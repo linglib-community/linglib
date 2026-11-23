@@ -1,0 +1,173 @@
+{
+  "features": [
+    {
+      "key": "application",
+      "lean": "application",
+      "type": "Application",
+      "doc": "How a phonological process applies in a candidate reduplicated form.",
+      "levels": [
+        {
+          "name": "over",
+          "label": "over",
+          "doc": "the process applies in base and reduplicant, though its conditions are met in one"
+        },
+        {
+          "name": "under",
+          "label": "under",
+          "doc": "the process applies in neither, though its conditions are met in one"
+        },
+        {
+          "name": "normal",
+          "label": "normal",
+          "doc": "the process applies only where its conditions are met"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "mccarthyprince1995_6a",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "(6a)"},
+      "language": "java1254",
+      "primaryText": "bəḍa–bəḍa–e",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "broken",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["application", "over"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "mccarthyprince1995_6b",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "(6b)"},
+      "language": "java1254",
+      "primaryText": "bəḍah–bəḍah–e",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "broken",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["application", "under"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "mccarthyprince1995_6c",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "(6c)"},
+      "language": "java1254",
+      "primaryText": "bəḍah–bəḍa–e",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "broken",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["application", "normal"]
+      ],
+      "comment": "A footnote to the Javanese data reports that forms of this shape are also observed.",
+      "verified": "page-image"
+    },
+    {
+      "id": "mccarthyprince1995_124a",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "(124)"},
+      "language": "akan1250",
+      "primaryText": "tɕɛ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "divide",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "kɛ", "judgment": "ungrammatical"}
+      ],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "mccarthyprince1995_kita",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "p. 94"},
+      "language": "akan1250",
+      "primaryText": "kita",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "polish",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "tɕita", "judgment": "ungrammatical"}
+      ],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "mccarthyprince1995_125a",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "(125)"},
+      "language": "akan1250",
+      "primaryText": "kɪ–kaʔ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "bite",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["application", "under"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "mccarthyprince1995_125a_pal",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "(125)"},
+      "language": "akan1250",
+      "primaryText": "tɕɪ–kaʔ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "bite",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["application", "normal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "mccarthyprince1995_fn71",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "fn. 71"},
+      "language": "akan1250",
+      "primaryText": "tɕɪ–tɕa",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "bite",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["application", "over"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

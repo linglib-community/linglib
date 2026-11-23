@@ -1,5 +1,7 @@
 module
 
+public import Linglib.Data.Examples.Languages
+public import Linglib.Data.Examples.McCarthyPrince1995
 public import Linglib.Fragments.Akan.Phonology
 public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
@@ -9,38 +11,37 @@ public import Mathlib.Tactic.FinCases
 /-!
 # McCarthy and Prince (1995): Faithfulness and Reduplicative Identity
 
-This file formalizes three analyses from McCarthy and Prince's correspondence theory of
-reduplication. In the basic model a reduplicated form has an input stem, a base and a
-reduplicant, with faithfulness between input and base and identity between base and
-reduplicant, and a phonological constraint interacts with both. Javanese deletes
-intervocalic *h*, and in a suffixed reduplication the *h* is lost from both copies although
-only one is intervocalic, which is overapplication (§3.4). Balangao copies the first two
-syllables of the base without the final coda although the language allows codas, which is
-emergence of the unmarked (§4.2). Akan palatalizes a velar before a front vowel, but not in
-the reduplicant of *kɪ–ka*, which is underapplication (§5.1).
+In the basic model of [mccarthy-prince-1995] a reduplicated form has an input stem, a base and a
+reduplicant. Faithfulness constraints relate the input to the base, identity constraints relate
+the base to the reduplicant, and a phonological constraint reads the surface string. A candidate
+is a base and a reduplicant, its marks are computed from the correspondence between the three
+strings and from the surface string, and each result says which rankings select which candidate.
 
-A candidate here is a correspondence between the input stem, the base and the reduplicant,
-and every constraint is computed from it: MAX and IDENT from the correspondence, and the
-phonological constraints from the surface string. The rankings are not fixed in advance.
-Each result says which rankings of the paper's constraints select which candidate.
-
-## Main definitions
-
-* `Javanese.Candidate`, `Balangao.Candidate`, `Akan.Candidate`: the candidates of tableaux
-  (39), (106) and (131), each with its `correspondence` and `surface`.
-* `Javanese.marks`, `Balangao.marks`, `Akan.marks`: the marks of the candidates.
+Javanese deletes intervocalic *h*: the ranking that does so in the unreduplicated *ara–e* is
+`Javanese.DeletesH`. Under it the suffixed reduplication of *bəḍah* loses *h* from both copies,
+though only one is intervocalic, exactly when MAX-BR dominates MAX-IO
+(`Javanese.overapplication_iff`), and no ranking keeps both
+(`Javanese.underapplication_notMem`). Balangao copies the first two syllables of *tagtag*
+without the final coda exactly when MAX-IO dominates NO-CODA and NO-CODA dominates MAX-BR
+(`Balangao.optimal_iff`). Akan palatalizes a velar before a front vowel, as in *tɕɛ*
+(`Akan.Palatalizes`), but not when a coronal begins the next syllable, as in *kɛsɪ*
+(`Akan.Blocks`). The reduplicant of *kɪ–ka* is unpalatalized exactly when a ranking blocks
+palatalization in *kɛsɪ* and has IDENT-BR dominate PAL (`Akan.underapplication_iff`).
 
 ## Implementation notes
 
-Javanese is analysed with suffixing reduplication, the paper's tableau (39). Its prefixing
-alternative (38), where DEP-BR does the work of MAX-BR, is not formalized. A coda is counted
-as a consonant that no vowel follows, which suffices for the CV(C) syllables of the Balangao
-forms. The paper measures OCP(+cor) by featural duplication in dissimilar constituents and
-prints three marks for the overapplying candidate of (131) without spelling the count out.
-Here the constraint is violated once by a syllable with a palatal onset and a front vowel
-before a syllable with a coronal onset and a vowel that is not front, which agrees with the
-paper's verdicts on *kita*, *tɕita*, *dʑidʑe* and the three candidates. The Akan segments are
-those of the Akan fragment.
+Javanese is analysed with suffixing reduplication. Its prefixing alternative, where DEP-BR does
+the work of MAX-BR, is not formalized. A coda is counted as a consonant that no vowel follows,
+which suffices for the CV(C) syllables of the Balangao forms.
+
+The paper measures OCP(+cor) by featural duplication in dissimilar constituents: a syllable
+whose onset and vowel share [+coronal, −anterior] may not be followed by a coronal that does
+not share those features with its own vowel. Here a syllable is a consonant and a vowel, and the
+constraint is violated once by a syllable of palatal onset and front vowel before a syllable of
+coronal onset that is not itself of that kind. The overapplying candidate of the summary tableau
+then has one mark where the paper prints three; no ranking result depends on the count. The top
+constraint of the paper's Akan ranking, IDENT-IO(+cor), which no candidate here violates, is
+left out. The Akan segments are those of the Akan fragment.
 
 ## References
 
@@ -114,13 +115,38 @@ example : (map ['x', 'y'] ['x', 'y', 'z'] [(0, 0), (1, 1)]).contigOViol .lhs .rh
 example : (map ['x', 'y', 'z'] ['x', 'y'] [(0, 0), (1, 1)]).anchorLViol .lhs .rhs = 0 ∧
     (map ['x', 'y', 'z'] ['x', 'y'] [(0, 0), (1, 1)]).anchorRViol .lhs .rhs = 1 := by decide
 
+/-! ### Candidates of the basic model -/
+
+/-- A candidate of the basic model: the base and the reduplicant of an output form. -/
+structure Candidate (α : Type*) where
+  /-- The base, the output of the stem. -/
+  base : List α
+  /-- The reduplicant, the output of the reduplicative affix. -/
+  reduplicant : List α
+  deriving DecidableEq
+
+namespace Candidate
+
+variable {α : Type*}
+
+/-- An unreduplicated word, a candidate with no reduplicant. -/
+def ofWord (w : List α) : Candidate α := ⟨w, []⟩
+
+/-- The correspondence of a candidate with the input `stem`, the three strings coindexed
+position by position. -/
+def correspondence (stem : List α) (c : Candidate α) :
+    Correspondence.Coindexation ReduplicationRole α :=
+  .reduplication stem c.base c.reduplicant
+
+end Candidate
+
 /-! ### Javanese *h*-deletion: overapplication -/
 
 namespace Javanese
 
-/-- The segments of *bədah* 'broken' and the demonstrative suffix *-e*. -/
+/-- The segments of *bəḍah* 'broken', *arah* 'direction' and the demonstrative suffix *-e*. -/
 inductive Seg where
-  | b | schwa | d | a | h | e
+  | b | schwa | d | a | h | e | r
   deriving DecidableEq, Repr
 
 /-- The vowels. -/
@@ -130,124 +156,98 @@ def Seg.IsVowel : Seg → Prop
 
 instance : DecidablePred Seg.IsVowel := fun s ↦ by cases s <;> unfold Seg.IsVowel <;> infer_instance
 
-/-- The stem *bədah*. -/
+/-- The marks of the unreduplicated word `out–e` for the input `stem–e`: none for MAX-BR, then
+*VhV and MAX-IO. -/
+def wordMarks (stem out : List Seg) : Fin 3 → ℕ :=
+  ![0, intervocalic Seg.IsVowel .h (out ++ [.e]),
+    (Correspondence.Coindexation.parallel stem out).maxViol .lhs .rhs]
+
+/-- (36): a ranking deletes intervocalic *h* when it selects *ara–e* over *arah–e* for
+/arah–e/. -/
+def DeletesH (r : Ranking.Enumeration (Fin 3) 3) : Prop :=
+  r.optimal (wordMarks [.a, .r, .a, .h]) {[.a, .r, .a], [.a, .r, .a, .h]} = {[.a, .r, .a]}
+
+-- (36)
+theorem deletesH_iff {r : Ranking.Enumeration (Fin 3) 3} : DeletesH r ↔ r.Dominates 1 2 := by
+  rw [DeletesH, Ranking.Enumeration.optimal_eq_singleton_iff_pair rfl (by decide),
+    Ranking.Enumeration.profile_lt_iff_dominates (i := 1) (j := 2) (by decide) (by decide)]
+
+/-- The stem *bəḍah*. -/
 def stem : List Seg := [.b, .schwa, .d, .a, .h]
 
-/-- The stem without its *h*. -/
-def stemNoH : List Seg := [.b, .schwa, .d, .a]
+/-- (6): the candidates for /bəḍah–RED–e/. Overapplication is *bəḍa–bəḍa–e*, with *h* lost from
+base and reduplicant, underapplication *bəḍah–bəḍah–e*, with *h* kept in both, and normal
+application *bəḍah–bəḍa–e*, with *h* lost where it is intervocalic. -/
+def candidate : Examples.Application → Candidate Seg
+  | .over => ⟨[.b, .schwa, .d, .a], [.b, .schwa, .d, .a]⟩
+  | .under => ⟨stem, stem⟩
+  | .normal => ⟨stem, [.b, .schwa, .d, .a]⟩
 
-/-- The candidates of tableau (39) for /bədah–RED–e/. -/
-inductive Candidate where
-  /-- *bəda–bəda–e*, with *h* lost from base and reduplicant. -/
-  | overapplication
-  /-- *bədah–bədah–e*, with *h* kept in both. -/
-  | underapplication
-  /-- *bədah–bəda–e*, with *h* lost where it is intervocalic. -/
-  | normalApplication
-  deriving DecidableEq, Fintype, Repr
+/-- The candidates of tableau (39). -/
+def candidates : Finset (Candidate Seg) := Finset.univ.image candidate
 
-namespace Candidate
-
-/-- The base of a candidate. -/
-def base : Candidate → List Seg
-  | overapplication => stemNoH
-  | underapplication | normalApplication => stem
-
-/-- The reduplicant of a candidate. -/
-def reduplicant : Candidate → List Seg
-  | underapplication => stem
-  | overapplication | normalApplication => stemNoH
-
-/-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
-def correspondence (c : Candidate) : Correspondence.Coindexation ReduplicationRole Seg :=
-  .reduplication stem c.base c.reduplicant
-
-/-- The surface string, the base followed by the reduplicant and the suffix. -/
-def surface (c : Candidate) : List Seg := c.base ++ c.reduplicant ++ [.e]
-
-end Candidate
-
-/-- The constraints of (39) are MAX-BR, *VhV and MAX-IO. -/
-def marks (c : Candidate) : Fin 3 → ℕ :=
-  ![c.correspondence.maxViol .base .reduplicant, intervocalic Seg.IsVowel .h c.surface,
-    c.correspondence.maxViol .input .base]
-
-/-- The constraint a candidate violates. -/
-def Candidate.violated : Candidate → Fin 3
-  | .normalApplication => 0
-  | .underapplication => 1
-  | .overapplication => 2
-
-/-- The candidate that violates a given constraint. -/
-def violator : Fin 3 → Candidate
-  | 0 => .normalApplication
-  | 1 => .underapplication
-  | 2 => .overapplication
-
-@[simp] theorem violated_violator : ∀ i, (violator i).violated = i := by decide
-
-theorem violated_injective : Function.Injective Candidate.violated := by decide
+/-- The constraints of (39) are MAX-BR, *VhV and MAX-IO; the surface string is the base followed
+by the reduplicant and the suffix. -/
+def marks (c : Candidate Seg) : Fin 3 → ℕ :=
+  ![(c.correspondence stem).maxViol .base .reduplicant,
+    intervocalic Seg.IsVowel .h (c.base ++ c.reduplicant ++ [.e]),
+    (c.correspondence stem).maxViol .input .base]
 
 -- (39)
-theorem marks_apply :
-    ∀ (c : Candidate) (i : Fin 3), marks c i = if i = c.violated then 1 else 0 := by
+theorem marks_eq :
+    marks (candidate .over) = ![0, 0, 1] ∧ marks (candidate .under) = ![0, 1, 0] ∧
+      marks (candidate .normal) = ![1, 0, 0] := by
   decide
 
-/-- The winners of tableau (39) under a ranking of its constraints. -/
-def optimal (r : Ranking.Enumeration (Fin 3) 3) : Finset Candidate :=
-  r.optimal marks {.overapplication, .underapplication, .normalApplication}
+section
 
-/-- The winner of (39) is the candidate whose one violated constraint is ranked last. -/
-theorem optimal_eq (r : Ranking.Enumeration (Fin 3) 3) :
-    optimal r = {violator (r 2)} := by
-  refine Ranking.Enumeration.optimal_eq_singleton_iff.2
-    ⟨by cases violator (r 2) <;> simp, fun d _ hne ↦ ?_⟩
-  have hd : d.violated ≠ r 2 := fun h ↦
-    hne (violated_injective (h.trans (violated_violator _).symm))
-  refine ⟨d.violated, by simp [marks_apply, hd], fun j hj ↦ ?_⟩
-  have hj' : j = r 2 := by
-    by_contra hjne
-    simp [marks_apply, hjne] at hj
-  subst hj'
-  have hne2 : r.symm d.violated ≠ 2 := fun h ↦ hd (by rw [← h, Equiv.apply_symm_apply])
-  show r.symm d.violated < r.symm (r 2)
-  rw [Equiv.symm_apply_apply]
-  omega
+open Ranking.Enumeration
 
-private theorem apply_two_eq {r : Ranking.Enumeration (Fin 3) 3} {i j k : Fin 3} (hij : i ≠ j)
-    (hi : r.Dominates i k) (hj : r.Dominates j k) : r 2 = k := by
-  have hne : r.symm i ≠ r.symm j := fun h ↦ hij (r.symm.injective h)
-  have : r.symm k = 2 := by
-    unfold Ranking.Enumeration.Dominates at hi hj
-    omega
-  rw [← this, Equiv.apply_symm_apply]
+variable {r : Ranking.Enumeration (Fin 3) 3}
 
-/-- With MAX-BR and *VhV above MAX-IO, the paper's skeletal ranking for overapplication, *h* is
-lost from both copies. -/
-theorem overapplication {r : Ranking.Enumeration (Fin 3) 3} (h₁ : r.Dominates 0 2)
-    (h₂ : r.Dominates 1 2) :
-    optimal r = {.overapplication} := by
-  rw [optimal_eq, apply_two_eq (by decide) h₁ h₂]; rfl
+/-- A ranking that deletes intervocalic *h* loses it from both copies of *bəḍah* exactly when
+MAX-BR dominates MAX-IO. -/
+theorem overapplication_iff (h : DeletesH r) :
+    r.optimal marks candidates = {candidate .over} ↔ r.Dominates 0 2 := by
+  have hu := profile_lt_iff_dominates (σ := r) (T := marks) (c := candidate .over)
+    (d := candidate .under) (i := 1) (j := 2) (by decide) (by decide)
+  have hn := profile_lt_iff_dominates (σ := r) (T := marks) (c := candidate .over)
+    (d := candidate .normal) (i := 0) (j := 2) (by decide) (by decide)
+  rw [optimal_eq_singleton_iff_profile_lt]
+  refine ⟨fun hw ↦ hn.1 (hw.2 _ (by decide) (by decide)), fun h02 ↦ ⟨by decide, fun d hd hne ↦ ?_⟩⟩
+  obtain ⟨a, -, rfl⟩ := Finset.mem_image.1 hd
+  cases a
+  exacts [absurd rfl hne, hu.2 (deletesH_iff.1 h), hn.2 h02]
 
-/-- With *VhV above MAX-IO and MAX-IO above MAX-BR, application is normal. -/
-theorem normalApplication {r : Ranking.Enumeration (Fin 3) 3} (h₁ : r.Dominates 1 2)
-    (h₂ : r.Dominates 2 0) :
-    optimal r = {.normalApplication} := by
-  rw [optimal_eq, apply_two_eq (by decide) (lt_trans h₁ h₂) h₂]; rfl
+-- the paragraph after (39)
+theorem normalApplication_iff (h : DeletesH r) :
+    r.optimal marks candidates = {candidate .normal} ↔ r.Dominates 2 0 := by
+  have ho := profile_lt_iff_dominates (σ := r) (T := marks) (c := candidate .normal)
+    (d := candidate .over) (i := 2) (j := 0) (by decide) (by decide)
+  have hu := profile_lt_iff_dominates (σ := r) (T := marks) (c := candidate .normal)
+    (d := candidate .under) (i := 1) (j := 0) (by decide) (by decide)
+  rw [optimal_eq_singleton_iff_profile_lt]
+  refine ⟨fun hw ↦ ho.1 (hw.2 _ (by decide) (by decide)), fun h20 ↦ ⟨by decide, fun d hd hne ↦ ?_⟩⟩
+  obtain ⟨a, -, rfl⟩ := Finset.mem_image.1 hd
+  cases a
+  exacts [ho.2 h20, hu.2 (lt_trans (deletesH_iff.1 h) h20), absurd rfl hne]
 
-/-- Underapplication is out of reach. While *VhV dominates MAX-IO, as *h*-deletion in
-unreduplicated words requires, no ranking selects the candidate that keeps both *h*s. -/
-theorem underapplication_notMem {r : Ranking.Enumeration (Fin 3) 3} (h : r.Dominates 1 2) :
-    .underapplication ∉ optimal r := by
-  rw [optimal_eq, Finset.mem_singleton]
-  intro he
-  have h2 : r 2 = 1 := by
-    have := congrArg Candidate.violated he
-    rw [violated_violator] at this
-    exact this.symm
-  have : r.symm 1 = 2 := by rw [← h2, Equiv.symm_apply_apply]
-  unfold Ranking.Enumeration.Dominates at h
-  omega
+/-- Underapplication is out of reach: no ranking that deletes intervocalic *h* keeps both *h*s
+of the reduplicated form. -/
+theorem underapplication_notMem (h : DeletesH r) :
+    candidate .under ∉ r.optimal marks candidates :=
+  notMem_optimal_of_forall_dominates (d := candidate .over) (i := 1) (by decide) (by decide)
+    fun k hk ↦ (by decide : ∀ k, marks (candidate .under) k < marks (candidate .over) k → k = 2)
+      k hk ▸ deletesH_iff.1 h
+
+-- (6)
+theorem judgments (h : DeletesH r) (h02 : r.Dominates 0 2) :
+    ∀ e ∈ Examples.all, e.language = .javanese → ∀ a ∈ Examples.application e,
+      (candidate a ∈ r.optimal marks candidates ↔ e.judgment = .acceptable) := by
+  rw [(overapplication_iff h).2 h02]
+  decide
+
+end
 
 end Javanese
 
@@ -270,87 +270,64 @@ instance : DecidablePred Seg.IsVowel := fun s ↦ by cases s <;> unfold Seg.IsVo
 /-- The stem *tagtag*. -/
 def stem : List Seg := [.t, .a, .g, .t, .a, .g]
 
-/-- The stem without its final coda. -/
-def stemNoCoda : List Seg := [.t, .a, .g, .t, .a]
+/-- The marks of the unreduplicated word `out` for the input /tagtag/: MAX-IO and NO-CODA, and
+none for MAX-BR. -/
+def wordMarks (out : List Seg) : Fin 3 → ℕ :=
+  ![(Correspondence.Coindexation.parallel stem out).maxViol .lhs .rhs, codas Seg.IsVowel out, 0]
+
+/-- (16): a ranking keeps codas when it selects *tagtag* over *tagta* for /tagtag/. -/
+def KeepsCodas (r : Ranking.Enumeration (Fin 3) 3) : Prop :=
+  r.optimal wordMarks {stem, [.t, .a, .g, .t, .a]} = {stem}
+
+-- (16)
+theorem keepsCodas_iff {r : Ranking.Enumeration (Fin 3) 3} : KeepsCodas r ↔ r.Dominates 0 1 := by
+  rw [KeepsCodas, Ranking.Enumeration.optimal_eq_singleton_iff_pair rfl (by decide),
+    Ranking.Enumeration.profile_lt_iff_dominates (i := 0) (j := 1) (by decide) (by decide)]
+
+/-- *tagta–tagta*, with the final coda lost from the base too. -/
+def unfaithfulBase : Candidate Seg := ⟨[.t, .a, .g, .t, .a], [.t, .a, .g, .t, .a]⟩
+
+/-- *tagtag–tagtag*, an exact copy. -/
+def exactCopy : Candidate Seg := ⟨stem, stem⟩
+
+/-- *tagta–tagtag*, with a reduplicant that lacks the final coda. -/
+def codalessReduplicant : Candidate Seg := ⟨stem, [.t, .a, .g, .t, .a]⟩
 
 /-- The candidates of tableau (106) for /RED–tagtag/. -/
-inductive Candidate where
-  /-- *tagta–tagta*, with the final coda lost from the base too. -/
-  | unfaithfulBase
-  /-- *tagtag–tagtag*, an exact copy. -/
-  | exactCopy
-  /-- *tagta–tagtag*, with a reduplicant that lacks the final coda. -/
-  | codalessReduplicant
-  deriving DecidableEq, Fintype, Repr
+def candidates : Finset (Candidate Seg) := {unfaithfulBase, exactCopy, codalessReduplicant}
 
-namespace Candidate
-
-/-- The base of a candidate. -/
-def base : Candidate → List Seg
-  | unfaithfulBase => stemNoCoda
-  | exactCopy | codalessReduplicant => stem
-
-/-- The reduplicant of a candidate. -/
-def reduplicant : Candidate → List Seg
-  | exactCopy => stem
-  | unfaithfulBase | codalessReduplicant => stemNoCoda
-
-/-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
-def correspondence (c : Candidate) : Correspondence.Coindexation ReduplicationRole Seg :=
-  .reduplication stem c.base c.reduplicant
-
-/-- The surface string, the reduplicant followed by the base. -/
-def surface (c : Candidate) : List Seg := c.reduplicant ++ c.base
-
-end Candidate
-
-/-- The constraints of (106) are MAX-IO, NO-CODA and MAX-BR. -/
-def marks (c : Candidate) : Fin 3 → ℕ :=
-  ![c.correspondence.maxViol .input .base, codas Seg.IsVowel c.surface,
-    c.correspondence.maxViol .base .reduplicant]
+/-- The constraints of (106) are MAX-IO, NO-CODA and MAX-BR; the surface string is the
+reduplicant followed by the base. -/
+def marks (c : Candidate Seg) : Fin 3 → ℕ :=
+  ![(c.correspondence stem).maxViol .input .base, codas Seg.IsVowel (c.reduplicant ++ c.base),
+    (c.correspondence stem).maxViol .base .reduplicant]
 
 -- (106)
-theorem marks_apply :
-    marks .unfaithfulBase = ![1, 2, 0] ∧ marks .exactCopy = ![0, 4, 0] ∧
-      marks .codalessReduplicant = ![0, 3, 1] := by
+theorem marks_eq :
+    marks unfaithfulBase = ![1, 2, 0] ∧ marks exactCopy = ![0, 4, 0] ∧
+      marks codalessReduplicant = ![0, 3, 1] := by
   decide
 
-/-- The winners of tableau (106) under a ranking of its constraints. -/
-def optimal (r : Ranking.Enumeration (Fin 3) 3) : Finset Candidate :=
-  r.optimal marks {.unfaithfulBase, .exactCopy, .codalessReduplicant}
-
-/-- The coda-sparing reduplicant wins exactly under MAX-IO ≫ NO-CODA ≫ MAX-BR, the paper's
-instance of the ranking for emergence of the unmarked. -/
+open Ranking.Enumeration in
+/-- The coda-sparing reduplicant wins exactly when a ranking keeps codas in unreduplicated words
+and has NO-CODA dominate MAX-BR, the ranking for emergence of the unmarked. -/
 theorem optimal_iff (r : Ranking.Enumeration (Fin 3) 3) :
-    optimal r = {.codalessReduplicant} ↔ r.Dominates 0 1 ∧ r.Dominates 1 2 := by
-  obtain ⟨ha, hb, hc⟩ := marks_apply
-  have va (i) : marks .unfaithfulBase i = ![1, 2, 0] i := congrFun ha i
-  have vb (i) : marks .exactCopy i = ![0, 4, 0] i := congrFun hb i
-  have vc (i) : marks .codalessReduplicant i = ![0, 3, 1] i := congrFun hc i
-  rw [optimal, Ranking.Enumeration.optimal_eq_singleton_iff, and_iff_right (by simp)]
-  constructor
-  · intro h
-    obtain ⟨i, hi, hdi⟩ := h .unfaithfulBase (by simp) (by decide)
-    obtain ⟨j, hj, hdj⟩ := h .exactCopy (by simp) (by decide)
-    have i0 : i = 0 := by fin_cases i <;> simp [va, vc] at hi ⊢
-    have j1 : j = 1 := by fin_cases j <;> simp [vb, vc] at hj ⊢
-    subst i0 j1
-    exact ⟨hdi 1 (by simp [va, vc]), hdj 2 (by simp [vb, vc])⟩
-  · rintro ⟨h01, h12⟩ d _ hd
-    cases d with
-    | codalessReduplicant => exact absurd rfl hd
-    | unfaithfulBase =>
-      refine ⟨0, by simp [va, vc], fun j hj ↦ ?_⟩
-      fin_cases j
-      · simp [va, vc] at hj
-      · exact h01
-      · exact lt_trans h01 h12
-    | exactCopy =>
-      refine ⟨1, by simp [vb, vc], fun j hj ↦ ?_⟩
-      fin_cases j
-      · simp [vb, vc] at hj
-      · simp [vb, vc] at hj
-      · exact h12
+    r.optimal marks candidates = {codalessReduplicant} ↔ KeepsCodas r ∧ r.Dominates 1 2 := by
+  have ha := profile_lt_iff_forall_dominates (σ := r) (T := marks) (c := codalessReduplicant)
+    (d := unfaithfulBase) (i := 0) (by decide)
+  have hb := profile_lt_iff_dominates (σ := r) (T := marks) (c := codalessReduplicant)
+    (d := exactCopy) (i := 1) (j := 2) (by decide) (by decide)
+  rw [keepsCodas_iff, optimal_eq_singleton_iff_profile_lt]
+  refine ⟨fun hw ↦ ⟨ha.1 (hw.2 _ (by decide) (by decide)) 1 (by decide),
+    hb.1 (hw.2 _ (by decide) (by decide))⟩, fun ⟨h01, h12⟩ ↦ ⟨by decide, fun d hd hne ↦ ?_⟩⟩
+  simp only [candidates, Finset.mem_insert, Finset.mem_singleton] at hd
+  rcases hd with rfl | rfl | rfl
+  · refine ha.2 fun j hj ↦ ?_
+    obtain rfl | rfl :=
+      (by decide : ∀ j, marks unfaithfulBase j < marks codalessReduplicant j → j = 1 ∨ j = 2) j hj
+    exacts [h01, lt_trans h01 h12]
+  · exact hb.2 h12
+  · exact absurd rfl hne
 
 end Balangao
 
@@ -358,10 +335,13 @@ end Balangao
 
 namespace Akan
 
-open _root_.Akan Data.PHOIBLE
+open _root_.Akan
 
 /-- A coronal consonant. -/
 def IsCoronal (s : Segment) : Prop := s .syllabic = false ∧ s .coronal = true
+
+/-- A palatal consonant, [+coronal, −anterior]. -/
+def IsPalatal (s : Segment) : Prop := IsCoronal s ∧ s .anterior = false
 
 /-- A plain velar, which PAL requires to palatalize before a front vowel. -/
 def IsVelar (s : Segment) : Prop :=
@@ -371,6 +351,7 @@ def IsVelar (s : Segment) : Prop :=
 def IsFrontVowel (s : Segment) : Prop := s .syllabic = true ∧ s .front = true
 
 instance : DecidablePred IsCoronal := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred IsPalatal := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred IsVelar := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred IsFrontVowel := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -378,106 +359,120 @@ instance : DecidablePred IsFrontVowel := fun _ ↦ inferInstanceAs (Decidable (_
 def pal : Constraint (List Segment) :=
   Constraint.ofForbiddenPairs fun c v ↦ IsVelar c ∧ IsFrontVowel v
 
-/-- OCP(+cor) counts the syllables of palatal onset and front vowel that stand before a
-syllable of coronal onset and a vowel that is not front, the clash of syllabic and segmental
-palatality. -/
+/-- OCP(+cor) counts the syllables of palatal onset and front vowel that stand before a syllable
+of coronal onset which is not itself of palatal onset and front vowel, the clash of syllabic and
+segmental coronality. -/
 def ocpCoronal : List Segment → ℕ
   | c₁ :: v₁ :: c₂ :: v₂ :: rest =>
-    (if IsCoronal c₁ ∧ IsFrontVowel v₁ ∧ IsCoronal c₂ ∧ ¬ IsFrontVowel v₂ then 1 else 0) +
-      ocpCoronal (c₂ :: v₂ :: rest)
+    (if IsPalatal c₁ ∧ IsFrontVowel v₁ ∧ IsCoronal c₂ ∧ ¬ (IsPalatal c₂ ∧ IsFrontVowel v₂)
+      then 1 else 0) + ocpCoronal (c₂ :: v₂ :: rest)
   | _ => 0
 
--- (127)
-theorem ocpCoronal_kita :
-    ocpCoronal [k, i, FeatureMatrix.«t».toSegment, a] = 0 ∧
-      ocpCoronal [tcCurl, i, FeatureMatrix.«t».toSegment, a] = 1 ∧
-      ocpCoronal [tcCurl, i, tcCurl, e] = 0 := by
+-- (127), (128), and *si–se* of the paragraph before (129)
+theorem ocpCoronal_eq :
+    ocpCoronal [k, i, t, a] = 0 ∧ ocpCoronal [tcCurl, i, t, a] = 1 ∧
+      ocpCoronal [tcCurl, i, tcCurl, e] = 0 ∧ ocpCoronal [k, epsilon, s, smallCapitalI] = 0 ∧
+      ocpCoronal [tcCurl, epsilon, s, smallCapitalI] = 1 ∧ ocpCoronal [s, i, s, e] = 0 := by
   decide
+
+/-- The constraints of (131) are OCP(+cor), IDENT-BR(−cor), PAL and IDENT-IO(−cor); the surface
+string is the reduplicant followed by the base. An IDENT(−cor) constraint is violated by a
+[−coronal] segment whose correspondent is not [−coronal]. -/
+def marks (stem : List Segment) (c : Candidate Segment) : Fin 4 → ℕ :=
+  ![ocpCoronal (c.reduplicant ++ c.base),
+    (c.correspondence stem).maxViolFeature (fun s : Segment ↦ s .coronal = false)
+      .base .reduplicant,
+    pal (c.reduplicant ++ c.base),
+    (c.correspondence stem).maxViolFeature (fun s : Segment ↦ s .coronal = false) .input .base]
+
+/-- (126): a ranking palatalizes when it selects *tɕɛ* over *kɛ* for /kɛ/. -/
+def Palatalizes (r : Ranking.Enumeration (Fin 4) 4) : Prop :=
+  r.optimal (marks [k, epsilon]) {.ofWord [tcCurl, epsilon], .ofWord [k, epsilon]} =
+    {.ofWord [tcCurl, epsilon]}
+
+/-- (128): a ranking blocks palatalization before a coronal when it selects *kɛsɪ* over *tɕɛsɪ*
+for /kɛsɪ/. -/
+def Blocks (r : Ranking.Enumeration (Fin 4) 4) : Prop :=
+  r.optimal (marks [k, epsilon, s, smallCapitalI])
+      {.ofWord [k, epsilon, s, smallCapitalI], .ofWord [tcCurl, epsilon, s, smallCapitalI]} =
+    {.ofWord [k, epsilon, s, smallCapitalI]}
 
 /-- The stem *ka* 'bite'. -/
 def stem : List Segment := [k, a]
 
-/-- The candidates of tableau (131) for /RED–ka/. -/
-inductive Candidate where
-  /-- *tɕɪ–tɕa*, palatalized in reduplicant and base. -/
-  | overapplication
-  /-- *tɕɪ–ka*, palatalized before the front vowel only. -/
-  | normalApplication
-  /-- *kɪ–ka*, not palatalized. -/
-  | underapplication
-  deriving DecidableEq, Fintype, Repr
+/-- (130): the candidates for /RED–ka/. Overapplication is *tɕɪ–tɕa*, palatalized in reduplicant
+and base, normal application *tɕɪ–ka*, palatalized before the front vowel only, and
+underapplication the unpalatalized *kɪ–ka*. -/
+def candidate : Examples.Application → Candidate Segment
+  | .over => ⟨[tcCurl, a], [tcCurl, smallCapitalI]⟩
+  | .normal => ⟨stem, [tcCurl, smallCapitalI]⟩
+  | .under => ⟨stem, [k, smallCapitalI]⟩
 
-namespace Candidate
-
-/-- The base of a candidate. -/
-def base : Candidate → List Segment
-  | overapplication => [tcCurl, a]
-  | normalApplication | underapplication => stem
-
-/-- The reduplicant of a candidate, a consonant and a high vowel. -/
-def reduplicant : Candidate → List Segment
-  | underapplication => [k, smallCapitalI]
-  | overapplication | normalApplication => [tcCurl, smallCapitalI]
-
-/-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
-def correspondence (c : Candidate) : Correspondence.Coindexation ReduplicationRole Segment :=
-  .reduplication stem c.base c.reduplicant
-
-/-- The surface string, the reduplicant followed by the base. -/
-def surface (c : Candidate) : List Segment := c.reduplicant ++ c.base
-
-end Candidate
-
-/-- The constraints of (131) are OCP(+cor), IDENT-BR(−cor), PAL and IDENT-IO(−cor). An
-IDENT(−cor) constraint is violated by a [−coronal] segment whose correspondent is not [−coronal]. -/
-def marks (c : Candidate) : Fin 4 → ℕ :=
-  ![ocpCoronal c.surface,
-    c.correspondence.maxViolFeature (fun s : Segment ↦ s .coronal = false) .base .reduplicant,
-    pal c.surface,
-    c.correspondence.maxViolFeature (fun s : Segment ↦ s .coronal = false) .input .base]
+/-- The candidates of tableau (131). -/
+def candidates : Finset (Candidate Segment) := Finset.univ.image candidate
 
 -- (131)
-theorem marks_apply :
-    marks .overapplication = ![1, 0, 0, 1] ∧ marks .normalApplication = ![0, 1, 0, 0] ∧
-      marks .underapplication = ![0, 0, 1, 0] := by
+theorem marks_eq :
+    marks stem (candidate .over) = ![1, 0, 0, 1] ∧ marks stem (candidate .normal) = ![0, 1, 0, 0] ∧
+      marks stem (candidate .under) = ![0, 0, 1, 0] := by
   decide
 
-/-- The winners of tableau (131) under a ranking of its constraints. -/
-def optimal (r : Ranking.Enumeration (Fin 4) 4) : Finset Candidate :=
-  r.optimal marks {.overapplication, .normalApplication, .underapplication}
+section
 
-/-- While PAL dominates IDENT-IO(−cor), as palatalization in unreduplicated words requires, the
-unpalatalized *kɪ–ka* wins exactly when OCP(+cor) and IDENT-BR(−cor) both dominate PAL. The
-blocking constraint rules out overapplication and identity rules out normal application. -/
-theorem optimal_iff {r : Ranking.Enumeration (Fin 4) 4} (h : r.Dominates 2 3) :
-    optimal r = {.underapplication} ↔ r.Dominates 0 2 ∧ r.Dominates 1 2 := by
-  obtain ⟨ha, hb, hc⟩ := marks_apply
-  have va (i) : marks .overapplication i = ![1, 0, 0, 1] i := congrFun ha i
-  have vb (i) : marks .normalApplication i = ![0, 1, 0, 0] i := congrFun hb i
-  have vc (i) : marks .underapplication i = ![0, 0, 1, 0] i := congrFun hc i
-  rw [optimal, Ranking.Enumeration.optimal_eq_singleton_iff, and_iff_right (by simp)]
+open Ranking.Enumeration
+
+variable {r : Ranking.Enumeration (Fin 4) 4}
+
+-- (126)
+theorem palatalizes_iff : Palatalizes r ↔ r.Dominates 2 3 := by
+  rw [Palatalizes, optimal_eq_singleton_iff_pair rfl (by decide),
+    profile_lt_iff_dominates (i := 2) (j := 3) (by decide) (by decide)]
+
+/-- An unpalatalized form beats a palatalized one that violates OCP(+cor) iff OCP(+cor) dominates
+PAL, given that PAL dominates IDENT-IO(−cor). -/
+private theorem profile_lt_iff {C : Type*} {T : Tableau C (Fin 4)} {c d : C}
+    (h : r.Dominates 2 3) (hc : T c = ![0, 0, 1, 0]) (hd : T d = ![1, 0, 0, 1]) :
+    r.profile T c < r.profile T d ↔ r.Dominates 0 2 := by
+  rw [profile_lt_iff_exists_dominates, hc, hd]
   constructor
-  · intro hw
-    obtain ⟨i, hi, hdi⟩ := hw .overapplication (by simp) (by decide)
-    obtain ⟨j, hj, hdj⟩ := hw .normalApplication (by simp) (by decide)
-    have h2i := hdi 2 (by simp [va, vc])
-    have j1 : j = 1 := by fin_cases j <;> simp [vb, vc] at hj ⊢
-    subst j1
-    refine ⟨?_, hdj 2 (by simp [vb, vc])⟩
+  · rintro ⟨i, hi, hdi⟩
+    have h2 := hdi 2 (by simp)
     fin_cases i
-    · exact h2i
-    · simp [va, vc] at hi
-    · simp [va, vc] at hi
-    · exact absurd h2i (lt_asymm h)
-  · rintro ⟨h02, h12⟩ d _ hd
-    cases d with
-    | underapplication => exact absurd rfl hd
-    | overapplication =>
-      refine ⟨0, by simp [va, vc], fun j hj ↦ ?_⟩
-      fin_cases j <;> first | exact h02 | simp [va, vc] at hj
-    | normalApplication =>
-      refine ⟨1, by simp [vb, vc], fun j hj ↦ ?_⟩
-      fin_cases j <;> first | exact h12 | simp [vb, vc] at hj
+    · exact h2
+    · simp at hi
+    · simp at hi
+    · exact absurd h2 (lt_asymm h)
+  · exact fun h02 ↦ ⟨0, by simp, fun j hj ↦ by fin_cases j <;> first | exact h02 | simp at hj⟩
+
+-- (128)
+theorem blocks_iff (h : Palatalizes r) : Blocks r ↔ r.Dominates 0 2 := by
+  rw [Blocks, optimal_eq_singleton_iff_pair rfl (by decide)]
+  exact profile_lt_iff (palatalizes_iff.1 h) (by decide) (by decide)
+
+/-- A ranking that palatalizes leaves the reduplicant of *kɪ–ka* unpalatalized exactly when it
+blocks palatalization before a coronal in unreduplicated words and has IDENT-BR(−cor) dominate
+PAL. -/
+theorem underapplication_iff (h : Palatalizes r) :
+    r.optimal (marks stem) candidates = {candidate .under} ↔ Blocks r ∧ r.Dominates 1 2 := by
+  have ho := profile_lt_iff (r := r) (T := marks stem) (c := candidate .under)
+    (d := candidate .over) (palatalizes_iff.1 h) (by decide) (by decide)
+  have hn := profile_lt_iff_dominates (σ := r) (T := marks stem) (c := candidate .under)
+    (d := candidate .normal) (i := 1) (j := 2) (by decide) (by decide)
+  rw [blocks_iff h, optimal_eq_singleton_iff_profile_lt]
+  refine ⟨fun hw ↦ ⟨ho.1 (hw.2 _ (by decide) (by decide)), hn.1 (hw.2 _ (by decide) (by decide))⟩,
+    fun ⟨h02, h12⟩ ↦ ⟨by decide, fun d hd hne ↦ ?_⟩⟩
+  obtain ⟨a, -, rfl⟩ := Finset.mem_image.1 hd
+  cases a
+  exacts [ho.2 h02, absurd rfl hne, hn.2 h12]
+
+-- (125) and the candidates of (130)
+theorem judgments (h : Palatalizes r) (hb : Blocks r) (h12 : r.Dominates 1 2) :
+    ∀ e ∈ Examples.all, e.language = .akan → ∀ a ∈ Examples.application e,
+      (candidate a ∈ r.optimal (marks stem) candidates ↔ e.judgment = .acceptable) := by
+  rw [(underapplication_iff h).2 ⟨hb, h12⟩]
+  decide
+
+end
 
 end Akan
 

@@ -8,7 +8,8 @@ public import Linglib.Phonology.Segmental.FeatureClass
 # Akan segments
 
 This file lists the vowels of Akan as segments, together with the two consonants of its
-velar–palatal alternation. Akan has nine vowels, /i ɪ e ɛ a ɔ o ʊ u/, which Dolphyne
+velar–palatal alternation and the coronal obstruents /t s/ before which it fails. Akan has
+nine vowels, /i ɪ e ɛ a ɔ o ʊ u/, which Dolphyne
 groups into an advanced set /i e o u/ and an unadvanced set /ɪ ɛ a ɔ ʊ/ that do not mix
 within a word, the tongue-root harmony Stewart identified; in Casali's typology the
 inventory is a five-height system, with the low vowel the only one lacking a partner. In
@@ -30,6 +31,7 @@ with the features McCarthy and Prince's corono-dorsal analysis adds.
 * `Akan.i`, `Akan.smallCapitalI` and the like: the nine vowels, and `Akan.vowels` the set of
   them.
 * `Akan.k`, `Akan.tcCurl`: the velar stop and its palatalized output.
+* `Akan.t`, `Akan.s`: the plain coronal obstruents.
 
 ## Main results
 
@@ -136,6 +138,17 @@ theorem k_tcCurl_coronal :
   decide
 
 theorem tcCurl_isComplex : tcCurl.IsComplex := by decide
+
+/-- The voiceless alveolar stop /t/. -/
+def t : Segment := .ofChart .«t»
+
+/-- The voiceless alveolar fricative /s/. -/
+def s : Segment := .ofChart .«s»
+
+/-- The plain coronals are [+anterior], the palatal affricate [−anterior]. -/
+theorem anterior_t_s_tcCurl :
+    t .anterior = true ∧ s .anterior = true ∧ tcCurl .anterior = false := by
+  decide
 
 theorem smallCapitalI_front_a_not_front :
     smallCapitalI .front = true ∧ a .front = false := by
