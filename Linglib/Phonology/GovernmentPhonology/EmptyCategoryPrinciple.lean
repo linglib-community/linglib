@@ -16,12 +16,13 @@ A nucleus may stay unexpressed when it is governed, when it is enclosed in a dom
 infrasegmental government, or when it is final in a language whose final nuclei may be empty.
 Since a governed nucleus governs nothing, of two successive unexpressed nuclei
 [one is enclosed](##GovernmentPhonology.EmptyCategoryPrinciple.enclosed_or_enclosed).
-Where alternation with zero is obligatory, the realization of a domain is fixed from the right,
+Where alternation with zero is obligatory, the realization of a domain is fixed from right to
+left,
 each nucleus unexpressed exactly when the principle lets it be, and the principle
 [holds of it](##GovernmentPhonology.emptyCategoryPrinciple_obligatory). A domain may also be
-realized from the left, a nucleus being left unexpressed when the next can govern it and the next
-then expressed, and the principle holds of that realization too
-(`GovernmentPhonology.emptyCategoryPrinciple_leftward`). In a word of
+realized from left to right, a nucleus being left unexpressed when the next can govern it and the
+next then expressed, and the principle holds of that realization too
+(`GovernmentPhonology.emptyCategoryPrinciple_leftToRight`). In a word of
 alternating vowels the outcome depends on whether such a vowel, once expressed, is strong
 enough to govern another: where it is,
 [every other one](##GovernmentPhonology.expressed_obligatory_iff_even) is expressed, counting
@@ -212,14 +213,14 @@ theorem obligatory_eq_self_iff : obligatory A R l = l ↔
         i + 1 = l.length ∧ A.finalEmpty = true)) :=
   obligatoryFrom_eq_self_iff
 
-/-! ### The realization from the left -/
+/-! ### The realization from left to right -/
 
 variable (A) in
-/-- The realization of a stretch from the left, whose first nucleus is nucleus `i` of its domain:
-a nucleus without associated melody that is not one of `R` is left unexpressed when the nucleus
-after it, once expressed, is strong enough to govern it, and that nucleus is then expressed; the
-last nucleus is left unexpressed where final nuclei may be empty. -/
-def leftwardFrom (R : Finset ℕ) : ℕ → List Nucleus → List Nucleus
+/-- The realization of a stretch from left to right, whose first nucleus is nucleus `i` of its
+domain: a nucleus without associated melody that is not one of `R` is left unexpressed when the
+nucleus after it, once expressed, is strong enough to govern it, and that nucleus is then
+expressed; the last nucleus is left unexpressed where final nuclei may be empty. -/
+def leftToRightFrom (R : Finset ℕ) : ℕ → List Nucleus → List Nucleus
   | _, [] => []
   | i, [x] =>
     if x.melody ≠ .associated ∧ i ∉ R ∧ A.finalEmpty = true then [{ x with expressed := false }]
@@ -227,31 +228,31 @@ def leftwardFrom (R : Finset ℕ) : ℕ → List Nucleus → List Nucleus
   | i, x :: y :: r =>
     if x.melody ≠ .associated ∧ i ∉ R ∧
         (x.melody : WithBot Melody) ≤ A.strength { y with expressed := true } (decide (r = [])) then
-      { x with expressed := false } :: { y with expressed := true } :: leftwardFrom R (i + 2) r
-    else { x with expressed := true } :: leftwardFrom R (i + 1) (y :: r)
+      { x with expressed := false } :: { y with expressed := true } :: leftToRightFrom R (i + 2) r
+    else { x with expressed := true } :: leftToRightFrom R (i + 1) (y :: r)
 
 variable (A) in
-/-- The realization of a domain from the left, in which a nucleus that the next can govern is
+/-- The realization of a domain from left to right, in which a nucleus that the next can govern is
 unexpressed, except those of `R`. -/
-def leftward (R : Finset ℕ) (l : List Nucleus) : List Nucleus := leftwardFrom A R 0 l
+def leftToRight (R : Finset ℕ) (l : List Nucleus) : List Nucleus := leftToRightFrom A R 0 l
 
-@[simp] theorem length_leftwardFrom : (leftwardFrom A R i l).length = l.length := by
-  fun_induction leftwardFrom A R i l <;> simp_all
+@[simp] theorem length_leftToRightFrom : (leftToRightFrom A R i l).length = l.length := by
+  fun_induction leftToRightFrom A R i l <;> simp_all
 
-@[simp] theorem length_leftward : (leftward A R l).length = l.length := length_leftwardFrom
+@[simp] theorem length_leftToRight : (leftToRight A R l).length = l.length := length_leftToRightFrom
 
-/-- The realization from the left changes only which nuclei are expressed. -/
-theorem map_leftwardFrom : (leftwardFrom A R i l).map ({ · with expressed := false }) =
+/-- The realization from left to right changes only which nuclei are expressed. -/
+theorem map_leftToRightFrom : (leftToRightFrom A R i l).map ({ · with expressed := false }) =
     l.map ({ · with expressed := false }) := by
-  fun_induction leftwardFrom A R i l <;> simp_all
+  fun_induction leftToRightFrom A R i l <;> simp_all
 
-theorem map_leftward : (leftward A R l).map ({ · with expressed := false }) =
+theorem map_leftToRight : (leftToRight A R l).map ({ · with expressed := false }) =
     l.map ({ · with expressed := false }) :=
-  map_leftwardFrom
+  map_leftToRightFrom
 
-theorem emptyCategoryPrinciple_leftwardFrom :
-    EmptyCategoryPrinciple A (leftwardFrom A R i l) := by
-  fun_induction leftwardFrom A R i l with
+theorem emptyCategoryPrinciple_leftToRightFrom :
+    EmptyCategoryPrinciple A (leftToRightFrom A R i l) := by
+  fun_induction leftToRightFrom A R i l with
   | case1 => exact emptyCategoryPrinciple_nil
   | case2 i x h =>
     exact emptyCategoryPrinciple_cons.2
@@ -261,23 +262,23 @@ theorem emptyCategoryPrinciple_leftwardFrom :
       emptyCategoryPrinciple_nil⟩
   | case4 i x y r h ih =>
     have hy : EmptyCategoryPrinciple A
-        ({ y with expressed := true } :: leftwardFrom A R (i + 2) r) :=
+        ({ y with expressed := true } :: leftToRightFrom A R (i + 2) r) :=
       emptyCategoryPrinciple_cons.2 ⟨fun _ ↦ rfl, fun h ↦ by simp at h, ih⟩
     refine emptyCategoryPrinciple_cons.2 ⟨fun hx ↦ absurd hx h.1, fun _ ↦ ?_, hy⟩
     by_cases he : EnclosedHead A
         ({ x with expressed := false } :: { y with expressed := true } ::
-          leftwardFrom A R (i + 2) r)
+          leftToRightFrom A R (i + 2) r)
     · exact .inr (.inl he)
     · refine .inl ⟨rfl, he, fun hg ↦ by simpa using hg.1, _, rfl, ?_⟩
-      have hr : leftwardFrom A R (i + 2) r = [] ↔ r = [] := by
-        rw [← List.length_eq_zero_iff, length_leftwardFrom, List.length_eq_zero_iff]
+      have hr : leftToRightFrom A R (i + 2) r = [] ↔ r = [] := by
+        rw [← List.length_eq_zero_iff, length_leftToRightFrom, List.length_eq_zero_iff]
       simpa [hr] using h.2.2
   | case5 i x y r h ih =>
     exact emptyCategoryPrinciple_cons.2 ⟨fun _ ↦ rfl, fun h ↦ by simp at h, ih⟩
 
-/-- The realization of a domain from the left satisfies the Empty Category Principle. -/
-theorem emptyCategoryPrinciple_leftward : EmptyCategoryPrinciple A (leftward A R l) :=
-  emptyCategoryPrinciple_leftwardFrom
+/-- The realization of a domain from left to right satisfies the Empty Category Principle. -/
+theorem emptyCategoryPrinciple_leftToRight : EmptyCategoryPrinciple A (leftToRight A R l) :=
+  emptyCategoryPrinciple_leftToRightFrom
 
 /-! ### Words of alternating vowels -/
 

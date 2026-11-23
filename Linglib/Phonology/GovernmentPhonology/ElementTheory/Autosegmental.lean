@@ -25,15 +25,15 @@ under it, and under that a token, a head or a dependent, on the line of each ele
 expression. A form is a word of positions; `ofForm` concatenates their representations, as the
 monoid homomorphism `ofFormHom` does on the free monoid, and its lines do not cross
 (`noCrossing_ofForm`). A position of a form reads a root node exactly when it has one
-(`reads_root_ofForm_iff`) and an element exactly when its expression contains it
+(`reads_rootNode_ofForm_iff`) and an element exactly when its expression contains it
 (`reads_line_ofForm_iff`).
 
-Fusion is a change of lines. `fuse w e m n` makes position `n` share the token of `e` of
+Spreading is a change of lines. `spread w e m n` makes position `n` share the token of `e` of
 position `m`, by `Autosegmental.AR.spreadTier`: the root node of `n` is delinked from its own
 token of `e` and linked to that of `m`. It crosses no line exactly when no position strictly
-between the two has `e` (`noCrossing_fuse_iff`). The result reads as the form in which position
-`n` has `e` in the status it has at `m` (`reads_fuse_iff`), so where both positions have `e` no
-position's elements change (`exists_reads_fuse_iff`): sharing a token reads as copying it.
+between the two has `e` (`noCrossing_spread_iff`). The result reads as the form in which position
+`n` has `e` in the status it has at `m` (`reads_spread_iff`), so where both positions have `e` no
+position's elements change (`exists_reads_spread_iff`): sharing a token reads as copying it.
 
 ## Implementation notes
 
@@ -97,14 +97,14 @@ theorem MR.status_adopt_of_ne (m₂ m₁ : MR) {e e' : Element} (h : e' ≠ e) :
 element. -/
 inductive Tier where
   | skeleton
-  | root
+  | rootNode
   | line (e : Element)
   deriving DecidableEq, Fintype
 
 /-- The tier a tier hangs from: a line from the root nodes, and the root nodes from the
 skeleton. -/
 def Tier.parent : Tier → Tier
-  | .line _ => .root
+  | .line _ => .rootNode
   | _ => .skeleton
 
 /-- The tree of tiers. -/
@@ -134,14 +134,14 @@ theorem tiers_le_line_iff {e : Element} {t : Tier} :
 
 /-- The alphabets of a representation of elements: slots on the skeleton, root nodes, and a
 status on the line of each element. -/
-abbrev Lines : Tier → Type
+abbrev Tiers : Tier → Type
   | .skeleton => Slot
-  | .root => Unit
+  | .rootNode => Unit
   | .line _ => Status
 
-instance : ∀ t, DecidableEq (Lines t)
+instance : ∀ t, DecidableEq (Tiers t)
   | .skeleton => inferInstanceAs (DecidableEq Slot)
-  | .root => inferInstanceAs (DecidableEq Unit)
+  | .rootNode => inferInstanceAs (DecidableEq Unit)
   | .line _ => inferInstanceAs (DecidableEq Status)
 
 /-! ### Positions and forms -/
@@ -155,9 +155,9 @@ structure Position where
 
 /-- The tokens of a position on each tier: its slot, its root node, and on the line of each
 element of its expression the status of the element. -/
-def Position.word (p : Position) : ∀ t, List (Lines t)
+def Position.word (p : Position) : ∀ t, List (Tiers t)
   | .skeleton => [p.slot]
-  | .root => if p.melody.isSome then [()] else []
+  | .rootNode => if p.melody.isSome then [()] else []
   | .line e =>
     match p.melody with
     | some m => if e ∈ m.elements then [m.status e] else []
@@ -165,14 +165,14 @@ def Position.word (p : Position) : ∀ t, List (Lines t)
 
 /-- The representation of a position: its tokens, each linked to the token of the tier its own
 hangs from. -/
-def ofPosition (p : Position) : AR Lines :=
+def ofPosition (p : Position) : AR Tiers :=
   AR.fromRel p.word fun t' t _ _ ↦ t.parent = t' ∧ t ≠ .skeleton
 
 /-- The representation of a form, those of its positions in order. -/
-def ofForm (w : List Position) : AR Lines := (w.map ofPosition).prod
+def ofForm (w : List Position) : AR Tiers := (w.map ofPosition).prod
 
 /-- `ofForm` as a monoid homomorphism out of the free monoid on the positions. -/
-def ofFormHom : FreeMonoid Position →* AR Lines := FreeMonoid.lift ofPosition
+def ofFormHom : FreeMonoid Position →* AR Tiers := FreeMonoid.lift ofPosition
 
 @[simp] theorem ofFormHom_ofList (w : List Position) :
     ofFormHom (FreeMonoid.ofList w) = ofForm w :=
@@ -184,7 +184,7 @@ variable {p : Position} {w : List Position} {e : Element} {s : Status} {k m n : 
 
 theorem Position.length_word_le_one (p : Position) : ∀ t, (p.word t).length ≤ 1
   | .skeleton => le_rfl
-  | .root => by
+  | .rootNode => by
     show (if p.melody.isSome then [()] else []).length ≤ 1
     split_ifs <;> simp
   | .line e => by
@@ -196,7 +196,7 @@ theorem Position.word_line_ne_nil_iff :
     p.word (.line e) ≠ [] ↔ ∃ m ∈ p.melody, e ∈ m.elements := by
   rcases h : p.melody with _ | m <;> simp [Position.word, h]
 
-theorem Position.word_root_ne_nil_iff : p.word .root ≠ [] ↔ p.melody.isSome := by
+theorem Position.word_rootNode_ne_nil_iff : p.word .rootNode ≠ [] ↔ p.melody.isSome := by
   rcases h : p.melody with _ | m <;> simp [Position.word, h]
 
 theorem noCrossing_ofPosition (p : Position) : (ofPosition p).NoCrossing :=
@@ -217,30 +217,30 @@ theorem link_ofPosition_parent_iff {t : Tier} (ht : t ≠ .skeleton) :
   rw [ofPosition, AR.link_fromRel]
   cases t with
   | skeleton => exact absurd rfl ht
-  | root => simp [Tier.parent, Position.word, List.length_pos_iff]
+  | rootNode => simp [Tier.parent, Position.word, List.length_pos_iff]
   | line e =>
     rcases h : p.melody with _ | m <;>
       simp [Tier.parent, Position.word, h, List.length_pos_iff]
 
 theorem dominates_ofPosition {t : Tier} (h : p.word t ≠ []) :
     (ofPosition p).Dominates tiers 0 t 0 := by
-  have hcard : 1 < Fintype.card Tier := Fintype.one_lt_card_iff.2 ⟨.skeleton, .root, by decide⟩
-  have hroot : p.word .root ≠ [] → ((Tier.root, 0) : Tier × ℕ) ∈
+  have hcard : 1 < Fintype.card Tier := Fintype.one_lt_card_iff.2 ⟨.skeleton, .rootNode, by decide⟩
+  have hroot : p.word .rootNode ≠ [] → ((Tier.rootNode, 0) : Tier × ℕ) ∈
       (ofPosition p).descendants tiers 1 (.skeleton, 0) := fun hr ↦
     AR.mem_descendants_succ_of_mem_children (AR.mem_descendants_self 0 _)
       (AR.mem_children.2 ⟨rfl, by decide, (link_ofPosition_parent_iff (by decide)).2 hr⟩)
   cases t with
   | skeleton => exact AR.mem_descendants_self _ _
-  | root => exact AR.descendants_mono (by omega) _ (hroot h)
+  | rootNode => exact AR.descendants_mono (by omega) _ (hroot h)
   | line e =>
-    have hr : p.word .root ≠ [] := by
+    have hr : p.word .rootNode ≠ [] := by
       obtain ⟨m, hm, -⟩ := Position.word_line_ne_nil_iff.1 h
-      exact Position.word_root_ne_nil_iff.2 (by simp [Option.mem_def.1 hm])
+      exact Position.word_rootNode_ne_nil_iff.2 (by simp [Option.mem_def.1 hm])
     exact AR.descendants_mono hcard _ (AR.mem_descendants_succ_of_mem_children (hroot hr)
       (AR.mem_children.2 ⟨rfl, by simp, (link_ofPosition_parent_iff (by simp)).2 h⟩))
 
 /-- A position reads on a tier the token it has there. -/
-theorem reads_ofPosition_iff {t : Tier} {b : Lines t} :
+theorem reads_ofPosition_iff {t : Tier} {b : Tiers t} :
     (ofPosition p).Reads tiers 0 t b ↔ p.word t = [b] := by
   constructor
   · rintro ⟨q, hq, -, hb⟩
@@ -255,18 +255,18 @@ theorem reads_ofPosition_iff {t : Tier} {b : Lines t} :
     exact ⟨0, by simp [h], dominates_ofPosition (by simp [h]), by simp [h]⟩
 
 /-- Position `k` of a form reads on a tier the token it has there. -/
-theorem reads_ofForm_iff {t : Tier} {b : Lines t} :
+theorem reads_ofForm_iff {t : Tier} {b : Tiers t} :
     (ofForm w).Reads tiers k t b ↔ ∃ hk : k < w.length, w[k].word t = [b] :=
   (AR.reads_prod_map tiers ofPosition fun _ ↦ rfl).trans
     (exists_congr fun _ ↦ reads_ofPosition_iff)
 
 /-- Position `k` of a form reads a root node exactly when it has one. -/
-theorem reads_root_ofForm_iff :
-    (ofForm w).Reads tiers k .root () ↔ ∃ p ∈ w[k]?, p.melody.isSome := by
+theorem reads_rootNode_ofForm_iff :
+    (ofForm w).Reads tiers k .rootNode () ↔ ∃ p ∈ w[k]?, p.melody.isSome := by
   simp only [reads_ofForm_iff, List.getElem?_eq_some_iff, Option.mem_def]
   constructor
   · rintro ⟨hk, h⟩
-    exact ⟨_, ⟨hk, rfl⟩, Position.word_root_ne_nil_iff.1 (by simp [h])⟩
+    exact ⟨_, ⟨hk, rfl⟩, Position.word_rootNode_ne_nil_iff.1 (by simp [h])⟩
   · rintro ⟨_, ⟨hk, rfl⟩, h⟩
     exact ⟨hk, by simp [Position.word, h]⟩
 
@@ -281,23 +281,23 @@ theorem reads_line_ofForm_iff :
   · rintro ⟨_, ⟨hk, rfl⟩, m, hm, he⟩
     exact ⟨m.status e, hk, by simp [Position.word, hm, he]⟩
 
-/-! ### Fusion -/
+/-! ### Spreading -/
 
-/-- `fuse w e m n` makes position `n` share the token of `e` of position `m`: the root node of
+/-- `spread w e m n` makes position `n` share the token of `e` of position `m`: the root node of
 `n` is delinked from its own token of `e` and linked to that of `m`. -/
-def fuse (w : List Position) (e : Element) (m n : ℕ) : AR Lines :=
+def spread (w : List Position) (e : Element) (m n : ℕ) : AR Tiers :=
   AR.spreadTier tiers ofPosition w (.line e) m n
 
-/-- Fusing an element between two positions crosses no line exactly when no position strictly
-between them has the element. -/
-theorem noCrossing_fuse_iff (hm : m < w.length) (hn : n < w.length)
+/-- Spreading an element from one position to another crosses no line exactly when no position
+strictly between them has the element. -/
+theorem noCrossing_spread_iff (hm : m < w.length) (hn : n < w.length)
     (he : ∃ m₁ ∈ w[m].melody, e ∈ m₁.elements) (hr : w[n].melody.isSome) :
-    (fuse w e m n).NoCrossing ↔
+    (spread w e m n).NoCrossing ↔
       ∀ k (hk : k < w.length), k ∈ Set.uIoo m n → ∀ m' ∈ w[k].melody, e ∉ m'.elements := by
   refine (AR.noCrossing_spreadTier_iff (T := tiers) (g₀ := ofPosition) (j := .line e)
     (by simp) (fun p ↦ p.length_word_le_one (tiers.parent (.line e)))
     (fun p ↦ p.length_word_le_one (.line e)) hm hn
-    (Position.word_line_ne_nil_iff.2 he) (Position.word_root_ne_nil_iff.2 hr)
+    (Position.word_line_ne_nil_iff.2 he) (Position.word_rootNode_ne_nil_iff.2 hr)
     (noCrossing_ofForm w)).trans ?_
   refine forall₃_congr fun k hk _ ↦ ?_
   rw [tiers_parent, link_ofPosition_parent_iff (by simp), not_not]
@@ -306,19 +306,19 @@ theorem noCrossing_fuse_iff (hm : m < w.length) (hn : n < w.length)
   obtain ⟨m', hm', he'⟩ := Position.word_line_ne_nil_iff.1 hne
   exact h m' hm' he'
 
-/-- Fusing an element by a change of lines reads as giving the target position the element in the
+/-- Spreading an element reads as giving the target position the element in the
 status it has at the source: sharing a token reads as copying it. -/
-theorem reads_fuse_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
+theorem reads_spread_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
     (h₁ : w[m].melody = some m₁) (he : e ∈ m₁.elements) (h₂ : w[n].melody = some m₂)
-    {t : Tier} {b : Lines t} :
-    (fuse w e m n).Reads tiers k t b ↔
+    {t : Tier} {b : Tiers t} :
+    (spread w e m n).Reads tiers k t b ↔
       (ofForm (w.set n ⟨w[n].slot, some (m₂.adopt m₁ e)⟩)).Reads tiers k t b := by
   refine AR.reads_spreadTier_iff ofPosition (by simp)
     (fun p t ↦ p.length_word_le_one t) (fun _ ↦ rfl) ?_ hm hn ?_ ?_ ?_ ?_
   · intro p t ht
     rw [tiers_parent, link_ofPosition_parent_iff (by simpa using ht), word_ofPosition]
   · exact Position.word_line_ne_nil_iff.2 ⟨m₁, h₁, he⟩
-  · exact Position.word_root_ne_nil_iff.2 (by simp [h₂])
+  · exact Position.word_rootNode_ne_nil_iff.2 (by simp [h₂])
   · intro t ht
     obtain rfl := tiers_le_line_iff.1 ht
     simp [Position.word, h₁, he, MR.mem_elements_adopt, MR.status_adopt_self]
@@ -328,14 +328,14 @@ theorem reads_fuse_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
     · have hne : e' ≠ e := fun h ↦ ht (tiers_le_line_iff.2 (h ▸ rfl))
       simp [Position.word, h₂, MR.mem_elements_adopt, hne, MR.status_adopt_of_ne _ _ hne]
 
-/-- Where both positions have the element, fusing it changes no position's elements: the shared
+/-- Where both positions have the element, spreading it changes no position's elements: the shared
 token stands for both. -/
-theorem exists_reads_fuse_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
+theorem exists_reads_spread_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
     (h₁ : w[m].melody = some m₁) (he : e ∈ m₁.elements) (h₂ : w[n].melody = some m₂)
     (he' : e ∈ m₂.elements) {e' : Element} :
-    (∃ s, (fuse w e m n).Reads tiers k (.line e') s) ↔
+    (∃ s, (spread w e m n).Reads tiers k (.line e') s) ↔
       ∃ s, (ofForm w).Reads tiers k (.line e') s := by
-  rw [exists_congr fun s ↦ reads_fuse_iff (t := .line e') (b := s) hm hn h₁ he h₂,
+  rw [exists_congr fun s ↦ reads_spread_iff (t := .line e') (b := s) hm hn h₁ he h₂,
     reads_line_ofForm_iff, reads_line_ofForm_iff]
   by_cases hk : n = k
   · subst hk
@@ -344,11 +344,11 @@ theorem exists_reads_fuse_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂
     exact ⟨fun h ↦ h.elim (· ▸ he') id, .inr⟩
   · rw [List.getElem?_set_ne hk]
 
-/-- After fusion the target position reads the element in the status it has at the source. -/
-theorem reads_fuse_self_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
+/-- After spreading the target position reads the element in the status it has at the source. -/
+theorem reads_spread_self_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
     (h₁ : w[m].melody = some m₁) (he : e ∈ m₁.elements) (h₂ : w[n].melody = some m₂) :
-    (fuse w e m n).Reads tiers n (.line e) s ↔ s = m₁.status e := by
-  rw [reads_fuse_iff hm hn h₁ he h₂, reads_ofForm_iff]
+    (spread w e m n).Reads tiers n (.line e) s ↔ s = m₁.status e := by
+  rw [reads_spread_iff hm hn h₁ he h₂, reads_ofForm_iff]
   simp [hn, Position.word, MR.mem_elements_adopt, MR.status_adopt_self, eq_comm]
 
 end ElementTheory
