@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `FaustLampitelli2026` — typed example data
@@ -379,6 +381,136 @@ def ex_7f : Datum :=
     readings := []
     paperFeatures := [("root", "ask"), ("template", "imp")] }
 
+def ex_8a_1sg : Datum :=
+  { id := "faustlampitelli2026_8a_1sg"
+    source := ⟨"faust-lampitelli-2026", "(8a)"⟩
+    reportedIn := none
+    language := "tigr1271"
+    primaryText := "gʌrif-e"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("root", "whip"), ("template", "prf"), ("suffix", "e")] }
+
+def ex_8a_3msg : Datum :=
+  { id := "faustlampitelli2026_8a_3msg"
+    source := ⟨"faust-lampitelli-2026", "(8a)"⟩
+    reportedIn := none
+    language := "tigr1271"
+    primaryText := "gʌrif-u"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("root", "whip"), ("template", "prf"), ("suffix", "u")] }
+
+def ex_8a_3fsg : Datum :=
+  { id := "faustlampitelli2026_8a_3fsg"
+    source := ⟨"faust-lampitelli-2026", "(8a)"⟩
+    reportedIn := none
+    language := "tigr1271"
+    primaryText := "gʌrif-a"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("root", "whip"), ("template", "prf"), ("suffix", "a")] }
+
+def ex_8a_1pl : Datum :=
+  { id := "faustlampitelli2026_8a_1pl"
+    source := ⟨"faust-lampitelli-2026", "(8a)"⟩
+    reportedIn := none
+    language := "tigr1271"
+    primaryText := "gʌrif-na"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("root", "whip"), ("template", "prf"), ("suffix", "na")] }
+
+def ex_8a_3mpl : Datum :=
+  { id := "faustlampitelli2026_8a_3mpl"
+    source := ⟨"faust-lampitelli-2026", "(8a)"⟩
+    reportedIn := none
+    language := "tigr1271"
+    primaryText := "gʌrif-om"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("root", "whip"), ("template", "prf"), ("suffix", "om")] }
+
+def ex_8b_1sg : Datum :=
+  { id := "faustlampitelli2026_8b_1sg"
+    source := ⟨"faust-lampitelli-2026", "(8b)"⟩
+    reportedIn := none
+    language := "tigr1271"
+    primaryText := "sʌtj-e"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("root", "drink"), ("template", "prf"), ("suffix", "e")] }
+
+def ex_8b_3msg : Datum :=
+  { id := "faustlampitelli2026_8b_3msg"
+    source := ⟨"faust-lampitelli-2026", "(8b)"⟩
+    reportedIn := none
+    language := "tigr1271"
+    primaryText := "sʌtj-u"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("root", "drink"), ("template", "prf"), ("suffix", "u")] }
+
+def ex_8b_3fsg : Datum :=
+  { id := "faustlampitelli2026_8b_3fsg"
+    source := ⟨"faust-lampitelli-2026", "(8b)"⟩
+    reportedIn := none
+    language := "tigr1271"
+    primaryText := "sʌtj-a"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("root", "drink"), ("template", "prf"), ("suffix", "a")] }
+
+def ex_8b_1pl : Datum :=
+  { id := "faustlampitelli2026_8b_1pl"
+    source := ⟨"faust-lampitelli-2026", "(8b)"⟩
+    reportedIn := none
+    language := "tigr1271"
+    primaryText := "sʌtiː-na"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("root", "drink"), ("template", "prf"), ("suffix", "na")] }
+
+def ex_8b_3mpl : Datum :=
+  { id := "faustlampitelli2026_8b_3mpl"
+    source := ⟨"faust-lampitelli-2026", "(8b)"⟩
+    reportedIn := none
+    language := "tigr1271"
+    primaryText := "sʌtj-om"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("root", "drink"), ("template", "prf"), ("suffix", "om")] }
+
 def ex_10a_f : Datum :=
   { id := "faustlampitelli2026_10a_f"
     source := ⟨"faust-lampitelli-2026", "(10a)"⟩
@@ -494,7 +626,7 @@ def ex_12a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("root", "whip"), ("template", "imprf2")] }
+    paperFeatures := [("root", "whip (Tigre)"), ("template", "imprf2")] }
 
 def ex_12b : Datum :=
   { id := "faustlampitelli2026_12b"
@@ -507,7 +639,7 @@ def ex_12b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("root", "ask"), ("template", "imprf2")] }
+    paperFeatures := [("root", "ask (Tigre)"), ("template", "imprf2")] }
 
 def ex_12c : Datum :=
   { id := "faustlampitelli2026_12c"
@@ -533,7 +665,7 @@ def ex_12d : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("root", "uncover"), ("template", "imprf2")] }
+    paperFeatures := [("root", "uncover (Tigre)"), ("template", "imprf2")] }
 
 def ex_26d : Datum :=
   { id := "faustlampitelli2026_26d"
@@ -546,7 +678,7 @@ def ex_26d : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("root", "pull"), ("template", "imprf2")] }
+    paperFeatures := [("root", "pull (Tigre)"), ("template", "imprf2")] }
 
 def ex_13a_ger : Datum :=
   { id := "faustlampitelli2026_13a_ger"
@@ -689,7 +821,7 @@ def ex_17b_imprf : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("root", "pull"), ("template", "imprf2"), ("predicted", "no")] }
+    paperFeatures := [("root", "pull"), ("template", "imprf2")] }
 
 def ex_17b_pass : Datum :=
   { id := "faustlampitelli2026_17b_pass"
@@ -702,7 +834,7 @@ def ex_17b_pass : Datum :=
     judgment := .acceptable
     contrasts := [("tɨ-sɨħib", .acceptable)]
     readings := []
-    paperFeatures := [("root", "pull"), ("template", "passPrf"), ("predicted", "no")] }
+    paperFeatures := [("root", "pull"), ("template", "passPrf")] }
 
 def ex_17c_imprf : Datum :=
   { id := "faustlampitelli2026_17c_imprf"
@@ -715,7 +847,7 @@ def ex_17c_imprf : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("root", "teach"), ("template", "imprf2"), ("predicted", "no")] }
+    paperFeatures := [("root", "teach"), ("template", "imprf2")] }
 
 def ex_17c_pass : Datum :=
   { id := "faustlampitelli2026_17c_pass"
@@ -728,7 +860,7 @@ def ex_17c_pass : Datum :=
     judgment := .acceptable
     contrasts := [("tɨ-mɨhir", .acceptable)]
     readings := []
-    paperFeatures := [("root", "teach"), ("template", "passPrf"), ("predicted", "no")] }
+    paperFeatures := [("root", "teach"), ("template", "passPrf")] }
 
 def ex_17d_imprf : Datum :=
   { id := "faustlampitelli2026_17d_imprf"
@@ -741,7 +873,7 @@ def ex_17d_imprf : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("root", "ask"), ("template", "imprf2"), ("predicted", "no")] }
+    paperFeatures := [("root", "ask"), ("template", "imprf2")] }
 
 def ex_17d_pass : Datum :=
   { id := "faustlampitelli2026_17d_pass"
@@ -754,7 +886,7 @@ def ex_17d_pass : Datum :=
     judgment := .acceptable
     contrasts := [("tɨ-sɨʔil", .acceptable)]
     readings := []
-    paperFeatures := [("root", "ask"), ("template", "passPrf"), ("predicted", "no")] }
+    paperFeatures := [("root", "ask"), ("template", "passPrf")] }
 
 def ex_18a_dep : Datum :=
   { id := "faustlampitelli2026_18a_dep"
@@ -819,7 +951,7 @@ def ex_18c_ger : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("root", "bless"), ("template", "gerC"), ("predicted", "no")] }
+    paperFeatures := [("root", "bless"), ("template", "gerC")] }
 
 def ex_19b_arifu : Datum :=
   { id := "faustlampitelli2026_19b_arifu"
@@ -964,6 +1096,602 @@ def ex_38 : Datum :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "passPrf"), ("suffix", "u")] }
 
-def all : List Datum := [ex_4a_depPrf, ex_4a_prf, ex_4a_imprf, ex_4b_depPrf, ex_4b_prf, ex_4b_imprf, ex_4c_depPrf, ex_4c_prf, ex_4c_imprf, ex_4d_depPrf, ex_4d_prf, ex_4d_imprf, ex_5a_juss, ex_5a_imp, ex_5b_juss, ex_5b_imp, ex_5c_juss, ex_5c_imp, ex_6a_prf, ex_6b_prf, ex_6b_juss, ex_6c_prf, ex_7a, ex_7b, ex_7c, ex_7d, ex_7e, ex_7f, ex_10a_f, ex_10b_m, ex_10b_f, ex_10c_m, ex_10c_f, ex_10d_m, ex_10d_f, ex_36b, ex_12a, ex_12b, ex_12c, ex_12d, ex_26d, ex_13a_ger, ex_13a_poss, ex_13b_ger, ex_13b_poss, ex_13c_ger, ex_13c_poss, ex_13d_ger, ex_13d_poss, ex_37a, ex_17a_pass, ex_17b_imprf, ex_17b_pass, ex_17c_imprf, ex_17c_pass, ex_17d_imprf, ex_17d_pass, ex_18a_dep, ex_18b_dep, ex_18b_ger, ex_18c_dep, ex_18c_ger, ex_19b_arifu, ex_19b_tismaa, ex_19c, ex_31a, ex_32b, ex_32c, ex_33a, ex_33b, ex_37b, ex_37d, ex_38]
+def all : List Datum := [ex_4a_depPrf, ex_4a_prf, ex_4a_imprf, ex_4b_depPrf, ex_4b_prf, ex_4b_imprf, ex_4c_depPrf, ex_4c_prf, ex_4c_imprf, ex_4d_depPrf, ex_4d_prf, ex_4d_imprf, ex_5a_juss, ex_5a_imp, ex_5b_juss, ex_5b_imp, ex_5c_juss, ex_5c_imp, ex_6a_prf, ex_6b_prf, ex_6b_juss, ex_6c_prf, ex_7a, ex_7b, ex_7c, ex_7d, ex_7e, ex_7f, ex_8a_1sg, ex_8a_3msg, ex_8a_3fsg, ex_8a_1pl, ex_8a_3mpl, ex_8b_1sg, ex_8b_3msg, ex_8b_3fsg, ex_8b_1pl, ex_8b_3mpl, ex_10a_f, ex_10b_m, ex_10b_f, ex_10c_m, ex_10c_f, ex_10d_m, ex_10d_f, ex_36b, ex_12a, ex_12b, ex_12c, ex_12d, ex_26d, ex_13a_ger, ex_13a_poss, ex_13b_ger, ex_13b_poss, ex_13c_ger, ex_13c_poss, ex_13d_ger, ex_13d_poss, ex_37a, ex_17a_pass, ex_17b_imprf, ex_17b_pass, ex_17c_imprf, ex_17c_pass, ex_17d_imprf, ex_17d_pass, ex_18a_dep, ex_18b_dep, ex_18b_ger, ex_18c_dep, ex_18c_ger, ex_19b_arifu, ex_19b_tismaa, ex_19c, ex_31a, ex_32b, ex_32c, ex_33a, ex_33b, ex_37b, ex_37d, ex_38]
+
+/-- The roots of the paper's forms, named by their glosses; a Tigre root whose gloss a Tigrinya root shares is marked. -/
+inductive Root where
+  /-- whip: √grf 'whip' -/
+  | whip
+  /-- hear: √smʕ 'hear' -/
+  | hear
+  /-- arrest: √ʔsr 'arrest' -/
+  | arrest
+  /-- pull: √sħb 'pull' -/
+  | pull
+  /-- teach: √mhr 'teach' -/
+  | teach
+  /-- slaughter: √ħrd 'slaughter' -/
+  | slaughter
+  /-- escape: √ħdm 'escape' -/
+  | escape
+  /-- ask: √sʔl 'ask' -/
+  | ask
+  /-- uncover: √glh 'uncover' -/
+  | uncover
+  /-- bark: √nbħ 'bark' -/
+  | bark
+  /-- hurt: √bdl 'hurt', of type B -/
+  | hurt
+  /-- bless: √brk 'bless', of type C -/
+  | bless
+  /-- arf: √ʕrf, which the paper does not gloss -/
+  | arf
+  /-- drink: √stI 'drink', a weak root whose final radical is the element |I| -/
+  | drink
+  /-- weigh: Tigre √mzn 'weigh' -/
+  | weigh
+  /-- leave: Tigre √fgr 'leave' -/
+  | leave
+  /-- wash: Tigre √ħtˁb 'wash' -/
+  | wash
+  /-- flee: Tigre √hrb 'flee' -/
+  | flee
+  /-- getUp: Tigre √kˀnsˁ 'get up' -/
+  | getUp
+  /-- whip (Tigre): Tigre √fgr 'whip' -/
+  | whipTigre
+  /-- ask (Tigre): Tigre √sʔl 'ask' -/
+  | askTigre
+  /-- load: Tigre √tˀʕn 'load' -/
+  | load
+  /-- uncover (Tigre): Tigre √sħk 'uncover' -/
+  | uncoverTigre
+  /-- pull (Tigre): Tigre √sħb 'pull' -/
+  | pullTigre
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `root`. -/
+def root (e : Datum) : Option Root :=
+  e.parse? "root" [("whip", .whip), ("hear", .hear), ("arrest", .arrest), ("pull", .pull), ("teach", .teach),
+    ("slaughter", .slaughter), ("escape", .escape), ("ask", .ask), ("uncover", .uncover),
+    ("bark", .bark), ("hurt", .hurt), ("bless", .bless), ("arf", .arf), ("drink", .drink),
+    ("weigh", .weigh), ("leave", .leave), ("wash", .wash), ("flee", .flee), ("getUp", .getUp),
+    ("whip (Tigre)", .whipTigre), ("ask (Tigre)", .askTigre), ("load", .load),
+    ("uncover (Tigre)", .uncoverTigre), ("pull (Tigre)", .pullTigre)]
+
+/-- The verbal and nominal templates of the paper's paradigms, Q, T, L standing for the radicals. -/
+inductive Template where
+  /-- depPrf: DEP.PRF QʌTʌL (4) -/
+  | depPrf
+  /-- depPrfB: the type B DEP.PRF QʌTTʌL, with medial gemination (18b) -/
+  | depPrfB
+  /-- depPrfC: the type C DEP.PRF QaTʌL, with [a] after the first radical (18c) -/
+  | depPrfC
+  /-- prf: PRF QʌTiL (4) -/
+  | prf
+  /-- imprf: IMPRF QʌTTɨL (4) -/
+  | imprf
+  /-- imprf2: 2-IMPRF tɨ-QʌTTɨL ((7), (12), (17)) -/
+  | imprf2
+  /-- imprf2NoGem: the 2-IMPRF without gemination, tɨ-QʌTɨL, of (7c) -/
+  | imprf2NoGem
+  /-- passPrf: PASS-PRF tɨ-QʌTiL (17) -/
+  | passPrf
+  /-- imp: IMP QɨTʌL ((5), (10)) -/
+  | imp
+  /-- juss2: 2-JUSS tɨ-QTʌL ((5), (6), (31), (32)) -/
+  | juss2
+  /-- impGem: the Tigre IMP QaTTɨL of (5a) -/
+  | impGem
+  /-- jussGem2: the Tigre 2-JUSS tɨ-QaTTɨL of (5a) -/
+  | jussGem2
+  /-- gerA: the type A gerund mɨQTaL (13) -/
+  | gerA
+  /-- gerB: the type B gerund mɨQɨTTaL (18b) -/
+  | gerB
+  /-- gerC: the type C gerund mɨQaTaL ((18c), (39b)) -/
+  | gerC
+  /-- caus: the causative PRF ʔʌQTiL (19c) -/
+  | caus
+  /-- prf3: the Tigre PRF-3MSG stem QaTL- (6) -/
+  | prf3
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `template`. -/
+def template (e : Datum) : Option Template :=
+  e.parse? "template" [("depPrf", .depPrf), ("depPrfB", .depPrfB), ("depPrfC", .depPrfC), ("prf", .prf),
+    ("imprf", .imprf), ("imprf2", .imprf2), ("imprf2NoGem", .imprf2NoGem),
+    ("passPrf", .passPrf), ("imp", .imp), ("juss2", .juss2), ("impGem", .impGem),
+    ("jussGem2", .jussGem2), ("gerA", .gerA), ("gerB", .gerB), ("gerC", .gerC), ("caus", .caus),
+    ("prf3", .prf3)]
+
+/-- The suffixes of the paper's suffixed forms. -/
+inductive Suffix where
+  /-- a: -a, as in Tigre PRF-3MSG [fagr-a] (6) and [sɨmʕa] (36b) -/
+  | a
+  /-- i: -i, the feminine of the imperative (10) -/
+  | i
+  /-- u: -u, as in [ʕarifu] (19b) and the possessed gerund [mɨ-graf-u] (13) -/
+  | u
+  /-- ʌ: -ʌ, as in DEP.PRF [gʌrʌf-ʌ] (18) -/
+  | aBare
+  /-- ej: -ej, the 1SG possessor of (13c) -/
+  | ej
+  /-- om: -om, the 3PL possessor of (13d) -/
+  | om
+  /-- ku: -ku, the 1SG of (37d) -/
+  | ku
+  /-- ka: -ka, the 2MSG of (19c) -/
+  | ka
+  /-- e: -e, the 1SG of the PRF (8) -/
+  | e
+  /-- na: -na, the 1PL of the PRF (8) -/
+  | na
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `suffix`. -/
+def suffix (e : Datum) : Option Suffix :=
+  e.parse? "suffix" [("a", .a), ("i", .i), ("u", .u), ("ʌ", .aBare), ("ej", .ej), ("om", .om), ("ku", .ku),
+    ("ka", .ka), ("e", .e), ("na", .na)]
+
+/-- The forms of the paper's paradigms (4)-(19) and derivations (26)-(38). -/
+inductive Example where
+  | ex_4a_depPrf
+  | ex_4a_prf
+  | ex_4a_imprf
+  | ex_4b_depPrf
+  | ex_4b_prf
+  | ex_4b_imprf
+  | ex_4c_depPrf
+  | ex_4c_prf
+  | ex_4c_imprf
+  | ex_4d_depPrf
+  | ex_4d_prf
+  | ex_4d_imprf
+  | ex_5a_juss
+  | ex_5a_imp
+  | ex_5b_juss
+  | ex_5b_imp
+  | ex_5c_juss
+  | ex_5c_imp
+  | ex_6a_prf
+  | ex_6b_prf
+  | ex_6b_juss
+  | ex_6c_prf
+  | ex_7a
+  | ex_7b
+  | ex_7c
+  | ex_7d
+  | ex_7e
+  | ex_7f
+  | ex_8a_1sg
+  | ex_8a_3msg
+  | ex_8a_3fsg
+  | ex_8a_1pl
+  | ex_8a_3mpl
+  | ex_8b_1sg
+  | ex_8b_3msg
+  | ex_8b_3fsg
+  | ex_8b_1pl
+  | ex_8b_3mpl
+  | ex_10a_f
+  | ex_10b_m
+  | ex_10b_f
+  | ex_10c_m
+  | ex_10c_f
+  | ex_10d_m
+  | ex_10d_f
+  | ex_36b
+  | ex_12a
+  | ex_12b
+  | ex_12c
+  | ex_12d
+  | ex_26d
+  | ex_13a_ger
+  | ex_13a_poss
+  | ex_13b_ger
+  | ex_13b_poss
+  | ex_13c_ger
+  | ex_13c_poss
+  | ex_13d_ger
+  | ex_13d_poss
+  | ex_37a
+  | ex_17a_pass
+  | ex_17b_imprf
+  | ex_17b_pass
+  | ex_17c_imprf
+  | ex_17c_pass
+  | ex_17d_imprf
+  | ex_17d_pass
+  | ex_18a_dep
+  | ex_18b_dep
+  | ex_18b_ger
+  | ex_18c_dep
+  | ex_18c_ger
+  | ex_19b_arifu
+  | ex_19b_tismaa
+  | ex_19c
+  | ex_31a
+  | ex_32b
+  | ex_32c
+  | ex_33a
+  | ex_33b
+  | ex_37b
+  | ex_37d
+  | ex_38
+  deriving DecidableEq, Repr, Fintype
+
+/-- Every example of the file, in its order. -/
+def Example.all : List Example :=
+  [.ex_4a_depPrf, .ex_4a_prf, .ex_4a_imprf, .ex_4b_depPrf, .ex_4b_prf, .ex_4b_imprf,
+    .ex_4c_depPrf, .ex_4c_prf, .ex_4c_imprf, .ex_4d_depPrf, .ex_4d_prf, .ex_4d_imprf, .ex_5a_juss,
+    .ex_5a_imp, .ex_5b_juss, .ex_5b_imp, .ex_5c_juss, .ex_5c_imp, .ex_6a_prf, .ex_6b_prf,
+    .ex_6b_juss, .ex_6c_prf, .ex_7a, .ex_7b, .ex_7c, .ex_7d, .ex_7e, .ex_7f, .ex_8a_1sg,
+    .ex_8a_3msg, .ex_8a_3fsg, .ex_8a_1pl, .ex_8a_3mpl, .ex_8b_1sg, .ex_8b_3msg, .ex_8b_3fsg,
+    .ex_8b_1pl, .ex_8b_3mpl, .ex_10a_f, .ex_10b_m, .ex_10b_f, .ex_10c_m, .ex_10c_f, .ex_10d_m,
+    .ex_10d_f, .ex_36b, .ex_12a, .ex_12b, .ex_12c, .ex_12d, .ex_26d, .ex_13a_ger, .ex_13a_poss,
+    .ex_13b_ger, .ex_13b_poss, .ex_13c_ger, .ex_13c_poss, .ex_13d_ger, .ex_13d_poss, .ex_37a,
+    .ex_17a_pass, .ex_17b_imprf, .ex_17b_pass, .ex_17c_imprf, .ex_17c_pass, .ex_17d_imprf,
+    .ex_17d_pass, .ex_18a_dep, .ex_18b_dep, .ex_18b_ger, .ex_18c_dep, .ex_18c_ger, .ex_19b_arifu,
+    .ex_19b_tismaa, .ex_19c, .ex_31a, .ex_32b, .ex_32c, .ex_33a, .ex_33b, .ex_37b, .ex_37d, .ex_38]
+
+/-- The row of an example. -/
+def Example.datum : Example → Datum
+  | .ex_4a_depPrf => _root_.FaustLampitelli2026.Examples.ex_4a_depPrf
+  | .ex_4a_prf => _root_.FaustLampitelli2026.Examples.ex_4a_prf
+  | .ex_4a_imprf => _root_.FaustLampitelli2026.Examples.ex_4a_imprf
+  | .ex_4b_depPrf => _root_.FaustLampitelli2026.Examples.ex_4b_depPrf
+  | .ex_4b_prf => _root_.FaustLampitelli2026.Examples.ex_4b_prf
+  | .ex_4b_imprf => _root_.FaustLampitelli2026.Examples.ex_4b_imprf
+  | .ex_4c_depPrf => _root_.FaustLampitelli2026.Examples.ex_4c_depPrf
+  | .ex_4c_prf => _root_.FaustLampitelli2026.Examples.ex_4c_prf
+  | .ex_4c_imprf => _root_.FaustLampitelli2026.Examples.ex_4c_imprf
+  | .ex_4d_depPrf => _root_.FaustLampitelli2026.Examples.ex_4d_depPrf
+  | .ex_4d_prf => _root_.FaustLampitelli2026.Examples.ex_4d_prf
+  | .ex_4d_imprf => _root_.FaustLampitelli2026.Examples.ex_4d_imprf
+  | .ex_5a_juss => _root_.FaustLampitelli2026.Examples.ex_5a_juss
+  | .ex_5a_imp => _root_.FaustLampitelli2026.Examples.ex_5a_imp
+  | .ex_5b_juss => _root_.FaustLampitelli2026.Examples.ex_5b_juss
+  | .ex_5b_imp => _root_.FaustLampitelli2026.Examples.ex_5b_imp
+  | .ex_5c_juss => _root_.FaustLampitelli2026.Examples.ex_5c_juss
+  | .ex_5c_imp => _root_.FaustLampitelli2026.Examples.ex_5c_imp
+  | .ex_6a_prf => _root_.FaustLampitelli2026.Examples.ex_6a_prf
+  | .ex_6b_prf => _root_.FaustLampitelli2026.Examples.ex_6b_prf
+  | .ex_6b_juss => _root_.FaustLampitelli2026.Examples.ex_6b_juss
+  | .ex_6c_prf => _root_.FaustLampitelli2026.Examples.ex_6c_prf
+  | .ex_7a => _root_.FaustLampitelli2026.Examples.ex_7a
+  | .ex_7b => _root_.FaustLampitelli2026.Examples.ex_7b
+  | .ex_7c => _root_.FaustLampitelli2026.Examples.ex_7c
+  | .ex_7d => _root_.FaustLampitelli2026.Examples.ex_7d
+  | .ex_7e => _root_.FaustLampitelli2026.Examples.ex_7e
+  | .ex_7f => _root_.FaustLampitelli2026.Examples.ex_7f
+  | .ex_8a_1sg => _root_.FaustLampitelli2026.Examples.ex_8a_1sg
+  | .ex_8a_3msg => _root_.FaustLampitelli2026.Examples.ex_8a_3msg
+  | .ex_8a_3fsg => _root_.FaustLampitelli2026.Examples.ex_8a_3fsg
+  | .ex_8a_1pl => _root_.FaustLampitelli2026.Examples.ex_8a_1pl
+  | .ex_8a_3mpl => _root_.FaustLampitelli2026.Examples.ex_8a_3mpl
+  | .ex_8b_1sg => _root_.FaustLampitelli2026.Examples.ex_8b_1sg
+  | .ex_8b_3msg => _root_.FaustLampitelli2026.Examples.ex_8b_3msg
+  | .ex_8b_3fsg => _root_.FaustLampitelli2026.Examples.ex_8b_3fsg
+  | .ex_8b_1pl => _root_.FaustLampitelli2026.Examples.ex_8b_1pl
+  | .ex_8b_3mpl => _root_.FaustLampitelli2026.Examples.ex_8b_3mpl
+  | .ex_10a_f => _root_.FaustLampitelli2026.Examples.ex_10a_f
+  | .ex_10b_m => _root_.FaustLampitelli2026.Examples.ex_10b_m
+  | .ex_10b_f => _root_.FaustLampitelli2026.Examples.ex_10b_f
+  | .ex_10c_m => _root_.FaustLampitelli2026.Examples.ex_10c_m
+  | .ex_10c_f => _root_.FaustLampitelli2026.Examples.ex_10c_f
+  | .ex_10d_m => _root_.FaustLampitelli2026.Examples.ex_10d_m
+  | .ex_10d_f => _root_.FaustLampitelli2026.Examples.ex_10d_f
+  | .ex_36b => _root_.FaustLampitelli2026.Examples.ex_36b
+  | .ex_12a => _root_.FaustLampitelli2026.Examples.ex_12a
+  | .ex_12b => _root_.FaustLampitelli2026.Examples.ex_12b
+  | .ex_12c => _root_.FaustLampitelli2026.Examples.ex_12c
+  | .ex_12d => _root_.FaustLampitelli2026.Examples.ex_12d
+  | .ex_26d => _root_.FaustLampitelli2026.Examples.ex_26d
+  | .ex_13a_ger => _root_.FaustLampitelli2026.Examples.ex_13a_ger
+  | .ex_13a_poss => _root_.FaustLampitelli2026.Examples.ex_13a_poss
+  | .ex_13b_ger => _root_.FaustLampitelli2026.Examples.ex_13b_ger
+  | .ex_13b_poss => _root_.FaustLampitelli2026.Examples.ex_13b_poss
+  | .ex_13c_ger => _root_.FaustLampitelli2026.Examples.ex_13c_ger
+  | .ex_13c_poss => _root_.FaustLampitelli2026.Examples.ex_13c_poss
+  | .ex_13d_ger => _root_.FaustLampitelli2026.Examples.ex_13d_ger
+  | .ex_13d_poss => _root_.FaustLampitelli2026.Examples.ex_13d_poss
+  | .ex_37a => _root_.FaustLampitelli2026.Examples.ex_37a
+  | .ex_17a_pass => _root_.FaustLampitelli2026.Examples.ex_17a_pass
+  | .ex_17b_imprf => _root_.FaustLampitelli2026.Examples.ex_17b_imprf
+  | .ex_17b_pass => _root_.FaustLampitelli2026.Examples.ex_17b_pass
+  | .ex_17c_imprf => _root_.FaustLampitelli2026.Examples.ex_17c_imprf
+  | .ex_17c_pass => _root_.FaustLampitelli2026.Examples.ex_17c_pass
+  | .ex_17d_imprf => _root_.FaustLampitelli2026.Examples.ex_17d_imprf
+  | .ex_17d_pass => _root_.FaustLampitelli2026.Examples.ex_17d_pass
+  | .ex_18a_dep => _root_.FaustLampitelli2026.Examples.ex_18a_dep
+  | .ex_18b_dep => _root_.FaustLampitelli2026.Examples.ex_18b_dep
+  | .ex_18b_ger => _root_.FaustLampitelli2026.Examples.ex_18b_ger
+  | .ex_18c_dep => _root_.FaustLampitelli2026.Examples.ex_18c_dep
+  | .ex_18c_ger => _root_.FaustLampitelli2026.Examples.ex_18c_ger
+  | .ex_19b_arifu => _root_.FaustLampitelli2026.Examples.ex_19b_arifu
+  | .ex_19b_tismaa => _root_.FaustLampitelli2026.Examples.ex_19b_tismaa
+  | .ex_19c => _root_.FaustLampitelli2026.Examples.ex_19c
+  | .ex_31a => _root_.FaustLampitelli2026.Examples.ex_31a
+  | .ex_32b => _root_.FaustLampitelli2026.Examples.ex_32b
+  | .ex_32c => _root_.FaustLampitelli2026.Examples.ex_32c
+  | .ex_33a => _root_.FaustLampitelli2026.Examples.ex_33a
+  | .ex_33b => _root_.FaustLampitelli2026.Examples.ex_33b
+  | .ex_37b => _root_.FaustLampitelli2026.Examples.ex_37b
+  | .ex_37d => _root_.FaustLampitelli2026.Examples.ex_37d
+  | .ex_38 => _root_.FaustLampitelli2026.Examples.ex_38
+
+theorem Example.map_datum_all :
+    Example.all.map Example.datum = _root_.FaustLampitelli2026.Examples.all := rfl
+
+/-- The value the example records under `root`. -/
+def Example.root : Example → Option Root
+  | .ex_4a_depPrf => some .whip
+  | .ex_4a_prf => some .whip
+  | .ex_4a_imprf => some .whip
+  | .ex_4b_depPrf => some .hear
+  | .ex_4b_prf => some .hear
+  | .ex_4b_imprf => some .hear
+  | .ex_4c_depPrf => some .arrest
+  | .ex_4c_prf => some .arrest
+  | .ex_4c_imprf => some .arrest
+  | .ex_4d_depPrf => some .pull
+  | .ex_4d_prf => some .pull
+  | .ex_4d_imprf => some .pull
+  | .ex_5a_juss => some .weigh
+  | .ex_5a_imp => some .weigh
+  | .ex_5b_juss => some .leave
+  | .ex_5b_imp => some .leave
+  | .ex_5c_juss => some .getUp
+  | .ex_5c_imp => some .getUp
+  | .ex_6a_prf => some .leave
+  | .ex_6b_prf => some .wash
+  | .ex_6b_juss => some .wash
+  | .ex_6c_prf => some .flee
+  | .ex_7a => some .whip
+  | .ex_7b => some .slaughter
+  | .ex_7c => some .escape
+  | .ex_7d => some .whip
+  | .ex_7e => some .teach
+  | .ex_7f => some .ask
+  | .ex_8a_1sg => some .whip
+  | .ex_8a_3msg => some .whip
+  | .ex_8a_3fsg => some .whip
+  | .ex_8a_1pl => some .whip
+  | .ex_8a_3mpl => some .whip
+  | .ex_8b_1sg => some .drink
+  | .ex_8b_3msg => some .drink
+  | .ex_8b_3fsg => some .drink
+  | .ex_8b_1pl => some .drink
+  | .ex_8b_3mpl => some .drink
+  | .ex_10a_f => some .whip
+  | .ex_10b_m => some .bark
+  | .ex_10b_f => some .bark
+  | .ex_10c_m => some .hear
+  | .ex_10c_f => some .hear
+  | .ex_10d_m => some .uncover
+  | .ex_10d_f => some .uncover
+  | .ex_36b => some .hear
+  | .ex_12a => some .whipTigre
+  | .ex_12b => some .askTigre
+  | .ex_12c => some .load
+  | .ex_12d => some .uncoverTigre
+  | .ex_26d => some .pullTigre
+  | .ex_13a_ger => some .whip
+  | .ex_13a_poss => some .whip
+  | .ex_13b_ger => some .bark
+  | .ex_13b_poss => some .bark
+  | .ex_13c_ger => some .hear
+  | .ex_13c_poss => some .hear
+  | .ex_13d_ger => some .uncover
+  | .ex_13d_poss => some .uncover
+  | .ex_37a => some .hear
+  | .ex_17a_pass => some .whip
+  | .ex_17b_imprf => some .pull
+  | .ex_17b_pass => some .pull
+  | .ex_17c_imprf => some .teach
+  | .ex_17c_pass => some .teach
+  | .ex_17d_imprf => some .ask
+  | .ex_17d_pass => some .ask
+  | .ex_18a_dep => some .whip
+  | .ex_18b_dep => some .hurt
+  | .ex_18b_ger => some .hurt
+  | .ex_18c_dep => some .bless
+  | .ex_18c_ger => some .bless
+  | .ex_19b_arifu => some .arf
+  | .ex_19b_tismaa => some .hear
+  | .ex_19c => some .hear
+  | .ex_31a => some .leave
+  | .ex_32b => some .pull
+  | .ex_32c => some .pull
+  | .ex_33a => some .arf
+  | .ex_33b => some .arf
+  | .ex_37b => some .pull
+  | .ex_37d => some .hear
+  | .ex_38 => some .hear
+
+theorem Example.root_datum :
+    ∀ x : Example, _root_.FaustLampitelli2026.Examples.root x.datum = x.root := by
+  decide +kernel
+
+/-- The value the example records under `template`. -/
+def Example.template : Example → Option Template
+  | .ex_4a_depPrf => some .depPrf
+  | .ex_4a_prf => some .prf
+  | .ex_4a_imprf => some .imprf
+  | .ex_4b_depPrf => some .depPrf
+  | .ex_4b_prf => some .prf
+  | .ex_4b_imprf => some .imprf
+  | .ex_4c_depPrf => some .depPrf
+  | .ex_4c_prf => some .prf
+  | .ex_4c_imprf => some .imprf
+  | .ex_4d_depPrf => some .depPrf
+  | .ex_4d_prf => some .prf
+  | .ex_4d_imprf => some .imprf
+  | .ex_5a_juss => some .jussGem2
+  | .ex_5a_imp => some .impGem
+  | .ex_5b_juss => some .juss2
+  | .ex_5b_imp => some .imp
+  | .ex_5c_juss => some .juss2
+  | .ex_5c_imp => some .imp
+  | .ex_6a_prf => some .prf3
+  | .ex_6b_prf => some .prf3
+  | .ex_6b_juss => some .juss2
+  | .ex_6c_prf => some .prf3
+  | .ex_7a => some .imprf2
+  | .ex_7b => some .imprf2
+  | .ex_7c => some .imprf2NoGem
+  | .ex_7d => some .imp
+  | .ex_7e => some .imp
+  | .ex_7f => some .imp
+  | .ex_8a_1sg => some .prf
+  | .ex_8a_3msg => some .prf
+  | .ex_8a_3fsg => some .prf
+  | .ex_8a_1pl => some .prf
+  | .ex_8a_3mpl => some .prf
+  | .ex_8b_1sg => some .prf
+  | .ex_8b_3msg => some .prf
+  | .ex_8b_3fsg => some .prf
+  | .ex_8b_1pl => some .prf
+  | .ex_8b_3mpl => some .prf
+  | .ex_10a_f => some .imp
+  | .ex_10b_m => some .imp
+  | .ex_10b_f => some .imp
+  | .ex_10c_m => some .imp
+  | .ex_10c_f => some .imp
+  | .ex_10d_m => some .imp
+  | .ex_10d_f => some .imp
+  | .ex_36b => some .imp
+  | .ex_12a => some .imprf2
+  | .ex_12b => some .imprf2
+  | .ex_12c => some .imprf2
+  | .ex_12d => some .imprf2
+  | .ex_26d => some .imprf2
+  | .ex_13a_ger => some .gerA
+  | .ex_13a_poss => some .gerA
+  | .ex_13b_ger => some .gerA
+  | .ex_13b_poss => some .gerA
+  | .ex_13c_ger => some .gerA
+  | .ex_13c_poss => some .gerA
+  | .ex_13d_ger => some .gerA
+  | .ex_13d_poss => some .gerA
+  | .ex_37a => some .gerA
+  | .ex_17a_pass => some .passPrf
+  | .ex_17b_imprf => some .imprf2
+  | .ex_17b_pass => some .passPrf
+  | .ex_17c_imprf => some .imprf2
+  | .ex_17c_pass => some .passPrf
+  | .ex_17d_imprf => some .imprf2
+  | .ex_17d_pass => some .passPrf
+  | .ex_18a_dep => some .depPrf
+  | .ex_18b_dep => some .depPrfB
+  | .ex_18b_ger => some .gerB
+  | .ex_18c_dep => some .depPrfC
+  | .ex_18c_ger => some .gerC
+  | .ex_19b_arifu => some .prf
+  | .ex_19b_tismaa => some .juss2
+  | .ex_19c => some .caus
+  | .ex_31a => some .juss2
+  | .ex_32b => some .juss2
+  | .ex_32c => some .juss2
+  | .ex_33a => some .imp
+  | .ex_33b => some .depPrf
+  | .ex_37b => some .imp
+  | .ex_37d => some .depPrf
+  | .ex_38 => some .passPrf
+
+theorem Example.template_datum :
+    ∀ x : Example, _root_.FaustLampitelli2026.Examples.template x.datum = x.template := by
+  decide +kernel
+
+/-- The value the example records under `suffix`. -/
+def Example.suffix : Example → Option Suffix
+  | .ex_4a_depPrf => none
+  | .ex_4a_prf => none
+  | .ex_4a_imprf => none
+  | .ex_4b_depPrf => none
+  | .ex_4b_prf => none
+  | .ex_4b_imprf => none
+  | .ex_4c_depPrf => none
+  | .ex_4c_prf => none
+  | .ex_4c_imprf => none
+  | .ex_4d_depPrf => none
+  | .ex_4d_prf => none
+  | .ex_4d_imprf => none
+  | .ex_5a_juss => none
+  | .ex_5a_imp => none
+  | .ex_5b_juss => none
+  | .ex_5b_imp => none
+  | .ex_5c_juss => none
+  | .ex_5c_imp => none
+  | .ex_6a_prf => some .a
+  | .ex_6b_prf => some .a
+  | .ex_6b_juss => none
+  | .ex_6c_prf => some .a
+  | .ex_7a => none
+  | .ex_7b => none
+  | .ex_7c => none
+  | .ex_7d => none
+  | .ex_7e => none
+  | .ex_7f => none
+  | .ex_8a_1sg => some .e
+  | .ex_8a_3msg => some .u
+  | .ex_8a_3fsg => some .a
+  | .ex_8a_1pl => some .na
+  | .ex_8a_3mpl => some .om
+  | .ex_8b_1sg => some .e
+  | .ex_8b_3msg => some .u
+  | .ex_8b_3fsg => some .a
+  | .ex_8b_1pl => some .na
+  | .ex_8b_3mpl => some .om
+  | .ex_10a_f => some .i
+  | .ex_10b_m => none
+  | .ex_10b_f => some .i
+  | .ex_10c_m => none
+  | .ex_10c_f => some .i
+  | .ex_10d_m => none
+  | .ex_10d_f => some .i
+  | .ex_36b => some .a
+  | .ex_12a => none
+  | .ex_12b => none
+  | .ex_12c => none
+  | .ex_12d => none
+  | .ex_26d => none
+  | .ex_13a_ger => none
+  | .ex_13a_poss => some .u
+  | .ex_13b_ger => none
+  | .ex_13b_poss => some .u
+  | .ex_13c_ger => none
+  | .ex_13c_poss => some .ej
+  | .ex_13d_ger => none
+  | .ex_13d_poss => some .om
+  | .ex_37a => some .u
+  | .ex_17a_pass => none
+  | .ex_17b_imprf => none
+  | .ex_17b_pass => none
+  | .ex_17c_imprf => none
+  | .ex_17c_pass => none
+  | .ex_17d_imprf => none
+  | .ex_17d_pass => none
+  | .ex_18a_dep => some .aBare
+  | .ex_18b_dep => some .aBare
+  | .ex_18b_ger => none
+  | .ex_18c_dep => some .aBare
+  | .ex_18c_ger => none
+  | .ex_19b_arifu => some .u
+  | .ex_19b_tismaa => none
+  | .ex_19c => some .ka
+  | .ex_31a => none
+  | .ex_32b => none
+  | .ex_32c => some .i
+  | .ex_33a => none
+  | .ex_33b => none
+  | .ex_37b => none
+  | .ex_37d => some .ku
+  | .ex_38 => some .u
+
+theorem Example.suffix_datum :
+    ∀ x : Example, _root_.FaustLampitelli2026.Examples.suffix x.datum = x.suffix := by
+  decide +kernel
 
 end FaustLampitelli2026.Examples

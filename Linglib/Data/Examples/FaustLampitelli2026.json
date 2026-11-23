@@ -1,2208 +1,1917 @@
-[
-  {
-    "id": "faustlampitelli2026_4a_depPrf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4a)"
-    },
-    "language": "tigr1271",
-    "primaryText": "gʌrʌf-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "DEP.PRF of 'whip'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "whip"
-      ],
-      [
-        "template",
-        "depPrf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_4a_prf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4a)"
-    },
-    "language": "tigr1271",
-    "primaryText": "gʌrif-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PRF of 'whip'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "whip"
-      ],
-      [
-        "template",
-        "prf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_4a_imprf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4a)"
-    },
-    "language": "tigr1271",
-    "primaryText": "-gʌrrɨf",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMPRF of 'whip'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "whip"
-      ],
-      [
-        "template",
-        "imprf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_4b_depPrf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "sʌmaʕ-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "DEP.PRF of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "depPrf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_4b_prf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "sʌmiʕ-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PRF of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "prf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_4b_imprf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "-sʌmmɨʕ",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMPRF of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "imprf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_4c_depPrf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "ʔasʌr-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "DEP.PRF of 'arrest'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "arrest"
-      ],
-      [
-        "template",
-        "depPrf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_4c_prf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "ʔasir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PRF of 'arrest'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "arrest"
-      ],
-      [
-        "template",
-        "prf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_4c_imprf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "-ʔassɨr",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMPRF of 'arrest'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "arrest"
-      ],
-      [
-        "template",
-        "imprf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_4d_depPrf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4d)"
-    },
-    "language": "tigr1271",
-    "primaryText": "saħab-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "DEP.PRF of 'pull'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "sɨħab-",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "pull"
-      ],
-      [
-        "template",
-        "depPrf"
-      ]
-    ],
-    "comment": "The [ɨ] variant is (15d)'s. (4) prints saħab without the hyphen; (15d) prints saħab- (~ sɨħab-).",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_4d_prf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4d)"
-    },
-    "language": "tigr1271",
-    "primaryText": "siħib-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PRF of 'pull'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "pull"
-      ],
-      [
-        "template",
-        "prf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_4d_imprf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(4d)"
-    },
-    "language": "tigr1271",
-    "primaryText": "-sɨħɨb",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMPRF of 'pull'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "pull"
-      ],
-      [
-        "template",
-        "imprf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_5a_juss",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(5a)"
-    },
-    "language": "tigr1270",
-    "primaryText": "tɨ-mazzɨn",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-JUSS of 'weigh'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "weigh"
-      ],
-      [
-        "template",
-        "jussGem2"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_5a_imp",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(5a)"
-    },
-    "language": "tigr1270",
-    "primaryText": "mazzɨn",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP of 'weigh'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "weigh"
-      ],
-      [
-        "template",
-        "impGem"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_5b_juss",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(5b)"
-    },
-    "language": "tigr1270",
-    "primaryText": "tɨ-fgʌr",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-JUSS of 'leave'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "leave"
-      ],
-      [
-        "template",
-        "juss2"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_5b_imp",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(5b)"
-    },
-    "language": "tigr1270",
-    "primaryText": "fɨgʌr",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP of 'leave'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "leave"
-      ],
-      [
-        "template",
-        "imp"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_5c_juss",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(5c)"
-    },
-    "language": "tigr1270",
-    "primaryText": "tɨ-kˀnʌsˁ",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-JUSS of 'get up'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "getUp"
-      ],
-      [
-        "template",
-        "juss2"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_5c_imp",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(5c)"
-    },
-    "language": "tigr1270",
-    "primaryText": "kˀɨnʌsˁ",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP of 'get up'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "getUp"
-      ],
-      [
-        "template",
-        "imp"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_6a_prf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(6a)"
-    },
-    "language": "tigr1270",
-    "primaryText": "fagr-a",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PRF-3MSG of 'leave'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "leave"
-      ],
-      [
-        "template",
-        "prf3"
-      ],
-      [
-        "suffix",
-        "a"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_6b_prf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(6b)"
-    },
-    "language": "tigr1270",
-    "primaryText": "ħatˁb-a",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PRF-3MSG of 'wash'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "wash"
-      ],
-      [
-        "template",
-        "prf3"
-      ],
-      [
-        "suffix",
-        "a"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_6b_juss",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(6b)"
-    },
-    "language": "tigr1270",
-    "primaryText": "tɨ-ħɨtˁʌb",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-JUSS of 'wash'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "wash"
-      ],
-      [
-        "template",
-        "juss2"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_6c_prf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(6c)"
-    },
-    "language": "tigr1270",
-    "primaryText": "harb-a",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PRF-3MSG of 'flee'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "flee"
-      ],
-      [
-        "template",
-        "prf3"
-      ],
-      [
-        "suffix",
-        "a"
-      ]
-    ],
-    "comment": "The jussive [tɨ-ħɨrʌb] is printed with a pharyngeal against the perfective's [h].",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_7a",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(7a)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨ-gʌrrɨf",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-IMPRF of 'whip'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "whip"
-      ],
-      [
-        "template",
-        "imprf2"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_7b",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(7b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "ta-ħarrɨd",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-IMPRF of 'slaughter'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "slaughter"
-      ],
-      [
-        "template",
-        "imprf2"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_7c",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(7c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "ta-ħadɨm",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-IMPRF of 'escape'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "escape"
-      ],
-      [
-        "template",
-        "imprf2NoGem"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_7d",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(7d)"
-    },
-    "language": "tigr1271",
-    "primaryText": "gɨrʌf",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP of 'whip'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "whip"
-      ],
-      [
-        "template",
-        "imp"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_7e",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(7e)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mahar",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP of 'teach'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "teach"
-      ],
-      [
-        "template",
-        "imp"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_7f",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(7f)"
-    },
-    "language": "tigr1271",
-    "primaryText": "saʔal",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP of 'ask'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "ask"
-      ],
-      [
-        "template",
-        "imp"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_10a_f",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(10a)"
-    },
-    "language": "tigr1271",
-    "primaryText": "gɨrʌf-i",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP-F of 'whip'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "whip"
-      ],
-      [
-        "template",
-        "imp"
-      ],
-      [
-        "suffix",
-        "i"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_10b_m",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(10b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "nɨβaħ",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP.M of 'bark'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "bark"
-      ],
-      [
-        "template",
-        "imp"
-      ]
-    ],
-    "comment": "Postvocalic spirantization of b.",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_10b_f",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(10b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "nɨbħ-i",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP-F of 'bark'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "bark"
-      ],
-      [
-        "template",
-        "imp"
-      ],
-      [
-        "suffix",
-        "i"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_10c_m",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(10c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "sɨmaʕ",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP.M of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "imp"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_10c_f",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(10c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "sɨmʕ-i",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP-F of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "imp"
-      ],
-      [
-        "suffix",
-        "i"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_10d_m",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(10d)"
-    },
-    "language": "tigr1271",
-    "primaryText": "gɨlah",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP.M of 'uncover'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "uncover"
-      ],
-      [
-        "template",
-        "imp"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_10d_f",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(10d)"
-    },
-    "language": "tigr1271",
-    "primaryText": "gɨlh-i",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP-F of 'uncover'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "uncover"
-      ],
-      [
-        "template",
-        "imp"
-      ],
-      [
-        "suffix",
-        "i"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_36b",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(36b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "sɨmʕa",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP-FPL of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "imp"
-      ],
-      [
-        "suffix",
-        "a"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_12a",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(12a)"
-    },
-    "language": "tigr1270",
-    "primaryText": "tɨ-fʌggɨr",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-IMP.M of 'whip'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "whip"
-      ],
-      [
-        "template",
-        "imprf2"
-      ]
-    ],
-    "comment": "The paper prints the prefix in parentheses, (tɨ-)fʌggɨr: optional in regular verbs, obligatory in guttural-medial stems (fn. 9). The column heading of (12) is 2-IMP.M, under the title 'Tigre imperfectives'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_12b",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(12b)"
-    },
-    "language": "tigr1270",
-    "primaryText": "tɨ-sʔɨl",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-IMP.M of 'ask'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "ask"
-      ],
-      [
-        "template",
-        "imprf2"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_12c",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(12c)"
-    },
-    "language": "tigr1270",
-    "primaryText": "tɨ-tˀʕɨn",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-IMP.M of 'load'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "load"
-      ],
-      [
-        "template",
-        "imprf2"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_12d",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(12d)"
-    },
-    "language": "tigr1270",
-    "primaryText": "tɨ-sħɨk",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-IMP.M of 'uncover'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "uncover"
-      ],
-      [
-        "template",
-        "imprf2"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_26d",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(26d)"
-    },
-    "language": "tigr1270",
-    "primaryText": "tɨ-sħɨb",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-IMP.M of 'pull'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "pull"
-      ],
-      [
-        "template",
-        "imprf2"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_13a_ger",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(13a)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mɨ-graf",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "GER of 'whip'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "whip"
-      ],
-      [
-        "template",
-        "gerA"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_13a_poss",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(13a)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mɨ-graf-u",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "GER+POSS of 'whip'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "whip"
-      ],
-      [
-        "template",
-        "gerA"
-      ],
-      [
-        "suffix",
-        "u"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_13b_ger",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(13b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mɨ-nbaħ",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "GER of 'bark'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "bark"
-      ],
-      [
-        "template",
-        "gerA"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_13b_poss",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(13b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mɨ-nbuħ-u",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "GER+POSS of 'bark'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "mɨ-nbɨħ-u",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "bark"
-      ],
-      [
-        "template",
-        "gerA"
-      ],
-      [
-        "suffix",
-        "u"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_13c_ger",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(13c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mɨ-smaʕ",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "GER of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "gerA"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_13c_poss",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(13c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mɨ-smeʕ-ej",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "GER+POSS of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "mɨ-smɨʕ-ej",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "gerA"
-      ],
-      [
-        "suffix",
-        "ej"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_13d_ger",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(13d)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mɨ-glah",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "GER of 'uncover'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "uncover"
-      ],
-      [
-        "template",
-        "gerA"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_13d_poss",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(13d)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mɨ-gloh-om",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "GER+POSS of 'uncover'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "mɨ-glɨh-om",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "uncover"
-      ],
-      [
-        "template",
-        "gerA"
-      ],
-      [
-        "suffix",
-        "om"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_37a",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(37a)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mɨsmuʕu",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "GER+POSS of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "mɨsmɨʕu",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "gerA"
-      ],
-      [
-        "suffix",
-        "u"
-      ]
-    ],
-    "comment": "The paper prints [mɨs_muʕu], the underscore marking the dissociated nucleus.",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_17a_pass",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(17a)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨ-gʌrif",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PASS-PRF of 'whip'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "whip"
-      ],
-      [
-        "template",
-        "passPrf"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_17b_imprf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(17b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨ-sɨħɨb",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-IMPRF of 'pull'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "pull"
-      ],
-      [
-        "template",
-        "imprf2"
-      ],
-      [
-        "predicted",
-        "no"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_17b_pass",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(17b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨ-siħib",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PASS-PRF of 'pull'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "tɨ-sɨħib",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "pull"
-      ],
-      [
-        "template",
-        "passPrf"
-      ],
-      [
-        "predicted",
-        "no"
-      ]
-    ],
-    "comment": "(39a): the stem-initial position is retained.",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_17c_imprf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(17c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨ-mɨhɨr",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-IMPRF of 'teach'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "teach"
-      ],
-      [
-        "template",
-        "imprf2"
-      ],
-      [
-        "predicted",
-        "no"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_17c_pass",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(17c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨ-mihir",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PASS-PRF of 'teach'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "tɨ-mɨhir",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "teach"
-      ],
-      [
-        "template",
-        "passPrf"
-      ],
-      [
-        "predicted",
-        "no"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_17d_imprf",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(17d)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨ-sɨʔɨl",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-IMPRF of 'ask'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "ask"
-      ],
-      [
-        "template",
-        "imprf2"
-      ],
-      [
-        "predicted",
-        "no"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_17d_pass",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(17d)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨsiʔil",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PASS-PRF of 'ask'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "tɨ-sɨʔil",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "ask"
-      ],
-      [
-        "template",
-        "passPrf"
-      ],
-      [
-        "predicted",
-        "no"
-      ]
-    ],
-    "comment": "The paper prints tɨsiʔil without the hyphen, beside tɨ-sɨʔil.",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_18a_dep",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(18a)"
-    },
-    "language": "tigr1271",
-    "primaryText": "gʌrʌf-ʌ",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "DEP.PRF-3MSG of 'whip'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "whip"
-      ],
-      [
-        "template",
-        "depPrf"
-      ],
-      [
-        "suffix",
-        "ʌ"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_18b_dep",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(18b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "bʌddʌl-ʌ",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "DEP.PRF-3MSG of 'hurt'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hurt"
-      ],
-      [
-        "template",
-        "depPrfB"
-      ],
-      [
-        "suffix",
-        "ʌ"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_18b_ger",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(18b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mɨ-bɨddal",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "GER of 'hurt'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hurt"
-      ],
-      [
-        "template",
-        "gerB"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_18c_dep",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(18c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "barʌk-ʌ",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "DEP.PRF-3MSG of 'bless'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "bless"
-      ],
-      [
-        "template",
-        "depPrfC"
-      ],
-      [
-        "suffix",
-        "ʌ"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_18c_ger",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(18c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "mɨ-bɨrak",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "GER of 'bless'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "bless"
-      ],
-      [
-        "template",
-        "gerC"
-      ],
-      [
-        "predicted",
-        "no"
-      ]
-    ],
-    "comment": "(39b): the first of two heteromorphemic low vowels is replaced by [ɨ] across a non-guttural.",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_19b_arifu",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(19b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "ʕarifu",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PRF-3MSG of √ʕrf",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "arf"
-      ],
-      [
-        "template",
-        "prf"
-      ],
-      [
-        "suffix",
-        "u"
-      ]
-    ],
-    "comment": "The paper prints the form in table (19) without a gloss; the translation names its template.",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_19b_tismaa",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(19b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨsmaʕ",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-JUSS of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "juss2"
-      ]
-    ],
-    "comment": "The paper prints the form in table (19) without a gloss; the translation names its template.",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_19c",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(19c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "ʔasmiʕika",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "make.listen.PRF-2MSG",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "caus"
-      ],
-      [
-        "suffix",
-        "ka"
-      ]
-    ],
-    "comment": "The paper glosses the underlying /ʔʌsmiʕ-ka/ 'make.listen.PRF-2MSG'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_31a",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(31a)"
-    },
-    "language": "tigr1270",
-    "primaryText": "tɨfgʌr",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-JUSS of 'leave'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "leave"
-      ],
-      [
-        "template",
-        "juss2"
-      ]
-    ],
-    "comment": "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c).",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_32b",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(32b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨsħab",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-JUSS of 'pull'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "pull"
-      ],
-      [
-        "template",
-        "juss2"
-      ]
-    ],
-    "comment": "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c).",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_32c",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(32c)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨsħabi",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "2-JUSS-F of 'pull'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "pull"
-      ],
-      [
-        "template",
-        "juss2"
-      ],
-      [
-        "suffix",
-        "i"
-      ]
-    ],
-    "comment": "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c).",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_33a",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(33a)"
-    },
-    "language": "tigr1271",
-    "primaryText": "ʕɨrʌf",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP of √ʕrf",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "arf"
-      ],
-      [
-        "template",
-        "imp"
-      ]
-    ],
-    "comment": "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c).",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_33b",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(33b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "ʕarʌf",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "DEP.PRF of √ʕrf",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "arf"
-      ],
-      [
-        "template",
-        "depPrf"
-      ]
-    ],
-    "comment": "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c).",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_37b",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(37b)"
-    },
-    "language": "tigr1271",
-    "primaryText": "saħab",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "IMP of 'pull'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "sɨħab",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "pull"
-      ],
-      [
-        "template",
-        "imp"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_37d",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(37d)"
-    },
-    "language": "tigr1271",
-    "primaryText": "sʌmaʕaku",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "DEP.PRF-1SG of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "sʌmaʕɨku",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "depPrf"
-      ],
-      [
-        "suffix",
-        "ku"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "faustlampitelli2026_38",
-    "source": {
-      "bibkey": "faust-lampitelli-2026",
-      "paperLabel": "(38)"
-    },
-    "language": "tigr1271",
-    "primaryText": "tɨsʌmiʕu",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "PASS-PRF-3PL of 'hear'",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "root",
-        "hear"
-      ],
-      [
-        "template",
-        "passPrf"
-      ],
-      [
-        "suffix",
-        "u"
-      ]
-    ],
-    "comment": "The paper translates the form 'they were heard'.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "root",
+      "lean": "root",
+      "type": "Root",
+      "doc": "The roots of the paper's forms, named by their glosses; a Tigre root whose gloss a Tigrinya root shares is marked.",
+      "levels": [
+        {
+          "name": "whip",
+          "label": "whip",
+          "doc": "√grf 'whip'"
+        },
+        {
+          "name": "hear",
+          "label": "hear",
+          "doc": "√smʕ 'hear'"
+        },
+        {
+          "name": "arrest",
+          "label": "arrest",
+          "doc": "√ʔsr 'arrest'"
+        },
+        {
+          "name": "pull",
+          "label": "pull",
+          "doc": "√sħb 'pull'"
+        },
+        {
+          "name": "teach",
+          "label": "teach",
+          "doc": "√mhr 'teach'"
+        },
+        {
+          "name": "slaughter",
+          "label": "slaughter",
+          "doc": "√ħrd 'slaughter'"
+        },
+        {
+          "name": "escape",
+          "label": "escape",
+          "doc": "√ħdm 'escape'"
+        },
+        {
+          "name": "ask",
+          "label": "ask",
+          "doc": "√sʔl 'ask'"
+        },
+        {
+          "name": "uncover",
+          "label": "uncover",
+          "doc": "√glh 'uncover'"
+        },
+        {
+          "name": "bark",
+          "label": "bark",
+          "doc": "√nbħ 'bark'"
+        },
+        {
+          "name": "hurt",
+          "label": "hurt",
+          "doc": "√bdl 'hurt', of type B"
+        },
+        {
+          "name": "bless",
+          "label": "bless",
+          "doc": "√brk 'bless', of type C"
+        },
+        {
+          "name": "arf",
+          "label": "arf",
+          "doc": "√ʕrf, which the paper does not gloss"
+        },
+        {
+          "name": "drink",
+          "label": "drink",
+          "doc": "√stI 'drink', a weak root whose final radical is the element |I|"
+        },
+        {
+          "name": "weigh",
+          "label": "weigh",
+          "doc": "Tigre √mzn 'weigh'"
+        },
+        {
+          "name": "leave",
+          "label": "leave",
+          "doc": "Tigre √fgr 'leave'"
+        },
+        {
+          "name": "wash",
+          "label": "wash",
+          "doc": "Tigre √ħtˁb 'wash'"
+        },
+        {
+          "name": "flee",
+          "label": "flee",
+          "doc": "Tigre √hrb 'flee'"
+        },
+        {
+          "name": "getUp",
+          "label": "getUp",
+          "doc": "Tigre √kˀnsˁ 'get up'"
+        },
+        {
+          "name": "whipTigre",
+          "label": "whip (Tigre)",
+          "doc": "Tigre √fgr 'whip'"
+        },
+        {
+          "name": "askTigre",
+          "label": "ask (Tigre)",
+          "doc": "Tigre √sʔl 'ask'"
+        },
+        {
+          "name": "load",
+          "label": "load",
+          "doc": "Tigre √tˀʕn 'load'"
+        },
+        {
+          "name": "uncoverTigre",
+          "label": "uncover (Tigre)",
+          "doc": "Tigre √sħk 'uncover'"
+        },
+        {
+          "name": "pullTigre",
+          "label": "pull (Tigre)",
+          "doc": "Tigre √sħb 'pull'"
+        }
+      ]
+    },
+    {
+      "key": "template",
+      "lean": "template",
+      "type": "Template",
+      "doc": "The verbal and nominal templates of the paper's paradigms, Q, T, L standing for the radicals.",
+      "levels": [
+        {
+          "name": "depPrf",
+          "label": "depPrf",
+          "doc": "DEP.PRF QʌTʌL (4)"
+        },
+        {
+          "name": "depPrfB",
+          "label": "depPrfB",
+          "doc": "the type B DEP.PRF QʌTTʌL, with medial gemination (18b)"
+        },
+        {
+          "name": "depPrfC",
+          "label": "depPrfC",
+          "doc": "the type C DEP.PRF QaTʌL, with [a] after the first radical (18c)"
+        },
+        {
+          "name": "prf",
+          "label": "prf",
+          "doc": "PRF QʌTiL (4)"
+        },
+        {
+          "name": "imprf",
+          "label": "imprf",
+          "doc": "IMPRF QʌTTɨL (4)"
+        },
+        {
+          "name": "imprf2",
+          "label": "imprf2",
+          "doc": "2-IMPRF tɨ-QʌTTɨL ((7), (12), (17))"
+        },
+        {
+          "name": "imprf2NoGem",
+          "label": "imprf2NoGem",
+          "doc": "the 2-IMPRF without gemination, tɨ-QʌTɨL, of (7c)"
+        },
+        {
+          "name": "passPrf",
+          "label": "passPrf",
+          "doc": "PASS-PRF tɨ-QʌTiL (17)"
+        },
+        {
+          "name": "imp",
+          "label": "imp",
+          "doc": "IMP QɨTʌL ((5), (10))"
+        },
+        {
+          "name": "juss2",
+          "label": "juss2",
+          "doc": "2-JUSS tɨ-QTʌL ((5), (6), (31), (32))"
+        },
+        {
+          "name": "impGem",
+          "label": "impGem",
+          "doc": "the Tigre IMP QaTTɨL of (5a)"
+        },
+        {
+          "name": "jussGem2",
+          "label": "jussGem2",
+          "doc": "the Tigre 2-JUSS tɨ-QaTTɨL of (5a)"
+        },
+        {
+          "name": "gerA",
+          "label": "gerA",
+          "doc": "the type A gerund mɨQTaL (13)"
+        },
+        {
+          "name": "gerB",
+          "label": "gerB",
+          "doc": "the type B gerund mɨQɨTTaL (18b)"
+        },
+        {
+          "name": "gerC",
+          "label": "gerC",
+          "doc": "the type C gerund mɨQaTaL ((18c), (39b))"
+        },
+        {
+          "name": "caus",
+          "label": "caus",
+          "doc": "the causative PRF ʔʌQTiL (19c)"
+        },
+        {
+          "name": "prf3",
+          "label": "prf3",
+          "doc": "the Tigre PRF-3MSG stem QaTL- (6)"
+        }
+      ]
+    },
+    {
+      "key": "suffix",
+      "lean": "suffix",
+      "type": "Suffix",
+      "doc": "The suffixes of the paper's suffixed forms.",
+      "levels": [
+        {
+          "name": "a",
+          "label": "a",
+          "doc": "-a, as in Tigre PRF-3MSG [fagr-a] (6) and [sɨmʕa] (36b)"
+        },
+        {
+          "name": "i",
+          "label": "i",
+          "doc": "-i, the feminine of the imperative (10)"
+        },
+        {
+          "name": "u",
+          "label": "u",
+          "doc": "-u, as in [ʕarifu] (19b) and the possessed gerund [mɨ-graf-u] (13)"
+        },
+        {
+          "name": "aBare",
+          "label": "ʌ",
+          "doc": "-ʌ, as in DEP.PRF [gʌrʌf-ʌ] (18)"
+        },
+        {
+          "name": "ej",
+          "label": "ej",
+          "doc": "-ej, the 1SG possessor of (13c)"
+        },
+        {
+          "name": "om",
+          "label": "om",
+          "doc": "-om, the 3PL possessor of (13d)"
+        },
+        {
+          "name": "ku",
+          "label": "ku",
+          "doc": "-ku, the 1SG of (37d)"
+        },
+        {
+          "name": "ka",
+          "label": "ka",
+          "doc": "-ka, the 2MSG of (19c)"
+        },
+        {
+          "name": "e",
+          "label": "e",
+          "doc": "-e, the 1SG of the PRF (8)"
+        },
+        {
+          "name": "na",
+          "label": "na",
+          "doc": "-na, the 1PL of the PRF (8)"
+        }
+      ]
+    }
+  ],
+  "index": {
+    "type": "Example",
+    "doc": "The forms of the paper's paradigms (4)-(19) and derivations (26)-(38)."
+  },
+  "examples": [
+    {
+      "id": "faustlampitelli2026_4a_depPrf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrʌf-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "DEP.PRF of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "depPrf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_4a_prf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrif-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "prf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_4a_imprf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4a)"},
+      "language": "tigr1271",
+      "primaryText": "-gʌrrɨf",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMPRF of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "imprf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_4b_depPrf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌmaʕ-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "DEP.PRF of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "depPrf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_4b_prf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌmiʕ-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "prf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_4b_imprf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4b)"},
+      "language": "tigr1271",
+      "primaryText": "-sʌmmɨʕ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMPRF of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "imprf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_4c_depPrf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4c)"},
+      "language": "tigr1271",
+      "primaryText": "ʔasʌr-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "DEP.PRF of 'arrest'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "arrest"],
+        ["template", "depPrf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_4c_prf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4c)"},
+      "language": "tigr1271",
+      "primaryText": "ʔasir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF of 'arrest'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "arrest"],
+        ["template", "prf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_4c_imprf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4c)"},
+      "language": "tigr1271",
+      "primaryText": "-ʔassɨr",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMPRF of 'arrest'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "arrest"],
+        ["template", "imprf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_4d_depPrf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4d)"},
+      "language": "tigr1271",
+      "primaryText": "saħab-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "DEP.PRF of 'pull'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "sɨħab-", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "pull"],
+        ["template", "depPrf"]
+      ],
+      "comment": "The [ɨ] variant is (15d)'s. (4) prints saħab without the hyphen; (15d) prints saħab- (~ sɨħab-).",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_4d_prf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4d)"},
+      "language": "tigr1271",
+      "primaryText": "siħib-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF of 'pull'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "pull"],
+        ["template", "prf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_4d_imprf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(4d)"},
+      "language": "tigr1271",
+      "primaryText": "-sɨħɨb",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMPRF of 'pull'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "pull"],
+        ["template", "imprf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_5a_juss",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(5a)"},
+      "language": "tigr1270",
+      "primaryText": "tɨ-mazzɨn",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-JUSS of 'weigh'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "weigh"],
+        ["template", "jussGem2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_5a_imp",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(5a)"},
+      "language": "tigr1270",
+      "primaryText": "mazzɨn",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP of 'weigh'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "weigh"],
+        ["template", "impGem"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_5b_juss",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(5b)"},
+      "language": "tigr1270",
+      "primaryText": "tɨ-fgʌr",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-JUSS of 'leave'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "leave"],
+        ["template", "juss2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_5b_imp",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(5b)"},
+      "language": "tigr1270",
+      "primaryText": "fɨgʌr",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP of 'leave'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "leave"],
+        ["template", "imp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_5c_juss",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(5c)"},
+      "language": "tigr1270",
+      "primaryText": "tɨ-kˀnʌsˁ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-JUSS of 'get up'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "getUp"],
+        ["template", "juss2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_5c_imp",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(5c)"},
+      "language": "tigr1270",
+      "primaryText": "kˀɨnʌsˁ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP of 'get up'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "getUp"],
+        ["template", "imp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_6a_prf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(6a)"},
+      "language": "tigr1270",
+      "primaryText": "fagr-a",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MSG of 'leave'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "leave"],
+        ["template", "prf3"],
+        ["suffix", "a"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_6b_prf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(6b)"},
+      "language": "tigr1270",
+      "primaryText": "ħatˁb-a",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MSG of 'wash'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "wash"],
+        ["template", "prf3"],
+        ["suffix", "a"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_6b_juss",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(6b)"},
+      "language": "tigr1270",
+      "primaryText": "tɨ-ħɨtˁʌb",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-JUSS of 'wash'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "wash"],
+        ["template", "juss2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_6c_prf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(6c)"},
+      "language": "tigr1270",
+      "primaryText": "harb-a",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MSG of 'flee'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "flee"],
+        ["template", "prf3"],
+        ["suffix", "a"]
+      ],
+      "comment": "The jussive [tɨ-ħɨrʌb] is printed with a pharyngeal against the perfective's [h].",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_7a",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(7a)"},
+      "language": "tigr1271",
+      "primaryText": "tɨ-gʌrrɨf",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-IMPRF of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "imprf2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_7b",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(7b)"},
+      "language": "tigr1271",
+      "primaryText": "ta-ħarrɨd",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-IMPRF of 'slaughter'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "slaughter"],
+        ["template", "imprf2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_7c",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(7c)"},
+      "language": "tigr1271",
+      "primaryText": "ta-ħadɨm",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-IMPRF of 'escape'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "escape"],
+        ["template", "imprf2NoGem"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_7d",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(7d)"},
+      "language": "tigr1271",
+      "primaryText": "gɨrʌf",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "imp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_7e",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(7e)"},
+      "language": "tigr1271",
+      "primaryText": "mahar",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP of 'teach'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "teach"],
+        ["template", "imp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_7f",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(7f)"},
+      "language": "tigr1271",
+      "primaryText": "saʔal",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP of 'ask'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "ask"],
+        ["template", "imp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8a_1sg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrif-e",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-1SG of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "prf"],
+        ["suffix", "e"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8a_3msg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrif-u",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MSG of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "prf"],
+        ["suffix", "u"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8a_3fsg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrif-a",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3FSG of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "prf"],
+        ["suffix", "a"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8a_1pl",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrif-na",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-1PL of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "prf"],
+        ["suffix", "na"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8a_3mpl",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrif-om",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MPL of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "prf"],
+        ["suffix", "om"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8b_1sg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌtj-e",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-1SG of 'drink'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "drink"],
+        ["template", "prf"],
+        ["suffix", "e"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8b_3msg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌtj-u",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MSG of 'drink'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "drink"],
+        ["template", "prf"],
+        ["suffix", "u"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8b_3fsg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌtj-a",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3FSG of 'drink'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "drink"],
+        ["template", "prf"],
+        ["suffix", "a"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8b_1pl",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌtiː-na",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-1PL of 'drink'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "drink"],
+        ["template", "prf"],
+        ["suffix", "na"]
+      ],
+      "comment": "Before the consonant-initial suffix the radical |I| and the vocalization /i/ give a long [iː].",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8b_3mpl",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌtj-om",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MPL of 'drink'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "drink"],
+        ["template", "prf"],
+        ["suffix", "om"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_10a_f",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(10a)"},
+      "language": "tigr1271",
+      "primaryText": "gɨrʌf-i",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP-F of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "imp"],
+        ["suffix", "i"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_10b_m",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(10b)"},
+      "language": "tigr1271",
+      "primaryText": "nɨβaħ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP.M of 'bark'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "bark"],
+        ["template", "imp"]
+      ],
+      "comment": "Postvocalic spirantization of b.",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_10b_f",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(10b)"},
+      "language": "tigr1271",
+      "primaryText": "nɨbħ-i",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP-F of 'bark'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "bark"],
+        ["template", "imp"],
+        ["suffix", "i"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_10c_m",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(10c)"},
+      "language": "tigr1271",
+      "primaryText": "sɨmaʕ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP.M of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "imp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_10c_f",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(10c)"},
+      "language": "tigr1271",
+      "primaryText": "sɨmʕ-i",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP-F of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "imp"],
+        ["suffix", "i"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_10d_m",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(10d)"},
+      "language": "tigr1271",
+      "primaryText": "gɨlah",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP.M of 'uncover'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "uncover"],
+        ["template", "imp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_10d_f",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(10d)"},
+      "language": "tigr1271",
+      "primaryText": "gɨlh-i",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP-F of 'uncover'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "uncover"],
+        ["template", "imp"],
+        ["suffix", "i"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_36b",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(36b)"},
+      "language": "tigr1271",
+      "primaryText": "sɨmʕa",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP-FPL of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "imp"],
+        ["suffix", "a"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_12a",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(12a)"},
+      "language": "tigr1270",
+      "primaryText": "tɨ-fʌggɨr",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-IMP.M of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip (Tigre)"],
+        ["template", "imprf2"]
+      ],
+      "comment": "The paper prints the prefix in parentheses, (tɨ-)fʌggɨr: optional in regular verbs, obligatory in guttural-medial stems (fn. 9). The column heading of (12) is 2-IMP.M, under the title 'Tigre imperfectives'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_12b",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(12b)"},
+      "language": "tigr1270",
+      "primaryText": "tɨ-sʔɨl",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-IMP.M of 'ask'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "ask (Tigre)"],
+        ["template", "imprf2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_12c",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(12c)"},
+      "language": "tigr1270",
+      "primaryText": "tɨ-tˀʕɨn",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-IMP.M of 'load'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "load"],
+        ["template", "imprf2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_12d",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(12d)"},
+      "language": "tigr1270",
+      "primaryText": "tɨ-sħɨk",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-IMP.M of 'uncover'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "uncover (Tigre)"],
+        ["template", "imprf2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_26d",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(26d)"},
+      "language": "tigr1270",
+      "primaryText": "tɨ-sħɨb",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-IMP.M of 'pull'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "pull (Tigre)"],
+        ["template", "imprf2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_13a_ger",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(13a)"},
+      "language": "tigr1271",
+      "primaryText": "mɨ-graf",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "GER of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "gerA"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_13a_poss",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(13a)"},
+      "language": "tigr1271",
+      "primaryText": "mɨ-graf-u",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "GER+POSS of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "gerA"],
+        ["suffix", "u"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_13b_ger",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(13b)"},
+      "language": "tigr1271",
+      "primaryText": "mɨ-nbaħ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "GER of 'bark'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "bark"],
+        ["template", "gerA"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_13b_poss",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(13b)"},
+      "language": "tigr1271",
+      "primaryText": "mɨ-nbuħ-u",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "GER+POSS of 'bark'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "mɨ-nbɨħ-u", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "bark"],
+        ["template", "gerA"],
+        ["suffix", "u"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_13c_ger",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(13c)"},
+      "language": "tigr1271",
+      "primaryText": "mɨ-smaʕ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "GER of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "gerA"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_13c_poss",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(13c)"},
+      "language": "tigr1271",
+      "primaryText": "mɨ-smeʕ-ej",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "GER+POSS of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "mɨ-smɨʕ-ej", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "gerA"],
+        ["suffix", "ej"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_13d_ger",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(13d)"},
+      "language": "tigr1271",
+      "primaryText": "mɨ-glah",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "GER of 'uncover'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "uncover"],
+        ["template", "gerA"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_13d_poss",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(13d)"},
+      "language": "tigr1271",
+      "primaryText": "mɨ-gloh-om",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "GER+POSS of 'uncover'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "mɨ-glɨh-om", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "uncover"],
+        ["template", "gerA"],
+        ["suffix", "om"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_37a",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(37a)"},
+      "language": "tigr1271",
+      "primaryText": "mɨsmuʕu",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "GER+POSS of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "mɨsmɨʕu", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "gerA"],
+        ["suffix", "u"]
+      ],
+      "comment": "The paper prints [mɨs_muʕu], the underscore marking the dissociated nucleus.",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_17a_pass",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(17a)"},
+      "language": "tigr1271",
+      "primaryText": "tɨ-gʌrif",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PASS-PRF of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "passPrf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_17b_imprf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(17b)"},
+      "language": "tigr1271",
+      "primaryText": "tɨ-sɨħɨb",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-IMPRF of 'pull'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "pull"],
+        ["template", "imprf2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_17b_pass",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(17b)"},
+      "language": "tigr1271",
+      "primaryText": "tɨ-siħib",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PASS-PRF of 'pull'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "tɨ-sɨħib", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "pull"],
+        ["template", "passPrf"]
+      ],
+      "comment": "(39a): the stem-initial position is retained.",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_17c_imprf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(17c)"},
+      "language": "tigr1271",
+      "primaryText": "tɨ-mɨhɨr",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-IMPRF of 'teach'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "teach"],
+        ["template", "imprf2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_17c_pass",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(17c)"},
+      "language": "tigr1271",
+      "primaryText": "tɨ-mihir",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PASS-PRF of 'teach'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "tɨ-mɨhir", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "teach"],
+        ["template", "passPrf"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_17d_imprf",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(17d)"},
+      "language": "tigr1271",
+      "primaryText": "tɨ-sɨʔɨl",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-IMPRF of 'ask'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "ask"],
+        ["template", "imprf2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_17d_pass",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(17d)"},
+      "language": "tigr1271",
+      "primaryText": "tɨsiʔil",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PASS-PRF of 'ask'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "tɨ-sɨʔil", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "ask"],
+        ["template", "passPrf"]
+      ],
+      "comment": "The paper prints tɨsiʔil without the hyphen, beside tɨ-sɨʔil.",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_18a_dep",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(18a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrʌf-ʌ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "DEP.PRF-3MSG of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "depPrf"],
+        ["suffix", "ʌ"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_18b_dep",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(18b)"},
+      "language": "tigr1271",
+      "primaryText": "bʌddʌl-ʌ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "DEP.PRF-3MSG of 'hurt'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hurt"],
+        ["template", "depPrfB"],
+        ["suffix", "ʌ"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_18b_ger",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(18b)"},
+      "language": "tigr1271",
+      "primaryText": "mɨ-bɨddal",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "GER of 'hurt'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hurt"],
+        ["template", "gerB"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_18c_dep",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(18c)"},
+      "language": "tigr1271",
+      "primaryText": "barʌk-ʌ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "DEP.PRF-3MSG of 'bless'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "bless"],
+        ["template", "depPrfC"],
+        ["suffix", "ʌ"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_18c_ger",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(18c)"},
+      "language": "tigr1271",
+      "primaryText": "mɨ-bɨrak",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "GER of 'bless'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "bless"],
+        ["template", "gerC"]
+      ],
+      "comment": "(39b): the first of two heteromorphemic low vowels is replaced by [ɨ] across a non-guttural.",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_19b_arifu",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(19b)"},
+      "language": "tigr1271",
+      "primaryText": "ʕarifu",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MSG of √ʕrf",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "arf"],
+        ["template", "prf"],
+        ["suffix", "u"]
+      ],
+      "comment": "The paper prints the form in table (19) without a gloss; the translation names its template.",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_19b_tismaa",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(19b)"},
+      "language": "tigr1271",
+      "primaryText": "tɨsmaʕ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-JUSS of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "juss2"]
+      ],
+      "comment": "The paper prints the form in table (19) without a gloss; the translation names its template.",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_19c",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(19c)"},
+      "language": "tigr1271",
+      "primaryText": "ʔasmiʕika",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "make.listen.PRF-2MSG",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "caus"],
+        ["suffix", "ka"]
+      ],
+      "comment": "The paper glosses the underlying /ʔʌsmiʕ-ka/ 'make.listen.PRF-2MSG'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_31a",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(31a)"},
+      "language": "tigr1270",
+      "primaryText": "tɨfgʌr",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-JUSS of 'leave'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "leave"],
+        ["template", "juss2"]
+      ],
+      "comment": "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c).",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_32b",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(32b)"},
+      "language": "tigr1271",
+      "primaryText": "tɨsħab",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-JUSS of 'pull'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "pull"],
+        ["template", "juss2"]
+      ],
+      "comment": "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c).",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_32c",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(32c)"},
+      "language": "tigr1271",
+      "primaryText": "tɨsħabi",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "2-JUSS-F of 'pull'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "pull"],
+        ["template", "juss2"],
+        ["suffix", "i"]
+      ],
+      "comment": "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c).",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_33a",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(33a)"},
+      "language": "tigr1271",
+      "primaryText": "ʕɨrʌf",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP of √ʕrf",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "arf"],
+        ["template", "imp"]
+      ],
+      "comment": "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c).",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_33b",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(33b)"},
+      "language": "tigr1271",
+      "primaryText": "ʕarʌf",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "DEP.PRF of √ʕrf",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "arf"],
+        ["template", "depPrf"]
+      ],
+      "comment": "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c).",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_37b",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(37b)"},
+      "language": "tigr1271",
+      "primaryText": "saħab",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "IMP of 'pull'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "sɨħab", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "pull"],
+        ["template", "imp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_37d",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(37d)"},
+      "language": "tigr1271",
+      "primaryText": "sʌmaʕaku",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "DEP.PRF-1SG of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "sʌmaʕɨku", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "depPrf"],
+        ["suffix", "ku"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_38",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(38)"},
+      "language": "tigr1271",
+      "primaryText": "tɨsʌmiʕu",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PASS-PRF-3PL of 'hear'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "hear"],
+        ["template", "passPrf"],
+        ["suffix", "u"]
+      ],
+      "comment": "The paper translates the form 'they were heard'.",
+      "verified": "page-image"
+    }
+  ]
+}

@@ -9,6 +9,8 @@ public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Lattice.Basic
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Logic.Equiv.Defs
+public import Mathlib.Order.Hom.Lattice
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Element Theory
@@ -92,7 +94,7 @@ inductive Element
   | H
   /-- The element |L| of nasality, voicing and low tone, low-frequency energy. -/
   | L
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 namespace Element
 
@@ -194,6 +196,28 @@ instance : OrderBot MR where
 
 @[simp] theorem bot_heads : (⊥ : MR).heads = ∅ := rfl
 
+/-- `MR.toProd` as an order embedding of the expressions into pairs of sets of elements. -/
+def toProdOrderEmbedding : MR ↪o Finset Element × Finset Element :=
+  ⟨⟨toProd, toProd_injective⟩, Iff.rfl⟩
+
+@[simp] theorem coe_toProdOrderEmbedding : ⇑toProdOrderEmbedding = toProd := rfl
+
+/-- `MR.elements` as a lattice homomorphism. -/
+def elementsHom : LatticeHom MR (Finset Element) where
+  toFun := elements
+  map_sup' := sup_elements
+  map_inf' := inf_elements
+
+/-- `MR.heads` as a lattice homomorphism. -/
+def headsHom : LatticeHom MR (Finset Element) where
+  toFun := heads
+  map_sup' := sup_heads
+  map_inf' := inf_heads
+
+@[simp] theorem coe_elementsHom : ⇑elementsHom = elements := rfl
+
+@[simp] theorem coe_headsHom : ⇑headsHom = heads := rfl
+
 /-- The simplex expression |e| is the element `e` alone, unheaded. -/
 def simplex (e : Element) : MR := ⟨{e}, ∅, Finset.empty_subset _⟩
 
@@ -289,6 +313,12 @@ instance : OrderBot Segment where
 @[simp] theorem bot_place : (⊥ : Segment).place = ⊥ := rfl
 
 @[simp] theorem bot_laryngeal : (⊥ : Segment).laryngeal = ⊥ := rfl
+
+/-- `Segment.toProd` as an order embedding of the segments into triples of expressions. -/
+def toProdOrderEmbedding : Segment ↪o MR × MR × MR :=
+  ⟨⟨toProd, toProd_injective⟩, Iff.rfl⟩
+
+@[simp] theorem coe_toProdOrderEmbedding : ⇑toProdOrderEmbedding = toProd := rfl
 
 /-! ### Well-formedness -/
 
