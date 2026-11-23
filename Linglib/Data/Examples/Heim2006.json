@@ -1,0 +1,297 @@
+[
+  {
+    "id": "heim2006_1",
+    "source": {
+      "bibkey": "heim-2006",
+      "paperLabel": "(1)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lucinda is driving less fast than is allowed on this highway.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "her speed is below the maximum speed allowed",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "her speed is below the minimum speed allowed",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "The example is Rullmann's.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "heim2006_2a",
+    "source": {
+      "bibkey": "heim-2006",
+      "paperLabel": "(2a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We can grow very little.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "growing very little is a possibility",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "growing very little is a necessity",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "heim2006_2b",
+    "source": {
+      "bibkey": "heim-2006",
+      "paperLabel": "(2b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I didn't realize how little I can pay.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "I thought I would have to pay more",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "I thought I would be able to pay more",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "heim2006_2c",
+    "source": {
+      "bibkey": "heim-2006",
+      "paperLabel": "(2c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's a shame that they let the students write so little!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "they should have been required to write more",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "they should be allowed to write more",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "heim2006_32",
+    "source": {
+      "bibkey": "heim-2006",
+      "paperLabel": "(32)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lucinda is driving faster than is allowed on this highway.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "her speed is above the maximum speed allowed",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "her speed is above the minimum speed allowed",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "The judgment is Rullmann's; the paper reports that it has been challenged.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "heim2006_34a",
+    "source": {
+      "bibkey": "heim-2006",
+      "paperLabel": "(34a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We can grow very much.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "growing very much is a possibility",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "growing very much is a necessity",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "heim2006_35c",
+    "source": {
+      "bibkey": "heim-2006",
+      "paperLabel": "(35c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Paul ate less than was necessary.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "he ate less than the diet would have allowed",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "he did not eat enough to maintain his weight",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "heim2006_44",
+    "source": {
+      "bibkey": "heim-2006",
+      "paperLabel": "(44)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lucinda is driving more slowly than is allowed on this highway.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "her speed is below the maximum speed allowed",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "her speed is below the minimum speed allowed",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "heim2006_46a",
+    "source": {
+      "bibkey": "heim-2006",
+      "paperLabel": "(46a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary needs to drive faster than John needs to drive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "John and Mary must both be in Boston by 8pm; at 5:30pm John sets out from Providence and Mary from New Haven, which is farther.",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer",
+    "verdict": true
+  },
+  {
+    "id": "heim2006_46b",
+    "source": {
+      "bibkey": "heim-2006",
+      "paperLabel": "(46b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John needs to drive less fast than Mary needs to drive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "John and Mary must both be in Boston by 8pm; at 5:30pm John sets out from Providence and Mary from New Haven, which is farther.",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer",
+    "verdict": true
+  },
+  {
+    "id": "heim2006_46c",
+    "source": {
+      "bibkey": "heim-2006",
+      "paperLabel": "(46c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John needs to drive more slowly than Mary needs to drive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "John and Mary must both be in Boston by 8pm; at 5:30pm John sets out from Providence and Mary from New Haven, which is farther.",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The paper calls it arguably false: John has the option of driving more slowly, not the need.",
+    "verified": "text-layer",
+    "verdict": false
+  }
+]

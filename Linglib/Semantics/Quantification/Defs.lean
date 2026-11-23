@@ -339,10 +339,50 @@ of which `Det.QuantityInvariant` is the counterpart for determiner denotations. 
 def QuantityInvariant (Q : Quantifier α) : Prop :=
   ∀ (σ : Equiv.Perm α) (B : Set α), Q (σ ⁻¹' B) ↔ Q B
 
+/-! ### The negations and the dual of a quantifier
+
+The outer negation of a quantifier is its complement `Qᶜ` in the Boolean algebra `Quantifier α`.
+The inner negation and the dual of a determiner denotation are those of its quantifiers,
+`(d.dual) A = (d A).dual`. -/
+
+/-- The inner negation of a quantifier negates its scope, `Q.innerNeg B = Q Bᶜ`. -/
+def innerNeg (Q : Quantifier α) : Quantifier α := fun B ↦ Q Bᶜ
+
+/-- The dual of a quantifier is the complement of its inner negation, `Q.dual B = ¬ Q Bᶜ`. -/
+def dual (Q : Quantifier α) : Quantifier α := Q.innerNegᶜ
+
+@[simp] theorem innerNeg_apply (Q : Quantifier α) (B : Set α) : Q.innerNeg B = Q Bᶜ := rfl
+
+@[simp] theorem dual_apply (Q : Quantifier α) (B : Set α) : Q.dual B = ¬ Q Bᶜ := rfl
+
+@[simp] theorem innerNeg_innerNeg (Q : Quantifier α) : Q.innerNeg.innerNeg = Q := by
+  funext B
+  simp
+
+@[simp] theorem dual_dual (Q : Quantifier α) : Q.dual.dual = Q := by
+  funext B
+  simp
+
+theorem innerNeg_compl (Q : Quantifier α) : Qᶜ.innerNeg = Q.innerNegᶜ := rfl
+
+theorem dual_eq_innerNeg_compl (Q : Quantifier α) : Q.dual = Qᶜ.innerNeg := rfl
+
+theorem monotone_dual {Q : Quantifier α} (hQ : Monotone Q) : Monotone Q.dual :=
+  fun _ _ h hB hB' ↦ hB (hQ (Set.compl_subset_compl.mpr h) hB')
+
+theorem Det.innerNeg_apply' (d : Det α) (A : Set α) : d.innerNeg A = (d A).innerNeg := rfl
+
+theorem Det.dual_apply' (d : Det α) (A : Set α) : d.dual A = (d A).dual := rfl
+
 /-- The Montague lift of an entity is the principal ultrafilter it generates, the quantifier of
 the sets it belongs to, as [montague-1973] translates a proper name; it is Partee's LIFT and the
 continuation `pure`. -/
 def individual (a : α) : Quantifier α := fun B ↦ a ∈ B
+
+/-- An individual is its own dual. -/
+@[simp] theorem dual_individual (a : α) : (individual a).dual = individual a := by
+  funext B
+  simp [individual]
 
 theorem individual_injective : Function.Injective (individual (α := α)) :=
   fun a b h ↦ (show b = a from (congrFun h {a}).mp rfl).symm

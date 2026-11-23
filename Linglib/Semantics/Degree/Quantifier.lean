@@ -89,6 +89,50 @@ theorem scopeDegrees_no (R : Set α) (P : α → Set D) :
     scopeDegrees (no R) P = (scopeDegrees (Det.some R) P)ᶜ :=
   Set.ext fun _ ↦ no_iff_not_some
 
+theorem scopeDegrees_preimage {D' : Type*} (f : D' → D) (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Q (fun x ↦ f ⁻¹' P x) = f ⁻¹' scopeDegrees Q P := rfl
+
+/-! In its quantifier, `scopeDegrees` is a preimage, so it commutes with the Boolean operations:
+outer negation complements the degrees, and inner negation complements each entity's degree
+property. -/
+
+theorem scopeDegrees_compl (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Qᶜ P = (scopeDegrees Q P)ᶜ := rfl
+
+theorem scopeDegrees_inf (Q Q' : Quantifier α) (P : α → Set D) :
+    scopeDegrees (Q ⊓ Q') P = scopeDegrees Q P ∩ scopeDegrees Q' P := rfl
+
+theorem scopeDegrees_sup (Q Q' : Quantifier α) (P : α → Set D) :
+    scopeDegrees (Q ⊔ Q') P = scopeDegrees Q P ∪ scopeDegrees Q' P := rfl
+
+/-- `scopeDegrees` in its quantifier, as a homomorphism of complete lattices. -/
+def scopeDegreesHom (P : α → Set D) : CompleteLatticeHom (Quantifier α) (Set D) where
+  toFun Q := scopeDegrees Q P
+  map_sInf' s := by
+    ext d
+    simp [mem_scopeDegrees, sInf_apply]
+  map_sSup' s := by
+    ext d
+    simp [mem_scopeDegrees, sSup_apply]
+
+@[simp] theorem scopeDegreesHom_apply (P : α → Set D) (Q : Quantifier α) :
+    scopeDegreesHom P Q = scopeDegrees Q P := rfl
+
+theorem scopeDegrees_mono (P : α → Set D) : Monotone (scopeDegrees · P) :=
+  OrderHomClass.mono (scopeDegreesHom P)
+
+theorem scopeDegrees_innerNeg (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Q.innerNeg P = scopeDegrees Q fun x ↦ (P x)ᶜ := by
+  ext e
+  simp [mem_scopeDegrees, Set.compl_ofPred]
+
+/-- A degree negation below a quantifier is a degree negation above its dual: complementing each
+entity's degree property complements the degrees of the dual quantifier. -/
+theorem scopeDegrees_dual (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Q.dual P = (scopeDegrees Q fun x ↦ (P x)ᶜ)ᶜ := by
+  rw [← scopeDegrees_innerNeg]
+  rfl
+
 end Scope
 
 section Preorder
@@ -248,6 +292,25 @@ theorem isGLB_compl_scopeDegrees_iff [DenselyOrdered D] {P : α → Set D} (hQ :
   ⟨fun hg ↦ hg.unique (isGLB_compl_scopeDegrees hQ hP hm') ▸ hm', isGLB_compl_scopeDegrees hQ hP⟩
 
 end LinearOrder
+
+section CompleteLinearOrder
+variable [CompleteLinearOrder D] {μ : α → D}
+
+/-- The supremum of the degrees every member of `R` reaches is the infimum of their measures. -/
+theorem sSup_scopeDegrees_every (R : Set α) (μ : α → D) :
+    sSup (scopeDegrees (every R) (Iic ∘ μ)) = sInf (μ '' R) := by
+  rw [scopeDegrees_every_Iic]
+  exact (isGLB_sInf _).isLUB.sSup_eq
+
+/-- The supremum of the degrees some member of `R` reaches is the supremum of their measures. -/
+theorem sSup_scopeDegrees_some (R : Set α) (μ : α → D) :
+    sSup (scopeDegrees (Det.some R) (Iic ∘ μ)) = sSup (μ '' R) := by
+  refine le_antisymm (sSup_le fun d ⟨x, hx, hd⟩ ↦ le_sSup_of_le ⟨x, hx, rfl⟩ hd)
+    (sSup_le_sSup ?_)
+  rintro _ ⟨x, hx, rfl⟩
+  exact ⟨x, hx, le_rfl⟩
+
+end CompleteLinearOrder
 
 end Quantifier
 

@@ -228,11 +228,18 @@ abbrev pristine := pristineness.pos
 
 abbrev filthy := pristineness.neg
 
-def long : Adjective :=
-  { form := "long", dimension := some .length, antonymForm := some "short" }
+/-- *long* and the *short* that is its antonym, as against the *short* of `height`. -/
+def length : AntonymPair :=
+  { dimension := .length, posForm := "long", negForm := "short" }
 
-def wide : Adjective :=
-  { form := "wide", dimension := some .width, antonymForm := some "narrow" }
+abbrev long := length.pos
+
+def width : AntonymPair :=
+  { dimension := .width, posForm := "wide", negForm := "narrow" }
+
+abbrev wide := width.pos
+
+abbrev narrow := width.neg
 
 def warmth : AntonymPair :=
   { dimension := .temperature, posForm := "warm", negForm := "cool" }

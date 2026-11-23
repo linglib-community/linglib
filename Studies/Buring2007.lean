@@ -1,43 +1,62 @@
 module
 
-public import Mathlib.Order.UpperLower.Basic
-public import Linglib.Logic.Modal.Basic
-public import Linglib.Semantics.Negation.Polarity
+public import Linglib.Data.Examples.Buring2007
+public import Linglib.Fragments.English.Adjectives
+public import Linglib.Semantics.Degree.Little
+public import Linglib.Semantics.Degree.Extent
 
 /-!
 # Büring 2007: cross-polar nomalies
 
-Comparatives pairing a positive adjective with a negative one are anomalous — *John is shorter than
-Mary is tall* — and yet *the ladder was shorter than the house was high* is perfectly acceptable.
-This file formalizes the account of the contrast. A negative adjective is the degree negation of
-its positive counterpart, and a comparative whose degree phrase carries that negation inverts both
-intervals it compares, so *shorter than … high* can be read as *less long than … high*. Read that
-way it compares two positive extents; read literally it compares a positive extent with a negative
-one, which no scale makes true, while the reinterpretation is a subcomparative.
+A degree interval is a set of degrees, and the positive extent of an object measuring `a` is
+`Set.Iic a`. The degree modifiers MUCH and LITTLE are the two polarities acting on intervals, MUCH
+as the identity and LITTLE as complement, so that a negative adjective such as *short*, LITTLE
+*long*, has the extent `Polarity.negative • Set.Iic a`, the degrees above `a`. The comparative
+morpheme takes the modifier `m` in its degree phrase and two intervals, and
+`comparative m i j` says that `m • i ⊂ m • j` for the than-clause interval `i` and the matrix
+interval `j`.
 
-The reinterpretation needs the negation and the comparative morpheme in one clause, and it is
-preempted where the than-clause adjective is the matrix one modulo the negation, since comparative
-deletion then supplies a synonymous competitor. Those two conditions cut the cross-polar space into
-the paper's three cases, and they block for different reasons: the anomaly has the reinterpretation
-available and loses to its competitor, the inverse nomaly has no competitor and still fails.
+Two extents stand in a comparative only if they have the same polarity
+(`polarity_eq_of_comparative`, from `Polarity.eq_of_smul_Iic_subset`), which is the cross-polar
+anomaly of *John is shorter than Mary is
+tall*. Since the polarities act, a modifier may be moved between the degree phrase and both
+adjectives, `comparative m (q • i) (q • j) ↔ comparative (m * q) i j`.
 
-A modal in the than-clause separates this account from the variant that puts the degree negation
-with the than-clause adjective. The negation outside the modal and the negation inside it turn the
-same comparison into the box and the diamond of one proposition, so the first is the stronger
-reading under a universal modal and the weaker one under an existential; they coincide only when
-the accessible worlds agree on the standard's degree.
+A comparative with *-er* on a negative adjective has two logical forms, `Comparative.literal` with
+MUCH in the degree phrase and LITTLE on the adjective, and `Comparative.reanalysis` with LITTLE in
+the degree phrase, the form of a *less*-comparative. A logical form whose than-clause adjective is
+its matrix adjective is pronounced with comparative deletion, so a comparative that pronounces
+both adjectives is acceptable when one of its logical forms compares extents of one polarity and
+does not license deletion. Among comparatives of opposite polarities those are the ones whose
+matrix adjective is the negative one and is not the antonym of the other
+(`Comparative.acceptable_iff_of_polarity_ne`).
 
-## Main definitions
+With a quantifier `Q` over worlds in the than-clause, the two placements of LITTLE are the two
+scopes of the degree negation of [heim-2006]: in the matrix degree phrase it is above `Q`,
+`Quantifier.LittleAbove` (`comparative_negative_scopeDegrees`), and on both adjectives it is below
+`Q`, `Quantifier.LittleBelow` (`comparative_positive_scopeDegrees`). The two differ under a
+necessity modal (`exists_littleBelow_every_not_littleAbove`), where the first puts the subject
+below the infimum of the standard's degrees and the second below their supremum. If the negation
+of a negative adjective stays on the adjective, as [heim-2006] concludes for lexical antonyms, a
+positive than-clause under a monotone quantifier is never properly included in the matrix extent
+(`not_comparative_positive_scopeDegrees`), so the reading above the quantifier needs the negation
+in the degree phrase.
 
-* `compareWith` — the comparative morpheme, relative to the modifier in its degree phrase
-* `Comparative`, `Comparative.Acceptable` — a cross-polar comparative and the conditions on it
-* `negationOutside`, `negationInside` — the two analyses of a modal than-clause
+Between positive extents the comparative with MUCH is the max-quantified comparative
+`MaxComparative .gt` (`maxComparative_gt_iff_ssubset`).
+
+## Implementation notes
+
+An adjective is a pole of an `AntonymPair` of the English fragment, the pair standing for the
+positive adjective the paper decomposes both poles into; *short* is a pole of two pairs, with
+*tall* and with *long*. Degree intervals are arbitrary sets, where the paper restricts them to
+nonempty convex ones. The anomaly of a positive matrix adjective with a negative than-clause
+needs a scale with no greatest degree, since the degrees above the greatest one are none.
 
 ## References
 
 * [buring-2007]
 * [heim-2006]
-* [kennedy-1999]
 * [kennedy-2001]
 * [rullmann-1995]
 * [schwarzschild-wilkinson-2002]
@@ -48,241 +67,226 @@ the accessible worlds agree on the standard's degree.
 
 namespace Buring2007
 
-open ModalLogic
-open SetRel
+open Polarity
 
-/-! ### The comparative and the degree negation -/
+/-! ### The comparative and the degree modifiers -/
 
 section Comparative
 
-variable {D : Type*} [LinearOrder D] {Entity : Type*}
+variable {D : Type*} {i j : Set D}
 
-/-- The comparative morpheme `compareWith m i j` holds when the than-clause interval `i` is properly
-included in the matrix interval `j`, both read through the degree-phrase modifier `m`, the identity
-for MUCH and complementation for LITTLE. -/
-def compareWith (m : Set D → Set D) (thanClause matrix : Set D) : Prop :=
-  m thanClause ⊂ m matrix
+/-- (21c): the comparative morpheme with the modifier `m` in its degree phrase, MUCH or LITTLE,
+holds of the than-clause interval and the matrix interval when the first, modified, is properly
+included in the second, modified. -/
+def comparative (m : Polarity) (thanClause matrix : Set D) : Prop :=
+  m • thanClause ⊂ m • matrix
 
-omit [LinearOrder D] in
-/-- LITTLE turns a more-comparative into a less-comparative by inverting both intervals compared:
-*less* is *LITTLE -er* ([heim-2006]). -/
-theorem compareWith_little (i j : Set D) : compareWith compl i j ↔ j ⊂ i :=
+-- LITTLE inverts both intervals, which makes a *less*-comparative of a *more*-comparative.
+theorem comparative_negative : comparative .negative i j ↔ j ⊂ i :=
   compl_lt_compl_iff_lt
 
-/-- A positive extent is never properly included in a negative one, so the literal reading of *Mary
-is taller than John is short* is true on no scale ([kennedy-2001]). -/
-theorem not_crossPolar (a b : D) : ¬ compareWith id (Set.Iic a) (Set.Ioi b) :=
-  fun h ↦ (h.subset (min_le_left a b)).not_ge (min_le_right a b)
+theorem comparative_smul (m q : Polarity) :
+    comparative m (q • i) (q • j) ↔ comparative (m * q) i j := by
+  simp only [comparative, mul_smul]
 
-/-- The other order fails too whenever the scale has no greatest degree: *John is shorter than Mary
-is tall* read literally would need every degree above John's height to lie below Mary's. -/
-theorem not_crossPolar' [NoMaxOrder D] (a b : D) : ¬ compareWith id (Set.Ioi a) (Set.Iic b) :=
-  fun h ↦ not_bddAbove_Ioi a ⟨b, h.subset⟩
+variable [LinearOrder D] {a b : D}
 
-/-- Under the reinterpretation, with the negation in the degree phrase, both intervals compared are
-positive extents, and the comparison is the subcomparative of [schwarzschild-wilkinson-2002], the
-ladder's length against the house's height. -/
-theorem metamorphosis_iff_subcomparative (μ₁ μ₂ : Entity → D) (a b : Entity) :
-    compareWith compl (Set.Iic (μ₁ a)) (Set.Iic (μ₂ b)) ↔ μ₂ b < μ₁ a :=
-  (compareWith_little _ _).trans Set.Iic_ssubset_Iic
+theorem comparative_positive_Iic : comparative .positive (Set.Iic b) (Set.Iic a) ↔ b < a :=
+  Set.Iic_ssubset_Iic
+
+theorem comparative_negative_Iic : comparative .negative (Set.Iic b) (Set.Iic a) ↔ a < b :=
+  comparative_negative.trans Set.Iic_ssubset_Iic
+
+/-- On a scale with no greatest degree, two extents that stand in a comparative have the same
+polarity. -/
+theorem polarity_eq_of_comparative [NoMaxOrder D] {m q₁ q₂ : Polarity}
+    (h : comparative m (q₂ • Set.Iic b) (q₁ • Set.Iic a)) : q₁ = q₂ := by
+  rcases m with _ | _
+  · exact (eq_of_smul_Iic_subset h.subset).symm
+  · exact eq_of_smul_Iic_subset (comparative_negative.mp h).subset
 
 end Comparative
 
-/-! ### The three cross-polar configurations -/
+/-! ### Logical forms and comparative deletion -/
 
-/-- The paper's examples measure spatial dimensions, the one scale carrying measurements in more
-than one dimension, which is why cross-polar nomalies are confined to it. -/
-inductive Dimension where
-  | length | height | width | depth
-  deriving DecidableEq, Repr
-
-/-- An adjective pairs a dimension with a polarity, measuring it positively (*long*) or negatively
-(*short*). -/
-structure Adjective where
-  dimension : Dimension
+/-- An adjective is a pole of an antonym pair, the positive adjective of the pair or LITTLE with
+it. -/
+structure Pole where
+  /-- The antonym pair. -/
+  pair : AntonymPair
+  /-- Positive for the bare adjective, negative for LITTLE with it. -/
   polarity : Polarity
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- A comparative pairing a matrix adjective with a than-clause adjective. -/
+/-- (15)–(18): a logical form of a comparative has a modifier in the matrix degree phrase and an
+adjective in each clause. -/
+structure LF where
+  /-- The modifier in the degree phrase, MUCH or LITTLE. -/
+  deg : Polarity
+  /-- The matrix adjective. -/
+  matrix : Pole
+  /-- The than-clause adjective. -/
+  thanClause : Pole
+
+namespace LF
+
+variable {Entity D : Type*} [LinearOrder D] {lf : LF} {meas : AntonymPair → Entity → D}
+  {x y : Entity}
+
+/-- A logical form holds of a subject `x` and a standard `y`, on measure functions for the
+positive adjectives, when the comparative holds of the extent of `y` and the extent of `x`. -/
+def Holds (lf : LF) (meas : AntonymPair → Entity → D) (x y : Entity) : Prop :=
+  comparative lf.deg (lf.thanClause.polarity • Set.Iic (meas lf.thanClause.pair y))
+    (lf.matrix.polarity • Set.Iic (meas lf.matrix.pair x))
+
+/-- A logical form is of one sort when its two adjectives have the same polarity. -/
+def SameSort (lf : LF) : Prop := lf.matrix.polarity = lf.thanClause.polarity
+
+/-- A logical form licenses comparative deletion when its than-clause adjective is its matrix
+adjective. -/
+def Deletable (lf : LF) : Prop := lf.thanClause = lf.matrix
+
+instance : DecidablePred SameSort := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred Deletable := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+
+theorem Holds.sameSort [NoMaxOrder D] (h : lf.Holds meas x y) : lf.SameSort :=
+  polarity_eq_of_comparative h
+
+theorem sameSort_iff_exists_holds :
+    lf.SameSort ↔ ∃ (meas : AntonymPair → Bool → ℕ) (x y : Bool), lf.Holds meas x y := by
+  refine ⟨fun h ↦ ?_, fun ⟨_, _, _, h⟩ ↦ h.sameSort⟩
+  obtain ⟨m, ⟨p₁, q⟩, ⟨p₂, q₂⟩⟩ := lf
+  obtain rfl : q = q₂ := h
+  rcases hmq : m * q with _ | _
+  · refine ⟨fun _ e ↦ if e then 1 else 0, true, false, (comparative_smul m q).mpr ?_⟩
+    rw [hmq]
+    exact comparative_positive_Iic.mpr (by simp)
+  · refine ⟨fun _ e ↦ if e then 1 else 0, false, true, (comparative_smul m q).mpr ?_⟩
+    rw [hmq]
+    exact comparative_negative_Iic.mpr (by simp)
+
+end LF
+
+/-- A comparative with *-er* on its matrix adjective and an adjective pronounced in its
+than-clause. -/
 structure Comparative where
-  matrix : Adjective
-  thanClause : Adjective
-  deriving DecidableEq, Repr
+  /-- The matrix adjective. -/
+  matrix : Pole
+  /-- The than-clause adjective. -/
+  thanClause : Pole
 
 namespace Comparative
 
 variable (c : Comparative)
 
-/-- A comparative is cross-polar when its two adjectives are of opposite polarity. -/
-def CrossPolar : Prop := c.matrix.polarity ≠ c.thanClause.polarity
+/-- (17): the logical form with MUCH in the degree phrase and the adjectives as pronounced. -/
+def literal : LF := ⟨.positive, c.matrix, c.thanClause⟩
 
-/-- The reinterpretation is available only where the degree negation and the comparative morpheme
-share a clause, that is where the negative adjective is the matrix one: a than-clause negation
-cannot be recombined with the matrix comparative. -/
-def Metamorphosis : Prop := c.matrix.polarity = .negative
+/-- (18): the logical form with the matrix adjective's LITTLE, if it has one, in the degree
+phrase. -/
+def reanalysis : LF := ⟨c.matrix.polarity, ⟨c.matrix.pair, .positive⟩, c.thanClause⟩
 
-/-- Comparative deletion is licensed where the than-clause adjective phrase is the matrix one
-modulo the degree morphology, that is where the two adjectives measure the same dimension. -/
-def Deletion : Prop := c.matrix.dimension = c.thanClause.dimension
+/-- A comparative is acceptable when one of its logical forms is of one sort and does not license
+comparative deletion, which would leave the than-clause adjective unpronounced. -/
+def Acceptable : Prop := ∃ lf ∈ [c.literal, c.reanalysis], lf.SameSort ∧ ¬ lf.Deletable
 
-/-- A cross-polar comparative survives when the reinterpretation is available and no comparative
-deletion competes with it ([takahashi-fox-2005]'s MaxElide prefers the larger ellipsis). -/
-def Acceptable : Prop := c.Metamorphosis ∧ ¬ c.Deletion
+instance : Decidable c.Acceptable := inferInstanceAs (Decidable (∃ lf ∈ [_, _], _))
 
-instance : Decidable c.CrossPolar := inferInstanceAs (Decidable ¬ _)
-instance : Decidable c.Metamorphosis := inferInstanceAs (Decidable (_ = _))
-instance : Decidable c.Deletion := inferInstanceAs (Decidable (_ = _))
-instance : Decidable c.Acceptable := inferInstanceAs (Decidable (_ ∧ _))
+variable {c}
 
-/-- The reading a cross-polar comparative gets under the reinterpretation, on a model interpreting
-each dimension as a measure function. -/
-def reading {Entity D : Type*} [LinearOrder D] (m : Dimension → Entity → D) (c : Comparative)
-    (subject standard : Entity) : Prop :=
-  m c.matrix.dimension subject < m c.thanClause.dimension standard
+-- (6b): the reanalysis of *shorter than … high* is the subcomparative *less long than … high*.
+theorem reanalysis_holds_iff {Entity D : Type*} [LinearOrder D] {meas : AntonymPair → Entity → D}
+    {x y : Entity} (hm : c.matrix.polarity = .negative) (ht : c.thanClause.polarity = .positive) :
+    c.reanalysis.Holds meas x y ↔ meas c.matrix.pair x < meas c.thanClause.pair y := by
+  simp only [LF.Holds, reanalysis, hm, ht, positive_smul, comparative_negative_Iic]
+
+/-- A comparative whose adjectives have opposite polarities is acceptable exactly when the matrix
+adjective is the negative one and the two are not antonyms. -/
+theorem acceptable_iff_of_polarity_ne (h : c.matrix.polarity ≠ c.thanClause.polarity) :
+    c.Acceptable ↔ c.matrix.polarity = .negative ∧ c.matrix.pair ≠ c.thanClause.pair := by
+  obtain ⟨⟨p₁, q₁⟩, ⟨p₂, q₂⟩⟩ := c
+  rcases q₁ with _ | _ <;> rcases q₂ with _ | _ <;>
+    simp_all [Acceptable, literal, reanalysis, LF.SameSort, LF.Deletable, eq_comm]
 
 end Comparative
 
-/-- In *John is shorter than Mary is tall* the negative adjective is the matrix one and both measure
-height. -/
-def anomaly : Comparative := ⟨⟨.height, .negative⟩, ⟨.height, .positive⟩⟩
+/-! ### The paper's comparatives -/
 
-/-- In *Mary is taller than John is short* the negation sits in the than-clause. -/
-def reverseAnomaly : Comparative := ⟨⟨.height, .positive⟩, ⟨.height, .negative⟩⟩
+section Rows
 
-/-- In *The ladder was shorter than the house was high* the negative adjective is the matrix one and
-the two dimensions differ. -/
-def nomaly : Comparative := ⟨⟨.length, .negative⟩, ⟨.height, .positive⟩⟩
+open English.Adjectives Examples
 
-/-- In *The house is higher than the ladder is short* the dimensions differ, but the negation is in
-the than-clause. -/
-def inverseNomaly : Comparative := ⟨⟨.height, .positive⟩, ⟨.length, .negative⟩⟩
+/-- A comparative with the example it is the form of. -/
+structure Compared where
+  /-- The comparative. -/
+  form : Comparative
+  /-- The example. -/
+  row : Datum
 
-theorem configurations_crossPolar :
-    anomaly.CrossPolar ∧ reverseAnomaly.CrossPolar ∧ nomaly.CrossPolar ∧
-      inverseNomaly.CrossPolar := by decide
+/-- The examples that pronounce an adjective in each clause. *short* is the antonym of *tall* of
+a person and of *long* of a ladder, a hose or a boat. -/
+def comparisons : List Compared :=
+  [⟨⟨⟨height, .negative⟩, ⟨height, .positive⟩⟩, ex_1a⟩,
+   ⟨⟨⟨height, .positive⟩, ⟨height, .negative⟩⟩, ex_1b⟩,
+   ⟨⟨⟨length, .negative⟩, ⟨elevation, .positive⟩⟩, ex_2a⟩,
+   ⟨⟨⟨length, .negative⟩, ⟨width, .positive⟩⟩, ex_2b⟩,
+   ⟨⟨⟨length, .negative⟩, ⟨width, .positive⟩⟩, ex_2c⟩,
+   ⟨⟨⟨width, .negative⟩, ⟨length, .positive⟩⟩, ex_3⟩,
+   ⟨⟨⟨length, .negative⟩, ⟨length, .positive⟩⟩, ex_4⟩,
+   ⟨⟨⟨elevation, .positive⟩, ⟨length, .negative⟩⟩, ex_5⟩]
 
-/-- The nomaly is reinterpretable and has no deletion competitor. -/
-theorem nomaly_acceptable : nomaly.Acceptable := by decide
+/-- The comparatives the paper accepts are those with a logical form of one sort that does not
+license comparative deletion. -/
+theorem acceptable_iff_judgment :
+    ∀ c ∈ comparisons, c.form.Acceptable ↔ c.row.judgment = .acceptable := by
+  decide
 
-theorem others_unacceptable :
-    ¬ anomaly.Acceptable ∧ ¬ reverseAnomaly.Acceptable ∧ ¬ inverseNomaly.Acceptable := by decide
+end Rows
 
-/-- Neither condition derives the pattern alone: the anomaly is reinterpretable and blocked only by
-its competitor, the inverse nomaly has no competitor and is blocked only by the position of the
-negation. -/
-theorem blocked_for_different_reasons :
-    anomaly.Metamorphosis ∧ anomaly.Deletion ∧
-      ¬ inverseNomaly.Metamorphosis ∧ ¬ inverseNomaly.Deletion := by decide
+/-! ### A quantifier in the than-clause -/
 
-/-- Comparative deletion competes only where it is synonymous: on one dimension the reinterpreted
-reading is exactly the plain comparative the deletion form expresses, which is why the anomaly
-loses to it while the nomaly — whose deletion form makes a different claim — does not. -/
-theorem reading_of_deletion {Entity D : Type*} [LinearOrder D] (m : Dimension → Entity → D)
-    (c : Comparative) (h : c.Deletion) (subject standard : Entity) :
-    c.reading m subject standard ↔
-      m c.matrix.dimension subject < m c.matrix.dimension standard := by
-  have h' : c.matrix.dimension = c.thanClause.dimension := h
-  simp only [Comparative.reading, ← h']
+section Scope
 
-theorem reading_not_synonymous :
-    ∃ (m : Dimension → Bool → ℕ) (subject standard : Bool),
-      nomaly.reading m subject standard ∧
-        ¬ m .length subject < m .length standard := by
-  refine ⟨fun d b => match d with | .length => if b then 12 else 10 | _ => 15,
-    true, false, ?_, ?_⟩ <;>
-    simp [Comparative.reading, nomaly]
+open Quantifier Quantifier.Det
 
-/-! ### A modal in the than-clause -/
+variable {W D : Type*} [LinearOrder D] {Q : Quantifier W} {μ : W → D} {c : D} {w : W}
 
-section Modal
+/-- (30): with LITTLE in the matrix degree phrase, the comparative is the *less*-comparative with
+the degree negation above the than-clause quantifier. -/
+theorem comparative_negative_scopeDegrees :
+    comparative .negative (scopeDegrees Q (Set.Iic ∘ μ)) (Set.Iic c) ↔ LittleAbove Q μ c := .rfl
 
-variable {W D : Type*} [LinearOrder D] {Q : (W → Prop) → Prop} {μ : W → D} {c : D}
-  {R : SetRel W W} {w : W}
+/-- (32): with LITTLE on both adjectives, the comparative is the *less*-comparative with the
+degree negation below the than-clause quantifier. -/
+theorem comparative_positive_scopeDegrees :
+    comparative .positive (scopeDegrees Q fun v ↦ Polarity.negative • Set.Iic (μ v))
+      (Polarity.negative • Set.Iic c) ↔ LittleBelow Q μ c := .rfl
 
-/-- With the degree negation outside the modal, the than-clause denotes the degrees the standard
-reaches under the modal, and the less-comparative asserts that the subject's positive extent is
-included in it. -/
-def negationOutside (Q : (W → Prop) → Prop) (μ : W → D) (c : D) : Prop :=
-  Set.Iic c ⊆ {d | Q fun v => d ≤ μ v}
+-- With the negation left on the matrix adjective and none in the than-clause, the comparative
+-- relates a positive extent to a negative one under any monotone quantifier, and never holds.
+theorem not_comparative_positive_scopeDegrees (hQ : Monotone Q)
+    (hne : (scopeDegrees Q (Set.Iic ∘ μ)).Nonempty) :
+    ¬ comparative .positive (scopeDegrees Q (Set.Iic ∘ μ)) (Polarity.negative • Set.Iic c) :=
+  fun h ↦ Polarity.noConfusion <|
+    IsExtent.polarity_eq (p := .positive) (isLowerSet_scopeDegrees hQ fun _ ↦ IsLowerSet.Iic _)
+      (isExtent_smul_Iic .negative c) hne (fun hu ↦ (hu.ge trivial : c ∈ (Set.Iic c)ᶜ) le_rfl)
+      h.subset
 
-/-- With the degree negation inside the modal, the than-clause denotes the degrees exceeding the
-standard under the modal, and the more-comparative asserts that they are among the degrees exceeding
-the subject. -/
-def negationInside (Q : (W → Prop) → Prop) (μ : W → D) (c : D) : Prop :=
-  {d | Q fun v => μ v < d} ⊆ Set.Ioi c
+-- Without a quantifier the two analyses are one: LITTLE moves between the degree phrase and both
+-- adjectives.
+theorem littleBelow_individual_iff_littleAbove :
+    LittleBelow (individual w) μ c ↔ LittleAbove (individual w) μ c :=
+  comparative_smul .positive .negative
 
-theorem negationOutside_iff (hQ : Monotone Q) :
-    negationOutside Q μ c ↔ Q fun v => c ≤ μ v := by
-  refine ⟨fun h => h le_rfl, fun h d hd => hQ (fun v hv => hd.trans hv) h⟩
+-- A 35-foot drawbridge where moats of 30 and of 40 feet are permitted: shorter than a permitted
+-- moat is wide, not shorter than every one. (29) has the second reading only.
+theorem exists_littleBelow_every_not_littleAbove :
+    ∃ (μ : Bool → ℕ) (c : ℕ), LittleBelow (every .univ) μ c ∧ ¬ LittleAbove (every .univ) μ c := by
+  refine ⟨fun b ↦ if b then 40 else 30, 35, littleBelow_every.mpr ⟨true, trivial, by decide⟩, ?_⟩
+  rw [littleAbove_every]
+  rintro ⟨e, hce, he⟩
+  exact absurd (hce.trans_le (he ⟨false, trivial, rfl⟩)) (by decide)
 
-theorem negationInside_iff (hQ : Monotone Q) :
-    negationInside Q μ c ↔ ¬ Q fun v => μ v < c := by
-  refine ⟨fun h hc => absurd (h hc) (lt_irrefl c), fun h d hd => ?_⟩
-  by_contra hdc
-  exact h (hQ (fun v hv => hv.trans_le (not_lt.mp hdc)) hd)
-
-theorem monotone_box (R : SetRel W W) (w : W) : Monotone fun p : W → Prop => □[R] p w :=
-  fun _ _ h hp v hv => h v (hp v hv)
-
-theorem monotone_diamond (R : SetRel W W) (w : W) :
-    Monotone fun p : W → Prop => ◇[R] p w :=
-  fun _ _ h hp => hp.imp fun _ hv => ⟨hv.1, h _ hv.2⟩
-
-/-- Under a universal than-clause modal the outside reading is that the standard reaches the
-subject's degree in every accessible world — the minimum required width of the moat exceeds the
-drawbridge's length. -/
-theorem negationOutside_box :
-    negationOutside (fun p => □[R] p w) μ c ↔ □[R] (fun v => c ≤ μ v) w :=
-  negationOutside_iff (monotone_box R w)
-
-/-- The inside reading of the same sentence is that the standard reaches it in some accessible
-world — the maximum permitted width does. -/
-theorem negationInside_box :
-    negationInside (fun p => □[R] p w) μ c ↔ ◇[R] (fun v => c ≤ μ v) w := by
-  rw [negationInside_iff (monotone_box R w), not_box]
-  simp [not_lt]
-
-theorem negationOutside_diamond :
-    negationOutside (fun p => ◇[R] p w) μ c ↔ ◇[R] (fun v => c ≤ μ v) w :=
-  negationOutside_iff (monotone_diamond R w)
-
-theorem negationInside_diamond :
-    negationInside (fun p => ◇[R] p w) μ c ↔ □[R] (fun v => c ≤ μ v) w := by
-  rw [negationInside_iff (monotone_diamond R w), not_diamond]
-  simp [not_lt]
-
-/-- Under a universal modal the outside reading entails the inside one. -/
-theorem outside_entails_inside_box [IsSerial R] :
-    negationOutside (fun p => □[R] p w) μ c → negationInside (fun p => □[R] p w) μ c := by
-  rw [negationOutside_box, negationInside_box]
-  exact box_D
-
-theorem inside_entails_outside_diamond [IsSerial R] :
-    negationInside (fun p => ◇[R] p w) μ c → negationOutside (fun p => ◇[R] p w) μ c := by
-  rw [negationOutside_diamond, negationInside_diamond]
-  exact box_D
-
-/-- The entailment is strict: where a regulation permits moats of 30 and of 40 feet, a 35-foot
-drawbridge is shorter than a permitted moat is wide without being shorter than every one. -/
-theorem inside_not_entails_outside :
-    ∃ (μ : Bool → ℕ) (c : ℕ),
-      negationInside (fun p => □[.univ] p true) μ c ∧
-        ¬ negationOutside (fun p => □[.univ] p true) μ c := by
-  refine ⟨fun b => if b then 40 else 30, 35, ?_, ?_⟩
-  · rw [negationInside_box]
-    exact ⟨true, trivial, by decide⟩
-  · rw [negationOutside_box]
-    exact fun h => absurd (h false trivial) (by decide)
-
-/-- The two readings coincide when the accessible worlds agree on the standard's degree, which is
-why a than-clause without a modal cannot tell the analyses apart. -/
-theorem analyses_agree_of_uniform [IsSerial R] (h : ∀ v u, w ~[R] v → w ~[R] u → μ v = μ u) :
-    negationOutside (fun p => □[R] p w) μ c ↔ negationInside (fun p => □[R] p w) μ c := by
-  rw [negationOutside_box, negationInside_box]
-  refine ⟨box_D, fun ⟨v, hv, hcv⟩ u hu => ?_⟩
-  show c ≤ μ u
-  rwa [h u v hu hv]
-
-end Modal
+end Scope
 
 end Buring2007
