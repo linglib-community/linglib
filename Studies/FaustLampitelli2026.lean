@@ -42,7 +42,10 @@ operation applies to the output of the one before it and not to the input (`feed
 `ElementTheory.ofForm` represents with each element on its line. The onset of a unit reads an
 element there exactly when its consonant has it (`exists_reads_positions_iff`), and sharing |A|
 between the two /a/s of /m_-barak/ crosses no line, where sharing it between two vowels across a
-guttural would (`noCrossing_fuse_39b`).
+guttural would (`noCrossing_fuse_39b`). `fusion` changes no position's elements
+(`exists_reads_positions_fusion_iff`), as `ElementTheory.fuse` changes none. The two differ in
+status: a nucleus sharing the |A| of a glottal reads it as a dependent, where the lowered vowel
+is written with a head (`reads_fuse_status`).
 
 ## Implementation notes
 
@@ -857,6 +860,65 @@ theorem exists_reads_positions_iff (e : Element) (f : Form) (i : ℕ) :
   rw [exists_reads_ofForm_iff, getElem?_positions_two_mul]
   unfold HasAt
   cases f[i]? <;> simp [Has]
+
+theorem getElem?_positions_two_mul_add_one (f : Form) (i : ℕ) :
+    (positions f)[2 * i + 1]? = f[i]?.map fun u ↦ ⟨.V, (u.v.vowel?.map vowelET).getD ⊥⟩ := by
+  induction f generalizing i with
+  | nil => simp [positions]
+  | cons u r ih =>
+    cases i with
+    | zero => simp [positions]
+    | succ i => simpa [positions, Nat.mul_succ] using ih i
+
+theorem elements_vowelET_headed : ∀ (v : Vowel) (e : Element), v.element? = some e →
+    (vowelET (headed e v)).elements = (vowelET v).elements := by
+  decide
+
+theorem elements_nucleus_fusion (f : Form) (i : ℕ) :
+    (fusion f)[i]?.map (fun u ↦ ((u.v.vowel?.map vowelET).getD ⊥).elements) =
+      f[i]?.map fun u ↦ ((u.v.vowel?.map vowelET).getD ⊥).elements := by
+  simp only [fusion, List.getElem?_mapIdx]
+  rcases f[i]? with _ | ⟨c, n⟩
+  · rfl
+  · cases n with
+    | vowel v =>
+      simp only [Option.map_some]
+      rcases he : v.element? with _ | e
+      · rfl
+      · simp only; split_ifs <;> simp [Nuc.vowel?, elements_vowelET_headed v e he]
+    | _ => rfl
+
+-- fusion changes no position's elements, as sharing a token changes none
+-- (`ElementTheory.exists_reads_fuse_iff`)
+theorem exists_reads_positions_fusion_iff (f : Form) (k : ℕ) (e : Element) :
+    (∃ s, (ofForm (positions (fusion f))).Reads Autosegmental.AR.planes k (some e) s) ↔
+      ∃ s, (ofForm (positions f)).Reads Autosegmental.AR.planes k (some e) s := by
+  simp only [exists_reads_ofForm_iff]
+  obtain ⟨i, rfl | rfl⟩ : ∃ i, k = 2 * i ∨ k = 2 * i + 1 := ⟨k / 2, by omega⟩
+  · rw [getElem?_positions_two_mul, getElem?_positions_two_mul]
+    have := map_c_fusion f i
+    cases h1 : (fusion f)[i]? <;> cases h2 : f[i]? <;> simp_all
+  · rw [getElem?_positions_two_mul_add_one, getElem?_positions_two_mul_add_one]
+    have := elements_nucleus_fusion f i
+    cases h1 : (fusion f)[i]? <;> cases h2 : f[i]? <;> simp_all
+
+/-- The imperative of 'pull', /s_ħʌb/ (37b). -/
+def imperativePull : Form :=
+  (instantiate (pattern .tigrinya .imp).positions Tigrinya.Phonology.pull).getD []
+
+/-- The imperative of 'ask', /s_ʔʌl/ (7f). -/
+def imperativeAsk : Form :=
+  (instantiate (pattern .tigrinya .imp).positions Tigrinya.Phonology.ask).getD []
+
+-- (20), (21), (27): a nucleus sharing the |A| of its onset reads it as a head after a pharyngeal
+-- and as a dependent after a glottal, where the lowered vowel is written with a head after both
+theorem reads_fuse_status :
+    (fuse (positions imperativePull) .A 2 3).Reads Autosegmental.AR.planes 3 (some .A) .head ∧
+      (fuse (positions imperativeAsk) .A 2 3).Reads Autosegmental.AR.planes 3 (some .A)
+        .dependent ∧
+      ∀ f ∈ [imperativePull, imperativeAsk],
+        (positions (fusion f))[3]?.map (·.melody.status .A) = some .head := by
+  decide +kernel
 
 /-- The type C gerund of 'bless', /m_-barak/ (39b). -/
 def gerund39b : Form :=
