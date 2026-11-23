@@ -23,8 +23,11 @@ A negation below a quantifier is a negation above its dual,
 `Quantifier.littleBelow_iff_littleAbove_dual`, so the two coincide under a quantifier that is its
 own dual, `Quantifier.littleBelow_iff_littleAbove_of_dual_eq`, as an individual is. Above a
 monotone quantifier the comparative says that `Q` holds of the entities measuring at least `e`
-for some `e` above `c`, `Quantifier.littleAbove_iff`: above *every* that puts `c` below the
-infimum of the measures, and above *some* below their supremum.
+for some `e` above `c`, `Quantifier.littleAbove_iff`. On a complete scale that puts `c` below
+the supremum of the degrees `Q` reaches, `Quantifier.littleAbove_iff_lt_sSup`, which is the
+infimum of the measures for *every* and their supremum for *some*. The comparative is monotone
+in `Q`, so under a quantifier that entails its dual the negation above entails the negation
+below, `Quantifier.LittleAbove.littleBelow`.
 
 ## References
 
@@ -75,6 +78,17 @@ theorem littleBelow_iff (hQ : Monotone Q) :
     LittleBelow Q μ c ↔ ∃ e, c < e ∧ ¬ Q {x | μ x < e} := by
   rw [littleBelow_iff_littleAbove_dual, littleAbove_iff (monotone_dual hQ)]
   simp [Set.compl_ofPred]
+
+theorem LittleAbove.mono {Q' : Quantifier α} (hQ : Monotone Q) (hQ' : Monotone Q') (h : Q ≤ Q')
+    (hc : LittleAbove Q μ c) : LittleAbove Q' μ c :=
+  let ⟨e, hce, he⟩ := (littleAbove_iff hQ).mp hc
+  (littleAbove_iff hQ').mpr ⟨e, hce, h _ he⟩
+
+/-- Under a monotone quantifier that entails its dual, the comparative with the negation above
+the quantifier entails the one with the negation below it. -/
+theorem LittleAbove.littleBelow (hQ : Monotone Q) (h : Q ≤ Q.dual) (hc : LittleAbove Q μ c) :
+    LittleBelow Q μ c :=
+  littleBelow_iff_littleAbove_dual.mpr (hc.mono hQ (monotone_dual hQ) h)
 
 /-- Over finitely many entities, the comparative with the negation above a monotone quantifier
 says that the quantifier holds of the entities measuring more than the subject. -/
@@ -137,8 +151,35 @@ theorem littleBelow_some_iff_of_isGLB (h : IsGLB (μ '' A) m) :
 the negation above *some*. -/
 theorem LittleAbove.some_of_every (hA : A.Nonempty) (h : LittleAbove (every A) μ c) :
     LittleAbove (Det.some A) μ c :=
-  let ⟨_, hce, he⟩ := littleAbove_every.mp h
-  let ⟨x, hx⟩ := hA
-  littleAbove_some.mpr ⟨x, hx, hce.trans_le (he ⟨x, hx, rfl⟩)⟩
+  h.mono (monotone_every A) (monotone_some A) fun _ hB ↦ let ⟨x, hx⟩ := hA; ⟨x, hx, hB hx⟩
+
+/-! ### On a complete scale
+
+The degrees a monotone quantifier reaches have a supremum, the infimum of the measures for
+*every* and their supremum for *some*, and the comparative puts the subject below it. -/
+
+section CompleteLinearOrder
+
+variable {D : Type*} [CompleteLinearOrder D] {Q : Quantifier α} {μ : α → D} {c : D} {A : Set α}
+
+/-- On a complete scale, the comparative with the negation above a monotone quantifier puts the
+subject below the supremum of the degrees the quantifier reaches. -/
+theorem littleAbove_iff_lt_sSup (hQ : Monotone Q) :
+    LittleAbove Q μ c ↔ c < sSup (scopeDegrees Q (Iic ∘ μ)) :=
+  (littleAbove_iff hQ).trans
+    ⟨fun ⟨e, hce, he⟩ ↦ lt_sSup_iff.mpr ⟨e, he, hce⟩,
+      fun h ↦ let ⟨e, he, hce⟩ := lt_sSup_iff.mp h; ⟨e, hce, he⟩⟩
+
+theorem littleBelow_iff_lt_sSup (hQ : Monotone Q) :
+    LittleBelow Q μ c ↔ c < sSup (scopeDegrees Q.dual (Iic ∘ μ)) :=
+  littleBelow_iff_littleAbove_dual.trans (littleAbove_iff_lt_sSup (monotone_dual hQ))
+
+theorem littleAbove_every_iff_lt_sInf : LittleAbove (every A) μ c ↔ c < sInf (μ '' A) := by
+  rw [littleAbove_iff_lt_sSup (monotone_every A), sSup_scopeDegrees_every]
+
+theorem littleAbove_some_iff_lt_sSup : LittleAbove (Det.some A) μ c ↔ c < sSup (μ '' A) := by
+  rw [littleAbove_iff_lt_sSup (monotone_some A), sSup_scopeDegrees_some]
+
+end CompleteLinearOrder
 
 end Quantifier
