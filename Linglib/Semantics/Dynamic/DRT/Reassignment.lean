@@ -4,22 +4,25 @@ public import Linglib.Semantics.Dynamic.DRT.Translation
 public import Linglib.Semantics.Dynamic.DRT.Embedding
 
 /-!
-# Embeddings and assignments
+# Reassignment
+
+A DRS *reassigns* a referent when a universe declares a referent that is already accessible to
+it (`DRS.ReassignmentFreeAt`). An embedding keeps the value of such a referent, and a total
+assignment gives it a new one, so the two interpretations can differ on a DRS that reassigns.
 
 A total assignment `f'` *completes* a partial embedding `f` when it agrees with `f` on the domain
-of `f`. On a DRS in which no referent is declared twice along a nesting path, an embedding has a
-verifying extension exactly when an assignment completing it has one
-(`DRS.mem_dom_eval_assignment_iff_embedding`), so a proper such DRS is true in a model exactly
-when some assignment verifies it (`DRS.mem_dom_eval_assignment_iff_isTrue`), which is when its
-first-order translation holds (`DRS.isTrue_iff_realize_toFormula`).
-
-On a DRS that declares a referent again the two interpretations differ: the referent keeps its
-value in an embedding and takes a new one in an assignment.
+of `f`. On a DRS without reassignment, an embedding has a verifying extension exactly when an
+assignment completing it has one (`DRS.mem_dom_eval_assignment_iff_embedding`). A proper DRS
+without reassignment is therefore true in a model exactly when some assignment verifies it
+(`DRS.mem_dom_eval_assignment_iff_isTrue`), which is when its first-order translation holds
+(`DRS.isTrue_iff_realize_toFormula`).
 
 ## References
 
 * [kamp-reyle-1993]
 * [muskens-1996]
+* [krahmer-muskens-1995]
+* [van-eijck-kamp-1996]
 -/
 
 @[expose] public section
@@ -128,10 +131,10 @@ private theorem mem_dom_eval_iff_of {X U : Finset V} {cs : List (Condition L V)}
     exact ⟨_, mem_eval_assignment_toTotal hIH hdom hff' hg⟩
 
 mutual
-/-- On a condition that declares no referent twice, an embedding verifies it exactly when an
+/-- On a condition without reassignment, an embedding verifies it exactly when an
 assignment completing the embedding does. -/
 theorem Condition.mem_verifiers_assignment_iff_embedding {X : Finset V} (c : Condition L V)
-    (hrf : Condition.ReuseFreeAt X c) (hfv : c.freeVarFinset ⊆ X)
+    (hrf : Condition.ReassignmentFreeAt X c) (hfv : c.freeVarFinset ⊆ X)
     {f : V → Part M} {f' : V → M}
     (hdom : PFun.Dom f = ↑X) (hff' : ∀ x ∈ X, f' x ∈ f x) :
     f' ⊨[.assignment M] c ↔ f ⊨[.embedding M] c := by
@@ -156,7 +159,7 @@ theorem Condition.mem_verifiers_assignment_iff_embedding {X : Finset V} (c : Con
       rw [Part.mem_unique hu hum, Part.mem_unique hv hvm]
   | .neg K =>
     obtain ⟨U, cs⟩ := K
-    rw [Condition.reuseFreeAt_neg, DRS.reuseFreeAt_mk] at hrf
+    rw [Condition.reassignmentFreeAt_neg, DRS.reassignmentFreeAt_mk] at hrf
     rw [Condition.freeVarFinset_neg] at hfv
     have hfvc := DRS.freeVarFinset_subset_iff.mp hfv
     rw [Condition.verifiers_neg, Condition.verifiers_neg, Set.mem_compl_iff, Set.mem_compl_iff]
@@ -165,7 +168,8 @@ theorem Condition.mem_verifiers_assignment_iff_embedding {X : Finset V} (c : Con
   | .imp a c =>
     obtain ⟨Ua, csa⟩ := a
     obtain ⟨Uc, csc⟩ := c
-    rw [Condition.reuseFreeAt_imp, DRS.reuseFreeAt_mk, DRS.reuseFreeAt_mk] at hrf
+    rw [Condition.reassignmentFreeAt_imp, DRS.reassignmentFreeAt_mk,
+      DRS.reassignmentFreeAt_mk] at hrf
     obtain ⟨⟨hXUa, hrfa⟩, hXUc, hrfc⟩ := hrf
     rw [Condition.freeVarFinset_imp, Finset.union_subset_iff] at hfv
     obtain ⟨hfva, hfvc'⟩ := hfv
@@ -207,7 +211,8 @@ theorem Condition.mem_verifiers_assignment_iff_embedding {X : Finset V} (c : Con
   | .dis l r =>
     obtain ⟨Ul, csl⟩ := l
     obtain ⟨Ur, csr⟩ := r
-    rw [Condition.reuseFreeAt_dis, DRS.reuseFreeAt_mk, DRS.reuseFreeAt_mk] at hrf
+    rw [Condition.reassignmentFreeAt_dis, DRS.reassignmentFreeAt_mk,
+      DRS.reassignmentFreeAt_mk] at hrf
     obtain ⟨⟨hXUl, hrfl⟩, hXUr, hrfr⟩ := hrf
     rw [Condition.freeVarFinset_dis, Finset.union_subset_iff] at hfv
     have hfvcl := DRS.freeVarFinset_subset_iff.mp hfv.1
@@ -220,7 +225,7 @@ theorem Condition.mem_verifiers_assignment_iff_embedding {X : Finset V} (c : Con
         Condition.mem_verifiersAll_assignment_iff_embedding csr hrfr hfvcr hk hkk') hdom hff')
 theorem Condition.mem_verifiersAll_assignment_iff_embedding {X : Finset V}
     (cs : List (Condition L V))
-    (hrf : Condition.ReuseFreeAllAt X cs) (hfv : Condition.freeVarFinsetL cs ⊆ X)
+    (hrf : Condition.ReassignmentFreeAllAt X cs) (hfv : Condition.freeVarFinsetL cs ⊆ X)
     {f : V → Part M} {f' : V → M}
     (hdom : PFun.Dom f = ↑X) (hff' : ∀ x ∈ X, f' x ∈ f x) :
     f' ∈ Condition.verifiersAll (.assignment M) cs ↔
@@ -228,7 +233,7 @@ theorem Condition.mem_verifiersAll_assignment_iff_embedding {X : Finset V}
   match cs with
   | [] => simp
   | c :: cs =>
-    rw [Condition.reuseFreeAllAt_cons] at hrf
+    rw [Condition.reassignmentFreeAllAt_cons] at hrf
     rw [Condition.freeVarFinsetL_cons, Finset.union_subset_iff] at hfv
     rw [Condition.mem_verifiersAll_cons, Condition.mem_verifiersAll_cons]
     exact and_congr
@@ -236,29 +241,29 @@ theorem Condition.mem_verifiersAll_assignment_iff_embedding {X : Finset V}
       (Condition.mem_verifiersAll_assignment_iff_embedding cs hrf.2 hfv.2 hdom hff')
 end
 
-/-- On a DRS that declares no referent twice, an embedding has a verifying extension exactly
+/-- On a DRS without reassignment, an embedding has a verifying extension exactly
 when an assignment completing it does. -/
 theorem DRS.mem_dom_eval_assignment_iff_embedding {X : Finset V} {K : DRS L V}
-    (hrf : K.ReuseFreeAt X) (hfv : K.freeVarFinset ⊆ X)
+    (hrf : K.ReassignmentFreeAt X) (hfv : K.freeVarFinset ⊆ X)
     {f : V → Part M} {f' : V → M}
     (hdom : PFun.Dom f = ↑X) (hff' : ∀ x ∈ X, f' x ∈ f x) :
     f' ∈ (K.eval (.assignment M)).dom ↔ f ∈ (K.eval (.embedding M)).dom := by
   obtain ⟨U, cs⟩ := K
-  rw [DRS.reuseFreeAt_mk] at hrf
+  rw [DRS.reassignmentFreeAt_mk] at hrf
   have hfvc := DRS.freeVarFinset_subset_iff.mp hfv
   exact mem_dom_eval_iff_of hrf.1 (fun k k' hk hkk' =>
     Condition.mem_verifiersAll_assignment_iff_embedding cs hrf.2 hfvc hk hkk') hdom hff'
 
-/-- A proper DRS that declares no referent twice is true exactly when an assignment has an
+/-- A proper DRS without reassignment is true exactly when an assignment has an
 extension verifying it. -/
-theorem DRS.mem_dom_eval_assignment_iff_isTrue {K : DRS L V} (hrf : K.ReuseFreeAt ∅)
+theorem DRS.mem_dom_eval_assignment_iff_isTrue {K : DRS L V} (hrf : K.ReassignmentFreeAt ∅)
     (hK : K.IsProper) (f' : V → M) : f' ∈ (K.eval (.assignment M)).dom ↔ K.IsTrue M :=
   DRS.mem_dom_eval_assignment_iff_embedding hrf (hK ▸ Finset.Subset.refl _) (f := ⊥)
     (by simp) fun x hx => absurd hx (Finset.notMem_empty x)
 
-/-- The truth of a proper DRS that declares no referent twice is the truth of its first-order
+/-- The truth of a proper DRS without reassignment is the truth of its first-order
 translation (§1.5). -/
-theorem DRS.isTrue_iff_realize_toFormula {K : DRS L V} (hrf : K.ReuseFreeAt ∅)
+theorem DRS.isTrue_iff_realize_toFormula {K : DRS L V} (hrf : K.ReassignmentFreeAt ∅)
     (hK : K.IsProper) (f' : V → M) : K.IsTrue M ↔ K.toFormula.Realize f' :=
   (DRS.mem_dom_eval_assignment_iff_isTrue hrf hK f').symm.trans
     (DRS.realize_toFormula K f').symm

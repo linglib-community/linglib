@@ -15,10 +15,10 @@ when a DRS declaring it is accessible to one containing the condition. Accessibi
 of complex conditions, so it is decidable, and it is
 [preserved by renaming](##DRT.AccessibleTo.map). A DRS is
 [proper exactly when](##DRT.DRS.isProper_iff_forall_occurrence) every atomic condition finds its
-referents among the DRSs the walk has passed where it occurs, and
-[reuse-free exactly when](##DRT.DRS.reuseFreeAt_empty_iff_forall_occurrence) no DRS declares one
-of them again: the two hypotheses under which a DRS has the truth conditions of its first-order
-translation.
+referents among the DRSs the walk has passed where it occurs, and free of reassignment exactly
+when no DRS declares one of them again
+(`DRT.DRS.reassignmentFreeAt_empty_iff_forall_occurrence`): the two hypotheses under which a DRS
+has the truth conditions of its first-order translation.
 
 ## Implementation notes
 
@@ -468,38 +468,38 @@ theorem DRS.IsProper.accessibleFrom {K K' : DRS L V} (hK : K.IsProper)
 
 end Properness
 
-/-! ### Reuse-freeness and accessibility -/
+/-! ### Reassignment and accessibility -/
 
-section ReuseFree
+section ReassignmentFree
 
 variable [DecidableEq V]
 
-theorem Condition.reuseFreeAt_iff {c : Condition L V} {X : Finset V} :
-    c.ReuseFreeAt X ↔
-      ∀ K s, K :: s ∈ c.subordinates → K.ReuseFreeAt (scopeReferents s ∪ X) := by
+theorem Condition.reassignmentFreeAt_iff {c : Condition L V} {X : Finset V} :
+    c.ReassignmentFreeAt X ↔
+      ∀ K s, K :: s ∈ c.subordinates → K.ReassignmentFreeAt (scopeReferents s ∪ X) := by
   cases c <;> simp [or_imp, forall_and, Finset.union_comm]
 
 /-- At the occurrences at or below an occurrence of `K` that has passed `bs`, no DRS declares
-a referent of the DRSs passed iff `K` is reuse-free at the referents declared in `bs`. -/
+a referent of the DRSs passed iff `K` is reassignment-free at the referents declared in `bs`. -/
 theorem DRS.forall_mem_occurrences_disjoint_iff (K : DRS L V) (bs : List (DRS L V)) :
     (∀ K' bs', K' :: bs' ∈ K.occurrences bs → Disjoint (scopeReferents bs') K'.referents) ↔
-      K.ReuseFreeAt (scopeReferents bs) := by
+      K.ReassignmentFreeAt (scopeReferents bs) := by
   refine DRS.forall_mem_occurrences_iff_of_unfold
-    (P := fun bs K => K.ReuseFreeAt (scopeReferents bs))
+    (P := fun bs K => K.ReassignmentFreeAt (scopeReferents bs))
     (q := fun bs K => Disjoint (scopeReferents bs) K.referents) (fun bs K => ?_) K bs
-  rw [DRS.reuseFreeAt_iff, Finset.union_comm, ← scopeReferents_cons]
+  rw [DRS.reassignmentFreeAt_iff, Finset.union_comm, ← scopeReferents_cons]
   simp only [scopeReferents_append]
-  exact and_congr_right fun _ => forall₂_congr fun c _ => Condition.reuseFreeAt_iff
+  exact and_congr_right fun _ => forall₂_congr fun c _ => Condition.reassignmentFreeAt_iff
 
-/-- A DRS is reuse-free iff no occurrence of a DRS in it declares a referent of the DRSs
+/-- A DRS is reassignment-free iff no occurrence of a DRS in it declares a referent of the DRSs
 passed on the way there, which is when verification by partial embeddings and by total
 assignments agree. -/
-theorem DRS.reuseFreeAt_empty_iff_forall_occurrence (K : DRS L V) :
-    K.ReuseFreeAt ∅ ↔
+theorem DRS.reassignmentFreeAt_empty_iff_forall_occurrence (K : DRS L V) :
+    K.ReassignmentFreeAt ∅ ↔
       ∀ K' bs, Occurrence K (K' :: bs) → Disjoint (scopeReferents bs) K'.referents := by
   simp only [Occurrence, ← DRS.mem_occurrences_iff]
   exact (K.forall_mem_occurrences_disjoint_iff []).symm
 
-end ReuseFree
+end ReassignmentFree
 
 end DRT

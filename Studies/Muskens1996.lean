@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRT.Agreement
+public import Linglib.Semantics.Dynamic.DRT.Reassignment
 public import Linglib.Semantics.Dynamic.RegisterStructure
 public import Mathlib.Data.Fin.VecNotation
 
@@ -305,8 +305,8 @@ declared twice, standard DRT ignores the second declaration and says that every 
 while here the second `x` takes a new value and the box says that there is a mortal if there is
 a man. Verification by partial embeddings (`Interpretation.embedding`) renders standard DRT:
 declaring the referent again has no effect, and in a model with a non-mortal man the two truth
-values differ (`fn4_diverges`). The witness is proper (`fn4_isProper`), so what fails is that no
-referent is declared twice (`fn4_not_reuseFreeAt`), the hypothesis of
+values differ (`fn4_diverges`). The witness is proper (`fn4_isProper`), so what fails is the
+absence of reassignment (`fn4_not_reassignmentFreeAt`), the hypothesis of
 `DRS.mem_dom_eval_assignment_iff_isTrue`. -/
 
 section Fn4
@@ -339,7 +339,7 @@ instance : fn4Lang.Structure (Fin 2) where
 
 theorem fn4_isProper : fn4.IsProper := by decide
 
-theorem fn4_not_reuseFreeAt : ¬ DRS.ReuseFreeAt ∅ fn4 := by decide
+theorem fn4_not_reassignmentFreeAt : ¬ DRS.ReassignmentFreeAt ∅ fn4 := by decide
 
 theorem fn4_mem_dom (g : ℕ → Fin 2) : g ∈ (fn4.eval (.assignment (Fin 2))).dom := by
   refine DRS.mem_dom_eval_assignment.mpr ⟨g, fun _ _ ↦ rfl, ?_⟩

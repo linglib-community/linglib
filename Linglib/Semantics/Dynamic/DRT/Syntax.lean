@@ -19,7 +19,7 @@ and properness.
 * `DRT.DRS.merge`, `DRT.DRS.map`: the merge of two DRSs, and renaming along `f : V → W`.
 * `DRT.DRS.varFinset`, `DRT.DRS.freeVarFinset`: occurring and free referents.
 * `DRT.DRS.IsProper`: no free referent.
-* `DRT.DRS.ReuseFreeAt`: no referent declared twice along a nesting path.
+* `DRT.DRS.ReassignmentFreeAt`: no universe declares a referent accessible to it.
 
 ## Implementation notes
 
@@ -38,6 +38,8 @@ and properness.
 
 * [kamp-reyle-1993]
 * [muskens-1996]
+* [krahmer-muskens-1995]
+* [van-eijck-kamp-1996]
 -/
 
 @[expose] public section
@@ -418,100 +420,111 @@ theorem isProper_merge {K₁ K₂ : DRS L V} (h₁ : K₁.IsProper)
 
 end DRS
 
-/-! ### Reuse-freeness
+/-! ### Reassignment
 
-A DRS is reuse-free when no universe declares a referent that is already declared around it,
-the antecedent of a conditional counting as declared around its consequent. -/
+A DRS *reassigns* a referent when one of its universes declares a referent that is already
+accessible there: one declared in a DRS it is nested in, or in the antecedent of a conditional
+whose consequent it is nested in. This is the reassignment of [muskens-1996] and
+[krahmer-muskens-1995] and the destructive assignment of [van-eijck-kamp-1996], whose DRSs are
+the representations without it. The construction algorithm of [kamp-reyle-1993] introduces only
+referents that do not yet occur, so it never produces one. -/
 
 mutual
-/-- A DRS is *reuse-free* at ambient declarations `X` when its universe avoids `X` and its
-conditions are reuse-free at the grown set. -/
-def DRS.ReuseFreeAt (X : Finset V) : DRS L V → Prop
-  | ⟨U, cs⟩ => Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) cs
-/-- A condition is reuse-free at ambient declarations `X` when each sub-box is, the
+/-- A DRS is *free of reassignment* at the accessible referents `X` when its universe avoids `X`
+and its conditions are free of reassignment at `X` with the universe added. -/
+def DRS.ReassignmentFreeAt (X : Finset V) : DRS L V → Prop
+  | ⟨U, cs⟩ => Disjoint X U ∧ Condition.ReassignmentFreeAllAt (X ∪ U) cs
+/-- A condition is free of reassignment at the accessible referents `X` when each sub-DRS is, the
 consequent of a `⇒` at the declarations grown by the antecedent's universe. -/
-def Condition.ReuseFreeAt (X : Finset V) : Condition L V → Prop
+def Condition.ReassignmentFreeAt (X : Finset V) : Condition L V → Prop
   | .atom _ => True
   | .eq _ _ => True
-  | .neg K => DRS.ReuseFreeAt X K
-  | .imp a c => DRS.ReuseFreeAt X a ∧ DRS.ReuseFreeAt (X ∪ a.referents) c
-  | .dis l r => DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r
-/-- Every condition of the list is reuse-free at `X`. -/
-def Condition.ReuseFreeAllAt (X : Finset V) : List (Condition L V) → Prop
+  | .neg K => DRS.ReassignmentFreeAt X K
+  | .imp a c => DRS.ReassignmentFreeAt X a ∧ DRS.ReassignmentFreeAt (X ∪ a.referents) c
+  | .dis l r => DRS.ReassignmentFreeAt X l ∧ DRS.ReassignmentFreeAt X r
+/-- Every condition of the list is free of reassignment at `X`. -/
+def Condition.ReassignmentFreeAllAt (X : Finset V) : List (Condition L V) → Prop
   | [] => True
-  | c :: cs => Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAllAt X cs
+  | c :: cs => Condition.ReassignmentFreeAt X c ∧ Condition.ReassignmentFreeAllAt X cs
 end
 
 namespace Condition
 
-@[simp] theorem reuseFreeAt_atom (X : Finset V) (a : L.Atom V) : ReuseFreeAt X (.atom a) :=
+@[simp] theorem reassignmentFreeAt_atom (X : Finset V) (a : L.Atom V) :
+    ReassignmentFreeAt X (.atom a) :=
   trivial
 
-@[simp] theorem reuseFreeAt_eq (X : Finset V) (u v : V) :
-    ReuseFreeAt X (.eq u v : Condition L V) := trivial
+@[simp] theorem reassignmentFreeAt_eq (X : Finset V) (u v : V) :
+    ReassignmentFreeAt X (.eq u v : Condition L V) := trivial
 
-@[simp] theorem reuseFreeAt_neg (X : Finset V) (K : DRS L V) :
-    ReuseFreeAt X (.neg K) ↔ K.ReuseFreeAt X := Iff.rfl
+@[simp] theorem reassignmentFreeAt_neg (X : Finset V) (K : DRS L V) :
+    ReassignmentFreeAt X (.neg K) ↔ K.ReassignmentFreeAt X := Iff.rfl
 
-@[simp] theorem reuseFreeAt_imp (X : Finset V) (a c : DRS L V) :
-    ReuseFreeAt X (.imp a c) ↔ a.ReuseFreeAt X ∧ c.ReuseFreeAt (X ∪ a.referents) := Iff.rfl
+@[simp] theorem reassignmentFreeAt_imp (X : Finset V) (a c : DRS L V) :
+    ReassignmentFreeAt X (.imp a c) ↔
+      a.ReassignmentFreeAt X ∧ c.ReassignmentFreeAt (X ∪ a.referents) := Iff.rfl
 
-@[simp] theorem reuseFreeAt_dis (X : Finset V) (l r : DRS L V) :
-    ReuseFreeAt X (.dis l r) ↔ l.ReuseFreeAt X ∧ r.ReuseFreeAt X := Iff.rfl
+@[simp] theorem reassignmentFreeAt_dis (X : Finset V) (l r : DRS L V) :
+    ReassignmentFreeAt X (.dis l r) ↔ l.ReassignmentFreeAt X ∧ r.ReassignmentFreeAt X := Iff.rfl
 
-@[simp] theorem reuseFreeAllAt_nil (X : Finset V) :
-    ReuseFreeAllAt X ([] : List (Condition L V)) := trivial
+@[simp] theorem reassignmentFreeAllAt_nil (X : Finset V) :
+    ReassignmentFreeAllAt X ([] : List (Condition L V)) := trivial
 
-@[simp] theorem reuseFreeAllAt_cons (X : Finset V) (c : Condition L V)
+@[simp] theorem reassignmentFreeAllAt_cons (X : Finset V) (c : Condition L V)
     (cs : List (Condition L V)) :
-    ReuseFreeAllAt X (c :: cs) ↔ ReuseFreeAt X c ∧ ReuseFreeAllAt X cs := Iff.rfl
+    ReassignmentFreeAllAt X (c :: cs) ↔ ReassignmentFreeAt X c ∧ ReassignmentFreeAllAt X cs :=
+  Iff.rfl
 
 end Condition
 
-@[simp] theorem DRS.reuseFreeAt_mk (X U : Finset V) (conds : List (Condition L V)) :
-    DRS.ReuseFreeAt X (.mk U conds) ↔ Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) conds :=
+@[simp] theorem DRS.reassignmentFreeAt_mk (X U : Finset V) (conds : List (Condition L V)) :
+    DRS.ReassignmentFreeAt X (.mk U conds) ↔
+      Disjoint X U ∧ Condition.ReassignmentFreeAllAt (X ∪ U) conds :=
   Iff.rfl
 
 mutual
-/-- Reuse-freeness of a DRS is decidable. -/
+/-- Freedom from reassignment is decidable. -/
 @[instance_reducible]
-def DRS.decidableReuseFreeAt (X : Finset V) : (K : DRS L V) → Decidable (K.ReuseFreeAt X)
-  | ⟨U, cs⟩ => @instDecidableAnd _ _ inferInstance (Condition.decidableReuseFreeAllAt (X ∪ U) cs)
-/-- Reuse-freeness of a condition is decidable. -/
+def DRS.decidableReassignmentFreeAt (X : Finset V) :
+    (K : DRS L V) → Decidable (K.ReassignmentFreeAt X)
+  | ⟨U, cs⟩ =>
+      @instDecidableAnd _ _ inferInstance (Condition.decidableReassignmentFreeAllAt (X ∪ U) cs)
+/-- Freedom from reassignment is decidable for conditions. -/
 @[instance_reducible]
-def Condition.decidableReuseFreeAt (X : Finset V) :
-    (c : Condition L V) → Decidable (c.ReuseFreeAt X)
+def Condition.decidableReassignmentFreeAt (X : Finset V) :
+    (c : Condition L V) → Decidable (c.ReassignmentFreeAt X)
   | .atom _ => instDecidableTrue
   | .eq _ _ => instDecidableTrue
-  | .neg K => DRS.decidableReuseFreeAt X K
+  | .neg K => DRS.decidableReassignmentFreeAt X K
   | .imp a c =>
-      @instDecidableAnd _ _ (DRS.decidableReuseFreeAt X a)
-        (DRS.decidableReuseFreeAt (X ∪ a.referents) c)
+      @instDecidableAnd _ _ (DRS.decidableReassignmentFreeAt X a)
+        (DRS.decidableReassignmentFreeAt (X ∪ a.referents) c)
   | .dis l r =>
-      @instDecidableAnd _ _ (DRS.decidableReuseFreeAt X l) (DRS.decidableReuseFreeAt X r)
-/-- Reuse-freeness of a list of conditions is decidable. -/
+      @instDecidableAnd _ _ (DRS.decidableReassignmentFreeAt X l)
+        (DRS.decidableReassignmentFreeAt X r)
+/-- Freedom from reassignment is decidable for lists of conditions. -/
 @[instance_reducible]
-def Condition.decidableReuseFreeAllAt (X : Finset V) :
-    (cs : List (Condition L V)) → Decidable (Condition.ReuseFreeAllAt X cs)
+def Condition.decidableReassignmentFreeAllAt (X : Finset V) :
+    (cs : List (Condition L V)) → Decidable (Condition.ReassignmentFreeAllAt X cs)
   | [] => instDecidableTrue
   | c :: cs =>
-      @instDecidableAnd _ _ (Condition.decidableReuseFreeAt X c)
-        (Condition.decidableReuseFreeAllAt X cs)
+      @instDecidableAnd _ _ (Condition.decidableReassignmentFreeAt X c)
+        (Condition.decidableReassignmentFreeAllAt X cs)
 end
 
-attribute [instance] DRS.decidableReuseFreeAt Condition.decidableReuseFreeAt
-  Condition.decidableReuseFreeAllAt
+attribute [instance] DRS.decidableReassignmentFreeAt Condition.decidableReassignmentFreeAt
+  Condition.decidableReassignmentFreeAllAt
 
-theorem Condition.reuseFreeAllAt_iff {X : Finset V} {cs : List (Condition L V)} :
-    Condition.ReuseFreeAllAt X cs ↔ ∀ c ∈ cs, c.ReuseFreeAt X := by
+theorem Condition.reassignmentFreeAllAt_iff {X : Finset V} {cs : List (Condition L V)} :
+    Condition.ReassignmentFreeAllAt X cs ↔ ∀ c ∈ cs, c.ReassignmentFreeAt X := by
   induction cs with
   | nil => simp
   | cons c cs ih => simp [ih]
 
-theorem DRS.reuseFreeAt_iff {X : Finset V} {K : DRS L V} :
-    K.ReuseFreeAt X ↔
-      Disjoint X K.referents ∧ ∀ c ∈ K.conditions, c.ReuseFreeAt (X ∪ K.referents) := by
+theorem DRS.reassignmentFreeAt_iff {X : Finset V} {K : DRS L V} :
+    K.ReassignmentFreeAt X ↔
+      Disjoint X K.referents ∧ ∀ c ∈ K.conditions, c.ReassignmentFreeAt (X ∪ K.referents) := by
   cases K
-  rw [DRS.reuseFreeAt_mk, Condition.reuseFreeAllAt_iff]
+  rw [DRS.reassignmentFreeAt_mk, Condition.reassignmentFreeAllAt_iff]
 
 end DRT
