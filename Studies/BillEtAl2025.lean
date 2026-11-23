@@ -6,6 +6,8 @@ public import Linglib.Data.Examples.BillEtAl2025
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Fragments.Georgian.Coordination
 public import Linglib.Fragments.Georgian.FocusParticles
+public import Linglib.Fragments.Hungarian.Coordination
+public import Linglib.Fragments.Hungarian.FocusParticles
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Multiset.Filter
@@ -19,21 +21,24 @@ Mitrović and Sauerland's structure, J and a μ for each conjunct, and we order 
 by inclusion of these sets: the J-μ type lies above the J and the μ type, which are incomparable.
 The particle `exponent l h` pronounces the head `h` in the language `l`, and the paper's examples
 of each language pronounce exactly these three sets of heads, each with the particles of the
-Fragments written as their entries say, `heads_examples` and `printed`.
+Fragments written as their entries say, `toFinset_map_heads` and `printed`.
 
 An account gives each sentence type the heads of its underlying structure, among which are the
 heads it pronounces. We define two measures of difficulty on an account `a`, the number
 `a.complexity s` of heads of the structure and the number `a.covert s` of them that the sentence
-leaves unpronounced, the measure of the Transparency Principle. Among sentence types with one
-structure `a.complexity` is constant and `a.covert` is strictly antitone,
-`Account.covert_strictAntiOn`.
+leaves unpronounced, the measure of the Transparency Principle. Where a sentence type that
+pronounces more is no more complex, `a.covert` is strictly antitone,
+`Account.covert_strictAntiOn`, and the J-μ type leaves no head covert on any account,
+`Account.covert_jMu`.
 
 A group replayed sentences of type `s` more than those of type `t`, `PlayedMore g s t`, when the
 follow-up contrast between the two is significant at .05 in that direction. Georgian children
 replayed a sentence type more exactly when it pronounces more, `playedMore_child_iff`, and a
 measure orders the sentence types as their replays do exactly when J-μ exceeds J and μ and these
-two are equal, `desiderata_iff`. For an account that gives μ and J-μ sentences one structure
-neither measure does, `not_desiderata_complexity` and `not_desiderata_covert`.
+two are equal, `desiderata_iff`. Children replay the sentences they find difficult, so this is the
+order of difficulty the data show. The measure `a.covert` meets the conditions for no account,
+`not_desiderata_covert`, and `a.complexity` for none that gives μ and J-μ sentences one structure,
+`not_desiderata_complexity`.
 
 In a trial three objects are shown and the sentence says of two of them that they are on the
 table. An end state is the set of objects on the table. It is accurate when it satisfies the
@@ -78,7 +83,7 @@ open Data.Statistics MitrovicSauerland2016 Exhaustification
 
 namespace Sentence
 
-/-- A sentence type pronounces J, the μ head of each conjunct, or all three heads. -/
+/-- The heads a sentence type pronounces: J, the μ head of each conjunct, or all three. -/
 def pronounced : Sentence → Finset Head
   | .j => {.j}
   | .mu => {.mu 0, .mu 1}
@@ -104,11 +109,11 @@ theorem pronounced_strictMono : StrictMono pronounced := pronouncedEmbedding.str
 
 theorem lt_iff {s t : Sentence} : s < t ↔ s ≠ .jMu ∧ t = .jMu := by revert s t; decide
 
-end Sentence
-
 -- each sentence type pronounces heads in a way that Mitrović and Sauerland's examples attest
 theorem pronounced_mem_attested (s : Sentence) : s.pronounced ∈ attested := by
   rw [mem_attested_iff]; cases s <;> decide
+
+end Sentence
 
 /-! ### The particles and the examples -/
 
@@ -162,8 +167,7 @@ def WrittenAs (w : GlossedWord) (c : Coordinator) : Prop :=
   if c.morph.kind = .free then w.wordform = c.morph.form.toList
   else 1 < w.morphs.length ∧ w.morphs.getLast? = some c.morph.form.toList
 
-instance (w : GlossedWord) (c : Coordinator) : Decidable (WrittenAs w c) := by
-  unfold WrittenAs; infer_instance
+instance : DecidableRel WrittenAs := fun _ _ ↦ by unfold WrittenAs; infer_instance
 
 -- (1), (2), (5), (6): each marked word names the particle of its language for the head it is
 -- marked as, and is written as that particle
@@ -180,7 +184,7 @@ theorem exists_span_iff_glossed :
   decide
 
 -- the examples of each language show the three sentence types
-theorem heads_examples (l : Language) :
+theorem toFinset_map_heads (l : Language) :
     ((Examples.all.filter (·.language = l.glottocode)).map heads).toFinset =
       Finset.univ.image Sentence.pronounced := by
   revert l; decide
@@ -199,13 +203,14 @@ namespace Account
 
 variable (a : Account) {s t : Sentence}
 
-/-- Mitrović and Sauerland give every sentence type the whole structure, Fig. 2. -/
+/-- The account of Mitrović and Sauerland, on which every sentence type has the whole structure,
+Fig. 2. -/
 def universal : Account where
   underlying _ := Finset.univ
   pronounced_subset _ := Finset.subset_univ _
 
-/-- The rival structures give J expressions J alone, and μ and J-μ expressions the whole
-structure, Fig. 1. -/
+/-- The account of the rival structures, on which J expressions have J alone and μ and J-μ
+expressions the whole structure, Fig. 1. -/
 def bareJ : Account where
   underlying
     | .j => {.j}
@@ -215,28 +220,41 @@ def bareJ : Account where
 /-- The complexity of a sentence type is the number of heads in its structure. -/
 def complexity (s : Sentence) : ℕ := (a.underlying s).card
 
-/-- The covert pieces of a sentence type are the heads of its structure it leaves unpronounced,
-the Transparency Principle's measure of difficulty, (3). -/
+/-- The number of heads of its structure that a sentence type leaves unpronounced, the
+Transparency Principle's measure of difficulty, (3). -/
 def covert (s : Sentence) : ℕ := (a.underlying s \ s.pronounced).card
 
-theorem card_pronounced_add_covert (s : Sentence) :
-    s.pronounced.card + a.covert s = a.complexity s :=
-  (add_comm _ _).trans (Finset.card_sdiff_add_card_eq_card (a.pronounced_subset s))
+theorem covert_add_card_pronounced (s : Sentence) :
+    a.covert s + s.pronounced.card = a.complexity s :=
+  Finset.card_sdiff_add_card_eq_card (a.pronounced_subset s)
+
+theorem underlying_jMu : a.underlying .jMu = Finset.univ :=
+  Finset.univ_subset_iff.mp (a.pronounced_subset .jMu)
+
+/-- The J-μ type leaves no head covert, on any account. -/
+@[simp] theorem covert_jMu : a.covert .jMu = 0 :=
+  Finset.card_eq_zero.mpr (Finset.sdiff_eq_empty_iff_subset.mpr (Finset.subset_univ _))
 
 variable {a} in
-theorem covert_lt_covert_of_lt (h : a.underlying s = a.underlying t) (hst : s < t) :
+theorem covert_lt_covert_of_lt (h : a.complexity t ≤ a.complexity s) (hst : s < t) :
     a.covert t < a.covert s := by
-  have hs := a.card_pronounced_add_covert s
-  have ht := a.card_pronounced_add_covert t
+  have hs := a.covert_add_card_pronounced s
+  have ht := a.covert_add_card_pronounced t
   have := Finset.card_lt_card (Sentence.pronounced_strictMono hst)
-  rw [complexity, h] at hs
-  rw [complexity] at ht
   omega
 
-/-- Among sentence types with one structure, one that pronounces more leaves fewer heads
+/-- Where a sentence type that pronounces more is no more complex, it leaves fewer heads
 covert. -/
-theorem covert_strictAntiOn (U : Finset Head) : StrictAntiOn a.covert (a.underlying ⁻¹' {U}) :=
-  fun _ hs _ ht ↦ covert_lt_covert_of_lt (hs.trans ht.symm)
+theorem covert_strictAntiOn {S : Set Sentence} (h : AntitoneOn a.complexity S) :
+    StrictAntiOn a.covert S :=
+  fun _ hs _ ht hst ↦ covert_lt_covert_of_lt (h hs ht hst.le) hst
+
+-- §4
+theorem complexity_bareJ_j_lt_jMu : bareJ.complexity .j < bareJ.complexity .jMu := by decide
+
+-- §4
+theorem covert_bareJ_jMu_lt_mu : bareJ.covert .jMu < bareJ.covert .mu :=
+  covert_lt_covert_of_lt le_rfl (by decide)
 
 end Account
 
@@ -244,15 +262,7 @@ end Account
 
 -- (4)
 theorem covert_universal_strictAnti : StrictAnti Account.universal.covert :=
-  fun _ _ ↦ Account.covert_lt_covert_of_lt rfl
-
--- §4
-theorem bareJ_prediction : Account.bareJ.complexity .j < Account.bareJ.complexity .jMu := by
-  decide
-
--- §4
-theorem bareJ_mu_opaque : Account.bareJ.covert .jMu < Account.bareJ.covert .mu :=
-  Account.covert_lt_covert_of_lt rfl (by decide)
+  fun _ _ ↦ Account.covert_lt_covert_of_lt le_rfl
 
 /-! ### The findings -/
 
@@ -274,8 +284,7 @@ def Contrast.sentences : Contrast → Sentence × Sentence
 
 /-- A group of the Georgian experiment replayed sentences of one type more than those of another
 when the contrast between the two is significant at .05, in the direction of the estimate, which
-is negative when the first was played less. Children replay the sentences they find difficult, so
-this is the order of difficulty the data show. -/
+is negative when the first was played less. -/
 def PlayedMore (g : Group) (s t : Sentence) : Prop :=
   ∃ c, (contrasts g c).p.Significant (1 / 20) ∧
     (c.sentences = (s, t) ∧ 0 < (contrasts g c).estimate.toRat ∨
@@ -294,18 +303,18 @@ theorem not_playedMore_adult (s t : Sentence) : ¬ PlayedMore .adult s t := by
 
 -- §4
 theorem covert_lt_covert_of_playedMore {a : Account} {s t : Sentence}
-    (h : a.underlying s = a.underlying t) (hp : PlayedMore .child s t) :
+    (h : a.complexity s ≤ a.complexity t) (hp : PlayedMore .child s t) :
     a.covert s < a.covert t :=
-  Account.covert_lt_covert_of_lt h.symm ((playedMore_child_iff s t).mp hp)
+  Account.covert_lt_covert_of_lt h ((playedMore_child_iff s t).mp hp)
 
 /-! ### The conditions on a successful account -/
 
 section Desiderata
 
-variable {β : Type*}
+variable {β : Type*} {c : Sentence → β}
 
-/-- A measure of complexity meets the paper's conditions on a successful account when J-μ is more
-complex than J and than μ, (i), and J and μ are equally complex, (ii). -/
+/-- A measure of complexity meets the first two of the paper's conditions on a successful account
+when J-μ is more complex than J and than μ, (i), and J and μ are equally complex, (ii). -/
 structure Desiderata [Preorder β] (c : Sentence → β) : Prop where
   /-- (i): J-μ is more complex than J. -/
   j_lt_jMu : c .j < c .jMu
@@ -314,42 +323,50 @@ structure Desiderata [Preorder β] (c : Sentence → β) : Prop where
   /-- (ii): J and μ are equally complex. -/
   j_eq_mu : c .j = c .mu
 
-theorem Desiderata.strictMono [Preorder β] {c : Sentence → β} (h : Desiderata c) :
-    StrictMono c := fun s t hst ↦ by
+theorem Desiderata.strictMono [Preorder β] (h : Desiderata c) : StrictMono c := fun s t hst ↦ by
   obtain ⟨hs, rfl⟩ := Sentence.lt_iff.mp hst
   cases s
   exacts [h.j_lt_jMu, h.mu_lt_jMu, absurd rfl hs]
 
-/-- A measure meets the conditions exactly when it orders the sentence types as the Georgian
-children's replays do. -/
-theorem desiderata_iff [LinearOrder β] {c : Sentence → β} :
-    Desiderata c ↔ ∀ s t, c s < c t ↔ PlayedMore .child t s := by
-  simp only [playedMore_child_iff]
-  refine ⟨fun h s t ↦ ⟨fun hst ↦ ?_, fun hst ↦ h.strictMono hst⟩, fun h ↦
-    ⟨(h _ _).mpr (by decide), (h _ _).mpr (by decide),
-      le_antisymm (not_lt.mp (mt (h _ _).mp (by decide)))
-        (not_lt.mp (mt (h _ _).mp (by decide)))⟩⟩
+theorem desiderata_iff_strictMono_and_eq [Preorder β] :
+    Desiderata c ↔ StrictMono c ∧ c .j = c .mu :=
+  ⟨fun h ↦ ⟨h.strictMono, h.j_eq_mu⟩, fun ⟨h, he⟩ ↦ ⟨h (by decide), h (by decide), he⟩⟩
+
+theorem Desiderata.lt_iff_lt [Preorder β] (h : Desiderata c) {s t : Sentence} :
+    c s < c t ↔ s < t := by
+  refine ⟨fun hst ↦ ?_, fun hst ↦ h.strictMono hst⟩
+  obtain ⟨hj, hm, he⟩ := h
   cases s <;> cases t <;>
     first
     | decide
     | exact (lt_irrefl _ hst).elim
-    | exact (h.j_eq_mu.not_lt hst).elim
-    | exact (h.j_eq_mu.not_gt hst).elim
-    | exact (lt_asymm h.j_lt_jMu hst).elim
-    | exact (lt_asymm h.mu_lt_jMu hst).elim
+    | exact (he.not_lt hst).elim
+    | exact (he.not_gt hst).elim
+    | exact (lt_asymm hj hst).elim
+    | exact (lt_asymm hm hst).elim
+
+theorem desiderata_iff_forall_lt_iff_lt [LinearOrder β] :
+    Desiderata c ↔ ∀ s t, c s < c t ↔ s < t :=
+  ⟨fun h _ _ ↦ h.lt_iff_lt, fun h ↦ ⟨(h _ _).mpr (by decide), (h _ _).mpr (by decide),
+    le_antisymm (not_lt.mp (mt (h _ _).mp (by decide)))
+      (not_lt.mp (mt (h _ _).mp (by decide)))⟩⟩
+
+/-- A measure meets the conditions exactly when it orders the sentence types as the Georgian
+children's replays do. -/
+theorem desiderata_iff [LinearOrder β] :
+    Desiderata c ↔ ∀ s t, c s < c t ↔ PlayedMore .child t s := by
+  simp_rw [playedMore_child_iff, desiderata_iff_forall_lt_iff_lt]
 
 end Desiderata
 
 -- §4
 theorem not_desiderata_complexity (a : Account) (h : a.underlying .mu = a.underlying .jMu) :
-    ¬ Desiderata a.complexity := fun hd ↦
-  (congrArg Finset.card h).not_lt hd.mu_lt_jMu
+    ¬ Desiderata a.complexity := fun hd ↦ (congrArg Finset.card h).not_lt hd.mu_lt_jMu
 
-/-- No account that gives μ and J-μ sentences one structure meets the conditions by the heads it
-leaves covert: it makes μ sentences the harder of the two. -/
-theorem not_desiderata_covert (a : Account) (h : a.underlying .mu = a.underlying .jMu) :
-    ¬ Desiderata a.covert := fun hd ↦
-  lt_asymm hd.mu_lt_jMu (Account.covert_lt_covert_of_lt h (by decide))
+/-- No account meets the conditions by the heads it leaves covert: the J-μ type, which should be
+the most complex, leaves none. -/
+theorem not_desiderata_covert (a : Account) : ¬ Desiderata a.covert := fun hd ↦ by
+  simpa using hd.mu_lt_jMu
 
 /-! ### The act-out task -/
 
@@ -361,7 +378,9 @@ variable {α : Type*}
 names it alone. -/
 def onTable (o : α) : Set (Finset α) := {st | o ∈ st}
 
-theorem exh_onTable (S : Finset α) : exh (Set.range onTable) {st | S ⊆ st} = {S} := by
+@[simp] theorem mem_onTable {o : α} {st : Finset α} : st ∈ onTable o ↔ o ∈ st := Iff.rfl
+
+theorem exh_range_onTable (S : Finset α) : exh (Set.range onTable) {st | S ⊆ st} = {S} := by
   ext st
   rw [mem_exh_range_iff, Set.mem_singleton_iff]
   constructor
@@ -371,13 +390,13 @@ theorem exh_onTable (S : Finset α) : exh (Set.range onTable) {st | S ⊆ st} = 
     exact ⟨Finset.Subset.refl _, fun _ ho _ hst ↦ hst ho⟩
 
 -- fn. 12
-theorem exhIE_onTable (S : Finset α) : exhIE (Set.range onTable) {st | S ⊆ st} = {S} := by
-  have h := exh_onTable S
+theorem exhIE_range_onTable (S : Finset α) : exhIE (Set.range onTable) {st | S ⊆ st} = {S} := by
+  have h := exh_range_onTable S
   rw [exhIE_eq_exh_of_nonempty _ _ (h ▸ Set.singleton_nonempty S), h]
 
 end OnTable
 
-/-- A trial shows three objects, of which the test sentence mentions two. -/
+/-- An object of a trial, one of the three shown. -/
 abbrev Object := Fin objectsPerTrial
 
 instance : NeZero objectsPerTrial := ⟨by decide⟩
@@ -385,7 +404,7 @@ instance : NeZero objectsPerTrial := ⟨by decide⟩
 /-- An end state of a trial is the set of objects on the table. -/
 abbrev EndState := Finset Object
 
-/-- The test sentence mentions the first two objects. -/
+/-- The objects the test sentence mentions, the first two. -/
 def mentioned : Finset Object := {0, 1}
 
 /-- An end state meets the basic truth conditions of the test sentence when each mentioned object
@@ -403,19 +422,19 @@ theorem basicTrue_iff_conjunction {j : Coordinator} (hj : j.role = .conjunctive)
 
 /-- An end state is accurate when it matches the exhaustified sentence, the basic truth
 conditions with every innocently excludable alternative naming one object denied. -/
-def Accurate (st : EndState) : Prop := st ∈ exhIE (Set.range onTable) {st | BasicTrue st}
+def Accurate (st : EndState) : Prop := st ∈ exhIE (Set.range onTable) {st' | BasicTrue st'}
 
 /-- The accurate end state has the mentioned objects and nothing else on the table. -/
 theorem accurate_iff (st : EndState) : Accurate st ↔ st = mentioned := by
-  simp only [Accurate, BasicTrue, exhIE_onTable, Set.mem_singleton_iff]
+  simp only [Accurate, BasicTrue, exhIE_range_onTable, Set.mem_singleton_iff]
 
 instance : DecidablePred Accurate := fun st ↦ decidable_of_iff' _ (accurate_iff st)
 
 theorem Accurate.basicTrue {st : EndState} (h : Accurate st) : BasicTrue st :=
   exhIE_subset _ _ h
 
-/-- The kind of an inaccurate end state by the number of mentioned objects on the table: neither,
-only one, or both and so the unmentioned object with them. -/
+/-- The kind of an end state by the number of mentioned objects on the table: neither, only one,
+or both, which an inaccurate end state has with the unmentioned object. -/
 def errorKind (st : EndState) : ErrorKind :=
   match (st ∩ mentioned).card with
   | 0 => .neitherMentioned
@@ -432,10 +451,11 @@ theorem basicTrue_and_not_accurate_iff {st : EndState} :
   rw [accurate_iff]; revert st; decide
 
 theorem errorKind_surjOn : Set.SurjOn errorKind {st | ¬ Accurate st} Set.univ := by
-  rintro (_ | _ | _) -
-  · exact ⟨Finset.univ, by decide, by decide⟩
-  · exact ⟨{0}, by decide, by decide⟩
-  · exact ⟨∅, by decide, by decide⟩
+  intro k _
+  match k with
+  | .unmentioned => exact ⟨Finset.univ, by decide, by decide⟩
+  | .oneMentioned => exact ⟨{0}, by decide, by decide⟩
+  | .neitherMentioned => exact ⟨∅, by decide, by decide⟩
 
 theorem countP_basicTrue (R : Multiset EndState) :
     R.countP BasicTrue =
@@ -443,12 +463,12 @@ theorem countP_basicTrue (R : Multiset EndState) :
   rw [Multiset.countP_eq_countP_filter_add R BasicTrue Accurate, Multiset.countP_filter,
     Multiset.countP_filter]
   congr 1 <;> refine Multiset.countP_congr rfl fun st _ ↦ ?_
-  · exact propext ⟨And.right, fun h ↦ ⟨h.basicTrue, h⟩⟩
+  · exact propext (and_iff_right_of_imp Accurate.basicTrue)
   · rw [errorKind_eq_unmentioned_iff, and_comm]
 
 -- §3.1.2 and fn. 12: the responses that enter the replay analysis are the accurate ones and the
 -- errors of the first kind.
-theorem playedPoints_child :
+theorem count_playedPoints_child :
     (playedPoints .child).count =
       (participants .georgian .child).count * (items - removedItems) - childErrors +
         (childErrorKinds .unmentioned).count := by
