@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.SuccPred.Nat
 public import Mathlib.Order.WithBot
 
@@ -82,6 +83,13 @@ theorem Melody.complexity_injective : Function.Injective Melody.complexity := by
 
 /-- Melodies are ordered by complexity. -/
 instance : LinearOrder Melody := LinearOrder.lift' Melody.complexity Melody.complexity_injective
+
+/-- `Melody.complexity` as an order embedding of the melodies into `ℕ`. -/
+def Melody.complexityOrderEmbedding : Melody ↪o ℕ :=
+  ⟨⟨Melody.complexity, Melody.complexity_injective⟩, Iff.rfl⟩
+
+@[simp] theorem Melody.coe_complexityOrderEmbedding :
+    ⇑Melody.complexityOrderEmbedding = Melody.complexity := rfl
 
 /-- A nucleus of a domain. -/
 structure Nucleus where
