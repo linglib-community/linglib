@@ -7,6 +7,7 @@ module
 
 public import Studies.Chierchia1984
 public import Linglib.Semantics.ArgumentStructure.Relation.MapArgs
+public import Linglib.Syntax.Voice.Apply
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Mathlib.Order.CompleteLattice.Basic
 
@@ -26,12 +27,11 @@ relation obeying the Control Principle of [chierchia-1984] [satisfies the weak
 schema](##Chierchia1989.weak_of_controlPrinciple), its propositional frame the modal claim of the
 principle.
 
-The English verbs bear the schema out as far as their entries record it. No verb entered as
-lacking a passive [has an object that
-controls](##Chierchia1989.not_object_control_of_not_passivizable), the object surviving as
-subject, and a verb whose subject controls has a passive only if [it has a frame without a
-controlled complement](##Chierchia1989.exists_uncontrolled_of_passivizable), the weaker hypothesis
-Chierchia adopts for *teach* and *try*.
+The English verbs bear the schema out. Passive, applied to a diathesis of a verb, [leaves the
+controller at an expressed position exactly when the object
+controls](##Chierchia1989.controller_expressed_passive_iff): with a controlling subject, as in
+either infinitive diathesis of *promise*, the controller is left implicit, and the passive of the
+diathesis without an infinitive loses no controller.
 
 ## Implementation notes
 
@@ -46,11 +46,6 @@ with the rest.
 * The default hierarchy of roles that fills in the controller, theme before goal before agent,
   is not tested: the entries of the English control verbs record no entailment profiles for their
   participants, so no role label is derivable for them.
-* The entries record whether a verb passivizes as one value for the verb, a passive unless the
-  entry says otherwise, where the schema predicts it frame by frame: *promise* passivizes with a
-  noun-phrase object and not with an infinitive. `exists_uncontrolled_of_passivizable` is the
-  most the entries support, and `not_object_control_of_not_passivizable` is stated of the verbs
-  entered as lacking a passive, since that a verb has one is the default.
 * Purpose clauses and control by the theme of a ditransitive are not formalized.
 
 ## References
@@ -125,19 +120,14 @@ end Schema
 
 open English.Verbs
 
--- (11b)
-/-- No verb entered as lacking a passive has a complement controlled by its object. -/
-theorem not_object_control_of_not_passivizable : ∀ v ∈ verbs, v.passivizable = false →
-    ∀ d ∈ v.valency.diatheses, d.controllerRole ≠ some .P := by
-  decide +kernel
-
--- (14), (15)
-/-- A verb that has a passive, and whose complements are controlled by its subject wherever they
-are controlled, has a frame without a controlled complement. -/
-theorem exists_uncontrolled_of_passivizable : ∀ v ∈ verbs, v.passivizable = true →
-    (∀ d ∈ v.valency.diatheses, d.controllerRole ≠ some .P) →
-    (∃ d ∈ v.valency.diatheses, d.controller.isSome) →
-      ∃ d ∈ v.valency.diatheses, d.controllerSlot? = none := by
+-- (11), (14)
+/-- The passive of a diathesis of an English verb leaves its controller at an expressed position
+exactly when the controller is the object. -/
+theorem controller_expressed_passive_iff : ∀ v ∈ verbs, ∀ d ∈ v.valency.diatheses,
+    ∀ i ∈ d.controller,
+      (∃ s ∈ ((Voice.passive d.toArgumentFrame).apply d).links.get i,
+        ∃ p ∈ ((Voice.passive d.toArgumentFrame).apply d).get? s, p.IsExpressed) ↔
+      d.controllerRole = some .P := by
   decide +kernel
 
 end Chierchia1989

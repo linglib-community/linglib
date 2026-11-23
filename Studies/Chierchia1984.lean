@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.Relation.Control
+public import Linglib.Semantics.ArgumentStructure.Relation.Denotation
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Mathlib.Data.PFun
@@ -38,6 +39,11 @@ keeps the controller and the frame obeys the principle when the relation does
 controller holds where some value of the deleted argument has the property in the frame
 (`ControlPrinciple.mem_mapArgs_iff`), the controller left implicit.
 
+For a verb's relation of its participants and a diathesis that leaves the controlling participant
+out, the hypothesis is computed: the relation the diathesis denotes obeys the principle, for the
+role of that participant, only if the verb's relation holds of nothing
+(`ControlPrinciple.eq_bot_of_denote`).
+
 A relation obeying the principle is controlled at the role (`ControlPrinciple.isControlledAt`),
 and raising at an argument position when the frame does not depend on the arguments, as that of
 a modal or of *seem* does not (`ControlPrinciple.isRaisingAt`). Two relations with dual forces
@@ -64,7 +70,9 @@ controller out.
 * A role is a partial function of a relation's arguments, one for each relation, where the
   source's is one partial function on all tuples of a relation and its arguments; that its value
   is among the arguments is not imposed. That a transform lacks a bearer of the role is
-  accordingly a hypothesis of `ControlPrinciple.eq_bot_of_mapArgs`.
+  accordingly a hypothesis of `ControlPrinciple.eq_bot_of_mapArgs`; for the relation a diathesis
+  denotes, where the role of a participant is the entity at its slot, it is that the diathesis
+  leaves the participant out.
 
 ## TODO
 
@@ -74,7 +82,11 @@ controller out.
 * The degenerate role borne by an argument with no thematic role, and the correspondence between
   virtual arguments and referential opacity derived from it, are not formalized.
 * The source's judgments on passives and intransitives of control verbs are not entered as
-  examples; the entries record no passive diatheses to pair them with.
+  examples.
+* `ControlPrinciple.eq_bot_of_denote` is stated for a participant the diathesis leaves out. The
+  agent of a passive is at an implicit position, and that implicit positions are no arguments of
+  the relation, as the source's treatment of the agent phrase as a modifier has it, is not yet a
+  step of the derivation.
 
 ## References
 
@@ -186,6 +198,32 @@ theorem mapArgs (h : ControlPrinciple α (fun x ↦ θ' (σ x)) q fun x ↦ N' (
     (hσ : Surjective σ) : ControlPrinciple (mapArgs σ α) θ' q N' :=
   controlPrinciple_iff.2 <| h.eq_atRole ▸
     mapArgs_comapArgs hσ (atRole θ' fun φ y ↦ q.claim (N' y) φ)
+
+/-! ### Diatheses -/
+
+section Diathesis
+
+variable {I J : Type*} [Nonempty E] {R : (E → Set W) → (I → E) → Set W} {f : I → Option J}
+  {i : I} {N : (J → E) → W → Filter W}
+
+-- (84)
+theorem eq_bot_of_mapIndex (hf : ∀ i i' j, f i = some j → f i' = some j → i = i')
+    (hi : f i = none)
+    (h : ControlPrinciple (mapIndex f R) (fun y ↦ ((f i).map y : Part E)) q N) : R = ⊥ :=
+  (mapIndex_eq_bot f hf).1 <| h.eq_atRole.trans <|
+    atRole_eq_bot_of_dom_eq_empty (Set.eq_empty_of_forall_notMem fun y hy ↦ by
+      simp [PFun.Dom, hi] at hy) _
+
+-- (86), (87)
+theorem eq_bot_of_denote {n : ℕ} {d : Diathesis n} {R : (E → Set W) → (Fin n → E) → Set W}
+    {i : Fin n} {N : (ArgumentFrame.Slot → E) → W → Filter W}
+    (hd : ∀ i i' s, d.links.get i = some s → d.links.get i' = some s → i = i')
+    (hi : d.links.get i = none)
+    (h : ControlPrinciple (d.denote R) (fun y ↦ ((d.links.get i).map y : Part E)) q N) :
+    R = ⊥ :=
+  eq_bot_of_mapIndex hd hi h
+
+end Diathesis
 
 end ControlPrinciple
 
