@@ -5,6 +5,8 @@ public import Linglib.Fragments.Turkish.Phonology
 public import Linglib.Phonology.FeatureGeometry
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Core.Order.SuccPred.Tree
+public import Linglib.Phonology.Autosegmental.TierTree
+public import Mathlib.Data.Finset.Sort
 
 /-!
 # Padgett (2002): feature classes in phonology
@@ -21,6 +23,9 @@ a Color node carries both features or neither.
 
 * `Node`, `node`: the geometry (3); `laryngeal`, `oral`, `vplace`, `height`, `color`: (25).
 * `Tier`, `Tier.spread`: the autosegments of one feature over a word, and SPREAD (26).
+* `Tier.toAR`: a tier as an autosegmental representation, whose lines do not cross
+  (`Tier.noCrossing_toAR`) and which reads at each segment the value the tier gives it
+  (`Tier.reads_toAR`).
 * `ranking`: the Turkish grammar of (17)–(22), over every fully specified candidate.
 
 ## Implementation notes
@@ -179,6 +184,89 @@ theorem spread_eq_zero_iff : t.spread = 0 ↔ t.starts.card ≤ 1 := by
     rcases Nat.eq_zero_or_pos a.val with ha0 | ha0
     · exact hja (Fin.le_def.2 (by omega))
     · exact absurd (h a ha _ h0) (fun he ↦ by simp [Fin.ext_iff] at he; omega)
+
+/-! ### The tier as an autosegmental representation -/
+
+/-- The autosegments of the tier in order, each named by the segment at which it begins. -/
+def autosegment (i : Fin t.starts.card) : Fin n := t.starts.orderEmbOfFin rfl i
+
+/-- A tier as an autosegmental representation: its autosegments with their values over the
+segments, each autosegment linked to the segments of its run. -/
+def toAR : Autosegmental.AR (Autosegmental.TwoTier Bool Unit) :=
+  Autosegmental.AR.ofLines (List.ofFn fun i ↦ t.value (t.autosegment i)) (List.replicate n ())
+    ((Finset.univ.filter fun p : Fin t.starts.card × Fin n ↦
+      t.Linked (t.autosegment p.1) p.2).image fun p ↦ (p.1.val, p.2.val))
+
+theorem link_toAR {p q : ℕ} : t.toAR.Link .upper .lower p q ↔
+    ∃ (hp : p < t.starts.card) (hq : q < n), t.Linked (t.autosegment ⟨p, hp⟩) ⟨q, hq⟩ := by
+  rw [toAR, Autosegmental.AR.link_ofLines]
+  simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and, Prod.exists,
+    Prod.mk.injEq, List.length_ofFn, List.length_replicate]
+  constructor
+  · rintro ⟨⟨i, j, h, rfl, rfl⟩, -, -⟩
+    exact ⟨i.2, j.2, h⟩
+  · rintro ⟨hp, hq, h⟩
+    exact ⟨⟨⟨p, hp⟩, ⟨q, hq⟩, h, rfl, rfl⟩, hp, hq⟩
+
+/-- The lines of a tier do not cross: each autosegment is linked to a run of segments. -/
+theorem noCrossing_toAR : t.toAR.NoCrossing :=
+  Autosegmental.AR.noCrossing_iff_two_tier.2 <|
+    Autosegmental.AR.isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ by
+    obtain ⟨hp, hq, h⟩ := t.link_toAR.1 h₁
+    obtain ⟨hp', hq', h'⟩ := t.link_toAR.1 h₂
+    have hlt' : t.autosegment ⟨p, hp⟩ < t.autosegment ⟨p', hp'⟩ :=
+      (t.starts.orderEmbOfFin rfl).lt_iff_lt.2 (show (⟨p, hp⟩ : Fin _) < ⟨p', hp'⟩ from hlt)
+    have := h.2 _ (t.starts.orderEmbOfFin_mem rfl _) hlt'
+    exact (Fin.lt_def.1 (this.trans_le h'.1)).le
+
+theorem value_eq_of_linked {a : Fin n} : ∀ {j : Fin n}, t.Linked a j → t.value j = t.value a := by
+  rintro ⟨j, hj⟩
+  induction j with
+  | zero =>
+    intro h
+    rw [show a = ⟨0, hj⟩ from Fin.ext (Nat.le_zero.1 (Fin.le_def.1 h.1))]
+  | succ j ih =>
+    intro h
+    by_cases hc : a = ⟨j + 1, hj⟩
+    · rw [hc]
+    · have hlt : a.val < j + 1 := lt_of_le_of_ne (Fin.le_def.1 h.1) fun he ↦ hc (Fin.ext he)
+      have hk : (⟨j + 1, hj⟩ : Fin n) ∉ t.starts := fun hk ↦
+        lt_irrefl _ (h.2 _ hk (Fin.lt_def.2 hlt))
+      rw [t.value_eq ⟨j, by omega⟩ ⟨j + 1, hj⟩ rfl hk]
+      exact ih (by omega) ⟨Fin.le_def.2 (by omega : a.val ≤ j), fun b hb hab ↦
+        Fin.lt_def.2 (Nat.lt_of_succ_lt (Fin.lt_def.1 (h.2 b hb hab)))⟩
+
+theorem exists_linked (j : Fin n) : ∃ i, t.Linked (t.autosegment i) j := by
+  have hne : (t.starts.filter (· ≤ j)).Nonempty :=
+    ⟨⟨0, j.pos⟩, Finset.mem_filter.2 ⟨t.zero_mem _ rfl, Fin.le_def.2 (Nat.zero_le _)⟩⟩
+  obtain ⟨has, haj⟩ := Finset.mem_filter.1 (Finset.max'_mem _ hne)
+  obtain ⟨i, hi⟩ : ∃ i, t.starts.orderEmbOfFin rfl i = (t.starts.filter (· ≤ j)).max' hne := by
+    have h : (t.starts.filter (· ≤ j)).max' hne ∈ Set.range (t.starts.orderEmbOfFin rfl) := by
+      rw [Finset.range_orderEmbOfFin]
+      exact has
+    exact h
+  refine ⟨i, ?_⟩
+  show t.Linked (t.starts.orderEmbOfFin rfl i) j
+  rw [hi]
+  exact ⟨haj, fun b hb hab ↦ lt_of_not_ge fun hbj ↦
+    absurd (Finset.le_max' _ b (Finset.mem_filter.2 ⟨hb, hbj⟩)) (not_le.2 hab)⟩
+
+/-- Each segment reads the value the tier gives it. -/
+theorem reads_toAR {j : ℕ} {b : Bool} :
+    t.toAR.Reads Autosegmental.AR.twoTier j .upper b ↔ ∃ hj : j < n, t.value ⟨j, hj⟩ = b := by
+  rw [Autosegmental.AR.reads_twoTier_upper_iff]
+  constructor
+  · rintro ⟨k, hl, hb⟩
+    obtain ⟨hk, hj, h⟩ := t.link_toAR.1 hl
+    have hb' : (List.ofFn fun i ↦ t.value (t.autosegment i))[k]? = some b := hb
+    simp only [List.getElem?_ofFn, hk, dite_true, Option.some.injEq] at hb'
+    exact ⟨hj, (t.value_eq_of_linked h).trans hb'⟩
+  · rintro ⟨hj, rfl⟩
+    obtain ⟨i, hi⟩ := t.exists_linked ⟨j, hj⟩
+    refine ⟨i, t.link_toAR.2 ⟨i.2, hj, hi⟩, ?_⟩
+    show (List.ofFn fun i ↦ t.value (t.autosegment i))[(i : ℕ)]? = some _
+    simp only [List.getElem?_ofFn, i.2, dite_true]
+    exact congrArg some (t.value_eq_of_linked hi).symm
 
 end Tier
 
