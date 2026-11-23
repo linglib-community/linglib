@@ -373,6 +373,104 @@ def comp (f' : Embedding J K) (f : Embedding I J) : Embedding I K where
 
 end Embedding
 
+/-! ### Isomorphisms -/
+
+/-- An isomorphism of interpretations is a bijection of entities that keeps sorts, commutes with
+the attributes, and preserves and reflects the relations. -/
+structure Equiv (I : Interpretation Sig U) (J : Interpretation Sig V) extends U ≃ V where
+  /-- An entity and its image have the same sort. -/
+  map_S' : ∀ u, J.S (toFun u) = I.S u
+  /-- An attribute is defined on the image of an entity exactly when it is defined on the
+  entity, with the image of its value as value. -/
+  map_A' : ∀ α u, J.A α (toFun u) = (I.A α u).map toFun
+  /-- A tuple is a relation tuple exactly when its image is. -/
+  map_R' : ∀ ρ (xs : Fin (Sig.arity ρ) → U), toFun ∘ xs ∈ J.R ρ ↔ xs ∈ I.R ρ
+
+namespace Equiv
+
+/-- An isomorphism regarded as an embedding. -/
+def toEmbedding (f : Equiv I J) : Embedding I J where
+  toEmbedding := f.toEquiv.toEmbedding
+  map_S' := f.map_S'
+  map_A' := f.map_A'
+  map_R' := f.map_R'
+
+instance : FunLike (Equiv I J) U V where
+  coe f := f.toFun
+  coe_injective f g h := by
+    obtain ⟨e, _, _, _⟩ := f
+    obtain ⟨e', _, _, _⟩ := g
+    obtain rfl : e = e' := _root_.Equiv.ext (congrFun h)
+    rfl
+
+instance : HomClass (Equiv I J) I J where
+  map_S f := f.map_S'
+  map_A f := f.map_A'
+  map_R f := (f.map_R' _ _).2
+
+@[simp] theorem coe_toEmbedding (f : Equiv I J) : ⇑f.toEmbedding = f := rfl
+
+@[simp] theorem coe_toEquiv (f : Equiv I J) : ⇑f.toEquiv = f := rfl
+
+variable (I) in
+/-- The identity isomorphism. -/
+protected def refl : Equiv I I where
+  toEquiv := .refl U
+  map_S' _ := rfl
+  map_A' _ _ := Option.map_id'.symm
+  map_R' _ _ := Iff.rfl
+
+/-- The inverse of an isomorphism. -/
+protected def symm (f : Equiv I J) : Equiv J I where
+  toEquiv := f.toEquiv.symm
+  map_S' v :=
+    ((congrArg J.S (f.toEquiv.apply_symm_apply v)).symm.trans (f.map_S' _)).symm
+  map_A' α v := by
+    have h := f.map_A' α (f.toEquiv.symm v)
+    rw [show f.toFun (f.toEquiv.symm v) = v from f.toEquiv.apply_symm_apply v] at h
+    have e : f.toEquiv.symm.toFun ∘ f.toFun = id := funext f.toEquiv.symm_apply_apply
+    rw [h, Option.map_map, e, Option.map_id, id]
+    rfl
+  map_R' ρ xs := by
+    have h := f.map_R' ρ (f.toEquiv.symm ∘ xs)
+    rw [show f.toFun ∘ f.toEquiv.symm ∘ xs = xs from
+      funext fun i ↦ f.toEquiv.apply_symm_apply (xs i)] at h
+    exact h.symm
+
+/-- The composition of two isomorphisms. -/
+protected def trans (f : Equiv I J) (f' : Equiv J K) : Equiv I K where
+  toEquiv := f.toEquiv.trans f'.toEquiv
+  map_S' u := (f'.map_S' (f u)).trans (f.map_S' u)
+  map_A' α u := by
+    change K.A α (f' (f u)) = _
+    rw [HomClass.map_A f', HomClass.map_A f, Option.map_map]; rfl
+  map_R' _ xs := (f'.map_R' _ (f ∘ xs)).trans (f.map_R' _ xs)
+
+@[simp] theorem symm_apply_apply (f : Equiv I J) (u : U) : f.symm (f u) = u :=
+  f.toEquiv.symm_apply_apply u
+
+@[simp] theorem apply_symm_apply (f : Equiv I J) (v : V) : f (f.symm v) = v :=
+  f.toEquiv.apply_symm_apply v
+
+end Equiv
+
+variable (I) in
+/-- The interpretation on `V` that a bijection with the universe of `I` carries over. -/
+def map (e : U ≃ V) : Interpretation Sig V where
+  S v := I.S (e.symm v)
+  A α v := (I.A α (e.symm v)).map e
+  R ρ := {xs | e.symm ∘ xs ∈ I.R ρ}
+
+variable (I) in
+/-- A bijection is an isomorphism onto the interpretation it carries over. -/
+def mapEquiv (e : U ≃ V) : Equiv I (I.map e) where
+  toEquiv := e
+  map_S' u := by simp [map]
+  map_A' α u := by simp [map]
+  map_R' ρ xs := by simp [map, ← Function.comp_assoc]
+
+@[simp] theorem coe_mapEquiv (e : U ≃ V) : ⇑(I.mapEquiv e) = e := rfl
+
 /-- A homomorphism is a simulation of the machine at an entity by the machine at its image. -/
 theorem Hom.simulatedBy (f : Hom I J) (u : U) :
     I.toPartialMoore.SimulatedBy J.toPartialMoore u (f u) :=

@@ -57,23 +57,6 @@ namespace Interpretation
 
 variable (I : Interpretation Sig U) {V : Type*}
 
-/-! ### Transport along a bijection -/
-
-/-- The interpretation on `V` that a bijection with the universe of `I` carries over. -/
-def map (e : U ≃ V) : Interpretation Sig V where
-  S v := I.S (e.symm v)
-  A α v := (I.A α (e.symm v)).map e
-  R ρ := {xs | e.symm ∘ xs ∈ I.R ρ}
-
-/-- The inverse of the bijection embeds the transported interpretation in the original. -/
-def mapEmbedding (e : U ≃ V) : Embedding (I.map e) I where
-  toEmbedding := e.symm.toEmbedding
-  map_S' _ := rfl
-  map_A' α v := by simp [map, Option.map_map]
-  map_R' _ _ := Iff.rfl
-
-@[simp] theorem coe_mapEmbedding (e : U ≃ V) : ⇑(I.mapEmbedding e) = e.symm := rfl
-
 /-! ### Small models -/
 
 /-- The components of an entity form a set no larger than the signature, since each is reached
@@ -92,8 +75,9 @@ universe of the signature that embeds in it. -/
 theorem exists_small_embedding (r : U) :
     ∃ (V : Type u) (J : Interpretation Sig V) (f : Embedding J I) (r' : V), f r' = r :=
   ⟨_, (I.generated r).map (equivShrink _),
-    (I.generatedEmbedding r).comp ((I.generated r).mapEmbedding (equivShrink _)),
-    equivShrink _ ⟨r, .refl⟩, by simp⟩
+    (I.generatedEmbedding r).comp ((I.generated r).mapEquiv (equivShrink _)).symm.toEmbedding,
+    (I.generated r).mapEquiv (equivShrink _) ⟨r, .refl⟩,
+    congrArg Subtype.val (((I.generated r).mapEquiv (equivShrink _)).symm_apply_apply _)⟩
 
 end Interpretation
 

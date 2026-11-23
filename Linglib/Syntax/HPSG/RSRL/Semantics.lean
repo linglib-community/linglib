@@ -411,14 +411,18 @@ theorem satisfies : J.Satisfies (f ∘ g) (f u) φ ↔ I.Satisfies g u φ := by
 theorem models (f : Embedding I J) (hJ : J.Models G) : I.Models G :=
   fun d hd g u ↦ f.satisfies.1 (hJ d hd (f ∘ g) (f u))
 
-/-- An interpretation onto which a model of a grammar embeds is a model of it. -/
-theorem models_of_surjective (f : Embedding I J) (hf : Function.Surjective f)
-    (hI : I.Models G) : J.Models G :=
-  models_iff.2 fun d hd v ↦ by
-    obtain ⟨u, rfl⟩ := hf v
-    exact (f.satisfies (g := fun _ ↦ u)).2 (hI d hd _ u)
-
 end Embedding
+
+/-- Isomorphic interpretations are models of the same grammars. -/
+theorem Equiv.models_iff {V : Type*} {J : Interpretation Sig V} (f : Equiv I J) :
+    I.Models G ↔ J.Models G :=
+  ⟨f.symm.toEmbedding.models, f.toEmbedding.models⟩
+
+/-- Isomorphic interpretations are well-typed together. -/
+theorem Equiv.isWellTyped_iff {V : Type*} {J : Interpretation Sig V} (f : Equiv I J) :
+    I.IsWellTyped ↔ J.IsWellTyped :=
+  ⟨HomClass.isWellTyped f.symm, HomClass.isWellTyped f⟩
+
 
 end Interpretation
 
