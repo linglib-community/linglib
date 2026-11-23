@@ -272,10 +272,10 @@ def Contrast.sentences : Contrast → Sentence × Sentence
   | .jVsMu => (.j, .mu)
   | .jMuVsMu => (.jMu, .mu)
 
-/-- A group replayed sentences of one type more than those of another when the contrast between
-the two is significant at .05, in the direction of the estimate, which is negative when the first
-was played less. Children replay the sentences they find difficult, so this is the order of
-difficulty the data show. -/
+/-- A group of the Georgian experiment replayed sentences of one type more than those of another
+when the contrast between the two is significant at .05, in the direction of the estimate, which
+is negative when the first was played less. Children replay the sentences they find difficult, so
+this is the order of difficulty the data show. -/
 def PlayedMore (g : Group) (s t : Sentence) : Prop :=
   ∃ c, (contrasts g c).p.Significant (1 / 20) ∧
     (c.sentences = (s, t) ∧ 0 < (contrasts g c).estimate.toRat ∨
@@ -296,7 +296,7 @@ theorem not_playedMore_adult (s t : Sentence) : ¬ PlayedMore .adult s t := by
 theorem covert_lt_covert_of_playedMore {a : Account} {s t : Sentence}
     (h : a.underlying s = a.underlying t) (hp : PlayedMore .child s t) :
     a.covert s < a.covert t :=
-  Account.covert_lt_covert_of_lt h.symm ((playedMore_child_iff s t).1 hp)
+  Account.covert_lt_covert_of_lt h.symm ((playedMore_child_iff s t).mp hp)
 
 /-! ### The conditions on a successful account -/
 
@@ -316,7 +316,7 @@ structure Desiderata [Preorder β] (c : Sentence → β) : Prop where
 
 theorem Desiderata.strictMono [Preorder β] {c : Sentence → β} (h : Desiderata c) :
     StrictMono c := fun s t hst ↦ by
-  obtain ⟨hs, rfl⟩ := Sentence.lt_iff.1 hst
+  obtain ⟨hs, rfl⟩ := Sentence.lt_iff.mp hst
   cases s
   exacts [h.j_lt_jMu, h.mu_lt_jMu, absurd rfl hs]
 
@@ -326,8 +326,9 @@ theorem desiderata_iff [LinearOrder β] {c : Sentence → β} :
     Desiderata c ↔ ∀ s t, c s < c t ↔ PlayedMore .child t s := by
   simp only [playedMore_child_iff]
   refine ⟨fun h s t ↦ ⟨fun hst ↦ ?_, fun hst ↦ h.strictMono hst⟩, fun h ↦
-    ⟨(h _ _).2 (by decide), (h _ _).2 (by decide),
-      le_antisymm (not_lt.1 (mt (h _ _).1 (by decide))) (not_lt.1 (mt (h _ _).1 (by decide)))⟩⟩
+    ⟨(h _ _).mpr (by decide), (h _ _).mpr (by decide),
+      le_antisymm (not_lt.mp (mt (h _ _).mp (by decide)))
+        (not_lt.mp (mt (h _ _).mp (by decide)))⟩⟩
   cases s <;> cases t <;>
     first
     | decide
@@ -442,7 +443,7 @@ theorem countP_basicTrue (R : Multiset EndState) :
   rw [Multiset.countP_eq_countP_filter_add R BasicTrue Accurate, Multiset.countP_filter,
     Multiset.countP_filter]
   congr 1 <;> refine Multiset.countP_congr rfl fun st _ ↦ ?_
-  · exact propext ⟨fun h ↦ h.2, fun h ↦ ⟨h.basicTrue, h⟩⟩
+  · exact propext ⟨And.right, fun h ↦ ⟨h.basicTrue, h⟩⟩
   · rw [errorKind_eq_unmentioned_iff, and_comm]
 
 -- §3.1.2 and fn. 12: the responses that enter the replay analysis are the accurate ones and the
