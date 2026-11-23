@@ -443,22 +443,23 @@ theorem dominates_twoTier_upper_iff : X.Dominates twoTier j upper q ↔ X.Link u
   rw [Dominates, Tier.card]
   simp only [descendants, Finset.mem_insert, Finset.mem_biUnion, Finset.mem_singleton]
   constructor
-  · rintro (h | ⟨⟨t, p⟩, hc, rfl | ⟨⟨t', p'⟩, hc', rfl⟩⟩)
+  · rintro (h | ⟨⟨t, p⟩, hc, h | ⟨⟨t', p'⟩, hc', h⟩⟩)
     · exact absurd (congrArg Prod.fst h) (by decide)
-    · exact (mem_children.1 hc).2.2.symm
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+      exact (mem_children.1 hc).2.2.symm
     · exact absurd (mem_children.1 hc').1.symm (mem_children.1 hc).2.1
   · exact fun h ↦ .inr ⟨(upper, q), mem_children.2 ⟨rfl, by decide, h.symm⟩, .inl rfl⟩
 
 /-- On two tiers, a slot reads the labels of the autosegments linked to it. -/
 theorem reads_twoTier_upper_iff : X.Reads twoTier j upper a ↔ X.SurfacesWith a j := by
   simp only [Reads, dominates_twoTier_upper_iff, SurfacesWith, Finset.mem_range]
-  exact ⟨fun ⟨q, -, h, hb⟩ ↦ ⟨q, h, hb⟩, fun ⟨q, h, hb⟩ ↦ ⟨q, h.lt_left, h, hb⟩⟩
+  exact ⟨fun ⟨q, _, h, hb⟩ ↦ ⟨q, h, hb⟩, fun ⟨q, h, hb⟩ ↦ ⟨q, h.lt_left, h, hb⟩⟩
 
 theorem reads_primitive_iff {as : List α} {b : β} :
     (primitive as b).Reads twoTier 0 upper a ↔ a ∈ as := by
   rw [reads_twoTier_upper_iff, List.mem_iff_getElem?]
   simp only [SurfacesWith, link_primitive, word_primitive_upper]
-  exact ⟨fun ⟨k, -, h⟩ ↦ ⟨k, h⟩,
+  exact ⟨fun ⟨k, _, h⟩ ↦ ⟨k, h⟩,
     fun ⟨k, h⟩ ↦ ⟨k, ⟨(List.getElem?_eq_some_iff.1 h).1, rfl⟩, h⟩⟩
 
 /-- A realization by primitives reads at each slot the melody of its symbol. -/
