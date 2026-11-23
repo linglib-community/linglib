@@ -6,24 +6,16 @@ public import Linglib.Fragments.Turkish.Morphotactics
 /-!
 # Turkish verbs
 
-This file defines the Turkish verbs that the studies of Qing and colleagues and of Göksel and
-Kerslake consume. The preferential attitudes are *kork-* 'fear', *um-* 'hope' and *endişelen-*
-'worry'. They take a nominalized clause, in the ablative under *kork-* and *endişelen-* and in
-the accusative under *um-*, and the first two take it as a question as well. The intransitive
-*dolan-* 'walk around' takes no complement. The causatives *öldür-* 'kill' and *yaptır-* 'have
-done' are built on *öl-* 'die' and *yap-* 'do' by the voice suffix -DIr.
+This file defines the Turkish verbs that the studies of [qing-uegaki-2025] and of
+[goksel-kerslake-2005] read. A `Turkish.Verb` is the root entry together with the segments of
+its root and the voice suffixes that build its stem. `Verb.inflect` is its surface form under a
+string of inflectional suffixes, derived by `Turkish.realize`.
 
-Turkish is agglutinating, so a verb records the segments of its root and the voice suffixes of
-its stem. Its inflected forms are derived by `Turkish.realize`, the attachment of suffixes in
-`Turkish.Morphotactics` followed by the surface forms of `Turkish.Phonology`, rather than
-listed.
-
-## Main definitions
-
-* `Turkish.Verb`: a Turkish verb, the root `Verb` with its root segments and voice suffixes.
-* `Turkish.Verb.suffixes`, `Turkish.Verb.inflect`: the suffix string of a verb under a string
-  of inflectional suffixes, and its surface form.
-* `Turkish.verbs`: the inventory of the entries.
+The preferential attitudes *kork-* 'fear', *um-* 'hope' and *endişelen-* 'worry' take a
+nominalized clause, in the ablative under *kork-* and *endişelen-* and in the accusative under
+*um-*, and *kork-* and *endişelen-* take it as a question as well. *dolan-* 'walk around' is
+intransitive. The causatives *öldür-* 'kill' and *yaptır-* 'have done' are built on *öl-* 'die'
+and *yap-* 'do' by the voice suffix -DIr.
 
 ## References
 

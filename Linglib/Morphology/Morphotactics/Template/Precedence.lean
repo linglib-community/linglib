@@ -23,7 +23,7 @@ strict weak order on a finite set of exponents arises from a template
 
 @[expose] public section
 
-namespace Morphology.Morphotactics
+namespace Morphotactics
 
 namespace Template
 
@@ -135,4 +135,4 @@ theorem exists_template_of_isStrictWeakOrder {F : Type*} [Finite F] (R : F → F
     simpa [Precedes, slots, hidx _ (hrank a), hidx _ (hrank b)] using hab
 end Template
 
-end Morphology.Morphotactics
+end Morphotactics

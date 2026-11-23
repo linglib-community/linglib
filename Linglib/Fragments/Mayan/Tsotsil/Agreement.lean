@@ -46,7 +46,7 @@ open Mayan (ExponentTable)
 
 /-- The position classes of the verbal complex in citation order, the aspect marker and Set A
 before the stem and Set B after it. -/
-def template : Morphology.Morphotactics.Template Mayan.VerbSlot :=
+def template : Morphotactics.Template Mayan.VerbSlot :=
   { prefixSlots := [.aspect, .setA], suffixSlots := [.setB] }
 
 /-- Tsotsil is ergative in every aspect. -/

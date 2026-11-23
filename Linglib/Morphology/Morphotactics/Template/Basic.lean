@@ -6,25 +6,22 @@ public import Mathlib.Data.Finset.Defs
 /-!
 # Position-class templates
 
-In templatic morphology the formatives of a word fill a flat string of positions. A formative's
-position can be determined by its formal category rather than by its function, and fillers of the
-same position cannot co-occur. These properties tend to hold of individual formatives rather than
-of the whole string, so a template may contain a position whose fillers stack, as the voice
-suffixes of the Turkish verb do.
+A position-class template lists the positions that the prefixes and the suffixes of a word
+fill, in order, and marks the positions whose fillers stack. We define `Template.language`, the
+strings of positions a template admits: those over its positions, in their order, in which only
+a stacking position repeats. A string of exponents, each tagged with its position, is
+`Template.Licensed` when its positions are admitted.
 
-A `Template` lists the positions of a word's prefixes and of its suffixes and marks those
-that stack. It admits [the strings over its positions, in their order, in which only stacking
-positions repeat](##language). Each position may be skipped, so these strings are [closed under
-dropping a filler](##isSublistClosed_language) and [regular](##isRegular_language). Order and
-repetition are conditions on pairs, so they are also [strictly
-2-piecewise](##isStrictlyPiecewise_language). A string of exponents, each tagged with its
-position, is licensed when its positions are admitted.
+Every position may be skipped, so the admitted strings are closed under dropping a filler
+(`Template.isSublistClosed_language`). They form a regular language
+(`Template.isRegular_language`) that is strictly 2-piecewise
+(`Template.isStrictlyPiecewise_language`).
 
 ## Implementation notes
 
-A template can forbid a filler but not require one, the limit of strictly piecewise grammars, so a
-dependency between fillers is a further condition in the citing grammar. The template of prosodic
-morphology, a CV skeleton, is `Autosegmental.Skeleton`, matched in
+A template can forbid a filler but not require one, the limit of strictly piecewise grammars, so
+a dependency between fillers is a further condition in the citing grammar. The template of
+prosodic morphology, a CV skeleton, is `Autosegmental.Skeleton`, matched in
 `Morphology/Morphotactics/TemplateMatch.lean`.
 
 ## References
@@ -35,7 +32,7 @@ morphology, a CV skeleton, is `Autosegmental.Skeleton`, matched in
 
 @[expose] public section
 
-namespace Morphology.Morphotactics
+namespace Morphotactics
 
 /-- A word's position-class template, over the positions `Slot`. Slots are tags, not exponents:
 the exponents of each position live in the citing grammar. -/
@@ -123,4 +120,4 @@ theorem count_le_one_of_mem_language {a : Slot} (ha : a ∉ t.stacking) (hv : v 
 
 end Template
 
-end Morphology.Morphotactics
+end Morphotactics

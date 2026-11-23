@@ -9,74 +9,31 @@ public import Linglib.Fragments.Turkish.Phonology
 /-!
 # Turkish morphotactics
 
-This file defines the inflectional suffixes of the Turkish finite verb and nominal and the
-order in which they appear, following the reference grammar of Göksel and Kerslake.
+This file defines the inflectional suffixes of the Turkish finite verb and nominal and the order
+in which they appear, following the reference grammar of [goksel-kerslake-2005].
 
-Turkish is suffixing. Derivational suffixes precede inflectional ones, and clitics follow both
-(§6.3). The inflectional suffixes of a finite verb appear in the order root, voice, negation,
-tense/aspect/modality, copular marker, person marker, -DIr (§8.2). The tense/aspect/modality
-markers themselves fall into five positions (§8.2.3): the possibility suffix -(y)A (1), which
-precedes the negative (§8.2.3.1), the bound auxiliaries (2), the markers of tense, aspect and
-modality proper (3), the copular markers (4) and -DIr (5). Markers of one position cannot
-co-occur, and every finite verb but the imperative and the third-person optative carries one of
-position 3. The voice slot alone admits a sequence of suffixes, as the four of
-*döğ-üş-tür-t-ül-* in (7) (§8.2, §8.2.1.1). The person marker alone may leave its place: a
-group-1 marker after -DI and the third-person plural may precede the copular marker, and the
-third-person plural may follow -DIr (§8.3.3, §8.4). The inflectional suffixes of a nominal
-appear in the order number, possession, case (§8.1).
+A `Suffix` is a citation form: the segments that always appear, preceded by a bracketed initial
+segment if it has one, as the `y` of -(y)A and the `I` of -(I)m. `Suffix.attach` attaches a
+suffix to a stem, the bracketed segment appearing exactly when it differs from the last segment
+of the stem in being a vowel, so that vowels and consonants alternate across the juncture
+(`Suffix.attach_concat_alternates`). After a vowel-final stem this is a repair of hiatus
+(`Suffix.attach_concat_eq_repair`). `underlying` attaches a string of suffixes in turn, and
+`realize` is the surface form of the result.
 
-The finite verb and the nominal each have a slot inventory, the exponents of each slot, and a
-template of suffix positions, each of which a word may skip, the voice position of the verb
-stacking. The person markers (§8.4) and the possessives (§8.1.2) are
-`Agreement.Paradigm`s.
-
-Vowels do not occur next to each other in Turkish, and the grammar brackets in a suffix's
-citation form the initial segment whose presence depends on the stem (§6.1.3). The vowel of
--(I)m is lost after a vowel, as in *araba-m*, and the consonant of -(y)A, -(n)In and -(s)I
-appears only after one, as in *masa-ya*. Both cases are one rule: a bracketed segment appears
-exactly when it differs from the last segment of the stem in being a vowel.
-
-## Main definitions
-
-* `Turkish.Verb.Slot`, `Turkish.Verb.Exponent`, `Turkish.Verb.template`: the slots, exponents
-  and template of the finite verb, the slots ordered as the template lists them.
-* `Turkish.Nominal.Slot`, `Turkish.Nominal.Exponent`, `Turkish.Nominal.template`: the same for
-  the nominal.
-* `Turkish.Suffix`, `Suffix.attach`: a suffix in citation form, with its bracketed initial
-  segment, and its attachment to a stem.
-* `Turkish.underlying`, `Turkish.realize`: the underlying and the surface form of a stem with
-  a string of suffixes.
-* `Exponent.form`: the citation form of an exponent.
-* `Verb.forms`: the citation forms of a string of exponents of the finite verb.
-* `Verb.Exponent.IsClitic`: the copular markers, -DIr and the group-2 person markers, which
-  are clitics (§11.1).
-* `Verb.Licensed`: the strings of exponents of the finite verb, in the order of its template
-  or with the person marker moved as §8.4 allows.
-* `Nominal.forms`: the forms of a string of nominal exponents, with the final `n` of a
-  third-person possessive before a case suffix.
-
-## Main results
-
-* `Suffix.attach_concat_alternates`: a bracketed suffix attaches with vowels and consonants
-  alternating across the juncture.
-* `Suffix.attach_eq_elideV2`, `Suffix.attach_eq_epenthesize`, `Suffix.attach_concat_eq_repair`:
-  after a vowel-final stem, attachment is one of the repairs of `Phonology.Hiatus`, elision of
-  the suffix's vowel or insertion of its bracketed consonant.
-* `realize_singleton_ne_self`: a suffix with fixed segments changes every stem it attaches to.
-* `Verb.pairwise_lt_suffixSlots`: the template lists the slots of the finite verb in order.
+The finite verb and the nominal each have their positions (`Verb.Slot`, `Nominal.Slot`), the
+exponents of each position and a template. The verb's positions are voice, possibility,
+negation, auxiliary, tense with aspect and modality, copula, person and -DIr, of which voice
+alone stacks; the nominal's are number, possession and case. The person markers and the
+possessives are `Agreement.Paradigm`s. `Verb.Licensed` admits the order of the template, and
+also a person marker before the copular marker or after -DIr where the grammar allows it.
 
 ## Implementation notes
 
-The question clitic mI stands among the predicate markers, before the first clitic (§6.3 (5),
-§11.1.1.5), and is placed by `Turkish.QuestionParticles.mi.insert`; the clitic dA, which can
-interrupt -(y)Abil (§6.3 (4)), is not represented. The markers' meanings are the matter of Chapter
-21 and Appendix 2. There -DI marks past tense, perfective aspect and direct knowledge, -mIş marks
-relative past tense, perfective aspect and indirect knowledge (evidential modality, §21.4.3), and
-the copular -(y)mIş marks evidential modality alone; -mIş followed by a copular marker or -DIr is
-perfective only (§8.2.3.3). The final `n` that the third-person possessives take before a case
-suffix (§6.2, §8.1.2) belongs to neither citation form and is supplied by `Nominal.forms`. Negation
-of the aorist is irregular, -mAz for -(A/I)r (§8.2.2; see `Turkish.Negation`). The grammar's
-examples are checked against both templates in `Studies/GokselKerslake2005.lean`.
+The question clitic mI is placed by `Turkish.QuestionParticles.mi.insert`; the clitic dA, which
+can interrupt -(y)Abil, is not represented. The final `n` that the third-person possessives take
+before a case suffix belongs to neither citation form and is supplied by `Nominal.forms`. The
+stem-conditioned allomorphs of the causative and the passive and the irregular negative of the
+aorist are not represented.
 
 ## References
 
@@ -386,7 +343,7 @@ instance : DecidablePred (Exponent.IsThirdPlural (σ := σ)) := fun e ↦ by
 
 /-- The template of the finite verb lists its slots in the order of §8.2, each of which a verb
 may skip, the voice slot taking any number of suffixes. -/
-def template : Morphology.Morphotactics.Template Slot where
+def template : Morphotactics.Template Slot where
   suffixSlots :=
     [.voice, .possibility, .negation, .auxiliary, .tam, .copula, .person, .generalizing]
   stacking := {.voice}
@@ -479,7 +436,7 @@ def forms : List (Σ σ, Exponent σ) → List Suffix
 
 /-- The template of the nominal lists the slots number, possession and case, in that order,
 each of which a nominal may skip (§8.1). -/
-def template : Morphology.Morphotactics.Template Slot :=
+def template : Morphotactics.Template Slot :=
   { suffixSlots := [.number, .possession, .case] }
 
 /-- The case a case exponent realizes. -/

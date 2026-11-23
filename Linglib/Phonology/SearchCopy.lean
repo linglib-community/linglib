@@ -12,73 +12,41 @@ public import Linglib.Phonology.Subregular.OSL
 /-!
 # Search and copy
 
-A search-and-copy rule is the Harmonic Search-and-Copy procedure of Nevins: a needy
-segment, one unspecified for a feature, searches in one direction for the closest segment
-visible to it and copies that segment's value, or the opposite value for dissimilation, and
-takes a last-resort default when the search fails. The procedure is stated by its
-visibility predicate, direction and feature; a target may further require its source to
-meet a condition of its own, and a visible source failing it halts the search with the
-default, which is defective intervention, since the search gets no second chance. Every
-visible valued segment donates whether or not it searches itself. Mailhot and Reiss's SEARCH
-and COPY rule components, which Bale and Reiss present as applying simultaneously, are a
-sibling formulation. Belth's learner constructs such a rule, written
-`Rel(A, F) / C __ ∘ proj(·, T)` with `A` the targets, `C` the sources and `T` the visible
-segments, and Nevins reads Rose and Walker's blockers and transparent segments as defective
-interveners and invisible segments.
+A search-and-copy rule is the procedure of [nevins-2010]: a target, a segment that lacks a value
+for a feature, searches in one direction for the closest segment visible to it and copies that
+segment's value, or the opposite value for dissimilation, and takes a default when the search
+fails.
 
-Run over a word, the rule is a Mealy machine whose state is the output of the closest visible
-segment read so far (`SearchCopy.toMealy`). Every target searches, visible or not; the tier
-decides only what the search can see. Where the targets are visible, the run is Belth's
-iterative application of the rule over the tier projection, and a copied value is donated
-onward. Where no write changes a target's visibility, the window is the visible output, and
-the run is the output tier-based strictly 2-local function of Burness and McMullin, the class
-Belth relates his rules to (`SearchCopy.toOSLRule_applyOnTier`). Where the targets are
-invisible, the window is the visible input, and the run is the input tier-based strictly
-2-local function of Andersson, Dolatian and Hao's streaming algorithm
-(`SearchCopy.toISLRule_applyOnTier`). Burness, McMullin and Nevins adopt that input-oriented
-reading. Andersson, Dolatian and Hao state it for simultaneous application, and obtain the
-iterative one by reading the output instead. Every rule is subsequential in its direction over
-a finite alphabet (`SearchCopy.apply_isSubsequential`), as Gainor, Lai and Heinz found of the
-patterns in Nevins's typology.
+A `SearchCopy` consists of the visible segments (its tier), the targets, the sources each target
+may copy from, the relation, a lens on the feature, a default and a direction. Run over a word
+it is a Mealy machine whose state is the output of the closest visible segment read so far
+(`SearchCopy.toMealy`). `SearchCopy.scan` is the run from left to right and `SearchCopy.apply`
+the run in the rule's direction. Every target searches, visible or not, and the tier decides
+only what the search can see.
 
-## Main definitions
-
-* `SearchCopy`: a rule, with its visible segments, targets, sources, relation, lens on the
-  feature, default and direction.
-* `SearchCopy.scan`, `SearchCopy.apply`: the left-to-right run, and the run in the rule's
-  direction.
-* `SearchCopy.sourceAfter`, `SearchCopy.sourceValue`: the closest visible segment of a
-  string and the value it offers to what follows.
-* `SearchCopy.PreservesTier`: no write changes whether a target is visible.
-* `SearchCopy.toMealy`, `SearchCopy.toOSLRule`, `SearchCopy.toISLRule`: the machine and the
-  output and input strictly local rules computing the run.
-
-## Main results
-
-* `SearchCopy.toOSLRule_applyOnTier`: when writes preserve visibility, the OSL rule run with its
-  window over the visible output is the run.
-* `SearchCopy.filter_scan`: when writes preserve visibility, the run restricted to the visible
-  segments is the 2-OSL rule on the tier projection.
-* `SearchCopy.toISLRule_applyOnTier`: when the targets are invisible, the ISL rule run with its
-  window over the visible input is the run.
-* `SearchCopy.apply_isSubsequential`, `SearchCopy.scan_isMealyComputable`: the run is
-  finite-state in the rule's direction over a finite alphabet.
+Where no write changes a target's visibility (`SearchCopy.PreservesTier`), the run is a
+tier-based output strictly 2-local function (`SearchCopy.toOSLRule_applyOnTier`), and the run of
+a word with one more segment is the run of the word followed by one output
+(`SearchCopy.scan_concat`). Where the targets are invisible, the run is a tier-based input
+strictly 2-local function (`SearchCopy.toISLRule_applyOnTier`). Over a finite alphabet every
+rule is subsequential in its direction (`SearchCopy.apply_isSubsequential`). A rule whose writes
+add to their targets changes no value that a segment has (`SearchCopy.forall₂_le_scan`).
 
 ## Implementation notes
 
-Placing the targets on the tier or off it chooses between the iterative and the simultaneous
-application. On the tier, a written target donates onward, as Nevins's derivations of stacked
-Turkish suffixes show, and the run is Nevins's cyclic derivation only where morphological order
-runs away from the root in the search direction. Belth's learner keeps the alternating segments
-on the tier. `IsSource` is more general than Nevins's conditions on a source, which are identity
-for an orthogonal feature or morphological affiliation. A source unspecified for the feature
-yields the default, where Belth counts a failed application, and a default of `none`, outside
-both sources, leaves a failed target unspecified for the fixed-point results of
-`Harmony.System`. The lens laws hold on targets only, since only targets are written. Not
-modelled are search in both directions at once, sonority hurdles, the distance parameters of
-Nevins's fifth chapter, more than one feature per search, and the patterns Burness, McMullin
-and Nevins place beyond the procedure: icy targets, persistent search and circumambient
-harmony.
+A visible source that fails a target's condition halts the search with the default, which is
+defective intervention. Every visible valued segment donates, whether or not it searches itself.
+Placing the targets on the tier or off it chooses between iterative and simultaneous
+application: on the tier a written target donates onward. A source unspecified for the feature
+yields the default, and a default of `none` leaves a failed target unspecified. The lens laws
+hold on targets only, since only targets are written.
+
+The output-local reading is that of [burness-mcmullin-2019], to which [belth-2026] relates his
+rules, and the input-local one that of [andersson-dolatian-hao-2020]. [gainor-lai-heinz-2012]
+found the patterns of Nevins's typology subsequential. The SEARCH and COPY components of
+[mailhot-reiss-2007] are a sibling formulation. Search in both directions at once, sonority
+hurdles, distance parameters, more than one feature per search, and the patterns that
+[burness-mcmullin-nevins-2024] place beyond the procedure are not modelled.
 
 ## References
 
@@ -271,6 +239,115 @@ theorem apply_isSubsequential [Fintype α] : IsSubsequential r.direction r.apply
   · exact r.apply_eq_scan h ▸ r.toMealy.isLeftSubsequential
   · exact r.apply_eq_revConj_scan h ▸ r.toMealy.isRightSubsequential
 
+theorem emit_congr {w w' : Option α} {s : α} (h : r.found s w = r.found s w') :
+    r.emit w s = r.emit w' s := by
+  unfold emit copied; rw [h]
+
+private theorem head?_filter_bind_congr {β γ : Type*} {π : α → γ} {p : α → Bool}
+    {κ : α → Option β} (hp : ∀ c c', π c = π c' → p c = p c')
+    (hκ : ∀ c c', π c = π c' → κ c = κ c') : ∀ l l' : List α, l.map π = l'.map π →
+      ((l.filter p).head?).bind κ = ((l'.filter p).head?).bind κ
+  | [], [], _ => rfl
+  | [], _ :: _, h => by simp at h
+  | _ :: _, [], h => by simp at h
+  | a :: l, b :: l', h => by
+    rw [List.map_cons, List.map_cons, List.cons.injEq] at h
+    have hpab := hp a b h.1
+    by_cases ha : p a
+    · rw [List.filter_cons_of_pos ha, List.filter_cons_of_pos (hpab ▸ ha)]
+      exact hκ a b h.1
+    · rw [List.filter_cons_of_neg ha, List.filter_cons_of_neg (hpab ▸ ha)]
+      exact head?_filter_bind_congr hp hκ l l' h.2
+
+/-- The segment output after a word depends on the word only through what the rule reads of
+it: two words that agree under a map `π` deciding visibility and the value a segment offers
+give the same output. -/
+theorem emit_getLast?_filter_congr {γ : Type*} {π : α → γ}
+    (hp : ∀ c c', π c = π c' → (r.tier c ↔ r.tier c'))
+    (hf : ∀ c c' t, π c = π c' → r.found t (some c) = r.found t (some c'))
+    {l l' : List α} (h : l.map π = l'.map π) (t : α) :
+    r.emit (l.filter (r.tier ·)).getLast? t = r.emit (l'.filter (r.tier ·)).getLast? t := by
+  refine r.emit_congr ?_
+  rw [List.getLast?_eq_head?_reverse, List.getLast?_eq_head?_reverse, ← List.filter_reverse,
+    ← List.filter_reverse]
+  exact head?_filter_bind_congr (κ := fun c ↦ r.found t (some c))
+    (fun c c' hc ↦ decide_eq_decide.2 (hp c c' hc)) (fun c c' hc ↦ hf c c' t hc) _ _
+    (by rw [List.map_reverse, List.map_reverse, h])
+
+/-- When writes preserve visibility, the closest visible segment after a word is the last
+visible segment of its run. -/
+theorem getLast?_filter_scan (hw : r.PreservesTier) (w : List α) :
+    ((r.scan w).filter (r.tier ·)).getLast? = r.toMealy.eval w := by
+  change _ = r.toMealy.evalFrom none w
+  induction w using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton w y ihw =>
+    rw [scan_eq_runFrom, Mealy.runFrom_append, Mealy.evalFrom_append, List.filter_append,
+      ← scan_eq_runFrom]
+    by_cases hy : r.tier y
+    · simp [hy, (r.tier_emit_iff hw _ y).2 hy]
+    · simp [hy, mt (r.tier_emit_iff hw _ y).1 hy, ihw]
+
+/-- When writes preserve visibility, the run of a word with one more segment is the run of the
+word, followed by the segment output with the last visible segment of that run as window. -/
+theorem scan_concat (hw : r.PreservesTier) (w : List α) (x : α) :
+    r.scan (w ++ [x]) = r.scan w ++ [r.emit ((r.scan w).filter (r.tier ·)).getLast? x] := by
+  rw [r.getLast?_filter_scan hw, scan_eq_runFrom, Mealy.runFrom_append, ← scan_eq_runFrom]
+  rfl
+
+/-! ### Words without targets -/
+
+theorem scan_eq_self {w : List α} (h : ∀ s ∈ w, ¬ r.IsTarget s) : r.scan w = w := by
+  suffices ∀ (q : Option α), r.toMealy.runFrom q w = w from this none
+  induction w with
+  | nil => exact fun _ ↦ rfl
+  | cons x xs ih =>
+    intro q
+    rw [Mealy.runFrom_cons, toMealy_output, r.emit_of_not_isTarget (h x List.mem_cons_self),
+      ih fun s hs ↦ h s (List.mem_cons_of_mem x hs)]
+
+theorem eval_toMealy_of_forall_not_isTarget {w : List α} (h : ∀ s ∈ w, ¬ r.IsTarget s) :
+    r.toMealy.eval w = (w.filter (r.tier ·)).getLast? := by
+  induction w using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton w x ih =>
+    have hx : ¬ r.IsTarget x := h x (by simp)
+    rw [Mealy.eval, Mealy.evalFrom_append, ← Mealy.eval,
+      ih fun s hs ↦ h s (List.mem_append_left _ hs), List.filter_append]
+    by_cases hxt : r.tier x
+    · simp [hxt, r.emit_of_not_isTarget hx]
+    · simp [hxt]
+
+/-! ### Rules that fill features in -/
+
+section Preorder
+
+variable [Preorder α]
+
+theorem le_emit (h : ∀ v s, r.IsTarget s → s ≤ r.write v s) (w : Option α) (s : α) :
+    s ≤ r.emit w s := by
+  unfold emit
+  split_ifs with ht
+  · cases r.copied s w with
+    | none => exact le_rfl
+    | some v => exact h v s ht
+  · exact le_rfl
+
+/-- A rule whose writes add to their targets fills features in and changes none: each segment
+of the run's output is at least the segment it comes from. -/
+theorem forall₂_le_scan (h : ∀ v s, r.IsTarget s → s ≤ r.write v s) (w : List α) :
+    List.Forall₂ (· ≤ ·) w (r.scan w) :=
+  r.toMealy.forall₂_run w fun q s ↦ r.le_emit h q s
+
+theorem forall₂_le_apply (h : ∀ v s, r.IsTarget s → s ≤ r.write v s) (w : List α) :
+    List.Forall₂ (· ≤ ·) w (r.apply w) := by
+  cases hd : r.direction
+  · simpa [apply, hd, Edge.orient] using r.forall₂_le_scan h w
+  · simpa [apply, hd, Edge.orient] using
+      List.rel_reverse (r.forall₂_le_scan h w.reverse)
+
+end Preorder
+
 /-! ### The run as a tier-based OSL rule -/
 
 /-- The rule as a 2-OSL rule ([chandlee-eyraud-heinz-2015]) in which each target copies from
@@ -291,16 +368,8 @@ theorem toOSLRule_applyOnTier (hw : r.PreservesTier) :
   induction w using List.reverseRecOn with
   | nil => rfl
   | append_singleton w x ih =>
-    have hv : ((r.scan w).filter (r.tier ·)).getLast? = r.toMealy.evalFrom none w := by
-      clear ih
-      induction w using List.reverseRecOn with
-      | nil => rfl
-      | append_singleton w y ihw =>
-        rw [scan_eq_runFrom, Mealy.runFrom_append, Mealy.evalFrom_append, List.filter_append,
-          ← scan_eq_runFrom]
-        by_cases hy : r.tier y
-        · simp [hy, (r.tier_emit_iff hw _ y).2 hy]
-        · simp [hy, mt (r.tier_emit_iff hw _ y).1 hy, ihw]
+    have hv : ((r.scan w).filter (r.tier ·)).getLast? = r.toMealy.evalFrom none w :=
+      r.getLast?_filter_scan hw w
     rw [Subregular.OSLRule.applyOnTier_append_singleton, ih, toOSLRule_windowOutput,
       List.getLast?_rtake]
     simp only [Nat.reduceSub, one_ne_zero, ↓reduceIte, hv]

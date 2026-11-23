@@ -115,7 +115,7 @@ def Exponent.morphs : Exponent σ → List Morph
   | .te => [.suff "te"]
 
 /-- The suffix positions in their order from the stem outward. -/
-def template : Morphology.Morphotactics.Template Slot where
+def template : Morphotactics.Template Slot where
   suffixSlots :=
     [.derivation, .valence, .voice, .politeness, .desiderative, .negation, .inflection]
 

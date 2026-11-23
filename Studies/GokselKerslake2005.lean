@@ -1,40 +1,36 @@
 module
 
+public import Linglib.Data.Examples.GokselKerslake2005
 public import Linglib.Fragments.Turkish.Clause
 public import Linglib.Fragments.Turkish.Possession
 public import Linglib.Fragments.Turkish.QuestionParticles
 public import Linglib.Fragments.Turkish.Verbs
+public import Linglib.Morphology.Morphotactics.Concatenation
 
 /-!
 # Göksel and Kerslake (2005): Turkish suffixation
 
-This file checks the account of the form and order of Turkish suffixes in the reference
-grammar of Göksel and Kerslake against the Turkish Fragment.
+We check the reference grammar's account of the form and order of Turkish suffixes against the
+Turkish Fragment.
 
-The vowel harmony of Chapter 3 is derived by the surface forms of `Turkish.Phonology` from the
-exponent forms of `Turkish.Morphotactics`. The permissible vowel sequences of §3.1 are the
-surface forms of the two suffix vowels. The last vowel of a disharmonic loan decides
-(*otobüs-ler*), an invariant suffix vowel is skipped and triggers what follows (*görüyorum*,
-§3.4), and the palatal l of *gol* fronts its suffix (§3.4). The bracketed segments of Chapter 6
-appear where they keep vowels and consonants apart (§6.1.3), and a stem-final `a` or `e`,
-the vowel of the negative included, is raised before -(I)yor (§8.2.3.3).
+A suffix vowel that lacks [back] or [round] takes it from the word before it, and a
+suffix-initial stop that lacks [voice] takes it from the segment before it. The Fragment states
+this as `Turkish.Phonology.fill w x`, the segment `x` after the harmonized string `w`. We prove
+that the search-and-copy rules of fronting, rounding and voicing compute the same form for
+every word (`harmonize_eq_searchCopy`), that harmony adds feature values and changes none
+(`forall₂_le_harmonize`), and that `A`, `I` and `D` surface as the alternants the grammar lists
+(`fill_A`, `fill_I`, `fill_D`).
 
-The suffix order of Chapter 8 is licensing by the templates of the finite verb and the nominal,
-the person marker of the verb moving where §8.4 allows and nowhere else.
-The grammar's example words are licensed with their stacked voice suffixes, reversed orders are
-not, and the rule that markers of one position cannot co-occur (§8.2.3) holds because the
-template does not repeat the position.
+Suffixes attach one at a time. Before raising, a suffix sees only the harmonized word it
+attaches to and leaves it in place (`isStepwise_harmonize_underlying`,
+`isConcatenative_harmonize_underlying`), and two stems that end alike take their suffixes alike
+(`exists_harmonize_append_eq`). Raising before -(I)yor alters the stem
+(`not_isConcatenative_realize`).
 
-The question clitic *mI* stands before the first clitic among the markers of a predicate and
-after the other markers (§11.1.1.5), as `Turkish.QuestionParticles.mi.insert` places it, so the
-grammar's examples are its surface forms, the markers after it attached to it (§6.3 (5)).
-
-The converbs of §8.5.2.2 are those of `Turkish.Converb` on the grammar's verbs, and
-*-(y)Ip* and *-(y)ArAk* follow every slot before the position-3 marker and none after it
-(§28.2).
-
-The possessive and locative existential sentences of §12.1.1.2 are those of
-`Turkish.Possession`, with the possessive suffix on the possessee obligatory (§14.4).
+The example words of the chapters on vowel harmony, suffixation and inflection are rows of the
+data, and each is written as the surface form of its stem with its suffixes (`printed`). The
+remaining sections check the order of suffixes against the templates of the verb and the
+nominal, the place of the question clitic *mI*, the converbs and the existential sentences.
 
 ## References
 
@@ -45,7 +41,7 @@ The possessive and locative existential sentences of §12.1.1.2 are those of
 
 namespace GokselKerslake2005
 
-open Turkish Phonology Verb.Exponent Nominal.Exponent QuestionParticles
+open Turkish Phonology Phonology.Harmony Verb.Exponent Nominal.Exponent QuestionParticles
 
 /-! ### Vowel harmony (Chapter 3) -/
 
@@ -54,110 +50,131 @@ and of `I` after it. -/
 def followers (v : Segment) : List Segment :=
   [A, I].map fun x ↦ (surface [v, x]).getLastD x
 
-/-- The permissible vowel sequences are those the grammar tabulates (§3.1). -/
+-- §3.1
 theorem followers_table :
     followers a = [a, ı] ∧ followers ı = [a, ı] ∧ followers o = [a, u] ∧ followers u = [a, u] ∧
     followers e = [e, i] ∧ followers i = [e, i] ∧ followers ö = [e, ü] ∧ followers ü = [e, ü] := by
   decide
 
--- §3.2.1
-theorem iType :
-    realize [k, ı, z] [(possessive (.personNumber .second .singular)).form] =
-        [k, ı, z, ı, n] ∧
-    realize [e, l] [(possessive (.personNumber .second .singular)).form] =
-        [e, l, i, n] ∧
-    realize [k, o, l] [(possessive (.personNumber .second .singular)).form] =
-        [k, o, l, u, n] ∧
-    realize [g, ö, z] [(possessive (.personNumber .second .singular)).form] =
-        [g, ö, z, ü, n] := by
+/-! ### The grammar's words -/
+
+/-- The segments of the stem that a lexeme of the data is, the loans *gol* and *hal* ending in
+the palatal lateral (§3.4 (iv)). -/
+def Examples.Lexeme.stem : Examples.Lexeme → List Segment
+  | .kiz => [k, ı, z]
+  | .el => [e, l]
+  | .kol => [k, o, l]
+  | .goz => [g, ö, z]
+  | .otobus => [o, t, o, b, ü, s]
+  | .uz => [ü, z]
+  | .gor => [g, ö, r]
+  | .bak => [b, a, k]
+  | .gol => [g, o, l']
+  | .hal => [h, a, l']
+  | .kal => [k, a, l]
+  | .dus => [d, ü, ş]
+  | .pul => [p, u, l]
+  | .ev => [e, v]
+  | .araba => [a, r, a, b, a]
+  | .ara => [a, r, a]
+  | .sor => [s, o, r]
+  | .atla => [a, t, l, a]
+  | .suna => [s, u, n, a]
+  | .betul => [b, e, t, ü, l]
+  | .emine => [e, m, i, n, e]
+  | .elbise => [e, l, b, i, s, e]
+  | .tepe => [t, e, p, e]
+  | .yuz => [y, ü, z]
+  | .oda => [o, d, a]
+  | .masa => [m, a, s, a]
+  | .okul => [o, k, u, l]
+  | .hasta => [h, a, s, t, a]
+  | .kat => [k, a, t]
+  | .anla => [a, n, l, a]
+  | .oksa => [o, k, ş, a]
+  | .bekle => [b, e, k, l, e]
+  | .ozle => [ö, z, l, e]
+  | .eri => [e, r, i]
+  | .kuru => [k, u, r, u]
+  | .sakla => [s, a, k, l, a]
+  | .soyle => [s, ö, y, l, e]
+  | .yap => [y, a, p]
+  | .koy => [k, o, y]
+  | .ol => [ö, l]
+  | .dol => [d, o, l]
+
+/-- The exponent of the nominal that a gloss of the data names, if it names one. -/
+def Examples.Suffix.nominal? : Examples.Suffix → Option (Σ σ, Nominal.Exponent σ)
+  | .pl => some ⟨_, plural⟩
+  | .poss1sg => some ⟨_, possessive (.personNumber .first .singular)⟩
+  | .poss2sg => some ⟨_, possessive (.personNumber .second .singular)⟩
+  | .poss3sg => some ⟨_, possessive (.personNumber .third .singular)⟩
+  | .poss1pl => some ⟨_, possessive (.personNumber .first .plural)⟩
+  | .poss2pl => some ⟨_, possessive (.personNumber .second .plural)⟩
+  | .poss3pl => some ⟨_, possessive (.personNumber .third .plural)⟩
+  | .gen => some ⟨_, genitive⟩
+  | .dat => some ⟨_, dative⟩
+  | .loc => some ⟨_, locative⟩
+  | _ => none
+
+/-- The group of a person marker after the suffix `prev`: group 1 after -DI, -sA and the
+copular markers -(y)DI and -(y)sA, and group 2 otherwise (§8.4). -/
+def groupAfter (prev : Option Examples.Suffix) : Verb.PersonGroup :=
+  if prev ∈ [some .pf, some .cond, some .pCop, some .condCop] then .one else .two
+
+/-- The forms of the verbal or predicate suffix that a gloss of the data names, after the
+suffix `prev`. -/
+def Examples.Suffix.verbal (prev : Option Examples.Suffix) :
+    Examples.Suffix → List Turkish.Suffix
+  | .pass => [passive.form]
+  | .caus => [causative.form]
+  | .neg => [negative.form]
+  | .pf => [di.form]
+  | .evPf => [miş.form]
+  | .impf => [iyor.form]
+  | .aor => [aorist.form]
+  | .fut => [acak.form]
+  | .cond => [sa.form]
+  | .pCop => [pastCopula.form]
+  | .evCop => [evidentialCopula.form]
+  | .condCop => [conditionalCopula.form]
+  | .cv => Converb.ken.form
+  | .p1sg => [(person (groupAfter prev) (.personNumber .first .singular)).form]
+  | .p1pl => [(person (groupAfter prev) (.personNumber .first .plural)).form]
+  | .p2pl => [(person (groupAfter prev) (.personNumber .second .plural)).form]
+  | .p3pl => [(person (groupAfter prev) (.personNumber .third .plural)).form]
+  | _ => []
+
+/-- The forms of a string of glosses. A nominal exponent takes its form before the one after
+it, as `Nominal.forms` gives it, and a verbal one after the gloss before it. -/
+def suffixForms : Option Examples.Suffix → List Examples.Suffix → List Suffix
+  | _, [] => []
+  | prev, x :: xs =>
+    (match x.nominal? with
+      | some e => (Nominal.forms (e :: (xs.head?.bind (·.nominal?)).toList)).take 1
+      | none => x.verbal prev) ++ suffixForms (some x) xs
+
+/-- The segments that a string of letters writes, capitals as small letters and without the
+morpheme boundaries and the full stop. -/
+def segments? (cs : List Char) : Option (List Segment) :=
+  ((cs.filter fun c ↦ c ≠ '-' ∧ c ≠ '.').map Char.toLower).mapM ofChar
+
+/-- A surface form as the alphabet writes it, the palatal lateral as the plain one and the
+final consonant of -(y)AcAK as `k`. -/
+def written (w : List Segment) : List Segment :=
+  w.map fun x ↦ if x = l' then l else if x = K then k else x
+
+/-- Every example word of the grammar is written as the surface form of its stem with its
+suffixes. -/
+theorem printed : ∀ x : Examples.Example, ∃ st ∈ (x.lexemes .stem).head?,
+    ∃ w ∈ x.datum.glossedWords.head?,
+      segments? w.word = some (written (realize st.stem (suffixForms none x.suffixes))) := by
   decide
 
--- Chapter 3
-theorem last_vowel_decides :
-    realize [o, t, o, b, ü, s] [plural.form] =
-      [o, t, o, b, ü, s, l, e, r] := by
-  decide
-
--- §3.2
-theorem iterated :
-    realize [ü, z] [passive.form, di.form, (person .one (.personNumber .second .plural)).form] =
-      [ü, z, ü, l, d, ü, n, ü, z] := by
-  decide
-
-/-- The `o` of -(I)yor does not harmonize and triggers the person marker in *gör-üyor-um*, and
-the converb -(y)ken is invariable in *bak-mış-ken* (§3.4 (vi)). -/
-theorem retriggering :
-    realize [g, ö, r] [iyor.form, (person .two (.personNumber .first .singular)).form] =
-      [g, ö, r, ü, y, o, r, u, m] ∧
-    realize [b, a, k] (miş.form :: Converb.ken.form) = [b, a, k, m, ı, ş, k, e, n] := by
-  decide
-
-/-- The palatal l of *gol* and *hal* fronts the suffix in *gol-ü* and *hal-im*, while rounding
-still comes from the vowel (§3.4 (iv)). -/
-theorem palatal_l :
-    realize [g, o, l'] [(possessive (.personNumber .third .singular)).form] =
-      [g, o, l', ü] ∧
-    realize [h, a, l'] [(possessive (.personNumber .first .singular)).form] =
-      [h, a, l', i, m] := by
-  decide
-
--- §6.1.2
-theorem voicing_of_D :
-    realize [k, a, l] [di.form] = [k, a, l, d, ı] ∧
-    realize [d, ü, ş] [di.form] = [d, ü, ş, t, ü] := by
-  decide
-
-/-- A bracketed vowel appears after a consonant and is lost after a vowel, as in *ev-im* against
-*araba-m* (§6.1.3, §8.1.2). -/
-theorem deletable_vowels :
-    realize [p, u, l] [(possessive (.personNumber .first .singular)).form] = [p, u, l, u, m] ∧
-    realize [e, v] [(possessive (.personNumber .first .singular)).form] = [e, v, i, m] ∧
-    realize [a, r, a, b, a] [(possessive (.personNumber .first .singular)).form] = [a, r, a, b, a,
-                                                                                    m] ∧
-    realize [e, v] [(possessive (.personNumber .second .plural)).form] = [e, v, i, n, i, z] ∧
-    realize [a, r, a, b, a] [(possessive (.personNumber .second .plural)).form] =
-      [a, r, a, b, a, n, ı, z] ∧
-    realize [e, v] [(possessive (.personNumber .first .plural)).form] = [e, v, i, m, i, z] ∧
-    realize [a, r, a, b, a] [(possessive (.personNumber .first .plural)).form] =
-      [a, r, a, b, a, m, ı, z] ∧
-    realize [g, ö, r] [aorist.form] = [g, ö, r, ü, r] ∧
-    realize [a, r, a] [aorist.form] = [a, r, a, r] := by
-  decide
-
-/-- A bracketed consonant appears after a vowel and is lost after a consonant, as in *masa-ya*
-against *sor-acak* (§6.1.3, §8.1.2, §8.1.3). -/
-theorem deletable_consonants :
-    realize [e, m, i, n, e] [dative.form] = [e, m, i, n, e, y, e] ∧
-    realize [m, a, s, a] [dative.form] = [m, a, s, a, y, a] ∧
-    realize [a, t, l, a] [acak.form] = [a, t, l, a, y, a, c, a, K] ∧
-    realize [s, o, r] [acak.form] = [s, o, r, a, c, a, K] ∧
-    realize [s, u, n, a] [genitive.form] = [s, u, n, a, n, ı, n] ∧
-    realize [e, m, i, n, e] [genitive.form] = [e, m, i, n, e, n, i, n] ∧
-    realize [b, e, t, ü, l] [genitive.form] = [b, e, t, ü, l, ü, n] ∧
-    realize [a, r, a, b, a] [(possessive (.personNumber .third .singular)).form] = [a, r, a, b, a,
-                                                                                    s, ı] ∧
-    realize [e, l, b, i, s, e] [(possessive (.personNumber .third .singular)).form] =
-      [e, l, b, i, s, e, s, i] ∧
-    realize [e, v] [(possessive (.personNumber .third .singular)).form] = [e, v, i] := by
-  decide
-
-/-- A third-person possessive takes a final `n` before a case suffix but not word-finally, as in
-*tepe-si-n-de* against *tepe-si* (§6.2 (iib), §8.1.2). -/
-theorem pronominal_n :
-    realize [t, e, p, e]
-        (Nominal.forms [⟨_, possessive (.personNumber .third .singular)⟩, ⟨_, locative⟩]) =
-      [t, e, p, e, s, i, n, d, e] ∧
-    realize [y, ü,
-             z] (Nominal.forms [⟨_, possessive (.personNumber .third .singular)⟩, ⟨_, dative⟩]) =
-      [y, ü, z, ü, n, e] ∧
-    realize [e, l, b, i, s, e]
-        (Nominal.forms [⟨_, possessive (.personNumber .third .plural)⟩, ⟨_, dative⟩]) =
-      [e, l, b, i, s, e, l, e, r, i, n, e] ∧
-    realize [t, e, p, e] (Nominal.forms [⟨_, possessive (.personNumber .third .singular)⟩]) =
-      [t, e, p, e, s, i] ∧
-    realize [o, d,
-             a] (Nominal.forms [⟨_, possessive (.personNumber .first .singular)⟩, ⟨_, locative⟩]) =
-      [o, d, a, m, d, a] := by
+-- where the grammar segments a word, its first morph writes the stem
+theorem stem_printed : ∀ x : Examples.Example, ∀ st ∈ (x.lexemes .stem).head?,
+    ∀ w ∈ x.datum.glossedWords.head?, ∀ m ∈ w.glossedMorphemes.head?,
+      1 < w.glossedMorphemes.length → segments? m.morpheme = some (written st.stem) := by
   decide
 
 /-- The juncture of *araba* 'car' and the vowel of -(I)m. -/
@@ -166,74 +183,311 @@ def arabaIm : Hiatus.Juncture := ⟨[a, r, a, b], a, I, [m], by decide, by decid
 /-- The juncture of *masa* 'table' and the vowel of -(y)A. -/
 def masaA : Hiatus.Juncture := ⟨[m, a, s], a, A, [], by decide, by decide⟩
 
-/-- Bracketed vowels and consonants are the two repairs of hiatus, elision in *araba-m* and
-epenthesis in *masa-ya* (§6.1.3). -/
+-- §6.1.3, §8.1.2, §8.1.3
 theorem hiatus_repairs :
     (possessive (.personNumber .first .singular)).form.attach arabaIm.left = arabaIm.elideV2 ∧
     dative.form.attach masaA.left = masaA.epenthesize y :=
   ⟨Suffix.attach_eq_elideV2 arabaIm rfl rfl,
     Suffix.attach_eq_epenthesize masaA rfl (by decide) rfl⟩
 
-/-- The copular markers and the first-person markers of group 2 take the buffer `y` after a
-vowel, as in *okul-da-yım*, *ev-de-ydi-k*, *hasta-ysa-lar* and *kat-sa-ydı-lar* (§8.4). -/
-theorem predicate_buffers :
-    realize [o, k, u, l] [locative.form, (person .two (.personNumber .first .singular)).form] =
-      [o, k, u, l, d, a, y, ı, m] ∧
-    realize [e, v] [locative.form, pastCopula.form,
-                    (person .one (.personNumber .first .plural)).form] =
-      [e, v, d, e, y, d, i, k] ∧
-    realize [h, a, s, t, a] [conditionalCopula.form,
-                             (person .one (.personNumber .third .plural)).form] =
-      [h, a, s, t, a, y, s, a, l, a, r] ∧
-    realize [k, a, t] [sa.form, pastCopula.form,
-                       (person .one (.personNumber .third .plural)).form] =
-      [k, a, t, s, a, y, d, ı, l, a, r] := by
-  decide
-
-/-- Before -(I)yor a stem-final `a` or `e` becomes high and harmonizes, as in *anlıyor*, while a
-final high vowel stands (§8.2.3.3). -/
-theorem imperfective_of_vowel_stems :
-    realize [a, n, l, a] [iyor.form] = [a, n, l, ı, y, o, r] ∧
-    realize [o, k, ş, a] [iyor.form] = [o, k, ş, u, y, o, r] ∧
-    realize [b, e, k, l, e] [iyor.form] = [b, e, k, l, i, y, o, r] ∧
-    realize [ö, z, l, e] [iyor.form] = [ö, z, l, ü, y, o, r] ∧
-    realize [e, r, i] [iyor.form] = [e, r, i, y, o, r] ∧
-    realize [k, u, r, u] [iyor.form] = [k, u, r, u, y, o, r] := by
-  decide
-
-/-- The vowel of the negative is a stem-final vowel before -(I)yor like any other, as in
-*anla-mı-yor*, *gör-mü-yor*, *sakla-mı-yor* and *söyle-mi-yor* (§8.2.2, §8.2.3.3). -/
-theorem negative_raised :
-    realize [a, n, l, a] [negative.form, iyor.form] =
-      [a, n, l, a, m, ı, y, o, r] ∧
-    realize [g, ö, r] [negative.form, iyor.form] =
-      [g, ö, r, m, ü, y, o, r] ∧
-    realize [s, a, k, l, a] [negative.form, iyor.form] =
-      [s, a, k, l, a, m, ı, y, o, r] ∧
-    realize [s, ö, y, l, e] [negative.form, iyor.form] =
-      [s, ö, y, l, e, m, i, y, o, r] := by
-  decide
-
--- §8.1, (2)
-theorem nominal_predicate :
-    realize [e, v] [plural.form, (possessive (.personNumber .first .plural)).form, locative.form,
-        evidentialCopula.form, (person .two (.personNumber .third .plural)).form] =
-      [e, v, l, e, r, i, m, i, z, d, e, y, m, i, ş, l, e, r] := by
-  decide
-
-/-- The causative -DIr on *yap-*, *koy-*, *öl-* and *dol-* gives the stems *yaptır-*,
-*koydur-*, *öldür-* and *doldur-* (§8.2.1.1). -/
-theorem causative_stems :
-    realize [y, a, p] [causative.form] = [y, a, p, t, ı, r] ∧
-    realize [k, o, y] [causative.form] = [k, o, y, d, u, r] ∧
-    realize [ö, l] [causative.form] = [ö, l, d, ü, r] ∧
-    realize [d, o, l] [causative.form] = [d, o, l, d, u, r] := by
-  decide
-
-/-- The spelled stem of every verb of the Fragment writes the surface form of its root and
-voice suffixes, the causatives *öldür-* and *yaptır-* among them. -/
 theorem spelled_stems : ∀ v ∈ verbs, ofString? v.form = some (v.inflect []) := by
   decide
+
+/-! ### The search-and-copy rules compute the harmonized form -/
+
+private theorem not_isTarget : ∀ x ∈ vowels ∪ consonants, ¬ fronting.searchCopy.IsTarget x ∧
+    ¬ rounding.searchCopy.IsTarget x ∧ ¬ voicing.searchCopy.IsTarget x := by decide
+
+private theorem fronting_preservesTier : fronting.searchCopy.PreservesTier := by
+  intro v s h
+  simp [fronting, System.mk', System.searchCopy, Pattern.OnTier] at h ⊢
+  exact fun _ ↦ h.1.1
+
+private theorem rounding_preservesTier : rounding.searchCopy.PreservesTier := by
+  intro v s h
+  simp [rounding, System.mk', System.searchCopy, Pattern.OnTier] at h ⊢
+
+private theorem voicing_preservesTier : voicing.searchCopy.PreservesTier := by
+  intro v s h
+  simp [voicing, System.mk', System.searchCopy, Pattern.OnTier] at h ⊢
+
+private theorem fronting_participating {b : Segment} (h : fronting.pattern.OnTier b) :
+    fronting.pattern.participation b = .participating := by
+  simpa [fronting, System.mk', Pattern.OnTier] using h
+
+private theorem rounding_participating {b : Segment} (h : rounding.pattern.OnTier b) :
+    rounding.pattern.participation b = .participating := by
+  simpa [rounding, System.mk', Pattern.OnTier] using h
+
+private theorem fronting_tier_iff (s : Segment) :
+    fronting.searchCopy.tier s ↔ s.IsSyllabic ∨ s .back ≠ none := by
+  simp [fronting, System.mk', System.searchCopy, Pattern.OnTier, Segment.IsSyllabic]; tauto
+
+private theorem rounding_tier_iff (s : Segment) : rounding.searchCopy.tier s ↔ s.IsSyllabic := by
+  simp [rounding, System.mk', System.searchCopy, Pattern.OnTier, Segment.IsSyllabic]
+
+private theorem filter_fronting_tier (w : List Segment) :
+    w.filter (fronting.searchCopy.tier ·) = w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none :=
+  List.filter_congr fun s _ ↦ decide_eq_decide.2 (fronting_tier_iff s)
+
+private theorem filter_rounding_tier (w : List Segment) :
+    w.filter (rounding.searchCopy.tier ·) = w.filter (·.IsSyllabic) :=
+  List.filter_congr fun s _ ↦ decide_eq_decide.2 (rounding_tier_iff s)
+
+private theorem fronting_emit (w : List Segment) (x : Segment) :
+    fronting.searchCopy.emit (w.filter (fronting.searchCopy.tier ·)).getLast? x =
+      if x.IsSyllabic ∧ x .back = none then
+        x.copy .back (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? else x := by
+  have ht := fronting_tier_iff
+  have hx : fronting.IsTarget x ∧ fronting.pattern.OnTier x ↔ x.IsSyllabic ∧ x .back = none :=
+    ⟨fun h ↦ h.1, fun h ↦ ⟨h, (ht x).2 (.inl h.1)⟩⟩
+  rw [fronting.emit_eq_of_participating rfl fun c hc ↦ by
+    have := of_decide_eq_true (List.mem_filter.1 (List.mem_of_getLast? hc)).2
+    simpa [fronting, System.mk', Pattern.OnTier] using this,
+    List.filter_congr fun s _ ↦ decide_eq_decide.2 (ht s)]
+  simp only [hx]
+  rfl
+
+private theorem rounding_emit (w : List Segment) (x : Segment) :
+    rounding.searchCopy.emit (w.filter (rounding.searchCopy.tier ·)).getLast? x =
+      if x.IsSyllabic ∧ x .high = true ∧ x .round = none then
+        x.copy .round (w.filter (·.IsSyllabic)).getLast? else x := by
+  have ht := rounding_tier_iff
+  have hx : rounding.IsTarget x ∧ rounding.pattern.OnTier x ↔
+      x.IsSyllabic ∧ x .high = true ∧ x .round = none :=
+    ⟨fun h ↦ h.1, fun h ↦ ⟨h, (ht x).2 h.1⟩⟩
+  rw [rounding.emit_eq_of_participating rfl fun c hc ↦ by
+    have := of_decide_eq_true (List.mem_filter.1 (List.mem_of_getLast? hc)).2
+    simpa [rounding, System.mk', Pattern.OnTier] using this,
+    List.filter_congr fun s _ ↦ decide_eq_decide.2 (ht s)]
+  simp only [hx]
+  rfl
+
+private theorem voicing_emit (w : List Segment) (x : Segment) :
+    voicing.searchCopy.emit w.getLast? x =
+      if x .voice = none then x.copy .voice w.getLast? else x := by
+  have hx : voicing.IsTarget x ∧ voicing.pattern.OnTier x ↔ x .voice = none :=
+    ⟨fun h ↦ h.1, fun h ↦ ⟨h, by simp [voicing, System.mk', Pattern.OnTier]⟩⟩
+  rw [voicing.emit_eq_of_participating rfl fun c _ ↦ by simp [voicing, System.mk']]
+  simp only [hx]
+  rfl
+
+private theorem emit_eq_fill (w : List Segment) (x : Segment) :
+    voicing.searchCopy.emit w.getLast?
+      (rounding.searchCopy.emit (w.filter (rounding.searchCopy.tier ·)).getLast?
+        (fronting.searchCopy.emit (w.filter (fronting.searchCopy.tier ·)).getLast? x)) =
+      fill w x := by
+  rw [fronting_emit, rounding_emit, voicing_emit]
+  rfl
+
+private theorem scans_concat (w : List Segment) (x : Segment) :
+    voicing.searchCopy.scan (rounding.searchCopy.scan (fronting.searchCopy.scan (w ++ [x]))) =
+      voicing.searchCopy.scan (rounding.searchCopy.scan (fronting.searchCopy.scan w)) ++
+        [fill (voicing.searchCopy.scan (rounding.searchCopy.scan (fronting.searchCopy.scan w)))
+          x] := by
+  rw [fronting.searchCopy.scan_concat fronting_preservesTier,
+    rounding.searchCopy.scan_concat rounding_preservesTier,
+    voicing.searchCopy.scan_concat voicing_preservesTier]
+  generalize fronting.searchCopy.scan w = F
+  generalize hR : rounding.searchCopy.scan F = R
+  generalize hV : voicing.searchCopy.scan R = V
+  have ev : ∀ g : Phonology.Feature, g ≠ .voice → ∀ q s, (voicing.searchCopy.emit q s) g = s g :=
+    fun g hg ↦ SearchCopy.emit_apply_of_ne (fun _ _ ↦ rfl) (Ne.symm hg)
+  have er : ∀ g : Phonology.Feature, g ≠ .round → ∀ q s, (rounding.searchCopy.emit q s) g = s g :=
+    fun g hg ↦ SearchCopy.emit_apply_of_ne (fun _ _ ↦ rfl) (Ne.symm hg)
+  have mV : ∀ {γ : Type} (π : Segment → γ), (∀ q s, π (voicing.searchCopy.emit q s) = π s) →
+      V.map π = R.map π := fun π h ↦ by
+    rw [← hV]; exact voicing.searchCopy.toMealy.map_run R h
+  have mR : ∀ {γ : Type} (π : Segment → γ), (∀ q s, π (rounding.searchCopy.emit q s) = π s) →
+      R.map π = F.map π := fun π h ↦ by
+    rw [← hR]; exact rounding.searchCopy.toMealy.map_run F h
+  have hVR : V.map (fun c ↦ (c .round, c .syllabic)) = R.map fun c ↦ (c .round, c .syllabic) :=
+    mV _ fun q s ↦ Prod.ext (ev .round (by decide) q s) (ev .syllabic (by decide) q s)
+  have hVF : V.map (fun c ↦ (c .back, c .syllabic)) = F.map fun c ↦ (c .back, c .syllabic) :=
+    (mV _ fun q s ↦ Prod.ext (ev .back (by decide) q s) (ev .syllabic (by decide) q s)).trans
+      (mR _ fun q s ↦ Prod.ext (er .back (by decide) q s) (er .syllabic (by decide) q s))
+  have h₁ : V.filter (voicing.searchCopy.tier ·) = V :=
+    List.filter_eq_self.2 fun a _ ↦ by simp [voicing, System.mk', System.searchCopy, Pattern.OnTier]
+  have h₂ : ∀ y, rounding.searchCopy.emit (R.filter (rounding.searchCopy.tier ·)).getLast? y =
+      rounding.searchCopy.emit (V.filter (rounding.searchCopy.tier ·)).getLast? y :=
+    rounding.searchCopy.emit_getLast?_filter_congr
+      (fun c c' h ↦ by
+        obtain ⟨-, h⟩ := Prod.mk.inj h
+        simp_all [rounding, System.mk', System.searchCopy, Pattern.OnTier])
+      (fun c c' t h ↦ by
+        obtain ⟨h, h'⟩ := Prod.mk.inj h
+        simp_all [rounding, System.mk', System.searchCopy, Pattern.OnTier]) hVR.symm
+  have h₃ : fronting.searchCopy.emit (F.filter (fronting.searchCopy.tier ·)).getLast? x =
+      fronting.searchCopy.emit (V.filter (fronting.searchCopy.tier ·)).getLast? x :=
+    fronting.searchCopy.emit_getLast?_filter_congr
+      (fun c c' h ↦ by
+        obtain ⟨h, h'⟩ := Prod.mk.inj h
+        simp_all [fronting, System.mk', System.searchCopy, Pattern.OnTier])
+      (fun c c' t h ↦ by
+        obtain ⟨h, h'⟩ := Prod.mk.inj h
+        simp_all [fronting, System.mk', System.searchCopy, Pattern.OnTier]) hVF.symm x
+  rw [h₁, h₂, h₃, emit_eq_fill]
+
+private theorem harmonize_eq_scan (w : List Segment) : harmonize w =
+    voicing.searchCopy.scan (rounding.searchCopy.scan (fronting.searchCopy.scan w)) := by
+  induction w using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton w x ih => rw [harmonize_concat, scans_concat, ih]
+
+/-- The search-and-copy rules of fronting, rounding and voicing, run in turn, compute the
+harmonized form of every word. -/
+theorem harmonize_eq_searchCopy (w : List Segment) : harmonize w =
+    voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply w)) := by
+  rw [harmonize_eq_scan, voicing.searchCopy.apply_eq_scan rfl,
+    rounding.searchCopy.apply_eq_scan rfl, fronting.searchCopy.apply_eq_scan rfl]
+
+/-! ### Harmony fills features in (Chapter 3) -/
+
+/-- Harmony and voicing fill features in and change none: each segment of `harmonize w` has
+every feature value of the segment of `w` it comes from. -/
+theorem forall₂_le_harmonize (w : List Segment) : List.Forall₂ (· ≤ ·) w (harmonize w) := by
+  rw [harmonize_eq_scan]
+  simpa only [Mealy.run_comp, Function.comp_apply, SearchCopy.scan] using
+    (voicing.searchCopy.toMealy.comp (rounding.searchCopy.toMealy.comp
+      fronting.searchCopy.toMealy)).forall₂_run w fun q s ↦
+    ((fronting.searchCopy.le_emit (fun v s h ↦ Segment.le_setFeature h.1.2 v) _ s).trans
+      (rounding.searchCopy.le_emit (fun v s h ↦ Segment.le_setFeature h.1.2.2 v) _ _)).trans
+      (voicing.searchCopy.le_emit (fun v s h ↦ Segment.le_setFeature h.1 v) _ _)
+
+theorem forall₂_le_surface (w : List Segment) :
+    List.Forall₂ (· ≤ ·) (raising.apply w) (surface w) :=
+  forall₂_le_harmonize _
+
+theorem harmonize_eq_self {w : List Segment} (hw : ∀ x ∈ w, x ∈ vowels ∪ consonants) :
+    harmonize w = w := by
+  rw [harmonize_eq_scan, fronting.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).1,
+    rounding.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).2.1,
+    voicing.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).2.2]
+
+theorem harmonize_isPrefix_append (w s : List Segment) :
+    harmonize w <+: harmonize (w ++ s) := by
+  induction s using List.reverseRecOn with
+  | nil => simp
+  | append_singleton s x ih =>
+    rw [← List.append_assoc, harmonize_concat]
+    exact ih.trans (List.prefix_append _ _)
+
+-- Chapter 3
+theorem exists_harmonize_append_eq {w w' : List Segment}
+    (hw : ∀ x ∈ w, x ∈ vowels ∪ consonants) (hw' : ∀ x ∈ w', x ∈ vowels ∪ consonants)
+    (hl : w.getLast? = w'.getLast?)
+    (hv : (w.filter (·.IsSyllabic)).getLast? = (w'.filter (·.IsSyllabic)).getLast?)
+    (hb : (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? =
+      (w'.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast?)
+    (s : List Segment) : ∃ t, harmonize (w ++ s) = w ++ t ∧ harmonize (w' ++ s) = w' ++ t := by
+  induction s using List.reverseRecOn with
+  | nil => exact ⟨[], by simp [harmonize_eq_self hw], by simp [harmonize_eq_self hw']⟩
+  | append_singleton s x ih =>
+    obtain ⟨t, h, h'⟩ := ih
+    have hf : fill (w' ++ t) x = fill (w ++ t) x := by
+      simp only [fill, List.filter_append, List.getLast?_append, hl, hv, hb]
+    exact ⟨t ++ [fill (w ++ t) x],
+      by rw [← List.append_assoc, harmonize_concat, h, List.append_assoc],
+      by rw [← List.append_assoc, harmonize_concat, h', hf, List.append_assoc]⟩
+
+/-! ### The alternants of an archiphoneme (§3.2, §6.1.2) -/
+
+-- §3.2.2
+theorem fill_A {w : List Segment} {b : Segment} {β : Bool}
+    (hb : (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? = some b)
+    (hβ : b .back = some β) : fill w A = A.setFeature .back β := by
+  rw [← filter_fronting_tier] at hb
+  have hbt : fronting.pattern.OnTier b :=
+    of_decide_eq_true (List.mem_filter.1 (List.mem_of_getLast? hb)).2
+  have h₁ : fronting.searchCopy.emit (some b) A = A.setFeature .back β :=
+    fronting.emit_eq_write_of_found_eq_some (by decide) (by decide)
+      ((fronting.found_some_of_participating (fronting_participating hbt) A).trans hβ)
+  rw [← emit_eq_fill, hb, h₁]
+  cases β <;>
+    rw [rounding.searchCopy.emit_of_not_isTarget (by decide),
+      voicing.searchCopy.emit_of_not_isTarget (by decide)]
+
+-- §3.2.1
+theorem fill_I {w : List Segment} {b v : Segment} {β ρ : Bool}
+    (hb : (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? = some b)
+    (hβ : b .back = some β) (hv : (w.filter (·.IsSyllabic)).getLast? = some v)
+    (hρ : v .round = some ρ) : fill w I = (I.setFeature .back β).setFeature .round ρ := by
+  rw [← filter_fronting_tier] at hb
+  rw [← filter_rounding_tier] at hv
+  have hbt : fronting.pattern.OnTier b :=
+    of_decide_eq_true (List.mem_filter.1 (List.mem_of_getLast? hb)).2
+  have hvt : rounding.pattern.OnTier v :=
+    of_decide_eq_true (List.mem_filter.1 (List.mem_of_getLast? hv)).2
+  have h₁ : fronting.searchCopy.emit (some b) I = I.setFeature .back β :=
+    fronting.emit_eq_write_of_found_eq_some (by decide) (by decide)
+      ((fronting.found_some_of_participating (fronting_participating hbt) I).trans hβ)
+  have h₂ : rounding.searchCopy.emit (some v) (I.setFeature .back β) =
+      (I.setFeature .back β).setFeature .round ρ :=
+    rounding.emit_eq_write_of_found_eq_some (by cases β <;> decide) (by cases β <;> decide)
+      ((rounding.found_some_of_participating (rounding_participating hvt) _).trans hρ)
+  rw [← emit_eq_fill, hb, hv, h₁, h₂]
+  cases β <;> cases ρ <;> exact voicing.searchCopy.emit_of_not_isTarget (by decide) _
+
+-- §6.1.2
+theorem fill_D {w : List Segment} {x : Segment} {ν : Bool}
+    (hx : w.getLast? = some x) (hν : x .voice = some ν) :
+    fill w D = D.setFeature .voice ν := by
+  rw [← emit_eq_fill, fronting.searchCopy.emit_of_not_isTarget (by decide),
+    rounding.searchCopy.emit_of_not_isTarget (by decide), hx]
+  exact voicing.emit_eq_write_of_found_eq_some (by decide) (by decide)
+    ((voicing.found_some_of_participating (by simp [voicing, System.mk']) D).trans hν)
+
+-- §3.4
+theorem fill_of_mem {x : Segment} (hx : x ∈ vowels ∪ consonants) (w : List Segment) :
+    fill w x = x := by
+  obtain ⟨h₁, h₂, h₃⟩ := not_isTarget x hx
+  rw [← emit_eq_fill, fronting.searchCopy.emit_of_not_isTarget h₁,
+    rounding.searchCopy.emit_of_not_isTarget h₂, voicing.searchCopy.emit_of_not_isTarget h₃]
+
+/-! ### Suffixes one at a time -/
+
+theorem underlying_eq_ofStep (w : List Segment) (sfxs : List Suffix) :
+    underlying w sfxs = Morphotactics.ofStep id Suffix.attach w sfxs :=
+  rfl
+
+theorem isConcatenative_harmonize_underlying :
+    Morphotactics.IsConcatenative fun w sfxs ↦ harmonize (underlying w sfxs) :=
+  fun w sfxs s ↦ by
+    change harmonize (underlying w sfxs) <+: harmonize (underlying w (sfxs ++ [s]))
+    rw [underlying_append, underlying_cons, underlying_nil, Suffix.attach, List.append_assoc]
+    exact harmonize_isPrefix_append _ _
+
+/-- Raising before -(I)yor alters the stem, so surface forms are not concatenative: *anla* is
+no prefix of *anlıyor* (§8.2.3.3). -/
+theorem not_isConcatenative_realize : ¬ Morphotactics.IsConcatenative realize :=
+  fun h ↦ absurd (h [a, n, l, a] [] iyor.form) (by decide)
+
+private theorem isVowel_fill (w : List Segment) (x : Segment) :
+    (fill w x).IsVowel ↔ x.IsVowel := by
+  simp only [fill]
+  split_ifs <;>
+    simp [Segment.IsVowel, Segment.IsSyllabic, Segment.copy_apply_of_ne]
+
+private theorem initial_harmonize (s : Suffix) (u : List Segment) :
+    s.initial (harmonize u) = s.initial u := by
+  cases hb : s.bracketed with
+  | none => rw [Suffix.initial_of_bracketed_eq_none hb, Suffix.initial_of_bracketed_eq_none hb]
+  | some b =>
+    induction u using List.reverseRecOn with
+    | nil => rfl
+    | append_singleton u x _ =>
+      rw [harmonize_concat, Suffix.initial_concat hb, Suffix.initial_concat hb]
+      simp only [isVowel_fill]
+
+/-- Before raising, a suffix sees only the harmonized word it attaches to: two words that are
+harmonized alike are harmonized alike with one more suffix. -/
+theorem isStepwise_harmonize_underlying :
+    Morphotactics.IsStepwise fun w sfxs ↦ harmonize (underlying w sfxs) :=
+  fun w w' sfxs sfxs' s h ↦ by
+    replace h : harmonize (underlying w sfxs) = harmonize (underlying w' sfxs') := h
+    simp only [underlying_append, underlying_cons, underlying_nil, Suffix.attach,
+      List.append_assoc, harmonize_append]
+    rw [← initial_harmonize s (underlying w sfxs), ← initial_harmonize s (underlying w' sfxs'), h]
 
 /-! ### The order of suffixes (Chapter 8) -/
 
@@ -243,8 +497,7 @@ theorem nominal :
       [⟨_, .plural⟩, ⟨_, .possessive (.personNumber .second .singular)⟩, ⟨_, .dative⟩] := by
   decide
 
-/-- *Döğ-üş-tür-t-ül-me-yebil-iyor-muş-sunuz-dur* fills every slot of the finite verb, the
-voice slot with four stacked suffixes (§8.2 (7)). -/
+-- §8.2, (7)
 theorem finite_verb :
     Verb.template.Licensed (E := Verb.Exponent)
       [⟨_, .reciprocal⟩, ⟨_, .causative⟩, ⟨_, .causative⟩, ⟨_, .passive⟩, ⟨_, .negative⟩,
@@ -270,27 +523,23 @@ theorem reversed_orders :
     ¬ Verb.template.Licensed (E := Verb.Exponent) [⟨_, .pastCopula⟩, ⟨_, .di⟩] := by
   decide
 
-/-- Markers of position 3 cannot co-occur, since the template does not repeat the position
-(§8.2.3 (i)). -/
+-- §8.2.3, (i)
 theorem same_position_excluded (m₁ m₂ : Verb.Exponent .tam) :
     ¬ Verb.template.Licensed [⟨_, m₁⟩, ⟨_, m₂⟩] :=
   show [Verb.Slot.tam, .tam] ∉ Verb.template.language by decide
 
-/-- A person marker precedes the copular marker when it is a group-1 marker after -DI, as in
-*git-ti-m-di*, *gel-di-niz-se* and *bak-tı-k-tı*, or the third-person plural, as in
-*kat-sa-lar-dı*, and the third-person plural may also follow -DIr, as in *gid-iyor-dur-lar*,
-beside the orders of the template (§8.3.2, §8.3.3, §8.4). -/
+-- §8.3.2, §8.3.3, §8.4
 theorem person_mobility : ∀ w ∈ ([
       ([g, i, t], [⟨_, di⟩, ⟨_, person .one (.personNumber .first .singular)⟩, ⟨_, pastCopula⟩],
-        "git-ti-m-di"),
+        "gittimdi"),
       ([g, i, t], [⟨_, di⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .first .singular)⟩],
-        "git-ti-ydi-m"),
+        "gittiydim"),
       ([g, e, l], [⟨_, di⟩, ⟨_, person .one (.personNumber .second .plural)⟩,
-        ⟨_, conditionalCopula⟩], "gel-di-niz-se"),
+        ⟨_, conditionalCopula⟩], "geldinizse"),
       ([g, e, l], [⟨_, di⟩, ⟨_, conditionalCopula⟩,
-        ⟨_, person .one (.personNumber .second .plural)⟩], "gel-di-yse-niz"),
+        ⟨_, person .one (.personNumber .second .plural)⟩], "geldiyseniz"),
       ([b, a, k], [⟨_, di⟩, ⟨_, person .one (.personNumber .first .plural)⟩, ⟨_, pastCopula⟩],
-        "bak-tı-k-tı"),
+        "baktıktı"),
       ([k, a, t], [⟨_, sa⟩, ⟨_, person .one (.personNumber .third .plural)⟩, ⟨_, pastCopula⟩],
         "kat-sa-lar-dı"),
       ([g, i, d], [⟨_, iyor⟩, ⟨_, person .two (.personNumber .third .plural)⟩, ⟨_, dir⟩],
@@ -302,8 +551,7 @@ theorem person_mobility : ∀ w ∈ ([
       ofSegmented? w.2.2 = some (realize w.1 (Verb.forms w.2.1)) := by
   decide
 
-/-- No other person marker leaves its place, so *gid-iyor-um-du*, *gid-iyor-dur-um* and
-*git-se-m-di* are unlicensed (§8.4). -/
+-- §8.3.3, §8.4
 theorem person_fixed :
     ¬ Verb.Licensed [⟨_, iyor⟩, ⟨_, person .two (.personNumber .first .singular)⟩,
       ⟨_, pastCopula⟩] ∧
@@ -314,11 +562,6 @@ theorem person_fixed :
 
 /-! ### The question clitic (§11.1.1.5) -/
 
-/-- *mI* precedes the copular markers, as in *Gitse miydik?*, *Başlamış mıydınız?* and *Burada
-mıymış?*, the group-2 person markers but the third-person plural, as in *Gidiyor musun?*,
-*İster miyiz?* and *Hazır mısınız?*, and -DIr, as in *Unutmuş mudurlar?*, *Evde midir?* and
-*geçmiş miyimdir?*, and the markers after it attach to it, as in *bil-iyor mu-ydu-nuz*
-(§6.3 (5)). -/
 theorem mi_precedes_clitics : ∀ w ∈ ([
       ([g, i, t], [⟨_, sa⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .first .plural)⟩],
         ["gitse", "miydik"]),
@@ -335,18 +578,12 @@ theorem mi_precedes_clitics : ∀ w ∈ ([
         ["unutmuş", "mudurlar"]),
       ([e, v, d, e], [⟨_, dir⟩], ["evde", "midir"]),
       ([g, e, ç], [⟨_, miş⟩, ⟨_, person .two (.personNumber .first .singular)⟩, ⟨_, dir⟩],
-        ["geçmiş", "miyimdir"]),
-      ([b, i, l], [⟨_, iyor⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .second .plural)⟩],
-        ["biliyor", "muydunuz"])] :
+        ["geçmiş", "miyimdir"])] :
       List (List Segment × List (Σ σ, Verb.Exponent σ) × List String)),
     Verb.Licensed w.2.1 ∧
       (w.2.2.mapM ofString?).map List.flatten = some (realize w.1 (mi.insert w.2.1)) := by
   decide
 
-/-- *mI* follows the group-1 person markers, as in *Gördün mü?*, *Gitsek mi?* and *Yürüdünüz
-mü?*, those of group 3, as in *Kalayım mı?* and *Başlasın mı?*, the third-person plural, as in
-*Gittiler mi?*, *Uyanırlar mı?* and *Okuldalar mı?*, and a subject complement without markers,
-as in *Akıllı mı?* and *Benimki mi?*. -/
 theorem mi_follows : ∀ w ∈ ([
       ([g, ö, r], [⟨_, di⟩, ⟨_, person .one (.personNumber .second .singular)⟩], ["gördün", "mü"]),
       ([g, i, t], [⟨_, sa⟩, ⟨_, person .one (.personNumber .first .plural)⟩], ["gitsek", "mi"]),
@@ -368,34 +605,29 @@ theorem mi_follows : ∀ w ∈ ([
 
 /-! ### Converbs (§8.5.2.2) -/
 
-/-- The converbs on the grammar's verbs: on the stem, as in *koş-up*, *kalk-ma-yınca*,
-*yık-ıl-ma-dan* and *koş-tukça*, -(y)ken on a position-3 marker or a nominal, as in
-*çalış-ır-ken* and *sokak-ta-y-ken*, and -cAsInA on -mIş and a person marker, as in
-*duy-ma-mış-çasına* and *konuş-uyor-muş-um-casına* (§8.5.1.1, §8.5.2.2, §26.2.3 (40),
-§26.3.8 (69), (73)). -/
-theorem converbs : ∀ w ∈ [("koş-up", [k, o, ş], Converb.ip.form),
-      ("gir-ip", [g, i, r], Converb.ip.form),
-      ("yüz-ünce", [y, ü, z], Converb.inca.form),
-      ("kalk-ma-yınca", [k, a, l, k], negative.form :: Converb.inca.form),
-      ("koş-arak", [k, o, ş], Converb.arak.form),
-      ("büyü-yerek", [b, ü, y, ü], Converb.arak.form),
-      ("çalış-arak", [ç, a, l, ı, ş], Converb.arak.form),
-      ("düşün-eli", [d, ü, ş, ü, n], Converb.ali.form),
-      ("gel-eli", [g, e, l], Converb.ali.form),
-      ("yık-ıl-ma-dan", [y, ı, k], passive.form :: Converb.madan.form),
-      ("seyret-me-den", [s, e, y, r, e, t], Converb.madan.form),
-      ("koş-tukça", [k, o, ş], Converb.dikca.form),
+-- §8.5.1.1, §8.5.2.2, §26.2.3, (40), §26.3.8, (69), (73)
+theorem converbs : ∀ w ∈ [("koşup", [k, o, ş], Converb.ip.form),
+      ("girip", [g, i, r], Converb.ip.form),
+      ("yüzünce", [y, ü, z], Converb.inca.form),
+      ("kalkmayınca", [k, a, l, k], negative.form :: Converb.inca.form),
+      ("koşarak", [k, o, ş], Converb.arak.form),
+      ("büyüyerek", [b, ü, y, ü], Converb.arak.form),
+      ("çalışarak", [ç, a, l, ı, ş], Converb.arak.form),
+      ("düşüneli", [d, ü, ş, ü, n], Converb.ali.form),
+      ("geleli", [g, e, l], Converb.ali.form),
+      ("yıkılmadan", [y, ı, k], passive.form :: Converb.madan.form),
+      ("seyretmeden", [s, e, y, r, e, t], Converb.madan.form),
+      ("koştukça", [k, o, ş], Converb.dikca.form),
       ("çalış-ır-ken", [ç, a, l, ı, ş], aorist.form :: Converb.ken.form),
-      ("çocuk-ken", [ç, o, c, u, k], Converb.ken.form),
-      ("sokak-ta-y-ken", [s, o, k, a, k], locative.form :: Converb.ken.form),
-      ("duy-ma-mış-çasına", [d, u, y], negative.form :: miş.form :: Converb.casina.form),
-      ("konuş-uyor-muş-um-casına", [k, o, n, u, ş], iyor.form :: evidentialCopula.form ::
+      ("çocukken", [ç, o, c, u, k], Converb.ken.form),
+      ("sokaktayken", [s, o, k, a, k], locative.form :: Converb.ken.form),
+      ("duymamışçasına", [d, u, y], negative.form :: miş.form :: Converb.casina.form),
+      ("konuşuyormuşumcasına", [k, o, n, u, ş], iyor.form :: evidentialCopula.form ::
         (person .two (.personNumber .first .singular)).form :: Converb.casina.form)],
     ofSegmented? w.1 = some (realize w.2.1 w.2.2) := by
   decide
 
-/-- The converbs on two verbs, as in *baka baka*, *duy-du-m duy-alı* and *ye-r ye-mez*
-(§8.5.2.2). -/
+-- §8.5.2.2
 theorem doubled_converbs :
     ofString? "baka" = some (realize [b, a, k] DoubledConverb.aA.forms.1) ∧
     ofString? "baka" = some (realize [b, a, k] DoubledConverb.aA.forms.2) ∧
@@ -406,16 +638,14 @@ theorem doubled_converbs :
     ofString? "yemez" = some (realize [y, e] DoubledConverb.arMaz.forms.2) := by
   decide
 
-/-- -(y)Ip and -(y)ArAk stand in place of the position-3 marker and all the suffixes after it,
-so they follow exactly the slots before it (§28.2). -/
+-- §28.2
 theorem conjunctive_converbs :
     ∀ c ∈ [Converb.ip, .arak], ∀ s : Verb.Slot, s ≤ c.follows ↔ s < .tam := by
   decide
 
 /-! ### Existential sentences (§12.1.1.2) -/
 
-/-- The existentials (21), (22) and (26), such as *Murat'ın yatı var* 'Murat has a yacht', are
-possessive. -/
+-- (21), (22), (26)
 theorem possessive_existential :
     Possession.IsPossessive [[a, y, t, e, n]] [realize [i, s, t, a, n, b, u, l] [locative.form]]
         [[i, k, i], [a, r, k, a, d, a, ş]] (.personNumber .third .singular) Possession.var
@@ -432,14 +662,13 @@ theorem possessive_existential :
         Possession.var [[m, u, r, a, t, ı, n], [y, a, t, ı], [v, a, r]] := by
   decide
 
-/-- The locative existential sentence (17), *Ben-de bir kitap var* 'I have a book'. -/
+-- (17)
 theorem locative_existential :
     Possession.locative [[b, e, n]] [[b, i, r], [k, i, t, a, p]] Possession.var =
       [[b, e, n, d, e], [b, i, r], [k, i, t, a, p], [v, a, r]] := by
   decide
 
-/-- The possessive suffix on *araba* in (117) is obligatory, so no person-number cell gives *Sizin
-araba var* (§14.4). -/
+-- (117), §14.4
 theorem possessive_obligatory :
     Possession.IsPossessive [[s, i, z]] [] [[a, r, a, b, a]] (.personNumber .second .plural)
         Possession.var [[s, i, z, i, n], [a, r, a, b, a, n, ı, z], [v, a, r]] ∧

@@ -29,7 +29,7 @@ examples: Latin liquid dissimilation (54) on (53), with the *lunaris* row it mis
 (`latin_rows`, `lunaris_mispredicted`); Finnish backness harmony (52), which is the
 search-and-copy reading of the fragment's `Finnish.palatalHarmony`, on (51)
 (`finnish_rows`); and Turkish vowel harmony (49a) on (46) and (47) through the fragment's
-two harmonies (`turkish_rows`).
+surface forms (`turkish_rows`).
 
 ## Implementation notes
 
