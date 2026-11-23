@@ -1,9 +1,6 @@
 module
 
-public import Linglib.Core.Data.Fintype.Order
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Data.Fintype.EquivFin
-public import Mathlib.Data.List.Iterate
+public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.Autosegmental.IntervalOrder
 public import Linglib.Phonology.Autosegmental.TwoTier
 public import Linglib.Phonology.Segmental.FeatureClass
@@ -24,14 +21,13 @@ target (`spread_place`), and distinct articulators have disjoint classes
 (`disjoint_featureClass_of_articulators`), so that no feature of one depends on a feature of
 another.
 
-An articulator node is present in a segment or absent from it and has no minus value, and a
-terminal feature under an articulator node, whichever its value, implies that node. A segment is
-licensed when it meets the second condition, from which the first follows
-(`Licensed.ne_some_false`). A complex segment has more than one articulator under its place node,
-so its articulators are one of the three pairs or the triple (`isComplex_iff`), and a licensed
-segment that is specified for `[round]` and has one articulator has the labial one
-(`articulators_eq_labial_of_round`): a language that admits one articulator under the place node
-rounds its labials and its placeless segments only.
+A segment bears a class node when it specifies a feature at or below it, so a node is present
+or absent and has no minus value, and a terminal feature under an articulator node, whichever its
+value, brings that node with it. The articulators of a segment are the articulator nodes it
+bears, and a complex segment has more than one. So the articulators of a complex segment are one
+of the three pairs or the triple (`isComplex_iff`), a segment specified for `[round]` that has
+one articulator has the labial one (`articulators_eq_labial_of_round`), and place assimilation
+gives its target the articulators of its trigger, complex or not (`articulators_spread_place`).
 
 An association line joins positions of two tiers. With the positions placed in time as intervals
 and the order of each tier read as precedence, a line may be read as total simultaneity, the two
@@ -44,17 +40,19 @@ crossing lines, so that the No-Crossing Constraint is not a separate condition.
 
 ## Implementation notes
 
-The features `[labial]`, `[coronal]` and `[dorsal]` of the substrate's segments stand for the
-articulator nodes: a node is present when its feature is `+`, and licensing excludes `−`.
+The features `[labial]`, `[coronal]` and `[dorsal]` of the substrate's segments hang from the
+articulator nodes and stand for a node with no terminal feature under it; the segments here have
+them only as `+`. `IsComplex` counts the articulator nodes a segment bears, where the substrate's
+`Phonology.Segment.IsComplex` counts the major articulator features it has `+`, and the two
+differ on a rounded segment with no `[labial]`.
 `[voice]` stands in for the laryngeal features of stiffness and slackness. `[lateral]` is placed
 at the supralaryngeal node, under which the Klamath evidence puts it; whether it hangs from that
 node or from the place node is left open. `[sonorant]` and `[strident]`, which the dissertation
 sets aside as acoustic, and the features it lacks are unplaced. The segments are specified as
 the dissertation draws them, for the nodes and features under discussion and nothing else.
 
-Spreading is `Finset.piecewise` on a node's feature class, so the target's own values under the
-node are delinked. The geometry keeps the root, laryngeal, supralaryngeal and place nodes of
-`Studies/Clements1985.lean` and has no manner node.
+Spreading a node delinks the target's own values under it. The geometry keeps the root,
+laryngeal, supralaryngeal and place nodes of `Studies/Clements1985.lean` and has no manner node.
 
 ## TODO
 
@@ -104,36 +102,19 @@ def pred : Node → Node
   | .softPalate | .place => .supralaryngeal
   | .labial | .coronal | .dorsal => .place
 
-/-- `a ≤ b` when `a` lies on the walk from `b` up to the root, so the root is `⊥` and the parent
-is `Order.pred`. -/
-instance : PartialOrder Node where
-  le a b := a ∈ List.iterate pred b (Fintype.card Node)
-  le_refl := by decide
-  le_trans := by decide +kernel
-  le_antisymm := by decide
+/-- (4): the tree of class nodes. -/
+def tree : ParentTree Node := .ofIterate pred .root 3 (by decide)
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a ∈ List.iterate pred b _))
+/-- `a ≤ b` when `a` dominates `b`, so the root is `⊥` and the parent is `Order.pred`. -/
+instance : PartialOrder Node := tree.toPartialOrder
+
+instance : DecidableLE Node := tree.decidableLE
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : OrderBot Node where
-  bot := .root
-  bot_le := by decide
+instance : OrderBot Node := tree.toOrderBot
 
-/-- The parent as the predecessor. -/
-instance : PredOrder Node where
-  pred := pred
-  pred_le := by decide
-  min_of_le_pred := by decide
-  le_pred_of_lt := by decide
-
-/-- The feature standing for an articulator node, `+` exactly when the articulator is active in
-the segment. -/
-def feature? : Node → Option Feature
-  | .labial => some .labial
-  | .coronal => some .coronal
-  | .dorsal => some .dorsal
-  | _ => none
+instance : PredOrder Node := tree.toPredOrder
 
 /-- The articulator nodes under place. -/
 def articulators : Finset Node := {.labial, .coronal, .dorsal}
@@ -141,6 +122,9 @@ def articulators : Finset Node := {.labial, .coronal, .dorsal}
 theorem not_le_of_mem_articulators {a b : Node} (ha : a ∈ articulators) (hb : b ∈ articulators)
     (hab : a ≠ b) : ¬ a ≤ b := by
   revert a b; decide
+
+theorem place_le_of_mem_articulators {a : Node} (ha : a ∈ articulators) : place ≤ a := by
+  revert a; decide
 
 end Node
 
@@ -181,27 +165,118 @@ theorem featureClass_place_clements_subset :
     featureClass Clements1985.classNode? .place ⊆ featureClass node .place := by
   decide
 
-/-! ### Spreading -/
+/-! ### Articulators -/
 
-/-- Spreading the class node `a` from `src` onto `tgt` gives `tgt` the values of `src`, specified
-or not, for the features in the class of `a`, and leaves its other features. -/
-def spread (a : Node) (src tgt : Segment) : Segment := .piecewise (featureClass node a) src tgt
+/-- The articulators of a segment are the articulator nodes it bears. -/
+def articulators (s : Segment) : Finset Node := Node.articulators.filter (Bears node ⇑s)
+
+/-- A complex segment has more than one articulator under its place node. -/
+def IsComplex (s : Segment) : Prop := 1 < (articulators s).card
+
+instance : DecidablePred IsComplex := fun _ ↦ inferInstanceAs (Decidable (1 < _))
+
+variable {s : Segment}
+
+/-- A segment specified for rounding that has a single articulator has the labial one. -/
+theorem articulators_eq_labial_of_round (hr : (s .round).isSome) (h : ¬ IsComplex s) :
+    articulators s = {.labial} :=
+  have hl : .labial ∈ articulators s :=
+    Finset.mem_filter.2 ⟨by decide, bears_of_isSome (f := .round) rfl hr le_rfl⟩
+  Finset.eq_singleton_iff_unique_mem.2
+    ⟨hl, fun _ hx ↦ Finset.card_le_one.1 (not_lt.1 h) _ hx _ hl⟩
+
+-- (2)
+theorem isComplex_iff : IsComplex s ↔ articulators s ∈
+    ({{.labial, .coronal}, {.labial, .dorsal}, {.coronal, .dorsal},
+      {.labial, .coronal, .dorsal}} : Finset (Finset Node)) := by
+  have h : ∀ a b c : Bool,
+      let t := Node.articulators.filter fun g ↦
+        (g = .labial ∧ a) ∨ (g = .coronal ∧ b) ∨ (g = .dorsal ∧ c)
+      1 < t.card ↔ t ∈ ({{.labial, .coronal}, {.labial, .dorsal}, {.coronal, .dorsal},
+        {.labial, .coronal, .dorsal}} : Finset (Finset Node)) := by
+    decide
+  have ht : articulators s = Node.articulators.filter fun g ↦
+      (g = .labial ∧ decide (Bears node ⇑s .labial)) ∨
+        (g = .coronal ∧ decide (Bears node ⇑s .coronal)) ∨
+          (g = .dorsal ∧ decide (Bears node ⇑s .dorsal)) :=
+    Finset.filter_congr fun g hg ↦ by
+      have hg' : g = .labial ∨ g = .coronal ∨ g = .dorsal := by
+        simpa [Node.articulators] using hg
+      rcases hg' with rfl | rfl | rfl <;> simp
+  unfold IsComplex
+  rw [ht]
+  exact h _ _ _
+
+/-- (5): the labiovelar stop, a labial and a dorsal node under one place node. -/
+def kp : Segment := [−continuant, +labial, +dorsal]
+
+/-- (2): the labiocoronal stop. -/
+def pt : Segment := [−continuant, +labial, +coronal]
+
+/-- (2): a click, coronal and dorsal. -/
+def click : Segment := [−continuant, +coronal, +dorsal]
+
+/-- (65): the labiovelarized coronal stop of Kinyarwanda. -/
+def tkw : Segment := [−continuant, +coronal, +round, +back]
+
+/-- (14a): the rounded labial nasal of Aneityum. -/
+def mw : Segment := [−continuant, +nasal, +labial, +round]
+
+/-- (25b): `h`, with a laryngeal node and no supralaryngeal node. -/
+def glottal : Segment := [+spreadGlottis]
+
+/-- (14d): the rounded `h` of Nenema, whose only articulator comes with its rounding. -/
+def hw : Segment := [+spreadGlottis, +round]
+
+-- (2), (5), (65)
+theorem articulators_occlusions :
+    articulators kp = {.labial, .dorsal} ∧ articulators pt = {.labial, .coronal} ∧
+      articulators click = {.coronal, .dorsal} ∧
+        articulators tkw = {.labial, .coronal, .dorsal} := by
+  decide
+
+-- (13)
+theorem articulators_anterior :
+    articulators [+anterior] = {.coronal} ∧ articulators [−anterior] = {.coronal} := by
+  decide
+
+-- (14a), (14d), (25b)
+theorem articulators_mw_glottal_hw :
+    articulators mw = {.labial} ∧ articulators glottal = ∅ ∧
+      ¬ Bears node ⇑glottal .supralaryngeal ∧ articulators hw = {.labial} := by
+  decide
+
+-- (14)
+theorem isComplex_round : IsComplex [+coronal, +round] ∧ IsComplex [+dorsal, +round] := by
+  decide
+
+/-! ### Spreading -/
 
 variable (src tgt : Segment)
 
 /-- Place assimilation gives the target the trigger's place features and leaves its degree of
 closure, its nasality and its laryngeal features. -/
 theorem spread_place :
-    Set.EqOn (spread .place src tgt) src ↑(featureClass node .place) ∧
-      Set.EqOn (spread .place src tgt) tgt
-        ↑({.continuant, .consonantal, .nasal} ∪ featureClass node .laryngeal : Finset Feature) :=
-  ⟨fun _ hf ↦ Finset.piecewise_eq_of_mem _ _ _ hf, Finset.eqOn_piecewise_of_disjoint (by decide)⟩
+    Set.EqOn (Segment.spread node .place src tgt) src ↑(featureClass node .place) ∧
+      Set.EqOn (Segment.spread node .place src tgt) tgt
+        ↑({.continuant, .consonantal} ∪ featureClass node .softPalate ∪
+          featureClass node .laryngeal : Finset Feature) :=
+  ⟨spread_eqOn, Finset.eqOn_piecewise_of_disjoint (by decide)⟩
+
+/-- Place assimilation gives the target the articulators of the trigger, all of them when the
+trigger is complex. -/
+theorem articulators_spread_place :
+    articulators (Segment.spread node .place src tgt) = articulators src :=
+  Finset.filter_congr fun _ hb ↦ bears_spread_of_le (Node.place_le_of_mem_articulators hb)
 
 -- (30), (31a)
 theorem spread_supralaryngeal :
-    Set.EqOn (spread .supralaryngeal src tgt) src ↑({.nasal, .lateral} : Finset Feature) ∧
-      Set.EqOn (spread .supralaryngeal src tgt) tgt ↑(featureClass node .laryngeal) :=
-  ⟨Finset.eqOn_piecewise_of_subset (by decide), Finset.eqOn_piecewise_of_disjoint (by decide)⟩
+    Set.EqOn (Segment.spread node .supralaryngeal src tgt) src
+        ↑({.nasal, .lateral} : Finset Feature) ∧
+      Set.EqOn (Segment.spread node .supralaryngeal src tgt) tgt
+        ↑(featureClass node .laryngeal) :=
+  ⟨Finset.eqOn_piecewise_of_subset (by decide),
+    spread_eqOn_of_incompRel ⟨by decide, by decide⟩⟩
 
 /-- The prefix nasal of Kpelle, with no place of its own. -/
 def nasalStop : Segment := [−continuant, +nasal]
@@ -213,111 +288,34 @@ def labialFricative : Segment := [+continuant, +labial]
 def labialStop : Segment := [−continuant, +labial]
 
 /-- An alveolar fricative. -/
-def alveolarFricative : Segment := [+continuant, +coronal, +anterior]
-
-/-- (5): the labiovelar stop, a labial and a dorsal node under one place node. -/
-def kp : Segment := [−continuant, +labial, +dorsal]
+def alveolarFricative : Segment := [+continuant, +anterior]
 
 -- (19)
 theorem spread_place_labialFricative_nasalStop :
-    spread .place labialFricative nasalStop = [−continuant, +nasal, +labial] := by
+    Segment.spread node .place labialFricative nasalStop = [−continuant, +nasal, +labial] := by
   decide
 
 -- (19)
 theorem spread_place_kp_nasalStop :
-    spread .place kp nasalStop = [−continuant, +nasal, +labial, +dorsal] := by
+    Segment.spread node .place kp nasalStop = [−continuant, +nasal, +labial, +dorsal] := by
   decide
 
 -- (22)
 theorem spread_place_labialStop_alveolarFricative :
-    spread .place labialStop alveolarFricative = [+continuant, +labial] := by
+    Segment.spread node .place labialStop alveolarFricative = [+continuant, +labial] := by
   decide
 
 /-- (123): the Fanti trill. -/
-def trill : Segment := [+coronal, −anterior, −distributed]
+def trill : Segment := [−anterior, −distributed]
 
 /-- (123): a high back rounded vowel. -/
-def highBackRound : Segment := [+labial, +round, +dorsal, +back, +high]
+def highBackRound : Segment := [+round, +back, +high]
 
 -- (123)
-theorem spread_dorsal_highBackRound_trill : spread .dorsal highBackRound trill =
-    [+coronal, −anterior, −distributed, +dorsal, +back, +high] := by
-  decide
-
-/-! ### Complex segments -/
-
-/-- A segment is licensed when every terminal feature it specifies under an articulator node,
-whichever its value, has that articulator active. -/
-def Licensed (s : Segment) : Prop :=
-  ∀ f, (s f).isSome → ∀ n ∈ node f, ∀ g ∈ n.feature?, s g = some true
-
-instance : DecidablePred Licensed := fun _ ↦ by unfold Licensed; infer_instance
-
-variable {s : Segment}
-
-theorem Licensed.ne_some_false (hs : Licensed s) {g : Feature}
-    (hg : g ∈ Feature.majorArticulators) : s g ≠ some false := by
-  have key : ∀ g ∈ Feature.majorArticulators, ∃ n ∈ node g, g ∈ n.feature? := by decide
-  obtain ⟨n, hn, hgn⟩ := key g hg
-  exact fun h ↦ absurd ((hs g (by simp [h]) n hn g hgn).symm.trans h) (by decide)
-
-/-- A licensed segment specified for rounding that has a single articulator has the labial
-one. -/
-theorem articulators_eq_labial_of_round (hs : Licensed s) (hr : (s .round).isSome)
-    (h : ¬ s.IsComplex) : s.articulators = {.labial} :=
-  have hl : .labial ∈ s.articulators := by
-    simp [Segment.articulators, hs .round hr .labial rfl .labial rfl]
-  Finset.eq_singleton_iff_unique_mem.2
-    ⟨hl, fun _ hx ↦ Finset.card_le_one.1 (not_lt.1 h) _ hx _ hl⟩
-
--- (2)
-theorem isComplex_iff : s.IsComplex ↔ s.articulators ∈
-    ({{.labial, .coronal}, {.labial, .dorsal}, {.coronal, .dorsal},
-      {.labial, .coronal, .dorsal}} : Finset (Finset Feature)) := by
-  have h : ∀ a b c : Bool,
-      let t := Feature.majorArticulators.filter fun g ↦
-        (g = .labial ∧ a) ∨ (g = .coronal ∧ b) ∨ (g = .dorsal ∧ c)
-      1 < t.card ↔ t ∈ ({{.labial, .coronal}, {.labial, .dorsal}, {.coronal, .dorsal},
-        {.labial, .coronal, .dorsal}} : Finset (Finset Feature)) := by
-    decide
-  have ht : s.articulators = Feature.majorArticulators.filter fun g ↦
-      (g = .labial ∧ decide (s .labial = some true)) ∨
-        (g = .coronal ∧ decide (s .coronal = some true)) ∨
-          (g = .dorsal ∧ decide (s .dorsal = some true)) :=
-    Finset.filter_congr fun g hg ↦ by
-      rcases Feature.mem_majorArticulators.1 hg with rfl | rfl | rfl <;> simp
-  unfold Segment.IsComplex
-  rw [ht]
-  exact h _ _ _
-
-/-- (2): the labiocoronal stop. -/
-def pt : Segment := [−continuant, +labial, +coronal]
-
-/-- (2): a click, coronal and dorsal. -/
-def click : Segment := [−continuant, +coronal, +dorsal]
-
-/-- (65): the labiovelarized coronal stop of Kinyarwanda. -/
-def tkw : Segment := [−continuant, +coronal, +labial, +round, +dorsal, +back]
-
-/-- (14a): the rounded labial nasal of Aneityum. -/
-def mw : Segment := [−continuant, +nasal, +labial, +round]
-
-/-- (14d): the rounded `h` of Nenema, whose only articulator comes with its rounding. -/
-def hw : Segment := [+spreadGlottis, +labial, +round]
-
--- (2), (5), (65)
-theorem articulators_occlusions :
-    kp.articulators = {.labial, .dorsal} ∧ pt.articulators = {.labial, .coronal} ∧
-      click.articulators = {.coronal, .dorsal} ∧
-        tkw.articulators = {.labial, .coronal, .dorsal} := by
-  decide
-
--- (14a), (14d)
-theorem licensed_mw_hw :
-    Licensed mw ∧ ¬ mw.IsComplex ∧ Licensed hw ∧ ¬ hw.IsComplex ∧ Licensed tkw := by
-  decide
-
-theorem not_licensed : ¬ Licensed [+coronal, +round] ∧ ¬ Licensed [+labial, −coronal] := by
+theorem spread_dorsal_highBackRound_trill :
+    Segment.spread node .dorsal highBackRound trill =
+      [−anterior, −distributed, +back, +high] ∧
+    articulators (Segment.spread node .dorsal highBackRound trill) = {.coronal, .dorsal} := by
   decide
 
 /-! ### Association lines -/
@@ -394,8 +392,7 @@ theorem hasIntervalOrder_contour_geminate_discontinuous :
     (AR.noCrossing_iff_hasIntervalOrder_of_card_le_two (by simp)).1 (by decide),
     (AR.noCrossing_iff_hasIntervalOrder_of_card_le_two (by simp)).1 (by decide)⟩
 
-/-- (23): the representation with crossed lines cannot be placed in time with association as
-overlap. -/
+-- (23)
 theorem not_hasIntervalOrder_crossing : ¬ crossing.HasIntervalOrder :=
   fun h ↦ absurd h.noCrossing (by decide)
 
