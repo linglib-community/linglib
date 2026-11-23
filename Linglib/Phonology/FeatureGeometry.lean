@@ -41,9 +41,11 @@ feature at the node to stand for it. `Phonology.Segment.spread` is `spread` on s
 
 ## TODO
 
-Spreading here acts on each feature of a class separately. Whether a rule moves a class node as a
-unit, so that blocking one feature blocks the class, or targets the features one by one, the
-point on which Clements differs from Padgett and from Halle, Vaux and Wolfe, is not represented.
+`spread` copies values, each feature of a class separately. Spreading as a change of association
+lines, where two segments come to share one node, is `FeatureGeometry/Linking.lean`. The point
+on which Clements differs from Padgett and from Halle, Vaux and Wolfe, whether a rule moves a
+class node as a unit or targets its features one by one, is the difference between `linkNode`
+and `linkFeature` there; the studies do not yet state it.
 
 ## References
 
