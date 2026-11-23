@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.Evidential.Time
+public import Linglib.Semantics.Evidential.Temporal
 
 /-!
 # Huijsmans (2025): Timing of evidence and epistemic modal claims

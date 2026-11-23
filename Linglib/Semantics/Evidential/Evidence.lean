@@ -31,6 +31,11 @@ has an evidential proposition that entails its scope (`Evidential.evidence_subse
 is a property of the relation and not of the source: a language may have a veridical reportative
 beside a sensory evidential that is not.
 
+This file and those it imports use neither modality nor tense. Accounts on which evidence is
+what a body of privileged information or a modal base settles are developed from
+`Evidential/Modal.lean`, and accounts on which an evidential locates the acquisition of the
+evidence in time from `Evidential/Temporal.lean`.
+
 ## Implementation notes
 
 The relation is a bare function and the speaker is not an argument: an account with several
@@ -42,7 +47,8 @@ excludes indirect evidence for it.
 
 * The evidence of a report is the content of a speech event; the content function of
   attitude reports is not yet related to `ev` at the hearsay and quotative parameters.
-* The time at which evidence is acquired (`Tense.EvidentialFrame`) is not an argument of `ev`.
+* The time at which evidence is acquired (`Tense.EvidentialFrame`, in `Evidential/Temporal.lean`)
+  is not an argument of `ev`, so the temporal accounts are not yet stated on an evidence relation.
 * The presupposition of indirect evidence in [izvorski-1997] and the information sources of the
   St'át'imcets modals in [matthewson-2016] are stated in their studies on Kratzer backgrounds,
   not on an evidence relation.

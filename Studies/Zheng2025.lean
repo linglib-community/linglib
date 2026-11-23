@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Zheng2025
 public import Linglib.Fragments.Mandarin.QuestionParticles
 public import Linglib.Pragmatics.DecisionTheoretic.Basic
-public import Linglib.Semantics.Modality.Kernel
+public import Linglib.Semantics.Evidential.Modal
 public import Linglib.Semantics.Questions.Bias
 public import Studies.Theiler2021
 public import Mathlib.Tactic.DeriveFintype
@@ -53,7 +53,7 @@ paraphrases it.
 
 namespace Zheng2025
 
-open MeasureTheory Modality DTS Question
+open MeasureTheory Evidential DTS Question
 open Theiler2021 (Property instantiations instantiations_zero Necessary Sufficient)
 
 /-! ### Felicity conditions, (11) and (13) -/

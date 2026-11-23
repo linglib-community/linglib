@@ -54,7 +54,7 @@ gear gets wet only if it is raining (`P ∪ Q`). Each kernel proposition overlap
 included in it, so neither settles `Q`, while the base, wet gear and rain, entails it. In
 Figure 3(b) her direct information is the rain itself (`Q`). -/
 
-open Modality
+open Modality Evidential
 
 /-- A world records whether the rain gear coming inside is wet and whether it is raining. -/
 abbrev World := Bool × Bool
@@ -100,9 +100,9 @@ theorem rainK_settles_raining : DirectlySettles rainK raining :=
 
 -- Figure 3: the wet rain gear is inferring evidence of rain, the sight of rain attested
 theorem kernelEvidence_raining (w : World) :
-    w ∈ kernelEvidence wetGearK .inferring raining ∧
-      w ∉ kernelEvidence wetGearK .attested raining ∧
-      w ∈ kernelEvidence rainK .attested raining :=
+    w ∈ kernelEvidence (fun _ ↦ wetGearK) .inferring raining ∧
+      w ∉ kernelEvidence (fun _ ↦ wetGearK) .attested raining ∧
+      w ∈ kernelEvidence (fun _ ↦ rainK) .attested raining :=
   ⟨⟨raining_follows, raining_unsettled⟩, fun ⟨X, hX, hXP⟩ ↦ raining_unsettled ⟨X, hX, .inl hXP⟩,
     raining, by simp [rainK], subset_rfl⟩
 
