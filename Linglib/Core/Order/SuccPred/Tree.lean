@@ -96,6 +96,23 @@ reaches `a`. -/
         (by rw [Function.iterate_add_apply, hn, hm])
       rw [ha, ← hn, ha, t.iterate_root]
 
+/-- An element is at or above another when it is that element or is at or above its parent. -/
+theorem le_iff_eq_or_le_parent :
+    t.toPartialOrder.le a b ↔ b = a ∨ t.toPartialOrder.le a (t.parent b) := by
+  constructor
+  · rintro ⟨n, hn⟩
+    cases n with
+    | zero => exact .inl hn
+    | succ n => exact .inr ⟨n, by rwa [Function.iterate_succ_apply] at hn⟩
+  · rintro (rfl | ⟨n, hn⟩)
+    · exact ⟨0, rfl⟩
+    · exact ⟨n + 1, by rwa [Function.iterate_succ_apply]⟩
+
+/-- An element other than the root is not at or above its parent. -/
+theorem not_le_parent (ha : a ≠ t.root) : ¬ t.toPartialOrder.le a (t.parent a) := fun ⟨n, hn⟩ ↦
+  ha (t.eq_root_of_iterate_eq (n := n + 1) (Nat.succ_ne_zero n)
+    (by rwa [Function.iterate_succ_apply]))
+
 /-- The root is the least element. -/
 @[reducible] def toOrderBot : @OrderBot α t.toPartialOrder.toLE :=
   letI := t.toPartialOrder

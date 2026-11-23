@@ -1,6 +1,8 @@
 module
 
 public import Mathlib.Data.Finset.Basic
+public import Mathlib.Logic.Relation
+public import Linglib.Core.Data.Set.Functor
 public import Linglib.Logic.Modal.Defs
 
 /-!
@@ -18,6 +20,8 @@ same worlds, and state-basedness, that every world of the team sees exactly the 
 ## Main definitions
 
 * `ModalLogic.KripkeModel`, with the accessibility relation `KripkeModel.accessible`.
+* `ModalLogic.KripkeModel.IsBisimulation`: a relation between the worlds of two models under
+  which related worlds make the same atoms true and have matching successors.
 * `ModalLogic.PointedTeam`: a Kripke model with a team on it.
 * `Team.IsIndisputable`, `Team.IsStateBased`: the conditions of [aloni-2022] Definition 5.
 
@@ -93,6 +97,41 @@ open SetRel in
 open SetRel in
 instance [DecidableEq W] (M : KripkeModel W Atom) (w v : W) : Decidable (w ~[M.accessible] v) :=
   inferInstanceAs (Decidable (v ∈ M.access w))
+
+/-! ### Bisimulation -/
+
+/-- A relation between the worlds of two Kripke models is a **bisimulation** when related worlds
+make the same atoms true and their successor sets are related by its lifting. -/
+structure KripkeModel.IsBisimulation (M : KripkeModel W Atom) (M' : KripkeModel W' Atom)
+    (r : W → W' → Prop) : Prop where
+  /-- Related worlds make the same atoms true. -/
+  val_iff : ∀ ⦃w w'⦄, r w w' → ∀ p, M.val p w ↔ M'.val p w'
+  /-- Each successor of one of two related worlds is related to a successor of the other. -/
+  liftRel_access : ∀ ⦃w w'⦄, r w w' → Set.LiftRel r ↑(M.access w) ↑(M'.access w')
+
+namespace KripkeModel.IsBisimulation
+
+variable {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {r : W → W' → Prop}
+  {w : W} {w' : W'}
+
+/-- The converse of a bisimulation is a bisimulation. -/
+protected theorem symm (h : M.IsBisimulation M' r) : M'.IsBisimulation M (Function.swap r) :=
+  ⟨fun _ _ hr p ↦ (h.val_iff hr p).symm, fun _ _ hr ↦ Set.liftRel_swap.2 (h.liftRel_access hr)⟩
+
+/-- A world reached from one of two related worlds is related to a world reached from the
+other. -/
+theorem exists_reflTransGen (h : M.IsBisimulation M' r) (hr : r w w') {u : W}
+    (hu : Relation.ReflTransGen (fun a b ↦ b ∈ M.access a) w u) :
+    ∃ u', Relation.ReflTransGen (fun a b ↦ b ∈ M'.access a) w' u' ∧ r u u' := by
+  induction hu with
+  | refl => exact ⟨w', .refl, hr⟩
+  | tail _ hbc ih =>
+    obtain ⟨b', hb', hrb⟩ := ih
+    obtain ⟨hforth, -⟩ := h.liftRel_access hrb
+    obtain ⟨c', hc', hrc⟩ := hforth _ hbc
+    exact ⟨c', hb'.tail hc', hrc⟩
+
+end KripkeModel.IsBisimulation
 
 /-- A **pointed team model** is a Kripke model with a team on it, the pointed state model of
 [anttila-2025] (p. 23); a class of them is a state property (Definition 2.3.9). -/

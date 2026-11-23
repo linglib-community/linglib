@@ -8,7 +8,6 @@ module
 public import Linglib.Phonology.Autosegmental.TierTree
 public import Linglib.Phonology.Prosody.Structure
 public import Mathlib.Data.Fintype.Sigma
-public import Mathlib.Logic.Relation
 
 /-!
 # The prosodic structure of an autosegmental representation
@@ -18,11 +17,9 @@ are the positions of the representation, a position dominates the positions that
 lines lead to, `AR.Dom`, and one position precedes another when both stand on one tier and the
 first is earlier. Positions on different tiers stand in no precedence.
 
-Domination is decided by the tokens reached in as many steps as there are tiers
-(`dom_iff_mem_descendants`), so the tokens a slot dominates in `AR.Dominates` are those below it
-in the structure (`dominates_iff_dom`). No Crossing of the structure gives the No-Crossing
-Constraint between each tier and the tier it hangs from
-(`isNonCrossing_lines_of_noCrossing_toStructure`).
+The tokens a slot dominates in `AR.Dominates` are those below it in the structure
+(`dominates_iff_dom`). No Crossing of the structure gives the No-Crossing Constraint between each
+tier and the tier it hangs from (`isNonCrossing_lines_of_noCrossing_toStructure`).
 
 ## Implementation notes
 
@@ -42,57 +39,6 @@ compares two lines between the same two tiers.
 namespace Autosegmental.AR
 
 variable {ι : Type*} {τ : ι → Type*} [Fintype ι] [DecidableEq ι] (T : ParentTree ι) (X : AR τ)
-
-/-- Descending lines lead from the token `v` to the token `w`. -/
-def Dom (v w : ι × ℕ) : Prop := Relation.ReflTransGen (fun v w ↦ w ∈ X.children T v) v w
-
-variable {T X} {v w : ι × ℕ}
-
-theorem depth_of_mem_children (h : w ∈ X.children T v) : T.depth w.1 = T.depth v.1 + 1 := by
-  obtain ⟨j, q⟩ := w
-  obtain ⟨hp, hr, -⟩ := mem_children.1 h
-  rw [T.depth_eq_depth_parent_add_one hr, hp]
-
-theorem Dom.eq_or_depth_lt (h : X.Dom T v w) : v = w ∨ T.depth v.1 < T.depth w.1 := by
-  induction h with
-  | refl => exact .inl rfl
-  | tail _ hc ih =>
-    have := depth_of_mem_children hc
-    rcases ih with rfl | ih <;> right <;> omega
-
-theorem Dom.mem_descendants (h : X.Dom T v w) :
-    w ∈ X.descendants T (T.depth w.1 - T.depth v.1) v := by
-  induction h with
-  | refl => simp [descendants]
-  | @tail b c hd hc ih =>
-    have h1 := depth_of_mem_children hc
-    have h2 : T.depth c.1 - T.depth v.1 = (T.depth b.1 - T.depth v.1) + 1 := by
-      rcases Dom.eq_or_depth_lt (T := T) (X := X) hd with rfl | h2 <;> omega
-    rw [h2]
-    exact mem_descendants_succ_of_mem_children ih hc
-
-theorem dom_of_mem_descendants : ∀ (d : ℕ) {v w : ι × ℕ}, w ∈ X.descendants T d v → X.Dom T v w
-  | 0, v, w, h => by
-    obtain rfl : w = v := by simpa [descendants] using h
-    exact .refl
-  | d + 1, v, w, h => by
-    rw [descendants, Finset.mem_insert, Finset.mem_biUnion] at h
-    obtain rfl | ⟨c, hc, h⟩ := h
-    · exact .refl
-    · exact .head hc (dom_of_mem_descendants d h)
-
-/-- Domination is decided by the tokens reached in as many steps as there are tiers. -/
-theorem dom_iff_mem_descendants : X.Dom T v w ↔ w ∈ X.descendants T (Fintype.card ι) v :=
-  ⟨fun h ↦ descendants_mono (by have := T.depth_lt_card w.1; omega) _ h.mem_descendants,
-    dom_of_mem_descendants _⟩
-
-instance : Decidable (X.Dom T v w) := decidable_of_iff _ dom_iff_mem_descendants.symm
-
-/-- A slot dominates a token exactly when descending lines lead to it. -/
-theorem dominates_iff_dom {k q : ℕ} {j : ι} : X.Dominates T k j q ↔ X.Dom T (T.root, k) (j, q) :=
-  dom_iff_mem_descendants.symm
-
-variable (T X)
 
 /-- The prosodic structure of a representation along a tree of tiers. -/
 def toStructure : Prosody.Structure (Σ i, τ i) where

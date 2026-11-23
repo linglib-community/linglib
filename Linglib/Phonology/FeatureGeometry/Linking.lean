@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.FeatureGeometry
-public import Linglib.Phonology.Autosegmental.Bisimulation
+public import Linglib.Phonology.Autosegmental.KripkeModel
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Sum
 
@@ -238,9 +238,10 @@ theorem iterate_parent_none (r : ℕ) : (tiers node).parent^[r] none = none :=
   Function.iterate_fixed rfl r
 
 omit [DecidableLE N] [Fintype F] [DecidableEq F] in
-theorem not_below_none {j : N ⊕ F} : ¬ AR.Below (tiers node) (some j) none := fun ⟨r, hr⟩ ↦ by
-  rw [iterate_parent_none] at hr
-  exact Option.some_ne_none _ hr.symm
+theorem not_tiers_le_none {j : N ⊕ F} : ¬ (tiers node).toPartialOrder.le (some j) none :=
+  fun ⟨r, hr⟩ ↦ by
+    rw [iterate_parent_none] at hr
+    exact Option.some_ne_none _ hr.symm
 
 omit [DecidableLE N] [Fintype F] [DecidableEq F] in
 theorem iterate_parent_node : ∀ (r : ℕ) {c : N}, Order.pred^[r] c = a →
@@ -255,8 +256,8 @@ theorem iterate_parent_node : ∀ (r : ℕ) {c : N}, Order.pred^[r] c = a →
 
 omit [DecidableLE N] [Fintype F] [DecidableEq F] in
 /-- The node tiers at or below the tier of a node are those of the nodes it dominates. -/
-theorem below_node_iff {c : N} :
-    AR.Below (tiers node) (some (.inl a)) (some (.inl c)) ↔ a ≤ c := by
+theorem tiers_node_le_node_iff {c : N} :
+    (tiers node).toPartialOrder.le (some (.inl a)) (some (.inl c)) ↔ a ≤ c := by
   constructor
   · rintro ⟨r, hr⟩
     induction r generalizing c with
@@ -280,9 +281,9 @@ theorem below_node_iff {c : N} :
 
 omit [DecidableEq F] in
 /-- The feature tiers below the tier of a node are those of its feature class. -/
-theorem below_feature_iff :
-    AR.Below (tiers node) (some (.inl a)) (some (.inr f)) ↔ f ∈ featureClass node a := by
-  rw [AR.below_iff, mem_featureClass]
+theorem tiers_node_le_feature_iff :
+    (tiers node).toPartialOrder.le (some (.inl a)) (some (.inr f)) ↔ f ∈ featureClass node a := by
+  rw [(tiers node).le_iff_eq_or_le_parent, mem_featureClass]
   have hp : (tiers node).parent (some (.inr f)) = (node f).map .inl := rfl
   constructor
   · rintro (h | h)
@@ -290,18 +291,18 @@ theorem below_feature_iff :
     · rw [hp] at h
       rcases hf : node f with _ | c
       · rw [hf] at h
-        exact absurd h not_below_none
+        exact absurd h not_tiers_le_none
       · rw [hf] at h
-        exact ⟨c, rfl, below_node_iff.1 h⟩
+        exact ⟨c, rfl, tiers_node_le_node_iff.1 h⟩
   · rintro ⟨c, hc, hac⟩
     right
     rw [hp, show node f = some c from hc]
-    exact below_node_iff.2 hac
+    exact tiers_node_le_node_iff.2 hac
 
 omit [DecidableLE N] [Fintype F] [DecidableEq F] in
 /-- Nothing hangs below the tier of a feature. -/
-theorem below_feature_tier_iff {t : Option (N ⊕ F)} :
-    AR.Below (tiers node) (some (.inr g)) t ↔ t = some (.inr g) := by
+theorem tiers_feature_le_iff {t : Option (N ⊕ F)} :
+    (tiers node).toPartialOrder.le (some (.inr g)) t ↔ t = some (.inr g) := by
   refine ⟨fun ⟨r, hr⟩ ↦ ?_, fun h ↦ h ▸ ⟨0, rfl⟩⟩
   cases r with
   | zero => exact hr
@@ -399,19 +400,19 @@ theorem reads_linkNode_iff (hm : m < w.length) (hn : n < w.length)
     (linkNode node w a m n).Reads (tiers node) k (some (.inr f)) b ↔
       (ofWord node (w.set n (spread node a w[m] w[n]))).Reads (tiers node) k
         (some (.inr f)) b := by
-  refine (AR.reads_spreadTier_iff (ofSpec node) (Option.some_ne_none _)
+  refine AR.reads_spreadTier_iff (ofSpec node) (Option.some_ne_none _)
     (fun s t ↦ length_tierWord_le_one node s t) (fun _ ↦ rfl)
     (fun s t ht ↦ link_ofSpec_parent_iff ht) hm hn (word_ofSpec_node_ne_nil.2 hma)
-    (word_ofSpec_parent_ne_nil hna) ?_ ?_).symm
+    (word_ofSpec_parent_ne_nil hna) ?_ ?_
   · rintro (_ | c | g) hb
-    · exact absurd hb not_below_none
-    · exact if_congr (or_congr_right (bears_spread_of_le (below_node_iff.1 hb))) rfl rfl
+    · exact absurd hb not_tiers_le_none
+    · exact if_congr (or_congr_right (bears_spread_of_le (tiers_node_le_node_iff.1 hb))) rfl rfl
     · show (if (node g).isSome then (spread node a w[m] w[n] g).toList else []) =
         if (node g).isSome then (w[m] g).toList else []
-      rw [spread_of_mem (below_feature_iff.1 hb)]
+      rw [spread_of_mem (tiers_node_le_feature_iff.1 hb)]
   · rintro (_ | c | g) hb
     · rfl
-    · have hac : ¬ a ≤ c := fun h ↦ hb (below_node_iff.2 h)
+    · have hac : ¬ a ≤ c := fun h ↦ hb (tiers_node_le_node_iff.2 h)
       by_cases hca : c ≤ a
       · have hne : a ≠ ⊥ := fun h ↦ hac (h ▸ bot_le)
         have hlt : c < a := lt_of_le_of_ne hca fun h ↦ hac h.ge
@@ -423,7 +424,7 @@ theorem reads_linkNode_iff (hm : m < w.length) (hn : n < w.length)
           · exact .inr (hp.of_le (Order.le_pred_of_lt hlt))
         exact if_congr (iff_of_true h₁ h₂) rfl rfl
       · exact if_congr (or_congr_right (bears_spread_of_incompRel ⟨hac, hca⟩)) rfl rfl
-    · have hg : g ∉ featureClass node a := fun h ↦ hb (below_feature_iff.2 h)
+    · have hg : g ∉ featureClass node a := fun h ↦ hb (tiers_node_le_feature_iff.2 h)
       show (if (node g).isSome then (spread node a w[m] w[n] g).toList else []) =
         if (node g).isSome then (w[n] g).toList else []
       rw [spread_of_notMem hg]
@@ -439,15 +440,15 @@ theorem reads_linkFeature_iff (hm : m < w.length) (hn : n < w.length) (hg : (nod
   have hp : (tiers node).parent (some (.inr g)) = some (.inl c₀) := by
     show tierParent node (some (.inr g)) = _
     simp [tierParent, hc₀]
-  refine (AR.reads_spreadTier_iff (ofSpec node) (Option.some_ne_none _)
+  refine AR.reads_spreadTier_iff (ofSpec node) (Option.some_ne_none _)
     (fun s t ↦ length_tierWord_le_one node s t) (fun _ ↦ rfl)
-    (fun s t ht ↦ link_ofSpec_parent_iff ht) hm hn ?_ ?_ ?_ ?_).symm
+    (fun s t ht ↦ link_ofSpec_parent_iff ht) hm hn ?_ ?_ ?_ ?_
   · show (if (node g).isSome then (w[m] g).toList else []) ≠ []
     simp [hg, hv]
   · rw [hp]
     exact word_ofSpec_node_ne_nil.2 (hng c₀ hc₀)
   · intro t hb
-    obtain rfl := below_feature_tier_iff.1 hb
+    obtain rfl := tiers_feature_le_iff.1 hb
     show (if (node g).isSome then (Function.update w[n] g (w[m] g) g).toList else []) =
       if (node g).isSome then (w[m] g).toList else []
     rw [Function.update_self]

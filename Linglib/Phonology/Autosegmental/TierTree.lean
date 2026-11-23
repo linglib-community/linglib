@@ -9,6 +9,7 @@ public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.Autosegmental.Edit
 public import Linglib.Phonology.Autosegmental.Realization
 public import Linglib.Phonology.Autosegmental.TwoTier
+public import Mathlib.Logic.Relation
 public import Mathlib.Order.Interval.Set.UnorderedInterval
 
 /-!
@@ -21,6 +22,9 @@ root node. For a tree of tiers `T : ParentTree ι`, the tokens a token is linked
 hanging from its own are its `children`, and slot `k` dominates the tokens it reaches by
 descending lines, `X.Dominates T k j q`. The representation reads the label `b` on tier `j` at
 slot `k`, `X.Reads T k j b`, when that slot dominates a token of the tier with that label.
+Descending lines lead from one token to another, `X.Dom T v w`, exactly when the second is
+reached in as many steps as there are tiers (`dom_iff_mem_descendants`), so `Dominates` is `Dom`
+from a slot (`dominates_iff_dom`).
 
 A realization `(w.map g₀).prod` whose primitives have one slot each is read symbol by symbol:
 reading it at slot `k` is reading the primitive of the `k`th symbol at its slot
@@ -81,6 +85,9 @@ def Reads (k : ℕ) (j : ι) (b : τ j) : Prop :=
 
 instance [∀ j, DecidableEq (τ j)] (k : ℕ) (j : ι) (b : τ j) : Decidable (X.Reads T k j b) :=
   inferInstanceAs (Decidable (∃ q ∈ Finset.range _, _))
+
+/-- Descending lines lead from the token `v` to the token `w`. -/
+def Dom (v w : ι × ℕ) : Prop := Relation.ReflTransGen (fun v w ↦ w ∈ X.children T v) v w
 
 variable {T X}
 
@@ -148,6 +155,71 @@ theorem mem_descendants_succ_of_mem_children {d : ℕ} {v u u' : ι × ℕ}
     · exact Finset.mem_insert_of_mem
         (Finset.mem_biUnion.2 ⟨u', hu', mem_descendants_self _ u'⟩)
     · exact Finset.mem_insert_of_mem (Finset.mem_biUnion.2 ⟨c, hc, ih hu⟩)
+
+/-! ### Domination -/
+
+theorem depth_of_mem_children {v w : ι × ℕ} (h : w ∈ X.children T v) :
+    T.depth w.1 = T.depth v.1 + 1 := by
+  obtain ⟨j, q⟩ := w
+  obtain ⟨hp, hr, -⟩ := mem_children.1 h
+  rw [T.depth_eq_depth_parent_add_one hr, hp]
+
+theorem Dom.eq_or_depth_lt {v w : ι × ℕ} (h : X.Dom T v w) : v = w ∨ T.depth v.1 < T.depth w.1 := by
+  induction h with
+  | refl => exact .inl rfl
+  | tail _ hc ih =>
+    have := depth_of_mem_children hc
+    rcases ih with rfl | ih <;> right <;> omega
+
+theorem Dom.mem_descendants {v w : ι × ℕ} (h : X.Dom T v w) :
+    w ∈ X.descendants T (T.depth w.1 - T.depth v.1) v := by
+  induction h with
+  | refl => simp [descendants]
+  | @tail b c hd hc ih =>
+    have h1 := depth_of_mem_children hc
+    have h2 : T.depth c.1 - T.depth v.1 = (T.depth b.1 - T.depth v.1) + 1 := by
+      rcases Dom.eq_or_depth_lt (T := T) (X := X) hd with rfl | h2 <;> omega
+    rw [h2]
+    exact mem_descendants_succ_of_mem_children ih hc
+
+theorem dom_of_mem_descendants : ∀ (d : ℕ) {v w : ι × ℕ}, w ∈ X.descendants T d v → X.Dom T v w
+  | 0, v, w, h => by
+    obtain rfl : w = v := by simpa [descendants] using h
+    exact .refl
+  | d + 1, v, w, h => by
+    rw [descendants, Finset.mem_insert, Finset.mem_biUnion] at h
+    obtain rfl | ⟨c, hc, h⟩ := h
+    · exact .refl
+    · exact .head hc (dom_of_mem_descendants d h)
+
+/-- Domination is decided by the tokens reached in as many steps as there are tiers. -/
+theorem dom_iff_mem_descendants {v w : ι × ℕ} :
+    X.Dom T v w ↔ w ∈ X.descendants T (Fintype.card ι) v :=
+  ⟨fun h ↦ descendants_mono (by have := T.depth_lt_card w.1; omega) _ h.mem_descendants,
+    dom_of_mem_descendants _⟩
+
+instance {v w : ι × ℕ} : Decidable (X.Dom T v w) := decidable_of_iff _ dom_iff_mem_descendants.symm
+
+/-- A slot dominates a token exactly when descending lines lead to it. -/
+theorem dominates_iff_dom {k q : ℕ} {j : ι} : X.Dominates T k j q ↔ X.Dom T (T.root, k) (j, q) :=
+  dom_iff_mem_descendants.symm
+
+/-- A position past the end of its tier is linked to nothing below it. -/
+theorem descendants_eq_singleton {v : ι × ℕ} (hv : (X.word v.1).length ≤ v.2) (d : ℕ) :
+    X.descendants T d v = {v} := by
+  have hc : X.children T v = ∅ := Finset.eq_empty_of_forall_notMem fun ⟨j, q⟩ h ↦
+    absurd (mem_children.1 h).2.2.lt_left (not_lt.2 hv)
+  cases d with
+  | zero => rfl
+  | succ d => simp [descendants, hc]
+
+/-- A slot past the end of the slots reads nothing. -/
+theorem not_reads_of_length_le {k : ℕ} (hk : (X.word T.root).length ≤ k) {j : ι} {b : τ j} :
+    ¬ X.Reads T k j b := by
+  rintro ⟨q, -, hq, hb⟩
+  rw [Dominates, descendants_eq_singleton (v := (T.root, k)) hk, Finset.mem_singleton] at hq
+  obtain ⟨rfl, rfl⟩ := Prod.mk.inj hq
+  exact absurd (List.getElem?_eq_some_iff.1 hb).1 (not_lt.2 hk)
 
 end Dominates
 
@@ -264,6 +336,53 @@ theorem tierOffset_add_length_le {k k' : ℕ} (h : k < k') (hk : k < w.length) :
 theorem tierOffset_length :
     tierOffset g₀ i w w.length = ((w.map g₀).prod.word i).length := by
   simp [tierOffset, word_prod, List.length_flatten, Function.comp_def]
+
+/-- On a tier where every primitive has one token, a symbol's offset is its index. -/
+theorem tierOffset_of_length_eq_one (h : ∀ s, ((g₀ s).word i).length = 1) {k : ℕ}
+    (hk : k ≤ w.length) : tierOffset g₀ i w k = k := by
+  simp [tierOffset, h, hk]
+
+theorem length_word_prod_map_of_length_eq_one (h : ∀ s, ((g₀ s).word i).length = 1) :
+    ((w.map g₀).prod.word i).length = w.length := by
+  rw [← tierOffset_length, tierOffset_of_length_eq_one g₀ i w h le_rfl]
+
+/-- A token of the `k`th symbol stands at that symbol's offset. -/
+theorem getElem?_word_prod_map {k : ℕ} (hk : k < w.length) {r : ℕ}
+    (hr : r < ((g₀ w[k]).word i).length) :
+    ((w.map g₀).prod.word i)[tierOffset g₀ i w k + r]? = ((g₀ w[k]).word i)[r]? := by
+  induction w generalizing k with
+  | nil => simp at hk
+  | cons a w ih =>
+    rw [List.map_cons, List.prod_cons, word_mul]
+    cases k with
+    | zero =>
+      simp only [tierOffset_zero, Nat.zero_add, List.getElem_cons_zero] at hr ⊢
+      exact List.getElem?_append_left hr
+    | succ k =>
+      simp only [tierOffset_cons_succ, List.getElem_cons_succ] at hr ⊢
+      rw [Nat.add_assoc, List.getElem?_append_right (Nat.le_add_right _ _),
+        Nat.add_sub_cancel_left]
+      exact ih (Nat.lt_of_succ_lt_succ hk) hr
+
+/-- Symbols with a token on a tier are told apart by their offsets there. -/
+theorem eq_of_tierOffset_eq {k k' : ℕ} (hk : k < w.length) (hk' : k' < w.length)
+    (h : (g₀ w[k]).word i ≠ []) (h' : (g₀ w[k']).word i ≠ [])
+    (he : tierOffset g₀ i w k = tierOffset g₀ i w k') : k = k' := by
+  rcases Nat.lt_trichotomy k k' with hlt | rfl | hlt
+  · have := tierOffset_add_length_le g₀ i w hlt hk
+    have := List.length_pos_iff.2 h
+    omega
+  · rfl
+  · have := tierOffset_add_length_le g₀ i w hlt hk'
+    have := List.length_pos_iff.2 h'
+    omega
+
+theorem tierOffset_lt_length {k : ℕ} (hk : k < w.length)
+    (h : (g₀ w[k]).word i ≠ []) :
+    tierOffset g₀ i w k < ((w.map g₀).prod.word i).length := by
+  rw [← tierOffset_length]
+  exact lt_of_lt_of_le (Nat.lt_add_of_pos_right (List.length_pos_iff.2 h))
+    (tierOffset_add_length_le g₀ i w hk hk)
 
 variable {g₀ w} {i j : ι} {p q : ℕ}
 
@@ -423,6 +542,46 @@ theorem noCrossing_spreadTier_iff (hj : j ≠ T.root)
     · exact absurd (hi₂.symm.trans hi₁) hij
     · subst hp₁ hp₂
       exact absurd hlt (lt_irrefl _)
+
+omit [Fintype ι] in
+theorem link_spreadTier (hj : j ≠ T.root) (hm : m < w.length)
+    (hn : n < w.length) (hmj : (g₀ w[m]).word j ≠ []) (hnp : (g₀ w[n]).word (T.parent j) ≠ [])
+    {i' j' : ι} {p q : ℕ} :
+    (spreadTier T g₀ w j m n).Link i' j' p q ↔
+      ((w.map g₀).prod.Link i' j' p q ∧
+        ¬ (i' = T.parent j ∧ j' = j ∧ p = tierOffset g₀ (T.parent j) w n ∧
+          q = tierOffset g₀ j w n) ∧
+        ¬ (i' = j ∧ j' = T.parent j ∧ p = tierOffset g₀ j w n ∧
+          q = tierOffset g₀ (T.parent j) w n)) ∨
+      (i' = T.parent j ∧ j' = j ∧ p = tierOffset g₀ (T.parent j) w n ∧
+          q = tierOffset g₀ j w m ∨
+        i' = j ∧ j' = T.parent j ∧ p = tierOffset g₀ j w m ∧
+          q = tierOffset g₀ (T.parent j) w n) := by
+  have hij : T.parent j ≠ j := fun h ↦ hj (T.eq_root_of_iterate_eq (n := 1) one_ne_zero h)
+  rw [spreadTier, link_addLine, link_eraseLine, word_eraseLine]
+  exact or_congr_right ((and_iff_right hij).trans
+    ((and_iff_right (tierOffset_lt_length g₀ _ w hn hnp)).trans
+      (and_iff_right (tierOffset_lt_length g₀ _ w hm hmj))))
+
+/-- In a realization by trees with at most one token on a tier, the children of a token are the
+tokens of its own symbol on the tiers hanging from its tier. -/
+theorem mem_children_prod_map (h1 : ∀ s t, ((g₀ s).word t).length ≤ 1)
+    (htree : ∀ s t, t ≠ T.root → ((g₀ s).Link (T.parent t) t 0 0 ↔ (g₀ s).word t ≠ []))
+    {i' t : ι} {p q : ℕ} :
+    (t, q) ∈ (w.map g₀).prod.children T (i', p) ↔ T.parent t = i' ∧ t ≠ T.root ∧
+      ∃ k, ∃ hk : k < w.length, p = tierOffset g₀ i' w k ∧ q = tierOffset g₀ t w k ∧
+        (g₀ w[k]).word t ≠ [] := by
+  rw [mem_children]
+  constructor
+  · rintro ⟨hp, hr, hl⟩
+    obtain rfl : T.parent t = i' := hp
+    replace hl : (w.map g₀).prod.Link (T.parent t) t p q := hl
+    obtain ⟨k, hk, rfl, rfl, hl0⟩ :=
+      (link_prod_map_of_length_le_one (fun s ↦ h1 s _) (fun s ↦ h1 s _)).1 hl
+    exact ⟨rfl, hr, k, hk, rfl, rfl, (htree _ t hr).1 hl0⟩
+  · rintro ⟨rfl, hr, k, hk, rfl, rfl, hne⟩
+    exact ⟨rfl, hr, (link_prod_map_of_length_le_one (fun s ↦ h1 s _) (fun s ↦ h1 s _)).2
+      ⟨k, hk, rfl, rfl, (htree _ t hr).2 hne⟩⟩
 
 end Realization
 
