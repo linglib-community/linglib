@@ -196,10 +196,11 @@ theorem subjectMatter_onset_without_cause : OnsetCondition (Set.Ici subjectMatte
 /-! ### The comparison with Pesetsky (1995) -/
 
 /-- Both [pesetsky-1995] and the Onset Condition rule out a Cause alongside a Target (42a) or a
-Subject Matter (42c). -/
-theorem tsm_restriction_agrees (s : Pesetsky1995.StimulusType) (h : c.IsEventive) :
-    ¬ Pesetsky1995.canReachV (Pesetsky1995.stimulusCascade s).spine 1 ∧
+Subject Matter (42c): the preposition that introduces either is no affix, so it strands CAUS. -/
+theorem tsm_restriction_agrees (v : Morphology.Morph) {q : Morphology.Morph}
+    (hq : ¬ Pesetsky1995.IsAffix q) (h : c.IsEventive) :
+    ¬ Pesetsky1995.Converges Pesetsky1995.IsAffix [v, q, Pesetsky1995.caus] ∧
       ¬ OnsetCondition (Set.Ici c) subjectMatter :=
-  ⟨Pesetsky1995.tsm_restriction s, tsm_restriction h⟩
+  ⟨Pesetsky1995.tsm_restriction v hq, tsm_restriction h⟩
 
 end Kim2024
