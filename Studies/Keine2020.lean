@@ -17,12 +17,13 @@ wh-licensing, on C⁰, has horizon C; Ā-movement, on C⁰, has horizon Nmlz.
 A Hindi sentence shows dependencies across an embedded clause: movement out of it, with or
 without binding from the landing site, long-distance or default agreement on the matrix verb,
 matrix scope of a wh-phrase inside it. The surface type of the clause leaves its size open, an
-infinitive being a vP or a TP. We say a sentence is derivable when some size its clause may have
-licenses every dependency it shows, where default agreement requires a clause opaque to
-φ-agreement, agreement being obligatory where it is possible. Derivability matches the judgment
-of each example sentence. Since the two probes on T⁰ share a horizon, no sentence in which a
-phrase binds from a landing site outside a clause shows default agreement into that clause,
-whatever else it shows.
+infinitive being a vP or a TP. The structures of the clause are the sizes it may have that meet
+the requirement of every dependency the sentence shows, where default agreement requires a
+clause opaque to φ-agreement, agreement being obligatory where it is possible. A sentence among
+the examples is accepted exactly when its clause has a structure. An infinitive has both
+structures; long-distance agreement or binding from the landing site leaves it the vP, and
+default agreement the TP. Where the probes for A-movement and φ-agreement share a horizon, a
+clause has no structure in a sentence that shows both such binding and default agreement.
 
 The nominalized clause and the finite clause are incomparable in size, and wh-licensing and
 Ā-movement each enter the one and not the other. The English and German probes are stated on
@@ -33,8 +34,8 @@ on T⁰, form a scale of successively higher horizons.
 ## Implementation notes
 
 The probes that [keine-2019] already has are that study's definitions. The Ā-movement probe
-differs: the article gives it no horizon, and the book gives it the horizon Nmlz, which the
-article's three clause sizes do not project.
+differs: the article gives it no horizon, and the book gives it the horizon Nmlz. The two sets
+of probes give every clause but a gerund the same structures.
 
 A row records the dependencies a sentence shows, not the probes that underlie them. Movement
 that binds a pronoun or a reciprocal from its landing site is A-movement; movement that does not
@@ -81,18 +82,31 @@ theorem nmlzP_cP_incomparable : ¬ nmlzP ≤ Spine.cP ∧ ¬ Spine.cP ≤ nmlzP 
 /-- (219d): the Ā-movement probe, on C⁰ with horizon Nmlz. -/
 def ābarProbe : HorizonSetting := ⟨.C, some .Nmlz⟩
 
-theorem ābarProbe_transparentTo_iff {s : Spine} (hs : Cat.Nmlz ∉ s) :
-    ābarProbe.TransparentTo s ↔ Keine2019.ābarProbe.TransparentTo s := by
-  simp [ābarProbe, Keine2019.ābarProbe, hs]
-
-/-- Wh-licensing enters the nominalized clause and not the finite one, and Ā-movement the finite
-clause and not the nominalized one. -/
+-- (168)
 theorem whLicensing_ābarProbe_cross :
     (Keine2019.whLicensing.TransparentTo nmlzP ∧ ¬ Keine2019.whLicensing.TransparentTo .cP) ∧
       ābarProbe.TransparentTo .cP ∧ ¬ ābarProbe.TransparentTo nmlzP := by
   decide
 
-/-! ### Dependencies across a clause -/
+/-- The settings of the four Hindi probes. -/
+structure Grammar where
+  /-- The A-movement probe. -/
+  aMovement : HorizonSetting
+  /-- The φ-agreement probe. -/
+  phiAgreement : HorizonSetting
+  /-- The wh-licensing probe. -/
+  whLicensing : HorizonSetting
+  /-- The Ā-movement probe. -/
+  ābarMovement : HorizonSetting
+
+/-- The probes of [keine-2019], whose Ā-movement probe has no horizon. -/
+def Grammar.article : Grammar :=
+  ⟨Keine2019.aProbe, Keine2019.phiProbe, Keine2019.whLicensing, Keine2019.ābarProbe⟩
+
+/-- (219): the probes of the book, whose Ā-movement probe has horizon Nmlz. -/
+def Grammar.book : Grammar := { Grammar.article with ābarMovement := ābarProbe }
+
+/-! ### The structures of a clause -/
 
 /-- The sizes a clause of each surface type may have: a finite clause is a CP and a gerund an
 NmlzP; an infinitive is a vP or a TP, and a TP when it hosts a temporal adverb or a negation. -/
@@ -102,44 +116,73 @@ def Examples.Clause.sizes : Examples.Clause → List Spine
   | .modifiedInfinitive => [.tP]
   | .gerund => [nmlzP]
 
-/-- The condition a dependency puts on a clause of size `s` that it crosses. Binding from the
-landing site requires A-movement and movement without it A-movement or Ā-movement; default
-agreement requires that φ-agreement be impossible. -/
-def Examples.Dependency.LicensedAt (s : Spine) : Examples.Dependency → Prop
-  | .binding => Keine2019.aProbe.TransparentTo s
-  | .movement => Keine2019.aProbe.TransparentTo s ∨ ābarProbe.TransparentTo s
-  | .lda => Keine2019.phiProbe.TransparentTo s
-  | .defaultAgreement => ¬ Keine2019.phiProbe.TransparentTo s
-  | .whScope => Keine2019.whLicensing.TransparentTo s
+/-- What a dependency requires of the size of a clause it crosses. Binding from the landing site
+requires A-movement and movement without it A-movement or Ā-movement; default agreement requires
+that φ-agreement be impossible. -/
+def Examples.Dependency.Requires (G : Grammar) : Examples.Dependency → Spine → Prop
+  | .binding, s => G.aMovement.TransparentTo s
+  | .movement, s => G.aMovement.TransparentTo s ∨ G.ābarMovement.TransparentTo s
+  | .lda, s => G.phiAgreement.TransparentTo s
+  | .defaultAgreement, s => ¬ G.phiAgreement.TransparentTo s
+  | .whScope, s => G.whLicensing.TransparentTo s
 
-instance (s : Spine) : DecidablePred (Examples.Dependency.LicensedAt s) := fun d ↦ by
-  cases d <;> unfold Examples.Dependency.LicensedAt <;> infer_instance
+instance (G : Grammar) (d : Examples.Dependency) : DecidablePred (d.Requires G) := fun s ↦ by
+  cases d <;> unfold Examples.Dependency.Requires <;> infer_instance
 
-/-- A sentence that shows the dependencies `ds` across a clause of type `c` is derivable when
-some size the clause may have licenses each of them. -/
-def Derivable (c : Examples.Clause) (ds : List Examples.Dependency) : Prop :=
-  ∃ s ∈ c.sizes, ∀ d ∈ ds, d.LicensedAt s
+/-- The structures of a clause of type `c` in a sentence that shows the dependencies `ds` across
+it: the sizes the clause may have that meet the requirement of each dependency. -/
+def structures (G : Grammar) (c : Examples.Clause) (ds : List Examples.Dependency) :
+    List Spine :=
+  c.sizes.filter fun s ↦ ∀ d ∈ ds, d.Requires G s
 
-instance (c : Examples.Clause) (ds : List Examples.Dependency) : Decidable (Derivable c ds) :=
-  inferInstanceAs (Decidable (∃ s ∈ _, _))
-
-/-- The horizons of the Hindi probes derive the judgment of each of the twenty example
-sentences. -/
+/-- A sentence among the twenty examples is accepted exactly when its embedded clause has a
+structure under the probes of the book. -/
 theorem judgments_derived :
     Datum.Checks (fun e ↦ (Examples.clause e).map (·, Examples.dependencies e))
-      (fun ⟨c, ds⟩ ↦ .ofProp (Derivable c ds)) Examples.all 20 := by
+      (fun ⟨c, ds⟩ ↦ .ofProp (structures .book c ds ≠ [])) Examples.all 20 := by
   decide
 
-/-- The A-Movement–Agreement Generalization: a sentence in which a phrase binds from a landing
-site outside a clause does not show default agreement into that clause. -/
-theorem not_derivable_of_binding_of_defaultAgreement {c : Examples.Clause}
-    {ds : List Examples.Dependency} (hb : .binding ∈ ds) (hd : .defaultAgreement ∈ ds) :
-    ¬ Derivable c ds :=
-  fun ⟨_, _, h⟩ ↦ h _ hd (h _ hb)
+-- (89), (90), (95), (96b)
+theorem structures_infinitive :
+    structures .book .infinitive [] = [.vP, .tP] ∧
+      structures .book .infinitive [.lda] = [.vP] ∧
+      structures .book .infinitive [.defaultAgreement] = [.tP] ∧
+      structures .book .infinitive [.binding] = [.vP] ∧
+      structures .book .infinitive [.movement, .defaultAgreement] = [.tP] := by
+  decide
 
--- (96b)
-theorem derivable_movement_defaultAgreement :
-    Derivable .infinitive [.movement, .defaultAgreement] := by
+/-- The A-Movement–Agreement Generalization: where the A-movement and φ-agreement probes share
+a horizon, a clause has no structure in a sentence in which a phrase binds from a landing site
+outside it and the matrix verb shows default agreement. -/
+theorem structures_eq_nil_of_binding_of_defaultAgreement {G : Grammar}
+    (hG : G.aMovement.horizon = G.phiAgreement.horizon) {c : Examples.Clause}
+    {ds : List Examples.Dependency} (hb : .binding ∈ ds) (hd : .defaultAgreement ∈ ds) :
+    structures G c ds = [] := by
+  simp only [structures, List.filter_eq_nil_iff, decide_eq_true_eq]
+  intro s _ h
+  have ha : G.aMovement.TransparentTo s := h _ hb
+  rw [HorizonSetting.transparentTo_iff, hG, ← HorizonSetting.transparentTo_iff] at ha
+  exact h _ hd ha
+
+theorem structures_article_eq_book {c : Examples.Clause} (hc : c ≠ .gerund)
+    (ds : List Examples.Dependency) : structures .article c ds = structures .book c ds := by
+  refine List.filter_congr fun s hs ↦ ?_
+  have hN : Cat.Nmlz ∉ s := by
+    cases c <;> simp only [Examples.Clause.sizes, List.mem_cons, List.not_mem_nil, or_false] at hs
+    · subst hs; decide
+    · rcases hs with rfl | rfl <;> decide
+    · subst hs; decide
+    · exact absurd rfl hc
+  have h : ∀ d : Examples.Dependency, d.Requires .article s ↔ d.Requires .book s := fun d ↦ by
+    cases d <;>
+      simp [Examples.Dependency.Requires, Grammar.article, Grammar.book, ābarProbe,
+        Keine2019.ābarProbe, hN]
+  exact decide_eq_decide.2 (forall₂_congr fun d _ ↦ h d)
+
+-- (50b)
+theorem structures_gerund_movement :
+    structures .article .gerund [.movement] = [nmlzP] ∧
+      structures .book .gerund [.movement] = [] := by
   decide
 
 /-! ### English and German -/
