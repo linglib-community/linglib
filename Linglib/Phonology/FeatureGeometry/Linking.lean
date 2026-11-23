@@ -164,16 +164,19 @@ def linkFeature (w : List (F → Option β)) (f : F) (m n : ℕ) : AR (Tiers N F
 variable [Fintype N] {node} {w : List (F → Option β)} {s : F → Option β} {a : N} {m n k : ℕ}
   {f g : F} {b : β}
 
+omit [IsPredArchimedean N] [Fintype N] in
 theorem word_ofSpec_node_ne_nil {c : N} :
     (ofSpec node s).word (some (.inl c)) ≠ [] ↔ c = ⊥ ∨ Bears node s c := by
   show (if c = ⊥ ∨ Bears node s c then [PUnit.unit] else []) ≠ [] ↔ _
   split_ifs with h <;> simp [h]
 
+omit [DecidableLE N] [Fintype F] [DecidableEq F] [Fintype N] in
 theorem parent_node {c : N} (hc : c ≠ ⊥) :
     (tiers node).parent (some (.inl c)) = some (.inl (Order.pred c)) := by
   show tierParent node (some (.inl c)) = _
   simp only [tierParent, hc, ↓reduceIte]
 
+omit [DecidableLE N] [Fintype F] [DecidableEq F] [Fintype N] in
 theorem parent_bot : (tiers node).parent (some (.inl (⊥ : N))) = none := by
   show tierParent node (some (.inl ⊥)) = _
   simp only [tierParent, ↓reduceIte]
@@ -243,7 +246,7 @@ theorem reads_ofSpec_iff :
       AR.mem_children.2 ⟨by show tierParent node (some (.inr f)) = _; simp [tierParent, hc],
         Option.some_ne_none _,
         AR.link_fromRel.2 ⟨by simp, List.length_pos_iff.2 (word_ofSpec_node_ne_nil.2 (.inr hb)),
-          by simp [hword, hf, hs], .inl ⟨by simp [tierParent, hc], Option.some_ne_none _⟩⟩⟩
+          by simp [tierWord, hf, hs], .inl ⟨by simp [tierParent, hc], Option.some_ne_none _⟩⟩⟩
     refine ⟨0, Finset.mem_range.2 (by simp [hword, hf, hs]), AR.descendants_mono ?_ _
       (AR.mem_descendants_succ_of_mem_children (mem_descendants_node s n c hpn (.inr hb)) hchild),
       by simp [hword, hf, hs]⟩
