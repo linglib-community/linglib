@@ -2,6 +2,8 @@ module
 
 public import Studies.MitrovicSauerland2016
 public import Linglib.Data.Statistics.BillEtAl2025
+public import Linglib.Data.Examples.BillEtAl2025
+public import Linglib.Data.Examples.Gloss
 public import Linglib.Fragments.Georgian.Coordination
 public import Linglib.Fragments.Georgian.FocusParticles
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
@@ -15,6 +17,9 @@ Georgian and Hungarian conjoin two noun phrases with a J particle alone, with a 
 conjunct, or with both. A sentence type `s` pronounces the set `s.pronounced` of the heads of
 Mitrović and Sauerland's structure, J and a μ for each conjunct, and we order the sentence types
 by inclusion of these sets: the J-μ type lies above the J and the μ type, which are incomparable.
+The particle `exponent l h` pronounces the head `h` in the language `l`, and the paper's examples
+of each language pronounce exactly these three sets of heads, each with the particles of the
+Fragments written as their entries say, `heads_examples` and `printed`.
 
 An account gives each sentence type the heads of its underlying structure, among which are the
 heads it pronounces. We define two measures of difficulty on an account `a`, the number
@@ -28,12 +33,13 @@ follow-up contrast between the two is significant at .05 in that direction. Geor
 replayed a sentence type more exactly when it pronounces more, `playedMore_child_iff`, and a
 measure orders the sentence types as their replays do exactly when J-μ exceeds J and μ and these
 two are equal, `desiderata_iff`. For an account that gives μ and J-μ sentences one structure
-neither measure does, `not_desiderata_covert`.
+neither measure does, `not_desiderata_complexity` and `not_desiderata_covert`.
 
 In a trial three objects are shown and the sentence says of two of them that they are on the
 table. An end state is the set of objects on the table. It is accurate when it satisfies the
 sentence exhaustified against the alternatives *o is on the table*, which holds of the two
-mentioned objects alone, `accurate_iff`.
+mentioned objects alone, `accurate_iff`, and it satisfies the sentence unexhaustified without
+being accurate when every object is on the table, `basicTrue_and_not_accurate_iff`.
 
 ## Implementation notes
 
@@ -47,6 +53,8 @@ mentioned objects alone, `accurate_iff`.
 * An error is classified by the number of mentioned objects on the table, as the analysis script
   in the paper's supplementary materials classifies it. An end state with one mentioned object
   and the unmentioned one thus has only one of the mentioned objects.
+* A row marks the words that pronounce a head, each with the head and the particle it is, and
+  `exists_span_iff_glossed` checks the marks against the gloss line.
 
 ## References
 
@@ -98,36 +106,84 @@ theorem lt_iff {s t : Sentence} : s < t ↔ s ≠ .jMu ∧ t = .jMu := by revert
 
 end Sentence
 
+-- each sentence type pronounces heads in a way that Mitrović and Sauerland's examples attest
 theorem pronounced_mem_attested (s : Sentence) : s.pronounced ∈ attested := by
   rw [mem_attested_iff]; cases s <;> decide
 
-/-- The J particle of a test language, Georgian *da*, (2), and Hungarian *és*, (1). -/
-def jParticle : Language → Coordinator
-  | .georgian => Georgian.Coordination.da
-  | .hungarian => Hungarian.Coordination.es
+/-! ### The particles and the examples -/
 
-/-- The μ particle of a test language, Georgian *-c*, (2), and Hungarian *is*, (1). -/
-def muParticle : Language → Coordinator
-  | .georgian => Georgian.Coordination.c
-  | .hungarian => Hungarian.Coordination.is_
+/-- The particle of a test language that pronounces a head: J is Georgian *da* and Hungarian
+*és*, μ is Georgian *-c* and Hungarian *is*. -/
+def exponent : Language → Head → Coordinator
+  | .georgian, .j => Georgian.Coordination.da
+  | .georgian, .mu _ => Georgian.Coordination.c
+  | .hungarian, .j => Hungarian.Coordination.es
+  | .hungarian, .mu _ => Hungarian.Coordination.is_
 
 /-- The additive particle of a test language, Georgian *-c* and Hungarian *is*. -/
 def additiveParticle : Language → AdditiveParticle
   | .georgian => Georgian.FocusParticles.c
   | .hungarian => Hungarian.FocusParticles.is_
 
-theorem muParticle_isAlsoAdditive (l : Language) :
-    (muParticle l).IsAlsoAdditive (additiveParticle l) := by
-  cases l <;> rfl
-
-theorem not_jParticle_isAlsoAdditive (l : Language) :
-    ¬ (jParticle l).IsAlsoAdditive (additiveParticle l) := by
-  cases l <;> decide
+theorem exponent_isAlsoAdditive_iff (l : Language) (h : Head) :
+    (exponent l h).IsAlsoAdditive (additiveParticle l) ↔ h ≠ .j := by
+  revert l h; decide
 
 -- §4, (iii)
-theorem muParticle_free_iff {l : Language} :
-    (muParticle l).morph.kind = .free ↔ l = .hungarian := by
-  cases l <;> decide
+theorem exponent_mu_free_iff (l : Language) (i : Fin 2) :
+    (exponent l (.mu i)).morph.kind = .free ↔ l = .hungarian := by
+  revert l i; decide
+
+/-- The Glottocode of a test language. -/
+def Language.glottocode : Language → Glottocode
+  | .georgian => .georgian
+  | .hungarian => .hungarian
+
+/-- The coordinator of a fragment that a lexeme of the data is. -/
+def Examples.Lexeme.coordinator : Examples.Lexeme → Coordinator
+  | .da => Georgian.Coordination.da
+  | .c => Georgian.Coordination.c
+  | .es => Hungarian.Coordination.es
+  | .is => Hungarian.Coordination.is_
+
+/-- The head of the conjunction that a label of the data marks. -/
+def Examples.SpanLabel.head : Examples.SpanLabel → Head
+  | .j => .j
+  | .muFirst => .mu 0
+  | .muSecond => .mu 1
+
+/-- The heads a row pronounces, those its marked words pronounce. -/
+def heads (e : Datum) : Finset Head :=
+  ((e.spans.filterMap Examples.label?).map (·.head)).toFinset
+
+/-- A word is written as a coordinator when it is the coordinator's form, if that is a free word,
+and when it ends in the form after other morphs, if it is bound. -/
+def WrittenAs (w : GlossedWord) (c : Coordinator) : Prop :=
+  if c.morph.kind = .free then w.wordform = c.morph.form.toList
+  else 1 < w.morphs.length ∧ w.morphs.getLast? = some c.morph.form.toList
+
+instance (w : GlossedWord) (c : Coordinator) : Decidable (WrittenAs w c) := by
+  unfold WrittenAs; infer_instance
+
+-- (1), (2), (5), (6): each marked word names the particle of its language for the head it is
+-- marked as, and is written as that particle
+theorem printed (l : Language) :
+    ∀ e ∈ Examples.all, e.language = l.glottocode → ∀ s ∈ e.spans,
+      ∃ k ∈ Examples.label? s, ∃ x ∈ Examples.lexeme? s, x.coordinator = exponent l k.head ∧
+        ∃ w ∈ (s.words e).head?, s.length = 1 ∧ WrittenAs w (exponent l k.head) := by
+  revert l; decide
+
+-- the marked words are those the gloss line glosses J or MU
+theorem exists_span_iff_glossed :
+    ∀ e ∈ Examples.all, ∀ i < e.glossedWords.length, ∀ w ∈ e.glossedWords[i]?,
+      (∃ s ∈ e.spans, s.start = i) ↔ "J".toList ∈ w.glosses ∨ "MU".toList ∈ w.glosses := by
+  decide
+
+-- the examples of each language show the three sentence types
+theorem heads_examples (l : Language) :
+    ((Examples.all.filter (·.language = l.glottocode)).map heads).toFinset =
+      Finset.univ.image Sentence.pronounced := by
+  revert l; decide
 
 /-! ### Accounts and their measures -/
 
