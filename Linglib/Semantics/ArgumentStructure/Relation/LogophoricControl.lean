@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.ArgumentStructure.Control
+public import Linglib.Semantics.ArgumentStructure.Relation.Control
 public import Linglib.Semantics.Attitudes.Acquaintance
 
 /-!

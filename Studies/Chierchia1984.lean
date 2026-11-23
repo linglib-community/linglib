@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.Control
+public import Linglib.Semantics.ArgumentStructure.Relation.Control
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Mathlib.Data.PFun

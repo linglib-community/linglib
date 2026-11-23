@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Data.PFun
 public import Mathlib.Logic.Function.Basic
-public import Linglib.Semantics.ArgumentStructure.MapArgs
+public import Linglib.Semantics.ArgumentStructure.Relation.MapArgs
 
 /-!
 # Control and raising

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.ArgumentStructure.Control
+public import Linglib.Semantics.ArgumentStructure.Relation.Control
 
 /-!
 # Dowty (1985): On Recent Analyses of the Semantics of Control

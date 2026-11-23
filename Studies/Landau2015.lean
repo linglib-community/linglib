@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Binding.Valuation
 public import Mathlib.Data.Fin.VecNotation
 public import Studies.Landau2004
-public import Linglib.Semantics.ArgumentStructure.LogophoricControl
+public import Linglib.Semantics.ArgumentStructure.Relation.LogophoricControl
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Category.Verb.Defs
