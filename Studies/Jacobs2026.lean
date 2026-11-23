@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Statistics.Jacobs2026
 public import Linglib.Data.Wordlist.Jacobs2026
 public import Linglib.Fragments.Latin.Phonology
+public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.FeatureGeometry
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.SearchCopy
@@ -85,14 +86,13 @@ def pred : Node → Node
   | .cPlace | .labial | .lingual => .cPlace
   | .coronal | .dorsal => .lingual
 
-/-- `a ≤ b` when `a` lies on the walk from `b` up to C-place. -/
-instance : PartialOrder Node where
-  le a b := a ∈ List.iterate pred b (Fintype.card Node)
-  le_refl := by decide
-  le_trans := by decide +kernel
-  le_antisymm := by decide
+/-- The tree under C-place. -/
+def tree : ParentTree Node := .ofIterate pred .cPlace 2 (by decide)
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a ∈ List.iterate pred b _))
+/-- `a ≤ b` when `a` dominates `b`. -/
+instance : PartialOrder Node := tree.toPartialOrder
+
+instance : DecidableLE Node := tree.decidableLE
 
 end Node
 
@@ -118,14 +118,9 @@ def underlying (s : Segment) : Segment := ⟨fun
   | .dorsal => if s .dorsal = true then some true else none
   | _ => none⟩
 
-/-- A segment bears a node when it specifies a feature of the node's class. -/
-def Bears (s : Segment) (a : Node) : Prop := ∃ f ∈ featureClass node a, (s f).isSome
-
-instance (s : Segment) (a : Node) : Decidable (Bears s a) := by unfold Bears; infer_instance
-
 /-- The LINGUAL tier: the C-place segments whose underlying representation bears LINGUAL. -/
 def OnLingualTier (s : Segment) : Prop :=
-  s .syllabic = false ∧ Bears (underlying s) .lingual
+  s .syllabic = false ∧ Bears node ⇑(underlying s) .lingual
 
 instance : DecidablePred OnLingualTier := fun s ↦ by unfold OnLingualTier; infer_instance
 
@@ -147,7 +142,7 @@ theorem onLateralTier_iff : ∀ x ∈ Latin.inventory, OnLateralTier x ↔ x = L
   decide
 
 theorem OnLateralTier.onLingualTier {s : Segment} (h : OnLateralTier s) : OnLingualTier s :=
-  ⟨h.1, _, lateral_mem_featureClass_lingual, h.2⟩
+  ⟨h.1, bears_of_isSome (f := .lateral) rfl h.2 le_rfl⟩
 
 /-! ### Dissimilation -/
 

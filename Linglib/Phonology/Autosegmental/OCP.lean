@@ -107,6 +107,8 @@ def IsCleanAt : Prop := IsClean (X.word m)
 
 variable [DecidableEq ι] [DecidableEq (τ m)]
 
+instance : Decidable (X.IsCleanAt m) := inferInstanceAs (Decidable (IsClean (X.word m)))
+
 variable {X m} in
 theorem IsCleanAt.repointIdx_runIdx (h : X.IsCleanAt m) {i : ι} {p : ℕ}
     (hp : p < (X.word i).length) : repointIdx m (runIdx (X.word m)) i p = p := by

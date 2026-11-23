@@ -224,7 +224,7 @@ def associate (p : Pattern) (r : ConsonantalRoot String) :
     AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
   let m := lines p r
   ((consonantalLines m).filter fun l ↦ ¬ Admits p m l).foldl (join p)
-    (m.filterLines .consonantal (Admits p m ·))
+    (m.filterLines (some .consonantal) none (Admits p m ·))
 
 /-! ### Intrusion -/
 

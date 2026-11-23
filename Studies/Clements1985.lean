@@ -1,10 +1,8 @@
 module
 
 public import Linglib.Fragments.English.Phonology
-public import Linglib.Core.Data.Fintype.Order
-public import Mathlib.Data.Fintype.Card
+public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.FeatureGeometry
-public import Mathlib.Data.List.Iterate
 public import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
@@ -98,28 +96,19 @@ def pred : Node → Node
   | .laryngeal | .supralaryngeal => .root
   | .manner | .place => .supralaryngeal
 
-/-- `a ≤ b` when `a` lies on the walk from `b` up to the root, so the root is `⊥` and the parent
-is `Order.pred`. -/
-instance : PartialOrder Node where
-  le a b := a ∈ List.iterate pred b (Fintype.card Node)
-  le_refl := by decide
-  le_trans := by decide +kernel
-  le_antisymm := by decide
+/-- The tree (3). -/
+def tree : ParentTree Node := .ofIterate pred .root 2 (by decide)
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a ∈ List.iterate pred b _))
+/-- `a ≤ b` when `a` dominates `b`, so the root is `⊥` and the parent is `Order.pred`. -/
+instance : PartialOrder Node := tree.toPartialOrder
+
+instance : DecidableLE Node := tree.decidableLE
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : OrderBot Node where
-  bot := .root
-  bot_le := by decide
+instance : OrderBot Node := tree.toOrderBot
 
-/-- The parent as the predecessor. -/
-instance : PredOrder Node where
-  pred := pred
-  pred_le := by decide
-  min_of_le_pred := by decide
-  le_pred_of_lt := by decide
+instance : PredOrder Node := tree.toPredOrder
 
 end Node
 
@@ -182,6 +171,9 @@ def apply : Segment := Segment.piecewise σ.features src tgt
 
 theorem apply_eqOn : Set.EqOn (σ.apply src tgt) src ↑σ.features :=
   fun _ hf ↦ Finset.piecewise_eq_of_mem _ _ _ hf
+
+theorem apply_node (a : Node) : (node a).apply src tgt = Segment.spread classNode? a src tgt :=
+  rfl
 
 theorem apply_feature (f : Feature) :
     ((feature f).apply src tgt).val = Function.update tgt.val f (src f) :=
@@ -325,8 +317,7 @@ theorem preaspiration (v c : Segment) :
         ↑(featureClass classNode? Node.supralaryngeal) ∧
       Set.EqOn ((Spreading.node .supralaryngeal).apply v c) c
         ↑(featureClass classNode? Node.laryngeal) :=
-  ⟨Spreading.apply_eqOn _ v c,
-    Finset.eqOn_piecewise_of_disjoint (disjoint_featureClass ⟨by decide, by decide⟩)⟩
+  ⟨Spreading.apply_eqOn _ v c, spread_eqOn_of_incompRel ⟨by decide, by decide⟩⟩
 
 /-! ### Primary and secondary place features (§4) -/
 

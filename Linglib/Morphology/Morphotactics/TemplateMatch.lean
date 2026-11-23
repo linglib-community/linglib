@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.Root.Consonantal
-public import Linglib.Phonology.Autosegmental.Multiplanar
+public import Linglib.Phonology.Autosegmental.KripkeModel
 public import Linglib.Phonology.Autosegmental.Skeleton
 
 /-!
@@ -22,6 +22,12 @@ reach a slot and the melodic element linked to it, and `AR.spellout`, the surfac
 melodic element linked to several slots is geminate, and a slot that no line reaches has no
 segment. `AR.NoManyToOne` says that no slot has two lines. Relabelling the melodies relabels the
 surface segments (`AR.spellout_mapMelody`).
+
+`AR.NoManyToOne` holds exactly when two lines to one slot are the same line
+(`noManyToOne_iff`), and each token then has at most one line to each plane
+(`NoManyToOne.isFunctional`). Under it a slot realizes the segment of the autosegment it reads
+(`segmentAt_eq_some_iff`), so collapsing a plane, which merges adjacent identical melodic
+elements and changes no reading, changes no surface segment (`spellout_collapse`).
 
 The conventions that draw the lines are in `Morphology/Morphotactics/Association.lean`.
 
@@ -86,6 +92,49 @@ def NoManyToOne : Prop := ∀ s < (f.word none).length, Multiset.card (f.linesAt
 
 instance : Decidable f.NoManyToOne := inferInstanceAs (Decidable (∀ _ < _, _))
 
+section LinesAt
+
+variable {f} {s q : ℕ} {i : ι}
+
+theorem mem_linesAt : (i, q) ∈ f.linesAt s ↔ f.Link (some i) none q s := by
+  simp only [linesAt, Multiset.mem_bind, Finset.mem_val, Finset.mem_univ, true_and,
+    Multiset.mem_map, Finset.mem_filter, Prod.mk.injEq, Prod.exists, Link]
+  exact ⟨fun ⟨_, a, b, ⟨h, hb⟩, hi, ha⟩ ↦ by subst hi ha hb; exact h,
+    fun h ↦ ⟨i, q, s, ⟨h, rfl⟩, rfl, rfl⟩⟩
+
+theorem nodup_linesAt (s : ℕ) : (f.linesAt s).Nodup := by
+  refine Multiset.nodup_bind.2 ⟨fun i _ ↦ Multiset.Nodup.map_on ?_ (Finset.nodup _),
+    (Finset.nodup _).pairwise fun i _ i' _ hne ↦ Multiset.disjoint_left.2 fun {x} hx hx' ↦ ?_⟩
+  · intro l hl l' hl' h
+    have h₁ := (Finset.mem_filter.1 hl).2
+    have h₂ := (Finset.mem_filter.1 hl').2
+    exact Prod.ext (Prod.mk.inj h).2 (h₁.trans h₂.symm)
+  · obtain ⟨l, -, rfl⟩ := Multiset.mem_map.1 hx
+    obtain ⟨l', -, h⟩ := Multiset.mem_map.1 hx'
+    exact hne (Prod.mk.inj h).1.symm
+
+/-- No slot has two lines exactly when two lines to one slot are the same line. -/
+theorem noManyToOne_iff : f.NoManyToOne ↔ ∀ ⦃i i' : ι⦄ ⦃q q' s : ℕ⦄,
+    f.Link (some i) none q s → f.Link (some i') none q' s → i = i' ∧ q = q' := by
+  have key (s : ℕ) : Multiset.card (f.linesAt s) ≤ 1 ↔
+      ∀ a ∈ f.linesAt s, ∀ b ∈ f.linesAt s, a = b :=
+    Finset.card_le_one (s := ⟨f.linesAt s, nodup_linesAt s⟩)
+  constructor
+  · intro h i i' q q' s hl hl'
+    exact Prod.mk.inj ((key s).1 (h s hl.lt_right) _ (mem_linesAt.2 hl) _ (mem_linesAt.2 hl'))
+  · intro h s _
+    refine (key s).2 fun ⟨i, q⟩ ha ⟨i', q'⟩ hb ↦ ?_
+    obtain ⟨rfl, rfl⟩ := h (mem_linesAt.1 ha) (mem_linesAt.1 hb)
+    rfl
+
+/-- With no slot bearing two lines, each token has at most one line to each plane. -/
+theorem NoManyToOne.isFunctional (h : f.NoManyToOne) : f.IsFunctional planes := by
+  rintro (_ | i) p q q' hj hl hl'
+  · exact absurd rfl hj
+  · exact (noManyToOne_iff.1 h hl.symm hl'.symm).2
+
+end LinesAt
+
 /-- The melodic element linked to slot `s`, as its plane and position, when one line reaches the
 slot: association read as a partial function from the slots. -/
 def linkAt? (s : ℕ) : Option (ι × ℕ) :=
@@ -114,5 +163,78 @@ theorem segmentAt_mapMelody (φ : α → β) (s : ℕ) :
 /-- Relabeling the melodies relabels the surface segments. -/
 theorem spellout_mapMelody (φ : α → β) : (f.mapMelody φ).spellout = f.spellout.map φ := by
   simp only [spellout, word_mapMelody_none, List.map_filterMap, segmentAt_mapMelody]
+
+section Reading
+
+variable {f} {s : ℕ}
+
+theorem linkAt?_eq_some_iff {e : ι × ℕ} : f.linkAt? s = some e ↔ f.linesAt s = {e} := by
+  unfold linkAt?
+  induction f.linesAt s using Quot.inductionOn with
+  | h l =>
+    rcases l with _ | ⟨a, _ | ⟨b, l⟩⟩
+    · exact iff_of_false nofun fun h ↦ by simpa using congrArg Multiset.card h
+    · exact ⟨fun h ↦ by rw [← Option.some.inj h]; rfl, fun h ↦ congrArg some
+        (Multiset.singleton_inj.1 h)⟩
+    · exact iff_of_false nofun fun h ↦ by simpa using congrArg Multiset.card h
+
+/-- With no slot bearing two lines, a slot realizes the segment of the autosegment it reads. -/
+theorem segmentAt_eq_some_iff [DecidableEq ι] (h : f.NoManyToOne) {x : α} :
+    f.segmentAt s = some x ↔ ∃ i a, f.Reads planes s (some i) a ∧ a.value = x := by
+  simp only [reads_planes_iff, hostedOn, List.mem_map, List.mem_filter,
+    List.mem_zipIdx_iff_getElem?, decide_eq_true_eq, Prod.exists, exists_and_right,
+    exists_eq_right]
+  constructor
+  · intro hx
+    obtain ⟨⟨i, q⟩, he, hv⟩ := Option.bind_eq_some_iff.1 hx
+    obtain ⟨a, ha, rfl⟩ := Option.map_eq_some_iff.1 hv
+    have hl : f.Link (some i) none q s :=
+      mem_linesAt.1 (by rw [linkAt?_eq_some_iff.1 he]; exact Multiset.mem_singleton_self _)
+    exact ⟨i, a, ⟨q, ha, hl⟩, rfl⟩
+  · rintro ⟨i, a, ⟨q, ha, hl⟩, rfl⟩
+    have hl' : f.Link (some i) none q s := hl
+    have he : f.linkAt? s = some (i, q) := by
+      rw [linkAt?_eq_some_iff]
+      refine (Multiset.Nodup.ext (nodup_linesAt s) (Multiset.nodup_singleton _)).2 fun ⟨i', q'⟩ ↦ ?_
+      rw [Multiset.mem_singleton, mem_linesAt]
+      exact ⟨fun h' ↦ by obtain ⟨rfl, rfl⟩ := noManyToOne_iff.1 h h' hl'; rfl,
+        fun h' ↦ by obtain ⟨rfl, rfl⟩ := Prod.mk.inj h'; exact hl'⟩
+    simp only [segmentAt, he, Option.bind_some, Option.map_eq_some_iff]
+    exact ⟨a, ha, rfl⟩
+
+section Collapse
+
+open OCP
+
+variable [DecidableEq ι] [DecidableEq α] [DecidableEq M]
+
+/-- Collapsing a plane gives no slot a second line. -/
+theorem NoManyToOne.collapse (h : f.NoManyToOne) (i : ι) : (f.collapse (some i)).NoManyToOne := by
+  rw [noManyToOne_iff] at h ⊢
+  intro j j' q q' s hl hl'
+  obtain ⟨p, t, hp, rfl, ht⟩ := link_collapse.1 hl
+  obtain ⟨p', t', hp', rfl, ht'⟩ := link_collapse.1 hl'
+  rw [repointIdx_of_ne (Option.some_ne_none i).symm] at ht ht'
+  obtain rfl := ht
+  obtain rfl := ht'
+  obtain ⟨rfl, rfl⟩ := h hp hp'
+  exact ⟨rfl, rfl⟩
+
+theorem segmentAt_collapse (h : f.NoManyToOne) (i : ι) (s : ℕ) :
+    (f.collapse (some i)).segmentAt s = f.segmentAt s :=
+  Option.ext fun x ↦ by
+    rw [segmentAt_eq_some_iff (h.collapse i), segmentAt_eq_some_iff h]
+    exact exists_congr fun j ↦ exists_congr fun a ↦ and_congr_left fun _ ↦
+      reads_collapse_iff (fun _ _ ↦ (Option.some_ne_none i).symm) (Option.some_ne_none i)
+
+/-- Collapsing a plane changes no surface segment. -/
+theorem spellout_collapse (h : f.NoManyToOne) (i : ι) :
+    (f.collapse (some i)).spellout = f.spellout := by
+  rw [spellout, spellout, word_collapse_of_ne _ _ (Option.some_ne_none i).symm,
+    funext (segmentAt_collapse h i)]
+
+end Collapse
+
+end Reading
 
 end Autosegmental.AR

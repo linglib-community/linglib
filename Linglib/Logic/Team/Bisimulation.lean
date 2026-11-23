@@ -37,6 +37,8 @@ of each team logic is a class of invariant properties that meet a closure condit
   `Team.Invariant.possLax`, `Team.Invariant.necImage`: the modalities preserve invariance one
   step down.
 * `Set.LiftRel.exists_finset_union_eq`: the lifting transports splits of a team.
+* `ModalLogic.KripkeModel.IsBisimulation.worldBisim`: worlds related by a bisimulation are
+  `k`-bisimilar at every depth.
 * `ModalLogic.not_boundedBisimInvariant_setOf_isIndisputable`,
   `ModalLogic.not_boundedBisimInvariant_setOf_isStateBased`: Aloni's conditions are not invariant.
 
@@ -279,6 +281,14 @@ theorem WorldBisim.val_iff {k : ℕ} {M : KripkeModel W Atom} {w : W} {M' : Krip
   | 0, h => h p
   | _ + 1, ⟨h, _⟩ => h p
 
+/-- Worlds related by a bisimulation are `k`-bisimilar at every depth `k`. -/
+theorem KripkeModel.IsBisimulation.worldBisim {M : KripkeModel W Atom}
+    {M' : KripkeModel W' Atom} {r : W → W' → Prop} (h : M.IsBisimulation M' r) (k : ℕ) {w : W}
+    {w' : W'} (hr : r w w') : WorldBisim k M w M' w' := by
+  induction k generalizing w w' with
+  | zero => exact h.val_iff hr
+  | succ k ih => exact ⟨h.val_iff hr, (h.liftRel_access hr).imp fun h' ↦ ih h'⟩
+
 /-- Teams are `k`-bisimilar ([aloni-anttila-yang-2024] Definition 3.6) when they are related by
 the lifting of `k`-bisimilarity of their worlds. -/
 def StateBisim (k : ℕ) (M : KripkeModel W Atom) (s : Finset W) (M' : KripkeModel W' Atom)
@@ -315,13 +325,14 @@ private def loops : KripkeModel (ULift.{u} Bool) Atom where
   access w := {w}
   val _ _ := False
 
+private theorem isBisimulation_loops :
+    (loops (Atom := Atom)).IsBisimulation loops fun _ _ ↦ True :=
+  ⟨fun _ _ _ _ ↦ Iff.rfl, fun _ _ _ ↦ by
+    simp only [loops, Finset.coe_singleton, Set.liftRel_singleton]⟩
+
 private theorem worldBisim_loops (k : ℕ) (w w' : ULift.{u} Bool) :
-    WorldBisim k (loops (Atom := Atom)) w loops w' := by
-  induction k generalizing w w' with
-  | zero => exact fun _ ↦ Iff.rfl
-  | succ k ih =>
-    refine ⟨fun _ ↦ Iff.rfl, ?_⟩
-    simpa only [loops, Finset.coe_singleton, Set.liftRel_singleton] using ih w w'
+    WorldBisim k (loops (Atom := Atom)) w loops w' :=
+  isBisimulation_loops.worldBisim k trivial
 
 /-- At every depth `k`, a team of one looping world is state-based, and the team of both is
 `k`-bisimilar to it but not indisputable ([anttila-2021] p. 46). -/
