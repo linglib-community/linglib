@@ -1,267 +1,162 @@
 module
 
+public import Linglib.Semantics.Dynamic.File
 public import Linglib.Semantics.Dynamic.Partial
-public import Linglib.Semantics.Dynamic.State
 
 /-!
 # File change semantics
 
-This file defines file change potentials, the meanings of sentences in Heim's file change
-semantics. A file records what a discourse has established so far: it keeps a card for each
-individual that has been mentioned, and a sequence of individuals satisfies the file when,
-read card by card, it fits every entry. Uttering a sentence changes the file. It filters out
-the sequences the sentence rules out and opens a card for each individual the sentence
-introduces, and the meaning of the sentence is the function from files to files that its
-utterance brings about.
+A *file change potential* is a partial function on files, the meaning of a sentence: the change
+its utterance makes to the file, defined where the sentence is felicitous. The update by an
+atomic formula is the meet with the formula's file `File.atom`, which adds the cards of its
+variables and removes the points that falsify it. An indefinite is felicitous where its card is
+new, and a definite where its card is present and the file entails its descriptive content,
+where `F` entails an update that removes no point of `F` (`File.Entails`). For a one-place
+content at the definite's own card, the condition is that the file lies below the content's file
+(`FCP.admits_definite_ofFile_atomAt`). Negation is `PartialUpdate.neg` at the difference of
+files, the negation of [heim-1983] where the update adds no card, and the cards introduced under
+it are forgotten (`FCP.dom_eq_of_mem_neg`).
 
-A file is an information state (`State`) whose points are the sequences and whose
-established cards are the referents every point defines. The dissertation's files, which
-distinguish only finitely many cards, are the states uniform at a set of cards. A file change
-potential is a partial function on states. It is undefined at a file that fails the
-sentence's felicity conditions, so presupposition is definedness: the Novelty Condition on an
-indefinite requires its card to be new to the file, and the Familiarity Condition on a
-definite requires the card to be present. Sequencing is composition of partial functions.
-
-The assertive update by an atomic sentence merges the file with the sentence's proposition
-state. At the cards the file already has the merge filters the sequences, and at new cards it
-extends each sequence by every value, which is Heim's atomic rule read point by point. Every
-update only adds information, so it is eliminative in the informativeness order, Heim's
-Principle (A) as `PartialUpdate.IsEliminative`, and a card, once established, is never lost.
-Negation keeps the sequences that no extension carries into the scope's update, which traps the
-referents introduced inside the scope. On a uniform file negation is set difference, as in the
-later propositional presentation of the theory.
-
-## Main definitions
-
-* `FCP`: file change potentials, partial updates of information states.
-* `FCP.ofState`: the assertive update by a state, merging the file with it.
-* `FCP.atomVar`: the update by an atomic predicate at a card.
-* `FCP.atomW`: the update by an atomic predicate on the world alone.
-* `FCP.neg`, `FCP.cond`: negation as non-subsistence, and the conditional as `¬(φ ∧ ¬ψ)`.
-* `FCP.indef`: the indefinite, guarded by the Novelty Condition.
-* `FCP.def_`: the definite, guarded by the Familiarity Condition and its descriptive content.
-* `FCP.trueIn`: consistency of the updated file, the truth clause of Heim's criterion (C) for
-  files without worlds.
-
-## Main results
-
-* `FCP.ofState_mul`: updating by two states in sequence is updating by their merge.
-* `FCP.semiconj_ofState`: up to informational equivalence, assertion is additive.
-* `FCP.atomVar_eq`: the atom extends the file along its card and filters by its predicate.
-* `FCP.atomVar_eq_of_familiar`, `FCP.atomVar_eq_of_novel`: at an established card the atom
-  filters, and at a new card it is random assignment followed by filtering.
-* `FCP.admits_indef`, `FCP.admits_def_`: the felicity conditions are definedness.
-* `FCP.isEliminative_ofState`, `FCP.isEliminative_neg`, `PartialUpdate.IsEliminative.indef`: every
-  clause only adds information.
-* `PartialUpdate.IsEliminative.familiar`: an established card stays established.
-* `FCP.neg_eq_partial_neg`: on a uniform file, negation is set difference.
+The update by a file, negation and the conditional descend in the information order, and an
+indefinite or a definite does when its content does (`PartialUpdate.IsEliminative`). Under such
+an update no card is removed, no point is added, and a file false in a world stays false in it,
+since `File.dom` is antitone and `File.sat` and `File.worlds` are monotone.
 
 ## References
 
-* [heim-1982], [heim-1983], [heim-1991]
-* [kamp-vangenabith-reyle-2011]
+* [heim-1982]
+* [heim-1983]
 -/
 
 @[expose] public section
 
-open DynamicSemantics
+namespace DynamicSemantics
 
-/-- A file change potential ([heim-1982]): a partial update of referential
-information states. Partiality is presupposition (`PartialUpdate.Admits`); Heim numbers her
-cards, `V := ℕ`. -/
-abbrev FCP (W V M : Type*) := PartialUpdate (State W V M)
+variable {W V M : Type*}
+
+/-! ### File change potentials -/
+
+/-- A file change potential: a partial update of files, defined where the sentence is
+felicitous. -/
+abbrev FCP (W V M : Type*) := PartialUpdate (File W V M)
+
+/-- A file entails an update that is defined on it and removes none of its points. -/
+def File.Entails (F : File W V M) (φ : FCP W V M) : Prop := ∃ F' ∈ φ F, F.sat ⊆ F'.sat
 
 namespace FCP
 
-variable {W V M : Type*} {A B F F' : State W V M} {φ ψ : FCP W V M} {x : V}
+variable {A B F F' : File W V M} {φ ψ : FCP W V M} {x : V}
 
-/-! ### Assertive update -/
+/-- The assertive update by a file takes the meet with it. -/
+def ofFile (A : File W V M) : FCP W V M := PFun.lift (· ⊓ A)
 
-/-- Assertive update by a state: the file merges with it. Each point of the
-file pairs with every compatible point of `A`, filtering where their domains
-overlap and extending where `A` defines more. The update is total;
-appropriateness lives on `indef` and `def_`. -/
-def ofState (A : State W V M) : FCP W V M := fun F : State W V M ↦ Part.some (F * A)
+@[simp] theorem ofFile_apply : ofFile A F = Part.some (F ⊓ A) := rfl
 
-@[simp] theorem ofState_apply : ofState A F = Part.some (F * A) := rfl
+theorem mem_ofFile : F' ∈ ofFile A F ↔ F' = F ⊓ A := Part.mem_some_iff
 
-theorem mem_ofState : F' ∈ ofState A F ↔ F' = F * A := Part.mem_some_iff
+@[simp] theorem admits_ofFile (A F : File W V M) : (ofFile A).Admits F := trivial
 
-theorem ofState_one : ofState (1 : State W V M) = PFun.id _ := funext fun _ ↦ by simp
+@[simp] theorem ofFile_top : ofFile (⊤ : File W V M) = PFun.id _ := funext fun _ ↦ by simp
 
-/-- Assertive update is the regular action of the merge monoid: updating by
-`A` and then by `B` is updating by `A * B`. -/
-theorem ofState_mul : ofState (A * B) = (ofState A).seq (ofState B) :=
-  funext fun _ ↦ by simp [PartialUpdate.seq, PFun.comp_apply, mul_assoc]
+/-- Updating by two files in sequence is updating by their meet. -/
+theorem ofFile_inf : ofFile (A ⊓ B) = (ofFile A).seq (ofFile B) :=
+  funext fun _ ↦ by simp [PartialUpdate.seq, PFun.comp_apply, inf_assoc]
 
-theorem ofState_le (h : F' ∈ ofState A F) : F' ≤ F := mem_ofState.mp h ▸ State.mul_le_left
+/-- A file supports the update by a file it lies below. -/
+@[simp] theorem supports_ofFile : (ofFile A).supports F ↔ F ≤ A := by
+  rw [PartialUpdate.supports_iff_mem, mem_ofFile, eq_comm, inf_eq_left]
 
-/-- Up to informational equivalence, assertion is additive in the sense of
-`Semantics/Dynamic/Consequence.lean`: on the upper sets of possibilities it meets the file with
-the content of `A` (`isAdditive_inf_right`). Merging need not be literally idempotent, since two
-compatible points of a file merge into a third, so literal fixed points of assertion are finer
-than informational acceptance. -/
-theorem semiconj_ofState (A : State W V M) :
-    Function.Semiconj
-      (OrderDual.toDual ∘ upperClosure : State W V M → (UpperSet (Possibility W V (Part M)))ᵒᵈ)
-      (· * A) (· ⊓ OrderDual.toDual (upperClosure A)) :=
-  fun _ ↦ congrArg OrderDual.toDual State.upperClosure_mul
+theorem isEliminative_ofFile (A : File W V M) : (ofFile A).IsEliminative :=
+  fun _ _ h ↦ mem_ofFile.mp h ▸ inf_le_left
 
-/-! ### Atoms -/
+/-! ### Entailment -/
 
-/-- An atomic predicate on the world: merge with its proposition at the empty
-stratum. -/
-def atomW (pred : W → Prop) : FCP W V M :=
-  ofState {q ∈ (State.stratum ∅ : State W V M) | pred q.world}
-
-/-- An atomic predicate at card `x`: merge with its proposition state at the
-stratum `{x}`. -/
-def atomVar (pred : M → Prop) (x : V) : FCP W V M := ofState (State.atomAt x fun _ ↦ pred)
-
-theorem atomW_eq (pred : W → Prop) : atomW pred F = Part.some {p ∈ F | pred p.world} := by
-  rw [atomW, ofState_apply, State.mul_eq_sep_of_uniformAt (Set.sep_subset _ _),
-    State.mul_stratum_empty]
-  congr 1
-  ext r
-  refine and_congr_right fun _ ↦ ?_
-  show ((Possibility.restrict ∅ r).domain = ∅ ∧ pred r.world) ↔ pred r.world
-  rw [Possibility.domain_restrict, Set.empty_inter]
-  exact and_iff_right rfl
-
-/-- The card atom extends the file along its card, then filters by its
-predicate: the satisfaction clause and the domain clause of [heim-1982]'s
-atomic rule, per point. -/
-theorem atomVar_eq (pred : M → Prop) (x : V) :
-    atomVar pred x F =
-      Part.some {p ∈ F * State.stratum {x} | ∃ m ∈ p.assignment x, pred m} := by
-  rw [atomVar, ofState_apply, State.mul_atomAt]
-
-/-- At an established card the atom filters. -/
-theorem atomVar_eq_of_familiar (pred : M → Prop) (hfam : State.Familiar F x) :
-    atomVar pred x F = Part.some {p ∈ F | ∃ m ∈ p.assignment x, pred m} := by
-  rw [atomVar_eq, hfam.mul_stratum_singleton]
-
-/-- At a novel card the atom is random assignment followed by filtering, so
-the indefinite adds only the Novelty guard. -/
-theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (hnov : State.Novel F x) :
-    atomVar pred x F =
-      Part.some {p ∈ F.randomAssign x | ∃ m ∈ p.assignment x, pred m} := by
-  rw [atomVar_eq, hnov.mul_stratum_singleton]
-
-/-! ### Connectives and felicity conditions -/
-
-/-- Negation keeps the points of `F` that do not subsist in the scope's
-update: no extension of the point verifies the scope, so referents
-introduced inside it are trapped. Undefined when the scope is. -/
-def neg (φ : FCP W V M) : FCP W V M :=
-  fun F : State W V M ↦ (φ F).map fun F' ↦ {p ∈ F | p ∉ lowerClosure F'}
-
-/-- The conditional is the negated conjunction `¬(φ ∧ ¬ψ)`. -/
-def cond (φ ψ : FCP W V M) : FCP W V M := neg (φ.seq (neg ψ))
-
-/-- An indefinite at card `x`: defined only if `x` is novel (the Novelty
-Condition), then random assignment at `x` followed by the body. Indefinites
-do not quantify; they open a card. [heim-1991], on a uniqueness analysis of the definite, bars
-the indefinite article where the definite's presupposition is known to hold and suggests that a
-maxim to presuppose as much as possible derives the ban. -/
-def indef [DecidableEq V] (x : V) (body : FCP W V M) : FCP W V M :=
-  fun F : State W V M ↦ Part.assert (State.Novel F x) fun _ ↦ body (F.randomAssign x)
-
-/-- A definite at card `x` with descriptive content `N`: defined only if `x`
-is established and the file supports its content (the Extended
-Novelty-Familiarity-Condition), and then changes nothing. -/
-def def_ (x : V) (N : FCP W V M) : FCP W V M :=
-  fun F : State W V M ↦
-    Part.assert (State.Familiar F x ∧ N.supports F) fun _ ↦ Part.some F
-
-@[simp] theorem admits_neg : (neg φ).Admits F ↔ φ.Admits F := Iff.rfl
-
-theorem admits_cond :
-    (cond φ ψ).Admits F ↔ ∃ h : φ.Admits F, ψ.Admits ((φ F).get h) := Iff.rfl
-
-/-- The Novelty Condition is definedness. -/
-theorem admits_indef [DecidableEq V] (body : FCP W V M) :
-    (indef x body).Admits F ↔ ∃ _ : State.Novel F x, (body (F.randomAssign x)).Dom :=
-  Iff.rfl
-
-theorem indef_apply [DecidableEq V] (body : FCP W V M) (h : State.Novel F x) :
-    indef x body F = body (F.randomAssign x) := Part.assert_pos h
-
-/-- The Extended Familiarity Condition is definedness. -/
-theorem admits_def_ (N : FCP W V M) :
-    (def_ x N).Admits F ↔ State.Familiar F x ∧ N.supports F :=
-  ⟨fun ⟨h, _⟩ ↦ h, fun h ↦ ⟨h, trivial⟩⟩
-
-theorem def_apply (N : FCP W V M) (h : State.Familiar F x ∧ N.supports F) :
-    def_ x N F = Part.some F := Part.assert_pos h
-
-theorem subset_of_mem_neg (h : F' ∈ neg φ F) : F' ⊆ F := by
-  obtain ⟨_, -, rfl⟩ := (Part.mem_map_iff _).mp h
-  exact fun _ hp ↦ hp.1
-
-/-! ### Principle (A)
-
-Every defined update only adds information: it descends in informativeness. On a uniform stratum
-this is set shrinking (`State.UniformAt.le_iff_subset`); at a novel card an update extends rather
-than shrinks. -/
-
-theorem isEliminative_ofState (A : State W V M) : (ofState A).IsEliminative :=
-  fun _ _ ↦ ofState_le
-
-theorem isEliminative_neg (φ : FCP W V M) : (neg φ).IsEliminative :=
-  fun _ _ h ↦ State.le_of_subset (subset_of_mem_neg h)
-
-theorem isEliminative_cond (φ ψ : FCP W V M) : (cond φ ψ).IsEliminative :=
-  isEliminative_neg _
-
-theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.indef [DecidableEq V]
-    {body : FCP W V M} (h : body.IsEliminative) (x : V) : (indef x body).IsEliminative :=
-  fun _ _ hF' ↦
-  let ⟨hn, hF'⟩ := Part.mem_assert_iff.mp hF'
-  (h _ _ hF').trans (State.randomAssign_le hn)
-
-theorem isEliminative_def_ (x : V) (N : FCP W V M) : (def_ x N).IsEliminative :=
-  fun _ _ hF' ↦ let ⟨_, hF'⟩ := Part.mem_assert_iff.mp hF'; le_of_eq (Part.mem_some_iff.mp hF')
-
-theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.eq_empty_of_mem
-    (h : φ.IsEliminative) (hF' : F' ∈ φ ∅) : F' = ∅ :=
-  State.eq_empty_of_le_bot (h ∅ F' hF')
-
-/-- A card, once established, stays established. -/
-theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.familiar (h : φ.IsEliminative)
-    (hx : State.Familiar F x) (hF' : F' ∈ φ F) : State.Familiar F' x :=
-  hx.of_le (h F F' hF')
-
-/-! ### Truth -/
-
-/-- `φ` is true with respect to `F` when `F + φ` is defined and consistent. This is the truth
-clause of the criterion (C) of [heim-1982] (Ch. III §3.2) for files without worlds, where a file
-is true iff its satisfaction set is nonempty. On points that carry worlds consistency is truth at
-some world, not at a given one, and the falsity clause of (C) is not stated. Existential
-quantification is built into it, so indefinites need no existential closure. -/
-def trueIn (F : State W V M) (φ : FCP W V M) : Prop := ∃ F' ∈ φ F, F'.Nonempty
-
-theorem trueIn_admits (h : trueIn F φ) : φ.Admits F :=
+theorem _root_.DynamicSemantics.File.Entails.admits (h : F.Entails φ) : φ.Admits F :=
   let ⟨F', hF', _⟩ := h
   Part.dom_iff_mem.mpr ⟨F', hF'⟩
 
-theorem trueIn_of_supports (hsup : φ.supports F) (hcons : F.Nonempty) :
-    trueIn F φ :=
-  ⟨F, hsup, hcons⟩
+theorem _root_.DynamicSemantics.PartialUpdate.supports.entails (h : φ.supports F) : F.Entails φ :=
+  ⟨F, h, subset_rfl⟩
 
-/-! ### The uniform shadow -/
+@[simp] theorem _root_.DynamicSemantics.File.entails_ofFile :
+    F.Entails (ofFile A) ↔ F.sat ⊆ A.sat := by
+  simp [File.Entails]
 
-/-- On a uniform stratum, non-subsistence negation is [heim-1983]'s
-set-difference negation (`CCP.Partial.neg`): with every referent shared, a
-point subsists in the update exactly when it survives into it. -/
-theorem neg_eq_partial_neg [DecidableEq V] {X : Finset V} (hF : State.UniformAt X F)
-    (hφ : ∀ F' ∈ φ F, State.UniformAt X F') :
-    neg φ F = CCP.Partial.neg φ F := by
-  refine Part.ext' Iff.rfl fun h₁ h₂ ↦ ?_
-  show ({p ∈ (F : Set (Possibility W V (Part M))) | p ∉ lowerClosure ((φ F).get h₁)} : Set _) =
-    (F : Set (Possibility W V (Part M))) \ (φ F).get h₁
-  ext p
-  exact and_congr_right fun hp ↦ not_congr
-    ((hφ _ (Part.get_mem _)).mem_lowerClosure (hF p hp))
+/-- Under an eliminative update, a file entails the update iff the update keeps its satisfaction
+set. -/
+theorem _root_.DynamicSemantics.File.entails_iff_of_isEliminative (h : φ.IsEliminative) :
+    F.Entails φ ↔ ∃ F' ∈ φ F, F'.sat = F.sat :=
+  exists_congr fun F' ↦ and_congr_right fun hF' ↦
+    ⟨fun hsub ↦ (File.sat_mono (h F F' hF')).antisymm hsub, fun heq ↦ heq.ge⟩
+
+/-! ### Felicity conditions -/
+
+/-- An indefinite at the card `x`, felicitous on the files that lack the card. -/
+def indefinite (x : V) (φ : FCP W V M) : FCP W V M :=
+  fun F ↦ Part.assert (x ∉ F.dom) fun _ ↦ φ F
+
+/-- A definite at the card `x`, felicitous on the files that have the card and entail its
+content. -/
+def definite (x : V) (φ : FCP W V M) : FCP W V M :=
+  fun F ↦ Part.assert (x ∈ F.dom ∧ F.Entails φ) fun _ ↦ φ F
+
+theorem mem_indefinite : F' ∈ indefinite x φ F ↔ x ∉ F.dom ∧ F' ∈ φ F :=
+  Part.mem_assert_iff.trans exists_prop
+
+theorem mem_definite : F' ∈ definite x φ F ↔ x ∈ F.dom ∧ F.Entails φ ∧ F' ∈ φ F :=
+  Part.mem_assert_iff.trans (exists_prop.trans and_assoc)
+
+theorem indefinite_apply (h : x ∉ F.dom) : indefinite x φ F = φ F := Part.assert_pos h
+
+theorem definite_apply (hx : x ∈ F.dom) (h : F.Entails φ) : definite x φ F = φ F :=
+  Part.assert_pos ⟨hx, h⟩
+
+theorem admits_indefinite : (indefinite x φ).Admits F ↔ x ∉ F.dom ∧ φ.Admits F := exists_prop
+
+theorem admits_definite : (definite x φ).Admits F ↔ x ∈ F.dom ∧ F.Entails φ :=
+  ⟨fun ⟨h, _⟩ ↦ h, fun ⟨hx, h⟩ ↦ ⟨⟨hx, h⟩, h.admits⟩⟩
+
+/-- A definite whose content is a file is felicitous on the files that have its card and whose
+points all satisfy the content. -/
+theorem admits_definite_ofFile :
+    (definite x (ofFile A)).Admits F ↔ x ∈ F.dom ∧ F.sat ⊆ A.sat := by
+  rw [admits_definite, File.entails_ofFile]
+
+/-- A definite with a one-place content at its own card is felicitous on the files below the
+content's file. -/
+theorem admits_definite_ofFile_atomAt {N : W → M → Prop} :
+    (definite x (ofFile (File.atomAt x N))).Admits F ↔ F ≤ File.atomAt x N := by
+  rw [admits_definite_ofFile, File.le_atomAt_iff]
+
+theorem definite_ofFile_apply (h : F ≤ A) (hx : x ∈ F.dom) :
+    definite x (ofFile A) F = Part.some F := by
+  rw [definite_apply hx (File.entails_ofFile.mpr (File.sat_mono h)), ofFile_apply,
+    inf_eq_left.mpr h]
+
+theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.indefinite (h : φ.IsEliminative)
+    (x : V) : (indefinite x φ).IsEliminative :=
+  fun F F' hF' ↦ let ⟨_, h'⟩ := mem_indefinite.mp hF'; h F F' h'
+
+theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.definite (h : φ.IsEliminative)
+    (x : V) : (definite x φ).IsEliminative :=
+  fun F F' hF' ↦ let ⟨_, _, h'⟩ := mem_definite.mp hF'; h F F' h'
+
+/-! ### Negation and the conditional -/
+
+/-- Negation adds no card. -/
+theorem dom_eq_of_mem_neg (h : F' ∈ PartialUpdate.neg φ F) : F'.dom = F.dom := by
+  obtain ⟨_, -, rfl⟩ := PartialUpdate.mem_neg.mp h
+  rfl
+
+theorem isEliminative_neg (φ : FCP W V M) : (PartialUpdate.neg φ).IsEliminative := fun F _ h ↦ by
+  obtain ⟨G, -, rfl⟩ := PartialUpdate.mem_neg.mp h
+  exact File.sdiff_le F G
+
+theorem isEliminative_cond (φ ψ : FCP W V M) : (PartialUpdate.cond φ ψ).IsEliminative :=
+  fun F _ h ↦ by
+    obtain ⟨_, -, _, -, rfl⟩ := PartialUpdate.mem_cond.mp h
+    exact File.sdiff_le F _
 
 end FCP
+
+end DynamicSemantics

@@ -78,7 +78,7 @@ def eval : Connective → Prop → Prop → Prop
 disjunction. -/
 noncomputable def ccp : Connective → CCP.Partial W → CCP.Partial W → CCP.Partial W
   | .conj => PartialUpdate.seq
-  | .cond => CCP.Partial.cond
+  | .cond => PartialUpdate.cond
   | .disj => CCP.Partial.disj
 
 end Connective
@@ -129,7 +129,7 @@ meaning, so a trigger is defined in a context that entails its presupposition. -
 noncomputable def ccp : Formula Atom → CCP.Partial W
   | atom p => CCP.Partial.ofTrivalent ((atom p).middleKleene I)
   | trigger p p' => CCP.Partial.ofTrivalent ((trigger p p').middleKleene I)
-  | not F => CCP.Partial.neg (ccp F)
+  | not F => PartialUpdate.neg (ccp F)
   | bin c F G => c.ccp (ccp F) (ccp G)
 
 /-- [heim-1983]'s local accommodation: the presupposition of each trigger joins its assertion where
