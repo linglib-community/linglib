@@ -18,7 +18,7 @@ its subject imposes on its object. A thematic role is a partial function `θ` fr
 to the individual among them that bears it. The relation obeys the *Control Principle* for a role
 and a frame, `ControlPrinciple α θ q N`, when
 
-`w ∈ α P x ↔ ∃ e ∈ θ x, w ∈ claim (N x) (P e) q`,
+`w ∈ α P x ↔ ∃ e ∈ θ x, w ∈ q.claim (N x) (P e)`,
 
 so that it holds of a property exactly where the bearer of the role has the property as a
 necessity, or as a possibility, of the frame.
@@ -46,8 +46,10 @@ depend on the arguments, as that of a modal or of *seem* does not
 (`ControlPrinciple.compl_eq_dual`), and a relation of necessity is factive exactly when its
 conversational background is realistic (`ControlPrinciple.subset_iff_isRealistic`).
 
-In the entries of the English verbs, the controller of a diathesis fills a slot in every diathesis
-of its verb that has a nonfinite clausal complement (`controller_linked`).
+In the entries of the English verbs a participant that controls in one diathesis controls in
+every diathesis of its verb with a nonfinite clausal complement, apart from the raising diathesis
+of a verb like *begin* (`controller_eq_or_isRaising`): no entry has a diathesis that leaves its
+controller out.
 
 ## Implementation notes
 
@@ -101,10 +103,9 @@ deleted ones. -/
 def drop (σ : X → Y) (R : (E → Φ) → X → Ψ) : (E → Φ) → Y → Ψ :=
   fun P y ↦ ⨆ x, ⨆ (_ : σ x = y), R P x
 
-/-- Deleting arguments is the lower adjoint of substitution along the map that forgets them. -/
 theorem gc_drop (σ : X → Y) :
     GaloisConnection (drop σ : ((E → Φ) → X → Ψ) → _) fun S P x ↦ S P (σ x) :=
-  fun R _ ↦ ⟨fun h P x ↦ (le_iSup₂ (f := fun x (_ : σ x = σ x) ↦ R P x) x rfl).trans (h P (σ x)),
+  fun R _ ↦ ⟨fun h P x ↦ (le_iSup₂ (f := fun x' (_ : σ x' = σ x) ↦ R P x') x rfl).trans (h P (σ x)),
     fun h P _ ↦ iSup₂_le fun x hx ↦ hx ▸ h P x⟩
 
 theorem le_drop (σ : X → Y) (R : (E → Φ) → X → Ψ) (P : E → Φ) (x : X) :
@@ -117,7 +118,8 @@ theorem le_drop (σ : X → Y) (R : (E → Φ) → X → Ψ) (P : E → Φ) (x :
 
 theorem drop_comp (τ : Y → Z) (σ : X → Y) (R : (E → Φ) → X → Ψ) :
     drop (τ ∘ σ) R = drop τ (drop σ R) :=
-  (gc_drop (τ ∘ σ)).l_unique ((gc_drop σ).compose (gc_drop τ)) fun _ ↦ rfl
+  show _ = (drop τ ∘ drop σ) R from
+    (gc_drop (τ ∘ σ)).l_unique ((gc_drop σ).compose (gc_drop τ)) fun _ ↦ rfl
 
 @[simp] theorem mem_drop {σ : X → Y} {α : (E → Φ) → X → Set W} {P : E → Φ} {y : Y} {w : W} :
     w ∈ drop σ α P y ↔ ∃ x, σ x = y ∧ w ∈ α P x := by
@@ -133,7 +135,7 @@ where the bearer of the role has the property as a necessity, or as a possibilit
 frame. -/
 def ControlPrinciple (α : (E → Set W) → X → Set W) (θ : X →. E) (q : QuantificationalForce)
     (N : X → W → Filter W) : Prop :=
-  ∀ P x w, w ∈ α P x ↔ ∃ e ∈ θ x, w ∈ claim (N x) (P e) q
+  ∀ P x w, w ∈ α P x ↔ ∃ e ∈ θ x, w ∈ q.claim (N x) (P e)
 
 namespace ControlPrinciple
 
@@ -146,7 +148,7 @@ theorem mem_dom (h : ControlPrinciple α θ q N) (hw : w ∈ α P x) : x ∈ θ.
   Part.dom_iff_mem.2 ⟨e, he⟩
 
 theorem eq_claim (h : ControlPrinciple α θ q N) (he : e ∈ θ x) (P : E → Set W) :
-    α P x = claim (N x) (P e) q :=
+    α P x = q.claim (N x) (P e) :=
   Set.ext fun w ↦ (h P x w).trans
     ⟨fun ⟨_, he', hw⟩ ↦ Part.mem_unique he he' ▸ hw, fun hw ↦ ⟨e, he, hw⟩⟩
 
@@ -166,7 +168,7 @@ the complement of the other at the negated property, where the role has a bearer
 theorem compl_eq_dual (h : ControlPrinciple α θ q N) (h' : ControlPrinciple β θ q.dual N)
     (hx : x ∈ θ.Dom) (P : E → Set W) : (α P x)ᶜ = β (fun e ↦ (P e)ᶜ) x := by
   obtain ⟨e, he⟩ := Part.dom_iff_mem.1 hx
-  rw [h.eq_claim he, h'.eq_claim he, compl_claim]
+  rw [h.eq_claim he, h'.eq_claim he, QuantificationalForce.compl_claim]
 
 -- (45)
 theorem disjoint_dual (h : ControlPrinciple α θ q N) (h' : ControlPrinciple β θ q.dual N)
@@ -213,7 +215,7 @@ theorem drop (h : ControlPrinciple α (fun x ↦ θ' (σ x)) q fun x ↦ N' (σ 
 arguments, the bearer of the role has the property in the frame: the controller of *it was
 decided to leave* is whoever decided. -/
 theorem mem_drop_iff (h : ControlPrinciple α θ q N) :
-    w ∈ Chierchia1984.drop σ α P y ↔ ∃ x, σ x = y ∧ ∃ e ∈ θ x, w ∈ claim (N x) (P e) q := by
+    w ∈ Chierchia1984.drop σ α P y ↔ ∃ x, σ x = y ∧ ∃ e ∈ θ x, w ∈ q.claim (N x) (P e) := by
   simp only [mem_drop, h P]
 
 end ControlPrinciple
@@ -227,7 +229,9 @@ variable (P : E → Set W) (y : Y) (w : W)
 -- (22a)
 example : ControlPrinciple (fun (P : E → Set W) (x : E × Y) ↦ P x.1) (Prod.fst : E × Y → E)
     .universal fun _ ↦ pure :=
-  fun _ x _ ↦ ⟨fun hw ↦ ⟨x.1, Part.mem_some _, hw⟩, fun ⟨_, he, hw⟩ ↦ Part.mem_some_iff.1 he ▸ hw⟩
+  fun _ x _ ↦ ⟨fun hw ↦ ⟨x.1, Part.mem_some _, hw⟩, by
+    rintro ⟨e, he, hw⟩
+    rwa [Part.mem_some_iff.1 he] at hw⟩
 
 -- (99)
 example : w ∈ drop Prod.snd (fun (P : E → Set W) (x : E × Y) ↦ P x.1) P y ↔ ∃ e, w ∈ P e := by
@@ -238,10 +242,11 @@ end
 /-! ### The English verbs -/
 
 open English.Verbs in
-/-- (17e): the controller of a diathesis of an English verb fills a slot in every diathesis of
-the verb that has a clausal complement and no finite one. -/
-theorem controller_linked : ∀ v ∈ verbs, ∀ c ∈ v.valency.diatheses, ∀ i ∈ c.controller,
-    ∀ d ∈ v.valency.diatheses, d.HasClausal → ¬ d.HasFinite → (d.links.get i).isSome := by
+/-- (17c), (17e): the controller of a diathesis of an English verb is the controller of every
+diathesis of the verb that has a clausal complement and no finite one, raising diatheses apart. -/
+theorem controller_eq_or_isRaising : ∀ v ∈ verbs, ∀ c ∈ v.valency.diatheses, ∀ i ∈ c.controller,
+    ∀ d ∈ v.valency.diatheses, d.HasClausal → ¬ d.HasFinite →
+      d.controller = some i ∨ d.IsRaising := by
   decide +kernel
 
 end Chierchia1984

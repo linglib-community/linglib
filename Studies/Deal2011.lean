@@ -48,7 +48,7 @@ flexible](##flexible_iff) in upward-entailing contexts only, as [*o'qa* is](##oq
 
 namespace Deal2011
 
-open Modality Exhaustification Filter
+open Modality QuantificationalForce Exhaustification Filter
 
 /-! ### Claims -/
 
