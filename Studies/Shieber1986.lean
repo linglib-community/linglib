@@ -21,7 +21,7 @@ the most specific structure subsumed by both inputs, is total, the meet.
 ## Implementation notes
 
 * The order, the partial join and the meet are the pointwise instances of
-  `Core/Order/Flat.lean` and `Core/Order/Compat.lean`, so each
+  `Core/Order/Flat.lean` and `Core/Order/BoundedComplete.lean`, so each
   law is the generic lemma at `Features`. The subsumption lattice is not distributive: a
   feature with three values is the diamond, modular but not distributive, as [carpenter-1992]
   notes of feature-structure orders in general. Phrasal combination and reentrant structures
@@ -52,6 +52,8 @@ theorem compat_iff : Compat f g ↔ ∀ t, Compat (f t) (g t) := compat_pi_iff
 theorem exists_isLUB (hc : Compat f g) : ∃ u, IsLUB {f, g} u :=
   ⟨fun t ↦ (f t).or (g t), isLUB_pair_pi_iff.2 fun t ↦ (hc.apply t).isLUB_or⟩
 
+instance : IsBoundedComplete Features := ⟨fun _ _ ↦ exists_isLUB⟩
+
 theorem compat_of_isLUB (hu : IsLUB {f, g} u) : Compat f g := ⟨u, hu.1⟩
 
 theorem le_of_isLUB (hu : IsLUB {f, g} u) : f ≤ u ∧ g ≤ u := mem_upperBounds_pair.1 hu.1
@@ -71,7 +73,7 @@ theorem isLUB_comm : IsLUB {f, g} u ↔ IsLUB {g, f} u := by rw [Set.pair_comm]
 /-- Unification is associative, with failure propagating. -/
 theorem isLUB_assoc {v w : Features} (hv : IsLUB {f, g} v) (hw : IsLUB {v, h} w) :
     ∃ u, IsLUB {g, h} u ∧ IsLUB {f, u} w :=
-  hv.pair_assoc (fun _ _ ↦ exists_isLUB) hw
+  hv.pair_assoc hw
 
 /-- Unification is monotone where defined: weakening both inputs preserves success and weakens
 the result. -/

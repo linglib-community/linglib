@@ -144,11 +144,11 @@ theorem mem_mul : r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', IsLUB {p, q} r := 
 instance : CommMonoid (State W V M) where
   mul_assoc s t u := Set.ext fun r ↦
     ⟨fun ⟨v, ⟨p, hp, q, hq, hv⟩, w, hw, hr⟩ ↦
-      let ⟨v', hv', hr'⟩ := hv.pair_assoc (fun _ _ ↦ Possibility.exists_isLUB) hr
+      let ⟨v', hv', hr'⟩ := hv.pair_assoc hr
       ⟨p, hp, v', ⟨q, hq, w, hw, hv'⟩, hr'⟩,
      fun ⟨p, hp, v, ⟨q, hq, w, hw, hv⟩, hr⟩ ↦
       let ⟨v', hv', hr'⟩ := (Set.pair_comm q w ▸ hv).pair_assoc
-        (fun _ _ ↦ Possibility.exists_isLUB) (Set.pair_comm p v ▸ hr)
+        (Set.pair_comm p v ▸ hr)
       ⟨v', ⟨p, hp, q, hq, Set.pair_comm q p ▸ hv'⟩, w, hw, Set.pair_comm w v' ▸ hr'⟩⟩
   one_mul s := Set.ext fun r ↦
     ⟨fun ⟨_, ⟨w, rfl⟩, p, hp, h⟩ ↦

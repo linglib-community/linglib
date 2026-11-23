@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.Cover
-public import Linglib.Core.Order.Compat
+public import Linglib.Core.Order.BoundedComplete
 
 /-!
 # The flat order

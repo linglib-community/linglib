@@ -74,9 +74,10 @@ instance : Decidable (DistributiveMight ord S C w) :=
 end
 
 -- (27)
-theorem simplification {A B : Finset W} (h : w ∈ distributiveImp ord {A, B} C) :
-    w ∈ closestImp ord ↑A C ∧ w ∈ closestImp ord ↑B C :=
-  mem_distributiveImp_pair.1 h
+omit [DecidableEq W] in
+theorem simplification {A B : Set W} (h : w ∈ distributiveImp ord {A, B} C) :
+    w ∈ closestImp ord A C ∧ w ∈ closestImp ord B C :=
+  mem_distributiveImp_pair.mp h
 
 -- (54), §3.3
 theorem simplification_might {A B : Finset W} (h : DistributiveMight ord {A, B} C w) :
@@ -89,20 +90,20 @@ abbrev sunColdW : Finset CropWorld := Finset.univ.filter (· ∈ sunCold)
 
 /-- Boolean *or* (6) hands the modal the union, and (1) comes out true (Fig. 1). -/
 theorem bumperCrop_boolean :
-    .actual ∈ disjunctiveImp cropSim {goodWeatherW, sunColdW} bumperCrop := by
+    .actual ∈ disjunctiveImp cropSim {↑goodWeatherW, ↑sunColdW} bumperCrop := by
   decide
 
 /-- With the disjuncts as alternatives (13) under universal force (26), (1) is false, since the
 closest cold-sun worlds have no crop. -/
 theorem bumperCrop_alternatives :
-    .actual ∉ distributiveImp cropSim {goodWeatherW, sunColdW} bumperCrop := by decide
+    .actual ∉ distributiveImp cropSim {↑goodWeatherW, ↑sunColdW} bumperCrop := by decide
 
 /-! ### Universal quantifier or sum (§2.2.3) -/
 
-theorem homogeneity_ne_false [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)]
-    {A : Finset W} (hA : A ∈ S)
-    (h : w ∈ closestImp ord ↑A C) : homogeneousImp ord S C w ≠ .false :=
-  fun hf ↦ (homogeneousImp_eq_false_iff.1 hf).2 A hA h
+omit [DecidableEq W] in
+theorem homogeneity_ne_false {S : Set (Set W)} {A : Set W} (hA : A ∈ S)
+    (h : w ∈ closestImp ord A C) : homogeneousImp ord S C w ≠ .false :=
+  fun hf ↦ (homogeneousImp_eq_false_iff.mp hf).right A hA h
 
 /-- In (29)–(31) Spain joining Germany is closer than Spain joining the U.S., and Hitler is
 pleased only in the former. -/
@@ -122,10 +123,12 @@ abbrev pleased : Set HitlerWorld := {.germany}
 /-- Sentence (29) is true under the universal quantifier, as (30a) holds and (30b) fails per (31),
 and a gap under a homogeneous sum (33). -/
 theorem hitler_negation :
-    .actual ∉ distributiveImp hitlerSim {joinedGermany, joinedUS} pleased ∧
+    .actual ∉ distributiveImp hitlerSim {↑joinedGermany, ↑joinedUS} pleased ∧
       .actual ∈ closestImp hitlerSim ↑joinedGermany pleased ∧
       .actual ∉ closestImp hitlerSim ↑joinedUS pleased ∧
-      homogeneousImp hitlerSim {joinedGermany, joinedUS} pleased .actual = .undefined := by decide
+      homogeneousImp hitlerSim {↑joinedGermany, ↑joinedUS} pleased .actual = .undefined :=
+  ⟨by decide, by decide, by decide, homogeneousImp_eq_undefined_iff.mpr
+    ⟨⟨_, .inl rfl, by decide⟩, _, .inr rfl, by decide⟩⟩
 
 end
 
@@ -254,7 +257,7 @@ theorem manner_insufficient :
 /-- On Nute's recipe (80), a counterfactual with one of two incompatible disjuncts as consequent is
 true only if the other is impossible. -/
 theorem distributive_pair_disjoint_iff {A B : Finset W} (h : Disjoint A B) :
-    w ∈ distributiveImp ord {A, B} ↑A ↔ B = ∅ := by
+    w ∈ distributiveImp ord {↑A, ↑B} ↑A ↔ B = ∅ := by
   rw [mem_distributiveImp_pair]
   refine ⟨fun hd ↦ ?_, fun hB ↦ ⟨Preorder.minimals_subset _ _, by simp [hB]⟩⟩
   by_contra hne
@@ -277,8 +280,8 @@ abbrev education : Finset BudgetWorld := {.education}
 /-- (80) is a contradiction under the analysis and true once Existential Closure (82)
 returns the Boolean antecedent. -/
 theorem budget :
-    (∀ w, w ∉ distributiveImp budgetSim {defense, education} ↑defense) ∧
-      .actual ∈ disjunctiveImp budgetSim {defense, education} ↑defense :=
+    (∀ w, w ∉ distributiveImp budgetSim {↑defense, ↑education} ↑defense) ∧
+      .actual ∈ disjunctiveImp budgetSim {↑defense, ↑education} ↑defense :=
   ⟨fun w h ↦ by simpa using (distributive_pair_disjoint_iff budgetSim w (by decide)).1 h,
     by decide⟩
 
@@ -305,9 +308,13 @@ def forkAlts : String → Option (Finset (Finset ForkWorld))
 
 variable [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)]
 
+instance : Decidable (w ∈ distributiveImp ord ((↑) '' (S : Set (Finset W))) C) :=
+  decidable_of_iff (∀ A ∈ S, w ∈ closestImp ord ↑A C) <| by
+    simp only [mem_distributiveImp, Set.forall_mem_image, Finset.mem_coe]
+
 /-- The verdict of the analysis for a *would* or *might* consequent, possibly negated. -/
 def verdict : String → Bool → Option Bool
-  | "would", neg => some (decide (w ∈ distributiveImp ord S C) != neg)
+  | "would", neg => some (decide (w ∈ distributiveImp ord ((↑) '' (S : Set (Finset W))) C) != neg)
   | "might", neg => some (decide (DistributiveMight ord S C w) != neg)
   | _, _ => none
 
@@ -322,7 +329,7 @@ def predicted (row : Datum) : Option Bool :=
     hitlerAlts a >>= fun S => verdict hitlerSim S pleased .actual m neg
   | some "fork", some a, some m => forkAlts a >>= fun S => verdict forkSim S bent .actual m neg
   | some "budget", some "defense or education", some "would" =>
-    some (decide (.actual ∈ disjunctiveImp budgetSim {defense, education} ↑defense))
+    some (decide (.actual ∈ disjunctiveImp budgetSim {↑defense, ↑education} ↑defense))
   | _, _, _ => none
 
 theorem rows_agree : Datum.ChecksVerdict predicted id Examples.all 10 := by
