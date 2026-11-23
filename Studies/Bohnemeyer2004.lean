@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Wordlist.Bohnemeyer2004
 public import Linglib.Fragments.Mayan.Yukatek.Agreement
 public import Linglib.Fragments.HindiUrdu.Case
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
 public import Linglib.Core.Relation.ReflTransGen
 public import Studies.Lucy1994
 public import Linglib.Syntax.Voice.Basic
@@ -303,22 +303,25 @@ the causing subevent, which it requires to be a process. The anticausative (29) 
 subevent. The passive (30) keeps the caused subevent and a process causing it. -/
 def template : Detransitivization → Template .event → Option (Template .event)
   | .antipassive, .cause .act _ => some .act
-  | .anticausative, .cause _ e => some e
+  | .anticausative, .cause (σ := .event) _ e => some e
   | .passive, .cause _ e => some (.cause .act e)
   | _, _ => none
 
 -- (28)–(30) presuppose a causal relation between two subevents
 theorem exists_cause_of_template_isSome {d : Detransitivization} {t : Template .event}
-    (h : (d.template t).isSome) : ∃ c e, t = .cause c e := by
+    (h : (d.template t).isSome) :
+    ∃ (c : Template .event) (σ : Eventuality) (e : Template σ), t = .cause c e := by
   cases t with
-  | cause c e => exact ⟨c, e, rfl⟩
+  | cause c e => exact ⟨c, _, e, rfl⟩
   | _ => cases d <;> simp [template] at h
 
 /-- A passive stem denotes the event its anticausative denotes together with a process causing
 it (30). -/
 theorem passive_template_bind_caused (t : Template .event) :
     (passive.template t).bind Template.caused = anticausative.template t := by
-  cases t <;> rfl
+  cases t with
+  | @cause c σ e => cases σ <;> cases c <;> rfl
+  | _ => rfl
 
 -- (12): on *p'eh* 'chip', the antipassive denotes the chipping process, the anticausative the
 -- change, and the passive the whole chain

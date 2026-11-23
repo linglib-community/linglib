@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Pragmatics.Bidirectional
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Postulates
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.MartinRoseNichols2025
@@ -17,22 +18,22 @@ formalizes the account of why a thick causative, used transitively in its physic
 a subject with abstract reference (*the lack of sunscreen burned her skin*) that periphrastic
 *cause* and the thin causatives accept.
 
-A model `ProductionInterpretation State Event` is an event structure with two relations of causation
+A model `ProductionModel State Event` is an event structure with two relations of causation
 between its eventualities, after Rose, Sievers and Nichols: production, the transfer of a conserved
 physical quantity from cause to effect, and dependence, the counterfactual dependence of the effect
 on the cause. Production entails dependence, and only a physical relatum produces. The operator
 CAUSE has a `Reading` for each relation, and the readings are ordered by specificity, `production <
-dependence`, so that `ProductionInterpretation.interpretation` is monotone and every event-structure
+dependence`, so that `ProductionModel.interpretation` is monotone and every event-structure
 decomposition is at least as true under dependence as under production
-(`ProductionInterpretation.denote_mono`). A thin causative is true of an eventuality that causes a
-change into a state of its root, `ProductionInterpretation.causative`, and the causative of a manner
-root adds the manner of the causing eventuality, `ProductionInterpretation.mannerCausative`.
+(`ProductionModel.denote_mono`). A thin causative is true of an eventuality that causes a
+change into a state of its root, `ProductionModel.causative`, and the causative of a manner
+root adds the manner of the causing eventuality, `ProductionModel.mannerCausative`.
 
 A verb is thick when its causative entails a manner of the causing eventuality. There are two ways.
 A manner root contributes the manner directly, under either reading. A state root does so when every
 productive cause of its state is of the manner, the postulate of Beavers and Koontz-Garboden for a
 manner of the cause, taken under production: then the causative entails the manner under production
-(`ProductionInterpretation.causative_le_of_entailsMannerOfCause`), and need not under dependence
+(`ProductionModel.causative_le_of_entailsMannerOfCause`), and need not under dependence
 (`scene_not_causative_dependence_le`). The second is the paper's account of *bury*, whose state
 reveals the process that produced it.
 
@@ -71,8 +72,8 @@ and the verbs found with an omission or quality subject are the thin verbs other
   so no ranking of constraints is chosen.
 * The paper's representations relate the causing eventuality to the result state directly. Here the
   causing eventuality causes a change that gives rise to the state, as the event-structure templates
-  have it, and `ProductionInterpretation.causative_eq_denote` and
-  `ProductionInterpretation.mannerCausative_eq_denote` give the two causatives as template
+  have it, and `ProductionModel.causative_eq_denote` and
+  `ProductionModel.mannerCausative_eq_denote` give the two causatives as template
   denotations. The eventualities of a model are the causal relata, facts and absences among them.
 * `Felicitous` tests the causal relation alone, the thin causative of any state; the manner of
   a manner root is a further condition on the cause that the rows do not test.
@@ -103,8 +104,8 @@ and the verbs found with an omission or quality subject are the thin verbs other
   be the positive form, is not stated; `scene_condition` shows only that a necessary condition
   for the transference cause fails production.
 * The survey's thick verbs are not assigned roots: no theorem joins a verb of the survey to
-  `ProductionInterpretation.mannerCausative` or to the postulate of
-  `ProductionInterpretation.causative_le_of_entailsMannerOfCause`.
+  `ProductionModel.mannerCausative` or to the postulate of
+  `ProductionModel.causative_le_of_entailsMannerOfCause`.
 * Strong resultatives are available to a root that does not describe states in the study of Yu,
   Ausensi and Smith; the resultative column is not derived from that.
 
@@ -147,7 +148,7 @@ instance : LinearOrder Reading := LinearOrder.lift' Reading.rank (by decide)
 /-- An event structure with the two concepts of causation of [rose-sievers-nichols-2021] between
 its eventualities, the causal relata. The relation `cause` is dependence, and production is a
 part of it that only a physical relatum enters as the cause. -/
-structure ProductionInterpretation (State Event : Type u) extends Interpretation State Event where
+structure ProductionModel (State Event : Type u) extends Model State Event where
   /-- The cause produces the effect: it transfers a conserved physical quantity to it. -/
   produces : SetRel Event Event
   produces_subset_cause : produces ⊆ cause
@@ -155,20 +156,20 @@ structure ProductionInterpretation (State Event : Type u) extends Interpretation
   Physical : Event → Prop
   physical_of_produces {c e : Event} : c ~[produces] e → Physical c
 
-namespace ProductionInterpretation
+namespace ProductionModel
 
-variable {Entity : Type*} {State Event : Type u} (C : ProductionInterpretation State Event)
+variable {Entity : Type*} {State Event : Type u} (C : ProductionModel State Event)
   (r : Reading) (Q : Event → Prop) (p : State → Prop) {c : Event}
 
 /-- The interpretation of the event-structure primitives under a reading of CAUSE. -/
-def interpretation : Interpretation State Event where
+def interpretation : Model State Event where
   become := C.become
   cause := match r with
     | .production => C.produces
     | .dependence => C.cause
 
 theorem interpretation_mono : Monotone C.interpretation := fun a b h ↦ by
-  refine ⟨subset_rfl, ?_⟩
+  refine ⟨subset_rfl, ?_, subset_rfl⟩
   cases a <;> cases b
   exacts [subset_rfl, C.produces_subset_cause, absurd h (by decide), subset_rfl]
 
@@ -197,7 +198,7 @@ theorem mannerCausative_eq_denote (P : Entity → State → Prop) (x : Entity) :
   funext fun _ ↦ propext ⟨fun h ↦ ⟨⟨trivial, h.1⟩, h.2⟩, fun h ↦ ⟨h.1.2, h.2⟩⟩
 
 theorem causative_mono : Monotone (C.causative · p) :=
-  fun _ _ h _ ⟨e, he, hp⟩ ↦ ⟨e, (C.interpretation_mono h).2 he, hp⟩
+  fun _ _ h _ ⟨e, he, hp⟩ ↦ ⟨e, (C.interpretation_mono h).2.1 he, hp⟩
 
 variable {C r p Q}
 
@@ -220,7 +221,7 @@ theorem causative_le_of_entailsMannerOfCause
     C.causative .production p ≤ Q :=
   h.diamond_cause_diamond_become_le hC
 
-end ProductionInterpretation
+end ProductionModel
 
 /-! ### The competition between covert and overt CAUSE -/
 
@@ -291,7 +292,7 @@ inductive Scene where
 /-- The producer produces the change, which depends on the absence and the condition as well and
 gives rise to the one state. The lack of sunscreen and the sun are the absence and the producer
 of a burn, and the flat tire and the driving the condition and the producer of a cracked axle. -/
-def scene : ProductionInterpretation Unit Scene where
+def scene : ProductionModel Unit Scene where
   become := {x | x.1 = .change}
   cause := {x | x.1 ≠ .change ∧ x.2 = .change}
   produces := {x | x.1 = .producer ∧ x.2 = .change}
@@ -340,7 +341,7 @@ theorem scene_condition :
 reading the statement allows, a cause that is not physical when the subject has abstract
 reference. -/
 def Felicitous (promoted : Prop) (a : Option Form) (abstract : Prop) : Prop :=
-  ∃ (State Event : Type) (C : ProductionInterpretation State Event) (c : Event) (r : Reading),
+  ∃ (State Event : Type) (C : ProductionModel State Event) (c : Event) (r : Reading),
     (abstract → ¬C.Physical c) ∧ Allows promoted a r ∧ C.causative r ⊤ c
 
 /-- A causative statement is infelicitous exactly when it is a lexical causative, production is
@@ -350,7 +351,7 @@ theorem felicitous_iff :
   refine ⟨fun ⟨_, _, C, c, r, hc, ha, hr⟩ ⟨hp, habs, hfr⟩ ↦ ?_, fun h ↦ ?_⟩
   · subst hfr
     obtain rfl := allows_some_iff.1 ha hp
-    exact hc habs (ProductionInterpretation.physical_of_causative hr)
+    exact hc habs (ProductionModel.physical_of_causative hr)
   · have absence {a} (ha : Allows promoted a .dependence) : Felicitous promoted a abstract :=
       ⟨_, _, scene, .absence, .dependence, fun _ h ↦ h rfl, ha,
         scene_causative_dependence.2 (by decide)⟩

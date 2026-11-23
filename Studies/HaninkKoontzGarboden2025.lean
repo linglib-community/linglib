@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Possession.Relationalizer
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Model
 public import Linglib.Fragments.Washo.PropertyConcepts
 public import Linglib.Data.Examples.HaninkKoontzGarboden2025
 public import Linglib.Data.StructureDataset.Dixon1982
@@ -39,7 +39,7 @@ Types are the substrate's `Ty`, with `.v` the paper's type of states and events 
 (43), and the composability claims are stated at the type level, since Lean's own typing enforces
 them in the semantic definitions. Possession relates a possessor to a possessum of any type, so
 ordinary possession (67) and the possession of a state (35) are one operator. Causation and change
-are interpreted by the substrate's `EventStructure.Interpretation`: possibility along its
+are interpreted by the substrate's `EventStructure.Model`: possibility along its
 `become` and `cause` are the paper's heads (43).
 
 ## TODO
@@ -182,7 +182,7 @@ theorem vHave_nabla_self (P : E → St → Prop) (x : E) : vHave (nabla P) P x �
 
 /-! ### Resultative bipartite verbs, section 5.1 -/
 
-variable {Event : Type*} (M : ArgumentStructure.EventStructure.Interpretation St Event)
+variable {Event : Type*} (M : ArgumentStructure.EventStructure.Model St Event)
 
 theorem exists_state_of_diamond_cause {P : E → St → Prop} {manner : Event → Prop} {x : E}
     {v : Event}

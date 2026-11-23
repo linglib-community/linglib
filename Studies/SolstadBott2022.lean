@@ -1,56 +1,56 @@
 module
 
-public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Data.Statistics.SolstadBott2022
 public import Linglib.Discourse.Coherence
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Nucleus
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Position
+public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Mathlib.Logic.Equiv.Defs
 
 /-!
 # Solstad & Bott (2022): On the Nature of Implicit Causality and Consequentiality
 
-This file formalizes the Two-Mechanism Account of Solstad and Bott. Implicit causality
-(I-Caus), the coreference bias of a continuation after *because*, is verb-semantic: on the
-authors' Empty Slot Theory, a stimulus argument causes the psychological state the verb
-names without the verb saying how, so the argument carries an underspecified proposition
-that an explanation fills. Implicit consequentiality (I-Cons), the bias after *and so*, is
-discourse-structural: on the Contiguity Principle of Kehler, a consequence continues
-from the final state of the prompt's eventuality, held by the experiencer of the state or by
-the participant the action affects. Both mechanisms read off a verb class's proto-role grid
-(Dowty): `CarriesSlot` is the stimulus label, `HoldsEndState` the experiencer label or
-causal affectedness, `ICaus` and `ICons` the resulting coreference predictions, and `Bias`
-routes them through the direction of the cause–effect relation a connective signals.
+A continuation of *Name₁ verb-ed Name₂ because …* tends to be about one argument of the verb,
+its implicit causality (I-Caus) bias, and a continuation of *… and so …* about one argument, its
+implicit consequentiality (I-Cons) bias. This file states two accounts of the biases, each in
+its own terms, and tests them on the paper's four continuation experiments.
 
-The rival One-Mechanism Account of Crinean and Garnham reads both biases off one causal
-decomposition, causes with agents and stimuli alike, consequences with experiencers and
-patients, so a continuation about the end-state argument should be a consequence. The
-Two-Mechanism Account lets slot filling take precedence over contiguity, so a slot predicate
-is continued by an explanation whichever argument the continuation is about. `oneMechanism`
-and `twoMechanism` state the two coherence predictions; they agree on the slot argument and
-diverge exactly on the end-state argument of a slot predicate, the paper's Asymmetry
-Hypothesis. The accounts also part on agent-patient verbs, whose agent is a cause on the
-One-Mechanism reading but carries no slot, since it causes by the very action the verb names.
+On the One-Mechanism Account both biases are read off thematic roles. For a role list `r` and
+an argument position `a`, `RoleCause r a` holds when the verb entails that the argument causes,
+`RoleEffect r a` when it is an experiencer or is causally affected, and `roleBias r` assigns the
+first to Explanation and the second to Result.
 
-Four sentence-continuation experiments on German stimulus-experiencer (*ärgern*) and
-experiencer-stimulus (*bewundern*) verbs test the hypothesis. Experiment 1 confirms the mirror
-coreference biases: after *weil* the stimulus argument, after *sodass* the experiencer, with the
-two per-verb biases almost perfectly anticorrelated. Experiment 2 (full stop) finds
-explanations the most frequent relation for both classes, about three times as frequent as
-consequences. Experiment 3 (forced reference) finds explanations at least as frequent as
-consequences even when the continuation is forced onto the I-Cons argument, against the
-One-Mechanism symmetry. Experiment 4 finds explanatory specifications, continuations giving
-the direct cause of the psychological state, almost only in I-Caus-congruent explanations,
-and consequence specifications, restatements of the experiencer's state, essentially never:
-consequences introduce an eventuality subsequent to the prompt's, as contiguity predicts.
+On the Two-Mechanism Account the biases are read off the event structure of the verb. A template
+has a slot, `HasSlot`, when one of its positions is the event of an individual causer, which has
+no content for an explanation to repeat. `VerbClass.Bias` assigns Explanation to the actor of a
+template with a slot and Result to the undergoer, the holder of the state the eventuality ends
+in.
+
+The two accounts give the psych verbs the same biases, mirror images of each other in the two
+classes. They part on agent-patient verbs, whose agent causes and has no slot, and on which
+relation a continuation stands in: we prove that under forced reference explanations about the
+end-state argument outnumber consequences about the slot argument, that most explanations give
+the cause of the psychological state exactly when they are about the slot argument, and that
+consequences are more frequent after the class whose template has a change.
 
 ## Implementation notes
 
-The experimental results are reported in prose above; the library's format for
-experimental data is pending. The psych grids are the substrate's `psychCausal` and
-`psychState`, which are each other's `flip`, so the mirror theorem is one instance of
-`bias_flip`. The agent-evocator grid `judgment` follows the paper's description of
-Crinean and Garnham: the evocator is causally affected by the agent's act and, through
-the verb's presupposition of a preceding eventuality it took part in, the non-agentive cause
-of the agent's intention, so it is both the slot argument and the end-state argument.
-Agent-patient verbs take the manner-contact grid `mannerContact`.
+* A stimulus-experiencer verb is given the template `[x CAUSE [BECOME [y ⟨STATE⟩]]]` and an
+  experiencer-stimulus verb `[x CAUSE [y ⟨STATE⟩]]`, a caused state with no change, after the
+  paper's remark that only the former have an end point.
+* The grid `judgment` of agent-evocator verbs follows the paper's report of
+  [crinean-garnham-2006]: the evocator is causally affected and is the non-agentive cause of the
+  agent's intention.
+* Under forced reference to the object of a stimulus-experiencer verb the printed consequences
+  (44.2%) exceed the explanations (42.9%), so the precedence of slot filling is stated of the
+  two arguments together.
+
+## TODO
+
+* The slot of an agent-evocator verb, which the paper derives from a presupposition, has no
+  template.
+* The role lists of the two classes are stated beside their templates. No map from a template to
+  the profiles of its participants derives one from the other.
 
 ## References
 
@@ -58,184 +58,260 @@ Agent-patient verbs take the manner-contact grid `mannerContact`.
 * [crinean-garnham-2006]
 * [dowty-1991]
 * [kehler-2002]
+* [moens-steedman-1988]
 -/
 
 @[expose] public section
 
+universe u
+
 namespace SolstadBott2022
 
-open ArgumentStructure Coherence
+open ArgumentStructure ArgumentStructure.EventStructure Data.Statistics
 
-/-- The argument positions of a prompt *Name₁ verb-ed Name₂*. -/
-inductive Argument where
-  | np1
-  | np2
-  deriving DecidableEq, Fintype, Repr
+/-! ### Positions and relations -/
 
-/-- The other argument position. -/
-def Argument.swap : Argument → Argument
-  | .np1 => .np2
-  | .np2 => .np1
+/-- The other argument of the prompt. -/
+def Position.swap : Position → Position
+  | .subject => .object
+  | .object => .subject
 
-/-- The proto-role profile a grid assigns to a position. -/
-def profileAt (r : RoleList) : Argument → Option EntailmentProfile
-  | .np1 => some r.subjectProfile
-  | .np2 => r.objectProfile
+@[simp] theorem Position.swap_swap (a : Position) : a.swap.swap = a := by cases a <;> rfl
 
-/-- The grid with subject and object exchanged, when there is an object. -/
-def flip (r : RoleList) : Option RoleList :=
-  r.objectProfile.map fun o ↦ ⟨o, some r.subjectProfile⟩
+/-- The exchange of the two arguments, as a permutation. -/
+def Position.swapEquiv : Equiv.Perm Position := Function.Involutive.toPerm swap swap_swap
 
-theorem profileAt_flip {r r' : RoleList} (h : flip r = some r') (a : Argument) :
-    profileAt r' a = profileAt r a.swap := by
-  obtain ⟨o, ho, rfl⟩ := Option.map_eq_some_iff.1 h
-  cases a <;> simp [profileAt, Argument.swap, ho]
+@[simp] theorem Position.coe_swapEquiv : ⇑Position.swapEquiv = Position.swap := rfl
 
-/-! ### The two mechanisms -/
+@[simp] theorem Position.symm_swapEquiv : Position.swapEquiv.symm = Position.swapEquiv := rfl
 
-/-- Mechanism 1, the empty slot. A stimulus causes the psychological state the verb names
-without the verb saying how, so it carries an underspecified proposition that an
-explanation fills. An agent causes by the action the verb names and carries no slot. -/
-def CarriesSlot (p : EntailmentProfile) : Prop := p ∈ ThetaRole.profiles .stimulus
-
-/-- Mechanism 2, the Contiguity Principle. A consequence continues from the final state of
-the prompt's eventuality, held by the experiencer of the psychological state or by the
-participant the action affects. -/
-def HoldsEndState (p : EntailmentProfile) : Prop :=
-  p ∈ ThetaRole.profiles .experiencer ∨ .causallyAffected ∈ p
-
-instance (p : EntailmentProfile) : Decidable (CarriesSlot p) :=
-  inferInstanceAs (Decidable (p ∈ ThetaRole.profiles .stimulus))
-
-instance (p : EntailmentProfile) : Decidable (HoldsEndState p) :=
-  inferInstanceAs (Decidable (_ ∨ _))
-
-theorem causation_mem_of_carriesSlot {p : EntailmentProfile} (h : CarriesSlot p) :
-    .causation ∈ p :=
-  (ThetaRole.mem_profiles_stimulus.1 h).1
-
-theorem holdsEndState_iff_of_carriesSlot {p : EntailmentProfile} (h : CarriesSlot p) :
-    HoldsEndState p ↔ .causallyAffected ∈ p :=
-  or_iff_right fun he ↦ Set.disjoint_left.1
-    (ThetaRole.pairwiseDisjoint_profiles (by simp) (by simp) (by decide)) he h
-
-/-- I-Caus coreference goes to the slot argument. -/
-def ICaus (r : RoleList) (a : Argument) : Prop := ∃ p ∈ profileAt r a, CarriesSlot p
-
-/-- I-Cons coreference goes to the end-state argument. -/
-def ICons (r : RoleList) (a : Argument) : Prop := ∃ p ∈ profileAt r a, HoldsEndState p
-
-instance (r : RoleList) (a : Argument) : Decidable (ICaus r a) := by
-  unfold ICaus; infer_instance
-
-instance (r : RoleList) (a : Argument) : Decidable (ICons r a) := by
-  unfold ICons; infer_instance
-
-/-- The connectives of the continuation prompts, German *weil* and *sodass*, the paper's *because*
-and *and so*. -/
-inductive Connective where
-  | because
-  | andSo
-  deriving DecidableEq, Fintype, Repr
-
-/-- The cause–effect relation a connective signals. -/
-def Connective.relation : Connective → Relation
+/-- The coherence relation a connective signals. -/
+def Connective.relation : Connective → Coherence.Relation
   | .because => .explanation
   | .andSo => .result
 
-/-- A connective elicits a coreference bias toward the slot argument when the relation it signals
-seeks its cause in the continuation, and toward the end-state argument when it seeks its effect
-there. -/
-def Bias (r : RoleList) (c : Connective) (a : Argument) : Prop :=
-  match c.relation.causalDirection with
-  | some .backward => ICaus r a
-  | some .forward => ICons r a
-  | none => False
+/-- The relation a connective signals, as an embedding. -/
+def Connective.relationEmbedding : Connective ↪ Coherence.Relation :=
+  ⟨relation, by decide⟩
 
-@[simp] theorem bias_because (r : RoleList) (a : Argument) : Bias r .because a ↔ ICaus r a :=
-  Iff.rfl
+@[simp] theorem Connective.coe_relationEmbedding :
+    ⇑Connective.relationEmbedding = Connective.relation := rfl
 
-@[simp] theorem bias_andSo (r : RoleList) (a : Argument) : Bias r .andSo a ↔ ICons r a :=
-  Iff.rfl
+/-- The paper's discourse relations in Kehler's classification. -/
+def Relation.toCoherence : Relation → Coherence.Relation
+  | .explanation => .explanation
+  | .consequence => .result
+  | .contrast => .contrast
 
-instance (r : RoleList) (c : Connective) (a : Argument) : Decidable (Bias r c a) := by
-  cases c
-  exacts [decidable_of_iff _ (bias_because r a).symm, decidable_of_iff _ (bias_andSo r a).symm]
+/-- The paper's discourse relations, as an embedding into Kehler's. -/
+def Relation.toCoherenceEmbedding : Relation ↪ Coherence.Relation :=
+  ⟨toCoherence, by decide⟩
 
-theorem icaus_flip {r r' : RoleList} (h : flip r = some r') (a : Argument) :
-    ICaus r' a ↔ ICaus r a.swap := by
-  simp [ICaus, profileAt_flip h]
+@[simp] theorem Relation.coe_toCoherenceEmbedding :
+    ⇑Relation.toCoherenceEmbedding = Relation.toCoherence := rfl
 
-theorem icons_flip {r r' : RoleList} (h : flip r = some r') (a : Argument) :
-    ICons r' a ↔ ICons r a.swap := by
-  simp [ICons, profileAt_flip h]
+/-! ### The One-Mechanism Account: thematic roles -/
 
-theorem bias_flip {r r' : RoleList} (h : flip r = some r') (c : Connective) (a : Argument) :
-    Bias r' c a ↔ Bias r c a.swap := by
-  cases c <;> simp [icaus_flip h, icons_flip h]
+/-- The proto-role profile a role list assigns to a position. -/
+def profileAt (r : RoleList) : Position → Option EntailmentProfile
+  | .subject => some r.subjectProfile
+  | .object => r.objectProfile
 
-/-! ### The psych doublets -/
+/-- The verb entails that the argument causes, as an agent or a stimulus does. -/
+def RoleCause (r : RoleList) (a : Position) : Prop := ∃ p ∈ profileAt r a, .causation ∈ p
 
-theorem psychState_eq_flip : flip psychCausal = some psychState := rfl
+/-- The argument is an experiencer or is causally affected. -/
+def RoleEffect (r : RoleList) (a : Position) : Prop :=
+  ∃ p ∈ profileAt r a, p ∈ ThetaRole.profiles .experiencer ∨ .causallyAffected ∈ p
 
-theorem psych_mirror (c : Connective) (a : Argument) :
-    Bias psychState c a ↔ Bias psychCausal c a.swap :=
-  bias_flip psychState_eq_flip c a
+instance (r : RoleList) (a : Position) : Decidable (RoleCause r a) := by
+  unfold RoleCause; infer_instance
 
-theorem stimExp_bias (a : Argument) :
-    (Bias psychCausal .because a ↔ a = .np1) ∧ (Bias psychCausal .andSo a ↔ a = .np2) := by
-  cases a <;> decide
+instance (r : RoleList) (a : Position) : Decidable (RoleEffect r a) := by
+  unfold RoleEffect; infer_instance
 
-theorem expStim_bias (a : Argument) :
-    (Bias psychState .because a ↔ a = .np2) ∧ (Bias psychState .andSo a ↔ a = .np1) := by
-  cases a <;> decide
+/-- The bias of a continuation on the One-Mechanism Account: a cause argument for Explanation,
+an effect argument for Result, and none otherwise. -/
+def roleBias (r : RoleList) : Coherence.Relation → Position → Prop
+  | .explanation, a => RoleCause r a
+  | .result, a => RoleEffect r a
+  | _, _ => False
 
-/-! ### The two accounts and the Asymmetry Hypothesis -/
+instance (r : RoleList) (ρ : Coherence.Relation) (a : Position) : Decidable (roleBias r ρ a) := by
+  unfold roleBias; split <;> infer_instance
 
-/-- The One-Mechanism Account's I-Caus argument: whichever argument the verb entails to
-cause, agent or stimulus alike. -/
-def ICausOne (r : RoleList) (a : Argument) : Prop :=
-  ∃ p ∈ profileAt r a, .causation ∈ p
+/-- The role list of a class of psych verbs. -/
+def VerbClass.roles : VerbClass → RoleList
+  | .stimExp => psychCausal
+  | .expStim => psychState
 
-instance (r : RoleList) (a : Argument) : Decidable (ICausOne r a) := by
-  unfold ICausOne; infer_instance
+/-! ### The Two-Mechanism Account: event structure -/
 
-theorem icausOne_of_icaus {r : RoleList} {a : Argument} (h : ICaus r a) : ICausOne r a :=
-  let ⟨p, hp, hs⟩ := h; ⟨p, hp, causation_mem_of_carriesSlot hs⟩
+/-- The event structure of a class of psych verbs: a caused change of state with an individual
+causer, `[x CAUSE [BECOME [y ⟨STATE⟩]]]`, or a caused state with no change,
+`[x CAUSE [y ⟨STATE⟩]]`. -/
+def VerbClass.template : VerbClass → Template .event
+  | .stimExp => .cause .effector .achievement
+  | .expStim => .cause .effector .state
 
-/-- The coherence relation the One-Mechanism Account predicts for a continuation about `a`:
-an explanation about a cause argument, a consequence about an end-state argument. -/
-def oneMechanism (r : RoleList) (a : Argument) : Option Relation :=
-  if ICausOne r a then some .explanation else if ICons r a then some .result else none
+/-- The position of the template's actor, the stimulus. -/
+def VerbClass.actor : VerbClass → Position
+  | .stimExp => .subject
+  | .expStim => .object
 
-/-- The coherence relation the Two-Mechanism Account predicts: slot filling takes
-precedence over contiguity, so a slot predicate is continued by an explanation whichever
-argument the continuation is about, and a slotless predicate has no preferred relation. -/
-def twoMechanism (r : RoleList) : Option Relation :=
-  if ∃ a, ICaus r a then some .explanation else none
+/-- A template has a slot when one of its positions is the event of an individual causer. -/
+def HasSlot (t : Template .event) : Prop :=
+  ∃ p : Template.Position t .event, p.subterm = .effector
 
-theorem oneMechanism_of_icaus {r : RoleList} {a : Argument} (h : ICaus r a) :
-    oneMechanism r a = some .explanation := by
-  simp [oneMechanism, icausOne_of_icaus h]
+theorem hasSlot_cause_effector {σ : Eventuality} (e : Template σ) :
+    HasSlot (.cause .effector e) :=
+  ⟨.causing (.here _), rfl⟩
 
-theorem twoMechanism_of_icaus {r : RoleList} {a : Argument} (h : ICaus r a) :
-    twoMechanism r = some .explanation := by
-  simp [twoMechanism, (⟨a, h⟩ : ∃ a, ICaus r a)]
+theorem hasSlot_template (v : VerbClass) : HasSlot v.template := by
+  cases v <;> exact hasSlot_cause_effector _
 
-theorem asymmetry {r : RoleList} {a b : Argument} (hb : ICaus r b) (ha : ¬ ICausOne r a)
-    (he : ICons r a) :
-    oneMechanism r a = some .result ∧ twoMechanism r = some .explanation :=
-  ⟨by simp [oneMechanism, ha, he], twoMechanism_of_icaus hb⟩
+-- an agent causes by the action the verb names
+theorem not_hasSlot_accomplishment : ¬ HasSlot .accomplishment := by
+  rintro ⟨p, hp⟩
+  rcases p with _ | _ | ⟨_ | _⟩ | ⟨_ | ⟨_ | _⟩⟩ <;> cases hp
 
-theorem psych_asymmetry :
-    oneMechanism psychCausal .np2 = some .result ∧ twoMechanism psychCausal = some .explanation ∧
-    oneMechanism psychState .np1 = some .result ∧ twoMechanism psychState = some .explanation := by
+/-- The bias of a continuation on the Two-Mechanism Account: the actor of a template with a slot
+for Explanation, the undergoer for Result, and none otherwise. -/
+def VerbClass.Bias (v : VerbClass) : Coherence.Relation → Position → Prop
+  | .explanation, a => HasSlot v.template ∧ a = v.actor
+  | .result, a => a = v.actor.swap
+  | _, _ => False
+
+@[simp] theorem VerbClass.bias_explanation {v : VerbClass} {a : Position} :
+    v.Bias .explanation a ↔ a = v.actor :=
+  and_iff_right (hasSlot_template v)
+
+@[simp] theorem VerbClass.bias_result {v : VerbClass} {a : Position} :
+    v.Bias .result a ↔ a = v.actor.swap := Iff.rfl
+
+instance (v : VerbClass) (ρ : Coherence.Relation) (a : Position) : Decidable (v.Bias ρ a) := by
+  unfold VerbClass.Bias
+  split
+  · exact decidable_of_iff _ VerbClass.bias_explanation.symm
+  · infer_instance
+  · infer_instance
+
+/-- Stimulus-experiencer and experiencer-stimulus verbs have mirror-image biases. -/
+theorem psych_mirror (ρ : Coherence.Relation) (a : Position) :
+    VerbClass.expStim.Bias ρ a ↔ VerbClass.stimExp.Bias ρ a.swap := by
+  unfold VerbClass.Bias
+  split <;> cases a <;> simp [hasSlot_template, VerbClass.actor, Position.swap]
+
+-- the mirror biases do not tell the two accounts apart
+theorem bias_iff_roleBias (v : VerbClass) (c : Connective) (a : Position) :
+    v.Bias c.relation a ↔ roleBias v.roles c.relation a := by
+  cases v <;> cases c <;> cases a <;> decide
+
+/-- The accomplishment is the stimulus-experiencer template with a manner on its causing
+event. -/
+theorem denote_accomplishment_iff {Entity : Type*} {State Event : Type u}
+    {M : Model State Event} {θ : Entity → Event → Prop} {P : Entity → State → Prop}
+    {Q : Event → Prop} {y x : Entity} {v : Event} :
+    Template.accomplishment.denote M θ P Q y x v ↔
+      VerbClass.stimExp.template.denote M θ P Q y x v ∧ Q v :=
+  Template.denote_cause_act
+
+-- Figure 1
+theorem denote_template_stimExp_iff {Entity : Type*} {State Event : Type u}
+    {M : Model State Event} {θ : Entity → Event → Prop} {P : Entity → State → Prop}
+    {Q : Event → Prop} {y x : Entity} {v : Event} :
+    VerbClass.stimExp.template.denote M θ P Q y x v ↔
+      θ y v ∧ ∃ n : Nucleus M.cause M.become, n.preparation = v ∧ P x n.consequent :=
+  Template.denote_cause_achievement_iff
+
+-- Section 3.3
+theorem consequence_lt_iff_result (v w : VerbClass) :
+    (relations v .consequence).percent.toRat < (relations w .consequence).percent.toRat ↔
+      .result ∉ v.template.kinds ∧ .result ∈ w.template.kinds := by
+  revert v w; decide +kernel
+
+/-! ### Coreference (Experiments 1 and 2) -/
+
+/-- After each connective, more continuations refer to an argument than to the other iff the
+relation of the connective is biased to it. -/
+theorem bias_iff_coreference (c : Connective) (v : VerbClass) (a : Position) :
+    v.Bias c.relation a ↔
+      (coreference c v a.swap).count < (coreference c v a).count := by
+  cases c <;> cases v <;> cases a <;> decide
+
+-- Table 3
+theorem bias_iff_coreferenceByRelation {ρ : Relation} (hρ : ρ ≠ .contrast) (v : VerbClass)
+    (a : Position) :
+    v.Bias ρ.toCoherence a ↔
+      (coreferenceByRelation ρ v a.swap).count < (coreferenceByRelation ρ v a).count := by
+  cases ρ <;> cases v <;> cases a <;> first | decide | exact absurd rfl hρ
+
+-- Table 3
+theorem contrast_object (v : VerbClass) :
+    (coreferenceByRelation .contrast v .subject).count <
+      (coreferenceByRelation .contrast v .object).count := by
+  cases v <;> decide
+
+-- Tables 1 and 3
+theorem roundsPercent_coreference :
+    (∀ c v a, (coreference c v a).percent.RoundsPercent (coreference c v a).count
+      ((coreference c v .subject).count + (coreference c v .object).count)) ∧
+    ∀ ρ v a, (coreferenceByRelation ρ v a).percent.RoundsPercent
+      (coreferenceByRelation ρ v a).count
+      ((coreferenceByRelation ρ v .subject).count + (coreferenceByRelation ρ v .object).count) := by
   decide
 
-/-! ### The four verb classes -/
+/-! ### Coherence (Experiments 2 and 3) -/
+
+-- Section 3.3
+theorem half_lt_explanation (v : VerbClass) :
+    50 < (relations v .explanation).percent.toRat := by
+  revert v; decide +kernel
+
+
+/-- Under forced reference, explanations about the end-state argument outnumber consequences
+about the other argument. -/
+theorem consequence_swap_lt_explanation (v : VerbClass) (a : Position) (h : v.Bias .result a) :
+    (forcedReference v a.swap).consequence.toRat < (forcedReference v a).explanation.toRat := by
+  revert v a; decide +kernel
+
+-- Section 4.4
+theorem explanation_swap_lt_of_bias (v : VerbClass) (a : Position) (h : v.Bias .explanation a) :
+    (forcedReference v a.swap).explanation.toRat < (forcedReference v a).explanation.toRat := by
+  revert v a; decide +kernel
+
+-- Section 4.4
+theorem consequence_lt_explanation (v : VerbClass) :
+    (forcedReference v .subject).consequence.toRat +
+        (forcedReference v .object).consequence.toRat <
+      (forcedReference v .subject).explanation.toRat +
+        (forcedReference v .object).explanation.toRat := by
+  revert v; decide +kernel
+
+/-! ### Specifications (Experiment 4) -/
+
+/-- Most explanations give the cause of the psychological state iff the pronoun is congruent
+with the bias, and most consequences do not restate the state. -/
+theorem specifying_iff_congruent (v : VerbClass) (c : Congruency) :
+    ((specifications v c).explanationOther < (specifications v c).explanationSpecifying ↔
+        c = .congruent) ∧
+      (specifications v c).consequenceSpecifying < (specifications v c).consequenceOther := by
+  cases v <;> cases c <;> decide
+
+-- Table 4
+theorem roundsPercent_specifications (v : VerbClass) (c : Congruency) :
+    (specifications v c).explanationSpecifyingPercent.RoundsPercent
+        (specifications v c).explanationSpecifying
+        ((specifications v c).explanationSpecifying + (specifications v c).explanationOther) ∧
+      (specifications v c).consequenceSpecifyingPercent.RoundsPercent
+        (specifications v c).consequenceSpecifying
+        ((specifications v c).consequenceSpecifying + (specifications v c).consequenceOther) := by
+  cases v <;> cases c <;> decide
+
+/-! ### Agent-evocator and agent-patient verbs -/
 
 /-- The evocator argument of judgement verbs (*criticise*, *congratulate*): affected by the
-agent's act and, through the verb's presupposition of a preceding eventuality it took part in,
+agent's act and, through the verb's presupposition of an earlier eventuality it took part in,
 the non-agentive cause of the agent's intention. -/
 def evocator : EntailmentProfile :=
   {.causation, .causallyAffected, .independentExistence}
@@ -243,44 +319,13 @@ def evocator : EntailmentProfile :=
 /-- Agent-evocator verbs: an agent acting on an evocator. -/
 def judgment : RoleList := ⟨accomplishmentSubjectProfile, some evocator⟩
 
-/-- The verb classes of the implicit-causality literature. -/
-inductive VerbClass where
-  | stimExp
-  | expStim
-  | agentEvocator
-  | agentPat
-  deriving DecidableEq, Repr
-
-/-- The proto-role grid of each class. -/
-def VerbClass.roles : VerbClass → RoleList
-  | .stimExp => psychCausal
-  | .expStim => psychState
-  | .agentEvocator => judgment
-  | .agentPat => mannerContact
-
-/-- The class's I-Caus bias, the slot argument if any. -/
-def VerbClass.icausBias (c : VerbClass) : Option Argument :=
-  [Argument.np1, .np2].find? (decide <| ICaus c.roles ·)
-
-/-- The class's I-Cons bias, the end-state argument if any. -/
-def VerbClass.iconsBias (c : VerbClass) : Option Argument :=
-  [Argument.np1, .np2].find? (decide <| ICons c.roles ·)
-
-theorem icausBias_eq :
-    VerbClass.stimExp.icausBias = some .np1 ∧ VerbClass.expStim.icausBias = some .np2 ∧
-    VerbClass.agentEvocator.icausBias = some .np2 ∧ VerbClass.agentPat.icausBias = none := by
+theorem roleCause_roleEffect_judgment :
+    RoleCause judgment .object ∧ RoleEffect judgment .object := by
   decide
 
-theorem iconsBias_eq :
-    VerbClass.stimExp.iconsBias = some .np2 ∧ VerbClass.expStim.iconsBias = some .np1 ∧
-    VerbClass.agentEvocator.iconsBias = some .np2 ∧ VerbClass.agentPat.iconsBias = some .np2 := by
-  decide
-
-theorem agentEvocator_dual : ICaus judgment .np2 ∧ ICons judgment .np2 := by decide
-
-theorem agentPat_balanced :
-    ICausOne mannerContact .np1 ∧ (∀ a, ¬ ICaus mannerContact a) ∧
-    twoMechanism mannerContact = none := by
+-- the agent of an agent-patient verb is a cause on its role and has no slot
+theorem roleCause_mannerContact :
+    RoleCause mannerContact .subject ∧ RoleEffect mannerContact .object := by
   decide
 
 end SolstadBott2022

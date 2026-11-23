@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Position
 public import Linglib.Fragments.Romance.Spanish.Verbs
 
 /-!
@@ -24,14 +23,18 @@ respects the Monotonicity Hypothesis that word formation never removes operators
 * `AnticausativeReading`: the anticausative reading of a reflexivized verb.
 * `LicensesBySelf`: the licensing condition of *por sí solo*.
 * `MonotonicityHypothesis`: the Monotonicity Hypothesis on event templates.
+* `inchoative`, `boundInchoative`: the inchoatives of the deletion and least common denominator
+  analyses, which have no CAUSE, and of the existential binding analysis, which has a causing
+  eventuality with no participant.
 
 ## Implementation notes
 
 The paper's representations take the change-of-state event as the verb's event argument and
-existentially close the causing event; `causative` follows that convention, and
-`exists_causative_iff` shows that its existential closure agrees with possibility along `cause`,
-whose event argument is the causing event. The underspecified effector and the agent are
-relations between individuals and events beside the `EventStructure.Interpretation`.
+existentially close the causing event. `causative` is therefore the causative template at its
+caused position, `Template.denoteAt`, and `exists_causative_iff` is the agreement of the
+positions of a template under existential closure.
+The underspecified effector and the agent are
+relations between individuals and events beside the `EventStructure.Model`.
 A Spanish verb's causer specification is derived from the proto-role subject profile the
 fragment states for it, after Dowty: a causer that must be an agent entails volition. The
 reflexive/anticausative syncretism in Haspelmath's survey, which the paper tabulates, is a
@@ -52,6 +55,8 @@ typological argument left in prose.
 
 @[expose] public section
 
+universe u
+
 namespace KoontzGarboden2009
 
 open ArgumentStructure ArgumentStructure.EventStructure Spanish.Verbs
@@ -63,26 +68,32 @@ def reflexivize {α β : Type*} (R : α → α → β) : α → β := fun x ↦ 
 
 section Model
 
-variable {Entity State E : Type*}
-  (M : ArgumentStructure.EventStructure.Interpretation State E)
+variable {Entity : Type*} {State E : Type u}
+  (M : ArgumentStructure.EventStructure.Model State E)
   (effector θ agent : Entity → E → Prop) (P : Entity → State → Prop)
 
 /-- A causative change-of-state verb, ((10b), (17), (29)), holds of an event `e` in which `x` comes
 to be in the root's state, caused by an event whose participant `y` bears the causer relation `θ`,
 the underspecified `effector` for *romper* and an agent relation for *asesinar*. -/
 def causative (y x : Entity) (e : E) : Prop :=
-  ∃ w, θ y w ∧ w ~[M.cause] e ∧ ◇[M.become] (P x) e
+  Template.denoteAt M θ P ⊤ (.caused (c := .effector) (.here .achievement)) y x e
+
+theorem causative_iff {y x : Entity} {e : E} :
+    causative M θ P y x e ↔ ∃ w, θ y w ∧ w ~[M.cause] e ∧ ◇[M.become] (P x) e :=
+  Template.denoteAt_caused_here
 
 theorem exists_causative_iff (y x : Entity) :
     (∃ e, causative M θ P y x e) ↔ ∃ w, θ y w ∧ ◇[M.cause] (◇[M.become] (P x)) w :=
-  ⟨fun ⟨e, w, hθ, hc, hi⟩ ↦ ⟨w, hθ, e, hc, hi⟩, fun ⟨w, hθ, e, hc, hi⟩ ↦ ⟨e, w, hθ, hc, hi⟩⟩
+  Template.exists_denoteAt_iff (M := M) (θ := θ) (P := P) (Q := ⊤) (y := y) (x := x)
+    (.caused (c := .effector) (.here .achievement))
 
 /-- Anticausativization is reflexivization. The derived inchoative is the causative on its
 diagonal, so the undergoer is also the participant in the causing event. -/
 def anticausative : Entity → E → Prop := reflexivize (causative M θ P)
 
 theorem anticausative_iff (x : Entity) (e : E) :
-    anticausative M θ P x e ↔ ∃ w, θ x w ∧ w ~[M.cause] e ∧ ◇[M.become] (P x) e := Iff.rfl
+    anticausative M θ P x e ↔ ∃ w, θ x w ∧ w ~[M.cause] e ∧ ◇[M.become] (P x) e :=
+  causative_iff M θ P
 
 /-- A reflexivized verb has the anticausative reading when it has an instance whose single
 argument is not an agent of the event causing its change, as in *el vaso se rompió* 'the cup
@@ -100,6 +111,14 @@ def LicensesBySelf (P : Entity → E → Prop) : Prop :=
 identified with the subject. -/
 def passive (x : Entity) (e : E) : Prop := ∃ y, causative M effector P y x e
 
+/-- (99a): an inchoative with no CAUSE holds of an event in which `x` comes to be in the root's
+state. It is what a deletion analysis derives and what a least common denominator analysis
+takes the root to denote. -/
+def inchoative (x : Entity) (e : E) : Prop := ◇[M.become] (P x) e
+
+/-- (99b): an inchoative whose causing eventuality is existentially bound. -/
+def boundInchoative (x : Entity) (e : E) : Prop := ∃ w, w ~[M.cause] e ∧ inchoative M P x e
+
 variable {M effector θ agent P}
 
 -- §3.5
@@ -110,11 +129,13 @@ theorem causative_self_of_anticausative {x : Entity} {e : E}
 survives reflexivization. -/
 theorem exists_cause_of_anticausative {x : Entity} {e : E}
     (h : anticausative M θ P x e) : ∃ w, θ x w ∧ w ~[M.cause] e :=
-  let ⟨w, hθ, hc, _⟩ := h; ⟨w, hθ, hc⟩
+  let ⟨w, hθ, hc, _⟩ := (anticausative_iff M θ P x e).1 h; ⟨w, hθ, hc⟩
 
 theorem exists_nonagent_of_anticausativeReading
     (h : AnticausativeReading M agent (anticausative M θ P)) : ∃ x w, θ x w ∧ ¬ agent x w :=
-  let ⟨x, _, ⟨w, hθ, hc, _⟩, hna⟩ := h; ⟨x, w, hθ, hna w hc⟩
+  let ⟨x, e, ha, hna⟩ := h
+  let ⟨w, hθ, hc, _⟩ := (anticausative_iff M θ P x e).1 ha
+  ⟨x, w, hθ, hna w hc⟩
 
 /-- A verb whose causer must be an agent ((29), *asesinar*) reflexivizes to the reflexive-type
 reading only ((27)–(28), (31)). -/
@@ -126,6 +147,32 @@ theorem not_anticausativeReading (hθ : ∀ x w, θ x w → agent x w) :
 theorem licensesBySelf_anticausative :
     LicensesBySelf M effector (anticausative M effector P) :=
   fun _ _ h ↦ let ⟨w, hθ, hc⟩ := exists_cause_of_anticausative h; ⟨w, hc, hθ⟩
+
+/-! ### Comparison with previous approaches -/
+
+-- §5.3: on a least common denominator analysis the causative is the root with a causer added
+theorem causative_iff_inchoative {y x : Entity} {e : E} :
+    causative M θ P y x e ↔ (∃ w, θ y w ∧ w ~[M.cause] e) ∧ inchoative M P x e :=
+  (causative_iff M θ P).trans
+    ⟨fun ⟨w, hθ, hc, hi⟩ ↦ ⟨⟨w, hθ, hc⟩, hi⟩, fun ⟨⟨w, hθ, hc⟩, hi⟩ ↦ ⟨w, hθ, hc, hi⟩⟩
+
+-- §5.4: existential binding applies to a causative whatever its causer relation
+theorem boundInchoative_of_causative {y x : Entity} {e : E} (h : causative M θ P y x e) :
+    boundInchoative M P x e :=
+  let ⟨w, _, hc, hi⟩ := (causative_iff M θ P).1 h; ⟨w, hc, hi⟩
+
+theorem boundInchoative_of_anticausative {x : Entity} {e : E}
+    (h : anticausative M θ P x e) : boundInchoative M P x e :=
+  boundInchoative_of_causative h
+
+theorem boundInchoative_of_passive {x : Entity} {e : E} (h : passive M effector P x e) :
+    boundInchoative M P x e :=
+  let ⟨_, hy⟩ := h; boundInchoative_of_causative hy
+
+-- §5.2: the inchoative of a deletion analysis is entailed by the others and has no CAUSE
+theorem inchoative_of_boundInchoative {x : Entity} {e : E} (h : boundInchoative M P x e) :
+    inchoative M P x e :=
+  let ⟨_, _, hi⟩ := h; hi
 
 end Model
 
@@ -143,7 +190,7 @@ inductive Participant
 
 /-- In the model where Juan breaks the glass, the one event causes itself and gives rise to the
 glass's broken state. -/
-def breaking : ArgumentStructure.EventStructure.Interpretation Unit Unit where
+def breaking : ArgumentStructure.EventStructure.Model Unit Unit where
   become := ⊤
   cause := ⊤
 
@@ -165,20 +212,22 @@ def e₀ : Unit := ()
 theorem not_anticausative_of_causative :
     causative breaking byJuan broken .juan .vaso e₀ ∧
       ¬ anticausative breaking byJuan broken .vaso e₀ :=
-  ⟨⟨e₀, rfl, trivial, (), trivial, rfl⟩, fun ⟨_, h, _⟩ ↦ Participant.noConfusion h⟩
+  ⟨(causative_iff _ _ _).2 ⟨e₀, rfl, trivial, (), trivial, rfl⟩,
+    fun h ↦ let ⟨_, h, _⟩ := (anticausative_iff _ _ _ _ _).1 h; Participant.noConfusion h⟩
 
 theorem anticausativeReading_romper :
     AnticausativeReading breaking juanAgent (anticausative breaking byBoth broken) :=
-  ⟨.vaso, e₀, ⟨e₀, trivial, trivial, (), trivial, rfl⟩, fun _ _ h ↦ Participant.noConfusion h⟩
+  ⟨.vaso, e₀, (anticausative_iff _ _ _ _ _).2 ⟨e₀, trivial, trivial, (), trivial, rfl⟩,
+    fun _ _ h ↦ Participant.noConfusion h⟩
 
 theorem not_licensesBySelf_passive :
     ¬ LicensesBySelf breaking byJuan (passive breaking byJuan broken) := fun h ↦
-  let ⟨_, _, hw⟩ := h .vaso e₀ ⟨.juan, e₀, rfl, trivial, (), trivial, rfl⟩
+  let ⟨_, _, hw⟩ := h .vaso e₀ ⟨.juan, (causative_iff _ _ _).2 ⟨e₀, rfl, trivial, (), trivial, rfl⟩⟩
   Participant.noConfusion hw
 
 -- (65), (67)
 theorem not_licensesBySelf_inchoative :
-    ¬ LicensesBySelf breaking byJuan (fun x ↦ ◇[breaking.become] (broken x)) := fun h ↦
+    ¬ LicensesBySelf breaking byJuan (inchoative breaking broken) := fun h ↦
   let ⟨_, _, hw⟩ := h .vaso e₀ ⟨(), trivial, rfl⟩
   Participant.noConfusion hw
 
@@ -193,6 +242,12 @@ def MonotonicityHypothesis (f : Template .event → Option (Template .event)) : 
 CAUSE and the causing subevent from an accomplishment; it violates the hypothesis. -/
 theorem not_monotonicityHypothesis_caused : ¬ MonotonicityHypothesis Template.caused :=
   fun h ↦ absurd (h .accomplishment .achievement rfl) (by decide)
+
+-- §5.3: deriving the causative from the root adds operators and removes none
+theorem monotonicityHypothesis_cause_effector :
+    MonotonicityHypothesis fun t ↦ some (.cause .effector t) := by
+  rintro t _ ⟨rfl⟩
+  simp
 
 /-- Reflexivization on templates identifies the causer with the undergoer, so it applies
 exactly to templates with CAUSE and changes no operator. -/

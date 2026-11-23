@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Model
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.ArgumentStructure.EventIdentification
 public import Linglib.Semantics.Composition.Rules
@@ -457,7 +457,7 @@ theorem possessor_dative_transitivity :
 /-! ### Cause introduces a causing event, not a causer -/
 
 -- (9), (14), (13b), (16), (15b)
-theorem melted_readings (M : EventStructure.Interpretation E E)
+theorem melted_readings (M : EventStructure.Model E E)
     (agent causer : Entity → E → Prop) (melt : E → Prop) (john : Entity) (e : E) :
     (eventIdentification agent (ModalLogic.Diamond M.cause melt) john e ↔
         agent john e ∧ ∃ e', e ~[M.cause] e' ∧ melt e') ∧

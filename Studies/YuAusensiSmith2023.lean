@@ -15,8 +15,9 @@ Koontz-Garboden's two classes of result roots, property concept roots and the ro
 change, here called change-of-state roots, differ in semantic type. A property concept root, such
 as that of *open*, relates an individual to a state (20); a change-of-state root, such as that of
 *break*, relates an individual to an event of change into the state it names (19)
-(`Analysis.denote`). Events and states are sorts of one domain of eventualities (`Model`), and the
-sorts restrict the variables of the denotations, not the relations of becoming and causing.
+(`Analysis.denote`). Events and states are sorts of one domain of eventualities
+(`OneSortedModel`), and the sorts restrict the variables of the denotations, not the relations of
+becoming and causing.
 
 Every argument of the paper is that a predicate of states and a predicate of events are disjoint.
 *Again* on a change-of-state root presupposes an earlier event wherever it attaches
@@ -45,11 +46,12 @@ the deck* it is the deck that breaks (`Monks.sentence`).
 ## Implementation notes
 
 * The causative head vCAUSE is possibility along `cause`, restricted to events
-  (`Model.causative`). It introduces no individual and quantifies over a caused eventuality of
-  either sort (footnote 7).
-* In two-sorted interpretations `cause` relates events, so the causative head cannot take a stative
-  complement as in (22), Harley's structure without vBECOME (footnote 8); the readings at the verb
-  phrase are compared in one-domain models.
+  (`OneSortedModel.causative`). It introduces no individual and quantifies over a caused
+  eventuality of either sort (footnote 7).
+* A causative head over a stative complement as in (22), Harley's structure without vBECOME
+  (footnote 8), relates an event to a state, which is `causeState` in a two-sorted interpretation
+  and `cause` in a one-domain model; the readings at the verb phrase are compared in one-domain
+  models.
 * The existential closure of the holder at the verb phrase is `Event.closure` of the flipped
   relation, and the agent of (33) is a relation of its own to the change (footnote 17).
 * Beavers and Koontz-Garboden's first objection to (55), that one state cannot carry two
@@ -81,7 +83,7 @@ open scoped SetRel
 
 /-- An interpretation of the event-structure primitives over one domain of eventualities, with
 the states among them (footnote 6). -/
-structure Model (Ev : Type*) extends Interpretation Ev Ev where
+structure OneSortedModel (Ev : Type*) extends Model Ev Ev where
   /-- The eventuality is a state. -/
   IsState : Ev → Prop
 
@@ -104,10 +106,10 @@ inductive Analysis
 
 section Roots
 
-variable {Entity Ev : Type*} (M : Model Ev)
+variable {Entity Ev : Type*} (M : OneSortedModel Ev)
 
 /-- The causative head vCAUSE (21), (22): the events that cause an eventuality of `P`. -/
-def Model.causative (P : Ev → Prop) : Ev → Prop := ◇[M.cause] P ⊓ M.IsStateᶜ
+def OneSortedModel.causative (P : Ev → Prop) : Ev → Prop := ◇[M.cause] P ⊓ M.IsStateᶜ
 
 /-- The root of a class with state description `B`. A property concept root relates an
 individual to a state of `B` (20). A change-of-state root relates an individual to an event of
@@ -117,7 +119,7 @@ def Analysis.denote : Analysis → RootClass → (Entity → Ev → Prop) → En
   | _, .propertyConcept, B, x => B x ⊓ M.IsState
   | .yuAusensiSmith, .changeOfState, B, x => ◇[M.become] (B x) ⊓ M.IsStateᶜ
   | .beaversKoontzGarboden, .changeOfState, B, x =>
-    BeaversEtAl2021.resultStative M.toInterpretation B x ⊓ M.IsState
+    BeaversEtAl2021.resultStative M.toModel B x ⊓ M.IsState
 
 /-- The root describes states: always on Beavers and Koontz-Garboden's analysis, and on this one
 when it is a property concept root. -/
@@ -145,7 +147,8 @@ theorem Analysis.denote_le_compl (h : ¬ a.DescribesStates c) (B : Entity → Ev
   · exact inf_le_right
   all_goals exact absurd trivial h
 
-theorem Model.causative_le_compl (P : Ev → Prop) : M.causative P ≤ M.IsStateᶜ := inf_le_right
+theorem OneSortedModel.causative_le_compl (P : Ev → Prop) : M.causative P ≤ M.IsStateᶜ :=
+  inf_le_right
 
 /-- A root that holds of states, a property concept root among them, cannot modify a causative
 verb phrase by Event Identification (30), (31). -/
@@ -159,7 +162,7 @@ end Roots
 
 section Again
 
-variable {Entity Ev : Type*} {M : Model Ev} {R : SetRel Ev Ev} {P : Ev → Prop} {v : Ev}
+variable {Entity Ev : Type*} {M : OneSortedModel Ev} {R : SetRel Ev Ev} {P : Ev → Prop} {v : Ev}
 
 theorem diamond_compl_of_again_ne_zero (hP : P ≤ M.IsStateᶜ) (h : again R P v ≠ .undefined) :
     ◇[R] M.IsStateᶜ v :=
@@ -175,7 +178,7 @@ theorem again_changeOfState :
       (again R (M.causative (Analysis.yuAusensiSmith.denote M .changeOfState B x)) v ≠ .undefined →
         ◇[R] M.IsStateᶜ v) :=
   ⟨diamond_compl_of_again_ne_zero (Analysis.denote_le_compl (by decide) B x),
-    diamond_compl_of_again_ne_zero (Model.causative_le_compl _)⟩
+    diamond_compl_of_again_ne_zero (OneSortedModel.causative_le_compl _)⟩
 
 /-- On Beavers and Koontz-Garboden's analysis, *again* on a change-of-state root presupposes an
 earlier state resulting from a change (p. 1616). -/
@@ -204,7 +207,7 @@ inductive Reading
 
 section Realized
 
-variable {Entity Ev : Type*} (M : Model Ev) (L : Ev → Prop) (ρ : Entity → Ev → Prop)
+variable {Entity Ev : Type*} (M : OneSortedModel Ev) (L : Ev → Prop) (ρ : Entity → Ev → Prop)
   (x : Entity)
 
 /-- The root `ρ`, applied to `x`, realizes the reading: the root holds of a state that no change
@@ -237,7 +240,7 @@ end Realized
 /-- The reading `r` is available for a root of class `c` on the analysis `a` when some model
 realizes it. -/
 def Available (a : Analysis) (c : RootClass) (r : Reading) : Prop :=
-  ∃ (Ev : Type) (M : Model Ev) (B : Unit → Ev → Prop) (L : Ev → Prop),
+  ∃ (Ev : Type) (M : OneSortedModel Ev) (B : Unit → Ev → Prop) (L : Ev → Prop),
     r.Realized M L (a.denote M c B) ()
 
 /-- What the sort of the root predicts: the readings at the verb phrase always, the restitutive
@@ -264,7 +267,7 @@ inductive Scene
   deriving DecidableEq
 
 /-- The causing event causes the change and its state, and the change causes its state. -/
-def scene : Model Scene where
+def scene : OneSortedModel Scene where
   become := {p | p.1 = .change ∧ p.2 = .result}
   cause := {p | p.1 = .causing ∧ (p.2 = .change ∨ p.2 = .result) ∨ p.1 = .change ∧ p.2 = .result}
   IsState v := v = .result ∨ v = .prior
@@ -335,11 +338,11 @@ section Relativize
 
 universe u
 
-variable {Entity : Type*} {State Event : Type u} (N : Interpretation State Event)
+variable {Entity : Type*} {State Event : Type u} (N : Model State Event)
 
 /-- The one-domain model of a two-sorted interpretation, on the sum of its sorts with the states
 on the left. -/
-def relativize : Model (State ⊕ Event) where
+def relativize : OneSortedModel (State ⊕ Event) where
   become := Prod.map Sum.inr Sum.inl '' N.become
   cause := Prod.map Sum.inr Sum.inr '' N.cause
   IsState v := v.isLeft
@@ -430,7 +433,7 @@ end Relativize
 
 section Resultative
 
-variable {Entity Ev : Type*} {M : Model Ev} {ρ : Entity → Ev → Prop} {L : Ev → Prop}
+variable {Entity Ev : Type*} {M : OneSortedModel Ev} {ρ : Entity → Ev → Prop} {L : Ev → Prop}
 
 -- (36), (37)
 theorem exists_of_resultative {e : Ev}
@@ -470,7 +473,7 @@ inductive Eventuality
   deriving DecidableEq
 
 /-- The breaking gives rise to the broken state and causes the loose one. -/
-def model : Model Eventuality where
+def model : OneSortedModel Eventuality where
   become := {p | p.1 = .breaking ∧ p.2 = .broken}
   cause := {p | p.1 = .breaking ∧ p.2 = .loose}
   IsState v := v ≠ .breaking

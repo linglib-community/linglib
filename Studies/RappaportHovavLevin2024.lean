@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.EnergySource
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
 public import Linglib.Data.Examples.RappaportHovavLevin2024
 public import Linglib.Data.Examples.Readers
 
@@ -393,7 +393,7 @@ theorem not_isSubterm_state : ¬ state.IsSubterm causativeEventStructure :=
 
 -- (50)
 theorem not_forall_exists_become :
-    ¬ ∀ (M : Interpretation Unit Unit) (θ : Unit → Unit → Prop) P Q y x v,
+    ¬ ∀ (M : Model Unit Unit) (θ : Unit → Unit → Prop) P Q y x v,
       causativeEventStructure.denote M θ P Q y x v → ∃ e s, e ~[M.become] s :=
   fun h ↦ absurd (result_mem_kinds_iff.2 h) (by decide)
 
