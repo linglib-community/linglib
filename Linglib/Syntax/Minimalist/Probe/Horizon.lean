@@ -16,24 +16,53 @@ public import Mathlib.Order.Monotone.Defs
 A probe's search stops at a node of its horizon category, and everything that node dominates is
 beyond the probe's reach, the edge of the phrase included. Category features are inherited up an
 extended projection, so a clause carries every head it projects and is transparent to a probe
-exactly when it does not project the horizon. Larger clauses are then
-[at least as opaque](##Minimalist.HorizonSetting.transparentTo_antitone), which is Upward
-Entailment. A probe whose horizon lies in its own complement is vacuous: its search ends at its
-sister. On an extended projection the horizon of a nonvacuous probe is therefore
-[at or above its head](##Minimalist.HorizonSetting.extendsTo_of_not_isVacuousIn), the
-Height–Locality Theorem.
+exactly when it does not project the horizon. Larger clauses are then at least as opaque, which
+is Upward Entailment. A probe whose horizon lies in its own complement is vacuous: its search
+ends at its sister. On an extended projection the horizon of a nonvacuous probe is therefore at
+or above its head, the Height–Locality Theorem.
 
-On a tree, a node carries the [spine](##Minimalist.spineOf) of its extended projection, a phrase
-[inheriting its complement's categories](##Minimalist.spineOf_le_spineOf_node), and the positions
-[behind a probe's horizon](##Minimalist.HorizonSetting.cut) are those under a node the probe
-c-commands that is [not transparent to it](##Minimalist.HorizonSetting.mem_cut_iff). A vacuous probe
-[reaches nothing beyond its sister](##Minimalist.HorizonSetting.mem_cut_of_isVacuousIn).
+The clause sizes of an extended projection are its truncations. Among them the clauses
+transparent to a probe are those inside the complement of its horizon, so a lower horizon is a
+stricter one, and the strictest horizon of a nonvacuous probe is the category of its own head,
+its default horizon.
+
+On a tree, a node carries the spine of its extended projection, a phrase inheriting its
+complement's categories, and the positions behind a probe's horizon are those under a node the
+probe c-commands that is not transparent to it.
+
+## Main definitions
+
+* `Minimalist.HorizonSetting`: the head that hosts a probe and its horizon, if any.
+* `Minimalist.HorizonSetting.TransparentTo`: a clause whose label lacks the horizon, and
+  `Minimalist.HorizonSetting.transparent`, the lower set of such clauses.
+* `Minimalist.HorizonSetting.IsVacuousIn`: a probe whose horizon lies in the complement of its
+  head.
+* `Minimalist.HorizonSetting.default`: the setting whose horizon is the category of its head.
+* `Minimalist.spineOf`: the spine of a tree, by category inheritance.
+* `Minimalist.HorizonSetting.cut`: the positions of a tree behind a probe's horizon.
+
+## Main results
+
+* `Minimalist.HorizonSetting.transparentTo_antitone`: Upward Entailment.
+* `Minimalist.HorizonSetting.transparentTo_mk_some_iff_le_below`: a truncation of a spine is
+  transparent exactly when it lies inside the complement of the horizon.
+* `Minimalist.HorizonSetting.TransparentTo.of_mem_below`: a lower horizon is stricter.
+* `Minimalist.HorizonSetting.TransparentTo.of_default`: the default horizon is the strictest
+  horizon of a nonvacuous probe.
+* `Minimalist.HorizonSetting.extendsTo_of_not_isVacuousIn`: the Height–Locality Theorem.
+* `Minimalist.HorizonSetting.mem_cut_iff`: a position is behind a probe's horizon exactly when a
+  node the probe c-commands dominates it and is not transparent to the probe.
+* `Minimalist.HorizonSetting.mem_cut_of_isVacuousIn`: a vacuous probe reaches nothing beyond its
+  sister.
 
 ## Implementation notes
 
 Vacuity is relative to the spine that hosts the probe, and the probe's sister is
 `Spine.below` of its head. On a spine that does not project the probe's head the complement
 is the whole spine, so vacuity is meaningful only for a head the spine projects.
+
+A clause size of a spine `s` is a spine `t` with `t.heads <+: s.heads`. The extension order
+`t ≤ s` compares labels only, and so also holds of spines that are not truncations of `s`.
 
 The spine of a tree is a fold over it, given the index of each tree's head daughter. A head
 merged with a specifier and no complement has the specifier for sister, which it inherits from
@@ -65,7 +94,7 @@ structure HorizonSetting where
 
 namespace HorizonSetting
 
-variable (p : HorizonSetting) {s t : Spine} {c d h : Cat} {o : Option Cat}
+variable (p : HorizonSetting) {s t : Spine} {c d h h' : Cat} {o : Option Cat}
 
 /-! ### Transparency -/
 
@@ -95,6 +124,28 @@ variable (p) in
 since it inherits the horizon from the smaller clause. -/
 theorem transparentTo_antitone : Antitone p.TransparentTo := fun _ _ ↦ TransparentTo.anti
 
+variable (p) in
+/-- The clauses transparent to `p`, a lower set of the extension order. -/
+def transparent : LowerSet Spine := ⟨{s | p.TransparentTo s}, fun _ _ h ht ↦ ht.anti h⟩
+
+@[simp] theorem mem_transparent : s ∈ p.transparent ↔ p.TransparentTo s := Iff.rfl
+
+@[simp] theorem coe_transparent : (p.transparent : Set Spine) = {s | p.TransparentTo s} := rfl
+
+/-- Among the truncations of a spine, the clauses transparent to a probe are those inside the
+complement of its horizon. -/
+theorem transparentTo_mk_some_iff_le_below (ht : t.heads <+: s.heads) :
+    (HorizonSetting.mk c (some h)).TransparentTo t ↔ t ≤ s.below h :=
+  transparentTo_mk_some.trans (Spine.notMem_iff_le_below ht)
+
+/-- A lower horizon is stricter: a truncation of `s` transparent to a probe whose horizon lies
+in the complement of `h` is transparent to a probe with horizon `h`. -/
+theorem TransparentTo.of_mem_below (ht : t.heads <+: s.heads) (hh : h' ∈ s.below h)
+    (H : (HorizonSetting.mk c (some h')).TransparentTo t) :
+    (HorizonSetting.mk d (some h)).TransparentTo t :=
+  (transparentTo_mk_some_iff_le_below ht).2 <|
+    ((transparentTo_mk_some_iff_le_below ht).1 H).trans (Spine.below_le_below hh)
+
 /-! ### Vacuity -/
 
 variable (p) in
@@ -114,15 +165,37 @@ theorem isVacuousIn_iff : p.IsVacuousIn s ↔ ∃ h ∈ p.horizon, h ∈ s.below
     (HorizonSetting.mk c (some h)).IsVacuousIn s ↔ h ∈ s.below c := by
   simp [IsVacuousIn]
 
-/-- A probe whose horizon is the category of its own head, its default horizon, is not vacuous. -/
-theorem not_isVacuousIn_mk_self : ¬ (HorizonSetting.mk c (some c)).IsVacuousIn s := by
-  simpa using s.notMem_below_self c
+/-! ### The default horizon -/
+
+/-- The default setting of a probe on a head of category `c`, whose horizon is `c` itself. -/
+protected def default (c : Cat) : HorizonSetting := ⟨c, some c⟩
+
+@[simp] theorem default_head (c : Cat) : (HorizonSetting.default c).head = c := rfl
+
+@[simp] theorem default_horizon (c : Cat) : (HorizonSetting.default c).horizon = some c := rfl
+
+@[simp] theorem transparentTo_default : (HorizonSetting.default c).TransparentTo s ↔ c ∉ s :=
+  transparentTo_mk_some
+
+/-- A probe with its default horizon is not vacuous. -/
+theorem not_isVacuousIn_default : ¬ (HorizonSetting.default c).IsVacuousIn s := by
+  simpa [HorizonSetting.default] using s.notMem_below_self c
+
+/-! ### The Height–Locality Theorem -/
 
 /-- The Height–Locality Theorem, from height to locality: a nonvacuous probe searches into every
 clause that projects no more than its complement does. -/
 theorem TransparentTo.of_not_isVacuousIn (hp : ¬ p.IsVacuousIn s) (ht : t ≤ s.below p.head) :
     p.TransparentTo t :=
   (not_not.1 hp).anti ht
+
+/-- The default horizon is the strictest horizon of a nonvacuous probe: a truncation of `s`
+transparent to a probe with its default horizon is transparent to every probe on the same head
+that is not vacuous in `s`. -/
+theorem TransparentTo.of_default (hp : ¬ p.IsVacuousIn s) (ht : t.heads <+: s.heads)
+    (h : (HorizonSetting.default p.head).TransparentTo t) : p.TransparentTo t :=
+  .of_not_isVacuousIn hp <|
+    Spine.le_of_prefix (Spine.prefix_below_of_notMem ht (transparentTo_default.1 h))
 
 /-- The Height–Locality Theorem, from locality to height: a horizon that makes a probe on `c`
 vacuous makes vacuous a probe on any head above `c`. -/
@@ -214,6 +287,9 @@ theorem spineOf_le_spineOf_node (h : η (.node (.inl none) [l, r]) = some 0)
 
 theorem isUpperSet_horizon : IsUpperSet (horizon η t a c) :=
   fun _ _ hqr ⟨x, hx, h⟩ ↦ ⟨x, Finset.mem_Iio.2 ((Finset.mem_Iio.1 hx).trans_le hqr), h⟩
+
+theorem HorizonSetting.isUpperSet_cut : IsUpperSet (p.cut η t a) :=
+  fun _ _ hqr ⟨c, hc, h⟩ ↦ ⟨c, hc, isUpperSet_horizon hqr h⟩
 
 @[simp] theorem HorizonSetting.cut_mk_none : (HorizonSetting.mk c' none).cut η t a = ∅ := by
   simp [HorizonSetting.cut]
