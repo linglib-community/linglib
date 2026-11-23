@@ -286,10 +286,11 @@ theorem File.novelIn_iff_exists_file :
       Possibility.ext hpq.world_eq.symm <| funext fun j ↦ by
         by_cases hj : j = i
         · subst hj; simp
-        · rw [Possibility.update_assignment, Function.update_of_ne hj]; exact (hpq.eqOn hj).symm
+        · rw [Possibility.update_assignment, Function.update_of_ne hj]
+          exact (hpq.assignment_eqOn hj).symm
     exact hq ▸ (h p _).mp hp
   · rintro ⟨F, rfl, hi⟩ p a
-    exact File.mem_sat_congr (Possibility.agreeOn_update hi a)
+    exact File.mem_sat_congr (Possibility.eqOn_update hi a)
 
 -- (19) is rule (I): the update by an open sentence takes the meet with its file.
 theorem atom_sat (P : M → W → Prop) (i : ℕ) (F : DynamicSemantics.File W ℕ M) :
@@ -306,15 +307,15 @@ theorem everyClause_sat (hi : i ∉ F.dom) (hG : G.dom = insert i F.dom) (hH : H
     File.everyClause i F.sat G.sat H.sat = (Heim1982.universal F G H).sat := by
   ext p
   refine and_congr_right fun _ ↦ ⟨fun h q hq hqp ↦ ?_, fun h a ha ↦ ?_⟩
-  · have hpq : (p.update i (q.assignment i)).AgreeOn G.dom q := by
+  · have hpq : (p.update i (q.assignment i)).EqOn q G.dom := by
       refine ⟨hqp.world_eq.symm, fun j hj ↦ ?_⟩
       rcases hG ▸ hj with rfl | hj
       · simp
       · rw [Possibility.update_assignment, Function.update_of_ne fun h : j = i ↦ hi (h ▸ hj)]
-        exact (hqp.eqOn hj).symm
-    exact ⟨_, h _ (G.mem_sat_of_agreeOn hpq.symm hq), hpq⟩
-  · obtain ⟨r, hr, hrq⟩ := h _ ha (Possibility.agreeOn_update hi a).symm
-    exact H.mem_sat_of_agreeOn (hrq.mono hH) hr
+        exact (hqp.assignment_eqOn hj).symm
+    exact ⟨_, h _ (G.mem_sat_of_eqOn hpq.symm hq), hpq⟩
+  · obtain ⟨r, hr, hrq⟩ := h _ ha (Possibility.eqOn_update hi a).symm
+    exact H.mem_sat_of_eqOn (hrq.mono hH) hr
 
 /-! ### Indefinites (§3.3) -/
 

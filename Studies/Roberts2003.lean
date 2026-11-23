@@ -95,8 +95,9 @@ referent 0 for the man here and 1 for the man down the block. -/
 def strangeMenContext : File Unit ℕ Man where
   dom := {0, 1}
   sat := {p | p.assignment 0 = .here ∧ p.assignment 1 = .downTheBlock}
-  mem_sat_of_agreeOn := fun _ _ h ⟨hhere, hdown⟩ ↦
-    ⟨(h.eqOn (.inl rfl)).symm.trans hhere, (h.eqOn (.inr rfl)).symm.trans hdown⟩
+  mem_sat_of_eqOn := fun _ _ h ⟨hhere, hdown⟩ ↦
+    ⟨(h.assignment_eqOn (.inl rfl)).symm.trans hhere,
+      (h.assignment_eqOn (.inr rfl)).symm.trans hdown⟩
 
 /-- The content of *strange man*. -/
 def strangeMan : Unit → Man → Prop := fun _ _ ↦ True

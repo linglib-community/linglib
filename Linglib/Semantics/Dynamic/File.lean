@@ -62,35 +62,35 @@ namespace Possibility
 
 variable {X Y : Set V} {p q r : Possibility W V M}
 
-/-- Two points agree on the cards in `X` when they share their world and their sequences take
-the same values on `X`. -/
-structure AgreeOn (X : Set V) (p q : Possibility W V M) : Prop where
+/-- Two points are equal on the cards in `X` when they share their world and their sequences
+take the same values on `X`. -/
+structure EqOn (p q : Possibility W V M) (X : Set V) : Prop where
   /-- The points share their world. -/
   world_eq : p.world = q.world
   /-- The sequences take the same values on `X`. -/
-  eqOn : Set.EqOn p.assignment q.assignment X
+  assignment_eqOn : Set.EqOn p.assignment q.assignment X
 
-@[refl] theorem AgreeOn.refl (X : Set V) (p : Possibility W V M) : p.AgreeOn X p :=
+theorem EqOn.refl (p : Possibility W V M) (X : Set V) : p.EqOn p X :=
   ⟨rfl, Set.eqOn_refl _ _⟩
 
-@[symm] theorem AgreeOn.symm (h : p.AgreeOn X q) : q.AgreeOn X p := ⟨h.world_eq.symm, h.eqOn.symm⟩
+@[symm] theorem EqOn.symm (h : p.EqOn q X) : q.EqOn p X := ⟨h.world_eq.symm, h.assignment_eqOn.symm⟩
 
-@[trans] theorem AgreeOn.trans (h : p.AgreeOn X q) (h' : q.AgreeOn X r) : p.AgreeOn X r :=
-  ⟨h.world_eq.trans h'.world_eq, h.eqOn.trans h'.eqOn⟩
+theorem EqOn.trans (h : p.EqOn q X) (h' : q.EqOn r X) : p.EqOn r X :=
+  ⟨h.world_eq.trans h'.world_eq, h.assignment_eqOn.trans h'.assignment_eqOn⟩
 
-theorem AgreeOn.mono (hXY : X ⊆ Y) (h : p.AgreeOn Y q) : p.AgreeOn X q :=
-  ⟨h.world_eq, h.eqOn.mono hXY⟩
+theorem EqOn.mono (hXY : X ⊆ Y) (h : p.EqOn q Y) : p.EqOn q X :=
+  ⟨h.world_eq, h.assignment_eqOn.mono hXY⟩
 
-theorem agreeOn_comm : p.AgreeOn X q ↔ q.AgreeOn X p := ⟨.symm, .symm⟩
+theorem eqOn_comm : p.EqOn q X ↔ q.EqOn p X := ⟨.symm, .symm⟩
 
-@[simp] theorem agreeOn_empty : p.AgreeOn ∅ q ↔ p.world = q.world :=
-  ⟨AgreeOn.world_eq, fun h ↦ ⟨h, Set.eqOn_empty _ _⟩⟩
+@[simp] theorem eqOn_empty : p.EqOn q ∅ ↔ p.world = q.world :=
+  ⟨EqOn.world_eq, fun h ↦ ⟨h, Set.eqOn_empty _ _⟩⟩
 
-@[simp] theorem agreeOn_univ : p.AgreeOn Set.univ q ↔ p = q :=
-  ⟨fun h ↦ Possibility.ext h.world_eq (funext fun v ↦ h.eqOn (Set.mem_univ v)),
+@[simp] theorem eqOn_univ : p.EqOn q Set.univ ↔ p = q :=
+  ⟨fun h ↦ Possibility.ext h.world_eq (funext fun v ↦ h.assignment_eqOn (Set.mem_univ v)),
     fun h ↦ h ▸ .refl _ _⟩
 
-theorem agreeOn_update [DecidableEq V] {x : V} (hx : x ∉ X) (m : M) : p.AgreeOn X (p.update x m) :=
+theorem eqOn_update [DecidableEq V] {x : V} (hx : x ∉ X) (m : M) : p.EqOn (p.update x m) X :=
   ⟨rfl, fun _ hv ↦ (Function.update_of_ne (ne_of_mem_of_not_mem hv hx) _ _).symm⟩
 
 end Possibility
@@ -106,14 +106,14 @@ structure File (W V M : Type*) where
   /-- The satisfaction set: the points that fit every entry of the file. -/
   sat : Set (Possibility W V M)
   /-- A point that agrees on the cards with a point of the satisfaction set belongs to it. -/
-  mem_sat_of_agreeOn ⦃p q : Possibility W V M⦄ : p.AgreeOn dom q → p ∈ sat → q ∈ sat
+  mem_sat_of_eqOn ⦃p q : Possibility W V M⦄ : p.EqOn q dom → p ∈ sat → q ∈ sat
 
 namespace File
 
 variable {ι : Type*} {F G H : File W V M} {X Y : Set V} {p q : Possibility W V M} {x : V}
 
-theorem mem_sat_congr (h : p.AgreeOn F.dom q) : p ∈ F.sat ↔ q ∈ F.sat :=
-  ⟨F.mem_sat_of_agreeOn h, F.mem_sat_of_agreeOn h.symm⟩
+theorem mem_sat_congr (h : p.EqOn q F.dom) : p ∈ F.sat ↔ q ∈ F.sat :=
+  ⟨F.mem_sat_of_eqOn h, F.mem_sat_of_eqOn h.symm⟩
 
 /-- `F ≤ G` when `F` has every card of `G` and every point of `F` satisfies `G`. -/
 instance : PartialOrder (File W V M) :=
@@ -137,9 +137,9 @@ instance : SemilatticeInf (File W V M) where
   inf F G :=
     { dom := F.dom ∪ G.dom
       sat := F.sat ∩ G.sat
-      mem_sat_of_agreeOn := fun _ _ h ⟨hF, hG⟩ ↦
-        ⟨F.mem_sat_of_agreeOn (h.mono Set.subset_union_left) hF,
-          G.mem_sat_of_agreeOn (h.mono Set.subset_union_right) hG⟩ }
+      mem_sat_of_eqOn := fun _ _ h ⟨hF, hG⟩ ↦
+        ⟨F.mem_sat_of_eqOn (h.mono Set.subset_union_left) hF,
+          G.mem_sat_of_eqOn (h.mono Set.subset_union_right) hG⟩ }
   inf_le_left _ _ := ⟨Set.subset_union_left, Set.inter_subset_left⟩
   inf_le_right _ _ := ⟨Set.subset_union_right, Set.inter_subset_right⟩
   le_inf _ _ _ h₁ h₂ :=
@@ -172,9 +172,9 @@ it when the values of the variables stand in the predicate at the point's world.
 def atom (ζ : W → (ι → M) → Prop) (args : ι → V) : File W V M where
   dom := Set.range args
   sat := {p | ζ p.world (p.assignment ∘ args)}
-  mem_sat_of_agreeOn p q h hp := by
+  mem_sat_of_eqOn p q h hp := by
     have hq : q.assignment ∘ args = p.assignment ∘ args :=
-      funext fun k ↦ (h.eqOn ⟨k, rfl⟩).symm
+      funext fun k ↦ (h.assignment_eqOn ⟨k, rfl⟩).symm
     change ζ q.world (q.assignment ∘ args)
     rw [hq, ← h.world_eq]
     exact hp
@@ -207,7 +207,7 @@ theorem mem_dom_of_forall_mem_sat {N : W → M → Prop}
   classical
   by_contra hx
   obtain ⟨p, hp, m, hm⟩ := hN
-  exact hm (by simpa using h _ (F.mem_sat_of_agreeOn (Possibility.agreeOn_update hx m) hp))
+  exact hm (by simpa using h _ (F.mem_sat_of_eqOn (Possibility.eqOn_update hx m) hp))
 
 /-! ### Existential closure -/
 
@@ -215,20 +215,21 @@ theorem mem_dom_of_forall_mem_sat {N : W → M → Prop}
 point satisfies it when it agrees on `X` with a point that satisfies the file. -/
 def restrict (F : File W V M) (X : Set V) : File W V M where
   dom := F.dom ∩ X
-  sat := {p | ∃ q ∈ F.sat, q.AgreeOn X p}
-  mem_sat_of_agreeOn := by
+  sat := {p | ∃ q ∈ F.sat, q.EqOn p X}
+  mem_sat_of_eqOn := by
     classical
     rintro p p' h ⟨q, hq, hqp⟩
     refine ⟨⟨q.world, X.piecewise p'.assignment q.assignment⟩,
-      F.mem_sat_of_agreeOn (p := q) ⟨rfl, fun v hv ↦ ?_⟩ hq,
+      F.mem_sat_of_eqOn (p := q) ⟨rfl, fun v hv ↦ ?_⟩ hq,
       hqp.world_eq.trans h.world_eq, fun v hv ↦ Set.piecewise_eq_of_mem _ _ _ hv⟩
     by_cases hX : v ∈ X
-    · exact ((hqp.eqOn hX).trans (h.eqOn ⟨hv, hX⟩)).trans (Set.piecewise_eq_of_mem _ _ _ hX).symm
+    · exact ((hqp.assignment_eqOn hX).trans (h.assignment_eqOn ⟨hv, hX⟩)).trans
+        (Set.piecewise_eq_of_mem _ _ _ hX).symm
     · exact (Set.piecewise_eq_of_notMem _ _ _ hX).symm
 
 @[simp] theorem dom_restrict (F : File W V M) (X : Set V) : (F.restrict X).dom = F.dom ∩ X := rfl
 
-@[simp] theorem mem_sat_restrict : p ∈ (F.restrict X).sat ↔ ∃ q ∈ F.sat, q.AgreeOn X p := Iff.rfl
+@[simp] theorem mem_sat_restrict : p ∈ (F.restrict X).sat ↔ ∃ q ∈ F.sat, q.EqOn p X := Iff.rfl
 
 theorem le_restrict (F : File W V M) (X : Set V) : F ≤ F.restrict X :=
   ⟨Set.inter_subset_left, fun p hp ↦ ⟨p, hp, .refl _ _⟩⟩
@@ -237,7 +238,7 @@ theorem le_restrict (F : File W V M) (X : Set V) : F ≤ F.restrict X :=
 same. -/
 theorem restrict_le_iff (h : G.dom ⊆ X) : F.restrict X ≤ G ↔ F ≤ G :=
   ⟨(le_restrict F X).trans, fun hFG ↦ ⟨Set.subset_inter (dom_anti hFG) h,
-    fun _ ⟨_, hq, hqp⟩ ↦ G.mem_sat_of_agreeOn (hqp.mono h) (sat_mono hFG hq)⟩⟩
+    fun _ ⟨_, hq, hqp⟩ ↦ G.mem_sat_of_eqOn (hqp.mono h) (sat_mono hFG hq)⟩⟩
 
 @[simp] theorem restrict_eq_self_iff : F.restrict X = F ↔ F.dom ⊆ X :=
   ⟨fun h ↦ h ▸ Set.inter_subset_right,
@@ -275,9 +276,9 @@ instance : Lattice (File W V M) where
   sup F G :=
     { dom := F.dom ∩ G.dom
       sat := (F.restrict G.dom).sat ∪ (G.restrict F.dom).sat
-      mem_sat_of_agreeOn := fun _ _ h hp ↦ hp.imp
-        ((F.restrict G.dom).mem_sat_of_agreeOn h)
-        ((G.restrict F.dom).mem_sat_of_agreeOn (h.mono (Set.inter_comm G.dom F.dom).subset)) }
+      mem_sat_of_eqOn := fun _ _ h hp ↦ hp.imp
+        ((F.restrict G.dom).mem_sat_of_eqOn h)
+        ((G.restrict F.dom).mem_sat_of_eqOn (h.mono (Set.inter_comm G.dom F.dom).subset)) }
   le_sup_left F _ :=
     le_iff.mpr ⟨Set.inter_subset_left, fun _ hp ↦ .inl (sat_mono (le_restrict F _) hp)⟩
   le_sup_right _ G :=
@@ -315,8 +316,8 @@ instance : InfSet (File W V M) where
   sInf S :=
     { dom := ⋃ F ∈ S, F.dom
       sat := ⋂ F ∈ S, F.sat
-      mem_sat_of_agreeOn := fun _ _ h hp ↦ Set.mem_iInter₂.mpr fun F hF ↦
-        F.mem_sat_of_agreeOn (h.mono (Set.subset_biUnion_of_mem (u := dom) hF))
+      mem_sat_of_eqOn := fun _ _ h hp ↦ Set.mem_iInter₂.mpr fun F hF ↦
+        F.mem_sat_of_eqOn (h.mono (Set.subset_biUnion_of_mem (u := dom) hF))
           (Set.mem_iInter₂.mp hp F hF) }
 
 @[simp] theorem dom_sInf (S : Set (File W V M)) : (sInf S).dom = ⋃ F ∈ S, F.dom := rfl
@@ -395,15 +396,15 @@ instance : SDiff (File W V M) where
   sdiff F G :=
     { dom := F.dom
       sat := F.sat \ (G.restrict F.dom).sat
-      mem_sat_of_agreeOn := fun _ _ h ⟨hp, hnp⟩ ↦ ⟨F.mem_sat_of_agreeOn h hp, fun hq ↦ hnp <|
-        (G.restrict F.dom).mem_sat_of_agreeOn (h.symm.mono Set.inter_subset_right) hq⟩ }
+      mem_sat_of_eqOn := fun _ _ h ⟨hp, hnp⟩ ↦ ⟨F.mem_sat_of_eqOn h hp, fun hq ↦ hnp <|
+        (G.restrict F.dom).mem_sat_of_eqOn (h.symm.mono Set.inter_subset_right) hq⟩ }
 
 @[simp] theorem dom_sdiff (F G : File W V M) : (F \ G).dom = F.dom := rfl
 
 theorem sat_sdiff (F G : File W V M) : (F \ G).sat = F.sat \ (G.restrict F.dom).sat := rfl
 
 @[simp] theorem mem_sat_sdiff :
-    p ∈ (F \ G).sat ↔ p ∈ F.sat ∧ ∀ q ∈ G.sat, ¬ q.AgreeOn F.dom p := by
+    p ∈ (F \ G).sat ↔ p ∈ F.sat ∧ ∀ q ∈ G.sat, ¬ q.EqOn p F.dom := by
   simp [sat_sdiff]
 
 theorem sdiff_le (F G : File W V M) : F \ G ≤ F := le_iff.mpr ⟨subset_rfl, Set.sdiff_subset⟩
@@ -420,7 +421,7 @@ theorem sat_sdiff_of_dom_subset (h : G.dom ⊆ F.dom) : (F \ G).sat = F.sat \ G.
 of `F` has a variant in `H` on the cards of `G`. -/
 theorem mem_sat_sdiff_sdiff :
     p ∈ (F \ (G \ H)).sat ↔
-      p ∈ F.sat ∧ ∀ q ∈ G.sat, q.AgreeOn F.dom p → ∃ r ∈ H.sat, r.AgreeOn G.dom q := by
+      p ∈ F.sat ∧ ∀ q ∈ G.sat, q.EqOn p F.dom → ∃ r ∈ H.sat, r.EqOn q G.dom := by
   simp only [mem_sat_sdiff, and_imp]
   exact and_congr_right fun _ ↦ forall₂_congr fun q hq ↦
     ⟨fun h hqp ↦ by_contra fun hne ↦ h (fun r hr hrq ↦ hne ⟨r, hr, hrq⟩) hqp,

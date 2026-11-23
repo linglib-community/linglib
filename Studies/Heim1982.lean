@@ -72,9 +72,9 @@ inductive LF (M : Type*)
 in `F₁` on the cards of `F` has a variant in `F₂` on the cards of `F₁`. -/
 def universal (F F₁ F₂ : File W ℕ M) : File W ℕ M where
   dom := F.dom
-  sat := {p ∈ F.sat | ∀ q ∈ F₁.sat, q.AgreeOn F.dom p → ∃ r ∈ F₂.sat, r.AgreeOn F₁.dom q}
-  mem_sat_of_agreeOn := fun _ _ h ⟨hp, hall⟩ ↦
-    ⟨F.mem_sat_of_agreeOn h hp, fun q hq hqp ↦ hall q hq (hqp.trans h.symm)⟩
+  sat := {p ∈ F.sat | ∀ q ∈ F₁.sat, q.EqOn p F.dom → ∃ r ∈ F₂.sat, r.EqOn q F₁.dom}
+  mem_sat_of_eqOn := fun _ _ h ⟨hp, hall⟩ ↦
+    ⟨F.mem_sat_of_eqOn h hp, fun q hq hqp ↦ hall q hq (hqp.trans h.symm)⟩
 
 theorem universal_eq_sdiff (F F₁ F₂ : File W ℕ M) : universal F F₁ F₂ = F \ (F₁ \ F₂) :=
   File.ext rfl (Set.ext fun _ ↦ File.mem_sat_sdiff_sdiff.symm)
@@ -273,7 +273,7 @@ theorem trueWrt_indef (h : i ∉ F.dom) :
   · rintro ⟨p, ⟨hp, hN⟩, rfl⟩
     exact ⟨⟨p, hp, rfl⟩, _, hN⟩
   · rintro ⟨⟨p, hp, rfl⟩, m, hN⟩
-    exact ⟨p.update i m, ⟨F.mem_sat_of_agreeOn (Possibility.agreeOn_update h m) hp, by simpa⟩, rfl⟩
+    exact ⟨p.update i m, ⟨F.mem_sat_of_eqOn (Possibility.eqOn_update h m) hp, by simpa⟩, rfl⟩
 
 -- (IV)
 theorem trueWrt_neg_indef (h : i ∉ F.dom) :
@@ -285,9 +285,9 @@ theorem trueWrt_neg_indef (h : i ∉ F.dom) :
     File.mem_sat_sdiff, File.sat_inf, Set.mem_inter_iff, File.mem_sat_atomAt]
   constructor
   · rintro ⟨p, ⟨hp, hno⟩, rfl⟩
-    have hu (m : M) := Possibility.agreeOn_update (p := p) h m
+    have hu (m : M) := Possibility.eqOn_update (p := p) h m
     exact ⟨⟨p, hp, rfl⟩, fun ⟨m, hm⟩ ↦
-      hno _ ⟨F.mem_sat_of_agreeOn (hu m) hp, by simpa⟩ (hu m).symm⟩
+      hno _ ⟨F.mem_sat_of_eqOn (hu m) hp, by simpa⟩ (hu m).symm⟩
   · rintro ⟨⟨p, hp, rfl⟩, hno⟩
     exact ⟨p, ⟨hp, fun _ ⟨_, hN⟩ _ ↦ hno ⟨_, hN⟩⟩, rfl⟩
 
