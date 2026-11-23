@@ -124,6 +124,13 @@ theorem le_copy (h : s f = none) (c : Option Segment) : s ≤ s.copy f c := by
     (s.setFeature f v) g = s g :=
   Function.update_of_ne (Ne.symm h) _ _
 
+theorem copy_apply_of_ne (h : f ≠ g) (s : Segment) (c : Option Segment) :
+    (s.copy f c) g = s g := by
+  unfold copy
+  cases c.bind (· f) with
+  | none => rfl
+  | some v => exact setFeature_apply_of_ne h s v
+
 /-! ### Restriction -/
 
 theorem restrict_apply (C : Finset Feature) (s : Segment) (f : Feature) :

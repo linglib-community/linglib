@@ -5,6 +5,7 @@ public import Linglib.Fragments.Turkish.Clause
 public import Linglib.Fragments.Turkish.Possession
 public import Linglib.Fragments.Turkish.QuestionParticles
 public import Linglib.Fragments.Turkish.Verbs
+public import Linglib.Morphology.Morphotactics.Concatenation
 
 /-!
 # Göksel and Kerslake (2005): Turkish suffixation
@@ -24,7 +25,12 @@ the order of `Phonology.Segment` (`forall₂_le_harmonize`). The Fragment states
 of features alone, as the grammar does: `Turkish.Phonology.fill w x` is the segment `x` after
 the harmonized string `w`, and the harmonized form of `w ++ [x]` is that of `w` followed by
 `fill` of it and `x`. The search-and-copy rules of the three harmony systems, run in turn,
-compute the same form for every word (`harmonize_eq_searchCopy`). The alternants that the
+compute the same form for every word (`harmonize_eq_searchCopy`). The underlying form of a
+word attaches its suffixes one at a time, and before raising the harmonized word is stepwise and
+concatenative in the sense of `Morphology.Morphotactics`: a suffix sees only the harmonized word
+it attaches to and leaves it in place (`isStepwise_harmonize_underlying`,
+`isConcatenative_harmonize_underlying`). Raising before -(I)yor alters the stem, so surface
+forms are not concatenative (`not_isConcatenative_realize`). The alternants that the
 grammar lists for `A`, `I` and `D` are the values of `fill` (`fill_A`, `fill_I`, `fill_D`), and
 two stems of phonemes that end alike take their suffixes alike
 (`exists_harmonize_append_eq`). The permissible vowel sequences of §3.1 are the
@@ -476,6 +482,52 @@ theorem fill_of_mem {x : Segment} (hx : x ∈ vowels ∪ consonants) (w : List S
   obtain ⟨h₁, h₂, h₃⟩ := not_isTarget x hx
   rw [← emit_eq_fill, fronting.searchCopy.emit_of_not_isTarget h₁,
     rounding.searchCopy.emit_of_not_isTarget h₂, voicing.searchCopy.emit_of_not_isTarget h₃]
+
+/-! ### Suffixes one at a time -/
+
+theorem underlying_eq_ofStep (w : List Segment) (sfxs : List Suffix) :
+    underlying w sfxs = Morphology.Morphotactics.ofStep id Suffix.attach w sfxs :=
+  rfl
+
+/-- Before raising, a further suffix leaves the word before it in place. -/
+theorem isConcatenative_harmonize_underlying :
+    Morphology.Morphotactics.IsConcatenative fun w sfxs ↦ harmonize (underlying w sfxs) :=
+  fun w sfxs s ↦ by
+    change harmonize (underlying w sfxs) <+: harmonize (underlying w (sfxs ++ [s]))
+    rw [underlying_append, underlying_cons, underlying_nil, Suffix.attach, List.append_assoc]
+    exact harmonize_isPrefix_append _ _
+
+/-- Raising before -(I)yor alters the stem, so surface forms are not concatenative: *anla* is
+no prefix of *anlıyor* (§8.2.3.3). -/
+theorem not_isConcatenative_realize : ¬ Morphology.Morphotactics.IsConcatenative realize :=
+  fun h ↦ absurd (h [a, n, l, a] [] iyor.form) (by decide)
+
+private theorem isVowel_fill (w : List Segment) (x : Segment) :
+    (fill w x).IsVowel ↔ x.IsVowel := by
+  simp only [fill]
+  split_ifs <;>
+    simp [Segment.IsVowel, Segment.IsSyllabic, Segment.copy_apply_of_ne]
+
+private theorem initial_harmonize (s : Suffix) (u : List Segment) :
+    s.initial (harmonize u) = s.initial u := by
+  cases hb : s.bracketed with
+  | none => rw [Suffix.initial_of_bracketed_eq_none hb, Suffix.initial_of_bracketed_eq_none hb]
+  | some b =>
+    induction u using List.reverseRecOn with
+    | nil => rfl
+    | append_singleton u x _ =>
+      rw [harmonize_concat, Suffix.initial_concat hb, Suffix.initial_concat hb]
+      simp only [isVowel_fill]
+
+/-- Before raising, a suffix sees only the harmonized word it attaches to: two words that are
+harmonized alike are harmonized alike with one more suffix. -/
+theorem isStepwise_harmonize_underlying :
+    Morphology.Morphotactics.IsStepwise fun w sfxs ↦ harmonize (underlying w sfxs) :=
+  fun w w' sfxs sfxs' s h ↦ by
+    replace h : harmonize (underlying w sfxs) = harmonize (underlying w' sfxs') := h
+    simp only [underlying_append, underlying_cons, underlying_nil, Suffix.attach,
+      List.append_assoc, harmonize_append]
+    rw [← initial_harmonize s (underlying w sfxs), ← initial_harmonize s (underlying w' sfxs'), h]
 
 /-! ### The order of suffixes (Chapter 8) -/
 

@@ -321,6 +321,10 @@ theorem harmonize_concat (w : List Segment) (x : Segment) :
     harmonize (w ++ [x]) = harmonize w ++ [fill (harmonize w) x] := by
   simp [harmonize, List.foldl_append]
 
+theorem harmonize_append (w t : List Segment) :
+    harmonize (w ++ t) = t.foldl (fun h x ↦ h ++ [fill h x]) (harmonize w) :=
+  List.foldl_append
+
 @[simp] theorem length_harmonize (w : List Segment) : (harmonize w).length = w.length := by
   induction w using List.reverseRecOn with
   | nil => rfl
