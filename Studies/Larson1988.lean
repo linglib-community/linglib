@@ -16,27 +16,34 @@ public import Linglib.Fragments.English.Verbs.Levin
 /-!
 # Larson (1988): On the Double Object Construction
 
-A phrase is `[XP Spec [X′ X YP]]`: a head with one complement and one specifier. A verb with the
-arguments $a_0, \dots, a_n$, the highest first, projects a stack of such phrases, `shells`. The
-lowest argument is the complement of the verb and the next its specifier; each further argument
-is the specifier of a shell whose head is empty and whose complement is the phrase below. At
-D-Structure the verb is the lowest head, `dStructure`, and at S-Structure it has raised to the
-highest, leaving a trace in each head below, `sStructure`. Whatever the heads, the argument $a_i$
-c-commands $a_j$ exactly when $i < j$ (`cCommands_argPos_iff`), so when the roles of the arguments
-descend the hierarchy agent > theme > goal > oblique, one argument c-commands another exactly when
-its role is the higher (`cCommands_argPos_iff_role_lt`). In *John sent a letter to Mary* the theme
-therefore c-commands the goal and not conversely, where a flat verb phrase has its two objects
-c-command each other and a left-branching one has the second c-command the first.
+In any tree, call positions $p_0, \dots, p_n$ a spine when each $p_k$ with $k < n$ is a branching
+node whose second daughter branches and properly dominates $p_{k+1}$ (`IsSpine`). Its arguments
+are the first daughters of $p_0, \dots, p_{n-1}$ and the position $p_n$. One argument of a spine
+c-commands another exactly when it is the higher (`IsSpine.cCommands_argPos_iff`). Nothing in this
+depends on what the nodes are labelled.
 
-PASSIVE assigns the role of a specifier to an adjunct of its sister and moves a noun phrase into
-the specifier. In the lower verb phrase it is Dative Shift: the theme is adjoined to V′ and the
-goal moves to the specifier, which gives the double object construction `doubleObject`, where the
-goal c-commands the theme and not conversely (`cCommands_doubleObject`). In the clause it is
-Passive, `passive`, where the subject c-commands the *by*-phrase and not conversely. The dative
-passive *Mary was sent a letter* moves the goal of the oblique structure to the subject in one
-step, `indirectPassive`. Of two objects in either frame, the one that licenses an anaphor, binds
-a pronoun, moves as a *wh*-phrase, or licenses *the other* or a polarity item in the other is the
-one that c-commands the other (`acceptable_iff_cCommands`).
+A phrase is `[XP Spec [X′ X YP]]`, a head with one complement and one specifier, and a verb with
+several arguments projects a stack of such phrases, `shells`: the lowest argument is the
+complement of the verb and the next its specifier, and each further argument is the specifier of
+a phrase whose head is empty and whose complement is the phrase below. The positions of the
+phrases are a spine (`isSpine_pos`). At D-Structure the verb is the lowest head, `dLayers`, and at
+S-Structure it has raised to the highest, leaving a trace in each head below, `sLayers`. When the
+roles of the arguments descend the hierarchy agent > theme > goal > oblique, one argument
+c-commands another exactly when its role is the higher (`cCommands_argPos_iff_role_lt`). In *John
+sent a letter to Mary* the theme therefore c-commands the goal and not conversely, where a flat
+verb phrase has its two objects c-command each other and a left-branching one has the second
+c-command the first.
+
+PASSIVE assigns the role of a specifier to an adjunct of its sister, `Layer.demote`, and moves a
+noun phrase into the specifier. In the lower verb phrase it is Dative Shift: the theme is adjoined
+to V′ and the goal moves to the specifier, which gives the double object construction
+`doubleObject`, where the goal c-commands the theme and not conversely
+(`cCommands_doubleObject`). In the clause it is Passive, `passive`, where the subject c-commands
+the *by*-phrase and not conversely. The dative passive *Mary was sent a letter* moves the goal of
+the oblique structure to the subject in one step, `indirectPassive`. Of two objects in either
+frame, the one that licenses an anaphor, binds a pronoun, moves as a *wh*-phrase, or licenses
+*the other* or a polarity item in the other is the one that c-commands the other
+(`acceptable_iff_cCommands`).
 
 Dative Shift deletes *to*, and the deletion is recoverable when the roles the verb assigns to its
 indirect object include the role *to* assigns. A verb shifts exactly when they do
@@ -47,8 +54,12 @@ indirect object include the role *to* assigns. A verb shifts exactly when they d
 * C-command is that of the first branching node, which the paper assumes. The categories V, V′
   and VP are one category `V`, and I, I′ and IP one category `Aux`; an empty position is a node
   without daughters.
+* The spine is stated on rose trees and not on the phrases of the paper, so that it applies to
+  any right-branching structure, whatever its heads and labels.
 * The absorption of *to* is not an operation on trees: the D-Structure of the double object
   construction, `shiftedD`, has the goal as a bare noun phrase.
+* The passive (24) adjoins the *by*-phrase to the verb phrase, the complement of the inflection,
+  so it is not `Layer.demote` applied to a layer.
 * The paper says of *send* and *promise* only that they specify a goal, and gives the pair
   beneficiary and goal for *give*, which heads no row with a verb column.
 * The third line of (5d), with the preposition pied-piped, is not among the rows.
@@ -72,6 +83,90 @@ namespace Larson1988
 
 open PhraseStructure PhraseStructure.Tree
 
+/-! ### Specifiers along a spine -/
+
+section Spine
+
+variable {β : Type*} {t : RoseTree β} {p : ℕ → GornAddress} {n i j : ℕ}
+
+/-- The positions `p 0`, …, `p n` are a spine of `t` when each of the first `n` is a branching
+node whose second daughter branches and properly dominates the next. -/
+structure IsSpine (t : RoseTree β) (p : ℕ → GornAddress) (n : ℕ) : Prop where
+  /-- The second daughter of each position properly dominates the next. -/
+  lt : ∀ k < n, p k * .of 1 < p (k + 1)
+  /-- Each position branches. -/
+  mem_branching : ∀ k < n, p k ∈ t.branching
+  /-- The second daughter of each position branches. -/
+  mul_of_mem_branching : ∀ k < n, p k * .of 1 ∈ t.branching
+
+/-- The position of the `k`th argument of a spine of length `n`: the first daughter of the
+`k`th position, and the last position for `k = n`. -/
+def argPos (p : ℕ → GornAddress) (n k : ℕ) : GornAddress := if k < n then p k * .of 0 else p n
+
+theorem argPos_of_lt (h : i < n) : argPos p n i = p i * .of 0 := by simp [argPos, h]
+
+theorem le_argPos (p : ℕ → GornAddress) (n i : ℕ) (hi : i ≤ n) : p i ≤ argPos p n i := by
+  rw [argPos]
+  split_ifs
+  · exact GornAddress.le_mul_right _ _
+  · exact (Nat.le_antisymm hi (Nat.le_of_not_lt ‹_›)) ▸ le_rfl
+
+namespace IsSpine
+
+variable (h : IsSpine t p n)
+include h
+
+theorem mul_of_lt (hij : i < j) (hj : j ≤ n) : p i * .of 1 < p j := by
+  induction j, hij using Nat.le_induction with
+  | base => exact h.lt i hj
+  | succ k hk ih =>
+    exact (ih (by omega)).trans (((GornAddress.le_mul_right _ _).trans_lt (h.lt k (by omega))))
+
+theorem exists_eq_mul {b : GornAddress} (hij : i < j) (hj : j ≤ n) (hb : p j ≤ b) :
+    ∃ q, q ≠ 1 ∧ b = p i * .of 1 * q := by
+  have hlt := (h.mul_of_lt hij hj).trans_le hb
+  obtain ⟨q, rfl⟩ := GornAddress.le_iff_exists_mul.1 hlt.le
+  exact ⟨q, fun hq ↦ hlt.ne (by rw [hq, mul_one]), rfl⟩
+
+theorem cCommands_of_lt {b : GornAddress} (hij : i < j) (hj : j ≤ n) (hb : p j ≤ b) :
+    t.CCommands (p i * .of 0) b := by
+  obtain ⟨q, -, rfl⟩ := h.exists_eq_mul hij hj hb
+  exact RoseTree.cCommands_mul_of (h.mem_branching i (by omega)) (by decide) q
+
+theorem not_cCommands_of_lt {b : GornAddress} (hij : i < j) (hj : j ≤ n) (hb : p j ≤ b) :
+    ¬ t.CCommands b (p i * .of 0) := by
+  obtain ⟨q, hq, rfl⟩ := h.exists_eq_mul hij hj hb
+  exact RoseTree.not_cCommands_mul_of_mul (h.mul_of_mem_branching i (by omega)) (by decide) hq
+
+/-- One argument of a spine c-commands another exactly when it is the higher. -/
+theorem cCommands_argPos_iff (hi : i ≤ n) (hj : j ≤ n) :
+    t.CCommands (argPos p n i) (argPos p n j) ↔ i < j := by
+  rcases lt_trichotomy i j with hij | rfl | hji
+  · rw [argPos_of_lt (hij.trans_le hj)]
+    exact iff_of_true (h.cCommands_of_lt hij hj (le_argPos p n j hj)) hij
+  · exact iff_of_false not_commands_self (lt_irrefl _)
+  · rw [argPos_of_lt (hji.trans_le hi)]
+    exact iff_of_false (h.not_cCommands_of_lt hji hi (le_argPos p n i hi)) hji.asymm
+
+/-- The arguments of a spine, the highest first, embed in the positions of the tree, their order
+going to c-command. -/
+def argEmbedding : ((· < ·) : Fin (n + 1) → Fin (n + 1) → Prop) ↪r t.CCommands where
+  toFun k := argPos p n k
+  inj' a b hab := by
+    have h₁ := h.cCommands_argPos_iff (i := a) (j := b) (by omega) (by omega)
+    have h₂ := h.cCommands_argPos_iff (i := b) (j := a) (by omega) (by omega)
+    simp only [hab] at h₁
+    simp only [← hab] at h₂
+    exact Fin.ext (Nat.le_antisymm (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₂.2 hlt))
+      (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₁.2 hlt)))
+  map_rel_iff' := h.cCommands_argPos_iff (by omega) (by omega)
+
+@[simp] theorem argEmbedding_apply (k : Fin (n + 1)) : h.argEmbedding k = argPos p n k := rfl
+
+end IsSpine
+
+end Spine
+
 variable {W : Type*}
 
 /-! ### Projection -/
@@ -79,116 +174,130 @@ variable {W : Type*}
 /-- The empty position of category `c`. -/
 abbrev empty (c : Cat) : Tree Cat W := .node c []
 
-/-- (76): the phrase `[XP spec [X′ head comp]]` of category `c`. -/
-def xbar (c : Cat) (spec head comp : Tree Cat W) : Tree Cat W :=
-  .node c [spec, .node c [head, comp]]
+/-- A phrase without its complement: a specifier and a head of one category, and the phrase to
+which the role of the specifier is assigned when it is demoted, an adjunct of X′. -/
+structure Layer (W : Type*) where
+  /-- The category of the head. -/
+  cat : Cat := .V
+  /-- The specifier. -/
+  spec : Tree Cat W
+  /-- The head. -/
+  head : Tree Cat W
+  /-- The adjunct of X′. -/
+  adjunct : Option (Tree Cat W) := none
 
-/-- The verb phrase of the specifiers `ss`, the highest first, over the heads `hs` and the lowest
-complement `x`: each specifier with its head, over the phrase of the rest. -/
-def shells : List (Tree Cat W) → List (Tree Cat W) → Tree Cat W → Tree Cat W
-  | s :: ss, h :: hs, x => xbar .V s h (shells ss hs x)
-  | _, _, x => x
+namespace Layer
 
-/-- The position of the `i`th phrase of a stack of shells. -/
-def spine (i : ℕ) : GornAddress := (.of 1 * .of 1) ^ i
+variable {L : Layer W} {x : Tree Cat W}
 
-/-- The position of the `k`th argument of a projection with `n` specifiers: the `k`th specifier,
-and the complement for `k = n`. -/
-def argPos (n k : ℕ) : GornAddress := if k < n then spine k * .of 0 else spine n
+/-- X′: the head with the complement `x`, and the adjunct if there is one. -/
+def bar (L : Layer W) (x : Tree Cat W) : Tree Cat W :=
+  L.adjunct.elim (node L.cat [L.head, x]) fun d ↦ adjoin L.cat [node L.cat [L.head, x], d]
 
-variable {ss hs : List (Tree Cat W)} {c : Cat} {s h x : Tree Cat W} {i j n : ℕ}
+/-- (76): the phrase `[XP spec [X′ head x]]`. -/
+def over (L : Layer W) (x : Tree Cat W) : Tree Cat W := node L.cat [L.spec, L.bar x]
 
-@[simp] theorem shells_cons_cons :
-    shells (s :: ss) (h :: hs) x = xbar .V s h (shells ss hs x) := rfl
+/-- The position of the complement in the phrase. -/
+def compPos (L : Layer W) : GornAddress :=
+  .of 1 * L.adjunct.elim (.of 1) fun _ ↦ .of 0 * .of 1
 
-@[simp] theorem shells_nil_left : shells [] hs x = x := rfl
+/-- Argument Demotion: the role of the specifier is assigned to an adjunct of X′, and the
+specifier is empty. -/
+def demote (L : Layer W) : Layer W := { L with spec := empty .N, adjunct := some L.spec }
 
-@[simp] theorem yield_xbar : (xbar c s h x).yield = s.yield ++ (h.yield ++ x.yield) := by
-  simp [xbar]
+theorem getElem?_compPos (L : Layer W) (x : Tree Cat W) : (L.over x)[L.compPos]? = some x := by
+  rcases L with ⟨c, s, h, _ | d⟩ <;> rfl
 
-theorem spine_succ (i : ℕ) : spine (i + 1) = .of 1 * .of 1 * spine i := pow_succ' _ _
+theorem one_mem_branching (L : Layer W) (x : Tree Cat W) :
+    (1 : GornAddress) ∈ (L.over x).branching := by
+  simp [RoseTree.mem_branching, over]
 
-theorem spine_add (i k : ℕ) : spine (i + k) = spine i * spine k := pow_add _ _ _
+theorem of_one_mem_branching (L : Layer W) (x : Tree Cat W) :
+    GornAddress.of 1 ∈ (L.over x).branching := by
+  rcases L with ⟨c, s, h, _ | d⟩ <;> simp [RoseTree.mem_branching, over, bar]
 
-theorem argPos_of_lt (h : i < n) : argPos n i = spine i * .of 0 := by simp [argPos, h]
+theorem of_one_lt_compPos (L : Layer W) : GornAddress.of 1 < L.compPos := by
+  rcases L with ⟨c, s, h, _ | d⟩ <;>
+    exact lt_of_le_of_ne (GornAddress.le_mul_right _ _) fun e ↦ by
+      simpa [compPos] using congrArg GornAddress.toList e
 
-theorem getElem?_spine (x : Tree Cat W) : ∀ {i : ℕ} {ss hs : List (Tree Cat W)},
-    i ≤ ss.length → i ≤ hs.length →
-    (shells ss hs x)[spine i]? = some (shells (ss.drop i) (hs.drop i) x)
-  | 0, _, _, _, _ => rfl
-  | i + 1, s :: ss, h :: hs, hi, hj => by
-    have := getElem?_spine x (i := i) (ss := ss) (hs := hs) (by simpa using hi) (by simpa using hj)
-    simp only [RoseTree.getElem?_gornAddress] at this ⊢
-    simp [spine_succ, xbar, this]
+@[simp] theorem yield_over (L : Layer W) (x : Tree Cat W) :
+    (L.over x).yield =
+      L.spec.yield ++ (L.head.yield ++ (x.yield ++ L.adjunct.elim [] yield)) := by
+  rcases L with ⟨c, s, h, _ | d⟩ <;> simp [over, bar]
 
-theorem exists_shells_drop_eq_xbar (x : Tree Cat W) (hi : i < ss.length) (hi' : i < hs.length) :
-    ∃ s h y, shells (ss.drop i) (hs.drop i) x = xbar .V s h y := by
-  rw [List.drop_eq_getElem_cons hi, List.drop_eq_getElem_cons hi']
-  exact ⟨_, _, _, rfl⟩
+end Layer
 
-theorem one_mem_branching_xbar : (1 : GornAddress) ∈ (xbar c s h x).branching := by
-  simp [RoseTree.mem_branching, xbar]
+/-- The phrase of the layers `ls`, the highest first, over the lowest complement `x`. -/
+def shells (ls : List (Layer W)) (x : Tree Cat W) : Tree Cat W := ls.foldr Layer.over x
 
-theorem of_one_mem_branching_xbar : GornAddress.of 1 ∈ (xbar c s h x).branching := by
-  simp [RoseTree.mem_branching, xbar]
+/-- The position of the `k`th phrase of a stack of layers, and of the lowest complement for
+`k` their number. -/
+def pos : List (Layer W) → ℕ → GornAddress
+  | L :: ls, k + 1 => L.compPos * pos ls k
+  | _, _ => 1
 
--- The specifier of a phrase c-commands what its sister dominates, and nothing properly inside
--- the sister c-commands it.
-theorem cCommands_xbar (q : GornAddress) : (xbar c s h x).CCommands (.of 0) (.of 1 * q) := by
-  simpa using RoseTree.cCommands_mul_of one_mem_branching_xbar (i := 0) (j := 1) (by decide) q
+/-- The position of the `k`th specifier. -/
+abbrev specPos (ls : List (Layer W)) (k : ℕ) : GornAddress := pos ls k * .of 0
 
-theorem not_cCommands_xbar {q : GornAddress} (hq : q ≠ 1) :
-    ¬ (xbar c s h x).CCommands (.of 1 * q) (.of 0) := by
-  simpa using RoseTree.not_cCommands_mul_of_mul (p := 1) (i := 0) (j := 1)
-    (by simpa using of_one_mem_branching_xbar (c := c) (s := s) (h := h) (x := x)) (by decide) hq
+/-- The position of the adjunct of the `k`th layer. -/
+abbrev adjunctPos (ls : List (Layer W)) (k : ℕ) : GornAddress := pos ls k * .of 1 * .of 1
 
-theorem exists_argPos_eq (hij : i < j) (hj : j ≤ n) :
-    ∃ q, q ≠ 1 ∧ argPos n j = spine i * (.of 1 * q) := by
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_lt hij
-  rw [argPos]
-  split_ifs
-  · exact ⟨.of 1 * spine k * .of 0, fun h ↦ by simpa using congrArg GornAddress.toList h,
-      by simp only [Nat.add_assoc, spine_add, spine_succ, mul_assoc]⟩
-  · obtain rfl : n = i + k + 1 := by omega
-    exact ⟨.of 1 * spine k, fun h ↦ by simpa using congrArg GornAddress.toList h,
-      by simp only [Nat.add_assoc, spine_add, spine_succ, mul_assoc]⟩
+variable {ls : List (Layer W)} {L : Layer W} {x : Tree Cat W} {i j k : ℕ}
 
-/-- One argument of a projection c-commands another exactly when it is the higher, whatever the
-heads of the shells. -/
-theorem cCommands_argPos_iff (x : Tree Cat W) (h : ss.length ≤ hs.length) (hi : i ≤ ss.length)
-    (hj : j ≤ ss.length) :
-    (shells ss hs x).CCommands (argPos ss.length i) (argPos ss.length j) ↔ i < j := by
-  rcases lt_trichotomy i j with hij | rfl | hji
-  · obtain ⟨q, -, hq⟩ := exists_argPos_eq hij hj
-    have hin : i < ss.length := hij.trans_le hj
-    obtain ⟨s, h', y, hy⟩ := exists_shells_drop_eq_xbar x hin (hin.trans_le h)
-    rw [hq, argPos_of_lt hin,
-      RoseTree.cCommands_mul_iff (getElem?_spine x hin.le (hin.le.trans h)), hy]
-    exact iff_of_true (cCommands_xbar q) hij
-  · exact iff_of_false not_commands_self (lt_irrefl _)
-  · obtain ⟨q, hq1, hq⟩ := exists_argPos_eq hji hi
-    have hjn : j < ss.length := hji.trans_le hi
-    obtain ⟨s, h', y, hy⟩ := exists_shells_drop_eq_xbar x hjn (hjn.trans_le h)
-    rw [hq, argPos_of_lt hjn,
-      RoseTree.cCommands_mul_iff (getElem?_spine x hjn.le (hjn.le.trans h)), hy]
-    exact iff_of_false (not_cCommands_xbar hq1) hji.asymm
+@[simp] theorem shells_nil : shells ([] : List (Layer W)) x = x := rfl
 
-/-- The arguments of a projection, the highest first, embed in its positions, the order of the
-arguments going to c-command. -/
-def argEmbedding (x : Tree Cat W) (h : ss.length ≤ hs.length) :
-    ((· < ·) : Fin (ss.length + 1) → Fin (ss.length + 1) → Prop) ↪r (shells ss hs x).CCommands where
-  toFun k := argPos ss.length k
-  inj' a b hab := by
-    have h₁ := cCommands_argPos_iff (i := a) (j := b) x h (by omega) (by omega)
-    have h₂ := cCommands_argPos_iff (i := b) (j := a) x h (by omega) (by omega)
-    simp only [hab] at h₁
-    simp only [← hab] at h₂
-    exact Fin.ext (Nat.le_antisymm (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₂.2 hlt))
-      (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₁.2 hlt)))
-  map_rel_iff' := cCommands_argPos_iff x h (by omega) (by omega)
+@[simp] theorem shells_cons : shells (L :: ls) x = L.over (shells ls x) := rfl
 
-@[simp] theorem argEmbedding_apply (x : Tree Cat W) (h : ss.length ≤ hs.length)
-    (k : Fin (ss.length + 1)) : argEmbedding x h k = argPos ss.length k := rfl
+@[simp] theorem pos_zero : pos ls 0 = 1 := by cases ls <;> rfl
+
+@[simp] theorem pos_cons_succ : pos (L :: ls) (k + 1) = L.compPos * pos ls k := rfl
+
+theorem pos_succ : ∀ {ls : List (Layer W)} {k : ℕ} (hk : k < ls.length),
+    pos ls (k + 1) = pos ls k * ls[k].compPos
+  | L :: ls, 0, _ => by simp
+  | L :: ls, k + 1, hk => by
+    rw [pos_cons_succ, pos_succ (ls := ls) (by simpa using hk), pos_cons_succ, mul_assoc]
+    rfl
+
+theorem getElem?_pos (x : Tree Cat W) : ∀ {ls : List (Layer W)} {k : ℕ}, k ≤ ls.length →
+    (shells ls x)[pos ls k]? = some (shells (ls.drop k) x)
+  | _, 0, _ => by simp
+  | L :: ls, k + 1, hk => by
+    have h₁ := L.getElem?_compPos (shells ls x)
+    have h₂ := getElem?_pos x (ls := ls) (k := k) (by simpa using hk)
+    simp only [RoseTree.getElem?_gornAddress] at h₁ h₂ ⊢
+    simp [RoseTree.getElem?_append, h₁, h₂]
+
+theorem shells_drop (x : Tree Cat W) (hk : k < ls.length) :
+    shells (ls.drop k) x = ls[k].over (shells (ls.drop (k + 1)) x) := by
+  rw [List.drop_eq_getElem_cons hk, shells_cons]
+
+theorem isSpine_pos (ls : List (Layer W)) (x : Tree Cat W) :
+    IsSpine (shells ls x) (pos ls) ls.length where
+  lt k hk := by
+    rw [pos_succ hk]
+    exact (GornAddress.mulLeft (pos ls k)).lt_iff_lt.2 ls[k].of_one_lt_compPos
+  mem_branching k hk := by
+    have := (RoseTree.mul_mem_branching_iff (getElem?_pos x hk.le) (x := 1)).2
+      (shells_drop x hk ▸ Layer.one_mem_branching _ _)
+    rwa [mul_one] at this
+  mul_of_mem_branching k hk :=
+    (RoseTree.mul_mem_branching_iff (getElem?_pos x hk.le)).2
+      (shells_drop x hk ▸ Layer.of_one_mem_branching _ _)
+
+theorem getElem?_specPos (x : Tree Cat W) (hk : k < ls.length) :
+    (shells ls x)[specPos ls k]? = some ls[k].spec := by
+  have := getElem?_pos x hk.le
+  simp only [RoseTree.getElem?_gornAddress] at this ⊢
+  simp [RoseTree.getElem?_append, this, shells_drop x hk, Layer.over]
+
+theorem cCommands_specPos_adjunctPos (x : Tree Cat W) (hk : k < ls.length) :
+    (shells ls x).CCommands (specPos ls k) (adjunctPos ls k) ∧
+      ¬ (shells ls x).CCommands (adjunctPos ls k) (specPos ls k) :=
+  ⟨RoseTree.cCommands_mul_of ((isSpine_pos ls x).mem_branching k hk) (by decide) (.of 1),
+    RoseTree.not_cCommands_mul_of_mul ((isSpine_pos ls x).mul_of_mem_branching k hk) (by decide)
+      (by decide)⟩
 
 /-! ### The Thematic Hierarchy -/
 
@@ -219,59 +328,69 @@ def Role.rankOrderEmbedding : Role ↪o ℕ := ⟨⟨Role.rank, Role.rank_inject
 
 @[simp] theorem Role.coe_rankOrderEmbedding : ⇑Role.rankOrderEmbedding = Role.rank := rfl
 
-/-- (P2): when the roles of the arguments descend the hierarchy, one argument c-commands another
-exactly when its role is the higher. -/
-theorem cCommands_argPos_iff_role_lt (x : Tree Cat W) {role : ℕ → Role}
-    (hrole : StrictAntiOn role (Set.Iic ss.length)) (h : ss.length ≤ hs.length)
-    (hi : i ≤ ss.length) (hj : j ≤ ss.length) :
-    (shells ss hs x).CCommands (argPos ss.length i) (argPos ss.length j) ↔ role j < role i :=
-  (cCommands_argPos_iff x h hi hj).trans (hrole.lt_iff_gt hj hi).symm
+/-- (P2): when the roles of the arguments of a projection descend the hierarchy, one argument
+c-commands another exactly when its role is the higher. -/
+theorem cCommands_argPos_iff_role_lt (ls : List (Layer W)) (x : Tree Cat W) {role : ℕ → Role}
+    (hrole : StrictAntiOn role (Set.Iic ls.length)) (hi : i ≤ ls.length) (hj : j ≤ ls.length) :
+    (shells ls x).CCommands (argPos (pos ls) ls.length i) (argPos (pos ls) ls.length j) ↔
+      role j < role i :=
+  ((isSpine_pos ls x).cCommands_argPos_iff hi hj).trans (hrole.lt_iff_gt hj hi).symm
 
 /-! ### V Raising -/
 
-/-- The D-Structure of the verb `v` with the specifiers `ss` and the complement `x`: the verb is
-the lowest head, and the heads above it are empty. -/
-def dStructure (v : Tree Cat W) (ss : List (Tree Cat W)) (x : Tree Cat W) : Tree Cat W :=
-  shells ss (List.replicate (ss.length - 1) (empty .V) ++ [v]) x
+/-- The layers of a D-Structure: the verb `v` is the head of the lowest of the specifiers `ss`,
+and the heads above it are empty. -/
+def dLayers (v : Tree Cat W) : List (Tree Cat W) → List (Layer W)
+  | [] => []
+  | [s] => [{ spec := s, head := v }]
+  | s :: ss => { spec := s, head := empty .V } :: dLayers v ss
 
-/-- The S-Structure: the verb has raised to the highest head, and each head below is its
-trace. -/
-def sStructure (v : Tree Cat W) (ss : List (Tree Cat W)) (x : Tree Cat W) : Tree Cat W :=
-  shells ss (v :: List.replicate (ss.length - 1) (trace 0 .V)) x
+/-- The layers of an S-Structure: the verb has raised to the highest head, and each head below
+is its trace. -/
+def sLayers (v : Tree Cat W) : List (Tree Cat W) → List (Layer W)
+  | [] => []
+  | s :: ss => { spec := s, head := v } :: ss.map fun s ↦ { spec := s, head := trace 0 .V }
 
-variable {v agent theme goal prep infl byP : Tree Cat W}
-
-theorem yield_shells_replicate_trace (x : Tree Cat W) : ∀ (ss : List (Tree Cat W)) (k : ℕ),
-    ss.length ≤ k → (shells ss (List.replicate k (trace 0 .V)) x).yield =
-      ss.flatMap yield ++ x.yield
-  | [], _, _ => by simp
-  | s :: ss, k + 1, hk => by
-    simp [List.replicate_succ, yield_shells_replicate_trace x ss k (by simpa using hk)]
+variable {v s agent theme goal prep infl byP : Tree Cat W} {ss : List (Tree Cat W)}
 
 -- Before the verb raises the arguments all but the lowest precede it: *John a letter send to
 -- Mary*.
-theorem yield_dStructure (v x : Tree Cat W) : ∀ {ss : List (Tree Cat W)}, ss ≠ [] →
-    (dStructure v ss x).yield = ss.flatMap yield ++ (v.yield ++ x.yield)
-  | [s], _ => by simp [dStructure]
+theorem yield_shells_dLayers (v x : Tree Cat W) : ∀ {ss : List (Tree Cat W)}, ss ≠ [] →
+    (shells (dLayers v ss) x).yield = ss.flatMap yield ++ (v.yield ++ x.yield)
+  | [s], _ => by simp [dLayers]
   | s :: s' :: ss, _ => by
-    have := yield_dStructure v x (ss := s' :: ss) (by simp)
-    simp only [dStructure, List.length_cons, Nat.add_sub_cancel] at this ⊢
-    simp [List.replicate_succ, this]
+    simp [dLayers, yield_shells_dLayers v x (ss := s' :: ss) (by simp)]
 
 -- After it raises only the highest does: *John send a letter to Mary*.
-theorem yield_sStructure (v s x : Tree Cat W) (ss : List (Tree Cat W)) :
-    (sStructure v (s :: ss) x).yield = s.yield ++ (v.yield ++ (ss.flatMap yield ++ x.yield)) := by
-  simp [sStructure, yield_shells_replicate_trace x ss ss.length le_rfl]
+theorem yield_shells_sLayers (v s x : Tree Cat W) (ss : List (Tree Cat W)) :
+    (shells (sLayers v (s :: ss)) x).yield =
+      s.yield ++ (v.yield ++ (ss.flatMap yield ++ x.yield)) := by
+  suffices h : (shells (ss.map fun s ↦ ({ spec := s, head := trace 0 .V } : Layer W)) x).yield =
+      ss.flatMap yield ++ x.yield by simp [sLayers, h]
+  induction ss with
+  | nil => simp
+  | cons s ss ih => simp [ih]
 
 /-- Move α: the phrase at `src` takes the empty position `dst` and leaves the trace `i`. -/
-def move (i : ℕ) (src dst : List ℕ) (t : Tree Cat W) : Tree Cat W :=
-  t[src]?.elim t fun a ↦ (t.replaceAt src (trace i (Tree.cat a) : Tree Cat W)).replaceAt dst a
+def move (i : ℕ) (src dst : GornAddress) (t : Tree Cat W) : Tree Cat W :=
+  t[src]?.elim t fun a ↦
+    (t.replaceAt src.toList (trace i (Tree.cat a) : Tree Cat W)).replaceAt dst.toList a
 
--- (14): the verb of a dative raises from the lower head to the upper.
-theorem move_dStructure (hv : Tree.cat v = .V) :
-    move 0 [1, 1, 1, 0] [1, 0] (dStructure v [agent, theme] x) =
-      sStructure v [agent, theme] x := by
-  simp [move, dStructure, sStructure, xbar, RoseTree.replaceAt_cons, hv]
+/-! ### The oblique dative -/
+
+/-- (13): the D-Structure of the oblique dative, the theme over the verb and the *to*-phrase. -/
+abbrev obliqueD (v agent theme pp : Tree Cat W) : Tree Cat W :=
+  shells (dLayers v [agent, theme]) pp
+
+/-- (14): its S-Structure. -/
+abbrev oblique (v agent theme pp : Tree Cat W) : Tree Cat W := shells (sLayers v [agent, theme]) pp
+
+-- (14): the verb raises from the lower head to the upper.
+theorem move_obliqueD (hv : Tree.cat v = .V) :
+    move 0 ⟨[1, 1, 1, 0]⟩ ⟨[1, 0]⟩ (obliqueD v agent theme x) =
+      oblique v agent theme x := by
+  simp [move, obliqueD, oblique, dLayers, sLayers, Layer.over, Layer.bar, RoseTree.replaceAt_cons,
+    hv]
 
 /-! ### The structures the paper rejects -/
 
@@ -297,62 +416,74 @@ theorem cCommands_leftBranching (v a b : Tree Cat W) :
 
 /-! ### PASSIVE -/
 
-/-- (80), with *to* absorbed: the D-Structure of the double object construction. The role of the
-lower specifier is assigned to the theme as an adjunct of V′, and the specifier is empty. -/
-def shiftedD (v agent goal theme : Tree Cat W) : Tree Cat W :=
-  xbar .V agent (empty .V) (.node .V [empty .N, .adjoin .V [.node .V [v, goal], theme]])
+/-- The layers of the double object construction at S-Structure: the goal in the lower
+specifier, the theme the adjunct of V′. -/
+abbrev shiftedLayers (v agent goal theme : Tree Cat W) : List (Layer W) :=
+  [{ spec := agent, head := v }, { spec := goal, head := trace 0 .V, adjunct := some theme }]
+
+/-- (80), with *to* absorbed: the D-Structure of the double object construction, the oblique
+dative with the role of the lower specifier demoted. -/
+abbrev shiftedD (v agent goal theme : Tree Cat W) : Tree Cat W :=
+  shells ((dLayers v [agent, theme]).modify 1 Layer.demote) goal
 
 /-- (26): the double object construction. The goal has moved to the lower specifier and the verb
 has raised. -/
-def doubleObject (v agent goal theme : Tree Cat W) : Tree Cat W :=
-  xbar .V agent v (.node .V [goal, .adjoin .V [.node .V [.trace 0 .V, .trace 1 .N], theme]])
+abbrev doubleObject (v agent goal theme : Tree Cat W) : Tree Cat W :=
+  shells (shiftedLayers v agent goal theme) (trace 1 .N)
 
 /-- (24): the passive. The object has moved to the subject, and the *by*-phrase is adjoined to
 the verb phrase. -/
 def passive (infl v patient byP : Tree Cat W) : Tree Cat W :=
-  xbar .Aux patient infl (.adjoin .V [.node .V [v, .trace 1 .N], byP])
+  ({ cat := .Aux, spec := patient, head := infl } : Layer W).over
+    (adjoin .V [node .V [v, trace 1 .N], byP])
 
 /-- (40): the dative passive. The goal has moved from the complement of the verb to the subject,
 and the theme is in the lower specifier. -/
-def indirectPassive (infl v goal theme : Tree Cat W) : Tree Cat W :=
-  xbar .Aux goal infl (sStructure v [empty .N, theme] (.trace 1 .N))
+abbrev indirectPassive (infl v goal theme : Tree Cat W) : Tree Cat W :=
+  shells ({ cat := .Aux, spec := goal, head := infl } :: sLayers v [empty .N, theme]) (trace 1 .N)
 
 -- (25), (26): Dative Shift is the movement of the goal to the lower specifier.
 theorem move_move_shiftedD (hv : Tree.cat v = .V) (hg : Tree.cat goal = .N) :
-    move 0 [1, 1, 1, 0, 0] [1, 0] (move 1 [1, 1, 1, 0, 1] [1, 1, 0] (shiftedD v agent goal theme)) =
+    move 0 ⟨[1, 1, 1, 0, 0]⟩ ⟨[1, 0]⟩
+      (move 1 ⟨[1, 1, 1, 0, 1]⟩ ⟨[1, 1, 0]⟩ (shiftedD v agent goal theme)) =
       doubleObject v agent goal theme := by
-  simp [move, shiftedD, doubleObject, xbar, RoseTree.replaceAt_cons, hv, hg]
+  simp [move, shiftedD, doubleObject, shiftedLayers, dLayers, Layer.demote, Layer.over, Layer.bar,
+    RoseTree.replaceAt_cons, hv, hg]
 
 -- (40): the dative passive is one movement of the goal out of the D-Structure of the oblique
 -- dative, whose subject is empty.
-theorem move_move_dStructure (hv : Tree.cat v = .V) (hg : Tree.cat goal = .N) :
-    move 1 [1, 1, 1, 1, 1, 1] [0] (move 0 [1, 1, 1, 1, 1, 0] [1, 1, 1, 0]
-      (xbar .Aux (empty .N) infl (dStructure v [empty .N, theme] goal))) =
+theorem move_move_obliqueD (hv : Tree.cat v = .V) (hg : Tree.cat goal = .N) :
+    move 1 ⟨[1, 1, 1, 1, 1, 1]⟩ ⟨[0]⟩ (move 0 ⟨[1, 1, 1, 1, 1, 0]⟩ ⟨[1, 1, 1, 0]⟩
+      (({ cat := .Aux, spec := empty .N, head := infl } : Layer W).over
+        (obliqueD v (empty .N) theme goal))) =
       indirectPassive infl v goal theme := by
-  simp [move, indirectPassive, dStructure, sStructure, xbar, RoseTree.replaceAt_cons, hv, hg]
+  simp [move, obliqueD, indirectPassive, dLayers, sLayers, Layer.over, Layer.bar,
+    RoseTree.replaceAt_cons, hv, hg]
 
 theorem yield_doubleObject (v agent goal theme : Tree Cat W) :
     (doubleObject v agent goal theme).yield =
       agent.yield ++ (v.yield ++ (goal.yield ++ theme.yield)) := by
-  simp [doubleObject]
+  simp [doubleObject, shiftedLayers]
 
 /-- In the double object construction the goal c-commands the theme and not conversely. -/
 theorem cCommands_doubleObject (v agent goal theme : Tree Cat W) :
-    (doubleObject v agent goal theme).CCommands ⟨[1, 1, 0]⟩ ⟨[1, 1, 1, 1]⟩ ∧
-      ¬ (doubleObject v agent goal theme).CCommands ⟨[1, 1, 1, 1]⟩ ⟨[1, 1, 0]⟩ :=
-  ⟨RoseTree.cCommands_mul_of (p := ⟨[1, 1]⟩) (i := 0) (j := 1)
-      (by simp [RoseTree.mem_branching, doubleObject, xbar]) (by decide) (.of 1),
-    RoseTree.not_cCommands_mul_of_mul (p := ⟨[1, 1]⟩) (i := 0) (j := 1) (q := .of 1)
-      (by simp [RoseTree.mem_branching, doubleObject, xbar]) (by decide) (by decide)⟩
+    (doubleObject v agent goal theme).CCommands (specPos (shiftedLayers v agent goal theme) 1)
+        (adjunctPos (shiftedLayers v agent goal theme) 1) ∧
+      ¬ (doubleObject v agent goal theme).CCommands
+        (adjunctPos (shiftedLayers v agent goal theme) 1)
+        (specPos (shiftedLayers v agent goal theme) 1) :=
+  cCommands_specPos_adjunctPos _ (by simp)
 
 -- (27): in the passive the subject c-commands the *by*-phrase and not conversely.
 theorem cCommands_passive (infl v patient byP : Tree Cat W) :
-    (passive infl v patient byP).CCommands ⟨[0]⟩ ⟨[1, 1, 1]⟩ ∧
-      ¬ (passive infl v patient byP).CCommands ⟨[1, 1, 1]⟩ ⟨[0]⟩ :=
-  ⟨RoseTree.cCommands_mul_of (p := 1) (i := 0) (j := 1)
-      (by simp [RoseTree.mem_branching, passive, xbar]) (by decide) ⟨[1, 1]⟩,
-    RoseTree.not_cCommands_mul_of_mul (p := 1) (i := 0) (j := 1) (q := ⟨[1, 1]⟩)
-      (by simp [RoseTree.mem_branching, passive, xbar]) (by decide) (by decide)⟩
+    (passive infl v patient byP).CCommands (.of 0) (.of 1 * (.of 1 * .of 1)) ∧
+      ¬ (passive infl v patient byP).CCommands (.of 1 * (.of 1 * .of 1)) (.of 0) := by
+  unfold passive
+  refine ⟨?_, ?_⟩
+  · simpa using RoseTree.cCommands_mul_of (p := 1) (Layer.one_mem_branching _ _) (i := 0) (j := 1)
+      (by decide) (.of 1 * .of 1)
+  · simpa using RoseTree.not_cCommands_mul_of_mul (p := 1) (i := 0) (j := 1) (q := .of 1 * .of 1)
+      (by simpa using Layer.of_one_mem_branching _ _) (by decide) (by decide)
 
 /-! ### The asymmetries of the two objects -/
 
@@ -360,15 +491,17 @@ open Examples (Frame Argument)
 
 /-- The S-Structure of a frame. -/
 def rep (v agent theme goal prep : Tree Cat W) : Frame → Tree Cat W
-  | .oblique => sStructure v [agent, theme] (node .P [prep, goal])
+  | .oblique => oblique v agent theme (node .P [prep, goal])
   | .doubleObject => doubleObject v agent goal theme
 
-/-- The position of an object in the S-Structure of a frame. -/
-def pos : Frame → Argument → GornAddress
-  | .oblique, .theme => ⟨[1, 1, 0]⟩
-  | .oblique, .goal => ⟨[1, 1, 1, 1, 1]⟩
-  | .doubleObject, .goal => ⟨[1, 1, 0]⟩
-  | .doubleObject, .theme => ⟨[1, 1, 1, 1]⟩
+/-- The position of an object in the S-Structure of a frame: in the oblique dative the theme is
+the lower specifier and the goal the object of the preposition, and in the double object
+construction the goal is the lower specifier and the theme the adjunct. -/
+def objectPos (v agent theme goal : Tree Cat W) : Frame → Argument → GornAddress
+  | .oblique, .theme => specPos (sLayers v [agent, theme]) 1
+  | .oblique, .goal => pos (sLayers v [agent, theme]) 2 * .of 1
+  | .doubleObject, .goal => specPos (shiftedLayers v agent goal theme) 1
+  | .doubleObject, .theme => adjunctPos (shiftedLayers v agent goal theme) 1
 
 /-- The object in the lower specifier: the theme of the oblique dative, and the goal of the
 double object construction. -/
@@ -381,23 +514,21 @@ def other : Argument → Argument
   | .theme => .goal
   | .goal => .theme
 
-theorem getElem?_pos (f : Frame) :
-    (rep v agent theme goal prep f)[pos f .theme]? = some theme ∧
-      (rep v agent theme goal prep f)[pos f .goal]? = some goal := by
+theorem getElem?_objectPos (f : Frame) :
+    (rep v agent theme goal prep f)[objectPos v agent theme goal f .theme]? = some theme ∧
+      (rep v agent theme goal prep f)[objectPos v agent theme goal f .goal]? = some goal := by
   cases f <;> exact ⟨rfl, rfl⟩
 
-theorem cCommands_pos_iff (f : Frame) (r : Argument) :
-    (rep v agent theme goal prep f).CCommands (pos f r) (pos f (other r)) ↔ r = higher f := by
-  have ho : (rep v agent theme goal prep .oblique).CCommands ⟨[1, 1, 0]⟩ ⟨[1, 1, 1, 1, 1]⟩ ∧
-      ¬ (rep v agent theme goal prep .oblique).CCommands ⟨[1, 1, 1, 1, 1]⟩ ⟨[1, 1, 0]⟩ :=
-    ⟨RoseTree.cCommands_mul_of (p := ⟨[1, 1]⟩) (i := 0) (j := 1)
-        (by simp [RoseTree.mem_branching, rep, sStructure, xbar]) (by decide) ⟨[1, 1]⟩,
-      RoseTree.not_cCommands_mul_of_mul (p := ⟨[1, 1]⟩) (i := 0) (j := 1) (q := ⟨[1, 1]⟩)
-        (by simp [RoseTree.mem_branching, rep, sStructure, xbar]) (by decide) (by decide)⟩
+theorem cCommands_objectPos_iff (f : Frame) (r : Argument) :
+    (rep v agent theme goal prep f).CCommands (objectPos v agent theme goal f r)
+      (objectPos v agent theme goal f (other r)) ↔ r = higher f := by
+  have hs := isSpine_pos (sLayers v [agent, theme]) (node .P [prep, goal])
   have hd := cCommands_doubleObject v agent goal theme
   cases f <;> cases r
-  · exact iff_of_true ho.1 rfl
-  · exact iff_of_false ho.2 (by decide)
+  · exact iff_of_true (hs.cCommands_of_lt (i := 1) (j := 2) (by decide) le_rfl
+      (GornAddress.le_mul_right _ _)) rfl
+  · exact iff_of_false (hs.not_cCommands_of_lt (i := 1) (j := 2) (by decide) le_rfl
+      (GornAddress.le_mul_right _ _)) (by decide)
   · exact iff_of_false hd.2 (by decide)
   · exact iff_of_true hd.1 rfl
 
@@ -406,8 +537,9 @@ c-command the other does. -/
 theorem acceptable_iff_cCommands (v agent theme goal prep : Tree Cat W) :
     ∀ e ∈ Examples.all, ∀ f ∈ Examples.frame e, ∀ r ∈ Examples.licensor e,
       (e.judgment = .acceptable ↔
-        (rep v agent theme goal prep f).CCommands (pos f r) (pos f (other r))) := by
-  simp only [cCommands_pos_iff]
+        (rep v agent theme goal prep f).CCommands (objectPos v agent theme goal f r)
+          (objectPos v agent theme goal f (other r))) := by
+  simp only [cCommands_objectPos_iff]
   decide
 
 example : Datum.ReadCount Examples.licensor Examples.all 24 := by decide
@@ -460,7 +592,7 @@ theorem yield_oblique :
   decide
 
 theorem yield_shifted :
-    ((move 0 [1, 1, 1, 0, 0] [1, 0] (move 1 [1, 1, 1, 0, 1] [1, 1, 0]
+    ((move 0 ⟨[1, 1, 1, 0, 0]⟩ ⟨[1, 0]⟩ (move 1 ⟨[1, 1, 1, 0, 1]⟩ ⟨[1, 1, 0]⟩
       (shiftedD sent john mary aLetter))).yield.map (·.form)) =
       ["John", "sent", "Mary", "a", "letter"] := by
   decide
