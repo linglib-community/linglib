@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Hamblin.Exhaustive
+public import Linglib.Semantics.Questions.Hamblin.StrongestAnswer
 public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 
 /-!

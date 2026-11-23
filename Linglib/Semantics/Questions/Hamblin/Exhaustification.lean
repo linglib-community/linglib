@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Finite.Basic
-public import Linglib.Semantics.Questions.Hamblin.Exhaustive
+public import Linglib.Semantics.Questions.Hamblin.StrongestAnswer
 public import Linglib.Semantics.Exhaustification.Basic
 
 /-!
