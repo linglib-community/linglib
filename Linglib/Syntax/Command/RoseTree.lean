@@ -12,7 +12,9 @@ are `RoseTree.branching`. Between positions neither of which dominates the other
 c-command, `RoseTree.CCommands`, which is
 [sisterhood plus dominance](##RoseTree.cCommands_iff_parent_lt). Both are read off the tree, so
 they are decidable, and they are unchanged by relabelling and by replacing a subtree the
-commander does not dominate.
+commander does not dominate. C-command between two positions of a subtree is c-command in the
+tree, `RoseTree.cCommands_mul_iff`, so the positions of the subtree embed in those of the tree by
+`RoseTree.cCommandsEmbedding`.
 
 ## Implementation notes
 
@@ -161,5 +163,57 @@ theorem cCommands_replaceAt_self : CCommands (t.replaceAt c new) c a ↔ CComman
   simp only [CCommands, commands_iff, mem_commandRelation_branching_replaceAt (lt_irrefl c)]
 
 end Replace
+
+/-! ### Subtrees and sisters -/
+
+section Subtree
+
+variable {t s : RoseTree β} {p q : GornAddress} {i j : ℕ}
+
+theorem mul_mem_branching_iff (h : t[p]? = some s) {x : GornAddress} :
+    p * x ∈ t.branching ↔ x ∈ s.branching := by
+  rw [getElem?_gornAddress] at h
+  simp [mem_branching, getElem?_append, h]
+
+/-- C-command between two positions of a subtree is c-command in the tree. -/
+theorem cCommands_mul_iff (h : t[p]? = some s) {a b : GornAddress} :
+    t.CCommands (p * a) (p * b) ↔ s.CCommands a b := by
+  have hf : ∀ a, ∀ y < GornAddress.mulLeft p a, y ∈ Set.range (GornAddress.mulLeft p) ∨
+      y ∈ lowerBounds (Set.range (GornAddress.mulLeft p)) := fun a y hy ↦ by
+    rcases GornAddress.le_mul_iff.1 hy.le with hyp | ⟨q, -, rfl⟩
+    · exact .inr fun _ ⟨z, hz⟩ ↦ hz ▸ hyp.trans (GornAddress.le_mul_right p z)
+    · exact .inl ⟨q, rfl⟩
+  rw [CCommands, CCommands, ← GornAddress.mulLeft_apply, ← GornAddress.mulLeft_apply,
+    ← commands_preimage_iff _ hf]
+  congr! 1
+  ext x
+  exact mul_mem_branching_iff h
+
+/-- The positions of a subtree embed in those of the tree, and the embedding preserves and
+reflects c-command. -/
+def cCommandsEmbedding (h : t[p]? = some s) : s.CCommands ↪r t.CCommands where
+  toEmbedding := (GornAddress.mulLeft p).toEmbedding
+  map_rel_iff' := cCommands_mul_iff h
+
+@[simp] theorem cCommandsEmbedding_apply (h : t[p]? = some s) (a : GornAddress) :
+    cCommandsEmbedding h a = p * a := rfl
+
+theorem not_mul_of_le_mul_of (p : GornAddress) (hij : i ≠ j) : ¬ p * .of i ≤ p * .of j :=
+  fun h ↦ hij (GornAddress.of_inj_of_mul_of_le h le_rfl)
+
+/-- A daughter of a branching node c-commands what its sisters dominate. -/
+theorem cCommands_mul_of (hp : p ∈ t.branching) (hij : i ≠ j) (q : GornAddress) :
+    t.CCommands (p * .of i) (p * .of j * q) :=
+  commands_of_covBy_of_lt (GornAddress.covBy_mul_of p i) hp (GornAddress.lt_mul_of p j)
+    (not_mul_of_le_mul_of p hij) (GornAddress.le_mul_right _ _)
+
+/-- A position properly below a branching daughter c-commands none of the daughter's sisters. -/
+theorem not_cCommands_mul_of_mul (hp : p * .of j ∈ t.branching) (hij : i ≠ j) (hq : q ≠ 1) :
+    ¬ t.CCommands (p * .of j * q) (p * .of i) :=
+  not_commands_of_covBy_of_lt (GornAddress.covBy_mul_of p i) hp (GornAddress.lt_mul_of p j)
+    (not_mul_of_le_mul_of p hij) (lt_of_le_of_ne (GornAddress.le_mul_right _ _)
+      fun e ↦ hq (mul_left_cancel (e.symm.trans (mul_one _).symm))) le_rfl
+
+end Subtree
 
 end RoseTree

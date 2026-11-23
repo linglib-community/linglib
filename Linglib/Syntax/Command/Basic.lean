@@ -225,6 +225,29 @@ theorem commands_iff_lt_of_covBy (ha : m ⋖ a) (hm : m ∈ P) :
 theorem commands_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hab : a ≠ b) : Commands P a b :=
   ⟨mem_commandRelation_of_covBy ha hb.le, ha.not_le_of_ne hb hab, hb.not_le_of_ne ha hab.symm⟩
 
+variable {m' : α}
+
+/-- A daughter of `m` that does not dominate a node below `m` dominates nothing below that
+node. -/
+theorem not_le_of_covBy_of_lt (ha : m ⋖ a) (hmm : m < m') (hoff : ¬ a ≤ m') (hb : m' ≤ b) :
+    ¬ a ≤ b := fun hab ↦
+  (IsForestOrder.le_total_of_le_of_le hab hb).elim hoff fun h ↦
+    hoff ((ha.eq_or_eq hmm.le h).resolve_left hmm.ne').ge
+
+/-- Down a path the higher daughter commands: a daughter of the generator `m` that does not
+dominate the node `m'` below `m` commands whatever `m'` dominates. -/
+theorem commands_of_covBy_of_lt (ha : m ⋖ a) (hm : m ∈ P) (hmm : m < m') (hoff : ¬ a ≤ m')
+    (hb : m' ≤ b) : Commands P a b :=
+  (commands_iff_lt_of_covBy ha hm).2
+    ⟨hmm.trans_le hb, not_le_of_covBy_of_lt ha hmm hoff hb⟩
+
+/-- Down a path the lower node does not command: nothing the generator `m'` properly dominates
+commands what a daughter of a node above `m'` dominates, if the daughter does not dominate
+`m'`. -/
+theorem not_commands_of_covBy_of_lt {b' : α} (ha : m ⋖ a) (hm' : m' ∈ P) (hmm : m < m')
+    (hoff : ¬ a ≤ m') (hb : m' < b) (hb' : a ≤ b') : ¬ Commands P b b' := fun h ↦
+  not_le_of_covBy_of_lt ha hmm hoff (h.command hm' hb) hb'
+
 end ForestOrder
 
 /-! ### Mates -/
