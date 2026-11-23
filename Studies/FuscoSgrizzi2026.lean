@@ -93,7 +93,7 @@ theorem aP_empty (circumstances : V → Set (W → Prop)) (causeStar : W → Set
 
 /-- The head *di* (26) is necessity over the state's content worlds of a proposition. -/
 def diP (con : V → Option (Set W)) (Q : W → Prop) (s : V) : Prop :=
-  □[contentAccessible con] Q s
+  □[compatible con] Q s
 
 /-- The relations the denotation (24) draws on, convincing events, the thematic relations,
 causation between eventualities, and the class of rational attitudes. -/

@@ -8,6 +8,7 @@ public import Linglib.Data.Examples.Bondarenko2022
 public import Linglib.Semantics.Composition.Interpret
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
+public import Linglib.Semantics.Modality.Content
 
 /-!
 # [bondarenko-2022] — Anatomy of an Attitude
@@ -141,36 +142,20 @@ theorem sort_predicts_cooccurrence :
 /-! ### Equality, subset and existential content
 
 The content function is partial: it is defined for ideas, beliefs and claims and undefined for
-other individuals. -/
+other individuals. On the equality semantics (7) a clause with proposition `p` holds of `x` when
+`p ∈ cont x`. On the subset semantics (10) of [kratzer-2006], which the thesis rejects, and on
+the existential semantics (15), it holds when `p` is necessary, or possible, along
+`Modality.compatible cont`. The law (11), that the subset semantics distributes over conjunction,
+is `ModalLogic.box_and`, both are monotone in `p` (`ModalLogic.box_mono`,
+`ModalLogic.diamond_mono`), and a clause that holds on the equality semantics holds on the other
+two, on the existential one where its proposition is consistent
+(`Modality.box_compatible_of_mem`, `Modality.diamond_compatible_of_mem`). -/
 
-variable {X W : Type*} {cont : X → Option (W → Prop)} {x : X} {p q : W → Prop}
+section Content
 
-/-- (10): on the subset semantics of [kratzer-2006], which the thesis rejects, a clause holds of
-an individual whose content entails the clause's proposition, where the equality semantics (7)
-asks for `p ∈ cont x`. -/
-def SubsetContent (cont : X → Option (W → Prop)) (x : X) (p : W → Prop) : Prop :=
-  ∃ c ∈ cont x, c ≤ p
+open Modality ModalLogic
 
-/-- (15): on the existential semantics a clause holds of an individual whose content is
-compatible with the clause's proposition. -/
-def ExistentialContent (cont : X → Option (W → Prop)) (x : X) (p : W → Prop) : Prop :=
-  ∃ c ∈ cont x, ∃ w, c w ∧ p w
-
-theorem SubsetContent.of_mem (h : p ∈ cont x) : SubsetContent cont x p :=
-  ⟨p, h, le_rfl⟩
-
-theorem SubsetContent.mono (h : SubsetContent cont x p) (hpq : p ≤ q) : SubsetContent cont x q :=
-  let ⟨c, hc, hcp⟩ := h; ⟨c, hc, hcp.trans hpq⟩
-
-theorem ExistentialContent.of_mem (hne : ∃ w, p w) (h : p ∈ cont x) :
-    ExistentialContent cont x p :=
-  let ⟨w, hw⟩ := hne; ⟨p, h, w, hw, hw⟩
-
--- (11)
-theorem subsetContent_inf :
-    SubsetContent cont x (p ⊓ q) ↔ SubsetContent cont x p ∧ SubsetContent cont x q :=
-  ⟨fun ⟨c, hc, h⟩ ↦ ⟨⟨c, hc, h.trans inf_le_left⟩, c, hc, h.trans inf_le_right⟩,
-    fun ⟨⟨c, hc, hp⟩, _, hc', hq⟩ ↦ ⟨c, hc, le_inf hp (Option.mem_unique hc hc' ▸ hq)⟩⟩
+variable {X W : Type*} {cont : X → Option (Set W)} {x : X} {p q : Set W}
 
 /-- On the equality semantics two clauses that hold of one individual have the same proposition,
 so clauses cannot stack or conjoin under one content individual. -/
@@ -180,31 +165,34 @@ theorem eq_of_mem_cont (hp : p ∈ cont x) (hq : q ∈ cont x) : p = q :=
 theorem mem_cont_iff_eq (hp : p ∈ cont x) : q ∈ cont x ↔ p = q :=
   ⟨eq_of_mem_cont hp, fun h ↦ h ▸ hp⟩
 
-theorem subsetContent_not_functional :
-    ¬ ∀ (cont : Unit → Option (Bool → Prop)) (p q : Bool → Prop),
-      SubsetContent cont () p → SubsetContent cont () q → p = q :=
-  fun h ↦ Bool.noConfusion <| (iff_of_eq (congrFun
-    (h (fun _ ↦ some (· = true)) (· = true) (fun _ ↦ True) (.of_mem rfl)
-      ⟨_, rfl, fun _ _ ↦ trivial⟩) false)).mpr trivial
+theorem box_compatible_not_functional :
+    ¬ ∀ (cont : Unit → Option (Set Bool)) (p q : Set Bool),
+      □[compatible cont] (· ∈ p) () → □[compatible cont] (· ∈ q) () → p = q :=
+  fun h ↦ Bool.false_ne_true
+    (h (fun _ ↦ some {true}) {true} Set.univ (box_compatible_of_mem rfl) (fun _ _ ↦ trivial) ▸
+      Set.mem_univ false : false ∈ ({true} : Set Bool))
+
+end Content
 
 /-! ### Transparency -/
 
 variable {S : Type*}
 
-/-- A clause is referentially transparent at `s` when predicates agreeing at
-`s` are interchangeable in it. -/
-def ReferentiallyTransparentAt (clause : (S → Prop) → S → Prop) (s : S) : Prop :=
-  ∀ p q : S → Prop, (p s ↔ q s) → (clause p s ↔ clause q s)
+/-- A clause is referentially transparent at `s` when propositions agreeing at `s` are
+interchangeable in it. -/
+def ReferentiallyTransparentAt (clause : Set S → S → Prop) (s : S) : Prop :=
+  ∀ p q : Set S, (s ∈ p ↔ s ∈ q) → (clause p s ↔ clause q s)
 
-theorem sit_transparentAt (s : S) : ReferentiallyTransparentAt (fun p s' => p s') s :=
-  fun _ _ h => h
+theorem sit_transparentAt (s : S) : ReferentiallyTransparentAt (fun p s' ↦ s' ∈ p) s :=
+  fun _ _ h ↦ h
 
 theorem mem_cont_not_transparentAt :
-    ¬ ∀ (cont : Unit → Option (Bool → Prop)) (w : Bool),
+    ¬ ∀ (cont : Unit → Option (Set Bool)) (w : Bool),
       ReferentiallyTransparentAt (fun p _ ↦ p ∈ cont ()) w :=
-  fun h ↦ Bool.noConfusion <| (iff_of_eq (congrFun (Option.some.inj
-    ((h (fun _ ↦ some (· = false)) false (· = false) (fun _ ↦ True)
-      ⟨fun _ ↦ trivial, fun _ ↦ rfl⟩).mp rfl)) true)).mpr trivial
+  fun h ↦ Bool.false_ne_true
+    (Option.some.inj ((h (fun _ ↦ some {false}) false {false} Set.univ
+      ⟨fun _ ↦ trivial, fun _ ↦ rfl⟩).mp rfl) ▸ Set.mem_univ true :
+        true ∈ ({false} : Set Bool)).symm
 
 /-- A substitution triple's conclusion, with the sort of the embedded
 clause and whether the thesis judges the inference valid. -/
