@@ -27,6 +27,12 @@ the paper's examples realizes a sentence type of its language and each type has 
 Fragment entries say, `printed`. The J-μ type alone realizes every head,
 `isDefective_transpose_exponence_iff`.
 
+Each head's particle stands on a side of a conjunct, and the pattern of a sentence type is the
+join of the patterns of the heads it pronounces. The J type is monosyndetic A co-B and the μ type
+bisyndetic A-co B-co, two of the nine binary patterns with at most one coordinator on a
+coordinand; the J-μ type is their join, `pattern_jMu`, with two coordinators on its second
+conjunct, `card_pattern_le_one_iff`.
+
 A structure for the conjunction is J over the two noun phrases or J over a μ phrase for each, and
 an account gives each sentence type a structure, among whose heads are the heads it pronounces.
 With a conjunctive J both structures denote *every* on the conjuncts,
@@ -219,6 +225,40 @@ theorem exists_span_iff_glossed :
     ∀ e ∈ Examples.all, ∀ i < e.glossedWords.length, ∀ w ∈ e.glossedWords[i]?,
       (∃ s ∈ e.spans, s.start = i) ↔ "J".toList ∈ w.glosses ∨ "MU".toList ∈ w.glosses := by
   decide
+
+/-! ### The patterns of the sentence types -/
+
+/-- The coordinand and side at which the particle of a head stands in the test languages: J
+before the second conjunct, the μ of a conjunct after it. -/
+def headPattern : Head → Coordinator.Pattern
+  | .j => ![∅, {.before}]
+  | .mu i => fun k ↦ if k = i then {.after} else ∅
+
+/-- The pattern of a sentence type, the join of the patterns of the heads it pronounces. -/
+def Sentence.pattern (s : Sentence) : Coordinator.Pattern := s.pronounced.sup headPattern
+
+theorem Sentence.pattern_mono : Monotone Sentence.pattern := fun _ _ h ↦ Finset.sup_mono h
+
+-- (1a) and (2a): monosyndetic A co-B
+theorem pattern_j : Sentence.j.pattern = ![∅, {.before}] := by decide
+
+-- (1b) and (2b): bisyndetic A-co B-co
+theorem pattern_mu : Sentence.mu.pattern = ![{.after}, {.after}] := by decide
+
+-- (1c) and (2c)
+theorem pattern_jMu : Sentence.jMu.pattern = Sentence.j.pattern ⊔ Sentence.mu.pattern := by
+  decide
+
+theorem syndesis_pattern (s : Sentence) : s.pattern.syndesis = s.pronounced.card := by
+  cases s <;> decide
+
+-- the J-μ type has two coordinators on its second conjunct
+theorem card_pattern_le_one_iff {s : Sentence} : (∀ i, (s.pattern i).card ≤ 1) ↔ s ≠ .jMu := by
+  revert s; decide
+
+-- (2): the Georgian enclitic stands on the side `headPattern` gives μ
+theorem side?_exponent_georgian_mu (i : Fin 2) :
+    (exponent .georgian (.mu i)).morph.kind.side? = some .after := rfl
 
 /-! ### Structures, accounts and their measures -/
 
