@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Logic.Modal.Kripke
-public import Linglib.Phonology.Autosegmental.Multiplanar
 public import Linglib.Phonology.Autosegmental.OCP
 public import Linglib.Phonology.Autosegmental.TierTree
 
@@ -15,32 +14,33 @@ public import Linglib.Phonology.Autosegmental.TierTree
 
 A representation along a tree of tiers is a Kripke model, `AR.toKripkeModel`: its worlds are
 the positions on the tiers, a position sees its children, and the atom `⟨j, b⟩` is true at the
-positions of tier `j` labelled `b`. A slot reads `b` on tier `j` when a position it reaches makes
-that atom true (`reads_iff_exists_val`). Representations whose models are related by a
-bisimulation therefore read alike at related slots (`IsBisimulation.reads_iff`). Material that no
+positions of tier `j` labelled `b`. A slot bears `b` on tier `j` when a position it reaches makes
+that atom true (`mem_melody_iff_exists_val`). Representations whose models are related by a
+bisimulation therefore bear the same labels at related slots
+(`IsBisimulation.mem_melody_iff`). Material that no
 slot dominates, such as an autosegment left floating by delinking, plays no part.
 
 A relation between positions of the same tier is a bisimulation when related positions carry
 the same label and each child of one is related to a child of the other
 (`isBisimulation_toKripkeModel`). When each token of two representations has at most one line
-to each lower tier, the converse holds: two slots that read alike are bisimilar
-(`exists_isBisimulation_iff_reads`), so a slot is bisimilar to the slot of a symbol in a
-realization exactly when it reads what the primitive of that symbol reads
+to each lower tier, the converse holds: two slots that bear the same labels are bisimilar
+(`exists_isBisimulation_iff_mem_melody`), so a slot is bisimilar to the slot of a symbol in a
+realization exactly when it bears the labels that the primitive of that symbol bears
 (`exists_isBisimulation_prod_map_iff`). The condition is needed: a slot with two tokens on the
-tier below, one of them childless, reads what a slot with one does and is not bisimilar to it
-(`exists_reads_iff_and_not_isBisimulation`).
+tier below, one of them childless, bears the labels of a slot with one and is not bisimilar to it
+(`exists_mem_melody_iff_and_not_isBisimulation`).
 
 In a realization by trees with at most one token on a tier, spreading a tier from one symbol
 onto another by a change of lines, `AR.spreadTier`, is bisimilar to replacing the target symbol
 by one that has the source's tokens on that tier and below it and the target's own elsewhere
-(`exists_isBisimulation_spreadTier`). The two read alike (`reads_spreadTier_iff`): linking
+(`exists_isBisimulation_spreadTier`). The two bear the same labels
+(`mem_melody_spreadTier_iff`): linking
 shares what copying duplicates.
 
 The OCP-merging collapse of a tier that no tier hangs from is bisimilar to the representation,
-each position related to its run index (`exists_isBisimulation_collapse`), so it changes what no
-slot reads (`reads_collapse_iff`). On two tiers, collapsing the autosegments changes what no
-slot surfaces with (`surfacesWith_collapse_upper_iff`), and collapsing a plane of a multiplanar
-representation leaves each slot hosting the same autosegments (`mem_hostedOn_collapse_iff`).
+each position related to its run index (`exists_isBisimulation_collapse`), so it changes the
+labels no slot bears (`mem_melody_collapse_iff`). On two tiers, collapsing the autosegments
+changes what no slot surfaces with (`surfacesWith_collapse_upper_iff`).
 
 A phonological frame of [bird-blackburn-1991] has precedence, overlap and dominance between its
 nodes, with a modality for each and the labels of nodes as propositional variables;
@@ -87,10 +87,10 @@ theorem toKripkeModel_val_self {j : ι} {q : ℕ} {b : τ j} :
   Option.map_eq_some_iff.trans
     ⟨fun ⟨_, ha, he⟩ ↦ by cases he; exact ha, fun h ↦ ⟨b, h, rfl⟩⟩
 
-/-- A slot reads a label on a tier when a position it reaches makes the atom true. -/
-theorem reads_iff_exists_val {k : ℕ} {j : ι} {b : τ j} :
-    X.Reads T k j b ↔ ∃ v, X.Dom T (T.root, k) v ∧ (X.toKripkeModel T).val ⟨j, b⟩ v := by
-  rw [reads_iff_exists_dom]
+/-- A slot bears a label on a tier when a position it reaches makes the atom true. -/
+theorem mem_melody_iff_exists_val {k : ℕ} {j : ι} {b : τ j} :
+    b ∈ X.melody T k j ↔ ∃ v, X.Dom T (T.root, k) v ∧ (X.toKripkeModel T).val ⟨j, b⟩ v := by
+  rw [mem_melody_iff_exists_dom]
   constructor
   · rintro ⟨q, hq, hb⟩
     exact ⟨(j, q), hq, toKripkeModel_val_self.mpr hb⟩
@@ -99,13 +99,13 @@ theorem reads_iff_exists_val {k : ℕ} {j : ι} {b : τ j} :
     cases he
     exact ⟨q, hv, ha⟩
 
-/-- Representations whose Kripke models are related by a bisimulation read alike at related
-slots. -/
-theorem _root_.ModalLogic.KripkeModel.IsBisimulation.reads_iff {r : ι × ℕ → ι × ℕ → Prop}
+/-- Representations whose Kripke models are related by a bisimulation bear the same labels at
+related slots. -/
+theorem _root_.ModalLogic.KripkeModel.IsBisimulation.mem_melody_iff {r : ι × ℕ → ι × ℕ → Prop}
     (h : (Y.toKripkeModel T).IsBisimulation (Z.toKripkeModel T) r) {k k' : ℕ}
     (hr : r (T.root, k) (T.root, k')) {j : ι} {b : τ j} :
-    Y.Reads T k j b ↔ Z.Reads T k' j b := by
-  simp only [reads_iff_exists_val]
+    b ∈ Y.melody T k j ↔ b ∈ Z.melody T k' j := by
+  simp only [mem_melody_iff_exists_val]
   constructor
   · rintro ⟨v, hv, hval⟩
     obtain ⟨v', hv', hrv⟩ := h.exists_reflTransGen hr hv
@@ -135,70 +135,70 @@ theorem isBisimulation_toKripkeModel {R : ι → ℕ → ℕ → Prop}
       fun ⟨j, q'⟩ hc ↦
         let ⟨q, hc', hR'⟩ := back hR hc; ⟨(j, q), hc', j, q, q', rfl, rfl, hR'⟩⟩
 
-/-! ### Reading as a complete invariant -/
+/-! ### The labels a slot bears as a complete invariant -/
 
-private theorem forth_of_reads (hY : Y.IsFunctional T) {k k' : ℕ}
-    (h : ∀ (j : ι) (b : τ j), X.Reads T k j b → Y.Reads T k' j b) {i j : ι} {p p' q : ℕ}
+private theorem forth_of_mem_melody (hY : Y.IsFunctional T) {k k' : ℕ}
+    (h : ∀ (j : ι) (b : τ j), b ∈ X.melody T k j → b ∈ Y.melody T k' j) {i j : ι} {p p' q : ℕ}
     (hp : X.Dom T (T.root, k) (i, p)) (hp' : Y.Dom T (T.root, k') (i, p'))
     (hc : (j, q) ∈ X.children T (i, p)) :
     ∃ q', (j, q') ∈ Y.children T (i, p') ∧ X.Dom T (T.root, k) (j, q) ∧
       Y.Dom T (T.root, k') (j, q') := by
   obtain ⟨hpar, hr, hl⟩ := mem_children.1 hc
   have hq : X.Dom T (T.root, k) (j, q) := hp.tail hc
-  obtain ⟨q', hq', -⟩ := reads_iff_exists_dom.1
-    (h j _ (reads_iff_exists_dom.2 ⟨q, hq, List.getElem?_eq_getElem hl.lt_right⟩))
+  obtain ⟨q', hq', -⟩ := mem_melody_iff_exists_dom.1
+    (h j _ (mem_melody_iff_exists_dom.2 ⟨q, hq, List.getElem?_eq_getElem hl.lt_right⟩))
   refine ⟨q', ?_, hq, hq'⟩
   rcases Relation.ReflTransGen.cases_tail hq' with he | ⟨u, hu, hc'⟩
   · exact absurd (congrArg Prod.fst he) hr
   · obtain rfl : u = (i, p') := hY.eq_of_dom hu hp' ((mem_children.1 hc').1.symm.trans hpar)
     exact hc'
 
-private theorem label_of_reads (hY : Y.IsFunctional T) {k k' : ℕ}
-    (h : ∀ (j : ι) (b : τ j), X.Reads T k j b → Y.Reads T k' j b) {j : ι} {q q' : ℕ}
+private theorem label_of_mem_melody (hY : Y.IsFunctional T) {k k' : ℕ}
+    (h : ∀ (j : ι) (b : τ j), b ∈ X.melody T k j → b ∈ Y.melody T k' j) {j : ι} {q q' : ℕ}
     (hq : X.Dom T (T.root, k) (j, q)) (hq' : Y.Dom T (T.root, k') (j, q')) {b : τ j}
     (hb : (X.word j)[q]? = some b) : (Y.word j)[q']? = some b := by
-  obtain ⟨q₁, hd, hb'⟩ := reads_iff_exists_dom.1
-    (h j b (reads_iff_exists_dom.2 ⟨q, hq, hb⟩))
+  obtain ⟨q₁, hd, hb'⟩ := mem_melody_iff_exists_dom.1
+    (h j b (mem_melody_iff_exists_dom.2 ⟨q, hq, hb⟩))
   obtain ⟨-, rfl⟩ := Prod.mk.inj (hY.eq_of_dom hd hq' rfl)
   exact hb'
 
 /-- When each token of two representations has at most one line to each lower tier, two slots
-are bisimilar exactly when they read alike. -/
-theorem exists_isBisimulation_iff_reads (hX : X.IsFunctional T) (hY : Y.IsFunctional T)
+are bisimilar exactly when they bear the same labels. -/
+theorem exists_isBisimulation_iff_mem_melody (hX : X.IsFunctional T) (hY : Y.IsFunctional T)
     {k k' : ℕ} :
     (∃ r, (X.toKripkeModel T).IsBisimulation (Y.toKripkeModel T) r ∧
         r (T.root, k) (T.root, k')) ↔
-      ∀ (j : ι) (b : τ j), X.Reads T k j b ↔ Y.Reads T k' j b := by
+      ∀ (j : ι) (b : τ j), b ∈ X.melody T k j ↔ b ∈ Y.melody T k' j := by
   constructor
   · rintro ⟨r, hB, hr⟩ j b
-    exact hB.reads_iff hr
+    exact hB.mem_melody_iff hr
   · intro h
     refine ⟨_, isBisimulation_toKripkeModel (R := fun j q q' ↦
       X.Dom T (T.root, k) (j, q) ∧ Y.Dom T (T.root, k') (j, q')) ?_ ?_ ?_,
       T.root, k, k', rfl, rfl, .refl, .refl⟩
     · rintro j q q' ⟨hq, hq'⟩
-      exact Option.ext fun b ↦ ⟨label_of_reads hY (fun j b ↦ (h j b).1) hq hq',
-        label_of_reads hX (fun j b ↦ (h j b).2) hq' hq⟩
+      exact Option.ext fun b ↦ ⟨label_of_mem_melody hY (fun j b ↦ (h j b).1) hq hq',
+        label_of_mem_melody hX (fun j b ↦ (h j b).2) hq' hq⟩
     · rintro i p p' j q ⟨hp, hp'⟩ hc
-      obtain ⟨q', hc', hq, hq'⟩ := forth_of_reads hY (fun j b ↦ (h j b).1) hp hp' hc
+      obtain ⟨q', hc', hq, hq'⟩ := forth_of_mem_melody hY (fun j b ↦ (h j b).1) hp hp' hc
       exact ⟨q', hc', hq, hq'⟩
     · rintro i p p' j q' ⟨hp, hp'⟩ hc
-      obtain ⟨q, hc', hq', hq⟩ := forth_of_reads hX (fun j b ↦ (h j b).2) hp' hp hc
+      obtain ⟨q, hc', hq', hq⟩ := forth_of_mem_melody hX (fun j b ↦ (h j b).2) hp' hp hc
       exact ⟨q, hc', hq, hq'⟩
 
 /-- A slot of a functional representation is bisimilar to the slot of a symbol in a realization
-exactly when it reads what the primitive of that symbol reads. -/
+exactly when it bears the labels that the primitive of that symbol bears. -/
 theorem exists_isBisimulation_prod_map_iff {S : Type*} (g₀ : S → AR τ) {w : List S}
     (hX : X.IsFunctional T) (h1 : ∀ s t, ((g₀ s).word t).length ≤ 1)
     (hroot : ∀ s, ((g₀ s).word T.root).length = 1) {k k' : ℕ} (hk' : k' < w.length) :
     (∃ r, (X.toKripkeModel T).IsBisimulation ((w.map g₀).prod.toKripkeModel T) r ∧
         r (T.root, k) (T.root, k')) ↔
-      ∀ (j : ι) (b : τ j), X.Reads T k j b ↔ (g₀ w[k']).Reads T 0 j b :=
-  (exists_isBisimulation_iff_reads hX (isFunctional_prod_map T h1)).trans <|
+      ∀ (j : ι) (b : τ j), b ∈ X.melody T k j ↔ b ∈ (g₀ w[k']).melody T 0 j :=
+  (exists_isBisimulation_iff_mem_melody hX (isFunctional_prod_map T h1)).trans <|
     forall_congr' fun _ ↦ forall_congr' fun _ ↦ iff_congr Iff.rfl
-      ((reads_prod_map T g₀ hroot).trans ⟨fun ⟨_, h⟩ ↦ h, fun h ↦ ⟨hk', h⟩⟩)
+      ((mem_melody_prod_map T g₀ hroot).trans ⟨fun ⟨_, h⟩ ↦ h, fun h ↦ ⟨hk', h⟩⟩)
 
-/-! ### A slot that reads alike and is not bisimilar -/
+/-! ### Slots that bear the same labels and are not bisimilar -/
 
 private def chain : ParentTree (Fin 3) :=
   .ofIterate (fun i ↦ if i = 2 then 1 else 0) 0 2 (by decide)
@@ -212,11 +212,12 @@ private def forked : AR fun _ : Fin 3 ↦ Unit :=
 private def straight : AR fun _ : Fin 3 ↦ Unit :=
   fromRel (fun _ ↦ [()]) fun i j _ _ ↦ (i = 0 ∧ j = 1) ∨ (i = 1 ∧ j = 2)
 
-/-- Slots that read alike need not be bisimilar when a token has two lines to one tier: a slot
-with two tokens on the tier below, one of them childless, reads what a slot with one does. -/
-theorem exists_reads_iff_and_not_isBisimulation :
+/-- Slots that bear the same labels need not be bisimilar when a token has two lines to one
+tier: a slot with two tokens on the tier below, one of them childless, bears the labels of a
+slot with one. -/
+theorem exists_mem_melody_iff_and_not_isBisimulation :
     ∃ (T : ParentTree (Fin 3)) (X Y : AR fun _ : Fin 3 ↦ Unit), Y.IsFunctional T ∧
-      (∀ j b, X.Reads T 0 j b ↔ Y.Reads T 0 j b) ∧
+      (∀ j b, b ∈ X.melody T 0 j ↔ b ∈ Y.melody T 0 j) ∧
       ¬ ∃ r, (X.toKripkeModel T).IsBisimulation (Y.toKripkeModel T) r ∧
         r (T.root, 0) (T.root, 0) := by
   refine ⟨chain, forked, straight, fun j p q q' _ hl hl' ↦ ?_, by decide, ?_⟩
@@ -475,9 +476,10 @@ theorem exists_isBisimulation_spreadTier {w : List S} {j : ι} {m n : ℕ} {s' :
   · exact (hoff _ k (by simpa using hk.le)).symm
   · rw [spreadPos_of_not_below g₀ hroot_nb, hoff w k hk.le]
 
-/-- Spreading a tier by a change of lines reads as replacing the target symbol by one that has
+/-- Spreading a tier by a change of lines gives each slot the labels it bears on replacing the
+target symbol by one that has
 the source's tokens on that tier and below it, and the target's own tokens elsewhere. -/
-theorem reads_spreadTier_iff {w : List S} {j : ι} {m n : ℕ} {s' : S} (hj : j ≠ T.root)
+theorem mem_melody_spreadTier_iff {w : List S} {j : ι} {m n : ℕ} {s' : S} (hj : j ≠ T.root)
     (h1 : ∀ s t, ((g₀ s).word t).length ≤ 1) (hroot : ∀ s, ((g₀ s).word T.root).length = 1)
     (htree : ∀ s t, t ≠ T.root → ((g₀ s).Link (T.parent t) t 0 0 ↔ (g₀ s).word t ≠ []))
     (hm : m < w.length) (hn : n < w.length) (hmj : (g₀ w[m]).word j ≠ [])
@@ -485,18 +487,18 @@ theorem reads_spreadTier_iff {w : List S} {j : ι} {m n : ℕ} {s' : S} (hj : j 
     (hbelow : ∀ t, T.toPartialOrder.le j t → (g₀ s').word t = (g₀ w[m]).word t)
     (hrest : ∀ t, ¬ T.toPartialOrder.le j t → (g₀ s').word t = (g₀ w[n]).word t)
     {k : ℕ} {t : ι} {b : τ t} :
-    (spreadTier T g₀ w j m n).Reads T k t b ↔ ((w.set n s').map g₀).prod.Reads T k t b := by
+    b ∈ (spreadTier T g₀ w j m n).melody T k t ↔ b ∈ ((w.set n s').map g₀).prod.melody T k t := by
   obtain ⟨r, hB, hr⟩ :=
     exists_isBisimulation_spreadTier g₀ hj h1 hroot htree hm hn hmj hnp hbelow hrest
   by_cases hk : k < w.length
-  · exact (hB.reads_iff (hr k hk)).symm
+  · exact (hB.mem_melody_iff (hr k hk)).symm
   · have hlen : ∀ v : List S, ((v.map g₀).prod.word T.root).length = v.length := fun v ↦
       length_word_prod_map_of_length_eq_one g₀ T.root v hroot
     exact iff_of_false
-      (not_reads_of_length_le (X := spreadTier T g₀ w j m n) (by
+      (notMem_melody_of_length_le (X := spreadTier T g₀ w j m n) (by
         show ((w.map g₀).prod.word T.root).length ≤ k
         rw [hlen]; exact not_lt.1 hk))
-      (not_reads_of_length_le (by rw [hlen]; simpa using not_lt.1 hk))
+      (notMem_melody_of_length_le (by rw [hlen]; simpa using not_lt.1 hk))
 
 end Spread
 
@@ -535,17 +537,18 @@ theorem exists_isBisimulation_collapse (hm : ∀ t, t ≠ T.root → T.parent t 
     subst hp₀
     exact ⟨q₀, mem_children.2 ⟨rfl, hr, hl₀⟩, hl₀.lt_right, rfl⟩
 
-/-- Collapsing a tier that no tier hangs from changes what no slot reads. -/
-theorem reads_collapse_iff (hm : ∀ t, t ≠ T.root → T.parent t ≠ m) (hroot : m ≠ T.root)
-    {k : ℕ} {j : ι} {b : τ j} : (X.collapse m).Reads T k j b ↔ X.Reads T k j b := by
+/-- Collapsing a tier that no tier hangs from changes the labels no slot bears. -/
+theorem mem_melody_collapse_iff (hm : ∀ t, t ≠ T.root → T.parent t ≠ m) (hroot : m ≠ T.root)
+    {k : ℕ} {j : ι} {b : τ j} : b ∈ (X.collapse m).melody T k j ↔ b ∈ X.melody T k j := by
   obtain ⟨r, hB, hr⟩ := exists_isBisimulation_collapse (X := X) hm
   by_cases hk : k < (X.word T.root).length
   · have h := hr k hk
     rw [repointIdx_of_ne (Ne.symm hroot)] at h
-    exact (hB.reads_iff h).symm
+    exact (hB.mem_melody_iff h).symm
   · exact iff_of_false
-      (not_reads_of_length_le (by rw [word_collapse_of_ne _ _ (Ne.symm hroot)]; exact not_lt.1 hk))
-      (not_reads_of_length_le (not_lt.1 hk))
+      (notMem_melody_of_length_le
+        (by rw [word_collapse_of_ne _ _ (Ne.symm hroot)]; exact not_lt.1 hk))
+      (notMem_melody_of_length_le (not_lt.1 hk))
 
 end Collapse
 
@@ -560,25 +563,9 @@ variable {α β : Type u} [DecidableEq α] {X : AR (TwoTier α β)} {a : α} {j 
 /-- Collapsing the autosegments changes what no slot surfaces with. -/
 theorem surfacesWith_collapse_upper_iff :
     (X.collapse upper).SurfacesWith a j ↔ X.SurfacesWith a j := by
-  rw [← reads_twoTier_upper_iff, ← reads_twoTier_upper_iff]
-  exact reads_collapse_iff (fun _ _ ↦ (by decide : lower ≠ upper)) (by decide)
+  rw [← mem_melody_twoTier_upper_iff, ← mem_melody_twoTier_upper_iff]
+  exact mem_melody_collapse_iff (fun _ _ ↦ (by decide : lower ≠ upper)) (by decide)
 
 end TwoTier
-
-section Planes
-
-universe u
-
-variable {ι : Type*} {α β : Type u} [Fintype ι] [DecidableEq ι] {X : AR (Multiplanar ι α β)}
-  {i : ι} {s : ℕ} {a : α}
-
-/-- Collapsing a plane leaves each slot hosting the same autosegments, though not in the same
-number. -/
-theorem mem_hostedOn_collapse_iff [DecidableEq α] [DecidableEq β] {j : ι} :
-    a ∈ (X.collapse (some i)).hostedOn j s ↔ a ∈ X.hostedOn j s := by
-  rw [← reads_planes_iff, ← reads_planes_iff]
-  exact reads_collapse_iff (fun _ _ ↦ (Option.some_ne_none i).symm) (Option.some_ne_none i)
-
-end Planes
 
 end Autosegmental.AR

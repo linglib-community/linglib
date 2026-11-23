@@ -25,7 +25,7 @@ a Color node carries both features or neither.
 * `Tier`, `Tier.spread`: the autosegments of one feature over a word, and SPREAD (26).
 * `Tier.toAR`: a tier as an autosegmental representation, whose lines do not cross
   (`Tier.noCrossing_toAR`) and which reads at each segment the value the tier gives it
-  (`Tier.reads_toAR`).
+  (`Tier.mem_melody_toAR`).
 * `ranking`: the Turkish grammar of (17)–(22), over every fully specified candidate.
 
 ## Implementation notes
@@ -252,9 +252,9 @@ theorem exists_linked (j : Fin n) : ∃ i, t.Linked (t.autosegment i) j := by
     absurd (Finset.le_max' _ b (Finset.mem_filter.2 ⟨hb, hbj⟩)) (not_le.2 hab)⟩
 
 /-- Each segment reads the value the tier gives it. -/
-theorem reads_toAR {j : ℕ} {b : Bool} :
-    t.toAR.Reads Autosegmental.AR.twoTier j .upper b ↔ ∃ hj : j < n, t.value ⟨j, hj⟩ = b := by
-  rw [Autosegmental.AR.reads_twoTier_upper_iff]
+theorem mem_melody_toAR {j : ℕ} {b : Bool} :
+    b ∈ t.toAR.melody Autosegmental.AR.twoTier j .upper ↔ ∃ hj : j < n, t.value ⟨j, hj⟩ = b := by
+  rw [Autosegmental.AR.mem_melody_twoTier_upper_iff]
   constructor
   · rintro ⟨k, hl, hb⟩
     obtain ⟨hk, hj, h⟩ := t.link_toAR.1 hl
