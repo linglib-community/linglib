@@ -152,6 +152,9 @@ def ExistentialContent (cont : X → Option (W → Prop)) (x : X) (p : W → Pro
 theorem SubsetContent.of_mem (h : p ∈ cont x) : SubsetContent cont x p :=
   ⟨p, h, le_rfl⟩
 
+theorem SubsetContent.mono (h : SubsetContent cont x p) (hpq : p ≤ q) : SubsetContent cont x q :=
+  let ⟨c, hc, hcp⟩ := h; ⟨c, hc, hcp.trans hpq⟩
+
 theorem ExistentialContent.of_mem (hne : ∃ w, p w) (h : p ∈ cont x) :
     ExistentialContent cont x p :=
   let ⟨w, hw⟩ := hne; ⟨p, h, w, hw, hw⟩
@@ -160,12 +163,15 @@ theorem ExistentialContent.of_mem (hne : ∃ w, p w) (h : p ∈ cont x) :
 theorem subsetContent_inf :
     SubsetContent cont x (p ⊓ q) ↔ SubsetContent cont x p ∧ SubsetContent cont x q :=
   ⟨fun ⟨c, hc, h⟩ ↦ ⟨⟨c, hc, h.trans inf_le_left⟩, c, hc, h.trans inf_le_right⟩,
-    fun ⟨⟨c, hc, hp⟩, c', hc', hq⟩ ↦ ⟨c, hc, le_inf hp (Option.mem_unique hc hc' ▸ hq)⟩⟩
+    fun ⟨⟨c, hc, hp⟩, _, hc', hq⟩ ↦ ⟨c, hc, le_inf hp (Option.mem_unique hc hc' ▸ hq)⟩⟩
 
 /-- On the equality semantics two clauses that hold of one individual have the same proposition,
 so clauses cannot stack or conjoin under one content individual. -/
 theorem eq_of_mem_cont (hp : p ∈ cont x) (hq : q ∈ cont x) : p = q :=
   Option.mem_unique hp hq
+
+theorem mem_cont_iff_eq (hp : p ∈ cont x) : q ∈ cont x ↔ p = q :=
+  ⟨eq_of_mem_cont hp, fun h ↦ h ▸ hp⟩
 
 theorem subsetContent_not_functional :
     ¬ ∀ (cont : Unit → Option (Bool → Prop)) (p q : Bool → Prop),

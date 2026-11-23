@@ -170,7 +170,7 @@ example :
     reportThat (fun (_ : Unit) (i : Bool × NonemptyInterval ℤ) ↦ i.1 = true)
       (fun (_ : Bool) _ _ ↦ True) (fun i ↦ i.1 = true) (.pure 1) (.pure 2) false = .true := by
   simp only [reportThat, Trivalent.existsStrong_eq_true_iff, Trivalent.ofProp_eq_true_iff]
-  exact ⟨⟨.pure 1, by decide, le_rfl⟩, (), trivial, rfl⟩
+  exact ⟨⟨.pure 1, by decide, le_rfl⟩, (), trivial, trivial⟩
 
 /-! ### The judgments
 

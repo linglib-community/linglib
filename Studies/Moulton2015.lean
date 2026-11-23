@@ -7,17 +7,19 @@ public import Mathlib.Data.Set.Pairwise.Basic
 # Moulton (2015): CPs: copies and compositionality
 
 A *that*-clause denotes a predicate of individuals with propositional content, such as ideas,
-rumours and beliefs. The content function gives, for a content individual `x` and a world `w`,
-the proposition `cont x w` true at the worlds compatible with the content of `x` in `w`, and the
-clause with proposition `p` holds of `x` in `w` when `cont x w = p`. A content noun and a clause
-combine by predicate modification, and so does a clause with the verb phrase abstracted over the
-verb's content argument, which existential closure then binds.
+rumours and beliefs. For a content individual `x` and a world `w`, the content function gives the
+proposition `cont x w` true at the worlds compatible with the content of `x` in `w`, and the
+clause with proposition `p` holds of `x` in `w` when `cont x w = p`. Clauses with different
+propositions hold of disjoint sets of individuals (`pairwise_disjoint_cont_eq`), so a second
+clause cannot modify a noun that already has one.
 
 The verb *believe* relates a content individual `x` and an eventuality `e` in `w` when the
-content of `x` holds at every world compatible with what the holder of `e` believes in `w`. The
-closed report `Believes cont dox holder a p w` then holds exactly when `a` holds some eventuality,
-`p` is the content of some individual, and `p` is true at every world compatible with what `a`
-believes, as `believes_iff` states; the last conjunct is the truth condition of [hintikka-1969].
+content of `x` holds at every world compatible with what the holder of `e` believes in `w`. We
+define `Believes cont dox holder a p w`, the report *`a` believes that `p`*, by existential
+closure of the content individual and the eventuality. It holds exactly when `a` holds some
+eventuality, `p` is the content of some individual, and `p` is true at every world compatible
+with what `a` believes (`believes_iff`); the last conjunct is the truth condition of
+[hintikka-1969].
 
 ## Implementation notes
 
@@ -50,7 +52,7 @@ variable {X D V W : Type*} {cont : X → W → W → Prop} {dox : D → SetRel W
 -- fn. 10
 theorem pairwise_disjoint_cont_eq (cont : X → W → W → Prop) (w : W) :
     Pairwise (Disjoint on fun p ↦ {x | cont x w = p}) :=
-  Set.pairwise_disjoint_fiber _
+  pairwise_disjoint_fiber fun x ↦ cont x w
 
 /-- fn. 12: *believe* holds of a content individual `x` and an eventuality `e` in `w` when the
 content of `x` in `w` is true at every world compatible with what the holder of `e` believes. -/
@@ -98,7 +100,7 @@ example :
       ¬ Believes (fun (_ : Unit) (_ _ : Bool) ↦ True) (fun (_ : Unit) ↦ SetRel.id)
         (fun (_ : Unit) _ ↦ ()) () (· = true) true :=
   ⟨box_id.2 rfl, fun h ↦ by
-    obtain ⟨-, ⟨-, hx⟩, -⟩ := believes_iff.1 h
-    exact Bool.false_ne_true (congrFun hx false).mp trivial⟩
+    obtain ⟨-, ⟨_, hx⟩, -⟩ := believes_iff.1 h
+    exact Bool.false_ne_true ((congrFun hx false).mp trivial)⟩
 
 end Moulton2015
