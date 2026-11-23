@@ -54,7 +54,8 @@ theorem optimal_subset : σ.optimal T s ⊆ s := Finset.argmin_subset ..
 theorem optimal_nonempty (h : s.Nonempty) : (σ.optimal T s).Nonempty :=
   Finset.argmin_nonempty h
 
-private theorem optimal_eq_singleton_iff' :
+/-- A candidate is the sole winner iff it is a candidate whose profile is below every other. -/
+theorem optimal_eq_singleton_iff_profile_lt :
     σ.optimal T s = {c} ↔ c ∈ s ∧ ∀ d ∈ s, d ≠ c → σ.profile T c < σ.profile T d :=
   Finset.argmin_eq_singleton_iff
 
@@ -78,6 +79,26 @@ theorem profile_lt_iff_exists_dominates :
     σ.profile T c < σ.profile T d ↔
       ∃ i, T c i < T d i ∧ ∀ j, T d j < T c j → σ.Dominates i j :=
   profile_lt_iff_lex.trans Pi.lex_iff_exists_forall
+
+/-- When `i` is the only constraint preferring `c` to `d`, `c` beats `d` iff `i` dominates every
+constraint preferring `d`. -/
+theorem profile_lt_iff_forall_dominates {i : ι} (hi : ∀ k, T c k < T d k ↔ k = i) :
+    σ.profile T c < σ.profile T d ↔ ∀ j, T d j < T c j → σ.Dominates i j :=
+  profile_lt_iff_exists_dominates.trans
+    ⟨fun ⟨_, hk, h⟩ ↦ (hi _).1 hk ▸ h, fun h ↦ ⟨i, (hi i).2 rfl, h⟩⟩
+
+/-- When `i` is the only constraint preferring `c` to `d` and `j` the only one preferring `d`,
+`c` beats `d` iff `i` dominates `j`. -/
+theorem profile_lt_iff_dominates {i j : ι} (hi : ∀ k, T c k < T d k ↔ k = i)
+    (hj : ∀ k, T d k < T c k ↔ k = j) : σ.profile T c < σ.profile T d ↔ σ.Dominates i j :=
+  (profile_lt_iff_forall_dominates hi).trans
+    ⟨fun h ↦ h j ((hj j).2 rfl), fun h _ hk ↦ (hj _).1 hk ▸ h⟩
+
+/-- A candidate loses to a competitor that some constraint prefers, when that constraint
+dominates every constraint preferring the candidate. -/
+theorem notMem_optimal_of_forall_dominates {i : ι} (hd : d ∈ s) (hi : T d i < T c i)
+    (h : ∀ k, T c k < T d k → σ.Dominates i k) : c ∉ σ.optimal T s := fun hc ↦
+  ((mem_optimal_iff.1 hc).2 d hd).not_gt (profile_lt_iff_exists_dominates.2 ⟨i, hi, h⟩)
 
 /-- The winners depend only on how a ranking orders the constraints that tell the candidates
 apart: for an injection `f` of constraints, some ranking of its domain orders it as `σ` orders its
@@ -114,7 +135,7 @@ constraint preferring it dominates every constraint preferring the competitor. -
 theorem optimal_eq_singleton_iff :
     σ.optimal T s = {c} ↔ c ∈ s ∧ ∀ d ∈ s, d ≠ c →
       ∃ i, T c i < T d i ∧ ∀ j, T d j < T c j → σ.Dominates i j :=
-  optimal_eq_singleton_iff'.trans <| and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦
+  optimal_eq_singleton_iff_profile_lt.trans <| and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦
     imp_congr_right fun _ ↦ profile_lt_iff_exists_dominates
 
 /-- Ties do not depend on the ranking: beside a winner, the winners are the candidates with the
@@ -154,7 +175,7 @@ theorem notMem_optimal_of_lt (hc : c ∈ s) (hlt : T c < T d) : d ∉ σ.optimal
 
 theorem optimal_eq_singleton_of_forall_lt (hc : c ∈ s) (hlt : ∀ d ∈ s, d ≠ c → T c < T d) :
     σ.optimal T s = {c} :=
-  optimal_eq_singleton_iff'.2 ⟨hc, fun d hd hne ↦ profile_lt_of_lt (hlt d hd hne)⟩
+  optimal_eq_singleton_iff_profile_lt.2 ⟨hc, fun d hd hne ↦ profile_lt_of_lt (hlt d hd hne)⟩
 
 /-- A candidate with no violations wins under every ranking. -/
 theorem zero_mem_optimal (hc : c ∈ s) (hzero : T c = 0) : c ∈ σ.optimal T s :=
@@ -198,7 +219,7 @@ theorem mem_optimal_of_forall_le {C' : Type*} {T' : Tableau C' ι} {s' : Finset 
 /-- Against its only competitor a candidate is the sole winner iff its profile is less. -/
 theorem optimal_eq_singleton_iff_pair [DecidableEq C] (hs : s = {c, d}) (hne : c ≠ d) :
     σ.optimal T s = {c} ↔ σ.profile T c < σ.profile T d := by
-  simp [optimal_eq_singleton_iff', hs, hne.symm]
+  simp [optimal_eq_singleton_iff_profile_lt, hs, hne.symm]
 
 /-- Against its only competitor a candidate wins iff its profile is not greater. -/
 theorem mem_optimal_iff_pair [DecidableEq C] (hs : s = {c, d}) :
