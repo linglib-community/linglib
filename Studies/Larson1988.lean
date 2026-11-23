@@ -216,7 +216,7 @@ theorem not_cCommands_specPos_of_lt (x : Tree Cat W) (hij : i < j) (hj : j ≤ l
     {b : GornAddress} (hb : pos ls j ≤ b) : ¬ (shells ls x).CCommands b (specPos ls i) :=
   not_commands_of_covBy_of_lt (GornAddress.covBy_mul_of _ 0)
     (pos_mul_of_mem_branching x (by omega)) (GornAddress.lt_mul_of _ 1)
-    (RoseTree.not_mul_of_le_mul_of _ (by decide)) ((pos_mul_of_lt hij hj).trans_le hb)
+    (RoseTree.not_mul_of_le_mul_of _ (by decide)) ((pos_mul_of_lt hij hj).trans_le hb) le_rfl
 
 /-- The position of the `k`th argument of a stack of layers: the `k`th specifier, and the lowest
 complement for `k` their number. -/

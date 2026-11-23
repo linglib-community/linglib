@@ -241,12 +241,12 @@ theorem commands_of_covBy_of_lt (ha : m ⋖ a) (hm : m ∈ P) (hmm : m < m') (ho
   (commands_iff_lt_of_covBy ha hm).2
     ⟨hmm.trans_le hb, not_le_of_covBy_of_lt ha hmm hoff hb⟩
 
-omit [IsForestOrder α] in
 /-- Down a path the lower node does not command: nothing the generator `m'` properly dominates
-commands a daughter of a node above `m'` that does not dominate `m'`. -/
-theorem not_commands_of_covBy_of_lt (ha : m ⋖ a) (hm' : m' ∈ P) (hmm : m < m') (hoff : ¬ a ≤ m')
-    (hb : m' < b) : ¬ Commands P b a := fun h ↦
-  hoff ((ha.eq_or_eq hmm.le (h.command hm' hb)).resolve_left hmm.ne').ge
+commands what a daughter of a node above `m'` dominates, if the daughter does not dominate
+`m'`. -/
+theorem not_commands_of_covBy_of_lt {b' : α} (ha : m ⋖ a) (hm' : m' ∈ P) (hmm : m < m')
+    (hoff : ¬ a ≤ m') (hb : m' < b) (hb' : a ≤ b') : ¬ Commands P b b' := fun h ↦
+  not_le_of_covBy_of_lt ha hmm hoff (h.command hm' hb) hb'
 
 end ForestOrder
 

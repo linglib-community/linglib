@@ -255,14 +255,12 @@ theorem cCommands_of_covBy (hc : a ⋖ c) (hq : a < q) (hcq : ¬ c ≤ q) : t.to
     (hpar ▸ parent_mem_branching (ne_bot_of_gt hc.lt))).2 ⟨hq, hcq⟩
 
 theorem not_cCommands_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (hcq : c < q)
-    (hdq' : d ≤ q') : ¬ t.toRoseTree.CCommands q q' := by
-  intro h
-  have hq0 : q ≠ ⊥ := ne_bot_of_gt hcq
-  rw [cCommands_iff_parent_lt (fun h0 ↦ hq0 (Subtype.ext h0)) (parent_mem_branching hq0)] at h
-  have hcq' : c.val ≤ q'.val := (Subtype.coe_le_coe.2 (Order.le_pred_of_lt hcq)).trans
-    ((Positions.pred_val q).symm ▸ h.1.le)
-  exact hcd (Subtype.ext (IsForestOrder.eq_of_covBy_of_le (Positions.covBy_iff.1 hc)
-    (Positions.covBy_iff.1 hd) hcq' (Subtype.coe_le_coe.2 hdq')))
+    (hdq' : d ≤ q') : ¬ t.toRoseTree.CCommands q q' :=
+  not_commands_of_covBy_of_lt (Positions.covBy_iff.1 hd)
+    ((isBranching_iff_mem_branching c).1 (isBranching_of_not_isMax (not_isMax_of_lt hcq)))
+    (Subtype.coe_lt_coe.2 hc.lt)
+    (fun h ↦ hcd (IsForestOrder.eq_of_covBy_of_le hc hd le_rfl (Subtype.coe_le_coe.1 h)))
+    (Subtype.coe_lt_coe.2 hcq) (Subtype.coe_le_coe.2 hdq')
 
 theorem termAt_eq_or_eq_of_covBy {y : SyntacticObject L ι}
     (hn : t.termAt a = SyntacticObject.merge x y) (he : a ⋖ e) : t.termAt e = x ∨ t.termAt e = y :=

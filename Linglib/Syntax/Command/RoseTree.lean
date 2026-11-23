@@ -212,7 +212,7 @@ theorem not_cCommands_mul_of_mul (hp : p * .of j ∈ t.branching) (hij : i ≠ j
     ¬ t.CCommands (p * .of j * q) (p * .of i) :=
   not_commands_of_covBy_of_lt (GornAddress.covBy_mul_of p i) hp (GornAddress.lt_mul_of p j)
     (not_mul_of_le_mul_of p hij) (lt_of_le_of_ne (GornAddress.le_mul_right _ _)
-      fun e ↦ hq (mul_left_cancel (e.symm.trans (mul_one _).symm)))
+      fun e ↦ hq (mul_left_cancel (e.symm.trans (mul_one _).symm))) le_rfl
 
 end Subtree
 
