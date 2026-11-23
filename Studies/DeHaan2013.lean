@@ -55,37 +55,37 @@ open Evidential Data.WALS.F77A
 
 /-! ### The map's values -/
 
-/-- The value on the map of the coverages of a language's evidentials. Some indirect evidential
-covers inference or report, a parameter outside attested evidence, and a direct one covers
-attested evidence alone; coverages that are all direct have no value. -/
+/-- The value on the map of the coverages of a language's evidentials. An indirect evidential
+covers some indirect source, inference or report, and a direct one covers direct sources alone;
+coverages that are all direct have no value. -/
 def ofCovers (cs : List (Finset Parameter)) : Option EvidentialityDistinctions :=
-  if ∃ c ∈ cs, ¬ c ⊆ EvidenceType.attested.block then
-    some <| if ∃ c ∈ cs, c.Nonempty ∧ c ⊆ EvidenceType.attested.block then .directAndIndirect
+  if ∃ c ∈ cs, ∃ p ∈ c, p.directness = .indirect then
+    some <| if ∃ c ∈ cs, c.Nonempty ∧ ∀ p ∈ c, p.directness = .direct then .directAndIndirect
       else .indirectOnly
   else if ∃ c ∈ cs, c.Nonempty then none else some .noGrammaticalEvidentials
 
 /-- The value of an inventory on the map. -/
 def value? (es : List Evidential) : Option EvidentialityDistinctions := ofCovers (es.map covers)
 
-/-- An inventory is off the map exactly when it has a direct evidential and no indirect one. -/
+/-- An inventory is off the map exactly when it has an evidential and all the sources its
+evidentials cover are direct. -/
 theorem value?_eq_none_iff {es : List Evidential} :
     value? es = none ↔
-      (∃ e ∈ es, e.IsDirect) ∧ ∀ e ∈ es, e.covers ⊆ EvidenceType.attested.block := by
+      (∃ e ∈ es, e.covers.Nonempty) ∧ ∀ e ∈ es, ∀ p ∈ e.covers, p.directness = .direct := by
   rw [value?, ofCovers]
   split_ifs with h₁ h₂
-  · obtain ⟨_, hc, hn⟩ := h₁
+  · obtain ⟨c, hc, p, hp, hi⟩ := h₁
     obtain ⟨e, he, rfl⟩ := List.mem_map.1 hc
-    simp only [false_iff, not_and]
-    exact fun _ h ↦ hn (h e he)
-  · have h : ∀ e ∈ es, e.covers ⊆ EvidenceType.attested.block := fun e he ↦
-      by_contra fun hn ↦ h₁ ⟨_, List.mem_map_of_mem he, hn⟩
-    obtain ⟨_, hc, hn⟩ := h₂
+    simp only [reduceCtorEq, false_iff, not_and]
+    exact fun _ h ↦ by simp [h e he p hp] at hi
+  · simp only [true_iff]
+    obtain ⟨c, hc, hn⟩ := h₂
     obtain ⟨e, he, rfl⟩ := List.mem_map.1 hc
-    simp only [true_iff]
-    exact ⟨⟨e, he, isOfType_iff.2 ⟨hn, h e he⟩⟩, h⟩
-  · simp only [false_iff, not_and]
-    rintro ⟨e, he, hd⟩ -
-    exact h₂ ⟨_, List.mem_map_of_mem he, hd.nonempty⟩
+    refine ⟨⟨e, he, hn⟩, fun e he p hp ↦ Directness.ne_indirect_iff.1 fun hi ↦ ?_⟩
+    exact h₁ ⟨_, List.mem_map_of_mem he, p, hp, hi⟩
+  · simp only [reduceCtorEq, false_iff, not_and]
+    rintro ⟨e, he, hn⟩ -
+    exact h₂ ⟨_, List.mem_map_of_mem he, hn⟩
 
 theorem ofCovers_perm {cs cs' : List (Finset Parameter)} (h : cs.Perm cs') :
     ofCovers cs = ofCovers cs' := by

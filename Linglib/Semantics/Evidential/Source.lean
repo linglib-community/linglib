@@ -84,6 +84,12 @@ inductive Directness where
   | indirect
   deriving DecidableEq, Repr, Fintype
 
+@[simp] theorem Directness.ne_indirect_iff {d : Directness} : d ≠ .indirect ↔ d = .direct := by
+  cases d <;> simp
+
+@[simp] theorem Directness.ne_direct_iff {d : Directness} : d ≠ .direct ↔ d = .indirect := by
+  cases d <;> simp
+
 /-- Each parameter falls under a type of evidence, Willett's types grouping the six parameters
 in pairs. -/
 def Parameter.evidenceType : Parameter → EvidenceType
