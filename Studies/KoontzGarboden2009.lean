@@ -23,6 +23,9 @@ respects the Monotonicity Hypothesis that word formation never removes operators
 * `AnticausativeReading`: the anticausative reading of a reflexivized verb.
 * `LicensesBySelf`: the licensing condition of *por sí solo*.
 * `MonotonicityHypothesis`: the Monotonicity Hypothesis on event templates.
+* `inchoative`, `boundInchoative`: the inchoatives of the deletion and least common denominator
+  analyses, which have no CAUSE, and of the existential binding analysis, which has a causing
+  eventuality with no participant.
 
 ## Implementation notes
 
@@ -99,6 +102,14 @@ def LicensesBySelf (P : Entity → E → Prop) : Prop :=
 identified with the subject. -/
 def passive (x : Entity) (e : E) : Prop := ∃ y, causative M effector P y x e
 
+/-- (99a): an inchoative with no CAUSE holds of an event in which `x` comes to be in the root's
+state. It is what a deletion analysis derives and what a least common denominator analysis
+takes the root to denote. -/
+def inchoative (x : Entity) (e : E) : Prop := ◇[M.become] (P x) e
+
+/-- (99b): an inchoative whose causing eventuality is existentially bound. -/
+def boundInchoative (x : Entity) (e : E) : Prop := ∃ w, w ~[M.cause] e ∧ inchoative M P x e
+
 variable {M effector θ agent P}
 
 -- §3.5
@@ -125,6 +136,31 @@ theorem not_anticausativeReading (hθ : ∀ x w, θ x w → agent x w) :
 theorem licensesBySelf_anticausative :
     LicensesBySelf M effector (anticausative M effector P) :=
   fun _ _ h ↦ let ⟨w, hθ, hc⟩ := exists_cause_of_anticausative h; ⟨w, hc, hθ⟩
+
+/-! ### Comparison with previous approaches -/
+
+-- §5.3: on a least common denominator analysis the causative is the root with a causer added
+theorem causative_iff_inchoative {y x : Entity} {e : E} :
+    causative M θ P y x e ↔ (∃ w, θ y w ∧ w ~[M.cause] e) ∧ inchoative M P x e :=
+  ⟨fun ⟨w, hθ, hc, hi⟩ ↦ ⟨⟨w, hθ, hc⟩, hi⟩, fun ⟨⟨w, hθ, hc⟩, hi⟩ ↦ ⟨w, hθ, hc, hi⟩⟩
+
+-- §5.4: existential binding applies to a causative whatever its causer relation
+theorem boundInchoative_of_causative {y x : Entity} {e : E} (h : causative M θ P y x e) :
+    boundInchoative M P x e :=
+  let ⟨w, _, hc, hi⟩ := h; ⟨w, hc, hi⟩
+
+theorem boundInchoative_of_anticausative {x : Entity} {e : E}
+    (h : anticausative M θ P x e) : boundInchoative M P x e :=
+  boundInchoative_of_causative h
+
+theorem boundInchoative_of_passive {x : Entity} {e : E} (h : passive M effector P x e) :
+    boundInchoative M P x e :=
+  let ⟨_, hy⟩ := h; boundInchoative_of_causative hy
+
+-- §5.2: the inchoative of a deletion analysis is entailed by the others and has no CAUSE
+theorem inchoative_of_boundInchoative {x : Entity} {e : E} (h : boundInchoative M P x e) :
+    inchoative M P x e :=
+  let ⟨_, _, hi⟩ := h; hi
 
 end Model
 
@@ -177,7 +213,7 @@ theorem not_licensesBySelf_passive :
 
 -- (65), (67)
 theorem not_licensesBySelf_inchoative :
-    ¬ LicensesBySelf breaking byJuan (fun x ↦ ◇[breaking.become] (broken x)) := fun h ↦
+    ¬ LicensesBySelf breaking byJuan (inchoative breaking broken) := fun h ↦
   let ⟨_, _, hw⟩ := h .vaso e₀ ⟨(), trivial, rfl⟩
   Participant.noConfusion hw
 
@@ -192,6 +228,12 @@ def MonotonicityHypothesis (f : Template .event → Option (Template .event)) : 
 CAUSE and the causing subevent from an accomplishment; it violates the hypothesis. -/
 theorem not_monotonicityHypothesis_caused : ¬ MonotonicityHypothesis Template.caused :=
   fun h ↦ absurd (h .accomplishment .achievement rfl) (by decide)
+
+-- §5.3: deriving the causative from the root adds operators and removes none
+theorem monotonicityHypothesis_cause_effector :
+    MonotonicityHypothesis fun t ↦ some (.cause .effector t) := by
+  rintro t _ ⟨rfl⟩
+  simp
 
 /-- Reflexivization on templates identifies the causer with the undergoer, so it applies
 exactly to templates with CAUSE and changes no operator. -/
