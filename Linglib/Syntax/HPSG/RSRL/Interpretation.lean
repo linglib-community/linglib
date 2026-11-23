@@ -16,18 +16,26 @@ sorts as outputs, and following a path is reading it in this machine. The *compo
 entity are the entities that some path reaches from it, so each entity is the root of a feature
 structure (`HPSG.RSRL.Interpretation.featureStructure`).
 
+For a path `p`, `I.SortAt u p σ` says that `p` leads from `u` to an entity of the sort `σ`, and
+`I.PathEq u p q` that `p` and `q` lead from `u` to one entity. These are what the abstract
+feature structure of `u` records, so they pass along any simulation of the machine at `u`
+(`HPSG.RSRL.Interpretation.SortAt.of_simulatedBy`).
+
 A *homomorphism* of interpretations keeps sorts, commutes with the attributes and preserves the
 relations. It maps the components of an entity onto those of its image
-(`HPSG.RSRL.Interpretation.HomClass.image_isComponentOf`).
+(`HPSG.RSRL.Interpretation.HomClass.image_isComponentOf`). An *isomorphism* is a bijection that
+does so and reflects the relations, and a bijection carries an interpretation over to an
+isomorphic one (`HPSG.RSRL.Interpretation.mapEquiv`).
 
 ## Implementation notes
 
 The universe is a parameter, not a field, as the carrier of a first-order structure is in
 mathlib. The conditions that [richter-2024] builds into an interpretation are separate
 predicates (`IsSortResolved`, `IsTotallyWellTyped`, `IsFull`), since a worked example often
-interprets only part of a feature structure. Chains are not formalized. `Hom`, `Embedding` and
-`HomClass` follow their namesakes in `FirstOrder.Language`. The machine outputs the sort in the
-dual order, in which the more specific sort is the greater.
+interprets only part of a feature structure. Chains are not formalized. `Hom`, `Embedding`,
+`Equiv` and `HomClass` follow their namesakes in `FirstOrder.Language`. Being a component is
+being reached in the machine, the reflexive transitive closure of its transitions. The machine
+outputs the sort in the dual order, in which the more specific sort is the greater.
 
 ## References
 
@@ -478,6 +486,30 @@ theorem Hom.simulatedBy (f : Hom I J) (u : U) :
     show J.A α (f q) = some (f q')
     rw [HomClass.map_A]
     exact congrArg (Option.map f) hα⟩
+
+/-! ### Subsumption
+
+The sorts of the values of paths and the paths that meet are what the abstract feature structure
+of an entity records, so both pass from an entity to any entity whose feature structure its own
+subsumes. -/
+
+section Simulation
+
+variable {v' : V} {p q : Path Sig} {σ : Srt}
+
+theorem SortAt.of_simulatedBy (h : I.toPartialMoore.SimulatedBy J.toPartialMoore u v')
+    (hσ : I.SortAt u p σ) : J.SortAt v' p σ := by
+  obtain ⟨w, hw, hle⟩ := hσ
+  obtain ⟨c, hc, hwc⟩ := (PartialMoore.simulatedBy_iff.1 h).1 p (OrderDual.toDual (I.S w))
+    (congrArg (Option.map I.toPartialMoore.out) (Option.mem_def.1 hw))
+  obtain ⟨w', hw', rfl⟩ := Option.map_eq_some_iff.1 hc
+  exact ⟨w', hw', (OrderDual.toDual_le_toDual.1 hwc).trans hle⟩
+
+theorem PathEq.of_simulatedBy (h : I.toPartialMoore.SimulatedBy J.toPartialMoore u v')
+    (hpq : I.PathEq u p q) : J.PathEq v' p q :=
+  (PartialMoore.simulatedBy_iff.1 h).2 p q hpq
+
+end Simulation
 
 end Interpretation
 

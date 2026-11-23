@@ -473,6 +473,19 @@ theorem models_ofConstraints_iff :
   simp only [models_iff, Grammar.mem_ofList, List.forall_mem_map,
     Constraint.toDescription_toFormula, satisfies_toFormula]
 
+/-- An atom that holds of an entity holds of every entity whose feature structure the entity's
+subsumes. -/
+theorem _root_.HPSG.RSRL.PathAtom.Holds.of_simulatedBy {V : Type*} {J : Interpretation Sig V}
+    {v : V} {a : PathAtom Sig} (h : I.toPartialMoore.SimulatedBy J.toPartialMoore u v)
+    (ha : a.Holds I u) : a.Holds J v := by
+  cases a
+  exacts [SortAt.of_simulatedBy h ha, PathEq.of_simulatedBy h ha]
+
+/-- A homomorphism preserves the atoms of an attribute-value description. -/
+theorem Hom.holds {V : Type*} {J : Interpretation Sig V} (f : Hom I J) {a : PathAtom Sig}
+    (ha : a.Holds I u) : a.Holds J (f u) :=
+  ha.of_simulatedBy (f.simulatedBy u)
+
 instance _root_.HPSG.RSRL.PathAtom.decidableHolds [DecidableLE Srt] [DecidableEq U] (u : U) :
     (a : PathAtom Sig) → Decidable (a.Holds I u)
   | .sort p σ => inferInstanceAs (Decidable (I.SortAt u p σ))

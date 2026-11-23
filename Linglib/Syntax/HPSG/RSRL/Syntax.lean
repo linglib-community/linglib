@@ -289,6 +289,15 @@ instance : Coe (Constraint Sig) (Description Sig) := ⟨toDescription⟩
 def inherited [DecidableLE Srt] (C : List (Constraint Sig)) (σ : Srt) : List (Constraint Sig) :=
   C.filter fun c ↦ σ ≤ c.sort
 
+@[simp] theorem mem_inherited [DecidableLE Srt] {C : List (Constraint Sig)} {σ : Srt}
+    {c : Constraint Sig} : c ∈ inherited C σ ↔ c ∈ C ∧ σ ≤ c.sort := by
+  simp [inherited]
+
+/-- A sort inherits every constraint that its supersorts inherit. -/
+theorem inherited_sublist_of_le [DecidableLE Srt] (C : List (Constraint Sig)) {σ τ : Srt}
+    (h : σ ≤ τ) : (inherited C τ).Sublist (inherited C σ) :=
+  C.monotone_filter_right fun _ hc ↦ by simpa using h.trans (by simpa using hc)
+
 end Constraint
 
 /-- The grammar whose principles are the constraints of a list. -/

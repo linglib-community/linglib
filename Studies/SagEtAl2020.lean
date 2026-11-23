@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.HPSG.Construction
 public import Linglib.Syntax.HPSG.RSRL.Satisfiability
+public import Linglib.Core.Order.Compat
 public import Linglib.Data.Examples.SagEtAl2020
 public import Studies.Sag2010
 
@@ -21,10 +22,11 @@ sort of all its values, and state the three constructions on the construct hiera
 `Linglib/Syntax/HPSG/Construction.lean`. A specified category *can head* a construct sort when
 the description of a construct of that sort whose head daughter satisfies the specification is
 satisfiable over the grammar: some well-typed model has such a construct. The main result,
-`SagEtAl2020.canHead_iff`, says that it can exactly when, for each feature, the sort of the
-specification and the sort of the construction have a common subsort. A subject-predicate clause, a polar interrogative and an inverted exclamative inherit
-the specification of their headed construction and narrow the verb form
-(`SagEtAl2020.canHead_clause_iff`). An example is acceptable exactly when a specification of its
+`SagEtAl2020.canHead_iff`, says that it can exactly when it is compatible with the specification
+of the construction, that is, when they unify: for each feature the two sorts have a common
+subsort (`SagEtAl2020.Specification.compat_iff`). A subject-predicate clause, a polar
+interrogative and an inverted exclamative inherit the specification of their headed construction
+and narrow the verb form (`SagEtAl2020.canHead_clause_iff`). An example is acceptable exactly when a specification of its
 verb can head a clause of its type (`SagEtAl2020.judgments`), apart from two examples that turn
 on stress and on `GRAM` (`SagEtAl2020.judgments_unaccounted`), and a sense of *shall* is
 available exactly where the listeme with that sense can head the clause
@@ -118,6 +120,15 @@ theorem forall_mem_atoms {ℓ : Specification} {p : Path sig} :
       ∀ f : HeadFeature, I.SortAt u (p ++ [.CAT, f.attr]) (ℓ f) := by
   rw [atoms, List.forall_mem_map]
   exact ⟨fun h f ↦ h f (by cases f <;> simp), fun h f _ ↦ h f⟩
+
+-- compatibility in the order in which the more specific sort is the greater
+theorem compat_iff {ℓ r : Specification} :
+    Compat (α := HeadFeature → Srtᵒᵈ) ℓ r ↔ ∀ f, ∃ τ, τ ≤ ℓ f ∧ τ ≤ r f :=
+  (compat_pi_iff (S := fun _ : HeadFeature ↦ Srtᵒᵈ)).trans
+    (forall_congr' fun f ↦ compat_toDual_iff (a := ℓ f) (b := r f))
+
+instance (ℓ r : Specification) : Decidable (Compat (α := HeadFeature → Srtᵒᵈ) ℓ r) :=
+  decidable_of_iff _ compat_iff.symm
 
 end Specification
 
@@ -400,21 +411,20 @@ private theorem canHead_iff_of {ℓ r : Specification} {σ ic sem : Srt}
     cases f
     exacts [⟨.aux, rfl, haτ.trans haℓ⟩, ⟨.inv, rfl, hiτ.trans hiℓ⟩, ⟨.vform, rfl, hvτ.trans hvℓ⟩]
 
-/-- A specification can head a headed construction exactly when, for each head feature, the sort
-that it gives the feature and the sort that the construction requires of its head daughter have
-a common subsort. -/
+/-- A specification can head a headed construction exactly when it is compatible with the
+specification that the construction requires of its head daughter. -/
 theorem canHead_iff (ℓ : Specification) (c : Headed) :
-    CanHead ℓ c.sort ↔ ∀ f, ∃ τ, τ ≤ ℓ f ∧ τ ≤ c.head f :=
-  canHead_iff_of (by cases c <;> decide) (fun hI hu ↦ sortAt_hdDtr hI c hu)
+    CanHead ℓ c.sort ↔ Compat (α := HeadFeature → Srtᵒᵈ) ℓ c.head :=
+  (canHead_iff_of (by cases c <;> decide) (fun hI hu ↦ sortAt_hdDtr hI c hu)
     fun a ha i hi v hv h₁ h₂ h₃ ↦ ⟨(models_construct_iff c a ha i hi v hv).2 ⟨h₁, h₂, h₃⟩,
-      isWellTyped_construct c a ha i hi v hv⟩
+      isWellTyped_construct c a ha i hi v hv⟩).trans Specification.compat_iff.symm
 
 -- the head of a clause is also finite, or finite or infinitival
 theorem canHead_clause_iff (ℓ : Specification) (k : Examples.Clause) :
-    CanHead ℓ k.sort ↔ ∀ f, ∃ τ, τ ≤ ℓ f ∧ τ ≤ k.head f :=
-  canHead_iff_of (by cases k <;> decide) (fun hI hu ↦ sortAt_hdDtr_clause hI k hu)
+    CanHead ℓ k.sort ↔ Compat (α := HeadFeature → Srtᵒᵈ) ℓ k.head :=
+  (canHead_iff_of (by cases k <;> decide) (fun hI hu ↦ sortAt_hdDtr_clause hI k hu)
     fun a ha i hi v hv h₁ h₂ h₃ ↦ ⟨(models_clause_construct_iff k a ha i hi v hv).2 ⟨h₁, h₂, h₃⟩,
-      isWellTyped_clause_construct k a ha i hi v hv⟩
+      isWellTyped_clause_construct k a ha i hi v hv⟩).trans Specification.compat_iff.symm
 
 /-- The examples that the constructions here do not account for. Stressed *do* heads a
 subject-predicate clause (36b), which the rebuttal construction licenses, and *do* does not
