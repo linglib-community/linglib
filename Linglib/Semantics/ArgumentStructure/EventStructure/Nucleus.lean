@@ -6,14 +6,20 @@ public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
 # The event nucleus
 
 This file defines the nucleus of [moens-steedman-1988]: a preparatory process, the culmination
-it brings about, and the consequent state of the culmination. In a model `M`, a `Nucleus M` is a
-preparation `v`, a culmination `e` and a state `s` with `v ~[M.cause] e` and `e ~[M.become] s`.
+it brings about, and the consequent state of the culmination. In a model, a nucleus is a path
+from a preparation through `cause` to a culmination and through `become` to a state.
 
-The main result is `Nucleus.exists_iff`: an event is the preparation of a nucleus with a
-`p`-state as its consequent state iff it causes a change into a `p`-state. A causative of a
-change of state therefore denotes the preparations of the nuclei whose consequent state the root
-describes. The subterm maps `Template.causing` and `Template.caused` drop the culmination and the
-preparation of the accomplishment.
+## Main definitions
+
+* `EventStructure.Nucleus`: a preparation, a culmination and a consequent state of a model.
+* `Nucleus.map`: a nucleus of a model is a nucleus of every model with more relations.
+
+## Main results
+
+* `Nucleus.exists_iff`: an event is the preparation of a nucleus with a `p`-state as its
+  consequent state iff it causes a change into a `p`-state.
+* `Template.denote_cause_achievement_iff`: a causative of a change of state denotes the
+  preparations of the nuclei whose consequent state the root describes.
 
 ## Implementation notes
 

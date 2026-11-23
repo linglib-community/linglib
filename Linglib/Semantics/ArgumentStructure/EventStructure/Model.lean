@@ -5,16 +5,17 @@ public import Linglib.Logic.Modal.Defs
 /-!
 # Models of the event-structure primitives
 
-This file defines the models in which event structure templates are interpreted. An
-`EventStructure.Model` over a type of states and a type of events consists of three relations:
+This file defines the models in which event structure templates are interpreted: three relations
+on a type of states and a type of events. The verbal heads are possibility along these
+relations, so that `◇[become] p` holds of the events that give rise to a `p`-state and
+`◇[cause] q` of the events that cause a `q`-event.
 
-* `become`, between an event and a state it gives rise to;
-* `cause`, between an event and an event it causes;
-* `causeState`, between an event and a state it causes without a change.
+## Main definitions
 
-The verbal heads are possibility along these relations: `◇[become] p` holds of the events that
-give rise to a `p`-state, and `◇[cause] q` of the events that cause a `q`-event. Models are
-ordered by inclusion of their relations.
+* `EventStructure.Model`: the relations `become`, between an event and a state it gives rise to,
+  `cause`, between an event and an event it causes, and `causeState`, between an event and a
+  state it causes without a change.
+* The order on models, by inclusion of their relations.
 
 ## Implementation notes
 

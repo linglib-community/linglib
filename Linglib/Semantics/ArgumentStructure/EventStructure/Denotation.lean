@@ -6,23 +6,28 @@ public import Linglib.Semantics.ArgumentStructure.EventStructure.Template
 /-!
 # Denotations of event structure templates
 
-This file interprets event structure templates in a model. Fix a model `M`, a thematic relation
-`θ` between individuals and events, and the state predicate `P` and manner `Q` of a root.
-`Template.denote` is then a relation between an actor `y`, an undergoer `x` and an eventuality:
+This file interprets event structure templates in a model. Given a thematic relation between
+individuals and events and the state predicate and manner of a root, a template denotes a
+relation between an actor, an undergoer and an eventuality. A state holds when the state
+predicate holds of the undergoer, an action when its actor acts in the manner, a change when it
+gives rise to a state of which the embedded template holds, and a causation when the causing
+template holds of an event that causes an eventuality of which the caused template holds.
 
-* `state` holds of `s` when `P x s`;
-* `act` holds of `v` when `θ y v` and `Q v`, and `effector` when `θ y v`;
-* `become t` holds of `e` when `e` gives rise to a state of which `t` holds;
-* `cause c t` holds of `v` when `c` holds of `v` and `v` causes an eventuality of which `t` holds
-  with the undergoer as its actor.
+## Main definitions
 
-The denotation is monotone in the model, and it entails that every subterm is realized. Giving
-the event of an individual causer a manner yields the template with an action in its place.
+* `Template.denote`: the denotation of a template in a model.
+* `Model.causeInto`: the causal relation of a model into a sort.
 
-The main results, `Template.result_mem_kinds_iff` and `Template.cause_mem_kinds_iff`, say that
-the kinds of a template are what all its denotations entail: a template has `BECOME` iff every
-denotation in every model involves a change, and `CAUSE` iff every denotation involves
-causation.
+## Main results
+
+* `Template.denote_mono`: the denotation is monotone in the model.
+* `Template.exists_denote_of_isSubterm`: if a template is realized then so is each subterm.
+* `Template.denote_cause_act`: giving the event of an individual causer a manner yields the
+  template with an action in its place.
+* `Template.result_mem_kinds_iff`: a template has `BECOME` iff every denotation of it in every
+  model involves a change.
+* `Template.cause_mem_kinds_iff`: a template has `CAUSE` iff every denotation of it in every
+  model involves causation.
 
 ## Implementation notes
 

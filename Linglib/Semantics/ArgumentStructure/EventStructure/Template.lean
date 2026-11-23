@@ -6,26 +6,30 @@ public import Linglib.Semantics.ArgumentStructure.Root.Basic
 # Event structure templates
 
 This file defines event structure templates, the terms that describe the internal structure of
-the eventuality a verb names. A `Template` is built from four primitives:
+the eventuality a verb names. A template is built from a state `[x ⟨STATE⟩]`, an action
+`[x ACT⟨MANNER⟩]`, a change `[BECOME t]` and causation `[c CAUSE e]`. Templates are sorted:
+`BECOME` takes a state and gives an event, and `CAUSE` takes an event and a template of either
+sort.
 
-* `state`, a state, written `[x ⟨STATE⟩]`;
-* `act`, an action with a manner, `[x ACT⟨MANNER⟩]`;
-* `become t`, a change into the state `t`, `[BECOME t]`;
-* `cause c e`, a causing event `c` and what it causes, `[c CAUSE e]`.
+## Main definitions
 
-A fifth leaf, `effector`, is the causing event of an individual causer, as in
-`[x CAUSE [BECOME [y ⟨STATE⟩]]]`. Templates are sorted: `become` takes a state and gives an event,
-and `cause` takes an event and a template of either sort. The achievement is
-`[BECOME [x ⟨STATE⟩]]` and the accomplishment is `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`.
+* `EventStructure.Template`: the templates of a sort, with constructors `state`, `act`,
+  `effector`, `become` and `cause`.
+* `Template.achievement`: the template `[BECOME [x ⟨STATE⟩]]`.
+* `Template.accomplishment`: the template `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`.
+* `Template.kinds`: the kinds of entailment the primitives of a template contribute.
+* `Template.IsSubterm`: the subterm relation.
 
-We define `Template.kinds`, the kinds of entailment the primitives of a template contribute, and
-the subterm relation `Template.IsSubterm`. A template with a manner and a state has a cause, and
-the kinds of a subterm are among those of the template.
+## Main results
+
+* `Template.cause_mem_kinds_of_manner_of_state`: a template with a manner and a state has a
+  cause.
+* `Template.IsSubterm.kinds_subset`: the kinds of a subterm are among those of the template.
 
 ## Implementation notes
 
-An individual causer is the leaf `effector`, an event with no content beyond its effector, so
-that `cause` always relates two subevents.
+An individual causer is the leaf `effector`, an event with no content beyond its effector, as in
+`[x CAUSE [BECOME [y ⟨STATE⟩]]]`, so that `cause` always relates two subevents.
 
 ## References
 

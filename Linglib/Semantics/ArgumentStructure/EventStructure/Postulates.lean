@@ -7,22 +7,25 @@ public import Linglib.Semantics.ArgumentStructure.Root.Basic
 # Meaning postulates of roots
 
 This file defines the entailments that the predicates of a root may carry in a model of the
-event-structure primitives, the meaning postulates of [beavers-koontz-garboden-2020]. For a
-state predicate `p` and a manner predicate `Q`:
+event-structure primitives, the meaning postulates of [beavers-koontz-garboden-2020]. They are
+stated for a state predicate `p` and a manner predicate `Q`.
 
-* `p` entails change when every `p`-state arises from a change, `p ≤ ◇[become.inv] ⊤`;
-* `p` entails a cause when that change has a cause, `p ≤ ◇[become.inv] (◇[cause.inv] ⊤)`;
-* `Q` is the manner of the cause of `p` when the change has a cause and every cause of it is a
-  `Q`-event, `p ≤ ◇[become.inv] (◇[cause.inv] ⊤ ⊓ □[cause.inv] Q)`;
-* `Q` entails the caused result `p` when every `Q`-event causes a change into a `p`-state,
+## Main definitions
+
+* `Model.EntailsChange`: every `p`-state arises from a change, `p ≤ ◇[become.inv] ⊤`.
+* `Model.EntailsCause`: that change has a cause, `p ≤ ◇[become.inv] (◇[cause.inv] ⊤)`.
+* `Model.EntailsMannerOfCause`: the change has a cause and every cause of it is a `Q`-event,
+  `p ≤ ◇[become.inv] (◇[cause.inv] ⊤ ⊓ □[cause.inv] Q)`.
+* `Model.EntailsCausedResult`: every `Q`-event causes a change into a `p`-state,
   `Q ≤ ◇[cause] (◇[become] p)`.
+* `Model.Respects`: the postulates of the kinds in a signature hold.
 
-A model `Respects` a kind signature when the postulates of its kinds hold. Each postulate entails
-the one before it, so a signature and its closure have the same models.
+## Main results
 
-The main result is `Model.entailsMannerOfCause_iff`: where a state arises from at most one
-change, `Q` is the manner of the cause of `p` iff `p` entails a cause and every event that causes
-a change into a `p`-state is a `Q`-event.
+* `Model.respects_close`: a model respects a signature iff it respects its closure.
+* `Model.entailsMannerOfCause_iff`: where a state arises from at most one change, `Q` is the
+  manner of the cause of `p` iff `p` entails a cause and every event that causes a change into a
+  `p`-state is a `Q`-event.
 
 ## Implementation notes
 
