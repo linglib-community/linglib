@@ -5,30 +5,10 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Basic.Rel
-public import Mathlib.Order.UpperLower.Closure
-public import Linglib.Core.Data.Set.Sups
+public import Linglib.Semantics.Conditionals.Counterfactual.Transition
 
 /-!
 # Fine (2012): Counterfactuals without Possible Worlds
-
-States are ordered by parthood, and the fusion of some states exists just in case they are
-compatible: the order is bounded complete, with a null state `⊥`. A statement is exactly verified
-by a set of states: a conjunction by the fusions `A.lubs B` of a verifier of each conjunct, a
-disjunction by the verifiers `A ∪ B ∪ A.lubs B` of either disjunct or of their conjunction,
-`⊤` by the null state alone, and `⊥` by nothing. It is inexactly verified by the states
-containing an exact verifier, the upper set `upperClosure A`. By BC a state inexactly verifies a
-conjunction exactly when it inexactly verifies both conjuncts (`Set.upperClosure_lubs`).
-
-For a transition relation `outcome w`, relating a state `t` to the possible outcomes `u` of
-imposing it on the world `w`, the counterfactual `would outcome A C` is true at `w` when every
-outcome at `w` of every exact verifier of `A` inexactly verifies `C`: the image of `A` under
-`outcome w` is contained in `C`. From the form of this clause alone the counterfactual
-satisfies Inclusive Disjunction (`inclusive_disjunction`), Conjunction
-(`conjunction`), Exact Strengthening, Inexact Weakening and Triviality; when outcomes contain
-the state imposed it satisfies Identity, when a state within a world has an outcome within
-it, Modus Ponens (`modus_ponens`), and when an outcome of a state is an outcome of its fusion
-with any part of that outcome, Transitivity (`transitivity`).
 
 The paper begins from a derivation: for rocks each of which would topple the next and leave the
 previous one standing, the rules Entailment, Substitution, Transitivity, Disjunction and
@@ -37,12 +17,29 @@ propositions, sets of worlds, satisfies Substitution of logical equivalents by i
 derivation is a theorem about every such conditional. Disjunction is used only for exclusive
 disjuncts.
 
+The paper's own semantics gives up Substitution. States are ordered by parthood, and the fusion
+of some states exists just in case they are compatible: the order is bounded complete, with a
+null state `⊥`. A statement is exactly verified by a set of states: a conjunction by the fusions
+`A.lubs B` of a verifier of each conjunct, a disjunction by the verifiers `A ∪ B ∪ A.lubs B` of
+either disjunct or of their conjunction, `⊤` by the null state alone, and `⊥` by nothing. For a
+transition relation, the counterfactual is `Conditional.transitionImp`, and the paper's rules
+for it are theorems about that clause: Inclusive Disjunction
+(`Conditional.transitionImp_union_union_lubs`), Conjunction
+(`Conditional.transitionImp_upperClosure_lubs`), Exact Strengthening
+(`Conditional.transitionImp_anti`), Inexact Weakening (`Conditional.transitionImp_mono`),
+Triviality (`Conditional.transitionImp_upperClosure_bot`, `Conditional.transitionImp_empty`),
+Identity from Inclusion (`Conditional.transitionImp_upperClosure_self`), Modus Ponens from
+Actuality (`Conditional.state_mem_of_mem_transitionImp`) and Transitivity from Incorporation
+(`Conditional.transitionImp_trans`).
+
 ## Implementation notes
 
 Bounded completeness is assumed for pairs of states; the paper assumes it for sets of states,
 and infinitary conjunction of statements, which needs that, is not formalized. Statements are
 unilateral, a set of verifiers, so negation, which the paper treats by falsifiers, is not
-represented. The consequent of `would` is an inexact content, an upper set of states.
+represented. Inclusive Disjunction and Conjunction are stated as equalities, of which the
+paper's rules are one direction. Transitivity takes Inclusion as a hypothesis, under which the
+fusion formed in its proof exists.
 
 ## References
 
@@ -53,86 +50,6 @@ represented. The consequent of `would` is an inexact content, an upper set of st
 
 namespace Fine2012
 
-
-/-! ### The truth clause and its rules -/
-
-section Clause
-
-variable {S W : Type*} [PartialOrder S]
-
-/-- `A > C` is true at `w` when the possible outcomes at `w` of the exact verifiers of `A`
-inexactly verify `C`. -/
-def would (outcome : W → SetRel S S) (A : Set S) (C : UpperSet S) : Set W :=
-  {w | (outcome w).image A ⊆ C}
-
-variable {outcome : W → SetRel S S} {A A' B D E : Set S} {C C' : UpperSet S} {w : W}
-
-theorem mem_would : w ∈ would outcome A C ↔ (outcome w).image A ⊆ C := Iff.rfl
-
-theorem would_union : would outcome (A ∪ B) C = would outcome A C ∩ would outcome B C :=
-  Set.ext fun _ ↦ by
-    simp only [mem_would, SetRel.image_union, Set.union_subset_iff, Set.mem_inter_iff]
-
-/-- Inclusive Disjunction. -/
-theorem inclusive_disjunction :
-    would outcome A C ∩ would outcome B C ∩ would outcome (A.lubs B) C ⊆
-      would outcome (A ∪ B ∪ A.lubs B) C := by
-  rw [would_union, would_union]
-
-theorem would_sup : would outcome A (C ⊔ C') = would outcome A C ∩ would outcome A C' :=
-  Set.ext fun _ ↦ by
-    simp only [mem_would, UpperSet.coe_sup, Set.subset_inter_iff, Set.mem_inter_iff]
-
-/-- Conjunction: by BC the outcome contains the fusion of the verifiers it contains. -/
-theorem conjunction [IsBoundedComplete S] :
-    would outcome A (upperClosure D) ∩ would outcome A (upperClosure E) ⊆
-      would outcome A (upperClosure (D.lubs E)) := by
-  rw [Set.upperClosure_lubs, would_sup]
-
--- Exact Strengthening
-theorem exact_strengthening (h : A' ⊆ A) : would outcome A C ⊆ would outcome A' C :=
-  fun _ hw ↦ (SetRel.image_subset_image h).trans hw
-
--- Inexact Weakening
-theorem inexact_weakening (h : (C : Set S) ⊆ C') : would outcome A C ⊆ would outcome A C' :=
-  fun _ hw ↦ hw.trans h
-
--- Triviality
-theorem triviality_top [OrderBot S] : would outcome A (upperClosure {⊥}) = Set.univ :=
-  Set.eq_univ_of_forall fun _ _ _ ↦ ⟨⊥, rfl, bot_le⟩
-
--- Triviality
-theorem triviality_bot : would outcome ∅ C = Set.univ :=
-  Set.eq_univ_of_forall fun _ ↦ by
-    rw [mem_would, SetRel.image_empty_right]
-    exact Set.empty_subset _
-
--- Identity, from Inclusion
-theorem identity (h : ∀ w t u, (t, u) ∈ outcome w → t ≤ u) :
-    would outcome A (upperClosure A) = Set.univ :=
-  Set.eq_univ_of_forall fun w u ⟨t, ht, htu⟩ ↦ ⟨t, ht, h w t u htu⟩
-
-/-- Modus Ponens, from Actuality: a state within a world has an outcome within it. The state
-of the world `w` is `state w`. -/
-theorem modus_ponens (state : W → S)
-    (h : ∀ w t, t ≤ state w → ∃ u ≤ state w, (t, u) ∈ outcome w) (hw : w ∈ would outcome A C)
-    (hA : state w ∈ upperClosure A) : state w ∈ C := by
-  obtain ⟨t, ht, htw⟩ := hA
-  obtain ⟨u, huw, hu⟩ := h w t htw
-  exact C.upper huw (hw ⟨t, ht, hu⟩)
-
-/-- Transitivity, from Inclusion and Incorporation: an outcome of a state is an outcome of its
-fusion with any part of that outcome. -/
-theorem transitivity [IsBoundedComplete S] (incl : ∀ w t u, (t, u) ∈ outcome w → t ≤ u)
-    (inc : ∀ w t u u' r, (t, u) ∈ outcome w → u' ≤ u → IsLUB {t, u'} r → (r, u) ∈ outcome w) :
-    would outcome A (upperClosure B) ∩ would outcome (A.lubs B) C ⊆ would outcome A C := by
-  rintro w ⟨h₁, h₂⟩ u ⟨t, ht, htu⟩
-  obtain ⟨u', hu', hu'u⟩ := h₁ ⟨t, ht, htu⟩
-  obtain ⟨r, hr⟩ := IsBoundedComplete.exists_isLUB_of_bddAbove t u'
-    ⟨u, mem_upperBounds_pair.mpr ⟨incl w t u htu, hu'u⟩⟩
-  exact h₂ ⟨r, ⟨t, ht, u', hu', hr⟩, inc w t u u' r htu hu'u hr⟩
-
-end Clause
 
 /-! ### The rocks -/
 

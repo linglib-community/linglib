@@ -9,7 +9,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Causation.CausalModel.Dependence
 public import Linglib.Core.Data.Set.Sups
-public import Studies.Fine2012
+public import Linglib.Semantics.Conditionals.Counterfactual.Transition
 
 /-!
 # Briggs (2012): Interventionist Counterfactuals
@@ -37,7 +37,8 @@ right-nested counterfactual (`would_singleton_nested`).
 A causal model is a state space in the sense of [fine-2012]. Its transition relation
 `outcome M u` relates a state to the assignments that satisfy the equations of the submodel the
 state generates, in the context `u`, and the counterfactual with a counterfactual-free
-consequent is the truth clause of that paper for this relation (`would_outcome`). The relation
+consequent is the truth clause of that paper, `Conditional.transitionImp`, for this relation
+(`would_outcome`). The relation
 satisfies its conditions Inclusion (`le_of_mem_outcome`), Incorporation
 (`mem_outcome_of_isLUB`) and, in an acyclic model, Actuality (`mem_outcome_solve`), so modus
 ponens holds for a counterfactual-free consequent (`solve_mem_of_mem_would_holds`). In an
@@ -187,7 +188,7 @@ variable {M} {u : U} {s t t' r : ∀ v, Part (α v)}
 /-- The counterfactual with a counterfactual-free consequent is the truth clause of
 [fine-2012] for the transition relation of the model. -/
 theorem would_outcome (A : Set (∀ v, Part (α v))) (C : UpperSet (∀ v, Part (α v))) :
-    Fine2012.would (outcome M) A C =
+    Conditional.transitionImp (outcome M) A C =
       would M A (holds {x | (fun v ↦ Part.some (x v)) ∈ C}) := by
   ext u
   constructor
@@ -204,7 +205,7 @@ theorem some_mem_upperClosure_image_iff {C : Set (∀ v, α v)} {x : ∀ v, α v
   rwa [← funext fun v ↦ Part.some_le_some.mp (hle v)]
 
 theorem would_holds (A : Set (∀ v, Part (α v))) (C : Set (∀ v, α v)) :
-    would M A (holds C) = Fine2012.would (outcome M) A
+    would M A (holds C) = Conditional.transitionImp (outcome M) A
       (upperClosure ((fun (y : ∀ v, α v) v ↦ Part.some (y v)) '' C)) := by
   rw [would_outcome]
   simp only [some_mem_upperClosure_image_iff, Set.ofPred_mem_eq]
@@ -251,7 +252,7 @@ theorem solve_mem_of_mem_would_holds [∀ v, Nonempty (α v)] [M.IsAcyclic]
     {A : Set (∀ v, Part (α v))} {C : Set (∀ v, α v)} (hu : u ∈ would M A (holds C))
     (hA : (fun v ↦ Part.some (M.solve u v)) ∈ upperClosure A) : M.solve u ∈ C := by
   rw [would_holds] at hu
-  exact some_mem_upperClosure_image_iff.mp (Fine2012.modus_ponens
+  exact some_mem_upperClosure_image_iff.mp (Conditional.state_mem_of_mem_transitionImp
     (fun u v ↦ Part.some (M.solve u v)) (fun _ _ h ↦ ⟨_, le_rfl, mem_outcome_solve h⟩) hu hA)
 
 end Outcome

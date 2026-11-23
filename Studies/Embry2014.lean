@@ -7,14 +7,15 @@ module
 
 public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Conditionals.Basic
-public import Studies.Fine2012
+public import Linglib.Semantics.Conditionals.Counterfactual.Transition
 
 /-!
 # Embry (2014): A Difficulty for Fine's Exact Semantics for Counterfactuals
 
-On the truth clause of [fine-2012] a counterfactual is true when every outcome of every exact
-verifier of its antecedent contains a verifier of its consequent. An atomic statement such as
-*it snowed* is determinable: each determinate snowfall verifies it. So where I ski after eight
+On the truth clause of [fine-2012], `Conditional.transitionImp`, a counterfactual is true when
+every outcome of every exact verifier of its antecedent contains a verifier of its consequent.
+An atomic statement such as *it snowed* is determinable: each determinate snowfall verifies
+it. So where I ski after eight
 inches and not after a hundred feet, *if it had snowed, I would have gone skiing* is false on
 that clause, because of the outcome of the hundred-foot verifier (`not_would_snowed`), although
 it is true of the eight-inch verifier taken alone (`would_eightInches`).
@@ -50,7 +51,7 @@ and the base world is the single point of evaluation.
 
 namespace Embry2014
 
-open Conditional Fine2012
+open Conditional
 
 /-! ### A determinable antecedent -/
 
@@ -105,19 +106,20 @@ theorem mem_upperClosure_skis_iff {d : Depth} {u : St} (hu : (snowedTo d, u) ∈
     cases v <;> simp [skiing, snowedTo]
 
 -- true of the eight-inch verifier
-theorem would_eightInches : () ∈ would outcome {snowedTo .eightInches} (upperClosure skis) := by
+theorem would_eightInches :
+    () ∈ transitionImp outcome {snowedTo .eightInches} (upperClosure skis) := by
   rintro u ⟨t, rfl, hu⟩
   exact (mem_upperClosure_skis_iff hu).mpr rfl
 
 -- (3b)
 theorem not_would_hundredFeet :
-    () ∉ would outcome {snowedTo .hundredFeet} (upperClosure skis) := fun h ↦
+    () ∉ transitionImp outcome {snowedTo .hundredFeet} (upperClosure skis) := fun h ↦
   absurd ((mem_upperClosure_skis_iff ⟨_, rfl, rfl⟩).mp (h ⟨_, rfl, _, rfl, rfl⟩)) (by decide)
 
 /-- (3a) is false on the truth clause of exact semantics: the outcome of the hundred-foot
 verifier contains no skiing. -/
-theorem not_would_snowed : () ∉ would outcome snowed (upperClosure skis) := fun h ↦
-  not_would_hundredFeet (exact_strengthening (Set.subset_insert _ _) h)
+theorem not_would_snowed : () ∉ transitionImp outcome snowed (upperClosure skis) := fun h ↦
+  not_would_hundredFeet (transitionImp_anti (Set.subset_insert _ _) h)
 
 /-! ### The dilemma for a repair by closeness -/
 
