@@ -10,6 +10,7 @@ public import Mathlib.Data.Finset.Lattice.Basic
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Logic.Equiv.Defs
 public import Mathlib.Order.Hom.Lattice
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Element Theory
@@ -93,7 +94,7 @@ inductive Element
   | H
   /-- The element |L| of nasality, voicing and low tone, low-frequency energy. -/
   | L
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 namespace Element
 
