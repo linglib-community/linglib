@@ -1,0 +1,44 @@
+{
+ "meta": {
+  "bibkey": "narrog-2012",
+  "method": "typology",
+  "description": "The totals the book gives for the changes of modal meaning in the sample of [bybee-perkins-pagliuca-1994], by the sides of volitivity they run between. The changes themselves are tabulated in `Narrog2010.changes`.",
+  "rawData": []
+ },
+ "types": [],
+ "constants": [
+  {
+   "name": "nonVolitiveToVolitive",
+   "type": "nat",
+   "value": 27,
+   "doc": "The changes from non-volitive to volitive meaning.",
+   "locator": "section 5.2, p. 154",
+   "verified": "page-image"
+  },
+  {
+   "name": "withinNonVolitive",
+   "type": "nat",
+   "value": 6,
+   "doc": "The changes within non-volitive meaning.",
+   "locator": "section 5.2, p. 154",
+   "verified": "page-image"
+  },
+  {
+   "name": "volitiveToNonVolitive",
+   "type": "nat",
+   "value": 5,
+   "doc": "The changes from volitive to non-volitive meaning.",
+   "locator": "section 5.2, p. 154",
+   "verified": "page-image"
+  },
+  {
+   "name": "withinVolitive",
+   "type": "nat",
+   "value": 4,
+   "doc": "The changes within volitive meaning.",
+   "locator": "section 5.2, p. 154",
+   "verified": "page-image"
+  }
+ ],
+ "tables": []
+}

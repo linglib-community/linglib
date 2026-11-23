@@ -1,0 +1,176 @@
+{
+ "meta": {
+  "bibkey": "narrog-2010",
+  "method": "typology",
+  "description": "The changes of modal meaning that the chapter tabulates from the 76-language sample of [bybee-perkins-pagliuca-1994], and the totals it draws from them.",
+  "rawData": []
+ },
+ "types": [
+  {
+   "name": "Label",
+   "doc": "The labels of source and new meanings in the chapter's table of changes.",
+   "levels": [
+    {
+     "name": "futurePrediction",
+     "label": "future/prediction",
+     "doc": "a future or prediction marker"
+    },
+    {
+     "name": "rootPossibility",
+     "label": "root possibility",
+     "doc": "possibility given the circumstances"
+    },
+    {
+     "name": "rootEpistemicPossibility",
+     "label": "root/epistemic possibility",
+     "doc": "root or epistemic possibility"
+    },
+    {
+     "name": "obligation",
+     "label": "obligation",
+     "doc": "obligation of unspecified strength"
+    },
+    {
+     "name": "abilityRootPossibility",
+     "label": "ability/root possibility",
+     "doc": "ability or root possibility"
+    },
+    {
+     "name": "strongObligation",
+     "label": "strong obligation",
+     "doc": "obligation of the kind English must expresses"
+    },
+    {
+     "name": "weakObligation",
+     "label": "weak obligation",
+     "doc": "obligation of the kind English should expresses"
+    },
+    {
+     "name": "imperative",
+     "label": "imperative",
+     "doc": "the imperative mood"
+    },
+    {
+     "name": "permission",
+     "label": "permission",
+     "doc": "deontic possibility"
+    },
+    {
+     "name": "admonitive",
+     "label": "admonitive",
+     "doc": "the admonitive mood, a warning or prohibition"
+    },
+    {
+     "name": "epistemicPossibility",
+     "label": "epistemic possibility",
+     "doc": "epistemic possibility"
+    },
+    {
+     "name": "certainty",
+     "label": "certainty",
+     "doc": "strong epistemic necessity"
+    },
+    {
+     "name": "probability",
+     "label": "probability",
+     "doc": "weak epistemic necessity"
+    }
+   ]
+  }
+ ],
+ "constants": [
+  {
+   "name": "listedChanges",
+   "type": "nat",
+   "value": 42,
+   "doc": "The changes of the sample that the chapter counts.",
+   "locator": "section 4, p. 405",
+   "verified": "page-image"
+  },
+  {
+   "name": "possibilitySourceChanges",
+   "type": "nat",
+   "value": 18,
+   "doc": "The changes whose source is ability or situational possibility.",
+   "locator": "section 4, p. 405",
+   "verified": "page-image"
+  },
+  {
+   "name": "obligationSourceChanges",
+   "type": "nat",
+   "value": 9,
+   "doc": "The changes whose source is obligation.",
+   "locator": "section 4, p. 405",
+   "verified": "page-image"
+  }
+ ],
+ "tables": [
+  {
+   "name": "changes",
+   "structure": "Change",
+   "doc": "a change of modal meaning, with the number of grams of the sample that show it, one gram per language.",
+   "locator": "Table 2, p. 396",
+   "verified": "page-image",
+   "columns": [
+    {
+     "name": "source",
+     "type": "Label",
+     "doc": "The source meaning."
+    },
+    {
+     "name": "target",
+     "type": "Label",
+     "doc": "The new meaning."
+    },
+    {
+     "name": "grams",
+     "type": "nat",
+     "doc": "The grams showing the change."
+    }
+   ],
+   "rows": [
+    {
+     "source": "future/prediction",
+     "target": "imperative",
+     "grams": 13
+    },
+    {
+     "source": "root possibility",
+     "target": "permission",
+     "grams": 9
+    },
+    {
+     "source": "root/epistemic possibility",
+     "target": "admonitive",
+     "grams": 5
+    },
+    {
+     "source": "obligation",
+     "target": "imperative",
+     "grams": 4
+    },
+    {
+     "source": "ability/root possibility",
+     "target": "epistemic possibility",
+     "grams": 4
+    },
+    {
+     "source": "strong obligation",
+     "target": "certainty",
+     "grams": 3
+    },
+    {
+     "source": "weak obligation",
+     "target": "probability",
+     "grams": 2
+    },
+    {
+     "source": "future/prediction",
+     "target": "probability",
+     "grams": 2,
+     "note": "Printed as prediction/future."
+    }
+   ]
+  }
+ ]
+}
