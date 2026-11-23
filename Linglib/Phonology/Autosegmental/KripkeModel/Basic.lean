@@ -40,6 +40,15 @@ exactly one node, as [bird-blackburn-1991] do to state that two syllables share 
 the automata of [kasper-rounds-1990] two paths lead to the same token exactly when they lead to
 the same state.
 
+## Implementation notes
+
+Kripke models and their bisimulations are defined in `Logic/Modal/Kripke.lean`, which knows
+nothing of phonology. The map from representations into them is phonological content and lives
+here, as do the theorems about spreading and the collapse in the files beside this one. The map
+into prosodic structures is instead in `Phonology/Prosody/Structure/Autosegmental.lean`, since
+`Prosody.Structure` is the object the accounts of prosodic structure are compared in and
+collects the map from each.
+
 ## References
 
 * [bird-blackburn-1991]
