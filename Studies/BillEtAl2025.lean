@@ -231,7 +231,6 @@ theorem covert_add_card_pronounced (s : Sentence) :
 theorem underlying_jMu : a.underlying .jMu = Finset.univ :=
   Finset.univ_subset_iff.mp (a.pronounced_subset .jMu)
 
-/-- The J-μ type leaves no head covert, on any account. -/
 @[simp] theorem covert_jMu : a.covert .jMu = 0 :=
   Finset.card_eq_zero.mpr (Finset.sdiff_eq_empty_iff_subset.mpr (Finset.subset_univ _))
 
