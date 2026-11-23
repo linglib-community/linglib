@@ -4,6 +4,7 @@ public import Linglib.Semantics.ArgumentStructure.Relation.Control
 public import Linglib.Semantics.ArgumentStructure.Relation.Denotation
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Syntax.Voice.Apply
 public import Mathlib.Data.PFun
 
 /-!
@@ -42,7 +43,10 @@ controller holds where some value of the deleted argument has the property in th
 For a verb's relation of its participants and a diathesis that leaves the controlling participant
 out, the hypothesis is computed: the relation the diathesis denotes obeys the principle, for the
 role of that participant, only if the verb's relation holds of nothing
-(`ControlPrinciple.eq_bot_of_denote`).
+(`ControlPrinciple.eq_bot_of_denote`). The short passive leaves its agent at an implicit position,
+which is no argument of the relation; with such positions closed (`closedPassive`), the passive
+of every diathesis of an English verb whose controller is not its object leaves the controller
+out, so a verb with such a passive obeying the principle holds of nothing (`eq_bot_of_passive`).
 
 A relation obeying the principle is controlled at the role (`ControlPrinciple.isControlledAt`),
 and raising at an argument position when the frame does not depend on the arguments, as that of
@@ -83,10 +87,9 @@ controller out.
   virtual arguments and referential opacity derived from it, are not formalized.
 * The source's judgments on passives and intransitives of control verbs are not entered as
   examples.
-* `ControlPrinciple.eq_bot_of_denote` is stated for a participant the diathesis leaves out. The
-  agent of a passive is at an implicit position, and that implicit positions are no arguments of
-  the relation, as the source's treatment of the agent phrase as a modifier has it, is not yet a
-  step of the derivation.
+* A long passive expresses the agent in an adpositional phrase, which the source takes to
+  modify the passive predicate; `closedPassive` is the short passive, and the long one is not
+  formalized.
 
 ## References
 
@@ -255,5 +258,37 @@ theorem controller_eq_or_isRaising : ∀ v ∈ verbs, ∀ c ∈ v.valency.diathe
     ∀ d ∈ v.valency.diatheses, d.HasClausal → ¬ d.HasFinite →
       d.controller = some i ∨ d.IsRaising := by
   decide +kernel
+
+section Passive
+
+open English.Verbs
+
+variable {n : ℕ}
+
+/-- The short passive of a diathesis with the positions that are not expressed closed: the agent,
+left implicit, is no argument of the relation the passive denotes. -/
+def closedPassive (d : Diathesis n) : Diathesis n :=
+  ((Voice.passive d.toArgumentFrame).apply d).restrict fun p ↦ p.IsExpressed
+
+-- (11), (87)
+theorem links_closedPassive : ∀ v ∈ verbs, ∀ d ∈ v.valency.diatheses, ∀ i ∈ d.controller,
+    d.controllerRole ≠ some .P →
+      (closedPassive d).links.get i = none ∧ ∀ j j', ((closedPassive d).links.get j).isSome →
+        (closedPassive d).links.get j = (closedPassive d).links.get j' → j = j' := by
+  decide +kernel
+
+-- (86), (87)
+theorem eq_bot_of_passive [Nonempty E] {v : English.Verbs.Verb} (hv : v ∈ verbs)
+    {d : Diathesis v.valency.arity} (hd : d ∈ v.valency.diatheses) {i : Fin v.valency.arity}
+    (hi : i ∈ d.controller) (hP : d.controllerRole ≠ some .P)
+    {R : (E → Set W) → (Fin v.valency.arity → E) → Set W}
+    {N : (ArgumentFrame.Slot → E) → W → Filter W}
+    (h : ControlPrinciple ((closedPassive d).denote R)
+      (fun y ↦ (((closedPassive d).links.get i).map y : Part E)) q N) : R = ⊥ :=
+  let ⟨h₁, h₂⟩ := links_closedPassive v hv d hd i hi hP
+  h.eq_bot_of_denote
+    (fun j j' _ hj hj' ↦ h₂ j j' (Option.isSome_iff_exists.2 ⟨_, hj⟩) (hj.trans hj'.symm)) h₁
+
+end Passive
 
 end Chierchia1984
