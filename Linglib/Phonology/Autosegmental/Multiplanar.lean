@@ -26,7 +26,8 @@ The tiers form a tree, `AR.planes`, with the slots at the root and every plane h
 them. A slot dominates the autosegments linked to it (`dominates_planes_iff`), and it reads, in
 the sense of `AR.Reads`, the autosegments that `X.hostedOn i s` lists for each plane
 (`reads_planes_iff`). The list also keeps their order on the plane and how many there are, which
-reading does not.
+reading does not; it is what the slot hosts on the plane, `X.hosted planes s (some i)`
+(`hostedOn_eq_hosted`).
 
 ## Implementation notes
 
@@ -159,6 +160,12 @@ theorem reads_planes_iff : X.Reads planes s (some i) a ↔ a ∈ X.hostedOn i s 
     List.mem_zipIdx_iff_getElem?, decide_eq_true_eq, Prod.exists, exists_and_right,
     exists_eq_right]
   exact ⟨fun ⟨q, hl, ha⟩ ↦ ⟨q, ha, hl⟩, fun ⟨q, ha, hl⟩ ↦ ⟨q, hl, ha⟩⟩
+
+/-- The autosegments a slot hosts on a plane are what it hosts there along the tree of
+tiers. -/
+theorem hostedOn_eq_hosted (i : ι) (s : ℕ) : X.hostedOn i s = X.hosted planes s (some i) :=
+  congrArg (List.map Prod.fst) (List.filter_congr fun x _ ↦
+    decide_eq_decide.2 (dominates_planes_iff (q := x.2)).symm)
 
 end Planes
 
