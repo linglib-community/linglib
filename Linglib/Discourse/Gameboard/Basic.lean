@@ -6,21 +6,41 @@ public import Linglib.Discourse.Gameboard.Defs
 # Dialogue gameboard operations
 
 This file defines the updates of the dialogue gameboard of Ginzburg's theory of dialogue, KoS:
-pushing a question onto QUD, adding a fact, recording a move or a pending utterance, changing the
-turn, and QUD-downdate, which removes from QUD every question that some fact resolves. A
-gameboard satisfies `non-resolve-cond` when no fact resolves a question under discussion;
-downdate [is idle exactly](##Gameboard.downdateQud_eq_self_iff) on the gameboards that
-satisfy it and returns
-[the largest QUD free of resolved questions](##Gameboard.sublist_qud_downdateQud_iff),
-and pushing a question
-[keeps the condition exactly](##Gameboard.nonResolveCond_pushQud_iff) when no fact
-resolves that question. Contextual instantiation witnesses some of an utterance's contextual
-parameters, and the utterances it produces are
-[exactly the contextual extensions](##Gameboard.LocutionaryProposition.exists_eq_instantiate_iff).
-Utterance Interpolation accommodates a question as MaxQUD and records a move co-propositional
-with it, and a Clarification Context Update Rule
-[does so](##Gameboard.clarify_eq_some_iff) for a question built from a constituent of
-the maximal pending utterance, with the turn kept or passed on.
+pushing a question onto QUD, adding a fact, recording a move or a pending utterance, replacing
+the maximal pending utterance, and changing the turn. QUD-downdate removes from QUD every
+question that some fact resolves, and a gameboard satisfies `non-resolve-cond` when no fact
+resolves a question under discussion. Contextual instantiation witnesses some of an utterance's
+contextual parameters. Utterance Interpolation accommodates a question as MaxQUD and records a
+move co-propositional with it, and a Clarification Context Update Rule does so for a question
+built from a constituent of the maximal pending utterance, with the turn kept or passed on.
+
+## Main definitions
+
+* `Gameboard.pushQud`, `Gameboard.addFact`, `Gameboard.recordMove`, `Gameboard.pushPending`,
+  `Gameboard.replaceMaxPending`: the updates of QUD, FACTS, MOVES and PENDING.
+* `Gameboard.swapTurn`, `Gameboard.swapTurnEquiv`, `Gameboard.Turn`: the addressee takes the turn,
+  and a rule's choice between keeping the turn and passing it on.
+* `Gameboard.NonResolveCond`, `Gameboard.downdateQud`: `non-resolve-cond` and QUD-downdate.
+* `Gameboard.LocutionaryProposition.instantiate`: contextual instantiation.
+* `Gameboard.incrementQud`: QUD-incrementation by the question the latest move contributes.
+* `Gameboard.interpolate`, `Gameboard.clarify`: Utterance Interpolation and the Clarification
+  Context Update Rules.
+
+## Main results
+
+* `Gameboard.downdateQud_eq_self_iff`: downdate is idle exactly on the gameboards that satisfy
+  `non-resolve-cond`.
+* `Gameboard.sublist_qud_downdateQud_iff`: the downdated QUD is the largest sublist of QUD free
+  of resolved questions.
+* `Gameboard.nonResolveCond_pushQud_iff`: pushing a question keeps `non-resolve-cond` exactly
+  when no fact resolves that question.
+* `Gameboard.LocutionaryProposition.exists_eq_instantiate_iff`: contextual instantiation yields
+  exactly the contextual extensions of an utterance.
+* `Gameboard.clarify_eq_some_iff`: a Clarification Context Update Rule applies exactly when its
+  constituent is one of MaxPending and the move is co-propositional with the accommodated
+  question.
+* `Gameboard.clarify_eq_map_act`: the turn a Clarification Context Update Rule takes changes only
+  who holds the turn afterwards.
 
 ## Implementation notes
 
@@ -127,6 +147,18 @@ def pushPending (m : U) : Gameboard P F U I :=
 def pendingUpdate (u : U) (speaker addressee : P) : Gameboard P F U I :=
   { d.pushPending u with speaker, addressee }
 
+/-- Replace MaxPending by `w`, on a gameboard with a pending utterance. -/
+def replaceMaxPending (w : U) : Option (Gameboard P F U I) :=
+  match d.pending with
+  | _ :: rest => some { d with pending := w :: rest }
+  | [] => none
+
+theorem replaceMaxPending_eq_some_iff {w : U} {d' : Gameboard P F U I} :
+    d.replaceMaxPending w = some d' ↔
+      ∃ v rest, d.pending = v :: rest ∧ { d with pending := w :: rest } = d' := by
+  unfold replaceMaxPending
+  split <;> simp_all
+
 /-- The addressee takes the turn. -/
 def swapTurn : Gameboard P F U I :=
   { d with speaker := d.addressee, addressee := d.speaker }
@@ -169,6 +201,14 @@ end Initial
 
 theorem swapTurn_involutive : Function.Involutive (swapTurn (P := P) (F := F) (U := U) (I := I)) :=
   swapTurn_swapTurn
+
+/-- Swapping the turn, as a permutation of gameboards. -/
+@[simps! apply symm_apply]
+def swapTurnEquiv : Gameboard P F U I ≃ Gameboard P F U I :=
+  swapTurn_involutive.toPerm
+
+@[simp] theorem swapTurnEquiv_symm :
+    (swapTurnEquiv : Gameboard P F U I ≃ Gameboard P F U I).symm = swapTurnEquiv := rfl
 
 @[simp] theorem swapTurn_pushQud (i : I) : d.swapTurn.pushQud i = (d.pushQud i).swapTurn := rfl
 
@@ -314,6 +354,20 @@ theorem clarify_eq_some_iff : d.clarify r t i u m = some d' ↔
   cases d.maxPending with
   | none => simp
   | some v => by_cases hu : u ∈ v.constituents <;> simp [hu, interpolate]
+
+theorem isSome_clarify_iff : (d.clarify r t i u m).isSome ↔
+    ∃ v ∈ d.maxPending, u ∈ v.constituents ∧ r m.content (i v u).question := by
+  simp only [Option.isSome_iff_exists, clarify_eq_some_iff]
+  exact ⟨fun ⟨_, v, hv, hu, hr, _⟩ ↦ ⟨v, hv, hu, hr⟩, fun ⟨v, hv, hu, hr⟩ ↦ ⟨_, v, hv, hu, hr, rfl⟩⟩
+
+/-- The turn a Clarification Context Update Rule takes changes only who holds the turn
+afterwards. -/
+theorem clarify_eq_map_act (t : Turn) :
+    d.clarify r t i u m = (d.clarify r .keep i u m).map t.act := by
+  unfold clarify
+  cases d.maxPending with
+  | none => rfl
+  | some v => cases t <;> simp only [Option.bind_some, interpolate] <;> split_ifs <;> rfl
 
 theorem speaker_clarify (h : d.clarify r t i u m = some d') : d'.speaker = (t.act d).speaker := by
   obtain ⟨_, _, _, _, rfl⟩ := d.clarify_eq_some_iff.1 h

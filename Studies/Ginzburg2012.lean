@@ -358,9 +358,7 @@ constituents and continues co-propositionally with it. -/
 believes their witnesses are the ones the speaker intended. -/
 def contextualInstantiation (s : Finset Parameter) (d : Board P Fact Q) :
     Option (Board P Fact Q) :=
-  match d.pending with
-  | u :: rest => some { d with pending := u.instantiate s :: rest }
-  | [] => none
+  d.maxPending.bind fun u ↦ d.replaceMaxPending (u.instantiate s)
 
 /-- Pendification of a move rule: the move it records originates in PENDING, with no contextual
 parameter left to witness. -/
@@ -449,11 +447,8 @@ theorem coherent_of_isInitiating {G : Set (Board P Fact Q)} {d : Board P Fact Q}
 omit [DecidableEq Fact] in
 theorem parameterIdentification_eq_repair_swapTurn (u : Constituent) (cr : Utterance Fact Q)
     (d : Board P Fact Q) :
-    parameterIdentification u cr d = (repair u cr d).map Gameboard.swapTurn := by
-  simp only [parameterIdentification, repair, Gameboard.clarify, Gameboard.interpolate, Turn.act]
-  cases d.maxPending with
-  | none => rfl
-  | some v => simp only [Option.bind_some]; split_ifs <;> rfl
+    parameterIdentification u cr d = (repair u cr d).map Gameboard.swapTurn :=
+  d.clarify_eq_map_act .change
 
 /-! ### Worked traces (Ch. 4)
 
