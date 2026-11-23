@@ -12,48 +12,33 @@ public import Linglib.Morphology.Morphotactics.Template.Basic
 /-!
 # Morphotactics over strings of exponents
 
-A morphotactics joins a stem and inflectional material into a form, as the `compose` of an
-`InflectionalParadigm` does. Here the inflectional material is a string of exponents, so a
-morphotactics is a function `m : Z → List E → F` from a stem and a string to a form, and we
-study how the form of a string depends on the forms of its prefixes.
+A morphotactics builds the form of a word from a stem and its inflectional material. Here the
+material is a string of exponents, so a morphotactics is a function `m : Z → List E → F`.
 
-For `base : Z → F` and `step : F → E → F` we define `ofStep base step z es`, the form
-`es.foldl step (base z)` that attaches the exponents of `es` to the stem one at a time. A
-morphotactics `m` is *stepwise* when `m z es = m z' es'` implies
-`m z (es ++ [e]) = m z' (es' ++ [e])`: an exponent sees only the form it attaches to. When
-forms are strings, `m` is *concatenative* when `m z es <+: m z (es ++ [e])`: a further exponent
-leaves the form before it in place. The two are independent. A morphotactics that selects an
-allomorph by the exponents before it, and not by their form, is concatenative without being
-stepwise, and one in which an exponent alters the stem is stepwise without being concatenative.
+We define `ofStep base step`, which attaches the exponents to the stem one at a time: its form
+on `es` is `es.foldl step (base z)`. A morphotactics is *stepwise* when
+`m z es = m z' es'` implies `m z (es ++ [e]) = m z' (es' ++ [e])`, which holds exactly when it
+attaches its exponents one at a time by some step (`isStepwise_iff_exists_step`). A
+morphotactics whose forms are strings is *concatenative* when `m z es` is a prefix of
+`m z (es ++ [e])`.
 
-`realization m L` is the `Realization` of `m` on the strings a predicate `L` licenses, such as
-those of a `Template`. Its `cells z f` are the licensed strings whose form on `z` is `f`, and
-for `ofStep` they are found one exponent at a time (`concat_mem_cells_ofStep`). A paradigm of
-property cells is the pullback of `realization m L` along the function that gives each cell its
-string of exponents, `Realization.comap`.
+We also define `realization m L`, the `Morphology.Realization` whose contexts are the strings
+that `L` licenses. For `ofStep`, the strings with a given form are found one exponent at a time
+(`concat_mem_cells_ofStep`).
 
 ## Implementation notes
 
-`IsStepwise` is stated as a condition on pairs of strings with the same form, without an
-existential, so that it reads as the claim it is tested by; `isStepwise_iff_exists_step` gives
-the step function. It holds of every `ofStep`, and of an `ofStep` followed by a map of forms
-whose kernel the step respects (`isStepwise_comp_ofStep`), as a phonology that runs from left
-to right is.
-
-`ofStep` is the left fold, the action of the free monoid on forms from the right;
+`ofStep` is a left fold, since suffixes attach to the right of what is already built;
 `FreeMonoid.mkMulAction` is the right fold.
 
 ## TODO
 
-* The rule blocks of `PFM.evalBlocks` are folded over a list of blocks at a fixed cell; its
-  relation to `ofStep` is not stated.
-* Prefixes and the strings read from the stem outwards on both sides are not treated: a string
-  here is a string of suffixes.
+* `PFM.evalBlocks` folds rule blocks at a fixed cell. Its relation to `ofStep` is not stated.
+* A string here is a string of suffixes. Prefixes are not treated.
 
 ## References
 
 * [bickel-nichols-2007]
-* [corbett-2007]
 -/
 
 @[expose] public section

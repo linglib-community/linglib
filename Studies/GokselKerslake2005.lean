@@ -10,52 +10,27 @@ public import Linglib.Morphology.Morphotactics.Concatenation
 /-!
 # Göksel and Kerslake (2005): Turkish suffixation
 
-This file checks the account of the form and order of Turkish suffixes in the reference
-grammar of Göksel and Kerslake against the Turkish Fragment.
+We check the reference grammar's account of the form and order of Turkish suffixes against the
+Turkish Fragment.
 
-The example words of Chapters 3, 6 and 8 are rows of the data, each naming its stem and its
-suffixes, and every one of them is written as the surface form of that stem with those
-suffixes (`printed`). A person marker is read as one of group 1 or of group 2 by the suffix
-before it (§8.4), and a possessive by the suffix after it (§8.1.2).
+A suffix vowel that lacks [back] or [round] takes it from the word before it, and a
+suffix-initial stop that lacks [voice] takes it from the segment before it. The Fragment states
+this as `Turkish.Phonology.fill w x`, the segment `x` after the harmonized string `w`. We prove
+that the search-and-copy rules of fronting, rounding and voicing compute the same form for
+every word (`harmonize_eq_searchCopy`), that harmony adds feature values and changes none
+(`forall₂_le_harmonize`), and that `A`, `I` and `D` surface as the alternants the grammar lists
+(`fill_A`, `fill_I`, `fill_D`).
 
-The vowel harmony of Chapter 3 is derived by the surface forms of `Turkish.Phonology` from the
-exponent forms of `Turkish.Morphotactics`. Harmony and the voicing of a suffix-initial stop fill
-features in and change none, so each harmonized segment is at least its underlying segment in
-the order of `Phonology.Segment` (`forall₂_le_harmonize`). The Fragment states them in terms
-of features alone, as the grammar does: `Turkish.Phonology.fill w x` is the segment `x` after
-the harmonized string `w`, and the harmonized form of `w ++ [x]` is that of `w` followed by
-`fill` of it and `x`. The search-and-copy rules of the three harmony systems, run in turn,
-compute the same form for every word (`harmonize_eq_searchCopy`). The underlying form of a
-word attaches its suffixes one at a time, and before raising the harmonized word is stepwise and
-concatenative in the sense of `Morphotactics`: a suffix sees only the harmonized word
-it attaches to and leaves it in place (`isStepwise_harmonize_underlying`,
-`isConcatenative_harmonize_underlying`). Raising before -(I)yor alters the stem, so surface
-forms are not concatenative (`not_isConcatenative_realize`). The alternants that the
-grammar lists for `A`, `I` and `D` are the values of `fill` (`fill_A`, `fill_I`, `fill_D`), and
-two stems of phonemes that end alike take their suffixes alike
-(`exists_harmonize_append_eq`). The permissible vowel sequences of §3.1 are the
-surface forms of the two suffix vowels. The last vowel of a disharmonic loan decides
-(*otobüs-ler*), an invariant suffix vowel is skipped and triggers what follows (*görüyorum*,
-§3.4), and the palatal l of *gol* fronts its suffix (§3.4). The bracketed segments of Chapter 6
-appear where they keep vowels and consonants apart (§6.1.3), and a stem-final `a` or `e`,
-the vowel of the negative included, is raised before -(I)yor (§8.2.3.3).
+Suffixes attach one at a time. Before raising, a suffix sees only the harmonized word it
+attaches to and leaves it in place (`isStepwise_harmonize_underlying`,
+`isConcatenative_harmonize_underlying`), and two stems that end alike take their suffixes alike
+(`exists_harmonize_append_eq`). Raising before -(I)yor alters the stem
+(`not_isConcatenative_realize`).
 
-The suffix order of Chapter 8 is licensing by the templates of the finite verb and the nominal,
-the person marker of the verb moving where §8.4 allows and nowhere else.
-The grammar's example words are licensed with their stacked voice suffixes, reversed orders are
-not, and the rule that markers of one position cannot co-occur (§8.2.3) holds because the
-template does not repeat the position.
-
-The question clitic *mI* stands before the first clitic among the markers of a predicate and
-after the other markers (§11.1.1.5), as `Turkish.QuestionParticles.mi.insert` places it, so the
-grammar's examples are its surface forms, the markers after it attached to it.
-
-The converbs of §8.5.2.2 are those of `Turkish.Converb` on the grammar's verbs, and
-*-(y)Ip* and *-(y)ArAk* follow every slot before the position-3 marker and none after it
-(§28.2).
-
-The possessive and locative existential sentences of §12.1.1.2 are those of
-`Turkish.Possession`, with the possessive suffix on the possessee obligatory (§14.4).
+The example words of the chapters on vowel harmony, suffixation and inflection are rows of the
+data, and each is written as the surface form of its stem with its suffixes (`printed`). The
+remaining sections check the order of suffixes against the templates of the verb and the
+nominal, the place of the question clitic *mI*, the converbs and the existential sentences.
 
 ## References
 
