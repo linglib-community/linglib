@@ -198,21 +198,21 @@ def cCommandsEmbedding (h : t[p]? = some s) : s.CCommands ↪r t.CCommands where
 @[simp] theorem cCommandsEmbedding_apply (h : t[p]? = some s) (a : GornAddress) :
     cCommandsEmbedding h a = p * a := rfl
 
+theorem not_mul_of_le_mul_of (p : GornAddress) (hij : i ≠ j) : ¬ p * .of i ≤ p * .of j :=
+  fun h ↦ hij (GornAddress.of_inj_of_mul_of_le h le_rfl)
+
 /-- A daughter of a branching node c-commands what its sisters dominate. -/
 theorem cCommands_mul_of (hp : p ∈ t.branching) (hij : i ≠ j) (q : GornAddress) :
-    t.CCommands (p * .of i) (p * .of j * q) := by
-  refine (cCommands_iff_parent_lt (fun h ↦ ?_) (by rwa [GornAddress.parent_mul_of])).2 ⟨?_, ?_⟩
-  · simpa using congrArg GornAddress.toList h
-  · rw [GornAddress.parent_mul_of, mul_assoc]
-    exact lt_of_le_of_ne (GornAddress.le_mul_right _ _) fun h ↦ by
-      simpa using congrArg GornAddress.toList h
-  · exact fun h ↦ hij (GornAddress.of_inj_of_mul_of_le h (GornAddress.le_mul_right _ _))
+    t.CCommands (p * .of i) (p * .of j * q) :=
+  commands_of_covBy_of_lt (GornAddress.covBy_mul_of p i) hp (GornAddress.lt_mul_of p j)
+    (not_mul_of_le_mul_of p hij) (GornAddress.le_mul_right _ _)
 
 /-- A position properly below a branching daughter c-commands none of the daughter's sisters. -/
 theorem not_cCommands_mul_of_mul (hp : p * .of j ∈ t.branching) (hij : i ≠ j) (hq : q ≠ 1) :
-    ¬ t.CCommands (p * .of j * q) (p * .of i) := fun h ↦
-  hij (GornAddress.of_inj_of_mul_of_le le_rfl (h.command hp (lt_of_le_of_ne
-    (GornAddress.le_mul_right _ _) fun e ↦ hq (mul_left_cancel (e.symm.trans (mul_one _).symm)))))
+    ¬ t.CCommands (p * .of j * q) (p * .of i) :=
+  not_commands_of_covBy_of_lt (GornAddress.covBy_mul_of p i) hp (GornAddress.lt_mul_of p j)
+    (not_mul_of_le_mul_of p hij) (lt_of_le_of_ne (GornAddress.le_mul_right _ _)
+      fun e ↦ hq (mul_left_cancel (e.symm.trans (mul_one _).symm)))
 
 end Subtree
 

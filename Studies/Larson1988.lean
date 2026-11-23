@@ -16,23 +16,17 @@ public import Linglib.Fragments.English.Verbs.Levin
 /-!
 # Larson (1988): On the Double Object Construction
 
-In any tree, call positions $p_0, \dots, p_n$ a spine when each $p_k$ with $k < n$ is a branching
-node whose second daughter branches and properly dominates $p_{k+1}$ (`IsSpine`). Its arguments
-are the first daughters of $p_0, \dots, p_{n-1}$ and the position $p_n$. One argument of a spine
-c-commands another exactly when it is the higher (`IsSpine.cCommands_argPos_iff`). Nothing in this
-depends on what the nodes are labelled.
-
 A phrase is `[XP Spec [X′ X YP]]`, a head with one complement and one specifier, and a verb with
 several arguments projects a stack of such phrases, `shells`: the lowest argument is the
 complement of the verb and the next its specifier, and each further argument is the specifier of
-a phrase whose head is empty and whose complement is the phrase below. The positions of the
-phrases are a spine (`isSpine_pos`). At D-Structure the verb is the lowest head, `dLayers`, and at
-S-Structure it has raised to the highest, leaving a trace in each head below, `sLayers`. When the
-roles of the arguments descend the hierarchy agent > theme > goal > oblique, one argument
-c-commands another exactly when its role is the higher (`cCommands_argPos_iff_role_lt`). In *John
-sent a letter to Mary* the theme therefore c-commands the goal and not conversely, where a flat
-verb phrase has its two objects c-command each other and a left-branching one has the second
-c-command the first.
+a phrase whose head is empty and whose complement is the phrase below. At D-Structure the verb is
+the lowest head, `dLayers`, and at S-Structure it has raised to the highest, leaving a trace in
+each head below, `sLayers`. Whatever the heads, one argument c-commands another exactly when it
+is the higher (`cCommands_argPos_iff`), so when the roles of the arguments descend the hierarchy
+agent > theme > goal > oblique, one argument c-commands another exactly when its role is the
+higher (`cCommands_argPos_iff_role_lt`). In *John sent a letter to Mary* the theme therefore
+c-commands the goal and not conversely, where a flat verb phrase has its two objects c-command
+each other and a left-branching one has the second c-command the first.
 
 PASSIVE assigns the role of a specifier to an adjunct of its sister, `Layer.demote`, and moves a
 noun phrase into the specifier. In the lower verb phrase it is Dative Shift: the theme is adjoined
@@ -54,8 +48,8 @@ indirect object include the role *to* assigns. A verb shifts exactly when they d
 * C-command is that of the first branching node, which the paper assumes. The categories V, V′
   and VP are one category `V`, and I, I′ and IP one category `Aux`; an empty position is a node
   without daughters.
-* The spine is stated on rose trees and not on the phrases of the paper, so that it applies to
-  any right-branching structure, whatever its heads and labels.
+* The asymmetry among the arguments rests on `PhraseStructure.commands_of_covBy_of_lt` and
+  `PhraseStructure.not_commands_of_covBy_of_lt`, which hold of a path in any dominance order.
 * The absorption of *to* is not an operation on trees: the D-Structure of the double object
   construction, `shiftedD`, has the goal as a bare noun phrase.
 * The passive (24) adjoins the *by*-phrase to the verb phrase, the complement of the inflection,
@@ -82,90 +76,6 @@ indirect object include the role *to* assigns. A verb shifts exactly when they d
 namespace Larson1988
 
 open PhraseStructure PhraseStructure.Tree
-
-/-! ### Specifiers along a spine -/
-
-section Spine
-
-variable {β : Type*} {t : RoseTree β} {p : ℕ → GornAddress} {n i j : ℕ}
-
-/-- The positions `p 0`, …, `p n` are a spine of `t` when each of the first `n` is a branching
-node whose second daughter branches and properly dominates the next. -/
-structure IsSpine (t : RoseTree β) (p : ℕ → GornAddress) (n : ℕ) : Prop where
-  /-- The second daughter of each position properly dominates the next. -/
-  lt : ∀ k < n, p k * .of 1 < p (k + 1)
-  /-- Each position branches. -/
-  mem_branching : ∀ k < n, p k ∈ t.branching
-  /-- The second daughter of each position branches. -/
-  mul_of_mem_branching : ∀ k < n, p k * .of 1 ∈ t.branching
-
-/-- The position of the `k`th argument of a spine of length `n`: the first daughter of the
-`k`th position, and the last position for `k = n`. -/
-def argPos (p : ℕ → GornAddress) (n k : ℕ) : GornAddress := if k < n then p k * .of 0 else p n
-
-theorem argPos_of_lt (h : i < n) : argPos p n i = p i * .of 0 := by simp [argPos, h]
-
-theorem le_argPos (p : ℕ → GornAddress) (n i : ℕ) (hi : i ≤ n) : p i ≤ argPos p n i := by
-  rw [argPos]
-  split_ifs
-  · exact GornAddress.le_mul_right _ _
-  · exact (Nat.le_antisymm hi (Nat.le_of_not_lt ‹_›)) ▸ le_rfl
-
-namespace IsSpine
-
-variable (h : IsSpine t p n)
-include h
-
-theorem mul_of_lt (hij : i < j) (hj : j ≤ n) : p i * .of 1 < p j := by
-  induction j, hij using Nat.le_induction with
-  | base => exact h.lt i hj
-  | succ k hk ih =>
-    exact (ih (by omega)).trans (((GornAddress.le_mul_right _ _).trans_lt (h.lt k (by omega))))
-
-theorem exists_eq_mul {b : GornAddress} (hij : i < j) (hj : j ≤ n) (hb : p j ≤ b) :
-    ∃ q, q ≠ 1 ∧ b = p i * .of 1 * q := by
-  have hlt := (h.mul_of_lt hij hj).trans_le hb
-  obtain ⟨q, rfl⟩ := GornAddress.le_iff_exists_mul.1 hlt.le
-  exact ⟨q, fun hq ↦ hlt.ne (by rw [hq, mul_one]), rfl⟩
-
-theorem cCommands_of_lt {b : GornAddress} (hij : i < j) (hj : j ≤ n) (hb : p j ≤ b) :
-    t.CCommands (p i * .of 0) b := by
-  obtain ⟨q, -, rfl⟩ := h.exists_eq_mul hij hj hb
-  exact RoseTree.cCommands_mul_of (h.mem_branching i (by omega)) (by decide) q
-
-theorem not_cCommands_of_lt {b : GornAddress} (hij : i < j) (hj : j ≤ n) (hb : p j ≤ b) :
-    ¬ t.CCommands b (p i * .of 0) := by
-  obtain ⟨q, hq, rfl⟩ := h.exists_eq_mul hij hj hb
-  exact RoseTree.not_cCommands_mul_of_mul (h.mul_of_mem_branching i (by omega)) (by decide) hq
-
-/-- One argument of a spine c-commands another exactly when it is the higher. -/
-theorem cCommands_argPos_iff (hi : i ≤ n) (hj : j ≤ n) :
-    t.CCommands (argPos p n i) (argPos p n j) ↔ i < j := by
-  rcases lt_trichotomy i j with hij | rfl | hji
-  · rw [argPos_of_lt (hij.trans_le hj)]
-    exact iff_of_true (h.cCommands_of_lt hij hj (le_argPos p n j hj)) hij
-  · exact iff_of_false not_commands_self (lt_irrefl _)
-  · rw [argPos_of_lt (hji.trans_le hi)]
-    exact iff_of_false (h.not_cCommands_of_lt hji hi (le_argPos p n i hi)) hji.asymm
-
-/-- The arguments of a spine, the highest first, embed in the positions of the tree, their order
-going to c-command. -/
-def argEmbedding : ((· < ·) : Fin (n + 1) → Fin (n + 1) → Prop) ↪r t.CCommands where
-  toFun k := argPos p n k
-  inj' a b hab := by
-    have h₁ := h.cCommands_argPos_iff (i := a) (j := b) (by omega) (by omega)
-    have h₂ := h.cCommands_argPos_iff (i := b) (j := a) (by omega) (by omega)
-    simp only [hab] at h₁
-    simp only [← hab] at h₂
-    exact Fin.ext (Nat.le_antisymm (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₂.2 hlt))
-      (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₁.2 hlt)))
-  map_rel_iff' := h.cCommands_argPos_iff (by omega) (by omega)
-
-@[simp] theorem argEmbedding_apply (k : Fin (n + 1)) : h.argEmbedding k = argPos p n k := rfl
-
-end IsSpine
-
-end Spine
 
 variable {W : Type*}
 
@@ -273,18 +183,81 @@ theorem shells_drop (x : Tree Cat W) (hk : k < ls.length) :
     shells (ls.drop k) x = ls[k].over (shells (ls.drop (k + 1)) x) := by
   rw [List.drop_eq_getElem_cons hk, shells_cons]
 
-theorem isSpine_pos (ls : List (Layer W)) (x : Tree Cat W) :
-    IsSpine (shells ls x) (pos ls) ls.length where
-  lt k hk := by
-    rw [pos_succ hk]
-    exact (GornAddress.mulLeft (pos ls k)).lt_iff_lt.2 ls[k].of_one_lt_compPos
-  mem_branching k hk := by
-    have := (RoseTree.mul_mem_branching_iff (getElem?_pos x hk.le) (x := 1)).2
-      (shells_drop x hk ▸ Layer.one_mem_branching _ _)
-    rwa [mul_one] at this
-  mul_of_mem_branching k hk :=
-    (RoseTree.mul_mem_branching_iff (getElem?_pos x hk.le)).2
-      (shells_drop x hk ▸ Layer.of_one_mem_branching _ _)
+theorem pos_mul_of_lt_succ (hk : k < ls.length) : pos ls k * .of 1 < pos ls (k + 1) := by
+  rw [pos_succ hk]
+  exact (GornAddress.mulLeft (pos ls k)).lt_iff_lt.2 ls[k].of_one_lt_compPos
+
+theorem pos_mul_of_lt (hij : i < j) (hj : j ≤ ls.length) : pos ls i * .of 1 < pos ls j := by
+  induction j, hij using Nat.le_induction with
+  | base => exact pos_mul_of_lt_succ hj
+  | succ k hk ih =>
+    exact (ih (by omega)).trans
+      ((GornAddress.le_mul_right _ _).trans_lt (pos_mul_of_lt_succ (by omega)))
+
+theorem pos_mem_branching (x : Tree Cat W) (hk : k < ls.length) :
+    pos ls k ∈ (shells ls x).branching := by
+  have := (RoseTree.mul_mem_branching_iff (getElem?_pos x hk.le) (x := 1)).2
+    (shells_drop x hk ▸ Layer.one_mem_branching _ _)
+  rwa [mul_one] at this
+
+theorem pos_mul_of_mem_branching (x : Tree Cat W) (hk : k < ls.length) :
+    pos ls k * .of 1 ∈ (shells ls x).branching :=
+  (RoseTree.mul_mem_branching_iff (getElem?_pos x hk.le)).2
+    (shells_drop x hk ▸ Layer.of_one_mem_branching _ _)
+
+-- A specifier c-commands whatever a lower phrase dominates, and nothing there c-commands it.
+theorem cCommands_specPos_of_lt (x : Tree Cat W) (hij : i < j) (hj : j ≤ ls.length)
+    {b : GornAddress} (hb : pos ls j ≤ b) : (shells ls x).CCommands (specPos ls i) b :=
+  commands_of_covBy_of_lt (GornAddress.covBy_mul_of _ 0) (pos_mem_branching x (by omega))
+    (GornAddress.lt_mul_of _ 1) (RoseTree.not_mul_of_le_mul_of _ (by decide))
+    ((pos_mul_of_lt hij hj).le.trans hb)
+
+theorem not_cCommands_specPos_of_lt (x : Tree Cat W) (hij : i < j) (hj : j ≤ ls.length)
+    {b : GornAddress} (hb : pos ls j ≤ b) : ¬ (shells ls x).CCommands b (specPos ls i) :=
+  not_commands_of_covBy_of_lt (GornAddress.covBy_mul_of _ 0)
+    (pos_mul_of_mem_branching x (by omega)) (GornAddress.lt_mul_of _ 1)
+    (RoseTree.not_mul_of_le_mul_of _ (by decide)) ((pos_mul_of_lt hij hj).trans_le hb)
+
+/-- The position of the `k`th argument of a stack of layers: the `k`th specifier, and the lowest
+complement for `k` their number. -/
+def argPos (ls : List (Layer W)) (k : ℕ) : GornAddress :=
+  if k < ls.length then specPos ls k else pos ls ls.length
+
+theorem argPos_of_lt (h : k < ls.length) : argPos ls k = specPos ls k := by simp [argPos, h]
+
+theorem pos_le_argPos (hk : k ≤ ls.length) : pos ls k ≤ argPos ls k := by
+  rw [argPos]
+  split_ifs
+  · exact GornAddress.le_mul_right _ _
+  · exact (Nat.le_antisymm hk (Nat.le_of_not_lt ‹_›)) ▸ le_rfl
+
+/-- One argument of a projection c-commands another exactly when it is the higher, whatever the
+heads of the phrases. -/
+theorem cCommands_argPos_iff (ls : List (Layer W)) (x : Tree Cat W) (hi : i ≤ ls.length)
+    (hj : j ≤ ls.length) : (shells ls x).CCommands (argPos ls i) (argPos ls j) ↔ i < j := by
+  rcases lt_trichotomy i j with hij | rfl | hji
+  · rw [argPos_of_lt (hij.trans_le hj)]
+    exact iff_of_true (cCommands_specPos_of_lt x hij hj (pos_le_argPos hj)) hij
+  · exact iff_of_false not_commands_self (lt_irrefl _)
+  · rw [argPos_of_lt (hji.trans_le hi)]
+    exact iff_of_false (not_cCommands_specPos_of_lt x hji hi (pos_le_argPos hi)) hji.asymm
+
+/-- The arguments of a projection, the highest first, embed in its positions, their order going
+to c-command. -/
+def argEmbedding (ls : List (Layer W)) (x : Tree Cat W) :
+    ((· < ·) : Fin (ls.length + 1) → Fin (ls.length + 1) → Prop) ↪r (shells ls x).CCommands where
+  toFun k := argPos ls k
+  inj' a b hab := by
+    have h₁ := cCommands_argPos_iff ls x (i := a) (j := b) (by omega) (by omega)
+    have h₂ := cCommands_argPos_iff ls x (i := b) (j := a) (by omega) (by omega)
+    simp only [hab] at h₁
+    simp only [← hab] at h₂
+    exact Fin.ext (Nat.le_antisymm (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₂.2 hlt))
+      (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₁.2 hlt)))
+  map_rel_iff' := cCommands_argPos_iff ls x (by omega) (by omega)
+
+@[simp] theorem argEmbedding_apply (ls : List (Layer W)) (x : Tree Cat W)
+    (k : Fin (ls.length + 1)) : argEmbedding ls x k = argPos ls k := rfl
 
 theorem getElem?_specPos (x : Tree Cat W) (hk : k < ls.length) :
     (shells ls x)[specPos ls k]? = some ls[k].spec := by
@@ -295,9 +268,8 @@ theorem getElem?_specPos (x : Tree Cat W) (hk : k < ls.length) :
 theorem cCommands_specPos_adjunctPos (x : Tree Cat W) (hk : k < ls.length) :
     (shells ls x).CCommands (specPos ls k) (adjunctPos ls k) ∧
       ¬ (shells ls x).CCommands (adjunctPos ls k) (specPos ls k) :=
-  ⟨RoseTree.cCommands_mul_of ((isSpine_pos ls x).mem_branching k hk) (by decide) (.of 1),
-    RoseTree.not_cCommands_mul_of_mul ((isSpine_pos ls x).mul_of_mem_branching k hk) (by decide)
-      (by decide)⟩
+  ⟨RoseTree.cCommands_mul_of (pos_mem_branching x hk) (by decide) (.of 1),
+    RoseTree.not_cCommands_mul_of_mul (pos_mul_of_mem_branching x hk) (by decide) (by decide)⟩
 
 /-! ### The Thematic Hierarchy -/
 
@@ -332,9 +304,8 @@ def Role.rankOrderEmbedding : Role ↪o ℕ := ⟨⟨Role.rank, Role.rank_inject
 c-commands another exactly when its role is the higher. -/
 theorem cCommands_argPos_iff_role_lt (ls : List (Layer W)) (x : Tree Cat W) {role : ℕ → Role}
     (hrole : StrictAntiOn role (Set.Iic ls.length)) (hi : i ≤ ls.length) (hj : j ≤ ls.length) :
-    (shells ls x).CCommands (argPos (pos ls) ls.length i) (argPos (pos ls) ls.length j) ↔
-      role j < role i :=
-  ((isSpine_pos ls x).cCommands_argPos_iff hi hj).trans (hrole.lt_iff_gt hj hi).symm
+    (shells ls x).CCommands (argPos ls i) (argPos ls j) ↔ role j < role i :=
+  (cCommands_argPos_iff ls x hi hj).trans (hrole.lt_iff_gt hj hi).symm
 
 /-! ### V Raising -/
 
@@ -522,12 +493,11 @@ theorem getElem?_objectPos (f : Frame) :
 theorem cCommands_objectPos_iff (f : Frame) (r : Argument) :
     (rep v agent theme goal prep f).CCommands (objectPos v agent theme goal f r)
       (objectPos v agent theme goal f (other r)) ↔ r = higher f := by
-  have hs := isSpine_pos (sLayers v [agent, theme]) (node .P [prep, goal])
   have hd := cCommands_doubleObject v agent goal theme
   cases f <;> cases r
-  · exact iff_of_true (hs.cCommands_of_lt (i := 1) (j := 2) (by decide) le_rfl
+  · exact iff_of_true (cCommands_specPos_of_lt _ (i := 1) (j := 2) (by decide) le_rfl
       (GornAddress.le_mul_right _ _)) rfl
-  · exact iff_of_false (hs.not_cCommands_of_lt (i := 1) (j := 2) (by decide) le_rfl
+  · exact iff_of_false (not_cCommands_specPos_of_lt _ (i := 1) (j := 2) (by decide) le_rfl
       (GornAddress.le_mul_right _ _)) (by decide)
   · exact iff_of_false hd.2 (by decide)
   · exact iff_of_true hd.1 rfl
