@@ -8,31 +8,23 @@ public import Linglib.Syntax.Clause.Chaining
 # Turkish converbs
 
 Turkish chains clauses with converbs, the non-finite verbs of adverbial clauses, without
-switch-reference. Most converbial suffixes stand in place of the tense, aspect or modality
-marker and all that follows it, after the voice suffixes, the negative and the markers of
-positions 1 and 2 (§8.2, §28.2). *-(y)ken*, which contains the copula, attaches to a
-position-3 marker or a nominal, and *-cAsInA* to the aorist or *-mIş* (§8.5.2.2). The converbs
-take no person marker, except one before *-cAsInA* and the third-person plural before
-*-(y)ken*. Three more converbial subordinators go on two verbs in succession.
-
-## Main definitions
-
-* `Turkish.Converb`: the converbial suffixes on one verb, with their forms and `Converb.follows`,
-  the last slot of the finite verb that may precede them; they are a `MedialForm`.
-* `Turkish.DoubledConverb`: the converbial subordinators on two verbs.
+switch-reference. `Converb` lists the converbial suffixes on one verb, with their forms and
+`Converb.follows`, the last position of the finite verb that may precede each. Most stand in
+place of the marker of tense, aspect or modality and all that follows it, *-(y)ken* attaches to
+that marker or to a nominal, and *-cAsInA* to the aorist or *-mIş*. `DoubledConverb` lists the
+three subordinators that go on two verbs in succession. The converbs are a `MedialForm`.
 
 ## Implementation notes
 
-The forms are strings of `Turkish.Suffix`, so that `Turkish.realize` gives a converb on a
-stem, and the negative of *-mAdAn* is the finite verb's.
-The clause-chaining typology over the converbs is in `Studies/SarvasyAikhenvald2025.lean`, and
-the grammar's examples are checked in `Studies/GokselKerslake2005.lean`.
+The forms are strings of `Turkish.Suffix`, so that `Turkish.realize` gives a converb on a stem,
+and the negative of *-mAdAn* is the finite verb's. The clause-chaining typology over the
+converbs is in `Studies/SarvasyAikhenvald2025.lean`.
 
 ## TODO
 
-The other converbs built on the subordinators -DIK, -(y)AcAK, -mA and -mAK (§8.5.1), such as
-*-mAksIzIn* 'without', and those with a postposition, such as *-mAzdAn önce* and
-*-(y)IncAyA kadar* (§8.5.2.2), are not represented.
+The other converbs built on the subordinators -DIK, -(y)AcAK, -mA and -mAK, such as
+*-mAksIzIn* 'without', and those with a postposition, such as *-mAzdAn önce*, are not
+represented.
 
 ## References
 

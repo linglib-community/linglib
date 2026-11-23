@@ -12,28 +12,18 @@ public import Linglib.Phonology.Autosegmental.Skeleton
 /-!
 # Template matches
 
-In McCarthy's prosodic theory of nonconcatenative morphology, a word is built by associating the
-melodies of its morphemes, a consonantal root, a vocalism and affixal material, with the slots of
-a prosodic template, a CV skeleton. A match is a multiplanar form over C- and V-slots, the
-product of its morphs: each morpheme's melody lies on a plane, so the No-Crossing Constraint holds
-plane by plane, and morphs on separate planes are unordered. `AR.spellout` reads off
-the surface segments: gemination is one melody element associated to several slots, and a slot
-with no association line receives no phonetic realization. The association conventions that draw
-the lines are in `Morphology/Morphotactics/Association.lean`.
+In the prosodic morphology of [mccarthy-1981], a word is the melodies of its morphemes, a
+consonantal root, a vocalism and affixal material, associated with the slots of a CV skeleton.
+A match is a multiplanar form over C- and V-slots in which each morpheme's melody lies on its
+own plane.
 
-## Main definitions
+We define `AR.template`, the skeleton of a match, `AR.linesAt` and `AR.linkAt?`, the lines that
+reach a slot and the melodic element linked to it, and `AR.spellout`, the surface segments: a
+melodic element linked to several slots is geminate, and a slot that no line reaches has no
+segment. `AR.NoManyToOne` says that no slot has two lines. Relabelling the melodies relabels the
+surface segments (`AR.spellout_mapMelody`).
 
-* `AR.template`: the CV skeleton of a match.
-* `AR.linesAt`, `AR.linkAt?`: the lines that reach a slot, and the
-  melodic element linked to it.
-* `AR.NoManyToOne`: no slot has two lines.
-* `AR.spellout`: the surface segments of a match.
-* `AR.freeBearers`, `AR.linkCount`: the slots of a class that no line reaches, and
-  the lines from one melody element.
-
-## Main results
-
-* `AR.spellout_mapMelody`: relabeling the melodies relabels the surface segments.
+The conventions that draw the lines are in `Morphology/Morphotactics/Association.lean`.
 
 ## References
 

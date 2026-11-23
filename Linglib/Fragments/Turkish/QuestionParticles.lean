@@ -7,35 +7,25 @@ public import Linglib.Syntax.Clause.Marker
 # Turkish question particles
 
 Turkish forms yes/no and alternative questions with the clitic *mI*, written as a separate word
-and harmonizing as an I-type suffix does, as *mı*, *mi*, *mu* or *mü* (§3.2, §11.1.1.5). It
-follows the questioned phrase, which is the predicate when the whole proposition is questioned,
-and each alternative of an alternative question (§19.1). On the predicate it stands among the
-markers, immediately before the first clitic, a copular marker, -DIr or a group-2 person marker
-other than the third-person plural, and after every other marker, so that *Gidiyor musun?*
-'Are you going?' contrasts with *Gördün mü?* 'Did you see?'. The markers after it attach to it,
-as in *bil-iyor mu-ydu-nuz* (§6.3 (5)).
+and harmonizing as an I-type suffix does. It follows the questioned phrase, which is the
+predicate when the whole proposition is questioned.
 
-## Main definitions
-
-* `Turkish.QuestionParticles.mi`: the particle.
-* `mi.suffix`, `mi.Precedes`, `mi.insert`: the segments of *mI*, the markers it precedes, and
-  the markers of a predicate with *mI* among them.
-
-## Main results
-
-* `mi.insert_append_cons`, `mi.insert_of_forall_not_precedes`: *mI* immediately precedes the
-  first marker it precedes, and follows the last marker if it precedes none.
+`mi` is the particle with its distribution over clause types. On a predicate *mI* stands among
+the markers: `mi.Precedes` holds of the clitics among them other than the third-person plural,
+and `mi.insert` puts *mI* immediately before the first marker it precedes
+(`mi.insert_append_cons`), or after the last if it precedes none
+(`mi.insert_of_forall_not_precedes`). So *Gidiyor musun?* 'Are you going?' contrasts with
+*Gördün mü?* 'Did you see?'.
 
 ## Implementation notes
 
-The distribution follows Türk and Hirsch, for whom *mI* is obligatory in polar questions, and
-the grammar. A quoted question keeps it (§24.3.1 (16)), and so does a question under *diye*, as
-in Türk and Hirsch's (14) and Qing et al.'s examples, while a noun clause expresses 'whether (or
-not)' with -(y)Ip…-mA and keeps *mI* only after alternatives other than the negation of the
-predicate (§24.4.3.2). Echo questions (§19.3), adverbial clauses after -DI and doubled forms
-(§11.1.1.5) also take *mI*, so the constituent and declarative cells are not recorded. The
-colloquial contractions of -(y)AcAK with a person marker (§11.1.1.5 (e)) are not represented,
-and the conditional copula -(y)sA has no example with *mI*.
+The distribution follows [turk-hirsch-2026], for whom *mI* is obligatory in polar questions, and
+[goksel-kerslake-2005]. A quoted question keeps *mI* and so does a question under *diye*, while
+a noun clause keeps it only after alternatives other than the negation of the predicate, so it
+is optional in subordinated clauses. Echo questions, adverbial clauses after -DI and doubled
+forms also take *mI*, so the constituent and declarative cells are not recorded. The colloquial
+contractions of -(y)AcAK with a person marker are not represented, and the conditional copula
+-(y)sA has no example with *mI*.
 
 ## References
 

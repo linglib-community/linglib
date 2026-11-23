@@ -12,73 +12,41 @@ public import Linglib.Phonology.Subregular.OSL
 /-!
 # Search and copy
 
-A search-and-copy rule is the Harmonic Search-and-Copy procedure of Nevins: a needy
-segment, one unspecified for a feature, searches in one direction for the closest segment
-visible to it and copies that segment's value, or the opposite value for dissimilation, and
-takes a last-resort default when the search fails. The procedure is stated by its
-visibility predicate, direction and feature; a target may further require its source to
-meet a condition of its own, and a visible source failing it halts the search with the
-default, which is defective intervention, since the search gets no second chance. Every
-visible valued segment donates whether or not it searches itself. Mailhot and Reiss's SEARCH
-and COPY rule components, which Bale and Reiss present as applying simultaneously, are a
-sibling formulation. Belth's learner constructs such a rule, written
-`Rel(A, F) / C __ ∘ proj(·, T)` with `A` the targets, `C` the sources and `T` the visible
-segments, and Nevins reads Rose and Walker's blockers and transparent segments as defective
-interveners and invisible segments.
+A search-and-copy rule is the procedure of [nevins-2010]: a target, a segment that lacks a value
+for a feature, searches in one direction for the closest segment visible to it and copies that
+segment's value, or the opposite value for dissimilation, and takes a default when the search
+fails.
 
-Run over a word, the rule is a Mealy machine whose state is the output of the closest visible
-segment read so far (`SearchCopy.toMealy`). Every target searches, visible or not; the tier
-decides only what the search can see. Where the targets are visible, the run is Belth's
-iterative application of the rule over the tier projection, and a copied value is donated
-onward. Where no write changes a target's visibility, the window is the visible output, and
-the run is the output tier-based strictly 2-local function of Burness and McMullin, the class
-Belth relates his rules to (`SearchCopy.toOSLRule_applyOnTier`). Where the targets are
-invisible, the window is the visible input, and the run is the input tier-based strictly
-2-local function of Andersson, Dolatian and Hao's streaming algorithm
-(`SearchCopy.toISLRule_applyOnTier`). Burness, McMullin and Nevins adopt that input-oriented
-reading. Andersson, Dolatian and Hao state it for simultaneous application, and obtain the
-iterative one by reading the output instead. Every rule is subsequential in its direction over
-a finite alphabet (`SearchCopy.apply_isSubsequential`), as Gainor, Lai and Heinz found of the
-patterns in Nevins's typology.
+A `SearchCopy` consists of the visible segments (its tier), the targets, the sources each target
+may copy from, the relation, a lens on the feature, a default and a direction. Run over a word
+it is a Mealy machine whose state is the output of the closest visible segment read so far
+(`SearchCopy.toMealy`). `SearchCopy.scan` is the run from left to right and `SearchCopy.apply`
+the run in the rule's direction. Every target searches, visible or not, and the tier decides
+only what the search can see.
 
-## Main definitions
-
-* `SearchCopy`: a rule, with its visible segments, targets, sources, relation, lens on the
-  feature, default and direction.
-* `SearchCopy.scan`, `SearchCopy.apply`: the left-to-right run, and the run in the rule's
-  direction.
-* `SearchCopy.sourceAfter`, `SearchCopy.sourceValue`: the closest visible segment of a
-  string and the value it offers to what follows.
-* `SearchCopy.PreservesTier`: no write changes whether a target is visible.
-* `SearchCopy.toMealy`, `SearchCopy.toOSLRule`, `SearchCopy.toISLRule`: the machine and the
-  output and input strictly local rules computing the run.
-
-## Main results
-
-* `SearchCopy.toOSLRule_applyOnTier`: when writes preserve visibility, the OSL rule run with its
-  window over the visible output is the run.
-* `SearchCopy.filter_scan`: when writes preserve visibility, the run restricted to the visible
-  segments is the 2-OSL rule on the tier projection.
-* `SearchCopy.toISLRule_applyOnTier`: when the targets are invisible, the ISL rule run with its
-  window over the visible input is the run.
-* `SearchCopy.apply_isSubsequential`, `SearchCopy.scan_isMealyComputable`: the run is
-  finite-state in the rule's direction over a finite alphabet.
+Where no write changes a target's visibility (`SearchCopy.PreservesTier`), the run is a
+tier-based output strictly 2-local function (`SearchCopy.toOSLRule_applyOnTier`), and the run of
+a word with one more segment is the run of the word followed by one output
+(`SearchCopy.scan_concat`). Where the targets are invisible, the run is a tier-based input
+strictly 2-local function (`SearchCopy.toISLRule_applyOnTier`). Over a finite alphabet every
+rule is subsequential in its direction (`SearchCopy.apply_isSubsequential`). A rule whose writes
+add to their targets changes no value that a segment has (`SearchCopy.forall₂_le_scan`).
 
 ## Implementation notes
 
-Placing the targets on the tier or off it chooses between the iterative and the simultaneous
-application. On the tier, a written target donates onward, as Nevins's derivations of stacked
-Turkish suffixes show, and the run is Nevins's cyclic derivation only where morphological order
-runs away from the root in the search direction. Belth's learner keeps the alternating segments
-on the tier. `IsSource` is more general than Nevins's conditions on a source, which are identity
-for an orthogonal feature or morphological affiliation. A source unspecified for the feature
-yields the default, where Belth counts a failed application, and a default of `none`, outside
-both sources, leaves a failed target unspecified for the fixed-point results of
-`Harmony.System`. The lens laws hold on targets only, since only targets are written. Not
-modelled are search in both directions at once, sonority hurdles, the distance parameters of
-Nevins's fifth chapter, more than one feature per search, and the patterns Burness, McMullin
-and Nevins place beyond the procedure: icy targets, persistent search and circumambient
-harmony.
+A visible source that fails a target's condition halts the search with the default, which is
+defective intervention. Every visible valued segment donates, whether or not it searches itself.
+Placing the targets on the tier or off it chooses between iterative and simultaneous
+application: on the tier a written target donates onward. A source unspecified for the feature
+yields the default, and a default of `none` leaves a failed target unspecified. The lens laws
+hold on targets only, since only targets are written.
+
+The output-local reading is that of [burness-mcmullin-2019], to which [belth-2026] relates his
+rules, and the input-local one that of [andersson-dolatian-hao-2020]. [gainor-lai-heinz-2012]
+found the patterns of Nevins's typology subsequential. The SEARCH and COPY components of
+[mailhot-reiss-2007] are a sibling formulation. Search in both directions at once, sonority
+hurdles, distance parameters, more than one feature per search, and the patterns that
+[burness-mcmullin-nevins-2024] place beyond the procedure are not modelled.
 
 ## References
 

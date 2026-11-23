@@ -5,32 +5,22 @@ public import Linglib.Fragments.Turkish.Morphotactics
 /-!
 # Turkish possession
 
-Turkish expresses *x has y* by two existential sentences on the predicates *var* 'existent'
-and *yok* 'non-existent' (Göksel and Kerslake §12.1.1.2). In the possessive existential
-sentence the possessor is genitive and the head of the possessee takes the possessive suffix
-of the possessor's person and number, *Murat'ın yatı var* 'Murat has a yacht'; in the
-locative existential sentence the possessor is locative and the possessee unmarked, *Bende
-bir kitap var* 'I have a book'. Adverbials generally precede the possessee, before or after
-the possessor.
+Turkish expresses *x has y* by two existential sentences on the predicates *var* 'existent' and
+*yok* 'non-existent', following [goksel-kerslake-2005]. In the possessive existential sentence
+the possessor is genitive and the head of the possessee takes the possessive suffix of the
+possessor's person and number, as in *Murat'ın yatı var* 'Murat has a yacht'. In the locative
+existential sentence the possessor is locative and the possessee unmarked, as in *Bende bir
+kitap var* 'I have a book'.
 
-## Main definitions
-
-* `Turkish.Possession.var`, `Turkish.Possession.yok`: the existential predicates
-* `Turkish.Possession.predicate`: a predicate with its copular marker
-* `Turkish.Possession.inflect`: a noun phrase with a suffix on its head
-* `Turkish.Possession.IsPossessive`, `Turkish.Possession.locative`: the possessive and the
-  locative existential sentences
-
-## Main results
-
-* `Turkish.Possession.IsPossessive.ne_bare`: the head of the possessee is never bare
+`IsPossessive` and `locative` are the two sentences, over a noun phrase as a list of words whose
+last word, the head, takes the suffixes (`inflect`). The head of the possessee is never bare
+(`IsPossessive.ne_bare`).
 
 ## Implementation notes
 
-A noun phrase is a list of words whose last word, the head, takes the suffixes. The possessor
-is regular, so the irregular genitives of the first-person pronouns (*benim*, *bizim*) are not
-derived. The predicate carries no person marker, the subject being third person. The
-grammar's examples are derived in `Studies/GokselKerslake2005.lean`.
+The possessor is regular, so the irregular genitives of the first-person pronouns (*benim*,
+*bizim*) are not derived. The predicate carries no person marker, the subject being third
+person. Adverbials precede the possessee, before or after the possessor.
 
 ## References
 
