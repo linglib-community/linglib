@@ -1,5 +1,6 @@
 module
 
+public import Studies.Narrog2009
 public import Studies.Narrog2010
 public import Linglib.Data.Statistics.Narrog2012
 public import Linglib.Syntax.Cartography
@@ -29,6 +30,13 @@ combined hierarchy restricts to the non-volitive one, and to the volitive one ex
 separates negation from tense (`GramCategory.nonVolitiveRow_le_iff`,
 `GramCategory.volitiveRow_le_iff`).
 
+The modal categories are classes of the markers whose embedding behaviour [narrog-2009a]
+tabulates. A level assignment agrees with a cell of that table when it puts the marker's
+category above a category the marker only embeds, below one that only embeds it, and at or
+below one with which it embeds both ways (`Agrees`). The two hierarchies agree with every cell
+(`agrees_nonVolitiveRow_volitiveRow`); the combined one agrees except for the markers of
+valuative obligation and internal negation (`agrees_scopeLevel_iff`).
+
 The three evidential categories lie on three levels, each at or below tense, so no monotone map
 into the hierarchy of [cinque-1999] sends one of them to its evidential mood and tense to its
 past tense (`not_monotone_of_moodEvidential`).
@@ -41,7 +49,10 @@ change from a volitive to a non-volitive meaning has an epistemic target.
 
 ## Implementation notes
 
-The scope levels are the rows of the book's combined hierarchy. Possession, directionals and the
+The scope levels are the rows of the book's combined hierarchy. Stative and completive aspect,
+which [narrog-2009a] tests, are taken to be the perfective and imperfective aspect of the
+hierarchy, which stands in their place in it; phasal aspect, voice and benefactives come from a
+later study and are not in that data. Possession, directionals and the
 two kinds of honorification, which the table of source and target categories also lists, are not
 in the hierarchy and are left out.
 
@@ -249,8 +260,8 @@ end GramCategory
 
 open GramCategory
 
-/-- A potential source of modality has narrower scope than a category that is only a potential
-target. -/
+-- A potential source of modality has narrower scope than a category that is only a potential
+-- target.
 theorem source_lt_target {c d : GramCategory} (hc : c.IsSource) (hd : d.IsTarget)
     (hd' : ¬ d.IsSource) : c < d := by
   obtain ⟨-, m, hm, hcm⟩ := hc
@@ -262,6 +273,59 @@ mood and tense to the past tense. -/
 theorem not_monotone_of_moodEvidential {f : GramCategory → Cartography.Head} {e : GramCategory}
     (he : e ≤ tense) (hf : f e = .moodEvidential) (ht : f tense = .tPast) : ¬ Monotone f :=
   fun h ↦ absurd (hf ▸ ht ▸ h he) (by decide)
+
+/-! ### The embedding data of [narrog-2009a] -/
+
+/-- The category of the hierarchy that a marker of [narrog-2009a] represents, as that study's
+figures of the two layerings label them. -/
+def _root_.Narrog2009.Marker.gramCategory : Narrog2009.Marker → GramCategory
+  | .eru | .rareru | .kotoGaDekiru => dynamicModality
+  | .soo1 => evidentiality1
+  | .tai | .teHosii => boulomaicModality
+  | .nakerebaNaranai => deontic1
+  | .rebaIi | .beki => deontic2
+  | .hazu => epistemic1
+  | .yoo | .rasii => evidentiality2
+  | .kaMoSirenai => epistemic2
+  | .soo2 => evidentiality3
+  | .daroo => epistemic3
+  | .hortative | .imperativeI | .imperativeII => volitiveMood
+
+/-- The category of the hierarchy that a category tested in [narrog-2009a] corresponds to.
+External negation and nominalization have none. -/
+def _root_.Narrog2009.Category.gramCategory : Narrog2009.Category → Option GramCategory
+  | .stativeAspect | .completiveAspect => some perfImperfAspect
+  | .internalNegation => some negation
+  | .tense => some tense
+  | .illocutionaryModulation => some illocutionaryMod
+  | .externalNegation | .nominalization => none
+
+/-- A level assignment `level` agrees with the scope relation of marker `m` to category `c` when
+it puts the marker's category above a category it only embeds, below one it is only embedded
+by, and at or below one with which it embeds both ways. -/
+def Agrees (level : GramCategory → Option ℕ) (m : Narrog2009.Marker) (c : Narrog2009.Category) :
+    Prop :=
+  ∀ g ∈ c.gramCategory, ∀ i ∈ level m.gramCategory, ∀ j ∈ level g,
+    ((Narrog2009.scopes m c).scope = .embeds → j < i) ∧
+    ((Narrog2009.scopes m c).scope = .embedded → i < j) ∧
+    ((Narrog2009.scopes m c).scope = .both → i ≤ j)
+
+instance (level : GramCategory → Option ℕ) (m : Narrog2009.Marker) (c : Narrog2009.Category) :
+    Decidable (Agrees level m c) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+
+/-- The hierarchies of the two sides of volitivity agree with every cell of the embedding data
+of [narrog-2009a]. -/
+theorem agrees_nonVolitiveRow_volitiveRow (m : Narrog2009.Marker) (c : Narrog2009.Category) :
+    Agrees nonVolitiveRow m c ∧ Agrees volitiveRow m c := by
+  revert m c; decide +kernel
+
+-- The combined hierarchy agrees with the data except in putting the two markers of valuative
+-- obligation above internal negation, with which they embed both ways.
+theorem agrees_scopeLevel_iff (m : Narrog2009.Marker) (c : Narrog2009.Category) :
+    Agrees (fun g ↦ some g.scopeLevel) m c ↔
+      ¬ (m.gramCategory = deontic2 ∧ c = .internalNegation) := by
+  revert m c; decide +kernel
 
 /-! ### The changes of [narrog-2010] -/
 
