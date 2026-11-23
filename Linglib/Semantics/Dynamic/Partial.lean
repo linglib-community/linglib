@@ -23,7 +23,7 @@ connectives are Peters'.
 ## Main definitions
 
 * `PartialUpdate.seq`: sequencing, the composition of partial functions.
-* `PartialUpdate.IsEliminative`: Heim's Principle (A), that an update never adds information.
+* `PartialUpdate.IsEliminative`: an update never adds information.
 * `PartialUpdate.supports`: a state supports an update of which it is a fixed point.
 * `PartialUpdate.Presupposes`: every state admitting the first update supports the second.
 * `CCP.Partial.ofTrivalent`: the update of a trivalent proposition.
@@ -55,9 +55,8 @@ connectives are Peters'.
 
 The partiality is of the update and not of the points. The partial assignments of
 `Dynamic/State.lean` encode referential growth rather than presupposition, the sense of partial
-dynamic semantics in Haug's work, and the two kinds compose in `Dynamic/FileChange.lean`. Heim
-gives context change potentials for negation, conjunction and the conditional only, and the
-disjunction follows Beaver. [george-2014]'s error context `#` is the undefinedness of a `Part`, so
+dynamic semantics in Haug's work. Heim gives context change potentials for negation, conjunction
+and the conditional only, and the disjunction follows Beaver. [george-2014]'s error context `#` is the undefinedness of a `Part`, so
 every update sends `#` to `#`; updates that recover from `#`, such as his (6a), are not
 representable, but every trivalentisable update is of this kind.
 
@@ -96,12 +95,6 @@ variable {α : Type*} {φ ψ χ : PartialUpdate α} {s : α}
     [karttunen-1974-presupposition]'s satisfaction). This is `Part.Dom`. -/
 def Admits (u : PartialUpdate α) (s : α) : Prop := (u s).Dom
 
-/-- Total updates are partial updates with trivial presupposition. -/
-def ofTotal (φ : α → α) : PartialUpdate α := fun s ↦ Part.some (φ s)
-
-@[simp] theorem admits_ofTotal (φ : α → α) (s : α) :
-    (ofTotal φ).Admits s := trivial
-
 /-- Sequencing, dynamic conjunction, is `s[φ ∧ ψ] = s[φ][ψ]`. This is
     `PFun.comp`; the projection behavior of conjunction is the
     composition law of partial functions. -/
@@ -117,7 +110,8 @@ theorem seq_eq_kleisliComp (φ ψ : α → Part α) :
 /-! ### Eliminativity -/
 
 /-- A partial update is *eliminative* if its defined outputs are at least as informative as the
-input ([heim-1982]'s Principle (A); [groenendijk-stokhof-1990]'s `↓`-direction). -/
+input, as [heim-1982]'s principle (A) requires of a satisfaction set
+([groenendijk-stokhof-1990]'s `↓`-direction). -/
 def IsEliminative [LE α] (φ : PartialUpdate α) : Prop := ∀ s, ∀ s' ∈ φ s, s' ≤ s
 
 theorem isEliminative_id [Preorder α] : IsEliminative (PFun.id α) :=

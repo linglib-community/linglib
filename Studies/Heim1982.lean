@@ -7,41 +7,42 @@ public import Linglib.Data.Examples.Heim1982
 /-!
 # Heim (1982): The Semantics of Definite and Indefinite Noun Phrases
 
-This file formalizes the file change semantics of Chapter III of [heim-1982]: indefinites
-and definites are alike variables, and they differ in a felicity condition on files, the
-Extended Novelty-Familiarity-Condition (§2.4, §5.1): an indefinite's card must be new to the
-file, a definite's already present and, if it has descriptive content, entailed by it.
-Logical forms are interpreted by their file change potentials, the four rules of §4.4: an
-atom filters the file and adds its cards, a cumulative formula updates in sequence, the
-universal quantifier tests the file against its two auxiliary updates, and negation tests it
-against one. The truth of an utterance is the truth of the resulting file, the truth half of
-criterion (C) of §3.2, so Existential Closure is dispensable. The logical forms `LF` and the
-rules `LF.fcp` are stated over the substrate's file change potentials. Principle (A) holds of
-every rule at once (`fcp_isEliminative`), so an established card persists (`familiar_of_mem`)
-and a card a formula does not introduce stays novel (`novel_of_mem`); the claims the
-dissertation draws are proved on its own texts: felicity conditions project through the
-elementary steps of file change (`admits_pretzel`), a card introduced under `every` or `not`
-does not outlive its sentence (`not_admits_everyDog`), and criterion (C) gives a free indefinite
-existential force (`trueIn_indef`).
+This file formalizes the file change semantics of Chapter III of [heim-1982]. Indefinites and
+definites are alike variables. They differ in a felicity condition on files, the Extended
+Novelty-Familiarity-Condition: the card of an indefinite must be new to the file, and the card of
+a definite must be in the file, which must entail the definite's descriptive content.
+
+A logical form `LF` is interpreted by its file change potential `LF.fcp`, which gives the
+satisfaction set and the domain of the changed file together. An atomic formula removes the
+sequences that falsify it and adds the cards of its variables. A cumulative formula updates with
+its parts in order. A universal formula keeps the sequences of the file each of whose variants
+that satisfies the file updated with the restrictor has a variant that satisfies that file
+updated with the nuclear scope, and a negated formula keeps the sequences no variant of which
+satisfies the file updated with its scope; neither adds a card.
+
+The domain of the changed file is the domain of the file together with the cards of the atoms and
+indefinites of the formula outside every universal and negated formula (`LF.dom_of_mem`), so a
+card introduced under `every` or `not` does not outlive its formula, and a pronoun for it in the
+next sentence is infelicitous whatever the file (`not_admits_everyDog`, `not_admits_noDog`). The
+universal formula is the conditional `¬(φ₁ ∧ ¬φ₂)` (`LF.every_eq_cond`). A formula is true with
+respect to a file in a world when the changed file is true there, and an indefinite at a new card
+is then true exactly where the file is true and something has its descriptive content
+(`trueWrt_indef`), and its negation where the file is true and nothing has it
+(`trueWrt_neg_indef`): the truth criterion gives a free indefinite existential force, with no
+existential quantifier in the logical form.
 
 ## Implementation notes
 
-A file is the substrate's `State` of world–assignment points, with felicity its
-`Part`-definedness, satisfaction sets in place of `Sat(F)` and domains in place of `Dom(F)`;
-principle (A) of §1.2, that an update only filters the satisfaction set, is the
-informativeness order. Quantifier Indexing and Existential Closure are not represented, as
-the revised rules make them dispensable. Accommodating a novel definite (§5.2) is modelled
-by placing its indefinite card either inside the auxiliary file of a negation or in the
-initial file. Examples are numbered as in the dissertation, by chapter and section.
+The rules are those of the summary in §4.4 with the felicity condition of §5.1. Predicates are
+interpreted directly and do not vary with the world, as in the extensional semantics of the
+chapter; files carry worlds so that entailment, which compares satisfaction sets world by world,
+can be stated. Quantifier Indexing and Existential Closure are not represented, since the revised
+rules make them dispensable. Accommodating a novel definite (§5.2) is modelled by placing its
+indefinite either inside the auxiliary file of a negation or in the initial file.
 
-A state has no domain apart from its points, so at the empty, false file every card is both
-familiar and novel. Heim's files keep `Dom(F)` apart from `Sat(F)`, and her (16) and (17) are
-infelicitous whether or not they are true; here `not_admits_everyDog` and `not_admits_noDog`
-assume that the universal or negated first sentence is true in `F`, since a false one leaves an
-empty file, at which the pronoun's card is vacuously familiar. Truth with respect to a file
-(`FCP.trueIn`) is the consistency of the updated file. That is the truth clause of (C) for the
-files of Chapter III, which carry no worlds; on points that carry worlds it is truth at some
-world, and the falsity clause is not stated.
+The truth criterion is not defined for a file false in the world of evaluation; `TrueWrt` is
+false there and `FalseWrt` requires the file to be true. Examples are numbered as in the
+dissertation, by chapter and section.
 
 ## References
 
@@ -56,13 +57,9 @@ open DynamicSemantics
 
 variable {W M : Type*} {n : ℕ}
 
-/-- A file (Ch. III): a referential information state with numbered cards. -/
-abbrev File (W M : Type*) := State W ℕ M
-
-/-- Logical forms of the revised theory (Ch. III §4.4, §5.1): atomic formulas
-over indexed variables, indefinite and definite noun phrases with their
-descriptive content, cumulative (sequenced), universally quantified and
-negated formulas. Predicates are interpreted directly. -/
+/-- Logical forms of the revised theory (Ch. III §4.4, §5.1): atomic formulas over indexed
+variables, indefinite and definite noun phrases with their descriptive content, and cumulative,
+universally quantified and negated formulas. -/
 inductive LF (M : Type*)
   | atom {n : ℕ} (ζ : (Fin n → M) → Prop) (args : Fin n → ℕ)
   | indef (i : ℕ) (N : M → Prop)
@@ -71,7 +68,21 @@ inductive LF (M : Type*)
   | every (φ₁ φ₂ : LF M)
   | neg (ψ : LF M)
 
+/-- (III): the file that keeps the cards of `F` and the sequences of `F` each of whose variants
+in `F₁` on the cards of `F` has a variant in `F₂` on the cards of `F₁`. -/
+def universal (F F₁ F₂ : File W ℕ M) : File W ℕ M where
+  dom := F.dom
+  sat := {p ∈ F.sat | ∀ q ∈ F₁.sat, q.AgreeOn F.dom p → ∃ r ∈ F₂.sat, r.AgreeOn F₁.dom q}
+  mem_sat_of_agreeOn _ _ h hp :=
+    ⟨F.mem_sat_of_agreeOn h hp.1, fun q hq hqp ↦ hp.2 q hq (hqp.trans h.symm)⟩
+
+theorem universal_eq_sdiff (F F₁ F₂ : File W ℕ M) : universal F F₁ F₂ = F \ (F₁ \ F₂) :=
+  File.ext rfl (Set.ext fun _ ↦ File.mem_sat_sdiff_sdiff.symm)
+
 namespace LF
+
+variable {F F' : File W ℕ M} {φ ψ φ₁ φ₂ : LF M} {i j : ℕ} {N : M → Prop}
+  {ζ : (Fin n → M) → Prop} {args : Fin n → ℕ}
 
 /-- A pronoun or trace: a definite without descriptive content. -/
 def pro (i : ℕ) : LF M := defNP i fun _ ↦ True
@@ -82,35 +93,21 @@ def pred₁ (N : M → Prop) (i : ℕ) : LF M := atom (fun m ↦ N (m 0)) fun _ 
 /-- A two-place predication at cards `i`, `j`. -/
 def pred₂ (R : M → M → Prop) (i j : ℕ) : LF M := atom (fun m ↦ R (m 0) (m 1)) ![i, j]
 
-/-- The proposition state of an atomic formula: the points with exactly the
-atom's cards, whose values stand in `ζ`. -/
-def atomState (ζ : (Fin n → M) → Prop) (args : Fin n → ℕ) : File W M :=
-  {q | q.domain = Set.range args ∧ ∃ m : Fin n → M, (∀ k, m k ∈ q.assignment (args k)) ∧ ζ m}
-
-/-- The file change of a one-place atom. -/
-def unary (N : M → Prop) (i : ℕ) : FCP W ℕ M :=
-  FCP.ofState (atomState (fun m ↦ N (m 0)) fun _ : Fin 1 ↦ i)
-
-/-- Rules (I)–(IV) of Ch. III §4.4 with the Extended Novelty-Familiarity-
-Condition of §5.1: an atom merges the file with its proposition state
-(filtering at familiar cards, adding novel ones); an indefinite is defined
-only if its card is novel and then introduces it; a definite is defined only
-if its card is familiar and the file entails its content, and then changes
-nothing; sequencing composes; `every` keeps the points of `F` all of whose
-extensions in `F + φ₁` extend to `(F + φ₁) + φ₂`; `not` keeps the points of
-`F` with no extension in `F + ψ`. -/
+/-- Rules (I)–(IV) of Ch. III §4.4 with the Extended Novelty-Familiarity-Condition of §5.1. An
+atom takes the meet with its file. An indefinite is defined on the files that lack its card and a
+definite on those that have its card and entail its content, and each then updates with its
+content. Sequencing composes, `every` is rule (III), and `not` takes the difference of the file
+from its update. -/
 def fcp : LF M → FCP W ℕ M
-  | atom ζ args => FCP.ofState (atomState ζ args)
-  | indef i N => FCP.indef i (unary N i)
-  | defNP i N => FCP.def_ i (unary N i)
+  | atom ζ args => FCP.ofFile (File.atom (fun _ ↦ ζ) args)
+  | indef i N => FCP.indefinite i (FCP.ofFile (File.atomAt i fun _ ↦ N))
+  | defNP i N => FCP.definite i (FCP.ofFile (File.atomAt i fun _ ↦ N))
   | seq φ ψ => φ.fcp.seq ψ.fcp
-  | every φ₁ φ₂ => fun F ↦ (φ₁.fcp F).bind fun F₁ ↦ (φ₂.fcp F₁).map fun F₂ ↦
-      {p ∈ F | ∀ q ∈ F₁, p ≤ q → ∃ r ∈ F₂, q ≤ r}
+  | every φ₁ φ₂ => fun F ↦ (φ₁.fcp F).bind fun F₁ ↦ (φ₂.fcp F₁).map fun F₂ ↦ universal F F₁ F₂
   | neg ψ => FCP.neg ψ.fcp
 
-/-- The cards a logical form adds to the file: those of its atoms and
-indefinites outside the scope of `every` and `not`, whose auxiliary files are
-discarded. -/
+/-- The cards a logical form adds to the file: those of its atoms and indefinites outside the
+scope of `every` and `not`. -/
 def cards : LF M → Set ℕ
   | atom _ args => Set.range args
   | indef i _ => {i}
@@ -119,172 +116,189 @@ def cards : LF M → Set ℕ
   | every _ _ => ∅
   | neg _ => ∅
 
-theorem unary_eq_atomVar (N : M → Prop) (i : ℕ) : (unary N i : FCP W ℕ M) = FCP.atomVar N i := by
-  refine congrArg FCP.ofState (Set.ext fun q ↦ ?_)
-  constructor
-  · rintro ⟨hd, m, hm, hN⟩
-    exact ⟨hd.trans Set.range_const, m 0, hm 0, hN⟩
-  · rintro ⟨hd, m, hm, hN⟩
-    exact ⟨hd.trans Set.range_const.symm, fun _ ↦ m, fun _ ↦ hm, hN⟩
-
 /-! ### The Extended Novelty-Familiarity-Condition -/
 
-theorem admits_indef (i : ℕ) (N : M → Prop) (F : File W M) :
-    (indef i N).fcp.Admits F ↔ State.Novel F i :=
-  (FCP.admits_indef _).trans ⟨fun ⟨h, _⟩ ↦ h, fun h ↦ ⟨h, trivial⟩⟩
+theorem admits_atom : (atom ζ args).fcp.Admits F := trivial
 
-theorem admits_defNP (i : ℕ) (N : M → Prop) (F : File W M) :
-    (defNP i N).fcp.Admits F ↔
-      State.Familiar F i ∧ (unary N i).supports F :=
-  FCP.admits_def_ _
+theorem admits_indef : (indef i N).fcp.Admits F ↔ i ∉ F.dom :=
+  FCP.admits_indefinite.trans (and_iff_left FCP.admits_ofFile)
 
-theorem supports_unary_true (F : File W M) {i : ℕ} (h : State.Familiar F i) :
-    (unary (fun _ ↦ True) i).supports F := by
-  rw [PartialUpdate.supports_iff_eq_some, unary_eq_atomVar, FCP.atomVar_eq_of_familiar _ h]
-  exact congrArg Part.some (Set.sep_eq_self_iff_mem_true.mpr fun p hp ↦
-    let ⟨m, hm⟩ := Part.dom_iff_mem.1 (h p hp); ⟨m, hm, trivial⟩)
+theorem admits_defNP : (defNP i N).fcp.Admits F ↔ i ∈ F.dom ∧ ∀ p ∈ F.sat, N (p.assignment i) :=
+  FCP.admits_definite_ofFile
 
-theorem fcp_pro (F : File W M) {i : ℕ} (h : State.Familiar F i) : (pro i).fcp F = Part.some F :=
-  FCP.def_apply _ ⟨h, supports_unary_true F h⟩
+theorem admits_pro : (pro i).fcp.Admits F ↔ i ∈ F.dom :=
+  admits_defNP.trans (and_iff_left fun _ _ ↦ trivial)
 
-theorem admits_pro (F : File W M) (i : ℕ) : (pro i).fcp.Admits F ↔ State.Familiar F i :=
-  ⟨fun ⟨h, _⟩ ↦ h.1, fun h ↦ by rw [PartialUpdate.Admits, fcp_pro F h]; trivial⟩
+theorem fcp_pro (h : i ∈ F.dom) : (pro i).fcp F = Part.some F :=
+  FCP.definite_ofFile_apply (File.le_atomAt_iff.2 ⟨h, fun _ _ ↦ trivial⟩) h
 
-theorem fcp_indef {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Novel F i) :
-    (indef i N).fcp F = Part.some {p ∈ F.randomAssign i | ∃ m ∈ p.assignment i, N m} := by
-  show FCP.indef i (unary N i) F = _
-  rw [FCP.indef_apply _ h, unary_eq_atomVar,
-    FCP.atomVar_eq_of_familiar _ (State.familiar_randomAssign F i)]
+theorem fcp_indef (h : i ∉ F.dom) :
+    (indef i N).fcp F = Part.some (F ⊓ File.atomAt i fun _ ↦ N) :=
+  FCP.indefinite_apply h
 
-theorem mem_fcp_indef {F F' : File W M} {i : ℕ} {N : M → Prop} :
-    F' ∈ (indef i N).fcp F ↔
-      State.Novel F i ∧ F' = {p ∈ F.randomAssign i | ∃ m ∈ p.assignment i, N m} :=
-  ⟨fun h ↦ have hn : State.Novel F i := (Part.mem_assert_iff.mp h).1
-    ⟨hn, Part.mem_some_iff.mp (fcp_indef N hn ▸ h)⟩,
-   fun ⟨hn, hF⟩ ↦ hF ▸ fcp_indef N hn ▸ Part.mem_some _⟩
+theorem mem_fcp_indef :
+    F' ∈ (indef i N).fcp F ↔ i ∉ F.dom ∧ F' = F ⊓ File.atomAt i fun _ ↦ N :=
+  FCP.mem_indefinite.trans (and_congr_right fun _ ↦ FCP.mem_ofFile)
+
+-- §5.1, p. 369
+theorem mem_dom_of_entails (h : F.Entails (FCP.ofFile (File.atomAt i fun _ ↦ N)))
+    (hF : F.sat.Nonempty) (hN : ∃ m, ¬ N m) : i ∈ F.dom :=
+  let ⟨p, hp⟩ := hF
+  let ⟨m, hm⟩ := hN
+  File.mem_dom_of_forall_mem_sat (N := fun _ ↦ N) (FCP.entails_ofFile.1 h) ⟨p, hp, m, hm⟩
 
 /-! ### Membership and projection through the rules -/
 
-theorem mem_fcp_seq {φ ψ : LF M} {F F' : File W M} :
-    F' ∈ (φ.seq ψ).fcp F ↔ ∃ F₁ ∈ φ.fcp F, F' ∈ ψ.fcp F₁ :=
+theorem mem_fcp_seq : F' ∈ (φ.seq ψ).fcp F ↔ ∃ F₁ ∈ φ.fcp F, F' ∈ ψ.fcp F₁ :=
   Part.mem_bind_iff
 
-theorem mem_fcp_every {φ₁ φ₂ : LF M} {F F' : File W M} :
-    F' ∈ (every φ₁ φ₂).fcp F ↔ ∃ F₁ ∈ φ₁.fcp F, ∃ F₂ ∈ φ₂.fcp F₁,
-      F' = {p ∈ F | ∀ q ∈ F₁, p ≤ q → ∃ r ∈ F₂, q ≤ r} := by
+theorem mem_fcp_every :
+    F' ∈ (every φ₁ φ₂).fcp F ↔ ∃ F₁ ∈ φ₁.fcp F, ∃ F₂ ∈ φ₂.fcp F₁, universal F F₁ F₂ = F' := by
   simp only [fcp, Part.mem_bind_iff, Part.mem_map_iff]
-  exact exists_congr fun _ ↦ and_congr_right fun _ ↦ exists_congr fun _ ↦
-    and_congr_right fun _ ↦ eq_comm
 
-theorem subset_of_mem_fcp_every {φ₁ φ₂ : LF M} {F F' : File W M}
-    (h : F' ∈ (every φ₁ φ₂).fcp F) : F' ⊆ F := by
-  obtain ⟨_, -, _, -, rfl⟩ := mem_fcp_every.mp h
-  exact fun _ hp ↦ hp.1
-
-theorem admits_seq_of_mem {φ ψ : LF M} {F F' : File W M} (h : F' ∈ φ.fcp F)
-    (h' : ψ.fcp.Admits F') : (φ.seq ψ).fcp.Admits F :=
-  Part.dom_iff_mem.mpr ⟨_, mem_fcp_seq.mpr ⟨F', h, Part.get_mem h'⟩⟩
-
-theorem admits_pro_seq {ψ : LF M} {F : File W M} {i : ℕ} (h : State.Familiar F i)
-    (h' : ψ.fcp.Admits F) : ((pro i).seq ψ).fcp.Admits F :=
-  admits_seq_of_mem (by rw [fcp_pro F h]; exact Part.mem_some F) h'
-
-theorem admits_every_of_mem {φ₁ φ₂ : LF M} {F F₁ : File W M} (h : F₁ ∈ φ₁.fcp F)
-    (h' : φ₂.fcp.Admits F₁) : (every φ₁ φ₂).fcp.Admits F :=
-  Part.dom_iff_mem.mpr ⟨_, mem_fcp_every.mpr ⟨F₁, h, _, Part.get_mem h', rfl⟩⟩
-
+/-- Rule (III) is the conditional: the negation of the restrictor followed by the negated
+nuclear scope. -/
 theorem every_eq_cond (φ₁ φ₂ : LF M) :
-    (every φ₁ φ₂).fcp = FCP.cond (W := W) φ₁.fcp φ₂.fcp := by
-  funext F
-  simp only [fcp, FCP.cond, FCP.neg, PartialUpdate.seq, PFun.comp_apply, Part.map_bind,
-    Part.map_map]
-  refine congrArg (Part.bind _) (funext fun F₁ ↦
-    congrArg (fun g ↦ Part.map g (φ₂.fcp F₁)) (funext fun F₂ ↦ Set.ext fun p ↦ ?_))
-  simp only [Function.comp, Set.mem_ofPred_eq, mem_lowerClosure, not_exists, not_and]
-  exact and_congr_right fun _ ↦ forall_congr' fun q ↦
-    ⟨fun h ⟨hq, hno⟩ hpq ↦ let ⟨r, hr, hqr⟩ := h hq hpq; hno r hr hqr,
-     fun h hq hpq ↦ Classical.byContradiction fun hne ↦
-      h ⟨hq, fun r hr hqr ↦ hne ⟨r, hr, hqr⟩⟩ hpq⟩
+    (every φ₁ φ₂).fcp = FCP.cond (W := W) φ₁.fcp φ₂.fcp :=
+  funext fun _ ↦ Part.ext fun _ ↦ by
+    simp only [mem_fcp_every, FCP.mem_cond, universal_eq_sdiff]
 
-theorem admits_every (φ₁ φ₂ : LF M) (F : File W M) :
-    (every φ₁ φ₂).fcp.Admits F ↔ ∃ h : φ₁.fcp.Admits F, φ₂.fcp.Admits ((φ₁.fcp F).get h) := by
-  rw [every_eq_cond]; exact FCP.admits_cond
+theorem admits_seq : (φ.seq ψ).fcp.Admits F ↔ ∃ F₁ ∈ φ.fcp F, ψ.fcp.Admits F₁ :=
+  ⟨fun ⟨h, h'⟩ ↦ ⟨_, Part.get_mem h, h'⟩,
+    fun ⟨_, h, h'⟩ ↦ Part.dom_iff_mem.2 ⟨_, mem_fcp_seq.2 ⟨_, h, Part.get_mem h'⟩⟩⟩
 
-/-! ### Principle (A) of §1.2 and the cards through the rules
+theorem admits_every : (every φ₁ φ₂).fcp.Admits F ↔ ∃ F₁ ∈ φ₁.fcp F, φ₂.fcp.Admits F₁ :=
+  ⟨fun ⟨h, h'⟩ ↦ ⟨_, Part.get_mem h, h'⟩,
+    fun ⟨_, h, h'⟩ ↦ Part.dom_iff_mem.2 ⟨_, mem_fcp_every.2 ⟨_, h, _, Part.get_mem h', rfl⟩⟩⟩
 
-Every rule only adds information, so a card once established stays
-established; the cards a rule can add are those the logical form introduces,
-so a card it does not introduce stays novel. -/
+theorem admits_atom_seq :
+    ((atom ζ args).seq ψ).fcp.Admits F ↔ ψ.fcp.Admits (F ⊓ File.atom (fun _ ↦ ζ) args) :=
+  admits_seq.trans ⟨fun ⟨_, h, h'⟩ ↦ FCP.mem_ofFile.1 h ▸ h', fun h ↦ ⟨_, Part.mem_some _, h⟩⟩
+
+theorem admits_indef_seq :
+    ((indef i N).seq ψ).fcp.Admits F ↔
+      i ∉ F.dom ∧ ψ.fcp.Admits (F ⊓ File.atomAt i fun _ ↦ N) := by
+  simp [admits_seq, mem_fcp_indef]
+
+theorem admits_every_indef :
+    (every (indef i N) ψ).fcp.Admits F ↔
+      i ∉ F.dom ∧ ψ.fcp.Admits (F ⊓ File.atomAt i fun _ ↦ N) := by
+  simp [admits_every, mem_fcp_indef]
+
+theorem admits_pro_seq : ((pro i).seq ψ).fcp.Admits F ↔ i ∈ F.dom ∧ ψ.fcp.Admits F := by
+  refine admits_seq.trans ⟨fun ⟨F₁, h₁, h⟩ ↦ ?_, fun ⟨hi, h⟩ ↦ ⟨F, fcp_pro hi ▸ Part.mem_some F, h⟩⟩
+  have hi := admits_pro.1 (Part.dom_iff_mem.2 ⟨F₁, h₁⟩)
+  exact ⟨hi, Part.mem_some_iff.1 (fcp_pro hi ▸ h₁) ▸ h⟩
+
+/-! ### Satisfaction sets and domains through the rules
+
+Every rule descends in the information order, so no card is removed and no sequence is added.
+The cards a rule adds are those the logical form introduces. -/
 
 theorem fcp_isEliminative : ∀ φ : LF M, (φ.fcp : FCP W ℕ M).IsEliminative
-  | atom _ _ => FCP.isEliminative_ofState _
-  | indef i _ => (FCP.isEliminative_ofState _).indef i
-  | defNP i _ => FCP.isEliminative_def_ i _
+  | atom _ _ => FCP.isEliminative_ofFile _
+  | indef i _ => (FCP.isEliminative_ofFile _).indefinite i
+  | defNP i _ => (FCP.isEliminative_ofFile _).definite i
   | seq φ ψ => (fcp_isEliminative φ).seq (fcp_isEliminative ψ)
   | every φ₁ φ₂ => by rw [every_eq_cond]; exact FCP.isEliminative_cond _ _
   | neg _ => FCP.isEliminative_neg _
 
+/-- The domain of the changed file is the domain of the file with the cards of the logical
+form. -/
+theorem dom_of_mem : ∀ {φ : LF M} {F F' : File W ℕ M}, F' ∈ φ.fcp F → F'.dom = F.dom ∪ φ.cards
+  | atom _ _, _, _, h => FCP.mem_ofFile.1 h ▸ rfl
+  | indef _ _, _, _, h => by
+    obtain ⟨-, rfl⟩ := mem_fcp_indef.1 h
+    simp [cards]
+  | defNP _ _, _, _, h => by
+    obtain ⟨⟨hi, -⟩, h⟩ := FCP.mem_definite.1 h
+    obtain rfl := FCP.mem_ofFile.1 h
+    simpa [cards] using hi
+  | seq φ ψ, _, _, h => by
+    obtain ⟨_, h₁, h₂⟩ := mem_fcp_seq.1 h
+    rw [dom_of_mem h₂, dom_of_mem h₁, cards, Set.union_assoc]
+  | every _ _, _, _, h => by
+    obtain ⟨_, -, _, -, rfl⟩ := mem_fcp_every.1 h
+    simp [cards, universal]
+  | neg _, _, _, h => by simp [cards, FCP.dom_eq_of_mem_neg h]
+
 -- §3.2
-theorem fcp_empty (φ : LF M) {F' : File W M} (h : F' ∈ φ.fcp ∅) : F' = ∅ :=
-  (fcp_isEliminative φ).eq_empty_of_mem h
+theorem sat_eq_empty_of_mem (h : F' ∈ φ.fcp F) (hF : F.sat = ∅) : F'.sat = ∅ :=
+  Set.eq_empty_of_subset ((fcp_isEliminative φ).sat_subset h) hF
 
-theorem familiar_of_mem {φ : LF M} {F F' : File W M} {j : ℕ} (hj : State.Familiar F j)
-    (h : F' ∈ φ.fcp F) : State.Familiar F' j :=
-  (fcp_isEliminative φ).familiar hj h
-
-theorem familiar_of_mem_indef {F F' : File W M} {i : ℕ} {N : M → Prop}
-    (h : F' ∈ (indef i N).fcp F) : State.Familiar F' i := by
-  obtain ⟨-, rfl⟩ := mem_fcp_indef.mp h
-  exact (State.familiar_randomAssign F i).mono fun _ hp ↦ hp.1
-
-theorem novel_atomState {ζ : (Fin n → M) → Prop} {args : Fin n → ℕ} {j : ℕ}
-    (hj : j ∉ Set.range args) : State.Novel (atomState (W := W) ζ args) j :=
-  fun _ ⟨hq, _⟩ hd ↦ hj (hq ▸ hd)
-
-theorem novel_of_mem : ∀ {φ : LF M} {F F' : File W M} {j : ℕ}, j ∉ φ.cards →
-    State.Novel F j → F' ∈ φ.fcp F → State.Novel F' j
-  | atom _ _, _, _, _, hj, hF, h => FCP.mem_ofState.mp h ▸ hF.mul (novel_atomState hj)
-  | indef _ _, F, _, _, hj, hF, h => by
-    obtain ⟨-, rfl⟩ := mem_fcp_indef.mp h
-    exact (hF.randomAssign (Set.notMem_singleton_iff.mp hj)).mono fun _ hp ↦ hp.1
-  | defNP _ _, _, _, _, _, hF, h => by
-    obtain ⟨-, h⟩ := Part.mem_assert_iff.mp h
-    exact Part.mem_some_iff.mp h ▸ hF
-  | seq φ ψ, _, _, _, hj, hF, h => by
-    obtain ⟨_, h₁, h₂⟩ := mem_fcp_seq.mp h
-    exact novel_of_mem (fun hψ ↦ hj (Set.mem_union_right _ hψ))
-      (novel_of_mem (fun hφ ↦ hj (Set.mem_union_left _ hφ)) hF h₁) h₂
-  | every _ _, _, _, _, _, hF, h => hF.mono (subset_of_mem_fcp_every h)
-  | neg _, _, _, _, _, hF, h => hF.mono (FCP.subset_of_mem_neg h)
+end LF
 
 /-! ### Truth (§3.2)
 
-Criterion (C): an utterance is true with respect to a file iff the resulting
-file is true, i.e. has a satisfying point (`FCP.trueIn`). No existential
-closure is needed: a novel card ranges over the whole domain, a familiar one
-over the values its card admits. -/
+A file is true in a world when some sequence satisfies it there. A formula is true with respect
+to a file when the changed file is true, and false when the file is true and the changed file is
+false. -/
 
-theorem trueIn_indef {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Novel F i) :
-    FCP.trueIn F (indef i N).fcp ↔ F.Nonempty ∧ ∃ m, N m := by
-  simp only [FCP.trueIn, fcp_indef N h, Part.mem_some_iff, exists_eq_left]
+section Truth
+
+variable {F : File W ℕ M} {φ : FCP W ℕ M} {i : ℕ} {N : M → Prop} {w : W}
+
+/-- (C): `φ` is true with respect to `F` in `w` when `F + φ` is true in `w`. -/
+def TrueWrt (φ : FCP W ℕ M) (F : File W ℕ M) (w : W) : Prop := ∃ F' ∈ φ F, w ∈ F'.worlds
+
+/-- (C): `φ` is false with respect to `F` in `w` when `F` is true in `w` and `F + φ` is false in
+`w`. -/
+def FalseWrt (φ : FCP W ℕ M) (F : File W ℕ M) (w : W) : Prop :=
+  w ∈ F.worlds ∧ ∃ F' ∈ φ F, w ∉ F'.worlds
+
+theorem not_trueWrt_of_falseWrt (h : FalseWrt φ F w) : ¬ TrueWrt φ F w :=
+  fun ⟨_, hF', hw⟩ ↦ let ⟨_, _, hG, hw'⟩ := h; hw' (Part.mem_unique hG hF' ▸ hw)
+
+-- §3.2, p. 330
+theorem TrueWrt.mem_worlds (h : TrueWrt φ F w) (hφ : φ.IsEliminative) : w ∈ F.worlds :=
+  let ⟨_, hF', hw⟩ := h
+  hφ.worlds_subset hF' hw
+
+theorem trueWrt_or_falseWrt (h : φ.Admits F) (hw : w ∈ F.worlds) :
+    TrueWrt φ F w ∨ FalseWrt φ F w :=
+  (Classical.em (w ∈ ((φ F).get h).worlds)).imp (fun h' ↦ ⟨_, Part.get_mem h, h'⟩)
+    fun h' ↦ ⟨hw, _, Part.get_mem h, h'⟩
+
+/-- An indefinite at a new card is true with respect to a file in the worlds where the file is
+true, provided something has its descriptive content. -/
+theorem trueWrt_indef (h : i ∉ F.dom) :
+    TrueWrt (LF.indef i N).fcp F w ↔ w ∈ F.worlds ∧ ∃ m, N m := by
+  simp only [TrueWrt, LF.fcp_indef h, Part.mem_some_iff, exists_eq_left, File.mem_worlds,
+    File.sat_inf, Set.mem_inter_iff, File.mem_sat_atomAt]
   constructor
-  · rintro ⟨p, hp, m', hm', hN⟩
-    obtain ⟨q, hq, m, rfl⟩ := hp
-    obtain rfl : m' = m := by simpa [Possibility.update] using hm'
-    exact ⟨⟨q, hq⟩, _, hN⟩
-  · rintro ⟨⟨q, hq⟩, m, hN⟩
-    exact ⟨q.update i (.some m), ⟨q, hq, m, rfl⟩, m, by simp [Possibility.update], hN⟩
+  · rintro ⟨p, ⟨hp, hN⟩, rfl⟩
+    exact ⟨⟨p, hp, rfl⟩, _, hN⟩
+  · rintro ⟨⟨p, hp, rfl⟩, m, hN⟩
+    exact ⟨p.update i m, ⟨F.mem_sat_of_agreeOn (Possibility.agreeOn_update h m) hp, by simpa⟩, rfl⟩
 
-theorem trueIn_pro_pred {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Familiar F i) :
-    FCP.trueIn F ((pro i).seq (pred₁ N i)).fcp ↔ ∃ p ∈ F, ∃ m ∈ p.assignment i, N m := by
-  have : ((pro i).seq (pred₁ N i)).fcp F = FCP.atomVar N i F := by
-    show ((pro i).fcp F).bind _ = _
-    rw [fcp_pro F h, Part.bind_some]
-    exact congrFun (unary_eq_atomVar N i) F
-  simp only [FCP.trueIn, this, FCP.atomVar_eq_of_familiar _ h, Part.mem_some_iff,
-    exists_eq_left, Set.Nonempty, Set.mem_ofPred_eq]
+-- (IV)
+theorem trueWrt_neg_indef (h : i ∉ F.dom) :
+    TrueWrt (LF.neg (LF.indef i N)).fcp F w ↔ w ∈ F.worlds ∧ ¬ ∃ m, N m := by
+  have : (LF.neg (LF.indef i N)).fcp F = Part.some (F \ (F ⊓ File.atomAt i fun _ ↦ N)) := by
+    show ((LF.indef i N).fcp F).map _ = _
+    rw [LF.fcp_indef h, Part.map_some]
+  simp only [TrueWrt, this, Part.mem_some_iff, exists_eq_left, File.mem_worlds,
+    File.mem_sat_sdiff, File.sat_inf, Set.mem_inter_iff, File.mem_sat_atomAt]
+  constructor
+  · rintro ⟨p, ⟨hp, hno⟩, rfl⟩
+    have hu (m : M) := Possibility.agreeOn_update (p := p) h m
+    exact ⟨⟨p, hp, rfl⟩, fun ⟨m, hm⟩ ↦
+      hno _ ⟨F.mem_sat_of_agreeOn (hu m) hp, by simpa⟩ (hu m).symm⟩
+  · rintro ⟨⟨p, hp, rfl⟩, hno⟩
+    exact ⟨p, ⟨hp, fun q hq _ ↦ hno ⟨_, hq.2⟩⟩, rfl⟩
 
-end LF
+theorem trueWrt_pro_pred (h : i ∈ F.dom) :
+    TrueWrt ((LF.pro i).seq (LF.pred₁ N i)).fcp F w ↔
+      ∃ p ∈ F.sat, N (p.assignment i) ∧ p.world = w := by
+  have : ((LF.pro i).seq (LF.pred₁ N i)).fcp F =
+      Part.some (F ⊓ File.atom (fun _ m ↦ N (m 0)) fun _ : Fin 1 ↦ i) := by
+    show ((LF.pro i).fcp F).bind _ = _
+    rw [LF.fcp_pro h, Part.bind_some]
+    rfl
+  simp only [TrueWrt, this, Part.mem_some_iff, exists_eq_left, File.mem_worlds, File.sat_inf,
+    Set.mem_inter_iff, File.mem_sat_atom, Function.comp_apply, and_assoc]
+
+end Truth
 
 /-! ### The book's texts -/
 
@@ -323,73 +337,53 @@ def kingLocal (m i : ℕ) : LF M := neg ((indef i king).seq (pred₂ lunch m i))
 def kingGlobal (m i : ℕ) : LF M := (indef i king).seq (neg (pred₂ lunch m i))
 
 variable {dog cameIn layDown woman person pretzel king bit hit bought ate lunch}
+  {F F' : File W ℕ M}
 
--- (9)
-theorem admits_aDog {F : File W M} (h : State.Novel F 1) :
-    (aDog dog cameIn layDown).fcp.Admits F := by
-  unfold aDog
-  have m1 := mem_fcp_indef (F := F) (N := dog).mpr ⟨h, rfl⟩
-  exact admits_seq_of_mem m1 (admits_seq_of_mem (Part.mem_some _) (admits_pro_seq
-    (familiar_of_mem (φ := pred₁ cameIn 1) (familiar_of_mem_indef m1) (Part.mem_some _)) trivial))
+-- (9), row `heim1982_indefinite_persists`
+theorem admits_aDog : (aDog dog cameIn layDown).fcp.Admits F ↔ 1 ∉ F.dom := by
+  simp [aDog, pred₁, admits_indef_seq, admits_atom_seq, admits_pro_seq, admits_atom]
 
-/-- (16) is infelicitous whenever card 1 is novel and the universal sentence is true. -/
-theorem not_admits_everyDog {F : File W M} (h : State.Novel F 1)
-    (ht : FCP.trueIn F (every (indef 1 dog) (pred₁ cameIn 1)).fcp) :
-    ¬ (everyDog dog cameIn layDown).fcp.Admits F := by
-  rintro ⟨hd, hrest⟩
-  obtain ⟨F', hF', p, hp⟩ := ht
-  obtain rfl := Part.get_eq_of_mem hF' hd
-  obtain ⟨hpro, -⟩ := hrest
-  have hf : State.Familiar _ 1 := hpro.1.1
-  exact h p (subset_of_mem_fcp_every hF' hp) (hf p hp)
+/-- (16) is infelicitous with respect to every file: the card of *every dog* is new to the file
+and is not added to it, so the pronoun's card is missing. -/
+theorem not_admits_everyDog (F : File W ℕ M) : ¬ (everyDog dog cameIn layDown).fcp.Admits F := by
+  intro h
+  obtain ⟨F₁, h₁, h₂⟩ := admits_seq.1 h
+  have hd : F₁.dom = F.dom := by simpa [cards] using dom_of_mem h₁
+  exact (admits_every_indef.1 (Part.dom_iff_mem.2 ⟨F₁, h₁⟩)).1 (hd ▸ (admits_pro_seq.1 h₂).1)
 
--- (17)
-theorem not_admits_noDog {F : File W M} (h : State.Novel F 1)
-    (ht : FCP.trueIn F (neg ((indef 1 dog).seq (pred₁ cameIn 1))).fcp) :
-    ¬ (noDog dog cameIn layDown).fcp.Admits F := by
-  rintro ⟨hd, hrest⟩
-  obtain ⟨F', hF', p, hp⟩ := ht
-  obtain rfl := Part.get_eq_of_mem hF' hd
-  obtain ⟨hpro, -⟩ := hrest
-  have hf : State.Familiar _ 1 := hpro.1.1
-  exact h p (FCP.subset_of_mem_neg hF' hp) (hf p hp)
+-- (17), row `heim1982_negative_blocks`
+theorem not_admits_noDog (F : File W ℕ M) : ¬ (noDog dog cameIn layDown).fcp.Admits F := by
+  intro h
+  obtain ⟨F₁, h₁, h₂⟩ := admits_seq.1 h
+  have hd : F₁.dom = F.dom := FCP.dom_eq_of_mem_neg h₁
+  have hn : ((indef 1 dog).seq (pred₁ cameIn 1)).fcp.Admits F :=
+    FCP.admits_neg.1 (Part.dom_iff_mem.2 ⟨F₁, h₁⟩)
+  exact (admits_indef_seq.1 hn).1 (hd ▸ (admits_pro_seq.1 h₂).1)
 
--- §2.4, (5)
-theorem admits_womanDog {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel F 2) :
-    (womanDog dog woman bit hit).fcp.Admits F := by
-  unfold womanDog
-  have m1 := mem_fcp_indef (F := F) (N := woman).mpr ⟨h1, rfl⟩
-  have m2 := mem_fcp_indef (N := dog).mpr ⟨novel_of_mem (by simp [cards]) h2 m1, rfl⟩
-  have f1 := familiar_of_mem (φ := pred₂ bit 2 1)
-    (familiar_of_mem (φ := indef 2 dog) (familiar_of_mem_indef m1) m2) (Part.mem_some _)
-  have f2 := familiar_of_mem (φ := pred₂ bit 2 1) (familiar_of_mem_indef m2) (Part.mem_some _)
-  exact admits_seq_of_mem m1 (admits_seq_of_mem m2 (admits_seq_of_mem (Part.mem_some _)
-    (admits_pro_seq f1 (admits_pro_seq f2 trivial))))
+-- §2.4 (5), row `heim1982_woman_dog`
+theorem admits_womanDog :
+    (womanDog dog woman bit hit).fcp.Admits F ↔ 1 ∉ F.dom ∧ 2 ∉ F.dom := by
+  simp [womanDog, pred₂, admits_indef_seq, admits_atom_seq, admits_pro_seq, admits_atom]
 
-/-- §4.1 (2) is felicitous against a file at which cards 1 and 2 are novel. -/
-theorem admits_pretzel {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel F 2) :
-    (pretzelText person pretzel bought ate).fcp.Admits F := by
-  unfold pretzelText
-  have m1 := mem_fcp_indef (F := F) (N := person).mpr ⟨h1, rfl⟩
-  have m2 := mem_fcp_indef (N := pretzel).mpr ⟨novel_of_mem (by simp [cards]) h2 m1, rfl⟩
-  have f2 := familiar_of_mem (φ := pred₂ bought 1 2) (familiar_of_mem_indef m2) (Part.mem_some _)
-  exact admits_every_of_mem m1 (admits_seq_of_mem m2 (admits_seq_of_mem (Part.mem_some _)
-    (admits_pro_seq f2 trivial)))
+/-- §4.1 (2) is felicitous with respect to the files that have neither card: the pretzel's card
+is in the auxiliary file by the time the pronoun is evaluated. -/
+theorem admits_pretzel :
+    (pretzelText person pretzel bought ate).fcp.Admits F ↔ 1 ∉ F.dom ∧ 2 ∉ F.dom := by
+  simp [pretzelText, pred₂, admits_every_indef, admits_indef_seq, admits_atom_seq,
+    admits_pro_seq, admits_atom]
 
 -- §5.2
-theorem novel_of_mem_kingLocal {F F' : File W M} {m i : ℕ} (h : State.Novel F i)
-    (hF' : F' ∈ (kingLocal king lunch m i).fcp F) : State.Novel F' i :=
-  novel_of_mem (φ := kingLocal king lunch m i) (Set.notMem_empty i) h hF'
+theorem dom_of_mem_kingLocal {m i : ℕ} (hF' : F' ∈ (kingLocal king lunch m i).fcp F) :
+    F'.dom = F.dom :=
+  FCP.dom_eq_of_mem_neg hF'
 
 -- §5.2
-theorem familiar_of_mem_kingGlobal {F F' : File W M} {m i : ℕ}
-    (hF' : F' ∈ (kingGlobal king lunch m i).fcp F) :
-    State.Familiar F' i ∧ ∀ p ∈ F', ∃ x ∈ p.assignment i, king x := by
-  obtain ⟨F₁, h₁, h₂⟩ := mem_fcp_seq.mp hF'
-  have hsub := FCP.subset_of_mem_neg h₂
-  refine ⟨(familiar_of_mem_indef h₁).mono hsub, fun p hp ↦ ?_⟩
-  obtain ⟨-, rfl⟩ := mem_fcp_indef.mp h₁
-  exact (hsub hp).2
+theorem mem_dom_of_mem_kingGlobal {m i : ℕ} (hF' : F' ∈ (kingGlobal king lunch m i).fcp F) :
+    i ∈ F'.dom ∧ ∀ p ∈ F'.sat, king (p.assignment i) := by
+  obtain ⟨F₁, h₁, h₂⟩ := mem_fcp_seq.1 hF'
+  obtain ⟨-, rfl⟩ := mem_fcp_indef.1 h₁
+  obtain ⟨G, -, rfl⟩ := FCP.mem_neg.1 h₂
+  exact ⟨by simp, fun p hp ↦ (File.mem_sat_sdiff.1 hp).1.2⟩
 
 end Texts
 

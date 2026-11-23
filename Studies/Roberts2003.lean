@@ -9,20 +9,20 @@ public import Linglib.Data.Examples.Roberts2003
 
 A definite noun phrase presupposes an antecedent discourse referent that is weakly familiar and
 informationally unique: of the referents in the domain of the context, it is the only one the
-context entails to have the definite's descriptive content. The presupposition is [the iota over
-the familiar referents entailed to have the content](##informationallyUnique_iff), and its
-existence half is [Heim's Familiarity Condition](##admits_def_of_informationallyUnique), which
-alone [admits *the strange man* beside a second strange man](##strangeMen). A pronoun's
-presupposition takes the iota over the referents at least as salient as its antecedent, and [with
-every referent equally salient it is the definite's](##pronounPresupposes_top_iff).
+context entails to have the definite's descriptive content. A context is a file, its domain and
+its satisfaction set, and the referents in the domain that it entails to have a content `desc`
+are the `k` with `C ≤ File.atomAt k desc` (`mem_candidates_iff`). Heim's Familiarity Condition
+asks that the definite's referent be one of them (`admits_definite_iff_mem_candidates`), and
+informational uniqueness that it be the only one (`informationallyUnique_iff`), so the first
+alone admits *the strange man* beside a second strange man (`strangeMen`). A pronoun's
+presupposition takes the iota over the referents at least as salient as its antecedent, and with
+every referent of the domain equally salient it is the definite's (`pronounPresupposes_top_iff`).
 
 ## Implementation notes
 
-* A context ⟨Dom, Sat⟩ (31) is a `DynamicSemantics.State`, whose points are the world–assignment
-  pairs of Sat and whose familiar referents (`State.Familiar`) are Dom. Weak familiarity is
-  membership in Dom, whether the referent was introduced by mention, acquaintance or contextual
-  entailment, so it needs no predicate of its own. Roberts, after Heim, keeps Dom apart from Sat;
-  here every referent is familiar at the absurd state.
+* A context ⟨Dom, Sat⟩ (31) is a `DynamicSemantics.File`. Weak familiarity is membership in the
+  domain, whether the referent was introduced by mention, acquaintance or contextual entailment,
+  so it needs no predicate of its own.
 * The salience order of (50) is a relation `r` on referents, `r k i` reading *`k` is at least as
   salient as `i`*.
 
@@ -38,48 +38,46 @@ namespace Roberts2003
 
 open DynamicSemantics
 
-variable {W V M : Type*} {C : State W V M} {desc : W → M → Prop} {i : V}
+variable {W V M : Type*} {C : File W V M} {desc : W → M → Prop} {i k : V}
 
 /-! ### The presupposition of a definite (32) -/
 
-/-- A context entails of a referent that it has a descriptive content when every point assigns
-the referent a value with that content at its world. -/
-def Entails (C : State W V M) (desc : W → M → Prop) (k : V) : Prop :=
-  ∀ p ∈ C, ∃ m ∈ p.assignment k, desc p.world m
+/-- A context entails of a referent that it has a descriptive content when every point of its
+satisfaction set assigns the referent a value with that content at its world. -/
+def Entails (C : File W V M) (desc : W → M → Prop) (k : V) : Prop :=
+  ∀ p ∈ C.sat, desc p.world (p.assignment k)
 
-/-- The familiar referents a context entails to have a descriptive content. -/
-def candidates (C : State W V M) (desc : W → M → Prop) : Set V :=
-  {k | State.Familiar C k ∧ Entails C desc k}
+/-- The referents in the domain of a context that it entails to have a descriptive content. -/
+def candidates (C : File W V M) (desc : W → M → Prop) : Set V :=
+  {k | k ∈ C.dom ∧ Entails C desc k}
 
 /-- A referent is informationally unique for a descriptive content in a context when it is the
-iota of the familiar referents the context entails to have the content (32). -/
-def InformationallyUnique (C : State W V M) (desc : W → M → Prop) (i : V) : Prop :=
+iota of the referents in the domain that the context entails to have the content (32). -/
+def InformationallyUnique (C : File W V M) (desc : W → M → Prop) (i : V) : Prop :=
   i ∈ iota (candidates C desc)
 
-/-- A referent is informationally unique when it is familiar and entailed to have the content,
-and every familiar referent entailed to have the content is that referent (32). -/
+-- The candidates are the referents whose content file the context lies below.
+theorem mem_candidates_iff : k ∈ candidates C desc ↔ C ≤ File.atomAt k desc :=
+  File.le_atomAt_iff.symm
+
+/-- A referent is informationally unique when it is in the domain and entailed to have the
+content, and every referent in the domain entailed to have the content is that referent (32). -/
 theorem informationallyUnique_iff :
     InformationallyUnique C desc i ↔
-      (State.Familiar C i ∧ Entails C desc i) ∧
-        ∀ k, State.Familiar C k ∧ Entails C desc k → k = i :=
+      (i ∈ C.dom ∧ Entails C desc i) ∧ ∀ k, k ∈ C.dom ∧ Entails C desc k → k = i :=
   mem_iota
 
 /-! ### Heim's Familiarity Condition -/
 
--- At a familiar referent, a context supports the update by a content at that referent exactly
--- when it entails the content of the referent.
-theorem supports_atomAt_iff (h : State.Familiar C i) :
-    (FCP.ofState (State.atomAt i desc)).supports C ↔ Entails C desc i := by
-  rw [PartialUpdate.supports_iff_mem, FCP.ofState_apply, Part.mem_some_iff, State.mul_atomAt,
-    h.mul_stratum_singleton, eq_comm]
-  exact Set.sep_eq_self_iff_mem_true
+/-- Heim's Familiarity Condition, the first clause of (32), holds of the referents in the domain
+that the context entails to have the content (p. 310). -/
+theorem admits_definite_iff_mem_candidates :
+    (FCP.definite i (FCP.ofFile (File.atomAt i desc))).Admits C ↔ i ∈ candidates C desc :=
+  FCP.admits_definite_atomAt.trans mem_candidates_iff.symm
 
-/-- An informationally unique referent meets Heim's Familiarity Condition, the first clause of
-(32) (p. 310). -/
-theorem admits_def_of_informationallyUnique (h : InformationallyUnique C desc i) :
-    (FCP.def_ i (FCP.ofState (State.atomAt i desc))).Admits C :=
-  let ⟨⟨hfam, hent⟩, _⟩ := informationallyUnique_iff.1 h
-  (FCP.admits_def_ _).2 ⟨hfam, (supports_atomAt_iff hfam).2 hent⟩
+theorem admits_definite_of_informationallyUnique (h : InformationallyUnique C desc i) :
+    (FCP.definite i (FCP.ofFile (File.atomAt i desc))).Admits C :=
+  admits_definite_iff_mem_candidates.2 (informationallyUnique_iff.1 h).1
 
 /-! ### Two strange men (33), (35) -/
 
@@ -91,19 +89,13 @@ inductive Man where
   | downTheBlock
   deriving DecidableEq
 
-/-- The point after *A strange man lives here, and another one lives down the block*, with
+/-- The context after *A strange man lives here, and another one lives down the block*, with
 referent 0 for the man here and 1 for the man down the block. -/
-def strangeMenPoint : Possibility Unit ℕ (Part Man) :=
-  ⟨(), fun n ↦
-    if n = 0 then Part.some Man.here else if n = 1 then Part.some Man.downTheBlock else ⊥⟩
-
-/-- The context of (33) and (35), whose only point is `strangeMenPoint`. -/
-def strangeMenContext : State Unit ℕ Man :=
-  ({strangeMenPoint} : Set (Possibility Unit ℕ (Part Man)))
-
-private theorem mem_strangeMenContext {p : Possibility Unit ℕ (Part Man)} :
-    p ∈ strangeMenContext ↔ p = strangeMenPoint :=
-  Iff.rfl
+def strangeMenContext : File Unit ℕ Man where
+  dom := {0, 1}
+  sat := {p | p.assignment 0 = .here ∧ p.assignment 1 = .downTheBlock}
+  mem_sat_of_agreeOn _ _ h hp :=
+    ⟨(h.eqOn (.inl rfl)).symm.trans hp.1, (h.eqOn (.inr rfl)).symm.trans hp.2⟩
 
 /-- The content of *strange man*. -/
 def strangeMan : Unit → Man → Prop := fun _ _ ↦ True
@@ -111,38 +103,28 @@ def strangeMan : Unit → Man → Prop := fun _ _ ↦ True
 /-- The content of *strange man who lives here*. -/
 def strangeManHere : Unit → Man → Prop := fun _ m ↦ m = .here
 
-private theorem familiar_iff {k : ℕ} : State.Familiar strangeMenContext k ↔ k = 0 ∨ k = 1 := by
-  simp only [State.Familiar, mem_strangeMenContext, forall_eq, strangeMenPoint]
-  rcases k with _ | _ | k <;> simp [Part.bot_eq_none, Part.not_none_dom]
-
-private theorem entails_iff {d : Unit → Man → Prop} {k : ℕ} :
-    Entails strangeMenContext d k ↔
-      (k = 0 ∧ d () .here) ∨ (k = 1 ∧ d () .downTheBlock) := by
-  simp only [Entails, mem_strangeMenContext, forall_eq, strangeMenPoint]
-  rcases k with _ | _ | k <;> simp [Part.bot_eq_none, Part.notMem_none]
-
 /-- Familiarity admits *the strange man* beside a second strange man, but no referent is
 informationally unique for it, while *the strange man who lives here* is, as the judgments on
 (35) and (33) have it. -/
 theorem strangeMen :
-    (FCP.def_ 0 (FCP.ofState (State.atomAt 0 strangeMan))).Admits strangeMenContext ∧
+    (FCP.definite 0 (FCP.ofFile (File.atomAt 0 strangeMan))).Admits strangeMenContext ∧
       ((∃ i, InformationallyUnique strangeMenContext strangeMan i) ↔
         Examples.two_strange_men.judgment = .acceptable) ∧
       (InformationallyUnique strangeMenContext strangeManHere 0 ↔
         Examples.enriched_definite.judgment = .acceptable) := by
-  have h0 : State.Familiar strangeMenContext 0 := familiar_iff.2 (.inl rfl)
-  refine ⟨(FCP.admits_def_ _).2 ⟨h0, (supports_atomAt_iff h0).2 (entails_iff.2 (.inl ⟨rfl, ⟨⟩⟩))⟩,
+  have h0 : 0 ∈ candidates strangeMenContext strangeMan := ⟨.inl rfl, fun _ _ ↦ trivial⟩
+  have h1 : 1 ∈ candidates strangeMenContext strangeMan := ⟨.inr rfl, fun _ _ ↦ trivial⟩
+  refine ⟨admits_definite_iff_mem_candidates.2 h0,
     ⟨fun ⟨i, hi⟩ ↦ ?_, fun h ↦ absurd h (by decide)⟩, ⟨fun _ ↦ rfl, fun _ ↦ ?_⟩⟩
   · have hne : iota (candidates strangeMenContext strangeMan) = Part.none :=
-      iota_eq_none_of_ne (e := 0) (e' := 1)
-        ⟨familiar_iff.2 (.inl rfl), entails_iff.2 (.inl ⟨rfl, ⟨⟩⟩)⟩
-        ⟨familiar_iff.2 (.inr rfl), entails_iff.2 (.inr ⟨rfl, ⟨⟩⟩)⟩ (by decide)
+      iota_eq_none_of_ne (e := 0) (e' := 1) h0 h1 (by decide)
     exact absurd (hne ▸ hi : i ∈ (Part.none : Part ℕ)) (Part.notMem_none _)
-  · refine informationallyUnique_iff.2 ⟨⟨h0, entails_iff.2 (.inl ⟨rfl, rfl⟩)⟩, ?_⟩
-    rintro k ⟨-, hk⟩
-    rcases entails_iff.1 hk with ⟨rfl, -⟩ | ⟨-, h⟩
+  · refine informationallyUnique_iff.2 ⟨⟨.inl rfl, fun _ hp ↦ hp.1⟩, ?_⟩
+    rintro k ⟨rfl | rfl, hk⟩
     · rfl
-    · exact absurd h (by simp [strangeManHere])
+    · have hp : (⟨(), fun n ↦ if n = 0 then .here else .downTheBlock⟩ :
+          Possibility Unit ℕ Man) ∈ strangeMenContext.sat := ⟨rfl, rfl⟩
+      exact absurd (hk _ hp) (by simp [strangeManHere])
 
 /-! ### Pronouns (50) -/
 
@@ -150,7 +132,7 @@ theorem strangeMen :
 `i` is salient and entailed to have the content, and that every salient referent at least as
 salient as `i` and entailed to have the content is `i` (50); `r k i` reads *`k` is at least as
 salient as `i`*. -/
-def PronounPresupposes (C : State W V M) (desc : W → M → Prop) (sal : Set V)
+def PronounPresupposes (C : File W V M) (desc : W → M → Prop) (sal : Set V)
     (r : V → V → Prop) (i : V) : Prop :=
   (i ∈ sal ∧ Entails C desc i) ∧ ∀ k ∈ sal, r k i → Entails C desc k → k = i
 
@@ -163,11 +145,10 @@ theorem pronounPresupposes_iff_iota {sal : Set V} {r : V → V → Prop} (hr : r
   exact ⟨fun ⟨hi, h⟩ ↦ ⟨⟨hi, hr⟩, fun k ⟨⟨hk, hd⟩, hki⟩ ↦ h k hk hki hd⟩,
     fun ⟨⟨hi, _⟩, h⟩ ↦ ⟨hi, fun k hk hki hd ↦ h k ⟨⟨hk, hd⟩, hki⟩⟩⟩
 
-/-- With every familiar referent salient and all equally salient, a pronoun's presupposition is a
-definite's. -/
+/-- With every referent of the domain salient and all equally salient, a pronoun's
+presupposition is a definite's. -/
 theorem pronounPresupposes_top_iff :
-    PronounPresupposes C desc {k | State.Familiar C k} (fun _ _ ↦ True) i ↔
-      InformationallyUnique C desc i := by
+    PronounPresupposes C desc C.dom (fun _ _ ↦ True) i ↔ InformationallyUnique C desc i := by
   rw [informationallyUnique_iff]
   exact ⟨fun ⟨hi, h⟩ ↦ ⟨hi, fun k ⟨hk, hd⟩ ↦ h k hk trivial hd⟩,
     fun ⟨hi, h⟩ ↦ ⟨hi, fun k hk _ hd ↦ h k ⟨hk, hd⟩⟩⟩
