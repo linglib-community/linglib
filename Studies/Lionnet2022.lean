@@ -8,7 +8,7 @@ module
 public import Mathlib.Data.Fin.VecNotation
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Phonology.OCP
-public import Linglib.Phonology.Autosegmental.Basic
+public import Linglib.Phonology.FeatureGeometry.Linking
 public import Linglib.Fragments.Laal.Prosody
 
 /-!
@@ -23,8 +23,9 @@ analysis unifies the behaviour of the mid tone. It never shares a stem with anot
 the only target (`mLowering_from_L`, `H_stable`); and the ventive suffix, a floating
 `[−raised]` taking `[upper]` from the root, surfaces as H after H and as L after M and L
 (`ventive_after_M`). The tonal root node lets a feature act on its own tier apart from the
-whole tone: on the multi-tier autosegmental foundation, delinking the `[raised]` feature
-leaves the association of the tone to its mora untouched (`partial_indep_of_full`).
+whole tone: the geometry is a feature geometry with one class node, and in its autosegmental
+representation delinking the `[raised]` feature leaves the association of the tone to its mora
+untouched (`partial_indep_of_full`).
 
 ## Implementation notes
 
@@ -117,60 +118,66 @@ theorem ocp_raised_merge_clean (tier : List TRN) :
     OCP.IsClean (OCP.collapse (tier.map (·.raised))) :=
   OCP.isClean_collapse _
 
-/-! ### The register-tier geometry on the multi-tier substrate (§5–§6)
+/-! ### The register-tier geometry (§5–§6)
 
-The geometry of (52) is a hub and spokes around the tonal root node: the `[±upper]` tier,
-the `[±raised]` tier, and the mora tier each associate to it. On the multi-tier substrate this
-is a four-tier representation, on which a subtonal feature is a tier of its own and so can be
-manipulated apart from the whole node, the paper's partial activity, which the bundled
-`TRN` record cannot express; whole-node operations act on the node-to-mora layer. -/
+The geometry of (52) is a hub and spokes around the tonal root node, from which `[±upper]` and
+`[±raised]` hang and which associates to its mora. It is a feature geometry with one class node,
+so a tone is realized by `ofSpec` with a tier for each subtonal feature, and a feature can be
+delinked apart from the whole node, the paper's partial activity, which the bundled `TRN` record
+cannot express. -/
 
-open Autosegmental
+open Autosegmental Phonology.FeatureGeometry
 
-/-- The four Laal tone tiers are the `[±upper]` register, `[±raised]`, the TRN, and the
-mora. -/
-abbrev laalTier : Fin 4 → Type := ![Option Bool, Option Bool, Unit, Unit]
+/-- The tonal root node, the one class node of the geometry (52). -/
+inductive ToneNode where
+  | root
+  deriving DecidableEq, Fintype
 
-/-- The tier words of a one-node M-toned form. -/
-def laalWords : ∀ i : Fin 4, List (laalTier i) :=
-  Fin.cons [some false] (Fin.cons [some true] (Fin.cons [()] (Fin.cons [()] finZeroElim)))
+/-- The tree of one node. -/
+def ToneNode.tree : ParentTree ToneNode := .ofIterate id .root 0 fun | .root => rfl
 
-/-- In the hub-and-spoke links (ex. 52) register, `[raised]`, and mora each associate to the
-TRN. -/
-def laalSpokes (i j : Fin 4) (p q : ℕ) : Prop :=
-  ((i, j) = (0, 2) ∨ (i, j) = (1, 2) ∨ (i, j) = (2, 3)) ∧ p = 0 ∧ q = 0
+instance : PartialOrder ToneNode := ToneNode.tree.toPartialOrder
 
-instance (i j : Fin 4) (p q : ℕ) : Decidable (laalSpokes i j p q) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidableLE ToneNode := ToneNode.tree.decidableLE
 
-/-- The M-toned form on the multi-tier substrate. -/
-def mForm : AR laalTier := AR.fromRel laalWords laalSpokes
+instance : OrderBot ToneNode := ToneNode.tree.toOrderBot
 
-theorem mForm_noCrossing : mForm.NoCrossing := by decide
+instance : PredOrder ToneNode := ToneNode.tree.toPredOrder
 
-/-- Delinking a feature acts on one tier-pair layer alone (**partial activity**, §5), here
-`[raised]`↔TRN, the pair `(1, 2)`. -/
-def delink (L : Fin 4 → Fin 4 → ℕ → ℕ → Prop) (i₀ j₀ : Fin 4)
-    (i j : Fin 4) (p q : ℕ) : Prop :=
-  ¬ (i = i₀ ∧ j = j₀) ∧ L i j p q
+/-- (52): both subtonal features hang from the tonal root node. -/
+def toneNode : Subtonal → Option ToneNode := fun _ ↦ some .root
 
-instance (L : Fin 4 → Fin 4 → ℕ → ℕ → Prop) [∀ i j p q, Decidable (L i j p q)]
-    (i₀ j₀ i j : Fin 4) (p q : ℕ) : Decidable (delink L i₀ j₀ i j p q) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+/-- An M tone on its mora, with its tonal root node and its two features. -/
+def mForm : AR (Tiers ToneNode Subtonal Bool) := ofSpec toneNode TRN.M.toBundle
 
-/-- The M form with the subtonal `[−raised]` feature delinked. -/
-def delinkRaised : AR laalTier := AR.fromRel laalWords (delink laalSpokes 1 2)
+theorem mForm_noCrossing : mForm.NoCrossing := noCrossing_ofSpec _ _
 
-/-- Delinking the subtonal `[−raised]` feature leaves the node-to-mora layer, the tier pair
-`(2, 3)`, untouched, so partial activity is independent of full activity. -/
+/-- The M form with the subtonal `[+raised]` feature delinked from the tonal root node. -/
+def delinkRaised : AR (Tiers ToneNode Subtonal Bool) :=
+  mForm.eraseLine (some (.inl .root)) (some (.inr .raised)) 0 0
+
+/-- Delinking a subtonal feature leaves the line from the tonal root node to its mora
+untouched, so partial activity is independent of full activity. -/
 theorem partial_indep_of_full (p q : ℕ) :
-    delinkRaised.Link 2 3 p q ↔ mForm.Link 2 3 p q := by
-  simp [delinkRaised, mForm, delink, laalSpokes]
+    delinkRaised.Link (some (.inl .root)) none p q ↔ mForm.Link (some (.inl .root)) none p q := by
+  simp [delinkRaised, AR.link_eraseLine]
 
-theorem delinkRaised_erases (p q : ℕ) : ¬ delinkRaised.Link 1 2 p q := by
-  rw [delinkRaised, AR.link_fromRel]
-  rintro ⟨-, -, -, ⟨hne, -⟩ | ⟨-, h2, -⟩⟩
-  · exact hne ⟨rfl, rfl⟩
-  · rcases h2 with h2 | h2 | h2 <;> simp_all
+theorem delinkRaised_erases (p q : ℕ) :
+    ¬ delinkRaised.Link (some (.inr .raised)) (some (.inl .root)) p q := by
+  rw [delinkRaised, AR.link_eraseLine]
+  rintro ⟨h, -, h₂⟩
+  have hp : p < (tierWord (β := Bool) toneNode TRN.M.toBundle (some (.inr .raised))).length :=
+    h.lt_left
+  have hq : q < (tierWord (β := Bool) toneNode TRN.M.toBundle (some (.inl .root))).length :=
+    h.lt_right
+  have := length_tierWord_le_one (β := Bool) toneNode TRN.M.toBundle (some (.inr .raised))
+  have := length_tierWord_le_one (β := Bool) toneNode TRN.M.toBundle (some (.inl .root))
+  exact h₂ ⟨rfl, rfl, by omega, by omega⟩
+
+-- After delinking, the mora no longer reads `[+raised]` and still reads `[−upper]`.
+theorem reads_delinkRaised :
+    ¬ delinkRaised.Reads (tiers toneNode) 0 (some (.inr .raised)) true ∧
+      delinkRaised.Reads (tiers toneNode) 0 (some (.inr .upper)) false := by
+  decide
 
 end Lionnet2022
