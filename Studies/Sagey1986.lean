@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.Autosegmental.IntervalOrder
+public import Linglib.Phonology.FeatureGeometry.Linking
 public import Linglib.Phonology.Autosegmental.TwoTier
 public import Linglib.Phonology.Segmental.FeatureClass
 public import Studies.Clements1985
@@ -28,6 +29,11 @@ bears, and a complex segment has more than one. So the articulators of a complex
 of the three pairs or the triple (`isComplex_iff`), a segment specified for `[round]` that has
 one articulator has the labial one (`articulators_eq_labial_of_round`), and place assimilation
 gives its target the articulators of its trigger, complex or not (`articulators_spread_place`).
+
+As a change of lines, `Phonology.FeatureGeometry.linkNode`, spreading leaves one node shared by
+two segments. A segment that lacks the node is transparent to it, as the glottal stop of Acoma
+is to the supralaryngeal node of the vowels around it, and a segment that bears the node blocks
+(`noCrossing_linkNode`).
 
 An association line joins positions of two tiers. A reading sends the positions to events
 ordered by a precedence, `Autosegmental.AR.IsReading`, the order of each tier going to the
@@ -319,6 +325,27 @@ theorem spread_dorsal_highBackRound_trill :
       [−anterior, −distributed, +back, +high] ∧
     articulators (Segment.spread node .dorsal highBackRound trill) = {.coronal, .dorsal} := by
   decide
+
+/-! ### Spreading as linking -/
+
+/-- (15): the glottal stop of Acoma, with a laryngeal node and no supralaryngeal node. -/
+def glottalStop : Segment := [+constrGlottis]
+
+/-- (15): a low vowel. -/
+def lowVowel : Segment := [+low]
+
+/-- Spreading the supralaryngeal node from vowel to vowel crosses no line over a glottal stop and
+crosses one over an oral stop. -/
+theorem noCrossing_linkNode :
+    (linkNode node [⇑lowVowel, ⇑glottalStop, ⇑lowVowel] .supralaryngeal 2 0).NoCrossing ∧
+      ¬ (linkNode node [⇑lowVowel, ⇑labialStop, ⇑lowVowel] .supralaryngeal 2 0).NoCrossing := by
+  decide +kernel
+
+-- (19)
+theorem reads_linkNode_kp_nasalStop : ∀ f b,
+    Reads node (linkNode node [⇑nasalStop, ⇑kp] .place 1 0) 0 f b ↔
+      Segment.spread node .place kp nasalStop f = some b := by
+  decide +kernel
 
 /-! ### Association lines -/
 
