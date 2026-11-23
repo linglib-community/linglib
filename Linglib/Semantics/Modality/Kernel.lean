@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Trivalent.Proposition
-public import Linglib.Semantics.Evidential.Modal
+public import Linglib.Semantics.Evidential.Modal.Kernel
 
 /-!
 # Kernel semantics for epistemic modals

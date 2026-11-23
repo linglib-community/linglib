@@ -4,7 +4,7 @@ public import Linglib.Semantics.Evidential.Evidence
 public import Mathlib.Order.SetNotation
 
 /-!
-# Evidence from kernels of privileged information
+# Kernels of privileged information
 
 A kernel is the set `K : Set (Set W)` of propositions a speaker treats as privileged
 information, by direct observation or by trustworthy report; its base is their intersection

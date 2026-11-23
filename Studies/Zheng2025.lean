@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Zheng2025
 public import Linglib.Fragments.Mandarin.QuestionParticles
 public import Linglib.Pragmatics.DecisionTheoretic.Basic
-public import Linglib.Semantics.Evidential.Modal
+public import Linglib.Semantics.Evidential.Modal.Kernel
 public import Linglib.Semantics.Questions.Bias
 public import Studies.Theiler2021
 public import Mathlib.Tactic.DeriveFintype
