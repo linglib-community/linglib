@@ -6,7 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.Root.Consonantal
-public import Linglib.Phonology.Autosegmental.KripkeModel
+public import Linglib.Phonology.Autosegmental.KripkeModel.Collapse
+public import Linglib.Phonology.Autosegmental.Multiplanar
 public import Linglib.Phonology.Autosegmental.Skeleton
 
 /-!
@@ -25,9 +26,9 @@ surface segments (`AR.spellout_mapMelody`).
 
 `AR.NoManyToOne` holds exactly when two lines to one slot are the same line
 (`noManyToOne_iff`), and each token then has at most one line to each plane
-(`NoManyToOne.isFunctional`). Under it a slot realizes the segment of the autosegment it reads
+(`NoManyToOne.isFunctional`). Under it a slot realizes the segment of the autosegment it bears
 (`segmentAt_eq_some_iff`), so collapsing a plane, which merges adjacent identical melodic
-elements and changes no reading, changes no surface segment (`spellout_collapse`).
+elements and changes the labels no slot bears, changes no surface segment (`spellout_collapse`).
 
 The conventions that draw the lines are in `Morphology/Morphotactics/Association.lean`.
 
@@ -164,7 +165,7 @@ theorem segmentAt_mapMelody (φ : α → β) (s : ℕ) :
 theorem spellout_mapMelody (φ : α → β) : (f.mapMelody φ).spellout = f.spellout.map φ := by
   simp only [spellout, word_mapMelody_none, List.map_filterMap, segmentAt_mapMelody]
 
-section Reading
+section Melody
 
 variable {f} {s : ℕ}
 
@@ -178,21 +179,18 @@ theorem linkAt?_eq_some_iff {e : ι × ℕ} : f.linkAt? s = some e ↔ f.linesAt
         (Multiset.singleton_inj.1 h)⟩
     · exact iff_of_false nofun fun h ↦ by simpa using congrArg Multiset.card h
 
-/-- With no slot bearing two lines, a slot realizes the segment of the autosegment it reads. -/
+/-- With no slot bearing two lines, a slot realizes the segment of the autosegment it bears. -/
 theorem segmentAt_eq_some_iff [DecidableEq ι] (h : f.NoManyToOne) {x : α} :
-    f.segmentAt s = some x ↔ ∃ i a, f.Reads planes s (some i) a ∧ a.value = x := by
-  simp only [reads_planes_iff, hostedOn, List.mem_map, List.mem_filter,
-    List.mem_zipIdx_iff_getElem?, decide_eq_true_eq, Prod.exists, exists_and_right,
-    exists_eq_right]
+    f.segmentAt s = some x ↔ ∃ i a, a ∈ f.melody planes s (some i) ∧ a.value = x := by
+  simp only [mem_melody_planes_iff]
   constructor
   · intro hx
     obtain ⟨⟨i, q⟩, he, hv⟩ := Option.bind_eq_some_iff.1 hx
     obtain ⟨a, ha, rfl⟩ := Option.map_eq_some_iff.1 hv
     have hl : f.Link (some i) none q s :=
       mem_linesAt.1 (by rw [linkAt?_eq_some_iff.1 he]; exact Multiset.mem_singleton_self _)
-    exact ⟨i, a, ⟨q, ha, hl⟩, rfl⟩
-  · rintro ⟨i, a, ⟨q, ha, hl⟩, rfl⟩
-    have hl' : f.Link (some i) none q s := hl
+    exact ⟨i, a, ⟨q, hl, ha⟩, rfl⟩
+  · rintro ⟨i, a, ⟨q, hl', ha⟩, rfl⟩
     have he : f.linkAt? s = some (i, q) := by
       rw [linkAt?_eq_some_iff]
       refine (Multiset.Nodup.ext (nodup_linesAt s) (Multiset.nodup_singleton _)).2 fun ⟨i', q'⟩ ↦ ?_
@@ -225,7 +223,7 @@ theorem segmentAt_collapse (h : f.NoManyToOne) (i : ι) (s : ℕ) :
   Option.ext fun x ↦ by
     rw [segmentAt_eq_some_iff (h.collapse i), segmentAt_eq_some_iff h]
     exact exists_congr fun j ↦ exists_congr fun a ↦ and_congr_left fun _ ↦
-      reads_collapse_iff (fun _ _ ↦ (Option.some_ne_none i).symm) (Option.some_ne_none i)
+      mem_melody_collapse_iff (fun _ _ ↦ (Option.some_ne_none i).symm) (Option.some_ne_none i)
 
 /-- Collapsing a plane changes no surface segment. -/
 theorem spellout_collapse (h : f.NoManyToOne) (i : ι) :
@@ -235,6 +233,6 @@ theorem spellout_collapse (h : f.NoManyToOne) (i : ι) :
 
 end Collapse
 
-end Reading
+end Melody
 
 end Autosegmental.AR

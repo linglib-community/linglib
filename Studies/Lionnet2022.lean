@@ -7,7 +7,9 @@ module
 
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Phonology.OCP
-public import Linglib.Phonology.Autosegmental.TierTree
+public import Linglib.Phonology.Autosegmental.TierTree.Realization
+public import Linglib.Phonology.Autosegmental.TierTree.Spread
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Fragments.Laal.Prosody
 
 /-!
@@ -167,28 +169,28 @@ def toAR (t : TRN) : AR ToneTier.Label :=
 /-- A word of tones, each on its mora, as a monoid homomorphism. -/
 def toARHom : FreeMonoid TRN →* AR ToneTier.Label := FreeMonoid.lift toAR
 
-theorem reads_toAR_upper (t : TRN) (b : Bool) :
-    (toAR t).Reads toneTiers 0 .upper b ↔ t.upper = some b := by
+theorem mem_melody_toAR_upper (t : TRN) (b : Bool) :
+    b ∈ (toAR t).melody toneTiers 0 .upper ↔ t.upper = some b := by
   obtain ⟨u, r⟩ := t
   rcases u with _ | _ | _ <;> rcases r with _ | _ | _ <;> cases b <;> decide
 
-theorem reads_toAR_raised (t : TRN) (b : Bool) :
-    (toAR t).Reads toneTiers 0 .raised b ↔ t.raised = some b := by
+theorem mem_melody_toAR_raised (t : TRN) (b : Bool) :
+    b ∈ (toAR t).melody toneTiers 0 .raised ↔ t.raised = some b := by
   obtain ⟨u, r⟩ := t
   rcases u with _ | _ | _ <;> rcases r with _ | _ | _ <;> cases b <;> decide
 
 /-- A word of tones reads at each mora the `[raised]` value of its tone. -/
-theorem reads_prod_map_toAR_raised {w : List TRN} {k : ℕ} {b : Bool} :
-    (w.map toAR).prod.Reads toneTiers k .raised b ↔ ∃ hk : k < w.length, w[k].raised = some b :=
-  (AR.reads_prod_map toneTiers toAR fun _ ↦ rfl).trans
-    (exists_congr fun _ ↦ reads_toAR_raised _ _)
+theorem mem_melody_prod_map_toAR_raised {w : List TRN} {k : ℕ} {b : Bool} :
+    b ∈ (w.map toAR).prod.melody toneTiers k .raised ↔ ∃ hk : k < w.length, w[k].raised = some b :=
+  (AR.mem_melody_prod_map toneTiers toAR fun _ ↦ rfl).trans
+    (exists_congr fun _ ↦ mem_melody_toAR_raised _ _)
 
 -- (§5.2) M-lowering as the spreading of `[−raised]` on its own tier: the M after an L comes to
 -- share the L's `[−raised]` and keeps its own `[−upper]`, which is L.
 theorem mLowering_spreadTier :
-    (AR.spreadTier toneTiers toAR [TRN.L, TRN.M] .raised 0 1).Reads toneTiers 1 .raised false ∧
-      ¬ (AR.spreadTier toneTiers toAR [TRN.L, TRN.M] .raised 0 1).Reads toneTiers 1 .raised true ∧
-      (AR.spreadTier toneTiers toAR [TRN.L, TRN.M] .raised 0 1).Reads toneTiers 1 .upper false ∧
+    false ∈ (AR.spreadTier toneTiers toAR [TRN.L, TRN.M] .raised 0 1).melody toneTiers 1 .raised ∧
+      true ∉ (AR.spreadTier toneTiers toAR [TRN.L, TRN.M] .raised 0 1).melody toneTiers 1 .raised ∧
+      false ∈ (AR.spreadTier toneTiers toAR [TRN.L, TRN.M] .raised 0 1).melody toneTiers 1 .upper ∧
       (AR.spreadTier toneTiers toAR [TRN.L, TRN.M] .raised 0 1).NoCrossing := by
   decide
 
@@ -214,9 +216,9 @@ theorem delinkRaised_erases (p q : ℕ) : ¬ delinkRaised.Link .raised .root p q
   exact h₂ ⟨rfl, rfl, by omega, by omega⟩
 
 -- After delinking, the mora no longer reads `[+raised]` and still reads `[−upper]`.
-theorem reads_delinkRaised :
-    ¬ delinkRaised.Reads toneTiers 0 .raised true ∧
-      delinkRaised.Reads toneTiers 0 .upper false := by
+theorem mem_melody_delinkRaised :
+    true ∉ delinkRaised.melody toneTiers 0 .raised ∧
+      false ∈ delinkRaised.melody toneTiers 0 .upper := by
   decide
 
 end Lionnet2022

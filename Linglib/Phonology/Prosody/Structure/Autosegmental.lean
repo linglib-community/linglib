@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Autosegmental.TierTree
+public import Linglib.Phonology.Autosegmental.TierTree.Basic
 public import Linglib.Phonology.Prosody.Structure
 public import Mathlib.Data.Fintype.Sigma
 

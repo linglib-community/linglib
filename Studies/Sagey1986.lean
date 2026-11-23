@@ -347,14 +347,14 @@ theorem noCrossing_linkNode :
   decide +kernel
 
 -- (19)
-theorem reads_linkNode_kp_nasalStop : ∀ f b,
-    (linkNode node [⇑nasalStop, ⇑kp] .place 1 0).Reads (tiers node) 0 (some (.inr f)) b ↔
+theorem mem_melody_linkNode_kp_nasalStop : ∀ f b,
+    b ∈ (linkNode node [⇑nasalStop, ⇑kp] .place 1 0).melody (tiers node) 0 (some (.inr f)) ↔
       Segment.spread node .place kp nasalStop f = some b := by
   decide +kernel
 
 -- Spreading the root node gives total assimilation, one segment on two slots.
-theorem reads_linkNode_root : ∀ f b,
-    (linkNode node [⇑kp, ⇑nasalStop] ⊥ 0 1).Reads (tiers node) 1 (some (.inr f)) b ↔
+theorem mem_melody_linkNode_root : ∀ f b,
+    b ∈ (linkNode node [⇑kp, ⇑nasalStop] ⊥ 0 1).melody (tiers node) 1 (some (.inr f)) ↔
       kp f = some b := by
   decide +kernel
 

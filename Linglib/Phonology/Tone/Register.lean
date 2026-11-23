@@ -8,7 +8,7 @@ module
 public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.Data.List.Forall2
 public import Mathlib.Data.PNat.Defs
-public import Linglib.Phonology.Autosegmental.TierTree
+public import Linglib.Phonology.Autosegmental.TierTree.TwoTier
 
 /-!
 # Register features and terracing
@@ -164,11 +164,11 @@ def toARHom : FreeMonoid (List RegisterFeature) →*
     toARHom (FreeMonoid.ofList tier) = toAR tier :=
   FreeMonoid.lift_ofList _ _
 
-/-- The units bearing a feature are the slots that read it. -/
-theorem mem_bearing_iff_reads {f : RegisterFeature} {tier : RegisterTier} {i : ℕ} :
-    i ∈ bearing f tier ↔ (toAR tier).Reads Autosegmental.AR.twoTier i .upper f :=
+/-- The units bearing a feature are the slots that bear it in the representation. -/
+theorem mem_bearing_iff_mem_melody {f : RegisterFeature} {tier : RegisterTier} {i : ℕ} :
+    i ∈ bearing f tier ↔ f ∈ (toAR tier).melody Autosegmental.AR.twoTier i .upper :=
   mem_bearing.trans
-    (Autosegmental.AR.reads_prod_map_primitive (fun fs ↦ fs) (fun _ ↦ ())).symm
+    (Autosegmental.AR.mem_melody_prod_map_primitive (fun fs ↦ fs) (fun _ ↦ ())).symm
 
 end RegisterTier
 

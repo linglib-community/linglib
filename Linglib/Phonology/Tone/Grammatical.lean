@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Computability.Edge
 public import Linglib.Phonology.Tone.Basic
-public import Linglib.Phonology.Autosegmental.TierTree
+public import Linglib.Phonology.Autosegmental.TierTree.TwoTier
 
 /-!
 # Grammatical tone
@@ -99,12 +99,12 @@ def toAR (τ : TBU S) : AR (TwoTier TRN S) :=
 /-- A host as a representation, as a monoid homomorphism out of the free monoid on its units. -/
 def toARHom : FreeMonoid (TBU S) →* AR (TwoTier TRN S) := FreeMonoid.lift toAR
 
-/-- A host reads at each unit the tone of that unit when it is valued, and nothing when it is
+/-- A host bears at each unit the tone of that unit when it is valued, and nothing when it is
 free. -/
-theorem reads_prod_map_toAR {host : List (TBU S)} {k : ℕ} {t : TRN} :
-    (host.map toAR).prod.Reads AR.twoTier k .upper t ↔
+theorem mem_melody_prod_map_toAR {host : List (TBU S)} {k : ℕ} {t : TRN} :
+    t ∈ (host.map toAR).prod.melody AR.twoTier k .upper ↔
       ∃ hk : k < host.length, host[k].IsValued ∧ host[k].tone = t :=
-  (AR.reads_prod_map_primitive (fun τ : TBU S ↦ if τ.IsValued then [τ.tone] else [])
+  (AR.mem_melody_prod_map_primitive (fun τ : TBU S ↦ if τ.IsValued then [τ.tone] else [])
     TBU.seg).trans (exists_congr fun _ ↦ by
       split_ifs with h
       · simp only [List.mem_singleton, h, true_and]

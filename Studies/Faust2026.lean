@@ -348,7 +348,9 @@ theorem derive_of_category_ne_noun (p : Pattern) (r : ConsonantalRoot String)
 melody, root before suffix. -/
 def hosted (m : AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) (s :
     Nat) : List String :=
-  (m.hostedOn .vocalic s ++ m.hostedOn .consonantal s).map (·.value)
+  ((show List (Sponsored String Morpheme) from m.melody AR.planes s (some .vocalic)) ++
+    (show List (Sponsored String Morpheme) from m.melody AR.planes s (some .consonantal))).map
+      (·.value)
 
 /-- `realizeSlot m s` merges the segments slot `s` hosts onto the first. -/
 def realizeSlot (m : AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)))
@@ -485,7 +487,7 @@ theorem klj_qtila_qatul :
 theorem dmj_taqtil :
     (associate hebrewTaqtil dmj).freeBearers .C = [3] ∧
     Misaligned ((associate hebrewTaqtil dmj).spread .consonantal .C) ∧
-    (derive hebrewTaqtil dmj).hostedOn .consonantal 3 = [⟨"t", .suffix⟩] ∧
+    (derive hebrewTaqtil dmj).melody AR.planes 3 (some .consonantal) = [⟨"t", .suffix⟩] ∧
     (derive hebrewTaqtil dmj).freeBearers .C = [] ∧
     ¬ Misaligned (derive hebrewTaqtil dmj) := by
   decide
@@ -528,7 +530,7 @@ theorem wd_pfv :
 
 -- (8)
 theorem fdj_grnd :
-    (derive amharicGrnd fdj).hostedOn .consonantal 3 = [⟨"t", .suffix⟩] ∧
+    (derive amharicGrnd fdj).melody AR.planes 3 (some .consonantal) = [⟨"t", .suffix⟩] ∧
     (derive amharicGrnd fdj).freeBearers .C = [] ∧
     ¬ Misaligned (derive amharicGrnd fdj) ∧
     (derive amharicGrnd fdj).NoCrossing := by
@@ -539,7 +541,7 @@ theorem inf_intrusion :
     (associate amharicInf sma).freeBearers .C = [4] ∧
     (associate amharicInf sam).freeBearers .C = [2] ∧
     (associate amharicInf hid).freeBearers .C = [2] ∧
-    (derive amharicInf sma).hostedOn .consonantal 4 = [⟨"t", .suffix⟩] ∧
+    (derive amharicInf sma).melody AR.planes 4 (some .consonantal) = [⟨"t", .suffix⟩] ∧
     2 ∉ window ((associate amharicInf sam).lines (some .consonantal) none : SetRel ℕ ℕ) sam.arity ∧
     2 ∉ window ((associate amharicInf hid).lines (some .consonantal) none : SetRel ℕ ℕ) hid.arity ∧
     (derive amharicInf sam).freeBearers .C = [2] ∧

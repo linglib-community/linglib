@@ -7,7 +7,8 @@ module
 
 public import Mathlib.Data.Fintype.Option
 public import Linglib.Phonology.Autosegmental.Morph
-public import Linglib.Phonology.Autosegmental.TierTree
+public import Linglib.Phonology.Autosegmental.Edit
+public import Linglib.Phonology.Autosegmental.TierTree.Basic
 
 /-!
 # Multiplanar representations
@@ -23,11 +24,9 @@ planes stand in no order, so the No-Crossing Constraint
 commute (`AR.commute_of_disjoint_support`).
 
 The tiers form a tree, `AR.planes`, with the slots at the root and every plane hanging from
-them. A slot dominates the autosegments linked to it (`dominates_planes_iff`), and it reads, in
-the sense of `AR.Reads`, the autosegments that `X.hostedOn i s` lists for each plane
-(`reads_planes_iff`). The list also keeps their order on the plane and how many there are, which
-reading does not; it is what the slot hosts on the plane, `X.hosted planes s (some i)`
-(`hostedOn_eq_hosted`).
+them. A slot dominates the autosegments linked to it (`dominates_planes_iff`), so the melody
+it bears on a plane, `X.melody planes s (some i)`, lists those autosegments in the order of the
+plane (`mem_melody_planes_iff`).
 
 ## Implementation notes
 
@@ -128,10 +127,6 @@ theorem lines_eq_empty_of_word {i : ι} (h : X.word (some i) = []) :
   Finset.eq_empty_of_forall_notMem fun ⟨p, q⟩ hp ↦ by
     simpa [h] using Link.lt_left (X := X) hp
 
-/-- `X.hostedOn i s` lists, in tier order, the autosegments of plane `i` linked to slot `s`. -/
-def hostedOn (i : ι) (s : ℕ) : List α :=
-  ((X.word (some i)).zipIdx.filter fun x ↦ (x.2, s) ∈ X.lines (some i) none).map Prod.fst
-
 /-! ### The tree of tiers -/
 
 section Planes
@@ -155,19 +150,10 @@ theorem dominates_planes_iff : X.Dominates planes s (some i) q ↔ X.Link (some 
     · exact (mem_children.1 h).2.2.symm
   · exact mem_children.2 ⟨rfl, Option.some_ne_none i, h.symm⟩
 
-/-- A slot reads the autosegments it hosts. -/
-theorem reads_planes_iff : X.Reads planes s (some i) a ↔ a ∈ X.hostedOn i s := by
-  rw [reads_iff_exists_dom]
-  simp only [← dominates_iff_dom, dominates_planes_iff, hostedOn, List.mem_map, List.mem_filter,
-    List.mem_zipIdx_iff_getElem?, decide_eq_true_eq, Prod.exists, exists_and_right,
-    exists_eq_right]
-  exact ⟨fun ⟨q, hl, ha⟩ ↦ ⟨q, ha, hl⟩, fun ⟨q, ha, hl⟩ ↦ ⟨q, hl, ha⟩⟩
-
-/-- The autosegments a slot hosts on a plane are what it hosts there along the tree of
-tiers. -/
-theorem hostedOn_eq_hosted (i : ι) (s : ℕ) : X.hostedOn i s = X.hosted planes s (some i) :=
-  congrArg (List.map Prod.fst) (List.filter_congr fun x _ ↦
-    decide_eq_decide.2 (dominates_planes_iff (q := x.2)).symm)
+/-- The melody a slot bears on a plane has the autosegments of the plane linked to it. -/
+theorem mem_melody_planes_iff : a ∈ X.melody planes s (some i) ↔
+    ∃ q, X.Link (some i) none q s ∧ (X.word (some i))[q]? = some a := by
+  simp only [mem_melody_iff_exists_dominates, dominates_planes_iff]
 
 end Planes
 
@@ -279,12 +265,6 @@ def mapMelody : AR (Multiplanar ι (Sponsored T' M) (Sponsored S M)) where
     (X.mapMelody φ).word (some i) = (X.word (some i)).map (Sponsored.map φ) := rfl
 
 @[simp] theorem lines_mapMelody : (X.mapMelody φ).lines = X.lines := rfl
-
-theorem hostedOn_mapMelody (i : ι) (s : ℕ) :
-    (X.mapMelody φ).hostedOn i s = (X.hostedOn i s).map (Sponsored.map φ) := by
-  simp only [hostedOn, word_mapMelody_some, lines_mapMelody, List.zipIdx_map, List.filter_map,
-    List.map_map]
-  rfl
 
 /-- Relabeling commutes with concatenation. -/
 theorem mapMelody_mul (Y : AR (Multiplanar ι (Sponsored T M) (Sponsored S M))) :
