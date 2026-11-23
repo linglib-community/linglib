@@ -427,6 +427,12 @@ def PathAtom.Holds (I : Interpretation Sig U) (u : U) : PathAtom Sig → Prop
   | .sort p σ => I.SortAt u p σ
   | .eq p q => I.PathEq u p q
 
+@[simp] theorem PathAtom.holds_sort {I : Interpretation Sig U} {u : U} {p : Path Sig} {σ : Srt} :
+    (PathAtom.sort p σ).Holds I u ↔ I.SortAt u p σ := Iff.rfl
+
+@[simp] theorem PathAtom.holds_eq {I : Interpretation Sig U} {u : U} {p q : Path Sig} :
+    (PathAtom.eq p q).Holds I u ↔ I.PathEq u p q := Iff.rfl
+
 namespace Interpretation
 
 variable {I : Interpretation Sig U} {C D : List (Constraint Sig)} {c : Constraint Sig}

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.HPSG.Construction
+public import Linglib.Syntax.HPSG.RSRL.Satisfiability
 public import Linglib.Data.Examples.SagEtAl2020
 public import Studies.Sag2010
 
@@ -18,8 +19,8 @@ subject-head construct and of a predicational head-complement construct is `[AUX
 We define a *specification* as a sort for each of the three features, an open feature having the
 sort of all its values, and state the three constructions on the construct hierarchy of
 `Linglib/Syntax/HPSG/Construction.lean`. A specified category *can head* a construct sort when
-some well-typed model of the grammar has a construct of that sort whose head daughter satisfies
-the specification. The main result, `SagEtAl2020.canHead_iff`, says that it can exactly when, for
+the description of a construct of that sort whose head daughter satisfies the specification is
+satisfiable over the grammar: some well-typed model has such a construct. The main result, `SagEtAl2020.canHead_iff`, says that it can exactly when, for
 each feature, the sort of the specification and the sort of the construction have a common
 subsort. A subject-predicate clause, a polar interrogative and an inverted exclamative inherit
 the specification of their headed construction and narrow the verb form
@@ -33,7 +34,7 @@ The mother of an aux-initial construct has the category of its head daughter and
 It is therefore not the head daughter of a construct whose head is uninverted, among them the
 topicalized clauses, wh-exclamatives and wh-relatives of [sag-2010]
 (`SagEtAl2020.mtr_ne_hdDtr`), and a nonsubject wh-interrogative that it heads is an independent
-clause (`SagEtAl2020.satisfies_hdDtr_ic`, with the worked construct
+clause (`SagEtAl2020.sortAt_hdDtr_ic`, with the worked construct
 `SagEtAl2020.whConstruct`). In a worked polar interrogative or inverted exclamative the mother
 is an independent clause that denotes a question or a fact (`SagEtAl2020.models_clause_iff`).
 
@@ -52,8 +53,8 @@ head and nothing of `AUX`, so a lexical verb is excluded from it by its `[INV �
 predicational head-complement construction requires `[AUX −]`, so auxiliary *do* heads no
 head-complement construct here.
 
-As in the paper the hierarchy of constructs is partial, and the models that
-`SagEtAl2020.CanHead` ranges over are well-typed and not sort-resolved. A construct may then
+As in the paper the hierarchy of constructs is partial, and the models over which
+`HPSG.RSRL.Grammar.IsSatisfiable` ranges are well-typed and not sort-resolved. A construct may then
 bear the sort of the aux-initial construction itself, as the head daughter of a wh-interrogative
 does, and `SagEtAl2020.canHead_iff` is about those; the three clause types of
 `SagEtAl2020.canHead_clause_iff` are maximal sorts. The semantic type of a subject-predicate
@@ -105,22 +106,17 @@ def of (aux inv : Srt := .boolean) (vf : Srt := .vform) : Specification
   | .inv => inv
   | .vform => vf
 
-/-- The formula that says of the sign at the end of the path `p` that each head feature of its
+/-- The atoms that say of the sign at the end of the path `p` that each head feature of its
 category has a value of the specified sort. -/
-def toFormula (ℓ : Specification) (p : Path sig) : Formula sig :=
-  .conj ([HeadFeature.aux, .inv, .vform].map fun f ↦
-    .sortAssign (.path (p ++ [.CAT, f.attr])) (ℓ f))
+def atoms (ℓ : Specification) (p : Path sig) : List (PathAtom sig) :=
+  [HeadFeature.aux, .inv, .vform].map fun f ↦ .sort (p ++ [.CAT, f.attr]) (ℓ f)
 
-@[simp] theorem freeVars_toFormula (ℓ : Specification) (p : Path sig) :
-    (ℓ.toFormula p).freeVars = ∅ := by
-  simp [toFormula, Formula.conj, Formula.top, Formula.freeVars, Term.freeVars]
+variable {U : Type*} {I : Interpretation sig U} {u : U}
 
-variable {U : Type*} {I : Interpretation sig U} {g : ℕ → U} {u : U}
-
-theorem satisfies_toFormula {ℓ : Specification} {p : Path sig} :
-    I.Satisfies g u (ℓ.toFormula p) ↔
-      ∀ f : HeadFeature, I.Satisfies g u (.sortAssign (.path (p ++ [.CAT, f.attr])) (ℓ f)) := by
-  rw [toFormula, Interpretation.satisfies_conj, List.forall_mem_map]
+theorem forall_mem_atoms {ℓ : Specification} {p : Path sig} :
+    (∀ a ∈ ℓ.atoms p, a.Holds I u) ↔
+      ∀ f : HeadFeature, I.SortAt u (p ++ [.CAT, f.attr]) (ℓ f) := by
+  rw [atoms, List.forall_mem_map]
   exact ⟨fun h f ↦ h f (by cases f <;> simp), fun h f _ ↦ h f⟩
 
 end Specification
@@ -188,25 +184,24 @@ def head : Headed → Specification
 specification. -/
 def principle (c : Headed) : Constraint sig where
   sort := c.sort
-  body := c.head.toFormula [.HDDTR]
-  freeVars_body := c.head.freeVars_toFormula _
+  atoms := c.head.atoms [.HDDTR]
 
 end Headed
 
 /-- (23): the head daughter of a subject-predicate clause is finite. -/
 def subjPredPrinciple : Constraint sig where
   sort := .subjPredCl
-  body := .sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin
+  atoms := [.sort [.HDDTR, .CAT, .VFORM] .fin]
 
 /-- (40): the mother of a polar interrogative is an independent clause. -/
 def polarIntPrinciple : Constraint sig where
   sort := .polarIntCl
-  body := .sortAssign (.path [.MTR, .CAT, .IC]) .plus
+  atoms := [.sort [.MTR, .CAT, .IC] .plus]
 
 /-- The inverted exclamative construction: the mother is an independent clause. -/
 def auxInitialExclPrinciple : Constraint sig where
   sort := .auxInitialExclCl
-  body := .sortAssign (.path [.MTR, .CAT, .IC]) .plus
+  atoms := [.sort [.MTR, .CAT, .IC] .plus]
 
 /-- The constructions of the paper. -/
 def principles : List (Constraint sig) :=
@@ -214,8 +209,7 @@ def principles : List (Constraint sig) :=
     subjPredPrinciple, polarIntPrinciple, auxInitialExclPrinciple]
 
 /-- The filler-gap grammar with the constructions of the paper. -/
-abbrev grammar : Grammar sig :=
-  .ofList ((constraints ++ principles).map Constraint.toDescription)
+abbrev grammar : Grammar sig := .ofConstraints (constraints ++ principles)
 
 namespace Examples.Clause
 
@@ -259,39 +253,28 @@ theorem map_sort_inherited :
 
 variable {U : Type*} {I : Interpretation sig U} {u u' : U}
 
-theorem models_fillerGap (hI : I.Models grammar) : I.Models HPSG.Construction.grammar :=
-  hI.mono fun _ hd ↦
-    let ⟨c, hc, e⟩ := List.mem_map.1 hd
-    List.mem_map.2 ⟨c, List.mem_append_left _ hc, e⟩
+theorem sortAt_hdDtr (hI : I.Models grammar) (c : Headed) (hu : I.S u ≤ c.sort)
+    (f : HeadFeature) : I.SortAt u [.HDDTR, .CAT, f.attr] (c.head f) :=
+  Specification.forall_mem_atoms.1
+    (fun _ ha ↦ hI.holds (c := c.principle) (by cases c <;> decide) hu ha) f
 
-theorem satisfies_body (hI : I.Models grammar) {c : Constraint sig}
-    (hc : c ∈ constraints ++ principles) (hu : I.S u ≤ c.sort) :
-    I.Satisfies (fun _ ↦ u) u c.body :=
-  hI.satisfies_body (List.mem_map_of_mem hc) hu
-
-theorem satisfies_hdDtr (hI : I.Models grammar) (c : Headed) (hu : I.S u ≤ c.sort)
-    (f : HeadFeature) :
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, f.attr]) (c.head f)) :=
-  Specification.satisfies_toFormula.1
-    (satisfies_body hI (c := c.principle) (by cases c <;> simp [principles]) hu) f
-
-theorem satisfies_hdDtr_clause (hI : I.Models grammar) (k : Examples.Clause)
+theorem sortAt_hdDtr_clause (hI : I.Models grammar) (k : Examples.Clause)
     (hu : I.S u ≤ k.sort) (f : HeadFeature) :
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, f.attr]) (k.head f)) := by
+    I.SortAt u [.HDDTR, .CAT, f.attr] (k.head f) := by
   have hcore : I.S u ≤ .coreCl := hu.trans (by cases k <;> decide)
   have hheaded : I.S u ≤ k.headed.sort := hu.trans (by cases k <;> decide)
-  have hvf := (satisfies_hdCat_iff (models_fillerGap hI)
+  have hvf := (sortAt_mtr_cat_iff hI.of_append_left
     (hu.trans (by cases k <;> decide : k.sort ≤ .headedCxt)) [.VFORM] .core).1
-    (satisfies_body hI (c := corePrinciple) (by simp [constraints]) hcore)
+    (hI.sortAt corePrinciple hcore)
   cases k <;> cases f
-  · exact satisfies_hdDtr hI .subjHead hheaded .aux
-  · exact satisfies_hdDtr hI .subjHead hheaded .inv
-  · exact satisfies_body hI (c := subjPredPrinciple) (by simp [principles]) hu
-  · exact satisfies_hdDtr hI .auxInitial hheaded .aux
-  · exact satisfies_hdDtr hI .auxInitial hheaded .inv
+  · exact sortAt_hdDtr hI .subjHead hheaded .aux
+  · exact sortAt_hdDtr hI .subjHead hheaded .inv
+  · exact hI.sortAt subjPredPrinciple hu
+  · exact sortAt_hdDtr hI .auxInitial hheaded .aux
+  · exact sortAt_hdDtr hI .auxInitial hheaded .inv
   · exact hvf
-  · exact satisfies_hdDtr hI .auxInitial hheaded .aux
-  · exact satisfies_hdDtr hI .auxInitial hheaded .inv
+  · exact sortAt_hdDtr hI .auxInitial hheaded .aux
+  · exact sortAt_hdDtr hI .auxInitial hheaded .inv
   · exact hvf
 
 /-! ### Worked constructs -/
@@ -371,11 +354,19 @@ theorem models_clause_iff (k : Examples.Clause) :
 
 /-! ### Heading a construction -/
 
-/-- A category with the specification `ℓ` can head a construct of sort `σ` when some well-typed
-model of the grammar has a construct of that sort whose head daughter satisfies `ℓ`. -/
+/-- A category with the specification `ℓ` can head a construct of sort `σ` when it is
+satisfiable over the grammar that an entity is of the sort `σ` and its head daughter satisfies
+`ℓ`. -/
 def CanHead (ℓ : Specification) (σ : Srt) : Prop :=
-  ∃ (U : Type) (I : Interpretation sig U), I.Models grammar ∧ I.IsWellTyped ∧
-    ∃ u, I.S u ≤ σ ∧ I.Satisfies (fun _ ↦ u) u (ℓ.toFormula [.HDDTR])
+  grammar.IsSatisfiable (PathAtom.toDescription '' {a | a ∈ .sort [] σ :: ℓ.atoms [.HDDTR]})
+
+theorem canHead_iff_exists {ℓ : Specification} {σ : Srt} :
+    CanHead ℓ σ ↔ ∃ (U : Type) (I : Interpretation sig U), I.IsWellTyped ∧ I.Models grammar ∧
+      ∃ u, I.S u ≤ σ ∧ ∀ f : HeadFeature, I.SortAt u [.HDDTR, .CAT, f.attr] (ℓ f) := by
+  simp only [CanHead, Grammar.isSatisfiable_image_toDescription_iff, List.forall_mem_cons,
+    PathAtom.holds_sort, Specification.forall_mem_atoms, List.cons_append, List.nil_append]
+  exact exists_congr fun _ ↦ exists_congr fun _ ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦
+    exists_congr fun _ ↦ and_congr_left fun _ ↦ Interpretation.sortAt_nil
 
 private theorem exists_species_le :
     (∀ τ : Srt, τ ≤ .boolean → ∃ a ∈ [Srt.plus, .minus], a ≤ τ) ∧
@@ -387,16 +378,16 @@ private theorem exists_species_le :
 private theorem canHead_iff_of {ℓ r : Specification} {σ ic sem : Srt}
     (hr : r .aux ≤ .boolean ∧ r .inv ≤ .boolean ∧ r .vform ≤ .vform)
     (hsat : ∀ {U : Type} {I : Interpretation sig U} {u : U}, I.Models grammar → I.S u ≤ σ →
-      ∀ f : HeadFeature,
-        I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, f.attr]) (r f)))
+      ∀ f : HeadFeature, I.SortAt u [.HDDTR, .CAT, f.attr] (r f))
     (hmod : ∀ a ∈ [Srt.plus, .minus], ∀ i ∈ [Srt.plus, .minus], ∀ v ∈ vforms,
       a ≤ r .aux → i ≤ r .inv → v ≤ r .vform →
         (construct σ (.of a i v) ic sem).Models grammar ∧
           (construct σ (.of a i v) ic sem).IsWellTyped) :
     CanHead ℓ σ ↔ ∀ f, ∃ τ, τ ≤ ℓ f ∧ τ ≤ r f := by
+  rw [canHead_iff_exists]
   constructor
-  · rintro ⟨U, I, hI, -, u, hu, hℓ⟩ f
-    exact (Specification.satisfies_toFormula.1 hℓ f).exists_le_of_sortAssign (hsat hI hu f)
+  · rintro ⟨U, I, -, hI, u, hu, hℓ⟩ f
+    exact (hℓ f).exists_le (hsat hI hu f)
   · intro h
     obtain ⟨τa, haℓ, har⟩ := h .aux
     obtain ⟨τi, hiℓ, hir⟩ := h .inv
@@ -405,7 +396,7 @@ private theorem canHead_iff_of {ℓ r : Specification} {σ ic sem : Srt}
     obtain ⟨i, hi, hiτ⟩ := exists_species_le.1 τi (hir.trans hr.2.1)
     obtain ⟨v, hv, hvτ⟩ := exists_species_le.2 τv (hvr.trans hr.2.2)
     obtain ⟨hM, hW⟩ := hmod a ha i hi v hv (haτ.trans har) (hiτ.trans hir) (hvτ.trans hvr)
-    refine ⟨Ent, _, hM, hW, .cxt, le_rfl, Specification.satisfies_toFormula.2 fun f ↦ ?_⟩
+    refine ⟨Ent, _, hW, hM, .cxt, le_rfl, fun f ↦ ?_⟩
     cases f
     exacts [⟨.aux, rfl, haτ.trans haℓ⟩, ⟨.inv, rfl, hiτ.trans hiℓ⟩, ⟨.vform, rfl, hvτ.trans hvℓ⟩]
 
@@ -414,14 +405,14 @@ that it gives the feature and the sort that the construction requires of its hea
 a common subsort. -/
 theorem canHead_iff (ℓ : Specification) (c : Headed) :
     CanHead ℓ c.sort ↔ ∀ f, ∃ τ, τ ≤ ℓ f ∧ τ ≤ c.head f :=
-  canHead_iff_of (by cases c <;> decide) (fun hI hu ↦ satisfies_hdDtr hI c hu)
+  canHead_iff_of (by cases c <;> decide) (fun hI hu ↦ sortAt_hdDtr hI c hu)
     fun a ha i hi v hv h₁ h₂ h₃ ↦ ⟨(models_construct_iff c a ha i hi v hv).2 ⟨h₁, h₂, h₃⟩,
       isWellTyped_construct c a ha i hi v hv⟩
 
 -- the head of a clause is also finite, or finite or infinitival
 theorem canHead_clause_iff (ℓ : Specification) (k : Examples.Clause) :
     CanHead ℓ k.sort ↔ ∀ f, ∃ τ, τ ≤ ℓ f ∧ τ ≤ k.head f :=
-  canHead_iff_of (by cases k <;> decide) (fun hI hu ↦ satisfies_hdDtr_clause hI k hu)
+  canHead_iff_of (by cases k <;> decide) (fun hI hu ↦ sortAt_hdDtr_clause hI k hu)
     fun a ha i hi v hv h₁ h₂ h₃ ↦ ⟨(models_clause_construct_iff k a ha i hi v hv).2 ⟨h₁, h₂, h₃⟩,
       isWellTyped_clause_construct k a ha i hi v hv⟩
 
@@ -456,10 +447,10 @@ theorem shall_readings (x : Examples.Example) (r : Examples.Reading) :
 
 /-! ### Aux-initial clauses as head daughters -/
 
-theorem satisfies_mtr_inv (hI : I.Models grammar) (hu : I.S u ≤ .auxInitialCxt) :
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.MTR, .CAT, .INV]) .plus) :=
-  (satisfies_hdCat_iff (models_fillerGap hI) (hu.trans (by decide)) [.INV] .plus).2
-    (satisfies_hdDtr hI .auxInitial hu .inv)
+theorem sortAt_mtr_inv (hI : I.Models grammar) (hu : I.S u ≤ .auxInitialCxt) :
+    I.SortAt u [.MTR, .CAT, .INV] .plus :=
+  (sortAt_mtr_cat_iff hI.of_append_left (hu.trans (by decide)) [.INV] .plus).2
+    (sortAt_hdDtr hI .auxInitial hu .inv)
 
 /-- The mother of an aux-initial construct is inverted, so it is not the head daughter of a
 construct whose head is uninverted: a subject-head construct, a predicational head-complement
@@ -469,36 +460,26 @@ theorem mtr_ne_hdDtr (hI : I.Models grammar) (hu : I.S u ≤ .auxInitialCxt)
       I.S u' ≤ .whExclCl ∨ I.S u' ≤ .whRelCl) {s : U} (hs : I.A .MTR u = some s) :
     I.A .HDDTR u' ≠ some s := by
   intro hs'
-  have hminus : I.Satisfies (fun _ ↦ u') u' (.sortAssign (.path [.HDDTR, .CAT, .INV]) .minus) := by
+  have hminus : I.SortAt u' [.HDDTR, .CAT, .INV] .minus := by
     rcases hu' with h | h | h | h | h
-    · exact satisfies_hdDtr hI .subjHead h .inv
-    · exact satisfies_hdDtr hI .predHdComp h .inv
-    · exact Sag2010.satisfies_head_uninverted (models_fillerGap hI) (c := .topicalized)
-        (.inl rfl) h
-    · exact Sag2010.satisfies_head_uninverted (models_fillerGap hI) (c := .whExclamative)
-        (.inr (.inl rfl)) h
-    · exact Sag2010.satisfies_head_uninverted (models_fillerGap hI) (c := .whRelative)
-        (.inr (.inr rfl)) h
-  obtain ⟨ρ, hplus, hminus⟩ :=
-    ((Interpretation.satisfies_sortAssign_path_cons (g' := fun _ ↦ s) hs).1
-      (satisfies_mtr_inv hI hu)).exists_le_of_sortAssign
-      ((Interpretation.satisfies_sortAssign_path_cons hs').1 hminus)
+    · exact sortAt_hdDtr hI .subjHead h .inv
+    · exact sortAt_hdDtr hI .predHdComp h .inv
+    · exact Sag2010.sortAt_hdDtr_inv hI.of_append_left (c := .topicalized) (.inl rfl) h
+    · exact Sag2010.sortAt_hdDtr_inv hI.of_append_left (c := .whExclamative) (.inr (.inl rfl)) h
+    · exact Sag2010.sortAt_hdDtr_inv hI.of_append_left (c := .whRelative) (.inr (.inr rfl)) h
+  obtain ⟨ρ, hplus, hminus⟩ := ((Interpretation.sortAt_cons hs).1
+    (sortAt_mtr_inv hI hu)).exists_le ((Interpretation.sortAt_cons hs').1 hminus)
   exact (by decide +kernel : ∀ ρ : Srt, ρ ≤ .plus → ¬ ρ ≤ .minus) ρ hplus hminus
 
 /-- A nonsubject wh-interrogative whose head daughter is the mother of an aux-initial construct
 is an independent clause, since its head is inverted exactly when it is independent. -/
-theorem satisfies_hdDtr_ic (hI : I.Models grammar) (hu : I.S u ≤ .auxInitialCxt)
+theorem sortAt_hdDtr_ic (hI : I.Models grammar) (hu : I.S u ≤ .auxInitialCxt)
     (hu' : I.S u' ≤ .nsWhIntCl) {s : U} (hs : I.A .MTR u = some s)
-    (hs' : I.A .HDDTR u' = some s) :
-    I.Satisfies (fun _ ↦ u') u' (.sortAssign (.path [.HDDTR, .CAT, .IC]) .plus) := by
-  obtain ⟨v, hv, hv'⟩ :=
-    (satisfies_body hI (c := nsWhIntPrinciple) (by simp [constraints]) hu').and_right
-  have h : I.Satisfies (fun _ ↦ u') u' (.sortAssign (.path [.HDDTR, .CAT, .INV]) .plus) :=
-    (Interpretation.satisfies_sortAssign_path_cons hs').2
-      ((Interpretation.satisfies_sortAssign_path_cons (g' := fun _ ↦ s) hs).1
-        (satisfies_mtr_inv hI hu))
-  obtain ⟨w, hw, hle⟩ := h
-  exact ⟨v, hv', Option.mem_unique hw hv ▸ hle⟩
+    (hs' : I.A .HDDTR u' = some s) : I.SortAt u' [.HDDTR, .CAT, .IC] .plus :=
+  (hI.pathEq nsWhIntPrinciple hu' (p := [.HDDTR, .CAT, .INV])
+    (q := [.HDDTR, .CAT, .IC])).sortAt_iff.1
+    ((Interpretation.sortAt_cons hs').2 ((Interpretation.sortAt_cons hs).1
+      (sortAt_mtr_inv hI hu)))
 
 /-- The entities of a worked wh-interrogative with an aux-initial head: the two constructs, the
 mother, filler daughter and semantic object of the interrogative, the filler's category and
