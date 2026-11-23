@@ -1,0 +1,377 @@
+{
+  "features": [
+    {
+      "key": "suffix",
+      "lean": "suffixes",
+      "type": "Suffix",
+      "multiple": true,
+      "doc": "The suffixes of the word under test, in order, under the grammar's glosses.",
+      "levels": [
+        {
+          "name": "poss1sg",
+          "label": "1SG.POSS",
+          "doc": "the first-person singular possessive -(I)m"
+        },
+        {
+          "name": "poss2sg",
+          "label": "2SG.POSS",
+          "doc": "the second-person singular possessive -(I)n"
+        },
+        {
+          "name": "poss3sg",
+          "label": "3SG.POSS",
+          "doc": "the third-person singular possessive -(s)I"
+        },
+        {
+          "name": "pl",
+          "label": "PL",
+          "doc": "the plural -lAr"
+        },
+        {
+          "name": "pass",
+          "label": "PASS",
+          "doc": "the passive -Il"
+        },
+        {
+          "name": "pf",
+          "label": "PF",
+          "doc": "the perfective -DI"
+        },
+        {
+          "name": "evPf",
+          "label": "EV/PF",
+          "doc": "the evidential and perfective -mIş"
+        },
+        {
+          "name": "impf",
+          "label": "IMPF",
+          "doc": "the imperfective -(I)yor"
+        },
+        {
+          "name": "cv",
+          "label": "CV",
+          "doc": "the converbial marker -(y)ken"
+        },
+        {
+          "name": "p1sg",
+          "label": "1SG",
+          "doc": "a first-person singular person marker"
+        },
+        {
+          "name": "p2pl",
+          "label": "2PL",
+          "doc": "a second-person plural person marker"
+        }
+      ]
+    }
+  ],
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "stem",
+          "label": "stem",
+          "doc": "the word under test, a form of the lexeme that is its stem"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The stems of the words under test.",
+      "levels": [
+        {
+          "name": "kiz",
+          "label": "kiz",
+          "doc": "kız 'girl, daughter'"
+        },
+        {
+          "name": "el",
+          "label": "el",
+          "doc": "el 'hand'"
+        },
+        {
+          "name": "kol",
+          "label": "kol",
+          "doc": "kol 'arm'"
+        },
+        {
+          "name": "goz",
+          "label": "goz",
+          "doc": "göz 'eye'"
+        },
+        {
+          "name": "otobus",
+          "label": "otobus",
+          "doc": "otobüs 'bus', a loan"
+        },
+        {
+          "name": "uz",
+          "label": "uz",
+          "doc": "üz- 'sadden'"
+        },
+        {
+          "name": "gor",
+          "label": "gor",
+          "doc": "gör- 'see'"
+        },
+        {
+          "name": "bak",
+          "label": "bak",
+          "doc": "bak- 'look'"
+        },
+        {
+          "name": "gol",
+          "label": "gol",
+          "doc": "gol 'goal', a loan ending in a palatal l"
+        },
+        {
+          "name": "hal",
+          "label": "hal",
+          "doc": "hal 'condition', a loan ending in a palatal l"
+        }
+      ]
+    }
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The grammar's example words."
+  },
+  "examples": [
+    {
+      "id": "gokselkerslake2005_kizin",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.2.1"},
+      "language": "nucl1301",
+      "primaryText": "kızın",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["kız-ın", ""]
+      ],
+      "translation": "your daughter",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "kiz"}
+      ],
+      "paperFeatures": [
+        ["suffix", "2SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_elin",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.2.1"},
+      "language": "nucl1301",
+      "primaryText": "elin",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["el-in", ""]
+      ],
+      "translation": "your hand",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "el"}
+      ],
+      "paperFeatures": [
+        ["suffix", "2SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_kolun",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.2.1"},
+      "language": "nucl1301",
+      "primaryText": "kolun",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["kol-un", ""]
+      ],
+      "translation": "your arm",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "kol"}
+      ],
+      "paperFeatures": [
+        ["suffix", "2SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_gozun",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.2.1"},
+      "language": "nucl1301",
+      "primaryText": "gözün",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["göz-ün", ""]
+      ],
+      "translation": "your eye",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "goz"}
+      ],
+      "paperFeatures": [
+        ["suffix", "2SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_otobusler",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3"},
+      "language": "nucl1301",
+      "primaryText": "otobüsler",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["otobüs-ler", ""]
+      ],
+      "translation": "buses",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "otobus"}
+      ],
+      "paperFeatures": [
+        ["suffix", "PL"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_uzuldunuz",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.1"},
+      "language": "nucl1301",
+      "primaryText": "üzüldünüz",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["üz-ül-dü-nüz", ""]
+      ],
+      "translation": "you became sad",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "uz"}
+      ],
+      "paperFeatures": [
+        ["suffix", "PASS"],
+        ["suffix", "PF"],
+        ["suffix", "2PL"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_goruyorum",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.4 (vi)"},
+      "language": "nucl1301",
+      "primaryText": "görüyorum",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["görüyorum", ""]
+      ],
+      "translation": "I see",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "gor"}
+      ],
+      "paperFeatures": [
+        ["suffix", "IMPF"],
+        ["suffix", "1SG"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_bakmisken",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.4 (vi)"},
+      "language": "nucl1301",
+      "primaryText": "bakmışken",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["bakmışken", ""]
+      ],
+      "translation": "having looked",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "bak"}
+      ],
+      "paperFeatures": [
+        ["suffix", "EV/PF"],
+        ["suffix", "CV"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_golu",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.4 (iv)"},
+      "language": "nucl1301",
+      "primaryText": "golü",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["gol-ü", "goal-3SG.POSS"]
+      ],
+      "translation": "his/her goal",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "gol"}
+      ],
+      "paperFeatures": [
+        ["suffix", "3SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_halim",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.4 (iv)"},
+      "language": "nucl1301",
+      "primaryText": "halim",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["hal-im", "condition-1SG.POSS"]
+      ],
+      "translation": "my condition",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "hal"}
+      ],
+      "paperFeatures": [
+        ["suffix", "1SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    }
+  ]
+}

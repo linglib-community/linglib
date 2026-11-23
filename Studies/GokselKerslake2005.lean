@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Examples.GokselKerslake2005
 public import Linglib.Fragments.Turkish.Clause
 public import Linglib.Fragments.Turkish.Possession
 public import Linglib.Fragments.Turkish.QuestionParticles
@@ -71,45 +72,64 @@ theorem followers_table :
     followers e = [e, i] ∧ followers i = [e, i] ∧ followers ö = [e, ü] ∧ followers ü = [e, ü] := by
   decide
 
--- §3.2.1
-theorem iType :
-    realize [k, ı, z] [(possessive (.personNumber .second .singular)).form] =
-        [k, ı, z, ı, n] ∧
-    realize [e, l] [(possessive (.personNumber .second .singular)).form] =
-        [e, l, i, n] ∧
-    realize [k, o, l] [(possessive (.personNumber .second .singular)).form] =
-        [k, o, l, u, n] ∧
-    realize [g, ö, z] [(possessive (.personNumber .second .singular)).form] =
-        [g, ö, z, ü, n] := by
+/-! ### The grammar's words -/
+
+/-- The segments of the stem that a lexeme of the data is, the loans *gol* and *hal* ending in
+the palatal lateral (§3.4 (iv)). -/
+def Examples.Lexeme.stem : Examples.Lexeme → List Segment
+  | .kiz => [k, ı, z]
+  | .el => [e, l]
+  | .kol => [k, o, l]
+  | .goz => [g, ö, z]
+  | .otobus => [o, t, o, b, ü, s]
+  | .uz => [ü, z]
+  | .gor => [g, ö, r]
+  | .bak => [b, a, k]
+  | .gol => [g, o, l']
+  | .hal => [h, a, l']
+
+/-- The group of a person marker after the suffix `prev`: group 1 after the perfective -DI and
+group 2 otherwise (§8.4). -/
+def groupAfter (prev : Option Examples.Suffix) : Verb.PersonGroup :=
+  if prev = some .pf then .one else .two
+
+/-- The forms of the suffix that a gloss of the data names, after the suffix `prev`. -/
+def Examples.Suffix.forms (prev : Option Examples.Suffix) :
+    Examples.Suffix → List Turkish.Suffix
+  | .poss1sg => [(possessive (.personNumber .first .singular)).form]
+  | .poss2sg => [(possessive (.personNumber .second .singular)).form]
+  | .poss3sg => [(possessive (.personNumber .third .singular)).form]
+  | .pl => [plural.form]
+  | .pass => [passive.form]
+  | .pf => [di.form]
+  | .evPf => [miş.form]
+  | .impf => [iyor.form]
+  | .cv => Converb.ken.form
+  | .p1sg => [(person (groupAfter prev) (.personNumber .first .singular)).form]
+  | .p2pl => [(person (groupAfter prev) (.personNumber .second .plural)).form]
+
+/-- The forms of a string of glosses, each read after the one before it. -/
+def suffixForms : Option Examples.Suffix → List Examples.Suffix → List Suffix
+  | _, [] => []
+  | prev, x :: xs => x.forms prev ++ suffixForms (some x) xs
+
+/-- The letters of a word, its morpheme boundaries left out. -/
+def letters (w : GlossedWord) : List Char := w.word.filter (· ≠ '-')
+
+/-- A surface form as the alphabet writes it, the palatal lateral as the plain one. -/
+def written (w : List Segment) : List Segment := w.map fun x ↦ if x = l' then l else x
+
+/-- Every example word of the grammar is written as the surface form of its stem with its
+suffixes. -/
+theorem printed : ∀ x : Examples.Example, ∃ st ∈ (x.lexemes .stem).head?,
+    ∃ w ∈ x.datum.glossedWords.head?,
+      (letters w).mapM ofChar = some (written (realize st.stem (suffixForms none x.suffixes))) := by
   decide
 
--- Chapter 3
-theorem last_vowel_decides :
-    realize [o, t, o, b, ü, s] [plural.form] =
-      [o, t, o, b, ü, s, l, e, r] := by
-  decide
-
--- §3.1
-theorem iterated :
-    realize [ü, z] [passive.form, di.form, (person .one (.personNumber .second .plural)).form] =
-      [ü, z, ü, l, d, ü, n, ü, z] := by
-  decide
-
-/-- The `o` of -(I)yor does not harmonize and triggers the person marker in *görüyorum*, and
-the converb -(y)ken is invariable in *bakmışken* (§3.4 (vi)). -/
-theorem retriggering :
-    realize [g, ö, r] [iyor.form, (person .two (.personNumber .first .singular)).form] =
-      [g, ö, r, ü, y, o, r, u, m] ∧
-    realize [b, a, k] (miş.form :: Converb.ken.form) = [b, a, k, m, ı, ş, k, e, n] := by
-  decide
-
-/-- The palatal l of *gol* and *hal* fronts the suffix in *gol-ü* and *hal-im*, while rounding
-still comes from the vowel (§3.4 (iv)). -/
-theorem palatal_l :
-    realize [g, o, l'] [(possessive (.personNumber .third .singular)).form] =
-      [g, o, l', ü] ∧
-    realize [h, a, l'] [(possessive (.personNumber .first .singular)).form] =
-      [h, a, l', i, m] := by
+-- where the grammar segments a word, its first morph writes the stem
+theorem stem_printed : ∀ x : Examples.Example, ∀ st ∈ (x.lexemes .stem).head?,
+    ∀ w ∈ x.datum.glossedWords.head?, ∀ m ∈ w.glossedMorphemes.head?,
+      1 < w.glossedMorphemes.length → m.morpheme.mapM ofChar = some (written st.stem) := by
   decide
 
 -- §6.1
