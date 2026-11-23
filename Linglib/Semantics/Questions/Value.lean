@@ -1,38 +1,52 @@
 module
 
-public import Linglib.Core.Order.Partition.Finpartition
 public import Linglib.Core.Probability.Decision.ValueOfInformation
+public import Linglib.Semantics.Questions.HamblinSet
 
 /-!
 # The value of a question
 
-Relative to a decision problem, a prior over worlds and a utility for each action in each world,
-an answer is worth the gain in decision value from learning it, and a question, a partition of
-the worlds, is worth the expected gain from learning its answer. That expectation is the value of
-information of the experiment revealing the answer, it is never negative, it vanishes exactly
-when no answer changes the best action, and it reaches the value of perfect information when the
-answer settles the utilities. One question refines another exactly when it is at least as useful
-in every decision problem. A wh-question over a domain partitions the worlds by the predicate's
-extension within the domain, so widening the domain cannot lower the question's value, and once
-the domain holds every individual the utilities depend on, widening it further only makes the
-question worse.
+A decision problem is a prior `μ` over worlds together with a utility `U w a` for each action `a`
+in each world `w`. Its value is `decisionValue U μ`, the best expected utility of an action.
+Learning a proposition `C` replaces the prior by `μ[|C]`, and we define the utility value of `C`
+as the change in the value of the problem,
+`utilityValue U μ C = decisionValue U μ[|C] - decisionValue U μ`.
 
-## Main statements
+A question is a partition of the worlds, a `Setoid W`, whose answer in the world `w` is the cell
+`Q.cell w`. We define the expected utility value of a question as the expected utility value of
+its true answer, `utility U μ Q = ∫ w, utilityValue U μ (Q.cell w) ∂μ`. On finitely many worlds
+this is the sum of the utility values of the cells weighted by their probabilities
+(`utility_eq_sum`), and it is the value of information of the experiment that observes the cell
+(`utility_eq_valueOfInformation`).
 
-* `Question.utility_eq_valueOfInformation`: a question's value is the value of information of
-  revealing its answer.
-* `Question.utility_eq_zero_iff`: a question is worthless exactly when the best action stays best
-  whatever the answer.
-* `Question.le_iff_forall_utility_le`: one question refines another exactly when it is at least
-  as useful in every decision problem.
-* `Question.better_wh_of_factorsThrough`: a wh-domain should contain only the individuals the
-  decision depends on.
+The trivial question `⊤` is worth nothing and the finest question `⊥` is worth the value of
+perfect information, as is every question that settles the utilities, `Q ≤ Setoid.ker U`. A
+finer question is worth at least as much (`utility_anti`), so questions have nonnegative value,
+and refinement is exactly being at least as useful in every decision problem
+(`le_iff_forall_utility_le`). A question is worth nothing exactly when an action that is best now
+stays best at the answer in almost every world (`utility_eq_zero_iff`).
+
+Relative to a decision problem, `Better U μ Q Q'` holds when `Q` is worth more than `Q'`, or as
+much and strictly coarser. A question that settles the utilities is better than every strictly
+finer one (`better_of_lt_of_le_ker`). The wh-question over a domain `D` of individuals with
+property `P` is the partition `partition (P '' D)` of the worlds by which individuals of `D` have
+the property; widening the domain cannot lower its value (`utility_partition_image_mono`), and
+once the domain settles the utilities, widening it gives a worse question
+(`better_partition_image`).
+
+## Implementation notes
+
+The expected utility value is an integral over worlds and not a sum over cells, so the definition
+needs neither finiteness nor decidability, and the cells of probability zero that a sum has to
+set aside are a null set. The theorems assume finitely many worlds and actions, as the value of
+information they rest on does.
 
 ## References
 
 * [van-rooy-2003]
 * [blackwell-1953]
 * [raiffa-schlaifer-1961]
+* [groenendijk-stokhof-1984]
 -/
 
 @[expose] public section
@@ -43,18 +57,21 @@ open MeasureTheory ProbabilityTheory
 
 universe u
 
-variable {W : Type u} {A : Type*}
+variable {W : Type u} {A : Type*} [MeasurableSpace W]
 
 /-! ### The value of answers -/
 
 section Answer
 
-variable [MeasurableSpace W]
-
 /-- The utility value of learning `C` is the decision value of the prior conditioned on `C`, less
 the decision value of the prior. -/
 noncomputable def utilityValue (U : W → A → ℝ) (μ : Measure W) (C : Set W) : ℝ :=
   decisionValue U μ[|C] - decisionValue U μ
+
+@[simp]
+theorem utilityValue_univ (U : W → A → ℝ) (μ : Measure W) [IsProbabilityMeasure μ] :
+    utilityValue U μ Set.univ = 0 := by
+  simp [utilityValue]
 
 /-- An answer is better than another when it has a higher utility value, or the same value and
 is strictly less informative. -/
@@ -66,6 +83,10 @@ theorem betterAnswer_iff {U : W → A → ℝ} {μ : Measure W} {C D : Set W} :
       utilityValue U μ C = utilityValue U μ D ∧ D ⊂ C := by
   simp [BetterAnswer, Prod.Lex.toLex_lt_toLex, eq_comm]
 
+instance (U : W → A → ℝ) (μ : Measure W) : IsStrictOrder (Set W) (BetterAnswer U μ) where
+  irrefl _ := lt_irrefl _
+  trans _ _ _ h h' := lt_trans h' h
+
 /-- The value of sample information of learning `C` compares the best action after learning `C`
 with the action `a` taken now. -/
 noncomputable def valueSampleInfo (U : W → A → ℝ) (μ : Measure W) (a : A) (C : Set W) : ℝ :=
@@ -75,17 +96,16 @@ theorem valueSampleInfo_nonneg [Finite A] (U : W → A → ℝ) (μ : Measure W)
     0 ≤ valueSampleInfo U μ a C :=
   sub_nonneg.2 (integral_le_decisionValue _ a)
 
-private theorem decisionValue_cond_eq_integral [MeasurableSingletonClass W] (U : W → A → ℝ)
-    (μ : Measure W) [IsFiniteMeasure μ] {s : Set W} {w₀ : W} (hs : ∀ w ∈ s, U w = U w₀)
-    (hsm : MeasurableSet s) (hμ : μ s ≠ 0) :
-    decisionValue U μ[|s] = ∫ w, ⨆ a, U w a ∂μ[|s] := by
+/-- Where the utilities are constant on `s`, the decision value of the prior conditioned on `s`
+is the utility of the best action there. -/
+theorem decisionValue_cond_of_forall_eq (U : W → A → ℝ) (μ : Measure W) [IsFiniteMeasure μ]
+    {s : Set W} {w : W} (hs : ∀ v ∈ s, U v = U w) (hsm : MeasurableSet s) (hμ : μ s ≠ 0) :
+    decisionValue U μ[|s] = ⨆ a, U w a := by
   have := cond_isProbabilityMeasure (μ := μ) hμ
-  have hae : ∀ᵐ w ∂μ[|s], U w = U w₀ := (ae_cond_mem hsm).mono fun w hw ↦ hs w hw
-  have h (f : (A → ℝ) → ℝ) : ∫ w, f (U w) ∂μ[|s] = f (U w₀) := by
-    rw [integral_congr_ae (g := fun _ ↦ f (U w₀)) (hae.mono fun w hw ↦ by simp only [hw])]
-    simp
-  rw [decisionValue, h fun u ↦ ⨆ a, u a]
-  exact congrArg _ (funext fun a ↦ h fun u ↦ u a)
+  refine iSup_congr fun a ↦ ?_
+  rw [integral_congr_ae (g := fun _ ↦ U w a)
+    ((ae_cond_mem hsm).mono fun v hv ↦ by simp only [hs v hv])]
+  simp
 
 end Answer
 
@@ -93,124 +113,150 @@ end Answer
 
 section Utility
 
-variable [MeasurableSpace W] [Fintype W] [DecidableEq W]
-
-/-- The expected utility value of a question weights the utility value of each answer by its
-probability. -/
-noncomputable def utility (U : W → A → ℝ) (μ : Measure W)
-    (Q : Finpartition (Finset.univ : Finset W)) : ℝ :=
-  ∑ c ∈ Q.parts, μ.real c * utilityValue U μ c
+/-- The expected utility value of a question is the expected utility value of its true
+answer. -/
+noncomputable def utility (U : W → A → ℝ) (μ : Measure W) (Q : Setoid W) : ℝ :=
+  ∫ w, utilityValue U μ (Q.cell w) ∂μ
 
 /-- Relative to a decision problem, a question is better than another when it is more useful, or
 as useful and strictly coarser, since one should not ask for irrelevant information. -/
-def Better (U : W → A → ℝ) (μ : Measure W) (Q Q' : Finpartition (Finset.univ : Finset W)) :
-    Prop :=
+def Better (U : W → A → ℝ) (μ : Measure W) (Q Q' : Setoid W) : Prop :=
   toLex (utility U μ Q', Q') < toLex (utility U μ Q, Q)
 
-theorem better_iff {U : W → A → ℝ} {μ : Measure W} {Q Q' : Finpartition (Finset.univ : Finset W)} :
-    Better U μ Q Q' ↔
-      utility U μ Q' < utility U μ Q ∨
-        utility U μ Q = utility U μ Q' ∧ Q' < Q := by
+theorem better_iff {U : W → A → ℝ} {μ : Measure W} {Q Q' : Setoid W} :
+    Better U μ Q Q' ↔ utility U μ Q' < utility U μ Q ∨ utility U μ Q = utility U μ Q' ∧ Q' < Q := by
   simp [Better, Prod.Lex.toLex_lt_toLex, eq_comm]
 
-variable [DiscreteMeasurableSpace W] (U : W → A → ℝ) (μ : Measure W) [IsProbabilityMeasure μ]
+instance (U : W → A → ℝ) (μ : Measure W) : IsStrictOrder (Setoid W) (Better U μ) where
+  irrefl _ := lt_irrefl _
+  trans _ _ _ h h' := lt_trans h' h
 
-private theorem utility_eq (Q : Finpartition (Finset.univ : Finset W)) :
-    utility U μ Q =
-      ∑ c, μ.real (Q.part ⁻¹' {c}) * decisionValue U μ[|Q.part ⁻¹' {c}] - decisionValue U μ := by
-  have hmass : ∑ c ∈ Q.parts, μ.real c = 1 := by
-    rw [Q.sum_parts_eq_sum_preimage_part (F := μ.real) measureReal_empty,
-      sum_measureReal_preimage_singleton _ fun _ _ ↦ .of_discrete]
-    simp
-  simp only [utility, utilityValue, mul_sub, Finset.sum_sub_distrib, ← Finset.sum_mul,
-    hmass, one_mul]
-  rw [Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * decisionValue U μ[|c]) (by simp)]
+variable (U : W → A → ℝ) (μ : Measure W) [IsProbabilityMeasure μ]
+
+/-- The trivial question is worth nothing. -/
+@[simp]
+theorem utility_top : utility U μ ⊤ = 0 := by
+  simp [utility]
+
+variable [Finite W] [DiscreteMeasurableSpace W]
+
+private theorem integral_cell (F : Set W → ℝ) (Q : Setoid W) [Fintype (Quotient Q)] :
+    ∫ w, F (Q.cell w) ∂μ =
+      ∑ c : Quotient Q, μ.real (Quotient.mk Q ⁻¹' {c}) * F (Quotient.mk Q ⁻¹' {c}) := by
+  simp_rw [Setoid.cell_eq_preimage_mk]
+  rw [← integral_map (φ := Quotient.mk Q) Measurable.of_discrete.aemeasurable
+      (f := fun c ↦ F (Quotient.mk Q ⁻¹' {c})) Integrable.of_finite.aestronglyMeasurable,
+    integral_fintype .of_finite]
+  exact Finset.sum_congr rfl fun c _ ↦ by
+    rw [smul_eq_mul, map_measureReal_apply .of_discrete (measurableSet_singleton c)]
+
+/-- The expected utility value of a question is the sum of the utility values of its cells
+weighted by their probabilities. -/
+theorem utility_eq_sum (Q : Setoid W) [Fintype (Quotient Q)] :
+    utility U μ Q = ∑ c : Quotient Q,
+      μ.real (Quotient.mk Q ⁻¹' {c}) * utilityValue U μ (Quotient.mk Q ⁻¹' {c}) :=
+  integral_cell μ _ Q
+
+theorem utility_eq_integral_sub (Q : Setoid W) :
+    utility U μ Q = ∫ w, decisionValue U μ[|Q.cell w] ∂μ - decisionValue U μ := by
+  simp [utility, utilityValue, integral_sub (μ := μ) .of_finite .of_finite]
 
 /-- The expected utility value of a question is the value of information of the experiment that
-reveals its answer. -/
-theorem utility_eq_valueOfInformation [Nonempty W] [MeasurableSpace (Finset W)]
-    [MeasurableSingletonClass (Finset W)] (Q : Finpartition (Finset.univ : Finset W)) :
-    utility U μ Q =
-      valueOfInformation (decisionValue U) (Kernel.deterministic Q.part .of_discrete) μ := by
-  rw [utility_eq, valueOfInformation_deterministic]
+observes its answer. -/
+theorem utility_eq_valueOfInformation [Nonempty W] (Q : Setoid W) :
+    utility U μ Q = valueOfInformation (decisionValue U)
+      (Kernel.deterministic (Quotient.mk Q) .of_discrete) μ := by
+  cases nonempty_fintype (Quotient Q)
+  rw [utility_eq_integral_sub, valueOfInformation_deterministic,
+    integral_cell μ (fun c ↦ decisionValue U μ[|c])]
 
-theorem utility_eq_valueOfInformation_id [Nonempty W]
-    (Q : Finpartition (Finset.univ : Finset W)) (hQ : U.FactorsThrough Q.part) :
+/-- A question that settles the utilities is worth the value of perfect information. -/
+theorem utility_eq_valueOfInformation_id [Nonempty W] {Q : Setoid W} (hQ : Q ≤ Setoid.ker U) :
     utility U μ Q = valueOfInformation (decisionValue U) Kernel.id μ := by
-  rw [utility_eq, valueOfInformation_id]
+  rw [utility_eq_integral_sub, valueOfInformation_id]
   simp only [decisionValue_dirac]
   congr 1
-  rw [← sum_measureReal_mul_integral_cond (fun w ↦ ⨆ a, U w a) Q.part μ]
-  refine Finset.sum_congr rfl fun c _ ↦ ?_
-  rcases eq_or_ne (μ (Q.part ⁻¹' {c})) 0 with h | h
-  · simp [measureReal_def, h]
-  obtain ⟨w₀, hw₀⟩ := nonempty_of_measure_ne_zero h
-  rw [decisionValue_cond_eq_integral U μ (s := Q.part ⁻¹' {c}) (fun w hw ↦ hQ (hw.trans hw₀.symm))
-    .of_discrete h]
+  refine integral_congr_ae (ae_iff_of_countable.2 fun w hw ↦ ?_)
+  exact decisionValue_cond_of_forall_eq U μ (fun v hv ↦ hQ hv) .of_discrete fun h ↦
+    hw (measure_mono_null (Set.singleton_subset_iff.2 (Q.mem_cell_self w)) h)
 
 theorem utility_bot [Nonempty W] :
     utility U μ ⊥ = valueOfInformation (decisionValue U) Kernel.id μ :=
-  utility_eq_valueOfInformation_id U μ ⊥ fun w v h ↦ by
-    rw [Finpartition.part_bot (Finset.mem_univ w), Finpartition.part_bot (Finset.mem_univ v),
-      Finset.singleton_inj] at h
-    rw [h]
+  utility_eq_valueOfInformation_id U μ bot_le
 
-theorem utility_nonneg [Finite A] [Nonempty W] (Q : Finpartition (Finset.univ : Finset W)) :
-    0 ≤ utility U μ Q := by
-  let _ : MeasurableSpace (Finset W) := ⊤
-  have : MeasurableSingletonClass (Finset W) := ⟨fun _ ↦ trivial⟩
-  rw [utility_eq_valueOfInformation]
-  exact valueOfInformation_decisionValue_nonneg U _ μ
+theorem utility_eq_utility_bot [Nonempty W] {Q : Setoid W} (hQ : Q ≤ Setoid.ker U) :
+    utility U μ Q = utility U μ ⊥ :=
+  (utility_eq_valueOfInformation_id U μ hQ).trans (utility_bot U μ).symm
 
-theorem utility_anti [Finite A] [Nonempty W] {P Q : Finpartition (Finset.univ : Finset W)}
-    (h : P ≤ Q) : utility U μ Q ≤ utility U μ P := by
-  let _ : MeasurableSpace (Finset W) := ⊤
-  have : MeasurableSingletonClass (Finset W) := ⟨fun _ ↦ trivial⟩
+/-- A finer question is worth at least as much. -/
+theorem utility_anti [Finite A] [Nonempty W] : Antitone (utility U μ) := fun Q Q' h ↦ by
   rw [utility_eq_valueOfInformation, utility_eq_valueOfInformation]
+  cases nonempty_fintype (Quotient Q)
   exact valueOfInformation_decisionValue_le_of_factorsThrough U _ _
-    (Finpartition.le_iff_factorsThrough_part.1 h) μ
+    (fun _ _ hab ↦ Quotient.sound (h (Quotient.exact hab))) μ
 
-theorem utility_le_bot [Finite A] [Nonempty W]
-    (Q : Finpartition (Finset.univ : Finset W)) :
-    utility U μ Q ≤ utility U μ ⊥ :=
+/-- The expected utility value as a monotone map into the dual of the reals. -/
+noncomputable def utilityOrderHom [Finite A] [Nonempty W] : Setoid W →o ℝᵒᵈ where
+  toFun Q := OrderDual.toDual (utility U μ Q)
+  monotone' := utility_anti U μ
+
+@[simp]
+theorem utilityOrderHom_apply [Finite A] [Nonempty W] (Q : Setoid W) :
+    utilityOrderHom U μ Q = OrderDual.toDual (utility U μ Q) := rfl
+
+theorem utility_nonneg [Finite A] [Nonempty W] (Q : Setoid W) : 0 ≤ utility U μ Q :=
+  (utility_top U μ).ge.trans (utility_anti U μ le_top)
+
+theorem utility_le_bot [Finite A] [Nonempty W] (Q : Setoid W) : utility U μ Q ≤ utility U μ ⊥ :=
   utility_anti U μ bot_le
 
-theorem utility_eq_sum_valueSampleInfo [Nonempty W]
-    (Q : Finpartition (Finset.univ : Finset W)) {a : A}
+/-- The expected utility value of a question is its expected value of sample information over an
+action that is best now. -/
+theorem utility_eq_integral_valueSampleInfo [Nonempty W] (Q : Setoid W) {a : A}
     (ha : ∫ w, U w a ∂μ = decisionValue U μ) :
-    utility U μ Q = ∑ c ∈ Q.parts, μ.real c * valueSampleInfo U μ a c := by
-  simp only [valueSampleInfo, mul_sub, Finset.sum_sub_distrib]
-  rw [utility_eq,
-    Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * decisionValue U μ[|c]) (by simp),
-    Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * ∫ w, U w a ∂μ[|c]) (by simp),
-    sum_measureReal_mul_integral_cond, ha]
+    utility U μ Q = ∫ w, valueSampleInfo U μ a (Q.cell w) ∂μ := by
+  cases nonempty_fintype (Quotient Q)
+  have h : ∫ w, ∫ v, U v a ∂μ[|Q.cell w] ∂μ = decisionValue U μ := by
+    rw [integral_cell μ (fun c ↦ ∫ v, U v a ∂μ[|c]), sum_measureReal_mul_integral_cond, ha]
+  simp only [valueSampleInfo]
+  rw [integral_sub .of_finite .of_finite, h, utility_eq_integral_sub]
 
-/-- A question is worthless exactly when the action that is best now stays best whatever the
-answer. -/
-theorem utility_eq_zero_iff [Finite A] [Nonempty W] (Q : Finpartition (Finset.univ : Finset W))
-    {a : A} (ha : ∫ w, U w a ∂μ = decisionValue U μ) :
+/-- A question is worthless exactly when an action that is best now stays best at the answer in
+almost every world. -/
+theorem utility_eq_zero_iff [Finite A] [Nonempty W] (Q : Setoid W) {a : A}
+    (ha : ∫ w, U w a ∂μ = decisionValue U μ) :
     utility U μ Q = 0 ↔
-      ∀ c ∈ Q.parts, μ c ≠ 0 → ∫ w, U w a ∂μ[|c] = decisionValue U μ[|c] := by
-  rw [utility_eq_sum_valueSampleInfo U μ Q ha, Finset.sum_eq_zero_iff_of_nonneg fun c _ ↦
-    mul_nonneg measureReal_nonneg (valueSampleInfo_nonneg U μ a _)]
-  refine forall₂_congr fun c _ ↦ ?_
-  rw [mul_eq_zero, measureReal_eq_zero_iff, valueSampleInfo, sub_eq_zero, or_iff_not_imp_left]
-  exact imp_congr_right fun _ ↦ eq_comm
+      ∀ᵐ w ∂μ, ∫ v, U v a ∂μ[|Q.cell w] = decisionValue U μ[|Q.cell w] := by
+  rw [utility_eq_integral_valueSampleInfo U μ Q ha,
+    integral_eq_zero_iff_of_nonneg (fun w ↦ valueSampleInfo_nonneg U μ a _) .of_finite]
+  exact Filter.eventually_congr (.of_forall fun w ↦ sub_eq_zero.trans eq_comm)
 
 variable {U μ}
 
 /-- One question refines another exactly when it is at least as useful in every decision problem
-with a probability prior, the special case of [blackwell-1953] stated in section 4.1. -/
-theorem le_iff_forall_utility_le [Nonempty W]
-    (P Q : Finpartition (Finset.univ : Finset W)) :
-    P ≤ Q ↔ ∀ {B : Type u} [Fintype B] (U : W → B → ℝ) (μ : Measure W) [IsProbabilityMeasure μ],
-      utility U μ Q ≤ utility U μ P := by
+with a probability prior, a case of the comparison of experiments of [blackwell-1953]. -/
+theorem le_iff_forall_utility_le [Nonempty W] (Q Q' : Setoid W) :
+    Q ≤ Q' ↔ ∀ {B : Type u} [Finite B] (U : W → B → ℝ) (μ : Measure W) [IsProbabilityMeasure μ],
+      utility U μ Q' ≤ utility U μ Q := by
   refine ⟨fun h _ _ U μ _ ↦ utility_anti U μ h, fun h ↦ ?_⟩
-  let _ : MeasurableSpace (Finset W) := ⊤
-  have : MeasurableSingletonClass (Finset W) := ⟨fun _ ↦ trivial⟩
-  obtain ⟨ψ, hψ⟩ := exists_eq_comp_of_forall_valueOfInformation_le P.part Q.part fun U ↦ by
-    simpa only [utility_eq_valueOfInformation] using h U (uniformOn Set.univ)
-  exact Finpartition.le_iff_factorsThrough_part.2 fun a b hab ↦ by simp [hψ, hab]
+  cases nonempty_fintype W
+  cases nonempty_fintype (Quotient Q)
+  cases nonempty_fintype (Quotient Q')
+  have : Nonempty (Quotient Q') := Nonempty.map (Quotient.mk Q') inferInstance
+  obtain ⟨ψ, hψ⟩ := exists_eq_comp_of_forall_valueOfInformation_le (Quotient.mk Q)
+    (Quotient.mk Q') fun U ↦ by
+      simpa only [utility_eq_valueOfInformation] using h U (uniformOn Set.univ)
+  exact fun a b hab ↦ Quotient.exact <| by
+    rw [show Quotient.mk Q' a = ψ (Quotient.mk Q a) from congrFun hψ a,
+      show Quotient.mk Q' b = ψ (Quotient.mk Q b) from congrFun hψ b, Quotient.sound hab]
+
+variable (U μ)
+
+/-- A question that settles the utilities is better than every strictly finer question. -/
+theorem better_of_lt_of_le_ker [Nonempty W] {Q Q' : Setoid W} (hQ : Q ≤ Setoid.ker U)
+    (h : Q' < Q) : Better U μ Q Q' :=
+  better_iff.2 (.inr ⟨by rw [utility_eq_utility_bot U μ hQ,
+    utility_eq_utility_bot U μ (h.le.trans hQ)], h⟩)
 
 end Utility
 
@@ -218,45 +264,20 @@ end Utility
 
 section Domain
 
-variable [Fintype W] [DecidableEq W] {D : Type*} [DecidableEq D]
+variable [Finite W] [DiscreteMeasurableSpace W] [Nonempty W] (U : W → A → ℝ) (μ : Measure W)
+  [IsProbabilityMeasure μ] {E : Type*} (P : E → Set W) {D D' : Set E}
 
-/-- The partition a wh-question induces over a domain puts two worlds together when the
-predicate's extension agrees on the domain. -/
-def wh (P : W → Finset D) (dom : Finset D) : Finpartition (Finset.univ : Finset W) :=
-  Finpartition.ofFun fun w ↦ dom ∩ P w
+/-- Widening the domain of a wh-question cannot lower its value. -/
+theorem utility_partition_image_mono [Finite A] (h : D ⊆ D') :
+    utility U μ (partition (P '' D)) ≤ utility U μ (partition (P '' D')) :=
+  utility_anti U μ (partition_anti (Set.image_mono h))
 
-theorem wh_anti (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom') :
-    wh P dom' ≤ wh P dom :=
-  Finpartition.ofFun_le_ofFun_iff.2 fun w v hwv ↦ by
-    rw [← Finset.inter_eq_left.2 h, Finset.inter_assoc, Finset.inter_assoc, hwv]
-
-variable [MeasurableSpace W] (U : W → A → ℝ) (μ : Measure W)
-
-/-- Of two domains yielding equally useful but different questions, the smaller gives the better
-question, so the domain relevance selects contains only individuals that could affect the
-decision. -/
-theorem better_wh (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom')
-    (heq : utility U μ (wh P dom) = utility U μ (wh P dom'))
-    (hne : wh P dom' ≠ wh P dom) :
-    Better U μ (wh P dom) (wh P dom') :=
-  better_iff.2 (.inr ⟨heq, (wh_anti P h).lt_of_ne hne⟩)
-
-variable [DiscreteMeasurableSpace W] [IsProbabilityMeasure μ]
-
-theorem utility_wh_mono [Finite A] [Nonempty W] (P : W → Finset D)
-    {dom dom' : Finset D} (h : dom ⊆ dom') :
-    utility U μ (wh P dom) ≤ utility U μ (wh P dom') :=
-  utility_anti U μ (wh_anti P h)
-
-/-- When the utilities depend only on which individuals of `dom` satisfy `P`, every larger domain
-yielding a different question gives a worse one. -/
-theorem better_wh_of_factorsThrough [Nonempty W] (P : W → Finset D) {dom dom' : Finset D}
-    (h : dom ⊆ dom') (hU : U.FactorsThrough (wh P dom).part) (hne : wh P dom' ≠ wh P dom) :
-    Better U μ (wh P dom) (wh P dom') := by
-  have hU' : U.FactorsThrough (wh P dom').part := fun w v hwv ↦
-    hU (Finpartition.le_iff_factorsThrough_part.1 (wh_anti P h) hwv)
-  exact better_wh U μ P h (by rw [utility_eq_valueOfInformation_id U μ _ hU,
-    utility_eq_valueOfInformation_id U μ _ hU']) hne
+/-- When the wh-question over `D` settles the utilities, every larger domain yielding a
+different question gives a worse one. -/
+theorem better_partition_image (h : D ⊆ D') (hU : partition (P '' D) ≤ Setoid.ker U)
+    (hne : partition (P '' D') ≠ partition (P '' D)) :
+    Better U μ (partition (P '' D)) (partition (P '' D')) :=
+  better_of_lt_of_le_ker U μ hU ((partition_anti (Set.image_mono h)).lt_of_ne hne)
 
 end Domain
 

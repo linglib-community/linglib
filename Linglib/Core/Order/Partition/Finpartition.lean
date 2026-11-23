@@ -37,9 +37,6 @@ of block sizes is invariant.
 ## Main results
 
 * `Finpartition.ofFun_congr`: the partition depends only on which values coincide.
-* `Finpartition.ofFun_le_ofFun_iff`, `Finpartition.le_iff_factorsThrough_part`: one partition
-  refines another exactly when the generator or block map of the second factors through that of
-  the first.
 * `Finpartition.sum_parts_eq_sum_preimage_part`: a sum over the parts is a sum over the fibres of
   the block map.
 * `disjoint_minterm`, `sup_minterm`: distinct minterms are disjoint and the minterms join to `⊤`.
@@ -181,9 +178,6 @@ def partSizes (P : Finpartition s) : Multiset ℕ := P.parts.val.map card
 theorem sum_partSizes (P : Finpartition s) : P.partSizes.sum = #s := by
   rw [partSizes, ← P.sum_card_parts, sum_eq_multiset_sum]
 
-theorem part_bot {i : ι} (hi : i ∈ s) : (⊥ : Finpartition s).part i = {i} :=
-  part_eq_of_mem _ (mem_bot_iff.2 ⟨i, hi, rfl⟩) (mem_singleton_self i)
-
 end Finset
 
 variable {ι β : Type*} [Fintype ι] [DecidableEq ι] [DecidableEq β]
@@ -262,27 +256,6 @@ theorem card_partSizes_ofFun (s : ι → β) : (ofFun s).partSizes.card = #(univ
 theorem part_ofFun_eq_part_ofFun_iff {s : ι → β} {i j : ι} :
     (ofFun s).part i = (ofFun s).part j ↔ s i = s j := by
   rw [← (ofFun s).mem_part_iff_part_eq_part (mem_univ i) (mem_univ j), mem_part_ofFun, eq_comm]
-
-/-- One generated partition refines another exactly when the second generator factors through
-the first. -/
-theorem ofFun_le_ofFun_iff {γ : Type*} [DecidableEq γ] {s : ι → β} {t : ι → γ} :
-    ofFun s ≤ ofFun t ↔ t.FactorsThrough s := by
-  refine ⟨fun h i j hij ↦ ?_, fun h b hb ↦ ?_⟩
-  · obtain ⟨c, hc, hsub⟩ := h ((ofFun s).part_mem.2 (mem_univ i))
-    have hj := hsub (mem_part_ofFun.2 hij)
-    rw [← (ofFun t).part_eq_of_mem hc (hsub ((ofFun s).mem_part_self.2 (mem_univ i)))] at hj
-    exact mem_part_ofFun.1 hj
-  · obtain ⟨i, hi⟩ := (ofFun s).nonempty_of_mem_parts hb
-    refine ⟨_, (ofFun t).part_mem.2 (mem_univ i), fun j hj ↦ ?_⟩
-    rw [← (ofFun s).part_eq_of_mem hb hi, mem_part_ofFun] at hj
-    exact mem_part_ofFun.2 (h hj)
-
-/-- A partition refines another exactly when the block map of the second factors through that
-of the first. -/
-theorem le_iff_factorsThrough_part {P Q : Finpartition (univ : Finset ι)} :
-    P ≤ Q ↔ Q.part.FactorsThrough P.part := by
-  conv_lhs => rw [← ofFun_part P, ← ofFun_part Q]
-  exact ofFun_le_ofFun_iff
 
 theorem ofFun_part_ofFun_comp (s : ι → β) (g : ι → ι) :
     ofFun ((ofFun s).part ∘ g) = ofFun (s ∘ g) :=

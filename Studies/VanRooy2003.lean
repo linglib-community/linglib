@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.Order.Partition.Finpartition
 public import Linglib.Semantics.Questions.Value
 public import Studies.Aloni2001
 public import Linglib.Data.Examples.VanRooy2003
@@ -21,7 +20,7 @@ more relevant true value, and this one rule yields both mention-all and mention-
 ## Implementation notes
 
 A decision problem is a real utility on worlds and actions together with a prior measure, the
-actions forming a type, and questions over a finite set of worlds are `Finpartition`s.
+actions forming a type, and a partition question is a `Setoid` on the worlds.
 The relevance of a value in a world is a utility into a preorder; the paper's relation `>` orders
 answers, which for the newspaper example of section 5.2 is world-relative, the best place
 differing between worlds. Section 5.3 assumes the questioner most wants to resolve her problem, so
@@ -33,7 +32,7 @@ taken into account. The examples are rows of `Data.Examples.VanRooy2003`.
 ## TODO
 
 * The group-valued domain example of section 5.3, the questions (23) and (25), the individual-wise
-  relevance condition on wh-domains of section 4.2 (`Question.better_wh_of_factorsThrough` covers
+  relevance condition on wh-domains of section 4.2 (`Question.better_partition_image` covers
   utilities that depend only on the domain), and the argumentative value of section 5.4.
 
 ## References
@@ -502,18 +501,13 @@ instance : MeasurableSpace Address := ⊤
 instance : DiscreteMeasurableSpace Address := ⟨fun _ ↦ trivial⟩
 
 theorem liveIn_visit_better (μ : Measure Address) [IsProbabilityMeasure μ] :
-    Question.Better visit μ (Finpartition.ofFun Address.city) ⊥ := by
-  have hU : visit.FactorsThrough (Finpartition.ofFun Address.city).part := fun w v h ↦ by
-    rw [Finpartition.part_ofFun_eq_part_ofFun_iff] at h
-    ext c
-    simp [visit, h]
-  refine Question.better_iff.2 (.inr ⟨by rw [Question.utility_eq_valueOfInformation_id visit μ _ hU,
-    Question.utility_bot], bot_lt_iff_ne_bot.2 fun h ↦ ?_⟩)
-  have := Finpartition.part_ofFun_eq_part_ofFun_iff.2
-    (show Address.amsterdam₁.city = Address.amsterdam₂.city from rfl)
-  rw [h, Finpartition.part_bot (Finset.mem_univ _), Finpartition.part_bot (Finset.mem_univ _),
-    Finset.singleton_inj] at this
-  exact absurd this (by decide)
+    Question.Better visit μ (Setoid.ker Address.city) ⊥ := by
+  refine Question.better_of_lt_of_le_ker visit μ (fun w v h ↦ funext fun c ↦ ?_)
+    (bot_lt_iff_ne_bot.2 fun h ↦ ?_)
+  · simp only [visit, Setoid.ker_def.1 h]
+  · have : Setoid.ker Address.city .amsterdam₁ .amsterdam₂ := rfl
+    rw [h, Setoid.bot_def] at this
+    exact absurd this (by decide)
 
 /-! #### Conceptual covers -/
 

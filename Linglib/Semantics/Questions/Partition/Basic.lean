@@ -80,8 +80,15 @@ theorem cell_eq_or_disjoint (w v : W) : Q.cell w = Q.cell v ∨ Disjoint (Q.cell
   · exact Or.inl (cell_eq_of_rel h)
   · exact Or.inr (Set.disjoint_left.2 fun u hw hv ↦ h (Q.trans' (Q.symm' hw) hv))
 
+/-- The cell of `w` is the fibre of the quotient map through `w`. -/
+theorem cell_eq_preimage_mk (w : W) : Q.cell w = Quotient.mk Q ⁻¹' {Quotient.mk Q w} :=
+  Set.ext fun _ ↦ Quotient.eq.symm
+
 @[simp] theorem cell_bot (w : W) : (⊥ : Setoid W).cell w = {w} := by
   ext; simp [cell]
+
+@[simp] theorem cell_top (w : W) : (⊤ : Setoid W).cell w = Set.univ := by
+  ext; simp [cell, Setoid.top_def]
 
 theorem cell_inf (Q' : Setoid W) (w : W) : (Q ⊓ Q').cell w = Q.cell w ∩ Q'.cell w :=
   Set.ext fun _ ↦ Setoid.inf_iff_and
