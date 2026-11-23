@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
+public import Linglib.Semantics.Conditionals.Counterfactual.Transition
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Studies.McKayVanInwagen1977
 
@@ -24,7 +25,11 @@ cover it (`sUnion_truthmakers`).
 The conditional is read off this set by the operators of
 `Semantics/Conditionals/Counterfactual/Alternatives.lean`. Without the distributivity operator
 *would* takes the union of the truthmakers, so the conditional is the counterfactual of `S`
-(`disjunctiveImp_truthmakers`). With it the counterfactual holds of each truthmaker. For a
+(`disjunctiveImp_truthmakers`). With it the counterfactual holds of each truthmaker, the
+universal quantification over truthmakers that the paper identifies as the route of the
+truthmaker semantics of [fine-2012]: with propositions as states, a stronger one the larger,
+and the closest worlds of a proposition as its outcomes, it is the truth clause
+`Conditional.transitionImp` (`distributiveImp_eq_transitionImp`). For a
 disjunction of two propositions neither of which includes the other, with alternatives
 `{A ∪ B, A, B, A ∩ B}`, the truthmakers are the disjuncts (`truthmakers_disjunction`), so the
 distributive reading is the conjunction of the two simplifications
@@ -63,6 +68,7 @@ generated from a substitution source.
 * [mckay-vaninwagen-1977]
 * [fox-2007]
 * [spector-2016]
+* [fine-2012]
 -/
 
 @[expose] public section
@@ -242,6 +248,23 @@ theorem distributiveImp_truthmakers_disjunction (hA : ¬ A ⊆ B) (hB : ¬ B ⊆
     distributiveImp ord (truthmakers {A ∪ B, A, B, A ∩ B} (A ∪ B)) C =
       closestImp ord A C ∩ closestImp ord B C := by
   rw [truthmakers_disjunction hA hB, distributiveImp_pair]
+
+open OrderDual in
+-- the universal clause over truthmakers is the truth clause of exact semantics, with
+-- propositions as states and the closest worlds of a proposition as its outcomes
+theorem distributiveImp_eq_transitionImp (T : Set (Set W)) :
+    distributiveImp ord T C = transitionImp
+      (fun w ↦ {(p, r) | ∃ v ∈ (ord w).minimals (ofDual p), r = toDual {v}})
+      (toDual '' T) (upperClosure {toDual C}) := by
+  ext w
+  rw [distributiveImp, Set.mem_iInter₂]
+  constructor
+  · rintro h r ⟨_, ⟨p, hp, rfl⟩, v, hv, rfl⟩
+    exact ⟨toDual C, rfl, Set.singleton_subset_iff.mpr (h p hp hv)⟩
+  · intro h p hp v hv
+    obtain ⟨x, hx, hle⟩ := h ⟨toDual p, ⟨p, hp, rfl⟩, v, hv, rfl⟩
+    rw [Set.mem_singleton_iff.mp hx] at hle
+    exact Set.singleton_subset_iff.mp hle
 
 /-! ### Every student read War and Peace or Anna Karenina (35) -/
 

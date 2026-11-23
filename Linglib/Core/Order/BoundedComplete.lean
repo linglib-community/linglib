@@ -14,9 +14,7 @@ and an incompatible pair has none. Compatibility is `Compat`, mathlib's `BddAbov
 it is pointwise on functions and componentwise on products, and it is decidable wherever it is on
 the components. An order is `IsBoundedComplete` when every compatible pair has a join, and then
 joins of pairs reassociate (`IsLUB.pair_assoc`). An order whose joins are computed presents them
-as the join of `WithTop α`, with `⊤` the failure, through `WithTop.semilatticeSupOfIsLUB`; in a
-bounded-complete order `WithTop α` is a join-semilattice without a computed join
-(`IsBoundedComplete.semilatticeSupWithTop`).
+as the join of `WithTop α`, with `⊤` the failure, through `WithTop.semilatticeSupOfIsLUB`.
 
 ## References
 
@@ -243,44 +241,6 @@ theorem eq_coe_iff_of_isLUB {a b c : α} {v : WithTop α}
 theorem eq_top_iff_of_isLUB {a b : α} {v : WithTop α}
     (h : IsLUB ({↑a, ↑b} : Set (WithTop α)) v) : v = ⊤ ↔ ¬ Compat a b :=
   ⟨fun e ↦ isLUB_pair_coe_top_iff.1 (e ▸ h), fun hc ↦ h.unique (isLUB_pair_coe_top_iff.2 hc)⟩
-
-end WithTop
-
-/-! ### Failure adjoined to a bounded-complete order -/
-
-namespace IsBoundedComplete
-
-variable {α : Type*} [PartialOrder α] [IsBoundedComplete α]
-
-open Classical in
-/-- The join of two elements, `⊤` when they have no common upper bound. -/
-noncomputable def unify (a b : α) : WithTop α :=
-  if h : BddAbove ({a, b} : Set α) then ↑(exists_isLUB_of_bddAbove a b h).choose else ⊤
-
-theorem isLUB_unify (a b : α) : IsLUB {(a : WithTop α), (b : WithTop α)} (unify a b) := by
-  unfold unify
-  split_ifs with h
-  · exact WithTop.isLUB_pair_coe_iff.mpr (exists_isLUB_of_bddAbove a b h).choose_spec
-  · exact WithTop.isLUB_pair_coe_top_iff.mpr h
-
-/-- A bounded-complete order with a top adjoined is a join-semilattice, incompatible pairs
-joining to `⊤`. Scoped, since mathlib gives `WithTop α` its own join when `α` has one. -/
-noncomputable scoped instance semilatticeSupWithTop : SemilatticeSup (WithTop α) :=
-  WithTop.semilatticeSupOfIsLUB unify isLUB_unify
-
-theorem coe_sup_coe_eq_coe_iff {a b c : α} :
-    (a : WithTop α) ⊔ (b : WithTop α) = (c : WithTop α) ↔ IsLUB {a, b} c :=
-  WithTop.eq_coe_iff_of_isLUB (isLUB_unify a b)
-
-theorem coe_sup_coe_eq_top_iff {a b : α} :
-    (a : WithTop α) ⊔ (b : WithTop α) = ⊤ ↔ ¬ BddAbove ({a, b} : Set α) :=
-  WithTop.eq_top_iff_of_isLUB (isLUB_unify a b)
-
-end IsBoundedComplete
-
-namespace WithTop
-
-variable {α : Type*} [PartialOrder α]
 
 /-! ### Pointwise joins -/
 
