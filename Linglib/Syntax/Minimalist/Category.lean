@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Logic.Function.Basic
+public import Mathlib.Logic.Equiv.Defs
 
 /-!
 # Categories
@@ -26,6 +26,7 @@ features exactly when they share their family.
 * `Minimalist.CatFamily.lexical`: the lexical head of a family.
 * `Minimalist.CatFeatures`, `Minimalist.Cat.features`: the features `[±V, ±N]`, read off the
   family.
+* `Minimalist.CatFamily.featuresEquiv`: the families as the combinations of the two features.
 
 ## Main results
 
@@ -188,13 +189,22 @@ def CatFamily.features : CatFamily → CatFeatures
   | .adjectival => ⟨true, true⟩
   | .adpositional => ⟨false, false⟩
 
+/-- The families are the four combinations of the two features. -/
+def CatFamily.featuresEquiv : CatFamily ≃ CatFeatures where
+  toFun := features
+  invFun
+    | ⟨true, false⟩ => .verbal
+    | ⟨false, true⟩ => .nominal
+    | ⟨true, true⟩ => .adjectival
+    | ⟨false, false⟩ => .adpositional
+  left_inv f := by cases f <;> rfl
+  right_inv := by rintro ⟨_ | _, _ | _⟩ <;> rfl
+
+@[simp] theorem CatFamily.coe_featuresEquiv : ⇑CatFamily.featuresEquiv = CatFamily.features := rfl
+
 /-- Each of the four combinations of the two features is the features of exactly one family. -/
 theorem CatFamily.features_bijective : Function.Bijective CatFamily.features :=
-  ⟨fun a b h ↦ by cases a <;> cases b <;> simp_all [features], fun
-    | ⟨true, false⟩ => ⟨.verbal, rfl⟩
-    | ⟨false, true⟩ => ⟨.nominal, rfl⟩
-    | ⟨true, true⟩ => ⟨.adjectival, rfl⟩
-    | ⟨false, false⟩ => ⟨.adpositional, rfl⟩⟩
+  CatFamily.featuresEquiv.bijective
 
 /-- The features of a category are those of its family, so that every functional head inherits
 the features of its lexical head. -/
