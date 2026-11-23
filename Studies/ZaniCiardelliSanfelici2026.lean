@@ -131,45 +131,42 @@ variable {ord A B w}
 
 section Pair
 
-variable [DecidableEq W]
-
 section Finite
 
 variable [Fintype W]
 
 theorem would_iff_distributive_of_equallyRealistic [Std.Total (ord w).le]
     (hAB : ¬ MoreRealistic ord ↑A ↑B w) (hBA : ¬ MoreRealistic ord ↑B ↑A w) :
-    w ∈ disjunctiveImp ord {A, B} C ↔ w ∈ distributiveImp ord {A, B} C := by
+    w ∈ disjunctiveImp ord {↑A, ↑B} C ↔ w ∈ distributiveImp ord {↑A, ↑B} C := by
   rw [disjunctiveImp_pair, mem_closestImp, minimals_union_of_equallyRealistic hAB hBA,
     Set.union_subset_iff, mem_distributiveImp_pair, mem_closestImp, mem_closestImp]
 
 theorem would_iff_of_moreRealistic [Std.Total (ord w).le]
     (h : MoreRealistic ord ↑A ↑B w) :
-    w ∈ disjunctiveImp ord {A, B} C ↔ w ∈ closestImp ord ↑A C := by
+    w ∈ disjunctiveImp ord {↑A, ↑B} C ↔ w ∈ closestImp ord ↑A C := by
   rw [disjunctiveImp_pair, mem_closestImp, minimals_union_of_moreRealistic h, mem_closestImp]
 
 end Finite
 
-theorem would_of_distributive (h : w ∈ distributiveImp ord {A, B} C) :
-    w ∈ disjunctiveImp ord {A, B} C :=
+theorem would_of_distributive (h : w ∈ distributiveImp ord {↑A, ↑B} C) :
+    w ∈ disjunctiveImp ord {↑A, ↑B} C :=
   mem_disjunctiveImp_pair_of_mem_distributiveImp h
 
-theorem dcr_of_would [Std.Total (ord w).le] (h : w ∈ disjunctiveImp ord {A, B} C) :
+theorem dcr_of_would [Std.Total (ord w).le] (h : w ∈ disjunctiveImp ord {↑A, ↑B} C) :
     DCR ord A B C w := by
   rw [disjunctiveImp_pair] at h
   exact mem_closestImp_or_of_mem_union h
 
 /-! ### Homogeneity and exhaustification (§2, §3) -/
 
-theorem dcr_iff_homogeneity_ne_false [Fintype W] [∀ w, DecidableRel (ord w).le]
-    [DecidablePred (· ∈ C)] :
-    DCR ord A B C w ↔ homogeneousImp ord {A, B} C w ≠ .false := by
-  simp only [DCR, Ne, homogeneousImp_eq_false_iff, Finset.insert_nonempty, true_and,
-    Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq, not_and_or, not_not]
+theorem dcr_iff_homogeneity_ne_false :
+    DCR ord A B C w ↔ homogeneousImp ord {↑A, ↑B} C w ≠ .false := by
+  simp only [DCR, Ne, homogeneousImp_eq_false_iff, Set.insert_nonempty, true_and,
+    Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, not_and_or, not_not]
 
 open BarLevFox2020 in
-theorem literal_eq_would : closestImp ord (↑A ∪ ↑B) C = disjunctiveImp ord {A, B} C :=
-  (disjunctiveImp_pair A B).symm
+theorem literal_eq_would : closestImp ord (↑A ∪ ↑B) C = disjunctiveImp ord {↑A, ↑B} C :=
+  disjunctiveImp_pair.symm
 
 open BarLevFox2020 in
 theorem distributive_of_exh [∀ w, Std.Total (ord w).le]
@@ -179,7 +176,7 @@ theorem distributive_of_exh [∀ w, Std.Total (ord w).le]
       v ∉ closestImp ord ↑A C ∪ closestImp ord (↑A ∩ ↑B) C)
     (h : ∃ v ∈ closestImp ord ↑A C ∩ closestImp ord ↑B C, v ∉ closestImp ord (↑A ∩ ↑B) C)
     (hw : w ∈ Exhaustification.exhIEII (sdaAlts ord ↑A ↑B C) (closestImp ord (↑A ∪ ↑B) C)) :
-    w ∈ distributiveImp ord {A, B} C := by
+    w ∈ distributiveImp ord {↑A, ↑B} C := by
   rw [sda h₁ h₂ h] at hw
   exact mem_distributiveImp_pair.2 ⟨hw.1.1, hw.1.2⟩
 
