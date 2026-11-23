@@ -41,14 +41,14 @@ operation applies to the output of the one before it and not to the input (`feed
 
 `positions` gives the positions of a form with their melodies, which
 `ElementTheory.ofForm` represents with a root node under each position that has a melody and
-each element on its line. A nucleus reads a root node exactly when it holds a vowel
-(`reads_rootNode_positions_iff`), the onset of a unit reads an element exactly when its consonant
-has it (`exists_reads_positions_iff`), and sharing |A|
+each element on its line. A nucleus bears a root node exactly when it holds a vowel
+(`mem_melody_rootNode_positions_iff`), the onset of a unit bears an element exactly when its
+consonant has it (`exists_mem_melody_positions_iff`), and sharing |A|
 between the two /a/s of /m_-barak/ crosses no line, where sharing it between two vowels across a
 guttural would (`noCrossing_spread_39b`). `fusion` changes no position's elements
-(`exists_reads_positions_fusion_iff`), as `ElementTheory.spread` changes none. The two differ in
-status: a nucleus sharing the |A| of a glottal reads it as a dependent, where the lowered vowel
-is written with a head (`reads_spread_status`).
+(`exists_mem_melody_positions_fusion_iff`), as `ElementTheory.spread` changes none. The two
+differ in status: a nucleus sharing the |A| of a glottal bears it as a dependent, where the
+lowered vowel is written with a head (`mem_melody_spread_status`).
 
 ## Implementation notes
 
@@ -873,18 +873,18 @@ theorem getElem?_positions_two_mul_add_one (f : Form) (i : ℕ) :
     | zero => simp [positions]
     | succ i => simpa [positions, Nat.mul_succ] using ih i
 
--- the onset of a unit reads an element on its line exactly when its consonant has the element
-theorem exists_reads_positions_iff (e : Element) (f : Form) (i : ℕ) :
-    (∃ s, (ofForm (positions f)).Reads tiers (2 * i) (.line e) s) ↔ HasAt e f i := by
-  rw [reads_line_ofForm_iff, getElem?_positions_two_mul]
+-- the onset of a unit bears an element on its line exactly when its consonant has the element
+theorem exists_mem_melody_positions_iff (e : Element) (f : Form) (i : ℕ) :
+    (∃ s, s ∈ (ofForm (positions f)).melody tiers (2 * i) (.line e)) ↔ HasAt e f i := by
+  rw [exists_mem_melody_line_ofForm_iff, getElem?_positions_two_mul]
   unfold HasAt
   cases f[i]? <;> simp [Has]
 
--- a nucleus reads a root node exactly when it holds a vowel, the weak vowel included
-theorem reads_rootNode_positions_iff (f : Form) (i : ℕ) :
-    (ofForm (positions f)).Reads tiers (2 * i + 1) .rootNode () ↔
+-- a nucleus bears a root node exactly when it holds a vowel, the weak vowel included
+theorem mem_melody_rootNode_positions_iff (f : Form) (i : ℕ) :
+    () ∈ (ofForm (positions f)).melody tiers (2 * i + 1) .rootNode ↔
       ∃ u ∈ f[i]?, u.v.melody = .associated := by
-  rw [reads_rootNode_ofForm_iff, getElem?_positions_two_mul_add_one]
+  rw [mem_melody_rootNode_ofForm_iff, getElem?_positions_two_mul_add_one]
   rcases f[i]? with _ | ⟨c, n⟩
   · simp
   · cases n <;> simp [Nuc.vowel?, Nuc.melody]
@@ -908,11 +908,11 @@ theorem elements_nucleus_fusion (f : Form) (i : ℕ) :
     | _ => rfl
 
 -- fusion changes no position's elements, as sharing a token changes none
--- (`ElementTheory.exists_reads_spread_iff`)
-theorem exists_reads_positions_fusion_iff (f : Form) (k : ℕ) (e : Element) :
-    (∃ s, (ofForm (positions (fusion f))).Reads tiers k (.line e) s) ↔
-      ∃ s, (ofForm (positions f)).Reads tiers k (.line e) s := by
-  rw [reads_line_ofForm_iff, reads_line_ofForm_iff]
+-- (`ElementTheory.exists_mem_melody_spread_iff`)
+theorem exists_mem_melody_positions_fusion_iff (f : Form) (k : ℕ) (e : Element) :
+    (∃ s, s ∈ (ofForm (positions (fusion f))).melody tiers k (.line e)) ↔
+      ∃ s, s ∈ (ofForm (positions f)).melody tiers k (.line e) := by
+  rw [exists_mem_melody_line_ofForm_iff, exists_mem_melody_line_ofForm_iff]
   obtain ⟨i, rfl | rfl⟩ : ∃ i, k = 2 * i ∨ k = 2 * i + 1 := ⟨k / 2, by omega⟩
   · rw [getElem?_positions_two_mul, getElem?_positions_two_mul]
     have := map_c_fusion f i
@@ -930,11 +930,11 @@ def imperativePull : Form :=
 def imperativeAsk : Form :=
   (instantiate (pattern .tigrinya .imp).positions Tigrinya.Phonology.ask).getD []
 
--- (20), (21), (27): a nucleus sharing the |A| of its onset reads it as a head after a pharyngeal
+-- (20), (21), (27): a nucleus sharing the |A| of its onset bears it as a head after a pharyngeal
 -- and as a dependent after a glottal, where the lowered vowel is written with a head after both
-theorem reads_spread_status :
-    (spread (positions imperativePull) .A 2 3).Reads tiers 3 (.line .A) .head ∧
-      (spread (positions imperativeAsk) .A 2 3).Reads tiers 3 (.line .A) .dependent ∧
+theorem mem_melody_spread_status :
+    Status.head ∈ (spread (positions imperativePull) .A 2 3).melody tiers 3 (.line .A) ∧
+      Status.dependent ∈ (spread (positions imperativeAsk) .A 2 3).melody tiers 3 (.line .A) ∧
       ∀ f ∈ [imperativePull, imperativeAsk],
         ((positions (fusion f))[3]?.bind (·.melody)).map (·.status .A) = some .head := by
   decide +kernel

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.GovernmentPhonology.ElementTheory.Basic
-public import Linglib.Phonology.Autosegmental.KripkeModel
+public import Linglib.Phonology.Autosegmental.KripkeModel.Spread
 public import Linglib.Phonology.Autosegmental.Skeleton
 public import Mathlib.Data.Fintype.Sum
 
@@ -24,16 +24,18 @@ We define `Position`, a slot with the melodic expression of its root node if it 
 under it, and under that a token, a head or a dependent, on the line of each element of the
 expression. A form is a word of positions; `ofForm` concatenates their representations, as the
 monoid homomorphism `ofFormHom` does on the free monoid, and its lines do not cross
-(`noCrossing_ofForm`). A position of a form reads a root node exactly when it has one
-(`reads_rootNode_ofForm_iff`) and an element exactly when its expression contains it
-(`reads_line_ofForm_iff`).
+(`noCrossing_ofForm`). The melody of a position of a form on each tier is the tokens the
+position has there (`melody_ofForm`): it bears a root node exactly when it has one
+(`mem_melody_rootNode_ofForm_iff`) and an element exactly when its expression contains it
+(`exists_mem_melody_line_ofForm_iff`).
 
 Spreading is a change of lines. `spread w e m n` makes position `n` share the token of `e` of
 position `m`, by `Autosegmental.AR.spreadTier`: the root node of `n` is delinked from its own
 token of `e` and linked to that of `m`. It crosses no line exactly when no position strictly
-between the two has `e` (`noCrossing_spread_iff`). The result reads as the form in which position
-`n` has `e` in the status it has at `m` (`reads_spread_iff`), so where both positions have `e` no
-position's elements change (`exists_reads_spread_iff`): sharing a token reads as copying it.
+between the two has `e` (`noCrossing_spread_iff`). Each position then bears what it bears in the form in
+which position `n` has `e` in the status it has at `m` (`mem_melody_spread_iff`), so where both
+positions have `e` no position's elements change (`exists_mem_melody_spread_iff`): sharing a
+token is borne as copying it.
 
 ## Implementation notes
 
@@ -239,45 +241,46 @@ theorem dominates_ofPosition {t : Tier} (h : p.word t ≠ []) :
     exact AR.descendants_mono hcard _ (AR.mem_descendants_succ_of_mem_children (hroot hr)
       (AR.mem_children.2 ⟨rfl, by simp, (link_ofPosition_parent_iff (by simp)).2 h⟩))
 
-/-- A position reads on a tier the token it has there. -/
-theorem reads_ofPosition_iff {t : Tier} {b : Tiers t} :
-    (ofPosition p).Reads tiers 0 t b ↔ p.word t = [b] := by
-  constructor
-  · rintro ⟨q, hq, -, hb⟩
-    have hlen := p.length_word_le_one t
-    rw [word_ofPosition] at hq hb
-    rcases hw : p.word t with _ | ⟨c, _ | ⟨d, l⟩⟩
-    · simp [hw] at hq
-    · obtain rfl : q = 0 := by simpa [hw] using hq
-      simpa [hw] using hb
-    · simp [hw] at hlen
-  · intro h
-    exact ⟨0, by simp [h], dominates_ofPosition (by simp [h]), by simp [h]⟩
+/-- The melody of a position on a tier is the token it has there. -/
+theorem melody_ofPosition (p : Position) (t : Tier) :
+    (ofPosition p).melody tiers 0 t = p.word t := by
+  have hlen := p.length_word_le_one t
+  rcases hw : p.word t with _ | ⟨c, _ | ⟨d, l⟩⟩
+  · simp [AR.melody, hw]
+  · have hd : (ofPosition p).Dominates tiers 0 t 0 := dominates_ofPosition (by simp [hw])
+    simp [AR.melody, hw, hd]
+  · simp [hw] at hlen
 
-/-- Position `k` of a form reads on a tier the token it has there. -/
-theorem reads_ofForm_iff {t : Tier} {b : Tiers t} :
-    (ofForm w).Reads tiers k t b ↔ ∃ hk : k < w.length, w[k].word t = [b] :=
-  (AR.reads_prod_map tiers ofPosition fun _ ↦ rfl).trans
-    (exists_congr fun _ ↦ reads_ofPosition_iff)
+/-- The melody of position `k` of a form on a tier is the token the position has there. -/
+theorem melody_ofForm (hk : k < w.length) (t : Tier) :
+    (ofForm w).melody tiers k t = w[k].word t :=
+  (AR.melody_prod_map tiers ofPosition (fun _ ↦ rfl) hk).trans (melody_ofPosition _ _)
 
-/-- Position `k` of a form reads a root node exactly when it has one. -/
-theorem reads_rootNode_ofForm_iff :
-    (ofForm w).Reads tiers k .rootNode () ↔ ∃ p ∈ w[k]?, p.melody.isSome := by
-  simp only [reads_ofForm_iff, List.getElem?_eq_some_iff, Option.mem_def]
+theorem mem_melody_ofForm_iff {t : Tier} {b : Tiers t} :
+    b ∈ (ofForm w).melody tiers k t ↔ ∃ hk : k < w.length, b ∈ w[k].word t :=
+  (AR.mem_melody_prod_map tiers ofPosition fun _ ↦ rfl).trans
+    (exists_congr fun _ ↦ by rw [melody_ofPosition])
+
+/-- Position `k` of a form bears a root node exactly when it has one. -/
+theorem mem_melody_rootNode_ofForm_iff :
+    () ∈ (ofForm w).melody tiers k .rootNode ↔ ∃ p ∈ w[k]?, p.melody.isSome := by
+  refine (mem_melody_ofForm_iff (t := .rootNode) (b := ())).trans ?_
+  simp only [List.getElem?_eq_some_iff, Option.mem_def]
   constructor
   · rintro ⟨hk, h⟩
-    exact ⟨_, ⟨hk, rfl⟩, Position.word_rootNode_ne_nil_iff.1 (by simp [h])⟩
+    exact ⟨_, ⟨hk, rfl⟩, Position.word_rootNode_ne_nil_iff.1 (List.ne_nil_of_mem h)⟩
   · rintro ⟨_, ⟨hk, rfl⟩, h⟩
     exact ⟨hk, by simp [Position.word, h]⟩
 
-/-- Position `k` of a form reads an element exactly when its expression contains it. -/
-theorem reads_line_ofForm_iff :
-    (∃ s, (ofForm w).Reads tiers k (.line e) s) ↔
+/-- Position `k` of a form bears an element exactly when its expression contains it. -/
+theorem exists_mem_melody_line_ofForm_iff :
+    (∃ s, s ∈ (ofForm w).melody tiers k (.line e)) ↔
       ∃ p ∈ w[k]?, ∃ m ∈ p.melody, e ∈ m.elements := by
-  simp only [reads_ofForm_iff, List.getElem?_eq_some_iff, Option.mem_def]
+  refine (exists_congr fun s ↦ mem_melody_ofForm_iff (t := .line e) (b := s)).trans ?_
+  simp only [List.getElem?_eq_some_iff, Option.mem_def]
   constructor
   · rintro ⟨s, hk, h⟩
-    exact ⟨_, ⟨hk, rfl⟩, Position.word_line_ne_nil_iff.1 (by simp [h])⟩
+    exact ⟨_, ⟨hk, rfl⟩, Position.word_line_ne_nil_iff.1 (List.ne_nil_of_mem h)⟩
   · rintro ⟨_, ⟨hk, rfl⟩, m, hm, he⟩
     exact ⟨m.status e, hk, by simp [Position.word, hm, he]⟩
 
@@ -306,14 +309,14 @@ theorem noCrossing_spread_iff (hm : m < w.length) (hn : n < w.length)
   obtain ⟨m', hm', he'⟩ := Position.word_line_ne_nil_iff.1 hne
   exact h m' hm' he'
 
-/-- Spreading an element reads as giving the target position the element in the
-status it has at the source: sharing a token reads as copying it. -/
-theorem reads_spread_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
+/-- Spreading an element gives each position what it bears when the target position has the
+element in the status it has at the source: sharing a token is borne as copying it. -/
+theorem mem_melody_spread_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
     (h₁ : w[m].melody = some m₁) (he : e ∈ m₁.elements) (h₂ : w[n].melody = some m₂)
     {t : Tier} {b : Tiers t} :
-    (spread w e m n).Reads tiers k t b ↔
-      (ofForm (w.set n ⟨w[n].slot, some (m₂.adopt m₁ e)⟩)).Reads tiers k t b := by
-  refine AR.reads_spreadTier_iff ofPosition (by simp)
+    b ∈ (spread w e m n).melody tiers k t ↔
+      b ∈ (ofForm (w.set n ⟨w[n].slot, some (m₂.adopt m₁ e)⟩)).melody tiers k t := by
+  refine AR.mem_melody_spreadTier_iff ofPosition (by simp)
     (fun p t ↦ p.length_word_le_one t) (fun _ ↦ rfl) ?_ hm hn ?_ ?_ ?_ ?_
   · intro p t ht
     rw [tiers_parent, link_ofPosition_parent_iff (by simpa using ht), word_ofPosition]
@@ -330,13 +333,13 @@ theorem reads_spread_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR
 
 /-- Where both positions have the element, spreading it changes no position's elements: the shared
 token stands for both. -/
-theorem exists_reads_spread_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
+theorem exists_mem_melody_spread_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
     (h₁ : w[m].melody = some m₁) (he : e ∈ m₁.elements) (h₂ : w[n].melody = some m₂)
     (he' : e ∈ m₂.elements) {e' : Element} :
-    (∃ s, (spread w e m n).Reads tiers k (.line e') s) ↔
-      ∃ s, (ofForm w).Reads tiers k (.line e') s := by
-  rw [exists_congr fun s ↦ reads_spread_iff (t := .line e') (b := s) hm hn h₁ he h₂,
-    reads_line_ofForm_iff, reads_line_ofForm_iff]
+    (∃ s, s ∈ (spread w e m n).melody tiers k (.line e')) ↔
+      ∃ s, s ∈ (ofForm w).melody tiers k (.line e') := by
+  rw [exists_congr fun s ↦ mem_melody_spread_iff (t := .line e') (b := s) hm hn h₁ he h₂,
+    exists_mem_melody_line_ofForm_iff, exists_mem_melody_line_ofForm_iff]
   by_cases hk : n = k
   · subst hk
     simp only [List.getElem?_set_self hn, List.getElem?_eq_getElem hn, Option.mem_def,
@@ -344,11 +347,11 @@ theorem exists_reads_spread_iff (hm : m < w.length) (hn : n < w.length) {m₁ m�
     exact ⟨fun h ↦ h.elim (· ▸ he') id, .inr⟩
   · rw [List.getElem?_set_ne hk]
 
-/-- After spreading the target position reads the element in the status it has at the source. -/
-theorem reads_spread_self_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
+/-- After spreading the target position bears the element in the status it has at the source. -/
+theorem mem_melody_spread_self_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
     (h₁ : w[m].melody = some m₁) (he : e ∈ m₁.elements) (h₂ : w[n].melody = some m₂) :
-    (spread w e m n).Reads tiers n (.line e) s ↔ s = m₁.status e := by
-  rw [reads_spread_iff hm hn h₁ he h₂, reads_ofForm_iff]
-  simp [hn, Position.word, MR.mem_elements_adopt, MR.status_adopt_self, eq_comm]
+    s ∈ (spread w e m n).melody tiers n (.line e) ↔ s = m₁.status e := by
+  rw [mem_melody_spread_iff hm hn h₁ he h₂, mem_melody_ofForm_iff]
+  simp [hn, Position.word, MR.mem_elements_adopt, MR.status_adopt_self]
 
 end ElementTheory
