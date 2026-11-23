@@ -19,8 +19,9 @@ inches and not after a hundred feet, *if it had snowed, I would have gone skiing
 that clause, because of the outcome of the hundred-foot verifier (`not_would_snowed`), although
 it is true of the eight-inch verifier taken alone (`would_eightInches`).
 
-Bringing in closeness between worlds to set the hundred-foot verifier aside costs one of the
-rules that the argument of [fine-2012] against the possible-worlds semantics relies on. Where
+Bringing in closeness between worlds to set the hundred-foot verifier aside costs Infinitary
+Conjunction or Disjunction, rules of the argument of [fine-2012] against the possible-worlds
+semantics. Where
 the antecedent-worlds approach the base world without a closest one, the conditional of
 [lewis-1973b] does not satisfy Infinitary Conjunction (`infinitary_conjunction_fails`), and
 Fine's alternative, on which the consequent must hold in the closest and in the stranded
@@ -29,7 +30,10 @@ antecedent-worlds, does not satisfy Disjunction (`disjunction_fails`).
 ## Implementation notes
 
 The states of the snowfall model are partial assignments to two variables, the snowfall and
-whether I ski, and an outcome of a snowfall adds the skiing it leads to. The paper states the
+whether I ski, and an outcome of a snowfall adds the skiing it leads to. Eight inches is taken
+as a snowfall after which I ski; the paper says that the counterfactual is true for many of the
+ways it could have snowed. Disjunction is stated as in the paper, for disjuncts that need not be
+exclusive; [fine-2012] states it for exclusive disjuncts. The paper states the
 two counterexamples of its dilemma for the clauses that add exact verification to closeness;
 they are stated here for the conditionals between propositions, on which those clauses rest.
 In them the antecedent-worlds are indexed by the natural numbers, a larger index being closer,

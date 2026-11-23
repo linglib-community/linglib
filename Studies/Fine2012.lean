@@ -14,11 +14,11 @@ public import Linglib.Core.Order.BoundedComplete
 
 States are ordered by parthood, and the fusion of some states exists just in case they are
 compatible: the order is bounded complete, with a null state `⊥`. A statement is exactly verified
-by a set of states: a conjunction by the fusions of a verifier of each conjunct, a disjunction by
-the verifiers of either disjunct or of their conjunction, `⊤` by the null state alone, and `⊥`
-by nothing. It is inexactly verified by the states containing an exact verifier, the upper set
-`upperClosure A`. Inexact contents are the lattice `UpperSet S`, in which conjunction is `⊔`, by
-BC (`mem_upperClosure_sup_iff`), and disjunction is `⊓`.
+by a set of states: a conjunction by the fusions `fusions A B` of a verifier of each conjunct, a
+disjunction by the verifiers `A ∪ B ∪ fusions A B` of either disjunct or of their conjunction,
+`⊤` by the null state alone, and `⊥` by nothing. It is inexactly verified by the states
+containing an exact verifier, the upper set `upperClosure A`. By BC a state inexactly verifies a
+conjunction exactly when it inexactly verifies both conjuncts (`upperClosure_fusions`).
 
 For a transition relation `outcome w`, relating a state `t` to the possible outcomes `u` of
 imposing it on the world `w`, the counterfactual `would outcome A C` is true at `w` when every
@@ -33,8 +33,8 @@ The paper begins from a derivation: for rocks each of which would topple the nex
 previous one standing, the rules Entailment, Substitution, Transitivity, Disjunction and
 Conjunction yield that if some rock fell then none would (`rocks`). A conditional between
 propositions, sets of worlds, satisfies Substitution of logical equivalents by its type, so the
-derivation is a theorem about every such conditional; the conditional between sets of states
-does not.
+derivation is a theorem about every such conditional. Disjunction is used only for exclusive
+disjuncts.
 
 ## Implementation notes
 
@@ -46,8 +46,6 @@ represented. The consequent of `would` is an inexact content, an upper set of st
 ## References
 
 * [fine-2012]
-* [fine-2017a]
-* [lewis-1973b]
 -/
 
 @[expose] public section
@@ -66,7 +64,7 @@ inexactly verify `C`. -/
 def would (outcome : W → SetRel S S) (A : Set S) (C : UpperSet S) : Set W :=
   {w | (outcome w).image A ⊆ C}
 
-variable {outcome : W → SetRel S S} {A A' B X : Set S} {C C' : UpperSet S} {w : W}
+variable {outcome : W → SetRel S S} {A A' B D E : Set S} {C C' : UpperSet S} {w : W}
 
 theorem mem_would : w ∈ would outcome A C ↔ (outcome w).image A ⊆ C := Iff.rfl
 
@@ -74,29 +72,39 @@ theorem would_union : would outcome (A ∪ B) C = would outcome A C ∩ would ou
   Set.ext fun _ ↦ by
     simp only [mem_would, SetRel.image_union, Set.union_subset_iff, Set.mem_inter_iff]
 
-/-- Inclusive Disjunction, with its converse, for `X` the fusions of a verifier of each
-disjunct. -/
+/-- The fusions of the compatible pairs of a state from each set, the exact verifiers of a
+conjunction. -/
+def fusions (A B : Set S) : Set S := {d | ∃ a ∈ A, ∃ b ∈ B, IsLUB {a, b} d}
+
+/-- Inclusive Disjunction. -/
 theorem inclusive_disjunction :
-    would outcome (A ∪ B ∪ X) C = would outcome A C ∩ would outcome B C ∩ would outcome X C := by
+    would outcome A C ∩ would outcome B C ∩ would outcome (fusions A B) C ⊆
+      would outcome (A ∪ B ∪ fusions A B) C := by
   rw [would_union, would_union]
 
-/-- By BC, a state inexactly verifies both of two statements exactly when it contains a fusion
-of a verifier of each. -/
-theorem mem_upperClosure_sup_iff [IsBoundedComplete S] {B C : Set S} {u : S} :
-    u ∈ upperClosure B ⊔ upperClosure C ↔ ∃ b ∈ B, ∃ c ∈ C, ∃ d, IsLUB {b, c} d ∧ d ≤ u := by
+/-- By BC, a state contains a fusion of a verifier of each of two statements exactly when it
+contains a verifier of each. -/
+theorem upperClosure_fusions [IsBoundedComplete S] :
+    upperClosure (fusions D E) = upperClosure D ⊔ upperClosure E := by
+  refine SetLike.ext fun u ↦ ?_
   simp only [UpperSet.mem_sup_iff, mem_upperClosure]
   constructor
-  · rintro ⟨⟨b, hb, hbu⟩, c, hc, hcu⟩
-    obtain ⟨d, hd⟩ := IsBoundedComplete.exists_isLUB_of_bddAbove b c (Compat.of_le hbu hcu)
-    exact ⟨b, hb, c, hc, d, hd, hd.2 (mem_upperBounds_pair.mpr ⟨hbu, hcu⟩)⟩
-  · rintro ⟨b, hb, c, hc, d, hd, hdu⟩
+  · rintro ⟨d, ⟨b, hb, c, hc, hd⟩, hdu⟩
     obtain ⟨hbd, hcd⟩ := mem_upperBounds_pair.mp hd.1
     exact ⟨⟨b, hb, hbd.trans hdu⟩, c, hc, hcd.trans hdu⟩
+  · rintro ⟨⟨b, hb, hbu⟩, c, hc, hcu⟩
+    obtain ⟨d, hd⟩ := IsBoundedComplete.exists_isLUB_of_bddAbove b c (Compat.of_le hbu hcu)
+    exact ⟨d, ⟨b, hb, c, hc, hd⟩, hd.2 (mem_upperBounds_pair.mpr ⟨hbu, hcu⟩)⟩
 
-/-- Conjunction, with its converse. -/
-theorem conjunction : would outcome A (C ⊔ C') = would outcome A C ∩ would outcome A C' :=
+theorem would_sup : would outcome A (C ⊔ C') = would outcome A C ∩ would outcome A C' :=
   Set.ext fun _ ↦ by
     simp only [mem_would, UpperSet.coe_sup, Set.subset_inter_iff, Set.mem_inter_iff]
+
+/-- Conjunction: by BC the outcome contains the fusion of the verifiers it contains. -/
+theorem conjunction [IsBoundedComplete S] :
+    would outcome A (upperClosure D) ∩ would outcome A (upperClosure E) ⊆
+      would outcome A (upperClosure (fusions D E)) := by
+  rw [upperClosure_fusions, would_sup]
 
 -- Exact Strengthening
 theorem exact_strengthening (h : A' ⊆ A) : would outcome A C ⊆ would outcome A' C :=
@@ -135,12 +143,13 @@ end Clause
 /-! ### The rocks -/
 
 /-- For a conditional between propositions that satisfies Entailment, Transitivity, Disjunction
-and infinitary Conjunction, Positive Effect and Negative Effect make it a counterfactual
-consequence of some rock's falling that no rock falls. -/
+for exclusive disjuncts and infinitary Conjunction, Positive Effect and Negative Effect make it
+a counterfactual consequence of some rock's falling that no rock falls. -/
 theorem rocks {W : Type*} (imp : Set W → Set W → Prop) (R : ℕ → Set W)
     (ent : ∀ {A C : Set W}, A ⊆ C → imp A C)
     (trans : ∀ {A B C : Set W}, imp A B → imp (A ∩ B) C → imp A C)
-    (disj : ∀ {A B C : Set W}, imp A C → imp B C → imp (A ∪ B) C)
+    (disj : ∀ {A B C : Set W},
+      Disjoint A B → imp A C → imp B C → imp (A ∪ B) C)
     (conj : ∀ {A : Set W} {C : ℕ → Set W}, (∀ n, imp A (C n)) → imp A (⋂ n, C n))
     (pos : ∀ n, imp (R n) (R (n + 1))) (neg : ∀ n, imp (R (n + 1)) (R n)ᶜ) :
     imp (⋃ n, R n) (⋃ n, R n)ᶜ := by
@@ -161,19 +170,24 @@ theorem rocks {W : Type*} (imp : Set W → Set W → Prop) (R : ℕ → Set W)
   have step₁ (k : ℕ) : imp (R k ∪ ((R k)ᶜ ∩ R (k + 1))) (R k)ᶜ :=
     trans' (B := R (k + 1))
       (fun x hx ↦ by by_cases h : x ∈ R k; exacts [.inl h, .inr ⟨h, hx⟩])
-      (disj (pos k) (ent Set.inter_subset_right)) (neg k)
+      (disj (Set.disjoint_left.mpr fun _ hx h ↦ h.1 hx) (pos k) (ent Set.inter_subset_right))
+      (neg k)
   have step₂ (k : ℕ) : imp (T k) (R k)ᶜ := by
-    have h := disj (step₁ k) (ent (A := T k ∩ (R k)ᶜ) Set.inter_subset_right)
-    have e : R k ∪ ((R k)ᶜ ∩ R (k + 1)) ∪ (T k ∩ (R k)ᶜ) = T k := by
+    have hd : Disjoint (R k ∪ ((R k)ᶜ ∩ R (k + 1))) (T k ∩ (R k)ᶜ ∩ (R (k + 1))ᶜ) :=
+      Set.disjoint_left.mpr fun _ hx h ↦ hx.elim (fun h' ↦ h.1.2 h') fun h' ↦ h.2 h'.2
+    have h := disj hd (step₁ k) (ent fun _ hx ↦ hx.1.2)
+    have e : R k ∪ ((R k)ᶜ ∩ R (k + 1)) ∪ (T k ∩ (R k)ᶜ ∩ (R (k + 1))ᶜ) = T k := by
       ext x
       constructor
-      · rintro ((hx | ⟨-, hx⟩) | ⟨hx, -⟩)
+      · rintro ((hx | ⟨-, hx⟩) | ⟨⟨hx, -⟩, -⟩)
         · exact Set.mem_iUnion.mpr ⟨0, hx⟩
         · exact Set.mem_iUnion.mpr ⟨1, hx⟩
         · exact hx
       · intro hx
         by_cases h : x ∈ R k
-        exacts [.inl (.inl h), .inr ⟨hx, h⟩]
+        · exact .inl (.inl h)
+        · by_cases h' : x ∈ R (k + 1)
+          exacts [.inl (.inr ⟨h, h'⟩), .inr ⟨⟨hx, h⟩, h'⟩]
     rwa [e] at h
   have key (k : ℕ) : imp (T 0) (T k) ∧ imp (T 0) (R k)ᶜ := by
     induction k with
