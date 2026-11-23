@@ -51,27 +51,13 @@ taken into account. The examples are rows of `Data.Examples.VanRooy2003`.
 
 namespace VanRooy2003
 
-open MeasureTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory Question
 
 universe u
 
 variable {W : Type u} {A G R : Type*}
 
 /-! ### Resolving a decision problem -/
-
-/-- Information `C` resolves the decision problem with utility `U` when some action is at least
-as good as every other in every world of `C`. -/
-def IsResolved (U : W → A → ℝ) (C : Set W) : Prop := ∃ a, ∀ b, ∀ w ∈ C, U w b ≤ U w a
-
-/-- The proposition an action induces is the set of worlds where no action is strictly
-better. -/
-def optimalityRegion (U : W → A → ℝ) (a : A) : Set W := {w | ∀ b, U w b ≤ U w a}
-
-/-- Information resolves the decision problem exactly when it lies within the optimality
-region of some action. -/
-theorem isResolved_iff_exists_subset_optimalityRegion (U : W → A → ℝ) (C : Set W) :
-    IsResolved U C ↔ ∃ a, C ⊆ optimalityRegion U a :=
-  ⟨fun ⟨a, h⟩ ↦ ⟨a, fun _ hw b ↦ h b _ hw⟩, fun ⟨a, h⟩ ↦ ⟨a, fun _ _ hw ↦ h hw _⟩⟩
 
 theorem iUnion_optimalityRegion [Finite A] [Nonempty A] (U : W → A → ℝ) :
     ⋃ a, optimalityRegion U a = Set.univ :=
@@ -137,7 +123,7 @@ theorem newspaper_optimalityRegions :
 /-- The mention-some answer *at least at the station* resolves the problem although it is only
 a partial answer to the partition question. -/
 theorem newspaper_station_resolves : IsResolved newspaper ({.station, .both} : Set NewsW) :=
-  (isResolved_iff_exists_subset_optimalityRegion _ _).2
+  isResolved_iff_exists_subset_optimalityRegion.2
     ⟨.station, newspaper_optimalityRegions.1.ge⟩
 
 private theorem newspaper_value : decisionValue newspaper newsPrior = 2 / 3 := by
@@ -501,13 +487,12 @@ instance : MeasurableSpace Address := ⊤
 instance : DiscreteMeasurableSpace Address := ⟨fun _ ↦ trivial⟩
 
 theorem liveIn_visit_better (μ : Measure Address) [IsProbabilityMeasure μ] :
-    Question.Better visit μ (Setoid.ker Address.city) ⊥ := by
-  refine Question.better_of_lt_of_le_ker visit μ (fun w v h ↦ funext fun c ↦ ?_)
+    Better visit μ (Setoid.ker Address.city) ⊥ := by
+  refine better_of_isResolved_of_lt visit μ (fun w ↦ visit_isResolved w.city fun _ hv ↦ hv)
     (bot_lt_iff_ne_bot.2 fun h ↦ ?_)
-  · simp only [visit, Setoid.ker_def.1 h]
-  · have : Setoid.ker Address.city .amsterdam₁ .amsterdam₂ := rfl
-    rw [h, Setoid.bot_def] at this
-    exact absurd this (by decide)
+  have : Setoid.ker Address.city .amsterdam₁ .amsterdam₂ := rfl
+  rw [h, Setoid.bot_def] at this
+  exact absurd this (by decide)
 
 /-! #### Conceptual covers -/
 
