@@ -26,8 +26,9 @@ outcome at `w` of every exact verifier of `A` inexactly verifies `C`: the image 
 `outcome w` is contained in `C`. From the form of this clause alone the counterfactual
 satisfies Inclusive Disjunction (`inclusive_disjunction`), Conjunction
 (`conjunction`), Exact Strengthening, Inexact Weakening and Triviality; when outcomes contain
-the state imposed it satisfies Identity, and when a state within a world has an outcome within
-it, Modus Ponens (`modus_ponens`).
+the state imposed it satisfies Identity, when a state within a world has an outcome within
+it, Modus Ponens (`modus_ponens`), and when an outcome of a state is an outcome of its fusion
+with any part of that outcome, Transitivity (`transitivity`).
 
 The paper begins from a derivation: for rocks each of which would topple the next and leave the
 previous one standing, the rules Entailment, Substitution, Transitivity, Disjunction and
@@ -111,14 +112,25 @@ theorem identity (h : ∀ w t u, (t, u) ∈ outcome w → t ≤ u) :
     would outcome A (upperClosure A) = Set.univ :=
   Set.eq_univ_of_forall fun w u ⟨t, ht, htu⟩ ↦ ⟨t, ht, h w t u htu⟩
 
-/-- Modus Ponens, from Actuality: a state within a world has an outcome within it. Here the
-worlds are states. -/
-theorem modus_ponens {outcome : S → SetRel S S}
-    (h : ∀ w t, t ≤ w → ∃ u ≤ w, (t, u) ∈ outcome w) {w : S} (hw : w ∈ would outcome A C)
-    (hA : w ∈ upperClosure A) : w ∈ C := by
+/-- Modus Ponens, from Actuality: a state within a world has an outcome within it. The state
+of the world `w` is `state w`. -/
+theorem modus_ponens (state : W → S)
+    (h : ∀ w t, t ≤ state w → ∃ u ≤ state w, (t, u) ∈ outcome w) (hw : w ∈ would outcome A C)
+    (hA : state w ∈ upperClosure A) : state w ∈ C := by
   obtain ⟨t, ht, htw⟩ := hA
   obtain ⟨u, huw, hu⟩ := h w t htw
   exact C.upper huw (hw ⟨t, ht, hu⟩)
+
+/-- Transitivity, from Inclusion and Incorporation: an outcome of a state is an outcome of its
+fusion with any part of that outcome. -/
+theorem transitivity [IsBoundedComplete S] (incl : ∀ w t u, (t, u) ∈ outcome w → t ≤ u)
+    (inc : ∀ w t u u' r, (t, u) ∈ outcome w → u' ≤ u → IsLUB {t, u'} r → (r, u) ∈ outcome w) :
+    would outcome A (upperClosure B) ∩ would outcome (A.lubs B) C ⊆ would outcome A C := by
+  rintro w ⟨h₁, h₂⟩ u ⟨t, ht, htu⟩
+  obtain ⟨u', hu', hu'u⟩ := h₁ ⟨t, ht, htu⟩
+  obtain ⟨r, hr⟩ := IsBoundedComplete.exists_isLUB_of_bddAbove t u'
+    ⟨u, mem_upperBounds_pair.mpr ⟨incl w t u htu, hu'u⟩⟩
+  exact h₂ ⟨r, ⟨t, ht, u', hu', hr⟩, inc w t u u' r htu hu'u hr⟩
 
 end Clause
 

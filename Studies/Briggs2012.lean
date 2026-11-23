@@ -9,6 +9,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Causation.CausalModel.Dependence
 public import Linglib.Core.Data.Set.Sups
+public import Studies.Fine2012
 
 /-!
 # Briggs (2012): Interventionist Counterfactuals
@@ -32,6 +33,14 @@ variables the counterfactual from a conjunction is a nested counterfactual (`wou
 second intervention settles a variable the first did, it prevails
 (`CausalModel.intervene_intervene`), which gives the paper's equivalence between a simple and a
 right-nested counterfactual (`would_singleton_nested`).
+
+A causal model is a state space in the sense of [fine-2012]. Its transition relation
+`outcome M u` relates a state to the assignments that satisfy the equations of the submodel the
+state generates, in the context `u`, and the counterfactual with a counterfactual-free
+consequent is the truth clause of that paper for this relation (`would_outcome`). The relation
+satisfies its conditions Inclusion (`le_of_mem_outcome`), Incorporation
+(`mem_outcome_of_isLUB`) and, in an acyclic model, Actuality (`mem_outcome_solve`), so modus
+ponens holds for a counterfactual-free consequent (`solve_mem_of_mem_would_holds`).
 
 In the execution model the captain signals when the court orders, each executioner fires when
 the captain signals, and the prisoner dies when either fires. With a counterfactual in the
@@ -118,10 +127,8 @@ theorem would_lubs (A B : Set (∀ v, Part (α v))) (φ : CausalModel U V α →
     rw [intervene_intervene_of_isLUB hc] at hu'
     exact hu'
 
+-- (CM11): a simple counterfactual as a right-nested one
 open Classical in
-/-- (CM11): where `b` and `b'` settle the same variables, the counterfactual from the fusion of
-`a`, `b` and `c` is the counterfactual from the fusion of `a` and `b'` of the counterfactual
-from the fusion of `b` and `c`. -/
 theorem would_singleton_nested {a b b' c ab' bc abc : ∀ v, Part (α v)}
     (φ : CausalModel U V α → Set U) (hab' : IsLUB {a, b'} ab') (hbc : IsLUB {b, c} bc)
     (habc : IsLUB {a, bc} abc) (hb : ∀ v, (b v).Dom ↔ (b' v).Dom) :
@@ -157,6 +164,84 @@ def holds (C : Set (∀ v, α v)) (N : CausalModel U V α) : Set U :=
   {u | ∀ x, Function.IsFixedPt (N.step u) x → x ∈ C}
 
 end States
+
+/-! ### The causal model as a state space -/
+
+section Outcome
+
+variable {U V : Type*} {α : V → Type*} (M : CausalModel U V α)
+
+open Classical in
+/-- The transition relation of a causal model: an outcome of imposing a state in a context is
+an assignment satisfying the equations of the submodel the state generates. -/
+noncomputable def outcome (u : U) : SetRel (∀ v, Part (α v)) (∀ v, Part (α v)) :=
+  {(s, t) | ∃ x, Function.IsFixedPt ((M.intervene s).step u) x ∧ t = fun v ↦ Part.some (x v)}
+
+variable {M} {u : U} {s t t' r : ∀ v, Part (α v)}
+
+/-- The counterfactual with a counterfactual-free consequent is the truth clause of
+[fine-2012] for the transition relation of the model. -/
+theorem would_outcome (A : Set (∀ v, Part (α v))) (C : UpperSet (∀ v, Part (α v))) :
+    Fine2012.would (outcome M) A C =
+      would M A (holds {x | (fun v ↦ Part.some (x v)) ∈ C}) := by
+  ext u
+  constructor
+  · intro h s hs x hx
+    exact h ⟨s, hs, x, hx, rfl⟩
+  · rintro h t ⟨s, hs, x, hx, rfl⟩
+    exact h hs x hx
+
+theorem some_mem_upperClosure_image_iff {C : Set (∀ v, α v)} {x : ∀ v, α v} :
+    (fun v ↦ Part.some (x v)) ∈ upperClosure ((fun (y : ∀ v, α v) v ↦ Part.some (y v)) '' C) ↔
+      x ∈ C := by
+  refine ⟨?_, fun hx ↦ ⟨_, ⟨x, hx, rfl⟩, le_rfl⟩⟩
+  rintro ⟨_, ⟨c, hc, rfl⟩, hle⟩
+  rwa [← funext fun v ↦ Part.some_le_some.mp (hle v)]
+
+theorem would_holds (A : Set (∀ v, Part (α v))) (C : Set (∀ v, α v)) :
+    would M A (holds C) = Fine2012.would (outcome M) A
+      (upperClosure ((fun (y : ∀ v, α v) v ↦ Part.some (y v)) '' C)) := by
+  rw [would_outcome]
+  simp only [some_mem_upperClosure_image_iff, Set.ofPred_mem_eq]
+
+open Classical in
+-- Inclusion: an outcome contains the state imposed
+theorem le_of_mem_outcome (h : (s, t) ∈ outcome M u) : s ≤ t := by
+  obtain ⟨x, hx, rfl⟩ := h
+  refine Part.pi_le_iff.mpr fun v hv ↦ ?_
+  rw [← congrFun hx v, step_apply, intervene_eqn_of_dom hv, Part.some_get]
+
+open Classical in
+-- Incorporation: an outcome of a state is an outcome of its fusion with a part of the outcome
+theorem mem_outcome_of_isLUB (h : (s, t) ∈ outcome M u) (ht : t' ≤ t) (hr : IsLUB {s, t'} r) :
+    (r, t) ∈ outcome M u := by
+  have hrt : r ≤ t := hr.2 (mem_upperBounds_pair.mpr ⟨le_of_mem_outcome h, ht⟩)
+  obtain ⟨x, hx, rfl⟩ := h
+  refine ⟨x, funext fun v ↦ ?_, rfl⟩
+  by_cases hv : (r v).Dom
+  · rw [step_apply, intervene_eqn_of_eq_some (Part.pi_le_iff.mp hrt v hv)]
+  · have hs : s v = ⊥ := Part.eq_bot_iff_not_dom.mpr fun h ↦
+      hv (Part.Dom.mono ((mem_upperBounds_pair.mp hr.1).1 v) h)
+    rw [step_apply, intervene_eqn_of_eq_bot (Part.eq_bot_iff_not_dom.mpr hv),
+      ← intervene_eqn_of_eq_bot hs]
+    exact congrFun hx v
+
+open Classical in
+-- Actuality: a state within the actual world has the actual world as an outcome
+theorem mem_outcome_solve [∀ v, Nonempty (α v)] [M.IsAcyclic]
+    (h : s ≤ fun v ↦ Part.some (M.solve u v)) :
+    (s, fun v ↦ Part.some (M.solve u v)) ∈ outcome M u :=
+  ⟨M.solve u, isFixedPt_iff_eq_solve.mpr (solve_intervene_eq_iff.mpr h).symm, rfl⟩
+
+-- modus ponens for a counterfactual-free consequent
+theorem solve_mem_of_mem_would_holds [∀ v, Nonempty (α v)] [M.IsAcyclic]
+    {A : Set (∀ v, Part (α v))} {C : Set (∀ v, α v)} (hu : u ∈ would M A (holds C))
+    (hA : (fun v ↦ Part.some (M.solve u v)) ∈ upperClosure A) : M.solve u ∈ C := by
+  rw [would_holds] at hu
+  exact some_mem_upperClosure_image_iff.mp (Fine2012.modus_ponens
+    (fun u v ↦ Part.some (M.solve u v)) (fun _ _ h ↦ ⟨_, le_rfl, mem_outcome_solve h⟩) hu hA)
+
+end Outcome
 
 /-! ### The execution model -/
 
