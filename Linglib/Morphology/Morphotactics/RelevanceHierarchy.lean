@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Morphotactics.Template.Scale
 public import Mathlib.Order.Basic
 public import Mathlib.Data.List.Sort
 public import Mathlib.Tactic.DeriveFintype
@@ -16,15 +17,11 @@ does not predict which categories are most often inflectional: generality works 
 relevant, so inflection is likeliest in the middle of the scale.
 
 `RelevanceHierarchy` is a comparative concept, not a universal slot inventory: languages own the
-slot types of their `AffixTemplate`s (`Mayan.VerbSlot`, `Japanese.Verb.Slot`), and a relevance claim
+slot types of their templates (`Mayan.VerbSlot`, `Japanese.Verb.Slot`), and a relevance claim
 pulls the order back along a partial map from slots to categories supplied by the study that
-draws the comparison. A slot sequence read stem-outward respects the hierarchy when it is
-`List.SortedLE`.
-
-## Main definitions
-
-* `Morphology.RelevanceHierarchy`: Bybee's six categories, linearly ordered from the most
-  relevant.
+draws the comparison. A template's suffixes respect the hierarchy under such a map `cat` when
+`Morphotactics.Template.SuffixesAscend cat` holds, and its prefixes when
+`Morphotactics.Template.PrefixesAscend cat` does.
 
 ## Implementation notes
 

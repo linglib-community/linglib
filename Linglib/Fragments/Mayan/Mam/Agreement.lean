@@ -68,7 +68,8 @@ def defaultSetB : List Morphology.Morph := [.procl "tz'"]
 
 /-- The position classes of the verbal complex, the aspect marker, Set B and Set A before the
 stem and no status suffix. -/
-def template : Morphology.AffixTemplate Mayan.VerbSlot := { prefixSlots := [.aspect, .setB, .setA] }
+def template : Morphology.Morphotactics.Template Mayan.VerbSlot :=
+  { prefixSlots := [.aspect, .setB, .setA] }
 
 /-- Set A on the transitive subject and Set B on the intransitive subject in every aspect; the
 object is not cross-referenced, the verb carrying the default Set B whatever the object. -/

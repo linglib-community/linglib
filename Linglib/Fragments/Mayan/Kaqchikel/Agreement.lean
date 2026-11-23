@@ -44,7 +44,7 @@ open Mayan (ExponentTable MarkerSet)
 
 /-- The Kaqchikel verbal complex has the aspect marker, Set B and Set A before the stem and the
 status suffix after it ([preminger-2014]). -/
-def template : Morphology.AffixTemplate Mayan.VerbSlot :=
+def template : Morphology.Morphotactics.Template Mayan.VerbSlot :=
   { prefixSlots := [.aspect, .setB, .setA], suffixSlots := [.status] }
 
 /-- Kaqchikel is ergative in every aspect but the progressive, where in the construction with

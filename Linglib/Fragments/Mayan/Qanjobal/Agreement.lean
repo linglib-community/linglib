@@ -48,7 +48,7 @@ open Mayan (ExponentTable MarkerSet)
 
 /-- The Q'anjob'al verbal complex has the aspect marker, Set B and Set A before the stem and the
 status suffix after it ([mateo-toledo-2008]). -/
-def template : Morphology.AffixTemplate Mayan.VerbSlot :=
+def template : Morphology.Morphotactics.Template Mayan.VerbSlot :=
   { prefixSlots := [.aspect, .setB, .setA], suffixSlots := [.status] }
 
 /-- Q'anjob'al is ergative in every clause with a preverbal aspect marker, the imperfective

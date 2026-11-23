@@ -12,7 +12,7 @@ same position cannot co-occur. These properties tend to hold of individual forma
 of the whole string, so a template may contain a position whose fillers stack, as the voice
 suffixes of the Turkish verb do.
 
-An `AffixTemplate` lists the positions of a word's prefixes and of its suffixes and marks those
+A `Template` lists the positions of a word's prefixes and of its suffixes and marks those
 that stack. It admits [the strings over its positions, in their order, in which only stacking
 positions repeat](##language). Each position may be skipped, so these strings are [closed under
 dropping a filler](##isSublistClosed_language) and [regular](##isRegular_language). Order and
@@ -35,11 +35,11 @@ morphology, a CV skeleton, is `Autosegmental.Skeleton`, matched in
 
 @[expose] public section
 
-namespace Morphology
+namespace Morphology.Morphotactics
 
 /-- A word's position-class template, over the positions `Slot`. Slots are tags, not exponents:
 the exponents of each position live in the citing grammar. -/
-structure AffixTemplate (Slot : Type*) where
+structure Template (Slot : Type*) where
   /-- The prefix positions, word-edge inward. -/
   prefixSlots : List Slot := []
   /-- The suffix positions, stem-outward. -/
@@ -47,12 +47,13 @@ structure AffixTemplate (Slot : Type*) where
   /-- The positions whose fillers stack, any number of them in one word. -/
   stacking : Finset Slot := ∅
 
-namespace AffixTemplate
+namespace Template
 
-variable {Slot : Type*} (t : AffixTemplate Slot)
+variable {Slot : Type*} (t : Template Slot)
 
 /-- The positions in linear order, the stem left out. -/
 def slots : List Slot := t.prefixSlots ++ t.suffixSlots
+
 
 variable [DecidableEq Slot]
 
@@ -113,6 +114,13 @@ theorem mem_language_iff_sublist (ht : t.slots.Nodup) (h : t.stacking = ∅) :
     (pairwise_map.1 (sortedLE_iff_pairwise.1 hs)) ▸ hw
   exact (idxOf_inj (hw.subset ha)).1 (le_antisymm hab hba)
 
-end AffixTemplate
+/-- Fillers of one position cannot co-occur, unless the position stacks. -/
+theorem count_le_one_of_mem_language {a : Slot} (ha : a ∉ t.stacking) (hv : v ∈ t.language) :
+    v.count a ≤ 1 := by
+  by_cases hav : a ∈ v
+  · exact ((hv.2 a hav).2).resolve_left ha
+  · simp [count_eq_zero_of_not_mem hav]
 
-end Morphology
+end Template
+
+end Morphology.Morphotactics

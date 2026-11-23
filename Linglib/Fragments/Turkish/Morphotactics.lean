@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Turkish.Case
-public import Linglib.Morphology.Morphotactics.AffixTemplate
+public import Linglib.Morphology.Morphotactics.Template.Basic
 public import Linglib.Phonology.Hiatus
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Fragments.Turkish.Phonology
@@ -386,7 +386,7 @@ instance : DecidablePred (Exponent.IsThirdPlural (σ := σ)) := fun e ↦ by
 
 /-- The template of the finite verb lists its slots in the order of §8.2, each of which a verb
 may skip, the voice slot taking any number of suffixes. -/
-def template : Morphology.AffixTemplate Slot where
+def template : Morphology.Morphotactics.Template Slot where
   suffixSlots :=
     [.voice, .possibility, .negation, .auxiliary, .tam, .copula, .person, .generalizing]
   stacking := {.voice}
@@ -479,7 +479,8 @@ def forms : List (Σ σ, Exponent σ) → List Suffix
 
 /-- The template of the nominal lists the slots number, possession and case, in that order,
 each of which a nominal may skip (§8.1). -/
-def template : Morphology.AffixTemplate Slot := { suffixSlots := [.number, .possession, .case] }
+def template : Morphology.Morphotactics.Template Slot :=
+  { suffixSlots := [.number, .possession, .case] }
 
 /-- The case a case exponent realizes. -/
 def Exponent.toCase : Exponent .case → Case
