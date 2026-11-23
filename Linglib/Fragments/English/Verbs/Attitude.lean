@@ -96,7 +96,8 @@ holder's degree of certainty in the complement ([hawthorne-rothschild-spectre-20
 [koev-2026] (3), (7)–(10)), and takes the maximizers *fully*, *completely* and *entirely* ((12)).
 The fragment enters it on the confidence scale of *certain*, *sure* and *confident*. Besides a
 finite clause it takes an infinitive whose subject it raises to its object, an object that is no
-participant of its own (*believe Julia to be a princess*; [noonan-2007] §2.2). -/
+participant of its own (*believe Julia to be a princess*; [noonan-2007] §2.2) and that is the
+subject of the passive (*Julia is believed to be a princess*). -/
 def believe : Verb where
   morphs := [.root "believe"]
   levin := some Levin1993.Index.believe
@@ -104,7 +105,6 @@ def believe : Verb where
     [(.finiteClause, [some 0, some 1]), (toInfinitive.withObject, [some 0, none, some 1])]
     (controls := [none, some (.complement 0)])
   scaleDimension := some .confidence
-  passivizable := false
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
   complementSig := some .mono
@@ -196,7 +196,7 @@ def pray : Verb where
 
 /-- "expect" — preferential attitude verb, taking a finite clause, an infinitive its subject
 controls (*expect to win*), or one whose subject it raises to its object (*expect the bridge to
-collapse*). -/
+collapse*), which is the subject of the passive (*the bridge is expected to collapse*). -/
 def expect : Verb where
   morphs := [.root "expect"]
   levin := none
@@ -204,7 +204,6 @@ def expect : Verb where
     [(.finiteClause, [some 0, some 1]), (toInfinitive, [some 0, some 1]),
       (toInfinitive.withObject, [some 0, none, some 1])]
     (controls := [none, some .external, some (.complement 0)])
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
 

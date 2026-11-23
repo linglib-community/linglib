@@ -26,8 +26,9 @@ relation obeying the Control Principle of [chierchia-1984] [satisfies the weak
 schema](##Chierchia1989.weak_of_controlPrinciple), its propositional frame the modal claim of the
 principle.
 
-The English verbs bear the schema out as far as their entries record it. Every verb whose object
-controls [has a passive](##Chierchia1989.passivizable_of_object_control), the object surviving as
+The English verbs bear the schema out as far as their entries record it. No verb entered as
+lacking a passive [has an object that
+controls](##Chierchia1989.not_object_control_of_not_passivizable), the object surviving as
 subject, and a verb whose subject controls has a passive only if [it has a frame without a
 controlled complement](##Chierchia1989.exists_uncontrolled_of_passivizable), the weaker hypothesis
 Chierchia adopts for *teach* and *try*.
@@ -45,9 +46,11 @@ with the rest.
 * The default hierarchy of roles that fills in the controller, theme before goal before agent,
   is not tested: the entries of the English control verbs record no entailment profiles for their
   participants, so no role label is derivable for them.
-* The entries record whether a verb passivizes as one value for the verb, where the schema
-  predicts it frame by frame: *promise* passivizes with a noun-phrase object and not with an
-  infinitive. `exists_uncontrolled_of_passivizable` is the most the entries support.
+* The entries record whether a verb passivizes as one value for the verb, a passive unless the
+  entry says otherwise, where the schema predicts it frame by frame: *promise* passivizes with a
+  noun-phrase object and not with an infinitive. `exists_uncontrolled_of_passivizable` is the
+  most the entries support, and `not_object_control_of_not_passivizable` is stated of the verbs
+  entered as lacking a passive, since that a verb has one is the default.
 * Purpose clauses and control by the theme of a ditransitive are not formalized.
 
 ## References
@@ -123,9 +126,9 @@ end Schema
 open English.Verbs
 
 -- (11b)
-/-- A verb whose complement is controlled by its object has a passive. -/
-theorem passivizable_of_object_control : ∀ v ∈ verbs, ∀ d ∈ v.valency.diatheses,
-    d.controllerRole = some .P → v.passivizable = true := by
+/-- No verb entered as lacking a passive has a complement controlled by its object. -/
+theorem not_object_control_of_not_passivizable : ∀ v ∈ verbs, v.passivizable = false →
+    ∀ d ∈ v.valency.diatheses, d.controllerRole ≠ some .P := by
   decide +kernel
 
 -- (14), (15)
