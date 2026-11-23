@@ -205,7 +205,9 @@ variable {S : Type*} (g₀ : S → AR τ) (i : ι) (w : List S)
 
 theorem tierOffset_succ {k : ℕ} (hk : k < w.length) :
     tierOffset g₀ i w (k + 1) = tierOffset g₀ i w k + ((g₀ w[k]).word i).length := by
-  simp [tierOffset, List.take_succ, List.getElem?_eq_getElem hk]
+  unfold tierOffset
+  rw [List.take_add_one, List.getElem?_eq_getElem hk, Option.toList_some, List.map_append,
+    List.sum_append, List.map_singleton, List.sum_singleton]
 
 theorem tierOffset_mono : Monotone (tierOffset g₀ i w) :=
   monotone_nat_of_le_succ fun k ↦ by
