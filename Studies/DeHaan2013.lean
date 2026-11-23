@@ -81,11 +81,11 @@ theorem value?_eq_none_iff {es : List Evidential} :
       by_contra fun hn ↦ h₁ ⟨_, List.mem_map_of_mem he, hn⟩
     obtain ⟨_, hc, hn⟩ := h₂
     obtain ⟨e, he, rfl⟩ := List.mem_map.1 hc
-    simp only [true_iff, IsOfType]
-    exact ⟨⟨e, he, hn, h e he⟩, h⟩
+    simp only [true_iff]
+    exact ⟨⟨e, he, isOfType_iff.2 ⟨hn, h e he⟩⟩, h⟩
   · simp only [false_iff, not_and]
-    rintro ⟨e, he, hn, -⟩ -
-    exact h₂ ⟨_, List.mem_map_of_mem he, hn⟩
+    rintro ⟨e, he, hd⟩ -
+    exact h₂ ⟨_, List.mem_map_of_mem he, hd.nonempty⟩
 
 theorem ofCovers_perm {cs cs' : List (Finset Parameter)} (h : cs.Perm cs') :
     ofCovers cs = ofCovers cs' := by

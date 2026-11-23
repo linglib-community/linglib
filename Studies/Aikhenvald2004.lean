@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Order.OrdConnected
-public import Linglib.Semantics.Evidential.Basic
+public import Linglib.Semantics.Evidential.Paradigm
 public import Linglib.Fragments.Turkish.Evidentiality
 public import Linglib.Fragments.Abkhaz.Evidentiality
 public import Linglib.Fragments.Slavic.Bulgarian.Evidentiality
@@ -37,6 +37,12 @@ Bulgarian realize A2, their unmarked pasts read as evidentiality-neutral, Aymara
 Quechua B1, Tuyuca and Tariana D1. The Kashaya performative lies outside the six parameters, so
 a spontaneous remark realizes no kind; West Greenlandic's synonymous reported evidentials form no
 paradigm, though each, read as a system on its own, is A3; Euchee's auditory evidential is A5.
+
+Where several sources are at hand, Tuyuca and Tariana prefer their evidentials in the order
+visual, non-visual, inferred, reported, assumed, the order of their inventories. The assumed
+evidential is then used only when assumption is the one source at hand
+(`preferred_eq_assumed_iff`), and a speaker with both a report and visible results uses the
+inferred evidential (`tariana_preferred_inferred`).
 
 ## Implementation notes
 
@@ -247,6 +253,26 @@ theorem westGreenlandic (k : Kind) : ¬ Realizes WestGreenlandic.Evidentiality.e
 theorem westGreenlandic_A3 :
     ∀ e ∈ WestGreenlandic.Evidentiality.evidentials, Realizes [e] .A3 := by
   decide
+
+/-! ### Preferred evidentials -/
+
+-- Diagram 10.1
+theorem preferred_eq_assumed_iff (S : Finset Parameter) :
+    (preferred Tuyuca.Evidentiality.evidentials S = some Tuyuca.Evidentiality.assumed ↔
+        S = {.assumption}) ∧
+      (preferred Tariana.Evidentiality.evidentials S = some Tariana.Evidentiality.assumed ↔
+        S = {.assumption}) := by
+  revert S; decide +kernel
+
+theorem tariana_preferred_inferred :
+    preferred Tariana.Evidentiality.evidentials {.inference, .hearsay} =
+      some Tariana.Evidentiality.inferred := by
+  decide +kernel
+
+theorem tariana_preferred_singleton {es : List Evidential}
+    (h : es.Perm Tariana.Evidentiality.evidentials) (p : Parameter) :
+    preferred es {p} = preferred Tariana.Evidentiality.evidentials {p} :=
+  (tariana.wellFormed.perm h.symm).preferred_singleton_perm h p
 
 /-! ### Euchee -/
 

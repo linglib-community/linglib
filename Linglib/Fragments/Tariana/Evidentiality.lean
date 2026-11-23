@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Evidential.Defs
+public import Linglib.Semantics.Evidential.Term
 
 /-!
 # Tariana evidentiality
@@ -15,7 +15,7 @@ recorded.
 
 ## References
 
-* [aikhenvald-2004], §2.4
+* [aikhenvald-2004]
 -/
 
 @[expose] public section
@@ -39,7 +39,8 @@ def assumed : Evidential := { morphs := [.suff "sika"], covers := {.assumption} 
 /-- The reported recent past *-pidaka*. -/
 def reported : Evidential := { morphs := [.suff "pidaka"], covers := {.hearsay, .quotative} }
 
-/-- The recent-past evidentials: visual, non-visual, inferred, assumed and reported. -/
-def evidentials : List Evidential := [visual, nonvisual, inferred, assumed, reported]
+/-- The recent-past evidentials in order of preference: visual, non-visual, inferred, reported
+and assumed. -/
+def evidentials : List Evidential := [visual, nonvisual, inferred, reported, assumed]
 
 end Tariana.Evidentiality

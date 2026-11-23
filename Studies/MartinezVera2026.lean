@@ -5,7 +5,7 @@ public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
 public import Linglib.Semantics.ConventionalImplicature
-public import Linglib.Semantics.Evidential.Basic
+public import Linglib.Semantics.Evidential.Paradigm
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Linglib.Data.Examples.Readers
@@ -136,18 +136,16 @@ def biasedQuestion (s : A) (q : Set W) : Move A W := ⟨s, ∅, {q}⟩
 ((40c), (42c)), and `declare s e S` is the move of a declarative with evidential `e`, if the paper
 analyzes `e`. -/
 def declare (s : A) (e : Evidential) (S : TwoDim W (Set W)) : Option (Move A W) :=
-  match e.evidenceType? with
-  | some .attested => some (assert s S)
-  | some .reported => some (present s S)
-  | _ => none
+  if e.IsDirect then some (assert s S) else if e.IsReportative then some (present s S) else none
 
 theorem declare_of_isDirect {e : Evidential} (he : e.IsDirect) (S : TwoDim W (Set W)) :
     declare s e S = some (assert s S) := by
-  simp [declare, Evidential.evidenceType?_eq_some_iff.2 he]
+  simp [declare, he]
 
 theorem declare_of_isReportative {e : Evidential} (he : e.IsReportative)
     (S : TwoDim W (Set W)) : declare s e S = some (present s S) := by
-  simp [declare, Evidential.evidenceType?_eq_some_iff.2 he]
+  have hd : ¬ e.IsDirect := fun h ↦ by cases h.eq he
+  simp [declare, hd, he]
 
 @[simp] theorem declare_rka (S : TwoDim W (Set W)) : declare s rka S = some (assert s S) :=
   declare_of_isDirect s (by decide) S
@@ -156,7 +154,8 @@ theorem declare_of_isReportative {e : Evidential} (he : e.IsReportative)
   declare_of_isReportative s (by decide) S
 
 -- The paper does not analyze the inferential *-shi* (footnote 6).
-example (S : TwoDim W (Set W)) : declare s shi S = none := rfl
+example (S : TwoDim W (Set W)) : declare s shi S = none := by
+  simp [declare, show ¬ shi.IsDirect by decide, show ¬ shi.IsReportative by decide]
 
 end Move
 
@@ -763,7 +762,7 @@ theorem nonempty_contextSetOf_iff (he : r.evidential.IsDirect ∨ r.evidential.I
       Set.not_nonempty_iff_eq_empty]
     · refine ⟨∅, mem_contextSetOf_present_assert_compl _ _ (by simp [Context.mem_contextSetOf])
         ?_ (empty_notMem_happened _)⟩
-      simpa [sentence, withEvidential, evidence, evModel] using he.1.exists_mem
+      simpa [sentence, withEvidential, evidence, evModel] using he.nonempty.exists_mem
     · rw [← ofPred_notAtIssue_withEvidential_pure evModel]
       exact contextSetOf_update_assert_compl_notAtIssue _ _ rfl
         (by simp [Move.present, sentence, ofPred_notAtIssue_withEvidential_pure])

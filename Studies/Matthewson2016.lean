@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Universals
-public import Linglib.Semantics.Evidential.Defs
+public import Linglib.Semantics.Evidential.Term
 public import Linglib.Data.Examples.Matthewson2016
 public import Linglib.Fragments.Gitksan.Modals
 public import Linglib.Fragments.Statimcets.Modals

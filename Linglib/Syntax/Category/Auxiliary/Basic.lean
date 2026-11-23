@@ -7,7 +7,7 @@ module
 
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Pragmatics.SocialMeaning.Register
-public import Linglib.Semantics.Evidential.Defs
+public import Linglib.Semantics.Evidential.Term
 public import Linglib.Semantics.Modality.Typology
 
 /-!
