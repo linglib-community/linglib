@@ -62,12 +62,11 @@ operation applies to the output of the one before it and not to the input (`feed
   paper lists, are not recorded.
 * `fusion` also joins two /a/s in successive nuclei, as in the derivation of [mɨ-bɨrak] from
   /m_-barak/.
-* `Silent` is decided from the left: an empty nucleus is realized when it is initial, when its
-  onset is a guttural, when the nucleus before it is silent, when a geminate follows, or when
-  its position is in the set `epenthesis` is given. `pronounced_eq_obligatory_iff` compares the
-  result with the obligatory realization under the Empty Category Principle, which is decided
-  from the right: they differ where the dissociated nucleus is the third of three empty nuclei,
-  where `epenthesis` gives C▪C_C▪C.
+* `epenthesis` marks the nuclei that `GovernmentPhonology.leftward` expresses, the realization
+  from the left, so that the derived forms satisfy the Empty Category Principle
+  (`emptyCategoryPrinciple_surface`). `pronounced_eq_obligatory_iff` compares it with the
+  obligatory realization, which is decided from the right: they differ where the dissociated
+  nucleus is the third of three empty nuclei, where the realization from the left gives C▪C_C▪C.
 * Trans-guttural harmony is optional, so `realizations` lists every option. `harmonized` reads
   one harmonized surface form back as an underlying form.
 * The postvocalic spirantization of b ([nɨβaħ]) is outside the analysis; `read` takes β as b.
@@ -328,10 +327,12 @@ def Nuc.melody : Nuc → Melody
 def nuclei (f : Form) : List Nucleus := f.map fun u ↦ { melody := u.v.melody }
 
 /-- The nuclei that must be expressed whatever follows: the first, since an initial empty CV
-unit needs its government (fn. 21), and one whose onset is a guttural, which needs an expressed
-licensor (25), unless the nucleus is final. -/
+unit needs its government (fn. 21); one whose onset is a guttural, which needs an expressed
+licensor (25), unless the nucleus is final; and one before a geminate, whose inner nucleus stays
+empty. -/
 def required (f : Form) : Finset ℕ :=
-  (Finset.range f.length).filter fun i ↦ i = 0 ∨ HasAt .A f i ∧ i + 1 < f.length
+  (Finset.range f.length).filter fun i ↦
+    i = 0 ∨ HasAt .A f i ∧ i + 1 < f.length ∨ GeminateInternal f (i + 1)
 
 /-- The nuclei of a form before epenthesis, those with a vowel expressed, so that only a
 contentful nucleus governs (23a). -/
@@ -369,25 +370,18 @@ def dissociation (f : Form) : Form :=
     | .shared _ => if IsGovernor actorship (lexical f) (i + 1) then ⟨u.c, .empty⟩ else u
     | _ => u
 
-/-- The empty nucleus at `i` stays silent: it is word-final or inside a geminate, or it is
-governed, being neither initial (no initial clusters), nor the licensor of a word-internal
-guttural (25), nor preceded by a silent nucleus (no triconsonantal clusters), nor followed by a
-geminate, nor in `R`. -/
-def Silent (R : Finset ℕ) (f : Form) : ℕ → Prop
-  | 0 => f[0]?.map (·.v) = some .empty ∧ (1 = f.length ∨ GeminateInternal f 0)
-  | i + 1 => f[i + 1]?.map (·.v) = some .empty ∧ (i + 2 = f.length ∨ GeminateInternal f (i + 1) ∨
-      ¬ (HasAt .A f (i + 1) ∨ Silent R f i ∨ GeminateInternal f (i + 2) ∨ i + 1 ∈ R))
+/-- The nucleus at `i` is expressed in the realization of the form from the left, in which the
+required nuclei and those of `R` are expressed and any other empty nucleus that the next can
+govern is silent (no triconsonantal clusters). -/
+def Realized (R : Finset ℕ) (f : Form) (i : ℕ) : Prop :=
+  ∃ x ∈ (leftward actorship (required f ∪ R) (nuclei f))[i]?, x.expressed = true
 
-instance instDecidableSilent (R : Finset ℕ) (f : Form) : ∀ i, Decidable (Silent R f i)
-  | 0 => inferInstanceAs (Decidable (_ ∧ _))
-  | i + 1 =>
-    have := instDecidableSilent R f i
-    inferInstanceAs (Decidable (_ ∧ (_ ∨ _ ∨ ¬ (_ ∨ _ ∨ _ ∨ _))))
+instance (R : Finset ℕ) (f : Form) (i : ℕ) : Decidable (Realized R f i) :=
+  inferInstanceAs (Decidable (∃ x ∈ _, _))
 
-/-- Epenthesis (30)–(31) marks the empty nuclei that must be realized, those that do not stay
-silent. -/
+/-- Epenthesis (30)–(31) marks the empty nuclei that are realized. -/
 def epenthesis (R : Finset ℕ) (f : Form) : Form :=
-  f.mapIdx fun i u ↦ if u.v = .empty ∧ ¬ Silent R f i then ⟨u.c, .mark⟩ else u
+  f.mapIdx fun i u ↦ if u.v = .empty ∧ Realized R f i then ⟨u.c, .mark⟩ else u
 
 /-- The derivation applies the operations in the order of (30), with the nuclei of `R` realized. -/
 def derive (R : Finset ℕ) (f : Form) : Form := epenthesis R (dissociation (fusion f))
@@ -508,13 +502,8 @@ theorem vowelAt_dissociation_iff (f : Form) (i : ℕ) (c : Phonology.Segment) (v
 
 theorem getElem?_epenthesis (R : Finset ℕ) (f : Form) (i : ℕ) :
     (epenthesis R f)[i]? =
-      f[i]?.map fun u ↦ if u.v = .empty ∧ ¬ Silent R f i then ⟨u.c, .mark⟩ else u :=
+      f[i]?.map fun u ↦ if u.v = .empty ∧ Realized R f i then ⟨u.c, .mark⟩ else u :=
   List.getElem?_mapIdx ..
-
-theorem Silent.empty {R : Finset ℕ} {f : Form} :
-    ∀ {i : ℕ}, Silent R f i → f[i]?.map (·.v) = some .empty
-  | 0, h => h.1
-  | _ + 1, h => h.1
 
 theorem map_c_epenthesis (R : Finset ℕ) (f : Form) (i : ℕ) :
     (epenthesis R f)[i]?.map (·.c) = f[i]?.map (·.c) := by
@@ -523,57 +512,38 @@ theorem map_c_epenthesis (R : Finset ℕ) (f : Form) (i : ℕ) :
   | none => rfl
   | some u => simp only [Option.map_some]; split_ifs <;> rfl
 
-theorem map_v_epenthesis_eq_empty_iff (R : Finset ℕ) (f : Form) (i : ℕ) :
-    (epenthesis R f)[i]?.map (·.v) = some .empty ↔ Silent R f i := by
-  rw [getElem?_epenthesis]
-  constructor
-  · intro h
-    cases hu : f[i]? with
-    | none => simp [hu] at h
-    | some u =>
-      simp only [hu, Option.map_some, Option.some.injEq] at h
-      split_ifs at h with hc
-      by_contra hs
-      exact hc ⟨h, hs⟩
-  · intro h
-    have he := h.empty
-    cases hu : f[i]? with
-    | none => simp [hu] at he
-    | some u =>
-      simp only [hu, Option.map_some, Option.some.injEq] at he ⊢
-      rw [ite_eq_right fun hc ↦ hc.2 h]
-      exact he
+theorem nuclei_epenthesis (R : Finset ℕ) (f : Form) : nuclei (epenthesis R f) = nuclei f := by
+  refine List.ext_getElem? fun i ↦ ?_
+  simp only [nuclei, List.getElem?_map, getElem?_epenthesis]
+  cases hu : f[i]? with
+  | none => rfl
+  | some u =>
+    simp only [Option.map_some]
+    split_ifs with hc
+    · simp [hc.1, Nuc.melody]
+    · rfl
 
-theorem silent_epenthesis (R : Finset ℕ) (f : Form) :
-    ∀ i, Silent R (epenthesis R f) i ↔ Silent R f i
-  | 0 => by
-    show (epenthesis R f)[0]?.map (·.v) = some .empty ∧
-        (1 = (epenthesis R f).length ∨ GeminateInternal (epenthesis R f) 0) ↔ Silent R f 0
-    rw [map_v_epenthesis_eq_empty_iff, geminateInternal_congr (map_c_epenthesis R f),
-      show (epenthesis R f).length = f.length from List.length_mapIdx]
-    exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, h.2⟩⟩
-  | i + 1 => by
-    show (epenthesis R f)[i + 1]?.map (·.v) = some .empty ∧
-        (i + 2 = (epenthesis R f).length ∨ GeminateInternal (epenthesis R f) (i + 1) ∨
-          ¬ (HasAt .A (epenthesis R f) (i + 1) ∨ Silent R (epenthesis R f) i ∨
-            GeminateInternal (epenthesis R f) (i + 2) ∨ i + 1 ∈ R)) ↔ Silent R f (i + 1)
-    rw [map_v_epenthesis_eq_empty_iff, geminateInternal_congr (map_c_epenthesis R f),
-      geminateInternal_congr (map_c_epenthesis R f), hasAt_congr (map_c_epenthesis R f),
-      silent_epenthesis R f i, show (epenthesis R f).length = f.length from List.length_mapIdx]
-    exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, h.2⟩⟩
+theorem required_epenthesis (R : Finset ℕ) (f : Form) :
+    required (epenthesis R f) = required f := by
+  simp only [required, show (epenthesis R f).length = f.length from List.length_mapIdx,
+    hasAt_congr (map_c_epenthesis R f), geminateInternal_congr (map_c_epenthesis R f)]
+
+theorem realized_epenthesis (R : Finset ℕ) (f : Form) (i : ℕ) :
+    Realized R (epenthesis R f) i ↔ Realized R f i := by
+  rw [Realized, nuclei_epenthesis, required_epenthesis, Realized]
 
 -- no nucleus is left to mark once epenthesis has applied
 theorem epenthesis_epenthesis (R : Finset ℕ) (f : Form) :
     epenthesis R (epenthesis R f) = epenthesis R f := by
   refine List.ext_getElem? fun i ↦ ?_
-  rw [getElem?_epenthesis]
-  cases hu : (epenthesis R f)[i]? with
+  rw [getElem?_epenthesis (f := epenthesis R f), getElem?_epenthesis]
+  cases hu : f[i]? with
   | none => rfl
   | some u =>
-    simp only [Option.map_some, Option.some.injEq]
-    refine ite_eq_right fun hc ↦ hc.2 ?_
-    rw [silent_epenthesis, ← map_v_epenthesis_eq_empty_iff, hu]
-    exact congrArg some hc.1
+    simp only [Option.map_some, Option.some.injEq, realized_epenthesis]
+    by_cases hc : u.v = .empty ∧ Realized R f i
+    · simp [hc]
+    · simp [hc]
 
 /-! ### Patterns and endings (§2.1) -/
 
@@ -902,6 +872,13 @@ theorem isGovernor_32a (s : WithBot Melody) :
 -- (25), (32a)
 theorem guttural_licensed : ∀ x : Example, ∀ f ∈ stem x, ∀ i < f.length, HasAt .A f i →
     IsLicensor actorship (surface (derive ∅ f)) i := by
+  decide +kernel
+
+-- the derived forms satisfy the Empty Category Principle
+theorem emptyCategoryPrinciple_surface : ∀ x : Example, ∀ f ∈ stem x,
+    surface (derive ∅ f) = leftward actorship (required (dissociation (fusion f)))
+        (nuclei (dissociation (fusion f))) ∧
+      EmptyCategoryPrinciple actorship (surface (derive ∅ f)) := by
   decide +kernel
 
 /-- The realizations of a sequence of nuclei that satisfy the Empty Category Principle, express
