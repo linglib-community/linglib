@@ -22,6 +22,12 @@ and benefactives are sources only, mood and illocutionary modification targets o
 tense and negation, which share their levels with modal categories, both. A source lies
 strictly below a category that is only a target (`source_lt_target`).
 
+The book gives a hierarchy for each side of volitivity, in which the modal categories of the
+other side do not appear (`GramCategory.nonVolitiveRow`, `GramCategory.volitiveRow`). The
+combined hierarchy restricts to the non-volitive one, and to the volitive one except that it
+separates negation from tense (`GramCategory.nonVolitiveRow_le_iff`,
+`GramCategory.volitiveRow_le_iff`).
+
 The three evidential categories lie on three levels, each at or below tense, so no monotone map
 into the hierarchy of [cinque-1999] sends one of them to its evidential mood and tense to its
 past tense (`not_monotone_of_moodEvidential`).
@@ -157,8 +163,8 @@ theorem isSource_iff (c : GramCategory) : c.IsSource ↔
     c ∈ [voice, benefactive, phasalAspect, perfImperfAspect, negation, tense] := by
   cases c <;> decide
 
-/-- Table 3.10: the potential targets of modality are aspect, tense, negation, mood and
-illocutionary modification. -/
+-- Table 3.10: the potential targets are aspect, tense, negation, mood and illocutionary
+-- modification.
 theorem isTarget_iff (c : GramCategory) : c.IsTarget ↔
     c ∈ [phasalAspect, perfImperfAspect, negation, tense, volitiveMood, illocutionaryMod] := by
   cases c <;> decide
@@ -179,6 +185,52 @@ theorem le_illocutionaryMod (c : GramCategory) : c ≤ illocutionaryMod := by
 theorem evidentiality_le_tense :
     evidentiality1 < tense ∧ evidentiality2 < tense ∧ evidentiality3 ≤ tense := by
   decide
+
+/-! ### The hierarchies of the two sides of volitivity -/
+
+/-- Table 3.5: the row of a category in the hierarchy with non-volitive modalities, counted from
+the bottom; the volitive categories are not in it. -/
+def nonVolitiveRow : GramCategory → Option ℕ
+  | voice | benefactive => some 0
+  | phasalAspect | dynamicModality => some 1
+  | perfImperfAspect | evidentiality1 => some 2
+  | negation | epistemic1 | evidentiality2 => some 3
+  | tense | epistemic2 | evidentiality3 => some 4
+  | epistemic3 => some 5
+  | illocutionaryMod => some 6
+  | boulomaicModality | deontic1 | deontic2 | volitiveMood => none
+
+/-- Table 3.6: the row of a category in the hierarchy with volitive modalities, counted from the
+bottom; the non-volitive modal categories are not in it. -/
+def volitiveRow : GramCategory → Option ℕ
+  | voice | benefactive => some 0
+  | phasalAspect | boulomaicModality => some 1
+  | perfImperfAspect | deontic1 => some 2
+  | tense | negation | deontic2 => some 3
+  | volitiveMood => some 4
+  | illocutionaryMod => some 5
+  | dynamicModality | epistemic1 | epistemic2 | epistemic3 | evidentiality1 | evidentiality2
+  | evidentiality3 => none
+
+-- On the categories of Table 3.5 the combined hierarchy is that table's.
+theorem nonVolitiveRow_le_iff (a b : GramCategory) :
+    ∀ i ∈ nonVolitiveRow a, ∀ j ∈ nonVolitiveRow b, (i ≤ j ↔ a ≤ b) := by
+  cases a <;> cases b <;> decide
+
+/-- On the categories of the hierarchy with volitive modalities, the combined hierarchy differs
+from it only in separating negation from tense, which share a row there. -/
+theorem volitiveRow_le_iff (a b : GramCategory) :
+    ∀ i ∈ volitiveRow a, ∀ j ∈ volitiveRow b, (i ≤ j ↔ a ≤ b ∨ b = negation ∧ a ≤ tense) := by
+  cases a <;> cases b <;> decide
+
+theorem isSome_nonVolitiveRow_or_volitiveRow (c : GramCategory) :
+    (nonVolitiveRow c).isSome ∨ (volitiveRow c).isSome := by
+  cases c <;> decide
+
+-- A modal category belongs to exactly one of the two hierarchies.
+theorem isSome_nonVolitiveRow_iff_of_isModal {c : GramCategory} (hc : c.IsModal) :
+    (nonVolitiveRow c).isSome ↔ ¬ (volitiveRow c).isSome := by
+  cases c <;> first | decide | exact hc.elim
 
 end GramCategory
 
