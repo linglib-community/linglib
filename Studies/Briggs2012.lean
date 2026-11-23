@@ -28,7 +28,10 @@ holds. So the counterfactual from a disjunction is the conjunction of the counte
 each disjunct and from their conjunction (`would_union_union`). Intervening with the fusion of
 two states is intervening with one and then the other
 (`CausalModel.intervene_intervene_of_isLUB`), so for antecedents that share none of their
-variables the counterfactual from a conjunction is a nested counterfactual (`would_lubs`).
+variables the counterfactual from a conjunction is a nested counterfactual (`would_lubs`). Where the
+second intervention settles a variable the first did, it prevails
+(`CausalModel.intervene_intervene`), which gives the paper's equivalence between a simple and a
+right-nested counterfactual (`would_singleton_nested`).
 
 In the execution model the captain signals when the court orders, each executioner fires when
 the captain signals, and the prisoner dies when either fires. With a counterfactual in the
@@ -115,8 +118,31 @@ theorem would_lubs (A B : Set (∀ v, Part (α v))) (φ : CausalModel U V α →
     rw [intervene_intervene_of_isLUB hc] at hu'
     exact hu'
 
+open Classical in
+/-- (CM11): where `b` and `b'` settle the same variables, the counterfactual from the fusion of
+`a`, `b` and `c` is the counterfactual from the fusion of `a` and `b'` of the counterfactual
+from the fusion of `b` and `c`. -/
+theorem would_singleton_nested {a b b' c ab' bc abc : ∀ v, Part (α v)}
+    (φ : CausalModel U V α → Set U) (hab' : IsLUB {a, b'} ab') (hbc : IsLUB {b, c} bc)
+    (habc : IsLUB {a, bc} abc) (hb : ∀ v, (b v).Dom ↔ (b' v).Dom) :
+    would M {abc} φ = would M {ab'} fun N ↦ would N {bc} φ := by
+  have key : (M.intervene ab').intervene bc = M.intervene abc :=
+    intervene_intervene (mem_upperBounds_pair.mp habc.1).2 fun v hd ↦ by
+      have h₁ := isLUB_pair_pi_iff.mp habc v
+      have h₂ := isLUB_pair_pi_iff.mp hab' v
+      have hbv : ¬(b v).Dom := fun h ↦
+        hd (Part.Dom.mono ((mem_upperBounds_pair.mp hbc.1).1 v) h)
+      rw [Part.eq_bot_iff_not_dom.mpr hd] at h₁
+      rw [Part.eq_bot_iff_not_dom.mpr fun h ↦ hbv ((hb v).mpr h)] at h₂
+      exact (le_antisymm (h₁.2 (mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩))
+        (mem_upperBounds_pair.mp h₁.1).1).trans
+        (le_antisymm (h₂.2 (mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩))
+          (mem_upperBounds_pair.mp h₂.1).1).symm
+  ext u
+  rw [mem_would_singleton, mem_would_singleton, mem_would_singleton, key]
+
+-- Exclusion: the states settling one variable at two values have no fusion
 omit M in
-/-- Exclusion: the states settling one variable at two values have no fusion. -/
 theorem not_compat_update_update_of_ne [DecidableEq V] {c : V} {x y : α c} (h : x ≠ y) :
     ¬ Compat (Function.update ⊥ c (Part.some x) : ∀ v, Part (α v))
       (Function.update ⊥ c (Part.some y)) := by

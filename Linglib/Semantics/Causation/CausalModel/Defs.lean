@@ -224,30 +224,39 @@ theorem intervene_eqn_of_eq_bot (h : s v = ⊥) (u : U) (y : ∀ v, α v) :
   funext v u y
   simp
 
-/-- Intervening with one partial assignment and then with a second that agrees with it wherever
-both settle a variable is intervening with their join. -/
-theorem intervene_intervene_of_isLUB {s₁ s₂ r : ∀ v, Part (α v)} [∀ v, Decidable (s₁ v).Dom]
-    [∀ v, Decidable (s₂ v).Dom] [∀ v, Decidable (r v).Dom] (h : IsLUB {s₁, s₂} r) :
-    (M.intervene s₁).intervene s₂ = M.intervene r := by
+/-- Intervening with `s₁` and then with `s₂` is intervening with a partial assignment that
+extends `s₂` and is `s₁` wherever `s₂` settles nothing. -/
+theorem intervene_intervene {s₁ s₂ r : ∀ v, Part (α v)} [∀ v, Decidable (s₁ v).Dom]
+    [∀ v, Decidable (s₂ v).Dom] [∀ v, Decidable (r v).Dom] (h₂ : s₂ ≤ r)
+    (h₁ : ∀ v, ¬(s₂ v).Dom → r v = s₁ v) : (M.intervene s₁).intervene s₂ = M.intervene r := by
   have key (v : V) (u : U) (y : ∀ v, α v) :
       ((M.intervene s₁).intervene s₂).eqn v u y = (M.intervene r).eqn v u y := by
-    have hv := isLUB_pair_pi_iff.mp h v
-    obtain ⟨h₁, h₂⟩ := mem_upperBounds_pair.mp hv.1
     by_cases hd₂ : (s₂ v).Dom
-    · rw [intervene_eqn_of_dom hd₂, intervene_eqn_of_dom (Part.Dom.mono h₂ hd₂)]
-      exact (Part.get_eq_of_mem (h₂ _ (Part.get_mem hd₂)) _).symm
+    · rw [intervene_eqn_of_dom hd₂, intervene_eqn_of_dom (Part.Dom.mono (h₂ v) hd₂)]
+      exact (Part.get_eq_of_mem (h₂ v _ (Part.get_mem hd₂)) _).symm
     · rw [intervene_eqn_of_eq_bot (Part.eq_bot_iff_not_dom.mpr hd₂)]
+      have e := h₁ v hd₂
       by_cases hd₁ : (s₁ v).Dom
-      · rw [intervene_eqn_of_dom hd₁, intervene_eqn_of_dom (Part.Dom.mono h₁ hd₁)]
-        exact (Part.get_eq_of_mem (h₁ _ (Part.get_mem hd₁)) _).symm
-      · have hr : r v = ⊥ := le_bot_iff.mp (hv.2 (mem_upperBounds_pair.mpr
-          ⟨(Part.eq_bot_iff_not_dom.mpr hd₁).le, (Part.eq_bot_iff_not_dom.mpr hd₂).le⟩))
-        rw [intervene_eqn_of_eq_bot (Part.eq_bot_iff_not_dom.mpr hd₁),
-          intervene_eqn_of_eq_bot hr]
+      · have hm : (s₁ v).get hd₁ ∈ r v := by rw [e]; exact Part.get_mem hd₁
+        rw [intervene_eqn_of_dom hd₁, intervene_eqn_of_dom (Part.dom_iff_mem.mpr ⟨_, hm⟩)]
+        exact (Part.get_eq_of_mem hm _).symm
+      · rw [intervene_eqn_of_eq_bot (Part.eq_bot_iff_not_dom.mpr hd₁),
+          intervene_eqn_of_eq_bot (e.trans (Part.eq_bot_iff_not_dom.mpr hd₁))]
   obtain ⟨g, eqn, hdep⟩ := M
   simp only [intervene, mk.injEq, true_and]
   funext v u y
   exact key v u y
+
+/-- Intervening with one partial assignment and then with a second that agrees with it wherever
+both settle a variable is intervening with their join. -/
+theorem intervene_intervene_of_isLUB {s₁ s₂ r : ∀ v, Part (α v)} [∀ v, Decidable (s₁ v).Dom]
+    [∀ v, Decidable (s₂ v).Dom] [∀ v, Decidable (r v).Dom] (h : IsLUB {s₁, s₂} r) :
+    (M.intervene s₁).intervene s₂ = M.intervene r :=
+  intervene_intervene (mem_upperBounds_pair.mp h.1).2 fun v hd ↦ by
+    have hv := isLUB_pair_pi_iff.mp h v
+    rw [Part.eq_bot_iff_not_dom.mpr hd] at hv
+    exact le_antisymm (hv.2 (mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩))
+      (mem_upperBounds_pair.mp hv.1).1
 
 /-- `M[c ← x]` is the submodel holding `c` at `x`, and `M[c ← x, d ← y]` the one holding `c` at
 `x` and `d` at `y`: the submodel of the partial assignment `[c ← x, d ← y]`. -/
