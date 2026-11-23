@@ -151,7 +151,7 @@ variable {W : Type*} (α β : W → Trivalent) {s : Set W}
 /-- Update with a proposition or with its negation. -/
 def lit : Bool → (W → Trivalent) → CCP.Partial W
   | true, p => ofTrivalent p
-  | false, p => CCP.Partial.neg (ofTrivalent p)
+  | false, p => PartialUpdate.neg (ofTrivalent p)
 
 /-- The context `C[p][q]`, for `p` and `q` propositions or their negations. -/
 def chain (b₁ : Bool) (p : W → Trivalent) (b₂ : Bool) (q : W → Trivalent) : CCP.Partial W :=

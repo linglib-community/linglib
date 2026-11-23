@@ -236,9 +236,10 @@ theorem mem_flex_rival_iff (h : Conflict φ ψ) (s t : Set W) :
       ⟨fun w hw ↦ (hs w hw.1).resolve_left (not_not.2 hw.2), rfl⟩, hset⟩
 
 theorem neg_flex_rival (h : Conflict φ ψ) {s : Set W} (hs : ∀ w ∈ s, φ w ≠ .undefined ∨ ψ w ≠ .undefined) :
-    neg (flex (Trivalent.gapExt ψ) (Trivalent.gapExt φ) (ofTrivalent φ) (ofTrivalent ψ)) s =
+    PartialUpdate.neg (flex (Trivalent.gapExt ψ) (Trivalent.gapExt φ) (ofTrivalent φ)
+        (ofTrivalent ψ)) s =
       Part.some {w ∈ s | φ w ≠ .true ∧ ψ w ≠ .true} := by
-  rw [CCP.Partial.neg, Part.eq_some_iff, Part.mem_map_iff]
+  rw [PartialUpdate.neg, Part.eq_some_iff, Part.mem_map_iff]
   refine ⟨_, (mem_flex_rival_iff h s _).2 ⟨hs, rfl⟩, ?_⟩
   ext w
   simp only [Set.mem_sdiff, Set.mem_sep_iff]
@@ -276,7 +277,8 @@ head of state performs the duty, and its negation (4) the others. -/
 theorem buganda :
     flex (Trivalent.gapExt presidentConducts) (Trivalent.gapExt kingOpens)
         (ofTrivalent kingOpens) (ofTrivalent presidentConducts) Set.univ = Part.some {0, 2} ∧
-      neg (flex (Trivalent.gapExt presidentConducts) (Trivalent.gapExt kingOpens)
+      PartialUpdate.neg (flex (Trivalent.gapExt presidentConducts)
+        (Trivalent.gapExt kingOpens)
         (ofTrivalent kingOpens) (ofTrivalent presidentConducts)) Set.univ =
         Part.some {1, 3} := by
   have hs : ∀ w ∈ (Set.univ : Set Buganda), kingOpens w ≠ .undefined ∨ presidentConducts w ≠ .undefined := by

@@ -73,8 +73,8 @@ in `F₁` on the cards of `F` has a variant in `F₂` on the cards of `F₁`. -/
 def universal (F F₁ F₂ : File W ℕ M) : File W ℕ M where
   dom := F.dom
   sat := {p ∈ F.sat | ∀ q ∈ F₁.sat, q.AgreeOn F.dom p → ∃ r ∈ F₂.sat, r.AgreeOn F₁.dom q}
-  mem_sat_of_agreeOn _ _ h hp :=
-    ⟨F.mem_sat_of_agreeOn h hp.1, fun q hq hqp ↦ hp.2 q hq (hqp.trans h.symm)⟩
+  mem_sat_of_agreeOn := fun _ _ h ⟨hp, hall⟩ ↦
+    ⟨F.mem_sat_of_agreeOn h hp, fun q hq hqp ↦ hall q hq (hqp.trans h.symm)⟩
 
 theorem universal_eq_sdiff (F F₁ F₂ : File W ℕ M) : universal F F₁ F₂ = F \ (F₁ \ F₂) :=
   File.ext rfl (Set.ext fun _ ↦ File.mem_sat_sdiff_sdiff.symm)
@@ -104,7 +104,7 @@ def fcp : LF M → FCP W ℕ M
   | defNP i N => FCP.definite i (FCP.ofFile (File.atomAt i fun _ ↦ N))
   | seq φ ψ => φ.fcp.seq ψ.fcp
   | every φ₁ φ₂ => fun F ↦ (φ₁.fcp F).bind fun F₁ ↦ (φ₂.fcp F₁).map fun F₂ ↦ universal F F₁ F₂
-  | neg ψ => FCP.neg ψ.fcp
+  | neg ψ => PartialUpdate.neg ψ.fcp
 
 /-- The cards a logical form adds to the file: those of its atoms and indefinites outside the
 scope of `every` and `not`. -/
@@ -121,7 +121,7 @@ def cards : LF M → Set ℕ
 theorem admits_atom : (atom ζ args).fcp.Admits F := trivial
 
 theorem admits_indef : (indef i N).fcp.Admits F ↔ i ∉ F.dom :=
-  FCP.admits_indefinite.trans (and_iff_left FCP.admits_ofFile)
+  FCP.admits_indefinite.trans (and_iff_left (FCP.admits_ofFile _ _))
 
 theorem admits_defNP : (defNP i N).fcp.Admits F ↔ i ∈ F.dom ∧ ∀ p ∈ F.sat, N (p.assignment i) :=
   FCP.admits_definite_ofFile
@@ -130,7 +130,7 @@ theorem admits_pro : (pro i).fcp.Admits F ↔ i ∈ F.dom :=
   admits_defNP.trans (and_iff_left fun _ _ ↦ trivial)
 
 theorem fcp_pro (h : i ∈ F.dom) : (pro i).fcp F = Part.some F :=
-  FCP.definite_ofFile_apply (File.le_atomAt_iff.2 ⟨h, fun _ _ ↦ trivial⟩) h
+  FCP.definite_ofFile_apply (File.le_atomAt_iff.mpr ⟨h, fun _ _ ↦ trivial⟩) h
 
 theorem fcp_indef (h : i ∉ F.dom) :
     (indef i N).fcp F = Part.some (F ⊓ File.atomAt i fun _ ↦ N) :=
@@ -145,7 +145,7 @@ theorem mem_dom_of_entails (h : F.Entails (FCP.ofFile (File.atomAt i fun _ ↦ N
     (hF : F.sat.Nonempty) (hN : ∃ m, ¬ N m) : i ∈ F.dom :=
   let ⟨p, hp⟩ := hF
   let ⟨m, hm⟩ := hN
-  File.mem_dom_of_forall_mem_sat (N := fun _ ↦ N) (FCP.entails_ofFile.1 h) ⟨p, hp, m, hm⟩
+  File.mem_dom_of_forall_mem_sat (N := fun _ ↦ N) (File.entails_ofFile.mp h) ⟨p, hp, m, hm⟩
 
 /-! ### Membership and projection through the rules -/
 
@@ -159,21 +159,22 @@ theorem mem_fcp_every :
 /-- Rule (III) is the conditional: the negation of the restrictor followed by the negated
 nuclear scope. -/
 theorem every_eq_cond (φ₁ φ₂ : LF M) :
-    (every φ₁ φ₂).fcp = FCP.cond (W := W) φ₁.fcp φ₂.fcp :=
+    (every φ₁ φ₂).fcp = PartialUpdate.cond (φ₁.fcp : FCP W ℕ M) φ₂.fcp :=
   funext fun _ ↦ Part.ext fun _ ↦ by
-    simp only [mem_fcp_every, FCP.mem_cond, universal_eq_sdiff]
+    simp only [mem_fcp_every, PartialUpdate.mem_cond, universal_eq_sdiff]
 
 theorem admits_seq : (φ.seq ψ).fcp.Admits F ↔ ∃ F₁ ∈ φ.fcp F, ψ.fcp.Admits F₁ :=
   ⟨fun ⟨h, h'⟩ ↦ ⟨_, Part.get_mem h, h'⟩,
-    fun ⟨_, h, h'⟩ ↦ Part.dom_iff_mem.2 ⟨_, mem_fcp_seq.2 ⟨_, h, Part.get_mem h'⟩⟩⟩
+    fun ⟨_, h, h'⟩ ↦ Part.dom_iff_mem.mpr ⟨_, mem_fcp_seq.mpr ⟨_, h, Part.get_mem h'⟩⟩⟩
 
 theorem admits_every : (every φ₁ φ₂).fcp.Admits F ↔ ∃ F₁ ∈ φ₁.fcp F, φ₂.fcp.Admits F₁ :=
   ⟨fun ⟨h, h'⟩ ↦ ⟨_, Part.get_mem h, h'⟩,
-    fun ⟨_, h, h'⟩ ↦ Part.dom_iff_mem.2 ⟨_, mem_fcp_every.2 ⟨_, h, _, Part.get_mem h', rfl⟩⟩⟩
+    fun ⟨_, h, h'⟩ ↦
+      Part.dom_iff_mem.mpr ⟨_, mem_fcp_every.mpr ⟨_, h, _, Part.get_mem h', rfl⟩⟩⟩
 
 theorem admits_atom_seq :
     ((atom ζ args).seq ψ).fcp.Admits F ↔ ψ.fcp.Admits (F ⊓ File.atom (fun _ ↦ ζ) args) :=
-  admits_seq.trans ⟨fun ⟨_, h, h'⟩ ↦ FCP.mem_ofFile.1 h ▸ h', fun h ↦ ⟨_, Part.mem_some _, h⟩⟩
+  admits_seq.trans ⟨fun ⟨_, h, h'⟩ ↦ FCP.mem_ofFile.mp h ▸ h', fun h ↦ ⟨_, Part.mem_some _, h⟩⟩
 
 theorem admits_indef_seq :
     ((indef i N).seq ψ).fcp.Admits F ↔
@@ -187,8 +188,8 @@ theorem admits_every_indef :
 
 theorem admits_pro_seq : ((pro i).seq ψ).fcp.Admits F ↔ i ∈ F.dom ∧ ψ.fcp.Admits F := by
   refine admits_seq.trans ⟨fun ⟨F₁, h₁, h⟩ ↦ ?_, fun ⟨hi, h⟩ ↦ ⟨F, fcp_pro hi ▸ Part.mem_some F, h⟩⟩
-  have hi := admits_pro.1 (Part.dom_iff_mem.2 ⟨F₁, h₁⟩)
-  exact ⟨hi, Part.mem_some_iff.1 (fcp_pro hi ▸ h₁) ▸ h⟩
+  have hi := admits_pro.mp (Part.dom_iff_mem.mpr ⟨F₁, h₁⟩)
+  exact ⟨hi, Part.mem_some_iff.mp (fcp_pro hi ▸ h₁) ▸ h⟩
 
 /-! ### Satisfaction sets and domains through the rules
 
@@ -206,25 +207,25 @@ theorem fcp_isEliminative : ∀ φ : LF M, (φ.fcp : FCP W ℕ M).IsEliminative
 /-- The domain of the changed file is the domain of the file with the cards of the logical
 form. -/
 theorem dom_of_mem : ∀ {φ : LF M} {F F' : File W ℕ M}, F' ∈ φ.fcp F → F'.dom = F.dom ∪ φ.cards
-  | atom _ _, _, _, h => FCP.mem_ofFile.1 h ▸ rfl
+  | atom _ _, _, _, h => FCP.mem_ofFile.mp h ▸ rfl
   | indef _ _, _, _, h => by
-    obtain ⟨-, rfl⟩ := mem_fcp_indef.1 h
+    obtain ⟨-, rfl⟩ := mem_fcp_indef.mp h
     simp [cards]
   | defNP _ _, _, _, h => by
-    obtain ⟨⟨hi, -⟩, h⟩ := FCP.mem_definite.1 h
-    obtain rfl := FCP.mem_ofFile.1 h
+    obtain ⟨hi, -, h⟩ := FCP.mem_definite.mp h
+    obtain rfl := FCP.mem_ofFile.mp h
     simpa [cards] using hi
   | seq φ ψ, _, _, h => by
-    obtain ⟨_, h₁, h₂⟩ := mem_fcp_seq.1 h
+    obtain ⟨_, h₁, h₂⟩ := mem_fcp_seq.mp h
     rw [dom_of_mem h₂, dom_of_mem h₁, cards, Set.union_assoc]
   | every _ _, _, _, h => by
-    obtain ⟨_, -, _, -, rfl⟩ := mem_fcp_every.1 h
+    obtain ⟨_, -, _, -, rfl⟩ := mem_fcp_every.mp h
     simp [cards, universal]
   | neg _, _, _, h => by simp [cards, FCP.dom_eq_of_mem_neg h]
 
 -- §3.2
 theorem sat_eq_empty_of_mem (h : F' ∈ φ.fcp F) (hF : F.sat = ∅) : F'.sat = ∅ :=
-  Set.eq_empty_of_subset ((fcp_isEliminative φ).sat_subset h) hF
+  Set.eq_empty_of_subset (File.sat_mono (fcp_isEliminative φ _ _ h)) hF
 
 end LF
 
@@ -243,16 +244,19 @@ def TrueWrt (φ : FCP W ℕ M) (F : File W ℕ M) (w : W) : Prop := ∃ F' ∈ �
 
 /-- (C): `φ` is false with respect to `F` in `w` when `F` is true in `w` and `F + φ` is false in
 `w`. -/
-def FalseWrt (φ : FCP W ℕ M) (F : File W ℕ M) (w : W) : Prop :=
-  w ∈ F.worlds ∧ ∃ F' ∈ φ F, w ∉ F'.worlds
+structure FalseWrt (φ : FCP W ℕ M) (F : File W ℕ M) (w : W) : Prop where
+  /-- The file is true in the world. -/
+  mem_worlds : w ∈ F.worlds
+  /-- The changed file is false in the world. -/
+  exists_notMem : ∃ F' ∈ φ F, w ∉ F'.worlds
 
 theorem not_trueWrt_of_falseWrt (h : FalseWrt φ F w) : ¬ TrueWrt φ F w :=
-  fun ⟨_, hF', hw⟩ ↦ let ⟨_, _, hG, hw'⟩ := h; hw' (Part.mem_unique hG hF' ▸ hw)
+  fun ⟨_, hF', hw⟩ ↦ let ⟨_, hG, hw'⟩ := h.exists_notMem; hw' (Part.mem_unique hG hF' ▸ hw)
 
 -- §3.2, p. 330
 theorem TrueWrt.mem_worlds (h : TrueWrt φ F w) (hφ : φ.IsEliminative) : w ∈ F.worlds :=
   let ⟨_, hF', hw⟩ := h
-  hφ.worlds_subset hF' hw
+  File.worlds_mono (hφ _ _ hF') hw
 
 theorem trueWrt_or_falseWrt (h : φ.Admits F) (hw : w ∈ F.worlds) :
     TrueWrt φ F w ∨ FalseWrt φ F w :=
@@ -285,7 +289,7 @@ theorem trueWrt_neg_indef (h : i ∉ F.dom) :
     exact ⟨⟨p, hp, rfl⟩, fun ⟨m, hm⟩ ↦
       hno _ ⟨F.mem_sat_of_agreeOn (hu m) hp, by simpa⟩ (hu m).symm⟩
   · rintro ⟨⟨p, hp, rfl⟩, hno⟩
-    exact ⟨p, ⟨hp, fun q hq _ ↦ hno ⟨_, hq.2⟩⟩, rfl⟩
+    exact ⟨p, ⟨hp, fun _ ⟨_, hN⟩ _ ↦ hno ⟨_, hN⟩⟩, rfl⟩
 
 theorem trueWrt_pro_pred (h : i ∈ F.dom) :
     TrueWrt ((LF.pro i).seq (LF.pred₁ N i)).fcp F w ↔
@@ -347,18 +351,22 @@ theorem admits_aDog : (aDog dog cameIn layDown).fcp.Admits F ↔ 1 ∉ F.dom := 
 and is not added to it, so the pronoun's card is missing. -/
 theorem not_admits_everyDog (F : File W ℕ M) : ¬ (everyDog dog cameIn layDown).fcp.Admits F := by
   intro h
-  obtain ⟨F₁, h₁, h₂⟩ := admits_seq.1 h
+  obtain ⟨F₁, h₁, h₂⟩ := admits_seq.mp h
   have hd : F₁.dom = F.dom := by simpa [cards] using dom_of_mem h₁
-  exact (admits_every_indef.1 (Part.dom_iff_mem.2 ⟨F₁, h₁⟩)).1 (hd ▸ (admits_pro_seq.1 h₂).1)
+  obtain ⟨hnew, -⟩ := admits_every_indef.mp (Part.dom_iff_mem.mpr ⟨F₁, h₁⟩)
+  obtain ⟨hold, -⟩ := admits_pro_seq.mp h₂
+  exact hnew (hd ▸ hold)
 
 -- (17), row `heim1982_negative_blocks`
 theorem not_admits_noDog (F : File W ℕ M) : ¬ (noDog dog cameIn layDown).fcp.Admits F := by
   intro h
-  obtain ⟨F₁, h₁, h₂⟩ := admits_seq.1 h
+  obtain ⟨F₁, h₁, h₂⟩ := admits_seq.mp h
   have hd : F₁.dom = F.dom := FCP.dom_eq_of_mem_neg h₁
   have hn : ((indef 1 dog).seq (pred₁ cameIn 1)).fcp.Admits F :=
-    FCP.admits_neg.1 (Part.dom_iff_mem.2 ⟨F₁, h₁⟩)
-  exact (admits_indef_seq.1 hn).1 (hd ▸ (admits_pro_seq.1 h₂).1)
+    (PartialUpdate.admits_neg _ _).mp (Part.dom_iff_mem.mpr ⟨F₁, h₁⟩)
+  obtain ⟨hnew, -⟩ := admits_indef_seq.mp hn
+  obtain ⟨hold, -⟩ := admits_pro_seq.mp h₂
+  exact hnew (hd ▸ hold)
 
 -- §2.4 (5), row `heim1982_woman_dog`
 theorem admits_womanDog :
@@ -380,10 +388,10 @@ theorem dom_of_mem_kingLocal {m i : ℕ} (hF' : F' ∈ (kingLocal king lunch m i
 -- §5.2
 theorem mem_dom_of_mem_kingGlobal {m i : ℕ} (hF' : F' ∈ (kingGlobal king lunch m i).fcp F) :
     i ∈ F'.dom ∧ ∀ p ∈ F'.sat, king (p.assignment i) := by
-  obtain ⟨F₁, h₁, h₂⟩ := mem_fcp_seq.1 hF'
-  obtain ⟨-, rfl⟩ := mem_fcp_indef.1 h₁
-  obtain ⟨G, -, rfl⟩ := FCP.mem_neg.1 h₂
-  exact ⟨by simp, fun p hp ↦ (File.mem_sat_sdiff.1 hp).1.2⟩
+  obtain ⟨F₁, h₁, h₂⟩ := mem_fcp_seq.mp hF'
+  obtain ⟨-, rfl⟩ := mem_fcp_indef.mp h₁
+  obtain ⟨G, -, rfl⟩ := PartialUpdate.mem_neg.mp h₂
+  exact ⟨by simp, fun p hp ↦ let ⟨⟨_, hking⟩, _⟩ := File.mem_sat_sdiff.mp hp; hking⟩
 
 end Texts
 

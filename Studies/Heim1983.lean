@@ -79,7 +79,7 @@ def TrueWrt (φ : CCP.Partial W) (c : Set W) (w : W) : Prop := ∃ h : φ.Admits
 
 theorem trueWrt_ofTrivalent {p : W → Trivalent} {c : Set W} {w : W} (hw : w ∈ c)
     (h : (ofTrivalent p).Admits c) : TrueWrt (ofTrivalent p) c w ↔ p w = .true :=
-  ⟨fun ⟨_, hm⟩ => hm.2, fun hq => ⟨h, hw, hq⟩⟩
+  ⟨fun ⟨_, _, hq⟩ => hq, fun hq => ⟨h, hw, hq⟩⟩
 
 variable (king son bald : W → Prop)
 
@@ -110,7 +110,7 @@ open Classical in
 -- (3), (1)
 theorem king_presupposes :
     Presupposes (ifKingHasSon king son bald) (ofTrivalent fun w ↦ Trivalent.ofProp (king w)) :=
-  (presupposes_ofProp_iff _ _).2 fun c h ↦ (king_admits_iff c).1 h
+  (presupposes_ofProp_iff _ _).mpr fun c h ↦ (king_admits_iff c).mp h
 
 open Classical in
 -- (3)
@@ -119,7 +119,7 @@ theorem not_presupposes_son (h : ∃ w, king w ∧ ¬ son w) :
   rw [presupposes_ofProp_iff]
   obtain ⟨w, hk, hs⟩ := h
   intro hp
-  exact hs (hp {w} ((king_admits_iff _).2 fun _ hv => hv ▸ hk) w rfl)
+  exact hs (hp {w} ((king_admits_iff _).mpr fun _ hv => hv ▸ hk) w rfl)
 
 /-! ### Accommodation (§2.3) -/
 
@@ -142,15 +142,15 @@ theorem localNeg_admits {c : Set W} (h : φ.Admits (c ∩ p)) : (localNeg φ p).
 /-- The global option's result entails the accommodated presupposition, so (16) read in
     isolation has France with a king. -/
 theorem globalNeg_entails {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ⊆ p :=
-  fun _ hw ↦ (isEliminative_neg φ _ _ h hw).2
+  fun _ hw ↦ let ⟨_, hp⟩ := isEliminative_neg φ _ _ h hw; hp
 
 open Classical in
 /-- Under the local option, (16) entails only that France has no king or he did not come. -/
 theorem localNeg_entails {came : W → Prop} [DecidablePred came] {c c' : Set W}
     (h : c' ∈ localNeg (ofTrivalent (Trivalent.condEvent (· ∈ p) came)) p c) :
     c' = {w ∈ c | w ∉ p ∨ ¬ came w} := by
-  obtain ⟨t, ht, rfl⟩ := (Part.mem_map_iff _).1 h
-  obtain ⟨-, rfl⟩ := (mem_ofTrivalent _ _ _).1 ht
+  obtain ⟨t, ht, rfl⟩ := (Part.mem_map_iff _).mp h
+  obtain ⟨-, rfl⟩ := (mem_ofTrivalent _ _ _).mp ht
   ext w
   simp only [Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_inter_iff, Trivalent.condEvent_eq_true_iff]
   tauto
@@ -184,7 +184,7 @@ theorem cancellation_only_under_inconsistency {c g l k : Set W} (hg : g ∈ glob
   rw [preferGlobal] at h
   split_ifs at h with hk
   · exact absurd (Set.inter_subset_left.trans (globalNeg_entails hg)) h
-  · exact Set.not_nonempty_iff_eq_empty.1 hk
+  · exact Set.not_nonempty_iff_eq_empty.mp hk
 
 end Propositional
 
@@ -241,7 +241,7 @@ theorem every_admits_iff (i : ℕ) (A B : CCP.Partial (Possibility W ℕ M)) (c 
 theorem every_atom_admits_iff (i : ℕ) (A pre B : M → W → Prop) (c : File M W) :
     (every i (atom A i) (atomP pre B i)).Admits c ↔
       ∀ p ∈ c, A (p.assignment i) p.world → pre (p.assignment i) p.world :=
-  ⟨fun ⟨_, h⟩ p hp hA ↦ h p ⟨hp, hA⟩, fun h ↦ ⟨trivial, fun p hp ↦ h p hp.1 hp.2⟩⟩
+  ⟨fun ⟨_, h⟩ p hp hA ↦ h p ⟨hp, hA⟩, fun h ↦ ⟨trivial, fun p ⟨hp, hA⟩ ↦ h p hp hA⟩⟩
 
 /-- For a novel index, (7) presupposes under (22) that every nation has a king. -/
 theorem every_nation_presupposes (i : ℕ) (nation hasKing cherishes : M → W → Prop)
@@ -251,7 +251,7 @@ theorem every_nation_presupposes (i : ℕ) (nation hasKing cherishes : M → W �
   rw [every_atom_admits_iff]
   constructor
   · rintro h _ ⟨p, hp, rfl⟩ a hn
-    have := h (p.update i a) ((hc p a).1 hp)
+    have := h (p.update i a) ((hc p a).mp hp)
     simp only [Possibility.update_assignment, Function.update_self, Possibility.update_world]
       at this
     exact this hn
@@ -264,7 +264,7 @@ theorem every_restrictor_presupposes (i : ℕ) (hasKing serves rewarded : M → 
       ∀ w ∈ c.prop, ∀ a, hasKing a w := by
   constructor
   · rintro ⟨h, -⟩ _ ⟨p, hp, rfl⟩ a
-    simpa using h (p.update i a) ((hc p a).1 hp)
+    simpa using h (p.update i a) ((hc p a).mp hp)
   · exact fun h ↦ ⟨fun p hp ↦ h p.world ⟨p, hp, rfl⟩ _, trivial⟩
 
 /-! ### Files of the dissertation
@@ -287,7 +287,7 @@ theorem File.novelIn_iff_exists_file :
         by_cases hj : j = i
         · subst hj; simp
         · rw [Possibility.update_assignment, Function.update_of_ne hj]; exact (hpq.eqOn hj).symm
-    exact hq ▸ (h p _).1 hp
+    exact hq ▸ (h p _).mp hp
   · rintro ⟨F, rfl, hi⟩ p a
     exact File.mem_sat_congr (Possibility.agreeOn_update hi a)
 
@@ -331,8 +331,8 @@ theorem fatManBicycle_admits_iff (i : ℕ) (fatMan hasBicycle pushing : M → W 
       ∀ w ∈ c.prop, ∀ a, fatMan a w → hasBicycle a w := by
   constructor
   · rintro ⟨_, h⟩ _ ⟨p, hp, rfl⟩ a hf
-    simpa using h (p.update i a) ⟨(hc p a).1 hp, by simpa using hf⟩
-  · exact fun h ↦ ⟨trivial, fun p hp ↦ h p.world ⟨p, hp.1, rfl⟩ _ hp.2⟩
+    simpa using h (p.update i a) ⟨(hc p a).mp hp, by simpa using hf⟩
+  · exact fun h ↦ ⟨trivial, fun p ⟨hp, hf⟩ ↦ h p.world ⟨p, hp, rfl⟩ _ hf⟩
 
 /-- Accommodation in the course of the update amends `c + "xᵢ is a fat man"` with
     *xᵢ has a bicycle* before the second sentence is evaluated. -/
@@ -343,7 +343,7 @@ def fatManBicycleAcc (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop) :
 
 theorem fatManBicycleAcc_admits (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop)
     (c : File M W) : (fatManBicycleAcc i fatMan hasBicycle pushing).Admits c :=
-  fun _ hp ↦ hp.2.2
+  fun _ ⟨_, _, hb⟩ ↦ hb
 
 theorem fatManBicycleAcc_entails (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop)
     {c c' : File M W} (h : c' ∈ fatManBicycleAcc i fatMan hasBicycle pushing c) :
@@ -351,7 +351,7 @@ theorem fatManBicycleAcc_entails (i : ℕ) (fatMan hasBicycle pushing : M → W 
       pushing (p.assignment i) p.world := by
   rw [fatManBicycleAcc, atomP, Part.mem_mk_iff] at h
   obtain ⟨-, rfl⟩ := h
-  exact fun p hp ↦ ⟨hp.1.2.1, hp.1.2.2, hp.2⟩
+  exact fun p ⟨⟨_, hf, hb⟩, hpush⟩ ↦ ⟨hf, hb, hpush⟩
 
 theorem fatManBicycleAcc_not_universal :
     ∃ (c' : File Bool Unit), c' ∈ fatManBicycleAcc 0 (fun _ _ ↦ True) (fun a _ ↦ a = true)
@@ -388,7 +388,7 @@ theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : W → Trivalent) :
     have hp : c ⊆ (Trivalent.gapExt p)ᶜ := h _ (.inl rfl)
     refine ⟨hp, fun w ⟨hw, ha⟩ ↦ ?_⟩
     by_cases hf : c ∩ (Karttunen1973.Presupposing.ofTrivalent p).truth ⊆ (Trivalent.gapExt q)ᶜ
-    · exact hf ⟨hw, ha, fun t ht ↦ Set.mem_singleton_iff.1 ht ▸ hp hw⟩
+    · exact hf ⟨hw, ha, fun t ht ↦ Set.mem_singleton_iff.mp ht ▸ hp hw⟩
     · exact h _ (.inr ⟨rfl, hf⟩) hw
 
 end Heim1983

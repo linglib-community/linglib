@@ -15,45 +15,54 @@ individuals that fit every entry. The two are separate data, tied by one conditi
 satisfaction set does not distinguish two points that agree on the cards. So a file says nothing
 about an individual it has no card for, and a file that nothing satisfies still has its cards.
 
-Files are ordered by information, `F ≤ G` when `G.dom ⊆ F.dom` and `F.sat ⊆ G.sat`. They form a
-meet-semilattice whose top is the file with no cards that every point satisfies; the meet
-`F ⊓ G` has the cards of both and the points that satisfy both. The world set
+Files are ordered by information, `F ≤ G` when `G.dom ⊆ F.dom` and `F.sat ⊆ G.sat`, and they
+form a bounded lattice. The meet `F ⊓ G` has the cards of both and the points that satisfy both.
+The join `F ⊔ G` has the cards they share and the points that agree on those cards with a point
+of either. The top is the file with no cards that every point satisfies. The world set
 `File.worlds F` is the set of worlds at which some sequence satisfies `F`, the worlds in which
-the file is true. The existential closure `F.restrict X` forgets the cards outside `X`, keeping
-every point that agrees on `X` with a point of `F`. It is a closure operator
-(`File.restrictClosure`), and below a file whose cards lie in `X` it changes nothing
-(`File.restrict_le_iff`). The difference `F \ G` keeps the cards of `F` and the points of `F`
-that no point of `G` agrees with on those cards. When `G` has no card that `F` lacks, it is the
-difference of the satisfaction sets (`File.sat_sdiff_of_dom_subset`), the negation of
-[heim-1983].
+the file is true; a join is true where either file is (`File.worldsHom`).
+
+The existential closure `F.restrict X` forgets the cards outside `X`, keeping every point that
+agrees on `X` with a point of `F`. It is a closure operator (`File.restrictClosure`), it is
+true in the same worlds as `F` (`File.worlds_restrict`), and below a file whose cards lie in `X`
+it changes nothing (`File.restrict_le_iff`). The difference `F \ G` keeps the cards of `F` and
+the points of `F` that no point of `G` agrees with on those cards. When `G` has no card that `F`
+lacks, it is the difference of the satisfaction sets (`File.sat_sdiff_of_dom_subset`), the
+negation of [heim-1983].
 
 A *file change potential* is a partial function on files, the meaning of a sentence: the change
 its utterance makes to the file, defined where the sentence is felicitous. The update by an
 atomic formula is the meet with the formula's file `File.atom`, which adds the cards of its
 variables and removes the points that falsify it. An indefinite is felicitous where its card is
 new, and a definite where its card is present and the file entails its descriptive content,
-where `F` entails an update that removes no point of `F` (`File.Entails`). For an atomic content
-the definite's condition is that the file lies below the content's file
-(`FCP.admits_definite_atomAt`). Negation is the difference of the file from its update
-(`FCP.neg`), so the cards introduced under it are forgotten, and the conditional is the negation
-of the antecedent followed by the negated consequent.
+where `F` entails an update that removes no point of `F` (`File.Entails`). For a one-place
+content at the definite's own card, the condition is that the file lies below the content's file
+(`FCP.admits_definite_ofFile_atomAt`). Negation is `PartialUpdate.neg` at the difference of
+files, so the cards introduced under it are forgotten (`FCP.dom_eq_of_mem_neg`).
 
-Every one of these updates descends in the information order
-(`PartialUpdate.IsEliminative`), so a card once added is never removed, a point once removed
-never returns, and a file false in a world stays false in it
-(`PartialUpdate.IsEliminative.worlds_subset`).
+The update by a file, negation and the conditional descend in the information order, and an
+indefinite or a definite does when its content does (`PartialUpdate.IsEliminative`). Under such
+an update no card is removed, no point is added, and a file false in a world stays false in it,
+since `File.dom` is antitone and `File.sat` and `File.worlds` are monotone.
 
 ## Implementation notes
 
-The condition tying `sat` to `dom` is stated for all cards outside `dom` at once: `sat` is closed
-under any change of a sequence off the cards. Changing one card at a time, as [heim-1982]'s
-principle (B) is worded, gives the same closure under finitely many changes. The stronger form is
-the one under which `F.restrict F.dom = F`.
+The condition tying `sat` to `dom` is stated for all cards outside `dom` at once, where
+[heim-1982]'s principle (B) changes one card at a time. This is the form under which
+`F.restrict F.dom = F` (`File.restrict_dom`).
+
+The difference of files is not a co-Heyting difference: `F \ F` keeps the cards of `F`.
 
 The points are those of `Dynamic/Possibility.lean` with total assignments, [heim-1982]'s
 world–sequence pairs. The information states of `Dynamic/State.lean` are sets of partial points
 with no domain apart from the points, where a state that nothing satisfies makes every referent
 both familiar and novel.
+
+## TODO
+
+Files have arbitrary meets, the union of the cards with the intersection of the satisfaction
+sets, so they form a complete lattice, and `F.restrict X` is the join of `F` with the file that
+has the cards `X` and no points. Neither is stated.
 
 ## References
 
@@ -94,6 +103,9 @@ theorem AgreeOn.mono (hXY : X ⊆ Y) (h : p.AgreeOn Y q) : p.AgreeOn X q :=
 
 theorem agreeOn_comm : p.AgreeOn X q ↔ q.AgreeOn X p := ⟨.symm, .symm⟩
 
+@[simp] theorem agreeOn_empty : p.AgreeOn ∅ q ↔ p.world = q.world :=
+  ⟨AgreeOn.world_eq, fun h ↦ ⟨h, Set.eqOn_empty _ _⟩⟩
+
 @[simp] theorem agreeOn_univ : p.AgreeOn Set.univ q ↔ p = q :=
   ⟨fun h ↦ Possibility.ext h.world_eq (funext fun v ↦ h.eqOn (Set.mem_univ v)),
     fun h ↦ h ▸ .refl _ _⟩
@@ -126,66 +138,48 @@ theorem mem_sat_congr (h : p.AgreeOn F.dom q) : p ∈ F.sat ↔ q ∈ F.sat :=
 /-- `F ≤ G` when `F` has every card of `G` and every point of `F` satisfies `G`. -/
 instance : PartialOrder (File W V M) :=
   .lift (fun F ↦ (OrderDual.toDual F.dom, F.sat)) fun _ _ h ↦
-    File.ext (OrderDual.toDual_inj.1 (Prod.ext_iff.1 h).1) (Prod.ext_iff.1 h).2
+    let ⟨hdom, hsat⟩ := Prod.mk.inj h
+    File.ext (OrderDual.toDual_inj.mp hdom) hsat
 
 theorem le_iff : F ≤ G ↔ G.dom ⊆ F.dom ∧ F.sat ⊆ G.sat := Iff.rfl
 
-theorem dom_anti : Antitone (dom : File W V M → Set V) := fun _ _ h ↦ h.1
+theorem dom_anti : Antitone (dom : File W V M → Set V) := fun _ _ ⟨h, _⟩ ↦ h
 
-theorem sat_mono : Monotone (sat : File W V M → Set (Possibility W V M)) := fun _ _ h ↦ h.2
+theorem sat_mono : Monotone (sat : File W V M → Set (Possibility W V M)) :=
+  fun _ _ ⟨_, h⟩ ↦ h
 
 /-- The meet of two files has the cards of both and the points that satisfy both. -/
 instance : SemilatticeInf (File W V M) where
   inf F G :=
     { dom := F.dom ∪ G.dom
       sat := F.sat ∩ G.sat
-      mem_sat_of_agreeOn := fun _ _ h hp ↦
-        ⟨F.mem_sat_of_agreeOn (h.mono Set.subset_union_left) hp.1,
-          G.mem_sat_of_agreeOn (h.mono Set.subset_union_right) hp.2⟩ }
+      mem_sat_of_agreeOn := fun _ _ h ⟨hF, hG⟩ ↦
+        ⟨F.mem_sat_of_agreeOn (h.mono Set.subset_union_left) hF,
+          G.mem_sat_of_agreeOn (h.mono Set.subset_union_right) hG⟩ }
   inf_le_left _ _ := ⟨Set.subset_union_left, Set.inter_subset_left⟩
   inf_le_right _ _ := ⟨Set.subset_union_right, Set.inter_subset_right⟩
-  le_inf _ _ _ h₁ h₂ := ⟨Set.union_subset h₁.1 h₂.1, Set.subset_inter h₁.2 h₂.2⟩
+  le_inf _ _ _ h₁ h₂ :=
+    ⟨Set.union_subset (dom_anti h₁) (dom_anti h₂), Set.subset_inter (sat_mono h₁) (sat_mono h₂)⟩
 
 @[simp] theorem dom_inf (F G : File W V M) : (F ⊓ G).dom = F.dom ∪ G.dom := rfl
 
 @[simp] theorem sat_inf (F G : File W V M) : (F ⊓ G).sat = F.sat ∩ G.sat := rfl
 
-/-- The initial file has no cards, and every point satisfies it. -/
-instance : OrderTop (File W V M) where
+/-- The initial file has no cards, and every point satisfies it. The absurd file has every card,
+and no point satisfies it. -/
+instance : BoundedOrder (File W V M) where
   top := ⟨∅, Set.univ, fun _ _ _ _ ↦ trivial⟩
   le_top _ := ⟨Set.empty_subset _, Set.subset_univ _⟩
+  bot := ⟨Set.univ, ∅, fun _ _ _ h ↦ h.elim⟩
+  bot_le _ := ⟨Set.subset_univ _, Set.empty_subset _⟩
 
 @[simp] theorem dom_top : (⊤ : File W V M).dom = ∅ := rfl
 
 @[simp] theorem sat_top : (⊤ : File W V M).sat = Set.univ := rfl
 
-/-- The cards of a file, which the meet unites. -/
-@[simps]
-def domHom : InfTopHom (File W V M) (Set V)ᵒᵈ where
-  toFun F := OrderDual.toDual F.dom
-  map_inf' _ _ := rfl
-  map_top' := rfl
+@[simp] theorem dom_bot : (⊥ : File W V M).dom = Set.univ := rfl
 
-/-- The satisfaction set of a file, which the meet intersects. -/
-@[simps]
-def satHom : InfTopHom (File W V M) (Set (Possibility W V M)) where
-  toFun := sat
-  map_inf' _ _ := rfl
-  map_top' := rfl
-
-/-! ### The world set -/
-
-/-- The world set of a file: the worlds in which it is true, those at which some sequence
-satisfies it. -/
-def worlds (F : File W V M) : Set W := Possibility.world '' F.sat
-
-theorem mem_worlds {w : W} : w ∈ F.worlds ↔ ∃ p ∈ F.sat, p.world = w := Iff.rfl
-
-theorem worlds_mono : Monotone (worlds : File W V M → Set W) := fun _ _ h ↦ Set.image_mono h.2
-
-/-- The world set as a monotone map: a more informed file is true in fewer worlds. -/
-@[simps]
-def worldsHom : File W V M →o Set W := ⟨worlds, worlds_mono⟩
+@[simp] theorem sat_bot : (⊥ : File W V M).sat = ∅ := rfl
 
 /-! ### Atomic files -/
 
@@ -197,7 +191,7 @@ def atom (ζ : W → (ι → M) → Prop) (args : ι → V) : File W V M where
   mem_sat_of_agreeOn p q h hp := by
     have hq : q.assignment ∘ args = p.assignment ∘ args :=
       funext fun k ↦ (h.eqOn ⟨k, rfl⟩).symm
-    show ζ q.world (q.assignment ∘ args)
+    change ζ q.world (q.assignment ∘ args)
     rw [hq, ← h.world_eq]
     exact hp
 
@@ -218,9 +212,8 @@ def atomAt (x : V) (N : W → M → Prop) : File W V M :=
     p ∈ (atomAt x N).sat ↔ N p.world (p.assignment x) := Iff.rfl
 
 theorem le_atomAt_iff {N : W → M → Prop} :
-    F ≤ atomAt x N ↔ x ∈ F.dom ∧ ∀ p ∈ F.sat, N p.world (p.assignment x) := by
+    F ≤ atomAt x N ↔ x ∈ F.dom ∧ F.sat ⊆ (atomAt x N).sat := by
   rw [le_iff, dom_atomAt, Set.singleton_subset_iff]
-  rfl
 
 /-- A file that entails a predicate of the card `x`, and is satisfied by a point at whose world
 some individual lacks the predicate, has the card `x`. -/
@@ -251,7 +244,7 @@ def restrict (F : File W V M) (X : Set V) : File W V M where
 
 @[simp] theorem dom_restrict (F : File W V M) (X : Set V) : (F.restrict X).dom = F.dom ∩ X := rfl
 
-theorem mem_sat_restrict : p ∈ (F.restrict X).sat ↔ ∃ q ∈ F.sat, q.AgreeOn X p := Iff.rfl
+@[simp] theorem mem_sat_restrict : p ∈ (F.restrict X).sat ↔ ∃ q ∈ F.sat, q.AgreeOn X p := Iff.rfl
 
 theorem le_restrict (F : File W V M) (X : Set V) : F ≤ F.restrict X :=
   ⟨Set.inter_subset_left, fun p hp ↦ ⟨p, hp, .refl _ _⟩⟩
@@ -259,20 +252,20 @@ theorem le_restrict (F : File W V M) (X : Set V) : F ≤ F.restrict X :=
 /-- Below a file whose cards lie in `X`, a file and its existential closure off `X` are the
 same. -/
 theorem restrict_le_iff (h : G.dom ⊆ X) : F.restrict X ≤ G ↔ F ≤ G :=
-  ⟨(le_restrict F X).trans, fun hFG ↦ ⟨Set.subset_inter hFG.1 h,
-    fun _ ⟨_, hq, hqp⟩ ↦ G.mem_sat_of_agreeOn (hqp.mono h) (hFG.2 hq)⟩⟩
+  ⟨(le_restrict F X).trans, fun hFG ↦ ⟨Set.subset_inter (dom_anti hFG) h,
+    fun _ ⟨_, hq, hqp⟩ ↦ G.mem_sat_of_agreeOn (hqp.mono h) (sat_mono hFG hq)⟩⟩
 
-theorem restrict_eq_self_iff : F.restrict X = F ↔ F.dom ⊆ X :=
+@[simp] theorem restrict_eq_self_iff : F.restrict X = F ↔ F.dom ⊆ X :=
   ⟨fun h ↦ h ▸ Set.inter_subset_right,
-    fun h ↦ ((restrict_le_iff h).2 le_rfl).antisymm (le_restrict F X)⟩
+    fun h ↦ ((restrict_le_iff h).mpr le_rfl).antisymm (le_restrict F X)⟩
 
-@[simp] theorem restrict_dom (F : File W V M) : F.restrict F.dom = F :=
-  restrict_eq_self_iff.2 subset_rfl
+theorem restrict_dom (F : File W V M) : F.restrict F.dom = F :=
+  restrict_eq_self_iff.mpr subset_rfl
 
 /-- Existential closure off the cards in `X`, as a closure operator on files. Its closed
 elements are the files whose cards lie in `X`. -/
 def restrictClosure (X : Set V) : ClosureOperator (File W V M) :=
-  .mk₂ (·.restrict X) (le_restrict · X) fun _ _ h ↦ (restrict_le_iff Set.inter_subset_right).2 h
+  .mk₂ (·.restrict X) (le_restrict · X) fun _ _ h ↦ (restrict_le_iff Set.inter_subset_right).mpr h
 
 @[simp] theorem restrictClosure_apply (X : Set V) (F : File W V M) :
     restrictClosure X F = F.restrict X := rfl
@@ -283,6 +276,79 @@ theorem isClosed_restrictClosure_iff : (restrictClosure X).IsClosed F ↔ F.dom 
 theorem restrict_mono (X : Set V) : Monotone (restrict · X : File W V M → File W V M) :=
   (restrictClosure X).monotone
 
+/-! ### Joins -/
+
+/-- The join of two files has the cards they share and the points that agree on those cards with
+a point of either. -/
+instance : Lattice (File W V M) where
+  __ := (inferInstance : SemilatticeInf (File W V M))
+  sup F G :=
+    { dom := F.dom ∩ G.dom
+      sat := (F.restrict G.dom).sat ∪ (G.restrict F.dom).sat
+      mem_sat_of_agreeOn := fun _ _ h hp ↦ hp.imp
+        ((F.restrict G.dom).mem_sat_of_agreeOn h)
+        ((G.restrict F.dom).mem_sat_of_agreeOn (h.mono (Set.inter_comm G.dom F.dom).subset)) }
+  le_sup_left F _ :=
+    le_iff.mpr ⟨Set.inter_subset_left, fun _ hp ↦ .inl (sat_mono (le_restrict F _) hp)⟩
+  le_sup_right _ G :=
+    le_iff.mpr ⟨Set.inter_subset_right, fun _ hp ↦ .inr (sat_mono (le_restrict G _) hp)⟩
+  sup_le _ _ _ hF hG := le_iff.mpr ⟨Set.subset_inter (dom_anti hF) (dom_anti hG), Set.union_subset
+    (sat_mono ((restrict_le_iff (dom_anti hG)).mpr hF))
+    (sat_mono ((restrict_le_iff (dom_anti hF)).mpr hG))⟩
+
+@[simp] theorem dom_sup (F G : File W V M) : (F ⊔ G).dom = F.dom ∩ G.dom := rfl
+
+theorem sat_sup (F G : File W V M) :
+    (F ⊔ G).sat = (F.restrict G.dom).sat ∪ (G.restrict F.dom).sat := rfl
+
+/-- The cards of a file: the meet unites them and the join intersects them. -/
+def domHom : BoundedLatticeHom (File W V M) (Set V)ᵒᵈ where
+  toFun F := OrderDual.toDual F.dom
+  map_sup' _ _ := rfl
+  map_inf' _ _ := rfl
+  map_top' := rfl
+  map_bot' := rfl
+
+@[simp] theorem domHom_apply (F : File W V M) : domHom F = OrderDual.toDual F.dom := rfl
+
+/-- The satisfaction set of a file, which the meet intersects. -/
+def satHom : InfTopHom (File W V M) (Set (Possibility W V M)) where
+  toFun := sat
+  map_inf' _ _ := rfl
+  map_top' := rfl
+
+@[simp] theorem satHom_apply (F : File W V M) : satHom F = F.sat := rfl
+
+/-! ### The world set -/
+
+/-- The world set of a file: the worlds in which it is true, those at which some sequence
+satisfies it. -/
+def worlds (F : File W V M) : Set W := Possibility.world '' F.sat
+
+@[simp] theorem mem_worlds {w : W} : w ∈ F.worlds ↔ ∃ p ∈ F.sat, p.world = w := Iff.rfl
+
+theorem worlds_mono : Monotone (worlds : File W V M → Set W) :=
+  fun _ _ h ↦ Set.image_mono (sat_mono h)
+
+@[simp] theorem worlds_bot : (⊥ : File W V M).worlds = ∅ := Set.image_empty _
+
+/-- A file and its existential closure are true in the same worlds. -/
+@[simp] theorem worlds_restrict (F : File W V M) (X : Set V) : (F.restrict X).worlds = F.worlds :=
+  Set.Subset.antisymm (by rintro _ ⟨_, ⟨q, hq, hqp⟩, rfl⟩; exact ⟨q, hq, hqp.world_eq⟩)
+    (worlds_mono (le_restrict F X))
+
+theorem worlds_sup (F G : File W V M) : (F ⊔ G).worlds = F.worlds ∪ G.worlds := by
+  rw [worlds, sat_sup, Set.image_union]
+  exact congrArg₂ _ (worlds_restrict F _) (worlds_restrict G _)
+
+/-- The world set of a file: a join of files is true in the worlds where either is. -/
+def worldsHom : SupBotHom (File W V M) (Set W) where
+  toFun := worlds
+  map_sup' := worlds_sup
+  map_bot' := worlds_bot
+
+@[simp] theorem worldsHom_apply (F : File W V M) : worldsHom F = F.worlds := rfl
+
 /-! ### Difference -/
 
 /-- The difference of two files keeps the cards of the first and its points that no point of the
@@ -291,23 +357,23 @@ instance : SDiff (File W V M) where
   sdiff F G :=
     { dom := F.dom
       sat := F.sat \ (G.restrict F.dom).sat
-      mem_sat_of_agreeOn := fun _ _ h hp ↦ ⟨F.mem_sat_of_agreeOn h hp.1, fun hq ↦ hp.2 <|
+      mem_sat_of_agreeOn := fun _ _ h ⟨hp, hnp⟩ ↦ ⟨F.mem_sat_of_agreeOn h hp, fun hq ↦ hnp <|
         (G.restrict F.dom).mem_sat_of_agreeOn (h.symm.mono Set.inter_subset_right) hq⟩ }
 
 @[simp] theorem dom_sdiff (F G : File W V M) : (F \ G).dom = F.dom := rfl
 
 theorem sat_sdiff (F G : File W V M) : (F \ G).sat = F.sat \ (G.restrict F.dom).sat := rfl
 
-theorem mem_sat_sdiff :
+@[simp] theorem mem_sat_sdiff :
     p ∈ (F \ G).sat ↔ p ∈ F.sat ∧ ∀ q ∈ G.sat, ¬ q.AgreeOn F.dom p := by
-  simp [sat_sdiff, mem_sat_restrict]
+  simp [sat_sdiff]
 
-theorem sdiff_le (F G : File W V M) : F \ G ≤ F := le_iff.2 ⟨subset_rfl, Set.sdiff_subset⟩
+theorem sdiff_le (F G : File W V M) : F \ G ≤ F := le_iff.mpr ⟨subset_rfl, Set.sdiff_subset⟩
 
 /-- When the second file has no card the first lacks, the difference of files is the difference
 of their satisfaction sets. -/
 theorem sat_sdiff_of_dom_subset (h : G.dom ⊆ F.dom) : (F \ G).sat = F.sat \ G.sat := by
-  rw [sat_sdiff, restrict_eq_self_iff.2 h]
+  rw [sat_sdiff, restrict_eq_self_iff.mpr h]
 
 /-- The points of `F \ (G \ H)` are the points of `F` each of whose variants in `G` on the cards
 of `F` has a variant in `H` on the cards of `G`. -/
@@ -341,27 +407,40 @@ def ofFile (A : File W V M) : FCP W V M := PFun.lift (· ⊓ A)
 
 theorem mem_ofFile : F' ∈ ofFile A F ↔ F' = F ⊓ A := Part.mem_some_iff
 
-theorem admits_ofFile : (ofFile A).Admits F := trivial
+@[simp] theorem admits_ofFile (A F : File W V M) : (ofFile A).Admits F := trivial
 
-theorem ofFile_top : ofFile (⊤ : File W V M) = PFun.id _ := funext fun _ ↦ by simp
+@[simp] theorem ofFile_top : ofFile (⊤ : File W V M) = PFun.id _ := funext fun _ ↦ by simp
 
 /-- Updating by two files in sequence is updating by their meet. -/
 theorem ofFile_inf : ofFile (A ⊓ B) = (ofFile A).seq (ofFile B) :=
   funext fun _ ↦ by simp [PartialUpdate.seq, PFun.comp_apply, inf_assoc]
 
 /-- A file supports the update by a file it lies below. -/
-theorem supports_ofFile : (ofFile A).supports F ↔ F ≤ A := by
+@[simp] theorem supports_ofFile : (ofFile A).supports F ↔ F ≤ A := by
   rw [PartialUpdate.supports_iff_mem, mem_ofFile, eq_comm, inf_eq_left]
+
+theorem isEliminative_ofFile (A : File W V M) : (ofFile A).IsEliminative :=
+  fun _ _ h ↦ mem_ofFile.mp h ▸ inf_le_left
+
+/-! ### Entailment -/
 
 theorem _root_.DynamicSemantics.File.Entails.admits (h : F.Entails φ) : φ.Admits F :=
   let ⟨F', hF', _⟩ := h
-  Part.dom_iff_mem.2 ⟨F', hF'⟩
+  Part.dom_iff_mem.mpr ⟨F', hF'⟩
 
 theorem _root_.DynamicSemantics.PartialUpdate.supports.entails (h : φ.supports F) : F.Entails φ :=
   ⟨F, h, subset_rfl⟩
 
-@[simp] theorem entails_ofFile : F.Entails (ofFile A) ↔ F.sat ⊆ A.sat := by
+@[simp] theorem _root_.DynamicSemantics.File.entails_ofFile :
+    F.Entails (ofFile A) ↔ F.sat ⊆ A.sat := by
   simp [File.Entails]
+
+/-- Under an eliminative update, a file entails the update iff the update keeps its satisfaction
+set. -/
+theorem _root_.DynamicSemantics.File.entails_iff_of_isEliminative (h : φ.IsEliminative) :
+    F.Entails φ ↔ ∃ F' ∈ φ F, F'.sat = F.sat :=
+  exists_congr fun F' ↦ and_congr_right fun hF' ↦
+    ⟨fun hsub ↦ (File.sat_mono (h F F' hF')).antisymm hsub, fun heq ↦ heq.ge⟩
 
 /-! ### Felicity conditions -/
 
@@ -377,99 +456,59 @@ def definite (x : V) (φ : FCP W V M) : FCP W V M :=
 theorem mem_indefinite : F' ∈ indefinite x φ F ↔ x ∉ F.dom ∧ F' ∈ φ F :=
   Part.mem_assert_iff.trans exists_prop
 
-theorem mem_definite : F' ∈ definite x φ F ↔ (x ∈ F.dom ∧ F.Entails φ) ∧ F' ∈ φ F :=
-  Part.mem_assert_iff.trans exists_prop
+theorem mem_definite : F' ∈ definite x φ F ↔ x ∈ F.dom ∧ F.Entails φ ∧ F' ∈ φ F :=
+  Part.mem_assert_iff.trans (exists_prop.trans and_assoc)
 
 theorem indefinite_apply (h : x ∉ F.dom) : indefinite x φ F = φ F := Part.assert_pos h
 
-theorem definite_apply (h : x ∈ F.dom ∧ F.Entails φ) : definite x φ F = φ F := Part.assert_pos h
+theorem definite_apply (hx : x ∈ F.dom) (h : F.Entails φ) : definite x φ F = φ F :=
+  Part.assert_pos ⟨hx, h⟩
 
 theorem admits_indefinite : (indefinite x φ).Admits F ↔ x ∉ F.dom ∧ φ.Admits F := exists_prop
 
 theorem admits_definite : (definite x φ).Admits F ↔ x ∈ F.dom ∧ F.Entails φ :=
-  ⟨fun ⟨h, _⟩ ↦ h, fun h ↦ ⟨h, h.2.admits⟩⟩
+  ⟨fun ⟨h, _⟩ ↦ h, fun ⟨hx, h⟩ ↦ ⟨⟨hx, h⟩, h.admits⟩⟩
 
 /-- A definite whose content is a file is felicitous on the files that have its card and whose
 points all satisfy the content. -/
 theorem admits_definite_ofFile :
     (definite x (ofFile A)).Admits F ↔ x ∈ F.dom ∧ F.sat ⊆ A.sat := by
-  rw [admits_definite, entails_ofFile]
+  rw [admits_definite, File.entails_ofFile]
 
 /-- A definite with a one-place content at its own card is felicitous on the files below the
 content's file. -/
-theorem admits_definite_atomAt {N : W → M → Prop} :
+theorem admits_definite_ofFile_atomAt {N : W → M → Prop} :
     (definite x (ofFile (File.atomAt x N))).Admits F ↔ F ≤ File.atomAt x N := by
   rw [admits_definite_ofFile, File.le_atomAt_iff]
-  rfl
 
 theorem definite_ofFile_apply (h : F ≤ A) (hx : x ∈ F.dom) :
     definite x (ofFile A) F = Part.some F := by
-  rw [definite_apply ⟨hx, entails_ofFile.2 h.2⟩, ofFile_apply, inf_eq_left.2 h]
-
-/-! ### Negation and the conditional -/
-
-/-- Negation is the difference of the file from its update, defined where the update is. -/
-def neg (φ : FCP W V M) : FCP W V M := fun F ↦ (φ F).map (F \ ·)
-
-/-- The conditional is the negation of the antecedent followed by the negated consequent. -/
-def cond (φ ψ : FCP W V M) : FCP W V M := neg (φ.seq (neg ψ))
-
-@[simp] theorem admits_neg : (neg φ).Admits F ↔ φ.Admits F := Iff.rfl
-
-theorem admits_cond : (cond φ ψ).Admits F ↔ ∃ h : φ.Admits F, ψ.Admits ((φ F).get h) := Iff.rfl
-
-theorem mem_neg : F' ∈ neg φ F ↔ ∃ G ∈ φ F, F \ G = F' := Part.mem_map_iff _
-
-theorem mem_cond : F' ∈ cond φ ψ F ↔ ∃ F₁ ∈ φ F, ∃ F₂ ∈ ψ F₁, F \ (F₁ \ F₂) = F' := by
-  simp only [cond, mem_neg, PartialUpdate.seq, PFun.comp_apply, Part.mem_bind_iff]
-  exact ⟨fun ⟨_, ⟨F₁, h₁, F₂, h₂, hG⟩, h⟩ ↦ ⟨F₁, h₁, F₂, h₂, hG ▸ h⟩,
-    fun ⟨F₁, h₁, F₂, h₂, h⟩ ↦ ⟨_, ⟨F₁, h₁, F₂, h₂, rfl⟩, h⟩⟩
-
-/-- Negation adds no card. -/
-theorem dom_eq_of_mem_neg (h : F' ∈ neg φ F) : F'.dom = F.dom := by
-  obtain ⟨_, -, rfl⟩ := mem_neg.1 h
-  rfl
-
-/-! ### Eliminativity -/
-
-theorem isEliminative_ofFile (A : File W V M) : (ofFile A).IsEliminative :=
-  fun _ _ h ↦ mem_ofFile.1 h ▸ inf_le_left
-
-theorem isEliminative_neg (φ : FCP W V M) : (neg φ).IsEliminative := fun F _ h ↦ by
-  obtain ⟨G, -, rfl⟩ := mem_neg.1 h
-  exact File.sdiff_le F G
-
-theorem isEliminative_cond (φ ψ : FCP W V M) : (cond φ ψ).IsEliminative := isEliminative_neg _
+  rw [definite_apply hx (File.entails_ofFile.mpr (File.sat_mono h)), ofFile_apply,
+    inf_eq_left.mpr h]
 
 theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.indefinite (h : φ.IsEliminative)
     (x : V) : (indefinite x φ).IsEliminative :=
-  fun F F' hF' ↦ h F F' (mem_indefinite.1 hF').2
+  fun F F' hF' ↦ let ⟨_, h'⟩ := mem_indefinite.mp hF'; h F F' h'
 
 theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.definite (h : φ.IsEliminative)
     (x : V) : (definite x φ).IsEliminative :=
-  fun F F' hF' ↦ h F F' (mem_definite.1 hF').2
+  fun F F' hF' ↦ let ⟨_, _, h'⟩ := mem_definite.mp hF'; h F F' h'
 
-/-- An eliminative update removes no card. -/
-theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.dom_subset (h : φ.IsEliminative)
-    (hF' : F' ∈ φ F) : F.dom ⊆ F'.dom :=
-  (h F F' hF').1
+/-! ### Negation and the conditional -/
 
-/-- An eliminative update adds no point. -/
-theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.sat_subset (h : φ.IsEliminative)
-    (hF' : F' ∈ φ F) : F'.sat ⊆ F.sat :=
-  (h F F' hF').2
+/-- Negation adds no card. -/
+theorem dom_eq_of_mem_neg (h : F' ∈ PartialUpdate.neg φ F) : F'.dom = F.dom := by
+  obtain ⟨_, -, rfl⟩ := PartialUpdate.mem_neg.mp h
+  rfl
 
-/-- An eliminative update of a file false in a world gives a file false in that world. -/
-theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.worlds_subset (h : φ.IsEliminative)
-    (hF' : F' ∈ φ F) : F'.worlds ⊆ F.worlds :=
-  File.worlds_mono (h F F' hF')
+theorem isEliminative_neg (φ : FCP W V M) : (PartialUpdate.neg φ).IsEliminative := fun F _ h ↦ by
+  obtain ⟨G, -, rfl⟩ := PartialUpdate.mem_neg.mp h
+  exact File.sdiff_le F G
 
-/-- Under an eliminative update, a file entails the update iff the update keeps its satisfaction
-set. -/
-theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.entails_iff (h : φ.IsEliminative) :
-    F.Entails φ ↔ ∃ F' ∈ φ F, F'.sat = F.sat :=
-  exists_congr fun _ ↦ and_congr_right fun hF' ↦
-    ⟨fun hsub ↦ (h.sat_subset hF').antisymm hsub, fun heq ↦ heq.ge⟩
+theorem isEliminative_cond (φ ψ : FCP W V M) : (PartialUpdate.cond φ ψ).IsEliminative :=
+  fun F _ h ↦ by
+    obtain ⟨_, -, _, -, rfl⟩ := PartialUpdate.mem_cond.mp h
+    exact File.sdiff_le F _
 
 end FCP
 
