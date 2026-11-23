@@ -14,11 +14,13 @@ grammar of Göksel and Kerslake against the Turkish Fragment.
 The vowel harmony of Chapter 3 is derived by the surface forms of `Turkish.Phonology` from the
 exponent forms of `Turkish.Morphotactics`. Harmony and the voicing of a suffix-initial stop fill
 features in and change none, so each harmonized segment is at least its underlying segment in
-the order of `Phonology.Segment` (`forall₂_le_harmonize`). They run from left to right: for a
-harmonized string `w` and a segment `x` we define `fill w x`, the segment `x` with [back] from
-the last segment of `w` that bears it, [round] from the last vowel of `w` and [voice] from the
-last segment of `w`, each taken only where `x` lacks it, and the harmonized form of `w ++ [x]`
-is that of `w` followed by `fill` of it and `x` (`harmonize_concat`). The alternants that the
+the order of `Phonology.Segment` (`forall₂_le_harmonize`). They run from left to right. For a
+harmonized string `w` and a segment `x` we define `fill w x` in terms of features alone: a
+syllabic `x` lacking [back] takes it from the last segment of `w` that is syllabic or bears
+[back], a high syllabic `x` lacking [round] takes it from the last syllabic segment of `w`, and
+an `x` lacking [voice] takes it from the last segment of `w`. The search-and-copy rules of the
+Fragment compute it: the harmonized form of `w ++ [x]` is that of `w` followed by
+`fill (harmonize w) x` (`harmonize_concat`). The alternants that the
 grammar lists for `A`, `I` and `D` are the values of `fill` (`fill_A`, `fill_I`, `fill_D`), and
 two stems of phonemes that end alike take their suffixes alike
 (`exists_harmonize_append_eq`). The permissible vowel sequences of §3.1 are the
@@ -279,14 +281,21 @@ theorem harmonize_eq_self {w : List Segment} (hw : ∀ x ∈ w, x ∈ vowels ∪
 
 /-! ### Harmony from left to right (Chapter 3) -/
 
-/-- `fill w x` is the segment `x` as it stands after the harmonized string `w`. A vowel lacking
-[back] takes it from the last segment of `w` that bears it, a high vowel lacking [round] takes
-it from the last vowel of `w`, and a segment lacking [voice] takes it from the last segment of
-`w` (§3.2, §6.1.2). -/
+/-- `copy f c x` is the segment `x` with the value that `c` has for the feature `f`, and `x`
+itself where there is no `c` or it has no value. -/
+def copy (f : Phonology.Feature) (c : Option Segment) (x : Segment) : Segment :=
+  (c.bind (· f)).elim x (x.setFeature f)
+
+/-- `fill w x` is the segment `x` as it stands after the harmonized string `w`. A syllabic
+segment lacking [back] takes it from the last segment of `w` that is syllabic or bears [back],
+a high syllabic segment lacking [round] takes it from the last syllabic segment of `w`, and a
+segment lacking [voice] takes it from the last segment of `w` (§3.2, §6.1.2). -/
 def fill (w : List Segment) (x : Segment) : Segment :=
-  voicing.searchCopy.emit w.getLast? <|
-    rounding.searchCopy.emit (w.filter (rounding.searchCopy.tier ·)).getLast? <|
-      fronting.searchCopy.emit (w.filter (fronting.searchCopy.tier ·)).getLast? x
+  let x := if x.IsSyllabic ∧ x .back = none then
+    copy .back (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? x else x
+  let x := if x.IsSyllabic ∧ x .high = true ∧ x .round = none then
+    copy .round (w.filter (·.IsSyllabic)).getLast? x else x
+  if x .voice = none then copy .voice w.getLast? x else x
 
 private theorem fronting_preservesTier : fronting.searchCopy.PreservesTier := by
   intro v s h
@@ -309,14 +318,75 @@ private theorem rounding_participating {b : Segment} (h : rounding.pattern.OnTie
     rounding.pattern.participation b = .participating := by
   simpa [rounding, System.mk', Pattern.OnTier] using h
 
-/-- Harmony runs from left to right: the harmonized form of a word with one more segment is
-that of the word, followed by the segment filled in after it. -/
+private theorem fronting_tier_iff (s : Segment) :
+    fronting.searchCopy.tier s ↔ s.IsSyllabic ∨ s .back ≠ none := by
+  simp [fronting, System.mk', System.searchCopy, Pattern.OnTier, Segment.IsSyllabic]; tauto
+
+private theorem rounding_tier_iff (s : Segment) : rounding.searchCopy.tier s ↔ s.IsSyllabic := by
+  simp [rounding, System.mk', System.searchCopy, Pattern.OnTier, Segment.IsSyllabic]
+
+private theorem filter_fronting_tier (w : List Segment) :
+    w.filter (fronting.searchCopy.tier ·) = w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none :=
+  List.filter_congr fun s _ ↦ decide_eq_decide.2 (fronting_tier_iff s)
+
+private theorem filter_rounding_tier (w : List Segment) :
+    w.filter (rounding.searchCopy.tier ·) = w.filter (·.IsSyllabic) :=
+  List.filter_congr fun s _ ↦ decide_eq_decide.2 (rounding_tier_iff s)
+
+private theorem fronting_emit (w : List Segment) (x : Segment) :
+    fronting.searchCopy.emit (w.filter (fronting.searchCopy.tier ·)).getLast? x =
+      if x.IsSyllabic ∧ x .back = none then
+        copy .back (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? x else x := by
+  have ht := fronting_tier_iff
+  have hx : fronting.IsTarget x ∧ fronting.pattern.OnTier x ↔ x.IsSyllabic ∧ x .back = none :=
+    ⟨fun h ↦ h.1, fun h ↦ ⟨h, (ht x).2 (.inl h.1)⟩⟩
+  rw [fronting.emit_eq_of_participating rfl fun c hc ↦ by
+    have := of_decide_eq_true (List.mem_filter.1 (List.mem_of_getLast? hc)).2
+    simpa [fronting, System.mk', Pattern.OnTier] using this,
+    List.filter_congr fun s _ ↦ decide_eq_decide.2 (ht s)]
+  simp only [hx]
+  rfl
+
+private theorem rounding_emit (w : List Segment) (x : Segment) :
+    rounding.searchCopy.emit (w.filter (rounding.searchCopy.tier ·)).getLast? x =
+      if x.IsSyllabic ∧ x .high = true ∧ x .round = none then
+        copy .round (w.filter (·.IsSyllabic)).getLast? x else x := by
+  have ht := rounding_tier_iff
+  have hx : rounding.IsTarget x ∧ rounding.pattern.OnTier x ↔
+      x.IsSyllabic ∧ x .high = true ∧ x .round = none :=
+    ⟨fun h ↦ h.1, fun h ↦ ⟨h, (ht x).2 h.1⟩⟩
+  rw [rounding.emit_eq_of_participating rfl fun c hc ↦ by
+    have := of_decide_eq_true (List.mem_filter.1 (List.mem_of_getLast? hc)).2
+    simpa [rounding, System.mk', Pattern.OnTier] using this,
+    List.filter_congr fun s _ ↦ decide_eq_decide.2 (ht s)]
+  simp only [hx]
+  rfl
+
+private theorem voicing_emit (w : List Segment) (x : Segment) :
+    voicing.searchCopy.emit w.getLast? x =
+      if x .voice = none then copy .voice w.getLast? x else x := by
+  have hx : voicing.IsTarget x ∧ voicing.pattern.OnTier x ↔ x .voice = none :=
+    ⟨fun h ↦ h.1, fun h ↦ ⟨h, by simp [voicing, System.mk', Pattern.OnTier]⟩⟩
+  rw [voicing.emit_eq_of_participating rfl fun c _ ↦ by simp [voicing, System.mk']]
+  simp only [hx]
+  rfl
+
+private theorem emit_eq_fill (w : List Segment) (x : Segment) :
+    voicing.searchCopy.emit w.getLast?
+      (rounding.searchCopy.emit (w.filter (rounding.searchCopy.tier ·)).getLast?
+        (fronting.searchCopy.emit (w.filter (fronting.searchCopy.tier ·)).getLast? x)) =
+      fill w x := by
+  rw [fronting_emit, rounding_emit, voicing_emit]
+  rfl
+
+/-- The search-and-copy rules compute `fill` from left to right: the harmonized form of a word
+with one more segment is that of the word, followed by the segment filled in after it. -/
 theorem harmonize_concat (w : List Segment) (x : Segment) :
     harmonize (w ++ [x]) = harmonize w ++ [fill (harmonize w) x] := by
   simp only [harmonize_eq_scan]
   rw [fronting.searchCopy.scan_concat fronting_preservesTier,
     rounding.searchCopy.scan_concat rounding_preservesTier,
-    voicing.searchCopy.scan_concat voicing_preservesTier, fill]
+    voicing.searchCopy.scan_concat voicing_preservesTier]
   generalize fronting.searchCopy.scan w = F
   generalize hR : rounding.searchCopy.scan F = R
   generalize hV : voicing.searchCopy.scan R = V
@@ -355,7 +425,7 @@ theorem harmonize_concat (w : List Segment) (x : Segment) :
       (fun c c' t h ↦ by
         obtain ⟨h, h'⟩ := Prod.mk.inj h
         simp_all [fronting, System.mk', System.searchCopy, Pattern.OnTier]) hVF.symm x
-  rw [h₁, h₂, h₃]
+  rw [h₁, h₂, h₃, emit_eq_fill]
 
 /-- Adding segments to a word leaves the harmonized form of the word in place. -/
 theorem harmonize_isPrefix_append (w s : List Segment) :
@@ -367,16 +437,15 @@ theorem harmonize_isPrefix_append (w s : List Segment) :
     exact ih.trans (List.prefix_append _ _)
 
 /-- Stems that end alike take their suffixes alike: two strings of phonemes with the same last
-segment, the same last vowel and the same last segment bearing [back] are followed by the same
+segment, the same last vowel and the same last vowel or palatal lateral are followed by the same
 harmonized segments, whatever is added, so that a loan such as *otobüs* takes the suffixes of a
 native stem in `ü` (Chapter 3). -/
 theorem exists_harmonize_append_eq {w w' : List Segment}
     (hw : ∀ x ∈ w, x ∈ vowels ∪ consonants) (hw' : ∀ x ∈ w', x ∈ vowels ∪ consonants)
     (hl : w.getLast? = w'.getLast?)
-    (hv : (w.filter (rounding.searchCopy.tier ·)).getLast? =
-      (w'.filter (rounding.searchCopy.tier ·)).getLast?)
-    (hb : (w.filter (fronting.searchCopy.tier ·)).getLast? =
-      (w'.filter (fronting.searchCopy.tier ·)).getLast?)
+    (hv : (w.filter (·.IsSyllabic)).getLast? = (w'.filter (·.IsSyllabic)).getLast?)
+    (hb : (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? =
+      (w'.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast?)
     (s : List Segment) : ∃ t, harmonize (w ++ s) = w ++ t ∧ harmonize (w' ++ s) = w' ++ t := by
   induction s using List.reverseRecOn with
   | nil => exact ⟨[], by simp [harmonize_eq_self hw], by simp [harmonize_eq_self hw']⟩
@@ -390,27 +459,31 @@ theorem exists_harmonize_append_eq {w w' : List Segment}
 
 /-! ### The alternants of an archiphoneme (§3.2, §6.1.2) -/
 
-/-- After a string whose last segment bearing [back] has the value `β`, `A` is `a` or `e`
-accordingly (§3.2.2). -/
+/-- After a string whose last segment that is syllabic or bears [back] has the value `β` for
+[back], `A` is `a` or `e` accordingly (§3.2.2). -/
 theorem fill_A {w : List Segment} {b : Segment} {β : Bool}
-    (hb : (w.filter (fronting.searchCopy.tier ·)).getLast? = some b) (hβ : b .back = some β) :
-    fill w A = A.setFeature .back β := by
+    (hb : (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? = some b)
+    (hβ : b .back = some β) : fill w A = A.setFeature .back β := by
+  rw [← filter_fronting_tier] at hb
   have hbt : fronting.pattern.OnTier b :=
     of_decide_eq_true (List.mem_filter.1 (List.mem_of_getLast? hb)).2
   have h₁ : fronting.searchCopy.emit (some b) A = A.setFeature .back β :=
     fronting.emit_eq_write_of_found_eq_some (by decide) (by decide)
       ((fronting.found_some_of_participating (fronting_participating hbt) A).trans hβ)
-  rw [fill, hb, h₁]
+  rw [← emit_eq_fill, hb, h₁]
   cases β <;>
     rw [rounding.searchCopy.emit_of_not_isTarget (by decide),
       voicing.searchCopy.emit_of_not_isTarget (by decide)]
 
-/-- After a string whose last segment bearing [back] has the value `β` and whose last vowel
-has the value `ρ` for [round], `I` is the high vowel with those values (§3.2.1). -/
+/-- After a string whose last segment that is syllabic or bears [back] has the value `β` for
+[back] and whose last syllabic segment has the value `ρ` for [round], `I` is the high vowel
+with those values (§3.2.1). -/
 theorem fill_I {w : List Segment} {b v : Segment} {β ρ : Bool}
-    (hb : (w.filter (fronting.searchCopy.tier ·)).getLast? = some b) (hβ : b .back = some β)
-    (hv : (w.filter (rounding.searchCopy.tier ·)).getLast? = some v) (hρ : v .round = some ρ) :
-    fill w I = (I.setFeature .back β).setFeature .round ρ := by
+    (hb : (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? = some b)
+    (hβ : b .back = some β) (hv : (w.filter (·.IsSyllabic)).getLast? = some v)
+    (hρ : v .round = some ρ) : fill w I = (I.setFeature .back β).setFeature .round ρ := by
+  rw [← filter_fronting_tier] at hb
+  rw [← filter_rounding_tier] at hv
   have hbt : fronting.pattern.OnTier b :=
     of_decide_eq_true (List.mem_filter.1 (List.mem_of_getLast? hb)).2
   have hvt : rounding.pattern.OnTier v :=
@@ -422,7 +495,7 @@ theorem fill_I {w : List Segment} {b v : Segment} {β ρ : Bool}
       (I.setFeature .back β).setFeature .round ρ :=
     rounding.emit_eq_write_of_found_eq_some (by cases β <;> decide) (by cases β <;> decide)
       ((rounding.found_some_of_participating (rounding_participating hvt) _).trans hρ)
-  rw [fill, hb, hv, h₁, h₂]
+  rw [← emit_eq_fill, hb, hv, h₁, h₂]
   cases β <;> cases ρ <;> exact voicing.searchCopy.emit_of_not_isTarget (by decide) _
 
 /-- After a string whose last segment has the value `ν` for [voice], `D` is `d` or `t`
@@ -430,7 +503,7 @@ accordingly (§6.1.2). -/
 theorem fill_D {w : List Segment} {x : Segment} {ν : Bool}
     (hx : w.getLast? = some x) (hν : x .voice = some ν) :
     fill w D = D.setFeature .voice ν := by
-  rw [fill, fronting.searchCopy.emit_of_not_isTarget (by decide),
+  rw [← emit_eq_fill, fronting.searchCopy.emit_of_not_isTarget (by decide),
     rounding.searchCopy.emit_of_not_isTarget (by decide), hx]
   exact voicing.emit_eq_write_of_found_eq_some (by decide) (by decide)
     ((voicing.found_some_of_participating (by simp [voicing, System.mk']) D).trans hν)
@@ -440,7 +513,7 @@ invariable suffix decides for what follows it (§3.4). -/
 theorem fill_of_mem {x : Segment} (hx : x ∈ vowels ∪ consonants) (w : List Segment) :
     fill w x = x := by
   obtain ⟨h₁, h₂, h₃⟩ := not_isTarget x hx
-  rw [fill, fronting.searchCopy.emit_of_not_isTarget h₁,
+  rw [← emit_eq_fill, fronting.searchCopy.emit_of_not_isTarget h₁,
     rounding.searchCopy.emit_of_not_isTarget h₂, voicing.searchCopy.emit_of_not_isTarget h₃]
 
 /-! ### The order of suffixes (Chapter 8) -/

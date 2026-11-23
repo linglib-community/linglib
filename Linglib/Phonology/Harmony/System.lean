@@ -151,6 +151,21 @@ theorem emit_of_not_onTier {s : α} (h : ¬ sys.pattern.OnTier s) (w : Option α
     sys.searchCopy.emit w s = s :=
   sys.searchCopy.emit_of_not_isTarget (fun ht ↦ h ht.2) w
 
+/-- Without a default, a target takes the value that a participating segment in the window
+has, and stands as it is where the window is empty or its segment has no value. -/
+theorem emit_eq_of_participating (hd : sys.default = none) {c? : Option α}
+    (hc : ∀ c ∈ c?, sys.pattern.participation c = .participating) (x : α) :
+    sys.searchCopy.emit c? x =
+      if sys.IsTarget x ∧ sys.pattern.OnTier x then
+        (c?.bind sys.pattern.value).elim x (sys.write · x) else x := by
+  have hf : sys.searchCopy.found x c? = c?.bind sys.pattern.value := by
+    cases c? with
+    | none => rfl
+    | some c => exact sys.found_some_of_participating (hc c rfl) x
+  unfold SearchCopy.emit SearchCopy.copied
+  rw [hf, searchCopy_default, hd]
+  simp [show SearchCopy.Relation.agree.act = id from funext fun _ ↦ rfl]
+
 /-- Compiles the [rose-walker-2011] roles over `Phonology.Segment` from the harmonic feature,
 the targets, the transparent segments, the direction, the blockers, and the default; every
 other segment is a trigger. -/
