@@ -5,26 +5,30 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Autosegmental.TierTree.Basic
+public import Linglib.Phonology.Autosegmental.Basic
 
 /-!
-# Maps of alphabets and of tiers
+# Maps of autosegmental representations
 
-An autosegmental representation `X : AR τ` has a word over the alphabet `τ i` on each tier `i`,
-and association lines between the tiers. This file defines two operations that change the
-family of alphabets.
+An autosegmental representation has positions on each tier, a label at each position, and
+association lines between the tiers. This file defines the map of a representation along each
+of the three.
 
-Given a map of alphabets `g i : τ i → τ' i` for each tier `i`, the relabelling `X.mapRange g`
-applies `g i` to each letter of tier `i` and keeps the lines. Given a map of tiers `h : κ → ι`,
-the restriction `X.comapDomain h` is the representation on the tiers `κ` whose tier `k` is tier
-`h k` of `X`, with the lines of `X` between these tiers. Both are monoid homomorphisms, and both
-preserve the No-Crossing Constraint.
+Given words `w` and a map of positions `f i` on each tier `i`, the representation `X.map w f hf`
+has the words `w` and the lines of `X`, each moved along `f`. Given a map of alphabets
+`g i : τ i → τ' i` for each tier, the relabelling `X.mapRange g` applies `g i` to each label of
+tier `i` and keeps the lines. Given a map of tiers `h : κ → ι`, the restriction
+`X.comapDomain h` is the representation on the tiers `κ` whose tier `k` is tier `h k` of `X`,
+with the lines of `X` between these tiers.
+
+A monotone map of positions preserves the No-Crossing Constraint. Relabelling and restriction
+are monoid homomorphisms, and both preserve it.
 
 ## Implementation notes
 
-The names follow `DFinsupp.mapRange` and `DFinsupp.comapDomain`, which map a dependent family
-along its values and along its index. `AR.map` is a different operation: it moves the positions
-of a representation within its tiers.
+`AR.map` moves lines along a map of positions as `SimpleGraph.map` moves edges along a map of
+vertices. The names `mapRange` and `comapDomain` follow `DFinsupp.mapRange` and
+`DFinsupp.comapDomain`, which map a dependent family along its values and along its index.
 
 ## TODO
 
@@ -38,6 +42,64 @@ of a representation within its tiers.
 namespace Autosegmental.AR
 
 variable {ι κ κ' : Type*} {τ τ' τ'' : ι → Type*}
+
+/-! ### Moving positions -/
+
+section Map
+
+variable {X : AR τ} (w : ∀ i, List (τ i)) (f g : ι → ℕ → ℕ)
+  (hf : ∀ i, ∀ p < (X.word i).length, f i p < (w i).length)
+
+variable (X) in
+/-- The representation with words `w` whose lines are those of `X`, each position moved
+along `f` on its tier; positions merged by `f` keep the lines of all of them. -/
+def map : AR τ where
+  word := w
+  lines i j := (X.lines i j).image (Prod.map (f i) (f j))
+  lines_self i := by simp [X.lines_self]
+  swap_mem_lines i j p q h := by
+    simp only [Finset.mem_image, Prod.map, Prod.mk.injEq, Prod.exists] at h ⊢
+    obtain ⟨a, b, h, rfl, rfl⟩ := h
+    exact ⟨b, a, X.swap_mem_lines h, rfl, rfl⟩
+  fst_lt_of_mem_lines i j p q h := by
+    simp only [Finset.mem_image, Prod.map, Prod.mk.injEq, Prod.exists] at h
+    obtain ⟨a, b, h, rfl, rfl⟩ := h
+    exact hf i a (X.fst_lt_of_mem_lines h)
+
+@[simp] theorem word_map : (X.map w f hf).word = w := rfl
+
+theorem lines_map (i j : ι) :
+    (X.map w f hf).lines i j = (X.lines i j).image (Prod.map (f i) (f j)) := rfl
+
+variable {w f hf} in
+theorem link_map {i j : ι} {r s : ℕ} :
+    (X.map w f hf).Link i j r s ↔ ∃ p q, X.Link i j p q ∧ f i p = r ∧ f j q = s := by
+  simp [Link, map]
+
+/-- A move depends only on where it sends the positions of the words. -/
+theorem map_congr (hg : ∀ i, ∀ p < (X.word i).length, g i p < (w i).length)
+    (h : ∀ i, ∀ p < (X.word i).length, f i p = g i p) : X.map w f hf = X.map w g hg :=
+  ext rfl fun i j r s ↦ by
+    simp only [link_map]
+    constructor <;> rintro ⟨p, q, hl, rfl, rfl⟩
+    · exact ⟨p, q, hl, (h i p hl.lt_left).symm, (h j q hl.lt_right).symm⟩
+    · exact ⟨p, q, hl, h i p hl.lt_left, h j q hl.lt_right⟩
+
+/-- Moving positions monotonically preserves the No-Crossing Constraint. -/
+theorem NoCrossing.map (hmono : ∀ i, MonotoneOn (f i) (Set.Iio (X.word i).length))
+    (h : X.NoCrossing) : (X.map w f hf).NoCrossing := fun i j ↦
+  isNonCrossing_lines_iff.2 fun r s r' s' h₁ h₂ hlt ↦ by
+    obtain ⟨p, q, hl, rfl, rfl⟩ := link_map.1 h₁
+    obtain ⟨p', q', hl', rfl, rfl⟩ := link_map.1 h₂
+    have hpp' : p < p' := lt_of_not_ge fun hge ↦
+      (hmono i hl'.lt_left hl.lt_left hge).not_gt hlt
+    exact hmono j hl.lt_right hl'.lt_right (isNonCrossing_lines_iff.1 (h i j) hl hl' hpp')
+
+variable (X) in
+@[simp] theorem map_id : X.map X.word (fun _ ↦ id) (fun _ _ h ↦ h) = X :=
+  ext rfl fun i j p q ↦ by simp [link_map]
+
+end Map
 
 /-! ### Relabelling -/
 
@@ -95,28 +157,6 @@ theorem mapRangeHom_comp (g' : ∀ i, τ' i → τ'' i) :
 theorem wordHom_comp_mapRangeHom (i : ι) :
     (wordHom i).comp (mapRangeHom g) = (FreeMonoid.map (g i)).comp (wordHom i) :=
   MonoidHom.ext fun _ ↦ rfl
-
-variable [Fintype ι] [DecidableEq ι] (T : ParentTree ι)
-
-@[simp] theorem children_mapRange (v : ι × ℕ) :
-    (X.mapRange g).children T v = X.children T v := rfl
-
-@[simp] theorem descendants_mapRange :
-    ∀ (d : ℕ) (v : ι × ℕ), (X.mapRange g).descendants T d v = X.descendants T d v
-  | 0, _ => rfl
-  | d + 1, v => by
-    show insert v (((X.mapRange g).children T v).biUnion ((X.mapRange g).descendants T d)) =
-      insert v ((X.children T v).biUnion (X.descendants T d))
-    rw [children_mapRange, funext (descendants_mapRange d)]
-
-@[simp] theorem dominates_mapRange {k q : ℕ} {j : ι} :
-    (X.mapRange g).Dominates T k j q ↔ X.Dominates T k j q := by
-  simp only [Dominates, descendants_mapRange]
-
-/-- The melody of a slot of a relabelling is its melody mapped by `g`. -/
-theorem melody_mapRange (k : ℕ) (j : ι) :
-    (X.mapRange g).melody T k j = (X.melody T k j).map (g j) := by
-  simp [melody, List.zipIdx_map, List.filter_map, Function.comp_def]
 
 end MapRange
 

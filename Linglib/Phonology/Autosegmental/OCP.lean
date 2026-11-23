@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.OCP
+public import Linglib.Phonology.Autosegmental.Map
 public import Linglib.Phonology.Autosegmental.TwoTier
 
 /-!

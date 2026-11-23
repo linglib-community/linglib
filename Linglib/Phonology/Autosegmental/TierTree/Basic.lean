@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.SuccPred.Tree
-public import Linglib.Phonology.Autosegmental.Basic
+public import Linglib.Phonology.Autosegmental.Map
 public import Mathlib.Data.List.Sigma
 public import Mathlib.Logic.Relation
 
@@ -409,5 +409,33 @@ theorem melody_mul_right :
   rw [melody, melody, word_mul, List.zipIdx_append, List.filter_append, h₁, List.nil_append, hz, h₂]
 
 end Mul
+
+/-! ### Relabelling -/
+
+section MapRange
+
+variable {τ' : ι → Type*} (g : ∀ i, τ i → τ' i) (X : AR τ)
+
+@[simp] theorem children_mapRange (v : ι × ℕ) :
+    (X.mapRange g).children T v = X.children T v := rfl
+
+@[simp] theorem descendants_mapRange :
+    ∀ (d : ℕ) (v : ι × ℕ), (X.mapRange g).descendants T d v = X.descendants T d v
+  | 0, _ => rfl
+  | d + 1, v => by
+    show insert v (((X.mapRange g).children T v).biUnion ((X.mapRange g).descendants T d)) =
+      insert v ((X.children T v).biUnion (X.descendants T d))
+    rw [children_mapRange, funext (descendants_mapRange d)]
+
+@[simp] theorem dominates_mapRange {k q : ℕ} {j : ι} :
+    (X.mapRange g).Dominates T k j q ↔ X.Dominates T k j q := by
+  simp only [Dominates, descendants_mapRange]
+
+/-- The melody of a slot of a relabelling is its melody mapped by `g`. -/
+theorem melody_mapRange (k : ℕ) (j : ι) :
+    (X.mapRange g).melody T k j = (X.melody T k j).map (g j) := by
+  simp [melody, List.zipIdx_map, List.filter_map, Function.comp_def]
+
+end MapRange
 
 end Autosegmental.AR

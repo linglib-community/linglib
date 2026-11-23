@@ -25,7 +25,7 @@ No-Crossing Constraint are decidable. Association is also
 statements read it. Representations concatenate tier by tier, appending the words and keeping
 [the lines of both factors](##Autosegmental.AR.link_mul), and form a monoid in which
 representations on disjoint tiers [commute](##Autosegmental.AR.commute_of_disjoint_support).
-Concatenation and monotone moves of the positions preserve
+Concatenation preserves
 [the No-Crossing Constraint](##Autosegmental.AR.NoCrossing.mul).
 
 ## Implementation notes
@@ -405,64 +405,6 @@ merge this gives the inductive step of [jardine-heinz-2015]'s Theorem 4 for thei
 concatenation, `MergeAR.noCrossing_toAR_mul`. -/
 theorem NoCrossing.mul (hX : X.NoCrossing) (hY : Y.NoCrossing) : (X * Y).NoCrossing :=
   fun i j ↦ isNonCrossing_lines_mul (hX i j) (hY i j)
-
-/-! ### Moving positions -/
-
-section Map
-
-variable (w : ∀ i, List (τ i)) (f g : ι → ℕ → ℕ)
-  (hf : ∀ i, ∀ p < (X.word i).length, f i p < (w i).length)
-
-variable (X) in
-/-- The representation with words `w` whose lines are those of `X`, each position moved
-along `f` on its tier; positions merged by `f` keep the lines of all of them. -/
-def map : AR τ where
-  word := w
-  lines i j := (X.lines i j).image (Prod.map (f i) (f j))
-  lines_self i := by simp [X.lines_self]
-  swap_mem_lines i j p q h := by
-    simp only [Finset.mem_image, Prod.map, Prod.mk.injEq, Prod.exists] at h ⊢
-    obtain ⟨a, b, h, rfl, rfl⟩ := h
-    exact ⟨b, a, X.swap_mem_lines h, rfl, rfl⟩
-  fst_lt_of_mem_lines i j p q h := by
-    simp only [Finset.mem_image, Prod.map, Prod.mk.injEq, Prod.exists] at h
-    obtain ⟨a, b, h, rfl, rfl⟩ := h
-    exact hf i a (X.fst_lt_of_mem_lines h)
-
-@[simp] theorem word_map : (X.map w f hf).word = w := rfl
-
-theorem lines_map (i j : ι) :
-    (X.map w f hf).lines i j = (X.lines i j).image (Prod.map (f i) (f j)) := rfl
-
-variable {w f hf} in
-theorem link_map {i j : ι} {r s : ℕ} :
-    (X.map w f hf).Link i j r s ↔ ∃ p q, X.Link i j p q ∧ f i p = r ∧ f j q = s := by
-  simp [Link, map]
-
-/-- A move depends only on where it sends the positions of the words. -/
-theorem map_congr (hg : ∀ i, ∀ p < (X.word i).length, g i p < (w i).length)
-    (h : ∀ i, ∀ p < (X.word i).length, f i p = g i p) : X.map w f hf = X.map w g hg :=
-  ext rfl fun i j r s ↦ by
-    simp only [link_map]
-    constructor <;> rintro ⟨p, q, hl, rfl, rfl⟩
-    · exact ⟨p, q, hl, (h i p hl.lt_left).symm, (h j q hl.lt_right).symm⟩
-    · exact ⟨p, q, hl, h i p hl.lt_left, h j q hl.lt_right⟩
-
-/-- Moving positions monotonically preserves the No-Crossing Constraint. -/
-theorem NoCrossing.map (hmono : ∀ i, MonotoneOn (f i) (Set.Iio (X.word i).length))
-    (h : X.NoCrossing) : (X.map w f hf).NoCrossing := fun i j ↦
-  isNonCrossing_lines_iff.2 fun r s r' s' h₁ h₂ hlt ↦ by
-    obtain ⟨p, q, hl, rfl, rfl⟩ := link_map.1 h₁
-    obtain ⟨p', q', hl', rfl, rfl⟩ := link_map.1 h₂
-    have hpp' : p < p' := lt_of_not_ge fun hge ↦
-      (hmono i hl'.lt_left hl.lt_left hge).not_gt hlt
-    exact hmono j hl.lt_right hl'.lt_right (isNonCrossing_lines_iff.1 (h i j) hl hl' hpp')
-
-variable (X) in
-@[simp] theorem map_id : X.map X.word (fun _ ↦ id) (fun _ _ h ↦ h) = X :=
-  ext rfl fun i j p q ↦ by simp [link_map]
-
-end Map
 
 /-! ### Representations from words and a relation -/
 
