@@ -11,13 +11,12 @@ public import Mathlib.Algebra.Group.Hom.Defs
 /-!
 # The Bregman divergence along a functional
 
-For functions `V g : E → β` into an additive group, we define the Bregman divergence of `V` from
-`p` to `q` along `g` as `bregmanDiv V g p q = V q - V p - (g q - g p)`, the gap at `q` between `V`
-and the function `V p + (g · - g p)` that agrees with `V` at `p` and varies as `g` does. When `g`
-is additive on a group `E` this is `V q - V p - g (q - p)`, the Bregman divergence of a convex
-function `V` whose subgradient at `p` is `g`. The divergence is nonnegative exactly when that
-function lies below `V` at `q` (`bregmanDiv_nonneg_iff`), which is what it is for `g` to support
-`V` at `p`.
+Let `V` and `g` be functions from `E` to an additive group. The Bregman divergence of `V` from `p`
+to `q` along `g` is `bregmanDiv V g p q = V q - V p - (g q - g p)`.
+
+To read the formula, think of `V p + (g q - g p)` as the value at `q` of the tangent to `V` at `p`,
+with slope given by `g`. The divergence is how far `V` lies above that tangent at `q`. When `g` is
+additive, it equals `V q - V p - g (q - p)`, the usual formula.
 
 ## Implementation notes
 

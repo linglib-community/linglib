@@ -7,14 +7,16 @@ public import Mathlib.Order.Hom.CompleteLattice
 /-!
 # The question raised by a family of propositions
 
-The question a family `A` of propositions raises is the meet of their polar questions,
-`Setoid.ofProps A = ⨅ p ∈ A, polar p`, the coarsest question determining each of them: two worlds
-are equivalent when every member treats them alike (`ofProps_iff`). The propositions a question
-determines form a Boolean subalgebra `Setoid.determined Q`. The two maps are adjoint into the
-dual order (`gc_ofProps_determined`): a question determines every member of `A` exactly when it
-refines the question `A` raises. Every question is raised by the propositions it determines
-(`ofProps_determined`), so the adjunction is a Galois insertion, and `ofProps` sends unions of
-families to meets of questions (`ofPropsHom`).
+Given a family `A` of propositions, we define the question `Setoid.ofProps A` that asks, of each
+member of `A`, whether it holds. Two worlds are equivalent for it when they make the same members of
+`A` true. It is the meet of the polar questions of the members, `⨅ p ∈ A, polar p`.
+
+In the other direction, the propositions that a question `Q` determines form a Boolean subalgebra,
+`Q.determined`.
+
+These two constructions are adjoint: a question `Q` determines every member of `A` if and only if
+`Q` refines `ofProps A`. See `Setoid.gc_ofProps_determined`. Every question is raised by the
+propositions it determines, so the adjunction is a Galois insertion.
 
 ## References
 

@@ -5,13 +5,17 @@ public import Linglib.Semantics.Questions.Partition.Basic
 /-!
 # Information and the answers to a partition question
 
-Information, a set `J` of worlds, is compatible with the cells of a question it does not rule
-out, `Setoid.compatible Q J`. It is closer to an answer than weaker information `K` when it rules
-out a cell that `K` leaves open, `Setoid.CloserToAnswer Q J K`, the partial answer of
-[groenendijk-stokhof-1984], and it gives access to the true answer at a world when it is
-compatible with that world's cell. The saturation `Setoid.saturation Q s` of a set of worlds is
-the union of the cells it meets, the least proposition containing it that the question
-determines.
+Let `Q` be a partition question and let `J` be a set of worlds, the information that someone has.
+
+A cell of `Q` is compatible with `J` when some world of `J` lies in it, so that `J` does not rule
+that answer out. We write `Q.compatible J` for the set of compatible cells.
+
+Information `J` is closer to an answer than weaker information `K` when `J` rules out a cell that
+`K` leaves open. This is `Q.CloserToAnswer J K`, and it is how [groenendijk-stokhof-1984] define a
+partial answer.
+
+We also define the saturation `Q.saturation s` of a set of worlds, the union of the cells that it
+meets.
 
 ## References
 

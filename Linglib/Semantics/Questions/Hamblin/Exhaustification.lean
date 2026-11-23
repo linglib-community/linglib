@@ -7,15 +7,13 @@ public import Linglib.Semantics.Exhaustification.Basic
 /-!
 # Exhaustification against a Hamblin set
 
-Exhaustifying a member `p` against a Hamblin set `H`, `Exhaustification.exh H p`, asserts `p` and
-denies every member `p` does not entail ([fox-2018]). On a member it holds exactly where `p` is
-the strongest true answer (`mem_exh_iff_isStrongestTrueAnswer`), where it is the strong answer
-(`exh_eq_strongAnswer`), so Dayal's presupposition holds throughout a set of worlds exactly when
-exhaustifying the members gives each of their cells there
-(`forall_isExhaustivelyResolvable_iff_exh_inter`). `dayalStrongAns` applies this strengthening to
-Dayal's answer and agrees with the strong answer wherever it is defined
-(`dayalStrongAns_eq_some_iff`). A strongest true answer is never dominated
-(`not_dominated_of_isStrongestTrueAnswer`).
+Let `p` be a member of a Hamblin set `H`. Exhaustifying `p` against `H` gives the proposition that
+`p` holds and that every member of `H` not entailed by `p` fails. This is
+`Exhaustification.exh H p`, following [fox-2018].
+
+The main result is that the exhaustified `p` holds exactly at the worlds where `p` is the strongest
+true answer. See `Question.mem_exh_iff_isStrongestTrueAnswer`. At such a world it coincides with the
+strong answer.
 
 ## References
 

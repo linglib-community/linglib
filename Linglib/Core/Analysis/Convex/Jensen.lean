@@ -12,12 +12,12 @@ public import Mathlib.Analysis.Convex.Function
 /-!
 # Jensen's inequality over a semifield
 
-Mathlib proves that a convex set contains the convex combinations of its points
-(`Convex.sum_mem`) and Jensen's inequality for finite sums (`ConvexOn.map_sum_le`) for a module
-over a field on an additive group, through the centre of mass. A convex combination needs no
-subtraction, and this file proves both for a module over a linearly ordered semifield on an
-additive monoid, by induction on the finite set. The case in view is the measures on a measurable
-space, a module over `ℝ≥0`, where a convex combination is a mixture.
+In this file we prove the finite Jensen inequality for a module over a linearly ordered semifield.
+See `Convex.sum_smul_mem` and `ConvexOn.map_sum_smul_le`.
+
+Mathlib proves it for a module over a field, in `Mathlib.Analysis.Convex.Jensen`. A convex
+combination involves no subtraction, so a semifield is enough. The extra generality matters for
+measures: they form a module over `ℝ≥0`, and a convex combination of measures is a mixture.
 
 [UPSTREAM] generalizations of `Convex.sum_mem` and `ConvexOn.map_sum_le`.
 -/

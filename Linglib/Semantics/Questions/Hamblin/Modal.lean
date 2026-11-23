@@ -6,18 +6,16 @@ public import Linglib.Logic.Modal.Basic
 /-!
 # Knowing the answer and questions under necessity
 
-An agent with doxastic alternatives `Dox` knows the answer to a Hamblin set `H` at `w` when the
-weak answer holds throughout its alternatives, `KnowsAnswer H w Dox`, [karttunen-1977]'s meaning
-postulate for *know*, and knows some answer when some true member does, `KnowsSomeAnswer H w Dox`,
-the mention-some *know* of [belnap-1982] and [groenendijk-stokhof-1984]. Knowing the answer
-implies knowing some answer when there is a true member, and the two agree on a unique one
-(`knowsSomeAnswer_iff_knowsAnswer`). The perspectival center is possibly ignorant in a context
-when it may not know the answer there, `PossiblyIgnorant H c Dox`, [dayal-2025]'s requirement on
-the center of a question.
+Let `H` be a Hamblin set, and let `Dox : SetRel W W` relate each world to the worlds that an agent
+considers possible there.
 
-The question under necessity `box H R` is the image of `H` under `SetRel.core R`, and its
-presupposition at a world is that of `H` on that world's modal base
-(`isExhaustivelyResolvable_box_iff`).
+The agent knows the answer to `H` at `w` when the weak answer at `w` holds in every world the agent
+considers possible. We write `KnowsAnswer H w Dox`. The agent knows some answer when at least one
+true member of `H` holds in all those worlds, written `KnowsSomeAnswer H w Dox`. Knowing the answer
+implies knowing some answer, provided that some member is true.
+
+We also define the question under necessity, `box H R`. Its members say, for each member `p` of `H`,
+that `p` holds in every `R`-accessible world.
 
 ## References
 

@@ -6,12 +6,12 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 /-!
 # The σ-algebra of a question
 
-The information in a partition question `Q` is the σ-algebra `Setoid.measurableSpace Q` of the
-sets that are unions of cells, the pullback of the discrete σ-algebra along the quotient map. Its
-measurable sets are exactly the propositions the question determines
-(`measurableSet_measurableSpace_iff`), so a finer question has a larger σ-algebra
-(`measurableSpace_anti`), the finest question has every set and the trivial question only `∅`
-and the whole space. Conditioning on this σ-algebra is conditioning on the answer.
+A partition question `Q` carries a σ-algebra, `Q.measurableSpace`, whose measurable sets are the
+unions of cells of `Q`. Formally, it is the pullback of the discrete σ-algebra on the answers along
+the quotient map.
+
+The measurable sets are exactly the propositions that `Q` determines. See
+`Setoid.measurableSet_measurableSpace_iff`.
 
 ## TODO
 

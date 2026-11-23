@@ -6,30 +6,18 @@ public import Mathlib.Order.Setoid.Partition
 /-!
 # Partition questions
 
-This file defines the basic vocabulary of partition questions. A question in the sense of
-[groenendijk-stokhof-1984] is a `Setoid W`, its answers the cells; the same object is a subject
-matter in the sense of [lewis-1988], and a proposition is entirely about it when the question
-determines it, that is, when it is constant on the cells. The polar question whether `p` is the
-kernel of the indicator of `p`, a question determines `p` exactly when it refines the polar
-question, `Q ≤ polar p`, so a finer question determines more (`le_trans`) and the finest question
-determines everything (`bot_le`). A
-question settles the value of a function exactly when it determines each of its fibres
-(`le_ker_iff_forall_determines`). Every question is the meet of the polar questions of its cells
-(`iInf_polar_cell`), and the nontrivial polar questions are the coatoms of the lattice of
-questions (`isCoatom_iff`). A proposition a question determines is [cariani-2013]'s visible,
-[phillips-brown-2025]'s considered, and an issue in a subject matter for
-[von-fintel-gillies-2010]; *determines* is [ciardelli-2022]'s word for the dependency of one
-question on another, here of the polar question whether `p`, and `Setoid.DeterminesOn` is his
-dependency relative to a set of worlds. The converse relation, a state settling a question, is
-membership in a `Question`. The question a family of propositions raises is in `OfProps.lean`,
-and information against a question in `Answer.lean`.
+A partition question divides the worlds into cells and asks which cell the actual world is in. We
+represent it by an equivalence relation `Q : Setoid W`: two worlds are equivalent when the question
+does not distinguish them. The cell `Q.cell w` is the set of worlds equivalent to `w`, and it is the
+true answer at `w`. This is the notion of question of [groenendijk-stokhof-1984].
 
-## Main definitions
+Questions are ordered by refinement: `Q ≤ Q'` means that `Q` distinguishes every pair of worlds that
+`Q'` does. The simplest question is the polar question `Setoid.polar p`, which asks only whether the
+proposition `p` holds.
 
-* `Setoid.cell Q w` — the cell of `w`, an element of `Q.classes`.
-* `Setoid.polar p` — the polar question whether `p`.
-* `Setoid.Determines Q p` — `Q` determines `p`: `p` is a union of cells.
-* `Setoid.DeterminesOn Q p c` — `Q` determines `p` on the worlds of `c`.
+A question determines a proposition `p` when learning the answer always settles whether `p` holds,
+that is, when `p` is a union of cells. We write this `Q.Determines p`. It is the same as
+`Q ≤ Setoid.polar p`.
 
 ## References
 

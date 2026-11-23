@@ -7,21 +7,15 @@ public import Linglib.Semantics.Questions.Hamblin.Basic
 /-!
 # The strongest true answer
 
-A strongest true answer to a Hamblin set `H` at a world `w` is a member true at `w` that entails
-every member true at `w`, [dayal-1996]'s maximally informative true answer:
-`IsStrongestTrueAnswer H w p` is `IsLeast (trueAnswers H w) p`. Dayal's presupposition is that one
-exists, `IsExhaustivelyResolvable H w`, and it holds on the worlds `presupposition H`. It holds
-exactly when the weak answer is itself a member (`isExhaustivelyResolvable_iff`), so Dayal's
-operator `dayalAns` agrees with the weak answer of [heim-1994] and [beck-rullmann-1999] wherever
-it is defined. When the members exclude one another the presupposition is that one of them is
-true (`presupposition_eq_sUnion`).
+Let `H` be a Hamblin set. A strongest true answer at a world `w` is a member of `H` that is true at
+`w` and entails every member of `H` that is true at `w`. We write `IsStrongestTrueAnswer H w p`,
+which unfolds to `IsLeast (trueAnswers H w) p`.
 
-A question as a topical property `P : α → Set W`, from short answers to propositions
-([xiang-2022]), has the Hamblin set `Set.range P`, and the presupposition is a true short answer
-entailing every true one (`isExhaustivelyResolvable_range_iff`), which on a strictly monotone
-property is the greatest or least true degree (`isExhaustivelyResolvable_range_iff_isGreatest`).
-On an information state `s` the presupposition is a least member that `s` supports,
-`IsExhaustivelyResolvableOn H s`, Dayal's at the singleton `{w}`.
+[dayal-1996] proposes that a question presupposes that it has a strongest true answer. We call this
+condition `IsExhaustivelyResolvable H w`.
+
+The main result is that the presupposition holds at `w` if and only if the weak answer at `w` is
+itself a member of `H`. See `Question.isExhaustivelyResolvable_iff`.
 
 ## References
 

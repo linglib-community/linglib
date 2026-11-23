@@ -17,32 +17,17 @@ public import Linglib.Core.Analysis.Convex.Jensen
 /-!
 # The value of information of an experiment
 
-An experiment is a Markov kernel `κ : Kernel Θ 𝓧` that draws an observation from a parameter.
-An agent with prior `π` who values a belief `μ` at `V μ` expects, before observing, the value
-of the posterior `κ†π`; the value of information `valueOfInformation V κ π` is that expectation
-less the value of the prior. DeGroot calls it the information in the experiment when `V` is the
-negative of an uncertainty function, and Lindley's measure of information is the case of
-Shannon entropy.
+An experiment is a Markov kernel `κ : Kernel Θ 𝓧`: for each value of a parameter, it gives the
+distribution of an observation. Consider an agent with prior `π` who assigns the value `V μ` to
+holding the belief `μ`. After observing, the agent holds the posterior `κ†π`. We define the value of
+information `valueOfInformation V κ π` as the expected value of the posterior minus the value of the
+prior.
 
-A value function is convex on beliefs when the value of a mixture of two beliefs is at most
-the mixture of their values, `ConvexOn ℝ≥0 {μ | IsProbabilityMeasure μ} V`. The prior is the
-mixture of the posteriors, so by Jensen's inequality information has nonnegative value for every
-such `V`. The value of information is also the expected Bregman divergence `bregmanDiv V g` of
-`V` from the prior to the posterior, along any `g` whose expectation over the posteriors is its
-value at the prior, as the expectation `μ ↦ ∫ θ, g θ ∂μ` of a function of the parameter is.
+The basic fact is that information cannot hurt when `V` is convex. The prior is a mixture of the
+posteriors, so this is Jensen's inequality. See `valueOfInformation_nonneg_of_convexOn`.
 
-The decision value `decisionValue U μ` of a belief is the best expected utility of an action. It
-is convex on beliefs, and an action that is best at the prior supports it there, so its Bregman
-divergence along that action is what re-optimizing gains over keeping the action. For it, the
-value of information is also the risk increase of mathlib's decision theory at the regret loss
-`C − U`, so garbling an experiment never raises its value, the forward direction of Blackwell's
-comparison of experiments. For an
-experiment that observes a classifier `f`, the value of information is the probability-weighted
-value of the prior conditioned on each fibre of `f`; a fixed statistic gains nothing, which is the
-law of total expectation over the fibres, and the converse of Blackwell's theorem says that a
-classifier never worth more than `f` factors through `f`. Observing the parameter itself leaves a
-point-mass belief, so its value is the expected value of perfect information, and no experiment
-is worth more.
+The main example is the decision value `decisionValue U μ`, the best expected utility that an agent
+with belief `μ` can obtain. For it we also prove Blackwell's theorem comparing experiments.
 
 ## Main definitions
 
