@@ -94,7 +94,7 @@ def DRS.IsTrue (K : DRS L V) (M : Type x) [L.Structure M] : Prop :=
 
 variable {M} {K : DRS L V} {f g : V → Part M}
 
-theorem Interpretation.mem_extend_embedding {U : Finset V} :
+@[simp] theorem Interpretation.mem_extend_embedding {U : Finset V} :
     f ~[(Interpretation.embedding (L := L) M).extend U] g ↔
       f ≤ g ∧ PFun.Dom g = PFun.Dom f ∪ ↑U := Iff.rfl
 

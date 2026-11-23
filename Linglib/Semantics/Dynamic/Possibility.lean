@@ -86,6 +86,9 @@ theorem liftRel_comp (R S : W → SetRel (V → M) (V → M)) :
   · rintro ⟨c, ⟨hw₁, h₁⟩, hw₂, h₂⟩
     exact ⟨hw₁.trans hw₂, c.assignment, h₁, by rwa [hw₁]⟩
 
+theorem mem_dom_liftRel : a ∈ (liftRel R).dom ↔ a.assignment ∈ (R a.world).dom :=
+  ⟨fun ⟨b, _, h⟩ ↦ ⟨b.assignment, h⟩, fun ⟨g, h⟩ ↦ ⟨⟨a.world, g⟩, rfl, h⟩⟩
+
 end LiftRel
 
 /-! ### Partial points -/

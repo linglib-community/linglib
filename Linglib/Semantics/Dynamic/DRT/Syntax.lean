@@ -28,7 +28,7 @@ and properness.
   variable DRS that must unfold a recursive definition starts from `cases K`.
 * `referents` is the textbook universe `U`: `universe` is a Lean keyword and `univ` collides with
   `Finset.univ`. `conditions` is a `List`, since an inductive cannot nest through `Finset` or
-  `Multiset`; set semantics is recovered by the interpretation (`verifiesTotal_perm`).
+  `Multiset`; set semantics is recovered by the interpretation (`DRS.mem_verifiers_iff`).
 * Renaming and occurring and free referents are each three mutually recursive functions, on DRSs,
   conditions and condition lists, by structural recursion through the nesting, so the kernel
   evaluates them and `decide` settles them on concrete DRSs.

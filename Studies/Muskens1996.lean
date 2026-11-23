@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRT.Relational
+public import Linglib.Semantics.Dynamic.DRT.Agreement
 public import Linglib.Semantics.Dynamic.RegisterStructure
 public import Mathlib.Data.Fin.VecNotation
 
@@ -289,10 +289,10 @@ theorem isProper_proper : proper.IsProper := by decide
 theorem not_isProper_improper : ¬ improper.IsProper := by decide
 
 /-- (45) and (47) denote the same relation in every model. -/
-theorem toRel_improper_eq {M : Type*} [girlLang.Structure M] :
-    (DRS.toRel improper : Update (ℕ → M)) = DRS.toRel proper := by
+theorem eval_improper_eq {M : Type*} [girlLang.Structure M] :
+    improper.eval (.assignment M) = proper.eval (.assignment M) := by
   ext ⟨a, a'⟩
-  simp [DRS.toRel_iff, improper, proper, talks, DRS.Extends]
+  simp [DRS.mem_eval_assignment, DRS.mem_verifiers_iff, improper, proper, talks]
   exact fun _ _ g _ hg ↦ ⟨g, fun _ ↦ rfl, hg⟩
 
 end Representational
@@ -303,11 +303,11 @@ end Representational
 assignments and notes a second difference: on `[ | [x | man x] ⇒ [x | mortal x]]`, where `x` is
 declared twice, standard DRT ignores the second declaration and says that every man is mortal,
 while here the second `x` takes a new value and the box says that there is a mortal if there is
-a man. The partial semantics `DRS.Verifies` (`Verification/Partial.lean`) renders standard DRT:
-the re-declaration is inert, and in a model with a non-mortal man the two truth values differ
-(`fn4_diverges`). The witness is proper (`fn4_isProper`), so what fails is reuse-freeness
-(`fn4_not_reuseFreeAt`), the hypothesis of the reconciliation
-`DRS.trueRel_iff_exists_verifies`. -/
+a man. Verification by partial embeddings (`Interpretation.embedding`) renders standard DRT:
+declaring the referent again has no effect, and in a model with a non-mortal man the two truth
+values differ (`fn4_diverges`). The witness is proper (`fn4_isProper`), so what fails is that no
+referent is declared twice (`fn4_not_reuseFreeAt`), the hypothesis of
+`DRS.mem_dom_eval_assignment_iff_isTrue`. -/
 
 section Fn4
 
@@ -341,38 +341,43 @@ theorem fn4_isProper : fn4.IsProper := by decide
 
 theorem fn4_not_reuseFreeAt : ¬ DRS.ReuseFreeAt ∅ fn4 := by decide
 
-theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
-  refine (DRS.trueRel_iff_exists_extends _ _).2 ⟨g, fun _ _ ↦ rfl, ?_⟩
-  rw [verifiesTotal_iff]
+theorem fn4_mem_dom (g : ℕ → Fin 2) : g ∈ (fn4.eval (.assignment (Fin 2))).dom := by
+  refine DRS.mem_dom_eval_assignment.mpr ⟨g, fun _ _ ↦ rfl, ?_⟩
+  rw [DRS.mem_verifiers_iff]
   intro c hc
   simp only [fn4, List.mem_singleton] at hc
   subst hc
-  rw [verifiesTotal_imp]
+  rw [Condition.mem_verifiers_assignment_imp]
   intro g₁ _ _
-  refine ⟨Function.update g₁ 0 1,
+  refine DRS.mem_dom_eval_assignment.mpr ⟨Function.update g₁ 0 1,
     fun x hx ↦ by rw [Function.update_apply, ite_eq_right (by simpa [fn4Cons] using hx)], ?_⟩
-  rw [verifiesTotal_iff]
+  rw [DRS.mem_verifiers_iff]
   intro c hc
   simp only [fn4Cons, List.mem_singleton] at hc
   subst hc
-  rw [verifiesTotal_atom, Language.Atom.realize_mk]
+  rw [Condition.mem_verifiers_assignment_atom, Language.Atom.realize_mk]
   show Function.update g₁ 0 1 0 = 1
   simp
 
 theorem fn4_not_isTrue : ¬ fn4.IsTrue (Fin 2) := by
-  rintro ⟨g', -, hdom, himp, -⟩
-  have hg' : g' = ⊥ :=
+  rintro ⟨g', hg'⟩
+  obtain ⟨-, hdom, hcs⟩ := DRS.mem_eval_embedding_mk.mp hg'
+  have hg'' : g' = ⊥ :=
     (PFun.eq_of_le_of_dom_subset bot_le (by rw [hdom]; simp)).symm
-  subst hg'
-  have hman :
-      fn4Ante.Verifies (⊥ : ℕ → Part (Fin 2)) (Function.update ⊥ 0 (Part.some 0)) := by
-    rw [fn4Ante, DRS.verifies_mk]
-    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
+  subst hg''
+  have himp := Condition.mem_verifiers_imp.mp (Condition.mem_verifiersAll_cons.mp hcs).1
+  have hman : (⊥ : ℕ → Part (Fin 2)) ~[fn4Ante.eval (.embedding (Fin 2))]
+      (Function.update ⊥ 0 (Part.some 0) : ℕ → Part (Fin 2)) := by
+    rw [fn4Ante, DRS.mem_eval_embedding_mk]
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ,
+      and_true, Condition.mem_verifiers_embedding_atom]
     exact ⟨bot_le, by simp, ![0], fun i => by rw [Subsingleton.elim i 0]; simp, rfl⟩
-  obtain ⟨g₂, hle₂, hdom₂, hmortal, -⟩ := himp _ hman
+  obtain ⟨g₂, hg₂'⟩ := himp _ hman
+  obtain ⟨hle₂, hdom₂, hcs₂⟩ := DRS.mem_eval_embedding_mk.mp hg₂'
   have hg₂ : g₂ = Function.update (⊥ : ℕ → Part (Fin 2)) 0 (Part.some 0) :=
     (PFun.eq_of_le_of_dom_subset hle₂ (by rw [hdom₂]; simp)).symm
-  obtain ⟨v, hv, hrel⟩ := hmortal
+  obtain ⟨v, hv, hrel⟩ := (Condition.mem_verifiers_embedding_atom _).mp
+    (Condition.mem_verifiersAll_cons.mp hcs₂).1
   have h0 : v 0 ∈ g₂ 0 := hv 0
   rw [hg₂] at h0
   have hv0 : v 0 = 0 := by simpa using h0
@@ -380,10 +385,10 @@ theorem fn4_not_isTrue : ¬ fn4.IsTrue (Fin 2) := by
   rw [hv0] at h1
   exact absurd h1 (by decide)
 
-/-- The reconciliation `DRS.trueRel_iff_exists_verifies` fails on the witness. -/
+/-- On the witness, having a verifying extension on assignments and truth come apart. -/
 theorem fn4_diverges (g : ℕ → Fin 2) :
-    ¬ (DRS.trueRel fn4 g ↔ fn4.IsTrue (Fin 2)) :=
-  fun h ↦ fn4_not_isTrue (h.mp (fn4_trueRel g))
+    ¬ (g ∈ (fn4.eval (.assignment (Fin 2))).dom ↔ fn4.IsTrue (Fin 2)) :=
+  fun h ↦ fn4_not_isTrue (h.mp (fn4_mem_dom g))
 
 end Fn4
 

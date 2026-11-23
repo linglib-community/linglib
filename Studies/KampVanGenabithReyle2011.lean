@@ -35,7 +35,7 @@ follow from the form of Definition 24(ii) alone and do not use the absence of `�
 @[expose] public section
 
 open FirstOrder FirstOrder.Language DRT
-open DynamicSemantics
+open DynamicSemantics SetRel
 
 namespace KampVanGenabithReyle2011
 
@@ -78,13 +78,19 @@ set_option linter.style.haveILetI false in
 private theorem marbleOut_isTrue_iff (w : Bool) :
     (letI := bag w; marbleOut.IsTrue (Fin 2)) ↔ w = true := by
   constructor
-  · rintro ⟨g, -, -, -, ⟨v, -, hout⟩, -⟩
+  · rintro ⟨g, hg⟩
+    letI := bag w
+    obtain ⟨-, -, hcs⟩ := DRS.mem_eval_embedding_mk.mp hg
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ,
+      and_true, Condition.mem_verifiers_embedding_atom] at hcs
+    obtain ⟨-, v, -, hout⟩ := hcs
     exact hout
   · rintro rfl
     letI := bag true
     refine ⟨Function.update ⊥ 0 (.some 0), ?_⟩
-    rw [marbleOut, DRS.verifies_mk]
-    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
+    rw [marbleOut, DRS.mem_eval_embedding_mk]
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ,
+      and_true, Condition.mem_verifiers_embedding_atom]
     exact ⟨bot_le, by simp,
       ⟨![0], fun i => by rw [Subsingleton.elim i 0]; simp, rfl⟩,
       ⟨![0], fun i => by rw [Subsingleton.elim i 0]; simp, rfl⟩⟩
@@ -93,13 +99,19 @@ set_option linter.style.haveILetI false in
 private theorem coinOut_isTrue_iff (w : Bool) :
     (letI := bag w; coinOut.IsTrue (Fin 2)) ↔ w = true := by
   constructor
-  · rintro ⟨g, -, -, -, ⟨v, -, hout⟩, -⟩
+  · rintro ⟨g, hg⟩
+    letI := bag w
+    obtain ⟨-, -, hcs⟩ := DRS.mem_eval_embedding_mk.mp hg
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ,
+      and_true, Condition.mem_verifiers_embedding_atom] at hcs
+    obtain ⟨-, v, -, hout⟩ := hcs
     exact hout
   · rintro rfl
     letI := bag true
     refine ⟨Function.update ⊥ 0 (.some 1), ?_⟩
-    rw [coinOut, DRS.verifies_mk]
-    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
+    rw [coinOut, DRS.mem_eval_embedding_mk]
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ,
+      and_true, Condition.mem_verifiers_embedding_atom]
     exact ⟨bot_le, by simp,
       ⟨![1], fun i => by rw [Subsingleton.elim i 0]; simp, rfl⟩,
       ⟨![1], fun i => by rw [Subsingleton.elim i 0]; simp, rfl⟩⟩
@@ -118,16 +130,23 @@ def witness (d : Fin 2) : Possibility Bool ℕ (Part (Fin 2)) :=
 set_option linter.style.haveILetI false in
 theorem witness_mem_marbleOut : witness 0 ∈ marbleOut.state bag := by
   letI := bag true
-  refine ⟨rfl, ?_⟩
-  show marbleOut.Verifies ⊥ (Function.update ⊥ 0 (.some 0))
-  rw [marbleOut, DRS.verifies_mk]
-  simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
+  refine (DRS.mem_state_iff bag).mpr ?_
+  show (⊥ : ℕ → Part (Fin 2)) ~[marbleOut.eval (.embedding (Fin 2))]
+    (Function.update ⊥ 0 (.some 0) : ℕ → Part (Fin 2))
+  rw [marbleOut, DRS.mem_eval_embedding_mk]
+  simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ,
+    and_true, Condition.mem_verifiers_embedding_atom]
   exact ⟨bot_le, by simp,
     ⟨![0], fun i => by rw [Subsingleton.elim i 0]; simp, rfl⟩,
     ⟨![0], fun i => by rw [Subsingleton.elim i 0]; simp, rfl⟩⟩
 
+set_option linter.style.haveILetI false in
 theorem witness_notMem_coinOut : witness 0 ∉ coinOut.state bag := by
-  rintro ⟨-, -, -, ⟨v, hv, hcoin⟩, -⟩
+  intro h
+  letI := bag true
+  obtain ⟨-, -, hcs⟩ := DRS.mem_eval_embedding_mk.mp ((DRS.mem_state_iff bag).mp h)
+  obtain ⟨v, hv, hcoin⟩ := (Condition.mem_verifiers_embedding_atom _).mp
+    (Condition.mem_verifiersAll_cons.mp hcs).1
   have h0 : v 0 ∈ (witness 0).assignment 0 := hv 0
   have h2 : v 0 = 0 := by simpa [witness] using h0
   have h3 : v 0 = 1 := hcoin
@@ -182,7 +201,8 @@ theorem ccp_action {W M : Type*} (interp : W → dLang.Structure M) :
 
 section Regular
 
-variable {L : Language} {V W M : Type*} (interp : W → L.Structure M) (K : DRS L V)
+variable {L : Language} {V W M : Type*} [DecidableEq V] (interp : W → L.Structure M)
+  (K : DRS L V)
 
 -- p. 161, (ii)
 theorem ccp_base {X : Set V} {I : State W V M} (hI : State.UniformAt X I) :
@@ -203,7 +223,8 @@ theorem ccp_extensional {I I' : State W V M} {w : W}
     {q : Possibility W V (Part M)} (hq : q.world = w) :
     q ∈ K.ccp interp I ↔ q ∈ K.ccp interp I' := by
   rw [DRS.mem_ccp, DRS.mem_ccp]
-  exact exists_congr fun p => and_congr_left fun hrest => h p (hrest.1.trans hq)
+  exact exists_congr fun p => and_congr_left fun hrest =>
+    h p (((DRS.mem_eval_intensional interp).mp hrest).1.1.trans hq)
 
 /-- (44): at an extension of a point of the input, the context change potential agrees with the
 state the DRS expresses relative to that point's assignment (Definition 29). -/
@@ -216,7 +237,7 @@ theorem mem_ccp_iff_mem_relState {X : Set V} {I : State W V M} (hI : State.Unifo
   refine ⟨?_, fun h ↦ ⟨p, hp, h⟩⟩
   rintro ⟨p', hp', h⟩
   have he : p' = p := by
-    rw [(Possibility.le_iff_eq_restrict (hI p' hp')).mp ((DRS.mem_update_iff interp).mp h).1,
+    rw [(Possibility.le_iff_eq_restrict (hI p' hp')).mp ((DRS.mem_eval_intensional interp).mp h).1,
       ← (Possibility.le_iff_eq_restrict (hI p hp)).mp hpq]
   exact he ▸ h
 

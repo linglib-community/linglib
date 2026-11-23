@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRT.Assignment
+public import Linglib.Semantics.Dynamic.DRT.Translation
 public import Linglib.Semantics.Dynamic.DRT.Embedding
 
 /-!
@@ -10,7 +10,8 @@ A total assignment `f'` *completes* a partial embedding `f` when it agrees with 
 of `f`. On a DRS in which no referent is declared twice along a nesting path, an embedding has a
 verifying extension exactly when an assignment completing it has one
 (`DRS.mem_dom_eval_assignment_iff_embedding`), so a proper such DRS is true in a model exactly
-when some assignment verifies it (`DRS.mem_dom_eval_assignment_iff_isTrue`).
+when some assignment verifies it (`DRS.mem_dom_eval_assignment_iff_isTrue`), which is when its
+first-order translation holds (`DRS.isTrue_iff_realize_toFormula`).
 
 On a DRS that declares a referent again the two interpretations differ: the referent keeps its
 value in an embedding and takes a new one in an assignment.
@@ -254,5 +255,12 @@ theorem DRS.mem_dom_eval_assignment_iff_isTrue {K : DRS L V} (hrf : K.ReuseFreeA
     (hK : K.IsProper) (f' : V → M) : f' ∈ (K.eval (.assignment M)).dom ↔ K.IsTrue M :=
   DRS.mem_dom_eval_assignment_iff_embedding hrf (hK ▸ Finset.Subset.refl _) (f := ⊥)
     (by simp) fun x hx => absurd hx (Finset.notMem_empty x)
+
+/-- The truth of a proper DRS that declares no referent twice is the truth of its first-order
+translation (§1.5). -/
+theorem DRS.isTrue_iff_realize_toFormula {K : DRS L V} (hrf : K.ReuseFreeAt ∅)
+    (hK : K.IsProper) (f' : V → M) : K.IsTrue M ↔ K.toFormula.Realize f' :=
+  (DRS.mem_dom_eval_assignment_iff_isTrue hrf hK f').symm.trans
+    (DRS.realize_toFormula K f').symm
 
 end DRT

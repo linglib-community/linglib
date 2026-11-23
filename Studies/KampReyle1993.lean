@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRT.Relational
+public import Linglib.Semantics.Dynamic.DRT.Embedding
 public import Linglib.Semantics.Dynamic.DRT.Accessibility
 public import Linglib.Core.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
@@ -11,8 +11,8 @@ import Mathlib.Tactic.FinCases
 A discourse is interpreted by constructing a discourse representation structure (DRS), and a DRS
 is verified by a partial embedding of its referents into a model. A sub-DRS is verified by
 extensions of the embedding that keep the values it has already assigned (Defs. 1.4.4, 2.1.4),
-the semantics `DRS.Verifies`, and a DRS is true when some embedding of its universe verifies it
-from the empty input (Def. 1.4.5, `DRS.IsTrue`).
+the interpretation `Interpretation.embedding`, and a DRS is true when some embedding of its
+universe verifies it (Def. 1.4.5, `DRS.IsTrue`).
 
 * `DRT.DRS.isProper_iff_forall_occurrence` (in `DRT/Accessibility.lean`): a DRS is proper iff
   every referent of an atomic condition is accessible where the condition occurs, the
@@ -32,6 +32,7 @@ unary conditions the construction algorithm writes for them.
 @[expose] public section
 
 open FirstOrder FirstOrder.Language
+open SetRel
 
 namespace KampReyle1993
 
@@ -59,9 +60,9 @@ private theorem le_update {g : ℕ → Part M} {x : ℕ} (h : ¬(g x).Dom) (m : 
   le_update_iff.mpr ⟨fun _ ha => absurd ha.fst h, fun _ _ => le_rfl⟩
 
 private theorem holds_atom1 {R : krLang.Relations 1} {a : ℕ} {g : ℕ → Part M} :
-    (Condition.atom ⟨R, ![a]⟩ : Condition krLang ℕ).Holds g ↔
+    g ⊨[.embedding M] (Condition.atom ⟨R, ![a]⟩ : Condition krLang ℕ) ↔
       ∃ m ∈ g a, rm R ![m] := by
-  rw [Condition.holds_atom]
+  rw [Condition.mem_verifiers_embedding_atom]
   constructor
   · rintro ⟨v, hv, hrel⟩
     have he : v = ![v 0] := funext fun i => by fin_cases i; rfl
@@ -72,9 +73,9 @@ private theorem holds_atom1 {R : krLang.Relations 1} {a : ℕ} {g : ℕ → Part
     exact hm
 
 private theorem holds_atom2 {R : krLang.Relations 2} {a b : ℕ} {g : ℕ → Part M} :
-    (Condition.atom ⟨R, ![a, b]⟩ : Condition krLang ℕ).Holds g ↔
+    g ⊨[.embedding M] (Condition.atom ⟨R, ![a, b]⟩ : Condition krLang ℕ) ↔
       ∃ m ∈ g a, ∃ n ∈ g b, rm R ![m, n] := by
-  rw [Condition.holds_atom]
+  rw [Condition.mem_verifiers_embedding_atom]
   constructor
   · rintro ⟨v, hv, hrel⟩
     have he : v = ![v 0, v 1] := funext fun i => by fin_cases i <;> rfl
@@ -101,12 +102,16 @@ theorem ulysses_tc :
       ∃ x y : M, rm .jones ![x] ∧ rm .ulysses ![y] ∧ rm .owns ![x, y] ∧
         rm .fascinates ![y, x] := by
   constructor
-  · rintro ⟨g, -, -, h1, h2, h3, h4, h5, h6, -⟩
+  · rintro ⟨g, hg⟩
+    obtain ⟨-, -, hcs⟩ := DRS.mem_eval_embedding_mk.mp hg
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil,
+      Set.mem_univ, and_true] at hcs
+    obtain ⟨h1, h2, h3, h4, h5, h6⟩ := hcs
     obtain ⟨x, hx, hjones⟩ := holds_atom1.mp h1
     obtain ⟨y, hy, hulysses⟩ := holds_atom1.mp h2
     obtain ⟨x', hx', y', hy', howns⟩ := holds_atom2.mp h3
-    obtain ⟨m, hm3, hm2⟩ := h4
-    obtain ⟨n, hn4, hn1⟩ := h5
+    obtain ⟨m, hm3, hm2⟩ := (Condition.mem_verifiers_embedding_eq _ _).mp h4
+    obtain ⟨n, hn4, hn1⟩ := (Condition.mem_verifiers_embedding_eq _ _).mp h5
     obtain ⟨p, hp, q, hq, hfasc⟩ := holds_atom2.mp h6
     rw [Part.mem_unique hx' hx, Part.mem_unique hy' hy] at howns
     rw [Part.mem_unique hp hm3, Part.mem_unique hm2 hy, Part.mem_unique hq hn4,
@@ -116,14 +121,14 @@ theorem ulysses_tc :
     refine ⟨Function.update (Function.update (Function.update
       (Function.update (⊥ : ℕ → Part M) 1 (Part.some x)) 2 (Part.some y)) 3 (Part.some y))
       4 (Part.some x), ?_⟩
-    rw [ulyssesDiscourse, DRS.verifies_mk]
-    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    rw [ulyssesDiscourse, DRS.mem_eval_embedding_mk]
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ, and_true]
     refine ⟨bot_le, ?_, holds_atom1.mpr ⟨x, by simp, hj⟩,
       holds_atom1.mpr ⟨y, by simp, hu⟩,
       holds_atom2.mpr ⟨x, by simp, y, by simp, ho⟩,
-      (Condition.holds_eq 3 2).mpr
+      (Condition.mem_verifiers_embedding_eq 3 2).mpr
         ⟨y, by simp, by simp⟩,
-      (Condition.holds_eq 4 1).mpr
+      (Condition.mem_verifiers_embedding_eq 4 1).mpr
         ⟨x, by simp, by simp⟩,
       holds_atom2.mpr ⟨y, by simp, x, by simp, hf⟩⟩
     ext n
@@ -150,13 +155,17 @@ theorem porsche_tc :
     porscheDiscourse.IsTrue M ↔
       ∃ x : M, rm .jones ![x] ∧ ¬ ∃ y : M, rm .porsche ![y] ∧ rm .owns ![x, y] := by
   constructor
-  · rintro ⟨g, -, hdom, h1, hneg, -⟩
+  · rintro ⟨g, hg⟩
+    obtain ⟨-, hdom, hcs⟩ := DRS.mem_eval_embedding_mk.mp hg
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil,
+      Set.mem_univ, and_true] at hcs
+    obtain ⟨h1, hneg⟩ := hcs
     obtain ⟨x, hx, hjones⟩ := holds_atom1.mp h1
     refine ⟨x, hjones, ?_⟩
     rintro ⟨y, hp, ho⟩
-    refine hneg ⟨Function.update g 2 (Part.some y), ?_⟩
-    rw [porscheNeg, DRS.verifies_mk]
-    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    refine Condition.mem_verifiers_neg.mp hneg ⟨Function.update g 2 (Part.some y), ?_⟩
+    rw [porscheNeg, DRS.mem_eval_embedding_mk]
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ, and_true]
     have h2bot : ¬(g 2).Dom := by
       show (2 : ℕ) ∉ PFun.Dom g
       rw [hdom]
@@ -167,10 +176,15 @@ theorem porsche_tc :
     exact Set.union_comm _ _
   · rintro ⟨x, hj, hn⟩
     refine ⟨Function.update ⊥ 1 (.some x), ?_⟩
-    rw [porscheDiscourse, DRS.verifies_mk]
-    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    rw [porscheDiscourse, DRS.mem_eval_embedding_mk]
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ, and_true]
     refine ⟨bot_le, by simp, holds_atom1.mpr ⟨x, by simp, hj⟩, ?_⟩
-    rintro ⟨g', hle', hdom', hp, ho, -⟩
+    rw [Condition.mem_verifiers_neg]
+    rintro ⟨g', hg'⟩
+    obtain ⟨hle', hdom', hcs'⟩ := DRS.mem_eval_embedding_mk.mp hg'
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil,
+      Set.mem_univ, and_true] at hcs'
+    obtain ⟨hp, ho⟩ := hcs'
     obtain ⟨y, hy, hporsche⟩ := holds_atom1.mp hp
     obtain ⟨x', hx', y', hy', howns⟩ := holds_atom2.mp ho
     have h1 : x ∈ g' 1 := by
@@ -211,14 +225,18 @@ theorem donkey_universal_reading :
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
   constructor
-  · rintro ⟨g, -, hdom, himp, -⟩ e₁ e₂ ⟨hf, hd, ho⟩
+  · rintro ⟨g, hg⟩ e₁ e₂ ⟨hf, hd, ho⟩
+    obtain ⟨-, hdom, himp⟩ := DRS.mem_eval_embedding_mk.mp hg
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil,
+      Set.mem_univ, and_true] at himp
     have hg : g = ⊥ := (PFun.eq_of_le_of_dom_subset bot_le (by rw [hdom]; simp)).symm
     subst hg
-    have hante : donkeyAnte.Verifies (⊥ : ℕ → Part M)
+    have hante : (⊥ : ℕ → Part M) ~[donkeyAnte.eval (.embedding M)]
         (Function.update (Function.update (⊥ : ℕ → Part M) 1 (Part.some e₁))
-          2 (Part.some e₂)) := by
-      rw [donkeyAnte, DRS.verifies_mk]
-      simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+          2 (Part.some e₂) : ℕ → Part M) := by
+      rw [donkeyAnte, DRS.mem_eval_embedding_mk]
+      simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil,
+        Set.mem_univ, and_true]
       refine ⟨bot_le, ?_, holds_atom1.mpr ⟨e₁, by simp, hf⟩,
         holds_atom1.mpr ⟨e₂, by simp, hd⟩,
         holds_atom2.mpr ⟨e₁, by simp, e₂, by simp, ho⟩⟩
@@ -227,7 +245,10 @@ theorem donkey_universal_reading :
         Set.mem_union, Set.mem_empty_iff_false, Finset.coe_insert, Finset.coe_singleton,
         Set.mem_singleton_iff]
       tauto
-    obtain ⟨g₂, hle₂, hdom₂, hb, -⟩ := himp _ hante
+    obtain ⟨g₂, hg₂'⟩ := Condition.mem_verifiers_imp.mp himp _ hante
+    obtain ⟨hle₂, hdom₂, hb⟩ := DRS.mem_eval_embedding_mk.mp hg₂'
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil,
+      Set.mem_univ, and_true] at hb
     have hg₂ : g₂ = Function.update (Function.update (⊥ : ℕ → Part M) 1 (Part.some e₁))
         2 (Part.some e₂) :=
       (PFun.eq_of_le_of_dom_subset hle₂ (by rw [hdom₂]; simp)).symm
@@ -241,17 +262,22 @@ theorem donkey_universal_reading :
     exact hbeats
   · intro hall
     refine ⟨⊥, ?_⟩
-    rw [donkey, DRS.verifies_mk]
-    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    rw [donkey, DRS.mem_eval_embedding_mk]
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ, and_true]
     refine ⟨le_rfl, by simp, ?_⟩
-    rintro g₁ ⟨-, hdom₁, hf, hd, ho, -⟩
+    rw [Condition.mem_verifiers_imp]
+    intro g₁ hg₁
+    obtain ⟨-, hdom₁, hcs₁⟩ := DRS.mem_eval_embedding_mk.mp hg₁
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil,
+      Set.mem_univ, and_true] at hcs₁
+    obtain ⟨hf, hd, ho⟩ := hcs₁
     obtain ⟨e₁, h1, hfarmer⟩ := holds_atom1.mp hf
     obtain ⟨e₂, h2, hdonkey⟩ := holds_atom1.mp hd
     obtain ⟨m, hm, n, hn, howns⟩ := holds_atom2.mp ho
     rw [Part.mem_unique hm h1, Part.mem_unique hn h2] at howns
     refine ⟨g₁, ?_⟩
-    rw [donkeyCons, DRS.verifies_mk]
-    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    rw [donkeyCons, DRS.mem_eval_embedding_mk]
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ, and_true]
     exact ⟨le_rfl, by simp,
       holds_atom2.mpr ⟨e₁, h1, e₂, h2, hall e₁ e₂ ⟨hfarmer, hdonkey, howns⟩⟩⟩
 
@@ -268,14 +294,18 @@ theorem donkeyPronoun_tc :
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
   constructor
-  · rintro ⟨g, -, hdom, himp, -⟩ e₁ e₂ ⟨hf, hd, ho⟩
+  · rintro ⟨g, hg⟩ e₁ e₂ ⟨hf, hd, ho⟩
+    obtain ⟨-, hdom, himp⟩ := DRS.mem_eval_embedding_mk.mp hg
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil,
+      Set.mem_univ, and_true] at himp
     have hg : g = ⊥ := (PFun.eq_of_le_of_dom_subset bot_le (by rw [hdom]; simp)).symm
     subst hg
-    have hante : donkeyAnte.Verifies (⊥ : ℕ → Part M)
+    have hante : (⊥ : ℕ → Part M) ~[donkeyAnte.eval (.embedding M)]
         (Function.update (Function.update (⊥ : ℕ → Part M) 1 (Part.some e₁))
-          2 (Part.some e₂)) := by
-      rw [donkeyAnte, DRS.verifies_mk]
-      simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+          2 (Part.some e₂) : ℕ → Part M) := by
+      rw [donkeyAnte, DRS.mem_eval_embedding_mk]
+      simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil,
+        Set.mem_univ, and_true]
       refine ⟨bot_le, ?_, holds_atom1.mpr ⟨e₁, by simp, hf⟩,
         holds_atom1.mpr ⟨e₂, by simp, hd⟩,
         holds_atom2.mpr ⟨e₁, by simp, e₂, by simp, ho⟩⟩
@@ -284,8 +314,12 @@ theorem donkeyPronoun_tc :
         Set.mem_union, Set.mem_empty_iff_false, Finset.coe_insert, Finset.coe_singleton,
         Set.mem_singleton_iff]
       tauto
-    obtain ⟨g₂, hle₂, hdom₂, h32, hb, -⟩ := himp _ hante
-    obtain ⟨m', hm3, hm2⟩ := h32
+    obtain ⟨g₂, hg₂'⟩ := Condition.mem_verifiers_imp.mp himp _ hante
+    obtain ⟨hle₂, hdom₂, hcs₂⟩ := DRS.mem_eval_embedding_mk.mp hg₂'
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil,
+      Set.mem_univ, and_true] at hcs₂
+    obtain ⟨h32, hb⟩ := hcs₂
+    obtain ⟨m', hm3, hm2⟩ := (Condition.mem_verifiers_embedding_eq _ _).mp h32
     obtain ⟨m, hm, n, hn, hbeats⟩ := holds_atom2.mp hb
     have h1 : e₁ ∈ g₂ 1 := by
       have h := PFun.le_iff_eqOn_dom.mp hle₂ (x := 1) (by simp)
@@ -303,10 +337,15 @@ theorem donkeyPronoun_tc :
     exact hbeats
   · intro hall
     refine ⟨⊥, ?_⟩
-    rw [donkeyPronoun, DRS.verifies_mk]
-    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    rw [donkeyPronoun, DRS.mem_eval_embedding_mk]
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ, and_true]
     refine ⟨le_rfl, by simp, ?_⟩
-    rintro g₁ ⟨-, hdom₁, hf, hd, ho, -⟩
+    rw [Condition.mem_verifiers_imp]
+    intro g₁ hg₁
+    obtain ⟨-, hdom₁, hcs₁⟩ := DRS.mem_eval_embedding_mk.mp hg₁
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil,
+      Set.mem_univ, and_true] at hcs₁
+    obtain ⟨hf, hd, ho⟩ := hcs₁
     obtain ⟨e₁, h1, hfarmer⟩ := holds_atom1.mp hf
     obtain ⟨e₂, h2, hdonkey⟩ := holds_atom1.mp hd
     obtain ⟨m, hm, n, hn, howns⟩ := holds_atom2.mp ho
@@ -316,10 +355,10 @@ theorem donkeyPronoun_tc :
       rw [hdom₁]
       simp
     refine ⟨Function.update g₁ 3 (Part.some e₂), ?_⟩
-    rw [donkeyPronounCons, DRS.verifies_mk]
-    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    rw [donkeyPronounCons, DRS.mem_eval_embedding_mk]
+    simp only [Condition.mem_verifiersAll_cons, Condition.verifiersAll_nil, Set.mem_univ, and_true]
     refine ⟨le_update h3bot e₂, ?_,
-      (Condition.holds_eq 3 2).mpr ⟨e₂, by simp, by simp [h2]⟩,
+      (Condition.mem_verifiers_embedding_eq 3 2).mpr ⟨e₂, by simp, by simp [h2]⟩,
       holds_atom2.mpr ⟨e₁, by simp [h1], e₂, by simp,
         hall e₁ e₂ ⟨hfarmer, hdonkey, howns⟩⟩⟩
     rw [PFun.dom_update_some, Set.insert_eq, Finset.coe_singleton]

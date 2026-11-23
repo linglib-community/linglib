@@ -61,7 +61,7 @@ def Interpretation.assignment : Interpretation L V (V → M) where
 
 variable {M} {K : DRS L V} {f g : V → M} {U : Finset V}
 
-theorem Interpretation.mem_extend_assignment :
+@[simp] theorem Interpretation.mem_extend_assignment :
     f ~[(Interpretation.assignment (L := L) M).extend U] g ↔ ∀ x ∉ U, g x = f x := Iff.rfl
 
 @[simp] theorem Condition.mem_verifiers_assignment_atom (a : L.Atom V) :

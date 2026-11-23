@@ -98,10 +98,10 @@ theorem DRS.eval_eq (K : DRS L V) :
   cases K
   exact DRS.eval_mk ..
 
-@[simp] theorem Condition.verifiers_atom (a : L.Atom V) : (Condition.atom a).verifiers I = I.atom a := by
+theorem Condition.verifiers_atom (a : L.Atom V) : (Condition.atom a).verifiers I = I.atom a := by
   rw [Condition.verifiers]
 
-@[simp] theorem Condition.verifiers_eq (x y : V) :
+theorem Condition.verifiers_eq (x y : V) :
     (Condition.eq x y : Condition L V).verifiers I = I.eq x y := by
   rw [Condition.verifiers]
 

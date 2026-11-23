@@ -1,14 +1,14 @@
 module
 
 public import Linglib.Semantics.Dynamic.DRT.Sheaf.Gluing
-public import Linglib.Semantics.Dynamic.DRT.Verification.Total
+public import Linglib.Semantics.Dynamic.DRT.Assignment
 
 /-!
 # Realizers of basic DRSs
 
 A basic DRS is true under an assignment of its context's referents when each literal holds, and its
-realizers, the assignments that make it true, are the [verifying
-embeddings](##DRT.Context.DRS.verifies_toDRS_iff) of the DRS. Assignments form a presheaf on
+realizers, the assignments that make it true, are the assignments verifying the DRS
+(`DRT.Context.DRS.mem_verifiers_toDRS_iff`). Assignments form a presheaf on
 contexts that is a sheaf for a presieve [exactly when it is jointly surjective on
 referents](##DRT.Context.isSheafFor_assignments_iff), the first of Abramsky and Sadrzadeh's two
 conditions on covers. An assignment [realizes the least
@@ -88,17 +88,18 @@ namespace DRS
 
 variable [L.Structure M] {s : c.DRS}
 
-/-- An embedding verifies a basic DRS exactly when its restriction to the context's referents
+/-- An assignment verifies a basic DRS exactly when its restriction to the context's referents
 realizes its literals. -/
-theorem verifies_toDRS_iff {g : V → M} :
-    VerifiesTotal g s.toDRS ↔ g ∘ Subtype.val ∈ Literal.realizers M (s.1 : Set (Literal c)) := by
-  rw [verifiesTotal_iff, Literal.mem_realizers]
+theorem mem_verifiers_toDRS_iff [DecidableEq V] {g : V → M} :
+    g ⊨[.assignment M] s.toDRS ↔
+      g ∘ Subtype.val ∈ Literal.realizers M (s.1 : Set (Literal c)) := by
+  rw [DRT.DRS.mem_verifiers_iff, Literal.mem_realizers]
   simp only [toDRS, List.mem_map, Finset.mem_toList, forall_exists_index,
     and_imp, forall_apply_eq_imp_iff₂, Finset.mem_coe]
   refine forall₂_congr fun l _ ↦ ?_
   rw [Literal.holds_comp_val_iff]
   unfold Literal.toCondition
-  cases l.pos <;> simp [DRS.Extends, ← funext_iff]
+  cases l.pos <;> simp [← funext_iff]
 
 variable [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
 
