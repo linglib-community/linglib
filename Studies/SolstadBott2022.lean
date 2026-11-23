@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Statistics.SolstadBott2022
 public import Linglib.Discourse.Coherence
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Nucleus
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Mathlib.Logic.Equiv.Defs
 
@@ -34,10 +34,12 @@ change of state with an individual causer, `[x CAUSE [BECOME [y ⟨STATE⟩]]]`,
 experiencer-stimulus verb a caused state with no change, `[x CAUSE [y ⟨STATE⟩]]`. The slot is the
 causing subevent, which has no content beyond its effector (`HasSlot`): the slot argument is the
 actor of a template with a slot and the end-state argument its undergoer (`icaus_iff_actor`,
-`icons_iff_undergoer`). Giving the causing subevent a manner yields the accomplishment
-`[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`, which has no slot (`denote_accomplishment_iff`).
-Only the stimulus-experiencer template has a change, the end point a consequence continues from,
-and consequences after a full stop are more frequent for that class
+`icons_iff_undergoer`). A stimulus-experiencer verb thus describes the preparation of a nucleus by
+its effector alone (`denote_template_stimExp_iff`), and an explanation says what the preparation
+was, where a consequence continues from the consequent state. Giving the causing subevent a manner
+yields the accomplishment `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`, which has no slot
+(`denote_accomplishment_iff`). Only the stimulus-experiencer template has a change, the end point
+a consequence continues from, and consequences after a full stop are more frequent for that class
 (`consequence_lt_iff_result`).
 
 The paper's four continuation experiments on German psych verbs are read from the generated
@@ -79,6 +81,7 @@ specify the cause of the psychological state just when they are about the slot a
 * [crinean-garnham-2006]
 * [dowty-1991]
 * [kehler-2002]
+* [moens-steedman-1988]
 -/
 
 @[expose] public section
@@ -270,6 +273,14 @@ theorem denote_accomplishment_iff {Entity : Type*} {State Event : Type u}
     Template.accomplishment.denote M θ P Q y x v ↔
       VerbClass.stimExp.template.denote M θ P Q y x v ∧ Q v :=
   Template.denote_cause_act
+
+-- Figure 1
+theorem denote_template_stimExp_iff {Entity : Type*} {State Event : Type u}
+    {M : Model State Event} {θ : Entity → Event → Prop} {P : Entity → State → Prop}
+    {Q : Event → Prop} {y x : Entity} {v : Event} :
+    VerbClass.stimExp.template.denote M θ P Q y x v ↔
+      θ y v ∧ ∃ n : Nucleus M, n.preparation = v ∧ P x n.consequent :=
+  Template.denote_cause_achievement_iff
 
 -- Section 3.3
 theorem consequence_lt_iff_result (v w : VerbClass) :
