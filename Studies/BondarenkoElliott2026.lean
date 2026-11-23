@@ -37,7 +37,8 @@ needs the relation to be functional. The believings of a holder at a world are a
 the statements use divisive and cumulative reference only.
 
 Theme-event content matching is stated for every believing with a theme, which has the contents
-of its theme.
+of its theme. The report with *the rumor that `p`* is existential over the rumors with content
+`p`, where the paper has a definite description that presupposes there is exactly one.
 
 ## References
 
@@ -70,7 +71,7 @@ variable [PartialOrder V] {B : Set V} {cont : SetRel (Set W)ᵒᵈ V} {p p' : Se
 reference, belief is closed under entailment. -/
 theorem Believes.mono (hMSI : MSE cont) (hB : DIV B) (h : Believes B cont p) (hp : p ⊆ p') :
     Believes B cont p' :=
-  me_iff_forall_isLowerSet.1 hMSI.me B hB (a := toDual p) hp h
+  me_iff_forall_isLowerSet.1 hMSI.me B hB (show toDual p' ≤ toDual p from hp) h
 
 -- (46)
 theorem not_believes_of_subset (hMSI : MSE cont) (hB : DIV B) (hp : p ⊆ p')
@@ -83,6 +84,15 @@ theorem me_iff_forall_believes_mono :
     ME cont ↔ ∀ B, DIV B → ∀ ⦃p p' : Set W⦄, p ⊆ p' → Believes B cont p → Believes B cont p' :=
   me_iff_forall_isLowerSet.trans
     ⟨fun h B hB _ _ hp hb ↦ h B hB hp hb, fun h B hB _ _ hp hb ↦ h B hB hp hb⟩
+
+/-- Where each eventuality is its own content, the content relation maps to sub-eventualities,
+and the believings below `p` have as contents the propositions that `p` entails. -/
+example (p p' : Set W) :
+    MSE (SetRel.id : SetRel (Set W)ᵒᵈ (Set W)ᵒᵈ) ∧
+      (Believes (Set.Iic (toDual p)) SetRel.id p' ↔ p ⊆ p') :=
+  ⟨fun _ _ h _ hy ↦ ⟨_, SetRel.mem_id.1 h ▸ hy, SetRel.mem_id.2 rfl⟩,
+    fun ⟨_, he, hc⟩ ↦ ((SetRel.mem_id.1 hc).trans_le he : toDual p' ≤ toDual p),
+    fun h ↦ ⟨toDual p', h, SetRel.mem_id.2 rfl⟩⟩
 
 end Closure
 
@@ -98,6 +108,14 @@ theme a rumor with content `p`. -/
 def BelievesTheRumorThat (B : Set V) (theme : SetRel E V) (rumor : Set E)
     (contE : SetRel (Set W)ᵒᵈ E) (p : Set W) : Prop :=
   ∃ e ∈ B, ∃ r ∈ rumor, r ~[theme] e ∧ toDual p ~[contE] r
+
+-- (61)
+theorem BelievesTheRumorThat.believes {B : Set V} {cont : SetRel (Set W)ᵒᵈ V}
+    {contE : SetRel (Set W)ᵒᵈ E} {theme : SetRel E V} {rumor : Set E} {p : Set W}
+    (hTECM : TECM B cont contE theme) (h : BelievesTheRumorThat B theme rumor contE p) :
+    Believes B cont p :=
+  let ⟨e, he, _, _, hth, hc⟩ := h
+  ⟨e, he, (hTECM he hth _).2 hc⟩
 
 section Rumor
 
@@ -128,9 +146,9 @@ theorem not_believesTheRumorThat_of_subset (hMSI : MSE cont) (hMSO : MSO theme)
 
 end Rumor
 
-/-- Believing the rumor that `p` is not closed under strengthening of `p`, so its negation is
-not Strawson upward entailing. One believing has the trivial content and as its theme a rumor
-with the trivial content, and a second rumor has the content `{true}`. -/
+/-- (70), (73): believing the rumor that `p` is not closed under strengthening of `p`, so its
+negation is not Strawson upward entailing. One believing has the trivial content and as its
+theme a rumor with the trivial content, and a second rumor has the content `{true}`. -/
 theorem not_believesTheRumorThat_mono :
     ∃ (B : Set Unit) (cont : SetRel (Set Bool)ᵒᵈ Unit) (contE : SetRel (Set Bool)ᵒᵈ Bool)
       (theme : SetRel Bool Unit) (rumor : Set Bool) (p p' : Set Bool),
