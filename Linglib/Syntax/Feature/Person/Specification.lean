@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.Compat
+public import Linglib.Core.Order.BoundedComplete
 public import Linglib.Core.Order.Flat
 public import Linglib.Syntax.Feature.Person.Basic
 public import Linglib.Syntax.Feature.Person.Clusivity

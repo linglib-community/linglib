@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Data.Fintype.Order
 public import Linglib.Core.Order.Flat
-public import Linglib.Core.Order.Compat
+public import Linglib.Core.Order.BoundedComplete
 public import Mathlib.Order.Lattice
 
 /-!

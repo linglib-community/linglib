@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Compat
+public import Linglib.Core.Order.BoundedComplete
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Syntax.Obligatoriness
 public import Mathlib.Data.Fintype.Prod

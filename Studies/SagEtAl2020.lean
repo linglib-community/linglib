@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.HPSG.Construction
 public import Linglib.Syntax.HPSG.RSRL.Satisfiability
-public import Linglib.Core.Order.Compat
+public import Linglib.Core.Order.BoundedComplete
 public import Linglib.Data.Examples.SagEtAl2020
 public import Studies.Sag2010
 
