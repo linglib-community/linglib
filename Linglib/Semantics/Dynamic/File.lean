@@ -56,45 +56,6 @@ namespace DynamicSemantics
 
 variable {W V M : Type*}
 
-/-! ### Agreement of points -/
-
-namespace Possibility
-
-variable {X Y : Set V} {p q r : Possibility W V M}
-
-/-- Two points are equal on the cards in `X` when they share their world and their sequences
-take the same values on `X`. -/
-structure EqOn (p q : Possibility W V M) (X : Set V) : Prop where
-  /-- The points share their world. -/
-  world_eq : p.world = q.world
-  /-- The sequences take the same values on `X`. -/
-  assignment_eqOn : Set.EqOn p.assignment q.assignment X
-
-theorem EqOn.refl (p : Possibility W V M) (X : Set V) : p.EqOn p X :=
-  ⟨rfl, Set.eqOn_refl _ _⟩
-
-@[symm] theorem EqOn.symm (h : p.EqOn q X) : q.EqOn p X := ⟨h.world_eq.symm, h.assignment_eqOn.symm⟩
-
-theorem EqOn.trans (h : p.EqOn q X) (h' : q.EqOn r X) : p.EqOn r X :=
-  ⟨h.world_eq.trans h'.world_eq, h.assignment_eqOn.trans h'.assignment_eqOn⟩
-
-theorem EqOn.mono (hXY : X ⊆ Y) (h : p.EqOn q Y) : p.EqOn q X :=
-  ⟨h.world_eq, h.assignment_eqOn.mono hXY⟩
-
-theorem eqOn_comm : p.EqOn q X ↔ q.EqOn p X := ⟨.symm, .symm⟩
-
-@[simp] theorem eqOn_empty : p.EqOn q ∅ ↔ p.world = q.world :=
-  ⟨EqOn.world_eq, fun h ↦ ⟨h, Set.eqOn_empty _ _⟩⟩
-
-@[simp] theorem eqOn_univ : p.EqOn q Set.univ ↔ p = q :=
-  ⟨fun h ↦ Possibility.ext h.world_eq (funext fun v ↦ h.assignment_eqOn (Set.mem_univ v)),
-    fun h ↦ h ▸ .refl _ _⟩
-
-theorem eqOn_update [DecidableEq V] {x : V} (hx : x ∉ X) (m : M) : p.EqOn (p.update x m) X :=
-  ⟨rfl, fun _ hv ↦ (Function.update_of_ne (ne_of_mem_of_not_mem hv hx) _ _).symm⟩
-
-end Possibility
-
 /-! ### Files -/
 
 /-- A file: a set of cards and the set of points that satisfy it, which does not distinguish
