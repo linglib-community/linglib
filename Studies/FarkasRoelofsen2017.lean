@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.FarkasRoelofsen2017
 public import Linglib.Discourse.Commitment.Basic
-public import Linglib.Semantics.Questions.Basic
+public import Linglib.Semantics.Questions.Inquisitive.Declarative
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Readers

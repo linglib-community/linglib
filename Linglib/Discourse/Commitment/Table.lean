@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Discourse.Commitment.Basic
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 
 /-!
 # The Table

@@ -4,7 +4,7 @@ public import Mathlib.Data.Set.Lattice.Order
 public import Mathlib.Order.Atoms
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Semantics.Questions.Closure
+public import Linglib.Semantics.Questions.Hamblin.Closure
 
 /-!
 # Number in Hamblin sets

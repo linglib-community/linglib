@@ -5,7 +5,7 @@ public import Linglib.Discourse.CommonGround
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.PolarityItem.Licenser
-public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Syntax.Negation
 public import Linglib.Data.Examples.Readers
 

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Questions.Partition.Inquisitive
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Mathlib.Order.BooleanSubalgebra
 
 /-!

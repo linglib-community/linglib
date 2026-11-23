@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Team.Inquisitive
-public import Linglib.Semantics.Questions.Unrestricted
+public import Linglib.Semantics.Questions.Hamblin.Unrestricted
 
 /-!
 # Ciardelli, Groenendijk and Roelofsen (2009): Attention! 'Might' in inquisitive semantics

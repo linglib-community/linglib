@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.Decision.ValueOfInformation
-public import Linglib.Semantics.Questions.HamblinSet
+public import Linglib.Semantics.Questions.Hamblin.Basic
 
 /-!
 # The value of a question

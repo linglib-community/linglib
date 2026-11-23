@@ -2,8 +2,8 @@ module
 
 public import Linglib.Data.Examples.Feinmann2026
 public import Linglib.Pragmatics.DecisionTheoretic.Basic
-public import Linglib.Semantics.Questions.Partition.Inquisitive
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 
 /-!
 # Feinmann (2026): A Note on Relevance

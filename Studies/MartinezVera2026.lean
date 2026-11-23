@@ -7,7 +7,7 @@ public import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Semantics.Evidential.Basic
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Linglib.Data.Examples.Readers
 
 /-!

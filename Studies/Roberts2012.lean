@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Constituent
-public import Linglib.Semantics.Questions.Entailment
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Constituent
+public import Linglib.Semantics.Questions.Inquisitive.Entailment
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Linglib.Core.Data.Fintype.Sets
 public import Linglib.Discourse.QUD.Basic
 public import Mathlib.Data.Fintype.Powerset

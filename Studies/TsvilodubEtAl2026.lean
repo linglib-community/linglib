@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.MeasureTheory.Measure.Tilted
-public import Linglib.Semantics.Questions.Value
+public import Linglib.Semantics.Questions.Decision
 public import Studies.DongEtAl2026
 public import Mathlib.Probability.Distributions.Bernoulli
 public import Mathlib.Analysis.SpecialFunctions.Sigmoid

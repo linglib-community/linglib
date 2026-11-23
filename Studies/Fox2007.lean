@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Pragmatics.NeoGricean.Basic
-public import Linglib.Semantics.Questions.Closure
+public import Linglib.Semantics.Questions.Hamblin.Closure
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Data.Examples.Fox2007
 public import Mathlib.Order.OrderIsoNat

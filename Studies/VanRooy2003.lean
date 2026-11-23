@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Value
+public import Linglib.Semantics.Questions.Decision
 public import Studies.Aloni2001
 public import Linglib.Data.Examples.VanRooy2003
 public import Mathlib.Data.Fintype.Powerset
@@ -13,7 +13,7 @@ Van Rooy grounds the meaning of questions in the questioner's decision problem, 
 worlds and a utility for each action in each world. Information resolves the problem when some
 action is optimal in every world it leaves open. A question, a partition of the worlds, is worth
 the average gain in decision value from learning its answer; that theory of question value,
-consumed beyond this paper, is `Semantics/Questions/Value.lean`. A wh-question denotes the
+consumed beyond this paper, is `Semantics/Questions/Decision.lean`. A wh-question denotes the
 propositions that some value is among the optimal true values of its predicate, those with no
 more relevant true value, and this one rule yields both mention-all and mention-some readings.
 

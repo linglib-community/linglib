@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Linglib.Data.Examples.Umbach2004
 
 /-!

@@ -3,8 +3,8 @@ module
 public import Mathlib.Data.Set.Lattice.Image
 public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.Alternatives.Structural
-public import Linglib.Semantics.Questions.HamblinSet
-public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.Hamblin.Answerhood
+public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Fragments.Turkish.QuestionParticles

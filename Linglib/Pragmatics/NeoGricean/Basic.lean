@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Pragmatics.Implicature.OptimalAssertion
-public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Polar
 
 /-!
 # Neo-Gricean pragmatics: primary and secondary implicatures

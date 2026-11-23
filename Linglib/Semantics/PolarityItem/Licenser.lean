@@ -8,7 +8,7 @@ module
 public import Linglib.Logic.Natural.ProjectivitySignature
 public import Linglib.Semantics.Presupposition.Strawson
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
-public import Linglib.Semantics.Questions.Value
+public import Linglib.Semantics.Questions.Decision
 public import Linglib.Semantics.PolarityItem.Basic
 
 /-!

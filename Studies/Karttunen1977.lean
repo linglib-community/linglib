@@ -1,9 +1,8 @@
 module
 
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Constituent
-public import Linglib.Semantics.Questions.HamblinSet
-
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Constituent
+public import Linglib.Semantics.Questions.Hamblin.Answerhood
 /-!
 # Karttunen (1977): Syntax and Semantics of Questions
 

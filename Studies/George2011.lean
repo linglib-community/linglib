@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Order.Setoid.Partition
 public import Mathlib.Order.Closure
-public import Linglib.Semantics.Questions.HamblinSet
+public import Linglib.Semantics.Questions.Hamblin.Answerhood
 public import Linglib.Data.Examples.George2011
 public import Linglib.Data.Examples.Readers
 

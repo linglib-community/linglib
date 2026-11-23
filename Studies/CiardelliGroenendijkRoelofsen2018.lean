@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Basic
-
+public import Linglib.Semantics.Questions.Inquisitive.Declarative
 /-!
 # Ciardelli, Groenendijk and Roelofsen 2018: Inquisitive Semantics
 

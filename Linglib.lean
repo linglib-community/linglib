@@ -769,13 +769,9 @@ import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Semantics.Quantification.Polyadic
 import Linglib.Semantics.Quantification.Properties
 import Linglib.Semantics.Quantification.Witness
-import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Bias
-import Linglib.Semantics.Questions.Closure
-import Linglib.Semantics.Questions.Entailment
 import Linglib.Semantics.Questions.Highlighting
 import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Tense.Defs
