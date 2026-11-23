@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Phonology.FeatureGeometry
+public import Linglib.Phonology.Autosegmental.Edit
 public import Linglib.Phonology.Autosegmental.Realization
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Order.Interval.Set.UnorderedInterval
