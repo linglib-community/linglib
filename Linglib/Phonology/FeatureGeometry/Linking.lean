@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.FeatureGeometry
-public import Linglib.Phonology.Autosegmental.TierTree
+public import Linglib.Phonology.Autosegmental.Bisimulation
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Sum
 
@@ -21,11 +21,12 @@ lines do not cross (`noCrossing_ofWord`). Reading it back gives its segments
 Spreading is a change of lines. `linkNode node w a m n` spreads the node `a` from segment `m` onto
 segment `n`, and `linkFeature node w f m n` a single feature, by `Autosegmental.AR.spreadTier`:
 the token of segment `n` above is delinked from its own token and linked to that of segment
-`m`, which the two segments then share. The result reads as the word with `spread node a`
-applied at `n` (`reads_linkNode_iff`), or with the one feature copied
-(`reads_linkFeature_iff`). Spreading a node crosses no line exactly when no segment strictly
-between the two has the node (`noCrossing_linkNode_iff`). Spreading the root node shares a whole
-segment between two slots, and every segment between blocks it.
+`m`, which the two segments then share. The result is bisimilar to the word with
+`spread node a` applied at `n`, or with the one feature copied, so it reads as that word does
+(`reads_linkNode_iff`, `reads_linkFeature_iff`): linking shares what copying duplicates.
+Spreading a node crosses no line exactly when no segment strictly between the two has the node
+(`noCrossing_linkNode_iff`). Spreading the root node shares a whole segment between two slots,
+and every segment between blocks it.
 
 ## Implementation notes
 
@@ -36,8 +37,6 @@ segment `k` on a tier is the number of earlier segments with a token there,
 
 ## TODO
 
-* The proofs of `reads_linkNode_iff` and `reads_linkFeature_iff`, which are checked on small
-  geometries.
 * Contour segments, with two tokens of one feature under one node token, and geminates, with one
   root node under two slots, as representations that no word of specifications realizes.
 
@@ -225,6 +224,116 @@ theorem noCrossing_linkNode_iff (hm : m < w.length) (hn : n < w.length)
   exact forall_congr' fun k ↦ forall_congr' fun hk ↦ imp_congr_right fun _ ↦
     not_congr link_ofSpec_node_iff
 
+omit [DecidableLE N] [Fintype F] [DecidableEq F] [IsPredArchimedean N] in
+theorem tierParent_ne_feature (t : Option (N ⊕ F)) (g : F) :
+    tierParent node t ≠ some (.inr g) := by
+  rcases t with _ | c | f
+  · simp [tierParent]
+  · simp only [tierParent]
+    split_ifs <;> simp
+  · cases h : node f <;> simp [tierParent, h]
+
+omit [DecidableLE N] [Fintype F] [DecidableEq F] in
+theorem iterate_parent_none (r : ℕ) : (tiers node).parent^[r] none = none :=
+  Function.iterate_fixed rfl r
+
+omit [DecidableLE N] [Fintype F] [DecidableEq F] in
+theorem not_below_none {j : N ⊕ F} : ¬ AR.Below (tiers node) (some j) none := fun ⟨r, hr⟩ ↦ by
+  rw [iterate_parent_none] at hr
+  exact Option.some_ne_none _ hr.symm
+
+omit [DecidableLE N] [Fintype F] [DecidableEq F] in
+theorem iterate_parent_node : ∀ (r : ℕ) {c : N}, Order.pred^[r] c = a →
+    (∀ i < r, Order.pred^[i] c ≠ ⊥) → (tiers node).parent^[r] (some (.inl c)) = some (.inl a)
+  | 0, c, h, _ => by rw [show c = a from h]; rfl
+  | r + 1, c, h, hne => by
+    have hc : c ≠ ⊥ := hne 0 (Nat.succ_pos r)
+    rw [Function.iterate_succ_apply, parent_node hc]
+    exact iterate_parent_node r (by rwa [Function.iterate_succ_apply] at h) fun i hi ↦ by
+      have := hne (i + 1) (Nat.succ_lt_succ hi)
+      rwa [Function.iterate_succ_apply] at this
+
+omit [DecidableLE N] [Fintype F] [DecidableEq F] in
+/-- The node tiers at or below the tier of a node are those of the nodes it dominates. -/
+theorem below_node_iff {c : N} :
+    AR.Below (tiers node) (some (.inl a)) (some (.inl c)) ↔ a ≤ c := by
+  constructor
+  · rintro ⟨r, hr⟩
+    induction r generalizing c with
+    | zero => exact (Sum.inl.inj (Option.some.inj hr)).ge
+    | succ r ih =>
+      rw [Function.iterate_succ_apply] at hr
+      by_cases hc : c = ⊥
+      · subst hc
+        rw [parent_bot, iterate_parent_none] at hr
+        exact (Option.some_ne_none _ hr.symm).elim
+      · rw [parent_node hc] at hr
+        exact (ih hr).trans (Order.pred_le c)
+  · intro h
+    classical
+    have hex := h.exists_pred_iterate
+    refine ⟨Nat.find hex, iterate_parent_node _ (Nat.find_spec hex) fun i hi hbot ↦ ?_⟩
+    have ha := Nat.find_spec hex
+    rw [← Nat.sub_add_cancel hi.le, Function.iterate_add_apply, hbot,
+      Function.iterate_fixed Order.pred_bot] at ha
+    exact Nat.find_min hex hi (hbot.trans ha)
+
+omit [DecidableEq F] in
+/-- The feature tiers below the tier of a node are those of its feature class. -/
+theorem below_feature_iff :
+    AR.Below (tiers node) (some (.inl a)) (some (.inr f)) ↔ f ∈ featureClass node a := by
+  rw [AR.below_iff, mem_featureClass]
+  have hp : (tiers node).parent (some (.inr f)) = (node f).map .inl := rfl
+  constructor
+  · rintro (h | h)
+    · exact absurd h (by simp)
+    · rw [hp] at h
+      rcases hf : node f with _ | c
+      · rw [hf] at h
+        exact absurd h not_below_none
+      · rw [hf] at h
+        exact ⟨c, rfl, below_node_iff.1 h⟩
+  · rintro ⟨c, hc, hac⟩
+    right
+    rw [hp, show node f = some c from hc]
+    exact below_node_iff.2 hac
+
+omit [DecidableLE N] [Fintype F] [DecidableEq F] in
+/-- Nothing hangs below the tier of a feature. -/
+theorem below_feature_tier_iff {t : Option (N ⊕ F)} :
+    AR.Below (tiers node) (some (.inr g)) t ↔ t = some (.inr g) := by
+  refine ⟨fun ⟨r, hr⟩ ↦ ?_, fun h ↦ h ▸ ⟨0, rfl⟩⟩
+  cases r with
+  | zero => exact hr
+  | succ r =>
+    rw [Function.iterate_succ_apply'] at hr
+    exact absurd hr (tierParent_ne_feature _ g)
+
+theorem link_ofSpec_parent_iff {t : Option (N ⊕ F)} (ht : t ≠ none) :
+    (ofSpec node s).Link ((tiers node).parent t) t 0 0 ↔ (ofSpec node s).word t ≠ [] := by
+  rcases t with _ | c | f
+  · exact absurd rfl ht
+  · exact link_ofSpec_node_iff.trans word_ofSpec_node_ne_nil.symm
+  · refine ⟨fun h ↦ List.ne_nil_of_length_pos h.lt_right, fun h ↦ ?_⟩
+    have hw : (ofSpec node s).word (some (.inr f)) =
+        if (node f).isSome then (s f).toList else [] := rfl
+    rw [hw] at h
+    split_ifs at h with hf
+    swap
+    · exact absurd rfl h
+    obtain ⟨c, hc⟩ := Option.isSome_iff_exists.1 hf
+    obtain ⟨v, hv⟩ : ∃ v, s f = some v := by
+      cases hsf : s f with
+      | none => rw [hsf] at h; exact absurd rfl h
+      | some v => exact ⟨v, rfl⟩
+    have hb : Bears node s c := bears_of_isSome hc (by rw [hv]; rfl) le_rfl
+    have hp : (tiers node).parent (some (.inr f)) = some (.inl c) := by
+      show tierParent node (some (.inr f)) = _
+      simp [tierParent, hc]
+    rw [hp]
+    exact AR.link_fromRel.2 ⟨by simp, List.length_pos_iff.2 (word_ofSpec_node_ne_nil.2 (.inr hb)),
+      by simp [tierWord, hf, hv], .inl ⟨by simp [tierParent, hc], Option.some_ne_none _⟩⟩
+
 variable [Fintype N]
 
 theorem mem_descendants_node (s : F → Option β) : ∀ (n : ℕ) (c : N), Order.pred^[n] c = ⊥ →
@@ -290,18 +399,79 @@ theorem reads_linkNode_iff (hm : m < w.length) (hn : n < w.length)
     (linkNode node w a m n).Reads (tiers node) k (some (.inr f)) b ↔
       (ofWord node (w.set n (spread node a w[m] w[n]))).Reads (tiers node) k
         (some (.inr f)) b := by
-  -- TODO: the lines of `linkNode` differ from those of `ofWord` only between the tier of `a`
-  -- and the tier above it at segment `n`, whose token there now has the `a` token of segment
-  -- `m` as its only child on that tier; below it the tokens are those of segment `m`.
-  sorry
+  refine (AR.reads_spreadTier_iff (ofSpec node) (Option.some_ne_none _)
+    (fun s t ↦ length_tierWord_le_one node s t) (fun _ ↦ rfl)
+    (fun s t ht ↦ link_ofSpec_parent_iff ht) hm hn (word_ofSpec_node_ne_nil.2 hma)
+    (word_ofSpec_parent_ne_nil hna) ?_ ?_).symm
+  · rintro (_ | c | g) hb
+    · exact absurd hb not_below_none
+    · exact if_congr (or_congr_right (bears_spread_of_le (below_node_iff.1 hb))) rfl rfl
+    · show (if (node g).isSome then (spread node a w[m] w[n] g).toList else []) =
+        if (node g).isSome then (w[m] g).toList else []
+      rw [spread_of_mem (below_feature_iff.1 hb)]
+  · rintro (_ | c | g) hb
+    · rfl
+    · have hac : ¬ a ≤ c := fun h ↦ hb (below_node_iff.2 h)
+      by_cases hca : c ≤ a
+      · have hne : a ≠ ⊥ := fun h ↦ hac (h ▸ bot_le)
+        have hlt : c < a := lt_of_le_of_ne hca fun h ↦ hac h.ge
+        have h₁ : c = ⊥ ∨ Bears node (spread node a w[m] w[n]) c :=
+          .inr (((bears_spread_of_le le_rfl).2 (hma.resolve_left hne)).of_le hca)
+        have h₂ : c = ⊥ ∨ Bears node w[n] c := by
+          rcases hna.resolve_left hne with hp | hp
+          · exact .inl (le_bot_iff.1 (hp ▸ Order.le_pred_of_lt hlt))
+          · exact .inr (hp.of_le (Order.le_pred_of_lt hlt))
+        exact if_congr (iff_of_true h₁ h₂) rfl rfl
+      · exact if_congr (or_congr_right (bears_spread_of_incompRel ⟨hac, hca⟩)) rfl rfl
+    · have hg : g ∉ featureClass node a := fun h ↦ hb (below_feature_iff.2 h)
+      show (if (node g).isSome then (spread node a w[m] w[n] g).toList else []) =
+        if (node g).isSome then (w[n] g).toList else []
+      rw [spread_of_notMem hg]
 
 /-- Spreading a feature by a change of lines reads as copying its value. -/
-theorem reads_linkFeature_iff (hm : m < w.length) (hn : n < w.length)
+theorem reads_linkFeature_iff (hm : m < w.length) (hn : n < w.length) (hg : (node g).isSome)
     (hmg : (w[m] g).isSome) (hng : ∀ c ∈ node g, c = ⊥ ∨ Bears node w[n] c) :
     (linkFeature node w g m n).Reads (tiers node) k (some (.inr f)) b ↔
       (ofWord node (w.set n (Function.update w[n] g (w[m] g)))).Reads (tiers node) k
         (some (.inr f)) b := by
-  -- TODO: as `reads_linkNode_iff`, at the tier of the feature.
-  sorry
+  obtain ⟨c₀, hc₀⟩ := Option.isSome_iff_exists.1 hg
+  obtain ⟨v, hv⟩ := Option.isSome_iff_exists.1 hmg
+  have hp : (tiers node).parent (some (.inr g)) = some (.inl c₀) := by
+    show tierParent node (some (.inr g)) = _
+    simp [tierParent, hc₀]
+  refine (AR.reads_spreadTier_iff (ofSpec node) (Option.some_ne_none _)
+    (fun s t ↦ length_tierWord_le_one node s t) (fun _ ↦ rfl)
+    (fun s t ht ↦ link_ofSpec_parent_iff ht) hm hn ?_ ?_ ?_ ?_).symm
+  · show (if (node g).isSome then (w[m] g).toList else []) ≠ []
+    simp [hg, hv]
+  · rw [hp]
+    exact word_ofSpec_node_ne_nil.2 (hng c₀ hc₀)
+  · intro t hb
+    obtain rfl := below_feature_tier_iff.1 hb
+    show (if (node g).isSome then (Function.update w[n] g (w[m] g) g).toList else []) =
+      if (node g).isSome then (w[m] g).toList else []
+    rw [Function.update_self]
+  · rintro (_ | c | f') hb
+    · rfl
+    · refine if_congr ⟨?_, ?_⟩ rfl rfl
+      · rintro (h | ⟨f', hf', hs⟩)
+        · exact .inl h
+        · by_cases hfg : f' = g
+          · subst hfg
+            have hle := le_of_mem_featureClass hf' hc₀
+            rcases hng c₀ hc₀ with h | h
+            · exact .inl (le_bot_iff.1 (h ▸ hle))
+            · exact .inr (h.of_le hle)
+          · exact .inr ⟨f', hf', by rwa [Function.update_of_ne hfg] at hs⟩
+      · rintro (h | ⟨f', hf', hs⟩)
+        · exact .inl h
+        · by_cases hfg : f' = g
+          · subst hfg
+            exact .inr ⟨_, hf', by rw [Function.update_self, hv]; rfl⟩
+          · exact .inr ⟨f', hf', by rwa [Function.update_of_ne hfg]⟩
+    · have hfg : f' ≠ g := fun h ↦ hb (h ▸ ⟨0, rfl⟩)
+      show (if (node f').isSome then (Function.update w[n] g (w[m] g) f').toList else []) =
+        if (node f').isSome then (w[n] f').toList else []
+      rw [Function.update_of_ne hfg]
 
 end Phonology.FeatureGeometry
