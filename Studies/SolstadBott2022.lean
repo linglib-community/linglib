@@ -259,7 +259,7 @@ theorem denote_template_stimExp_iff {Entity : Type*} {State Event : Type u}
     {M : Model State Event} {θ : Entity → Event → Prop} {P : Entity → State → Prop}
     {Q : Event → Prop} {y x : Entity} {v : Event} :
     VerbClass.stimExp.template.denote M θ P Q y x v ↔
-      θ y v ∧ ∃ n : Nucleus M, n.preparation = v ∧ P x n.consequent :=
+      θ y v ∧ ∃ n : Nucleus M.cause M.become, n.preparation = v ∧ P x n.consequent :=
   Template.denote_cause_achievement_iff
 
 -- Section 3.3
