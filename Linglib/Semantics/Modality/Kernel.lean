@@ -149,6 +149,11 @@ theorem sInter_subset_iff_exists_mem_kernelEvidence (hw : w ∈ ⋂₀ K) :
       exact (Set.sInter_subset_of_mem hX).trans hXP
     · exact h.1
 
+/-- What a kernel true at the world of evaluation gives evidence for holds there. -/
+theorem mem_of_mem_kernelEvidence {t : Evidential.EvidenceType} (hw : w ∈ ⋂₀ K)
+    (h : w ∈ kernelEvidence K t P) : w ∈ P :=
+  (sInter_subset_iff_exists_mem_kernelEvidence hw).2 ⟨t, h⟩ hw
+
 theorem kernelMust_eq_true_iff_mem_kernelEvidence :
     kernelMust K P w = .true ↔ w ∈ kernelEvidence K .inferring P := by
   simp [and_comm]

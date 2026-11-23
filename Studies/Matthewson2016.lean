@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Universals
-public import Linglib.Semantics.Evidential.Term
+public import Linglib.Semantics.Evidential.Evidence
 public import Linglib.Data.Examples.Matthewson2016
 public import Linglib.Fragments.Gitksan.Modals
 public import Linglib.Fragments.Statimcets.Modals
@@ -24,7 +24,9 @@ the worlds compatible with what some source of information says. A factual backg
 therefore realistic, and realism is exactly the veridicality of necessity, so a factual modal
 cannot be followed by the denial of its prejacent while a content modal can: the rumor of
 (23)–(24), and St'át'imcets *k'a* against *lákw7a* in (25)–(28). Deniability diagnoses the
-content mode rather than ruling out a modal analysis of an evidential. With the
+content mode rather than ruling out a modal analysis of an evidential, and it does not follow
+the information source: the reportative *ku7* is veridical and the sensory *lákw7a* is not
+(`veridical_ku7_not_lakw7a`). With the
 circumstantial–evidential division, whether a background encodes an information source, the
 modes give Table 18.3's three classes, which St'át'imcets lexicalizes in full, and Gitksan
 keeps its epistemic and circumstantial modals apart.
@@ -113,34 +115,37 @@ def ProjectionMode.Admits : ProjectionMode → Background W → Prop
   | .factual, f => f.IsRealistic
   | .content, _ => True
 
-/-- A modal base allows *must p, but not p* when at some world `p` is necessary and false. -/
-def Deniable (f : Background W) : Prop := ∃ (p : Set W) (w : W), p ∈ simpleNecessity f w ∧ w ∉ p
+/-- The evidence a modal base gives is veridical, no necessity being false where it holds,
+exactly when the base is realistic. -/
+theorem isVeridical_simpleNecessity_iff :
+    IsVeridical (fun p ↦ {w | p ∈ simpleNecessity f w}) ↔ f.IsRealistic :=
+  ⟨fun h w ↦ h (f.accessibleWorlds w) (Set.mem_setOf.2 (mem_simpleNecessity.2 Set.Subset.rfl)),
+    fun h _ w hw ↦ hw (h w)⟩
 
-theorem deniable_iff_not_isRealistic : Deniable f ↔ ¬ f.IsRealistic := by
-  simpa [Deniable, isRealistic_iff_pure_le_simpleNecessity, Filter.le_def] using exists_comm
-
-/-- A mode is veridical over a space of worlds when no base it projects there allows the denial
-of a necessity claim. -/
+/-- A mode is veridical over a space of worlds when every base it projects there gives
+veridical evidence, so that none allows *must p, but not p*. -/
 def ProjectionMode.Veridical (μ : ProjectionMode) (W : Type*) : Prop :=
-  ∀ f : Background W, μ.Admits f → ¬ Deniable f
+  ∀ f : Background W, μ.Admits f → IsVeridical fun p ↦ {w | p ∈ simpleNecessity f w}
 
 theorem ProjectionMode.veridical_iff [Nonempty W] : μ.Veridical W ↔ μ = .factual := by
   cases μ
-  · exact iff_of_true (fun _ hf h ↦ deniable_iff_not_isRealistic.1 h hf) rfl
-  · refine iff_of_false (fun h ↦ h (fun _ ↦ {∅}) trivial ?_) nofun
-    exact deniable_iff_not_isRealistic.2 fun hr ↦
-      Background.mem_accessibleWorlds.1 (hr ‹Nonempty W›.some) _ (Set.mem_singleton _)
+  · exact iff_of_true (fun _ hf ↦ isVeridical_simpleNecessity_iff.2 hf) rfl
+  · refine iff_of_false (fun h ↦ ?_) nofun
+    exact Background.mem_accessibleWorlds.1
+      (isVeridical_simpleNecessity_iff.1 (h (fun _ ↦ {∅}) trivial) ‹Nonempty W›.some) _
+      (Set.mem_singleton _)
 
 instance [Nonempty W] : Decidable (μ.Veridical W) :=
   decidable_of_iff _ ProjectionMode.veridical_iff.symm
 
 -- (23), (24)
 theorem rumor :
-    ProjectionMode.factual.Admits Kratzer2012.evidence ∧ ¬ Deniable Kratzer2012.evidence ∧
-      Deniable Kratzer2012.content :=
+    ProjectionMode.factual.Admits Kratzer2012.evidence ∧
+      IsVeridical (fun p ↦ {w | p ∈ simpleNecessity Kratzer2012.evidence w}) ∧
+      ¬ IsVeridical fun p ↦ {w | p ∈ simpleNecessity Kratzer2012.content w} :=
   ⟨Kratzer2012.evidence_realistic,
-    fun h ↦ deniable_iff_not_isRealistic.1 h Kratzer2012.evidence_realistic,
-    deniable_iff_not_isRealistic.2 Kratzer2012.content_not_realistic⟩
+    isVeridical_simpleNecessity_iff.2 Kratzer2012.evidence_realistic,
+    fun h ↦ Kratzer2012.content_not_realistic (isVeridical_simpleNecessity_iff.1 h)⟩
 
 /-! ### The three-way classification (Table 18.3) -/
 
@@ -227,6 +232,13 @@ theorem deniability_rows (W : Type*) [Nonempty W] :
     ∀ e ∈ Examples.all, e.feature? "test" = some "deniability" →
       ∃ m ∈ e.parse? "modal" modalTable,
         (e.judgment = .acceptable ↔ ¬ (statimcetsMode m).Veridical W) := by
+  simp only [ProjectionMode.veridical_iff]
+  decide
+
+-- Table 18.3: veridicality does not follow the source
+theorem veridical_ku7_not_lakw7a (W : Type*) [Nonempty W] :
+    source ku7 = some .reported ∧ (statimcetsMode ku7).Veridical W ∧
+      source lakw7a = some .attested ∧ ¬ (statimcetsMode lakw7a).Veridical W := by
   simp only [ProjectionMode.veridical_iff]
   decide
 

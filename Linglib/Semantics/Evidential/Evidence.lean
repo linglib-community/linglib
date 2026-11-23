@@ -25,6 +25,12 @@ that type as its evidential proposition (`Evidential.IsOfType.evidence_comp`), a
 term whose parameters all fall in one class of a classification has the evidence of that class
 (`Evidential.evidence_comp_of_forall_eq`).
 
+Evidence from a source is veridical when the speaker has it for `p` only where `p` is true,
+`ev π p ⊆ p` for every `p` (`Evidential.IsVeridical`). A term all of whose sources are veridical
+has an evidential proposition that entails its scope (`Evidential.evidence_subset`). Veridicality
+is a property of the relation and not of the source: a language may have a veridical reportative
+beside a sensory evidential that is not.
+
 ## Implementation notes
 
 The relation is a bare function and the speaker is not an argument: an account with several
@@ -44,7 +50,9 @@ excludes indirect evidence for it.
 ## References
 
 * [aikhenvald-2004]
+* [kratzer-2012]
 * [martinez-vera-2026]
+* [matthewson-2016]
 * [von-fintel-gillies-2010]
 -/
 
@@ -107,5 +115,20 @@ theorem notMem_evidence_of_preferred_eq_none (hS : (S : Set Parameter) = sources
     (h : preferred es S = none) (he : e ∈ es) : w ∉ e.evidence ev p := by
   rw [mem_evidence_iff_not_disjoint, not_not, ← hS, Finset.disjoint_coe]
   exact (preferred_eq_none.1 h).mono_left fun π hπ ↦ mem_expressed.2 ⟨e, he, hπ⟩
+
+/-! ### Veridicality -/
+
+/-- Evidence is veridical when there is evidence for a proposition only where it is true. -/
+def IsVeridical (ev : Set W → Set W) : Prop := ∀ p, ev p ⊆ p
+
+theorem isVeridical_iff_le_id {ev : Set W → Set W} : IsVeridical ev ↔ ev ≤ id := Iff.rfl
+
+theorem IsVeridical.mono {ev ev' : Set W → Set W} (h : IsVeridical ev') (hle : ev ≤ ev') :
+    IsVeridical ev :=
+  fun p ↦ (hle p).trans (h p)
+
+/-- The evidential proposition of a term whose sources are all veridical entails its scope. -/
+theorem evidence_subset (h : ∀ π ∈ e.covers, IsVeridical (ev π)) : e.evidence ev p ⊆ p :=
+  fun _ ⟨π, hπ, hw⟩ ↦ h π hπ p hw
 
 end Evidential
