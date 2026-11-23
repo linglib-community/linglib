@@ -69,13 +69,27 @@ def ex_124a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    contrasts := [("kɛ", .ungrammatical)]
+    contrasts := []
     readings := []
-    paperFeatures := [] }
+    paperFeatures := [("input", "divide"), ("velar", "palatalized")] }
 
-def kita : Datum :=
-  { id := "mccarthyprince1995_kita"
-    source := ⟨"mccarthy-prince-1995", "p. 94"⟩
+def ex_124a_plain : Datum :=
+  { id := "mccarthyprince1995_124a_plain"
+    source := ⟨"mccarthy-prince-1995", "(124)"⟩
+    reportedIn := none
+    method := some .description
+    language := "akan1250"
+    primaryText := "kɛ"
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("input", "divide"), ("velar", "plain")] }
+
+def ex_127a_i : Datum :=
+  { id := "mccarthyprince1995_127a_i"
+    source := ⟨"mccarthy-prince-1995", "(127a)"⟩
     reportedIn := none
     method := some .description
     language := "akan1250"
@@ -83,9 +97,51 @@ def kita : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    contrasts := [("tɕita", .ungrammatical)]
+    contrasts := []
     readings := []
-    paperFeatures := [] }
+    paperFeatures := [("input", "polish"), ("velar", "plain")] }
+
+def ex_127a_ii : Datum :=
+  { id := "mccarthyprince1995_127a_ii"
+    source := ⟨"mccarthy-prince-1995", "(127a)"⟩
+    reportedIn := none
+    method := some .description
+    language := "akan1250"
+    primaryText := "tɕita"
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("input", "polish"), ("velar", "palatalized")] }
+
+def ex_128a : Datum :=
+  { id := "mccarthyprince1995_128a"
+    source := ⟨"mccarthy-prince-1995", "(128a)"⟩
+    reportedIn := none
+    method := some .description
+    language := "akan1250"
+    primaryText := "kɛsɪ"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("input", "big"), ("velar", "plain")] }
+
+def fn72 : Datum :=
+  { id := "mccarthyprince1995_fn72"
+    source := ⟨"mccarthy-prince-1995", "fn. 72"⟩
+    reportedIn := none
+    method := some .description
+    language := "akan1250"
+    primaryText := "tɕɛsɪ"
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("input", "big"), ("velar", "palatalized")] }
 
 def ex_125a : Datum :=
   { id := "mccarthyprince1995_125a"
@@ -99,7 +155,7 @@ def ex_125a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("application", "under")] }
+    paperFeatures := [("input", "bite"), ("application", "under")] }
 
 def ex_125a_pal : Datum :=
   { id := "mccarthyprince1995_125a_pal"
@@ -113,7 +169,7 @@ def ex_125a_pal : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("application", "normal")] }
+    paperFeatures := [("input", "bite"), ("application", "normal")] }
 
 def fn71 : Datum :=
   { id := "mccarthyprince1995_fn71"
@@ -127,9 +183,9 @@ def fn71 : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("application", "over")] }
+    paperFeatures := [("input", "bite"), ("application", "over")] }
 
-def all : List Datum := [ex_6a, ex_6b, ex_6c, ex_124a, kita, ex_125a, ex_125a_pal, fn71]
+def all : List Datum := [ex_6a, ex_6b, ex_6c, ex_124a, ex_124a_plain, ex_127a_i, ex_127a_ii, ex_128a, fn72, ex_125a, ex_125a_pal, fn71]
 
 /-- How a phonological process applies in a candidate reduplicated form. -/
 inductive Application where
@@ -144,5 +200,33 @@ inductive Application where
 /-- The value a row records under `application`. -/
 def application (e : Datum) : Option Application :=
   e.parse? "application" [("over", .over), ("under", .under), ("normal", .normal)]
+
+/-- The Akan inputs whose outputs the paper judges. -/
+inductive Input where
+  /-- divide: /kɛ/ 'divide' -/
+  | divide
+  /-- big: /kɛsɪ/ 'big' -/
+  | big
+  /-- polish: /kita/ 'polish' -/
+  | polish
+  /-- bite: /RED–ka/, the reduplication of 'bite' -/
+  | bite
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `input`. -/
+def input (e : Datum) : Option Input :=
+  e.parse? "input" [("divide", .divide), ("big", .big), ("polish", .polish), ("bite", .bite)]
+
+/-- The realization of the initial velar of an unreduplicated Akan word. -/
+inductive Velar where
+  /-- plain: a velar -/
+  | plain
+  /-- palatalized: a palatal -/
+  | palatalized
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `velar`. -/
+def velar (e : Datum) : Option Velar :=
+  e.parse? "velar" [("plain", .plain), ("palatalized", .palatalized)]
 
 end McCarthyPrince1995.Examples

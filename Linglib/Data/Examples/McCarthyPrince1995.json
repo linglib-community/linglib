@@ -22,6 +22,52 @@
           "doc": "the process applies only where its conditions are met"
         }
       ]
+    },
+    {
+      "key": "input",
+      "lean": "input",
+      "type": "Input",
+      "doc": "The Akan inputs whose outputs the paper judges.",
+      "levels": [
+        {
+          "name": "divide",
+          "label": "divide",
+          "doc": "/kɛ/ 'divide'"
+        },
+        {
+          "name": "big",
+          "label": "big",
+          "doc": "/kɛsɪ/ 'big'"
+        },
+        {
+          "name": "polish",
+          "label": "polish",
+          "doc": "/kita/ 'polish'"
+        },
+        {
+          "name": "bite",
+          "label": "bite",
+          "doc": "/RED–ka/, the reduplication of 'bite'"
+        }
+      ]
+    },
+    {
+      "key": "velar",
+      "lean": "velar",
+      "type": "Velar",
+      "doc": "The realization of the initial velar of an unreduplicated Akan word.",
+      "levels": [
+        {
+          "name": "plain",
+          "label": "plain",
+          "doc": "a velar"
+        },
+        {
+          "name": "palatalized",
+          "label": "palatalized",
+          "doc": "a palatal"
+        }
+      ]
     }
   ],
   "examples": [
@@ -89,17 +135,37 @@
       "translation": "divide",
       "context": "",
       "judgment": "acceptable",
-      "contrasts": [
-        {"form": "kɛ", "judgment": "ungrammatical"}
-      ],
+      "contrasts": [],
       "readings": [],
-      "paperFeatures": [],
+      "paperFeatures": [
+        ["input", "divide"],
+        ["velar", "palatalized"]
+      ],
       "comment": "",
       "verified": "page-image"
     },
     {
-      "id": "mccarthyprince1995_kita",
-      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "p. 94"},
+      "id": "mccarthyprince1995_124a_plain",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "(124)"},
+      "language": "akan1250",
+      "primaryText": "kɛ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "divide",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["input", "divide"],
+        ["velar", "plain"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "mccarthyprince1995_127a_i",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "(127a)"},
       "language": "akan1250",
       "primaryText": "kita",
       "discourseSegments": [],
@@ -107,11 +173,69 @@
       "translation": "polish",
       "context": "",
       "judgment": "acceptable",
-      "contrasts": [
-        {"form": "tɕita", "judgment": "ungrammatical"}
-      ],
+      "contrasts": [],
       "readings": [],
-      "paperFeatures": [],
+      "paperFeatures": [
+        ["input", "polish"],
+        ["velar", "plain"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "mccarthyprince1995_127a_ii",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "(127a)"},
+      "language": "akan1250",
+      "primaryText": "tɕita",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "polish",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["input", "polish"],
+        ["velar", "palatalized"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "mccarthyprince1995_128a",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "(128a)"},
+      "language": "akan1250",
+      "primaryText": "kɛsɪ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "big",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["input", "big"],
+        ["velar", "plain"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "mccarthyprince1995_fn72",
+      "source": {"bibkey": "mccarthy-prince-1995", "paperLabel": "fn. 72"},
+      "language": "akan1250",
+      "primaryText": "tɕɛsɪ",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "big",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["input", "big"],
+        ["velar", "palatalized"]
+      ],
       "comment": "",
       "verified": "page-image"
     },
@@ -128,6 +252,7 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
+        ["input", "bite"],
         ["application", "under"]
       ],
       "comment": "",
@@ -146,6 +271,7 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
+        ["input", "bite"],
         ["application", "normal"]
       ],
       "comment": "",
@@ -164,6 +290,7 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
+        ["input", "bite"],
         ["application", "over"]
       ],
       "comment": "",
