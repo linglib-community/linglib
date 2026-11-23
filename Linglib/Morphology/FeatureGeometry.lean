@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Data.Fintype.Order
+public import Linglib.Core.Order.SuccPred.Tree
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.SuccPred.Basic
 public import Linglib.Core.Order.UpperLower.Finset
@@ -108,33 +109,25 @@ def ancestors : Node → List Node
 /-- The node a node depends on directly, the root fixed. -/
 def pred (n : Node) : Node := n.ancestors.head?.getD n
 
-/-- `a ≤ b` when `b` depends on `a`, the dominance of the geometry: `a` is `b` or one of the nodes
-`b` depends on. -/
-instance : PartialOrder Node where
-  le a b := a = b ∨ a ∈ b.ancestors
-  le_refl := by decide
-  le_trans := by decide +kernel
-  le_antisymm := by decide
+/-- The tree of the geometry, each node under the node it depends on directly. -/
+def tree : ParentTree Node := .ofIterate pred .referringExpression 4 (by decide)
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a = b ∨ a ∈ b.ancestors))
+/-- `a ≤ b` when `b` depends on `a`, the dominance of the geometry, with the root as `⊥` and the
+parent as `Order.pred`. -/
+instance : PartialOrder Node := tree.toPartialOrder
+
+instance : DecidableLE Node := tree.decidableLE
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-/-- The root dominates every node. -/
-instance : OrderBot Node where
-  bot := .referringExpression
-  bot_le := by decide
+instance : OrderBot Node := tree.toOrderBot
 
-/-- The parent as the predecessor. -/
-instance : PredOrder Node where
-  pred := pred
-  pred_le := by decide
-  min_of_le_pred := by decide
-  le_pred_of_lt := by decide
+instance : PredOrder Node := tree.toPredOrder
 
 instance : LocallyFiniteOrder Node := Fintype.toLocallyFiniteOrder
 
-theorem le_iff {a b : Node} : a ≤ b ↔ a = b ∨ a ∈ b.ancestors := Iff.rfl
+theorem le_iff {a b : Node} : a ≤ b ↔ a = b ∨ a ∈ b.ancestors := by
+  revert a b; decide
 
 /-- The nodes a node depends on, itself included and the root excluded, from the root down:
 the content a privative feature brings with it. -/
