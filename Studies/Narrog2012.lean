@@ -1,6 +1,7 @@
 module
 
 public import Studies.Narrog2010
+public import Linglib.Data.Statistics.Narrog2012
 
 /-!
 # Narrog (2012): Modality, Subjectivity, and Semantic Change
@@ -24,8 +25,14 @@ from narrower to wider scope.
 The scope levels follow the combined hierarchy of the book's third chapter, categories on
 a shared level being unordered. Possession, directionals, and the two kinds of
 honorification, which the book's table of source and target categories also lists, are not
-in the scope hierarchy and are left out. The most frequent attested changes of modal meaning
-are tabulated in `Studies/Narrog2010`, and the last section checks them against the scale.
+in the scope hierarchy and are left out.
+
+The book classifies the changes of modal meaning tabulated in `Narrog2010.changes` by the sides
+of volitivity they run between. The last section derives its four totals from that table
+(`gramsBetween_eq`) and proves the two tendencies it reads off the classification
+(`isMood_or_circumstantial_of_toVolitive`, `epistemic_of_toNonVolitive`). The book's synopsis
+figure draws each change as an arrow on the map; its positions are not encoded, and
+`minOrientation` records only that mood lies above modality proper.
 
 ## TODO
 
@@ -86,7 +93,8 @@ inductive GramCategory where
   | voice              -- passive, causative (lowest scope)
   | benefactive        -- benefactive applicatives
   | phasalAspect       -- begin, continue, finish
-  | dynamicModality    -- ability, volition (boulomaic)
+  | dynamicModality    -- ability
+  | boulomaicModality  -- volition
   | perfImperfAspect   -- perfective/imperfective
   | deontic1           -- necessity: must, have to
   | evidentiality1     -- predictive appearance
@@ -116,12 +124,13 @@ inductive GramCategory where
     listed alongside them share the same level. -/
 def GramCategory.scopeLevel : GramCategory → Nat
   | .voice | .benefactive                                     => 0
-  | .phasalAspect | .dynamicModality                          => 1
+  | .phasalAspect | .dynamicModality | .boulomaicModality     => 1
   | .perfImperfAspect | .deontic1 | .evidentiality1           => 2
   | .negation | .epistemic1 | .evidentiality2                 => 3
   | .tense | .deontic2 | .epistemic2 | .evidentiality3        => 4
-  | .epistemic3 | .volitiveMood                               => 5
-  | .illocutionaryMod                                         => 6
+  | .epistemic3                                               => 5
+  | .volitiveMood                                             => 6
+  | .illocutionaryMod                                         => 7
 
 /-- Categories are compared by scope level, categories on one level lying below each other. -/
 instance : Preorder GramCategory := Preorder.lift GramCategory.scopeLevel
@@ -139,7 +148,7 @@ theorem dynamic_below_deontic : GramCategory.dynamicModality < GramCategory.deon
   decide
 
 theorem mood_outscopes_modality :
-    GramCategory.epistemic3 ≤ GramCategory.volitiveMood ∧
+    GramCategory.epistemic3 < GramCategory.volitiveMood ∧
     GramCategory.deontic2 < GramCategory.volitiveMood := by
   exact ⟨by decide, by decide⟩
 
@@ -159,7 +168,7 @@ theorem im_is_widest (c : GramCategory) : c ≤ GramCategory.illocutionaryMod :=
     event/speaker boundary; see `scope_implies_orientation` for the
     precise (strict `<`) relationship. -/
 def GramCategory.toOrientation : GramCategory → SpeechActOrientation
-  | .voice | .benefactive | .phasalAspect | .dynamicModality
+  | .voice | .benefactive | .phasalAspect | .dynamicModality | .boulomaicModality
   | .perfImperfAspect => .eventOriented
   | .deontic1 | .deontic2 | .epistemic1 | .epistemic2
   | .evidentiality1 | .evidentiality2 | .evidentiality3
@@ -204,27 +213,54 @@ theorem target_is_speech_act_oriented (c : GramCategory) (hc : c.IsTarget)
 
 /-! ### The changes of [narrog-2010] -/
 
-/-- The lowest position a use of a meaning tabulated in [narrog-2010] can take: the directive
+/-- The lowest position a use at a point of the map of [narrog-2010] can take: the directive
 moods lie at the speech act-oriented end, and modality proper and the future reach down to the
 event-oriented pole. -/
-def minOrientation (m : Narrog2010.Meaning) : SpeechActOrientation :=
-  if m.IsMood then ⊤ else ⊥
+def minOrientation (p : Narrog2010.Point) : SpeechActOrientation :=
+  if p.IsMood then ⊤ else ⊥
 
-theorem le_minOrientation {m : Narrog2010.Meaning} (hm : m.IsMood) (o : SpeechActOrientation) :
-    o ≤ minOrientation m := by
-  simp only [minOrientation, hm, ↓reduceIte, le_top]
+theorem le_minOrientation {p : Narrog2010.Point} (hp : p.IsMood) (o : SpeechActOrientation) :
+    o ≤ minOrientation p := by
+  simp only [minOrientation, hp, ↓reduceIte, le_top]
+
+theorem not_minOrientation_le {p : Narrog2010.Point} (hp : p.IsMood)
+    {o : SpeechActOrientation} (ho : o < ⊤) : ¬ minOrientation p ≤ o := by
+  simp only [minOrientation, hp, ↓reduceIte, top_le_iff]
+  exact ho.ne
 
 theorem minOrientation_source_le_target :
-    ∀ c ∈ Narrog2010.changes,
-      minOrientation c.source.meaning ≤ minOrientation c.target.meaning := by
-  intro c hc
-  by_cases h : c.source.meaning.IsMood
-  · exact le_minOrientation (Narrog2010.isMood_target_of_isMood_source c hc h) _
-  · simp only [minOrientation, h, ↓reduceIte, bot_le]
+    ∀ c ∈ Narrog2010.changes, ∀ p ∈ c.source.meaning, ∀ q ∈ c.target.meaning,
+      minOrientation p ≤ minOrientation q := by
+  decide
 
-theorem not_minOrientation_le {m : Narrog2010.Meaning} (hm : m.IsMood)
-    {o : SpeechActOrientation} (ho : o < ⊤) : ¬ minOrientation m ≤ o := by
-  simp only [minOrientation, hm, ↓reduceIte, top_le_iff]
-  exact ho.ne
+/-- The grams of the changes of [narrog-2010] that run from side `v` of volitivity to side `w`. -/
+def gramsBetween (v w : Prop) [Decidable v] [Decidable w] : ℕ :=
+  ((Narrog2010.changes.filter fun c ↦ (∀ p ∈ c.source.meaning, p.IsVolitive ↔ v) ∧
+    ∀ p ∈ c.target.meaning, p.IsVolitive ↔ w).map (·.grams)).sum
+
+/-- The four totals of the book's classification of the changes by volitivity follow from the
+table of [narrog-2010] and the volitivity of its meanings. -/
+theorem gramsBetween_eq :
+    gramsBetween False True = nonVolitiveToVolitive ∧
+    gramsBetween False False = withinNonVolitive ∧
+    gramsBetween True False = volitiveToNonVolitive ∧
+    gramsBetween True True = withinVolitive := by
+  decide
+
+/-- A change from a non-volitive to a volitive meaning has its target in mood or its source in
+circumstantial possibility. -/
+theorem isMood_or_circumstantial_of_toVolitive :
+    ∀ c ∈ Narrog2010.changes,
+      (∀ p ∈ c.source.meaning, ¬ p.IsVolitive) → (∀ p ∈ c.target.meaning, p.IsVolitive) →
+      (∀ p ∈ c.target.meaning, p.IsMood) ∨
+        ∀ p ∈ c.source.meaning, p = .modal (.possibility, .circumstantial) := by
+  decide
+
+/-- A change from a volitive to a non-volitive meaning has an epistemic target. -/
+theorem epistemic_of_toNonVolitive :
+    ∀ c ∈ Narrog2010.changes,
+      (∀ p ∈ c.source.meaning, p.IsVolitive) → (∀ p ∈ c.target.meaning, ¬ p.IsVolitive) →
+      ∀ p ∈ c.target.meaning, ∃ fo, p = .modal (fo, .epistemic) := by
+  decide
 
 end Narrog2012
