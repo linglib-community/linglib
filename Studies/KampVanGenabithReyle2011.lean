@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Dynamic.DRT.ContextChange
+public import Linglib.Semantics.Dynamic.FileChange
 public import Mathlib.Data.Fin.VecNotation
 
 /-!
@@ -14,7 +15,8 @@ of an intensional model whose information states record different witnesses for 
 In the worked discourse (43), *John owns a donkey. It loves him.*, applying the context change
 potential of the second sentence to the state the first expresses gives the state of their merge.
 The context change potentials of DRSs are regular (Definition 27) and relate to the states DRSs
-express relative to an assignment (Definition 29) as (44) states.
+express relative to an assignment (Definition 29) as (44) states. On a state with a base they are
+assertive updates in the sense of [heim-1982]'s file change semantics (`ccp_eq_ofState`).
 
 ## Implementation notes
 
@@ -27,6 +29,7 @@ follow from the form of Definition 24(ii) alone and do not use the absence of `�
 ## References
 
 * [kamp-vangenabith-reyle-2011]
+* [heim-1982]
 -/
 
 @[expose] public section
@@ -182,19 +185,14 @@ variable {L : Language} {V W M : Type*} (interp : W → L.Structure M) (K : DRS 
 
 -- p. 161, (ii)
 theorem ccp_base {X : Set V} {I : State W V M} (hI : State.UniformAt X I) :
-    State.UniformAt (X ∪ ↑K.referents) (K.ccp interp I) := by
-  intro q hq
-  obtain ⟨p, hp, -, hv⟩ := (DRS.mem_ccp interp).mp hq
-  have h := DRS.VerifiesAt.domain_eq interp hv
-  have hpd : PFun.Dom p.assignment = X := hI p hp
-  rwa [hpd] at h
+    State.UniformAt (X ∪ ↑K.referents) (K.ccp interp I) :=
+  DRS.uniformAt_ccp interp hI
 
 -- p. 161, (iii)
 theorem ccp_distributive : CCP.IsDistributive (K.ccp interp) :=
   Update.image_isDistributive _
 
-/-- A context change potential only adds information: its output carries at least as much
-information as its input (Definitions 25 and 27(ii)) (Definition 27). -/
+-- Definitions 25 and 27(ii)
 theorem ccp_informative (I : State W V M) : K.ccp interp I ≤ I :=
   DRS.ccp_le interp I
 
@@ -216,7 +214,7 @@ theorem mem_ccp_iff_mem_relState {X : Set V} {I : State W V M} (hI : State.Unifo
   · rintro ⟨p', hp', hw, hv⟩
     have he : p' = p := by
       rw [(Possibility.le_iff_eq_restrict (hI p' hp')).mp
-          ⟨hw, Pi.le_def.mp (DRS.VerifiesAt.le interp hv)⟩,
+          ((DRS.mem_update_iff interp).mp ⟨hw, hv⟩).1,
         ← (Possibility.le_iff_eq_restrict (hI p hp)).mp hpq]
     rw [← he, ← hw]
     exact hv
@@ -224,6 +222,12 @@ theorem mem_ccp_iff_mem_relState {X : Set V} {I : State W V M} (hI : State.Unifo
     refine ⟨p, hp, hpq.1, ?_⟩
     rw [hpq.1]
     exact hv
+
+/-- On a state uniform at `X`, the context change potential of a DRS is the assertive update of
+[heim-1982] by the state the DRS expresses on the stratum at `X`. -/
+theorem ccp_eq_ofState {X : Set V} {I : State W V M} (hI : State.UniformAt X I) :
+    FCP.ofState (K.ccp interp (State.stratum X)) I = Part.some (K.ccp interp I) := by
+  rw [FCP.ofState_apply, DRS.ccp_eq_mul_ccp_stratum interp hI]
 
 end Regular
 
