@@ -2,6 +2,7 @@ module
 
 public import Linglib.Phonology.FeatureGeometry
 public import Linglib.Phonology.Autosegmental.Realization
+public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Order.Interval.Set.UnorderedInterval
 
 /-!
@@ -80,6 +81,7 @@ def tierWord (s : F → Option β) : ∀ t, List (Tiers N F β t)
   | .inl a => if a = ⊥ ∨ Bears node s a then [PUnit.unit] else []
   | .inr f => if (node f).isSome then (s f).toList else []
 
+omit [PredOrder N] [DecidableEq F] in
 theorem length_tierWord_le_one (s : F → Option β) (t : N ⊕ F) :
     (tierWord node s t).length ≤ 1 := by
   rcases t with a | f
