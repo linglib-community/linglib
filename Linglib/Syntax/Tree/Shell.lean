@@ -8,6 +8,7 @@ module
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Syntax.Cat
+public import Linglib.Core.Data.RoseTree.Context
 
 /-!
 # Stacks of shells
@@ -25,6 +26,8 @@ c-commanding the lower and not conversely, and so are the heads.
 
 * `PhraseStructure.Shell`: a specifier and a head of one category, with an optional adjunct of X′.
 * `PhraseStructure.Shell.stack`: the phrase of a list of shells over a lowest complement.
+* `PhraseStructure.Shell.context`, `PhraseStructure.Shell.stackContext`: a shell and a stack as
+  one-hole contexts, whose hole is the position of the complement.
 * `PhraseStructure.Shell.argPos`, `PhraseStructure.Shell.headPos`: the positions of the arguments
   and of the heads of a stack.
 * `PhraseStructure.Shell.argEmbedding`, `PhraseStructure.Shell.headEmbedding`: the arguments and
@@ -39,7 +42,10 @@ c-commanding the lower and not conversely, and so are the heads.
 
 ## Implementation notes
 
-C-command is that of the first branching node. The asymmetries rest on
+A stack is a context plugged with its lowest complement, `Shell.plug_stackContext`, so the
+position of a phrase is the path of a context and the subtree there is found by
+`RoseTree.Context.getElem?_plug_path`, without induction on the stack. C-command is that of the
+first branching node. The asymmetries rest on
 `PhraseStructure.commands_of_covBy_of_lt` and `PhraseStructure.not_commands_of_covBy_of_lt`, which
 hold of a path in any dominance order, so they do not depend on what the specifiers, heads and
 adjuncts are. A lowest head and its complement are sisters and c-command each other, so the
@@ -86,8 +92,21 @@ def over (L : Shell W) (x : Tree Cat W) : Tree Cat W := node L.cat [L.spec, L.ba
 def compPos (L : Shell W) : GornAddress :=
   .of 1 * L.adjunct.elim (.of 1) fun _ ↦ .of 0 * .of 1
 
-theorem getElem?_compPos (L : Shell W) (x : Tree Cat W) : (L.over x)[L.compPos]? = some x := by
+/-- The frames of a shell, from its phrase down to the hole of its complement. -/
+def context (L : Shell W) : RoseTree.Context (Label Cat W) :=
+  ⟨.phrase L.cat .projection, [L.spec], []⟩ ::
+    ((L.adjunct.elim [] fun d ↦ [⟨.phrase L.cat .adjunction, [], [d]⟩]) ++
+      [⟨.phrase L.cat .projection, [L.head], []⟩])
+
+@[simp] theorem plug_context (L : Shell W) (x : Tree Cat W) : L.context.plug x = L.over x := by
   rcases L with ⟨c, s, h, _ | d⟩ <;> rfl
+
+theorem path_context (L : Shell W) : L.context.path = L.compPos.toList := by
+  rcases L with ⟨c, s, h, _ | d⟩ <;> rfl
+
+theorem getElem?_compPos (L : Shell W) (x : Tree Cat W) : (L.over x)[L.compPos]? = some x := by
+  rw [← plug_context, RoseTree.getElem?_gornAddress, ← path_context]
+  exact RoseTree.Context.getElem?_plug_path _ _
 
 theorem one_mem_branching (L : Shell W) (x : Tree Cat W) :
     (1 : GornAddress) ∈ (L.over x).branching := by
@@ -127,11 +146,12 @@ theorem getElem?_barPos_mul_of_zero (L : Shell W) (x : Tree Cat W) :
 /-- The phrase of the shells `ls`, the highest first, over the lowest complement `x`. -/
 def stack (ls : List (Shell W)) (x : Tree Cat W) : Tree Cat W := ls.foldr Shell.over x
 
+/-- The context of a stack of shells, down to the hole of the lowest complement. -/
+def stackContext (ls : List (Shell W)) : RoseTree.Context (Label Cat W) := ls.flatMap context
+
 /-- The position of the `k`th phrase of a stack of shells, and of the lowest complement for
-`k` their number. -/
-def pos : List (Shell W) → ℕ → GornAddress
-  | L :: ls, k + 1 => L.compPos * pos ls k
-  | _, _ => 1
+`k` at least their number: the hole of the first `k` shells. -/
+def pos (ls : List (Shell W)) (k : ℕ) : GornAddress := ⟨(stackContext (ls.take k)).path⟩
 
 /-- The position of the `k`th specifier. -/
 abbrev specPos (ls : List (Shell W)) (k : ℕ) : GornAddress := pos ls k * .of 0
@@ -145,25 +165,42 @@ variable {ls : List (Shell W)} {i j k : ℕ}
 
 @[simp] theorem stack_cons : stack (L :: ls) x = L.over (stack ls x) := rfl
 
-@[simp] theorem pos_zero : pos ls 0 = 1 := by cases ls <;> rfl
+theorem stack_append (l₁ l₂ : List (Shell W)) (x : Tree Cat W) :
+    stack (l₁ ++ l₂) x = stack l₁ (stack l₂ x) := List.foldr_append
 
-@[simp] theorem pos_cons_succ : pos (L :: ls) (k + 1) = L.compPos * pos ls k := rfl
+@[simp] theorem stackContext_nil : stackContext ([] : List (Shell W)) = [] := rfl
 
-theorem pos_succ : ∀ {ls : List (Shell W)} {k : ℕ} (hk : k < ls.length),
-    pos ls (k + 1) = pos ls k * ls[k].compPos
-  | L :: ls, 0, _ => by simp
-  | L :: ls, k + 1, hk => by
-    rw [pos_cons_succ, pos_succ (ls := ls) (by simpa using hk), pos_cons_succ, mul_assoc]
-    rfl
+@[simp] theorem stackContext_cons : stackContext (L :: ls) = L.context ++ stackContext ls := rfl
 
-theorem getElem?_pos (x : Tree Cat W) : ∀ {ls : List (Shell W)} {k : ℕ}, k ≤ ls.length →
-    (stack ls x)[pos ls k]? = some (stack (ls.drop k) x)
-  | _, 0, _ => by simp
-  | L :: ls, k + 1, hk => by
-    have h₁ := L.getElem?_compPos (stack ls x)
-    have h₂ := getElem?_pos x (ls := ls) (k := k) (by simpa using hk)
-    simp only [RoseTree.getElem?_gornAddress] at h₁ h₂ ⊢
-    simp [RoseTree.getElem?_append, h₁, h₂]
+@[simp] theorem stackContext_append (l₁ l₂ : List (Shell W)) :
+    stackContext (l₁ ++ l₂) = stackContext l₁ ++ stackContext l₂ := List.flatMap_append
+
+/-- A stack is its context with the lowest complement in the hole. -/
+@[simp] theorem plug_stackContext (ls : List (Shell W)) (x : Tree Cat W) :
+    (stackContext ls).plug x = stack ls x := by
+  induction ls with
+  | nil => rfl
+  | cons L ls ih => simp [ih]
+
+@[simp] theorem pos_zero : pos ls 0 = 1 := rfl
+
+@[simp] theorem pos_cons_succ : pos (L :: ls) (k + 1) = L.compPos * pos ls k :=
+  GornAddress.ext (by simp [pos, path_context])
+
+/-- The position of a phrase is found by descending to a higher phrase and on from there. -/
+theorem pos_add (ls : List (Shell W)) (i j : ℕ) :
+    pos ls (i + j) = pos ls i * pos (ls.drop i) j :=
+  GornAddress.ext (by simp [pos, List.take_add])
+
+theorem pos_succ (hk : k < ls.length) : pos ls (k + 1) = pos ls k * ls[k].compPos := by
+  rw [pos_add, List.drop_eq_getElem_cons hk, pos_cons_succ, pos_zero, mul_one]
+
+theorem getElem?_pos (x : Tree Cat W) (ls : List (Shell W)) (k : ℕ) :
+    (stack ls x)[pos ls k]? = some (stack (ls.drop k) x) := by
+  have h : stack ls x = (stackContext (ls.take k)).plug (stack (ls.drop k) x) := by
+    rw [plug_stackContext, ← stack_append, List.take_append_drop]
+  rw [h, RoseTree.getElem?_gornAddress]
+  exact RoseTree.Context.getElem?_plug_path _ _
 
 theorem stack_drop (x : Tree Cat W) (hk : k < ls.length) :
     stack (ls.drop k) x = ls[k].over (stack (ls.drop (k + 1)) x) := by
@@ -182,13 +219,13 @@ theorem pos_mul_of_lt (hij : i < j) (hj : j ≤ ls.length) : pos ls i * .of 1 < 
 
 theorem pos_mem_branching (x : Tree Cat W) (hk : k < ls.length) :
     pos ls k ∈ (stack ls x).branching := by
-  have := (RoseTree.mul_mem_branching_iff (getElem?_pos x hk.le) (x := 1)).2
+  have := (RoseTree.mul_mem_branching_iff (getElem?_pos x ls k) (x := 1)).2
     (stack_drop x hk ▸ Shell.one_mem_branching _ _)
   rwa [mul_one] at this
 
 theorem pos_mul_of_mem_branching (x : Tree Cat W) (hk : k < ls.length) :
     pos ls k * .of 1 ∈ (stack ls x).branching :=
-  (RoseTree.mul_mem_branching_iff (getElem?_pos x hk.le)).2
+  (RoseTree.mul_mem_branching_iff (getElem?_pos x ls k)).2
     (stack_drop x hk ▸ Shell.of_one_mem_branching _ _)
 
 -- A specifier c-commands whatever a lower phrase dominates, and nothing there c-commands it.
@@ -203,6 +240,14 @@ theorem not_cCommands_specPos_of_lt (x : Tree Cat W) (hij : i < j) (hj : j ≤ l
   not_commands_of_covBy_of_lt (GornAddress.covBy_mul_of _ 0)
     (pos_mul_of_mem_branching x (by omega)) (GornAddress.lt_mul_of _ 1)
     (RoseTree.not_mul_of_le_mul_of _ (by decide)) ((pos_mul_of_lt hij hj).trans_le hb) le_rfl
+
+-- A map of a linear order whose order goes to c-command and back is injective.
+theorem injective_of_cCommands_iff {n : ℕ} {t : Tree Cat W} {f : Fin n → GornAddress}
+    (h : ∀ a b, t.CCommands (f a) (f b) ↔ a < b) : Function.Injective f := fun a b hab ↦ by
+  by_contra hne
+  rcases lt_or_gt_of_ne hne with hlt | hlt
+  · exact not_commands_self (hab ▸ (h a b).2 hlt)
+  · exact not_commands_self (hab ▸ (h b a).2 hlt)
 
 /-- The position of the `k`th argument of a stack of shells: the `k`th specifier, and the lowest
 complement for `k` their number. -/
@@ -233,13 +278,7 @@ to c-command. -/
 def argEmbedding (ls : List (Shell W)) (x : Tree Cat W) :
     ((· < ·) : Fin (ls.length + 1) → Fin (ls.length + 1) → Prop) ↪r (stack ls x).CCommands where
   toFun k := argPos ls k
-  inj' a b hab := by
-    have h₁ := cCommands_argPos_iff ls x (i := a) (j := b) (by omega) (by omega)
-    have h₂ := cCommands_argPos_iff ls x (i := b) (j := a) (by omega) (by omega)
-    simp only [hab] at h₁
-    simp only [← hab] at h₂
-    exact Fin.ext (Nat.le_antisymm (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₂.2 hlt))
-      (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₁.2 hlt)))
+  inj' := injective_of_cCommands_iff fun a b ↦ cCommands_argPos_iff ls x (by omega) (by omega)
   map_rel_iff' := cCommands_argPos_iff ls x (by omega) (by omega)
 
 @[simp] theorem argEmbedding_apply (ls : List (Shell W)) (x : Tree Cat W)
@@ -247,7 +286,7 @@ def argEmbedding (ls : List (Shell W)) (x : Tree Cat W) :
 
 theorem getElem?_specPos (x : Tree Cat W) (hk : k < ls.length) :
     (stack ls x)[specPos ls k]? = some ls[k].spec := by
-  have := getElem?_pos x hk.le
+  have := getElem?_pos x ls k
   simp only [RoseTree.getElem?_gornAddress] at this ⊢
   simp [RoseTree.getElem?_append, this, stack_drop x hk, Shell.over]
 
@@ -274,7 +313,7 @@ theorem headPos_eq : ∀ {ls : List (Shell W)} {k : ℕ} (hk : k < ls.length),
 
 theorem getElem?_headPos (x : Tree Cat W) (hk : k < ls.length) :
     (stack ls x)[headPos ls k]? = some ls[k].head := by
-  have h₁ := getElem?_pos x hk.le
+  have h₁ := getElem?_pos x ls k
   have h₂ := ls[k].getElem?_barPos_mul_of_zero (stack (ls.drop (k + 1)) x)
   rw [headPos_eq hk, mul_assoc]
   simp only [RoseTree.getElem?_gornAddress] at h₁ h₂ ⊢
@@ -292,7 +331,7 @@ theorem pos_lt_headPos (hk : k < ls.length) : pos ls k < headPos ls k := by
 
 theorem pos_mul_barPos_mem_branching (x : Tree Cat W) (hk : k < ls.length) :
     pos ls k * ls[k].barPos ∈ (stack ls x).branching :=
-  (RoseTree.mul_mem_branching_iff (getElem?_pos x hk.le)).2
+  (RoseTree.mul_mem_branching_iff (getElem?_pos x ls k)).2
     (stack_drop x hk ▸ Shell.barPos_mem_branching _ _)
 
 private theorem pos_succ_eq (hk : k < ls.length) :
@@ -332,13 +371,7 @@ c-command. -/
 def headEmbedding (ls : List (Shell W)) (x : Tree Cat W) :
     ((· < ·) : Fin ls.length → Fin ls.length → Prop) ↪r (stack ls x).CCommands where
   toFun k := headPos ls k
-  inj' a b hab := by
-    have h₁ := cCommands_headPos_iff ls x a.isLt b.isLt
-    have h₂ := cCommands_headPos_iff ls x b.isLt a.isLt
-    simp only [hab] at h₁
-    simp only [← hab] at h₂
-    exact Fin.ext (Nat.le_antisymm (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₂.2 hlt))
-      (Nat.le_of_not_lt fun hlt ↦ not_commands_self (h₁.2 hlt)))
+  inj' := injective_of_cCommands_iff fun a b ↦ cCommands_headPos_iff ls x a.isLt b.isLt
   map_rel_iff' := cCommands_headPos_iff ls x (Fin.isLt _) (Fin.isLt _)
 
 @[simp] theorem headEmbedding_apply (ls : List (Shell W)) (x : Tree Cat W) (k : Fin ls.length) :
