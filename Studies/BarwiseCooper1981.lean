@@ -315,7 +315,8 @@ theorem most_apply_self {d : Det.Family} (hd : d ∈ ⟦English.Determiners.most
 /-- On a restrictor of odd size, *more than half* is self-dual (§4.11). -/
 theorem most_selfDual_of_odd_count {A : Set α} (h : Odd A.ncard) (S : Set α) :
     dual (most : Det α) A S ↔ most A S := by
-  simp only [dual, innerNeg, compl_apply, most_apply, not_lt, Set.sdiff_compl, ← Set.sdiff_eq]
+  simp only [Det.dual, Det.innerNeg, compl_apply, most_apply, not_lt, Set.sdiff_compl,
+    ← Set.sdiff_eq]
   have hd := Set.ncard_inter_add_ncard_sdiff_eq_ncard A S
   obtain ⟨k, hk⟩ := h
   omega
