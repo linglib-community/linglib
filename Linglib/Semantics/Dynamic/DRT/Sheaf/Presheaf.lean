@@ -9,11 +9,10 @@ public import Mathlib.Data.Finset.Sort
 /-!
 # The presheaf of basic DRSs
 
-This file defines the presheaf of basic discourse representation structures on the category of
-contexts. Sets of literals over contexts form a presheaf, restricting along a context morphism `f`
-by preimage under renaming, `F(f)(s) ⊢ ±A(x̄) ⟺ s ⊢ ±A(f(x̄))`; the consistent sets form a
-subpresheaf, whose sections at a context `(L, X)`, the DRSs over it, are the basic DRSs `(X, s)`.
-`Context.DRS.toDRS` realises a section as a `DRS` whose conditions are literals.
+Sets of literals form a presheaf on contexts: the restriction of a set `s` along a morphism `f`
+contains `±A(x̄)` exactly when `s` contains `±A(f(x̄))`. The consistent sets form a subpresheaf,
+and its sections over a context `(L, X)` are the *basic DRSs* `(X, s)` over that context
+(`Context.DRS`). `Context.DRS.toDRS` is the `DRS` whose conditions are the literals of a section.
 
 ## Implementation notes
 

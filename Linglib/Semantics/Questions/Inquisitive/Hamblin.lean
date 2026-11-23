@@ -1,19 +1,17 @@
 module
 
-public import Linglib.Semantics.Questions.Hamblin.Exhaustive
+public import Linglib.Semantics.Questions.Hamblin.StrongestAnswer
 public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 
 /-!
 # The alternatives of a question as a Hamblin set
 
-An inquisitive question `Q : Question W` enters the answerhood operators on Hamblin sets through
-its alternatives `alt Q`. The strong answer on the alternatives completely answers the question
-(`completelyAnsweredBy_strongAnswer`). The alternatives are an antichain, over which the
-strongest true answer is the only true answer (`isStrongestTrueAnswer_alt_iff`): answerhood
-sensitive to members that entail one another, as in [dayal-2016], needs Hamblin sets with such
-members, which `alt` discards. For a nontrivial polar question the true, weak and strong answers
-are the prejacent or its complement, and Dayal's presupposition holds everywhere
-(`isExhaustivelyResolvable_polar_of_nontrivial`).
+The alternatives `alt Q` of an inquisitive question `Q : Question W` form a Hamblin set, so the
+answerhood operators for Hamblin sets apply to them.
+
+No alternative is included in another. It follows that an alternative is the strongest true answer
+at a world exactly when it is the only alternative true there. See
+`Question.isStrongestTrueAnswer_alt_iff`.
 
 ## References
 
@@ -101,8 +99,8 @@ theorem isStrongestTrueAnswer_polar_of_neg (hwp : w ∉ p) :
   rw [IsStrongestTrueAnswer, trueAnswers_polar_of_neg hne hnu hwp]
   exact isLeast_singleton pᶜ
 
-theorem isExhaustivelyResolvable_polar_of_nontrivial (w : W) :
-    IsExhaustivelyResolvable (alt (polar p)) w := by
+theorem hasStrongestTrueAnswer_polar_of_nontrivial (w : W) :
+    HasStrongestTrueAnswer (alt (polar p)) w := by
   by_cases hwp : w ∈ p
   · exact ⟨p, isStrongestTrueAnswer_polar_of_pos hne hnu hwp⟩
   · exact ⟨pᶜ, isStrongestTrueAnswer_polar_of_neg hne hnu hwp⟩

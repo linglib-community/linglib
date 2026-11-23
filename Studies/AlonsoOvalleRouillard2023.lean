@@ -20,7 +20,7 @@ and under *must* keep [disjunctions competition cannot remove](##mem_strengthen_
 * A world of a collective or mixed nucleus is the extension of the predicate before closure under
   sum, `ElliottNicolaeSauerland2022.starred`, and a world of a distributive one the plurality it
   holds of.
-* Under *must* a world is replaced by its modal base. `Question.isExhaustivelyResolvable_box_iff`
+* Under *must* a world is replaced by its modal base. `Question.hasStrongestTrueAnswer_box_iff`
   gives the equivalence at one world, and `contentMust` compares forms over every set of
   pluralities, the empty one included; since (14) compares domains of worlds, this takes each base
   to be realized.
@@ -30,7 +30,7 @@ and under *must* keep [disjunctions competition cannot remove](##mem_strengthen_
 * `G+` (47) is a fragment of Elliott et al.'s range chosen for illustration, so the forms range over
   `upwardGQ`, and `hamblinPlus` is the printed fragment. The reasoning of the paper's §5.3 needs the
   former, where *quién(et)t* is
-  [vacuous under *must*](##ElliottNicolaeSauerland2022.isExhaustivelyResolvableOn_upwardGQ). On the
+  [vacuous under *must*](##ElliottNicolaeSauerland2022.hasStrongestAnswerOn_upwardGQ). On the
   fragment [no member is strongest on the modal base of (68b)](##notMem_contentMust_hamblinPlus),
   competition [does exclude (68a)](##notMem_strengthen_atoms), and EXHp [drops where the form is
   undefined](##avoidsIneffability_hamblinPlus), as the paper's fallback paragraph says.
@@ -126,7 +126,7 @@ variable [SemilatticeSup E] {g g₁ g₂ x : E}
 
 variable {D : Set E} {v : Set E}
 
--- (26b) is `isExhaustivelyResolvable_starred_image_iff`
+-- (26b) is `hasStrongestTrueAnswer_starred_image_iff`
 
 /-- Where two groups form committees, a phrase ranging over conjunctions and disjunctions has a
 strongest true answer, the conjunction of the two, (31). -/
@@ -196,7 +196,7 @@ variable [CompleteLattice E]
 /-- The presupposition of a form's question under *must*, (67), on the modal bases, over a range
 `G` for the higher-order forms. -/
 def contentMust (G : Set E → Set (Set E)) (f : Form) : Set (Set E) :=
-  {s | IsExhaustivelyResolvableOn (f.hamblinSet G) s}
+  {s | HasStrongestAnswerOn (f.hamblinSet G) s}
 
 /-- The competitors of *quiénes(et)t* that §5.3 considers. -/
 def rivals (_ : Form) : Set Form := {.quienE, .quienesE, .quienGQ}
@@ -206,8 +206,8 @@ section StrongSingular
 variable {g : E}
 
 -- (54): over individuals the strong singular is undefined at a collective lifting
-theorem not_isExhaustivelyResolvable_starred_atoms (hg : ¬ IsAtom g) :
-    ¬ IsExhaustivelyResolvable (starred '' whDomain (some Number.singular)) {g} := by
+theorem not_hasStrongestTrueAnswer_starred_atoms (hg : ¬ IsAtom g) :
+    ¬ HasStrongestTrueAnswer (starred '' whDomain (some Number.singular)) {g} := by
   rintro ⟨_, ⟨⟨z, hz, rfl⟩, hzw⟩, -⟩
   exact hg (singleton_mem_starred_iff.1 hzw ▸ mem_whDomain_singular.1 hz)
 
@@ -230,9 +230,9 @@ theorem mem_strengthen_disjunction [IsAtomistic E] [Finite E] (hu : u ≠ ⊥) (
       (fun a ha ↦ mem_whDomain_of_isAtom _ ha) hu hv
   refine ⟨hleast, mem_strengthen_iff.2 ⟨⟨_, hleast⟩, ?_⟩⟩
   rintro _ (rfl | rfl | rfl) hs hss
-  · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .singular))
+  · exact not_hasStrongestAnswerOn_image_Ici (D := whDomain (E := E) (some .singular))
       (fun h ↦ h.2 rfl) hdis (Or.inl rfl) (Or.inr rfl) hs
-  · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .plural))
+  · exact not_hasStrongestAnswerOn_image_Ici (D := whDomain (E := E) (some .plural))
       (fun h ↦ h.2 rfl) hdis (Or.inl rfl) (Or.inr rfl) hs
   · refine hss.ne ?_
     simp only [contentMust, Form.hamblinSet, upwardGQ_whDomain_singular]
@@ -317,9 +317,9 @@ theorem avoidsIneffability_hamblinPlus [Finite E] (ha : IsAtom a) (hb : IsAtom b
   have hab : Disjoint a b := hdis.mono_right le_sup_left
   refine .inr ⟨fun _ _ ↦ by rw [contentMust_hamblinPlus_quienesGQ]; trivial, ?_⟩
   rintro _ (rfl | rfl | rfl) - hs
-  · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .singular))
+  · exact not_hasStrongestAnswerOn_image_Ici (D := whDomain (E := E) (some .singular))
       (fun h ↦ h.2 rfl) hab (Or.inl rfl) (Or.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
-  · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .plural))
+  · exact not_hasStrongestAnswerOn_image_Ici (D := whDomain (E := E) (some .plural))
       (fun h ↦ h.2 rfl) hab (Or.inl rfl) (Or.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
   · exact notMem_contentMust_hamblinPlus ha hb hc hbc hdis
       (strengthen_subset _ _ _ (hs (.inr rfl)))
@@ -424,11 +424,11 @@ theorem not_subset_presupposition_weak_singular [Finite E] {c : Set E} (hbot : �
 -- (22a), (23): two groups have an answer over quantifiers and, (26), none over individuals
 theorem two_group_answer_iff {g₁ g₂ : E} (hg₁ : g₁ ∈ whStrongPlural) (hg₂ : g₂ ∈ whStrongPlural)
     (hne : g₁ ≠ g₂) :
-    (IsExhaustivelyResolvable (hamblin starred whStrongPlural) {g₁, g₂} ↔
+    (HasStrongestTrueAnswer (hamblin starred whStrongPlural) {g₁, g₂} ↔
         Examples.ex_22a.readings.lookup "two-group answer" = some .acceptable) ∧
-      ¬ IsExhaustivelyResolvable (starred '' whStrongPlural) {g₁, g₂} := by
+      ¬ HasStrongestTrueAnswer (starred '' whStrongPlural) {g₁, g₂} := by
   refine ⟨iff_of_true ⟨_, isStrongestTrueAnswer_hamblin_starred hg₁ hg₂⟩ (by decide), fun h ↦ ?_⟩
-  obtain ⟨z, -, huniq⟩ := isExhaustivelyResolvable_starred_image_iff.1 h
+  obtain ⟨z, -, huniq⟩ := hasStrongestTrueAnswer_starred_image_iff.1 h
   exact hne ((huniq g₁ ⟨hg₁, subset_supClosure (Set.mem_insert _ _)⟩).trans
     (huniq g₂ ⟨hg₂, subset_supClosure (Set.mem_insert_of_mem _ rfl)⟩).symm)
 

@@ -134,8 +134,8 @@ theorem isCellValued_exh : IsCellValued (exh H) H :=
 /-- With the exhaustification (11), Cell Identification (19) is Dayal's presupposition at every
 world of the context set ((12) and its converse). -/
 theorem cellIdentification_exh_iff :
-    CellIdentification (exh H) H A ↔ ∀ w ∈ A, IsExhaustivelyResolvable H w := by
-  rw [forall_isExhaustivelyResolvable_iff_exh_inter]
+    CellIdentification (exh H) H A ↔ ∀ w ∈ A, HasStrongestTrueAnswer H w := by
+  rw [forall_hasStrongestTrueAnswer_iff_exh_inter]
   exact ⟨fun h w hw ↦ h _ ⟨w, hw, rfl⟩, fun h _ ⟨w, hw, hC⟩ ↦ hC ▸ h w hw⟩
 
 theorem nonVacuity_exh_iff :
@@ -149,10 +149,10 @@ theorem nonVacuity_exh_iff :
     obtain ⟨w, hw, hwp⟩ := h p hp
     exact ⟨_, ⟨w, hw, rfl⟩, by rw [exh_eq_strongAnswer H w hwp]⟩
 
-theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι → Set W}
+theorem hasStrongestTrueAnswer_range_iff_existsUnique {ι : Type*} {a : ι → Set W}
     (ha : ∀ i j, a i ⊆ a j → i = j) (w : W) :
-    IsExhaustivelyResolvable (range a) w ↔ ∃! i, w ∈ a i := by
-  rw [isExhaustivelyResolvable_range_iff]
+    HasStrongestTrueAnswer (range a) w ↔ ∃! i, w ∈ a i := by
+  rw [hasStrongestTrueAnswer_range_iff]
   exact exists_congr fun i ↦ and_congr_right fun _ ↦
     ⟨fun h j hj ↦ (ha _ _ (h j hj)).symm, fun h j hj ↦ by rw [h j hj]⟩
 
@@ -534,7 +534,7 @@ theorem admissible_Ici [Nonempty D] : Admissible (range Ici : Set (Set D)) :=
 
 -- (16b), (17b), (18b): on a dense scale the negative degree question is inadmissible
 theorem not_admissible_Iio [DenselyOrdered D] : ¬ Admissible (range Iio : Set (Set D)) :=
-  fun ⟨_, ⟨w, hw⟩, hCI, _⟩ ↦ FoxHackl2006.negation_not_isExhaustivelyResolvable id
+  fun ⟨_, ⟨w, hw⟩, hCI, _⟩ ↦ FoxHackl2006.negation_not_hasStrongestTrueAnswer id
     Function.surjective_id w (cellIdentification_exh_iff.1 hCI w hw)
 
 variable {ι : Type*}

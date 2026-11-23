@@ -2,6 +2,8 @@ module
 
 public import Mathlib.Order.BooleanSubalgebra
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Semantics.Questions.Partition.Answer
+public import Linglib.Semantics.Questions.Partition.OfProps
 public import Linglib.Semantics.Questions.Partition.Basic
 
 /-!

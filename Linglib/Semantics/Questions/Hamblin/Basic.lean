@@ -1,21 +1,24 @@
 module
 
-public import Linglib.Semantics.Questions.Partition.Basic
+public import Linglib.Semantics.Questions.Partition.OfProps
 
 /-!
 # Hamblin sets
 
-A Hamblin set is a set `H : Set (Set W)` of propositions, the possible answers to a question. At
-a world `w` its true answers are the members true at `w`, `trueAnswers H w = {p ∈ H | w ∈ p}`,
-the denotation of [karttunen-1977]. We define the weak answer `weakAnswer H w` as the
-intersection of the true answers ([heim-1994], [beck-rullmann-1999]) and the strong answer
-`strongAnswer H w` as the set of worlds that decide every member as `w` does
-([groenendijk-stokhof-1984]).
+A Hamblin set is a set `H : Set (Set W)` of propositions, the possible answers to a question. Unlike
+the cells of a partition, the members of a Hamblin set may overlap, and several of them may be true
+in the same world.
 
-Two worlds have the same true answers exactly when every member decides them alike, so the
-kernel of `trueAnswers H` is the question the members raise, `Setoid.ofProps H`
-(`ker_trueAnswers`). It is also the kernel of the weak answer (`ker_weakAnswer`), and its cells
-are the strong answers (`strongAnswer_eq_cell`).
+This file defines three ways to say what the answer is at a world `w`.
+
+* `trueAnswers H w`: the members of `H` that are true at `w`.
+* `weakAnswer H w`: the intersection of the true answers. It says that each of them holds.
+* `strongAnswer H w`: the set of worlds that agree with `w` on every member of `H`. It says which
+  members hold and which do not.
+
+Two worlds have the same true answers if and only if every member of `H` treats them alike. So the
+true answers determine a partition question, `Setoid.ofProps H`, and its cells are the strong
+answers. See `Question.ker_trueAnswers` and `Question.strongAnswer_eq_cell`.
 
 ## References
 

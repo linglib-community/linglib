@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Assignment
 public import Linglib.Logic.CylindricAlgebra
 public import Linglib.Semantics.Dynamic.DPL.Context
-public import Linglib.Semantics.Dynamic.DRT.Relational
+public import Linglib.Semantics.Dynamic.DRT.Assignment
 
 /-!
 # Groenendijk and Stokhof (1991): Dynamic Predicate Logic
@@ -707,8 +707,8 @@ end Formulas
 Definition 28 translates a discourse representation structure into a formula: a box becomes the
 existential closure, over its referents, of the conjunction of its translated conditions, and
 a complex condition the corresponding connective over its translated sub-boxes. Fact 25 says
-the translation preserves meaning: a condition becomes a test of its verification, and a box
-denotes its box relation `DRT.DRS.toRel`. -/
+the translation preserves meaning: a condition becomes the test of the assignments verifying
+it, and a box denotes its relation on assignments. -/
 
 section DRT
 
@@ -764,16 +764,16 @@ theorem _root_.DRT.Condition.toDPL_dis (l r : DRS L V) :
 variable [DecidableEq V] (M : Type x) [L.Structure M]
 
 private theorem eval_toDPL_of_conditions (K : DRS L V)
-    (h : ∀ c ∈ K.conditions, c.toDPL.eval M = test {f : V → M | VerifiesConditionTotal f c}) :
-    K.toDPL.eval M = K.toRel := by
+    (h : ∀ c ∈ K.conditions, c.toDPL.eval M = test (c.verifiers (.assignment M))) :
+    K.toDPL.eval M = K.eval (.assignment M) := by
   rw [DRS.toDPL_eq, eval_exs, eval_conjs, List.map_map,
     (List.map_congr_left h : K.conditions.map (eval M ∘ Condition.toDPL) = _), prod_map_test,
-    ← box_toFinset, Finset.toList_toFinset, DRS.toRel]
-  exact congrArg _ (Set.ext fun f ↦ by simp [verifiesTotal_iff])
+    ← box_toFinset, Finset.toList_toFinset, DRS.eval_assignment_eq_box]
+  exact congrArg _ (Set.ext fun f ↦ by simp [DRS.mem_verifiers_iff])
 
 -- Fact 25
 theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :
-    c.toDPL.eval M = test {f : V → M | VerifiesConditionTotal f c} := by
+    c.toDPL.eval M = test (c.verifiers (.assignment M)) := by
   induction c with
   | atom a =>
     rw [Condition.toDPL_atom, eval_rel]
@@ -782,20 +782,17 @@ theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :
     rw [Condition.toDPL_eq, eval_equal]
     exact congrArg test (Set.ext fun f ↦ by simp)
   | neg K ih =>
-    rw [Condition.toDPL_neg, eval_neg, eval_toDPL_of_conditions M K ih]
-    exact congrArg test (Set.ext fun f ↦ (verifies_neg_toRel K f).symm)
+    rw [Condition.toDPL_neg, eval_neg, eval_toDPL_of_conditions M K ih, Condition.verifiers_neg]
   | imp a c iha ihc =>
     rw [Condition.toDPL_imp, eval_imp, eval_toDPL_of_conditions M a iha,
-      eval_toDPL_of_conditions M c ihc]
-    exact congrArg test (Set.ext fun f ↦ (verifies_imp_toRel a c f).symm)
+      eval_toDPL_of_conditions M c ihc, Condition.verifiers_imp]
   | dis l r ihl ihr =>
     rw [Condition.toDPL_dis, eval_disj, eval_toDPL_of_conditions M l ihl,
-      eval_toDPL_of_conditions M r ihr]
-    exact congrArg test (Set.ext fun f ↦ (verifies_dis_toRel l r f).symm)
+      eval_toDPL_of_conditions M r ihr, Condition.verifiers_dis]
 
-/-- The translation of a discourse representation structure denotes its box relation (Fact 25
-for boxes). -/
-theorem _root_.DRT.DRS.eval_toDPL (K : DRS L V) : K.toDPL.eval M = K.toRel :=
+/-- The translation of a discourse representation structure denotes the relation of the
+structure on assignments (Fact 25 for boxes). -/
+theorem _root_.DRT.DRS.eval_toDPL (K : DRS L V) : K.toDPL.eval M = K.eval (.assignment M) :=
   eval_toDPL_of_conditions M K fun c _ ↦ c.eval_toDPL M
 
 end DRT

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Hamblin.Exhaustive
+public import Linglib.Semantics.Questions.Hamblin.StrongestAnswer
 public import Linglib.Core.Order.OfCriteria
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.CompleteLattice.Finset
@@ -10,16 +10,19 @@ public import Linglib.Core.Order.SupClosed
 /-!
 # Hamblin sets closed under conjunction or disjunction
 
-A wh-question over atomic answers `a i` denotes, under Dayal's sum-closed restrictor, the closure
-of the atoms under conjunction, `infClosure (Set.range a)`, the conjunctions over nonempty groups
-of atoms; under Spector's higher-order quantification, pruned to disjunctions of atoms as in Fox,
-it denotes their closure under disjunction, `supClosure (Set.range a)`. Both families are read
-off the atoms true at a world, `Preorder.satisfied` with the atoms as criteria, and both induce
-the same partition, the kernel of that map. Closing a finite family under conjunction reduces
-Dayal's presupposition to the existence of a true member. An interrogative ranging over both is
-`hamblin`: its [strongest true answer is the conjunction of its true
-members](##Question.isStrongestTrueAnswer_hamblin), and on an information state of a distributive
-nucleus [the strongest member supported can be a disjunction](##Question.isLeast_supported_hamblin).
+A wh-question has one atomic answer `a i` for each individual `i`. Accounts differ on which further
+propositions belong to its Hamblin set.
+
+* On the account of [dayal-1996], the set is closed under conjunction: it is
+  `infClosure (Set.range a)`.
+* On the account of [spector-2008] and [fox-2018], it is closed under disjunction: it is
+  `supClosure (Set.range a)`.
+
+Both closures raise the same partition question as the atoms themselves.
+
+We also define `hamblin P D`, which contains both the conjunctions and the disjunctions. Its
+strongest true answer is the conjunction of its true members. See
+`Question.isStrongestTrueAnswer_hamblin`.
 
 ## References
 
@@ -197,9 +200,9 @@ end Preorder
 
 /-- Over individuals, a state with two disjoint elements supports no member: there is no one
 individual below both. -/
-theorem not_isExhaustivelyResolvableOn_image_Ici [PartialOrder E] [OrderBot E] (hD : ⊥ ∉ D)
+theorem not_hasStrongestAnswerOn_image_Ici [PartialOrder E] [OrderBot E] (hD : ⊥ ∉ D)
     (hab : Disjoint a b) (has : a ∈ s) (hbs : b ∈ s) :
-    ¬ IsExhaustivelyResolvableOn (Ici '' D) s := by
+    ¬ HasStrongestAnswerOn (Ici '' D) s := by
   rintro ⟨_, ⟨⟨x, hx, rfl⟩, hxs⟩, -⟩
   exact hD (le_bot_iff.1 (hab (hxs has) (hxs hbs)) ▸ hx)
 

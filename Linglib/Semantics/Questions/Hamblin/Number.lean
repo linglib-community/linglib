@@ -13,7 +13,7 @@ identified with the plurality the nucleus holds of, so the member for `x` is `Se
 phrase of number `n` ranges over the non-null individuals in Sauerland's domain of `n`, the atoms
 for a singular phrase and all of them otherwise; a strong plural phrase ranges over the non-atoms
 (`whStrongPlural`). Dayal's presupposition on such a Hamblin set
-[holds exactly in the situations of the domain](##Question.isExhaustivelyResolvable_whHamblin_iff).
+[holds exactly in the situations of the domain](##Question.hasStrongestTrueAnswer_whHamblin_iff).
 Under competition in number a plural phrase is then [felicitous exactly in the situations that are
 neither null nor atomic](##Question.whFelicitous_plural).
 
@@ -88,13 +88,13 @@ theorem weakAnswer_whHamblin (n : Option Number) (w : E) : weakAnswer (whHamblin
 
 /-- Ans-D is defined on the Hamblin set of a *wh* phrase exactly in the situations its domain
 contains. -/
-theorem isExhaustivelyResolvable_whHamblin_iff (n : Option Number) (w : E) :
-    IsExhaustivelyResolvable (whHamblin n) w ↔ w ∈ whDomain n := by
-  rw [isExhaustivelyResolvable_iff, weakAnswer_whHamblin, whHamblin, Ici_injective.mem_set_image]
+theorem hasStrongestTrueAnswer_whHamblin_iff (n : Option Number) (w : E) :
+    HasStrongestTrueAnswer (whHamblin n) w ↔ w ∈ whDomain n := by
+  rw [hasStrongestTrueAnswer_iff, weakAnswer_whHamblin, whHamblin, Ici_injective.mem_set_image]
 
 theorem presupposition_whHamblin (n : Option Number) :
     presupposition (whHamblin n) = whDomain (E := E) n :=
-  Set.ext (isExhaustivelyResolvable_whHamblin_iff n)
+  Set.ext (hasStrongestTrueAnswer_whHamblin_iff n)
 
 theorem whFelicitous_eq_strengthen_whDomain (n : Option Number) :
     whFelicitous (E := E) n = strengthen Number.alts whDomain n := by

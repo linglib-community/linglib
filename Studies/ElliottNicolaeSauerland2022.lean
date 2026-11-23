@@ -196,8 +196,8 @@ theorem isLeast_supported_upwardGQ_pair (hD : ∀ a : E, IsAtom a → a ∈ D) (
     (by rintro (h | h); exacts [hu h.symm, hv h.symm])
 
 -- under *must* such a phrase is defined on every modal base
-theorem isExhaustivelyResolvableOn_upwardGQ (hD : ∀ a : E, IsAtom a → a ∈ D) (s : Set E) :
-    IsExhaustivelyResolvableOn (upwardGQ Ici D) s := by
+theorem hasStrongestAnswerOn_upwardGQ (hD : ∀ a : E, IsAtom a → a ∈ D) (s : Set E) :
+    HasStrongestAnswerOn (upwardGQ Ici D) s := by
   rcases s.eq_empty_or_nonempty with rfl | hs
   · exact ⟨∅, ⟨.inr (.inl rfl), empty_subset _⟩, fun r _ ↦ empty_subset r⟩
   by_cases hbot : ⊥ ∈ s
@@ -842,8 +842,8 @@ theorem starred_ne_univ : starred g ≠ univ := fun h ↦ by
 variable {D : Set E} {v : Set E}
 
 -- p. 575: over individuals a starred nucleus is defined exactly when it holds of one member
-theorem isExhaustivelyResolvable_starred_image_iff :
-    IsExhaustivelyResolvable (starred '' D) v ↔ ∃! x, x ∈ D ∧ v ∈ starred x := by
+theorem hasStrongestTrueAnswer_starred_image_iff :
+    HasStrongestTrueAnswer (starred '' D) v ↔ ∃! x, x ∈ D ∧ v ∈ starred x := by
   constructor
   · rintro ⟨_, ⟨⟨z, hz, rfl⟩, hzv⟩, hle⟩
     exact ⟨z, ⟨hz, hzv⟩, fun x hx ↦ singleton_mem_starred_iff.1
@@ -955,14 +955,14 @@ theorem usable_ex_68 (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
 omit [IsAtomistic E] [Finite E] in
 -- (76), (77): two groups have an answer over the quantifiers and, p. 575, none over individuals
 theorem two_group_answer_iff {g₁ g₂ : E} (hg₁ : g₁ ≠ ⊥) (hg₂ : g₂ ≠ ⊥) (hne : g₁ ≠ g₂) :
-    (IsExhaustivelyResolvable (upwardGQ starred (whDomain (some Number.plural))) {g₁, g₂} ↔
+    (HasStrongestTrueAnswer (upwardGQ starred (whDomain (some Number.plural))) {g₁, g₂} ↔
         Examples.ex_76.readings.lookup "two-group answer" = some .acceptable) ∧
-      ¬ IsExhaustivelyResolvable (starred '' whDomain (some Number.plural)) {g₁, g₂} := by
+      ¬ HasStrongestTrueAnswer (starred '' whDomain (some Number.plural)) {g₁, g₂} := by
   have h₁ := mem_whDomain_plural.2 hg₁
   have h₂ := mem_whDomain_plural.2 hg₂
   refine ⟨iff_of_true ⟨_, isStrongestTrueAnswer_upwardGQ_starred_pair h₁ h₂⟩ (by decide),
     fun h ↦ ?_⟩
-  obtain ⟨z, -, huniq⟩ := isExhaustivelyResolvable_starred_image_iff.1 h
+  obtain ⟨z, -, huniq⟩ := hasStrongestTrueAnswer_starred_image_iff.1 h
   exact hne ((huniq g₁ ⟨h₁, subset_supClosure (Set.mem_insert _ _)⟩).trans
     (huniq g₂ ⟨h₂, subset_supClosure (Set.mem_insert_of_mem _ rfl)⟩).symm)
 
