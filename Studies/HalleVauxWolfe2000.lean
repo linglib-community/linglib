@@ -1,10 +1,7 @@
 module
 
-public import Linglib.Core.Data.Fintype.Order
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Data.Fintype.EquivFin
+public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.FeatureGeometry
-public import Mathlib.Data.List.Iterate
 public import Linglib.Phonology.Segmental.FeatureClass
 public import Linglib.Data.Examples.HalleVauxWolfe2000
 
@@ -90,28 +87,19 @@ def pred : Node → Node
   | .lips | .tongueBlade | .tongueBody => .place
   | .tongueRoot | .larynx => .guttural
 
-/-- `a ≤ b` when `a` lies on the walk from `b` up to the root, so the root is `⊥` and the parent
-is `Order.pred`. -/
-instance : PartialOrder Node where
-  le a b := a ∈ List.iterate pred b (Fintype.card Node)
-  le_refl := by decide
-  le_trans := by decide +kernel
-  le_antisymm := by decide
+/-- The tree (1). -/
+def tree : ParentTree Node := .ofIterate pred .root 2 (by decide)
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a ∈ List.iterate pred b _))
+/-- `a ≤ b` when `a` dominates `b`, so the root is `⊥` and the parent is `Order.pred`. -/
+instance : PartialOrder Node := tree.toPartialOrder
+
+instance : DecidableLE Node := tree.decidableLE
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : OrderBot Node where
-  bot := .root
-  bot_le := by decide
+instance : OrderBot Node := tree.toOrderBot
 
-/-- The parent as the predecessor. -/
-instance : PredOrder Node where
-  pred := pred
-  pred_le := by decide
-  min_of_le_pred := by decide
-  le_pred_of_lt := by decide
+instance : PredOrder Node := tree.toPredOrder
 
 end Node
 
@@ -163,25 +151,27 @@ theorem isComplex_kp : kp.IsComplex := by decide
 
 theorem not_isComplex_kw : ¬ kw.IsComplex := by decide
 
+-- section 1.2.2
+theorem bears_lips_kw : Bears node ⇑kw .lips ∧ kw .labial = none := by decide
+
 /-! ### Terminal spreading, sections 1.2.3 and 2.2.4 -/
 
 variable (src tgt : Segment)
 
 /-- Irish Nasal Place Assimilation spreads the terminal features under Place from `src` onto
-`tgt`, the substrate's `Finset.piecewise` on the Place class. -/
-def placeAssimilation : Segment := Segment.piecewise (featureClass node Node.place) src tgt
+`tgt`. -/
+def placeAssimilation : Segment := Segment.spread node .place src tgt
 
 /-- Spreading Place carries the whole Tongue Body class, which Place contains; in the same way
 the Lips and Tongue Blade classes. -/
 theorem placeAssimilation_eqOn_tongueBody :
     Set.EqOn (placeAssimilation src tgt) src ↑(featureClass node Node.tongueBody) :=
-  Finset.eqOn_piecewise_of_subset (antitone_featureClass (by decide))
+  spread_eqOn_of_le (by decide)
 
 /-- Soft Palate is a sister of Place, so Place assimilation leaves [nasal] where it was and the
 assimilated nasal is still a nasal, the two classes being disjoint. -/
 theorem placeAssimilation_nasal : placeAssimilation src tgt .nasal = tgt .nasal :=
-  Finset.eqOn_piecewise_of_disjoint (f := src.val) (g := tgt.val)
-    (disjoint_featureClass (a := Node.place) (b := Node.softPalate) ⟨by decide, by decide⟩)
+  spread_eqOn_of_incompRel (a := Node.place) (b := Node.softPalate) ⟨by decide, by decide⟩
     (by decide : Feature.nasal ∈ featureClass node Node.softPalate)
 
 /-- Irish Dorsal Assimilation (44) spreads the designated articulator alone, the terminal
@@ -197,7 +187,7 @@ theorem dorsalAssimilation_back : dorsalAssimilation src tgt .back = tgt .back :
 /-- Spreading the Tongue Body node instead would carry [back] along with [dorsal] (45), the
 prediction of a Place-node analysis of (44) that the data refute. -/
 theorem tongueBody_spread_back :
-    (featureClass node Node.tongueBody).piecewise src tgt .back = src .back :=
-  Finset.piecewise_eq_of_mem _ _ _ (by decide)
+    Segment.spread node .tongueBody src tgt .back = src .back :=
+  spread_eqOn (a := Node.tongueBody) (by decide : Feature.back ∈ featureClass node Node.tongueBody)
 
 end HalleVauxWolfe2000

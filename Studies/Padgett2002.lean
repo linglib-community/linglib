@@ -4,7 +4,7 @@ public import Linglib.Data.Wordlist.Padgett2002
 public import Linglib.Fragments.Turkish.Phonology
 public import Linglib.Phonology.FeatureGeometry
 public import Linglib.Phonology.OptimalityTheory.Filtration
-public import Mathlib.Data.List.Iterate
+public import Linglib.Core.Order.SuccPred.Tree
 
 /-!
 # Padgett (2002): feature classes in phonology
@@ -67,17 +67,15 @@ def pred : Node → Node
   | .vplace => .oral
   | .height | .color => .vplace
 
-/-- `a ≤ b` when `a` lies on the walk from `b` up to the root. -/
-instance : PartialOrder Node where
-  le a b := a ∈ List.iterate pred b (Fintype.card Node)
-  le_refl := by decide
-  le_trans := by decide +kernel
-  le_antisymm := by decide
+/-- The tree (3), each node of which has a single mother. -/
+def tree : ParentTree Node := .ofIterate pred .root 4 (by decide)
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a ∈ List.iterate pred b _))
+/-- `a ≤ b` when `a` dominates `b`. -/
+instance : PartialOrder Node := tree.toPartialOrder
 
-/-- Each node of (3) has a single mother. -/
-instance : IsForestOrder Node := ⟨by decide⟩
+instance : DecidableLE Node := tree.decidableLE
+
+instance : PredOrder Node := tree.toPredOrder
 
 end Node
 
