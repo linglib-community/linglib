@@ -20,10 +20,11 @@ and a than-clause with the quantifier `Q` and the measure `μ` we define
   `(scopeDegrees Q (Iic ∘ μ))ᶜ ⊂ (Iic c)ᶜ`.
 
 A negation below a quantifier is a negation above its dual,
-`Quantifier.littleBelow_iff_littleAbove_dual`. Above a monotone quantifier the comparative says
-that `Q` holds of the entities measuring at least `e` for some `e` above `c`,
-`Quantifier.littleAbove_iff`: above *every* that puts `c` below the infimum of the measures, and
-above *some* below their supremum.
+`Quantifier.littleBelow_iff_littleAbove_dual`, so the two coincide under a quantifier that is its
+own dual, `Quantifier.littleBelow_iff_littleAbove_of_dual_eq`, as an individual is. Above a
+monotone quantifier the comparative says that `Q` holds of the entities measuring at least `e`
+for some `e` above `c`, `Quantifier.littleAbove_iff`: above *every* that puts `c` below the
+infimum of the measures, and above *some* below their supremum.
 
 ## References
 
@@ -52,10 +53,15 @@ def LittleBelow (Q : Quantifier α) (μ : α → D) (c : D) : Prop :=
   scopeDegrees Q (fun x ↦ (Iic (μ x))ᶜ) ⊂ (Iic c)ᶜ
 
 /-- A degree negation below a quantifier is a degree negation above its dual. -/
-theorem littleBelow_iff_littleAbove_dual (d : Det α) :
-    LittleBelow (d A) μ c ↔ LittleAbove (d.dual A) μ c := by
-  rw [LittleBelow, scopeDegrees_compl]
+theorem littleBelow_iff_littleAbove_dual : LittleBelow Q μ c ↔ LittleAbove Q.dual μ c := by
+  rw [LittleAbove, scopeDegrees_dual, compl_compl]
   rfl
+
+/-- Under a quantifier that is its own dual, an individual or any ultrafilter, the scope of the
+degree negation makes no difference. -/
+theorem littleBelow_iff_littleAbove_of_dual_eq (h : Q.dual = Q) :
+    LittleBelow Q μ c ↔ LittleAbove Q μ c := by
+  rw [littleBelow_iff_littleAbove_dual, h]
 
 theorem littleAbove_iff (hQ : Monotone Q) :
     LittleAbove Q μ c ↔ ∃ e, c < e ∧ Q {x | e ≤ μ x} := by
@@ -64,6 +70,11 @@ theorem littleAbove_iff (hQ : Monotone Q) :
     exact ⟨e, not_le.mp hec, he⟩
   · exact hQ (fun x hx ↦ (he'.trans hce.le).trans hx) he
   · exact hce.not_ge (h he)
+
+theorem littleBelow_iff (hQ : Monotone Q) :
+    LittleBelow Q μ c ↔ ∃ e, c < e ∧ ¬ Q {x | μ x < e} := by
+  rw [littleBelow_iff_littleAbove_dual, littleAbove_iff (monotone_dual hQ)]
+  simp [Set.compl_ofPred]
 
 /-- Over finitely many entities, the comparative with the negation above a monotone quantifier
 says that the quantifier holds of the entities measuring more than the subject. -/
@@ -87,7 +98,7 @@ theorem littleAbove_individual : LittleAbove (individual a) μ c ↔ c < μ a :=
   compl_lt_compl_iff_lt.trans Iic_ssubset_Iic
 
 theorem littleBelow_individual : LittleBelow (individual a) μ c ↔ c < μ a :=
-  littleAbove_individual
+  (littleBelow_iff_littleAbove_of_dual_eq (dual_individual a)).trans littleAbove_individual
 
 /-! ### Universal and existential quantifiers -/
 
@@ -100,11 +111,11 @@ theorem littleAbove_some : LittleAbove (Det.some A) μ c ↔ ∃ x ∈ A, c < μ
     ⟨fun ⟨_, hce, x, hx, he⟩ ↦ ⟨x, hx, hce.trans_le he⟩, fun ⟨x, hx, hc⟩ ↦ ⟨_, hc, x, hx, le_rfl⟩⟩
 
 theorem littleBelow_every : LittleBelow (every A) μ c ↔ ∃ x ∈ A, c < μ x := by
-  rw [littleBelow_iff_littleAbove_dual, dual_every, littleAbove_some]
+  rw [littleBelow_iff_littleAbove_dual, ← dual_apply', dual_every, littleAbove_some]
 
 theorem littleBelow_some :
     LittleBelow (Det.some A) μ c ↔ ∃ e, c < e ∧ e ∈ lowerBounds (μ '' A) := by
-  rw [littleBelow_iff_littleAbove_dual, dual_some, littleAbove_every]
+  rw [littleBelow_iff_littleAbove_dual, ← dual_apply', dual_some, littleAbove_every]
 
 theorem littleAbove_every_iff_of_isGLB (h : IsGLB (μ '' A) m) :
     LittleAbove (every A) μ c ↔ c < m :=
@@ -116,11 +127,11 @@ theorem littleAbove_some_iff_of_isLUB (h : IsLUB (μ '' A) m) :
 
 theorem littleBelow_every_iff_of_isLUB (h : IsLUB (μ '' A) m) :
     LittleBelow (every A) μ c ↔ c < m := by
-  rw [littleBelow_iff_littleAbove_dual, dual_every, littleAbove_some_iff_of_isLUB h]
+  rw [littleBelow_iff_littleAbove_dual, ← dual_apply', dual_every, littleAbove_some_iff_of_isLUB h]
 
 theorem littleBelow_some_iff_of_isGLB (h : IsGLB (μ '' A) m) :
     LittleBelow (Det.some A) μ c ↔ c < m := by
-  rw [littleBelow_iff_littleAbove_dual, dual_some, littleAbove_every_iff_of_isGLB h]
+  rw [littleBelow_iff_littleAbove_dual, ← dual_apply', dual_some, littleAbove_every_iff_of_isGLB h]
 
 /-- Over a nonempty set, the comparative with the negation above *every* entails the one with
 the negation above *some*. -/

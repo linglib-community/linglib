@@ -36,7 +36,11 @@ scopes of the degree negation of [heim-2006]: in the matrix degree phrase it is 
 `Quantifier.LittleAbove` (`comparative_negative_scopeDegrees`), and on both adjectives it is below
 `Q`, `Quantifier.LittleBelow` (`comparative_positive_scopeDegrees`). The two differ under a
 necessity modal (`exists_littleBelow_every_not_littleAbove`), where the first puts the subject
-below the infimum of the standard's degrees and the second below their supremum.
+below the infimum of the standard's degrees and the second below their supremum. If the negation
+of a negative adjective stays on the adjective, as [heim-2006] concludes for lexical antonyms, a
+positive than-clause under a monotone quantifier is never properly included in the matrix extent
+(`not_comparative_positive_scopeDegrees`), so the reading above the quantifier needs the negation
+in the degree phrase.
 
 Between positive extents the comparative with MUCH is the max-quantified comparative
 `MaxComparative .gt` (`maxComparative_gt_iff_ssubset`).
@@ -257,6 +261,16 @@ degree negation below the than-clause quantifier. -/
 theorem comparative_positive_scopeDegrees :
     comparative .positive (scopeDegrees Q fun v ↦ Polarity.negative • Set.Iic (μ v))
       (Polarity.negative • Set.Iic c) ↔ LittleBelow Q μ c := .rfl
+
+-- With the negation left on the matrix adjective and none in the than-clause, the comparative
+-- relates a positive extent to a negative one under any monotone quantifier, and never holds.
+theorem not_comparative_positive_scopeDegrees (hQ : Monotone Q)
+    (hne : (scopeDegrees Q (Set.Iic ∘ μ)).Nonempty) :
+    ¬ comparative .positive (scopeDegrees Q (Set.Iic ∘ μ)) (Polarity.negative • Set.Iic c) :=
+  fun h ↦ Polarity.noConfusion <|
+    IsExtent.polarity_eq (p := .positive) (isLowerSet_scopeDegrees hQ fun _ ↦ IsLowerSet.Iic _)
+      (isExtent_smul_Iic .negative c) hne (fun hu ↦ (hu.ge trivial : c ∈ (Set.Iic c)ᶜ) le_rfl)
+      h.subset
 
 -- Without a quantifier the two analyses are one: LITTLE moves between the degree phrase and both
 -- adjectives.

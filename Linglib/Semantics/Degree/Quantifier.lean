@@ -92,12 +92,30 @@ theorem scopeDegrees_no (R : Set α) (P : α → Set D) :
 theorem scopeDegrees_preimage {D' : Type*} (f : D' → D) (Q : Quantifier α) (P : α → Set D) :
     scopeDegrees Q (fun x ↦ f ⁻¹' P x) = f ⁻¹' scopeDegrees Q P := rfl
 
-/-- Complementing each entity's degree property under a quantifier complements the degrees of the
-dual quantifier, so a degree negation below *every* is one above *some*. -/
-theorem scopeDegrees_compl (d : Det α) (A : Set α) (P : α → Set D) :
-    scopeDegrees (d A) (fun x ↦ (P x)ᶜ) = (scopeDegrees (d.dual A) P)ᶜ := by
+/-! In its quantifier, `scopeDegrees` is a preimage, so it commutes with the Boolean operations:
+outer negation complements the degrees, and inner negation complements each entity's degree
+property. -/
+
+theorem scopeDegrees_compl (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Qᶜ P = (scopeDegrees Q P)ᶜ := rfl
+
+theorem scopeDegrees_inf (Q Q' : Quantifier α) (P : α → Set D) :
+    scopeDegrees (Q ⊓ Q') P = scopeDegrees Q P ∩ scopeDegrees Q' P := rfl
+
+theorem scopeDegrees_sup (Q Q' : Quantifier α) (P : α → Set D) :
+    scopeDegrees (Q ⊔ Q') P = scopeDegrees Q P ∪ scopeDegrees Q' P := rfl
+
+theorem scopeDegrees_innerNeg (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Q.innerNeg P = scopeDegrees Q fun x ↦ (P x)ᶜ := by
   ext e
-  simp [mem_scopeDegrees, dual, innerNeg, Set.compl_ofPred]
+  simp [mem_scopeDegrees, Set.compl_ofPred]
+
+/-- A degree negation below a quantifier is a degree negation above its dual: complementing each
+entity's degree property complements the degrees of the dual quantifier. -/
+theorem scopeDegrees_dual (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Q.dual P = (scopeDegrees Q fun x ↦ (P x)ᶜ)ᶜ := by
+  rw [← scopeDegrees_innerNeg]
+  rfl
 
 end Scope
 

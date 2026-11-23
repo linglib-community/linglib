@@ -90,8 +90,8 @@ negation above one is the negation below the other. -/
 theorem littleAbove_every_iff_littleBelow_some :
     (LittleAbove (every A) μ c ↔ LittleBelow (Det.some A) μ c) ∧
       (LittleBelow (every A) μ c ↔ LittleAbove (Det.some A) μ c) :=
-  ⟨by rw [littleBelow_iff_littleAbove_dual, dual_some],
-    by rw [littleBelow_iff_littleAbove_dual, dual_every]⟩
+  ⟨by rw [littleBelow_iff_littleAbove_dual, ← dual_apply', dual_some],
+    by rw [littleBelow_iff_littleAbove_dual, ← dual_apply', dual_every]⟩
 
 /-- (32): a comparative without *little* under a possibility modal has the subject above every
 accessible measure. -/
