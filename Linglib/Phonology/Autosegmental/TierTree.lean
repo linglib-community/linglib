@@ -8,6 +8,7 @@ module
 public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.Autosegmental.Edit
 public import Linglib.Phonology.Autosegmental.Realization
+public import Linglib.Phonology.Autosegmental.TwoTier
 public import Mathlib.Order.Interval.Set.UnorderedInterval
 
 /-!
@@ -30,10 +31,15 @@ result has no crossing lines exactly when no symbol strictly between the two has
 those tiers (`noCrossing_spreadTier_iff`): a symbol with a token there blocks, and one without
 is transparent.
 
+On two tiers, with the autosegments over their slots, `twoTier`, a slot reads the labels of the
+autosegments linked to it, which is `AR.SurfacesWith` (`reads_twoTier_upper_iff`), and a
+realization by `AR.primitive`s reads at each slot the melody of its symbol
+(`reads_prod_map_primitive`).
+
 ## TODO
 
-* `AR.SurfacesWith` on two tiers and `AR.hostedOn` on planes are `Reads` on trees of depth one,
-  and the line edits of `Multiplanar.lean` are `addLine` and `eraseLine` on a star.
+* `AR.hostedOn` on planes is `Reads` on a star of tiers, and the line edits of
+  `Multiplanar.lean` are `addLine` and `eraseLine` there.
 * The graph of a tree of tiers is acyclic, so by `AR.noCrossing_iff_hasIntervalOrder_of_isAcyclic`
   a representation whose lines run along it obeys the No-Crossing Constraint exactly when it has
   an interval order.
@@ -419,5 +425,49 @@ theorem noCrossing_spreadTier_iff (hj : j ≠ T.root)
       exact absurd hlt (lt_irrefl _)
 
 end Realization
+
+/-! ### Two tiers -/
+
+section TwoTier
+
+open Tier
+
+universe u
+
+variable {α β : Type u} {X : AR (TwoTier α β)} {a : α} {j q : ℕ}
+
+/-- The tree of two tiers, the autosegments over their slots. -/
+def twoTier : ParentTree Tier := .ofIterate (fun _ ↦ lower) lower 1 fun _ ↦ rfl
+
+theorem dominates_twoTier_upper_iff : X.Dominates twoTier j upper q ↔ X.Link upper lower q j := by
+  rw [Dominates, Tier.card]
+  simp only [descendants, Finset.mem_insert, Finset.mem_biUnion, Finset.mem_singleton]
+  constructor
+  · rintro (h | ⟨⟨t, p⟩, hc, rfl | ⟨⟨t', p'⟩, hc', rfl⟩⟩)
+    · exact absurd (congrArg Prod.fst h) (by decide)
+    · exact (mem_children.1 hc).2.2.symm
+    · exact absurd (mem_children.1 hc').1.symm (mem_children.1 hc).2.1
+  · exact fun h ↦ .inr ⟨(upper, q), mem_children.2 ⟨rfl, by decide, h.symm⟩, .inl rfl⟩
+
+/-- On two tiers, a slot reads the labels of the autosegments linked to it. -/
+theorem reads_twoTier_upper_iff : X.Reads twoTier j upper a ↔ X.SurfacesWith a j := by
+  simp only [Reads, dominates_twoTier_upper_iff, SurfacesWith, Finset.mem_range]
+  exact ⟨fun ⟨q, -, h, hb⟩ ↦ ⟨q, h, hb⟩, fun ⟨q, h, hb⟩ ↦ ⟨q, h.lt_left, h, hb⟩⟩
+
+theorem reads_primitive_iff {as : List α} {b : β} :
+    (primitive as b).Reads twoTier 0 upper a ↔ a ∈ as := by
+  rw [reads_twoTier_upper_iff, List.mem_iff_getElem?]
+  simp only [SurfacesWith, link_primitive, word_primitive_upper]
+  exact ⟨fun ⟨k, -, h⟩ ↦ ⟨k, h⟩,
+    fun ⟨k, h⟩ ↦ ⟨k, ⟨(List.getElem?_eq_some_iff.1 h).1, rfl⟩, h⟩⟩
+
+/-- A realization by primitives reads at each slot the melody of its symbol. -/
+theorem reads_prod_map_primitive {S : Type*} (as : S → List α) (b : S → β) {w : List S}
+    {k : ℕ} :
+    (w.map fun s ↦ primitive (as s) (b s)).prod.Reads twoTier k upper a ↔
+      ∃ hk : k < w.length, a ∈ as w[k] :=
+  (reads_prod_map twoTier _ fun _ ↦ rfl).trans (exists_congr fun _ ↦ reads_primitive_iff)
+
+end TwoTier
 
 end Autosegmental.AR
