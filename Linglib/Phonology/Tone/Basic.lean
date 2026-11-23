@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Logic.Equiv.Defs
 public import Linglib.Core.Order.Flat
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Tonal root nodes and subtonal features
