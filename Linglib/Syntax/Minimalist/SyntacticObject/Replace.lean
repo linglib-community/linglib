@@ -207,14 +207,14 @@ class TraceLabel (L ι : Type) where
   encoder : SyntacticObject L ι → Option ι
 
 /-- Labelled in tokens, a moved object leaves the trace of its head by selection. -/
-instance : TraceLabel LexicalItem.Token LexicalItem.Token := ⟨selHead⟩
+instance : TraceLabel LexicalItem.Token LexicalItem.Token := ⟨selectionHead⟩
 
 /-- Labelled in `ℕ`, a moved object leaves the bare trace unless an encoder numbers it. -/
 instance : TraceLabel L ℕ := ⟨fun _ ↦ none⟩
 
 omit [DecidableEq L] [DecidableEq ι] in
 theorem TraceLabel.encoder_token :
-    (TraceLabel.encoder : SyntacticObject → Option LexicalItem.Token) = selHead := rfl
+    (TraceLabel.encoder : SyntacticObject → Option LexicalItem.Token) = selectionHead := rfl
 
 /-- A moved object leaves the trace of its head under the encoder `τ`, by default the head by
     selection, or the bare trace when it has none. -/

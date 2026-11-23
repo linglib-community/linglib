@@ -60,7 +60,7 @@ theorem cCommandsAt_map_iff {f : LexicalItem.Token → LexicalItem.Token} (hf : 
     (d.map f).CCommandsAt n (x.map f) (y.map f) ↔ d.CCommandsAt n x y := by
   rw [CCommandsAt, CCommandsAt,
     stageAt_map (τ := TraceLabel.encoder) (τ' := TraceLabel.encoder) d hf
-      (fun s ↦ s.selHead_map hsel), cCommands_map_iff hf]
+      (fun s ↦ s.selectionHead_map hsel), cCommands_map_iff hf]
 
 end Derivation
 

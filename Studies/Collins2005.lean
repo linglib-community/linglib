@@ -300,7 +300,7 @@ theorem converges_map (a : Analysis) (ev : Bool) :
   have hi : f infl₀ = infl₀ := hh _ (by simp [heads])
   rw [Converges, InflFinds, Converges, InflFinds, preRaising_map p hh,
     Derivation.externalize?_map (τ := TraceLabel.encoder) (τ' := TraceLabel.encoder) hf
-      fun s ↦ s.selHead_map hsel]
+      fun s ↦ s.selectionHead_map hsel]
   cases (p.preRaising a ev).externalize? with
   | none => simp
   | some t =>
@@ -405,7 +405,7 @@ theorem isSome_replay? (a : Analysis) (ev : Bool) :
     ((Clause.of verb agent patient c be).passive a ev).replay?.isSome := by
   rw [of_eq_map, Clause.passive_map _ (renaming_heads _ _ _ _ _),
     Derivation.replay?_map (τ := TraceLabel.encoder) (τ' := TraceLabel.encoder) (Equiv.injective _)
-      (fun s ↦ s.selHead_map (renaming_preservesSelection ..)), Option.isSome_map]
+      (fun s ↦ s.selectionHead_map (renaming_preservesSelection ..)), Option.isSome_map]
   generalize c.map (Complement.map fun _ ↦ ()) = s
   revert s a ev
   decide +kernel
@@ -471,8 +471,8 @@ theorem ex45_surfacePhon (a : Analysis) :
 theorem by_selects_vP :
     (Examples.ex29.judgment = .acceptable ↔
       (({PlanarSyntacticObject.leaf ex9.voice, PlanarSyntacticObject.leaf ex9.patient} :
-        PlanarSyntacticObject).toSyntacticObject.selHead).isSome) ∧
-    ∃ q ∈ (ex9.voiceP false).externalize?, q.toSyntacticObject.selHead = some ex9.voice := by
+        PlanarSyntacticObject).toSyntacticObject.selectionHead).isSome) ∧
+    ∃ q ∈ (ex9.voiceP false).externalize?, q.toSyntacticObject.selectionHead = some ex9.voice := by
   decide
 
 /-! ### Word order and convergence (§3, §5, §7) -/

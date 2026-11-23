@@ -27,7 +27,7 @@ rest.
 
 ## TODO
 
-* Prove `MarkedBy` of `termTrace selHead` for the objects a replay reaches, under conditions on the
+* Prove `MarkedBy` of `termTrace selectionHead` for the objects a replay reaches, under conditions on the
   moved heads.
 * Characterize `cutForest` by the positions it cuts.
 

@@ -132,20 +132,19 @@ theorem map_replace {cur m t : SyntacticObject (ι := ι)} {σ}
       rcases hl : φ l with ⟨_ | ⟨σl, pl⟩⟩ <;> rcases hr : φ r with ⟨_ | ⟨σr, pr⟩⟩ <;>
         rw [hl, hr] at hc <;> try cases hc
       rw [some_mul_some] at hc
-      obtain ⟨⟨b, σ'⟩, hcomb, he⟩ := Option.map_eq_some_iff.1 (LinearizationState.mk.inj hc)
-      obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
       have hpl : (φ l).linearized? = some pl := by rw [hl]; rfl
       have hpr : (φ r).linearized? = some pr := by rw [hr]; rfl
-      rw [replace_merge_of_ne heq, show merge (l.replace m t) (r.replace m t) =
-        l.replace m t * r.replace m t from rfl, map_mul, ihl hl, ihr hr, some_mul_some, hcomb]
       have hl' := hφ.toSyntacticObject_eq hpl
       have hr' := hφ.toSyntacticObject_eq hpr
-      cases b <;> dsimp only [cond]
-      · rw [PlanarSyntacticObject.replace_attach
+      rw [replace_merge_of_ne heq, show merge (l.replace m t) (r.replace m t) =
+        l.replace m t * r.replace m t from rfl, map_mul, ihl hl, ihr hr, some_mul_some]
+      split_ifs at hc ⊢
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj (Option.some.inj (LinearizationState.mk.inj hc))
+        rw [PlanarSyntacticObject.replace_attach (by rw [hl', hr']; exact heq)]
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj (Option.some.inj (LinearizationState.mk.inj hc))
+        rw [PlanarSyntacticObject.replace_attach
           (by rw [hl', hr']; exact fun h ↦ heq ((merge_comm l r).trans h))]
-        rfl
-      · rw [PlanarSyntacticObject.replace_attach (by rw [hl', hr']; exact heq)]
-        rfl
+      · cases hc
 
 omit [TraceLabel LexicalItem.Token ι] in
 theorem linearized?_of_find? {cur m : SyntacticObject (ι := ι)}
@@ -195,13 +194,13 @@ def Step.Harmonic (φ : SyntacticObject (ι := ι) →ₙ* LinearizationState si
     (τ : SyntacticObject (ι := ι) → Option ι) (c : Cfg (SyntacticObject (ι := ι))) :
     Step ι → Prop
   | .em e item => (φ item.toSyntacticObject).linearized? = some item ∧
-      selSide (sel (φ item.toSyntacticObject)) (sel (φ c.current)) = some (decide (e = side))
+      SelectionRule.State.side (sel (φ item.toSyntacticObject)) (sel (φ c.current)) = some (decide (e = side))
   | .im mover e => mover ∈ c.current.terms ∧ sel (φ (mover.headTrace τ)) = sel (φ mover) ∧
-      selSide (sel (φ mover)) (sel (φ (deleteAccessible mover c.current τ))) =
+      SelectionRule.State.side (sel (φ mover)) (sel (φ (deleteAccessible mover c.current τ))) =
         some (decide (e = side))
   | .extract mover => mover ∈ c.current.terms ∧ sel (φ (mover.headTrace τ)) = sel (φ mover)
   | .remerge e => ∃ m ∈ c.stack.head?,
-      selSide (sel (φ m)) (sel (φ c.current)) = some (decide (e = side))
+      SelectionRule.State.side (sel (φ m)) (sel (φ c.current)) = some (decide (e = side))
 
 /-- Each step of a list is harmonic at the configuration it applies to. -/
 def Step.HarmonicList (φ : SyntacticObject (ι := ι) →ₙ* LinearizationState side ι)
@@ -309,12 +308,12 @@ an item is itself, and the trace of a mover is silent, saturated, and headed as 
 trace the saturated head of the object moved, linearized as the trace itself. -/
 def LinearizationState.licensing (side : Edge) : Licensing (LinearizationState side ℕ) where
   lex tok := .of tok tok.item.sel (.leaf tok)
-  trace i x := ⟨x.toOption.map fun s ↦ ((s.1.1, []), .labelledTrace i)⟩
+  trace i x := ⟨x.toOption.map fun s ↦ (⟨s.1.head, []⟩, .labelledTrace i)⟩
 
 /-- The selection component of linearization is triggered Merge, over any derivation. -/
 theorem LinearizationState.sel_comp_hom (d : Derivation ℕ) :
     (LinearizationState.sel (side := side)).comp ((LinearizationState.licensing side).hom d) =
-      SelectionState.licensing.hom d :=
+      SelectionRule.State.licensing.hom d :=
   Licensing.comp_hom rfl (fun _ ↦ rfl) (fun _ x ↦ by rcases x with ⟨_ | ⟨⟨a, ra⟩, p⟩⟩ <;> rfl) d
 
 /-- Harmonic linearization over a derivation linearizes. -/
@@ -336,7 +335,7 @@ theorem LinearizationState.linearizes_hom (d : Derivation ℕ) :
 /-- The linearized object is a datum of the derivation, not of the object it derives: merging a
     second leaf on the left and on the right derives one object in two orders. -/
 theorem Derivation.not_factorsThrough_final :
-    ¬ Function.FactorsThrough (externalize? · selHead) (final · selHead) := fun h ↦ by
+    ¬ Function.FactorsThrough (externalize? · selectionHead) (final · selectionHead) := fun h ↦ by
   have := @h ⟨.leaf ⟨.of .N [], 0⟩, [.em .left (.leaf ⟨.of .N [], 1⟩)]⟩
     ⟨.leaf ⟨.of .N [], 0⟩, [.em .right (.leaf ⟨.of .N [], 1⟩)]⟩ rfl
   revert this
