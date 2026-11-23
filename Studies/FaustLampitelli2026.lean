@@ -534,6 +534,48 @@ theorem epenthesis_epenthesis (R : Finset ℕ) (f : Form) :
     · simp [hc]
     · simp [hc]
 
+-- a nucleus with a vowel is expressed in the left-to-right realization
+theorem realized_of_melody (R : Finset ℕ) (f : Form) (i : ℕ) (u : CV) (hu : f[i]? = some u)
+    (hm : u.v.melody = .associated) : Realized R f i := by
+  have h := getElem?_leftToRight (A := actorship) (R := required f ∪ R) (l := nuclei f) i
+  simp only [nuclei, List.getElem?_map, hu, Option.map_some] at h
+  exact ⟨_, h, expressed_of_mem_leftToRight (List.mem_of_getElem? h) hm⟩
+
+-- the nuclei of a form after epenthesis are its left-to-right realization
+theorem surface_epenthesis (R : Finset ℕ) (f : Form) (hf : ∀ u ∈ f, u.v ≠ .mark) :
+    surface (epenthesis R f) = leftToRight actorship (required f ∪ R) (nuclei f) := by
+  refine List.ext_getElem? fun i ↦ ?_
+  rw [getElem?_leftToRight]
+  simp only [surface, nuclei, List.getElem?_map, getElem?_epenthesis]
+  cases hu : f[i]? with
+  | none => rfl
+  | some u =>
+    have hmark := hf u (List.mem_of_getElem? hu)
+    have hr := realized_of_melody R f i u hu
+    obtain ⟨c, v⟩ := u
+    cases v <;> simp_all [Nuc.melody, Realized, nuclei]
+    split_ifs <;> simp_all
+
+theorem mark_notMem_fusion (f : Form) (hf : ∀ u ∈ f, u.v ≠ .mark) :
+    ∀ u ∈ fusion f, u.v ≠ .mark := by
+  intro u hu
+  obtain ⟨i, hi, rfl⟩ := List.mem_mapIdx.1 hu
+  have := hf _ (List.getElem_mem hi)
+  split <;> (try split) <;> (try split_ifs) <;> simp_all
+
+theorem mark_notMem_dissociation (f : Form) (hf : ∀ u ∈ f, u.v ≠ .mark) :
+    ∀ u ∈ dissociation f, u.v ≠ .mark := by
+  intro u hu
+  obtain ⟨i, hi, rfl⟩ := List.mem_mapIdx.1 hu
+  have := hf _ (List.getElem_mem hi)
+  split <;> (try split_ifs) <;> simp_all
+
+-- a derived form satisfies the Empty Category Principle
+theorem emptyCategoryPrinciple_surface_derive (R : Finset ℕ) (f : Form)
+    (hf : ∀ u ∈ f, u.v ≠ .mark) : EmptyCategoryPrinciple actorship (surface (derive R f)) := by
+  rw [derive, surface_epenthesis R _ (mark_notMem_dissociation _ (mark_notMem_fusion f hf))]
+  exact emptyCategoryPrinciple_leftToRight
+
 /-! ### Patterns and endings (§2.1) -/
 
 /-- A position of a pattern: a radical, a radical that geminates if it can, or a fixed segment.
@@ -982,11 +1024,8 @@ theorem guttural_licensed : ∀ x : Example, ∀ f ∈ stem x, ∀ i < f.length,
     IsLicensor actorship (surface (derive ∅ f)) i := by
   decide +kernel
 
--- the derived forms satisfy the Empty Category Principle
-theorem emptyCategoryPrinciple_surface : ∀ x : Example, ∀ f ∈ stem x,
-    surface (derive ∅ f) = leftToRight actorship (required (dissociation (fusion f)))
-        (nuclei (dissociation (fusion f))) ∧
-      EmptyCategoryPrinciple actorship (surface (derive ∅ f)) := by
+-- no underlying form of the examples has a marked nucleus
+theorem mark_notMem_stem : ∀ x : Example, ∀ f ∈ stem x, ∀ u ∈ f, u.v ≠ .mark := by
   decide +kernel
 
 /-- The ways of expressing a list of nuclei that satisfy the Empty Category Principle, express the

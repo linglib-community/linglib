@@ -278,6 +278,31 @@ theorem emptyCategoryPrinciple_leftToRightFrom :
 theorem emptyCategoryPrinciple_leftToRight : EmptyCategoryPrinciple A (leftToRight A R l) :=
   emptyCategoryPrinciple_leftToRightFrom
 
+theorem expressed_of_mem_leftToRightFrom {y : Nucleus} (hy : y ∈ leftToRightFrom A R i l)
+    (hm : y.melody = .associated) : y.expressed = true := by
+  fun_induction leftToRightFrom A R i l <;> simp_all <;> grind
+
+/-- The left-to-right realization expresses every nucleus with an associated melody. -/
+theorem expressed_of_mem_leftToRight {y : Nucleus} (hy : y ∈ leftToRight A R l)
+    (hm : y.melody = .associated) : y.expressed = true :=
+  expressed_of_mem_leftToRightFrom hy hm
+
+/-- Nucleus `k` of the left-to-right realization of a domain is nucleus `k` of the domain,
+expressed or not. -/
+theorem getElem?_leftToRight (k : ℕ) : (leftToRight A R l)[k]? = l[k]?.map fun x ↦
+    { x with expressed := decide (∃ y ∈ (leftToRight A R l)[k]?, y.expressed = true) } := by
+  have h := congrArg (·[k]?) (map_leftToRight (A := A) (R := R) (l := l))
+  simp only [List.getElem?_map] at h
+  cases hy : (leftToRight A R l)[k]? with
+  | none => simpa [hy] using h
+  | some y =>
+    cases hx : l[k]? with
+    | none => simp [hy, hx] at h
+    | some x =>
+      obtain ⟨m, e, c⟩ := y
+      obtain ⟨m', e', c'⟩ := x
+      simp_all
+
 /-! ### Words of alternating vowels -/
 
 variable (A) in
