@@ -4,6 +4,8 @@ public import Studies.Narrog2009
 public import Studies.Narrog2010
 public import Linglib.Data.Statistics.Narrog2012
 public import Linglib.Syntax.Cartography
+public import Linglib.Fragments.Japanese.Morph
+public import Linglib.Morphology.Morphotactics.Template.Scale
 public import Mathlib.Order.Antisymmetrization
 
 /-!
@@ -30,16 +32,23 @@ combined hierarchy restricts to the non-volitive one, and to the volitive one ex
 separates negation from tense (`GramCategory.nonVolitiveRow_le_iff`,
 `GramCategory.volitiveRow_le_iff`).
 
-The modal categories are classes of the markers whose embedding behaviour [narrog-2009a]
-tabulates. A level assignment agrees with a cell of that table when it puts the marker's
-category above a category the marker only embeds, below one that only embeds it, and at or
-below one with which it embeds both ways (`Agrees`). The two hierarchies agree with every cell
-(`agrees_nonVolitiveRow_volitiveRow`); the combined one agrees except for the markers of
-valuative obligation and internal negation (`agrees_scopeLevel_iff`).
+The modal categories are classes of the markers whose scope [narrog-2009a] tabulates, and a
+hierarchy reads as an assignment of stretches of a scale in the sense of `Narrog2009.Represents`:
+a marker at the row of its category, a tested category on a stretch ending at its row. Read so,
+each of the two hierarchies represents the data on its side of volitivity
+(`exists_represents_row`), and on the non-volitive side the rows of aspect, negation and tense
+are the only ones that do (`snd_eq_of_represents_nonVolitiveRow`). The combined hierarchy does
+not: it puts valuative obligation on the row of epistemic possibility, and no stretch for
+internal negation separates the two (`not_represents_of_beki_eq_kaMoSirenai`,
+`not_represents_scopeLevel`).
+
+The suffix positions of the Japanese verb ascend along the hierarchy away from the stem
+(`suffixesAscend_slotCategory`).
 
 The three evidential categories lie on three levels, each at or below tense, so no monotone map
 into the hierarchy of [cinque-1999] sends one of them to its evidential mood and tense to its
-past tense (`not_monotone_of_moodEvidential`).
+past tense (`not_monotone_of_moodEvidential`), and no placement on that hierarchy, which assigns
+points, represents the data (`not_represents_cartography`).
 
 The book classifies the changes of modal meaning tabulated in `Narrog2010.changes` by the sides
 of volitivity they run between. Its four totals follow from that table (`gramsBetween_eq`), and
@@ -241,8 +250,8 @@ theorem nonVolitiveRow_le_iff (a b : GramCategory) :
     ∀ i ∈ nonVolitiveRow a, ∀ j ∈ nonVolitiveRow b, (i ≤ j ↔ a ≤ b) := by
   cases a <;> cases b <;> decide
 
-/-- On the categories of the hierarchy with volitive modalities, the combined hierarchy differs
-from it only in separating negation from tense, which share a row there. -/
+-- On the categories of Table 3.6 the combined hierarchy differs from it only in separating
+-- negation from tense, which share a row there.
 theorem volitiveRow_le_iff (a b : GramCategory) :
     ∀ i ∈ volitiveRow a, ∀ j ∈ volitiveRow b, (i ≤ j ↔ a ≤ b ∨ b = negation ∧ a ≤ tense) := by
   cases a <;> cases b <;> decide
@@ -300,32 +309,101 @@ def _root_.Narrog2009.Category.gramCategory : Narrog2009.Category → Option Gra
   | .illocutionaryModulation => some illocutionaryMod
   | .externalNegation | .nominalization => none
 
-/-- A level assignment `level` agrees with the scope relation of marker `m` to category `c` when
-it puts the marker's category above a category it only embeds, below one it is only embedded
-by, and at or below one with which it embeds both ways. -/
-def Agrees (level : GramCategory → Option ℕ) (m : Narrog2009.Marker) (c : Narrog2009.Category) :
-    Prop :=
-  ∀ g ∈ c.gramCategory, ∀ i ∈ level m.gramCategory, ∀ j ∈ level g,
-    ((Narrog2009.scopes m c).scope = .embeds → j < i) ∧
-    ((Narrog2009.scopes m c).scope = .embedded → i < j) ∧
-    ((Narrog2009.scopes m c).scope = .both → i ≤ j)
+/-- The point of a marker under a table of rows: the row of its category. -/
+def _root_.Narrog2009.Marker.point (row : GramCategory → Option ℕ) (m : Narrog2009.Marker) : ℕ :=
+  (row m.gramCategory).getD 0
 
-instance (level : GramCategory → Option ℕ) (m : Narrog2009.Marker) (c : Narrog2009.Category) :
-    Decidable (Agrees level m c) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+open Narrog2009 (Represents) in
+/-- Each of the two hierarchies represents the embedding data of [narrog-2009a] on its side of
+volitivity, with every marker at the row of its category and every tested category on a stretch
+that ends at its row. -/
+theorem exists_represents_row :
+    (∃ g : Narrog2009.Category → NonemptyInterval ℕ,
+      (∀ c, ∀ x ∈ c.gramCategory, nonVolitiveRow x = some (g c).snd) ∧
+      Represents {m | ¬ m.IsVolitive} {c | c.gramCategory.isSome}
+        (fun m ↦ .pure (m.point nonVolitiveRow)) g) ∧
+    ∃ g : Narrog2009.Category → NonemptyInterval ℕ,
+      (∀ c, ∀ x ∈ c.gramCategory, volitiveRow x = some (g c).snd) ∧
+      Represents {m | m.IsVolitive} {c | c.gramCategory.isSome}
+        (fun m ↦ .pure (m.point volitiveRow)) g := by
+  refine ⟨⟨fun c ↦ match c with
+      | .stativeAspect | .completiveAspect => ⟨(1, 2), by decide⟩
+      | .internalNegation => ⟨(1, 3), by decide⟩
+      | .tense => ⟨(3, 4), by decide⟩
+      | _ => ⟨(6, 6), by decide⟩, ?_, ?_⟩,
+    fun c ↦ match c with
+      | .stativeAspect | .completiveAspect => ⟨(1, 2), by decide⟩
+      | .internalNegation | .tense => ⟨(1, 3), by decide⟩
+      | _ => ⟨(5, 5), by decide⟩, ?_, ?_⟩
+  · intro c; cases c <;> decide
+  · intro m hm c hc; revert hm hc; cases m <;> cases c <;> decide
+  · intro c; cases c <;> decide
+  · intro m hm c hc; revert hm hc; cases m <;> cases c <;> decide
 
-/-- The hierarchies of the two sides of volitivity agree with every cell of the embedding data
-of [narrog-2009a]. -/
-theorem agrees_nonVolitiveRow_volitiveRow (m : Narrog2009.Marker) (c : Narrog2009.Category) :
-    Agrees nonVolitiveRow m c ∧ Agrees volitiveRow m c := by
-  revert m c; decide +kernel
+open Narrog2009 (Represents) in
+/-- On the non-volitive side the rows of aspect, negation and tense are forced: in any
+representation with the markers at the rows of their categories, the stretch of each ends at its
+row. -/
+theorem snd_eq_of_represents_nonVolitiveRow {g : Narrog2009.Category → NonemptyInterval ℕ}
+    (h : Represents {m | ¬ m.IsVolitive} {c | c.gramCategory.isSome}
+      (fun m ↦ .pure (m.point nonVolitiveRow)) g) {c : Narrog2009.Category}
+    (hc : c ∈ [.stativeAspect, .completiveAspect, .internalNegation, .tense]) :
+    ∀ x ∈ c.gramCategory, nonVolitiveRow x = some (g c).snd := by
+  have key : ∀ {c : Narrog2009.Category} {n : ℕ}, (NonemptyInterval.pure n).Overlaps (g c) →
+      (g c).Precedes (.pure (n + 1)) → ∀ x ∈ c.gramCategory, some n = some (g c).snd :=
+    fun ho hp _ _ ↦ congrArg some (le_antisymm ho.1 (Nat.le_of_lt_succ hp))
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
+  rcases hc with rfl | rfl | rfl | rfl <;> intro x hx <;> cases hx
+  · exact key (n := 2) (h .soo1 (by decide) .stativeAspect rfl)
+      (h .hazu (by decide) .stativeAspect rfl) _ rfl
+  · exact key (n := 2) (h .soo1 (by decide) .completiveAspect rfl)
+      (h .hazu (by decide) .completiveAspect rfl) _ rfl
+  · exact key (n := 3) (h .hazu (by decide) .internalNegation rfl)
+      (h .kaMoSirenai (by decide) .internalNegation rfl) _ rfl
+  · exact key (n := 4) (h .kaMoSirenai (by decide) .tense rfl)
+      (h .daroo (by decide) .tense rfl) _ rfl
 
--- The combined hierarchy agrees with the data except in putting the two markers of valuative
--- obligation above internal negation, with which they embed both ways.
-theorem agrees_scopeLevel_iff (m : Narrog2009.Marker) (c : Narrog2009.Category) :
-    Agrees (fun g ↦ some g.scopeLevel) m c ↔
-      ¬ (m.gramCategory = deontic2 ∧ c = .internalNegation) := by
-  revert m c; decide +kernel
+open Narrog2009 (Represents) in
+/-- No assignment of points that puts *beki* and *ka mo sirenai* together, as the combined
+hierarchy puts valuative obligation and epistemic possibility on one row, represents the data:
+*beki* overlaps internal negation and *ka mo sirenai* lies above it. -/
+theorem not_represents_of_beki_eq_kaMoSirenai {β : Type*} [LinearOrder β]
+    {p : Narrog2009.Marker → β} (hp : p .beki = p .kaMoSirenai)
+    (g : Narrog2009.Category → NonemptyInterval β) :
+    ¬ Represents Set.univ {c | c.gramCategory.isSome} (fun m ↦ .pure (p m)) g := by
+  intro h
+  have h₁ : (NonemptyInterval.pure (p .beki)).Overlaps (g .internalNegation) :=
+    h .beki trivial .internalNegation rfl
+  have h₂ : (g .internalNegation).Precedes (.pure (p .kaMoSirenai)) :=
+    h .kaMoSirenai trivial .internalNegation rfl
+  exact not_lt_of_ge (hp ▸ h₁.1) h₂
+
+theorem not_represents_scopeLevel (g : Narrog2009.Category → NonemptyInterval ℕ) :
+    ¬ Narrog2009.Represents Set.univ {c | c.gramCategory.isSome}
+      (fun m ↦ .pure m.gramCategory.scopeLevel) g :=
+  not_represents_of_beki_eq_kaMoSirenai (p := fun m ↦ m.gramCategory.scopeLevel) rfl g
+
+-- A hierarchy of heads assigns points, so no placement of the markers and categories on
+-- Cinque's hierarchy represents the data.
+theorem not_represents_cartography (h : Narrog2009.Marker → Cartography.Head)
+    (h' : Narrog2009.Category → Cartography.Head) :
+    ¬ Narrog2009.Represents Set.univ Set.univ (fun m ↦ .pure (h m)) fun c ↦ .pure (h' c) :=
+  Narrog2009.not_represents_pure trivial trivial trivial trivial h h'
+
+/-! ### Morpheme order -/
+
+/-- The category of the hierarchy that a suffix position of the Japanese verb expresses: the
+passive, the desiderative *-tai*, the negative and the final inflection, read as tense. -/
+def slotCategory : Japanese.Verb.Slot → Option GramCategory
+  | .voice => some voice
+  | .desiderative => some boulomaicModality
+  | .negation => some negation
+  | .inflection => some tense
+  | .derivation | .valence | .politeness => none
+
+-- The order of the suffixes reflects scope.
+theorem suffixesAscend_slotCategory : Japanese.Verb.template.SuffixesAscend slotCategory := by
+  decide
 
 /-! ### The changes of [narrog-2010] -/
 
@@ -345,8 +423,8 @@ def gramsBetween (v w : Prop) [Decidable v] [Decidable w] : ℕ :=
   ((Narrog2010.changes.filter fun c ↦ (∀ p ∈ c.source.meaning, p.IsVolitive ↔ v) ∧
     ∀ p ∈ c.target.meaning, p.IsVolitive ↔ w).map (·.grams)).sum
 
-/-- The four totals of the book's classification of the changes by volitivity follow from the
-table of [narrog-2010] and the volitivity of its meanings. -/
+-- The four totals of the book's classification of the changes by volitivity follow from the
+-- table of [narrog-2010] and the volitivity of its meanings.
 theorem gramsBetween_eq :
     gramsBetween False True = nonVolitiveToVolitive ∧
     gramsBetween False False = withinNonVolitive ∧
