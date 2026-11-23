@@ -94,50 +94,19 @@ instance : DecidablePred NominalSort.occurrenceCompatible
   | .content => isFalse id
   | .situation => isTrue trivial
 
-/-- The predicate a co-occurrence example tests the noun against. -/
-inductive Diagnostic where
-  | truth
-  | occurrence
-  deriving DecidableEq, Repr
+/-- The sort of noun a row names. -/
+def Examples.NounSort.toNominalSort : Examples.NounSort → NominalSort
+  | .content => .content
+  | .situation => .situation
 
-def parseSort : String → Option NominalSort
-  | "content" => some .content
-  | "situation" => some .situation
-  | _ => none
-
-def parseDiagnostic : String → Option Diagnostic
-  | "truth-predicates" => some .truth
-  | "occurrence-predicates" | "situation-only-predicate-notice" => some .occurrence
-  | _ => none
-
-/-- A noun of a given sort under a diagnostic predicate, with its
-judgment. -/
-structure CooccurrenceDatum where
-  sort : NominalSort
-  diagnostic : Diagnostic
-  acceptable : Bool
-  deriving DecidableEq, Repr
-
-def cooccurrenceDatum (e : Datum) : Option CooccurrenceDatum := do
-  let s ← parseSort (← e.paperFeatures.lookup "nounSort")
-  let d ← parseDiagnostic (← e.paperFeatures.lookup "diagnostic")
-  some ⟨s, d, e.judgment == Judgment.acceptable⟩
-
-/-- The ch. 2 co-occurrence examples. -/
-def cooccurrenceData : List CooccurrenceDatum := Examples.all.filterMap cooccurrenceDatum
-
-/-- Which predicate the datum's sort should accept. -/
-def Diagnostic.accepts : Diagnostic → NominalSort → Prop
-  | .truth, s => s.truthEvaluable
-  | .occurrence, s => s.occurrenceCompatible
-
-instance : ∀ (d : Diagnostic) (s : NominalSort), Decidable (d.accepts s)
-  | .truth, s => inferInstanceAs (Decidable s.truthEvaluable)
-  | .occurrence, s => inferInstanceAs (Decidable s.occurrenceCompatible)
-
+-- §2.2.2
 theorem sort_predicts_cooccurrence :
-    ∀ d ∈ cooccurrenceData, d.acceptable = true ↔ d.diagnostic.accepts d.sort := by
-  decide
+    ∀ r ∈ Examples.all, ∀ s ∈ Examples.nounSort r,
+      (Examples.diagnostic r = some .truthPredicates →
+        (r.judgment = .acceptable ↔ s.toNominalSort.truthEvaluable)) ∧
+      (Examples.diagnostic r ∈ [some .occurrencePredicates, some .notice] →
+        (r.judgment = .acceptable ↔ s.toNominalSort.occurrenceCompatible)) := by
+  decide +kernel
 
 /-! ### Equality, subset and existential content
 
@@ -194,29 +163,11 @@ theorem mem_cont_not_transparentAt :
       ⟨fun _ ↦ trivial, fun _ ↦ rfl⟩).mp rfl) ▸ Set.mem_univ true :
         true ∈ ({false} : Set Bool)).symm
 
-/-- A substitution triple's conclusion, with the sort of the embedded
-clause and whether the thesis judges the inference valid. -/
-structure SubstitutionDatum where
-  sort : NominalSort
-  valid : Bool
-  deriving DecidableEq, Repr
-
-def parseValidity : String → Option Bool
-  | "valid" => some true
-  | "invalid" => some false
-  | _ => none
-
-def substitutionDatum (e : Datum) : Option SubstitutionDatum := do
-  let s ← parseSort (← e.paperFeatures.lookup "nounSort")
-  let v ← parseValidity (← e.paperFeatures.lookup "inference")
-  some ⟨s, v⟩
-
-/-- The substitution-test conclusions of §2.2.3. -/
-def substitutionData : List SubstitutionDatum := Examples.all.filterMap substitutionDatum
-
+-- §2.2.3
 theorem substitution_valid_iff_situation :
-    ∀ d ∈ substitutionData, d.valid = true ↔ d.sort = .situation := by
-  decide
+    ∀ r ∈ Examples.all, ∀ s ∈ Examples.nounSort r, ∀ i ∈ Examples.inference r,
+      (i = .valid ↔ s = .situation) := by
+  decide +kernel
 
 /-! ### Clauses as modifiers and as arguments
 
@@ -367,34 +318,15 @@ theorem mem_buryatContExponent_iff :
   decide
 
 /-- The clause-typers of a Buryat clause shape (§4.3.1 ex. 30–32). -/
-def parseShape : String → Option (List Complementizer)
-  | "bare gɘ-žɘ clause" => some [ge, zha]
-  | "nominalized participial clause" => some [aasha]
-  | "nominalized gɘ-participial clause" => some [ge, aasha]
-  | _ => none
-
-def parseClauseSort : String → Option NominalSort
-  | "Cont-CP" => some .content
-  | "Sit-CP" => some .situation
-  | _ => none
-
-/-- A Buryat embedded clause, with its typers and the sort it denotes. -/
-structure ShapeDatum where
-  typers : List Complementizer
-  sort : NominalSort
-  deriving DecidableEq, Repr
-
-def shapeDatum (e : Datum) : Option ShapeDatum := do
-  let ts ← parseShape (← e.paperFeatures.lookup "shape")
-  let s ← parseClauseSort (← e.paperFeatures.lookup "clauseType")
-  some ⟨ts, s⟩
-
-/-- The Buryat clause shapes of §4.3.1. -/
-def shapeData : List ShapeDatum := Examples.all.filterMap shapeDatum
+def Examples.Shape.typers : Examples.Shape → List Complementizer
+  | .bareGeZhe => [ge, zha]
+  | .nominalizedParticipial => [aasha]
+  | .nominalizedGeParticipial => [ge, aasha]
 
 theorem content_iff_contExponent_mem :
-    ∀ d ∈ shapeData, ∀ c ∈ buryatAnalysis.contExponent, (d.sort = .content ↔ c ∈ d.typers) := by
-  decide
+    ∀ r ∈ Examples.all, ∀ sh ∈ Examples.shape r, ∀ ct ∈ Examples.clauseType r,
+      ∀ c ∈ buryatAnalysis.contExponent, (ct = .contCP ↔ c ∈ sh.typers) := by
+  decide +kernel
 
 -- §4.4.3
 theorem hanaxa_typers :

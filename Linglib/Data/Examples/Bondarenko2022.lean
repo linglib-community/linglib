@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Bondarenko2022` — typed example data
@@ -317,5 +319,88 @@ def ch4_32 : Datum :=
     paperFeatures := [("clauseType", "Cont-CP"), ("shape", "nominalized gɘ-participial clause")] }
 
 def all : List Datum := [ch2_105, ch2_106, ch2_107, ch2_108, ch2_109, ch2_110, ch2_111, ch2_112, ch2_120a, ch2_120b, ch2_120c, ch2_121a, ch2_121b, ch2_121c, ch2_122a, ch2_122b, ch2_122c, ch4_30, ch4_31, ch4_32]
+
+/-- The diagnostic the example applies. -/
+inductive Diagnostic where
+  /-- truth-predicates: predicates of truth and falsity, *true*, *false*, *mistaken* -/
+  | truthPredicates
+  /-- occurrence-predicates: predicates of occurrence, *occur*, *happen* -/
+  | occurrencePredicates
+  /-- situation-only-predicate-notice: *notice*, which takes situation nouns only -/
+  | notice
+  /-- substitution: substitution of a clause true at the same situations -/
+  | substitution
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `diagnostic`. -/
+def diagnostic (e : Datum) : Option Diagnostic :=
+  e.parse? "diagnostic" [("truth-predicates", .truthPredicates), ("occurrence-predicates", .occurrencePredicates),
+    ("situation-only-predicate-notice", .notice), ("substitution", .substitution)]
+
+/-- The sort of the noun the clause combines with. -/
+inductive NounSort where
+  /-- content: a content noun, *idea*, *claim*, *rumor* -/
+  | content
+  /-- situation: a situation noun, *situation*, *event*, *case* -/
+  | situation
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `nounSort`. -/
+def nounSort (e : Datum) : Option NounSort :=
+  e.parse? "nounSort" [("content", .content), ("situation", .situation)]
+
+/-- The place of the sentence in a substitution triple. -/
+inductive Role where
+  /-- premise-a: the first premise -/
+  | premiseA
+  /-- premise-b: the second premise -/
+  | premiseB
+  /-- conclusion: the conclusion -/
+  | conclusion
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `role`. -/
+def role (e : Datum) : Option Role :=
+  e.parse? "role" [("premise-a", .premiseA), ("premise-b", .premiseB), ("conclusion", .conclusion)]
+
+/-- Whether the conclusion follows from the premises. -/
+inductive Inference where
+  /-- valid: the conclusion follows -/
+  | valid
+  /-- invalid: the conclusion does not follow -/
+  | invalid
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `inference`. -/
+def inference (e : Datum) : Option Inference :=
+  e.parse? "inference" [("valid", .valid), ("invalid", .invalid)]
+
+/-- The meaning of the embedded clause. -/
+inductive ClauseType where
+  /-- Cont-CP: a clause that describes propositional content -/
+  | contCP
+  /-- Sit-CP: a clause that describes a situation -/
+  | sitCP
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `clauseType`. -/
+def clauseType (e : Datum) : Option ClauseType :=
+  e.parse? "clauseType" [("Cont-CP", .contCP), ("Sit-CP", .sitCP)]
+
+/-- The form of the Buryat embedded clause. -/
+inductive Shape where
+  /-- bare gɘ-žɘ clause: a bare clause with *gɘ* and the converb *-žɘ* -/
+  | bareGeZhe
+  /-- nominalized participial clause: a nominalized clause with the participle alone -/
+  | nominalizedParticipial
+  /-- nominalized gɘ-participial clause: a nominalized clause with *gɘ* and the participle -/
+  | nominalizedGeParticipial
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `shape`. -/
+def shape (e : Datum) : Option Shape :=
+  e.parse? "shape" [("bare gɘ-žɘ clause", .bareGeZhe),
+    ("nominalized participial clause", .nominalizedParticipial),
+    ("nominalized gɘ-participial clause", .nominalizedGeParticipial)]
 
 end Bondarenko2022.Examples
