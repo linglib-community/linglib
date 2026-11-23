@@ -7,18 +7,18 @@ module
 
 public import Mathlib.Basic.Rel
 public import Mathlib.Order.UpperLower.Closure
-public import Linglib.Core.Order.BoundedComplete
+public import Linglib.Core.Data.Set.Sups
 
 /-!
 # Fine (2012): Counterfactuals without Possible Worlds
 
 States are ordered by parthood, and the fusion of some states exists just in case they are
 compatible: the order is bounded complete, with a null state `⊥`. A statement is exactly verified
-by a set of states: a conjunction by the fusions `fusions A B` of a verifier of each conjunct, a
-disjunction by the verifiers `A ∪ B ∪ fusions A B` of either disjunct or of their conjunction,
+by a set of states: a conjunction by the fusions `A.lubs B` of a verifier of each conjunct, a
+disjunction by the verifiers `A ∪ B ∪ A.lubs B` of either disjunct or of their conjunction,
 `⊤` by the null state alone, and `⊥` by nothing. It is inexactly verified by the states
 containing an exact verifier, the upper set `upperClosure A`. By BC a state inexactly verifies a
-conjunction exactly when it inexactly verifies both conjuncts (`upperClosure_fusions`).
+conjunction exactly when it inexactly verifies both conjuncts (`Set.upperClosure_lubs`).
 
 For a transition relation `outcome w`, relating a state `t` to the possible outcomes `u` of
 imposing it on the world `w`, the counterfactual `would outcome A C` is true at `w` when every
@@ -72,29 +72,11 @@ theorem would_union : would outcome (A ∪ B) C = would outcome A C ∩ would ou
   Set.ext fun _ ↦ by
     simp only [mem_would, SetRel.image_union, Set.union_subset_iff, Set.mem_inter_iff]
 
-/-- The fusions of the compatible pairs of a state from each set, the exact verifiers of a
-conjunction. -/
-def fusions (A B : Set S) : Set S := {d | ∃ a ∈ A, ∃ b ∈ B, IsLUB {a, b} d}
-
 /-- Inclusive Disjunction. -/
 theorem inclusive_disjunction :
-    would outcome A C ∩ would outcome B C ∩ would outcome (fusions A B) C ⊆
-      would outcome (A ∪ B ∪ fusions A B) C := by
+    would outcome A C ∩ would outcome B C ∩ would outcome (A.lubs B) C ⊆
+      would outcome (A ∪ B ∪ A.lubs B) C := by
   rw [would_union, would_union]
-
-/-- By BC, a state contains a fusion of a verifier of each of two statements exactly when it
-contains a verifier of each. -/
-theorem upperClosure_fusions [IsBoundedComplete S] :
-    upperClosure (fusions D E) = upperClosure D ⊔ upperClosure E := by
-  refine SetLike.ext fun u ↦ ?_
-  simp only [UpperSet.mem_sup_iff, mem_upperClosure]
-  constructor
-  · rintro ⟨d, ⟨b, hb, c, hc, hd⟩, hdu⟩
-    obtain ⟨hbd, hcd⟩ := mem_upperBounds_pair.mp hd.1
-    exact ⟨⟨b, hb, hbd.trans hdu⟩, c, hc, hcd.trans hdu⟩
-  · rintro ⟨⟨b, hb, hbu⟩, c, hc, hcu⟩
-    obtain ⟨d, hd⟩ := IsBoundedComplete.exists_isLUB_of_bddAbove b c (Compat.of_le hbu hcu)
-    exact ⟨d, ⟨b, hb, c, hc, hd⟩, hd.2 (mem_upperBounds_pair.mpr ⟨hbu, hcu⟩)⟩
 
 theorem would_sup : would outcome A (C ⊔ C') = would outcome A C ∩ would outcome A C' :=
   Set.ext fun _ ↦ by
@@ -103,8 +85,8 @@ theorem would_sup : would outcome A (C ⊔ C') = would outcome A C ∩ would out
 /-- Conjunction: by BC the outcome contains the fusion of the verifiers it contains. -/
 theorem conjunction [IsBoundedComplete S] :
     would outcome A (upperClosure D) ∩ would outcome A (upperClosure E) ⊆
-      would outcome A (upperClosure (fusions D E)) := by
-  rw [upperClosure_fusions, would_sup]
+      would outcome A (upperClosure (D.lubs E)) := by
+  rw [Set.upperClosure_lubs, would_sup]
 
 -- Exact Strengthening
 theorem exact_strengthening (h : A' ⊆ A) : would outcome A C ⊆ would outcome A' C :=

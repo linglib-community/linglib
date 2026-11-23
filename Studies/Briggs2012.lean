@@ -8,7 +8,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Causation.CausalModel.Dependence
-public import Studies.Fine2012
+public import Linglib.Core.Data.Set.Sups
 
 /-!
 # Briggs (2012): Interventionist Counterfactuals
@@ -18,8 +18,8 @@ A state of a causal model settles some of its variables: it is a partial assignm
 values. The fusion of two states is their least upper bound, which exists when they agree
 wherever both settle a variable, so two values of one variable have no fusion
 (`not_compat_update_update_of_ne`). A sentence is made true by a set of states: an atomic
-sentence by one state, a conjunction by the fusions `Fine2012.fusions A B` of a state for each
-conjunct, and a disjunction by the states `A ∪ B ∪ Fine2012.fusions A B` for either disjunct or
+sentence by one state, a conjunction by the fusions `A.lubs B` of a state for each
+conjunct, and a disjunction by the states `A ∪ B ∪ A.lubs B` for either disjunct or
 for their conjunction.
 
 The counterfactual `would M A ψ` holds in a context when `ψ` holds there in every submodel of
@@ -72,8 +72,8 @@ theorem would_union (A B : Set (∀ v, Part (α v))) (φ : CausalModel U V α �
 /-- (CM9): a counterfactual from a disjunction holds exactly when the counterfactuals from each
 disjunct and from their conjunction do. -/
 theorem would_union_union (A B : Set (∀ v, Part (α v))) (φ : CausalModel U V α → Set U) :
-    would M (A ∪ B ∪ Fine2012.fusions A B) φ =
-      would M A φ ∩ would M B φ ∩ would M (Fine2012.fusions A B) φ := by
+    would M (A ∪ B ∪ A.lubs B) φ =
+      would M A φ ∩ would M B φ ∩ would M (A.lubs B) φ := by
   rw [would_union, would_union]
 
 theorem mem_would_apply {A : Set (∀ v, Part (α v))} {φ : CausalModel U V α → Set U} {u : U}
@@ -168,7 +168,7 @@ theorem consequent_false : true ∉ would ex (atom .C false) (holds (dies true))
 
 -- three interventions verify `¬X ∨ ¬Y`
 theorem not_x_or_not_y :
-    atom .X false ∪ atom .Y false ∪ Fine2012.fusions (atom .X false) (atom .Y false) =
+    atom .X false ∪ atom .Y false ∪ (atom .X false).lubs (atom .Y false) =
       {Function.update ⊥ V.X (Part.some false), Function.update ⊥ V.Y (Part.some false),
         Function.update (Function.update ⊥ V.X (Part.some false)) V.Y (Part.some false)} := by
   have hc : IsLUB {(Function.update ⊥ V.X (Part.some false) : V → Part Bool),
@@ -178,7 +178,7 @@ theorem not_x_or_not_y :
       ⟨by rw [Function.update_self, Function.update_of_ne (by decide), Pi.bot_apply]
           exact isLUB_pair_iff_forall_le.mpr ⟨bot_le, le_rfl, fun _ _ h ↦ h⟩,
         by rw [Function.update_self]⟩
-  have hl : Fine2012.fusions (atom .X false) (atom .Y false) =
+  have hl : (atom .X false).lubs (atom .Y false) =
       {Function.update (Function.update ⊥ V.X (Part.some false)) V.Y (Part.some false)} :=
     Set.ext fun d ↦ ⟨fun ⟨_, ha, _, hb, h⟩ ↦ by
         rw [Set.mem_singleton_iff.mp ha, Set.mem_singleton_iff.mp hb] at h
@@ -192,7 +192,7 @@ theorem not_x_or_not_y :
 fire. -/
 theorem disjunction_false :
     true ∉ would ex (atom .X false ∪ atom .Y false ∪
-      Fine2012.fusions (atom .X false) (atom .Y false)) (holds (dies false)) := by
+      (atom .X false).lubs (atom .Y false)) (holds (dies false)) := by
   intro h
   have h₁ := mem_would_apply ex h (s := Function.update ⊥ V.X (Part.some false))
     (Or.inl (Or.inl rfl))
