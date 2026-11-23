@@ -266,13 +266,13 @@ def mapMelody : AR (Multiplanar ι (Sponsored T' M) (Sponsored S M)) where
 
 @[simp] theorem lines_mapMelody : (X.mapMelody φ).lines = X.lines := rfl
 
-/-- The relabelling of each tier that relabels the autosegments by `φ` and keeps the slots. -/
+/-- The maps of alphabets that apply `φ` to the autosegments and fix the slots. -/
 def melodyMap : ∀ j : Option ι, Multiplanar ι (Sponsored T M) (Sponsored S M) j →
     Multiplanar ι (Sponsored T' M) (Sponsored S M) j
   | none => id
   | some _ => Sponsored.map φ
 
-/-- Relabelling the autosegments is `AR.mapRange` along `melodyMap`. -/
+/-- Relabelling the autosegments by `φ` is `AR.mapRange` by `melodyMap φ`. -/
 theorem mapMelody_eq_mapRange : X.mapMelody φ = X.mapRange (melodyMap φ) :=
   ext (funext fun j ↦ by cases j <;> simp [mapMelody, melodyMap]) fun _ _ _ _ ↦ .rfl
 

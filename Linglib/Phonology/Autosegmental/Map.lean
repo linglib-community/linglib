@@ -10,30 +10,32 @@ public import Linglib.Phonology.Autosegmental.TierTree.Basic
 /-!
 # Maps of alphabets and of tiers
 
-A representation is over a family of alphabets `τ`, one for each tier. A family of maps
-`g i : τ i → τ' i` relabels a representation, `AR.mapRange g`, and a map of tiers `h : κ → ι`
-restricts it to the tiers `κ`, `AR.comapDomain h`: tier `k` of the restriction is tier `h k`, with
-the lines between them. Both keep the lines and commute with concatenation, so they are monoid
-homomorphisms, `AR.mapRangeHom` and `AR.comapDomainHom`, and both are functorial
-(`mapRangeHom_id`, `mapRangeHom_comp`, `comapDomain_id`, `comapDomain_comapDomain`).
+An autosegmental representation `X : AR τ` has a word over the alphabet `τ i` on each tier `i`,
+and association lines between the tiers. This file defines two operations that change the
+family of alphabets.
 
-Relabelling changes no line, so it preserves and reflects the No-Crossing Constraint
-(`noCrossing_mapRange`), and the melody of a slot is relabelled with the representation
-(`melody_mapRange`). The word of a tier is natural in both
-(`wordHom_comp_mapRangeHom`, `wordHom_comp_comapDomainHom`): restriction to one tier, forgetting
-the lines, is `AR.wordHom`.
+Given a map of alphabets `g i : τ i → τ' i` for each tier `i`, the relabelling `X.mapRange g`
+applies `g i` to each letter of tier `i` and keeps the lines. Given a map of tiers `h : κ → ι`,
+the restriction `X.comapDomain h` is the representation on the tiers `κ` whose tier `k` is tier
+`h k` of `X`, with the lines of `X` between these tiers. Both operations commute with
+concatenation, so they are monoid homomorphisms, `AR.mapRangeHom` and `AR.comapDomainHom`.
+
+Relabelling keeps the lines, so `X.mapRange g` satisfies the No-Crossing Constraint if and only
+if `X` does (`noCrossing_mapRange`), and the melody of a slot of `X.mapRange g` on tier `j` is
+its melody in `X` with `g j` applied (`melody_mapRange`). A restriction of a representation that
+satisfies the No-Crossing Constraint satisfies it too (`NoCrossing.comapDomain`).
 
 ## Implementation notes
 
-The names follow `DFinsupp.mapRange` and `DFinsupp.comapDomain`, the maps of a dependent family
-along its values and along its index. `AR.map` moves the positions of a representation within
-its tiers and is a different operation.
+The names follow `DFinsupp.mapRange` and `DFinsupp.comapDomain`, which map a dependent family
+along its values and along its index. `AR.map` is a different operation: it moves the positions
+of a representation within its tiers.
 
 ## TODO
 
-* The melody of a restriction along a map of trees of tiers, and the contraction of a tier, which
-  composes the lines through it.
-* The merger of two tiers, which is defined when the lines order their tokens.
+* The melody of a restriction, when `h` is a map of trees of tiers.
+* The contraction of a tier, which composes the lines through it.
+* The merger of two tiers into one.
 -/
 
 @[expose] public section
@@ -48,7 +50,8 @@ section MapRange
 
 variable (g : ∀ i, τ i → τ' i) (X Y : AR τ)
 
-/-- The representation with each label of tier `i` mapped by `g i`, and the same lines. -/
+/-- The relabelling of `X` by `g`: the word of tier `i` is mapped by `g i`, and the lines are those
+of `X`. -/
 def mapRange : AR τ' where
   word i := (X.word i).map (g i)
   lines := X.lines
@@ -75,7 +78,7 @@ theorem mapRange_mapRange (g' : ∀ i, τ' i → τ'' i) :
 @[simp] theorem mapRange_mul : (X * Y).mapRange g = X.mapRange g * Y.mapRange g :=
   AR.ext (funext fun _ ↦ List.map_append) fun i j p q ↦ by simp [link_mul]
 
-/-- Relabelling as a monoid homomorphism. -/
+/-- `AR.mapRange` as a monoid homomorphism. -/
 def mapRangeHom : AR τ →* AR τ' where
   toFun X := X.mapRange g
   map_one' := mapRange_one g
@@ -90,10 +93,10 @@ theorem mapRangeHom_comp (g' : ∀ i, τ' i → τ'' i) :
     mapRangeHom (fun i ↦ g' i ∘ g i) = (mapRangeHom g').comp (mapRangeHom g) :=
   MonoidHom.ext fun X ↦ (mapRange_mapRange g X g').symm
 
-/-- Relabelling preserves and reflects the No-Crossing Constraint. -/
+/-- A relabelling satisfies the No-Crossing Constraint if and only if the representation does. -/
 @[simp] theorem noCrossing_mapRange : (X.mapRange g).NoCrossing ↔ X.NoCrossing := .rfl
 
-/-- The word of a tier is natural in relabelling. -/
+/-- The word of tier `i` of a relabelling is the word of tier `i` mapped by `g i`. -/
 theorem wordHom_comp_mapRangeHom (i : ι) :
     (wordHom i).comp (mapRangeHom g) = (FreeMonoid.map (g i)).comp (wordHom i) :=
   MonoidHom.ext fun _ ↦ rfl
@@ -115,7 +118,7 @@ variable [Fintype ι] [DecidableEq ι] (T : ParentTree ι)
     (X.mapRange g).Dominates T k j q ↔ X.Dominates T k j q := by
   simp only [Dominates, descendants_mapRange]
 
-/-- The melody of a slot is relabelled with the representation. -/
+/-- The melody of a slot of a relabelling is its melody mapped by `g`. -/
 theorem melody_mapRange (k : ℕ) (j : ι) :
     (X.mapRange g).melody T k j = (X.melody T k j).map (g j) := by
   simp [melody, List.zipIdx_map, List.filter_map, Function.comp_def]
@@ -128,8 +131,8 @@ section ComapDomain
 
 variable (h : κ → ι) (X Y : AR τ)
 
-/-- The representation on the tiers `κ` whose tier `k` is tier `h k` of `X`, with the lines of
-`X` between them. -/
+/-- The restriction of `X` along `h`: tier `k` is tier `h k` of `X`, and the lines between tiers `k`
+and `k'` are those of `X` between `h k` and `h k'`. -/
 def comapDomain : AR fun k ↦ τ (h k) where
   word k := X.word (h k)
   lines k k' := X.lines (h k) (h k')
@@ -155,7 +158,7 @@ theorem comapDomain_comapDomain (h' : κ' → κ) :
 @[simp] theorem comapDomain_mul : (X * Y).comapDomain h = X.comapDomain h * Y.comapDomain h :=
   rfl
 
-/-- Restriction as a monoid homomorphism. -/
+/-- `AR.comapDomain` as a monoid homomorphism. -/
 def comapDomainHom : AR τ →* AR fun k ↦ τ (h k) where
   toFun X := X.comapDomain h
   map_one' := comapDomain_one h
@@ -163,15 +166,15 @@ def comapDomainHom : AR τ →* AR fun k ↦ τ (h k) where
 
 @[simp] theorem comapDomainHom_apply : comapDomainHom h X = X.comapDomain h := rfl
 
-/-- A restriction of a representation whose lines do not cross has lines that do not cross. -/
+/-- A restriction of a representation that satisfies the No-Crossing Constraint satisfies it. -/
 theorem NoCrossing.comapDomain {X : AR τ} (hX : X.NoCrossing) : (X.comapDomain h).NoCrossing :=
   fun _ _ ↦ hX _ _
 
-/-- The word of a tier of a restriction is the word of the tier it restricts. -/
+/-- The word of tier `k` of a restriction along `h` is the word of tier `h k`. -/
 theorem wordHom_comp_comapDomainHom (k : κ) :
     (wordHom k).comp (comapDomainHom (τ := τ) h) = wordHom (h k) := rfl
 
-/-- Relabelling commutes with restriction. -/
+/-- The restriction of a relabelling is the relabelling of the restriction. -/
 theorem comapDomain_mapRange (g : ∀ i, τ i → τ' i) :
     (X.mapRange g).comapDomain h = (X.comapDomain h).mapRange fun k ↦ g (h k) := rfl
 

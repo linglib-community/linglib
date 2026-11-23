@@ -12,28 +12,29 @@ public import Mathlib.Data.Finset.Basic
 /-!
 # The Empty Category Principle
 
-A nucleus may stay unexpressed when it is governed, when it is enclosed in a domain of
-infrasegmental government, or when it is final in a language whose final nuclei may be empty.
-Since a governed nucleus governs nothing, of two successive unexpressed nuclei
-[one is enclosed](##GovernmentPhonology.EmptyCategoryPrinciple.enclosed_or_enclosed).
-Where alternation with zero is obligatory, the realization of a domain is fixed from right to
-left,
-each nucleus unexpressed exactly when the principle lets it be, and the principle
-[holds of it](##GovernmentPhonology.emptyCategoryPrinciple_obligatory). A domain may also be
-realized from left to right, a nucleus being left unexpressed when the next can govern it and the
-next then expressed, and the principle holds of that realization too
-(`GovernmentPhonology.emptyCategoryPrinciple_leftToRight`). In a word of
-alternating vowels the outcome depends on whether such a vowel, once expressed, is strong
-enough to govern another: where it is,
-[every other one](##GovernmentPhonology.expressed_obligatory_iff_even) is expressed, counting
-from the end, and where it is not,
-[all but the last](##GovernmentPhonology.expressed_obligatory_iff_succ_lt) are.
+The Empty Category Principle says when a nucleus may stay unexpressed: when it is governed, when
+it is enclosed in a domain of infrasegmental government, or when it is final in a language whose
+final nuclei may be empty. A governed nucleus governs nothing, so of two successive unexpressed
+nuclei one is enclosed (`GovernmentPhonology.EmptyCategoryPrinciple.enclosed_or_enclosed`).
+
+A realization of a domain chooses which of its nuclei are expressed. We define two. The
+obligatory realization `GovernmentPhonology.obligatory` decides from right to left and leaves a
+nucleus unexpressed whenever the principle allows it. The left-to-right realization
+`GovernmentPhonology.leftToRight` leaves a nucleus unexpressed when the next nucleus can govern
+it, and then expresses the next nucleus. Both satisfy the principle
+(`GovernmentPhonology.emptyCategoryPrinciple_obligatory`,
+`GovernmentPhonology.emptyCategoryPrinciple_leftToRight`).
+
+In a word of alternating vowels, the obligatory realization depends on whether an expressed
+alternating vowel is strong enough to govern another. If it is, the vowels at an even distance
+from the end are expressed (`GovernmentPhonology.expressed_obligatory_iff_even`). If it is not,
+all vowels but the last are expressed (`GovernmentPhonology.expressed_obligatory_iff_succ_lt`).
 
 ## Implementation notes
 
-The realization takes the set of nuclei that are required to be expressed on grounds the
-lateral relations do not give. Alternation is optional in some languages, and the realization
-here is the obligatory one.
+Both realizations take a set `R` of nuclei that must be expressed for reasons other than the
+lateral relations. Alternation is optional in some languages; `obligatory` is the realization in
+which every nucleus that may be unexpressed is unexpressed.
 
 ## References
 
@@ -213,13 +214,14 @@ theorem obligatory_eq_self_iff : obligatory A R l = l ↔
         i + 1 = l.length ∧ A.finalEmpty = true)) :=
   obligatoryFrom_eq_self_iff
 
-/-! ### The realization from left to right -/
+/-! ### The left-to-right realization -/
 
 variable (A) in
-/-- The realization of a stretch from left to right, whose first nucleus is nucleus `i` of its
-domain: a nucleus without associated melody that is not one of `R` is left unexpressed when the
-nucleus after it, once expressed, is strong enough to govern it, and that nucleus is then
-expressed; the last nucleus is left unexpressed where final nuclei may be empty. -/
+/-- The left-to-right realization of a list of nuclei whose first nucleus is nucleus `i` of its
+domain. A nucleus with no associated melody that is not in `R` is left unexpressed if the next
+nucleus, once expressed, is strong enough to govern it, and the next nucleus is then expressed.
+A last nucleus with no associated melody that is not in `R` is left unexpressed if final nuclei
+may be empty. Every other nucleus is expressed. -/
 def leftToRightFrom (R : Finset ℕ) : ℕ → List Nucleus → List Nucleus
   | _, [] => []
   | i, [x] =>
@@ -232,8 +234,8 @@ def leftToRightFrom (R : Finset ℕ) : ℕ → List Nucleus → List Nucleus
     else { x with expressed := true } :: leftToRightFrom R (i + 1) (y :: r)
 
 variable (A) in
-/-- The realization of a domain from left to right, in which a nucleus that the next can govern is
-unexpressed, except those of `R`. -/
+/-- The left-to-right realization of a domain: a nucleus that the next nucleus can govern is left
+unexpressed, unless it is in `R`. -/
 def leftToRight (R : Finset ℕ) (l : List Nucleus) : List Nucleus := leftToRightFrom A R 0 l
 
 @[simp] theorem length_leftToRightFrom : (leftToRightFrom A R i l).length = l.length := by
@@ -241,7 +243,7 @@ def leftToRight (R : Finset ℕ) (l : List Nucleus) : List Nucleus := leftToRigh
 
 @[simp] theorem length_leftToRight : (leftToRight A R l).length = l.length := length_leftToRightFrom
 
-/-- The realization from left to right changes only which nuclei are expressed. -/
+/-- The left-to-right realization changes only which nuclei are expressed. -/
 theorem map_leftToRightFrom : (leftToRightFrom A R i l).map ({ · with expressed := false }) =
     l.map ({ · with expressed := false }) := by
   fun_induction leftToRightFrom A R i l <;> simp_all
@@ -276,7 +278,7 @@ theorem emptyCategoryPrinciple_leftToRightFrom :
   | case5 i x y r h ih =>
     exact emptyCategoryPrinciple_cons.2 ⟨fun _ ↦ rfl, fun h ↦ by simp at h, ih⟩
 
-/-- The realization of a domain from left to right satisfies the Empty Category Principle. -/
+/-- The left-to-right realization of a domain satisfies the Empty Category Principle. -/
 theorem emptyCategoryPrinciple_leftToRight : EmptyCategoryPrinciple A (leftToRight A R l) :=
   emptyCategoryPrinciple_leftToRightFrom
 
