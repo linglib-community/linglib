@@ -75,7 +75,7 @@ indirect object include the role *to* assigns. A verb shifts exactly when they d
 
 namespace Larson1988
 
-open PhraseStructure PhraseStructure.Tree
+open PhraseStructure Tree
 
 variable {W : Type*}
 
@@ -458,7 +458,7 @@ theorem cCommands_passive (infl v patient byP : Tree Cat W) :
 
 /-! ### The asymmetries of the two objects -/
 
-open Examples (Frame Argument)
+open Examples
 
 /-- The S-Structure of a frame. -/
 def rep (v agent theme goal prep : Tree Cat W) : Frame → Tree Cat W
