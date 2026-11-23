@@ -31,9 +31,11 @@ reading does not; it is what the slot hosts on the plane, `X.hosted planes s (so
 
 ## Implementation notes
 
-The operations that edit lines or slots (`AR.addLines`, `AR.filterLines`, `AR.eraseSlot`) rebuild
-the representation with `AR.ofPlanes`, so their result has lines from planes to slots only. A
-line between two planes, which no multiplanar representation has, is not carried over.
+Lines are added to a plane and erased from it by `AR.addLines` and `AR.filterLines` of
+`Autosegmental/Edit.lean`, between the plane and the slots (`mem_addLines`, `mem_filterLines`).
+`AR.eraseSlot` rebuilds the representation with `AR.ofPlanes`, so its result has lines from
+planes to slots only: a line between two planes, which no multiplanar representation has, is
+not carried over.
 
 ## References
 
@@ -185,62 +187,34 @@ def eraseSlot (k : ℕ) : AR (Multiplanar ι α β) :=
 
 section Lines
 
-variable [DecidableEq ι] (i : ι)
+variable [DecidableEq ι] {X} {i j : ι} {p : ℕ × ℕ}
 
-/-- `X.addLines i L` adds to plane `i` the lines of `L` that are in range, as
-`SimpleGraph.fromEdgeSet` drops loops. -/
-def addLines (L : Finset (ℕ × ℕ)) : AR (Multiplanar ι α β) :=
-  ofPlanes (X.word none) (fun j ↦ X.word (some j)) fun j ↦
-    if j = i then X.lines (some j) none ∪ L else X.lines (some j) none
-
-/-- `X.filterLines i P` keeps the lines of plane `i` that satisfy `P`. -/
-def filterLines (P : ℕ × ℕ → Prop) [DecidablePred P] : AR (Multiplanar ι α β) :=
-  ofPlanes (X.word none) (fun j ↦ X.word (some j)) fun j ↦
-    if j = i then (X.lines (some j) none).filter P else X.lines (some j) none
-
-@[simp] theorem word_addLines (L : Finset (ℕ × ℕ)) (j : Option ι) :
-    (X.addLines i L).word j = X.word j := by cases j <;> rfl
-
-@[simp] theorem word_filterLines (P : ℕ × ℕ → Prop) [DecidablePred P] (j : Option ι) :
-    (X.filterLines i P).word j = X.word j := by cases j <;> rfl
-
-theorem mem_addLines {L : Finset (ℕ × ℕ)} {j : ι} {p : ℕ × ℕ} :
-    p ∈ (X.addLines i L).lines (some j) none ↔ p ∈ X.lines (some j) none ∨
+/-- The lines of a plane after `L` is added to plane `i`. -/
+theorem mem_addLines {L : Finset (ℕ × ℕ)} :
+    p ∈ (X.addLines (some i) none L).lines (some j) none ↔ p ∈ X.lines (some j) none ∨
       j = i ∧ p ∈ L ∧ p.1 < (X.word (some j)).length ∧ p.2 < (X.word none).length := by
   obtain ⟨p, q⟩ := p
-  have hX (h : (p, q) ∈ X.lines (some j) none) :
-      p < (X.word (some j)).length ∧ q < (X.word none).length :=
-    ⟨Link.lt_left h, Link.lt_right h⟩
-  rcases eq_or_ne j i with rfl | hj
-  · simp only [addLines, lines_ofPlanes, ite_true, Finset.mem_filter, Finset.mem_union,
-      true_and]
-    tauto
-  · simp only [addLines, lines_ofPlanes, hj, ite_false, Finset.mem_filter, false_and, or_false]
-    tauto
+  refine (link_addLines (X := X) (i := some i) (j := none) (i' := some j) (j' := none)
+    (p := p) (q := q) (L := L)).trans ?_
+  constructor
+  · rintro (h | ⟨-, ⟨hj, -, hL, hp, hq⟩ | ⟨hj, -⟩⟩)
+    · exact .inl h
+    · obtain rfl := Option.some.inj hj
+      exact .inr ⟨rfl, hL, hp, hq⟩
+    · exact absurd hj (Option.some_ne_none j)
+  · rintro (h | ⟨rfl, hL, hp, hq⟩)
+    · exact .inl h
+    · exact .inr ⟨Option.some_ne_none _, .inl ⟨rfl, rfl, hL, hp, hq⟩⟩
 
-/-- Adding no lines leaves the lines of every plane as they were. -/
-@[simp] theorem lines_addLines_empty (j : ι) :
-    (X.addLines i ∅).lines (some j) none = X.lines (some j) none :=
-  Finset.ext fun p ↦ by simp [mem_addLines]
-
-/-- Adding no lines to a representation whose planes are not linked to one another changes
-nothing. -/
-theorem addLines_empty (h : ∀ j j', X.lines (some j) (some j') = ∅) : X.addLines i ∅ = X :=
-  (congrArg (ofPlanes _ _) (funext fun j ↦ by split_ifs <;> simp)).trans (ofPlanes_eta X h)
-
-theorem mem_filterLines {P : ℕ × ℕ → Prop} [DecidablePred P] {j : ι} {p : ℕ × ℕ} :
-    p ∈ (X.filterLines i P).lines (some j) none ↔
+/-- The lines of a plane after the lines of plane `i` are filtered by `P`. -/
+theorem mem_filterLines {P : ℕ × ℕ → Prop} [DecidablePred P] :
+    p ∈ (X.filterLines (some i) none P).lines (some j) none ↔
       p ∈ X.lines (some j) none ∧ (j = i → P p) := by
   obtain ⟨p, q⟩ := p
-  have hX (h : (p, q) ∈ X.lines (some j) none) :
-      p < (X.word (some j)).length ∧ q < (X.word none).length :=
-    ⟨Link.lt_left h, Link.lt_right h⟩
-  rcases eq_or_ne j i with rfl | hj
-  · simp only [filterLines, lines_ofPlanes, ite_true, Finset.mem_filter, forall_const]
-    tauto
-  · simp only [filterLines, lines_ofPlanes, hj, ite_false, Finset.mem_filter, false_imp_iff,
-      and_true]
-    tauto
+  refine (link_filterLines (X := X) (i := some i) (j := none) (i' := some j) (j' := none)
+    (p := p) (q := q) (P := P)).trans (and_congr_right fun _ ↦ ?_)
+  exact ⟨fun h hj ↦ h.1 (congrArg some hj) rfl, fun h ↦ ⟨fun hj _ ↦ h (Option.some.inj hj),
+    fun hj ↦ absurd hj (Option.some_ne_none j)⟩⟩
 
 end Lines
 
@@ -341,14 +315,18 @@ theorem mapMelody_eraseSlot (k : ℕ) :
     rcases i with _ | i <;> rcases j with _ | j <;> simp [Link, mapMelody, eraseSlot, ofPlanes]
 
 theorem mapMelody_addLines [DecidableEq ι] (i : ι) (L : Finset (ℕ × ℕ)) :
-    (X.addLines i L).mapMelody φ = (X.mapMelody φ).addLines i L :=
+    (X.addLines (some i) none L).mapMelody φ = (X.mapMelody φ).addLines (some i) none L :=
   ext (funext fun j ↦ by cases j <;> rfl) fun a b p q ↦ by
-    rcases a with _ | a <;> rcases b with _ | b <;> simp [Link, mapMelody, addLines, ofPlanes]
+    show (X.addLines (some i) none L).Link a b p q ↔ _
+    rw [link_addLines, link_addLines]
+    simp [Link]
 
 theorem mapMelody_filterLines [DecidableEq ι] (i : ι) (P : ℕ × ℕ → Prop) [DecidablePred P] :
-    (X.filterLines i P).mapMelody φ = (X.mapMelody φ).filterLines i P :=
+    (X.filterLines (some i) none P).mapMelody φ = (X.mapMelody φ).filterLines (some i) none P :=
   ext (funext fun j ↦ by cases j <;> rfl) fun a b p q ↦ by
-    rcases a with _ | a <;> rcases b with _ | b <;> simp [Link, mapMelody, filterLines, ofPlanes]
+    show (X.filterLines (some i) none P).Link a b p q ↔ _
+    rw [link_filterLines, link_filterLines]
+    simp [Link]
 
 end Sponsor
 

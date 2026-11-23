@@ -52,8 +52,6 @@ that hosting inverts realization.
 
 ## TODO
 
-* `AR.hostedOn` on planes is `Reads` on a star of tiers, and the line edits of
-  `Multiplanar.lean` are `addLine` and `eraseLine` there.
 * The graph of a tree of tiers is acyclic, so by `AR.noCrossing_iff_hasIntervalOrder_of_isAcyclic`
   a representation whose lines run along it obeys the No-Crossing Constraint exactly when it has
   an interval order.

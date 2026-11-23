@@ -64,12 +64,12 @@ variable [DecidableEq ι]
 
 /-- The match with the lines `L` added to plane `i`. -/
 def link (L : List (ℕ × ℕ)) : AR (Multiplanar ι (Sponsored α M) (Sponsored Slot M)) :=
-  f.addLines i L.toFinset
+  f.addLines (some i) none L.toFinset
 
 /-- The match with the lines of plane `i` on slot `s` erased, as a language-particular rule erases
 them before the conventions apply again. -/
 def delink (s : ℕ) : AR (Multiplanar ι (Sponsored α M) (Sponsored Slot M)) :=
-  f.filterLines i (·.2 ≠ s)
+  f.filterLines (some i) none (·.2 ≠ s)
 
 theorem link_mapMelody (L : List (ℕ × ℕ)) : (f.mapMelody φ).link i L = (f.link i L).mapMelody φ :=
   (mapMelody_addLines f φ i _).symm
