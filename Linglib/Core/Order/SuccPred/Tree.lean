@@ -17,7 +17,8 @@ parent of an element as its predecessor. This file goes the other way. A `Parent
 `parent : α → α` with a `root` that is its own parent and that every element reaches by iterating
 the map. We define the ancestorship order `a ≤ b ↔ ∃ n, parent^[n] b = a`, for which the root is
 `⊥` and the parent is `Order.pred`, and the predecessor is archimedean, so that the order is a
-rooted tree in mathlib's sense. On a finite type the order is decidable.
+rooted tree in mathlib's sense. On a finite type the order is decidable. The `depth` of an element
+is the number of steps from it to the root, one more than the depth of its parent.
 
 `[UPSTREAM]` candidate for `Mathlib/Order/SuccPred/Tree.lean`.
 -/
@@ -128,5 +129,41 @@ theorem isPredArchimedean :
     ⟨fun h ↦ let ⟨n, _, hn⟩ := List.mem_iterate.1 h; ⟨n, hn.symm⟩,
       fun h ↦ List.mem_iterate.2 <|
         (Function.exists_iterate_eq_lt_card t.parent h).imp fun _ hn ↦ ⟨hn.1, hn.2.symm⟩⟩
+
+/-! ### Depth -/
+
+open Classical in
+/-- The depth of an element: the number of steps to the root. -/
+noncomputable def depth (a : α) : ℕ := Nat.find (t.exists_iterate_eq_root a)
+
+open Classical in
+theorem iterate_depth (a : α) : t.parent^[t.depth a] a = t.root :=
+  Nat.find_spec (t.exists_iterate_eq_root a)
+
+open Classical in
+theorem depth_le {a : α} {n : ℕ} (h : t.parent^[n] a = t.root) : t.depth a ≤ n :=
+  Nat.find_min' (t.exists_iterate_eq_root a) h
+
+theorem depth_eq_zero_iff {a : α} : t.depth a = 0 ↔ a = t.root := by
+  constructor
+  · intro h
+    have := t.iterate_depth a
+    rwa [h] at this
+  · rintro rfl
+    exact Nat.le_zero.1 (t.depth_le rfl)
+
+theorem depth_eq_depth_parent_add_one {a : α} (ha : a ≠ t.root) :
+    t.depth a = t.depth (t.parent a) + 1 := by
+  apply le_antisymm
+  · exact t.depth_le (by rw [Function.iterate_succ_apply]; exact t.iterate_depth _)
+  · obtain ⟨n, hn⟩ := Nat.exists_eq_succ_of_ne_zero (mt t.depth_eq_zero_iff.1 ha)
+    have h := t.iterate_depth a
+    rw [hn, Function.iterate_succ_apply] at h
+    rw [hn]
+    exact Nat.succ_le_succ (t.depth_le h)
+
+theorem depth_lt_card [Fintype α] (a : α) : t.depth a < Fintype.card α := by
+  obtain ⟨n, hn, h⟩ := Function.exists_iterate_eq_lt_card t.parent (t.exists_iterate_eq_root a)
+  exact (t.depth_le h).trans_lt hn
 
 end ParentTree

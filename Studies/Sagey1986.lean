@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.Autosegmental.IntervalOrder
 public import Linglib.Phonology.FeatureGeometry.Linking
+public import Linglib.Phonology.Prosody.Structure.Autosegmental
 public import Linglib.Phonology.Autosegmental.TwoTier
 public import Linglib.Phonology.Segmental.FeatureClass
 public import Studies.Clements1985
@@ -44,6 +45,11 @@ which excludes the contour segment, the geminate and the discontinuous link. Und
 `Autosegmental.AR.HasIntervalOrder`, all three can be placed, and by
 `Autosegmental.AR.HasIntervalOrder.noCrossing` a representation that can be placed has no
 crossing lines, so that the No-Crossing Constraint is not a separate condition.
+
+Lines of dominance, as in metrical structure, are another matter. Read as domination, by
+`Autosegmental.AR.toStructure`, a node shared by two slots is allowed, as an ambisyllabic
+segment is, and a shared node with two tokens below it is not, though none of its lines cross
+(`noCrossing_toStructure_shared`).
 
 ## Implementation notes
 
@@ -416,5 +422,26 @@ theorem hasIntervalOrder_contour_geminate_discontinuous :
 -- (23)
 theorem not_hasIntervalOrder_crossing : ¬ crossing.HasIntervalOrder :=
   fun h ↦ absurd h.noCrossing (by decide)
+
+/-! ### Lines as dominance -/
+
+/-- Three tiers in a chain: the slots, a node under them and a feature under the node. -/
+def chain : ParentTree (Fin 3) := .ofIterate (fun | 0 => 0 | 1 => 0 | 2 => 1) 0 2 (by decide)
+
+/-- Two slots sharing one node, which has one token below it. -/
+def sharedNode : AR fun _ : Fin 3 ↦ Unit :=
+  AR.fromRel (fun i ↦ if i = 0 then [(), ()] else [()])
+    fun i j p q ↦ (i = 0 ∧ j = 1 ∧ q = 0) ∨ (i = 1 ∧ j = 2 ∧ p = 0)
+
+/-- Two slots sharing one node, which has two tokens below it. -/
+def sharedContour : AR fun _ : Fin 3 ↦ Unit :=
+  AR.fromRel (fun i ↦ if i = 1 then [()] else [(), ()])
+    fun i j p q ↦ (i = 0 ∧ j = 1 ∧ q = 0) ∨ (i = 1 ∧ j = 2 ∧ p = 0)
+
+-- No line of either crosses another; read as dominance, the second has a crossing.
+theorem noCrossing_toStructure_shared :
+    sharedNode.NoCrossing ∧ (sharedNode.toStructure chain).NoCrossing ∧
+      sharedContour.NoCrossing ∧ ¬ (sharedContour.toStructure chain).NoCrossing := by
+  decide
 
 end Sagey1986
