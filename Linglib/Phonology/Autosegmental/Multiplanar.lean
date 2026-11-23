@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Data.Fintype.Option
 public import Linglib.Phonology.Autosegmental.Morph
+public import Linglib.Phonology.Autosegmental.TierTree
 
 /-!
 # Multiplanar representations
@@ -20,6 +21,12 @@ slots, the word of each plane and the lines of each plane;
 planes stand in no order, so the No-Crossing Constraint
 [holds plane by plane](##Autosegmental.AR.noCrossing_iff_planes), and morphs on separate planes
 commute (`AR.commute_of_disjoint_support`).
+
+The tiers form a tree, `AR.planes`, with the slots at the root and every plane hanging from
+them. A slot dominates the autosegments linked to it (`dominates_planes_iff`), and it reads, in
+the sense of `AR.Reads`, the autosegments that `X.hostedOn i s` lists for each plane
+(`reads_planes_iff`). The list also keeps their order on the plane and how many there are, which
+reading does not.
 
 ## Implementation notes
 
@@ -121,6 +128,39 @@ theorem lines_eq_empty_of_word {i : ι} (h : X.word (some i) = []) :
 /-- `X.hostedOn i s` lists, in tier order, the autosegments of plane `i` linked to slot `s`. -/
 def hostedOn (i : ι) (s : ℕ) : List α :=
   ((X.word (some i)).zipIdx.filter fun x ↦ (x.2, s) ∈ X.lines (some i) none).map Prod.fst
+
+/-! ### The tree of tiers -/
+
+section Planes
+
+/-- The tree of tiers of a multiplanar representation: every plane hangs from the slots. -/
+def planes : ParentTree (Option ι) := .ofIterate (fun _ ↦ none) none 1 fun _ ↦ rfl
+
+@[simp] theorem planes_root : (planes : ParentTree (Option ι)).root = none := rfl
+
+@[simp] theorem planes_parent (j : Option ι) : (planes : ParentTree (Option ι)).parent j = none :=
+  rfl
+
+variable {X} [Fintype ι] [DecidableEq ι] {i : ι} {s q : ℕ} {a : α}
+
+/-- A slot dominates the autosegments linked to it. -/
+theorem dominates_planes_iff : X.Dominates planes s (some i) q ↔ X.Link (some i) none q s := by
+  rw [dominates_iff_dom]
+  refine (dom_root_iff_mem_children (T := planes) (j := some i) rfl).trans ⟨?_, fun h ↦ .inr ?_⟩
+  · rintro (⟨h, -⟩ | h)
+    · exact absurd h (Option.some_ne_none i)
+    · exact (mem_children.1 h).2.2.symm
+  · exact mem_children.2 ⟨rfl, Option.some_ne_none i, h.symm⟩
+
+/-- A slot reads the autosegments it hosts. -/
+theorem reads_planes_iff : X.Reads planes s (some i) a ↔ a ∈ X.hostedOn i s := by
+  rw [reads_iff_exists_dom]
+  simp only [← dominates_iff_dom, dominates_planes_iff, hostedOn, List.mem_map, List.mem_filter,
+    List.mem_zipIdx_iff_getElem?, decide_eq_true_eq, Prod.exists, exists_and_right,
+    exists_eq_right]
+  exact ⟨fun ⟨q, hl, ha⟩ ↦ ⟨q, ha, hl⟩, fun ⟨q, ha, hl⟩ ↦ ⟨q, hl, ha⟩⟩
+
+end Planes
 
 /-- `X.eraseSlot k` deletes slot `k` with every line it bears, moving the lines of the later
 slots one position left. -/

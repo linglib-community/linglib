@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Logic.Modal.Kripke
+public import Linglib.Phonology.Autosegmental.Multiplanar
 public import Linglib.Phonology.Autosegmental.OCP
 public import Linglib.Phonology.Autosegmental.TierTree
 
@@ -38,7 +39,8 @@ shares what copying duplicates.
 The OCP-merging collapse of a tier that no tier hangs from is bisimilar to the representation,
 each position related to its run index (`exists_isBisimulation_collapse`), so it changes what no
 slot reads (`reads_collapse_iff`). On two tiers, collapsing the autosegments changes what no
-slot surfaces with (`surfacesWith_collapse_upper_iff`).
+slot surfaces with (`surfacesWith_collapse_upper_iff`), and collapsing a plane of a multiplanar
+representation leaves each slot hosting the same autosegments (`mem_hostedOn_collapse_iff`).
 
 A phonological frame of [bird-blackburn-1991] has precedence, overlap and dominance between its
 nodes, with a modality for each and the labels of nodes as propositional variables;
@@ -562,5 +564,21 @@ theorem surfacesWith_collapse_upper_iff :
   exact reads_collapse_iff (fun _ _ ↦ (by decide : lower ≠ upper)) (by decide)
 
 end TwoTier
+
+section Planes
+
+universe u
+
+variable {ι : Type*} {α β : Type u} [Fintype ι] [DecidableEq ι] {X : AR (Multiplanar ι α β)}
+  {i : ι} {s : ℕ} {a : α}
+
+/-- Collapsing a plane leaves each slot hosting the same autosegments, though not in the same
+number. -/
+theorem mem_hostedOn_collapse_iff [DecidableEq α] [DecidableEq β] {j : ι} :
+    a ∈ (X.collapse (some i)).hostedOn j s ↔ a ∈ X.hostedOn j s := by
+  rw [← reads_planes_iff, ← reads_planes_iff]
+  exact reads_collapse_iff (fun _ _ ↦ (Option.some_ne_none i).symm) (Option.some_ne_none i)
+
+end Planes
 
 end Autosegmental.AR

@@ -211,6 +211,26 @@ instance {v w : ι × ℕ} : Decidable (X.Dom T v w) := decidable_of_iff _ dom_i
 theorem dominates_iff_dom {k q : ℕ} {j : ι} : X.Dominates T k j q ↔ X.Dom T (T.root, k) (j, q) :=
   dom_iff_mem_descendants.symm
 
+/-- Nothing but a slot itself leads to it by descending lines. -/
+theorem Dom.eq_of_root {v : ι × ℕ} {q : ℕ} (h : X.Dom T v (T.root, q)) : v = (T.root, q) := by
+  rcases Relation.ReflTransGen.cases_tail h with h | ⟨u, -, hc⟩
+  · exact h.symm
+  · exact absurd rfl (mem_children.1 hc).2.1
+
+/-- On a tier hanging from the slots, a slot dominates the tokens it has a line to. -/
+theorem dom_root_iff_mem_children {j : ι} {k q : ℕ} (hp : T.parent j = T.root) :
+    X.Dom T (T.root, k) (j, q) ↔ j = T.root ∧ q = k ∨ (j, q) ∈ X.children T (T.root, k) := by
+  constructor
+  · intro h
+    rcases Relation.ReflTransGen.cases_tail h with he | ⟨⟨i, p⟩, hu, hc⟩
+    · exact .inl (Prod.mk.inj he)
+    · obtain rfl : T.parent j = i := (mem_children.1 hc).1
+      rw [hp] at hu hc
+      obtain ⟨-, rfl⟩ := Prod.mk.inj (Dom.eq_of_root hu)
+      exact .inr hc
+  · rintro (⟨rfl, rfl⟩ | h)
+    exacts [.refl, .single h]
+
 /-- A slot reads a label on a tier when descending lines lead from it to a token of the tier
 with that label. -/
 theorem reads_iff_exists_dom {k : ℕ} {j : ι} {b : τ j} :
