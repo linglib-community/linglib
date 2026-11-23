@@ -161,8 +161,7 @@ theorem nasal_mem_featureClass_iff (a : Node) :
     .nasal ∈ featureClass node a ↔ a ≤ .softPalate := by
   revert a; decide
 
-/-- Distinct articulators have disjoint classes, so a feature of one, such as rounding, depends
-on no node of another, such as height. -/
+-- (124)
 theorem disjoint_featureClass_of_articulators {a b : Node} (ha : a ∈ Node.articulators)
     (hb : b ∈ Node.articulators) (hab : a ≠ b) :
     Disjoint (featureClass node a : Finset Feature) (featureClass node b) :=
