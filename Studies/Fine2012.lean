@@ -5,9 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Data.Set.Semiring
+public import Mathlib.Data.Set.Sups
 public import Mathlib.Order.Concept
-public import Linglib.Core.Algebra.Order.SupMonoid
 public import Linglib.Core.Order.BoundedComplete
 
 /-!
@@ -15,10 +14,10 @@ public import Linglib.Core.Order.BoundedComplete
 
 States are ordered by parthood, and the fusion of some states exists just in case they are
 compatible: the order is bounded complete, with a null state `⊥`. With a failed fusion adjoined
-the states form a commutative monoid with zero, `Fused S`, and a statement is verified by a set
-of states, an element of `SetSemiring (Fused S)`: a conjunction `A * B` by the fusions of a
-verifier of each conjunct, a disjunction `A + B + A * B` by the verifiers of either disjunct or
-of their conjunction, `⊤` by the null state alone and `⊥` by nothing.
+as a top element, `WithTop S` is a join-semilattice, and a statement is verified by a set of its
+elements: a conjunction by the pointwise fusions `A ⊻ B` of a verifier of each conjunct, a
+disjunction by the verifiers `A ∪ B ∪ A ⊻ B` of either disjunct or of their conjunction, `⊤` by
+the null state alone, `{⊥}`, and `⊥` by nothing.
 
 For a transition relation `outcome w t u`, saying that `u` is a possible outcome of imposing
 the state `t` on the world `w`, the counterfactual `would outcome A C` is true at `w` when every
@@ -55,7 +54,7 @@ verifier of the new consequent.
 
 namespace Fine2012
 
-open scoped IsBoundedComplete Pointwise
+open scoped IsBoundedComplete SetFamily
 
 /-! ### The truth clause and its rules -/
 
@@ -63,65 +62,59 @@ section Clause
 
 variable {S W : Type*} [PartialOrder S] [OrderBot S] [IsBoundedComplete S]
 
-/-- States with a failed fusion adjoined, under fusion. -/
-abbrev Fused (S : Type*) := SupMonoid (WithTop S)
-
-/-- A state, among the fused states. -/
-def st (t : S) : Fused S := SupMonoid.of (t : WithTop S)
-
-theorem st_mul_st_eq_iff {a b c : S} : st a * st b = st c ↔ IsLUB {a, b} c :=
-  IsBoundedComplete.coe_sup_coe_eq_coe_iff
-
 /-- The state `u` inexactly verifies `C`: it contains an exact verifier. -/
-def Inexact (C : SetSemiring (Fused S)) (u : S) : Prop := ∃ c, st c ∈ C.toSet ∧ c ≤ u
+def Inexact (C : Set (WithTop S)) (u : S) : Prop := ∃ c : S, ↑c ∈ C ∧ c ≤ u
 
 /-- `A > C` is true at `w` when `u` inexactly verifies `C` whenever `t` exactly verifies `A` and
 `u` is a possible outcome of `t` at `w`. -/
-def would (outcome : W → S → S → Prop) (A C : SetSemiring (Fused S)) : Set W :=
-  upperPolar (fun a w ↦ ∀ t, a = st t → ∀ u, outcome w t u → Inexact C u) A.toSet
+def would (outcome : W → S → S → Prop) (A C : Set (WithTop S)) : Set W :=
+  upperPolar (fun a w ↦ ∀ t : S, a = ↑t → ∀ u, outcome w t u → Inexact C u) A
 
-variable {outcome : W → S → S → Prop} {A A' B C C' : SetSemiring (Fused S)}
+variable {outcome : W → S → S → Prop} {A A' B C C' : Set (WithTop S)}
 
 omit [OrderBot S] [IsBoundedComplete S] in
-theorem would_add : would outcome (A + B) C = would outcome A C ∩ would outcome B C :=
+theorem would_union : would outcome (A ∪ B) C = would outcome A C ∩ would outcome B C :=
   upperPolar_union ..
 
+omit [OrderBot S] in
 /-- Inclusive Disjunction, with its converse. -/
 theorem inclusive_disjunction :
-    would outcome (A + B + A * B) C =
-      would outcome A C ∩ would outcome B C ∩ would outcome (A * B) C := by
-  rw [would_add, would_add]
+    would outcome (A ∪ B ∪ A ⊻ B) C =
+      would outcome A C ∩ would outcome B C ∩ would outcome (A ⊻ B) C := by
+  rw [would_union, would_union]
 
+omit [OrderBot S] in
 /-- Conjunction: fusing a verifier of each consequent inside the outcome uses BC. -/
-theorem conjunction : would outcome A B ∩ would outcome A C ⊆ would outcome A (B * C) := by
+theorem conjunction : would outcome A B ∩ would outcome A C ⊆ would outcome A (B ⊻ C) := by
   rintro w ⟨hB, hC⟩ a ha t rfl u hu
   obtain ⟨b, hb, hbu⟩ := hB ha t rfl u hu
   obtain ⟨c, hc, hcu⟩ := hC ha t rfl u hu
   obtain ⟨d, hd⟩ := IsBoundedComplete.exists_isLUB_of_bddAbove b c (Compat.of_le hbu hcu)
-  exact ⟨d, ⟨_, hb, _, hc, st_mul_st_eq_iff.mpr hd⟩,
+  exact ⟨d, Set.mem_sups.mpr ⟨_, hb, _, hc, IsBoundedComplete.coe_sup_coe_eq_coe_iff.mpr hd⟩,
     hd.2 (mem_upperBounds_pair.mpr ⟨hbu, hcu⟩)⟩
 
 omit [OrderBot S] [IsBoundedComplete S] in
 -- Exact Strengthening
-theorem exact_strengthening (h : A' ≤ A) : would outcome A C ⊆ would outcome A' C :=
+theorem exact_strengthening (h : A' ⊆ A) : would outcome A C ⊆ would outcome A' C :=
   upperPolar_anti _ h
 
 omit [OrderBot S] [IsBoundedComplete S] in
 -- Inexact Weakening
-theorem inexact_weakening (h : ∀ c, st c ∈ C.toSet → Inexact C' c) :
+theorem inexact_weakening (h : ∀ c : S, ↑c ∈ C → Inexact C' c) :
     would outcome A C ⊆ would outcome A C' := by
   intro w hw a ha t ht u hu
   obtain ⟨c, hc, hcu⟩ := hw ha t ht u hu
   obtain ⟨c', hc', hc'c⟩ := h c hc
   exact ⟨c', hc', hc'c.trans hcu⟩
 
+omit [IsBoundedComplete S] in
 -- Triviality
-theorem triviality_top : would outcome A 1 = Set.univ :=
+theorem triviality_top : would outcome A {⊥} = Set.univ :=
   Set.eq_univ_of_forall fun _ _ _ _ _ _ _ ↦ ⟨⊥, rfl, bot_le⟩
 
 omit [OrderBot S] [IsBoundedComplete S] in
 -- Triviality
-theorem triviality_bot : would outcome 0 C = Set.univ :=
+theorem triviality_bot : would outcome ∅ C = Set.univ :=
   upperPolar_empty _
 
 omit [OrderBot S] [IsBoundedComplete S] in

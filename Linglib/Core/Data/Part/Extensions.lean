@@ -5,9 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Algebra.GroupWithZero.Hom
 public import Mathlib.Data.Part
-public import Linglib.Core.Algebra.Order.SupMonoid
 public import Linglib.Core.Order.BoundedComplete
 
 /-!
@@ -17,10 +15,9 @@ A family `s : ∀ v, Part (α v)` of partial values is a piece of information ab
 families `x : ∀ v, α v`: it holds of those that extend it, `Part.piExtensions s`, the `x` with
 `s ≤ fun v ↦ Part.some (x v)`. A family that says more has fewer extensions; the extensions of a
 join are the common extensions (`Part.piExtensions_of_isLUB`); and two families have a common
-extension exactly when they are compatible (`Part.piExtensions_inter_nonempty_iff`). So sending
-a family to its extensions, and a failed join to the empty set, is a homomorphism of monoids
-with zero from the families with failure adjoined, under join, to the sets of total families
-under intersection (`Part.piExtensionsHom`).
+extension exactly when they are compatible (`Part.piExtensions_inter_nonempty_iff`). So with a
+failed join adjoined as a top element with no extensions, the extensions of a join are the
+intersection of the extensions (`Part.piExtensionsTop_sup`).
 -/
 
 @[expose] public section
@@ -107,15 +104,5 @@ theorem piExtensionsTop_sup [∀ v, Nonempty (α v)] (a b : WithTop (∀ v, Part
       · rw [IsBoundedComplete.coe_sup_coe_eq_top_iff.mpr h]
         exact (Set.not_nonempty_iff_eq_empty.mp
           (mt piExtensions_inter_nonempty_iff.mp h)).symm
-
-/-- Sending a family to its extensions, and a failed join to the empty set, takes joins to
-intersections. -/
-noncomputable def piExtensionsHom [∀ v, Nonempty (α v)] :
-    SupMonoid (WithTop (∀ v, Part (α v))) →*₀ SupMonoid (Set (∀ v, α v))ᵒᵈ where
-  toFun a := SupMonoid.of (OrderDual.toDual (piExtensionsTop (SupMonoid.of.symm a)))
-  map_zero' := rfl
-  map_one' := congrArg (fun e ↦ SupMonoid.of (OrderDual.toDual e)) piExtensions_bot
-  map_mul' a b := congrArg (fun e ↦ SupMonoid.of (OrderDual.toDual e))
-    (piExtensionsTop_sup (SupMonoid.of.symm a) (SupMonoid.of.symm b))
 
 end Part

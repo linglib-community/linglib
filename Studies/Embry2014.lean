@@ -79,14 +79,10 @@ def outcome (_ : Unit) (t u : St) : Prop :=
     u = Function.update (snowedTo d) V.ski (Part.some (decide (d = .eightInches)))
 
 /-- *It snowed*, verified by each positive snowfall. -/
-def snowed : SetSemiring (Fused St) :=
-  SetSemiring.ofSet {st (snowedTo .eightInches)} + SetSemiring.ofSet {st (snowedTo .hundredFeet)}
+def snowed : Set (WithTop St) := {↑(snowedTo .eightInches), ↑(snowedTo .hundredFeet)}
 
 /-- *I went skiing*. -/
-def skis : SetSemiring (Fused St) := SetSemiring.ofSet {st (skiing true)}
-
-theorem st_injective : Function.Injective (st : St → Fused St) :=
-  fun _ _ h ↦ WithTop.coe_injective h
+def skis : Set (WithTop St) := {↑(skiing true)}
 
 theorem snowedTo_injective : Function.Injective snowedTo := fun d e h ↦ by
   have := congrFun h V.snow
@@ -99,7 +95,7 @@ theorem inexact_skis_iff {d : Depth} {u : St} (hu : outcome () (snowedTo d) u) :
   obtain rfl := snowedTo_injective he
   constructor
   · rintro ⟨c, hc, hcu⟩
-    obtain rfl : c = skiing true := st_injective hc
+    obtain rfl : c = skiing true := WithTop.coe_injective hc
     have := hcu V.ski true (by simp [skiing])
     simpa using this
   · rintro rfl
@@ -108,20 +104,20 @@ theorem inexact_skis_iff {d : Depth} {u : St} (hu : outcome () (snowedTo d) u) :
 
 -- true of the eight-inch verifier
 theorem would_eightInches :
-    () ∈ would outcome (SetSemiring.ofSet {st (snowedTo .eightInches)}) skis := by
+    () ∈ would outcome {(↑(snowedTo .eightInches) : WithTop St)} skis := by
   rintro a rfl t ht u hu
-  obtain rfl := st_injective ht
+  obtain rfl := WithTop.coe_injective ht
   exact (inexact_skis_iff hu).mpr rfl
 
 -- (3b)
 theorem not_would_hundredFeet :
-    () ∉ would outcome (SetSemiring.ofSet {st (snowedTo .hundredFeet)}) skis := fun h ↦
+    () ∉ would outcome {(↑(snowedTo .hundredFeet) : WithTop St)} skis := fun h ↦
   absurd ((inexact_skis_iff ⟨_, rfl, rfl⟩).mp (h rfl _ rfl _ ⟨_, rfl, rfl⟩)) (by decide)
 
 /-- (3a) is false on the truth clause of exact semantics: the outcome of the hundred-foot
 verifier contains no skiing. -/
 theorem not_would_snowed : () ∉ would outcome snowed skis := fun h ↦
-  not_would_hundredFeet ((Set.ext_iff.mp would_add ()).mp h).2
+  not_would_hundredFeet fun _ ha ↦ h (Set.mem_insert_of_mem _ ha)
 
 /-! ### The dilemma for a repair by closeness -/
 
