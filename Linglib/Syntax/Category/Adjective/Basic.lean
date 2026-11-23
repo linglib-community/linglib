@@ -127,6 +127,7 @@ structure AntonymPair where
   negLexicalStandard : Option PositiveStandard := none
   /-- The positive pole's evaluative valence; the negative pole's is its `flip`. -/
   evaluativeValence : Option EvaluativeValence := none
+  deriving DecidableEq, Repr
 
 namespace AntonymPair
 
