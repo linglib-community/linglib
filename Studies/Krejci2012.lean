@@ -43,6 +43,8 @@ stay with the causee of the periphrastic one.
 
 @[expose] public section
 
+universe u
+
 namespace Krejci2012
 
 open Event (τ)
@@ -54,7 +56,7 @@ open scoped SetRel ModalLogic
 
 section Model
 
-variable {Entity State T E : Type*} [LinearOrder T] [TemporalTrace E T]
+variable {Entity T : Type*} {State E : Type u} [LinearOrder T] [TemporalTrace E T]
   (M : ArgumentStructure.EventStructure.Model State E)
   (effector manip : Entity → E → Prop) (S : Entity → State → Prop)
 
@@ -102,11 +104,11 @@ theorem exists_manip_of_eat (h : eat M manip S x e) : ∃ w, manip x w ∧ w ~[M
 
 -- (45)
 theorem exists_manip_of_feed (h : feed M manip S y x e) : ∃ w, manip y w ∧ w ~[M.cause] e :=
-  let ⟨w, h₁, h₂, _⟩ := h; ⟨w, h₁, h₂⟩
+  let ⟨w, h₁, h₂, _⟩ := (causative_iff M manip S).1 h; ⟨w, h₁, h₂⟩
 
 -- (44c)
 theorem inchoative_of_feed (h : feed M manip S y x e) : ◇[M.become] (S x) e :=
-  let ⟨_, _, _, h⟩ := h; h
+  let ⟨_, _, _, h⟩ := (causative_iff M manip S).1 h; h
 
 -- (47a)
 theorem exists_manip_of_makeEat (h : makeEat M effector manip S z x e) :
@@ -189,8 +191,8 @@ manipulated no food (44a). -/
 theorem not_eat_and_feed :
     ¬ eat spoonFeeding spoonManip digesting .john e₀ ∧
       feed spoonFeeding spoonManip digesting .mary .john e₀ :=
-  ⟨fun ⟨_, ⟨h, _⟩, _⟩ ↦ Participant.noConfusion h,
-    ⟨w₀, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, 2, ⟨⟨w₀, rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩⟩
+  ⟨fun h ↦ let ⟨_, ⟨h, _⟩, _⟩ := (causative_iff _ _ _).1 h; Participant.noConfusion h,
+    (causative_iff _ _ _).2 ⟨w₀, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, 2, ⟨⟨w₀, rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩⟩
 
 /-- Feeding is not making eat, since John, fed, was not made to eat, as whoever is made to eat
 manipulates food ((47a)). -/
@@ -203,9 +205,9 @@ theorem feed_not_makeEat :
 theorem makeEat_not_feed :
     makeEat supervising supEffector supManip digesting .mary .john e₀ ∧
       ¬ feed supervising supManip digesting .mary .john e₀ :=
-  ⟨⟨w₁, Or.inr ⟨rfl, rfl⟩, ⟨Or.inr rfl, rfl⟩, w₀, ⟨rfl, rfl⟩, ⟨Or.inl rfl, rfl⟩, 2,
-      ⟨⟨w₀, Or.inl rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩,
-    fun ⟨_, ⟨h, _⟩, _⟩ ↦ Participant.noConfusion h⟩
+  ⟨⟨w₁, Or.inr ⟨rfl, rfl⟩, ⟨Or.inr rfl, rfl⟩, (causative_iff _ _ _).2
+      ⟨w₀, ⟨rfl, rfl⟩, ⟨Or.inl rfl, rfl⟩, 2, ⟨⟨w₀, Or.inl rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩⟩,
+    fun h ↦ let ⟨_, ⟨h, _⟩, _⟩ := (causative_iff _ _ _).1 h; Participant.noConfusion h⟩
 
 -- (113d)
 theorem not_licensesBySelf_inchoative :
@@ -219,10 +221,12 @@ and false on the repetitive one. -/
 theorem restitutive_not_repetitive :
     eat twoMeals twoManip (againState {p | p.2 < p.1} digesting) .john e₁ ∧
       ¬ Repetitive (eat twoMeals twoManip digesting) .john e₁ :=
-  ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩, 5, ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩⟩, rfl⟩,
+  ⟨(causative_iff _ _ _).2 ⟨w₂, Or.inr ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩, 5,
+      ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩⟩, rfl⟩,
       Presupposition.again_eq_true_iff.2 ⟨⟨2, by decide, rfl, .inl rfl⟩, rfl, .inr rfl⟩⟩,
     fun h ↦ by
-      obtain ⟨⟨e', hb, w, hm, hc, _⟩, _⟩ := Presupposition.again_eq_true_iff.1 h
+      obtain ⟨⟨e', hb, he'⟩, _⟩ := Presupposition.again_eq_true_iff.1 h
+      obtain ⟨w, hm, hc, _⟩ := (causative_iff _ _ _).1 he'
       rcases hm with ⟨h, _⟩ | ⟨_, hw⟩
       · exact Participant.noConfusion h
       rcases hc with ⟨h, _⟩ | ⟨_, he⟩
