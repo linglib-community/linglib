@@ -262,9 +262,9 @@ theorem negative_correlation_replicates :
     ∀ r ∈ correlations, r.level = .triggerTypes → r.r.toRat < 0 := by
   decide +kernel
 
-open SolstadBott2022 in
 theorem shared_bias_distinct_projectivity :
-    VerbClass.agentEvocator.icausBias = VerbClass.expStim.icausBias ∧
+    (SolstadBott2022.ICaus SolstadBott2022.judgment .object ∧
+        SolstadBott2022.ICaus ArgumentStructure.psychState .object) ∧
       ∀ o ∈ blockTwo, ∀ e ∈ blockTwo, o.experiment = .exp2 → e.experiment = .exp2 →
         o.trigger = .occasion → e.trigger = .experiencerStimulus →
           e.projectivity.toRat < o.projectivity.toRat :=

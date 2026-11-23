@@ -1,0 +1,567 @@
+{
+ "meta": {
+  "bibkey": "solstad-bott-2022",
+  "method": "experiment",
+  "description": "Four sentence-continuation experiments in German on stimulus-experiencer and experiencer-stimulus verbs. Experiment 1 (52 participants): the referent of continuations after weil 'because' and sodass 'and so'. Experiment 2 (the same participants): the discourse relation and the referent of continuations after a full stop. Experiment 3 (64 participants): the discourse relation of continuations after a full stop that had to be about a marked argument. Experiment 4 (56 participants): the type of explanation or consequence after a connective and a pronoun congruent or incongruent with the connective's bias. The verb gefallen 'appeal to' is excluded throughout.",
+  "rawData": [
+   {
+    "url": "https://osf.io/5ewbd/",
+    "doc": "the data and analyses of the four experiments (note 3)"
+   }
+  ]
+ },
+ "constants": [
+  {
+   "name": "biasCorrelation",
+   "type": "decimal",
+   "value": "-0.94",
+   "doc": "The correlation between the mean I-Caus and I-Cons biases of the verbs in Experiment 1.",
+   "locator": "Section 2.3, p. 1322",
+   "verified": "page-image"
+  }
+ ],
+ "types": [
+  {
+   "name": "VerbClass",
+   "doc": "The two classes of psychological verbs tested, twenty German verbs each.",
+   "levels": [
+    {
+     "name": "stimExp",
+     "label": "STIM-EXP",
+     "doc": "stimulus-experiencer verbs such as ärgern 'annoy', VerbNet class 31.1"
+    },
+    {
+     "name": "expStim",
+     "label": "EXP-STIM",
+     "doc": "experiencer-stimulus verbs such as bewundern 'admire', VerbNet class 31.2"
+    }
+   ]
+  },
+  {
+   "name": "Connective",
+   "doc": "The connectives ending the prompts of Experiments 1 and 4.",
+   "levels": [
+    {
+     "name": "because",
+     "label": "weil",
+     "doc": "'because'"
+    },
+    {
+     "name": "andSo",
+     "label": "sodass",
+     "doc": "'and so'"
+    }
+   ]
+  },
+  {
+   "name": "Position",
+   "doc": "The two arguments of a prompt Name1 verb-ed Name2, in the subject-verb-object reading.",
+   "levels": [
+    {
+     "name": "subject",
+     "label": "subject",
+     "doc": "the first-mentioned argument, NP1"
+    },
+    {
+     "name": "object",
+     "label": "object",
+     "doc": "the second-mentioned argument, NP2"
+    }
+   ]
+  },
+  {
+   "name": "Relation",
+   "doc": "The three most common discourse relations of the continuations after a full stop.",
+   "levels": [
+    {
+     "name": "explanation",
+     "label": "Explanation",
+     "doc": "the continuation passes the weil 'because' insertion test"
+    },
+    {
+     "name": "consequence",
+     "label": "Consequence",
+     "doc": "the continuation passes the sodass 'and so' insertion test"
+    },
+    {
+     "name": "contrast",
+     "label": "Contrast",
+     "doc": "contrast or violated expectation, by the aber 'but' insertion test"
+    }
+   ]
+  },
+  {
+   "name": "Congruency",
+   "doc": "Whether the pronoun ending a prompt of Experiment 4 refers to the argument the connective is biased to.",
+   "levels": [
+    {
+     "name": "congruent",
+     "label": "congruent",
+     "doc": "the pronoun refers to the biased argument"
+    },
+    {
+     "name": "incongruent",
+     "label": "incongruent",
+     "doc": "the pronoun refers to the other argument"
+    }
+   ]
+  }
+ ],
+ "tables": [
+  {
+   "name": "coreference",
+   "structure": "Coreference",
+   "doc": "the referent of the continuations in Experiment 1, by connective and verb class.",
+   "locator": "Table 1, p. 1322",
+   "verified": "page-image",
+   "key": [
+    "connective",
+    "verbClass",
+    "reference"
+   ],
+   "columns": [
+    {
+     "name": "connective",
+     "type": "Connective",
+     "doc": "The connective of the prompt."
+    },
+    {
+     "name": "verbClass",
+     "type": "VerbClass",
+     "doc": "The verb class of the prompt."
+    },
+    {
+     "name": "reference",
+     "type": "Position",
+     "doc": "The argument the continuation refers to."
+    },
+    {
+     "name": "percent",
+     "type": "decimal",
+     "doc": "The percentage of continuations referring to the argument."
+    },
+    {
+     "name": "count",
+     "type": "nat",
+     "doc": "The number of continuations referring to the argument."
+    }
+   ],
+   "rows": [
+    {
+     "connective": "weil",
+     "verbClass": "STIM-EXP",
+     "reference": "subject",
+     "percent": "87.4",
+     "count": 388
+    },
+    {
+     "connective": "weil",
+     "verbClass": "STIM-EXP",
+     "reference": "object",
+     "percent": "12.6",
+     "count": 56
+    },
+    {
+     "connective": "weil",
+     "verbClass": "EXP-STIM",
+     "reference": "subject",
+     "percent": "4.0",
+     "count": 20
+    },
+    {
+     "connective": "weil",
+     "verbClass": "EXP-STIM",
+     "reference": "object",
+     "percent": "96.0",
+     "count": 474
+    },
+    {
+     "connective": "sodass",
+     "verbClass": "STIM-EXP",
+     "reference": "subject",
+     "percent": "4.8",
+     "count": 21
+    },
+    {
+     "connective": "sodass",
+     "verbClass": "STIM-EXP",
+     "reference": "object",
+     "percent": "95.2",
+     "count": 419
+    },
+    {
+     "connective": "sodass",
+     "verbClass": "EXP-STIM",
+     "reference": "subject",
+     "percent": "77.9",
+     "count": 339
+    },
+    {
+     "connective": "sodass",
+     "verbClass": "EXP-STIM",
+     "reference": "object",
+     "percent": "22.1",
+     "count": 96
+    }
+   ]
+  },
+  {
+   "name": "relations",
+   "structure": "RelationShare",
+   "doc": "the share of a discourse relation among the continuations after a full stop in Experiment 2, printed in the text.",
+   "locator": "Section 3.3, p. 1325",
+   "verified": "page-image",
+   "key": [
+    "verbClass",
+    "relation"
+   ],
+   "columns": [
+    {
+     "name": "verbClass",
+     "type": "VerbClass",
+     "doc": "The verb class of the prompt."
+    },
+    {
+     "name": "relation",
+     "type": "Relation",
+     "doc": "The discourse relation of the continuation."
+    },
+    {
+     "name": "percent",
+     "type": "decimal",
+     "doc": "The percentage of continuations with the relation."
+    }
+   ],
+   "rows": [
+    {
+     "verbClass": "STIM-EXP",
+     "relation": "Explanation",
+     "percent": "58.2"
+    },
+    {
+     "verbClass": "STIM-EXP",
+     "relation": "Consequence",
+     "percent": "21.1",
+     "note": "printed as 21.1 with Figure 3 and as 21.4 with the regression on the same page"
+    },
+    {
+     "verbClass": "STIM-EXP",
+     "relation": "Contrast",
+     "percent": "5.8"
+    },
+    {
+     "verbClass": "EXP-STIM",
+     "relation": "Explanation",
+     "percent": "60.2"
+    },
+    {
+     "verbClass": "EXP-STIM",
+     "relation": "Consequence",
+     "percent": "9.9"
+    },
+    {
+     "verbClass": "EXP-STIM",
+     "relation": "Contrast",
+     "percent": "14.8"
+    }
+   ]
+  },
+  {
+   "name": "coreferenceByRelation",
+   "structure": "RelationCoreference",
+   "doc": "the referent of the continuations in Experiment 2, by the discourse relation produced and verb class.",
+   "locator": "Table 3, p. 1326",
+   "verified": "page-image",
+   "key": [
+    "relation",
+    "verbClass",
+    "reference"
+   ],
+   "columns": [
+    {
+     "name": "relation",
+     "type": "Relation",
+     "doc": "The discourse relation of the continuation."
+    },
+    {
+     "name": "verbClass",
+     "type": "VerbClass",
+     "doc": "The verb class of the prompt."
+    },
+    {
+     "name": "reference",
+     "type": "Position",
+     "doc": "The argument the continuation refers to."
+    },
+    {
+     "name": "percent",
+     "type": "decimal",
+     "doc": "The percentage of continuations referring to the argument."
+    },
+    {
+     "name": "count",
+     "type": "nat",
+     "doc": "The number of continuations referring to the argument."
+    }
+   ],
+   "rows": [
+    {
+     "relation": "Explanation",
+     "verbClass": "STIM-EXP",
+     "reference": "subject",
+     "percent": "79.2",
+     "count": 401
+    },
+    {
+     "relation": "Explanation",
+     "verbClass": "STIM-EXP",
+     "reference": "object",
+     "percent": "20.8",
+     "count": 105
+    },
+    {
+     "relation": "Explanation",
+     "verbClass": "EXP-STIM",
+     "reference": "subject",
+     "percent": "7.3",
+     "count": 41
+    },
+    {
+     "relation": "Explanation",
+     "verbClass": "EXP-STIM",
+     "reference": "object",
+     "percent": "92.7",
+     "count": 520
+    },
+    {
+     "relation": "Consequence",
+     "verbClass": "STIM-EXP",
+     "reference": "subject",
+     "percent": "3.2",
+     "count": 6
+    },
+    {
+     "relation": "Consequence",
+     "verbClass": "STIM-EXP",
+     "reference": "object",
+     "percent": "96.8",
+     "count": 184
+    },
+    {
+     "relation": "Consequence",
+     "verbClass": "EXP-STIM",
+     "reference": "subject",
+     "percent": "84.5",
+     "count": 71
+    },
+    {
+     "relation": "Consequence",
+     "verbClass": "EXP-STIM",
+     "reference": "object",
+     "percent": "15.5",
+     "count": 13
+    },
+    {
+     "relation": "Contrast",
+     "verbClass": "STIM-EXP",
+     "reference": "subject",
+     "percent": "25.7",
+     "count": 9
+    },
+    {
+     "relation": "Contrast",
+     "verbClass": "STIM-EXP",
+     "reference": "object",
+     "percent": "74.3",
+     "count": 26
+    },
+    {
+     "relation": "Contrast",
+     "verbClass": "EXP-STIM",
+     "reference": "subject",
+     "percent": "19.2",
+     "count": 23
+    },
+    {
+     "relation": "Contrast",
+     "verbClass": "EXP-STIM",
+     "reference": "object",
+     "percent": "80.8",
+     "count": 97
+    }
+   ]
+  },
+  {
+   "name": "forcedReference",
+   "structure": "ForcedReference",
+   "doc": "the shares of explanations and consequences among the continuations of Experiment 3, by verb class and the argument the continuation had to be about, printed in the text.",
+   "locator": "Section 4.4, p. 1328",
+   "verified": "page-image",
+   "key": [
+    "verbClass",
+    "reference"
+   ],
+   "columns": [
+    {
+     "name": "verbClass",
+     "type": "VerbClass",
+     "doc": "The verb class of the prompt."
+    },
+    {
+     "name": "reference",
+     "type": "Position",
+     "doc": "The argument the continuation had to be about."
+    },
+    {
+     "name": "explanation",
+     "type": "decimal",
+     "doc": "The percentage of explanations."
+    },
+    {
+     "name": "consequence",
+     "type": "decimal",
+     "doc": "The percentage of consequences."
+    }
+   ],
+   "rows": [
+    {
+     "verbClass": "STIM-EXP",
+     "reference": "subject",
+     "explanation": "83.8",
+     "consequence": "3.7"
+    },
+    {
+     "verbClass": "STIM-EXP",
+     "reference": "object",
+     "explanation": "42.9",
+     "consequence": "44.2"
+    },
+    {
+     "verbClass": "EXP-STIM",
+     "reference": "subject",
+     "explanation": "49.1",
+     "consequence": "32.4"
+    },
+    {
+     "verbClass": "EXP-STIM",
+     "reference": "object",
+     "explanation": "76.7",
+     "consequence": "3.0"
+    }
+   ]
+  },
+  {
+   "name": "specifications",
+   "structure": "Specification",
+   "doc": "explanations and consequences of Experiment 4 that specify the contingency relation of the predicate, by verb class and congruency; consequence specifications are merged with proximate experiencer-consequences.",
+   "locator": "Table 4, p. 1333",
+   "verified": "page-image",
+   "key": [
+    "verbClass",
+    "congruency"
+   ],
+   "columns": [
+    {
+     "name": "verbClass",
+     "type": "VerbClass",
+     "doc": "The verb class of the prompt."
+    },
+    {
+     "name": "congruency",
+     "type": "Congruency",
+     "doc": "The congruency of the prompt's pronoun."
+    },
+    {
+     "name": "explanationSpecifyingPercent",
+     "type": "decimal",
+     "doc": "The percentage of explanations that are broadly specifying."
+    },
+    {
+     "name": "explanationSpecifying",
+     "type": "nat",
+     "doc": "The number of broadly specifying explanations."
+    },
+    {
+     "name": "explanationOtherPercent",
+     "type": "decimal",
+     "doc": "The percentage of other explanations."
+    },
+    {
+     "name": "explanationOther",
+     "type": "nat",
+     "doc": "The number of other explanations."
+    },
+    {
+     "name": "consequenceSpecifyingPercent",
+     "type": "decimal",
+     "doc": "The percentage of consequences that are broadly specifying."
+    },
+    {
+     "name": "consequenceSpecifying",
+     "type": "nat",
+     "doc": "The number of broadly specifying consequences."
+    },
+    {
+     "name": "consequenceOtherPercent",
+     "type": "decimal",
+     "doc": "The percentage of other consequences."
+    },
+    {
+     "name": "consequenceOther",
+     "type": "nat",
+     "doc": "The number of other consequences."
+    }
+   ],
+   "rows": [
+    {
+     "verbClass": "STIM-EXP",
+     "congruency": "congruent",
+     "explanationSpecifyingPercent": "87.6",
+     "explanationSpecifying": 227,
+     "explanationOtherPercent": "12.4",
+     "explanationOther": 32,
+     "consequenceSpecifyingPercent": "24.0",
+     "consequenceSpecifying": 62,
+     "consequenceOtherPercent": "76.0",
+     "consequenceOther": 196
+    },
+    {
+     "verbClass": "STIM-EXP",
+     "congruency": "incongruent",
+     "explanationSpecifyingPercent": "3.0",
+     "explanationSpecifying": 6,
+     "explanationOtherPercent": "97.0",
+     "explanationOther": 193,
+     "consequenceSpecifyingPercent": "7.9",
+     "consequenceSpecifying": 14,
+     "consequenceOtherPercent": "92.1",
+     "consequenceOther": 164
+    },
+    {
+     "verbClass": "EXP-STIM",
+     "congruency": "congruent",
+     "explanationSpecifyingPercent": "98.2",
+     "explanationSpecifying": 271,
+     "explanationOtherPercent": "1.8",
+     "explanationOther": 5,
+     "consequenceSpecifyingPercent": "4.2",
+     "consequenceSpecifying": 11,
+     "consequenceOtherPercent": "95.8",
+     "consequenceOther": 250
+    },
+    {
+     "verbClass": "EXP-STIM",
+     "congruency": "incongruent",
+     "explanationSpecifyingPercent": "8.5",
+     "explanationSpecifying": 22,
+     "explanationOtherPercent": "91.5",
+     "explanationOther": 236,
+     "consequenceSpecifyingPercent": "0.4",
+     "consequenceSpecifying": 1,
+     "consequenceOtherPercent": "99.6",
+     "consequenceOther": 244
+    }
+   ]
+  }
+ ]
+}
