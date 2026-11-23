@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Dynamic.Possibility
 public import Mathlib.Algebra.Group.Defs
 public import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
+public import Mathlib.Basic.Rel
 public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Order.UpperLower.CompleteLattice
@@ -44,8 +45,8 @@ has cards; a consumer that needs a familiarity failure at a state must assume it
 
 ## References
 
-- [kamp-vangenabith-reyle-2011], Defs. 0.23 (information states),
-  0.25 (informativeness), 0.26 (consistent merge)
+- [kamp-vangenabith-reyle-2011], Defs. 23 (information states),
+  25 (informativeness), 26 (consistent merge)
 - [elliott-sudo-2025], Def. 3.3 (subsistence);
   [groenendijk-stokhof-veltman-1996]
 - [visser-vermeulen-1996] (monoidal processing); [heim-1982]
@@ -54,6 +55,8 @@ has cards; a consumer that needs a familiarity failure at a state must assume it
 @[expose] public section
 
 namespace DynamicSemantics
+
+open scoped SetRel
 
 variable {W V M : Type*}
 
@@ -328,6 +331,16 @@ theorem mem_mul_stratum :
     refine ⟨p, hp, r.restrict X, ?_, Possibility.isLUB_restrict hpr hdom⟩
     show (r.restrict X).domain = X
     rw [Possibility.domain_restrict, hdom, Set.inter_eq_left.mpr Set.subset_union_right]
+
+/-- Extension along `X` relates a point to the points that extend it and define exactly its
+referents and those in `X`. Merging with the stratum at `X` is its image (`image_extend`). -/
+def extend (X : Set V) : SetRel (Possibility W V (Part M)) (Possibility W V (Part M)) :=
+  {(a, b) | (a ≤ b) ∧ b.domain = a.domain ∪ X}
+
+theorem mem_extend : p ~[extend X] q ↔ p ≤ q ∧ q.domain = p.domain ∪ X := Iff.rfl
+
+theorem image_extend (s : State W V M) : (extend X).image s = s * stratum X :=
+  Set.ext fun _ ↦ mem_mul_stratum.symm
 
 theorem stratum_union : (stratum (X ∪ Y) : State W V M) = stratum X * stratum Y := by
   ext r

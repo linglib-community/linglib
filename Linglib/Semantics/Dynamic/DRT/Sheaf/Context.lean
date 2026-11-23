@@ -10,22 +10,17 @@ public import Mathlib.Data.Fintype.Prod
 public import Mathlib.ModelTheory.Basic
 
 /-!
-# Contexts, renamings, and literals
+# Contexts and literals
 
-This file defines the category of *contexts* of discourse representation theory in its
-sheaf-theoretic reading: a context is a finite vocabulary of relation symbols together with a
-finite set of discourse referents, and a morphism is an inclusion of vocabularies with a map of
-referents — a relabelling, an inclusion, or an identification of referents. Literals over a
-context are signed atoms; they rename covariantly along context morphisms.
+A *context* `(L, X)` is a finite vocabulary `L` of relation symbols together with a finite set
+`X` of discourse referents. A morphism of contexts is an inclusion of vocabularies with a map of
+referents, which may relabel, include or identify them. Contexts form a category (`Context`,
+`Context.Hom`), and `Context.varsFunctor` sends a context to its referents.
 
-## Main definitions
-
-* `DRT.Context`, `DRT.Context.Hom`: contexts `(L, X)` and their morphisms, a `Category`, with
-  the referents functor `Context.varsFunctor`.
-* `DRT.Literal`: literals `±A(x̄)` over a context, with `Literal.map` (renaming), the
-  complementary literal `-l`, decidable equality and finiteness.
-* `DRT.Literal.functor`: literals as a functor to types.
-* `DRT.Literal.Consistent`: sets of literals containing no complementary pair.
+A *literal* over a context is an atom `A(x̄)` or its negation (`Literal`). Literals are renamed
+along morphisms (`Literal.map`), which makes them a functor to types (`Literal.functor`). A set
+of literals is *consistent* when it contains no atom together with its negation
+(`Literal.Consistent`).
 
 ## References
 
