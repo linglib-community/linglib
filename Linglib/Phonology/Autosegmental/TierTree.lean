@@ -93,9 +93,10 @@ theorem mem_children {v : ι × ℕ} {j : ι} {q : ℕ} :
       exact ⟨hc.1, hc.2, hx₁⟩
     · simp at h
   · rintro ⟨h₁, h₂, h₃⟩
-    exact ⟨j, by
-      rw [if_pos ⟨h₁, h₂⟩]
-      exact Finset.mem_image.2 ⟨(v.2, q), Finset.mem_filter.2 ⟨h₃, rfl⟩, rfl⟩⟩
+    refine ⟨j, ?_⟩
+    split_ifs with hc
+    · exact Finset.mem_image.2 ⟨(v.2, q), Finset.mem_filter.2 ⟨h₃, rfl⟩, rfl⟩
+    · exact absurd ⟨h₁, h₂⟩ hc
 
 /-- The tokens a token of the representation reaches are tokens of the representation. -/
 theorem lt_length_of_mem_descendants {d : ℕ} {v u : ι × ℕ} (hv : v.2 < (X.word v.1).length)
@@ -193,6 +194,59 @@ theorem reads_mul_right :
       by rwa [List.getElem?_append_right (by omega), Nat.add_sub_cancel_left]⟩
 
 end Mul
+
+/-! ### Tier offsets -/
+
+section Offset
+
+omit [Fintype ι] [DecidableEq ι]
+
+variable {S : Type*} (g₀ : S → AR τ) (i : ι) (w : List S)
+
+theorem tierOffset_succ {k : ℕ} (hk : k < w.length) :
+    tierOffset g₀ i w (k + 1) = tierOffset g₀ i w k + ((g₀ w[k]).word i).length := by
+  simp [tierOffset, List.take_succ, List.getElem?_eq_getElem hk]
+
+theorem tierOffset_mono : Monotone (tierOffset g₀ i w) :=
+  monotone_nat_of_le_succ fun k ↦ by
+    by_cases hk : k < w.length
+    · rw [tierOffset_succ g₀ i w hk]
+      exact Nat.le_add_right _ _
+    · simp [tierOffset, List.take_of_length_le (not_lt.1 hk),
+        List.take_of_length_le (Nat.le_succ_of_le (not_lt.1 hk))]
+
+/-- The tokens of a symbol on a tier stand before those of every later symbol. -/
+theorem tierOffset_add_length_le {k k' : ℕ} (h : k < k') (hk : k < w.length) :
+    tierOffset g₀ i w k + ((g₀ w[k]).word i).length ≤ tierOffset g₀ i w k' := by
+  rw [← tierOffset_succ g₀ i w hk]
+  exact tierOffset_mono g₀ i w h
+
+theorem tierOffset_length :
+    tierOffset g₀ i w w.length = ((w.map g₀).prod.word i).length := by
+  simp [tierOffset, word_prod, List.length_flatten, Function.comp_def]
+
+variable {g₀ w} {i j : ι} {p q : ℕ}
+
+/-- When the primitives have at most one token on each of two tiers, the lines of a
+realization between them are the lines of its symbols, each at that symbol's offsets. -/
+theorem link_prod_map_of_length_le_one (hi : ∀ s, ((g₀ s).word i).length ≤ 1)
+    (hj : ∀ s, ((g₀ s).word j).length ≤ 1) :
+    (w.map g₀).prod.Link i j p q ↔ ∃ k, ∃ hk : k < w.length,
+      p = tierOffset g₀ i w k ∧ q = tierOffset g₀ j w k ∧ (g₀ w[k]).Link i j 0 0 := by
+  rw [link_prod_map]
+  constructor
+  · rintro ⟨k, hk, hp, hq, h⟩
+    have h₁ := h.lt_left
+    have h₂ := h.lt_right
+    have := hi w[k]
+    have := hj w[k]
+    obtain rfl : p = tierOffset g₀ i w k := by omega
+    obtain rfl : q = tierOffset g₀ j w k := by omega
+    exact ⟨k, hk, rfl, rfl, by simpa using h⟩
+  · rintro ⟨k, hk, rfl, rfl, h⟩
+    exact ⟨k, hk, le_rfl, le_rfl, by simpa using h⟩
+
+end Offset
 
 section Realization
 
