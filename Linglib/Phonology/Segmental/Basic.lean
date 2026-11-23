@@ -98,6 +98,10 @@ theorem inf_apply (s t : Segment) (f : Feature) : (s ⊓ t) f = if s f = t f the
     · exact ((Function.update_self ..).symm.trans hg) ▸ hf
     · exact H g w ((Function.update_of_ne hne ..).symm.trans hg)
 
+/-- Giving a segment a value for a feature it lacks adds to it. -/
+theorem le_setFeature (h : s f = none) (v : Bool) : s ≤ s.setFeature f v :=
+  ((setFeature_le_iff h).1 le_rfl).2
+
 /-! ### Changes -/
 
 @[simp] theorem setFeature_apply_self (s : Segment) (f : Feature) (v : Bool) :

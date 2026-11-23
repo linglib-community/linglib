@@ -51,7 +51,8 @@ writing one segment.
   `Turkish.Morphotactics`.
 * `raising`: the raising of a stem-final `a` or `e` before -(I)yor, as a
   `Subregular.LocalRewrite.Rule`.
-* `surface`: the surface form of an underlying word.
+* `harmonize`, `surface`: the harmonized form of a word, and its surface form, which applies
+  raising first.
 * `ofChar`, `ofString?`, `ofSegmented?`: the segments that a spelled word writes, with or
   without its morpheme boundaries.
 
@@ -289,10 +290,19 @@ def raising : Rule where
 
 /-! ### Surface forms -/
 
-/-- The surface form of an underlying word applies raising before -(I)yor and then the
-search-and-copy runs of fronting, rounding and voicing in turn. -/
-def surface (w : List Segment) : List Segment :=
-  voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply (raising.apply w)))
+/-- `harmonize w` supplies the features that the archiphonemes of `w` lack, by the runs of
+fronting, rounding and voicing in turn. -/
+def harmonize (w : List Segment) : List Segment :=
+  voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply w))
+
+/-- The surface form of an underlying word applies raising before -(I)yor and then harmonizes
+it. -/
+def surface (w : List Segment) : List Segment := harmonize (raising.apply w)
+
+@[simp] theorem harmonize_nil : harmonize [] = [] := rfl
+
+@[simp] theorem length_harmonize (w : List Segment) : (harmonize w).length = w.length := by
+  simp [harmonize]
 
 /-- The surface form of a word has its length, since no rule deletes or inserts. -/
 @[simp] theorem length_surface (w : List Segment) : (surface w).length = w.length := by
