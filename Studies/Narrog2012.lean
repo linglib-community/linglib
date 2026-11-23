@@ -2,43 +2,46 @@ module
 
 public import Studies.Narrog2010
 public import Linglib.Data.Statistics.Narrog2012
+public import Linglib.Syntax.Cartography
 
 /-!
 # Narrog (2012): Modality, Subjectivity, and Semantic Change
 
-This file formalizes the category hierarchy and the category-climbing hypothesis of
-[narrog-2012]. Scope data from Japanese order the grammatical categories of the verbal
-clause from voice and benefactives at the bottom through aspect, dynamic and deontic
-modality, negation and epistemic modality, and tense to mood and illocutionary
-modification at the top (`GramCategory`, `GramCategory.scopeLevel`), an empirical
-hierarchy finer than the stipulated universal one of [cinque-1999]; epistemic modality
-outscopes deontic and dynamic modality, and mood outscopes modality proper
-(`epistemic_outscopes_deontic`, `mood_outscopes_modality`). Scope level determines speaker
-orientation (`scope_implies_orientation`), and the non-modal categories that are only
-diachronic sources of modality lie strictly below those that are only its targets
-(`GramCategory.IsSource`, `GramCategory.IsTarget`, `source_below_target`), the structural
-precondition of the hypothesis that semantic change involving grammatical categories climbs
-from narrower to wider scope.
+[narrog-2012] orders the grammatical categories of the verbal clause by scope, from the embedding
+behaviour of their markers in Modern Japanese ([narrog-2009a]), and hypothesizes that a change of
+meaning leads from a category to one of the same or wider scope, and from a use to one of the
+same or greater speech act orientation.
+
+We define the categories of the combined hierarchy (`GramCategory`) and their preorder by scope
+level (`GramCategory.scopeLevel`); categories on one level embed each other and are equivalent.
+A non-modal category is a potential source of modality when some modal category lies at or above
+it, and a potential target when some modal category lies at or below it
+(`GramCategory.IsSource`, `GramCategory.IsTarget`). These are the columns of the book's table of
+source and target categories (`GramCategory.isSource_iff`, `GramCategory.isTarget_iff`): voice
+and benefactives are sources only, mood and illocutionary modification targets only, and aspect,
+tense and negation, which share their levels with modal categories, both. A source lies
+strictly below a category that is only a target (`source_lt_target`).
+
+The three evidential categories lie on three levels, each at or below tense, so no monotone map
+into the hierarchy of [cinque-1999] sends one of them to its evidential mood and tense to its
+past tense (`not_monotone_of_moodEvidential`).
+
+The book classifies the changes of modal meaning tabulated in `Narrog2010.changes` by the sides
+of volitivity they run between. Its four totals follow from that table (`gramsBetween_eq`), and
+so do the two tendencies it reads off the classification: a change from a non-volitive to a
+volitive meaning has its target in mood or its source in circumstantial possibility, and a
+change from a volitive to a non-volitive meaning has an epistemic target.
 
 ## Implementation notes
 
-The scope levels follow the combined hierarchy of the book's third chapter, categories on
-a shared level being unordered. Possession, directionals, and the two kinds of
-honorification, which the book's table of source and target categories also lists, are not
-in the scope hierarchy and are left out.
+The scope levels are the rows of the book's combined hierarchy. Possession, directionals and the
+two kinds of honorification, which the table of source and target categories also lists, are not
+in the hierarchy and are left out.
 
-The book classifies the changes of modal meaning tabulated in `Narrog2010.changes` by the sides
-of volitivity they run between. The last section derives its four totals from that table
-(`gramsBetween_eq`) and proves the two tendencies it reads off the classification
-(`isMood_or_circumstantial_of_toVolitive`, `epistemic_of_toNonVolitive`). The book's synopsis
-figure draws each change as an arrow on the map; its positions are not encoded, and
-`minOrientation` records only that mood lies above modality proper.
-
-## TODO
-
-The book derives a category's role as source or target from its scope level relative to the
-modal categories. `IsSource` and `IsTarget` transcribe the table; deriving them turns on
-whether the speculative category on the level of volitive mood counts as modality or as mood.
+The book treats speech act orientation as a continuum on which a modal category covers a range
+of positions, and places no category at a point, so no orientation is assigned to a category.
+Its synopsis figure draws each tabulated change as an arrow on the map; those positions are not
+encoded, and `minOrientation` records only that mood lies above modality proper.
 
 ## References
 
@@ -53,22 +56,18 @@ whether the speculative category on the level of volitive mood counts as modalit
 namespace Narrog2012
 
 /-- Speech act orientation at the three positions labelled on the vertical axis of the book's
-semantic map. The book treats the dimension as gradual and open-ended, a property of a use that
-follows from performativity, and gives most modal categories a broad range of positions. -/
+semantic map. The book treats the dimension as gradual and open-ended. -/
 inductive SpeechActOrientation where
   /-- The modal judgment concerns conditions on the described event and its participants. -/
   | eventOriented
   /-- The modal judgment is the speaker's own at the time of speech. -/
   | speakerOriented
-  /-- The use is tied to the speech act itself, including the hearer and the discourse. Clausal
-  mood and illocutionary modification lie here. -/
+  /-- The use is tied to the speech act itself, including the hearer and the discourse. -/
   | speechActOriented
   deriving DecidableEq, Fintype, Repr
 
 namespace SpeechActOrientation
 
-/-- The positions are ordered as they are listed, from the event-oriented pole upwards. A change
-of use from `o` to `o'` conforms to the directionality hypothesis when `o ≤ o'`. -/
 instance : LinearOrder SpeechActOrientation :=
   LinearOrder.lift' SpeechActOrientation.ctorIdx (by decide)
 
@@ -78,138 +77,126 @@ instance : BoundedOrder SpeechActOrientation where
   bot := eventOriented
   bot_le := by decide
 
-theorem top_def : (⊤ : SpeechActOrientation) = speechActOriented := rfl
-
 end SpeechActOrientation
 
-/-- Grammatical categories relevant to the verbal clause, drawn from
-    [narrog-2012] Tables 3.5–3.9 and [narrog-2009a].
-
-    The categories are ordered by empirical scope from Japanese data:
-    lower scope (event-oriented) to wider scope (speech-act-oriented).
-    Categories at the same scope level are grouped into a shared
-    `scopeLevel`. -/
+/-- Table 3.7: the categories of the combined scope hierarchy of Modern Japanese. A modal
+category with a number is one of several of its kind on different levels. -/
 inductive GramCategory where
-  | voice              -- passive, causative (lowest scope)
-  | benefactive        -- benefactive applicatives
-  | phasalAspect       -- begin, continue, finish
-  | dynamicModality    -- ability
-  | boulomaicModality  -- volition
-  | perfImperfAspect   -- perfective/imperfective
-  | deontic1           -- necessity: must, have to
-  | evidentiality1     -- predictive appearance
-  | negation           -- internal negation
-  | epistemic1         -- necessity/expectation
-  | evidentiality2     -- inferential evidentiality
-  | tense              -- past, present, future
-  | deontic2           -- valuative obligation, recommendation
-  | epistemic2         -- possibility
-  | evidentiality3     -- reportive
-  | epistemic3         -- speculative, epistemic mood
-  | volitiveMood       -- imperative, hortative
-  | illocutionaryMod   -- sentence-final particles, tag questions (widest scope)
-  deriving DecidableEq, Repr
-
-/-- Empirical scope level from Japanese data ([narrog-2009a],
-    [narrog-2012] Tables 3.5–3.7, 3.9). Lower number = narrower scope.
-
-    Multiple categories can share a level; the ordering between
-    categories at the same level is not empirically established.
-
-    Level assignments follow the groupings established in the text (p. 97):
-    "Evidentiality 3 and Epistemic modality 2... are located on the same
-    level as Tense"; "Epistemic modality 1 and Evidentiality 2... are
-    located at the same level as (Internal) negation." Non-modal anchors
-    (Tense, Negation, Perf/Imperf, Phasal aspect) and the modal categories
-    listed alongside them share the same level. -/
-def GramCategory.scopeLevel : GramCategory → Nat
-  | .voice | .benefactive                                     => 0
-  | .phasalAspect | .dynamicModality | .boulomaicModality     => 1
-  | .perfImperfAspect | .deontic1 | .evidentiality1           => 2
-  | .negation | .epistemic1 | .evidentiality2                 => 3
-  | .tense | .deontic2 | .epistemic2 | .evidentiality3        => 4
-  | .epistemic3                                               => 5
-  | .volitiveMood                                             => 6
-  | .illocutionaryMod                                         => 7
-
-/-- Categories are compared by scope level, categories on one level lying below each other. -/
-instance : Preorder GramCategory := Preorder.lift GramCategory.scopeLevel
-
-instance : DecidableLE GramCategory :=
-  fun a b ↦ inferInstanceAs (Decidable (a.scopeLevel ≤ b.scopeLevel))
-
-instance : DecidableLT GramCategory :=
-  fun a b ↦ inferInstanceAs (Decidable (a.scopeLevel < b.scopeLevel))
-
-theorem epistemic_outscopes_deontic : GramCategory.deontic1 < GramCategory.epistemic1 := by
-  decide
-
-theorem dynamic_below_deontic : GramCategory.dynamicModality < GramCategory.deontic1 := by
-  decide
-
-theorem mood_outscopes_modality :
-    GramCategory.epistemic3 < GramCategory.volitiveMood ∧
-    GramCategory.deontic2 < GramCategory.volitiveMood := by
-  exact ⟨by decide, by decide⟩
-
-theorem im_is_widest (c : GramCategory) : c ≤ GramCategory.illocutionaryMod := by
-  cases c <;> decide
-
-/-- Map a category to its speaker-orientation level in Narrog's 2D map.
-
-    Categories below the aspect boundary are event-oriented; categories
-    at the modal level are speaker-oriented; mood and illocutionary modification are
-    speech act-oriented.
-
-    At scope level 2, event-oriented (perfective aspect) and speaker-oriented
-    (deontic 1, evidentiality 1) categories coexist, reflecting Narrog's
-    observation (p. 97, point 4) that volitive modalities rank low due to
-    descriptive use. The mapping is therefore approximate at the
-    event/speaker boundary; see `scope_implies_orientation` for the
-    precise (strict `<`) relationship. -/
-def GramCategory.toOrientation : GramCategory → SpeechActOrientation
-  | .voice | .benefactive | .phasalAspect | .dynamicModality | .boulomaicModality
-  | .perfImperfAspect => .eventOriented
-  | .deontic1 | .deontic2 | .epistemic1 | .epistemic2
-  | .evidentiality1 | .evidentiality2 | .evidentiality3
-  | .negation | .tense => .speakerOriented
-  | .epistemic3 | .volitiveMood | .illocutionaryMod => .speechActOriented
-
-/-- Strictly wider scope implies no lower orientation, linking Hypothesis I to Hypothesis II (p.
-97). -/
-theorem scope_implies_orientation (a b : GramCategory) (h : a < b) :
-    a.toOrientation ≤ b.toOrientation := by
-  revert h; cases a <;> cases b <;> decide
+  | voice
+  | benefactive
+  | phasalAspect
+  | dynamicModality
+  | boulomaicModality
+  /-- Perfective and imperfective aspect. -/
+  | perfImperfAspect
+  /-- Deontic necessity. -/
+  | deontic1
+  /-- Predictive appearance. -/
+  | evidentiality1
+  /-- Internal negation. -/
+  | negation
+  /-- Epistemic necessity and expectation. -/
+  | epistemic1
+  /-- Inferential evidentiality. -/
+  | evidentiality2
+  | tense
+  /-- Valuative obligation and recommendation. -/
+  | deontic2
+  /-- Epistemic possibility. -/
+  | epistemic2
+  /-- Reportive evidentiality. -/
+  | evidentiality3
+  /-- Speculative modality and epistemic mood. -/
+  | epistemic3
+  /-- The imperative and hortative moods. -/
+  | volitiveMood
+  | illocutionaryMod
+  deriving DecidableEq, Fintype, Repr
 
 namespace GramCategory
 
-/-- The non-modal categories from which modal markers may derive, in the book's table of
-potential source and target categories for modality: voice and benefactives, and aspect,
-tense, and negation, which the table lists as both source and target. -/
-def IsSource (c : GramCategory) : Prop :=
-  c ∈ [voice, benefactive, phasalAspect, perfImperfAspect, tense, negation]
+/-- Table 3.7: the row of a category in the combined hierarchy, counted from the bottom. -/
+def scopeLevel : GramCategory → ℕ
+  | voice | benefactive => 0
+  | phasalAspect | dynamicModality | boulomaicModality => 1
+  | perfImperfAspect | deontic1 | evidentiality1 => 2
+  | negation | epistemic1 | evidentiality2 => 3
+  | tense | deontic2 | epistemic2 | evidentiality3 => 4
+  | epistemic3 => 5
+  | volitiveMood => 6
+  | illocutionaryMod => 7
 
-/-- The non-modal categories into which modal markers may develop: mood and illocutionary
-modification, and aspect, tense, and negation. -/
-def IsTarget (c : GramCategory) : Prop :=
-  c ∈ [phasalAspect, perfImperfAspect, tense, negation, volitiveMood, illocutionaryMod]
+/-- Categories are compared by scope level. -/
+instance : Preorder GramCategory := Preorder.lift scopeLevel
 
-instance : DecidablePred IsSource := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
-instance : DecidablePred IsTarget := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+instance : DecidableLE GramCategory := fun a _ ↦ inferInstanceAs (Decidable (a.scopeLevel ≤ _))
+instance : DecidableLT GramCategory := fun a _ ↦ inferInstanceAs (Decidable (a.scopeLevel < _))
+
+/-- The categories of modality proper. -/
+def IsModal : GramCategory → Prop
+  | dynamicModality | boulomaicModality | deontic1 | deontic2 | epistemic1 | epistemic2
+  | epistemic3 | evidentiality1 | evidentiality2 | evidentiality3 => True
+  | _ => False
+
+instance : DecidablePred IsModal := fun c ↦ by cases c <;> unfold IsModal <;> infer_instance
+
+/-- A non-modal category is a potential source of modality when some modal category has the
+same or wider scope. -/
+def IsSource (c : GramCategory) : Prop := ¬ c.IsModal ∧ ∃ m : GramCategory, m.IsModal ∧ c ≤ m
+
+/-- A non-modal category is a potential target of modality when some modal category has the
+same or narrower scope. -/
+def IsTarget (c : GramCategory) : Prop := ¬ c.IsModal ∧ ∃ m : GramCategory, m.IsModal ∧ m ≤ c
+
+instance : DecidablePred IsSource := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred IsTarget := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Table 3.10: the potential sources of modality are voice, benefactives, aspect, tense and
+negation. -/
+theorem isSource_iff (c : GramCategory) : c.IsSource ↔
+    c ∈ [voice, benefactive, phasalAspect, perfImperfAspect, negation, tense] := by
+  cases c <;> decide
+
+/-- Table 3.10: the potential targets of modality are aspect, tense, negation, mood and
+illocutionary modification. -/
+theorem isTarget_iff (c : GramCategory) : c.IsTarget ↔
+    c ∈ [phasalAspect, perfImperfAspect, negation, tense, volitiveMood, illocutionaryMod] := by
+  cases c <;> decide
+
+theorem deontic1_lt_epistemic1 : deontic1 < epistemic1 := by decide
+
+theorem dynamicModality_lt_deontic1 : dynamicModality < deontic1 := by decide
+
+-- Mood and illocutionary modification outscope every category of modality proper.
+theorem lt_volitiveMood_of_isModal {c : GramCategory} (hc : c.IsModal) : c < volitiveMood := by
+  cases c <;> first | decide | exact hc.elim
+
+theorem volitiveMood_lt_illocutionaryMod : volitiveMood < illocutionaryMod := by decide
+
+theorem le_illocutionaryMod (c : GramCategory) : c ≤ illocutionaryMod := by
+  cases c <;> decide
+
+theorem evidentiality_le_tense :
+    evidentiality1 < tense ∧ evidentiality2 < tense ∧ evidentiality3 ≤ tense := by
+  decide
 
 end GramCategory
 
-theorem source_below_target (c d : GramCategory) (hc : c.IsSource) (hc' : ¬ c.IsTarget)
-    (hd : d.IsTarget) (hd' : ¬ d.IsSource) : c < d := by
-  revert hc hc' hd hd'; cases c <;> cases d <;> decide
+open GramCategory
 
-theorem source_is_event_oriented (c : GramCategory) (hc : c.IsSource) (hc' : ¬ c.IsTarget) :
-    c.toOrientation = .eventOriented := by
-  revert hc hc'; cases c <;> decide
+/-- A potential source of modality has narrower scope than a category that is only a potential
+target. -/
+theorem source_lt_target {c d : GramCategory} (hc : c.IsSource) (hd : d.IsTarget)
+    (hd' : ¬ d.IsSource) : c < d := by
+  obtain ⟨-, m, hm, hcm⟩ := hc
+  have hmd : ¬ d.scopeLevel ≤ m.scopeLevel := fun h ↦ hd' ⟨hd.1, m, hm, h⟩
+  exact Nat.lt_of_le_of_lt hcm (Nat.lt_of_not_le hmd)
 
-theorem target_is_speech_act_oriented (c : GramCategory) (hc : c.IsTarget)
-    (hc' : ¬ c.IsSource) : c.toOrientation = .speechActOriented := by
-  revert hc hc'; cases c <;> decide
+/-- No monotone map into Cinque's hierarchy sends a category at or below tense to the evidential
+mood and tense to the past tense. -/
+theorem not_monotone_of_moodEvidential {f : GramCategory → Cartography.Head} {e : GramCategory}
+    (he : e ≤ tense) (hf : f e = .moodEvidential) (ht : f tense = .tPast) : ¬ Monotone f :=
+  fun h ↦ absurd (hf ▸ ht ▸ h he) (by decide)
 
 /-! ### The changes of [narrog-2010] -/
 
@@ -218,15 +205,6 @@ moods lie at the speech act-oriented end, and modality proper and the future rea
 event-oriented pole. -/
 def minOrientation (p : Narrog2010.Point) : SpeechActOrientation :=
   if p.IsMood then ⊤ else ⊥
-
-theorem le_minOrientation {p : Narrog2010.Point} (hp : p.IsMood) (o : SpeechActOrientation) :
-    o ≤ minOrientation p := by
-  simp only [minOrientation, hp, ↓reduceIte, le_top]
-
-theorem not_minOrientation_le {p : Narrog2010.Point} (hp : p.IsMood)
-    {o : SpeechActOrientation} (ho : o < ⊤) : ¬ minOrientation p ≤ o := by
-  simp only [minOrientation, hp, ↓reduceIte, top_le_iff]
-  exact ho.ne
 
 theorem minOrientation_source_le_target :
     ∀ c ∈ Narrog2010.changes, ∀ p ∈ c.source.meaning, ∀ q ∈ c.target.meaning,
@@ -247,8 +225,8 @@ theorem gramsBetween_eq :
     gramsBetween True True = withinVolitive := by
   decide
 
-/-- A change from a non-volitive to a volitive meaning has its target in mood or its source in
-circumstantial possibility. -/
+-- A change from a non-volitive to a volitive meaning has its target in mood or its source in
+-- circumstantial possibility (section 5.2).
 theorem isMood_or_circumstantial_of_toVolitive :
     ∀ c ∈ Narrog2010.changes,
       (∀ p ∈ c.source.meaning, ¬ p.IsVolitive) → (∀ p ∈ c.target.meaning, p.IsVolitive) →
@@ -256,7 +234,7 @@ theorem isMood_or_circumstantial_of_toVolitive :
         ∀ p ∈ c.source.meaning, p = .modal (.possibility, .circumstantial) := by
   decide
 
-/-- A change from a volitive to a non-volitive meaning has an epistemic target. -/
+-- A change from a volitive to a non-volitive meaning has an epistemic target (section 5.2).
 theorem epistemic_of_toNonVolitive :
     ∀ c ∈ Narrog2010.changes,
       (∀ p ∈ c.source.meaning, p.IsVolitive) → (∀ p ∈ c.target.meaning, ¬ p.IsVolitive) →
