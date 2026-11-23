@@ -13,12 +13,15 @@ prejacent must not be *directly settled* by the kernel, entailed or excluded by 
 propositions. The presupposition makes *must P* strong, asserting that `⋂₀ K` entails `P`, while
 still signalling indirectness, since `⋂₀ K` can entail `P` without any single kernel proposition
 settling it. *Might* is [the negation of *can't*](##Modality.kernelMight_eq_compl_kernelCant),
-presupposition and all. A kernel gives direct evidence for what one of its propositions entails
-and indirect evidence for what its base entails without any of them settling it
-(`Modality.kernelEvidence`); a consistent kernel entails exactly what it gives evidence for
-(`Modality.sInter_subset_iff_exists_mem_kernelEvidence`), and *must P* is true where an
-evidential covering indirect sources alone has its evidence
-(`Modality.kernelMust_eq_true_iff_mem_evidence`). The worked examples are in `Studies/VonFintelGillies2010.lean`, the
+presupposition and all. Seen as evidentials, epistemic modals
+mark inference, and not report: a kernel holds what the speaker treats as privileged, by
+observation or by trustworthy report, so it gives attested or reported evidence for what one of
+its propositions entails and inferring evidence for what its base entails without any of them
+settling it (`Modality.kernelEvidence`). A kernel true at the world of evaluation entails exactly
+what it gives evidence for (`Modality.sInter_subset_iff_exists_mem_kernelEvidence`), *must P* is
+true where an inferential evidential has its evidence
+(`Modality.kernelMust_eq_true_iff_mem_evidence`), and a reportative evidential has none there
+(`Modality.notMem_evidence_of_kernelMust_eq_true`). The worked examples are in `Studies/VonFintelGillies2010.lean`, the
 *can't* dilemma in `Studies/VonFintelGillies2021.lean`.
 
 ## Implementation notes
@@ -114,47 +117,56 @@ theorem kernelMight_eq_compl_kernelCant : kernelMight K P = (kernelCant K P)ᶜ 
 
 /-! ### The evidence a kernel gives -/
 
-/-- A kernel gives direct evidence for what one of its propositions entails, and indirect
-evidence for what its base entails while no kernel proposition settles it. -/
-def kernelEvidence (K : Set (Set W)) : Evidential.Directness → Set W → Set W
-  | .direct, P => {_w | ∃ X ∈ K, X ⊆ P}
-  | .indirect, P => {_w | ⋂₀ K ⊆ P ∧ ¬ DirectlySettles K P}
+/-- A kernel gives attested or reported evidence for what one of its propositions entails, the
+kernel not telling observation from trustworthy report, and inferring evidence for what its
+base entails while no kernel proposition settles it. -/
+def kernelEvidence (K : Set (Set W)) : Evidential.EvidenceType → Set W → Set W
+  | .attested, P | .reported, P => {_w | ∃ X ∈ K, X ⊆ P}
+  | .inferring, P => {_w | ⋂₀ K ⊆ P ∧ ¬ DirectlySettles K P}
 
-@[simp] theorem mem_kernelEvidence_direct :
-    w ∈ kernelEvidence K .direct P ↔ ∃ X ∈ K, X ⊆ P := Iff.rfl
+@[simp] theorem mem_kernelEvidence_attested :
+    w ∈ kernelEvidence K .attested P ↔ ∃ X ∈ K, X ⊆ P := Iff.rfl
 
-@[simp] theorem mem_kernelEvidence_indirect :
-    w ∈ kernelEvidence K .indirect P ↔ ⋂₀ K ⊆ P ∧ ¬ DirectlySettles K P := Iff.rfl
+@[simp] theorem mem_kernelEvidence_reported :
+    w ∈ kernelEvidence K .reported P ↔ ∃ X ∈ K, X ⊆ P := Iff.rfl
 
-theorem disjoint_kernelEvidence :
-    Disjoint (kernelEvidence K .direct P) (kernelEvidence K .indirect P) :=
-  Set.disjoint_left.2 fun _ ⟨X, hX, hXP⟩ h ↦ h.2 ⟨X, hX, .inl hXP⟩
+@[simp] theorem mem_kernelEvidence_inferring :
+    w ∈ kernelEvidence K .inferring P ↔ ⋂₀ K ⊆ P ∧ ¬ DirectlySettles K P := Iff.rfl
 
-/-- A consistent kernel entails exactly what it gives direct or indirect evidence for. -/
-theorem sInter_subset_iff_exists_mem_kernelEvidence (hK : (⋂₀ K).Nonempty) :
-    ⋂₀ K ⊆ P ↔ ∃ d, w ∈ kernelEvidence K d P := by
+/-- A kernel true at the world of evaluation entails exactly what it gives evidence for. -/
+theorem sInter_subset_iff_exists_mem_kernelEvidence (hw : w ∈ ⋂₀ K) :
+    ⋂₀ K ⊆ P ↔ ∃ t, w ∈ kernelEvidence K t P := by
   refine ⟨fun h ↦ ?_, ?_⟩
   · by_cases hd : ∃ X ∈ K, X ⊆ P
-    · exact ⟨.direct, hd⟩
-    · refine ⟨.indirect, h, ?_⟩
+    · exact ⟨.attested, hd⟩
+    · refine ⟨.inferring, h, ?_⟩
       rintro ⟨X, hX, hXP | hXP⟩
-      · exact hd ⟨X, hX, hXP⟩
-      · obtain ⟨v, hv⟩ := hK
-        exact Set.disjoint_left.1 hXP (Set.sInter_subset_of_mem hX hv) (h hv)
-  · rintro ⟨_ | _, h⟩
+      exacts [hd ⟨X, hX, hXP⟩, Set.disjoint_left.1 hXP (Set.sInter_subset_of_mem hX hw) (h hw)]
+  · rintro ⟨_ | _ | _, h⟩
+    · obtain ⟨X, hX, hXP⟩ := h
+      exact (Set.sInter_subset_of_mem hX).trans hXP
     · obtain ⟨X, hX, hXP⟩ := h
       exact (Set.sInter_subset_of_mem hX).trans hXP
     · exact h.1
 
 theorem kernelMust_eq_true_iff_mem_kernelEvidence :
-    kernelMust K P w = .true ↔ w ∈ kernelEvidence K .indirect P := by
+    kernelMust K P w = .true ↔ w ∈ kernelEvidence K .inferring P := by
   simp [and_comm]
 
-/-- *Must P* is true exactly where an evidential that covers indirect sources alone has its
-evidence in the kernel. -/
-theorem kernelMust_eq_true_iff_mem_evidence {e : Evidential} (hne : e.covers.Nonempty)
-    (he : ∀ π ∈ e.covers, π.directness = .indirect) :
-    kernelMust K P w = .true ↔ w ∈ e.evidence (fun π ↦ kernelEvidence K π.directness) P := by
-  rw [Evidential.evidence_comp_of_forall_eq _ hne he, kernelMust_eq_true_iff_mem_kernelEvidence]
+variable {e : Evidential}
+
+/-- *Must P* is true exactly where an inferential evidential has its evidence in the kernel. -/
+theorem kernelMust_eq_true_iff_mem_evidence (he : e.IsInferential) :
+    kernelMust K P w = .true ↔
+      w ∈ e.evidence (fun π ↦ kernelEvidence K π.evidenceType) P := by
+  rw [he.evidence_comp, kernelMust_eq_true_iff_mem_kernelEvidence]
+
+/-- Where *must P* is true, a reportative evidential has no evidence in the kernel. -/
+theorem notMem_evidence_of_kernelMust_eq_true (he : e.IsReportative)
+    (h : kernelMust K P w = .true) :
+    w ∉ e.evidence (fun π ↦ kernelEvidence K π.evidenceType) P := by
+  rw [he.evidence_comp]
+  rintro ⟨X, hX, hXP⟩
+  exact (kernelMust_eq_true_iff.1 h).1 ⟨X, hX, .inl hXP⟩
 
 end Modality

@@ -19,10 +19,11 @@ hand therefore has a true evidential proposition
 (`Evidential.mem_evidence_of_preferred_eq_some`), and where it prefers none, no term has
 (`Evidential.notMem_evidence_of_preferred_eq_none`).
 
-An account that distinguishes evidence only by its type, or only as direct or indirect, gives an
-evidence relation that factors through `Parameter.evidenceType` or `Parameter.directness`. A
-term whose parameters all fall in one class then has the evidence of that class as its
-evidential proposition (`Evidential.evidence_comp_of_forall_eq`).
+An account that distinguishes evidence only by its type gives an evidence relation that
+factors through `Parameter.evidenceType`. A term of a type of evidence then has the evidence of
+that type as its evidential proposition (`Evidential.IsOfType.evidence_comp`), and in general a
+term whose parameters all fall in one class of a classification has the evidence of that class
+(`Evidential.evidence_comp_of_forall_eq`).
 
 ## Implementation notes
 

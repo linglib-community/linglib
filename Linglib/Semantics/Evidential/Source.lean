@@ -130,8 +130,4 @@ theorem EvidenceType.ordConnected_block (t : EvidenceType) :
     (t.block : Set Parameter).OrdConnected :=
   t.coe_block ▸ (isContiguous_iff_ordConnected_preimage _).1 Parameter.isContiguous_evidenceType t
 
-theorem Parameter.directness_eq_direct {p : Parameter} :
-    p.directness = .direct ↔ p.evidenceType = .attested := by
-  cases p <;> decide
-
 end Evidential

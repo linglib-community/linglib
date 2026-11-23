@@ -98,10 +98,11 @@ theorem rainK_settles_raining : DirectlySettles rainK raining :=
 
 /-! ### Deep theorems -/
 
--- Figure 3: the wet rain gear is indirect evidence of rain, the sight of rain direct evidence
+-- Figure 3: the wet rain gear is inferring evidence of rain, the sight of rain attested
 theorem kernelEvidence_raining (w : World) :
-    w ∈ kernelEvidence wetGearK .indirect raining ∧ w ∉ kernelEvidence wetGearK .direct raining ∧
-      w ∈ kernelEvidence rainK .direct raining :=
+    w ∈ kernelEvidence wetGearK .inferring raining ∧
+      w ∉ kernelEvidence wetGearK .attested raining ∧
+      w ∈ kernelEvidence rainK .attested raining :=
   ⟨⟨raining_follows, raining_unsettled⟩, fun ⟨X, hX, hXP⟩ ↦ raining_unsettled ⟨X, hX, .inl hXP⟩,
     raining, by simp [rainK], subset_rfl⟩
 
