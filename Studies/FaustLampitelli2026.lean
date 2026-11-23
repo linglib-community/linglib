@@ -39,8 +39,10 @@ operation applies to the output of the one before it and not to the input (`feed
 (`derive_harmonized_pull`) and would syncopate [sʌmaʕaku] (`realizations_harmonized_37d`).
 
 `positions` gives the positions of a form with their melodies, which
-`ElementTheory.ofForm` represents with each element on its line. The onset of a unit reads an
-element there exactly when its consonant has it (`exists_reads_positions_iff`), and sharing |A|
+`ElementTheory.ofForm` represents with a root node under each position that has a melody and
+each element on its line. A nucleus reads a root node exactly when it holds a vowel
+(`reads_root_positions_iff`), the onset of a unit reads an element exactly when its consonant
+has it (`exists_reads_positions_iff`), and sharing |A|
 between the two /a/s of /m_-barak/ crosses no line, where sharing it between two vowels across a
 guttural would (`noCrossing_fuse_39b`). `fusion` changes no position's elements
 (`exists_reads_positions_fusion_iff`), as `ElementTheory.fuse` changes none. The two differ in
@@ -70,8 +72,9 @@ is written with a head (`reads_fuse_status`).
 * The 3FPL forms of the perfective paradigms, whose suffix vowel is not among the vowels the
   paper lists, are not recorded.
 * The /ɨ/ of a pattern is a nucleus that holds a vowel with no element. It governs as a nucleus
-  with a vowel does, which the syneresis of the imperfective requires, and `positions` gives it
-  the empty expression: on the lines of the elements it reads as an empty nucleus does.
+  with a vowel does, which the syneresis of the imperfective requires. `positions` gives it a
+  root node with no element under it, where an empty nucleus has no root node, as [faust-2025]
+  distinguishes a weak vowel from an empty nucleus.
 * `fusion` also joins two /a/s in successive nuclei, as in the derivation of [mɨ-bɨrak] from
   /m_-barak/.
 * `epenthesis` marks the nuclei that `GovernmentPhonology.leftward` expresses, the realization
@@ -105,6 +108,7 @@ is written with a head (`reads_fuse_status`).
 * [kaye-1992]
 * [bye-2011]
 * [buckley-2000]
+* [faust-2025]
 -/
 
 @[expose] public section
@@ -843,12 +847,22 @@ theorem dissociated_drink :
 
 /-! ### The elements of a form on their lines -/
 
-/-- The positions of a form, the onset and the nucleus of each unit with their melodies. -/
+/-- The positions of a form, the onset and the nucleus of each unit. A consonant has a root node,
+and so has a nucleus that holds a vowel; an empty nucleus has none. -/
 def positions (f : Form) : List Position :=
-  f.flatMap fun u ↦ [⟨.C, consET u.c⟩, ⟨.V, (u.v.vowel?.map vowelET).getD ⊥⟩]
+  f.flatMap fun u ↦ [⟨.C, some (consET u.c)⟩, ⟨.V, u.v.vowel?.map vowelET⟩]
 
 theorem getElem?_positions_two_mul (f : Form) (i : ℕ) :
-    (positions f)[2 * i]? = f[i]?.map fun u ↦ ⟨.C, consET u.c⟩ := by
+    (positions f)[2 * i]? = f[i]?.map fun u ↦ ⟨.C, some (consET u.c)⟩ := by
+  induction f generalizing i with
+  | nil => simp [positions]
+  | cons u r ih =>
+    cases i with
+    | zero => simp [positions]
+    | succ i => simpa [positions, Nat.mul_succ] using ih i
+
+theorem getElem?_positions_two_mul_add_one (f : Form) (i : ℕ) :
+    (positions f)[2 * i + 1]? = f[i]?.map fun u ↦ ⟨.V, u.v.vowel?.map vowelET⟩ := by
   induction f generalizing i with
   | nil => simp [positions]
   | cons u r ih =>
@@ -858,28 +872,27 @@ theorem getElem?_positions_two_mul (f : Form) (i : ℕ) :
 
 -- the onset of a unit reads an element on its line exactly when its consonant has the element
 theorem exists_reads_positions_iff (e : Element) (f : Form) (i : ℕ) :
-    (∃ s, (ofForm (positions f)).Reads Autosegmental.AR.planes (2 * i) (some e) s) ↔
-      HasAt e f i := by
-  rw [exists_reads_ofForm_iff, getElem?_positions_two_mul]
+    (∃ s, (ofForm (positions f)).Reads tiers (2 * i) (.line e) s) ↔ HasAt e f i := by
+  rw [reads_line_ofForm_iff, getElem?_positions_two_mul]
   unfold HasAt
   cases f[i]? <;> simp [Has]
 
-theorem getElem?_positions_two_mul_add_one (f : Form) (i : ℕ) :
-    (positions f)[2 * i + 1]? = f[i]?.map fun u ↦ ⟨.V, (u.v.vowel?.map vowelET).getD ⊥⟩ := by
-  induction f generalizing i with
-  | nil => simp [positions]
-  | cons u r ih =>
-    cases i with
-    | zero => simp [positions]
-    | succ i => simpa [positions, Nat.mul_succ] using ih i
+-- a nucleus reads a root node exactly when it holds a vowel, the weak vowel included
+theorem reads_root_positions_iff (f : Form) (i : ℕ) :
+    (ofForm (positions f)).Reads tiers (2 * i + 1) .root () ↔
+      ∃ u ∈ f[i]?, u.v.melody = .associated := by
+  rw [reads_root_ofForm_iff, getElem?_positions_two_mul_add_one]
+  rcases f[i]? with _ | ⟨c, n⟩
+  · simp
+  · cases n <;> simp [Nuc.vowel?, Nuc.melody]
 
 theorem elements_vowelET_headed : ∀ (v : Vowel) (e : Element), v.element? = some e →
     (vowelET (headed e v)).elements = (vowelET v).elements := by
   decide
 
 theorem elements_nucleus_fusion (f : Form) (i : ℕ) :
-    (fusion f)[i]?.map (fun u ↦ ((u.v.vowel?.map vowelET).getD ⊥).elements) =
-      f[i]?.map fun u ↦ ((u.v.vowel?.map vowelET).getD ⊥).elements := by
+    (fusion f)[i]?.map (fun u ↦ (u.v.vowel?.map vowelET).map (·.elements)) =
+      f[i]?.map fun u ↦ (u.v.vowel?.map vowelET).map (·.elements) := by
   simp only [fusion, List.getElem?_mapIdx]
   rcases f[i]? with _ | ⟨c, n⟩
   · rfl
@@ -894,16 +907,17 @@ theorem elements_nucleus_fusion (f : Form) (i : ℕ) :
 -- fusion changes no position's elements, as sharing a token changes none
 -- (`ElementTheory.exists_reads_fuse_iff`)
 theorem exists_reads_positions_fusion_iff (f : Form) (k : ℕ) (e : Element) :
-    (∃ s, (ofForm (positions (fusion f))).Reads Autosegmental.AR.planes k (some e) s) ↔
-      ∃ s, (ofForm (positions f)).Reads Autosegmental.AR.planes k (some e) s := by
-  simp only [exists_reads_ofForm_iff]
+    (∃ s, (ofForm (positions (fusion f))).Reads tiers k (.line e) s) ↔
+      ∃ s, (ofForm (positions f)).Reads tiers k (.line e) s := by
+  rw [reads_line_ofForm_iff, reads_line_ofForm_iff]
   obtain ⟨i, rfl | rfl⟩ : ∃ i, k = 2 * i ∨ k = 2 * i + 1 := ⟨k / 2, by omega⟩
   · rw [getElem?_positions_two_mul, getElem?_positions_two_mul]
     have := map_c_fusion f i
     cases h1 : (fusion f)[i]? <;> cases h2 : f[i]? <;> simp_all
   · rw [getElem?_positions_two_mul_add_one, getElem?_positions_two_mul_add_one]
     have := elements_nucleus_fusion f i
-    cases h1 : (fusion f)[i]? <;> cases h2 : f[i]? <;> simp_all
+    rcases h1 : (fusion f)[i]? with _ | u' <;> rcases h2 : f[i]? with _ | u <;> simp_all
+    rcases hv' : u'.v.vowel? with _ | v' <;> rcases hv : u.v.vowel? with _ | v <;> simp_all
 
 /-- The imperative of 'pull', /s_ħʌb/ (37b). -/
 def imperativePull : Form :=
@@ -916,11 +930,10 @@ def imperativeAsk : Form :=
 -- (20), (21), (27): a nucleus sharing the |A| of its onset reads it as a head after a pharyngeal
 -- and as a dependent after a glottal, where the lowered vowel is written with a head after both
 theorem reads_fuse_status :
-    (fuse (positions imperativePull) .A 2 3).Reads Autosegmental.AR.planes 3 (some .A) .head ∧
-      (fuse (positions imperativeAsk) .A 2 3).Reads Autosegmental.AR.planes 3 (some .A)
-        .dependent ∧
+    (fuse (positions imperativePull) .A 2 3).Reads tiers 3 (.line .A) .head ∧
+      (fuse (positions imperativeAsk) .A 2 3).Reads tiers 3 (.line .A) .dependent ∧
       ∀ f ∈ [imperativePull, imperativeAsk],
-        (positions (fusion f))[3]?.map (·.melody.status .A) = some .head := by
+        ((positions (fusion f))[3]?.bind (·.melody)).map (·.status .A) = some .head := by
   decide +kernel
 
 /-- The type C gerund of 'bless', /m_-barak/ (39b). -/
