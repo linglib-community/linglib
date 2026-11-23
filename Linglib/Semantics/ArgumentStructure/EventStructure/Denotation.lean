@@ -44,7 +44,7 @@ open scoped SetRel
 
 universe u
 
-/-- The carrier of a sort, the states or the events of a model. -/
+/-- The type of eventualities of a sort: the states or the events. -/
 abbrev Eventuality.Carrier (State Event : Type u) : Eventuality → Type u
   | .state => State
   | .event => Event
@@ -53,8 +53,7 @@ instance {State Event : Type u} [Nonempty State] [Nonempty Event] (σ : Eventual
     Nonempty (σ.Carrier State Event) := by
   cases σ <;> assumption
 
-/-- The causal relation of a model into a sort, `cause` into the events and
-`causeState` into the states. -/
+/-- The causal relation into a sort: `cause` into events and `causeState` into states. -/
 def Model.causeInto {State Event : Type u} (M : Model State Event) :
     (σ : Eventuality) → SetRel Event (σ.Carrier State Event)
   | .state => M.causeState
@@ -76,9 +75,9 @@ open ModalLogic
 variable {Entity : Type*} {State Event : Type u} (M : Model State Event)
   (θ : Entity → Event → Prop) (P : Entity → State → Prop) (Q : Event → Prop)
 
-/-- The denotation of a template in `M`, with `θ` the relation of an actor to its eventuality, a
-root's state predicate `P` at the state and its manner `Q` at `ACT`: a relation between the
-actor, the undergoer and an eventuality of the template's sort. -/
+/-- The denotation of a template in `M`: a relation between an actor, an undergoer and an
+eventuality of the template's sort, given a thematic relation `θ`, a state predicate `P` and a
+manner `Q`. -/
 def denote : {σ : Eventuality} → Template σ → Entity → Entity → σ.Carrier State Event → Prop
   | _, state, _, x, s => P x s
   | _, act, y, _, v => θ y v ∧ Q v
@@ -88,7 +87,7 @@ def denote : {σ : Eventuality} → Template σ → Entity → Entity → σ.Car
 
 variable {M θ P Q} {y x : Entity}
 
-/-- A template's denotation grows with the relations of the model. -/
+/-- The denotation of a template is monotone in the model. -/
 theorem denote_mono {σ : Eventuality} (t : Template σ) (y x : Entity) :
     Monotone fun M : Model State Event ↦ t.denote M θ P Q y x := by
   intro M N h
@@ -99,20 +98,19 @@ theorem denote_mono {σ : Eventuality} (t : Template σ) (y x : Entity) :
     exact fun _ ⟨hv, e, he, hp⟩ ↦
       ⟨ihc y x _ hv, e, Model.causeInto_mono h _ he, iht x x e hp⟩
 
-/-- CAUSE with an individual causer is the `vcause` of Beavers and Koontz-Garboden, an event
-whose effector is the causer and which causes the caused subevent. -/
+/-- A causative with an individual causer holds of an event that has the causer as its actor and
+causes the caused subevent. -/
 theorem denote_cause_effector {t : Template .event} {v : Event} :
     (cause effector t).denote M θ P Q y x v ↔ θ y v ∧ ◇[M.cause] (t.denote M θ P Q x x) v :=
   Iff.rfl
 
-/-- Giving the eventuality of an individual causer a manner yields the template with an action
-as its causing subevent. -/
+/-- A causative whose causing subevent is an action is the causative with an individual causer
+together with the manner. -/
 theorem denote_cause_act {t : Template τ} {v : Event} :
     (cause act t).denote M θ P Q y x v ↔ (cause effector t).denote M θ P Q y x v ∧ Q v :=
   and_right_comm
 
-/-- A template's denotation entails that each of its subterms is realized, with the same
-undergoer. -/
+/-- If a template is realized then so is each of its subterms, with the same undergoer. -/
 theorem exists_denote_of_isSubterm {u : Template τ} {t : Template σ} (hu : u.IsSubterm t)
     {v : σ.Carrier State Event} (h : t.denote M θ P Q y x v) :
     ∃ y' w, u.denote M θ P Q y' x w := by
@@ -143,9 +141,8 @@ theorem exists_cause_of_denote {t : Template σ} (ht : .cause ∈ t.kinds)
     exact ih ht hs
   | cause _ _ _ _ => obtain ⟨_, _, hc, _⟩ := h; exact ⟨_, _, _, hc⟩
 
-/-- Where every individual is an actor of every eventuality, a template with the trivial state
-and manner is realized everywhere, if every eventuality gives rise to a state when the template
-has `BECOME` and causes an eventuality when it has `CAUSE`. -/
+/-- If `θ` is total and every event has a result and an effect of each sort wherever the template
+has `BECOME` and `CAUSE`, then the template with trivial predicates holds everywhere. -/
 theorem denote_top (hθ : ∀ y v, θ y v) {t : Template σ}
     (hb : .result ∈ t.kinds → ∀ e, ∃ s, e ~[M.become] s)
     (hc : .cause ∈ t.kinds → ∀ (τ : Eventuality) (v : Event),

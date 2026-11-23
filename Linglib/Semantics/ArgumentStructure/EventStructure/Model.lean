@@ -36,14 +36,15 @@ ordered by inclusion of their relations.
 
 namespace ArgumentStructure.EventStructure
 
-/-- A model of the event-structure primitives, the relations that the verbal heads introduce. -/
+/-- A model of the event-structure primitives: the relations `become`, `cause` and `causeState` on
+states and events. -/
 @[ext]
 structure Model (State Event : Type*) where
-  /-- An eventuality and a state it gives rise to. -/
+  /-- `e ~[become] s`: the event `e` gives rise to the state `s`. -/
   become : SetRel Event State
-  /-- An eventuality and an eventuality it causes. -/
+  /-- `v ~[cause] e`: the event `v` causes the event `e`. -/
   cause : SetRel Event Event
-  /-- An eventuality and a state it causes without a change. -/
+  /-- `v ~[causeState] s`: the event `v` causes the state `s` without a change. -/
   causeState : SetRel Event State := ∅
 
 namespace Model

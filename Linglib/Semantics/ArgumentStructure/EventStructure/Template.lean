@@ -39,25 +39,24 @@ that `cause` always relates two subevents.
 
 namespace ArgumentStructure.EventStructure
 
-/-- The two sorts of eventuality a template describes. -/
+/-- The sort of an eventuality, a state or an event. -/
 inductive Eventuality where
   | state
   | event
   deriving DecidableEq, Repr
 
 
-/-- An event structure template, a sorted term over the primitive predicates. -/
+/-- An event structure template of a given sort. -/
 inductive Template : Eventuality → Type where
   /-- `[x ⟨STATE⟩]`. -/
   | state : Template .state
-  /-- `[x ACT⟨MANNER⟩]`, the activity. -/
+  /-- `[x ACT⟨MANNER⟩]`, an action. -/
   | act : Template .event
-  /-- `[x]`, an eventuality with no content beyond its effector: the individual causer of
-  `[x CAUSE t]`. -/
+  /-- `[x]`, the event of an individual causer, with no content beyond its effector. -/
   | effector : Template .event
   /-- `[BECOME t]`. -/
   | become (t : Template .state) : Template .event
-  /-- `[causing CAUSE caused]`, the caused subevent an event or a state. -/
+  /-- `[causing CAUSE caused]`, where `caused` is an event or a state. -/
   | cause (causing : Template .event) {σ : Eventuality} (caused : Template σ) : Template .event
 
 namespace Template
@@ -70,8 +69,7 @@ def achievement : Template .event := become state
 /-- The accomplishment `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`. -/
 def accomplishment : Template .event := cause act achievement
 
-/-- The kinds of entailment a template's primitives contribute: a state, the manner of an
-action, the change of `BECOME` and the causation of `CAUSE`. -/
+/-- The kinds of entailment the primitives of a template contribute. -/
 @[simp]
 def kinds : {σ : Eventuality} → Template σ → Finset Root.Kind
   | _, state => {.state}
@@ -85,12 +83,12 @@ def causing : Template .event → Option (Template .event)
   | cause c _ => some c
   | _ => none
 
-/-- The caused subevent of a causative template, where it is an event. -/
+/-- The caused subevent of a causative template, when it is an event. -/
 def caused : Template .event → Option (Template .event)
   | cause (σ := .event) _ e => some e
   | _ => none
 
-/-- `u` occurs in `t`. -/
+/-- `u.IsSubterm t` means that `u` occurs in `t`. -/
 inductive IsSubterm : {α β : Eventuality} → Template α → Template β → Prop
   | refl {α : Eventuality} (t : Template α) : IsSubterm t t
   | become {α : Eventuality} {u : Template α} {t : Template .state} :
@@ -100,8 +98,7 @@ inductive IsSubterm : {α β : Eventuality} → Template α → Template β → 
   | caused {α β : Eventuality} {u : Template α} {c : Template .event} {e : Template β} :
       IsSubterm u e → IsSubterm u (cause c e)
 
-/-- A template whose primitives include a manner and a state has `CAUSE`, since causation is
-the only primitive that relates an action to a state. -/
+/-- A template with a manner and a state has `CAUSE`. -/
 theorem cause_mem_kinds_of_manner_of_state {t : Template σ} (hm : .manner ∈ t.kinds)
     (hs : .state ∈ t.kinds) : .cause ∈ t.kinds := by
   induction t with
@@ -111,7 +108,7 @@ theorem cause_mem_kinds_of_manner_of_state {t : Template σ} (hm : .manner ∈ t
     exact ih hm hs
   | cause => simp
 
-/-- A subterm's primitives are among the template's. -/
+/-- The kinds of a subterm are among the kinds of the template. -/
 theorem IsSubterm.kinds_subset {u : Template τ} {t : Template σ} (h : u.IsSubterm t) :
     u.kinds ⊆ t.kinds := by
   induction h with
