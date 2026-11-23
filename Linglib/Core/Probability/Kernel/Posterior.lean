@@ -184,6 +184,16 @@ theorem comp_real_mul_posterior_real [Fintype Ω] (ω : Ω) (x : 𝓧) :
   · rw [posterior_real_singleton κ μ hx, mul_div_cancel₀]
     rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
 
+
+/-- At every state and observation, the mass of the observation times the posterior mass of the
+state is the prior mass of the state times its likelihood. -/
+theorem comp_mul_posterior_singleton [Fintype Ω] (ω : Ω) (x : 𝓧) :
+    (κ ∘ₘ μ) {x} * (κ†μ) x {ω} = μ {ω} * κ ω {x} := by
+  have h := comp_real_mul_posterior_real κ μ ω x
+  simp only [measureReal_def, ← ENNReal.toReal_mul] at h
+  exact (ENNReal.toReal_eq_toReal_iff' (ENNReal.mul_ne_top (measure_ne_top _ _)
+    (measure_ne_top _ _)) (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))).1 h
+
 theorem real_lt_posterior_real_singleton_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω : Ω}
     (hω : μ {ω} ≠ 0) :
     μ.real {ω} < ((κ†μ) x).real {ω} ↔ (κ ∘ₘ μ).real {x} < (κ ω).real {x} := by

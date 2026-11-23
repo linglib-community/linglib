@@ -23,8 +23,10 @@ holding the belief `μ`. After observing, the agent holds the posterior `κ†π
 information `valueOfInformation V κ π` as the expected value of the posterior minus the value of the
 prior.
 
-The basic fact is that information cannot hurt when `V` is convex. The prior is a mixture of the
-posteriors, so this is Jensen's inequality. See `valueOfInformation_nonneg_of_convexOn`.
+The basic facts hold for every `V` that is convex on beliefs. Information cannot hurt: the prior is
+a mixture of the posteriors, so this is Jensen's inequality. And garbling an experiment cannot
+raise its value, because the posteriors of the garbled experiment are mixtures of the original
+ones. See `valueOfInformation_nonneg_of_convexOn` and `valueOfInformation_comp_le_of_convexOn`.
 
 The main example is the decision value `decisionValue U μ`, the best expected utility that an agent
 with belief `μ` can obtain. For it we also prove Blackwell's theorem comparing experiments.
@@ -45,7 +47,8 @@ with belief `μ` can obtain. For it we also prove Blackwell's theorem comparing 
   (`valueOfInformation_decisionValue_nonneg`).
 * `valueOfInformation_eq_integral_bregmanDiv`: the value of information is the expected Bregman
   divergence from the prior to the posterior.
-* `valueOfInformation_decisionValue_comp_le`: a garbled experiment is worth no more.
+* `valueOfInformation_comp_le_of_convexOn`: a garbled experiment is worth no more, for a value
+  function convex on beliefs.
 * `valueOfInformation_const`: an experiment whose law does not depend on the parameter is
   worth nothing.
 * `valueOfInformation_deterministic`, `sum_measureReal_mul_integral_cond`,
@@ -64,10 +67,6 @@ bound `C` stays inside the proofs of the inequalities.
 
 ## TODO
 
-* Garbling cannot raise the value of an experiment for any value function convex on beliefs:
-  the posterior of the garbled experiment at an observation is a mixture of the posteriors of
-  the original, so `ConvexOn.map_sum_smul_le` applies at each observation.
-  `valueOfInformation_decisionValue_comp_le` would then follow without the risk increase.
 * The value functions here are on finitely many parameters and observations. In general Jensen's
   inequality needs a topology on beliefs.
 * Negative entropy as a value function, whose value of information is mutual information and
@@ -202,6 +201,21 @@ theorem convexOn_decisionValue [Finite Θ] [MeasurableSingletonClass Θ] [Finite
   exact add_le_add (mul_le_mul_of_nonneg_left (integral_le_decisionValue μ y) a.2)
     (mul_le_mul_of_nonneg_left (integral_le_decisionValue ν y) b.2)
 
+/-- The posterior of a garbled experiment at an observation, weighted by the probability of the
+observation, is the mixture of the posteriors of the original experiment weighted by the joint
+probabilities. -/
+theorem smul_posterior_comp [Fintype Θ] [MeasurableSingletonClass Θ] [StandardBorelSpace Θ]
+    [Nonempty Θ] [Fintype 𝓧] [MeasurableSingletonClass 𝓧] {𝓧' : Type*} {m𝓧' : MeasurableSpace 𝓧'}
+    [MeasurableSingletonClass 𝓧'] (κ : Kernel Θ 𝓧) [IsMarkovKernel κ] (π : Measure Θ)
+    [IsProbabilityMeasure π] (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] (x' : 𝓧') :
+    ((η ∘ₖ κ) ∘ₘ π) {x'} • ((η ∘ₖ κ)†π) x' = ∑ x, ((κ ∘ₘ π) {x} * η x {x'}) • (κ†π) x := by
+  refine Measure.ext_of_singleton fun θ ↦ ?_
+  rw [smul_apply, smul_eq_mul, comp_mul_posterior_singleton, Kernel.comp_apply_singleton,
+    FunLike.coe_sum, Finset.sum_apply, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun x _ ↦ ?_
+  rw [smul_apply, smul_eq_mul, mul_right_comm, comp_mul_posterior_singleton]
+  ring
+
 section Convex
 
 variable [StandardBorelSpace Θ] [Nonempty Θ] [Finite 𝓧] [MeasurableSingletonClass 𝓧]
@@ -249,6 +263,65 @@ theorem valueOfInformation_eq_integral_bregmanDiv_integral [Finite Θ] [Measurab
   valueOfInformation_eq_integral_bregmanDiv κ π V _ <| by
     have h := valueOfInformation_integral g κ π
     rwa [valueOfInformation, sub_eq_zero] at h
+
+/-- Garbling an experiment cannot raise its value for a value function that is convex on
+beliefs. -/
+theorem valueOfInformation_comp_le_of_convexOn [Finite Θ] [MeasurableSingletonClass Θ]
+    {𝓧' : Type*} {m𝓧' : MeasurableSpace 𝓧'} [Finite 𝓧'] [MeasurableSingletonClass 𝓧']
+    {V : Measure Θ → ℝ} (hV : ConvexOn ℝ≥0 {μ : Measure Θ | IsProbabilityMeasure μ} V)
+    (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] :
+    valueOfInformation V (η ∘ₖ κ) π ≤ valueOfInformation V κ π := by
+  cases nonempty_fintype Θ
+  cases nonempty_fintype 𝓧
+  cases nonempty_fintype 𝓧'
+  rw [valueOfInformation, valueOfInformation, sub_le_sub_iff_right, integral_fintype .of_finite,
+    integral_fintype .of_finite]
+  simp only [smul_eq_mul, measureReal_def]
+  have hm' (x' : 𝓧') : ((η ∘ₖ κ) ∘ₘ π) {x'} = ∑ x, (κ ∘ₘ π) {x} * η x {x'} := by
+    rw [← Measure.comp_assoc, Measure.comp_apply_singleton]
+  have hfin (x : 𝓧) (x' : 𝓧') : (κ ∘ₘ π) {x} * η x {x'} ≠ ∞ :=
+    ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
+  have key (x' : 𝓧') : (((η ∘ₖ κ) ∘ₘ π) {x'}).toReal * V (((η ∘ₖ κ)†π) x') ≤
+      ∑ x, ((κ ∘ₘ π) {x} * η x {x'}).toReal * V ((κ†π) x) := by
+    rcases eq_or_ne (((η ∘ₖ κ) ∘ₘ π) {x'}) 0 with h0 | h0
+    · have hz (x : 𝓧) : (κ ∘ₘ π) {x} * η x {x'} = 0 :=
+        Finset.sum_eq_zero_iff.1 ((hm' x').symm.trans h0) x (Finset.mem_univ x)
+      simp [h0, hz]
+    · have hc : ((η ∘ₖ κ) ∘ₘ π) {x'} ≠ ∞ := measure_ne_top _ _
+      have hwt (x : 𝓧) : (κ ∘ₘ π) {x} * η x {x'} * (((η ∘ₖ κ) ∘ₘ π) {x'})⁻¹ ≠ ∞ :=
+        ENNReal.mul_ne_top (hfin x x') (ENNReal.inv_ne_top.2 h0)
+      have hw : ∑ x, ((κ ∘ₘ π) {x} * η x {x'} * (((η ∘ₖ κ) ∘ₘ π) {x'})⁻¹).toNNReal = 1 := by
+        apply ENNReal.coe_injective
+        push_cast
+        simp_rw [ENNReal.coe_toNNReal (hwt _)]
+        rw [← Finset.sum_mul, ← hm' x', ENNReal.mul_inv_cancel h0 hc]
+      have hp : ∑ x, ((κ ∘ₘ π) {x} * η x {x'} * (((η ∘ₖ κ) ∘ₘ π) {x'})⁻¹).toNNReal • (κ†π) x =
+          ((η ∘ₖ κ)†π) x' := by
+        calc _ = ∑ x, (((η ∘ₖ κ) ∘ₘ π) {x'})⁻¹ • ((κ ∘ₘ π) {x} * η x {x'}) • (κ†π) x :=
+              Finset.sum_congr rfl fun x _ ↦ by
+                rw [ENNReal.smul_def, ENNReal.coe_toNNReal (hwt x), smul_smul, mul_comm]
+          _ = (((η ∘ₖ κ) ∘ₘ π) {x'})⁻¹ • (((η ∘ₖ κ) ∘ₘ π) {x'} • ((η ∘ₖ κ)†π) x') := by
+              rw [← Finset.smul_sum, smul_posterior_comp κ π η x']
+          _ = ((η ∘ₖ κ)†π) x' := by rw [smul_smul, ENNReal.inv_mul_cancel h0 hc, one_smul]
+      have hJ := hV.map_sum_smul_le (t := Finset.univ)
+        (w := fun x ↦ ((κ ∘ₘ π) {x} * η x {x'} * (((η ∘ₖ κ) ∘ₘ π) {x'})⁻¹).toNNReal)
+        (p := fun x ↦ (κ†π) x) (fun _ _ ↦ bot_le) hw
+        fun x _ ↦ (inferInstance : IsProbabilityMeasure ((κ†π) x))
+      rw [hp] at hJ
+      refine (mul_le_mul_of_nonneg_left hJ ENNReal.toReal_nonneg).trans_eq ?_
+      rw [Finset.mul_sum]
+      refine Finset.sum_congr rfl fun x _ ↦ ?_
+      rw [NNReal.smul_def, smul_eq_mul, ← mul_assoc, ENNReal.coe_toNNReal_eq_toReal,
+        ← ENNReal.toReal_mul, mul_comm (((η ∘ₖ κ) ∘ₘ π) {x'}), mul_assoc,
+        ENNReal.inv_mul_cancel h0 hc, mul_one]
+  refine (Finset.sum_le_sum fun x' _ ↦ key x').trans_eq ?_
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun x _ ↦ ?_
+  rw [← Finset.sum_mul]
+  congr 1
+  simp_rw [ENNReal.toReal_mul]
+  rw [← Finset.mul_sum, ← ENNReal.toReal_sum fun _ _ ↦ measure_ne_top _ _]
+  simp
 
 end Convex
 
@@ -333,16 +406,8 @@ theorem valueOfInformation_decisionValue_nonneg :
 /-- Garbling an experiment cannot raise its value to an expected-utility maximizer. -/
 theorem valueOfInformation_decisionValue_comp_le {𝓧' : Type*} {m𝓧' : MeasurableSpace 𝓧'}
     [Finite 𝓧'] [MeasurableSingletonClass 𝓧'] (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] :
-    valueOfInformation (decisionValue U) (η ∘ₖ κ) π ≤ valueOfInformation (decisionValue U) κ π := by
-  rcases isEmpty_or_nonempty 𝓨 with h𝓨 | h𝓨
-  · simp [valueOfInformation, decisionValue]
-  let _ : MeasurableSpace 𝓨 := ⊤
-  have : MeasurableSingletonClass 𝓨 := ⟨fun _ ↦ trivial⟩
-  obtain ⟨C, hC⟩ := Finite.exists_le (Function.uncurry U)
-  replace hC : ∀ θ a, U θ a ≤ C := fun θ a ↦ hC (θ, a)
-  have h := riskIncrease_comp_le (fun θ a ↦ ENNReal.ofReal (C - U θ a)) κ π η
-  rwa [riskIncrease_ofReal_sub hC, riskIncrease_ofReal_sub hC,
-    ENNReal.ofReal_le_ofReal_iff (valueOfInformation_decisionValue_nonneg U κ π)] at h
+    valueOfInformation (decisionValue U) (η ∘ₖ κ) π ≤ valueOfInformation (decisionValue U) κ π :=
+  valueOfInformation_comp_le_of_convexOn κ π (convexOn_decisionValue U) η
 
 /-- No experiment is worth more than observing the parameter itself, the expected value of
 perfect information. -/
