@@ -29,13 +29,14 @@ of the three pairs or the triple (`isComplex_iff`), a segment specified for `[ro
 one articulator has the labial one (`articulators_eq_labial_of_round`), and place assimilation
 gives its target the articulators of its trigger, complex or not (`articulators_spread_place`).
 
-An association line joins positions of two tiers. With the positions placed in time as intervals
-and the order of each tier read as precedence, a line may be read as total simultaneity, the two
-intervals being equal, or as overlap, the two sharing an instant. Under simultaneity the lines
-between two tiers pair their positions one to one and in order
-(`HasSimultaneity.lt_iff_lt`), which excludes the contour segment, the geminate and the
-discontinuous link. Under overlap, `Autosegmental.AR.HasIntervalOrder`, all three can be placed,
-and by `Autosegmental.AR.HasIntervalOrder.noCrossing` a representation that can be placed has no
+An association line joins positions of two tiers. A reading sends the positions to events
+ordered by a precedence, `Autosegmental.AR.IsReading`, the order of each tier going to the
+precedence. A line may then be read as simultaneity, its two positions at one event, or, with
+intervals for events, as overlap, the two sharing an instant. Under simultaneity the lines
+between two tiers pair their positions one to one and in order (`lt_iff_lt_of_isReading_eq`),
+which excludes the contour segment, the geminate and the discontinuous link. Under overlap,
+`Autosegmental.AR.HasIntervalOrder`, all three can be placed, and by
+`Autosegmental.AR.HasIntervalOrder.noCrossing` a representation that can be placed has no
 crossing lines, so that the No-Crossing Constraint is not a separate condition.
 
 ## Implementation notes
@@ -322,42 +323,28 @@ theorem spread_dorsal_highBackRound_trill :
 
 section Association
 
-variable {ι : Type*} {τ : ι → Type*} {X : AR τ}
+variable {ι E : Type*} {τ : ι → Type*} {X : AR τ} {prec : E → E → Prop} {I : X.Pos → E}
 
-variable (X) in
-/-- `X` can be placed in time with association as total simultaneity: intervals in the order of
-each tier, equal across each line. -/
-def HasSimultaneity : Prop :=
-  ∃ (T : Type) (_ : LinearOrder T) (I : X.Pos → NonemptyInterval T),
-    (∀ i ⦃p q : Fin (X.word i).length⦄, p < q → (I ⟨i, p⟩).Precedes (I ⟨i, q⟩)) ∧
-      ∀ ⦃v w⦄, X.assoc.Adj v w → I v = I w
-
-namespace HasSimultaneity
-
-theorem hasIntervalOrder (h : HasSimultaneity X) : X.HasIntervalOrder := by
-  obtain ⟨T, _, I, hI, hA⟩ := h
-  exact AR.hasIntervalOrder_of_intervals I hI fun _ _ hvw ↦ by
-    rw [hA hvw]
-    exact NonemptyInterval.overlaps_refl _
-
-private theorem lt_of_lt (h : HasSimultaneity X) {i j : ι} {p q p' q' : ℕ}
-    (h₁ : X.Link i j p q) (h₂ : X.Link i j p' q') (hlt : p < p') : q < q' := by
-  obtain ⟨T, _, I, hI, hA⟩ := h
-  have hq := hI i (show (⟨p, h₁.lt_left⟩ : Fin _) < ⟨p', h₂.lt_left⟩ from hlt)
-  rw [hA h₁.adj, hA h₂.adj] at hq
+private theorem lt_of_lt [IsStrictOrder E prec] (h : X.IsReading prec Eq I) {i j : ι}
+    {p q p' q' : ℕ} (h₁ : X.Link i j p q) (h₂ : X.Link i j p' q') (hlt : p < p') : q < q' := by
+  have hq := h.prec_of_lt i (show (⟨p, h₁.lt_left⟩ : Fin _) < ⟨p', h₂.lt_left⟩ from hlt)
+  rw [h.ov_of_adj h₁.adj, h.ov_of_adj h₂.adj] at hq
   by_contra! hge
   obtain rfl | hlt' := hge.eq_or_lt
-  · exact NonemptyInterval.precedes_irrefl _ hq
-  · exact NonemptyInterval.precedes_asymm hq
-      (hI j (show (⟨q', h₂.lt_right⟩ : Fin _) < ⟨q, h₁.lt_right⟩ from hlt'))
+  · exact irrefl_of prec _ hq
+  · exact irrefl_of prec _ (trans_of prec hq
+      (h.prec_of_lt j (show (⟨q', h₂.lt_right⟩ : Fin _) < ⟨q, h₁.lt_right⟩ from hlt')))
 
-/-- Read as simultaneity, the lines between two tiers pair their positions one to one and in
-order. -/
-theorem lt_iff_lt (h : HasSimultaneity X) {i j : ι} {p q p' q' : ℕ} (h₁ : X.Link i j p q)
-    (h₂ : X.Link i j p' q') : p < p' ↔ q < q' :=
-  ⟨h.lt_of_lt h₁ h₂, h.lt_of_lt h₁.symm h₂.symm⟩
+/-- Read as simultaneity, the two positions of a line at one event, the lines between two tiers
+pair their positions one to one and in order. -/
+theorem lt_iff_lt_of_isReading_eq [IsStrictOrder E prec] (h : X.IsReading prec Eq I) {i j : ι}
+    {p q p' q' : ℕ} (h₁ : X.Link i j p q) (h₂ : X.Link i j p' q') : p < p' ↔ q < q' :=
+  ⟨lt_of_lt h h₁ h₂, lt_of_lt h h₁.symm h₂.symm⟩
 
-end HasSimultaneity
+theorem hasIntervalOrder_of_isReading_eq {T : Type*} [LinearOrder T]
+    {I : X.Pos → NonemptyInterval T} (h : X.IsReading NonemptyInterval.Precedes Eq I) :
+    X.HasIntervalOrder :=
+  (h.mono fun a _ hab ↦ by rw [← hab]; exact NonemptyInterval.overlaps_refl a).hasIntervalOrder
 
 end Association
 
@@ -376,14 +363,15 @@ abbrev crossing : AR (TwoTier Bool Unit) :=
   AR.ofLines [false, true] [(), ()] {(0, 1), (1, 0)}
 
 -- (9), (10), (13)
-theorem not_hasSimultaneity :
-    ¬ HasSimultaneity contour ∧ ¬ HasSimultaneity geminate ∧ ¬ HasSimultaneity discontinuous :=
-  ⟨fun h ↦ absurd ((h.lt_iff_lt (i := .upper) (j := .lower) (p := 0) (q := 0) (p' := 1) (q' := 0)
-      (by decide) (by decide)).1 (by decide)) (by decide),
-    fun h ↦ absurd ((h.lt_iff_lt (i := .upper) (j := .lower) (p := 0) (q := 0) (p' := 0) (q' := 1)
-      (by decide) (by decide)).2 (by decide)) (by decide),
-    fun h ↦ absurd ((h.lt_iff_lt (i := .upper) (j := .lower) (p := 0) (q := 0) (p' := 0) (q' := 2)
-      (by decide) (by decide)).2 (by decide)) (by decide)⟩
+theorem not_isReading_eq {E : Type*} (prec : E → E → Prop) [IsStrictOrder E prec] :
+    (∀ I, ¬ contour.IsReading prec Eq I) ∧ (∀ I, ¬ geminate.IsReading prec Eq I) ∧
+      ∀ I, ¬ discontinuous.IsReading prec Eq I :=
+  ⟨fun _ h ↦ absurd ((lt_iff_lt_of_isReading_eq h (i := .upper) (j := .lower) (p := 0) (q := 0)
+      (p' := 1) (q' := 0) (by decide) (by decide)).1 (by decide)) (by decide),
+    fun _ h ↦ absurd ((lt_iff_lt_of_isReading_eq h (i := .upper) (j := .lower) (p := 0) (q := 0)
+      (p' := 0) (q' := 1) (by decide) (by decide)).2 (by decide)) (by decide),
+    fun _ h ↦ absurd ((lt_iff_lt_of_isReading_eq h (i := .upper) (j := .lower) (p := 0) (q := 0)
+      (p' := 0) (q' := 2) (by decide) (by decide)).2 (by decide)) (by decide)⟩
 
 -- (18), (21)
 theorem hasIntervalOrder_contour_geminate_discontinuous :
