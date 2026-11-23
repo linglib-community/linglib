@@ -378,7 +378,7 @@ inductive Address where
 inductive City where
   | amsterdam
   | utrecht
-  deriving DecidableEq, Fintype
+  deriving DecidableEq, Fintype, Nonempty
 
 /-- The city of an address. -/
 def Address.city : Address → City
@@ -488,7 +488,8 @@ instance : DiscreteMeasurableSpace Address := ⟨fun _ ↦ trivial⟩
 
 theorem liveIn_visit_better (μ : Measure Address) [IsProbabilityMeasure μ] :
     Better visit μ (Setoid.ker Address.city) ⊥ := by
-  refine better_of_isResolved_of_lt visit μ (fun w ↦ visit_isResolved w.city fun _ hv ↦ hv)
+  refine better_of_le_issue_of_lt visit μ
+    ((fromSetoid_le_issue_iff visit).2 fun w ↦ visit_isResolved w.city fun _ hv ↦ hv)
     (bot_lt_iff_ne_bot.2 fun h ↦ ?_)
   have : Setoid.ker Address.city .amsterdam₁ .amsterdam₂ := rfl
   rw [h, Setoid.bot_def] at this
