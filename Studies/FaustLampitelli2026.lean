@@ -39,11 +39,10 @@ applies to the output of the one before it and not to the input (`feeds_fusion`,
 
 ## Implementation notes
 
-* The analysis runs over the paper's transcription, a consonant other than a guttural being its
-  letter, which is read only to compare two consonants and to spell a form.
-  `mapM_segment?_radicals` shows that the roots, read as segments of the PHOIBLE inventories, are
-  the roots of the Tigrinya and Tigre fragments, and `image_segment_eq_vowels` that the vowels
-  are the Tigrinya fragment's.
+* The consonants and roots are those of the Tigrinya and Tigre fragments, and the surface forms
+  are lists of their segments. `read` reads an attested form's transcription through the PHOIBLE
+  inventory of its language; `image_segment_eq_vowels` shows that the vowels are the Tigrinya
+  fragment's.
 * A pattern is a prefix and a stem of positions (radical, geminable radical, fixed segment)
   with nuclei, instantiated by a root. Gutturals do not geminate, so a geminable position
   holding a guttural is a single unit. The prefixes tɨ- and mɨ- carry empty nuclei; the
@@ -65,7 +64,7 @@ applies to the output of the one before it and not to the input (`feeds_fusion`,
   where `epenthesis` gives C▪C_C▪C.
 * Trans-guttural harmony is optional, so `realizations` lists every option. `harmonized` reads
   one harmonized surface form back as an underlying form.
-* The postvocalic spirantization of b ([nɨβaħ]) is outside the analysis; β is read as b.
+* The postvocalic spirantization of b ([nɨβaħ]) is outside the analysis; `read` takes β as b.
 
 ## TODO
 
@@ -110,17 +109,18 @@ inductive Vowel where
   | weak
   deriving DecidableEq, Repr, Fintype
 
-/-- `v.toIPA` is the IPA symbol of the vowel `v`. -/
-def Vowel.toIPA : Vowel → String
-  | .a => "a"
-  | .aBare => "ʌ"
-  | .i => "i"
-  | .u => "u"
-  | .e => "e"
-  | .o => "o"
-  | .weak => "ɨ"
+/-- The vowel a letter of the paper's transcription writes. -/
+def Vowel.ofLetter? : String → Option Vowel
+  | "a" => some .a
+  | "ʌ" => some .aBare
+  | "i" => some .i
+  | "u" => some .u
+  | "e" => some .e
+  | "o" => some .o
+  | "ɨ" => some .weak
+  | _ => none
 
-/-- `v.segment` is the vowel `v` in the Tigrinya fragment. -/
+/-- `v.segment` is the vowel `v` in the Tigrinya fragment, whose vowels are those of Tigre. -/
 def Vowel.segment : Vowel → Phonology.Segment
   | .a => Tigrinya.Phonology.a
   | .aBare => Tigrinya.Phonology.«ʌ»
@@ -156,24 +156,8 @@ inductive Guttural where
   | pharyngealVoiceless
   deriving DecidableEq, Repr, Fintype
 
-/-- `g.toIPA` is the IPA symbol of the guttural `g`. -/
-def Guttural.toIPA : Guttural → String
-  | .glottalStop => "ʔ"
-  | .h => "h"
-  | .pharyngealVoiced => "ʕ"
-  | .pharyngealVoiceless => "ħ"
-
-/-- `Guttural.ofIPA? s` is the guttural the IPA symbol `s` writes, if any. -/
-def Guttural.ofIPA? : String → Option Guttural
-  | "ʔ" => some .glottalStop
-  | "h" => some .h
-  | "ʕ" => some .pharyngealVoiced
-  | "ħ" => some .pharyngealVoiceless
-  | _ => none
-
-theorem Guttural.ofIPA?_toIPA (g : Guttural) : ofIPA? g.toIPA = some g := by cases g <;> rfl
-
-/-- `g.segment` is the guttural `g` in the Tigrinya fragment. -/
+/-- `g.segment` is the guttural `g` in the Tigrinya fragment, whose gutturals are those of
+Tigre. -/
 def Guttural.segment : Guttural → Phonology.Segment
   | .glottalStop => Tigrinya.Phonology.«ʔ»
   | .h => Tigrinya.Phonology.h
@@ -249,33 +233,15 @@ theorem lowered_lowered : ∀ v : Vowel, lowered (lowered v) = lowered v := by d
 
 /-! ### Strict CV forms -/
 
-/-- A consonantal position is a guttural, or any other consonant by its transcription. -/
-inductive Cons where
-  | guttural (g : Guttural)
-  | plain (s : String)
-  deriving DecidableEq, Repr
+/-- `HasA c` says that the consonant is a guttural, whose melody contains |A| (20). Other
+consonants carry no representation here, since ejectives also lower but never trigger syneresis
+(fn. 8). -/
+def HasA (c : Phonology.Segment) : Prop :=
+  ∃ g : Guttural, g.segment = c ∧ .A ∈ (gutturalET g).elements
 
-/-- The consonant written by a root segment. -/
-def Cons.ofIPA (s : String) : Cons :=
-  match Guttural.ofIPA? s with
-  | some g => .guttural g
-  | none => .plain s
+instance : DecidablePred HasA := fun _ ↦ inferInstanceAs (Decidable (∃ _, _))
 
-/-- `c.HasA` says that the consonant's melody contains |A|, which every guttural's does (20). Other
-consonants carry no representation here, since ejectives also lower but never trigger syneresis (fn.
-8). -/
-def Cons.HasA : Cons → Prop
-  | .guttural g => .A ∈ (gutturalET g).elements
-  | .plain _ => False
-
-instance : DecidablePred Cons.HasA := fun c ↦ by cases c <;> unfold Cons.HasA <;> infer_instance
-
-theorem hasA_guttural (g : Guttural) : (Cons.guttural g).HasA := mem_elements_gutturalET g
-
-/-- The transcription of a consonant. -/
-def Cons.chars : Cons → List Char
-  | .guttural g => g.toIPA.toList
-  | .plain s => s.toList
+theorem hasA_segment (g : Guttural) : HasA g.segment := ⟨g, rfl, mem_elements_gutturalET g⟩
 
 /-- A nucleus in the course of a derivation (29) is empty, empty but to be realized (▪), or a
 vowel. A vowel fused with an adjacent |A| either shares that |A| with what follows ((26), (27))
@@ -295,9 +261,9 @@ def Nuc.vowel? : Nuc → Option Vowel
 
 /-- A CV unit ([lowenstamm-1996]). -/
 structure CV where
-  c : Cons
+  c : Phonology.Segment
   v : Nuc
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-- A form is a strict iteration of CV units. -/
 abbrev Form := List CV
@@ -305,7 +271,7 @@ abbrev Form := List CV
 /-- The consonant at `i` contains |A|. -/
 def HasAAt (f : Form) (i : ℕ) : Prop :=
   match f[i]? with
-  | some u => u.c.HasA
+  | some u => HasA u.c
   | none => False
 
 instance (f : Form) (i : ℕ) : Decidable (HasAAt f i) := by
@@ -369,7 +335,7 @@ def fusion (f : Form) : Form :=
   f.mapIdx fun i u ↦
     match u.v with
     | .vowel v =>
-      if IsLowA v ∧ u.c.HasA then ⟨u.c, .licensed (lowered v)⟩
+      if IsLowA v ∧ HasA u.c then ⟨u.c, .licensed (lowered v)⟩
       else if IsLowA v ∧ (HasAAt f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) then
         ⟨u.c, .shared (lowered v)⟩
       else u
@@ -416,27 +382,21 @@ def harmonySources (f : Form) (i : ℕ) : List Vowel :=
     if HasAAt f (i + 1) then (vowelAt f (i + 1)).toList else []
 
 /-- A nucleus to be realized surfaces as the weak vowel or as a copy of a harmony source. -/
-def realizeMark (f : Form) (i : ℕ) : List (List Char) :=
-  (['ɨ'] :: (harmonySources f i).map (·.toIPA.toList)).dedup
+def realizeMark (f : Form) (i : ℕ) : List (List Phonology.Segment) :=
+  (Vowel.weak :: harmonySources f i).dedup.map fun v ↦ [v.segment]
 
 /-- The realizations of the nucleus at `i`. -/
-def realizeNuc (f : Form) (i : ℕ) : List (List Char) :=
+def realizeNuc (f : Form) (i : ℕ) : List (List Phonology.Segment) :=
   match f[i]? with
   | some ⟨_, .mark⟩ => realizeMark f i
-  | some ⟨_, .vowel v⟩ | some ⟨_, .shared v⟩ | some ⟨_, .licensed v⟩ => [v.toIPA.toList]
+  | some ⟨_, .vowel v⟩ | some ⟨_, .shared v⟩ | some ⟨_, .licensed v⟩ => [[v.segment]]
   | _ => [[]]
-
-/-- The transcription of the consonant at `i`. -/
-def consAt (f : Form) (i : ℕ) : List Char :=
-  match f[i]? with
-  | some u => u.c.chars
-  | none => []
 
 /-- The surface forms of a form are its consonants and realized nuclei in order, one form per choice
 of realization. -/
-def realizations (f : Form) : List (List Char) :=
+def realizations (f : Form) : List (List Phonology.Segment) :=
   (List.range f.length).foldl (init := [[]]) fun acc i ↦
-    acc.flatMap fun s ↦ (realizeNuc f i).map (s ++ consAt f i ++ ·)
+    acc.flatMap fun s ↦ (realizeNuc f i).map (s ++ (f[i]?.map (·.c)).toList ++ ·)
 
 /-- A harmonized surface form read as an underlying form: a nucleus realized by trans-guttural
 harmony holds the vowel it copies, a fused vowel is a vowel, and any other nucleus to be realized
@@ -464,9 +424,10 @@ theorem lexical_fusion (f : Form) : lexical (fusion f) = lexical f := by
   · cases n <;> simp only [Option.map_some]; split_ifs <;> rfl
 
 -- (26b), (27b), (28b), §3.2.2
-theorem fusion_getElem? (f : Form) (i : ℕ) (c : Cons) (v : Vowel) (h : f[i]? = some ⟨c, .vowel v⟩) :
+theorem fusion_getElem? (f : Form) (i : ℕ) (c : Phonology.Segment) (v : Vowel)
+    (h : f[i]? = some ⟨c, .vowel v⟩) :
     (fusion f)[i]? = some ⟨c,
-      if IsLowA v ∧ c.HasA then .licensed (lowered v)
+      if IsLowA v ∧ HasA c then .licensed (lowered v)
       else if IsLowA v ∧ (HasAAt f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) then
         .shared (lowered v)
       else .vowel v⟩ := by
@@ -476,21 +437,21 @@ theorem fusion_getElem? (f : Form) (i : ℕ) (c : Cons) (v : Vowel) (h : f[i]? =
 /-- Syneresis ((26), (40)): dissociation after fusion empties a nucleus exactly when it holds a
 low vowel, its onset has no |A|, the next onset has, or the two nuclei hold /a/, and the next
 nucleus governs. -/
-theorem dissociation_empty_iff (f : Form) (i : ℕ) (c : Cons) (v : Vowel)
+theorem dissociation_empty_iff (f : Form) (i : ℕ) (c : Phonology.Segment) (v : Vowel)
     (h : f[i]? = some ⟨c, .vowel v⟩) :
     (dissociation (fusion f))[i]? = some ⟨c, .empty⟩ ↔
-      IsLowA v ∧ ¬ c.HasA ∧ (HasAAt f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) ∧
+      IsLowA v ∧ ¬ HasA c ∧ (HasAAt f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) ∧
         IsGovernor actorship (lexical f) (i + 1) := by
   simp only [dissociation, List.getElem?_mapIdx, fusion_getElem? f i c v h, Option.map_some,
     lexical_fusion]
   split_ifs <;> simp_all
 
 -- (27), (28), (40)
-theorem vowelAt_dissociation_iff (f : Form) (i : ℕ) (c : Cons) (v : Vowel)
+theorem vowelAt_dissociation_iff (f : Form) (i : ℕ) (c : Phonology.Segment) (v : Vowel)
     (h : f[i]? = some ⟨c, .vowel v⟩) (hv : IsLowA v)
-    (hA : c.HasA ∨ HasAAt f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) :
+    (hA : HasA c ∨ HasAAt f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) :
     vowelAt (dissociation (fusion f)) i = some (lowered v) ↔
-      c.HasA ∨ ¬ IsGovernor actorship (lexical f) (i + 1) := by
+      HasA c ∨ ¬ IsGovernor actorship (lexical f) (i + 1) := by
   simp only [vowelAt, dissociation, List.getElem?_mapIdx, fusion_getElem? f i c v h,
     Option.map_some, lexical_fusion, Option.bind_some]
   split_ifs <;> simp_all [Nuc.vowel?]
@@ -502,7 +463,7 @@ cannot geminate (§2.1, (12)), or fixed segmental material. -/
 inductive Pos where
   | rad (i : ℕ)
   | gem (i : ℕ)
-  | seg (s : String)
+  | seg (s : Phonology.Segment)
 
 /-- A lexical vowel. -/
 abbrev V (v : Vowel) : Nuc := .vowel v
@@ -518,46 +479,56 @@ structure Pattern where
 /-- The positions of a pattern, prefix and stem. -/
 def Pattern.positions (p : Pattern) : List (Pos × Nuc) := p.pre ++ p.stem
 
-/-- The 2nd-person prefix tɨ-, an empty nucleus in the underlying forms of (31)–(39). -/
-def prefix2 : List (Pos × Nuc) := [(.seg "t", .empty)]
+/-- The languages of the paper. -/
+inductive Lang where
+  | tigrinya
+  | tigre
+  deriving DecidableEq, Repr
+
+/-- The 2nd-person prefix tɨ-, an empty nucleus in the underlying forms of (31)–(39), with the /t/
+of the language. -/
+def prefix2 : Lang → List (Pos × Nuc)
+  | .tigrinya => [(.seg Tigrinya.Phonology.t, .empty)]
+  | .tigre => [(.seg Tigre.Phonology.t, .empty)]
 
 /-- The gerund prefix mɨ-, an empty nucleus in the underlying forms of (37a) and (39b). -/
-def prefixGer : List (Pos × Nuc) := [(.seg "m", .empty)]
+def prefixGer : List (Pos × Nuc) := [(.seg Tigrinya.Phonology.m, .empty)]
 
-/-- The pattern of each template of the paradigms. -/
-def pattern : Examples.Template → Pattern
+/-- The pattern of each template of the paradigms in a language. -/
+def pattern (l : Lang) : Examples.Template → Pattern
   | .depPrf => ⟨[], [(.rad 0, V .aBare), (.rad 1, V .aBare), (.rad 2, .empty)]⟩
   | .depPrfB => ⟨[], [(.rad 0, V .aBare), (.gem 1, V .aBare), (.rad 2, .empty)]⟩
   | .depPrfC => ⟨[], [(.rad 0, V .a), (.rad 1, V .aBare), (.rad 2, .empty)]⟩
   | .prf => ⟨[], [(.rad 0, V .aBare), (.rad 1, V .i), (.rad 2, .empty)]⟩
   | .imprf => ⟨[], [(.rad 0, V .aBare), (.gem 1, V .weak), (.rad 2, .empty)]⟩
-  | .imprf2 => ⟨prefix2, [(.rad 0, V .aBare), (.gem 1, V .weak), (.rad 2, .empty)]⟩
-  | .imprf2NoGem => ⟨prefix2, [(.rad 0, V .aBare), (.rad 1, V .weak), (.rad 2, .empty)]⟩
-  | .passPrf => ⟨prefix2, [(.rad 0, V .aBare), (.rad 1, V .i), (.rad 2, .empty)]⟩
+  | .imprf2 => ⟨prefix2 l, [(.rad 0, V .aBare), (.gem 1, V .weak), (.rad 2, .empty)]⟩
+  | .imprf2NoGem => ⟨prefix2 l, [(.rad 0, V .aBare), (.rad 1, V .weak), (.rad 2, .empty)]⟩
+  | .passPrf => ⟨prefix2 l, [(.rad 0, V .aBare), (.rad 1, V .i), (.rad 2, .empty)]⟩
   | .imp => ⟨[], [(.rad 0, .empty), (.rad 1, V .aBare), (.rad 2, .empty)]⟩
-  | .juss2 => ⟨prefix2, [(.rad 0, .empty), (.rad 1, V .aBare), (.rad 2, .empty)]⟩
+  | .juss2 => ⟨prefix2 l, [(.rad 0, .empty), (.rad 1, V .aBare), (.rad 2, .empty)]⟩
   | .impGem => ⟨[], [(.rad 0, V .a), (.gem 1, V .weak), (.rad 2, .empty)]⟩
-  | .jussGem2 => ⟨prefix2, [(.rad 0, V .a), (.gem 1, V .weak), (.rad 2, .empty)]⟩
+  | .jussGem2 => ⟨prefix2 l, [(.rad 0, V .a), (.gem 1, V .weak), (.rad 2, .empty)]⟩
   | .gerA => ⟨prefixGer, [(.rad 0, .empty), (.rad 1, V .a), (.rad 2, .empty)]⟩
   | .gerB => ⟨prefixGer, [(.rad 0, .empty), (.gem 1, V .a), (.rad 2, .empty)]⟩
   | .gerC => ⟨prefixGer, [(.rad 0, V .a), (.rad 1, V .a), (.rad 2, .empty)]⟩
-  | .caus => ⟨[(.seg "ʔ", V .aBare)], [(.rad 0, .empty), (.rad 1, V .i), (.rad 2, .empty)]⟩
+  | .caus =>
+    ⟨[(.seg Tigrinya.Phonology.«ʔ», V .aBare)],
+      [(.rad 0, .empty), (.rad 1, V .i), (.rad 2, .empty)]⟩
   | .prf3 => ⟨[], [(.rad 0, V .a), (.rad 1, .empty), (.rad 2, .empty)]⟩
 
 /-- Positions instantiated by a root. -/
-def instantiate (t : List (Pos × Nuc)) (r : ConsonantalRoot String) : Option Form :=
+def instantiate (t : List (Pos × Nuc)) (r : ConsonantalRoot Phonology.Segment) : Option Form :=
   (t.mapM fun (pn : Pos × Nuc) ↦
     match pn.1 with
-    | .rad i => (r.segments[i]?).map fun s ↦ [CV.mk (Cons.ofIPA s) pn.2]
-    | .gem i => (r.segments[i]?).map fun s ↦
-        let c := Cons.ofIPA s
-        if c.HasA then [CV.mk c pn.2] else [CV.mk c .empty, CV.mk c pn.2]
-    | .seg s => some [CV.mk (Cons.ofIPA s) pn.2]).map List.flatten
+    | .rad i => (r.segments[i]?).map fun c ↦ [CV.mk c pn.2]
+    | .gem i => (r.segments[i]?).map fun c ↦
+        if HasA c then [CV.mk c pn.2] else [CV.mk c .empty, CV.mk c pn.2]
+    | .seg c => some [CV.mk c pn.2]).map List.flatten
 
 /-- An ending is a vowel filling the stem-final nucleus, then further CV units. -/
 structure Ending where
   vowel : Option Vowel := none
-  rest : List (String × Nuc) := []
+  rest : List (Phonology.Segment × Nuc) := []
 
 /-- The ending of each suffix of the paradigms. -/
 def ending : Examples.Suffix → Ending
@@ -565,24 +536,18 @@ def ending : Examples.Suffix → Ending
   | .i => ⟨some .i, []⟩
   | .u => ⟨some .u, []⟩
   | .aBare => ⟨some .aBare, []⟩
-  | .ej => ⟨some .e, [("j", .empty)]⟩
-  | .om => ⟨some .o, [("m", .empty)]⟩
-  | .ku => ⟨none, [("k", V .u)]⟩
-  | .ka => ⟨none, [("k", V .a)]⟩
+  | .ej => ⟨some .e, [(Tigrinya.Phonology.j, .empty)]⟩
+  | .om => ⟨some .o, [(Tigrinya.Phonology.m, .empty)]⟩
+  | .ku => ⟨none, [(Tigrinya.Phonology.k, V .u)]⟩
+  | .ka => ⟨none, [(Tigrinya.Phonology.k, V .a)]⟩
 
 /-- A stem with an ending. -/
 def attach (f : Form) (s : Ending) : Form :=
   (match s.vowel with
     | some v => f.dropLast ++ (f.getLast?.map fun u ↦ [⟨u.c, .vowel v⟩]).getD []
-    | none => f) ++ s.rest.map fun cn ↦ ⟨Cons.ofIPA cn.1, cn.2⟩
+    | none => f) ++ s.rest.map fun cn ↦ ⟨cn.1, cn.2⟩
 
 /-! ### Roots -/
-
-/-- The languages of the paper. -/
-inductive Lang where
-  | tigrinya
-  | tigre
-  deriving DecidableEq, Repr
 
 /-- The language of each root. -/
 def lang : Examples.Root → Lang
@@ -591,34 +556,8 @@ def lang : Examples.Root → Lang
   | .weigh | .leave | .wash | .flee | .getUp | .whipTigre | .askTigre | .load | .uncoverTigre
   | .pullTigre => .tigre
 
-/-- The radicals of each root, in the paper's transcription. -/
-def radicals : Examples.Root → ConsonantalRoot String
-  | .whip => ⟨["g", "r", "f"]⟩
-  | .hear => ⟨["s", "m", "ʕ"]⟩
-  | .arrest => ⟨["ʔ", "s", "r"]⟩
-  | .pull => ⟨["s", "ħ", "b"]⟩
-  | .teach => ⟨["m", "h", "r"]⟩
-  | .slaughter => ⟨["ħ", "r", "d"]⟩
-  | .escape => ⟨["ħ", "d", "m"]⟩
-  | .ask => ⟨["s", "ʔ", "l"]⟩
-  | .uncover => ⟨["g", "l", "h"]⟩
-  | .bark => ⟨["n", "b", "ħ"]⟩
-  | .hurt => ⟨["b", "d", "l"]⟩
-  | .bless => ⟨["b", "r", "k"]⟩
-  | .arf => ⟨["ʕ", "r", "f"]⟩
-  | .weigh => ⟨["m", "z", "n"]⟩
-  | .leave => ⟨["f", "g", "r"]⟩
-  | .wash => ⟨["ħ", "tˁ", "b"]⟩
-  | .flee => ⟨["h", "r", "b"]⟩
-  | .getUp => ⟨["kˀ", "n", "sˁ"]⟩
-  | .whipTigre => ⟨["f", "g", "r"]⟩
-  | .askTigre => ⟨["s", "ʔ", "l"]⟩
-  | .load => ⟨["tˀ", "ʕ", "n"]⟩
-  | .uncoverTigre => ⟨["s", "ħ", "k"]⟩
-  | .pullTigre => ⟨["s", "ħ", "b"]⟩
-
-/-- The root of each language's fragment that a root of the paradigms is. -/
-def fragmentRoot : Examples.Root → ConsonantalRoot Phonology.Segment
+/-- Each root of the paradigms, in its language's fragment. -/
+def root : Examples.Root → ConsonantalRoot Phonology.Segment
   | .whip => Tigrinya.Phonology.whip
   | .hear => Tigrinya.Phonology.hear
   | .arrest => Tigrinya.Phonology.arrest
@@ -643,30 +582,44 @@ def fragmentRoot : Examples.Root → ConsonantalRoot Phonology.Segment
   | .uncoverTigre => Tigre.Phonology.uncover
   | .pullTigre => Tigre.Phonology.pull
 
+/-! ### Transcriptions -/
+
 /-- The PHOIBLE inventory of each language. -/
 def inventory : Lang → Data.PHOIBLE.Inventory
   | .tigrinya => Data.PHOIBLE.Inventories.Tigrinya.tir
   | .tigre => Data.PHOIBLE.Inventories.Tigre.tig
 
-/-- The glyph of a language's inventory that a letter of the paper's transcription writes, where
-it is not the letter itself: the paper writes the ejectives of Tigre with a superscript. -/
+/-- The glyph of a language's inventory that a consonant letter of the paper's transcription
+writes, where it is not the letter itself: the coronals of Tigre are dental, and the paper writes
+its ejectives with a superscript. -/
 def glyph : Lang → String → String
   | _, "g" => "ɡ"
   | .tigrinya, "r" => "ɾ"
+  | .tigre, "t" => "t̪"
+  | .tigre, "d" => "d̪"
   | .tigre, "n" => "n̪"
   | .tigre, "tˁ" | .tigre, "tˀ" => "t̪ʼ"
   | .tigre, "kˀ" => "kʼ"
   | .tigre, "sˁ" => "tsʼ"
-  | _, s => s
+  | _, x => x
 
-/-- `segment? l x` reads a letter of the paper's transcription of a root of language `l` as a
-segment of that language's inventory. -/
-def segment? (l : Lang) (x : String) : Option Phonology.Segment :=
-  (inventory l).segment? (glyph l x)
+/-- `letter? l x` reads a letter of the paper's transcription of a form of language `l` as a
+segment: a vowel, or a consonant of the language's inventory. -/
+def letter? (l : Lang) (x : String) : Option Phonology.Segment :=
+  ((Vowel.ofLetter? x).map Vowel.segment).orElse fun _ ↦ (inventory l).segment? (glyph l x)
 
-theorem mapM_segment?_radicals : ∀ r : Examples.Root,
-    (radicals r).segments.mapM (segment? (lang r)) = some (fragmentRoot r).segments := by
-  decide +kernel
+/-- The letters of a transcription, a superscript going with the letter before it. -/
+def letters : List Char → List String
+  | [] => []
+  | [c] => [String.singleton c]
+  | c :: d :: cs =>
+    if d = 'ˁ' ∨ d = 'ˀ' then String.ofList [c, d] :: letters cs
+    else String.singleton c :: letters (d :: cs)
+
+/-- `read l s` reads a transcription of a form of language `l` as segments, hyphens removed and β
+read as b. -/
+def read (l : Lang) (s : String) : Option (List Phonology.Segment) :=
+  (letters ((s.toList.filter (· ≠ '-')).map fun c ↦ if c = 'β' then 'b' else c)).mapM (letter? l)
 
 /-! ### The paradigms (4)–(19) and the derivations (31)–(39) -/
 
@@ -674,23 +627,20 @@ theorem mapM_segment?_radicals : ∀ r : Examples.Root,
 def stem (x : Example) : Option Form := do
   let r ← x.root
   let t ← x.template
-  let f ← instantiate (pattern t).positions (radicals r)
+  let f ← instantiate (pattern (lang r) t).positions (root r)
   pure ((x.suffix.map fun s ↦ attach f (ending s)).getD f)
 
 /-- The position of the first nucleus of the stem of an example, after its prefix. -/
-def stemStart (x : Example) : ℕ := (x.template.map fun t ↦ (pattern t).pre.length).getD 0
+def stemStart (x : Example) : ℕ :=
+  (x.template.map fun t ↦ (pattern .tigrinya t).pre.length).getD 0
 
-/-- `transcribe s` is a transcription as compared with the realizations, hyphens removed and β read
-as b. -/
-def transcribe (s : String) : List Char :=
-  (s.toList.filter (· ≠ '-')).map fun c ↦ if c = 'β' then 'b' else c
-
-/-- The attested forms of an example. -/
-def forms (x : Example) : List (List Char) :=
-  (x.datum.primaryText :: x.datum.contrasts.map Prod.fst).map transcribe
+/-- The attested forms of an example, read as segments. -/
+def forms (x : Example) : List (List Phonology.Segment) :=
+  (x.root.map lang).toList.flatMap fun l ↦
+    (x.datum.primaryText :: x.datum.contrasts.map Prod.fst).filterMap (read l)
 
 /-- The surface forms the analysis yields for an example when the nuclei of `R` are realized. -/
-def realizationsOf (R : Finset ℕ) (x : Example) : List (List Char) :=
+def realizationsOf (R : Finset ℕ) (x : Example) : List (List Phonology.Segment) :=
   match stem x with
   | some f => realizations (derive R f)
   | none => []
@@ -710,6 +660,10 @@ def Retains (x : Example) : Prop :=
 instance (x : Example) : Decidable (Retains x) := inferInstanceAs (Decidable (_ ∧ ∃ f ∈ _, _))
 
 theorem stem_isSome : ∀ x : Example, (stem x).isSome := by decide +kernel
+
+-- every attested form is read
+theorem length_forms : ∀ x : Example, (forms x).length = x.datum.contrasts.length + 1 := by
+  decide +kernel
 
 -- the root of each example is a root of the example's language
 theorem glottocode_lang : ∀ x : Example, x.root.map lang =
@@ -744,15 +698,18 @@ theorem retains_iff : ∀ x : Example, Retains x ↔
 
 /-- The underlying form of the feminine imperative of 'hear', /s_mʌʕ-i/ (36a). -/
 def imperative36a : Form :=
-  attach ((instantiate (pattern .imp).positions (radicals .hear)).getD []) (ending .i)
+  attach ((instantiate (pattern .tigrinya .imp).positions Tigrinya.Phonology.hear).getD [])
+    (ending .i)
 
 /-- The gerund of 'hear' with the suffix *-u*, /m_s_maʕ-u/ (37a). -/
 def gerund37a : Form :=
-  attach ((instantiate (pattern .gerA).positions (radicals .hear)).getD []) (ending .u)
+  attach ((instantiate (pattern .tigrinya .gerA).positions Tigrinya.Phonology.hear).getD [])
+    (ending .u)
 
 /-- The dependent perfective of 'hear' with the suffix *-ku*, /sʌmʌʕ_-ku/ (37d). -/
 def perfective37d : Form :=
-  attach ((instantiate (pattern .depPrf).positions (radicals .hear)).getD []) (ending .ku)
+  attach ((instantiate (pattern .tigrinya .depPrf).positions Tigrinya.Phonology.hear).getD [])
+    (ending .ku)
 
 /-- The number of nuclei of a form marked to be realized. -/
 def marks (f : Form) : ℕ := f.countP (·.v = .mark)
@@ -782,24 +739,26 @@ theorem feeds_harmonized :
 
 -- (37d): a derivation that read the harmonized form again would yield *[sʌmʕaku]
 theorem realizations_harmonized_37d :
-    realizations (derive ∅ (harmonized (derive ∅ perfective37d))) = ["sʌmʕaku".toList] ∧
-      "sʌmʕaku".toList ∉ realizations (derive ∅ perfective37d) := by
+    (realizations (derive ∅ (harmonized (derive ∅ perfective37d)))).map some =
+        [read .tigrinya "sʌmʕaku"] ∧
+      ∀ w ∈ read .tigrinya "sʌmʕaku", w ∉ realizations (derive ∅ perfective37d) := by
   decide +kernel
 
 -- (37b,c): /s_ħʌb/ and /sʌħʌb/ are neutralized, and harmony returns the derived form to a form
 -- from which it is derived again
 theorem derive_harmonized_pull :
-    ∀ f ∈ [instantiate (pattern .imp).positions (radicals .pull),
-        instantiate (pattern .depPrf).positions (radicals .pull)],
-      ∀ g ∈ f, derive ∅ g = [⟨.plain "s", .mark⟩, ⟨.guttural .pharyngealVoiceless, .licensed .a⟩,
-          ⟨.plain "b", .empty⟩] ∧
+    ∀ f ∈ [instantiate (pattern .tigrinya .imp).positions Tigrinya.Phonology.pull,
+        instantiate (pattern .tigrinya .depPrf).positions Tigrinya.Phonology.pull],
+      ∀ g ∈ f, derive ∅ g = [⟨Tigrinya.Phonology.s, .mark⟩, ⟨Tigrinya.Phonology.ħ, .licensed .a⟩,
+          ⟨Tigrinya.Phonology.b, .empty⟩] ∧
         harmonized (derive ∅ g) ≠ derive ∅ g ∧ derive ∅ (harmonized (derive ∅ g)) = derive ∅ g := by
   decide +kernel
 
 /-! ### Proper government and the obligatory realization -/
 
 /-- The 2nd-person jussive of 'hear', /t_-s_mʌʕ_/ (32a). -/
-def jussive32a : Form := (instantiate (pattern .juss2).positions (radicals .hear)).getD []
+def jussive32a : Form :=
+  (instantiate (pattern .tigrinya .juss2).positions Tigrinya.Phonology.hear).getD []
 
 -- §3.3.1: [tɨsmaʕ] shows that the final nucleus does not govern
 theorem isGovernor_32a (s : WithBot Melody) :
