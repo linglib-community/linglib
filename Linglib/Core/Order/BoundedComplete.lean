@@ -162,6 +162,15 @@ instance {β : Type*} [Preorder α] [Preorder β] [∀ a b : α, Decidable (Comp
 
 end Compat
 
+/-- A product of bounded-complete orders is bounded complete. -/
+instance {ι : Type*} {S : ι → Type*} [∀ i, Preorder (S i)] [∀ i, IsBoundedComplete (S i)] :
+    IsBoundedComplete (∀ i, S i) where
+  exists_isLUB_of_bddAbove a b h :=
+    ⟨fun i ↦ (IsBoundedComplete.exists_isLUB_of_bddAbove (a i) (b i)
+        (compat_pi_iff.mp h i)).choose,
+      isLUB_pair_pi_iff.mpr fun i ↦ (IsBoundedComplete.exists_isLUB_of_bddAbove (a i) (b i)
+        (compat_pi_iff.mp h i)).choose_spec⟩
+
 /-! ### Joins with failure adjoined -/
 
 namespace WithTop
