@@ -25,6 +25,9 @@ Under any licensing a head merged over material without a categorizer bears no u
 feature, so a functional head takes no bare root as its complement. The functional heads of a
 line whose categorizers all bear `[X]` all bear `[uX]`, which is biuniqueness. Between two heads
 with different uninterpretable features there is a categorizer, which may be the lower of the two.
+Of two heads that merge, a head with an uninterpretable feature is the one that projects: a line
+that begins with such a head does not converge, while heads without one merge in either order, so
+categorial Agree labels the first kind of merger and is silent on the second.
 
 The book adds a division of labour: a categorizer without an uninterpretable feature merges over
 lexical material only, and the only head with both features is the Switch `[N][uV]`, which merges
@@ -39,7 +42,9 @@ extended projection that begins at its categorizer converges.
 ## Implementation notes
 
 A projection line records the head that projects at each application of Merge, so specifiers and
-the label of a phrase merged with a phrase are not represented.
+the label of a phrase merged with a phrase are not represented. A labelling prediction for two
+heads is read as which of the two orders converges: one order, the head that projects; neither, a
+merger that crashes; both, a merger that categorial Agree does not label.
 
 Besides its category a projection records whether a head with an uninterpretable feature has been
 merged, which is what the division of labour reads.
@@ -52,9 +57,8 @@ those specified for a single categorial feature.
 
 ## TODO
 
-The licensing of roots by a categorizer at the interface, the labelling predictions of categorial
-Agree, the phasehood of categorizers and Switches, and the size of the complement of a Switch are
-not formalized.
+The licensing of roots by a categorizer at the interface, the phasehood of categorizers and
+Switches, and the size of the complement of a Switch are not formalized.
 
 ## References
 
@@ -337,6 +341,20 @@ theorem category_eq_of_switch_mem (hq : Projection.bare.extend DivisionOfLabour 
   rw [this] at hq
   rw [extend_nominal_functional hq]
 
+theorem extend_free_of_forall : ∀ {l : List Head} {p : Projection},
+    (∀ h ∈ l, h.uninterpretable = none) → ∃ q, p.extend Free l = some q
+  | [], p, _ => ⟨p, rfl⟩
+  | h :: l, p, hl => by
+    obtain ⟨q, hq⟩ := extend_free_of_forall (p := p.merge h)
+      fun k hk ↦ hl k (List.mem_cons_of_mem _ hk)
+    have hm : p.merge? Free h = some (p.merge h) :=
+      merge?_eq_some.2 ⟨trivial, fun X hX ↦ by simp [hl h List.mem_cons_self] at hX, rfl⟩
+    exact ⟨q, by simp [hm, hq]⟩
+
+-- Categorial Agree alone is silent on heads without an uninterpretable feature.
+theorem converges_free_of_forall (hl : ∀ h ∈ l, h.uninterpretable = none) : Converges Free l :=
+  converges_iff.2 (extend_free_of_forall hl)
+
 /-! ### The book's structures
 
 A structure the book derives converges under the division of labour, and so under categorial
@@ -365,14 +383,6 @@ example : ¬ Converges Free [.functional .V, .functional .V, .functional .V] := 
 
 -- (20), p. 128: a lexical head merged over two functional heads.
 example : ¬ Converges Free [.functional .V, .functional .V, .v] := by decide
-
--- (29), p. 132: no line begins with two functional heads.
-example : ¬ Converges Free [.functional X, .functional Y] := by cases X <;> cases Y <;> decide
-
--- (30) and n. 22, p. 132: `[DP D n]` converges without a root and `[DP D Num]` does not.
-example : Converges DivisionOfLabour [.n, .functional .N] ∧
-    ¬ Converges Free [.functional .N, .functional .N] := by
-  decide
 
 -- (21), p. 145: *Albert's eating herring*, a nominal line over a verbal one.
 example : ∃ q ∈ Projection.bare.extend DivisionOfLabour
@@ -405,6 +415,34 @@ example : Converges Free [.root, .v, .functional .V, .n, .functional .N] ∧
 example : Converges Free [.root, .v, .switch .N .V] ∧
     ¬ Converges DivisionOfLabour [.root, .v, .switch .N .V] := by
   decide
+
+/-! ### Labelling
+
+The rows of (30), p. 132, for two heads, in the two orders in which one could project. -/
+
+-- (29) and n. 22: two functional heads, as `*[T Asp]` and a pronoun `*[DP D Num]` without *n*.
+example : ¬ Converges Free [.functional X, .functional Y] := by cases X <;> cases Y <;> decide
+
+-- (23): a functional head and a lexical head, as `[DP D n]`; the functional head projects.
+example : Converges DivisionOfLabour [.categorizer X, .functional X] ∧
+    ¬ Converges Free [.functional X, .categorizer X] := by
+  cases X <;> decide
+
+-- (26): a functional head and a phrase, as `[DP the [NumP three little ducks]]`.
+example : Converges DivisionOfLabour [.n, .functional .N, .functional .N] := by decide
+
+-- A functional head and a root, as `*[Num cat]`.
+example : ¬ Converges Free [.root, .functional X] ∧ ¬ Converges Free [.functional X, .root] := by
+  cases X <;> decide
+
+-- Two lexical heads, and a lexical head and a root as `[nP n cat]`: not labelled.
+example : Converges Free [.categorizer X, .categorizer Y] ∧
+    Converges Free [.categorizer Y, .categorizer X] ∧
+    Converges Free [.root, .categorizer X] ∧ Converges Free [.categorizer X, .root] :=
+  ⟨converges_free_of_forall (by simp [Head.categorizer]),
+    converges_free_of_forall (by simp [Head.categorizer]),
+    converges_free_of_forall (by simp [Head.categorizer, Head.root]),
+    converges_free_of_forall (by simp [Head.categorizer, Head.root])⟩
 
 /-! ### Categorial Deficiency over the families -/
 
