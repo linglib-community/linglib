@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Team.Kripke
+public import Linglib.Logic.Modal.Kripke
 public import Linglib.Phonology.Autosegmental.OCP
 public import Linglib.Phonology.Autosegmental.TierTree
 
@@ -15,13 +15,17 @@ public import Linglib.Phonology.Autosegmental.TierTree
 A representation along a tree of tiers is a Kripke model, `AR.toKripkeModel`: its worlds are
 the positions on the tiers, a position sees its children, and the atom `⟨j, b⟩` is true at the
 positions of tier `j` labelled `b`. A slot reads `b` on tier `j` when a position it reaches makes
-that atom true (`reads_iff_exists_dom`). Representations whose models are related by a
+that atom true (`reads_iff_exists_val`). Representations whose models are related by a
 bisimulation therefore read alike at related slots (`IsBisimulation.reads_iff`). Material that no
 slot dominates, such as an autosegment left floating by delinking, plays no part.
 
 A relation between positions of the same tier is a bisimulation when related positions carry
 the same label and each child of one is related to a child of the other
-(`isBisimulation_toKripkeModel`). In a realization by trees with at most one token on a tier,
+(`isBisimulation_toKripkeModel`). When each token of two representations has at most one line
+to each lower tier, the converse holds: two slots that read alike are bisimilar
+(`exists_isBisimulation_iff_reads`), so a slot is bisimilar to the slot of a symbol in a
+realization exactly when it reads what the primitive of that symbol reads
+(`exists_isBisimulation_prod_map_iff`). In a realization by trees with at most one token on a tier,
 spreading a tier from one symbol onto another by a change of lines, `AR.spreadTier`, is
 bisimilar in this way to replacing the target symbol by one that has the source's tokens on
 that tier and below it and the target's own elsewhere (`exists_isBisimulation_spreadTier`). The
@@ -78,7 +82,7 @@ theorem toKripkeModel_val_self {j : ι} {q : ℕ} {b : τ j} :
     ⟨fun ⟨_, ha, he⟩ ↦ by cases he; exact ha, fun h ↦ ⟨b, h, rfl⟩⟩
 
 /-- A slot reads a label on a tier when a position it reaches makes the atom true. -/
-theorem reads_iff_exists_dom {k : ℕ} {j : ι} {b : τ j} :
+theorem reads_iff_exists_val {k : ℕ} {j : ι} {b : τ j} :
     X.Reads T k j b ↔ ∃ v, X.Dom T (T.root, k) v ∧ (X.toKripkeModel T).val ⟨j, b⟩ v := by
   constructor
   · rintro ⟨q, -, hq, hb⟩
@@ -95,7 +99,7 @@ theorem _root_.ModalLogic.KripkeModel.IsBisimulation.reads_iff {r : ι × ℕ �
     (h : (Y.toKripkeModel T).IsBisimulation (Z.toKripkeModel T) r) {k k' : ℕ}
     (hr : r (T.root, k) (T.root, k')) {j : ι} {b : τ j} :
     Y.Reads T k j b ↔ Z.Reads T k' j b := by
-  simp only [reads_iff_exists_dom]
+  simp only [reads_iff_exists_val]
   constructor
   · rintro ⟨v, hv, hval⟩
     obtain ⟨v', hv', hrv⟩ := h.exists_reflTransGen hr hv
@@ -124,6 +128,69 @@ theorem isBisimulation_toKripkeModel {R : ι → ℕ → ℕ → Prop}
         let ⟨q', hc', hR'⟩ := forth hR hc; ⟨(j, q'), hc', j, q, q', rfl, rfl, hR'⟩,
       fun ⟨j, q'⟩ hc ↦
         let ⟨q, hc', hR'⟩ := back hR hc; ⟨(j, q), hc', j, q, q', rfl, rfl, hR'⟩⟩
+
+/-! ### Reading as a complete invariant -/
+
+private theorem forth_of_reads (hY : Y.IsFunctional T) {k k' : ℕ}
+    (h : ∀ (j : ι) (b : τ j), X.Reads T k j b → Y.Reads T k' j b) {i j : ι} {p p' q : ℕ}
+    (hp : X.Dom T (T.root, k) (i, p)) (hp' : Y.Dom T (T.root, k') (i, p'))
+    (hc : (j, q) ∈ X.children T (i, p)) :
+    ∃ q', (j, q') ∈ Y.children T (i, p') ∧ X.Dom T (T.root, k) (j, q) ∧
+      Y.Dom T (T.root, k') (j, q') := by
+  obtain ⟨hpar, hr, hl⟩ := mem_children.1 hc
+  have hq : X.Dom T (T.root, k) (j, q) := hp.tail hc
+  obtain ⟨q', hq', -⟩ := reads_iff_exists_dom.1
+    (h j _ (reads_iff_exists_dom.2 ⟨q, hq, List.getElem?_eq_getElem hl.lt_right⟩))
+  refine ⟨q', ?_, hq, hq'⟩
+  rcases Relation.ReflTransGen.cases_tail hq' with he | ⟨u, hu, hc'⟩
+  · exact absurd (congrArg Prod.fst he) hr
+  · obtain rfl : u = (i, p') := hY.eq_of_dom hu hp' ((mem_children.1 hc').1.symm.trans hpar)
+    exact hc'
+
+private theorem label_of_reads (hY : Y.IsFunctional T) {k k' : ℕ}
+    (h : ∀ (j : ι) (b : τ j), X.Reads T k j b → Y.Reads T k' j b) {j : ι} {q q' : ℕ}
+    (hq : X.Dom T (T.root, k) (j, q)) (hq' : Y.Dom T (T.root, k') (j, q')) {b : τ j}
+    (hb : (X.word j)[q]? = some b) : (Y.word j)[q']? = some b := by
+  obtain ⟨q₁, hd, hb'⟩ := reads_iff_exists_dom.1
+    (h j b (reads_iff_exists_dom.2 ⟨q, hq, hb⟩))
+  obtain ⟨-, rfl⟩ := Prod.mk.inj (hY.eq_of_dom hd hq' rfl)
+  exact hb'
+
+/-- When each token of two representations has at most one line to each lower tier, two slots
+are bisimilar exactly when they read alike. -/
+theorem exists_isBisimulation_iff_reads (hX : X.IsFunctional T) (hY : Y.IsFunctional T)
+    {k k' : ℕ} :
+    (∃ r, (X.toKripkeModel T).IsBisimulation (Y.toKripkeModel T) r ∧
+        r (T.root, k) (T.root, k')) ↔
+      ∀ (j : ι) (b : τ j), X.Reads T k j b ↔ Y.Reads T k' j b := by
+  constructor
+  · rintro ⟨r, hB, hr⟩ j b
+    exact hB.reads_iff hr
+  · intro h
+    refine ⟨_, isBisimulation_toKripkeModel (R := fun j q q' ↦
+      X.Dom T (T.root, k) (j, q) ∧ Y.Dom T (T.root, k') (j, q')) ?_ ?_ ?_,
+      T.root, k, k', rfl, rfl, .refl, .refl⟩
+    · rintro j q q' ⟨hq, hq'⟩
+      exact Option.ext fun b ↦ ⟨label_of_reads hY (fun j b ↦ (h j b).1) hq hq',
+        label_of_reads hX (fun j b ↦ (h j b).2) hq' hq⟩
+    · rintro i p p' j q ⟨hp, hp'⟩ hc
+      obtain ⟨q', hc', hq, hq'⟩ := forth_of_reads hY (fun j b ↦ (h j b).1) hp hp' hc
+      exact ⟨q', hc', hq, hq'⟩
+    · rintro i p p' j q' ⟨hp, hp'⟩ hc
+      obtain ⟨q, hc', hq', hq⟩ := forth_of_reads hX (fun j b ↦ (h j b).2) hp' hp hc
+      exact ⟨q, hc', hq, hq'⟩
+
+/-- A slot of a functional representation is bisimilar to the slot of a symbol in a realization
+exactly when it reads what the primitive of that symbol reads. -/
+theorem exists_isBisimulation_prod_map_iff {S : Type*} (g₀ : S → AR τ) {w : List S}
+    (hX : X.IsFunctional T) (h1 : ∀ s t, ((g₀ s).word t).length ≤ 1)
+    (hroot : ∀ s, ((g₀ s).word T.root).length = 1) {k k' : ℕ} (hk' : k' < w.length) :
+    (∃ r, (X.toKripkeModel T).IsBisimulation ((w.map g₀).prod.toKripkeModel T) r ∧
+        r (T.root, k) (T.root, k')) ↔
+      ∀ (j : ι) (b : τ j), X.Reads T k j b ↔ (g₀ w[k']).Reads T 0 j b :=
+  (exists_isBisimulation_iff_reads hX (isFunctional_prod_map T h1)).trans <|
+    forall_congr' fun _ ↦ forall_congr' fun _ ↦ iff_congr Iff.rfl
+      ((reads_prod_map T g₀ hroot).trans ⟨fun ⟨_, h⟩ ↦ h, fun h ↦ ⟨hk', h⟩⟩)
 
 /-! ### Spreading -/
 

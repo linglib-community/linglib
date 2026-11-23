@@ -1,36 +1,21 @@
 module
 
-public import Mathlib.Data.Finset.Basic
-public import Mathlib.Logic.Relation
-public import Linglib.Core.Data.Set.Functor
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Kripke
 
 /-!
-# Kripke models
+# Teams on Kripke models
 
-A Kripke model gives each world the finite set of worlds it accesses and each atom the worlds
-at which it is true. BSML and modal dependence and inclusion logic evaluate formulas on these
-models, and InqML on the inquisitive models they induce. `KripkeModel.accessible` reads the
-successor sets as the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take.
+BSML and modal dependence and inclusion logic evaluate formulas on a team of worlds of a Kripke
+model (`Logic/Modal/Kripke.lean`), and InqML on the inquisitive models they induce. A pointed
+team model, `ModalLogic.PointedTeam`, is a Kripke model with a team on it.
 
 The file also states Aloni's two conditions on a successor function relative to a team, which
-distinguish epistemic from deontic modals: indisputability, that every world of the team sees the
-same worlds, and state-basedness, that every world of the team sees exactly the team.
-
-## Main definitions
-
-* `ModalLogic.KripkeModel`, with the accessibility relation `KripkeModel.accessible`.
-* `ModalLogic.KripkeModel.IsBisimulation`: a relation between the worlds of two models under
-  which related worlds make the same atoms true and have matching successors.
-* `ModalLogic.PointedTeam`: a Kripke model with a team on it.
-* `Team.IsIndisputable`, `Team.IsStateBased`: the conditions of [aloni-2022] Definition 5.
+distinguish epistemic from deontic modals: indisputability, `Team.IsIndisputable`, that every
+world of the team sees the same worlds, and state-basedness, `Team.IsStateBased`, that every
+world of the team sees exactly the team ([aloni-2022] Definition 5).
 
 ## Implementation notes
 
-The sources take any relation `R ⊆ W × W` and a valuation `V : X → ℘(W)`
-([aloni-anttila-yang-2024] Definition 2.2). Successor sets here are `Finset`s, since the team
-clauses evaluate subformulas on `R[w]` as a team; frames are therefore image-finite. The
-valuation is `Prop`-valued, and decision procedures for support take `[DecidableRel M.val]`.
 Aloni's conditions are not closed under bisimulation ([aloni-2022] fn. 21): they are
 [not invariant at any depth](##ModalLogic.not_boundedBisimInvariant_setOf_isIndisputable), so no
 team logic defines them. [anttila-2021] Definition 3.3.1 (p. 46) restates them up to
@@ -40,7 +25,6 @@ bisimilarity of the successor sets.
 
 * [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
 * [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
-* [blackburn-derijke-venema-2001] Blackburn, de Rijke and Venema, Modal Logic
 * [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
 * [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
 * [vaananen-2008] Väänänen, Modal Dependence Logic
@@ -51,88 +35,6 @@ bisimilarity of the successor sets.
 universe u
 
 namespace ModalLogic
-
-/-- A **Kripke model** over worlds `W` and atoms `Atom` has successor sets and a valuation. -/
-structure KripkeModel (W : Type*) (Atom : Type*) where
-  /-- `access w` is the set of worlds accessible from `w`. -/
-  access : W → Finset W
-  /-- `val p w` says that the atom `p` is true at the world `w`. -/
-  val : Atom → W → Prop
-
-variable {W W' : Type*} {Atom : Type*}
-
-/-- The disjoint union of two Kripke models. -/
-def KripkeModel.sum (M : KripkeModel W Atom) (M' : KripkeModel W' Atom) :
-    KripkeModel (W ⊕ W') Atom where
-  access := Sum.elim (fun w ↦ (M.access w).map .inl) (fun w ↦ (M'.access w).map .inr)
-  val p := Sum.elim (M.val p) (M'.val p)
-
-section Sum
-
-variable {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
-
-@[simp] theorem KripkeModel.sum_access_inl (w : W) :
-    (M.sum M').access (.inl w) = (M.access w).map .inl := rfl
-
-@[simp] theorem KripkeModel.sum_access_inr (w : W') :
-    (M.sum M').access (.inr w) = (M'.access w).map .inr := rfl
-
-@[simp] theorem KripkeModel.sum_val_inl (p : Atom) (w : W) :
-    (M.sum M').val p (.inl w) ↔ M.val p w := .rfl
-
-@[simp] theorem KripkeModel.sum_val_inr (p : Atom) (w : W') :
-    (M.sum M').val p (.inr w) ↔ M'.val p w := .rfl
-
-end Sum
-
-open SetRel in
-/-- In the accessibility relation of `M`, `v` is accessible from `w` when `v ∈ M.access w`.
-This is the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take. -/
-def KripkeModel.accessible (M : KripkeModel W Atom) : SetRel W W :=
-  .ofSuccessors fun w ↦ ↑(M.access w)
-
-open SetRel in
-@[simp] theorem KripkeModel.mem_accessible {M : KripkeModel W Atom} {w v : W} :
-    w ~[M.accessible] v ↔ v ∈ M.access w := .rfl
-
-open SetRel in
-instance [DecidableEq W] (M : KripkeModel W Atom) (w v : W) : Decidable (w ~[M.accessible] v) :=
-  inferInstanceAs (Decidable (v ∈ M.access w))
-
-/-! ### Bisimulation -/
-
-/-- A relation between the worlds of two Kripke models is a **bisimulation** when related worlds
-make the same atoms true and their successor sets are related by its lifting. -/
-structure KripkeModel.IsBisimulation (M : KripkeModel W Atom) (M' : KripkeModel W' Atom)
-    (r : W → W' → Prop) : Prop where
-  /-- Related worlds make the same atoms true. -/
-  val_iff : ∀ ⦃w w'⦄, r w w' → ∀ p, M.val p w ↔ M'.val p w'
-  /-- Each successor of one of two related worlds is related to a successor of the other. -/
-  liftRel_access : ∀ ⦃w w'⦄, r w w' → Set.LiftRel r ↑(M.access w) ↑(M'.access w')
-
-namespace KripkeModel.IsBisimulation
-
-variable {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {r : W → W' → Prop}
-  {w : W} {w' : W'}
-
-/-- The converse of a bisimulation is a bisimulation. -/
-protected theorem symm (h : M.IsBisimulation M' r) : M'.IsBisimulation M (Function.swap r) :=
-  ⟨fun _ _ hr p ↦ (h.val_iff hr p).symm, fun _ _ hr ↦ Set.liftRel_swap.2 (h.liftRel_access hr)⟩
-
-/-- A world reached from one of two related worlds is related to a world reached from the
-other. -/
-theorem exists_reflTransGen (h : M.IsBisimulation M' r) (hr : r w w') {u : W}
-    (hu : Relation.ReflTransGen (fun a b ↦ b ∈ M.access a) w u) :
-    ∃ u', Relation.ReflTransGen (fun a b ↦ b ∈ M'.access a) w' u' ∧ r u u' := by
-  induction hu with
-  | refl => exact ⟨w', .refl, hr⟩
-  | tail _ hbc ih =>
-    obtain ⟨b', hb', hrb⟩ := ih
-    obtain ⟨hforth, -⟩ := h.liftRel_access hrb
-    obtain ⟨c', hc', hrc⟩ := hforth _ hbc
-    exact ⟨c', hb'.tail hc', hrc⟩
-
-end KripkeModel.IsBisimulation
 
 /-- A **pointed team model** is a Kripke model with a team on it, the pointed state model of
 [anttila-2025] (p. 23); a class of them is a state property (Definition 2.3.9). -/

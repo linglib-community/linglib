@@ -24,7 +24,10 @@ descending lines, `X.Dominates T k j q`. The representation reads the label `b` 
 slot `k`, `X.Reads T k j b`, when that slot dominates a token of the tier with that label.
 Descending lines lead from one token to another, `X.Dom T v w`, exactly when the second is
 reached in as many steps as there are tiers (`dom_iff_mem_descendants`), so `Dominates` is `Dom`
-from a slot (`dominates_iff_dom`).
+from a slot (`dominates_iff_dom`). A representation is functional, `X.IsFunctional T`, when
+each token has at most one line to each tier hanging from its own; a slot then dominates at
+most one token on each tier (`IsFunctional.eq_of_dom`), and a realization whose primitives have
+at most one token on each tier is functional (`isFunctional_prod_map`).
 
 A realization `(w.map g₀).prod` whose primitives have one slot each is read symbol by symbol:
 reading it at slot `k` is reading the primitive of the `k`th symbol at its slot
@@ -85,6 +88,10 @@ def Reads (k : ℕ) (j : ι) (b : τ j) : Prop :=
 
 instance [∀ j, DecidableEq (τ j)] (k : ℕ) (j : ι) (b : τ j) : Decidable (X.Reads T k j b) :=
   inferInstanceAs (Decidable (∃ q ∈ Finset.range _, _))
+
+/-- Each token has at most one line to each tier hanging from its own. -/
+def IsFunctional : Prop :=
+  ∀ ⦃j p q q'⦄, j ≠ T.root → X.Link (T.parent j) j p q → X.Link (T.parent j) j p q' → q = q'
 
 /-- Descending lines lead from the token `v` to the token `w`. -/
 def Dom (v w : ι × ℕ) : Prop := Relation.ReflTransGen (fun v w ↦ w ∈ X.children T v) v w
@@ -203,6 +210,40 @@ instance {v w : ι × ℕ} : Decidable (X.Dom T v w) := decidable_of_iff _ dom_i
 /-- A slot dominates a token exactly when descending lines lead to it. -/
 theorem dominates_iff_dom {k q : ℕ} {j : ι} : X.Dominates T k j q ↔ X.Dom T (T.root, k) (j, q) :=
   dom_iff_mem_descendants.symm
+
+/-- A slot reads a label on a tier when descending lines lead from it to a token of the tier
+with that label. -/
+theorem reads_iff_exists_dom {k : ℕ} {j : ι} {b : τ j} :
+    X.Reads T k j b ↔ ∃ q, X.Dom T (T.root, k) (j, q) ∧ (X.word j)[q]? = some b :=
+  ⟨fun ⟨q, _, hq, hb⟩ ↦ ⟨q, dominates_iff_dom.1 hq, hb⟩, fun ⟨q, hq, hb⟩ ↦
+    ⟨q, Finset.mem_range.2 (List.getElem?_eq_some_iff.1 hb).1, dominates_iff_dom.2 hq, hb⟩⟩
+
+theorem IsFunctional.eq_of_mem_children (h : X.IsFunctional T) {v : ι × ℕ} {j : ι} {q q' : ℕ}
+    (hq : (j, q) ∈ X.children T v) (hq' : (j, q') ∈ X.children T v) : q = q' := by
+  obtain ⟨-, hr, hl⟩ := mem_children.1 hq
+  obtain ⟨hp, -, hl'⟩ := mem_children.1 hq'
+  obtain ⟨i, p⟩ := v
+  obtain rfl : T.parent j = i := hp
+  exact h hr hl hl'
+
+/-- A slot dominates at most one token on each tier. -/
+theorem IsFunctional.eq_of_dom (h : X.IsFunctional T) {k : ℕ} {v v' : ι × ℕ}
+    (hv : X.Dom T (T.root, k) v) (hv' : X.Dom T (T.root, k) v') (he : v.1 = v'.1) : v = v' := by
+  induction hv generalizing v' with
+  | refl =>
+    rcases Relation.ReflTransGen.cases_tail hv' with rfl | ⟨u, -, hc⟩
+    · rfl
+    · obtain ⟨j, q⟩ := v'
+      exact absurd he.symm (mem_children.1 hc).2.1
+  | @tail u w hu hc ih =>
+    obtain ⟨j, q⟩ := w
+    obtain ⟨hp, hr, -⟩ := mem_children.1 hc
+    rcases Relation.ReflTransGen.cases_tail hv' with rfl | ⟨u', hu', hc'⟩
+    · exact absurd he hr
+    · obtain ⟨j', q'⟩ := v'
+      obtain rfl : j = j' := he
+      obtain rfl : u = u' := ih hu' (hp.symm.trans (mem_children.1 hc').1)
+      rw [h.eq_of_mem_children hc hc']
 
 /-- A position past the end of its tier is linked to nothing below it. -/
 theorem descendants_eq_singleton {v : ι × ℕ} (hv : (X.word v.1).length ≤ v.2) (d : ℕ) :
@@ -404,6 +445,17 @@ theorem link_prod_map_of_length_le_one (hi : ∀ s, ((g₀ s).word i).length ≤
     exact ⟨k, hk, rfl, rfl, by simpa using h⟩
   · rintro ⟨k, hk, rfl, rfl, h⟩
     exact ⟨k, hk, le_rfl, le_rfl, by simpa using h⟩
+
+/-- A realization whose primitives have at most one token on each tier is functional. -/
+theorem isFunctional_prod_map (h1 : ∀ s t, ((g₀ s).word t).length ≤ 1) :
+    (w.map g₀).prod.IsFunctional T := by
+  intro j p q q' _ hl hl'
+  obtain ⟨k, hk, rfl, rfl, hl0⟩ :=
+    (link_prod_map_of_length_le_one (fun s ↦ h1 s _) (fun s ↦ h1 s _)).1 hl
+  obtain ⟨k', hk', he, rfl, hl0'⟩ :=
+    (link_prod_map_of_length_le_one (fun s ↦ h1 s _) (fun s ↦ h1 s _)).1 hl'
+  rw [eq_of_tierOffset_eq g₀ _ w hk hk' (List.ne_nil_of_length_pos hl0.lt_left)
+    (List.ne_nil_of_length_pos hl0'.lt_left) he]
 
 end Offset
 
