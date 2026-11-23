@@ -279,20 +279,19 @@ def heads : Structure → Finset Head
   | .bare => {.j}
   | .mu => Finset.univ
 
-/-- What a structure denotes on the conjuncts `S` with the junctor `j`, which coordinates the
-lifts of the conjuncts, or the μ phrases of their singletons. -/
-def denote (j : Coordinator) (S : Set α) : Structure → Quantifier α
-  | .bare => j.denote (individual '' S)
-  | .mu => j.denote ((fun a ↦ Det.every {a}) '' S)
+/-- What a structure denotes on the conjuncts `a` and `b` with the junctor `j`, which coordinates
+their lifts, or the μ phrases of their singletons. -/
+def denote (j : Coordinator) (a b : α) : Structure → Quantifier α
+  | .bare => j.denote {individual a, individual b}
+  | .mu => j.denote {Det.every {a}, Det.every {b}}
 
-/-- With a conjunctive junctor both structures denote *every* on the conjuncts, so the sentence
-types have the same truth conditions whichever structure an account gives them. -/
-theorem denote_eq_every {j : Coordinator} (hj : j.role = .conjunctive) (S : Set α)
-    (t : Structure) : t.denote j S = Det.every S := by
-  cases t
-  · rw [denote, funext individual_eq_every]
-    exact conjunction_image_eq hj S
-  · exact conjunction_image_eq hj S
+/-- With a conjunctive junctor both structures denote *every* on the two conjuncts, so the
+sentence types have the same truth conditions whichever structure an account gives them. -/
+theorem denote_eq_every {j : Coordinator} (hj : j.role = .conjunctive) (a b : α)
+    (t : Structure) : t.denote j a b = Det.every {a, b} := by
+  cases t <;>
+    simp only [denote, individual_eq_every, Coordinator.denote_of_conjunctive hj, sInf_pair,
+      ← Det.every_union, Set.singleton_union]
 
 end Structure
 
@@ -537,8 +536,8 @@ def mentioned : Finset Object := {0, 1}
 
 -- Fig. 1 and Fig. 2
 theorem denote_mentioned (a : Account) (l : Language) (s : Sentence) :
-    (a.underlying s).denote (exponent l .j) (mentioned : Set Object) = Det.every ↑mentioned :=
-  Structure.denote_eq_every (by cases l <;> rfl) _ _
+    (a.underlying s).denote (exponent l .j) (0 : Object) 1 = Det.every ↑mentioned := by
+  rw [Structure.denote_eq_every (by cases l <;> rfl), mentioned, Finset.coe_pair]
 
 /-- An end state is accurate when it matches the exhaustified sentence: the mentioned objects are
 on the table, and every innocently excludable alternative naming one object is denied. -/
