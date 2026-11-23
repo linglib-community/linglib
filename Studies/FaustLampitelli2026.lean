@@ -3,6 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Phonology.GovernmentPhonology.ElementTheory.Autosegmental
 public import Linglib.Phonology.GovernmentPhonology.EmptyCategoryPrinciple
+public import Linglib.Phonology.GovernmentPhonology.Skeleton
 public import Linglib.Phonology.RuleInteraction
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Fragments.Tigrinya.Phonology
@@ -203,6 +204,11 @@ def Guttural.IsPharyngeal : Guttural → Prop
 
 instance : DecidablePred Guttural.IsPharyngeal :=
   fun g ↦ by cases g <;> unfold Guttural.IsPharyngeal <;> infer_instance
+
+-- the gutturals are consonants of both fragments
+theorem segment_mem_consonants : ∀ g : Guttural,
+    g.segment ∈ Tigrinya.Phonology.consonants ∧ g.segment ∈ Tigre.Phonology.consonants := by
+  decide +kernel
 
 -- fn. 15: whether the gutturals are a natural class
 theorem not_isNaturalClass_gutturals :
@@ -872,6 +878,16 @@ theorem getElem?_positions_two_mul_add_one (f : Form) (i : ℕ) :
     cases i with
     | zero => simp [positions]
     | succ i => simpa [positions, Nat.mul_succ] using ih i
+
+-- the skeleton of a form is a strict sequence of CV units
+theorem isStrict_positions (f : Form) :
+    Autosegmental.Skeleton.IsStrict ((positions f).map (·.slot)) := by
+  refine ⟨f.length, ?_⟩
+  induction f with
+  | nil => rfl
+  | cons u r ih =>
+    rw [List.length_cons, List.replicate_succ, List.flatten_cons, ← ih]
+    simp [positions]
 
 -- the onset of a unit bears an element on its line exactly when its consonant has the element
 theorem exists_mem_melody_positions_iff (e : Element) (f : Form) (i : ℕ) :
