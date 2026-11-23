@@ -20,7 +20,8 @@ share |I|, and the analysis runs in Strict CV with the lateral relations of Gove
 
 We define a form as a sequence of CV units and three operations on forms. `fusion` joins the
 element that is the whole melody of a vowel with the same element of an adjacent consonant: the
-vowel then shares the element with what follows, or is licensed by its own onset. `dissociation`
+vowel then shares the element with what follows, or licenses its own onset in a self-licensing
+domain. `dissociation`
 empties a nucleus that shares its element with what follows when the next nucleus governs.
 `epenthesis` marks the empty nuclei that must be realized, and `realizations` realizes each as
 the weak vowel or as a copy of the vowel across a guttural. `derive` applies the three in this
@@ -41,13 +42,13 @@ operation applies to the output of the one before it and not to the input (`feed
 `positions` gives the positions of a form with their melodies, which
 `ElementTheory.ofForm` represents with a root node under each position that has a melody and
 each element on its line. A nucleus reads a root node exactly when it holds a vowel
-(`reads_root_positions_iff`), the onset of a unit reads an element exactly when its consonant
+(`reads_rootNode_positions_iff`), the onset of a unit reads an element exactly when its consonant
 has it (`exists_reads_positions_iff`), and sharing |A|
 between the two /a/s of /m_-barak/ crosses no line, where sharing it between two vowels across a
-guttural would (`noCrossing_fuse_39b`). `fusion` changes no position's elements
-(`exists_reads_positions_fusion_iff`), as `ElementTheory.fuse` changes none. The two differ in
+guttural would (`noCrossing_spread_39b`). `fusion` changes no position's elements
+(`exists_reads_positions_fusion_iff`), as `ElementTheory.spread` changes none. The two differ in
 status: a nucleus sharing the |A| of a glottal reads it as a dependent, where the lowered vowel
-is written with a head (`reads_fuse_status`).
+is written with a head (`reads_spread_status`).
 
 ## Implementation notes
 
@@ -77,11 +78,12 @@ is written with a head (`reads_fuse_status`).
   distinguishes a weak vowel from an empty nucleus.
 * `fusion` also joins two /a/s in successive nuclei, as in the derivation of [mɨ-bɨrak] from
   /m_-barak/.
-* `epenthesis` marks the nuclei that `GovernmentPhonology.leftward` expresses, the realization
-  from the left, so that the derived forms satisfy the Empty Category Principle
+* `epenthesis` marks the nuclei that `GovernmentPhonology.leftToRight` expresses, the realization
+  from left to right, so that the derived forms satisfy the Empty Category Principle
   (`emptyCategoryPrinciple_surface`). `pronounced_eq_obligatory_iff` compares it with the
-  obligatory realization, which is decided from the right: they differ where the dissociated
-  nucleus is the third of three empty nuclei, where the realization from the left gives C▪C_C▪C.
+  obligatory realization, which is decided from right to left: they differ where the dissociated
+  nucleus is the third of three empty nuclei, where the realization from left to right gives
+  C▪C_C▪C.
 * Trans-guttural harmony is optional, so `realizations` lists every option. `harmonized` reads
   one harmonized surface form back as an underlying form.
 * The postvocalic spirantization of b ([nɨβaħ]) is outside the analysis; `read` takes β as b.
@@ -276,18 +278,18 @@ theorem has_A_segment : ∀ g : Guttural, Has .A g.segment := by decide +kernel
 
 /-- A nucleus in the course of a derivation (29) is empty, empty but to be realized (▪), or a
 vowel. A vowel fused with an adjacent |A| either shares that |A| with what follows ((26), (27))
-or is licensed by its own onset, with which it forms a self-licensing domain (28). -/
+or is the licensor of its own onset, with which it forms a self-licensing domain (28). -/
 inductive Nuc where
   | empty
   | mark
   | vowel (v : Vowel)
   | shared (v : Vowel)
-  | licensed (v : Vowel)
+  | selfLicensing (v : Vowel)
   deriving DecidableEq, Repr
 
 /-- The vowel a nucleus holds, fused or not. -/
 def Nuc.vowel? : Nuc → Option Vowel
-  | .vowel v | .shared v | .licensed v => some v
+  | .vowel v | .shared v | .selfLicensing v => some v
   | .empty | .mark => none
 
 /-- A CV unit ([lowenstamm-1996]). -/
@@ -336,7 +338,7 @@ def actorship : Actorship := .ltp ↑Melody.floating ⊥ true true false
 /-- The melody of a nucleus is associated for a vowel and empty otherwise, even when the nucleus
 is marked for epenthesis. -/
 def Nuc.melody : Nuc → Melody
-  | .vowel _ | .shared _ | .licensed _ => .associated
+  | .vowel _ | .shared _ | .selfLicensing _ => .associated
   | .empty | .mark => .empty
 
 /-- The nuclei of a form as the lateral computation reads them, none yet expressed. -/
@@ -362,16 +364,16 @@ def surface (f : Form) : List Nucleus :=
 /-! ### The operations of (30) -/
 
 /-- Fusion ((9), (26b), (27b), (28b)) fuses the element that is the whole melody of a vowel with
-the same element of an adjacent consonant. After such a consonant the vowel is licensed by its
-onset; otherwise it shares the element with the next onset, or, when both are /a/, with the next
-nucleus (39b). Fusion always applies (§3.2.2). -/
+the same element of an adjacent consonant. After such a consonant the vowel and its onset form a
+self-licensing domain; otherwise it shares the element with the next onset, or, when both are
+/a/, with the next nucleus (39b). Fusion always applies (§3.2.2). -/
 def fusion (f : Form) : Form :=
   f.mapIdx fun i u ↦
     match u.v with
     | .vowel v =>
       match v.element? with
       | some e =>
-        if Has e u.c then ⟨u.c, .licensed (headed e v)⟩
+        if Has e u.c then ⟨u.c, .selfLicensing (headed e v)⟩
         else if HasAt e f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1) then
           ⟨u.c, .shared (headed e v)⟩
         else u
@@ -379,18 +381,19 @@ def fusion (f : Form) : Form :=
     | _ => u
 
 /-- Dissociation ((9), (26c)) empties a nucleus that shares its element with what follows iff the
-next nucleus governs. A nucleus licensed by its own onset keeps its vowel (28). -/
+next nucleus governs. The licensor of a self-licensing domain keeps its vowel (28). -/
 def dissociation (f : Form) : Form :=
   f.mapIdx fun i u ↦
     match u.v with
     | .shared _ => if IsGovernor actorship (lexical f) (i + 1) then ⟨u.c, .empty⟩ else u
     | _ => u
 
-/-- The nucleus at `i` is expressed in the realization of the form from the left, in which the
+/-- The nucleus at `i` is expressed in the realization of the form from left to right, in which
+the
 required nuclei and those of `R` are expressed and any other empty nucleus that the next can
 govern is silent (no triconsonantal clusters). -/
 def Realized (R : Finset ℕ) (f : Form) (i : ℕ) : Prop :=
-  ∃ x ∈ (leftward actorship (required f ∪ R) (nuclei f))[i]?, x.expressed = true
+  ∃ x ∈ (leftToRight actorship (required f ∪ R) (nuclei f))[i]?, x.expressed = true
 
 instance (R : Finset ℕ) (f : Form) (i : ℕ) : Decidable (Realized R f i) :=
   inferInstanceAs (Decidable (∃ x ∈ _, _))
@@ -419,7 +422,7 @@ def realizeMark (f : Form) (i : ℕ) : List (List Phonology.Segment) :=
 def realizeNuc (f : Form) (i : ℕ) : List (List Phonology.Segment) :=
   match f[i]? with
   | some ⟨_, .mark⟩ => realizeMark f i
-  | some ⟨_, .vowel v⟩ | some ⟨_, .shared v⟩ | some ⟨_, .licensed v⟩ => [[v.segment]]
+  | some ⟨_, .vowel v⟩ | some ⟨_, .shared v⟩ | some ⟨_, .selfLicensing v⟩ => [[v.segment]]
   | _ => [[]]
 
 /-- The surface forms of a form are its consonants and realized nuclei in order, one form per choice
@@ -435,7 +438,7 @@ def harmonized (f : Form) : Form :=
   f.mapIdx fun i u ↦
     match u.v with
     | .mark => ⟨u.c, ((harmonySources f i).head?.map Nuc.vowel).getD .empty⟩
-    | .shared v | .licensed v => ⟨u.c, .vowel v⟩
+    | .shared v | .selfLicensing v => ⟨u.c, .vowel v⟩
     | _ => u
 
 /-! ### Fusion and dissociation -/
@@ -486,7 +489,7 @@ theorem lexical_fusion (f : Form) : lexical (fusion f) = lexical f := by
 theorem fusion_getElem? (f : Form) (i : ℕ) (c : Phonology.Segment) (v : Vowel) (e : Element)
     (h : f[i]? = some ⟨c, .vowel v⟩) (he : v.element? = some e) :
     (fusion f)[i]? = some ⟨c,
-      if Has e c then .licensed (headed e v)
+      if Has e c then .selfLicensing (headed e v)
       else if HasAt e f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1) then .shared (headed e v)
       else .vowel v⟩ := by
   simp only [fusion, List.getElem?_mapIdx, h, Option.map_some, he]
@@ -878,10 +881,10 @@ theorem exists_reads_positions_iff (e : Element) (f : Form) (i : ℕ) :
   cases f[i]? <;> simp [Has]
 
 -- a nucleus reads a root node exactly when it holds a vowel, the weak vowel included
-theorem reads_root_positions_iff (f : Form) (i : ℕ) :
-    (ofForm (positions f)).Reads tiers (2 * i + 1) .root () ↔
+theorem reads_rootNode_positions_iff (f : Form) (i : ℕ) :
+    (ofForm (positions f)).Reads tiers (2 * i + 1) .rootNode () ↔
       ∃ u ∈ f[i]?, u.v.melody = .associated := by
-  rw [reads_root_ofForm_iff, getElem?_positions_two_mul_add_one]
+  rw [reads_rootNode_ofForm_iff, getElem?_positions_two_mul_add_one]
   rcases f[i]? with _ | ⟨c, n⟩
   · simp
   · cases n <;> simp [Nuc.vowel?, Nuc.melody]
@@ -905,7 +908,7 @@ theorem elements_nucleus_fusion (f : Form) (i : ℕ) :
     | _ => rfl
 
 -- fusion changes no position's elements, as sharing a token changes none
--- (`ElementTheory.exists_reads_fuse_iff`)
+-- (`ElementTheory.exists_reads_spread_iff`)
 theorem exists_reads_positions_fusion_iff (f : Form) (k : ℕ) (e : Element) :
     (∃ s, (ofForm (positions (fusion f))).Reads tiers k (.line e) s) ↔
       ∃ s, (ofForm (positions f)).Reads tiers k (.line e) s := by
@@ -929,9 +932,9 @@ def imperativeAsk : Form :=
 
 -- (20), (21), (27): a nucleus sharing the |A| of its onset reads it as a head after a pharyngeal
 -- and as a dependent after a glottal, where the lowered vowel is written with a head after both
-theorem reads_fuse_status :
-    (fuse (positions imperativePull) .A 2 3).Reads tiers 3 (.line .A) .head ∧
-      (fuse (positions imperativeAsk) .A 2 3).Reads tiers 3 (.line .A) .dependent ∧
+theorem reads_spread_status :
+    (spread (positions imperativePull) .A 2 3).Reads tiers 3 (.line .A) .head ∧
+      (spread (positions imperativeAsk) .A 2 3).Reads tiers 3 (.line .A) .dependent ∧
       ∀ f ∈ [imperativePull, imperativeAsk],
         ((positions (fusion f))[3]?.bind (·.melody)).map (·.status .A) = some .head := by
   decide +kernel
@@ -944,11 +947,11 @@ def gerund39b : Form :=
 def depPrf37c : Form :=
   (instantiate (pattern .tigrinya .depPrf).positions Tigrinya.Phonology.pull).getD []
 
--- (39b): the two /a/s of /m_-barak/ fuse across a consonant without |A| and cross no line; the
--- two vowels of /sʌħʌb/ could not fuse across the guttural
-theorem noCrossing_fuse_39b :
-    (fuse (positions gerund39b) .A 5 3).NoCrossing ∧
-      ¬ (fuse (positions depPrf37c) .A 3 1).NoCrossing := by
+-- (39b): the two /a/s of /m_-barak/ share |A| across a consonant without |A| and cross no line;
+-- the two vowels of /sʌħʌb/ could not share it across the guttural
+theorem noCrossing_spread_39b :
+    (spread (positions gerund39b) .A 5 3).NoCrossing ∧
+      ¬ (spread (positions depPrf37c) .A 3 1).NoCrossing := by
   decide +kernel
 
 /-! ### Trans-guttural harmony and the derivation (pp. 24–25) -/
@@ -972,8 +975,8 @@ theorem realizations_harmonized_37d :
 theorem derive_harmonized_pull :
     ∀ f ∈ [instantiate (pattern .tigrinya .imp).positions Tigrinya.Phonology.pull,
         instantiate (pattern .tigrinya .depPrf).positions Tigrinya.Phonology.pull],
-      ∀ g ∈ f, derive ∅ g = [⟨Tigrinya.Phonology.s, .mark⟩, ⟨Tigrinya.Phonology.ħ, .licensed .a⟩,
-          ⟨Tigrinya.Phonology.b, .empty⟩] ∧
+      ∀ g ∈ f, derive ∅ g = [⟨Tigrinya.Phonology.s, .mark⟩,
+          ⟨Tigrinya.Phonology.ħ, .selfLicensing .a⟩, ⟨Tigrinya.Phonology.b, .empty⟩] ∧
         harmonized (derive ∅ g) ≠ derive ∅ g ∧ derive ∅ (harmonized (derive ∅ g)) = derive ∅ g := by
   decide +kernel
 
@@ -998,7 +1001,7 @@ theorem guttural_licensed : ∀ x : Example, ∀ f ∈ stem x, ∀ i < f.length,
 
 -- the derived forms satisfy the Empty Category Principle
 theorem emptyCategoryPrinciple_surface : ∀ x : Example, ∀ f ∈ stem x,
-    surface (derive ∅ f) = leftward actorship (required (dissociation (fusion f)))
+    surface (derive ∅ f) = leftToRight actorship (required (dissociation (fusion f)))
         (nuclei (dissociation (fusion f))) ∧
       EmptyCategoryPrinciple actorship (surface (derive ∅ f)) := by
   decide +kernel
