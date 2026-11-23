@@ -3,9 +3,7 @@ module
 public import Linglib.Data.Examples.Buring2007
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Semantics.Degree.Quantifier
-public import Linglib.Semantics.Negation.Polarity
-public import Mathlib.Order.Interval.Set.LinearOrder
-public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Semantics.Degree.Extent
 
 /-!
 # Büring 2007: cross-polar nomalies
@@ -19,7 +17,8 @@ morpheme takes the modifier `m` in its degree phrase and two intervals, and
 interval `j`.
 
 Two extents stand in a comparative only if they have the same polarity
-(`polarity_eq_of_comparative`), which is the cross-polar anomaly of *John is shorter than Mary is
+(`polarity_eq_of_comparative`, from `Polarity.eq_of_smul_Iic_subset`), which is the cross-polar
+anomaly of *John is shorter than Mary is
 tall*. Since the polarities act, a modifier may be moved between the degree phrase and both
 adjectives, `comparative m (q • i) (q • j) ↔ comparative (m * q) i j`.
 
@@ -93,23 +92,13 @@ theorem comparative_positive_Iic : comparative .positive (Set.Iic b) (Set.Iic a)
 theorem comparative_negative_Iic : comparative .negative (Set.Iic b) (Set.Iic a) ↔ a < b :=
   comparative_negative.trans Set.Iic_ssubset_Iic
 
-theorem polarity_eq_of_smul_Iic_ssubset [NoMaxOrder D] {q₁ q₂ : Polarity}
-    (h : q₂ • Set.Iic b ⊂ q₁ • Set.Iic a) : q₁ = q₂ := by
-  rcases q₁ with _ | _ <;> rcases q₂ with _ | _
-  · rfl
-  · have hs : Set.Ioi b ⊆ Set.Iic a := by simpa [Set.compl_Iic] using h.subset
-    exact absurd ⟨a, hs⟩ (not_bddAbove_Ioi b)
-  · have hs : Set.Iic b ⊆ Set.Ioi a := by simpa [Set.compl_Iic] using h.subset
-    exact absurd (min_le_right b a) (hs (min_le_left b a)).not_ge
-  · rfl
-
 /-- On a scale with no greatest degree, two extents that stand in a comparative have the same
 polarity. -/
 theorem polarity_eq_of_comparative [NoMaxOrder D] {m q₁ q₂ : Polarity}
     (h : comparative m (q₂ • Set.Iic b) (q₁ • Set.Iic a)) : q₁ = q₂ := by
   rcases m with _ | _
-  · exact polarity_eq_of_smul_Iic_ssubset h
-  · exact (polarity_eq_of_smul_Iic_ssubset (comparative_negative.mp h)).symm
+  · exact (eq_of_smul_Iic_subset h.subset).symm
+  · exact eq_of_smul_Iic_subset (comparative_negative.mp h).subset
 
 end Comparative
 
