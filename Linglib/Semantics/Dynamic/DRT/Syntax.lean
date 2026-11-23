@@ -6,20 +6,19 @@ public import Mathlib.Data.Finset.Image
 /-!
 # Discourse representation structures
 
-A *discourse representation structure* (DRS) pairs a finite set of discourse referents, its
-universe, with a list of conditions on them. A condition is atomic, an atom of a
-`FirstOrder.Language` or an equation between referents, or complex, a negation, conditional or
-disjunction of sub-DRSs, so DRSs and conditions are defined by simultaneous recursion. This file
-defines both, together with their syntactic theory: merge, renaming, occurring and free referents,
-and properness.
+A *discourse representation structure* (DRS) `⟨U, Con⟩` is a finite set `U` of discourse
+referents, its *universe*, together with a list `Con` of conditions. A condition is *atomic*, an
+atom `P(x₁, …, xₙ)` of a first-order language or an equation `x = y` between referents, or
+*complex*, one of `¬K`, `K ⇒ K'` and `K ∨ K'` for DRSs `K` and `K'`. DRSs and conditions are
+defined by simultaneous recursion, as `DRS` and `Condition`.
 
-## Main definitions
-
-* `DRT.DRS`, `DRT.Condition`: DRSs and conditions over a language `L` and referent type `V`.
-* `DRT.DRS.merge`, `DRT.DRS.map`: the merge of two DRSs, and renaming along `f : V → W`.
-* `DRT.DRS.varFinset`, `DRT.DRS.freeVarFinset`: occurring and free referents.
-* `DRT.DRS.IsProper`: no free referent.
-* `DRT.DRS.ReassignmentFreeAt`: no universe declares a referent accessible to it.
+The *merge* `K ⊕ K'` has the union of the two universes and the conditions of both
+(`DRS.merge`), and `DRS.map` renames the referents of a DRS. The referents occurring in a DRS
+are `DRS.varFinset`, and its *free* referents `DRS.freeVarFinset` are those occurring in a
+condition that are declared neither in the universe nor, in the consequent of a conditional, in
+the universe of the antecedent. A DRS is *proper* when it has no free referent (`DRS.IsProper`),
+and *free of reassignment* when no universe declares a referent that is already accessible to it
+(`DRS.ReassignmentFreeAt`).
 
 ## Implementation notes
 

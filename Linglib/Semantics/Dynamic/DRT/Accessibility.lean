@@ -7,18 +7,22 @@ public import Mathlib.Order.RelClasses
 /-!
 # Subordination and accessibility
 
-A DRS is subordinate to another when it occurs inside one of its complex conditions. A DRS `K₁`
-is accessible to `K₂` when `K₂` lies weakly below `K₁`, or weakly below the consequent of a
-conditional whose antecedent is `K₁`, and a discourse referent is accessible from a condition
-when a DRS declaring it is accessible to one containing the condition. Accessibility is
-[computed by a walk](##DRT.accessibleTo_iff_exists_occurrence) from the host into the sub-DRSs
-of complex conditions, so it is decidable, and it is
-[preserved by renaming](##DRT.AccessibleTo.map). A DRS is
-[proper exactly when](##DRT.DRS.isProper_iff_forall_occurrence) every atomic condition finds its
-referents among the DRSs the walk has passed where it occurs, and free of reassignment exactly
-when no DRS declares one of them again
-(`DRT.DRS.reassignmentFreeAt_empty_iff_forall_occurrence`): the two hypotheses under which a DRS
-has the truth conditions of its first-order translation.
+A DRS `K'` is *immediately subordinate* to `K` when it is the DRS of a negation, a side of a
+conditional or a disjunct among the conditions of `K` (`DirectlySubordinate`). It is
+*subordinate* to `K` when a chain of such steps leads from `K` to `K'` (`Subordinate`), and
+`K' ≤ K` also allows `K' = K` (`WeakSubordinate`).
+
+Within a DRS `host`, a DRS `K₁` is *accessible* to `K₂` when `K₂ ≤ K₁`, or when `K₂ ≤ K₃` for
+a conditional `K₁ ⇒ K₃` occurring in `host` (`AccessibleTo`). A discourse referent is accessible
+from a condition when a DRS declaring it is accessible to one containing the condition
+(`AccessibleFrom`).
+
+Accessibility is decidable: it holds exactly when the pair is met on a walk from `host` into the
+DRSs of its complex conditions (`accessibleTo_iff_exists_occurrence`), and renaming preserves it
+(`AccessibleTo.map`). A DRS is proper exactly when every atomic condition finds its referents
+among the DRSs the walk has passed (`DRS.isProper_iff_forall_occurrence`), and free of
+reassignment exactly when no DRS on the walk declares one of them again
+(`DRS.reassignmentFreeAt_empty_iff_forall_occurrence`).
 
 ## Implementation notes
 
