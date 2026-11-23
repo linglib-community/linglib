@@ -8,7 +8,7 @@ public import Linglib.Fragments.Georgian.Coordination
 public import Linglib.Fragments.Georgian.FocusParticles
 public import Linglib.Fragments.Hungarian.Coordination
 public import Linglib.Fragments.Hungarian.FocusParticles
-public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Multiset.Filter
 
@@ -41,10 +41,13 @@ order of difficulty the data show. The measure `a.covert` meets the conditions f
 `not_desiderata_complexity`.
 
 In a trial three objects are shown and the sentence says of two of them that they are on the
-table. An end state is the set of objects on the table. It is accurate when it satisfies the
-sentence exhaustified against the alternatives *o is on the table*, which holds of the two
-mentioned objects alone, `accurate_iff`, and it satisfies the sentence unexhaustified without
-being accurate when every object is on the table, `basicTrue_and_not_accurate_iff`.
+table. An end state is the set of objects on the table, so a noun phrase with quantifier `q` is
+on the table at the end states `onTable q` of which `q` holds. The subject of the test sentence,
+J over the μ phrases of the mentioned objects, is *every* on them,
+`denote_image_every_mentioned`. An end state is accurate when it satisfies the sentence
+exhaustified against the alternatives *o is on the table*, which holds of the two mentioned
+objects alone, `accurate_iff`, and it satisfies the sentence unexhaustified without being
+accurate when every object is on the table, `subset_and_not_accurate_iff`.
 
 ## Implementation notes
 
@@ -77,7 +80,7 @@ being accurate when every object is on the table, `basicTrue_and_not_accurate_if
 
 namespace BillEtAl2025
 
-open Data.Statistics MitrovicSauerland2016 Exhaustification
+open Data.Statistics MitrovicSauerland2016 Exhaustification Quantifier
 
 /-! ### The test sentences -/
 
@@ -373,25 +376,30 @@ section OnTable
 
 variable {α : Type*}
 
-/-- The proposition that an object is on the table, the alternative to the test sentence that
-names it alone. -/
-def onTable (o : α) : Set (Finset α) := {st | o ∈ st}
+/-- The proposition that a noun phrase *is on the table*: the end states, sets of objects on the
+table, of which its quantifier holds. -/
+def onTable (q : Quantifier α) : Set (Finset α) := {st | q ↑st}
 
-@[simp] theorem mem_onTable {o : α} {st : Finset α} : st ∈ onTable o ↔ o ∈ st := Iff.rfl
+@[simp] theorem mem_onTable {q : Quantifier α} {st : Finset α} : st ∈ onTable q ↔ q ↑st := Iff.rfl
 
-theorem exh_range_onTable (S : Finset α) : exh (Set.range onTable) {st | S ⊆ st} = {S} := by
-  ext st
-  rw [mem_exh_range_iff, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨h, h'⟩
-    exact Finset.Subset.antisymm (fun o ho ↦ h' o ho (Finset.Subset.refl S)) h
-  · rintro rfl
-    exact ⟨Finset.Subset.refl _, fun _ ho _ hst ↦ hst ho⟩
+theorem mem_onTable_every {S st : Finset α} : st ∈ onTable (Det.every ↑S) ↔ S ⊆ st :=
+  Finset.coe_subset
+
+theorem onTable_every (S : Finset α) :
+    onTable (Det.every ↑S) = ⋂ o ∈ S, onTable (individual o) := by
+  ext st; simp [Det.every, individual, Set.subset_def]
+
+variable [Fintype α]
+
+theorem minterm_onTable (T : Finset α) :
+    minterm Finset.univ (fun o ↦ onTable (individual o)) T = {T} := by
+  ext st; simp [individual, Finset.ext_iff]
 
 -- fn. 12
-theorem exhIE_range_onTable (S : Finset α) : exhIE (Set.range onTable) {st | S ⊆ st} = {S} := by
-  have h := exh_range_onTable S
-  rw [exhIE_eq_exh_of_nonempty _ _ (h ▸ Set.singleton_nonempty S), h]
+theorem exhIE_onTable_every (S : Finset α) :
+    exhIE (Set.range fun o ↦ onTable (individual o)) (onTable (Det.every ↑S)) = {S} := by
+  rw [← Set.image_univ, ← Finset.coe_univ, onTable_every,
+    exhIE_image_biInter (Finset.subset_univ S) (by simp [minterm_onTable]), minterm_onTable]
 
 end OnTable
 
@@ -406,31 +414,25 @@ abbrev EndState := Finset Object
 /-- The objects the test sentence mentions, the first two. -/
 def mentioned : Finset Object := {0, 1}
 
-/-- An end state meets the basic truth conditions of the test sentence when each mentioned object
-is on the table. -/
-def BasicTrue (st : EndState) : Prop := mentioned ⊆ st
-
-instance : DecidablePred BasicTrue := fun st ↦ inferInstanceAs (Decidable (_ ⊆ st))
-
 -- Fig. 2
-theorem basicTrue_iff_conjunction {j : Coordinator} (hj : j.role = .conjunctive)
-    (st : EndState) : BasicTrue st ↔
-      j.denote {Quantifier.Det.every {(0 : Object)}, Quantifier.Det.every {1}}
-        (st : Set Object) := by
-  rw [conjunction_apply hj]; simp [BasicTrue, mentioned, Finset.insert_subset_iff]
+theorem denote_image_every_mentioned (l : Language) :
+    (exponent l .j).denote ((fun o ↦ Det.every {o}) '' (mentioned : Set Object)) =
+      Det.every ↑mentioned :=
+  conjunction_image_eq (by cases l <;> rfl) _
 
-/-- An end state is accurate when it matches the exhaustified sentence, the basic truth
-conditions with every innocently excludable alternative naming one object denied. -/
-def Accurate (st : EndState) : Prop := st ∈ exhIE (Set.range onTable) {st' | BasicTrue st'}
+/-- An end state is accurate when it matches the exhaustified sentence: the mentioned objects are
+on the table, and every innocently excludable alternative naming one object is denied. -/
+def Accurate (st : EndState) : Prop :=
+  st ∈ exhIE (Set.range fun o ↦ onTable (individual o)) (onTable (Det.every ↑mentioned))
 
 /-- The accurate end state has the mentioned objects and nothing else on the table. -/
-theorem accurate_iff (st : EndState) : Accurate st ↔ st = mentioned := by
-  simp only [Accurate, BasicTrue, exhIE_range_onTable, Set.mem_singleton_iff]
+theorem accurate_iff {st : EndState} : Accurate st ↔ st = mentioned := by
+  rw [Accurate, exhIE_onTable_every, Set.mem_singleton_iff]
 
-instance : DecidablePred Accurate := fun st ↦ decidable_of_iff' _ (accurate_iff st)
+instance : DecidablePred Accurate := fun _ ↦ decidable_of_iff' _ accurate_iff
 
-theorem Accurate.basicTrue {st : EndState} (h : Accurate st) : BasicTrue st :=
-  exhIE_subset _ _ h
+theorem Accurate.subset {st : EndState} (h : Accurate st) : mentioned ⊆ st :=
+  mem_onTable_every.mp (exhIE_subset _ _ h)
 
 /-- The kind of an end state by the number of mentioned objects on the table: neither, only one,
 or both, which an inaccurate end state has with the unmentioned object. -/
@@ -441,12 +443,12 @@ def errorKind (st : EndState) : ErrorKind :=
   | _ => .unmentioned
 
 theorem errorKind_eq_unmentioned_iff {st : EndState} :
-    errorKind st = .unmentioned ↔ BasicTrue st := by
+    errorKind st = .unmentioned ↔ mentioned ⊆ st := by
   revert st; decide
 
 -- fn. 12
-theorem basicTrue_and_not_accurate_iff {st : EndState} :
-    BasicTrue st ∧ ¬ Accurate st ↔ st = Finset.univ := by
+theorem subset_and_not_accurate_iff {st : EndState} :
+    mentioned ⊆ st ∧ ¬ Accurate st ↔ st = Finset.univ := by
   rw [accurate_iff]; revert st; decide
 
 theorem errorKind_surjOn : Set.SurjOn errorKind {st | ¬ Accurate st} Set.univ := by
@@ -456,13 +458,13 @@ theorem errorKind_surjOn : Set.SurjOn errorKind {st | ¬ Accurate st} Set.univ :
   | .oneMentioned => exact ⟨{0}, by decide, by decide⟩
   | .neitherMentioned => exact ⟨∅, by decide, by decide⟩
 
-theorem countP_basicTrue (R : Multiset EndState) :
-    R.countP BasicTrue =
+theorem countP_subset (R : Multiset EndState) :
+    R.countP (mentioned ⊆ ·) =
       R.countP Accurate + R.countP fun st ↦ ¬ Accurate st ∧ errorKind st = .unmentioned := by
-  rw [Multiset.countP_eq_countP_filter_add R BasicTrue Accurate, Multiset.countP_filter,
+  rw [Multiset.countP_eq_countP_filter_add R (mentioned ⊆ ·) Accurate, Multiset.countP_filter,
     Multiset.countP_filter]
   congr 1 <;> refine Multiset.countP_congr rfl fun st _ ↦ ?_
-  · exact propext (and_iff_right_of_imp Accurate.basicTrue)
+  · exact propext (and_iff_right_of_imp Accurate.subset)
   · rw [errorKind_eq_unmentioned_iff, and_comm]
 
 -- §3.1.2 and fn. 12: the responses that enter the replay analysis are the accurate ones and the

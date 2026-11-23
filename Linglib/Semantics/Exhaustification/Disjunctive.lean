@@ -24,7 +24,8 @@ to the size-`m` alternatives gives the non-maximal readings.
 Exhaustifying a sub-disjunction over the same closure affirms its disjuncts and denies the others
 (`exhIEII_supClosure_biUnion`): its `minterm`, the cell of the partition the disjuncts induce
 where exactly those disjuncts hold. The disjuncts form an independent family
-(`IsIndependentFamily`) when every minterm is satisfiable.
+(`IsIndependentFamily`) when every minterm is satisfiable. The conjunction of some members of a
+family, exhaustified against the family, is their minterm as well (`exhIE_image_biInter`).
 
 ## References
 
@@ -316,6 +317,28 @@ theorem not_minterm_subset_compl_minterm (hT : T ⊆ I) :
   fun hsub ↦ let ⟨_, hw⟩ := h T hT; hsub hw hw
 
 end IsIndependentFamily
+
+/-- Exhaustified against the family, the conjunction of the members of `T` holds where exactly
+they do, its minterm, when some world is in it. -/
+theorem exh_image_biInter (hT : T ⊆ I) (h : (minterm I p T).Nonempty) :
+    exh (p '' I) (⋂ i ∈ T, p i) = minterm I p T := by
+  obtain ⟨v, hv⟩ := h
+  ext w
+  rw [mem_exh_image_iff, mem_minterm, Set.mem_iInter₂]
+  refine ⟨fun ⟨hw, hex⟩ i hi ↦ ⟨fun hwi ↦ (hv i hi).1 (hex i hi hwi
+      (Set.mem_iInter₂.2 fun j hj ↦ (hv j (hT hj)).2 hj)), hw i⟩,
+    fun hw ↦ ⟨fun i hi ↦ (hw i (hT hi)).2 hi,
+      fun i hi hwi _ hu ↦ Set.mem_iInter₂.1 hu i ((hw i hi).1 hwi)⟩⟩
+
+/-- Innocent exclusion gives the minterm too, since plain exhaustification is consistent. -/
+theorem exhIE_image_biInter (hT : T ⊆ I) (h : (minterm I p T).Nonempty) :
+    exhIE (p '' I) (⋂ i ∈ T, p i) = minterm I p T := by
+  have he := exh_image_biInter hT h
+  rw [exhIE_eq_exh_of_nonempty _ _ (he ▸ h), he]
+
+theorem IsIndependentFamily.exhIE_image_biInter (h : IsIndependentFamily I p) (hT : T ⊆ I) :
+    exhIE (p '' I) (⋂ i ∈ T, p i) = minterm I p T :=
+  Exhaustification.exhIE_image_biInter hT (h T hT)
 
 end Minterm
 

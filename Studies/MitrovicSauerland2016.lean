@@ -72,6 +72,13 @@ theorem conjunction_apply {j : Coordinator} (hj : j.role = .conjunctive) (a b : 
     (P : Set α) : j.denote {Det.every {a}, Det.every {b}} P ↔ a ∈ P ∧ b ∈ P := by
   rw [conjunction_eq hj]; rfl
 
+-- (13), for any set of conjuncts
+theorem conjunction_image_eq {j : Coordinator} (hj : j.role = .conjunctive) (S : Set α) :
+    j.denote ((fun a ↦ Det.every {a}) '' S) = Det.every S := by
+  rw [Coordinator.denote_of_conjunctive hj]
+  funext B
+  simp [Det.every, Set.subset_def]
+
 end Semantics
 
 /-! ### The collective μ′, (20)–(22) -/
