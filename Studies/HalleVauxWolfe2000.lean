@@ -171,8 +171,8 @@ theorem placeAssimilation_eqOn_tongueBody :
 /-- Soft Palate is a sister of Place, so Place assimilation leaves [nasal] where it was and the
 assimilated nasal is still a nasal, the two classes being disjoint. -/
 theorem placeAssimilation_nasal : placeAssimilation src tgt .nasal = tgt .nasal :=
-  spread_eqOn_of_incompRel (a := Node.place) (b := Node.softPalate) ⟨by decide, by decide⟩
-    (by decide : Feature.nasal ∈ featureClass node Node.softPalate)
+  spread_eqOn_of_incompRel (src := ⇑src) (tgt := ⇑tgt) (a := Node.place) (b := Node.softPalate)
+    ⟨by decide, by decide⟩ (by decide : Feature.nasal ∈ featureClass node Node.softPalate)
 
 /-- Irish Dorsal Assimilation (44) spreads the designated articulator alone, the terminal
 feature [dorsal] rather than the Tongue Body node. -/
@@ -188,6 +188,6 @@ theorem dorsalAssimilation_back : dorsalAssimilation src tgt .back = tgt .back :
 prediction of a Place-node analysis of (44) that the data refute. -/
 theorem tongueBody_spread_back :
     Segment.spread node .tongueBody src tgt .back = src .back :=
-  spread_eqOn (a := Node.tongueBody) (by decide : Feature.back ∈ featureClass node Node.tongueBody)
+  spread_of_mem (src := ⇑src) (tgt := ⇑tgt) (by decide)
 
 end HalleVauxWolfe2000

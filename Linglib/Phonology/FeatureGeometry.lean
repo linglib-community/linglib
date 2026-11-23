@@ -135,6 +135,9 @@ variable {src tgt : F → β}
 theorem spread_eqOn : Set.EqOn (spread node a src tgt) src ↑(featureClass node a) :=
   Finset.eqOn_piecewise_of_subset subset_rfl
 
+theorem spread_of_mem (hf : f ∈ featureClass node a) : spread node a src tgt f = src f :=
+  Finset.piecewise_eq_of_mem _ _ _ hf
+
 theorem spread_of_notMem (hf : f ∉ featureClass node a) : spread node a src tgt f = tgt f :=
   Finset.piecewise_eq_of_notMem _ _ _ hf
 
