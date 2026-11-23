@@ -11,22 +11,21 @@ public import Linglib.Syntax.Voice.Apply
 /-!
 # The relation a diathesis denotes
 
-A verb denotes a relation `R` of its participants, and a diathesis links each participant to a
-slot or leaves it out. The relation of the slots that `R` gives in a diathesis `d` is
-`d.denote R = mapIndex d.links.get R`: a participant the diathesis leaves out is closed
-existentially, and participants that share a slot are identified.
+A verb denotes a relation `R : A → (Fin n → E) → Ψ` of its `n` participants. A diathesis `d`
+links each participant to a slot, or to no slot.
 
-Relinking a diathesis and reading off its relation is pushing the relation along the relinking,
-`(d.relink τ gr).denote R = mapIndex τ (d.denote R)`, when no two participants share a slot the
-relinking drops (`Diathesis.denote_relink`); in general the second entails the first
-(`Diathesis.denote_relink_le`). So a relinking that only permutes slots leaves the proposition
-unchanged up to the order of its arguments, and one that suppresses a slot closes its participant
-existentially.
+We define `d.denote R : A → (Slot → E) → Ψ` as `mapIndex d.links.get R`. So `d.denote R a y` is
+the supremum of `R a x` over the tuples of participants `x` such that `x i = y s` whenever
+participant `i` is at slot `s`. A participant at no slot is existentially quantified.
+
+We show how `denote` interacts with `Diathesis.relink`. In general,
+`mapIndex τ (d.denote R) ≤ (d.relink τ gr).denote R` (`Diathesis.denote_relink_le`). The two are
+equal when no two participants of `d` share a slot that `τ` sends to `none`
+(`Diathesis.denote_relink`).
 
 ## References
 
 * [melcuk-1993]
-* [bach-1979]
 * [chierchia-1984]
 -/
 
@@ -38,7 +37,7 @@ namespace Diathesis
 
 variable {A E Ψ : Type*} [CompleteLattice Ψ] {n : ℕ}
 
-/-- The relation of the slots that a relation of the participants gives in a diathesis. -/
+/-- The relation of the slots of a diathesis given by a relation `R` of its participants. -/
 def denote (d : Diathesis n) (R : A → (Fin n → E) → Ψ) : A → (Slot → E) → Ψ :=
   mapIndex d.links.get R
 

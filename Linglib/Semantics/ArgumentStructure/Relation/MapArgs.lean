@@ -11,36 +11,40 @@ public import Mathlib.Order.GaloisConnection.Basic
 /-!
 # Maps of a relation's arguments
 
-A verb denotes a relation `R : A → X → Ψ` of its arguments `X`, with `A` whatever else it takes
-and `Ψ` the propositions. The arguments change along a map. For `σ : Y → X`, `comapArgs σ R` is
-the relation of `y` that `R` is of `σ y`. For `σ : X → Y` and `Ψ` a complete lattice,
-`mapArgs σ R a y` is the join of `R a x` over the `x` with `σ x = y`: the arguments that `σ`
-forgets are quantified existentially, as passive does the subject of a verb and
-detransitivization its object.
+A verb denotes a relation `R : A → X → Ψ`. Here `X` is the type of its arguments, `Ψ` is the type
+of propositions, and `A` holds anything else the relation takes. This file defines three ways to
+change the arguments of such a relation.
 
-The two are adjoint (`gc_mapArgs_comapArgs`), so `mapArgs` preserves joins and entailments,
-`mapArgs σ R` is `⊥` only if `R` is (`mapArgs_eq_bot`), and along a surjection
-`mapArgs σ (comapArgs σ R) = R` (`mapArgs_comapArgs`).
+For `σ : Y → X`, we define `comapArgs σ R a y = R a (σ y)`. This substitutes `σ y` for the
+arguments.
 
-When the arguments are a tuple `I → E` of entities, they also change along a partial map of the
-indices `f : I → Option J`: `mapIndex f R a y` is the join of `R a x` over the tuples `x` with
-`x i = y j` whenever `f i = some j`. An index sent nowhere is closed existentially and indices
-sent to one place are identified, so that along a total map it is substitution
-(`mapIndex_some_comp`) and along the partial inverse of an injection existential closure
-(`mapIndex_partialInv`). Two steps entail the composite (`mapIndex_mapIndex_le`) and equal it when
-no two indices share a place the second step drops (`mapIndex_mapIndex`).
+For `σ : X → Y` and `Ψ` a complete lattice, we define `mapArgs σ R a y` as the supremum of `R a x`
+over all `x` with `σ x = y`. When propositions are sets of worlds, `mapArgs σ R a y` holds exactly
+when `R a x` holds for some such `x`. The arguments that `σ` forgets are existentially quantified.
+Passive does this to the subject of a verb.
+
+We show that `mapArgs σ` and `comapArgs σ` form a Galois connection (`gc_mapArgs_comapArgs`). It
+follows that `mapArgs σ R = ⊥` exactly when `R = ⊥` (`mapArgs_eq_bot`). If `σ` is surjective,
+then `mapArgs σ (comapArgs σ R) = R` (`mapArgs_comapArgs`).
+
+When the arguments are tuples `I → E`, we define `mapIndex f R` for a partial map of indices
+`f : I → Option J`. The relation `mapIndex f R a y` is the supremum of `R a x` over the tuples `x`
+such that `x i = y j` whenever `f i = some j`. An index with `f i = none` is existentially
+quantified. Two indices with the same image must have the same value.
+
+We show that `mapIndex` along a total map is `comapArgs` (`mapIndex_some_comp`), and that
+`mapIndex` along the partial inverse of an injection is `mapArgs` (`mapIndex_partialInv`).
+Applying `mapIndex` twice entails applying it once along the composite (`mapIndex_mapIndex_le`).
+The two are equal when no two indices share an image that the second map sends to `none`
+(`mapIndex_mapIndex`).
 
 ## Implementation notes
 
-`mapIndex` identifies the entity at a place with each of the entities sent there, the reading of
-a reflexive. A reciprocal, whose one place holds a plurality with the participants its distinct
-members, is not an instance.
-
-
-`mapArgs` and `comapArgs` are to a relation's arguments what `Finsupp.mapDomain` and
-`Finsupp.comapDomain` are to a finitely supported function's, with a join for the sum. For
-propositions that are sets of worlds they are the image and preimage of the relation as a set of
-pairs, adjoint by `Set.image_preimage`.
+* `mapArgs` and `comapArgs` are analogous to `Finsupp.mapDomain` and `Finsupp.comapDomain`, with
+  a supremum in place of a sum.
+* `mapIndex` requires the value at `j` to equal the value at every `i` with `f i = some j`. This
+  is the reading of a reflexive. A reciprocal, where one position holds a group whose members
+  are the participants, is not an instance.
 
 ## References
 
@@ -56,8 +60,7 @@ namespace ArgumentStructure
 
 variable {A Ψ W X Y Z : Type*}
 
-/-- The relation of the arguments `y` that `R` is of `σ y`, the arguments followed along a map as
-across the diatheses of a verb. -/
+/-- The relation `R` with `σ y` substituted for its arguments. -/
 def comapArgs (σ : Y → X) (R : A → X → Ψ) : A → Y → Ψ :=
   fun a y ↦ R a (σ y)
 
@@ -67,8 +70,8 @@ def comapArgs (σ : Y → X) (R : A → X → Ψ) : A → Y → Ψ :=
 
 variable [CompleteLattice Ψ] {R : A → X → Ψ} {σ : X → Y}
 
-/-- The relation of the arguments `y` that holds when `R` does of some `x` with `σ x = y`: the
-arguments `σ` forgets are quantified existentially. -/
+/-- The relation that holds of `y` when `R` holds of some `x` with `σ x = y`. The arguments that
+`σ` forgets are existentially quantified. -/
 def mapArgs (σ : X → Y) (R : A → X → Ψ) : A → Y → Ψ :=
   fun a y ↦ ⨆ x, ⨆ (_ : σ x = y), R a x
 
@@ -92,8 +95,8 @@ theorem mapArgs_comp (τ : Y → Z) (σ : X → Y) (R : A → X → Ψ) :
 @[simp] theorem mapArgs_eq_bot : mapArgs σ R = ⊥ ↔ R = ⊥ :=
   (gc_mapArgs_comapArgs σ).l_eq_bot.trans le_bot_iff
 
-/-- Along a surjection, a relation is recovered from its substitution instance by closing the
-arguments the surjection forgets. -/
+/-- If `σ` is surjective, substituting along `σ` and then quantifying along `σ` gives back the
+relation. -/
 theorem mapArgs_comapArgs (hσ : Surjective σ) (R : A → Y → Ψ) :
     mapArgs σ (comapArgs σ R) = R := by
   funext a y
@@ -109,9 +112,8 @@ theorem mapArgs_comapArgs (hσ : Surjective σ) (R : A → Y → Ψ) :
 
 variable {E I J K : Type*}
 
-/-- The relation of `J`-tuples that holds when `R` does of some `I`-tuple agreeing with it along
-the partial map `f`: an index `f` sends nowhere is closed existentially, and indices sent to one
-place are identified. -/
+/-- The relation that holds of a `J`-tuple `y` when `R` holds of some `I`-tuple `x` with
+`x i = y j` whenever `f i = some j`. -/
 def mapIndex (f : I → Option J) (R : A → (I → E) → Ψ) : A → (J → E) → Ψ :=
   fun a y ↦ ⨆ x : I → E, ⨆ (_ : ∀ i, ∀ j ∈ f i, x i = y j), R a x
 
@@ -120,8 +122,7 @@ def mapIndex (f : I → Option J) (R : A → (I → E) → Ψ) : A → (J → E)
   have h : ∀ x : I → E, (∀ i, ∀ j ∈ some i, x i = y j) ↔ x = y := fun x ↦ by simp [funext_iff]
   simp only [mapIndex, h, iSup_iSup_eq_left]
 
-/-- Along a total map of indices the pushforward is substitution: a permutation rearranges the
-arguments and a map that is not injective identifies them. -/
+/-- Along a total map of indices, `mapIndex` is `comapArgs`. -/
 theorem mapIndex_some_comp (σ : I → J) (R : A → (I → E) → Ψ) :
     mapIndex (some ∘ σ) R = comapArgs (· ∘ σ) R := by
   funext a y
@@ -129,8 +130,7 @@ theorem mapIndex_some_comp (σ : I → J) (R : A → (I → E) → Ψ) :
     fun x ↦ by simp [funext_iff]
   simp only [mapIndex, h, iSup_iSup_eq_left, comapArgs_apply]
 
-/-- Along the partial inverse of an injection the pushforward is existential closure of the
-indices outside its range. -/
+/-- Along the partial inverse of an injection `ι`, `mapIndex` is `mapArgs`. -/
 theorem mapIndex_partialInv (ι : J → I) (f : I → Option J)
     (hf : ∀ i j, f i = some j ↔ ι j = i) (R : A → (I → E) → Ψ) :
     mapIndex f R = mapArgs (· ∘ ι) R := by
@@ -140,7 +140,7 @@ theorem mapIndex_partialInv (ι : J → I) (f : I → Option J)
       rw [← (hf i j).1 hj, ← h]; rfl⟩
   simp only [mapIndex, mapArgs, h]
 
-/-- Pushing forward in two steps entails pushing forward along the composite. -/
+/-- Applying `mapIndex` twice entails applying it once along the composite map. -/
 theorem mapIndex_mapIndex_le (f : I → Option J) (g : J → Option K) (R : A → (I → E) → Ψ) :
     mapIndex g (mapIndex f R) ≤ mapIndex (fun i ↦ (f i).bind g) R := by
   intro a z
@@ -149,8 +149,8 @@ theorem mapIndex_mapIndex_le (f : I → Option J) (g : J → Option K) (R : A �
   obtain ⟨j, hj, hk⟩ := Option.bind_eq_some_iff.1 hk
   exact (hx i j hj).trans (hy j k hk)
 
-/-- The two steps equal the composite when no two indices share a place that the second map
-drops. -/
+/-- Applying `mapIndex` twice equals applying it once along the composite, when no two indices
+share an image that the second map sends to `none`. -/
 theorem mapIndex_mapIndex [Nonempty E] (f : I → Option J) (g : J → Option K)
     (h : ∀ i i' j, f i = some j → f i' = some j → g j = none → i = i')
     (R : A → (I → E) → Ψ) :
@@ -171,8 +171,7 @@ theorem mapIndex_mapIndex [Nonempty E] (f : I → Option J) (g : J → Option K)
   exact (le_iSup₂ (f := fun x (_ : ∀ i, ∀ j ∈ f i, x i = y j) ↦ R a x) x hxy).trans
     (le_iSup₂ (f := fun y (_ : ∀ j, ∀ k ∈ g j, y j = z k) ↦ mapIndex f R a y) y hy)
 
-/-- The pushforward of a relation is `⊥` only if the relation is, when the map sends no two
-indices to one place. -/
+/-- If no two indices share an image, `mapIndex f R = ⊥` exactly when `R = ⊥`. -/
 theorem mapIndex_eq_bot [Nonempty E] (f : I → Option J)
     (hf : ∀ i i' j, f i = some j → f i' = some j → i = i') {R : A → (I → E) → Ψ} :
     mapIndex f R = ⊥ ↔ R = ⊥ := by

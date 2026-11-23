@@ -12,43 +12,41 @@ public import Linglib.Semantics.ArgumentStructure.Relation.MapArgs
 /-!
 # Control and raising
 
-On the analysis of Montague, Bach, Dowty and Chierchia the complement of *try*, *persuade* or
-*seem* denotes a property, and the predicate denotes a relation `R : (E → Φ) → X → Ψ` between a
-property and its other arguments `X`, with `Φ` the propositions. What is called control and
-raising are then two answers to how much of the property the relation reads. A *role* is a
-partial function `θ : X →. E` from the arguments to the individual among them that bears it, an
-argument position being the case of a total function. The relation is *controlled* at `θ`,
-`IsControlledAt R θ`, when it reads the property only at the bearer of the role, and *raising* at
-a position `c`, `IsRaisingAt R c`, when it reads only the proposition `P (c x)`.
+The complement of *try*, *persuade* or *seem* can be analyzed as denoting a property. The verb
+then denotes a relation `R : (E → Φ) → X → Ψ` between a property and the verb's other arguments.
+Here `E` is the type of entities, `Φ` and `Ψ` are types of propositions, and `X` is the type of
+the other arguments. This file defines what it means for such a relation to be controlled or
+raising.
 
-A raising relation is controlled, a relation controlled at a position is exactly a relation to a
-proposition and the arguments (`isControlledAt_coe_iff`), and a raising relation is exactly a
-property of propositions (`isRaisingAt_iff`), which entails nothing of `c x` that it does not
-entail of everything (`IsRaisingAt.le_of_le`): the argument is not a semantic argument of the
-relation, as no participant of a raising verb fills the slot it raises into
-(`Diathesis.IsRaising`). A controlled relation stays controlled when its arguments are
-substituted (`IsControlledAt.comapArgs`) and when arguments are closed existentially along a map
-through which the role factors (`IsControlledAt.mapArgs`).
+A *role* is a partial function `θ : X →. E`. It picks out one entity among the arguments, when
+there is one. An argument position is a total function `c : X → E`, which we coerce to a role.
 
-A relation to a proposition `S : Φ → X → Ψ` gives the relation to a property `atRole θ S`, which
-is `S (P e) x` where `e` bears the role among the arguments `x` and `⊥` where nothing does. It is
-controlled at `θ` (`isControlledAt_atRole`), raising at a position when `S` does not depend on
-the arguments (`isRaisingAt_atRole`), and `⊥` when nothing bears the role
-(`atRole_eq_bot_of_dom_eq_empty`).
+* `IsControlledAt R θ` says that `R P x` depends on the property `P` only through its value at
+  the entity `θ x`. If `θ x` is undefined, `R P x` does not depend on `P` at all.
+* `IsRaisingAt R c` says that `R P x` depends on `P` and `x` only through the proposition
+  `P (c x)`.
+
+We show that a raising relation is controlled (`IsRaisingAt.isControlledAt`). A relation is
+controlled at a position `c` exactly when `R P x = R' (P (c x)) x` for some `R'`
+(`isControlledAt_coe_iff`). It is raising at `c` exactly when `R P x = S (P (c x))` for some `S`
+(`isRaisingAt_iff`). A raising relation entails nothing about `c x` that it does not entail about
+every entity (`IsRaisingAt.le_of_le`).
+
+Given a role `θ` and a relation to a proposition `S : Φ → X → Ψ`, we define `atRole θ S`. When
+`e` is the value of `θ x`, we have `atRole θ S P x = S (P e) x`. When `θ x` is undefined, we have
+`atRole θ S P x = ⊥`. We show that `atRole θ S` is controlled at `θ` (`isControlledAt_atRole`),
+and that it is `⊥` when `θ` is nowhere defined (`atRole_eq_bot_of_dom_eq_empty`).
+
+A controlled relation stays controlled under `comapArgs` (`IsControlledAt.comapArgs`), and under
+`mapArgs` along a map that the role factors through (`IsControlledAt.mapArgs`).
 
 ## Implementation notes
 
-* `IsRaisingAt` and `IsControlledAt` are predicates on the bare relation, as `Monotone` is on a
-  function, and a relation that reads the whole property satisfies neither. Equality in `Φ` is
-  logical equivalence when propositions are sets of worlds.
-* A role is partial so that a relation may have arguments among which nothing bears it, as the
-  passive of a verb whose subject controls has; a relation controlled at a role does not read its
-  property there at all. Chierchia's thematic role is such a function, a thematic relation of
-  `ArgumentStructure/ThematicRole.lean` that is functional, and the participant in a slot is the
-  case of a projection.
-* `atRole θ S` is the join of `S (P e) x` over the bearers `e` of the role, of which there is at
-  most one. The meet over them is `⊤` where nothing bears the role, the reading on which a schema
-  of control says nothing of arguments without a controller.
+* `IsControlledAt` and `IsRaisingAt` are predicates on a bare function, like `Monotone`. A
+  relation that reads the whole property satisfies neither.
+* A role is partial because some relations have arguments among which no entity bears the role.
+  The passive of a verb whose subject controls is an example.
+* Equality in `Φ` is logical equivalence when propositions are sets of worlds.
 
 ## References
 
@@ -69,14 +67,13 @@ variable {E Φ Ψ W X Y : Type*} {R : (E → Φ) → X → Ψ} {θ : X →. E} {
 
 /-! ### Control and raising -/
 
-/-- A relation to a property is raising at `c` when it depends only on the proposition the
-property forms with `c x`: two properties forming one proposition with two arguments are related
-alike. -/
+/-- A relation is raising at the position `c` when `R P x` depends on `P` and `x` only through
+the proposition `P (c x)`. -/
 def IsRaisingAt (R : (E → Φ) → X → Ψ) (c : X → E) : Prop :=
   ∀ ⦃P Q : E → Φ⦄ ⦃x y : X⦄, P (c x) = Q (c y) → R P x = R Q y
 
-/-- A relation to a property is controlled at the role `θ` when it depends on the property only
-through the proposition it forms with the bearer of the role. -/
+/-- A relation is controlled at the role `θ` when `R P x` depends on `P` only through its value
+at the entity `θ x`. -/
 def IsControlledAt (R : (E → Φ) → X → Ψ) (θ : X →. E) : Prop :=
   ∀ ⦃P Q : E → Φ⦄ ⦃x : X⦄, (∀ e ∈ θ x, P e = Q e) → R P x = R Q x
 
@@ -92,24 +89,23 @@ theorem isControlledAt_coe_iff_forall_factorsThrough :
     IsControlledAt R (c : X →. E) ↔ ∀ x, FactorsThrough (R · x) (eval (c x)) :=
   isControlledAt_coe.trans ⟨fun h _ _ _ hPQ ↦ h hPQ, fun h _ _ x hPQ ↦ h x hPQ⟩
 
-/-- A relation is controlled at the position `c` exactly when it is a relation to a proposition,
-taken at the proposition the property forms with `c x`. -/
+/-- A relation is controlled at the position `c` exactly when `R P x = R' (P (c x)) x` for some
+`R'`. -/
 theorem isControlledAt_coe_iff :
     IsControlledAt R (c : X →. E) ↔ ∃ R' : Φ → X → Ψ, ∀ P x, R P x = R' (P (c x)) x :=
   isControlledAt_coe.trans ⟨fun h ↦ ⟨fun φ x ↦ R (fun _ ↦ φ) x, fun _ _ ↦ h rfl⟩,
     fun ⟨R', h⟩ P Q x hPQ ↦ by rw [h, h, hPQ]⟩
 
 open Classical in
-/-- A relation is raising at `c` exactly when it is a property of propositions, taken at the
-proposition the property forms with `c x`. -/
+/-- A relation is raising at `c` exactly when `R P x = S (P (c x))` for some `S`. -/
 theorem isRaisingAt_iff [Nonempty Ψ] :
     IsRaisingAt R c ↔ ∃ S : Φ → Ψ, ∀ P x, R P x = S (P (c x)) :=
   ⟨fun h ↦ ⟨fun φ ↦ if hX : Nonempty X then R (fun _ ↦ φ) hX.some else Classical.arbitrary Ψ,
       fun P x ↦ by simp only [(⟨x⟩ : Nonempty X), ↓reduceDIte]; exact h rfl⟩,
     fun ⟨S, h⟩ P Q x y hPQ ↦ by rw [h, h, hPQ]⟩
 
-/-- What a raising relation entails of the argument it is raising at, it entails of every entity
-some argument takes there: its meaning does not depend on that argument as such. -/
+/-- If a raising relation entails `α (c x)` for its own arguments `x`, it entails `α (c y)` for
+every `y`. -/
 theorem IsRaisingAt.le_of_le [LE Ψ] (h : IsRaisingAt R c) {α : E → Ψ}
     (hα : ∀ P x, R P x ≤ α (c x)) (P : E → Φ) (x y : X) : R P x ≤ α (c y) :=
   h (Q := fun _ ↦ P (c x)) (y := y) rfl ▸ hα _ y
@@ -132,9 +128,8 @@ theorem IsControlledAt.mapArgs {σ : X → Y} {θ' : Y →. E}
 
 /-! ### The relation of a role -/
 
-/-- The relation to a property that the relation to a proposition `S` gives at the role `θ`: `S`
-of the proposition that the bearer of the role has the property, and `⊥` where nothing bears
-it. -/
+/-- The relation to a property given by `S` at the role `θ`: it is `S (P e) x` when `e` is the
+value of `θ x`, and `⊥` when `θ x` is undefined. -/
 def atRole (θ : X →. E) (S : Φ → X → Ψ) : (E → Φ) → X → Ψ :=
   fun P x ↦ ⨆ e ∈ θ x, S (P e) x
 
@@ -156,8 +151,7 @@ theorem atRole_eq_bot_of_dom_eq_empty (hθ : θ.Dom = ∅) (S : Φ → X → Ψ)
 theorem isControlledAt_atRole (θ : X →. E) (S : Φ → X → Ψ) : IsControlledAt (atRole θ S) θ :=
   fun _ _ _ hPQ ↦ iSup_congr fun e ↦ iSup_congr fun he ↦ by rw [hPQ e he]
 
-/-- The relation of a position is raising there when the relation to a proposition does not
-depend on the arguments. -/
+/-- If `S` does not depend on the arguments, `atRole c S` is raising at the position `c`. -/
 theorem isRaisingAt_atRole (c : X → E) (S : Φ → Ψ) :
     IsRaisingAt (atRole (c : X →. E) fun φ _ ↦ S φ) c := fun P Q x y hPQ ↦ by
   rw [atRole_apply_of_mem (θ := (c : X →. E)) (Part.mem_some (c x)),

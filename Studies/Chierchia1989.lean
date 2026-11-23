@@ -14,38 +14,42 @@ public import Mathlib.Order.CompleteLattice.Basic
 /-!
 # Chierchia (1989): Structured Meanings, Thematic Roles and Control
 
-Chierchia takes the infinitive of a control structure to denote a property, and a thematic role
-to be a partial function from an eventuality to one of its constituents. Control is then one
-schema on the relations that take properties: if a relation holds of a property, it holds of the
-proposition that the bearer of a designated role has it. The controller is a co-argument because a
-role picks a constituent, and unique because a role is a function. On the strict form of the
-schema the role must have a bearer, so an operation that deletes the controller [has no
-value](##Chierchia1989.Strict.mem_dom), which is why *it was tried to win* is out; on the weak
-form, which holds only when the bearer is present, passive leaves [someone or other as the
-controller](##Chierchia1989.mapArgs_snd_le), the implicit control of *it was decided to leave*. A
-relation obeying the Control Principle of [chierchia-1984] [satisfies the weak
-schema](##Chierchia1989.weak_of_controlPrinciple), its propositional frame the modal claim of the
-principle.
+This file formalizes the schema of control in [chierchia-1989].
 
-The English verbs bear the schema out. Passive, applied to a diathesis of a verb, [leaves the
-controller at an expressed position exactly when the object
-controls](##Chierchia1989.controller_expressed_passive_iff): with a controlling subject, as in
-either infinitive diathesis of *promise*, the controller is left implicit, and the passive of the
-diathesis without an infinitive loses no controller.
+As in [chierchia-1984], the infinitive of a control structure denotes a property. A relation that
+takes a property has two frames. The frame `rP : (E → Φ) → X → Φ` takes a property, and the frame
+`rS : Φ → X → Φ` takes a proposition. Here `X` is the type of the other constituents of an
+eventuality and `Φ` is a complete lattice of propositions. A thematic role is a partial function
+`θ : X →. E`.
+
+We define two schemas.
+
+* `Weak rP rS θ` says that `rP P x ≤ rS (P e) x` whenever `e` is the value of `θ x`.
+* `Strict rP rS θ` says that for every `x`, the role `θ x` has a value `e` with
+  `rP P x ≤ rS (P e) x`.
+
+We show that the strict schema implies the weak one (`Strict.weak`), and that under the strict
+schema `θ` is defined everywhere (`Strict.mem_dom`). So no operation can remove the controller
+under the strict schema. Under the weak schema with the agent as controller, the passive
+`mapArgs Prod.snd rP P y` entails that `rS (P a) (a, y)` holds for some agent `a`
+(`mapArgs_snd_le`). A relation that obeys the Control Principle of [chierchia-1984] satisfies the
+weak schema (`weak_of_controlPrinciple`).
+
+For the English verbs, we show that the passive of a diathesis leaves its controller at an
+expressed position exactly when the controller is the object
+(`controller_expressed_passive_iff`).
 
 ## Implementation notes
 
-Propositions are the elements of any complete lattice, entailment its order. An eventuality's
-constituents other than the property are a type `X`, and a relation has one frame taking a
-property and one taking a proposition, which Chierchia writes as one polymorphic relation. Passive
-is `ArgumentStructure.mapArgs` along the second projection, for eventualities that pair an agent
-with the rest.
+* The source writes the two frames as one polymorphic relation.
+* Passive is `mapArgs` along the second projection, for eventualities that pair an agent with the
+  rest.
 
 ## TODO
 
-* The default hierarchy of roles that fills in the controller, theme before goal before agent,
-  is not tested: the entries of the English control verbs record no entailment profiles for their
-  participants, so no role label is derivable for them.
+* The source fills in the controller from a default hierarchy of roles: theme, then goal, then
+  agent. This is not tested. The entries of the English control verbs record no entailment
+  profiles, so no role label can be derived for them.
 * Purpose clauses and control by the theme of a ditransitive are not formalized.
 
 ## References

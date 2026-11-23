@@ -11,18 +11,21 @@ public import Linglib.Semantics.Attitudes.Acquaintance
 /-!
 # Logophoric control
 
-A controlled relation reads its property at an argument. In Landau's two-tiered theory that is
-one of two ways control is established, predication, found under predicates that introduce no
-attitude. Under an attitude predicate the complement is read at a coordinate of the reported
-context, its author or addressee, as the holder of the attitude represents it: a relation to a
-property of centers is *logophoric* at a concept `c` of centers, `IsLogophoricAt R c`, when it
-reads the property only through the centers whose value under `c` has it, which is a relation to
-the proposition self-ascribed (`isLogophoricAt_iff`).
+This file defines a second way in which a relation can read a property complement. It is the way
+[landau-2015] proposes for attitude predicates.
 
-Self-ascription over a set of alternatives is logophoric (`isLogophoricAt_subset_deRe`), and it
-is controlled at an argument when the concept takes that argument as its value throughout the
-alternatives (`isControlledAt_subset_deRe`), so that the two readings come apart only where the
-holder may mistake who the coordinate is.
+A *center* is a point of evaluation that fixes an author and an addressee. We write `C` for the
+type of centers. A property of centers is a function `P : α → Set C`. A *concept* is a function
+`c : C → α`. It picks out an entity at each center, such as the author.
+
+For a concept `c`, the set `deRe (Part.some ∘ c) P` contains the centers `q` such that
+`q ∈ P (c q)`. We define `IsLogophoricAt R c` to say that `R P x` depends on `P` only through
+this set.
+
+We show that `R` is logophoric at `c` exactly when `R P x = A (deRe (Part.some ∘ c) P) x` for
+some `A` (`isLogophoricAt_iff`). The relation `fun P x ↦ A x ⊆ deRe (Part.some ∘ c) P` is
+logophoric at `c` (`isLogophoricAt_subset_deRe`). It is controlled at an argument `ctrl` when
+`c q = ctrl x` for every `q ∈ A x` (`isControlledAt_subset_deRe`).
 
 ## References
 
@@ -43,27 +46,26 @@ open Acquaintance
 
 variable {α C : Type*} {R : (α → Set C) → X → Ψ} {c : C → α}
 
-/-- A relation to a property of centers is logophoric at the concept `c` when it depends on the
-property only through the centers whose value under `c` has it. -/
+/-- A relation is logophoric at the concept `c` when it depends on the property `P` only
+through the set of centers `q` with `q ∈ P (c q)`. -/
 def IsLogophoricAt (R : (α → Set C) → X → Ψ) (c : C → α) : Prop :=
   ∀ ⦃P Q : α → Set C⦄ ⦃x : X⦄, deRe (Part.some ∘ c) P = deRe (Part.some ∘ c) Q → R P x = R Q x
 
-/-- A relation is logophoric at `c` exactly when it is a relation to a proposition, taken at the
-centers whose value under `c` has the property. -/
+/-- A relation is logophoric at `c` exactly when it is a relation to the set of centers `q`
+with `q ∈ P (c q)`. -/
 theorem isLogophoricAt_iff :
     IsLogophoricAt R c ↔ ∃ A : Set C → X → Ψ, ∀ P x, R P x = A (deRe (Part.some ∘ c) P) x :=
   ⟨fun h ↦ ⟨fun S x ↦ R (fun _ ↦ S) x, fun P _ ↦ h (Set.ext fun _ ↦ by simp)⟩,
     fun ⟨A, h⟩ P Q x hPQ ↦ by rw [h, h, hPQ]⟩
 
-/-- Self-ascription, every alternative having the property of its own value under `c`, is
+/-- The relation that holds when every center `q` in `A x` satisfies `q ∈ P (c q)` is
 logophoric at `c`. -/
 theorem isLogophoricAt_subset_deRe (A : X → Set C) (c : C → α) :
     IsLogophoricAt (fun P x ↦ A x ⊆ deRe (Part.some ∘ c) P) c :=
   fun _ _ x hPQ ↦ congrArg (A x ⊆ ·) hPQ
 
-/-- Self-ascription is controlled at an argument when the concept takes that argument as its
-value at every alternative: the reading at the coordinate and the reading at the argument agree
-where the coordinate is not mistaken. -/
+/-- That relation is controlled at the argument `ctrl` when `c q = ctrl x` for every center `q`
+in `A x`. -/
 theorem isControlledAt_subset_deRe {A : X → Set C} {ctrl : X → α}
     (h : ∀ x, ∀ q ∈ A x, c q = ctrl x) :
     IsControlledAt (fun P x ↦ A x ⊆ deRe (Part.some ∘ c) P) ctrl := by
