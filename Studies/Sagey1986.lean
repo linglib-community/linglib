@@ -46,6 +46,7 @@ articulator nodes and stand for a node with no terminal feature under it; the se
 them only as `+`. `IsComplex` counts the articulator nodes a segment bears, where the substrate's
 `Phonology.Segment.IsComplex` counts the major articulator features it has `+`, and the two
 differ on a rounded segment with no `[labial]`.
+
 `[voice]` stands in for the laryngeal features of stiffness and slackness. `[lateral]` is placed
 at the supralaryngeal node, under which the Klamath evidence puts it; whether it hangs from that
 node or from the place node is left open. `[sonorant]` and `[strident]`, which the dissertation
