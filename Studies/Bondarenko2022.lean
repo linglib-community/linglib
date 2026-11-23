@@ -10,8 +10,8 @@ public import Linglib.Data.Examples.Bondarenko2022
 # [bondarenko-2022] — Anatomy of an Attitude
 
 Embedded clauses come in two sorts. A Cont-CP denotes a predicate of
-individuals with propositional content, CONT(x) = p ([kratzer-2006],
-[moulton-2015]), and projects a ContP whose head is overt in Buryat (*gɘ*
+individuals with propositional content ([kratzer-2006]), those with
+CONT(x) = p ([moulton-2015]), and projects a ContP whose head is overt in Buryat (*gɘ*
 'say') and Korean (*-ta*) and null in English and Russian; a Sit-CP
 denotes a predicate of situations exemplifying p ([kratzer-1989]) and
 lacks that layer. Content nouns take truth predicates and reject
@@ -138,9 +138,9 @@ other individuals. -/
 
 variable {X W : Type*} {cont : X → Option (W → Prop)} {x : X} {p q : W → Prop}
 
-/-- (10): on the subset semantics that the thesis rejects, a clause holds of an individual whose
-content entails the clause's proposition, where the equality semantics (7) asks for
-`p ∈ cont x`. -/
+/-- (10): on the subset semantics of [kratzer-2006], which the thesis rejects, a clause holds of
+an individual whose content entails the clause's proposition, where the equality semantics (7)
+asks for `p ∈ cont x`. -/
 def SubsetContent (cont : X → Option (W → Prop)) (x : X) (p : W → Prop) : Prop :=
   ∃ c ∈ cont x, c ≤ p
 
