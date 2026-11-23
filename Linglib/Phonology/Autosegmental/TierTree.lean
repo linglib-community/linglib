@@ -78,7 +78,121 @@ def Reads (k : ℕ) (j : ι) (b : τ j) : Prop :=
 instance [∀ j, DecidableEq (τ j)] (k : ℕ) (j : ι) (b : τ j) : Decidable (X.Reads T k j b) :=
   inferInstanceAs (Decidable (∃ q ∈ Finset.range _, _))
 
+variable {T X}
+
+theorem mem_children {v : ι × ℕ} {j : ι} {q : ℕ} :
+    (j, q) ∈ X.children T v ↔ T.parent j = v.1 ∧ j ≠ T.root ∧ X.Link v.1 j v.2 q := by
+  simp only [children, Finset.mem_biUnion, Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨j', h⟩
+    split_ifs at h with hc
+    · obtain ⟨⟨x₁, x₂⟩, hx, he⟩ := Finset.mem_image.1 h
+      obtain ⟨hx₁, hx₂⟩ := Finset.mem_filter.1 hx
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
+      obtain rfl : x₁ = v.2 := hx₂
+      exact ⟨hc.1, hc.2, hx₁⟩
+    · simp at h
+  · rintro ⟨h₁, h₂, h₃⟩
+    exact ⟨j, by
+      rw [if_pos ⟨h₁, h₂⟩]
+      exact Finset.mem_image.2 ⟨(v.2, q), Finset.mem_filter.2 ⟨h₃, rfl⟩, rfl⟩⟩
+
+/-- The tokens a token of the representation reaches are tokens of the representation. -/
+theorem lt_length_of_mem_descendants {d : ℕ} {v u : ι × ℕ} (hv : v.2 < (X.word v.1).length)
+    (hu : u ∈ X.descendants T d v) : u.2 < (X.word u.1).length := by
+  induction d generalizing v with
+  | zero =>
+    obtain rfl : u = v := by simpa [descendants] using hu
+    exact hv
+  | succ d ih =>
+    simp only [descendants, Finset.mem_insert, Finset.mem_biUnion] at hu
+    obtain rfl | ⟨⟨j, q⟩, hc, hu⟩ := hu
+    · exact hv
+    · exact ih (mem_children.1 hc).2.2.lt_right hu
+
 end Dominates
+
+/-! ### Concatenation -/
+
+section Mul
+
+variable {T} (X Y : AR τ)
+
+theorem children_mul_left {v : ι × ℕ} (hv : v.2 < (X.word v.1).length) :
+    (X * Y).children T v = X.children T v := by
+  ext ⟨j, q⟩
+  simp only [mem_children, link_mul]
+  exact and_congr_right fun _ ↦ and_congr_right fun _ ↦ or_iff_left fun h ↦ not_le.2 hv h.1
+
+theorem descendants_mul_left (d : ℕ) {v : ι × ℕ} (hv : v.2 < (X.word v.1).length) :
+    (X * Y).descendants T d v = X.descendants T d v := by
+  induction d generalizing v with
+  | zero => rfl
+  | succ d ih =>
+    simp only [descendants]
+    rw [children_mul_left X Y hv]
+    congr 1
+    exact Finset.biUnion_congr rfl fun ⟨_, _⟩ hu ↦ ih (mem_children.1 hu).2.2.lt_right
+
+theorem children_mul_right (v : ι × ℕ) :
+    (X * Y).children T (v.1, (X.word v.1).length + v.2) =
+      (Y.children T v).image fun u ↦ (u.1, (X.word u.1).length + u.2) := by
+  ext ⟨j, q⟩
+  simp only [mem_children, link_mul, Finset.mem_image, Prod.mk.injEq, Prod.exists]
+  constructor
+  · rintro ⟨h₁, h₂, h | ⟨-, hq, h⟩⟩
+    · exact absurd h.lt_left (by omega)
+    · exact ⟨j, q - (X.word j).length, ⟨h₁, h₂, by simpa using h⟩, rfl, by omega⟩
+  · rintro ⟨j', q', ⟨h₁, h₂, h⟩, rfl, rfl⟩
+    exact ⟨h₁, h₂, .inr ⟨by omega, by omega, by simpa using h⟩⟩
+
+theorem descendants_mul_right (d : ℕ) (v : ι × ℕ) :
+    (X * Y).descendants T d (v.1, (X.word v.1).length + v.2) =
+      (Y.descendants T d v).image fun u ↦ (u.1, (X.word u.1).length + u.2) := by
+  induction d generalizing v with
+  | zero => simp [descendants]
+  | succ d ih =>
+    simp only [descendants, children_mul_right, Finset.image_insert, Finset.biUnion_image,
+      Finset.image_biUnion]
+    congr 1
+    exact Finset.biUnion_congr rfl fun u _ ↦ ih u
+
+variable {X Y} {j : ι} {k : ℕ} {b : τ j}
+
+/-- A concatenation reads at a slot of its left factor as that factor does. -/
+theorem reads_mul_left (hk : k < (X.word T.root).length) :
+    (X * Y).Reads T k j b ↔ X.Reads T k j b := by
+  simp only [Reads, Dominates, descendants_mul_left X Y _ (v := (T.root, k)) hk, word_mul,
+    List.length_append, Finset.mem_range]
+  constructor
+  · rintro ⟨q, -, hq, hb⟩
+    have hq' := lt_length_of_mem_descendants (v := (T.root, k)) hk hq
+    exact ⟨q, hq', hq, by rwa [List.getElem?_append_left hq'] at hb⟩
+  · rintro ⟨q, hq', hq, hb⟩
+    exact ⟨q, by omega, hq, by rwa [List.getElem?_append_left hq']⟩
+
+/-- A concatenation reads at a slot of its right factor as that factor does. -/
+theorem reads_mul_right :
+    (X * Y).Reads T (k + (X.word T.root).length) j b ↔ Y.Reads T k j b := by
+  have hd : (X * Y).descendants T (Fintype.card ι) (T.root, k + (X.word T.root).length) =
+      (Y.descendants T (Fintype.card ι) (T.root, k)).image fun u ↦
+        (u.1, (X.word u.1).length + u.2) := by
+    rw [Nat.add_comm]
+    exact descendants_mul_right X Y _ (T.root, k)
+  simp only [Reads, Dominates, hd, word_mul, List.length_append, Finset.mem_range]
+  constructor
+  · rintro ⟨q, -, hq, hb⟩
+    obtain ⟨⟨j', q'⟩, hq', he⟩ := Finset.mem_image.1 hq
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
+    have hb' : (Y.word j')[q']? = some b := by
+      rwa [List.getElem?_append_right (by omega), Nat.add_sub_cancel_left] at hb
+    exact ⟨q', (List.getElem?_eq_some_iff.1 hb').1, hq', hb'⟩
+  · rintro ⟨q, -, hq, hb⟩
+    exact ⟨(X.word j).length + q, by have := (List.getElem?_eq_some_iff.1 hb).1; omega,
+      Finset.mem_image.2 ⟨(j, q), hq, rfl⟩,
+      by rwa [List.getElem?_append_right (by omega), Nat.add_sub_cancel_left]⟩
+
+end Mul
 
 section Realization
 
@@ -95,10 +209,22 @@ def spreadTier (w : List S) (j : ι) (m n : ℕ) : AR τ :=
 /-- Reading a realization at slot `k` is reading the primitive of its `k`th symbol. -/
 theorem reads_prod_map (h : ∀ s, ((g₀ s).word T.root).length = 1) {b : τ j} :
     (w.map g₀).prod.Reads T k j b ↔ ∃ hk : k < w.length, (g₀ w[k]).Reads T 0 j b := by
-  -- TODO: by `link_prod_map` every line lies inside one symbol's primitive, and the root
-  -- token of the `k`th symbol is at `k`; by induction on the depth, the descendants of
-  -- `(T.root, k)` are those of `(T.root, 0)` in the primitive, moved by the tier offsets.
-  sorry
+  induction w generalizing k with
+  | nil => simp [Reads]
+  | cons a w ih =>
+    rw [List.map_cons, List.prod_cons]
+    cases k with
+    | zero =>
+      rw [reads_mul_left (by rw [h]; exact Nat.one_pos)]
+      exact ⟨fun hr ↦ ⟨Nat.succ_pos _, hr⟩, fun ⟨_, hr⟩ ↦ hr⟩
+    | succ k =>
+      have key : (g₀ a * (w.map g₀).prod).Reads T (k + 1) j b ↔
+          (w.map g₀).prod.Reads T k j b := by
+        have := reads_mul_right (T := T) (X := g₀ a) (Y := (w.map g₀).prod) (k := k) (b := b)
+        rwa [h a] at this
+      rw [key, ih]
+      exact ⟨fun ⟨hk, hr⟩ ↦ ⟨Nat.succ_lt_succ hk, hr⟩,
+        fun ⟨hk, hr⟩ ↦ ⟨Nat.lt_of_succ_lt_succ hk, hr⟩⟩
 
 /-- Spreading a tier crosses no line exactly when no symbol strictly between the two has a line
 between that tier and the one above it. -/
