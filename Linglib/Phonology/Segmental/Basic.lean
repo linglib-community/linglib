@@ -102,6 +102,18 @@ theorem inf_apply (s t : Segment) (f : Feature) : (s ⊓ t) f = if s f = t f the
 theorem le_setFeature (h : s f = none) (v : Bool) : s ≤ s.setFeature f v :=
   ((setFeature_le_iff h).1 le_rfl).2
 
+/-- `s.copy f c` is `s` with the value that the segment `c` has for the feature `f`, and `s`
+itself where there is no `c` or it has no value. -/
+def copy (s : Segment) (f : Feature) (c : Option Segment) : Segment :=
+  (c.bind (· f)).elim s (s.setFeature f)
+
+/-- Copying a value for a feature that a segment lacks adds to it. -/
+theorem le_copy (h : s f = none) (c : Option Segment) : s ≤ s.copy f c := by
+  unfold copy
+  cases c.bind (· f) with
+  | none => exact le_rfl
+  | some v => exact le_setFeature h v
+
 /-! ### Changes -/
 
 @[simp] theorem setFeature_apply_self (s : Segment) (f : Feature) (v : Bool) :

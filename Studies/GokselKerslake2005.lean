@@ -15,13 +15,11 @@ grammar of Göksel and Kerslake against the Turkish Fragment.
 The vowel harmony of Chapter 3 is derived by the surface forms of `Turkish.Phonology` from the
 exponent forms of `Turkish.Morphotactics`. Harmony and the voicing of a suffix-initial stop fill
 features in and change none, so each harmonized segment is at least its underlying segment in
-the order of `Phonology.Segment` (`forall₂_le_harmonize`). They run from left to right. For a
-harmonized string `w` and a segment `x` we define `fill w x` in terms of features alone: a
-syllabic `x` lacking [back] takes it from the last segment of `w` that is syllabic or bears
-[back], a high syllabic `x` lacking [round] takes it from the last syllabic segment of `w`, and
-an `x` lacking [voice] takes it from the last segment of `w`. The search-and-copy rules of the
-Fragment compute it: the harmonized form of `w ++ [x]` is that of `w` followed by
-`fill (harmonize w) x` (`harmonize_concat`). The alternants that the
+the order of `Phonology.Segment` (`forall₂_le_harmonize`). The Fragment states them in terms
+of features alone, as the grammar does: `Turkish.Phonology.fill w x` is the segment `x` after
+the harmonized string `w`, and the harmonized form of `w ++ [x]` is that of `w` followed by
+`fill` of it and `x`. The search-and-copy rules of the three harmony systems, run in turn,
+compute the same form for every word (`harmonize_eq_searchCopy`). The alternants that the
 grammar lists for `A`, `I` and `D` are the values of `fill` (`fill_A`, `fill_I`, `fill_D`), and
 two stems of phonemes that end alike take their suffixes alike
 (`exists_harmonize_append_eq`). The permissible vowel sequences of §3.1 are the
@@ -267,56 +265,10 @@ voice suffixes, the causatives *öldür-* and *yaptır-* among them. -/
 theorem spelled_stems : ∀ v ∈ verbs, ofString? v.form = some (v.inflect []) := by
   decide
 
-/-! ### Harmony fills features in (Chapter 3) -/
+/-! ### The search-and-copy rules compute the harmonized form -/
 
 private theorem not_isTarget : ∀ x ∈ vowels ∪ consonants, ¬ fronting.searchCopy.IsTarget x ∧
     ¬ rounding.searchCopy.IsTarget x ∧ ¬ voicing.searchCopy.IsTarget x := by decide
-
-private theorem harmonize_eq_scan (w : List Segment) : harmonize w =
-    voicing.searchCopy.scan (rounding.searchCopy.scan (fronting.searchCopy.scan w)) := by
-  rw [harmonize, voicing.searchCopy.apply_eq_scan rfl, rounding.searchCopy.apply_eq_scan rfl,
-    fronting.searchCopy.apply_eq_scan rfl]
-
-/-- Harmony and voicing fill features in and change none: each segment of `harmonize w` has
-every feature value of the segment of `w` it comes from. -/
-theorem forall₂_le_harmonize (w : List Segment) : List.Forall₂ (· ≤ ·) w (harmonize w) := by
-  rw [harmonize_eq_scan]
-  simpa only [Mealy.run_comp, Function.comp_apply, SearchCopy.scan] using
-    (voicing.searchCopy.toMealy.comp (rounding.searchCopy.toMealy.comp
-      fronting.searchCopy.toMealy)).forall₂_run w fun q s ↦
-    ((fronting.searchCopy.le_emit (fun v s h ↦ Segment.le_setFeature h.1.2 v) _ s).trans
-      (rounding.searchCopy.le_emit (fun v s h ↦ Segment.le_setFeature h.1.2.2 v) _ _)).trans
-      (voicing.searchCopy.le_emit (fun v s h ↦ Segment.le_setFeature h.1 v) _ _)
-
-/-- Raising is the one rule of the surface form that changes a feature value. -/
-theorem forall₂_le_surface (w : List Segment) :
-    List.Forall₂ (· ≤ ·) (raising.apply w) (surface w) :=
-  forall₂_le_harmonize _
-
-/-- A string of phonemes is harmonized already. -/
-theorem harmonize_eq_self {w : List Segment} (hw : ∀ x ∈ w, x ∈ vowels ∪ consonants) :
-    harmonize w = w := by
-  rw [harmonize_eq_scan, fronting.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).1,
-    rounding.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).2.1,
-    voicing.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).2.2]
-
-/-! ### Harmony from left to right (Chapter 3) -/
-
-/-- `copy f c x` is the segment `x` with the value that `c` has for the feature `f`, and `x`
-itself where there is no `c` or it has no value. -/
-def copy (f : Phonology.Feature) (c : Option Segment) (x : Segment) : Segment :=
-  (c.bind (· f)).elim x (x.setFeature f)
-
-/-- `fill w x` is the segment `x` as it stands after the harmonized string `w`. A syllabic
-segment lacking [back] takes it from the last segment of `w` that is syllabic or bears [back],
-a high syllabic segment lacking [round] takes it from the last syllabic segment of `w`, and a
-segment lacking [voice] takes it from the last segment of `w` (§3.2, §6.1.2). -/
-def fill (w : List Segment) (x : Segment) : Segment :=
-  let x := if x.IsSyllabic ∧ x .back = none then
-    copy .back (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? x else x
-  let x := if x.IsSyllabic ∧ x .high = true ∧ x .round = none then
-    copy .round (w.filter (·.IsSyllabic)).getLast? x else x
-  if x .voice = none then copy .voice w.getLast? x else x
 
 private theorem fronting_preservesTier : fronting.searchCopy.PreservesTier := by
   intro v s h
@@ -357,7 +309,7 @@ private theorem filter_rounding_tier (w : List Segment) :
 private theorem fronting_emit (w : List Segment) (x : Segment) :
     fronting.searchCopy.emit (w.filter (fronting.searchCopy.tier ·)).getLast? x =
       if x.IsSyllabic ∧ x .back = none then
-        copy .back (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? x else x := by
+        x.copy .back (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? else x := by
   have ht := fronting_tier_iff
   have hx : fronting.IsTarget x ∧ fronting.pattern.OnTier x ↔ x.IsSyllabic ∧ x .back = none :=
     ⟨fun h ↦ h.1, fun h ↦ ⟨h, (ht x).2 (.inl h.1)⟩⟩
@@ -371,7 +323,7 @@ private theorem fronting_emit (w : List Segment) (x : Segment) :
 private theorem rounding_emit (w : List Segment) (x : Segment) :
     rounding.searchCopy.emit (w.filter (rounding.searchCopy.tier ·)).getLast? x =
       if x.IsSyllabic ∧ x .high = true ∧ x .round = none then
-        copy .round (w.filter (·.IsSyllabic)).getLast? x else x := by
+        x.copy .round (w.filter (·.IsSyllabic)).getLast? else x := by
   have ht := rounding_tier_iff
   have hx : rounding.IsTarget x ∧ rounding.pattern.OnTier x ↔
       x.IsSyllabic ∧ x .high = true ∧ x .round = none :=
@@ -385,7 +337,7 @@ private theorem rounding_emit (w : List Segment) (x : Segment) :
 
 private theorem voicing_emit (w : List Segment) (x : Segment) :
     voicing.searchCopy.emit w.getLast? x =
-      if x .voice = none then copy .voice w.getLast? x else x := by
+      if x .voice = none then x.copy .voice w.getLast? else x := by
   have hx : voicing.IsTarget x ∧ voicing.pattern.OnTier x ↔ x .voice = none :=
     ⟨fun h ↦ h.1, fun h ↦ ⟨h, by simp [voicing, System.mk', Pattern.OnTier]⟩⟩
   rw [voicing.emit_eq_of_participating rfl fun c _ ↦ by simp [voicing, System.mk']]
@@ -400,11 +352,11 @@ private theorem emit_eq_fill (w : List Segment) (x : Segment) :
   rw [fronting_emit, rounding_emit, voicing_emit]
   rfl
 
-/-- The search-and-copy rules compute `fill` from left to right: the harmonized form of a word
-with one more segment is that of the word, followed by the segment filled in after it. -/
-theorem harmonize_concat (w : List Segment) (x : Segment) :
-    harmonize (w ++ [x]) = harmonize w ++ [fill (harmonize w) x] := by
-  simp only [harmonize_eq_scan]
+private theorem scans_concat (w : List Segment) (x : Segment) :
+    voicing.searchCopy.scan (rounding.searchCopy.scan (fronting.searchCopy.scan (w ++ [x]))) =
+      voicing.searchCopy.scan (rounding.searchCopy.scan (fronting.searchCopy.scan w)) ++
+        [fill (voicing.searchCopy.scan (rounding.searchCopy.scan (fronting.searchCopy.scan w)))
+          x] := by
   rw [fronting.searchCopy.scan_concat fronting_preservesTier,
     rounding.searchCopy.scan_concat rounding_preservesTier,
     voicing.searchCopy.scan_concat voicing_preservesTier]
@@ -447,6 +399,44 @@ theorem harmonize_concat (w : List Segment) (x : Segment) :
         obtain ⟨h, h'⟩ := Prod.mk.inj h
         simp_all [fronting, System.mk', System.searchCopy, Pattern.OnTier]) hVF.symm x
   rw [h₁, h₂, h₃, emit_eq_fill]
+
+private theorem harmonize_eq_scan (w : List Segment) : harmonize w =
+    voicing.searchCopy.scan (rounding.searchCopy.scan (fronting.searchCopy.scan w)) := by
+  induction w using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton w x ih => rw [harmonize_concat, scans_concat, ih]
+
+/-- The search-and-copy rules of fronting, rounding and voicing, run in turn, compute the
+harmonized form of every word. -/
+theorem harmonize_eq_searchCopy (w : List Segment) : harmonize w =
+    voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply w)) := by
+  rw [harmonize_eq_scan, voicing.searchCopy.apply_eq_scan rfl,
+    rounding.searchCopy.apply_eq_scan rfl, fronting.searchCopy.apply_eq_scan rfl]
+
+/-! ### Harmony fills features in (Chapter 3) -/
+
+/-- Harmony and voicing fill features in and change none: each segment of `harmonize w` has
+every feature value of the segment of `w` it comes from. -/
+theorem forall₂_le_harmonize (w : List Segment) : List.Forall₂ (· ≤ ·) w (harmonize w) := by
+  rw [harmonize_eq_scan]
+  simpa only [Mealy.run_comp, Function.comp_apply, SearchCopy.scan] using
+    (voicing.searchCopy.toMealy.comp (rounding.searchCopy.toMealy.comp
+      fronting.searchCopy.toMealy)).forall₂_run w fun q s ↦
+    ((fronting.searchCopy.le_emit (fun v s h ↦ Segment.le_setFeature h.1.2 v) _ s).trans
+      (rounding.searchCopy.le_emit (fun v s h ↦ Segment.le_setFeature h.1.2.2 v) _ _)).trans
+      (voicing.searchCopy.le_emit (fun v s h ↦ Segment.le_setFeature h.1 v) _ _)
+
+/-- Raising is the one rule of the surface form that changes a feature value. -/
+theorem forall₂_le_surface (w : List Segment) :
+    List.Forall₂ (· ≤ ·) (raising.apply w) (surface w) :=
+  forall₂_le_harmonize _
+
+/-- A string of phonemes is harmonized already. -/
+theorem harmonize_eq_self {w : List Segment} (hw : ∀ x ∈ w, x ∈ vowels ∪ consonants) :
+    harmonize w = w := by
+  rw [harmonize_eq_scan, fronting.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).1,
+    rounding.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).2.1,
+    voicing.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).2.2]
 
 /-- Adding segments to a word leaves the harmonized form of the word in place. -/
 theorem harmonize_isPrefix_append (w s : List Segment) :

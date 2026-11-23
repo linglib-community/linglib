@@ -36,9 +36,13 @@ feature and the palatals are linked to [−back]. There are two departures from 
 share.
 
 Before -(I)yor a stem-final `a` or `e` becomes high and then harmonizes, as in *anlıyor* from
-*anla-* and the negative *-mIyor* from *-mA* (§8.2.2, §8.2.3.3). The surface form of a word
-applies that raising and then the three alternations. The spelling is phonemic, each letter
-writing one segment.
+*anla-* and the negative *-mIyor* from *-mA* (§8.2.2, §8.2.3.3).
+
+The alternations are stated in terms of features. For a harmonized string `w` and a segment
+`x`, `fill w x` is `x` with [back], [round] and [voice] taken from `w` where `x` lacks them,
+and the harmonized form of `w ++ [x]` is that of `w` followed by `fill` of it and `x`. The
+surface form of a word applies the raising and then harmonizes. The spelling is phonemic, each
+letter writing one segment.
 
 ## Main definitions
 
@@ -51,8 +55,8 @@ writing one segment.
   `Turkish.Morphotactics`.
 * `raising`: the raising of a stem-final `a` or `e` before -(I)yor, as a
   `Subregular.LocalRewrite.Rule`.
-* `harmonize`, `surface`: the harmonized form of a word, and its surface form, which applies
-  raising first.
+* `fill`, `harmonize`, `surface`: a segment as it stands after a harmonized string, the
+  harmonized form of a word, and its surface form, which applies raising first.
 * `ofChar`, `ofString?`, `ofSegmented?`: the segments that a spelled word writes, with or
   without its morpheme boundaries.
 
@@ -73,7 +77,9 @@ writing one segment.
 The raised vowel harmonizes for rounding as well as backness, as in *okşuyor* from *okşa-*, so
 raising replaces the stem vowel by the archiphoneme `I` instead of setting [high] alone. The
 loss of the suffix's own `I` after a vowel is a matter of attachment, in
-`Turkish.Morphotactics`. The letters *f*, *ğ* and *j* write segments outside the inventory
+`Turkish.Morphotactics`. That the search-and-copy rules of `fronting`, `rounding` and `voicing`
+compute the harmonized form is proved in `Studies/GokselKerslake2005.lean`. The letters *f*, *ğ*
+and *j* write segments outside the inventory
 and have no value under `ofChar`. The grammar's examples are derived in
 `Studies/GokselKerslake2005.lean`.
 The inventory is PHOIBLE 2217, whose glyphs the chart entries follow, the coronals being
@@ -290,10 +296,20 @@ def raising : Rule where
 
 /-! ### Surface forms -/
 
-/-- `harmonize w` supplies the features that the archiphonemes of `w` lack, by the runs of
-fronting, rounding and voicing in turn. -/
-def harmonize (w : List Segment) : List Segment :=
-  voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply w))
+/-- `fill w x` is the segment `x` as it stands after the harmonized string `w`. A syllabic
+segment lacking [back] takes it from the last segment of `w` that is syllabic or bears [back],
+a high syllabic segment lacking [round] takes it from the last syllabic segment of `w`, and a
+segment lacking [voice] takes it from the last segment of `w` (§3.2, §6.1.2). -/
+def fill (w : List Segment) (x : Segment) : Segment :=
+  let x := if x.IsSyllabic ∧ x .back = none then
+    x.copy .back (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? else x
+  let x := if x.IsSyllabic ∧ x .high = true ∧ x .round = none then
+    x.copy .round (w.filter (·.IsSyllabic)).getLast? else x
+  if x .voice = none then x.copy .voice w.getLast? else x
+
+/-- `harmonize w` supplies the features that the archiphonemes of `w` lack, each segment
+filled in after the harmonized segments before it. -/
+def harmonize (w : List Segment) : List Segment := w.foldl (fun h x ↦ h ++ [fill h x]) []
 
 /-- The surface form of an underlying word applies raising before -(I)yor and then harmonizes
 it. -/
@@ -301,8 +317,14 @@ def surface (w : List Segment) : List Segment := harmonize (raising.apply w)
 
 @[simp] theorem harmonize_nil : harmonize [] = [] := rfl
 
+theorem harmonize_concat (w : List Segment) (x : Segment) :
+    harmonize (w ++ [x]) = harmonize w ++ [fill (harmonize w) x] := by
+  simp [harmonize, List.foldl_append]
+
 @[simp] theorem length_harmonize (w : List Segment) : (harmonize w).length = w.length := by
-  simp [harmonize]
+  induction w using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton w x ih => simp [harmonize_concat, ih]
 
 /-- The surface form of a word has its length, since no rule deletes or inserts. -/
 @[simp] theorem length_surface (w : List Segment) : (surface w).length = w.length := by
