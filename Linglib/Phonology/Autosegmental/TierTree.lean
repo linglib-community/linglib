@@ -9,6 +9,7 @@ public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.Autosegmental.Edit
 public import Linglib.Phonology.Autosegmental.Realization
 public import Linglib.Phonology.Autosegmental.TwoTier
+public import Mathlib.Data.List.Sigma
 public import Mathlib.Logic.Relation
 public import Mathlib.Order.Interval.Set.UnorderedInterval
 
@@ -28,8 +29,9 @@ Descending lines lead from one token to another, `X.Dom T v w`, exactly when the
 reached in as many steps as there are tiers (`dom_iff_mem_descendants`), so `Dominates` is `Dom`
 from a slot (`dominates_iff_dom`). A representation is functional, `X.IsFunctional T`, when
 each token has at most one line to each tier hanging from its own; a slot then dominates at
-most one token on each tier (`IsFunctional.eq_of_dom`), and a realization whose primitives have
-at most one token on each tier is functional (`isFunctional_prod_map`).
+most one token on each tier (`IsFunctional.eq_of_dom`) and hosts at most one label there
+(`IsFunctional.length_hosted_le_one`), and a realization whose primitives have at most one
+token on each tier is functional (`isFunctional_prod_map`).
 
 A realization `(w.map g₀).prod` whose primitives have one slot each is read symbol by symbol:
 reading it at slot `k` is reading the primitive of the `k`th symbol at its slot
@@ -280,6 +282,21 @@ theorem IsFunctional.eq_of_dom (h : X.IsFunctional T) {k : ℕ} {v v' : ι × �
       obtain rfl : j = j' := he
       obtain rfl : u = u' := ih hu' (hp.symm.trans (mem_children.1 hc').1)
       rw [h.eq_of_mem_children hc hc']
+
+/-- With at most one line from each token to each lower tier, a slot hosts at most one label on
+each tier. -/
+theorem IsFunctional.length_hosted_le_one (h : X.IsFunctional T) (k : ℕ) (j : ι) :
+    (X.hosted T k j).length ≤ 1 := by
+  have hnd : (((X.word j).zipIdx.filter fun x ↦ X.Dominates T k j x.2).map Prod.snd).Nodup :=
+    List.Nodup.sublist (List.filter_sublist.map Prod.snd) (List.nodup_zipIdx_map_snd _)
+  rw [hosted, List.length_map, ← List.length_map (f := Prod.snd),
+    ← List.toFinset_card_of_nodup hnd]
+  refine Finset.card_le_one.2 fun q hq q' hq' ↦ ?_
+  obtain ⟨x, hx, rfl⟩ := List.mem_map.1 (List.mem_toFinset.1 hq)
+  obtain ⟨x', hx', rfl⟩ := List.mem_map.1 (List.mem_toFinset.1 hq')
+  have hd := of_decide_eq_true (List.mem_filter.1 hx).2
+  have hd' := of_decide_eq_true (List.mem_filter.1 hx').2
+  exact (Prod.mk.inj (h.eq_of_dom (dominates_iff_dom.1 hd) (dominates_iff_dom.1 hd') rfl)).2
 
 /-- A position past the end of its tier is linked to nothing below it. -/
 theorem descendants_eq_singleton {v : ι × ℕ} (hv : (X.word v.1).length ≤ v.2) (d : ℕ) :
