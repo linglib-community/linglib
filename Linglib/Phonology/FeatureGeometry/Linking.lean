@@ -204,6 +204,21 @@ theorem link_ofSpec_node_iff :
       List.length_pos_iff.2 (word_ofSpec_node_ne_nil.2 h), .inl ⟨rfl, Option.some_ne_none _⟩⟩
     exact h.imp_right fun hb ↦ .inr (hb.of_le (Order.pred_le a))
 
+/-- Spreading a node crosses no line exactly when no segment strictly between the two has the
+node. -/
+theorem noCrossing_linkNode_iff (hm : m < w.length) (hn : n < w.length)
+    (hma : a = ⊥ ∨ Bears node w[m] a)
+    (hna : a = ⊥ ∨ Order.pred a = ⊥ ∨ Bears node w[n] (Order.pred a)) :
+    (linkNode node w a m n).NoCrossing ↔
+      ∀ k (hk : k < w.length), k ∈ Set.uIoo m n → ¬ (a = ⊥ ∨ Bears node w[k] a) := by
+  rw [linkNode, AR.noCrossing_spreadTier_iff (tiers node) (ofSpec node) (Option.some_ne_none _)
+    (fun s ↦ length_tierWord_le_one node s _) (fun s ↦ length_tierWord_le_one node s _) hm hn
+    (word_ofSpec_node_ne_nil.2 hma) (word_ofSpec_parent_ne_nil hna) (noCrossing_ofWord node w)]
+  exact forall_congr' fun k ↦ forall_congr' fun hk ↦ imp_congr_right fun _ ↦
+    not_congr link_ofSpec_node_iff
+
+variable [Fintype N]
+
 theorem mem_descendants_node (s : F → Option β) : ∀ (n : ℕ) (c : N), Order.pred^[n] c = ⊥ →
     (c = ⊥ ∨ Bears node s c) → ((some (.inl c) : Option (N ⊕ F)), 0) ∈
       (ofSpec node s).descendants (tiers node) (n + 1) (none, 0)
@@ -225,21 +240,6 @@ theorem mem_descendants_node (s : F → Option β) : ∀ (n : ℕ) (c : N), Orde
         (AR.mem_children.2 ⟨parent_node hbot, Option.some_ne_none _, ?_⟩)
       have := (link_ofSpec_node_iff (node := node) (s := s) (a := c)).2 (.inr hb)
       rwa [parent_node hbot] at this
-
-/-- Spreading a node crosses no line exactly when no segment strictly between the two has the
-node. -/
-theorem noCrossing_linkNode_iff (hm : m < w.length) (hn : n < w.length)
-    (hma : a = ⊥ ∨ Bears node w[m] a)
-    (hna : a = ⊥ ∨ Order.pred a = ⊥ ∨ Bears node w[n] (Order.pred a)) :
-    (linkNode node w a m n).NoCrossing ↔
-      ∀ k (hk : k < w.length), k ∈ Set.uIoo m n → ¬ (a = ⊥ ∨ Bears node w[k] a) := by
-  rw [linkNode, AR.noCrossing_spreadTier_iff (tiers node) (ofSpec node) (Option.some_ne_none _)
-    (fun s ↦ length_tierWord_le_one node s _) (fun s ↦ length_tierWord_le_one node s _) hm hn
-    (word_ofSpec_node_ne_nil.2 hma) (word_ofSpec_parent_ne_nil hna) (noCrossing_ofWord node w)]
-  exact forall_congr' fun k ↦ forall_congr' fun hk ↦ imp_congr_right fun _ ↦
-    not_congr link_ofSpec_node_iff
-
-variable [Fintype N]
 
 theorem reads_ofSpec_iff :
     (ofSpec node s).Reads (tiers node) 0 (some (.inr f)) b ↔ (node f).isSome ∧ s f = some b := by
