@@ -3,6 +3,7 @@ module
 public import Studies.Narrog2010
 public import Linglib.Data.Statistics.Narrog2012
 public import Linglib.Syntax.Cartography
+public import Mathlib.Order.Antisymmetrization
 
 /-!
 # Narrog (2012): Modality, Subjectivity, and Semantic Change
@@ -176,6 +177,18 @@ theorem dynamicModality_lt_deontic1 : dynamicModality < deontic1 := by decide
 -- Mood and illocutionary modification outscope every category of modality proper.
 theorem lt_volitiveMood_of_isModal {c : GramCategory} (hc : c.IsModal) : c < volitiveMood := by
   cases c <;> first | decide | exact hc.elim
+
+-- Voice markers become modal markers and not the reverse (section 4.6).
+theorem voice_lt_of_isModal {c : GramCategory} (hc : c.IsModal) : voice < c := by
+  cases c <;> first | decide | exact hc.elim
+
+-- Aspect and event-oriented modality embed each other, so change is possible in both directions
+-- (section 7.3.1).
+theorem antisymmRel_aspect :
+    AntisymmRel (· ≤ ·) phasalAspect dynamicModality ∧
+    AntisymmRel (· ≤ ·) phasalAspect boulomaicModality ∧
+    AntisymmRel (· ≤ ·) perfImperfAspect deontic1 := by
+  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩, ?_, ?_⟩ <;> decide
 
 theorem volitiveMood_lt_illocutionaryMod : volitiveMood < illocutionaryMod := by decide
 
