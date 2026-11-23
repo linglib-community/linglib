@@ -1,191 +1,247 @@
 module
 
-public import Linglib.Syntax.Voice.Basic
+public import Linglib.Semantics.ArgumentStructure.Control
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Fragments.English.Verbs.Inventory
-public import Mathlib.Tactic.FinCases
+public import Mathlib.Data.PFun
 
 /-!
 # Chierchia (1984): Topics in the syntax and semantics of infinitives and gerunds
 
-This file formalizes the control theory of [chierchia-1984]. Infinitival and gerundive
-complements denote properties, not propositions, and control is not movement of PRO but
-entailment: the Control Principle is a meaning postulate on a verb taking a property
-complement, that it holds of the property and its arguments exactly when a designated argument
-has the property throughout the situations the verb's conversational background selects
-([kratzer-1981]), so the controller is fixed by the predicate's meaning rather than by syntactic
-configuration. Visser's and Bach's generalizations follow: a subject-control verb cannot
-passivize and an object-control verb cannot detransitivize, since either alternation removes
-the argument the postulate needs. The control classes of chapter IV are cut by whether the
-postulate applies and whether the controller must be expressed. The theorems derive the
-controller's having the property from the postulate, and, in the Fragment, which alternations
-it blocks from what the voice does to the controlling participant of the verb's diathesis: the
-passive exactly when the controller is the subject, the antipassive exactly when it is the
-object.
+On the theory of control of [chierchia-1984] an infinitive or gerund denotes a property, a verb
+taking one denotes a relation `α` between a property and the verb's other arguments, and control
+is an entailment of that relation. A *modal frame* is a quantificational force `q` together with
+necessities `N x w`, a filter of propositions at each world `w` for each choice `x` of the
+arguments: the propositions that follow from a conversational background of [kratzer-1981],
+`simpleNecessity (a x) w`, which for *try* holds what its subject aims at and for *force* what
+its subject imposes on its object. A thematic role is a partial function `θ` from the arguments
+to the individual among them that bears it. The relation obeys the *Control Principle* for a role
+and a frame, `ControlPrinciple α θ q N`, when
+
+`w ∈ α P x ↔ ∃ e ∈ θ x, w ∈ claim (N x) (P e) q`,
+
+so that it holds of a property exactly where the bearer of the role has the property as a
+necessity, or as a possibility, of the frame.
+
+An argument manipulation, such as passive or detransitivization, deletes arguments of a relation
+and quantifies them existentially. For `σ` the map from the arguments to those that remain,
+`drop σ α P y` is the join of `α P x` over the `x` with `σ x = y`, the lower adjoint of
+substitution along `σ` (`gc_drop`).
+
+A relation obeying the principle holds only of arguments among which the role has a bearer
+(`ControlPrinciple.mem_dom`). So a relation one of whose transforms obeys the principle, for a role
+that has no bearer among the transform's arguments, holds of nothing
+(`ControlPrinciple.eq_bot_of_drop`): a verb whose transforms all obey the principle has no passive
+when its subject controls and no intransitive when its object does. A transform that keeps the
+controller and the frame obeys the principle when the relation does (`ControlPrinciple.drop`).
+When only the relation obeys it, a transform that deletes the controller holds where some value
+of the deleted argument has the property in the frame (`ControlPrinciple.mem_drop_iff`), the
+controller left implicit.
+
+The principle makes a relation one to a proposition and the arguments
+(`ControlPrinciple.isControlledAt`), and one to the proposition alone when the frame does not
+depend on the arguments, as that of a modal or of *seem* does not
+(`ControlPrinciple.isRaisingAt`). Two relations with dual forces over one frame, *force* and
+*allow*, are each the complement of the other at the negated property
+(`ControlPrinciple.compl_eq_dual`), and a relation of necessity is factive exactly when its
+conversational background is realistic (`ControlPrinciple.subset_iff_isRealistic`).
+
+In the entries of the English verbs, the controller of a diathesis fills a slot in every diathesis
+of its verb that has a nonfinite clausal complement (`controller_linked`).
 
 ## Implementation notes
 
-* The conversational background is the two-parameter one of [kratzer-1991], a modal base and an
-  ordering source, and the entailment is necessity over it; the possibility that *allow*
-  needs is not instantiated.
+* The principle is a predicate on a bare relation, as `ArgumentStructure.IsControlledAt` is, and
+  not a structure storing a relation with its role and frame: the classes of control predicates
+  are told apart by which transforms of one relation obey it, and a relation determines neither
+  its role nor its frame.
+* The principle is stated for any family of necessities. The source's frames are simple necessity
+  and simple possibility over one conversational background, the case `simpleNecessity (a x)`;
+  an ordering source, which it sets aside, is the case `humanNecessity (a x) (g x)`.
+* Where the role has no bearer the right side of the principle is false, the source's being
+  undefined there.
+* A role is a partial function of a relation's arguments, one for each relation, where the
+  source's is one partial function on all tuples of a relation and its arguments; that its value
+  is among the arguments is not imposed. That a transform lacks a bearer of the role is
+  accordingly a hypothesis of `ControlPrinciple.eq_bot_of_drop`.
+
+## TODO
+
+* The condition that the controller be adjacent to the property in function-argument structure,
+  and the rule filling in the role from the thematic hierarchy, are not formalized: the entries
+  of the English control verbs record no entailment profiles from which a role could be read.
+* The degenerate role borne by an argument with no thematic role, and the correspondence between
+  virtual arguments and referential opacity derived from it, are not formalized.
+* The source's judgments on passives and intransitives of control verbs are not entered as
+  examples; the entries record no passive diatheses to pair them with.
 
 ## References
 
 * [chierchia-1984]
 * [kratzer-1981]
-* [kratzer-1991]
 -/
 
 @[expose] public section
 
 namespace Chierchia1984
 
-open Interpreter
+open Modality ArgumentStructure Filter Function
 
-open Modality
+variable {E W X Y Z Φ Ψ : Type*}
 
-variable {E W Args : Type*}
+/-! ### Argument manipulations -/
 
-/-! ### The Control Principle (chapter IV) -/
+section Drop
 
-/-- A verb taking a property complement, with the Control Principle as its meaning postulate:
-the verb holds of a property and its arguments at a world exactly when the argument it controls
-has the property throughout the situations its conversational background selects, what is aimed
-at for *try*, what is imposed for *force*. -/
-structure ControlVerb (E W Args : Type*) where
-  sem : (E → W → Prop) → Args → W → Prop
-  controller : Args → E
-  accessible : Args → W → Set W
-  control : ∀ P args w, sem P args w ↔ ∀ w' ∈ accessible args w, P (controller args) w'
+variable [CompleteLattice Ψ]
 
-/-- A subject-control verb's one argument is its controller. -/
-abbrev SubjectControlVerb (E W : Type*) := ControlVerb E W E
+/-- (30c): the argument manipulation along `σ`, the map from the arguments of a relation to those
+that remain, holds of the remaining arguments when the relation holds for some value of the
+deleted ones. -/
+def drop (σ : X → Y) (R : (E → Φ) → X → Ψ) : (E → Φ) → Y → Ψ :=
+  fun P y ↦ ⨆ x, ⨆ (_ : σ x = y), R P x
 
-/-- An object-control verb controls the first of its object and subject. -/
-abbrev ObjectControlVerb (E W : Type*) := ControlVerb E W (E × E)
+/-- Deleting arguments is the lower adjoint of substitution along the map that forgets them. -/
+theorem gc_drop (σ : X → Y) :
+    GaloisConnection (drop σ : ((E → Φ) → X → Ψ) → _) fun S P x ↦ S P (σ x) :=
+  fun R _ ↦ ⟨fun h P x ↦ (le_iSup₂ (f := fun x (_ : σ x = σ x) ↦ R P x) x rfl).trans (h P (σ x)),
+    fun h P _ ↦ iSup₂_le fun x hx ↦ hx ▸ h P x⟩
 
-/-- The control verb of a modal base and an ordering source, [kratzer-1991]'s form of the
-background, whose controller has the property throughout the best accessible worlds. -/
-def ControlVerb.ofKratzer (base ordering : Background W)
-    (controller : Args → E) : ControlVerb E W Args where
-  sem P args w := ∀ w' ∈ bestWorlds base ordering w, P (controller args) w'
-  controller := controller
-  accessible _ w := bestWorlds base ordering w
-  control _ _ _ := Iff.rfl
+theorem le_drop (σ : X → Y) (R : (E → Φ) → X → Ψ) (P : E → Φ) (x : X) :
+    R P x ≤ drop σ R P (σ x) :=
+  (gc_drop σ).le_u_l R P x
 
-variable (v : ControlVerb E W Args)
+@[simp] theorem drop_id (R : (E → Φ) → X → Ψ) : drop id R = R := by
+  funext P y
+  simp [drop]
 
-theorem ControlVerb.controller_has {P : E → W → Prop} {args : Args} {w : W}
-    (h : v.sem P args w) : ∀ w' ∈ v.accessible args w, P (v.controller args) w' :=
-  (v.control P args w).1 h
+theorem drop_comp (τ : Y → Z) (σ : X → Y) (R : (E → Φ) → X → Ψ) :
+    drop (τ ∘ σ) R = drop τ (drop σ R) :=
+  (gc_drop (τ ∘ σ)).l_unique ((gc_drop σ).compose (gc_drop τ)) fun _ ↦ rfl
 
-theorem ControlVerb.controller_has_self (hrefl : ∀ args w, w ∈ v.accessible args w)
-    {P : E → W → Prop} {args : Args} {w : W} (h : v.sem P args w) : P (v.controller args) w :=
-  v.controller_has h w (hrefl args w)
+@[simp] theorem mem_drop {σ : X → Y} {α : (E → Φ) → X → Set W} {P : E → Φ} {y : Y} {w : W} :
+    w ∈ drop σ α P y ↔ ∃ x, σ x = y ∧ w ∈ α P x := by
+  simp [drop]
 
-/-! ### Visser's and Bach's generalizations (chapter IV) -/
+end Drop
 
-theorem visser (v : SubjectControlVerb E W) (pass : (E → W → Prop) → W → Prop)
-    (faithful : ∀ P w, pass P w → ∃ x, v.sem P x w) {P : E → W → Prop} {w : W}
-    (h : pass P w) : ∃ x, ∀ w' ∈ v.accessible x w, P (v.controller x) w' :=
-  let ⟨x, hx⟩ := faithful P w h
-  ⟨x, v.controller_has hx⟩
+/-! ### The Control Principle -/
 
-theorem bach (v : ObjectControlVerb E W) (detrans : (E → W → Prop) → E → W → Prop)
-    (faithful : ∀ P y w, detrans P y w → ∃ args, v.sem P args w) {P : E → W → Prop} {y : E}
-    {w : W} (h : detrans P y w) : ∃ args, ∀ w' ∈ v.accessible args w, P (v.controller args) w' :=
-  let ⟨args, hv⟩ := faithful P y w h
-  ⟨args, v.controller_has hv⟩
+/-- (60): the Control Principle for the relation `α`, the role `θ` and the modal frame of the
+force `q` and the necessities `N`. The relation holds of a property and its arguments exactly
+where the bearer of the role has the property as a necessity, or as a possibility, of the
+frame. -/
+def ControlPrinciple (α : (E → Set W) → X → Set W) (θ : X →. E) (q : QuantificationalForce)
+    (N : X → W → Filter W) : Prop :=
+  ∀ P x w, w ∈ α P x ↔ ∃ e ∈ θ x, w ∈ claim (N x) (P e) q
 
-/-! ### Control classes (chapter IV, section 1) -/
+namespace ControlPrinciple
 
-/-- The three control classes are obligatory control, where the Control Principle fixes a
-controller that must be expressed, *try* and *persuade* alike; semi-obligatory control, where
-the controller may stay implicit, *decide*, *recommend*; and prominence control, where discourse
-rather than the postulate fixes it, *bother*, *be dangerous*. -/
-inductive ControlClass where
-  | obligatory
-  | semiObligatory
-  | prominence
-  deriving DecidableEq, Repr
+variable {α β : (E → Set W) → X → Set W} {θ : X →. E} {q : QuantificationalForce}
+  {N : X → W → Filter W} {P : E → Set W} {x : X} {w : W} {e : E}
 
-/-- The Control Principle governs the first two classes. -/
-def ControlClass.HasControlPrinciple : ControlClass → Prop
-  | .obligatory => True
-  | .semiObligatory => True
-  | .prominence => False
+-- (17e)
+theorem mem_dom (h : ControlPrinciple α θ q N) (hw : w ∈ α P x) : x ∈ θ.Dom :=
+  let ⟨e, he, _⟩ := (h P x w).1 hw
+  Part.dom_iff_mem.2 ⟨e, he⟩
 
-instance : DecidablePred ControlClass.HasControlPrinciple
-  | .obligatory => inferInstanceAs (Decidable True)
-  | .semiObligatory => inferInstanceAs (Decidable True)
-  | .prominence => inferInstanceAs (Decidable False)
+theorem eq_claim (h : ControlPrinciple α θ q N) (he : e ∈ θ x) (P : E → Set W) :
+    α P x = claim (N x) (P e) q :=
+  Set.ext fun w ↦ (h P x w).trans
+    ⟨fun ⟨_, he', hw⟩ ↦ Part.mem_unique he he' ▸ hw, fun hw ↦ ⟨e, he, hw⟩⟩
 
-/-- The class of a Fragment verb, obligatory control for every verb with a controller, the
-Fragment recording neither an implicit controller nor the prominence verbs. -/
-def ControlClass.ofVerb (v : Verb) : Option ControlClass :=
-  if v.HasController then some .obligatory else none
+theorem isControlledAt {c : X → E} (h : ControlPrinciple α (c : X →. E) q N) :
+    IsControlledAt α c := fun P Q x hPQ ↦ by
+  rw [h.eq_claim (Part.mem_some (c x)) P, h.eq_claim (Part.mem_some (c x)) Q, hPQ]
 
-/-! ### Which alternations the postulate blocks -/
+-- (118c)
+theorem isRaisingAt {c : X → E} {N : W → Filter W}
+    (h : ControlPrinciple α (c : X →. E) q fun _ ↦ N) : IsRaisingAt α c := fun P Q x y hPQ ↦ by
+  rw [h.eq_claim (Part.mem_some (c x)) P, h.eq_claim (Part.mem_some (c y)) Q, hPQ]
 
-open Voice
+/-! ### Modal frames -/
 
-variable {n : ℕ}
+/-- Two relations with dual forces over one frame and one role, as *force* and *allow*, are each
+the complement of the other at the negated property, where the role has a bearer. -/
+theorem compl_eq_dual (h : ControlPrinciple α θ q N) (h' : ControlPrinciple β θ q.dual N)
+    (hx : x ∈ θ.Dom) (P : E → Set W) : (α P x)ᶜ = β (fun e ↦ (P e)ᶜ) x := by
+  obtain ⟨e, he⟩ := Part.dom_iff_mem.1 hx
+  rw [h.eq_claim he, h'.eq_claim he, compl_claim]
 
-/-- The Control Principle blocks a voice on a diathesis's frame that removes the controlling
-participant from core-term status, since the argument the postulate needs is then gone. -/
-def Blocks (d : Diathesis n) (va : Voice) : Prop :=
-  ∃ c ∈ d.controller, ∃ s ∈ d.links.get c, (va.fate s).RemovesFromCoreStatus
+-- (45)
+theorem disjoint_dual (h : ControlPrinciple α θ q N) (h' : ControlPrinciple β θ q.dual N)
+    (P : E → Set W) (x : X) : Disjoint (α P x) (β (fun e ↦ (P e)ᶜ) x) :=
+  Set.disjoint_left.2 fun _ hw hw' ↦ (h.compl_eq_dual h' (h.mem_dom hw) P).ge hw' hw
 
-instance (d : Diathesis n) (va : Voice) : Decidable (Blocks d va) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+-- (34)
+theorem subset_iff_pure_le (h : ControlPrinciple α θ .universal N) (he : e ∈ θ x) :
+    (∀ P, α P x ⊆ P e) ↔ ∀ w, pure w ≤ N x w := by
+  simp only [h.eq_claim he, pure_le_iff]
+  exact ⟨fun hf w s hs ↦ hf (fun _ ↦ s) hs, fun hT P w hw ↦ hT w _ hw⟩
 
-/-- A diathesis passivizes when the postulate does not block the passive of its frame. -/
-def Passivizable (d : Diathesis n) : Prop := ¬ Blocks d (passive d.toArgumentFrame)
+/-- A relation of necessity over a conversational background, as *force* over what its subject
+imposes, is factive exactly when the background is realistic. -/
+theorem subset_iff_isRealistic {a : X → Background W}
+    (h : ControlPrinciple α θ .universal fun x ↦ simpleNecessity (a x)) (he : e ∈ θ x) :
+    (∀ P, α P x ⊆ P e) ↔ (a x).IsRealistic :=
+  (h.subset_iff_pure_le he).trans isRealistic_iff_pure_le_simpleNecessity.symm
 
-instance (d : Diathesis n) : Decidable (Passivizable d) :=
-  inferInstanceAs (Decidable (¬ Blocks d _))
+/-! ### Transforms -/
 
-/-! ### The Fragment's control verbs -/
+variable {σ : X → Y} {θ' : Y →. E} {N' : Y → W → Filter W} {y : Y}
 
-section Fragment
+theorem mem_dom_of_drop (h : ControlPrinciple (drop σ α) θ' q N') (hw : w ∈ α P x) :
+    σ x ∈ θ'.Dom :=
+  h.mem_dom (le_drop σ α P x hw)
 
-open English
-open English.Verbs hiding Verb
+/-- A relation whose transform obeys the principle for a role that no arguments of the transform
+bear holds of nothing: where the transforms of a verb obey the principle, none deletes its
+controller, neither passive the controlling subject of *promise* nor detransitivization the
+controlling object of *force*. -/
+theorem eq_bot_of_drop (h : ControlPrinciple (drop σ α) θ' q N') (hθ : θ'.Dom = ∅) : α = ⊥ := by
+  funext P x
+  exact Set.eq_empty_of_forall_notMem fun w hw ↦ by simpa [hθ] using h.mem_dom_of_drop hw
 
-/-- The control verbs of the Fragment, the attitude verbs *want*, *hope* and *promise* included. -/
-def controlVerbs : List Verb :=
-  [try_.toVerb, manage.toVerb, begin_.toVerb, stop.toVerb, continue_.toVerb, fail.toVerb,
-    persuade.toVerb, force.toVerb, want.toVerb, hope.toVerb, promise.toVerb]
+-- (82)
+theorem drop (h : ControlPrinciple α (fun x ↦ θ' (σ x)) q fun x ↦ N' (σ x))
+    (hσ : Surjective σ) : ControlPrinciple (drop σ α) θ' q N' := fun P y w ↦ by
+  obtain ⟨x, rfl⟩ := hσ y
+  simp only [mem_drop, h P]
+  exact ⟨by rintro ⟨x', hx', hw⟩; rwa [hx'] at hw, fun hw ↦ ⟨x, rfl, hw⟩⟩
 
-theorem fragment_control_verbs : ∀ v ∈ controlVerbs, v.HasController := by
-  decide
+/-- A transform of a relation obeying the principle holds where, for some value of the deleted
+arguments, the bearer of the role has the property in the frame: the controller of *it was
+decided to leave* is whoever decided. -/
+theorem mem_drop_iff (h : ControlPrinciple α θ q N) :
+    w ∈ Chierchia1984.drop σ α P y ↔ ∃ x, σ x = y ∧ ∃ e ∈ θ x, w ∈ claim (N x) (P e) q := by
+  simp only [mem_drop, h P]
 
-theorem blocks_passive_iff : ∀ v ∈ controlVerbs, ∀ d ∈ v.valency.diatheses,
-    Blocks d (passive d.toArgumentFrame) ↔
-      d.controllerRole = some .S ∨ d.controllerRole = some .A := by
-  decide
+end ControlPrinciple
 
-theorem blocks_antipassive_iff : ∀ v ∈ controlVerbs, ∀ d ∈ v.valency.diatheses,
-    Blocks d antipassive ↔ d.controllerRole = some .P := by
-  decide
+/-! ### A relation whose passive has no controller -/
 
-theorem passivizable_iff :
-    ∀ v ∈ [try_.toVerb, persuade.toVerb, force.toVerb], ∀ d ∈ v.valency.basic?,
-      Passivizable d ↔ v.passivizable = true := by
-  decide
+section
 
-/-- The semantic type of a clausal complement, a proposition for a finite clause and a property
-for a nonfinite one, the type distinction of chapter I. -/
-def complementTy (fr : ArgumentFrame) : Option (Ty Base) :=
-  if fr.HasClausal then some (if fr.HasFinite then .t else .et) else none
+variable (P : E → Set W) (y : Y) (w : W)
 
-theorem control_complements_property :
-    (∀ v ∈ [try_.toVerb, want.toVerb], v.valency.frames.head?.bind complementTy = some .et) ∧
-      believe.toVerb.valency.frames.head?.bind complementTy = some .t ∧
-      ¬ believe.toVerb.HasController := by
-  decide
+-- (22a)
+example : ControlPrinciple (fun (P : E → Set W) (x : E × Y) ↦ P x.1) (Prod.fst : E × Y → E)
+    .universal fun _ ↦ pure :=
+  fun _ x _ ↦ ⟨fun hw ↦ ⟨x.1, Part.mem_some _, hw⟩, fun ⟨_, he, hw⟩ ↦ Part.mem_some_iff.1 he ▸ hw⟩
 
-end Fragment
+-- (99)
+example : w ∈ drop Prod.snd (fun (P : E → Set W) (x : E × Y) ↦ P x.1) P y ↔ ∃ e, w ∈ P e := by
+  simp
+
+end
+
+/-! ### The English verbs -/
+
+open English.Verbs in
+/-- (17e): the controller of a diathesis of an English verb fills a slot in every diathesis of
+the verb that has a clausal complement and no finite one. -/
+theorem controller_linked : ∀ v ∈ verbs, ∀ c ∈ v.valency.diatheses, ∀ i ∈ c.controller,
+    ∀ d ∈ v.valency.diatheses, d.HasClausal → ¬ d.HasFinite → (d.links.get i).isSome := by
+  decide +kernel
 
 end Chierchia1984
