@@ -62,3 +62,9 @@ joins. -/
 theorem SupClosed.relImage [SemilatticeSup α] [SemilatticeSup β] {R : SetRel α β} {s : Set α}
     (hR : SupClosed R) (hs : SupClosed s) : SupClosed (R.image s) :=
   fun _ ⟨_, ha, hab⟩ _ ⟨_, ha', hab'⟩ ↦ ⟨_, hs ha ha', hR hab hab'⟩
+
+/-- The preimage of a set closed under joins, under a relation closed under joins, is closed
+under joins. -/
+theorem SupClosed.relPreimage [SemilatticeSup α] [SemilatticeSup β] {R : SetRel α β} {t : Set β}
+    (hR : SupClosed R) (ht : SupClosed t) : SupClosed (R.preimage t) :=
+  hR.relInv.relImage ht

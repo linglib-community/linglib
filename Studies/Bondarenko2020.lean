@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Events.Lifespan
-public import Linglib.Semantics.Attitudes.Anchor
 public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Data.Examples.Bondarenko2020
@@ -88,11 +87,11 @@ noncomputable def report (τ : X → NonemptyInterval T) (about : E → X)
 
 open Classical in
 /-- A report with a CP, (29), is the past tense (28) over a thinking event whose content the
-complementizer (25) fixes as `p`. -/
-noncomputable def reportThat [Anchor E I] (P : W → NonemptyInterval T → E → Prop)
+complementizer (25) fixes as `p`, for a content function `cont` on events. -/
+noncomputable def reportThat (cont : E → I → Prop) (P : W → NonemptyInterval T → E → Prop)
     (p : I → Prop) (g₁ t : NonemptyInterval T) : W → Trivalent :=
   fun w ↦ Trivalent.existsStrong fun t' : {t' // t'.Precedes t ∧ t' ≤ g₁} ↦
-    Trivalent.ofProp (∃ e, P w t' e ∧ Anchor.comp p e)
+    Trivalent.ofProp (∃ e, P w t' e ∧ cont e = p)
 
 variable {τ : X → NonemptyInterval T} {about : E → X} {P : W → NonemptyInterval T → E → Prop}
   {Q : W → NonemptyInterval T → X → Prop} {g₁ t : NonemptyInterval T} {w : W}
@@ -112,8 +111,8 @@ theorem thetaTh_ne_undefined_iff {e : E} :
 
 /-- A report with a CP is defined at every world, so it presupposes nothing about the
 actual world, §3.1.2. -/
-theorem reportThat_ne_undefined [Anchor E I] (p : I → Prop) :
-    reportThat P p g₁ t w ≠ .undefined :=
+theorem reportThat_ne_undefined (cont : E → I → Prop) (p : I → Prop) :
+    reportThat cont P p g₁ t w ≠ .undefined :=
   Trivalent.existsStrong_ne_undefined_iff.2 (.inr fun _ ↦ by simp)
 
 /-! ### A nominalized clause presupposes pre-existence, §3.2.3 -/
@@ -157,21 +156,21 @@ theorem gapExt_compl_report :
   ext; simp
 
 -- (64), (65)
-theorem existsStrong_thetaTh_comp_ne_undefined_iff [Nonempty E] [Anchor X I] (p : I → Prop) :
-    Trivalent.existsStrong (fun e ↦ thetaTh τ about P (fun _ _ ↦ Anchor.comp p) t e w) ≠
+theorem existsStrong_thetaTh_cont_ne_undefined_iff [Nonempty E] (cont : X → I → Prop)
+    (p : I → Prop) :
+    Trivalent.existsStrong (fun e ↦ thetaTh τ about P (fun _ _ x ↦ cont x = p) t e w) ≠
         .undefined ↔
-      PreExists τ (Anchor.comp p) t :=
+      PreExists τ (fun x ↦ cont x = p) t :=
   existsStrong_thetaTh_ne_undefined_iff
 
 /-- A report with a CP can be true while its content is false, (1b). One thinking event, at
 the past time `1` and with the content that the world is `true`, makes the report true at the
 world `false`. -/
 example :
-    letI : Anchor Unit (Bool × NonemptyInterval ℤ) := ⟨fun _ i ↦ i.1 = true⟩
-    reportThat (I := Bool × NonemptyInterval ℤ) (fun (_ : Bool) _ (_ : Unit) ↦ True)
-      (fun i ↦ i.1 = true) (.pure 1) (.pure 2) false = .true := by
+    reportThat (fun (_ : Unit) (i : Bool × NonemptyInterval ℤ) ↦ i.1 = true)
+      (fun (_ : Bool) _ _ ↦ True) (fun i ↦ i.1 = true) (.pure 1) (.pure 2) false = .true := by
   simp only [reportThat, Trivalent.existsStrong_eq_true_iff, Trivalent.ofProp_eq_true_iff]
-  exact ⟨⟨.pure 1, by decide, le_rfl⟩, (), trivial, rfl⟩
+  exact ⟨⟨.pure 1, by decide, le_rfl⟩, (), trivial, trivial⟩
 
 /-! ### The judgments
 

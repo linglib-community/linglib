@@ -16,7 +16,7 @@ clause, the attitude event for a high modal in a complement, and the VP event fo
 (48), `Modality.ModalPosition.binder`. Speech and attitude events carry propositional content
 and embed a proposition under universal quantification over it (41), (44), `attitude`; the
 epistemic modal base is the content of the event the modal is anchored to (51), the relation
-`Modality.contentAccessible`, so it is undefined where a low modal is anchored to a contentless VP
+`Modality.compatible`, so it is undefined where a low modal is anchored to a contentless VP
 event (49e), (59), and defined again when the complement is itself an attitude (60). Anchored to
 the event that embeds it, an epistemic modal quantifies over the same worlds as that event, so the
 outer layer of quantification is vacuous, (53) to (57), `attitude_can_iff` and
@@ -25,13 +25,13 @@ supposition (58) is incoherent because the modal quantifies over the supposition
 `not_attitude_suppose`. Cinque's puzzle (section 3) is that
 [cinque-1999]'s hierarchy fixes the epistemic head above tense and the root head below aspect
 (`tPast_lt_iff_eq_modEpistemic`), where a single flavor-neutral entry should suffice; the paper
-derives the same matrix correlation from the content of the binding event, `epistemic_high_iff`. The paper's
-examples are the rows of `Data.Examples.Hacquard2010`.
+derives the same matrix correlation from the content of the binding event,
+`epistemic_high_iff`. The paper's examples are the rows of `Data.Examples.Hacquard2010`.
 
 ## Implementation notes
 
-The content of an event is its set of compatible worlds, `⋂CON(e)`, an `Option` undefined for
-contentless events; the descriptive part of an attitude or asserting event, `Exp(e, x)` and
+The content of an event is its set of compatible worlds, `⋂CON(e)`, a partial function undefined
+for contentless events; the descriptive part of an attitude or asserting event, `Exp(e, x)` and
 `belief'(e, w)` or `Assert'(e₀, w)`, is an abstract predicate. Ordering sources are omitted, as
 in the paper's derivations, and the circumstantial modal base (61), whose event dependence the
 paper leaves open, is not defined. The individual and time a modal is keyed to (section 4) enter
@@ -68,41 +68,41 @@ def can (f : E → Set W) : (W → Prop) → E → Prop := ◇[SetRel.ofSuccesso
 
 /-- A contentful event, an attitude or the speech event, embeds a proposition under universal
 quantification over its content (41), (44); `holds e w` is the event's descriptive part. -/
-def attitude (con : E → Option (Set W)) (holds : E → W → Prop) (e : E) (p : W → Prop)
+def attitude (con : E →. Set W) (holds : E → W → Prop) (e : E) (p : W → Prop)
     (w : W) : Prop :=
-  holds e w ∧ □[contentAccessible con] p e
+  holds e w ∧ □[compatible con] p e
 
-variable {con : E → Option (Set W)} {holds : E → W → Prop} {f : E → Set W} {e : E}
+variable {con : E →. Set W} {holds : E → W → Prop} {f : E → Set W} {e : E}
   {q : W → Prop} {w : W}
 
 -- (51)
-theorem must_iff_box (h : con e = some (f e)) : must f q e ↔ □[contentAccessible con] q e :=
-  (box_contentAccessible_iff h).symm
+theorem must_iff_box (h : f e ∈ con e) : must f q e ↔ □[compatible con] q e :=
+  (box_compatible_iff h).symm
 
-theorem can_iff_diamond (h : con e = some (f e)) : can f q e ↔ ◇[contentAccessible con] q e :=
-  (diamond_contentAccessible_iff h).symm
+theorem can_iff_diamond (h : f e ∈ con e) : can f q e ↔ ◇[compatible con] q e :=
+  (diamond_compatible_iff h).symm
 
 /-! ### Content licensing, section 6.1 -/
 
 /-- A possibility modal anchored to its embedding event quantifies over that event's worlds, so
 for consistent content the outer universal is vacuous (53), (54), (57). -/
-theorem attitude_can_iff (hC : e ∈ (contentAccessible con).dom) :
-    attitude con holds e (fun _ ↦ ◇[contentAccessible con] q e) w ↔
-      holds e w ∧ ◇[contentAccessible con] q e := by
+theorem attitude_can_iff (hC : e ∈ (compatible con).dom) :
+    attitude con holds e (fun _ ↦ ◇[compatible con] q e) w ↔
+      holds e w ∧ ◇[compatible con] q e := by
   rw [attitude, box_const, forall_prop_of_true hC]
 
 /-- An embedded epistemic necessity is necessity over the embedding event's content, the outer
 layer again vacuous (55), (57). -/
 theorem attitude_must_iff :
-    attitude con holds e (fun _ ↦ □[contentAccessible con] q e) w ↔
-      holds e w ∧ □[contentAccessible con] q e :=
+    attitude con holds e (fun _ ↦ □[compatible con] q e) w ↔
+      holds e w ∧ □[compatible con] q e :=
   and_congr_right' <| box_const.trans ⟨fun h v hv ↦ h ⟨v, hv⟩ v hv, fun h _ ↦ h⟩
 
 /-- Supposing that it is raining and that it might not be is incoherent, which is [yalcin-2007]'s
 puzzle (58). -/
-theorem not_attitude_suppose {rain : W → Prop} (hC : e ∈ (contentAccessible con).dom) :
+theorem not_attitude_suppose {rain : W → Prop} (hC : e ∈ (compatible con).dom) :
     ¬ attitude con holds e
-      (fun w' ↦ rain w' ∧ ◇[contentAccessible con] (fun w'' ↦ ¬ rain w'') e) w := by
+      (fun w' ↦ rain w' ∧ ◇[compatible con] (fun w'' ↦ ¬ rain w'') e) w := by
   rintro ⟨-, h⟩
   obtain ⟨w₀, hw₀⟩ := hC
   obtain ⟨w₁, hw₁, hnr⟩ := (h w₀ hw₀).2
@@ -125,9 +125,9 @@ theorem modVolitional_lt_aspHabitual : Cartography.Head.modVolitional < .aspHabi
 
 /-- One flavor-neutral entry gives an epistemic modal base exactly in the position above tense,
 since the VP event of (59) lacks content (section 6.3). -/
-theorem epistemic_high_iff {con : E → Option (Set W)} {ev : EventBinder → E}
-    (hs : (con (ev .speechAct)).isSome) (hv : con (ev .vpEvent) = none) (pos : ModalPosition) :
-    (con (ev (pos.binder .speechAct))).isSome ↔ pos = .high := by
+theorem epistemic_high_iff {con : E →. Set W} {ev : EventBinder → E}
+    (hs : ev .speechAct ∈ con.Dom) (hv : ev .vpEvent ∉ con.Dom) (pos : ModalPosition) :
+    ev (pos.binder .speechAct) ∈ con.Dom ↔ pos = .high := by
   cases pos <;> simp [ModalPosition.binder, hs, hv]
 
 end Hacquard2010
