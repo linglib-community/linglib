@@ -40,7 +40,7 @@ Kernel semantics resolves this: *can't φ* = *must*(¬φ) by definition
 (`kernelCant`), so Observation 4's evidential parallelism holds by
 construction, while the strong assertion B_K ⊆ ⟦¬φ⟧ delivers Observation 5. -/
 
-open Modality VonFintelGillies2010
+open Modality Evidential VonFintelGillies2010
 
 /-- `⟦not raining⟧`. -/
 abbrev notRaining : Set World := rainingᶜ

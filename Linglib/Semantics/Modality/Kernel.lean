@@ -7,13 +7,14 @@ public import Mathlib.Order.SetNotation
 # Kernel semantics for epistemic modals
 
 Von Fintel and Gillies give epistemic modals an evidential presupposition. The kernel `K` is a set
-of propositions, the direct information, whose intersection `⋂₀ K` is the modal base; the
-prejacent must not be *directly settled* by the kernel, entailed or excluded by one of its
-propositions. The presupposition makes *must P* strong, asserting that `⋂₀ K` entails `P`, while
-still signalling indirectness, since `⋂₀ K` can entail `P` without any single kernel proposition
-settling it. *Might* is [the negation of *can't*](##Modality.kernelMight_eq_compl_kernelCant),
-presupposition and all. The worked examples are in `Studies/VonFintelGillies2010.lean`, the
-*can't* dilemma in `Studies/VonFintelGillies2021.lean`.
+of propositions, the privileged information, whose intersection `⋂₀ K` is the modal base; the
+prejacent must not be directly settled by the kernel, entailed or excluded by one of its
+propositions (`Modality.DirectlySettles`). The presupposition makes *must P* strong, asserting
+that `⋂₀ K` entails `P`, while still signalling indirectness, since `⋂₀ K` can entail `P` without
+any single kernel proposition settling it. *Might* is the negation of *can't*, presupposition
+and all (`Modality.kernelMight_eq_compl_kernelCant`). The worked examples are in
+`Studies/VonFintelGillies2010.lean`, the *can't* dilemma in `Studies/VonFintelGillies2021.lean`,
+and the evidence a kernel gives in `Semantics/Evidentiality/Modal/Kernel.lean`.
 
 ## Implementation notes
 
@@ -32,7 +33,7 @@ namespace Modality
 
 variable {W : Type*} {K K' : Set (Set W)} {P : Set W} {w : W}
 
-/-! ### Settling ([von-fintel-gillies-2010] §7.1, Implementation 1) -/
+/-! ### Settling -/
 
 /-- A kernel directly settles `P` when one of its propositions entails `P` or excludes it. -/
 def DirectlySettles (K : Set (Set W)) (P : Set W) : Prop := ∃ X ∈ K, X ⊆ P ∨ Disjoint X P
@@ -59,7 +60,7 @@ theorem DirectlySettles.mono (hK : K ⊆ K') (h : DirectlySettles K P) : Directl
 @[simp] theorem not_directlySettles_empty : ¬ DirectlySettles (∅ : Set (Set W)) P := by
   simp [DirectlySettles]
 
-/-! ### Modal operators ([von-fintel-gillies-2010] Definitions 5 and 6) -/
+/-! ### Modal operators -/
 
 open Classical in
 /-- *Must P* presupposes that `K` does not directly settle `P` and asserts `⋂₀ K ⊆ P`. -/

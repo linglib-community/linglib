@@ -723,8 +723,6 @@ import Linglib.Logic.Natural.Completeness
 import Linglib.Semantics.Quantification.Signatures
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Events.Path
-import Linglib.Semantics.Evidential.Basic
-import Linglib.Semantics.Evidential.Defs
 import Linglib.Semantics.Exhaustification.Disjunctive
 import Linglib.Semantics.Exhaustification.DomainAlternatives
 import Linglib.Semantics.Exhaustification.InnocentExclusion
@@ -774,7 +772,6 @@ import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Embedding
-import Linglib.Semantics.Tense.Evidential
 import Linglib.Semantics.Tense.Perspective
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Tense.Reichenbach
