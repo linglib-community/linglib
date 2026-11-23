@@ -210,11 +210,17 @@ event-oriented pole. -/
 def minOrientation (m : Narrog2010.Meaning) : SpeechActOrientation :=
   if m.IsMood then ⊤ else ⊥
 
-theorem le_minOrientation_of_isMood :
-    ∀ c ∈ Narrog2010.commonChanges, c.target.IsMood →
-      ∀ o : SpeechActOrientation, o ≤ minOrientation c.target := by
-  intro c _ hc o
-  simp only [minOrientation, hc, ↓reduceIte, le_top]
+theorem le_minOrientation {m : Narrog2010.Meaning} (hm : m.IsMood) (o : SpeechActOrientation) :
+    o ≤ minOrientation m := by
+  simp only [minOrientation, hm, ↓reduceIte, le_top]
+
+theorem minOrientation_source_le_target :
+    ∀ c ∈ Narrog2010.changes,
+      minOrientation c.source.meaning ≤ minOrientation c.target.meaning := by
+  intro c hc
+  by_cases h : c.source.meaning.IsMood
+  · exact le_minOrientation (Narrog2010.isMood_target_of_isMood_source c hc h) _
+  · simp only [minOrientation, h, ↓reduceIte, bot_le]
 
 theorem not_minOrientation_le {m : Narrog2010.Meaning} (hm : m.IsMood)
     {o : SpeechActOrientation} (ho : o < ⊤) : ¬ minOrientation m ≤ o := by

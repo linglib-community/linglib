@@ -1,36 +1,29 @@
 module
 
-public import Linglib.Semantics.Modality.Typology
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Data.Statistics.Narrog2010
 
 /-!
 # Narrog (2010): (Inter)subjectification in the Domain of Modality and Mood
 
-This file formalizes the use [narrog-2010] makes of the eight most frequent changes of modal
-meaning in the sample of [bybee-perkins-pagliuca-1994]. The chapter places the uses of modal
-markers on a map with two dimensions. Volitivity separates the modalities in which an element
-of will is present, deontic and boulomaic modality, from those in which it is absent, epistemic,
-evidential, and dynamic modality (`ModalFlavor.IsVolitive`). Speaker orientation runs from
+[narrog-2010] places the uses of modal markers on a map with two dimensions. Volitivity separates
+the modalities in which an element of will is present, deontic and boulomaic modality, from those
+in which it is absent, epistemic, evidential and dynamic modality. Speaker orientation runs from
 event-oriented uses up through modality proper to mood and illocutionary force modulation, and
-the chapter's claim is that a change never decreases it, whatever the change does to volitivity.
-The tabulated meanings are force-flavor pairs, the future, and two directive moods (`Meaning`),
-which fixes the volitivity of source and target and tells modality proper from mood. On that
-basis change is attested within and across the two sides of volitivity in every combination
-(`volitivity_independent`), each change from non-volitive to volitive meaning is more frequent
-than each deontic-to-epistemic one (`toNonVolitive_lt_toVolitive`), so the deontic-to-epistemic
-shift is one change among several and not the representative one, and no change leads out of
-mood (`source_not_isMood`). The changes into mood, future and possibility markers becoming
-imperatives and admonitives and obligation markers becoming imperatives, reach the top of the
-map and so conform wherever the source use lay. A change from probability to an event-oriented
-obligation is what the chapter names as a counterexample and finds undocumented.
+the hypothesis is that a change of meaning never decreases it, whatever the change does to
+volitivity.
 
-The chapter's second half asks why strong obligation is rarely grammaticalized: must-type
-markers were found in sixty of two hundred languages, and the Japanese strong-necessity
-construction occurs with no second-person subject in the corpus counts the chapter cites.
-Imperatives are in principle always performative and used under full authority, while obligation
-markers either report obligations or impose them without such authority, which is
-face-threatening, so that direct reference to obligation is habitually avoided in many cultures
-and obligation markers are less often available as sources of epistemic ones. That argument and
-its counts are not formalized.
+We define volitivity on modal flavors (`Modality.ModalFlavor.IsVolitive`) and on the meanings
+between which changes run (`Meaning`): a set of force-flavor pairs, the future, or one of two
+directive moods, which lie in the area of mood (`Meaning.IsMood`). The chapter's table of the
+eight most frequent changes in the sample of [bybee-perkins-pagliuca-1994] is
+`Narrog2010.changes`, and `Label.meaning` gives the meaning of each of its labels. On the table,
+change is attested within and across the two sides of volitivity in every combination
+(`volitivity_independent`), each change from a non-volitive to a volitive meaning has more grams
+than any other change (`grams_lt_of_toVolitive`), and no change leads out of mood
+(`isMood_target_of_isMood_source`). The grams of the table sum to the totals the chapter gives
+for all changes, for changes out of situational possibility and for changes out of obligation
+(`sum_grams`, `sum_grams_of_source`).
 
 ## Implementation notes
 
@@ -38,11 +31,18 @@ The chapter argues that the five tabulated changes within modality proper also i
 orientation, the deontic-to-epistemic ones included, but it assigns no positions to their
 meanings, and orientation is a property of a use and not of a meaning label, so no orientation
 is assigned to a meaning here. The scale itself is `Narrog2012.SpeechActOrientation`, in the
-later book's terms, and that study checks these changes against it. Strong obligation and
-certainty are read as necessity, weak obligation and probability as weak necessity, and root
-possibility and ability as circumstantial possibility; a label that does not mention strength is
-read as the strong force. `ModalFlavor` files teleological modality under the circumstantial
+later book's terms, and that study checks these changes against it.
+
+Strong obligation and certainty are read as necessity, weak obligation and probability as weak
+necessity, obligation without a strength as either, and root possibility and ability as
+circumstantial possibility. `ModalFlavor` files teleological modality under the circumstantial
 flavor, which `IsVolitive` treats as non-volitive.
+
+## TODO
+
+The chapter's counts of obligation and possibility markers in a sample of two hundred languages,
+and of grammatical person with necessity constructions in Japanese and English corpora, are not
+encoded.
 
 ## References
 
@@ -63,8 +63,8 @@ def _root_.Modality.ModalFlavor.IsVolitive (f : ModalFlavor) : Prop :=
 
 instance : DecidablePred ModalFlavor.IsVolitive := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- A meaning between which the tabulated changes run. A modal meaning is the set of
-force-flavor pairs its label covers, as in `ModalItem.meaning`. -/
+/-- A meaning between which changes run. A modal meaning is the set of force-flavor pairs it
+covers, as in `ModalItem.meaning`. -/
 inductive Meaning where
   | modal (m : Finset ForceFlavor)
   /-- Future or prediction. -/
@@ -75,17 +75,10 @@ inductive Meaning where
 
 namespace Meaning
 
-/-- Root possibility, which the table also lists with ability. -/
-abbrev rootPossibility : Meaning := modal {(.possibility, .circumstantial)}
-/-- Root or epistemic possibility. -/
-abbrev possibility : Meaning :=
-  modal {(.possibility, .circumstantial), (.possibility, .epistemic)}
-abbrev permission : Meaning := modal {(.possibility, .deontic)}
-abbrev obligation : Meaning := modal {(.necessity, .deontic)}
-abbrev weakObligation : Meaning := modal {(.weakNecessity, .deontic)}
-abbrev epistemicPossibility : Meaning := modal {(.possibility, .epistemic)}
-abbrev probability : Meaning := modal {(.weakNecessity, .epistemic)}
-abbrev certainty : Meaning := modal {(.necessity, .epistemic)}
+/-- The force-flavor pairs a meaning covers, none outside modality proper. -/
+def forceFlavors : Meaning → Finset ForceFlavor
+  | modal m => m
+  | _ => ∅
 
 /-- A modal meaning is volitive when all its flavors are, and the directive moods are. -/
 def IsVolitive : Meaning → Prop
@@ -112,39 +105,60 @@ instance : DecidablePred IsMood := fun m ↦ by cases m <;> unfold IsMood <;> in
 
 end Meaning
 
-/-- A change of modal meaning, with the number of grams of the sample of
-[bybee-perkins-pagliuca-1994] that show it, one gram per language. -/
-structure Change where
-  source : Meaning
-  target : Meaning
-  grams : ℕ
+/-- The meaning a label of the table stands for. -/
+def Label.meaning : Label → Meaning
+  | .futurePrediction => .future
+  | .rootPossibility | .abilityRootPossibility => .modal {(.possibility, .circumstantial)}
+  | .rootEpistemicPossibility =>
+    .modal {(.possibility, .circumstantial), (.possibility, .epistemic)}
+  | .permission => .modal {(.possibility, .deontic)}
+  | .obligation => .modal {(.necessity, .deontic), (.weakNecessity, .deontic)}
+  | .strongObligation => .modal {(.necessity, .deontic)}
+  | .weakObligation => .modal {(.weakNecessity, .deontic)}
+  | .epistemicPossibility => .modal {(.possibility, .epistemic)}
+  | .probability => .modal {(.weakNecessity, .epistemic)}
+  | .certainty => .modal {(.necessity, .epistemic)}
+  | .imperative => .imperative
+  | .admonitive => .admonitive
 
-open Meaning in
-/-- The eight most frequent changes of modal meaning in the sample of
-[bybee-perkins-pagliuca-1994], as the chapter tabulates them. -/
-def commonChanges : List Change :=
-  [⟨future, imperative, 13⟩, ⟨rootPossibility, permission, 9⟩, ⟨possibility, admonitive, 5⟩,
-   ⟨obligation, imperative, 4⟩, ⟨rootPossibility, epistemicPossibility, 4⟩,
-   ⟨obligation, certainty, 3⟩, ⟨weakObligation, probability, 2⟩, ⟨future, probability, 2⟩]
-
+/-- Change within each side of volitivity and across the two sides in each direction is
+attested. -/
 theorem volitivity_independent :
-    (∃ c ∈ commonChanges, c.source.IsVolitive ∧ c.target.IsVolitive) ∧
-    (∃ c ∈ commonChanges, c.source.IsVolitive ∧ c.target.IsNonVolitive) ∧
-    (∃ c ∈ commonChanges, c.source.IsNonVolitive ∧ c.target.IsVolitive) ∧
-    (∃ c ∈ commonChanges, c.source.IsNonVolitive ∧ c.target.IsNonVolitive) := by
+    (∃ c ∈ changes, c.source.meaning.IsVolitive ∧ c.target.meaning.IsVolitive) ∧
+    (∃ c ∈ changes, c.source.meaning.IsVolitive ∧ c.target.meaning.IsNonVolitive) ∧
+    (∃ c ∈ changes, c.source.meaning.IsNonVolitive ∧ c.target.meaning.IsVolitive) ∧
+    (∃ c ∈ changes, c.source.meaning.IsNonVolitive ∧ c.target.meaning.IsNonVolitive) := by
   decide
 
-theorem toNonVolitive_lt_toVolitive :
-    ∀ c ∈ commonChanges, ∀ d ∈ commonChanges,
-      c.source.IsNonVolitive → c.target.IsVolitive →
-      d.source.IsVolitive → d.target.IsNonVolitive → d.grams < c.grams := by
+/-- A change from a non-volitive to a volitive meaning has more grams than any other change. -/
+theorem grams_lt_of_toVolitive :
+    ∀ c ∈ changes, ∀ d ∈ changes,
+      c.source.meaning.IsNonVolitive → c.target.meaning.IsVolitive →
+      ¬ (d.source.meaning.IsNonVolitive ∧ d.target.meaning.IsVolitive) → d.grams < c.grams := by
   decide
 
-theorem source_not_isMood : ∀ c ∈ commonChanges, ¬ c.source.IsMood := by decide
+/-- No change leads out of mood. -/
+theorem isMood_target_of_isMood_source :
+    ∀ c ∈ changes, c.source.meaning.IsMood → c.target.meaning.IsMood := by
+  decide
 
 theorem isMood_of_both_volitivities :
-    (∃ c ∈ commonChanges, c.source.IsVolitive ∧ c.target.IsMood) ∧
-    (∃ c ∈ commonChanges, c.source.IsNonVolitive ∧ c.target.IsMood) := by
+    (∃ c ∈ changes, c.source.meaning.IsVolitive ∧ c.target.meaning.IsMood) ∧
+    (∃ c ∈ changes, c.source.meaning.IsNonVolitive ∧ c.target.meaning.IsMood) := by
+  decide
+
+theorem sum_grams : (changes.map (·.grams)).sum = listedChanges := by decide
+
+/-- Situational possibility is the source of twice as many changes as obligation: the grams whose
+source covers circumstantial possibility and those whose source covers a deontic necessity sum to
+the chapter's two totals. -/
+theorem sum_grams_of_source :
+    ((changes.filter fun c ↦
+      (.possibility, .circumstantial) ∈ c.source.meaning.forceFlavors).map (·.grams)).sum =
+        possibilitySourceChanges ∧
+    ((changes.filter fun c ↦ ∃ ff ∈ c.source.meaning.forceFlavors,
+      ff.force ≠ .possibility ∧ ff.flavor = .deontic).map (·.grams)).sum =
+        obligationSourceChanges := by
   decide
 
 end Narrog2010
