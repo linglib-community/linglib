@@ -40,6 +40,7 @@ bisimilarity of the successor sets.
 
 * [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
 * [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
+* [blackburn-derijke-venema-2001] Blackburn, de Rijke and Venema, Modal Logic
 * [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
 * [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
 * [vaananen-2008] Väänänen, Modal Dependence Logic

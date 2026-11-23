@@ -26,12 +26,14 @@ tier and the tier it hangs from (`isNonCrossing_lines_of_noCrossing_toStructure`
 The structure reads a line as domination, which is transitive, where the reading of a line as
 overlap in time is not. No Crossing of the structure is therefore the stronger condition: it
 compares what two nodes dominate through any number of lines, and the No-Crossing Constraint
-compares two lines between the same two tiers.
+compares two lines between the same two tiers. A phonological frame of [bird-blackburn-1991]
+has both relations at once, the transitive closure of dominance contained in overlap.
 
 ## References
 
 * [sagey-1988]
 * [bird-klein-1990]
+* [bird-blackburn-1991]
 -/
 
 @[expose] public section

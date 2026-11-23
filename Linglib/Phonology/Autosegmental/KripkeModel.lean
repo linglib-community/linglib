@@ -32,10 +32,25 @@ each position related to its run index (`exists_isBisimulation_collapse`), so it
 slot reads (`reads_collapse_iff`). On two tiers, collapsing the autosegments changes what no
 slot surfaces with (`surfacesWith_collapse_upper_iff`).
 
+A phonological frame of [bird-blackburn-1991] has precedence, overlap and dominance between its
+nodes, with a modality for each and the labels of nodes as propositional variables;
+`toKripkeModel` is the dominance part of such a frame, and [potts-pullum-2002] state the content
+of constraints in a modal language over structures of this kind. Modal formulas are preserved
+under bisimulation ([blackburn-derijke-venema-2001]), so none of them tells a token that two
+positions share from two copies of it. Attribute-value structures are Kripke models in the
+same way, and there [blackburn-1992] states structure sharing with nominals, symbols true at
+exactly one node, as [bird-blackburn-1991] do to state that two syllables share no mora; in
+the automata of [kasper-rounds-1990] two paths lead to the same token exactly when they lead to
+the same state.
+
 ## References
 
+* [bird-blackburn-1991]
+* [blackburn-1992]
 * [blackburn-derijke-venema-2001]
 * [jardine-2019]
+* [kasper-rounds-1990]
+* [potts-pullum-2002]
 * [sagey-1986]
 -/
 
