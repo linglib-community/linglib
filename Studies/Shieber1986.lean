@@ -21,7 +21,7 @@ the most specific structure subsumed by both inputs, is total, the meet.
 ## Implementation notes
 
 * The order, the partial join and the meet are the pointwise instances of
-  `Core/Order/Flat.lean` and `Core/Order/Compat.lean`, so each
+  `Core/Order/Flat.lean` and `Core/Order/BoundedComplete.lean`, so each
   law is the generic lemma at `Features`. The subsumption lattice is not distributive: a
   feature with three values is the diamond, modular but not distributive, as [carpenter-1992]
   notes of feature-structure orders in general. Phrasal combination and reentrant structures
