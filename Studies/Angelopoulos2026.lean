@@ -47,7 +47,7 @@ against the transparent syntax–semantics mapping.
 namespace Angelopoulos2026
 
 open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs
-open Bondarenko2022 (NominalSort CompositionPath)
+open Bondarenko2022 (NominalSort)
 open Aspect
 
 /-! ### Sorts and aspectual selection -/
@@ -90,9 +90,9 @@ instance (s : NominalSort) (h : AspectualHead) (c : Complementizer) :
 /-- The sample verbs with the sort of noun each verbalizes (§3.2, where saying, belief, and
 knowledge verbs are content-denoting like *rumor*, emotive factives situation-denoting like
 *sadness*) and the aspectual head of the reading the rows use, stative or eventive by the
-manner-adverb test of §2.3, as the example rows name them; *thimame* splits into its attitude and perception
-senses (fn. 16), *simveni* 'happen' is a situation verb (fn. 14), and *δjafono* 'disagree', which
-the rows use only for the ban on prepositions (31), is not among them. -/
+manner-adverb test of §2.3, as the example rows name them; *thimame* splits into its attitude and
+perception senses (fn. 16), *simveni* 'happen' is a situation verb (fn. 14), and *δjafono*
+'disagree', which the rows use only for the ban on prepositions (31), is not among them. -/
 def verbEntry : Examples.Verb → Option (NominalSort × AspectualHead)
   | .leo => some (.content, .vEvent)
   | .pistevo => some (.content, .vState)
@@ -224,10 +224,11 @@ theorem oti_report_not_factive :
 /-! ### Against the transparent syntax–semantics mapping (§7.3) -/
 
 theorem transparency_conflates_axes :
-    ¬ Bondarenko2022.transparentSSMapping .bareArgument ∧
+    (Bondarenko2022.bareArgument .theme).derive Bondarenko2022.grammar (fun _ ↦ .e)
+        (W := Bondarenko2022.Item) (fun w ↦ [w]) = [] ∧
       ∃ r ∈ Examples.all, Examples.position r = some .internalArgument ∧
         Examples.diagnostic r = some .cliticDoubling ∧
         r.feature? "composition" = some "predicate_modification" :=
-  ⟨Bondarenko2022.not_transparentSSMapping_bareArgument, by decide +kernel⟩
+  ⟨Bondarenko2022.derive_bareArgument .theme, by decide +kernel⟩
 
 end Angelopoulos2026

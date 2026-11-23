@@ -5,6 +5,9 @@ public import Linglib.Fragments.Buryat.Complementizers
 public import Linglib.Fragments.Korean.Complementizers
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 public import Linglib.Data.Examples.Bondarenko2022
+public import Linglib.Semantics.Composition.Interpret
+public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.Sorts
 
 /-!
 # [bondarenko-2022] — Anatomy of an Attitude
@@ -26,8 +29,12 @@ argument by Predicate Modification or through a DP argument by Functional
 Application, and the thesis's mapping claim is that bare clauses take only
 the first path and nominalized clauses only the second: a bare CP is a
 predicate of situations, a nominalized CP an individual, and every Θ-head
-(Causer, Theme, About) wants an individual. [angelopoulos-2026] later
-attacks this mapping with Greek *oti*-clauses.
+(Causer, Theme, About) wants an individual. The four combinations are trees
+interpreted by Functional Application and Predicate Modification: the two
+on the diagonal have one meaning each (`meanings_bareModifier`,
+`meanings_nominalizedArgument`) and the other two have no derivation
+(`derive_bareArgument`, `derive_nominalizedModifier`). [angelopoulos-2026]
+later attacks this mapping with Greek *oti*-clauses.
 
 The ch. 2 diagnostics and the Buryat clause shapes are checked here against
 the thesis's own examples (`Bondarenko2022.Examples`); the per-language
@@ -223,90 +230,95 @@ theorem substitution_valid_iff_situation :
     ∀ d ∈ substitutionData, d.valid = true ↔ d.sort = .situation := by
   decide
 
-/-! ### Clauses as arguments -/
+/-! ### Clauses as modifiers and as arguments
 
-/-- The two semantic types of an embedded clause (§4.2). -/
-inductive SemType where
-  | individual
-  | predicate
-  deriving DecidableEq, Repr
+A verb denotes a predicate of situations, and a Θ-head (62) takes the verb's predicate and an
+individual. A bare clause denotes a predicate of situations and a nominalized clause an
+individual, so the two are never integrated with the verb in the same way: the types leave each
+one path. -/
 
-/-- Bare CPs are predicates of situations and nominalized CPs are individuals. -/
-inductive ClauseType where
-  | predicateOfIndividuals
-  | predicateOfSituations
-  deriving DecidableEq, Repr
+section Composition
 
-def ClauseType.semanticType : ClauseType → SemType
-  | .predicateOfIndividuals => .individual
-  | .predicateOfSituations => .predicate
+open Interpreter PhraseStructure ManySorted
 
-/-- The Θ-heads of §4.4, each demanding an individual. -/
+/-- The Θ-heads of §4.4. -/
 inductive ThetaHead where
   | causer
   | theme
   | aboutAttitude
   deriving DecidableEq, Repr
 
-/-- A clause saturates a Θ-head when its type is the individual type. -/
-def saturatesTheta (ct : ClauseType) (_ : ThetaHead) : Prop :=
-  ct.semanticType = .individual
+/-- The words of the four combinations, by semantic type. -/
+inductive Item : Ty Base → Type
+  /-- A verb, a predicate of situations. -/
+  | verb : Item (.s ⇒ .t)
+  /-- A Θ-head, (62). -/
+  | theta (θ : ThetaHead) : Item ((.s ⇒ .t) ⇒ .e ⇒ .s ⇒ .t)
+  /-- A bare clause, a predicate of situations. -/
+  | bareCP : Item (.s ⇒ .t)
+  /-- A nominalized clause, an individual. -/
+  | nominalizedCP : Item .e
 
-instance (ct : ClauseType) (θ : ThetaHead) : Decidable (saturatesTheta ct θ) :=
-  inferInstanceAs (Decidable (_ = _))
+/-- Functional Application and Predicate Modification. -/
+abbrev grammar : Language (Ty Base) := application.sum predicateModification
 
--- §4.4
-theorem bareCP_satisfies_no_theta (θ : ThetaHead) :
-    ¬ saturatesTheta .predicateOfSituations θ :=
-  SemType.noConfusion
+variable {E S : Type} (verb : S → Prop) (role : ThetaHead → S → E) (clause : S → Prop) (x : E)
 
-theorem nominalizedCP_satisfies_every_theta (θ : ThetaHead) :
-    saturatesTheta .predicateOfIndividuals θ :=
+/-- The denotations of the words: a Θ-head (62) holds of a predicate of situations, an individual
+and a situation of the predicate in which the individual has the head's role. -/
+def Item.val : {a : Ty Base} → Item a → a.Dom (Base.Dom E S)
+  | _, .verb => verb
+  | _, .theta θ => fun p y s ↦ p s ∧ role θ s = y
+  | _, .bareCP => clause
+  | _, .nominalizedCP => x
+
+/-- The leaf of a word. -/
+def leaf {a : Ty Base} (i : Item a) : Tree Unit (Σ a, Item a) := .leaf ⟨a, i⟩
+
+/-- A bare clause with a verb. -/
+def bareModifier : Tree Unit (Σ a, Item a) := .bin (leaf .bareCP) (leaf .verb)
+
+/-- A nominalized clause with a verb and its Θ-head, as in (61). -/
+def nominalizedArgument (θ : ThetaHead) : Tree Unit (Σ a, Item a) :=
+  .bin (.bin (leaf .verb) (leaf (.theta θ))) (leaf .nominalizedCP)
+
+/-- A bare clause in the position of the argument of a Θ-head. -/
+def bareArgument (θ : ThetaHead) : Tree Unit (Σ a, Item a) :=
+  .bin (.bin (leaf .verb) (leaf (.theta θ))) (leaf .bareCP)
+
+/-- A nominalized clause as the sister of a verb. -/
+def nominalizedModifier : Tree Unit (Σ a, Item a) := .bin (leaf .nominalizedCP) (leaf .verb)
+
+/-- The meanings of a tree. -/
+def meanings (t : Tree Unit (Σ a, Item a)) :
+    List (Σ a : Ty Base, (ℕ → E) → a.Dom (Base.Dom E S)) :=
+  t.interpret grammar (Base.Dom E S) (fun _ ↦ .e) (fun i _ ↦ Item.val verb role clause x i)
+    fun w ↦ [w]
+
+-- §4.5
+theorem meanings_bareModifier :
+    meanings verb role clause x bareModifier = [⟨.s ⇒ .t, fun _ s ↦ clause s ∧ verb s⟩] :=
   rfl
 
-/-- Bare CPs compose with the verb's situation argument by Predicate Modification
-(§4.5), and nominalized CPs do not. -/
-def composesViaPM : ClauseType → Prop
-  | .predicateOfIndividuals => False
-  | .predicateOfSituations => True
+-- (61)
+theorem meanings_nominalizedArgument (θ : ThetaHead) :
+    meanings verb role clause x (nominalizedArgument θ) =
+      [⟨.s ⇒ .t, fun _ s ↦ verb s ∧ role θ s = x⟩] := by
+  cases θ <;> rfl
 
-instance : DecidablePred composesViaPM
-  | .predicateOfIndividuals => isFalse id
-  | .predicateOfSituations => isTrue trivial
+/-- A bare clause saturates no Θ-head: the head with its verb wants an individual, and no rule
+applies to it and a predicate of situations. -/
+theorem derive_bareArgument (θ : ThetaHead) :
+    (bareArgument θ).derive grammar (fun _ ↦ .e) (W := Item) (fun w ↦ [w]) = [] := by
+  cases θ <;> rfl
 
-/-- Table 1.1's two composition paths. -/
-inductive CompositionPath where
-  | viaSituation
-  | viaDPArgument
-  deriving DecidableEq, Repr
+/-- A nominalized clause does not modify a verb: no rule applies to an individual and a predicate
+of situations. -/
+theorem derive_nominalizedModifier :
+    nominalizedModifier.derive grammar (fun _ ↦ .e) (W := Item) (fun w ↦ [w]) = [] :=
+  rfl
 
-/-- The four (clause shape, composition path) combinations. -/
-inductive ClauseStructurePath where
-  | bareModifier
-  | bareArgument
-  | nominalizedModifier
-  | nominalizedArgument
-  deriving DecidableEq, Repr
-
-/-- The transparent syntax–semantics mapping (§1.1.2, ch. 4) is read off the
-types, making a cell available when its clause type composes on its path. -/
-def transparentSSMapping : ClauseStructurePath → Prop
-  | .bareModifier => composesViaPM .predicateOfSituations
-  | .bareArgument => ∃ θ, saturatesTheta .predicateOfSituations θ
-  | .nominalizedModifier => composesViaPM .predicateOfIndividuals
-  | .nominalizedArgument => ∃ θ, saturatesTheta .predicateOfIndividuals θ
-
-theorem not_transparentSSMapping_bareArgument :
-    ¬ transparentSSMapping .bareArgument :=
-  fun ⟨θ, h⟩ => bareCP_satisfies_no_theta θ h
-
-theorem not_transparentSSMapping_nominalizedModifier :
-    ¬ transparentSSMapping .nominalizedModifier :=
-  id
-
-theorem transparentSSMapping_diagonal :
-    transparentSSMapping .bareModifier ∧ transparentSSMapping .nominalizedArgument :=
-  ⟨trivial, .causer, rfl⟩
+end Composition
 
 /-! ### The Comp head -/
 
