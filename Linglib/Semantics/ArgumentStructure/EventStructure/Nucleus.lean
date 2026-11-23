@@ -9,11 +9,11 @@ This file defines the nucleus of [moens-steedman-1988]: a preparatory process, t
 it brings about, and the consequent state of the culmination. In a model `M`, a `Nucleus M` is a
 preparation `v`, a culmination `e` and a state `s` with `v ~[M.cause] e` and `e ~[M.become] s`.
 
-An event is the preparation of a nucleus with a `p`-state as its consequent state iff it causes a
-change into a `p`-state (`Nucleus.exists_iff`). A causative of a change of state therefore
-denotes the preparations of the nuclei whose consequent state the root describes
-(`Template.denote_cause_achievement_iff`). `Template.causing` and `Template.caused` drop the
-culmination and the preparation of the accomplishment.
+The main result is `Nucleus.exists_iff`: an event is the preparation of a nucleus with a
+`p`-state as its consequent state iff it causes a change into a `p`-state. A causative of a
+change of state therefore denotes the preparations of the nuclei whose consequent state the root
+describes. The subterm maps `Template.causing` and `Template.caused` drop the culmination and the
+preparation of the accomplishment.
 
 ## Implementation notes
 

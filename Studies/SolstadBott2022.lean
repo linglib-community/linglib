@@ -16,28 +16,26 @@ biases and tests it on the paper's four continuation experiments.
 
 For a verb class with role list `r` and an argument position `a`:
 
-* `ICaus r a` holds when the argument carries a slot, that is, when the verb entails that it
-  causes and nothing about how (`CarriesSlot`);
-* `ICons r a` holds when the argument holds the end state, that is, when it is the experiencer
-  of a state or is causally affected (`HoldsEndState`);
+* `ICaus r a` holds when the argument carries a slot: the verb entails that it causes and
+  nothing about how;
+* `ICons r a` holds when the argument holds the end state: it is the experiencer of a state or
+  is causally affected;
 * `Bias r ρ a` is the bias of a continuation in the coherence relation `ρ`: `ICaus` for
   Explanation and `ICons` for Result.
 
-Stimulus-experiencer and experiencer-stimulus verbs have mirror-image biases (`psych_mirror`).
-In event structure the slot is a causing subevent with no content (`HasSlot`); filling it with a
-manner gives the accomplishment, which has none (`denote_accomplishment_iff`).
+Stimulus-experiencer and experiencer-stimulus verbs have mirror-image biases. In event structure
+the slot is a causing subevent with no content, and filling it with a manner gives the
+accomplishment, which has none.
 
-On the data:
+We prove four things about the printed results:
 
 * after *weil* and *sodass*, and for explanations and consequences after a full stop, most
-  continuations are about the argument `Bias` gives (`bias_iff_coreference`,
-  `bias_iff_coreferenceByRelation`);
+  continuations are about the argument `Bias` gives;
 * under forced reference, explanations about the end-state argument outnumber consequences about
-  the slot argument (`consequence_swap_lt_explanation`);
+  the slot argument;
 * most explanations give the cause of the psychological state exactly when they are about the
-  slot argument (`specifying_iff_congruent`);
-* consequences are more frequent after the class whose template has a change
-  (`consequence_lt_iff_result`).
+  slot argument;
+* consequences are more frequent after the class whose template has a change.
 
 ## Implementation notes
 
@@ -52,7 +50,7 @@ On the data:
   with no change.
 * Under forced reference to the object of a stimulus-experiencer verb the printed consequences
   (44.2%) exceed the explanations (42.9%), so the precedence of slot filling is stated of the
-  two arguments together (`consequence_lt_explanation`).
+  two arguments together.
 
 ## TODO
 

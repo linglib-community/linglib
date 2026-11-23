@@ -18,10 +18,11 @@ state predicate `p` and a manner predicate `Q`:
   `Q ≤ ◇[cause] (◇[become] p)`.
 
 A model `Respects` a kind signature when the postulates of its kinds hold. Each postulate entails
-the one before it, so a signature and its closure have the same models (`Model.respects_close`).
-Where a state arises from at most one change, `Q` is the manner of the cause of `p` iff `p`
-entails a cause and every event that causes a change into a `p`-state is a `Q`-event
-(`Model.entailsMannerOfCause_iff`).
+the one before it, so a signature and its closure have the same models.
+
+The main result is `Model.entailsMannerOfCause_iff`: where a state arises from at most one
+change, `Q` is the manner of the cause of `p` iff `p` entails a cause and every event that causes
+a change into a `p`-state is a `Q`-event.
 
 ## Implementation notes
 

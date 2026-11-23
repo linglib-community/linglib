@@ -19,9 +19,8 @@ and `cause` takes an event and a template of either sort. The achievement is
 `[BECOME [x ⟨STATE⟩]]` and the accomplishment is `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`.
 
 We define `Template.kinds`, the kinds of entailment the primitives of a template contribute, and
-the subterm relation `Template.IsSubterm`. A template with a manner and a state has a cause
-(`Template.cause_mem_kinds_of_manner_of_state`), and the kinds of a subterm are among those of
-the template (`Template.IsSubterm.kinds_subset`).
+the subterm relation `Template.IsSubterm`. A template with a manner and a state has a cause, and
+the kinds of a subterm are among those of the template.
 
 ## Implementation notes
 

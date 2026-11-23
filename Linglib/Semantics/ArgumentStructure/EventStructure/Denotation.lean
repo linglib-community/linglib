@@ -16,13 +16,13 @@ This file interprets event structure templates in a model. Fix a model `M`, a th
 * `cause c t` holds of `v` when `c` holds of `v` and `v` causes an eventuality of which `t` holds
   with the undergoer as its actor.
 
-The denotation is monotone in the model (`Template.denote_mono`) and entails that every subterm
-is realized (`Template.exists_denote_of_isSubterm`). Giving the event of an individual causer a
-manner yields the template with an action in its place (`Template.denote_cause_act`).
+The denotation is monotone in the model, and it entails that every subterm is realized. Giving
+the event of an individual causer a manner yields the template with an action in its place.
 
-The kinds of a template are what all its denotations entail: it has `BECOME` iff every
-denotation in every model involves a change (`Template.result_mem_kinds_iff`), and `CAUSE` iff
-every denotation involves causation (`Template.cause_mem_kinds_iff`).
+The main results, `Template.result_mem_kinds_iff` and `Template.cause_mem_kinds_iff`, say that
+the kinds of a template are what all its denotations entail: a template has `BECOME` iff every
+denotation in every model involves a change, and `CAUSE` iff every denotation involves
+causation.
 
 ## Implementation notes
 
