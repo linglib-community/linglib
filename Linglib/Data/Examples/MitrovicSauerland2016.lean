@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `MitrovicSauerland2016` — typed example data
@@ -211,5 +213,19 @@ def ex33b : Datum :=
     paperFeatures := [("head", "mu-second")] }
 
 def all : List Datum := [ex1c, ex1c_omitted, ex23, ex24, ex25, ex26, ex27, ex28, ex28_omitted, fn9, ex29, ex33a, ex33b]
+
+/-- The heads of the conjunction an example pronounces, those its gloss line writes outside parentheses. -/
+inductive HeadLabel where
+  /-- j: the junctor J -/
+  | j
+  /-- mu-first: the μ head of the first conjunct -/
+  | muFirst
+  /-- mu-second: the μ head of the second conjunct -/
+  | muSecond
+  deriving DecidableEq, Repr, Fintype
+
+/-- The values a row records under `head`. -/
+def heads (e : Datum) : List HeadLabel :=
+  (e.features "head").filterMap (List.lookup · [("j", .j), ("mu-first", .muFirst), ("mu-second", .muSecond)])
 
 end MitrovicSauerland2016.Examples

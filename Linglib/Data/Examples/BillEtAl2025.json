@@ -1,0 +1,330 @@
+{
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The heads of the conjunction that the words of a row pronounce.",
+      "levels": [
+        {
+          "name": "j",
+          "label": "j",
+          "doc": "the J particle, between the conjuncts"
+        },
+        {
+          "name": "muFirst",
+          "label": "mu-first",
+          "doc": "the MU particle of the first conjunct"
+        },
+        {
+          "name": "muSecond",
+          "label": "mu-second",
+          "doc": "the MU particle of the second conjunct"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The conjunctive particles of the two languages.",
+      "levels": [
+        {
+          "name": "da",
+          "label": "da",
+          "doc": "Georgian da"
+        },
+        {
+          "name": "c",
+          "label": "c",
+          "doc": "Georgian -c"
+        },
+        {
+          "name": "es",
+          "label": "es",
+          "doc": "Hungarian és"
+        },
+        {
+          "name": "is",
+          "label": "is",
+          "doc": "Hungarian is"
+        }
+      ]
+    }
+  },
+  "examples": [
+    {
+      "id": "billetal2025_1a",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(1a)"},
+      "language": "hung1274",
+      "primaryText": "Az alma és a banán az asztal-on van.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Az", "the"], ["alma", "apple"], ["és", "J"], ["a", "the"], ["banán", "banana"],
+        ["az", "the"], ["asztal-on", "table-LOC"], ["van.", "is"]
+      ],
+      "translation": "The apple and the banana are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "j", "lexeme": "es"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "billetal2025_1b",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(1b)"},
+      "language": "hung1274",
+      "primaryText": "Az alma is, a banán is az asztal-on van.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Az", "the"], ["alma", "apple"], ["is,", "MU"], ["a", "the"], ["banán", "banana"],
+        ["is", "MU"], ["az", "the"], ["asztal-on", "table-LOC"], ["van.", "is"]
+      ],
+      "translation": "The apple and the banana are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "mu-first", "lexeme": "is"},
+        {"start": 5, "label": "mu-second", "lexeme": "is"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "billetal2025_1c",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(1c)"},
+      "language": "hung1274",
+      "primaryText": "Az alma is és a banán is az asztal-on van.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Az", "the"], ["alma", "apple"], ["is", "MU"], ["és", "J"], ["a", "the"],
+        ["banán", "banana"], ["is", "MU"], ["az", "the"], ["asztal-on", "table-LOC"], ["van.", "is"]
+      ],
+      "translation": "The apple and the banana are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "mu-first", "lexeme": "is"},
+        {"start": 3, "label": "j", "lexeme": "es"},
+        {"start": 6, "label": "mu-second", "lexeme": "is"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "billetal2025_2a",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(2a)"},
+      "language": "nucl1302",
+      "primaryText": "vashl-i da banan-i aris magida-ze.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["vashl-i", "apple-NOM"], ["da", "J"], ["banan-i", "banana-NOM"], ["aris", "is"],
+        ["magida-ze.", "table-on"]
+      ],
+      "translation": "The apple and the banana are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "j", "lexeme": "da"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "billetal2025_2b",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(2b)"},
+      "language": "nucl1302",
+      "primaryText": "vashl-i-c, banan-i-c aris magida-ze.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["vashl-i-c,", "apple-NOM-MU"], ["banan-i-c", "banana-NOM-MU"], ["aris", "is"],
+        ["magida-ze.", "table-on"]
+      ],
+      "translation": "The apple and the banana are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "mu-first", "lexeme": "c"},
+        {"start": 1, "label": "mu-second", "lexeme": "c"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "billetal2025_2c",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(2c)"},
+      "language": "nucl1302",
+      "primaryText": "vashl-i-c da banan-i-c aris magida-ze.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["vashl-i-c", "apple-NOM-MU"], ["da", "J"], ["banan-i-c", "banana-NOM-MU"], ["aris", "is"],
+        ["magida-ze.", "table-on"]
+      ],
+      "translation": "The apple and the banana are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "mu-first", "lexeme": "c"},
+        {"start": 1, "label": "j", "lexeme": "da"},
+        {"start": 2, "label": "mu-second", "lexeme": "c"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "billetal2025_5a",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(5a)"},
+      "language": "nucl1302",
+      "primaryText": "k’ovz-i da saban-i aris magida-ze.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["k’ovz-i", "spoon-NOM"], ["da", "J"], ["saban-i", "blanket-NOM"], ["aris", "is"],
+        ["magida-ze.", "table-on"]
+      ],
+      "translation": "The spoon and the blanket are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "j", "lexeme": "da"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "billetal2025_5b",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(5b)"},
+      "language": "nucl1302",
+      "primaryText": "k’ovz-i-c, saban-i-c aris magida-ze.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["k’ovz-i-c,", "spoon-NOM-MU"], ["saban-i-c", "blanket-NOM-MU"], ["aris", "is"],
+        ["magida-ze.", "table-on"]
+      ],
+      "translation": "The spoon and the blanket are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "mu-first", "lexeme": "c"},
+        {"start": 1, "label": "mu-second", "lexeme": "c"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "billetal2025_5c",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(5c)"},
+      "language": "nucl1302",
+      "primaryText": "k’ovz-i-c da saban-i-c aris magida-ze.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["k’ovz-i-c", "spoon-NOM-MU"], ["da", "J"], ["saban-i-c", "blanket-NOM-MU"], ["aris", "is"],
+        ["magida-ze.", "table-on"]
+      ],
+      "translation": "The spoon and the blanket are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "mu-first", "lexeme": "c"},
+        {"start": 1, "label": "j", "lexeme": "da"},
+        {"start": 2, "label": "mu-second", "lexeme": "c"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "billetal2025_6a",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(6a)"},
+      "language": "hung1274",
+      "primaryText": "A kanál és a takaró az asztal-on van.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["A", "the"], ["kanál", "spoon"], ["és", "J"], ["a", "the"], ["takaró", "blanket"],
+        ["az", "the"], ["asztal-on", "table-LOC"], ["van.", "is"]
+      ],
+      "translation": "The spoon and the blanket are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "j", "lexeme": "es"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "billetal2025_6b",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(6b)"},
+      "language": "hung1274",
+      "primaryText": "A kanál is, a takaró is az asztal-on van.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["A", "the"], ["kanál", "spoon"], ["is,", "MU"], ["a", "the"], ["takaró", "blanket"],
+        ["is", "MU"], ["az", "the"], ["asztal-on", "table-LOC"], ["van.", "is"]
+      ],
+      "translation": "The spoon and the blanket are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "mu-first", "lexeme": "is"},
+        {"start": 5, "label": "mu-second", "lexeme": "is"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "billetal2025_6c",
+      "source": {"bibkey": "bill-etal-2025", "paperLabel": "(6c)"},
+      "language": "hung1274",
+      "primaryText": "A kanál is és a takaró is az asztal-on van.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["A", "the"], ["kanál", "spoon"], ["is", "MU"], ["és", "J"], ["a", "the"],
+        ["takaró", "blanket"], ["is", "MU"], ["az", "the"], ["asztal-on", "table-LOC"],
+        ["van.", "is"]
+      ],
+      "translation": "The spoon and the blanket are on the table.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "mu-first", "lexeme": "is"},
+        {"start": 3, "label": "j", "lexeme": "es"},
+        {"start": 6, "label": "mu-second", "lexeme": "is"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

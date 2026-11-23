@@ -135,12 +135,14 @@ inductive Head where
 
 theorem card_head : Fintype.card Head = 3 := rfl
 
-/-- The labels of the heads in the rows. -/
-def Head.labels : List (String × Head) := [("j", .j), ("mu-first", .mu 0), ("mu-second", .mu 1)]
+/-- The head that a label of the rows names. -/
+def Examples.HeadLabel.head : Examples.HeadLabel → Head
+  | .j => .j
+  | .muFirst => .mu 0
+  | .muSecond => .mu 1
 
 /-- The heads an example pronounces. -/
-def pronounced (d : Datum) : Finset Head :=
-  ((d.features "head").filterMap (List.lookup · Head.labels)).toFinset
+def pronounced (d : Datum) : Finset Head := ((Examples.heads d).map (·.head)).toFinset
 
 /-- The sets of heads the examples pronounce. -/
 def attested : Finset (Finset Head) := (Examples.all.map pronounced).toFinset
