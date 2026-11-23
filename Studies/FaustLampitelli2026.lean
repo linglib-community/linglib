@@ -70,7 +70,9 @@ applies to the output of the one before it and not to the input (`feeds_fusion`,
 
 * The syneresis of |I| before a glide and the ejectives, which lower a vowel and never
   syncopate it, are not derived.
-* `derive_isFixedPt` is stated of the rows; no operation applies to any derived form.
+* `derive_isFixedPt` is stated of the rows. Of every form, `epenthesis_epenthesis` shows that
+  epenthesis marks nothing further; that fusion and dissociation do not apply to a derived form
+  is not proved.
 
 ## References
 
@@ -455,6 +457,91 @@ theorem vowelAt_dissociation_iff (f : Form) (i : ℕ) (c : Phonology.Segment) (v
   simp only [vowelAt, dissociation, List.getElem?_mapIdx, fusion_getElem? f i c v h,
     Option.map_some, lexical_fusion, Option.bind_some]
   split_ifs <;> simp_all [Nuc.vowel?]
+
+/-! ### Epenthesis -/
+
+theorem getElem?_epenthesis (R : Finset ℕ) (f : Form) (i : ℕ) :
+    (epenthesis R f)[i]? =
+      f[i]?.map fun u ↦ if u.v = .empty ∧ ¬ Silent R f i then ⟨u.c, .mark⟩ else u :=
+  List.getElem?_mapIdx ..
+
+theorem Silent.empty {R : Finset ℕ} {f : Form} :
+    ∀ {i : ℕ}, Silent R f i → f[i]?.map (·.v) = some .empty
+  | 0, h => h.1
+  | _ + 1, h => h.1
+
+theorem map_c_epenthesis (R : Finset ℕ) (f : Form) (i : ℕ) :
+    (epenthesis R f)[i]?.map (·.c) = f[i]?.map (·.c) := by
+  rw [getElem?_epenthesis]
+  cases f[i]? with
+  | none => rfl
+  | some u => simp only [Option.map_some]; split_ifs <;> rfl
+
+theorem map_v_epenthesis_eq_empty_iff (R : Finset ℕ) (f : Form) (i : ℕ) :
+    (epenthesis R f)[i]?.map (·.v) = some .empty ↔ Silent R f i := by
+  rw [getElem?_epenthesis]
+  constructor
+  · intro h
+    cases hu : f[i]? with
+    | none => simp [hu] at h
+    | some u =>
+      simp only [hu, Option.map_some, Option.some.injEq] at h
+      split_ifs at h with hc
+      by_contra hs
+      exact hc ⟨h, hs⟩
+  · intro h
+    have he := h.empty
+    cases hu : f[i]? with
+    | none => simp [hu] at he
+    | some u =>
+      simp only [hu, Option.map_some, Option.some.injEq] at he ⊢
+      rw [ite_eq_right fun hc ↦ hc.2 h]
+      exact he
+
+theorem geminateInternal_congr {f g : Form} (h : ∀ i : ℕ, g[i]?.map (·.c) = f[i]?.map (·.c))
+    (i : ℕ) : GeminateInternal g i ↔ GeminateInternal f i := by
+  have h1 := h i
+  have h2 := h (i + 1)
+  unfold GeminateInternal
+  cases hf1 : f[i]? <;> cases hf2 : f[i + 1]? <;> cases hg1 : g[i]? <;> cases hg2 : g[i + 1]? <;>
+    simp_all
+
+theorem hasAAt_congr {f g : Form} (h : ∀ i : ℕ, g[i]?.map (·.c) = f[i]?.map (·.c)) (i : ℕ) :
+    HasAAt g i ↔ HasAAt f i := by
+  have h1 := h i
+  unfold HasAAt
+  cases hf : f[i]? <;> cases hg : g[i]? <;> simp_all
+
+theorem silent_epenthesis (R : Finset ℕ) (f : Form) :
+    ∀ i, Silent R (epenthesis R f) i ↔ Silent R f i
+  | 0 => by
+    show (epenthesis R f)[0]?.map (·.v) = some .empty ∧
+        (1 = (epenthesis R f).length ∨ GeminateInternal (epenthesis R f) 0) ↔ Silent R f 0
+    rw [map_v_epenthesis_eq_empty_iff, geminateInternal_congr (map_c_epenthesis R f),
+      show (epenthesis R f).length = f.length from List.length_mapIdx]
+    exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, h.2⟩⟩
+  | i + 1 => by
+    show (epenthesis R f)[i + 1]?.map (·.v) = some .empty ∧
+        (i + 2 = (epenthesis R f).length ∨ GeminateInternal (epenthesis R f) (i + 1) ∨
+          ¬ (HasAAt (epenthesis R f) (i + 1) ∨ Silent R (epenthesis R f) i ∨
+            GeminateInternal (epenthesis R f) (i + 2) ∨ i + 1 ∈ R)) ↔ Silent R f (i + 1)
+    rw [map_v_epenthesis_eq_empty_iff, geminateInternal_congr (map_c_epenthesis R f),
+      geminateInternal_congr (map_c_epenthesis R f), hasAAt_congr (map_c_epenthesis R f),
+      silent_epenthesis R f i, show (epenthesis R f).length = f.length from List.length_mapIdx]
+    exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, h.2⟩⟩
+
+-- no nucleus is left to mark once epenthesis has applied
+theorem epenthesis_epenthesis (R : Finset ℕ) (f : Form) :
+    epenthesis R (epenthesis R f) = epenthesis R f := by
+  refine List.ext_getElem? fun i ↦ ?_
+  rw [getElem?_epenthesis]
+  cases hu : (epenthesis R f)[i]? with
+  | none => rfl
+  | some u =>
+    simp only [Option.map_some, Option.some.injEq]
+    refine ite_eq_right fun hc ↦ hc.2 ?_
+    rw [silent_epenthesis, ← map_v_epenthesis_eq_empty_iff, hu]
+    exact congrArg some hc.1
 
 /-! ### Patterns and endings (§2.1) -/
 
