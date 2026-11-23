@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Dynamic.Possibility
+public import Linglib.Core.Data.Set.Sups
 public import Mathlib.Algebra.Group.Defs
 public import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
 public import Mathlib.Basic.Rel
@@ -132,7 +133,7 @@ bottom of both. -/
 /-! ### Consistent merge as multiplication -/
 
 /-- `s * s'` is consistent merge, the unifications of pairs of points, one from each state. -/
-instance : Mul (State W V M) := ⟨fun s s' ↦ {r | ∃ p ∈ s, ∃ q ∈ s', IsLUB {p, q} r}⟩
+instance : Mul (State W V M) := ⟨Set.lubs⟩
 
 /-- The unit of merge is the initial state. -/
 instance : One (State W V M) := ⟨⊤⟩
@@ -142,14 +143,7 @@ theorem one_eq_top : (1 : State W V M) = ⊤ := rfl
 theorem mem_mul : r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', IsLUB {p, q} r := Iff.rfl
 
 instance : CommMonoid (State W V M) where
-  mul_assoc s t u := Set.ext fun r ↦
-    ⟨fun ⟨v, ⟨p, hp, q, hq, hv⟩, w, hw, hr⟩ ↦
-      let ⟨v', hv', hr'⟩ := hv.pair_assoc hr
-      ⟨p, hp, v', ⟨q, hq, w, hw, hv'⟩, hr'⟩,
-     fun ⟨p, hp, v, ⟨q, hq, w, hw, hv⟩, hr⟩ ↦
-      let ⟨v', hv', hr'⟩ := (Set.pair_comm q w ▸ hv).pair_assoc
-        (Set.pair_comm p v ▸ hr)
-      ⟨v', ⟨p, hp, q, hq, Set.pair_comm q p ▸ hv'⟩, w, hw, Set.pair_comm w v' ▸ hr'⟩⟩
+  mul_assoc := Set.lubs_assoc
   one_mul s := Set.ext fun r ↦
     ⟨fun ⟨_, ⟨w, rfl⟩, p, hp, h⟩ ↦
       have hw : Possibility.bot w ≤ p := Possibility.bot_le_of_compat (Compat.symm ⟨r, h.1⟩)
@@ -162,9 +156,7 @@ instance : CommMonoid (State W V M) where
       h.unique (isLUB_pair_iff_forall_le.2 ⟨le_rfl, hw, fun _ hu _ ↦ hu⟩) ▸ hp,
      fun hr ↦ ⟨r, hr, _, ⟨r.world, rfl⟩,
       isLUB_pair_iff_forall_le.2 ⟨le_rfl, Possibility.bot_le, fun _ hu _ ↦ hu⟩⟩⟩
-  mul_comm s s' := Set.ext fun _ ↦
-    ⟨fun ⟨p, hp, q, hq, h⟩ ↦ ⟨q, hq, p, hp, Set.pair_comm p q ▸ h⟩,
-     fun ⟨q, hq, p, hp, h⟩ ↦ ⟨p, hp, q, hq, Set.pair_comm q p ▸ h⟩⟩
+  mul_comm := Set.lubs_comm
 
 @[simp] theorem empty_mul : (∅ : State W V M) * s = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ hr ↦ let ⟨_, hp, _⟩ := mem_mul.mp hr; Set.notMem_empty _ hp
@@ -172,16 +164,8 @@ instance : CommMonoid (State W V M) where
 @[simp] theorem mul_empty : s * (∅ : State W V M) = ∅ := by rw [mul_comm, empty_mul]
 
 theorem upperClosure_mul :
-    upperClosure (s * s') = upperClosure s ⊔ upperClosure s' := by
-  ext x
-  simp only [SetLike.mem_coe, UpperSet.mem_sup_iff, mem_upperClosure]
-  exact ⟨fun ⟨r, ⟨p, hp, q, hq, h⟩, hrx⟩ ↦
-      have := isLUB_pair_iff_forall_le.1 h
-      ⟨⟨p, hp, this.1.trans hrx⟩, q, hq, this.2.1.trans hrx⟩,
-    fun ⟨⟨p, hp, hpx⟩, q, hq, hqx⟩ ↦
-      have hx := mem_upperBounds_pair.2 ⟨hpx, hqx⟩
-      let ⟨r, hr⟩ := Possibility.exists_isLUB ⟨x, hx⟩
-      ⟨r, ⟨p, hp, q, hq, hr⟩, (isLUB_le_iff hr).2 hx⟩⟩
+    upperClosure (s * s') = upperClosure s ⊔ upperClosure s' :=
+  Set.upperClosure_lubs s s'
 
 theorem mul_le_left : s * s' ≤ s :=
   le_sup_left.trans_eq upperClosure_mul.symm

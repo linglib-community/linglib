@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.FeatureGeometry
-public import Linglib.Phonology.Autosegmental.KripkeModel
+public import Linglib.Phonology.Autosegmental.KripkeModel.Spread
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Sum
 
@@ -15,9 +15,9 @@ representation `ofSpec node s` has a slot, a token of the root node, a token on 
 node `s` bears and a token on the tier of each placed feature `s` specifies, labelled with its
 value; each token has a line to the token of the tier its own hangs from. `ofWord node w`
 concatenates these, as the monoid homomorphism `ofWordHom` does on the free monoid, and its
-lines do not cross (`noCrossing_ofWord`). Reading it back gives its segments
-(`reads_ofWord_iff`), and a representation in which each token has at most one line to each
-lower tier is bisimilar at a slot to a segment of a word exactly when it reads there a slot,
+lines do not cross (`noCrossing_ofWord`). The labels its slots bear give back its segments
+(`mem_melody_ofWord_iff`), and a representation in which each token has at most one line to each
+lower tier is bisimilar at a slot to a segment of a word exactly when it bears there a slot,
 the nodes the segment bears and the values the segment gives the placed features
 (`exists_isBisimulation_ofWord_iff`).
 
@@ -25,8 +25,9 @@ Spreading is a change of lines. `linkNode node w a m n` spreads the node `a` fro
 segment `n`, and `linkFeature node w f m n` a single feature, by `Autosegmental.AR.spreadTier`:
 the token of segment `n` above is delinked from its own token and linked to that of segment
 `m`, which the two segments then share. The result is bisimilar to the word with
-`spread node a` applied at `n`, or with the one feature copied, so it reads as that word does
-(`reads_linkNode_iff`, `reads_linkFeature_iff`): linking shares what copying duplicates.
+`spread node a` applied at `n`, or with the one feature copied, so its slots bear what that
+word's do
+(`mem_melody_linkNode_iff`, `mem_melody_linkFeature_iff`): linking shares what copying duplicates.
 Spreading a node crosses no line exactly when no segment strictly between the two has the node
 (`noCrossing_linkNode_iff`). Spreading the root node shares a whole segment between two slots,
 and every segment between blocks it.
@@ -362,12 +363,13 @@ theorem mem_descendants_node (s : F → Option β) : ∀ (n : ℕ) (c : N), Orde
       have := (link_ofSpec_node_iff (node := node) (s := s) (a := c)).2 (.inr hb)
       rwa [parent_node hbot] at this
 
-theorem reads_ofSpec_iff :
-    (ofSpec node s).Reads (tiers node) 0 (some (.inr f)) b ↔ (node f).isSome ∧ s f = some b := by
+theorem mem_melody_ofSpec_iff :
+    b ∈ (ofSpec node s).melody (tiers node) 0 (some (.inr f)) ↔ (node f).isSome ∧ s f = some b := by
   have hword : (ofSpec node s).word (some (.inr f)) =
       if (node f).isSome then (s f).toList else [] := rfl
   constructor
-  · rintro ⟨q, -, -, hb⟩
+  · intro h
+    obtain ⟨q, -, hb⟩ := AR.mem_melody_iff_exists_dominates.1 h
     rw [hword] at hb
     split_ifs at hb with hf
     · exact ⟨hf, Option.mem_toList.1 (List.mem_of_getElem? hb)⟩
@@ -383,68 +385,72 @@ theorem reads_ofSpec_iff :
         Option.some_ne_none _,
         AR.link_fromRel.2 ⟨by simp, List.length_pos_iff.2 (word_ofSpec_node_ne_nil.2 (.inr hb)),
           by simp [tierWord, hf, hs], .inl ⟨by simp [tierParent, hc], Option.some_ne_none _⟩⟩⟩
-    refine ⟨0, Finset.mem_range.2 (by simp [hword, hf, hs]), AR.descendants_mono ?_ _
+    refine AR.mem_melody_iff_exists_dominates.2 ⟨0, AR.descendants_mono ?_ _
       (AR.mem_descendants_succ_of_mem_children (mem_descendants_node s n c hpn (.inr hb)) hchild),
       by simp [hword, hf, hs]⟩
     rw [Fintype.card_option, Fintype.card_sum]
     omega
 
-/-- The representation of a specification reads a slot. -/
-theorem reads_ofSpec_slot : (ofSpec node s).Reads (tiers node) 0 none PUnit.unit :=
-  ⟨0, Finset.mem_range.2 Nat.one_pos, AR.mem_descendants_self _ _, rfl⟩
+/-- The representation of a specification bears a slot. -/
+theorem mem_melody_ofSpec_slot : PUnit.unit ∈ (ofSpec node s).melody (tiers node) 0 none :=
+  AR.mem_melody_iff_exists_dominates.2 ⟨0, AR.mem_descendants_self _ _, rfl⟩
 
-/-- The representation of a specification reads the nodes the specification bears. -/
-theorem reads_ofSpec_node_iff :
-    (ofSpec node s).Reads (tiers node) 0 (some (.inl a)) PUnit.unit ↔ a = ⊥ ∨ Bears node s a := by
+/-- The slot of the representation of a specification bears the nodes the specification
+bears. -/
+theorem mem_melody_ofSpec_node_iff :
+    PUnit.unit ∈ (ofSpec node s).melody (tiers node) 0 (some (.inl a)) ↔
+      a = ⊥ ∨ Bears node s a := by
   constructor
-  · rintro ⟨q, hq, -, -⟩
+  · intro h
+    obtain ⟨q, -, hb⟩ := AR.mem_melody_iff_exists_dominates.1 h
     exact word_ofSpec_node_ne_nil.1 (List.ne_nil_of_length_pos
-      (Nat.zero_lt_of_lt (Finset.mem_range.1 hq)))
+      (Nat.zero_lt_of_lt (List.getElem?_eq_some_iff.1 hb).1))
   · intro h
     have hword : (ofSpec node s).word (some (.inl a)) = [PUnit.unit] := ite_eq_left h
     obtain ⟨n, hn, hpn⟩ :=
       Function.exists_iterate_eq_lt_card Order.pred (bot_le (a := a)).exists_pred_iterate
-    refine ⟨0, Finset.mem_range.2 (by rw [hword]; exact Nat.one_pos),
-      AR.descendants_mono ?_ _ (mem_descendants_node s n a hpn h), by rw [hword]; rfl⟩
+    refine AR.mem_melody_iff_exists_dominates.2
+      ⟨0, AR.descendants_mono ?_ _ (mem_descendants_node s n a hpn h), by rw [hword]; rfl⟩
     rw [Fintype.card_option, Fintype.card_sum]
     omega
 
-/-- Reading a realized word back gives its segments. -/
-theorem reads_ofWord_iff :
-    (ofWord node w).Reads (tiers node) k (some (.inr f)) b ↔
+/-- The labels the slots of a realized word bear give back its segments. -/
+theorem mem_melody_ofWord_iff :
+    b ∈ (ofWord node w).melody (tiers node) k (some (.inr f)) ↔
       ∃ h : k < w.length, (node f).isSome ∧ w[k] f = some b :=
-  (AR.reads_prod_map (tiers node) (ofSpec node) fun _ ↦ rfl).trans
-    (exists_congr fun _ ↦ reads_ofSpec_iff)
+  (AR.mem_melody_prod_map (tiers node) (ofSpec node) fun _ ↦ rfl).trans
+    (exists_congr fun _ ↦ mem_melody_ofSpec_iff)
 
 /-- A slot of a representation in which each token has at most one line to each lower tier is
-bisimilar to a segment of a word exactly when it reads a slot, the nodes the segment bears and
+bisimilar to a segment of a word exactly when it bears a slot, the nodes the segment bears and
 the values the segment gives the placed features. -/
 theorem exists_isBisimulation_ofWord_iff {X : AR (Tiers N F β)}
     (hX : X.IsFunctional (tiers node)) {k' : ℕ} (hk' : k' < w.length) :
     (∃ r, (X.toKripkeModel (tiers node)).IsBisimulation
         ((ofWord node w).toKripkeModel (tiers node)) r ∧ r (none, k) (none, k')) ↔
-      X.Reads (tiers node) k none PUnit.unit ∧
-      (∀ a, X.Reads (tiers node) k (some (.inl a)) PUnit.unit ↔ a = ⊥ ∨ Bears node w[k'] a) ∧
-      ∀ f b, X.Reads (tiers node) k (some (.inr f)) b ↔ (node f).isSome ∧ w[k'] f = some b :=
+      PUnit.unit ∈ X.melody (tiers node) k none ∧
+      (∀ a, PUnit.unit ∈ X.melody (tiers node) k (some (.inl a)) ↔ a = ⊥ ∨ Bears node w[k'] a) ∧
+      ∀ f b, b ∈ X.melody (tiers node) k (some (.inr f)) ↔ (node f).isSome ∧ w[k'] f = some b :=
   (AR.exists_isBisimulation_prod_map_iff (ofSpec node) hX
     (fun s t ↦ length_tierWord_le_one node s t) (fun _ ↦ rfl) hk').trans
-    ⟨fun h ↦ ⟨(h none PUnit.unit).2 reads_ofSpec_slot,
-        fun a ↦ (h (some (.inl a)) PUnit.unit).trans reads_ofSpec_node_iff,
-        fun f b ↦ (h (some (.inr f)) b).trans reads_ofSpec_iff⟩,
+    ⟨fun h ↦ ⟨(h none PUnit.unit).2 mem_melody_ofSpec_slot,
+        fun a ↦ (h (some (.inl a)) PUnit.unit).trans mem_melody_ofSpec_node_iff,
+        fun f b ↦ (h (some (.inr f)) b).trans mem_melody_ofSpec_iff⟩,
       fun ⟨h₀, h₁, h₂⟩ t b ↦ by
         rcases t with _ | a | f
-        · exact iff_of_true h₀ reads_ofSpec_slot
-        · exact (h₁ a).trans reads_ofSpec_node_iff.symm
-        · exact (h₂ f b).trans reads_ofSpec_iff.symm⟩
+        · exact iff_of_true h₀ mem_melody_ofSpec_slot
+        · exact (h₁ a).trans mem_melody_ofSpec_node_iff.symm
+        · exact (h₂ f b).trans mem_melody_ofSpec_iff.symm⟩
 
-/-- Spreading a node by a change of lines reads as spreading it by a change of values. -/
-theorem reads_linkNode_iff (hm : m < w.length) (hn : n < w.length)
+/-- Spreading a node by a change of lines gives each slot the feature values of spreading it by
+a change of values. -/
+theorem mem_melody_linkNode_iff (hm : m < w.length) (hn : n < w.length)
     (hma : a = ⊥ ∨ Bears node w[m] a)
     (hna : a = ⊥ ∨ Order.pred a = ⊥ ∨ Bears node w[n] (Order.pred a)) :
-    (linkNode node w a m n).Reads (tiers node) k (some (.inr f)) b ↔
-      (ofWord node (w.set n (spread node a w[m] w[n]))).Reads (tiers node) k
-        (some (.inr f)) b := by
-  refine AR.reads_spreadTier_iff (ofSpec node) (Option.some_ne_none _)
+    b ∈ (linkNode node w a m n).melody (tiers node) k (some (.inr f)) ↔
+      b ∈ (ofWord node (w.set n (spread node a w[m] w[n]))).melody (tiers node) k
+        (some (.inr f)) := by
+  refine AR.mem_melody_spreadTier_iff (ofSpec node) (Option.some_ne_none _)
     (fun s t ↦ length_tierWord_le_one node s t) (fun _ ↦ rfl)
     (fun s t ht ↦ link_ofSpec_parent_iff ht) hm hn (word_ofSpec_node_ne_nil.2 hma)
     (word_ofSpec_parent_ne_nil hna) ?_ ?_
@@ -473,18 +479,19 @@ theorem reads_linkNode_iff (hm : m < w.length) (hn : n < w.length)
         if (node g).isSome then (w[n] g).toList else []
       rw [spread_of_notMem hg]
 
-/-- Spreading a feature by a change of lines reads as copying its value. -/
-theorem reads_linkFeature_iff (hm : m < w.length) (hn : n < w.length) (hg : (node g).isSome)
+/-- Spreading a feature by a change of lines gives each slot the feature values of copying its
+value. -/
+theorem mem_melody_linkFeature_iff (hm : m < w.length) (hn : n < w.length) (hg : (node g).isSome)
     (hmg : (w[m] g).isSome) (hng : ∀ c ∈ node g, c = ⊥ ∨ Bears node w[n] c) :
-    (linkFeature node w g m n).Reads (tiers node) k (some (.inr f)) b ↔
-      (ofWord node (w.set n (Function.update w[n] g (w[m] g)))).Reads (tiers node) k
-        (some (.inr f)) b := by
+    b ∈ (linkFeature node w g m n).melody (tiers node) k (some (.inr f)) ↔
+      b ∈ (ofWord node (w.set n (Function.update w[n] g (w[m] g)))).melody (tiers node) k
+        (some (.inr f)) := by
   obtain ⟨c₀, hc₀⟩ := Option.isSome_iff_exists.1 hg
   obtain ⟨v, hv⟩ := Option.isSome_iff_exists.1 hmg
   have hp : (tiers node).parent (some (.inr g)) = some (.inl c₀) := by
     show tierParent node (some (.inr g)) = _
     simp [tierParent, hc₀]
-  refine AR.reads_spreadTier_iff (ofSpec node) (Option.some_ne_none _)
+  refine AR.mem_melody_spreadTier_iff (ofSpec node) (Option.some_ne_none _)
     (fun s t ↦ length_tierWord_le_one node s t) (fun _ ↦ rfl)
     (fun s t ht ↦ link_ofSpec_parent_iff ht) hm hn ?_ ?_ ?_ ?_
   · show (if (node g).isSome then (w[m] g).toList else []) ≠ []

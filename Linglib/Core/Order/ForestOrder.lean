@@ -9,6 +9,7 @@ public import Mathlib.Order.Comparable
 public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.SuccPred.Archimedean
+public import Linglib.Core.Order.BoundedComplete
 
 /-!
 # Forest orders
@@ -43,6 +44,16 @@ class IsForestOrder (α : Type*) [LE α] : Prop where
 
 instance (priority := 100) LinearOrder.toIsForestOrder [LinearOrder α] : IsForestOrder α :=
   ⟨fun a b _ _ _ ↦ le_total a b⟩
+
+/-- A forest is bounded complete: two elements with a common upper bound are comparable, and
+their join is the larger. -/
+instance (priority := 100) IsForestOrder.toIsBoundedComplete [Preorder α] [IsForestOrder α] :
+    IsBoundedComplete α where
+  exists_isLUB_of_bddAbove a b := fun ⟨_, hu⟩ ↦
+    (IsForestOrder.le_total_of_le_of_le (mem_upperBounds_pair.mp hu).1
+      (mem_upperBounds_pair.mp hu).2).elim
+      (fun h ↦ ⟨b, isLUB_pair_iff_forall_le.mpr ⟨h, le_rfl, fun _ _ hb ↦ hb⟩⟩)
+      fun h ↦ ⟨a, isLUB_pair_iff_forall_le.mpr ⟨le_rfl, h, fun _ ha _ ↦ ha⟩⟩
 
 instance (priority := 100) IsPredArchimedean.toIsForestOrder [Preorder α] [PredOrder α]
     [IsPredArchimedean α] : IsForestOrder α :=

@@ -5,22 +5,24 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.Part.Extensions
+public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Conditionals.Basic
-public import Studies.Fine2012
+public import Linglib.Semantics.Conditionals.Counterfactual.Transition
 
 /-!
 # Embry (2014): A Difficulty for Fine's Exact Semantics for Counterfactuals
 
-On the truth clause of [fine-2012] a counterfactual is true when every outcome of every exact
-verifier of its antecedent contains a verifier of its consequent. An atomic statement such as
-*it snowed* is determinable: each determinate snowfall verifies it. So where I ski after eight
+On the truth clause of [fine-2012], `Conditional.transitionImp`, a counterfactual is true when
+every outcome of every exact verifier of its antecedent contains a verifier of its consequent.
+An atomic statement such as *it snowed* is determinable: each determinate snowfall verifies
+it. So where I ski after eight
 inches and not after a hundred feet, *if it had snowed, I would have gone skiing* is false on
 that clause, because of the outcome of the hundred-foot verifier (`not_would_snowed`), although
 it is true of the eight-inch verifier taken alone (`would_eightInches`).
 
-Bringing in closeness between worlds to set the hundred-foot verifier aside costs one of the
-rules that the argument of [fine-2012] against the possible-worlds semantics relies on. Where
+Bringing in closeness between worlds to set the hundred-foot verifier aside costs Infinitary
+Conjunction or Disjunction, rules of the argument of [fine-2012] against the possible-worlds
+semantics. Where
 the antecedent-worlds approach the base world without a closest one, the conditional of
 [lewis-1973b] does not satisfy Infinitary Conjunction (`infinitary_conjunction_fails`), and
 Fine's alternative, on which the consequent must hold in the closest and in the stranded
@@ -29,7 +31,10 @@ antecedent-worlds, does not satisfy Disjunction (`disjunction_fails`).
 ## Implementation notes
 
 The states of the snowfall model are partial assignments to two variables, the snowfall and
-whether I ski, and an outcome of a snowfall adds the skiing it leads to. The paper states the
+whether I ski, and an outcome of a snowfall adds the skiing it leads to. Eight inches is taken
+as a snowfall after which I ski; the paper says that the counterfactual is true for many of the
+ways it could have snowed. Disjunction is stated as in the paper, for disjuncts that need not be
+exclusive; [fine-2012] states it for exclusive disjuncts. The paper states the
 two counterexamples of its dilemma for the clauses that add exact verification to closeness;
 they are stated here for the conditionals between propositions, on which those clauses rest.
 In them the antecedent-worlds are indexed by the natural numbers, a larger index being closer,
@@ -46,8 +51,7 @@ and the base world is the single point of evaluation.
 
 namespace Embry2014
 
-open Conditional Fine2012
-open scoped IsBoundedComplete
+open Conditional
 
 /-! ### A determinable antecedent -/
 
@@ -74,28 +78,27 @@ def snowedTo (d : Depth) : St := Function.update ⊥ V.snow (Part.some d)
 def skiing (b : Bool) : St := Function.update ⊥ V.ski (Part.some b)
 
 /-- The outcome of a snowfall adds the skiing it leads to: I ski after eight inches only. -/
-def outcome (_ : Unit) (t u : St) : Prop :=
-  ∃ d, t = snowedTo d ∧
-    u = Function.update (snowedTo d) V.ski (Part.some (decide (d = .eightInches)))
+def outcome (_ : Unit) : SetRel St St :=
+  {(t, u) | ∃ d, t = snowedTo d ∧
+    u = Function.update (snowedTo d) V.ski (Part.some (decide (d = .eightInches)))}
 
 /-- *It snowed*, verified by each positive snowfall. -/
-def snowed : Set (WithTop St) := {↑(snowedTo .eightInches), ↑(snowedTo .hundredFeet)}
+def snowed : Set St := {snowedTo .eightInches, snowedTo .hundredFeet}
 
 /-- *I went skiing*. -/
-def skis : Set (WithTop St) := {↑(skiing true)}
+def skis : Set St := {skiing true}
 
 theorem snowedTo_injective : Function.Injective snowedTo := fun d e h ↦ by
   have := congrFun h V.snow
   simpa [snowedTo] using this
 
 /-- An outcome of the snowfall `d` contains my skiing exactly when `d` is eight inches. -/
-theorem inexact_skis_iff {d : Depth} {u : St} (hu : outcome () (snowedTo d) u) :
-    Inexact skis u ↔ d = .eightInches := by
+theorem mem_upperClosure_skis_iff {d : Depth} {u : St} (hu : (snowedTo d, u) ∈ outcome ()) :
+    u ∈ upperClosure skis ↔ d = .eightInches := by
   obtain ⟨e, he, rfl⟩ := hu
   obtain rfl := snowedTo_injective he
   constructor
-  · rintro ⟨c, hc, hcu⟩
-    obtain rfl : c = skiing true := WithTop.coe_injective hc
+  · rintro ⟨c, rfl, hcu⟩
     have := hcu V.ski true (by simp [skiing])
     simpa using this
   · rintro rfl
@@ -104,20 +107,19 @@ theorem inexact_skis_iff {d : Depth} {u : St} (hu : outcome () (snowedTo d) u) :
 
 -- true of the eight-inch verifier
 theorem would_eightInches :
-    () ∈ would outcome {(↑(snowedTo .eightInches) : WithTop St)} skis := by
-  rintro a rfl t ht u hu
-  obtain rfl := WithTop.coe_injective ht
-  exact (inexact_skis_iff hu).mpr rfl
+    () ∈ transitionImp outcome {snowedTo .eightInches} (upperClosure skis) := by
+  rintro u ⟨t, rfl, hu⟩
+  exact (mem_upperClosure_skis_iff hu).mpr rfl
 
 -- (3b)
 theorem not_would_hundredFeet :
-    () ∉ would outcome {(↑(snowedTo .hundredFeet) : WithTop St)} skis := fun h ↦
-  absurd ((inexact_skis_iff ⟨_, rfl, rfl⟩).mp (h rfl _ rfl _ ⟨_, rfl, rfl⟩)) (by decide)
+    () ∉ transitionImp outcome {snowedTo .hundredFeet} (upperClosure skis) := fun h ↦
+  absurd ((mem_upperClosure_skis_iff ⟨_, rfl, rfl⟩).mp (h ⟨_, rfl, _, rfl, rfl⟩)) (by decide)
 
 /-- (3a) is false on the truth clause of exact semantics: the outcome of the hundred-foot
 verifier contains no skiing. -/
-theorem not_would_snowed : () ∉ would outcome snowed skis := fun h ↦
-  not_would_hundredFeet fun _ ha ↦ h (Set.mem_insert_of_mem _ ha)
+theorem not_would_snowed : () ∉ transitionImp outcome snowed (upperClosure skis) := fun h ↦
+  not_would_hundredFeet (transitionImp_anti (Set.subset_insert _ _) h)
 
 /-! ### The dilemma for a repair by closeness -/
 
