@@ -319,21 +319,21 @@ question under *must* is defined exactly when its phrase ranges over disjunction
 with the free choice disjunction as its answer. Individuals, and so *-ro*, demand a particular
 thing, and disjunctions of pluralities are false where one thing alone was bought. -/
 theorem Range.freeChoice_iff (hs : s ⊆ Ici a ∪ Ici b) (r : Range) (m : Marking) :
-    IsExhaustivelyResolvable (box (r.hamblinSet m) permits) s ↔
+    HasStrongestTrueAnswer (box (r.hamblinSet m) permits) s ↔
       r = .quantifiers ∧ m ≠ .plural := by
-  rw [isExhaustivelyResolvable_box_iff _ permits_singleton (x := s) (s := s) fun _ ↦ Iff.rfl]
+  rw [hasStrongestTrueAnswer_box_iff _ permits_singleton (x := s) (s := s) fun _ ↦ Iff.rfl]
   have hdis := ha.disjoint_of_ne hb hab
   have atoms {m : Marking} (hm : m ≠ .plural) :
-      IsExhaustivelyResolvableOn (hamblin Ici m.domain) s :=
+      HasStrongestAnswerOn (hamblin Ici m.domain) s :=
     ⟨_, isLeast_supported_hamblin_pair ((Marking.atom_mem_domain_iff ha m).2 hm)
       ((Marking.atom_mem_domain_iff hb m).2 hm) has hbs hs⟩
   cases r with
   | individuals =>
-    exact iff_of_false (not_isExhaustivelyResolvableOn_image_Ici (fun h ↦ h.2 rfl) hdis has hbs)
+    exact iff_of_false (not_hasStrongestAnswerOn_image_Ici (fun h ↦ h.2 rfl) hdis has hbs)
       (by simp)
   | singletons =>
     simp only [hamblinSet, hamblinRo_eq_image, reduceCtorEq, false_and, iff_false]
-    exact not_isExhaustivelyResolvableOn_image_Ici (bot_notMem_domain m) hdis has hbs
+    exact not_hasStrongestAnswerOn_image_Ici (bot_notMem_domain m) hdis has hbs
   | quantifiers =>
     cases m
     · exact iff_of_true (atoms (by simp)) (by simp)
@@ -422,7 +422,7 @@ example := rows_agree (E := Set (Fin 2)) (Set.isAtom_singleton 0) (Set.isAtom_si
 -- (60)–(63)
 theorem scenario_rows (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (has : a ∈ s) (hbs : b ∈ s)
     (hs : s ⊆ Ici a ∪ Ici b) : ∀ e ∈ Examples.all, ∀ i ∈ wh? e, ∀ v ∈ e.verdict,
-      (IsExhaustivelyResolvable (box (i.1.hamblinSet i.2) permits) s ↔ v = true) := by
+      (HasStrongestTrueAnswer (box (i.1.hamblinSet i.2) permits) s ↔ v = true) := by
   simp only [Range.freeChoice_iff ha hb hab has hbs hs]
   decide +kernel
 
@@ -442,7 +442,7 @@ def freeChoiceAnswer? (e : Datum) : Option (Range × Marking) :=
 -- (30), (31)
 theorem freeChoiceAnswer_rows (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (has : a ∈ s)
     (hbs : b ∈ s) (hs : s ⊆ Ici a ∪ Ici b) : ∀ e ∈ Examples.all, ∀ i ∈ freeChoiceAnswer? e,
-      (IsExhaustivelyResolvable (box (i.1.hamblinSet i.2) permits) s ↔
+      (HasStrongestTrueAnswer (box (i.1.hamblinSet i.2) permits) s ↔
         e.readings.lookup "free choice answer" = some .acceptable) := by
   simp only [Range.freeChoice_iff ha hb hab has hbs hs]
   decide +kernel

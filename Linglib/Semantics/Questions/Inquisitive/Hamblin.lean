@@ -99,8 +99,8 @@ theorem isStrongestTrueAnswer_polar_of_neg (hwp : w ∉ p) :
   rw [IsStrongestTrueAnswer, trueAnswers_polar_of_neg hne hnu hwp]
   exact isLeast_singleton pᶜ
 
-theorem isExhaustivelyResolvable_polar_of_nontrivial (w : W) :
-    IsExhaustivelyResolvable (alt (polar p)) w := by
+theorem hasStrongestTrueAnswer_polar_of_nontrivial (w : W) :
+    HasStrongestTrueAnswer (alt (polar p)) w := by
   by_cases hwp : w ∈ p
   · exact ⟨p, isStrongestTrueAnswer_polar_of_pos hne hnu hwp⟩
   · exact ⟨pᶜ, isStrongestTrueAnswer_polar_of_neg hne hnu hwp⟩

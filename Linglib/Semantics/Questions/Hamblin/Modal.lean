@@ -101,9 +101,9 @@ def box {W' : Type*} (R : SetRel W' W) : Set (Set W') := R.core '' H
 theorem mem_box {W' : Type*} {R : SetRel W' W} {q : Set W'} :
     q ∈ box H R ↔ ∃ p ∈ H, R.core p = q := Iff.rfl
 
-theorem isExhaustivelyResolvable_box_iff {W' : Type*} {R : SetRel W' W}
+theorem hasStrongestTrueAnswer_box_iff {W' : Type*} {R : SetRel W' W}
     (hR : ∀ v, ∃ x, ∀ u, x ~[R] u ↔ u = v) {x : W'} {s : Set W} (hs : ∀ v, x ~[R] v ↔ v ∈ s) :
-    IsExhaustivelyResolvable (box H R) x ↔ IsExhaustivelyResolvableOn H s := by
+    HasStrongestTrueAnswer (box H R) x ↔ HasStrongestAnswerOn H s := by
   have mem : ∀ p, x ∈ R.core p ↔ s ⊆ p := fun p =>
     ⟨fun h v hv => h ((hs v).2 hv), fun h v hv => h ((hs v).1 hv)⟩
   have mono : ∀ p q : Set W, p ⊆ q → R.core p ⊆ R.core q := fun _ _ ↦ core_subset_core

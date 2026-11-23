@@ -61,7 +61,7 @@ the same strongest true member as `w`. -/
 noncomputable def dayalStrongAns : Option (Set W) := (dayalAns H w).map (Exhaustification.exh H)
 
 theorem dayalStrongAns_eq_some_iff {A : Set W} :
-    dayalStrongAns H w = some A ↔ IsExhaustivelyResolvable H w ∧ A = strongAnswer H w := by
+    dayalStrongAns H w = some A ↔ HasStrongestTrueAnswer H w ∧ A = strongAnswer H w := by
   simp only [dayalStrongAns, Option.map_eq_some_iff, dayalAns_eq_some_iff]
   constructor
   · rintro ⟨p, hp, rfl⟩
@@ -73,7 +73,7 @@ theorem dayalStrongAns_eq_some_iff {A : Set W} :
 strong operator. -/
 theorem dayalStrongAns_eq_some_iff_eq_setOf {A : Set W} :
     dayalStrongAns H w = some A ↔
-      IsExhaustivelyResolvable H w ∧ A = {v | dayalAns H v = dayalAns H w} := by
+      HasStrongestTrueAnswer H w ∧ A = {v | dayalAns H v = dayalAns H w} := by
   rw [dayalStrongAns_eq_some_iff]
   refine and_congr_right fun ⟨p, hp⟩ ↦ ?_
   rw [(dayalAns_eq_some_iff H w).2 hp, ← exh_eq_strongAnswer H w hp]
@@ -83,8 +83,8 @@ theorem dayalStrongAns_eq_some_iff_eq_setOf {A : Set W} :
 variable {H} in
 /-- The presupposition holds throughout `C` exactly when, for each world of `C`, exhaustifying some
 member gives its cell inside `C`. -/
-theorem forall_isExhaustivelyResolvable_iff_exh_inter (C : Set W) :
-    (∀ w ∈ C, IsExhaustivelyResolvable H w) ↔
+theorem forall_hasStrongestTrueAnswer_iff_exh_inter (C : Set W) :
+    (∀ w ∈ C, HasStrongestTrueAnswer H w) ↔
       ∀ w ∈ C, ∃ p ∈ H, Exhaustification.exh H p ∩ C = strongAnswer H w ∩ C := by
   refine ⟨fun h w hw ↦ ?_, fun h w hw ↦ ?_⟩
   · obtain ⟨p, hp⟩ := h w hw
@@ -96,11 +96,11 @@ theorem forall_isExhaustivelyResolvable_iff_exh_inter (C : Set W) :
 variable {H} in
 /-- The presupposition holds everywhere exactly when every cell of the partition is the
 exhaustification of a member. -/
-theorem forall_isExhaustivelyResolvable_iff_classes_subset :
-    (∀ w, IsExhaustivelyResolvable H w) ↔
+theorem forall_hasStrongestTrueAnswer_iff_classes_subset :
+    (∀ w, HasStrongestTrueAnswer H w) ↔
       (Setoid.ofProps H).classes ⊆ Exhaustification.exh H '' H := by
   rw [classes_ofProps, Set.range_subset_iff]
-  simpa using forall_isExhaustivelyResolvable_iff_exh_inter (H := H) Set.univ
+  simpa using forall_hasStrongestTrueAnswer_iff_exh_inter (H := H) Set.univ
 
 variable {H w} in
 theorem not_dominated_of_isStrongestTrueAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
@@ -111,7 +111,7 @@ theorem not_dominated_of_isStrongestTrueAnswer {p : Set W} (h : IsStrongestTrueA
 variable {H} in
 /-- Where the presupposition holds everywhere, a member that is not dominated is the strongest true
 one somewhere. -/
-theorem exists_isStrongestTrueAnswer_of_not_dominated (h : ∀ w, IsExhaustivelyResolvable H w)
+theorem exists_isStrongestTrueAnswer_of_not_dominated (h : ∀ w, HasStrongestTrueAnswer H w)
     {p : Set W} (hp : p ∈ H) (hd : ¬ Exhaustification.Dominated H p) :
     ∃ w, IsStrongestTrueAnswer H w p := by
   obtain ⟨w, hwp, hw⟩ := Set.not_subset.1 hd

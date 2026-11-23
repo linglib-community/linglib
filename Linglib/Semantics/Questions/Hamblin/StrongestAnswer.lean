@@ -12,10 +12,10 @@ Let `H` be a Hamblin set. A strongest true answer at a world `w` is a member of 
 which unfolds to `IsLeast (trueAnswers H w) p`.
 
 [dayal-1996] proposes that a question presupposes that it has a strongest true answer. We call this
-condition `IsExhaustivelyResolvable H w`.
+condition `HasStrongestTrueAnswer H w`.
 
 The main result is that the presupposition holds at `w` if and only if the weak answer at `w` is
-itself a member of `H`. See `Question.isExhaustivelyResolvable_iff`.
+itself a member of `H`. See `Question.hasStrongestTrueAnswer_iff`.
 
 ## References
 
@@ -39,12 +39,12 @@ at `w`, [dayal-1996]'s maximally informative true member. -/
 abbrev IsStrongestTrueAnswer (p : Set W) : Prop := IsLeast (trueAnswers H w) p
 
 /-- Dayal's existential presupposition holds at `w` when a strongest true member exists. -/
-def IsExhaustivelyResolvable : Prop := ∃ p, IsStrongestTrueAnswer H w p
+def HasStrongestTrueAnswer : Prop := ∃ p, IsStrongestTrueAnswer H w p
 
 /-- The worlds where Dayal's existential presupposition holds. -/
-def presupposition : Set W := {w | IsExhaustivelyResolvable H w}
+def presupposition : Set W := {w | HasStrongestTrueAnswer H w}
 
-@[simp] theorem mem_presupposition : w ∈ presupposition H ↔ IsExhaustivelyResolvable H w := Iff.rfl
+@[simp] theorem mem_presupposition : w ∈ presupposition H ↔ HasStrongestTrueAnswer H w := Iff.rfl
 
 theorem isStrongestTrueAnswer_iff {p : Set W} :
     IsStrongestTrueAnswer H w p ↔ p ∈ H ∧ p = weakAnswer H w := by
@@ -55,14 +55,14 @@ theorem isStrongestTrueAnswer_iff {p : Set W} :
   · rintro ⟨hp, rfl⟩
     exact ⟨⟨hp, self_mem_weakAnswer H w⟩, fun _ hq => Set.sInter_subset_of_mem hq⟩
 
-theorem isExhaustivelyResolvable_iff : IsExhaustivelyResolvable H w ↔ weakAnswer H w ∈ H :=
+theorem hasStrongestTrueAnswer_iff : HasStrongestTrueAnswer H w ↔ weakAnswer H w ∈ H :=
   ⟨fun ⟨_, h⟩ =>
     have h' := (isStrongestTrueAnswer_iff H w).1 h
     h'.2 ▸ h'.1,
    fun h => ⟨_, (isStrongestTrueAnswer_iff H w).2 ⟨h, rfl⟩⟩⟩
 
-theorem IsExhaustivelyResolvable.exists_mem {H : Set (Set W)} {w : W}
-    (h : IsExhaustivelyResolvable H w) : ∃ p ∈ H, w ∈ p :=
+theorem HasStrongestTrueAnswer.exists_mem {H : Set (Set W)} {w : W}
+    (h : HasStrongestTrueAnswer H w) : ∃ p ∈ H, w ∈ p :=
   let ⟨p, hp⟩ := h; ⟨p, hp.1.1, hp.1.2⟩
 
 /-- When the members exclude one another, Dayal's presupposition is that one of them is true. -/
@@ -101,8 +101,8 @@ theorem trueAnswers_range (P : α → Set W) (w : W) :
     trueAnswers (Set.range P) w = P '' {a | w ∈ P a} := by
   rw [← Set.image_univ, trueAnswers_image, Set.sep_univ]
 
-theorem isExhaustivelyResolvable_range_iff (P : α → Set W) (w : W) :
-    IsExhaustivelyResolvable (Set.range P) w ↔
+theorem hasStrongestTrueAnswer_range_iff (P : α → Set W) (w : W) :
+    HasStrongestTrueAnswer (Set.range P) w ↔
       ∃ a, w ∈ P a ∧ ∀ b, w ∈ P b → P a ⊆ P b := by
   constructor
   · rintro ⟨p, ⟨⟨a, rfl⟩, hw⟩, hmin⟩
@@ -115,8 +115,8 @@ theorem isStrongestTrueAnswer_range_iff {P : α → Set W} {a : α} {w : W} :
   rw [IsStrongestTrueAnswer, trueAnswers_range]
   exact and_congr ⟨fun ⟨_, hb, h⟩ => h ▸ hb, fun h => ⟨a, h, rfl⟩⟩ Set.forall_mem_image
 
-theorem isExhaustivelyResolvable_range_iff_exists {P : α → Set W} {w : W} :
-    IsExhaustivelyResolvable (Set.range P) w ↔
+theorem hasStrongestTrueAnswer_range_iff_exists {P : α → Set W} {w : W} :
+    HasStrongestTrueAnswer (Set.range P) w ↔
       ∃ a, IsStrongestTrueAnswer (Set.range P) w (P a) := by
   refine ⟨fun ⟨p, hp⟩ => ?_, fun ⟨a, ha⟩ => ⟨_, ha⟩⟩
   obtain ⟨⟨a, rfl⟩, -⟩ := hp.1
@@ -126,15 +126,15 @@ section LinearOrder
 
 variable [LinearOrder α] {φ : α → Set W} {w : W}
 
-theorem isExhaustivelyResolvable_range_iff_isGreatest (hφ : StrictAnti φ) :
-    IsExhaustivelyResolvable (Set.range φ) w ↔ ∃ m, IsGreatest {d | w ∈ φ d} m := by
-  rw [isExhaustivelyResolvable_range_iff]
+theorem hasStrongestTrueAnswer_range_iff_isGreatest (hφ : StrictAnti φ) :
+    HasStrongestTrueAnswer (Set.range φ) w ↔ ∃ m, IsGreatest {d | w ∈ φ d} m := by
+  rw [hasStrongestTrueAnswer_range_iff]
   exact ⟨fun ⟨x, hxw, hent⟩ => ⟨x, hxw, fun y hy => not_lt.1 fun hxy => (hφ hxy).2 (hent y hy)⟩,
     fun ⟨m, hm⟩ => ⟨m, hm.1, fun _ hb => hφ.antitone (hm.2 hb)⟩⟩
 
-theorem isExhaustivelyResolvable_range_iff_isLeast (hφ : StrictMono φ) :
-    IsExhaustivelyResolvable (Set.range φ) w ↔ ∃ m, IsLeast {d | w ∈ φ d} m :=
-  isExhaustivelyResolvable_range_iff_isGreatest (φ := fun d : αᵒᵈ => φ (OrderDual.ofDual d))
+theorem hasStrongestTrueAnswer_range_iff_isLeast (hφ : StrictMono φ) :
+    HasStrongestTrueAnswer (Set.range φ) w ↔ ∃ m, IsLeast {d | w ∈ φ d} m :=
+  hasStrongestTrueAnswer_range_iff_isGreatest (φ := fun d : αᵒᵈ => φ (OrderDual.ofDual d))
     fun _ _ h => hφ h
 
 end LinearOrder
@@ -155,8 +155,8 @@ theorem isStrongestTrueAnswer_iff_of_antichain (hH : IsAntichain (· ⊆ ·) H) 
     rw [IsStrongestTrueAnswer, h]
     exact isLeast_singleton p
 
-theorem isExhaustivelyResolvable_iff_of_antichain (hH : IsAntichain (· ⊆ ·) H) :
-    IsExhaustivelyResolvable H w ↔ ∃ p, trueAnswers H w = {p} :=
+theorem hasStrongestTrueAnswer_iff_of_antichain (hH : IsAntichain (· ⊆ ·) H) :
+    HasStrongestTrueAnswer H w ↔ ∃ p, trueAnswers H w = {p} :=
   exists_congr fun _ => isStrongestTrueAnswer_iff_of_antichain H w hH
 
 open Classical in
@@ -177,12 +177,12 @@ theorem dayalAns_eq_some_iff {p : Set W} :
       rw [e]
   · exact ⟨fun e => (by simp at e), fun ⟨hp, e⟩ => (h (e ▸ hp)).elim⟩
 
-theorem dayalAns_isSome_iff : (dayalAns H w).isSome ↔ IsExhaustivelyResolvable H w := by
-  rw [isExhaustivelyResolvable_iff, dayalAns]
+theorem dayalAns_isSome_iff : (dayalAns H w).isSome ↔ HasStrongestTrueAnswer H w := by
+  rw [hasStrongestTrueAnswer_iff, dayalAns]
   split_ifs with h <;> simp [h]
 
-theorem dayalAns_eq_none_iff : dayalAns H w = none ↔ ¬ IsExhaustivelyResolvable H w := by
-  rw [isExhaustivelyResolvable_iff, dayalAns]
+theorem dayalAns_eq_none_iff : dayalAns H w = none ↔ ¬ HasStrongestTrueAnswer H w := by
+  rw [hasStrongestTrueAnswer_iff, dayalAns]
   split_ifs with h <;> simp [h]
 
 /-! ### Resolvability on an information state -/
@@ -198,11 +198,11 @@ def supported (s : Set W) : Set (Set W) := {p ∈ H | s ⊆ p}
 
 /-- Dayal's presupposition holds on an information state when the state supports a least member.
 On the singleton state `{w}` it is the presupposition at `w`. -/
-def IsExhaustivelyResolvableOn (s : Set W) : Prop := ∃ p, IsLeast (supported H s) p
+def HasStrongestAnswerOn (s : Set W) : Prop := ∃ p, IsLeast (supported H s) p
 
-theorem isExhaustivelyResolvableOn_singleton :
-    IsExhaustivelyResolvableOn H {w} ↔ IsExhaustivelyResolvable H w := by
-  rw [IsExhaustivelyResolvableOn, supported_singleton]
+theorem hasStrongestAnswerOn_singleton :
+    HasStrongestAnswerOn H {w} ↔ HasStrongestTrueAnswer H w := by
+  rw [HasStrongestAnswerOn, supported_singleton]
   rfl
 
 end Question

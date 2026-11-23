@@ -30,7 +30,7 @@ communicative stability](##Enguehard2025.weaklyStable_iff_isOptimal).
   atom for `i` is `{I | i ∈ I}`, the Montague lift `Quantifier.individual i` of the name in
   *Ann came to the party*. Upward monotonicity is `IsUpperSet`; the conjunction and the disjunction
   of the atoms in `I` and outside `I` are `Set.Ici I` and `(Set.Iic I)ᶜ`.
-* Strong stability is `Question.IsExhaustivelyResolvable` at every world. Weak stability is read
+* Strong stability is `Question.HasStrongestTrueAnswer` at every world. Weak stability is read
   as printed: a strongest true member, or only atoms among the minimal true members. At a world
   where nothing is true this holds vacuously.
 * The theorem relating strong stability to exhaustification assumes finitely many alternatives,
@@ -89,7 +89,7 @@ variable {W ι : Type*}
 
 /-- A set of alternatives is strongly stable when every world has a strongest true member,
 Dayal's condition on answers (STA). -/
-def StronglyStable (A : Set (Set W)) : Prop := ∀ w, IsExhaustivelyResolvable A w
+def StronglyStable (A : Set (Set W)) : Prop := ∀ w, HasStrongestTrueAnswer A w
 
 /-- (31): bilaterally strongly stable, when the alternatives and their negations are both strongly
 stable; for the negations this is the weakest false answer condition (WFA). -/
@@ -99,7 +99,7 @@ def BilaterallyStronglyStable (A : Set (Set W)) : Prop :=
 /-- Weakly stable over the atoms (non-atomic STA): every world has a strongest true member, or
 only atoms are minimal among the true members. -/
 def WeaklyStable (atoms A : Set (Set W)) : Prop :=
-  ∀ w, IsExhaustivelyResolvable A w ∨ ∀ φ, Minimal (· ∈ trueAnswers A w) φ → φ ∈ atoms
+  ∀ w, HasStrongestTrueAnswer A w ∨ ∀ φ, Minimal (· ∈ trueAnswers A w) φ → φ ∈ atoms
 
 /-- Bilaterally weakly stable: the alternatives weakly stable over the atoms, and their negations
 over the negated atoms. -/
@@ -134,7 +134,7 @@ theorem tfae_stronglyStable (A : Set (Set W)) (hA : A.Finite) :
         (Setoid.ofProps A).classes] := by
   rw [classes_ofProps]
   tfae_have 1 ↔ 2 := by
-    rw [← classes_ofProps]; exact forall_isExhaustivelyResolvable_iff_classes_subset
+    rw [← classes_ofProps]; exact forall_hasStrongestTrueAnswer_iff_classes_subset
   have hA' : {φ ∈ A | ¬ Dominated A φ}.Finite := hA.subset (sep_subset _ _)
   have hne : ∀ {B : Set (Set W)} {w p}, IsStrongestTrueAnswer B w p → (exh B p).Nonempty :=
     fun {_ w _} hp ↦ ⟨w, (mem_exh_iff_isStrongestTrueAnswer hp.1.1).2 hp⟩

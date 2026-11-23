@@ -162,8 +162,8 @@ theorem not_isMIPLicensed_of_not_isLeast {N : Type*} [LinearOrder N] {φ : N →
 theorem isMIPLicensed_of_isGreatest {N : Type*} [LinearOrder N] {φ : N → Set W}
     (hφ : StrictAnti φ) {w : W} (h : ∃ n, IsGreatest {m | w ∈ φ m} n) : IsMIPLicensed φ := by
   obtain ⟨n, hn⟩ :=
-    isExhaustivelyResolvable_range_iff_exists.1
-      ((isExhaustivelyResolvable_range_iff_isGreatest hφ).2 h)
+    hasStrongestTrueAnswer_range_iff_exists.1
+      ((hasStrongestTrueAnswer_range_iff_isGreatest hφ).2 h)
   refine ⟨w, n, hn, fun m hm ↦ hφ.injective (subset_antisymm ?_ ?_)⟩
   exacts [(isStrongestTrueAnswer_range_iff.1 hm).2 n (isStrongestTrueAnswer_range_iff.1 hn).1,
     (isStrongestTrueAnswer_range_iff.1 hn).2 m (isStrongestTrueAnswer_range_iff.1 hm).1]
@@ -171,8 +171,8 @@ theorem isMIPLicensed_of_isGreatest {N : Type*} [LinearOrder N] {φ : N → Set 
 theorem isMIPLicensed_of_isLeast {N : Type*} [LinearOrder N] {φ : N → Set W}
     (hφ : StrictMono φ) {w : W} (h : ∃ n, IsLeast {m | w ∈ φ m} n) : IsMIPLicensed φ := by
   obtain ⟨n, hn⟩ :=
-    isExhaustivelyResolvable_range_iff_exists.1
-      ((isExhaustivelyResolvable_range_iff_isLeast hφ).2 h)
+    hasStrongestTrueAnswer_range_iff_exists.1
+      ((hasStrongestTrueAnswer_range_iff_isLeast hφ).2 h)
   refine ⟨w, n, hn, fun m hm ↦ hφ.injective (subset_antisymm ?_ ?_)⟩
   exacts [(isStrongestTrueAnswer_range_iff.1 hm).2 n (isStrongestTrueAnswer_range_iff.1 hn).1,
     (isStrongestTrueAnswer_range_iff.1 hn).2 m (isStrongestTrueAnswer_range_iff.1 hm).1]

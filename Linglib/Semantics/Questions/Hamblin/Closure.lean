@@ -200,9 +200,9 @@ end Preorder
 
 /-- Over individuals, a state with two disjoint elements supports no member: there is no one
 individual below both. -/
-theorem not_isExhaustivelyResolvableOn_image_Ici [PartialOrder E] [OrderBot E] (hD : ⊥ ∉ D)
+theorem not_hasStrongestAnswerOn_image_Ici [PartialOrder E] [OrderBot E] (hD : ⊥ ∉ D)
     (hab : Disjoint a b) (has : a ∈ s) (hbs : b ∈ s) :
-    ¬ IsExhaustivelyResolvableOn (Ici '' D) s := by
+    ¬ HasStrongestAnswerOn (Ici '' D) s := by
   rintro ⟨_, ⟨⟨x, hx, rfl⟩, hxs⟩, -⟩
   exact hD (le_bot_iff.1 (hab (hxs has) (hxs hbs)) ▸ hx)
 
