@@ -370,26 +370,6 @@ theorem mul_eq_sep_of_uniformAt (hs' : UniformAt X s') :
     obtain ⟨p, hp, hpr, hdom⟩ := mem_mul_stratum.mp hr
     exact ⟨p, hp, _, hq, Possibility.isLUB_restrict hpr hdom⟩
 
-/-- The proposition state of an atomic predicate at card `x`: the points of
-the stratum `{x}` whose value at `x` satisfies the predicate at their world. -/
-def atomAt (x : V) (pred : W → M → Prop) : State W V M :=
-  {q ∈ (stratum {x} : State W V M) | ∃ m ∈ q.assignment x, pred q.world m}
-
-theorem uniformAt_atomAt {x : V} {pred : W → M → Prop} :
-    UniformAt {x} (atomAt x pred : State W V M) := fun _ h ↦ h.1
-
-theorem mul_atomAt {x : V} {pred : W → M → Prop} :
-    s * atomAt x pred = {r ∈ s * stratum {x} | ∃ m ∈ r.assignment x, pred r.world m} := by
-  rw [mul_eq_sep_of_uniformAt uniformAt_atomAt]
-  ext r
-  refine and_congr_right fun hr ↦ ?_
-  have hx : x ∈ r.domain := familiar_mul_stratum (Set.mem_singleton x) r hr
-  show ((r.restrict {x}).domain = {x} ∧
-    ∃ m ∈ (r.restrict {x}).assignment x, pred (r.restrict {x}).world m) ↔ _
-  rw [Possibility.restrict_assignment_of_mem (Set.mem_singleton x), Possibility.domain_restrict,
-    Set.inter_eq_left.mpr (Set.singleton_subset_iff.mpr hx)]
-  exact and_iff_right rfl
-
 theorem UniformAt.isAntichain (hs : UniformAt X s) :
     IsAntichain (· ≤ ·) (s : Set (Possibility W V (Part M))) :=
   fun p hp q hq hne hpq =>
