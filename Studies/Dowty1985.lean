@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.ArgumentStructure.Control
+public import Linglib.Semantics.ArgumentStructure.Relation.Control
 
 /-!
 # Dowty (1985): On Recent Analyses of the Semantics of Control
@@ -55,8 +55,9 @@ def ofRAnalysis (r : (W → Prop) → N → W → Prop) : (N → W → Prop) →
 it reads the property only at that noun-phrase meaning, so the R-analysis describes a function of
 two things. -/
 theorem rAnalysis_iff {δ : (N → W → Prop) → N → W → Prop} :
-    (∃ r, δ = ofRAnalysis r) ↔ IsControlledAt δ id :=
-  isControlledAt_iff.trans (exists_congr fun _ ↦ by simp only [funext_iff, ofRAnalysis, id]) |>.symm
+    (∃ r, δ = ofRAnalysis r) ↔ IsControlledAt δ (id : N → N) :=
+  isControlledAt_coe_iff.trans
+    (exists_congr fun _ ↦ by simp only [funext_iff, ofRAnalysis, id]) |>.symm
 
 /-- (13): the meaning of a Raising verb is a property `S` of the proposition its complement forms
 with its subject. -/
@@ -92,7 +93,7 @@ what it entails of its subject at a world, it entails there of every noun-phrase
 theorem postulate9_trivial {δ : (N → W → Prop) → N → W → Prop} (h : Postulate15 δ)
     {α : N → W → Prop} (hα : ∀ P a w, δ P a w → α a w) {P : N → W → Prop} {a : N} {w : W}
     (hδ : δ P a w) (b : N) : α b w :=
-  hα (fun _ ↦ P a) b w ((h a b P (fun _ ↦ P a) (fun _ ↦ Iff.rfl) w).1 hδ)
+  (postulate15_iff_isRaisingAt.1 h).le_of_le (fun P a w ↦ hα P a w) P a b w hδ
 
 -- p. 304
 /-- The Raising relations are a proper subclass of the relations between a property and a

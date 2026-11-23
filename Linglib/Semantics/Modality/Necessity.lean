@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Background
+public import Linglib.Semantics.Modality.Basic
 public import Linglib.Core.Order.Filter.AtBotOn
 public import Linglib.Semantics.Modality.ComparativePossibility
 public import Linglib.Logic.Modal.Basic
@@ -23,6 +24,8 @@ union](##Modality.humanNecessity_eq_simpleNecessity_sup).
 * `simpleNecessity f w`, `humanNecessity f g w`: the necessities at `w`, each a `Filter W`.
 * `simplePossibility f w`, `humanPossibility f g w`: their duals.
 * `goodPossibility f g w`, `LimitAssumption f g w`.
+* `QuantificationalForce.claim N p q`: where a modal of quantificational force `q` holds of `p`
+  over the necessities `N`.
 
 ## Implementation notes
 
@@ -222,6 +225,41 @@ theorem goodPossibility_bot_iff :
     goodPossibility f ⊥ w s ↔ (f.accessibleWorlds w).Nonempty ∧ s ∈ simpleNecessity f w :=
   ⟨fun ⟨u, hu, h⟩ ↦ ⟨⟨u, hu⟩, fun v hv ↦ h v hv fun _ h ↦ h.elim⟩,
     fun ⟨⟨u, hu⟩, h⟩ ↦ ⟨u, hu, fun _ hv _ ↦ h hv⟩⟩
+
+/-! ### Claims of a quantificational force -/
+
+namespace QuantificationalForce
+
+variable (N : W → Filter W) (p : Set W)
+
+/-- The claim a modal of quantificational force `q` makes about `p` over the necessities `N`: that
+`p` is a necessity, or that its negation is not. -/
+def claim : QuantificationalForce → Set W
+  | .universal => {w | p ∈ N w}
+  | .existential => {w | ∃ᶠ v in N w, v ∈ p}
+
+variable {N p}
+
+@[simp] theorem mem_claim_universal : w ∈ claim N p .universal ↔ p ∈ N w := .rfl
+
+@[simp] theorem mem_claim_existential : w ∈ claim N p .existential ↔ ∃ᶠ v in N w, v ∈ p := .rfl
+
+/-- Over consistent necessities the universal claim entails the existential one. -/
+theorem antitone_claim (hN : ∀ w, (N w).NeBot) : Antitone (claim N p) := by
+  intro q r hqr w hw
+  have := hN w
+  cases q <;> cases r
+  exacts [hw, Eventually.frequently hw, absurd hqr (by decide), hw]
+
+variable (N p)
+
+/-- The negation of a claim is the dual claim about the negated prejacent. -/
+theorem compl_claim (q : QuantificationalForce) : (claim N p q)ᶜ = claim N pᶜ q.dual := by
+  ext w
+  cases q
+  exacts [not_frequently, not_eventually]
+
+end QuantificationalForce
 
 /-! ### Unified backgrounds
 
