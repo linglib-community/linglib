@@ -12,6 +12,11 @@ public import Linglib.Fragments.Turkish.Verbs
 This file checks the account of the form and order of Turkish suffixes in the reference
 grammar of Göksel and Kerslake against the Turkish Fragment.
 
+The example words of Chapters 3, 6 and 8 are rows of the data, each naming its stem and its
+suffixes, and every one of them is written as the surface form of that stem with those
+suffixes (`printed`). A person marker is read as one of group 1 or of group 2 by the suffix
+before it (§8.4), and a possessive by the suffix after it (§8.1.2).
+
 The vowel harmony of Chapter 3 is derived by the surface forms of `Turkish.Phonology` from the
 exponent forms of `Turkish.Morphotactics`. Harmony and the voicing of a suffix-initial stop fill
 features in and change none, so each harmonized segment is at least its underlying segment in
@@ -85,108 +90,110 @@ def Examples.Lexeme.stem : Examples.Lexeme → List Segment
   | .bak => [b, a, k]
   | .gol => [g, o, l']
   | .hal => [h, a, l']
+  | .kal => [k, a, l]
+  | .dus => [d, ü, ş]
+  | .pul => [p, u, l]
+  | .ev => [e, v]
+  | .araba => [a, r, a, b, a]
+  | .ara => [a, r, a]
+  | .sor => [s, o, r]
+  | .atla => [a, t, l, a]
+  | .suna => [s, u, n, a]
+  | .betul => [b, e, t, ü, l]
+  | .emine => [e, m, i, n, e]
+  | .elbise => [e, l, b, i, s, e]
+  | .tepe => [t, e, p, e]
+  | .yuz => [y, ü, z]
+  | .oda => [o, d, a]
+  | .masa => [m, a, s, a]
+  | .okul => [o, k, u, l]
+  | .hasta => [h, a, s, t, a]
+  | .kat => [k, a, t]
+  | .anla => [a, n, l, a]
+  | .oksa => [o, k, ş, a]
+  | .bekle => [b, e, k, l, e]
+  | .ozle => [ö, z, l, e]
+  | .eri => [e, r, i]
+  | .kuru => [k, u, r, u]
+  | .sakla => [s, a, k, l, a]
+  | .soyle => [s, ö, y, l, e]
+  | .yap => [y, a, p]
+  | .koy => [k, o, y]
+  | .ol => [ö, l]
+  | .dol => [d, o, l]
 
-/-- The group of a person marker after the suffix `prev`: group 1 after the perfective -DI and
-group 2 otherwise (§8.4). -/
+/-- The exponent of the nominal that a gloss of the data names, if it names one. -/
+def Examples.Suffix.nominal? : Examples.Suffix → Option (Σ σ, Nominal.Exponent σ)
+  | .pl => some ⟨_, plural⟩
+  | .poss1sg => some ⟨_, possessive (.personNumber .first .singular)⟩
+  | .poss2sg => some ⟨_, possessive (.personNumber .second .singular)⟩
+  | .poss3sg => some ⟨_, possessive (.personNumber .third .singular)⟩
+  | .poss1pl => some ⟨_, possessive (.personNumber .first .plural)⟩
+  | .poss2pl => some ⟨_, possessive (.personNumber .second .plural)⟩
+  | .poss3pl => some ⟨_, possessive (.personNumber .third .plural)⟩
+  | .gen => some ⟨_, genitive⟩
+  | .dat => some ⟨_, dative⟩
+  | .loc => some ⟨_, locative⟩
+  | _ => none
+
+/-- The group of a person marker after the suffix `prev`: group 1 after -DI, -sA and the
+copular markers -(y)DI and -(y)sA, and group 2 otherwise (§8.4). -/
 def groupAfter (prev : Option Examples.Suffix) : Verb.PersonGroup :=
-  if prev = some .pf then .one else .two
+  if prev ∈ [some .pf, some .cond, some .pCop, some .condCop] then .one else .two
 
-/-- The forms of the suffix that a gloss of the data names, after the suffix `prev`. -/
-def Examples.Suffix.forms (prev : Option Examples.Suffix) :
+/-- The forms of the verbal or predicate suffix that a gloss of the data names, after the
+suffix `prev`. -/
+def Examples.Suffix.verbal (prev : Option Examples.Suffix) :
     Examples.Suffix → List Turkish.Suffix
-  | .poss1sg => [(possessive (.personNumber .first .singular)).form]
-  | .poss2sg => [(possessive (.personNumber .second .singular)).form]
-  | .poss3sg => [(possessive (.personNumber .third .singular)).form]
-  | .pl => [plural.form]
   | .pass => [passive.form]
+  | .caus => [causative.form]
+  | .neg => [negative.form]
   | .pf => [di.form]
   | .evPf => [miş.form]
   | .impf => [iyor.form]
+  | .aor => [aorist.form]
+  | .fut => [acak.form]
+  | .cond => [sa.form]
+  | .pCop => [pastCopula.form]
+  | .evCop => [evidentialCopula.form]
+  | .condCop => [conditionalCopula.form]
   | .cv => Converb.ken.form
   | .p1sg => [(person (groupAfter prev) (.personNumber .first .singular)).form]
+  | .p1pl => [(person (groupAfter prev) (.personNumber .first .plural)).form]
   | .p2pl => [(person (groupAfter prev) (.personNumber .second .plural)).form]
+  | .p3pl => [(person (groupAfter prev) (.personNumber .third .plural)).form]
+  | _ => []
 
-/-- The forms of a string of glosses, each read after the one before it. -/
+/-- The forms of a string of glosses. A nominal exponent takes its form before the one after
+it, as `Nominal.forms` gives it, and a verbal one after the gloss before it. -/
 def suffixForms : Option Examples.Suffix → List Examples.Suffix → List Suffix
   | _, [] => []
-  | prev, x :: xs => x.forms prev ++ suffixForms (some x) xs
+  | prev, x :: xs =>
+    (match x.nominal? with
+      | some e => (Nominal.forms (e :: (xs.head?.bind (·.nominal?)).toList)).take 1
+      | none => x.verbal prev) ++ suffixForms (some x) xs
 
-/-- The letters of a word, its morpheme boundaries left out. -/
-def letters (w : GlossedWord) : List Char := w.word.filter (· ≠ '-')
+/-- The segments that a string of letters writes, capitals as small letters and without the
+morpheme boundaries and the full stop. -/
+def segments? (cs : List Char) : Option (List Segment) :=
+  ((cs.filter fun c ↦ c ≠ '-' ∧ c ≠ '.').map Char.toLower).mapM ofChar
 
-/-- A surface form as the alphabet writes it, the palatal lateral as the plain one. -/
-def written (w : List Segment) : List Segment := w.map fun x ↦ if x = l' then l else x
+/-- A surface form as the alphabet writes it, the palatal lateral as the plain one and the
+final consonant of -(y)AcAK as `k`. -/
+def written (w : List Segment) : List Segment :=
+  w.map fun x ↦ if x = l' then l else if x = K then k else x
 
 /-- Every example word of the grammar is written as the surface form of its stem with its
 suffixes. -/
 theorem printed : ∀ x : Examples.Example, ∃ st ∈ (x.lexemes .stem).head?,
     ∃ w ∈ x.datum.glossedWords.head?,
-      (letters w).mapM ofChar = some (written (realize st.stem (suffixForms none x.suffixes))) := by
+      segments? w.word = some (written (realize st.stem (suffixForms none x.suffixes))) := by
   decide
 
 -- where the grammar segments a word, its first morph writes the stem
 theorem stem_printed : ∀ x : Examples.Example, ∀ st ∈ (x.lexemes .stem).head?,
     ∀ w ∈ x.datum.glossedWords.head?, ∀ m ∈ w.glossedMorphemes.head?,
-      1 < w.glossedMorphemes.length → m.morpheme.mapM ofChar = some (written st.stem) := by
-  decide
-
--- §6.1
-theorem voicing_of_D :
-    realize [k, a, l] [di.form] = [k, a, l, d, ı] ∧
-    realize [d, ü, ş] [di.form] = [d, ü, ş, t, ü] := by
-  decide
-
-/-- A bracketed vowel appears after a consonant and is lost after a vowel, as in *ev-im* against
-*araba-m* (§6.1.3, §8.1.2). -/
-theorem deletable_vowels :
-    realize [p, u, l] [(possessive (.personNumber .first .singular)).form] = [p, u, l, u, m] ∧
-    realize [e, v] [(possessive (.personNumber .first .singular)).form] = [e, v, i, m] ∧
-    realize [a, r, a, b, a] [(possessive (.personNumber .first .singular)).form] = [a, r, a, b, a,
-                                                                                    m] ∧
-    realize [e, v] [(possessive (.personNumber .second .plural)).form] = [e, v, i, n, i, z] ∧
-    realize [a, r, a, b, a] [(possessive (.personNumber .second .plural)).form] =
-      [a, r, a, b, a, n, ı, z] ∧
-    realize [e, v] [(possessive (.personNumber .first .plural)).form] = [e, v, i, m, i, z] ∧
-    realize [a, r, a, b, a] [(possessive (.personNumber .first .plural)).form] =
-      [a, r, a, b, a, m, ı, z] ∧
-    realize [g, ö, r] [aorist.form] = [g, ö, r, ü, r] ∧
-    realize [a, r, a] [aorist.form] = [a, r, a, r] := by
-  decide
-
-/-- A bracketed consonant appears after a vowel and is lost after a consonant, as in *masa-ya*
-against *sor-acak* (§6.1.3, §8.1.2, §8.1.3). -/
-theorem deletable_consonants :
-    realize [e, m, i, n, e] [dative.form] = [e, m, i, n, e, y, e] ∧
-    realize [m, a, s, a] [dative.form] = [m, a, s, a, y, a] ∧
-    realize [a, t, l, a] [acak.form] = [a, t, l, a, y, a, c, a, K] ∧
-    realize [s, o, r] [acak.form] = [s, o, r, a, c, a, K] ∧
-    realize [s, u, n, a] [genitive.form] = [s, u, n, a, n, ı, n] ∧
-    realize [e, m, i, n, e] [genitive.form] = [e, m, i, n, e, n, i, n] ∧
-    realize [b, e, t, ü, l] [genitive.form] = [b, e, t, ü, l, ü, n] ∧
-    realize [a, r, a, b, a] [(possessive (.personNumber .third .singular)).form] = [a, r, a, b, a,
-                                                                                    s, ı] ∧
-    realize [e, l, b, i, s, e] [(possessive (.personNumber .third .singular)).form] =
-      [e, l, b, i, s, e, s, i] ∧
-    realize [e, v] [(possessive (.personNumber .third .singular)).form] = [e, v, i] := by
-  decide
-
-/-- A third-person possessive takes a final `n` before a case suffix but not word-finally, as in
-*tepesinde* against *tepesi* (§6.2 (iib), §8.1.2). -/
-theorem pronominal_n :
-    realize [t, e, p, e]
-        (Nominal.forms [⟨_, possessive (.personNumber .third .singular)⟩, ⟨_, locative⟩]) =
-      [t, e, p, e, s, i, n, d, e] ∧
-    realize [y, ü,
-             z] (Nominal.forms [⟨_, possessive (.personNumber .third .singular)⟩, ⟨_, dative⟩]) =
-      [y, ü, z, ü, n, e] ∧
-    realize [e, l, b, i, s, e]
-        (Nominal.forms [⟨_, possessive (.personNumber .third .plural)⟩, ⟨_, dative⟩]) =
-      [e, l, b, i, s, e, l, e, r, i, n, e] ∧
-    realize [t, e, p, e] (Nominal.forms [⟨_, possessive (.personNumber .third .singular)⟩]) =
-      [t, e, p, e, s, i] ∧
-    realize [o, d,
-             a] (Nominal.forms [⟨_, possessive (.personNumber .first .singular)⟩, ⟨_, locative⟩]) =
-      [o, d, a, m, d, a] := by
+      1 < w.glossedMorphemes.length → segments? m.morpheme = some (written st.stem) := by
   decide
 
 /-- The juncture of *araba* 'car' and the vowel of -(I)m. -/
@@ -202,63 +209,6 @@ theorem hiatus_repairs :
     dative.form.attach masaA.left = masaA.epenthesize y :=
   ⟨Suffix.attach_eq_elideV2 arabaIm rfl rfl,
     Suffix.attach_eq_epenthesize masaA rfl (by decide) rfl⟩
-
-/-- The copula `y` of the copular markers stands after a vowel and is omitted after a consonant
-(§8.3.1, §8.3.2), as the buffer `y` of the first-person markers of group 2 is, as in
-*okuldayım*, *evdeydik*, *hastaysalar* and *kat-sa-ydı-lar* (§8.4). -/
-theorem predicate_buffers :
-    realize [o, k, u, l] [locative.form, (person .two (.personNumber .first .singular)).form] =
-      [o, k, u, l, d, a, y, ı, m] ∧
-    realize [e, v] [locative.form, pastCopula.form,
-                    (person .one (.personNumber .first .plural)).form] =
-      [e, v, d, e, y, d, i, k] ∧
-    realize [h, a, s, t, a] [conditionalCopula.form,
-                             (person .one (.personNumber .third .plural)).form] =
-      [h, a, s, t, a, y, s, a, l, a, r] ∧
-    realize [k, a, t] [sa.form, pastCopula.form,
-                       (person .one (.personNumber .third .plural)).form] =
-      [k, a, t, s, a, y, d, ı, l, a, r] := by
-  decide
-
-/-- Before -(I)yor a stem-final `a` or `e` becomes high and harmonizes, as in *anlıyor*, while a
-final high vowel stands (§8.2.3.3). -/
-theorem imperfective_of_vowel_stems :
-    realize [a, n, l, a] [iyor.form] = [a, n, l, ı, y, o, r] ∧
-    realize [o, k, ş, a] [iyor.form] = [o, k, ş, u, y, o, r] ∧
-    realize [b, e, k, l, e] [iyor.form] = [b, e, k, l, i, y, o, r] ∧
-    realize [ö, z, l, e] [iyor.form] = [ö, z, l, ü, y, o, r] ∧
-    realize [e, r, i] [iyor.form] = [e, r, i, y, o, r] ∧
-    realize [k, u, r, u] [iyor.form] = [k, u, r, u, y, o, r] := by
-  decide
-
-/-- The vowel of the negative is a stem-final vowel before -(I)yor like any other, as in
-*anlamıyor*, *görmüyor*, *saklamıyor* and *söylemiyor* (§8.2.2, §8.2.3.3). -/
-theorem negative_raised :
-    realize [a, n, l, a] [negative.form, iyor.form] =
-      [a, n, l, a, m, ı, y, o, r] ∧
-    realize [g, ö, r] [negative.form, iyor.form] =
-      [g, ö, r, m, ü, y, o, r] ∧
-    realize [s, a, k, l, a] [negative.form, iyor.form] =
-      [s, a, k, l, a, m, ı, y, o, r] ∧
-    realize [s, ö, y, l, e] [negative.form, iyor.form] =
-      [s, ö, y, l, e, m, i, y, o, r] := by
-  decide
-
--- §8.1, (2)
-theorem nominal_predicate :
-    realize [e, v] [plural.form, (possessive (.personNumber .first .plural)).form, locative.form,
-        evidentialCopula.form, (person .two (.personNumber .third .plural)).form] =
-      [e, v, l, e, r, i, m, i, z, d, e, y, m, i, ş, l, e, r] := by
-  decide
-
-/-- The causative -DIr on *yap-*, *koy-*, *öl-* and *dol-* gives the stems *yaptır-*,
-*koydur-*, *öldür-* and *doldur-* (§8.2.1.1). -/
-theorem causative_stems :
-    realize [y, a, p] [causative.form] = [y, a, p, t, ı, r] ∧
-    realize [k, o, y] [causative.form] = [k, o, y, d, u, r] ∧
-    realize [ö, l] [causative.form] = [ö, l, d, ü, r] ∧
-    realize [d, o, l] [causative.form] = [d, o, l, d, u, r] := by
-  decide
 
 /-- The spelled stem of every verb of the Fragment writes the surface form of its root and
 voice suffixes, the causatives *öldür-* and *yaptır-* among them. -/
