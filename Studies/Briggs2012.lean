@@ -8,7 +8,7 @@ module
 public import Mathlib.Data.Set.Sups
 public import Mathlib.Order.Concept
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Core.Data.Part.Extensions
+public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Causation.CausalModel.Dependence
 
 /-!

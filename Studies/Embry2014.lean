@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.Part.Extensions
+public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Conditionals.Basic
 public import Studies.Fine2012
 
