@@ -125,15 +125,16 @@ the ones not dominated yields exactly that partition, whether the exhaustifier i
 innocent exclusion or minimal worlds. -/
 theorem tfae_stronglyStable (A : Set (Set W)) (hA : A.Finite) :
     List.TFAE [StronglyStable A,
-      (partition A).classes ⊆ exh A '' A,
-      exh {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} = (partition A).classes,
-      (partition A).classes ⊆ exhIE A '' A,
-      exhIE {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} = (partition A).classes,
-      (partition A).classes ⊆ exhMW A '' A,
-      exhMW {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} = (partition A).classes] := by
-  rw [classes_partition]
+      (Setoid.ofProps A).classes ⊆ exh A '' A,
+      exh {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} = (Setoid.ofProps A).classes,
+      (Setoid.ofProps A).classes ⊆ exhIE A '' A,
+      exhIE {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} = (Setoid.ofProps A).classes,
+      (Setoid.ofProps A).classes ⊆ exhMW A '' A,
+      exhMW {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} =
+        (Setoid.ofProps A).classes] := by
+  rw [classes_ofProps]
   tfae_have 1 ↔ 2 := by
-    rw [← classes_partition]; exact forall_isExhaustivelyResolvable_iff_classes_subset
+    rw [← classes_ofProps]; exact forall_isExhaustivelyResolvable_iff_classes_subset
   have hA' : {φ ∈ A | ¬ Dominated A φ}.Finite := hA.subset (sep_subset _ _)
   have hne : ∀ {B : Set (Set W)} {w p}, IsStrongestTrueAnswer B w p → (exh B p).Nonempty :=
     fun {_ w _} hp ↦ ⟨w, (mem_exh_iff_isStrongestTrueAnswer hp.1.1).2 hp⟩
@@ -199,7 +200,7 @@ theorem tfae_stronglyStable (A : Set (Set W)) (hA : A.Finite) :
 -- partition, yet none is strongest at `∞`
 theorem exists_image_exh_eq_classes_not_stronglyStable :
     ∃ A : Set (Set (Option ℕ)),
-      exh {q ∈ A | ¬ Dominated A q} '' {q ∈ A | ¬ Dominated A q} = (partition A).classes ∧
+      exh {q ∈ A | ¬ Dominated A q} '' {q ∈ A | ¬ Dominated A q} = (Setoid.ofProps A).classes ∧
         ¬ StronglyStable A := by
   set ψ : ℕ → Set (Option ℕ) := fun n ↦ {w | ∀ k, w = some k → n ≤ k} with hψ
   set φ : Set (Option ℕ) := {some 0, none} with hφ
@@ -241,7 +242,7 @@ theorem exists_image_exh_eq_classes_not_stronglyStable :
         have := this k rfl; omega
     · exact (hv {some n} (.inl (.inr ⟨n, rfl⟩))).1 rfl
   refine ⟨A, ?_, fun h ↦ ?_⟩
-  · rw [classes_partition, hstar, image_union, image_singleton]
+  · rw [classes_ofProps, hstar, image_union, image_singleton]
     have hφe : exh (range (fun n ↦ {some n}) ∪ {φ}) φ = {none} := by
       ext w
       simp only [mem_exh, mem_union, mem_range, mem_singleton_iff]

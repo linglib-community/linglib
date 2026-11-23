@@ -130,7 +130,7 @@ theorem Karttunen.knows_iff_generalizedKnows_of_eq_empty (h : q w = ∅) :
 theorem generalizedKnows_deRe (S C : E → Set W) (u : W) :
     GeneralizedKnows (trueAnswers (C '' extension S u)) w R ↔
       GroenendijkStokhof1984.Knows (GroenendijkStokhof1984.whichDeRe S C u) w R := by
-  rw [GroenendijkStokhof1984.whichDeRe_eq_partition]
+  rw [GroenendijkStokhof1984.whichDeRe_eq_ofProps, ← ker_trueAnswers]
   rfl
 
 /-! ### *Whether*-questions -/
@@ -138,9 +138,9 @@ theorem generalizedKnows_deRe (S C : E → Set W) (u : W) :
 -- (2), (12), footnote 11
 theorem ker_trueAnswers_pair (φ : Set W) :
     Setoid.ker (trueAnswers {φ, φᶜ}) = Setoid.polar φ := by
-  show partition {φ, φᶜ} = _
+  rw [ker_trueAnswers]
   ext v u
-  rw [partition_iff, Setoid.polar_iff]
+  rw [Setoid.ofProps_iff, Setoid.polar_iff]
   simp [not_iff_not]
 
 theorem trueAnswers_pair_nonempty (φ : Set W) (w : W) : (trueAnswers {φ, φᶜ} w).Nonempty := by

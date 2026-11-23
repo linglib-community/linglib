@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Data.Setoid.Basic
+public import Mathlib.Order.Hom.CompleteLattice
 public import Mathlib.Order.Setoid.Partition
 
 /-!
@@ -33,7 +34,7 @@ a cell that the weaker information leaves open (`Setoid.CloserToAnswer`), the pa
 * `Setoid.polar p` — the polar question whether `p`.
 * `Setoid.Determines Q p` — `Q` determines `p`: `p` is a union of cells.
 * `Setoid.DeterminesOn Q p c` — `Q` determines `p` on the worlds of `c`.
-* `Setoid.ofProps ps` — the question raised by a finite family of propositions.
+* `Setoid.ofProps A` — the question raised by a family of propositions.
 * `Setoid.saturation Q s` — the union of the cells that `s` meets.
 * `Setoid.compatible Q J` — the cells compatible with the information `J`.
 * `Setoid.CloserToAnswer Q J K` — `J` rules out a cell that `K ⊇ J` leaves open.
@@ -285,29 +286,68 @@ theorem isCoatom_iff : IsCoatom Q ↔ ∃ p : Set W, p.Nonempty ∧ p ≠ Set.un
 
 /-! ### The question raised by a family of propositions -/
 
-variable (ps : Finset (Finset W))
-
-/-- The question raised by a family of propositions is the meet of their polar questions, the
-coarsest question deciding each of them. -/
-def ofProps : Setoid W := ⨅ p ∈ ps, polar (↑p : Set W)
-
-theorem ofProps_iff : ofProps ps w v ↔ ∀ p ∈ ps, (w ∈ p ↔ v ∈ p) := by
-  simp only [Setoid.iInf_iff, polar_iff, Finset.mem_coe]
-
-instance [DecidableEq W] : DecidableRel (ofProps ps) :=
-  fun _ _ ↦ decidable_of_iff _ (ofProps_iff ps).symm
-
-theorem ofProps_determines {p : Finset W} (hp : p ∈ ps) : (ofProps ps).Determines ↑p :=
-  iInf₂_le p hp
-
-theorem le_ofProps_iff : Q ≤ ofProps ps ↔ ∀ p ∈ ps, Q.Determines ↑p :=
-  le_iInf₂_iff
-
 /-- Two worlds are equivalent for the question raised by a family of propositions when every
 member treats them alike. -/
 theorem iInf_mem_polar_iff {A : Set (Set W)} :
     (⨅ a ∈ A, polar a) w v ↔ ∀ a ∈ A, (w ∈ a ↔ v ∈ a) := by
   simp only [Setoid.iInf_iff, polar_iff]
+
+variable (A B : Set (Set W))
+
+/-- The question raised by a family of propositions is the meet of their polar questions, the
+coarsest question deciding each of them. -/
+def ofProps : Setoid W := ⨅ p ∈ A, polar p
+
+variable {A B}
+
+theorem ofProps_iff : ofProps A w v ↔ ∀ p ∈ A, (w ∈ p ↔ v ∈ p) := iInf_mem_polar_iff
+
+theorem ofProps_determines (hp : p ∈ A) : (ofProps A).Determines p := iInf₂_le p hp
+
+theorem le_ofProps_iff : Q ≤ ofProps A ↔ ∀ p ∈ A, Q.Determines p := le_iInf₂_iff
+
+/-- A larger family of propositions raises a finer question. -/
+theorem ofProps_anti : Antitone (ofProps : Set (Set W) → Setoid W) :=
+  fun _ _ h _ _ hvw ↦ ofProps_iff.2 fun p hp ↦ ofProps_iff.1 hvw p (h hp)
+
+@[simp] theorem ofProps_empty : ofProps (∅ : Set (Set W)) = ⊤ := by
+  simp [ofProps]
+
+@[simp] theorem ofProps_singleton : ofProps {p} = polar p :=
+  Setoid.ext fun _ _ ↦ by simp only [ofProps_iff, Set.mem_singleton_iff, forall_eq, polar_iff]
+
+theorem ofProps_union : ofProps (A ∪ B) = ofProps A ⊓ ofProps B := by
+  ext v w
+  simp only [ofProps_iff, Setoid.inf_iff_and, Set.mem_union, or_imp, forall_and]
+
+theorem ofProps_insert : ofProps (insert p A) = polar p ⊓ ofProps A := by
+  rw [Set.insert_eq, ofProps_union, ofProps_singleton]
+
+theorem ofProps_sUnion (S : Set (Set (Set W))) : ofProps (⋃₀ S) = ⨅ A ∈ S, ofProps A := by
+  ext v w
+  simp only [ofProps_iff, Setoid.iInf_iff, Set.mem_sUnion]
+  exact ⟨fun h A hA p hp ↦ h p ⟨A, hA, hp⟩, fun h p ⟨A, hA, hp⟩ ↦ h A hA p hp⟩
+
+/-- The question raised by a family of propositions as a map into the dual of the lattice of
+questions, sending unions to meets. -/
+def ofPropsHom : sSupHom (Set (Set W)) (Setoid W)ᵒᵈ where
+  toFun A := OrderDual.toDual (ofProps A)
+  map_sSup' S := OrderDual.ofDual.injective <| by
+    rw [ofDual_sSup, OrderDual.ofDual_toDual, Set.sSup_eq_sUnion, ofProps_sUnion]
+    refine le_antisymm (le_sInf ?_) (le_iInf₂ fun A hA ↦ sInf_le ⟨A, hA, rfl⟩)
+    rintro _ ⟨A, hA, h⟩
+    exact (iInf₂_le A hA).trans_eq (OrderDual.toDual.injective h)
+
+@[simp] theorem ofPropsHom_apply (A : Set (Set W)) :
+    ofPropsHom A = OrderDual.toDual (ofProps A) := rfl
+
+instance [DecidablePred (· ∈ p)] : DecidableRel (ofProps {p}) :=
+  fun w v ↦ decidable_of_iff (polar p w v) (by rw [ofProps_singleton])
+
+instance [DecidablePred (· ∈ p)] [DecidableRel (ofProps A)] :
+    DecidableRel (ofProps (insert p A)) :=
+  fun w v ↦ decidable_of_iff (polar p w v ∧ ofProps A w v) (by
+    rw [ofProps_insert]; exact Setoid.inf_iff_and.symm)
 
 /-! ### Saturation -/
 

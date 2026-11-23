@@ -95,17 +95,17 @@ theorem trueAnswers_stronglyExhaustive :
     exact ⟨⟨α w, rfl⟩, rfl⟩
 
 -- (129), p. 70
-theorem partition_mentionSome : partition (mentionSome α) = Setoid.ker α := by
+theorem ofProps_mentionSome : Setoid.ofProps (mentionSome α) = Setoid.ker α := by
   ext v w
   rw [← Setoid.mem_cell, ← strongAnswer_eq_cell, strongAnswer_mentionSome]
   rfl
 
-/-- The cells of the partition (129) are the strongly exhaustive answers other than the
+/-- The cells of the Setoid.ofProps (129) are the strongly exhaustive answers other than the
 contradiction (footnote 24). -/
-theorem classes_partition_mentionSome :
-    (partition (mentionSome α)).classes = stronglyExhaustive α \ {∅} := by
+theorem classes_ofProps_mentionSome :
+    (Setoid.ofProps (mentionSome α)).classes = stronglyExhaustive α \ {∅} := by
   ext C
-  simp only [classes_partition, Set.mem_range, strongAnswer_mentionSome, Set.mem_sdiff,
+  simp only [classes_ofProps, Set.mem_range, strongAnswer_mentionSome, Set.mem_sdiff,
     mem_stronglyExhaustive, Set.mem_singleton_iff]
   constructor
   · rintro ⟨w, rfl⟩

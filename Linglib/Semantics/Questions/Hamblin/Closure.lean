@@ -43,11 +43,11 @@ theorem mem_biInter_iff_subset {S : Finset ι} {w : W} :
     w ∈ ⋂ i ∈ S, a i ↔ ↑S ⊆ Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w :=
   Set.mem_iInter₂.trans ⟨fun h _ hi ↦ ⟨trivial, h _ hi⟩, fun h _ hi ↦ (h hi).2⟩
 
-theorem partition_infClosure_range :
-    partition (infClosure (Set.range a)) =
+theorem ofProps_infClosure_range :
+    Setoid.ofProps (infClosure (Set.range a)) =
       Setoid.ker (Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ) := by
   ext v w
-  rw [partition_iff, Setoid.ker_def]
+  rw [Setoid.ofProps_iff, Setoid.ker_def]
   constructor
   · intro h
     ext i
@@ -57,11 +57,11 @@ theorem partition_infClosure_range :
     obtain ⟨S, -, rfl⟩ := Set.mem_infClosure_range.1 hq
     rw [mem_biInter_iff_subset, mem_biInter_iff_subset, h]
 
-theorem partition_supClosure_range :
-    partition (supClosure (Set.range a)) =
+theorem ofProps_supClosure_range :
+    Setoid.ofProps (supClosure (Set.range a)) =
       Setoid.ker (Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ) := by
   ext v w
-  rw [partition_iff, Setoid.ker_def]
+  rw [Setoid.ofProps_iff, Setoid.ker_def]
   constructor
   · intro h
     ext i
@@ -72,9 +72,9 @@ theorem partition_supClosure_range :
     simp only [Set.ext_iff, Preorder.mem_satisfied, Set.mem_univ, true_and] at h
     simp only [Set.mem_iUnion, exists_prop, h]
 
-theorem partition_infClosure_range_eq_supClosure_range :
-    partition (infClosure (Set.range a)) = partition (supClosure (Set.range a)) :=
-  partition_infClosure_range.trans partition_supClosure_range.symm
+theorem ofProps_infClosure_range_eq_supClosure_range :
+    Setoid.ofProps (infClosure (Set.range a)) = Setoid.ofProps (supClosure (Set.range a)) :=
+  ofProps_infClosure_range.trans ofProps_supClosure_range.symm
 
 /-- The conjunction of the members true at a world is the strongest true member of the closure
 of a finite family under conjunction. -/

@@ -274,12 +274,12 @@ def LicensesByRelevance : Licenser → Prop
   | .question => ∀ {W A E : Type} [Finite W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
       [Finite A] [Nonempty W] (U : W → A → ℝ) (μ : Measure W) [IsProbabilityMeasure μ]
       (P : E → Set W) ⦃D D' : Set E⦄, D ⊆ D' →
-      Question.utility U μ (Question.partition (P '' D)) ≤
-        Question.utility U μ (Question.partition (P '' D'))
+      Question.utility U μ (Setoid.ofProps (P '' D)) ≤
+        Question.utility U μ (Setoid.ofProps (P '' D'))
   | .classical _ | .scalar _ | .strawson _ | .modal _ => False
 
 theorem licensesByRelevance_question : question.LicensesByRelevance :=
-  fun U μ _ P _ _ h ↦ Question.utility_partition_image_mono U μ P h
+  fun U μ _ P _ _ h ↦ Question.utility_ofProps_image_mono U μ P h
 
 variable {L : Licenser} {σ τ : ProjectivitySignature} {s t : Negation.Strength}
 

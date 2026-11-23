@@ -80,13 +80,13 @@ theorem whichDeRe_iff {G P : E → Set W} {w v u : W} :
   simp only [Setoid.ker_def, Set.ext_iff, Set.mem_inter_iff, mem_extension,
     and_congr_right_iff]
 
-theorem who_eq_partition (P : E → Set W) : who P = partition (Set.range P) :=
-  Setoid.ext fun _ _ ↦ by rw [who_iff, partition_iff, Set.forall_mem_range]
+theorem who_eq_ofProps (P : E → Set W) : who P = Setoid.ofProps (Set.range P) :=
+  Setoid.ext fun _ _ ↦ by rw [who_iff, Setoid.ofProps_iff, Set.forall_mem_range]
 
-theorem whichDeRe_eq_partition (G P : E → Set W) (w : W) :
-    whichDeRe G P w = partition (P '' extension G w) := by
+theorem whichDeRe_eq_ofProps (G P : E → Set W) (w : W) :
+    whichDeRe G P w = Setoid.ofProps (P '' extension G w) := by
   ext v u
-  simp only [whichDeRe_iff, partition_iff, Set.forall_mem_image, mem_extension]
+  simp only [whichDeRe_iff, Setoid.ofProps_iff, Set.forall_mem_image, mem_extension]
 
 -- p. 220
 theorem who_eq_iInf_polar (P : E → Set W) : who P = ⨅ x, Setoid.polar (P x) :=
@@ -187,11 +187,12 @@ theorem not_knows_who_of_believes {D K : SetRel W W} {P : E → Set W} {x : E} (
 
 /-- Knowing the answer to a partition satisfies Karttunen's meaning postulate for *know* on the
 Hamblin set, both its clause for the true answers and its clause for an empty set of them. -/
-theorem karttunen_knows_of_knows {H : Set (Set W)} (h : Knows (partition H) w R) :
+theorem karttunen_knows_of_knows {H : Set (Set W)} (h : Knows (Setoid.ofProps H) w R) :
     Karttunen1977.Knows (trueAnswers H) w R := by
   refine ⟨knowsAnswer_of_mem_core_strongAnswer (by rwa [strongAnswer_eq_cell]), fun h₀ v hv ↦ ?_⟩
   show trueAnswers H v = ∅
-  rw [show trueAnswers H v = trueAnswers H w from h hv, h₀]
+  rw [show trueAnswers H v = trueAnswers H w from
+    Setoid.ker_def.1 (by rw [ker_trueAnswers]; exact h hv), h₀]
 
 -- pp. 92–93
 theorem knowsAnswer_of_forall_notMem {P : E → Set W} (h : ∀ x, w ∉ P x) :

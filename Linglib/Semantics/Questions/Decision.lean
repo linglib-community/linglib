@@ -30,10 +30,10 @@ that is best now stays best at the answer in almost every world (`utility_eq_zer
 Relative to a decision problem, `Better U μ Q Q'` holds when `Q` is worth more than `Q'`, or as
 much and strictly coarser. A question whose answers resolve the problem is better than every
 strictly finer one (`better_of_isResolved_of_lt`). The wh-question over a domain `D` of
-individuals with property `P` is the partition `partition (P '' D)` of the worlds by which
+individuals with property `P` is the partition `Setoid.ofProps (P '' D)` of the worlds by which
 individuals of `D` have the property; widening the domain cannot lower its value
-(`utility_partition_image_mono`), and once the answers over the domain resolve the problem,
-widening it gives a worse question (`better_partition_image`).
+(`utility_ofProps_image_mono`), and once the answers over the domain resolve the problem,
+widening it gives a worse question (`better_ofProps_image`).
 
 ## Implementation notes
 
@@ -208,16 +208,14 @@ private theorem integral_cell (F : Set W → ℝ) (Q : Setoid W) [Fintype (Quoti
     ∫ w, F (Q.cell w) ∂μ =
       ∑ c : Quotient Q, μ.real (Quotient.mk Q ⁻¹' {c}) * F (Quotient.mk Q ⁻¹' {c}) := by
   simp_rw [Setoid.cell_eq_preimage_mk]
-  rw [← integral_map (φ := Quotient.mk Q) Measurable.of_discrete.aemeasurable
-      (f := fun c ↦ F (Quotient.mk Q ⁻¹' {c})) Integrable.of_finite.aestronglyMeasurable,
-    integral_fintype .of_finite]
-  exact Finset.sum_congr rfl fun c _ ↦ by
-    rw [smul_eq_mul, map_measureReal_apply .of_discrete (measurableSet_singleton c)]
+  exact integral_preimage_singleton F .of_discrete μ
 
+omit [DiscreteMeasurableSpace W] in
 private theorem integral_integral_cond_cell (g : W → ℝ) (Q : Setoid W) :
     ∫ w, ∫ v, g v ∂μ[|Q.cell w] ∂μ = ∫ w, g w ∂μ := by
   cases nonempty_fintype (Quotient Q)
-  rw [integral_cell μ (fun c ↦ ∫ v, g v ∂μ[|c]), sum_measureReal_mul_integral_cond]
+  simp_rw [Setoid.cell_eq_preimage_mk]
+  exact integral_integral_cond_preimage g _ μ
 
 theorem utility_eq_integral_sub (Q : Setoid W) :
     utility U μ Q = ∫ w, decisionValue U μ[|Q.cell w] ∂μ - decisionValue U μ := by
@@ -332,17 +330,17 @@ variable [Finite W] [DiscreteMeasurableSpace W] [Nonempty W] [Finite A] (U : W �
   (μ : Measure W) [IsProbabilityMeasure μ] {E : Type*} (P : E → Set W) {D D' : Set E}
 
 /-- Widening the domain of a wh-question cannot lower its value. -/
-theorem utility_partition_image_mono (h : D ⊆ D') :
-    utility U μ (partition (P '' D)) ≤ utility U μ (partition (P '' D')) :=
-  utility_anti U μ (partition_anti (Set.image_mono h))
+theorem utility_ofProps_image_mono (h : D ⊆ D') :
+    utility U μ (Setoid.ofProps (P '' D)) ≤ utility U μ (Setoid.ofProps (P '' D')) :=
+  utility_anti U μ (Setoid.ofProps_anti (Set.image_mono h))
 
 /-- When every answer to the wh-question over `D` resolves the decision problem, every larger
 domain yielding a different question gives a worse one. -/
-theorem better_partition_image (h : D ⊆ D')
-    (hU : ∀ w, IsResolved U ((partition (P '' D)).cell w))
-    (hne : partition (P '' D') ≠ partition (P '' D)) :
-    Better U μ (partition (P '' D)) (partition (P '' D')) :=
-  better_of_isResolved_of_lt U μ hU ((partition_anti (Set.image_mono h)).lt_of_ne hne)
+theorem better_ofProps_image (h : D ⊆ D')
+    (hU : ∀ w, IsResolved U ((Setoid.ofProps (P '' D)).cell w))
+    (hne : Setoid.ofProps (P '' D') ≠ Setoid.ofProps (P '' D)) :
+    Better U μ (Setoid.ofProps (P '' D)) (Setoid.ofProps (P '' D')) :=
+  better_of_isResolved_of_lt U μ hU ((Setoid.ofProps_anti (Set.image_mono h)).lt_of_ne hne)
 
 end Domain
 

@@ -12,8 +12,7 @@ public import Linglib.Semantics.Exhaustification.Basic
 
 The theories that take a question to denote a Hamblin set `H : Set (Set W)` locate the answer
 at a world `w` by an operator on the members of `H` true at `w`. The true answers, the weak and
-strong answers and the partition are in `Hamblin/Basic.lean`; as an inquisitive question the
-partition is the meet of the members' polar questions (`fromSetoid_partition`). This file adds:
+strong answers and the question the members raise are in `Hamblin/Basic.lean`. This file adds:
 
 - `IsStrongestTrueAnswer H w p`, [dayal-1996]'s maximally informative true
   member: the least true member under entailment, `IsLeast`. Its existence is
@@ -79,10 +78,7 @@ open SetRel
 
 variable {W : Type*} (H : Set (Set W)) (w : W)
 
-/-! ### The partition and the strong answer as inquisitive content -/
-
-theorem fromSetoid_partition : fromSetoid (partition H) = ⨅ p ∈ H, polar p := by
-  simp only [partition_eq_iInf, fromSetoid_iInf, fromSetoid_polar]
+/-! ### The strong answer as a complete answer -/
 
 theorem completelyAnsweredBy_strongAnswer (Q : Question W) :
     CompletelyAnsweredBy Q (strongAnswer (alt Q) w) := by
@@ -423,8 +419,8 @@ variable {H} in
 exhaustification of a member. -/
 theorem forall_isExhaustivelyResolvable_iff_classes_subset :
     (∀ w, IsExhaustivelyResolvable H w) ↔
-      (partition H).classes ⊆ Exhaustification.exh H '' H := by
-  rw [classes_partition, Set.range_subset_iff]
+      (Setoid.ofProps H).classes ⊆ Exhaustification.exh H '' H := by
+  rw [classes_ofProps, Set.range_subset_iff]
   simpa using forall_isExhaustivelyResolvable_iff_exh_inter (H := H) Set.univ
 
 variable {H w} in

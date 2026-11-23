@@ -32,7 +32,7 @@ taken into account. The examples are rows of `Data.Examples.VanRooy2003`.
 ## TODO
 
 * The group-valued domain example of section 5.3, the questions (23) and (25), the individual-wise
-  relevance condition on wh-domains of section 4.2 (`Question.better_partition_image` covers
+  relevance condition on wh-domains of section 4.2 (`Question.better_ofProps_image` covers
   utilities that depend only on the domain), and the argumentative value of section 5.4.
 
 ## References

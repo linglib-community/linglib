@@ -12,11 +12,10 @@ intersection of the true answers ([heim-1994], [beck-rullmann-1999]) and the str
 `strongAnswer H w` as the set of worlds that decide every member as `w` does
 ([groenendijk-stokhof-1984]).
 
-Two worlds with the same true answers are equivalent in `partition H`, the kernel of
-`trueAnswers H`. It is the meet of the polar questions of the members (`partition_eq_iInf`), also
-the kernel of the weak answer (`ker_weakAnswer`), and its cells are the strong answers
-(`strongAnswer_eq_cell`). A larger Hamblin set raises a finer partition (`partition_anti`), and
-the partition of a union is the meet of the partitions (`partition_union`).
+Two worlds have the same true answers exactly when every member decides them alike, so the
+kernel of `trueAnswers H` is the question the members raise, `Setoid.ofProps H`
+(`ker_trueAnswers`). It is also the kernel of the weak answer (`ker_weakAnswer`), and its cells
+are the strong answers (`strongAnswer_eq_cell`).
 
 ## References
 
@@ -90,43 +89,18 @@ theorem weakAnswer_union_image_compl : weakAnswer (H ∪ compl '' H) w = strongA
     · exact (h p hp).1 hw
     · exact fun hv ↦ hw ((h q hq).2 hv)
 
-/-- In the partition of [groenendijk-stokhof-1984], two worlds are equivalent when they have the
-same true members: the kernel of the Karttunen denotation, whose cell [heim-1994]'s generalized
-analysis has the agent believe. -/
-def partition : Setoid W := Setoid.ker (trueAnswers H)
-
-variable {H} in
-theorem partition_iff {v w : W} : partition H v w ↔ ∀ p ∈ H, (v ∈ p ↔ w ∈ p) := by
-  simp only [Setoid.ker_def, Set.ext_iff, mem_trueAnswers, and_congr_right_iff]
-
-theorem partition_eq_iInf : partition H = ⨅ p ∈ H, Setoid.polar p := by
+/-- Two worlds have the same true answers exactly when every member decides them alike: the
+kernel of the [karttunen-1977] denotation is the partition of [groenendijk-stokhof-1984], the
+question the members raise, whose cell [heim-1994]'s generalized analysis has the agent
+believe. -/
+theorem ker_trueAnswers : Setoid.ker (trueAnswers H) = Setoid.ofProps H := by
   ext v w
-  simp only [partition_iff, Setoid.iInf_iff, Setoid.polar_iff]
+  simp only [Setoid.ker_def, Setoid.ofProps_iff, Set.ext_iff, mem_trueAnswers,
+    and_congr_right_iff]
 
-/-- A larger Hamblin set raises a finer partition. -/
-theorem partition_anti : Antitone (partition : Set (Set W) → Setoid W) :=
-  fun _ _ h _ _ hvw ↦ partition_iff.2 fun p hp ↦ partition_iff.1 hvw p (h hp)
-
-@[simp] theorem partition_empty : partition (∅ : Set (Set W)) = ⊤ :=
-  eq_top_iff.2 fun _ _ _ ↦ partition_iff.2 fun _ hp ↦ hp.elim
-
-theorem partition_union (H' : Set (Set W)) : partition (H ∪ H') = partition H ⊓ partition H' := by
+theorem ker_weakAnswer : Setoid.ker (weakAnswer H) = Setoid.ofProps H := by
   ext v w
-  simp only [partition_iff, Setoid.inf_iff_and, Set.mem_union, or_imp, forall_and]
-
-/-- The partition of a Hamblin set as a map into the dual of the lattice of partitions, sending
-unions to meets. -/
-def partitionSupBotHom : SupBotHom (Set (Set W)) (Setoid W)ᵒᵈ where
-  toFun H := OrderDual.toDual (partition H)
-  map_sup' H H' := congrArg OrderDual.toDual (partition_union H H')
-  map_bot' := congrArg OrderDual.toDual partition_empty
-
-@[simp] theorem partitionSupBotHom_apply :
-    partitionSupBotHom H = OrderDual.toDual (partition H) := rfl
-
-theorem ker_weakAnswer : Setoid.ker (weakAnswer H) = partition H := by
-  ext v w
-  rw [Setoid.ker_def, partition_iff]
+  rw [Setoid.ker_def, Setoid.ofProps_iff]
   constructor
   · intro h p hp
     have hw : w ∈ weakAnswer H v := h ▸ self_mem_weakAnswer H w
@@ -137,18 +111,18 @@ theorem ker_weakAnswer : Setoid.ker (weakAnswer H) = partition H := by
     simp only [mem_weakAnswer]
     exact ⟨fun hu p hp hw ↦ hu p hp ((h p hp).2 hw), fun hu p hp hv ↦ hu p hp ((h p hp).1 hv)⟩
 
-theorem strongAnswer_eq_cell : strongAnswer H w = (partition H).cell w := by
+theorem strongAnswer_eq_cell : strongAnswer H w = (Setoid.ofProps H).cell w := by
   ext v
-  simp only [mem_strongAnswer, Setoid.mem_cell, partition_iff]
+  simp only [mem_strongAnswer, Setoid.mem_cell, Setoid.ofProps_iff]
   exact forall₂_congr fun _ _ ↦ Iff.comm
 
-theorem classes_partition : (partition H).classes = Set.range (strongAnswer H) := by
+theorem classes_ofProps : (Setoid.ofProps H).classes = Set.range (strongAnswer H) := by
   ext C
   simp only [Setoid.classes, Set.mem_ofPred_eq, Set.mem_range, strongAnswer_eq_cell, eq_comm]
   rfl
 
 theorem strongAnswer_eq_or_disjoint (w v : W) :
     strongAnswer H w = strongAnswer H v ∨ Disjoint (strongAnswer H w) (strongAnswer H v) := by
-  simpa only [strongAnswer_eq_cell] using (partition H).cell_eq_or_disjoint w v
+  simpa only [strongAnswer_eq_cell] using (Setoid.ofProps H).cell_eq_or_disjoint w v
 
 end Question
