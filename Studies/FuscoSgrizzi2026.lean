@@ -92,7 +92,7 @@ theorem aP_empty (circumstances : V → Set (W → Prop)) (causeStar : W → Set
   simp [aP, inertiaWorlds, Grano2024.sbjvCausal, ModalLogic.Box]
 
 /-- The head *di* (26) is necessity over the state's content worlds of a proposition. -/
-def diP (con : V → Option (Set W)) (Q : W → Prop) (s : V) : Prop :=
+def diP (con : V →. Set W) (Q : W → Prop) (s : V) : Prop :=
   □[compatible con] Q s
 
 /-- The relations the denotation (24) draws on, convincing events, the thematic relations,
@@ -111,7 +111,7 @@ def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W
   ∃ s, F.convince e w ∧ F.agent e y w ∧ F.patient e x w ∧ F.cause e s ∧ F.rationalAttitude s ∧
     F.experiencer x s ∧ P s
 
-variable (F : Frame I V W) (con : V → Option (Set W)) (circumstances : V → Set (W → Prop))
+variable (F : Frame I V W) (con : V →. Set W) (circumstances : V → Set (W → Prop))
   (inertia : V → Set (Set W)) (causeStar : W → SetRel V V) (P : W → V → Prop) (x y : I) (e : V)
   (w : W)
 

@@ -25,7 +25,7 @@ instance, `gen_not_actual`, which is why root modals under imperfective are not 
 binder, aspect, the speech event, or an attitude (200), (309), so a modal is keyed to that
 event's participants and time (201), `positionPerspective`; an epistemic relation needs an
 event with content (310a), so an aspect-bound modal is epistemic only under a contentful
-complement, `not_aspectBoundEpistemic_of_eq_none`, and its reading (248) is an epistemic
+complement, `not_aspectBoundEpistemic_of_notMem_dom`, and its reading (248) is an epistemic
 necessity for the attitude holder, `aspectBoundEpistemic_iff`. The starting point of the
 account is that one modal verb has root and epistemic readings alike, as Italian *potere* and
 *dovere* do, `italian_modals_one_entry`, so the contrast in actuality entailments cannot be
@@ -188,12 +188,12 @@ theorem embedding_shifts_perspective :
 /-- The aspect-bound epistemic reading of a modal over an attitude complement (248c), (248d).
 There was an attitude state of the subject within the reference time, and some world
 compatible with its content is such that all worlds compatible with it are `Q`-worlds. -/
-def aspectBoundEpistemic (occurs : E → W → Prop) (τ : E → Set T) (con : E → Option (Set W))
+def aspectBoundEpistemic (occurs : E → W → Prop) (τ : E → Set T) (con : E →. Set W)
     (think : E → Prop) (w : W) (t : Set T) (Q : W → Prop) : Prop :=
   perfective occurs τ w t fun s ↦
     think s ∧ ◇[compatible con] (fun _ ↦ □[compatible con] Q s) s
 
-variable {con : E → Option (Set W)} {think : E → Prop} {P : W → Prop}
+variable {con : E →. Set W} {think : E → Prop} {P : W → Prop}
 
 /-- The reading (248) is an epistemic necessity for the attitude holder, a past belief state
 with consistent content that entails `Q`. -/
@@ -206,7 +206,7 @@ theorem aspectBoundEpistemic_iff :
 
 /-- An aspect-bound modal has no epistemic reading where actual events lack content, as with the
 train-taking of (246), since the reading needs a contentful event (310a). -/
-theorem not_aspectBoundEpistemic_of_eq_none (h : ∀ e, occurs e w → con e = none) :
+theorem not_aspectBoundEpistemic_of_notMem_dom (h : ∀ e, occurs e w → e ∉ con.Dom) :
     ¬ aspectBoundEpistemic occurs τ con think w t P :=
   fun ⟨e, he, _, _, hp⟩ ↦ not_diamond_compatible (h e he) hp
 
@@ -218,33 +218,33 @@ event. The deontic relation is keyed to the same event through its addressee. -/
 
 section Deontic
 
-variable {X : Type*} {addr : E → Option X} {todo : X → Set (Set W)} {e : E} {a : X} {w : W}
+variable {X : Type*} {addr : E →. X} {todo : X → Set (Set W)} {e : E} {a : X} {w : W}
   {q : W → Prop}
 
 /-- The deontic accessibility relation relates an event to the worlds compatible with the To-Do
 List of its addressee (231), (235c), and an event without an addressee to no world. -/
-def deonticAccessible (addr : E → Option X) (todo : X → Set (Set W)) : SetRel E W :=
-  compatible fun e ↦ (addr e).map fun a ↦ ⋂₀ todo a
+def deonticAccessible (addr : E →. X) (todo : X → Set (Set W)) : SetRel E W :=
+  compatible (addr.map fun a ↦ ⋂₀ todo a)
 
 theorem mem_deonticAccessible :
     e ~[deonticAccessible addr todo] w ↔ ∃ a ∈ addr e, ∀ p ∈ todo a, w ∈ p := by
-  simp [deonticAccessible]
+  simp [deonticAccessible, PFun.map]
 
 /-- Deontic necessity at an event with an addressee holds when the prejacent holds in every
 world compatible with the requests on the addressee, the truth conditions of (232). -/
-theorem box_deonticAccessible_iff (h : addr e = some a) :
+theorem box_deonticAccessible_iff (h : a ∈ addr e) :
     □[deonticAccessible addr todo] q e ↔ ∀ w ∈ ⋂₀ todo a, q w :=
-  box_compatible_iff (by rw [h, Option.map_some])
+  box_compatible_iff (Part.mem_map _ h)
 
-theorem diamond_deonticAccessible_iff (h : addr e = some a) :
+theorem diamond_deonticAccessible_iff (h : a ∈ addr e) :
     ◇[deonticAccessible addr todo] q e ↔ ∃ w ∈ ⋂₀ todo a, q w :=
-  diamond_compatible_iff (by rw [h, Option.map_some])
+  diamond_compatible_iff (Part.mem_map _ h)
 
 /-- An event without an addressee binds no deontic modal: the oddness of a deontic *must* under
 *believe* and *hope* (236). -/
-theorem not_diamond_deonticAccessible (h : addr e = none) :
+theorem not_diamond_deonticAccessible (h : e ∉ addr.Dom) :
     ¬ ◇[deonticAccessible addr todo] q e :=
-  not_diamond_compatible (by rw [h, Option.map_none])
+  not_diamond_compatible h
 
 end Deontic
 
@@ -257,11 +257,12 @@ inductive LeaveWorld where
 leaving on the To-Do List, the possibility of leaving is false along the epistemic relation and
 true along the deontic one: the readings come apart over one prejacent. -/
 theorem leave_possible_by_relation :
-    ¬ ◇[compatible fun _ : Unit ↦ some {LeaveWorld.stay}] (· = .leave) () ∧
-      ◇[deonticAccessible (fun _ : Unit ↦ some ()) fun _ ↦ {{LeaveWorld.leave}}]
+    ¬ ◇[compatible fun _ : Unit ↦ Part.some {LeaveWorld.stay}] (· = .leave) () ∧
+      ◇[deonticAccessible (fun _ : Unit ↦ Part.some ()) fun _ ↦ {{LeaveWorld.leave}}]
         (· = .leave) () := by
-  refine ⟨fun h ↦ ?_, (diamond_deonticAccessible_iff rfl).2 ⟨.leave, by simp, rfl⟩⟩
-  obtain ⟨w, hw, rfl⟩ := (diamond_compatible_iff rfl).1 h
+  refine ⟨fun h ↦ ?_,
+    (diamond_deonticAccessible_iff (Part.mem_some _)).2 ⟨.leave, by simp, rfl⟩⟩
+  obtain ⟨w, hw, rfl⟩ := (diamond_compatible_iff (Part.mem_some _)).1 h
   cases hw
 
 end Hacquard2006

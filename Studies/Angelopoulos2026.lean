@@ -216,9 +216,9 @@ theorem pu_report_factive {S X : Type*} [Preorder S] (verb : X → S → S → P
 
 -- (38a)
 theorem oti_report_not_factive :
-    ¬ ∀ (cont : Unit → Option (Set Bool)) (verb : Unit → Unit → Bool → Prop) (p : Set Bool)
+    ¬ ∀ (cont : Unit →. Set Bool) (verb : Unit → Unit → Bool → Prop) (p : Set Bool)
         (w : Bool), (∃ x, verb () x w ∧ p ∈ cont x) → w ∈ p :=
-  fun h ↦ h (fun _ ↦ some ∅) (fun _ _ _ ↦ True) ∅ true ⟨(), trivial, rfl⟩
+  fun h ↦ h (fun _ ↦ Part.some ∅) (fun _ _ _ ↦ True) ∅ true ⟨(), trivial, Part.mem_some _⟩
 
 /-! ### Against the transparent syntax–semantics mapping (§7.3) -/
 

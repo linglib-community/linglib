@@ -2,6 +2,7 @@ module
 
 public import Linglib.Logic.Truthmaker.Basic
 public import Linglib.Semantics.Mereology.Relation
+public import Mathlib.Data.PFun
 
 /-!
 # Bondarenko and Elliott (2026): Monotonicity via mereology in the semantics of attitude reports
@@ -33,8 +34,9 @@ Between single alternatives, Fine's conjunctive parthood of alternative sets is 
 ## Implementation notes
 
 The paper's content, theme and holder maps are partial functions. A partial function is here the
-relation between a value and the arguments sent to it, as in `Mereology`, and no statement below
-needs the relation to be functional. The believings of a holder at a world are a set `B`, of which
+relation between a value and the arguments sent to it, as in `Mereology`, which for a content
+function `f : V →. Set W` is `(f.map toDual).graph'.inv`, and no statement below needs the
+relation to be functional. The believings of a holder at a world are a set `B`, of which
 the statements use divisive and cumulative reference only.
 
 Theme-event content matching is stated for every believing with a theme, which has the contents
@@ -62,6 +64,12 @@ variable {V E W : Type*}
 
 By (45a), *`M` believes `p`* holds when one of the believings `B` of `M` has content `p`, which
 is `toDual p ∈ cont.preimage B`. -/
+
+/-- The content relation of a partial content function is the converse of its graph, with the
+contents in the informational order. -/
+example (f : V →. Set W) (e : V) (p : Set W) :
+    toDual p ~[(f.map toDual).graph'.inv] e ↔ p ∈ f e := by
+  simp [PFun.graph', PFun.map]
 
 section Closure
 

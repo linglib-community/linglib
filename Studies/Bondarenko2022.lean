@@ -112,10 +112,12 @@ theorem sort_predicts_cooccurrence :
 
 The content function is partial: it is defined for ideas, beliefs and claims and undefined for
 other individuals. On the equality semantics (7) a clause with proposition `p` holds of `x` when
-`p ∈ cont x`. On the subset semantics (10) of [kratzer-2006], which the thesis rejects, and on
-the existential semantics (15), it holds when `p` is necessary, or possible, along
-`Modality.compatible cont`. The law (11), that the subset semantics distributes over conjunction,
-is `ModalLogic.box_and`, both are monotone in `p` (`ModalLogic.box_mono`,
+`p ∈ cont x`, so its denotation is `cont.preimage {p}`. On the subset semantics (10) of
+[kratzer-2006], which the thesis rejects, it is `cont.preimage (Set.Iic p)`, the individuals with
+content at which `p` is necessary along `Modality.compatible cont`
+(`Modality.mem_preimage_Iic_iff`), and on the existential semantics (15) it is those at which `p`
+is possible. The law (11), that the subset semantics distributes over conjunction, is
+`ModalLogic.box_and`, both are monotone in `p` (`ModalLogic.box_mono`,
 `ModalLogic.diamond_mono`), and a clause that holds on the equality semantics holds on the other
 two, on the existential one where its proposition is consistent
 (`Modality.box_compatible_of_mem`, `Modality.diamond_compatible_of_mem`). -/
@@ -124,22 +126,28 @@ section Content
 
 open Modality ModalLogic
 
-variable {X W : Type*} {cont : X → Option (Set W)} {x : X} {p q : Set W}
+variable {X W : Type*} {cont : X →. Set W} {x : X} {p q : Set W}
 
 /-- On the equality semantics two clauses that hold of one individual have the same proposition,
 so clauses cannot stack or conjoin under one content individual. -/
 theorem eq_of_mem_cont (hp : p ∈ cont x) (hq : q ∈ cont x) : p = q :=
-  Option.mem_unique hp hq
+  Part.mem_unique hp hq
 
 theorem mem_cont_iff_eq (hp : p ∈ cont x) : q ∈ cont x ↔ p = q :=
   ⟨eq_of_mem_cont hp, fun h ↦ h ▸ hp⟩
 
+-- (171)
+theorem disjoint_preimage_singleton (cont : X →. Set W) (h : p ≠ q) :
+    Disjoint (cont.preimage {p}) (cont.preimage {q}) := by
+  rw [Set.disjoint_iff_inter_eq_empty, ← PFun.preimage_inter,
+    Set.singleton_inter_eq_empty.2 (by simpa using h), PFun.preimage_empty]
+
 theorem box_compatible_not_functional :
-    ¬ ∀ (cont : Unit → Option (Set Bool)) (p q : Set Bool),
+    ¬ ∀ (cont : Unit →. Set Bool) (p q : Set Bool),
       □[compatible cont] (· ∈ p) () → □[compatible cont] (· ∈ q) () → p = q :=
   fun h ↦ Bool.false_ne_true
-    (h (fun _ ↦ some {true}) {true} Set.univ (box_compatible_of_mem rfl) (fun _ _ ↦ trivial) ▸
-      Set.mem_univ false : false ∈ ({true} : Set Bool))
+    (h (fun _ ↦ Part.some {true}) {true} Set.univ (box_compatible_of_mem (Part.mem_some _))
+      (fun _ _ ↦ trivial) ▸ Set.mem_univ false : false ∈ ({true} : Set Bool))
 
 end Content
 
@@ -156,11 +164,11 @@ theorem sit_transparentAt (s : S) : ReferentiallyTransparentAt (fun p s' ↦ s' 
   fun _ _ h ↦ h
 
 theorem mem_cont_not_transparentAt :
-    ¬ ∀ (cont : Unit → Option (Set Bool)) (w : Bool),
+    ¬ ∀ (cont : Unit →. Set Bool) (w : Bool),
       ReferentiallyTransparentAt (fun p _ ↦ p ∈ cont ()) w :=
   fun h ↦ Bool.false_ne_true
-    (Option.some.inj ((h (fun _ ↦ some {false}) false {false} Set.univ
-      ⟨fun _ ↦ trivial, fun _ ↦ rfl⟩).mp rfl) ▸ Set.mem_univ true :
+    (Part.mem_some_iff.1 ((h (fun _ ↦ Part.some {false}) false {false} Set.univ
+      ⟨fun _ ↦ trivial, fun _ ↦ rfl⟩).mp (Part.mem_some _)) ▸ Set.mem_univ true :
         true ∈ ({false} : Set Bool)).symm
 
 -- §2.2.3

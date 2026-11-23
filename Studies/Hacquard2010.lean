@@ -30,8 +30,8 @@ derives the same matrix correlation from the content of the binding event,
 
 ## Implementation notes
 
-The content of an event is its set of compatible worlds, `⋂CON(e)`, an `Option` undefined for
-contentless events; the descriptive part of an attitude or asserting event, `Exp(e, x)` and
+The content of an event is its set of compatible worlds, `⋂CON(e)`, a partial function undefined
+for contentless events; the descriptive part of an attitude or asserting event, `Exp(e, x)` and
 `belief'(e, w)` or `Assert'(e₀, w)`, is an abstract predicate. Ordering sources are omitted, as
 in the paper's derivations, and the circumstantial modal base (61), whose event dependence the
 paper leaves open, is not defined. The individual and time a modal is keyed to (section 4) enter
@@ -68,18 +68,18 @@ def can (f : E → Set W) : (W → Prop) → E → Prop := ◇[SetRel.ofSuccesso
 
 /-- A contentful event, an attitude or the speech event, embeds a proposition under universal
 quantification over its content (41), (44); `holds e w` is the event's descriptive part. -/
-def attitude (con : E → Option (Set W)) (holds : E → W → Prop) (e : E) (p : W → Prop)
+def attitude (con : E →. Set W) (holds : E → W → Prop) (e : E) (p : W → Prop)
     (w : W) : Prop :=
   holds e w ∧ □[compatible con] p e
 
-variable {con : E → Option (Set W)} {holds : E → W → Prop} {f : E → Set W} {e : E}
+variable {con : E →. Set W} {holds : E → W → Prop} {f : E → Set W} {e : E}
   {q : W → Prop} {w : W}
 
 -- (51)
-theorem must_iff_box (h : con e = some (f e)) : must f q e ↔ □[compatible con] q e :=
+theorem must_iff_box (h : f e ∈ con e) : must f q e ↔ □[compatible con] q e :=
   (box_compatible_iff h).symm
 
-theorem can_iff_diamond (h : con e = some (f e)) : can f q e ↔ ◇[compatible con] q e :=
+theorem can_iff_diamond (h : f e ∈ con e) : can f q e ↔ ◇[compatible con] q e :=
   (diamond_compatible_iff h).symm
 
 /-! ### Content licensing, section 6.1 -/
@@ -125,9 +125,9 @@ theorem modVolitional_lt_aspHabitual : Cartography.Head.modVolitional < .aspHabi
 
 /-- One flavor-neutral entry gives an epistemic modal base exactly in the position above tense,
 since the VP event of (59) lacks content (section 6.3). -/
-theorem epistemic_high_iff {con : E → Option (Set W)} {ev : EventBinder → E}
-    (hs : (con (ev .speechAct)).isSome) (hv : con (ev .vpEvent) = none) (pos : ModalPosition) :
-    (con (ev (pos.binder .speechAct))).isSome ↔ pos = .high := by
+theorem epistemic_high_iff {con : E →. Set W} {ev : EventBinder → E}
+    (hs : ev .speechAct ∈ con.Dom) (hv : ev .vpEvent ∉ con.Dom) (pos : ModalPosition) :
+    ev (pos.binder .speechAct) ∈ con.Dom ↔ pos = .high := by
   cases pos <;> simp [ModalPosition.binder, hs, hv]
 
 end Hacquard2010
