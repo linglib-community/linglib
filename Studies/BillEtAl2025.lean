@@ -9,6 +9,7 @@ public import Linglib.Fragments.Georgian.FocusParticles
 public import Linglib.Fragments.Hungarian.Coordination
 public import Linglib.Fragments.Hungarian.FocusParticles
 public import Linglib.Semantics.Exhaustification.Disjunctive
+public import Linglib.Morphology.Realization
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Multiset.Filter
 
@@ -19,9 +20,12 @@ Georgian and Hungarian conjoin two noun phrases with a J particle alone, with a 
 conjunct, or with both. A sentence type `s` pronounces the set `s.pronounced` of the heads of
 Mitrović and Sauerland's structure, J and a μ for each conjunct, and we order the sentence types
 by inclusion of these sets: the J-μ type lies above the J and the μ type, which are incomparable.
-The particle `exponent l h` pronounces the head `h` in the language `l`, and the paper's examples
-of each language pronounce exactly these three sets of heads, each with the particles of the
-Fragments written as their entries say, `toFinset_map_heads` and `printed`.
+The particle `exponent l h` pronounces the head `h` in the language `l`, and `exponence l` is the
+realization in which a sentence type realizes each head it pronounces as that particle. Each of
+the paper's examples realizes a sentence type of its language and each type has an example,
+`exists_marked_eq_realize` and `exists_example_realizing`, with the particles written as their
+Fragment entries say, `printed`. The J-μ type alone realizes every head,
+`isDefective_transpose_exponence_iff`.
 
 An account gives each sentence type the heads of its underlying structure, among which are the
 heads it pronounces. We define two measures of difficulty on an account `a`, the number
@@ -160,9 +164,24 @@ def Examples.SpanLabel.head : Examples.SpanLabel → Head
   | .muFirst => .mu 0
   | .muSecond => .mu 1
 
-/-- The heads a row pronounces, those its marked words pronounce. -/
-def heads (e : Datum) : Finset Head :=
-  ((e.spans.filterMap Examples.label?).map (·.head)).toFinset
+/-- The exponence of the heads in a test language: a sentence type realizes each head it
+pronounces as the particle of that head, and the other heads as nothing. -/
+def exponence (l : Language) : Morphology.Realization Head Sentence Coordinator :=
+  .ofOption fun h s ↦ if h ∈ s.pronounced then some (exponent l h) else none
+
+theorem isLicensed_exponence_iff {l : Language} {h : Head} {s : Sentence} :
+    (exponence l).IsLicensed h s ↔ h ∈ s.pronounced := by
+  revert l h s; decide
+
+-- (4): the J-μ type alone realizes every head
+theorem isDefective_transpose_exponence_iff {l : Language} {s : Sentence} :
+    (exponence l).transpose.IsDefective s ↔ s ≠ .jMu := by
+  revert l s; decide
+
+/-- The particles a row marks as pronouncing a head. -/
+def marked (e : Datum) (h : Head) : Finset Coordinator :=
+  (e.spans.filterMap fun p ↦ (Examples.label? p).bind fun k ↦
+    if k.head = h then (Examples.lexeme? p).map (·.coordinator) else none).toFinset
 
 /-- A word is written as a coordinator when it is the coordinator's form, if that is a free word,
 and when it ends in the form after other morphs, if it is bound. -/
@@ -172,25 +191,30 @@ def WrittenAs (w : GlossedWord) (c : Coordinator) : Prop :=
 
 instance : DecidableRel WrittenAs := fun _ _ ↦ by unfold WrittenAs; infer_instance
 
--- (1), (2), (5), (6): each marked word names the particle of its language for the head it is
--- marked as, and is written as that particle
-theorem printed (l : Language) :
-    ∀ e ∈ Examples.all, e.language = l.glottocode → ∀ s ∈ e.spans,
-      ∃ k ∈ Examples.label? s, ∃ x ∈ Examples.lexeme? s, x.coordinator = exponent l k.head ∧
-        ∃ w ∈ (s.words e).head?, s.length = 1 ∧ WrittenAs w (exponent l k.head) := by
+-- (1), (2), (5), (6): each example realizes a sentence type of its language, marking for each
+-- head the particle the type realizes it as
+theorem exists_marked_eq_realize (l : Language) :
+    ∀ e ∈ Examples.all, e.language = l.glottocode →
+      ∃ s : Sentence, ∀ h, marked e h = (exponence l).realize h s := by
   revert l; decide
+
+-- each sentence type of each language is realized by an example
+theorem exists_example_realizing (l : Language) (s : Sentence) :
+    ∃ e ∈ Examples.all, e.language = l.glottocode ∧
+      ∀ h, marked e h = (exponence l).realize h s := by
+  revert l s; decide
+
+-- each marked word is written as the particle it names
+theorem printed :
+    ∀ e ∈ Examples.all, ∀ p ∈ e.spans, ∃ x ∈ Examples.lexeme? p,
+      ∃ w ∈ (p.words e).head?, p.length = 1 ∧ WrittenAs w x.coordinator := by
+  decide
 
 -- the marked words are those the gloss line glosses J or MU
 theorem exists_span_iff_glossed :
     ∀ e ∈ Examples.all, ∀ i < e.glossedWords.length, ∀ w ∈ e.glossedWords[i]?,
       (∃ s ∈ e.spans, s.start = i) ↔ "J".toList ∈ w.glosses ∨ "MU".toList ∈ w.glosses := by
   decide
-
--- the examples of each language show the three sentence types
-theorem toFinset_map_heads (l : Language) :
-    ((Examples.all.filter (·.language = l.glottocode)).map heads).toFinset =
-      Finset.univ.image Sentence.pronounced := by
-  revert l; decide
 
 /-! ### Accounts and their measures -/
 
