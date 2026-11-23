@@ -1,39 +1,52 @@
 module
 
-public import Linglib.Morphology.Word.Basic
-public import Linglib.Syntax.Minimalist.ExtendedProjection
+public import Linglib.Syntax.Minimalist.Spine
+public import Mathlib.Data.Option.Basic
 
 /-!
 # Panagiotidis (2015): Categorial Features
 
-This file formalizes Panagiotidis's theory of word class: lexical category is
-not a property of roots but of the categorizer heads *n*, *v*, and *a* that category-neutral
-roots merge with, as Marantz proposed, and the categorial features those heads bear are
-substantive and interpretable rather than diacritic, [N] imposing a sortal perspective and
-[V] a perspective extending into time on the root's concept. Nouns bear [N] only, verbs [V]
-only, adjectives both, and adpositions neither, the adposition being the default categorizer
-(`categorizer_features`, `isCategorizer_iff`). The functional heads of an extended projection
-carry uninterpretable copies of their categorizer's features, so a category's features are
-fixed by its family (`categorialFeatures_eq_iff`), and the diacritic features Chomsky proposed
-in 1970 cut the categories into the same four classes (`chomsky_panagiotidis_agree`).
-Category change is change of categorizer: an English root surfaces in all three categorized
-classes (`RootFamily`, `all_families_tricategorial`).
+A categorial feature is one of `[N]` and `[V]`, which impose a sortal and an extending-into-time
+perspective on the complement of the head that bears them. A head bears at most one categorial
+feature interpretably and at most one uninterpretably. A categorizer, *n* or *v*, bears an
+interpretable feature and is a lexical head. A functional head bears an uninterpretable one, that
+of the lexical head at the foot of its projection line (Categorial Deficiency). A Switch bears
+both, as the head of a gerund bears `[N]` beside `[uV]`, and a root bears neither.
+
+A projection line is the list of heads a phrase projects, from the bottom up. Its category is the
+interpretable feature of its highest categorizer. An uninterpretable feature probes the complement
+of its head, and the line converges when each `[uX]` finds `[X]` as the category of that
+complement, the closest interpretable feature below it (categorial Agree).
+
+In a convergent line a head merged over material without a categorizer bears no uninterpretable
+feature, so a functional head takes no bare root as its complement and the lowest head with a
+categorial feature is lexical. The functional heads of a line whose categorizers all bear `[X]`
+all bear `[uX]`, which is biuniqueness. Two functional heads with different features have a
+categorizer between them, and a line through a Switch divides into a part below it uniform in its
+uninterpretable feature and a part above it uniform in its interpretable one, which is Phrasal
+Coherence. With the features of the substrate's categories read off their families, an extended
+projection that begins at its lexical head converges.
 
 ## Implementation notes
 
-The features of a category are read off its extended-projection family, since the book has
-every functional head carry a copy of its categorizer's features; the substrate's `Cat.features`
-reads Chomsky's features off the family the same way, so the two systems are compared as
-images of the family. The book's distinction between a categorizer's interpretable features and
-the copies on functional heads is not represented. The root families are the standard English
-illustrations of category-neutral roots from the Distributed Morphology literature rather than
-data from the book.
+A projection line records the head that projects at each application of Merge, so specifiers and
+the label of a phrase merged with a phrase are not represented. In `Head.ofCat` the lexical head
+of a family stands for a categorized root and bears the interpretable feature, as the categorizer
+does. The heads of the adjectival and adpositional families bear no categorial feature, since the
+book sets adjectives and adpositions outside the system of `[N]` and `[V]`. Categorial Agree does
+not keep a categorizer without an uninterpretable feature from merging over functional structure;
+the book takes the heads that do so to be Switches.
+
+## TODO
+
+The labelling predictions of categorial Agree, the phasehood of categorizers and Switches, and the
+size of the complement of a Switch are not formalized.
 
 ## References
 
 * [panagiotidis-2015]
-* [chomsky-1970]
-* [marantz-1997]
+* [grimshaw-2005]
+* [embick-marantz-2008]
 -/
 
 @[expose] public section
@@ -42,102 +55,265 @@ namespace Panagiotidis2015
 
 open Minimalist
 
-/-- Panagiotidis's categorial features, [N] a sortal perspective and [V] a perspective extending
-into time, substantive and interpretable on a categorizer. -/
-structure CategorialFeatures where
-  hasN : Bool
-  hasV : Bool
+/-- (7), p. 84: the categorial features, `N` a sortal perspective and `V` a perspective extending
+into time. -/
+inductive CategorialFeature where
+  | N
+  | V
   deriving DecidableEq, Repr
 
-/-- The features of a family's categorizer, where *n* bears [N], *v* bears [V], *a* both, and the
-adposition, the default categorizer, neither. -/
-def CategorialFeatures.ofFamily : CatFamily → CategorialFeatures
-  | .nominal => ⟨true, false⟩
-  | .verbal => ⟨false, true⟩
-  | .adjectival => ⟨true, true⟩
-  | .adpositional => ⟨false, false⟩
+/-- The categorial features of a head. -/
+structure Head where
+  /-- The interpretable feature, which sets the perspective on the complement. -/
+  interpretable : Option CategorialFeature := none
+  /-- The uninterpretable feature, a probe for categorial Agree. -/
+  uninterpretable : Option CategorialFeature := none
+  deriving DecidableEq, Repr
 
-theorem CategorialFeatures.ofFamily_injective :
-    Function.Injective CategorialFeatures.ofFamily := by
-  intro a b h
-  cases a <;> cases b <;> simp_all [CategorialFeatures.ofFamily]
+namespace Head
 
-/-- The features of a category are those of its family's categorizer, which every functional
-head of the extended projection carries as an uninterpretable copy. -/
-def categorialFeatures (c : Cat) : CategorialFeatures := .ofFamily c.family
+/-- A root, which bears no categorial feature. -/
+def root : Head := {}
 
-/-- The categorizers are *v*, *n* and *a*; the categorized lexical heads are root-plus-categorizer
-complexes. -/
-def IsCategorizer : Cat → Prop
-  | .v | .n | .a => True
-  | _ => False
+/-- (11), p. 119: a lexical head bears an interpretable categorial feature. -/
+def categorizer (X : CategorialFeature) : Head := ⟨some X, none⟩
 
-instance : DecidablePred IsCategorizer := fun c ↦ by
-  cases c <;> unfold IsCategorizer <;> infer_instance
+/-- The nominalizer. -/
+abbrev n : Head := categorizer .N
 
-theorem isCategorizer_iff (c : Cat) : IsCategorizer c ↔ c = .v ∨ c = .n ∨ c = .a := by
-  cases c <;> simp [IsCategorizer]
+/-- The verbalizer. -/
+abbrev v : Head := categorizer .V
 
-theorem categorizer_features :
-    categorialFeatures .n = ⟨true, false⟩ ∧ categorialFeatures .v = ⟨false, true⟩ ∧
-      categorialFeatures .a = ⟨true, true⟩ ∧ categorialFeatures .P = ⟨false, false⟩ := by
+/-- (11), p. 119: a functional head bears an uninterpretable categorial feature. -/
+def functional (X : CategorialFeature) : Head := ⟨none, some X⟩
+
+/-- (17), p. 143: a Switch bears an interpretable feature `X` and an uninterpretable feature
+`Y`. -/
+def switch (X Y : CategorialFeature) : Head := ⟨some X, some Y⟩
+
+end Head
+
+variable {l l₁ l₂ l₃ : List Head} {h h' k : Head} {X Y : CategorialFeature}
+
+/-! ### The category of a projection line -/
+
+/-- (21), p. 98: the category of a projection line is the interpretable feature of its highest
+categorizer. -/
+def category (l : List Head) : Option CategorialFeature :=
+  (l.filterMap Head.interpretable).getLast?
+
+@[simp] theorem category_nil : category [] = none := rfl
+
+theorem category_append (l₁ l₂ : List Head) :
+    category (l₁ ++ l₂) = (category l₂).or (category l₁) := by
+  simp [category, List.getLast?_append]
+
+@[simp] theorem category_singleton (h : Head) : category [h] = h.interpretable := by
+  cases hi : h.interpretable <;> simp [category, hi]
+
+@[simp] theorem category_concat (l : List Head) (h : Head) :
+    category (l ++ [h]) = h.interpretable.or (category l) := by
+  rw [category_append, category_singleton]
+
+theorem category_eq_none_iff : category l = none ↔ ∀ h ∈ l, h.interpretable = none := by
+  simp [category]
+
+theorem exists_mem_of_category_eq_some (hl : category l = some X) :
+    ∃ h ∈ l, h.interpretable = some X := by
+  simpa using List.mem_of_getLast? hl
+
+theorem category_eq_some_of_forall (hk : k ∈ l) (hkX : k.interpretable = some X)
+    (hl : ∀ h ∈ l, ∀ Y ∈ h.interpretable, Y = X) : category l = some X := by
+  cases hc : category l with
+  | none => simp [category_eq_none_iff.1 hc k hk] at hkX
+  | some Y =>
+    obtain ⟨h, hh, hY⟩ := exists_mem_of_category_eq_some hc
+    rw [hl h hh Y hY]
+
+/-! ### Categorial Agree -/
+
+/-- (14) and (16), pp. 125–126: a projection line converges when every uninterpretable feature
+`[uX]` finds `[X]` as the category of the complement of its head. -/
+def Converges (l : List Head) : Prop :=
+  ∀ l₁ h, l₁ ++ [h] <+: l → ∀ X ∈ h.uninterpretable, category l₁ = some X
+
+theorem converges_iff_forall_getElem : Converges l ↔
+    ∀ (i : ℕ) (hi : i < l.length), ∀ X ∈ l[i].uninterpretable, category (l.take i) = some X := by
+  refine ⟨fun hl i hi ↦ hl _ _ ?_, ?_⟩
+  · rw [← List.take_succ_eq_append_getElem hi]
+    exact List.take_prefix _ _
+  · rintro hl l₁ h ⟨t, rfl⟩
+    simpa using hl l₁.length (by simp)
+
+instance : DecidablePred Converges := fun _ ↦ decidable_of_iff _ converges_iff_forall_getElem.symm
+
+@[simp] theorem converges_nil : Converges [] := fun l₁ h hp ↦ by simp at hp
+
+theorem Converges.of_prefix (hl : Converges l₂) (hp : l₁ <+: l₂) : Converges l₁ :=
+  fun a k hk ↦ hl a k (hk.trans hp)
+
+-- Merging the head `h` with the line `l`.
+theorem converges_concat : Converges (l ++ [h]) ↔
+    Converges l ∧ ∀ X ∈ h.uninterpretable, category l = some X := by
+  refine ⟨fun hl ↦ ⟨hl.of_prefix (List.prefix_append _ _), hl l h List.prefix_rfl⟩, ?_⟩
+  rintro ⟨hl, hh⟩ l₁ k hp
+  rcases List.prefix_concat_iff.1 hp with heq | hp
+  · obtain ⟨rfl, hk⟩ := List.append_inj' heq rfl
+    obtain rfl : k = h := by simpa using hk
+    exact hh
+  · exact hl l₁ k hp
+
+theorem converges_cons_of_forall_mem {o : Option CategorialFeature}
+    (hl : ∀ h ∈ l, (∀ Y ∈ h.interpretable, Y ∈ o) ∧ ∀ Y ∈ h.uninterpretable, Y ∈ o) :
+    Converges (⟨o, none⟩ :: l) := by
+  rintro (_ | ⟨k, l₁⟩) h hp X hX
+  · obtain ⟨rfl, -⟩ := List.cons_prefix_cons.1 hp
+    simp at hX
+  · obtain ⟨rfl, hp'⟩ := List.cons_prefix_cons.1 hp
+    have hsub : ∀ x ∈ l₁ ++ [h], x ∈ l := fun x hx ↦ hp'.subset hx
+    obtain rfl : o = some X := (hl h (hsub h (by simp))).2 X hX
+    refine category_eq_some_of_forall (k := ⟨some X, none⟩) (by simp) rfl fun h' hh' Y hY ↦ ?_
+    rcases List.mem_cons.1 hh' with rfl | hh'
+    · exact (Option.some.inj hY).symm
+    · exact (Option.some.inj ((hl h' (hsub h' (by simp [hh']))).1 Y hY)).symm
+
+/-- A head merged over material without a categorizer bears no uninterpretable feature: a
+functional head takes no bare root as its complement, the Categorization Assumption of
+[embick-marantz-2008], and the lowest head with a categorial feature is lexical. -/
+theorem Converges.uninterpretable_eq_none (hl : Converges (l₁ ++ h :: l₂))
+    (h₁ : category l₁ = none) : h.uninterpretable = none :=
+  Option.eq_none_iff_forall_ne_some.2 fun X hX ↦ by
+    simpa [h₁] using hl l₁ h ⟨l₂, by simp⟩ X hX
+
+/-- Biuniqueness: in a convergent line whose categorizers all bear `[X]`, every functional head
+bears `[uX]`. -/
+theorem Converges.uninterpretable_eq (hl : Converges l)
+    (hX : ∀ h ∈ l, ∀ Y ∈ h.interpretable, Y = X) : ∀ h ∈ l, ∀ Y ∈ h.uninterpretable, Y = X := by
+  intro h hh Y hY
+  obtain ⟨l₁, l₂, rfl⟩ := List.append_of_mem hh
+  obtain ⟨k, hk, hkY⟩ := exists_mem_of_category_eq_some (hl l₁ h ⟨l₂, by simp⟩ Y hY)
+  exact hX k (List.mem_append_left _ hk) Y hkY
+
+/-- The category of a line switches only at a categorizer: between a head bearing `[uX]` and a
+higher head bearing `[uY]` with `Y ≠ X` there is a head bearing `[Y]`, the lower of the two
+possibly being that head. -/
+theorem Converges.exists_mem_interpretable_of_ne (hl : Converges (l₁ ++ h :: l₂ ++ h' :: l₃))
+    (hX : X ∈ h.uninterpretable) (hY : Y ∈ h'.uninterpretable) (hne : Y ≠ X) :
+    ∃ k ∈ h :: l₂, k.interpretable = some Y := by
+  have h₁ : category l₁ = some X := hl l₁ h ⟨l₂ ++ h' :: l₃, by simp⟩ X hX
+  have h₂ : category (l₁ ++ h :: l₂) = some Y := hl _ h' ⟨l₃, by simp⟩ Y hY
+  rw [category_append, h₁] at h₂
+  cases hc : category (h :: l₂) with
+  | none => simp [hc, hne.symm] at h₂
+  | some Z =>
+    obtain rfl : Z = Y := by simpa [hc] using h₂
+    exact exists_mem_of_category_eq_some hc
+
+theorem category_append_cons_of_forall (hk : k.interpretable = some X)
+    (h₂ : ∀ h ∈ l₂, h.interpretable = none) : category (l₁ ++ k :: l₂) = some X := by
+  rw [← List.singleton_append, ← List.append_assoc, category_append,
+    category_eq_none_iff.2 h₂, category_concat, hk]
+  rfl
+
+theorem Converges.uninterpretable_eq_of_mem_right (hl : Converges (l₁ ++ k :: l₂))
+    (hk : k.interpretable = some X) (h₂ : ∀ h ∈ l₂, h.interpretable = none) :
+    ∀ h ∈ l₂, ∀ Y ∈ h.uninterpretable, Y = X := by
+  intro h hh Y hY
+  obtain ⟨a, b, rfl⟩ := List.append_of_mem hh
+  have := hl (l₁ ++ k :: a) h ⟨b, by simp⟩ Y hY
+  rw [category_append_cons_of_forall hk fun x hx ↦ h₂ x (List.mem_append_left _ hx)] at this
+  exact (Option.some.inj this).symm
+
+/-- Phrasal Coherence: a convergent line through a Switch `[X][uY]`, with the categorizers below
+it bearing `[Y]` and none above it, has every functional head below the Switch bear `[uY]` and
+every one above it bear `[uX]`. -/
+theorem phrasal_coherence (hl : Converges (l₁ ++ .switch X Y :: l₂))
+    (h₁ : ∀ h ∈ l₁, ∀ Z ∈ h.interpretable, Z = Y) (h₂ : ∀ h ∈ l₂, h.interpretable = none) :
+    (∀ h ∈ l₁, ∀ Z ∈ h.uninterpretable, Z = Y) ∧ ∀ h ∈ l₂, ∀ Z ∈ h.uninterpretable, Z = X :=
+  ⟨(hl.of_prefix (List.prefix_append _ _)).uninterpretable_eq h₁,
+    hl.uninterpretable_eq_of_mem_right rfl h₂⟩
+
+/-! ### The book's structures -/
+
+-- (10), p. 117: one `[V]` and three `[uV]`.
+example : Converges [.v, .functional .V, .functional .V, .functional .V] := by decide
+
+-- (10), p. 90: no functional head over a bare root.
+example : ¬ Converges [.root, .functional X] := by cases X <;> decide
+
+-- (17), p. 126: a `[uN]` head over a verbal line.
+example : ¬ Converges [.v, .functional .V, .functional .N] := by decide
+
+-- (18), p. 126: the lexical heads merged first and the functional heads above them.
+example : ¬ Converges [.n, .v, .functional .V, .functional .N] := by decide
+
+-- (19), p. 127: no line of functional heads alone.
+example : ¬ Converges [.functional .V, .functional .V, .functional .V] := by decide
+
+-- (20), p. 128: no lexical head in the middle of a line.
+example : ¬ Converges [.functional .V, .v, .functional .V] := by decide
+
+-- (29), p. 132: no line begins with two functional heads.
+example : ¬ Converges [.functional X, .functional Y] := by cases X <;> cases Y <;> decide
+
+-- (30) and n. 22, p. 132: `[DP D n]` converges without a root and `[DP D Num]` does not.
+example : Converges [.n, .functional .N] ∧ ¬ Converges [.functional .N, .functional .N] := by
   decide
 
-theorem categorialFeatures_eq_iff (c₁ c₂ : Cat) :
-    categorialFeatures c₁ = categorialFeatures c₂ ↔ c₁.family = c₂.family :=
-  CategorialFeatures.ofFamily_injective.eq_iff
+-- (21), p. 145: *Albert's eating herring*, a nominal line over a verbal one.
+example : Converges [.root, .v, .functional .V, .switch .N .V, .functional .N] ∧
+    category [.root, .v, .functional .V, .switch .N .V, .functional .N] = some .N := by
+  decide
 
-theorem chomsky_panagiotidis_agree (c₁ c₂ : Cat) :
-    categorialFeatures c₁ = categorialFeatures c₂ ↔ c₁.features = c₂.features := by
-  rw [categorialFeatures_eq_iff, Cat.features_eq_iff]
+-- (24), p. 147: the head merged over a Switch bears `[uN]`, not `[uV]`.
+example : ¬ Converges [.root, .v, .functional .V, .switch .N .V, .functional .V] := by decide
 
-/-- A categorizer merges directly with the root, the lexical head of its family. -/
-theorem step_of_isCategorizer {c : Cat} (h : IsCategorizer c) : c.family.lexical.Step c := by
-  cases c <;> first | decide +kernel | exact h.elim
+-- (25), p. 147: two `[uN]` heads over a Switch over two `[uV]` heads.
+example : Converges [.root, .v, .functional .V, .functional .V, .switch .N .V, .functional .N,
+    .functional .N] := by
+  decide
 
-/-- A category-neutral root with the surface words it projects across the lexical categories,
-each stamped with its Universal Dependencies category ([marantz-1997]). -/
-structure RootFamily where
-  /-- A label for the root; roots themselves are sub-morphemic. -/
-  rootLabel : String
-  /-- The surface words it projects. -/
-  words : List Morphology.Word
+/-! ### Categorial Deficiency over the families -/
 
-/-- The family has a surface form in category `c`. -/
-def RootFamily.HasCategory (rf : RootFamily) (c : UD.UPOS) : Prop :=
-  ∃ w ∈ rf.words, w.cat = c
+/-- The categorial feature of a family: `[N]` for the nominal family and `[V]` for the verbal. -/
+def CategorialFeature.ofFamily? : CatFamily → Option CategorialFeature
+  | .nominal => some .N
+  | .verbal => some .V
+  | .adjectival | .adpositional => none
 
-instance (rf : RootFamily) (c : UD.UPOS) : Decidable (rf.HasCategory c) :=
-  List.decidableBEx _ rf.words
+/-- (9), p. 117: the lexical head and the categorizer of a family bear its categorial feature
+interpretably, and its functional heads bear the uninterpretable version. -/
+def Head.ofCat (c : Cat) : Head :=
+  if c.IsCategorizer ∨ c = c.family.lexical then ⟨CategorialFeature.ofFamily? c.family, none⟩
+  else ⟨none, CategorialFeature.ofFamily? c.family⟩
 
-/-- The root √DESTROY surfaces as destroy, destruction and destructive. -/
-def destroy : RootFamily :=
-  ⟨"DESTROY", [.mk' "destroy" .VERB, .mk' "destruction" .NOUN, .mk' "destructive" .ADJ]⟩
+theorem Head.ofCat_lexical (f : CatFamily) :
+    Head.ofCat f.lexical = ⟨CategorialFeature.ofFamily? f, none⟩ := by
+  simp [Head.ofCat]
 
-/-- The root √BEAUTY surfaces as beautify, beauty and beautiful. -/
-def beauty : RootFamily :=
-  ⟨"BEAUTY", [.mk' "beautify" .VERB, .mk' "beauty" .NOUN, .mk' "beautiful" .ADJ]⟩
+/-- An extended projection that begins at the lexical head of its family converges. -/
+theorem converges_map_ofCat {s : Spine} {f : CatFamily} (hs : s.IsExtendedProjection)
+    (hf : s.heads.head? = some f.lexical) : Converges (s.heads.map Head.ofCat) := by
+  obtain ⟨t, ht⟩ : ∃ t, s.heads = f.lexical :: t := by
+    cases hh : s.heads with
+    | nil => simp [hh] at hf
+    | cons c t => exact ⟨t, by simp_all⟩
+  have hp := hs.pairwise
+  rw [ht, List.pairwise_cons] at hp
+  rw [ht, List.map_cons, Head.ofCat_lexical]
+  refine converges_cons_of_forall_mem fun h hh ↦ ?_
+  obtain ⟨c, hc, rfl⟩ := List.mem_map.1 hh
+  have hcf : c.family = f := by simpa using (hp.1 c hc).family_eq.symm
+  unfold Head.ofCat
+  split <;> simp [hcf]
 
-/-- The root √CLEAR surfaces as clear, clarity and clear. -/
-def clear : RootFamily :=
-  ⟨"CLEAR", [.mk' "clear" .VERB, .mk' "clarity" .NOUN, .mk' "clear" .ADJ]⟩
+-- The finite clause `[V, v, T, C]`.
+example : Converges (Spine.cP.heads.map Head.ofCat) :=
+  converges_map_ofCat (f := .verbal) Spine.cP_isExtendedProjection rfl
 
-/-- The root √PRODUCE surfaces as produce, production and productive. -/
-def produce : RootFamily :=
-  ⟨"PRODUCE", [.mk' "produce" .VERB, .mk' "production" .NOUN, .mk' "productive" .ADJ]⟩
-
-/-- The root √CREATE surfaces as create, creation and creative. -/
-def create : RootFamily :=
-  ⟨"CREATE", [.mk' "create" .VERB, .mk' "creation" .NOUN, .mk' "creative" .ADJ]⟩
-
-/-- The root √ACT surfaces as act, action and active. -/
-def act : RootFamily := ⟨"ACT", [.mk' "act" .VERB, .mk' "action" .NOUN, .mk' "active" .ADJ]⟩
-
-/-- The sample root families. -/
-def allFamilies : List RootFamily := [destroy, beauty, clear, produce, create, act]
-
-theorem all_families_tricategorial :
-    ∀ rf ∈ allFamilies, rf.HasCategory .VERB ∧ rf.HasCategory .NOUN ∧ rf.HasCategory .ADJ := by
+-- p. 111: D merges only in the projection line of N and T only in that of V.
+example : ¬ Converges ([Cat.V, .v, .T, .D].map Head.ofCat) ∧
+    ¬ Converges ([Cat.N, .n, .D, .T].map Head.ofCat) := by
   decide
 
 end Panagiotidis2015
