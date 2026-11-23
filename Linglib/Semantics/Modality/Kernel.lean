@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Trivalent.Proposition
-public import Linglib.Semantics.Evidential.Modal.Kernel
+public import Mathlib.Order.SetNotation
 
 /-!
 # Kernel semantics for epistemic modals
@@ -9,22 +9,17 @@ public import Linglib.Semantics.Evidential.Modal.Kernel
 Von Fintel and Gillies give epistemic modals an evidential presupposition. The kernel `K` is a set
 of propositions, the privileged information, whose intersection `⋂₀ K` is the modal base; the
 prejacent must not be directly settled by the kernel, entailed or excluded by one of its
-propositions (`Evidential.DirectlySettles`). The presupposition makes *must P* strong, asserting
+propositions (`Modality.DirectlySettles`). The presupposition makes *must P* strong, asserting
 that `⋂₀ K` entails `P`, while still signalling indirectness, since `⋂₀ K` can entail `P` without
 any single kernel proposition settling it. *Might* is the negation of *can't*, presupposition
-and all (`Modality.kernelMight_eq_compl_kernelCant`).
-
-Seen as evidentials, epistemic modals mark inference and not report. *Must P* is true where an
-inferential evidential has its evidence in the kernel
-(`Modality.kernelMust_eq_true_iff_mem_evidence`), and a reportative evidential has none there
-(`Modality.notMem_evidence_of_kernelMust_eq_true`). The worked examples are in
-`Studies/VonFintelGillies2010.lean`, the *can't* dilemma in `Studies/VonFintelGillies2021.lean`.
+and all (`Modality.kernelMight_eq_compl_kernelCant`). The worked examples are in
+`Studies/VonFintelGillies2010.lean`, the *can't* dilemma in `Studies/VonFintelGillies2021.lean`,
+and the evidence a kernel gives in `Semantics/Evidentiality/Modal/Kernel.lean`.
 
 ## Implementation notes
 
 A kernel is a set of propositions `Set (Set W)` and its modal base is `⋂₀ K`, so no structure
-wraps it. The assertion of *must* is Kratzer's simple necessity over the constant modal base `K`,
-and the evidence relation of the kernel is that of the constant family `fun _ ↦ K`.
+wraps it. The assertion of *must* is Kratzer's simple necessity over the constant modal base `K`.
 
 ## References
 
@@ -36,9 +31,34 @@ and the evidence relation of the kernel is that of the constant family `fun _ �
 
 namespace Modality
 
-open Evidential
-
 variable {W : Type*} {K K' : Set (Set W)} {P : Set W} {w : W}
+
+/-! ### Settling -/
+
+/-- A kernel directly settles `P` when one of its propositions entails `P` or excludes it. -/
+def DirectlySettles (K : Set (Set W)) (P : Set W) : Prop := ∃ X ∈ K, X ⊆ P ∨ Disjoint X P
+
+/-- What a kernel directly settles its modal base entails or excludes; the converse fails
+(`VonFintelGillies2010.entailment_settling_gap`). -/
+theorem DirectlySettles.sInter_subset_or (h : DirectlySettles K P) : ⋂₀ K ⊆ P ∨ ⋂₀ K ⊆ Pᶜ :=
+  let ⟨_, hX, hXP⟩ := h
+  hXP.imp (Set.sInter_subset_of_mem hX).trans
+    fun hd ↦ (Set.sInter_subset_of_mem hX).trans hd.subset_compl_right
+
+theorem DirectlySettles.mono (hK : K ⊆ K') (h : DirectlySettles K P) : DirectlySettles K' P :=
+  let ⟨X, hX, hXP⟩ := h
+  ⟨X, hK hX, hXP⟩
+
+@[simp] theorem directlySettles_singleton {X : Set W} :
+    DirectlySettles {X} P ↔ X ⊆ P ∨ Disjoint X P := by
+  simp [DirectlySettles]
+
+@[simp] theorem directlySettles_compl : DirectlySettles K Pᶜ ↔ DirectlySettles K P := by
+  simp [DirectlySettles, Set.subset_compl_iff_disjoint_right, Set.disjoint_compl_right_iff_subset,
+    or_comm]
+
+@[simp] theorem not_directlySettles_empty : ¬ DirectlySettles (∅ : Set (Set W)) P := by
+  simp [DirectlySettles]
 
 /-! ### Modal operators -/
 
@@ -86,27 +106,5 @@ theorem kernelMight_eq_compl_kernelCant : kernelMight K P = (kernelCant K P)ᶜ 
   ext w
   refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_ <;>
     simp [kernelCant, Set.subset_compl_iff_disjoint_right, Set.not_disjoint_iff_nonempty_inter]
-
-/-! ### Epistemic modals as evidentials -/
-
-theorem kernelMust_eq_true_iff_mem_kernelEvidence :
-    kernelMust K P w = .true ↔ w ∈ kernelEvidence (fun _ ↦ K) .inferring P := by
-  simp [and_comm]
-
-variable {e : Evidential}
-
-/-- *Must P* is true exactly where an inferential evidential has its evidence in the kernel. -/
-theorem kernelMust_eq_true_iff_mem_evidence (he : e.IsInferential) :
-    kernelMust K P w = .true ↔
-      w ∈ e.evidence (fun π ↦ kernelEvidence (fun _ ↦ K) π.evidenceType) P := by
-  rw [he.evidence_comp, kernelMust_eq_true_iff_mem_kernelEvidence]
-
-/-- Where *must P* is true, a reportative evidential has no evidence in the kernel. -/
-theorem notMem_evidence_of_kernelMust_eq_true (he : e.IsReportative)
-    (h : kernelMust K P w = .true) :
-    w ∉ e.evidence (fun π ↦ kernelEvidence (fun _ ↦ K) π.evidenceType) P := by
-  rw [he.evidence_comp]
-  rintro ⟨X, hX, hXP⟩
-  exact (kernelMust_eq_true_iff.1 h).1 ⟨X, hX, .inl hXP⟩
 
 end Modality

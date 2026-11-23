@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Image
 public import Linglib.Morphology.Morph
-public import Linglib.Semantics.Evidential.Source
+public import Linglib.Semantics.Evidentiality.Source
 
 /-!
 # Evidentials

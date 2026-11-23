@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Evidential.Paradigm
+public import Linglib.Semantics.Evidentiality.Paradigm
 
 /-!
 # Evidence
@@ -33,8 +33,8 @@ beside a sensory evidential that is not.
 
 This file and those it imports use neither modality nor tense. Accounts on which evidence is
 what a body of privileged information or a modal base settles are developed from
-`Evidential/Modal/`, and accounts on which an evidential locates the acquisition of the
-evidence in time from `Evidential/Temporal/`.
+`Evidentiality/Modal/`, and accounts on which an evidential locates the acquisition of the
+evidence in time from `Evidentiality/Temporal/`.
 
 ## Implementation notes
 
@@ -47,7 +47,7 @@ excludes indirect evidence for it.
 
 * The evidence of a report is the content of a speech event; the content function of
   attitude reports is not yet related to `ev` at the hearsay and quotative parameters.
-* The time at which evidence is acquired (`Evidential.Frame`, in `Evidential/Temporal/Frame.lean`)
+* The time at which evidence is acquired (`Evidential.Frame`, in `Evidentiality/Temporal/Frame.lean`)
   is not an argument of `ev`, so the temporal accounts are not yet stated on an evidence relation.
 * The presupposition of indirect evidence in [izvorski-1997] and the information sources of the
   St'át'imcets modals in [matthewson-2016] are stated in their studies on Kratzer backgrounds,

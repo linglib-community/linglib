@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Modality.Kernel
+public import Linglib.Semantics.Evidentiality.Modal.Kernel
+public import Studies.Izvorski1997
 public import Linglib.Semantics.Questions.Partition.Basic
 public import Linglib.Data.Examples.VonFintelGillies2010
 
@@ -41,6 +42,7 @@ the proposition. The paper's examples are the rows of `Data.Examples.VonFintelGi
 * [von-fintel-gillies-2010]
 * [kratzer-1991]
 * [karttunen-1972]
+* [izvorski-1997]
 -/
 
 @[expose] public section
@@ -106,6 +108,12 @@ theorem kernelEvidence_raining (w : World) :
   ⟨⟨raining_follows, raining_unsettled⟩, fun ⟨X, hX, hXP⟩ ↦ raining_unsettled ⟨X, hX, .inl hXP⟩,
     raining, by simp [rainK], subset_rfl⟩
 
+-- footnote 30: one kernel gives inferring evidence for one proposition and attested for another
+theorem kernelEvidence_wetGear (w : World) :
+    w ∈ kernelEvidence (fun _ ↦ wetGearK) .inferring raining ∧
+      w ∈ kernelEvidence (fun _ ↦ wetGearK) .attested wetGear :=
+  ⟨⟨raining_follows, raining_unsettled⟩, wetGear, by simp [wetGearK], subset_rfl⟩
+
 theorem entailment_settling_gap :
     ∃ (K : Set (Set World)) (P : Set World), ⋂₀ K ⊆ P ∧ ¬ DirectlySettles K P :=
   ⟨wetGearK, raining, raining_follows, raining_unsettled⟩
@@ -123,6 +131,11 @@ variable {W : Type*} (K : Set (Set W))
 theorem modus_ponens_with_must {P Q : Set W} {w : W} (hReal : w ∈ ⋂₀ K)
     (hCond : w ∈ P → kernelMust K Q w = .true) (hP : w ∈ P) : w ∈ Q :=
   (kernelMust_eq_true_iff.1 (hCond hP)).2 hReal
+
+-- footnote 30: where *must* is true, the evidential of [izvorski-1997] over the kernel is undefined
+theorem ev_eq_undefined_of_kernelMust {P : Set W} {w : W} (g : Background W)
+    (h : kernelMust K P w = .true) : Izvorski1997.Ev (fun _ ↦ K) g P w = .undefined :=
+  Izvorski1997.ev_eq_undefined_of_known (kernelMust_eq_true_iff.1 h).2
 
 theorem must_perhaps_contradiction {P : Set W} {w : W} (hMust : kernelMust K P w = .true) :
     kernelMight K Pᶜ w = .false :=

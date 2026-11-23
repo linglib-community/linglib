@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Typology
-public import Linglib.Semantics.Evidential.Term
+public import Linglib.Semantics.Evidentiality.Term
 
 /-!
 # St'át'imcets (Lillooet Salish) Modal Inventory

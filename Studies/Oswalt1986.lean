@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Evidential.Paradigm
+public import Linglib.Semantics.Evidentiality.Paradigm
 public import Linglib.Fragments.Kashaya.Evidentiality
 public import Linglib.Data.Examples.Oswalt1986
 public import Linglib.Data.Examples.Readers

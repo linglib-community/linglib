@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Evidential.Temporal.Frame
+public import Linglib.Semantics.Evidentiality.Temporal.Frame
 
 /-!
 # Korean evidentiality

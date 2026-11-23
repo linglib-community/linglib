@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Universals
-public import Linglib.Semantics.Evidential.Evidence
+public import Linglib.Semantics.Evidentiality.Evidence
 public import Linglib.Data.Examples.Matthewson2016
 public import Linglib.Fragments.Gitksan.Modals
 public import Linglib.Fragments.Statimcets.Modals
@@ -119,7 +119,7 @@ def ProjectionMode.Admits : ProjectionMode → Background W → Prop
 exactly when the base is realistic. -/
 theorem isVeridical_simpleNecessity_iff :
     IsVeridical (fun p ↦ {w | p ∈ simpleNecessity f w}) ↔ f.IsRealistic :=
-  ⟨fun h w ↦ h (f.accessibleWorlds w) (Set.mem_setOf.2 (mem_simpleNecessity.2 Set.Subset.rfl)),
+  ⟨fun h w ↦ h (f.accessibleWorlds w) (Set.mem_ofPred.2 (mem_simpleNecessity.2 Set.Subset.rfl)),
     fun h _ w hw ↦ hw (h w)⟩
 
 /-- A mode is veridical over a space of worlds when every base it projects there gives

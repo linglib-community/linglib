@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Order.OrdConnected
-public import Linglib.Semantics.Evidential.Paradigm
+public import Linglib.Semantics.Evidentiality.Paradigm
 public import Linglib.Fragments.Turkish.Evidentiality
 public import Linglib.Fragments.Abkhaz.Evidentiality
 public import Linglib.Fragments.Slavic.Bulgarian.Evidentiality

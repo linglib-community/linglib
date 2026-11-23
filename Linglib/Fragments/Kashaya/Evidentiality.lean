@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Evidential.Term
+public import Linglib.Semantics.Evidentiality.Term
 public import Linglib.Semantics.Aspect.Viewpoint.Defs
 
 /-!

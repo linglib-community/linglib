@@ -5,7 +5,7 @@ public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
 public import Linglib.Semantics.ConventionalImplicature
-public import Linglib.Semantics.Evidential.Evidence
+public import Linglib.Semantics.Evidentiality.Evidence
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Linglib.Data.Examples.Readers

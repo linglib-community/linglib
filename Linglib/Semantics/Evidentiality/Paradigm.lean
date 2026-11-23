@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.Partition.Finpartition
-public import Linglib.Semantics.Evidential.Term
+public import Linglib.Semantics.Evidentiality.Term
 
 /-!
 # Evidential paradigms

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Evidential.Term
+public import Linglib.Semantics.Evidentiality.Evidence
 public import Linglib.Semantics.Tense.Defs
 
 /-!
@@ -20,6 +20,13 @@ compose to a cell containing the third (`Evidential.Frame.Constraint.compare_mem
 Downstream evidence is the constraint whose first cell is the nonfuture. An evidential that
 fixes when its evidence was acquired, as Korean *-te* fixes it before speech and *-ney* at
 speech, carries the cell of its acquisition relative to speech (`Evidential.Timed`).
+
+A dated evidence relation `ev : Parameter → Set W → T → Set W` gives the worlds `ev π p t` in
+which the speaker acquires evidence from `π` for `p` at the time `t`; forgetting the time gives
+the evidence relation `Evidential.undated ev`. The evidential proposition of a timed evidential
+uttered at `s` requires evidence from a source it covers acquired at a time in its cell relative
+to `s` (`Evidential.Timed.evidence`). It entails the evidential proposition of the underlying
+evidential (`Evidential.Timed.evidence_subset`) and equals it when the cell is `⊤`.
 
 ## Main definitions
 
@@ -141,3 +148,49 @@ of the acquisition relative to speech. -/
 structure Evidential.Timed extends Evidential where
   /-- The cell of the acquisition of the evidence relative to speech. -/
   acquisitionToSpeech : PointAlgebra
+
+namespace Evidential
+
+variable {W T : Type*} {ev : Parameter → Set W → T → Set W} {p : Set W} {w : W}
+
+/-! ### Dated evidence -/
+
+/-- The evidence relation of a dated one, forgetting when the evidence is acquired. -/
+def undated (ev : Parameter → Set W → T → Set W) : Parameter → Set W → Set W :=
+  fun π p ↦ ⋃ t, ev π p t
+
+@[simp] theorem mem_undated {π : Parameter} : w ∈ undated ev π p ↔ ∃ t, w ∈ ev π p t :=
+  Set.mem_iUnion
+
+variable [LinearOrder T] {e : Timed} {s : T}
+
+/-- The evidential proposition of a timed evidential uttered at `s`: the speaker has evidence
+for `p` from a source it covers, acquired at a time in its cell relative to `s`. -/
+def Timed.evidence (e : Timed) (ev : Parameter → Set W → T → Set W) (s : T) (p : Set W) :
+    Set W :=
+  {w | ∃ π ∈ e.covers, ∃ t, w ∈ ev π p t ∧ compare t s ∈ e.acquisitionToSpeech}
+
+@[simp] theorem Timed.mem_evidence :
+    w ∈ e.evidence ev s p ↔
+      ∃ π ∈ e.covers, ∃ t, w ∈ ev π p t ∧ compare t s ∈ e.acquisitionToSpeech := Iff.rfl
+
+/-- A timed evidential requires at least the evidence its sources require. -/
+theorem Timed.evidence_subset : e.evidence ev s p ⊆ e.toEvidential.evidence (undated ev) p :=
+  fun _ ⟨π, hπ, t, ht, _⟩ ↦ ⟨π, hπ, mem_undated.2 ⟨t, ht⟩⟩
+
+/-- An evidential that leaves the time of acquisition open requires only the evidence its
+sources require. -/
+theorem Timed.evidence_eq_of_eq_top (h : e.acquisitionToSpeech = ⊤) :
+    e.evidence ev s p = e.toEvidential.evidence (undated ev) p := by
+  ext w
+  simp [h]
+
+/-- The evidential proposition of a timed evidential holds where the frame of some acquisition
+of evidence from a source it covers satisfies the constraint of its cell. -/
+theorem Timed.mem_evidence_iff_holds (x : T) :
+    w ∈ e.evidence ev s p ↔ ∃ π ∈ e.covers, ∃ t, w ∈ ev π p t ∧
+      ({ acquisitionToSpeech := e.acquisitionToSpeech } : Frame.Constraint).Holds
+        { speechTime := s, eventTime := x, acquisitionTime := t } := by
+  simp [Frame.Constraint.Holds]
+
+end Evidential

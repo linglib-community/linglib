@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Korean.Evidentiality
-public import Linglib.Semantics.Evidential.Temporal.Frame
+public import Linglib.Semantics.Evidentiality.Temporal.Frame
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.Cumming2026
 public import Linglib.Data.Examples.Readers
@@ -118,6 +118,26 @@ def willHave : Constraint := { eventToAcquisition := ⟦future⟧, eventToSpeech
 
 /-- The present-directed *will now* requires prospective evidence for a present event ((22)). -/
 def willNow : Constraint := { eventToAcquisition := ⟦future⟧, eventToSpeech := ⟦present⟧ }
+
+/-! ### The evidential proposition of the Korean pair
+
+*-te* and *-ney* cover the same sources and differ in the cell of the acquisition, before
+speech against at speech, so between them they require evidence in hand by the time of
+speech. -/
+
+theorem te_evidence_union_ney_evidence {W : Type*} (ev : Evidential.Parameter → Set W → T → Set W)
+    (s : T) (p : Set W) :
+    Korean.Evidentiality.te.evidence ev s p ∪ Korean.Evidentiality.ney.evidence ev s p =
+      {w | ∃ π ∈ Korean.Evidentiality.te.covers, ∃ t ≤ s, w ∈ ev π p t} := by
+  ext w
+  simp only [Set.mem_union, Evidential.Timed.mem_evidence, Set.mem_ofPred_eq, le_iff_lt_or_eq]
+  constructor
+  · rintro (⟨π, hπ, t, ht, hts⟩ | ⟨π, hπ, t, ht, hts⟩)
+    exacts [⟨π, hπ, t, .inl ((compare_mem_past t s).1 hts), ht⟩,
+      ⟨π, hπ, t, .inr ((compare_mem_present t s).1 hts), ht⟩]
+  · rintro ⟨π, hπ, t, hts | hts, ht⟩
+    exacts [.inl ⟨π, hπ, t, ht, (compare_mem_past t s).2 hts⟩,
+      .inr ⟨π, hπ, t, ht, (compare_mem_present t s).2 hts⟩]
 
 /-! ### The utterance perspective derived (§3)
 

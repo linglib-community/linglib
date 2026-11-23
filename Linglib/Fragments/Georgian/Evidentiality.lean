@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Georgian.Agreement
-public import Linglib.Semantics.Evidential.Term
+public import Linglib.Semantics.Evidentiality.Term
 
 /-!
 # Georgian evidentiality
