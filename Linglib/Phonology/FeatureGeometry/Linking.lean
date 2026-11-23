@@ -14,8 +14,9 @@ class node under its parent and each feature under its node. For a specification
 representation `ofSpec node s` has a slot, a token of the root node, a token on the tier of each
 node `s` bears and a token on the tier of each placed feature `s` specifies, labelled with its
 value; each token has a line to the token of the tier its own hangs from. `ofWord node w`
-concatenates these, and its lines do not cross (`noCrossing_ofWord`). Reading it back gives its
-segments (`reads_ofWord_iff`).
+concatenates these, as the monoid homomorphism `ofWordHom` does on the free monoid, and its
+lines do not cross (`noCrossing_ofWord`). Reading it back gives its segments
+(`reads_ofWord_iff`).
 
 Spreading is a change of lines. `linkNode node w a m n` spreads the node `a` from segment `m` onto
 segment `n`, and `linkFeature node w f m n` a single feature, by `Autosegmental.AR.spreadTier`:
@@ -138,6 +139,13 @@ def ofSpec (s : F → Option β) : AR (Tiers N F β) :=
 
 /-- The representation of a word of specifications, those of its segments in order. -/
 def ofWord (w : List (F → Option β)) : AR (Tiers N F β) := (w.map (ofSpec node)).prod
+
+/-- `ofWord` as a monoid homomorphism out of the free monoid on the specifications. -/
+def ofWordHom : FreeMonoid (F → Option β) →* AR (Tiers N F β) := FreeMonoid.lift (ofSpec node)
+
+@[simp] theorem ofWordHom_ofList (w : List (F → Option β)) :
+    ofWordHom node (FreeMonoid.ofList w) = ofWord node w :=
+  FreeMonoid.lift_ofList _ _
 
 theorem noCrossing_ofSpec (s : F → Option β) : (ofSpec node s).NoCrossing :=
   fun t' _ ↦ AR.isNonCrossing_lines_iff.2 fun p _ p' _ _ h₂ hlt ↦ by

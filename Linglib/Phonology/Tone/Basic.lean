@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Logic.Equiv.Defs
 public import Linglib.Core.Order.Flat
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Tonal root nodes and subtonal features
@@ -51,7 +50,7 @@ value is `some true` (`+`), `some false` (`-`), or `none` (unspecified). -/
 inductive Subtonal where
   | upper
   | raised
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited
 
 /-- A **tonal root node**: a `[±upper]` and a `[±raised]` value, each possibly unspecified.
 A structure rather than the bundle `Subtonal → Flat Bool`, so that `DecidableEq` derives

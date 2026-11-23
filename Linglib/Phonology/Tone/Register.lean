@@ -8,6 +8,7 @@ module
 public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.Data.List.Forall2
 public import Mathlib.Data.PNat.Defs
+public import Linglib.Phonology.Autosegmental.TierTree
 
 /-!
 # Register features and terracing
@@ -148,6 +149,26 @@ def bearing (f : RegisterFeature) (tier : RegisterTier) : List ℕ :=
 theorem mem_bearing {f : RegisterFeature} {tier : RegisterTier} {i : ℕ} :
     i ∈ bearing f tier ↔ ∃ h : i < tier.length, f ∈ tier[i] := by
   simp [bearing]
+
+/-- A register tier as an autosegmental representation: each register-bearing unit is a slot,
+with the features it bears linked to it in order. -/
+def toAR (tier : RegisterTier) : Autosegmental.AR (Autosegmental.TwoTier RegisterFeature Unit) :=
+  (tier.map fun fs ↦ Autosegmental.AR.primitive fs ()).prod
+
+/-- `toAR` as a monoid homomorphism out of the free monoid on the units. -/
+def toARHom : FreeMonoid (List RegisterFeature) →*
+    Autosegmental.AR (Autosegmental.TwoTier RegisterFeature Unit) :=
+  FreeMonoid.lift fun fs ↦ Autosegmental.AR.primitive fs ()
+
+@[simp] theorem toARHom_ofList (tier : RegisterTier) :
+    toARHom (FreeMonoid.ofList tier) = toAR tier :=
+  FreeMonoid.lift_ofList _ _
+
+/-- The units bearing a feature are the slots that read it. -/
+theorem mem_bearing_iff_reads {f : RegisterFeature} {tier : RegisterTier} {i : ℕ} :
+    i ∈ bearing f tier ↔ (toAR tier).Reads Autosegmental.AR.twoTier i .upper f :=
+  mem_bearing.trans
+    (Autosegmental.AR.reads_prod_map_primitive (fun fs ↦ fs) (fun _ ↦ ())).symm
 
 end RegisterTier
 
