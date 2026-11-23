@@ -7,7 +7,8 @@ module
 
 public import Mathlib.Data.Fintype.Option
 public import Linglib.Phonology.Autosegmental.Morph
-public import Linglib.Phonology.Autosegmental.TierTree
+public import Linglib.Phonology.Autosegmental.Edit
+public import Linglib.Phonology.Autosegmental.TierTree.Basic
 
 /-!
 # Multiplanar representations

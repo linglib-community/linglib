@@ -5,7 +5,7 @@ public import Linglib.Fragments.Turkish.Phonology
 public import Linglib.Phonology.FeatureGeometry
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Core.Order.SuccPred.Tree
-public import Linglib.Phonology.Autosegmental.TierTree
+public import Linglib.Phonology.Autosegmental.TierTree.TwoTier
 public import Mathlib.Data.Finset.Sort
 
 /-!

@@ -7,7 +7,9 @@ module
 
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Phonology.OCP
-public import Linglib.Phonology.Autosegmental.TierTree
+public import Linglib.Phonology.Autosegmental.TierTree.Realization
+public import Linglib.Phonology.Autosegmental.TierTree.Spread
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Fragments.Laal.Prosody
 
 /-!

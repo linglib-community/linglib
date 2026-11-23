@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Computability.Edge
 public import Linglib.Phonology.Tone.Basic
-public import Linglib.Phonology.Autosegmental.TierTree
+public import Linglib.Phonology.Autosegmental.TierTree.TwoTier
 
 /-!
 # Grammatical tone

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.FeatureGeometry
-public import Linglib.Phonology.Autosegmental.KripkeModel
+public import Linglib.Phonology.Autosegmental.KripkeModel.Spread
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Sum
 

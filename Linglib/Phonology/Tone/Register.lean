@@ -8,7 +8,7 @@ module
 public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.Data.List.Forall2
 public import Mathlib.Data.PNat.Defs
-public import Linglib.Phonology.Autosegmental.TierTree
+public import Linglib.Phonology.Autosegmental.TierTree.TwoTier
 
 /-!
 # Register features and terracing

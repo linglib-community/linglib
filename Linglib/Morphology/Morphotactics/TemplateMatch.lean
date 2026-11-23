@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.Root.Consonantal
-public import Linglib.Phonology.Autosegmental.KripkeModel
+public import Linglib.Phonology.Autosegmental.KripkeModel.Collapse
 public import Linglib.Phonology.Autosegmental.Multiplanar
 public import Linglib.Phonology.Autosegmental.Skeleton
 
