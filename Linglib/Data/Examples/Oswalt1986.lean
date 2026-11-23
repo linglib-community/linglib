@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Oswalt1986` — typed example data
@@ -322,5 +324,60 @@ def s32 : Datum :=
     paperFeatures := [("evidential", "inferentialII")] }
 
 def all : List Datum := [s1, s2, s4, s6, s7, s8, s9, s13, s14, s15, s16, s17, s19, s19_visual, s19_auditory, s22, s25, s26, s27, s28, s29, s32]
+
+/-- The modes of speech, the columns of Table 1. -/
+inductive Mode where
+  /-- spontaneous: a remark prompted by the event itself -/
+  | spontaneous
+  /-- responsive: a response to another's words, marked by -m -/
+  | responsive
+  /-- narrative: the narrative construction -/
+  | narrative
+  /-- remote: the archaic remote past -/
+  | remote
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `mode`. -/
+def mode (e : Datum) : Option Mode :=
+  e.parse? "mode" [("spontaneous", .spontaneous), ("responsive", .responsive), ("narrative", .narrative),
+    ("remote", .remote)]
+
+/-- The aspect of the stem, where the example fixes it. -/
+inductive Aspect where
+  /-- imperfective: an imperfective stem -/
+  | imperfective
+  /-- perfective: a perfective stem -/
+  | perfective
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `aspect`. -/
+def aspect (e : Datum) : Option Aspect :=
+  e.parse? "aspect" [("imperfective", .imperfective), ("perfective", .perfective)]
+
+/-- The evidential an example illustrates, by the name of its row of Table 1. -/
+inductive Marker where
+  /-- performative: the performative pair -/
+  | performative
+  /-- factualVisual: the factual-visual pair -/
+  | factualVisual
+  /-- auditory: the auditory -/
+  | auditory
+  /-- inferential: inferential I -/
+  | inferential
+  /-- quotative: the quotative -/
+  | quotative
+  /-- inferentialII: inferential II, never verb-final -/
+  | inferentialII
+  /-- personalExperience: the personal experience of the narrative construction -/
+  | personalExperience
+  /-- remotePast: the remote past -/
+  | remotePast
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `evidential`. -/
+def marker (e : Datum) : Option Marker :=
+  e.parse? "evidential" [("performative", .performative), ("factualVisual", .factualVisual), ("auditory", .auditory),
+    ("inferential", .inferential), ("quotative", .quotative), ("inferentialII", .inferentialII),
+    ("personalExperience", .personalExperience), ("remotePast", .remotePast)]
 
 end Oswalt1986.Examples

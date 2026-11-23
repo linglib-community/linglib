@@ -1,294 +1,472 @@
-[
-  {
-    "id": "aikhenvald2004_ex1_1",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(1.1)"},
-    "language": "tari1256",
-    "primaryText": "Juse iɾida di-manika-ka",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Juse", "José"], ["iɾida", "football"], ["di-manika-ka", "3sgnf-play-REC.P.VIS"]
-    ],
-    "translation": "José has played football (we saw it)",
-    "context": "The speaker saw José play.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "D1"],
-      ["term", "visual"],
-      ["source", "visual"]
-    ],
-    "comment": "Tariana's five-choice system: the evidential -ka is fused with recent past tense; omitting an evidential is ungrammatical.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex1_2",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(1.2)"},
-    "language": "tari1256",
-    "primaryText": "Juse iɾida di-manika-mahka",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Juse", "José"], ["iɾida", "football"], ["di-manika-mahka", "3sgnf-play-REC.P.NONVIS"]
-    ],
-    "translation": "José has played football (we heard it)",
-    "context": "The speaker heard the noise of a game but could not see it.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "D1"],
-      ["term", "nonvisual"],
-      ["source", "nonvisual"]
-    ],
-    "comment": "Tariana's five-choice system: the evidential -mahka is fused with recent past tense; omitting an evidential is ungrammatical.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex1_3",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(1.3)"},
-    "language": "tari1256",
-    "primaryText": "Juse iɾida di-manika-nihka",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Juse", "José"], ["iɾida", "football"], ["di-manika-nihka", "3sgnf-play-REC.P.INFR"]
-    ],
-    "translation": "José has played football (we infer it from visual evidence)",
-    "context": "The football and José's boots are gone and crowds return from the ground.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "D1"],
-      ["term", "inferred"],
-      ["source", "inference"]
-    ],
-    "comment": "Tariana's five-choice system: the evidential -nihka is fused with recent past tense; omitting an evidential is ungrammatical.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex1_4",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(1.4)"},
-    "language": "tari1256",
-    "primaryText": "Juse iɾida di-manika-sika",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Juse", "José"], ["iɾida", "football"], ["di-manika-sika", "3sgnf-play-REC.P.ASSUM"]
-    ],
-    "translation": "José has played football (we assume this on the basis of what we already know)",
-    "context": "José is out on a Sunday afternoon, when he usually plays.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "D1"],
-      ["term", "assumed"],
-      ["source", "assumption"]
-    ],
-    "comment": "Tariana's five-choice system: the evidential -sika is fused with recent past tense; omitting an evidential is ungrammatical.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex1_5",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(1.5)"},
-    "language": "tari1256",
-    "primaryText": "Juse iɾida di-manika-pidaka",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Juse", "José"], ["iɾida", "football"], ["di-manika-pidaka", "3sgnf-play-REC.P.REP"]
-    ],
-    "translation": "José has played football (we were told)",
-    "context": "Someone told the speaker.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "D1"],
-      ["term", "reported"],
-      ["source", "report"]
-    ],
-    "comment": "Tariana's five-choice system: the evidential -pidaka is fused with recent past tense; omitting an evidential is ungrammatical.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex2_16",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.16)"},
-    "language": "nucl1301",
-    "primaryText": "bakan hasta-ymış",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["bakan", "minister"], ["hasta-ymış", "sick-NONFIRSTH.COP"]
-    ],
-    "translation": "The minister is reportedly sick",
-    "context": "Said by somebody told about the sickness.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "A2"],
-      ["term", "nonfirsthand"],
-      ["source", "report"]
-    ],
-    "comment": "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex2_17",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.17)"},
-    "language": "nucl1301",
-    "primaryText": "uyu-muş-um",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["uyu-muş-um", "sleep-NONFIRSTH.PAST-1sg"]
-    ],
-    "translation": "I have obviously slept",
-    "context": "Said by somebody who has just woken up.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "A2"],
-      ["term", "nonfirsthand"],
-      ["source", "inference"]
-    ],
-    "comment": "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex2_18",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.18)"},
-    "language": "nucl1301",
-    "primaryText": "iyi çal-Iyor-muş",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["iyi", "good"], ["çal-Iyor-muş", "play-INTRATERM.ASP-NONFIRSTH.COP"]
-    ],
-    "translation": "She is, as I hear, playing well",
-    "context": "Said by somebody listening to her play.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "A2"],
-      ["term", "nonfirsthand"],
-      ["source", "nonvisual"]
-    ],
-    "comment": "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson. The book writes the harmonizing vowel of -Iyor as a small-capital I.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex2_40",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.40)"},
-    "language": "jauj1238",
-    "primaryText": "Chay-chruu-mi achka wamla-pis walashr-pis alma-ku-lkaa-ña",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Chay-chruu-mi", "this-LOC-DIR.EV"], ["achka", "many"], ["wamla-pis", "girl-TOO"],
-      ["walashr-pis", "boy-TOO"], ["alma-ku-lkaa-ña", "bathe-REFL-IMPF.PL-NARR.PAST"]
-    ],
-    "translation": "Many girls and boys were swimming (I saw them)",
-    "context": "The speaker saw them.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "B1"],
-      ["term", "direct"],
-      ["source", "visual"]
-    ],
-    "comment": "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex2_41",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.41)"},
-    "language": "jauj1238",
-    "primaryText": "Daañu pawa-shra-si ka-ya-n-chr-ari",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Daañu", "field"], ["pawa-shra-si", "finish-PART-EVEN"],
-      ["ka-ya-n-chr-ari", "be-IMPF-3-INFR-EMPH"]
-    ],
-    "translation": "It (the field) might be completely destroyed (I infer)",
-    "context": "The speaker infers it.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "B1"],
-      ["term", "inferred"],
-      ["source", "inference"]
-    ],
-    "comment": "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex2_42",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.42)"},
-    "language": "jauj1238",
-    "primaryText": "Ancha-p-shi wa'a-chi-nki wamla-a-ta",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ancha-p-shi", "too.much-GEN-REP"], ["wa'a-chi-nki", "cry-CAUS-2"],
-      ["wamla-a-ta", "girl-1p-ACC"]
-    ],
-    "translation": "You make my daughter cry too much (they tell me)",
-    "context": "The speaker was told.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "B1"],
-      ["term", "reported"],
-      ["source", "report"]
-    ],
-    "comment": "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex4_7",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(4.7)"},
-    "language": "nucl1302",
-    "primaryText": "varsken-s ianvr-is rva-s p'irvel-ad (ø-)u-c'am-eb-i-a šušanik'-i",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["varsken-s", "Varsken-DAT"], ["ianvr-is", "January-GEN"], ["rva-s", "8-DAT"],
-      ["p'irvel-ad", "first-ADV"], ["(ø-)u-c'am-eb-i-a", "(he-)OV-torture-TS-PERF-her"],
-      ["šušanik'-i", "Shushanik'-NOM"]
-    ],
-    "translation": "Varsken apparently first tortured Shushanik on 8th January",
-    "context": "A past action the speaker did not witness but assumes from a present result or a report.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "perfect"],
-      ["source", "nonfirsthand"]
-    ],
-    "comment": "The Georgian perfect's non-firsthand use is an extension of its resultative meaning, alongside present-perfect, negated-past and optative uses, so the perfect is an evidentiality strategy rather than an evidential; example after Hewitt.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aikhenvald2004_ex4_55",
-    "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(4.55)"},
-    "language": "bulg1262",
-    "primaryText": "Dumat, zmejat sljazăl v našata niva",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Dumat", "think.PRES.3PL"], ["zmejat", "dragon"], ["sljazăl", "come.down.REPORTIVE.SG"],
-      ["v", "into"], ["našata", "our"], ["niva", "field"]
-    ],
-    "translation": "They think that the dragon would seem to have come down into our field (not very likely)",
-    "context": "Reported information the speaker distances themself from.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["system", "A2"],
-      ["term", "nonfirsthand"],
-      ["source", "report"],
-      ["extension", "epistemic"]
-    ],
-    "comment": "The Bulgarian non-firsthand carries an epistemic overtone of distance: the speaker is unwilling to bear responsibility for the claim; example after Gvozdanović.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "system",
+      "lean": "kind",
+      "type": "Kind",
+      "doc": "The fourteen kinds of evidentiality system, the letter giving the number of choices and the digit the grouping of information sources.",
+      "levels": [
+        {
+          "name": "a1",
+          "label": "A1",
+          "doc": "firsthand and non-firsthand"
+        },
+        {
+          "name": "a2",
+          "label": "A2",
+          "doc": "non-firsthand against everything else"
+        },
+        {
+          "name": "a3",
+          "label": "A3",
+          "doc": "reported against everything else"
+        },
+        {
+          "name": "a4",
+          "label": "A4",
+          "doc": "sensory evidence and reported"
+        },
+        {
+          "name": "a5",
+          "label": "A5",
+          "doc": "auditory against everything else"
+        },
+        {
+          "name": "b1",
+          "label": "B1",
+          "doc": "direct, inferred and reported"
+        },
+        {
+          "name": "b2",
+          "label": "B2",
+          "doc": "visual, non-visual sensory and inferred"
+        },
+        {
+          "name": "b3",
+          "label": "B3",
+          "doc": "visual, non-visual sensory and reported"
+        },
+        {
+          "name": "b4",
+          "label": "B4",
+          "doc": "non-visual sensory, inferred and reported"
+        },
+        {
+          "name": "b5",
+          "label": "B5",
+          "doc": "reported, quotative and everything else"
+        },
+        {
+          "name": "c1",
+          "label": "C1",
+          "doc": "visual, non-visual sensory, inferred and reported"
+        },
+        {
+          "name": "c2",
+          "label": "C2",
+          "doc": "direct, inferred, assumed and reported"
+        },
+        {
+          "name": "c3",
+          "label": "C3",
+          "doc": "direct, inferred, reported and quotative"
+        },
+        {
+          "name": "d1",
+          "label": "D1",
+          "doc": "visual, non-visual sensory, inferred, assumed and reported"
+        }
+      ]
+    },
+    {
+      "key": "term",
+      "lean": "term",
+      "type": "Term",
+      "doc": "The book's names for the terms of evidentiality systems.",
+      "levels": [
+        {
+          "name": "firsthand",
+          "label": "firsthand",
+          "doc": "the firsthand term"
+        },
+        {
+          "name": "nonfirsthand",
+          "label": "nonfirsthand",
+          "doc": "the nonfirsthand term"
+        },
+        {
+          "name": "direct",
+          "label": "direct",
+          "doc": "the direct term"
+        },
+        {
+          "name": "visual",
+          "label": "visual",
+          "doc": "the visual term"
+        },
+        {
+          "name": "nonVisual",
+          "label": "nonvisual",
+          "doc": "the non-visual term"
+        },
+        {
+          "name": "auditory",
+          "label": "auditory",
+          "doc": "the auditory term"
+        },
+        {
+          "name": "inferred",
+          "label": "inferred",
+          "doc": "the inferred term"
+        },
+        {
+          "name": "assumed",
+          "label": "assumed",
+          "doc": "the assumed term"
+        },
+        {
+          "name": "reported",
+          "label": "reported",
+          "doc": "the reported term"
+        },
+        {
+          "name": "quotative",
+          "label": "quotative",
+          "doc": "the quotative term"
+        }
+      ]
+    },
+    {
+      "key": "source",
+      "lean": "infoSource",
+      "type": "InfoSource",
+      "doc": "The information source an example illustrates.",
+      "levels": [
+        {
+          "name": "visual",
+          "label": "visual",
+          "doc": "the speaker saw the event"
+        },
+        {
+          "name": "nonvisual",
+          "label": "nonvisual",
+          "doc": "the speaker heard, smelt, tasted or felt the event"
+        },
+        {
+          "name": "inference",
+          "label": "inference",
+          "doc": "inference from visible or tangible results"
+        },
+        {
+          "name": "assumption",
+          "label": "assumption",
+          "doc": "assumption from reasoning or general knowledge"
+        },
+        {
+          "name": "report",
+          "label": "report",
+          "doc": "the speaker was told"
+        },
+        {
+          "name": "nonfirsthand",
+          "label": "nonfirsthand",
+          "doc": "any source other than the speaker's own perception"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "aikhenvald2004_ex1_1",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(1.1)"},
+      "language": "tari1256",
+      "primaryText": "Juse iɾida di-manika-ka",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Juse", "José"], ["iɾida", "football"], ["di-manika-ka", "3sgnf-play-REC.P.VIS"]
+      ],
+      "translation": "José has played football (we saw it)",
+      "context": "The speaker saw José play.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "D1"],
+        ["term", "visual"],
+        ["source", "visual"]
+      ],
+      "comment": "Tariana's five-choice system: the evidential -ka is fused with recent past tense; omitting an evidential is ungrammatical.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex1_2",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(1.2)"},
+      "language": "tari1256",
+      "primaryText": "Juse iɾida di-manika-mahka",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Juse", "José"], ["iɾida", "football"], ["di-manika-mahka", "3sgnf-play-REC.P.NONVIS"]
+      ],
+      "translation": "José has played football (we heard it)",
+      "context": "The speaker heard the noise of a game but could not see it.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "D1"],
+        ["term", "nonvisual"],
+        ["source", "nonvisual"]
+      ],
+      "comment": "Tariana's five-choice system: the evidential -mahka is fused with recent past tense; omitting an evidential is ungrammatical.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex1_3",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(1.3)"},
+      "language": "tari1256",
+      "primaryText": "Juse iɾida di-manika-nihka",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Juse", "José"], ["iɾida", "football"], ["di-manika-nihka", "3sgnf-play-REC.P.INFR"]
+      ],
+      "translation": "José has played football (we infer it from visual evidence)",
+      "context": "The football and José's boots are gone and crowds return from the ground.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "D1"],
+        ["term", "inferred"],
+        ["source", "inference"]
+      ],
+      "comment": "Tariana's five-choice system: the evidential -nihka is fused with recent past tense; omitting an evidential is ungrammatical.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex1_4",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(1.4)"},
+      "language": "tari1256",
+      "primaryText": "Juse iɾida di-manika-sika",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Juse", "José"], ["iɾida", "football"], ["di-manika-sika", "3sgnf-play-REC.P.ASSUM"]
+      ],
+      "translation": "José has played football (we assume this on the basis of what we already know)",
+      "context": "José is out on a Sunday afternoon, when he usually plays.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "D1"],
+        ["term", "assumed"],
+        ["source", "assumption"]
+      ],
+      "comment": "Tariana's five-choice system: the evidential -sika is fused with recent past tense; omitting an evidential is ungrammatical.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex1_5",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(1.5)"},
+      "language": "tari1256",
+      "primaryText": "Juse iɾida di-manika-pidaka",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Juse", "José"], ["iɾida", "football"], ["di-manika-pidaka", "3sgnf-play-REC.P.REP"]
+      ],
+      "translation": "José has played football (we were told)",
+      "context": "Someone told the speaker.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "D1"],
+        ["term", "reported"],
+        ["source", "report"]
+      ],
+      "comment": "Tariana's five-choice system: the evidential -pidaka is fused with recent past tense; omitting an evidential is ungrammatical.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex2_16",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.16)"},
+      "language": "nucl1301",
+      "primaryText": "bakan hasta-ymış",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["bakan", "minister"], ["hasta-ymış", "sick-NONFIRSTH.COP"]
+      ],
+      "translation": "The minister is reportedly sick",
+      "context": "Said by somebody told about the sickness.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "A2"],
+        ["term", "nonfirsthand"],
+        ["source", "report"]
+      ],
+      "comment": "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex2_17",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.17)"},
+      "language": "nucl1301",
+      "primaryText": "uyu-muş-um",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["uyu-muş-um", "sleep-NONFIRSTH.PAST-1sg"]
+      ],
+      "translation": "I have obviously slept",
+      "context": "Said by somebody who has just woken up.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "A2"],
+        ["term", "nonfirsthand"],
+        ["source", "inference"]
+      ],
+      "comment": "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex2_18",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.18)"},
+      "language": "nucl1301",
+      "primaryText": "iyi çal-Iyor-muş",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["iyi", "good"], ["çal-Iyor-muş", "play-INTRATERM.ASP-NONFIRSTH.COP"]
+      ],
+      "translation": "She is, as I hear, playing well",
+      "context": "Said by somebody listening to her play.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "A2"],
+        ["term", "nonfirsthand"],
+        ["source", "nonvisual"]
+      ],
+      "comment": "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson. The book writes the harmonizing vowel of -Iyor as a small-capital I.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex2_40",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.40)"},
+      "language": "jauj1238",
+      "primaryText": "Chay-chruu-mi achka wamla-pis walashr-pis alma-ku-lkaa-ña",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Chay-chruu-mi", "this-LOC-DIR.EV"], ["achka", "many"], ["wamla-pis", "girl-TOO"],
+        ["walashr-pis", "boy-TOO"], ["alma-ku-lkaa-ña", "bathe-REFL-IMPF.PL-NARR.PAST"]
+      ],
+      "translation": "Many girls and boys were swimming (I saw them)",
+      "context": "The speaker saw them.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "B1"],
+        ["term", "direct"],
+        ["source", "visual"]
+      ],
+      "comment": "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex2_41",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.41)"},
+      "language": "jauj1238",
+      "primaryText": "Daañu pawa-shra-si ka-ya-n-chr-ari",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Daañu", "field"], ["pawa-shra-si", "finish-PART-EVEN"],
+        ["ka-ya-n-chr-ari", "be-IMPF-3-INFR-EMPH"]
+      ],
+      "translation": "It (the field) might be completely destroyed (I infer)",
+      "context": "The speaker infers it.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "B1"],
+        ["term", "inferred"],
+        ["source", "inference"]
+      ],
+      "comment": "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex2_42",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(2.42)"},
+      "language": "jauj1238",
+      "primaryText": "Ancha-p-shi wa'a-chi-nki wamla-a-ta",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ancha-p-shi", "too.much-GEN-REP"], ["wa'a-chi-nki", "cry-CAUS-2"],
+        ["wamla-a-ta", "girl-1p-ACC"]
+      ],
+      "translation": "You make my daughter cry too much (they tell me)",
+      "context": "The speaker was told.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "B1"],
+        ["term", "reported"],
+        ["source", "report"]
+      ],
+      "comment": "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex4_7",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(4.7)"},
+      "language": "nucl1302",
+      "primaryText": "varsken-s ianvr-is rva-s p'irvel-ad (ø-)u-c'am-eb-i-a šušanik'-i",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["varsken-s", "Varsken-DAT"], ["ianvr-is", "January-GEN"], ["rva-s", "8-DAT"],
+        ["p'irvel-ad", "first-ADV"], ["(ø-)u-c'am-eb-i-a", "(he-)OV-torture-TS-PERF-her"],
+        ["šušanik'-i", "Shushanik'-NOM"]
+      ],
+      "translation": "Varsken apparently first tortured Shushanik on 8th January",
+      "context": "A past action the speaker did not witness but assumes from a present result or a report.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "perfect"],
+        ["source", "nonfirsthand"]
+      ],
+      "comment": "The Georgian perfect's non-firsthand use is an extension of its resultative meaning, alongside present-perfect, negated-past and optative uses, so the perfect is an evidentiality strategy rather than an evidential; example after Hewitt.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2004_ex4_55",
+      "source": {"bibkey": "aikhenvald-2004", "paperLabel": "(4.55)"},
+      "language": "bulg1262",
+      "primaryText": "Dumat, zmejat sljazăl v našata niva",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dumat", "think.PRES.3PL"], ["zmejat", "dragon"], ["sljazăl", "come.down.REPORTIVE.SG"],
+        ["v", "into"], ["našata", "our"], ["niva", "field"]
+      ],
+      "translation": "They think that the dragon would seem to have come down into our field (not very likely)",
+      "context": "Reported information the speaker distances themself from.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["system", "A2"],
+        ["term", "nonfirsthand"],
+        ["source", "report"],
+        ["extension", "epistemic"]
+      ],
+      "comment": "The Bulgarian non-firsthand carries an epistemic overtone of distance: the speaker is unwilling to bear responsibility for the claim; example after Gvozdanović.",
+      "verified": "page-image"
+    }
+  ]
+}

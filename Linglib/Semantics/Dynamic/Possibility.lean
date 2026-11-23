@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Index
-public import Linglib.Core.Order.Compat
+public import Linglib.Core.Order.BoundedComplete
 public import Mathlib.Basic.Rel
 public import Mathlib.Data.PFun
 public import Mathlib.Logic.Function.Basic
@@ -329,6 +329,8 @@ theorem exists_isLUB (h : Compat p q) : ∃ u, IsLUB {p, q} u := by
   · simp only [mem_domain] at hv
     split_ifs at hv with hp
     exacts [.inl hp, .inr hv]
+
+instance : IsBoundedComplete (Possibility W V (Part M)) := ⟨fun _ _ ↦ exists_isLUB⟩
 
 theorem domain_eq_of_isLUB (h : IsLUB {p, q} u) : u.domain = p.domain ∪ q.domain :=
   have ⟨hp, hq, hdom⟩ := isLUB_pair_iff.mp h

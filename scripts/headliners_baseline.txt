@@ -62,7 +62,6 @@ BerentEtAl2016
 Bhadra2024
 BhattDayal2020
 BhattTakahashi2011
-BillEtAl2025
 BirdKlein1990
 Bobaljik2008
 Bobaljik2012
@@ -356,7 +355,6 @@ Saab2026
 SableMeyerMascarenhas2022
 SadakaneKoizumi1995
 SagWasowBender2003
-Santorio2018
 Sassoon2013
 Schlenker2004a
 Schlenker2009

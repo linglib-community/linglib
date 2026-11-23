@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Data.Part.Extensions
 public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Semantics.Causation.CausalModel.Defs
 
@@ -137,6 +138,11 @@ variable (M) in
 world gives every variable `s` settles the value `s` settles it to. A counterfactual conditioned
 on `s` is evaluated over these contexts. -/
 def contexts (s : ∀ v, Part (α v)) : Set U := {u | s ≤ fun v ↦ Part.some (M.solve u v)}
+
+/-- An observation holds in the contexts whose solution extends it. -/
+theorem contexts_eq_preimage (s : ∀ v, Part (α v)) :
+    M.contexts s = M.solve ⁻¹' Part.piExtensions s :=
+  rfl
 
 @[simp] theorem contexts_bot : M.contexts ⊥ = Set.univ :=
   Set.eq_univ_of_forall fun _ _ ↦ bot_le

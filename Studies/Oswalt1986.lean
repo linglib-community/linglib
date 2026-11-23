@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Evidential.Basic
+public import Linglib.Semantics.Evidentiality.Paradigm
 public import Linglib.Fragments.Kashaya.Evidentiality
 public import Linglib.Data.Examples.Oswalt1986
 public import Linglib.Data.Examples.Readers
@@ -20,7 +20,7 @@ remark expresses, every column is a coarsening of the spontaneous column
 narrative and remote columns two (`card_parts_spontaneous`, `card_parts_narrative`). The rows
 of the table are a hierarchy, Performative > Factual-Visual > Auditory > Inferential >
 Quotative, each with priority over those below it, so the evidential a speaker uses is the
-first of the column covering a source at hand (`preferred`). Seeing takes precedence over every
+first of the column covering a source at hand (`Evidential.preferred`). Seeing takes precedence over every
 other source (`preferred_of_visual_mem`), the quotative is used exactly when report is at hand
 and no other row covers a source at hand (`preferred_eq_quotative_iff`), and the performative
 is never chosen on the strength of a parameter (`preferred_ne_performative`). Inferential II
@@ -80,28 +80,9 @@ theorem card_parts_narrative (a : Perfectivity) :
 
 /-! ### The hierarchy -/
 
-/-- The evidential a column prefers for the sources at hand is its first suffix covering one of
-them, the rows of Table 1 being ordered so that each has priority over those below. -/
-def preferred (es : List Evidential) (sources : Finset Parameter) : Option Evidential :=
-  es.find? fun e ↦ (e.covers ∩ sources).Nonempty
-
 theorem preferred_of_visual_mem (a : Perfectivity) {S : Finset Parameter} (h : .visual ∈ S) :
     preferred (paradigm .spontaneous a) S = some (factualVisual a) := by
-  cases a <;> simp [preferred, paradigm, List.find?, performative, factualVisual,
-    Finset.Nonempty, h]
-
-theorem preferred_append_singleton_eq_some {es : List Evidential} {e : Evidential} (he : e ∉ es)
-    (S : Finset Parameter) :
-    preferred (es ++ [e]) S = some e ↔
-      ¬ Disjoint e.covers S ∧ ∀ x ∈ es, Disjoint x.covers S := by
-  simp only [preferred, List.find?_append, ← Finset.not_disjoint_iff_nonempty_inter]
-  cases h : es.find? (fun x ↦ !Disjoint x.covers S) with
-  | none => simp_all [List.find?_eq_none]
-  | some x =>
-    have hx := List.mem_of_find?_eq_some h
-    have := List.find?_some h
-    simp only [Option.some_or, Option.some.injEq]
-    exact ⟨fun hxe ↦ (he (hxe ▸ hx)).elim, fun ⟨_, hall⟩ ↦ by simp_all⟩
+  cases a <;> simp [preferred, paradigm, List.find?, performative, factualVisual, h]
 
 theorem preferred_eq_quotative_iff (a : Perfectivity) (S : Finset Parameter) :
     preferred (paradigm .spontaneous a) S = some quotative ↔
@@ -124,43 +105,39 @@ theorem preferred_ne_performative (a : Perfectivity) (S : Finset Parameter) :
 
 /-! ### The examples -/
 
-/-- The mode an example's `mode` feature names. -/
-def mode? (r : Datum) : Option Mode :=
-  match r.feature? "mode" with
-  | some "spontaneous" => some .spontaneous
-  | some "responsive" => some .responsive
-  | some "narrative" => some .narrative
-  | some "remote" => some .remote
-  | _ => none
+/-- The mode of the fragment an example's mode names. -/
+def Examples.Mode.toMode : Examples.Mode → Kashaya.Evidentiality.Mode
+  | .spontaneous => .spontaneous
+  | .responsive => .responsive
+  | .narrative => .narrative
+  | .remote => .remote
 
-/-- The aspects an example's stem may have, the one its `aspect` feature names or else either. -/
+/-- The aspects an example's stem may have, the one the example fixes or else either. -/
 def aspects (r : Datum) : List Perfectivity :=
-  match r.feature? "aspect" with
-  | some "imperfective" => [.imperfective]
-  | some "perfective" => [.perfective]
-  | _ => [.imperfective, .perfective]
+  match Examples.aspect r with
+  | some .imperfective => [.imperfective]
+  | some .perfective => [.perfective]
+  | none => [.imperfective, .perfective]
 
-/-- The evidential an example's `evidential` feature names, for a stem of the given aspect. -/
-def evidential? (r : Datum) (a : Perfectivity) : Option Evidential :=
-  match r.feature? "evidential" with
-  | some "performative" => some (performative a)
-  | some "factualVisual" => some (factualVisual a)
-  | some "auditory" => some auditory
-  | some "inferential" => some inferential
-  | some "quotative" => some quotative
-  | some "inferentialII" => some inferentialII
-  | some "personalExperience" => some personalExperience
-  | some "remotePast" => some remotePast
-  | _ => none
+/-- The evidential a row of Table 1 names, for a stem of the given aspect. -/
+def Examples.Marker.evidential : Examples.Marker → Perfectivity → Evidential
+  | .performative, a => Kashaya.Evidentiality.performative a
+  | .factualVisual, a => Kashaya.Evidentiality.factualVisual a
+  | .auditory, _ => Kashaya.Evidentiality.auditory
+  | .inferential, _ => Kashaya.Evidentiality.inferential
+  | .quotative, _ => Kashaya.Evidentiality.quotative
+  | .inferentialII, _ => Kashaya.Evidentiality.inferentialII
+  | .personalExperience, _ => Kashaya.Evidentiality.personalExperience
+  | .remotePast, _ => Kashaya.Evidentiality.remotePast
 
 theorem examples_named :
-    ∀ r ∈ Examples.all, ∀ a ∈ aspects r,
-      (evidential? r a).isSome ∧ (evidential? r a ≠ some inferentialII → (mode? r).isSome) := by
+    ∀ r ∈ Examples.all, (Examples.marker r).isSome ∧
+      (Examples.marker r ≠ some .inferentialII → (Examples.mode r).isSome) := by
   decide
 
 theorem examples_mem_paradigm :
-    ∀ r ∈ Examples.all, ∀ m ∈ mode? r, ∀ a ∈ aspects r, ∀ e ∈ evidential? r a,
-      e ∈ paradigm m a := by
+    ∀ r ∈ Examples.all, ∀ m ∈ Examples.mode r, ∀ a ∈ aspects r, ∀ k ∈ Examples.marker r,
+      k.evidential a ∈ paradigm m.toMode a := by
   decide
 
 end Oswalt1986

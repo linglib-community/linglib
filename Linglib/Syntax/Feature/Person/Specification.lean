@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.Compat
+public import Linglib.Core.Order.BoundedComplete
 public import Linglib.Core.Order.Flat
 public import Linglib.Syntax.Feature.Person.Basic
 public import Linglib.Syntax.Feature.Person.Clusivity
@@ -36,7 +36,7 @@ person slot of an agreement bundle is a specification (`Syntax/Feature/Bundle.le
 
 ## Implementation notes
 
-The order is that of `{s : Finset α // s.Nonempty}ᵒᵈ` in `Core/Order/Compat.lean`, the
+The order is that of `{s : Finset α // s.Nonempty}ᵒᵈ` in `Core/Order/BoundedComplete.lean`, the
 smaller family the larger element. The empty family is not a specification, so that
 incompatible specifications have no common extension.
 

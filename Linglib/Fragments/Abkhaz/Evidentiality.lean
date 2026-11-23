@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Evidential.Defs
+public import Linglib.Semantics.Evidentiality.Term
 
 /-!
 # Abkhaz evidentiality

@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Pi
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Core.Order.Compat
+public import Linglib.Core.Order.BoundedComplete
 public import Linglib.Morphology.Word.Features
 public import Linglib.Syntax.Feature.Person.Specification
 

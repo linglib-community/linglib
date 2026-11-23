@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Aikhenvald2004` — typed example data
@@ -211,5 +213,94 @@ def ex4_55 : Datum :=
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "report"), ("extension", "epistemic")] }
 
 def all : List Datum := [ex1_1, ex1_2, ex1_3, ex1_4, ex1_5, ex2_16, ex2_17, ex2_18, ex2_40, ex2_41, ex2_42, ex4_7, ex4_55]
+
+/-- The fourteen kinds of evidentiality system, the letter giving the number of choices and the digit the grouping of information sources. -/
+inductive Kind where
+  /-- A1: firsthand and non-firsthand -/
+  | a1
+  /-- A2: non-firsthand against everything else -/
+  | a2
+  /-- A3: reported against everything else -/
+  | a3
+  /-- A4: sensory evidence and reported -/
+  | a4
+  /-- A5: auditory against everything else -/
+  | a5
+  /-- B1: direct, inferred and reported -/
+  | b1
+  /-- B2: visual, non-visual sensory and inferred -/
+  | b2
+  /-- B3: visual, non-visual sensory and reported -/
+  | b3
+  /-- B4: non-visual sensory, inferred and reported -/
+  | b4
+  /-- B5: reported, quotative and everything else -/
+  | b5
+  /-- C1: visual, non-visual sensory, inferred and reported -/
+  | c1
+  /-- C2: direct, inferred, assumed and reported -/
+  | c2
+  /-- C3: direct, inferred, reported and quotative -/
+  | c3
+  /-- D1: visual, non-visual sensory, inferred, assumed and reported -/
+  | d1
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `system`. -/
+def kind (e : Datum) : Option Kind :=
+  e.parse? "system" [("A1", .a1), ("A2", .a2), ("A3", .a3), ("A4", .a4), ("A5", .a5), ("B1", .b1), ("B2", .b2),
+    ("B3", .b3), ("B4", .b4), ("B5", .b5), ("C1", .c1), ("C2", .c2), ("C3", .c3), ("D1", .d1)]
+
+/-- The book's names for the terms of evidentiality systems. -/
+inductive Term where
+  /-- firsthand: the firsthand term -/
+  | firsthand
+  /-- nonfirsthand: the nonfirsthand term -/
+  | nonfirsthand
+  /-- direct: the direct term -/
+  | direct
+  /-- visual: the visual term -/
+  | visual
+  /-- nonvisual: the non-visual term -/
+  | nonVisual
+  /-- auditory: the auditory term -/
+  | auditory
+  /-- inferred: the inferred term -/
+  | inferred
+  /-- assumed: the assumed term -/
+  | assumed
+  /-- reported: the reported term -/
+  | reported
+  /-- quotative: the quotative term -/
+  | quotative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `term`. -/
+def term (e : Datum) : Option Term :=
+  e.parse? "term" [("firsthand", .firsthand), ("nonfirsthand", .nonfirsthand), ("direct", .direct),
+    ("visual", .visual), ("nonvisual", .nonVisual), ("auditory", .auditory),
+    ("inferred", .inferred), ("assumed", .assumed), ("reported", .reported),
+    ("quotative", .quotative)]
+
+/-- The information source an example illustrates. -/
+inductive InfoSource where
+  /-- visual: the speaker saw the event -/
+  | visual
+  /-- nonvisual: the speaker heard, smelt, tasted or felt the event -/
+  | nonvisual
+  /-- inference: inference from visible or tangible results -/
+  | inference
+  /-- assumption: assumption from reasoning or general knowledge -/
+  | assumption
+  /-- report: the speaker was told -/
+  | report
+  /-- nonfirsthand: any source other than the speaker's own perception -/
+  | nonfirsthand
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `source`. -/
+def infoSource (e : Datum) : Option InfoSource :=
+  e.parse? "source" [("visual", .visual), ("nonvisual", .nonvisual), ("inference", .inference),
+    ("assumption", .assumption), ("report", .report), ("nonfirsthand", .nonfirsthand)]
 
 end Aikhenvald2004.Examples
