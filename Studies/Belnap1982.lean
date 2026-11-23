@@ -111,8 +111,8 @@ end Schemes
 unique (p. 174). -/
 theorem weakAnswer_mem_iff_of_antichain {H : Set (Set W)} (hH : IsAntichain (· ⊆ ·) H) (w : W) :
     weakAnswer H w ∈ H ↔ ∃ p, trueAnswers H w = {p} :=
-  (isExhaustivelyResolvable_iff H w).symm.trans
-    (isExhaustivelyResolvable_iff_of_antichain H w hH)
+  (hasStrongestTrueAnswer_iff H w).symm.trans
+    (hasStrongestTrueAnswer_iff_of_antichain H w hH)
 
 /-- The two stations of the gas example. -/
 inductive Station

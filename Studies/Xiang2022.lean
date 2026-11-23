@@ -66,11 +66,11 @@ def trueShort (P : α → Set W) (w : W) : Set α := {a | w ∈ P a}
 
 /-- Dayal's exhaustivity presupposition for a topical property: its answer space has a
 strongest true member. -/
-def DEP (P : α → Set W) (w : W) : Prop := IsExhaustivelyResolvable (range P) w
+def DEP (P : α → Set W) (w : W) : Prop := HasStrongestTrueAnswer (range P) w
 
 theorem dep_iff (P : α → Set W) (w : W) :
     DEP P w ↔ ∃ a, w ∈ P a ∧ ∀ b, w ∈ P b → P a ⊆ P b :=
-  isExhaustivelyResolvable_range_iff P w
+  hasStrongestTrueAnswer_range_iff P w
 
 /-- A max-informative true short answer: true, and minimal under entailment among the true
 short answers. -/

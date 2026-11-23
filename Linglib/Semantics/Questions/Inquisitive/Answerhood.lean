@@ -7,20 +7,18 @@ public import Mathlib.Order.Filter.Ker
 /-!
 # Answerhood predicates on questions
 
-This file defines the answerhood predicates over the inquisitive substrate `Question W`, with
-the question as subject so that dot notation reads in the right direction. Resolution is
-membership, `σ ∈ Q`, the support relation of [ciardelli-groenendijk-roelofsen-2018],
-which on normal questions is settling some alternative
-(`mem_iff_exists_alt_subset`), the mention-some reading of [groenendijk-stokhof-1984]. A state
-completely answers a question when it decides every alternative (`CompletelyAnsweredBy`), the
-mention-all reading, and partially answers it when it decides some alternative
-(`PartiallyAnsweredBy`), the non-contextual core of [roberts-2012]'s partial answer. The
-notions form the quantifier × polarity square of answerhood: resolution (∃, positive),
-`PartiallyAnsweredBy` (∃, either), `CompletelyAnsweredBy` (∀, either). A question is a
-contextual subquestion of another when its complete answers, cut to the context, partially
-answer it (`IsSubquestionOf`). A common ground, a filter of
-propositions, decides a question when it entails a complete answer (`DecidedBy`), which on a
-principal filter is resolution.
+Let `Q : Question W` be a question and `σ` an information state, a set of worlds. This file defines
+three senses in which `σ` answers `Q`.
+
+* `σ` resolves `Q` when `σ ∈ Q`. For a normal question this means that `σ` is included in some
+  alternative.
+* `σ` completely answers `Q` when it decides every alternative, either entailing it or excluding it.
+  This is `CompletelyAnsweredBy Q σ`.
+* `σ` partially answers `Q` when it decides at least one alternative. This is
+  `PartiallyAnsweredBy Q σ`.
+
+Resolution is the mention-some reading of a question, and complete answerhood is the mention-all
+reading.
 
 ## Implementation notes
 

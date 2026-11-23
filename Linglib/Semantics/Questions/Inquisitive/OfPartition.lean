@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Partition.OfProps
 public import Linglib.Semantics.Questions.Partition.Basic
 
 /-!
