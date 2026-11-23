@@ -35,7 +35,9 @@ On derivations, the horizons of the probes are a cut, and a derivation obeys the
 link of its object leaves it. Raising out of a nonfinite clause obeys the horizon of the English
 A-movement probe and raising out of a finite clause does not, whether the phrase moves in one
 step or through the edge of the clause; the Phase Impenetrability Condition allows the route
-through the edge.
+through the edge. For Hindi, each dependency is a movement of the embedded object that obeys the
+horizons or a search from the matrix clause that finds it, and the structures of a clause are
+the sizes at which the dependencies of the sentence hold in such derivations.
 
 ## Implementation notes
 
@@ -50,8 +52,11 @@ is A-movement or Ā-movement.
 ## TODO
 
 * The English and German examples behind the two languages' probes are not rows.
-* The structures of a clause are computed from its label. That a clause has a structure exactly
-  when a derivation of the sentence obeys the horizons is not stated.
+* That a dependency holds in a derivation exactly when the label of the clause meets its
+  requirement is checked for the two sets of Hindi probes on the four clause sizes, not proved
+  for every probe and spine.
+* The derivations have one argument in the embedded clause, so the intervention of a closer
+  agreement controller is not derived.
 * Agreement into the edge of a Tsez clause, where horizons and phases interact, is not
   formalized.
 
@@ -218,9 +223,7 @@ def germanWh : HorizonSetting := ⟨.C, some .Force⟩
 /-- (367d): German topicalization, on Force⁰ without horizon. -/
 def germanTop : HorizonSetting := ⟨.Force, none⟩
 
-/-- The four German movements leave successively larger clauses: scrambling the coherent
-infinitive, relativization also the noncoherent one, wh-movement also the verb-final finite
-clause, and topicalization every clause. -/
+-- (359), (367)
 theorem german_profiles {t : Spine} (ht : t.heads <+: forceP.heads) :
     (germanScr.TransparentTo t ↔ t ≤ .vP) ∧ (germanRel.TransparentTo t ↔ t ≤ .tP) ∧
       (germanWh.TransparentTo t ↔ t ≤ .cP) ∧ germanTop.TransparentTo t :=
@@ -364,5 +367,79 @@ theorem respects_phases_sup_horizons :
       ¬ (raising true).Respects .raising (phases ⊔ horizons lubukusuAProbe) := by
   simp only [Derivation.respects_sup]
   decide +kernel
+
+/-! ### Structures from derivations
+
+A matrix clause over a clause with a given spine and an object in it. The dependencies of a
+Hindi sentence are movements of the object that obey the horizons and searches that find it in
+situ, and what each requires of the clause's label follows. -/
+
+/-- The steps that build a clause with spine `s` over an object, each head selecting the one
+below it. -/
+def clauseSteps (s : Spine) : List Step :=
+  (s.heads.zip (.D :: s.heads)).zipIdx.map fun ⟨⟨c, sel⟩, i⟩ ↦
+    .em .left (.leaf ⟨.of c [sel], 10 + i⟩)
+
+def matCTok : LexicalItem.Token := ⟨.of .C [.T], 9⟩
+
+/-- The matrix clause over a clause with spine `s`, up to T⁰, or up to C⁰ when `c` holds. -/
+def matrixOver (s : Spine) (c : Bool) : Derivation :=
+  ⟨obj, clauseSteps s ++ [.em .left (matV (s.heads.getLast?.getD .V)), .em .left matT] ++
+    if c then [.em .left (.leaf matCTok)] else []⟩
+
+/-- The movement probes of a grammar, A-movement on the matrix T⁰ and Ā-movement on the matrix
+C⁰. -/
+def Grammar.probes (G : Grammar) (tok : LexicalItem.Token) : Option HorizonSetting :=
+  if tok = matTTok then some G.aMovement else if tok = matCTok then some G.ābarMovement else none
+
+/-- The object of a clause with spine `s` moves to the specifier of the matrix T⁰, or of the
+matrix C⁰ when `c` holds, in a derivation that obeys the horizons. -/
+def Moves (G : Grammar) (s : Spine) (c : Bool) : Prop :=
+  ((matrixOver s c).append [.im obj]).Respects .raising
+    fun t ↦ horizonCut headIndex? t .raising G.probes
+
+instance (G : Grammar) (s : Spine) (c : Bool) : Decidable (Moves G s c) :=
+  inferInstanceAs (Decidable (Derivation.Respects _ _ _))
+
+/-- A probe with setting `p` on the matrix head `host` finds the object of a clause with spine
+`s` in situ. -/
+def Finds (p : HorizonSetting) (host : LexicalItem.Token) (s : Spine) : Prop :=
+  ∃ t ∈ (matrixOver s true).externalize?, Keine2019.found p (.leaf host) t ≠ ∅
+
+instance (p : HorizonSetting) (host : LexicalItem.Token) (s : Spine) :
+    Decidable (Finds p host s) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- A dependency across a clause with spine `s`: binding from the landing site is A-movement of
+the object and movement without it A-movement or Ā-movement, agreement is the φ-probe finding
+the object and default agreement its finding none, and matrix scope the wh-probe finding it. -/
+def Examples.Dependency.Holds (G : Grammar) : Examples.Dependency → Spine → Prop
+  | .binding, s => Moves G s false
+  | .movement, s => Moves G s false ∨ Moves G s true
+  | .lda, s => Finds G.phiAgreement matTTok s
+  | .defaultAgreement, s => ¬ Finds G.phiAgreement matTTok s
+  | .whScope, s => Finds G.whLicensing matCTok s
+
+instance (G : Grammar) (d : Examples.Dependency) : DecidablePred (d.Holds G) := fun s ↦ by
+  cases d <;> unfold Examples.Dependency.Holds <;> infer_instance
+
+/-- The four clause sizes of Hindi. -/
+def hindiSizes : List Spine := [.vP, .tP, .cP, nmlzP]
+
+theorem holds_iff_requires :
+    ∀ G ∈ [Grammar.book, .article], ∀ s ∈ hindiSizes, ∀ d : Examples.Dependency,
+      d.Holds G s ↔ d.Requires G s := by
+  decide +kernel
+
+/-- The structures of a clause are the sizes at which each dependency of the sentence holds in a
+derivation: a movement that obeys the horizons, or a search that finds its goal. -/
+theorem structures_eq_filter_holds {G : Grammar} (hG : G ∈ [Grammar.book, .article])
+    (c : Examples.Clause) (ds : List Examples.Dependency) :
+    structures G c ds = c.sizes.filter fun s ↦ ∀ d ∈ ds, d.Holds G s := by
+  refine List.filter_congr fun s hs ↦ ?_
+  have hs' : s ∈ hindiSizes := by
+    cases c <;> simp only [Examples.Clause.sizes, List.mem_cons, List.not_mem_nil, or_false] at hs
+    all_goals rcases hs with rfl | rfl <;> decide
+  exact decide_eq_decide.2 (forall₂_congr fun d _ ↦ (holds_iff_requires G hG s hs' d).symm)
 
 end Keine2020
