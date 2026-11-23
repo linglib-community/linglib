@@ -87,10 +87,12 @@ instance : Mul CopyState where
 @[simp] theorem sel_mul_sel (x y : SelectionRule.stack.State) : sel x * sel y = sel (x * y) := rfl
 
 theorem copy_mul_sel (a : LexicalItem.Token) (y : SelectionRule.stack.State) :
-    copy a * sel y = if SelectionRule.State.of a [] * y = 0 then sel y else sel (.of a [] * y) := rfl
+    copy a * sel y = if SelectionRule.State.of a [] * y = 0 then sel y else sel (.of a [] * y) :=
+  rfl
 
 theorem sel_mul_copy (x : SelectionRule.stack.State) (a : LexicalItem.Token) :
-    sel x * copy a = if x * SelectionRule.State.of a [] = 0 then sel x else sel (x * .of a []) := rfl
+    sel x * copy a = if x * SelectionRule.State.of a [] = 0 then sel x else sel (x * .of a []) :=
+  rfl
 
 instance : CommMagma CopyState where
   mul_comm

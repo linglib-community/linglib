@@ -140,7 +140,8 @@ theorem isSmugglingStep_map_iff {f : LexicalItem.Token → LexicalItem.Token}
     (hf : Function.Injective f) (hsel : LexicalItem.Token.PreservesSelection f) :
     (d.map f).IsSmugglingStep i (xp.map f) (w.map f) ↔ d.IsSmugglingStep i xp w := by
   have hτ : ∀ s : SyntacticObject,
-      TraceLabel.encoder (s.map f) = (TraceLabel.encoder s).map f := fun s ↦ s.selectionHead_map hsel
+      TraceLabel.encoder (s.map f) = (TraceLabel.encoder s).map f :=
+    fun s ↦ s.selectionHead_map hsel
   rw [isSmugglingStep_iff, isSmugglingStep_iff]
   cases h : d.mover? i <;>
     simp [mover?_map, h, stageAt_map d hf hτ, contains_map_iff hf, cCommands_map_iff hf,

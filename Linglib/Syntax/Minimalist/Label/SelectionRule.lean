@@ -29,8 +29,8 @@ as a morphism of magmas (`Minimalist.Licensing`), and their head is a head funct
 * `Minimalist.SelectionRule.Constituent`: a projecting head with its residue.
 * `Minimalist.SelectionRule.Constituent.Projects`: one constituent projects over a sister.
 * `Minimalist.SelectionRule.State`: a constituent or `0`, a `CommMagma` and `MulZeroClass`.
-* `Minimalist.SelectionRule.State.head`, `Minimalist.SelectionRule.State.residual`: the projecting head
-  of a state and its residue.
+* `Minimalist.SelectionRule.State.head`, `Minimalist.SelectionRule.State.residual`: the
+  projecting head of a state and its residue.
 * `Minimalist.SelectionRule.State.side`: which of two sisters projects.
 * `Minimalist.SelectionRule.State.map`: the state with its head relabelled.
 
@@ -84,7 +84,8 @@ namespace SelectionRule
 
 variable {R : Type*}
 
-instance (S : SelectionRule R) (r : R) (b : LexicalItem.Token) (u : R) : Decidable (S.Selects r b u) :=
+instance (S : SelectionRule R) (r : R) (b : LexicalItem.Token) (u : R) :
+    Decidable (S.Selects r b u) :=
   S.decidableSelects r b u
 
 instance (S : SelectionRule R) : DecidableRel S.Outranks := S.decidableOutranks

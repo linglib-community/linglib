@@ -194,7 +194,8 @@ def Step.Harmonic (φ : SyntacticObject (ι := ι) →ₙ* LinearizationState si
     (τ : SyntacticObject (ι := ι) → Option ι) (c : Cfg (SyntacticObject (ι := ι))) :
     Step ι → Prop
   | .em e item => (φ item.toSyntacticObject).linearized? = some item ∧
-      SelectionRule.State.side (sel (φ item.toSyntacticObject)) (sel (φ c.current)) = some (decide (e = side))
+      SelectionRule.State.side (sel (φ item.toSyntacticObject)) (sel (φ c.current)) =
+        some (decide (e = side))
   | .im mover e => mover ∈ c.current.terms ∧ sel (φ (mover.headTrace τ)) = sel (φ mover) ∧
       SelectionRule.State.side (sel (φ mover)) (sel (φ (deleteAccessible mover c.current τ))) =
         some (decide (e = side))

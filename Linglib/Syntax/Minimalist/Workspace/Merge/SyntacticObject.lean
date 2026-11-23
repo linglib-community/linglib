@@ -126,7 +126,8 @@ theorem traceMergeOp_node (τ : UnorderedTree Vertex → Option LexicalItem.Toke
 /-! ### Internal Merge through the trace cuts -/
 
 /-- The trace encoder of derivations sends a tree to its head by selection. -/
-def traceEncoder (t : UnorderedTree Vertex) : Option LexicalItem.Token := (treeSelectionState t).head
+def traceEncoder (t : UnorderedTree Vertex) : Option LexicalItem.Token :=
+  (treeSelectionState t).head
 
 @[simp] theorem traceEncoder_toUnorderedTree (s : SyntacticObject) :
     traceEncoder s.toUnorderedTree = s.selectionHead := by

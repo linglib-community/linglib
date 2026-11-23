@@ -228,7 +228,8 @@ def cat? : Option Cat := s.selectionHead.map (·.item.cat)
 
 /-- The selection head of a merge is the selection head of a daughter. -/
 theorem selectionHead_merge {l r : SyntacticObject} {t : LexicalItem.Token}
-    (h : (merge l r).selectionHead = some t) : l.selectionHead = some t ∨ r.selectionHead = some t :=
+    (h : (merge l r).selectionHead = some t) :
+    l.selectionHead = some t ∨ r.selectionHead = some t :=
   SelectionRule.State.isHeadFunction_head.comp selectionState (x := l) (y := r) h
 
 variable {f : LexicalItem.Token → LexicalItem.Token}

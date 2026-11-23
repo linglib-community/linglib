@@ -279,7 +279,8 @@ theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
         deletionCuts SyntacticObject.Vertex.bare C ∧
       ∀ F, (F, lowReading) ∉ traceCuts τ C := by
   have h : ∀ c ∈ everyDidntScore.replayWithCopies?,
-      c.current.val.value.1 = none ∧ MarkedBy (termTrace SyntacticObject.selectionHead) c.current.val ∧
+      c.current.val.value.1 = none ∧
+      MarkedBy (termTrace SyntacticObject.selectionHead) c.current.val ∧
       c.current.cutForest ∅ = {everyPlayer.toRoseTree} ∧
       c.current.cutForest {everyPlayer.toSyntacticObject} = {everyPlayer.toRoseTree} ∧
       (∀ r ∈ c.current.val.subtrees, r.value.1.isSome →

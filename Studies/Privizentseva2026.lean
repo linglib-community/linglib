@@ -34,7 +34,7 @@ which [selection before saturation licenses](##raisingRelative_licensed).
   (`pronounVariable_and_crossover_uniform`); the book concludes that they do not rest on
   c-command in syntax, and they are not modelled as structural.
 * Rows with speaker variation (`%`, the second idiom) are left out of `rows`.
-* `PendingState` is the selection state (`Minimalist.SelectionState`) of the discipline `Pending`.
+* `PendingState` is the state (`Minimalist.SelectionRule.State`) of the rule `beforeSaturation`.
   Its product never discharges a pending selector: an object has nothing pending once the item
   selected before it was saturated is copied out, leaving a saturated trace.
 * The derivations of section 5.2.2 number their traces by their movers
@@ -360,7 +360,8 @@ theorem toSelectionState_ne_zero_iff {x : PendingState} :
     rw [toSelectionState_of]
     split_ifs with hp
     · subst hp
-      exact iff_of_true (mt (congrArg SelectionRule.State.toOption) (Option.some_ne_none _)) ⟨a, ra, rfl⟩
+      exact iff_of_true (mt (congrArg SelectionRule.State.toOption) (Option.some_ne_none _))
+        ⟨a, ra, rfl⟩
     · exact iff_of_false (fun h ↦ h rfl) fun ⟨b, rb, h⟩ ↦ hp (by cases h; rfl)
 
 end
@@ -384,7 +385,7 @@ def toSelectionStateHom : PendingState →ₙ* SelectionRule.stack.State where
         rcases ra with _ | ⟨c, ra⟩ <;> rcases rb with _ | ⟨c', rb⟩ <;>
           by_cases hp : p = 0 <;> by_cases hq : q = 0 <;>
           simp [SelectionRule.State.stack_of_mul_of, hp, hq] <;>
-          first | rfl | (split_ifs <;> first | rfl | simp_all [toSelectionState_of])
+          split_ifs <;> first | rfl | simp_all [toSelectionState_of]
 
 @[simp] theorem toSelectionStateHom_apply (x : PendingState) :
     toSelectionStateHom x = x.toSelectionState := rfl

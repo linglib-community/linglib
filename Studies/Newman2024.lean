@@ -32,8 +32,8 @@ the complement position of non-DP arguments, the binding pattern of the dative a
 focus in Mayan subject questions, and the subjects of passive ditransitives. The last three are
 fitted to the examples of `Data.Examples.Newman2024`.
 
-Merge with Feature Maximality is a selection discipline (`Minimalist.Selection`) on sets of
-features, beside the discipline in which a head selects from an ordered stack. A head then
+Merge with Feature Maximality is a selection rule (`Minimalist.SelectionRule`) on sets of
+features, beside the rule in which a head selects from an ordered stack. A head then
 selects a sequence of constituents exactly when each lies outside the closure of those before it
 (`selects_iff`), the closure in which an item is covered by those that check every Merge feature
 it checks, and the order of a head's arguments follows from that closure.
@@ -41,7 +41,7 @@ it checks, and the order of a head's arguments follows from that closure.
 ## Main definitions
 
 * `Selector`, `Phrase.checks`: the features of a head, and those a phrase checks.
-* `Selection (Finset Selector)`: Merge with Feature Maximality as a selection discipline.
+* `featureMaximality`: Merge with Feature Maximality as a selection rule.
 * `mergeFeatures`, `categorial`: the features a category bears, and the licensing of syntactic
   objects in which a lexical item has the features of its category.
 * `closure`, `Selects`: the closure the features of a head induce on lexical items, and a
@@ -100,7 +100,7 @@ by-phrases, the SiSwati object-marking examples, and the chapters on interpretat
 accounts of the double object movement asymmetry are not formalized. The examples of non-DP
 complements are not entered as rows. The operations at v in the sections on agent focus and on
 passives are stated on `System`, with the features each operation checks given directly, and not
-yet as steps of a `Minimalist.Derivation` under the selection discipline.
+yet as steps of a `Minimalist.Derivation` under the selection rule.
 
 ## References
 
@@ -239,7 +239,8 @@ theorem categorial_lex_eq_of_cat {a b : LexicalItem.Token} (h : a.item.cat = b.i
 
 theorem exists_licensing_lex_ne :
     ∃ a b : LexicalItem.Token, a.item.cat = b.item.cat ∧
-      (SelectionRule.State.licensing.lex a).residual ≠ (SelectionRule.State.licensing.lex b).residual :=
+      (SelectionRule.State.licensing.lex a).residual ≠
+        (SelectionRule.State.licensing.lex b).residual :=
   ⟨⟨.of .V [.D], 0⟩, ⟨.of .V [], 0⟩, rfl, by decide⟩
 
 /-! ### Coverage -/
@@ -446,7 +447,8 @@ theorem eval_spine {h : LexicalItem.Token} (hl : ∀ b ∈ l, mergeFeatures b.it
     categorial.eval [] (spine h l) =
       (l.foldlM (fun r b ↦ featureMaximality.select r b ∅) (mergeFeatures h.item.cat)).elim 0
         (SelectionRule.State.of h) := by
-  have key := SelectionRule.State.foldl_mul_of h (mergeFeatures h.item.cat)
+  have key := SelectionRule.State.foldl_mul_of (S := featureMaximality) h
+    (mergeFeatures h.item.cat)
     (l.map fun b ↦ (b, mergeFeatures b.item.cat)) (by
       intro a ha r'
       obtain ⟨b, hb, rfl⟩ := List.mem_map.1 ha
