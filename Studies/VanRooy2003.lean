@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Core.Order.Partition.Finpartition
-public import Linglib.Semantics.Questions.Value
+public import Linglib.Semantics.Questions.Decision
 public import Studies.Aloni2001
 public import Linglib.Data.Examples.VanRooy2003
 public import Mathlib.Data.Fintype.Powerset
@@ -14,14 +13,14 @@ Van Rooy grounds the meaning of questions in the questioner's decision problem, 
 worlds and a utility for each action in each world. Information resolves the problem when some
 action is optimal in every world it leaves open. A question, a partition of the worlds, is worth
 the average gain in decision value from learning its answer; that theory of question value,
-consumed beyond this paper, is `Semantics/Questions/Value.lean`. A wh-question denotes the
+consumed beyond this paper, is `Semantics/Questions/Decision.lean`. A wh-question denotes the
 propositions that some value is among the optimal true values of its predicate, those with no
 more relevant true value, and this one rule yields both mention-all and mention-some readings.
 
 ## Implementation notes
 
 A decision problem is a real utility on worlds and actions together with a prior measure, the
-actions forming a type, and questions over a finite set of worlds are `Finpartition`s.
+actions forming a type, and a partition question is a `Setoid` on the worlds.
 The relevance of a value in a world is a utility into a preorder; the paper's relation `>` orders
 answers, which for the newspaper example of section 5.2 is world-relative, the best place
 differing between worlds. Section 5.3 assumes the questioner most wants to resolve her problem, so
@@ -33,7 +32,7 @@ taken into account. The examples are rows of `Data.Examples.VanRooy2003`.
 ## TODO
 
 * The group-valued domain example of section 5.3, the questions (23) and (25), the individual-wise
-  relevance condition on wh-domains of section 4.2 (`Question.better_wh_of_factorsThrough` covers
+  relevance condition on wh-domains of section 4.2 (`Question.better_ofProps_image` covers
   utilities that depend only on the domain), and the argumentative value of section 5.4.
 
 ## References
@@ -52,27 +51,13 @@ taken into account. The examples are rows of `Data.Examples.VanRooy2003`.
 
 namespace VanRooy2003
 
-open MeasureTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory Question
 
 universe u
 
 variable {W : Type u} {A G R : Type*}
 
 /-! ### Resolving a decision problem -/
-
-/-- Information `C` resolves the decision problem with utility `U` when some action is at least
-as good as every other in every world of `C`. -/
-def IsResolved (U : W → A → ℝ) (C : Set W) : Prop := ∃ a, ∀ b, ∀ w ∈ C, U w b ≤ U w a
-
-/-- The proposition an action induces is the set of worlds where no action is strictly
-better. -/
-def optimalityRegion (U : W → A → ℝ) (a : A) : Set W := {w | ∀ b, U w b ≤ U w a}
-
-/-- Information resolves the decision problem exactly when it lies within the optimality
-region of some action. -/
-theorem isResolved_iff_exists_subset_optimalityRegion (U : W → A → ℝ) (C : Set W) :
-    IsResolved U C ↔ ∃ a, C ⊆ optimalityRegion U a :=
-  ⟨fun ⟨a, h⟩ ↦ ⟨a, fun _ hw b ↦ h b _ hw⟩, fun ⟨a, h⟩ ↦ ⟨a, fun _ _ hw ↦ h hw _⟩⟩
 
 theorem iUnion_optimalityRegion [Finite A] [Nonempty A] (U : W → A → ℝ) :
     ⋃ a, optimalityRegion U a = Set.univ :=
@@ -138,7 +123,7 @@ theorem newspaper_optimalityRegions :
 /-- The mention-some answer *at least at the station* resolves the problem although it is only
 a partial answer to the partition question. -/
 theorem newspaper_station_resolves : IsResolved newspaper ({.station, .both} : Set NewsW) :=
-  (isResolved_iff_exists_subset_optimalityRegion _ _).2
+  isResolved_iff_exists_subset_optimalityRegion.2
     ⟨.station, newspaper_optimalityRegions.1.ge⟩
 
 private theorem newspaper_value : decisionValue newspaper newsPrior = 2 / 3 := by
@@ -393,7 +378,7 @@ inductive Address where
 inductive City where
   | amsterdam
   | utrecht
-  deriving DecidableEq, Fintype
+  deriving DecidableEq, Fintype, Nonempty
 
 /-- The city of an address. -/
 def Address.city : Address → City
@@ -502,17 +487,12 @@ instance : MeasurableSpace Address := ⊤
 instance : DiscreteMeasurableSpace Address := ⟨fun _ ↦ trivial⟩
 
 theorem liveIn_visit_better (μ : Measure Address) [IsProbabilityMeasure μ] :
-    Question.Better visit μ (Finpartition.ofFun Address.city) ⊥ := by
-  have hU : visit.FactorsThrough (Finpartition.ofFun Address.city).part := fun w v h ↦ by
-    rw [Finpartition.part_ofFun_eq_part_ofFun_iff] at h
-    ext c
-    simp [visit, h]
-  refine Question.better_iff.2 (.inr ⟨by rw [Question.utility_eq_valueOfInformation_id visit μ _ hU,
-    Question.utility_bot], bot_lt_iff_ne_bot.2 fun h ↦ ?_⟩)
-  have := Finpartition.part_ofFun_eq_part_ofFun_iff.2
-    (show Address.amsterdam₁.city = Address.amsterdam₂.city from rfl)
-  rw [h, Finpartition.part_bot (Finset.mem_univ _), Finpartition.part_bot (Finset.mem_univ _),
-    Finset.singleton_inj] at this
+    Better visit μ (Setoid.ker Address.city) ⊥ := by
+  refine better_of_le_issue_of_lt visit μ
+    ((fromSetoid_le_issue_iff visit).2 fun w ↦ visit_isResolved w.city fun _ hv ↦ hv)
+    (bot_lt_iff_ne_bot.2 fun h ↦ ?_)
+  have : Setoid.ker Address.city .amsterdam₁ .amsterdam₂ := rfl
+  rw [h, Setoid.bot_def] at this
   exact absurd this (by decide)
 
 /-! #### Conceptual covers -/

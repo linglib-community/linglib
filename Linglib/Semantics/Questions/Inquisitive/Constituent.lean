@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Basic
-
+public import Linglib.Semantics.Questions.Inquisitive.Generate
 /-!
 # Constituent questions
 

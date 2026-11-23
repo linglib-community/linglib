@@ -8,7 +8,7 @@ module
 public import Linglib.Logic.Natural.ProjectivitySignature
 public import Linglib.Semantics.Presupposition.Strawson
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
-public import Linglib.Semantics.Questions.Value
+public import Linglib.Semantics.Questions.Decision
 public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
@@ -271,14 +271,15 @@ def LicensesFreeChoice : Licenser → Prop
 /-- A question *licenses by relevance* an item that widens its domain, since widening the domain
 of a wh-question never lowers its value in any decision problem ([van-rooy-2003-npi]). -/
 def LicensesByRelevance : Licenser → Prop
-  | .question => ∀ {W A D : Type} [Fintype W] [DecidableEq W] [DecidableEq D] [MeasurableSpace W]
-      [DiscreteMeasurableSpace W] [Finite A] [Nonempty W] (U : W → A → ℝ) (μ : Measure W)
-      [IsProbabilityMeasure μ] (P : W → Finset D) (dom dom' : Finset D), dom ⊆ dom' →
-      Question.utility U μ (Question.wh P dom) ≤ Question.utility U μ (Question.wh P dom')
+  | .question => ∀ {W A E : Type} [Finite W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
+      [Finite A] [Nonempty W] (U : W → A → ℝ) (μ : Measure W) [IsProbabilityMeasure μ]
+      (P : E → Set W) ⦃D D' : Set E⦄, D ⊆ D' →
+      Question.utility U μ (Setoid.ofProps (P '' D)) ≤
+        Question.utility U μ (Setoid.ofProps (P '' D'))
   | .classical _ | .scalar _ | .strawson _ | .modal _ => False
 
 theorem licensesByRelevance_question : question.LicensesByRelevance :=
-  fun U μ _ P _ _ h ↦ Question.utility_wh_mono U μ P h
+  fun U μ _ P _ _ h ↦ Question.utility_ofProps_image_mono U μ P h
 
 variable {L : Licenser} {σ τ : ProjectivitySignature} {s t : Negation.Strength}
 

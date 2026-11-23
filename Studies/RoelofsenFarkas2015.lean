@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Core.Algebra.Group.Action.Prod
-public import Linglib.Semantics.Questions.Highlighting
-public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Highlighting
+public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Studies.FarkasBruce2010
 public import Linglib.Data.Examples.RoelofsenFarkas2015
 public import Linglib.Data.Examples.Readers

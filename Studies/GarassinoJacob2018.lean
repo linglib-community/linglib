@@ -1,7 +1,10 @@
 module
 
 public import Linglib.Discourse.QUD.Basic
-public import Linglib.Semantics.Questions.HamblinSet
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Studies.FarkasBruce2010
 public import Linglib.Data.Examples.GarassinoJacob2018
 public import Linglib.Data.Examples.Readers
@@ -78,7 +81,7 @@ theorem orbit_eq_alt_query {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
 /-- The tree of the sitting-back passage pursues a *wh*-question over candidates through the
 polar question for each candidate. -/
 def agentStrategy (agents : List F) (P : F → Set W) : Strategy W :=
-  .node (fromSetoid (partition (Set.range P))) (agents.map fun f ↦ .leaf (ofSet (P f)).query)
+  .node (fromSetoid (Setoid.ofProps (Set.range P))) (agents.map fun f ↦ .leaf (ofSet (P f)).query)
 
 theorem agentStrategy_isComplete {agents : List F} (hcov : ∀ f, f ∈ agents)
     (P : F → Set W) : (agentStrategy agents P).IsComplete := by
@@ -89,7 +92,7 @@ theorem agentStrategy_isComplete {agents : List F} (hcov : ∀ f, f ∈ agents)
       simp only [Multiset.mem_coe, List.mem_map, List.map_map, Function.comp_def, RoseTree.leaf,
         RoseTree.value_node]
       exact ⟨fun ⟨f, _, h⟩ ↦ ⟨f, h⟩, fun ⟨f, h⟩ ↦ ⟨f, hcov f, h⟩⟩
-    rw [fromSetoid_partition, iInf_range]
+    rw [fromSetoid_ofProps, iInf_range]
     simp_rw [← query_ofSet]
     refine (le_antisymm ?_ ?_).le
     · exact le_iInf fun f ↦ Multiset.inf_le ((hmem _).mpr ⟨f, rfl⟩)

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.English.NumeralModifiers
 public import Linglib.Semantics.Focus.Particles
-public import Linglib.Semantics.Questions.Unrestricted
+public import Linglib.Semantics.Questions.Hamblin.Unrestricted
 
 /-!
 # Coppock and Brochhagen (2013): Raising and resolving issues with scalar modifiers

@@ -48,8 +48,9 @@ is worth more.
 * `valueOfInformation_decisionValue_comp_le`: a garbled experiment is worth no more.
 * `valueOfInformation_const`: an experiment whose law does not depend on the parameter is
   worth nothing.
-* `valueOfInformation_deterministic`, `sum_measureReal_mul_integral_cond`: the value of observing
-  a classifier sums over its fibres, and the law of total expectation over them.
+* `valueOfInformation_deterministic`, `sum_measureReal_mul_integral_cond`,
+  `integral_integral_cond_preimage`: the value of observing a classifier sums over its fibres,
+  and the law of total expectation over them, as a sum and as an integral.
 * `exists_eq_comp_of_forall_valueOfInformation_le`: a classifier never worth more than `f`
   factors through `f`.
 * `valueOfInformation_id`, `valueOfInformation_decisionValue_le_id`: observing the parameter is
@@ -308,6 +309,27 @@ theorem sum_measureReal_mul_integral_cond (g : Θ → ℝ) (f : Θ → 𝓧) (π
   have : MeasurableSingletonClass 𝓧 := ⟨fun _ ↦ trivial⟩
   have h := valueOfInformation_integral g (Kernel.deterministic f (measurable_of_countable f)) π
   rwa [valueOfInformation_deterministic, sub_eq_zero] at h
+
+omit [Finite Θ] [MeasurableSingletonClass Θ] [StandardBorelSpace Θ] [Nonempty Θ] in
+/-- The integral of a function of the fibre of `f` through the parameter is its sum over the
+fibres of `f`, weighted by their probabilities. -/
+theorem integral_preimage_singleton (F : Set Θ → ℝ) {f : Θ → 𝓧} (hf : Measurable f)
+    (π : Measure Θ) [IsFiniteMeasure π] :
+    ∫ θ, F (f ⁻¹' {f θ}) ∂π = ∑ x, π.real (f ⁻¹' {x}) * F (f ⁻¹' {x}) := by
+  rw [← integral_map hf.aemeasurable (f := fun x ↦ F (f ⁻¹' {x}))
+      Integrable.of_finite.aestronglyMeasurable, integral_fintype .of_finite]
+  exact Finset.sum_congr rfl fun x _ ↦ by
+    rw [smul_eq_mul, map_measureReal_apply hf (measurableSet_singleton x)]
+
+omit [MeasurableSingletonClass 𝓧] in
+/-- The expectation of the expectation conditional on the fibre of `f` through the parameter is
+the expectation, the law of total expectation as an integral. -/
+theorem integral_integral_cond_preimage (g : Θ → ℝ) (f : Θ → 𝓧) (π : Measure Θ)
+    [IsProbabilityMeasure π] : ∫ θ, ∫ ω, g ω ∂π[|f ⁻¹' {f θ}] ∂π = ∫ θ, g θ ∂π := by
+  let _ : MeasurableSpace 𝓧 := ⊤
+  have : MeasurableSingletonClass 𝓧 := ⟨fun _ ↦ trivial⟩
+  rw [integral_preimage_singleton (fun s ↦ ∫ ω, g ω ∂π[|s]) (measurable_of_countable f),
+    sum_measureReal_mul_integral_cond]
 
 variable {𝓧' : Type*} {m𝓧' : MeasurableSpace 𝓧'} [Fintype 𝓧'] [MeasurableSingletonClass 𝓧']
   [Nonempty 𝓧']

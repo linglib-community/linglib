@@ -1,8 +1,7 @@
 module
 
-public import Linglib.Semantics.Questions.Basic
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Constituent
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Constituent
 public import Mathlib.Order.Filter.Ker
 
 /-!
@@ -28,7 +27,7 @@ principal filter is resolution.
 `CompletelyAnsweredBy` decides each alternative rather than entailing every one, which would
 collapse to `σ ⊆ ⋂ alt Q` and is incoherent for partition questions with disjoint
 alternatives; the decided form is [groenendijk-stokhof-1984]'s strong exhaustivity on
-partition questions, and `HamblinSet.lean` relates it to the weak and strong answers on Hamblin
+partition questions, and `Hamblin/Basic.lean` relates it to the weak and strong answers on Hamblin
 sets ([heim-1994]). Mention-some answerhood
 is resolution itself: an added "and not all alternatives" conjunct would rule out
 singleton-world states as mention-some answers to *Where can I get coffee?*. `∅` vacuously

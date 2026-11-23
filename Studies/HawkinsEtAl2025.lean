@@ -5,7 +5,7 @@ public import Mathlib.InformationTheory.KullbackLeibler.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Probability.Decision.ValueOfInformation
 public import Linglib.Data.Examples.HawkinsEtAl2025
-public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Pragmatics.Agent.InversePlanning
 public import Linglib.Pragmatics.Probabilistic.Literal
 

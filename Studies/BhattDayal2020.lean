@@ -1,7 +1,8 @@
 module
 
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Constituent
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Declarative
+public import Linglib.Semantics.Questions.Inquisitive.Constituent
 public import Linglib.Fragments.HindiUrdu.Particles
 
 /-!

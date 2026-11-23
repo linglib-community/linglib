@@ -214,11 +214,11 @@ theorem cpr_overgenerates :
 
 /-- The question considering whether the act is done and whether its benefit obtains
 (Figure 3). -/
-def qBenefit : Setoid World := Setoid.ofProps {act, benefit}
+def qBenefit : Setoid World := Setoid.ofProps {↑act, ↑benefit}
 
 /-- The question considering whether the act is done and whether its cost obtains
 (Figure 5). -/
-def qCost : Setoid World := Setoid.ofProps {act, cost}
+def qCost : Setoid World := Setoid.ofProps {↑act, ↑cost}
 
 instance : DecidableRel qBenefit := inferInstanceAs (DecidableRel (Setoid.ofProps _))
 instance : DecidableRel qCost := inferInstanceAs (DecidableRel (Setoid.ofProps _))
@@ -269,7 +269,7 @@ happy. -/
 def qStacked : Setoid LuWorld := Setoid.ker fun w ↦ if w.rain then none else some w.happy
 
 /-- The level playing field (Figure 9). -/
-def qFair : Setoid LuWorld := Setoid.ofProps {rain, happy}
+def qFair : Setoid LuWorld := Setoid.ofProps {↑rain, ↑happy}
 
 instance : DecidableRel qStacked := inferInstanceAs (DecidableRel (Setoid.ker _))
 instance : DecidableRel qFair := inferInstanceAs (DecidableRel (Setoid.ofProps _))

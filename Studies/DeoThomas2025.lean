@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Questions.Partition.Inquisitive
-public import Linglib.Semantics.Questions.Constituent
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
+public import Linglib.Semantics.Questions.Inquisitive.Constituent
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.DeoThomas2025
 public import Linglib.Semantics.Degree.Granularity

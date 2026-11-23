@@ -1,8 +1,8 @@
 module
 
 public import Studies.TonhauserEtAl2013
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 
 /-!
 # Beaver, Roberts, Simons and Tonhauser (2017): Questions Under Discussion: Where Information Structure Meets Projective Content

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.DeMorganAlgebra.Kalman
-public import Linglib.Semantics.Questions.Basic
+public import Linglib.Semantics.Questions.Inquisitive.Declarative
 public import Mathlib.Order.Comparable
 
 /-!

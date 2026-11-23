@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Core.Data.RoseTree.Licensed
-public import Linglib.Semantics.Questions.Basic
-public import Linglib.Semantics.Questions.Entailment
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.Declarative
+public import Linglib.Semantics.Questions.Inquisitive.Entailment
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 
 /-!
 # Questions under discussion: stack and strategy

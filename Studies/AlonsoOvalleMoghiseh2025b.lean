@@ -2,8 +2,9 @@ module
 
 public import Linglib.Semantics.Plurality.Number
 public import Linglib.Semantics.Quantification.Defs
-public import Linglib.Semantics.Questions.Closure
-public import Linglib.Semantics.Questions.Number
+public import Linglib.Semantics.Questions.Hamblin.Closure
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Number
 public import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers

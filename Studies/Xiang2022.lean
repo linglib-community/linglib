@@ -1,7 +1,8 @@
 module
 
 public import Mathlib.Tactic.FinCases
-public import Linglib.Semantics.Questions.Closure
+public import Linglib.Semantics.Questions.Hamblin.Closure
+public import Linglib.Semantics.Questions.Hamblin.Modal
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Data.Examples.Xiang2022
 

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Team.Kripke
 public import Linglib.Logic.Team.Operations
-public import Linglib.Semantics.Questions.Basic
+public import Linglib.Semantics.Questions.Inquisitive.Declarative
 public import Linglib.Core.Order.UpperLower.CompleteLattice
 
 /-!

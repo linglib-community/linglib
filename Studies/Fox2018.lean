@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Questions.Closure
+public import Linglib.Semantics.Questions.Hamblin.Closure
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
 public import Linglib.Semantics.Exhaustification.InnocentInclusion
 public import Studies.Fox2007
 public import Studies.FoxHackl2006
@@ -259,13 +260,13 @@ theorem mem_atomCell {T : Finset ι} {v : W} : v ∈ atomCell a T ↔ atoms v = 
 theorem strongAnswer_infClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w = ↑T) :
     strongAnswer (infClosure (range a)) w = atomCell a T := by
   ext v
-  rw [strongAnswer_eq_cell, partition_infClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
+  rw [strongAnswer_eq_cell, ofProps_infClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
     mem_atomCell]
 
 theorem strongAnswer_supClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w = ↑T) :
     strongAnswer (supClosure (range a)) w = atomCell a T := by
   ext v
-  rw [strongAnswer_eq_cell, partition_supClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
+  rw [strongAnswer_eq_cell, ofProps_supClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
     mem_atomCell]
 
 theorem satisfied_infClosure_range_subset_iff {u v : W} :

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Semantics.Questions.Partition.Basic
 
 /-!
@@ -190,6 +190,12 @@ theorem fromSetoid_polar (p : Set W) : fromSetoid (Setoid.polar p) = polar p := 
     · rcases q.eq_empty_or_nonempty with rfl | ⟨y, hy⟩
       · exact Or.inl rfl
       · exact Or.inr ⟨_, ⟨y, rfl⟩, λ x hx => Setoid.polar_iff.2 (iff_of_false (h hx) (h hy))⟩
+
+/-- As an inquisitive question, the question a family of propositions raises is the meet of their
+polar questions. -/
+theorem fromSetoid_ofProps (A : Set (Set W)) :
+    fromSetoid (Setoid.ofProps A) = ⨅ p ∈ A, polar p := by
+  simp only [Setoid.ofProps, fromSetoid_iInf, fromSetoid_polar]
 
 theorem determines_iff_fromSetoid_le (r : Setoid W) (p : Set W) :
     r.Determines p ↔ fromSetoid r ≤ polar p := by

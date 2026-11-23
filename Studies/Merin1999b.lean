@@ -1,12 +1,10 @@
 module
 
 public import Linglib.Semantics.Questions.Partition.Basic
-public import Linglib.Core.Order.Partition.Finpartition
 public import Linglib.Core.Probability.Decision.ValueOfInformation
 public import Mathlib.Data.Set.Card
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-public import Mathlib.Order.Partition.Finpartition
 
 /-!
 # Merin (1999): Negative Attributes, Partitions, and Rational Decisions
@@ -172,25 +170,23 @@ section ExpectedUtility
 
 open MeasureTheory ProbabilityTheory
 
-variable {M A : Type*} [Fintype M] [DecidableEq M] [MeasurableSpace M] [DiscreteMeasurableSpace M]
-  [Nonempty M]
+variable {M A : Type*} [Finite M] [MeasurableSpace M] [DiscreteMeasurableSpace M] [Nonempty M]
 
-/-- The expected utility of an act computed through a partition weights each cell's conditional
-expected utility by the cell's probability. -/
-noncomputable def partitionEU (μ : Measure M) (U : M → A → ℝ) (q : Setoid M) [DecidableRel q]
-    (a : A) : ℝ :=
-  ∑ cell ∈ (Finpartition.ofSetoid q).parts, μ.real cell * ∫ m, U m a ∂μ[|cell]
+/-- The expected utility of an act computed through a partition is the expectation of its
+conditional expected utility at the cell of the true state. -/
+noncomputable def partitionEU (μ : Measure M) (U : M → A → ℝ) (q : Setoid M) (a : A) : ℝ :=
+  ∫ m, ∫ m', U m' a ∂μ[|q.cell m] ∂μ
 
 /-- Expected utility computed through any partition is the expected utility. -/
 theorem integral_eq_partitionEU (μ : Measure M) [IsProbabilityMeasure μ] (U : M → A → ℝ)
-    (q : Setoid M) [DecidableRel q] (a : A) : ∫ m, U m a ∂μ = partitionEU μ U q a := by
-  rw [partitionEU, (Finpartition.ofSetoid q).sum_parts_eq_sum_preimage_part
-    (F := fun c ↦ μ.real c * ∫ m, U m a ∂μ[|c]) (by simp), sum_measureReal_mul_integral_cond]
+    (q : Setoid M) (a : A) : ∫ m, U m a ∂μ = partitionEU μ U q a := by
+  cases nonempty_fintype (Quotient q)
+  simp_rw [partitionEU, Setoid.cell_eq_preimage_mk]
+  exact (integral_integral_cond_preimage (fun m ↦ U m a) _ μ).symm
 
 /-- Expected utility computed through a partition does not depend on the partition. -/
 theorem partitionEU_congr (μ : Measure M) [IsProbabilityMeasure μ] (U : M → A → ℝ)
-    (q q' : Setoid M) [DecidableRel q] [DecidableRel q'] (a : A) :
-    partitionEU μ U q a = partitionEU μ U q' a :=
+    (q q' : Setoid M) (a : A) : partitionEU μ U q a = partitionEU μ U q' a :=
   (integral_eq_partitionEU μ U q a).symm.trans (integral_eq_partitionEU μ U q' a)
 
 end ExpectedUtility

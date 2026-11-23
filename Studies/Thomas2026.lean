@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Basic
+public import Linglib.Semantics.Questions.Inquisitive.Declarative
 public import Linglib.Data.Examples.Thomas2026
 public import Linglib.Core.Probability.Independence.Basic
 

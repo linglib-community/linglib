@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Order.Filter.Basic
 public import Linglib.Semantics.Dynamic.OrderedInformationState
-public import Linglib.Semantics.Questions.Entailment
+public import Linglib.Semantics.Questions.Inquisitive.Entailment
 public import Mathlib.Tactic.DeriveFintype
 
 /-!

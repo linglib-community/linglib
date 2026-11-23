@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Questions.Partition.Inquisitive
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Mathlib.Order.BooleanSubalgebra
 
 /-!
@@ -118,6 +118,11 @@ def determined (Q : Question W) : BooleanSubalgebra (Set W) where
     exact le_top
 
 @[simp] theorem mem_determined {p : Set W} : p ∈ Q.determined ↔ Q ≤ polar p := Iff.rfl
+
+/-- A partition question determines, as an inquisitive question, the propositions it determines
+as a partition. -/
+theorem determined_fromSetoid (r : Setoid W) : (fromSetoid r).determined = r.determined :=
+  SetLike.ext fun p ↦ (determines_iff_fromSetoid_le r p).symm
 
 /-! ### Complete-answer entailment -/
 
