@@ -105,43 +105,39 @@ theorem preferred_ne_performative (a : Perfectivity) (S : Finset Parameter) :
 
 /-! ### The examples -/
 
-/-- The mode an example's `mode` feature names. -/
-def mode? (r : Datum) : Option Mode :=
-  match r.feature? "mode" with
-  | some "spontaneous" => some .spontaneous
-  | some "responsive" => some .responsive
-  | some "narrative" => some .narrative
-  | some "remote" => some .remote
-  | _ => none
+/-- The mode of the fragment an example's mode names. -/
+def Examples.Mode.toMode : Examples.Mode → Kashaya.Evidentiality.Mode
+  | .spontaneous => .spontaneous
+  | .responsive => .responsive
+  | .narrative => .narrative
+  | .remote => .remote
 
-/-- The aspects an example's stem may have, the one its `aspect` feature names or else either. -/
+/-- The aspects an example's stem may have, the one the example fixes or else either. -/
 def aspects (r : Datum) : List Perfectivity :=
-  match r.feature? "aspect" with
-  | some "imperfective" => [.imperfective]
-  | some "perfective" => [.perfective]
-  | _ => [.imperfective, .perfective]
+  match Examples.aspect r with
+  | some .imperfective => [.imperfective]
+  | some .perfective => [.perfective]
+  | none => [.imperfective, .perfective]
 
-/-- The evidential an example's `evidential` feature names, for a stem of the given aspect. -/
-def evidential? (r : Datum) (a : Perfectivity) : Option Evidential :=
-  match r.feature? "evidential" with
-  | some "performative" => some (performative a)
-  | some "factualVisual" => some (factualVisual a)
-  | some "auditory" => some auditory
-  | some "inferential" => some inferential
-  | some "quotative" => some quotative
-  | some "inferentialII" => some inferentialII
-  | some "personalExperience" => some personalExperience
-  | some "remotePast" => some remotePast
-  | _ => none
+/-- The evidential a row of Table 1 names, for a stem of the given aspect. -/
+def Examples.Marker.evidential : Examples.Marker → Perfectivity → Evidential
+  | .performative, a => Kashaya.Evidentiality.performative a
+  | .factualVisual, a => Kashaya.Evidentiality.factualVisual a
+  | .auditory, _ => Kashaya.Evidentiality.auditory
+  | .inferential, _ => Kashaya.Evidentiality.inferential
+  | .quotative, _ => Kashaya.Evidentiality.quotative
+  | .inferentialII, _ => Kashaya.Evidentiality.inferentialII
+  | .personalExperience, _ => Kashaya.Evidentiality.personalExperience
+  | .remotePast, _ => Kashaya.Evidentiality.remotePast
 
 theorem examples_named :
-    ∀ r ∈ Examples.all, ∀ a ∈ aspects r,
-      (evidential? r a).isSome ∧ (evidential? r a ≠ some inferentialII → (mode? r).isSome) := by
+    ∀ r ∈ Examples.all, (Examples.marker r).isSome ∧
+      (Examples.marker r ≠ some .inferentialII → (Examples.mode r).isSome) := by
   decide
 
 theorem examples_mem_paradigm :
-    ∀ r ∈ Examples.all, ∀ m ∈ mode? r, ∀ a ∈ aspects r, ∀ e ∈ evidential? r a,
-      e ∈ paradigm m a := by
+    ∀ r ∈ Examples.all, ∀ m ∈ Examples.mode r, ∀ a ∈ aspects r, ∀ k ∈ Examples.marker r,
+      k.evidential a ∈ paradigm m.toMode a := by
   decide
 
 end Oswalt1986

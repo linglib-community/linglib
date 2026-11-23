@@ -17,7 +17,7 @@ direct and indirect ones, counting every grammaticalized evidential, auxiliaries
 among them; [an inventory of direct evidentials alone has no value](##value?_eq_none_iff). The
 map's value of each Fragment language is [that of what de Haan counts](##lookup_walsCode): its
 evidentials, its evidentiality strategies, and for Turkish, Bulgarian and Georgian a past read as
-witnessed, which [makes an A1 system](##realizes_A1). Aikhenvald counts the evidentials alone, so
+witnessed, which [makes an A1 system](##realizes_a1). Aikhenvald counts the evidentials alone, so
 the map agrees with her [where a language has neither of the others](##lookup_walsCode_of_nil).
 Of her kinds only A5 is off the map, and its one language, Euchee, is [coded without
 evidentials](##euchee), after a grammar that takes the auditory *-ke* for a locative.
@@ -76,14 +76,14 @@ theorem value?_eq_none_iff {es : List Evidential} :
   split_ifs with h₁ h₂
   · obtain ⟨c, hc, p, hp, hi⟩ := h₁
     obtain ⟨e, he, rfl⟩ := List.mem_map.1 hc
-    simp only [reduceCtorEq, false_iff, not_and]
+    simp only [false_iff, not_and]
     exact fun _ h ↦ by simp [h e he p hp] at hi
   · simp only [true_iff]
     obtain ⟨c, hc, hn⟩ := h₂
     obtain ⟨e, he, rfl⟩ := List.mem_map.1 hc
     refine ⟨⟨e, he, hn⟩, fun e he p hp ↦ Directness.ne_indirect_iff.1 fun hi ↦ ?_⟩
     exact h₁ ⟨_, List.mem_map_of_mem he, p, hp, hi⟩
-  · simp only [reduceCtorEq, false_iff, not_and]
+  · simp only [false_iff, not_and]
     rintro ⟨e, he, hn⟩ -
     exact h₂ ⟨_, List.mem_map_of_mem he, hn⟩
 
@@ -91,12 +91,12 @@ theorem ofCovers_perm {cs cs' : List (Finset Parameter)} (h : cs.Perm cs') :
     ofCovers cs = ofCovers cs' := by
   simp only [ofCovers, h.mem_iff]
 
-private theorem ofCovers_rows_eq_none_iff (k : Aikhenvald2004.Kind) :
-    ∀ r ∈ k.rows, ofCovers (r.map Prod.snd) = none ↔ k = .A5 := by
+private theorem ofCovers_rows_eq_none_iff (k : Aikhenvald2004.Examples.Kind) :
+    ∀ r ∈ k.rows, ofCovers (r.map Prod.snd) = none ↔ k = .a5 := by
   revert k; decide +kernel
 
-theorem value?_eq_none_iff_of_realizes {es : List Evidential} {k : Aikhenvald2004.Kind}
-    (h : Aikhenvald2004.Realizes es k) : value? es = none ↔ k = .A5 := by
+theorem value?_eq_none_iff_of_realizes {es : List Evidential} {k : Aikhenvald2004.Examples.Kind}
+    (h : Aikhenvald2004.Realizes es k) : value? es = none ↔ k = .a5 := by
   obtain ⟨r, hr, hp⟩ := h
   rw [value?, ofCovers_perm hp]
   exact ofCovers_rows_eq_none_iff k r hr
@@ -172,8 +172,8 @@ theorem lookup_walsCode_of_nil {l : Language} (h : l.strategies = []) (h' : l.wi
 
 /-- Read with its past as witnessed, each of Turkish, Bulgarian and Georgian has an A1 system,
 firsthand against non-firsthand. -/
-theorem realizes_A1 :
-    ∀ l ∈ [Language.turkish, .bulgarian, .georgian], Aikhenvald2004.Realizes l.counted .A1 := by
+theorem realizes_a1 :
+    ∀ l ∈ [Language.turkish, .bulgarian, .georgian], Aikhenvald2004.Realizes l.counted .a1 := by
   decide +kernel
 
 /-- Euchee, the one language with an A5 system, auditory against everything else, has no value

@@ -71,29 +71,20 @@ open Evidential
 
 /-! ### The systems -/
 
-/-- The book's names for the terms of evidentiality systems. -/
-inductive Term
-  | firsthand | nonfirsthand | direct | visual | nonVisual | auditory | inferred | assumed
-  | reported | quotative
-  deriving DecidableEq, Repr
+open Examples (Kind Term)
 
-/-- The fourteen kinds of evidentiality system, the letter giving the number of choices and the
-digit the grouping of information sources. -/
-inductive Kind
-  | A1 | A2 | A3 | A4 | A5 | B1 | B2 | B3 | B4 | B5 | C1 | C2 | C3 | D1
-  deriving DecidableEq, Repr, Fintype
+namespace Examples.Kind
 
-namespace Kind
 
 /-- The number of evidentiality choices, counting an evidentiality-neutral term. -/
 def choices : Kind → ℕ
-  | .A1 | .A2 | .A3 | .A4 | .A5 => 2
-  | .B1 | .B2 | .B3 | .B4 | .B5 => 3
-  | .C1 | .C2 | .C3 => 4
-  | .D1 => 5
+  | .a1 | .a2 | .a3 | .a4 | .a5 => 2
+  | .b1 | .b2 | .b3 | .b4 | .b5 => 3
+  | .c1 | .c2 | .c3 => 4
+  | .d1 => 5
 
 /-- The kinds organized around an evidentiality-neutral "everything else" term. -/
-def HasDefault (k : Kind) : Prop := k ∈ ({.A2, .A3, .A5, .B5} : Finset Kind)
+def HasDefault (k : Kind) : Prop := k ∈ ({.a2, .a3, .a5, .b5} : Finset Kind)
 
 instance : DecidablePred HasDefault := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
@@ -102,40 +93,40 @@ open Parameter in
 They are the rows of Table 2.1, and for an everything-else kind the terms opposed to the neutral
 one. -/
 def rows : Kind → List (List (Term × Finset Parameter))
-  | .A1 =>
+  | .a1 =>
     [[(.firsthand, {visual, sensory}),
         (.nonfirsthand, {inference, assumption, hearsay, quotative})],
       [(.firsthand, {visual}),
         (.nonfirsthand, {sensory, inference, assumption, hearsay, quotative})],
       [(.firsthand, {visual, sensory}), (.nonfirsthand, {inference, assumption})]]
-  | .A2 =>
+  | .a2 =>
     [[(.nonfirsthand, {inference, assumption, hearsay, quotative})],
       [(.nonfirsthand, {sensory, inference, assumption, hearsay, quotative})]]
-  | .A3 => [[(.reported, {hearsay, quotative})]]
-  | .A4 => [[(.nonVisual, {sensory}), (.reported, {hearsay, quotative})]]
-  | .A5 => [[(.auditory, {sensory})]]
-  | .B1 =>
+  | .a3 => [[(.reported, {hearsay, quotative})]]
+  | .a4 => [[(.nonVisual, {sensory}), (.reported, {hearsay, quotative})]]
+  | .a5 => [[(.auditory, {sensory})]]
+  | .b1 =>
     [[(.direct, {visual, sensory}), (.inferred, {inference, assumption}),
       (.reported, {hearsay, quotative})]]
-  | .B2 =>
+  | .b2 =>
     [[(.visual, {visual}), (.nonVisual, {sensory}), (.inferred, {inference, assumption})],
       [(.visual, {visual}), (.nonVisual, {sensory}),
         (.inferred, {inference, assumption, hearsay, quotative})]]
-  | .B3 => [[(.visual, {visual}), (.nonVisual, {sensory}), (.reported, {hearsay, quotative})]]
-  | .B4 =>
+  | .b3 => [[(.visual, {visual}), (.nonVisual, {sensory}), (.reported, {hearsay, quotative})]]
+  | .b4 =>
     [[(.nonVisual, {sensory}), (.inferred, {inference, assumption}),
       (.reported, {hearsay, quotative})]]
-  | .B5 => [[(.reported, {hearsay}), (.quotative, {quotative})]]
-  | .C1 =>
+  | .b5 => [[(.reported, {hearsay}), (.quotative, {quotative})]]
+  | .c1 =>
     [[(.visual, {visual}), (.nonVisual, {sensory}), (.inferred, {inference, assumption}),
       (.reported, {hearsay, quotative})]]
-  | .C2 =>
+  | .c2 =>
     [[(.direct, {visual, sensory}), (.inferred, {inference}), (.assumed, {assumption}),
       (.reported, {hearsay, quotative})]]
-  | .C3 =>
+  | .c3 =>
     [[(.direct, {visual, sensory}), (.inferred, {inference, assumption}), (.reported, {hearsay}),
       (.quotative, {quotative})]]
-  | .D1 =>
+  | .d1 =>
     [[(.visual, {visual}), (.nonVisual, {sensory}), (.inferred, {inference}),
       (.assumed, {assumption}), (.reported, {hearsay, quotative})]]
 
@@ -161,8 +152,8 @@ theorem eq_of_perm (k k' : Kind) :
     ∀ r ∈ k.rows, ∀ r' ∈ k'.rows, (r.map Prod.snd).Perm (r'.map Prod.snd) → k = k' := by
   revert k k'; decide +kernel
 
-theorem B1_willett :
-    B1.rows.map (·.map Prod.snd) =
+theorem b1_willett :
+    b1.rows.map (·.map Prod.snd) =
       [[EvidenceType.attested.block, EvidenceType.inferring.block,
         EvidenceType.reported.block]] := by
   decide
@@ -170,9 +161,9 @@ theorem B1_willett :
 /-- The names of the terms of a kind's systems. -/
 def terms (k : Kind) : Finset Term := (k.rows.flatMap (·.map Prod.fst)).toFinset
 
-theorem A2_rows_subset : A2.rows ⊆ A1.rows.map (·.filter (·.1 ≠ .firsthand)) := by decide
+theorem a2_rows_subset : a2.rows ⊆ a1.rows.map (·.filter (·.1 ≠ .firsthand)) := by decide
 
-end Kind
+end Examples.Kind
 
 /-! ### Inventories -/
 
@@ -216,25 +207,25 @@ theorem not_realizes_nil (k : Kind) : ¬ Realizes [] k := by
 
 /-! ### The Fragment languages -/
 
-theorem turkish : Realizes Turkish.Evidentiality.evidentials .A2 := by decide
+theorem turkish : Realizes Turkish.Evidentiality.evidentials .a2 := by decide
 
-theorem abkhaz : Realizes Abkhaz.Evidentiality.evidentials .A2 := by decide
+theorem abkhaz : Realizes Abkhaz.Evidentiality.evidentials .a2 := by decide
 
-theorem bulgarian : Realizes Bulgarian.Evidentiality.evidentials .A2 := by decide
+theorem bulgarian : Realizes Bulgarian.Evidentiality.evidentials .a2 := by decide
 
-theorem aymara : Realizes Aymara.Evidentiality.evidentials .B1 := by decide
+theorem aymara : Realizes Aymara.Evidentiality.evidentials .b1 := by decide
 
-theorem quechua : Realizes Quechua.Evidentiality.evidentials .B1 := by decide
+theorem quechua : Realizes Quechua.Evidentiality.evidentials .b1 := by decide
 
-theorem tuyuca : Realizes Tuyuca.Evidentiality.evidentials .D1 := by decide
+theorem tuyuca : Realizes Tuyuca.Evidentiality.evidentials .d1 := by decide
 
-theorem tariana : Realizes Tariana.Evidentiality.evidentials .D1 := by decide
+theorem tariana : Realizes Tariana.Evidentiality.evidentials .d1 := by decide
 
 /-- Georgian, whose perfect is a strategy on Aikhenvald's reading, has no system of evidentials;
 read as an evidential, as most grammars read it, the perfect makes one of the kind A2. -/
 theorem georgian (k : Kind) :
     ¬ Realizes Georgian.Evidentiality.evidentials k ∧
-      Realizes Georgian.Evidentiality.strategies .A2 :=
+      Realizes Georgian.Evidentiality.strategies .a2 :=
   ⟨not_realizes_nil k, by decide⟩
 
 open Kashaya.Evidentiality in
@@ -250,8 +241,8 @@ theorem westGreenlandic_not_wellFormed :
 theorem westGreenlandic (k : Kind) : ¬ Realizes WestGreenlandic.Evidentiality.evidentials k :=
   fun h ↦ westGreenlandic_not_wellFormed h.wellFormed
 
-theorem westGreenlandic_A3 :
-    ∀ e ∈ WestGreenlandic.Evidentiality.evidentials, Realizes [e] .A3 := by
+theorem westGreenlandic_a3 :
+    ∀ e ∈ WestGreenlandic.Evidentiality.evidentials, Realizes [e] .a3 := by
   decide
 
 /-! ### Preferred evidentials -/
@@ -280,43 +271,35 @@ theorem tariana_preferred_singleton {es : List Evidential}
 locative only. -/
 def eucheeKe : Evidential := { morphs := [.suff "ke"], covers := {.sensory} }
 
-theorem euchee : Realizes [eucheeKe] .A5 := by decide
+theorem euchee : Realizes [eucheeKe] .a5 := by decide
 
 /-! ### The book's examples -/
 
-/-- The terms named by the examples' `term` feature. -/
-def termNames : List (String × Term) :=
-  [("firsthand", .firsthand), ("nonfirsthand", .nonfirsthand), ("direct", .direct),
-    ("visual", .visual), ("nonvisual", .nonVisual), ("auditory", .auditory),
-    ("inferred", .inferred), ("assumed", .assumed), ("reported", .reported),
-    ("quotative", .quotative)]
+/-- The parameters an example's information source takes in. -/
+def Examples.InfoSource.parameters : Examples.InfoSource → Finset Parameter
+  | .visual => {.visual}
+  | .nonvisual => {.sensory}
+  | .inference => {.inference}
+  | .assumption => {.assumption}
+  | .report => {.hearsay, .quotative}
+  | .nonfirsthand => {.inference, .assumption, .hearsay, .quotative}
 
-/-- The kinds named by the examples' `system` feature. -/
-def kindNames : List (String × Kind) :=
-  [("A1", .A1), ("A2", .A2), ("A3", .A3), ("A4", .A4), ("A5", .A5), ("B1", .B1), ("B2", .B2),
-    ("B3", .B3), ("B4", .B4), ("B5", .B5), ("C1", .C1), ("C2", .C2), ("C3", .C3), ("D1", .D1)]
-
-/-- The parameters named by the examples' `source` feature. -/
-def sourceNames : List (String × Parameter) :=
-  [("visual", .visual), ("nonvisual", .sensory), ("inference", .inference),
-    ("assumption", .assumption), ("report", .hearsay)]
-
-theorem examples_source_mem_cell :
-    ∀ x ∈ Examples.all, ∀ k ∈ x.parse? "system" kindNames, ∀ t ∈ x.parse? "term" termNames,
-      ∀ p ∈ x.parse? "source" sourceNames, ∃ r ∈ k.rows, ∃ c ∈ r, c.1 = t ∧ p ∈ c.2 := by
+theorem examples_source_subset_cell :
+    ∀ x ∈ Examples.all, ∀ k ∈ Examples.kind x, ∀ t ∈ Examples.term x,
+      ∀ s ∈ Examples.infoSource x, ∃ r ∈ k.rows, ∃ c ∈ r, c.1 = t ∧ s.parameters ⊆ c.2 := by
   decide
 
 /-- The terms illustrated by the examples from a language. -/
 def illustrated (lang : Glottocode) : Finset Term :=
-  ((Examples.all.filter (·.language = lang)).filterMap (·.parse? "term" termNames)).toFinset
+  ((Examples.all.filter (·.language = lang)).filterMap Examples.term).toFinset
 
-theorem tariana_illustration : illustrated .tariana = Kind.D1.terms := by
+theorem tariana_illustration : illustrated .tariana = Kind.d1.terms := by
   decide
 
-theorem wanka_illustration : illustrated .jaujaWancaQuechua = Kind.B1.terms := by
+theorem wanka_illustration : illustrated .jaujaWancaQuechua = Kind.b1.terms := by
   decide
 
-theorem turkish_illustration : illustrated .turkish = Kind.A2.terms := by
+theorem turkish_illustration : illustrated .turkish = Kind.a2.terms := by
   decide
 
 end Aikhenvald2004
