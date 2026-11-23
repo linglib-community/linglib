@@ -320,6 +320,25 @@ theorem disjoint_Ici_mul_of (p : GornAddress) {i j : ℕ} (h : i ≠ j) :
     Disjoint (Set.Ici (p * of i)) (Set.Ici (p * of j)) :=
   Set.disjoint_left.2 fun _ hi hj ↦ h (of_inj_of_mul_of_le hi hj)
 
+/-! ### Sisters -/
+
+/-- The sister of an address in a binary node: the other daughter of its parent. -/
+def sister (p : GornAddress) : GornAddress := p.parent * of (1 - p.last?.getD 0)
+
+@[simp] theorem sister_mul_of (p : GornAddress) (i : ℕ) : (p * of i).sister = p * of (1 - i) := by
+  simp [sister]
+
+theorem parent_covBy_sister (p : GornAddress) : p.parent ⋖ p.sister := covBy_iff.2 ⟨_, rfl⟩
+
+@[simp] theorem parent_sister (p : GornAddress) : p.sister.parent = p.parent :=
+  GornAddress.ext (by simp [sister])
+
+theorem sister_sister_mul_of (p : GornAddress) {i : ℕ} (hi : i < 2) :
+    (p * of i).sister.sister = p * of i := by
+  rw [sister_mul_of, sister_mul_of]
+  congr 2
+  omega
+
 /-! ### Least common ancestors -/
 
 /-- The meet of two addresses is their longest common head, the deepest address dominating

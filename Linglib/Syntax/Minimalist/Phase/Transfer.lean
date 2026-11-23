@@ -144,7 +144,7 @@ theorem atCompletion_le_atMerger : atCompletion hd t ≤ atMerger := fun _ h s h
 
 /-- The next phase head merges only after the phase is complete. -/
 theorem ofNextPhase_atMerger_le_atCompletion : ofNextPhase hd t atMerger ≤ atCompletion hd t :=
-  fun _ _ _ ⟨z, _, hs, hc⟩ ↦ hs.trans_lt ((parent_covBy_complement z).lt.trans_le hc)
+  fun _ _ _ ⟨z, _, hs, hc⟩ ↦ hs.trans_lt ((GornAddress.parent_covBy_sister z).lt.trans_le hc)
 
 end Schedule
 
@@ -160,7 +160,7 @@ theorem sealed_mono {D' : GornAddress → Set GornAddress} {σ' : Schedule}
 edge besides. -/
 theorem complementDomain_subset_wholePhaseDomain (hp : projectionAt hd t h ≤ h.parent) :
     complementDomain h ⊆ wholePhaseDomain hd t h := fun _ hq ↦
-  (hp.trans_lt (parent_covBy_complement h).lt).trans_le hq
+  (hp.trans_lt (GornAddress.parent_covBy_sister h).lt).trans_le hq
 
 /-! ### What a phase head transfers on its own -/
 
@@ -195,7 +195,7 @@ theorem phaseLevel_le (q : t.toRoseTree.Positions) : phaseLevel hd t Φ q ≤ q 
 theorem projectionAt_le_phaseLevel {q : t.toRoseTree.Positions} (hΦ : h ∈ Φ) (hc : complement h ≤
     q.val)
     (hp : projectionAt hd t h ≤ h.parent) : projectionAt hd t h ≤ (phaseLevel hd t Φ q).val := by
-  have hq := hp.trans ((parent_covBy_complement h).le.trans hc)
+  have hq := hp.trans ((GornAddress.parent_covBy_sister h).le.trans hc)
   exact GornAddress.le_def.2 (List.prefix_take_iff.2 ⟨GornAddress.le_def.1 hq,
     Finset.le_sup (f := (projectionAt hd t · |>.depth)) (Finset.mem_filter.2 ⟨hΦ, hc⟩)⟩)
 
@@ -288,7 +288,7 @@ theorem crosses_iff {tok : LexicalItem.Token} {h : GornAddress} (hh : h ∈ t.to
     complementDomain, Set.mem_Ici, Set.mem_ofPred_eq]
   rw [cCommands_iff_complement_le hh h0 (mem_validPaths_of_mem_chain hq)]
   have hle : ∀ hc : complement h ≤ q, projectionAt hd t h ≤ q := fun hc ↦
-    hproj.trans ((parent_covBy_complement h).le.trans hc)
+    hproj.trans ((GornAddress.parent_covBy_sister h).le.trans hc)
   exact ⟨fun ⟨hc, hn⟩ ↦ ⟨(not_le_fst_iff hx (hle hc)).1 hn, hc⟩,
     fun ⟨hlt, hc⟩ ↦ ⟨hc, (not_le_fst_iff hx (hle hc)).2 hlt⟩⟩
 
