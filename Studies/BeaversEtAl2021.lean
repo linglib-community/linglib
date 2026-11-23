@@ -18,7 +18,7 @@ out the unmarked form only when it spells out the marked one
 
 ## Implementation notes
 
-* The semantics is stated on `EventStructure.Interpretation`, which interprets the primitives of
+* The semantics is stated on `EventStructure.Model`, which interprets the primitives of
   Beavers and Koontz-Garboden's book, and *again* is `Presupposition.again`. The diagnostics, and
   the readers of a row's root class and diagnostic, are those of
   `Studies/BeaversKoontzGarboden2020.lean`.
@@ -50,7 +50,7 @@ section Model
 universe u
 
 variable {Entity : Type*} {State Event : Type u}
-  (M : EventStructure.Interpretation State Event) {θ : Entity → Event → Prop}
+  (M : EventStructure.Model State Event) {θ : Entity → Event → Prop}
   {R : SetRel Event Event} {P : Entity → State → Prop} {y x : Entity} {s : State}
 
 /-- The deverbal stative of `P` holds of the states of which `P` holds and that a change gave
@@ -109,7 +109,7 @@ theorem stativeRealization_eq_unmarked_iff {a : AdjectivalStructure} :
   cases a <;> simp [stativeRealization]
 
 theorem entailsChange_of_verbRealization_eq_unmarked {State Event : Type*}
-    {M : ArgumentStructure.EventStructure.Interpretation State Event}
+    {M : ArgumentStructure.EventStructure.Model State Event}
     {p : State → Prop} {Q : Event → Prop} (h : M.Respects p Q r)
     (hr : verbRealization r = .unmarked) :
     M.EntailsChange p :=

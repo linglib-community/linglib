@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.Root.Basic
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Postulates
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Presupposition.Again
@@ -120,7 +120,7 @@ that each of its subterms was realized. -/
 
 universe u
 
-variable {Entity : Type*} {State Event : Type u} (M : Interpretation State Event)
+variable {Entity : Type*} {State Event : Type u} (M : Model State Event)
   (θ : Entity → Event → Prop) {σ τ : Eventuality} {P : Entity → State → Prop} {y x : Entity}
 
 /-- The causative change-of-state template (18c), `[y CAUSE [x BECOME P]]`. -/
@@ -258,13 +258,13 @@ theorem hand_drown_differ_in_position :
 /-! ### The entailments of the roots in a model
 
 The kinds of a root are meaning postulates on its state and manner predicates
-(`EventStructure.Interpretation.Respects`). In an interpretation that respects the signature of
+(`EventStructure.Model.Respects`). In an interpretation that respects the signature of
 √crack, a cracked state arises from a caused change whatever template the root occurs in, while
 one that respects the signature of √flat may have a flat state that no change gave rise to. -/
 
 section Model
 
-variable {Entity State Event : Type*} {M : EventStructure.Interpretation State Event}
+variable {Entity State Event : Type*} {M : EventStructure.Model State Event}
   {P : Entity → State → Prop} {Q : Event → Prop} {x : Entity} {s : State}
 
 theorem crack_entails_cause (h : M.Respects (P x) Q crack) (hs : P x s) :
@@ -285,12 +285,12 @@ theorem drown_diamond_cause_diamond_become_le (h : M.Respects (P x) Q drown)
 end Model
 
 /-- A model without changes. -/
-def unchanging : EventStructure.Interpretation Unit Unit where
+def unchanging : EventStructure.Model Unit Unit where
   become := ⊥
   cause := ⊥
 
 /-- A model in which every state arises from a caused change. -/
-def changing : EventStructure.Interpretation Unit Unit where
+def changing : EventStructure.Model Unit Unit where
   become := ⊤
   cause := ⊤
 
@@ -321,7 +321,7 @@ inductive Subevent
   | action (i : Bool)
 
 /-- A model in which the one state arises from two changes, each caused by one action. -/
-def twoChanges : EventStructure.Interpretation Unit Subevent where
+def twoChanges : EventStructure.Model Unit Subevent where
   become := {(e, _) | ∃ i, e = .change i}
   cause := {(v, e) | ∃ i, v = .action i ∧ e = .change i}
 
@@ -346,7 +346,7 @@ theorem twoChanges_not_entailsCausedResult :
     fun h ↦ let ⟨_, ⟨_, hv, _⟩, _⟩ := h (.change true) trivial; nomatch hv⟩
 
 /-- A model in which the one state arises from one change, which both actions cause. -/
-def jointCause : EventStructure.Interpretation Unit Subevent where
+def jointCause : EventStructure.Model Unit Subevent where
   become := {(e, _) | e = .change true}
   cause := {(v, e) | (∃ i, v = .action i) ∧ e = .change true}
 
@@ -369,7 +369,7 @@ theme leaves the causer (52). -/
 
 section Ditransitive
 
-variable {Entity State Event : Type*} {M : EventStructure.Interpretation State Event}
+variable {Entity State Event : Type*} {M : EventStructure.Model State Event}
   {prospect : SetRel Event State} {θ : Entity → Event → Prop} {p r : State → Prop}
   {Q : Event → Prop} {x : Entity}
 
@@ -405,7 +405,7 @@ def Examples.RootClass.result? {State : Type*} (p q : State → Prop) :
 in some interpretation the root's manner entails its caused result and an event of the
 ditransitive brings about no state of the template's result. -/
 def Examples.RootClass.Deniable (c : Examples.RootClass) : Prop :=
-  ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Interpretation State Event)
+  ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Model State Event)
     (prospect : SetRel Event State) (θ : Unit → Event → Prop) (p q : State → Prop)
     (Q : Event → Prop),
     M.cause ○ M.become ⊆ prospect ∧ (∃ r ∈ c.result? p q, M.EntailsCausedResult Q r) ∧
@@ -413,7 +413,7 @@ def Examples.RootClass.Deniable (c : Examples.RootClass) : Prop :=
 
 /-- (52): a throwing `false` causes a change `true` into the state `false`, in which the theme
 has left the causer; the state `true`, in which the recipient has it, does not come about. -/
-def thrown : ArgumentStructure.EventStructure.Interpretation Bool Bool where
+def thrown : ArgumentStructure.EventStructure.Model Bool Bool where
   become := {(e, s) | e = true ∧ s = false}
   cause := {(v, e) | v = false ∧ e = true}
 
@@ -449,7 +449,7 @@ open Presupposition
 universe u
 
 variable {Entity : Type*} {State Event : Type u}
-  (M : ArgumentStructure.EventStructure.Interpretation State Event) (θ : Entity → Event → Prop)
+  (M : ArgumentStructure.EventStructure.Model State Event) (θ : Entity → Event → Prop)
 
 /-- The stative description `P` holds of `x` in the state `s`, and no change gave rise to `s`. -/
 def DeniesChange (P : Entity → State → Prop) (x : Entity) : State → Prop :=
@@ -488,7 +488,7 @@ end Diagnostics
 
 /-- (46a): a knife forged sharp is sharp in its first state `false`, and in its later state
 `true`, which a sharpening gave rise to. -/
-def forged : ArgumentStructure.EventStructure.Interpretation Bool Unit where
+def forged : ArgumentStructure.EventStructure.Model Bool Unit where
   become := {(_, s) | s = true}
   cause := ⊥
 
@@ -517,7 +517,7 @@ private theorem forged_respects {ks : Root} (hr : Root.Kind.result ∉ close ks)
 model that respects the signature, with some manner, and in which a state arises from at most
 one change. -/
 def Passes (ks : Root) (g : Diagnostic) : Prop :=
-  ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Interpretation State Event)
+  ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Model State Event)
     (θ : Unit → Event → Prop) (P : Unit → State → Prop) (Q : Event → Prop)
     (R : SetRel State State),
     (∀ s ⦃e⦄, e ~[M.become] s → ∀ ⦃e'⦄, e' ~[M.become] s → e = e') ∧

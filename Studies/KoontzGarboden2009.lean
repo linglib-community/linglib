@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
 public import Linglib.Fragments.Romance.Spanish.Verbs
 
 /-!
@@ -31,7 +30,7 @@ The paper's representations take the change-of-state event as the verb's event a
 existentially close the causing event; `causative` follows that convention, and
 `exists_causative_iff` shows that its existential closure agrees with possibility along `cause`,
 whose event argument is the causing event. The underspecified effector and the agent are
-relations between individuals and events beside the `EventStructure.Interpretation`.
+relations between individuals and events beside the `EventStructure.Model`.
 A Spanish verb's causer specification is derived from the proto-role subject profile the
 fragment states for it, after Dowty: a causer that must be an agent entails volition. The
 reflexive/anticausative syncretism in Haspelmath's survey, which the paper tabulates, is a
@@ -64,7 +63,7 @@ def reflexivize {α β : Type*} (R : α → α → β) : α → β := fun x ↦ 
 section Model
 
 variable {Entity State E : Type*}
-  (M : ArgumentStructure.EventStructure.Interpretation State E)
+  (M : ArgumentStructure.EventStructure.Model State E)
   (effector θ agent : Entity → E → Prop) (P : Entity → State → Prop)
 
 /-- A causative change-of-state verb, ((10b), (17), (29)), holds of an event `e` in which `x` comes
@@ -143,7 +142,7 @@ inductive Participant
 
 /-- In the model where Juan breaks the glass, the one event causes itself and gives rise to the
 glass's broken state. -/
-def breaking : ArgumentStructure.EventStructure.Interpretation Unit Unit where
+def breaking : ArgumentStructure.EventStructure.Model Unit Unit where
   become := ⊤
   cause := ⊤
 

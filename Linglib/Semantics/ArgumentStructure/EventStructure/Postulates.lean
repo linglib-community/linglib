@@ -1,104 +1,51 @@
 module
 
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Model
 public import Linglib.Semantics.ArgumentStructure.Root.Basic
 
 /-!
-# Interpretations of the event-structure primitives
-
-Event-structural decomposition builds the meaning of a verb from two relations: an eventuality
-`e` *gives rise to* a state `s`, written `e ~[become] s`, and an eventuality `v` *causes* an
-eventuality `e`, written `v ~[cause] e`. An `EventStructure.Interpretation` over types of
-states and eventualities is a choice of these relations, with a third, `causeState`, between an
-eventuality and a state it causes without a change, for a causative head over a stative
-complement.
-
-The verbal heads are possibility along the relations. For a state predicate `p`, the
-change-of-state head yields `◇[become] p`, the eventualities that give rise to a `p`-state, and
-for a predicate `q` of eventualities the causative head yields `◇[cause] q`, the eventualities
-that cause a `q`-eventuality. A causative of a change of state is `◇[cause] (◇[become] p)`.
+# Meaning postulates of roots
 
 A root's predicates may carry entailments of their own, the meaning postulates of Beavers and
-Koontz-Garboden. A state predicate `p` *entails change* when every `p`-state arises from some
-change, `p ≤ ◇[become.inv] ⊤`, and *entails a cause* when that change has a cause,
-`p ≤ ◇[become.inv] (◇[cause.inv] ⊤)`. The two postulates that join a state predicate `p` and a
-manner predicate `Q` mirror each other. For a root that describes a state, `Q` *is the manner of
-the cause* of `p` when every `p`-state arises from a change that has a cause and whose causes
-are all `Q`-eventualities, `p ≤ ◇[become.inv] (◇[cause.inv] ⊤ ⊓ □[cause.inv] Q)`; then every
-`p`-state is brought about by a `Q`-eventuality
-(`Interpretation.EntailsMannerOfCause.le_diamond_inv_diamond_inv`). For a root that describes an
-action, `Q` *entails the caused result* `p` when every `Q`-eventuality causes a change into a
-`p`-state, `Q ≤ ◇[cause] (◇[become] p)`.
+Koontz-Garboden, stated in a model of the event-structure primitives. A state predicate `p`
+*entails change* when every `p`-state arises from some change, `p ≤ ◇[become.inv] ⊤`, and
+*entails a cause* when that change has a cause, `p ≤ ◇[become.inv] (◇[cause.inv] ⊤)`. The two
+postulates that join a state predicate `p` and a manner predicate `Q` mirror each other. For a
+root that describes a state, `Q` *is the manner of the cause* of `p` when every `p`-state arises
+from a change that has a cause and whose causes are all `Q`-eventualities,
+`p ≤ ◇[become.inv] (◇[cause.inv] ⊤ ⊓ □[cause.inv] Q)`; then every `p`-state is brought about by a
+`Q`-eventuality (`Model.EntailsMannerOfCause.le_diamond_inv_diamond_inv`). For a root that
+describes an action, `Q` *entails the caused result* `p` when every `Q`-eventuality causes a
+change into a `p`-state, `Q ≤ ◇[cause] (◇[become] p)`.
 
-An interpretation `Respects` a kind signature for `p` and `Q` when the postulates of the kinds
-in the signature hold of the state predicate. Each postulate entails the one before it, so a
-signature and its collocational closure have the same models (`Interpretation.respects_close`).
-Where a state arises from at most one change, `Q` is the manner of the cause of `p` exactly when
-`p` entails a cause and the causing event of the causative is a `Q`-eventuality
-(`Interpretation.entailsMannerOfCause_iff`).
+A model `Respects` a kind signature for `p` and `Q` when the postulates of the kinds in the
+signature hold of the state predicate. Each postulate entails the one before it, so a signature
+and its collocational closure have the same models (`Model.respects_close`). Where a state arises
+from at most one change, `Q` is the manner of the cause of `p` exactly when `p` entails a cause
+and the causing event of the causative is a `Q`-eventuality (`Model.entailsMannerOfCause_iff`).
 
 ## Implementation notes
-
-The sorts are type parameters, so a relation cannot be applied to an argument of the wrong sort.
-An analysis on which states and events are sorts of one domain of eventualities takes the two
-types to be the same.
-
-An interpretation has no relation between individuals and eventualities. The causative head of
-[beavers-koontz-garboden-2020] also makes its subject the effector of the causing eventuality;
-that is a thematic relation, which a caller supplies and states as a conjunct (`Template.denote`),
-so that the same relations serve analyses on which the causer is an agent or is introduced by a
-separate head.
 
 `Respects` reads a signature as the postulates of a root in the complement of `v`. For a root
 adjoined to `v` the cause kind is `EntailsCausedResult` of a result that the signature does not
 fix, since a root may entail the result of its template or another one, so a caller states that
 postulate of the result it means.
 
-`become` runs from the eventuality to the state it gives rise to, the direction of `cause`, so
-that the two compose; [beavers-koontz-garboden-2020] write the state first.
-
-Causation of a state is a field of its own and not `cause` followed by `become`, since a state
-that is caused need not arise from a change: [yu-ausensi-smith-2023] let the causative head take
-a caused eventuality of either sort. It defaults to the empty relation, for an analysis on which
-every caused state is the result of a change. The meaning postulates concern caused changes and
-are stated of `cause`.
+The postulates concern caused changes and are stated of `cause`, not of `causeState`.
 
 ## References
 
 * [beavers-koontz-garboden-2020]
-* [yu-ausensi-smith-2023]
 -/
 
 @[expose] public section
 
-namespace ArgumentStructure.EventStructure
-
-/-- An interpretation of the event-structure primitives, the relations that the verbal heads
-introduce. -/
-@[ext]
-structure Interpretation (State Event : Type*) where
-  /-- An eventuality and a state it gives rise to. -/
-  become : SetRel Event State
-  /-- An eventuality and an eventuality it causes. -/
-  cause : SetRel Event Event
-  /-- An eventuality and a state it causes without a change. -/
-  causeState : SetRel Event State := ∅
-
-namespace Interpretation
+namespace ArgumentStructure.EventStructure.Model
 
 open ModalLogic
 open scoped SetRel
 
-/-- Interpretations are ordered by inclusion of their relations. -/
-instance {State Event : Type*} : PartialOrder (Interpretation State Event) :=
-  PartialOrder.lift (fun M ↦ (M.become, M.cause, M.causeState)) fun _ _ h ↦
-    Interpretation.ext (congrArg Prod.fst h) (congrArg (fun p ↦ p.2.1) h)
-      (congrArg (fun p ↦ p.2.2) h)
-
-theorem le_def {State Event : Type*} {M N : Interpretation State Event} :
-    M ≤ N ↔ M.become ⊆ N.become ∧ M.cause ⊆ N.cause ∧ M.causeState ⊆ N.causeState := Iff.rfl
-
-variable {State Event : Type*} (M : Interpretation State Event) (p : State → Prop)
+variable {State Event : Type*} (M : Model State Event) (p : State → Prop)
   (Q : Event → Prop) {ks ks' : Finset Root.Kind}
 
 /-- The state predicate `p` entails change when every state of which it holds arises from a
@@ -117,11 +64,11 @@ def EntailsMannerOfCause : Prop :=
 
 /-- The manner `Q` entails the caused result `p`, as with √hand, when every eventuality of which
 `Q` holds causes a change into a state of which `p` holds. -/
-def EntailsCausedResult (M : Interpretation State Event) (Q : Event → Prop)
+def EntailsCausedResult (M : Model State Event) (Q : Event → Prop)
     (p : State → Prop) : Prop :=
   Q ≤ ◇[M.cause] (◇[M.become] p)
 
-/-- The interpretation respects the kind signature `ks` for the state predicate `p` of a root
+/-- The model respects the kind signature `ks` for the state predicate `p` of a root
 and the manner `Q` when the meaning postulate of each kind in `ks` holds of `p`, and that of the
 manner of the cause for a signature with a manner and a cause. The state and manner kinds impose
 nothing beyond the predicates. -/
@@ -191,6 +138,4 @@ theorem Respects.entailsChange (h : M.Respects p Q ks)
     (hr : Root.Kind.result ∈ Root.close ks) : M.EntailsChange p :=
   (respects_close.2 h).change hr
 
-end Interpretation
-
-end ArgumentStructure.EventStructure
+end ArgumentStructure.EventStructure.Model

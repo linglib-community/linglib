@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Wordlist.Bohnemeyer2004
 public import Linglib.Fragments.Mayan.Yukatek.Agreement
 public import Linglib.Fragments.HindiUrdu.Case
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
 public import Linglib.Core.Relation.ReflTransGen
 public import Studies.Lucy1994
 public import Linglib.Syntax.Voice.Basic

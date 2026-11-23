@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Statistics.SolstadBott2022
 public import Linglib.Discourse.Coherence
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Mathlib.Logic.Equiv.Defs
 
@@ -265,7 +265,7 @@ theorem icons_iff_undergoer (v : VerbClass) (a : Position) :
 /-- A stimulus-experiencer verb whose causing eventuality is given a manner denotes as the
 accomplishment with that manner, which has no slot. -/
 theorem denote_accomplishment_iff {Entity : Type*} {State Event : Type u}
-    {M : Interpretation State Event} {θ : Entity → Event → Prop} {P : Entity → State → Prop}
+    {M : Model State Event} {θ : Entity → Event → Prop} {P : Entity → State → Prop}
     {Q : Event → Prop} {y x : Entity} {v : Event} :
     Template.accomplishment.denote M θ P Q y x v ↔
       VerbClass.stimExp.template.denote M θ P Q y x v ∧ Q v :=

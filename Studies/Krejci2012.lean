@@ -55,7 +55,7 @@ open scoped SetRel ModalLogic
 section Model
 
 variable {Entity State T E : Type*} [LinearOrder T] [TemporalTrace E T]
-  (M : ArgumentStructure.EventStructure.Interpretation State E)
+  (M : ArgumentStructure.EventStructure.Model State E)
   (effector manip : Entity → E → Prop) (S : Entity → State → Prop)
 
 /-- In the lexical causative (38a) the causer's manipulation of food brings the causee to the
@@ -153,7 +153,7 @@ def digesting (x : Participant) (s : ℤ) : Prop := x = .john ∧ (s = 2 ∨ s =
 digestion. States are times, and a change gives rise to the
 state at its end. -/
 def eating (causing : NonemptyInterval ℤ → NonemptyInterval ℤ → Prop) :
-    ArgumentStructure.EventStructure.Interpretation ℤ (NonemptyInterval ℤ) where
+    ArgumentStructure.EventStructure.Model ℤ (NonemptyInterval ℤ) where
   become := {(e, s) | (∃ w, causing w e) ∧ s = (τ e).toProd.2}
   cause := {(w, e) | causing w e}
 
@@ -161,7 +161,7 @@ def eating (causing : NonemptyInterval ℤ → NonemptyInterval ℤ → Prop) :
 def spoonManip (y : Participant) (w : NonemptyInterval ℤ) : Prop := y = .mary ∧ At w 0 1
 
 /-- In spoon feeding ((44a)) Mary's manipulation of the food causes John's change. -/
-def spoonFeeding : ArgumentStructure.EventStructure.Interpretation ℤ (NonemptyInterval ℤ) :=
+def spoonFeeding : ArgumentStructure.EventStructure.Model ℤ (NonemptyInterval ℤ) :=
   eating fun w e ↦ At w 0 1 ∧ At e 1 2
 
 /-- John manipulates the food. -/
@@ -169,7 +169,7 @@ def supManip (y : Participant) (w : NonemptyInterval ℤ) : Prop := y = .john �
 
 /-- Under supervision ((48)) John's manipulation of the food and Mary's supervising action both
 cause John's change. -/
-def supervising : ArgumentStructure.EventStructure.Interpretation ℤ (NonemptyInterval ℤ) :=
+def supervising : ArgumentStructure.EventStructure.Model ℤ (NonemptyInterval ℤ) :=
   eating fun w e ↦ (At w 0 1 ∨ At w 0 2) ∧ At e 1 2
 
 /-- Under supervision John is the effector of his manipulation and Mary of her supervising. -/
@@ -181,7 +181,7 @@ def twoManip (y : Participant) (w : NonemptyInterval ℤ) : Prop :=
   (y = .mary ∧ At w 0 1) ∨ (y = .john ∧ At w 3 4)
 
 /-- In the model of two meals Mary feeds John, and later John eats. -/
-def twoMeals : ArgumentStructure.EventStructure.Interpretation ℤ (NonemptyInterval ℤ) :=
+def twoMeals : ArgumentStructure.EventStructure.Model ℤ (NonemptyInterval ℤ) :=
   eating fun w e ↦ (At w 0 1 ∧ At e 1 2) ∨ (At w 3 4 ∧ At e 4 5)
 
 /-- *I didn't eat pie; you fed pie to me* ((92), (106)) is consistent, since John, fed by Mary,
