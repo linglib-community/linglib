@@ -118,6 +118,7 @@ def witness (d : Fin 2) : Possibility Bool ℕ (Part (Fin 2)) :=
 set_option linter.style.haveILetI false in
 theorem witness_mem_marbleOut : witness 0 ∈ marbleOut.state bag := by
   letI := bag true
+  refine ⟨rfl, ?_⟩
   show marbleOut.Verifies ⊥ (Function.update ⊥ 0 (.some 0))
   rw [marbleOut, DRS.verifies_mk]
   simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
@@ -126,7 +127,7 @@ theorem witness_mem_marbleOut : witness 0 ∈ marbleOut.state bag := by
     ⟨![0], fun i => by rw [Subsingleton.elim i 0]; simp, rfl⟩⟩
 
 theorem witness_notMem_coinOut : witness 0 ∉ coinOut.state bag := by
-  rintro ⟨-, -, ⟨v, hv, hcoin⟩, -⟩
+  rintro ⟨-, -, -, ⟨v, hv, hcoin⟩, -⟩
   have h0 : v 0 ∈ (witness 0).assignment 0 := hv 0
   have h2 : v 0 = 0 := by simpa [witness] using h0
   have h3 : v 0 = 1 := hcoin
@@ -209,19 +210,15 @@ state the DRS expresses relative to that point's assignment (Definition 29). -/
 theorem mem_ccp_iff_mem_relState {X : Set V} {I : State W V M} (hI : State.UniformAt X I)
     {p q : Possibility W V (Part M)} (hp : p ∈ I) (hpq : p ≤ q) :
     q ∈ K.ccp interp I ↔ q ∈ K.relState interp p.assignment := by
-  rw [DRS.mem_ccp, DRS.mem_relState]
-  constructor
-  · rintro ⟨p', hp', hw, hv⟩
-    have he : p' = p := by
-      rw [(Possibility.le_iff_eq_restrict (hI p' hp')).mp
-          ((DRS.mem_update_iff interp).mp ⟨hw, hv⟩).1,
-        ← (Possibility.le_iff_eq_restrict (hI p hp)).mp hpq]
-    rw [← he, ← hw]
-    exact hv
-  · intro hv
-    refine ⟨p, hp, hpq.1, ?_⟩
-    rw [hpq.1]
-    exact hv
+  rw [DRS.mem_ccp, DRS.mem_relState,
+    show (⟨q.world, p.assignment⟩ : Possibility W V (Part M)) = p from
+      Possibility.ext hpq.1.symm rfl]
+  refine ⟨?_, fun h ↦ ⟨p, hp, h⟩⟩
+  rintro ⟨p', hp', h⟩
+  have he : p' = p := by
+    rw [(Possibility.le_iff_eq_restrict (hI p' hp')).mp ((DRS.mem_update_iff interp).mp h).1,
+      ← (Possibility.le_iff_eq_restrict (hI p hp)).mp hpq]
+  exact he ▸ h
 
 /-- On a state uniform at `X`, the context change potential of a DRS is the assertive update of
 [heim-1982] by the state the DRS expresses on the stratum at `X`. -/

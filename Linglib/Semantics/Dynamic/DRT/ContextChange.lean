@@ -10,7 +10,8 @@ public import Linglib.Semantics.Dynamic.Update
 An *intensional model* is a family `interp : W → L.Structure M` of structures on a constant
 domain. Over such a model a DRS `K` with universe `U` relates two possibilities when they share
 their world `w` and their assignments `f`, `g` verify `K` at `w`: `g` extends `f` by exactly `U`
-and verifies the conditions of `K` in `interp w`. This relation is `DRS.update`, and the
+and verifies the conditions of `K` in `interp w`. This relation is `DRS.update`, the relation
+of `K` on embeddings (`DRS.rel`) taken world by world (`Possibility.liftRel`), and the
 *context change potential* `DRS.ccp` of `K` is its image on information states,
 `K.ccp interp I = {⟨w, g⟩ | ∃ f, ⟨w, f⟩ ∈ I ∧ ⟨f, g⟩ verifies K at w}`.
 
@@ -27,7 +28,7 @@ sequence of their updates when the second universe captures no referent that the
 the first use outside its own (`DRS.update_merge`, `DRS.ccp_merge`).
 
 The information state a DRS expresses relative to an assignment `g` of its free referents is
-`DRS.relState`, the points `⟨w, f⟩` such that `⟨g, f⟩` verifies the DRS at `w`, and the state it
+`DRS.relState`, the points `⟨w, f⟩` that the update reaches from `⟨w, g⟩`, and the state it
 expresses outright is `DRS.state`, its value at the empty assignment. That state is the value of
 the context change potential on the initial state (`DRS.ccp_top`), and its worlds are those
 where the DRS is true (`DRS.image_world_state`).
@@ -56,50 +57,18 @@ universe u v w x y
 variable {L : Language.{u, v}} {V : Type w} {M : Type x} {W : Type y}
 variable (interp : W → L.Structure M)
 
-/-! ### Verification at a world -/
-
-/-- `⟨f, g⟩` verifies `K` in the model at the world `w` (Def. 19). -/
-def DRS.VerifiesAt (w : W) (K : DRS L V) (f g : V → Part M) : Prop :=
-  letI := interp w
-  K.Verifies f g
+/-! ### The update of a DRS -/
 
 /-- The points whose assignment verifies the conditions of a DRS at their world. -/
 def DRS.conditionSet (K : DRS L V) : Set (Possibility W V (Part M)) :=
   {q | letI := interp q.world; Condition.HoldsAll K.conditions q.assignment}
 
-variable {K K₁ K₂ : DRS L V} {p q : Possibility W V (Part M)} {I : State W V M}
-
-theorem DRS.verifiesAt_iff {w : W} {f g : V → Part M} :
-    K.VerifiesAt interp w f g ↔
-      f ≤ g ∧ PFun.Dom g = PFun.Dom f ∪ ↑K.referents ∧
-        (⟨w, g⟩ : Possibility W V (Part M)) ∈ K.conditionSet interp :=
-  letI := interp w
-  DRS.verifies_iff
-
-theorem DRS.verifiesAt_empty {w : W} {f g : V → Part M} :
-    (DRS.empty : DRS L V).VerifiesAt interp w f g ↔ g = f :=
-  letI := interp w
-  DRS.verifies_empty
-
-/-- The Merging Lemma at a world. -/
-theorem DRS.verifiesAt_merge [DecidableEq V] (K₁ K₂ : DRS L V)
-    (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions \ K₁.referents))
-    {w : W} {f g : V → Part M} :
-    (K₁.merge K₂).VerifiesAt interp w f g ↔
-      ∃ h, K₁.VerifiesAt interp w f h ∧ K₂.VerifiesAt interp w h g :=
-  letI := interp w
-  DRS.verifies_merge K₁ K₂ hfresh
-
-/-! ### The update of a DRS -/
-
-/-- The dynamic value of a DRS on possibilities: worlds are preserved and assignments related by
-Def. 19. -/
+/-- The dynamic value of a DRS on possibilities: the world is kept, and the assignments are
+related by verification in the structure at that world (Def. 19). -/
 def DRS.update (K : DRS L V) : Update (Possibility W V (Part M)) :=
-  {(p, q) | p.world = q.world ∧ K.VerifiesAt interp p.world p.assignment q.assignment}
+  Possibility.liftRel fun w ↦ letI := interp w; K.rel
 
-theorem DRS.mem_update :
-    p ~[K.update interp] q ↔
-      p.world = q.world ∧ K.VerifiesAt interp p.world p.assignment q.assignment := Iff.rfl
+variable {K K₁ K₂ : DRS L V} {p q : Possibility W V (Part M)} {I : State W V M}
 
 /-- An update extends its input by exactly the universe, to a point where the conditions hold. -/
 theorem DRS.mem_update_iff :
@@ -107,14 +76,14 @@ theorem DRS.mem_update_iff :
       p ≤ q ∧ q.domain = p.domain ∪ ↑K.referents ∧ q ∈ K.conditionSet interp := by
   obtain ⟨w, f⟩ := p
   obtain ⟨w', g⟩ := q
-  rw [DRS.mem_update, DRS.verifiesAt_iff]
   constructor
-  · rintro ⟨hw, hle, hdom, hh⟩
+  · rintro ⟨hw, hv⟩
     obtain rfl : w = w' := hw
+    obtain ⟨hle, hdom, hh⟩ := (@DRS.verifies_iff L V M (interp w) K f g).mp hv
     exact ⟨⟨rfl, hle⟩, hdom, hh⟩
   · rintro ⟨⟨hw, hle⟩, hdom, hh⟩
     obtain rfl : w = w' := hw
-    exact ⟨rfl, hle, hdom, hh⟩
+    exact ⟨rfl, (@DRS.verifies_iff L V M (interp w) K f g).mpr ⟨hle, hdom, hh⟩⟩
 
 /-- The update of a DRS is a box: extension along its universe, then the test of its
 conditions. -/
@@ -125,22 +94,15 @@ theorem DRS.update_eq :
   exact DRS.mem_update_iff interp
 
 @[simp] theorem DRS.update_empty : (DRS.empty : DRS L V).update interp = SetRel.id := by
-  ext ⟨p, q⟩
-  rw [DRS.mem_update, DRS.verifiesAt_empty, mem_id, Possibility.ext_iff]
-  exact and_congr_right fun _ ↦ eq_comm
+  simp only [DRS.update, DRS.rel_empty, Possibility.liftRel_id]
 
 /-- Sequencing the dynamic values of two DRSs is the dynamic value of their merge, when the
 second universe captures no referent the first DRS's conditions use outside its own. -/
 theorem DRS.update_merge [DecidableEq V] (K₁ K₂ : DRS L V)
     (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions \ K₁.referents)) :
     (K₁.merge K₂).update interp = K₁.update interp ○ K₂.update interp := by
-  ext ⟨p, q⟩
-  rw [mem_comp, DRS.mem_update, DRS.verifiesAt_merge interp K₁ K₂ hfresh]
-  constructor
-  · rintro ⟨hw, h, h₁, h₂⟩
-    exact ⟨⟨p.world, h⟩, ⟨rfl, h₁⟩, hw, h₂⟩
-  · rintro ⟨r, ⟨hw₁, hv₁⟩, hw₂, hv₂⟩
-    exact ⟨hw₁.trans hw₂, r.assignment, hv₁, by rwa [hw₁]⟩
+  rw [DRS.update, DRS.update, DRS.update, ← Possibility.liftRel_comp]
+  exact congrArg _ (funext fun w ↦ letI := interp w; DRS.rel_merge K₁ K₂ hfresh)
 
 /-! ### The context change potential -/
 
@@ -160,7 +122,7 @@ theorem DRS.ccp_eq (I : State W V M) :
 /-- A context change potential only adds information (Def. 27(ii)). -/
 theorem DRS.ccp_le (I : State W V M) : K.ccp interp I ≤ I := by
   rw [DRS.ccp_eq]
-  exact (State.le_of_subset fun _ h ↦ h.1).trans State.mul_le_left
+  exact le_trans (State.le_of_subset fun _ h ↦ h.1) State.mul_le_left
 
 /-- A context change potential grows the base of a state by the universe. -/
 theorem DRS.uniformAt_ccp {X : Set V} (hI : State.UniformAt X I) :
@@ -182,12 +144,12 @@ theorem DRS.ccp_eq_mul_ccp_stratum {X : Set V} (hI : State.UniformAt X I) :
   have hmul : I * State.stratum (X ∪ ↑K.referents) = I * State.stratum ↑K.referents := by
     rw [State.stratum_union, ← mul_assoc,
       State.mul_stratum_eq_self fun p hp ↦ (hI p hp).symm.subset]
-  rw [DRS.ccp_stratum, State.mul_eq_sep_of_uniformAt (X := X ∪ ↑K.referents) fun _ h ↦ h.1,
-    hmul, DRS.ccp_eq]
+  rw [State.mul_eq_sep_of_uniformAt (DRS.uniformAt_ccp interp State.uniformAt_stratum), hmul,
+    DRS.ccp_eq interp I]
   ext r
   refine and_congr_right fun hr ↦ ?_
   have hd : r.domain = X ∪ ↑K.referents := hI.mul State.uniformAt_stratum r hr
-  rw [Possibility.restrict_eq_self hd]
+  rw [Possibility.restrict_eq_self hd, DRS.ccp_stratum]
   exact (and_iff_right hd).symm
 
 theorem DRS.ccp_merge [DecidableEq V] (K₁ K₂ : DRS L V)
@@ -202,16 +164,17 @@ theorem DRS.ccp_merge [DecidableEq V] (K₁ K₂ : DRS L V)
 /-- The information state a DRS expresses relative to an assignment of its free referents
 (Def. 29(ii)). -/
 def DRS.relState (K : DRS L V) (g : V → Part M) : State W V M :=
-  {q | K.VerifiesAt interp q.world g q.assignment}
+  {q | (⟨q.world, g⟩ : Possibility W V (Part M)) ~[K.update interp] q}
 
 theorem DRS.mem_relState {g : V → Part M} :
-    q ∈ K.relState interp g ↔ K.VerifiesAt interp q.world g q.assignment := Iff.rfl
+    q ∈ K.relState interp g ↔ (⟨q.world, g⟩ : Possibility W V (Part M)) ~[K.update interp] q :=
+  Iff.rfl
 
 /-- The information state a proper DRS expresses (Def. 22), the state relative to the empty
 assignment. -/
 def DRS.state (K : DRS L V) : State W V M := K.relState interp ⊥
 
-theorem DRS.mem_state : q ∈ K.state interp ↔ K.VerifiesAt interp q.world ⊥ q.assignment :=
+theorem DRS.mem_state : q ∈ K.state interp ↔ Possibility.bot q.world ~[K.update interp] q :=
   Iff.rfl
 
 /-- The state a DRS expresses is the context change potential's value on the initial state. -/
@@ -219,11 +182,10 @@ theorem DRS.ccp_top : K.ccp interp (⊤ : State W V M) = K.state interp := by
   ext q
   rw [DRS.mem_ccp, DRS.mem_state]
   constructor
-  · rintro ⟨p, hp, hw, hv⟩
-    have hbot : p.assignment = ⊥ := funext fun v => State.mem_top.mp hp v
-    rwa [hw, hbot] at hv
-  · intro hv
-    exact ⟨⟨q.world, fun _ => ⊥⟩, State.mem_top.mpr fun _ => rfl, rfl, hv⟩
+  · rintro ⟨_, ⟨w, rfl⟩, h⟩
+    obtain rfl : w = q.world := h.1
+    exact h
+  · exact fun h ↦ ⟨_, ⟨q.world, rfl⟩, h⟩
 
 theorem DRS.uniformAt_state : State.UniformAt ↑K.referents (K.state interp) := by
   simpa [DRS.ccp_top] using DRS.uniformAt_ccp interp (K := K) State.uniformAt_top
@@ -242,8 +204,8 @@ theorem DRS.image_world_state :
   ext w
   constructor
   · rintro ⟨q, hq, rfl⟩
-    exact ⟨q.assignment, hq⟩
+    exact ⟨q.assignment, hq.2⟩
   · rintro ⟨g, hg⟩
-    exact ⟨⟨w, g⟩, hg, rfl⟩
+    exact ⟨⟨w, g⟩, ⟨rfl, hg⟩, rfl⟩
 
 end DRT

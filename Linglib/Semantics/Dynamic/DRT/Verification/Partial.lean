@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Dynamic.DRT.Verification.Total
+public import Mathlib.Basic.Rel
 public import Mathlib.Data.Finset.Piecewise
 
 /-!
@@ -18,6 +19,7 @@ assignments](##DRT.DRS.exists_extends_verifiesTotal_iff_exists_verifies).
 
 * `DRT.DRS.Verifies`, `DRT.Condition.Holds`: verification of DRSs and conditions.
 * `DRT.DRS.IsTrue`: truth in a model.
+* `DRT.DRS.rel`: the relation of a DRS, its inputs paired with their verifying outputs.
 
 ## Main statements
 
@@ -46,6 +48,7 @@ assignments](##DRT.DRS.exists_extends_verifiesTotal_iff_exists_verifies).
 @[expose] public section
 
 open FirstOrder FirstOrder.Language
+open scoped SetRel
 
 namespace DRT
 
@@ -194,6 +197,17 @@ theorem DRS.verifies_singleton_nil_iff (u : V) :
         exact ⟨Or.inl, fun h => h.resolve_right hyx⟩
     · exact ⟨le_rfl, by
         rw [Set.union_eq_left.mpr (Set.singleton_subset_iff.2 (show u ∈ PFun.Dom g from hu))]⟩
+
+/-- The relation of a DRS on partial embeddings: an input is related to the outputs that verify
+the DRS from it. -/
+def DRS.rel (K : DRS L V) : SetRel (V → Part M) (V → Part M) := {(f, g) | K.Verifies f g}
+
+@[simp] theorem DRS.mem_rel {K : DRS L V} : f ~[K.rel] g ↔ K.Verifies f g := Iff.rfl
+
+@[simp] theorem DRS.rel_empty :
+    (DRS.empty : DRS L V).rel = (SetRel.id : SetRel (V → Part M) (V → Part M)) := by
+  ext ⟨f, g⟩
+  exact DRS.verifies_empty.trans eq_comm
 
 /-! ### Coincidence
 
@@ -398,6 +412,13 @@ theorem DRS.verifies_merge [DecidableEq V] (K₁ K₂ : DRS L V)
           exact hxh hxd
     exact ⟨hle₁.trans hle₂, by rw [hdom₂, hdom₁, Set.union_assoc],
       (Condition.holdsAll_congr cs₁ heq).mp hh₁, hh₂⟩
+
+/-- The relation of a merge is the sequence of the relations of its parts. -/
+theorem DRS.rel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
+    (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions \ K₁.referents)) :
+    (K₁.merge K₂).rel = (K₁.rel ○ K₂.rel : SetRel (V → Part M) (V → Part M)) := by
+  ext ⟨f, g⟩
+  exact DRS.verifies_merge K₁ K₂ hfresh
 
 /-! ### Agreement with total assignments
 

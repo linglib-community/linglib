@@ -3,18 +3,20 @@ module
 public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Index
 public import Linglib.Core.Order.Compat
+public import Mathlib.Basic.Rel
 public import Mathlib.Data.PFun
 public import Mathlib.Logic.Function.Basic
 
 /-!
 # Possibilities
 
-This file defines a *possibility*, a world paired with an assignment of discourse referents, and
-the structure of its partial points, whose assignments are families of partial values
-`V → Part M`: the descent order, compatibility and joins, restriction, and the classification of
-each stratum as world–assignment pairs. Partial values form a forest, so two compatible points
-have a join, the point that extends both and is defined only where one of them is
-([the join](##DynamicSemantics.Possibility.isLUB_pair_iff)).
+This file defines a *possibility*, a world paired with an assignment of discourse referents, the
+relation on possibilities that a family of relations on assignments determines world by world
+(`Possibility.liftRel`), and the structure of the partial points, whose assignments are families
+of partial values `V → Part M`: the descent order, compatibility and joins, restriction, and the
+classification of each stratum as world–assignment pairs. Partial values form a forest, so two
+compatible points have a join, the point that extends both and is defined only where one of them
+is (`Possibility.isLUB_pair_iff`).
 
 ## References
 
@@ -53,6 +55,38 @@ def update : Possibility W V M :=
     (p.update x e).assignment = Function.update p.assignment x e := rfl
 
 end Update
+
+/-! ### Relations world by world -/
+
+section LiftRel
+
+open scoped SetRel
+
+variable {R S : W → SetRel (V → M) (V → M)} {a b : Possibility W V M}
+
+/-- The relation on possibilities that a family of relations on assignments determines: the
+world is kept, and the assignments are related by the relation at that world. -/
+def liftRel (R : W → SetRel (V → M) (V → M)) : SetRel (Possibility W V M) (Possibility W V M) :=
+  {(a, b) | a.world = b.world ∧ a.assignment ~[R a.world] b.assignment}
+
+theorem mem_liftRel :
+    a ~[liftRel R] b ↔ a.world = b.world ∧ a.assignment ~[R a.world] b.assignment := Iff.rfl
+
+@[simp] theorem liftRel_id :
+    liftRel (fun _ ↦ SetRel.id) = (SetRel.id : SetRel (Possibility W V M) (Possibility W V M)) := by
+  ext ⟨a, b⟩
+  exact Possibility.ext_iff.symm
+
+theorem liftRel_comp (R S : W → SetRel (V → M) (V → M)) :
+    liftRel (fun w ↦ R w ○ S w) = liftRel R ○ liftRel S := by
+  ext ⟨a, b⟩
+  constructor
+  · rintro ⟨hw, g, h₁, h₂⟩
+    exact ⟨⟨a.world, g⟩, ⟨rfl, h₁⟩, hw, h₂⟩
+  · rintro ⟨c, ⟨hw₁, h₁⟩, hw₂, h₂⟩
+    exact ⟨hw₁.trans hw₂, c.assignment, h₁, by rwa [hw₁]⟩
+
+end LiftRel
 
 /-! ### Partial points -/
 

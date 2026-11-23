@@ -335,7 +335,7 @@ theorem mem_mul_stratum :
 /-- Extension along `X` relates a point to the points that extend it and define exactly its
 referents and those in `X`. Merging with the stratum at `X` is its image (`image_extend`). -/
 def extend (X : Set V) : SetRel (Possibility W V (Part M)) (Possibility W V (Part M)) :=
-  {(p, q) | p ≤ q ∧ q.domain = p.domain ∪ X}
+  {(a, b) | (a ≤ b) ∧ b.domain = a.domain ∪ X}
 
 theorem mem_extend : p ~[extend X] q ↔ p ≤ q ∧ q.domain = p.domain ∪ X := Iff.rfl
 
