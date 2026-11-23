@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Korean.Evidentiality
-public import Linglib.Semantics.Tense.Evidential
+public import Linglib.Semantics.Evidential.Time
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.Cumming2026
 public import Linglib.Data.Examples.Readers

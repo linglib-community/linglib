@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Trivalent.Proposition
+public import Linglib.Semantics.Evidential.Evidence
 public import Mathlib.Order.SetNotation
 
 /-!
@@ -12,7 +13,12 @@ prejacent must not be *directly settled* by the kernel, entailed or excluded by 
 propositions. The presupposition makes *must P* strong, asserting that `⋂₀ K` entails `P`, while
 still signalling indirectness, since `⋂₀ K` can entail `P` without any single kernel proposition
 settling it. *Might* is [the negation of *can't*](##Modality.kernelMight_eq_compl_kernelCant),
-presupposition and all. The worked examples are in `Studies/VonFintelGillies2010.lean`, the
+presupposition and all. A kernel gives direct evidence for what one of its propositions entails
+and indirect evidence for what its base entails without any of them settling it
+(`Modality.kernelEvidence`); a consistent kernel entails exactly what it gives evidence for
+(`Modality.sInter_subset_iff_exists_mem_kernelEvidence`), and *must P* is true where an
+evidential covering indirect sources alone has its evidence
+(`Modality.kernelMust_eq_true_iff_mem_evidence`). The worked examples are in `Studies/VonFintelGillies2010.lean`, the
 *can't* dilemma in `Studies/VonFintelGillies2021.lean`.
 
 ## Implementation notes
@@ -105,5 +111,50 @@ theorem kernelMight_eq_compl_kernelCant : kernelMight K P = (kernelCant K P)ᶜ 
   ext w
   refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_ <;>
     simp [kernelCant, Set.subset_compl_iff_disjoint_right, Set.not_disjoint_iff_nonempty_inter]
+
+/-! ### The evidence a kernel gives -/
+
+/-- A kernel gives direct evidence for what one of its propositions entails, and indirect
+evidence for what its base entails while no kernel proposition settles it. -/
+def kernelEvidence (K : Set (Set W)) : Evidential.Directness → Set W → Set W
+  | .direct, P => {_w | ∃ X ∈ K, X ⊆ P}
+  | .indirect, P => {_w | ⋂₀ K ⊆ P ∧ ¬ DirectlySettles K P}
+
+@[simp] theorem mem_kernelEvidence_direct :
+    w ∈ kernelEvidence K .direct P ↔ ∃ X ∈ K, X ⊆ P := Iff.rfl
+
+@[simp] theorem mem_kernelEvidence_indirect :
+    w ∈ kernelEvidence K .indirect P ↔ ⋂₀ K ⊆ P ∧ ¬ DirectlySettles K P := Iff.rfl
+
+theorem disjoint_kernelEvidence :
+    Disjoint (kernelEvidence K .direct P) (kernelEvidence K .indirect P) :=
+  Set.disjoint_left.2 fun _ ⟨X, hX, hXP⟩ h ↦ h.2 ⟨X, hX, .inl hXP⟩
+
+/-- A consistent kernel entails exactly what it gives direct or indirect evidence for. -/
+theorem sInter_subset_iff_exists_mem_kernelEvidence (hK : (⋂₀ K).Nonempty) :
+    ⋂₀ K ⊆ P ↔ ∃ d, w ∈ kernelEvidence K d P := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · by_cases hd : ∃ X ∈ K, X ⊆ P
+    · exact ⟨.direct, hd⟩
+    · refine ⟨.indirect, h, ?_⟩
+      rintro ⟨X, hX, hXP | hXP⟩
+      · exact hd ⟨X, hX, hXP⟩
+      · obtain ⟨v, hv⟩ := hK
+        exact Set.disjoint_left.1 hXP (Set.sInter_subset_of_mem hX hv) (h hv)
+  · rintro ⟨_ | _, h⟩
+    · obtain ⟨X, hX, hXP⟩ := h
+      exact (Set.sInter_subset_of_mem hX).trans hXP
+    · exact h.1
+
+theorem kernelMust_eq_true_iff_mem_kernelEvidence :
+    kernelMust K P w = .true ↔ w ∈ kernelEvidence K .indirect P := by
+  simp [and_comm]
+
+/-- *Must P* is true exactly where an evidential that covers indirect sources alone has its
+evidence in the kernel. -/
+theorem kernelMust_eq_true_iff_mem_evidence {e : Evidential} (hne : e.covers.Nonempty)
+    (he : ∀ π ∈ e.covers, π.directness = .indirect) :
+    kernelMust K P w = .true ↔ w ∈ e.evidence (fun π ↦ kernelEvidence K π.directness) P := by
+  rw [Evidential.evidence_comp_of_forall_eq _ hne he, kernelMust_eq_true_iff_mem_kernelEvidence]
 
 end Modality

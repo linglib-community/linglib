@@ -5,7 +5,7 @@ public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
 public import Linglib.Semantics.ConventionalImplicature
-public import Linglib.Semantics.Evidential.Paradigm
+public import Linglib.Semantics.Evidential.Evidence
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Linglib.Data.Examples.Readers
@@ -76,19 +76,14 @@ variable {A W : Type*}
 
 /-! ### Evidentials -/
 
-/-- `evidence ev s e p` is the not-at-issue proposition of the evidential `e` ((40b), (42b)),
-that `s` has evidence for `p` from a source `e` covers, where `ev s π p` is the set of worlds in
-which `s` has evidence of kind `π` for `p`. For *-rka* this is direct perceptual evidence and for
-*-shka* reportative evidence. -/
-def evidence (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evidential)
-    (p : Set W) : Set W :=
-  {w | ∃ π ∈ e.covers, w ∈ ev s π p}
-
 /-- `withEvidential ev s e S` applies the evidential `e` to the sentence `S` by rule I ((40a),
-(42a)), keeping the scope at issue and adding the speaker's evidence for it not at issue. -/
+(42a)), keeping the scope at issue and adding not at issue that `s` has evidence for it from a
+source `e` covers ((40b), (42b)), where `ev s π p` is the set of worlds in which `s` has evidence
+of kind `π` for `p`. For *-rka* this is direct perceptual evidence and for *-shka* reportative
+evidence. -/
 def withEvidential (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evidential)
     (S : TwoDim W (Set W)) : TwoDim W (Set W) :=
-  S.ciApply fun p ↦ (· ∈ evidence ev s e p)
+  S.ciApply fun p ↦ (· ∈ e.evidence (ev s) p)
 
 variable (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evidential)
 
@@ -96,7 +91,7 @@ variable (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evid
     (withEvidential ev s e S).atIssue = S.atIssue := rfl
 
 @[simp] theorem ofPred_notAtIssue_withEvidential_pure (p : Set W) :
-    Set.ofPred (withEvidential ev s e (pure p)).notAtIssue = evidence ev s e p := by
+    Set.ofPred (withEvidential ev s e (pure p)).notAtIssue = e.evidence (ev s) p := by
   ext; simp [withEvidential]
 
 /-! ### Moves and contexts -/
@@ -735,7 +730,7 @@ def context : Context Role (Set Event) :=
   match r.continuation with
   | .deniesScope => c.update (.assert .speaker (pure Answer.negation.prop))
   | .deniesEvidence => c.update
-      (.assert .speaker (pure (evidence evModel .speaker r.evidential Answer.scope.prop)ᶜ))
+      (.assert .speaker (pure (r.evidential.evidence (evModel .speaker) Answer.scope.prop)ᶜ))
   | .confirmsThenDeniesScope => (c.update (.assert .speaker (pure Answer.scope.prop))).update
       (.assert .speaker (pure Answer.negation.prop))
 
@@ -762,7 +757,7 @@ theorem nonempty_contextSetOf_iff (he : r.evidential.IsDirect ∨ r.evidential.I
       Set.not_nonempty_iff_eq_empty]
     · refine ⟨∅, mem_contextSetOf_present_assert_compl _ _ (by simp [Context.mem_contextSetOf])
         ?_ (empty_notMem_happened _)⟩
-      simpa [sentence, withEvidential, evidence, evModel] using he.nonempty.exists_mem
+      simpa [sentence, withEvidential, Evidential.evidence, evModel] using he.nonempty.exists_mem
     · rw [← ofPred_notAtIssue_withEvidential_pure evModel]
       exact contextSetOf_update_assert_compl_notAtIssue _ _ rfl
         (by simp [Move.present, sentence, ofPred_notAtIssue_withEvidential_pure])
