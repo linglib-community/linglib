@@ -26,17 +26,17 @@ empties a nucleus that shares its element with what follows when the next nucleu
 the weak vowel or as a copy of the vowel across a guttural. `derive` applies the three in this
 order.
 
-For every element, a nucleus is emptied exactly when its onset lacks the element, what follows
-has it, and the next nucleus governs (`dissociation_empty_iff`); otherwise the fused vowel stays,
+For every element, a nucleus is emptied exactly when its onset lacks the element, what follows has
+it, and the next nucleus governs (`dissociation_empty_iff`); otherwise the fused vowel stays,
 lowered when the element is |A| and before its glide when it is |I|. The attested forms are
 realizations of the derived forms (`mem_realizations_of_not_retains`), except the Tigrinya forms
-that keep a stem-initial nucleus the derivation empties (`notMem_realizations_of_retains`), which requiring
-that nucleus to be realized derives (`mem_realizations_stemStart_of_retains`). Each operation
-applies to the output of the one before it and not to the input (`feeds_fusion`,
+that keep a stem-initial nucleus the derivation empties (`notMem_realizations_of_retains`), which
+requiring that nucleus to be realized derives (`mem_realizations_stemStart_of_retains`). Each
+operation applies to the output of the one before it and not to the input (`feeds_fusion`,
 `feeds_dissociation`), and no operation applies to a derived form of the rows
 (`derive_isFixedPt`). Trans-guttural harmony restores the environment of fusion and dissociation
-(`feeds_harmonized`): a derivation that read the harmonized form again would not end on
-/s_ħʌb/ (`derive_harmonized_pull`) and would syncopate [sʌmaʕaku] (`realizations_harmonized_37d`).
+(`feeds_harmonized`): a derivation that read the harmonized form again would not end on /s_ħʌb/
+(`derive_harmonized_pull`) and would syncopate [sʌmaʕaku] (`realizations_harmonized_37d`).
 
 ## Implementation notes
 
