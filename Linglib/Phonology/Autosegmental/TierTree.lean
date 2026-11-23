@@ -22,9 +22,9 @@ representation around their slots, the class nodes and features of a feature geo
 root node. For a tree of tiers `T : ParentTree ι`, the tokens a token is linked to on the tiers
 hanging from its own are its `children`, and slot `k` dominates the tokens it reaches by
 descending lines, `X.Dominates T k j q`. The representation reads the label `b` on tier `j` at
-slot `k`, `X.Reads T k j b`, when that slot dominates a token of the tier with that label.
-`X.hosted T k j` lists the labels of those tokens in the order of the tier, so that a slot reads
-the members of what it hosts (`mem_hosted`), and the list also keeps their order and number.
+slot `k`, `X.Reads T k j b`, when that slot dominates a token of the tier with that label
+(`reads_iff_exists_dominates`). `X.hosted T k j` lists the labels of those tokens in the order
+of the tier, and reading is membership in that list, which also keeps their order and number.
 Descending lines lead from one token to another, `X.Dom T v w`, exactly when the second is
 reached in as many steps as there are tiers (`dom_iff_mem_descendants`), so `Dominates` is `Dom`
 from a slot (`dominates_iff_dom`). A representation is functional, `X.IsFunctional T`, when
@@ -86,17 +86,15 @@ def Dominates (k : ℕ) (j : ι) (q : ℕ) : Prop :=
 instance (k : ℕ) (j : ι) (q : ℕ) : Decidable (X.Dominates T k j q) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
-/-- `X` reads the label `b` on tier `j` at slot `k`: the slot dominates a token of the tier with
-that label. -/
-def Reads (k : ℕ) (j : ι) (b : τ j) : Prop :=
-  ∃ q ∈ Finset.range (X.word j).length, X.Dominates T k j q ∧ (X.word j)[q]? = some b
-
-instance [∀ j, DecidableEq (τ j)] (k : ℕ) (j : ι) (b : τ j) : Decidable (X.Reads T k j b) :=
-  inferInstanceAs (Decidable (∃ q ∈ Finset.range _, _))
-
 /-- The labels of the tokens of tier `j` that slot `k` dominates, in the order of the tier. -/
 def hosted (k : ℕ) (j : ι) : List (τ j) :=
   ((X.word j).zipIdx.filter fun x ↦ X.Dominates T k j x.2).map Prod.fst
+
+/-- `X` reads the label `b` on tier `j` at slot `k`: the slot hosts it there. -/
+def Reads (k : ℕ) (j : ι) (b : τ j) : Prop := b ∈ X.hosted T k j
+
+instance [∀ j, DecidableEq (τ j)] (k : ℕ) (j : ι) (b : τ j) : Decidable (X.Reads T k j b) :=
+  inferInstanceAs (Decidable (b ∈ _))
 
 /-- Each token has at most one line to each tier hanging from its own. -/
 def IsFunctional : Prop :=
@@ -126,11 +124,14 @@ theorem mem_children {v : ι × ℕ} {j : ι} {q : ℕ} :
     · exact absurd ⟨h₁, h₂⟩ hc
 
 /-- A slot reads the labels it hosts. -/
-theorem mem_hosted {k : ℕ} {j : ι} {b : τ j} : b ∈ X.hosted T k j ↔ X.Reads T k j b := by
-  simp only [hosted, List.mem_map, List.mem_filter, List.mem_zipIdx_iff_getElem?,
-    decide_eq_true_eq, Prod.exists, exists_and_right, exists_eq_right, Reads, Finset.mem_range]
-  exact ⟨fun ⟨q, hb, hq⟩ ↦ ⟨q, (List.getElem?_eq_some_iff.1 hb).1, hq, hb⟩,
-    fun ⟨q, _, hq, hb⟩ ↦ ⟨q, hb, hq⟩⟩
+theorem mem_hosted {k : ℕ} {j : ι} {b : τ j} : b ∈ X.hosted T k j ↔ X.Reads T k j b := .rfl
+
+/-- A slot reads a label on a tier when it dominates a token of the tier with that label. -/
+theorem reads_iff_exists_dominates {k : ℕ} {j : ι} {b : τ j} :
+    X.Reads T k j b ↔ ∃ q, X.Dominates T k j q ∧ (X.word j)[q]? = some b := by
+  simp only [Reads, hosted, List.mem_map, List.mem_filter, List.mem_zipIdx_iff_getElem?,
+    decide_eq_true_eq, Prod.exists, exists_and_right, exists_eq_right]
+  exact exists_congr fun q ↦ and_comm
 
 /-- The tokens a token of the representation reaches are tokens of the representation. -/
 theorem lt_length_of_mem_descendants {d : ℕ} {v u : ι × ℕ} (hv : v.2 < (X.word v.1).length)
@@ -251,8 +252,8 @@ theorem dom_root_iff_mem_children {j : ι} {k q : ℕ} (hp : T.parent j = T.root
 with that label. -/
 theorem reads_iff_exists_dom {k : ℕ} {j : ι} {b : τ j} :
     X.Reads T k j b ↔ ∃ q, X.Dom T (T.root, k) (j, q) ∧ (X.word j)[q]? = some b :=
-  ⟨fun ⟨q, _, hq, hb⟩ ↦ ⟨q, dominates_iff_dom.1 hq, hb⟩, fun ⟨q, hq, hb⟩ ↦
-    ⟨q, Finset.mem_range.2 (List.getElem?_eq_some_iff.1 hb).1, dominates_iff_dom.2 hq, hb⟩⟩
+  reads_iff_exists_dominates.trans
+    (exists_congr fun _ ↦ and_congr_left fun _ ↦ dominates_iff_dom)
 
 theorem IsFunctional.eq_of_mem_children (h : X.IsFunctional T) {v : ι × ℕ} {j : ι} {q q' : ℕ}
     (hq : (j, q) ∈ X.children T v) (hq' : (j, q') ∈ X.children T v) : q = q' := by
@@ -308,10 +309,16 @@ theorem descendants_eq_singleton {v : ι × ℕ} (hv : (X.word v.1).length ≤ v
 /-- A slot past the end of the slots reads nothing. -/
 theorem not_reads_of_length_le {k : ℕ} (hk : (X.word T.root).length ≤ k) {j : ι} {b : τ j} :
     ¬ X.Reads T k j b := by
-  rintro ⟨q, -, hq, hb⟩
+  intro h
+  obtain ⟨q, hq, hb⟩ := reads_iff_exists_dominates.1 h
   rw [Dominates, descendants_eq_singleton (v := (T.root, k)) hk, Finset.mem_singleton] at hq
   obtain ⟨rfl, rfl⟩ := Prod.mk.inj hq
   exact absurd (List.getElem?_eq_some_iff.1 hb).1 (not_lt.2 hk)
+
+/-- A slot past the end of the slots hosts nothing. -/
+theorem hosted_eq_nil_of_length_le {k : ℕ} (hk : (X.word T.root).length ≤ k) (j : ι) :
+    X.hosted T k j = [] :=
+  List.eq_nil_iff_forall_not_mem.2 fun _ ↦ not_reads_of_length_le hk
 
 end Dominates
 
@@ -361,39 +368,6 @@ theorem descendants_mul_right (d : ℕ) (v : ι × ℕ) :
     exact Finset.biUnion_congr rfl fun u _ ↦ ih u
 
 variable {X Y} {j : ι} {k : ℕ} {b : τ j}
-
-/-- A concatenation reads at a slot of its left factor as that factor does. -/
-theorem reads_mul_left (hk : k < (X.word T.root).length) :
-    (X * Y).Reads T k j b ↔ X.Reads T k j b := by
-  simp only [Reads, Dominates, descendants_mul_left X Y _ (v := (T.root, k)) hk, word_mul,
-    List.length_append, Finset.mem_range]
-  constructor
-  · rintro ⟨q, -, hq, hb⟩
-    have hq' := lt_length_of_mem_descendants (v := (T.root, k)) hk hq
-    exact ⟨q, hq', hq, by rwa [List.getElem?_append_left hq'] at hb⟩
-  · rintro ⟨q, hq', hq, hb⟩
-    exact ⟨q, by omega, hq, by rwa [List.getElem?_append_left hq']⟩
-
-/-- A concatenation reads at a slot of its right factor as that factor does. -/
-theorem reads_mul_right :
-    (X * Y).Reads T (k + (X.word T.root).length) j b ↔ Y.Reads T k j b := by
-  have hd : (X * Y).descendants T (Fintype.card ι) (T.root, k + (X.word T.root).length) =
-      (Y.descendants T (Fintype.card ι) (T.root, k)).image fun u ↦
-        (u.1, (X.word u.1).length + u.2) := by
-    rw [Nat.add_comm]
-    exact descendants_mul_right X Y _ (T.root, k)
-  simp only [Reads, Dominates, hd, word_mul, List.length_append, Finset.mem_range]
-  constructor
-  · rintro ⟨q, -, hq, hb⟩
-    obtain ⟨⟨j', q'⟩, hq', he⟩ := Finset.mem_image.1 hq
-    obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
-    have hb' : (Y.word j')[q']? = some b := by
-      rwa [List.getElem?_append_right (by omega), Nat.add_sub_cancel_left] at hb
-    exact ⟨q', (List.getElem?_eq_some_iff.1 hb').1, hq', hb'⟩
-  · rintro ⟨q, -, hq, hb⟩
-    exact ⟨(X.word j).length + q, by have := (List.getElem?_eq_some_iff.1 hb).1; omega,
-      Finset.mem_image.2 ⟨(j, q), hq, rfl⟩,
-      by rwa [List.getElem?_append_right (by omega), Nat.add_sub_cancel_left]⟩
 
 /-- A concatenation hosts at a slot of its left factor what that factor does. -/
 theorem hosted_mul_left (hk : k < (X.word T.root).length) :
@@ -453,6 +427,16 @@ theorem hosted_mul_right :
     rw [hf]
     exact List.map_congr_left fun x _ ↦ rfl
   rw [hosted, hosted, word_mul, List.zipIdx_append, List.filter_append, h₁, List.nil_append, hz, h₂]
+
+/-- A concatenation reads at a slot of its left factor as that factor does. -/
+theorem reads_mul_left (hk : k < (X.word T.root).length) :
+    (X * Y).Reads T k j b ↔ X.Reads T k j b := by
+  rw [Reads, hosted_mul_left hk, Reads]
+
+/-- A concatenation reads at a slot of its right factor as that factor does. -/
+theorem reads_mul_right :
+    (X * Y).Reads T (k + (X.word T.root).length) j b ↔ Y.Reads T k j b := by
+  rw [Reads, hosted_mul_right, Reads]
 
 end Mul
 
@@ -581,26 +565,6 @@ def spreadTier (w : List S) (j : ι) (m n : ℕ) : AR τ :=
       (tierOffset g₀ j w n)).addLine
     (T.parent j) j (tierOffset g₀ (T.parent j) w n) (tierOffset g₀ j w m)
 
-/-- Reading a realization at slot `k` is reading the primitive of its `k`th symbol. -/
-theorem reads_prod_map (h : ∀ s, ((g₀ s).word T.root).length = 1) {b : τ j} :
-    (w.map g₀).prod.Reads T k j b ↔ ∃ hk : k < w.length, (g₀ w[k]).Reads T 0 j b := by
-  induction w generalizing k with
-  | nil => simp [Reads]
-  | cons a w ih =>
-    rw [List.map_cons, List.prod_cons]
-    cases k with
-    | zero =>
-      rw [reads_mul_left (by rw [h]; exact Nat.one_pos)]
-      exact ⟨fun hr ↦ ⟨Nat.succ_pos _, hr⟩, fun ⟨_, hr⟩ ↦ hr⟩
-    | succ k =>
-      have key : (g₀ a * (w.map g₀).prod).Reads T (k + 1) j b ↔
-          (w.map g₀).prod.Reads T k j b := by
-        have := reads_mul_right (T := T) (X := g₀ a) (Y := (w.map g₀).prod) (k := k) (b := b)
-        rwa [h a] at this
-      rw [key, ih]
-      exact ⟨fun ⟨hk, hr⟩ ↦ ⟨Nat.succ_lt_succ hk, hr⟩,
-        fun ⟨hk, hr⟩ ↦ ⟨Nat.lt_of_succ_lt_succ hk, hr⟩⟩
-
 /-- A realization whose primitives have one slot each hosts at slot `k` what the primitive of
 its `k`th symbol hosts. -/
 theorem hosted_prod_map (h : ∀ s, ((g₀ s).word T.root).length = 1) (hk : k < w.length) :
@@ -616,6 +580,16 @@ theorem hosted_prod_map (h : ∀ s, ((g₀ s).word T.root).length = 1) (hk : k <
       rw [h a] at key
       rw [key]
       exact ih (Nat.lt_of_succ_lt_succ hk)
+
+/-- Reading a realization at slot `k` is reading the primitive of its `k`th symbol. -/
+theorem reads_prod_map (h : ∀ s, ((g₀ s).word T.root).length = 1) {b : τ j} :
+    (w.map g₀).prod.Reads T k j b ↔ ∃ hk : k < w.length, (g₀ w[k]).Reads T 0 j b := by
+  by_cases hk : k < w.length
+  · rw [Reads, hosted_prod_map T g₀ h hk]
+    exact ⟨fun hb ↦ ⟨hk, hb⟩, fun ⟨_, hb⟩ ↦ hb⟩
+  · refine iff_of_false (not_reads_of_length_le ?_) fun ⟨hk', _⟩ ↦ hk hk'
+    rw [length_word_prod_map_of_length_eq_one g₀ T.root w h]
+    exact not_lt.1 hk
 
 omit [Fintype ι] in
 /-- Spreading a tier crosses no line exactly when no symbol strictly between the two has a line
@@ -789,22 +763,7 @@ theorem dominates_twoTier_upper_iff : X.Dominates twoTier j upper q ↔ X.Link u
 
 /-- On two tiers, a slot reads the labels of the autosegments linked to it. -/
 theorem reads_twoTier_upper_iff : X.Reads twoTier j upper a ↔ X.SurfacesWith a j := by
-  simp only [Reads, dominates_twoTier_upper_iff, SurfacesWith, Finset.mem_range]
-  exact ⟨fun ⟨q, _, h, hb⟩ ↦ ⟨q, h, hb⟩, fun ⟨q, h, hb⟩ ↦ ⟨q, h.lt_left, h, hb⟩⟩
-
-theorem reads_primitive_iff {as : List α} {b : β} :
-    (primitive as b).Reads twoTier 0 upper a ↔ a ∈ as := by
-  rw [reads_twoTier_upper_iff, List.mem_iff_getElem?]
-  simp only [SurfacesWith, link_primitive, word_primitive_upper]
-  exact ⟨fun ⟨k, _, h⟩ ↦ ⟨k, h⟩,
-    fun ⟨k, h⟩ ↦ ⟨k, ⟨(List.getElem?_eq_some_iff.1 h).1, trivial⟩, h⟩⟩
-
-/-- A realization by primitives reads at each slot the melody of its symbol. -/
-theorem reads_prod_map_primitive {S : Type*} (as : S → List α) (b : S → β) {w : List S}
-    {k : ℕ} :
-    (w.map fun s ↦ primitive (as s) (b s)).prod.Reads twoTier k upper a ↔
-      ∃ hk : k < w.length, a ∈ as w[k] :=
-  (reads_prod_map twoTier _ fun _ ↦ rfl).trans (exists_congr fun _ ↦ reads_primitive_iff)
+  simp only [reads_iff_exists_dominates, dominates_twoTier_upper_iff, SurfacesWith]
 
 /-- A primitive hosts its melody. -/
 theorem hosted_primitive {as : List α} {b : β} : (primitive as b).hosted twoTier 0 upper = as := by
@@ -815,6 +774,17 @@ theorem hosted_primitive {as : List α} {b : β} : (primitive as b).hosted twoTi
       (link_primitive.2 ⟨by simpa using List.snd_lt_of_mem_zipIdx hx, rfl⟩))
   rw [hosted, h, List.zipIdx_map_fst]
   rfl
+
+theorem reads_primitive_iff {as : List α} {b : β} :
+    (primitive as b).Reads twoTier 0 upper a ↔ a ∈ as := by
+  rw [Reads, hosted_primitive]
+
+/-- A realization by primitives reads at each slot the melody of its symbol. -/
+theorem reads_prod_map_primitive {S : Type*} (as : S → List α) (b : S → β) {w : List S}
+    {k : ℕ} :
+    (w.map fun s ↦ primitive (as s) (b s)).prod.Reads twoTier k upper a ↔
+      ∃ hk : k < w.length, a ∈ as w[k] :=
+  (reads_prod_map twoTier _ fun _ ↦ rfl).trans (exists_congr fun _ ↦ reads_primitive_iff)
 
 /-- A realization by primitives hosts at each slot the melody of its symbol. -/
 theorem hosted_prod_map_primitive {S : Type*} (as : S → List α) (b : S → β) {w : List S}

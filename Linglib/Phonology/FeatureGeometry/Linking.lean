@@ -367,7 +367,8 @@ theorem reads_ofSpec_iff :
   have hword : (ofSpec node s).word (some (.inr f)) =
       if (node f).isSome then (s f).toList else [] := rfl
   constructor
-  · rintro ⟨q, -, -, hb⟩
+  · intro h
+    obtain ⟨q, -, hb⟩ := AR.reads_iff_exists_dominates.1 h
     rw [hword] at hb
     split_ifs at hb with hf
     · exact ⟨hf, Option.mem_toList.1 (List.mem_of_getElem? hb)⟩
@@ -383,7 +384,7 @@ theorem reads_ofSpec_iff :
         Option.some_ne_none _,
         AR.link_fromRel.2 ⟨by simp, List.length_pos_iff.2 (word_ofSpec_node_ne_nil.2 (.inr hb)),
           by simp [tierWord, hf, hs], .inl ⟨by simp [tierParent, hc], Option.some_ne_none _⟩⟩⟩
-    refine ⟨0, Finset.mem_range.2 (by simp [hword, hf, hs]), AR.descendants_mono ?_ _
+    refine AR.reads_iff_exists_dominates.2 ⟨0, AR.descendants_mono ?_ _
       (AR.mem_descendants_succ_of_mem_children (mem_descendants_node s n c hpn (.inr hb)) hchild),
       by simp [hword, hf, hs]⟩
     rw [Fintype.card_option, Fintype.card_sum]
@@ -391,21 +392,22 @@ theorem reads_ofSpec_iff :
 
 /-- The representation of a specification reads a slot. -/
 theorem reads_ofSpec_slot : (ofSpec node s).Reads (tiers node) 0 none PUnit.unit :=
-  ⟨0, Finset.mem_range.2 Nat.one_pos, AR.mem_descendants_self _ _, rfl⟩
+  AR.reads_iff_exists_dominates.2 ⟨0, AR.mem_descendants_self _ _, rfl⟩
 
 /-- The representation of a specification reads the nodes the specification bears. -/
 theorem reads_ofSpec_node_iff :
     (ofSpec node s).Reads (tiers node) 0 (some (.inl a)) PUnit.unit ↔ a = ⊥ ∨ Bears node s a := by
   constructor
-  · rintro ⟨q, hq, -, -⟩
+  · intro h
+    obtain ⟨q, -, hb⟩ := AR.reads_iff_exists_dominates.1 h
     exact word_ofSpec_node_ne_nil.1 (List.ne_nil_of_length_pos
-      (Nat.zero_lt_of_lt (Finset.mem_range.1 hq)))
+      (Nat.zero_lt_of_lt (List.getElem?_eq_some_iff.1 hb).1))
   · intro h
     have hword : (ofSpec node s).word (some (.inl a)) = [PUnit.unit] := ite_eq_left h
     obtain ⟨n, hn, hpn⟩ :=
       Function.exists_iterate_eq_lt_card Order.pred (bot_le (a := a)).exists_pred_iterate
-    refine ⟨0, Finset.mem_range.2 (by rw [hword]; exact Nat.one_pos),
-      AR.descendants_mono ?_ _ (mem_descendants_node s n a hpn h), by rw [hword]; rfl⟩
+    refine AR.reads_iff_exists_dominates.2
+      ⟨0, AR.descendants_mono ?_ _ (mem_descendants_node s n a hpn h), by rw [hword]; rfl⟩
     rw [Fintype.card_option, Fintype.card_sum]
     omega
 

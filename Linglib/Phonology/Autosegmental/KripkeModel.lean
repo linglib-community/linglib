@@ -90,14 +90,14 @@ theorem toKripkeModel_val_self {j : ι} {q : ℕ} {b : τ j} :
 /-- A slot reads a label on a tier when a position it reaches makes the atom true. -/
 theorem reads_iff_exists_val {k : ℕ} {j : ι} {b : τ j} :
     X.Reads T k j b ↔ ∃ v, X.Dom T (T.root, k) v ∧ (X.toKripkeModel T).val ⟨j, b⟩ v := by
+  rw [reads_iff_exists_dom]
   constructor
-  · rintro ⟨q, -, hq, hb⟩
-    exact ⟨(j, q), dominates_iff_dom.mp hq, toKripkeModel_val_self.mpr hb⟩
+  · rintro ⟨q, hq, hb⟩
+    exact ⟨(j, q), hq, toKripkeModel_val_self.mpr hb⟩
   · rintro ⟨⟨i, q⟩, hv, hval⟩
     obtain ⟨a, ha, he⟩ := Option.map_eq_some_iff.mp hval
     cases he
-    exact ⟨q, Finset.mem_range.mpr (List.getElem?_eq_some_iff.mp ha).1,
-      dominates_iff_dom.mpr hv, ha⟩
+    exact ⟨q, hv, ha⟩
 
 /-- Representations whose Kripke models are related by a bisimulation read alike at related
 slots. -/
