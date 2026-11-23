@@ -11,6 +11,8 @@ public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
 public import Mathlib.Probability.Decision.BayesEstimator
 public import Mathlib.Probability.Decision.Risk.Basic
 public import Mathlib.Probability.Decision.Risk.RiskIncrease
+public import Linglib.Core.Analysis.Convex.Bregman
+public import Linglib.Core.Analysis.Convex.Jensen
 
 /-!
 # The value of information of an experiment
@@ -22,10 +24,19 @@ less the value of the prior. DeGroot calls it the information in the experiment 
 negative of an uncertainty function, and Lindley's measure of information is the case of
 Shannon entropy.
 
-The decision value `decisionValue U μ` of a belief is the best expected utility of an action.
-For it, the value of information is the risk increase of mathlib's decision theory at the
-regret loss `C − U`, so information never has negative value, and garbling an experiment never
-raises its value, the forward direction of Blackwell's comparison of experiments. For an
+A value function is convex on beliefs when the value of a mixture of two beliefs is at most
+the mixture of their values, `ConvexOn ℝ≥0 {μ | IsProbabilityMeasure μ} V`. The prior is the
+mixture of the posteriors, so by Jensen's inequality information has nonnegative value for every
+such `V`. The value of information is also the expected Bregman divergence `bregmanDiv V g` of
+`V` from the prior to the posterior, along any `g` whose expectation over the posteriors is its
+value at the prior, as the expectation `μ ↦ ∫ θ, g θ ∂μ` of a function of the parameter is.
+
+The decision value `decisionValue U μ` of a belief is the best expected utility of an action. It
+is convex on beliefs, and an action that is best at the prior supports it there, so its Bregman
+divergence along that action is what re-optimizing gains over keeping the action. For it, the
+value of information is also the risk increase of mathlib's decision theory at the regret loss
+`C − U`, so garbling an experiment never raises its value, the forward direction of Blackwell's
+comparison of experiments. For an
 experiment that observes a classifier `f`, the value of information is the probability-weighted
 value of the prior conditioned on each fibre of `f`; a fixed statistic gains nothing, which is the
 law of total expectation over the fibres, and the converse of Blackwell's theorem says that a
@@ -44,7 +55,11 @@ is worth more.
   a pointwise minimizer of the posterior expected loss is an argmin estimator.
 * `riskIncrease_ofReal_sub`: at the regret loss, the risk increase is the value of information
   of the decision value.
-* `valueOfInformation_decisionValue_nonneg`: information has nonnegative value.
+* `valueOfInformation_nonneg_of_convexOn`: information has nonnegative value for a value
+  function convex on beliefs, and so for the decision value
+  (`valueOfInformation_decisionValue_nonneg`).
+* `valueOfInformation_eq_integral_bregmanDiv`: the value of information is the expected Bregman
+  divergence from the prior to the posterior.
 * `valueOfInformation_decisionValue_comp_le`: a garbled experiment is worth no more.
 * `valueOfInformation_const`: an experiment whose law does not depend on the parameter is
   worth nothing.
@@ -62,6 +77,17 @@ The decision value is a supremum over the action type, `0` when there is no acti
 theorems about it assume finitely many parameters, observations and actions, and the regret
 bound `C` stays inside the proofs of the inequalities.
 
+## TODO
+
+* Garbling cannot raise the value of an experiment for any value function convex on beliefs:
+  the posterior of the garbled experiment at an observation is a mixture of the posteriors of
+  the original, so `ConvexOn.map_sum_smul_le` applies at each observation.
+  `valueOfInformation_decisionValue_comp_le` would then follow without the risk increase.
+* The value functions here are on finitely many parameters and observations. In general Jensen's
+  inequality needs a topology on beliefs.
+* Negative entropy as a value function, whose value of information is mutual information and
+  whose Bregman divergence is the Kullback–Leibler divergence.
+
 ## References
 
 * [degroot-1962]
@@ -73,7 +99,7 @@ bound `C` stays inside the proofs of the inequalities.
 @[expose] public section
 
 open MeasureTheory
-open scoped ENNReal
+open scoped ENNReal NNReal
 
 namespace ProbabilityTheory
 
@@ -163,6 +189,93 @@ theorem integral_le_decisionValue (μ : Measure Θ) (a : 𝓨) : ∫ θ, U θ a 
 
 end DecisionValue
 
+/-! ### Convex value functions -/
+
+/-- A mixture of two probability measures is a probability measure. -/
+theorem convex_setOf_isProbabilityMeasure :
+    Convex ℝ≥0 {μ : Measure Θ | IsProbabilityMeasure μ} := by
+  intro μ hμ ν hν a b _ _ hab
+  have : IsProbabilityMeasure μ := hμ
+  have : IsProbabilityMeasure ν := hν
+  refine ⟨?_⟩
+  simp only [FunLike.coe_add, Measure.coe_nnreal_smul_apply, Pi.add_apply, measure_univ, mul_one]
+  exact_mod_cast hab
+
+/-- The decision value is convex on beliefs: a mixture of beliefs is worth at most the mixture
+of their values, since one action has to serve both. -/
+theorem convexOn_decisionValue [Finite Θ] [MeasurableSingletonClass Θ] [Finite 𝓨]
+    (U : Θ → 𝓨 → ℝ) : ConvexOn ℝ≥0 {μ : Measure Θ | IsProbabilityMeasure μ} (decisionValue U) := by
+  refine ⟨convex_setOf_isProbabilityMeasure, fun μ hμ ν hν a b _ _ _ ↦ ?_⟩
+  have : IsProbabilityMeasure μ := hμ
+  have : IsProbabilityMeasure ν := hν
+  rcases isEmpty_or_nonempty 𝓨 with h | h
+  · simp [decisionValue]
+  refine ciSup_le fun y ↦ ?_
+  rw [integral_add_measure .of_finite .of_finite, integral_smul_nnreal_measure,
+    integral_smul_nnreal_measure, NNReal.smul_def, NNReal.smul_def, NNReal.smul_def,
+    NNReal.smul_def]
+  exact add_le_add (mul_le_mul_of_nonneg_left (integral_le_decisionValue μ y) a.2)
+    (mul_le_mul_of_nonneg_left (integral_le_decisionValue ν y) b.2)
+
+section Convex
+
+variable [StandardBorelSpace Θ] [Nonempty Θ] [Finite 𝓧] [MeasurableSingletonClass 𝓧]
+  (κ : Kernel Θ 𝓧) [IsMarkovKernel κ] (π : Measure Θ) [IsProbabilityMeasure π]
+
+/-- Information has nonnegative value for a value function that is convex on beliefs, since the
+prior is the mixture of the posteriors. -/
+theorem valueOfInformation_nonneg_of_convexOn {V : Measure Θ → ℝ}
+    (hV : ConvexOn ℝ≥0 {μ : Measure Θ | IsProbabilityMeasure μ} V) :
+    0 ≤ valueOfInformation V κ π := by
+  cases nonempty_fintype 𝓧
+  have hne (x : 𝓧) : (κ ∘ₘ π) {x} ≠ ∞ := measure_ne_top _ _
+  have hw : ∑ x, ((κ ∘ₘ π) {x}).toNNReal = 1 := by
+    apply ENNReal.coe_injective
+    simp [ENNReal.coe_toNNReal (hne _)]
+  have hp : ∑ x, ((κ ∘ₘ π) {x}).toNNReal • (κ†π) x = π :=
+    (Finset.sum_congr rfl fun x _ ↦ by
+      rw [ENNReal.smul_def, ENNReal.coe_toNNReal (hne x)]).trans <| by
+      rw [← Measure.sum_fintype, ← Measure.comp_eq_sum_of_countable, posterior_comp_self]
+  have h := hV.map_sum_smul_le (t := Finset.univ) (w := fun x ↦ ((κ ∘ₘ π) {x}).toNNReal)
+    (p := fun x ↦ (κ†π) x) (fun _ _ ↦ bot_le) hw
+    fun x _ ↦ (inferInstance : IsProbabilityMeasure ((κ†π) x))
+  rw [hp] at h
+  rw [valueOfInformation, integral_fintype .of_finite, sub_nonneg]
+  exact h.trans_eq (Finset.sum_congr rfl fun x _ ↦ by
+    rw [NNReal.smul_def, measureReal_def, ENNReal.coe_toNNReal_eq_toReal])
+
+/-- The value of information is the expected Bregman divergence of the value function from the
+prior to the posterior, along any `g` whose expectation over the posteriors is its value at the
+prior. -/
+theorem valueOfInformation_eq_integral_bregmanDiv (V g : Measure Θ → ℝ)
+    (hg : ∫ x, g ((κ†π) x) ∂(κ ∘ₘ π) = g π) :
+    valueOfInformation V κ π = ∫ x, bregmanDiv V g π ((κ†π) x) ∂(κ ∘ₘ π) := by
+  simp only [bregmanDiv, valueOfInformation]
+  rw [integral_sub .of_finite .of_finite, integral_sub .of_finite .of_finite,
+    integral_sub .of_finite .of_finite, hg]
+  simp
+
+/-- The value of information is the expected Bregman divergence of the value function from the
+prior to the posterior, along the expectation of any function of the parameter. -/
+theorem valueOfInformation_eq_integral_bregmanDiv_integral [Finite Θ] [MeasurableSingletonClass Θ]
+    (V : Measure Θ → ℝ) (g : Θ → ℝ) :
+    valueOfInformation V κ π =
+      ∫ x, bregmanDiv V (fun μ ↦ ∫ θ, g θ ∂μ) π ((κ†π) x) ∂(κ ∘ₘ π) :=
+  valueOfInformation_eq_integral_bregmanDiv κ π V _ <| by
+    have h := valueOfInformation_integral g κ π
+    rwa [valueOfInformation, sub_eq_zero] at h
+
+end Convex
+
+/-- Along an action that is best at the prior, the Bregman divergence of the decision value to a
+belief is what re-optimizing there gains over keeping that action. -/
+theorem bregmanDiv_decisionValue {U : Θ → 𝓨 → ℝ} {a : 𝓨} {π : Measure Θ}
+    (ha : ∫ θ, U θ a ∂π = decisionValue U π) (μ : Measure Θ) :
+    bregmanDiv (decisionValue U) (fun ν ↦ ∫ θ, U θ a ∂ν) π μ =
+      decisionValue U μ - ∫ θ, U θ a ∂μ := by
+  rw [bregmanDiv, ha]
+  ring
+
 /-! ### The decision value and the risk increase -/
 
 section Regret
@@ -228,19 +341,9 @@ variable [Finite Θ] [MeasurableSingletonClass Θ] [StandardBorelSpace Θ] [None
   (π : Measure Θ) [IsProbabilityMeasure π]
 
 /-- Information has nonnegative value to an expected-utility maximizer. -/
-theorem valueOfInformation_decisionValue_nonneg : 0 ≤ valueOfInformation (decisionValue U) κ π := by
-  rcases isEmpty_or_nonempty 𝓨 with h𝓨 | h𝓨
-  · simp [valueOfInformation, decisionValue]
-  let _ : MeasurableSpace 𝓨 := ⊤
-  have : MeasurableSingletonClass 𝓨 := ⟨fun _ ↦ trivial⟩
-  obtain ⟨C, hC⟩ := Finite.exists_le (Function.uncurry U)
-  replace hC : ∀ θ a, U θ a ≤ C := fun θ a ↦ hC (θ, a)
-  have h := bayesRisk_le_iInf (m𝓨 := inferInstance)
-    (measurable_of_countable (Function.uncurry fun θ a ↦ ENNReal.ofReal (C - U θ a))) κ π
-  rw [bayesRisk_ofReal_sub hC, iInf_lintegral_ofReal_sub hC,
-    ENNReal.ofReal_le_ofReal_iff (sub_nonneg.2 (decisionValue_le hC π))] at h
-  rw [valueOfInformation]
-  linarith
+theorem valueOfInformation_decisionValue_nonneg :
+    0 ≤ valueOfInformation (decisionValue U) κ π :=
+  valueOfInformation_nonneg_of_convexOn κ π (convexOn_decisionValue U)
 
 /-- Garbling an experiment cannot raise its value to an expected-utility maximizer. -/
 theorem valueOfInformation_decisionValue_comp_le {𝓧' : Type*} {m𝓧' : MeasurableSpace 𝓧'}
@@ -266,6 +369,16 @@ theorem valueOfInformation_decisionValue_le_id :
 end Inequalities
 
 /-! ### Deterministic experiments -/
+
+/-- The integral of a function of the fibre of `f` through the parameter is its sum over the
+fibres of `f`, weighted by their probabilities. -/
+theorem integral_preimage_singleton [Fintype 𝓧] [MeasurableSingletonClass 𝓧] (F : Set Θ → ℝ)
+    {f : Θ → 𝓧} (hf : Measurable f) (π : Measure Θ) [IsFiniteMeasure π] :
+    ∫ θ, F (f ⁻¹' {f θ}) ∂π = ∑ x, π.real (f ⁻¹' {x}) * F (f ⁻¹' {x}) := by
+  rw [← integral_map hf.aemeasurable (f := fun x ↦ F (f ⁻¹' {x}))
+      Integrable.of_finite.aestronglyMeasurable, integral_fintype .of_finite]
+  exact Finset.sum_congr rfl fun x _ ↦ by
+    rw [smul_eq_mul, map_measureReal_apply hf (measurableSet_singleton x)]
 
 section Deterministic
 
@@ -309,17 +422,6 @@ theorem sum_measureReal_mul_integral_cond (g : Θ → ℝ) (f : Θ → 𝓧) (π
   have : MeasurableSingletonClass 𝓧 := ⟨fun _ ↦ trivial⟩
   have h := valueOfInformation_integral g (Kernel.deterministic f (measurable_of_countable f)) π
   rwa [valueOfInformation_deterministic, sub_eq_zero] at h
-
-omit [Finite Θ] [MeasurableSingletonClass Θ] [StandardBorelSpace Θ] [Nonempty Θ] in
-/-- The integral of a function of the fibre of `f` through the parameter is its sum over the
-fibres of `f`, weighted by their probabilities. -/
-theorem integral_preimage_singleton (F : Set Θ → ℝ) {f : Θ → 𝓧} (hf : Measurable f)
-    (π : Measure Θ) [IsFiniteMeasure π] :
-    ∫ θ, F (f ⁻¹' {f θ}) ∂π = ∑ x, π.real (f ⁻¹' {x}) * F (f ⁻¹' {x}) := by
-  rw [← integral_map hf.aemeasurable (f := fun x ↦ F (f ⁻¹' {x}))
-      Integrable.of_finite.aestronglyMeasurable, integral_fintype .of_finite]
-  exact Finset.sum_congr rfl fun x _ ↦ by
-    rw [smul_eq_mul, map_measureReal_apply hf (measurableSet_singleton x)]
 
 omit [MeasurableSingletonClass 𝓧] in
 /-- The expectation of the expectation conditional on the fibre of `f` through the parameter is
