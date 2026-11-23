@@ -9,7 +9,7 @@ public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Atoms
 public import Linglib.Syntax.Command.Closeness
 public import Linglib.Syntax.Command.RoseTree
-public import Linglib.Syntax.Projection
+public import Linglib.Syntax.Projection.GornAddress
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!

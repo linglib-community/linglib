@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Chomsky1981
 public import Linglib.Data.Examples.Readers
 public import Linglib.Syntax.Binding.Tree
-public import Linglib.Syntax.Tree.Projection
+public import Linglib.Syntax.Projection.Tree
 public import Studies.Reinhart1976
 public import Linglib.Fragments.English.Adpositions
 public import Linglib.Fragments.English.Auxiliaries

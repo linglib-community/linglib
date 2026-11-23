@@ -10,7 +10,7 @@ public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Reichenbach
-public import Linglib.Syntax.Tree.Command
+public import Linglib.Syntax.Command.Tree
 public import Studies.Partee1973
 
 /-!

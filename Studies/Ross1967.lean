@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Cat
-public import Linglib.Syntax.Tree.Projection
+public import Linglib.Syntax.Projection.Tree
 public import Linglib.Data.Examples.Ross1967
 public import Linglib.Data.Examples.Readers
 

@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Command.DominanceImage
-public import Linglib.Syntax.Projection
+public import Linglib.Syntax.Projection.GornAddress
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Pronouns

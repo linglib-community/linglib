@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Tree.Command
+public import Linglib.Syntax.Command.Tree
 public import Linglib.Data.Examples.Reinhart1976
 public import Linglib.Data.Examples.Readers
 

@@ -2,8 +2,8 @@ module
 
 public import Linglib.Core.Data.Fintype.Order
 public import Linglib.Syntax.Command.Closeness
-public import Linglib.Syntax.Tree.Command
-public import Linglib.Syntax.Tree.Projection
+public import Linglib.Syntax.Command.Tree
+public import Linglib.Syntax.Projection.Tree
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.Hom.Set
 
