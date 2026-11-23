@@ -41,8 +41,9 @@ applies to the output of the one before it and not to the input (`feeds_fusion`,
 
 * The analysis runs over the paper's transcription, a consonant other than a guttural being its
   letter, which is read only to compare two consonants and to spell a form.
-  `map_segment_radicals` shows that the roots, read as segments, are the roots of the Tigrinya and
-  Tigre fragments, and `image_segment_eq_vowels` that the vowels are the Tigrinya fragment's.
+  `mapM_segment?_radicals` shows that the roots, read as segments of the PHOIBLE inventories, are
+  the roots of the Tigrinya and Tigre fragments, and `image_segment_eq_vowels` that the vowels
+  are the Tigrinya fragment's.
 * A pattern is a prefix and a stem of positions (radical, geminable radical, fixed segment)
   with nuclei, instantiated by a root. Gutturals do not geminate, so a geminable position
   holding a guttural is a single unit. The prefixes tɨ- and mɨ- carry empty nuclei; the
@@ -642,46 +643,30 @@ def fragmentRoot : Examples.Root → ConsonantalRoot Phonology.Segment
   | .uncoverTigre => Tigre.Phonology.uncover
   | .pullTigre => Tigre.Phonology.pull
 
-/-- `segment l x` reads a letter of the paper's transcription of a root of language `l` as a
-segment of that language's fragment. -/
-def segment : Lang → String → Phonology.Segment
-  | .tigrinya, "g" => Tigrinya.Phonology.«ɡ»
-  | .tigrinya, "r" => Tigrinya.Phonology.«ɾ»
-  | .tigrinya, "f" => Tigrinya.Phonology.f
-  | .tigrinya, "s" => Tigrinya.Phonology.s
-  | .tigrinya, "m" => Tigrinya.Phonology.m
-  | .tigrinya, "ʕ" => Tigrinya.Phonology.«ʕ»
-  | .tigrinya, "ʔ" => Tigrinya.Phonology.«ʔ»
-  | .tigrinya, "ħ" => Tigrinya.Phonology.ħ
-  | .tigrinya, "b" => Tigrinya.Phonology.b
-  | .tigrinya, "h" => Tigrinya.Phonology.h
-  | .tigrinya, "d" => Tigrinya.Phonology.d
-  | .tigrinya, "l" => Tigrinya.Phonology.l
-  | .tigrinya, "n" => Tigrinya.Phonology.n
-  | .tigrinya, "k" => Tigrinya.Phonology.k
-  | .tigre, "m" => Tigre.Phonology.m
-  | .tigre, "z" => Tigre.Phonology.z
-  | .tigre, "n" => Tigre.Phonology.n
-  | .tigre, "f" => Tigre.Phonology.f
-  | .tigre, "g" => Tigre.Phonology.«ɡ»
-  | .tigre, "r" => Tigre.Phonology.r
-  | .tigre, "ħ" => Tigre.Phonology.ħ
-  | .tigre, "tˁ" => Tigre.Phonology.«tʼ»
-  | .tigre, "b" => Tigre.Phonology.b
-  | .tigre, "h" => Tigre.Phonology.h
-  | .tigre, "kˀ" => Tigre.Phonology.«kʼ»
-  | .tigre, "sˁ" => Tigre.Phonology.«tsʼ»
-  | .tigre, "s" => Tigre.Phonology.s
-  | .tigre, "ʔ" => Tigre.Phonology.«ʔ»
-  | .tigre, "l" => Tigre.Phonology.l
-  | .tigre, "tˀ" => Tigre.Phonology.«tʼ»
-  | .tigre, "ʕ" => Tigre.Phonology.«ʕ»
-  | .tigre, "k" => Tigre.Phonology.k
-  | _, _ => ⊥
+/-- The PHOIBLE inventory of each language. -/
+def inventory : Lang → Data.PHOIBLE.Inventory
+  | .tigrinya => Data.PHOIBLE.Inventories.Tigrinya.tir
+  | .tigre => Data.PHOIBLE.Inventories.Tigre.tig
 
-theorem map_segment_radicals (r : Examples.Root) :
-    (radicals r).map (segment (lang r)) = fragmentRoot r := by
-  cases r <;> rfl
+/-- The glyph of a language's inventory that a letter of the paper's transcription writes, where
+it is not the letter itself: the paper writes the ejectives of Tigre with a superscript. -/
+def glyph : Lang → String → String
+  | _, "g" => "ɡ"
+  | .tigrinya, "r" => "ɾ"
+  | .tigre, "n" => "n̪"
+  | .tigre, "tˁ" | .tigre, "tˀ" => "t̪ʼ"
+  | .tigre, "kˀ" => "kʼ"
+  | .tigre, "sˁ" => "tsʼ"
+  | _, s => s
+
+/-- `segment? l x` reads a letter of the paper's transcription of a root of language `l` as a
+segment of that language's inventory. -/
+def segment? (l : Lang) (x : String) : Option Phonology.Segment :=
+  (inventory l).segment? (glyph l x)
+
+theorem mapM_segment?_radicals : ∀ r : Examples.Root,
+    (radicals r).segments.mapM (segment? (lang r)) = some (fragmentRoot r).segments := by
+  decide +kernel
 
 /-! ### The paradigms (4)–(19) and the derivations (31)–(39) -/
 
