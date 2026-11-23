@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Binding.Valuation
 public import Mathlib.Data.Fin.VecNotation
 public import Studies.Landau2004
-public import Linglib.Semantics.ArgumentStructure.Control
+public import Linglib.Semantics.ArgumentStructure.LogophoricControl
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Category.Verb.Defs
@@ -103,8 +103,8 @@ def logophoric (alternatives : X → Set C) (author : C → E) (P : E → Set C)
 /-- Predicative control reads the complement's property at the controller. -/
 theorem isControlledAt_begin [LT D] (inertia : W → Set W) (initial : Ev → Ev → Prop)
     (cause : E → Ev → W → Prop) :
-    ArgumentStructure.IsControlledAt (begin (D := D) inertia initial cause) id :=
-  ArgumentStructure.isControlledAt_iff.2 ⟨fun φ x d e w ↦ φ d e w ∧ cause x e w ∧
+    ArgumentStructure.IsControlledAt (begin (D := D) inertia initial cause) (id : E → E) :=
+  ArgumentStructure.isControlledAt_coe_iff.2 ⟨fun φ x d e w ↦ φ d e w ∧ cause x e w ∧
     ∃ e' w' d', w' ∈ inertia w ∧ initial e e' ∧ d < d' ∧ φ d' e' w', fun _ _ ↦ rfl⟩
 
 /-- Logophoric control reads the complement's property at the author of each alternative. -/
@@ -119,8 +119,9 @@ theorem isLogophoricAt_logophoric (alternatives : X → Set C) (author : C → E
 /-- A logophoric reading is not a reading at the controller: where an alternative's author is not
 the attitude holder, two properties that agree on the holder are told apart. -/
 example : ¬ ArgumentStructure.IsControlledAt
-    (logophoric (fun _ : Bool ↦ ({()} : Set Unit)) fun _ ↦ false) id := fun h ↦ by
-  have := @h (fun y ↦ {_i | y = true}) (fun _ ↦ Set.univ) true (by ext; simp)
+    (logophoric (fun _ : Bool ↦ ({()} : Set Unit)) fun _ ↦ false) (id : Bool → Bool) := fun h ↦ by
+  have := ArgumentStructure.isControlledAt_coe.1 h (P := fun y ↦ {_i | y = true})
+    (Q := fun _ ↦ Set.univ) (x := true) (by ext; simp)
   simp [logophoric] at this
 
 end Readings

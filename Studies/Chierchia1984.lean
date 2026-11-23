@@ -21,28 +21,27 @@ and a frame, `ControlPrinciple α θ q N`, when
 `w ∈ α P x ↔ ∃ e ∈ θ x, w ∈ q.claim (N x) (P e)`,
 
 so that it holds of a property exactly where the bearer of the role has the property as a
-necessity, or as a possibility, of the frame.
+necessity, or as a possibility, of the frame: it is the relation of the role,
+`atRole θ fun φ x ↦ q.claim (N x) φ` (`controlPrinciple_iff`).
 
 An argument manipulation, such as passive or detransitivization, deletes arguments of a relation
-and quantifies them existentially. For `σ` the map from the arguments to those that remain,
-`drop σ α P y` is the join of `α P x` over the `x` with `σ x = y`, the lower adjoint of
-substitution along `σ` (`gc_drop`).
+and quantifies them existentially. For `σ` the map from the arguments to those that remain, the
+transform of `α` is `mapArgs σ α`.
 
 A relation obeying the principle holds only of arguments among which the role has a bearer
 (`ControlPrinciple.mem_dom`). So a relation one of whose transforms obeys the principle, for a role
 that has no bearer among the transform's arguments, holds of nothing
-(`ControlPrinciple.eq_bot_of_drop`): a verb whose transforms all obey the principle has no passive
-when its subject controls and no intransitive when its object does. A transform that keeps the
-controller and the frame obeys the principle when the relation does (`ControlPrinciple.drop`).
-When only the relation obeys it, a transform that deletes the controller holds where some value
-of the deleted argument has the property in the frame (`ControlPrinciple.mem_drop_iff`), the
-controller left implicit.
+(`ControlPrinciple.eq_bot_of_mapArgs`): a verb whose transforms all obey the principle has no
+passive when its subject controls and no intransitive when its object does. A transform that
+keeps the controller and the frame obeys the principle when the relation does
+(`ControlPrinciple.mapArgs`). When only the relation obeys it, a transform that deletes the
+controller holds where some value of the deleted argument has the property in the frame
+(`ControlPrinciple.mem_mapArgs_iff`), the controller left implicit.
 
-The principle makes a relation one to a proposition and the arguments
-(`ControlPrinciple.isControlledAt`), and one to the proposition alone when the frame does not
-depend on the arguments, as that of a modal or of *seem* does not
-(`ControlPrinciple.isRaisingAt`). Two relations with dual forces over one frame, *force* and
-*allow*, are each the complement of the other at the negated property
+A relation obeying the principle is controlled at the role (`ControlPrinciple.isControlledAt`),
+and raising at an argument position when the frame does not depend on the arguments, as that of
+a modal or of *seem* does not (`ControlPrinciple.isRaisingAt`). Two relations with dual forces
+over one frame, *force* and *allow*, are each the complement of the other at the negated property
 (`ControlPrinciple.compl_eq_dual`), and a relation of necessity is factive exactly when its
 conversational background is realistic (`ControlPrinciple.subset_iff_isRealistic`).
 
@@ -65,7 +64,7 @@ controller out.
 * A role is a partial function of a relation's arguments, one for each relation, where the
   source's is one partial function on all tuples of a relation and its arguments; that its value
   is among the arguments is not imposed. That a transform lacks a bearer of the role is
-  accordingly a hypothesis of `ControlPrinciple.eq_bot_of_drop`.
+  accordingly a hypothesis of `ControlPrinciple.eq_bot_of_mapArgs`.
 
 ## TODO
 
@@ -89,43 +88,7 @@ namespace Chierchia1984
 
 open Modality ArgumentStructure Filter Function
 
-variable {E W X Y Z Φ Ψ : Type*}
-
-/-! ### Argument manipulations -/
-
-section Drop
-
-variable [CompleteLattice Ψ]
-
-/-- (30c): the argument manipulation along `σ`, the map from the arguments of a relation to those
-that remain, holds of the remaining arguments when the relation holds for some value of the
-deleted ones. -/
-def drop (σ : X → Y) (R : (E → Φ) → X → Ψ) : (E → Φ) → Y → Ψ :=
-  fun P y ↦ ⨆ x, ⨆ (_ : σ x = y), R P x
-
-theorem gc_drop (σ : X → Y) :
-    GaloisConnection (drop σ : ((E → Φ) → X → Ψ) → _) fun S P x ↦ S P (σ x) :=
-  fun R _ ↦ ⟨fun h P x ↦ (le_iSup₂ (f := fun x' (_ : σ x' = σ x) ↦ R P x') x rfl).trans (h P (σ x)),
-    fun h P _ ↦ iSup₂_le fun x hx ↦ hx ▸ h P x⟩
-
-theorem le_drop (σ : X → Y) (R : (E → Φ) → X → Ψ) (P : E → Φ) (x : X) :
-    R P x ≤ drop σ R P (σ x) :=
-  (gc_drop σ).le_u_l R P x
-
-@[simp] theorem drop_id (R : (E → Φ) → X → Ψ) : drop id R = R := by
-  funext P y
-  simp [drop]
-
-theorem drop_comp (τ : Y → Z) (σ : X → Y) (R : (E → Φ) → X → Ψ) :
-    drop (τ ∘ σ) R = drop τ (drop σ R) :=
-  show _ = (drop τ ∘ drop σ) R from
-    (gc_drop (τ ∘ σ)).l_unique ((gc_drop σ).compose (gc_drop τ)) fun _ ↦ rfl
-
-@[simp] theorem mem_drop {σ : X → Y} {α : (E → Φ) → X → Set W} {P : E → Φ} {y : Y} {w : W} :
-    w ∈ drop σ α P y ↔ ∃ x, σ x = y ∧ w ∈ α P x := by
-  simp [drop]
-
-end Drop
+variable {E W X Y : Type*}
 
 /-! ### The Control Principle -/
 
@@ -137,10 +100,19 @@ def ControlPrinciple (α : (E → Set W) → X → Set W) (θ : X →. E) (q : Q
     (N : X → W → Filter W) : Prop :=
   ∀ P x w, w ∈ α P x ↔ ∃ e ∈ θ x, w ∈ q.claim (N x) (P e)
 
-namespace ControlPrinciple
-
 variable {α β : (E → Set W) → X → Set W} {θ : X →. E} {q : QuantificationalForce}
   {N : X → W → Filter W} {P : E → Set W} {x : X} {w : W} {e : E}
+
+theorem controlPrinciple_iff :
+    ControlPrinciple α θ q N ↔ α = atRole θ fun φ x ↦ q.claim (N x) φ :=
+  ⟨fun h ↦ funext₂ fun P x ↦ Set.ext fun w ↦
+      (h P x w).trans (mem_atRole (S := fun φ x ↦ q.claim (N x) φ)).symm,
+    fun h _ _ _ ↦ by rw [h]; exact mem_atRole⟩
+
+namespace ControlPrinciple
+
+theorem eq_atRole (h : ControlPrinciple α θ q N) : α = atRole θ fun φ x ↦ q.claim (N x) φ :=
+  controlPrinciple_iff.1 h
 
 -- (17e)
 theorem mem_dom (h : ControlPrinciple α θ q N) (hw : w ∈ α P x) : x ∈ θ.Dom :=
@@ -148,18 +120,16 @@ theorem mem_dom (h : ControlPrinciple α θ q N) (hw : w ∈ α P x) : x ∈ θ.
   Part.dom_iff_mem.2 ⟨e, he⟩
 
 theorem eq_claim (h : ControlPrinciple α θ q N) (he : e ∈ θ x) (P : E → Set W) :
-    α P x = q.claim (N x) (P e) :=
-  Set.ext fun w ↦ (h P x w).trans
-    ⟨fun ⟨_, he', hw⟩ ↦ Part.mem_unique he he' ▸ hw, fun hw ↦ ⟨e, he, hw⟩⟩
+    α P x = q.claim (N x) (P e) := by
+  rw [h.eq_atRole, atRole_apply_of_mem he]
 
-theorem isControlledAt {c : X → E} (h : ControlPrinciple α (c : X →. E) q N) :
-    IsControlledAt α c := fun P Q x hPQ ↦ by
-  rw [h.eq_claim (Part.mem_some (c x)) P, h.eq_claim (Part.mem_some (c x)) Q, hPQ]
+theorem isControlledAt (h : ControlPrinciple α θ q N) : IsControlledAt α θ :=
+  h.eq_atRole ▸ isControlledAt_atRole θ _
 
 -- (118c)
 theorem isRaisingAt {c : X → E} {N : W → Filter W}
-    (h : ControlPrinciple α (c : X →. E) q fun _ ↦ N) : IsRaisingAt α c := fun P Q x y hPQ ↦ by
-  rw [h.eq_claim (Part.mem_some (c x)) P, h.eq_claim (Part.mem_some (c y)) Q, hPQ]
+    (h : ControlPrinciple α (c : X →. E) q fun _ ↦ N) : IsRaisingAt α c :=
+  h.eq_atRole ▸ isRaisingAt_atRole c (q.claim N)
 
 /-! ### Modal frames -/
 
@@ -192,31 +162,30 @@ theorem subset_iff_isRealistic {a : X → Background W}
 
 variable {σ : X → Y} {θ' : Y →. E} {N' : Y → W → Filter W} {y : Y}
 
-theorem mem_dom_of_drop (h : ControlPrinciple (drop σ α) θ' q N') (hw : w ∈ α P x) :
+theorem mem_dom_of_mapArgs (h : ControlPrinciple (mapArgs σ α) θ' q N') (hw : w ∈ α P x) :
     σ x ∈ θ'.Dom :=
-  h.mem_dom (le_drop σ α P x hw)
+  h.mem_dom (le_mapArgs σ α P x hw)
 
 /-- A relation whose transform obeys the principle for a role that no arguments of the transform
 bear holds of nothing: where the transforms of a verb obey the principle, none deletes its
 controller, neither passive the controlling subject of *promise* nor detransitivization the
 controlling object of *force*. -/
-theorem eq_bot_of_drop (h : ControlPrinciple (drop σ α) θ' q N') (hθ : θ'.Dom = ∅) : α = ⊥ := by
-  funext P x
-  exact Set.eq_empty_of_forall_notMem fun w hw ↦ by simpa [hθ] using h.mem_dom_of_drop hw
-
--- (82)
-theorem drop (h : ControlPrinciple α (fun x ↦ θ' (σ x)) q fun x ↦ N' (σ x))
-    (hσ : Surjective σ) : ControlPrinciple (drop σ α) θ' q N' := fun P y w ↦ by
-  obtain ⟨x, rfl⟩ := hσ y
-  simp only [mem_drop, h P]
-  exact ⟨by rintro ⟨x', hx', hw⟩; rwa [hx'] at hw, fun hw ↦ ⟨x, rfl, hw⟩⟩
+theorem eq_bot_of_mapArgs (h : ControlPrinciple (mapArgs σ α) θ' q N') (hθ : θ'.Dom = ∅) :
+    α = ⊥ :=
+  mapArgs_eq_bot.1 (h.eq_atRole.trans (atRole_eq_bot_of_dom_eq_empty hθ _))
 
 /-- A transform of a relation obeying the principle holds where, for some value of the deleted
 arguments, the bearer of the role has the property in the frame: the controller of *it was
 decided to leave* is whoever decided. -/
-theorem mem_drop_iff (h : ControlPrinciple α θ q N) :
-    w ∈ Chierchia1984.drop σ α P y ↔ ∃ x, σ x = y ∧ ∃ e ∈ θ x, w ∈ q.claim (N x) (P e) := by
-  simp only [mem_drop, h P]
+theorem mem_mapArgs_iff (h : ControlPrinciple α θ q N) :
+    w ∈ mapArgs σ α P y ↔ ∃ x, σ x = y ∧ ∃ e ∈ θ x, w ∈ q.claim (N x) (P e) := by
+  simp only [mem_mapArgs, h P]
+
+-- (82)
+theorem mapArgs (h : ControlPrinciple α (fun x ↦ θ' (σ x)) q fun x ↦ N' (σ x))
+    (hσ : Surjective σ) : ControlPrinciple (mapArgs σ α) θ' q N' :=
+  controlPrinciple_iff.2 <| h.eq_atRole ▸
+    mapArgs_comapArgs hσ (atRole θ' fun φ y ↦ q.claim (N' y) φ)
 
 end ControlPrinciple
 
@@ -234,7 +203,7 @@ example : ControlPrinciple (fun (P : E → Set W) (x : E × Y) ↦ P x.1) (Prod.
     rwa [Part.mem_some_iff.1 he] at hw⟩
 
 -- (99)
-example : w ∈ drop Prod.snd (fun (P : E → Set W) (x : E × Y) ↦ P x.1) P y ↔ ∃ e, w ∈ P e := by
+example : w ∈ mapArgs Prod.snd (fun (P : E → Set W) (x : E × Y) ↦ P x.1) P y ↔ ∃ e, w ∈ P e := by
   simp
 
 end

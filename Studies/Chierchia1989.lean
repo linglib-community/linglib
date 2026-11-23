@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Studies.Chierchia1984
+public import Linglib.Semantics.ArgumentStructure.MapArgs
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Mathlib.Order.CompleteLattice.Basic
 
@@ -20,7 +21,7 @@ role picks a constituent, and unique because a role is a function. On the strict
 schema the role must have a bearer, so an operation that deletes the controller [has no
 value](##Chierchia1989.Strict.mem_dom), which is why *it was tried to win* is out; on the weak
 form, which holds only when the bearer is present, passive leaves [someone or other as the
-controller](##Chierchia1989.drop_snd_le), the implicit control of *it was decided to leave*. A
+controller](##Chierchia1989.mapArgs_snd_le), the implicit control of *it was decided to leave*. A
 relation obeying the Control Principle of [chierchia-1984] [satisfies the weak
 schema](##Chierchia1989.weak_of_controlPrinciple), its propositional frame the modal claim of the
 principle.
@@ -36,8 +37,8 @@ Chierchia adopts for *teach* and *try*.
 Propositions are the elements of any complete lattice, entailment its order. An eventuality's
 constituents other than the property are a type `X`, and a relation has one frame taking a
 property and one taking a proposition, which Chierchia writes as one polymorphic relation. Passive
-is `Chierchia1984.drop` along the second projection, for eventualities that pair an agent with the
-rest.
+is `ArgumentStructure.mapArgs` along the second projection, for eventualities that pair an agent
+with the rest.
 
 ## TODO
 
@@ -59,7 +60,7 @@ rest.
 
 namespace Chierchia1989
 
-open Chierchia1984
+open ArgumentStructure Chierchia1984
 
 /-! ### The control schema -/
 
@@ -103,9 +104,9 @@ theorem strict_of_eq {c : X → E} (h : ∀ P x, rP P x = rS (P (c x)) x) :
 -- (4), (5)
 /-- Under the weak schema with the agent as controller, the passive of a relation entails that
 for some agent the relation holds of the proposition that the agent has the property. -/
-theorem drop_snd_le {rP : (E → Φ) → E × Y → Φ} {rS : Φ → E × Y → Φ}
+theorem mapArgs_snd_le {rP : (E → Φ) → E × Y → Φ} {rS : Φ → E × Y → Φ}
     (h : Weak rP rS (Prod.fst : E × Y → E)) (P : E → Φ) (y : Y) :
-    drop Prod.snd rP P y ≤ ⨆ a, rS (P a) (a, y) :=
+    mapArgs Prod.snd rP P y ≤ ⨆ a, rS (P a) (a, y) :=
   iSup₂_le fun x hx ↦
     hx ▸ (h P x x.1 (Part.mem_some _)).trans (le_iSup (fun a ↦ rS (P a) (a, x.2)) x.1)
 
