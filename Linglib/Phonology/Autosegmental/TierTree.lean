@@ -444,7 +444,7 @@ theorem dominates_twoTier_upper_iff : X.Dominates twoTier j upper q ↔ X.Link u
   simp only [descendants, Finset.mem_insert, Finset.mem_biUnion, Finset.mem_singleton]
   constructor
   · rintro (h | ⟨⟨t, p⟩, hc, h | ⟨⟨t', p'⟩, hc', h⟩⟩)
-    · exact absurd (congrArg Prod.fst h) (by decide)
+    · exact absurd (congrArg Prod.fst h) (show upper ≠ lower by decide)
     · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
       exact (mem_children.1 hc).2.2.symm
     · exact absurd (mem_children.1 hc').1.symm (mem_children.1 hc).2.1
@@ -460,7 +460,7 @@ theorem reads_primitive_iff {as : List α} {b : β} :
   rw [reads_twoTier_upper_iff, List.mem_iff_getElem?]
   simp only [SurfacesWith, link_primitive, word_primitive_upper]
   exact ⟨fun ⟨k, _, h⟩ ↦ ⟨k, h⟩,
-    fun ⟨k, h⟩ ↦ ⟨k, ⟨(List.getElem?_eq_some_iff.1 h).1, rfl⟩, h⟩⟩
+    fun ⟨k, h⟩ ↦ ⟨k, ⟨(List.getElem?_eq_some_iff.1 h).1, trivial⟩, h⟩⟩
 
 /-- A realization by primitives reads at each slot the melody of its symbol. -/
 theorem reads_prod_map_primitive {S : Type*} (as : S → List α) (b : S → β) {w : List S}
