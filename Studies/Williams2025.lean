@@ -5,7 +5,7 @@ public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Tactic.NormNum
 public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Events.Closure
-public import Linglib.Semantics.Events.Lifespan
+public import Linglib.Semantics.Tense.Lifespan
 public import Studies.Kratzer1998
 public import Studies.White2014
 public import Linglib.Fragments.English.Verbs.Attitude
@@ -41,7 +41,7 @@ tests](##began_rows) and the [five-language survey](##table1_rows) follow.
   whose intervals may touch, and under any heads a complement closes to it (`closure_den_cons`).
   The paper gives no structure for the perfect gerund of (8) and (10), here the gerund's past over
   the perfect. Plain infinitives are simultaneous with the matrix reference time, after Wurmbrand.
-* Pre-existence is `Event.PreExists` of `Semantics/Events/Lifespan.lean`, shared with
+* Pre-existence is `Tense.PreExists` of `Semantics/Tense/Lifespan.lean`, shared with
   `Studies/Bondarenko2020`, at the subjective now of the derivations (32), (34) and (36), here the
   run time of the forgetting (`PreEx`). The contradiction of (36) holds whatever the predicate, so a
   form needs the modal when no predicate of events meets pre-existence under it (`lf`), and with
@@ -193,24 +193,24 @@ theorem closure_den_cons [DenselyOrdered T] (h : Head) (hs : List Head) (P : W �
 /-- Pre-existence, (28b), holds at the forgetting `e` when the complement describes an event at the
 subjective now, the run time of `e`, that starts before `e` does. -/
 def PreEx (C : Complement W E T) (e : E) (w : W) : Prop :=
-  Event.PreExists τ (C w (τ e)) (τ e)
+  Tense.PreExists τ (C w (τ e)) (τ e)
 
 theorem PreEx.closure (h : PreEx C e w) : C.closure w (τ e) :=
-  Event.PreExists.exists h
+  Tense.PreExists.exists h
 
 -- (32), (34): the presupposition of an anterior complement is its truth at the subjective now
 theorem preEx_den_cons_iff :
     PreEx (den (h :: hs) P) e w ↔ (den (h :: hs) P).closure w (τ e) :=
-  Event.preExists_iff_exists_of_precedes fun _ ↦ precedes_of_den_cons
+  Tense.preExists_iff_exists_of_precedes fun _ ↦ precedes_of_den_cons
 
 -- (36)
 theorem not_preEx_aspP : ¬ PreEx (aspP P) e w :=
-  Event.not_preExists_of_le fun _ h ↦ h.1
+  Tense.not_preExists_of_le fun _ h ↦ h.1
 
 -- (39), (40)
 theorem preEx_mod_iff :
     PreEx (mod plan C) e w ↔ ∃ s, mod plan C w (τ e) s ∧ (τ s).fst < (τ e).fst :=
-  Event.preExists_iff
+  Tense.preExists_iff
 
 -- (37): over a plain infinitive the plan modal is the prospective over the plan state's modal
 -- domain, as the imperfective is inclusion over its own
@@ -434,11 +434,11 @@ theorem table1_rows [DenselyOrdered T] [Nonempty W] (hE : ∃ e f : E, (τ e).Pr
 
 /-- Pre-existence as (28b) prints it, with the time of the complement bound existentially. -/
 def PreExPrinted (C : Complement W E T) (e : E) (w : W) : Prop :=
-  ∃ t, Event.PreExists τ (C w t) (τ e)
+  ∃ t, Tense.PreExists τ (C w t) (τ e)
 
 -- (28b): as printed, a plain infinitive presupposes that an event of its predicate started first
-theorem preExPrinted_aspP_iff : PreExPrinted (aspP P) e w ↔ Event.PreExists τ (P w) (τ e) := by
-  simp only [PreExPrinted, Event.preExists_iff, aspP]
+theorem preExPrinted_aspP_iff : PreExPrinted (aspP P) e w ↔ Tense.PreExists τ (P w) (τ e) := by
+  simp only [PreExPrinted, Tense.preExists_iff, aspP]
   exact ⟨fun ⟨_, e', ⟨_, hP⟩, hlt⟩ ↦ ⟨e', hP, hlt⟩,
     fun ⟨e', hP, hlt⟩ ↦ ⟨τ e', e', ⟨le_rfl, hP⟩, hlt⟩⟩
 

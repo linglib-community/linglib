@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Persistence
-public import Linglib.Semantics.Events.Lifespan
+public import Linglib.Semantics.Tense.Lifespan
 
 /-!
 # Persistence from life spans
@@ -109,8 +109,8 @@ theorem fst_lt_of_ofLifespan_eq_existentialEnd (h : ofLifespan life run q = .exi
 pre-exist it ([grimm-2011] (5)). -/
 theorem not_preExists_of_ofLifespan_eq_existentialEnd {X : Type*} {σ : X → NonemptyInterval T}
     {x : X} (h : ofLifespan (σ x) run q = .existentialEnd) :
-    ¬ Event.PreExists σ (· = x) run := by
-  rw [Event.preExists_eq_iff, not_lt]
+    ¬ Tense.PreExists σ (· = x) run := by
+  rw [Tense.preExists_eq_iff, not_lt]
   exact (fst_lt_of_ofLifespan_eq_existentialEnd h).le
 
 /-- A participant destroyed in an event, existing at its beginning but not at its end, goes out of

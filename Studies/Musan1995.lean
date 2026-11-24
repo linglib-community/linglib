@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Events.Lifespan
+public import Linglib.Semantics.Tense.Lifespan
 public import Linglib.Semantics.Tense.Quantificational
 public import Mathlib.Order.Nat
 
@@ -25,10 +25,10 @@ a stage-level predicate supports the first implicature but not the second
 Times are the points of a linear order, the past tense is the quantificational past of
 `Semantics/Tense/Quantificational.lean`, and the present tense is evaluation at the utterance
 time, where the dissertation quantifies over intervals surrounding it. Life spans are intervals
-`τ x` of `Semantics/Events/Lifespan.lean`, as in (12), where the times at which *Gregory was from
+`τ x` of `Semantics/Tense/Lifespan.lean`, as in (12), where the times at which *Gregory was from
 America* is true start at or after Gregory's birth and the longest ends at his death. That
-Gregory was born before now is his pre-existing now (`Event.PreExists`), and an individual-level
-predicate is `Event.Permanent` of the predicate with its presupposition (10), (17g). The
+Gregory was born before now is his pre-existing now (`Tense.PreExists`), and an individual-level
+predicate is `Tense.Permanent` of the predicate with its presupposition (10), (17g). The
 neutralization of life-time effects in temporally specific contexts, the existence-independent
 predicates, and the third chapter's account of the predication times of noun phrases are not
 represented.
@@ -42,7 +42,7 @@ represented.
 
 namespace Musan1995
 
-open Tense PointAlgebra ModalLogic Event
+open Tense PointAlgebra ModalLogic
 open scoped Denotes
 
 variable {X T : Type*} [LinearOrder T]
