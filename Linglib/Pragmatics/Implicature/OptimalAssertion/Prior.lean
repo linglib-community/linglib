@@ -111,7 +111,7 @@ theorem IsOptimalAssertion.measure_exhMW_le (hinf : InfClosed alts)
     (hsup : ∀ A ⊆ alts, A.Nonempty → ⋃₀ A ∈ alts) (hφ : φ ∈ alts) (hne : s.Nonempty)
     (hs : IsOptimalAssertion alts φ s) (μ : Measure W) :
     μ (Exhaustification.exhMW alts φ) ≤
-      μ (Preorder.satisfied (· ∈ ·) alts ⁻¹' (Preorder.satisfied (· ∈ ·) alts '' s)) :=
+      μ ((fun w ↦ {a ∈ alts | w ∈ a}) ⁻¹' ((fun w ↦ {a ∈ alts | w ∈ a}) '' s)) :=
   measure_mono fun _ hu ↦ hs.exists_satisfied_eq hinf hsup hφ hne hu
 
 /-! ### Divergence from the literal reading -/

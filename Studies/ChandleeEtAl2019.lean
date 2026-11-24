@@ -59,18 +59,17 @@ theorem mem_language_iff : i ∈ language M G ↔ ∀ g ∈ G, ¬ g.Occurs (M i)
   Set.disjoint_right
 
 theorem isStrictlyLocal_language (G : Set (L.Factor k)) : L.IsStrictlyLocal M k (language M G) :=
-  ⟨Gᶜ, Set.ext fun _ ↦ Set.subset_compl_iff_disjoint_right.symm⟩
+  isStrictlyLocal_iff_exists_disjoint.2 ⟨G, rfl⟩
 
 -- Criteria 1 and 2 of Definition 9: the language covers the sample and lies in every strictly
 -- local set that does.
 theorem language_eq_strictlyLocalClosure_iff :
     language M G = L.strictlyLocalClosure M k D ↔
       D ⊆ language M G ∧ ∀ S, L.IsStrictlyLocal M k S → D ⊆ S → language M G ⊆ S := by
-  set c := L.strictlyLocalClosure M k
-  refine ⟨fun h ↦ ⟨h ▸ c.le_closure D, fun S hS hDS ↦ h ▸ c.closure_min hDS
-    (isStrictlyLocal_iff_isClosed.1 hS)⟩, fun ⟨h₁, h₂⟩ ↦ le_antisymm ?_ ?_⟩
-  · exact h₂ _ (isStrictlyLocal_iff_isClosed.2 (c.isClosed_closure D)) (c.le_closure D)
-  · exact c.closure_min h₁ (isStrictlyLocal_iff_isClosed.1 (isStrictlyLocal_language G))
+  refine ⟨fun h ↦ ⟨h ▸ subset_strictlyLocalClosure, fun S hS hDS ↦
+    h ▸ strictlyLocalClosure_min hDS hS⟩, fun ⟨h₁, h₂⟩ ↦ subset_antisymm ?_ ?_⟩
+  · exact h₂ _ (isStrictlyLocal_strictlyLocalClosure D) subset_strictlyLocalClosure
+  · exact strictlyLocalClosure_min h₁ (isStrictlyLocal_language G)
 
 variable (L M k) in
 /-- The forbidden factors of a sample, section 6: the factors of members that no datum
@@ -128,7 +127,7 @@ theorem isAdequate_mostGeneral [WellFoundedLT (L.Factor k)] (D : Set ι) :
     IsAdequate M D (mostGeneral L M k D) :=
   ⟨fun _ hg ↦ hg.prop.1, language_mostGeneral D, fun _ hG' h _ hg' ↦
     exists_mem_mostGeneral_le
-      (subset_forbidden hG' (h ▸ (L.strictlyLocalClosure M k).le_closure D) hg')⟩
+      (subset_forbidden hG' (h ▸ subset_strictlyLocalClosure) hg')⟩
 
 /-- Up to equivalent factors, an adequate grammar of pairwise incomparable factors is the most
 general grammar. -/
@@ -136,7 +135,7 @@ theorem IsAdequate.image_toAntisymmetrization [WellFoundedLT (L.Factor k)]
     (hG : IsAdequate M D G) (hanti : IsAntichain (· ≤ ·) G) :
     toAntisymmetrization (· ≤ ·) '' G = toAntisymmetrization (· ≤ ·) '' mostGeneral L M k D := by
   have hF := subset_forbidden hG.subset_factors
-    (hG.language_eq ▸ (L.strictlyLocalClosure M k).le_closure D)
+    (hG.language_eq ▸ subset_strictlyLocalClosure)
   have hle (m) (hm : m ∈ mostGeneral L M k D) : ∃ g ∈ G, g ≤ m :=
     hG.exists_le (mostGeneral L M k D) (fun _ hg ↦ hg.prop.1) (language_mostGeneral D) m hm
   refine subset_antisymm (Set.image_mono fun g hg ↦ ⟨hF hg, fun f hf hfg ↦ ?_⟩) ?_

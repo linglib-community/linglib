@@ -224,8 +224,8 @@ variable {ALT φ} {w : World}
 
 /-- The cell of the prejacent consists of the prejacent worlds verifying exactly the alternatives
 of the minimal verified sets. -/
-theorem mem_cell_iff : w ∈ cell ALT φ ↔ w ∈ φ ∧ Preorder.satisfied (· ∈ ·) ALT w =
-    ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P} := by
+theorem mem_cell_iff : w ∈ cell ALT φ ↔ w ∈ φ ∧ {a ∈ ALT | w ∈ a} =
+    ⋃₀ {P | Minimal (· ∈ (fun w ↦ {a ∈ ALT | w ∈ a}) '' φ) P} := by
   rw [mem_cell]
   refine and_congr_right fun _ ↦
     ⟨fun ⟨hIE, hnon⟩ ↦ ?_, fun h ↦ ⟨fun q hq hwq ↦ ?_, fun r hr hnr ↦ ?_⟩⟩
@@ -236,18 +236,18 @@ theorem mem_cell_iff : w ∈ cell ALT φ ↔ w ∈ φ ∧ Preorder.satisfied (·
     obtain ⟨⟨u, hu, rfl⟩, -⟩ := hP'
     exact ⟨haP.1, hnon a haP.1 fun hIEa ↦
       (isInnocentlyExcludable_iff_forall_minimal haP.1).1 hIEa _ hP haP⟩
-  · obtain ⟨P, hP, hqP⟩ := (h ▸ (⟨hq.1, hwq⟩ : q ∈ Preorder.satisfied (· ∈ ·) ALT w) :
-      q ∈ ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P})
+  · obtain ⟨P, hP, hqP⟩ := (h ▸ (⟨hq.1, hwq⟩ : q ∈ {a ∈ ALT | w ∈ a}) :
+      q ∈ ⋃₀ {P | Minimal (· ∈ (fun w ↦ {a ∈ ALT | w ∈ a}) '' φ) P})
     exact (isInnocentlyExcludable_iff_forall_minimal hq.1).1 hq P hP hqP
-  · have : r ∈ ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P} := by
+  · have : r ∈ ⋃₀ {P | Minimal (· ∈ (fun w ↦ {a ∈ ALT | w ∈ a}) '' φ) P} := by
       by_contra hn
       exact hnr ((isInnocentlyExcludable_iff_forall_minimal hr).2 fun P hP hrP ↦
         hn ⟨P, hP, hrP⟩)
-    exact (h ▸ this : r ∈ Preorder.satisfied (· ∈ ·) ALT w).2
+    exact (h ▸ this : r ∈ {a ∈ ALT | w ∈ a}).2
 
 theorem cell_nonempty_iff : (cell ALT φ).Nonempty ↔
-    ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P} ∈
-      Preorder.satisfied (· ∈ ·) ALT '' φ :=
+    ⋃₀ {P | Minimal (· ∈ (fun w ↦ {a ∈ ALT | w ∈ a}) '' φ) P} ∈
+      (fun w ↦ {a ∈ ALT | w ∈ a}) '' φ :=
   ⟨fun ⟨w, hw⟩ ↦ ⟨w, (mem_cell_iff.1 hw).1, (mem_cell_iff.1 hw).2⟩,
     fun ⟨w, hw, h⟩ ↦ ⟨w, mem_cell_iff.2 ⟨hw, h⟩⟩⟩
 

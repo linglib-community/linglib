@@ -118,4 +118,13 @@ def inventory : Finset Segment := consonants ∪ vowels
 /-- The vowels are the [+syllabic] phonemes. -/
 theorem isVowel_iff : ∀ x ∈ inventory, x.IsVowel ↔ x ∈ vowels := by decide
 
+/-- The consonants are the phonemes that are not vowels. -/
+theorem not_isVowel_iff : ∀ x ∈ inventory, ¬ x.IsVowel ↔ x ∈ consonants := by decide
+
+/-- The [+consonantal] phonemes are the consonants other than the approximants /w/, /ð̞/ and
+/j/. -/
+theorem isConsonant_iff :
+    ∀ x ∈ inventory, x.IsConsonant ↔ x ∈ consonants ∧ x ≠ w ∧ x ≠ «ð̞» ∧ x ≠ j := by
+  decide
+
 end Shiwilu

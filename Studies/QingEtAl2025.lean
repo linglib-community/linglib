@@ -55,6 +55,8 @@ predicted.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace QingEtAl2025
 
 open Examples Preferential Modality UegakiSudo2019
@@ -367,7 +369,7 @@ variable {V : Type*} {p Bp Bnp : Set V} {v₁ v₂ : V}
 def HopefulGoals (φ Bφ : Set V) (G : Set (Set V)) : Prop := ∀ g ∈ G, g = φ ∨ g = Bφ
 
 theorem hopes_radical (h₁ : v₁ ∈ Bp) (h₂ : v₂ ∉ Bp) : v₁ <[{Bp}] v₂ := by
-  simp only [Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
+  simp only [Preorder.ofLowerSets_lt_iff, Preorder.ofLowerSets_le_iff,
     Set.mem_singleton_iff, forall_eq]
   exact ⟨fun h ↦ (h₂ h).elim, fun h ↦ h₂ (h h₁)⟩
 
@@ -384,7 +386,7 @@ theorem hopes_negation {G : Set (Set V)} (hG : HopefulGoals pᶜ Bnp G)
 -- (87)
 theorem fears (h₁ : v₁ ∈ Bp) (h₂ : v₂ ∉ Bp) (hn₂ : v₂ ∉ Bnp) :
     v₁ <[{Bp ∪ Bnp}] v₂ := by
-  simp only [Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
+  simp only [Preorder.ofLowerSets_lt_iff, Preorder.ofLowerSets_le_iff,
     Set.mem_singleton_iff, forall_eq]
   exact ⟨fun h ↦ (h.elim h₂ hn₂).elim, fun h ↦ (h (Or.inl h₁)).elim h₂ hn₂⟩
 

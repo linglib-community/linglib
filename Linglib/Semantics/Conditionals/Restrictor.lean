@@ -26,6 +26,8 @@ source the strict conditional.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Conditional.Restrictor
 
 open Modality
@@ -35,7 +37,7 @@ variable {W : Type*} (f g : Background W) (α β : Set W)
 /-- *If α, must β* is the variably strict conditional over the accessible worlds, under the
 preorders the ordering source induces. -/
 theorem variablyStrictImp_eq_setOf_mem_humanNecessity :
-    variablyStrictImp f.accessibleWorlds (fun w ↦ premisePreorder (g w)) α β =
+    variablyStrictImp f.accessibleWorlds (fun w ↦ ≤[g w]) α β =
       {w | β ∈ humanNecessity (f.restrict α) g w} :=
   Set.ext fun w ↦ by
     rw [mem_variablyStrictImp, Set.mem_ofPred_eq, humanNecessity,
@@ -43,7 +45,7 @@ theorem variablyStrictImp_eq_setOf_mem_humanNecessity :
 
 /-- *If α, might β* is the *might* of the variably strict conditional. -/
 theorem might_variablyStrictImp_eq_setOf_humanPossibility :
-    might (variablyStrictImp f.accessibleWorlds (fun w ↦ premisePreorder (g w))) α β =
+    might (variablyStrictImp f.accessibleWorlds (fun w ↦ ≤[g w])) α β =
       {w | humanPossibility (f.restrict α) g w β} :=
   Set.ext fun w ↦ by
     rw [mem_might, variablyStrictImp_eq_setOf_mem_humanNecessity, Set.mem_ofPred_eq,
@@ -51,7 +53,7 @@ theorem might_variablyStrictImp_eq_setOf_humanPossibility :
 
 /-- Over the best worlds, *if α, must β* is truth at the best accessible α-worlds. -/
 theorem orderingImp_eq_setOf_bestWorlds_subset :
-    orderingImp f.accessibleWorlds (fun w ↦ premisePreorder (g w)) α β =
+    orderingImp f.accessibleWorlds (fun w ↦ ≤[g w]) α β =
       {w | bestWorlds (f.restrict α) g w ⊆ β} :=
   Set.ext fun w ↦ by
     rw [mem_orderingImp, Set.mem_ofPred_eq, bestWorlds, Background.accessibleWorlds_restrict]

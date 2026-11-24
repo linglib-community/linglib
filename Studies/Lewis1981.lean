@@ -46,7 +46,9 @@ induced ordering frame (`neutralPremiseImp_eq_variablyStrictImp`).
   ties, which a strict ordering cannot tell from incomparabilities, and the proofs do not need
   antisymmetry.
 * Neither Centering nor finiteness is assumed: §7 notes that the equivalence results do not
-  depend on Centering, and §6 that they carry over to the infinite case.
+  depend on Centering, and §6 that they carry over to the infinite case. That equivalent frames
+  both satisfy Centering or neither does is `sInter_eq_singleton_iff`, stated at a world with at
+  least one premise and no empty premise.
 * Section 5's reconciliation of partial with total orderings, truth on an ordering being truth on
   every refinement to a total one, is `Conditional.mem_closestImp_iff_forall_compatible` for the
   refinements [stalnaker-1981] calls completions.
@@ -55,6 +57,7 @@ induced ordering frame (`neutralPremiseImp_eq_variablyStrictImp`).
 
 * Section 6's example of a counterfactual true under the neutral condition on a frame and false
   on one of its refinements.
+* Section 4's remark that equivalent frames both satisfy Universality or neither does.
 
 ## References
 
@@ -67,6 +70,8 @@ induced ordering frame (`neutralPremiseImp_eq_variablyStrictImp`).
 -/
 
 @[expose] public section
+
+open scoped PremiseOrdering
 
 namespace Lewis1981
 
@@ -90,7 +95,7 @@ def premiseImp : Set W :=
 
 /-- In the ordering a premise frame induces at `i`, `j` is at least as close as `k` when every
 premise for `i` that holds at `k` holds at `j`. -/
-abbrev premiseOrder (i : W) : Preorder W := Preorder.ofCriteria (· ∈ ·) (H i)
+abbrev premiseOrder (i : W) : Preorder W := ≤[H i]
 
 end Premise
 
@@ -128,21 +133,71 @@ field is at least as close as some given world of it. -/
 def ofOrdering (S : W → Set W) (ord : W → Preorder W) (i : W) : Set (Set W) :=
   (fun k ↦ {j ∈ S i | (ord i).le j k}) '' S i
 
+variable {S : W → Set W} {ord : W → Preorder W} {i j k : W}
+
+-- §4: the field of the induced ordering frame is the given field
+theorem sUnion_ofOrdering : ⋃₀ ofOrdering S ord i = S i :=
+  Set.ext fun j ↦
+    ⟨fun ⟨_, ⟨_, _, hk⟩, hj⟩ ↦ (hk ▸ hj).1, fun hj ↦ ⟨_, ⟨j, hj, rfl⟩, hj, (ord i).le_refl j⟩⟩
+
+-- §4: on the field, the ordering the induced premise frame induces is the given ordering
+theorem premiseOrder_ofOrdering_le_iff (hk : k ∈ S i) :
+    (premiseOrder (ofOrdering S ord) i).le j k ↔ j ∈ S i ∧ (ord i).le j k :=
+  Preorder.ofLowerSets_le_iff_of_mem (r := fun j k ↦ j ∈ S i ∧ (ord i).le j k)
+    (by rintro _ ⟨m, -, rfl⟩ a b ⟨ha, hab⟩ ⟨-, hbm⟩; exact ⟨ha, (ord i).le_trans _ _ _ hab hbm⟩)
+    ⟨hk, (ord i).le_refl k⟩ ⟨k, hk, rfl⟩
+
 /-- Every ordering frame is induced by a premise frame, so the correspondence of §4 exhausts both
 classes of frames. -/
 theorem orderingImp_eq_premiseImp (S : W → Set W) (ord : W → Preorder W) :
     orderingImp S ord A C = premiseImp (ofOrdering S ord) A C := by
   rw [premiseImp_eq_orderingImp]
   ext i
-  have hS : ⋃₀ ofOrdering S ord i = S i := Set.ext fun j ↦
-    ⟨fun ⟨_, ⟨_, _, hk⟩, hj⟩ ↦ (hk ▸ hj).1, fun hj ↦ ⟨_, ⟨j, hj, rfl⟩, hj, (ord i).le_refl j⟩⟩
   have hle : ∀ j ∈ S i ∩ A, ∀ k ∈ S i ∩ A,
-      (ord i).le j k ↔ (premiseOrder (ofOrdering S ord) i).le j k := by
-    rintro j ⟨hj, -⟩ k ⟨hk, -⟩
-    refine ⟨fun hjk ↦ ?_, fun h ↦ (h _ ⟨k, hk, rfl⟩ ⟨hk, (ord i).le_refl k⟩).2⟩
-    rintro _ ⟨m, -, rfl⟩ ⟨-, hkm⟩
-    exact ⟨hj, (ord i).le_trans _ _ _ hjk hkm⟩
-  simp only [mem_orderingImp, hS, Preorder.minimals_congr hle]
+      (ord i).le j k ↔ (premiseOrder (ofOrdering S ord) i).le j k :=
+    fun j hj k hk ↦ ((premiseOrder_ofOrdering_le_iff hk.1).trans (and_iff_right hj.1)).symm
+  simp only [mem_orderingImp, sUnion_ofOrdering, Preorder.minimals_congr hle]
+
+/-! ### Centering (§§2, 3, 7)
+
+A premise frame satisfies Centering at `i` when `i`, and no other world, belongs to every premise
+for `i`. An ordering frame satisfies it when `i` is in its own field and strictly closer than every
+other world of the field. -/
+
+-- §7: a premise frame and the ordering frame it induces both satisfy Centering or neither does
+/-- At a world with a premise and no empty premise, the premises single the world out just in case
+it is in the field of the induced ordering and strictly closer than every other world of it. -/
+theorem sInter_eq_singleton_iff (hne : (H i).Nonempty) (h₀ : ∅ ∉ H i) :
+    ⋂₀ H i = {i} ↔
+      i ∈ ⋃₀ H i ∧ ∀ j ∈ ⋃₀ H i, j ≠ i → (premiseOrder H i).lt i j := by
+  constructor
+  · intro h
+    have hi : ∀ p ∈ H i, i ∈ p := Set.mem_sInter.1 (h ▸ rfl)
+    obtain ⟨p, hp⟩ := hne
+    refine ⟨⟨p, hp, hi p hp⟩, fun j _ hji ↦ ⟨fun q hq _ ↦ hi q hq, fun hle ↦ hji ?_⟩⟩
+    exact (Set.ext_iff.1 h j).1 (Set.mem_sInter.2 fun q hq ↦ hle q hq (hi q hq))
+  · rintro ⟨-, h⟩
+    have hi : ∀ p ∈ H i, i ∈ p := fun p hp ↦ by
+      obtain ⟨j, hj⟩ := Set.nonempty_iff_ne_empty.2 fun h ↦ h₀ (h ▸ hp)
+      by_cases hji : j = i
+      · exact hji ▸ hj
+      · exact (h j ⟨p, hp, hj⟩ hji).1 p hp hj
+    refine Set.eq_singleton_iff_unique_mem.2 ⟨hi, fun j hj ↦ by_contra fun hji ↦ ?_⟩
+    obtain ⟨p, hp⟩ := hne
+    exact (h j ⟨p, hp, hj p hp⟩ hji).2 fun q hq _ ↦ hj q hq
+
+-- §4: the premise frame an ordering frame with Centering induces satisfies Centering
+theorem sInter_ofOrdering (hi : i ∈ S i) (h : ∀ j ∈ S i, j ≠ i → (ord i).lt i j) :
+    ⋂₀ ofOrdering S ord i = {i} := by
+  have hle : ∀ k ∈ S i, (ord i).le i k := fun k hk ↦ by
+    by_cases hki : k = i
+    · exact hki ▸ (ord i).le_refl i
+    · exact (((ord i).lt_iff_le_not_ge _ _).1 (h k hk hki)).1
+  refine Set.eq_singleton_iff_unique_mem.2 ⟨?_, fun j hj ↦ by_contra fun hji ↦ ?_⟩
+  · rintro _ ⟨k, hk, rfl⟩
+    exact ⟨hi, hle k hk⟩
+  · have hj' := hj _ ⟨i, hi, rfl⟩
+    exact (((ord i).lt_iff_le_not_ge _ _).1 (h j hj'.1 hji)).2 hj'.2
 
 /-! ### Surplus information (§4)
 
@@ -159,9 +214,9 @@ def split : Fin 3 → Set (Set (Fin 3)) := fun _ ↦ {{0, 1}, {0, 2}}
 
 theorem premiseOrder_tied_ne_split : premiseOrder tied 0 ≠ premiseOrder split 0 := by
   intro h
-  have h12 : (premiseOrder tied 0).le 1 2 := by simp [tied, Preorder.ofCriteria_le_iff]
+  have h12 : (premiseOrder tied 0).le 1 2 := by simp [tied, Preorder.ofLowerSets_le_iff]
   rw [h] at h12
-  simp [split, Preorder.ofCriteria_le_iff] at h12
+  simp [split, Preorder.ofLowerSets_le_iff] at h12
 
 theorem premiseImp_tied_iff_split (A C : Set (Fin 3)) :
     0 ∈ premiseImp tied A C ↔ 0 ∈ premiseImp split A C := by
@@ -170,7 +225,7 @@ theorem premiseImp_tied_iff_split (A C : Set (Fin 3)) :
   have hlt : ∀ a b, (premiseOrder tied 0).lt a b ↔ (premiseOrder split 0).lt a b := by
     intro a b
     rw [(premiseOrder tied 0).lt_iff_le_not_ge, (premiseOrder split 0).lt_iff_le_not_ge]
-    simp only [Preorder.ofCriteria_le_iff, tied, split, Set.mem_insert_iff, Set.mem_singleton_iff,
+    simp only [Preorder.ofLowerSets_le_iff, tied, split, Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp, forall_eq]
     revert a b; decide
   simp only [premiseImp_eq_orderingImp, mem_orderingImp, hS,
@@ -189,7 +244,7 @@ evaluate every counterfactual alike: truth condition P is the variably strict co
 theorem neutralPremiseImp_eq_variablyStrictImp :
     neutralPremiseImp H A C = variablyStrictImp (fun i ↦ ⋃₀ H i) (premiseOrder H) A C := by
   ext i
-  rw [mem_variablyStrictImp, Filter.atBotOn_ofCriteria, Filter.mem_atBotOn_satisfied_iff]
+  rw [mem_variablyStrictImp, Filter.atBotOn_ofLowerSets, Filter.mem_atBotOn_satisfied_iff]
   refine ⟨fun h B hB ⟨u, ⟨⟨c, hc, huc⟩, huA⟩, huB⟩ ↦ ?_, fun h J hJ ⟨c, hc⟩ ↦ ?_⟩
   · obtain ⟨K, ⟨hK, v, hvA, hvK⟩, hBK, hKC⟩ := h (insert c B)
       ⟨Set.insert_subset hc hB, u, huA, Set.forall_mem_insert.2 ⟨huc, huB⟩⟩ ⟨c, B.mem_insert c⟩

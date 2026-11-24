@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Modality.BranchingTime
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Core.Order.Minimals
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Linglib.Core.Order.GornAddress
 public import Mathlib.Tactic.DeriveFintype
 

@@ -33,6 +33,8 @@ evaluates the derived word.
   derived word's winners among the subparadigms whose base wins.
 * `Transderivational.eq_zero_of_mem_evalOn_nonrecursive`: under summed evaluation, a
   candidate satisfying the top constraints in both words forces every winner to.
+* `Transderivational.evalOn_baseRecursion_ooIdentity`: an OO-Identity constraint never chooses
+  among the candidates for a simplex word.
 
 ## Implementation notes
 
@@ -141,6 +143,17 @@ theorem evalOn_recursive :
       Constraint.evalOn cand (Constraint.evalOn cand labels (baseRecursion ranking r))
         (derivedRecursion ranking r) :=
   Constraint.evalOn_append
+
+/-- A simplex word bears no OO relation, so an OO-Identity constraint never chooses among the
+candidates for a base: the base's copy of a hierarchy selects what it selects without the
+constraint. -/
+theorem evalOn_baseRecursion_ooIdentity [DecidableEq ρ] {top rest : List (ρ → ParadigmConstraint α)}
+    (rel : ρ) (f : Correspondence.Coindexation Role α → Role → Role → ℕ) :
+    Constraint.evalOn cand labels (baseRecursion (top ++ ooIdentity rel f :: rest) r) =
+      Constraint.evalOn cand labels (baseRecursion (top ++ rest) r) := by
+  simp only [Constraint.evalOn, baseRecursion, List.map_append, List.map_cons,
+    Constraint.eval_append]
+  exact Constraint.eval_cons_of_forall_eq fun _ _ _ _ ↦ rfl
 
 /-- When the candidates share their base, recursive evaluation is evaluation of the derived
 word. -/

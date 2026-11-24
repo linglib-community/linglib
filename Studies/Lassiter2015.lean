@@ -47,6 +47,8 @@ likely to win as not; the lottery's probability measure makes the first true and
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Lassiter2015
 
 open ComparativeProbability ComparativePossibility Modality MeasureTheory ProbabilityTheory
@@ -245,7 +247,7 @@ theorem lifts_lottery_collapse (r : Ticket → Ticket → Prop) :
 def onlyBest (w₀ : W) : Set (Set W) := {{w₀}}
 
 theorem onlyBest_le (w₀ v u : W) : (v ≤[onlyBest w₀] u) ↔ (u = w₀ → v = w₀) := by
-  simp [onlyBest, Preorder.ofCriteria_le_iff]
+  simp [onlyBest, Preorder.ofLowerSets_le_iff]
 
 theorem bestWorlds_onlyBest (w₀ w : W) : bestWorlds ⊥ (fun _ ↦ onlyBest w₀) w = {w₀} := by
   ext x
@@ -291,13 +293,13 @@ theorem peaked_real (A : Set (Fin 3)) :
     peaked.real A = ∑ i, A.indicator ![6 / 10, 2 / 10, 2 / 10] i :=
   Measure.finsetSum_ofReal_smul_dirac_real_apply peaked_nonneg A
 
-theorem skewed_agrees : (premisePreorder (onlyBest 0)).le = (inducedGe skewed on fun u ↦ {u}) :=
+theorem skewed_agrees : (≤[onlyBest 0]).le = (inducedGe skewed on fun u ↦ {u}) :=
   funext₂ fun u v ↦ propext <| by
     rw [Function.onFun, Measure.inducedGe_iff_real, skewed_real, skewed_real]
     rw [onlyBest_le]
     fin_cases u <;> fin_cases v <;> simp <;> norm_num
 
-theorem peaked_agrees : (premisePreorder (onlyBest 0)).le = (inducedGe peaked on fun u ↦ {u}) :=
+theorem peaked_agrees : (≤[onlyBest 0]).le = (inducedGe peaked on fun u ↦ {u}) :=
   funext₂ fun u v ↦ propext <| by
     rw [Function.onFun, Measure.inducedGe_iff_real, peaked_real, peaked_real]
     rw [onlyBest_le]
@@ -307,7 +309,7 @@ theorem peaked_agrees : (premisePreorder (onlyBest 0)).le = (inducedGe peaked on
 of every probability measure agreeing with it on singletons (p. 662). -/
 theorem not_exists_lift :
     ¬∃ ge : Set (Fin 3) → Set (Fin 3) → Prop, ∀ P : Measure (Fin 3), IsProbabilityMeasure P →
-      (premisePreorder (onlyBest 0)).le = (inducedGe P on fun u ↦ {u}) → inducedGe P = ge := by
+      (≤[onlyBest 0]).le = (inducedGe P on fun u ↦ {u}) → inducedGe P = ge := by
   rintro ⟨ge, h⟩
   have := congrFun₂ ((h skewed inferInstance skewed_agrees).trans
     (h peaked inferInstance peaked_agrees).symm) {0} {1, 2}
@@ -319,11 +321,11 @@ theorem not_exists_lift :
 half the worlds are best (p. 664). -/
 theorem not_mustToProbably_of_ncard_lt [Finite W] (O : Set (Set W)) (w : W)
     (h : (bestWorlds ⊥ (fun _ ↦ O) w).ncard < (bestWorlds ⊥ (fun _ ↦ O) w)ᶜ.ncard) :
-    ¬MustToProbably (MatchingLift (premisePreorder O).le) (Yalcin2010.must O · w) :=
+    ¬MustToProbably (MatchingLift (≤[O]).le) (Yalcin2010.must O · w) :=
   fun hV6 ↦ absurd (hV6 _ (must_bestWorlds O w)).1.ncard_le (not_le.2 h)
 
 theorem mLift_refutes_V6 :
-    ¬MustToProbably (MatchingLift (premisePreorder (onlyBest 0)).le)
+    ¬MustToProbably (MatchingLift (≤[onlyBest 0]).le)
       (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) :=
   not_mustToProbably_of_ncard_lt _ _ (by
     rw [bestWorlds_onlyBest, Set.ncard_singleton,
@@ -465,15 +467,15 @@ theorem bridge3_of_agree [Fintype W] [MeasurableSingletonClass W]
 end Bridges
 
 theorem bridge1_kratzer :
-    Bridge1 (premisePreorder (Kratzer2012.Grades.ideal 0)).le Kratzer2012.Grades.prob := by
-  have hr : (premisePreorder (Kratzer2012.Grades.ideal 0)).le = (· ≥ ·) :=
+    Bridge1 (≤[Kratzer2012.Grades.ideal 0]).le Kratzer2012.Grades.prob := by
+  have hr : (≤[Kratzer2012.Grades.ideal 0]).le = (· ≥ ·) :=
     funext₂ fun w z ↦ propext (Kratzer2012.Grades.atLeastAsGoodAs_ideal_iff 0 w z)
   intro A B h
   rw [hr] at h
   exact (Kratzer2012.Grades.kratzer_iff_measure_le_iff.2
     Kratzer2012.Grades.superincreasing_prob A B).1 h
 
-theorem not_bridge1_skewed : ¬Bridge1 (premisePreorder (onlyBest 0)).le skewed := fun h ↦ by
+theorem not_bridge1_skewed : ¬Bridge1 (≤[onlyBest 0]).le skewed := fun h ↦ by
   have := h {0} {1, 2} (kratzer_iff.2 fun _ _ ↦ ⟨0, ⟨rfl, by simp⟩, fun ⟨_, h2⟩ ↦
     h2 ((onlyBest_le _ _ _).2 fun _ ↦ rfl)⟩)
   rw [Measure.inducedGe_iff_real, skewed_real, skewed_real] at this
@@ -481,7 +483,7 @@ theorem not_bridge1_skewed : ¬Bridge1 (premisePreorder (onlyBest 0)).le skewed 
   norm_num at this
 
 theorem bridge2_refutes_V6 :
-    Bridge2 (premisePreorder (onlyBest 0)).le skewed ∧
+    Bridge2 (≤[onlyBest 0]).le skewed ∧
       ¬MustToProbably (inducedGe skewed) (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) := by
   refine ⟨skewed_agrees.le, fun hV6 ↦ ?_⟩
   have h := (hV6 _ (must_onlyBest 0 0)).1
@@ -489,7 +491,7 @@ theorem bridge2_refutes_V6 :
   norm_num at h
 
 theorem bridge3_refutes_V6 :
-    Bridge3 (premisePreorder (onlyBest 0)).le skewed ∧
+    Bridge3 (≤[onlyBest 0]).le skewed ∧
       ¬MustToProbably (inducedGe skewed) (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) :=
   ⟨bridge3_of_agree _ _ skewed_agrees, bridge2_refutes_V6.2⟩
 
@@ -510,7 +512,7 @@ theorem thin_real (A : Set (Fin 2)) :
   Measure.finsetSum_ofReal_smul_dirac_real_apply thin_nonneg A
 
 theorem bridge1_thin_margin :
-    Bridge1 (premisePreorder (onlyBest 0)).le thin ∧
+    Bridge1 (≤[onlyBest 0]).le thin ∧
       Yalcin2010.must (onlyBest (0 : Fin 2)) {0} 0 ∧
       thin.real {0} < 5002 / 10000 := by
   have hsets : ∀ A : Set (Fin 2), A = ∅ ∨ A = {0} ∨ A = {1} ∨ A = Set.univ := fun A ↦ by
@@ -533,7 +535,7 @@ def crossed : Set (Set (Fin 4)) := {{0, 2}, {1, 3}, {0, 1}}
 theorem crossed_le (v u : Fin 4) : (v ≤[crossed] u) ↔
     ((u = 0 ∨ u = 2) → (v = 0 ∨ v = 2)) ∧ ((u = 1 ∨ u = 3) → (v = 1 ∨ v = 3)) ∧
       ((u = 0 ∨ u = 1) → (v = 0 ∨ v = 1)) := by
-  simp [crossed, Preorder.ofCriteria_le_iff]
+  simp [crossed, Preorder.ofLowerSets_le_iff]
 
 theorem bestWorlds_crossed : bestWorlds ⊥ (fun _ ↦ crossed) 0 = {0, 1} := by
   ext x
@@ -543,7 +545,7 @@ theorem bestWorlds_crossed : bestWorlds ⊥ (fun _ ↦ crossed) 0 = {0, 1} := by
   decide
 
 theorem not_asymmRel_kratzer_bestWorlds :
-    ¬AsymmRel (Kratzer (premisePreorder crossed).le) (bestWorlds ⊥ (fun _ ↦ crossed) 0)
+    ¬AsymmRel (Kratzer (≤[crossed]).le) (bestWorlds ⊥ (fun _ ↦ crossed) 0)
       (bestWorlds ⊥ (fun _ ↦ crossed) 0)ᶜ := by
   rw [bestWorlds_crossed]
   refine fun ⟨_, h⟩ ↦ h ?_
@@ -589,7 +591,7 @@ theorem quant_mustToProbably [DiscreteMeasurableSpace W]
 theorem rows_35 [DiscreteMeasurableSpace W] (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) :
     (MustToProbably (inducedGe P) (fun A ↦ A ∈ humanNecessity f ⊥ w) ↔
         Examples.ex35.judgment = .acceptable) ∧
-      ¬(MustToProbably (MatchingLift (premisePreorder (onlyBest 0)).le)
+      ¬(MustToProbably (MatchingLift (≤[onlyBest 0]).le)
           (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) ↔
         Examples.ex35.judgment = .acceptable) :=
   ⟨iff_of_true (quant_mustToProbably P hP) rfl, fun h ↦ mLift_refutes_V6 (h.2 rfl)⟩

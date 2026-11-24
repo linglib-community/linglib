@@ -1,0 +1,447 @@
+{
+  "meta": {
+    "bibkey": "paramore-bennett-2026",
+    "method": "experiment",
+    "description": "Oronasal air-pressure recordings of Pakistani Panjabi. Nasalance is the share of nasal air pressure in the total of oral and nasal air pressure. Experiment 1 compares the vowels of monosyllables with a contrastive nasal vowel (CṼṼ) and with a vowel before a nasal consonant (CVVN); Experiment 2 compares the glide and the vowel before it in words ending in a vowel, a glide and a contrastive nasal vowel ([ṼG̃Ṽ=CV]), in an oral vowel ([VGV]), or in a vowel and a nasal consonant ([VGṼN]). Each table is a linear mixed-effects model with the condition dummy coded, so that an estimate is a difference from the intercept."
+  },
+  "types": [
+    {
+      "name": "VowelPredictor",
+      "doc": "The predictors of the model of the vowel in Experiment 1.",
+      "levels": [
+        {
+          "name": "intercept",
+          "label": "Intercept (CṼṼ)",
+          "doc": "the contrastive nasal vowel, averaged over time steps and vowel qualities"
+        },
+        {
+          "name": "cvvn",
+          "label": "CVVN",
+          "doc": "the vowel before a nasal consonant"
+        },
+        {
+          "name": "beg",
+          "label": "Beg",
+          "doc": "the first third of the vowel"
+        },
+        {
+          "name": "mid",
+          "label": "Mid",
+          "doc": "the middle third of the vowel"
+        },
+        {
+          "name": "fin",
+          "label": "Fin",
+          "doc": "the final third of the vowel"
+        },
+        {
+          "name": "uu",
+          "label": "uu",
+          "doc": "the vowel uu"
+        },
+        {
+          "name": "ii",
+          "label": "ii",
+          "doc": "the vowel ii"
+        },
+        {
+          "name": "oo",
+          "label": "oo",
+          "doc": "the vowel oo"
+        },
+        {
+          "name": "openO",
+          "label": "ɔɔ",
+          "doc": "the vowel ɔɔ"
+        },
+        {
+          "name": "ee",
+          "label": "ee",
+          "doc": "the vowel ee"
+        },
+        {
+          "name": "aa",
+          "label": "ɑɑ",
+          "doc": "the vowel ɑɑ"
+        },
+        {
+          "name": "cvvnBeg",
+          "label": "CVVN:Beg",
+          "doc": "the vowel before a nasal consonant in its first third"
+        },
+        {
+          "name": "cvvnMid",
+          "label": "CVVN:Mid",
+          "doc": "the vowel before a nasal consonant in its middle third"
+        },
+        {
+          "name": "cvvnFin",
+          "label": "CVVN:Fin",
+          "doc": "the vowel before a nasal consonant in its final third"
+        }
+      ]
+    },
+    {
+      "name": "GlidePredictor",
+      "doc": "The predictors of the model of the glide in Experiment 2.",
+      "levels": [
+        {
+          "name": "intercept",
+          "label": "Intercept (Final V in [ṼG̃Ṽ=CV])",
+          "doc": "the final contrastive nasal vowel"
+        },
+        {
+          "name": "nasal",
+          "label": "glide ([ṼG̃Ṽ=CV] condition)",
+          "doc": "the glide before a contrastive nasal vowel"
+        },
+        {
+          "name": "preN",
+          "label": "glide (pre-N [VGṼN] condition)",
+          "doc": "the glide before a vowel that a nasal consonant follows"
+        }
+      ]
+    },
+    {
+      "name": "PenultPredictor",
+      "doc": "The predictors of the model of the vowel before the glide in Experiment 2.",
+      "levels": [
+        {
+          "name": "intercept",
+          "label": "Intercept (penult V in oral [VGV])",
+          "doc": "the vowel before the glide in a word ending in an oral vowel"
+        },
+        {
+          "name": "preN",
+          "label": "penult V in pre-N [VGṼN]",
+          "doc": "the vowel before the glide in a word ending in a vowel and a nasal consonant"
+        },
+        {
+          "name": "nasal",
+          "label": "penult V in [ṼG̃Ṽ=CV]",
+          "doc": "the vowel before the glide in a word ending in a contrastive nasal vowel"
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "ropeMonosyllable",
+      "type": "decimal",
+      "value": "0.061",
+      "doc": "The half-width of the region of practical equivalence for the nasalance of the contrastive nasal vowels of Experiment 1, two standard deviations of the speaker who varies least.",
+      "locator": "§3.5",
+      "verified": "text-layer"
+    },
+    {
+      "name": "ropeFinal",
+      "type": "decimal",
+      "value": "0.051",
+      "doc": "The half-width of the region of practical equivalence for the nasalance of the final contrastive nasal vowels of Experiment 2.",
+      "locator": "§4.2.3",
+      "verified": "text-layer"
+    },
+    {
+      "name": "ropePenult",
+      "type": "decimal",
+      "value": "0.033",
+      "doc": "The half-width of the region of practical equivalence for the nasalance of the oral vowels before the glide in Experiment 2.",
+      "locator": "§4.2.4",
+      "verified": "text-layer"
+    }
+  ],
+  "tables": [
+    {
+      "name": "vowelModel",
+      "structure": "VowelCoefficient",
+      "doc": "a coefficient of the model of mean vowel nasalance in Experiment 1, for nineteen speakers.",
+      "locator": "Table 2",
+      "verified": "page-image",
+      "key": [
+        "predictor"
+      ],
+      "columns": [
+        {
+          "name": "predictor",
+          "type": "VowelPredictor",
+          "doc": "The predictor."
+        },
+        {
+          "name": "beta",
+          "type": "decimal",
+          "doc": "The estimate, a difference in mean nasalance from the intercept."
+        },
+        {
+          "name": "ciLow",
+          "type": "decimal",
+          "doc": "The lower bound of the 95% confidence interval."
+        },
+        {
+          "name": "ciHigh",
+          "type": "decimal",
+          "doc": "The upper bound of the 95% confidence interval."
+        },
+        {
+          "name": "t",
+          "type": "decimal",
+          "doc": "The t statistic."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "predictor": "Intercept (CṼṼ)",
+          "beta": "0.541",
+          "ciLow": "0.514",
+          "ciHigh": "0.568",
+          "t": "39.55",
+          "p": "< 0.001"
+        },
+        {
+          "predictor": "CVVN",
+          "beta": "-0.016",
+          "ciLow": "-0.039",
+          "ciHigh": "0.007",
+          "t": "-1.36",
+          "p": "0.18"
+        },
+        {
+          "predictor": "Beg",
+          "beta": "-0.114",
+          "ciLow": "-0.117",
+          "ciHigh": "-0.112",
+          "t": "-91.54",
+          "p": "< 0.001"
+        },
+        {
+          "predictor": "Mid",
+          "beta": "0.040",
+          "ciLow": "0.038",
+          "ciHigh": "0.043",
+          "t": "32.29",
+          "p": "< 0.001"
+        },
+        {
+          "predictor": "Fin",
+          "beta": "0.074",
+          "ciLow": "0.071",
+          "ciHigh": "0.077",
+          "t": "51.04",
+          "p": "< 0.001"
+        },
+        {
+          "predictor": "uu",
+          "beta": "0.038",
+          "ciLow": "0.016",
+          "ciHigh": "0.059",
+          "t": "3.44",
+          "p": "0.002"
+        },
+        {
+          "predictor": "ii",
+          "beta": "0.052",
+          "ciLow": "0.021",
+          "ciHigh": "0.082",
+          "t": "3.34",
+          "p": "0.002"
+        },
+        {
+          "predictor": "oo",
+          "beta": "-0.046",
+          "ciLow": "-0.071",
+          "ciHigh": "-0.022",
+          "t": "-3.66",
+          "p": "< 0.001"
+        },
+        {
+          "predictor": "ɔɔ",
+          "beta": "-0.009",
+          "ciLow": "-0.040",
+          "ciHigh": "0.021",
+          "t": "-0.60",
+          "p": "0.55"
+        },
+        {
+          "predictor": "ee",
+          "beta": "-0.012",
+          "ciLow": "-0.061",
+          "ciHigh": "0.037",
+          "t": "-0.47",
+          "p": "0.64"
+        },
+        {
+          "predictor": "ɑɑ",
+          "beta": "-0.022",
+          "ciLow": "-0.004",
+          "ciHigh": "-0.004",
+          "t": "-2.44",
+          "p": "0.02"
+        },
+        {
+          "predictor": "CVVN:Beg",
+          "beta": "0.017",
+          "ciLow": "0.013",
+          "ciHigh": "0.021",
+          "t": "9.23",
+          "p": "< 0.001"
+        },
+        {
+          "predictor": "CVVN:Mid",
+          "beta": "-0.002",
+          "ciLow": "-0.005",
+          "ciHigh": "0.002",
+          "t": "-0.88",
+          "p": "0.38"
+        },
+        {
+          "predictor": "CVVN:Fin",
+          "beta": "-0.015",
+          "ciLow": "-0.019",
+          "ciHigh": "-0.011",
+          "t": "-7.27",
+          "p": "< 0.001"
+        }
+      ]
+    },
+    {
+      "name": "glideModel",
+      "structure": "GlideCoefficient",
+      "doc": "a coefficient of the model of mean glide nasalance in Experiment 2, for the thirteen speakers who nasalize the vowel before a nasal consonant.",
+      "locator": "Table 5",
+      "verified": "page-image",
+      "key": [
+        "predictor"
+      ],
+      "columns": [
+        {
+          "name": "predictor",
+          "type": "GlidePredictor",
+          "doc": "The predictor."
+        },
+        {
+          "name": "beta",
+          "type": "decimal",
+          "doc": "The estimate, a difference in mean nasalance from the final contrastive nasal vowel."
+        },
+        {
+          "name": "ciLow",
+          "type": "decimal",
+          "doc": "The lower bound of the 95% confidence interval."
+        },
+        {
+          "name": "ciHigh",
+          "type": "decimal",
+          "doc": "The upper bound of the 95% confidence interval."
+        },
+        {
+          "name": "t",
+          "type": "decimal",
+          "doc": "The t statistic."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "predictor": "Intercept (Final V in [ṼG̃Ṽ=CV])",
+          "beta": "0.538",
+          "ciLow": "0.475",
+          "ciHigh": "0.600",
+          "t": "16.83",
+          "p": "< 0.001"
+        },
+        {
+          "predictor": "glide ([ṼG̃Ṽ=CV] condition)",
+          "beta": "0.068",
+          "ciLow": "0.048",
+          "ciHigh": "0.087",
+          "t": "6.83",
+          "p": "< 0.001"
+        },
+        {
+          "predictor": "glide (pre-N [VGṼN] condition)",
+          "beta": "-0.167",
+          "ciLow": "-0.232",
+          "ciHigh": "-0.100",
+          "t": "-4.92",
+          "p": "< 0.001"
+        }
+      ]
+    },
+    {
+      "name": "penultModel",
+      "structure": "PenultCoefficient",
+      "doc": "a coefficient of the model of the mean nasalance of the vowel before the glide in Experiment 2, for the same thirteen speakers.",
+      "locator": "Table 6",
+      "verified": "page-image",
+      "key": [
+        "predictor"
+      ],
+      "columns": [
+        {
+          "name": "predictor",
+          "type": "PenultPredictor",
+          "doc": "The predictor."
+        },
+        {
+          "name": "beta",
+          "type": "decimal",
+          "doc": "The estimate, a difference in mean nasalance from the vowel before the glide in a word ending in an oral vowel."
+        },
+        {
+          "name": "ciLow",
+          "type": "decimal",
+          "doc": "The lower bound of the 95% confidence interval."
+        },
+        {
+          "name": "ciHigh",
+          "type": "decimal",
+          "doc": "The upper bound of the 95% confidence interval."
+        },
+        {
+          "name": "t",
+          "type": "decimal",
+          "doc": "The t statistic."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "predictor": "Intercept (penult V in oral [VGV])",
+          "beta": "0.194",
+          "ciLow": "0.132",
+          "ciHigh": "0.255",
+          "t": "6.20",
+          "p": "< 0.001"
+        },
+        {
+          "predictor": "penult V in pre-N [VGṼN]",
+          "beta": "0.069",
+          "ciLow": "0.005",
+          "ciHigh": "0.133",
+          "t": "2.12",
+          "p": "0.05"
+        },
+        {
+          "predictor": "penult V in [ṼG̃Ṽ=CV]",
+          "beta": "0.338",
+          "ciLow": "0.274",
+          "ciHigh": "0.402",
+          "t": "10.36",
+          "p": "< 0.001"
+        }
+      ]
+    }
+  ]
+}

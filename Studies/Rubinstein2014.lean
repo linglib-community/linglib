@@ -53,6 +53,8 @@ Hebrew reaches weak necessity through the comparatives alone.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Rubinstein2014
 
 open Modality
@@ -87,13 +89,13 @@ def favoredWorlds (b : Backgrounds W) (w : W) : Set W :=
 
 /-- The promoted priorities a world verifies. -/
 def verified (b : Backgrounds W) (w u : W) : Set (Set W) :=
-  Preorder.satisfied (· ∈ ·) {q | q ∈ b.nonNegotiable w} u
+  {q ∈ {q | q ∈ b.nonNegotiable w} | u ∈ q}
 
 variable {b : Backgrounds W} {p : Set W} {w : W}
 
 theorem atLeastAsGoodAs_iff_verified_subset {u v : W} :
     (v ≤[b.nonNegotiable w] u) ↔ verified b w u ⊆ verified b w v :=
-  (Preorder.satisfied_subset_iff _ _ u v).symm
+  Preorder.ofLowerSets_le_iff_subset _ v u
 
 /-- The priorities a best world verifies form a maximal consistent extension. -/
 theorem verified_mem_extensions {u : W} (hu : u ∈ bestWorlds b.circumstances b.nonNegotiable w) :
@@ -128,7 +130,7 @@ def strongNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
 /-- Weak necessity (42) is human necessity over the favored worlds under the negotiable
 ordering source. -/
 def weakNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
-  (premisePreorder (b.negotiable w)).minimals (favoredWorlds b w) ⊆ p
+  (≤[b.negotiable w]).minimals (favoredWorlds b w) ⊆ p
 
 /-- Strong necessity is [von-fintel-iatridou-2008]'s, with the promoted priorities as the
 ordering source. -/
@@ -177,7 +179,7 @@ theorem weakNecessity_ideal {γ : Set W} (hγ : b.negotiable w = {γ})
     (hlive : ∃ v ∈ favoredWorlds b w, v ∈ γ) :
     weakNecessity b γ w ∧ ¬ weakNecessity b γᶜ w := by
   obtain ⟨v, hv, hγv⟩ := hlive
-  rw [weakNecessity, weakNecessity, hγ, Preorder.minimals_ofCriteria_eq ⟨v, hv, by simpa⟩]
+  rw [weakNecessity, weakNecessity, hγ, Preorder.minimals_ofLowerSets_eq ⟨v, hv, by simpa⟩]
   exact ⟨fun _ h ↦ h.2 γ (Set.mem_singleton _), fun h ↦ h ⟨hv, by simpa⟩ hγv⟩
 
 /-- The neg-raising inference for the ideal: when the negotiable ideal is `γ` or its negation and
@@ -239,7 +241,7 @@ private theorem favoredWorlds_ofIdeals (h g : List Ideal) (w : Revenue) :
     show (true, true) ∈ Background.accessibleWorlds ⊥ w
     rw [Background.accessibleWorlds_bot]; exact Set.mem_univ _
   rw [favoredWorlds_eq_bestWorlds,
-    bestWorlds, Preorder.minimals_ofCriteria_eq ⟨(true, true), hall, ?_⟩]
+    bestWorlds, Preorder.minimals_ofLowerSets_eq ⟨(true, true), hall, ?_⟩]
   · ext v
     simp only [ofIdeals, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
       Set.forall_mem_image, Set.mem_ofPred_eq]
@@ -255,7 +257,7 @@ theorem tax_shift (w : Revenue) :
       (¬ Negotiable commitmentAfter [Ideal.international] ∧
         strongNecessity (ofIdeals [.domestic, .international] []) reportAll w) := by
   refine ⟨⟨by decide, ?_, fun h ↦ ?_⟩, by decide, fun v hv ↦ ?_⟩
-  · rw [weakNecessity, favoredWorlds_ofIdeals, Preorder.minimals_ofCriteria_eq ⟨(true, true),
+  · rw [weakNecessity, favoredWorlds_ofIdeals, Preorder.minimals_ofLowerSets_eq ⟨(true, true),
       by simp [Ideal.holds], by simp [ofIdeals, Ideal.holds]⟩]
     rintro v ⟨hd, hi⟩
     exact ⟨hd .domestic (by simp), hi _ ⟨.international, by simp, rfl⟩⟩

@@ -122,6 +122,20 @@ theorem le_copy (h : s f = none) (c : Option Segment) : s ≤ s.copy f c := by
     (s.setFeature f v) g = s g :=
   Function.update_of_ne (Ne.symm h) _ _
 
+/-- Setting a feature leaves a segment as it is exactly when the segment has that value. -/
+theorem setFeature_eq_self_iff : s.setFeature f v = s ↔ s f = some v :=
+  ⟨fun h ↦ (congrArg (· f) h).symm.trans (setFeature_apply_self s f v),
+    fun h ↦ Segment.ext <| by
+      rw [setFeature, ← show s.val f = some v from h]; exact Function.update_eq_self ..⟩
+
+/-- Changing a segment to a matrix with a single value sets that feature. -/
+theorem setFeature_bot_or (f : Feature) (v : Bool) (s : Segment) :
+    ((⊥ : Segment).setFeature f v).or s = s.setFeature f v := by
+  refine ext' fun g ↦ ?_
+  obtain rfl | h := eq_or_ne f g
+  · simp
+  · simp [setFeature_apply_of_ne h]
+
 theorem copy_apply_of_ne (h : f ≠ g) (s : Segment) (c : Option Segment) :
     (s.copy f c) g = s g := by
   unfold copy
