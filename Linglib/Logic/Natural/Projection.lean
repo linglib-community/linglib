@@ -318,50 +318,9 @@ theorem compl_soundFor_antiAddMult :
     SoundFor .antiAddMult (compl : α → α) :=
   soundFor_antiAddMult_of_boundedLatticeHomClass (OrderIso.compl α)
 
-theorem not_soundFor_antiAddMult : SoundFor .antiAddMult Not :=
-  compl_soundFor_antiAddMult
-
 end ComplInstance
 
 end ProjectivitySignature
-
-/-! ### Per-position profiles
-
-Two-place operators carry one signature per argument position — a
-determiner is one signature in its restrictor and another in its scope.
-`ProjectivitySignature₂` records the pair, `ProjectivitySignature₂.SoundFor` says each component is
-sound for the corresponding section (the other argument held constant), and
-`ProjectivitySignature.SoundFor.comp₂` composes an outer context into both
-positions at once. Certified instances for generalized quantifiers live
-in `Semantics/Quantification/Signatures.lean`. -/
-
-/-- A per-position signature profile for a two-place operator. For
-determiners the positions are restrictor and scope; under the restrictor
-analysis of conditionals, antecedent and consequent. -/
-structure ProjectivitySignature₂ where
-  restrictor : ProjectivitySignature
-  scope : ProjectivitySignature
-  deriving DecidableEq, Repr
-
-section ProjectivitySignature₂
-
-variable {α β γ δ : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
-  [BoundedOrder β] [Lattice γ] [BoundedOrder γ] [Lattice δ] [BoundedOrder δ]
-
-/-- A profile is sound for a two-place operator when each component
-signature is sound for the corresponding section (the other argument held
-constant). -/
-def ProjectivitySignature₂.SoundFor (σ : ProjectivitySignature₂) (f : α → β → γ) : Prop :=
-  (∀ y, σ.restrictor.SoundFor (fun x => f x y)) ∧
-  (∀ x, σ.scope.SoundFor (f x))
-
-theorem ProjectivitySignature.SoundFor.comp₂ {ψ : ProjectivitySignature} {g : γ → δ}
-    {σ : ProjectivitySignature₂} {f : α → β → γ} (hg : ψ.SoundFor g) (hf : σ.SoundFor f) :
-    ProjectivitySignature₂.SoundFor ⟨ψ * σ.restrictor, ψ * σ.scope⟩ (fun x y => g (f x y)) :=
-  ⟨fun y => hg.comp (hf.1 y), fun x => hg.comp (hf.2 x)⟩
-
-end ProjectivitySignature₂
-
 
 /-! ### The projection row of a function class -/
 

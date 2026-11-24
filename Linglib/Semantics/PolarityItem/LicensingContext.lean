@@ -15,6 +15,7 @@ public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Tense.Since
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Quantification.Signatures
 public import Linglib.Semantics.Reference.Indefinite
 public import Linglib.Semantics.Tense.RunTimes
 public import Mathlib.Basic.Rel
@@ -120,21 +121,6 @@ theorem exhaustified_eq_of_forall_le (h : ∀ Q' ∈ C, ∀ P, Q' A P → Q A �
     exhaustified Q C A = Q A :=
   funext fun P ↦ congrArg (P ∈ ·) (Exhaustification.exh_eq_self_iff.2
     (by rintro _ ⟨Q', hQ', rfl⟩ ⟨P, _, hP⟩; exact h Q' hQ' P hP))
-
-open NaturalLogic in
-/-- The scope of a universal over a nonempty restrictor is multiplicative. -/
-theorem holdsFor_mult_every (hA : A.Nonempty) : ProjectivitySignature.mult.HoldsFor (every A) :=
-  ProjectivitySignature.holdsFor_mult_iff.2 ⟨fun _ _ ↦ propext Set.subset_inter_iff,
-    eq_false fun h ↦ hA.ne_empty (Set.subset_empty_iff.1 h)⟩
-
-open NaturalLogic in
-/-- The scope of a universal over a restrictor with two members is not additive. -/
-theorem not_holdsFor_additive_every {a b : α} (ha : a ∈ A) (hb : b ∈ A) (hab : a ≠ b) :
-    ¬ ProjectivitySignature.additive.HoldsFor (every A) := fun h ↦ by
-  have := eq_iff_iff.1 ((ProjectivitySignature.holdsFor_additive_iff.1 h).1 {a}ᶜ {b}ᶜ)
-  refine (this.1 fun x _ ↦ ?_).elim (fun h ↦ h ha rfl) fun h ↦ h hb rfl
-  by_cases hx : x = a
-  exacts [.inr (hx ▸ hab), .inl hx]
 
 theorem exhaustified_no : exhaustified (no : Det α) {everyᶜ} = no := by
   funext A

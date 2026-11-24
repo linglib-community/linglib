@@ -6,58 +6,98 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Logic.Natural.Projection
+public import Linglib.Logic.Natural.ProjectivitySignature
 
 /-!
-# Projectivity signatures of generalized quantifiers
+# Projectivity signatures of the determiners
 
-This file instantiates the natural-logic signature calculus at determiner denotations: *every*
-and *no* receive certified `ProjectivitySignature₂` profiles, read off the anti-additivity and
-monotonicity of their sections, and *not every* is derived by profile composition.
+This file places the argument positions of *every*, *some* and *no* in the function classes of
+natural logic. A determiner is a map of its scope for each restrictor and a map of its restrictor
+for each scope, and each of these maps has a projectivity signature: *some* is additive in both
+arguments, *no* is anti-additive in both, and *every* is anti-additive in its restrictor and
+multiplicative in its scope. The unit condition of each class holds when the other argument is not
+trivial, a nonempty restrictor or a scope that is neither empty nor everything.
 
 ## Main results
 
-* `soundFor_every`, `soundFor_no`: the certified determiner profiles.
+* `Quantifier.Det.holdsFor_antiAdd_every_left`, `Quantifier.Det.holdsFor_mult_every`: *every* is
+  anti-additive in its restrictor and multiplicative in its scope.
+* `Quantifier.Det.holdsFor_additive_some_left`, `Quantifier.Det.holdsFor_additive_some`: *some* is
+  additive in both arguments.
+* `Quantifier.Det.holdsFor_antiAdd_no_left`, `Quantifier.Det.holdsFor_antiAdd_no`: *no* is
+  anti-additive in both arguments.
+* `Quantifier.Det.holdsFor_additive_not_every_left`,
+  `Quantifier.Det.holdsFor_antiMult_not_every`: *not every* is additive in its restrictor and
+  anti-multiplicative in its scope, by composition with negation.
+* `Quantifier.Det.not_holdsFor_additive_every`: the scope of *every* is not additive.
 
 ## References
 
+* [icard-2012]
 * [peters-westerstahl-2006]
-* [van-benthem-1984]
 -/
 
-public section
+@[expose] public section
 
 namespace Quantifier.Det
 
-open NaturalLogic
+open NaturalLogic ProjectivitySignature
 
-variable {α : Type*}
+variable {α : Type*} {A B : Set α}
 
-/-! ### Certified determiner profiles -/
+/-! ### Every -/
 
-/-- *Every* realizes ↓MON↑ as a certified profile, the restrictor side
-derived from left anti-additivity (`leftAntiAdditive_every`). -/
-theorem soundFor_every :
-    ProjectivitySignature₂.SoundFor ⟨.anti, .mono⟩ (every (α := α)) :=
-  ⟨fun S => ProjectivitySignature.soundFor_anti_iff.mpr
-      ((leftAntiAdditive_every S).antitone),
-   fun R => ProjectivitySignature.soundFor_mono_iff.mpr
-      (scopeMonotone_every R)⟩
+/-- The restrictor of a universal whose scope is not everything is anti-additive. -/
+theorem holdsFor_antiAdd_every_left (hB : B ≠ Set.univ) : antiAdd.HoldsFor (every · B) :=
+  holdsFor_antiAdd_iff.2
+    ⟨leftAntiAdditive_every B, eq_false fun h ↦ hB (Set.univ_subset_iff.1 h)⟩
 
-/-- *No* realizes ↓MON↓, both positions via anti-additivity (`leftAntiAdditive_no`,
-`rightAntiAdditive_no`). -/
-theorem soundFor_no :
-    ProjectivitySignature₂.SoundFor ⟨.anti, .anti⟩ (no (α := α)) :=
-  ⟨fun S => ProjectivitySignature.soundFor_anti_iff.mpr
-      ((leftAntiAdditive_no S).antitone),
-   fun R => ProjectivitySignature.soundFor_anti_iff.mpr
-      ((rightAntiAdditive_no R).antitone)⟩
+/-- The scope of a universal over a nonempty restrictor is multiplicative. -/
+theorem holdsFor_mult_every (hA : A.Nonempty) : mult.HoldsFor (every A) :=
+  holdsFor_mult_iff.2 ⟨fun _ _ ↦ propext Set.subset_inter_iff,
+    eq_false fun h ↦ hA.ne_empty (Set.subset_empty_iff.1 h)⟩
 
-/-- *Not every* is obtained by composition, since negating *every* composes the anti-morphism
-row into both positions of *every*'s profile; the scope component `.antiAddMult * .mono = .anti`
-records that *any* is licensed in *not every*'s scope. -/
-example : ProjectivitySignature₂.SoundFor ⟨.antiAddMult * .anti, .antiAddMult * .mono⟩
-    (fun R S => ¬ every (α := α) R S) :=
-  ProjectivitySignature.not_soundFor_antiAddMult.comp₂ (σ := ⟨.anti, .mono⟩) soundFor_every
+/-- The scope of a universal over a restrictor with two members is not additive. -/
+theorem not_holdsFor_additive_every {a b : α} (ha : a ∈ A) (hb : b ∈ A) (hab : a ≠ b) :
+    ¬ additive.HoldsFor (every A) := fun h ↦ by
+  have := eq_iff_iff.1 ((holdsFor_additive_iff.1 h).1 {a}ᶜ {b}ᶜ)
+  refine (this.1 fun x _ ↦ ?_).elim (fun h ↦ h ha rfl) fun h ↦ h hb rfl
+  by_cases hx : x = a
+  exacts [.inr (hx ▸ hab), .inl hx]
+
+/-- The restrictor of *not every* with a scope that is not everything is additive: negation after
+an anti-additive map. -/
+theorem holdsFor_additive_not_every_left (hB : B ≠ Set.univ) :
+    additive.HoldsFor fun A ↦ ¬ every A B :=
+  holdsFor_compl_comp_iff.2 (holdsFor_antiAdd_every_left hB)
+
+/-- The scope of *not every* over a nonempty restrictor is anti-multiplicative: negation after a
+multiplicative map. -/
+theorem holdsFor_antiMult_not_every (hA : A.Nonempty) :
+    antiMult.HoldsFor fun B ↦ ¬ every A B :=
+  holdsFor_compl_comp_iff.2 (holdsFor_mult_every hA)
+
+/-! ### Some -/
+
+/-- The restrictor of an existential with a nonempty scope is additive. -/
+theorem holdsFor_additive_some_left (hB : B.Nonempty) : additive.HoldsFor (Det.some · B) :=
+  holdsFor_additive_iff.2 ⟨fun A A' ↦ congrFun (some_union A A') B, eq_true (by simpa using hB)⟩
+
+/-- The scope of an existential over a nonempty restrictor is additive. -/
+theorem holdsFor_additive_some (hA : A.Nonempty) : additive.HoldsFor (Det.some A) :=
+  holdsFor_additive_iff.2 ⟨fun B B' ↦ by
+      simp [Det.some, Set.inter_union_distrib_left, Set.union_nonempty],
+    eq_true (by simpa [Det.some] using hA)⟩
+
+/-! ### No -/
+
+/-- The restrictor of a negative universal with a nonempty scope is anti-additive. -/
+theorem holdsFor_antiAdd_no_left (hB : B.Nonempty) : antiAdd.HoldsFor (no · B) :=
+  holdsFor_antiAdd_iff.2 ⟨leftAntiAdditive_no B, eq_false (by simpa using hB.ne_empty)⟩
+
+/-- The scope of a negative universal over a nonempty restrictor is anti-additive. -/
+theorem holdsFor_antiAdd_no (hA : A.Nonempty) : antiAdd.HoldsFor (no A) :=
+  holdsFor_antiAdd_iff.2 ⟨rightAntiAdditive_no A,
+    eq_false fun h ↦ hA.ne_empty (Set.subset_empty_iff.1 (by simpa [no] using h))⟩
 
 end Quantifier.Det
