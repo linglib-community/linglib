@@ -38,6 +38,11 @@ namespace Question
 
 variable {W ι : Type*} {a : ι → Set W}
 
+/-- The Karttunen denotation is the set of members a world satisfies, the valuation of the order
+the members induce on worlds. -/
+theorem karttunen_eq_satisfied (H : Set (Set W)) (w : W) :
+    karttunen H w = Preorder.satisfied (· ∈ ·) H w := rfl
+
 @[simp] theorem mem_satisfied_iff {w : W} {i : ι} :
     i ∈ Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w ↔ w ∈ a i :=
   Preorder.mem_satisfied_univ

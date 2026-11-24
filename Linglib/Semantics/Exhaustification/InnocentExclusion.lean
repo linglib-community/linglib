@@ -229,6 +229,25 @@ theorem exhMW_subset_exhIE : exhMW ALT φ ⊆ exhIE ALT φ := fun _ hu ↦
 theorem exhIE_univ : exhIE univ φ = φ :=
   (exhIE_subset _ _).antisymm (exhMW_univ.ge.trans (exhMW_subset_exhIE _ _))
 
+/-- The exclusion of `φ` is the set of its lower bounds in the order the alternatives induce on
+worlds, which ranks `w` below `v` when every alternative true at `w` is true at `v`. -/
+theorem excludes_eq_lowerBounds :
+    excludes ALT φ = @lowerBounds World (Preorder.ofCriteria (fun w a ↦ w ∉ a) ALT).toLE φ := by
+  ext w
+  simp only [mem_excludes, lowerBounds, Set.mem_ofPred_eq, Preorder.ofCriteria_le_iff,
+    Set.subset_def]
+  exact ⟨fun h v hv q hq hvq hw ↦ hvq (h q hq hw v hv),
+    fun h q hq hw v hv ↦ by_contra fun hvq ↦ h hv q hq hvq hw⟩
+
+/-- Exhaustification keeps the least worlds of the prejacent in the order the alternatives induce,
+as `exhMW` keeps the minimal ones. -/
+theorem mem_exh_iff_isLeast_ofCriteria {w : World} :
+    w ∈ exh ALT φ ↔
+      @IsLeast World (Preorder.ofCriteria (fun w a ↦ w ∉ a) ALT).toLE φ w := by
+  show w ∈ φ ∧ w ∈ excludes ALT φ ↔ _
+  rw [excludes_eq_lowerBounds]
+  rfl
+
 theorem exh_subset_exhMW : exh ALT φ ⊆ exhMW ALT φ :=
   fun _ ⟨hu, hex⟩ ↦ ⟨hu, fun _ hv _ a ⟨ha, hua⟩ ↦ ⟨ha, hex a ha hua hv⟩⟩
 
