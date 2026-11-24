@@ -24,6 +24,8 @@ form a lower set in it.
   the subfactor relation.
 * `FirstOrder.Language.Factor.Occurs`, `FirstOrder.Language.factors`: occurrence, and the
   `k`-factors of a structure.
+* `FirstOrder.Language.Factor.castLE`, `FirstOrder.Language.Factor.castLEOrderEmb`: a `k`-factor
+  as a `k'`-factor for `k ≤ k'`, an embedding of the subfactor orders.
 
 ## Main statements
 
@@ -118,6 +120,36 @@ instance [∀ n, Finite (L.Atom (Fin n))] : Finite (L.Factor k) :=
       cases h
       rfl
 
+/-! ### Widening the bound -/
+
+section CastLE
+
+variable {k' : ℕ}
+
+/-- A `k`-factor is a `k'`-factor for `k ≤ k'`. -/
+def castLE (h : k ≤ k') (f : L.Factor k) : L.Factor k' where
+  n_le := f.n_le.trans h
+  atoms := f.atoms
+  preconnected := f.preconnected
+
+@[simp] theorem occurs_castLE (h : k ≤ k') : (f.castLE h).Occurs M ↔ f.Occurs M := .rfl
+
+theorem castLE_injective (h : k ≤ k') : Function.Injective (castLE (L := L) h) := by
+  rintro ⟨_, A, _⟩ ⟨_, B, _⟩ e
+  simp only [castLE, mk.injEq] at e
+  obtain ⟨rfl, e⟩ := e
+  cases e
+  rfl
+
+/-- Widening the bound on the number of variables embeds the subfactor orders. -/
+@[simps! apply]
+def castLEOrderEmb [L.IsRelational] (h : k ≤ k') : L.Factor k ↪o L.Factor k' where
+  toFun := castLE h
+  inj' := castLE_injective h
+  map_rel_iff' := .rfl
+
+end CastLE
+
 end Factor
 
 variable (L) in
@@ -129,10 +161,19 @@ def factors (k : ℕ) (M : Type w) [L.Structure M] : Set (L.Factor k) :=
     f ∈ L.factors k M ↔ f.Occurs M :=
   .rfl
 
+/-- The factor on no variables occurs in every structure. -/
+theorem factors_nonempty (k : ℕ) (M : Type w) [L.Structure M] : (L.factors k M).Nonempty :=
+  ⟨⟨Nat.zero_le k, ∅, fun a ↦ a.elim0⟩, fun i ↦ i.elim0, fun _ h ↦ (Set.notMem_empty _ h).elim⟩
+
 /-- A homomorphism carries the factors of its domain to factors of its codomain. -/
 theorem factors_mono {k : ℕ} {M : Type w} {N : Type x} [L.Structure M] [L.Structure N]
     (φ : M →[L] N) : L.factors k M ⊆ L.factors k N :=
   fun _ ↦ Factor.Occurs.hom φ
+
+/-- The `k`-factors of a structure are those of its `k'`-factors on at most `k` variables. -/
+@[simp] theorem preimage_castLE_factors {k k' : ℕ} (h : k ≤ k') (M : Type w) [L.Structure M] :
+    Factor.castLE h ⁻¹' L.factors k' M = L.factors k M :=
+  rfl
 
 /-- The factors of a structure are closed under subfactors. -/
 theorem isLowerSet_factors [L.IsRelational] {k : ℕ} {M : Type w} [L.Structure M] :

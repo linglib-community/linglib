@@ -3,6 +3,7 @@ module
 public import Linglib.Phonology.Subregular.Local
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
+public import Mathlib.Basic.Finite.Sum
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.List.NodupEquivFin
 public import Mathlib.Order.SuccPred.Nat
@@ -27,7 +28,10 @@ locally testable sets of word models under precedence are the
 between their edges under successor are the
 [strictly local](##Language.isStrictlyLocal_iff_wordModel) and
 [locally testable](##Language.isLocallyTestable_iff_wordModel) ones, and on the projection to a
-tier the [tier-based strictly local](##Language.isTierStrictlyLocal_iff_wordModel) ones. In a
+tier the [tier-based strictly local](##Language.isTierStrictlyLocal_iff_wordModel) ones. Over a
+finite alphabet the piecewise testable stringsets are therefore the Boolean combinations of the
+strictly piecewise ones, and for widths from two up the locally testable stringsets those of the
+strictly local ones. In a
 feature-labelled model a symbol carries the values of its features, so that a position of a
 factor stands for a natural class.
 
@@ -790,7 +794,7 @@ theorem isTierStrictlyLocal_iff_wordModel (hk : 2 ≤ k) :
   constructor
   · rintro ⟨G, rfl⟩
     exact ⟨G.tier, inferInstance,
-      ((isStrictlyLocal_iff_wordModel hk).1 ⟨G.permitted, rfl⟩).comap
+      ((isStrictlyLocal_iff_wordModel hk).1 ⟨G.permitted, rfl⟩).preimage
         fun w : List α ↦ w.filter (G.tier ·)⟩
   · rintro ⟨T, _, G', rfl⟩
     obtain ⟨G₀, hG₀⟩ := (isStrictlyLocal_iff_wordModel hk).2 ⟨G', rfl⟩
@@ -814,5 +818,26 @@ theorem isLocallyTestable_iff_wordModel :
         (wordLanguage (α ⊕ Edge)).factors k (WordModel ({·}) (anchor v) (· ⋖ ·)) :=
     kTestVector_eq_iff.trans WordModel.factors_eq_iff_infix.symm
   exact ⟨fun h _ _ e ↦ h ((key _ _).2 e), fun h _ _ e ↦ h ((key _ _).1 e)⟩
+
+/-- Over a finite alphabet, a stringset is piecewise `k`-testable exactly when it is a Boolean
+combination of strictly `k`-piecewise stringsets. -/
+theorem isPiecewiseTestable_iff_mem_closure [Finite α] :
+    L.IsPiecewiseTestable k ↔
+      L ∈ BooleanSubalgebra.closure {K : Language α | K.IsStrictlyPiecewise k} := by
+  have h : {K : Language α | K.IsStrictlyPiecewise k} =
+      {S | (wordLanguage α).IsStrictlyLocal (WordModel ({·}) · (· < ·)) k S} :=
+    Set.ext fun _ ↦ isStrictlyPiecewise_iff_wordModel
+  rw [isPiecewiseTestable_iff_wordModel, FirstOrder.Language.isLocallyTestable_iff_mem_closure, h]
+
+/-- Over a finite alphabet, a stringset is locally `k`-testable, for `2 ≤ k`, exactly when it is a
+Boolean combination of strictly `k`-local stringsets. -/
+theorem isLocallyTestable_iff_mem_closure [Finite α] (hk : 2 ≤ k) :
+    L.IsLocallyTestable k ↔
+      L ∈ BooleanSubalgebra.closure {K : Language α | K.IsStrictlyLocal k} := by
+  have h : {K : Language α | K.IsStrictlyLocal k} =
+      {S | (wordLanguage (α ⊕ Edge)).IsStrictlyLocal
+        (fun w ↦ WordModel ({·}) (anchor w) (· ⋖ ·)) k S} :=
+    Set.ext fun _ ↦ isStrictlyLocal_iff_wordModel hk
+  rw [isLocallyTestable_iff_wordModel, FirstOrder.Language.isLocallyTestable_iff_mem_closure, h]
 
 end Language
