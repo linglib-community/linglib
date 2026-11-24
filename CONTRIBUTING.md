@@ -105,11 +105,10 @@ questions in order. The first yes decides.
    a spine or a graph? `Syntax/<Structure>/`.
 4. **Is it theory stated only on those shared types?** It lives with
    the shared object it is about. One account's analysis is named for
-   the account, as `Tree/Shell.lean` is.
-5. **Does it need a framework's own objects**, such as a probe or a
-   sign? That framework's directory. A file that relates the
-   framework's objects to a shared type `T` is named for `T`, as
-   `Minimalist/Spine.lean` is.
+   the account.
+5. **Does it need a framework's own objects?** That framework's
+   directory. A file that relates the framework's objects to a shared
+   type `T` is named for `T`: `<Framework>/<T>.lean`.
 6. **Is it mathematics mathlib would accept?** `Linglib/Core/`.
 
 The directory follows what a file imports. Whose idea it is goes in
