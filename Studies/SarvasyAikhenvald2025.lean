@@ -76,8 +76,8 @@ inductive Order where
 /-- Stassen's type of temporal chaining for an order: anterior consecutive deranking for the
 medial-final order and posterior consecutive deranking for the initial-medial one. -/
 def Order.chainType : Order → Stassen1985.ChainType
-  | .medialFinal => .absolute .anterior
-  | .initialMedial => .absolute .posterior
+  | .medialFinal => .absolute .lt
+  | .initialMedial => .absolute .gt
 
 theorem Order.temporality_chainType (o : Order) : o.chainType.temporality = .consecutive := by
   cases o <;> rfl

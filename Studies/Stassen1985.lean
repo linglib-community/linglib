@@ -15,7 +15,6 @@ public import Linglib.Fragments.Turkish.Clause
 public import Linglib.Fragments.Turkish.Comparison
 public import Linglib.Fragments.Yoruba.Comparison
 public import Linglib.Syntax.Feature.Case.Spatial
-public import Mathlib.Basic.PEquiv
 public import Mathlib.Basic.Rel
 
 /-!
@@ -26,26 +25,31 @@ standard whose case is derived from the comparee's belongs to a conjoined compar
 independent clauses, or to a particle comparative. A standard in a fixed case is the direct
 object of a verb of exceeding, the exceed comparative, or part of an adverbial phrase, and the
 adverbial comparative is separative, allative or locative as the phrase is one of source, of
-goal or of location. We define the type of a construction from the encoding of its standard,
-with the adverbial types indexed by the spatial relation of the standard's case.
+goal or of location.
 
 A temporal chain expresses two events as consecutive or as simultaneous. It is balanced, both
 predicates keeping their rank, or deranked, one predicate reduced, either only under identity
 of subjects or absolutely, and an absolutely deranked predicate is anterior to, posterior to or
-simultaneous with the other. The types of chain are indexed in the same way: a balanced or a
-conditionally deranked chain by its temporality, and an absolutely deranked chain by the
-relative time of its deranked predicate.
+simultaneous with the other.
+
+The three adverbial comparatives and the three absolutely deranked chains are indexed by one
+type, `Ordering`, read as the comparison `cmp ground figure` of a ground with a figure along a
+line. For a comparative the ground is the standard and the line a path: the standard is where
+the path starts, `lt`, where it ends, `gt`, or where the comparee is, `eq`. For a chain the
+ground is the deranked predicate and the line is time: it is before the main predicate, after
+it or simultaneous with it.
 
 The book's hypothesis is that a comparative is modelled on a chaining construction of its
 language. `Models c t` holds when a comparative of type `t` is modelled on a chain of type `c`:
 a particle comparative on a balanced chain, a conjoined one on the balanced simultaneous chain,
-an exceed comparative on a conditionally deranked chain, and the adverbial comparative of a
-spatial relation on the absolutely deranked chain of the corresponding relative time, the
-source to the anterior, the goal to the posterior and the location to the simultaneous. For a
-language with the chaining constructions `C` and the comparatives `T` we state the book's
-chaining-based universals as `Universals C T`, and prove that they hold exactly when every
-comparative of the language is modelled on one of its chains, `T ⊆ models.image C`. Every type
-of chain models some comparative and every type of comparative is modelled on some chain.
+an exceed comparative on a conditionally deranked chain, and an adverbial comparative on the
+absolutely deranked chain with the same order of ground and figure. Modelling is invariant
+under the reversal of the line, which exchanges the separative with the allative and the
+anterior with the posterior. For a language with the chaining constructions `C` and the
+comparatives `T` we state the book's chaining-based universals as `Universals C T`, and prove
+that they hold exactly when every comparative of the language is modelled on one of its
+chains, `T ⊆ models.image C`. Every type of chain models some comparative and every type of
+comparative is modelled on some chain.
 
 The examples are comparatives of the book whose construction a fragment records. The type each
 fragment construction has by the encoding of its standard is the type the book classes the
@@ -56,7 +60,7 @@ example under, for every recorded example but the Finnish partitive.
 * `Stassen1985.ComparativeType`, `Stassen1985.typeOf`: the types of comparative and the type
   of a construction
 * `Stassen1985.ChainType`: the types of temporal chaining
-* `Stassen1985.relativeTime`: the correspondence of spatial relations and relative times
+* `Stassen1985.groundOrder?`: the order of ground and figure a spatial direction expresses
 * `Stassen1985.Models`, `Stassen1985.models`: the modelling relation between chains and
   comparatives
 * `Stassen1985.Universals`: the chaining-based universals of a language
@@ -66,8 +70,10 @@ example under, for every recorded example but the Finnish partitive.
 * The two typologies are inductive types with one constructor for each way of encoding the
   standard and for each chaining option, so that the universals on case assignment and on
   conditionality say that modelling preserves the constructor, and the three universals on the
-  adverbial types are one statement over the spatial relations. The book's flat lists are the
-  six and the seven values of these types.
+  adverbial types are one statement over `Ordering`. The book's flat lists are the six and the
+  seven values of these types. `Ordering` is used and not a type of spatial relations with a
+  bijection to a type of relative times, since the bijection would be stipulated, while the
+  comparison of ground and figure is what both sets of labels classify.
 * A language is a set of chaining constructions and a set of comparatives, since the book
   allows a language several of each. A universal whose consequent is that the language is
   balancing or deranking, or has conditional or absolute deranking, is read as saying that the
@@ -104,25 +110,19 @@ open scoped SetRel
 
 /-! ### The types of comparative -/
 
-/-- The spatial relation of an adverbial standard to the comparee. -/
-inductive SpatialRelation
-  | source
-  | goal
-  | location
-  deriving DecidableEq, Repr, Fintype
+/-- The order of the ground and the figure along a path of a direction, `cmp ground figure`:
+the ground comes first on a path from it, last on a path to it, and coincides with the figure
+located at it. A route, past the ground, compares the two in no one way. -/
+def groundOrder? : Spatial.Path.Direction → Option Ordering
+  | .source => some .lt
+  | .goal => some .gt
+  | .place => some .eq
+  | .route => none
 
-/-- The spatial relation of a direction, none for a route. -/
-def SpatialRelation.ofDirection : Spatial.Path.Direction ≃. SpatialRelation where
-  toFun
-    | .source => some .source
-    | .goal => some .goal
-    | .place => some .location
-    | .route => none
-  invFun
-    | .source => some .source
-    | .goal => some .goal
-    | .location => some .place
-  inv := by decide
+-- Reversing a path swaps the order of the ground and the figure.
+theorem groundOrder?_reverse (d : Spatial.Path.Direction) :
+    groundOrder? d.reverse = (groundOrder? d).map Ordering.swap := by
+  cases d <;> rfl
 
 /-- The types of comparative construction, by the encoding of the standard. -/
 inductive ComparativeType
@@ -132,9 +132,10 @@ inductive ComparativeType
   | particle
   /-- The standard is the direct object of a verb of exceeding. -/
   | exceed
-  /-- The standard is in an adverbial phrase: the separative comparative for a source, the
-  allative for a goal and the locative for a location. -/
-  | adverbial (r : SpatialRelation)
+  /-- The standard is in an adverbial phrase, with `o` the order of the standard and the
+  comparee along the path the phrase expresses: the separative comparative, `lt`, for a source,
+  the allative, `gt`, for a goal and the locative, `eq`, for a location. -/
+  | adverbial (o : Ordering)
   deriving DecidableEq, Repr, Fintype
 
 namespace ComparativeType
@@ -155,32 +156,39 @@ def IsDerivedCase : ComparativeType → Prop
 instance : DecidablePred IsDerivedCase := fun t ↦ by
   cases t <;> unfold IsDerivedCase <;> infer_instance
 
+/-- The type with the line reversed: the separative and the allative are exchanged. -/
+def swap : ComparativeType → ComparativeType
+  | adverbial o => adverbial o.swap
+  | t => t
+
+@[simp] theorem swap_swap (t : ComparativeType) : t.swap.swap = t := by
+  cases t <;> simp [swap, Ordering.swap_swap]
+
 end ComparativeType
 
-/-- The spatial relation that classes an adverbial standard in the case `k`: that of the
-direction of a spatial case and, by the localist analysis, the source for an instrumental, the
-goal for a dative or a benefactive and the location for a comitative. -/
-def spatialRelation? (k : Case) : Option SpatialRelation :=
-  k.dirOf.bind SpatialRelation.ofDirection <|> match k with
-    | .inst => some .source
-    | .dat | .ben => some .goal
-    | .com => some .location
+/-- The order of the standard and the comparee for an adverbial standard in the case `k`:
+that of the direction of a spatial case and, by the localist analysis, that of a source for an
+instrumental, of a goal for a dative or a benefactive and of a location for a comitative. -/
+def standardOrder? (k : Case) : Option Ordering :=
+  k.dirOf.bind groundOrder? <|> match k with
+    | .inst => some .lt
+    | .dat | .ben => some .gt
+    | .com => some .eq
     | _ => none
 
-theorem spatialRelation?_of_dirOf {k : Case} {d : Spatial.Path.Direction} {r : SpatialRelation}
-    (hd : k.dirOf = some d) (hr : r ∈ SpatialRelation.ofDirection d) :
-    spatialRelation? k = some r := by
-  simp [spatialRelation?, hd, Option.mem_def.mp hr]
+theorem standardOrder?_of_dirOf {k : Case} {d : Spatial.Path.Direction} {o : Ordering}
+    (hd : k.dirOf = some d) (ho : groundOrder? d = some o) : standardOrder? k = some o := by
+  simp [standardOrder?, hd, ho]
 
 /-- The type of a construction, by the encoding of its standard. A derived-case standard gives
 a particle comparative when a marker flags it and a conjoined one otherwise, a direct object an
-exceed comparative, and an adverbial standard the adverbial comparative of the spatial relation
-of its case, if it has one. -/
+exceed comparative, and an adverbial standard the adverbial comparative of the order its case
+expresses, if it expresses one. -/
 def typeOf (c : Comparative) : Option ComparativeType :=
   match c.standard with
   | .derived => some (if c.standardMarker = [] then .conjoined else .particle)
   | .directObject => some .exceed
-  | .adverbial k => (k.bind spatialRelation?).map .adverbial
+  | .adverbial k => (k.bind standardOrder?).map .adverbial
 
 variable {c : Comparative} {t : ComparativeType}
 
@@ -191,7 +199,7 @@ theorem toWALS_of_mem_typeOf (h : t ∈ typeOf c) : t.toWALS = c.type := by
     split <;> rfl
   · obtain rfl := Option.mem_some_iff.mp h
     rfl
-  · obtain ⟨r, -, rfl⟩ := Option.mem_map.mp h
+  · obtain ⟨o, -, rfl⟩ := Option.mem_map.mp h
     rfl
 
 theorem isDerivedCase_iff_of_mem_typeOf (h : t ∈ typeOf c) :
@@ -201,12 +209,12 @@ theorem isDerivedCase_iff_of_mem_typeOf (h : t ∈ typeOf c) :
     split <;> simp [ComparativeType.IsDerivedCase]
   · obtain rfl := Option.mem_some_iff.mp h
     simp [ComparativeType.IsDerivedCase]
-  · obtain ⟨r, -, rfl⟩ := Option.mem_map.mp h
+  · obtain ⟨o, -, rfl⟩ := Option.mem_map.mp h
     simp [ComparativeType.IsDerivedCase]
 
-theorem typeOf_eq_some_adverbial_iff {r : SpatialRelation} :
-    typeOf c = some (.adverbial r) ↔
-      ∃ k, c.standard = .adverbial (some k) ∧ spatialRelation? k = some r := by
+theorem typeOf_eq_some_adverbial_iff {o : Ordering} :
+    typeOf c = some (.adverbial o) ↔
+      ∃ k, c.standard = .adverbial (some k) ∧ standardOrder? k = some o := by
   cases hs : c.standard with
   | derived => simp only [typeOf, hs]; split <;> simp
   | directObject => simp [typeOf, hs]
@@ -220,14 +228,6 @@ inductive Temporality
   | simultaneous
   deriving DecidableEq, Repr, Fintype
 
-/-- The time of an absolutely deranked predicate relative to the other predicate of its
-chain: before it or after it in a consecutive chain, or simultaneous with it. -/
-inductive RelativeTime
-  | anterior
-  | posterior
-  | simultaneous
-  deriving DecidableEq, Repr, Fintype
-
 /-- The syntactic types of temporal chaining. -/
 inductive ChainType
   /-- Both predicates keep their structural rank. -/
@@ -235,8 +235,10 @@ inductive ChainType
   /-- One predicate is reduced, and only under identity of the subjects; in a consecutive
   chain it is the posterior one. -/
   | conditional (τ : Temporality)
-  /-- One predicate is reduced whether or not the subjects are identical. -/
-  | absolute (p : RelativeTime)
+  /-- One predicate is reduced whether or not the subjects are identical, with `o` the order
+  in time of the deranked predicate and the other: anterior, `lt`, or posterior, `gt`, in a
+  consecutive chain, or simultaneous, `eq`. -/
+  | absolute (o : Ordering)
   deriving DecidableEq, Repr, Fintype
 
 namespace ChainType
@@ -244,7 +246,7 @@ namespace ChainType
 /-- The temporality of a chain type. -/
 def temporality : ChainType → Temporality
   | balanced τ | conditional τ => τ
-  | absolute .simultaneous => .simultaneous
+  | absolute .eq => .simultaneous
   | absolute _ => .consecutive
 
 /-- A chain is balanced when neither predicate is deranked. -/
@@ -255,26 +257,20 @@ def IsBalanced : ChainType → Prop
 instance : DecidablePred IsBalanced := fun c ↦ by
   cases c <;> unfold IsBalanced <;> infer_instance
 
+/-- The chain type with time reversed: the anterior and the posterior are exchanged. -/
+def swap : ChainType → ChainType
+  | absolute o => absolute o.swap
+  | c => c
+
+@[simp] theorem swap_swap (c : ChainType) : c.swap.swap = c := by
+  cases c <;> simp [swap, Ordering.swap_swap]
+
 -- The typology has the seven types of the book's summary.
 theorem card_eq : Fintype.card ChainType = 7 := by decide
 
 end ChainType
 
 /-! ### The modelling of comparatives on chains -/
-
-/-- The relative time that corresponds to a spatial relation: the anterior to the source, the
-posterior to the goal and the simultaneous to the location. -/
-def relativeTime : SpatialRelation ≃ RelativeTime where
-  toFun
-    | .source => .anterior
-    | .goal => .posterior
-    | .location => .simultaneous
-  invFun
-    | .anterior => .source
-    | .posterior => .goal
-    | .simultaneous => .location
-  left_inv r := by cases r <;> rfl
-  right_inv p := by cases p <;> rfl
 
 /-- `Models c t` holds when a comparative of type `t` is modelled on a chain of type `c`. -/
 inductive Models : ChainType → ComparativeType → Prop
@@ -284,9 +280,9 @@ inductive Models : ChainType → ComparativeType → Prop
   | conjoined : Models (.balanced .simultaneous) .conjoined
   /-- An exceed comparative is modelled on a conditionally deranked chain. -/
   | exceed (τ : Temporality) : Models (.conditional τ) .exceed
-  /-- An adverbial comparative is modelled on the absolutely deranked chain whose relative
-  time corresponds to its spatial relation. -/
-  | adverbial (r : SpatialRelation) : Models (.absolute (relativeTime r)) (.adverbial r)
+  /-- An adverbial comparative is modelled on the absolutely deranked chain with the same
+  order of ground and figure. -/
+  | adverbial (o : Ordering) : Models (.absolute o) (.adverbial o)
 
 /-- The modelling relation as a set of pairs. -/
 def models : SetRel ChainType ComparativeType := {(c, t) | Models c t}
@@ -304,28 +300,36 @@ variable {ct : ChainType}
 @[simp] theorem models_exceed_iff : Models ct .exceed ↔ ∃ τ, ct = .conditional τ :=
   ⟨fun | .exceed τ => ⟨τ, rfl⟩, fun ⟨τ, h⟩ ↦ h ▸ .exceed τ⟩
 
-@[simp] theorem models_adverbial_iff {r : SpatialRelation} :
-    Models ct (.adverbial r) ↔ ct = .absolute (relativeTime r) :=
-  ⟨fun | .adverbial _ => rfl, fun h ↦ h ▸ .adverbial r⟩
+@[simp] theorem models_adverbial_iff {o : Ordering} :
+    Models ct (.adverbial o) ↔ ct = .absolute o :=
+  ⟨fun | .adverbial _ => rfl, fun h ↦ h ▸ .adverbial o⟩
+
+/-- Modelling is invariant under the reversal of the line: the allative is modelled on the
+mirror image of the chain the separative is modelled on. -/
+theorem models_swap_iff : Models ct.swap t.swap ↔ Models ct t := by
+  have key : ∀ {c : ChainType} {t : ComparativeType}, Models c t → Models c.swap t.swap := by
+    rintro _ _ (τ | _ | τ | o)
+    exacts [.particle τ, .conjoined, .exceed τ, .adverbial o.swap]
+  exact ⟨fun h ↦ by simpa using key h, key⟩
 
 -- A chain is balanced exactly when the comparatives modelled on it have a derived-case standard.
 theorem Models.isBalanced_iff (h : Models ct t) : ct.IsBalanced ↔ t.IsDerivedCase := by
   cases h <;> simp [ChainType.IsBalanced, ComparativeType.IsDerivedCase]
 
-/-- Every type of chain models some comparative. -/
+-- Every type of chain models some comparative.
 theorem dom_models : models.dom = Set.univ :=
   Set.eq_univ_of_forall fun
     | .balanced τ => ⟨_, .particle τ⟩
     | .conditional τ => ⟨_, .exceed τ⟩
-    | .absolute p => ⟨.adverbial (relativeTime.symm p), by simp⟩
+    | .absolute o => ⟨_, .adverbial o⟩
 
-/-- Every type of comparative is modelled on some chain. -/
+-- Every type of comparative is modelled on some chain.
 theorem cod_models : models.cod = Set.univ :=
   Set.eq_univ_of_forall fun
     | .conjoined => ⟨_, .conjoined⟩
     | .particle => ⟨_, .particle .simultaneous⟩
     | .exceed => ⟨_, .exceed .simultaneous⟩
-    | .adverbial r => ⟨_, .adverbial r⟩
+    | .adverbial o => ⟨_, .adverbial o⟩
 
 variable {C : Set ChainType} {T : Set ComparativeType}
 
@@ -340,11 +344,11 @@ structure Universals (C : Set ChainType) (T : Set ComparativeType) : Prop where
   /-- Universal 2A: a language with an exceed comparative has conditional deranking. -/
   conditional_of_exceed : .exceed ∈ T → ∃ τ, .conditional τ ∈ C
   /-- Universal 2B: a language with an adverbial comparative has absolute deranking. -/
-  absolute_of_adverbial : ∀ r, .adverbial r ∈ T → ∃ p, .absolute p ∈ C
+  absolute_of_adverbial : ∀ o, .adverbial o ∈ T → ∃ o', .absolute o' ∈ C
   /-- Universals 3A to 3C: a language with a separative, an allative or a locative comparative
   has an absolutely deranked anterior consecutive, posterior consecutive or simultaneous
   construction. -/
-  relativeTime_of_adverbial : ∀ r, .adverbial r ∈ T → .absolute (relativeTime r) ∈ C
+  absolute_of_adverbial_same : ∀ o, .adverbial o ∈ T → .absolute o ∈ C
   /-- Universal 4: a language with a conjoined comparative has a balanced simultaneous
   construction. -/
   balanced_of_conjoined : .conjoined ∈ T → .balanced .simultaneous ∈ C
@@ -361,7 +365,7 @@ theorem universals_iff_subset_image : Universals C T ↔ T ⊆ models.image C :=
     | exceed =>
       obtain ⟨τ, hτ⟩ := h.conditional_of_exceed ht
       exact ⟨_, hτ, .exceed τ⟩
-    | adverbial r => exact ⟨_, h.relativeTime_of_adverbial r ht, .adverbial r⟩
+    | adverbial o => exact ⟨_, h.absolute_of_adverbial_same o ht, .adverbial o⟩
   · rintro t ht hd
     obtain ⟨c, hc, hm⟩ := h ht
     exact ⟨c, hc, hm.isBalanced_iff.mpr hd⟩
@@ -372,11 +376,11 @@ theorem universals_iff_subset_image : Universals C T ↔ T ⊆ models.image C :=
     obtain ⟨c, hc, hm⟩ := h ht
     obtain ⟨τ, rfl⟩ := models_exceed_iff.mp hm
     exact ⟨τ, hc⟩
-  · intro r ht
+  · intro o ht
     obtain ⟨c, hc, hm⟩ := h ht
     obtain rfl := models_adverbial_iff.mp hm
     exact ⟨_, hc⟩
-  · intro r ht
+  · intro o ht
     obtain ⟨c, hc, hm⟩ := h ht
     obtain rfl := models_adverbial_iff.mp hm
     exact hc
@@ -396,9 +400,9 @@ theorem Universals.mono {C' : Set ChainType} {T' : Set ComparativeType} (h : Uni
 
 /-- The type of each class of the rows. -/
 def Examples.ComparativeClass.toType : Examples.ComparativeClass → ComparativeType
-  | .separative => .adverbial .source
-  | .allative => .adverbial .goal
-  | .locative => .adverbial .location
+  | .separative => .adverbial .lt
+  | .allative => .adverbial .gt
+  | .locative => .adverbial .eq
   | .exceed => .exceed
   | .conjoined => .conjoined
   | .particle => .particle
@@ -421,7 +425,7 @@ def Examples.Lexeme.entry : Examples.Lexeme → Comparative
 
 /-- The type of the fragment's construction is the type the book classes the example under, for
 each example but that of the Finnish partitive standard, which the book classes as separative
-and whose case has no spatial relation. -/
+and whose case expresses no order of standard and comparee. -/
 theorem typeOf_entry :
     ∀ x : Examples.Example, ∀ l ∈ x.lexemes .standard,
       (typeOf l.entry = x.comparativeClass.map (·.toType) ↔ x ≠ .ex_10_54a) := by
