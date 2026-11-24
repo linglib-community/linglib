@@ -108,7 +108,7 @@ theorem holds_no : Sentence.Holds ⟨.no, x, y⟩ s ↔ ∀ r ∈ s, x ∈ r.1 �
 
 theorem holds_some_of_holds_all (h : Sentence.Holds ⟨.all, x, y⟩ s) :
     Sentence.Holds ⟨.some, x, y⟩ s :=
-  Det.subalternation_a_i h.2 h.1
+  Det.every_le_some h.2 _ h.1
 
 end Holds
 

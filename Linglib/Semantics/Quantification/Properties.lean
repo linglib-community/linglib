@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Defs
 public import Mathlib.Order.UpperLower.Basic
+public import Mathlib.Order.UpperLower.Closure
 
 /-!
 # Properties of determiner denotations
@@ -15,7 +16,9 @@ and ↓NE monotonicity; a determiner denotation is restrictor monotone exactly w
 ↑SE monotone, and smoothness gives scope monotonicity, all as in Peters and Westerståhl. Van
 Benthem's relational results characterize *all*, *some* and *no* by their relational properties
 alone. Scope monotonicity is that every section of the determiner denotation is an upper set of
-scopes. The sections of the conservative, quantity-invariant determiner denotations, which Peters
+scopes, and Barwise and Cooper's constraint that a noun phrase denote a monotone quantifier or a
+conjunction of monotone quantifiers is that every section is an order-connected set of scopes.
+The sections of the conservative, quantity-invariant determiner denotations, which Peters
 and Westerståhl call their freezings to a restrictor, are [exactly the
 quantifiers](##Quantifier.exists_det_apply_eq_iff_livesOn) that live on a set and that the
 permutations fixing it leave unchanged.
@@ -55,6 +58,21 @@ theorem QuantityInvariant.sup (h : Q.QuantityInvariant) (h' : Q'.QuantityInvaria
   fun σ B ↦ or_congr (h σ B) (h' σ B)
 
 end QuantityInvariant
+
+/-- A quantifier is the meet of two quantifiers, each monotone or antitone, exactly when its
+scopes are order-connected: with any two scopes it has every scope between them. -/
+theorem ordConnected_setOf_iff_exists_eq_inf {Q : Quantifier α} :
+    {B | Q B}.OrdConnected ↔ ∃ Q₁ Q₂ : Quantifier α, (Monotone Q₁ ∨ Antitone Q₁) ∧
+      (Monotone Q₂ ∨ Antitone Q₂) ∧ Q = Q₁ ⊓ Q₂ := by
+  refine ⟨fun h ↦ ⟨(· ∈ upperClosure {B | Q B}), (· ∈ lowerClosure {B | Q B}),
+    .inl fun _ _ hBC hB ↦ (upperClosure _).upper hBC hB,
+    .inr fun _ _ hBC hB ↦ (lowerClosure _).lower hBC hB,
+    funext fun B ↦ congrArg (B ∈ ·) h.upperClosure_inter_lowerClosure.symm⟩, ?_⟩
+  rintro ⟨Q₁, Q₂, h₁, h₂, rfl⟩
+  have key {Q' : Quantifier α} (h : Monotone Q' ∨ Antitone Q') : {B | Q' B}.OrdConnected :=
+    h.elim (fun hm ↦ (isUpperSet_setOfPred.2 hm).ordConnected)
+      fun ha ↦ (isLowerSet_setOfPred.2 ha).ordConnected
+  exact (key h₁).inter (key h₂)
 
 namespace Det
 
@@ -379,6 +397,13 @@ theorem ScopeMonotone.rightContinuous (h : d.ScopeMonotone) : d.RightContinuous 
 
 theorem ScopeAntitone.rightContinuous (h : d.ScopeAntitone) : d.RightContinuous :=
   fun A ↦ (isLowerSet_setOfPred.2 (h A)).ordConnected
+
+/-- Barwise and Cooper's monotonicity constraint is right continuity: a quantifier is a
+conjunction of monotone quantifiers exactly when it holds at every scope between two at which it
+holds, Thijsse's observation reported by [van-benthem-1984]. -/
+theorem satisfiesUniversals_iff : d.SatisfiesUniversals ↔ d.Conservative ∧ d.RightContinuous :=
+  ⟨fun h ↦ ⟨h.conservative, fun A ↦ ordConnected_setOf_iff_exists_eq_inf.2 (h.exists_eq_inf A)⟩,
+    fun h ↦ ⟨h.1, fun A ↦ ordConnected_setOf_iff_exists_eq_inf.1 (h.2 A)⟩⟩
 
 /-- An irreflexive almost-connected conservative determiner denotation is scope antitone
 ([van-benthem-1984], Theorem 4.1.2). -/

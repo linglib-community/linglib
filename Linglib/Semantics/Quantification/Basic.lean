@@ -10,31 +10,50 @@ public import Mathlib.Order.CompleteLattice.Basic
 # The determiners *every*, *some*, *no* and *the*
 
 This file defines the determiner denotations *every* (`A ⊆ B`), *some* (`A ∩ B` nonempty), *no*
-(`A ⊆ Bᶜ`) and the Russellian *the*, whose truth conditions need no counting, and proves their
-conservativity, monotonicity, symmetry, duality and square-of-opposition properties. The
-properties checked are Barwise and Cooper's determiner universal and monotonicity constraint,
-Keenan and Stavi's Boolean structure, and Peters and Westerståhl's left monotonicity and
-smoothness. The counting
+(`A ⊆ Bᶜ`) and the Russellian *the*, whose truth conditions need no counting. The counting
 quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
+
+At a restrictor `A`, the quantifier `every A` is the principal filter of `A`: the sets that
+include `A`. It commutes with arbitrary intersections of scopes, and the quantifiers that do so
+are exactly the `every A`, each at the intersection of its scopes. Dually `some A` commutes with
+arbitrary unions, `no A` turns them into conjunctions, and these properties characterize the two.
+In the restrictor, *some* is an order embedding of the sets into the quantifiers, and *every* and
+*no* are order embeddings of the sets with the reverse order.
+
+A quantifier `Q` spans the square of opposition of `Q`, its inner negation, its dual and its
+complement. Its diagonals are contradictory for every `Q`, and the remaining relations of the
+classical square hold exactly when `Q ≤ Q.dual`. For a quantifier whose scopes form a filter that
+is `¬ Q ∅`, so the square of `every A` has them exactly when `A` is nonempty, and its universals
+can both fail exactly when `A` has two members.
 
 ## Main definitions
 
 * `every`, `Det.some`, `no`, `the`: the propositional denotations.
-* `SatisfiesUniversals`: conservativity together with Barwise and Cooper's monotonicity
-  constraint, which is right continuity in the scope (`satisfiesUniversals_iff`).
+* `someOrderEmbedding`, `everyOrderEmbedding`, `noOrderEmbedding`: the three determiners as order
+  embeddings of the restrictors.
+* `Quantifier.square`: the square of opposition that a quantifier spans.
 * `square`: the square of opposition of `every`, `no`, `some` and `not every` at a restrictor.
 
 ## Main results
 
+* `exists_eq_every_iff`, `exists_eq_some_iff`, `exists_eq_no_iff`: the quantifiers `every A`,
+  `some A` and `no A` are those that commute with arbitrary intersections, commute with arbitrary
+  unions, and turn arbitrary unions into conjunctions.
 * `every_eq_sInf_image`, `some_eq_sSup_image`, `no_eq_compl_sSup_image`: the three determiners
   are the infimum, the supremum and the complement of the supremum of the scope over the
   restrictor.
 * `no_iff_disjoint`, `no_iff_not_some`: *no* is disjointness, the complement of *some*.
-* `every_univ_iff`, `some_univ_iff`, `no_univ_iff`: with the whole universe as restrictor, the
-  three hold of the universe, of the nonempty sets and of the empty set.
-* `squareRelations_square`: with a non-empty restrictor the four stand in all six relations of the
-  square, so its vertices (`Aristotelian.Square.triangle`) divide the scopes into those covering all of
-  the restrictor, some but not all of it, and none of it.
+* `squareRelations_square_iff`: a quantifier's square has the relations of the classical square
+  exactly when the quantifier entails its dual.
+* `squareRelations_square`: the square at a restrictor has them exactly when the restrictor is
+  nonempty.
+* `isContrary_every_no_iff`: `every A` and `no A` are contrary exactly when `A` has two members.
+
+## Implementation notes
+
+The square at a restrictor is stated with `Det.some A` at its particular affirmative corner and
+is equal to the square that `every A` spans, whose corner is the dual of `every A`
+(`square_eq`).
 
 ## References
 
@@ -48,9 +67,13 @@ quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 
 @[expose] public section
 
-namespace Quantifier.Det
+namespace Quantifier
 
-variable {α : Type*} {A B : Set α}
+variable {α : Type*}
+
+namespace Det
+
+variable {A A' B : Set α}
 
 /-! ### Denotations -/
 
@@ -88,6 +111,10 @@ theorem the_eq_bot (h : ¬ (iota A).Dom) : the A = ⊥ :=
   funext fun _ ↦ propext <| the_iff_exists_mem_iota.trans
     ⟨fun ⟨_, hx, _⟩ ↦ h (Part.dom_iff_mem.2 ⟨_, hx⟩), False.elim⟩
 
+theorem the_le_every : the A ≤ every A := fun _ h ↦ (the_iff.1 h).2
+
+theorem the_le_some : the A ≤ Det.some A := fun _ ⟨x, hx, hB⟩ ↦ ⟨x, (hx x).2 rfl, hB⟩
+
 theorem every_iff_le : every A B ↔ A ≤ B := .rfl
 
 theorem every_injective : Function.Injective (every : Det α) := fun A B h ↦
@@ -100,11 +127,67 @@ theorem no_iff_disjoint : no A B ↔ Disjoint A B := Set.subset_compl_iff_disjoi
 theorem no_iff_not_some : no A B ↔ ¬ Det.some A B :=
   no_iff_disjoint.trans <| Set.disjoint_iff_inter_eq_empty.trans Set.not_nonempty_iff_eq_empty.symm
 
+theorem some_iff_not_disjoint : Det.some A B ↔ ¬ Disjoint A B :=
+  Set.not_disjoint_iff_nonempty_inter.symm
+
 @[simp] theorem every_univ_iff : every Set.univ B ↔ B = Set.univ := Set.univ_subset_iff
 
 @[simp] theorem some_univ_iff : Det.some Set.univ B ↔ B.Nonempty := by simp [Det.some]
 
 @[simp] theorem no_univ_iff : no Set.univ B ↔ B = ∅ := by simp [no, Set.univ_subset_iff]
+
+@[simp] theorem every_empty : every (∅ : Set α) = ⊤ := by funext B; simp [every]
+
+@[simp] theorem some_empty : Det.some (∅ : Set α) = ⊥ := by funext B; simp [Det.some]
+
+@[simp] theorem no_empty : no (∅ : Set α) = ⊤ := by funext B; simp [no]
+
+@[simp] theorem every_apply_empty : every A ∅ ↔ A = ∅ := Set.subset_empty_iff
+
+@[simp] theorem some_self_iff : Det.some A A ↔ A.Nonempty := by rw [Det.some, Set.inter_self]
+
+@[simp] theorem no_self_iff : no A A ↔ A = ∅ := no_iff_disjoint.trans disjoint_self
+
+/-! ### The restrictor
+
+*Some* preserves the order of restrictors and turns their unions into joins; *every* and *no*
+reverse the order and turn unions into meets. Each is injective. -/
+
+theorem every_le_every_iff : every A ≤ every A' ↔ A' ⊆ A :=
+  ⟨fun h ↦ h A subset_rfl, fun h _ hB ↦ h.trans hB⟩
+
+theorem some_le_some_iff : Det.some A ≤ Det.some A' ↔ A ⊆ A' :=
+  ⟨fun h x hx ↦ let ⟨_, hy, hxy⟩ := h {x} ⟨x, hx, rfl⟩; Set.eq_of_mem_singleton hxy ▸ hy,
+    fun h B hB ↦ hB.mono (Set.inter_subset_inter_left B h)⟩
+
+theorem no_le_no_iff : no A ≤ no A' ↔ A' ⊆ A :=
+  ⟨fun h ↦ (h Aᶜ (compl_compl A).ge).trans (compl_compl A).le, fun h _ hB ↦ h.trans hB⟩
+
+theorem some_injective : Function.Injective (Det.some : Det α) := fun _ _ h ↦
+  subset_antisymm (some_le_some_iff.1 h.le) (some_le_some_iff.1 h.ge)
+
+theorem no_injective : Function.Injective (no : Det α) := fun _ _ h ↦
+  subset_antisymm (no_le_no_iff.1 h.ge) (no_le_no_iff.1 h.le)
+
+/-- *Some* as an order embedding of the restrictors into the quantifiers. -/
+def someOrderEmbedding : Set α ↪o Quantifier α :=
+  .ofMapLEIff Det.some fun _ _ ↦ some_le_some_iff
+
+/-- *Every* as an order embedding of the restrictors, in the reverse order, into the
+quantifiers. -/
+def everyOrderEmbedding : (Set α)ᵒᵈ ↪o Quantifier α :=
+  .ofMapLEIff (fun A ↦ every A.ofDual) fun _ _ ↦ every_le_every_iff
+
+/-- *No* as an order embedding of the restrictors, in the reverse order, into the quantifiers. -/
+def noOrderEmbedding : (Set α)ᵒᵈ ↪o Quantifier α :=
+  .ofMapLEIff (fun A ↦ no A.ofDual) fun _ _ ↦ no_le_no_iff
+
+@[simp] theorem coe_someOrderEmbedding : ⇑(someOrderEmbedding (α := α)) = Det.some := rfl
+
+@[simp] theorem everyOrderEmbedding_apply (A : (Set α)ᵒᵈ) :
+    everyOrderEmbedding A = every A.ofDual := rfl
+
+@[simp] theorem noOrderEmbedding_apply (A : (Set α)ᵒᵈ) : noOrderEmbedding A = no A.ofDual := rfl
 
 /-- *Some* turns a union of restrictors into a join. -/
 theorem some_union (A A' : Set α) : Det.some (A ∪ A') = Det.some A ⊔ Det.some A' := by
@@ -113,6 +196,19 @@ theorem some_union (A A' : Set α) : Det.some (A ∪ A') = Det.some A ⊔ Det.so
 /-- *Every* turns a union of restrictors into a meet. -/
 theorem every_union (A A' : Set α) : every (A ∪ A') = every A ⊓ every A' := by
   funext B; simp [every, Set.union_subset_iff]
+
+/-- *No* turns a union of restrictors into a meet. -/
+theorem no_union (A A' : Set α) : no (A ∪ A') = no A ⊓ no A' := by
+  funext B; simp [no, Set.union_subset_iff]
+
+theorem some_iUnion {ι : Sort*} (A : ι → Set α) : Det.some (⋃ i, A i) = ⨆ i, Det.some (A i) := by
+  funext B; simp [Det.some, Set.iUnion_inter]
+
+theorem every_iUnion {ι : Sort*} (A : ι → Set α) : every (⋃ i, A i) = ⨅ i, every (A i) := by
+  funext B; simp [every, Set.iUnion_subset_iff]
+
+theorem no_iUnion {ι : Sort*} (A : ι → Set α) : no (⋃ i, A i) = ⨅ i, no (A i) := by
+  funext B; simp [no, Set.iUnion_subset_iff]
 
 /-- The Montague lift of `a` is *every* on `{a}`. -/
 theorem _root_.Quantifier.individual_eq_every (a : α) : individual a = every {a} := by
@@ -130,14 +226,6 @@ instance : Decidable (no A B) := inferInstanceAs (Decidable (∀ _, _))
 
 end Decidable
 
-/-- A determiner denotation satisfies Barwise and Cooper's determiner universal and monotonicity
-constraint (U3 and U6 of [barwise-cooper-1981]) when it is conservative, so that each `d A` lives
-on `A`, and each of its noun phrases `d A` is a monotone quantifier or a conjunction of monotone
-quantifiers. A monotone `d A` is its own conjunction with the trivial quantifier `⊤`. -/
-def SatisfiesUniversals (d : Det α) : Prop :=
-  d.Conservative ∧ ∀ A, ∃ Q₁ Q₂ : Quantifier α, (Monotone Q₁ ∨ Antitone Q₁) ∧
-    (Monotone Q₂ ∨ Antitone Q₂) ∧ d A = Q₁ ⊓ Q₂
-
 /-! ### Infima and suprema
 
 At a restrictor `A`, `every A B` is the infimum of the truth values of `x ∈ B` for `x ∈ A`,
@@ -153,6 +241,48 @@ theorem some_eq_sSup_image (A B : Set α) : Det.some A B = sSup ((· ∈ B) '' A
 theorem no_eq_compl_sSup_image (A B : Set α) : no A B = (sSup ((· ∈ B) '' A))ᶜ := by
   rw [← some_eq_sSup_image]; exact propext no_iff_not_some
 
+/-! ### Arbitrary intersections and unions of scopes
+
+`every A` commutes with arbitrary intersections of scopes and `some A` with arbitrary unions,
+and `no A` turns a union of scopes into a conjunction. Each property characterizes the
+quantifiers of that form, and recovers the restrictor: as the intersection of the scopes of
+`every A`, and as the elements whose singleton is a scope of `some A`. -/
+
+theorem every_sInter (A : Set α) (S : Set (Set α)) : every A (⋂₀ S) ↔ ∀ B ∈ S, every A B :=
+  Set.subset_sInter_iff
+
+theorem some_sUnion (A : Set α) (S : Set (Set α)) :
+    Det.some A (⋃₀ S) ↔ ∃ B ∈ S, Det.some A B := by
+  simp only [some_iff_not_disjoint, Set.disjoint_sUnion_right, not_forall, exists_prop]
+
+theorem no_sUnion (A : Set α) (S : Set (Set α)) : no A (⋃₀ S) ↔ ∀ B ∈ S, no A B := by
+  simp only [no_iff_disjoint, Set.disjoint_sUnion_right]
+
+theorem sInter_setOf_every (A : Set α) : ⋂₀ {B | every A B} = A :=
+  subset_antisymm (Set.sInter_subset_of_mem (Set.Subset.refl A : every A A))
+    (Set.subset_sInter fun _ h ↦ h)
+
+/-- The quantifiers that commute with arbitrary intersections are the quantifiers `every A`. -/
+theorem exists_eq_every_iff {Q : Quantifier α} :
+    (∃ A, Q = every A) ↔ ∀ S : Set (Set α), Q (⋂₀ S) ↔ ∀ B ∈ S, Q B := by
+  refine ⟨?_, fun h ↦ ⟨⋂₀ {B | Q B}, funext fun B ↦ propext
+    ⟨fun hB ↦ Set.sInter_subset_of_mem hB, fun hB ↦ ?_⟩⟩⟩
+  · rintro ⟨A, rfl⟩ S
+    exact every_sInter A S
+  · have h₁ : Q (⋂₀ {B | Q B}) := (h _).2 fun _ hB ↦ hB
+    rw [← Set.inter_eq_left.2 hB, ← Set.sInter_pair] at h₁
+    exact (h _).1 h₁ B (Set.mem_insert_of_mem _ rfl)
+
+/-- The quantifiers that commute with arbitrary unions are the quantifiers `some A`. -/
+theorem exists_eq_some_iff {Q : Quantifier α} :
+    (∃ A, Q = Det.some A) ↔ ∀ S : Set (Set α), Q (⋃₀ S) ↔ ∃ B ∈ S, Q B := by
+  refine ⟨?_, fun h ↦ ⟨{x | Q {x}}, funext fun B ↦ propext ?_⟩⟩
+  · rintro ⟨A, rfl⟩ S
+    exact some_sUnion A S
+  · have hB := h ((fun x ↦ ({x} : Set α)) '' B)
+    rw [Set.sUnion_image, Set.biUnion_of_singleton, Set.exists_mem_image] at hB
+    exact hB.trans ⟨fun ⟨x, hx, hQ⟩ ↦ ⟨x, hQ, hx⟩, fun ⟨x, hQ, hx⟩ ↦ ⟨x, hx, hQ⟩⟩
+
 /-! ### Conservativity and permutation invariance -/
 
 theorem conservative_every : (every : Det α).Conservative :=
@@ -164,6 +294,9 @@ theorem conservative_some : (Det.some : Det α).Conservative := fun A B ↦ by
 
 theorem conservative_no : (no : Det α).Conservative := fun A B ↦
   no_iff_not_some.trans <| (not_congr (conservative_some A B)).trans no_iff_not_some.symm
+
+theorem conservative_the : (the : Det α).Conservative := fun A B ↦ by
+  simp only [the_iff, Set.subset_inter_iff, subset_rfl, true_and]
 
 theorem quantityInvariant_every : (every : Det α).QuantityInvariant :=
   fun σ _ _ ↦ σ.surjective.preimage_subset_preimage_iff
@@ -241,13 +374,23 @@ theorem dual_every : (every : Det α).dual = Det.some := by
 theorem dual_some : (Det.some : Det α).dual = every := by
   rw [← dual_every, dual_dual]
 
+theorem innerNeg_no : (no : Det α).innerNeg = every := by
+  rw [← innerNeg_every, innerNeg_innerNeg]
+
+/-- The quantifiers that turn arbitrary unions into conjunctions are the quantifiers `no A`. -/
+theorem exists_eq_no_iff {Q : Quantifier α} :
+    (∃ A, Q = no A) ↔ ∀ S : Set (Set α), Q (⋃₀ S) ↔ ∀ B ∈ S, Q B := by
+  have h : (∃ A, Q = no A) ↔ ∃ A, Qᶜ = Det.some A :=
+    exists_congr fun A ↦ by rw [← compl_some, compl_eq_comm, eq_comm]; rfl
+  rw [h, exists_eq_some_iff]
+  refine forall_congr' fun S ↦ ?_
+  simp only [Pi.compl_apply, compl_iff_not, not_iff_comm (b := ∃ B ∈ S, ¬ Q B), not_exists,
+    not_and, not_not]
+  exact iff_comm
+
 /-! ### Strength -/
 
 theorem positiveStrong_every : (every : Det α).PositiveStrong := fun _ ↦ subset_rfl
-
-theorem not_no_self (hA : A.Nonempty) : ¬ no A A := fun h ↦
-  let ⟨_, hx⟩ := hA
-  h hx hx
 
 /-! ### Relational properties ([van-benthem-1984]) -/
 
@@ -270,34 +413,60 @@ theorem restrictorMonotone_some : (Det.some : Det α).RestrictorMonotone :=
 
 theorem restrictorAntitone_no : (no : Det α).RestrictorAntitone := fun _ _ _ hA h ↦ hA.trans h
 
-theorem doubleMono_every :
-    (every : Det α).RestrictorAntitone ∧ (every : Det α).ScopeMonotone :=
-  ⟨restrictorAntitone_every, scopeMonotone_every⟩
-
-theorem doubleMono_some :
-    (Det.some : Det α).RestrictorMonotone ∧ (Det.some : Det α).ScopeMonotone :=
-  ⟨restrictorMonotone_some, scopeMonotone_some⟩
-
-theorem doubleMono_no : (no : Det α).RestrictorAntitone ∧ (no : Det α).ScopeAntitone :=
-  ⟨restrictorAntitone_no, scopeAntitone_no⟩
-
-theorem doubleMono_compl_every :
-    (every : Det α)ᶜ.RestrictorMonotone ∧ (every : Det α)ᶜ.ScopeAntitone :=
-  ⟨restrictorAntitone_every.compl, scopeMonotone_every.compl⟩
-
 theorem scopeIntersective_every : (every : Det α).ScopeIntersective :=
   fun _ _ _ ↦ Set.subset_inter
 
 theorem filtrating_every : (every : Det α).Filtrating :=
   ⟨scopeMonotone_every, scopeIntersective_every⟩
 
-/-! ### Aristotelian square of opposition
+end Det
+
+/-! ### The square of a quantifier
+
+A quantifier spans a square of opposition with its inner negation, its dual and its complement.
+The diagonals are contradictory whatever the quantifier. The universals are disjoint, and with
+that the subalternations and subcontrariety hold, exactly when the quantifier entails its dual;
+for a quantifier closed under supersets and intersections of scopes, that is when it does not
+hold of the empty set. -/
+
+/-- The square of opposition that a quantifier spans: the quantifier, its inner negation, its
+dual and its complement ([peters-westerstahl-2006]). -/
+@[simps]
+def square (Q : Quantifier α) : Aristotelian.Square (Quantifier α) := ⟨Q, Q.innerNeg, Q.dual, Qᶜ⟩
+
+variable {Q : Quantifier α}
+
+theorem square_eq_ofUniversals (Q : Quantifier α) : Q.square = .ofUniversals Q Q.innerNeg := rfl
+
+/-- The inner negation of a quantifier spans the same square, with the universals exchanged and
+the particulars exchanged. -/
+theorem square_innerNeg (Q : Quantifier α) : Q.innerNeg.square = Q.square.inner :=
+  Aristotelian.Square.ext rfl (innerNeg_innerNeg Q) (congrArg (·ᶜ) (innerNeg_innerNeg Q)) rfl
+
+theorem disjoint_innerNeg_iff : Disjoint Q Q.innerNeg ↔ Q ≤ Q.dual :=
+  le_compl_iff_disjoint_right.symm
+
+/-- The square of a quantifier has the relations of the classical square exactly when the
+quantifier entails its dual. -/
+theorem squareRelations_square_iff : Aristotelian.SquareRelations Q.square ↔ Q ≤ Q.dual :=
+  Aristotelian.squareRelations_ofUniversals.trans disjoint_innerNeg_iff
+
+/-- A quantifier closed under supersets and intersections of scopes entails its dual exactly
+when it does not hold of the empty set. -/
+theorem le_dual_iff_not_apply_empty (hm : Monotone Q) (hi : ∀ B C, Q B → Q C → Q (B ∩ C)) :
+    Q ≤ Q.dual ↔ ¬ Q ∅ :=
+  ⟨fun h h₀ ↦ h ∅ h₀ (hm (Set.empty_subset _) h₀),
+    fun h B hB hB' ↦ h (Set.inter_compl_self B ▸ hi _ _ hB hB')⟩
+
+namespace Det
+
+variable {A B : Set α}
+
+/-! ### The square at a restrictor
 
 At a restrictor `A`, the denotations `every A`, `no A`, `Det.some A` and `everyᶜ A` are the corners
-of a square in the Boolean algebra `Quantifier α`. Outer negation is the Boolean complement, so the
-diagonals are contradictory at every restrictor. Contrariety, and with it the subalternations
-and subcontrariety, needs existential import: at an empty restrictor `every` and `no` both hold
-vacuously (`a_e_contrary`), and `squareRelations_square` assumes a nonempty one. -/
+of the square that `every A` spans. Its relations need existential import: at an empty restrictor
+`every` and `no` both hold vacuously. -/
 
 /-- At a restrictor `A` the four determiners form a square of opposition. -/
 def square (A : Set α) : Aristotelian.Square (Quantifier α) where
@@ -306,21 +475,45 @@ def square (A : Set α) : Aristotelian.Square (Quantifier α) where
   I := Det.some A
   O := (every : Det α)ᶜ A
 
-theorem every_contradicts_notEvery (A B : Set α) :
-    (every : Det α) A B ↔ ¬ ((every : Det α)ᶜ A B) := by
-  simp [compl_apply, Classical.not_not]
+theorem square_eq (A : Set α) : square A = (every A).square :=
+  Aristotelian.Square.ext rfl rfl (congrFun dual_every A).symm rfl
 
-theorem a_e_contrary : every A B → no A B → A = ∅ :=
-  fun hA hE ↦ Set.eq_empty_of_forall_notMem fun _ hx ↦ hE hx (hA hx)
+theorem eq_empty_of_every_of_no (hA : every A B) (hE : no A B) : A = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ hx ↦ hE hx (hA hx)
 
-/-- With a nonempty restrictor the four determiners stand in all six relations of the square. -/
-theorem squareRelations_square (hA : A.Nonempty) : Aristotelian.SquareRelations (square A) :=
-  .of_disjoint (funext fun _ ↦ propext <| iff_not_comm.mp no_iff_not_some) rfl <|
-    Pi.disjoint_iff.mpr fun _ ↦ Prop.disjoint_iff.mpr fun ⟨hE, hN⟩ ↦
-      hA.ne_empty (a_e_contrary hE hN)
+/-- The four determiners stand in the relations of the square exactly at a nonempty
+restrictor. -/
+theorem squareRelations_square : Aristotelian.SquareRelations (square A) ↔ A.Nonempty := by
+  rw [square_eq, Quantifier.squareRelations_square_iff,
+    le_dual_iff_not_apply_empty (monotone_every A) fun _ _ ↦ Set.subset_inter, every_apply_empty,
+    Set.nonempty_iff_ne_empty]
 
-theorem subalternation_a_i (hA : A.Nonempty) : every A B → Det.some A B :=
-  (squareRelations_square hA).subalternAI B
+theorem disjoint_every_no_iff : Disjoint (every A) (no A) ↔ A.Nonempty :=
+  Aristotelian.squareRelations_ofUniversals.symm.trans <|
+  (square_eq A ▸ squareRelations_square (A := A) :)
+
+theorem every_le_some (hA : A.Nonempty) : every A ≤ Det.some A :=
+  (squareRelations_square.2 hA).subalternAI
+
+theorem some_inf_compl_every_ne_bot_iff :
+    Det.some A ⊓ (every : Det α)ᶜ A ≠ ⊥ ↔ A.Nontrivial := by
+  rw [Function.ne_iff]
+  constructor
+  · rintro ⟨B, hB⟩
+    obtain ⟨⟨x, hxA, hxB⟩, hne⟩ : Det.some A B ∧ ¬ every A B := by simpa using hB
+    obtain ⟨y, hyA, hyB⟩ := Set.not_subset.1 hne
+    exact ⟨x, hxA, y, hyA, fun h ↦ hyB (h ▸ hxB)⟩
+  · rintro ⟨x, hx, y, hy, hne⟩
+    have h : Det.some A {x} ∧ ¬ every A {x} := ⟨⟨x, hx, rfl⟩, fun h ↦ hne (h hy).symm⟩
+    exact ⟨{x}, by simpa using h⟩
+
+/-- `every A` and `no A` are contrary, unable both to hold and able both to fail, exactly when
+`A` has two members. -/
+theorem isContrary_every_no_iff : Aristotelian.IsContrary (every A) (no A) ↔ A.Nontrivial :=
+  ⟨fun h ↦ some_inf_compl_every_ne_bot_iff.1 <|
+      (squareRelations_square.2 (disjoint_every_no_iff.1 h.disjoint)).isContrary_AE_iff.1 h,
+    fun h ↦ (squareRelations_square.2 h.nonempty).isContrary_AE_iff.2 <|
+      some_inf_compl_every_ne_bot_iff.2 h⟩
 
 /-! ### Left monotonicity and smoothness ([peters-westerstahl-2006]) -/
 
@@ -351,22 +544,6 @@ theorem coSmooth_no : (no : Det α).CoSmooth :=
 
 /-! ### Barwise and Cooper's universals -/
 
-/-- Barwise and Cooper's monotonicity constraint is right continuity: a quantifier is a
-conjunction of monotone quantifiers exactly when it holds at every scope between two at which it
-holds, Thijsse's observation reported by [van-benthem-1984]. -/
-theorem satisfiesUniversals_iff {d : Det α} :
-    d.SatisfiesUniversals ↔ d.Conservative ∧ d.RightContinuous := by
-  refine and_congr_right fun _ ↦ ⟨fun h A ↦ ⟨fun B₁ hq₁ B₂ hq₂ B ⟨h₁, h₂⟩ ↦ ?_⟩, fun h A ↦ ?_⟩
-  · obtain ⟨Q₁, Q₂, hm₁, hm₂, he⟩ := h A
-    simp only [Set.mem_ofPred_eq, he, Pi.inf_apply, inf_Prop_eq] at hq₁ hq₂ ⊢
-    exact ⟨hm₁.elim (fun hm ↦ hm h₁ hq₁.1) fun hm ↦ hm h₂ hq₂.1,
-      hm₂.elim (fun hm ↦ hm h₁ hq₁.2) fun hm ↦ hm h₂ hq₂.2⟩
-  · refine ⟨fun B ↦ ∃ B' ≤ B, d A B', fun B ↦ ∃ B', B ≤ B' ∧ d A B',
-      .inl fun _ _ hBC ⟨B', hB', hq⟩ ↦ ⟨B', hB'.trans hBC, hq⟩,
-      .inr fun _ _ hBC ⟨B', hB', hq⟩ ↦ ⟨B', hBC.trans hB', hq⟩, funext fun B ↦ propext ?_⟩
-    exact ⟨fun hq ↦ ⟨⟨B, le_rfl, hq⟩, B, le_rfl, hq⟩,
-      fun ⟨⟨B₁, h₁, hq₁⟩, B₂, h₂, hq₂⟩ ↦ (h A).out' hq₁ hq₂ ⟨h₁, h₂⟩⟩
-
 theorem satisfiesUniversals_some : (Det.some : Det α).SatisfiesUniversals :=
   satisfiesUniversals_iff.2 ⟨conservative_some, scopeMonotone_some.rightContinuous⟩
 
@@ -376,4 +553,6 @@ theorem satisfiesUniversals_every : (every : Det α).SatisfiesUniversals :=
 theorem satisfiesUniversals_no : (no : Det α).SatisfiesUniversals :=
   satisfiesUniversals_iff.2 ⟨conservative_no, scopeAntitone_no.rightContinuous⟩
 
-end Quantifier.Det
+end Det
+
+end Quantifier

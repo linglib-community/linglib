@@ -446,7 +446,7 @@ def sqAt : Square (Set W) where
 variable {A X}
 
 theorem squareRelations_sqAt (hA : A.Nonempty) : SquareRelations (sqAt A X) :=
-  (Det.squareRelations_square hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
+  (Det.squareRelations_square.2 hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
     { toFun Q := {w | Q (X w)}
       map_sup' _ _ := rfl
       map_inf' _ _ := rfl

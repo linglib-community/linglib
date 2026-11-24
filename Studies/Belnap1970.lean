@@ -126,7 +126,7 @@ Belnap's assertiveness condition, so the relations hold exactly where the forms 
 assertive. -/
 theorem squareRelations_contentSquare (hR : ∃ x, x ∈ C) :
     SquareRelations (contentSquare C) :=
-  contentSquare_eq_square hR ▸ Det.squareRelations_square hR
+  contentSquare_eq_square hR ▸ Det.squareRelations_square.2 hR
 
 /-! ### Obversion, I-conversion, Barbara -/
 

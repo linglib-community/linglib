@@ -20,8 +20,8 @@ algebra of the Pi type, whose `ᶜ`, `⊓` and `⊔` are outer negation, conjunc
 
 The properties are stated in the lattice of sets: conservativity `d A B ↔ d A (A ∩ B)`, the
 monotonicities as `Monotone` and `Antitone` of the sections and the anti-additivities as
-`IsAntiAdditive` of the sections, Peters and Westerståhl's left monotonicities, van Benthem's relational properties, and invariance under the permutations of
-the universe. A determiner, though, denotes a global quantifier, a `Det.Family` with a value on
+`IsAntiAdditive` of the sections, Peters and Westerståhl's left monotonicities, van Benthem's
+relational properties, and invariance under the permutations of the universe. A determiner, though, denotes a global quantifier, a `Det.Family` with a value on
 every finite universe. Two conditions tie the values together:
 [isomorphism closure](##Quantifier.Det.Family.Isom), that equivalent universes carry the same
 quantifier, and [extension](##Quantifier.Det.Family.Ext), that enlarging the universe changes
@@ -36,6 +36,8 @@ nothing.
 * `Det.UpSEMon`, `Det.Smooth`, `Det.LeftAntiAdditive`: the left monotonicities.
 * `Det.QuasiReflexive`, `Det.Filtrating`, `Det.QuantityInvariant`: relational properties and
   permutation invariance.
+* `Det.SatisfiesUniversals`: Barwise and Cooper's determiner universal and monotonicity
+  constraint.
 * `Det.innerNeg`, `Det.dual`, `Det.adjRestrict`: inner negation, the dual and restriction.
 * `Det.Family.Isom`, `Det.Family.Ext`, `Det.Family.Constant`: isomorphism closure, extension,
   and constancy, the two together.
@@ -221,6 +223,17 @@ def Circular (d : Det α) : Prop := ∀ A B C, d A B → d B C → d C A
 /-- A determiner denotation is right continuous when every set of scopes `{B | d A B}` is
 order-connected, so that `d A B₁`, `d A B₂` and `B₁ ⊆ B ⊆ B₂` give `d A B`. -/
 def RightContinuous (d : Det α) : Prop := ∀ A, {B | d A B}.OrdConnected
+
+/-- A determiner denotation satisfies Barwise and Cooper's determiner universal and monotonicity
+constraint (U3 and U6 of [barwise-cooper-1981]) when it is conservative and each of its noun
+phrases `d A` is a monotone quantifier or a conjunction of monotone quantifiers. A monotone `d A`
+is its own conjunction with the trivial quantifier `⊤`. -/
+structure SatisfiesUniversals (d : Det α) : Prop where
+  /-- The determiner denotation is conservative, so that each `d A` lives on `A`. -/
+  conservative : d.Conservative
+  /-- Each `d A` is the meet of two quantifiers, each monotone or antitone. -/
+  exists_eq_inf : ∀ A, ∃ Q₁ Q₂ : Quantifier α, (Monotone Q₁ ∨ Antitone Q₁) ∧
+    (Monotone Q₂ ∨ Antitone Q₂) ∧ d A = Q₁ ⊓ Q₂
 
 /-- A determiner denotation is scope-intersective when `d A B` and `d A C` give `d A (B ∩ C)`. -/
 def ScopeIntersective (d : Det α) : Prop := ∀ A B C, d A B → d A C → d A (B ∩ C)

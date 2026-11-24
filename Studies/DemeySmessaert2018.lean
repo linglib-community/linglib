@@ -250,7 +250,7 @@ theorem inf_categorical_fol :
   simp only [categorical, mem_inter, mem_filter, mem_univ, true_and, IsSYLPattern,
     Matrix.cons_val_zero, Matrix.cons_val_one]
   exact ⟨fun ⟨hA, hE⟩ ⟨r, hr, hS⟩ ↦
-      Set.eq_empty_iff_forall_notMem.1 (a_e_contrary hA hE) ⟨r, hr⟩ hS,
+      Set.eq_empty_iff_forall_notMem.1 (eq_empty_of_every_of_no hA hE) ⟨r, hr⟩ hS,
     fun h ↦ ⟨fun r hr ↦ (h ⟨r.1, r.2, hr⟩).elim, fun r hr ↦ (h ⟨r.1, r.2, hr⟩).elim⟩⟩
 
 -- In syllogistics the categorical statements form a square of opposition.
@@ -263,7 +263,7 @@ theorem squareRelations_syl : SquareRelations (categoricalSquare IsSYLPattern) :
   · obtain ⟨r, hr, hS⟩ := m.2
     simp only [categoricalSquare, categorical, mem_filter, mem_univ, true_and,
       Matrix.cons_val_zero, Matrix.cons_val_one] at hA hE
-    exact Set.eq_empty_iff_forall_notMem.1 (a_e_contrary hA hE) ⟨r, hr⟩ hS
+    exact Set.eq_empty_iff_forall_notMem.1 (eq_empty_of_every_of_no hA hE) ⟨r, hr⟩ hS
 
 -- Section 4: the syllogistic cells are the vertices of the triangle of opposition.
 theorem parts_minterms_syl :

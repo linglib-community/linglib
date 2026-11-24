@@ -290,7 +290,7 @@ theorem not_licensingCondition_every (hD : D.Nonempty)
     (hne : ¬{w | Det.some D {x | ∃ y ∈ N, w ∈ V x y}} ⊆
       {w | Det.every D {x | ∃ y ∈ N, w ∈ V x y}}) :
     ¬LicensingCondition (compl <$> every V D ·) N := fun h ↦
-  hne (maximal_pair_iff.1 (licensingCondition_compl_iff.1 h).2 fun _ ↦ Det.subalternation_a_i hD)
+  hne (maximal_pair_iff.1 (licensingCondition_compl_iff.1 h).2 fun _ ↦ Det.every_le_some hD _)
 
 end Universal
 
