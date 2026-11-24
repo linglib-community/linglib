@@ -31,6 +31,8 @@ possibilities, the same inquisitive content.
   the question it generates is.
 * `Inquisitive.Unrestricted.univ_mem_iff`: a finite proposition contains the trivial possibility
   iff it is neither informative nor inquisitive.
+* `Inquisitive.Unrestricted.subsingleton_restrict_iff`: a restricted proposition has at most one
+  possibility iff its possibilities consistent with the information set agree on it.
 
 ## References
 
@@ -223,25 +225,39 @@ theorem isAttentive_pro_iff : IsAttentive (pro P) ↔ IsAttentive (P \ {∅}) :=
     simp [IsAttentive]
   · rfl
 
-theorem pro_eq_singleton {k : Set W} (hk : k ≠ ∅) (hkP : k ∈ P) (hP : P ⊆ {k, ∅}) :
-    pro P = {k} := by
-  have hne : P ≠ {∅} := fun h ↦ hk (mem_singleton_iff.1 (h ▸ hkP))
-  simp only [pro, hne, ↓reduceIte]
-  ext p
-  refine ⟨fun ⟨hp, hp0⟩ ↦ ?_, ?_⟩
-  · rcases hP hp with rfl | rfl
-    · rfl
-    · exact absurd rfl hp0
-  · rintro rfl
-    exact ⟨hkP, hk⟩
+/-- The propositional closure has at most one possibility just in case the set of possibilities
+has at most one nonempty member. -/
+theorem subsingleton_pro_iff : (pro P).Subsingleton ↔ (P \ {∅}).Subsingleton := by
+  unfold pro
+  split_ifs with h
+  · subst h
+    simp
+  · rfl
+
+variable {k : Set W}
+
+/-- A proposition restricted to `k` has at most one possibility just in case its possibilities
+consistent with `k` agree on `k`. -/
+theorem subsingleton_restrict_iff :
+    (restrict P k).Subsingleton ↔
+      ∀ p ∈ P, ∀ q ∈ P, (k ∩ p).Nonempty → (k ∩ q).Nonempty → k ∩ p = k ∩ q := by
+  rw [restrict, subsingleton_pro_iff]
+  refine ⟨fun h p hp q hq hkp hkq ↦
+    h ⟨mem_image_of_mem _ hp, hkp.ne_empty⟩ ⟨mem_image_of_mem _ hq, hkq.ne_empty⟩, ?_⟩
+  rintro h _ ⟨⟨p, hp, rfl⟩, hp0⟩ _ ⟨⟨q, hq, rfl⟩, hq0⟩
+  exact h p hp q hq (nonempty_iff_ne_empty.2 hp0) (nonempty_iff_ne_empty.2 hq0)
+
+/-- Restricted to an information set that decides each of its possibilities, a proposition keeps
+at most one possibility. -/
+theorem subsingleton_restrict_of_subset_or_disjoint (h : ∀ p ∈ P, k ⊆ p ∨ Disjoint k p) :
+    (restrict P k).Subsingleton :=
+  subsingleton_restrict_iff.2 fun p hp q hq hkp hkq ↦ by
+    rw [inter_eq_left.2 ((h p hp).resolve_right (not_disjoint_iff_nonempty_inter.2 hkp)),
+      inter_eq_left.2 ((h q hq).resolve_right (not_disjoint_iff_nonempty_inter.2 hkq))]
 
 /-- Restricted to a single world, a proposition keeps at most one possibility. -/
-theorem subsingleton_restrict_singleton (w : W) : (restrict P {w}).Subsingleton := by
-  unfold restrict pro
-  split_ifs with h
-  · exact h ▸ subsingleton_singleton
-  · refine (subsingleton_singleton (a := {w})).anti ?_
-    rintro _ ⟨⟨p, -, rfl⟩, hne⟩
-    exact singleton_inter_of_mem (not_not.1 (mt singleton_inter_eq_empty.2 hne))
+theorem subsingleton_restrict_singleton (w : W) : (restrict P {w}).Subsingleton :=
+  subsingleton_restrict_of_subset_or_disjoint fun p _ ↦
+    (em (w ∈ p)).imp singleton_subset_iff.2 disjoint_singleton_left.2
 
 end Inquisitive.Unrestricted
