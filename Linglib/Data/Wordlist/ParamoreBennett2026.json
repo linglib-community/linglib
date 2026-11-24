@@ -1,0 +1,1132 @@
+{
+  "description": "Forms of Pakistani Panjabi from Paramore and Bennett (2026): the derivations of (5) and the suffixed forms of (2c, d) with their underlying forms, and the 32 stimuli of Experiment 2 (Table 3), each a stem with a postposition, which the paper prints as underlying forms. Segments follow the paper's transcription, a long vowel written double; a single ⟨a⟩ is the short central vowel ⟨ə⟩, a single ⟨e⟩ the vowel ⟨ee⟩, and ⟨v⟩ the semivowel ⟨ʋ⟩. Morpheme boundaries are not segments.",
+  "Types": {
+    "Condition": [
+      {
+        "Value": "oral [VGV]",
+        "Lean": "oral",
+        "Description": "a stem ending in a vowel, a glide and an oral vowel"
+      },
+      {
+        "Value": "pre-N [VGṼN]",
+        "Lean": "preN",
+        "Description": "a stem ending in a vowel, a glide, a vowel and a nasal consonant of the same morpheme"
+      },
+      {
+        "Value": "contrastive nasal [ṼG̃Ṽ=NV]",
+        "Lean": "nasalNV",
+        "Description": "a stem ending in a vowel, a glide and a contrastive nasal vowel, with a postposition beginning in a nasal consonant"
+      },
+      {
+        "Value": "contrastive nasal [ṼG̃Ṽ=CV]",
+        "Lean": "nasalCV",
+        "Description": "a stem ending in a vowel, a glide and a contrastive nasal vowel, with a postposition beginning in an oral stop"
+      }
+    ]
+  },
+  "ParameterTable": [
+    {
+      "ID": "pumicestone",
+      "Name": "pumicestone",
+      "Description": ""
+    },
+    {
+      "ID": "generalPublic",
+      "Name": "general public",
+      "Description": ""
+    },
+    {
+      "ID": "division",
+      "Name": "division-ADJZ",
+      "Description": ""
+    },
+    {
+      "ID": "branch",
+      "Name": "branch-PL",
+      "Description": ""
+    },
+    {
+      "ID": "twentySeven",
+      "Name": "27",
+      "Description": ""
+    },
+    {
+      "ID": "piousMen",
+      "Name": "pious men",
+      "Description": ""
+    },
+    {
+      "ID": "air",
+      "Name": "air",
+      "Description": ""
+    },
+    {
+      "ID": "twentyFour",
+      "Name": "24",
+      "Description": ""
+    },
+    {
+      "ID": "cotLeg",
+      "Name": "cot leg",
+      "Description": ""
+    },
+    {
+      "ID": "widow",
+      "Name": "widow",
+      "Description": ""
+    },
+    {
+      "ID": "medicine",
+      "Name": "medicine",
+      "Description": ""
+    },
+    {
+      "ID": "uncle",
+      "Name": "uncle",
+      "Description": ""
+    },
+    {
+      "ID": "boasting",
+      "Name": "boasting",
+      "Description": ""
+    },
+    {
+      "ID": "chief",
+      "Name": "chief",
+      "Description": ""
+    },
+    {
+      "ID": "youth",
+      "Name": "a youth",
+      "Description": ""
+    },
+    {
+      "ID": "omumSeed",
+      "Name": "omum seed",
+      "Description": ""
+    },
+    {
+      "ID": "recognition",
+      "Name": "recognition",
+      "Description": ""
+    },
+    {
+      "ID": "attention",
+      "Name": "attention",
+      "Description": ""
+    },
+    {
+      "ID": "taking",
+      "Name": "taking",
+      "Description": ""
+    },
+    {
+      "ID": "inThatWay",
+      "Name": "in that way",
+      "Description": ""
+    },
+    {
+      "ID": "bothSides",
+      "Name": "both sides",
+      "Description": ""
+    },
+    {
+      "ID": "somehow",
+      "Name": "somehow",
+      "Description": ""
+    },
+    {
+      "ID": "inVain",
+      "Name": "in vain",
+      "Description": ""
+    },
+    {
+      "ID": "fish",
+      "Name": "fish-PL",
+      "Description": ""
+    },
+    {
+      "ID": "woman",
+      "Name": "woman",
+      "Description": ""
+    },
+    {
+      "ID": "breaths",
+      "Name": "breaths",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "pumicestone",
+      "Language_ID": "west2386",
+      "Parameter_ID": "pumicestone"
+    },
+    {
+      "ID": "generalPublic",
+      "Language_ID": "west2386",
+      "Parameter_ID": "generalPublic"
+    },
+    {
+      "ID": "division",
+      "Language_ID": "west2386",
+      "Parameter_ID": "division"
+    },
+    {
+      "ID": "branch",
+      "Language_ID": "west2386",
+      "Parameter_ID": "branch"
+    },
+    {
+      "ID": "twentySeven",
+      "Language_ID": "west2386",
+      "Parameter_ID": "twentySeven"
+    },
+    {
+      "ID": "piousMen",
+      "Language_ID": "west2386",
+      "Parameter_ID": "piousMen"
+    },
+    {
+      "ID": "air",
+      "Language_ID": "west2386",
+      "Parameter_ID": "air"
+    },
+    {
+      "ID": "twentyFour",
+      "Language_ID": "west2386",
+      "Parameter_ID": "twentyFour"
+    },
+    {
+      "ID": "cotLeg",
+      "Language_ID": "west2386",
+      "Parameter_ID": "cotLeg"
+    },
+    {
+      "ID": "widow",
+      "Language_ID": "west2386",
+      "Parameter_ID": "widow"
+    },
+    {
+      "ID": "medicine",
+      "Language_ID": "west2386",
+      "Parameter_ID": "medicine"
+    },
+    {
+      "ID": "uncle",
+      "Language_ID": "west2386",
+      "Parameter_ID": "uncle"
+    },
+    {
+      "ID": "boasting",
+      "Language_ID": "west2386",
+      "Parameter_ID": "boasting"
+    },
+    {
+      "ID": "chief",
+      "Language_ID": "west2386",
+      "Parameter_ID": "chief"
+    },
+    {
+      "ID": "youth",
+      "Language_ID": "west2386",
+      "Parameter_ID": "youth"
+    },
+    {
+      "ID": "omumSeed",
+      "Language_ID": "west2386",
+      "Parameter_ID": "omumSeed"
+    },
+    {
+      "ID": "recognition",
+      "Language_ID": "west2386",
+      "Parameter_ID": "recognition"
+    },
+    {
+      "ID": "attention",
+      "Language_ID": "west2386",
+      "Parameter_ID": "attention"
+    },
+    {
+      "ID": "taking",
+      "Language_ID": "west2386",
+      "Parameter_ID": "taking"
+    },
+    {
+      "ID": "inThatWay",
+      "Language_ID": "west2386",
+      "Parameter_ID": "inThatWay"
+    },
+    {
+      "ID": "bothSides",
+      "Language_ID": "west2386",
+      "Parameter_ID": "bothSides"
+    },
+    {
+      "ID": "somehow",
+      "Language_ID": "west2386",
+      "Parameter_ID": "somehow"
+    },
+    {
+      "ID": "inVain",
+      "Language_ID": "west2386",
+      "Parameter_ID": "inVain"
+    },
+    {
+      "ID": "fish",
+      "Language_ID": "west2386",
+      "Parameter_ID": "fish"
+    },
+    {
+      "ID": "woman",
+      "Language_ID": "west2386",
+      "Parameter_ID": "woman"
+    },
+    {
+      "ID": "breaths",
+      "Language_ID": "west2386",
+      "Parameter_ID": "breaths"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "paramorebennett2026_pumicestone",
+      "Lexeme_ID": "pumicestone",
+      "Form": "tʃɑ̃ɑ̃ʋ̃ẽẽ",
+      "Segments": [
+        "tʃ",
+        "ɑ̃ɑ̃",
+        "ʋ̃",
+        "ẽẽ"
+      ],
+      "Source": [
+        "paramore-bennett-2026[(5a)]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_generalPublic",
+      "Lexeme_ID": "generalPublic",
+      "Form": "ɑɑʋɑ̃ɑ̃m",
+      "Segments": [
+        "ɑɑ",
+        "ʋ",
+        "ɑ̃ɑ̃",
+        "m"
+      ],
+      "Source": [
+        "paramore-bennett-2026[(5b)]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_division",
+      "Lexeme_ID": "division",
+      "Form": "və̃ɳɖɪ̃ʋ̃ɑ̃ɑ̃",
+      "Segments": [
+        "ʋ",
+        "ə̃",
+        "ɳ",
+        "ɖ",
+        "ɪ̃",
+        "ʋ̃",
+        "ɑ̃ɑ̃"
+      ],
+      "Source": [
+        "paramore-bennett-2026[(2c)]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_branches",
+      "Lexeme_ID": "branch",
+      "Form": "ʃɑɑxɑ̃ɑ̃",
+      "Segments": [
+        "ʃ",
+        "ɑɑ",
+        "x",
+        "ɑ̃ɑ̃"
+      ],
+      "Source": [
+        "paramore-bennett-2026[(2d)]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_twentySevenDa",
+      "Lexeme_ID": "twentySeven",
+      "Form": "sət-ɑɑjii də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_piousMenDa",
+      "Lexeme_ID": "piousMen",
+      "Form": "ɔɔlii-jɑɑ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_airDa",
+      "Lexeme_ID": "air",
+      "Form": "həʋɑɑ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_twentyFourDa",
+      "Lexeme_ID": "twentyFour",
+      "Form": "tʃoo-ʋii də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_cotLegDa",
+      "Lexeme_ID": "cotLeg",
+      "Form": "pɑɑʋee də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_widowDa",
+      "Lexeme_ID": "widow",
+      "Form": "beeʋɑɑ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_medicineDa",
+      "Lexeme_ID": "medicine",
+      "Form": "dəʋɑɑ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_uncleDa",
+      "Lexeme_ID": "uncle",
+      "Form": "tɑɑʋuu də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_boastingDa",
+      "Lexeme_ID": "boasting",
+      "Form": "ʋəkʰɑɑʋee də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_chiefDa",
+      "Lexeme_ID": "chief",
+      "Form": "mʊkʰiijɑɑ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_youthDa",
+      "Lexeme_ID": "youth",
+      "Form": "dʒəʋɑɑɳ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_omumSeedDa",
+      "Lexeme_ID": "omumSeed",
+      "Form": "ədʒəʋɛɛɳ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_recognitionDa",
+      "Lexeme_ID": "recognition",
+      "Form": "siijɑɑɳ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_attentionDa",
+      "Lexeme_ID": "attention",
+      "Form": "teejɑɑɳ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_takingDe",
+      "Lexeme_ID": "taking",
+      "Form": "lɛɛ-jɑɑɳ de",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_generalPublicDa",
+      "Lexeme_ID": "generalPublic",
+      "Form": "ɑɑʋɑɑm də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_pumicestoneNu",
+      "Lexeme_ID": "pumicestone",
+      "Form": "tʃɑɑʋẽẽ nʊ",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_inThatWayNu",
+      "Lexeme_ID": "inThatWay",
+      "Form": "uu-ʋẽẽ nʊ",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_bothSidesNu",
+      "Lexeme_ID": "bothSides",
+      "Form": "doo-ʋɑ̃ɑ̃ nʊ",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_somehowNu",
+      "Lexeme_ID": "somehow",
+      "Form": "kii-ʋẽẽ nʊ",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_inVainNu",
+      "Lexeme_ID": "inVain",
+      "Form": "ɛɛ-ʋẽẽ nʊ",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_fishNi",
+      "Lexeme_ID": "fish",
+      "Form": "matʃii-jɑ̃ɑ̃ nɪ",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_womanNi",
+      "Lexeme_ID": "woman",
+      "Form": "tiiʋĩĩ nɪ",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_breathsNi",
+      "Lexeme_ID": "breaths",
+      "Form": "sɑɑ-ʋɑ̃ɑ̃ nɪ",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_pumicestoneDa",
+      "Lexeme_ID": "pumicestone",
+      "Form": "tʃɑɑʋẽẽ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_inThatWayDa",
+      "Lexeme_ID": "inThatWay",
+      "Form": "uu-ʋẽẽ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_bothSidesPaase",
+      "Lexeme_ID": "bothSides",
+      "Form": "doo-ʋɑ̃ɑ̃ pɑɑse",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_somehowDa",
+      "Lexeme_ID": "somehow",
+      "Form": "kii-ʋẽẽ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_inVainDa",
+      "Lexeme_ID": "inVain",
+      "Form": "ɛɛ-ʋẽẽ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_fishDa",
+      "Lexeme_ID": "fish",
+      "Form": "matʃii-jɑ̃ɑ̃ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_womanDa",
+      "Lexeme_ID": "woman",
+      "Form": "tiiʋĩĩ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    },
+    {
+      "ID": "paramorebennett2026_breathsDa",
+      "Lexeme_ID": "breaths",
+      "Form": "sɑɑ-ʋɑ̃ɑ̃ də",
+      "Source": [
+        "paramore-bennett-2026[Table 3]"
+      ]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Underlying",
+      "Lean": "underlying",
+      "Type": "List String",
+      "Description": "the segments of the underlying form the paper gives, the stem of a stimulus"
+    },
+    {
+      "Name": "Clitic",
+      "Lean": "clitic",
+      "Type": "List String",
+      "Description": "the segments of the postposition a stimulus was recorded with"
+    },
+    {
+      "Name": "Condition",
+      "Lean": "condition",
+      "Type": "Condition",
+      "Description": "the condition of Experiment 2 a stimulus belongs to"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "paramorebennett2026_pumicestone",
+      "Underlying": [
+        "tʃ",
+        "ɑɑ",
+        "ʋ",
+        "ẽẽ"
+      ]
+    },
+    {
+      "Form_ID": "paramorebennett2026_generalPublic",
+      "Underlying": [
+        "ɑɑ",
+        "ʋ",
+        "ɑɑ",
+        "m"
+      ]
+    },
+    {
+      "Form_ID": "paramorebennett2026_division",
+      "Underlying": [
+        "ʋ",
+        "ə",
+        "ɳ",
+        "ɖ",
+        "ɪ",
+        "ʋ",
+        "ɑ̃ɑ̃"
+      ]
+    },
+    {
+      "Form_ID": "paramorebennett2026_branches",
+      "Underlying": [
+        "ʃ",
+        "ɑɑ",
+        "k",
+        "ɑ̃ɑ̃"
+      ]
+    },
+    {
+      "Form_ID": "paramorebennett2026_twentySevenDa",
+      "Underlying": [
+        "s",
+        "ə",
+        "t",
+        "ɑɑ",
+        "j",
+        "ii"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "oral [VGV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_piousMenDa",
+      "Underlying": [
+        "ɔɔ",
+        "l",
+        "ii",
+        "j",
+        "ɑɑ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "oral [VGV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_airDa",
+      "Underlying": [
+        "h",
+        "ə",
+        "ʋ",
+        "ɑɑ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "oral [VGV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_twentyFourDa",
+      "Underlying": [
+        "tʃ",
+        "oo",
+        "ʋ",
+        "ii"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "oral [VGV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_cotLegDa",
+      "Underlying": [
+        "p",
+        "ɑɑ",
+        "ʋ",
+        "ee"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "oral [VGV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_widowDa",
+      "Underlying": [
+        "b",
+        "ee",
+        "ʋ",
+        "ɑɑ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "oral [VGV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_medicineDa",
+      "Underlying": [
+        "d",
+        "ə",
+        "ʋ",
+        "ɑɑ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "oral [VGV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_uncleDa",
+      "Underlying": [
+        "t",
+        "ɑɑ",
+        "ʋ",
+        "uu"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "oral [VGV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_boastingDa",
+      "Underlying": [
+        "ʋ",
+        "ə",
+        "kʰ",
+        "ɑɑ",
+        "ʋ",
+        "ee"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "oral [VGV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_chiefDa",
+      "Underlying": [
+        "m",
+        "ʊ",
+        "kʰ",
+        "ii",
+        "j",
+        "ɑɑ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "oral [VGV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_youthDa",
+      "Underlying": [
+        "dʒ",
+        "ə",
+        "ʋ",
+        "ɑɑ",
+        "ɳ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "pre-N [VGṼN]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_omumSeedDa",
+      "Underlying": [
+        "ə",
+        "dʒ",
+        "ə",
+        "ʋ",
+        "ɛɛ",
+        "ɳ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "pre-N [VGṼN]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_recognitionDa",
+      "Underlying": [
+        "s",
+        "ii",
+        "j",
+        "ɑɑ",
+        "ɳ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "pre-N [VGṼN]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_attentionDa",
+      "Underlying": [
+        "t",
+        "ee",
+        "j",
+        "ɑɑ",
+        "ɳ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "pre-N [VGṼN]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_takingDe",
+      "Underlying": [
+        "l",
+        "ɛɛ",
+        "j",
+        "ɑɑ",
+        "ɳ"
+      ],
+      "Clitic": [
+        "d",
+        "ee"
+      ],
+      "Condition": "pre-N [VGṼN]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_generalPublicDa",
+      "Underlying": [
+        "ɑɑ",
+        "ʋ",
+        "ɑɑ",
+        "m"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "pre-N [VGṼN]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_pumicestoneNu",
+      "Underlying": [
+        "tʃ",
+        "ɑɑ",
+        "ʋ",
+        "ẽẽ"
+      ],
+      "Clitic": [
+        "n",
+        "ʊ"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=NV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_inThatWayNu",
+      "Underlying": [
+        "uu",
+        "ʋ",
+        "ẽẽ"
+      ],
+      "Clitic": [
+        "n",
+        "ʊ"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=NV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_bothSidesNu",
+      "Underlying": [
+        "d",
+        "oo",
+        "ʋ",
+        "ɑ̃ɑ̃"
+      ],
+      "Clitic": [
+        "n",
+        "ʊ"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=NV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_somehowNu",
+      "Underlying": [
+        "k",
+        "ii",
+        "ʋ",
+        "ẽẽ"
+      ],
+      "Clitic": [
+        "n",
+        "ʊ"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=NV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_inVainNu",
+      "Underlying": [
+        "ɛɛ",
+        "ʋ",
+        "ẽẽ"
+      ],
+      "Clitic": [
+        "n",
+        "ʊ"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=NV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_fishNi",
+      "Underlying": [
+        "m",
+        "ə",
+        "tʃ",
+        "ii",
+        "j",
+        "ɑ̃ɑ̃"
+      ],
+      "Clitic": [
+        "n",
+        "ɪ"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=NV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_womanNi",
+      "Underlying": [
+        "t",
+        "ii",
+        "ʋ",
+        "ĩĩ"
+      ],
+      "Clitic": [
+        "n",
+        "ɪ"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=NV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_breathsNi",
+      "Underlying": [
+        "s",
+        "ɑɑ",
+        "ʋ",
+        "ɑ̃ɑ̃"
+      ],
+      "Clitic": [
+        "n",
+        "ɪ"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=NV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_pumicestoneDa",
+      "Underlying": [
+        "tʃ",
+        "ɑɑ",
+        "ʋ",
+        "ẽẽ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=CV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_inThatWayDa",
+      "Underlying": [
+        "uu",
+        "ʋ",
+        "ẽẽ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=CV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_bothSidesPaase",
+      "Underlying": [
+        "d",
+        "oo",
+        "ʋ",
+        "ɑ̃ɑ̃"
+      ],
+      "Clitic": [
+        "p",
+        "ɑɑ",
+        "s",
+        "ee"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=CV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_somehowDa",
+      "Underlying": [
+        "k",
+        "ii",
+        "ʋ",
+        "ẽẽ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=CV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_inVainDa",
+      "Underlying": [
+        "ɛɛ",
+        "ʋ",
+        "ẽẽ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=CV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_fishDa",
+      "Underlying": [
+        "m",
+        "ə",
+        "tʃ",
+        "ii",
+        "j",
+        "ɑ̃ɑ̃"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=CV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_womanDa",
+      "Underlying": [
+        "t",
+        "ii",
+        "ʋ",
+        "ĩĩ"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=CV]"
+    },
+    {
+      "Form_ID": "paramorebennett2026_breathsDa",
+      "Underlying": [
+        "s",
+        "ɑɑ",
+        "ʋ",
+        "ɑ̃ɑ̃"
+      ],
+      "Clitic": [
+        "d",
+        "ə"
+      ],
+      "Condition": "contrastive nasal [ṼG̃Ṽ=CV]"
+    }
+  ]
+}

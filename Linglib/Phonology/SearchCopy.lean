@@ -27,7 +27,8 @@ only what the search can see.
 Where no write changes a target's visibility (`SearchCopy.PreservesTier`), the run is a
 tier-based output strictly 2-local function (`SearchCopy.toOSLRule_applyOnTier`), and the run of
 a word with one more segment is the run of the word followed by one output
-(`SearchCopy.scan_concat`). Where the targets are invisible, the run is a tier-based input
+(`SearchCopy.scan_concat`), or preceded by one when the rule scans from the right
+(`SearchCopy.apply_cons`). Where the targets are invisible, the run is a tier-based input
 strictly 2-local function (`SearchCopy.toISLRule_applyOnTier`). Over a finite alphabet every
 rule is subsequential in its direction (`SearchCopy.apply_isSubsequential`). A rule whose writes
 add to their targets changes no value that a segment has (`SearchCopy.forall₂_le_scan`).
@@ -223,6 +224,8 @@ def sourceValue (w : List α) : Option Bool := (r.sourceAfter w).bind r.value
 
 @[simp] theorem scan_nil : r.scan [] = [] := rfl
 
+@[simp] theorem apply_nil : r.apply [] = [] := by cases h : r.direction <;> simp [apply, h]
+
 @[simp] theorem length_scan (w : List α) : (r.scan w).length = w.length :=
   r.toMealy.length_run w
 
@@ -294,6 +297,14 @@ theorem scan_concat (hw : r.PreservesTier) (w : List α) (x : α) :
     r.scan (w ++ [x]) = r.scan w ++ [r.emit ((r.scan w).filter (r.tier ·)).getLast? x] := by
   rw [r.getLast?_filter_scan hw, scan_eq_runFrom, Mealy.runFrom_append, ← scan_eq_runFrom]
   rfl
+
+/-- When writes preserve visibility, a rule scanning from the right outputs the first segment of
+a word with the first visible segment of the run of the rest as window. -/
+theorem apply_cons (hd : r.direction = .right) (hw : r.PreservesTier) (s : α) (w : List α) :
+    r.apply (s :: w) = r.emit ((r.apply w).filter (r.tier ·)).head? s :: r.apply w := by
+  simp only [apply, hd, Edge.orient_right, List.reverse_cons]
+  rw [r.scan_concat hw, List.reverse_append, List.reverse_singleton, List.singleton_append,
+    List.filter_reverse, List.head?_reverse]
 
 /-! ### Words without targets -/
 

@@ -141,10 +141,8 @@ omit [DecidableEq σ] in
 /-- In the counterfeeding order the fed map underapplies: where `P` makes a string `Q` applies
 to, applying `Q` first changes nothing, and `P` then gives a string in `Q`'s input set. -/
 theorem underapplication (h : Feeds P (· ∈ inputSet Q) x) :
-    P (Q x) = P x ∧ P (Q x) ∈ inputSet Q := by
-  have hQ : Q x = x := h.isFixedPt fun _ ↦ not_not.mp
-  rw [hQ]
-  exact ⟨rfl, (feeds_iff.mp h).2⟩
+    P (Q x) = P x ∧ P (Q x) ∈ inputSet Q :=
+  Feeds.underapplication h
 
 end Maps
 

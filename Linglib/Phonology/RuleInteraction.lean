@@ -12,8 +12,9 @@ how far being measured in any preorder. [A predicate, with `False < True`, gives
 relations](##Phonology.feeds_iff), the number of times the second rule applies Baković and
 Blumenfeld's input-provision and input-removal, and [a coarser measure fewer
 interactions](##Phonology.Feeds.of_comp). [In the bleeding order the bled rule applies
-vacuously](##Phonology.Bleeds.isFixedPt), and [a map undoing the first rule bleeds what it
-feeds](##Phonology.bleeds_iff_feeds_of_apply_eq).
+vacuously](##Phonology.Bleeds.isFixedPt), [in the counterfeeding order the fed rule
+underapplies](##Phonology.Feeds.underapplication), and [a map undoing the first rule bleeds what
+it feeds](##Phonology.bleeds_iff_feeds_of_apply_eq).
 
 ## Implementation notes
 
@@ -95,5 +96,12 @@ theorem Bleeds.isFixedPt (h : Bleeds f p x) (hg : ∀ y, ¬ p y → IsFixedPt g 
 satisfying `p` fixes a form at which `p` is fed. -/
 theorem Feeds.isFixedPt (h : Feeds f p x) (hg : ∀ y, ¬ p y → IsFixedPt g y) : IsFixedPt g x :=
   hg _ (feeds_iff.mp h).1
+
+/-- In the counterfeeding order the fed rule underapplies: where `f` makes a form that `g` changes,
+`g` applied first changes nothing, and `f` then gives a form that `g` would change. -/
+theorem Feeds.underapplication (h : Feeds f (¬ IsFixedPt g ·) x) :
+    f (g x) = f x ∧ ¬ IsFixedPt g (f (g x)) := by
+  rw [show g x = x from h.isFixedPt fun _ ↦ not_not.mp]
+  exact ⟨rfl, (feeds_iff.mp h).2⟩
 
 end Phonology

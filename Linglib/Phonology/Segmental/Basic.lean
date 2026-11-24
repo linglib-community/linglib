@@ -122,6 +122,14 @@ theorem le_copy (h : s f = none) (c : Option Segment) : s ≤ s.copy f c := by
     (s.setFeature f v) g = s g :=
   Function.update_of_ne (Ne.symm h) _ _
 
+/-- Changing a segment to a matrix with a single value sets that feature. -/
+theorem setFeature_bot_or (f : Feature) (v : Bool) (s : Segment) :
+    ((⊥ : Segment).setFeature f v).or s = s.setFeature f v := by
+  refine ext' fun g ↦ ?_
+  obtain rfl | h := eq_or_ne f g
+  · simp
+  · simp [setFeature_apply_of_ne h]
+
 theorem copy_apply_of_ne (h : f ≠ g) (s : Segment) (c : Option Segment) :
     (s.copy f c) g = s g := by
   unfold copy
