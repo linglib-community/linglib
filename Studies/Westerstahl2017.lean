@@ -73,16 +73,24 @@ variable {Q : Quantifier.Family.{u}}
 def Ext (Q : Quantifier.Family.{u}) : Prop :=
   ∀ ⦃β : Type u⦄ [Finite β] (M B : Set β), B ⊆ M → (Q M (Subtype.val ⁻¹' B) ↔ Q β B)
 
-/-- (5-b): the quantifier *at least `k`*, which holds of the sets with at least `k` members. -/
-def atLeast (k : ℕ) : Quantifier.Family.{u} := fun _ _ B ↦ k ≤ B.ncard
+/-- (5-b): the quantifier *at least `k`*, the determiner denotation *at least `k`* with the
+universe as its restrictor. -/
+def atLeast (k : ℕ) : Quantifier.Family.{u} := (Det.Family.atLeast k).atUniv
 
-/-- (5-c): the universal quantifier, which holds of the whole universe. -/
-def all : Quantifier.Family.{u} := fun _ _ B ↦ B = Set.univ
+/-- (5-c): the universal quantifier, *every* with the universe as its restrictor. -/
+def all : Quantifier.Family.{u} := Det.Family.every.atUniv
+
+theorem atLeast_apply (k : ℕ) (α : Type u) [Finite α] (B : Set α) :
+    atLeast k α B ↔ k ≤ B.ncard := by
+  simp [atLeast, Det.Family.atUniv, Det.Family.atLeast, Det.atLeast_apply]
+
+theorem all_apply (α : Type u) [Finite α] (B : Set α) : all α B ↔ B = Set.univ := by
+  simp [all, Det.Family.atUniv, Det.Family.every, Det.every, Set.univ_subset_iff]
 
 -- (5-b)
 theorem ext_atLeast (k : ℕ) : Ext (atLeast.{u} k) := fun _ _ M B hB ↦ by
-  simp only [atLeast]
-  rw [Set.ncard_preimage_of_injective_subset_range Subtype.val_injective (by simpa using hB)]
+  rw [atLeast_apply, atLeast_apply,
+    Set.ncard_preimage_of_injective_subset_range Subtype.val_injective (by simpa using hB)]
 
 -- (5-d)
 theorem ext_bot : Ext (⊥ : Quantifier.Family.{u}) := fun _ _ _ _ _ ↦ Iff.rfl
@@ -92,8 +100,8 @@ theorem ext_top : Ext (⊤ : Quantifier.Family.{u}) := fun _ _ _ _ _ ↦ Iff.rfl
 
 -- (5-c)
 theorem not_ext_all : ¬ Ext all.{u} := fun h ↦
-  Set.empty_ne_univ <| (h (∅ : Set PUnit.{u + 1}) ∅ subset_rfl).1 <|
-    Set.eq_univ_of_forall fun x ↦ (Set.notMem_empty _ x.2).elim
+  Set.empty_ne_univ <| (all_apply _ _).1 <| (h (∅ : Set PUnit.{u + 1}) ∅ subset_rfl).1 <|
+    (all_apply _ _).2 <| Set.eq_univ_of_forall fun x ↦ (Set.notMem_empty _ x.2).elim
 
 theorem iff_of_ncard_eq (hI : Q.Isom) (hE : Ext Q) {α β : Type u} [Finite α] [Finite β]
     {B : Set α} {C : Set β} (h : B.ncard = C.ncard) : Q α B ↔ Q β C := by
@@ -128,7 +136,7 @@ theorem ext_iff_eq_bot_or_atLeast (hI : Q.Isom) (hm : ∀ (α : Type u) [Finite 
     · exact .inl <| eq_bot_iff.2 <| Quantifier.Family.le_def.2 fun α _ B h ↦
         absurd ((key α B).1 h) (by rw [h0]; exact Set.notMem_empty _)
     · exact .inr ⟨k, funext fun α ↦ funext fun _ ↦ funext fun B ↦
-        propext ((key α B).trans (by rw [hk]; rfl))⟩
+        propext ((key α B).trans (by rw [hk, atLeast_apply]; rfl))⟩
   · rintro (rfl | ⟨k, rfl⟩)
     exacts [ext_bot, ext_atLeast k]
 
@@ -148,9 +156,13 @@ def ofMinSize (f : ℕ → ℕ) : Quantifier.Family.{u} := fun α _ B ↦ f (Nat
 unchanged or raises it by one. -/
 def Smooth (f : ℕ → ℕ) : Prop := ∀ n, f n ≤ f (n + 1) ∧ f (n + 1) ≤ f n + 1
 
-/-- Section 4, (5-f): the Rescher quantifier *more than half*, which holds of the sets with more
-members than their complement. -/
-def rescher : Quantifier.Family.{u} := fun _ _ B ↦ Bᶜ.ncard < B.ncard
+/-- Section 4, (5-f): the Rescher quantifier *more than half*, *most* with the universe as its
+restrictor. -/
+def rescher : Quantifier.Family.{u} := Det.Family.most.atUniv
+
+theorem rescher_apply (α : Type u) [Finite α] (B : Set α) :
+    rescher α B ↔ Bᶜ.ncard < B.ncard := by
+  simp [rescher, Det.Family.atUniv, Det.Family.most, Det.most_apply, Set.compl_eq_univ_sdiff]
 
 /-- Section 7: the minimum size of the first test quantifier. -/
 def test1 (n : ℕ) : ℕ := if n % 2 = 0 then (n + 2) / 2 else (n + 1) / 2
@@ -166,7 +178,8 @@ def allEven (n : ℕ) : ℕ := if n % 2 = 0 then n else 1
 theorem ofMinSize_test1 : ofMinSize.{u} test1 = rescher := by
   funext α _ B
   have h := Set.ncard_add_ncard_compl B
-  simp only [ofMinSize, rescher, test1, eq_iff_iff]
+  rw [eq_iff_iff, rescher_apply]
+  simp only [ofMinSize, test1]
   split <;> omega
 
 -- Section 8.1
