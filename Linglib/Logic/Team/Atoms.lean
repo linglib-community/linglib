@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Logic.Team.Closure
 public import Mathlib.Data.Set.Restrict
 
@@ -76,10 +75,24 @@ instance [DecidableEq β] (f g : α → β) (T : Finset α) : Decidable ((T : Se
 theorem isLowerSet_dep (f : α → β) (g : α → γ) : IsLowerSet (dep f g) :=
   fun _ _ hT h a b hab ↦ @h ⟨a, hT a.2⟩ ⟨b, hT b.2⟩ hab
 
-theorem singleton_mem_dep (a : α) : {a} ∈ dep f g :=
-  Set.subsingleton_singleton.factorsThrough_domRestrict
+/-- Every function is a function of `f` on a team on which `f` is injective. -/
+theorem mem_dep_of_injOn (hf : T.InjOn f) : T ∈ dep f g :=
+  (Set.injOn_iff_injective.1 hf).factorsThrough _
 
-theorem empty_mem_dep : ∅ ∈ dep f g := Set.subsingleton_empty.factorsThrough_domRestrict
+theorem mem_dep_of_subsingleton (hT : T.Subsingleton) : T ∈ dep f g :=
+  mem_dep_of_injOn (hT.injOn f)
+
+/-- On a team on which `f` is constant, `g` is a function of `f` exactly when it is constant. -/
+theorem mem_dep_iff_of_subsingleton_image (hf : (f '' T).Subsingleton) :
+    T ∈ dep f g ↔ (g '' T).Subsingleton := by
+  simp only [mem_dep, Set.Subsingleton, Set.forall_mem_image]
+  exact forall₄_congr fun a ha b hb ↦
+    imp_iff_right (hf (Set.mem_image_of_mem f ha) (Set.mem_image_of_mem f hb))
+
+theorem singleton_mem_dep (a : α) : {a} ∈ dep f g :=
+  mem_dep_of_subsingleton Set.subsingleton_singleton
+
+theorem empty_mem_dep : ∅ ∈ dep f g := mem_dep_of_subsingleton Set.subsingleton_empty
 
 theorem empty_mem_incl (f g : α → β) : ∅ ∈ incl f g := fun _ h ↦ h.elim
 
@@ -152,7 +165,7 @@ theorem dep_iff_exists [Nonempty E] :
 /-- The constancy atom `=(u)`, dependence on no variables, holds when `u` takes at most one value
 on the team. -/
 theorem dep_empty_iff : Dep T ∅ u ↔ ((· u) '' (T : Set (V → E))).Subsingleton :=
-  Set.factorsThrough_domRestrict_iff_of_subsingleton fun _ _ _ _ ↦
+  mem_dep_iff_of_subsingleton_image fun _ _ _ _ ↦
     funext fun z ↦ absurd (Finset.mem_coe.1 z.2) (Finset.notMem_empty _)
 
 /-- Variation on no variables holds when `u` takes two values on the team. -/

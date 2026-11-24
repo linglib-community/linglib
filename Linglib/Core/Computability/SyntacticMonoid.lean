@@ -16,7 +16,7 @@ public import Linglib.Core.Computability.TransitionMonoid
 public import Linglib.Core.GroupTheory.Congruence.Syntactic
 public import Linglib.Core.Algebra.Group.Subquotient
 public import Linglib.Core.Algebra.FreeMonoid.Basic
-public import Linglib.Core.Logic.Function.FactorsThrough
+public import Linglib.Core.Computability.MyhillNerode
 
 /-!
 # The syntactic monoid of a language
@@ -205,9 +205,8 @@ theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.SyntacticM
   .of_equiv _ L.syntacticMonoidEquivTransitionMonoid.symm.toEquiv
 
 theorem IsRegular.of_finite_syntacticMonoid (h : Finite L.SyntacticMonoid) : L.IsRegular :=
-  .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
-    (fun _ _ e ↦ Set.ext (syntacticClass_eq_iff.mp e [] ·) :
-      Function.FactorsThrough L.leftQuotient L.syntacticClass) (Set.toFinite _)
+  .of_factorsThrough_leftQuotient (g := L.syntacticClass)
+    (fun _ _ e ↦ Set.ext (syntacticClass_eq_iff.mp e [] ·)) (Set.toFinite _)
 
 /-- `L` is regular iff `L.SyntacticMonoid` is finite. -/
 theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.SyntacticMonoid :=

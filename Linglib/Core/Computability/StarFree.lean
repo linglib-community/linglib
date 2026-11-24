@@ -86,7 +86,9 @@ theorem IsStarFree.of_factorsThrough {β : Type*} {g : List α → β} {n : ℕ}
   have hcls : Function.FactorsThrough L.syntacticClass g := fun _ _ e ↦
     syntacticClass_eq_iff.mpr fun _ _ ↦ iff_of_eq (hL (hg (hg rfl e) rfl))
   refine ⟨Set.finite_univ_iff.mp ?_, n, fun x ↦ ?_⟩
-  · exact L.syntacticClass_surjective.range_eq ▸ hcls.finite_range hfin
+  · refine (hfin.image (Function.extend g L.syntacticClass fun _ ↦ 1)).subset fun x _ ↦ ?_
+    obtain ⟨w, rfl⟩ := L.syntacticClass_surjective x
+    exact ⟨_, Set.mem_range_self w, hcls.extend_apply _ w⟩
   · obtain ⟨w, rfl⟩ := L.syntacticClass_surjective x
     simpa [syntacticClass_flatten] using hcls (hpow w)
 

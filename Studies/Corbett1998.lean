@@ -224,13 +224,9 @@ namespace Latin
 open _root_.Latin.Gender
 
 -- Table 9.2
-theorem facilis_factorsThrough_acer :
-    Function.FactorsThrough facilis.nomSg acer.nomSg ∧
-      ¬ Function.FactorsThrough acer.nomSg facilis.nomSg := by decide
+theorem convergent_acer_facilis : Gender.Convergent acer.nomSg facilis.nomSg := by decide
 
-theorem felix_factorsThrough_facilis :
-    Function.FactorsThrough felix.nomSg facilis.nomSg ∧
-      ¬ Function.FactorsThrough facilis.nomSg felix.nomSg := by decide
+theorem convergent_facilis_felix : Gender.Convergent facilis.nomSg felix.nomSg := by decide
 
 end Latin
 
