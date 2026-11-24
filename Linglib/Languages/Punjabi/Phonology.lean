@@ -6,9 +6,10 @@ public import Linglib.Phonology.Segmental.PHOIBLE
 /-!
 # Punjabi phonology
 
-This file defines the segments of Punjabi (Panjabi): the consonants of [bhatia-1993], and the
-ten oral vowels with the nasal counterparts of the seven long ones, the inventory of
-[shackle-2003] as [paramore-bennett-2026] chart it.
+This file defines the segments of Punjabi (Panjabi): the consonants that [bhatia-1993] describes
+for standard spoken Punjabi, and the ten oral vowels with the nasal counterparts of the seven
+long ones, the inventory of [shackle-2003] as [paramore-bennett-2026] chart it for the Panjabi of
+Pakistan.
 
 The phonemes are segments named by their symbols, with feature values from the PHOIBLE chart. A
 long vowel is written with its symbol doubled, as is usual for Indo-Aryan languages, so that
@@ -18,14 +19,17 @@ reads a segment from its symbol.
 
 ## Implementation notes
 
-Segments carry no length, so a long vowel and a short one differ in quality alone. Tone is not
-represented. The stops and the nasal that the grammar calls apico-dental are the chart's
-dentals, its palatal affricates the chart's postalveolar ones, its voiced glottal fricative the
-chart's `ɦ`, and its labial semivowel the chart's labiodental approximant. The grammar gives
-`f`, `z`, `x`, `ɣ` and `q` as sounds of Perso-Arabic and English words, whose phonemic status it
-calls questionable; they are `loanConsonants`. The velar and palatal nasals, which the grammar
-gives as realizations of `n` before velar and palatal stops, are not phonemes. On the chart's
-values the glottal fricative is [−consonantal], with the vowels and the semivowels.
+Segments carry no length, so a long vowel and a short one differ in quality alone, and the
+distinctive length of consonants is not represented. Tone is not represented. The stops and the
+nasal that the grammar calls apico-dental are the chart's dentals, while its apico-dental
+fricatives, lateral and trill are the chart's `s`, `z`, `l` and `r`. Its palatal affricates are
+the chart's postalveolar ones, its fricative transcribed *sh*, which it calls retroflex, the
+chart's `ʃ`, its voiced glottal fricative the chart's `ɦ`, and its labial semivowel the chart's
+labiodental approximant. The grammar gives `f`, `z`, `x`, `ɣ` and `q` as sounds of Perso-Arabic
+and English words, whose phonemic status it calls questionable; they are `loanConsonants`. Its
+chart of segments has a palatal and a velar nasal, which its description gives as realizations
+of `n` before palatal and velar stops; they are not phonemes here. On the chart's values the
+glottal fricative is [−consonantal], with the vowels and the semivowels.
 
 ## References
 

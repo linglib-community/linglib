@@ -98,7 +98,7 @@ theorem Feeds.isFixedPt (h : Feeds f p x) (hg : ∀ y, ¬ p y → IsFixedPt g y)
   hg _ (feeds_iff.mp h).1
 
 /-- In the counterfeeding order the fed rule underapplies: where `f` makes a form that `g` changes,
-`g` applied first changes nothing, and `f` then gives a form that `g` would change. -/
+applying `g` first gives what `f` alone gives, a form that `g` would change. -/
 theorem Feeds.underapplication (h : Feeds f (¬ IsFixedPt g ·) x) :
     f (g x) = f x ∧ ¬ IsFixedPt g (f (g x)) := by
   rw [show g x = x from h.isFixedPt fun _ ↦ not_not.mp]

@@ -6,35 +6,40 @@ public import Linglib.Languages.Punjabi.Phonology
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Transderivational
 public import Linglib.Phonology.RuleInteraction
 public import Linglib.Phonology.SearchCopy
+public import Linglib.Phonology.Subregular.ForbiddenPairs
 public import Linglib.Phonology.Subregular.LocalRewrite
-public import Linglib.Phonology.Subregular.StrictlyLocal
 
 /-!
 # Paramore and Bennett (2026): Covert URs: Evidence from nasalization in Panjabi
 
-In Pakistani Panjabi long vowels contrast in nasality, except before a nasal consonant, where
-every vowel is nasal, and nasality spreads leftward from a nasal vowel through vowels and glides.
-This file formalizes the analysis of that pattern by two ordered rules. Harmony gives [+nasal] to
-a segment that is [−consonantal] when only such segments stand between it and a following nasal
-vowel; assimilation gives [+nasal] to a vowel before a nasal consonant. Harmony applies first, so
-the surface form of an underlying form `u` is `surface u = assimilation (harmony u)`, and a vowel
-that assimilation nasalizes triggers no harmony. An underlying form is covert when its morpheme
-surfaces unaltered in no context.
+In Pakistani Panjabi long vowels contrast in nasality, a vowel before a nasal consonant is
+nasal, and nasality spreads leftward from a nasal vowel through vowels and glides. This file
+formalizes the analysis of that pattern by two ordered rules in the notation of
+[chomsky-halle-1968]. Harmony gives [+nasal] to a segment that is [−consonantal] when only such
+segments stand between it and a following nasal vowel; assimilation gives [+nasal] to a vowel
+before a nasal consonant. Harmony applies first, so the surface form of an underlying form `u`
+is `surface u = assimilation (harmony u)`, and a vowel that assimilation nasalizes triggers no
+harmony: assimilation counterfeeds harmony, in the sense of [bakovic-blumenfeld-2024]. An
+underlying form is covert when one of its segments surfaces unaltered in no context.
 
-Harmony changes a word only if the word has an underlying nasal vowel or glide. No surface form
-has an oral vowel before a nasal consonant, so an underlying form with one is covert. A word with
-an oral vowel or glide before a nasal one is not its own surface form, so no underlying form of
-it is identical to it; over the phonemes, the underlying forms of [ɑɑʋɑ̃ɑ̃m] 'general public' are
-/ɑɑʋɑɑm/ alone. Among the stimuli of the paper's second experiment, the surface form taken as an
-underlying form surfaces unchanged except in the pre-N condition. The surface forms of the words
-without a nasal vowel before a nasal consonant have no nasal glide, nasal vowel and nasal
-consonant in sequence, and no grammar of constraints on two adjacent segments generates them.
+A word is its own surface form exactly when neither rule applies in it, a condition on adjacent
+segments, and an underlying form is covert exactly when it is not its own surface form. An
+underlying form with an oral vowel before a nasal consonant is covert whether or not harmony
+applies, and one that harmony alone changes is covert only if harmony applies. Over the
+phonemes, the underlying forms of [ɑɑʋɑ̃ɑ̃m] 'general public' are /ɑɑʋɑɑm/ alone. Among the
+stimuli of the paper's second experiment, the surface form taken as an underlying form surfaces
+unchanged except in the pre-N condition.
 
-Two further cases are run. In Berbice Dutch Creole, identity to the base [nimi] keeps the nasal
-of [nim-tɛ] from assimilating in place, and the same strings without a base assimilate. In
-Máíhɨ̃ki, where nasality spreads rightward, [nãji] taken as an underlying form harmonizes. The
-paper's forms and stimuli are read from its data, and the intervals of its nasalance models are
-compared with its regions of practical equivalence.
+The morphemes are taken to be the words over the phonemes with no nasal vowel before a nasal
+consonant. Their surface forms have no nasal glide, nasal vowel and nasal consonant in sequence,
+and they are not a strictly 2-local language, while the words that are their own surface forms
+are one. The stimuli with a postposition that begins in a nasal consonant have that sequence
+across the boundary.
+
+In Berbice Dutch Creole, identity to the base [nimi] keeps the nasal of [nim-tɛ] from
+assimilating in place, and the same strings without a base assimilate. The paper's forms and
+stimuli are read from its data, and the intervals of its nasalance models are compared with its
+regions of practical equivalence.
 
 ## Implementation notes
 
@@ -42,43 +47,48 @@ compared with its regions of practical equivalence.
   from the output of the segment to its right when that is a nasal vowel or glide, and every
   other segment halts its search. Scanning from the right, it applies the paper's rule
   iteratively. The two differ on a nasal glide in the input, which triggers here; the phonemes
-  have none. On the chart's values the glottal fricative is [−consonantal], so it is a target
-  with the vowels and glides.
+  have none.
+* The rules are those the paper prints. Its prose names the vowels and the two glides as the
+  targets of harmony; on the chart's values the glottal fricative is [−consonantal] too, and is
+  a target here. Its prose restricts assimilation to a vowel before a nasal consonant of its own
+  syllable; the printed rule, and `assimilation`, have no such condition, so a vowel is nasalized
+  before a nasal consonant that begins a postposition. The paper's oral and pre-N stimuli have
+  no such postposition.
 * A `Phonology.Harmony.Pattern` holds tier-adjacent segments to the same value in both
   directions, so it does not state that an oral vowel or glide stands before no nasal one while a
   nasal vowel stands freely before an oral one. The surface generalizations are stated on
   adjacent segments directly.
 * The paper finds harmony optional before a contrastive nasal vowel and sets that aside in its
-  analysis; harmony is obligatory here.
+  analysis. `surface` applies harmony, and `assimilation.apply` is the derivation in which it
+  does not apply; `Covert` takes the map as an argument, and is stated of both.
+* `Covert` reads no boundary, since neither rule does.
 * The glide of /sɑɑ-ɑ̃ɑ̃/ 'breath-PL', which breaks hiatus, and the [x] of [ʃɑɑxɑ̃ɑ̃] 'branch-PL'
   are not derived. The stimuli are written with their glides, as the paper writes them, and
   'branch-PL' is compared with its underlying form in nasality.
-* `Covert` quantifies over the strings on either side of a morpheme and reads no boundary, since
-  neither rule does.
-* The lexicon of the section on phonotactics is the words over the phonemes with no nasal vowel
-  before a nasal consonant, the restriction on underlying forms that the paper's discussion of
-  learning considers.
+* The paper states the constraint against a nasal glide, a nasal vowel and a nasal consonant
+  without a boundary, and considers a restriction of underlying forms to those without a nasal
+  vowel before a nasal consonant. Here the restriction is on morphemes and the constraint is
+  proved of morphemes standing alone.
 * The tableau of Berbice Dutch Creole is run on the transderivational correspondence of
-  [benua-1997], with the base [nimi] and the suffixed word in chart segments. Máíhɨ̃ki is stated
-  with the mirror image of the Panjabi rules, not with the harmony domains of
-  [cole-kisseberth-1995].
-* The items of the first experiment, the model of the final vowel in the second, the two
-  speakers set aside there, and the corpus counts are not entered.
+  [benua-1997], with the forms of [dow-2014] as the paper gives them, in chart segments. The
+  identity constraint counts the corresponding segments that differ in place, where the paper's
+  counts the words that have one. A word without a base is evaluated by the base's copy of the
+  hierarchy. As in the paper, the optionality of assimilation in [nim-tɛ] is set aside.
+* Not entered: the items of the first experiment; the models of the final vowel and of the two
+  postpositions in the second, and the two speakers set aside there; the suffixed and the nonce
+  forms of the discussion; the comparison of [mətʃii-ʋɑɑ] 'fisherman' with 'fish-PL'; the
+  Máíhɨ̃ki pattern; and the corpus counts.
 
 ## References
 
 * [J. C. Paramore and R. Bennett, *Covert URs: Evidence from nasalization in Panjabi*
   (2026)][paramore-bennett-2026]
 * [N. Chomsky and M. Halle, *The Sound Pattern of English* (1968)][chomsky-halle-1968]
-* [P. Kiparsky, *Abstractness, opacity, and global rules* (1973)][kiparsky-1973]
 * [E. Baković and L. Blumenfeld, *A formal typology of process interactions*
   (2024)][bakovic-blumenfeld-2024]
 * [A. Nevins, *Locality in Vowel Harmony* (2010)][nevins-2010]
-* [T. K. Bhatia, *Punjabi: A Cognitive-Descriptive Grammar* (1993)][bhatia-1993]
 * [L. Benua, *Transderivational Identity* (1997)][benua-1997]
 * [M. Dow, *Hybrid opacity in Berbice Dutch Creole* (2014)][dow-2014]
-* [J. Cole and C. Kisseberth, *Nasal harmony in Optimal Domains Theory*
-  (1995)][cole-kisseberth-1995]
 -/
 
 @[expose] public section
@@ -89,105 +99,108 @@ open Function Phonology Subregular.LocalRewrite OptimalityTheory Data.PHOIBLE Da
 
 /-! ### The rules -/
 
-/-- A nasal vowel or glide: a segment that is [−consonantal, +nasal]. -/
-def IsNasalVocoid (s : Segment) : Prop := s .consonantal = false ∧ s .nasal = true
+/-- The targets of harmony, the segments that are [−consonantal]. -/
+def vocoid : Segment := [−consonantal]
 
-instance : DecidablePred IsNasalVocoid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+/-- The nasal vowels and glides. -/
+def nasalVocoid : Segment := [−consonantal, +nasal]
 
-/-- A nasal consonant: a segment that is [+consonantal, +nasal]. -/
-def IsNasalConsonant (s : Segment) : Prop := s .consonantal = true ∧ s .nasal = true
+/-- The nasal consonants. -/
+def nasalConsonant : Segment := [+consonantal, +nasal]
 
-instance : DecidablePred IsNasalConsonant := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+/-- The vowels. -/
+def vowel : Segment := [+syllabic, −consonantal]
 
-/-- (5): nasal harmony, `[−cons] → [+nas] / __ [−cons]₀ V[+nas]` when the scan starts at the
-right edge. A [−consonantal] segment searches the adjacent segment on the side the scan comes
-from and takes [+nasal] from a nasal vowel or glide. -/
-def harmony (d : Edge) : SearchCopy Segment where
+section Classes
+
+variable {s : Segment}
+
+theorem vocoid_le_iff : vocoid ≤ s ↔ s .consonantal = false := by
+  rw [vocoid, Segment.setFeature_le_iff rfl]; simp
+
+theorem nasalVocoid_le_iff : nasalVocoid ≤ s ↔ s .consonantal = false ∧ s .nasal = true := by
+  rw [nasalVocoid, Segment.setFeature_le_iff (by decide), Segment.setFeature_le_iff rfl]; simp
+
+theorem nasalConsonant_le_iff :
+    nasalConsonant ≤ s ↔ s .consonantal = true ∧ s .nasal = true := by
+  rw [nasalConsonant, Segment.setFeature_le_iff (by decide), Segment.setFeature_le_iff rfl]; simp
+
+theorem vowel_le_iff : vowel ≤ s ↔ s.IsVowel := by
+  rw [vowel, Segment.setFeature_le_iff (by decide), Segment.setFeature_le_iff rfl]
+  simp [Segment.IsVowel, Segment.IsSyllabic]
+
+theorem not_vocoid_le_of_nasalConsonant_le (h : nasalConsonant ≤ s) : ¬ vocoid ≤ s := fun hv ↦
+  absurd ((vocoid_le_iff.1 hv).symm.trans (nasalConsonant_le_iff.1 h).1) (by decide)
+
+theorem vocoid_le_of_nasalVocoid_le (h : nasalVocoid ≤ s) : vocoid ≤ s :=
+  vocoid_le_iff.2 (nasalVocoid_le_iff.1 h).1
+
+end Classes
+
+/-- (5): nasal harmony, `[−cons] → [+nas] / __ [−cons]₀ V[+nas]`. Scanning from the right, a
+[−consonantal] segment searches the segment to its right and takes [+nasal] from a nasal vowel
+or glide. -/
+def harmony : SearchCopy Segment where
   tier _ := True
-  IsTarget s := s .consonantal = false
-  IsSource c _ := IsNasalVocoid c
+  IsTarget s := vocoid ≤ s
+  IsSource c _ := nasalVocoid ≤ c
   value s := s .nasal
   write v s := s.setFeature .nasal v
-  value_write v s _ := show Function.update s.val .nasal (some v) .nasal = some v from
-    Function.update_self ..
-  write_value v s _ h := Segment.ext <| by
-    rw [Segment.setFeature, ← show s.val .nasal = some v from h]; exact Function.update_eq_self ..
-  direction := d
+  value_write v s _ := Segment.setFeature_apply_self s .nasal v
+  write_value _ _ _ h := Segment.setFeature_eq_self_iff.2 h
+  direction := .right
 
 /-- (5): nasal assimilation, `V → [+nas] / __ C[+nas]`. -/
 def assimilation : Rule where
-  target := [+syllabic, −consonantal]
+  target := vowel
   effect := .changeFeatures [+nasal]
-  rightContext := [.seg [+consonantal, +nasal]]
+  rightContext := [.seg nasalConsonant]
 
 /-- The surface form of an underlying form: harmony, then assimilation. -/
-def surface (u : List Segment) : List Segment := assimilation.apply ((harmony .right).apply u)
+def surface (u : List Segment) : List Segment := assimilation.apply (harmony.apply u)
 
-theorem harmony_emit (d : Edge) (q : Option Segment) (s : Segment) :
-    (harmony d).emit q s =
-      if s .consonantal = false ∧ ∃ c ∈ q, IsNasalVocoid c then s.setFeature .nasal true
-      else s := by
+theorem harmony_emit (q : Option Segment) (s : Segment) :
+    harmony.emit q s =
+      if vocoid ≤ s ∧ ∃ c ∈ q, nasalVocoid ≤ c then s.setFeature .nasal true else s := by
   cases q with
   | none => simp [SearchCopy.emit, SearchCopy.copied, harmony]
   | some c =>
-    by_cases hc : IsNasalVocoid c
-    · simp [SearchCopy.emit, SearchCopy.copied, harmony, hc, hc.2]
+    by_cases hc : nasalVocoid ≤ c
+    · simp [SearchCopy.emit, SearchCopy.copied, harmony, hc, (nasalVocoid_le_iff.1 hc).2]
     · simp [SearchCopy.emit, SearchCopy.copied, harmony, hc]
 
 theorem harmony_apply_cons (s : Segment) (w : List Segment) :
-    (harmony .right).apply (s :: w) =
-      (if s .consonantal = false ∧ ∃ c ∈ ((harmony .right).apply w).head?, IsNasalVocoid c then
-        s.setFeature .nasal true else s) :: (harmony .right).apply w := by
-  have h : ((harmony .right).apply w).filter ((harmony .right).tier ·) = (harmony .right).apply w :=
+    harmony.apply (s :: w) =
+      (if vocoid ≤ s ∧ ∃ c ∈ (harmony.apply w).head?, nasalVocoid ≤ c then
+        s.setFeature .nasal true else s) :: harmony.apply w := by
+  have h : (harmony.apply w).filter (harmony.tier ·) = harmony.apply w :=
     List.filter_eq_self.2 fun _ _ ↦ decide_eq_true trivial
-  rw [(harmony .right).apply_cons rfl (fun _ _ _ ↦ Iff.rfl), harmony_emit, h]
+  rw [harmony.apply_cons rfl (fun _ _ _ ↦ Iff.rfl), harmony_emit, h]
+
+theorem assimilation_verdict (w : List Segment) (s : Segment) (d : List Segment) :
+    assimilation.verdict w s d =
+      [if vowel ≤ s ∧ ∃ c ∈ d.head?, nasalConsonant ≤ c then s.setFeature .nasal true else s] := by
+  have hr : MatchesRight assimilation.rightContext d ↔ ∃ c ∈ d.head?, nasalConsonant ≤ c := by
+    cases d <;> simp [assimilation, MatchesRight]
+  have hl : MatchesLeft assimilation.leftContext w := trivial
+  simp only [Rule.verdict, hr, hl, true_and, show assimilation.target = vowel from rfl]
+  split_ifs <;> simp [assimilation, Effect.apply, Segment.setFeature_bot_or]
 
 theorem assimilation_apply_cons (s : Segment) (w : List Segment) :
     assimilation.apply (s :: w) =
-      (if s.IsVowel ∧ ∃ c ∈ w.head?, IsNasalConsonant c then s.setFeature .nasal true else s) ::
+      (if vowel ≤ s ∧ ∃ c ∈ w.head?, nasalConsonant ≤ c then s.setFeature .nasal true else s) ::
         assimilation.apply w := by
-  have ht : assimilation.target ≤ s ↔ s.IsVowel := by
-    rw [assimilation, Segment.setFeature_le_iff (by decide), Segment.setFeature_le_iff rfl]
-    simp [Segment.IsVowel, Segment.IsSyllabic]
-  have hr : MatchesRight assimilation.rightContext w ↔ ∃ c ∈ w.head?, IsNasalConsonant c := by
-    cases w <;> simp [assimilation, MatchesRight, IsNasalConsonant]
-  have hl : MatchesLeft assimilation.leftContext [] := trivial
-  rw [Rule.apply_cons_of_leftReach_eq_zero (by decide)]
-  simp only [Rule.verdict, hr, hl, true_and, ht]
-  split_ifs <;> simp [assimilation, Effect.apply, Segment.setFeature_bot_or]
+  rw [Rule.apply_cons_of_leftReach_eq_zero (by decide), assimilation_verdict,
+    List.singleton_append]
+
+theorem assimilation_apply_drop (n : ℕ) (u : List Segment) :
+    assimilation.apply (u.drop n) = (assimilation.apply u).drop n :=
+  Rule.apply_drop (by decide) (by simp [assimilation]) n u
 
 @[simp] theorem surface_nil : surface [] = [] := by simp [surface]
 
-/-! ### Underlying and derived nasality -/
-
--- harmony changes no word without an underlying nasal vowel or glide
-theorem harmony_apply_eq_self {u : List Segment} (h : ∀ s ∈ u, ¬ IsNasalVocoid s) :
-    (harmony .right).apply u = u := by
-  induction u with
-  | nil => simp
-  | cons s w ih =>
-    rw [harmony_apply_cons, ih fun t ht ↦ h t (List.mem_cons_of_mem _ ht), ite_eq_right]
-    rintro ⟨-, c, hc, hN⟩
-    exact h c (List.mem_cons_of_mem _ (List.mem_of_mem_head? hc)) hN
-
-theorem harmony_apply_drop (n : ℕ) (u : List Segment) :
-    (harmony .right).apply (u.drop n) = ((harmony .right).apply u).drop n := by
-  induction n generalizing u with
-  | zero => rfl
-  | succ n ih => cases u with
-    | nil => simp
-    | cons s w => rw [harmony_apply_cons, List.drop_succ_cons, List.drop_succ_cons, ih]
-
-theorem assimilation_apply_drop (n : ℕ) (u : List Segment) :
-    assimilation.apply (u.drop n) = (assimilation.apply u).drop n := by
-  induction n generalizing u with
-  | zero => rfl
-  | succ n ih => cases u with
-    | nil => simp
-    | cons s w => rw [assimilation_apply_cons, List.drop_succ_cons, List.drop_succ_cons, ih]
-
 theorem surface_drop (n : ℕ) (u : List Segment) : surface (u.drop n) = (surface u).drop n := by
-  rw [surface, harmony_apply_drop, assimilation_apply_drop, surface]
+  rw [surface, harmony.apply_drop rfl, assimilation_apply_drop, surface]
 
 /-- A segment without its value for [nasal]. -/
 abbrev denasal : Segment → Segment := Segment.restrict {.nasal}ᶜ
@@ -197,35 +210,102 @@ theorem denasal_setFeature (s : Segment) (v : Bool) :
   Segment.restrict_eq_restrict_iff.2 fun _ hg ↦
     Segment.setFeature_apply_of_ne (by rintro rfl; simp at hg) s v
 
+theorem apply_eq_of_denasal_eq {a b : Segment} (h : denasal a = denasal b)
+    {f : Phonology.Feature} (hf : f ≠ .nasal) : a f = b f :=
+  Segment.restrict_eq_restrict_iff.1 h (by simpa using hf)
+
 -- the rules change nasality alone
 theorem map_denasal_surface (u : List Segment) : (surface u).map denasal = u.map denasal := by
-  have hH : ∀ w : List Segment, ((harmony .right).apply w).map denasal = w.map denasal := by
-    intro w
-    induction w with
-    | nil => simp
-    | cons s w ih =>
-      rw [harmony_apply_cons, List.map_cons, List.map_cons, ih]
-      split_ifs <;> simp [denasal_setFeature]
-  have hA : ∀ w : List Segment, (assimilation.apply w).map denasal = w.map denasal := by
-    intro w
-    induction w with
-    | nil => simp
-    | cons s w ih =>
-      rw [assimilation_apply_cons, List.map_cons, List.map_cons, ih]
-      split_ifs <;> simp [denasal_setFeature]
-  rw [surface, hA, hH]
+  rw [surface, Rule.map_apply, SearchCopy.map_apply]
+  · intro q s
+    rw [harmony_emit]
+    split_ifs <;> simp [denasal_setFeature]
+  · intro w s d
+    rw [assimilation_verdict]
+    split_ifs <;> simp [denasal_setFeature]
 
-/-! ### Neutralization and covert underlying forms -/
+/-! ### Fixed points -/
 
-/-- An oral vowel before a nasal consonant. -/
-def OralVN (a b : Segment) : Prop := a.IsVowel ∧ a .nasal ≠ some true ∧ IsNasalConsonant b
+/-- Harmony applies to a [−consonantal] segment that is not nasal before a nasal vowel or
+glide. -/
+def Harmonizes (a b : Segment) : Prop := vocoid ≤ a ∧ a .nasal ≠ some true ∧ nasalVocoid ≤ b
 
-instance : DecidableRel OralVN := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+/-- Assimilation applies to a vowel that is not nasal before a nasal consonant. -/
+def Assimilates (a b : Segment) : Prop := vowel ≤ a ∧ a .nasal ≠ some true ∧ nasalConsonant ≤ b
 
--- no surface form has an oral vowel before a nasal consonant
-theorem isChain_surface (u : List Segment) : (surface u).IsChain fun a b ↦ ¬ OralVN a b := by
-  rw [surface]
-  generalize (harmony .right).apply u = w
+instance : DecidableRel Harmonizes := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+instance : DecidableRel Assimilates := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+theorem ite_setFeature_eq_self_iff {s : Segment} {p : Prop} {q : Segment → Prop}
+    {o : Option Segment} [Decidable (p ∧ ∃ c ∈ o, q c)] :
+    (if p ∧ ∃ c ∈ o, q c then s.setFeature .nasal true else s) = s ↔
+      ∀ y ∈ o, ¬ (p ∧ s .nasal ≠ some true ∧ q y) := by
+  split_ifs with h
+  · obtain ⟨hp, y, hy, hq⟩ := h
+    rw [Segment.setFeature_eq_self_iff]
+    exact ⟨fun hs z hz hz' ↦ hz'.2.1 hs, fun hs ↦ by_contra fun hn ↦ hs y hy ⟨hp, hn, hq⟩⟩
+  · exact iff_of_true rfl fun y hy hy' ↦ h ⟨hy'.1, y, hy, hy'.2.2⟩
+
+-- harmony changes a word exactly where it applies
+theorem harmony_apply_eq_self_iff {w : List Segment} :
+    harmony.apply w = w ↔ w.IsChain fun a b ↦ ¬ Harmonizes a b := by
+  induction w with
+  | nil => simp
+  | cons x w ih =>
+    rw [harmony_apply_cons, List.cons.injEq, List.isChain_cons, ← ih]
+    exact and_congr_left fun hw ↦ by rw [hw]; exact ite_setFeature_eq_self_iff
+
+-- assimilation changes a word exactly where it applies
+theorem assimilation_apply_eq_self_iff {w : List Segment} :
+    assimilation.apply w = w ↔ w.IsChain fun a b ↦ ¬ Assimilates a b := by
+  induction w with
+  | nil => simp
+  | cons x w ih =>
+    rw [assimilation_apply_cons, List.cons.injEq, List.isChain_cons, ← ih]
+    exact and_congr_left fun _ ↦ ite_setFeature_eq_self_iff
+
+-- harmony changes no word without an underlying nasal vowel or glide
+theorem harmony_apply_eq_self {u : List Segment} (h : ∀ s ∈ u, ¬ nasalVocoid ≤ s) :
+    harmony.apply u = u :=
+  harmony_apply_eq_self_iff.2 <| List.isChain_iff_forall_rel_of_append_cons_cons.2
+    fun _ b _ _ hu hab ↦ h b (by simp [hu]) hab.2.2
+
+-- a vowel before a nasal consonant comes out of assimilation nasal
+theorem getElem?_assimilation_apply {l₁ l₂ : List Segment} {a b : Segment} (ha : vowel ≤ a)
+    (hb : nasalConsonant ≤ b) :
+    (assimilation.apply (l₁ ++ a :: b :: l₂))[l₁.length]? = some (a.setFeature .nasal true) := by
+  rw [← List.head?_drop, ← assimilation_apply_drop, List.drop_left, assimilation_apply_cons,
+    ite_eq_left ⟨ha, b, rfl, hb⟩, List.head?_cons]
+
+-- a segment in which a rule applies surfaces nasal
+theorem nasal_getElem?_surface {l₁ l₂ : List Segment} {a b : Segment}
+    (h : Harmonizes a b ∨ Assimilates a b) :
+    ((surface (l₁ ++ a :: b :: l₂))[l₁.length]?).bind (· .nasal) = some true := by
+  rw [← List.head?_drop, ← surface_drop, List.drop_left, surface, harmony_apply_cons a]
+  rcases h with ⟨ha, -, hb⟩ | ⟨ha, -, hb⟩
+  · have hb' : ∃ c ∈ (harmony.apply (b :: l₂)).head?, nasalVocoid ≤ c := by
+      rw [harmony_apply_cons]
+      refine ⟨_, rfl, ?_⟩
+      split_ifs
+      · exact nasalVocoid_le_iff.2 ⟨(Segment.setFeature_apply_of_ne (by decide) ..).trans
+          (nasalVocoid_le_iff.1 hb).1, Segment.setFeature_apply_self ..⟩
+      · exact hb
+    rw [ite_eq_left ⟨ha, hb'⟩, assimilation_apply_cons]
+    split_ifs <;> simp
+  · have hb1 : ¬ vocoid ≤ b := not_vocoid_le_of_nasalConsonant_le hb
+    have hHb : harmony.apply (b :: l₂) = b :: harmony.apply l₂ := by
+      rw [harmony_apply_cons, ite_eq_right fun h ↦ hb1 h.1]
+    rw [hHb, ite_eq_right (fun h ↦ by
+      obtain ⟨-, c, hc, hN⟩ := h
+      obtain rfl : b = c := by simpa using hc
+      exact hb1 (vocoid_le_of_nasalVocoid_le hN)), assimilation_apply_cons,
+      ite_eq_left ⟨ha, b, rfl, hb⟩]
+    simp
+
+-- assimilation leaves no oral vowel before a nasal consonant
+theorem isChain_assimilation_apply (w : List Segment) :
+    (assimilation.apply w).IsChain fun a b ↦ ¬ Assimilates a b := by
   induction w with
   | nil => simp
   | cons x w ih =>
@@ -236,60 +316,96 @@ theorem isChain_surface (u : List Segment) : (surface u).IsChain fun a b ↦ ¬ 
       rw [assimilation_apply_cons] at ih ⊢
       refine List.IsChain.cons_cons ?_ ih
       rintro ⟨hv, hn, hc⟩
-      have hy : IsNasalConsonant y := by
+      have hy : nasalConsonant ≤ y := by
         split_ifs at hc with h
-        · have h1 := hc.1
+        · have h1 := (nasalConsonant_le_iff.1 hc).1
           rw [Segment.setFeature_apply_of_ne (by decide)] at h1
-          exact absurd (h.1.2.symm.trans h1) (by decide)
+          exact absurd ((vowel_le_iff.1 h.1).2.symm.trans h1) (by decide)
         · exact hc
-      by_cases hx : x.IsVowel
+      by_cases hx : vowel ≤ x
       · rw [ite_eq_left ⟨hx, y, rfl, hy⟩] at hn
         exact hn (Segment.setFeature_apply_self ..)
       · rw [ite_eq_right fun h ↦ hx h.1] at hv
         exact hx hv
 
-/-- The exponent of the morpheme `u` standing between `pre` and `post`. -/
-def exponent (pre u post : List Segment) : List Segment :=
-  ((surface (pre ++ u ++ post)).drop pre.length).take u.length
+-- no surface form has an oral vowel before a nasal consonant
+theorem isChain_surface (u : List Segment) : (surface u).IsChain fun a b ↦ ¬ Assimilates a b :=
+  isChain_assimilation_apply _
 
-/-- An underlying form is covert when its morpheme surfaces unaltered in no context. -/
-def Covert (u : List Segment) : Prop := ∀ pre post, exponent pre u post ≠ u
+/-- A word is its own surface form exactly when neither rule applies in it: no [−consonantal]
+segment that is not nasal stands before a nasal vowel or glide, and no oral vowel before a
+nasal consonant. -/
+theorem surface_eq_self_iff {w : List Segment} :
+    surface w = w ↔ w.IsChain fun a b ↦ ¬ (Harmonizes a b ∨ Assimilates a b) := by
+  refine ⟨fun h ↦ List.isChain_iff_forall_rel_of_append_cons_cons.2 fun a b l₁ l₂ hl hab ↦ ?_,
+    fun h ↦ ?_⟩
+  · have hn := nasal_getElem?_surface (l₁ := l₁) (l₂ := l₂) hab
+    rw [← hl, h, hl] at hn
+    exact hab.elim (·.2.1) (·.2.1) (by simpa using hn)
+  · simp only [not_or, List.isChain_and_iff] at h
+    rw [surface, harmony_apply_eq_self_iff.2 h.1, assimilation_apply_eq_self_iff.2 h.2]
 
-theorem exponent_infix (pre u post : List Segment) :
-    exponent pre u post <:+: surface (pre ++ u ++ post) :=
-  (List.take_prefix _ _).isInfix.trans (List.drop_suffix _ _).isInfix
+open TierStrictlyLocalGrammar in
+-- the words that are their own surface forms are a strictly 2-local language
+theorem isStrictlyLocal_fixedPoints : Language.IsStrictlyLocal (fixedPoints surface) 2 := by
+  refine ⟨(Subregular.forbiddenPairs fun a b ↦ Harmonizes a b ∨ Assimilates a b)ᶜ,
+    Set.ext fun w ↦ ?_⟩
+  have h := mem_ofForbiddenPairs_language_iff (R := fun a b ↦ Harmonizes a b ∨ Assimilates a b)
+    (p := fun _ ↦ True) (w := w)
+  simp only [mem_language, ofForbiddenPairs, decide_true, List.filter_true] at h
+  exact h.trans surface_eq_self_iff.symm
 
-/-- An underlying form with an oral vowel before a nasal consonant is covert. -/
+/-! ### Covert underlying forms -/
+
+section Covert
+
+variable {α : Type*}
+
+/-- An underlying form is covert under the map `G` when one of its segments surfaces unaltered
+in no context. -/
+def Covert (G : List α → List α) (u : List α) : Prop :=
+  ∃ i < u.length, ∀ pre post, (G (pre ++ u ++ post))[pre.length + i]? ≠ u[i]?
+
+-- where the fixed points of a map are the words meeting a condition on adjacent segments, and a
+-- segment that breaks the condition is changed whatever surrounds it, the covert underlying
+-- forms are those the map changes
+theorem covert_iff_ne_self {G : List α → List α} {R : α → α → Prop}
+    (hfix : ∀ w, G w = w ↔ w.IsChain R)
+    (hloc : ∀ l₁ l₂ a b, ¬ R a b → (G (l₁ ++ a :: b :: l₂))[l₁.length]? ≠ some a)
+    {u : List α} : Covert G u ↔ G u ≠ u := by
+  refine ⟨fun ⟨i, _, h⟩ he ↦ h [] [] (by simp [he]), fun h ↦ ?_⟩
+  rw [Ne, hfix, List.isChain_iff_forall_rel_of_append_cons_cons] at h
+  push Not at h
+  obtain ⟨a, b, l₁, l₂, rfl, hab⟩ := h
+  refine ⟨l₁.length, by simp, fun pre post he ↦ hloc (pre ++ l₁) (l₂ ++ post) a b hab ?_⟩
+  simpa using he
+
+end Covert
+
+/-- An underlying form is covert exactly when it is not its own surface form. -/
+theorem covert_surface_iff {u : List Segment} : Covert surface u ↔ surface u ≠ u :=
+  covert_iff_ne_self (fun _ ↦ surface_eq_self_iff) fun l₁ l₂ a b hab he ↦ by
+    have hn := nasal_getElem?_surface (l₁ := l₁) (l₂ := l₂) (not_not.1 hab)
+    rw [he] at hn
+    exact (not_not.1 hab).elim (·.2.1) (·.2.1) (by simpa using hn)
+
+-- without harmony, an underlying form is covert exactly when assimilation changes it
+theorem covert_assimilation_iff {u : List Segment} :
+    Covert assimilation.apply u ↔ assimilation.apply u ≠ u :=
+  covert_iff_ne_self (fun _ ↦ assimilation_apply_eq_self_iff) fun l₁ l₂ a b hab he ↦ by
+    obtain ⟨ha, hn, hb⟩ := not_not.1 hab
+    rw [getElem?_assimilation_apply ha hb, Option.some.injEq,
+      Segment.setFeature_eq_self_iff] at he
+    exact hn he
+
+-- an underlying form with an oral vowel before a nasal consonant is covert, whether or not
+-- harmony applies
 theorem covert_of_infix {u : List Segment} {a b : Segment} (h : [a, b] <:+: u)
-    (hab : OralVN a b) : Covert u := fun pre post he ↦
-  List.isChain_pair.1 (((isChain_surface _).infix (exponent_infix pre u post)).infix
-    (he.symm ▸ h)) hab
-
-/-- A word in which a [−consonantal] segment that is not nasal stands before a nasal vowel or
-glide is not its own surface form. -/
-theorem surface_ne_self {s : List Segment} {a b : Segment} (h : [a, b] <:+: s)
-    (ha : a .consonantal = false) (ha' : a .nasal ≠ some true) (hb : IsNasalVocoid b) :
-    surface s ≠ s := by
-  obtain ⟨l₁, l₂, rfl⟩ := h
-  intro he
-  have h1 := congrArg (List.drop l₁.length) he
-  rw [← surface_drop, List.append_assoc, List.drop_left] at h1
-  have hb' (q : Prop) [Decidable q] :
-      IsNasalVocoid (if q then b.setFeature .nasal true else b) := by
-    split_ifs
-    · exact ⟨(Segment.setFeature_apply_of_ne (by decide) ..).trans hb.1,
-        Segment.setFeature_apply_self ..⟩
-    · exact hb
-  have h2 : (surface (a :: b :: l₂)).head?.bind (· .nasal) = some true := by
-    rw [surface, harmony_apply_cons a, harmony_apply_cons b, ite_eq_left ⟨ha, _, rfl, hb' _⟩,
-      assimilation_apply_cons]
-    split_ifs <;> simp
-  rw [show surface (a :: b :: l₂) = a :: b :: l₂ from h1] at h2
-  exact ha' (by simpa using h2)
-
-theorem apply_eq_of_denasal_eq {a b : Segment} (h : denasal a = denasal b) {f : Phonology.Feature}
-    (hf : f ≠ .nasal) : a f = b f :=
-  Segment.restrict_eq_restrict_iff.1 h (by simpa using hf)
+    (hab : Assimilates a b) : Covert surface u ∧ Covert assimilation.apply u :=
+  ⟨covert_surface_iff.2 fun he ↦ List.isChain_pair.1 ((surface_eq_self_iff.1 he).infix h)
+      (.inr hab),
+    covert_assimilation_iff.2 fun he ↦
+      List.isChain_pair.1 ((assimilation_apply_eq_self_iff.1 he).infix h) hab⟩
 
 -- a word with a surface form of four segments differs from it in nasality alone
 theorem exists_of_surface_eq {u : List Segment} {a b c d : Segment}
@@ -324,37 +440,35 @@ theorem surface_pumicestone :
 theorem surface_generalPublic : surface [«ɑɑ», «ʋ», «ɑɑ», m] = [«ɑɑ», «ʋ», «ɑ̃ɑ̃», m] := by
   decide +kernel
 
--- an underlying form without a nasal vowel or glide undergoes assimilation alone
-theorem surface_eq_assimilation {u : List Segment} (h : ∀ s ∈ u, ¬ IsNasalVocoid s) :
-    surface u = assimilation.apply u := by
-  rw [surface, harmony_apply_eq_self h]
-
 -- (5b): assimilation feeds harmony, which would apply in the other order
 theorem feeds_generalPublic :
-    Feeds assimilation.apply (¬ IsFixedPt (harmony .right).apply ·) [«ɑɑ», «ʋ», «ɑɑ», m] ∧
-      (harmony .right).apply (assimilation.apply [«ɑɑ», «ʋ», «ɑɑ», m]) =
-        [«ɑ̃ɑ̃», «ʋ̃», «ɑ̃ɑ̃», m] := by
+    Feeds assimilation.apply (¬ IsFixedPt harmony.apply ·) [«ɑɑ», «ʋ», «ɑɑ», m] ∧
+      harmony.apply (assimilation.apply [«ɑɑ», «ʋ», «ɑɑ», m]) = [«ɑ̃ɑ̃», «ʋ̃», «ɑ̃ɑ̃», m] := by
   decide +kernel
 
 -- (5b): in the attested order harmony changes nothing, and would change the surface form
 theorem counterfeeding_generalPublic :
     surface [«ɑɑ», «ʋ», «ɑɑ», m] = assimilation.apply [«ɑɑ», «ʋ», «ɑɑ», m] ∧
-      ¬ IsFixedPt (harmony .right).apply (surface [«ɑɑ», «ʋ», «ɑɑ», m]) :=
+      ¬ IsFixedPt harmony.apply (surface [«ɑɑ», «ʋ», «ɑɑ», m]) :=
   feeds_generalPublic.1.underapplication
 
--- /ɑɑʋɑɑm/ surfaces unaltered in no context
-theorem covert_generalPublic : Covert [«ɑɑ», «ʋ», «ɑɑ», m] :=
-  covert_of_infix (a := «ɑɑ») (b := m) ⟨[«ɑɑ», «ʋ»], [], rfl⟩ (by decide)
+-- /ɑɑʋɑɑm/ is covert whether or not harmony applies; /tʃɑɑʋẽẽ/ only if it applies
+theorem covert_generalPublic :
+    (Covert surface [«ɑɑ», «ʋ», «ɑɑ», m] ∧ Covert assimilation.apply [«ɑɑ», «ʋ», «ɑɑ», m]) ∧
+      Covert surface [«tʃ», «ɑɑ», «ʋ», «ẽẽ»] ∧
+      ¬ Covert assimilation.apply [«tʃ», «ɑɑ», «ʋ», «ẽẽ»] :=
+  ⟨covert_of_infix (a := «ɑɑ») (b := m) ⟨[«ɑɑ», «ʋ»], [], rfl⟩ (by decide),
+    covert_surface_iff.2 (by decide +kernel),
+    fun h ↦ covert_assimilation_iff.1 h (by decide +kernel)⟩
 
--- the stem of /kʰɑɑ/ 'eat-IMP' surfaces unaltered alone, and nasal in /kʰɑɑ-ɳ/ 'eating'
+-- the stem of /kʰɑɑ/ 'eat-IMP' is not covert, and its vowel is nasal in /kʰɑɑ-ɳ/ 'eating'
 theorem alternation_eat :
-    ¬ Covert [«kʰ», «ɑɑ»] ∧ exponent [] [«kʰ», «ɑɑ»] [«ɳ»] = [«kʰ», «ɑ̃ɑ̃»] :=
-  ⟨fun h ↦ h [] [] (by decide +kernel), by decide +kernel⟩
+    ¬ Covert surface [«kʰ», «ɑɑ»] ∧ surface [«kʰ», «ɑɑ», «ɳ»] = [«kʰ», «ɑ̃ɑ̃», «ɳ»] :=
+  ⟨fun h ↦ covert_surface_iff.1 h (by decide +kernel), by decide +kernel⟩
 
--- [tʃɑ̃ɑ̃ʋ̃ẽẽ] is its own surface form, and [ɑɑʋɑ̃ɑ̃m] is not
-theorem surface_surface :
-    surface [«tʃ», «ɑ̃ɑ̃», «ʋ̃», «ẽẽ»] = [«tʃ», «ɑ̃ɑ̃», «ʋ̃», «ẽẽ»] ∧
-      surface [«ɑɑ», «ʋ», «ɑ̃ɑ̃», m] = [«ɑ̃ɑ̃», «ʋ̃», «ɑ̃ɑ̃», m] := by
+-- [ɑɑʋɑ̃ɑ̃m], taken as an underlying form, undergoes harmony
+theorem surface_surface_generalPublic :
+    surface [«ɑɑ», «ʋ», «ɑ̃ɑ̃», m] = [«ɑ̃ɑ̃», «ʋ̃», «ɑ̃ɑ̃», m] := by
   decide +kernel
 
 -- the phonemes that differ in nasality alone from [ɑɑ], [ʋ] and [m]
@@ -379,20 +493,28 @@ theorem surface_eq_generalPublic_iff {u : List Segment} (hu : ∀ x ∈ u, x ∈
 
 /-! ### Constraints on adjacent segments -/
 
-/-- The words over the phonemes with no nasal vowel before a nasal consonant. -/
-def lexicon : Set (List Segment) :=
-  {u | (∀ x ∈ u, x ∈ phonemes) ∧ u.IsChain fun a b ↦ ¬ (IsNasalVocoid a ∧ IsNasalConsonant b)}
+/-- The morphemes: the words over the phonemes with no nasal vowel before a nasal consonant. -/
+def morphemes : Set (List Segment) :=
+  {u | (∀ x ∈ u, x ∈ phonemes) ∧ u.IsChain fun a b ↦ ¬ (nasalVocoid ≤ a ∧ nasalConsonant ≤ b)}
 
-/-- The surface forms of the lexicon. -/
-def attested : Language Segment := surface '' lexicon
+/-- The surface forms of the morphemes standing alone. -/
+def citationForms : Language Segment := surface '' morphemes
 
-theorem isSyllabic_of_isNasalVocoid : ∀ x ∈ phonemes, IsNasalVocoid x → x.IsSyllabic := by
+/-- A nasal glide, a nasal vowel and a nasal consonant, the sequence that the constraint
+`*[G̃ṼN]` bans. -/
+def NasalGVN (g v c : Segment) : Prop :=
+  nasalVocoid ≤ g ∧ ¬ g.IsSyllabic ∧ nasalVocoid ≤ v ∧ nasalConsonant ≤ c
+
+instance (g v c : Segment) : Decidable (NasalGVN g v c) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
+
+theorem isSyllabic_of_nasalVocoid_le : ∀ x ∈ phonemes, nasalVocoid ≤ x → x.IsSyllabic := by
   decide +kernel
 
--- no surface form of the lexicon has a nasal glide, a nasal vowel and a nasal consonant in sequence
-theorem not_infix_attested {w : List Segment} (hw : w ∈ attested) {g v c : Segment}
-    (h : [g, v, c] <:+: w) :
-    ¬ (IsNasalVocoid g ∧ ¬ g.IsSyllabic ∧ IsNasalVocoid v ∧ IsNasalConsonant c) := by
+-- the surface form of no morpheme has a nasal glide, a nasal vowel and a nasal consonant in
+-- sequence
+theorem not_nasalGVN_of_infix {w : List Segment} (hw : w ∈ citationForms) {g v c : Segment}
+    (h : [g, v, c] <:+: w) : ¬ NasalGVN g v c := by
   obtain ⟨u, ⟨hp, hch⟩, rfl⟩ := hw
   obtain ⟨l₁, l₂, hl⟩ := h
   rintro ⟨hg, hg', -, hc⟩
@@ -408,48 +530,47 @@ theorem not_infix_attested {w : List Segment} (hw : w ∈ attested) {g v c : Seg
   rw [hu] at h1 hd
   simp only [List.map_cons, List.cons.injEq] at hd
   obtain ⟨hxg, -, hzc, -⟩ := hd
-  have hch' : (x :: y :: z :: rest).IsChain fun a b ↦ ¬ (IsNasalVocoid a ∧ IsNasalConsonant b) :=
+  have hch' : (x :: y :: z :: rest).IsChain fun a b ↦ ¬ (nasalVocoid ≤ a ∧ nasalConsonant ≤ b) :=
     hu ▸ hch.suffix (List.drop_suffix _ _)
   have hzcons : z .consonantal = true :=
-    (apply_eq_of_denasal_eq hzc (by decide)).trans hc.1
+    (apply_eq_of_denasal_eq hzc (by decide)).trans (nasalConsonant_le_iff.1 hc).1
   -- the consonant is unchanged, so it is nasal underlyingly
-  have hz : (harmony .right).apply (z :: rest) = z :: (harmony .right).apply rest := by
+  have hz : harmony.apply (z :: rest) = z :: harmony.apply rest := by
     rw [harmony_apply_cons, ite_eq_right]
     rintro ⟨h, -⟩
-    exact absurd (h.symm.trans hzcons) (by decide)
+    exact absurd ((vocoid_le_iff.1 h).symm.trans hzcons) (by decide)
   have h3 : surface (z :: rest) = c :: l₂ := by
     have := congrArg (List.drop 2) h1
     rwa [← surface_drop] at this
   rw [surface, hz, assimilation_apply_cons, ite_eq_right fun h ↦
-    absurd (h.1.2.symm.trans hzcons) (by decide)] at h3
+    absurd ((vowel_le_iff.1 h.1).2.symm.trans hzcons) (by decide)] at h3
   obtain rfl : z = c := (List.cons.inj h3).1
   -- so the vowel before it is oral underlyingly, and triggers no harmony
-  have hy : ¬ IsNasalVocoid y := fun h ↦
+  have hy : ¬ nasalVocoid ≤ y := fun h ↦
     (List.isChain_cons_cons.1 (List.isChain_cons_cons.1 hch').2).1 ⟨h, hc⟩
-  have hyz : (harmony .right).apply (y :: z :: rest) = y :: z :: (harmony .right).apply rest := by
+  have hyz : harmony.apply (y :: z :: rest) = y :: z :: harmony.apply rest := by
     rw [harmony_apply_cons, hz, ite_eq_right]
     rintro ⟨-, c', hc', hN⟩
     obtain rfl : z = c' := by simpa using hc'
-    exact absurd (hN.1.symm.trans hzcons) (by decide)
-  have hxy : (harmony .right).apply (x :: y :: z :: rest) =
-      x :: y :: z :: (harmony .right).apply rest := by
+    exact not_vocoid_le_of_nasalConsonant_le hc (vocoid_le_of_nasalVocoid_le hN)
+  have hxy : harmony.apply (x :: y :: z :: rest) = x :: y :: z :: harmony.apply rest := by
     rw [harmony_apply_cons, hyz, ite_eq_right]
     rintro ⟨-, c', hc', hN⟩
     obtain rfl : y = c' := by simpa using hc'
     exact hy hN
   have hxs : ¬ x.IsSyllabic := fun h ↦
     hg' ((apply_eq_of_denasal_eq hxg (f := .syllabic) (by decide)).symm.trans h)
-  rw [surface, hxy, assimilation_apply_cons, ite_eq_right fun h ↦ hxs h.1.1] at h1
+  rw [surface, hxy, assimilation_apply_cons, ite_eq_right fun h ↦ hxs (vowel_le_iff.1 h.1).1] at h1
   obtain rfl : x = g := (List.cons.inj h1).1
-  exact hg' (isSyllabic_of_isNasalVocoid x
+  exact hg' (isSyllabic_of_nasalVocoid_le x
     (hp x (List.mem_of_mem_drop (hu ▸ List.mem_cons_self))) hg)
 
-/-- No grammar of constraints on two adjacent segments generates the surface forms of the
-lexicon. -/
-theorem not_isStrictlyLocal_two : ¬ attested.IsStrictlyLocal 2 := fun h ↦ by
-  have h1 : [«ɑ̃ɑ̃», «ʋ̃», «ɑ̃ɑ̃»] ∈ attested :=
+/-- The surface forms of the morphemes are not a strictly 2-local language: no grammar of
+constraints on two adjacent segments generates them. -/
+theorem not_isStrictlyLocal_two : ¬ citationForms.IsStrictlyLocal 2 := fun h ↦ by
+  have h1 : [«ɑ̃ɑ̃», «ʋ̃», «ɑ̃ɑ̃»] ∈ citationForms :=
     ⟨[«ɑɑ», «ʋ», «ɑ̃ɑ̃»], ⟨by decide +kernel, by decide +kernel⟩, by decide +kernel⟩
-  have h2 : [«ɑɑ», «ʋ», «ɑ̃ɑ̃», m] ∈ attested :=
+  have h2 : [«ɑɑ», «ʋ», «ɑ̃ɑ̃», m] ∈ citationForms :=
     ⟨[«ɑɑ», «ʋ», «ɑɑ», m], ⟨by decide +kernel, by decide +kernel⟩, surface_generalPublic⟩
   obtain ⟨u, ⟨hp, hch⟩, hs⟩ :=
     h.suffixSubstitutionClosed [«ɑ̃ɑ̃», «ʋ̃»] [] [«ɑɑ», «ʋ»] [m] [«ɑ̃ɑ̃»] rfl h1 h2
@@ -497,7 +618,7 @@ def place (s : Segment) : Option Bool × Option Bool × Option Bool :=
 place. -/
 def ntPlace : List Segment → ℕ
   | a :: b :: rest =>
-    (if IsNasalConsonant a ∧ b .sonorant = false ∧ b .continuant = false ∧ place a ≠ place b
+    (if nasalConsonant ≤ a ∧ b .sonorant = false ∧ b .continuant = false ∧ place a ≠ place b
       then 1 else 0) + ntPlace (b :: rest)
   | _ => 0
 
@@ -540,55 +661,6 @@ theorem assimilation_simplex :
   decide +kernel
 
 end BerbiceDutch
-
-/-! ### Máíhɨ̃ki (8)
-
-Nasality spreads rightward from a nasal vowel, and a vowel after a nasal consonant is nasal
-without spreading. -/
-
-namespace Maihiki
-
-/-- The segment [s]. -/
-def s : Segment := .ofChart .«s»
-/-- The segment [e]. -/
-def e : Segment := .ofChart .«e»
-/-- The segment [ẽ]. -/
-def «ẽ» : Segment := .ofChart .«ẽ»
-/-- The segment [j]. -/
-def j : Segment := .ofChart .«j»
-/-- The segment [n]. -/
-def n : Segment := .ofChart .«n»
-/-- The segment [a]. -/
-def a : Segment := .ofChart .«a»
-/-- The segment [ã]. -/
-def «ã» : Segment := .ofChart .«ã»
-/-- The segment [i]. -/
-def i : Segment := .ofChart .«i»
-/-- The segment [ĩ]. -/
-def «ĩ» : Segment := .ofChart .«ĩ»
-
-/-- Nasalization of a vowel after a nasal consonant, `V → [+nas] / C[+nas] __`. -/
-def postNasal : Rule where
-  target := [+syllabic, −consonantal]
-  effect := .changeFeatures [+nasal]
-  leftContext := [.seg [+consonantal, +nasal]]
-
-/-- The surface form of an underlying form: rightward harmony, then nasalization after a nasal
-consonant. -/
-def surface (u : List Segment) : List Segment := postNasal.apply ((harmony .left).apply u)
-
--- (8a): /sẽje/ 'species of bird' harmonizes
-theorem surface_bird : surface [s, «ẽ», j, e] = [s, «ẽ», j.setFeature .nasal true, «ẽ»] := by
-  decide +kernel
-
--- (8b): /naji/ 'grandson' is nasalized after the nasal alone, and [nãji] as an underlying form
--- harmonizes
-theorem surface_grandson :
-    surface [n, a, j, i] = [n, «ã», j, i] ∧
-      surface [n, «ã», j, i] = [n, «ã», j.setFeature .nasal true, «ĩ»] := by
-  decide +kernel
-
-end Maihiki
 
 /-! ### The forms and the stimuli -/
 
@@ -640,6 +712,21 @@ theorem surface_surface_iff : ∀ a ∈ Wordlist.analyses, ∀ c ∈ a.condition
     (surface (surface u) = surface u ↔ c ≠ .preN) := by
   decide +kernel
 
+/-- A word has a nasal glide, a nasal vowel and a nasal consonant from position `i`. -/
+def NasalGVNAt (w : List Segment) (i : ℕ) : Prop :=
+  match w.drop i with
+  | g :: v :: c :: _ => NasalGVN g v c
+  | _ => False
+
+instance (w : List Segment) (i : ℕ) : Decidable (NasalGVNAt w i) := by
+  unfold NasalGVNAt; split <;> infer_instance
+
+-- Table 3: before a postposition that begins in a nasal consonant, the glide and the vowel
+-- ending the stem form that sequence with the consonant
+theorem nasalGVNAt_nasalNV : ∀ a ∈ Wordlist.analyses, a.condition = some .nasalNV →
+    ∃ u ∈ underlying? a, NasalGVNAt (surface u) (a.underlying.length - 2) := by
+  decide +kernel
+
 /-! ### Nasalance -/
 
 -- Table 2: the interval for the vowel before a nasal consonant lies within the region of
@@ -657,10 +744,12 @@ theorem glide_nasalance :
   norm_num [glideModel, ropeFinal, Decimal.toRat]
 
 -- Table 6: the vowel before the glide lies above the region of practical equivalence of an oral
--- vowel when a contrastive nasal vowel follows, and below that interval in the pre-N condition
+-- vowel when a contrastive nasal vowel follows; in the pre-N condition its interval reaches above
+-- the region, with an estimate 0.269 below that of the nasal condition
 theorem penult_nasalance :
     ropePenult.toRat < (penultModel .nasal).ciLow.toRat ∧
-      (penultModel .preN).ciHigh.toRat < (penultModel .nasal).ciLow.toRat := by
+      ropePenult.toRat < (penultModel .preN).ciHigh.toRat ∧
+      (penultModel .nasal).beta.toRat - (penultModel .preN).beta.toRat = 269 / 1000 := by
   norm_num [penultModel, ropePenult, Decimal.toRat]
 
 end ParamoreBennett2026

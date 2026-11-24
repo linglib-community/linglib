@@ -306,6 +306,19 @@ theorem apply_cons (hd : r.direction = .right) (hw : r.PreservesTier) (s : α) (
   rw [r.scan_concat hw, List.reverse_append, List.reverse_singleton, List.singleton_append,
     List.filter_reverse, List.head?_reverse]
 
+/-- A rule scanning from the right rewrites the end of a word as it does within the word. -/
+theorem apply_drop (hd : r.direction = .right) (n : ℕ) (w : List α) :
+    r.apply (w.drop n) = (r.apply w).drop n := by
+  rcases le_or_gt n w.length with hn | hn
+  · simp only [apply, hd, Edge.orient_right, scan, List.reverse_drop, Mealy.run_take,
+      List.reverse_take, Mealy.length_run, List.length_reverse, Nat.sub_sub_self hn]
+  · rw [List.drop_of_length_le hn.le, List.drop_of_length_le (by simpa using hn.le), apply_nil]
+
+/-- A projection of the segments that every output preserves is preserved by the run. -/
+theorem map_apply {γ : Type*} {g : α → γ} (h : ∀ q s, g (r.emit q s) = g s) (w : List α) :
+    (r.apply w).map g = w.map g := by
+  rw [apply, Edge.map_orient, scan, r.toMealy.map_run _ h, ← Edge.map_orient, Edge.orient_orient]
+
 /-! ### Words without targets -/
 
 theorem scan_eq_self {w : List α} (h : ∀ s ∈ w, ¬ r.IsTarget s) : r.scan w = w := by
