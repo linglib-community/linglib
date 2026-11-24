@@ -6,14 +6,15 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Morphology.Realization.Basic
+public import Linglib.Morphology.Exponence.Realization
 
 /-!
 # Vocabulary Insertion as a realization
 
 The realization by a list of Vocabulary Items inserts at each index and context the exponent the
-Subset Principle selects in the neighborhood of that context. The Subset Principle selects one
-item, so the realization has at most one form in each cell.
+Subset Principle selects in the neighborhood of that context. It is the realization of the items
+as a rule set ranked by their specificity, `RuleSet.toRealization`, so it has at most one form in
+each cell.
 
 ## Main definitions
 
@@ -29,8 +30,7 @@ item, so the realization has at most one form in each cell.
 ## TODO
 
 * A Vocabulary Item has the fields of a `SubsetRule` whose features are positioned; state the map
-  between them, so that insertion is the realization of a rule set
-  (`Morphology/Exponence/Realization.lean`).
+  between them.
 
 ## References
 
@@ -53,7 +53,7 @@ variable {F E R Ctx : Type*} [DecidableEq F] {items : RuleSet (VocabularyItem F 
 selects in the neighborhood `site r c`. -/
 def toRealization (items : RuleSet (VocabularyItem F E))
     (site : R → Ctx → Neighborhood (Finset F)) : Morphology.Realization R Ctx E :=
-  .ofOption fun r c ↦ subsetPrinciple items (site r c)
+  items.toRealization VocabularyItem.specificity site
 
 @[simp] theorem toRealization_realize (r : R) (c : Ctx) :
     (toRealization items site).realize r c = (subsetPrinciple items (site r c)).toFinset := rfl
@@ -61,14 +61,14 @@ def toRealization (items : RuleSet (VocabularyItem F E))
 /-- The Subset Principle selects one item, so Vocabulary Insertion realizes no cell
 overabundantly. -/
 theorem toRealization_isUnivalent : (toRealization items site).IsUnivalent :=
-  Morphology.Realization.isUnivalent_ofOption _
+  RuleSet.isUnivalent_toRealization
 
 /-- An index is suppletive exactly when two of its contexts select items with distinct
 exponents. -/
 theorem toRealization_isSuppletive_iff : (toRealization items site).IsSuppletive r ↔
     ∃ c c' e e', subsetPrinciple items (site r c) = some e ∧
       subsetPrinciple items (site r c') = some e' ∧ e ≠ e' :=
-  Morphology.Realization.isSuppletive_ofOption_iff
+  RuleSet.isSuppletive_toRealization_iff
 
 end Realization
 
