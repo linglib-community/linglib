@@ -19,9 +19,14 @@ reversing a separation another class makes, and the second constraint requires a
 distinguishable members to have members in both extensions. A measure `m` and a standard `σ`, an
 upper set of degrees for each class, give the delineation whose positive extension relative to
 `C` is `m ⁻¹' σ C`, and the delineation of a measure alone takes for standard the degrees above
-some member of the class. We show that a delineation without gaps meets the consistency
-constraint exactly when it arises from a measure into a linear order and a standard in this way,
-with a measure that represents the comparative.
+some member of the class.
+
+Conversely a delineation has degrees of its own. The degree of an entity on a set of classes is
+the set of those classes that put it in the positive extension, ordered by inclusion, and on
+those classes the delineation is the delineation of its degrees, which are the coarsest measure
+that gives it. A delineation without gaps meets the consistency constraint exactly when its
+degrees form a chain, so exactly when it arises from a measure into a linear order and a
+standard, with a measure that represents the comparative.
 
 ## Main definitions
 
@@ -32,6 +37,7 @@ with a measure that represents the comparative.
 * `Delineation.Nondistinct`, `Delineation.Equivalent`, `Delineation.IsComplete`: sameness of
   value across the subclasses of a class, and across more determinate delineations.
 * `Delineation.ofStandard`: the delineation of a measure and a class-relative standard.
+* `Delineation.degree`: the classes of a set that put an entity in the positive extension.
 * `Delineation.ofMeasure`: the delineation of a measure, positive above some member of the class.
 * `Delineation.very`, `Delineation.fairly`: degree modifiers as narrowings of the class.
 
@@ -41,8 +47,15 @@ with a measure that represents the comparative.
   ordering within a class is a strict partial order.
 * `Delineation.equivalent_or_outranks_or_outranks`: under the second constraint any two members
   of a complete class are equivalent or ranked.
-* `Delineation.isMonotoneOn_ofExtension_iff_isChain`: a gapless delineation meets the
-  consistency constraint on a set of classes exactly when their positive extensions form a chain.
+* `Delineation.ofStandard_degree`, `Delineation.exists_forall_eq_ofStandard_iff`: on a set of
+  classes a delineation is the delineation of its degrees, and a measure gives it at some standard
+  exactly when the degrees are monotone in the measure.
+* `Delineation.isMonotoneOn_ofExtension_iff_isChain`,
+  `Delineation.IsGapless.isMonotoneOn_iff_isChain_degree`: a gapless delineation meets the
+  consistency constraint on a set of classes exactly when their positive extensions form a chain,
+  and exactly when the degrees on them do.
+* `Delineation.IsGapless.outranks_iff_degree_ssubset`: under the consistency constraint the
+  ordering within a class is the strict ordering of the degrees.
 * `Delineation.IsGapless.isMonotoneOn_iff_exists_ofStandard`,
   `Delineation.IsGapless.isMonotone_iff_exists_ofStandard`: a gapless delineation meets the
   consistency constraint exactly when it is the delineation of a measure into a linear order and
@@ -62,6 +75,12 @@ it assume it, and `ofStandard` and `ofMeasure` classify every entity, so that th
 constraint, which compares classes that need not both contain the two entities, holds of them.
 Klein's equivalence quantifies over the contexts at least as determinate as the given one, which
 are here the delineations of an admissible family `𝒟` extending the given one.
+
+On a gapless delineation the consistency constraint is the Ferrers condition on the relation
+between entities and classes, *u is in the positive extension relative to X*: of two entities,
+one is positive wherever the other is. Measurement theory calls a relation that meets it a
+biorder, or a Guttman scale, and calls the ordering of the degrees its trace. The condition is
+stated here with mathlib's `IsChain`, on the degrees and on the positive extensions.
 
 A standard is an upper set of degrees, as in `Semantics/Degree/PositiveStandard.lean`, and the
 class-relative standard `σ : Set E → UpperSet D` is Klein's shape. A standard an adjective fixes
@@ -405,6 +424,94 @@ theorem isMonotone_ofStandard {D : Type*} [LinearOrder D] (m : E → D) (σ : Se
 
 end Standard
 
+/-! ### The degrees of a delineation
+
+The degree of an entity on a set `S` of comparison classes is the set of classes of `S` that put
+it in the positive extension, and degrees are ordered by inclusion. Each class of `S` then holds
+of exactly the entities whose degree contains it, so every delineation is, on `S`, the delineation
+of its own degrees. On a gapless delineation the consistency constraint says that the degrees form
+a chain: of two entities, one is positive wherever the other is. -/
+
+section Degree
+
+variable (d) (S : Set (Set E)) {a b : E} {X : Set E}
+
+/-- The degree of `u` on a set `S` of comparison classes is the set of classes of `S` that put
+`u` in the positive extension. -/
+def degree (u : E) : Set (Set E) := {X ∈ S | u ∈ d X}
+
+variable {d S}
+
+@[simp] theorem mem_degree : X ∈ d.degree S a ↔ X ∈ S ∧ a ∈ d X := Iff.rfl
+
+theorem degree_subset_degree_iff :
+    d.degree S a ⊆ d.degree S b ↔ ∀ X ∈ S, a ∈ d X → b ∈ d X :=
+  ⟨fun h _ hX ha ↦ (h ⟨hX, ha⟩).2, fun h _ hX ↦ ⟨hX.1, h _ hX.1 hX.2⟩⟩
+
+/-- Some class of `S` puts `a` and not `b` in the positive extension exactly when the degree of
+`a` is not below the degree of `b`. -/
+theorem not_degree_subset_degree_iff :
+    ¬ d.degree S a ⊆ d.degree S b ↔ ∃ X ∈ S, a ∈ d X ∧ b ∉ d X := by
+  simp [degree_subset_degree_iff]
+
+variable (d) in
+/-- On the classes of `S`, a delineation is the delineation of its degrees, the standard of a
+class being the degrees that contain it. -/
+theorem ofStandard_degree (hX : X ∈ S) :
+    ofStandard (d.degree S) (fun X ↦ .Ici {X}) X = d X :=
+  Set.ext fun _ ↦ by simp [hX]
+
+/-- A gapless delineation is the delineation of its degrees. -/
+theorem IsGapless.eq_ofStandard_degree (hd : d.IsGapless) :
+    d = ofStandard (d.degree Set.univ) fun X ↦ .Ici {X} := by
+  rw [hd.eq_ofExtension, ofStandard]
+  exact congrArg ofExtension (funext fun X ↦ (d.ofStandard_degree (Set.mem_univ X)).symm)
+
+variable (d S) in
+/-- A measure gives the positive extensions of the classes of `S` at some standard exactly when
+the degrees are monotone in it, so the degrees are the coarsest such measure. -/
+theorem exists_forall_eq_ofStandard_iff {D : Type*} [Preorder D] (m : E → D) :
+    (∃ σ : Set E → UpperSet D, ∀ X ∈ S, d X = ofStandard m σ X) ↔
+      ∀ ⦃a b⦄, m a ≤ m b → d.degree S a ⊆ d.degree S b := by
+  refine ⟨fun ⟨σ, h⟩ a b hab ↦ degree_subset_degree_iff.2 fun X hX ha ↦ ?_, fun h ↦
+    ⟨fun X ↦ upperClosure (m '' d X), fun X hX ↦ Set.ext fun x ↦ ?_⟩⟩
+  · rw [h X hX] at ha ⊢
+    exact (σ X).upper hab ha
+  · simp only [mem_ofStandard, mem_upperClosure, Set.exists_mem_image]
+    exact ⟨fun hx ↦ ⟨x, hx, le_rfl⟩, fun ⟨a, ha, hax⟩ ↦ (h hax ⟨hX, ha⟩).2⟩
+
+/-- A gapless delineation meets the consistency constraint on `S` exactly when its degrees on `S`
+form a chain. -/
+theorem IsGapless.isMonotoneOn_iff_isChain_degree (hd : d.IsGapless) :
+    d.IsMonotoneOn S ↔ IsChain (· ⊆ ·) (Set.range (d.degree S)) := by
+  rw [hd.eq_ofExtension, isMonotoneOn_ofExtension_iff, ← hd.eq_ofExtension]
+  refine ⟨?_, fun hc C₁ h₁ C₂ h₂ a b ha hb hb' ↦ ?_⟩
+  · rintro h _ ⟨a, rfl⟩ _ ⟨b, rfl⟩ -
+    by_contra hn
+    obtain ⟨hn₁, hn₂⟩ := not_or.1 hn
+    obtain ⟨X₁, h₁, ha, hb⟩ := not_degree_subset_degree_iff.1 hn₁
+    obtain ⟨X₂, h₂, hb', ha'⟩ := not_degree_subset_degree_iff.1 hn₂
+    exact ha' (h X₁ h₁ X₂ h₂ a b ha hb hb')
+  · rcases hc.total (Set.mem_range_self a) (Set.mem_range_self b) with h | h
+    exacts [absurd (h ⟨h₁, ha⟩).2 hb, (h ⟨h₂, hb'⟩).2]
+
+/-- Where the degrees form a chain, some class of `S` puts `a` and not `b` in the positive
+extension exactly when the degree of `a` is strictly above the degree of `b`. -/
+theorem exists_mem_notMem_iff_degree_ssubset (hc : IsChain (· ⊆ ·) (Set.range (d.degree S))) :
+    (∃ X ∈ S, a ∈ d X ∧ b ∉ d X) ↔ d.degree S b ⊂ d.degree S a := by
+  rw [← not_degree_subset_degree_iff, Set.ssubset_def]
+  exact ⟨fun h ↦ ⟨(hc.total (Set.mem_range_self a) (Set.mem_range_self b)).resolve_left h, h⟩,
+    And.right⟩
+
+/-- On a gapless delineation under the consistency constraint, the ordering within a class is
+the strict ordering of the degrees on its subclasses. -/
+theorem IsGapless.outranks_iff_degree_ssubset (hd : d.IsGapless) (hm : d.IsMonotoneOn (𝒫 C)) :
+    d.Outranks C a b ↔ d.degree (𝒫 C) b ⊂ d.degree (𝒫 C) a := by
+  rw [← exists_mem_notMem_iff_degree_ssubset (hd.isMonotoneOn_iff_isChain_degree.1 hm)]
+  exact exists_congr fun X ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦ hd.mem_neg_iff
+
+end Degree
+
 /-- A gapless delineation meets the consistency constraint on a set `S` of classes exactly when
 some measure into a linear order and some standard give its positive extension relative to each
 class of `S`, and the measure can be taken to order two entities as the classes of `S` that
@@ -416,34 +523,22 @@ theorem IsGapless.isMonotoneOn_iff_exists_ofStandard.{u} {E : Type u} {d : Delin
         ∀ a b, (∃ X ∈ S, a ∈ d X ∧ b ∈ d.neg X) ↔ m b < m a := by
   classical
   refine ⟨fun hm ↦ ?_, ?_⟩
-  · let _ : Preorder E := Preorder.lift fun u ↦ {X | X ∈ S ∧ u ∈ d X}
-    have : @Std.Total E (· ≤ ·) := ⟨fun a b ↦ by
-      by_cases h : a ≤ b
-      · exact .inl h
-      · obtain ⟨X₁, ⟨h₁, ha⟩, hb⟩ := Set.not_subset.1 h
-        exact .inr fun X₂ ⟨h₂, hb'⟩ ↦ ⟨h₂, (hm X₁ h₁ X₂ h₂ a b ha
-          (hd.mem_neg_iff.2 fun hb'' ↦ hb ⟨h₁, hb''⟩)).1 hb'⟩⟩
-    refine ⟨Antisymmetrization E (· ≤ ·), inferInstance, toAntisymmetrization (· ≤ ·),
-      fun X ↦ upperClosure (toAntisymmetrization (· ≤ ·) '' d X), fun X hX ↦ ?_, fun a b ↦ ?_⟩
-    · refine Set.ext fun x ↦ ?_
-      simp only [mem_ofStandard, mem_upperClosure, Set.exists_mem_image,
-        toAntisymmetrization_le_toAntisymmetrization_iff]
-      exact ⟨fun h ↦ ⟨x, h, le_rfl⟩, fun ⟨a, ha, hax⟩ ↦ (hax ⟨hX, ha⟩).2⟩
-    · rw [toAntisymmetrization_lt_toAntisymmetrization_iff, lt_iff_le_not_ge]
-      refine ⟨fun ⟨X, hX, ha, hb⟩ ↦ ?_, fun ⟨_, hab⟩ ↦ ?_⟩
-      · have hab : ¬ a ≤ b := fun h ↦ hd.mem_neg_iff.1 hb (h ⟨hX, ha⟩).2
-        exact ⟨(Std.Total.total a b).resolve_left hab, hab⟩
-      · obtain ⟨X, ⟨hX, ha⟩, hb⟩ := Set.not_subset.1 hab
-        exact ⟨X, hX, ha, hd.mem_neg_iff.2 fun hb' ↦ hb ⟨hX, hb'⟩⟩
+  · have hc := hd.isMonotoneOn_iff_isChain_degree.1 hm
+    let _ : LinearOrder (Set.range (d.degree S)) :=
+      { (inferInstance : PartialOrder (Set.range (d.degree S))) with
+        le_total := fun p q ↦ hc.total p.2 q.2
+        toDecidableLE := Classical.decRel _ }
+    refine ⟨Set.range (d.degree S), inferInstance, Set.rangeFactorization (d.degree S),
+      fun X ↦ ⟨{p | X ∈ p.1}, fun _ _ hpq hp ↦ hpq hp⟩, fun X hX ↦ Set.ext fun x ↦ ?_,
+      fun a b ↦ ?_⟩
+    · exact ⟨fun hx ↦ ⟨hX, hx⟩, And.right⟩
+    · simp only [hd.mem_neg_iff, exists_mem_notMem_iff_degree_ssubset hc]
+      exact Iff.rfl
   · rintro ⟨D, _, m, σ, h, -⟩
-    have key : ∀ C₁ ∈ S, ∀ C₂ ∈ S, ∀ a b, a ∈ d C₁ → b ∉ d C₁ → b ∈ d C₂ → a ∈ d C₂ := by
-      intro C₁ h₁ C₂ h₂ a b ha hb hb'
-      rw [h C₁ h₁] at ha hb
-      rw [h C₂ h₂] at hb' ⊢
-      exact (σ C₂).upper (le_of_not_ge fun hle ↦ hb ((σ C₁).upper hle ha)) hb'
-    exact fun C₁ h₁ C₂ h₂ a b ha hb ↦ ⟨key C₁ h₁ C₂ h₂ a b ha (hd.mem_neg_iff.1 hb),
-      fun ha' ↦ hd.mem_neg_iff.2 fun hb' ↦
-        hd.mem_neg_iff.1 ha' (key C₁ h₁ C₂ h₂ a b ha (hd.mem_neg_iff.1 hb) hb')⟩
+    have hmono := (d.exists_forall_eq_ofStandard_iff S m).1 ⟨σ, h⟩
+    refine hd.isMonotoneOn_iff_isChain_degree.2 ?_
+    rintro _ ⟨a, rfl⟩ _ ⟨b, rfl⟩ -
+    exact (le_total (m a) (m b)).imp (hmono ·) (hmono ·)
 
 /-- A gapless delineation meets the consistency constraint exactly when it is the delineation of
 a measure into a linear order and a standard, and the measure can be taken to represent the
@@ -538,11 +633,13 @@ theorem fairly_disjoint_very (hcc : ∀ C, d C ⊆ C) (C : Set E) : Disjoint (d.
 
 variable (d) in
 /-- In the equative preorder `u ≤ v` holds when every comparison class whose positive extension
-contains `v` also contains `u`, so `u ≤ v` says that *u is as A as v*. -/
+contains `v` also contains `u`, so `u ≤ v` says that *u is as A as v*: the degree of `u` on all
+classes contains that of `v`. -/
 abbrev preorder : Preorder E :=
-  Preorder.lift fun u ↦ OrderDual.toDual {C | u ∈ d C}
+  Preorder.lift fun u ↦ OrderDual.toDual (d.degree Set.univ u)
 
-theorem preorder_le_iff : (d.preorder).le u v ↔ ∀ C, v ∈ d C → u ∈ d C := Iff.rfl
+theorem preorder_le_iff : (d.preorder).le u v ↔ ∀ C, v ∈ d C → u ∈ d C :=
+  degree_subset_degree_iff.trans ⟨fun h C ↦ h C trivial, fun h C _ ↦ h C⟩
 
 /-! ### Faithfulness to a scalar relation
 
