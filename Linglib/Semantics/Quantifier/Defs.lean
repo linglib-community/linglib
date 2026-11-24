@@ -37,6 +37,22 @@ relational properties. Invariance under the permutations of the universe is in
 * `Det.innerNeg`, `Det.dual`, `Det.adjRestrict`: inner negation, the dual and restriction.
 * `Quantifier.LivesOn`, `Quantifier.individual`: the live-on property and the Montague lift.
 
+## Implementation notes
+
+A quantifier is a function `Set α → Prop`, not a set of sets, and a determiner denotation is the
+curried function `Set α → Set α → Prop`, not a set of pairs. A quantifier is applied to its scope
+and a determiner denotation to its restrictor and then its scope, as the types of Montague grammar
+have it, and the monotonicities are `Monotone` and `Antitone` of these functions directly. As
+sets of sets the same properties would be `IsUpperSet` and `IsLowerSet` of the family, and
+application would be membership; the set of scopes `{B | Q B}` is written where that view is
+wanted, as for right continuity.
+
+`Quantifier` and `Det` are abbreviations, so the Boolean algebra is that of the function type and
+needs no instance of its own. An instance stated on `Quantifier α` would therefore be an instance
+on every function from sets to propositions; structure that is specific to quantifiers, such as
+the action of the polarities in `Quantifier/Negation.lean`, is stated as a homomorphism and not as
+an instance.
+
 ## References
 
 * [barwise-cooper-1981]

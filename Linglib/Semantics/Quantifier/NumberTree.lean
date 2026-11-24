@@ -85,6 +85,15 @@ in `Quantifier/Global.lean`.
 
 ## Implementation notes
 
+A tree is a relation between two numbers, `ℕ → ℕ → Prop`, and not a set of pairs of numbers. It is
+defined by saying when it holds of `a` and `b`, it is decided by a `DecidableRel` instance, and
+its inner negation exchanges the two arguments. As a set of pairs, `toDet` would be the preimage
+of the tree under the map taking a restrictor and a scope to their two sizes; that map is written
+out in `toDet` and in `range_toDet`.
+
+Sizes are `Set.ncard`, which is `0` on an infinite set, so the theorems that relate a tree to a
+determiner denotation assume a finite universe.
+
 `Variety` asks only that the quantifier hold somewhere and fail somewhere. Van Benthem's VAR is
 stronger in both of its versions, so results assuming `Variety` apply under VAR. The paper asks
 for a presence and an absence among the points `(0, 0)`, `(1, 0)` and `(0, 1)`, and the book's
