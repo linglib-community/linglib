@@ -22,10 +22,7 @@ open Comparative
 
 /-- The *que*-comparative, with a particle-marked standard and the degree word *plus*. -/
 def que : Comparative :=
-  { standardMarker := [.free "que"], caseAssignment := .derived
+  { standardMarker := [.free "que"], standard := .derived
     degreeMarkers := [.free "plus"] }
-
-/-- The superlative is the definite article with the comparative. -/
-def superlative : SuperlativeStrategy := .definiteComparative
 
 end French.Comparison

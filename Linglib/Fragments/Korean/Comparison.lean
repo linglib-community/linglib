@@ -28,11 +28,6 @@ open Comparative
 adjective has no degree marking, the adverb *deo* being an optional intensifier. -/
 def boda : Comparative :=
   { standardMarker := [.encl "boda"]
-  , caseAssignment := .fixed
-  , fixedEncoding := some .adverbial
-  , standardCase := some .abl }
-
-/-- The superlative is the comparative with a universal standard. -/
-def superlative : SuperlativeStrategy := .comparativeUniversal
+  , standard := .adverbial (some .abl) }
 
 end Korean.Comparison

@@ -23,10 +23,6 @@ open Comparative
 /-- The *kwàa*-comparative, whose marker takes the standard as its object. -/
 def kwaa : Comparative :=
   { standardMarker := [.free "kwaa"]
-  , caseAssignment := .fixed
-  , fixedEncoding := some .directObject }
-
-/-- The superlative exceeds a universal standard. -/
-def superlative : SuperlativeStrategy := .exceedAll
+  , standard := .directObject }
 
 end Thai.Comparison

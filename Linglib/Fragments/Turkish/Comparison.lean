@@ -23,11 +23,6 @@ Stassen's finer typology.
 
 * `Turkish.Comparison.type_dan`: the construction is locational
 
-## Implementation notes
-
-* The superlative *en* is a free adverb that `SuperlativeStrategy` has no case for, so none is
-  recorded.
-
 ## References
 
 * [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]
@@ -43,8 +38,8 @@ open Comparative
 /-- The ablative comparative, whose standard takes *-DAn* and whose adjective is preceded by
 the optional *daha* and carries no comparative morphology. -/
 def dan : Comparative :=
-  { standardMarker := [.suff "DAn"], caseAssignment := .fixed, fixedEncoding := some .adverbial,
-    standardCase := some .abl, degreeMarkers := [.free "daha"] }
+  { standardMarker := [.suff "DAn"], standard := .adverbial (some .abl)
+    degreeMarkers := [.free "daha"] }
 
 /-- The construction is locational. -/
 theorem type_dan : dan.type = .locational := rfl

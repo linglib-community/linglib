@@ -23,10 +23,6 @@ open Comparative
 /-- The *ju … lọ* comparative, whose exceed verb takes the standard as its object. -/
 def ju : Comparative :=
   { standardMarker := [.free "ju", .free "lo"]
-  , caseAssignment := .fixed
-  , fixedEncoding := some .directObject }
-
-/-- The superlative exceeds a universal standard. -/
-def superlative : SuperlativeStrategy := .exceedAll
+  , standard := .directObject }
 
 end Yoruba.Comparison

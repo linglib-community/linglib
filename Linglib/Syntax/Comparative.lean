@@ -8,18 +8,25 @@ public import Linglib.Morphology.Morph
 # Comparative constructions
 
 A comparative construction, *X is taller than Y*, marks the standard of comparison *Y* and may
-mark the degree on the predicate. Stassen classifies constructions by the case of the standard,
-which is derived from the case of the comparee or fixed by the construction, and by the role of
-a fixed-case standard, the object of a verb of exceeding or an adverbial. This file defines the
-construction by these parameters and derives from them its type in Stassen's chapter of the
-World Atlas of Language Structures, a value of the atlas's feature.
+mark the degree on the predicate. Stassen classifies constructions by the encoding of the
+standard: its case is derived from the case of the comparee, or it is fixed by the construction,
+and a standard in a fixed case is the direct object of a verb of exceeding or part of an adverbial
+phrase. We define a construction by the encoding of its standard, `Comparative.Standard`, and by
+its markers, and derive from them its type in Stassen's chapter of the World Atlas of Language
+Structures.
 
 ## Main definitions
 
+* `Comparative.Standard`: the encoding of the standard of comparison.
 * `Comparative`: a construction, with the marker of its standard and its markers of degree as
   morphs.
 * `Comparative.type`: the type of a construction in the atlas.
-* `Comparative.SuperlativeStrategy`: the ways a language forms superlatives.
+
+## Implementation notes
+
+The encoding of the standard is one inductive type and not a field for each of Stassen's
+parameters, since the parameters are nested: only a standard in a fixed case is a direct object
+or an adverbial, and only an adverbial standard has a case of its own.
 
 ## References
 
@@ -30,36 +37,33 @@ World Atlas of Language Structures, a value of the atlas's feature.
 
 @[expose] public section
 
-/-- The standard of a comparative takes its case from the comparee or has one case that the
-construction fixes ([stassen-1985] §2.2.1). -/
-inductive Comparative.CaseAssignment where
+/-- The encoding of the standard of comparison in the parameters of [stassen-1985]. -/
+inductive Comparative.Standard where
+  /-- The standard takes its case from the comparee, as after Latin *quam*. -/
   | derived
-  | fixed
+  /-- The standard is the direct object of a transitive verb of exceeding. -/
+  | directObject
+  /-- The standard is part of an adverbial phrase, in the case given where the phrase has one,
+  the ablative of a separative and the partitive of the Finnish secondary construction. An
+  adposition with the meaning of the case counts, as Japanese *yori* and Arabic *min* do for the
+  ablative. -/
+  | adverbial (case : Option Case)
   deriving DecidableEq, Repr
 
-/-- A fixed-case standard is the direct object of a transitive verb of exceeding or an
-adverbial ([stassen-1985] §2.2.2). -/
-inductive Comparative.FixedCaseEncoding where
-  | directObject
-  | adverbial
-  deriving DecidableEq, Repr
+/-- The case of an adverbial standard. -/
+def Comparative.Standard.case? : Comparative.Standard → Option Case
+  | adverbial k => k
+  | _ => none
 
 /-- A comparative construction, by the way it encodes the standard of comparison in *X is more
-Adj than Y*, in the parameters of [stassen-1985]. A language may have more than one, as Latin
-has *quam* and the bare ablative. -/
+Adj than Y*. A language may have more than one, as Latin has *quam* and the bare ablative. -/
 structure Comparative where
   /-- The marker of the standard as the morphs of its form in order, *than* or the two pieces
   of Yoruba *ju … lọ*. It is empty where no segmental marker flags the standard, as in a
   conjoined construction and with a bare case-marked standard like the Latin ablative. -/
   standardMarker : List Morphology.Morph := []
-  /-- The standard takes its case from the comparee or has a case the construction fixes. -/
-  caseAssignment : Comparative.CaseAssignment
-  /-- The role of a fixed-case standard, the object of a verb of exceeding or an adverbial. -/
-  fixedEncoding : Option Comparative.FixedCaseEncoding := none
-  /-- The case of an adverbially encoded standard, the ablative of a separative and the partitive
-  of the Finnish secondary construction. An adposition with the meaning of the case counts, as
-  Japanese *yori* and Arabic *min* do for the ablative. -/
-  standardCase : Option Case := none
+  /-- The encoding of the standard. -/
+  standard : Comparative.Standard
   /-- The markers of degree on the predicate, each an alternative, as English *more* and *-er*.
   A bound marker is degree morphology and a free one a degree word, and the list is empty where
   the construction marks no degree. -/
@@ -68,39 +72,18 @@ structure Comparative where
 
 namespace Comparative
 
-/-! ### Superlatives -/
-
-/-- The ways a language forms superlatives, which are partly independent of its comparative
-type. -/
-inductive SuperlativeStrategy where
-  /-- Dedicated superlative morphology, as English *-est* and Latin *-issimus*. -/
-  | morphological
-  /-- The definite article with the comparative, as French *le plus grand*. -/
-  | definiteComparative
-  /-- The elative pattern without a comparison class, as Arabic *ʔafʕal*. -/
-  | elative
-  /-- A verb of exceeding with a universal quantifier, 'X exceeds all'. -/
-  | exceedAll
-  /-- The comparative with a universal standard, as Japanese *dare yori mo takai*. -/
-  | comparativeUniversal
-  /-- No dedicated superlative strategy. -/
-  | none
-  deriving DecidableEq, BEq, Repr
-
 /-! ### The derived type -/
 
-/-- The type of a construction in the atlas, derived from its anatomy. A derived-case
-construction is a particle comparative when it has a standard marker, as English *than* and German
-*als*, and a conjoined one otherwise, two juxtaposed clauses that attribute the property to one
-item and deny it of the other or contrast them. A fixed-case construction is an exceed comparative
-when the standard is a direct object, as of the exceed verb in Yoruba *X Adj ju Y lọ*, and a
-locational one otherwise, as when the standard is in a locational or ablative case or adposition,
-Japanese *yori*, Turkish *-DAn* and Hindi-Urdu *se*. A language with more than one productive
-construction has one `Comparative` for each, with its own type. -/
+/-- The type of a construction in the atlas. A construction with a standard in a derived case is
+a particle comparative when it has a standard marker, as English *than* and German *als*, and a
+conjoined one otherwise, two juxtaposed clauses that attribute the property to one item and deny
+it of the other or contrast them. A construction is an exceed comparative when the standard is a
+direct object, as of the exceed verb in Yoruba *X Adj ju Y lọ*, and a locational one when the
+standard is adverbial, as Japanese *yori*, Turkish *-DAn* and Hindi-Urdu *se*. -/
 def type (c : Comparative) : Data.WALS.F121A.ComparativeType :=
-  match c.caseAssignment, c.fixedEncoding with
-  | .derived, _ => if c.standardMarker = [] then .conjoined else .particle
-  | .fixed, some .directObject => .exceed
-  | .fixed, _ => .locational
+  match c.standard with
+  | .derived => if c.standardMarker = [] then .conjoined else .particle
+  | .directObject => .exceed
+  | .adverbial _ => .locational
 
 end Comparative

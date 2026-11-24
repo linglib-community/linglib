@@ -28,10 +28,7 @@ open Comparative
 /-- The *als*-comparative marks the standard with the particle *als* and the adjective with the
 bound ending *-er*. -/
 def als : Comparative :=
-  { standardMarker := [.free "als"], caseAssignment := .derived, degreeMarkers := [.suff "er"] }
-
-/-- The superlative is marked by the ending *-st*, as in *das tiefste*. -/
-def superlative : SuperlativeStrategy := .morphological
+  { standardMarker := [.free "als"], standard := .derived, degreeMarkers := [.suff "er"] }
 
 theorem als_type : als.type = .particle := rfl
 

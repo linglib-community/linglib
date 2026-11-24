@@ -24,16 +24,11 @@ open Comparative
 /-- The *se*-comparative, whose standard takes the postposition *se* in its ablative use. -/
 def se : Comparative :=
   { standardMarker := Adpositions.se.morphs
-  , caseAssignment := .fixed
-  , fixedEncoding := some .adverbial
-  , standardCase := some .abl
+  , standard := .adverbial (some .abl)
   , degreeMarkers := [.free "zyaadaa"] }
 
-theorem standardCase_functions_inter_nonempty :
-    ∀ k ∈ se.standardCase, (k.functions ∩ Adpositions.se.functions).Nonempty := by
+theorem case?_standard_functions_inter_nonempty :
+    ∀ k ∈ se.standard.case?, (k.functions ∩ Adpositions.se.functions).Nonempty := by
   decide
-
-/-- The superlative is the comparative with a universal standard, *sab se*. -/
-def superlative : SuperlativeStrategy := .comparativeUniversal
 
 end HindiUrdu.Comparison

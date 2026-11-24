@@ -11,7 +11,7 @@ predicate without degree marking: *Taroo-wa Hanako-yori zutto haya-ku ki-ta* 'Ta
 earlier than Hanako'. The standard's case is fixed by the construction, the ablative the case
 fragment records for *yori* (`Japanese.Adpositions.yori`), which `Studies/Stassen1985.lean`
 reads as Stassen's separative type. The superlative is formed with the adverb *itiban* 'most',
-*itiban haya-ku* 'the fastest', which none of `SuperlativeStrategy`'s cases fits.
+*itiban haya-ku* 'the fastest'.
 
 ## References
 
@@ -29,12 +29,10 @@ open Comparative
 no degree morphology. -/
 def yori : Comparative :=
   { standardMarker := Adpositions.yori.morphs
-  , caseAssignment := .fixed
-  , fixedEncoding := some .adverbial
-  , standardCase := some .abl }
+  , standard := .adverbial (some .abl) }
 
-theorem standardCase_functions_inter_nonempty :
-    ∀ k ∈ yori.standardCase, (k.functions ∩ Adpositions.yori.functions).Nonempty := by
+theorem case?_standard_functions_inter_nonempty :
+    ∀ k ∈ yori.standard.case?, (k.functions ∩ Adpositions.yori.functions).Nonempty := by
   decide
 
 end Japanese.Comparison

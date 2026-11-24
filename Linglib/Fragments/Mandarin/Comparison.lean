@@ -28,8 +28,7 @@ open Comparative
 /-- The *bǐ*-comparative, whose standard is the object of *bǐ* 'compare with'. -/
 def bi : Comparative :=
   { standardMarker := [.free "bǐ"]
-  , caseAssignment := .fixed
-  , fixedEncoding := some .directObject }
+  , standard := .directObject }
 
 theorem bi_type : bi.type = .exceed := rfl
 

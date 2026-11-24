@@ -25,15 +25,12 @@ open Comparative
 
 /-- The *quam*-comparative, the primary construction, with a particle-marked standard. -/
 def quam : Comparative :=
-  { standardMarker := [.free "quam"], caseAssignment := .derived
+  { standardMarker := [.free "quam"], standard := .derived
     degreeMarkers := [Adjectives.ior] }
 
 /-- The comparative with the standard in the bare ablative and no segmental marker. -/
 def ablative : Comparative :=
-  { caseAssignment := .fixed, fixedEncoding := some .adverbial, standardCase := some .abl
+  { standard := .adverbial (some .abl)
     degreeMarkers := [Adjectives.ior] }
-
-/-- The superlative is morphological. -/
-def superlative : SuperlativeStrategy := .morphological
 
 end Latin.Comparison

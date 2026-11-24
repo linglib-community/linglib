@@ -48,17 +48,15 @@ open Comparative
 /-- The exceed comparative, whose standard is the object of the infinitive *ku-shinda*
 'exceed' and whose adjective is unmarked for degree. -/
 def kushinda : Comparative :=
-  { standardMarker := [.pref "ku", .root "shinda"], caseAssignment := .fixed,
-    fixedEncoding := some .directObject }
+  { standardMarker := [.pref "ku", .root "shinda"], standard := .directObject }
 
 /-- The construction whose standard follows *kuliko*, the infinitive of *-liko* 'be at', an
 adverbial standard in no spatial case. -/
 def kuliko : Comparative :=
-  { standardMarker := [.pref "ku", .root "liko"], caseAssignment := .fixed,
-    fixedEncoding := some .adverbial }
+  { standardMarker := [.pref "ku", .root "liko"], standard := .adverbial none }
 
 /-- The conjoined comparative juxtaposes two clauses with antonymous predicates. -/
-def conjoined : Comparative := { caseAssignment := .derived }
+def conjoined : Comparative := { standard := .derived }
 
 /-- The exceed construction is an exceed comparative. -/
 theorem type_kushinda : kushinda.type = .exceed := rfl
