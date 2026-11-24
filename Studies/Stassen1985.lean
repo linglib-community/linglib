@@ -18,66 +18,48 @@ public import Mathlib.Basic.Rel
 /-!
 # Stassen (1985): Comparison and Universal Grammar
 
-This file defines Stassen's types of comparative construction and of temporal chaining, the
-relation of modelling between them, and the chaining-based universals of a language.
+This file defines Stassen's types of comparative construction and of temporal chaining, and the
+universals that relate them.
 
-A comparative construction is classed by the encoding of its standard of comparison. The
-standard takes its case from the comparee, in a conjoined comparative of two independent
-clauses or in a particle comparative, or it has a fixed case, as the direct object of a verb of
-exceeding in an exceed comparative or in an adverbial phrase in an adverbial comparative. A
-temporal chain of two predicates is balanced, both keeping their rank, or deranked, one of
-them reduced, either only under identity of subjects or absolutely.
+A comparative construction is classed by how it encodes the standard of comparison. The
+standard has a derived case in a conjoined or a particle comparative. It is the direct object
+of a verb of exceeding in an exceed comparative. It is in an adverbial phrase in an adverbial
+comparative, as in Turkish *sen gul-den güzel-sin* 'you are more beautiful than a rose', where
+it is in the ablative. A temporal chain of two predicates is balanced, conditionally deranked
+or absolutely deranked.
 
-An adverbial comparative `adverbial o` and an absolutely deranked chain `absolute o` are
-indexed by `o : Ordering`, the comparison `cmp g f` of a ground `g` with a figure `f` on a
-line. For a comparative the ground is the standard and the line a path: the standard is where
-the path starts in the separative comparative, `lt`, where it ends in the allative, `gt`, and
-where the comparee is in the locative, `eq`. For a chain the ground is the deranked predicate
-and the line is time: the deranked predicate is anterior to the other, posterior to it or
-simultaneous with it.
+We index the adverbial comparatives and the absolutely deranked chains by `o : Ordering`, the
+comparison `cmp g f` of a ground `g` with a figure `f` on a line. For a comparative the ground
+is the standard and the line is a path, so `lt` is the separative comparative, `gt` the
+allative and `eq` the locative. For a chain the ground is the deranked predicate and the line
+is time.
 
-`Models c t` says that a comparative of type `t` is modelled on a chain of type `c`: a
-particle comparative on a balanced chain, a conjoined comparative on the balanced simultaneous
-chain, an exceed comparative on a conditionally deranked chain, and `adverbial o` on
-`absolute o`. Modelling is invariant under `Ordering.swap`, the reversal of the line. For a
-language with the chain types `C` and the comparative types `T`, the chaining-based universals
-hold if and only if `T ⊆ models.image C`.
-
-The examples are comparatives of the book whose construction a fragment records. The type of
-each fragment construction is the type the book gives the example, except for the Finnish
-partitive standard. Turkish, with its ablative comparative and a gerund that precedes the main
-predicate and is neutral to switch-reference, satisfies the universals.
+`Models c t` says that comparatives of type `t` are modelled on chains of type `c`. Suppose a
+language has the chain types `C` and the comparative types `T`. Then the chaining-based
+universals hold of it if and only if `T ⊆ models.image C`. This is
+`universals_iff_subset_image`.
 
 ## Implementation notes
 
-* The two typologies are inductive types with one constructor for each way of encoding the
-  standard and for each chaining option, so that the universals on case assignment and on
-  conditionality say that modelling preserves the constructor, and the three universals on the
-  adverbial types are one statement over `Ordering`. The book's flat lists are the six and the
-  seven values of these types. `Ordering` is used and not a type of spatial relations with a
-  bijection to a type of relative times, since the bijection would be stipulated, while the
-  comparison of ground and figure is what both sets of labels classify.
-* A language is a set of chain types and a set of comparative types, since the book allows a
-  language several of each. A universal whose consequent is that the language is balancing or
-  deranking, or has conditional or absolute deranking, is read as saying that the language has
-  a chain of that kind, the reading under which the book takes a chaining type to be a
-  necessary and not a sufficient condition for a comparative type.
-* An adverbial standard is classed by the direction of its case, `Case.dirOf`, extended to the
-  non-spatial cases the book classes by the localist analysis. The partitive is none of these,
-  so the Finnish partitive standard, which the book lists as a secondary separative
-  comparative, gets no type.
-* The rows name the fragment's construction by a lexeme. The transcriptions of the book's
-  sources are not compared with the fragments' forms.
+Each typology is an inductive type with one constructor for each way of encoding the standard
+and for each chaining option. The universals on case assignment and on conditionality then say
+that modelling preserves the constructor.
+
+A language is a set of chain types and a set of comparative types, since the book allows a
+language several of each. A universal that says a language is balancing is read as saying that
+it has a balanced chain, and likewise for deranking.
+
+An adverbial standard is classed by the direction of its case, `Case.dirOf`, and by the
+localist analysis for the instrumental, the dative, the benefactive and the comitative. The
+Finnish partitive standard gets no type; the book lists it as a secondary separative
+comparative.
 
 ## TODO
 
-* The language types of the Principle of Parallel Chaining and the word orders the book
-  associates with each type of deranking are not formalized, nor are the mixed comparatives,
-  the chaining data of the sample that Part Two tests the universals against, and the
-  procedure-based universals of Part Three.
-* The Korean separative of the book marks the standard with *-eso*, which the fragment does
-  not record, so the universals are checked on Turkish alone. The book's chaining examples are
-  not recorded as rows, and the relative time of the Turkish gerund is given in the statement.
+* The Principle of Parallel Chaining, the word orders of each type of deranking, the mixed
+  comparatives and the procedure-based universals are not formalized.
+* The book's chaining examples are not recorded as rows, and its Korean separative marker
+  *-eso* is not in the fragment, so the universals are checked on Turkish alone.
 
 ## References
 
@@ -288,8 +270,7 @@ variable {ct : ChainType}
     Models ct (.adverbial o) ↔ ct = .absolute o :=
   ⟨fun | .adverbial _ => rfl, fun h ↦ h ▸ .adverbial o⟩
 
-/-- Modelling is invariant under the reversal of the line: the allative is modelled on the
-mirror image of the chain the separative is modelled on. -/
+/-- Modelling is invariant under the reversal of the line. -/
 theorem models_swap_iff : Models ct.swap t.swap ↔ Models ct t := by
   have key : ∀ {c : ChainType} {t : ComparativeType}, Models c t → Models c.swap t.swap := by
     rintro _ _ (τ | _ | τ | o)
@@ -408,8 +389,7 @@ def Examples.Lexeme.entry : Examples.Lexeme → Comparative
   | .partitive => Finnish.Comparison.partitive
 
 /-- The type of the fragment's construction is the type the book classes the example under, for
-each example but that of the Finnish partitive standard, which the book classes as separative
-and whose case expresses no order of standard and comparee. -/
+each example but that of the Finnish partitive standard. -/
 theorem typeOf_entry :
     ∀ x : Examples.Example, ∀ l ∈ x.lexemes .standard,
       (typeOf l.entry = x.comparativeClass.map (·.toType) ↔ x ≠ .ex_10_54a) := by
@@ -423,9 +403,8 @@ def chainTypeOf {M : Type*} [MedialForm M] (o : Ordering) (m : M) : ChainType :=
     .conditional (if o = .eq then .simultaneous else .consecutive)
   else .absolute o
 
-/-- Turkish satisfies the universals with its ablative comparative and the gerund in *-(y)IncA*,
-which the book describes as immediately prior to the main predicate and which is neutral to
-switch-reference. They would fail if the gerund were posterior. -/
+/-- Turkish satisfies the universals with its ablative comparative and its gerund in
+*-(y)IncA*, which precedes the main predicate, and would not if the gerund followed it. -/
 theorem universals_turkish :
     Universals {chainTypeOf .lt Turkish.Converb.inca}
         {t | typeOf Turkish.Comparison.dan = some t} ∧

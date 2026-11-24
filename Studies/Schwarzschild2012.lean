@@ -7,42 +7,33 @@ public import Studies.Stassen1985
 /-!
 # Schwarzschild (2012): Directed scale segments
 
-This file defines directed scale segments and the denotations Schwarzschild gives the parts of
-a comparative whose standard is marked by a spatial adposition.
+This file defines directed scale segments and the denotations Schwarzschild gives to a
+comparative whose standard is marked by a spatial adposition.
 
-A directed scale segment $\sigma = \langle s, e, \prec_\sigma \rangle$ is a part of a scale
-with a start $s$ and an end $e$. It is rising when $s \prec_\sigma e$ and falling when
-$e \prec_\sigma s$. A gradable predicate with the measure `μ` relates a segment to an
-individual `y` when the segment ends at `y` and lies on the scale of `μ`. Hindi *se* 'from'
-with the standard `x` quantifies over the rising segments that start at `x`, so that *Anu
-Raj-se lambii hai* 'Anu is taller than Raj' says that a rising segment of the height scale
-runs from Raj to Anu, which holds if and only if `μ x < μ y`.
+A *directed scale segment* is a part of a scale with a start and an end. It is *rising* if its
+start is lower on the scale than its end, and *falling* if it is higher. Hindi *se* 'from' with
+the standard `x` says that some rising segment starts at `x`. A gradable predicate with the
+measure `μ` says that the segment ends at its subject `y` and lies on the scale of `μ`. So
+*Anu Raj-se lambii hai* 'Anu is taller than Raj' holds if and only if `μ x < μ y`.
 
-A differential measure phrase restricts the predicate to segments of its length. Hindi *kam*
-'less' moves the predicate to the inverse scale, and Navajo *-'oh* quantifies over falling
-segments; the two comparatives of inferiority have the same truth conditions, `μ y < μ x`.
-
-A segment is a two-point path of entities, and a rising segment starts at `x` if and only if it
-is a coinitial path relative to `{x}`, the shape of a spatial path from a place. For the
-Hindi-Urdu construction of the fragment, the segment has the shape of the case of the
-standard, and the type of the construction in [stassen-1985]'s typology is the adverbial type
-of the direction of that shape.
+Hindi *kam* 'less' inverts the scale of the predicate, and Navajo *-'oh* takes falling
+segments. We prove that both say `μ y < μ x`. A segment is also a two-point path of entities.
+We prove that a rising segment starts at `x` if and only if it is a coinitial path relative
+to `{x}`, as a spatial path from a place is.
 
 ## Implementation notes
 
-* A scale is its measure, a function from entities to a linearly ordered group: the field is
-  the type of entities, the ordering and the distances are those of the measures, and the
-  inverse of a scale is the negated measure, which keeps the distances and reverses the order.
-* The predicates are relations between a segment and an individual and the standard phrases
-  are quantifiers over segments, as in the paper. They are combined by direct application to
-  the predicate saturated by its subject; the paper leaves the mode of combination open.
+A scale is its measure, a function from entities to a linearly ordered group. The inverse of a
+scale is the negated measure, which keeps the distances and reverses the order.
+
+The standard phrases are quantifiers over segments, as in the paper, and are applied to the
+predicate saturated by its subject. The paper leaves the mode of combination open.
 
 ## TODO
 
-* The positive form and the Navajo comparative built on it, with a contextual restriction on
-  segments, the gradable predicates with more than one individual argument, and the
-  restriction of measure phrases to some adjectives are not formalized.
-* There are no rows: the Navajo examples are Bogal-Allbritten's, whose work is not in the
+* The positive form, the Navajo comparative built on it, and gradable predicates with more
+  than one individual argument are not formalized.
+* There are no rows. The Navajo examples are Bogal-Allbritten's, whose work is not in the
   bibliography.
 
 ## References
@@ -170,8 +161,7 @@ theorem se_gradable_iff : se x (gradable μ · y) ↔ μ x < μ y :=
 theorem oh_gradable_iff : oh x (gradable μ · y) ↔ μ y < μ x :=
   ⟨by rintro ⟨σ, hf, rfl, rfl, rfl⟩; exact hf, fun h ↦ ⟨⟨x, y, μ⟩, h, rfl, rfl, rfl⟩⟩
 
-/-- The standard of a *se*-comparative is where the segment starts as a path: the segment is a
-coinitial path relative to the standard. -/
+/-- The segment of a *se*-comparative is a coinitial path relative to the standard. -/
 theorem se_iff_isCoinitial {P : Segment E D → Prop} :
     se x P ↔ ∃ σ, σ.Rising ∧ IsCoinitial {x} σ.toPath ∧ P σ :=
   exists_congr fun _ ↦ and_congr_right fun hr ↦
@@ -209,9 +199,8 @@ theorem se_kam_iff : se x (kam (gradable μ) · y) ↔ μ y < μ x := by
     simpa [Rising, hs] using hr
   · exact fun h ↦ ⟨⟨x, y, -μ⟩, by simpa [Rising] using h, rfl, rfl, ⟨y, y, μ⟩, ⟨rfl, rfl⟩, rfl⟩
 
-/-- The two comparatives of inferiority have the same truth conditions: inverting the scale of
-the predicate, as Hindi *kam* does, and quantifying over falling segments, as Navajo *-'oh*
-does. -/
+/-- Inverting the scale of the predicate, as Hindi *kam* does, and quantifying over falling
+segments, as Navajo *-'oh* does, give the same truth conditions. -/
 theorem se_kam_iff_oh : se x (kam (gradable μ) · y) ↔ oh x (gradable μ · y) :=
   se_kam_iff.trans oh_gradable_iff.symm
 
