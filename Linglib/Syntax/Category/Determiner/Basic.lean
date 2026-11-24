@@ -11,6 +11,7 @@ public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Global
 
 /-!
 # Determiners

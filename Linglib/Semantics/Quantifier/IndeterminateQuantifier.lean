@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Coordinator
 public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Global
 public import Linglib.Syntax.Category.Determiner.IndeterminateQuantifier
 
 /-!

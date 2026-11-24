@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantifier.Polyadic
+public import Linglib.Semantics.Quantifier.Global
 public import Linglib.Languages.Romance.French.Determiners
 
 /-!

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Quantifier.Continuation
 public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Global
 public import Mathlib.Logic.Function.Basic
 
 /-!

@@ -1,8 +1,7 @@
 module
 
 public import Linglib.Core.Order.GenerateCompleteBoolean
-public import Linglib.Semantics.Quantifier.NumberTree
-public import Linglib.Semantics.Quantifier.Properties
+public import Linglib.Semantics.Quantifier.Conservative
 public import Mathlib.Order.Atoms
 public import Mathlib.SetTheory.Cardinal.Finite
 
@@ -22,7 +21,6 @@ functions](##Quantifier.Det.generateCompleteBoolean_union_iff).
 ## References
 
 * [keenan-stavi-1986]
-* [peters-westerstahl-2006]
 -/
 
 @[expose] public section
@@ -54,25 +52,6 @@ theorem mem_invariants_iff_exists :
   ⟨fun h ↦ ⟨fun b ↦ ∃ A B, f (A, B) = b ∧ d A B, fun A B ↦
       ⟨fun hd ↦ ⟨A, B, rfl, hd⟩, fun ⟨A', B', he, hd⟩ ↦ (h A' B' A B he).1 hd⟩⟩,
     fun ⟨p, hp⟩ A B A' B' h ↦ by rw [hp, hp, h]⟩
-
-/-- The determiner denotations of the trees of numbers are the determiner denotations that depend
-only on `|A \ B|` and `|A ∩ B|`. -/
-theorem range_toDet :
-    Set.range (NumberTree.toDet : NumberTree → Det α) =
-      invariants fun ((A, B) : Set α × Set α) ↦ ((A \ B).ncard, (A ∩ B).ncard) := by
-  ext d
-  rw [SetLike.mem_coe, mem_invariants_iff_exists]
-  exact ⟨fun ⟨q, hq⟩ ↦ ⟨fun p ↦ q p.1 p.2, fun A B ↦ hq ▸ Iff.rfl⟩,
-    fun ⟨p, hp⟩ ↦ ⟨fun a b ↦ p (a, b), funext₂ fun A B ↦ propext (hp A B).symm⟩⟩
-
-/-- On a finite universe the cardinal determiner denotations are the intersective,
-permutation-invariant ones ([keenan-stavi-1986], [peters-westerstahl-2006]). -/
-theorem cardinal_iff_intersective_and_quantityInvariant [Finite α] :
-    d.Cardinal ↔ d.Intersective ∧ d.QuantityInvariant :=
-  ⟨fun h ↦ ⟨h.intersective, h.quantityInvariant⟩, fun ⟨hi, hq⟩ A B A' B' h ↦
-    hi.iff_inter_univ.trans <|
-      (iff_of_ncard_eq hi.conservative hq (by simp) (by simpa using h)).trans
-        hi.iff_inter_univ.symm⟩
 
 /-- When `f` has a section `s`, its class is the power set of its codomain, by evaluation along
 `s`. -/

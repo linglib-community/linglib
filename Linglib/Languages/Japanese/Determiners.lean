@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Semantics.Quantifier.IndeterminateQuantifier
+public import Linglib.Semantics.Quantifier.Global
 public import Linglib.Languages.Japanese.Coordination
 public import Linglib.Languages.Japanese.Pronouns
 public import Linglib.Languages.Japanese.Classifiers

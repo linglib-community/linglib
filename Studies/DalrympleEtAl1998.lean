@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Plurality.Reciprocal
 public import Linglib.Data.Examples.DalrympleEtAl1998
 public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.Invariance
 public import Mathlib.Algebra.Group.Fin.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Tactic.FinCases

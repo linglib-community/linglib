@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Semantics.Quantifier.Defs
-public import Linglib.Semantics.Quantifier.Properties
+public import Linglib.Semantics.Quantifier.Conservative
+public import Linglib.Semantics.Quantifier.Monotone
 public import Linglib.Semantics.Reference.Iota
 public import Mathlib.Order.CompleteLattice.Basic
 
@@ -387,7 +388,7 @@ theorem exists_eq_no_iff {Q : Quantifier α} :
     not_and, not_not]
   exact iff_comm
 
-/-! ### Conservativity and permutation invariance -/
+/-! ### Conservativity -/
 
 theorem conservative_every : (every : Det α).Conservative :=
   fun _ _ ↦ (Set.subset_inter_iff.trans (and_iff_right subset_rfl)).symm
@@ -398,14 +399,6 @@ theorem conservative_some : (Det.some : Det α).Conservative := fun A B ↦ by
 
 theorem conservative_no : (no : Det α).Conservative := fun A B ↦
   no_iff_not_some.trans <| (not_congr (conservative_some A B)).trans no_iff_not_some.symm
-
-theorem quantityInvariant_every : (every : Det α).QuantityInvariant :=
-  fun σ _ _ ↦ σ.surjective.preimage_subset_preimage_iff
-
-theorem quantityInvariant_some : (Det.some : Det α).QuantityInvariant :=
-  fun σ A B ↦ σ.surjective.nonempty_preimage (s := A ∩ B)
-
-theorem quantityInvariant_no : (no : Det α).QuantityInvariant := quantityInvariant_every.innerNeg
 
 /-! ### Relational properties
 

@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantifier.Defs
+public import Linglib.Semantics.Quantifier.Invariance
+public import Linglib.Semantics.Quantifier.Invariants
 public import Mathlib.Order.Hom.CompleteLattice
 public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Core.Data.Fintype.EquivFin
@@ -27,14 +28,10 @@ Van Benthem's postulates of variety, continuity, absence of deadlock and uniform
 invariant under both negations. That symmetry carries the verification of the postulates, and the
 proof that the corners are the only quantifiers satisfying them, from *all* to the other three.
 
-The trees are exactly the determiner denotations given on every finite universe that are
-conservative and constant, [as Boolean algebras](##Quantifier.NumberTree.familyOrderIso), so each
-theorem about trees is one about such denotations; van Benthem's theorem that no nonempty
-quantifier is asymmetric [is the first](##Quantifier.Det.Family.not_apply_of_asymm). On a single
-universe that theorem fails. The conservative constant denotations are in turn the
-[relativizations](##Quantifier.NumberTree.relOrderIso) of the isomorphism-closed global
-quantifiers, the determiner restricting the universe to its restrictor, and a quantifier and its
-relativization are decided by the same tree.
+A tree is read as a determiner denotation on a universe by `toDet`, and the tree of a determiner
+denotation is read off by `ofDet`; the two form a Galois connection. The trees are exactly the
+conservative determiner denotations that are the same on every finite universe, which is proved
+in `Quantifier/Global.lean`.
 
 ## Main definitions
 
@@ -55,8 +52,7 @@ relativization are decided by the same tree.
 * `Quantifier.NumberTree.ofDet`, `Quantifier.NumberTree.toDet`: the tree of a determiner
   denotation on a finite universe, and the determiner denotation of a tree, counting with
   `Set.ncard`.
-* `Quantifier.NumberTree.ofFamily`, `Quantifier.NumberTree.toFamily`: the same on every finite
-  universe at once.
+* `Quantifier.Det.Cardinal`: the determiner denotations that depend on `|A ∩ B|` alone.
 * `Quantifier.NumberTree.ConstantOnRow`, `Quantifier.NumberTree.ConstantBelow`: a quantifier that
   does not depend on its scope for a restrictor of a given size, or on either argument on a
   universe of a given size.
@@ -71,15 +67,12 @@ relativization are decided by the same tree.
   postulates are exactly the four corners of the square of opposition.
 * `Quantifier.NumberTree.ofDet_iff`: a conservative, permutation-invariant determiner denotation
   holds of `A` and `B` exactly when its tree holds of `|A \ B|` and `|A ∩ B|`.
-* `Quantifier.NumberTree.familyOrderIso`: the conservative constant global determiner
-  denotations are the trees, as Boolean algebras.
-* `Quantifier.Det.Family.not_apply_of_asymm`: such a denotation that is asymmetric on every
-  universe is empty.
-* `Quantifier.NumberTree.relOrderIso`: relativization is an order isomorphism from the
-  isomorphism-closed global quantifiers onto the conservative constant global determiner
-  denotations.
-* `Quantifier.Family.Isom.apply_iff`: an isomorphism-closed global quantifier holds of `B`
-  according to `|Bᶜ|` and `|B|`, by the tree of its relativization.
+* `Quantifier.NumberTree.gc_ofDet_toDet`: reading a tree off and reading it back form a Galois
+  connection.
+* `Quantifier.NumberTree.scopeMonotone_cardinal_iff`: a cardinal quantifier is scope monotone if
+  and only if its set of numbers is an upper set.
+* `Quantifier.Det.cardinal_iff_exists_toDet`: a determiner denotation is cardinal if and only if
+  it is the determiner denotation of the cardinal quantifier of a set of numbers.
 * `Quantifier.NumberTree.conservative_toDet`, `Quantifier.NumberTree.quantityInvariant_toDet`: the
   quantifier of a tree is conservative and permutation invariant.
 * `Quantifier.NumberTree.ScopeMonotone.toDet`, `Quantifier.NumberTree.ScopeAntitone.toDet`: the
@@ -749,6 +742,25 @@ theorem _root_.Quantifier.Det.cardinal_iff_exists_toDet :
       ⟨fun ⟨_, _, he, hd⟩ ↦ (h _ _ _ _ he).1 hd, fun hd ↦ ⟨A, B, rfl, hd⟩⟩⟩,
     fun ⟨s, hs⟩ ↦ hs ▸ cardinal_toDet_cardinal s⟩
 
+/-- On a finite universe the cardinal determiner denotations are the intersective,
+permutation-invariant ones ([keenan-stavi-1986], [peters-westerstahl-2006]). -/
+theorem _root_.Quantifier.Det.cardinal_iff_intersective_and_quantityInvariant [Finite α] :
+    d.Cardinal ↔ d.Intersective ∧ d.QuantityInvariant :=
+  ⟨fun h ↦ ⟨h.intersective, h.quantityInvariant⟩, fun ⟨hi, hq⟩ A B A' B' h ↦
+    hi.iff_inter_univ.trans <|
+      (Det.iff_of_ncard_eq hi.conservative hq (by simp) (by simpa using h)).trans
+        hi.iff_inter_univ.symm⟩
+
+/-- The determiner denotations of the trees of numbers are the determiner denotations that depend
+only on `|A \ B|` and `|A ∩ B|`. -/
+theorem range_toDet :
+    Set.range (toDet : NumberTree → Det α) =
+      Det.invariants fun ((A, B) : Set α × Set α) ↦ ((A \ B).ncard, (A ∩ B).ncard) := by
+  ext d
+  rw [SetLike.mem_coe, Det.mem_invariants_iff_exists]
+  exact ⟨fun ⟨q, hq⟩ ↦ ⟨fun p ↦ q p.1 p.2, fun A B ↦ hq ▸ Iff.rfl⟩,
+    fun ⟨p, hp⟩ ↦ ⟨fun a b ↦ p (a, b), funext₂ fun A B ↦ propext (hp A B).symm⟩⟩
+
 /-- Enlarging the scope from `B` to `B'` moves the `k` members of `A` that are in `B'` and not in
 `B` from outside the scope to inside it: a step of length `k` to the right along a row of the
 tree. -/
@@ -780,242 +792,6 @@ theorem ScopeAntitone.toDet [Finite α] {q : NumberTree} (h : q.ScopeAntitone) :
   fun A _ _ hB hq ↦ Classical.byContradiction fun hn ↦ h.compl.toDet A hB hn hq
 
 end OfDet
-
-/-! ### The tree of a global determiner denotation
-
-A global determiner denotation that is conservative and constant, extensional and closed under
-isomorphism, holds of `A` and `B` according to `|A \ B|` and `|A ∩ B|` alone, on every universe
-at once, which is Peters and Westerståhl's representation of such quantifiers by binary
-relations between numbers. Such denotations are exactly the trees, so every theorem about trees
-is a theorem about them. -/
-
-section Family
-
-universe u
-
-open Det
-
-variable {Q : Det.Family.{u}}
-
-/-- Constancy is extension together with isomorphism closure. -/
-theorem _root_.Quantifier.Det.Family.constant_iff : Q.Constant ↔ Q.Ext ∧ Q.Isom := by
-  refine ⟨fun h ↦ ⟨fun β _ M A B hA hB ↦ ?_, fun α β _ _ e A B ↦ ?_⟩, fun ⟨hE, hI⟩ ↦ ?_⟩
-  · exact h (Function.Embedding.subtype (· ∈ M)) A B (by simpa using hA) (by simpa using hB)
-  · exact h e.toEmbedding A B (by simp) (by simp)
-  · intro α β _ _ f A B hA hB
-    exact (hI (Equiv.ofInjective f f.injective) _ _).trans (hE _ A B hA hB)
-
-theorem _root_.Quantifier.Det.Family.Constant.ext (h : Q.Constant) : Q.Ext :=
-  (Det.Family.constant_iff.1 h).1
-
-theorem _root_.Quantifier.Det.Family.Constant.isom (h : Q.Constant) : Q.Isom :=
-  (Det.Family.constant_iff.1 h).2
-
-private theorem ncard_image_sdiff {α β : Type*} {f : α → β} (hf : f.Injective) (A B : Set α) :
-    (f '' A \ f '' B).ncard = (A \ B).ncard := by
-  rw [← Set.image_sdiff hf, Set.ncard_image_of_injective _ hf]
-
-private theorem ncard_image_inter {α β : Type*} {f : α → β} (hf : f.Injective) (A B : Set α) :
-    (f '' A ∩ f '' B).ncard = (A ∩ B).ncard := by
-  rw [← Set.image_inter hf, Set.ncard_image_of_injective _ hf]
-
-/-- A conservative constant global determiner denotation holds of `A` and `B` on one universe
-exactly when it holds of `A'` and `B'` on another with the same `|A \ B|` and `|A ∩ B|`. Both
-universes embed in their sum, where permutation invariance applies. -/
-theorem _root_.Quantifier.Det.Family.iff_of_ncard_eq (hC : Q.Conservative) (hK : Q.Constant)
-    {α β : Type u} [Finite α] [Finite β] {A B : Set α} {A' B' : Set β}
-    (hd : (A \ B).ncard = (A' \ B').ncard) (hi : (A ∩ B).ncard = (A' ∩ B').ncard) :
-    Q α A B ↔ Q β A' B' := by
-  have h₁ := hK (Function.Embedding.inl (α := α) (β := β)) _ _
-    (Set.image_subset_range _ A) (Set.image_subset_range _ B)
-  have h₂ := hK (Function.Embedding.inr (α := α) (β := β)) _ _
-    (Set.image_subset_range _ A') (Set.image_subset_range _ B')
-  simp only [Set.preimage_image_eq _ (Function.Embedding.injective _)] at h₁ h₂
-  refine h₁.trans ((Det.iff_of_ncard_eq (hC _) (hK.isom.quantityInvariant _) ?_ ?_).trans
-    h₂.symm)
-  · rw [ncard_image_sdiff (Function.Embedding.injective _),
-      ncard_image_sdiff (Function.Embedding.injective _), hd]
-  · rw [ncard_image_inter (Function.Embedding.injective _),
-      ncard_image_inter (Function.Embedding.injective _), hi]
-
-/-- The tree of a global determiner denotation holds of `(a, b)` when the denotation holds of some
-`A` and `B` on some universe with `|A \ B| = a` and `|A ∩ B| = b`. -/
-def ofFamily (Q : Det.Family.{u}) : NumberTree := fun a b ↦
-  ∃ (α : Type u) (_ : Finite α) (A B : Set α), (A \ B).ncard = a ∧ (A ∩ B).ncard = b ∧ Q α A B
-
-/-- A conservative constant global determiner denotation holds of `A` and `B` exactly when its
-tree holds of `|A \ B|` and `|A ∩ B|`. -/
-theorem ofFamily_iff (hC : Q.Conservative) (hK : Q.Constant) (α : Type u) [Finite α]
-    (A B : Set α) : ofFamily Q (A \ B).ncard (A ∩ B).ncard ↔ Q α A B :=
-  ⟨fun ⟨_, _, _, _, hd, hi, h⟩ ↦ (Det.Family.iff_of_ncard_eq hC hK hd hi).1 h,
-    fun h ↦ ⟨α, inferInstance, A, B, rfl, rfl, h⟩⟩
-
-/-- The global determiner denotation of a tree is its determiner denotation on every universe. -/
-def toFamily (q : NumberTree) : Det.Family.{u} := fun _ _ ↦ q.toDet
-
-theorem conservative_toFamily (q : NumberTree) : (q.toFamily : Det.Family.{u}).Conservative :=
-  fun _ _ ↦ conservative_toDet q
-
-/-- The global determiner denotation of a tree is constant; only the restrictor need lie inside
-the range of the embedding. -/
-theorem constant_toFamily (q : NumberTree) : (q.toFamily : Det.Family.{u}).Constant :=
-  fun _ _ _ _ f _ B hA _ ↦ toDet_preimage f.injective B hA q
-
-/-- Some universe realizes any three sizes as `|X \ Y|`, `|X ∩ Y|` and `|Y \ X|`, with nothing
-outside `X` and `Y`. -/
-theorem exists_ncard_eq (a b c : ℕ) : ∃ (γ : Type u) (_ : Finite γ) (X Y : Set γ),
-    (X \ Y).ncard = a ∧ (X ∩ Y).ncard = b ∧ (Y \ X).ncard = c ∧ (X ∪ Y)ᶜ = ∅ := by
-  let e₁ : Fin a → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c) := fun i ↦ ⟨.inl i⟩
-  let e₂ : Fin b → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c) := fun i ↦ ⟨.inr (.inl i)⟩
-  let e₃ : Fin c → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c) := fun i ↦ ⟨.inr (.inr i)⟩
-  have card {n : ℕ} {e : Fin n → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c)} (he : e.Injective) :
-      (Set.range e).ncard = n := by
-    rw [Set.ncard_range_of_injective he, Nat.card_eq_fintype_card, Fintype.card_fin]
-  refine ⟨_, inferInstance, Set.range e₁ ∪ Set.range e₂, Set.range e₂ ∪ Set.range e₃, ?_, ?_, ?_,
-    ?_⟩
-  · convert card (e := e₁) fun i j h ↦ by simpa [e₁] using h using 2
-    ext ⟨x | x | x⟩ <;> simp [e₁, e₂, e₃]
-  · convert card (e := e₂) fun i j h ↦ by simpa [e₂] using h using 2
-    ext ⟨x | x | x⟩ <;> simp [e₁, e₂, e₃]
-  · convert card (e := e₃) fun i j h ↦ by simpa [e₃] using h using 2
-    ext ⟨x | x | x⟩ <;> simp [e₁, e₂, e₃]
-  · ext ⟨x | x | x⟩ <;> simp [e₁, e₂, e₃]
-
-theorem ofFamily_toFamily (q : NumberTree) : ofFamily (q.toFamily : Det.Family.{u}) = q := by
-  funext a b
-  refine propext ⟨fun ⟨_, _, _, _, ha, hb, h⟩ ↦ ha ▸ hb ▸ h, fun h ↦ ?_⟩
-  obtain ⟨γ, _, X, Y, ha, hb, -, -⟩ := exists_ncard_eq.{u} a b 0
-  exact ⟨γ, inferInstance, X, Y, ha, hb, by rwa [toFamily, toDet_apply, ha, hb]⟩
-
-theorem toFamily_ofFamily (hC : Q.Conservative) (hK : Q.Constant) :
-    (ofFamily Q).toFamily = Q := by
-  funext α _ A B
-  exact propext (ofFamily_iff hC hK α A B)
-
-theorem toFamily_le_toFamily_iff {q r : NumberTree} :
-    (q.toFamily : Det.Family.{u}) ≤ r.toFamily ↔ q ≤ r := by
-  refine ⟨fun h a b hq ↦ ?_, fun h _ _ _ _ ↦ h _ _⟩
-  obtain ⟨γ, _, X, Y, ha, hb, -, -⟩ := exists_ncard_eq.{u} a b 0
-  have : r.toDet X Y := h γ ⟨inferInstance⟩ X Y (show q.toDet X Y by rwa [toDet_apply, ha, hb])
-  rwa [toDet_apply, ha, hb] at this
-
-/-- The conservative constant global determiner denotations are the trees of numbers, as
-Boolean algebras: the tree of a meet, join or complement is the meet, join or complement of
-the trees. -/
-noncomputable def familyOrderIso :
-    {Q : Det.Family.{u} // Q.Conservative ∧ Q.Constant} ≃o NumberTree where
-  toFun Q := ofFamily Q.1
-  invFun q := ⟨q.toFamily, conservative_toFamily q, constant_toFamily q⟩
-  left_inv Q := Subtype.ext (toFamily_ofFamily Q.2.1 Q.2.2)
-  right_inv := ofFamily_toFamily
-  map_rel_iff' {Q Q'} := by
-    change ofFamily Q.1 ≤ ofFamily Q'.1 ↔ Q.1 ≤ Q'.1
-    conv_rhs => rw [← toFamily_ofFamily Q.2.1 Q.2.2, ← toFamily_ofFamily Q'.2.1 Q'.2.2]
-    exact toFamily_le_toFamily_iff.symm
-
-/-- The tree of a global determiner denotation that is asymmetric on every universe is
-asymmetric. -/
-theorem asymmetric_ofFamily (hC : Q.Conservative) (hK : Q.Constant)
-    (h : ∀ (α : Type u) [Finite α], Std.Asymm (Q α)) : (ofFamily Q).Asymmetric := by
-  intro a c b hac hbc
-  obtain ⟨γ, _, X, Y, ha, hb, hc, -⟩ := exists_ncard_eq.{u} a b c
-  have hXY := (ofFamily_iff hC hK γ X Y).1 (by rwa [ha, hb])
-  have hYX := (ofFamily_iff hC hK γ Y X).1 (by rwa [hc, Set.inter_comm, hb])
-  exact Std.Asymm.asymm X Y hXY hYX
-
-/-- No conservative constant global determiner denotation is asymmetric on every universe unless
-it is empty ([van-benthem-1984], Theorem 3.2.1). On a single universe
-an asymmetric conservative permutation-invariant denotation can be nonempty. -/
-theorem _root_.Quantifier.Det.Family.not_apply_of_asymm (hC : Q.Conservative)
-    (hK : Q.Constant) (h : ∀ (α : Type u) [Finite α], Std.Asymm (Q α)) (α : Type u) [Finite α]
-    (A B : Set α) : ¬ Q α A B := by
-  rw [← ofFamily_iff hC hK, (asymmetric_ofFamily hC hK h).eq_bot]
-  exact id
-
-end Family
-
-/-! ### Relativization
-
-A determiner restricts the universe of quantification to its restrictor, and this is what makes
-it conservative and extensional: the conservative constant global determiner denotations are
-exactly the relativizations of the isomorphism-closed global quantifiers, and a quantifier and
-its relativization are decided by the same tree. -/
-
-section Relativization
-
-universe u
-
-open Det
-
-variable {Q : Quantifier.Family.{u}} {D : Det.Family.{u}}
-
-/-- A relativized quantifier is conservative, since it sees only the part of the scope inside the
-restrictor. -/
-theorem _root_.Quantifier.Family.conservative_rel (Q : Quantifier.Family.{u}) :
-    Q.rel.Conservative := fun _ _ A B ↦ by
-  show Q A (Subtype.val ⁻¹' B) ↔ Q A (Subtype.val ⁻¹' (A ∩ B))
-  rw [Set.preimage_inter, Subtype.coe_preimage_self, Set.univ_inter]
-
-/-- The relativization of an isomorphism-closed quantifier is constant. -/
-theorem _root_.Quantifier.Family.Isom.constant_rel (h : Q.Isom) : Q.rel.Constant := by
-  intro α β _ _ f A B hA _
-  refine h (Equiv.ofBijective (fun x : ↥(f ⁻¹' A) ↦ (⟨f x, x.2⟩ : ↥A)) ⟨fun x y hxy ↦
-    Subtype.ext (f.injective (congrArg Subtype.val hxy)), fun y ↦ ?_⟩) (Subtype.val ⁻¹' B)
-  obtain ⟨x, hx⟩ := hA y.2
-  exact ⟨⟨x, show f x ∈ A from hx ▸ y.2⟩, Subtype.ext hx⟩
-
-/-- The quantifier of a global determiner denotation at the universe: the denotation with the
-whole universe as its restrictor. -/
-def _root_.Quantifier.Det.Family.atUniv (D : Det.Family.{u}) : Quantifier.Family.{u} :=
-  fun α _ ↦ D α Set.univ
-
-theorem _root_.Quantifier.Det.Family.Isom.atUniv (h : D.Isom) : D.atUniv.Isom :=
-  fun _ _ _ _ e B ↦ h e Set.univ B
-
-/-- A conservative constant global determiner denotation is the relativization of its quantifier
-at the universe. -/
-theorem _root_.Quantifier.Det.Family.rel_atUniv (hC : D.Conservative) (hK : D.Constant) :
-    D.atUniv.rel = D := by
-  funext α _ A B
-  refine propext ((Iff.of_eq ?_).trans ((hK (Function.Embedding.subtype (· ∈ A)) A (A ∩ B)
-    (by simp) (by simp)).trans (hC α A B).symm))
-  simp only [Det.Family.atUniv, Quantifier.Family.rel, Function.Embedding.coe_subtype,
-    Set.preimage_inter, Subtype.coe_preimage_self, Set.univ_inter]
-
-/-- An isomorphism-closed quantifier is the quantifier at the universe of its relativization. -/
-theorem _root_.Quantifier.Family.Isom.atUniv_rel (h : Q.Isom) : Q.rel.atUniv = Q := by
-  funext α _ B
-  exact propext (h (Equiv.Set.univ α) B)
-
-/-- Relativization is an order isomorphism from the isomorphism-closed global quantifiers onto the
-conservative constant global determiner denotations. -/
-noncomputable def relOrderIso :
-    {Q : Quantifier.Family.{u} // Q.Isom} ≃o {D : Det.Family.{u} // D.Conservative ∧ D.Constant}
-    where
-  toFun Q := ⟨Q.1.rel, Q.1.conservative_rel, Q.2.constant_rel⟩
-  invFun D := ⟨D.1.atUniv, D.2.2.isom.atUniv⟩
-  left_inv Q := Subtype.ext Q.2.atUniv_rel
-  right_inv D := Subtype.ext (Det.Family.rel_atUniv D.2.1 D.2.2)
-  map_rel_iff' {Q Q'} := by
-    change Q.1.rel ≤ Q'.1.rel ↔ Q.1 ≤ Q'.1
-    rw [Det.Family.le_def, Quantifier.Family.le_def]
-    refine ⟨fun h α _ B hB ↦ ?_, fun h α _ A B ↦ h A (Subtype.val ⁻¹' B)⟩
-    rw [← Q'.2.atUniv_rel]
-    rw [← Q.2.atUniv_rel] at hB
-    exact h α Set.univ B hB
-
-/-- An isomorphism-closed global quantifier holds of `B` according to `|Bᶜ|` and `|B|` alone, by
-the tree of its relativization, so a quantifier and its relativization have the same numerical
-relation. -/
-theorem _root_.Quantifier.Family.Isom.apply_iff (h : Q.Isom) (α : Type u) [Finite α]
-    (B : Set α) : Q α B ↔ ofFamily Q.rel Bᶜ.ncard B.ncard := by
-  have key := ofFamily_iff Q.conservative_rel h.constant_rel α Set.univ B
-  rw [Set.univ_inter, ← Set.compl_eq_univ_sdiff] at key
-  rw [key]
-  conv_lhs => rw [← h.atUniv_rel]
-  rfl
-
-end Relativization
 
 /-! ### Counting quantifiers -/
 

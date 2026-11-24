@@ -16,7 +16,7 @@ Defined that way they are conservative and permutation invariant by construction
 monotonicity, smoothness and proportionality are read off the tree. Sizes are `Set.ncard`,
 which asks for no decidability and is `0` on an infinite set, so on an infinite restrictor the
 counting quantifiers take junk values; the theorems that state what they mean assume a finite
-universe or finite arguments, and global quantifiers are evaluated on finite universes only. On
+universe or finite arguments. The numerals are cardinal quantifiers of intervals of numbers. On
 a finite type with decidable arguments each quantifier is decidable through the `Finset` count
 of each size, so a concrete case closes by `decide`. A quantifier restricted to a finite set `s`
 of individuals is the quantifier with restrictor `s ∩ A`.
@@ -27,7 +27,6 @@ of individuals is the quantifier with restrictor `s ∩ A`.
   quantifiers, with `Quantifier.NumberTree.threshold` for a proportion of the restrictor.
 * `Quantifier.Det.most`, `Quantifier.Det.atLeast`, …: their quantifiers.
 * `Quantifier.Det.Proportional`: dependence on the ratio of `|A ∩ B|` to `|A \ B|`.
-* `Quantifier.Det.Symbol`: the determiner symbols, each denoting the global denotation of a tree.
 
 ## Main results
 
@@ -36,9 +35,6 @@ of individuals is the quantifier with restrictor `s ∩ A`.
 * `Quantifier.NumberTree.thresholdGt_one_two`: *more than half* is *most*.
 * `Quantifier.Det.not_intersective_most`, `Quantifier.Det.not_monotone_half`: *most* is not
   intersective, and *half* is monotone in its scope in neither direction.
-* `Quantifier.Det.Symbol.conservative_denote`, `Quantifier.Det.Symbol.constant_denote`: what a
-  determiner symbol denotes is conservative and constant, so it satisfies extension and is
-  closed under isomorphism.
 
 ## References
 
@@ -450,160 +446,6 @@ theorem most_singleton_iff (j : α) (B : Set α) : most {j} B ↔ j ∈ B := by
     simpa using h
   · rw [most_apply, Set.singleton_inter_of_notMem h]
     simpa using h
-
-/-! ### The families of the canonical denotations
-
-Each canonical denotation given on every finite universe, the readings a lexicon entry draws
-on. Each is the global denotation of its tree, so each is conservative, extensional and closed
-under isomorphism, as Peters and Westerståhl's universal for determiners requires. -/
-
-universe u
-
-namespace Family
-
-/-- `Family.every` is `every` on every finite universe. -/
-def every : Family.{u} := fun _ _ ↦ Det.every
-/-- `Family.some` is `Det.some` on every finite universe. -/
-def some : Family.{u} := fun _ _ ↦ Det.some
-/-- `Family.no` is `no` on every finite universe. -/
-def no : Family.{u} := fun _ _ ↦ Det.no
-/-- `Family.most` is `most` on every finite universe. -/
-def most : Family.{u} := fun _ _ ↦ Det.most
-/-- `Family.few` is `few` on every finite universe. -/
-def few : Family.{u} := fun _ _ ↦ Det.few
-/-- `Family.half` is `half` on every finite universe. -/
-def half : Family.{u} := fun _ _ ↦ Det.half
-/-- `Family.both` is `both` on every finite universe. -/
-def both : Family.{u} := fun _ _ ↦ Det.both
-/-- `Family.neither` is `neither` on every finite universe. -/
-def neither : Family.{u} := fun _ _ ↦ Det.neither
-/-- `Family.atLeast n` is `atLeast n` on every finite universe. -/
-def atLeast (n : ℕ) : Family.{u} := fun _ _ ↦ Det.atLeast n
-/-- `Family.exactly n` is `exactly n` on every finite universe. -/
-def exactly (n : ℕ) : Family.{u} := fun _ _ ↦ Det.exactly n
-
-theorem every_eq_toFamily : every.{u} = NumberTree.all.toFamily := by
-  funext _ _; exact every_eq_toDet_all
-
-theorem some_eq_toFamily : some.{u} = NumberTree.some.toFamily := by
-  funext _ _; exact some_eq_toDet_some
-
-theorem no_eq_toFamily : no.{u} = NumberTree.no.toFamily := by
-  funext _ _; exact no_eq_toDet_no
-
-theorem most_eq_toFamily : most.{u} = NumberTree.most.toFamily := rfl
-
-theorem few_eq_toFamily : few.{u} = NumberTree.few.toFamily := rfl
-
-theorem half_eq_toFamily : half.{u} = NumberTree.half.toFamily := rfl
-
-theorem both_eq_toFamily : both.{u} = NumberTree.both.toFamily := rfl
-
-theorem neither_eq_toFamily : neither.{u} = NumberTree.neither.toFamily := rfl
-
-theorem atLeast_eq_toFamily (n : ℕ) : atLeast.{u} n = (NumberTree.atLeast n).toFamily := rfl
-
-theorem exactly_eq_toFamily (n : ℕ) : exactly.{u} n = (NumberTree.exactly n).toFamily := rfl
-
-theorem some_ne_every : some.{u} ≠ every.{u} := fun h ↦ by
-  have := congrArg (fun d : Family.{u} ↦ d PUnit ∅ ∅) h
-  simp [some, every, Det.some, Det.every] at this
-
-theorem some_ne_no : some.{u} ≠ no.{u} := fun h ↦ by
-  have := congrArg (fun d : Family.{u} ↦ d PUnit Set.univ Set.univ) h
-  simp [some, no, Det.some, Det.no] at this
-
-theorem no_ne_every : no.{u} ≠ every.{u} := fun h ↦ by
-  have := congrArg (fun d : Family.{u} ↦ d PUnit Set.univ Set.univ) h
-  simp [no, every, Det.no, Det.every] at this
-
-theorem most_ne_every : most.{u} ≠ every.{u} := fun h ↦ by
-  have := congrArg (fun d : Family.{u} ↦ d PUnit ∅ ∅) h
-  simp [most, every, Det.every, most_apply] at this
-
-theorem few_ne_every : few.{u} ≠ every.{u} := fun h ↦ by
-  have := congrArg (fun d : Family.{u} ↦ d PUnit ∅ ∅) h
-  simp [few, every, Det.every, few_apply] at this
-
-@[simp]
-theorem compl_some : some.{u}ᶜ = no.{u} := by
-  funext _ _; exact Det.compl_some
-
-@[simp]
-theorem compl_no : no.{u}ᶜ = some.{u} := by
-  rw [← compl_some, compl_compl]
-
-end Family
-
-/-! ### Determiner symbols -/
-
-/-- A determiner symbol names one of the canonical denotations, after the basic determiner
-symbols from which [barwise-cooper-1981]'s logic L(GQ) builds its quantifiers. The eight symbols
-are ours: Barwise and Cooper's logical determiner symbols are *some*, *every*, *no*, *both*,
-*neither*, the numerals and *the n*, their non-logical ones include *most* and *few*, and they
-have no *half*; here every symbol has one denotation, the global denotation of its tree. -/
-inductive Symbol where
-  | every | some | no | most | few | half | both | neither
-  deriving DecidableEq, Repr, Fintype
-
-namespace Symbol
-
-/-- The tree of numbers a symbol denotes. -/
-def numberTree : Symbol → NumberTree
-  | .every => NumberTree.all
-  | .some => NumberTree.some
-  | .no => NumberTree.no
-  | .most => NumberTree.most
-  | .few => NumberTree.few
-  | .half => NumberTree.half
-  | .both => NumberTree.both
-  | .neither => NumberTree.neither
-
-/-- A symbol denotes its canonical denotation, the global denotation of its tree
-(`denote_eq_toFamily`). -/
-@[simp] def denote : Symbol → Family.{u}
-  | .every => Family.every
-  | .some => Family.some
-  | .no => Family.no
-  | .most => Family.most
-  | .few => Family.few
-  | .half => Family.half
-  | .both => Family.both
-  | .neither => Family.neither
-
-theorem denote_eq_toFamily (s : Symbol) : (s.denote : Family.{u}) = s.numberTree.toFamily := by
-  cases s
-  exacts [Family.every_eq_toFamily, Family.some_eq_toFamily, Family.no_eq_toFamily, rfl, rfl,
-    rfl, rfl, rfl]
-
-theorem numberTree_injective : Function.Injective numberTree := by
-  intro s t h
-  have h₀₀ := congrFun (congrFun h 0) 0
-  have h₁₀ := congrFun (congrFun h 1) 0
-  have h₀₁ := congrFun (congrFun h 0) 1
-  have h₁₁ := congrFun (congrFun h 1) 1
-  have h₀₂ := congrFun (congrFun h 0) 2
-  have h₂₀ := congrFun (congrFun h 2) 0
-  cases s <;> cases t <;> simp_all [numberTree, NumberTree.all, NumberTree.some, NumberTree.no,
-    NumberTree.most, NumberTree.few, NumberTree.half, NumberTree.both, NumberTree.neither]
-
-/-- Distinct symbols denote distinct quantifiers. -/
-theorem denote_injective : Function.Injective (denote : Symbol → Family.{u}) := fun s t h ↦
-  numberTree_injective <| by
-    rw [← NumberTree.ofFamily_toFamily.{u} s.numberTree, ← NumberTree.ofFamily_toFamily.{u}
-      t.numberTree, ← denote_eq_toFamily, ← denote_eq_toFamily, h]
-
-theorem conservative_denote (s : Symbol) : (s.denote : Family.{u}).Conservative :=
-  s.denote_eq_toFamily ▸ NumberTree.conservative_toFamily _
-
-theorem constant_denote (s : Symbol) : (s.denote : Family.{u}).Constant :=
-  s.denote_eq_toFamily ▸ NumberTree.constant_toFamily _
-
-theorem ext_denote (s : Symbol) : (s.denote : Family.{u}).Ext := s.constant_denote.ext
-
-theorem isom_denote (s : Symbol) : (s.denote : Family.{u}).Isom := s.constant_denote.isom
-
-end Symbol
 
 end Det
 

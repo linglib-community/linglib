@@ -7,6 +7,7 @@ public import Mathlib.Tactic.Abel
 public import Mathlib.Tactic.Ring
 public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Semantics.Quantifier.Lindstrom
+public import Linglib.Semantics.Quantifier.Global
 
 /-!
 # Peters and Westerståhl (2006): Quantifiers in Language and Logic

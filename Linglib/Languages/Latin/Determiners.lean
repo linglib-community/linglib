@@ -3,6 +3,7 @@ module
 public import Linglib.Languages.Latin.Coordination
 public import Linglib.Languages.Latin.Pronouns
 public import Linglib.Semantics.Quantifier.IndeterminateQuantifier
+public import Linglib.Semantics.Quantifier.Global
 
 /-!
 # Latin quantifiers
