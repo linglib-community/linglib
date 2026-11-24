@@ -6,7 +6,7 @@ public import Linglib.Data.Examples.Comrie1989
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
-public import Linglib.Fragments.Turkish.ObjectMarking
+public import Linglib.Languages.Turkish.ObjectMarking
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Person.Class
@@ -247,7 +247,7 @@ theorem marking_contrast : ∀ role : ArgumentRole, role = .A ∨ role = .P →
   decide
 
 -- (13), (14) and (25): the Turkish rows mark P exactly on the degrees of definiteness the
--- fragment's accusative covers, the continuum cut at the specific indefinites.
+-- language file's accusative covers, the continuum cut at the specific indefinites.
 theorem turkish_rows : ∀ r ∈ Examples.all, r.language = .turkish → ∀ m ∈ Marking.ofRow r,
     ∀ d ∈ m.definiteness, (m.overtness = .obligatory ↔ d ∈ Turkish.ObjectMarking.accusative) := by
   decide

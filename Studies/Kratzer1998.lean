@@ -4,8 +4,8 @@ public import Linglib.Logic.Assignment
 public import Linglib.Syntax.Category.Verb.Tense
 public import Linglib.Semantics.Tense.Pronoun
 public import Linglib.Semantics.Aspect.Viewpoint.Basic
-public import Linglib.Fragments.English.Tense
-public import Linglib.Fragments.German.Tense
+public import Linglib.Languages.English.Tense
+public import Linglib.Languages.German.Tense
 public import Linglib.Data.Examples.Kratzer1998
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

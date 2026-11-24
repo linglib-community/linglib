@@ -4,7 +4,7 @@ public import Linglib.Semantics.Quantification.Numerals.Basic
 public import Linglib.Data.Examples.BylininaNouwen2018
 public import Mathlib.Data.Set.Card
 public import Linglib.Semantics.Plurality.Algebra
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Data.Examples.Readers
 
@@ -216,13 +216,14 @@ instance (L : Licenser) : DecidablePred L.denote.Licenses := by
   cases L <;> dsimp only [Licenser.denote] <;> infer_instance
 
 /-- A sentence of the paper records its licenser, its polarity item as an entry of the English
-fragment, and the judgment. -/
+language file, and the judgment. -/
 structure Row where
   licenser : Licenser
   item : PolarityItem
   judgment : Judgment
 
-/-- A sentence gives a row for each of its polarity items, as entries of the English fragment. -/
+/-- A sentence gives a row for each of its polarity items, as entries of the English
+language file. -/
 def Row.ofDatum (ex : Datum) : List Row :=
   match ex.parse? "licenser"
       ([("no", .no), ("few", .few), ("zero", .zero)] :

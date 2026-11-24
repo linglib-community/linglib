@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Erlewine2016
 public import Linglib.Syntax.Feature.Person.Basic
-public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
+public import Linglib.Languages.Mayan.Kaqchikel.Extraction
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 public import Linglib.Syntax.Minimalist.SyntacticObject.Extend
@@ -325,7 +325,7 @@ theorem participant_exception :
   decide
 
 /-- Subject extraction to Spec,CP has an optimal AF derivation exactly when the arguments are not
-both participants, which is when the Kaqchikel fragment records the Agent Focus reflex. -/
+both participants, which is when the Kaqchikel language file records the Agent Focus reflex. -/
 theorem exists_optimal_agentFocus_iff (c : Mayan.VerbClass) (s o : Person) :
     (∃ d ∈ kaqchikel.optimal (subjectExtraction s o),
         d.form (argsOf true) = .agentFocus) ↔

@@ -2,7 +2,7 @@ module
 
 public import Studies.Kennedy2007
 public import Studies.Lassiter2017
-public import Linglib.Fragments.English.Verbs.Attitude
+public import Linglib.Languages.English.Verbs.Attitude
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Core.MeasureTheory.Measure.AE
 public import Linglib.Data.Examples.Koev2026
@@ -29,16 +29,16 @@ probability credence. Comparison classes and the antonym *doubt*
 The positive form at a standard is the preimage of the standard under the measure, as in
 `Semantics/Degree/PositiveStandard.lean`, and credences are probability measures where the
 comparison with Hintikka needs them. A row's predicates and its endpoint modifier are read off its
-words, the predicates as the fragment's entries, and the antonym of a predicate is the entry on
+words, the predicates as the language file's entries, and the antonym of a predicate is the entry on
 its dimension at the other pole; the rows keep as features only what the paper prints about them,
-the entailment arrow and the comparison-class construction. The fragment has no *likely*, whose
+the entailment arrow and the comparison-class construction. The language file has no *likely*, whose
 scale is disputed, so the comparison-class row for *likely* is read without a predicate and the
 gap of *likely* and *unlikely* is stated on Lassiter's threshold semantics.
 
 ## TODO
 
 * The objective reading of *sure*, a measure of commitment beside the credence, which makes *I
-  believe it but I'm not sure* consistent; the fragment's *sure* shares the scale of *believe*.
+  believe it but I'm not sure* consistent; the language file's *sure* shares the scale of *believe*.
 * The percentage judgments and their ratings, the second condition of
   [hawthorne-rothschild-spectre-2016] that the paper sets aside, and the exhaustification that
   strengthens unembedded *doubt*.
@@ -67,7 +67,8 @@ def endpointModifiers : List (String × EndpointModifier) :=
   [("fully", .maximizer), ("completely", .maximizer), ("entirely", .maximizer),
     ("slightly", .minimizer)]
 
-/-- The gradable predicates of the paper's examples, the fragment's entries, by citation form. -/
+/-- The gradable predicates of the paper's examples, the language file's entries, by
+citation form. -/
 def lexicon : List (List Char × Gradability) :=
   [tall, short, bent, straight, full].filterMap (fun a ↦ a.gradability?.map (a.form.toList, ·)) ++
     [believe, doubt].filterMap fun v ↦ v.gradability?.map (v.form.toList, ·)
@@ -126,7 +127,8 @@ theorem forall_licensesPos_iff {s : PositiveStandard} :
   rw [modifierRows_eq]
   cases s <;> decide
 
-/-- The weak semantics makes *believe* a verbal *confident*: the fragment's *confident* is on the
+/-- The weak semantics makes *believe* a verbal *confident*: the language file's *confident* is on
+the
 scale of *believe* with the contextual standard of [cariani-santorio-wellwood-2024], a standard
 Interpretive Economy does not admit there, so the argument from the scale does not extend to it. -/
 theorem confident_not_admits :
@@ -136,13 +138,13 @@ theorem confident_not_admits :
 
 /-! ### Further evidence (§3) -/
 
-/-- The fragment's standards, with `s` and `t` for *believe* and *doubt*. -/
+/-- The language file's standards, with `s` and `t` for *believe* and *doubt*. -/
 def standardWith (s t : PositiveStandard) (g : Gradability) : PositiveStandard :=
   if some g = believe.gradability? then s else if some g = doubt.gradability? then t
   else g.standard
 
 /-- The rows the paper marks as putting a predicate with an overt comparison class, each as its
-judgment and the predicate, if the fragment has it. -/
+judgment and the predicate, if the language file has it. -/
 def comparisonClassRows : List (Judgment × Option Gradability) :=
   Examples.all.filterMap fun e ↦
     if e.feature? "comparisonClass" = some "overt" then some (e.judgment, (predicates e).head?)

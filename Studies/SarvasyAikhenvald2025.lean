@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Fragments.Korean.Clause
-public import Linglib.Fragments.Manambu.Clause
-public import Linglib.Fragments.Nungon.Clause
-public import Linglib.Fragments.Turkish.Clause
+public import Linglib.Languages.Korean.Clause
+public import Linglib.Languages.Manambu.Clause
+public import Linglib.Languages.Nungon.Clause
+public import Linglib.Languages.Turkish.Clause
 public import Linglib.Semantics.ClauseLinking
 public import Linglib.Syntax.Clause.Chaining
 public import Studies.Aikhenvald2009

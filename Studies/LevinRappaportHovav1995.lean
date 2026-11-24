@@ -2,9 +2,9 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Data.Examples.LevinRappaportHovav1995
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.Romance.Italian.Verbs
-public import Linglib.Fragments.Dutch.Verbs
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.Romance.Italian.Verbs
+public import Linglib.Languages.Dutch.Verbs
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
@@ -291,7 +291,7 @@ theorem locativeInversion_not_diagnostic :
       ∀ s ∈ construals Examples.ex6_22a, ¬ Unaccusative s := by
   decide
 
-/-! ### The English fragment -/
+/-! ### The English language file -/
 
 /-- The English entry of a row's verb, in its default sense. -/
 def entryOf (ex : Datum) : Option Verb :=
@@ -303,7 +303,8 @@ theorem entryOf_isSome :
       (entryOf ex).isSome := by
   decide
 
-/-- Where a row's class gives one verdict, the English fragment classifies the entry for its verb
+/-- Where a row's class gives one verdict, the English language file classifies the entry for its
+verb
 as the linking rules do: *break*, *burn*, *freeze*, *arrive* and *appear* are unaccusative, and
 *run* and *swim* unergative. -/
 theorem isUnaccusative_agrees :

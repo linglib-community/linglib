@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Autosegmental.Candidate
-public import Linglib.Fragments.Hungarian.Phonology
+public import Linglib.Languages.Hungarian.Phonology
 public import Linglib.Data.Wordlist.SiptarTorkenczy2000
 
 /-!
@@ -23,7 +23,7 @@ its (13) to (23) (`derivations`), transparency, antiharmony and opacity followin
 prelinking alone, and the vacillating stem of section 3.2.3.1 has two representations deriving
 its two forms (`dzsungel_vacillates`). The surface generalization of section 3.2, that the
 last harmonic vowel governs suffix backness through the transparent neutral vowels, is the
-Fragment's `palatalHarmony`; it agrees with the derivations on the regular stems and
+language file's `palatalHarmony`; it agrees with the derivations on the regular stems and
 is silent or wrong exactly on the neutral, antiharmonic and opaque stems the analysis handles
 by prelinking (`sourceValue_agrees`, `sourceValue_viz`, `sourceValue_hid`,
 `sourceValue_kodex`).
@@ -401,7 +401,7 @@ theorem dzsungel_vacillates :
 
 /-! ### The surface generalization of section 3.2
 
-The Fragment's palatal harmony system reads the backness of the last harmonic vowel through
+The language file's palatal harmony system reads the backness of the last harmonic vowel through
 the transparent neutral vowels. -/
 
 /-- The stems whose harmonic vowels govern their suffixes as section 3.2 describes, all but the

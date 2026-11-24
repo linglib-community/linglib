@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Statistics.DegenTonhauser2022
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Verbs.Copular
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Copular
 public import Linglib.Syntax.Category.Verb.Defs
 public import Mathlib.Data.Set.Finite.Lemmas
 

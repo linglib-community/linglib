@@ -304,7 +304,7 @@ theorem not_blocks_down (ds : Inventory) (num : Number) : ¬ ds.Blocks num .down
   fun h ↦ ds.not_lexicalizes_down h.lexicalizes
 
 /-- Where no determiner lexicalizing a shift selects a number, as no definite article in the
-fragments does, a shift is blocked exactly when it is lexicalized. -/
+language files does, a shift is blocked exactly when it is lexicalized. -/
 theorem blocks_iff_lexicalizes (h : ∀ e ∈ ds, e.Lexicalizes τ → e.numberRestriction = none) :
     ds.Blocks num τ ↔ ds.Lexicalizes τ :=
   ⟨Blocks.lexicalizes, fun ⟨e, he, hl⟩ ↦ ⟨e, he, fun n hn ↦ by simp [h e he hl] at hn, hl⟩⟩

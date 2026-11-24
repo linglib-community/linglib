@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Nominality
 public import Mathlib.Order.Prod.Lex.Basic
-public import Linglib.Fragments.Turkish.ObjectMarking
+public import Linglib.Languages.Turkish.ObjectMarking
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Filtration
@@ -123,7 +123,7 @@ theorem hebrew_marks_definites (a : Animacy) (d : DefinitenessScale) :
   revert a d; decide
 
 /-- Turkish marks every object but the non-specific ones, so unlike Hebrew it marks specific
-indefinites obligatorily (Figure 2, Tableaux 1–2); the zone is the fragment's, read through the
+indefinites obligatorily (Figure 2, Tableaux 1–2); the zone is the language file's, read through the
 definiteness of a position. -/
 abbrev turkishDOM : Set (Animacy × DefinitenessScale) :=
   {c | c.2.definiteness ∈ Turkish.ObjectMarking.accusative}

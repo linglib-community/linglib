@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Bresnan1973
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -29,7 +29,7 @@ the privative adjective it modifies (D).
 Each row carries the paper's analysis of its example as features, the Det and Q of the QP
 and its position, or the head's category and site and the constituent the clause supplies;
 acceptability is derived from the rules. The anomaly of (242d) is read off the lexical gender
-of *mother* and *man* in the English fragment, privativeness off the polarity of *short*. QP
+of *mother* and *man* in the English language file, privativeness off the polarity of *short*. QP
 recursion and QP Shift (1.4), *so* and *such* (1.5), *of* Insertion, Enough Permutation and
 the ambiguities of 1.8 beyond the homophony of *more* are not formalized.
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Mathlib.Order.Monotone.Basic
 
 /-!
@@ -31,9 +31,9 @@ perceptual-ability scale.
 * Pragmatic entailment between the propositions of a scalar model is modelled as inclusion of
   sets of worlds; the paper's point that the relevant inferences may be pragmatic rather than
   logical is not represented.
-* The paper's classifications of the English items of `Fragments/English/PolarityItems.lean`
+* The paper's classifications of the English items of `Languages/English/PolarityItems.lean`
   by force, quantity and role live here (`classified`), and the derived licensing context is
-  checked against the fragment's record of each item as an NPI or PPI.
+  checked against the language file's record of each item as an NPI or PPI.
 
 ## References
 
@@ -194,14 +194,15 @@ theorem superlative_ambiguity {exist ability : α → Set W} {f : Set W → Set 
 
 /-! ### The classified lexicon -/
 
-/-- A fragment entry with the paper's classification by force, quantity and role. -/
+/-- A language file entry with the paper's classification by force, quantity and role. -/
 structure Classified where
   item : PolarityItem
   force : Force
   quantity : Quantity
   role : Role
 
-/-- The paper's classifications of the fragment's items: the canonical minimizers and the degree
+/-- The paper's classifications of the language file's items: the canonical minimizers and the
+degree
 items of Figure 1 in impeding roles, the maximizing NPIs and minimizing PPIs of Section 4 in
 facilitating roles. -/
 def classified : List Classified :=
@@ -216,7 +217,7 @@ def classified : List Classified :=
    ⟨inAJiffy, .emphatic, .small, .facilitating⟩, ⟨forAPittance, .emphatic, .small, .facilitating⟩,
    ⟨forASong, .emphatic, .small, .facilitating⟩]
 
-/-- The direction of the context the fragment records an item as sensitive to: preserving for a
+/-- The direction of the context the language file records an item as sensitive to: preserving for a
 PPI, reversing for an NPI. -/
 def PolarityItem.contextType (e : PolarityItem) : Option Polarity :=
   if e.antiLicensor.isSome then some .positive else if e.licensor.isSome then some .negative

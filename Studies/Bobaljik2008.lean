@@ -3,7 +3,7 @@ module
 public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Syntax.Case.Dependent
-public import Linglib.Fragments.HindiUrdu.Case
+public import Linglib.Languages.HindiUrdu.Case
 
 /-!
 # Bobaljik (2008): Where's Phi? Agreement as a Postsyntactic Operation

@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Possession.Relationalizer
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Model
-public import Linglib.Fragments.Washo.PropertyConcepts
+public import Linglib.Languages.Washo.PropertyConcepts
 public import Linglib.Data.Examples.HaninkKoontzGarboden2025
 public import Linglib.Data.StructureDataset.Dixon1982
 

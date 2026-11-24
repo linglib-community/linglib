@@ -33,7 +33,7 @@ Mandarin data, and the desire predicates are not formalized.
 
 ## TODO
 
-* Mandarin *duō* / *hěn duō (de)*, which needs Fragment entries.
+* Mandarin *duō* / *hěn duō (de)*, which needs language file entries.
 * The two-dimensional state ontology with its vertical axis and the fineness ordering.
 * The desire predicates *want*, *wish*, and *regret* over point-states.
 

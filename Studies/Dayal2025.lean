@@ -2,10 +2,10 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Dayal2025
-public import Linglib.Fragments.English.Particles
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.HindiUrdu.Particles
-public import Linglib.Fragments.Japanese.Particles
+public import Linglib.Languages.English.Particles
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.HindiUrdu.Particles
+public import Linglib.Languages.Japanese.Particles
 public import Linglib.Semantics.Questions.Hamblin.Modal
 public import Linglib.Semantics.Questions.Hamblin.Exhaustification
 public import Linglib.Semantics.Questions.Inquisitive.Hamblin
@@ -198,7 +198,7 @@ def particleTypes : List (Clause.Marker × ParticleType) :=
   [(ka, .qParticle), (kya, .polarQuestionParticle), (kke, .metaQuestionParticle),
    (quick, .metaQuestionParticle)]
 
-/-- The distribution the fragments record for each particle is the one its type predicts: *ka*
+/-- The distribution the language files record for each particle is the one its type predicts: *ka*
 everywhere and obligatorily under subordination, *kya:* in root and quasi-subordinated clauses,
 *kke* and *quick* in root clauses and quotations. -/
 theorem predicts_distribution : ∀ x ∈ particleTypes, x.2.Predicts x.1.distribution := by
@@ -365,7 +365,7 @@ theorem ya_nahi_obligatory_iff :
 
 /-! ### The paper's judgments -/
 
-/-- The English predicates of the paper, from the fragment. -/
+/-- The English predicates of the paper, from the language file. -/
 def verbs : List English.Verbs.Verb :=
   [know, believe, wonder, ask, investigate, depend_on, remember_rog, forget_rog]
 

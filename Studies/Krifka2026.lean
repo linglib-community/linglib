@@ -4,7 +4,7 @@ public import Linglib.Semantics.Reference.Kind
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Dynamic.Update
 public import Linglib.Logic.Assignment
-public import Linglib.Fragments.English.Nouns
+public import Linglib.Languages.English.Nouns
 
 /-!
 # Krifka (2026): Anaphora for Concepts, Kinds, and Parts in Dynamic Interpretation

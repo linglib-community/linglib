@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Gutzmann2015
-public import Linglib.Fragments.German.Particles
-public import Linglib.Fragments.German.WordOrder
+public import Linglib.Languages.German.Particles
+public import Linglib.Languages.German.WordOrder
 public import Linglib.Data.Examples.Readers
 
 /-!

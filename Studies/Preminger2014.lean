@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.Phi
-public import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-public import Linglib.Fragments.Mayan.Kiche.Agreement
-public import Linglib.Fragments.Mayan.Kiche.Pronouns
+public import Linglib.Languages.Mayan.Kaqchikel.Agreement
+public import Linglib.Languages.Mayan.Kiche.Agreement
+public import Linglib.Languages.Mayan.Kiche.Pronouns
 public import Studies.BejarRezac2003
 
 /-!
@@ -23,7 +23,7 @@ a third person singular, does not outrank the third person (§7.1).
 ## Implementation notes
 
 The probes are the substrate's `Probe.Target.participant` and `.plural`, and their competition
-for the slot (71) is their `Probe.cascade`; the marker is the fragment's Set B exponent of the
+for the slot (71) is their `Probe.cascade`; the marker is the language file's Set B exponent of the
 cascade's goal. The paradigm (22) enters as the hierarchy (23) read as `rank`. The
 morphophonology (§3.4), §4.5–§4.6, and the Zulu and Basque studies of chapter 6 are prose; the
 Zulu analysis is `Studies/Halpert2012.lean`.

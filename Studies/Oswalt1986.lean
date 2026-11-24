@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Evidentiality.Paradigm
-public import Linglib.Fragments.Kashaya.Evidentiality
+public import Linglib.Languages.Kashaya.Evidentiality
 public import Linglib.Data.Examples.Oswalt1986
 public import Linglib.Data.Examples.Readers
 
@@ -9,7 +9,7 @@ public import Linglib.Data.Examples.Readers
 # Oswalt (1986): The Evidential System of Kashaya
 
 This file formalizes Oswalt's description of the Kashaya evidential suffixes, recorded
-in `Fragments/Kashaya/Evidentiality.lean` as the columns of his Table 1. The suffixes of a
+in `Languages/Kashaya/Evidentiality.lean` as the columns of his Table 1. The suffixes of a
 column are mutually exclusive, only one appearing on a verb, and cover disjoint sources, so
 every column is a well-formed paradigm (`paradigm_wellFormed`). A response to another's words
 drops the performative pair, the factual-visual pair taking its place (`paradigm_responsive`,
@@ -105,7 +105,7 @@ theorem preferred_ne_performative (a : Perfectivity) (S : Finset Parameter) :
 
 /-! ### The examples -/
 
-/-- The mode of the fragment an example's mode names. -/
+/-- The mode of the language file an example's mode names. -/
 def Examples.Mode.toMode : Examples.Mode → Kashaya.Evidentiality.Mode
   | .spontaneous => .spontaneous
   | .responsive => .responsive

@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Syntax.Clause.Alignment
-public import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-public import Linglib.Fragments.Mayan.Chol.Agreement
-public import Linglib.Fragments.Mayan.Qanjobal.Agreement
+public import Linglib.Languages.Mayan.Kaqchikel.Agreement
+public import Linglib.Languages.Mayan.Chol.Agreement
+public import Linglib.Languages.Mayan.Qanjobal.Agreement
 
 /-!
 # Imanishi (2014): Default Ergative

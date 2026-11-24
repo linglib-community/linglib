@@ -51,7 +51,7 @@ p. 54).
   affix (§2.2.3), which he keeps apart from a compound one (p. 129).
 * `functions` is `∅` where no function fits, as for *despite*.
 * The case an adposition governs on its complement (Corbett) is a fact about a language's own
-  case values and is left to the fragments.
+  case values and is left to the language files.
 
 ## References
 

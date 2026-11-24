@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantification.Polyadic
-public import Linglib.Fragments.Romance.French.Determiners
+public import Linglib.Languages.Romance.French.Determiners
 
 /-!
 # de Swart and Sag (2002): Negation and Negative Concord in Romance

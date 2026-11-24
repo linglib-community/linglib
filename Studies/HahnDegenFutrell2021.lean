@@ -3,8 +3,8 @@ module
 public import Linglib.Core.InformationTheory.EntropyRate
 public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Reordering
-public import Linglib.Fragments.Japanese.Morph
-public import Linglib.Fragments.Sesotho.Morph
+public import Linglib.Languages.Japanese.Morph
+public import Linglib.Languages.Sesotho.Morph
 public import Studies.Bybee1985
 public import Linglib.Data.Examples.HahnDegenFutrell2021
 public import Linglib.Data.Examples.Readers
@@ -38,7 +38,7 @@ head-final mirror image get the same bound.
   out of the comparison.
 * The paper orders the Sesotho passive before the perfect, in its text, its Table 4 and its
   supplement; Demuth's schema (14) and examples (28) and (44) order the perfect before
-  the passive, and the Fragment follows Demuth. The paper's order is `paperSesothoTemplate`.
+  the passive, and the language file follows Demuth. The paper's order is `paperSesothoTemplate`.
 * The Sesotho rows are the verbs of Demuth's examples, their glosses without the noun classes,
   and two corpus forms from the supplement in which a tense prefix is fused with the
   neighbouring marker and glossed as that marker.
@@ -217,7 +217,7 @@ end Reversal
 /-! ### The Japanese suffix template
 
 The supplement tabulates the relative orders of the Japanese verb suffixes in attested forms,
-each segmented into a stem and its suffixes. Every suffix gloss names a suffix of the Fragment,
+each segmented into a stem and its suffixes. Every suffix gloss names a suffix of the language file,
 and the suffixes of every form are licensed by its template. -/
 
 /-- The paper's glosses of the Japanese suffixes, as suffixes of the Fragment. -/
@@ -249,7 +249,7 @@ theorem japanese_forms_licensed :
 
 The paper's examples (2), the forms of [demuth-1992] its supplement tabulates, and two forms
 from the corpus are segmented into a stem and its affixes; every gloss but the stem's names an
-affix of the Fragment, and the affixes of every form are licensed by its template. -/
+affix of the language file, and the affixes of every form are licensed by its template. -/
 
 /-- The affixes a gloss names, the glosses being Demuth's labels, the corpus labels of the
 supplement and the fused applicative perfect *-ets-*. Demuth's mood vowel is read as the
@@ -287,7 +287,7 @@ theorem sesotho_forms_licensed :
       Sesotho.Verb.template.Licensed (sesothoAffixes r) := by
   decide
 
-/-- The Fragment's template with the paper's own suffix order, which places the passive before
+/-- The language file's template with the paper's own suffix order, which places the passive before
 the perfect. -/
 def paperSesothoTemplate : Morphotactics.Template Sesotho.Verb.Slot :=
   { Sesotho.Verb.template with
@@ -337,7 +337,7 @@ def japaneseCategories : List RelevanceHierarchy :=
 theorem paper_sesotho_suffixes_respect_relevance :
     paperSesothoTemplate.SuffixesAscend sesothoCategory? := by decide
 
-/-- The Fragment's suffix order, [demuth-1992]'s, has the perfect before the passive, tense
+/-- The language file's suffix order, [demuth-1992]'s, has the perfect before the passive, tense
 before voice, and is not sorted by the hierarchy: the paper's agreement rests on its order. -/
 theorem sesotho_suffixes_violate_relevance :
     ¬ Sesotho.Verb.template.SuffixesAscend sesothoCategory? := by decide

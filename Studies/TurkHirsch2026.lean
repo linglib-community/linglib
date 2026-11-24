@@ -10,7 +10,7 @@ public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Negation.Polarity
-public import Linglib.Fragments.Turkish.QuestionParticles
+public import Linglib.Languages.Turkish.QuestionParticles
 public import Linglib.Data.Examples.TurkHirsch2026
 
 /-!
@@ -226,7 +226,7 @@ theorem isStrongestTrueAnswer_hamblinCat_compl {p : Set W} {w : W} (hw : w ∉ p
   refine ⟨⟨Set.mem_insert_of_mem _ rfl, hw⟩, ?_⟩
   rintro q ⟨rfl | rfl, hwq⟩ <;> [exact absurd hwq hw; exact le_rfl]
 
-/-- *=mI* is obligatory in polar questions such as (4), as the fragment records. -/
+/-- *=mI* is obligatory in polar questions such as (4), as the language file records. -/
 example : Turkish.QuestionParticles.mi.distribution (.polar, .matrix) = some .obligatory := rfl
 
 open Turkish.Phonology in

@@ -7,9 +7,9 @@ public import Studies.Ogihara1996
 public import Linglib.Data.Examples.Wurmbrand2014
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Verbs.Implicative
-public import Linglib.Fragments.English.Verbs.Communication
+public import Linglib.Languages.English.Auxiliaries
+public import Linglib.Languages.English.Verbs.Implicative
+public import Linglib.Languages.English.Verbs.Communication
 
 /-!
 # Wurmbrand (2014): Tense and Aspect in English Infinitives
@@ -43,9 +43,10 @@ matrix reference time](##table3), as [the aspect rows bear out](##aspect_rows).
 
 ## TODO
 
-* Table 4 assigns each verb its classes. Read from the attitudes of the English fragment, the
+* Table 4 assigns each verb its classes. Read from the attitudes of the English language file, the
   preferential *decide*, *want*, *promise* and *expect* are its future verbs and the doxastic
-  *believe* its propositional one, but the fragment gives *claim* no attitude, *expect* neither an
+  *believe* its propositional one, but the language file gives *claim* no attitude, *expect*
+  neither an
   infinitival frame nor its propositional reading (60), *begin* no infinitival frame and *seem* no
   attitude holder (70), so the rows state their classes.
 * Ogihara's rule deletes the past of *would* optionally where the paper makes deletion obligatory,
@@ -405,7 +406,7 @@ A planar syntactic object over a study lexicon pronounces each sequence-of-tense
 sentence (`Minimalist.SpellsOut`), and its tense spine is the stack the reader reconstructs, so
 the sequence-of-tense verdicts run on derived structure. The witnesses are right-branching
 linearizations, each embedded clause a constituent; fuller argument structure is the derivation
-step's work. Items take their forms from the English fragment where it declares or realizes
+step's work. Items take their forms from the English language file where it declares or realizes
 them; the rows' remaining words, names, pronouns and adverbs among them, enter the study lexicon
 directly, the adverbs at the adpositional category for want of a closer one. -/
 

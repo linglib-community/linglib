@@ -3,12 +3,12 @@ module
 public import Linglib.Syntax.Minimalist.ExtendedProjection
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Clause.Complementation
-public import Linglib.Fragments.Mandarin.Adverbs
-public import Linglib.Fragments.Mandarin.Verbs
-public import Linglib.Fragments.Cantonese.Aspect
-public import Linglib.Fragments.Cantonese.Particles
-public import Linglib.Fragments.Cantonese.Verbs
-public import Linglib.Fragments.Cantonese.ResultativeComplements
+public import Linglib.Languages.Mandarin.Adverbs
+public import Linglib.Languages.Mandarin.Verbs
+public import Linglib.Languages.Cantonese.Aspect
+public import Linglib.Languages.Cantonese.Particles
+public import Linglib.Languages.Cantonese.Verbs
+public import Linglib.Languages.Cantonese.ResultativeComplements
 
 /-!
 # Liu and Yip (2026): Again, finiteness, and split aspect in Chinese languages
@@ -32,8 +32,9 @@ clause; and transparency is downward closed along the size hierarchy
 (`antitone_exceptionalScope`), the implicational complementation hierarchy of
 Wurmbrand and Lohninger. A Cantonese nonfinite complement is a vP or a TP and a finite one a CP
 (`sizes`), so *-faan* embedded under a verb takes wide scope over it exactly when the verb's frame
-in the fragment is nonfinite, and then ambiguously (`faan_crossesComplement_iff`,
-`faan_ambiguous`), which sorts the fragment's verbs into the paper's two lists (`faan_lowering`).
+in the language file is nonfinite, and then ambiguously (`faan_crossesComplement_iff`,
+`faan_ambiguous`), which sorts the language file's verbs into the paper's two lists
+(`faan_lowering`).
 Mandarin *you* alone carries the unvalued dynamic feature of
 Lin and Liu and must be licensed by an outer aspect head bearing `[+D]`, which the paper's
 selectional table for *xiang* 'want', *rang* 'let' and *xiangxin* 'believe' turns into the
@@ -184,7 +185,7 @@ inductive Again where
   | gwo
   deriving DecidableEq, Repr
 
-/-- The lexical entry of an element in its language's fragment. -/
+/-- The lexical entry of an element in its language's language file. -/
 def Again.item : Again → Presupposition.TriggerItem
   | .you => Mandarin.Adverbs.you
   | .zai => Mandarin.Adverbs.zai

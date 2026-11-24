@@ -32,7 +32,7 @@ files are flat, named author-year).
 A study file typically:
 - Imports the relevant theory layer (`Linglib/Semantics/`,
   `Linglib/Syntax/`, `Linglib/Pragmatics/`, …).
-- Imports any cross-linguistic data needed from `Linglib/Fragments/`.
+- Imports any cross-linguistic data needed from `Linglib/Languages/`.
 - Encodes the paper's model — definitions, denotations, constraint
   ranking, whatever the paper specifies — in Lean syntax.
 - Proves the predictions the paper claims, using the encoded model.
@@ -46,18 +46,18 @@ reasonable starting points. `Studies/README.md` covers file naming.
 Theory-neutral empirical data lives separately under `Linglib/Data/`
 (see `Linglib/Data/README.md`).
 
-### Add a Fragment
+### Add a language
 
-A Fragment under `Linglib/Fragments/{Language}/` exposes the lexical
+The files under `Linglib/Languages/{Language}/` hold the lexical
 entries and typological metadata for one language. Even a sparse
-fragment — say, a handful of pronouns and a tense paradigm — is
+language — say, a handful of pronouns and a tense paradigm — is
 useful, because it lets phenomena studies cite real cross-linguistic
 data instead of toy examples.
 
 If you work on a language whose typological profile is poorly
 represented (most non-Indo-European languages outside our existing
 sample), a small contribution here goes a long way. See an existing
-fragment (e.g. the files under `Linglib/Fragments/English/`) for the
+language (e.g. the files under `Linglib/Languages/English/`) for the
 schema.
 
 ### Report a problem
@@ -79,7 +79,7 @@ point downstream:
   `Phonology/`, `Processing/`, `Discourse/`, `Logic/`: reusable
   theory, shared by several studies.
 - `Linglib/Data/`: empirical observations, with no theory imports.
-- `Linglib/Fragments/{Language}/`: lexical data for one language,
+- `Linglib/Languages/{Language}/`: lexical data for one language,
   typed by the theory layer.
 - `Studies/`: one paper per file, named `AuthorYear.lean`. The studies
   are the library's test suite.

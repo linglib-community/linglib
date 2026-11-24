@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Berent2026
-public import Linglib.Fragments.English.Phonology
-public import Linglib.Fragments.Hebrew.ConsonantalRoots
+public import Linglib.Languages.English.Phonology
+public import Linglib.Languages.Hebrew.ConsonantalRoots
 public import Linglib.Morphology.Root.Consonantal
 public import Linglib.Phonology.Segmental.Sonority.Basic
 public import Linglib.Phonology.Subregular.StrictlyLocal
@@ -179,7 +179,7 @@ theorem initialIdentity_not_factorsThrough (L : List (ConsonantalRoot Segment))
     (by simp [pairCounts, List.consecutivePairs, pairCount_eq_zero hθ])
   exact (by decide +kernel : ¬ InitialIdentity ⟨[k, θ, θ]⟩) (this ▸ by decide +kernel)
 
--- The fragment's roots, archisegments included, form such a lexicon.
+-- The language file's roots, archisegments included, form such a lexicon.
 open Hebrew Hebrew.Phonology in
 example : ∀ r ∈ [ktv, pll, rkk, mss, xmm], ∀ c ∈ r.segments, c ∈ consonants ∪ {B, K, P} := by
   decide +kernel

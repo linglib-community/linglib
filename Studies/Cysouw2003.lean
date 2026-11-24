@@ -5,8 +5,8 @@ public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Core.Data.Setoid.Basic
 public import Linglib.Syntax.Feature.Person.Features
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.Tagalog.Pronouns
+public import Linglib.Languages.English.Pronouns
+public import Linglib.Languages.Tagalog.Pronouns
 public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Core.Order.Concept
 public import Linglib.Data.Examples.Readers
@@ -749,9 +749,9 @@ theorem explicitness_rungs :
       Kind.maranao.pattern.explicitness = ⊥ := by
   decide +kernel
 
-/-! ### Two paradigms from the Fragments -/
+/-! ### Two paradigms from the language files -/
 
-/-- The English subject forms by referential category are the paradigm of the fragment's
+/-- The English subject forms by referential category are the paradigm of the language file's
 nominative pronouns. -/
 def englishSubject : Category → Finset String :=
   PersonalPronoun.paradigm (English.Pronouns.personal.filter (.nom ∈ ·.cases))

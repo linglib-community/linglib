@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
-public import Linglib.Fragments.Tagalog.Phonology
+public import Linglib.Languages.Tagalog.Phonology
 
 /-!
 # Zuraw (2010): A Model of Lexical Variation and the Grammar
@@ -67,7 +67,7 @@ inductive SubSt
 /-- A candidate is a stem-initial stop paired with a substitution decision. -/
 abbrev NSCand := StemC × SubSt
 
-/-- `c.segment` is the stem-initial stop `c` as a segment of `Fragments/Tagalog/Phonology.lean`. -/
+/-- `c.segment` is the stem-initial stop `c` as a segment of `Languages/Tagalog/Phonology.lean`. -/
 def StemC.segment : StemC → Phonology.Segment
   | .p => Tagalog.p | .t => Tagalog.t | .k => Tagalog.k
   | .b => Tagalog.b | .d => Tagalog.d | .g => Tagalog.g

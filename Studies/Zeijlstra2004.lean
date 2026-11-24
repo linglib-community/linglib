@@ -1,8 +1,8 @@
 module
 
 public import Studies.DeSwartSag2002
-public import Linglib.Fragments.Slavic.Czech.Determiners
-public import Linglib.Fragments.Romance.Italian.Determiners
+public import Linglib.Languages.Slavic.Czech.Determiners
+public import Linglib.Languages.Romance.Italian.Determiners
 
 /-!
 # Zeijlstra (2004): Sentential Negation and Negative Concord
@@ -166,7 +166,7 @@ end Comparison
 
 /-! ### The readings of n-words
 
-N-words are non-negative indefinites, so of the readings the fragments list for an n-word,
+N-words are non-negative indefinites, so of the readings the language files list for an n-word,
 Zeijlstra's is the one that is upward monotone in its scope. -/
 
 section Readings

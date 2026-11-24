@@ -4,8 +4,8 @@ public import Linglib.Logic.Natural.Projection
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Exhaustification.Basic
-public import Linglib.Fragments.English.PolarityItems
-public import Linglib.Fragments.Romance.Italian.PolarityItems
+public import Linglib.Languages.English.PolarityItems
+public import Linglib.Languages.Romance.Italian.PolarityItems
 public import Linglib.Data.Examples.Chierchia2013
 public import Linglib.Data.Examples.Readers
 
@@ -26,7 +26,7 @@ possibility modal or an imperative, the divide between it and *ever* and between
 *qualsiasi* and *alcuno*. The positions are the paper's easy and hard columns, the hard column
 being the licensing contexts whose licensers fix their polarity, and the readings and judgments
 are rows: the theorems derive each reading from Maximize Strength and each judgment from the
-licensing relation applied to the Fragment entries, and every row must name its position.
+licensing relation applied to the language file entries, and every row must name its position.
 
 ## References
 
@@ -217,7 +217,7 @@ def Position.ofKey : String → Option Position
   | "imperative" => some .imperative
   | _ => none
 
-/-- The Fragment entry a row names. -/
+/-- The language file entry a row names. -/
 noncomputable def item : String → Option PolarityItem
   | "any" => some English.PolarityItems.any
   | "ever" => some English.PolarityItems.ever

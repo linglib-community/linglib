@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Set.Finite.Lemmas
 public import Linglib.Data.Examples.Storment2026
-public import Linglib.Fragments.Setswana.Basic
+public import Linglib.Languages.Setswana.Basic
 public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Syntax.Minimalist.Probe.Search
 public import Studies.Collins2005

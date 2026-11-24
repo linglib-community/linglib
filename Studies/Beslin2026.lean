@@ -9,9 +9,9 @@ public import Studies.Merchant2013
 public import Linglib.Data.Examples.AnandHardtMcCloskey2025
 public import Linglib.Data.Examples.Beslin2026
 public import Linglib.Data.Examples.Languages
-public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
-public import Linglib.Fragments.Mayan.Kaqchikel.Voice
-public import Linglib.Fragments.Mayan.Kiche.Voice
+public import Linglib.Languages.Mayan.Kaqchikel.Extraction
+public import Linglib.Languages.Mayan.Kaqchikel.Voice
+public import Linglib.Languages.Mayan.Kiche.Voice
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Minimalist.Verbal.LittleV
@@ -684,7 +684,7 @@ theorem d_alternant_overgenerates :
 
 /-- §4.2. Nondistinctness rules out nothing exactly when every feature is privative, with at most
 one value, so ellipsis detects the features that are not. -/
-theorem forall_nondistinct_iff_subsingleton {ι : Type*} {κ : ι → Type*} {s : Spine}
+theorem forall_nondistinct_iff_subsingleton {ι : Type*} {κ : ι → Type*} {s : Spine Minimalist.Cat}
     {e : Ellipsis s} {x : Site} (hx : x ∈ e.argumentDomain) :
     (∀ a t : Site → ∀ i, Flat (κ i), e.Nondistinct a t) ↔ ∀ i, Subsingleton (κ i) := by
   classical

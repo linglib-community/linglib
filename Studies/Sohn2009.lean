@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Finset.Lattice.Basic
-public import Linglib.Fragments.Korean.Clause
+public import Linglib.Languages.Korean.Clause
 public import Linglib.Semantics.ClauseLinking
 
 /-!
@@ -9,7 +9,7 @@ public import Linglib.Semantics.ClauseLinking
 
 Korean links clauses chiefly by a conjunctive ender on the predicate of the non-main clause, which
 precedes the main clause, and the chapter sorts the enders by Dixon's semantic types of clause
-linking. `table` records, for the conjunctive suffixes of the Korean Fragment, the kinds of
+linking. `table` records, for the conjunctive suffixes of the Korean language file, the kinds of
 linking the chapter's summary table gives each and whether the clause it marks is the focal or
 the supporting clause of the linking. A non-main clause is the supporting clause in every kind
 but three: in purpose linking it is the focal clause, and unordered addition and disjunction do
@@ -25,7 +25,7 @@ The chapter writes the enders in Yale romanization: *-ko*, *-kose*, *-(u)myense*
 manner it adds for *-ese*, is classed with real manner. The rows are those of the summary table;
 the further uses the chapter lists in prose, *-(u)myen* 'when', *-(u)ni* and *-(u)nikka* 'when,
 while', *-(n)untey* as a softened contrast, and *-tolok* with a negative as a possible
-consequence, are not recorded, nor are the enders the Fragment lacks or the conjunctive
+consequence, are not recorded, nor are the enders the language file lacks or the conjunctive
 adverbials of main clauses.
 
 ## References
@@ -70,7 +70,7 @@ def table : List Row :=
 def linkings (c : Converb) : Finset Linking :=
   ((table.filter (·.converb = c)).map (·.linking)).toFinset
 
-/-- Every conjunctive suffix of the Fragment marks some kind of linking. -/
+/-- Every conjunctive suffix of the language file marks some kind of linking. -/
 theorem linkings_nonempty (c : Converb) : (linkings c).Nonempty := by
   decide +revert
 

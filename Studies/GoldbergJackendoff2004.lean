@@ -4,7 +4,7 @@ public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Linking
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Syntax.Category.Verb.Argument
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Data.Examples.GoldbergJackendoff2004
 public import Studies.Goldberg1995
 public import Linglib.Data.Examples.Readers

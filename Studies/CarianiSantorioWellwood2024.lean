@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Studies.CarianiSantorioWellwood2023
 public import Studies.Lassiter2017
 
@@ -140,7 +140,8 @@ example :
     maxComparative_singleton.2 Nat.zero_lt_one⟩
 
 open English.Adjectives in
--- Figure 3 in the fragment: *confident* and *certain* share one upper-closed scale, *certain* at
+-- Figure 3 in the language file: *confident* and *certain* share one upper-closed scale, *certain*
+-- at
 -- its maximum and *confident* at a contextual standard.
 example : confident.dimension = certain.dimension ∧ confident.boundedness = some .upperClosed ∧
     certain.standard = some .maxEndpoint ∧ confident.standard = some .contextual := by

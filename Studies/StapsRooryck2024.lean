@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.ArgumentStructure.EventIdentification
 public import Linglib.Logic.Trivalent.Proposition
-public import Linglib.Fragments.Romance.French.Verbs
+public import Linglib.Languages.Romance.French.Verbs
 
 /-!
 # Staps and Rooryck (2024): Formalizing Spatial-Causal Polysemy of Agent Prepositions
@@ -17,7 +17,7 @@ external argument of Angelopoulos, Collins and Terzi, combined with the verb by 
 Identification. The agentive instantiations share the at-issue relation Initiator and differ in
 presupposition, high proto-agentivity for *par* and low for *de*, where proto-agentivity is
 relational in the terms of Dowty and of Hopper and Thompson: bringing about a change,
-volitionality and telicity, with change primary. Over the fragment's verbs this derives the
+volitionality and telicity, with change primary. Over the language file's verbs this derives the
 paper's readings, such as the exclusion of *de* by verbs of change.
 
 ## Main definitions

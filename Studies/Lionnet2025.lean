@@ -7,8 +7,8 @@ module
 
 public import Linglib.Phonology.Subregular.Transduction
 public import Linglib.Phonology.Tone.Register
-public import Linglib.Fragments.Drubea.Prosody
-public import Linglib.Fragments.Numee.Prosody
+public import Linglib.Languages.Drubea.Prosody
+public import Linglib.Languages.Numee.Prosody
 public import Studies.Hyman2006
 public import Linglib.Data.Examples.Lionnet2025
 import all Init.Data.List.Scan.Basic
@@ -587,7 +587,7 @@ def levels? (e : Datum) : Option (List ℕ) :=
 /-- The direction of each step. -/
 def signs (xs : List Int) : List Int := (xs.zip xs.tail).map fun p ↦ Int.sign (p.2 - p.1)
 
-/-- The derivation of each levelled row's utterance from the fragments, under the steps its
+/-- The derivation of each levelled row's utterance from the language files, under the steps its
 surface transcription shows. The two transcriptions of (13) are left out: their drop within
 /ꜜbeɽu/ is a half step of declination on a registerless syllable, not a register shift. -/
 def derivations : List (Registered Syllable × Datum) :=

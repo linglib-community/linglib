@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Karlsson2017
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Wordlist.Karlsson2017
-public import Linglib.Fragments.Finnish.Morphotactics
+public import Linglib.Languages.Finnish.Morphotactics
 public import Linglib.Morphology.Word.UD
 public import Linglib.Semantics.Negation.Polarity
 
@@ -15,7 +15,7 @@ The object is *partitive* if the sentence is negative, the action irresultative 
 indefinite, and otherwise takes a *total-object case*: the accusative for a personal pronoun, the
 nominative for a numeral or a plural, and for a singular the genitive, or the nominative under an
 imperative, a passive, an obligation or an infinitival subject. [The partitive is thus the
-stronger case](##Object.case_eq_part_iff). The Finnish Fragment's morphotactics derives [the
+stronger case](##Object.case_eq_part_iff). The Finnish language file's morphotactics derives [the
 printed object of each of the grammar's examples in the case the rules assign](##rows_derived), and
 [the forms of its tables](##forms_derived), from their stems.
 
@@ -27,7 +27,7 @@ printed object of each of the grammar's examples in the case the rules assign](#
   prints in italics. The data declares the grammar's boundary symbols, and the object's stem is
   its morphs before the first inflectional boundary, compound and derivational boundaries lying
   within the stem.
-* The Fragment's phonemes do not write the *g* of *digi=kamera-n*, so one example goes unread.
+* The language file's phonemes do not write the *g* of *digi=kamera-n*, so one example goes unread.
 * A form of the tables is read in the Finnish case whose comparative label is its cell's case.
 
 ## References
@@ -245,7 +245,7 @@ def Word.ofForm (f : Form Wordlist.Cell) (c : Finnish.Case) : Option Word := do
   some ⟨stem, (inf.map (⟨_, .infinitive ·⟩)).toList ++ Nominal.endings (numberOf f.cell) c ++
     (p.map (⟨_, .possessive ·⟩)).toList ++ (k.map (⟨_, .clitic ·⟩)).toList⟩
 
-/-- The Fragment derives each form of the tables: in the Finnish case labelled by the cell's
+/-- The language file derives each form of the tables: in the Finnish case labelled by the cell's
 case, the endings of its cell make a word, and the stem with those endings has the form among
 its surface forms. -/
 theorem forms_derived : ∀ f ∈ Wordlist.all, ∃ c : Finnish.Case,

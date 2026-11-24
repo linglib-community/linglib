@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Morphology.Morphotactics.Association
-public import Linglib.Fragments.Arabic.ModernStandard.ConsonantalRoots
+public import Linglib.Languages.Arabic.ModernStandard.ConsonantalRoots
 public import Linglib.Data.Wordlist.McCarthy1981
 
 /-!
@@ -40,7 +40,7 @@ derivation never looks at the melodic elements themselves (`stem_map`).
 ## Implementation notes
 
 * The forms are compared in the paper's transcription; `stem_map` carries a derivation over to
-  the segments of the Arabic fragment, and `seg` reads the transcription as those segments.
+  the segments of the Arabic language file, and `seg` reads the transcription as those segments.
 * The consonantism of a stem is derived first and the prefix [CV] of imperfectives and
   participles multiplied on its left, so the root never reaches the prefixal C. The participle's
   m lies on the prefix's plane, linked to that C, and the table's imperfectives, stems without
@@ -587,7 +587,8 @@ theorem noCrossing_stem :
         (.ofQuadriliteral q) ⟨["d", "ḥ", "r", "j"]⟩).NoManyToOne := by
   decide +kernel
 
-/-- The paper's transcription as segments of the Arabic fragment, where j is ج, ğ is غ, y the glide,
+/-- The paper's transcription as segments of the Arabic language file, where j is ج, ğ is غ, y the
+glide,
 ḥ the pharyngeal fricative, ṭ the emphatic t and š the postalveolar fricative. -/
 def seg : String → Phonology.Segment
   | "b" => Phonology.b | "d" => Phonology.d | "k" => Phonology.k | "l" => Phonology.l

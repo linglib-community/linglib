@@ -4,7 +4,7 @@ public import Linglib.Core.Data.List.Find
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Woolford1997
-public import Linglib.Fragments.NezPerce.Case
+public import Linglib.Languages.NezPerce.Case
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Obligatoriness
@@ -610,7 +610,7 @@ theorem card_coreCases :
     nezPerce.coreCases.card = 4 ∧ thangu.coreCases.card = 3 ∧ kalkatungu.coreCases.card = 4 := by
   decide
 
--- objective and accusative are one comparative accusative, as in the fragment's paradigm, and
+-- objective and accusative are one comparative accusative, as in the language file's paradigm, and
 -- Thangu's only object Case is Schebeck's accusative (note 35)
 theorem image_label_coreCases :
     nezPerce.coreCases.image AbstractCase.label = Finset.univ.image NezPerce.Case.label ∧

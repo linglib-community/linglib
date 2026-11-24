@@ -6,7 +6,7 @@ public import Mathlib.Data.List.DropRight
 public import Linglib.Data.Examples.ArregiPietraszko2021
 public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Linglib.Data.Wordlist.ArregiPietraszko2021
-public import Linglib.Fragments.Ndebele.Phonology
+public import Linglib.Languages.Ndebele.Phonology
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.Spellout
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
@@ -674,7 +674,7 @@ theorem mul_not_assoc : ¬ ∀ x y z : Exponent, x * y * z = x * (y * z) := fun 
 
 section Amalgamation
 
-open HarizanovGribanova2019
+open HarizanovGribanova2019 Amalgamation
 
 variable {H : Type*}
 
@@ -722,8 +722,8 @@ theorem amalgamation_class9 :
         ⟨.Lnk, some .lowering⟩] = some [⟨.T, comb relative.mvalue⟩] ∧
       ∃ a, amalgamateSpine [⟨.T, none⟩, ⟨.C, some .lowering⟩, ⟨.D, some .raising⟩,
           ⟨.Lnk, some .lowering⟩] = some [a] ∧
-        a.members = relative.terminals ∧ a.complex ≠ comb relative.mvalue ∧
-        ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis, (lift e a.complex).segments = [Ndebele.i] :=
+        a.heads = relative.terminals ∧ a.bracketing ≠ comb relative.mvalue ∧
+        ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis, (lift e a.bracketing).segments = [Ndebele.i] :=
   ⟨rfl, _, rfl, rfl, by decide, by decide +kernel⟩
 
 theorem amalgamation_at_pronounced {lo hi rest : List Cat} {s b : Cat}
@@ -740,11 +740,11 @@ theorem amalgamation_at_pronounced {lo hi rest : List Cat} {s b : Cat}
     List.filter_eq_nil_iff.mpr fun y hy ↦ by simpa using fun h : y = s ↦ hs (by simp [← h, hy])
   simp [HeadChain.pronounced, HeadChain.ofHeads, ← h, List.filter_append, h₁, h₂]
 
-private theorem forall_isLeftComb_amalgamate {below : List (Amalgam H)}
-    {pending : Option (FreeMagma H)} {hs : List (Terminal H)} {out : List (Amalgam H)}
+private theorem forall_isLeftComb_amalgamate {below : List (MorphosyntacticWord H)}
+    {pending : Option (FreeMagma H)} {hs : List (Terminal H)} {out : List (MorphosyntacticWord H)}
     (h : amalgamate below pending hs = some out) :
-    (∀ a ∈ out, IsLeftComb a.complex) ↔
-      (∀ b ∈ below, IsLeftComb b.complex) ∧ (∀ p ∈ pending, IsLeftComb p) ∧
+    (∀ a ∈ out, IsLeftComb a.bracketing) ↔
+      (∀ b ∈ below, IsLeftComb b.bracketing) ∧ (∀ p ∈ pending, IsLeftComb p) ∧
         ((pending.map fun _ ↦ Direction.raising) :: hs.map (·.m)).IsChain
           fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
   induction hs generalizing below pending out with
@@ -761,9 +761,9 @@ private theorem forall_isLeftComb_amalgamate {below : List (Amalgam H)}
 /-- GenHM builds only complex heads in which each head is adjoined outside the heads below it,
 the bracketing of the Mirror Principle. Amalgamation builds only such complex heads exactly when
 no head Lowers right after a head has Raised into it. -/
-theorem forall_mem_range_comb_iff {hs : List (Terminal H)} {out : List (Amalgam H)}
+theorem forall_mem_range_comb_iff {hs : List (Terminal H)} {out : List (MorphosyntacticWord H)}
     (h : amalgamateSpine hs = some out) :
-    (∀ a ∈ out, a.complex ∈ Set.range comb) ↔
+    (∀ a ∈ out, a.bracketing ∈ Set.range comb) ↔
       (hs.map (·.m)).IsChain fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   have := forall_isLeftComb_amalgamate hr
@@ -771,10 +771,10 @@ theorem forall_mem_range_comb_iff {hs : List (Terminal H)} {out : List (Amalgam 
   rcases hs with _ | ⟨⟨y, n⟩, hs⟩ <;> simp_all [List.isChain_cons_cons]
 
 theorem amalgamation_keeps_verb_site (m : Cat → Option Direction)
-    {out out' : List (Amalgam Cat)} {a a' : Amalgam Cat}
+    {out out' : List (MorphosyntacticWord Cat)} {a a' : MorphosyntacticWord Cat}
     (h : amalgamateSpine ([Cat.V, .T].map fun x ↦ ⟨x, m x⟩) = some out)
     (h' : amalgamateSpine ([Cat.V, .T, .C].map fun x ↦ ⟨x, m x⟩) = some out')
-    (ha : a ∈ out) (ha' : a' ∈ out') (hV : .V ∈ a.members) (hV' : .V ∈ a'.members) :
+    (ha : a ∈ out) (ha' : a' ∈ out') (hV : .V ∈ a.heads) (hV' : .V ∈ a'.heads) :
     a'.site = a.site :=
   site_eq_of_append (extra := [⟨Cat.C, m .C⟩]) h h' (by simp) ha ha' hV hV'
 

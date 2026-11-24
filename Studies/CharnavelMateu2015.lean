@@ -3,7 +3,7 @@ module
 public import Mathlib.Order.Cover
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Statistics.CharnavelMateu2015
-public import Linglib.Fragments.Romance.Spanish.Clitics
+public import Linglib.Languages.Romance.Spanish.Clitics
 
 /-!
 # Charnavel and Mateu (2015): the clitic logophoric restriction
@@ -33,7 +33,7 @@ has a single logophoric operator, and two of its elements sharing a feature inte
 
 ## TODO
 
-* The French clitic fragment has only *se*; the strong Person Case Constraint and the clitic
+* The French clitic language file has only *se*; the strong Person Case Constraint and the clitic
   logophoric restriction over French await its object clitics.
 * The paper's examples as `Data/Examples` rows, among them the epithet diagnostics (27)–(32),
   the non-de se reading (33), the dream report (49) in which a first person escapes the Person

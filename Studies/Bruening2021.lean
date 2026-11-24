@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Data.Examples.Bruening2021
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
@@ -30,7 +30,7 @@ over the whole lexicon.
 
 ## Implementation notes
 
-The fragment places an implicit argument where the construction it is understood in would
+The language file places an implicit argument where the construction it is understood in would
 express it, so an alternating verb's implicit goal is a first object or a PP as its entry says.
 Events have their own type, written `v` here and `s` in the paper.
 

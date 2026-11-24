@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Tay2024
-public import Linglib.Fragments.Mandarin.Resultatives
+public import Linglib.Languages.Mandarin.Resultatives
 public import Studies.Kim2024
 public import Linglib.Core.Relation.ReflTransGen
 public import Mathlib.Order.Interval.Set.Basic
@@ -59,7 +59,7 @@ and the Onset Condition is [kim-2024]'s, `Kim2024.OnsetCondition`. The model of 
 chain as a relation of immediate causation (`SinkingEvent.Causes`), ordered by its reflexive
 transitive closure, so the macroevent, no link in the chain, is unordered with respect to its
 subevents. Temporal traces are rational intervals. The compounds are entries of
-`Fragments/Mandarin/Resultatives.lean`, which record no orientation: the apparent subject-oriented
+`Languages/Mandarin/Resultatives.lean`, which record no orientation: the apparent subject-oriented
 transitives *chī-bǎo* (3) and *qí-lèi* (330) are the hybrid resultatives of chapter 4, whose
 postverbal phrase is an argument of V2, and that chapter, the V-*de* construction's syntax (chapter
 6), the case against the No Argument Theory (chapter 5) and the null head ∅+C+B for adjectival X
@@ -317,7 +317,7 @@ def vvTree (v1 v2 : Morph) : Word.Tree Morph :=
 @[simp] theorem toList_vvTree (v1 v2 : Morph) : (vvTree v1 v2).toList = [v1, nullMorph, v2] :=
   rfl
 
-/-- The word V1-∅-V2 of a compound of the fragment. -/
+/-- The word V1-∅-V2 of a compound of the language file. -/
 def word (c : Resultative) : Word.Tree Morph := vvTree (.root c.v1.form) (.root c.v2.form)
 
 theorem toList_word_erase (c : Resultative) :

@@ -3,7 +3,7 @@ module
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Data.Examples.Anttila1997
-public import Linglib.Fragments.Finnish.Phonology
+public import Linglib.Languages.Finnish.Phonology
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.LinearCombination
 public import Mathlib.Tactic.Zify

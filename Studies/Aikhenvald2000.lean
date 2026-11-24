@@ -1,12 +1,12 @@
 module
 
-public import Linglib.Fragments.Mandarin.Nouns
-public import Linglib.Fragments.Romance.French.Nouns
-public import Linglib.Fragments.Romance.Italian.Determiners
-public import Linglib.Fragments.Romance.Italian.Nouns
-public import Linglib.Fragments.Shona.Nouns
-public import Linglib.Fragments.Swahili.Nouns
-public import Linglib.Fragments.Xhosa.Nouns
+public import Linglib.Languages.Mandarin.Nouns
+public import Linglib.Languages.Romance.French.Nouns
+public import Linglib.Languages.Romance.Italian.Determiners
+public import Linglib.Languages.Romance.Italian.Nouns
+public import Linglib.Languages.Shona.Nouns
+public import Linglib.Languages.Swahili.Nouns
+public import Linglib.Languages.Xhosa.Nouns
 public import Studies.Corbett1991
 public import Studies.Downing1996
 public import Mathlib.Data.Finset.Image
@@ -17,7 +17,7 @@ public import Mathlib.Data.Finset.Image
 The book sorts noun categorization devices into kinds by the morphosyntactic locus of their
 morphemes and the constituent they characterize, `Classifier.Device.ofScope`, and then gives the
 properties in which the kinds differ. This file states the properties its concluding chapter
-tabulates as functions of the kind and checks them on the systems the fragments hold, the
+tabulates as functions of the kind and checks them on the systems the language files hold, the
 numeral classifiers of Mandarin and Japanese, the noun classes of Swahili, Xhosa and Shona and
 the genders of French and Italian.
 
@@ -148,7 +148,7 @@ theorem admitsFree_of_agreement {d : Device} {a : AgreementRole} (h : agreement 
     (ha : a ≠ .always) : AdmitsFree d := by
   decide +revert
 
-/-! ### The systems of the fragments -/
+/-! ### The systems of the language files -/
 
 /-- The classifiers of Mandarin and Japanese are realizations numeral classifiers admit, free
 lexemes in Mandarin; the class prefixes of Swahili, Xhosa and Shona and the feminine suffix of
@@ -180,7 +180,7 @@ def italianSex : ReferentGender → Italian.Gender.Value
   | .male => .masculine
   | .female => .feminine
 
-/-- Every French or Italian noun of the fragments that fixes the sex of its referents has the
+/-- Every French or Italian noun of the language files that fixes the sex of its referents has the
 gender of that sex, the semantic core of the two systems, and nouns that fix none are found in
 both genders. -/
 theorem romance_semantic_core :

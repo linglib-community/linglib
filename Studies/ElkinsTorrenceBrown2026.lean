@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Data.Examples.ElkinsTorrenceBrown2026
-public import Linglib.Fragments.Mayan.Mam.Extraction
-public import Linglib.Fragments.Mayan.Kiche.Extraction
-public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
+public import Linglib.Languages.Mayan.Mam.Extraction
+public import Linglib.Languages.Mayan.Kiche.Extraction
+public import Linglib.Languages.Mayan.Kaqchikel.Extraction
 public import Linglib.Syntax.Minimalist.Spine
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Syntax.Minimalist.Feature.Valuation
@@ -64,20 +64,20 @@ open Minimalist DistributedMorphology ElkinsTorrenceBrown2026.Examples
 
 /-- A clause of the given size with `n` directionals above Voice (8). Nonfinite clauses, which lack
 Voice, lack directionals (§3.4). -/
-def spine (s : Spine) (n : ℕ) : Spine :=
+def spine (s : Spine Minimalist.Cat) (n : ℕ) : Spine Minimalist.Cat :=
   ⟨s.heads.flatMap fun c ↦ if c = .Voice then .Voice :: List.replicate n .Dir else [c]⟩
 
 /-- The Mam finite clause of (8), a CP over the aspect layer, Voice, v and V. -/
-def finiteClause : Spine := ⟨[.V, .v, .Voice, .Asp, .C]⟩
+def finiteClause : Spine Minimalist.Cat := ⟨[.V, .v, .Voice, .Asp, .C]⟩
 
 /-- The aspectless clause, a VoiceP-sized reduced clause without the aspect layer or C (§3.3). -/
-def aspectlessClause : Spine := ⟨[.V, .v, .Voice]⟩
+def aspectlessClause : Spine Minimalist.Cat := ⟨[.V, .v, .Voice]⟩
 
 /-- The nonfinite clause, a VP-sized complement (§3.4). -/
-def nonfiniteClause : Spine := ⟨[.V]⟩
+def nonfiniteClause : Spine Minimalist.Cat := ⟨[.V]⟩
 
 /-- The reduced K'ichean complement of [mendes-ranero-2021], an AspP without a CP layer (§5.1). -/
-def aspP : Spine := ⟨[.V, .v, .Voice, .Asp]⟩
+def aspP : Spine Minimalist.Cat := ⟨[.V, .v, .Voice, .Asp]⟩
 
 /-- C⁰, Voice⁰ and Dir⁰ bear [Ā], (41) and (44). -/
 def BearsA (h : Cat) : Prop := h = .C ∨ h = .Voice ∨ h = .Dir
@@ -96,7 +96,7 @@ theorem HostsReflex.bearsA {h : Cat} (hh : HostsReflex h) : BearsA h := Or.inr h
 
 /-- A dependency is the list of clauses the extracted adjunct crosses, bottom-up, the clause of
 origin first. -/
-abbrev Dependency := List Spine
+abbrev Dependency := List (Spine Minimalist.Cat)
 
 /-- The movement path of (43) is the list of [Ā]-bearing heads of the clauses crossed, bottom-up
 and tagged by clause. By Attract Closest (39) the mover stops in the specifier of each. -/
@@ -136,7 +136,7 @@ theorem licensed_iff {d : Dependency} {i : ℕ} :
     rw [List.getD_eq_getElem?_getD, List.getElem?_eq_none (Nat.le_of_not_lt hlt)] at hmem
     exact List.not_mem_nil hmem
 
-theorem exists_hostsReflex_spine_iff {s : Spine} (hD : .Dir ∉ s) (n : ℕ) :
+theorem exists_hostsReflex_spine_iff {s : Spine Minimalist.Cat} (hD : .Dir ∉ s) (n : ℕ) :
     (∃ h ∈ spine s n, HostsReflex h) ↔ .Voice ∈ s := by
   simp only [spine, List.mem_flatMap, Spine.mem_def]
   constructor
@@ -153,7 +153,8 @@ theorem exists_hostsReflex_spine_iff {s : Spine} (hD : .Dir ∉ s) (n : ℕ) :
 
 /-- =(y)a' is licensed in a clause of the dependency iff that clause projects Voice (Table 3,
 §3.3–3.4, §4.3). -/
-theorem licensed_iff_mem_voice {d : Dependency} {i : ℕ} {s : Spine} {n : ℕ} (hD : .Dir ∉ s)
+theorem licensed_iff_mem_voice {d : Dependency} {i : ℕ} {s : Spine Minimalist.Cat} {n : ℕ}
+    (hD : .Dir ∉ s)
     (hd : d.getD i ⟨[]⟩ = spine s n) : Licensed d i ↔ .Voice ∈ s := by
   rw [licensed_iff, hd, exists_hostsReflex_spine_iff hD]
 
@@ -192,7 +193,7 @@ instance (d : Dependency) (i : ℕ) : Decidable (CopyLicensed d i) :=
   inferInstanceAs (Decidable (_ ∨ _ ∧ _ ∧ _))
 
 -- (54)
-theorem fpg (e m : Spine) : CopyLicensed [e, m] 1 ↔ .C ∈ e := by
+theorem fpg (e m : Spine Minimalist.Cat) : CopyLicensed [e, m] 1 ↔ .C ∈ e := by
   simp [CopyLicensed]
 
 -- §3.1, §5.1
@@ -358,7 +359,7 @@ theorem directionalRows_sites :
   decide
 
 /-- The clause sizes as named in the rows. -/
-def sizeTable : List (String × Spine) :=
+def sizeTable : List (String × (Spine Minimalist.Cat)) :=
   [("cP", finiteClause), ("voiceP", aspectlessClause), ("bareVP", nonfiniteClause), ("aspP", aspP)]
 
 /-- The dependency of a long-distance row: the embedded clause and, when the wh-expression lands

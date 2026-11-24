@@ -3,12 +3,12 @@ module
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Feature.Bundle
-public import Linglib.Fragments.Slavic.Russian.Agreement
-public import Linglib.Fragments.Slavic.Russian.Gender
-public import Linglib.Fragments.Somali.Gender
-public import Linglib.Fragments.Latin.Gender
-public import Linglib.Fragments.Chichewa.Gender
-public import Linglib.Fragments.CoastalMarind.Gender
+public import Linglib.Languages.Slavic.Russian.Agreement
+public import Linglib.Languages.Slavic.Russian.Gender
+public import Linglib.Languages.Somali.Gender
+public import Linglib.Languages.Latin.Gender
+public import Linglib.Languages.Chichewa.Gender
+public import Linglib.Languages.CoastalMarind.Gender
 public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Agreement.ResolutionRule
 public import Linglib.Data.Examples.Corbett1998
@@ -41,14 +41,14 @@ rather than the resolved one. The chapter's examples are the rows of
 
 * The asymmetry criterion is read off where a covarying feature's value originates, the
   chapter's classification of the five dimensions carried as data; what a Russian target is
-  inflected for is derived from its forms in the fragment, and what it agrees in is the
+  inflected for is derived from its forms in the language file, and what it agrees in is the
   inflected dimensions whose origin is the controller.
-* Polarity is the substrate's `Morphology.Polar`, which the Somali fragment proves of its
+* Polarity is the substrate's `Morphology.Polar`, which the Somali language file proves of its
   article (Table 9.1); the verbal prefix is shown not to be polar, the plural prefix
   coinciding with the masculine singular's instead.
 * Number-conditioned gender distinctions are the substrate's convergent maps between the
   target genders of two numbers; Chichewa's coordination rules are the substrate's ordered
-  resolution rules over fragment nouns, one per target form before the semantic rule.
+  resolution rules over language file nouns, one per target form before the semantic rule.
 * The agreement slots of a target, their controllers and their bound of four are described
   in the rows and not modelled.
 * The syncretism claims are stated over the languages' own gender carriers, not over the

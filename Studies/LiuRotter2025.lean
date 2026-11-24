@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.Modality.Typology
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Adverbs
+public import Linglib.Languages.English.Auxiliaries
+public import Linglib.Languages.English.Adverbs
 public import Linglib.Data.Examples.LiuRotter2025
 public import Mathlib.Basic.Sign.Defs
 public import Linglib.Data.Examples.Readers
@@ -30,7 +30,7 @@ The effect of concord is a `SignType`; the regression estimates are not formal c
 The cell means of the paper's Table 1 are rows of `Data/Examples/LiuRotter2025.json`, stored
 as hundredths of the 1–7 scale and read structurally, so the observed signs are decided in
 the kernel. The concord precondition, that the doubled elements share a concord class, is read
-off the English auxiliary fragment.
+off the English auxiliary language file.
 
 ## References
 
@@ -92,7 +92,7 @@ theorem warmth_real_cost (f : ModalForce) : warmthEffect f ≠ 0 := by
 theorem warmth_ne_spread : warmthEffect ≠ spreadEffect :=
   λ h => absurd (congrFun h .necessity) (by decide)
 
-/-! ### The concord precondition in the fragment -/
+/-! ### The concord precondition in the language file -/
 
 /-- Two modal items share a concord class when a meaning of each has forces of one class,
 both universal or both existential. -/

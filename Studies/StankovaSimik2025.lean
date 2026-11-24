@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Slavic.Czech.Particles
-public import Linglib.Fragments.Slavic.Czech.PolarityItems
+public import Linglib.Languages.Slavic.Czech.Particles
+public import Linglib.Languages.Slavic.Czech.PolarityItems
 public import Linglib.Logic.Modal.Defs
 public import Studies.Simik2024
 
@@ -14,7 +14,8 @@ the canonical negation operator and is licensed only by Repp's commitment operat
 (`Simik2024.falsumCz_eq_true_of_falsum`), while a verb in situ is licensed by either
 (`mem_availableReadings_iff`). Following Zeijlstra, the concord item *žádný* and the prefix carry
 an uninterpretable negative feature and contribute no negation of their own, so of the readings
-the determiner fragment lists for *žádný* only the indefinite one yields 'no' under the canonical
+the determiner language file lists for *žádný* only the indefinite one yields 'no' under the
+canonical
 operator (`compl_eq_no_iff`). The canonical operator licenses concord items and needs negative
 contextual evidence; FALSUM licenses positive polarity items and is indifferent to evidence; and
 declarative word order needs evidence. Felicity in a context follows from these three sources

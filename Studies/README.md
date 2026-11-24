@@ -12,7 +12,7 @@ states a paper's model on the shared theory layer and proves the predictions the
 ## What a study contains
 
 A study is self-contained: the paper's data, its model, and its predictions. It imports the
-theory layer (`Linglib/Semantics/`, `Linglib/Syntax/`, ...) and `Linglib/Fragments/`, and works at
+theory layer (`Linglib/Semantics/`, `Linglib/Syntax/`, ...) and `Linglib/Languages/`, and works at
 the paper's own granularity.
 
 - **Build on what exists.** When the theory layer already defines an operator or type the paper

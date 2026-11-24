@@ -4,7 +4,7 @@ public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Plurality.Algebra
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Studies.Krifka1998
 
 /-!
@@ -19,7 +19,7 @@ the book assumes throughout, entails Krifka's cumulativity, and atelicity along 
 a Schwarzschild cover into parts with properly smaller run times. Against Krifka's subregion
 account of *for*-adverbials, the book's back-and-forth scenario has stratified reference and
 violates the subregion presupposition. The per-verb distributivity facts are meaning postulates,
-stated over the Fragment verbs' denotations.
+stated over the language file verbs' denotations.
 
 ## Main definitions
 
@@ -364,13 +364,14 @@ end ThematicRolesAndCumulativity
 /-! ### Distributivity as meaning postulates
 
 The book's per-verb distributivity facts are lexical meaning postulates in Hoeksema's sense, not
-theorems; they are stated here over the Fragment verbs' denotations. -/
+theorems; they are stated here over the language file verbs' denotations. -/
 
 section Distributivity
 variable {Entity E : Type*} [PartialOrder Entity] [OrderBot Entity] [SemilatticeSup E]
 
 /-- `ChampollionPostulates` records the book's postulates on the distributivity of verbs, over an
-interpretation `V` of the fragment's verbs as event predicates and the agent and theme roles. *See*
+interpretation `V` of the language file's verbs as event predicates and the agent and theme roles.
+*See*
 distributes on both roles and *kill* on its theme only, since a member of the posse need not have
 killed anyone, and *meet* does not distribute on its agent. -/
 structure ChampollionPostulates (V : Verb → E → Prop)

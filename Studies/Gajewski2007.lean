@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.Presupposition.TwoDimensional
 public import Linglib.Logic.Modal.Defs

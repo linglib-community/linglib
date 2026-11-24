@@ -8,7 +8,7 @@ module
 public import Linglib.Phonology.GovernmentPhonology.ElementTheory.Basic
 public import Linglib.Phonology.Autosegmental.Skeleton
 public import Studies.Scheer2004
-public import Linglib.Fragments.Slavic.Czech.Phonology
+public import Linglib.Languages.Slavic.Czech.Phonology
 public import Linglib.Data.Wordlist.CaviraniVandenWyngaerd2026
 
 /-!
@@ -23,7 +23,7 @@ several structures may share a phone. A labial and /l/ have |U| at the place nod
 |I|. After a labial the |I| is then heard as a segment of its own, unless the vowel of the suffix
 floats, and after /l/ it is not heard.
 
-The rows are the word pairs of the paper's tables, and the Czech fragment reads the alternating
+The rows are the word pairs of the paper's tables, and the Czech language file reads the alternating
 consonant off their spelling.
 
 ## Implementation notes
@@ -37,7 +37,7 @@ consonant off their spelling.
 * Union is taken in the structure, so small and medium palatalisation of /x/ build one structure
   where the paper counts two.
 * The palatal segment after a labial is a root node under a V slot, a vowel for the paper. The
-  fragment follows Short in writing it /j/.
+  language file follows Short in writing it /j/.
 
 ## TODO
 
@@ -99,7 +99,7 @@ def l : Segment := { manner := .simplex .A, place := .simplex .U }
 def voice : Segment := { laryngeal := .headedSimplex .L }
 
 /-- The consonants of the paper's tables by the letters that write them, each with its phoneme in
-the fragment and with its melody if the paper analyses it. A voiced obstruent is its voiceless
+the language file and with its melody if the paper analyses it. A voiced obstruent is its voiceless
 counterpart with voicing. The paper sets /g/ and /ʦ/ aside. -/
 def consonants : List (String × Phonology.Segment × Option Segment) :=
   [("k", Czech.Phonology.k, some k), ("g", Czech.Phonology.g, none),

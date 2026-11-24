@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Statistics.Jacobs2026
 public import Linglib.Data.Wordlist.Jacobs2026
-public import Linglib.Fragments.Latin.Phonology
+public import Linglib.Languages.Latin.Phonology
 public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.FeatureGeometry
 public import Linglib.Phonology.OptimalityTheory.Filtration
@@ -24,7 +24,8 @@ dissimilation](##dissimilate_glide).
 
 ## Implementation notes
 
-* Segments are the Fragment's, with PHOIBLE's values. `underlying` reads Jacobs's representations
+* Segments are the language file's, with PHOIBLE's values. `underlying` reads Jacobs's
+  representations
   off them: [lateral] only on liquids, after Steriade, CORONAL never, and LABIAL and DORSAL where
   present. The tree is Jacobs's statement of the LINGUAL node, which he attributes to Clements and
   Hume; the attribution is his. The tier is that of C-place, so a segment on it is [−syllabic]: a
@@ -47,7 +48,8 @@ dissimilation](##dissimilate_glide).
 ## TODO
 
 * Cser's further condition, at least three moræ between the stem and the suffix liquid, needs vowel
-  length, which the Fragment's segments do not carry. *limitaris* is the rival case either way: its
+  length, which the language file's segments do not carry. *limitaris* is the rival case either
+  way: its
   [m] blocks for Cser, and it has more than three moræ.
 
 ## References

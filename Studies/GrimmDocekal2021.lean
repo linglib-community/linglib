@@ -31,7 +31,8 @@ numeral is stated over the library's `Plurality.GroupStructure`, whose `up` form
 from a sum of individuals, which is why a group can be counted again. Clusters and the
 aggregate numeral are stated on a part structure with no null element, as the paper's is; with
 one, everything overlaps and no two maximal clusters could be separate. The paper's Table 1, the
-twenty-two nouns derived by *-í*, is lexical data for the Czech Fragment and is not retyped here.
+twenty-two nouns derived by *-í*, is lexical data for the Czech language file and is not retyped
+here.
 
 ## References
 
@@ -43,7 +44,7 @@ twenty-two nouns derived by *-í*, is lexical data for the Czech Fragment and is
 
 ## TODO
 
-Table 1's derived aggregates belong in `Fragments/Slavic/Czech/`; Krifka's kind and object unit
+Table 1's derived aggregates belong in `Languages/Slavic/Czech/`; Krifka's kind and object unit
 operators of section 4 are not formalized. A model with two separate maximal clusters, on which
 the aggregate numeral counts two, is not given.
 -/

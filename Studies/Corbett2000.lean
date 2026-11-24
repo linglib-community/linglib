@@ -11,8 +11,8 @@ public import Linglib.Semantics.Plurality.Cardinality
 public import Linglib.Semantics.Plurality.Configuration
 public import Linglib.Syntax.Agreement.ConjunctAgreement
 public import Linglib.Syntax.Feature.Bundle
-public import Linglib.Fragments.Bayso.Number
-public import Linglib.Fragments.Teop.Nouns
+public import Linglib.Languages.Bayso.Number
+public import Linglib.Languages.Teop.Nouns
 public import Studies.Corbett1991
 public import Linglib.Syntax.Clause.Basic
 public import Linglib.Data.Examples.Corbett2000
@@ -81,7 +81,7 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   with the book's readings of them as theorems.
 * Second systems and constructed numbers are represented by what their forms cover; the
   data of Kiowa, Hopi, Rembarrnga and the Slavonic honorifics live here for want of
-  fragments.
+  language files.
 
 ## TODO
 

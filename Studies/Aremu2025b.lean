@@ -2,8 +2,8 @@ module
 
 public import Linglib.Core.Order.GornAddress
 public import Linglib.Data.Examples.Aremu2025b
-public import Linglib.Fragments.Yoruba.Focus
-public import Linglib.Fragments.Yoruba.Pronouns
+public import Linglib.Languages.Yoruba.Focus
+public import Linglib.Languages.Yoruba.Pronouns
 public import Linglib.Semantics.Focus.Marking
 public import Linglib.Syntax.Reflex
 public import Linglib.Data.Examples.Readers

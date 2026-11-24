@@ -4,7 +4,7 @@ public import Studies.Narrog2009
 public import Studies.Narrog2010
 public import Linglib.Data.Statistics.Narrog2012
 public import Linglib.Syntax.Cartography
-public import Linglib.Fragments.Japanese.Morph
+public import Linglib.Languages.Japanese.Morph
 public import Linglib.Morphology.Morphotactics.Template.Scale
 public import Mathlib.Order.Antisymmetrization
 

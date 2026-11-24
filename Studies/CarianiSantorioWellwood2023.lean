@@ -5,7 +5,7 @@ public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Core.Algebra.Order.Group.Indicator
 public import Linglib.Semantics.Delineation
 public import Linglib.Semantics.Degree.Quantifier
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 
 /-!
 # Cariani, Santorio and Wellwood (2023): Positive gradable adjective ascriptions without positive morphemes
@@ -180,7 +180,7 @@ theorem image_Ici_subset_image_Ici_iff (h : holder.Injective) {u l : S} :
     holder '' Ici l ⊆ holder '' Ici u ↔ u ≤ l :=
   (image_subset_image_iff h).trans Ici_subset_Ici
 
--- (24): the fragment puts *hot* and *warm* on one dimension.
+-- (24): the language file puts *hot* and *warm* on one dimension.
 example : English.Adjectives.hot.dimension = English.Adjectives.warm.dimension := rfl
 
 /-! ### Thresholds as degree standards -/

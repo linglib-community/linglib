@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Data.Examples.Szabolcsi2004
 public import Linglib.Data.Examples.Readers
@@ -11,7 +11,8 @@ public import Linglib.Data.Examples.Readers
 Szabolcsi observes that *someone* cannot take scope immediately below clausemate negation, a
 negative quantifier or *without*, but can below *at most five*, and that what sets the first three
 apart is that they are anti-additive while *at most five* is merely decreasing. With *someone*'s
-Fragment entry, which is blocked by anti-additive operators, the licensing theory blocks exactly
+language file entry, which is blocked by anti-additive operators, the licensing theory blocks
+exactly
 the starred narrow-scope readings of her paradigm (`readings_predicted`), and an operator blocks it
 exactly when it is anti-additive (`antiLicenses_someone_iff`).
 

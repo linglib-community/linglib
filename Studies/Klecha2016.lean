@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Tense.Embedding
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Data.Examples.Klecha2016
 public import Linglib.Data.Examples.Readers
 
@@ -130,7 +130,7 @@ theorem hope_readings : ∀ a ∈ hope.attitude.toList,
 
 /-! ### The data, (1)–(3) -/
 
-/-- The attitude verb of a row, from the fragment. -/
+/-- The attitude verb of a row, from the language file. -/
 def verbOf : String → Option English.Verbs.Verb
   | "think" => some think
   | "hope" => some hope

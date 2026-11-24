@@ -17,7 +17,7 @@ from one *until*, so a study that draws the line classifies the words itself.
 An entry carries no truth conditions. What *before* means is contested, from the quantificational
 relations of Anscombe to the reference points of Heinämäki, the branching-time analysis of Beaver
 and Condoravdi and the scalar one of Rett, so a study assigns denotations to the relations it
-treats; a fragment says only which relation a word lexicalizes.
+treats; a language file says only which relation a word lexicalizes.
 
 ## Main declarations
 

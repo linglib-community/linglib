@@ -6,8 +6,8 @@ public import Linglib.Syntax.Minimalist.Verbal.Applicative
 public import Linglib.Syntax.Minimalist.Verbal.LittleV
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Syntax.Feature.Person.Features
-public import Linglib.Fragments.Romance.Spanish.Clitics
-public import Linglib.Fragments.Romance.Spanish.Verbs
+public import Linglib.Languages.Romance.Spanish.Clitics
+public import Linglib.Languages.Romance.Spanish.Verbs
 import all Init.Data.String.Defs  -- for unfolding `String.intercalate`
 public import Linglib.Data.Examples.Readers
 
@@ -252,7 +252,7 @@ def marking (v : Verb) : Option AnticausativeMarking :=
   else if fs.any (.encl "se" ∈ ·) then some .optional
   else some .unmarked
 
-/-- The verb of an example, the Fragment's entry of that form with an intransitive. -/
+/-- The verb of an example, the language file's entry of that form with an intransitive. -/
 def verb? (e : Datum) : Option Verb :=
   (e.feature? "verb").bind fun f ↦ allVerbs.find? fun v ↦ v.form = f ∧ (marking v).isSome
 

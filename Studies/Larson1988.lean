@@ -8,9 +8,9 @@ module
 public import Linglib.Data.Examples.Larson1988
 public import Linglib.Syntax.Tree.Shell
 public import Linglib.Syntax.Cat
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.Verbs.Levin
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.English.Verbs.Levin
 
 /-!
 # Larson (1988): On the Double Object Construction

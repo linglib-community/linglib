@@ -2,9 +2,9 @@ module
 
 public import Linglib.Syntax.Person.CaseConstraint
 public import Linglib.Syntax.Feature.Person.Lattice
-public import Linglib.Fragments.Romance.Italian.Pronouns
-public import Linglib.Fragments.Romance.Spanish.Clitics
-public import Linglib.Fragments.German.Pronouns
+public import Linglib.Languages.Romance.Italian.Pronouns
+public import Linglib.Languages.Romance.Spanish.Clitics
+public import Linglib.Languages.German.Pronouns
 public import Studies.Deal2024
 public import Studies.CoonKeine2021
 public import Studies.CharnavelMateu2015
@@ -40,7 +40,8 @@ prepositional dative obviate the constraint. The causee of a *faire infinitif* c
 the Fancy Constraint as a third person whether or not it is a clitic.
 
 A polite clitic is its third person counterpart denoting the addressee (`polite`), so Italian
-*La* is `polite la`. The German pronouns of a Wackernagel cluster are weak; the fragment records
+*La* is `polite la`. The German pronouns of a Wackernagel cluster are weak; the language file
+records
 no strength for them, and they are read as offering their person.
 
 The reader `scenario?` leaves out the rows whose gloss names two pronouns for one clitic. The

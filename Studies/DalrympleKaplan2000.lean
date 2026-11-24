@@ -4,12 +4,12 @@ public import Linglib.Core.Order.Flat.Finset
 public import Linglib.Data.Examples.DalrympleKaplan2000
 public import Linglib.Syntax.Agreement.ResolutionRule
 public import Linglib.Syntax.Feature.Person.Features
-public import Linglib.Fragments.Chichewa.Gender
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.German.Pronouns
-public import Linglib.Fragments.German.Verbs
-public import Linglib.Fragments.Slavic.Polish.Pronouns
-public import Linglib.Fragments.Xhosa.Basic
+public import Linglib.Languages.Chichewa.Gender
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.German.Pronouns
+public import Linglib.Languages.German.Verbs
+public import Linglib.Languages.Slavic.Polish.Pronouns
+public import Linglib.Languages.Xhosa.Basic
 public import Linglib.Morphology.Paradigm.Morphome
 public import Studies.Corbett1991
 public import Studies.Shieber1986
@@ -32,7 +32,8 @@ distributes to the conjuncts of a coordinate subject. A resolving value is a set
 the person or gender of a coordination is the union of its conjuncts' sets, the least set the
 subset annotations of the coordination rule allow. Resolving features are never indeterminate.
 
-We prove that an indeterminate value is a syncretism class of a paradigm, read off the fragments
+We prove that an indeterminate value is a syncretism class of a paradigm, read off the language
+files
 for *was*, *kogo*, *set*, *kaufen* and the Xhosa and Chichewa subject prefixes, that unification
 of the two verbs' atomic requirements fails, and that underspecification, the universal set,
 overgenerates. The marker set of a person value is its largest participant set, and union on

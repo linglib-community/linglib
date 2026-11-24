@@ -115,7 +115,7 @@ spans declares their labels and lexemes beside `features`:
 Every label and lexeme a span names must be a declared level, every level is named by some span,
 and a span lies within the row's gloss line. The module emits the two enums and the readers
 `label? : Datum.Span → Option SpanLabel` and `lexeme? : Datum.Span → Option Lexeme`, so that a study
-maps each lexeme to its entry in a language's fragment by a total function: the row names the
+maps each lexeme to its entry in a language's file by a total function: the row names the
 entry, and the study proves that the span is written as the entry is, rather than finding the
 entry by its spelling.
 

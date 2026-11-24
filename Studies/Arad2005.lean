@@ -4,7 +4,7 @@ public import Studies.McCarthy1981
 public import Linglib.Morphology.Realization
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Fragments.Hebrew.ConsonantalRoots
+public import Linglib.Languages.Hebrew.ConsonantalRoots
 public import Linglib.Data.Wordlist.Arad2005
 public import Mathlib.Data.List.Destutter
 public import Mathlib.Data.Sym.Sym2
@@ -32,7 +32,7 @@ single out the natural pairs.
   the vowels are Voice's (Bat El's melodic overwriting, p. 47). A `+` in the base marks the
   suffixes (32) prints as outside the stem.
 * The derivations run over the book's transcription, and a relabeling lifts them to the
-  fragment's segments. There the alternating stops are archisegments that spirantization
+  language file's segments. There the alternating stops are archisegments that spirantization
   realizes by continuancy, as the one stop or fricative of the inventory that refines them.
 * The data's patterns 1–7 are the numbers of (3). Ch. 7 prints CaCaC, hiCCiC, CiCCeC and
   hitCaCCeC, which p. 43 equates with them.
@@ -708,7 +708,7 @@ theorem conjugations_natural :
     ∀ x ∈ conjugations, ¬(x.2.1.Intransitive ↔ x.2.2.Intransitive) → ¬x.2.1.Intransitive := by
   decide +kernel
 
-/-! ### Over the fragment's segments -/
+/-! ### Over the language file's segments -/
 
 /-- `uncovered` lists the root-derived verbs the derivation leaves out, for guttural lowering in
 *hexšiv* and *heʔedim*, t–sibilant metathesis in *histager*, and the biliteral allomorphy of √mss.
@@ -735,7 +735,8 @@ theorem naturalClass_fillContinuant (post : Bool) :
   · exact ⟨hb, hk, hp⟩
   · exact ⟨hv, hx, hf⟩
 
-/-- `segment x` reads a letter of the book's transcription as a segment of the fragment, *b*, *k*,
+/-- `segment x` reads a letter of the book's transcription as a segment of the language file, *b*,
+*k*,
 *p* as the archisegments of the alternating stops, *q* as the /k/ of ק, *r* as /ʁ/, *c* as /ts/ and
 *e* as /ɛ/. -/
 def segment : String → Phonology.Segment
@@ -794,7 +795,8 @@ theorem fillContinuant_segment (post : Bool) (x : String) :
   have h := not_alternating_segment x hp hb hk
   rw [surfaceSegment, hx, fillContinuant_eq_self h, fillContinuant_eq_self h]
 
-/-- The roots of the data in the fragment, by label; Arad's √qlt is the fragment's √klt. -/
+/-- The roots of the data in the language file, by label; Arad's √qlt is the language
+file's √klt. -/
 def fragmentRoots : List (String × ConsonantalRoot Phonology.Segment) :=
   [("lmd", Hebrew.lmd), ("spr", Hebrew.spr), ("qlt", Hebrew.klt), ("pll", Hebrew.pll),
     ("npc", Hebrew.npc), ("xlq", Hebrew.xlq), ("str", Hebrew.str), ("pqd", Hebrew.pqd),
@@ -825,7 +827,7 @@ private theorem verb_eq_of_not_mem_uncovered {a : Wordlist.Analysis} (hf : a ∈
       exact List.mem_map_of_mem (List.mem_filter.2 ⟨hf, decide_eq_true ⟨hc, x, hx, hne⟩⟩)
     exact hu ((by decide : ∀ y ∈ _, y ∈ uncovered) _ h)
 
-/-- Over the fragment's roots and segments, the derivation produces every root-derived word of
+/-- Over the language file's roots and segments, the derivation produces every root-derived word of
 the data read as segments, the alternating stops realized by continuancy, except the verbs it
 leaves out. -/
 theorem words_derived_seg : ∀ p ∈ fragmentRoots, ∀ a ∈ Wordlist.analyses, a.root = some p.1 →

@@ -3,21 +3,21 @@ module
 public import Linglib.Data.WALS.Features.F113A
 public import Linglib.Data.Examples.Miestamo2005
 public import Linglib.Data.Examples.Cole1982
-public import Linglib.Fragments.Finnish.Negation
-public import Linglib.Fragments.Japanese.Negation
-public import Linglib.Fragments.Turkish.Negation
-public import Linglib.Fragments.Burmese.Negation
-public import Linglib.Fragments.Mandarin.Negation
-public import Linglib.Fragments.English.Negation
-public import Linglib.Fragments.Maori.Negation
-public import Linglib.Fragments.Hixkaryana.Negation
-public import Linglib.Fragments.German.Negation
-public import Linglib.Fragments.Romance.Italian.Negation
-public import Linglib.Fragments.Romance.French.Negation
-public import Linglib.Fragments.Slavic.Russian.Negation
-public import Linglib.Fragments.Romance.Spanish.Negation
-public import Linglib.Fragments.Quechua.Negation
-public import Linglib.Fragments.Tunica.Negation
+public import Linglib.Languages.Finnish.Negation
+public import Linglib.Languages.Japanese.Negation
+public import Linglib.Languages.Turkish.Negation
+public import Linglib.Languages.Burmese.Negation
+public import Linglib.Languages.Mandarin.Negation
+public import Linglib.Languages.English.Negation
+public import Linglib.Languages.Maori.Negation
+public import Linglib.Languages.Hixkaryana.Negation
+public import Linglib.Languages.German.Negation
+public import Linglib.Languages.Romance.Italian.Negation
+public import Linglib.Languages.Romance.French.Negation
+public import Linglib.Languages.Slavic.Russian.Negation
+public import Linglib.Languages.Romance.Spanish.Negation
+public import Linglib.Languages.Quechua.Negation
+public import Linglib.Languages.Tunica.Negation
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 
@@ -42,7 +42,8 @@ asymmetric, and of type SymAsy otherwise (`languageType`), so the definitional c
 book's fourth table follow (`languageType_eq_symmetric_iff`, `languageType_eq_asymmetric_iff`).
 
 The types are instantiated on the book's examples, the rows of `Data.Examples.Miestamo2005`, each
-language's pairs being its negative rows with the affirmatives they cite and its fragment's standard
+language's pairs being its negative rows with the affirmatives they cite and its language file's
+standard
 negator as the marker, the German and Italian paradigms by their first person singular. Spanish,
 German, Italian, French and Russian are of type Sym. The Finnish negative auxiliary takes the ending
 of the finite verb and leaves the lexical verb without it; the plain Japanese negative inflects as
@@ -126,7 +127,7 @@ def cite (l : Glottocode) (f : Form) : Form :=
 def forms (e : Datum) : List Form :=
   (Morphology.Morph.wordsOf e.primaryText).flatten.map (cite e.language)
 
-/-- The standard negators of a language, from its fragment. -/
+/-- The standard negators of a language, from its language file. -/
 def standard (l : Glottocode) : List Marker :=
   (List.lookup l [(.spanish, Spanish.Negation.standard), (.german, German.Negation.standard),
     (.italian, Italian.Negation.standard), (.french, French.Negation.standard),

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Order.Concept
 public import Linglib.Morphology.Exponence.SubsetRule
-public import Linglib.Fragments.Latvian.Pronouns
+public import Linglib.Languages.Latvian.Pronouns
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Japanese.Nouns
-public import Linglib.Fragments.Japanese.Pronouns
+public import Linglib.Languages.Japanese.Nouns
+public import Linglib.Languages.Japanese.Pronouns
 public import Studies.GundelHedbergZacharski1993
 public import Linglib.Data.Examples.Downing1996
 public import Linglib.Data.Examples.Readers
@@ -24,10 +24,12 @@ The semantic parameters of each category are coded here in the vocabulary of `Cl
 from the referent classes of the inventory tables. The coding is the formalization's, and it answers
 to Downing three times: to the kind and quality labels she prints beside her examples of
 disambiguation, to her sorting of classifiers by Denny's three kinds of interaction, and to the
-animacy of the nouns the fragment counts with each classifier. A parameter is deductive when it is
+animacy of the nouns the language file counts with each classifier. A parameter is deductive when
+it is
 a physical property; an inherent nature, which a classifier specific to one kind of noun encodes,
 is not, so *-rin* 'flowers' and *-kabu* 'rooted plants' are kind-classifiers. The coding is keyed by
-the fragment's classifier entries, and the examples are linked to the fragments by typed lists, of
+the language file's classifier entries, and the examples are linked to the language files by typed
+lists, of
 classifiers and of noun-phrase heads with the animacy of their groups; no row feature feeds a
 prediction, and the printed labels are read only as the targets of the cohesion check. About a
 dozen codings, among them *-ten*, *-shoku* and *-kabu*, meet none of these checks. The corpus
@@ -37,7 +39,8 @@ positions of the classifier phrase in Chapter 8 are not represented.
 ## TODO
 
 Downing's claim that only quality-classifiers serve as modifiers, adding information a noun does
-not carry, needs the conventional classifiers of the nouns concerned in the fragment; one of her
+not carry, needs the conventional classifiers of the nouns concerned in the language file; one of
+her
 examples uses *-ten*, which the coding makes a kind-classifier. Her estimate that deductive forms
 are under a quarter of the core and extended inventories needs the whole extended inventory.
 
@@ -173,7 +176,7 @@ theorem params_toClass :
   decide
 
 -- p. 143: the classifiers for humans and animals are set apart from those for inanimates, and the
--- classifiers that count the fragment's nouns encode animacy exactly for the animate nouns.
+-- classifiers that count the language file's nouns encode animacy exactly for the animate nouns.
 theorem params_animacy_iff :
     ∀ n ∈ Japanese.Nouns.nouns, ∀ c ∈ n.classifiers,
       ∃ ps ∈ params c, (∃ p ∈ ps, p.toClass = some .animacy) ↔ n.animacy ≠ .inanimate := by
@@ -286,7 +289,7 @@ theorem required_iff_singularPlural (h : NPHead) :
     pluralMarking .human h = .required ↔ numberSystem h = .singularPlural := by
   cases h <;> decide
 
-/-- The head of a noun phrase as an entry of the fragments. -/
+/-- The head of a noun phrase as an entry of the language files. -/
 inductive Head
   | noun (n : Japanese.Nouns.Noun)
   | name (n : Japanese.Nouns.ProperName)
@@ -306,7 +309,7 @@ structure GroupNP where
   /-- The animacy of the members of the group. -/
   animacy : Animacy
 
-/-- A common noun refers to a group of the animacy the fragment records for it. -/
+/-- A common noun refers to a group of the animacy the language file records for it. -/
 def GroupNP.ofNoun (n : Japanese.Nouns.Noun) : GroupNP := ⟨.noun n, n.animacy⟩
 
 /-- The availability of the plural suffix on the noun phrase. -/

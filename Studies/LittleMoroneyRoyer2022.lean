@@ -6,8 +6,8 @@ public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
 public import Studies.Borer2005
 public import Studies.IoninMatushansky2006
-public import Linglib.Fragments.Mayan.Chol.Classifiers
-public import Linglib.Fragments.Shan.Classifiers
+public import Linglib.Languages.Mayan.Chol.Classifiers
+public import Linglib.Languages.Shan.Classifiers
 public import Linglib.Semantics.Mereology.Extensive
 
 /-!
@@ -57,12 +57,12 @@ open IoninMatushansky2006 (cardMod cardMod_atoms_iff)
 
 /-! ### The two strategies, in the morphology -/
 
-/-- Ch'ol classifiers are suffixes on the numeral, as the fragment's entries record. -/
+/-- Ch'ol classifiers are suffixes on the numeral, as the language file's entries record. -/
 theorem chol_classifiers_suffixed :
     ∀ c ∈ Chol.Classifiers.classifiers, c.kind = .bound .after .affix := by
   decide
 
-/-- Shan classifiers are free morphemes, as the fragment's entries record. -/
+/-- Shan classifiers are free morphemes, as the language file's entries record. -/
 theorem shan_classifiers_free : ∀ c ∈ Shan.Classifiers.classifiers, c.kind = .free := by
   decide
 

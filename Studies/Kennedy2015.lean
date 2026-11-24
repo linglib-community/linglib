@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.NumeralModifiers
+public import Linglib.Languages.English.NumeralModifiers
 public import Linglib.Semantics.Quantification.Numerals.Basic
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Pragmatics.NeoGricean.Basic
@@ -21,7 +21,7 @@ least count the modal requires and over a possibility modal the greatest it allo
 (`necessity_wide_iff`, `possibility_wide_iff`).
 
 The two classes of Nouwen differ in the ordering they express ((4)), exclusive for
-Class A and inclusive for Class B. Over the English modifiers, whose class the Fragment reads
+Class A and inclusive for Class B. Over the English modifiers, whose class the language file reads
 off the construction, this is a fact about every reading, stated in Kamp's classes of modifiers:
 a Class A reading is disjoint from the number's two-sided meaning and a Class B reading is
 extensive (`classA_exclusive`, `classB_inclusive`).

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Dutch.PolarityItems
+public import Linglib.Languages.Dutch.PolarityItems
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Data.Examples.VanDerWouden1997
 public import Linglib.Data.Examples.Readers
@@ -16,7 +16,7 @@ polarity item, blocked by the antimorphic negation *niet*. The library's context
 operators have the strengths he assigns them (`context_strengths`). He holds that a verb with
 negative properties is anti-additive, none being only monotone decreasing; *deny* bears this out,
 but *doubt*, on his own sketch of it as not believing the complement, is only monotone decreasing
-(`verb_strengths`). With *ooit*'s Fragment entry every judgment of his (184) is the licensing
+(`verb_strengths`). With *ooit*'s language file entry every judgment of his (184) is the licensing
 theory's (`judgments_predicted`). An entry that were only a negative polarity item, as on the
 analysis with two items *ooit*, would be admitted under *niet*, against (184d)
 (`negativeOnly_admits_niet`). *Hoeven* 'need', a weak negative polarity item, is out in questions,
@@ -88,7 +88,7 @@ def Context.ofKey : String → Option Context
   | _ => none
 
 /-- Every row of (184) on *ooit* names its context, and is acceptable exactly when the context
-admits *ooit*'s Fragment entry. -/
+admits *ooit*'s language file entry. -/
 theorem judgments_predicted :
     ∀ d ∈ Examples.all, d.feature? "item" = some "ooit" →
       ∃ c ∈ (d.feature? "context").bind Context.ofKey,

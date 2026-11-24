@@ -57,14 +57,14 @@ distinguish more target genders, which Greenberg's universal 37 excludes.
   counted per target as well as per number across targets.
 * An assignment `N → G` gives every noun one controller gender, the Canonical Gender
   Principle of [corbett-fedden-2016].
-* The relations between two numbers take any controllers; the fragments state them of their
+* The relations between two numbers take any controllers; the language files state them of their
   genders rather than their nouns.
 * The kernel of a map is the syncretism of `Morphology/Paradigm/Basic.lean`, read here over the
   controllers a target agrees with rather than over the cells of a paradigm.
 * Subgenders, agreement classes differing on a minority of forms, inquorate genders, small
   closed classes whose pattern mixes other genders, and overdifferentiated targets are the
   steps from agreement classes to controller genders that remain to be defined; until then
-  the agreement classes of a fragment are its controller genders only when the fragment
+  the agreement classes of a language file are its controller genders only when the language file
   records no such class.
 
 ## References

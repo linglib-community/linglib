@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Fragments.Romance.Italian.Pronouns
+public import Linglib.Languages.Romance.Italian.Pronouns
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Comparative
 
@@ -175,7 +175,7 @@ def italian : Inventory Morph where
   forms := [[mi, da], [da, mmi]]
   rootClass m := if m = da then some .action else none
 
-/-- In (19), the object person forms are affixes, though the Italian fragment records *mi* as a
+/-- In (19), the object person forms are affixes, though the Italian language file records *mi* as a
 clitic. -/
 theorem italian_object_affixes :
     Italian.Pronouns.mi.strength = some .clitic ∧

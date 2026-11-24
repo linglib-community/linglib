@@ -1,10 +1,10 @@
 module
 
 public import Linglib.Syntax.Clause.Basic
-public import Linglib.Fragments.Norwegian.WordOrder
-public import Linglib.Fragments.English.WordOrder
-public import Linglib.Fragments.German.WordOrder
-public import Linglib.Fragments.Danish.WordOrder
+public import Linglib.Languages.Norwegian.WordOrder
+public import Linglib.Languages.English.WordOrder
+public import Linglib.Languages.German.WordOrder
+public import Linglib.Languages.Danish.WordOrder
 public import Linglib.Data.Examples.Westergaard2009
 public import Linglib.Semantics.Focus.Marking
 public import Mathlib.Tactic.DeriveFintype
@@ -39,8 +39,9 @@ subject is new](##isV2_order_iff).
 
 ## Implementation notes
 
-* The word order of each variety is its fragment's distribution of verb second over sentence types
-  and embedding contexts, read off the left edges the fragment admits for Norwegian, Danish and
+* The word order of each variety is its language file's distribution of verb second over sentence
+  types
+  and embedding contexts, read off the left edges the language file admits for Norwegian, Danish and
   German. A grammar's [heads](##heads) are read off it: the root heads from the verb-second
   distribution, Fin⁰ and Wh⁰ from the left edges without a complementizer, at the
   `quasiSubordinated` cells of Bhatt and Dayal where the complements of bridge and rogative verbs
@@ -51,14 +52,14 @@ subject is new](##isV2_order_iff).
   as no movement to Fin⁰.
 * Imp⁰ is movement of the verb past an overt imperative subject, which Belfast English shows (19).
   Norwegian and German imperatives leave the forefield empty and front the verb, as Faarlund, Lie
-  and Vannebo and Truckenbrodt describe them, so their fragments require verb second there; the
+  and Vannebo and Truckenbrodt describe them, so their language files require verb second there; the
   heads compared with the table leave Imp⁰ out.
 * Only some Danish exclamatives are verb second, which her table counts as movement to Excl⁰. The
-  Danish fragment takes its exclamative cell from Westergaard and the others from Vikner, and
+  Danish language file takes its exclamative cell from Westergaard and the others from Vikner, and
   leaves the imperative unrecorded.
 * The cues (57) and (60) for verb movement to I°, which she motivates with Icelandic, the cue for
   English inflectional elements, *som*-insertion, focus-sensitive adverbs, *kanskje*, and the
-  acquisition chapters are not formalized. The Tromsø rows have no fragment and enter only the
+  acquisition chapters are not formalized. The Tromsø rows have no language file and enter only the
   *wh*-word model.
 
 ## References
@@ -246,7 +247,7 @@ def orderOf (r : Datum) : Option Obligatoriness :=
     [("V2", .obligatory), ("V1", .obligatory), ("non-V2", .excluded), ("non-V2 or V2", .optional),
       ("V2 or non-V2", .optional)]
 
-/-- The fragments of a row's variety, Standard Norwegian, Nordmøre, Standard or Belfast English
+/-- The language files of a row's variety, Standard Norwegian, Nordmøre, Standard or Belfast English
 or Danish: its verb-second distribution and its distribution in embedded clauses without a
 complementizer. The Tromsø rows have none. -/
 def fragmentsOf (r : Datum) : Option (Distribution × Distribution) :=
@@ -266,7 +267,7 @@ when the row has none, otherwise its verb-second distribution. -/
 def grammarOf (r : Datum) : Option Distribution :=
   (fragmentsOf r).map fun p ↦ if r.feature? "complementizer" = some "none" then p.2 else p.1
 
-/-- Every judged word order in the data falls on a cell the fragment of its variety records and
+/-- Every judged word order in the data falls on a cell the language file of its variety records and
 is allowed there, apart from the *kanskje* rows, which the chapter treats as a lexical
 exception. -/
 theorem rows_consistent :

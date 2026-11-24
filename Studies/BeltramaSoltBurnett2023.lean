@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Basic.Sign
 public import Linglib.Data.Statistics.BeltramaSoltBurnett2023
 public import Linglib.Pragmatics.SocialMeaning.IndexicalField
-public import Linglib.Fragments.English.NumeralModifiers
+public import Linglib.Languages.English.NumeralModifiers
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Data.Rat.Floor

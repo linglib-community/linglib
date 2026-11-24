@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Fragments.Adyghe.Clause
-public import Linglib.Fragments.Slavic.Bulgarian.Clause
-public import Linglib.Fragments.Ndebele.Clause
-public import Linglib.Fragments.NezPerce.Clause
+public import Linglib.Languages.Adyghe.Clause
+public import Linglib.Languages.Slavic.Bulgarian.Clause
+public import Linglib.Languages.Ndebele.Clause
+public import Linglib.Languages.NezPerce.Clause
 public import Linglib.Data.Examples.Deal2026
 public import Linglib.Data.Examples.Krapova2010
 public import Studies.BochnakHanink2021
@@ -28,12 +28,12 @@ factivity cross-cuts the Ā axis as well (table (80)).
 
 The Nez Perce embedding strategy is read off the paper's judgments in
 `Data/Examples/Deal2026.json`. The Adyghe Ā flag is that the typer 'think' takes carries the
-Fragment's relativizer *zV-*, and the Bulgarian flag is Krapova's double requirement over the
-Fragment's frames, checked against her sentences (56)–(59) in `Data/Examples/Krapova2010.json`.
+language file's relativizer *zV-*, and the Bulgarian flag is Krapova's double requirement over the
+language file's frames, checked against her sentences (56)–(59) in `Data/Examples/Krapova2010.json`.
 
 ## Implementation notes
 
-The Ā column of (79) is a datum for English, Ndebele and Washo, whose Fragments carry no
+The Ā column of (79) is a datum for English, Ndebele and Washo, whose language files carry no
 relativizer observable, and the Washo V D CP structure of footnote 33, the complementation
 spine Bochnak and Hanink propose, is a row beside the table's six. Table (81), nominalization
 against factivity, needs Turkish *düşün-* 'think', which has no Fragment.
@@ -118,7 +118,7 @@ theorem cuukwe_conditional_projects :
 /-- A cell of table (79) pairs the extended spine of a notional complement, the heads projected
 from V up through any shell over C, with whether the CP contains an Ā-dependency. -/
 structure Cell where
-  spine : Spine
+  spine : Spine Minimalist.Cat
   internalAbar : Bool
 
 /-- A Nez Perce cell is a bare CP whose Ā-dependency is relative embedding. -/
@@ -194,7 +194,7 @@ shell with an N co-argument of [hankamer-mikkelsen-2021]. -/
 def englishNComplementation : Cell := ⟨Spine.cP.append [.N, .D], false⟩
 
 /-- The Bulgarian relative embedding of (49) is V P D CP with an Ā-dependency. Its flag comes
-from the Fragment, where *săžaljavam* 'regret' meets the double requirement and so takes the
+from the language file, where *săžaljavam* 'regret' meets the double requirement and so takes the
 *deto* complement Krapova analyzes as a hidden relative. -/
 def bulgarianRelative : Cell :=
   ⟨Spine.cP.append [.D, .P], decide (DetoComplement Bulgarian.sazhaljavam)⟩

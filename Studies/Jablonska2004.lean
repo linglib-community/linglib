@@ -22,7 +22,7 @@ property, or a path.
   their selectional requirements.
 * `WellFormed`, `Perfective`: every requirement of a derivation is met; its predicate is
   perfective.
-* `Stem`: a fragment verb with the verbalizer class the paper assigns it.
+* `Stem`: a language file verb with the verbalizer class the paper assigns it.
 * `attested`, `starred`: the paper's analyses of the forms it accepts and rejects.
 
 ## Implementation notes
@@ -431,10 +431,11 @@ theorem not_asp1Reading_distributive (v : Verbalizer) : ¬ Asp1Reading v false .
 
 /-! ### Stems -/
 
-/-- A stem of the analysis is a fragment verb with the verbalizer class the paper assigns it, so
+/-- A stem of the analysis is a language file verb with the verbalizer class the paper assigns it,
+so
 that the class belongs to the stem and every analysis over the stem shares it. -/
 structure Stem where
-  /-- The fragment verb. -/
+  /-- The language file verb. -/
   verb : Verb
   /-- The verbalizer class of Table 1 and Table 2. -/
   verbalizer : Verbalizer
@@ -702,7 +703,7 @@ theorem attested_perfective :
       (Perfective a.stem.verbalizer a.layers ↔ a.layers.getLast? ≠ some .si) := by
   decide
 
-/-- The fragment's aspect of each stem is the perfectivity the model derives for the bare stem:
+/-- The language file's aspect of each stem is the perfectivity the model derives for the bare stem:
 perfective exactly for the semelfactives, (46). -/
 theorem stem_perfectivity : ∀ a ∈ attested ++ starred,
     (a.stem.verb.perfectivity = some .perfective ↔ Perfective a.stem.verbalizer []) := by
@@ -710,7 +711,7 @@ theorem stem_perfectivity : ∀ a ∈ attested ++ starred,
 
 /-- Every infinitive without the Secondary Imperfective spells out its form: the prefixes, outermost
 first, and the stem are the morphs of the attested word, accepted or starred. The Secondary
-Imperfective replaces the stem's verbalizer, which the fragment's citation forms do not
+Imperfective replaces the stem's verbalizer, which the language file's citation forms do not
 separate. -/
 theorem spells : ∀ a ∈ attested ++ starred, a.form.cell = Wordlist.inf → .si ∉ a.layers →
     Svenonius2004.Spells a.morphs a.form.form := by

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Zheng2025
-public import Linglib.Fragments.Mandarin.QuestionParticles
+public import Linglib.Languages.Mandarin.QuestionParticles
 public import Linglib.Pragmatics.DecisionTheoretic.Basic
 public import Linglib.Semantics.Modality.Kernel
 public import Linglib.Semantics.Questions.Bias

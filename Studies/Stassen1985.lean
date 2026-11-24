@@ -1,17 +1,17 @@
 module
 
 public import Linglib.Data.Examples.Stassen1985
-public import Linglib.Fragments.Arabic.ModernStandard.Comparison
-public import Linglib.Fragments.Finnish.Comparison
-public import Linglib.Fragments.HindiUrdu.Comparison
-public import Linglib.Fragments.Japanese.Comparison
-public import Linglib.Fragments.Mandarin.Comparison
-public import Linglib.Fragments.Romance.French.Comparison
-public import Linglib.Fragments.Slavic.Russian.Comparison
-public import Linglib.Fragments.Swahili.Comparison
-public import Linglib.Fragments.Turkish.Clause
-public import Linglib.Fragments.Turkish.Comparison
-public import Linglib.Fragments.Yoruba.Comparison
+public import Linglib.Languages.Arabic.ModernStandard.Comparison
+public import Linglib.Languages.Finnish.Comparison
+public import Linglib.Languages.HindiUrdu.Comparison
+public import Linglib.Languages.Japanese.Comparison
+public import Linglib.Languages.Mandarin.Comparison
+public import Linglib.Languages.Romance.French.Comparison
+public import Linglib.Languages.Slavic.Russian.Comparison
+public import Linglib.Languages.Swahili.Comparison
+public import Linglib.Languages.Turkish.Clause
+public import Linglib.Languages.Turkish.Comparison
+public import Linglib.Languages.Yoruba.Comparison
 public import Linglib.Syntax.Feature.Case.Spatial
 public import Mathlib.Basic.Rel
 
@@ -59,7 +59,7 @@ comparative.
 * The Principle of Parallel Chaining, the word orders of each type of deranking, the mixed
   comparatives and the procedure-based universals are not formalized.
 * The book's chaining examples are not recorded as rows, and its Korean separative marker
-  *-eso* is not in the fragment, so the universals are checked on Turkish alone.
+  *-eso* is not in the language file, so the universals are checked on Turkish alone.
 
 ## References
 
@@ -372,7 +372,7 @@ def Examples.ComparativeClass.toType : Examples.ComparativeClass → Comparative
   | .conjoined => .conjoined
   | .particle => .particle
 
-/-- The fragment's construction for each lexeme of the rows. -/
+/-- The language file's construction for each lexeme of the rows. -/
 def Examples.Lexeme.entry : Examples.Lexeme → Comparative
   | .dan => Turkish.Comparison.dan
   | .se => HindiUrdu.Comparison.se
@@ -388,7 +388,7 @@ def Examples.Lexeme.entry : Examples.Lexeme → Comparative
   | .juxtaposition => Swahili.Comparison.conjoined
   | .partitive => Finnish.Comparison.partitive
 
-/-- The type of the fragment's construction is the type the book classes the example under, for
+/-- The type of the language file's construction is the type the book classes the example under, for
 each example but that of the Finnish partitive standard. -/
 theorem typeOf_entry :
     ∀ x : Examples.Example, ∀ l ∈ x.lexemes .standard,

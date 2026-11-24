@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Kennedy1999
-public import Linglib.Fragments.English.Adjectives
-public import Linglib.Fragments.English.MeasurePhrases
+public import Linglib.Languages.English.Adjectives
+public import Linglib.Languages.English.MeasurePhrases
 public import Linglib.Semantics.Degree.Extent
 
 /-!

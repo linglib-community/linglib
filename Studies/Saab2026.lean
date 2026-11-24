@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Romance.Spanish.Binominals
+public import Linglib.Languages.Romance.Spanish.Binominals
 public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Syntax.Minimalist.Ellipsis
 public import Linglib.Data.Examples.Saab2026
@@ -25,7 +25,7 @@ same principle covers the paper's structural ambiguity of quantity nouns: under 
 descriptive reading the noun heads the projection, so it can be elided and the verb is
 singular, and under the quantificational reading the coda heads it, so the coda can be elided
 and the verb is plural (`elidable_first_iff_singular`). The rows are the paper's examples,
-with the type of each first noun read from the Spanish fragment, and their ellipsis,
+with the type of each first noun read from the Spanish language file, and their ellipsis,
 agreement and gap facts follow from the structure assigned to them (`ellipsis_matches`).
 
 ## Implementation notes
@@ -145,7 +145,7 @@ theorem elidable_first_iff_singular (b : BinominalType) (r : Reading) (hb : b �
 
 /-! ### The paper's examples -/
 
-/-- A row's binominal type, from the fragment entry of its first noun. -/
+/-- A row's binominal type, from the language file entry of its first noun. -/
 def binominalType? (x : Datum) : Option BinominalType :=
   (x.feature? "noun").bind fun f ↦ (lookup f).map (·.binominalType)
 

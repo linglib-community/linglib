@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.ChoiceFunction
-public import Linglib.Fragments.Akan.Determiners
+public import Linglib.Languages.Akan.Determiners
 public import Linglib.Data.Examples.Owusu2022
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype

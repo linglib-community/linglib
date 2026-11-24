@@ -103,12 +103,12 @@ structure HorizonSetting where
 
 namespace HorizonSetting
 
-variable (p : HorizonSetting) {s t : Spine} {c d h h' : Cat} {o : Option Cat}
+variable (p : HorizonSetting) {s t : Spine Cat} {c d h h' : Cat} {o : Option Cat}
 
 /-! ### Transparency -/
 
 /-- A clause is transparent to `p` when its label is disjoint from the horizon of `p`. -/
-def TransparentTo (s : Spine) : Prop := Disjoint p.horizon.toFinset s.label
+def TransparentTo (s : Spine Cat) : Prop := Disjoint p.horizon.toFinset s.label
 
 instance : Decidable (p.TransparentTo s) := inferInstanceAs (Decidable (Disjoint _ _))
 
@@ -135,11 +135,11 @@ theorem transparentTo_antitone : Antitone p.TransparentTo := fun _ _ ↦ Transpa
 
 variable (p) in
 /-- The clauses transparent to `p`, a lower set of the extension order. -/
-def transparent : LowerSet Spine := ⟨{s | p.TransparentTo s}, fun _ _ h ht ↦ ht.anti h⟩
+def transparent : LowerSet (Spine Cat) := ⟨{s | p.TransparentTo s}, fun _ _ h ht ↦ ht.anti h⟩
 
 @[simp] theorem mem_transparent : s ∈ p.transparent ↔ p.TransparentTo s := Iff.rfl
 
-@[simp] theorem coe_transparent : (p.transparent : Set Spine) = {s | p.TransparentTo s} := rfl
+@[simp] theorem coe_transparent : (p.transparent : Set (Spine Cat)) = {s | p.TransparentTo s} := rfl
 
 /-- Among the truncations of a spine, the clauses transparent to a probe are those inside the
 complement of its horizon. -/
@@ -160,7 +160,7 @@ theorem TransparentTo.of_mem_below (ht : t.heads <+: s.heads) (hh : h' ∈ s.bel
 variable (p) in
 /-- `p` is vacuous in `s` when its horizon lies in the complement of its head, so that its search
 ends at its sister and it triggers no movement or agreement. -/
-def IsVacuousIn (s : Spine) : Prop := ¬ p.TransparentTo (s.below p.head)
+def IsVacuousIn (s : Spine Cat) : Prop := ¬ p.TransparentTo (s.below p.head)
 
 instance : Decidable (p.IsVacuousIn s) := inferInstanceAs (Decidable (¬ _))
 
@@ -237,7 +237,7 @@ def rootToken? : RoseTree Vertex → Option LexicalItem.Token
 /-- The spine of a tree, the heads of its extended projection, given the index `η` of the head
 daughter of each tree: a head projects its category over the spine of its sister, and a phrase
 keeps the spine of its head daughter ([keine-2019]'s Category Inheritance). -/
-def spineOf : RoseTree Vertex → Spine
+def spineOf : RoseTree Vertex → Spine Cat
   | .node (.inl (some tok)) _ => ⟨[tok.item.cat]⟩
   | .node (.inl none) [l, r] =>
     match η (.node (.inl none) [l, r]) with
@@ -247,7 +247,7 @@ def spineOf : RoseTree Vertex → Spine
   | _ => ⟨[]⟩
 
 /-- The spine of the node at `p`. -/
-def spineAt (p : GornAddress) : Spine := t.toRoseTree[p]?.elim ⟨[]⟩ (spineOf η)
+def spineAt (p : GornAddress) : Spine Cat := t.toRoseTree[p]?.elim ⟨[]⟩ (spineOf η)
 
 /-- The positions behind the horizon `c` of the probe at `a`, those dominated by a node the probe
 c-commands whose spine contains `c` ([keine-2019]'s Horizons). -/
@@ -324,13 +324,13 @@ theorem HorizonSetting.mem_cut_iff :
 variable (η t) in
 /-- The cut of a set `O` of spines: for a head at `a`, the positions under a node that `a`
 c-commands and whose spine is in `O`. -/
-def opaqueCut (O : Set Spine) : Cut :=
+def opaqueCut (O : Set (Spine Cat)) : Cut :=
   fun a ↦ {q | ∃ x < q, t.toRoseTree.CCommands a x ∧ spineAt η t x ∈ O}
 
 theorem opaqueCut_mono : Monotone (opaqueCut η t) :=
   fun _ _ h _ _ ⟨x, hx, ha, ho⟩ ↦ ⟨x, hx, ha, h ho⟩
 
-theorem opaqueCut_union (O O' : Set Spine) :
+theorem opaqueCut_union (O O' : Set (Spine Cat)) :
     opaqueCut η t (O ∪ O') = opaqueCut η t O ⊔ opaqueCut η t O' := by
   ext a q
   simp only [opaqueCut, Set.mem_union, Pi.sup_apply, Set.mem_ofPred_eq]
@@ -340,7 +340,7 @@ theorem opaqueCut_union (O O' : Set Spine) :
   · rintro (⟨x, hx, ha, ho⟩ | ⟨x, hx, ha, ho⟩)
     exacts [⟨x, hx, ha, .inl ho⟩, ⟨x, hx, ha, .inr ho⟩]
 
-theorem isUpperSet_opaqueCut {O : Set Spine} : IsUpperSet (opaqueCut η t O a) :=
+theorem isUpperSet_opaqueCut {O : Set (Spine Cat)} : IsUpperSet (opaqueCut η t O a) :=
   fun _ _ hqr ⟨x, hx, h⟩ ↦ ⟨x, hx.trans_le hqr, h⟩
 
 /-- The positions behind a probe's horizon are the cut of the clauses not transparent to it. -/

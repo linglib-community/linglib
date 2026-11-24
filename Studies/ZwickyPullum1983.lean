@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Languages.English.Auxiliaries
 public import Linglib.Logic.Modal.Basic
 public import Mathlib.Data.Fin.Basic
 

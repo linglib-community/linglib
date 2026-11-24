@@ -6,9 +6,9 @@ public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Logic.Trivalent.Connectives
-public import Linglib.Fragments.Mayan.Chuj.Verbs
-public import Linglib.Fragments.Mayan.Chuj.Voice
-public import Linglib.Fragments.Mayan.Chuj.Extraction
+public import Linglib.Languages.Mayan.Chuj.Verbs
+public import Linglib.Languages.Mayan.Chuj.Voice
+public import Linglib.Languages.Mayan.Chuj.Extraction
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.AlonsoOvalleRoyer2024
@@ -43,7 +43,7 @@ models](##context_rows), and with the sums it [mispredicts four](##sums_mispredi
 * A row's judgments are of the readings it names. Its item, its negation, the site of its DP and
   whether its verb is volitional are read off its glossed words: the site from the Agent Focus
   marking of `Chuj.Extraction.realize`, the passive of `Chuj.passive` and the verbs of
-  `Fragments/Mayan/Chuj/Verbs.lean`, whose subjects' entailments also give volitionality. Each
+  `Languages/Mayan/Chuj/Verbs.lean`, whose subjects' entailments also give volitionality. Each
   context the study models is a typed definition quoting the paper.
 * The bounds of *algún* and *uno cualquiera*, the first a quantity implicature, are part of the
   assertion here.

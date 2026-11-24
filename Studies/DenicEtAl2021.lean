@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Statistics.DenicEtAl2021
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Linglib.Core.Probability.ConditionalProbability
 
 /-!
@@ -23,8 +23,8 @@ Oaksford's probabilistic semantics of quantified sentences.
 
 ## Implementation notes
 
-* The English fragment gives *many* no reading; a model fixes one of Partee's cardinal and
-  proportional readings, and every result holds for both. *Few* is the fragment's proportional
+* The English language file gives *many* no reading; a model fixes one of Partee's cardinal and
+  proportional readings, and every result holds for both. *Few* is the language file's proportional
   reading.
 * *Only 12* is its presupposition and assertion together, at least and at most twelve, which is
   *exactly 12* (`Environment.denotation_only12`); the licensing context is still focus *only*,

@@ -1,8 +1,8 @@
 module
 
 public import Studies.Cinque2005
-public import Linglib.Fragments.English.Relativization
-public import Linglib.Fragments.Hebrew.Relativization
+public import Linglib.Languages.English.Relativization
+public import Linglib.Languages.Hebrew.Relativization
 
 /-!
 # Cinque (2020): The Syntax of Relative Clauses

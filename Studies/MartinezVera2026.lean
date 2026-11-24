@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.MartinezVera2026
 public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Discourse.SpeechAct.Role
-public import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
+public import Linglib.Languages.Quechua.SaraguroKichwa.Evidentiality
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Semantics.Evidentiality.Evidence
 public import Linglib.Semantics.Exhaustification.InnocentExclusion

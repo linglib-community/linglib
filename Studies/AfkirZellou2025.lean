@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Fin.VecNotation
-public import Linglib.Fragments.Tarifit.ConsonantalRoots
+public import Linglib.Languages.Tarifit.ConsonantalRoots
 public import Linglib.Phonology.Segmental.Sonority.Obstruent
 public import Linglib.Phonology.Segmental.Sonority.Sequencing
 public import Linglib.Morphology.Morphotactics.Association
@@ -17,7 +17,7 @@ public import Linglib.Data.Examples.Readers
 Tarifit triconsonantal verbs in the simple imperative carry a template schwa between the second
 and third radicals, and Afkir and Zellou find two further variants: a short intrusive schwa in
 the initial cluster ([Cə̆CəC]) and vowelless forms ([CCC]). This file builds the thirty-eight
-target words from the fragment's roots by McCarthy's association conventions, classifies their
+target words from the language file's roots by McCarthy's association conventions, classifies their
 initial clusters on the book's sonority scale, and states the generalizations of Tables 7 and 9
 over the pooled rows.
 
@@ -31,7 +31,7 @@ Table 9 files it under rising sonority. Vowellessness tracks voiceless second an
 (`voiceless_of_often_vowelless`, `voiced_of_never_vowelless`).
 
 The intensive imperative geminates the medial radical in the template CəCCəC, and a geminate
-bilabial or dental fricative is a stop (p. 9): /ʒβð/ has [ʒβəð] and [ʒəb:əð]. One fragment root
+bilabial or dental fricative is a stop (p. 9): /ʒβð/ has [ʒβəð] and [ʒəb:əð]. One language file root
 derives both imperatives of each verb of §2 (`imperatives_derived`), except that Table 1 prints
 the intensive of /χns/ without the schwa after the geminate (`bend_down_imp_intens`).
 

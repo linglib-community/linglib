@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Pronouns
 public import Linglib.Data.Examples.DechaineWiltschko2002
 public import Linglib.Data.Examples.Readers
 
@@ -17,7 +17,7 @@ Shuswap ones φPs and Japanese *kare* an NP. In English, *one* is an NP, first a
 pronouns are DPs, which is why they precede nouns, *we linguists*, and third person pronouns
 are φPs, *\*they linguists*, the dialect that says *them linguists* having reanalyzed *them* as
 the D-morpheme *th-* over the clitic φP *'em*. The English categories are derived from the
-Fragment's person features, and the determiner and bound-variable data are rows.
+language file's person features, and the determiner and bound-variable data are rows.
 
 ## References
 
@@ -115,7 +115,7 @@ def dialectB (p : PersonalPronoun) : Category :=
 
 /-! ### The rows -/
 
-/-- The category of a row's proform: the English pronouns' from the Fragment, dialect B's
+/-- The category of a row's proform: the English pronouns' from the language file, dialect B's
 *them* reanalyzed, and *one* and Japanese *kare* the NPs of sections 3.1 and 2.3. -/
 def categoryOf (e : Datum) : Option Category :=
   match e.feature? "pronoun", e.feature? "dialect" with

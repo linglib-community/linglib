@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.Questions.Bias
-public import Linglib.Fragments.English.PolarityItems
-public import Linglib.Fragments.German.PolarityItems
+public import Linglib.Languages.English.PolarityItems
+public import Linglib.Languages.German.PolarityItems
 
 /-!
 # Büring and Gunlogson 2000: aren't positive and negative polar questions the same?
@@ -27,7 +27,7 @@ negates it.
 
 * `E`, `Felicitous` — the proto-condition and the felicity condition of each question type
 * `Determiner`, `Question` — the morphosyntactic probes and a probed question; the polarity items
-  are the fragments' `either`, `too` and `brauchen`
+  are the language files' `either`, `too` and `brauchen`
 
 ## References
 

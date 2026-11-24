@@ -6,7 +6,7 @@ public import Linglib.Discourse.Accessibility
 public import Linglib.Discourse.Centering.Center
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Discourse.Coherence
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Pronouns
 public import Linglib.Syntax.Voice.Basic
 
 /-!

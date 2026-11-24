@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Helmantel2002
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.Dutch.Adpositions
+public import Linglib.Languages.Dutch.Adpositions
 public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Syntax.Projection.Tree
 public import Mathlib.Analysis.InnerProductSpace.Basic
@@ -26,11 +26,13 @@ does not separate a rejected preposition from an accepted postposition.
 
 ## Implementation notes
 
-* The classes are the lists of Appendix I.1 restricted to the fragment's entries, which follow a
-  later grammar. The appendix also calls *na* 'after' narrow locative, which the fragment records
-  as temporal, and *af* 'off' point locative, on a seldom used prepositional use the fragment
+* The classes are the lists of Appendix I.1 restricted to the language file's entries, which follow
+  a
+  later grammar. The appendix also calls *na* 'after' narrow locative, which the language file
+  records
+  as temporal, and *af* 'off' point locative, on a seldom used prepositional use the language file
   lacks; the productive postposition *af* is treated through the phrase in its specifier, (35)-(36)
-  of chapter 6. The appendix's postposition *onder* is regional and the fragment omits it.
+  of chapter 6. The appendix's postposition *onder* is regional and the language file omits it.
 * The directionality phrase is category `Path`, which the thesis identifies with PathP. A tree's
   linear order is its daughters' order, so the postpositional order is [the frontier of the raised
   object](##yield_postPP) and needs no linearization parameter.
@@ -103,19 +105,20 @@ instance : ∀ c r, Decidable (LocativeClass.Has c r)
   | .point, r => inferInstanceAs (Decidable (r = _))
   | .extended, _ => inferInstanceAs (Decidable True)
 
-/-- The narrow locative prepositions of Appendix I.1.1 in the fragment. -/
+/-- The narrow locative prepositions of Appendix I.1.1 in the language file. -/
 def narrowLocatives : List Dutch.Adposition :=
   [aan, achter, beneden, bij, binnen, boven, buiten, in_, naast, onder, op, tegen, tegenover,
    tussen, voor]
 
-/-- The point locative prepositions of Appendix I.1.2 in the fragment, the inherently directional
+/-- The point locative prepositions of Appendix I.1.2 in the language file, the inherently
+directional
 ones. -/
 def pointLocatives : List Dutch.Adposition := [naar, tot, van, vanaf, vanuit, via]
 
-/-- The extended locative prepositions of Appendix I.1.3 in the fragment. -/
+/-- The extended locative prepositions of Appendix I.1.3 in the language file. -/
 def extendedLocatives : List Dutch.Adposition := [door, langs, om, over₁, rond, uit, voorbij]
 
-/-- The class of a row's adposition, by the fragment's forms. -/
+/-- The class of a row's adposition, by the language file's forms. -/
 def classes : List (String × LocativeClass) :=
   narrowLocatives.map (fun a ↦ (a.form, .narrow)) ++
     pointLocatives.map (fun a ↦ (a.form, .point)) ++

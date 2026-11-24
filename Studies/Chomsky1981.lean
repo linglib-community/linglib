@@ -5,12 +5,12 @@ public import Linglib.Data.Examples.Readers
 public import Linglib.Syntax.Binding.Tree
 public import Linglib.Syntax.Projection.Tree
 public import Studies.Reinhart1976
-public import Linglib.Fragments.English.Adpositions
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Adpositions
+public import Linglib.Languages.English.Auxiliaries
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Pronouns
+public import Linglib.Languages.English.Verbs.Inventory
 
 /-!
 # Chomsky (1981): the binding theory
@@ -41,7 +41,7 @@ excludes](##judgment_92v), as the book observes.
   reading; none of the examples turns on the others.
 * Material with no bearing on binding is left out of the trees: complementizers and *on sale*.
   Head nouns are singular tokens, the number of a noun phrase playing no part, and *about* and the
-  copula, which have no fragment entries, are plain tokens.
+  copula, which have no language file entries, are plain tokens.
 * Page numbers are those of the seventh edition (1993).
 
 ## TODO

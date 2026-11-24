@@ -1,13 +1,13 @@
 module
 
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Pronouns
 public import Linglib.Semantics.Reference.Pronoun
 
 /-!
 # Büring (2012): Pronouns
 
 This file formalizes the semantics of definite pronouns in Büring's handbook survey, as theorems
-about the project's pronoun denotation applied to the English Fragment's entries. A pronoun is
+about the project's pronoun denotation applied to the English language file's entries. A pronoun is
 indexed and denotes the value its index has under the assignment; bound, anaphoric and deictic uses
 share that one denotation, so a binder is an external operator manipulating the assignment rather
 than a second lexical entry. The φ-features are presuppositions on the resolved referent: *she*

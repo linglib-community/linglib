@@ -8,7 +8,7 @@ module
 public import Linglib.Data.Examples.ClemDeal2026
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.Kawapanan.Shawi.Basic
+public import Linglib.Languages.Kawapanan.Shawi.Basic
 public import Linglib.Morphology.DistributedMorphology.Fission
 public import Linglib.Syntax.Obligatoriness
 public import Linglib.Syntax.Minimalist.Case.SyntacticObject

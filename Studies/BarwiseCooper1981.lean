@@ -4,7 +4,7 @@ public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Properties
 public import Linglib.Core.ModelTheory.Monadic
 public import Linglib.Semantics.Quantification.Witness
-public import Linglib.Fragments.English.Determiners
+public import Linglib.Languages.English.Determiners
 public import Linglib.Data.Examples.BarwiseCooper1981
 public import Mathlib.Data.Finset.Fin
 public import Mathlib.Data.Set.Card
@@ -28,7 +28,7 @@ determiners validate *D N that VP, VP* (C8); negation reverses monotonicity (C9)
 increasing quantifier and its dual overlap (C10); a monotone quantifier is decided by its
 witness sets (C11). C12 and C13 prove that *more than half* is definable neither in
 first-order logic nor from the unrelativized majority quantifier, so *most* is a determiner,
-not a quantifier. The fragment's quantity words instantiate Table II. *Exactly three or
+not a quantifier. The language file's quantity words instantiate Table II. *Exactly three or
 exactly five*, one of the quantifiers the monotonicity constraint U6 rules out,
 [fails it](##not_rightContinuous_exactly_three_sup_exactly_five), and the paper's
 artificial determiners witness that U7 and U8 are not logical truths either. Under the

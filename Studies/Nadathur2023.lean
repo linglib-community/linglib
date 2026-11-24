@@ -4,7 +4,7 @@ public import Mathlib.Data.Fintype.Prod
 public import Linglib.Semantics.Causation.CausalModel.Dependence
 public import Linglib.Semantics.Presupposition.Implicative
 public import Linglib.Core.Relation.ReflTransGen
-public import Linglib.Fragments.Finnish.Verbs
+public import Linglib.Languages.Finnish.Verbs
 public import Linglib.Data.Examples.Nadathur2023
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Morphology.Word.Leipzig
@@ -26,8 +26,9 @@ assertion and denial decide the message (`dare_felicitous_for_msg`, `msg_of_dare
 `not_msg_of_not_dare`). The nerve is necessary but not sufficient for establishing communication and
 for spying, so *dare* is infelicitous there (`dare_infelicitous_for_com`,
 `dare_infelicitous_for_spy`). Each of the paper's Finnish minimal pairs implies what the signature
-of its verb's Fragment entry says for its matrix polarity (`rows_agree`), and its complement is a
-Fragment verb in the infinitive and case that verb governs (`complement_mem_infinitiveForms`).
+of its verb's language file entry says for its matrix polarity (`rows_agree`), and its complement
+is a
+language file verb in the infinitive and case that verb governs (`complement_mem_infinitiveForms`).
 
 ## Implementation notes
 
@@ -300,7 +301,7 @@ end Consistent
 *kehdata* and *ehtiä* name their prerequisites, courage, engagement, patience,
 hard-heartedness, the lack of shame and time. *Jaksaa* names strength and *mahtua* being small
 enough, and both imply only when negated, as does *pystyä*, which the paper also allows might be
-a modal; *laiminlyödä* and *epäröidä* reverse the polarity. The Fragment's entries carry these
+a modal; *laiminlyödä* and *epäröidä* reverse the polarity. The language file's entries carry these
 signatures. -/
 
 /-- A minimal-pair member records the implication signature of its verb, the polarity of its
@@ -310,7 +311,8 @@ structure Row where
   matrix : Polarity
   entails : Flat Polarity
 
-/-- A row from the paper's features, with the signature of the Fragment's entry for its verb. -/
+/-- A row from the paper's features, with the signature of the language file's entry for its verb.
+-/
 def Row.ofDatum (e : Datum) : Option Row := do
   let k ← e.parse? "verb" (Finnish.verbs.map fun v ↦ (v.form, v.implicative))
   let m ← e.parse? "matrix" [("positive", Polarity.positive), ("negated", .negative)]

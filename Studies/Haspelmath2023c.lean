@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Fragments.English.Particles
-public import Linglib.Fragments.Slavic.Russian.QuestionParticles
-public import Linglib.Fragments.Turkish.QuestionParticles
+public import Linglib.Languages.English.Particles
+public import Linglib.Languages.Slavic.Russian.QuestionParticles
+public import Linglib.Languages.Turkish.QuestionParticles
 public import Linglib.Morphology.Word.Comparative
 public import Studies.Haspelmath2021c
 public import Studies.Haspelmath2023
@@ -18,7 +18,7 @@ when it can occur at both, and an interclitic when it can occur at neither. A se
 clitic must occur directly after the first word of its clause. These are properties of a morph's
 distribution over the free forms of its language, `Morphology.Comparative.Inventory`, and this
 file checks them against the paper's examples, and states where they agree with the attachment
-the fragments record for the same morphs, a label of the source, and with Zwicky and Pullum's
+the language files record for the same morphs, a label of the source, and with Zwicky and Pullum's
 criterion of selection, of which lack of word-class selectivity is the first.
 
 ## Main definitions
@@ -157,7 +157,7 @@ def knigu : Morph := .root "knigu"
 def vcera : Morph := .free "včera"
 
 /-- The Russian questions *Pročita-la li Anna knigu?*, *Knigu li Anna pročita-la?* and
-*Včera li Anna čita-la?*, with the fragment's morph for *li*. -/
+*Včera li Anna čita-la?*, with the language file's morph for *li*. -/
 def questions : Inventory Morph where
   forms :=
     [[procita, la] ++ Russian.QuestionParticles.li.morphs ++ [anna, knigu],
@@ -182,7 +182,7 @@ theorem li_not_isAffix : ¬ russian.IsAffix russian.IsContentful li := fun h ↦
   revert this
   decide
 
-/-- On these forms Russian *li* is a second-position clitic by the definition, and the fragment
+/-- On these forms Russian *li* is a second-position clitic by the definition, and the language file
 records that placement. -/
 theorem li_isSecondPosition :
     (∀ m ∈ Russian.QuestionParticles.li.morphs,
@@ -214,7 +214,7 @@ def ali : Morph := .root "Ali"
 /-- The Turkish adverb *dün* 'yesterday'. -/
 def dun : Morph := .free "dün"
 
-/-- The Turkish questions *geldi mi?*, *öldü mü?*, *Ali mi?* and *dün mü?*, with the fragment's
+/-- The Turkish questions *geldi mi?*, *öldü mü?*, *Ali mi?* and *dün mü?*, with the language file's
 morph for *mI*. -/
 def turkish : Inventory Morph where
   forms :=
@@ -225,7 +225,7 @@ def turkish : Inventory Morph where
   rootClass m := if m = gel ∨ m = ol then some .action else if m = ali then some .object else none
 
 /-- Turkish *mI* follows a verb, a noun and an adverb and ends each question, so on these forms
-it is an enclitic by the definition, and the fragment labels it one. -/
+it is an enclitic by the definition, and the language file labels it one. -/
 theorem mi_isEnclitic :
     ∀ m ∈ Turkish.QuestionParticles.mi.morphs,
       IsEnclitic turkish turkish.IsContentful m ∧ m.kind = .bound .after .clitic := by

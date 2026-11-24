@@ -3,7 +3,7 @@ module
 public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Basic
 public import Linglib.Phonology.Hiatus
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Deletion
-public import Linglib.Fragments.Farsi.Phonology
+public import Linglib.Languages.Farsi.Phonology
 
 /-!
 # Storme (2026): A Method to Evaluate Systemic Constraints in Probabilistic Grammars

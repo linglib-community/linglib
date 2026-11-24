@@ -4,10 +4,10 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Command.DominanceImage
 public import Linglib.Syntax.Projection.GornAddress
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.English.Verbs.Basic
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Pronouns
+public import Linglib.Languages.English.Verbs.Basic
 
 /-!
 # Chomsky 1995: bare phrase structure and the linear correspondence axiom

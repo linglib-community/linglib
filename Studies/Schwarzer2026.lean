@@ -4,7 +4,7 @@ public import Linglib.Syntax.WordOrder
 public import Studies.BrueningAlKhalaf2020
 public import Linglib.Data.Examples.Schwarzer2026
 public import Linglib.Data.Statistics.Schwarzer2026
-public import Linglib.Fragments.German.Verbs
+public import Linglib.Languages.German.Verbs
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -22,7 +22,7 @@ much as after it, against both closeness analyses.
 
 ## Implementation notes
 
-* The verbs' c-selection is read off their entries in `Fragments/German/Verbs`. The results are
+* The verbs' c-selection is read off their entries in `Languages/German/Verbs`. The results are
   `Data/Statistics/Schwarzer2026`; the mixed model and the logistic regression are not
   formalized, and the preferred order is the one chosen more often.
 * The bottom-up analyses are given the noun-phrase shell over the clause of the 2020 study; their
@@ -113,7 +113,7 @@ theorem exp1_predictions (s : Selection) (c : Complement) : ∀ v ∈ s.verbs,
       c = .coord ∨ s = .yes) := by
   cases s <;> cases c <;> decide
 
-/-- `entryOf form` is the fragment entry of the verb a row names. -/
+/-- `entryOf form` is the language file entry of the verb a row names. -/
 def entryOf (form : String) : Option German.Verb :=
   German.Verbs.allVerbs.find? (·.form = form)
 

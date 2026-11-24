@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Basic
-public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Languages.English.Auxiliaries
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.CiardelliGuerrini2026
 public import Linglib.Data.Examples.Readers
@@ -24,7 +24,7 @@ which is why *it's ok for John to sing or it's ok for John to dance* has no free
 (Alonso-Ovalle 2006). Across negation concord needs dual forces (Grosz 2010, Anand and
 Brasoveanu 2010), negation flipping the force of the feature it scopes over, so *I need not cook
 and I need not clean* conveys a permission to do neither and not an obligation. The
-modal features come from the English auxiliary Fragment, and the paper's coordination and
+modal features come from the English auxiliary language file, and the paper's coordination and
 concord examples are rows.
 
 ## Implementation notes
@@ -128,7 +128,8 @@ theorem ModalFeature.checks_negated_iff {checker checked : ModalFeature}
   simp only [ModalFeature.Checks, ModalFeature.negated, hi, hu, true_and]
   cases checker.force <;> cases checked.force <;> decide
 
-/-- The features of a modal auxiliary of the Fragment: the forces of its meanings, uninterpretable,
+/-- The features of a modal auxiliary of the language file: the forces of its meanings,
+uninterpretable,
 Zeijlstra's generalization that auxiliaries contribute no operator. -/
 def auxiliaryFeatures (a : ModalAuxiliary) : Finset ModalFeature :=
   a.quantificationalForces.image (⟨·, .uninterpretable⟩)
@@ -178,7 +179,8 @@ theorem need_not :
 
 /-! ### The rows -/
 
-/-- The modal features of a modal named in the rows: the auxiliaries' from the Fragment, and the
+/-- The modal features of a modal named in the rows: the auxiliaries' from the language file, and
+the
 interpretable feature of the non-auxiliary modals, (20). -/
 def featuresOf : String → Finset ModalFeature
   | "may" => auxiliaryFeatures may

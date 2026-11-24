@@ -13,7 +13,7 @@ public import Linglib.Morphology.Word.Basic
 The lexical core of the complementizer (clause-typing morpheme) as a
 grammatical object, modeled on `Syntax/Category/Pronoun/`: its exponent
 as morphs plus the consensus clause-typing axes, each drawn from
-existing substrate. Per-language fragments instantiate it — free
+existing substrate. Per-language language files instantiate it — free
 subordinators like *that* and *oti*, affixal clause-typers like Buryat
 *-žA* and Tigrinya *zɨ-*, grammaticalized say-roots like Buryat *gɘ*.
 

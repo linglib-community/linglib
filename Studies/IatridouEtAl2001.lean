@@ -46,7 +46,7 @@ has no universal perfect, except where an activity fills the span exactly.
 * Vlach's stativity test separates the Bulgarian neutral, which fails it, (49a), from the
   imperfective, though both have the subinterval property; the test turns on the framing of a
   *when*-clause, which footnote 5 says the interval features do not predict.
-* The Greek and Bulgarian participle facts belong in their languages' fragments once these
+* The Greek and Bulgarian participle facts belong in their languages' language files once these
   record the aspect of the perfect participle.
 * The individual-level facts (8) and (25)–(26), the reduced relatives of the addendum and the
   account of sentence-initial *for* by Merge height are syntactic and left in prose.

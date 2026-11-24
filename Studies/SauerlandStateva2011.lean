@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Degree.Granularity
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Data.Examples.SauerlandStateva2011
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
@@ -29,8 +29,8 @@ Granularities are the grains `grain`, identified by their widths, and the interv
 denotes is the cell of its degree. Cells are half-open so that they partition the scale; the
 chapter writes them closed, (12)–(13). A term is given by the endpoints of the scale it denotes a
 point on, `none` for an epistemically vague one: a numeral's scale is the order of `ℕ`, an
-adjective's that of its English fragment entry. *Absolutely* and *totally* share the entry of
-*completely* (p. 135). The rows are the cited judgments on terms with fragment entries.
+adjective's that of its English language file entry. *Absolutely* and *totally* share the entry of
+*completely* (p. 135). The rows are the cited judgments on terms with language file entries.
 
 ## References
 

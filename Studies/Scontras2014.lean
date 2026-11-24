@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.MeasurePhrases
+public import Linglib.Languages.English.MeasurePhrases
 public import Linglib.Semantics.Mereology.Connection
 public import Linglib.Data.Examples.Scontras2014
 public import Linglib.Data.Examples.Readers
@@ -10,7 +10,8 @@ public import Linglib.Data.Examples.Readers
 
 Scontras's third chapter studies quantizing nouns, the words that package a substance for counting
 or measuring. Diagnostics adapted from Rothstein separate three readings of *n Q of S* and three
-classes of noun (`Data/Examples/Scontras2014`), and the English fragment lists each example's noun
+classes of noun (`Data/Examples/Scontras2014`), and the English language file lists each example's
+noun
 under the class the chapter assigns it (`rows_nounClass`). A container noun like *glass* is a plain
 predicate whose container reading arises from intersective modification by the preposition *of*,
 contributing the filled-with relation ((38), `containerReading`); a measure term like *liter* is a
@@ -199,7 +200,7 @@ inductive QuantizingNounClass where
   deriving DecidableEq
 
 open English.MeasurePhrases in
-/-- The singular forms of the English nouns of a class, from the fragment's inventory of it. -/
+/-- The singular forms of the English nouns of a class, from the language file's inventory of it. -/
 def QuantizingNounClass.forms : QuantizingNounClass → List String
   | .measureTerm => measureTerms.map (·.form)
   | .containerNoun => containerNouns.map (·.form)

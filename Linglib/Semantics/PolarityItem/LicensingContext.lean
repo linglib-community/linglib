@@ -164,7 +164,8 @@ inductive LicensingContext where
   | negation
   /-- A negative quantifier, as in *nobody*, over a restrictor that is true of something. -/
   | nobody
-  /-- *Few* NP, in the proportional reading of the English fragment, which lies below the stronger
+  /-- *Few* NP, in the proportional reading of the English language file, which lies below the
+  stronger
   *no* on its scale. -/
   | few
   /-- *At most n* NP, which lies below the stronger *at most n − 1* on its scale. -/

@@ -6,7 +6,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Relation.ReflTransGen
 public import Studies.Buring2015
 public import Studies.HartmannZimmermann2004
-public import Linglib.Fragments.Hausa.Focus
+public import Linglib.Languages.Hausa.Focus
 public import Linglib.Data.Examples.AssmannEtAl2023
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

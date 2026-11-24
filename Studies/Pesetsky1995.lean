@@ -3,7 +3,7 @@ module
 public import Mathlib.Logic.Relation
 public import Linglib.Data.Examples.Pesetsky1995
 public import Linglib.Syntax.Tree.Shell
-public import Linglib.Fragments.English.Adpositions
+public import Linglib.Languages.English.Adpositions
 
 /-!
 # Pesetsky (1995): Zero Syntax

@@ -2,8 +2,8 @@ module
 
 public import Linglib.Phonology.RuleInteraction
 public import Linglib.Phonology.Subregular.LocalRewrite
-public import Linglib.Fragments.Finnish.Phonology
-public import Linglib.Fragments.Turkish.Phonology
+public import Linglib.Languages.Finnish.Phonology
+public import Linglib.Languages.Turkish.Phonology
 
 /-!
 # Baković and Blumenfeld (2024): A formal typology of process interactions
@@ -25,7 +25,7 @@ orders opaque](##seeding_turkish), and [flipping a feeding map makes it bleed](#
   input, so they compare membership in the output set.
 * The rules are the library's local rewrite rules, except epenthesis, which inserts and is a
   map. The Bedouin Arabic, Polish and hypothetical forms use chart segments, the Finnish and
-  Turkish forms their fragments' phonemes.
+  Turkish forms their language files' phonemes.
 
 ## TODO
 

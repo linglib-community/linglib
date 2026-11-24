@@ -3,16 +3,16 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Order.OrdConnected
 public import Linglib.Semantics.Evidentiality.Paradigm
-public import Linglib.Fragments.Turkish.Evidentiality
-public import Linglib.Fragments.Abkhaz.Evidentiality
-public import Linglib.Fragments.Slavic.Bulgarian.Evidentiality
-public import Linglib.Fragments.Aymara.Evidentiality
-public import Linglib.Fragments.Quechua.Evidentiality
-public import Linglib.Fragments.Tuyuca.Evidentiality
-public import Linglib.Fragments.Tariana.Evidentiality
-public import Linglib.Fragments.Kashaya.Evidentiality
-public import Linglib.Fragments.WestGreenlandic.Evidentiality
-public import Linglib.Fragments.Georgian.Evidentiality
+public import Linglib.Languages.Turkish.Evidentiality
+public import Linglib.Languages.Abkhaz.Evidentiality
+public import Linglib.Languages.Slavic.Bulgarian.Evidentiality
+public import Linglib.Languages.Aymara.Evidentiality
+public import Linglib.Languages.Quechua.Evidentiality
+public import Linglib.Languages.Tuyuca.Evidentiality
+public import Linglib.Languages.Tariana.Evidentiality
+public import Linglib.Languages.Kashaya.Evidentiality
+public import Linglib.Languages.WestGreenlandic.Evidentiality
+public import Linglib.Languages.Georgian.Evidentiality
 public import Linglib.Data.Examples.Aikhenvald2004
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -205,7 +205,7 @@ end Realizes
 theorem not_realizes_nil (k : Kind) : ¬ Realizes [] k := by
   revert k; decide +kernel
 
-/-! ### The Fragment languages -/
+/-! ### The languages with a language file -/
 
 theorem turkish : Realizes Turkish.Evidentiality.evidentials .a2 := by decide
 

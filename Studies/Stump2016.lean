@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Turkish.Morphotactics
+public import Linglib.Languages.Turkish.Morphotactics
 public import Linglib.Morphology.Inflection
 public import Linglib.Morphology.Paradigm.Function
 public import Studies.Stump2006

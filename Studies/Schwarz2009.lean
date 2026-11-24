@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Examples.Schwarz2009
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Reference.Determiner
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.Fering.Determiners
-public import Linglib.Fragments.German.Determiners
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.Fering.Determiners
+public import Linglib.Languages.German.Determiners
 public import Linglib.Data.Examples.Readers
 
 /-!

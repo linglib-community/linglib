@@ -206,10 +206,10 @@ theorem se_kam_iff_oh : se x (kam (gradable μ) · y) ↔ oh x (gradable μ · y
 
 end Group
 
-/-! ### The fragment -/
+/-! ### The language file -/
 
 /-- The segment of a *se*-comparative has, relative to the standard, the shape of the case the
-fragment gives the standard of the Hindi-Urdu construction, and the type of the construction in
+language file gives the standard of the Hindi-Urdu construction, and the type of the construction in
 Stassen's typology is the adverbial type of the direction of that shape. -/
 theorem se_shape {β : Type*} [LinearOrder D] [Preorder β] (near : E → β) :
     ∀ k ∈ HindiUrdu.Comparison.se.standard.case?, ∀ s, k.mode? = some (.directional s) →

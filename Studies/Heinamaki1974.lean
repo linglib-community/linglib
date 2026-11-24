@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Aspect.AspectualClass
-public import Linglib.Fragments.English.TemporalConnectives
+public import Linglib.Languages.English.TemporalConnectives
 public import Linglib.Data.Examples.Heinamaki1974
 public import Linglib.Data.Examples.Readers
 
@@ -440,7 +440,7 @@ instance : ∀ r a b, Decidable (Admitted r a b)
   | .before, _, _ | .after, _, _ | .asSoonAs, _, _ | .when_, _, _ | .whenever, _, _
   | .since, _, _ => isTrue trivial
 
-/-- The fragment's entries for the connectives of the rows. -/
+/-- The language file's entries for the connectives of the rows. -/
 def connectives : List (String × Connective) :=
   [ (English.TemporalConnectives.while_.form, English.TemporalConnectives.while_),
     (English.TemporalConnectives.asLongAs.form, English.TemporalConnectives.asLongAs),

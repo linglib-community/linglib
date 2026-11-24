@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Algebra.Group.Idempotent
-public import Linglib.Fragments.Manambu.Clause
+public import Linglib.Languages.Manambu.Clause
 public import Linglib.Logic.Temporal.IntervalAlgebra
 
 /-!

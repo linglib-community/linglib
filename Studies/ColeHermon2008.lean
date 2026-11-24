@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Fin.VecNotation
 public import Linglib.Data.Examples.ColeHermon2008
 public import Linglib.Data.Examples.Gloss
-public import Linglib.Fragments.TobaBatak.Voice
+public import Linglib.Languages.TobaBatak.Voice
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Syntax.Binding.Basic

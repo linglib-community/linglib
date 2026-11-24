@@ -2,8 +2,8 @@ module
 
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Fragments.Greek.StandardModern.Negation
-public import Linglib.Fragments.Greek.StandardModern.PolarityItems
+public import Linglib.Languages.Greek.StandardModern.Negation
+public import Linglib.Languages.Greek.StandardModern.PolarityItems
 public import Linglib.Data.Examples.Tsiakmakis2025
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -222,7 +222,8 @@ def predicted? (e : Datum) : Option (List Negator) :=
     some (h.negator :: c)
   else none
 
-/-- The negators among the words of a row's sentence, in order: the entries of the Greek fragment,
+/-- The negators among the words of a row's sentence, in order: the entries of the Greek language
+file,
 classed by the mood they negate. -/
 def negators (e : Datum) : List Negator :=
   (Datum.wordsOf e.primaryText).filterMap fun w ↦

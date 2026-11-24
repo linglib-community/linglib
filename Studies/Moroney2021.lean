@@ -6,11 +6,11 @@ public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Mathlib.Basic.Rel
 public import Linglib.Semantics.Reference.CovertShift
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.German.Determiners
-public import Linglib.Fragments.Cantonese.Determiners
-public import Linglib.Fragments.Thai.Determiners
-public import Linglib.Fragments.Shan.Determiners
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.German.Determiners
+public import Linglib.Languages.Cantonese.Determiners
+public import Linglib.Languages.Thai.Determiners
+public import Linglib.Languages.Shan.Determiners
 public import Studies.Jenks2018
 public import Studies.Schwarz2013
 
@@ -51,11 +51,12 @@ cumulative but have identifiable atomic parts (`maa_cumulative_not_divisive`).
   (`mem_image_near_nan_iff`). Where she treats far.from.speaker as the opposite of close.to.speaker, the
   two vicinities may overlap here, as when the addressee stands by the speaker.
 * Moroney's Lakhota is Schwarz's tentative construal of *kiŋ* as a weak article only. The Lakhota
-  fragment also gives *kiŋ* its anaphoric uses, so by the fragment Lakhota is generally marked.
+  language file also gives *kiŋ* its anaphoric uses, so by the language file Lakhota is generally
+  marked.
 * A determiner blocks a shift when it denotes what the shift denotes, the theory layer's
   `Determiner.Entry.Lexicalizes`, so a demonstrative, whose deictic presupposition can fail where
   the definite's does not, blocks nothing.
-* No fragment records a demonstrative as obligatory, obligatoriness being each account's
+* No language file records a demonstrative as obligatory, obligatoriness being each account's
   prediction. Under Index! Mandarin and Thai are marked anaphoric, as Jenks reports; under the
   Blocking Principle both are unmarked, as Moroney concludes once an economy principle chooses
   between the bare noun and the demonstrative, a principle not modelled here.

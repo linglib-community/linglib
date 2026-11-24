@@ -4,9 +4,9 @@ public import Mathlib.Data.Finset.Card
 public import Studies.Corbett1991
 public import Linglib.Morphology.DistributedMorphology.Gender
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Fragments.Romance.Spanish.Gender
-public import Linglib.Fragments.Slavic.Russian.Gender
-public import Linglib.Fragments.Hausa.Gender
+public import Linglib.Languages.Romance.Spanish.Gender
+public import Linglib.Languages.Slavic.Russian.Gender
+public import Linglib.Languages.Hausa.Gender
 
 /-!
 # Kramer (2020): Grammatical Gender: A Close Look at Gender Assignment Across Languages
@@ -25,14 +25,18 @@ the structural account alone.
 ## Implementation notes
 
 The semantic core generalization is checked over the assignment survey of `Corbett1991`, and the
-Spanish, Russian, and Hausa data are the Fragments' nouns rather than the review's tables;
-`Remainder.spanish` reads the split of Table 1 off the Fragment, and the two assignment accounts are
-compared on every noun of the Fragment's shape rather than on its list, the lexical one on every
+Spanish, Russian, and Hausa data are the language files' nouns rather than the review's tables;
+`Remainder.spanish` reads the split of Table 1 off the language file, and the two assignment
+accounts are
+compared on every noun of the language file's shape rather than on its list, the lexical one on
+every
 noun but a hybrid. A noun is [human] for Harris when its referents are human or animals whose gender
-is their sex, read off the Fragment's animacy and the gender its nouns restrict their referents to.
+is their sex, read off the language file's animacy and the gender its nouns restrict their
+referents to.
 The determiner items of (25) go through the library's Subset Principle, so *el* for [−fem] and for
-featureless *n* is a computation rather than a listing, checked against the Fragment's article. The
-hybrid datum (27) is the one hand-typed example, since the Russian Fragment records only the
+featureless *n* is a computation rather than a listing, checked against the language file's
+article. The
+hybrid datum (27) is the one hand-typed example, since the Russian language file records only the
 morphological gender of *vrač*.
 
 ## References
@@ -130,7 +134,7 @@ def dieri : Remainder DieriGender := ⟨{.masc, .fem}, {.masc}⟩
 def tamil : Remainder Tamil.Gender.Value := ⟨{.masc, .fem}, {.neut}⟩
 
 /-- Spanish splits the remainder arbitrarily over both core genders (Table 1), as the
-Fragment records. -/
+language file records. -/
 def spanish : Remainder Value :=
   ofNouns allNouns (·.IsNatural Value.ofReferentGender) (·.gender)
 
@@ -223,7 +227,7 @@ def IsHybrid (n : Spanish.Gender.Noun) : Prop :=
 instance (n : Spanish.Gender.Noun) : Decidable (IsHybrid n) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- A Fragment noun's lexical entry is [human] when its referents are human, or animals whose
+/-- A language file noun's lexical entry is [human] when its referents are human, or animals whose
 gender is their sex (higher animals honoris causa), [female] when its referents are female,
 and carries a listed [f] when it is feminine without its referents having a gender. -/
 def lexicalEntry (n : Spanish.Gender.Noun) : LexicalEntry :=
@@ -257,7 +261,7 @@ theorem persona_cloned_feminine :
 /-- The four n's of (24). -/
 def spanishHeads : List Categorizer := [.n_iFem, .n_iMasc, .n_plain, .n_uFem]
 
-/-- A Fragment noun's n bears interpretable gender for the natural-gender
+/-- A language file noun's n bears interpretable gender for the natural-gender
 nouns and u[+fem] for the arbitrarily feminine remainder, *persona* among
 them, and is plain otherwise. -/
 def nHead (n : Spanish.Gender.Noun) : Categorizer :=
@@ -317,7 +321,7 @@ theorem lexical_eq_structural (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
 
 /-! ### Hybrid nouns (§3.3.2) -/
 
-/-- In (27) the agreement targets of *vrač* 'doctor', the Fragment's
+/-- In (27) the agreement targets of *vrač* 'doctor', the language file's
 morphologically masculine Class I noun, take both genders in one phrase. -/
 def hybridTargets : List (String × Russian.Gender.Value) :=
   [("xoroš-aja", .fem), ("glavn-yj", .masc)]

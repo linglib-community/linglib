@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Romance.Italian.Phonology
+public import Linglib.Languages.Romance.Italian.Phonology
 
 /-!
 # Davis (1990): Italian onset structure and the distribution of *il* and *lo*
@@ -24,7 +24,7 @@ written with /s/, as Davis writes them. Davis leaves the affricates and the glid
 hierarchy (note 6), and `sonority` gives them no rank, so that they never join a following
 consonant; a consonant before a glide begins a diphthong-initial syllable and is in its onset.
 Davis does not discuss /ʎ/, and the elision of *lo* before a vowel is set aside. The rising cluster
-of *gnu* (13a) begins with no onset consonant, though the fragment's classes put it with the
+of *gnu* (13a) begins with no onset consonant, though the language file's classes put it with the
 consonants.
 
 ## TODO
@@ -117,10 +117,10 @@ theorem ofSegment_le_of_sonority_le : ∀ x ∈ inventory, ∀ y ∈ inventory, 
     ∀ n ∈ sonority y, m ≤ n → Sonority.ofSegment x ≤ Sonority.ofSegment y := by
   decide
 
-/-! ### The fragment's classes -/
+/-! ### The language file's classes -/
 
 /-- A word that begins with an onset consonant other than /ʎ/, which Davis leaves aside, is in the
-class before which the fragment's masculine article is *il*. -/
+class before which the language file's masculine article is *il*. -/
 theorem onsetOf_eq_consonant_of_beginsWithOnset {x y : Segment} (hx : x ∈ inventory)
     (hy : y ∈ inventory) (hne : x ≠ «ʎ») (rest : List Segment)
     (h : BeginsWithOnset (x :: y :: rest)) : Onset.of (x :: y :: rest) = .consonant := by

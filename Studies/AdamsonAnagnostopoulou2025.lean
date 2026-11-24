@@ -4,9 +4,9 @@ public import Linglib.Syntax.Minimalist.Feature.Interpretability
 public import Mathlib.Data.List.Iterate
 public import Linglib.Syntax.WordOrder
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Fragments.Greek.StandardModern.Gender
-public import Linglib.Fragments.Icelandic.Nouns
-public import Linglib.Fragments.Slavic.Serbian.Gender
+public import Linglib.Languages.Greek.StandardModern.Gender
+public import Linglib.Languages.Icelandic.Nouns
+public import Linglib.Languages.Slavic.Serbian.Gender
 public import Linglib.Data.Examples.AdamsonAnagnostopoulou2025
 public import Studies.Corbett1991
 public import Mathlib.Tactic.DeriveFintype
@@ -54,7 +54,8 @@ resolution (`mismatchResolution`), and Table 2 follows from the geometries alone
 A geometry is given by its parent map on the six gender nodes, rooted in CLASS; the nodes a
 language does not use hang from CLASS and are never contributed.
 
-A nominal pairs a fragment noun with the referent the paper's example gives it, the man, woman or
+A nominal pairs a language file noun with the referent the paper's example gives it, the man, woman
+or
 inanimate its margin notation marks. Each theorem names the derivation it computes, so the paper's
 percolation generalization, that humans percolate interpretable features and inanimates either
 kind, is respected in the choice of derivation rather than derived.

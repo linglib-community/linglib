@@ -8,8 +8,8 @@ public import Linglib.Semantics.Events.Closure
 public import Linglib.Semantics.Tense.Lifespan
 public import Studies.Kratzer1998
 public import Studies.White2014
-public import Linglib.Fragments.English.Verbs.Attitude
-public import Linglib.Fragments.English.Verbs.Implicative
+public import Linglib.Languages.English.Verbs.Attitude
+public import Linglib.Languages.English.Verbs.Implicative
 public import Linglib.Data.Examples.Williams2025
 public import Linglib.Data.StructureDataset.Williams2025
 
@@ -58,7 +58,8 @@ tests](##began_rows) and the [five-language survey](##table1_rows) follow.
   the worlds of the plan (`mod_aspP_iff`), built as `Aspect.imperfective` is.
   The scenarios count days in `ℚ`, Monday `1`, Tuesday `2` and Wednesday `3`, so that a perfect
   gerund has room between the event and the forgetting.
-* The English fragment has an implicative *forget* taking an infinitive and a factive one taking a
+* The English language file has an implicative *forget* taking an infinitive and a factive one
+  taking a
   finite clause or a gerund, `English.Verbs.forget` and `English.Verbs.forget_rog`; Williams'
   uniformity hypothesis takes them to be one verb.
 

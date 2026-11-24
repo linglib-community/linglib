@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Buryat.Complementizers
-public import Linglib.Fragments.Korean.Complementizers
+public import Linglib.Languages.Buryat.Complementizers
+public import Linglib.Languages.Korean.Complementizers
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 public import Linglib.Data.Examples.Bondarenko2022
 public import Linglib.Data.Examples.Languages
@@ -73,7 +73,7 @@ the exponents give for the heads of the clause and for what the clause combines 
 * Buryat *hanaxa* quantifies over doxastic alternatives in both of its frames, which differ in
   opacity and factivity. Its nominalized reading, 'remember', is factive through the
   presupposition that the event its complement describes started before the thinking, which the
-  fragment records on the nominalized frame.
+  language file records on the nominalized frame.
 
 ## TODO
 
@@ -478,19 +478,19 @@ def Exponence.typers (v : Exponence) :
   | .contCP, l => [v.cont, v.comp l]
   | .sitCP, l => [v.comp l]
 
--- the allomorphs of Comp are the fragments' entries licensed by each category
+-- the allomorphs of Comp are the language files' entries licensed by each category
 theorem licenser_comp :
     ∀ v ∈ [buryat, korean], ∀ l, (v.comp l).licenser = some l := by
   decide
 
--- the exponents are the fragments' inventories
+-- the exponents are the language files' inventories
 theorem complementizers_eq :
     complementizers = [buryat.cont, buryat.comp .nominal, buryat.comp .verbal] ∧
       Korean.Complementizers.complementizers =
         [korean.cont, korean.comp .nominal, korean.comp .verbal] :=
   ⟨rfl, rfl⟩
 
-/-- The fragment entry of a clause-typing morpheme that a row names. -/
+/-- The language file entry of a clause-typing morpheme that a row names. -/
 def Examples.Lexeme.entry : Examples.Lexeme → Complementizer
   | .ge => Buryat.ge
   | .aasha => Buryat.aasha

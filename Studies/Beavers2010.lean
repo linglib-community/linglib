@@ -65,7 +65,7 @@ arrival and possession.
 * Beavers's resolution of Dowty's *hit the fence with the stick* problem, which needs Dowty's own
   discussion checked against the profiles of `Dowty1991`: Beavers counts the stick's dependent
   motion as a Proto-Patient entailment, where those profiles give it movement, a Proto-Agent one.
-* Fragment entries for *clear* and *climb*, so that every alternation names its verb.
+* language file entries for *clear* and *climb*, so that every alternation names its verb.
 
 ## References
 

@@ -8,8 +8,8 @@ module
 public import Linglib.Semantics.Mood.Verbal
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Attitudes.Preference.BestWorlds
-public import Linglib.Fragments.Romance.French.Verbs
-public import Linglib.Fragments.Romance.Spanish.Verbs
+public import Linglib.Languages.Romance.French.Verbs
+public import Linglib.Languages.Romance.Spanish.Verbs
 
 /-!
 # Portner and Rubinstein (2020): Desire, belief, and semantic composition: variation in mood selection with desire predicates

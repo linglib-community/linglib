@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Noonan2007
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -10,7 +10,7 @@ public import Linglib.Data.Examples.Readers
 
 Noonan's survey classifies complement clauses by their morphology (`Clause.ComplementType`) and
 complement-taking predicates (ctps) by the semantic classes that select among the codings. This
-file checks three of the chapter's generalizations against the English verb fragment and the
+file checks three of the chapter's generalizations against the English verb language file and the
 chapter's examples.
 
 Equi-deletion, the deletion of a complement subject coreferential with a matrix argument, always
@@ -28,7 +28,7 @@ A complement has dependent time reference (dtr) when its time is fixed by the me
 and independent time reference (itr) otherwise (§3.1.1). Each class's complements have one or the
 other (§3.2), and the two go with reduced and indicative complements respectively (§3.1.2). No
 English verb of a dtr class takes a sentence-like complement (`not_isSentenceLike_of_dependent`),
-and every one of an itr class whose complement the fragment codes takes an indicative
+and every one of an itr class whose complement the language file codes takes an indicative
 (`indicative_mem_codings_of_independent`). The desideratives fit neither, since *want* takes only
 a reduced complement and *wish* an indicative (`want_wish_codings`), as the chapter's want-class
 (dtr) and wish-class (itr) predict.
@@ -36,26 +36,27 @@ a reduced complement and *wish* an indicative (`want_wish_codings`), as the chap
 ## Implementation notes
 
 * A class classifies a use of a ctp rather than a verb, as *tell* is an utterance predicate with
-  a *that*-clause and a manipulative one with an infinitive (§3.2). The fragment enters such uses
+  a *that*-clause and a manipulative one with an infinitive (§3.2). The language file enters such
+  uses
   as separate verbs (*remember* and *forget* with an infinitive are implicatives, with a
   *that*-clause veridical doxastics), so a verb's class is read off its entry. An entry is in a
   class when it records the property the chapter identifies the class by: commentatives are the
   emotive factives (§3.2.4), predicates of knowledge the veridical doxastics, which the chapter
   calls semifactives (§3.2.5), manipulatives have an affectee controlling the complement
-  (§3.2.8), and achievement predicates are Karttunen's implicatives (§3.2.10). The fragment's
+  (§3.2.8), and achievement predicates are Karttunen's implicatives (§3.2.10). The language file's
   implicative signature also covers the manipulatives *force* and *make*, so an implicative with
   an affectee is manipulative only. Nothing in an entry picks out pretence, modal, immediate
   perception, negative or conjunctive predicates.
 * Equi is control by a matrix participant with the complement subject left null. An English
-  controlled complement has a null subject, so control is equi in the English fragment.
+  controlled complement has a null subject, so control is equi in the English language file.
 
 ## TODO
 
 * Table 2.3 distributes realis and irrealis modality over complement roles, which neither the
-  fragment nor the rows record.
+  language file nor the rows record.
 * The infinitive of *believe* in (260), *I believe Zeke to be an idiot*, is the exception §3.1.2
   makes to the association of infinitives with dtr, which no theorem here states, and the
-  fragment's *see* lacks the immediate-perception use (347), *I saw Floyd leave*, beside the
+  language file's *see* lacks the immediate-perception use (347), *I saw Floyd leave*, beside the
   knowledge use (346).
 
 ## References
@@ -147,7 +148,7 @@ instance (v : Verb) : Decidable (HasAffectee v) :=
 
 namespace PredicateClass
 
-/-- A fragment entry is in a class when it records the property the class is identified by. -/
+/-- A language file entry is in a class when it records the property the class is identified by. -/
 protected def Mem : PredicateClass → Verb → Prop
   | utterance, v => v.speechActVerb
   | propositionalAttitude, v => ∃ a ∈ v.attitude, ¬ a.IsPreferential ∧ ¬ a.IsVeridical v.factivity
@@ -175,7 +176,7 @@ end PredicateClass
 /-- The classes whose predicates allow negative raising ([noonan-2007] §2.7). -/
 def negativeRaisers : List PredicateClass := [.propositionalAttitude, .desiderative, .modal]
 
-/-- The fragment entries of the verbs of the negative-raising rows. -/
+/-- The language file entries of the verbs of the negative-raising rows. -/
 def verbTable : List (String × Verb) :=
   [("think", think.toVerb), ("believe", believe.toVerb), ("want", want.toVerb),
     ("regret", regret.toVerb)]
@@ -213,7 +214,7 @@ theorem not_isSentenceLike_of_dependent : ∀ k : PredicateClass, k.timeReferenc
   decide +kernel
 
 /-- Indicatives go with itr ([noonan-2007] §3.1.2). Every English verb of an itr class whose
-complement the fragment codes takes an indicative. -/
+complement the language file codes takes an indicative. -/
 theorem indicative_mem_codings_of_independent : ∀ k : PredicateClass,
     k.timeReference = some .independent → ∀ v ∈ verbs, v.toVerb ∈ k → v.codings ≠ [] →
       .indicative ∈ v.codings := by

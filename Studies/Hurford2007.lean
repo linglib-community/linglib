@@ -6,8 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Category.Numeral.Grammar
-public import Linglib.Fragments.English.Numerals
-public import Linglib.Fragments.Welsh.Numerals
+public import Linglib.Languages.English.Numerals
+public import Linglib.Languages.Welsh.Numerals
 
 /-!
 # Hurford (2007): A performed practice explains a linguistic universal
@@ -24,7 +24,7 @@ reach it](##English.next_twoThousandNinetyNine).
 
 ## Implementation notes
 
-The English and Welsh numerals are built from the words of the fragments; the Mixtec and
+The English and Welsh numerals are built from the words of the language files; the Mixtec and
 Hawaiian ones are numerals over numbers, with the three multipliers of the Mixtec example and
 the seven Hurford lists for Hawaiian. A counter says a single group as the bare multiplier, so
 counting is compared with other numerals up to whether *one* is pronounced. `count` at 0 is the
@@ -35,7 +35,7 @@ junk value *one*.
 The French illustration, *soixante-dix* over \**cinquante vingt*, needs a lexicon whose
 well-formed PHRASEs exclude *septante*, which a list of multipliers does not express. The starred
 and unstarred numerals are typed here as trees rather than read from `Data/Examples` rows, and
-the Mixtec and Hawaiian words have no fragment.
+the Mixtec and Hawaiian words have no language file.
 
 ## References
 
@@ -214,7 +214,7 @@ namespace English
 
 open _root_.English.Numerals
 
-/-- The English numerals over the words of the fragment. -/
+/-- The English numerals over the words of the language file. -/
 abbrev Num := Number Numeral
 
 theorem isSystem : IsSystem Numeral.value digits multipliers :=

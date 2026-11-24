@@ -43,9 +43,11 @@ The two models are the successor graphs of `+ 1` on `ZMod (2 ^ (r + 1))` and of 
 `ZMod 2 × ZMod (2 ^ r)`, and the game is won by the general result for successor graphs of
 permutations with long cycles, `FirstOrder.Language.duplicatorWinsBijective_successor`.
 
-The universal and the claim are stated of denotations, not of the fragments' entries. An entry's
+The universal and the claim are stated of denotations, not of the language files' entries. An
+entry's
 readings are determiner symbols, which meet both by construction
-(`QuantificationalDeterminer.conservative_ext_isom_of_mem_denote`), and the fragments draw some of
+(`QuantificationalDeterminer.conservative_ext_isom_of_mem_denote`), and the language files draw
+some of
 their readings from sources later than the book.
 
 ## TODO

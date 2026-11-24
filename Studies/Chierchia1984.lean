@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.ArgumentStructure.Relation.Control
 public import Linglib.Semantics.ArgumentStructure.Relation.Denotation
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Syntax.Voice.Apply
 public import Mathlib.Data.PFun
 

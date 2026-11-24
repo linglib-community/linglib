@@ -6,23 +6,23 @@ public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Haspelmath2007
 public import Linglib.Syntax.Category.Coordinator
-public import Linglib.Fragments.English.Coordination
-public import Linglib.Fragments.Finnish.Coordination
-public import Linglib.Fragments.German.Coordination
-public import Linglib.Fragments.Hausa.Adpositions
-public import Linglib.Fragments.Hausa.Coordination
-public import Linglib.Fragments.Hungarian.Coordination
-public import Linglib.Fragments.Irish.Coordination
-public import Linglib.Fragments.Kannada.Coordination
-public import Linglib.Fragments.Korean.Coordination
-public import Linglib.Fragments.Lango.Adpositions
-public import Linglib.Fragments.Lango.Coordination
-public import Linglib.Fragments.Latin.Coordination
-public import Linglib.Fragments.Tibetic.Classical.Case
-public import Linglib.Fragments.Tibetic.Classical.Coordination
-public import Linglib.Fragments.Turkish.Adpositions
-public import Linglib.Fragments.Turkish.Coordination
-public import Linglib.Fragments.Yoruba.Coordination
+public import Linglib.Languages.English.Coordination
+public import Linglib.Languages.Finnish.Coordination
+public import Linglib.Languages.German.Coordination
+public import Linglib.Languages.Hausa.Adpositions
+public import Linglib.Languages.Hausa.Coordination
+public import Linglib.Languages.Hungarian.Coordination
+public import Linglib.Languages.Irish.Coordination
+public import Linglib.Languages.Kannada.Coordination
+public import Linglib.Languages.Korean.Coordination
+public import Linglib.Languages.Lango.Adpositions
+public import Linglib.Languages.Lango.Coordination
+public import Linglib.Languages.Latin.Coordination
+public import Linglib.Languages.Tibetic.Classical.Case
+public import Linglib.Languages.Tibetic.Classical.Coordination
+public import Linglib.Languages.Turkish.Adpositions
+public import Linglib.Languages.Turkish.Coordination
+public import Linglib.Languages.Yoruba.Coordination
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -46,14 +46,14 @@ counterexample from Tinrin the chapter records.
 
 * A binary pattern (17) is a `Coordinator.Pattern` with at most one coordinator on each
   coordinand, `∅` for a bare coordinand; there are nine, `card_patterns`.
-* A construction's coordinators are its language's Fragment entries where they exist, and are
+* A construction's coordinators are its language's language file entries where they exist, and are
   written inline otherwise. A pair of coordinators is a `Coordinator.Correlative`; the single
   coordinator of a mixed pair, (27) and (28), is taken to be its second, as in (45b).
 * The rows record emphasis only where the chapter states it. Keeping every coordinator of a
   multiple coordination is emphatic in European languages, p. 12, which is not emphasis by
   correlatives, so `emphatic_iff_correlative` is about binary coordination.
 * Classical Tibetan *-daŋ* and Turkish *-le*, which the chapter says "come from a former
-  case-marker" without naming the case, have no source in the rows; the Fragments record, after
+  case-marker" without naming the case, have no source in the rows; the language files record, after
   Beyer and after Göksel and Kerslake, that both are still comitative markers
   (`former_case_marker_isAlsoComitative`).
 * The rows record §1.4 coordinator omission as a feature, all but the last coordinator kept,
@@ -272,10 +272,10 @@ structure Attestation where
   datum : Datum
   coordinators : Coordinators
 
-/-- A conjunctive coordinator with no Fragment entry. -/
+/-- A conjunctive coordinator with no language file entry. -/
 def co (morph : Morph) : Coordinator := { morph, gloss := "and", role := .conjunctive }
 
-/-- A disjunctive coordinator with no Fragment entry. -/
+/-- A disjunctive coordinator with no language file entry. -/
 def dis (form : String) : Coordinator :=
   { morph := .free form, gloss := "or", role := .disjunctive }
 

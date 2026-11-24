@@ -2,10 +2,10 @@ module
 
 public import Linglib.Core.Combinatorics.SimpleGraph.Prod
 public import Linglib.Semantics.Modality.Universals
-public import Linglib.Fragments.Washo.Modals
+public import Linglib.Languages.Washo.Modals
 public import Linglib.Data.Examples.Bochnak2015a
 public import Studies.MocnikAbramovitz2019
-public import Linglib.Fragments.Javanese.Paciran.Modals
+public import Linglib.Languages.Javanese.Paciran.Modals
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 public import Linglib.Data.Examples.Readers
 

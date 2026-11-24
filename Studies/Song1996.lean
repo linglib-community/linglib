@@ -6,7 +6,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.IntervalCases
 public import Linglib.Syntax.Voice.Causativization
 public import Linglib.Data.Examples.Song1996
-public import Linglib.Fragments.Korean.Verbs
+public import Linglib.Languages.Korean.Verbs
 public import Linglib.Data.Examples.Readers
 
 /-!

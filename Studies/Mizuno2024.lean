@@ -3,9 +3,9 @@ module
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Discourse.Commitment.Table
-public import Linglib.Fragments.English.Conditionals
-public import Linglib.Fragments.Japanese.Conditionals
-public import Linglib.Fragments.Mandarin.Conditionals
+public import Linglib.Languages.English.Conditionals
+public import Linglib.Languages.Japanese.Conditionals
+public import Linglib.Languages.Mandarin.Conditionals
 public import Linglib.Data.Examples.Mizuno2024
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

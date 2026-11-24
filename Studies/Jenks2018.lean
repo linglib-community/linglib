@@ -6,12 +6,12 @@ public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Languages
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Reference.CovertShift
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.Mandarin.Determiners
-public import Linglib.Fragments.Mandarin.Pinyin
-public import Linglib.Fragments.Cantonese.Determiners
-public import Linglib.Fragments.German.Determiners
-public import Linglib.Fragments.Akan.Determiners
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.Mandarin.Determiners
+public import Linglib.Languages.Mandarin.Pinyin
+public import Linglib.Languages.Cantonese.Determiners
+public import Linglib.Languages.German.Determiners
+public import Linglib.Languages.Akan.Determiners
 public import Studies.Schwarz2013
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.UpperLower.Basic
@@ -41,8 +41,8 @@ uniqueness alone.
 * The environments are the paper's six, read as `Definite.Use`s, the donkey environment being an
   anaphoric use under quantification.
 * A row marks its definite noun phrase and, within it, the determiner that heads it, naming the
-  determiner's lexeme. `Examples.Lexeme.entry` gives the fragment entry of each lexeme, and the
-  rows are checked against the fragments: each lexeme is [an entry of the row's
+  determiner's lexeme. `Examples.Lexeme.entry` gives the language file entry of each lexeme, and the
+  rows are checked against the language files: each lexeme is [an entry of the row's
   language](##entry_mem_inventory), each marked determiner is [printed as its entry is
   written](##printed), and [no demonstrative of a noun phrase goes
   unmarked](##demonstratives_marked).
@@ -179,7 +179,7 @@ def inventory? (e : Datum) : Option Inventory :=
   e.byLanguage [(.mandarinChinese, Mandarin.Determiners.inventory),
     (.cantonese, Cantonese.Determiners.inventory)]
 
-/-- The fragment entry that a lexeme of the data is. -/
+/-- The language file entry that a lexeme of the data is. -/
 def Examples.Lexeme.entry : Examples.Lexeme → Entry
   | .na => .demonstrative Mandarin.Determiners.na
   | .zhe => .demonstrative Mandarin.Determiners.zhe
@@ -225,7 +225,7 @@ def head? (e : Datum) : Option (Option Entry) :=
 of the reading where the paper judges it apart from the sentence. -/
 def definiteJudgment (e : Datum) : Judgment := (Examples.reading e .definite).getD e.judgment
 
--- every lexeme a row names is a determiner of the fragment of the row's language
+-- every lexeme a row names is a determiner of the language file of the row's language
 theorem entry_mem_inventory :
     ∀ e ∈ Examples.all, ∀ inv ∈ inventory? e, ∀ p ∈ e.spans, ∀ l ∈ Examples.lexeme? p,
       ∃ d ∈ inv, d = l.entry := by
@@ -294,7 +294,7 @@ theorem setOf_marked_eq_empty_or_Ici (inv : Inventory) :
     {p | Marked inv p} = ∅ ∨ ∃ p, {q | Marked inv q} = Set.Ici p :=
   (isUpperSet_marked inv).eq_empty_or_Ici
 
-/-- The fragments derive Table 2's columns: German and Lakhota, on Schwarz's construal, are
+/-- The language files derive Table 2's columns: German and Lakhota, on Schwarz's construal, are
 bipartite, marking both presuppositions with distinct forms; Mandarin and Akan are marked
 anaphoric; and Cantonese and English are generally marked, with one form for both. -/
 theorem table2 :

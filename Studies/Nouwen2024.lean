@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.MeasureTheory.Measure.Real
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Pragmatics.Probabilistic.Latent
 public import Linglib.Pragmatics.Probabilistic.Literal
 
@@ -27,7 +27,7 @@ positive form and then interpreting the adjective against that posterior (`seque
 that the last update is ordered by the adjective's measure alone. The Goldilocks effect of
 evaluation, negative evaluation growing and positive evaluation shrinking with excess, fixes
 the direction of the shift (`sequential_mul_le_mul_of_negative`,
-`sequential_mul_le_mul_of_positive`), with the valence read off the English fragment
+`sequential_mul_le_mul_of_positive`), with the valence read off the English language file
 (`horribly_mul_le_mul`, `pleasantly_mul_le_mul`). A measure function that does not distinguish
 the states leaves the prior unchanged (`update_eq_self`). This is the intuition Nouwen offers
 for the generalisation he credits to Zwicky, that positive modal adjectives such as *usual* do

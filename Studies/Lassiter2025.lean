@@ -2,8 +2,8 @@ module
 
 public import Linglib.Data.Examples.Lassiter2025
 public import Studies.Israel2001
-public import Linglib.Fragments.Japanese.Conditionals
-public import Linglib.Fragments.German.Conditionals
+public import Linglib.Languages.Japanese.Conditionals
+public import Linglib.Languages.German.Conditionals
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Data.Examples.Readers
 
@@ -44,7 +44,7 @@ licensor outright, so it would exclude the minimizer from hypothetical anteceden
 Iatridou's (27a) and the paper's (32); on the scalar account a minimizer needs only a
 scale-reversing context.
 The paper's rows carry their features as strings, so `shape`, `markerOf`, `itemOf`, and
-`positionOf` are adapters from `paperFeatures` into the typed model and the fragments' entries;
+`positionOf` are adapters from `paperFeatures` into the typed model and the language files' entries;
 `adapters_total` checks that every marker and item named in a row resolves, so the row
 theorems are not vacuous. Gibbard's (4) is annotated with the premise reading it has, in a
 context where that reading is infelicitous; `interpretation_rows` therefore checks the
@@ -245,7 +245,7 @@ def shape (row : Datum) : Shape :=
       | _ => .bare
   else .simple
 
-/-- The fragment entry for the row's main conditional marker. -/
+/-- The language file entry for the row's main conditional marker. -/
 def markerOf (row : Datum) : Option Marker :=
   match row.feature? "marker" with
   | some "nara"  => some Japanese.Conditionals.nara
@@ -254,7 +254,7 @@ def markerOf (row : Datum) : Option Marker :=
   | some "falls" => some German.Conditionals.falls
   | _ => none
 
-/-- The fragment entry for the row's polarity item. -/
+/-- The language file entry for the row's polarity item. -/
 def itemOf (row : Datum) : Option PolarityItem :=
   row.parse? "item" (English.PolarityItems.allPolarityItems.map fun p ↦ (p.form, p))
 

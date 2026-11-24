@@ -1,0 +1,234 @@
+module
+
+public import Linglib.Core.Data.Fintype.Order
+public import Linglib.Languages.Korean.Phonology
+public import Linglib.Morphology.Exponence.SubsetRule
+public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Category.Pronoun.Interrogative
+public import Linglib.Syntax.Category.Pronoun.Personal
+
+/-!
+# Korean pronouns and speech-style particles
+
+Korean is discourse-oriented: pronouns are omitted whenever they are recoverable, and reference
+to a third party is a demonstrative with a noun for a person, *geu bun* 'that person', *geu ai*
+'that child', graded by the deference the noun carries. The overt pronouns are chosen by the
+addressee's or referent's age and status relative to the speaker, as Sohn tabulates them: the
+first person has the neutral *na* and the humble *jeo*, with the plurals *uri* and *jeohui*;
+the second has the plain *neo* for a child or intimate, the familiar *jane*, the blunt
+*dangsin*, used to an adult equal or inferior and affectionately between spouses, and the
+deferential *taek* to an adult stranger, kinship terms and titles serving a superior. Each has
+a plural: *neohui* for the plain, with the suffix *-hui* that only *neo* and the humble *jeo*
+take, and for the others the singular with the plural suffix *-deul*, which *uri*, *jeohui* and
+*neohui* may add as well. *jagi* is a recent second person of the blunt level, used between
+young couples and close friends. In the third person *geu* 'he' and *geunyeo* 'she', with the
+plural *geudeul*, are recent innovations of written narrative used anaphorically, while the
+colloquial *gyae*, contracted from *geu ai*, is neutral for gender and implies familiarity with
+the referent, as Kwon and Lee describe.
+Before the nominative particle *na*, *jeo* and *neo* become *nae*, *je* and *ne*. The
+sentence-final speech-style particles *-yo* and *-seumnida* occur in root clauses only. Both
+present the addressee as above the speaker, and they differ in the formality of the discourse:
+*-yo* is the polite particle of informal speech and *-seumnida* that of formal speech, *-mnida*
+after a vowel (`Korean.Pronouns.supnida_realize`). Forms
+are in the Revised Romanization; Sohn writes *na*, *ce*, *wuli*, *ce-huy*, *ne*, *ne-huy*,
+*caney*, *tangsin*, *caki*, *tayk*, *ku*, *ku nye* and *ku-tul*, and *-tul* for the plural
+suffix.
+
+## Main definitions
+
+* `Korean.Pronouns.personal` — the personal pronouns
+* `Korean.Pronouns.addresseeSg`, `Korean.Pronouns.addresseePl` — the second person singular
+  and plural at each grade
+* `Korean.Pronouns.yo`, `Korean.Pronouns.supnida` — the speech-style particles
+
+## Implementation notes
+
+The humble first person is chosen by the standing of the addressee. That is neither the
+formality of the situation, which a pronoun's register records, nor the grade at which a
+pronoun presents its own referent, so *jeo* and *jeohui* carry neither value and differ from
+*na* and *uri* in form alone.
+
+## References
+
+* [alok-bhalla-2026]
+* [kwon-lee-2026]
+* [sohn-1994]
+* [sohn-1999]
+-/
+
+@[expose] public section
+
+namespace Korean
+
+/-- The honorific grades of the Korean second-person pronouns, lowest first. -/
+inductive Grade where
+  /-- The plain grade, *neo*, to a child or an intimate. -/
+  | plain
+  /-- The familiar grade, *jane*, to an adult or pre-adult inferior. -/
+  | familiar
+  /-- The blunt grade, *dangsin*, to an adult equal or inferior. -/
+  | blunt
+  /-- The deferential grade, *taek*, to an adult stranger. -/
+  | deferential
+  deriving DecidableEq, Fintype, Repr
+
+instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
+
+namespace Pronouns
+
+/-- The neutral first person *na*. -/
+def na : PersonalPronoun :=
+  { form := "na", script := some "나", person := some .first, number := some .singular }
+
+/-- The humble first person *jeo*, used to a senior or an adult equal where the plain *na* is
+used to a child or a younger adult ([sohn-1999]). -/
+def jeo : PersonalPronoun :=
+  { form := "jeo", script := some "저", person := some .first, number := some .singular }
+
+/-- The neutral first person plural *uri*. -/
+def uri : PersonalPronoun :=
+  { form := "uri", script := some "우리", person := some .first, number := some .plural }
+
+/-- The humble first person plural *jeohui*. -/
+def jeohui : PersonalPronoun :=
+  { form := "jeohui", script := some "저희", person := some .first, number := some .plural }
+
+/-- The plain second person *neo*, to a child or an intimate. -/
+def neo : PersonalPronoun :=
+  { form := "neo", script := some "너", person := some .second, number := some .singular }
+
+/-- The familiar second person *jane*, to an adult or pre-adult inferior. -/
+def jane : PersonalPronoun :=
+  { form := "jane", script := some "자네", person := some .second, number := some .singular }
+
+/-- The blunt second person *dangsin*, to an adult equal or inferior and between spouses. -/
+def dangsin : PersonalPronoun :=
+  { form := "dangsin", script := some "당신", person := some .second, number := some .singular }
+
+/-- The deferential second person *taek*, to an adult stranger. -/
+def taek : PersonalPronoun :=
+  { form := "taek", script := some "댁", person := some .second, number := some .singular }
+
+/-- The second person *jagi*, of the blunt level beside *dangsin*: a recent form used between
+young couples and close friends ([sohn-1994]). -/
+def jagi : PersonalPronoun :=
+  { form := "jagi", script := some "자기", person := some .second, number := some .singular }
+
+/-- The plain second person plural *neohui*, *neo* with the suffix *-hui*. -/
+def neohui : PersonalPronoun :=
+  { form := "neohui", script := some "너희", person := some .second, number := some .plural }
+
+/-- The familiar second person plural *janedeul*. -/
+def janedeul : PersonalPronoun :=
+  { form := "janedeul", script := some "자네들", person := some .second, number := some .plural }
+
+/-- The blunt second person plural *dangsindeul*. -/
+def dangsindeul : PersonalPronoun :=
+  { form := "dangsindeul", script := some "당신들", person := some .second,
+    number := some .plural }
+
+/-- The deferential second person plural *taekdeul*. -/
+def taekdeul : PersonalPronoun :=
+  { form := "taekdeul", script := some "댁들", person := some .second, number := some .plural }
+
+/-- The written-narrative masculine third person *geu*. -/
+def geu : PersonalPronoun :=
+  { form := "geu", script := some "그", person := some .third, number := some .singular,
+    gender := some .Masc, register := .formal }
+
+/-- The written-narrative feminine third person *geunyeo*. -/
+def geunyeo : PersonalPronoun :=
+  { form := "geunyeo", script := some "그녀", person := some .third, number := some .singular,
+    gender := some .Fem, register := .formal }
+
+/-- The colloquial third person *gyae*, neutral for gender. -/
+def gyae : PersonalPronoun :=
+  { form := "gyae", script := some "걔", person := some .third, number := some .singular,
+    register := .informal }
+
+/-- The written-narrative third person plural *geudeul*. -/
+def geudeul : PersonalPronoun :=
+  { form := "geudeul", script := some "그들", person := some .third, number := some .plural,
+    register := .formal }
+
+/-- The second person singular at each grade. -/
+def addresseeSg : Grade → PersonalPronoun
+  | .plain => neo
+  | .familiar => jane
+  | .blunt => dangsin
+  | .deferential => taek
+
+/-- The second person plural at each grade. -/
+def addresseePl : Grade → PersonalPronoun
+  | .plain => neohui
+  | .familiar => janedeul
+  | .blunt => dangsindeul
+  | .deferential => taekdeul
+
+/-- The personal pronouns. -/
+def personal : Finset PersonalPronoun :=
+  {na, jeo, uri, jeohui, neo, jane, dangsin, jagi, taek, neohui, janedeul, dangsindeul, taekdeul,
+    geu, geunyeo, gyae, geudeul}
+
+/-- Every category has a pronoun. -/
+theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+  decide +kernel
+
+/-- Every grade distinguishes one addressee from several. -/
+theorem addresseeSg_ne_addresseePl (g : Grade) : addresseeSg g ≠ addresseePl g := by
+  cases g <;> decide
+
+/-- The pronouns of address are ordinary: each denotes what its person and number realize. -/
+theorem isOrdinary_addressee (g : Grade) :
+    (addresseeSg g).IsOrdinary ∧ (addresseePl g).IsOrdinary := by
+  cases g <;> decide
+
+/-- The polite speech-style particle *-yo*, of informal discourse. -/
+def yo : Morphology.Morph := .suff "yo"
+
+open Phonology Morphology in
+/-- The speech-style particle of formal discourse, *-mnida* after a vowel and *-seumnida* after a
+consonant ([sohn-1994]). -/
+def supnida : RuleSet (SubsetRule Segment Morph) :=
+  [⟨[+syllabic], .suff "mnida"⟩, ⟨⊥, .suff "seumnida"⟩]
+
+open Phonology Morphology in
+/-- The formal particle is *-mnida* after a vowel and *-seumnida* after a consonant. -/
+theorem supnida_realize :
+    supnida.realizeMinimal (fun r ↦ OrderDual.toDual r.features) a = some (.suff "mnida") ∧
+      supnida.realizeMinimal (fun r ↦ OrderDual.toDual r.features) k =
+        some (.suff "seumnida") := by
+  decide
+
+/-! ### Quexistentials
+
+The interrogative words, which are used bare as indefinites, *nwukwu* 'who' for 'someone'. The
+forms are those of Haspelmath's table, in his Yale romanization. -/
+
+/-- 누구 *nwukwu* 'who, someone'. -/
+def nwukwu : ProForm := { form := "nwukwu", script := some "누구", ontology := .person }
+
+/-- *mues* 'what, something'. -/
+def mues : ProForm := { form := "mues", ontology := .thing }
+
+/-- *etten* 'what kind of, some kind of'. -/
+def etten : ProForm := { form := "etten", ontology := .property }
+
+/-- *eti* 'where, somewhere'. -/
+def eti : ProForm := { form := "eti", ontology := .place }
+
+/-- *encey* 'when, sometime'. -/
+def encey : ProForm := { form := "encey", ontology := .time }
+
+/-- *enu* 'which, some'. -/
+def enu : ProForm := { form := "enu", ontology := .determiner }
+
+/-- The quexistentials. -/
+def quexistentials : Finset ProForm := {nwukwu, mues, etten, eti, encey, enu}
+
+/-- The interrogative pronouns, the quexistentials in their interrogative use. -/
+def interrogatives : Finset InterrogativePronoun := quexistentials.image (⟨·⟩)
+
+end Pronouns
+
+end Korean

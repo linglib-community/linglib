@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Mereology.Basic
-public import Linglib.Fragments.English.Determiners
+public import Linglib.Languages.English.Determiners
 public import Linglib.Data.Examples.HaslingerHienEtAl2025
 public import Mathlib.Data.PFun
 public import Mathlib.Tactic.DeriveFintype
@@ -327,7 +327,7 @@ def english (w : QuantificationalDeterminer) : Option Structure :=
   else none
 
 /-- At the lexicon the generalization says that the English forms carrying a ONE head are exactly
-the universal determiners the fragment records as selecting the singular. -/
+the universal determiners the language file records as selecting the singular. -/
 theorem one_iff_singular :
     ∀ w s, english w = some s →
       (s ≠ .bare ↔ w.numberRestriction = some .singular) := by

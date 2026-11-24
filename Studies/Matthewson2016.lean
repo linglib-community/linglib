@@ -3,11 +3,11 @@ module
 public import Linglib.Semantics.Modality.Universals
 public import Linglib.Semantics.Evidentiality.Evidence
 public import Linglib.Data.Examples.Matthewson2016
-public import Linglib.Fragments.Gitksan.Modals
-public import Linglib.Fragments.Statimcets.Modals
-public import Linglib.Fragments.NezPerce.Modals
-public import Linglib.Fragments.Niuean.Modals
-public import Linglib.Fragments.Nsyilxcen.Modals
+public import Linglib.Languages.Gitksan.Modals
+public import Linglib.Languages.Statimcets.Modals
+public import Linglib.Languages.NezPerce.Modals
+public import Linglib.Languages.Niuean.Modals
+public import Linglib.Languages.Nsyilxcen.Modals
 public import Studies.Condoravdi2002
 public import Studies.Deal2011
 public import Studies.Kratzer2012
@@ -54,7 +54,7 @@ Gitksan.
   counterparts it projects, and a content-mode base is unconstrained. Deniability is stated for
   simple necessity, the force of *must* in (23)–(24), without the stereotypical ordering source
   whose wiggle room the chapter allows the factual (23).
-* The rows are joined to the fragments through `parse?` tables, and every row naming a modal
+* The rows are joined to the language files through `parse?` tables, and every row naming a modal
   resolves (`rows_resolve`), so no row theorem holds by a failed lookup.
 * Duals, force distinctions and [nauze-2008]'s axes compare necessity with possibility, weak
   necessity counting as necessity (`ModalItem.quantificationalMeaning`): Table 18.1's *sgi* is
@@ -65,7 +65,7 @@ Gitksan.
 * Table 18.4's hypothetical root system has a teleological flavour, which the library folds
   into circumstantial; bouletic stands in for it, which keeps the system ambiguous along both
   axes.
-* The English row of Table 18.3 (*can*, *might*, *must*) is not formalized, no fragment
+* The English row of Table 18.3 (*can*, *might*, *must*) is not formalized, no language file
   recording the source or mode of the English modals.
 * §18.3.2 contrasts [peterson-2010]'s *ima('a)*, a possibility modal strengthened by an
   ordering source, with [deal-2011]'s *o'qa*; the two part only in downward-entailing contexts,

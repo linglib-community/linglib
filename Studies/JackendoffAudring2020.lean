@@ -7,8 +7,8 @@ module
 
 public import Linglib.Data.Examples.JackendoffAudring2020
 public import Linglib.Data.Wordlist.JackendoffAudring2020
-public import Linglib.Fragments.English.Phonology
-public import Linglib.Fragments.German.Phonology
+public import Linglib.Languages.English.Phonology
+public import Linglib.Languages.German.Phonology
 public import Linglib.Morphology.ConstructionMorphology.Pattern
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Linglib.Phonology.Prosody.Syllable

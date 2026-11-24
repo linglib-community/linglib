@@ -5,8 +5,8 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Haspelmath2025a
 public import Linglib.Data.Examples.Languages
-public import Linglib.Fragments.Finnish.Morphotactics
-public import Linglib.Fragments.Turkish.Morphotactics
+public import Linglib.Languages.Finnish.Morphotactics
+public import Linglib.Languages.Turkish.Morphotactics
 public import Studies.Haspelmath2021
 public import Linglib.Syntax.Feature.Case.Spatial
 public import Linglib.Data.Examples.Readers
@@ -36,7 +36,7 @@ Schemas](##predpossessiveStrategy?_eq_some_iff).
   builds.
 * A predpossessive strategy is read off Heine's formula for a source schema, which gives the
   participant made the subject and the flag of the other.
-* The Turkish fragment follows Göksel and Kerslake in taking -(y)DI as the past copular marker,
+* The Turkish language file follows Göksel and Kerslake in taking -(y)DI as the past copular marker,
   its y the buffer consonant after a vowel; the paper, citing Kornfilt, bolds the y alone.
 
 ## TODO
@@ -46,7 +46,7 @@ Schemas](##predpossessiveStrategy?_eq_some_iff).
   Hamar existential and the hyparctic examples. The paper's other examples are not entered, nor
   are the subtypes of the equational and existential types or the minor predicate types.
 * Only the predpossessive strategies are given forms, and only the locative flag of the Finnish
-  rows is checked against a fragment.
+  rows is checked against a language file.
 
 ## References
 
@@ -351,14 +351,15 @@ theorem hamar_existive {S : Set Construction}
   ⟨by decide +kernel, by decide +kernel, .of_mem (h existential (by decide +kernel)) (by decide),
     fun hS ↦ hS.hyparctic_notMem (h hyparctic (by decide +kernel))⟩
 
-/-! ### The fragments -/
+/-! ### The language files -/
 
 section Finnish
 
 open Phonology Finnish Finnish.Nominal Subregular.LocalRewrite
 
 -- The possessor of the locpossessive example (25) and the location of the existent-postposing
--- example (53) are the adessives of *Pekka* and *katto* in the Finnish fragment, after consonant
+-- example (53) are the adessives of *Pekka* and *katto* in the Finnish language file, after
+-- consonant
 -- gradation, and the adessive is a case of place, the flag the locpossessive strategy puts on the
 -- possessor.
 theorem finnish_adessive :
@@ -375,7 +376,7 @@ section Turkish
 
 open Phonology Turkish Turkish.Phonology
 
--- The word of (31) is the fragment's realization of *satıcı* with the past copular marker and
+-- The word of (31) is the language file's realization of *satıcı* with the past copular marker and
 -- the first person singular.
 theorem turkish_affixal_copula :
     ex31.glossedWords.map (·.wordform.mapM ofChar) = [some (Turkish.realize [s, a, t, ı, c, ı]

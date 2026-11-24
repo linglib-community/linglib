@@ -6,8 +6,8 @@ public import Linglib.Phonology.GovernmentPhonology.EmptyCategoryPrinciple
 public import Linglib.Phonology.GovernmentPhonology.Skeleton
 public import Linglib.Phonology.RuleInteraction
 public import Linglib.Phonology.Segmental.NaturalClass
-public import Linglib.Fragments.Tigrinya.Phonology
-public import Linglib.Fragments.Tigre.Phonology
+public import Linglib.Languages.Tigrinya.Phonology
+public import Linglib.Languages.Tigre.Phonology
 public import Linglib.Data.Examples.FaustLampitelli2026
 public import Linglib.Data.Examples.Languages
 public import Studies.KayeLowenstammVergnaud1985
@@ -42,8 +42,9 @@ order of the operations matters.
   vowel from the span of its |A|. Here |I| and |U| are the heads of the mid vowels, and `headed`
   makes the fused element the head of a fused vowel.
 * Read as the feature matrices of [kaye-lowenstamm-vergnaud-1985], the vowel melodies have the
-  fragment's values of [round], [front], [high], [ATR] and [low]: headed |A| is [+low] and plain
-  |A| is [−low]. The fragment's [back] is not determined by the elements.
+  language file's values of [round], [front], [high], [ATR] and [low]: headed |A| is [+low] and
+  plain
+  |A| is [−low]. The language file's [back] is not determined by the elements.
 * Among the consonants only the gutturals and the glides have a melody. The palatals and the
   ejectives contain |I| and |A| and never trigger syneresis; they are given no elements.
 * The /ɨ/ of a pattern is a vowel with no element, not an empty nucleus, so its nucleus governs.
@@ -112,7 +113,7 @@ def Vowel.ofLetter? : String → Option Vowel
   | "ɨ" => some .weak
   | _ => none
 
-/-- The vowel `v` as a segment of the Tigrinya fragment, which serves for both languages. -/
+/-- The vowel `v` as a segment of the Tigrinya language file, which serves for both languages. -/
 def Vowel.segment : Vowel → Phonology.Segment
   | .a => Tigrinya.Phonology.a
   | .aBare => Tigrinya.Phonology.«ʌ»
@@ -148,7 +149,7 @@ inductive Guttural where
   | pharyngealVoiceless
   deriving DecidableEq, Repr, Fintype
 
-/-- The guttural `g` as a segment of the Tigrinya fragment, which serves for both languages. -/
+/-- The guttural `g` as a segment of the Tigrinya language file, which serves for both languages. -/
 def Guttural.segment : Guttural → Phonology.Segment
   | .glottalStop => Tigrinya.Phonology.«ʔ»
   | .h => Tigrinya.Phonology.h
@@ -171,7 +172,7 @@ def Guttural.IsPharyngeal : Guttural → Prop
 instance : DecidablePred Guttural.IsPharyngeal :=
   fun g ↦ by cases g <;> unfold Guttural.IsPharyngeal <;> infer_instance
 
--- the gutturals are consonants of both fragments
+-- the gutturals are consonants of both language files
 theorem segment_mem_consonants : ∀ g : Guttural,
     g.segment ∈ Tigrinya.Phonology.consonants ∧ g.segment ∈ Tigre.Phonology.consonants := by
   decide +kernel
@@ -228,13 +229,13 @@ def headed (e : Element) (v : Vowel) : Vowel :=
 theorem headed_aBare : headed .A .aBare = .a := by decide
 
 -- read as the feature matrices of [kaye-lowenstamm-vergnaud-1985], the melodies of the vowels have
--- the fragment's values of [round], [front], [high], [ATR] and [low]
+-- the language file's values of [round], [front], [high], [ATR] and [low]
 theorem eqOn_interpret_vowelET : ∀ v : Vowel,
     Set.EqOn (KayeLowenstammVergnaud1985.interpret (vowelET v)) v.segment
       ↑KayeLowenstammVergnaud1985.features := by
   decide +kernel
 
--- the fragment's [back] is not a function of the elements: [ʌ] and [a] are both |A| alone and
+-- the language file's [back] is not a function of the elements: [ʌ] and [a] are both |A| alone and
 -- differ in it, and [ʌ] is [+back] with the vowels that have |U|
 theorem back_segment_iff : ∀ v : Vowel,
     v.segment Feature.back = some true ↔ .U ∈ (vowelET v).elements ∨ v = .aBare := by
@@ -695,7 +696,7 @@ def lang : Examples.Root → Lang
   | .weigh | .leave | .wash | .flee | .getUp | .whipTigre | .askTigre | .load | .uncoverTigre
   | .pullTigre => .tigre
 
-/-- Each root of the examples, as a root of the fragment of its language. -/
+/-- Each root of the examples, as a root of the language file of its language. -/
 def root : Examples.Root → ConsonantalRoot Phonology.Segment
   | .whip => Tigrinya.Phonology.whip
   | .hear => Tigrinya.Phonology.hear

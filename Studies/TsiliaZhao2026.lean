@@ -1,10 +1,10 @@
 module
 
-public import Linglib.Fragments.English.TemporalDeictic
-public import Linglib.Fragments.Greek.StandardModern.TemporalDeictic
-public import Linglib.Fragments.Hebrew.TemporalDeictic
-public import Linglib.Fragments.Japanese.TemporalDeictic
-public import Linglib.Fragments.Slavic.Russian.TemporalDeictic
+public import Linglib.Languages.English.TemporalDeictic
+public import Linglib.Languages.Greek.StandardModern.TemporalDeictic
+public import Linglib.Languages.Hebrew.TemporalDeictic
+public import Linglib.Languages.Japanese.TemporalDeictic
+public import Linglib.Languages.Slavic.Russian.TemporalDeictic
 public import Linglib.Data.Examples.TsiliaZhao2026
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

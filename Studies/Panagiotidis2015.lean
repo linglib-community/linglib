@@ -509,7 +509,7 @@ theorem extendCat_of_family_eq : ∀ {t : List Cat} {p : Projection}, p.category
 
 /-- An extended projection that begins at the categorizer *n* or *v* converges, with the category
 of the categorizer. -/
-theorem exists_extendCat_of_isExtendedProjection {s : Spine} (hs : s.IsExtendedProjection)
+theorem exists_extendCat_of_isExtendedProjection {s : Spine Cat} (hs : s.IsExtendedProjection)
     (hX : s.heads.head? = some (categorizerOf X)) :
     ∃ q, Projection.bare.extendCat Free s.heads = some q ∧ q.category = some X := by
   obtain ⟨t, ht⟩ : ∃ t, s.heads = categorizerOf X :: t := by

@@ -5,7 +5,7 @@ A page shows the module docstring and the declarations by section, its headline 
 open cards and every other declaration as a row that opens in place, whose "Built from" line opens
 the file's definitions its statement names. On a study page, which also shows the paper's title and
 citation, the headlines are the theorems with a docstring. The right column places the study in the
-library: the theory and fragments its statements use, with the names they use, the imports they
+library: the theory and languages its statements use, with the names they use, the imports they
 never name, the studies on the same theory, the papers it cites and those citing it, and the papers
 it cites that no study formalizes. It also has the theorems whose statements name another paper's
 definitions, with their sentences: this page's about other papers, and other pages' about this one.
@@ -16,7 +16,7 @@ definitions, leaving out proofs that only evaluate and sentences that need the p
 
 On a theory page the headlines are the declarations the module docstring links to, as a mathlib
 header names a file's main definitions and results, or the theorems with a docstring if it links to
-none. The right column has the theory it builds on, then the theory, studies and fragments whose
+none. The right column has the theory it builds on, then the theory, studies and languages whose
 statements use it, with the names they use, and the other files of its directory.
 
 Everything comes from doc-gen4's output, read by `docgen_index`, and from the bibliography;
@@ -135,13 +135,13 @@ def and_more(items, n=SHOWN):
 
 
 def node_of(page):
-    """The node of the graph a page belongs to: a study, a theory framework, a fragment, data."""
+    """The node of the graph a page belongs to: a study, a theory framework, a language, data."""
     p = page.split("#")[0].removesuffix(".html").split("/")
     if p[0] == "Studies" and len(p) >= 2:
         return "s", p[1]
     if p[0] != "Linglib" or len(p) < 3:
         return None
-    if p[1] == "Fragments":
+    if p[1] == "Languages":
         return "f", p[2]
     if p[1] in THEORY:
         return "t", f"{p[1]}.{p[2]}"
@@ -224,7 +224,7 @@ def year_of(study):
 
 class Library:
     """What every page needs from the rest of the library: the bibliography, who cites whom, the
-    declarations' references, and which studies use which theory and fragments."""
+    declarations' references, and which studies use which theory and languages."""
 
     def __init__(self, doc, checks=None):
         self.doc = doc
@@ -256,7 +256,7 @@ class Library:
                 self.study_key[s], e["study"] = key, s
             self.bib[key] = e
         self.cited_in = gb.citations(set(self.bib))
-        # The theory and fragments each study's statements use, and the reverse.
+        # The theory and languages each study's statements use, and the reverse.
         self.uses, self.users, self.node_pages = defaultdict(set), defaultdict(set), defaultdict(set)
         for page, mod in self.modules.items():
             node = node_of(page)
@@ -747,7 +747,7 @@ class ModulePage:
                 f'{link(self.to_study(s), esc(nodes[s]["l"]), "nd")}{note}</li>')
 
     def framework(self, nodes, node, page, desc=None):
-        """A theory or fragment node of the graph, whose page is `page`."""
+        """A theory or language node of the graph, whose page is `page`."""
         if not desc:
             m, s = len(self.lib.node_pages[node]), len(self.lib.users[node])
             desc = f"{m} module{'' if m == 1 else 's'} · {s} {'study' if s == 1 else 'studies'}"
@@ -1000,7 +1000,7 @@ class TheoryPage(ModulePage):
         edges, pages_of = [], {me: {self.page}}
         parts = ['<h2>Connections</h2>\n<div class="graph" id="graph"><svg id="g" viewBox="0 0 300 206" '
                  'role="img" aria-label="This file below the theory it builds on, above the theory '
-                 'built on it, the studies using it by year and the fragments using it"></svg>'
+                 'built on it, the studies using it by year and the languages using it"></svg>'
                  '<div class="tip" id="tip" role="tooltip"></div></div>']
 
         def file_item(node, page, note, in_graph, label=None):
@@ -1093,7 +1093,7 @@ class TheoryPage(ModulePage):
                 pages_of[node_id(node)] = pages
                 edges.append([node_id(node), me, "use"])
             rows.append(file_item(node, first, self.own_names(anchors, 2), node in order[:FILES_SHOWN]))
-        parts.append(self.listing("Fragments using it", rows))
+        parts.append(self.listing("Languages using it", rows))
 
         # Among its neighbors, who names whom, which hovering a neighbor shows.
         users = [n for n in pages_of if n != me and nodes[n].get("b") != "up"]
@@ -1173,7 +1173,7 @@ def landing(lib, template, site_root, sha):
                        ("references.html", "References")))
     studies = study_tree(lib, [p for p in lib.modules if p.startswith("Studies/")])
     sections = [("theory", "t", "Theory", areas), ("studies", "s", "Studies", studies),
-                ("fragments", "f", "Fragments", tree("Linglib/Fragments")),
+                ("fragments", "f", "Languages", tree("Linglib/Languages")),
                 ("data", "d", "Data", tree("Linglib/Data")), ("core", "d", "Core", tree("Linglib/Core")),
                 ("other", "d", "Other", f'<ul>{general}</ul>')]
     tree = "\n".join(f'<section id="{sid}"><h2 class="{cls}">{esc(title)}</h2>{body}</section>'

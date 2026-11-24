@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.BroekhuisCorver2026
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.Dutch.Adpositions
+public import Linglib.Languages.Dutch.Adpositions
 public import Linglib.Syntax.WordOrder
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 public import Studies.Helmantel2002
@@ -25,7 +25,7 @@ complementive makes a verb of motion take *zijn*](##perfect_op).
 * `Reads` takes Helmantel's condition, which the chapter names among its starting points: a noun
   phrase in the specifier is read as a path, which the object of a point locative cannot be, and a
   phrase otherwise has the readings of its adposition's class. Her classes are lists of the
-  fragment's entries; *af*, *heen*, *toe* and the locational *over* are not among them.
+  language file's entries; *af*, *heen*, *toe* and the locational *over* are not among them.
 * `Reads` licenses a site without forcing one: an extended locative such as *over* is directional
   with its noun phrase in either site, and the grammar records which narrow locatives have a
   postpositional use.
@@ -36,7 +36,7 @@ complementive makes a verb of motion take *zijn*](##perfect_op).
   base position, *van na de oorlog* 'from after the war', and the R-words that follow *van* and
   *tot*, *van hier tot daar* 'from here to there'. The extraction of modifiers such as measure
   phrases and the restriction of pronominal complements to human referents are not formalized.
-* A row is linked to the fragment entry whose phrase its element leaves, and to the element's
+* A row is linked to the language file entry whose phrase its element leaves, and to the element's
   kind; the class is Helmantel's, the judgment is predicted from it, and the linked adposition is
   checked against the row's words.
 * The perfect auxiliary follows the chapter's account of *heeft op de heuvel gereden* against *is de
@@ -224,7 +224,7 @@ theorem circumposition_extraction (c : LocativeClass) :
 
 /-! ### The Dutch lexicon -/
 
-/-- Helmantel's spatial prepositions in the fragment, with their classes. -/
+/-- Helmantel's spatial prepositions in the language file, with their classes. -/
 def classed : List (Dutch.Adposition × LocativeClass) :=
   narrowLocatives.map (·, .narrow) ++ pointLocatives.map (·, .point) ++
     extendedLocatives.map (·, .extended)

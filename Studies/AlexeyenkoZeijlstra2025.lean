@@ -1,13 +1,13 @@
 module
 
 public import Linglib.Syntax.WordOrder
-public import Linglib.Fragments.Slavic.Russian.Agreement
-public import Linglib.Fragments.German.Agreement
-public import Linglib.Fragments.Dutch.Agreement
-public import Linglib.Fragments.Greek.StandardModern.Agreement
-public import Linglib.Fragments.Romance.Italian.Agreement
-public import Linglib.Fragments.Farsi.Agreement
-public import Linglib.Fragments.Tagalog.Agreement
+public import Linglib.Languages.Slavic.Russian.Agreement
+public import Linglib.Languages.German.Agreement
+public import Linglib.Languages.Dutch.Agreement
+public import Linglib.Languages.Greek.StandardModern.Agreement
+public import Linglib.Languages.Romance.Italian.Agreement
+public import Linglib.Languages.Farsi.Agreement
+public import Linglib.Languages.Tagalog.Agreement
 public import Linglib.Data.Examples.AlexeyenkoZeijlstra2025
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.StructureDataset.AlexeyenkoZeijlstra2025
@@ -42,7 +42,7 @@ paper analyses, and `intervention_rows` against its examples, whose strings are 
 spans of the rows. `licit_rows` checks well-formedness directly on the rows that show their
 attributivizer, among them those with a degree word. The agreement paradigms the analysis
 assigns are checked against the rows that show them, `marker_rows`. The Greek, Italian, Persian,
-Tagalog, Russian, German and Dutch paradigms are those of the Fragments, and
+Tagalog, Russian, German and Dutch paradigms are those of the language files, and
 `russian_form_rows` checks the long and short forms.
 
 ## Implementation notes
@@ -89,7 +89,7 @@ structure Form where
   features : Finset Agreement.Dimension
   deriving DecidableEq
 
-/-- An adjectival target of a fragment as a form, its marker specified for the dimensions the
+/-- An adjectival target of a language file as a form, its marker specified for the dimensions the
 target inflects for. -/
 def form {V : Agreement.Dimension → Type*} {F : Type*} (t : Agreement.Target V F) : Form :=
   ⟨t.positions, t.inflection⟩
@@ -218,7 +218,8 @@ def apOrders : Language → Finset HeadDirection
 def φκ : Finset Agreement.Dimension := {.number, .gender, .case}
 
 /-- A language's adjectival forms. Those of Greek, Italian, Persian and Tagalog are the adjectives
-of their Fragments, Russian's the long and short adjectives of its Fragment, and German's and
+of their language files, Russian's the long and short adjectives of its language file, and German's
+and
 Dutch's the attributive and the bare predicative adjectives of theirs. Latin adjectives have one
 form,
 inflected for gender, number and case in both uses, and Kalaallisut's affixal number and case

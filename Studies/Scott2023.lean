@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Mayan.Mam.Agreement
-public import Linglib.Fragments.Mayan.Mam.Pronouns
+public import Linglib.Languages.Mayan.Mam.Agreement
+public import Linglib.Languages.Mayan.Mam.Pronouns
 public import Studies.Harbour2016
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Impoverishment
@@ -24,7 +24,7 @@ the probes (`agreedBy`).
 
 Vocabulary Insertion realizes the copied features by the Extended Subset Principle (53) over the
 Vocabulary of Tables 4.7, 4.8 and 4.10 and of (59), (65) and (66) (`vocabulary`), which derives
-the Fragment's Set A and Set B paradigms (`setA_realize`, `setB_realize`) and the default Set B
+the language file's Set A and Set B paradigms (`setA_realize`, `setB_realize`) and the default Set B
 of a transitive clause, where Infl carries no φ (`setB_transitive`). A pronoun hosts every item
 its features license, so first-person pronouns are bimorphemic (§4.4.1, `insertAll`). A probe
 that copies a goal's features flags the goal with its category (§4.4.3.2, `Feat.flag`), and the
@@ -40,7 +40,7 @@ dissertation's judgments (`Data/Examples/Scott2023`) instantiate the derivation
 * Features are Harbour's bivalent person and number features (Table 4.4) with the head a Set A
   or Set B terminal sits on and the flag a copying probe leaves; the person features of a cell
   are Harbour's signs of its referential category (`Harbour2016.signOf`), and the two pronoun
-  series the derivation targets are the fragment's `Mam.independent` and `Mam.subjPoss`.
+  series the derivation targets are the language file's `Mam.independent` and `Mam.subjPoss`.
   Contextual specifications of Vocabulary Items are features of the same terminal, so the
   Extended Subset Principle is the substrate's `subsetPrinciple` over sites.
 * Multiple insertion (§4.4.1) is read with the Extended Subset Principle: every applicable item
@@ -106,7 +106,7 @@ def PronCell.number : PronCell → Number
   | .firstSg | .secondSg | .thirdSg => .singular
   | .firstPlExcl | .firstPlIncl | .secondPl | .thirdPl => .plural
 
-/-- The cell of the fragment's pronoun paradigms, with clusivity on the person. -/
+/-- The cell of the language file's pronoun paradigms, with clusivity on the person. -/
 def PronCell.bundle : PronCell → Agreement.Bundle
   | .firstSg => .personNumber .first .singular
   | .firstPlExcl => .personNumber .firstExclusive .plural
@@ -124,10 +124,10 @@ def PronCell.sign (c : PronCell) : Harbour2016.Sign := Harbour2016.signOf c.cate
 /-- Whether a cell is singular. -/
 def PronCell.singular (c : PronCell) : Bool := c.number = .singular
 
-/-- The fragment's independent pronoun of a cell. -/
+/-- The language file's independent pronoun of a cell. -/
 def independentOf (c : PronCell) : Option PersonalPronoun := Mam.independent.realize c.bundle
 
-/-- The fragment's subject and possessor pronoun of a cell. -/
+/-- The language file's subject and possessor pronoun of a cell. -/
 def subjPossOf (c : PronCell) : Option PersonalPronoun := Mam.subjPoss.realize c.bundle
 
 /-! ### Features and Vocabulary Items -/
@@ -276,7 +276,7 @@ object's cell. -/
 theorem setB_transitive (c : PronCell) : insert1 (inflTerminal .P c) = some (.procl "tz'") := by
   cases c <;> decide
 
-/-- The Fragment's Set A paradigm (Table 4.5, pre-consonantal) is the Vocabulary's spell-out of
+/-- The language file's Set A paradigm (Table 4.5, pre-consonantal) is the Vocabulary's spell-out of
 what Voice or Poss copies. -/
 theorem setA_realize (c : PronCell) :
     (setAExponent .consonant).realize (.personNumber c.person c.number)
@@ -329,7 +329,8 @@ def formWith (rules : List (ImpoverishmentRule (List Feat) Dim)) (l : Option Loc
 /-- The form of a pronoun under the grammar of (84). -/
 def form (l : Option Locus) (c : PronCell) : List Morph := formWith [rule84] l c
 
-/-- The morphemes of the Fragment's pronoun entries (Table 4.9) are *qin=i*, *qo'=y*, *qo*, *=i*,
+/-- The morphemes of the language file's pronoun entries (Table 4.9) are *qin=i*, *qo'=y*, *qo*,
+*=i*,
 *q=i*, *qa*, and the null third-person singular. -/
 def morphemes : Option PersonalPronoun → List Morph
   | some p =>

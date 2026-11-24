@@ -2,8 +2,8 @@ module
 
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Pi
-public import Linglib.Fragments.German.Verbs
-public import Linglib.Fragments.Icelandic.Verbs
+public import Linglib.Languages.German.Verbs
+public import Linglib.Languages.Icelandic.Verbs
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Syntax.Case.Assignment
 public import Linglib.Data.Examples.ZaenenMalingThrainsson1985
@@ -306,7 +306,7 @@ def abhoeren : List (Arg German.Case) :=
 
 end Thematic
 
-/-- The paper's Icelandic verbs with the fragment entries they realize. -/
+/-- The paper's Icelandic verbs with the language file entries they realize. -/
 def entries : List (List (Arg Icelandic.Case) × Icelandic.Verbs.Verb) :=
   open Icelandic.Verbs in
   [(Thematic.dansa, dansa), (Thematic.kyssa, kyssa), (Thematic.hjalpa, hjalpa),

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Tigrinya.Complementizers
-public import Linglib.Fragments.Tigrinya.Negation
+public import Linglib.Languages.Tigrinya.Complementizers
+public import Linglib.Languages.Tigrinya.Negation
 public import Linglib.Data.Examples.Cacchioli2026
 public import Linglib.Data.Examples.Readers
 
@@ -149,14 +149,14 @@ structure NegationDatum where
   word : List String
   deriving DecidableEq, Repr
 
-/-- The negative word ends in the fragment's suffix *-(ɨ)n*. -/
+/-- The negative word ends in the language file's suffix *-(ɨ)n*. -/
 def NegationDatum.HasSuffix (d : NegationDatum) : Prop :=
   d.word.getLast? = some Tigrinya.Negation.n.form
 
 instance : DecidablePred NegationDatum.HasSuffix := fun d ↦
   inferInstanceAs (Decidable (d.word.getLast? = some Tigrinya.Negation.n.form))
 
-/-- The negative word among the words of a sentence is the one bearing the fragment's negative
+/-- The negative word among the words of a sentence is the one bearing the language file's negative
 prefix, *ʔaj-* or its allomorph *ɛj-*, given as the forms of its morphs. -/
 def negativeWord (ws : List (List (List Char))) : Option (List String) :=
   (ws.find? fun w ↦

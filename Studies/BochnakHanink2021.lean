@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Washo.Clause
+public import Linglib.Languages.Washo.Clause
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 public import Studies.Hanink2021
 public import Linglib.Syntax.Minimalist.Spine
@@ -11,7 +11,7 @@ public import Linglib.Syntax.Minimalist.Spine
 This file formalizes Bochnak and Hanink's two strategies of clausal embedding in Washo. A
 presuppositional predicate selects a nominalized clause as a DP complement. A
 non-presuppositional predicate is intransitive, and its dependent-mood clause is an adjoined
-modifier. We read selection off the Fragment's frames and derive Table 2 from it: a predicate
+modifier. We read selection off the language file's frames and derive Table 2 from it: a predicate
 selects iff it takes the nominalizer as clause-typer, and the selected clause is a CP under D
 while the modifier is a MoodP without C.
 
@@ -61,13 +61,13 @@ theorem selects_iff_takes_ge : ∀ v ∈ verbs, Selects v ↔ v.toVerb.Takes ge 
   decide
 
 /-- The spine of a nominalized complement, a CP under a silent D (3). -/
-def complementSpine : Spine := Spine.cP.append [.D]
+def complementSpine : Spine Minimalist.Cat := Spine.cP.append [.D]
 
 /-- The spine of a dependent-mood modifier, a MoodP without C ((4), (47b)). -/
-def modifierSpine : Spine := Spine.tP
+def modifierSpine : Spine Minimalist.Cat := Spine.tP
 
 /-- The spine of the clause a predicate embeds. -/
-def spine (v : Washo.Verb) : Spine :=
+def spine (v : Washo.Verb) : Spine Minimalist.Cat :=
   if Selects v then complementSpine else modifierSpine
 
 -- Table 2

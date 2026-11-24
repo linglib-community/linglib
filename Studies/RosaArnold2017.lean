@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.RosaArnold2017
 public import Linglib.Data.Statistics.RosaArnold2017
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Pronouns
 public import Linglib.Morphology.Word.Agree
 public import Studies.KehlerRohde2013
 public import Mathlib.Tactic.DeriveFintype

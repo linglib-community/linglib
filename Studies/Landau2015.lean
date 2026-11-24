@@ -5,7 +5,7 @@ public import Mathlib.Data.Fin.VecNotation
 public import Studies.Landau2004
 public import Linglib.Semantics.ArgumentStructure.Relation.LogophoricControl
 public import Linglib.Syntax.Category.Verb.Basic
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Syntax.Category.Verb.Defs
 
 /-!
@@ -25,8 +25,9 @@ contrasts (80) shows the two tiers separated on every row, with obligatory contr
 inflected complement realized as the OC-NC generalization (70) over
 the library's clause classes (`inflectedComplement_realizes_ocnc`); and object control under
 attitude predicates reads *de se* with psychological verbs and *de te* with communicative ones (36).
-The predicate classes are derived from the English fragment's verb entries rather than stored
-(`derivedLandauClass`). The derivation puts each fragment verb that (4) and (5) list in the class
+The predicate classes are derived from the English language file's verb entries rather than stored
+(`derivedLandauClass`). The derivation puts each language file verb that (4) and (5) list in the
+class
 they list it in, the responsive *know* among the interrogatives, and leaves *persuade*, an
 object-control verb that the two lists omit and table (36) classifies, without a class but on the
 logophoric tier.
@@ -260,9 +261,10 @@ def objectControlReading : ObjectControlSubclass → DeSeReading
   | .psychological => .deSe
   | .communicative => .deTe
 
-/-! ### Predicate classes from the fragment -/
+/-! ### Predicate classes from the language file -/
 
-/-- The predicate class of a fragment verb is read off its semantic fields. A change-of-state type
+/-- The predicate class of a language file verb is read off its semantic fields. A change-of-state
+type
 gives the aspectual class and an implication signature the implicative class. Question embedding
 then gives the interrogative class, ahead of factivity, since (5d) lists the responsive *know*
 there; a factive presupposition gives the factive class. Of the remaining verbs, one whose object
@@ -280,7 +282,7 @@ def derivedLandauClass (v : Verb) : Option PredicateClass :=
     | some (.preferential _) => some .desiderative
     | none                   => none
 
-/-- A fragment control verb is on the tier of its class, or else logophoric exactly when it
+/-- A language file control verb is on the tier of its class, or else logophoric exactly when it
 selects an attitude complement; a verb without control has no tier. -/
 def derivedControlTier (v : Verb) : Option Tier :=
   if ¬ v.HasController then Option.none
@@ -295,13 +297,13 @@ section Verbs
 open English
 open English.Verbs hiding Verb
 
-/-- The fragment's exhaustive-control verbs, with the classes (4) lists them in. -/
+/-- The language file's exhaustive-control verbs, with the classes (4) lists them in. -/
 def exhaustiveControlVerbs : List (Verb × PredicateClass) :=
   [(stop.toVerb, .aspectual), (start.toVerb, .aspectual), (begin_.toVerb, .aspectual),
     (continue_.toVerb, .aspectual), (manage.toVerb, .implicative), (fail.toVerb, .implicative),
     (remember.toVerb, .implicative), (forget.toVerb, .implicative), (force.toVerb, .implicative)]
 
-/-- The fragment's partial-control verbs, with the classes (5) lists them in. -/
+/-- The language file's partial-control verbs, with the classes (5) lists them in. -/
 def partialControlVerbs : List (Verb × PredicateClass) :=
   [(want.toVerb, .desiderative), (hope.toVerb, .desiderative), (promise.toVerb, .desiderative),
     (regret.toVerb, .factive), (know.toVerb, .interrogative), (believe.toVerb, .propositional),

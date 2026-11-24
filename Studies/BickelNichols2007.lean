@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Finnish.Morphotactics
-public import Linglib.Fragments.Turkish.Morphotactics
+public import Linglib.Languages.Finnish.Morphotactics
+public import Linglib.Languages.Turkish.Morphotactics
 public import Linglib.Morphology.Morphotactics.Template.Scale
 public import Mathlib.Tactic.DeriveFintype
 

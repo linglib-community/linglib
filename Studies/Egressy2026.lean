@@ -3,8 +3,8 @@ module
 public import Linglib.Data.Examples.Egressy2026
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Morphology.Word.Leipzig
-public import Linglib.Fragments.Hungarian.Verbs
-public import Linglib.Fragments.Hungarian.Pronouns
+public import Linglib.Languages.Hungarian.Verbs
+public import Linglib.Languages.Hungarian.Pronouns
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
@@ -44,7 +44,7 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
   feature. A row marks its matrix verb and the clause's correlate and names them; the verb is
   [checked against its declared past stem](##verbs_printed) in `Hungarian.Verbs`, the role is the
   case cell of `Hungarian.Pronouns.azRealization` the correlate's form fills, and [no past verb
-  the fragment declares and no correlate goes unmarked](##words_marked). Direct perception,
+  the language file declares and no correlate goes unmarked](##words_marked). Direct perception,
   which the paper says removes the backshifted reading pragmatically, is its `directPerception`
   feature. Each single-embedding
   row also carries a linearized witness over a study lexicon that pronounces the row's gloss
@@ -262,7 +262,7 @@ theorem singleRows_predicted :
       Agrees e "" (predicted e ct) := by
   decide +kernel
 
-/-- The verb of the Hungarian fragment that a lexeme of the data is, none for a correlate. -/
+/-- The verb of the Hungarian language file that a lexeme of the data is, none for a correlate. -/
 def verb? : Lexeme → Option Hungarian.Verbs.Verb
   | .lat => some Hungarian.Verbs.lat
   | .hall => some Hungarian.Verbs.hall
@@ -329,7 +329,7 @@ theorem correlates_printed :
         else lexeme? s = some .az ∧ (roleOfForm? w.wordform).isSome := by
   decide +kernel
 
--- no past word with a stem the fragment declares, and no word glossed *it*, goes unmarked: the
+-- no past word with a stem the language file declares, and no word glossed *it*, goes unmarked: the
 -- gloss sets the demonstrative apart from its article homograph
 theorem words_marked :
     ∀ e ∈ Examples.all, ∀ i < e.glossedWords.length, ∀ w ∈ e.glossedWords[i]?,
@@ -451,7 +451,7 @@ structure. The witnesses are right-branching linearizations, each *hogy*-clause 
 fuller argument structure is the derivation step's work. The expletive items take their forms
 from the `Hungarian.Pronouns.az` paradigm; the remaining words, inflected verbs and nouns among
 them, enter the study lexicon at their surface forms, Hungarian conjugation and declension being
-no fragment's yet. -/
+no language file's yet. -/
 
 def liPeti : LexicalItem.Token := ⟨.of .D [] "Peti", 0⟩
 def liPetit : LexicalItem.Token := ⟨.of .D [] "Petit", 1⟩

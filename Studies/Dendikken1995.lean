@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Fragments.Norwegian.Verbs
+public import Linglib.Languages.Norwegian.Verbs
 public import Linglib.Data.Examples.Dendikken1995
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -53,9 +53,9 @@ complex as by the reanalysed one, a point the chapter has no data on. Danish has
 which the chapter records without deriving, so the Danish rows enter only `rows_prefixed`. The
 Norwegian prefixed forms, *utsparka* after *vart* and not after *har*, are the compound
 participles of the reference grammar, which admits them after *være* and *bli* and not after *ha*
-whatever the voice, so the voices Norwegian incorporates in are read off the fragment through
+whatever the voice, so the voices Norwegian incorporates in are read off the language file through
 the auxiliary each voice has in the rows, and every form judged in the *sparke ut* rows is checked
-against the participles the fragment conjugates. The Bokmål rows were constructed and judged by
+against the participles the language file conjugates. The Bokmål rows were constructed and judged by
 Arnfinn Vonen and Alma Næss for den Dikken; the Nynorsk rows are Åfarli's. The arguments from
 small-clause constituency, from verb-particle idioms and from the ergativity of the particle,
 and Herslund's observation that Danish incorporation is lexically conditioned, are recorded in
@@ -376,7 +376,7 @@ theorem rows_prefixed :
         (r.judgment = .acceptable ↔ voiceOf r ∈ L.incorporates) := by
   decide +kernel
 
-/-- The fragment's verb of a row of Åfarli's (134a) and (135a), Nynorsk *sparke ut*. The rows
+/-- The language file's verb of a row of Åfarli's (134a) and (135a), Nynorsk *sparke ut*. The rows
 of (134b) and (134c) have none: the grammar's lists do not place *klippe*, and the book spells
 Åfarli's *køyrt* as Bokmål *kjørt*. -/
 def verbOf (r : Datum) : Option Norwegian.Verb :=

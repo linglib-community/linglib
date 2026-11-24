@@ -10,14 +10,14 @@ public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Discourse.CommonGround
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Fragments.Slavic.Russian.QuestionParticles
-public import Linglib.Fragments.Slavic.Bulgarian.QuestionParticles
-public import Linglib.Fragments.Slavic.Ukrainian.QuestionParticles
-public import Linglib.Fragments.Slavic.Polish.QuestionParticles
-public import Linglib.Fragments.Slavic.Slovenian.QuestionParticles
-public import Linglib.Fragments.Slavic.Serbian.QuestionParticles
-public import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
-public import Linglib.Fragments.Slavic.Czech.Particles
+public import Linglib.Languages.Slavic.Russian.QuestionParticles
+public import Linglib.Languages.Slavic.Bulgarian.QuestionParticles
+public import Linglib.Languages.Slavic.Ukrainian.QuestionParticles
+public import Linglib.Languages.Slavic.Polish.QuestionParticles
+public import Linglib.Languages.Slavic.Slovenian.QuestionParticles
+public import Linglib.Languages.Slavic.Serbian.QuestionParticles
+public import Linglib.Languages.Slavic.Macedonian.QuestionParticles
+public import Linglib.Languages.Slavic.Czech.Particles
 public import Linglib.Data.Examples.Simik2024
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -259,7 +259,7 @@ def Language.defaultStrategy : Language → Strategy
   | .ukrainian | .polish | .serbian | .macedonian => .clauseInitialParticle
   | .bulgarian | .russian => .verbAttachedParticle
 
-/-- The question particles of each language's fragment. -/
+/-- The question particles of each language's language file. -/
 def Language.particles : Language → List Clause.Marker
   | .czech | .slovak | .upperSorbian => []
   | .slovenian =>
@@ -373,7 +373,7 @@ inductive SerbianPQForm
   | lnpq
   deriving DecidableEq, Repr, Fintype
 
-/-- The fragment marker of each strategy. -/
+/-- The language file marker of each strategy. -/
 def SerbianPQForm.particle : SerbianPQForm → Clause.Marker
   | .daLiPPQ => Serbian.QuestionParticles.daLi
   | .jeLiPPQ | .lnpq => Serbian.QuestionParticles.jeLi

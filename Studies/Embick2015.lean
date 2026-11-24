@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Embick2015
-public import Linglib.Fragments.Korean.Phonology
+public import Linglib.Languages.Korean.Phonology
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -37,7 +37,7 @@ conditioning may see the phonological features of a realized exponent.
   conjugation feature [+I].
 * (42) prints the number feature of the *-m* item as [−sg] where (39) has [−pl], and omits the
   third singular *-t* of (33a); both are restored.
-* The Korean hosts are transcribed into the segments of `Fragments.Korean.Phonology`, so that the
+* The Korean hosts are transcribed into the segments of `Languages.Korean.Phonology`, so that the
   consonant-final or vowel-final shape an item refers to is read off the [consonantal] value of
   the final segment rather than listed per host.
 * The examples are `Data.Examples.Embick2015`.
@@ -56,7 +56,7 @@ namespace Embick2015
 
 open DistributedMorphology Embick2015.Examples
 
-/-! ### The Latin fragment -/
+/-! ### The Latin language file -/
 
 namespace Latin
 
@@ -233,7 +233,7 @@ open Feature
 def vocab : List (VocabularyItem Feature String) :=
   [⟨{(0, nom), (-1, cFinal)}, "i"⟩, ⟨{(0, nom), (-1, vFinal)}, "ka"⟩]
 
-/-- The hosts of (10), transcribed into the segments of the fragment. -/
+/-- The hosts of (10), transcribed into the segments of the language file. -/
 def segments : List (String × List Phonology.Segment) :=
   [("pap", [Korean.p, Korean.a, Korean.p]), ("ai", [Korean.a, Korean.i])]
 

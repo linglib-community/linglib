@@ -4,7 +4,7 @@ public import Mathlib.Data.Finset.Lattice.Basic
 public import Linglib.Data.Examples.Aikhenvald2008
 public import Linglib.Data.Examples.Aikhenvald2009
 public import Linglib.Data.Examples.Gloss
-public import Linglib.Fragments.Manambu.Clause
+public import Linglib.Languages.Manambu.Clause
 public import Linglib.Semantics.ClauseLinking
 
 /-!
