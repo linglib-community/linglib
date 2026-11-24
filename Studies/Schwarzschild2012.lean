@@ -1,8 +1,9 @@
 module
 
-public import Linglib.Semantics.Events.Path
+public import Linglib.Semantics.Space.Path
 public import Mathlib.Algebra.Order.Group.Abs
 public import Studies.Stassen1985
+public import Studies.Zwarts2005
 
 /-!
 # Schwarzschild (2012): Directed scale segments
@@ -18,8 +19,8 @@ measure `μ` says that the segment ends at its subject `y` and lies on the scale
 
 Hindi *kam* 'less' inverts the scale of the predicate, and Navajo *-'oh* takes falling
 segments. We prove that both say `μ y < μ x`. A segment is also a two-point path of entities.
-We prove that a rising segment starts at `x` if and only if it is a coinitial path relative
-to `{x}`, as a spatial path from a place is.
+We prove that a rising segment starts at `x` if and only if it leaves `{x}`, as a spatial path
+from a place does.
 
 ## Implementation notes
 
@@ -47,7 +48,7 @@ predicate saturated by its subject. The paper leaves the mode of combination ope
 
 namespace Schwarzschild2012
 
-open Spatial Spatial.Path
+open Case Locative Order Zwarts2005
 
 /-- (5): A directed scale segment, with the measure of its scale. -/
 structure Segment (E D : Type*) where
@@ -68,23 +69,22 @@ def reverse (σ : Segment E D) : Segment E D := ⟨σ.finish, σ.start, σ.scale
 @[simp] theorem reverse_reverse (σ : Segment E D) : σ.reverse.reverse = σ := rfl
 
 /-- The segment as a path of entities from its start to its end. -/
-def toPath (σ : Segment E D) : Path E := ⟨σ.start, [σ.finish]⟩
+def toPath (σ : Segment E D) : Path E := Path.ofPoints σ.start [σ.finish]
 
-@[simp] theorem source_toPath (σ : Segment E D) : σ.toPath.source = σ.start := rfl
+@[simp] theorem head_toPath (σ : Segment E D) : σ.toPath.head = σ.start := rfl
 
-@[simp] theorem goal_toPath (σ : Segment E D) : σ.toPath.goal = σ.finish := rfl
+@[simp] theorem last_toPath (σ : Segment E D) : σ.toPath.last = σ.finish := rfl
 
-/-- A segment with distinct ends is a coinitial path relative to an entity exactly when it
-starts at it. -/
-theorem isCoinitial_toPath_iff {σ : Segment E D} {x : E} (h : σ.start ≠ σ.finish) :
-    IsCoinitial {x} σ.toPath ↔ σ.start = x := by
+/-- A segment with distinct ends leaves `{x}` if and only if it starts at `x`. -/
+theorem leaves_toPath_iff {σ : Segment E D} {x : E} (h : σ.start ≠ σ.finish) :
+    Leaves σ.toPath {x} ↔ σ.start = x := by
   refine ⟨fun hc ↦ by simpa using hc.2.1, fun hx ↦ ⟨fun i j hji hi ↦ ?_, by simpa using hx, ?_⟩⟩
-  · have key : ∀ i : Fin (σ.toPath.steps.length + 1), i ≠ ⊥ → i = ⊤ :=
+  · have key : ∀ i : Fin (σ.toPath.length + 1), i ≠ ⊥ → i = ⊤ :=
       (by decide : ∀ i : Fin 2, i ≠ ⊥ → i = ⊤)
     have hi0 : i = ⊥ := by
       by_contra hne
       have hi' : σ.toPath i = x := hi
-      rw [key i hne, coe_top, goal_toPath] at hi'
+      rw [key i hne, RelSeries.apply_top, last_toPath] at hi'
       exact h (hx.trans hi'.symm)
     obtain rfl : j = ⊥ := le_bot_iff.mp (hi0 ▸ hji)
     exact hi0 ▸ hi
@@ -161,11 +161,11 @@ theorem se_gradable_iff : se x (gradable μ · y) ↔ μ x < μ y :=
 theorem oh_gradable_iff : oh x (gradable μ · y) ↔ μ y < μ x :=
   ⟨by rintro ⟨σ, hf, rfl, rfl, rfl⟩; exact hf, fun h ↦ ⟨⟨x, y, μ⟩, h, rfl, rfl, rfl⟩⟩
 
-/-- The segment of a *se*-comparative is a coinitial path relative to the standard. -/
-theorem se_iff_isCoinitial {P : Segment E D → Prop} :
-    se x P ↔ ∃ σ, σ.Rising ∧ IsCoinitial {x} σ.toPath ∧ P σ :=
+/-- The segment of a *se*-comparative leaves the standard. -/
+theorem se_iff_leaves {P : Segment E D → Prop} :
+    se x P ↔ ∃ σ, σ.Rising ∧ Leaves σ.toPath {x} ∧ P σ :=
   exists_congr fun _ ↦ and_congr_right fun hr ↦
-    and_congr_left' (isCoinitial_toPath_iff hr.start_ne_finish).symm
+    and_congr_left' (leaves_toPath_iff hr.start_ne_finish).symm
 
 end LinearOrder
 
@@ -212,14 +212,14 @@ end Group
 fragment gives the standard of the Hindi-Urdu construction, and the type of the construction in
 Stassen's typology is the adverbial type of the direction of that shape. -/
 theorem se_shape {β : Type*} [LinearOrder D] [Preorder β] (near : E → β) :
-    ∀ k ∈ HindiUrdu.Comparison.se.standard.case?, ∀ s ∈ k.shape?,
+    ∀ k ∈ HindiUrdu.Comparison.se.standard.case?, ∀ s, k.mode? = some (.directional s) →
       (∀ (σ : Segment E D) (x : E), σ.Rising → σ.start = x → HasShape {x} σ.toPath near s) ∧
         Stassen1985.typeOf HindiUrdu.Comparison.se =
           (Stassen1985.groundOrder? s.direction).map .adverbial := by
   intro k hk s hs
   obtain rfl : k = .abl := by
     simpa [HindiUrdu.Comparison.se, Comparative.Standard.case?] using hk.symm
-  obtain rfl : s = .coinitial := by simpa [Case.shape?] using hs.symm
-  exact ⟨fun σ x hr hx ↦ (isCoinitial_toPath_iff hr.start_ne_finish).mpr hx, by decide⟩
+  obtain rfl : s = .coinitial := by simpa [Case.mode?, Case.dirOf, Direction.mode] using hs.symm
+  exact ⟨fun σ x hr hx ↦ (leaves_toPath_iff hr.start_ne_finish).mpr hx, by decide⟩
 
 end Schwarzschild2012

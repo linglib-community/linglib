@@ -109,8 +109,8 @@ def Case.label : Case → _root_.Case
 
 /-- The nine local cases are the matrix of three regions by three directions. -/
 theorem Case.cells_image_label : _root_.Case.cells (Finset.univ.image Case.label) =
-    (.univ : Finset Spatial.Localization) ×ˢ
-      ({.place, .source, .goal} : Finset Spatial.Path.Direction) := by
+    (.univ : Finset Locative.Configuration) ×ˢ
+      ({.place, .source, .goal} : Finset Locative.Direction) := by
   decide
 
 /-- The functions a case marks: the dative also marks the possessor. -/

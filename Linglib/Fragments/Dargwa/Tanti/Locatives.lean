@@ -95,7 +95,7 @@ def Localization.suffix : Localization → Morph
 
 /-- The region of the comparative decomposition a localization falls in. *super* is the
 surface, *in* and *inter* are the interior and the rest are the exterior. -/
-def Localization.region : Localization → Spatial.Localization
+def Localization.region : Localization → Locative.Configuration
   | .super => .surface
   | .in_ | .inter => .interior
   | .sub | .ante | .apud | .ad | .post => .exterior
@@ -133,7 +133,7 @@ def Orientation.morphs (o : Orientation) (g : Gender.Marker) : List Morph :=
   ((o.marker? g).map Morph.suff).toList
 
 /-- The path head of the comparative decomposition an orientation expresses. -/
-def Orientation.pathDir : Orientation → Spatial.Path.Direction
+def Orientation.pathDir : Orientation → Locative.Direction
   | .essive => .place
   | .lative => .goal
   | .elative => .source
@@ -224,7 +224,7 @@ theorem isSpatial_post_iff {o : Orientation} {d : Option Direction} :
 
 /-- The forms fill the grid of regions and path heads except for the route, which the
 translative expresses, outside the exterior. -/
-theorem exists_isSpatial_iff (r : Spatial.Localization) (d : Spatial.Path.Direction) :
+theorem exists_isSpatial_iff (r : Locative.Configuration) (d : Locative.Direction) :
     (∃ f : LocativeForm,
       f.IsSpatial ∧ f.localization.region = r ∧ f.orientation.pathDir = d) ↔
       d ≠ .route ∨ r = .exterior := by

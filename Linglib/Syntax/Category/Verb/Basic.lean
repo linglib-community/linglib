@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Defs
-public import Linglib.Syntax.Category.Adposition.Spatial
 
 /-! # Verb entry readers
 
@@ -45,22 +44,23 @@ verb selects as a complement gives the theme's path its direction, the directed 
 verb of manner of motion ([levin-hovav-1995] p. 185). A locative phrase, and a phrase the verb
 does not select, an adjunct, leave the verb as it is: *correre* 'run' has a directed motion use
 in Italian but *nuotare* 'swim' has none ([sorace-2000] §4.3). -/
-def withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
-  if p.direction = .place ∨ ¬ v.TakesSpatial then v else
-    { v with direction := some p.direction }
+def withPath (v : Verb) (p : Locative) : Verb :=
+  if p.mode.direction = .place ∨ ¬ v.TakesSpatial then v else
+    { v with direction := some p.mode.direction }
 
 section withPath
 
-variable {v : Verb} {p : Adposition.SpatialReading}
+variable {v : Verb} {p : Locative}
 
-@[simp] theorem withPath_of_direction_eq_place (h : p.direction = .place) : v.withPath p = v := by
+@[simp] theorem withPath_of_direction_eq_place (h : p.mode.direction = .place) :
+    v.withPath p = v := by
   simp [withPath, h]
 
 @[simp] theorem withPath_of_not_takesSpatial (h : ¬ v.TakesSpatial) : v.withPath p = v := by
   simp [withPath, h]
 
-@[simp] theorem direction_withPath (hv : v.TakesSpatial) (h : p.direction ≠ .place) :
-    (v.withPath p).direction = some p.direction := by
+@[simp] theorem direction_withPath (hv : v.TakesSpatial) (h : p.mode.direction ≠ .place) :
+    (v.withPath p).direction = some p.mode.direction := by
   simp [withPath, hv, h]
 
 end withPath

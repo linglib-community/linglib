@@ -61,10 +61,10 @@ lexical information. -/
 def Verb.ofStem (s : Conjugation.Stem) : Verb := { morphs := [.root s.infinitive], stem := s }
 
 /-- The predicate the entry `v` forms with a path phrase of reading `p`. -/
-def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
+def Verb.withPath (v : Verb) (p : Locative) : Verb :=
   { v with toVerb := v.toVerb.withPath p }
 
-@[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Adposition.SpatialReading) :
+@[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Locative) :
     (v.withPath p).toVerb = v.toVerb.withPath p := rfl
 
 namespace Verbs

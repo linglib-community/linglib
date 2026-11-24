@@ -722,7 +722,6 @@ import Linglib.Semantics.Dynamic.Update
 import Linglib.Logic.Natural.Completeness
 import Linglib.Semantics.Quantification.Signatures
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Events.Path
 import Linglib.Semantics.Exhaustification.Disjunctive
 import Linglib.Semantics.Exhaustification.DomainAlternatives
 import Linglib.Semantics.Exhaustification.InnocentExclusion
@@ -787,7 +786,6 @@ import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Category.Adjective.Basic
 import Linglib.Syntax.Category.Adjective.ClauseEmbedding
 import Linglib.Syntax.Category.Adposition.Basic
-import Linglib.Syntax.Category.Adposition.Spatial
 import Linglib.Syntax.Category.Auxiliary.Basic
 import Linglib.Syntax.Category.Classifier.Basic
 import Linglib.Syntax.Category.Complementizer.Basic

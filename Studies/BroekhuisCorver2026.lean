@@ -230,7 +230,7 @@ def classed : List (Dutch.Adposition × LocativeClass) :=
     extendedLocatives.map (·, .extended)
 
 /-- The reading of a use whose path has direction `d`. -/
-def reading : Spatial.Path.Direction → Reading
+def reading : Locative.Direction → Reading
   | .place => .location
   | .goal | .source | .route => .path
 

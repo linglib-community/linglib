@@ -57,10 +57,10 @@ structure Verb extends _root_.Verb where
   clauseTypers : List Complementizer := []
 
 /-- The predicate the entry `v` forms with a path phrase of reading `p`. -/
-def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
+def Verb.withPath (v : Verb) (p : Locative) : Verb :=
   { v with toVerb := v.toVerb.withPath p }
 
-@[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Adposition.SpatialReading) :
+@[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Locative) :
     (v.withPath p).toVerb = v.toVerb.withPath p := rfl
 
 end Italian
@@ -354,12 +354,12 @@ along a scale, when the entry records a subject that neither acts volitionally n
 subject of a change of state or of a state is, and when a phrase the verb selects brings it to an
 endpoint; and *avere* otherwise, where an activity is in the foreground. -/
 def perfectAuxiliary (v : Verb) (fr : ArgumentFrame)
-    (p : Option Adposition.SpatialReading := none) : PerfectAuxiliary :=
+    (p : Option Locative := none) : PerfectAuxiliary :=
   if fr.HasNominal then .have
   else if (∃ d ∈ v.direction, d ≠ .place) ∨ v.phasal = some .continuation ∨
       v.scaleDimension.isSome ∨
       (∃ θ ∈ v.slotProfile? .external, .volition ∉ θ ∧ .causation ∉ θ) ∨
-      v.TakesSpatial ∧ ∃ r ∈ p, r.IsBounded then .be
+      v.TakesSpatial ∧ ∃ r ∈ p, r.mode.IsBounded then .be
   else .have
 
 theorem perfectAuxiliary_mem : ∀ v ∈ allVerbs, v.perfectAuxiliaries.Nonempty →
@@ -370,7 +370,7 @@ theorem perfectAuxiliary_mem : ∀ v ∈ allVerbs, v.perfectAuxiliaries.Nonempty
 'towards', while *nuotare* keeps *avere* (§14.20). -/
 example :
     perfectAuxiliary correre .intransitive (some (.ofCase .ill)) = .be ∧
-    perfectAuxiliary correre .intransitive (some { shape := some .approximative }) = .have ∧
+    perfectAuxiliary correre .intransitive (some { mode := .directional .approximative }) = .have ∧
     perfectAuxiliary nuotare .intransitive (some (.ofCase .ill)) = .have := by
   decide
 

@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Linking
-public import Linglib.Semantics.Events.Path
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Syntax.Category.Verb.Argument
 public import Linglib.Fragments.English.Verbs.Inventory
@@ -13,46 +12,47 @@ public import Linglib.Data.Examples.Readers
 /-!
 # Goldberg and Jackendoff (2004): The English Resultative as a Family of Constructions
 
-Goldberg and Jackendoff analyze the English resultative as a family of constructions. A resultative
-has a verbal subevent supplied by the verb and a constructional subevent supplied by the
-construction, in which a host comes to have the property the result phrase names or traverses the
-path it names, caused by the subject in the transitive cases. The constructional subevent controls
-the aspect of the sentence: the event measures out the result phrase's path, so an end-bounded
-result phrase makes a resultative telic and one that is not leaves an activity atelic. Under the
-principle of semantic coherence a verb role unifies with a constructional role only if it can be
-construed as an instance of it, so the intransitive path resultative admits more verbs than the
-intransitive property resultative.
+A *resultative* is a sentence such as *The gardener watered the flowers flat*, in which a result
+phrase says what becomes of one of the participants, the *host*. The result phrase names a
+property that the host comes to have or a path that it traverses. The construction is *causative*
+if the subject causes the change of the host, which is then the object.
 
-## Main definitions
+We define the four subconstructions of the family, given by whether the construction is causative
+and by what the result phrase names, together with their argument structures. We define a path
+resultative from a map `σ` that sends an event to its path: the resultative holds of an event of
+the verb if the result phrase describes the path of the event. Suppose that `σ` preserves joins.
+We prove that the resultative is quantized if `σ` is injective and the result phrase is
+quantized, and that it is cumulative if the verb and the result phrase are cumulative.
 
-* `Subconstruction`, `Subconstruction.link`: the four subconstructions of the family, and their
-  argument structures.
-* `resultative`: the resultative over a path trace.
-* `Row.Coheres`: the coherence of a row's roles with those of its construction.
+The paper's examples are the rows of this file. We prove that a row accepts a for-adverbial if
+and only if its result phrase is not end-bounded, and that every other row is acceptable if and
+only if its roles cohere with the roles of its construction.
 
 ## Implementation notes
 
-The verbal and constructional subevents are identified as one event, the paper's cotemporal means
-(§4.2). End-boundedness is rendered by quantization and its absence by cumulativity, the reading
-Krifka gives the event-path homomorphism that the paper takes from Jackendoff. The path of an event
-is its spatial trace `Event.σ`, and its preservation of sums a hypothesis. The paper labels result
-phrases only as AP or PP; a row's subconstruction follows the summary (97), where a PP naming a
-state (*into pieces*, *to death*) is a property result phrase, and the paper presents the examples
-(49) as transitive spatial resultatives. A row's `subjectRole` and `objectRole` are the paper's
-construals of the verb's arguments, per verb and referent: whether the argument is something that
-acts, an agent, or something to which something happens, a patient. The causative property
-resultative is the resultative of [goldberg-1995], and the path resultatives take the frames of its
-caused motion and intransitive motion constructions, which (97) names them as; where Goldberg
-labels the moving host a theme, the roles here are those of §6.2.
+The verbal subevent and the constructional subevent are one event, which is the case the paper
+calls a cotemporal means. End-boundedness is quantization and its absence is cumulativity, as in
+Krifka's reading of the homomorphism from events to paths.
+
+The paper labels result phrases only as AP or PP. A row's subconstruction follows the paper's
+summary of the family, where a PP that names a state, such as *into pieces* or *to death*, is a
+property result phrase.
+
+A row's `subjectRole` and `objectRole` are the paper's construals of the arguments of the verb:
+an argument is something that acts, an agent, or something to which something happens, a patient.
+
+The causative property resultative is the resultative of [goldberg-1995]. The path resultatives
+take the frames of its caused motion and intransitive motion constructions. Where Goldberg labels
+the moving host a theme, the roles here are the paper's.
 
 ## TODO
 
-- The temporal relations the subevent relation allows (33): a means does not follow the subevent it
-  effects, and a result does not precede its cause.
-- Full argument realization (37), which excludes (41d) and (43b,c), the Correspondence Principle
-  of [goldberg-1995] in another form (fn. 20, `ArgumentStructure.Corresponds`).
-- The stative extension readings (25), and the *follow* subconstructions (52), (55) and (56), which
-  are transitive but not causative.
+* The temporal relations that the relation between the subevents allows: a means does not follow
+  the subevent it brings about, and a result does not precede its cause.
+* Full argument realization, which excludes some of the paper's starred examples and restates the
+  Correspondence Principle of [goldberg-1995]. See `ArgumentStructure.Corresponds`.
+* The stative extension readings, and the *follow* subconstructions, which are transitive but not
+  causative.
 
 ## References
 
@@ -142,32 +142,29 @@ example : ¬ Disjoint {.agent} ((⟨false, .path⟩ : Subconstruction).link.admi
 
 section Aspect
 
-open Mereology Spatial
-open Event (σ)
+open Mereology
 
-variable {E Loc : Type*} [SemilatticeSup E] [SemilatticeSup (Path Loc)] [SpatialTrace E Loc]
-  {V : E → Prop} {R : Path Loc → Prop}
+variable {E P : Type*} [SemilatticeSup E] [SemilatticeSup P] (σ : SupHom E P)
+  {V : E → Prop} {R : P → Prop}
 
-/-- `resultative V R e` holds when `e` is an event of the verb whose path `σ e`, the path of the
+/-- `resultative σ V R e` holds when `e` is an event of the verb whose path `σ e`, the path of the
 constructional subevent, is one the result phrase describes, the two subevents being
 cotemporal. -/
-def resultative (V : E → Prop) (R : Path Loc → Prop) (e : E) : Prop :=
+def resultative (V : E → Prop) (R : P → Prop) (e : E) : Prop :=
   V e ∧ R (σ e)
 
-/-- If paths are additive and injective on events, an end-bounded result phrase makes the
+/-- If the path of an event is injective on events, an end-bounded result phrase makes the
 resultative telic (27). -/
-theorem qua_resultative (hσ : ∀ e e' : E, σ (e ⊔ e') = σ e ⊔ σ e')
-    (hinj : Function.Injective (σ : E → Path Loc)) (hR : QUA {p | R p}) :
-    QUA {e | resultative V R e} :=
+theorem qua_resultative (hinj : Function.Injective σ) (hR : QUA {p | R p}) :
+    QUA {e | resultative σ V R e} :=
   IsAntichain.subset
-    (QUA.preimage ((OrderHomClass.monotone (SupHom.mk σ hσ)).strictMono_of_injective hinj) hR)
+    (QUA.preimage ((OrderHomClass.monotone σ).strictMono_of_injective hinj) hR)
     fun _ h ↦ h.2
 
-/-- If paths are additive, a non-end-bounded result phrase leaves the resultative of an activity
-atelic (27). -/
-theorem cum_resultative (hσ : ∀ e e' : E, σ (e ⊔ e') = σ e ⊔ σ e') (hV : CUM {e | V e})
-    (hR : CUM {p | R p}) : CUM {e | resultative V R e} :=
-  SupClosed.inter hV (hR.preimage (SupHom.mk σ hσ))
+/-- A non-end-bounded result phrase leaves the resultative of an activity atelic (27). -/
+theorem cum_resultative (hV : CUM {e | V e}) (hR : CUM {p | R p}) :
+    CUM {e | resultative σ V R e} :=
+  SupClosed.inter hV (hR.preimage σ)
 
 end Aspect
 

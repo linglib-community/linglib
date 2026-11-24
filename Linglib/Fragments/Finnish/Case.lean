@@ -30,9 +30,9 @@ is the genitive's, as in *jala-n* 'on foot' beside *auto-n* 'of a car'.
 ## Main results
 
 * `Finnish.Case.isSome_spatialDecomp_label_iff`: the local cases are those whose label decomposes
-  into a localization and a direction.
+  into a configuration and a direction.
 * `Finnish.Case.cells_image_label`, `Finnish.Case.cells_biUnion_functions`: the labels fill the
-  interior and exterior localizations of the table, and the functions every localization.
+  interior and exterior configurations of the table, and the functions every configuration.
 
 ## Implementation notes
 
@@ -117,27 +117,26 @@ theorem label_functions_inter_nonempty (c : Case) :
     (c.label.functions ∩ c.functions).Nonempty := by
   cases c <;> decide
 
-/-- The local cases are those whose label decomposes into a localization and a direction. -/
+/-- The local cases are those whose label decomposes into a configuration and a direction. -/
 theorem isSome_spatialDecomp_label_iff (c : Case) :
     c.label.spatialDecomp.isSome ↔ c.label.kind = .spatial := by
   cases c <;> decide
 
 open _root_.Case (cells)
-open Spatial (Localization)
-open Spatial.Path (Direction)
+open _root_.Locative (Configuration Direction)
 
 /-- The local cases are the internal and external cases, each static, away from or towards
 ([karlsson-2017] p. 228). -/
 theorem cells_image_label : cells (Finset.univ.image label) =
-    ({.interior, .exterior} : Finset Localization) ×ˢ
+    ({.interior, .exterior} : Finset Configuration) ×ˢ
       ({.place, .source, .goal} : Finset Direction) := by
   decide
 
 /-- The external cases also express the surface relations, so that the functions of the Finnish
-cases fill every localization. -/
+cases fill every configuration. -/
 theorem cells_biUnion_functions :
     _root_.Case.Function.cells (Finset.univ.biUnion functions) =
-    (.univ : Finset Localization) ×ˢ ({.place, .source, .goal} : Finset Direction) := by
+    (.univ : Finset Configuration) ×ˢ ({.place, .source, .goal} : Finset Direction) := by
   decide
 
 end Case

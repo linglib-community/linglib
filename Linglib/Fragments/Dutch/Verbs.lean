@@ -297,10 +297,10 @@ def rollen : Verb :=
 /-! ### The perfect auxiliary -/
 
 /-- The predicate the entry `v` forms with a path phrase of reading `p`. -/
-def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
+def Verb.withPath (v : Verb) (p : Locative) : Verb :=
   { v with toVerb := v.toVerb.withPath p }
 
-@[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Adposition.SpatialReading) :
+@[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Locative) :
     (v.withPath p).toVerb = v.toVerb.withPath p := rfl
 
 /-- The auxiliary of the perfect of `v` on the frame `fr` ([broekhuis-corver-2026e] §§2.1–2.2) is
@@ -317,8 +317,8 @@ def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
 
 /-- A directional phrase gives an intransitive verb that selects it *zijn*, as in *De jongen is
 naar Groningen gewandeld* (§2.2, (274b)). -/
-theorem perfect_withPath_intransitive {v : Verb} {p : Adposition.SpatialReading}
-    (hv : v.TakesSpatial) (hp : p.direction ≠ .place) :
+theorem perfect_withPath_intransitive {v : Verb} {p : Locative}
+    (hv : v.TakesSpatial) (hp : p.mode.direction ≠ .place) :
     perfectAuxiliary (v.withPath p) .intransitive = .be := by
   simp [perfectAuxiliary, Verb.withPath, _root_.Verb.withPath, hv, hp,
     ArgumentFrame.intransitive, ArgumentFrame.IsIntransitive]
@@ -327,7 +327,7 @@ theorem perfect_withPath_intransitive {v : Verb} {p : Adposition.SpatialReading}
 locational one (§2.2, (273)–(275)). -/
 example : perfectAuxiliary wandelen .intransitive = .have ∧
     perfectAuxiliary (wandelen.withPath (.ofCase .ill)) .intransitive = .be ∧
-    perfectAuxiliary (wandelen.withPath Adposition.behind) .intransitive = .have := by
+    perfectAuxiliary (wandelen.withPath (.ofCase .ine)) .intransitive = .have := by
   decide
 
 /-! ### Verbs with a bare infinitival
