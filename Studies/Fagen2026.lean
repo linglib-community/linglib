@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.Quantifier.Restriction
 public import Linglib.Semantics.Exhaustification.MinimalWorlds
 public import Studies.Spector2007
@@ -23,7 +24,7 @@ The dual order prefers a larger extension; interpreting an answer under it is in
 inner negation of the answer under the default order for the complement of the question-property.
 The hybrid order contains the strict part of the ordering whose premises are that the individuals
 of the positive restriction lack the property and those of the negative restriction have it, so
-it excludes at least the worlds that ordering excludes.
+it excludes at least the worlds that ordering excludes, and for some answers it excludes more.
 
 An answer takes the default order when it is positively skewed, its restriction being its positive
 restriction, which is Spector's quasi-positivity, and the hybrid order otherwise. The two
@@ -48,11 +49,10 @@ minimal sets cover it.
   participants might assume (§3.2.1), are not formalized; nor are answers to second-order
   questions (§2.4) or the conditions under which the dual order is chosen (§3.3).
 * The answers of Table 3.1 are not recorded as data.
-* The inclusion `exh_ltHybrid_subset` is strict for some answers: with three individuals, for the
-  answer that holds of nobody, of exactly two given individuals and of exactly the third, the
-  hybrid order excludes a world that is minimal in the ordering by the two restrictions.
-* `someButNotAll L C` and `allOrNone L` are `Det.some L ⊓ (Det.every C)ᶜ` and
-  `Det.every L ⊔ Det.no L`; they are still defined here by their truth conditions.
+* Whether the hybrid order can leave an answer that holds somewhere with no exhaustive world. The
+  relation (31d), with arbitrary sets of five individuals in place of the two restrictions, can have
+  cycles, so the finiteness argument that gives minimal worlds for a premise ordering does not
+  apply to it.
 
 ## References
 
@@ -335,20 +335,23 @@ theorem exh_ltDual_not (b : E) : exh id (fun S ↦ b ∉ S) (ltDual id) = {{b}�
 variable {L C : Set E}
 
 /-- *Some of the `L` but not all of the `C`*. -/
-def someButNotAll (L C : Set E) : Quantifier E := fun S ↦ (S ∩ L).Nonempty ∧ ¬ C ⊆ S
+def someButNotAll (L C : Set E) : Quantifier E := Det.some L ⊓ (Det.every C)ᶜ
+
+theorem someButNotAll_apply {S : Set E} : someButNotAll L C S ↔ (L ∩ S).Nonempty ∧ ¬ C ⊆ S :=
+  Iff.rfl
 
 theorem positiveRestriction_someButNotAll (hLC : Disjoint L C) (hC : C.Nonempty) :
     positiveRestriction (someButNotAll L C) = L := by
   ext x
   constructor
-  · rintro ⟨S, hS, ⟨y, hyS, hyL⟩, hCS⟩
+  · rintro ⟨S, hS, ⟨y, hyL, hyS⟩, hCS⟩
     by_contra hx
-    refine hS ⟨⟨y, ?_, hyL⟩, fun h ↦ hCS (h.trans (subset_insert x S))⟩
+    refine hS ⟨⟨y, hyL, ?_⟩, fun h ↦ hCS (h.trans (subset_insert x S))⟩
     rcases hyS with rfl | hyS
     · exact absurd hyL hx
     · exact hyS
   · intro hx
-    refine ⟨∅, fun h ↦ (h.1.ne_empty (by simp)), ⟨x, by simp, hx⟩, fun h ↦ ?_⟩
+    refine ⟨∅, fun h ↦ (h.1.ne_empty (by simp)), ⟨x, hx, by simp⟩, fun h ↦ ?_⟩
     obtain ⟨c, hc⟩ := hC
     have hcx : c = x := by simpa using h hc
     exact hLC.ne_of_mem hx (hcx ▸ hc) rfl
@@ -357,12 +360,12 @@ theorem negativeRestriction_someButNotAll (hLC : Disjoint L C) (hL : L.Nonempty)
     negativeRestriction (someButNotAll L C) = C := by
   ext x
   constructor
-  · rintro ⟨S, hS, ⟨y, hyS, hyL⟩, hCS⟩
+  · rintro ⟨S, hS, ⟨y, hyL, hyS⟩, hCS⟩
     by_contra hx
-    exact hS ⟨⟨y, hyS.1, hyL⟩, fun h ↦ hCS fun c hc ↦ ⟨h hc, fun hcx ↦ hx (hcx ▸ hc)⟩⟩
+    exact hS ⟨⟨y, hyL, hyS.1⟩, fun h ↦ hCS fun c hc ↦ ⟨h hc, fun hcx ↦ hx (hcx ▸ hc)⟩⟩
   · intro hx
     obtain ⟨l, hl⟩ := hL
-    refine ⟨L ∪ C, fun h ↦ h.2 subset_union_right, ⟨l, ⟨.inl hl, ?_⟩, hl⟩, fun h ↦ ?_⟩
+    refine ⟨L ∪ C, fun h ↦ h.2 subset_union_right, ⟨l, hl, .inl hl, ?_⟩, fun h ↦ ?_⟩
     · rintro rfl
       exact hLC.ne_of_mem hl hx rfl
     · exact (h hx).2 rfl
@@ -387,9 +390,9 @@ theorem exh_selectedOrder_someButNotAll (hLC : Disjoint L C) (hL : L.Nonempty)
     simp only [ltHybrid, leHybrid, ltPos, ltNeg, positiveRestriction_someButNotAll hLC hC,
       negativeRestriction_someButNotAll hLC hL, id]
   ext S
-  simp only [exh, mem_ofPred_eq, id, hlt, someButNotAll]
+  simp only [exh, mem_ofPred_eq, id, hlt, someButNotAll_apply]
   constructor
-  · rintro ⟨⟨⟨y, hyS, hyL⟩, hCS⟩, hmin⟩
+  · rintro ⟨⟨⟨y, hyL, hyS⟩, hCS⟩, hmin⟩
     obtain ⟨c, hcC, hcS⟩ := not_subset.1 hCS
     refine ⟨⟨y, eq_singleton_iff_unique_mem.2 ⟨⟨hyS, hyL⟩, fun l ⟨hlS, hlL⟩ ↦ ?_⟩⟩,
       ⟨c, eq_singleton_iff_unique_mem.2 ⟨⟨hcC, hcS⟩, fun d ⟨hdC, hdS⟩ ↦ ?_⟩⟩⟩
@@ -400,7 +403,7 @@ theorem exh_selectedOrder_someButNotAll (hLC : Disjoint L C) (hL : L.Nonempty)
       have hvC : ∀ z ∈ C, z ∈ (S \ L) ∪ {y} ↔ z ∈ S := fun z hzC ↦
         ⟨fun h ↦ h.elim And.left fun h ↦ absurd (h ▸ hyL) (fun h' ↦ hd z h' hzC),
           fun h ↦ .inl ⟨h, fun h' ↦ hd z h' hzC⟩⟩
-      refine hmin ⟨(S \ L) ∪ {y}, ⟨⟨y, .inr rfl, hyL⟩, fun h ↦ hcS ((hvC c hcC).1 (h hcC))⟩,
+      refine hmin ⟨(S \ L) ∪ {y}, ⟨⟨y, hyL, .inr rfl⟩, fun h ↦ hcS ((hvC c hcC).1 (h hcC))⟩,
         .inl (ssubset_iff_of_subset (fun z (hz : z ∈ ((S \ L) ∪ {y}) ∩ L) ↦
           hvL z hz.1 hz.2 ▸ ⟨hyS, hyL⟩) |>.2
           ⟨l, ⟨hlS, hlL⟩, fun ⟨hl, _⟩ ↦ hly (hvL l hl hlL)⟩), ?_⟩
@@ -410,7 +413,7 @@ theorem exh_selectedOrder_someButNotAll (hLC : Disjoint L C) (hL : L.Nonempty)
         exact hz ⟨(hvC z hzC).2 hzS, hzC⟩
     · -- a second missing computer scientist: add `d`
       by_contra hdc
-      refine hmin ⟨insert d S, ⟨⟨y, .inr hyS, hyL⟩, fun h ↦ (h hcC).elim
+      refine hmin ⟨insert d S, ⟨⟨y, hyL, .inr hyS⟩, fun h ↦ (h hcC).elim
           (fun h ↦ hdc h.symm) hcS⟩,
         .inr (ssubset_iff_of_subset (fun z (hz : z ∈ S ∩ C) ↦ (⟨.inr hz.1, hz.2⟩ :
           z ∈ insert d S ∩ C)) |>.2
@@ -421,11 +424,11 @@ theorem exh_selectedOrder_someButNotAll (hLC : Disjoint L C) (hL : L.Nonempty)
       · exact hdS (h.subset ⟨.inl rfl, hdC⟩).1
   · rintro ⟨⟨l, hl⟩, c, hc⟩
     have hcm : c ∈ C \ S := hc.symm ▸ mem_singleton c
-    refine ⟨⟨⟨l, hl.symm ▸ mem_singleton l⟩, fun h ↦ hcm.2 (h hcm.1)⟩,
+    refine ⟨⟨⟨l, And.symm (hl.symm ▸ mem_singleton l : l ∈ S ∩ L)⟩, fun h ↦ hcm.2 (h hcm.1)⟩,
       fun ⟨v, ⟨hvL, hCv⟩, h, _⟩ ↦ ?_⟩
     rcases h with h | h
     · rw [hl, ssubset_singleton_iff] at h
-      exact hvL.ne_empty h
+      exact hvL.ne_empty (by rwa [inter_comm])
     · refine hCv fun z hzC ↦ ?_
       by_cases hzS : z ∈ S
       · exact (h.subset ⟨hzS, hzC⟩).1
@@ -453,10 +456,13 @@ theorem exh_ltDefault_some :
     exact singleton_subset_iff.2 hzy
 
 /-- *All or none of the `L`*. -/
-def allOrNone (L : Set E) : Quantifier E := fun S ↦ L ⊆ S ∨ Disjoint S L
+def allOrNone (L : Set E) : Quantifier E := Det.every L ⊔ Det.no L
+
+theorem allOrNone_apply {S : Set E} : allOrNone L S ↔ L ⊆ S ∨ Disjoint S L :=
+  or_congr_right subset_compl_iff_disjoint_left
 
 theorem allOrNone_livesOn : (allOrNone L).LivesOn L := fun B ↦ by
-  simp only [allOrNone, subset_inter_iff, subset_rfl, true_and]
+  simp only [allOrNone_apply, subset_inter_iff, subset_rfl, true_and]
   exact or_congr_right ⟨fun h ↦ h.mono_left inter_subset_right,
     fun h ↦ disjoint_left.2 fun z hzB hzL ↦ disjoint_left.1 h ⟨hzL, hzB⟩ hzL⟩
 
@@ -465,8 +471,8 @@ theorem positiveRestriction_allOrNone (hL : L.Nontrivial) :
   refine (positiveRestriction_subset_restriction.trans
     allOrNone_livesOn.restriction_subset).antisymm fun x hx ↦ ?_
   obtain ⟨z, hzL, hzx⟩ := hL.exists_ne x
-  refine ⟨L \ {x}, fun h ↦ h.elim (fun h ↦ (h hx).2 (mem_singleton x))
-    fun h ↦ disjoint_left.1 h ⟨hzL, hzx⟩ hzL, .inl ?_⟩
+  refine ⟨L \ {x}, fun h ↦ (allOrNone_apply.1 h).elim (fun h ↦ (h hx).2 (mem_singleton x))
+    fun h ↦ disjoint_left.1 h ⟨hzL, hzx⟩ hzL, allOrNone_apply.2 (.inl ?_)⟩
   rw [insert_sdiff_singleton]
   exact subset_insert x L
 
@@ -475,8 +481,8 @@ theorem negativeRestriction_allOrNone (hL : L.Nontrivial) :
   refine (negativeRestriction_subset_restriction.trans
     allOrNone_livesOn.restriction_subset).antisymm fun x hx ↦ ?_
   obtain ⟨z, hzL, hzx⟩ := hL.exists_ne x
-  refine ⟨{x}, fun h ↦ h.elim (fun h ↦ hzx (h hzL)) fun h ↦ disjoint_left.1 h (mem_singleton x) hx,
-    .inr ?_⟩
+  refine ⟨{x}, fun h ↦ (allOrNone_apply.1 h).elim (fun h ↦ hzx (h hzL))
+    fun h ↦ disjoint_left.1 h (mem_singleton x) hx, allOrNone_apply.2 (.inr ?_)⟩
   rw [sdiff_self]
   exact empty_disjoint L
 
@@ -485,8 +491,9 @@ theorem positivelySkewed_allOrNone (hL : L.Nontrivial) : PositivelySkewed (allOr
     ((negativeRestriction_allOrNone hL).trans (positiveRestriction_allOrNone hL).symm).subset
 
 theorem minimal_allOrNone_iff {S : Set E} : Minimal (allOrNone L) S ↔ S = ∅ :=
-  ⟨fun h ↦ subset_empty_iff.1 (h.2 (.inr (empty_disjoint L)) (empty_subset S)),
-    by rintro rfl; exact ⟨.inr (empty_disjoint L), fun _ _ _ ↦ empty_subset _⟩⟩
+  have h0 : allOrNone L ∅ := allOrNone_apply.2 (.inr (empty_disjoint L))
+  ⟨fun h ↦ subset_empty_iff.1 (h.2 h0 (empty_subset S)),
+    by rintro rfl; exact ⟨h0, fun _ _ _ ↦ empty_subset _⟩⟩
 
 -- (12): *all or none of the `L`* takes the default order and says that nothing has the property
 theorem exh_selectedOrder_allOrNone (hL : L.Nontrivial) :
@@ -543,6 +550,51 @@ theorem not_transitive_ltHybrid :
   simp only [ltHybrid, leHybrid, ltPos, ltNeg, positiveRestriction_someButNotAll hLC hC,
     negativeRestriction_someButNotAll hLC hL, ← Finset.coe_inter, Finset.coe_ssubset]
   decide
+
+open scoped PremiseOrdering in
+-- the inclusion `exh_ltHybrid_subset` is strict: for the answer that holds of nobody, of exactly
+-- `0` and `1`, and of exactly `2`, the world where `0` and `1` have the property is minimal in the
+-- ordering by the two restrictions, and the hybrid order puts the world where `2` has it below
+theorem exh_ltHybrid_ssubset :
+    let P : Finset (Fin 3) → Set (Fin 3) := (↑)
+    let T : Quantifier (Fin 3) := fun S ↦ S = ∅ ∨ S = {0, 1} ∨ S = {2}
+    exh P T (ltHybrid P T) ⊂
+      (≤[(fun x ↦ {u | x ∉ P u}) '' T.positiveRestriction ∪
+        (fun x ↦ {u | x ∈ P u}) '' T.negativeRestriction]).minimals {w | T (P w)} := by
+  intro P T
+  have hT (s : Finset (Fin 3)) : T s ↔ s = ∅ ∨ s = {0, 1} ∨ s = {2} := by
+    simp only [T, ← Finset.coe_empty, ← Finset.coe_singleton, ← Finset.coe_insert, Finset.coe_inj]
+  have hpos : T.positiveRestriction = ↑({0, 1} : Finset (Fin 3)) := by
+    ext x
+    refine ⟨fun ⟨S, hS, hxS⟩ ↦ by_contra fun hx ↦ hS ?_, fun hx ↦ ?_⟩
+    · obtain ⟨rfl⟩ : x = 2 := by revert hx; fin_cases x <;> simp
+      rcases hxS with h | h | h
+      · exact absurd h (Set.insert_nonempty 2 S).ne_empty
+      · exact absurd (h ▸ Set.mem_insert 2 S) (by simp)
+      · rcases Set.subset_singleton_iff_eq.1 (h ▸ Set.subset_insert 2 S) with h' | h'
+        exacts [.inl h', .inr (.inr h')]
+    · obtain rfl | rfl : x = 0 ∨ x = 1 := by simpa using hx
+      · exact ⟨↑({1} : Finset (Fin 3)), by rw [hT]; decide,
+          by rw [← Finset.coe_insert, hT]; decide⟩
+      · exact ⟨↑({0} : Finset (Fin 3)), by rw [hT]; decide,
+          by rw [← Finset.coe_insert, hT]; decide⟩
+  have hneg : T.negativeRestriction = Set.univ := by
+    have h (x : Fin 3) (s : Finset (Fin 3)) (hs : ¬ T s) (hsx : T ↑(s \ {x})) :
+        x ∈ T.negativeRestriction :=
+      ⟨s, hs, by rwa [← Finset.coe_singleton, ← Finset.coe_sdiff]⟩
+    refine Set.eq_univ_of_forall fun x ↦ ?_
+    fin_cases x
+    · exact h 0 {0, 2} (by rw [hT]; decide) (by rw [hT]; decide)
+    · exact h 1 {1, 2} (by rw [hT]; decide) (by rw [hT]; decide)
+    · exact h 2 {0, 1, 2} (by rw [hT]; decide) (by rw [hT]; decide)
+  refine (Set.ssubset_iff_of_subset exh_ltHybrid_subset).2
+    ⟨{0, 1}, ⟨(hT _).2 (by decide), fun v hv hvw ↦ ?_⟩, fun h ↦ h.2 ⟨{2}, (hT _).2 (by decide), ?_⟩⟩
+  · rw [Exhaustification.ofLowerSets_image_union_le_iff, hpos, hneg] at hvw ⊢
+    simp only [P, Set.inter_univ, ← Finset.coe_inter, Finset.coe_subset] at hvw ⊢
+    rcases (hT v).1 hv with rfl | rfl | rfl <;> revert hvw <;> decide
+  · simp only [ltHybrid, leHybrid, ltPos, ltNeg, hpos, hneg, P, Set.inter_univ,
+      ← Finset.coe_inter, Finset.coe_ssubset]
+    decide
 
 end Examples
 
