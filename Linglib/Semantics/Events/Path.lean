@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.List.Infix
-public import Mathlib.Order.RelSeries
+public import Linglib.Core.Order.RelSeries
 public import Mathlib.Order.Fin.Basic
 public import Mathlib.Order.Hom.Bounded
 public import Mathlib.Order.Interval.Set.OrdConnected
@@ -73,50 +73,9 @@ abbrev const (l : Loc) : Path Loc := RelSeries.singleton _ l
 
 /-! ### Concatenation and subpaths -/
 
-/-- `IsConcat p q r` says that `r` is the concatenation of `p` and `q`, `RelSeries.smash`, which
-is defined when `p` ends where `q` starts. -/
-def IsConcat (p q r : Path Loc) : Prop := ∃ h : p.last = q.head, r = p.smash q h
-
 section
 
-variable {p q r : Path Loc}
-
-theorem IsConcat.last_eq_head (h : IsConcat p q r) : p.last = q.head := h.fst
-
-theorem IsConcat.head_eq (h : IsConcat p q r) : r.head = p.head := by
-  obtain ⟨hc, rfl⟩ := h
-  simp
-
-theorem IsConcat.last_eq (h : IsConcat p q r) : r.last = q.last := by
-  obtain ⟨hc, rfl⟩ := h
-  simp
-
-theorem IsConcat.length_eq (h : IsConcat p q r) : r.length = p.length + q.length := by
-  obtain ⟨hc, rfl⟩ := h
-  rfl
-
-theorem IsConcat.mem_of_mem_left (h : IsConcat p q r) {x : Loc} (hx : x ∈ p) : x ∈ r := by
-  obtain ⟨hc, rfl⟩ := h
-  obtain ⟨i, rfl⟩ := hx
-  exact ⟨_, RelSeries.smash_castLE hc i⟩
-
-/-- The positions of a concatenation up to the junction are those of its first path. -/
-theorem IsConcat.apply_of_le (h : IsConcat p q r) (k : Fin (r.length + 1))
-    (hk : (k : ℕ) ≤ p.length) : r k = p ⟨k, by omega⟩ := by
-  obtain ⟨hc, rfl⟩ := h
-  exact RelSeries.smash_castLE hc ⟨k, by omega⟩
-
-/-- The positions of a concatenation from the junction on are those of its second path. -/
-theorem IsConcat.apply_of_ge (h : IsConcat p q r) (k : Fin (r.length + 1))
-    (hk : p.length ≤ (k : ℕ)) :
-    r k = q ⟨k - p.length, by have := h.length_eq; omega⟩ := by
-  obtain ⟨hc, rfl⟩ := h
-  have hl : (p.smash q hc).length = p.length + q.length := rfl
-  have hk' : k = Fin.natAdd p.length (⟨k - p.length, by have := k.2; omega⟩ : Fin (q.length + 1)) := by
-    ext; simp; omega
-  conv_lhs => rw [hk']
-  simp only [RelSeries.smash]
-  exact Fin.addCases_right _
+variable {p q : Path Loc}
 
 /-- `p` is a subpath of `q` when the locations of `p` are a stretch of those of `q`. The order is
 a scoped instance, since a theory that sums paths by a total join instead of partial
@@ -489,77 +448,34 @@ theorem hasShape_reverse {β : Type*} [Preorder β] {d : Loc → β} {R : Set Lo
 
 section Concat
 
-variable {p} {q r : Path Loc} {R : Set Loc} {β : Type*} [Preorder β] {d : Loc → β} {s : Shape}
-
-theorem IsConcat.forall_apply (h : IsConcat p q r) {P : Loc → Prop} :
-    (∀ k, P (r k)) ↔ (∀ i, P (p i)) ∧ ∀ j, P (q j) := by
-  have hl := h.length_eq
-  refine ⟨fun hr ↦ ⟨fun i ↦ ?_, fun j ↦ ?_⟩, fun ⟨hp, hq⟩ k ↦ ?_⟩
-  · simpa [h.apply_of_le ⟨i, by omega⟩ (by have := i.2; simp; omega)] using hr ⟨i, by omega⟩
-  · simpa [h.apply_of_ge ⟨p.length + j, by omega⟩ (by simp)] using
-      hr ⟨p.length + j, by omega⟩
-  · rcases le_total (k : ℕ) p.length with hk | hk
-    · rw [h.apply_of_le k hk]; exact hp _
-    · rw [h.apply_of_ge k hk]; exact hq _
-
-theorem IsConcat.strictMono_comp (h : IsConcat p q r) (hp : StrictMono (d ∘ p))
-    (hq : StrictMono (d ∘ q)) : StrictMono (d ∘ r) := by
-  rw [Fin.strictMono_iff_lt_succ]
-  intro i
-  simp only [Function.comp_apply]
-  rcases lt_or_ge (i : ℕ) p.length with hi | hi
-  · rw [h.apply_of_le _ (by simpa using hi.le), h.apply_of_le _ (by simp; omega)]
-    exact hp (by simp [Fin.lt_def])
-  · rw [h.apply_of_ge _ (by simpa using hi), h.apply_of_ge _ (by simp; omega)]
-    exact hq (by simp [Fin.lt_def]; omega)
-
-theorem IsConcat.strictAnti_comp (h : IsConcat p q r) (hp : StrictAnti (d ∘ p))
-    (hq : StrictAnti (d ∘ q)) : StrictAnti (d ∘ r) :=
-  h.strictMono_comp (d := OrderDual.toDual ∘ d) hp hq
-
-/-- A path's positions inside `R` are not one stretch if its concatenants both meet `R` and their
-junction is outside it. -/
-theorem IsConcat.not_ordConnected (h : IsConcat p q r) (hgoal : p.last ∉ R) {i j}
-    (hi : p i ∈ R) (hj : q j ∈ R) : ¬ (r ⁻¹' R).OrdConnected := fun hc ↦ by
-  have hl := h.length_eq
-  have hn : p.length < r.length + 1 := by omega
-  have ha := h.apply_of_le ⟨i, by omega⟩ (by have := i.2; simp; omega)
-  have hb := h.apply_of_le ⟨p.length, hn⟩ le_rfl
-  have hc' := h.apply_of_ge ⟨p.length + j, by omega⟩ (by simp)
-  have hmem := hc.out (x := ⟨i, by omega⟩) (y := ⟨p.length + j, by omega⟩)
-    (by simpa [ha] using hi) (by simpa [hc'] using hj)
-    (a := ⟨p.length, hn⟩) ⟨by have := i.2; simp [Fin.le_def]; omega, by simp [Fin.le_def]⟩
-  have htop : p ⟨p.length, by omega⟩ = p.last := p.coe_top
-  simp only [Set.mem_preimage, hb, htop] at hmem
-  exact hgoal hmem
+variable {p} {q : Path Loc} {R : Set Loc} {β : Type*} [Preorder β] {d : Loc → β} {s : Shape}
 
 /-- Concatenation keeps a shape without a transition. -/
 theorem HasShape.concat (hs : ¬ s.IsBounded) (hp : HasShape R p d s) (hq : HasShape R q d s)
-    (h : IsConcat p q r) : HasShape R r d s := by
-  have hne (hne : (⊥ : Fin (p.length + 1)) ≠ ⊤) : (⊥ : Fin (r.length + 1)) ≠ ⊤ := by
-    have := h.length_eq
+    (h : p.last = q.head) : HasShape R (p.smash q h) d s := by
+  have hne (hne : (⊥ : Fin (p.length + 1)) ≠ ⊤) : (⊥ : Fin (p.length + q.length + 1)) ≠ ⊤ := by
     simp only [ne_eq, Fin.ext_iff, bot_eq_zero, Fin.top_eq_last, Fin.val_zero, Fin.val_last]
       at hne ⊢
     omega
   cases s with
-  | prolative => exact h.forall_apply.2 ⟨hp, hq⟩
+  | prolative => exact (RelSeries.forall_smash_apply h).2 ⟨hp, hq⟩
   | approximative =>
-    exact ⟨(h.forall_apply (P := (· ∉ R))).2 ⟨hp.1, hq.1⟩, h.strictAnti_comp hp.2.1 hq.2.1,
-      hne hp.2.2⟩
+    exact ⟨(RelSeries.forall_smash_apply h (P := (· ∉ R))).2 ⟨hp.1, hq.1⟩,
+      RelSeries.strictAnti_comp_smash h hp.2.1 hq.2.1, hne hp.2.2⟩
   | recessive =>
-    exact ⟨(h.forall_apply (P := (· ∉ R))).2 ⟨hp.1, hq.1⟩, h.strictMono_comp hp.2.1 hq.2.1,
-      hne hp.2.2⟩
+    exact ⟨(RelSeries.forall_smash_apply h (P := (· ∉ R))).2 ⟨hp.1, hq.1⟩,
+      RelSeries.strictMono_comp_smash h hp.2.1 hq.2.1, hne hp.2.2⟩
   | _ => exact absurd (by decide) hs
 
 /-- Concatenation never keeps a shape with a transition: the ends of a cofinal or a coinitial path
 lie on opposite sides of `R`, so no two of them concatenate, and two transitive paths concatenate
 into more than one stretch inside `R`. -/
 theorem HasShape.not_concat (hs : s.IsBounded) (hp : HasShape R p d s) (hq : HasShape R q d s)
-    (h : IsConcat p q r) : ¬ HasShape R r d s := by
+    (h : p.last = q.head) : ¬ HasShape R (p.smash q h) d s := by
   have cofinal (hp : IsCofinal R p) (hq : IsCofinal R q) : False :=
-    hq.2.1 (by rw [coe_bot, ← h.last_eq_head, ← coe_top]; exact hp.2.2)
+    hq.2.1 (by rw [coe_bot, ← h, ← coe_top]; exact hp.2.2)
   have coinitial (hp : IsCoinitial R p) (hq : IsCoinitial R q) : False :=
-    hp.2.2 (by rw [coe_top, h.last_eq_head, ← coe_bot]; exact hq.2.1)
+    hp.2.2 (by rw [coe_top, h, ← coe_bot]; exact hq.2.1)
   cases s with
   | cofinal => exact (cofinal hp hq).elim
   | terminative => exact (cofinal (IsTerminative.isCofinal hp) (IsTerminative.isCofinal hq)).elim
@@ -568,7 +484,7 @@ theorem HasShape.not_concat (hs : s.IsBounded) (hp : HasShape R p d s) (hq : Has
   | transitive =>
     obtain ⟨_, ⟨i, hi⟩, -, hg⟩ := id hp
     obtain ⟨_, ⟨j, hj⟩, -, -⟩ := id hq
-    exact fun hr ↦ h.not_ordConnected (by rwa [coe_top] at hg) hi hj hr.1
+    exact fun hr ↦ RelSeries.not_ordConnected_preimage_smash h (by rwa [coe_top] at hg) hi hj hr.1
   | _ => exact absurd hs (by decide)
 
 end Concat

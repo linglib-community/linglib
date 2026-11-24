@@ -143,7 +143,7 @@ theorem georgian_loc_goal_possible : Possible ![0, 0, 1, 2] := by decide
 
 section Shapes
 
-variable {Loc β : Type*} [Preorder β] {R : Set Loc} {d : Loc → β} {p q r : Path Loc} {s : Shape}
+variable {Loc β : Type*} [Preorder β] {R : Set Loc} {d : Loc → β} {p q : Path Loc} {s : Shape}
 
 /-- A path from outside a place into it is cofinal and not coinitial, and its reverse is
 coinitial, the semantic ground of *A&¬A (§5.4). -/
@@ -160,38 +160,39 @@ example : let p : Path ℕ := Path.ofPoints 0 [1]
 /-- A goal path followed by a source path is a route path with one positive phase, (10) of
 Chapter 2. -/
 theorem isTransitive_of_concat (hp : IsCofinal R p) (hq : IsCoinitial R q)
-    (h : p.IsConcat q r) : IsTransitive R r := by
-  have hl := h.length_eq
+    (h : p.last = q.head) : IsTransitive R (p.smash q h) := by
+  have hl : (p.smash q h).length = p.length + q.length := rfl
   refine ⟨⟨fun a ha b hb c hc ↦ ?_⟩, ⟨⟨p.length, by omega⟩, ?_⟩, ?_, ?_⟩
   · rcases le_total (c : ℕ) p.length with hle | hle
     · have hac := Fin.le_def.1 hc.1
       have key : (⟨a, by omega⟩ : Fin (p.length + 1)) ∈ p ⁻¹' R := by
-        rw [Set.mem_preimage, ← h.apply_of_le a (hac.trans hle)]; exact ha
-      show r c ∈ R
-      rw [h.apply_of_le c hle]
+        rw [Set.mem_preimage, ← RelSeries.smash_apply_of_le h a (hac.trans hle)]; exact ha
+      show p.smash q h c ∈ R
+      rw [RelSeries.smash_apply_of_le h c hle]
       exact hp.1 (Fin.le_def.2 hac) key
     · have hcb := Fin.le_def.1 hc.2
       have key : (⟨b - p.length, by omega⟩ : Fin (q.length + 1)) ∈ q ⁻¹' R := by
-        rw [Set.mem_preimage, ← h.apply_of_ge b (hle.trans hcb)]; exact hb
-      show r c ∈ R
-      rw [h.apply_of_ge c hle]
+        rw [Set.mem_preimage, ← RelSeries.smash_apply_of_ge h b (hle.trans hcb)]; exact hb
+      show p.smash q h c ∈ R
+      rw [RelSeries.smash_apply_of_ge h c hle]
       exact hq.1 (Fin.le_def.2 (Nat.sub_le_sub_right hcb _)) key
-  · show r _ ∈ R
-    rw [h.apply_of_le _ le_rfl]
+  · show p.smash q h _ ∈ R
+    rw [RelSeries.smash_apply_of_le h _ le_rfl]
     exact hp.2.2
-  · rw [coe_bot, h.head_eq]; exact hp.2.1
-  · rw [coe_top, h.last_eq, ← coe_top]; exact hq.2.2
+  · rw [coe_bot, RelSeries.head_smash]; exact hp.2.1
+  · rw [coe_top, RelSeries.last_smash, ← coe_top]; exact hq.2.2
 
 /-- A source path followed by a goal path has two positive phases and so no shape, the *tsap of
 (11) of Chapter 2, which to her knowledge no language has a preposition for. -/
 theorem not_hasShape_of_concat (hp : IsCoinitial R p) (hq : IsCofinal R q)
-    (h : p.IsConcat q r) (s : Shape) : ¬ HasShape R r d s :=
-  fun hr ↦ h.not_ordConnected (p.coe_top ▸ hp.2.2) hp.2.1 hq.2.2 hr.ordConnected
+    (h : p.last = q.head) (s : Shape) : ¬ HasShape R (p.smash q h) d s :=
+  fun hr ↦ RelSeries.not_ordConnected_preimage_smash h (p.coe_top ▸ hp.2.2) hp.2.1 hq.2.2
+    hr.ordConnected
 
 /-- Such a path can be formed, so what (11) lacks is a shape rather than a concatenation. -/
-example : ∃ p q r : Path ℕ, IsCoinitial {1} p ∧ IsCofinal {1} q ∧ p.IsConcat q r := by
-  refine ⟨Path.ofPoints 1 [0], Path.ofPoints 0 [1], _, ⟨fun a b hab hb ↦ ?_, by decide, by decide⟩,
-    ⟨fun a b hab ha ↦ ?_, by decide, by decide⟩, rfl, rfl⟩
+example : ∃ p q : Path ℕ, IsCoinitial {1} p ∧ IsCofinal {1} q ∧ p.last = q.head := by
+  refine ⟨Path.ofPoints 1 [0], Path.ofPoints 0 [1], ⟨fun a b hab hb ↦ ?_, by decide, by decide⟩,
+    ⟨fun a b hab ha ↦ ?_, by decide, by decide⟩, rfl⟩
   · simp only [Set.mem_preimage, Set.mem_singleton_iff] at hb ⊢
     revert a b; decide
   · simp only [Set.mem_preimage, Set.mem_singleton_iff] at ha ⊢
@@ -212,12 +213,14 @@ theorem hasShape_comp_symm {γ : unitInterval → Loc} :
 of [zwarts-2005]: the paths of a shape are cumulative just when it has no transition and two of
 them concatenate. -/
 theorem cumulative_hasShape_iff :
-    Zwarts2005.Cumulative IsConcat {p : Path Loc | HasShape R p d s} ↔
-      ¬ s.IsBounded ∧ ∃ p q r : Path Loc, HasShape R p d s ∧ HasShape R q d s ∧ IsConcat p q r :=
-  ⟨fun ⟨⟨p, hp, q, hq, r, hr⟩, hc⟩ ↦
-    ⟨fun hs ↦ HasShape.not_concat hs hp hq hr (hc p hp q hq r hr), p, q, r, hp, hq, hr⟩,
-    fun ⟨hs, p, q, r, hp, hq, hr⟩ ↦
-      ⟨⟨p, hp, q, hq, r, hr⟩, fun _ hp _ hq _ hr ↦ HasShape.concat hs hp hq hr⟩⟩
+    Zwarts2005.Cumulative Zwarts2005.Concat {p : Path Loc | HasShape R p d s} ↔
+      ¬ s.IsBounded ∧
+        ∃ p q : Path Loc, HasShape R p d s ∧ HasShape R q d s ∧ p.last = q.head :=
+  ⟨fun ⟨⟨p, hp, q, hq, _, h, rfl⟩, hc⟩ ↦
+    ⟨fun hs ↦ HasShape.not_concat hs hp hq h (hc p hp q hq _ ⟨h, rfl⟩), p, q, hp, hq, h⟩,
+    fun ⟨hs, p, q, hp, hq, h⟩ ↦
+      ⟨⟨p, hp, q, hq, _, h, rfl⟩,
+        fun _ hp _ hq _ ⟨h, hr⟩ ↦ hr ▸ HasShape.concat hs hp hq h⟩⟩
 
 -- [zwarts-2005]
 theorem mem_towardsPP_of_isApproximative (h : IsApproximative R p d) :
