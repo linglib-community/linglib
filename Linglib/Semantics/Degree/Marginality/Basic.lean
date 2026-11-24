@@ -148,6 +148,9 @@ instance : IsOrderConnected α ml.LargelyLT where
       (fun hm ↦ (marginallyLT_or_largelyLT_of_lt hbc).imp
         (fun hm' ↦ absurd (hm.trans hm') h.2) id) .inl
 
+instance : IsOrderConnected α (Function.swap ml.LargelyLT) :=
+  ⟨fun a b c h ↦ (IsOrderConnected.conn c b a h).symm⟩
+
 instance instIsStrictWeakOrderLargelyLT : IsStrictWeakOrder α ml.LargelyLT :=
   isStrictWeakOrder_of_isOrderConnected
 
@@ -218,12 +221,12 @@ theorem toBlock_surjective : Function.Surjective ml.toBlock := Block.ind fun x �
 theorem toBlock_lt_toBlock : ml.toBlock x < ml.toBlock y ↔ ml.LargelyLT x y := Iff.rfl
 
 @[simp]
-theorem toBlock_eq_toBlock : ml.toBlock x = ml.toBlock y ↔ ml.AtMostMarginal x y := by
-  rw [atMostMarginal_iff_incompRel, ← incompRel_swap, ← cresswellSetoid_iff_incompRel]
-  exact Quotient.eq
+theorem toBlock_eq_toBlock : ml.toBlock x = ml.toBlock y ↔ ml.AtMostMarginal x y :=
+  CresswellDegree.mk_eq_mk.trans <|
+    (incompRel_swap_apply _).trans atMostMarginal_iff_incompRel.symm
 
 theorem toBlock_le_toBlock : ml.toBlock x ≤ ml.toBlock y ↔ ¬ ml.LargelyLT y x :=
-  not_lt.symm.trans (not_congr toBlock_lt_toBlock)
+  CresswellDegree.mk_le_mk
 
 variable (ml) in
 theorem toBlock_mono : Monotone ml.toBlock :=

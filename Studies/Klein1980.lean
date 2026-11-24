@@ -188,7 +188,7 @@ and a measure into a linear order represents the ordering within the class. -/
 
 example {d : Delineation E} {C : Set E} (hd : d.IsGapless) (hm : d.IsMonotoneOn (𝒫 C)) :
     IsStrictTotalOrder (CresswellDegree (d.Outranks C)) (· < ·) :=
-  CresswellDegree.isStrictTotalOrder_lt_iff.2 (hd.isStrictWeakOrder_outranks hm)
+  CresswellDegree.isStrictTotalOrder_lt_iff.2 ⟨hm.asymm_outranks, hd.isOrderConnected_outranks⟩
 
 universe u in
 example {E : Type u} {d : Delineation E} {C : Set E} (hd : d.IsGapless)
@@ -201,9 +201,9 @@ example {E : Type u} {d : Delineation E} {C : Set E} (hd : d.IsGapless)
 theorem mem_kleinDegree_ofMeasure_iff_cresswell (μ : E → D) {u v : E} :
     v ∈ kleinDegree (ofMeasure μ) Set.univ u ↔
       cresswellSetoid ((ofMeasure μ).Outranks Set.univ) u v := by
-  have hO : (ofMeasure μ).Outranks Set.univ = fun a b ↦ μ b < μ a :=
-    funext₂ fun a b ↦ propext (outranks_ofMeasure_iff μ trivial trivial)
-  rw [kleinDegree_ofMeasure μ (Set.mem_univ u) (Set.mem_univ v), hO, cresswellSetoid_lt_measure,
+  rw [kleinDegree_ofMeasure μ (Set.mem_univ u) (Set.mem_univ v),
+    cresswellSetoid_eq_ker_of_lt (φ := (ofMeasure μ).Outranks Set.univ) fun _ _ ↦
+      outranks_ofMeasure_iff μ trivial trivial,
     Setoid.ker_def]
 
 -- (i), n. 5

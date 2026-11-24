@@ -148,7 +148,7 @@ example : IsTrans U gt := inferInstance
 /-- On a grading relation the degree of `a` is its class in Cresswell's construction, though the
 paper sets its definition against his pair of a point and a relation (n. 15). -/
 theorem mem_degree_iff : x ∈ degree gt a ↔ (⟦x⟧ : CresswellDegree gt) = ⟦a⟧ :=
-  cresswellSetoid_iff_incompRel.symm.trans Quotient.eq.symm
+  CresswellDegree.mk_eq_mk.symm
 
 -- p. 424
 theorem degree_eq_degree_iff : degree gt a = degree gt b ↔ ¬ gt a b ∧ ¬ gt b a := by
@@ -170,13 +170,8 @@ when it is read off a measure into a linear order, the classes of Definition 7 g
 one. -/
 theorem gradingRelation_iff_exists_measure :
     (IsOrderConnected U gt ∧ Std.Asymm gt) ↔
-      ∃ (D : Type u) (_ : LinearOrder D) (μ : U → D), ∀ x y, gt x y ↔ μ y < μ x := by
-  refine ⟨fun ⟨_, _⟩ ↦ ?_, fun ⟨D, _, μ, h⟩ ↦
-    ⟨⟨fun x z y hxy ↦ ?_⟩, ⟨fun x y hxy hyx ↦ lt_asymm ((h _ _).1 hxy) ((h _ _).1 hyx)⟩⟩⟩
-  · classical
-    exact ⟨CresswellDegree gt, inferInstance, Quotient.mk _, fun _ _ ↦ Iff.rfl⟩
-  · exact (lt_or_ge (μ z) (μ x)).elim (.inl <| (h _ _).2 ·)
-      fun hz ↦ .inr <| (h _ _).2 <| ((h _ _).1 hxy).trans_le hz
+      ∃ (D : Type u) (_ : LinearOrder D) (μ : U → D), ∀ x y, gt x y ↔ μ y < μ x :=
+  and_comm.trans asymm_and_isOrderConnected_iff_exists_measure
 
 -- A third thing incommensurable with two compared ones breaks almost-connectedness, so no measure
 -- reads the relation off.
