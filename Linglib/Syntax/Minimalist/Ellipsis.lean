@@ -34,9 +34,9 @@ complements [E] silences and the null pro-forms.
 
 ## Main definitions
 
-* `Minimalist.Spine.Site`, `Minimalist.Spine.rank`: the sites of a spine and their
+* `Spine.Site`, `Spine.rank`: the sites of a spine and their
   interleaved order.
-* `Minimalist.Spine.Deletes`: the initial segment of sites [E] on a head deletes.
+* `Spine.Deletes`: the initial segment of sites [E] on a head deletes.
 * `Minimalist.Ellipsis`: an [E] feature on a head of a spine, ordered by height, with its
   `Minimalist.Ellipsis.domain`, the identity condition `Minimalist.Ellipsis.Identical`, the
   `Minimalist.Ellipsis.argumentDomain` and the nondistinctness condition
@@ -87,9 +87,9 @@ for.
 
 @[expose] public section
 
-namespace Minimalist
-
 namespace Spine
+
+open Minimalist
 
 /-- A site of a spine is a head, or the adjunction site of the phrase a head projects, where
 adjuncts such as *again* and prenominal modifiers attach. -/
@@ -98,28 +98,28 @@ inductive Site
   | adjunct (c : Cat)
   deriving DecidableEq, Repr
 
-variable {s : Spine} {p q : Cat} {x y : Site}
+variable {s : Spine Cat} {p q : Cat} {x y : Site}
 
 /-- The rank of a site in the order of a spine's sites: the head of index `i` at `2 * i`, the
 adjunction site of the phrase it projects at `2 * i + 1`. -/
-def rank (s : Spine) : Site → ℕ
+def rank (s : Spine Cat) : Site → ℕ
   | .head c => 2 * s.heads.idxOf c
   | .adjunct c => 2 * s.heads.idxOf c + 1
 
 /-- [E] on `p` deletes the sites below the adjunction site of its complement: the heads below `p`
 and the adjunction sites of the phrases inside its complement. -/
-def Deletes (s : Spine) (p : Cat) (x : Site) : Prop := s.rank x + 1 < s.rank (.head p)
+def Deletes (s : Spine Cat) (p : Cat) (x : Site) : Prop := s.rank x + 1 < s.rank (.head p)
 
-instance (s : Spine) (p : Cat) (x : Site) : Decidable (s.Deletes p x) :=
+instance (s : Spine Cat) (p : Cat) (x : Site) : Decidable (s.Deletes p x) :=
   inferInstanceAs (Decidable (_ < _))
 
 /-- The [E]-bearing head survives its own ellipsis, which is the core of X-stranding: a head that
 has moved to the [E]-bearing position is pronounced while its base position is deleted. -/
-theorem not_deletes_head_self (s : Spine) (p : Cat) : ¬ s.Deletes p (.head p) := by
+theorem not_deletes_head_self (s : Spine Cat) (p : Cat) : ¬ s.Deletes p (.head p) := by
   simp [Deletes]
 
 /-- The sites of a spine, its heads and the adjunction sites of the phrases they project. -/
-def sites (s : Spine) : List Site := s.heads.flatMap fun c ↦ [.head c, .adjunct c]
+def sites (s : Spine Cat) : List Site := s.heads.flatMap fun c ↦ [.head c, .adjunct c]
 
 /-- A deletion domain lies among the sites of the spine. -/
 theorem Deletes.mem_sites (h : s.Deletes p x) : x ∈ s.sites := by
@@ -140,12 +140,14 @@ theorem Deletes.of_rank_head_le (h : s.Deletes q x)
 
 end Spine
 
+namespace Minimalist
+
 /-! ### Ellipses -/
 
 /-- An ellipsis is an [E] feature on a head of the spine `s`; its deletion domain is that head's
 complement. -/
 @[ext]
-structure Ellipsis (s : Spine) where
+structure Ellipsis (s : Spine Cat) where
   /-- The head carrying [E]. -/
   ePosition : Cat
   mem : ePosition ∈ s
@@ -154,7 +156,7 @@ namespace Ellipsis
 
 open Spine
 
-variable {s : Spine} {e e' : Ellipsis s} {x : Site}
+variable {s : Spine Cat} {e e' : Ellipsis s} {x : Site}
 
 /-- The index on the spine of the head carrying [E]. -/
 def height (e : Ellipsis s) : ℕ := s.heads.idxOf e.ePosition
@@ -293,10 +295,10 @@ end Ellipsis
 namespace Ellipsis
 
 /-- The clausal spine that ellipsis distinguishes, V, v, Voice, T and C. -/
-def clausalSpine : Spine := ⟨[.V, .v, .Voice, .T, .C]⟩
+def clausalSpine : Spine Cat := ⟨[.V, .v, .Voice, .T, .C]⟩
 
 /-- The nominal spine, N, the categorizer n, Num and D. -/
-def nominalSpine : Spine := ⟨[.N, .n, .Num, .D]⟩
+def nominalSpine : Spine Cat := ⟨[.N, .n, .Num, .D]⟩
 
 /-- Sluicing puts [E] on C and deletes TP. -/
 def sluicing : Ellipsis clausalSpine := ⟨.C, by decide⟩
@@ -318,13 +320,13 @@ end Ellipsis
 /-- A null site of a spine: the complement an [E]-bearing head leaves unpronounced, which must
 contain some site, or a null pro-form, a head without a complement, such as *pro* or an empty
 noun. -/
-inductive NullSite (s : Spine) where
+inductive NullSite (s : Spine Cat) where
   | elided (e : Ellipsis s) (h : ∃ x, e.Deletes x)
   | proform (x : Spine.Site)
 
 namespace NullSite
 
-variable {s : Spine}
+variable {s : Spine Cat}
 
 /-- [E]-deletion yields a surface anaphor, and a null pro-form a deep one. -/
 def depth : NullSite s → Anaphor.Depth

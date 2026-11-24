@@ -118,7 +118,7 @@ theorem cuukwe_conditional_projects :
 /-- A cell of table (79) pairs the extended spine of a notional complement, the heads projected
 from V up through any shell over C, with whether the CP contains an Ā-dependency. -/
 structure Cell where
-  spine : Spine
+  spine : Spine Minimalist.Cat
   internalAbar : Bool
 
 /-- A Nez Perce cell is a bare CP whose Ā-dependency is relative embedding. -/

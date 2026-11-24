@@ -23,7 +23,7 @@ standard sizes are those of the standard spines.
 ## Main definitions
 
 * `Minimalist.ComplementSize`: a clausal complement measured by its highest head.
-* `Minimalist.Spine.size`: the size of a spine, its highest head.
+* `Spine.size`: the size of a spine, its highest head.
 * `Minimalist.ComplementSize.vP`, `Minimalist.ComplementSize.tP`,
   `Minimalist.ComplementSize.modP`, `Minimalist.ComplementSize.finP`,
   `Minimalist.ComplementSize.cP`: the standard sizes.
@@ -31,7 +31,7 @@ standard sizes are those of the standard spines.
 ## Main results
 
 * `Minimalist.ComplementSize.le_def`: the order is the extension order of the highest heads.
-* `Minimalist.Spine.size_le_size`: on extended projections, the extension order refines the
+* `Spine.size_le_size`: on extended projections, the extension order refines the
   size order, so that the standard sizes ascend as their spines do
   (`Minimalist.ComplementSize.vP_le_tP`, `Minimalist.ComplementSize.tP_le_cP`).
 
@@ -75,13 +75,17 @@ end ComplementSize
 
 /-! ### The size of a spine -/
 
+end Minimalist
+
 namespace Spine
 
-variable {s t : Spine} {c : Cat}
+open Minimalist
+
+variable {s t : Spine Cat} {c : Cat}
 
 /-- The size of a spine is its highest head; the empty spine has the size of a bare lexical head,
 the least size. -/
-def size (s : Spine) : ComplementSize := ⟨s.heads.getLastD .V⟩
+def size (s : Spine Cat) : ComplementSize := ⟨s.heads.getLastD .V⟩
 
 private theorem extendsTo_getLastD {l : List Cat} (hp : l.Pairwise Cat.ExtendsTo) (hc : c ∈ l) :
     c.ExtendsTo (l.getLastD .V) := by
@@ -108,6 +112,8 @@ theorem size_le_size (h : s ≤ t) (ht : t.IsExtendedProjection) (hs : s.heads �
   exact ht.extendsTo_size (le_iff_forall_mem.1 h c (by simp [hlc]))
 
 end Spine
+
+namespace Minimalist
 
 /-! ### The standard sizes -/
 

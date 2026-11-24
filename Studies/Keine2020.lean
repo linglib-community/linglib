@@ -78,10 +78,10 @@ open Minimalist
 /-! ### Clause sizes -/
 
 /-- The Hindi nominalized clause `[V, v, T, Nmlz]`, a gerund: Nmlz⁰ selects a TP. -/
-def nmlzP : Spine := ⟨[.V, .v, .T, .Nmlz]⟩
+def nmlzP : Spine Minimalist.Cat := ⟨[.V, .v, .T, .Nmlz]⟩
 
 /-- The German verb-second clause `[V, v, T, C, Force]`, a ForceP above the CP. -/
-def forceP : Spine := ⟨[.V, .v, .T, .C, .Force]⟩
+def forceP : Spine Minimalist.Cat := ⟨[.V, .v, .T, .C, .Force]⟩
 
 theorem nmlzP_isExtendedProjection : nmlzP.IsExtendedProjection := by decide +kernel
 
@@ -123,7 +123,7 @@ def Grammar.book : Grammar := { Grammar.article with ābarMovement := ābarProbe
 
 /-- The sizes a clause of each surface type may have: a finite clause is a CP and a gerund an
 NmlzP; an infinitive is a vP or a TP, and a TP when it hosts a temporal adverb or a negation. -/
-def Examples.Clause.sizes : Examples.Clause → List Spine
+def Examples.Clause.sizes : Examples.Clause → List (Spine Minimalist.Cat)
   | .finite => [.cP]
   | .infinitive => [.vP, .tP]
   | .modifiedInfinitive => [.tP]
@@ -132,7 +132,7 @@ def Examples.Clause.sizes : Examples.Clause → List Spine
 /-- What a dependency requires of the size of a clause it crosses. Binding from the landing site
 requires A-movement and movement without it A-movement or Ā-movement; default agreement requires
 that φ-agreement be impossible. -/
-def Examples.Dependency.Requires (G : Grammar) : Examples.Dependency → Spine → Prop
+def Examples.Dependency.Requires (G : Grammar) : Examples.Dependency → Spine Minimalist.Cat → Prop
   | .binding, s => G.aMovement.TransparentTo s
   | .movement, s => G.aMovement.TransparentTo s ∨ G.ābarMovement.TransparentTo s
   | .lda, s => G.phiAgreement.TransparentTo s
@@ -145,7 +145,7 @@ instance (G : Grammar) (d : Examples.Dependency) : DecidablePred (d.Requires G) 
 /-- The structures of a clause of type `c` in a sentence that shows the dependencies `ds` across
 it: the sizes the clause may have that meet the requirement of each dependency. -/
 def structures (G : Grammar) (c : Examples.Clause) (ds : List Examples.Dependency) :
-    List Spine :=
+    List (Spine Minimalist.Cat) :=
   c.sizes.filter fun s ↦ ∀ d ∈ ds, d.Requires G s
 
 /-- A sentence among the twenty examples is accepted exactly when its embedded clause has a
@@ -204,7 +204,7 @@ theorem structures_gerund_movement :
 def englishWh : HorizonSetting := ⟨.C, none⟩
 
 -- (241)
-theorem english_profiles {t : Spine} (ht : t.heads <+: Spine.cP.heads) :
+theorem english_profiles {t : Spine Minimalist.Cat} (ht : t.heads <+: Spine.cP.heads) :
     (Keine2019.englishAProbe.TransparentTo t ↔ t ≤ .tP) ∧
       (Keine2019.extrapositionProbe.TransparentTo t ↔ t ≤ .vP) ∧ englishWh.TransparentTo t :=
   ⟨(HorizonSetting.transparentTo_mk_some_iff_le_below ht).trans (by rw [Spine.cP_below_C]),
@@ -224,7 +224,7 @@ def germanWh : HorizonSetting := ⟨.C, some .Force⟩
 def germanTop : HorizonSetting := ⟨.Force, none⟩
 
 -- (359), (367)
-theorem german_profiles {t : Spine} (ht : t.heads <+: forceP.heads) :
+theorem german_profiles {t : Spine Minimalist.Cat} (ht : t.heads <+: forceP.heads) :
     (germanScr.TransparentTo t ↔ t ≤ .vP) ∧ (germanRel.TransparentTo t ↔ t ≤ .tP) ∧
       (germanWh.TransparentTo t ↔ t ≤ .cP) ∧ germanTop.TransparentTo t :=
   ⟨(HorizonSetting.transparentTo_mk_some_iff_le_below ht).trans
@@ -250,10 +250,10 @@ def tsezPhi (head : Cat) : HorizonSetting := ⟨head, some .Force⟩
 def tsezMove (head : Cat) : HorizonSetting := ⟨head, some .Top⟩
 
 /-- The Tsez clause `[V, v, T, Top]`. -/
-def tsezTopP : Spine := ⟨[.V, .v, .T, .Top]⟩
+def tsezTopP : Spine Minimalist.Cat := ⟨[.V, .v, .T, .Top]⟩
 
 /-- The Tsez clause `[V, v, T, Top, Force]`, whose ForceP requires a TopP below it. -/
-def tsezForceP : Spine := ⟨[.V, .v, .T, .Top, .Force]⟩
+def tsezForceP : Spine Minimalist.Cat := ⟨[.V, .v, .T, .Top, .Force]⟩
 
 -- (269), (271)
 theorem mismatches (head : Cat) :
@@ -285,7 +285,7 @@ def lubukusuAProbe : HorizonSetting := ⟨.T, none⟩
 /-- The A-movement probes of Hindi, English and Lubukusu form a scale: a clause that Hindi
 A-movement leaves, English A-movement leaves, and a clause that English A-movement leaves,
 Lubukusu A-movement leaves. -/
-theorem a_movement_scale {t : Spine} (ht : t.heads <+: Spine.cP.heads) :
+theorem a_movement_scale {t : Spine Minimalist.Cat} (ht : t.heads <+: Spine.cP.heads) :
     (Keine2019.aProbe.TransparentTo t → Keine2019.englishAProbe.TransparentTo t) ∧
       (Keine2019.englishAProbe.TransparentTo t → lubukusuAProbe.TransparentTo t) :=
   ⟨.of_default (p := Keine2019.englishAProbe) (s := .cP) (by decide) ht,
@@ -376,14 +376,14 @@ situ, and what each requires of the clause's label follows. -/
 
 /-- The steps that build a clause with spine `s` over an object, each head selecting the one
 below it. -/
-def clauseSteps (s : Spine) : List Step :=
+def clauseSteps (s : Spine Minimalist.Cat) : List Step :=
   (s.heads.zip (.D :: s.heads)).zipIdx.map fun ⟨⟨c, sel⟩, i⟩ ↦
     .em .left (.leaf ⟨.of c [sel], 10 + i⟩)
 
 def matCTok : LexicalItem.Token := ⟨.of .C [.T], 9⟩
 
 /-- The matrix clause over a clause with spine `s`, up to T⁰, or up to C⁰ when `c` holds. -/
-def matrixOver (s : Spine) (c : Bool) : Derivation :=
+def matrixOver (s : Spine Minimalist.Cat) (c : Bool) : Derivation :=
   ⟨obj, clauseSteps s ++ [.em .left (matV (s.heads.getLast?.getD .V)), .em .left matT] ++
     if c then [.em .left (.leaf matCTok)] else []⟩
 
@@ -394,26 +394,26 @@ def Grammar.probes (G : Grammar) (tok : LexicalItem.Token) : Option HorizonSetti
 
 /-- The object of a clause with spine `s` moves to the specifier of the matrix T⁰, or of the
 matrix C⁰ when `c` holds, in a derivation that obeys the horizons. -/
-def Moves (G : Grammar) (s : Spine) (c : Bool) : Prop :=
+def Moves (G : Grammar) (s : Spine Minimalist.Cat) (c : Bool) : Prop :=
   ((matrixOver s c).append [.im obj]).Respects .raising
     fun t ↦ horizonCut headIndex? t .raising G.probes
 
-instance (G : Grammar) (s : Spine) (c : Bool) : Decidable (Moves G s c) :=
+instance (G : Grammar) (s : Spine Minimalist.Cat) (c : Bool) : Decidable (Moves G s c) :=
   inferInstanceAs (Decidable (Derivation.Respects _ _ _))
 
 /-- A probe with setting `p` on the matrix head `host` finds the object of a clause with spine
 `s` in situ. -/
-def Finds (p : HorizonSetting) (host : LexicalItem.Token) (s : Spine) : Prop :=
+def Finds (p : HorizonSetting) (host : LexicalItem.Token) (s : Spine Minimalist.Cat) : Prop :=
   ∃ t ∈ (matrixOver s true).externalize?, Keine2019.found p (.leaf host) t ≠ ∅
 
-instance (p : HorizonSetting) (host : LexicalItem.Token) (s : Spine) :
+instance (p : HorizonSetting) (host : LexicalItem.Token) (s : Spine Minimalist.Cat) :
     Decidable (Finds p host s) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- A dependency across a clause with spine `s`: binding from the landing site is A-movement of
 the object and movement without it A-movement or Ā-movement, agreement is the φ-probe finding
 the object and default agreement its finding none, and matrix scope the wh-probe finding it. -/
-def Examples.Dependency.Holds (G : Grammar) : Examples.Dependency → Spine → Prop
+def Examples.Dependency.Holds (G : Grammar) : Examples.Dependency → Spine Minimalist.Cat → Prop
   | .binding, s => Moves G s false
   | .movement, s => Moves G s false ∨ Moves G s true
   | .lda, s => Finds G.phiAgreement matTTok s
@@ -424,7 +424,7 @@ instance (G : Grammar) (d : Examples.Dependency) : DecidablePred (d.Holds G) := 
   cases d <;> unfold Examples.Dependency.Holds <;> infer_instance
 
 /-- The four clause sizes of Hindi. -/
-def hindiSizes : List Spine := [.vP, .tP, .cP, nmlzP]
+def hindiSizes : List (Spine Minimalist.Cat) := [.vP, .tP, .cP, nmlzP]
 
 theorem holds_iff_requires :
     ∀ G ∈ [Grammar.book, .article], ∀ s ∈ hindiSizes, ∀ d : Examples.Dependency,

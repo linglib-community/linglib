@@ -76,10 +76,10 @@ instance : DecidablePred Examples.Determiner.NeedsD := fun d ↦ by
   cases d <;> unfold Examples.Determiner.NeedsD <;> infer_instance
 
 /-- The nominal predicate of (38), a possessed noun phrase up to its number head. -/
-def numP : Spine := ⟨[.n, .Poss, .Num]⟩
+def numP : Spine Cat := ⟨[.n, .Poss, .Num]⟩
 
 /-- The full noun phrase, the nominal predicate under D. -/
-def dP : Spine := numP.append [.D]
+def dP : Spine Cat := numP.append [.D]
 
 theorem dP_isExtendedProjection : dP.IsExtendedProjection := by decide +kernel
 
@@ -87,7 +87,7 @@ theorem numP_le_dP : numP ≤ dP := numP.le_append _
 
 /-- The sizes a nominal with the determiner may have: a full DP, and also a NumP when the
 determiner does not need the D layer. -/
-def sizes (d : Examples.Determiner) : List Spine := if d.NeedsD then [dP] else [numP, dP]
+def sizes (d : Examples.Determiner) : List (Spine Cat) := if d.NeedsD then [dP] else [numP, dP]
 
 /-! ### The two structures -/
 
@@ -106,18 +106,18 @@ lexicon tokens from 100 where
 
 /-- The possessee with spine `s`: the noun extended by the heads above it, with `spec`, when there
 is one, in the specifier of Poss. -/
-def nominal (s : Spine) (spec : Option PlanarSyntacticObject) : PlanarSyntacticObject :=
+def nominal (s : Spine Cat) (spec : Option PlanarSyntacticObject) : PlanarSyntacticObject :=
   (PlanarSyntacticObject.leaf noun).extend .n 1
     (fun i ↦ if (s.above .n)[i]? = some .Poss then spec else none) (s.above .n)
 
 /-- (38): the existential structure, in which v takes the possessee and the possessor is in the
 specifier of its Poss head; with *there* in that specifier it is the existential of (40). -/
-def existential (s : Spine) (x : LexicalItem.Token := specifier) : PlanarSyntacticObject :=
+def existential (s : Spine Cat) (x : LexicalItem.Token := specifier) : PlanarSyntacticObject :=
   so% [v₀ (nominal s (some (so% x)))]
 
 /-- (44): the locative structure, in which v takes the phrase of an applicative head, with the
 possessor in its specifier and the possessee as its complement. -/
-def locative (s : Spine) : PlanarSyntacticObject :=
+def locative (s : Spine Cat) : PlanarSyntacticObject :=
   so% [v₀ [specifier [appl₀ (nominal s none)]]]
 
 -- (38) as drawn, with *a* in Num.
@@ -151,14 +151,14 @@ instance : DecidablePred Extractable := fun _ ↦ decidable_of_iff _ extractable
 /-! ### Spans and varieties -/
 
 /-- The span of HAVE in a structure: its verbal heads from the lowest, and T. -/
-def span (t : PlanarSyntacticObject) : Spine :=
+def span (t : PlanarSyntacticObject) : Spine Cat :=
   ⟨(t.yield.map (·.item.cat)).reverse.filter (fun c ↦ decide (c.family = .verbal)) ++ [.T]⟩
 
 /-- The span of (53), v and T. -/
-abbrev vT : Spine := ⟨[.v, .T]⟩
+abbrev vT : Spine Cat := ⟨[.v, .T]⟩
 
 /-- The span of (54), the applicative, v and T. -/
-abbrev applvT : Spine := ⟨[.Appl, .v, .T]⟩
+abbrev applvT : Spine Cat := ⟨[.Appl, .v, .T]⟩
 
 @[simp] theorem span_existential_numP : span (existential numP) = vT := by decide
 
@@ -169,7 +169,7 @@ abbrev applvT : Spine := ⟨[.Appl, .v, .T]⟩
 /-- A spell-out rule pronounces the heads of a span at one of its positions. -/
 structure Rule where
   /-- The heads the rule spells out. -/
-  span : Spine
+  span : Spine Cat
   /-- The position at which they are pronounced. -/
   site : Cat
   deriving DecidableEq
@@ -186,9 +186,9 @@ def standard : List Rule := [⟨vT, .v⟩, ⟨applvT, .v⟩]
 variable {g : List Rule} {f : Examples.Frame} {d : Examples.Determiner} {r : Examples.Relation}
 
 /-- A variety raises HAVE over a span when it has the rule that pronounces the span at T. -/
-def Raises (g : List Rule) (s : Spine) : Prop := ⟨s, .T⟩ ∈ g
+def Raises (g : List Rule) (s : Spine Cat) : Prop := ⟨s, .T⟩ ∈ g
 
-instance (s : Spine) : Decidable (Raises g s) := inferInstanceAs (Decidable (_ ∈ _))
+instance (s : Spine Cat) : Decidable (Raises g s) := inferInstanceAs (Decidable (_ ∈ _))
 
 /-- HAVE stands before negation or the subject. -/
 def Examples.Frame.Raised : Examples.Frame → Prop
@@ -292,7 +292,7 @@ theorem copula_eq :
 /-! ### Head Chain Pronunciation -/
 
 /-- The head chain of a span, its heads sharing one M-value. -/
-def chain (s : Spine) : HeadChain := .ofHeads (s.heads.head?.getD .v) s.heads.tail
+def chain (s : Spine Cat) : HeadChain := .ofHeads (s.heads.head?.getD .v) s.heads.tail
 
 -- A strong applicative head leaves the chain of (53) at T and holds that of (54) down.
 theorem pronounced_strong_appl :
@@ -324,10 +324,10 @@ open Classical in
 /-- The rules a learner acquires from `n` clauses with HAVE raised, when a share `rate s` of them
 is derived only with the span `s` at T and a raising rule is kept from `θ` such clauses on: a span
 is pronounced at T when its evidence reaches the threshold, and at v otherwise. -/
-noncomputable def acquired (θ n : ℝ) (rate : Spine → ℝ) : List Rule :=
+noncomputable def acquired (θ n : ℝ) (rate : Spine Cat → ℝ) : List Rule :=
   [vT, applvT].map fun s ↦ ⟨s, if θ ≤ rate s * n then .T else .v⟩
 
-variable {θ n : ℝ} {rate : Spine → ℝ}
+variable {θ n : ℝ} {rate : Spine Cat → ℝ}
 
 theorem raises_acquired_vT : Raises (acquired θ n rate) vT ↔ θ ≤ rate vT * n := by
   simp [Raises, acquired, Rule.mk.injEq]

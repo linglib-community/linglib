@@ -61,13 +61,13 @@ theorem selects_iff_takes_ge : ∀ v ∈ verbs, Selects v ↔ v.toVerb.Takes ge 
   decide
 
 /-- The spine of a nominalized complement, a CP under a silent D (3). -/
-def complementSpine : Spine := Spine.cP.append [.D]
+def complementSpine : Spine Minimalist.Cat := Spine.cP.append [.D]
 
 /-- The spine of a dependent-mood modifier, a MoodP without C ((4), (47b)). -/
-def modifierSpine : Spine := Spine.tP
+def modifierSpine : Spine Minimalist.Cat := Spine.tP
 
 /-- The spine of the clause a predicate embeds. -/
-def spine (v : Washo.Verb) : Spine :=
+def spine (v : Washo.Verb) : Spine Minimalist.Cat :=
   if Selects v then complementSpine else modifierSpine
 
 -- Table 2
