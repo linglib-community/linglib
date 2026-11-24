@@ -45,8 +45,8 @@ External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Inter
   is a sum over its forest cuts, or over a choice of cut for each of its trees.
 * `Minimalist.Merge.mergeOpOfCuts_comm`: Merge does not depend on the order of the pair.
 * `Minimalist.Merge.mergeOp_eq_comp_comulAlgHom`, `mergeOp_eq_comp_markerComulAlgHom`: Merge at
-  `Δ^d` through the Connes–Kreimer coproduct and through the trace coproduct, the two expressions of the
-  book's (1.3.10).
+  `Δ^d` through the Connes–Kreimer coproduct and through the trace coproduct, the two expressions
+  of the book's (1.3.10).
 * `Minimalist.Merge.mergeOp_eq_deletionProj_comp`, `mergeOpUnit_eq_deletionProj_comp`: on
   objects that are their own remainders, Merge at the deletion coproduct is Merge at the
   admissible cuts followed by the projection `Π_{d,ρ}`.
@@ -64,6 +64,13 @@ into the result, so Merge at the admissible cuts (`mergeOpOfCuts admissibleCuts`
 operator: its Internal Merge leaves a unary vertex, which no syntactic object has. The book writes
 (1.3.7) through `Δ^ρ` only with the right channel projected after the matching
 (`mergeOp_eq_comp_comulAlgHom`).
+
+The chain `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}` after the coproduct is defined as one map, `mergePost`:
+contraction of the left channel with the coefficient functional of the forest `{S, S'}`, then
+multiplication by the tree `node lbl {S, S'}`. The matching `γ_{S,S'}` and the grafting `B` are
+not separate declarations. An algebra map then commutes with the chain when it sends the grafted
+tree to the grafted tree, and the product rule for contractions (`contractForest_mul`) applies to
+Merge (`mergeOpOfCuts_eq_mul_contractForest` in `Merge/External.lean`).
 
 `mergeOp lbl` uses the label `lbl` twice: Merge gives it to the new root, and the deletion takes it
 to mark the vertices with children, removing those a cut leaves childless. The deletion coproduct
@@ -125,117 +132,64 @@ theorem mem_subtrees_of_mem_treeCuts {a : Forest (UnorderedTree α) × Forest (U
 
 end IsMergeCuts
 
-/-! ### Products in the two channels -/
+/-! ### Contraction of the left channel
 
-private theorem of'_mul_single (F G : Forest (UnorderedTree α)) (r : R) :
-    of' (R := R) F * single G r = single (F + G) r := by
-  rw [← smul_of', mul_smul_comm, ← of'_add, smul_of']
+Contraction of the left channel with a functional `f`, the map `z ↦ lid ((f ⊗ id) z)`, is natural
+in both channels. -/
 
-/-- A chain `⊔ ∘ (f ⊗ id)` kills every term whose left channel is a product with `x` that `f`
-    kills. -/
-private theorem mul'_map_tmul_mul_eq_zero
-    (f : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α))
-    {x : ConnesKreimer R (UnorderedTree α)} (hf : ∀ a, f (x * a) = 0)
-    (b : ConnesKreimer R (UnorderedTree α))
-    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-    (LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ TensorProduct.map f LinearMap.id)
-      ((x ⊗ₜ[R] b) * z) = 0 := by
+section Channels
+
+variable {A A' B C : Type*} [CommSemiring A] [Algebra R A] [CommSemiring A'] [Algebra R A']
+  [CommSemiring B] [Algebra R B] [CommSemiring C] [Algebra R C]
+
+/-- Contraction of the left channel after a pair of algebra maps is the right map after
+    contraction with the functional pulled back along the left map. -/
+private theorem lid_rTensor_map (f : A →ₗ[R] R) (g : A' →ₐ[R] A) (φ : B →ₐ[R] C)
+    (z : A' ⊗[R] B) :
+    TensorProduct.lid R C (f.rTensor C (Algebra.TensorProduct.map g φ z)) =
+      φ (TensorProduct.lid R B ((f ∘ₗ g.toLinearMap).rTensor B z)) := by
   induction z using TensorProduct.inductionOn with
-  | tmul a b' =>
-    rw [Algebra.TensorProduct.tmul_mul_tmul, LinearMap.comp_apply, TensorProduct.map_tmul, hf,
-      TensorProduct.zero_tmul, map_zero]
-  | add z₁ z₂ h₁ h₂ => rw [mul_add, map_add, h₁, h₂, add_zero]
+  | tmul a b => simp
+  | add y z hy hz => simp only [map_add, hy, hz]
 
-/-- A chain `⊔ ∘ (f ⊗ id)` commutes with right multiplication by a right-channel factor `1 ⊗ y`. -/
-private theorem mul'_map_mul_one_tmul
-    (f : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α))
-    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
-    (y : ConnesKreimer R (UnorderedTree α)) :
-    (LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ TensorProduct.map f LinearMap.id)
-        (z * ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] y))
-      = (LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ
-          TensorProduct.map f LinearMap.id) z * y := by
-  induction z using TensorProduct.inductionOn with
-  | tmul a b =>
-    rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, LinearMap.comp_apply, LinearMap.comp_apply,
-      TensorProduct.map_tmul, TensorProduct.map_tmul, LinearMap.id_apply, LinearMap.id_apply,
-      LinearMap.mul'_apply, LinearMap.mul'_apply, mul_assoc]
-  | add z₁ z₂ h₁ h₂ => rw [add_mul, map_add, map_add, h₁, h₂, add_mul]
+end Channels
+
+/-! ### The chain after the coproduct
+
+After the coproduct, Merge applies `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}`. The matching
+`δ_{S,S'} = γ_{S,S'} ⊗ id` (Definition 1.3.1) keeps the terms whose left channel is the forest
+`{S, S'}`, the grafting `B` (Definition 1.3.2) sends that forest to the tree `node lbl {S, S'}`,
+and `⊔` multiplies the channels. So the chain contracts the left channel with the coefficient of
+`{S, S'}` and multiplies what is left of the right channel by the grafted tree. -/
+
+/-- The post-coproduct chain `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}`, shared by every coproduct: contraction of
+    the left channel with the coefficient of `{S, S'}`, then multiplication by the tree
+    `node lbl {S, S'}`. -/
+noncomputable def mergePost (lbl : α) (S S' : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
+      ConnesKreimer R (UnorderedTree α) :=
+  LinearMap.mulLeft R (ofTree (UnorderedTree.node lbl {S, S'})) ∘ₗ
+    (TensorProduct.lid R _).toLinearMap ∘ₗ
+      (lcoeff R ({S, S'} : Forest (UnorderedTree α))).rTensor _
+
+/-! ### The unit stage `M_{β,1}`
+
+The first stage of Internal Merge (Proposition 1.4.2) moves an accessible term `β` to the left
+channel and leaves `T/β` on the right. Its grafting step is the identity, since
+`B(β ⊔ 1) = M(β, 1) = β`. It is not a Merge in its own right: it occurs only composed with
+`M_{T/β,β}` ([marcolli-chomsky-berwick-2025] Remark 1.4.3). -/
+
+/-- The post-coproduct chain `⊔ ∘ δ_{β,1}` of the unit stage: contraction of the left channel
+    with the coefficient of `{β}`, then multiplication by `β`. -/
+noncomputable def mergePostUnit (β : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
+      ConnesKreimer R (UnorderedTree α) :=
+  LinearMap.mulLeft R (ofTree β) ∘ₗ (TensorProduct.lid R _).toLinearMap ∘ₗ
+    (lcoeff R ({β} : Forest (UnorderedTree α))).rTensor _
 
 section DecidableEq
 
 variable [DecidableEq (UnorderedTree α)]
-
-/-! ### The matching projections -/
-
-/-- The projection onto the basis element `F₀` keeps its coefficient and sends every other basis
-    element to zero. -/
-noncomputable def forestProj (F₀ : Forest (UnorderedTree α)) :
-    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  ConnesKreimer.linearLift (fun F => if F = F₀ then of' F else 0)
-
-theorem forestProj_apply_of' (F₀ F : Forest (UnorderedTree α)) :
-    forestProj (R := R) F₀ (of' F) = if F = F₀ then of' F else 0 := by
-  rw [forestProj, ConnesKreimer.linearLift_of']
-
-/-- The projection onto `F₀` kills every product with a forest that does not fit inside `F₀`. -/
-theorem forestProj_mul_eq_zero_of_not_le {F₀ F : Forest (UnorderedTree α)} (hF : ¬ F ≤ F₀)
-    (a : ConnesKreimer R (UnorderedTree α)) : forestProj F₀ (of' F * a) = 0 := by
-  induction a using ConnesKreimer.induction_linear with
-  | zero => rw [mul_zero, map_zero]
-  | add g h hg hh => rw [mul_add, map_add, hg, hh, add_zero]
-  | single G r =>
-    have hne : F + G ≠ F₀ := fun heq => hF (heq ▸ Multiset.le_add_right F G)
-    rw [of'_mul_single, forestProj]
-    simp only [ConnesKreimer.linearLift_single]
-    rw [ite_eq_right hne, smul_zero]
-
-/-- The matching projection `γ_{S,S'}` ([marcolli-chomsky-berwick-2025] Definition 1.3.1) is the
-    projection onto `{S, S'}`. -/
-noncomputable def gammaMatch (S S' : UnorderedTree α) :
-    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  forestProj {S, S'}
-
-theorem gammaMatch_apply_singleton (S S' : UnorderedTree α)
-    (F : Forest (UnorderedTree α)) :
-    gammaMatch (R := R) S S' (of' F) =
-      if F = ({S, S'} : Forest (UnorderedTree α)) then of' F else 0 :=
-  forestProj_apply_of' _ F
-
-/-- The matching operator `δ_{S,S'} = γ_{S,S'} ⊗ id` acts on the left channel of a coproduct. -/
-noncomputable def deltaMatch (S S' : UnorderedTree α) :
-    (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R]
-      (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :=
-  TensorProduct.map (gammaMatch (R := R) S S') LinearMap.id
-
-/-! ### Grafting -/
-
-/-- The grafting operator `B` at the pair `S, S'` sends the basis element `{S, S'}` to the tree
-    `node lbl {S, S'}` and every other basis element to zero. Merge applies it only after
-    `δ_{S,S'}`, so this restriction of [marcolli-chomsky-berwick-2025]'s `B` suffices. -/
-noncomputable def graftBinaryAt (lbl : α) (S S' : UnorderedTree α) :
-    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  ConnesKreimer.linearLift
-    (fun F => if F = ({S, S'} : Forest (UnorderedTree α))
-      then of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) else 0)
-
-theorem graftBinaryAt_apply_singleton (lbl : α) (S S' : UnorderedTree α)
-    (F : Forest (UnorderedTree α)) :
-    graftBinaryAt (R := R) lbl S S' (of' F) =
-      if F = ({S, S'} : Forest (UnorderedTree α))
-        then of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α))
-        else 0 := by
-  rw [graftBinaryAt, ConnesKreimer.linearLift_of']
-
-/-! ### The Merge operator -/
-
-/-- The post-coproduct chain `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}`, shared by every cut enumeration. -/
-noncomputable def mergePost (lbl : α) (S S' : UnorderedTree α) :
-    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
-      ConnesKreimer R (UnorderedTree α) :=
-  LinearMap.mul' R (ConnesKreimer R (UnorderedTree α))
-    ∘ₗ TensorProduct.map (graftBinaryAt (R := R) lbl S S') LinearMap.id
-    ∘ₗ deltaMatch (R := R) S S'
 
 /-- On a basis tensor `of' F ⊗ r`, the post-coproduct chain grafts `F` if it is `{S, S'}` and
     vanishes otherwise. -/
@@ -245,93 +199,7 @@ theorem mergePost_basis_tensor (lbl : α) (S S' : UnorderedTree α)
       = if F = ({S, S'} : Forest (UnorderedTree α))
           then of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) * r
           else 0 := by
-  unfold mergePost deltaMatch
-  rw [LinearMap.comp_apply, LinearMap.comp_apply,
-      TensorProduct.map_tmul, LinearMap.id_apply, gammaMatch_apply_singleton]
-  by_cases hF : F = ({S, S'} : Forest (UnorderedTree α))
-  · subst hF
-    rw [ite_eq_left rfl, TensorProduct.map_tmul, LinearMap.id_apply,
-        graftBinaryAt_apply_singleton, ite_eq_left rfl, ite_eq_left rfl]
-    exact LinearMap.mul'_apply
-  · rw [ite_eq_right hF, TensorProduct.zero_tmul, ite_eq_right hF]
-    simp only [map_zero]
-
-/-- `γ_{S,S'}` kills every product with a forest `F` that does not fit inside `{S, S'}`. -/
-theorem gammaMatch_mul_eq_zero_of_not_le (S S' : UnorderedTree α)
-    (F : Forest (UnorderedTree α))
-    (hF : ¬ F ≤ ({S, S'} : Forest (UnorderedTree α)))
-    (a : ConnesKreimer R (UnorderedTree α)) :
-    gammaMatch (R := R) S S' (of' F * a) = 0 :=
-  forestProj_mul_eq_zero_of_not_le hF a
-
-/-- `γ_{S,S'}` kills every product with a tree other than `S` and `S'`. -/
-theorem gammaMatch_singleton_mul_eq_zero (S S' T : UnorderedTree α)
-    (hT_ne_S : T ≠ S) (hT_ne_S' : T ≠ S') (a : ConnesKreimer R (UnorderedTree α)) :
-    gammaMatch (R := R) S S' (of' ({T} : Forest (UnorderedTree α)) * a) = 0 := by
-  apply gammaMatch_mul_eq_zero_of_not_le
-  intro h_le
-  have hT_mem : T ∈ ({S, S'} : Forest (UnorderedTree α)) :=
-    Multiset.subset_of_le h_le (Multiset.mem_singleton.mpr rfl)
-  rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
-  exact hT_mem.elim hT_ne_S hT_ne_S'
-
-private theorem mergePost_eq (lbl : α) (S S' : UnorderedTree α) :
-    mergePost (R := R) lbl S S' = LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ
-      TensorProduct.map (graftBinaryAt lbl S S' ∘ₗ gammaMatch S S') LinearMap.id := by
-  rw [mergePost, deltaMatch, ← TensorProduct.map_comp, LinearMap.id_comp]
-
-/-- The post-coproduct chain kills every term whose left channel carries a forest that does not
-    fit inside `{S, S'}`. -/
-theorem mergePost_left_mul_eq_zero_of_not_le (lbl : α) (S S' : UnorderedTree α)
-    (F : Forest (UnorderedTree α)) (b : ConnesKreimer R (UnorderedTree α))
-    (hF : ¬ F ≤ ({S, S'} : Forest (UnorderedTree α)))
-    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-    mergePost (R := R) (α := α) lbl S S' ((of' (R := R) F ⊗ₜ[R] b) * z) = 0 := by
-  rw [mergePost_eq]
-  exact mul'_map_tmul_mul_eq_zero _ (fun a ↦ by
-    rw [LinearMap.comp_apply, gammaMatch_mul_eq_zero_of_not_le _ _ _ hF, map_zero]) b z
-
-/-- The post-coproduct chain commutes with right multiplication by a right-channel factor
-    `1 ⊗ y`, so a spectator workspace passes through it unchanged. -/
-theorem mergePost_right_one_tmul (lbl : α) (S S' : UnorderedTree α)
-    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
-    (y : ConnesKreimer R (UnorderedTree α)) :
-    mergePost (R := R) (α := α) lbl S S'
-        (z * ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] y))
-      = mergePost (R := R) (α := α) lbl S S' z * y := by
-  rw [mergePost_eq]
-  exact mul'_map_mul_one_tmul _ z y
-
-/-! ### The unit stage `M_{β,1}`
-
-The first stage of Internal Merge (Proposition 1.4.2) moves an accessible term `β` to the left
-channel and leaves `T/β` on the right. Its grafting step is the identity, since
-`B(β ⊔ 1) = M(β, 1) = β`. It is not a Merge in its own right: it occurs only composed with
-`M_{T/β,β}` ([marcolli-chomsky-berwick-2025] Remark 1.4.3). -/
-
-/-- The single-tree matching projection `γ_{β,1}` keeps the coefficient of the basis element
-    `{β}`. -/
-noncomputable def gammaMatchSingle (β : UnorderedTree α) :
-    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  forestProj {β}
-
-theorem gammaMatchSingle_apply_singleton (β : UnorderedTree α)
-    (F : Forest (UnorderedTree α)) :
-    gammaMatchSingle (R := R) β (of' F) =
-      if F = ({β} : Forest (UnorderedTree α)) then of' F else 0 :=
-  forestProj_apply_of' _ F
-
-/-- The matching operator `δ_{β,1} = γ_{β,1} ⊗ id`. -/
-noncomputable def deltaMatchSingle (β : UnorderedTree α) :
-    (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R]
-      (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :=
-  TensorProduct.map (gammaMatchSingle (R := R) β) LinearMap.id
-
-/-- The post-coproduct chain `⊔ ∘ δ_{β,1}` of the unit stage. -/
-noncomputable def mergePostUnit (β : UnorderedTree α) :
-    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
-      ConnesKreimer R (UnorderedTree α) :=
-  LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ deltaMatchSingle (R := R) β
+  simp [mergePost, coeff_of', of'_singleton]
 
 theorem mergePostUnit_basis_tensor (β : UnorderedTree α)
     (F : Forest (UnorderedTree α)) (r : ConnesKreimer R (UnorderedTree α)) :
@@ -339,15 +207,7 @@ theorem mergePostUnit_basis_tensor (β : UnorderedTree α)
       = if F = ({β} : Forest (UnorderedTree α))
           then of' ({β} : Forest (UnorderedTree α)) * r
           else 0 := by
-  unfold mergePostUnit deltaMatchSingle
-  rw [LinearMap.comp_apply, TensorProduct.map_tmul, LinearMap.id_apply,
-      gammaMatchSingle_apply_singleton]
-  by_cases hF : F = ({β} : Forest (UnorderedTree α))
-  · subst hF
-    rw [ite_eq_left rfl, ite_eq_left rfl]
-    exact LinearMap.mul'_apply
-  · rw [ite_eq_right hF, TensorProduct.zero_tmul, ite_eq_right hF]
-    exact map_zero _
+  simp [mergePostUnit, coeff_of', of'_singleton]
 
 /-! ### Merge over a cut enumeration -/
 
@@ -429,11 +289,12 @@ theorem mergeOpUnitOfCuts_apply_of' (cuts : UnorderedTree α → Multiset (Fores
     Multiset.map_map]
   rfl
 
+omit [DecidableEq (UnorderedTree α)] in
 /-- Merge does not depend on the order of the pair. -/
 theorem mergeOpOfCuts_comm (cuts : UnorderedTree α → Multiset (Forest
     (UnorderedTree α) × UnorderedTree α)) (lbl : α) (S S' : UnorderedTree α) :
     mergeOpOfCuts (R := R) cuts lbl S S' = mergeOpOfCuts cuts lbl S' S := by
-  simp only [mergeOpOfCuts, mergePost, deltaMatch, gammaMatch, graftBinaryAt,
+  simp only [mergeOpOfCuts, mergePost,
     Multiset.pair_comm S S']
 
 /-- The unit stage vanishes on the empty workspace, which has no `β` to extract. -/
@@ -444,55 +305,27 @@ theorem mergeOpUnitOfCuts_one (cuts : UnorderedTree α → Multiset (Forest
     Algebra.TensorProduct.one_def, ← of'_zero, mergePostUnit_basis_tensor,
     ite_eq_right (Multiset.singleton_ne_zero β).symm]
 
+
 /-! ### Deletion and admissible cuts
 
 Merge at the deletion coproduct reaches the Connes–Kreimer coproduct through the projection
-`Π_{d,ρ}` of the right channel, `deletionProj`, which commutes with the matching since the two act
-on different channels. -/
+`Π_{d,ρ}` of the right channel, `deletionProj`. The projection is an algebra map, so it commutes
+with the chain after the coproduct once it fixes the tree that the chain multiplies by. -/
 
 section Contraction
 
 variable [DecidableEq α]
 
 omit [DecidableEq (UnorderedTree α)] in
-private theorem deletionComulAlgHom_apply (lbl : α) (x : ConnesKreimer R (UnorderedTree α)) :
-    deletionComulAlgHom lbl x = TensorProduct.map LinearMap.id
-      (deletionProj (R := R) lbl).toLinearMap (comulAlgHom x) := by
-  rw [deletionComulAlgHom, AlgHom.comp_apply,
-    Algebra.TensorProduct.map, Algebra.TensorProduct.algHomOfLinearMapTensorProduct_apply]
-  rfl
-
-/-- Merge at `Δ^d` is `⊔ ∘ (B ⊗ id) ∘ (id ⊗ Π_{d,ρ}) ∘ δ_{S,S'} ∘ Δ^ρ`, the matching taken through
-    the Connes–Kreimer coproduct and the remainder projected after it
-    ([marcolli-chomsky-berwick-2025] (1.3.10)). -/
+/-- Merge at `Δ^d` is `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ (id ⊗ Π_{d,ρ}) ∘ Δ^ρ`, the Connes–Kreimer
+    coproduct with its remainder projected ([marcolli-chomsky-berwick-2025] (1.3.10)). The
+    matching and the projection act on different channels, so their order does not matter. -/
 theorem mergeOp_eq_comp_comulAlgHom (lbl : α) (S S' : UnorderedTree α) :
-    mergeOp (R := R) lbl S S' = LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ
-      TensorProduct.map (graftBinaryAt lbl S S') LinearMap.id ∘ₗ
-      TensorProduct.map LinearMap.id (deletionProj (R := R) lbl).toLinearMap ∘ₗ
-      deltaMatch S S' ∘ₗ (comulAlgHom (R := R) (α := α)).toLinearMap := by
-  refine LinearMap.ext fun x ↦ ?_
-  simp only [mergeOp, mergePost, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-    deletionComulAlgHom_apply]
-  generalize comulAlgHom (R := R) (α := α) x = y
-  induction y using TensorProduct.inductionOn with
-  | tmul a b => simp [deltaMatch]
-  | add y z hy hz => simp only [map_add, hy, hz]
+    mergeOp (R := R) lbl S S' = mergePost lbl S S' ∘ₗ
+      (Algebra.TensorProduct.map (.id R _) (deletionProj (R := R) lbl)).toLinearMap ∘ₗ
+      (comulAlgHom (R := R) (α := α)).toLinearMap := rfl
 
-/-- Grafting a pair of trees that are their own remainders gives a tree the projection fixes. -/
-private theorem deletionProj_graftBinaryAt (lbl : α) {S S' : UnorderedTree α}
-    (hS : deletionQuotient lbl S = some S) (hS' : deletionQuotient lbl S' = some S')
-    (a : ConnesKreimer R (UnorderedTree α)) :
-    deletionProj lbl (graftBinaryAt lbl S S' a) = graftBinaryAt lbl S S' a := by
-  induction a using ConnesKreimer.induction_linear with
-  | zero => simp only [map_zero]
-  | add f g hf hg => simp only [map_add, hf, hg]
-  | single F r =>
-    rw [← smul_of', map_smul, map_smul, graftBinaryAt_apply_singleton]
-    split_ifs
-    · rw [of'_singleton, deletionProj_ofTree, deletionQuotient_node_pair lbl hS hS',
-        Option.elim_some]
-    · rw [map_zero]
-
+omit [DecidableEq (UnorderedTree α)] in
 /-- On trees that are their own remainders, Merge at the deletion coproduct is Merge at the
     admissible cuts followed by the projection `Π_{d,ρ}` of the workspace. -/
 theorem mergeOp_eq_deletionProj_comp (lbl : α) {S S' : UnorderedTree α}
@@ -501,25 +334,11 @@ theorem mergeOp_eq_deletionProj_comp (lbl : α) {S S' : UnorderedTree α}
       mergeOpOfCuts (R := R) admissibleCuts lbl S S' := by
   refine LinearMap.ext fun x ↦ ?_
   simp only [mergeOp_eq_comp_comulAlgHom, mergeOpOfCuts, mergePost, LinearMap.comp_apply,
-    AlgHom.toLinearMap_apply, comulAlgHom]
-  generalize deltaMatch S S' (comulOfCuts (R := R) admissibleCuts x) = y
-  induction y using TensorProduct.inductionOn with
-  | tmul a b => simp [deletionProj_graftBinaryAt lbl hS hS']
-  | add y z hy hz => simp only [map_add, hy, hz]
+    AlgHom.toLinearMap_apply, LinearEquiv.coe_coe, LinearMap.mulLeft_apply, lid_rTensor_map,
+    map_mul, deletionProj_ofTree, deletionQuotient_node_pair lbl hS hS', Option.elim_some]
+  rfl
 
-/-- A singleton matching of a tree that is its own remainder is fixed by the projection. -/
-private theorem deletionProj_gammaMatchSingle (lbl : α) {β : UnorderedTree α}
-    (hβ : deletionQuotient lbl β = some β) (a : ConnesKreimer R (UnorderedTree α)) :
-    deletionProj lbl (gammaMatchSingle β a) = gammaMatchSingle β a := by
-  induction a using ConnesKreimer.induction_linear with
-  | zero => simp only [map_zero]
-  | add f g hf hg => simp only [map_add, hf, hg]
-  | single F r =>
-    rw [← smul_of', map_smul, map_smul, gammaMatchSingle_apply_singleton]
-    split_ifs with h
-    · rw [h, of'_singleton, deletionProj_ofTree, hβ, Option.elim_some]
-    · rw [map_zero]
-
+omit [DecidableEq (UnorderedTree α)] in
 /-- On a tree that is its own remainder, the unit stage at the deletion coproduct is the unit
     stage at the admissible cuts followed by the projection `Π_{d,ρ}` of the workspace. -/
 theorem mergeOpUnit_eq_deletionProj_comp (lbl : α) {β : UnorderedTree α}
@@ -527,12 +346,10 @@ theorem mergeOpUnit_eq_deletionProj_comp (lbl : α) {β : UnorderedTree α}
     mergeOpUnit (R := R) lbl β = (deletionProj (R := R) lbl).toLinearMap ∘ₗ
       mergeOpUnitOfCuts (R := R) admissibleCuts β := by
   refine LinearMap.ext fun x ↦ ?_
-  simp only [mergeOpUnit, mergeOpUnitOfCuts, mergePostUnit, LinearMap.comp_apply,
-    AlgHom.toLinearMap_apply, deletionComulAlgHom_apply, comulAlgHom]
-  generalize comulOfCuts (R := R) admissibleCuts x = y
-  induction y using TensorProduct.inductionOn with
-  | tmul a b => simp [deltaMatchSingle, deletionProj_gammaMatchSingle lbl hβ]
-  | add y z hy hz => simp only [map_add, hy, hz]
+  simp only [mergeOpUnit, mergeOpUnitOfCuts, mergePostUnit, deletionComulAlgHom,
+    LinearMap.comp_apply, AlgHom.toLinearMap_apply, AlgHom.comp_apply, LinearEquiv.coe_coe,
+    LinearMap.mulLeft_apply, lid_rTensor_map, map_mul, deletionProj_ofTree, hβ, Option.elim_some]
+  rfl
 
 end Contraction
 
@@ -542,65 +359,23 @@ end DecidableEq
 
 /-- The trace Merge operator is Merge at the trace cuts `markerCuts τ`, whose trunks carry a
     trace leaf at each cut site. -/
-noncomputable def traceMergeOp {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
+noncomputable def traceMergeOp {β : Type*}
     (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : UnorderedTree (α ⊕ β)) :
     ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
   mergeOpOfCuts (R := R) (markerCuts τ) lbl S S'
 
 /-- The unit stage `M_{S,1}` at the trace cuts `markerCuts τ`. -/
-noncomputable def traceMergeOpUnit {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
+noncomputable def traceMergeOpUnit {β : Type*}
     (τ : UnorderedTree (α ⊕ β) → β) (S : UnorderedTree (α ⊕ β)) :
     ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
   mergeOpUnitOfCuts (R := R) (markerCuts τ) S
 
 /-! ### Erasing the traces of Merge
 
-An injective relabelling commutes with matching and grafting, and the embedding of the trees
-without traces is a section of the erasure `eraseTraces`. So erasure carries the chain of Merge at
-an embedded pair to the chain at the pair, and the relations between the coproducts pass to
-Merge. -/
-
-section Relabel
-
-variable {γ : Type*} [DecidableEq (UnorderedTree α)] [DecidableEq (UnorderedTree γ)]
-  {g : α → γ} (hg : Function.Injective g)
-include hg
-
-/-- An injective relabelling commutes with the projection onto a forest. -/
-theorem forestProj_rename (F₀ : Forest (UnorderedTree α))
-    (x : ConnesKreimer R (UnorderedTree α)) :
-    forestProj (F₀.map (UnorderedTree.map g)) (rename (UnorderedTree.map g) x) =
-      rename (UnorderedTree.map g) (forestProj F₀ x) := by
-  induction x using ConnesKreimer.induction_linear with
-  | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
-  | single F r =>
-    rw [← smul_of']
-    by_cases h : F = F₀
-    · subst h; simp [forestProj_apply_of']
-    · simp [forestProj_apply_of', h,
-        (Multiset.map_injective (UnorderedTree.map_injective hg)).ne h]
-
-/-- An injective relabelling commutes with grafting. -/
-theorem graftBinaryAt_rename (lbl : α) (S S' : UnorderedTree α)
-    (x : ConnesKreimer R (UnorderedTree α)) :
-    graftBinaryAt (g lbl) (S.map g) (S'.map g) (rename (UnorderedTree.map g) x) =
-      rename (UnorderedTree.map g) (graftBinaryAt lbl S S' x) := by
-  induction x using ConnesKreimer.induction_linear with
-  | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
-  | single F r =>
-    have hpair : ({S.map g, S'.map g} : Forest (UnorderedTree γ)) =
-        ({S, S'} : Forest (UnorderedTree α)).map (UnorderedTree.map g) := by simp
-    rw [← smul_of', map_smul, map_smul, map_smul, rename_of', graftBinaryAt_apply_singleton,
-      graftBinaryAt_apply_singleton, hpair]
-    by_cases h : F = {S, S'}
-    · subst h; simp [UnorderedTree.map_node]
-    · rw [ite_eq_right h,
-        ite_eq_right ((Multiset.map_injective (UnorderedTree.map_injective hg)).ne h),
-        smul_zero, smul_zero, map_zero]
-
-end Relabel
+The embedding of the trees without traces is a section of the erasure `eraseTraces`, and the
+coefficient of an embedded forest in an embedded element is the coefficient of the forest in the
+element. So erasure carries the chain of Merge at an embedded pair to the chain at the pair, and
+the relations between the coproducts pass to Merge. -/
 
 section Erasure
 
@@ -613,56 +388,27 @@ local notation "ι" => rename (R := R) (UnorderedTree.map (Sum.inl : α → α �
 local notation "Π_dc[" l "]" => AlgHom.comp (deletionProj (R := R) (α := α) l)
   (eraseTraces (R := R) (α := α) (β := β))
 
-/-- A left channel that absorbs the embedding absorbs it in a pair of channels. -/
-private theorem mul'_map_rename_inl {L : ConnesKreimer R (UnorderedTree α) →ₗ[R]
-      ConnesKreimer R (UnorderedTree α)}
-    {L' : ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree α)}
-    (hL : ∀ x, L' (ι x) = L x)
-    (y : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-    LinearMap.mul' R _ (TensorProduct.map L' LinearMap.id
-      (Algebra.TensorProduct.map ι (.id R _) y)) =
-      LinearMap.mul' R _ (TensorProduct.map L LinearMap.id y) := by
-  induction y using TensorProduct.inductionOn with
-  | tmul a b => simp [hL]
-  | add y z hy hz => simp only [map_add, hy, hz]
+omit τ in
+private theorem eraseTraces_ofTree_map_inl (T : UnorderedTree α) :
+    eraseTraces (R := R) (β := β) (ofTree (T.map Sum.inl)) = ofTree T := by
+  simp
 
-/-- Erasing the product of the two channels of `Δ^c` on an embedded tree gives the product of the
-    two channels of `Δ^ρ`, for a left channel that erasure carries to `L`. -/
-private theorem eraseTraces_mul'_markerComulAlgHom
-    {L : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α)}
-    {L' : ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β))}
-    (hL : ∀ x, eraseTraces (R := R) (L' (ι x)) = L x) (x : ConnesKreimer R (UnorderedTree α)) :
-    eraseTraces (R := R) (LinearMap.mul' R _ (TensorProduct.map L' LinearMap.id
-      (markerComulAlgHom τ (ι x)))) =
-      LinearMap.mul' R _ (TensorProduct.map L LinearMap.id (comulAlgHom x)) := by
-  have hmul (z : ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
-      ConnesKreimer R (UnorderedTree (α ⊕ β))) :
-      eraseTraces (R := R) (LinearMap.mul' R _ (TensorProduct.map L' LinearMap.id z)) =
-        LinearMap.mul' R _ (TensorProduct.map (eraseTraces.toLinearMap ∘ₗ L') LinearMap.id
-          (Algebra.TensorProduct.map (.id R _) eraseTraces z)) := by
-    induction z using TensorProduct.inductionOn with
-    | tmul a b => simp
-    | add y z hy hz => simp only [map_add, hy, hz]
+/-- Erasure carries the contraction of `Δ^c` with an embedded forest, on an embedded element, to
+    the contraction of `Δ^ρ` with the forest. -/
+private theorem eraseTraces_lid_rTensor_markerComulAlgHom (F : Forest (UnorderedTree α))
+    (x : ConnesKreimer R (UnorderedTree α)) :
+    eraseTraces (R := R) (TensorProduct.lid R _
+        ((lcoeff R (F.map (UnorderedTree.map Sum.inl))).rTensor _ (markerComulAlgHom τ (ι x)))) =
+      TensorProduct.lid R _ ((lcoeff R F).rTensor _ (comulAlgHom x)) := by
   have h := DFunLike.congr_fun (eraseTraces_markerComulAlgHom (R := R) τ) x
   simp only [AlgHom.comp_apply] at h
-  rw [hmul, h]
-  exact mul'_map_rename_inl (L' := eraseTraces.toLinearMap ∘ₗ L') hL _
-
-variable [DecidableEq (UnorderedTree α)] [DecidableEq (UnorderedTree (α ⊕ β))]
-
-omit τ in
-private theorem eraseTraces_graft_gamma_rename_inl (lbl : α) (S S' : UnorderedTree α)
-    (x : ConnesKreimer R (UnorderedTree α)) :
-    (eraseTraces.toLinearMap ∘ₗ
-        graftBinaryAt (R := R) (Sum.inl lbl : α ⊕ β) (S.map Sum.inl) (S'.map Sum.inl) ∘ₗ
-        gammaMatch (S.map Sum.inl) (S'.map Sum.inl)) (ι x) =
-      (graftBinaryAt lbl S S' ∘ₗ gammaMatch S S') x := by
-  have hpair : ({S.map Sum.inl, S'.map Sum.inl} : Forest (UnorderedTree (α ⊕ β))) =
-      ({S, S'} : Forest (UnorderedTree α)).map (UnorderedTree.map Sum.inl) := by simp
-  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply]
-  rw [gammaMatch, gammaMatch, hpair, forestProj_rename Sum.inl_injective,
-    graftBinaryAt_rename Sum.inl_injective]
-  exact DFunLike.congr_fun (eraseTraces_comp_rename_inl (R := R) (β := β)) _
+  calc _ = TensorProduct.lid R _ ((lcoeff R (F.map (UnorderedTree.map Sum.inl))).rTensor _
+          (Algebra.TensorProduct.map (.id R _) eraseTraces (markerComulAlgHom τ (ι x)))) :=
+        (lid_rTensor_map _ (.id R _) eraseTraces _).symm
+    _ = _ := by
+      rw [h, lid_rTensor_map,
+        lcoeff_map_comp_rename (UnorderedTree.map_injective Sum.inl_injective)]
+      rfl
 
 /-- Erasing the traces of Merge at the trace cuts gives Merge at the admissible cuts, on trees
     without traces. -/
@@ -671,51 +417,46 @@ theorem eraseTraces_comp_traceMergeOp (lbl : α) (S S' : UnorderedTree α) :
         traceMergeOp (R := R) τ (Sum.inl lbl) (S.map Sum.inl) (S'.map Sum.inl) ∘ₗ (ι).toLinearMap =
       mergeOpOfCuts admissibleCuts lbl S S' := by
   refine LinearMap.ext fun x ↦ ?_
-  simp only [LinearMap.comp_apply, traceMergeOp, mergeOpOfCuts, AlgHom.toLinearMap_apply,
-    mergePost_eq]
-  exact eraseTraces_mul'_markerComulAlgHom τ (eraseTraces_graft_gamma_rename_inl lbl S S') x
+  have hpair : ({S.map Sum.inl, S'.map Sum.inl} : Forest (UnorderedTree (α ⊕ β))) =
+      ({S, S'} : Forest (UnorderedTree α)).map (UnorderedTree.map Sum.inl) := by simp
+  have h := eraseTraces_lid_rTensor_markerComulAlgHom (R := R) τ {S, S'} x
+  simp only [LinearMap.comp_apply, traceMergeOp, mergeOpOfCuts, mergePost, hpair,
+    AlgHom.toLinearMap_apply, LinearEquiv.coe_coe, LinearMap.mulLeft_apply, map_mul]
+  exact congrArg₂ (· * ·) (by rw [← UnorderedTree.map_node, eraseTraces_ofTree_map_inl]) h
 
 /-- Erasing the traces of the unit stage at the trace cuts gives the unit stage at the admissible
     cuts, on trees without traces. -/
 theorem eraseTraces_comp_traceMergeOpUnit (S : UnorderedTree α) :
     eraseTraces.toLinearMap ∘ₗ traceMergeOpUnit (R := R) τ (S.map Sum.inl) ∘ₗ (ι).toLinearMap =
       mergeOpUnitOfCuts admissibleCuts S := by
-  refine LinearMap.ext fun x ↦ eraseTraces_mul'_markerComulAlgHom τ (L := gammaMatchSingle S)
-    (L' := gammaMatchSingle (S.map Sum.inl)) (fun y ↦ ?_) x
-  rw [gammaMatchSingle, gammaMatchSingle, ← Multiset.map_singleton,
-    forestProj_rename Sum.inl_injective]
-  exact DFunLike.congr_fun (eraseTraces_comp_rename_inl (R := R) (β := β)) _
+  refine LinearMap.ext fun x ↦ ?_
+  have h := eraseTraces_lid_rTensor_markerComulAlgHom (R := R) τ {S} x
+  rw [Multiset.map_singleton] at h
+  simp only [LinearMap.comp_apply, traceMergeOpUnit, mergeOpUnitOfCuts, mergePostUnit,
+    AlgHom.toLinearMap_apply, LinearEquiv.coe_coe, LinearMap.mulLeft_apply, map_mul]
+  exact congrArg₂ (· * ·) (eraseTraces_ofTree_map_inl S) h
 
 variable [DecidableEq α]
 
 /-- Merge at `Δ^d` through the trace coproduct, the second expression of
-    [marcolli-chomsky-berwick-2025] (1.3.10): `⊔ ∘ (B ⊗ id) ∘ (id ⊗ Π_{d,c}) ∘ δ_{S,S'} ∘ Δ^c`. The
-    chain runs on the embedded tree, and `B` lands in the trees without traces through erasure. -/
+    [marcolli-chomsky-berwick-2025] (1.3.10): `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ (id ⊗ Π_{d,c}) ∘ Δ^c`. The
+    chain runs on the embedded tree: the left channel is matched against the embedded pair, and
+    the pair is grafted among the trees without traces. -/
 theorem mergeOp_eq_comp_markerComulAlgHom (lbl : α) (S S' : UnorderedTree α) :
-    mergeOp (R := R) lbl S S' = LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ
-      TensorProduct.map
-        (eraseTraces.toLinearMap ∘ₗ graftBinaryAt (Sum.inl lbl) (S.map Sum.inl) (S'.map Sum.inl))
-        LinearMap.id ∘ₗ
-      TensorProduct.map LinearMap.id (Π_dc[lbl]).toLinearMap ∘ₗ
-      deltaMatch (S.map Sum.inl) (S'.map Sum.inl) ∘ₗ (markerComulAlgHom τ).toLinearMap ∘ₗ
-      (ι).toLinearMap := by
+    mergeOp (R := R) lbl S S' =
+      LinearMap.mulLeft R (ofTree (UnorderedTree.node lbl {S, S'})) ∘ₗ
+      (TensorProduct.lid R _).toLinearMap ∘ₗ
+      (lcoeff R ({S.map Sum.inl, S'.map Sum.inl} : Forest (UnorderedTree (α ⊕ β)))).rTensor _ ∘ₗ
+      (Algebra.TensorProduct.map (.id R _) Π_dc[lbl]).toLinearMap ∘ₗ
+      (markerComulAlgHom τ).toLinearMap ∘ₗ (ι).toLinearMap := by
   refine LinearMap.ext fun x ↦ ?_
   have h := DFunLike.congr_fun (deletionProj_eraseTraces_markerComulAlgHom (R := R) lbl τ) x
   simp only [AlgHom.comp_apply] at h
-  have hchain {L : ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree α)}
-      (z : ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
-        ConnesKreimer R (UnorderedTree (α ⊕ β))) :
-      TensorProduct.map L LinearMap.id (TensorProduct.map LinearMap.id (Π_dc[lbl]).toLinearMap
-          (deltaMatch (S.map Sum.inl) (S'.map Sum.inl) z)) =
-        TensorProduct.map (L ∘ₗ gammaMatch (S.map Sum.inl) (S'.map Sum.inl)) LinearMap.id
-          (Algebra.TensorProduct.map (.id R _) Π_dc[lbl] z) := by
-    induction z using TensorProduct.inductionOn with
-    | tmul a b => simp [deltaMatch]
-    | add y z hy hz => simp only [map_add, hy, hz]
-  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, mergeOp, mergePost_eq]
-  rw [hchain, h]
-  exact (mul'_map_rename_inl (eraseTraces_graft_gamma_rename_inl (R := R) (β := β) lbl S S')
-    (deletionComulAlgHom lbl x)).symm
+  have hpair : ({S.map Sum.inl, S'.map Sum.inl} : Forest (UnorderedTree (α ⊕ β))) =
+      ({S, S'} : Forest (UnorderedTree α)).map (UnorderedTree.map Sum.inl) := by simp
+  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, LinearEquiv.coe_coe, h, hpair,
+    lid_rTensor_map, lcoeff_map_comp_rename (UnorderedTree.map_injective Sum.inl_injective)]
+  rfl
 
 /-- On trees that are their own remainders, Merge at the deletion coproduct is the projection
     `Π_{d,c}` of Merge at the trace cuts. -/

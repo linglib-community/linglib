@@ -331,11 +331,13 @@ noncomputable def mergeOpEps (ε : R) (lbl : α) (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   mergePost lbl S S' ∘ₗ (comulEps ε).toLinearMap
 
+omit [DecidableEq (UnorderedTree α)] in
 /-- At `ε = 1` weighted Merge is Merge at the admissible cuts. -/
 theorem mergeOpEps_one (lbl : α) (S S' : UnorderedTree α) :
     mergeOpEps (1 : R) lbl S S' = mergeOpOfCuts admissibleCuts lbl S S' := by
   rw [mergeOpEps, comulEps_one]; rfl
 
+omit [DecidableEq (UnorderedTree α)] in
 /-- At `ε = 0` weighted Merge is Merge at the empty-cut enumeration. -/
 theorem mergeOpEps_zero (lbl : α) (S S' : UnorderedTree α) :
     mergeOpEps (0 : R) lbl S S' = mergeOpOfCuts emptyCuts lbl S S' := by
@@ -351,19 +353,28 @@ theorem mergeOpEps_zero_of'_of_not_le (lbl : α) {S S' : UnorderedTree α}
       fun p hp hpS ↦ h (by rw [← hpS, ← Multiset.mem_antidiagonal.mp hp]; exact le_self_add),
     Multiset.map_zero, Multiset.sum_zero, mul_zero]
 
+/-- At the empty-cut enumeration, contraction of a tree `U` with a forest other than `0` and
+    `{U}` vanishes: the coproduct of `U` has only its two primitive terms. -/
+private theorem contractForest_emptyCuts_ofTree {A : Forest (UnorderedTree α)}
+    {U : UnorderedTree α} (hA : A ≠ 0) (hU : A ≠ {U}) :
+    contractForest (R := R) emptyCuts A (ofTree U) = 0 := by
+  show _root_.TensorProduct.lid R _
+    ((lcoeff R A).rTensor _ (comulOfCuts emptyCuts (ofTree U))) = 0
+  rw [comulOfCuts_apply_ofTree, comulTreeOfCuts]
+  have h1 : (1 : ConnesKreimer R (UnorderedTree α)).coeff A = 0 := by
+    rw [← of'_zero, coeff_of', ite_eq_right hA.symm]
+  simp [emptyCuts, ← of'_singleton, coeff_of', h1, hU.symm]
+
 /-- At `ε = 0` Merge commutes with a spectator tree `U` other than `S` and `S'`, whatever
     accessible terms `U` has. -/
 theorem mergeOpEps_zero_ofTree_mul (lbl : α) {S S' U : UnorderedTree α} (hS : U ≠ S)
     (hS' : U ≠ S') (w : ConnesKreimer R (UnorderedTree α)) :
     mergeOpEps (0 : R) lbl S S' (ofTree U * w) = ofTree U * mergeOpEps (0 : R) lbl S S' w := by
-  rw [mergeOpEps, LinearMap.comp_apply, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-    AlgHom.toLinearMap_apply, map_mul, comulEps_ofTree, comulTreeEps_zero, add_mul, map_add,
-    ← of'_singleton, mergePost_left_mul_eq_zero_of_not_le _ _ _ _ _ ?_, zero_add,
-    mul_comm ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] _), mergePost_right_one_tmul,
-    mul_comm, of'_singleton]
-  intro h
-  rcases Multiset.mem_cons.mp (Multiset.singleton_le.mp h) with h | h
-  exacts [hS h, hS' (Multiset.mem_singleton.mp h)]
+  rw [mergeOpEps_zero]
+  refine mergeOpOfCuts_mul_of_contractForest_eq_zero lbl (fun A hA hle ↦ ?_) w
+  refine contractForest_emptyCuts_ofTree hA fun h ↦ ?_
+  rcases (by simpa [h] using hle : U = S ∨ U = S') with h | h
+  exacts [hS h, hS' h]
 
 /-- At `ε = 0` a spectator workspace passes through Merge whenever neither `S` nor `S'` is one of
     its components. -/
@@ -386,6 +397,7 @@ theorem mergeOpEps_zero_pair_add (lbl : α) {S S' : UnorderedTree α}
   rw [add_comm, of'_add, mergeOpEps_zero_of'_mul lbl hS hS', mergeOpEps_zero, mergeOpOfCuts_pair,
     ← of'_add, add_comm]
 
+omit [DecidableEq (UnorderedTree α)] in
 /-- Weighted Merge agrees with its value at `ε = 0` modulo `ε` ([marcolli-chomsky-berwick-2025]
 Proposition 1.5.1). -/
 theorem mergeOpEps_eq_add_smul (ε : R) (lbl : α) (S S' : UnorderedTree α)

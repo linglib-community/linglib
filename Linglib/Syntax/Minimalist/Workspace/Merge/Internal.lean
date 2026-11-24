@@ -86,19 +86,13 @@ theorem mergeOpUnitOfCuts_apply_singleton_unique (β T : UnorderedTree α)
   obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hx
   exact ite_eq_right (Multiset.mem_filter.mp hp).2
 
+omit [DecidableEq (UnorderedTree α)] in
 /-- The unit stage `M_{β,1}` is multiplication by `β` after the derivation `D_β`, contraction of
     the coproduct with the delta functional of `β`. -/
 theorem mergeOpUnitOfCuts_eq_mul_treeDerivation [IsMergeCuts cuts] (β : UnorderedTree α)
     (x : ConnesKreimer R (UnorderedTree α)) :
     mergeOpUnitOfCuts (R := R) cuts β x =
-      ofTree β * treeDerivation cuts IsMergeCuts.filter_empty β x := by
-  have h : mergePostUnit (R := R) β =
-      LinearMap.mulLeft R (ofTree β : ConnesKreimer R (UnorderedTree α)) ∘ₗ
-        (_root_.TensorProduct.lid R _).toLinearMap ∘ₗ
-          (lcoeff R ({β} : Forest (UnorderedTree α))).rTensor _ :=
-    TensorProduct.ext (lhom_ext' fun F ↦ LinearMap.ext fun r ↦ by
-      simp [mergePostUnit_basis_tensor, coeff_of', of'_singleton])
-  rw [mergeOpUnitOfCuts, h]
+      ofTree β * treeDerivation cuts IsMergeCuts.filter_empty β x :=
   rfl
 
 /-- The derivation `D_β` vanishes on a tree that does not contain `β`. -/

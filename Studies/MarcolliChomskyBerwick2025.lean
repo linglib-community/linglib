@@ -246,7 +246,8 @@ private def admTok (i : Nat) : LexicalItem.Token := ⟨.of .N [], i⟩
 /-- Raising the item a derivation has just merged is admissible, so the composite of its steps'
     Merges sends its initial workspace to its final object. -/
 example :
-    (Minimalist.Derivation.mk (admTok 0) [Step.em .left (admTok 1), Step.im (admTok 1)]).Admissible := by
+    (Minimalist.Derivation.mk (admTok 0)
+      [Step.em .left (admTok 1), Step.im (admTok 1)]).Admissible := by
   have hne : merge ↑(admTok 1) ↑(admTok 0) ≠ (↑(admTok 1) : SyntacticObject) := fun h ↦ by
     have := congrArg (fun s : SyntacticObject ↦ s.toUnorderedTree.numNodes) h
     simp at this
