@@ -79,14 +79,14 @@ open scoped SetRel
 /-- The order of the ground and the figure along a path of a direction, `cmp ground figure`:
 the ground comes first on a path from it, last on a path to it, and coincides with the figure
 located at it. A route, past the ground, compares the two in no one way. -/
-def groundOrder? : Spatial.Path.Direction → Option Ordering
+def groundOrder? : Locative.Direction → Option Ordering
   | .source => some .lt
   | .goal => some .gt
   | .place => some .eq
   | .route => none
 
 -- Reversing a path swaps the order of the ground and the figure.
-theorem groundOrder?_reverse (d : Spatial.Path.Direction) :
+theorem groundOrder?_reverse (d : Locative.Direction) :
     groundOrder? d.reverse = (groundOrder? d).map Ordering.swap := by
   cases d <;> rfl
 
@@ -142,7 +142,7 @@ def standardOrder? (k : Case) : Option Ordering :=
     | .com => some .eq
     | _ => none
 
-theorem standardOrder?_of_dirOf {k : Case} {d : Spatial.Path.Direction} {o : Ordering}
+theorem standardOrder?_of_dirOf {k : Case} {d : Locative.Direction} {o : Ordering}
     (hd : k.dirOf = some d) (ho : groundOrder? d = some o) : standardOrder? k = some o := by
   simp [standardOrder?, hd, ho]
 

@@ -2,35 +2,46 @@ module
 
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Zwarts2005
-public import Linglib.Semantics.Events.Path
+public import Linglib.Semantics.Space.Denotation
+public import Linglib.Fragments.English.Adpositions
+public import Mathlib.Data.List.Infix
 public import Linglib.Semantics.Mereology.Basic
 public import Mathlib.Tactic.FinCases
 
 /-!
 # Zwarts (2005): Prepositional Aspect and the Algebra of Paths
 
-Zwarts analyzes the aspect of directional prepositional phrases, which denote sets of paths. A
-telic phrase like *to the house* differs from an atelic one like *towards the house* in closure
-under the partial concatenation of paths: an atelic phrase is cumulative and a telic one bounded,
-that is, not cumulative. [Goal and source phrases](##Zwarts2005.toPP_no_pairs) are bounded because
-none of their paths concatenate, and [route phrases](##Zwarts2005.overPP_bounded) because their
-concatenations pass through the region twice. Bounded phrases
-[are not quantized](##Zwarts2005.toPP_not_quantized), and
-[loops are cumulative](##Zwarts2005.loops_cumulative) yet telic in Krifka's sense, so neither
-notion characterizes boundedness. A trace homomorphism for concatenation transfers closure from
-the phrase to the verb phrase, so [*walk to the house* is bounded](##Zwarts2005.vpp_toPP_bounded).
+A directional prepositional phrase such as *to the house* denotes a set of paths. A *path* is a
+finite sequence of locations, and two paths *concatenate* if the first ends where the second
+starts. A set of paths is *cumulative* if it has two paths that concatenate and it is closed
+under concatenation. It is *bounded* if it is not cumulative.
+
+We define the denotations of goal, source and route phrases and of *towards* and *away from*. A
+goal phrase holds of the paths that enter a region, a source phrase of the paths that leave it,
+and a route phrase of the paths that cross it. We prove that these three denotations are bounded
+and that the denotation of *towards* is cumulative. The main result,
+`Zwarts2005.bounded_iff_telic`, says that a phrase among the paper's examples is bounded if and
+only if the paper judges its sentence telic.
+
+We also prove that a goal phrase is not quantized, and that the set of loops at a location is
+cumulative although it is telic in Krifka's sense. Finally, suppose that the trace of events is a
+homomorphism for concatenation. Then a verb phrase is bounded if its prepositional phrase has no
+two paths that concatenate, as in *walk to the house*.
+
+The goal and source phrases agree with the English fragment. The paths that the spatial functions
+of *to* and *from* describe, as locatives, are the paths of the strict goal and source phrases.
 
 ## Implementation notes
 
-* The strict goal, source and route denotations are the cofinal, coinitial and transitive shapes
-  of `Spatial.Path`, relative to the region a preposition's locative basis picks out. Zwarts's
-  intervals are proper and nonempty, as his glosses of them say.
-* The paper's trace function respects Rothstein's partial event concatenation, not an
-  unrestricted mereological sum.
+The strict denotations of goal, source and route phrases are `Order.Enters`, `Order.Leaves` and
+`Order.Crosses`, applied to a path and the region of the phrase. The positions of a path inside
+the region form a proper nonempty interval.
+
+The trace of events respects a partial concatenation of events and not an unrestricted sum.
 
 ## TODO
 
-* The minimality and grinder operators (63) and (64).
+* The minimality operator and the grinder operator.
 
 ## References
 
@@ -43,10 +54,40 @@ the phrase to the verb phrase, so [*walk to the house* is bounded](##Zwarts2005.
 namespace Zwarts2005
 
 open Mereology (QUA)
-open Spatial
-open scoped Spatial.Path
 
 variable {Loc α : Type*}
+
+/-! ### Paths -/
+
+/-- A path is the finite sequence of locations it visits, a series with no condition on its
+steps. -/
+abbrev Path (Loc : Type*) := RelSeries (Set.univ : SetRel Loc Loc)
+
+/-- The path through the locations `a :: l`, in order. -/
+def Path.ofPoints (a : Loc) (l : List Loc) : Path Loc where
+  length := l.length
+  toFun i := (a :: l).get ⟨i, by have := i.2; simp; omega⟩
+  step _ := trivial
+
+@[simp] theorem Path.head_ofPoints (a : Loc) (l : List Loc) : (Path.ofPoints a l).head = a := rfl
+
+@[simp] theorem Path.toList_ofPoints (a : Loc) (l : List Loc) :
+    (Path.ofPoints a l).toList = a :: l := by
+  refine List.ext_getElem (by simp [RelSeries.toList, Path.ofPoints]) fun i h₁ h₂ ↦ ?_
+  simp [RelSeries.toList, Path.ofPoints]
+
+/-- `p` is a subpath of `q` when the locations of `p` are a stretch of those of `q`. -/
+scoped instance instSubpathOrder : PartialOrder (Path Loc) where
+  le p q := p.toList <:+: q.toList
+  le_refl _ := List.infix_refl _
+  le_trans _ _ _ := List.IsInfix.trans
+  le_antisymm _ _ h h' := RelSeries.toList_injective (List.infix_antisymm h h')
+
+theorem Path.le_iff_infix {p q : Path Loc} : p ≤ q ↔ p.toList <:+: q.toList := .rfl
+
+theorem Path.singleton_le_iff {x : Loc} {p : Path Loc} : RelSeries.singleton _ x ≤ p ↔ x ∈ p := by
+  rw [Path.le_iff_infix, RelSeries.toList_singleton, List.singleton_infix_iff,
+    RelSeries.mem_toList]
 
 /-! ### Cumulativity and boundedness (17b), (21)
 
@@ -67,6 +108,10 @@ theorem bounded_of_no_pairs {C : α → α → α → Prop} {X : Set α}
     (h : ¬ ∃ p ∈ X, ∃ q ∈ X, ∃ r, C p q r) : Bounded C X :=
   fun hc ↦ h hc.1
 
+/-- Concatenation of paths as a relation: `Concat p q r` when `p` ends where `q` starts and `r`
+is their concatenation, `RelSeries.smash`. -/
+def Concat (p q r : Path Loc) : Prop := ∃ h : p.last = q.head, r = p.smash q h
+
 /-! ### Quantization and Krifka-telicity are the wrong notions (§3.1)
 
 (22) transplants [krifka-1998]'s quantization and telicity to path sets;
@@ -75,7 +120,7 @@ Zwarts shows neither characterizes boundedness. Quantization is
 
 /-- A path set is telic in Krifka's sense, (22b), when comparable members share both endpoints. -/
 def TelicK (X : Set (Path Loc)) : Prop :=
-  ∀ p ∈ X, ∀ q ∈ X, p ≤ q → p.source = q.source ∧ p.goal = q.goal
+  ∀ p ∈ X, ∀ q ∈ X, p ≤ q → p.head = q.head ∧ p.last = q.last
 
 theorem quantized_telicK {X : Set (Path Loc)} (h : QUA X) :
     TelicK X := by
@@ -87,91 +132,112 @@ theorem quantized_telicK {X : Set (Path Loc)} (h : QUA X) :
 /-- `loops A` is the *round and round the block* set of non-constant loops at `A`, those that leave
 `A` somewhere along the way. -/
 def loops (A : Loc) : Set (Path Loc) :=
-  {p | p.source = A ∧ p.goal = A ∧ ∃ x ∈ p.steps, x ≠ A}
+  {p | p.head = A ∧ p.last = A ∧ ∃ x ∈ p, x ≠ A}
 
 theorem loops_telicK (A : Loc) : TelicK (loops (Loc := Loc) A) :=
   fun _ hp _ hq _ ↦ ⟨hp.1.trans hq.1.symm, hp.2.1.trans hq.2.1.symm⟩
 
 /-- Loop sets are cumulative, so Krifka's telicity (22b) does not characterize boundedness. -/
 theorem loops_cumulative [Nontrivial Loc] (A : Loc) :
-    Cumulative Path.IsConcat (loops (Loc := Loc) A) := by
+    Cumulative Concat (loops (Loc := Loc) A) := by
   obtain ⟨B, hB⟩ := exists_ne A
   constructor
-  · have h : (⟨A, [B, A]⟩ : Path Loc) ∈ loops A := ⟨rfl, rfl, B, by simp, hB⟩
+  · have h : Path.ofPoints A [B, A] ∈ loops A := ⟨rfl, rfl, B, ⟨1, rfl⟩, hB⟩
     exact ⟨_, h, _, h, _, ⟨rfl, rfl⟩⟩
-  · rintro p hp q hq r hr
+  · rintro p hp q hq r ⟨h, rfl⟩
     obtain ⟨hs, -, x, hx, hxA⟩ := hp
-    exact ⟨hr.source_eq.trans hs, hr.goal_eq.trans hq.2.1,
-      x, by rw [hr.2]; simp [hx], hxA⟩
+    exact ⟨by simpa using hs, by simpa using hq.2.1, x, RelSeries.mem_smash_of_mem_left h hx, hxA⟩
 
 -- p. 776
-theorem const_le_const_iff {a b : Loc} : Path.const a ≤ Path.const b ↔ a = b :=
-  Path.const_le_iff.trans List.mem_singleton
+theorem const_le_const_iff {a b : Loc} :
+    (RelSeries.singleton _ a : Path Loc) ≤ RelSeries.singleton _ b ↔ a = b :=
+  Path.singleton_le_iff.trans (by simp [RelSeries.mem_def, eq_comm])
 
 /-! ### Goal and source prepositions (§4.1.1) -/
 
 /-- The weak goal-phrase denotation, (30c), (33), holds of the paths ending in the region. -/
-def weakTo (R : Set Loc) : Set (Path Loc) := {p | p.goal ∈ R}
+def weakTo (R : Set Loc) : Set (Path Loc) := {p | p.last ∈ R}
 
 theorem weakTo_cumulative {R : Set Loc} {x : Loc} (hx : x ∈ R) :
-    Cumulative Path.IsConcat (weakTo R) :=
-  ⟨⟨_, hx, _, hx, _, Path.isConcat_const_left (.const x)⟩,
-    fun _ _ _ hq r hr ↦ (hr.goal_eq.symm ▸ hq : r.goal ∈ R)⟩
+    Cumulative Concat (weakTo R) :=
+  ⟨⟨RelSeries.singleton _ x, hx, RelSeries.singleton _ x, hx, _, rfl, rfl⟩,
+    fun _ _ _ hq _ ⟨_, hr⟩ ↦ by subst hr; simpa [weakTo] using hq⟩
 
 /-- The strict goal phrase, (35), (36): the positions in the region form an interval including the
 last position and, being a proper interval, not the first. The goal prepositions differ only in
 the region. -/
-def toPP (R : Set Loc) : Set (Path Loc) := {p | Path.IsCofinal R p}
+def toPP (R : Set Loc) : Set (Path Loc) := {p | Order.Enters p R}
 
 /-- The strict source phrase, (36), including the first position and not the last. -/
-def fromPP (R : Set Loc) : Set (Path Loc) := {p | Path.IsCoinitial R p}
+def fromPP (R : Set Loc) : Set (Path Loc) := {p | Order.Leaves p R}
 
 theorem toPP_subset_weakTo (R : Set Loc) : toPP R ⊆ weakTo R :=
-  fun p hp ↦ (p.coe_top ▸ hp.2.2 : p.goal ∈ R)
+  fun p hp ↦ (p.apply_top ▸ hp.2.2 : p.last ∈ R)
 
 -- (35)
 theorem toPP_no_pairs (R : Set Loc) :
-    ¬ ∃ p ∈ toPP R, ∃ q ∈ toPP R, ∃ r, Path.IsConcat p q r := by
+    ¬ ∃ p ∈ toPP R, ∃ q ∈ toPP R, ∃ r, Concat p q r := by
   rintro ⟨p, hp, q, hq, r, hr⟩
-  exact hq.2.1 (by rw [Path.coe_bot, ← hr.1, ← Path.coe_top]; exact hp.2.2)
+  exact hq.2.1 (by rw [RelSeries.apply_bot, ← hr.fst, ← RelSeries.apply_top]; exact hp.2.2)
 
 -- (36)
 theorem fromPP_no_pairs (R : Set Loc) :
-    ¬ ∃ p ∈ fromPP R, ∃ q ∈ fromPP R, ∃ r, Path.IsConcat p q r := by
+    ¬ ∃ p ∈ fromPP R, ∃ q ∈ fromPP R, ∃ r, Concat p q r := by
   rintro ⟨p, hp, q, hq, r, hr⟩
-  exact hp.2.2 (by rw [Path.coe_top, hr.1, ← Path.coe_bot]; exact hq.2.1)
+  exact hp.2.2 (by rw [RelSeries.apply_top, hr.fst, ← RelSeries.apply_bot]; exact hq.2.1)
 
 -- (21)
-theorem toPP_bounded (R : Set Loc) : Bounded Path.IsConcat (toPP R) :=
+theorem toPP_bounded (R : Set Loc) : Bounded Concat (toPP R) :=
   bounded_of_no_pairs (toPP_no_pairs R)
 
 -- (12a), (36)
-theorem fromPP_bounded (R : Set Loc) : Bounded Path.IsConcat (fromPP R) :=
+theorem fromPP_bounded (R : Set Loc) : Bounded Concat (fromPP R) :=
   bounded_of_no_pairs (fromPP_no_pairs R)
+
+-- The spatial functions of English *to* and *from* describe the paths of the strict goal and
+-- source phrases.
+theorem mem_paths_to_from [Preorder α] (place : Option Locative.Configuration → Set Loc → Set Loc)
+    (d : Loc → α) (G : Set Loc) (p : Path Loc) :
+    (∀ f ∈ English.Adpositions.to_.functions, f.kind = .spatial →
+      (⇑p ∈ Locative.paths place d (.ofFunction f) G ↔ p ∈ toPP (place (some .exterior) G))) ∧
+    (∀ f ∈ English.Adpositions.from_.functions, f.kind = .spatial →
+      (⇑p ∈ Locative.paths place d (.ofFunction f) G ↔
+        p ∈ fromPP (place (some .exterior) G))) := by
+  refine ⟨fun f hf hk ↦ ?_, fun f hf hk ↦ ?_⟩
+  · simp only [English.Adpositions.to_, Finset.mem_insert, Finset.mem_singleton] at hf
+    rcases hf with rfl | rfl | rfl
+    · exact Iff.rfl
+    · exact absurd hk (by decide)
+    · exact absurd hk (by decide)
+  · simp only [English.Adpositions.from_, Finset.mem_singleton] at hf
+    subst hf
+    exact Iff.rfl
 
 /-! ### Route prepositions (§4.1.2) -/
 
 /-- The strict route phrase, (39), (40): the positions in the region form an interval including
 neither the first nor the last position. -/
-def overPP (R : Set Loc) : Set (Path Loc) := {p | Path.IsTransitive R p}
+def overPP (R : Set Loc) : Set (Path Loc) := {p | Order.Crosses p R}
 
 -- (39)
 theorem overPP_exists_pair {R : Set Loc} {x a : Loc} (hx : x ∈ R) (ha : a ∉ R) :
-    ∃ p ∈ overPP R, ∃ q ∈ overPP R, ∃ r, Path.IsConcat p q r := by
-  have hp : (⟨a, [x, a]⟩ : Path Loc) ∈ overPP R := by
+    ∃ p ∈ overPP R, ∃ q ∈ overPP R, ∃ r, Concat p q r := by
+  have hp : Path.ofPoints a [x, a] ∈ overPP R := by
+    have key : ∀ i : Fin 3, Path.ofPoints a [x, a] i ∈ R ↔ i = 1 := by
+      intro i; fin_cases i <;> simp [Path.ofPoints, hx, ha]
     refine ⟨?_, ⟨1, hx⟩, ha, ha⟩
-    rw [show (⇑(⟨a, [x, a]⟩ : Path Loc)) ⁻¹' R = {1} by
-      ext i; fin_cases i <;> simp [Path.toFun, Path.points, hx, ha, Fin.ext_iff]]
+    rw [show (Path.ofPoints a [x, a]).toFun ⁻¹' R = {1} from Set.ext key]
     exact Set.ordConnected_singleton
   exact ⟨_, hp, _, hp, _, rfl, rfl⟩
 
-/-- A route phrase is bounded, (39), since a concatenation of its paths has more than one interval
-in the region. -/
-theorem overPP_bounded (R : Set Loc) : Bounded Path.IsConcat (overPP R) := by
-  rintro ⟨⟨p, hp, q, hq, r, hr⟩, hc⟩
-  obtain ⟨-, ⟨i, hi⟩, -, hg⟩ := id hp
-  obtain ⟨-, ⟨j, hj⟩, -, -⟩ := id hq
-  exact hr.not_ordConnected (p.coe_top ▸ hg) hi hj (hc p hp q hq r hr).1
+/-- A route phrase is bounded, (39), since a concatenation of its paths enters the region
+twice. -/
+theorem overPP_bounded (R : Set Loc) : Bounded Concat (overPP R) := by
+  rintro ⟨⟨p, hp, q, hq, _, h, rfl⟩, hc⟩
+  have := Order.Crosses.entries_eq (hc p hp q hq _ ⟨h, rfl⟩)
+  rw [RelSeries.entries_smash, Order.Crosses.entries_eq hp, Order.Crosses.entries_eq hq]
+    at this
+  exact absurd this (by decide)
 
 /-! ### Towards and away from (§4.1.3)
 
@@ -181,33 +247,35 @@ hence unbounded, which grounds the atelic marking of the comparative preposition
 /-- *Towards x*, (45), holds of a path that ends nearer to the reference object than it starts,
 measured by `d`. -/
 def towardsPP [Preorder α] (d : Loc → α) : Set (Path Loc) :=
-  {p | d p.goal < d p.source}
+  {p | d p.last < d p.head}
 
 /-- *Away from x*, (48), holds of a path that ends further from the reference object than it
 starts. -/
 def awayFromPP [Preorder α] (d : Loc → α) : Set (Path Loc) :=
-  {p | d p.source < d p.goal}
+  {p | d p.head < d p.last}
 
 theorem towardsPP_concat_closed [Preorder α] (d : Loc → α) :
-    ∀ p ∈ towardsPP d, ∀ q ∈ towardsPP d, ∀ r, Path.IsConcat p q r →
+    ∀ p ∈ towardsPP d, ∀ q ∈ towardsPP d, ∀ r, Concat p q r →
       r ∈ towardsPP d := by
   intro p hp q hq r hr
-  show d r.goal < d r.source
-  rw [hr.goal_eq, hr.source_eq]
-  exact hq.trans_le (hr.1 ▸ hp.le)
+  show d r.last < d r.head
+  obtain ⟨h, rfl⟩ := hr
+  rw [RelSeries.last_smash, RelSeries.head_smash]
+  exact hq.trans_le (h ▸ hp.le)
 
 theorem awayFromPP_concat_closed [Preorder α] (d : Loc → α) :
-    ∀ p ∈ awayFromPP d, ∀ q ∈ awayFromPP d, ∀ r, Path.IsConcat p q r →
+    ∀ p ∈ awayFromPP d, ∀ q ∈ awayFromPP d, ∀ r, Concat p q r →
       r ∈ awayFromPP d := by
   intro p hp q hq r hr
-  show d r.source < d r.goal
-  rw [hr.goal_eq, hr.source_eq]
-  exact hp.trans_le (hr.1 ▸ hq.le)
+  show d r.head < d r.last
+  obtain ⟨h, rfl⟩ := hr
+  rw [RelSeries.last_smash, RelSeries.head_smash]
+  exact hp.trans_le (h ▸ hq.le)
 
 -- (45)
 theorem towardsPP_cumulative [Preorder α] {d : Loc → α} {a b c : Loc} (hab : d b < d a)
-    (hbc : d c < d b) : Cumulative Path.IsConcat (towardsPP d) :=
-  ⟨⟨⟨a, [b]⟩, hab, ⟨b, [c]⟩, hbc, _, rfl, rfl⟩, towardsPP_concat_closed d⟩
+    (hbc : d c < d b) : Cumulative Concat (towardsPP d) :=
+  ⟨⟨Path.ofPoints a [b], hab, Path.ofPoints b [c], hbc, _, rfl, rfl⟩, towardsPP_concat_closed d⟩
 
 -- (45)
 theorem toPP_subset_towardsPP [Preorder α] {d : Loc → α} {R : Set Loc}
@@ -219,13 +287,16 @@ also *to x*, against the [krifka-1998] characterization of telicity. -/
 theorem toPP_not_quantized {x a b : Loc} (ha : a ≠ x) (hb : b ≠ x) :
     ¬ QUA (toPP ({x} : Set Loc)) := by
   intro h
-  have hp : (⟨a, [x]⟩ : Path Loc) ∈ toPP {x} := by
-    refine Path.IsTerminative.isCofinal ⟨?_, by simp⟩
-    ext i; fin_cases i <;> simp [Path.toFun, Path.points, ha, Fin.top_eq_last]
-  have hq : (⟨b, [a, x]⟩ : Path Loc) ∈ toPP {x} := by
-    refine Path.IsTerminative.isCofinal ⟨?_, by simp⟩
-    ext i; fin_cases i <;> simp [Path.toFun, Path.points, ha, hb, Fin.top_eq_last, Fin.ext_iff]
-  exact h hp hq (by simp) (Path.subpath_iff_infix.mpr ⟨[b], [], rfl⟩)
+  have hp : Path.ofPoints a [x] ∈ toPP {x} := by
+    have key : ∀ i : Fin 2, Path.ofPoints a [x] i ∈ ({x} : Set Loc) ↔ i = ⊤ := by
+      intro i; fin_cases i <;> simp [Path.ofPoints, ha, Fin.top_eq_last]
+    exact Order.Reaches.enters ⟨Set.ext key, (by decide : (⊥ : Fin 2) ≠ ⊤)⟩
+  have hq : Path.ofPoints b [a, x] ∈ toPP {x} := by
+    have key : ∀ i : Fin 3, Path.ofPoints b [a, x] i ∈ ({x} : Set Loc) ↔ i = ⊤ := by
+      intro i; fin_cases i <;> simp [Path.ofPoints, ha, hb, Fin.top_eq_last, Fin.ext_iff]
+    exact Order.Reaches.enters ⟨Set.ext key, (by decide : (⊥ : Fin 3) ≠ ⊤)⟩
+  exact h hp hq (fun he ↦ by simpa [Path.ofPoints] using congrArg RelSeries.length he)
+    (Path.le_iff_infix.mpr ⟨[b], [], by simp⟩)
 
 /-! ### The judgments (1), (23) -/
 
@@ -255,8 +326,8 @@ theorem bounded_iff_telic [Preorder α] {d : Loc → α} {a b c : Loc} (hab : d 
     (hbc : d c < d b) (R : Set Loc) :
     ∀ e ∈ Examples.all, ∀ ph ∈ e.parse? "preposition" prepositions,
       ∀ t ∈ e.parse? "aspect" [("telic", true), ("atelic", false)],
-        (Bounded Path.IsConcat (ph.denotation R d) ↔ t = true) := by
-  have key : ∀ ph : Phrase, Bounded Path.IsConcat (ph.denotation R d) ↔ ph ≠ .towards := by
+        (Bounded Concat (ph.denotation R d) ↔ t = true) := by
+  have key : ∀ ph : Phrase, Bounded Concat (ph.denotation R d) ↔ ph ≠ .towards := by
     rintro (_ | _ | _ | _)
     · exact iff_of_true (toPP_bounded R) (by decide)
     · exact iff_of_true (fromPP_bounded R) (by decide)
@@ -271,13 +342,13 @@ theorem bounded_iff_telic [Preorder α] {d : Loc → α} {a b c : Loc} (hab : d 
 plurality of *round and round the house*. -/
 inductive Star (X : Set (Path Loc)) : Path Loc → Prop
   | base {p} (hp : p ∈ X) : Star X p
-  | concat {p q r} (hp : Star X p) (hq : Star X q) (h : Path.IsConcat p q r) :
+  | concat {p q r} (hp : Star X p) (hq : Star X q) (h : Concat p q r) :
       Star X r
 
 -- (58)
 theorem star_cumulative {X : Set (Path Loc)}
-    (h : ∃ p ∈ X, ∃ q ∈ X, ∃ r, Path.IsConcat p q r) :
-    Cumulative Path.IsConcat {p | Star X p} := by
+    (h : ∃ p ∈ X, ∃ q ∈ X, ∃ r, Concat p q r) :
+    Cumulative Concat {p | Star X p} := by
   obtain ⟨p, hp, q, hq, r, hr⟩ := h
   exact ⟨⟨p, .base hp, q, .base hq, r, hr⟩,
     fun _ hp' _ hq' _ hr' ↦ .concat hp' hq' hr'⟩
@@ -286,39 +357,37 @@ theorem star_cumulative {X : Set (Path Loc)}
 
 section Transfer
 
-open Event (σ)
+variable {E : Type*} (σ : E → Path Loc) (C : E → E → E → Prop)
 
-variable {E : Type*} [SpatialTrace E Loc] (C : E → E → E → Prop)
-
-/-- The spatial trace is a homomorphism for concatenation when the trace of a fused event is the
-concatenation of the traces. -/
+/-- The spatial trace `σ` is a homomorphism for concatenation when the trace of a fused event is
+the concatenation of the traces. -/
 def IsTraceHom : Prop :=
-  ∀ e e' f, C e e' f → Path.IsConcat (σ e) (σ e') (σ f)
+  ∀ e e' f, C e e' f → Concat (σ e) (σ e') (σ f)
 
 /-- `⟦V PP⟧`, (25), holds of the verb's events whose trace lies in the phrase's denotation. -/
 def vpp (V : Set E) (X : Set (Path Loc)) : Set E :=
   {e ∈ V | σ e ∈ X}
 
-variable {C}
+variable {σ C}
 
-theorem vpp_concat_closed (hhom : IsTraceHom (E := E) C) {V : Set E}
+theorem vpp_concat_closed (hhom : IsTraceHom σ C) {V : Set E}
     {X : Set (Path Loc)}
     (hV : ∀ e ∈ V, ∀ e' ∈ V, ∀ f, C e e' f → f ∈ V)
-    (hX : ∀ p ∈ X, ∀ q ∈ X, ∀ r, Path.IsConcat p q r → r ∈ X) :
-    ∀ e ∈ vpp V X, ∀ e' ∈ vpp V X, ∀ f, C e e' f → f ∈ vpp V X :=
+    (hX : ∀ p ∈ X, ∀ q ∈ X, ∀ r, Concat p q r → r ∈ X) :
+    ∀ e ∈ vpp σ V X, ∀ e' ∈ vpp σ V X, ∀ f, C e e' f → f ∈ vpp σ V X :=
   fun e he e' he' f hf ↦
     ⟨hV e he.1 e' he'.1 f hf, hX _ he.2 _ he'.2 _ (hhom e e' f hf)⟩
 
-theorem vpp_bounded_of_no_pairs (hhom : IsTraceHom (E := E) C) {V : Set E}
+theorem vpp_bounded_of_no_pairs (hhom : IsTraceHom σ C) {V : Set E}
     {X : Set (Path Loc)}
-    (hX : ¬ ∃ p ∈ X, ∃ q ∈ X, ∃ r, Path.IsConcat p q r) :
-    Bounded C (vpp V X) :=
+    (hX : ¬ ∃ p ∈ X, ∃ q ∈ X, ∃ r, Concat p q r) :
+    Bounded C (vpp σ V X) :=
   bounded_of_no_pairs fun ⟨e, he, e', he', f, hf⟩ ↦
     hX ⟨σ e, he.2, σ e', he'.2, σ f, hhom e e' f hf⟩
 
 /-- *Walk to the house* is bounded, (26), by the negative transfer at the strict goal phrase. -/
-theorem vpp_toPP_bounded (hhom : IsTraceHom (E := E) C) {V : Set E} (R : Set Loc) :
-    Bounded C (vpp V (toPP R)) :=
+theorem vpp_toPP_bounded (hhom : IsTraceHom σ C) {V : Set E} (R : Set Loc) :
+    Bounded C (vpp σ V (toPP R)) :=
   vpp_bounded_of_no_pairs hhom (toPP_no_pairs R)
 
 end Transfer

@@ -6,27 +6,28 @@ public import Linglib.Semantics.Tense.RunTimes
 # Life spans
 
 The life span of an individual is the interval of times at which it exists: the run time of an
-event, or the time from an entity's coming into existence to its going out of it. A description
-pre-exists an interval when some individual it describes has a life span starting before the
-interval does, that is, when its life spans are *before ever* the interval (`Tense.beforeEver`).
-A predicate of individuals at times is permanent when it holds of an individual throughout its
-life span if it holds of it at all, as individual-level predicates such as *tall* are taken to be.
+event, or the time from an entity's coming into existence to its going out of it.
+
+A description *pre-exists* an interval if some individual it describes has a life span that
+starts before the interval does. That is, the life spans of its individuals are *before ever* the
+interval, in the sense of `Tense.beforeEver`. A predicate of individuals at times is *permanent*
+if it holds of an individual throughout its life span whenever it holds of it at all.
+Individual-level predicates such as *tall* are taken to be permanent.
 
 ## Main definitions
 
-* `Event.PreExists τ Q t`: the description `Q` pre-exists the interval `t`.
-* `Event.Permanent span P`: `P` holds of an individual throughout its life span if at all.
+* `Tense.PreExists τ Q t`: the description `Q` pre-exists the interval `t`.
+* `Tense.Permanent span P`: `P` holds of an individual throughout its life span if at all.
 
 ## Main statements
 
-* `Event.preExists_iff`: some individual of `Q` has a life span starting before `t` does.
-* `Event.PreExists.exists`: pre-existence entails existence, since *before ever* is veridical in
-  its first argument.
-* `Event.preExists_iff_exists_of_precedes`, `Event.not_preExists_of_le`: pre-existence under
+* `Tense.preExists_iff`: some individual of `Q` has a life span starting before `t` does.
+* `Tense.PreExists.exists`: a description that pre-exists an interval describes some individual.
+* `Tense.preExists_iff_exists_of_precedes`, `Tense.not_preExists_of_le`: pre-existence under
   descriptions that locate their individuals before, or within, the interval.
-* `Event.Permanent.forall_not_or_forall_iff_mem`: a permanent predicate that holds only within life
+* `Tense.Permanent.forall_not_or_forall_iff_mem`: a permanent predicate that holds only within life
   spans holds of an individual at no time or at exactly the times of its life span.
-* `Event.Permanent.precedes_pure`: a permanent predicate that held of an individual before `now` and
+* `Tense.Permanent.precedes_pure`: a permanent predicate that held of an individual before `now` and
   fails at `now` places the individual's life span before `now`.
 
 ## Implementation notes
@@ -48,7 +49,7 @@ since it needs them convex.
 
 @[expose] public section
 
-namespace Event
+namespace Tense
 
 variable {X T : Type*}
 
@@ -140,4 +141,4 @@ theorem Permanent.precedes_pure [LinearOrder T] {τ : X → NonemptyInterval T} 
 
 end Permanent
 
-end Event
+end Tense

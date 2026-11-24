@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Events.Lifespan
+public import Linglib.Semantics.Tense.Lifespan
 public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Data.Examples.Bondarenko2020
@@ -26,9 +26,9 @@ inference follows.
 
 ## Implementation notes
 
-* Pre-existence is `Event.PreExists` of `Semantics/Events/Lifespan.lean`. Time spans are a
+* Pre-existence is `Tense.PreExists` of `Semantics/Tense/Lifespan.lean`. Time spans are a
   function `τ` into `NonemptyInterval`, the run time of an event or the life span of an entity,
-  and the paper's `LB(τ(x)) < t` is `(τ x).fst < t.fst` (`Event.preExists_iff`). θTh's
+  and the paper's `LB(τ(x)) < t` is `(τ x).fst < t.fst` (`Tense.preExists_iff`). θTh's
   presupposition in (55) is the pre-existence of `Q`, and its assertion the pre-existence of the
   `Q`s that the `P`-event is about.
 * Truth values are trivalent, as in the paper: a sentence is a trivalent proposition
@@ -62,7 +62,7 @@ inference follows.
 
 namespace Bondarenko2020
 
-open Event
+open Event Tense
 
 variable {W T X E I : Type*} [LinearOrder T]
 

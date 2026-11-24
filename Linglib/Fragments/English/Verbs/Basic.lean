@@ -181,11 +181,11 @@ def go : Verb where
   levinExcluded := {LevinClass.meander}
 
 /-- In *run into the room* the spatial function *into* marks, the goal in the interior, makes a
-verb of manner of motion directed, while *run behind the house* leaves it as it is, and
+verb of manner of motion directed, while *run in the house* leaves it as it is, and
 so does any path phrase *sleep*, which selects none. -/
 example : (∀ f ∈ Adpositions.into.functions, f.kind = .spatial →
       (run.withPath (.ofFunction f)).direction = some .goal) ∧
-    run.withPath Adposition.behind = run.toVerb ∧ sleep.withPath (.ofCase .ill) = sleep.toVerb :=
+    run.withPath (.ofCase .ine) = run.toVerb ∧ sleep.withPath (.ofCase .ill) = sleep.toVerb :=
   ⟨by decide, rfl, rfl⟩
 
 /-- *Dance* says nothing of a path, *run* displaces its subject without a direction, and *arrive*
