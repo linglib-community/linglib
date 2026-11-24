@@ -18,13 +18,40 @@ minimal elements are those that nothing is `r`-related to. A strictly monotone m
 lower elements lift carries the minimal elements of a preimage to the minimal elements of the
 set, whether or not the map is injective.
 
+A point whose value under a map is least among the values on a set is minimal for the map on the
+set, for any relation `≤` on the values. When the values have a least one and `≤` is transitive,
+the minimal points are exactly the points of the set whose value is least.
+
 ## Main statements
 
+* `IsLeast.minimalFor`
+* `minimalFor_iff_of_isLeast`
 * `minimalFor_iff_of_isAntichain`
 * `minimal_comp_iff_of_strictMono`
 -/
 
 public section
+
+section Least
+
+variable {α β : Type*} {f : α → β} {s : Set α} {a b : α}
+
+/-- A point of a set whose value is least among the values on the set is minimal for the map on
+the set. -/
+theorem IsLeast.minimalFor [LE β] (ha : a ∈ s) (h : IsLeast (f '' s) (f a)) :
+    MinimalFor (· ∈ s) f a :=
+  ⟨ha, fun _ hb _ ↦ h.2 (Set.mem_image_of_mem f hb)⟩
+
+/-- When the values of a map on a set have a least one, the points minimal for the map are the
+points of the set whose value is least. -/
+theorem minimalFor_iff_of_isLeast [Preorder β] (h : IsLeast (f '' s) (f a)) :
+    MinimalFor (· ∈ s) f b ↔ b ∈ s ∧ IsLeast (f '' s) (f b) := by
+  obtain ⟨a', ha', hfa⟩ := h.1
+  refine ⟨fun hb ↦ ⟨hb.1, Set.mem_image_of_mem f hb.1, fun c hc ↦ ?_⟩,
+    fun hb ↦ hb.2.minimalFor hb.1⟩
+  exact (hb.2 ha' (hfa ▸ h.2 (Set.mem_image_of_mem f hb.1))).trans (hfa ▸ h.2 hc)
+
+end Least
 
 variable {ι β : Type*} [Preorder ι] [Preorder β] {P : ι → Prop} {f : ι → β} {r : ι → ι → Prop}
   {i : ι}

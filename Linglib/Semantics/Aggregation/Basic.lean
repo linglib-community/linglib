@@ -54,7 +54,7 @@ infima and suprema of relations on vectors to those of rules.
 
 ## TODO
 
-* `Preorder.ofCriteria`, the ordering of worlds by an ordering source, is the Pareto rule with
+* `Preorder.ofLowerSets`, the ordering of worlds by an ordering source, is the Pareto rule with
   propositions as the individuals; the harmony of Harmonic Grammar is the utilitarian rule with
   constraints as the individuals. State both as aggregation rules.
 

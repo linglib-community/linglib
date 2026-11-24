@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Partition.OfProps
+public import Mathlib.Order.Concept
 
 /-!
 # Hamblin sets
@@ -66,6 +67,21 @@ def weakAnswer : Set W := ⋂₀ karttunen H w
   simp [weakAnswer, and_imp]
 
 theorem self_mem_weakAnswer : w ∈ weakAnswer H w := by simp
+
+/-! Truth relates worlds to propositions, and a relation induces a Galois connection between
+sets on its two sides, mathlib's `upperPolar` and `lowerPolar`. The Karttunen denotation and the
+weak answer are the two polars at a world. -/
+
+/-- The Karttunen denotation at `w` is the members of `H` among the propositions true at `w`. -/
+theorem karttunen_eq_inter_upperPolar : karttunen H w = H ∩ upperPolar (· ∈ ·) {w} := by
+  ext q
+  simp [upperPolar]
+
+/-- The weak answer at `w` is the lower polar of the Karttunen denotation, the worlds at which
+every true member holds. -/
+theorem weakAnswer_eq_lowerPolar : weakAnswer H w = lowerPolar (· ∈ ·) (karttunen H w) := by
+  ext v
+  simp [lowerPolar, and_imp]
 
 theorem weakAnswer_subset {p : Set W} (hp : p ∈ H) (hw : w ∈ p) :
     weakAnswer H w ⊆ p :=

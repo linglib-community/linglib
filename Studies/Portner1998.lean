@@ -50,6 +50,8 @@ alone, inside which the progressive over a totally realistic base falls
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Portner1998
 
 open Modality Event Aspect
@@ -165,7 +167,7 @@ theorem not_prog_ordinary (w : Army) :
     have hv' : v ≠ .wipesOut := by simpa [ordinary] using hv
     cases v
     · exact absurd rfl hv'
-    · exact (premisePreorder _).le_refl _
+    · exact (≤[_]).le_refl _
     · exact absurd rfl (hle {.killedEarly}ᶜ (by simp [defeatsSoldiers]) (by simp))
   obtain ⟨_, -, h1, -⟩ := h _ hbest
   exact absurd h1 (by decide)

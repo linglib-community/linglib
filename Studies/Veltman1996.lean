@@ -80,6 +80,8 @@ of Asher and Morreau in section 5 is discussed in the paper and not formalized.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Veltman1996
 
 open DynamicSemantics DynamicSemantics.OrderedInformationState
@@ -376,26 +378,30 @@ abbrev Frame (W : Type*) := (d : Finset W) → Preorder d
 /-- The frame presented by a list of rules assigns to `d` the total pattern refined by the defaults
 of the rules with domain `d` (Proposition 4.14). -/
 @[reducible] def Frame.ofRules (R : List (Rule W)) : Frame W := fun d ↦
-  Preorder.ofCriteria (fun (w : d) (r : Rule W) ↦ w.1 ∈ r.default) {r | r ∈ R ∧ r.domain = d}
+  ≤[(fun r : Rule W ↦ {w : d | w.1 ∈ r.default}) '' {r | r ∈ R ∧ r.domain = d}]
+
+theorem Frame.ofRules_le_iff {R : List (Rule W)} {d : Finset W} {w v : d} :
+    (Frame.ofRules R d).le w v ↔
+      ∀ r ∈ R, r.domain = d → v.1 ∈ r.default → w.1 ∈ r.default :=
+  (Preorder.ofLowerSets_image_le_iff ..).trans
+    ⟨fun h r hr hd ↦ h r ⟨hr, hd⟩, fun h r hr ↦ h r hr.1 hr.2⟩
 
 /-- At the rule's own domain the pattern is the old one refined with `r.default` (Definition
 4.5(ii)(b)). -/
 theorem Frame.ofRules_cons_self (r : Rule W) (R : List (Rule W)) :
     Frame.ofRules (r :: R) r.domain =
       Frame.ofRules R r.domain ⊓ .ofCriterion (fun w ↦ w.1 ∈ r.default) :=
-  Preorder.ext fun w v ↦
-    ⟨fun h ↦ ⟨fun c hc ↦ h c ⟨List.mem_cons_of_mem _ hc.1, hc.2⟩, h r ⟨List.mem_cons_self, rfl⟩⟩,
-     fun h c hc ↦ by
-      rcases List.mem_cons.1 hc.1 with rfl | hc' <;> [exact h.2; exact h.1 c ⟨hc', hc.2⟩]⟩
+  Preorder.ext fun w v ↦ by
+    change _ ↔ (Frame.ofRules R r.domain).le w v ∧ (v.1 ∈ r.default → w.1 ∈ r.default)
+    rw [Frame.ofRules_le_iff, Frame.ofRules_le_iff, List.forall_mem_cons]
+    exact ⟨fun h ↦ ⟨h.2, h.1 rfl⟩, fun h ↦ ⟨fun _ ↦ h.2, h.1⟩⟩
 
 /-- Other domains are untouched (Definition 4.5(ii)(a)). -/
 theorem Frame.ofRules_cons_of_ne (r : Rule W) (R : List (Rule W)) {d : Finset W}
     (h : d ≠ r.domain) : Frame.ofRules (r :: R) d = Frame.ofRules R d :=
-  Preorder.ext fun _ _ ↦
-    ⟨fun h' c hc ↦ h' c ⟨List.mem_cons_of_mem _ hc.1, hc.2⟩, fun h' c hc ↦ by
-      rcases List.mem_cons.1 hc.1 with rfl | hc'
-      · exact absurd hc.2 h.symm
-      · exact h' c ⟨hc', hc.2⟩⟩
+  Preorder.ext fun _ _ ↦ by
+    rw [Frame.ofRules_le_iff, Frame.ofRules_le_iff, List.forall_mem_cons]
+    exact ⟨fun h' ↦ h'.2, fun h' ↦ ⟨fun hd ↦ absurd hd.symm h, h'⟩⟩
 
 theorem Frame.ofRules_perm {R R' : List (Rule W)} (h : R.Perm R') :
     Frame.ofRules R = Frame.ofRules R' :=
@@ -410,8 +416,9 @@ theorem normal_ofRules_iff (R : List (Rule W)) (d : Finset W) (w : W) :
     Normal (Frame.ofRules R) d w ↔ w ∈ d ∧ ∀ r ∈ R, r.domain ⊆ d → w ∈ r.domain →
       ∀ v ∈ r.domain, v ∈ r.default → w ∈ r.default :=
   and_congr_right fun _ ↦
-    ⟨fun h r hr hsub hw v hv ↦ h r.domain hsub hw v hv r ⟨hr, rfl⟩,
-     fun h d' hsub hw v hv r ⟨hr, hd⟩ ↦ by subst hd; exact h r hr hsub hw v hv⟩
+    ⟨fun h r hr hsub hw v hv ↦ Frame.ofRules_le_iff.1 (h r.domain hsub hw v hv) r hr rfl,
+     fun h d' hsub hw v hv ↦ Frame.ofRules_le_iff.2 fun r hr hd ↦ by
+      subst hd; exact h r hr hsub hw v hv⟩
 
 theorem Normal.mono {π : Frame W} {d d' : Finset W} {w : W} (h : Normal π d w) (hw : w ∈ d')
     (hd : d' ⊆ d) : Normal π d' w :=
@@ -424,9 +431,8 @@ theorem Normal.of_cons {r : Rule W} {R : List (Rule W)} {d : Finset W} {w : W}
 
 variable [DecidableEq W]
 
-instance (R : List (Rule W)) (d : Finset W) : DecidableRel (Frame.ofRules R d).le := fun w v ↦
-  decidable_of_iff (∀ r ∈ R, r.domain = d → v.1 ∈ r.default → w.1 ∈ r.default)
-    ⟨fun h c ⟨hc, hd⟩ ↦ h c hc hd, fun h c hc hd ↦ h c ⟨hc, hd⟩⟩
+instance (R : List (Rule W)) (d : Finset W) : DecidableRel (Frame.ofRules R d).le := fun _ _ ↦
+  decidable_of_iff _ Frame.ofRules_le_iff.symm
 
 instance (R : List (Rule W)) (d : Finset W) : DecidablePred (Normal (Frame.ofRules R) d) :=
   fun w ↦ decidable_of_iff _ (normal_ofRules_iff R d w).symm
@@ -448,17 +454,15 @@ def IsDefault (π : Frame W) (d e : Finset W) : Prop :=
 
 theorem isDefault_of_mem {R : List (Rule W)} {r : Rule W} (hr : r ∈ R)
     (hne : (r.domain ∩ r.default).Nonempty) : IsDefault (Frame.ofRules R) r.domain r.default :=
-  ⟨hne, fun _ _ h hv ↦ h r ⟨hr, rfl⟩ hv⟩
+  ⟨hne, fun _ _ h hv ↦ Frame.ofRules_le_iff.1 h r hr rfl hv⟩
 
 theorem conjConsequents {R : List (Rule W)} {φ ψ χ : Finset W}
     (hψ : ⟨φ, ψ⟩ ∈ R) (hχ : ⟨φ, χ⟩ ∈ R) :
     Frame.ofRules (⟨φ, ψ ∩ χ⟩ :: R) = Frame.ofRules R := by
-  refine funext fun d ↦ Preorder.ext fun w v ↦
-    ⟨fun h c hc ↦ h c ⟨List.mem_cons_of_mem _ hc.1, hc.2⟩, fun h c hc ↦ ?_⟩
-  rcases List.mem_cons.1 hc.1 with rfl | hc'
-  · exact fun hv ↦ Finset.mem_inter.2
-      ⟨h _ ⟨hψ, hc.2⟩ (Finset.mem_inter.1 hv).1, h _ ⟨hχ, hc.2⟩ (Finset.mem_inter.1 hv).2⟩
-  · exact h c ⟨hc', hc.2⟩
+  refine funext fun d ↦ Preorder.ext fun w v ↦ ?_
+  rw [Frame.ofRules_le_iff, Frame.ofRules_le_iff, List.forall_mem_cons]
+  exact ⟨fun h ↦ h.2, fun h ↦ ⟨fun hd hv ↦ Finset.mem_inter.2
+    ⟨h _ hψ hd (Finset.mem_inter.1 hv).1, h _ hχ hd (Finset.mem_inter.1 hv).2⟩, h⟩⟩
 
 /-- A frame is coherent when every nonempty domain has a normal world (Definition 4.3(iii)). -/
 def Coherent (π : Frame W) [∀ d, DecidablePred (Normal π d)] : Prop :=
@@ -611,8 +615,9 @@ theorem rule_self {φ : Finset W} (hφ : φ.Nonempty) : Valid [] (rule φ φ) :=
       ite_eq_left ⟨by rwa [Finset.inter_self], hco, hφ.elim fun w _ ↦ ⟨w, Finset.mem_univ w⟩⟩]
   show State.Accepts ⟨[], Finset.univ⟩ (rule φ φ)
   rw [State.Accepts, h]
-  refine ⟨rfl, funext fun d ↦ Preorder.ext fun w v ↦ ⟨fun _ c hc ↦ by simp at hc, ?_⟩⟩
-  rintro _ c ⟨hc, rfl⟩
+  refine ⟨rfl, funext fun d ↦ Preorder.ext fun w v ↦
+    ⟨fun _ ↦ Frame.ofRules_le_iff.2 (by simp), fun _ ↦ Frame.ofRules_le_iff.2 ?_⟩⟩
+  rintro c hc rfl
   rcases List.mem_singleton.1 hc with rfl
   exact fun _ ↦ w.2
 
@@ -637,7 +642,18 @@ structure IsGeneral (σ : State W) : Prop where
 /-- The ordered information state of section 3 that a state presents: its information, ranked by the
 ordering that the defaults of its rules induce. -/
 def toOrderedInformationState (σ : State W) : OrderedInformationState W :=
-  ⟨σ.info, Preorder.ofCriteria (fun w (r : Rule W) ↦ w ∈ r.default) {r | r ∈ σ.rules}⟩
+  ⟨σ.info, ≤[(fun r : Rule W ↦ (r.default : Set W)) '' {r | r ∈ σ.rules}]⟩
+
+omit [DecidableEq W] [Fintype W] in
+theorem defaults_le_iff {R : Set (Rule W)} {w v : W} :
+    (≤[(fun r : Rule W ↦ (r.default : Set W)) '' R]).le w v ↔
+      ∀ r ∈ R, v ∈ r.default → w ∈ r.default :=
+  Preorder.ofLowerSets_image_le_iff ..
+
+omit [DecidableEq W] [Fintype W] in
+theorem toOrderedInformationState_le_iff {w v : W} :
+    σ.toOrderedInformationState.order.le w v ↔ ∀ r ∈ σ.rules, v ∈ r.default → w ∈ r.default :=
+  defaults_le_iff
 
 /-- In a general state a set of the rules applies within `s` exactly when some world of `s`
 complies with it. -/
@@ -666,6 +682,7 @@ theorem IsGeneral.optimal_eq (h : σ.IsGeneral) :
   ext w
   rw [Finset.mem_coe, optimal, Finset.mem_filter, OrderedInformationState.optimal,
     Preorder.mem_minimals_iff]
+  simp only [toOrderedInformationState_le_iff]
   refine and_congr_right fun hw ↦ ⟨fun ⟨D, hD, hmax, hc⟩ v hv hvw r hr hrv ↦ ?_, fun hmin ↦ ?_⟩
   · have hsub : ∀ r ∈ D, r ∈ σ.rules := fun r hr ↦ (List.mem_sublists.1 hD).subset hr
     refine hc r (hmax.2 r hr ((h.applies_iff fun r' hr' ↦ ?_).2 ⟨v, hv, fun r' hr' _ ↦ ?_⟩))
@@ -690,7 +707,8 @@ a world at least as normal as every world, the coherence of a pattern (Definitio
 theorem coherent_ofRules_iff [Nonempty W] {R : List (Rule W)}
     (hR : ∀ r ∈ R, r.domain = Finset.univ) :
     Coherent (Frame.ofRules R) ↔
-      ∃ w, ∀ v, (Preorder.ofCriteria (fun w (r : Rule W) ↦ w ∈ r.default) {r | r ∈ R}).le w v := by
+      ∃ w, ∀ v, (≤[(fun r : Rule W ↦ (r.default : Set W)) '' {r | r ∈ R}]).le w v := by
+  simp only [defaults_le_iff]
   constructor
   · intro h
     obtain ⟨n, hn⟩ := h Finset.univ Finset.univ_nonempty
@@ -737,7 +755,7 @@ theorem toOrderedInformationState_normally (h : normally ψ σ ≠ absurd) :
   · refine OrderedInformationState.ext rfl ?_
     rw [toOrderedInformationState, show {r | r ∈ (⟨ψ ∪ ψᶜ, ψ⟩ : Rule W) :: σ.rules} =
       insert ⟨ψ ∪ ψᶜ, ψ⟩ {r | r ∈ σ.rules} from Set.ext fun _ ↦ List.mem_cons,
-      Preorder.ofCriteria_insert]
+      Set.image_insert_eq, Preorder.ofLowerSets_insert]
     rfl
   · exact (h rfl).elim
 
@@ -764,6 +782,7 @@ theorem IsGeneral.normally_eq_absurd_iff (h : σ.IsGeneral) (hσ : σ.info.Nonem
   have key : (((ψ ∪ ψᶜ) ∩ ψ).Nonempty ∧ Coherent (Frame.ofRules (⟨ψ ∪ ψᶜ, ψ⟩ :: σ.rules)) ∧
       σ.info.Nonempty) ↔ ∃ w, (∀ v, σ.toOrderedInformationState.order.le w v) ∧ w ∈ ψ := by
     rw [coherent_ofRules_iff hgen, Finset.union_compl, Finset.univ_inter]
+    simp only [defaults_le_iff]
     constructor
     · rintro ⟨⟨u, hu⟩, ⟨w, hw⟩, -⟩
       exact ⟨w, fun v r hr ↦ hw v r (List.mem_cons_of_mem _ hr), hw u _ List.mem_cons_self hu⟩
@@ -826,10 +845,12 @@ example : (3 : World) ∉ (State.init |> normally p |> rule q pᶜ |> fact q).op
   have hσ : (State.init |> normally p |> rule q pᶜ |> fact q) =
       ⟨[⟨q, pᶜ⟩, ⟨p ∪ pᶜ, p⟩], Finset.univ ∩ q⟩ := by decide +kernel
   rw [hσ]
-  refine ⟨by decide +kernel, (by decide : (3 : World) ∈ Finset.univ ∩ q), fun v _ hv3 r hr hrv ↦ ?_⟩
+  refine ⟨by decide +kernel, (by decide : (3 : World) ∈ Finset.univ ∩ q), fun v _ hv3 ↦
+    State.defaults_le_iff.2 fun r hr hrv ↦ ?_⟩
   have hp3 : (3 : World) ∈ p := by decide
   rcases List.mem_pair.1 hr with rfl | rfl
-  · exact absurd (hv3 _ (List.mem_cons_of_mem _ List.mem_cons_self) hp3) (Finset.mem_compl.1 hrv)
+  · exact absurd (State.defaults_le_iff.1 hv3 _ (List.mem_cons_of_mem _ List.mem_cons_self) hp3)
+      (Finset.mem_compl.1 hrv)
   · exact hp3
 
 -- Example 4.11

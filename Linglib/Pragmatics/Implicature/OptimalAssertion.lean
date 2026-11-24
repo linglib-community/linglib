@@ -55,7 +55,7 @@ open Exhaustification
 /-- Where every world of the assertion lies above a minimal one, as over finitely many
 alternatives, the assertion is optimal in the state of its minimal worlds. -/
 theorem isOptimalAssertion_exhMW (h : ∀ w ∈ φ, ∃ u ∈ exhMW alts φ,
-    Preorder.satisfied (· ∈ ·) alts u ⊆ Preorder.satisfied (· ∈ ·) alts w) :
+    {a ∈ alts | u ∈ a} ⊆ {a ∈ alts | w ∈ a}) :
     IsOptimalAssertion alts φ (exhMW alts φ) :=
   ⟨exhMW_subset, fun _ hψ hsub hψφ ↦ hψφ.2 fun w hw ↦
     let ⟨_, hu, huw⟩ := h w hw
@@ -69,11 +69,11 @@ include hinf hsup hφ hne hs
 unions, a consistent state in which the assertion is optimal contains, for each minimal world of
 the assertion, a world making the same alternatives true. -/
 theorem IsOptimalAssertion.exists_satisfied_eq {u : W} (hu : u ∈ exhMW alts φ) :
-    ∃ w ∈ s, Preorder.satisfied (· ∈ ·) alts w = Preorder.satisfied (· ∈ ·) alts u := by
+    ∃ w ∈ s, {a ∈ alts | w ∈ a} = {a ∈ alts | u ∈ a} := by
   by_contra hcon
   have hA : ∀ w ∈ s, ∃ a ∈ alts, w ∈ a ∧ u ∉ a := fun w hw ↦ by
     by_contra h
-    have hle : Preorder.satisfied (· ∈ ·) alts w ⊆ Preorder.satisfied (· ∈ ·) alts u :=
+    have hle : {a ∈ alts | w ∈ a} ⊆ {a ∈ alts | u ∈ a} :=
       fun a ha ↦ ⟨ha.1, by_contra fun hua ↦ h ⟨a, ha.1, ha.2, hua⟩⟩
     exact hcon ⟨w, hw, hle.antisymm (hu.2 (hs.admissible hw) hle)⟩
   obtain ⟨w₀, hw₀⟩ := hne

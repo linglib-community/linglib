@@ -98,7 +98,7 @@ theorem gapExt_compl_ev : Trivalent.gapExt (Ev f g p)ᶜ = Trivalent.gapExt (Ev 
 theorem bestWorlds_subset_of_beliefs (hex : ∃ u ∈ f.accessibleWorlds w, ∀ q ∈ g w, u ∈ q)
     (h : ∀ u ∈ f.accessibleWorlds w, (∀ q ∈ g w, u ∈ q) → u ∈ p) : bestWorlds f g w ⊆ p := by
   intro u hu
-  rw [bestWorlds, Preorder.minimals_ofCriteria_eq hex] at hu
+  rw [bestWorlds, Preorder.minimals_ofLowerSets_eq hex] at hu
   exact h u hu.1 hu.2
 
 /-- The best worlds lie within the epistemically accessible worlds, so the evidential meaning is

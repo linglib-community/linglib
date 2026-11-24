@@ -76,6 +76,8 @@ rather than built into the domain of `realizes`.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Roberts2023
 
 open Temporal Modality Quantifier Filter

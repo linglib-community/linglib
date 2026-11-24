@@ -258,10 +258,10 @@ theorem mem_exhIE_subdomain_iff (h : Separating D fun x ↦ {v | ◇[R] (Q · x)
   have hP : ∀ {S}, S ∈ P → S ⊆ D := fun h ↦ (mem_subdomainAlternatives_proper.1 h).1
   have hS₀D := hP hS₀
   have hAsing : ∀ {y v}, y ∈ D → ◇[R] (Q · y) v →
-      A {y} ∈ Preorder.satisfied (· ∈ ·) (A '' P) v := fun {y} {_} hy hyv ↦
+      A {y} ∈ {a ∈ (A '' P) | v ∈ a} := fun {y} {_} hy hyv ↦
     ⟨⟨{y}, singleton_mem_subdomainAlternatives_proper hS₀ hy, rfl⟩,
       diamond_claim_iff.2 ⟨_, Finset.mem_singleton_self _, hyv⟩⟩
-  have key : ∀ S ∈ P, A S ∈ ⋃₀ {M | Minimal (· ∈ Preorder.satisfied (· ∈ ·) (A '' P) '' A S₀) M} ↔
+  have key : ∀ S ∈ P, A S ∈ ⋃₀ {M | Minimal (· ∈ (fun w ↦ {a ∈ (A '' P) | w ∈ a}) '' A S₀) M} ↔
       ∃ x ∈ S, x ∈ S₀ := by
     intro S hS
     constructor
@@ -348,7 +348,7 @@ theorem exh_subdomain_eq_empty (h : Separating D fun x ↦ {v | ◇[R] (Q · x) 
   obtain ⟨_, ⟨v, hvφ, rfl⟩, hleast⟩ := exh_nonempty_iff.1 hne
   obtain ⟨x, hx, y, hy, hxy⟩ := Finset.one_lt_card.1 h2
   obtain ⟨z, hzS₀, hzv⟩ := diamond_claim_iff.1 hvφ
-  have hz : A {z} ∈ Preorder.satisfied (· ∈ ·) (A '' ↑(subdomainAlternatives .proper D)) v :=
+  have hz : A {z} ∈ {a ∈ A '' ↑(subdomainAlternatives .proper D) | v ∈ a} :=
     ⟨⟨{z}, singleton_mem_subdomainAlternatives_proper hS₀ (hS₀D hzS₀), rfl⟩,
       diamond_claim_iff.2 ⟨z, Finset.mem_singleton_self z, hzv⟩⟩
   have only : ∀ t ∈ S₀, z = t := fun t ht ↦ by

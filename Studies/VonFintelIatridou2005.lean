@@ -86,7 +86,7 @@ abbrev goals : Background Hoboken := fun _ ↦ {goHoboken}
 theorem not_obvious : takeA ∉ humanNecessity (Background.restrict ⊥ wantHarlem) goals wantA := by
   simp only [humanNecessity_eq_principal_of_finite,
     Filter.mem_principal, Set.subset_def, bestWorlds, Preorder.mem_minimals_iff,
-    Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
+    Background.mem_accessibleWorlds, Background.restrict, Preorder.ofLowerSets_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true]
   decide
@@ -116,7 +116,7 @@ theorem not_saebo : takeA ∉ humanNecessity ⊥ saebo aTrain := by
   simp only [humanNecessity_eq_principal_of_finite, Filter.mem_principal, Set.subset_def,
     bestWorlds, Preorder.mem_minimals_iff,
     Background.mem_accessibleWorlds,
-    Preorder.ofCriteria_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+    Preorder.ofLowerSets_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp, forall_eq,
     Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff,
@@ -160,7 +160,7 @@ theorem not_nested :
       humanNecessity (Background.restrict ⊥ wantHarlem) closeness actual := by
   simp only [humanNecessity_eq_principal_of_finite,
     Filter.mem_principal, Set.subset_def, bestWorlds, Preorder.mem_minimals_iff,
-    Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
+    Background.mem_accessibleWorlds, Background.restrict, Preorder.ofLowerSets_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true]
   intro h
@@ -205,7 +205,7 @@ theorem exists_oughtTo_not_haveTo :
       ¬ haveTo (⊥ : Background Bool) .univ {true} true := by
   simp only [oughtTo, haveTo_iff, Set.subset_def, bestWorlds,
     Preorder.mem_minimals_iff, Background.mem_accessibleWorlds, Background.restrict,
-    Preorder.ofCriteria_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+    Preorder.ofLowerSets_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp, forall_eq,
     Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true,
@@ -232,7 +232,7 @@ theorem not_haveTo_and_oughtTo :
     ¬ haveTo ⊥ .univ takeA aTrain ∧ oughtTo ⊥ (fun _ ↦ {meetRuud}) .univ takeA aTrain := by
   simp only [oughtTo, haveTo_iff, Set.subset_def, bestWorlds,
     Preorder.mem_minimals_iff, Background.mem_accessibleWorlds, Background.restrict,
-    Preorder.ofCriteria_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+    Preorder.ofLowerSets_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp, forall_eq,
     Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true,
@@ -258,7 +258,7 @@ abbrev kissPedro : Set Pedro := {cTrainKiss}
 
 theorem oughtTo_kissPedro : oughtTo ⊥ (fun _ ↦ {kissPedro}) goHarlem kissPedro aTrain := by
   simp only [oughtTo, Set.subset_def, bestWorlds, Preorder.mem_minimals_iff,
-    Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
+    Background.mem_accessibleWorlds, Background.restrict, Preorder.ofLowerSets_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true]
   decide

@@ -59,6 +59,8 @@ the run time of an actual event.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Ferreira2016
 
 open Modality Event Mereology
@@ -188,7 +190,7 @@ theorem not_IMP_atlantic : ¬ IMP atomize atlanticBase notInterrupted cross .sto
       .stopped := by
     refine mem_bestWorlds.2 ⟨by simp [atlanticBase], fun v hv _ ↦ ?_⟩
     have : v = .stopped := by cases v <;> simp_all [atlanticBase]
-    exact this ▸ (premisePreorder _).le_refl _
+    exact this ▸ (≤[_]).le_refl _
   obtain ⟨e, -, he⟩ := h _ hbest
   exact absurd he.1.1 (by decide)
 
@@ -289,7 +291,7 @@ theorem not_IMP_accident :
       (keepsPlaying playSoccer utterance) .plays := by
     refine mem_bestWorlds.2 ⟨by simp [accidentBase], fun v hv _ ↦ ?_⟩
     have : v = .accident := by simpa [accidentBase] using hv
-    exact this ▸ (premisePreorder _).le_refl _
+    exact this ▸ (≤[_]).le_refl _
   obtain ⟨e, he, hpl⟩ := h _ hbest
   exact not_utterance_le_hull hpl.1 he
 

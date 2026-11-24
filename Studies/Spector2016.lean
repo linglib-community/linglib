@@ -59,7 +59,6 @@ substrate's compatible sets carry separately.
 namespace Spector2016
 
 open Exhaustification Set
-open Preorder (satisfied)
 
 variable {World : Type*}
 
@@ -291,7 +290,7 @@ def atLeast (n : ℕ) : Set Stars := {w | (n : Stars) ≤ w}
 def starsALT : Set (Set Stars) := range exactly ∪ range atLeast
 
 theorem eq_of_satisfied_subset_stars {u v : Stars}
-    (h : satisfied (· ∈ ·) starsALT u ⊆ satisfied (· ∈ ·) starsALT v) : u = v := by
+    (h : {a ∈ starsALT | u ∈ a} ⊆ {a ∈ starsALT | v ∈ a}) : u = v := by
   induction u using WithTop.recTopCoe with
   | top =>
     induction v using WithTop.recTopCoe with

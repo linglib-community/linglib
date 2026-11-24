@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Modality.Background
 public import Linglib.Semantics.Modality.Basic
 public import Linglib.Core.Order.Filter.AtBotOn
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Linglib.Semantics.Modality.ComparativePossibility
 public import Linglib.Logic.Modal.Basic
 
@@ -47,6 +48,8 @@ not formalized here.
 -/
 
 @[expose] public section
+
+open scoped PremiseOrdering
 
 namespace Modality
 
@@ -148,7 +151,7 @@ the proposition holds throughout. Truth at the best worlds is its Limit Assumpti
 least as good below which `s` holds throughout, necessity in Definition 6 of [kratzer-1991] and in
 [kratzer-2012], human necessity in [kratzer-1981]'s terms. -/
 def humanNecessity (f g : Background W) (w : W) : Filter W :=
-  @atBotOn W W (premisePreorder (g w)) id (f.accessibleWorlds w)
+  @atBotOn W W (≤[g w]) id (f.accessibleWorlds w)
 
 theorem mem_humanNecessity : s ∈ humanNecessity f g w ↔ ∀ u ∈ f.accessibleWorlds w,
     ∃ v ∈ f.accessibleWorlds w, (v ≤[g w] u) ∧ ∀ z ∈ f.accessibleWorlds w, (z ≤[g w] v) → z ∈ s :=
@@ -165,7 +168,7 @@ theorem humanPossibility_iff_compl_notMem :
 
 /-- A human necessity holds at every best world. -/
 theorem principal_bestWorlds_le_humanNecessity : 𝓟 (bestWorlds f g w) ≤ humanNecessity f g w :=
-  fun _ h ↦ letI := premisePreorder (g w); setOf_minimalFor_subset_of_mem_atBotOn h
+  fun _ h ↦ letI := ≤[g w]; setOf_minimalFor_subset_of_mem_atBotOn h
 
 /-- The Limit Assumption holds at `w` when every accessible world sees a best world at least as
 good. -/
@@ -175,13 +178,13 @@ def LimitAssumption (f g : Background W) (w : W) : Prop :=
 /-- The Limit Assumption says that the best worlds are at least as possible as the accessible
 worlds, in Lewis's sense of comparative possibility. -/
 theorem limitAssumption_iff_lewis :
-    LimitAssumption f g w ↔ ComparativePossibility.Lewis (premisePreorder (g w)).le
+    LimitAssumption f g w ↔ ComparativePossibility.Lewis (≤[g w]).le
       (bestWorlds f g w) (f.accessibleWorlds w) :=
   .rfl
 
 theorem LimitAssumption.of_finite [Finite W] (f g : Background W) (w : W) :
     LimitAssumption f g w := fun _ hu ↦
-  Preorder.exists_le_mem_minimals (letI := premisePreorder (g w); wellFounded_lt) hu
+  Preorder.exists_le_mem_minimals (letI := ≤[g w]; wellFounded_lt) hu
 
 /-- An empty ordering source satisfies the Limit Assumption, every accessible world being best. -/
 theorem LimitAssumption.bot (f : Background W) (w : W) : LimitAssumption f ⊥ w :=
@@ -191,7 +194,7 @@ theorem LimitAssumption.bot (f : Background W) (w : W) : LimitAssumption f ⊥ w
 world. -/
 theorem humanNecessity_eq_principal (hlim : LimitAssumption f g w) :
     humanNecessity f g w = 𝓟 (bestWorlds f g w) :=
-  letI := premisePreorder (g w); atBotOn_eq_principal hlim
+  letI := ≤[g w]; atBotOn_eq_principal hlim
 
 theorem humanNecessity_eq_principal_of_finite [Finite W] :
     humanNecessity f g w = 𝓟 (bestWorlds f g w) :=
@@ -219,7 +222,7 @@ theorem goodPossibility_iff : goodPossibility f g w s ↔
 
 theorem goodPossibility_of_mem_humanNecessity (hne : (f.accessibleWorlds w).Nonempty)
     (h : s ∈ humanNecessity f g w) : goodPossibility f g w s :=
-  letI := premisePreorder (g w); exists_of_mem_atBotOn h hne
+  letI := ≤[g w]; exists_of_mem_atBotOn h hne
 
 theorem goodPossibility_bot_iff :
     goodPossibility f ⊥ w s ↔ (f.accessibleWorlds w).Nonempty ∧ s ∈ simpleNecessity f w :=
@@ -289,14 +292,14 @@ theorem goodPossibility_iff_mem_simpleNecessity_sup :
   let ⟨b, hb⟩ := h
   let hb := (Background.accessibleWorlds_sup f g w).subset hb
   (mem_simpleNecessity_sup_iff hb.2).trans ⟨fun hs ↦ ⟨b, hb.1, hs⟩, fun ⟨u, _, hp⟩ v hv hvb ↦
-    hp v hv ((premisePreorder (g w)).le_trans _ _ _ hvb (le_of_mem_accessibleWorlds hb.2 u))⟩
+    hp v hv ((≤[g w]).le_trans _ _ _ hvb (le_of_mem_accessibleWorlds hb.2 u))⟩
     |>.symm
 
 /-- When the ordering source is consistent with the modal base, the human necessities are the
 simple necessities of the unified backgrounds. -/
 theorem humanNecessity_eq_simpleNecessity_sup :
     humanNecessity f g w = simpleNecessity (f ⊔ g) w :=
-  letI := premisePreorder (g w)
+  letI := ≤[g w]
   let ⟨_, hb⟩ := h
   let hb := (Background.accessibleWorlds_sup f g w).subset hb
   Filter.ext fun _ ↦ (mem_atBotOn_iff_of_least hb.1

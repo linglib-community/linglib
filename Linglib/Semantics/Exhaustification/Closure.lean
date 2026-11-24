@@ -30,6 +30,8 @@ the closures under disjunction alone and conjunction alone are stated for arbitr
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Exhaustification
 
 open Set
@@ -39,20 +41,20 @@ variable {World : Type*} (ALT : Set (Set World)) (φ : Set World)
 variable {ALT φ} in
 /-- Alternative sets that rank worlds alike have the same minimal worlds. -/
 theorem exhMW_congr {ALT' : Set (Set World)}
-    (h : Preorder.ofCriteria (· ∈ ·) ALT' = Preorder.ofCriteria (· ∈ ·) ALT) :
+    (h : ≤[ALT'] = ≤[ALT]) :
     exhMW ALT' φ = exhMW ALT φ := by
   ext u
-  simp only [mem_exhMW, MinimalFor, Preorder.satisfied_subset_iff]
-  rw [h]
+  simp only [mem_exhMW, MinimalFor, ← Preorder.ofLowerSets_le_iff_subset]
+  rw [show Preorder.ofLowerSets ALT' = Preorder.ofLowerSets ALT from h]
 
 theorem exhMW_sUnion_image_powerset : exhMW (sUnion '' 𝒫 ALT) φ = exhMW ALT φ := by
-  refine exhMW_congr (Preorder.ofCriteria_eq_of_subset
+  refine exhMW_congr (Preorder.ofLowerSets_eq_of_subset
     (fun a ha ↦ ⟨{a}, singleton_subset_iff.2 ha, sUnion_singleton a⟩) ?_)
   rintro _ ⟨X, hX, rfl⟩ u v h ⟨q, hq, hvq⟩
   exact ⟨q, hq, h q (hX hq) hvq⟩
 
 theorem exhMW_sInter_image_powerset : exhMW (sInter '' 𝒫 ALT) φ = exhMW ALT φ := by
-  refine exhMW_congr (Preorder.ofCriteria_eq_of_subset
+  refine exhMW_congr (Preorder.ofLowerSets_eq_of_subset
     (fun a ha ↦ ⟨{a}, singleton_subset_iff.2 ha, sInter_singleton a⟩) ?_)
   rintro _ ⟨X, hX, rfl⟩ u v h hv q hq
   exact h q (hX hq) (hv q hq)
@@ -63,7 +65,7 @@ leaves the minimal worlds unchanged ([spector-2016]): the propositions true at `
 are true at `u` form a sublattice. -/
 theorem exhMW_eq_of_subset_latticeClosure {S : Set (Set World)} (h₁ : S ⊆ ALT)
     (h₂ : ALT ⊆ latticeClosure S) : exhMW ALT φ = exhMW S φ := by
-  refine exhMW_congr (Preorder.ofCriteria_eq_of_subset h₁ fun q hq u v h ↦ ?_)
+  refine exhMW_congr (Preorder.ofLowerSets_eq_of_subset h₁ fun q hq u v h ↦ ?_)
   have hsub : IsSublattice {q : Set World | v ∈ q → u ∈ q} :=
     ⟨fun _ hp _ hq hv ↦ hv.imp hp hq, fun _ hp _ hq hv ↦ ⟨hp hv.1, hq hv.2⟩⟩
   exact latticeClosure_min h hsub (h₂ hq)
@@ -83,9 +85,9 @@ theorem exhIE_eq_exhMW_of_infClosure_subset {E : Set (Set World)} (hfin : E.Fini
   rw [← hMW]
   refine (exhIE_eq_exhMW_iff ALT φ).2 fun u hu hmin ↦ ?_
   rw [hMW] at hmin ⊢
-  obtain ⟨v, hv, hvu, huv⟩ : ∃ v ∈ φ, Preorder.satisfied (· ∈ ·) E v ⊆
-      Preorder.satisfied (· ∈ ·) E u ∧ ¬ Preorder.satisfied (· ∈ ·) E u ⊆
-        Preorder.satisfied (· ∈ ·) E v := by
+  obtain ⟨v, hv, hvu, huv⟩ : ∃ v ∈ φ, {a ∈ E | v ∈ a} ⊆
+      {a ∈ E | u ∈ a} ∧ ¬ {a ∈ E | u ∈ a} ⊆
+        {a ∈ E | v ∈ a} := by
     simpa [mem_exhMW, MinimalFor, hu] using hmin
   have hne : {a ∈ E | u ∈ a}.Nonempty := by
     by_contra h
@@ -93,7 +95,7 @@ theorem exhIE_eq_exhMW_of_infClosure_subset {E : Set (Set World)} (hfin : E.Fini
   refine ⟨⋂₀ {a ∈ E | u ∈ a}, h₁ (infClosed_infClosure.sInf_mem_of_nonempty
     (hfin.subset fun _ h ↦ h.1) hne fun _ h ↦ subset_infClosure h.1), fun a ha ↦ ha.2,
     fun w hw hwA ↦ huv ?_⟩
-  have huw : Preorder.satisfied (· ∈ ·) E u ⊆ Preorder.satisfied (· ∈ ·) E w :=
+  have huw : {a ∈ E | u ∈ a} ⊆ {a ∈ E | w ∈ a} :=
     fun a ha ↦ ⟨ha.1, hwA a ha⟩
   exact huw.trans (hw.2 hv (hvu.trans huw))
 
