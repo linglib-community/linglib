@@ -6,31 +6,25 @@ public import Linglib.Semantics.Mereology.Exemplification
 /-!
 # Deigan (2020): A plea for inexact truthmaking
 
-A state exactly verifies a sentence when it is wholly relevant to the sentence's truth, and
-inexactly when it guarantees the truth and may contain more. The states carry the topology whose
-open sets are the sets closed under parts. Fine defines the inexact verifiers from the exact
-ones, as the states that contain an exact verifier: they are the closure of the exact verifiers.
-Deigan defines the exact verifiers from the inexact ones. For a sentence letter they are the
-exemplifiers of its inexact verifiers, their interior points and isolated points in the sense of
-`Mereology.Exemplifies`, and its exact falsifiers are the exemplifiers of its inexact falsifiers;
-negation, conjunction and disjunction are then Fine's. We define `inexact X`, the closures of the
-verifiers and of the falsifiers of a bilateral proposition, and `exemplifiers X`, their
+A state exactly verifies a sentence if it is wholly relevant to the sentence's truth, and inexactly
+if it guarantees the truth and may contain more. The states are ordered by parthood and carry the
+lower set topology. Fine defines the inexact verifiers from the exact ones, as the states that
+contain an exact verifier: we define `inexact X`, the closures of the verifiers and of the
+falsifiers of a bilateral proposition `X`. Deigan defines the exact verifiers of a sentence letter
+from its inexact ones, as their exemplifiers in the sense of `Mereology.Exemplifies`: we define
+`exemplifiers X`. Negation, conjunction and disjunction are then Fine's.
+
+In a well-founded space of states, `inexact (exemplifiers (inexact X)) = inexact X`. If the
+verifiers and the falsifiers of `X` are antichains of states that have proper parts, then
+`exemplifiers (inexact X) = X`, and every formula over such letters denotes under Deigan's
+definition what it denotes under the exact valuation.
+
+Two simpler definitions fail. Where the verifiers are open and every state has a proper part, no
+verifier is minimal, though every verifier exemplifies. And the exemplifiers of the inexact
+verifiers of a formula need not be its exact verifiers: `A ∨ (A ∧ B)` has the inexact verifiers of
+`A`, so a fusion that exactly verifies it and not `A` does not exemplify them. With a null state,
+the letter verified by the null state alone and the letter verified by every state have the same
 exemplifiers.
-
-In a well-founded space of states the two definitions compose to the identity on inexact
-propositions: the inexact verifiers of a proposition are the closure of their exemplifiers. In
-the other order they compose to the identity on a proposition whose verifiers and falsifiers are
-antichains of states that have proper parts, and every formula over such letters then denotes
-under Deigan's definition what it denotes under the exact valuation. A proposition has no
-exemplifier exactly when its verifiers have empty interior and no isolated point, as the
-proposition that there are infinitely many stars has none, `Kratzer2002.not_exemplifies_infinite`.
-
-Two simpler definitions fail. The minimal inexact verifiers are no definition where the
-verifiers are open and every state has a proper part, since nothing is then minimal, though
-every verifier exemplifies. And the exemplifiers of the inexact verifiers of an arbitrary formula
-are not its exact verifiers: `A ∨ (A ∧ B)` has the inexact verifiers of `A`, so a fusion that
-exactly verifies it and not `A` does not exemplify them. With a null state, the letter verified
-by the null state alone and the letter verified by every state have the same exemplifiers.
 
 ## TODO
 
@@ -54,14 +48,12 @@ open Bilattice.Product (mk)
 
 variable {A S : Type*} [TopologicalSpace S]
 
-/-- The inexact verifiers and falsifiers of a proposition, as Fine defines them: the closure of
-its exact verifiers and the closure of its exact falsifiers, which in the topology of parts are
-the states that contain one. -/
+/-- The inexact verifiers and falsifiers of a proposition: the closures of its exact verifiers and
+of its exact falsifiers. -/
 def inexact (X : Set S ⊙ Set S) : Set S ⊙ Set S :=
   X.map closure closure
 
-/-- The exemplifiers of the verifiers and of the falsifiers of a proposition, the exact verifiers
-and falsifiers that Deigan defines for a sentence letter from its inexact ones. -/
+/-- The exemplifiers of the verifiers and of the falsifiers of a proposition. -/
 def exemplifiers (X : Set S ⊙ Set S) : Set S ⊙ Set S :=
   X.map (fun p ↦ {s | Exemplifies p s}) fun p ↦ {s | Exemplifies p s}
 
@@ -81,15 +73,15 @@ variable [PartialOrder S] [Topology.IsLowerSet S] {X : Set S ⊙ Set S} {p : Set
 
 open Topology.IsLowerSet
 
-/-- Where the verifiers are open and every state has a proper part, as with *Achilles was
-moving*, every verifier exemplifies and none is minimal. -/
+/-- If `p` is open and no state is minimal, then every member of `p` exemplifies `p` and none is a
+minimal member of `p`. -/
 theorem exemplifies_and_not_minimal [NoMinOrder S] (hp : IsOpen p) {x : S} (hx : x ∈ p) :
     Exemplifies p x ∧ ¬ Minimal (· ∈ p) x :=
   ⟨hp.exemplifies_iff.2 hx, fun h ↦
     let ⟨_, hy⟩ := exists_lt x; h.not_prop_of_lt hy (isOpen_iff_isLowerSet.1 hp hy.le hx)⟩
 
-/-- In a well-founded space of states, the inexact verifiers and falsifiers of a proposition are
-those of the exact ones that Deigan defines from them. -/
+/-- In a well-founded space of states, the exemplifiers of the inexact verifiers and falsifiers of a
+proposition have the same closures as the proposition. -/
 theorem inexact_exemplifiers_inexact [WellFoundedLT S] (X : Set S ⊙ Set S) :
     inexact (exemplifiers (inexact X)) = inexact X :=
   Bilattice.Product.ext (closure_setOf_exemplifies isClosed_closure)
@@ -120,9 +112,9 @@ variable [SemilatticeSup S] [Topology.IsLowerSet S] {V : A → Set S ⊙ Set S}
 
 open Topology.IsLowerSet
 
-/-- Deigan's definition of exact verification from inexact gives every formula the proposition
-that the exact valuation gives it, where the verifiers and the falsifiers of each letter are
-antichains of states that have proper parts. -/
+/-- If the verifiers and the falsifiers of each letter are antichains without minimal states, then
+every formula denotes the same proposition under the exemplifiers of the inexact valuation as under
+the exact valuation. -/
 theorem denote_exemplifiers_inexact (hpro : ∀ a, IsAntichain (· ≤ ·) (V a).pro)
     (hcon : ∀ a, IsAntichain (· ≤ ·) (V a).con)
     (hmin : ∀ a, ∀ s ∈ (V a).pro ∪ (V a).con, ¬ IsMin s) (φ : Formula A) :
@@ -135,9 +127,8 @@ theorem closure_pro_disj_conj (P Q : Set S ⊙ Set S) :
   rw [closure_eq_upperClosure, closure_eq_upperClosure, pro_disj, pro_conj, upperClosure_union,
     upperClosure_sups, inf_sup_self]
 
-/-- A fusion `a ⊔ b` of the verifier of `A` with a verifier of `B` exactly verifies
-`A ∨ (A ∧ B)` and not `A`, and does not exemplify the inexact verifiers of `A ∨ (A ∧ B)`, where
-neither state is part of the other. -/
+/-- If neither of `a` and `b` is part of the other, then `a ⊔ b` exactly verifies `A ∨ (A ∧ B)`,
+does not exactly verify `A`, and does not exemplify the inexact verifiers of `A ∨ (A ∧ B)`. -/
 theorem sup_mem_pro_disj_conj_and_not_exemplifies (ha : P.pro = {a}) (hb : b ∈ Q.pro)
     (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     a ⊔ b ∈ (disj P (conj P Q)).pro ∧ a ⊔ b ∉ P.pro ∧

@@ -9,40 +9,34 @@ public import Mathlib.Logic.Relation
 /-!
 # Kratzer (2002): Facts: particulars or information units?
 
-Situations are parts of worlds, and a proposition is a set of situations. A fact that exemplifies
-a proposition `p` is a situation that contains nothing that does not contribute to the truth of
-`p`: every part of it is in `p`, or it is a minimal member of `p`. This is
-`Mereology.Exemplifies` in the topology whose open sets are the sets closed under parts, where
-the persistent propositions are the closed sets, and the minimal facts of a persistent
-proposition are the generic points of its irreducible components.
+Situations are parts of worlds and carry the lower set topology, and a proposition is a set of
+situations. A fact that exemplifies a proposition `p` is a situation that contains nothing that does
+not contribute to the truth of `p`: every part of it is in `p`, or it is a minimal member of `p`.
+This is `Mereology.Exemplifies`.
 
-Knowing `p` requires a belief about a fact that exemplifies `p`. Whether a situation exemplifies
-a proposition depends on the proposition only among the parts of the situation, so in a world
-where one disjunct is nowhere true the facts that exemplify a disjunction are those that
-exemplify the other disjunct. The believer of the disjunction who has no belief about any such
-fact has a true belief and no knowledge. In a model with three teapots and a pair of scissors,
-the proposition that there are three teapots is exemplified by the three teapots alone, the
-proposition that there are two by each pair of them, and the proposition that there are teapots
-by every situation with teapots and nothing else. No set of stars exemplifies the proposition
-that there are infinitely many.
+Knowing `p` requires a belief about a fact that exemplifies `p`. In a world where `q` is nowhere
+true, the facts that exemplify `q ∪ r` are those that exemplify `r`, so a belief in the disjunction
+that is not about such a fact is true and is not knowledge. In a model with three teapots and a pair
+of scissors, the proposition that there are three teapots is exemplified by the three teapots alone,
+the proposition that there are two by each pair of them, and the proposition that there are teapots
+by every situation that contains only teapots. No set of stars exemplifies the proposition that
+there are infinitely many.
 
-A proposition `p` lumps `q` in a world when `p` is true there and `q` is true in every part of
-the world in which `p` is, which is to say that `p` is included in `q` near the world. At a world
-that exemplifies `p`, either `q` is true throughout the world or the world is a minimal member of
-`p` and `q` is true in it.
+A proposition `p` lumps `q` in a world `w` if `p` is true in `w` and `q` is true in every part of
+`w` in which `p` is, that is, if `p` is included in `q` near `w`. If `w` exemplifies `p`, then `p`
+lumps `q` in `w` iff `q` is true in every part of `w`, or `w` is a minimal member of `p` and `q` is
+true in `w`.
 
-The facts that counterfactuals are evaluated against are propositions. A natural proposition is
-a persistent proposition that does not distinguish maximally similar situations, and the natural
-extension of a situation is the least natural proposition true in it. The natural extension of
-`f` lumps that of `g`, in a world that `f` is part of, exactly when `g` reaches `f` by parthood
-and similarity. The natural extension of a fact in a natural proposition is incompatible with the
-negation of that proposition, so the propositional fact that stands for a true disjunction is
-incompatible with the negation of its true disjunct. A set of propositions drawn from natural
-extensions none of which includes another is closed under lumping. In the model of
-[kratzer-1989], the propositional facts of the two parts of the actual world are the proposition
-that Paula is buying apples and the proposition that the Atlantic is not drying up, and on them
-the premise semantics without closure under lumping has it that the Atlantic would not be drying
-up if Paula weren't buying apples.
+The facts that counterfactuals are evaluated against are propositions. We define `IsNatural sim p`,
+a persistent proposition that does not distinguish maximally similar situations, and
+`naturalExtension sim s`, the least natural proposition true in `s`. If `f` is part of `w`, the
+natural extension of `f` lumps that of `g` in `w` iff `f` is in the natural extension of `g`, so a
+set of natural extensions none of which includes another is closed under lumping. The natural
+extension of a fact in a natural proposition `r` is incompatible with the negation of `r`. In the
+model of [kratzer-1989], the natural extensions of the two parts of the actual world are the
+proposition that Paula is buying apples and the proposition that the Atlantic is not drying up, and
+the premise semantics on them, without closure under lumping, makes it true that the Atlantic would
+not be drying up if Paula weren't buying apples.
 
 ## Implementation notes
 
@@ -79,9 +73,8 @@ section Facts
 variable {S : Type*} [TopologicalSpace S] [PartialOrder S] [Topology.IsLowerSet S]
   {p q r : Set S} {w s : S}
 
-/-- In a world where `q` is nowhere true, the facts that exemplify the disjunction of `q` and `r`
-are those that exemplify `r`, as the fact that exemplifies (4), that Jones owns a Ford or Brown
-is in Barcelona, is the fact that Brown is in Barcelona. -/
+/-- If `q` is true in no part of `w`, then a part of `w` exemplifies `q ∪ r` iff it exemplifies `r`.
+-/
 theorem exemplifies_union_iff (hq : Disjoint q (Iic w)) (hs : s ≤ w) :
     Exemplifies (q ∪ r) s ↔ Exemplifies r s :=
   iff_of_eq <| (dependsOn_exemplifies_Iic s).congr <| Set.ext fun _ ↦ and_congr_right fun hy ↦
@@ -122,9 +115,9 @@ def atLeast (n : ℕ) : Set {s : Finset (Fin 4) // s.Nonempty} := {s | n ≤ (s.
 instance (n : ℕ) : DecidablePred (· ∈ atLeast n) :=
   fun s ↦ inferInstanceAs (Decidable (n ≤ (s.1 ∩ teapots).card))
 
-/-- The proposition that there are three teapots is exemplified by the three teapots and by
-nothing else, the proposition that there are two by the pairs of teapots, and the proposition
-that there are teapots by the situations with teapots and nothing else. -/
+/-- The proposition that there are three teapots is exemplified by the three teapots alone, the
+proposition that there are two by the pairs of teapots, and the proposition that there are teapots
+by the situations that contain only teapots. -/
 theorem exemplifies_atLeast_iff : ∀ x : {s : Finset (Fin 4) // s.Nonempty},
     (Exemplifies (atLeast 3) x ↔ x.1 = teapots) ∧
       (Exemplifies (atLeast 2) x ↔ x.1 ⊆ teapots ∧ x.1.card = 2) ∧
@@ -149,7 +142,7 @@ section Natural
 variable {S : Type*} [Preorder S] (sim : S → S → Prop) {p r a : Set S} {A : Set (Set S)}
   {D : Set S} {w f g : S}
 
-/-- A natural proposition is a persistent proposition that does not distinguish maximally similar
+/-- A proposition is natural if it is persistent and does not distinguish maximally similar
 situations (§6.6). -/
 structure IsNatural (p : Set S) : Prop where
   /-- The proposition is persistent. -/
@@ -157,8 +150,8 @@ structure IsNatural (p : Set S) : Prop where
   /-- The proposition is true in the situations maximally similar to one it is true in. -/
   mem_of_sim : ∀ ⦃s t⦄, sim s t → s ∈ p → t ∈ p
 
-/-- The natural extension of a situation: the situations reached from it by steps of parthood
-and of maximal similarity (§6.6). -/
+/-- The natural extension of `s`: the situations reached from `s` by steps of parthood and of
+maximal similarity (§6.6). -/
 def naturalExtension (s : S) : Set S :=
   {t | Relation.ReflTransGen (fun a b ↦ a ≤ b ∨ sim a b) s t}
 
@@ -175,8 +168,8 @@ theorem IsNatural.naturalExtension_subset (hp : IsNatural sim p) {s : S} (hs : s
   | refl => exact hs
   | tail _ hbc ih => exact hbc.elim (fun h ↦ hp.isUpperSet h ih) fun h ↦ hp.mem_of_sim h ih
 
-/-- The natural extension of `f` lumps that of `g`, in a world that `f` is part of, exactly when
-`g` reaches `f` by parthood and similarity. -/
+/-- If `f` is part of `w`, then the natural extension of `f` lumps that of `g` in `w` iff `f` is in
+the natural extension of `g`. -/
 theorem lumps_naturalExtension_iff (hf : f ≤ w) :
     Lumps (naturalExtension sim f) (naturalExtension sim g) w ↔ f ∈ naturalExtension sim g :=
   ⟨fun h ↦ h.localImpl hf (mem_naturalExtension_self sim f),
@@ -188,8 +181,8 @@ theorem not_isCompatible_compl_naturalExtension (hr : IsNatural sim r) (hf : f �
     ¬ IsCompatible rᶜ {naturalExtension sim f} := fun ⟨_, _, hv⟩ ↦
   hv rᶜ (mem_insert _ _) (hr.naturalExtension_subset hf (hv _ (mem_insert_of_mem _ rfl)))
 
-/-- A set of propositions drawn from the antecedent, false in the world, and from natural
-extensions of parts of the world none of which includes another is closed under lumping. -/
+/-- If no natural extension of a member of `D` includes another and the antecedent `a` is false in
+`w`, then every set of them with `a` is closed under lumping in `w`. -/
 theorem closedUnderLumping_of_isAntichain (hD : ∀ f ∈ D, f ≤ w)
     (hF : IsAntichain (· ⊆ ·) (naturalExtension sim '' D))
     (hA : A ⊆ insert a (naturalExtension sim '' D)) (ha : w ∉ a) :
@@ -218,8 +211,8 @@ in the model is that world itself. -/
 
 section Paula
 
-/-- Maximal similarity in the model: the calm of the Atlantic in the actual world and the world
-in which only Paula's purchase differs. -/
+/-- Maximal similarity in the model: the calm of the Atlantic in the actual world is similar to the
+world in which only Paula's purchase differs. -/
 def sim (a b : Sit) : Prop := a = .calm ∧ b = .noApples
 
 -- the propositional fact of the purchase is (9a) of [kratzer-1989]
@@ -236,9 +229,9 @@ theorem naturalExtension_calm : naturalExtension sim Sit.calm = notAd := by
   rintro s (rfl | rfl | rfl)
   exacts [.refl, .single (.inl (by decide)), .single (.inr ⟨rfl, rfl⟩)]
 
-/-- With the propositional facts of Paula's purchase and of the calm of the Atlantic as the facts
-of the actual world, adding facts to the antecedent as consistency allows, without closure under
-lumping, has it that the Atlantic would not be drying up if Paula weren't buying apples. -/
+/-- With the natural extensions of Paula's purchase and of the calm of the Atlantic as the facts,
+the premise semantics without closure under lumping makes it true that the Atlantic would not be
+drying up if Paula weren't buying apples. -/
 theorem would_consistentPremiseSets_compl_ad :
     Would (consistentPremiseSets (naturalExtension sim '' {Sit.purchase, Sit.calm}) notPa)
       adᶜ := by
