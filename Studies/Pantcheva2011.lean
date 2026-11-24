@@ -3,7 +3,7 @@ module
 public import Linglib.Morphology.Paradigm.Contiguity
 public import Linglib.Core.Algebra.Order.Interval.Set.Instances
 public import Mathlib.Topology.UnitInterval
-public import Linglib.Semantics.Locative.Shape
+public import Linglib.Semantics.Space.Shape
 public import Studies.Zwarts2005
 
 /-!

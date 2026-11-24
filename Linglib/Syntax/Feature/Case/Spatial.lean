@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Feature.Case.Basic
-public import Linglib.Semantics.Locative.Basic
+public import Linglib.Semantics.Space.Locative
 public import Mathlib.Data.Fintype.Prod
 
 /-!

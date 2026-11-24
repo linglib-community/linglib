@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Locative.Shape
+public import Linglib.Semantics.Space.Shape
 public import Mathlib.Algebra.Order.Group.Abs
 public import Studies.Stassen1985
 public import Studies.Zwarts2005

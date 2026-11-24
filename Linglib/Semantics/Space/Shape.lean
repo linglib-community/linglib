@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Crossing
-public import Linglib.Semantics.Locative.Basic
+public import Linglib.Semantics.Space.Locative
 
 /-!
 # Shapes of paths
