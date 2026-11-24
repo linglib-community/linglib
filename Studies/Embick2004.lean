@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Embick2004
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Syntax.Tree.Projection
+public import Linglib.Syntax.Projection.Tree
 public import Linglib.Data.Examples.Readers
 
 /-!

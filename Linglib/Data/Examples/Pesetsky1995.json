@@ -1,0 +1,652 @@
+{
+ "features": [
+  {
+   "key": "subject",
+   "lean": "subject",
+   "type": "Subject",
+   "doc": "The role of the subject.",
+   "levels": [
+    {
+     "name": "agent",
+     "label": "agent",
+     "doc": "an Agent"
+    },
+    {
+     "name": "experiencer",
+     "label": "experiencer",
+     "doc": "an Experiencer"
+    },
+    {
+     "name": "causer",
+     "label": "causer",
+     "doc": "a Causer, which performs no action"
+    },
+    {
+     "name": "suggestor",
+     "label": "suggestor",
+     "doc": "a Suggestor, the manner or remarks that suggest an emotion"
+    }
+   ]
+  },
+  {
+   "key": "frame",
+   "lean": "frame",
+   "type": "Frame",
+   "doc": "What introduces the argument of the predicate that follows its first object.",
+   "levels": [
+    {
+     "name": "bare",
+     "label": "bare",
+     "doc": "no such argument"
+    },
+    {
+     "name": "doubleObject",
+     "label": "doubleObject",
+     "doc": "a second object with no overt preposition"
+    },
+    {
+     "name": "toPhrase",
+     "label": "toPhrase",
+     "doc": "the preposition to"
+    },
+    {
+     "name": "forPhrase",
+     "label": "forPhrase",
+     "doc": "the preposition for"
+    },
+    {
+     "name": "atPhrase",
+     "label": "atPhrase",
+     "doc": "the preposition at"
+    },
+    {
+     "name": "aboutPhrase",
+     "label": "aboutPhrase",
+     "doc": "the preposition about"
+    }
+   ]
+  }
+ ],
+ "index": {
+  "type": "Example",
+  "doc": "The examples of the book."
+ },
+ "examples": [
+  {
+   "id": "pesetsky1995_171a",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(171a)"
+   },
+   "language": "stan1293",
+   "primaryText": "The article in the Times angered Bill at the government.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "unacceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "causer"
+    ],
+    [
+     "frame",
+     "atPhrase"
+    ],
+    [
+     "predicate",
+     "anger"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_171c",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(171c)"
+   },
+   "language": "stan1293",
+   "primaryText": "The television set worried John about the veracity of Bill's alibi.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "unacceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "causer"
+    ],
+    [
+     "frame",
+     "aboutPhrase"
+    ],
+    [
+     "predicate",
+     "worry"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_181b",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(181b)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill was angry (at the government).",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "experiencer"
+    ],
+    [
+     "frame",
+     "atPhrase"
+    ],
+    [
+     "predicate",
+     "angry"
+    ]
+   ],
+   "comment": "The parentheses mark the phrase as optional.",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_494a",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(494a)"
+   },
+   "language": "stan1293",
+   "primaryText": "The war years gave Mailer his first big success.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "causer"
+    ],
+    [
+     "frame",
+     "doubleObject"
+    ],
+    [
+     "predicate",
+     "give"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_494b",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(494b)"
+   },
+   "language": "stan1293",
+   "primaryText": "The war years gave his first big success to Mailer.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "unacceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "causer"
+    ],
+    [
+     "frame",
+     "toPhrase"
+    ],
+    [
+     "predicate",
+     "give"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_497a",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(497a)"
+   },
+   "language": "stan1293",
+   "primaryText": "Katya taught me Russian.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "agent"
+    ],
+    [
+     "frame",
+     "doubleObject"
+    ],
+    [
+     "predicate",
+     "teach"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_497b",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(497b)"
+   },
+   "language": "stan1293",
+   "primaryText": "Katya taught Russian to me.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "agent"
+    ],
+    [
+     "frame",
+     "toPhrase"
+    ],
+    [
+     "predicate",
+     "teach"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_497c",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(497c)"
+   },
+   "language": "stan1293",
+   "primaryText": "Lipson's textbook taught me Russian.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "causer"
+    ],
+    [
+     "frame",
+     "doubleObject"
+    ],
+    [
+     "predicate",
+     "teach"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_497d",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(497d)"
+   },
+   "language": "stan1293",
+   "primaryText": "Lipson's textbook taught Russian to me.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "unacceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "causer"
+    ],
+    [
+     "frame",
+     "toPhrase"
+    ],
+    [
+     "predicate",
+     "teach"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_502a",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(502a)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill got Mary the prize.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "agent"
+    ],
+    [
+     "frame",
+     "doubleObject"
+    ],
+    [
+     "predicate",
+     "get"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_502b",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(502b)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill got the prize for Mary.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "agent"
+    ],
+    [
+     "frame",
+     "forPhrase"
+    ],
+    [
+     "predicate",
+     "get"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_502c",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(502c)"
+   },
+   "language": "stan1293",
+   "primaryText": "Hard work got Mary the prize.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "causer"
+    ],
+    [
+     "frame",
+     "doubleObject"
+    ],
+    [
+     "predicate",
+     "get"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_502d",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(502d)"
+   },
+   "language": "stan1293",
+   "primaryText": "Hard work got the prize for Mary.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "unacceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "causer"
+    ],
+    [
+     "frame",
+     "forPhrase"
+    ],
+    [
+     "predicate",
+     "get"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_503c",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(503c)"
+   },
+   "language": "stan1293",
+   "primaryText": "The conversation with Sue handed Bill a golden opportunity.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "causer"
+    ],
+    [
+     "frame",
+     "doubleObject"
+    ],
+    [
+     "predicate",
+     "hand"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_503d",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(503d)"
+   },
+   "language": "stan1293",
+   "primaryText": "The conversation with Sue handed a golden opportunity to Bill.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "causer"
+    ],
+    [
+     "frame",
+     "toPhrase"
+    ],
+    [
+     "predicate",
+     "hand"
+    ]
+   ],
+   "comment": "",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_518",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(518)"
+   },
+   "language": "stan1293",
+   "primaryText": "Pictures of each other annoyed the kids.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "causer"
+    ],
+    [
+     "frame",
+     "bare"
+    ],
+    [
+     "predicate",
+     "annoy"
+    ]
+   ],
+   "comment": "Printed with the subject bracketed and coindexed with the object.",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_534",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(534)"
+   },
+   "language": "stan1293",
+   "primaryText": "His manner was angry.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "suggestor"
+    ],
+    [
+     "frame",
+     "bare"
+    ],
+    [
+     "predicate",
+     "angry"
+    ]
+   ],
+   "comment": "Printed in brackets under the tree (534).",
+   "verified": "text-layer"
+  },
+  {
+   "id": "pesetsky1995_535",
+   "source": {
+    "bibkey": "pesetsky-1995",
+    "paperLabel": "(535)"
+   },
+   "language": "stan1293",
+   "primaryText": "His manner was angry at Mary.",
+   "discourseSegments": [],
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "unacceptable",
+   "contrasts": [],
+   "readings": [],
+   "paperFeatures": [
+    [
+     "subject",
+     "suggestor"
+    ],
+    [
+     "frame",
+     "atPhrase"
+    ],
+    [
+     "predicate",
+     "angry"
+    ]
+   ],
+   "comment": "Printed in brackets under the tree (535).",
+   "verified": "text-layer"
+  }
+ ]
+}

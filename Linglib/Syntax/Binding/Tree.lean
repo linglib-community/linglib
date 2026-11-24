@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Binding.Basic
-public import Linglib.Syntax.Tree.Command
+public import Linglib.Syntax.Command.Tree
 
 /-!
 # Binding configurations of phrase-structure trees

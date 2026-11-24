@@ -9,7 +9,7 @@ public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Atoms
 public import Linglib.Syntax.Command.Closeness
 public import Linglib.Syntax.Command.RoseTree
-public import Linglib.Syntax.Projection
+public import Linglib.Syntax.Projection.GornAddress
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
@@ -342,17 +342,13 @@ section Complement
 variable (t : PlanarSyntacticObject L ι)
 
 /-- The complement of the head at `p` is its sister. -/
-def complement (p : GornAddress) : GornAddress := p.parent * .of (1 - p.last?.getD 0)
-
-theorem parent_covBy_complement (p : GornAddress) : p.parent ⋖ complement p :=
-  GornAddress.covBy_iff.2 ⟨_, rfl⟩
-
-@[simp] theorem parent_complement (p : GornAddress) : (complement p).parent = p.parent :=
-  GornAddress.ext (by simp [complement])
+abbrev complement (p : GornAddress) : GornAddress := p.sister
 
 variable {t} in
-theorem complement_complement {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths) (h0 : h ≠ ⊥) :
-    complement (complement h) = h := by
+-- A position other than the root is one of the two daughters of its parent.
+private theorem exists_eq_parent_mul_of {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
+    (h0 : h ≠ ⊥) : ∃ s i, t.toRoseTree[h.parent]? = some s ∧ s.arity = 2 ∧ i < 2 ∧
+      h = h.parent * .of i := by
   set hp : t.toRoseTree.Positions := ⟨h, hh⟩
   have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
   have hm : Order.pred hp ⋖ hp :=
@@ -365,12 +361,14 @@ theorem complement_complement {h : GornAddress} (hh : h ∈ t.toRoseTree.validPa
     obtain ⟨s, hs, his⟩ := mem_validPaths_append_singleton_iff.1 hv
     rw [(Order.pred hp).getElem?_eq, Option.some.injEq] at hs
     exact hlen ▸ hs ▸ his
-  have key : complement (complement ((Order.pred hp).val * .of i)) =
-      (Order.pred hp).val * .of i := by
-    simp only [complement, GornAddress.parent_mul_of, GornAddress.last?_mul_of, Option.getD_some]
-    congr 2
-    omega
-  rwa [← show h = (Order.pred hp).val * .of i from hi] at key
+  exact ⟨_, i, (Order.pred hp).getElem?_eq, hlen, hlt, hi⟩
+
+variable {t} in
+theorem complement_complement {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths) (h0 : h ≠ ⊥) :
+    complement (complement h) = h := by
+  obtain ⟨-, i, -, -, hi, he⟩ := exists_eq_parent_mul_of hh h0
+  rw [he]
+  exact GornAddress.sister_sister_mul_of _ hi
 
 variable {t} in
 /-- In a syntactic object, a head other than the root c-commands exactly the positions below its
@@ -378,40 +376,9 @@ complement. -/
 theorem cCommands_iff_complement_le {h q : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
     (h0 : h ≠ ⊥) (hq : q ∈ t.toRoseTree.validPaths) :
     t.toRoseTree.CCommands h q ↔ complement h ≤ q := by
-  set hp : t.toRoseTree.Positions := ⟨h, hh⟩
-  have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
-  have hm : Order.pred hp ⋖ hp :=
-    Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
-  have hmv : (Order.pred hp).val = h.parent := Positions.pred_val hp
-  have hlen := PlanarSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
-  have hcv : complement h ∈ t.toRoseTree.validPaths := by
-    refine mem_validPaths_append_singleton_iff.2 ⟨(Order.pred hp).subtree, ?_, ?_⟩
-    · rw [← hmv]
-      exact (Order.pred hp).getElem?_eq
-    · rw [hlen]
-      omega
-  set hc : t.toRoseTree.Positions := ⟨complement h, hcv⟩
-  have hmc : Order.pred hp ⋖ hc :=
-    Positions.covBy_iff.2 (hmv ▸ parent_covBy_complement h)
-  have hhc : hp ≠ hc := fun he ↦ by
-    have := congrArg (fun r : t.toRoseTree.Positions ↦ r.val.last?) he
-    simp only [hp, hc, complement, GornAddress.last?_mul_of] at this
-    cases hl : h.last? <;> simp [hl] at this
-    omega
-  rw [cCommands_iff_parent_lt h0
-    (PlanarSyntacticObject.parent_mem_branching (t := t) hp0)]
-  set qp : t.toRoseTree.Positions := ⟨q, hq⟩
-  constructor
-  · rintro ⟨hlt, hnl⟩
-    obtain ⟨e, hme, heq⟩ := exists_covBy_le_of_lt
-      (show Order.pred hp < qp from Subtype.coe_lt_coe.1 (hmv ▸ hlt))
-    rcases PlanarSyntacticObject.eq_or_eq_of_covBy hm hmc hhc hme with rfl | rfl
-    · exact absurd heq hnl
-    · exact heq
-  · intro hcq
-    refine ⟨(parent_covBy_complement h).lt.trans_le hcq, fun hhq ↦ hhc (Subtype.ext ?_)⟩
-    exact IsForestOrder.eq_of_covBy_of_le (Positions.covBy_iff.1 hm) (Positions.covBy_iff.1 hmc)
-      hhq hcq
+  obtain ⟨s, i, hs, hs2, hi, he⟩ := exists_eq_parent_mul_of hh h0
+  rw [he]
+  exact cCommands_iff_sister_le hs hs2 hi hq
 
 end Complement
 

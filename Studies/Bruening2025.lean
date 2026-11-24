@@ -4,7 +4,7 @@ public import Studies.BrueningAlKhalaf2020
 public import Linglib.Data.Examples.Bruening2025
 public import Linglib.Data.Examples.BrueningAlKhalaf2020
 public import Linglib.Data.Statistics.Bruening2025
-public import Linglib.Syntax.Tree.Projection
+public import Linglib.Syntax.Projection.Tree
 public import Linglib.Data.Examples.Readers
 
 /-!

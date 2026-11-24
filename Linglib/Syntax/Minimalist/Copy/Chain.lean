@@ -8,7 +8,7 @@ module
 public import Linglib.Syntax.Minimalist.Copy.FormCopy
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.SyntacticObject.Projection
-public import Linglib.Syntax.Projection
+public import Linglib.Syntax.Projection.GornAddress
 public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Setoid.Basic
 

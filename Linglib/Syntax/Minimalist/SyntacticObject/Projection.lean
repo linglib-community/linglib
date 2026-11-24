@@ -12,7 +12,7 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 
 The theories of headedness differ in which daughter of a phrase projects, so a head function, the
 index of the head daughter at each position of each object, is a parameter, and the projections of
-`Syntax/Projection.lean` follow from it: the maximal projections, the maximal projection of a
+`Syntax/Projection/GornAddress.lean` follow from it: the maximal projections, the maximal projection of a
 position, and the lexical head of the phrase there. Whatever reads projection takes the head
 function its analysis assumes.
 

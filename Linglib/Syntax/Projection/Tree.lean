@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Projection
+public import Linglib.Syntax.Projection.GornAddress
 public import Linglib.Syntax.Tree.Basic
 
 /-!

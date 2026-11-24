@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.SadakaneKoizumi1995
 public import Linglib.Fragments.Japanese.Adpositions
 public import Linglib.Fragments.Japanese.Case
-public import Linglib.Syntax.Tree.Command
+public import Linglib.Syntax.Command.Tree
 public import Linglib.Data.Examples.Readers
 
 /-!

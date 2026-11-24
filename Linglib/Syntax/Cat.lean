@@ -9,7 +9,7 @@ A syntactic category is a lexical category, named by its Universal Dependencies 
 the clause `S`, which projects from no head. A category carries no level of projection: a noun
 phrase and the noun that heads it both have the category `N`, and whether a node is a minimal, an
 intermediate or a maximal projection is read off the tree from its head daughters
-(`Syntax/Tree/Projection.lean`). This is the category stripped of bar level that HPSG's head value
+(`Syntax/Projection/Tree.lean`). This is the category stripped of bar level that HPSG's head value
 records. `PhraseStructure.Cat` is the default category type of `PhraseStructure.Tree`.
 
 ## Implementation notes

@@ -216,4 +216,28 @@ theorem not_cCommands_mul_of_mul (hp : p * .of j ∈ t.branching) (hij : i ≠ j
 
 end Subtree
 
+/-- In a binary node a daughter c-commands exactly the positions below its sister. -/
+theorem cCommands_iff_sister_le {t s : RoseTree β} {m q : GornAddress} {i : ℕ}
+    (hm : t[m]? = some s) (hs : s.arity = 2) (hi : i < 2) (hq : q ∈ t.validPaths) :
+    t.CCommands (m * .of i) q ↔ (m * .of i).sister ≤ q := by
+  have hb : (m * .of i).parent ∈ t.branching := by
+    rw [GornAddress.parent_mul_of]
+    exact mem_branching.2 ⟨s, hm, hs.ge⟩
+  rw [cCommands_iff_parent_lt (ne_bot_of_gt (GornAddress.lt_mul_of m i)) hb,
+    GornAddress.parent_mul_of, GornAddress.sister_mul_of]
+  constructor
+  · rintro ⟨hlt, hnl⟩
+    obtain ⟨e, hme, heq⟩ := exists_covBy_le_of_lt hlt
+    obtain ⟨j, rfl⟩ := GornAddress.covBy_iff.1 hme
+    obtain ⟨s', hs', hj⟩ := mem_validPaths_append_singleton_iff.1 (validPaths_prefix_closed hq heq)
+    rw [getElem?_gornAddress] at hm
+    obtain rfl : s = s' := Option.some.inj (hm.symm.trans hs')
+    have hji : j ≠ i := fun h ↦ hnl (h ▸ heq)
+    rw [arity] at hs
+    rwa [show 1 - i = j by omega]
+  · intro h
+    refine ⟨(GornAddress.lt_mul_of m _).trans_le h, fun h' ↦ ?_⟩
+    have := GornAddress.of_inj_of_mul_of_le h' h
+    omega
+
 end RoseTree
