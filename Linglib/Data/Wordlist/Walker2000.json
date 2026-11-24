@@ -1,5 +1,5 @@
 {
-  "description": "The forms with nasal harmony that Walker (2000) gives for Sundanese, the Johore dialect of Malay and the Kolokuma dialect of Ijo, examples (3) to (5), as printed: a tilde marks a nasalized segment, the glottals included. The forms of Scottish Gaelic and Tuyuca are not entered.",
+  "description": "The forms with nasal harmony that Walker (2000) gives for Sundanese, the Johore dialect of Malay and the Kolokuma dialect of Ijo, examples (3) to (5), as printed: a tilde marks a nasalized segment, the glottals included. The forms of Scottish Gaelic and Tuyuca are not entered. The labial-velar stop of (5i), printed gb, is one segment.",
   "Types": {
     "Language": [
       {
@@ -640,9 +640,9 @@
     {
       "ID": "walker2000_breath",
       "Lexeme_ID": "breath",
-      "Form": "ũmba",
+      "Form": "ʊ̃mba",
       "Segments": [
-        "ũ",
+        "ʊ̃",
         "m",
         "b",
         "a"

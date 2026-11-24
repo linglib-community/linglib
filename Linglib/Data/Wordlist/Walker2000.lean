@@ -317,8 +317,8 @@ def breath : Form Cell :=
   { id := "walker2000_breath"
     lexeme := Lexemes.breath
     cell := {}
-    form := "ũmba"
-    segments := ["ũ", "m", "b", "a"]
+    form := "ʊ̃mba"
+    segments := ["ʊ̃", "m", "b", "a"]
     source := [
       ⟨"walker-2000", "(5a)"⟩
     ] }

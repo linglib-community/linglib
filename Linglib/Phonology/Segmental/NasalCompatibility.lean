@@ -8,14 +8,14 @@ public import Mathlib.Order.Interval.Set.Basic
 
 `Phonology.NasalCompatibility` is the hierarchy of segment classes by their compatibility with
 nasalization: obstruent stops, fricatives, liquids, glides, glottals, vowels and sonorant stops, a
-linear order. `NasalCompatibility.ofSegment` reads the class of a segment off [consonantal],
-[sonorant], [continuant], [approximant] and [syllabic].
+linear order. `NasalCompatibility.ofSegment` reads the class of a segment off its place features
+and [consonantal], [sonorant], [continuant], [approximant] and [syllabic].
 
-Nasal harmonies differ in the classes that nasality spreads through, and a class that undergoes
-implies every more compatible class. A harmony is therefore given by a cut `c` on the hierarchy:
-`c.IsTarget s` holds when the class of `s` lies in `Set.Ico c sonorantStop`, the classes from `c`
-up short of the sonorant stops, which are nasal already. The cut at the glides takes the segments
-that are [−consonantal].
+Nasal harmonies differ in the classes that nasality spreads through, and in general a class that
+undergoes implies every more compatible class. The targets of a harmony are then given by a cut
+`c` on the hierarchy: `c.IsTarget s` holds when the class of `s` lies in
+`Set.Ico c sonorantStop`, the classes from `c` up short of the sonorant stops, which are nasal
+already. The cut at the glides takes the segments that are [−consonantal] and the glottals.
 
 ## Main definitions
 
@@ -30,18 +30,25 @@ that are [−consonantal].
 * `Phonology.NasalCompatibility.IsTarget.of_le`: a segment at least as compatible as a target,
   and not a sonorant stop, is a target.
 * `Phonology.NasalCompatibility.isTarget_glide_iff`: the cut at the glides takes the segments
-  that are [−consonantal].
+  that are [−consonantal] and the glottals.
 * `Phonology.NasalCompatibility.monotoneOn_toSonority`,
   `Phonology.NasalCompatibility.not_monotone_toSonority`: sonority rises with compatibility
   among the classes other than the glottals and the sonorant stops, and not among all classes.
 
 ## Implementation notes
 
-The scale of nasalized segments in [walker-2000] has six classes. The glottals stand between the
-glides and the vowels as in her summary of the survey, where they are in parentheses: in most
-languages nasality spreads through them when it spreads through vocoids, and in a few they
-pattern with the obstruents. A sonorant stop is read off [−approximant], as the nasals of
-`Phonology.Sonority.ofSegment` are, where [walker-2000] writes [+sonorant, −continuant].
+* The scale of nasalized segments in [walker-2000] has six classes. The glottals stand between
+  the glides and the vowels as in her summary of the survey, where they are in parentheses: in
+  most languages nasality spreads through them when it spreads through vocoids.
+* The linear order is the general classification. The survey also has languages in which
+  glottals block where glides undergo, the glottals patterning there with the obstruents;
+  languages that differ in the relative order of voiced stops and voiceless fricatives; and
+  vowels that block by their height. None of these is represented.
+* A glottal is a segment with none of the places [labial], [coronal] and [dorsal]. The chart
+  has the glottal stop [+consonantal] and [h] [−consonantal], so [consonantal] does not pick
+  the class out.
+* A sonorant stop is read off [−approximant], as the nasals of `Phonology.Sonority.ofSegment`
+  are, where [walker-2000] writes [+sonorant, −continuant].
 
 ## References
 
@@ -61,11 +68,11 @@ inductive NasalCompatibility where
   | fricative
   /-- The liquids, [+consonantal, +sonorant, +approximant]. -/
   | liquid
-  /-- The glides, [−consonantal, +sonorant] and not [+syllabic]. -/
+  /-- The glides, [−consonantal] with a place and not [+syllabic]. -/
   | glide
-  /-- The glottals, [−consonantal, −sonorant]. -/
+  /-- The glottals, [−labial, −coronal, −dorsal]. -/
   | glottal
-  /-- The vowels, [−consonantal, +sonorant, +syllabic]. -/
+  /-- The vowels, [−consonantal, +syllabic] with a place. -/
   | vowel
   /-- The sonorant stops, [+consonantal, +sonorant, −approximant]: the nasal stops. -/
   | sonorantStop
@@ -81,13 +88,14 @@ def rank : NasalCompatibility → ℕ
 instance : LinearOrder NasalCompatibility :=
   LinearOrder.lift' rank fun a b h ↦ by cases a <;> cases b <;> simp_all [rank]
 
-/-- The class of a segment: among the segments that are [−consonantal], a glottal if
-[−sonorant], else a vowel if [+syllabic], and otherwise a glide; among the others, a fricative or
-an obstruent stop if [−sonorant], according to [continuant], else a sonorant stop if
-[−approximant], and otherwise a liquid. -/
+/-- The class of a segment: a glottal if it has none of the places [labial], [coronal] and
+[dorsal]; among the other segments that are [−consonantal], a vowel if [+syllabic] and otherwise
+a glide; among the rest, a fricative or an obstruent stop if [−sonorant], according to
+[continuant], else a sonorant stop if [−approximant], and otherwise a liquid. -/
 def ofSegment (s : Segment) : NasalCompatibility :=
-  if s .consonantal = false then
-    if s .sonorant = false then .glottal else if s .syllabic = true then .vowel else .glide
+  if s .labial = false ∧ s .coronal = false ∧ s .dorsal = false then .glottal
+  else if s .consonantal = false then
+    if s .syllabic = true then .vowel else .glide
   else if s .sonorant = false then
     if s .continuant = true then .fricative else .obstruentStop
   else if s .approximant = false then .sonorantStop
@@ -111,10 +119,21 @@ theorem IsTarget.of_le (h : c.IsTarget s) (hst : ofSegment s ≤ ofSegment t)
 /-- A lower cut takes every target of a higher one. -/
 theorem IsTarget.anti (h : c'.IsTarget s) (hc : c ≤ c') : c.IsTarget s := ⟨hc.trans h.1, h.2⟩
 
-/-- The cut at the glides takes the segments that are [−consonantal]. -/
-theorem isTarget_glide_iff : glide.IsTarget s ↔ s .consonantal = false := by
-  unfold IsTarget ofSegment
-  split_ifs <;> simp_all <;> decide
+/-- No segment is a target with the cut at the sonorant stops. -/
+theorem not_isTarget_sonorantStop : ¬ sonorantStop.IsTarget s := fun h ↦
+  lt_irrefl _ (h.1.trans_lt h.2)
+
+/-- The cut at the glides takes the segments that are [−consonantal] and the glottals. -/
+theorem isTarget_glide_iff : glide.IsTarget s ↔
+    s .consonantal = false ∨ s .labial = false ∧ s .coronal = false ∧ s .dorsal = false := by
+  by_cases hp : s .labial = false ∧ s .coronal = false ∧ s .dorsal = false
+  · rw [IsTarget, ofSegment, ite_eq_left hp]
+    exact iff_of_true (by decide) (.inr hp)
+  · by_cases hc : s .consonantal = false
+    · rw [IsTarget, ofSegment, ite_eq_right hp, ite_eq_left hc]
+      exact iff_of_true (by split_ifs <;> decide) (.inl hc)
+    · rw [IsTarget, ofSegment, ite_eq_right hp, ite_eq_right hc]
+      exact iff_of_false (by split_ifs <;> decide) (not_or.2 ⟨hc, hp⟩)
 
 /-- The sonority of a class: the glottals, with the fricatives and the obstruent stops, are
 obstruents, and the sonorant stops are the nasals. -/

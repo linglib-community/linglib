@@ -48,13 +48,13 @@ regions of practical equivalence.
   other segment halts its search. Scanning from the right, it applies the paper's rule
   iteratively. The two differ on a nasal glide in the input, which triggers here; the phonemes
   have none.
-* The rules are those the paper prints. On the nasalization hierarchy of [walker-2000] the
-  targets of the printed rule, the segments that are [−consonantal], are the cut at the glides:
-  the vowels, the glides and the glottals, where the paper's prose names the vowels and the two
-  glides. Its prose restricts assimilation to a vowel before a nasal consonant of its own
-  syllable; the printed rule, and `assimilation`, have no such condition, so a vowel is nasalized
-  before a nasal consonant that begins a postposition. The paper's oral and pre-N stimuli have
-  no such postposition.
+* The rules are those the paper prints. The targets of the printed rule are the segments that are
+  [−consonantal]. Among the phonemes these are the targets of the cut at the glides on the
+  nasalization hierarchy of [walker-2000], the vowels, the glides and [h], where the paper's prose
+  names the vowels and the two glides. Its prose restricts assimilation to a vowel before a nasal
+  consonant of its own syllable; the printed rule, and `assimilation`, have no such condition, so a
+  vowel is nasalized before a nasal consonant that begins a postposition. The paper's oral and
+  pre-N stimuli have no such postposition.
 * The paper finds harmony optional before a contrastive nasal vowel and sets that aside in its
   analysis. `surface` applies harmony, and `assimilation.apply` is the derivation in which it
   does not apply; `Covert` takes the map as an argument, and is stated of both.
@@ -135,8 +135,8 @@ theorem vocoid_le_of_nasalVocoid_le (h : nasalVocoid ≤ s) : vocoid ≤ s :=
 end Classes
 
 /-- (5): nasal harmony, `[−cons] → [+nas] / __ [−cons]₀ V[+nas]`: the nasal harmony that
-vowels trigger, with the cut at the glides, scanning from the right. -/
-def harmony : SearchCopy Segment := Harmony.nasalSpread (·.IsVowel) .glide .right
+vowels trigger, with the [−consonantal] segments as targets, scanning from the right. -/
+def harmony : SearchCopy Segment := Harmony.nasalSpread (·.IsVowel) (vocoid ≤ ·) .right
 
 /-- (5): nasal assimilation, `V → [+nas] / __ C[+nas]`. -/
 def assimilation : Rule where
@@ -147,27 +147,29 @@ def assimilation : Rule where
 /-- The surface form of an underlying form: harmony, then assimilation. -/
 def surface (u : List Segment) : List Segment := assimilation.apply (harmony.apply u)
 
-theorem isTarget_glide_iff {s : Segment} : NasalCompatibility.glide.IsTarget s ↔ vocoid ≤ s :=
-  NasalCompatibility.isTarget_glide_iff.trans vocoid_le_iff.symm
+-- among the phonemes the targets are those of the cut at the glides on the nasalization hierarchy
+theorem isTarget_glide_iff : ∀ s ∈ Punjabi.Phonology.phonemes,
+    NasalCompatibility.glide.IsTarget s ↔ vocoid ≤ s := by
+  decide +kernel
 
 -- the segments that pass nasality on are the nasal vowels and glides
 theorem isNasalSource_iff {s : Segment} :
-    Harmony.IsNasalSource (·.IsVowel) .glide s ↔ nasalVocoid ≤ s := by
-  rw [Harmony.IsNasalSource, NasalCompatibility.isTarget_glide_iff, nasalVocoid_le_iff]
+    Harmony.IsNasalSource (·.IsVowel) (vocoid ≤ ·) s ↔ nasalVocoid ≤ s := by
+  rw [Harmony.IsNasalSource, vocoid_le_iff, nasalVocoid_le_iff]
   exact ⟨fun ⟨hn, h⟩ ↦ ⟨h.elim (·.2) id, hn⟩, fun ⟨hc, hn⟩ ↦ ⟨hn, .inr hc⟩⟩
 
 theorem harmony_emit (q : Option Segment) (s : Segment) :
     harmony.emit q s =
       if vocoid ≤ s ∧ ∃ c ∈ q, nasalVocoid ≤ c then s.setFeature .nasal true else s := by
   rw [harmony, Harmony.nasalSpread_emit]
-  simp only [isTarget_glide_iff, isNasalSource_iff]
+  simp only [isNasalSource_iff]
 
 theorem harmony_apply_cons (s : Segment) (w : List Segment) :
     harmony.apply (s :: w) =
       (if vocoid ≤ s ∧ ∃ c ∈ (harmony.apply w).head?, nasalVocoid ≤ c then
         s.setFeature .nasal true else s) :: harmony.apply w := by
   rw [harmony, Harmony.nasalSpread_apply_cons]
-  simp only [isTarget_glide_iff, isNasalSource_iff]
+  simp only [isNasalSource_iff]
 
 theorem assimilation_verdict (w : List Segment) (s : Segment) (d : List Segment) :
     assimilation.verdict w s d =
@@ -241,7 +243,7 @@ theorem harmony_apply_eq_self_iff {w : List Segment} :
     harmony.apply w = w ↔ w.IsChain fun a b ↦ ¬ Harmonizes a b := by
   rw [harmony, Harmony.nasalSpread_apply_eq_self_iff, Edge.orient_right, List.isChain_reverse]
   refine List.IsChain.iff fun a b ↦ ?_
-  simp only [isTarget_glide_iff, isNasalSource_iff, Harmonizes]
+  simp only [isNasalSource_iff, Harmonizes]
   tauto
 
 -- assimilation changes a word exactly where it applies

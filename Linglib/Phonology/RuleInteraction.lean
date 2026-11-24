@@ -51,9 +51,10 @@ two rules applied in that order.
 
 The relations take the first rule's map and the second rule's measure, not two rules.
 [kiparsky-1968] defines feeding and bleeding as functional relationships between rules, by what
-the application of one does to the forms the other applies to, and the two rules may belong to
-different modules, as when impoverishment feeds metathesis. The relations hold at a form; a
-relation between rules is the existence of such a form.
+the application of one does to the forms the other applies to. Stated of a map and a measure,
+the relations also hold between rules of different modules, as when impoverishment feeds
+metathesis. They hold at a form, as [bakovic-blumenfeld-2024] define them, and a relation
+between rules is the existence of such a form.
 
 A measure in a preorder covers both the set of forms a rule applies to and the number of places
 at which it applies, the input-rank of [bakovic-blumenfeld-2024].

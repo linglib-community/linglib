@@ -151,7 +151,7 @@ theorem mem_inputSet_of_feeds {α : Type*} [Preorder α] {m : List σ → α} (h
   h.not_isFixedPt
 
 omit [DecidableEq σ] in
--- (9): where `P` feeds `Q` in the sense of (18), the two orders give different results
+-- the order-dependence clause of (9) holds where `P` feeds `Q` in the sense of (18)
 theorem apply_ne_apply (h : Feeds P (· ∈ inputSet Q) x) : P (Q x) ≠ Q (P x) :=
   Feeds.apply_ne_apply h
 
@@ -347,7 +347,7 @@ theorem feeding_bedouin : Feeding vocalization.apply raising.apply [b, a, d, w] 
   · rw [hd]
     exact ⟨[b, a, d, u], by decide +kernel, by decide +kernel⟩
 
--- (10): raising before vocalization and vocalization before raising differ at *badw*
+-- (10): the two orders of raising and vocalization differ at *badw*, the first clause of (9)
 theorem order_bedouin :
     vocalization.apply (raising.apply [b, a, d, w]) ≠
       raising.apply (vocalization.apply [b, a, d, w]) :=
