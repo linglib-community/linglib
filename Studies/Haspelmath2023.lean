@@ -5,9 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Root.Basic
-public import Linglib.Morphology.Word.Comparative
+public import Linglib.Morphology.Word.Distributional
 
 /-!
 # Haspelmath (2023): Defining the word
@@ -16,18 +15,19 @@ Haspelmath defines a word as a free morph, a clitic, or a root or compound possi
 by nonrequired affixes and augmented by required affixes if there are any. A clitic is a bound
 morph that is neither a root nor an affix, and a required affix is one that must be present in
 a free form unless another affix replaces it. This file checks the definitions,
-`Morphology.Comparative.Inventory.IsWord` and its parts, against the paper's examples, and compares
+`Morphology.Distributional.IsWord` and its parts, against the paper's examples, and compares
 the definition with Bloomfield's minimum free form, which it is meant to correct.
 
 ## Implementation notes
 
-Each example is an inventory of the paper's free forms, each a list of morphs with textbook
-attachment labels, with the classes of its roots. The definition of an affix refers to the roots
-of Definition 6, which needs a free form with the root as its only contentful morph; on the free
+Each example is a list of the paper's free forms, each a list of forms with textbook attachment
+labels and the class of what it denotes. The definition of an affix refers to the roots of
+Definition 6, which needs a free form with the root as its only contentful morph; on the free
 forms the paper cites for Definition 2 these are exactly the contentful morphs
-(`roots_contentful`), and the other inventories take the contentful morphs as roots. The English
-article's distribution comes from the 2021 paper's *a house*, *a big house*. Compounds are not
-formalized.
+(`roots_contentful`), and the other examples take the contentful morphs as roots. The English
+article's distribution comes from the 2021 paper's *a house*, *a big house*. The genitive *'s* is
+also given without a possessum, *the boy I love's*, since a noun follows it in each of the
+paper's three forms. Compounds are not formalized.
 
 ## References
 
@@ -40,189 +40,176 @@ formalized.
 
 namespace Haspelmath2023
 
-open Morphology Morphology.Comparative
+open Morphology Morphology.Distributional
 
 /-! ### Roots -/
 
 /-- The English possessive *my*. -/
-def my : Morph := .procl "my"
+def my : Form := ⟨.procl "my", none⟩
 /-- The English object root *husband*. -/
-def husband : Morph := .root "husband"
+def husband : Form := ⟨.root "husband", some .object⟩
 /-- The English article *a*. -/
-def a : Morph := .procl "a"
+def a : Form := ⟨.procl "a", none⟩
 /-- The English object root *café*. -/
-def cafe : Morph := .root "café"
+def cafe : Form := ⟨.root "café", some .object⟩
 /-- The English pronoun *he*. -/
-def he : Morph := .procl "he"
+def he : Form := ⟨.procl "he", none⟩
 /-- The English auxiliary *is*. -/
-def is : Morph := .free "is"
+def is : Form := ⟨.free "is", none⟩
 /-- The English action root *work*. -/
-def work : Morph := .root "work"
+def work : Form := ⟨.root "work", some .action⟩
 /-- The English progressive suffix *-ing*. -/
-def ing : Morph := .suff "ing"
+def ing : Form := ⟨.suff "ing", none⟩
 /-- The English property root *nice*. -/
-def nice : Morph := .root "nice"
+def nice : Form := ⟨.root "nice", some .property⟩
 /-- The English adverb *now*. -/
-def now : Morph := .free "now"
+def now : Form := ⟨.free "now", none⟩
 /-- The English interjection *ouch*. -/
-def ouch : Morph := .free "ouch"
+def ouch : Form := ⟨.free "ouch", none⟩
 
 /-- The English free forms cited for Definitions 1 and 2 are *nice*, *work*, *now*, *ouch*,
 *my husband*, *a café* and *he is working*. -/
-def freeForms : Inventory Morph where
-  forms := [[nice], [work], [now], [ouch], [my, husband], [a, cafe], [he, is, work, ing]]
-  rootClass m :=
-    if m = husband ∨ m = cafe then some .object
-    else if m = work then some .action else if m = nice then some .property else none
+def freeForms : List (List Form) :=
+  [[nice], [work], [now], [ouch], [my, husband], [a, cafe], [he, is, work, ing]]
 
 -- Definition 6
 theorem roots_contentful :
-    ∀ m ∈ freeForms.forms.flatten,
-      freeForms.IsRoot m ↔ freeForms.IsContentful m := by
+    ∀ m ∈ freeForms.flatten,
+      IsRoot freeForms Form.meaning m ↔ m.meaning ≠ none := by
   decide
 
 /-! ### Clitics and affixes -/
 
 /-- The English infinitival *to*. -/
-def «to» : Morph := .procl "to"
+def «to» : Form := ⟨.procl "to", none⟩
 /-- The English action root *destroy*. -/
-def destroy : Morph := .root "destroy"
+def destroy : Form := ⟨.root "destroy", some .action⟩
 /-- The English property root *thorough*. -/
-def thorough : Morph := .root "thorough"
+def thorough : Form := ⟨.root "thorough", some .property⟩
 /-- The English adverbial suffix *-ly*. -/
-def ly : Morph := .suff "ly"
+def ly : Form := ⟨.suff "ly", none⟩
 
 /-- The English infinitives *to destroy* and *to thoroughly destroy*. -/
-def infinitives : Inventory Morph where
-  forms := [[«to», destroy], [«to», thorough, ly, destroy]]
-  rootClass m :=
-    if m = destroy then some .action else if m = thorough then some .property else none
+def infinitives : List (List Form) :=
+  [[«to», destroy], [«to», thorough, ly, destroy]]
 
 /-- The German particle *aus* 'out'. -/
-def aus : Morph := .pref "aus"
+def aus : Form := ⟨.pref "aus", none⟩
 /-- The German infinitival *zu-*. -/
-def zu : Morph := .pref "zu"
+def zu : Form := ⟨.pref "zu", none⟩
 /-- The German action root *geh* 'go'. -/
-def geh : Morph := .root "geh"
+def geh : Form := ⟨.root "geh", some .action⟩
 /-- The German infinitive suffix *-en*. -/
-def en : Morph := .suff "en"
+def en : Form := ⟨.suff "en", none⟩
 
 /-- The German infinitive *aus-zu-gehen* 'to go out'. -/
-def ausZuGehen : Inventory Morph where
-  forms := [[aus, zu, geh, en]]
-  rootClass m := if m = geh then some .action else none
+def ausZuGehen : List (List Form) :=
+  [[aus, zu, geh, en]]
 
 /-- English *to* precedes an adverb as well as a verb, so it is a clitic, while German *zu-*
 always occurs on a verb root and is a prefix. -/
 theorem to_clitic_zu_prefix :
-    infinitives.IsClitic infinitives.IsContentful «to» ∧
-      ausZuGehen.IsAffix ausZuGehen.IsContentful zu := by
+    IsClitic infinitives Form.meaning «to» ∧
+      zu ∈ affixes ausZuGehen Form.meaning := by
   decide
 
 /-- The English and German object root *Kim*. -/
-def kim : Morph := .root "Kim"
+def kim : Form := ⟨.root "Kim", some .object⟩
 /-- The English genitive *'s*. -/
-def s_gen : Morph := .encl "s"
+def s_gen : Form := ⟨.encl "s", none⟩
 /-- The English object root *umbrella*. -/
-def umbrella : Morph := .root "umbrella"
+def umbrella : Form := ⟨.root "umbrella", some .object⟩
 /-- The English article *the*. -/
-def the : Morph := .procl "the"
+def the : Form := ⟨.procl "the", none⟩
 /-- The English object root *dog*. -/
-def dog : Morph := .root "dog"
+def dog : Form := ⟨.root "dog", some .object⟩
 /-- The English object root *bone*. -/
-def bone : Morph := .root "bone"
+def bone : Form := ⟨.root "bone", some .object⟩
 /-- The English object root *boy*. -/
-def boy : Morph := .root "boy"
+def boy : Form := ⟨.root "boy", some .object⟩
 /-- The English pronoun *I*. -/
-def i : Morph := .procl "I"
+def i : Form := ⟨.procl "I", none⟩
 /-- The English action root *love*. -/
-def love : Morph := .root "love"
+def love : Form := ⟨.root "love", some .action⟩
 
-/-- The English genitives *Kim's umbrella*, *the dog's bone* and *the boy I love's umbrella*. -/
-def genitives : Inventory Morph where
-  forms := [[kim, s_gen, umbrella], [the, dog, s_gen, bone], [the, boy, i, love, s_gen, umbrella]]
-  rootClass m :=
-    if m = love then some .action
-    else if m = kim ∨ m = umbrella ∨ m = dog ∨ m = bone ∨ m = boy then some .object else none
+/-- The English genitives *Kim's umbrella*, *the dog's bone* and *the boy I love's umbrella*, with
+the last also without its possessum. -/
+def genitives : List (List Form) :=
+  [[kim, s_gen, umbrella], [the, dog, s_gen, bone], [the, boy, i, love, s_gen, umbrella],
+     [the, boy, i, love, s_gen]]
 
 /-- The German genitive *-s*. -/
-def s_genDe : Morph := .suff "s"
+def s_genDe : Form := ⟨.suff "s", none⟩
 /-- The German object root *Ring* 'ring'. -/
-def ring : Morph := .root "Ring"
+def ring : Form := ⟨.root "Ring", some .object⟩
 
 /-- The German genitive *Kim-s Ring* 'Kim's ring'. -/
-def genitivesDe : Inventory Morph where
-  forms := [[kim, s_genDe, ring]]
-  rootClass m :=
-    if m = kim ∨ m = ring then some .object else none
+def genitivesDe : List (List Form) :=
+  [[kim, s_genDe, ring]]
 
 /-- English *'s* also follows a verb, so it is a clitic, while German *-s* always follows a noun
 and is a suffix. -/
 theorem genitive_clitic_suffix :
-    genitives.IsClitic genitives.IsContentful s_gen ∧
-      genitivesDe.IsAffix genitivesDe.IsContentful s_genDe := by
+    IsClitic genitives Form.meaning s_gen ∧
+      s_genDe ∈ affixes genitivesDe Form.meaning := by
   decide
 
 /-! ### Required affixes -/
 
 /-- The Italian object root *alber* 'tree'. -/
-def alber : Morph := .root "alber"
+def alber : Form := ⟨.root "alber", some .object⟩
 /-- The Italian singular suffix *-o*. -/
-def o : Morph := .suff "o"
+def o : Form := ⟨.suff "o", none⟩
 /-- The Italian plural suffix *-i*. -/
-def i_pl : Morph := .suff "i"
+def i_pl : Form := ⟨.suff "i", none⟩
 
 /-- The Italian free forms *alber-o* 'tree' and *alber-i* 'trees'. -/
-def italian : Inventory Morph where
-  forms := [[alber, o], [alber, i_pl]]
-  rootClass m := if m = alber then some .object else none
+def italian : List (List Form) :=
+  [[alber, o], [alber, i_pl]]
 
 /-- *alber* needs *-o* unless *-i* replaces it, so *-o* is a required affix, *alber* is not a
 word and *alber-o* is. -/
 theorem alber_required :
-    italian.IsRequiredAffix italian.IsContentful o alber ∧
-      ¬ italian.IsWord italian.IsContentful [alber] ∧
-      italian.IsWord italian.IsContentful [alber, o] := by
+    IsRequiredAffix italian Form.meaning o alber ∧
+      ¬ IsWord italian Form.meaning [alber] ∧
+      IsWord italian Form.meaning [alber, o] := by
   decide
 
 /-- The German action root *geb* 'give'. -/
-def geb : Morph := .root "geb"
+def geb : Form := ⟨.root "geb", some .action⟩
 /-- The German imperative plural suffix *-t*. -/
-def t : Morph := .suff "t"
+def t : Form := ⟨.suff "t", none⟩
 
 /-- The German free forms *geb-en* '(to) give' and *geb-t* 'give (pl.)'. -/
-def german : Inventory Morph where
-  forms := [[geb, en], [geb, t]]
-  rootClass m := if m = geb then some .action else none
+def german : List (List Form) :=
+  [[geb, en], [geb, t]]
 
 /-- *geb* takes *-en* or the alternative required suffix *-t*, so the bare root is not a
 word. -/
 theorem geb_required :
-    german.IsRequiredAffix german.IsContentful en geb ∧
-      ¬ german.IsWord german.IsContentful [geb] := by
+    IsRequiredAffix german Form.meaning en geb ∧
+      ¬ IsWord german Form.meaning [geb] := by
   decide
 
 /-- The English object root *tree*. -/
-def tree : Morph := .root "tree"
+def tree : Form := ⟨.root "tree", some .object⟩
 /-- The English plural suffix *-s*. -/
-def s_pl : Morph := .suff "s"
+def s_pl : Form := ⟨.suff "s", none⟩
 /-- The English object root *house*. -/
-def house : Morph := .root "house"
+def house : Form := ⟨.root "house", some .object⟩
 /-- The English property root *big*. -/
-def big : Morph := .root "big"
+def big : Form := ⟨.root "big", some .property⟩
 
 /-- The English free forms *a tree* and *trees*, with *a house* and *a big house* for the
 article. -/
-def trees : Inventory Morph where
-  forms := [[a, tree], [tree, s_pl], [a, house], [a, big, house]]
-  rootClass m :=
-    if m = tree ∨ m = house then some .object else if m = big then some .property else none
+def trees : List (List Form) :=
+  [[a, tree], [tree, s_pl], [a, house], [a, big, house]]
 
 /-- *-s* can be absent from a free form, as in *a tree*, without another affix replacing it, so
 it is not required, and *tree* is a word although it is not a free form. -/
 theorem tree_word :
-    ¬ trees.IsRequiredAffix trees.IsContentful s_pl tree ∧
-      trees.IsWord trees.IsContentful [tree] ∧ [tree] ∉ trees.forms := by
+    ¬ IsRequiredAffix trees Form.meaning s_pl tree ∧
+      IsWord trees Form.meaning [tree] ∧ [tree] ∉ trees := by
   decide
 
 /-! ### Bloomfield's minimum free form (§3.1) -/
@@ -230,31 +217,34 @@ theorem tree_word :
 /-- Bloomfield's definition is too narrow: *tree* and the clitic *to* are words but not free
 forms, so not minimum free forms. -/
 theorem bloomfield_too_narrow :
-    (trees.IsWord trees.IsContentful [tree] ∧
-        ¬ IsMinimalFreeForm trees.forms [tree]) ∧
-      infinitives.IsWord infinitives.IsContentful [«to»] ∧
-        ¬ IsMinimalFreeForm infinitives.forms [«to»] :=
+    (IsWord trees Form.meaning [tree] ∧
+        ¬ IsMinimalFreeForm trees [tree]) ∧
+      IsWord infinitives Form.meaning [«to»] ∧
+        ¬ IsMinimalFreeForm infinitives [«to»] :=
   ⟨⟨by decide, fun h ↦ by simpa [trees] using h.1⟩, by decide,
     fun h ↦ by simpa [infinitives] using h.1⟩
 
 /-- Bloomfield's definition is too broad: *a tree* cannot be broken up into free forms, so it
 is a minimum free form, but it is a clitic and a root, not a word. -/
 theorem bloomfield_too_broad :
-    IsMinimalFreeForm trees.forms [a, tree] ∧
-      ¬ trees.IsWord trees.IsContentful [a, tree] :=
+    IsMinimalFreeForm trees [a, tree] ∧
+      ¬ IsWord trees Form.meaning [a, tree] :=
   ⟨isMinimalFreeForm_of_take (by decide) (by decide), by decide⟩
 
 /-! ### Words at an attachment -/
 
+/-- The words of a sequence of forms at an attachment are the maximal runs whose morphs join at
+it. -/
+def wordsAt (l : Morph.Attachment) (fs : List Form) : List (List Form) :=
+  fs.splitBy fun x y ↦ decide (Morph.JoinsAt l x.shape y.shape)
+
 /-- The words at `.affix` of the English forms with *tree* and of the Italian forms are words,
 while *a=tree*, one word at `.clitic`, is not. -/
 theorem wordsAt_affix_words :
-    (∀ f ∈ trees.forms, ∀ w ∈ Morph.wordsAt .affix f,
-        trees.IsWord trees.IsContentful w) ∧
-      (∀ f ∈ italian.forms, ∀ w ∈ Morph.wordsAt .affix f,
-        italian.IsWord italian.IsContentful w) ∧
-      Morph.wordsAt .clitic [a, tree] = [[a, tree]] ∧
-      ¬ trees.IsWord trees.IsContentful [a, tree] := by
+    (∀ f ∈ trees, ∀ w ∈ wordsAt .affix f, IsWord trees Form.meaning w) ∧
+      (∀ f ∈ italian, ∀ w ∈ wordsAt .affix f, IsWord italian Form.meaning w) ∧
+      wordsAt .clitic [a, tree] = [[a, tree]] ∧
+      ¬ IsWord trees Form.meaning [a, tree] := by
   decide
 
 end Haspelmath2023
