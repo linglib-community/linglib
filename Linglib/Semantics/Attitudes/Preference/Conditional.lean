@@ -9,11 +9,10 @@ public import Mathlib.Data.Set.Finite.Basic
 On Heim's conditional semantics, *a wants p* holds at `w` when for every belief world `w'`, every
 `p`-world maximally similar to `w'` is more desirable than every non-`p`-world maximally similar
 to `w'`. Heim draws the similar worlds first from all worlds, then, in her context change rule,
-from the belief worlds alone, so `Desire.Conditional.Want` takes the domain of comparison as an
-argument. A domain not contingent on `p` makes `p` trivially wanted, and so its negation
-(`Want.of_not_isContingent`); her amendment, von Fintel's presupposition too, requires the belief
-worlds to be contingent (`Desire.IsContingent`), and under it an antisymmetric desirability
-relation cannot make both `p` and `¬p` wanted (`Want.not_compl`).
+from the belief worlds alone, so the domain of comparison is an argument. A domain not contingent
+on `p` makes `p` trivially wanted, and so its negation. Her amendment, which is von Fintel's
+presupposition too, requires the belief worlds to be contingent on `p`, and under it an
+antisymmetric desirability relation cannot make both `p` and `¬p` wanted.
 
 ## Main definitions
 
@@ -24,9 +23,18 @@ relation cannot make both `p` and `¬p` wanted (`Want.not_compl`).
 
 ## Main results
 
+* `Desire.Conditional.Frame.mem_closest_iff`: under a total similarity ordering the closest
+  worlds are those that resemble the world no less than any other.
 * `Desire.Conditional.Want.of_not_isContingent`: on a domain not contingent on `p`, `p` is
   trivially wanted.
 * `Desire.Conditional.Want.not_compl`: under the amendment, `p` and `¬p` are not both wanted.
+
+## Implementation notes
+
+Similarity to a world is a preorder and the closest worlds of a set are its minimal elements, as
+in the ordering semantics of conditionals. Heim's selection function takes the worlds that
+resemble the world no less than any other, which are the minimal elements when similarity is
+total.
 
 ## References
 
@@ -79,6 +87,11 @@ variable (F : Frame W) (D bel : Set W) (w : W) (p : Set W)
 /-- `F.closest D p w'`, Heim's `Sim_w'(p)` with the similar worlds drawn from `D`, is the set of
 `p`-worlds of `D` that are maximally similar to `w'`. -/
 def Frame.closest (w' : W) : Set W := (F.sim w').minimals (D ∩ p)
+
+variable {F D p} in
+theorem Frame.mem_closest_iff {w' x : W} [Std.Total (F.sim w').le] :
+    x ∈ F.closest D p w' ↔ x ∈ D ∩ p ∧ ∀ y ∈ D ∩ p, (F.sim w').le x y :=
+  Preorder.mem_minimals_iff_forall_le
 
 /-- `a wants p` at `w`, the similar worlds drawn from `D`, when for every belief-world `w'`, every
 closest `p`-world to `w'` is more desirable than every closest `¬p`-world to `w'`. Heim's (31)

@@ -130,8 +130,8 @@ theorem expectedValue_le_of_cond_eq_one {p : Measure W} {e φ : Set W} (ψ : Set
 paper's §3.1 is "more or less a reproduction of Lassiter's analysis". -/
 theorem toReal_expectedValue (p : Measure W) (R : ι → Set W) (φ : Set W) :
     (expectedValue p R φ).toReal =
-      Desire.ExpectedValue.expectedValue p (fun w ↦ (countTrue R w).toReal) Set.univ φ := by
-  rw [Desire.ExpectedValue.expectedValue, Set.univ_inter, expectedValue,
+      Desire.expectedValue p (fun w ↦ (countTrue R w).toReal) φ := by
+  rw [Desire.expectedValue_eq_integral_cond, expectedValue,
     integral_toReal Measurable.of_discrete.aemeasurable]
   exact Filter.Eventually.of_forall fun w ↦ by
     simp only [countTrue, Finset.sum_apply]
