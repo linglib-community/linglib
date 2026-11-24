@@ -5,8 +5,10 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.ContextFreeGrammar.Tree
+public import Linglib.Core.Computability.ContextFreeGrammar.Tree.Basic
+public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Order.Minimal
 public import Mathlib.Tactic.Abel
 
 /-!
@@ -76,6 +78,57 @@ end ContextFreeGrammar
 namespace RoseTree.Licensed
 
 variable {T : Type*} {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
+
+theorem exists_getElem?_take
+    (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
+    (hs : t[p]? = some s)
+    (hh : 1 < s.height) {k : ℕ} (hk : k ≤ p.length) :
+    ∃ A cs, t[p.take k]? = some (node (.nonterminal A) cs) := by
+  obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp (getElem?_take_isSome hs k)
+  obtain ⟨s₀, cs, rfl⟩ : ∃ s₀ cs, u = node s₀ cs := by cases u; exact ⟨_, _, rfl⟩
+  have hne : cs ≠ [] := by
+    rcases Nat.lt_or_ge k p.length with hlt | hge
+    · rw [← List.take_append_drop k p, getElem?_append, hu, Option.bind_some,
+        List.drop_eq_getElem_cons hlt] at hs
+      obtain ⟨c, hc, -⟩ := getElem?_cons_eq_some_iff.mp hs
+      exact List.ne_nil_of_mem (List.mem_of_getElem? hc)
+    · rw [List.take_of_length_le (le_antisymm hk hge ▸ le_rfl), hs] at hu
+      obtain rfl := Option.some.inj hu
+      obtain ⟨c, hc, -⟩ := exists_mem_children_height_add_one hh
+      exact List.ne_nil_of_mem hc
+  obtain ⟨A, rfl⟩ := (ht.of_getElem? hu).exists_nonterminal_of_ne_nil hne
+  exact ⟨A, cs, hu⟩
+
+/-- By pigeonhole, a path of at least `g.rules.card` steps through a licensed tree, ending at a
+node with children, passes two nodes with the same nonterminal. -/
+theorem exists_repeat
+    (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
+    (hs : t[p]? = some s)
+    (hh : 1 < s.height) (hlen : g.rules.card ≤ p.length) :
+    ∃ i j, i < j ∧ j ≤ p.length ∧ ∃ A csᵢ csⱼ,
+      t[p.take i]? = some (node (.nonterminal A) csᵢ) ∧
+      t[p.take j]? = some (node (.nonterminal A) csⱼ) := by
+  classical
+  let f : ℕ → ContextFreeRule T g.NT := fun k ↦ (ruleAt? t (p.take k)).getD ⟨g.initial, []⟩
+  have hf : ∀ k ∈ Finset.range (p.length + 1), f k ∈ g.rules := fun k hk ↦ by
+    obtain ⟨A, cs, hA⟩ :=
+      ht.exists_getElem?_take hs hh (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))
+    simp only [f, ruleAt?_eq_some hA, Option.getD_some]
+    exact (ht.of_getElem? hA).rule_mem
+  obtain ⟨a, ha, b, hb, hne, hfeq⟩ := Finset.exists_ne_map_eq_of_card_lt_of_maps_to
+    (by simp only [Finset.card_range]; omega) hf
+  wlog hab : a < b generalizing a b
+  · exact this b hb a ha hne.symm hfeq.symm (lt_of_le_of_ne (not_lt.mp hab) hne.symm)
+  rw [Finset.mem_range] at ha hb
+  obtain ⟨A, csₐ, hA⟩ := ht.exists_getElem?_take hs hh (Nat.lt_succ_iff.mp ha)
+  obtain ⟨B, cs_b, hB⟩ := ht.exists_getElem?_take hs hh (Nat.lt_succ_iff.mp hb)
+  have : A = B := by
+    have h := hfeq
+    simp only [f, ruleAt?_eq_some hA, ruleAt?_eq_some hB, Option.getD_some,
+      ContextFreeRule.mk.injEq] at h
+    exact h.1
+  subst this
+  exact ⟨a, b, hab, Nat.lt_succ_iff.mp hb, A, csₐ, cs_b, hA, hB⟩
 
 /-- A licensed tree of height `h` has at most `maxBranch ^ (h - 1)` terminals. -/
 theorem length_yield_le (ht : t.Licensed g.Licenses) :
@@ -148,16 +201,17 @@ theorem Language.IsContextFree.hasCFLPumpingProperty {T : Type*} {L : Language T
     (hcf : L.IsContextFree) : L.HasCFLPumpingProperty := by
   obtain ⟨g, rfl⟩ := hcf
   refine ⟨g.pumpingConstant, g.pumpingConstant_pos, fun w hw hlen ↦ ?_⟩
-  obtain ⟨t, ht, rfl, hroot⟩ := g.exists_licensed_tree hw
-  -- a licensed tree of least size with the same yield and root
-  obtain ⟨t₁, ht₁, hy₁, hr₁, hmin⟩ := ht.exists_min_numNodes
+  -- a derivation tree of `w` with the fewest nodes
+  obtain ⟨t₁, ⟨⟨ht₁, hr₁⟩, rfl⟩, hmin⟩ := exists_minimalFor_of_wellFoundedLT
+    (fun t ↦ t ∈ g.derivationTrees ∧ t.yield = w) numNodes
+    (ContextFreeGrammar.mem_language_iff_exists_mem_derivationTrees.mp hw)
   obtain ⟨po, pr, outer, inner, hpr, hpo, hpri, hv, hh⟩ :=
-    ht₁.exists_repeat_of_lt_height (ht₁.card_rules_add_one_lt_height (hy₁ ▸ hlen))
+    ht₁.exists_repeat_of_lt_height (ht₁.card_rules_add_one_lt_height hlen)
   have houter := ht₁.of_getElem? hpo
   obtain ⟨u, z, hyu, hyu'⟩ := yield_replaceAt hpo
   obtain ⟨v, y, hyv, hyv'⟩ := yield_replaceAt hpri
   refine ⟨u, v, inner.yield, y, z, ?_, ?_, ?_, fun k ↦ ?_⟩
-  · rw [← hy₁, hyu, hyv]; simp only [append_assoc]
+  · rw [hyu, hyv]; simp only [append_assoc]
   · rw [← hyv]
     exact houter.length_yield_le.trans
       (Nat.pow_le_pow_right (Nat.zero_lt_of_lt g.two_le_maxBranch) (by omega))
@@ -165,12 +219,11 @@ theorem Language.IsContextFree.hasCFLPumpingProperty {T : Type*} {L : Language T
     intro hvy
     obtain ⟨rfl, rfl⟩ := append_eq_nil_iff.1 hvy
     obtain ⟨i, rest, rfl⟩ := exists_cons_of_ne_nil hpr
-    have := hmin _ (ht₁.replaceAt hpo (houter.of_getElem? hpri) hv)
-      (by rw [hyu', ← hy₁, hyu, hyv]; simp) (by rw [value_replaceAt hpo hv, hr₁])
-    have := numNodes_replaceAt_lt hpo (numNodes_lt_of_getElem?_cons hpri)
-    omega
+    have hlt := numNodes_replaceAt_lt hpo (numNodes_lt_of_getElem?_cons hpri)
+    exact hlt.not_ge <| hmin ⟨⟨ht₁.replaceAt hpo (houter.of_getElem? hpri) hv,
+      by rw [value_replaceAt hpo hv, hr₁]⟩, by rw [hyu', hyu, hyv]; simp⟩ hlt.le
   · obtain ⟨s, hs, hsv, hsy⟩ := houter.exists_pump hpri hv hyv' k
-    rw [ContextFreeGrammar.mem_language_iff, ← hroot, ← hr₁, ← value_replaceAt hpo (hsv.trans hv),
+    rw [ContextFreeGrammar.mem_language_iff, ← hr₁, ← value_replaceAt hpo (hsv.trans hv),
       show u ++ (replicate k v).flatten ++ inner.yield ++ (replicate k y).flatten ++ z =
         (t₁.replaceAt po s).yield by rw [hyu', hsy]; simp only [append_assoc]]
     exact (ht₁.replaceAt hpo hs (hsv.trans hv)).derives

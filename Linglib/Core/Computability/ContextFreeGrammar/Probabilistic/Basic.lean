@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Analysis.Convex.StdSimplex
 public import Linglib.Core.Basic.ENNReal.BigOperators
-public import Linglib.Core.Computability.ContextFreeGrammar.Tree
+public import Linglib.Core.Computability.ContextFreeGrammar.Tree.RuleCount
 public import Mathlib.Algebra.BigOperators.Finprod
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Basic.ENNReal.Inv
@@ -34,7 +34,7 @@ may be zero on a rule. `PCFG.normalize` is total: at a nonterminal where the wei
 `⊤` it gives the rules equal weights, where [chi-1999] defines relative frequencies only for a
 sample in which every nonterminal occurs. The measure on trees whose singleton masses are the tree
 weights, and its total mass ([booth-thompson-1973]), are in
-`Linglib.Core.Computability.ContextFreeGrammar.Measure`.
+`Linglib.Core.Computability.ContextFreeGrammar.Probabilistic.Measure`.
 
 ## References
 
@@ -48,6 +48,15 @@ weights, and its total mass ([booth-thompson-1973]), are in
 
 open Convexity
 open scoped ENNReal
+
+/-- A product over the rules of a grammar is a product over the nonterminals it has a rule for
+of the products over the rules at each. -/
+@[to_additive /-- A sum over the rules of a grammar is a sum over the nonterminals it has a rule
+for of the sums over the rules at each. -/]
+theorem ContextFreeGrammar.prod_inputs_prod_rulesWithInput {T M : Type*} [CommMonoid M]
+    (g : ContextFreeGrammar T) [DecidableEq g.NT] (f : ContextFreeRule T g.NT → M) :
+    ∏ a ∈ g.inputs, ∏ r ∈ g.rulesWithInput a, f r = ∏ r ∈ g.rules, f r :=
+  Finset.prod_fiberwise_of_maps_to (fun _ hr ↦ g.input_mem_inputs hr) f
 
 /-! ### Weighted grammars
 
@@ -99,34 +108,15 @@ variable {T : Type*} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.N
 
 theorem ruleWeight_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)}
     (ht : t.Licensed G.Licenses) :
-    t.ruleWeight w = ∏ r ∈ G.rules, w r ^ ruleCount r t := by
-  induction ht using Licensed.grammar_induction with
-  | terminal a => simp [leaf, ruleWeight_node, ruleCount_node_terminal]
-  | nonterminal A cs hrule hcs ih =>
-    simp only [ruleWeight_node, ruleCount_node_nonterminal, pow_add,
-      Finset.prod_mul_distrib, pow_ite, pow_one, pow_zero, Finset.prod_ite_eq', ite_eq_left hrule,
-      Symbol.ruleWeight_nonterminal]
-    congr 1
-    clear hrule hcs
-    induction cs with
-    | nil => simp
-    | cons c cs ihl =>
-      simp only [List.map_cons, List.prod_cons, List.sum_cons, pow_add, Finset.prod_mul_distrib]
-      rw [ih c (List.mem_cons_self ..), ihl fun c' hc' ↦ ih c' (List.mem_cons_of_mem _ hc')]
+    t.ruleWeight w = ∏ r ∈ G.rules, w r ^ ruleCount r t :=
+  ht.prod_map_localTrees fun _ ↦ rfl
 
 /-- Over licensed derivation trees, the product of the weights of the trees of a corpus is the
 product over the grammar's rules of the rule weight raised to the rule's count. -/
 theorem prod_map_ruleWeight (D : Multiset (RoseTree (Symbol T G.NT)))
     (h : ∀ t ∈ D, t.Licensed G.Licenses) :
-    (D.map (ruleWeight w)).prod = ∏ r ∈ G.rules, w r ^ ruleCounts D r := by
-  induction D using Multiset.induction_on with
-  | empty => simp
-  | cons t D ih =>
-    rw [← Multiset.singleton_add, Multiset.map_add, Multiset.prod_add,
-      ih fun t' ht' ↦ h t' (Multiset.mem_cons_of_mem ht')]
-    simp only [Multiset.map_singleton, Multiset.prod_singleton, map_add,
-      Pi.add_apply, pow_add, Finset.prod_mul_distrib, ruleCounts_singleton,
-      ruleWeight_eq_prod_pow_ruleCount w (h t (Multiset.mem_cons_self t D))]
+    (D.map (ruleWeight w)).prod = ∏ r ∈ G.rules, w r ^ ruleCounts D r :=
+  prod_map_localTrees_eq_prod_ruleCounts h fun _ ↦ rfl
 
 end RoseTree
 
