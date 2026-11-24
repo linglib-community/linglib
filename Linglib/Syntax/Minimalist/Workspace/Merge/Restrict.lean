@@ -55,8 +55,8 @@ theorem restrictCuts_le : restrictCuts C cuts T ≤ cuts T := Multiset.filter_le
 instance [h : IsMergeCuts cuts] : IsMergeCuts (restrictCuts C cuts) where
   crown_numEdges_lt hp := h.crown_numEdges_lt (mem_restrictCuts.1 hp).1
   mem_subtrees_of_mem_crown hp := h.mem_subtrees_of_mem_crown (mem_restrictCuts.1 hp).1
-  filter_empty T := by
-    rw [restrictCuts, Multiset.filter_filter, ← h.filter_empty T]
+  filter_card_eq_zero T := by
+    rw [restrictCuts, Multiset.filter_filter, ← h.filter_card_eq_zero T]
     refine Multiset.filter_congr fun p _ ↦ ⟨fun hp ↦ hp.1, fun hp ↦ ⟨hp, fun x hx ↦ ?_⟩⟩
     rw [Multiset.card_eq_zero.1 hp] at hx
     exact absurd hx (Multiset.notMem_zero x)

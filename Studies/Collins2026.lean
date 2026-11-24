@@ -13,7 +13,7 @@ public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Syntax.Minimalist.Copy.Cut
 public import Linglib.Syntax.Minimalist.Workspace.Basic
-public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceConservation
+public import Linglib.Core.Combinatorics.RootedTree.MarkerCutConservation
 
 /-!
 # Collins (2026): Reconstruction and the New Minimalism
@@ -274,10 +274,10 @@ theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
     let τ := termTrace SyntacticObject.selectionHead
     let lowReading := UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree
     ({UnorderedTree.mk everyPlayer.toRoseTree}, UnorderedTree.mk c.current.contract.toRoseTree) ∈
-        traceCuts τ C ∧
+        markerCuts τ C ∧
       ({UnorderedTree.mk everyPlayer.toRoseTree}, some lowReading) ∈
         deletionCuts SyntacticObject.Vertex.bare C ∧
-      ∀ F, (F, lowReading) ∉ traceCuts τ C := by
+      ∀ F, (F, lowReading) ∉ markerCuts τ C := by
   have h : ∀ c ∈ everyDidntScore.replayWithCopies?,
       c.current.val.value.1 = none ∧
       MarkedBy (termTrace SyntacticObject.selectionHead) c.current.val ∧
@@ -285,8 +285,8 @@ theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
       c.current.cutForest {everyPlayer.toSyntacticObject} = {everyPlayer.toRoseTree} ∧
       (∀ r ∈ c.current.val.subtrees, r.value.1.isSome →
         ReadLow {everyPlayer.toSyntacticObject} r) ∧
-      (UnorderedTree.mk c.current.unmark.toRoseTree).numTraces = 0 ∧
-      (UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree).numTraces = 0 ∧
+      (UnorderedTree.mk c.current.unmark.toRoseTree).numMarkers = 0 ∧
+      (UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree).numMarkers = 0 ∧
       UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree ≠
         UnorderedTree.mk c.current.unmark.toRoseTree ∧
       (∀ a ∈ (UnorderedTree.mk
@@ -297,8 +297,8 @@ theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
     (by decide +kernel : everyDidntScore.replayWithCopies?.isSome)
   obtain ⟨hroot, hτ, hhigh, hlow, hall, hC, hL, hne, hlf⟩ := h c hc
   refine ⟨c, hc, ?_, ?_, fun F hF ↦ hne (congrArg Prod.snd
-    (eq_zero_of_mem_traceCuts _ hC hF hL))⟩
-  · simpa [hhigh] using mem_traceCuts_contract c.current hroot hτ
+    (eq_zero_of_mem_markerCuts _ hC hF hL))⟩
+  · simpa [hhigh] using mem_markerCuts_contract c.current hroot hτ
   · simpa [hlow] using mem_deletionCuts_lf c.current _ hall hlf
 
 /-! ### No Tampering -/

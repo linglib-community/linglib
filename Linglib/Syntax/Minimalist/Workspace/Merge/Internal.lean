@@ -57,16 +57,10 @@ theorem mergeOpUnitOfCuts_apply_singleton (β T : UnorderedTree α) :
         + ((cuts T).map
             (fun p => if p.1 = ({β} : Forest (UnorderedTree α))
               then of' (R := R) ({β} : Forest (UnorderedTree α)) * ofTree p.2 else 0)).sum := by
-  rw [mergeOpUnitOfCuts, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-    show (of' ({T} : Forest (UnorderedTree α)) : ConnesKreimer R (UnorderedTree α)) = ofTree T
-      from rfl, comulOfCuts_apply_ofTree, comulTreeOfCuts, map_add, map_multiset_sum,
-    Multiset.map_map]
-  congr 1
-  · rw [show (ofTree T : ConnesKreimer R (UnorderedTree α)) = of' {T} from rfl,
-      mergePostUnit_basis_tensor, mul_one]
-    simp only [Multiset.singleton_inj]
-  · exact congrArg Multiset.sum
-      (Multiset.map_congr rfl fun p _ ↦ mergePostUnit_basis_tensor β p.1 (ofTree p.2))
+  rw [mergeOpUnitOfCuts_eq_mul_contractForest, of'_singleton, contractForest_ofTree, mul_add,
+    mul_ite, mul_one, mul_zero, Multiset.sum_map_filter, ← Multiset.sum_map_mul_left,
+    of'_singleton]
+  simp only [Multiset.singleton_inj, eq_comm (a := β), mul_ite, mul_zero]
 
 /-- When `T ≠ β` and exactly one cut of `T` has crown `{β}`, the unit stage moves `β` to its own
     component beside that cut's trunk. -/
@@ -86,38 +80,30 @@ theorem mergeOpUnitOfCuts_apply_singleton_unique (β T : UnorderedTree α)
   obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hx
   exact ite_eq_right (Multiset.mem_filter.mp hp).2
 
+omit [DecidableEq (UnorderedTree α)] in
+/-- The unit stage `M_{β,1}` is multiplication by `β` after the derivation `D_β`, contraction of
+    the coproduct with the delta functional of `β`. -/
+theorem mergeOpUnitOfCuts_eq_mul_treeDerivation [IsMergeCuts cuts] (β : UnorderedTree α)
+    (x : ConnesKreimer R (UnorderedTree α)) :
+    mergeOpUnitOfCuts (R := R) cuts β x =
+      ofTree β * treeDerivation cuts β x :=
+  rfl
+
+/-- The derivation `D_β` vanishes on a tree that does not contain `β`. -/
+theorem treeDerivation_ofTree_of_notMem [IsMergeCuts cuts] {β T : UnorderedTree α}
+    (hT : β ∉ T.subtrees) :
+    treeDerivation (R := R) cuts β (ofTree T) = 0 := by
+  rw [treeDerivation_apply_eq_contractForest]
+  exact contractForest_ofTree_of_notMem (Multiset.mem_singleton_self β) hT
+
 /-- The unit stage commutes with a spectator component `T` that does not have `β` as a subtree. -/
 theorem mergeOpUnitOfCuts_ofTree_mul [IsMergeCuts cuts] {β T : UnorderedTree α}
     (hT : β ∉ T.subtrees) (w : ConnesKreimer R (UnorderedTree α)) :
     mergeOpUnitOfCuts (R := R) cuts β (ofTree T * w) =
       ofTree T * mergeOpUnitOfCuts (R := R) cuts β w := by
-  rw [mergeOpUnitOfCuts, LinearMap.comp_apply, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-    AlgHom.toLinearMap_apply, map_mul, comulOfCuts_apply_ofTree, comulTreeOfCuts, add_mul, map_add,
-    ← of'_singleton]
-  -- The primitive term vanishes, since `T ≠ β`.
-  rw [mergePostUnit_left_mul_eq_zero_of_not_le _ _ _ ?prim, zero_add]
-  case prim =>
-    intro h_le
-    rw [Multiset.singleton_le, Multiset.mem_singleton] at h_le
-    exact hT (h_le ▸ T.self_mem_subtrees)
-  -- Split off the empty cut `(0, T)`; the nonempty cuts vanish.
-  rw [← Multiset.sum_map_mul_right,
-    ← Multiset.filter_add_not (fun pf => pf.1.card = 0) (cuts T),
-    Multiset.map_add, Multiset.sum_add, map_add, IsMergeCuts.filter_empty,
-    Multiset.map_singleton, Multiset.sum_singleton, _root_.map_multiset_sum,
-    Multiset.sum_eq_zero, add_zero]
-  · rw [of'_zero,
-      mul_comm ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree T) _,
-      mergePostUnit_right_one_tmul, mul_comm]
-    rfl
-  · intro x hx
-    obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp (Multiset.map_map _ _ _ ▸ hx)
-    obtain ⟨hp, hcard⟩ := Multiset.mem_filter.mp hp
-    refine mergePostUnit_left_mul_eq_zero_of_not_le _ _ _ (fun h_le ↦ hcard ?_) _
-    rw [Multiset.card_eq_zero]
-    refine Multiset.eq_zero_of_forall_notMem fun x hx_mem => ?_
-    rw [Multiset.mem_singleton.mp (Multiset.subset_of_le h_le hx_mem)] at hx_mem
-    exact hT (IsMergeCuts.mem_subtrees_of_mem_crown hp hx_mem)
+  rw [mergeOpUnitOfCuts_eq_mul_treeDerivation, mergeOpUnitOfCuts_eq_mul_treeDerivation,
+    Derivation.leibniz, treeDerivation_ofTree_of_notMem hT, smul_zero, add_zero, smul_eq_mul,
+    mul_left_comm]
 
 /-- With a residual workspace `F̂` none of whose components has `β` as a subtree, the unit stage
     on `{T} + F̂` splits `β` off `T` and leaves `F̂` unchanged. -/
@@ -187,7 +173,7 @@ end DecidableEq
 theorem traceMergeOp_im_composition {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
     (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (m T Q : UnorderedTree (α ⊕ β))
     (p0 : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β))
-    (h_filter : (traceCuts τ T).filter
+    (h_filter : (markerCuts τ T).filter
       (fun p => p.1 = ({m} : Forest (UnorderedTree (α ⊕ β)))) = {p0})
     (h_remainder : p0.2 = Q) (hTm : T ≠ m) :
     traceMergeOp (R := R) τ lbl Q m

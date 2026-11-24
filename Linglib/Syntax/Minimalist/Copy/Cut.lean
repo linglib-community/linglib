@@ -14,10 +14,10 @@ public import Linglib.Syntax.Minimalist.Workspace.Coproduct.Deletion
 This file relates the readings of a marked object to the coproducts on trees. A reading cuts a
 forest from the copy object: the lower copies of the chains read high, each leaving its trace, and
 the higher copies of the chains read low, each leaving nothing, with the unary vertex that leaves
-contracted. With [no chain read low](##mem_traceCuts_contract) the reading is a term of the
+contracted. With [no chain read low](##mem_markerCuts_contract) the reading is a term of the
 coproduct $\Delta^c$, and with [every chain read low](##mem_deletionCuts_lf) a term of the deletion
 coproduct $\Delta^d$. A reading with chains of both kinds is [a cut under a policy of its
-own](##exists_mem_rootCuts_lf), which `leaveNothing` follows on some trees and `leaveTrace` on the
+own](##exists_mem_rootCuts_lf), which `leaveNothing` follows on some trees and `leaveMarker` on the
 rest.
 
 ## Implementation notes
@@ -283,10 +283,10 @@ def termTrace (σ : SyntacticObject → Option LexicalItem.Token) (u : Unordered
   if h : IsSyntacticObject u then σ (SyntacticObject.ofUnorderedTree u h) else none
 
 /-- The policy of a reading: a copy of a chain read low leaves nothing when it is cut, as under
-`leaveNothing`, and any other subtree its trace, as under `leaveTrace`. -/
+`leaveNothing`, and any other subtree its trace, as under `leaveMarker`. -/
 def extractReading (low : Finset SyntacticObject) (τ : RoseTree Vertex → Option LexicalItem.Token) :
     RoseTree Vertex → Option (List (RoseTree Vertex)) := fun r ↦
-  if ∃ m ∈ low, m.toUnorderedTree = UnorderedTree.mk r then leaveNothing r else leaveTrace τ r
+  if ∃ m ∈ low, m.toUnorderedTree = UnorderedTree.mk r then leaveNothing r else leaveMarker τ r
 
 variable {τ} (t : Marked) (low : Finset SyntacticObject)
 
@@ -294,23 +294,24 @@ variable {τ} (t : Marked) (low : Finset SyntacticObject)
 the higher copies of the chains read low, each outermost. -/
 def cutForest : Multiset (RoseTree Vertex) := (readCut (ReadLow low) t.val).1
 
-private theorem leaveTrace_map_snd {r : RoseTree (CopyMark × Vertex)} {l : Option LexicalItem.Token}
+private theorem leaveMarker_map_snd {r : RoseTree (CopyMark × Vertex)}
+    {l : Option LexicalItem.Token}
     (hτ : r.value.2.isLeft ∧ r.value.1 = some (τ (termOf r))) (hl : r.value.1 = some l) :
-    leaveTrace (τ ∘ UnorderedTree.mk) (r.map Prod.snd) = some [.node (.inr l) []] := by
+    leaveMarker (τ ∘ UnorderedTree.mk) (r.map Prod.snd) = some [.node (.inr l) []] := by
   obtain ⟨⟨k, a⟩, cs⟩ := r
   obtain ⟨ha, hk⟩ := hτ
   obtain rfl : τ (termOf (.node (k, a) cs)) = l := Option.some.inj (hk.symm.trans hl)
   rcases a with a | b
   · rw [map_node]
     dsimp only
-    rw [leaveTrace_inl, termOf, map_node]
+    rw [leaveMarker_inl, termOf, map_node]
     rfl
   · exact absurd ha (by simp [value])
 
 private theorem extractReading_of_not_low {low : Finset SyntacticObject}
     {τ : RoseTree Vertex → Option LexicalItem.Token} {r : RoseTree (CopyMark × Vertex)}
     (h : ¬ ReadLow low r) :
-    extractReading low τ (r.map Prod.snd) = leaveTrace τ (r.map Prod.snd) :=
+    extractReading low τ (r.map Prod.snd) = leaveMarker τ (r.map Prod.snd) :=
   ite_eq_right h
 
 private theorem extractReading_of_low {low : Finset SyntacticObject}
@@ -328,7 +329,7 @@ theorem exists_mem_rootCuts_lf (hroot : t.val.value.1 = none) (hτ : MarkedBy τ
     (e := extractReading low (τ ∘ UnorderedTree.mk)) (s := t.val)
     (fun l hl ↦ by simp [hroot] at hl)
     (fun r hr l hl hn ↦ (extractReading_of_not_low hn).trans
-      (leaveTrace_map_snd (hτ r hr (by simp [hl])) hl))
+      (leaveMarker_map_snd (hτ r hr (by simp [hl])) hl))
     (fun r _ hr ↦ extractReading_of_low hr)
   refine ⟨T, hm, ?_⟩
   have h := map_contractUnary_readCut (low := ReadLow low) t.2
@@ -337,20 +338,20 @@ theorem exists_mem_rootCuts_lf (hroot : t.val.value.1 = none) (hτ : MarkedBy τ
 
 /-- With no chain read low, a reading is the contraction, a term of the coproduct `Δ^c`: the lower
 copies are an admissible cut of the copy object. -/
-theorem mem_traceCuts_contract (hroot : t.val.value.1 = none) (hτ : MarkedBy τ t.val) :
+theorem mem_markerCuts_contract (hroot : t.val.value.1 = none) (hτ : MarkedBy τ t.val) :
     ((t.cutForest ∅).map UnorderedTree.mk, UnorderedTree.mk t.contract.toRoseTree) ∈
-      traceCuts τ (UnorderedTree.mk t.unmark.toRoseTree) := by
+      markerCuts τ (UnorderedTree.mk t.unmark.toRoseTree) := by
   rw [toRoseTree_contract, toRoseTree_unmark]
   obtain ⟨T, hT, hm⟩ := exists_mem_rootCuts_readCut (low := ReadLow ∅)
-    (e := leaveTrace (τ ∘ UnorderedTree.mk)) (s := t.val)
+    (e := leaveMarker (τ ∘ UnorderedTree.mk)) (s := t.val)
     (fun l hl ↦ by simp [hroot] at hl)
-    (fun r hr l hl _ ↦ leaveTrace_map_snd (hτ r hr (by simp [hl])) hl)
+    (fun r hr l hl _ ↦ leaveMarker_map_snd (hτ r hr (by simp [hl])) hl)
     (fun r _ hr ↦ absurd hr (not_readLow_empty r))
   obtain rfl : T = contractTree t.val := by
     have := readCut_readLow_empty t.val
     rw [hT] at this
     simpa using this
-  rw [traceCuts_mk]
+  rw [markerCuts_mk]
   exact Multiset.mem_map.2 ⟨_, hm, rfl⟩
 
 /-- With every chain read low, a reading is the trunk of an admissible cut of the copy object with

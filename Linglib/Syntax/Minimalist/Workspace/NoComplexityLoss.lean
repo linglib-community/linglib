@@ -68,7 +68,7 @@ multiset of pairs it keeps apart equal components that go to different places.
 The results hold for any positive degree with a fixed extraction cost
 (`CutChoice.HasExtractionCost`), such as the degrees each cut conserves: the vertex count at the
 admissible cuts (`hasExtractionCost_numNodes_admissibleCuts`) and the size `σ` at the trace cuts
-(`hasExtractionCost_accessibleSize_traceCuts`, the book's (1.6.10)). -/
+(`hasExtractionCost_accessibleSize_markerCuts`, the book's (1.6.10)). -/
 
 section ComponentMap
 
@@ -76,16 +76,38 @@ variable {α : Type*} {deg : UnorderedTree α → ℕ}
 
 /-- No Complexity Loss holds along a component map when no component is paired with one of lower
     degree. -/
-def NoComplexityLoss.Map (deg : UnorderedTree α → ℕ)
-    (φ : Multiset (UnorderedTree α × UnorderedTree α)) : Prop :=
+def NoComplexityLoss.Map {κ : Type*} (deg : κ → ℕ) (φ : Multiset (κ × κ)) : Prop :=
   ∀ x ∈ φ, deg x.1 ≤ deg x.2
 
 /-- A workspace transformation `F → F'` satisfies No Complexity Loss when some component map,
     pairing each component of `F` with a component of `F'`, loses no degree
     ([marcolli-chomsky-berwick-2025] Definition 1.6.2 asks this of the induced map). -/
-def NoComplexityLoss (deg : UnorderedTree α → ℕ) (F F' : Forest (UnorderedTree α)) : Prop :=
-  ∃ φ : Multiset (UnorderedTree α × UnorderedTree α),
-    φ.map Prod.fst = F ∧ (∀ x ∈ φ, x.2 ∈ F') ∧ NoComplexityLoss.Map deg φ
+def NoComplexityLoss {κ : Type*} (deg : κ → ℕ) (F F' : Multiset κ) : Prop :=
+  ∃ φ : Multiset (κ × κ), φ.map Prod.fst = F ∧ (∀ x ∈ φ, x.2 ∈ F') ∧ NoComplexityLoss.Map deg φ
+
+/-- No Complexity Loss for the images of two workspaces under an injective map gives No Complexity
+    Loss for the degree read through the map. -/
+theorem NoComplexityLoss.of_map {κ κ' : Type*} [Nonempty κ'] {f : κ' → κ}
+    (hf : Function.Injective f) {deg : κ → ℕ} {F F' : Multiset κ'}
+    (h : NoComplexityLoss deg (F.map f) (F'.map f)) : NoComplexityLoss (deg ∘ f) F F' := by
+  obtain ⟨φ, hφ, hmem, hdeg⟩ := h
+  have hl := Function.leftInverse_invFun hf
+  refine ⟨φ.map (Prod.map (Function.invFun f) (Function.invFun f)), ?_, ?_, ?_⟩
+  · rw [Multiset.map_map, show Prod.fst ∘ Prod.map (Function.invFun f) (Function.invFun f) =
+      Function.invFun f ∘ Prod.fst from rfl, ← Multiset.map_map, hφ, Multiset.map_map,
+      hl.comp_eq_id, Multiset.map_id]
+  · intro x hx
+    obtain ⟨y, hy, rfl⟩ := Multiset.mem_map.1 hx
+    obtain ⟨z, hz, hzy⟩ := Multiset.mem_map.1 (hmem y hy)
+    rw [Prod.map_snd, ← hzy, hl z]
+    exact hz
+  · intro x hx
+    obtain ⟨y, hy, rfl⟩ := Multiset.mem_map.1 hx
+    obtain ⟨z, -, hzy⟩ := Multiset.mem_map.1 (hmem y hy)
+    obtain ⟨w, -, hwy⟩ := Multiset.mem_map.1 (hφ ▸ Multiset.mem_map_of_mem Prod.fst hy)
+    simp only [Function.comp_apply, Prod.map_fst, Prod.map_snd]
+    rw [← hwy, ← hzy, hl w, hl z, hwy, hzy]
+    exact hdeg y hy
 
 variable {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
   {F : Forest (UnorderedTree α)} {s : CutChoice α} {k : ℕ}
@@ -233,7 +255,7 @@ variable {α β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))] {τ : Unorder
 /-- At the trace cuts, graded by the size `σ`, every term of Sideward Merge loses complexity along
     its component map ([marcolli-chomsky-berwick-2025] Proposition 1.6.10). -/
 theorem NoComplexityLoss.not_map_accessibleSize_componentMap_merge (a : α)
-    (hs : s ∈ forestCutChoices (traceCuts τ) F)
+    (hs : s ∈ forestCutChoices (markerCuts τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → x.1.value.isLeft)
     {S S' : UnorderedTree (α ⊕ β)} (hK : s.crown = {S, S'})
     (h : S ∉ F ∨ S' ∉ F) :
@@ -241,7 +263,7 @@ theorem NoComplexityLoss.not_map_accessibleSize_componentMap_merge (a : α)
       (componentMap (UnorderedTree.node (Sum.inl a) {S, S'}) s) := by
   have hmerge := accessibleCount_merge_of_crown_eq a hs hF hK
   refine NoComplexityLoss.not_map_componentMap_merge hs
-    (hasExtractionCost_accessibleSize_traceCuts hs hF) (fun T ↦ by simp) hK ?_ ?_ h <;>
+    (hasExtractionCost_accessibleSize_markerCuts hs hF) (fun T ↦ by simp) hK ?_ ?_ h <;>
     simp only [Forest.accessibleSize_singleton, hmerge] <;> omega
 
 end TraceCuts

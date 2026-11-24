@@ -1,7 +1,8 @@
 module
 
+public import Linglib.Core.Algebra.RootedTree.DualPrimitive
 public import Linglib.Syntax.Minimalist.Workspace.Merge.Basic
-public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceConservation
+public import Linglib.Core.Combinatorics.RootedTree.MarkerCutConservation
 public import Linglib.Core.Combinatorics.RootedTree.Conservation
 public import Linglib.Core.Combinatorics.RootedTree.Crown
 public import Linglib.Core.Algebra.RootedTree.HopfAlgebra
@@ -19,16 +20,17 @@ deletion coproduct, reaches these through the projection of the remainder
 (`mergeOp_eq_deletionProj_comp`), so its forms hold of objects that are their own remainders, as
 syntactic objects are.
 
-The proof of `mergeOpOfCuts_pair` expands the coproduct of `{S, S'}` into four cross-terms of the
-primitive terms and the cut sums of `S` and `S'`. Only the primitive term survives: a cut of `S'`
-alone would need crown `{S'}`, and cuts of both would need crowns reassembling `{S, S'}`, and
-both are ruled out by the edge bound of `IsMergeCuts`.
+Merge is multiplication by the grafted pair after contraction of the coproduct with the forest
+`{S, S'}` (`mergeOpOfCuts_eq_mul_contractForest`), and contractions obey a product rule
+(`ConnesKreimer.contractForest_mul`). Each result here evaluates that rule on a product of trees,
+from the contractions of a single tree.
 
 ## Main results
 
 * `Minimalist.Merge.mergeOpOfCuts_pair`, `mergeOp_pair`, `traceMergeOp_pair`: External Merge on a
   two-object workspace.
-* `Minimalist.Merge.mergeOpOfCuts_of'_mul`: Merge commutes with a spectator workspace.
+* `Minimalist.Merge.mergeOpOfCuts_mul_of_contractForest_eq_zero`, `mergeOpOfCuts_of'_mul`: Merge
+  commutes with a spectator.
 * `Minimalist.Merge.mergeOpOfCuts_pair_residual`, `mergeOp_pair_residual`,
   `traceMergeOp_pair_residual`: External Merge with a residual workspace.
 
@@ -46,13 +48,6 @@ open RoseTree UnorderedTree ConnesKreimer
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
 
-private theorem sum_map_ite_eq_zero {ι M : Type*} [AddCommMonoid M] {s : Multiset ι}
-    {P : ι → Prop} [DecidablePred P] {f : ι → M} (h : ∀ i ∈ s, ¬ P i) :
-    (s.map fun i ↦ if P i then f i else 0).sum = 0 :=
-  Multiset.sum_eq_zero fun _ hx ↦ by
-    obtain ⟨i, hi, rfl⟩ := Multiset.mem_map.mp hx
-    exact ite_eq_right (h i hi)
-
 section DecidableEq
 
 variable [DecidableEq (UnorderedTree α)]
@@ -60,55 +55,91 @@ variable [DecidableEq (UnorderedTree α)]
 instance : IsMergeCuts (admissibleCuts (α := α)) where
   crown_numEdges_lt := admissibleCuts_crown_numEdges_lt
   mem_subtrees_of_mem_crown hp hx := (exists_mem_crown_admissibleCuts_iff.mp ⟨_, hp, hx⟩).1
-  filter_empty := admissibleCuts_filter_empty
 
-instance {β : Type*} (τ : UnorderedTree (α ⊕ β) → β) : IsMergeCuts (traceCuts τ) where
-  crown_numEdges_lt := traceCuts_crown_numEdges_lt τ
-  mem_subtrees_of_mem_crown hp hx := traceCuts_mem_subtrees_of_mem_crown τ hp hx
-  filter_empty := traceCuts_filter_empty τ
+instance {β : Type*} (τ : UnorderedTree (α ⊕ β) → β) : IsMergeCuts (markerCuts τ) where
+  crown_numEdges_lt := markerCuts_crown_numEdges_lt τ
+  mem_subtrees_of_mem_crown hp hx := markerCuts_mem_subtrees_of_mem_crown τ hp hx
 
-/-- External Merge of a two-object workspace, over a cut enumeration admitting Merge. -/
+/-! ### Contraction of a tree
+
+Over a cut enumeration admitting Merge, the contraction of a tree `T` with a forest `A` is `1` at
+`A = {T}`, and vanishes when `A` has a member that no crown of `T` can have. -/
+
+section Contract
+
+variable {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
+  {A : Forest (UnorderedTree α)} {T : UnorderedTree α}
+
+/-- Contraction of `T` with a forest other than `{T}` that is the crown of no cut of `T`
+    vanishes. -/
+theorem contractForest_ofTree_eq_zero (hA : A ≠ {T}) (h : ∀ p ∈ cuts T, p.1 ≠ A) :
+    contractForest (R := R) cuts A (ofTree T) = 0 := by
+  rw [contractForest_ofTree_of_ne hA, Multiset.filter_eq_nil.mpr h, Multiset.map_zero,
+    Multiset.sum_zero]
+
+variable [IsMergeCuts cuts]
+
+/-- Contraction of a tree with itself is `1`. -/
+theorem contractForest_ofTree_self (T : UnorderedTree α) :
+    contractForest (R := R) cuts {T} (ofTree T) = 1 := by
+  rw [contractForest_ofTree, ite_eq_left rfl,
+    Multiset.filter_eq_nil.mpr fun p hp ↦ IsMergeCuts.crown_ne_singleton hp, Multiset.map_zero,
+    Multiset.sum_zero, add_zero]
+
+/-- Contraction of `T` with a forest that has `T` beside other members vanishes. -/
+theorem contractForest_ofTree_of_mem (hT : T ∈ A) (hA : A ≠ {T}) :
+    contractForest (R := R) cuts A (ofTree T) = 0 :=
+  contractForest_ofTree_eq_zero hA fun _ hp h ↦ IsMergeCuts.notMem_crown hp (h ▸ hT)
+
+/-- Contraction of `T` with a nonempty forest other than `{T}` that has at least as many edges
+    as `T` vanishes. -/
+theorem contractForest_ofTree_of_numEdges_le (h0 : A ≠ 0) (hA : A ≠ {T})
+    (h : T.numEdges ≤ (A.map numEdges).sum) : contractForest (R := R) cuts A (ofTree T) = 0 :=
+  contractForest_ofTree_eq_zero hA fun _ hp hpA ↦
+    (IsMergeCuts.crown_numEdges_lt hp (hpA ▸ h0)).not_ge (hpA ▸ h)
+
+/-- Contraction with a forest vanishes on a tree that does not contain one of its members. -/
+theorem contractForest_ofTree_of_notMem {t : UnorderedTree α} (ht : t ∈ A)
+    (hT : t ∉ T.subtrees) : contractForest (R := R) cuts A (ofTree T) = 0 :=
+  contractForest_ofTree_eq_zero
+    (fun h ↦ hT (Multiset.mem_singleton.1 (h ▸ ht) ▸ T.self_mem_subtrees))
+    fun _ hp h ↦ hT (IsMergeCuts.mem_subtrees_of_mem_crown hp (h ▸ ht))
+
+end Contract
+
+/-! ### External Merge of a pair -/
+
+/-- External Merge of a two-object workspace, over a cut enumeration admitting Merge. In the
+    product rule for the contraction of `S * S'` with `{S, S'}`, only the term contracting each
+    object with itself survives: every other split gives one of the two a forest with at least
+    as many edges as it has. -/
 theorem mergeOpOfCuts_pair
     {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
     [IsMergeCuts cuts] (lbl : α) (S S' : UnorderedTree α) :
     mergeOpOfCuts (R := R) cuts lbl S S' (of' ({S, S'} : Forest (UnorderedTree α)))
       = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) := by
-  have key (F F' : Forest (UnorderedTree α)) (t t' : ConnesKreimer R (UnorderedTree α)) :
-      mergePost (R := R) lbl S S' ((of' F ⊗ₜ[R] t) * (of' F' ⊗ₜ[R] t'))
-        = if F + F' = {S, S'} then of' {UnorderedTree.node lbl {S, S'}} * (t * t') else 0 := by
-    rw [Algebra.TensorProduct.tmul_mul_tmul, ← of'_add, mergePost_basis_tensor]
   have hpair : ({S} : Forest (UnorderedTree α)) + {S'} = {S, S'} := rfl
-  have hS (p) (hp : p ∈ cuts S) : ¬ p.1 + {S'} = {S, S'} := fun h ↦
-    IsMergeCuts.crown_ne_singleton hp (Multiset.add_left_inj.mp (h.trans hpair.symm))
-  have hS' (p) (hp : p ∈ cuts S') : ¬ {S} + p.1 = {S, S'} := fun h ↦
-    IsMergeCuts.crown_ne_singleton hp (Multiset.add_right_inj.mp (h.trans hpair.symm))
-  have hSS' (p) (hp : p ∈ cuts S) (p') (hp' : p' ∈ cuts S') : ¬ p.1 + p'.1 = {S, S'} := by
-    intro h
-    have hsum := congrArg (fun F ↦ (F.map numEdges).sum) h
-    simp only [Multiset.map_add, Multiset.sum_add, Multiset.insert_eq_cons, Multiset.map_cons,
-      Multiset.map_singleton, Multiset.sum_cons, Multiset.sum_singleton] at hsum
-    rcases eq_or_ne p.1 0 with h1 | h1
-    · have h2 : p'.1 ≠ 0 := fun h2 ↦ by simp [h1, h2] at h
-      have := IsMergeCuts.crown_numEdges_lt hp' h2
-      simp only [h1, Multiset.map_zero, Multiset.sum_zero] at hsum
-      omega
-    · have := IsMergeCuts.crown_numEdges_lt hp h1
-      rcases eq_or_ne p'.1 0 with h2 | h2
-      · simp only [h2, Multiset.map_zero, Multiset.sum_zero] at hsum
-        omega
-      · have := IsMergeCuts.crown_numEdges_lt hp' h2
-        omega
-  rw [mergeOpOfCuts, LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulOfCuts_apply_of',
-    show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ S' ::ₘ 0 from rfl, comulForestOfCuts_cons,
-    comulForestOfCuts_cons, comulForestOfCuts_zero, mul_one, comulTreeOfCuts, comulTreeOfCuts]
-  simp only [ofTree, add_mul, mul_add, ← Multiset.sum_map_mul_left,
-    ← Multiset.sum_map_mul_right, map_add, map_multiset_sum, Multiset.map_map,
-    Function.comp_def, key, ite_eq_left hpair, mul_one]
-  rw [sum_map_ite_eq_zero hS, add_zero, Multiset.sum_eq_zero, add_zero]
-  · rfl
-  intro x hx
-  obtain ⟨p', hp', rfl⟩ := Multiset.mem_map.mp hx
-  rw [ite_eq_right (hS' p' hp'), zero_add, sum_map_ite_eq_zero fun p hp ↦ hSS' p hp p' hp']
+  rw [mergeOpOfCuts_eq_mul_contractForest, ← hpair, of'_add, of'_singleton, of'_singleton,
+    contractForest_mul, Finset.sum_eq_single (({S} : Forest (UnorderedTree α)), {S'})]
+  · rw [contractForest_ofTree_self, contractForest_ofTree_self, mul_one, mul_one, of'_singleton]
+  · rintro ⟨A, B⟩ hp hne
+    have hAB : A + B = {S} + {S'} := Multiset.mem_antidiagonal.1 (Multiset.mem_toFinset.1 hp)
+    have hsum := congrArg (fun F ↦ (F.map numEdges).sum) hAB
+    simp only [Multiset.map_add, Multiset.sum_add, Multiset.map_singleton,
+      Multiset.sum_singleton] at hsum
+    have hA : A ≠ {S} := by
+      rintro rfl; exact hne (Prod.ext rfl (Multiset.add_right_inj.mp hAB))
+    have hB : B ≠ {S'} := by
+      rintro rfl; exact hne (Prod.ext (Multiset.add_left_inj.mp hAB) rfl)
+    rcases eq_or_ne A 0 with rfl | hA0
+    · rw [contractForest_ofTree_of_numEdges_le (T := S') (by rintro rfl; simp at hAB) hB
+        (by simp at hsum; omega), mul_zero]
+    rcases eq_or_ne B 0 with rfl | hB0
+    · rw [contractForest_ofTree_of_numEdges_le hA0 hA (by simp at hsum; omega), zero_mul]
+    rcases le_or_gt S.numEdges (A.map numEdges).sum with h | h
+    · rw [contractForest_ofTree_of_numEdges_le hA0 hA h, zero_mul]
+    · rw [contractForest_ofTree_of_numEdges_le (T := S') hB0 hB (by omega), mul_zero]
+  · exact fun h ↦ absurd (by simp) h
 
 /-- External Merge of a two-object workspace, for objects that are their own remainders
 ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). -/
@@ -120,6 +151,26 @@ theorem mergeOp_pair [DecidableEq α] (lbl : α) {S S' : UnorderedTree α}
     AlgHom.toLinearMap_apply, of'_singleton, deletionProj_ofTree,
     deletionQuotient_node_pair lbl hS hS', Option.elim_some]
 
+/-! ### Spectators -/
+
+/-- Merge commutes with a spectator `x` whose contractions with the nonempty parts of `{S, S'}`
+    vanish: in the product rule for the contraction of `x * w`, only the term that leaves `x`
+    whole survives. -/
+theorem mergeOpOfCuts_mul_of_contractForest_eq_zero
+    {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
+    [IsMergeCuts cuts] (lbl : α) {S S' : UnorderedTree α} {x : ConnesKreimer R (UnorderedTree α)}
+    (hx : ∀ A : Forest (UnorderedTree α), A ≠ 0 → A ≤ {S, S'} → contractForest cuts A x = 0)
+    (w : ConnesKreimer R (UnorderedTree α)) :
+    mergeOpOfCuts (R := R) cuts lbl S S' (x * w) = x * mergeOpOfCuts (R := R) cuts lbl S S' w := by
+  rw [mergeOpOfCuts_eq_mul_contractForest, mergeOpOfCuts_eq_mul_contractForest, contractForest_mul,
+    Finset.sum_eq_single ((0 : Forest (UnorderedTree α)), ({S, S'} : Forest (UnorderedTree α)))]
+  · rw [contractForest_zero, mul_left_comm]
+  · rintro ⟨A, B⟩ hp hne
+    have hAB : A + B = {S, S'} := Multiset.mem_antidiagonal.1 (Multiset.mem_toFinset.1 hp)
+    rw [hx A (fun h ↦ hne (by subst h; simpa using hAB)) (hAB ▸ Multiset.le_add_right A B),
+      zero_mul]
+  · exact fun h ↦ absurd (by simp) h
+
 /-- Merge commutes with a spectator component having neither `S` nor `S'` as a subtree
 ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). -/
 theorem mergeOpOfCuts_ofTree_mul
@@ -129,40 +180,11 @@ theorem mergeOpOfCuts_ofTree_mul
     (w : ConnesKreimer R (UnorderedTree α)) :
     mergeOpOfCuts (R := R) cuts lbl S S' (ofTree T * w) =
       ofTree T * mergeOpOfCuts (R := R) cuts lbl S S' w := by
-  rw [mergeOpOfCuts, LinearMap.comp_apply, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-    AlgHom.toLinearMap_apply, map_mul, comulOfCuts_apply_ofTree, comulTreeOfCuts, add_mul, map_add,
-    ← of'_singleton]
-  -- The primitive term vanishes, since `{T}` does not fit inside `{S, S'}`.
-  rw [mergePost_left_mul_eq_zero_of_not_le _ _ _ _ _ ?prim, zero_add]
-  case prim =>
-    intro h_le
-    have hT_mem : T ∈ ({S, S'} : Forest (UnorderedTree α)) :=
-      Multiset.subset_of_le h_le (Multiset.mem_singleton.mpr rfl)
-    rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
-    rcases hT_mem with rfl | rfl
-    exacts [hT_S T.self_mem_subtrees, hT_S' T.self_mem_subtrees]
-  -- Split off the empty cut `(0, T)`; the nonempty cuts vanish.
-  rw [← Multiset.sum_map_mul_right,
-    ← Multiset.filter_add_not (fun pf => pf.1.card = 0) (cuts T),
-    Multiset.map_add, Multiset.sum_add, map_add, IsMergeCuts.filter_empty,
-    Multiset.map_singleton, Multiset.sum_singleton, _root_.map_multiset_sum,
-    Multiset.sum_eq_zero, add_zero]
-  · -- The empty cut passes `T` to the right channel.
-    rw [of'_zero,
-      mul_comm ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree T) _,
-      mergePost_right_one_tmul, mul_comm]
-    rfl
-  · intro x hx
-    obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp (Multiset.map_map _ _ _ ▸ hx)
-    obtain ⟨hp, hcard⟩ := Multiset.mem_filter.mp hp
-    refine mergePost_left_mul_eq_zero_of_not_le _ _ _ _ _ (fun h_le ↦ hcard ?_) _
-    rw [Multiset.card_eq_zero]
-    refine Multiset.eq_zero_of_forall_notMem fun x hx_mem => ?_
-    have hx_in : x ∈ ({S, S'} : Forest (UnorderedTree α)) := Multiset.subset_of_le h_le hx_mem
-    rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hx_in
-    rcases hx_in with rfl | rfl
-    exacts [hT_S (IsMergeCuts.mem_subtrees_of_mem_crown hp hx_mem),
-      hT_S' (IsMergeCuts.mem_subtrees_of_mem_crown hp hx_mem)]
+  refine mergeOpOfCuts_mul_of_contractForest_eq_zero lbl (fun A hA hle ↦ ?_) w
+  obtain ⟨t, ht⟩ := Multiset.exists_mem_of_ne_zero hA
+  refine contractForest_ofTree_of_notMem ht ?_
+  rcases (by simpa using Multiset.subset_of_le hle ht : t = S ∨ t = S') with rfl | rfl <;>
+    assumption
 
 /-- Merge commutes with a spectator workspace `F` none of whose components has `S` or `S'` as a
     subtree. -/

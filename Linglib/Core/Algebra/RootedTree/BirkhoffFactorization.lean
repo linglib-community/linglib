@@ -44,6 +44,9 @@ the factorization `φ = (φ₋ ∘ S) ⋆ φ₊` (`ConnesKreimer.birkhoffFactori
 * `ConnesKreimer.birkhoffPlus_eq_self`: a character that `P` kills on every tree is its own
   renormalized part.
 * `ConnesKreimer.birkhoffMinus_neg_id_convMul`: at `P = -id`, `φ₋ ⋆ φ = 1`.
+* `ConnesKreimer.birkhoffPlusTree_id`, `ConnesKreimer.le_birkhoffPlusTree_id`: into an idempotent
+  semiring at `P = id`, the renormalized part of a tree is its preparation, and it is at least
+  `φ(T)`.
 
 ## Implementation notes
 
@@ -200,7 +203,48 @@ theorem birkhoffPlus_eq_self {φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] 
   algHom_ext_ofTree fun T ↦ by
     rw [birkhoffPlus_apply_ofTree, birkhoffPlusTree_eq_of_forall h, AlgHom.toLinearMap_apply]
 
+theorem birkhoffPrepTree_eq_zero (h : ∀ T, φ (ofTree T) = 0) (T : UnorderedTree α) :
+    birkhoffPrepTree φ P T = 0 :=
+  Multiset.sum_eq_zero fun x hx ↦ by
+    obtain ⟨p, -, rfl⟩ := Multiset.mem_map.mp hx
+    rw [h, mul_zero]
+
+/-- A map that vanishes on every tree has renormalized part zero on every tree. -/
+theorem birkhoffPlusTree_eq_zero (h : ∀ T, φ (ofTree T) = 0) (T : UnorderedTree α) :
+    birkhoffPlusTree φ P T = 0 := by
+  rw [birkhoffPlusTree, birkhoffMinusTree_eq, birkhoffPrepTree_eq_zero h, map_zero, add_zero]
+
 end Semiring
+
+/-! ### The identity operator on an idempotent semiring -/
+
+section Idem
+
+variable {R ℛ : Type*} [CommSemiring R] [IdemCommSemiring ℛ] [Algebra R ℛ] {α : Type*}
+  (φ : ConnesKreimer R (UnorderedTree α) →ₗ[R] ℛ)
+
+/-- Into an idempotent semiring the preparation of a tree is at least `φ(T)`, the term of the
+empty cut. -/
+theorem le_birkhoffPrepTree (P : ℛ →+ ℛ) (T : UnorderedTree α) :
+    φ (ofTree T) ≤ birkhoffPrepTree φ P T := by
+  have h : ((0 : Forest (UnorderedTree α)), T) ∈ admissibleCuts T :=
+    Multiset.mem_of_mem_filter (p := fun p ↦ p.1.card = 0)
+      (admissibleCuts_filter_empty T ▸ Multiset.mem_singleton_self _)
+  simpa [birkhoffPrepTree] using Multiset.le_sum_of_mem (Multiset.mem_map_of_mem
+    (fun p ↦ (p.1.map (birkhoffMinusTree φ P)).prod * φ (ofTree p.2)) h)
+
+/-- At `P = id` into an idempotent semiring, `φ₊(T) = φ̃(T) = φ₋(T)`. -/
+theorem birkhoffPlusTree_id (T : UnorderedTree α) :
+    birkhoffPlusTree φ (.id ℛ) T = birkhoffPrepTree φ (.id ℛ) T := by
+  rw [birkhoffPlusTree, birkhoffMinusTree_eq, AddMonoidHom.id_apply, add_idem]
+
+/-- At `P = id` into an idempotent semiring, the renormalized part of a tree is at least
+`φ(T)`. -/
+theorem le_birkhoffPlusTree_id (T : UnorderedTree α) :
+    φ (ofTree T) ≤ birkhoffPlusTree φ (.id ℛ) T :=
+  (le_birkhoffPrepTree φ _ T).trans_eq (birkhoffPlusTree_id φ T).symm
+
+end Idem
 
 /-! ### The operator `-id` -/
 

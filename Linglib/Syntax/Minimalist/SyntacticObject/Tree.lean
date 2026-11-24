@@ -255,6 +255,25 @@ theorem toUnorderedTree_injective :
 @[simp] theorem toUnorderedTree_inj {s t : SyntacticObject L ι} :
     s.toUnorderedTree = t.toUnorderedTree ↔ s = t := toUnorderedTree_injective.eq_iff
 
+/-- A syntactic object is a trace exactly when the root of its tree carries a trace label. -/
+theorem isTrace_iff_isRight {s : SyntacticObject L ι} :
+    s.IsTrace ↔ s.toUnorderedTree.value.isRight := by
+  induction s using SyntacticObject.ind with
+  | leaf a => simp
+  | trace => simp
+  | traceOf i => simp
+  | merge l r _ _ => simp
+
+/-- A syntactic object is no trace exactly when the root of its tree carries a lexical item or the
+bare label. -/
+theorem not_isTrace_iff_isLeft {s : SyntacticObject L ι} :
+    ¬ s.IsTrace ↔ s.toUnorderedTree.value.isLeft := by
+  rw [isTrace_iff_isRight]
+  cases s.toUnorderedTree.value <;> simp
+
+instance : DecidablePred (IsTrace (L := L) (ι := ι)) :=
+  fun _ ↦ decidable_of_iff _ isTrace_iff_isRight.symm
+
 end SyntacticObject
 
 namespace PlanarSyntacticObject

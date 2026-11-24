@@ -218,21 +218,24 @@ noncomputable instance : CommSemiring (WithCuts R cuts) :=
 noncomputable instance : Algebra R (WithCuts R cuts) :=
   inferInstanceAs (Algebra R (ConnesKreimer R (UnorderedTree α)))
 
-/-- A cut policy is admissible when nested cuts can be taken in either order and the empty cut is
-the only cut with an empty crown. The first makes the generic coproduct `comulOfCuts cuts`
-coassociative (`comulOfCuts_coassoc`) and the second makes it right counital
-(`rTensor_counit_comp_comulOfCuts`); it is left counital at every policy. Gates the `Bialgebra`
-instance on `WithCuts` (the `Fact`-style mixin of the `WithLp` pattern). -/
-class IsBialgebraCuts : Prop where
-  doubleCutsCrown_eq : ∀ T, doubleCutsCrown cuts T = doubleCutsTrunk cuts T
+/-- A cut policy is counital when the empty cut is its only cut with an empty crown, which makes
+the generic coproduct `comulOfCuts cuts` right counital (`rTensor_counit_comp_comulOfCuts`); it is
+left counital at every policy. -/
+class IsCounitalCuts : Prop where
   filter_card_eq_zero : ∀ T, (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}
+
+/-- A cut policy is admissible when it is counital and nested cuts can be taken in either order,
+which makes the generic coproduct `comulOfCuts cuts` coassociative (`comulOfCuts_coassoc`). Gates
+the `Bialgebra` instance on `WithCuts` (the `Fact`-style mixin of the `WithLp` pattern). -/
+class IsBialgebraCuts : Prop extends IsCounitalCuts cuts where
+  doubleCutsCrown_eq : ∀ T, doubleCutsCrown cuts T = doubleCutsTrunk cuts T
 
 /-- Any admissible cut policy makes `WithCuts R cuts` a bialgebra. -/
 noncomputable instance WithCuts.instBialgebra [IsBialgebraCuts cuts] :
     Bialgebra R (WithCuts R cuts) :=
   Bialgebra.ofAlgHom (A := WithCuts R cuts) (comulOfCuts cuts) counit
     (comulOfCuts_coassoc IsBialgebraCuts.doubleCutsCrown_eq)
-    (rTensor_counit_comp_comulOfCuts IsBialgebraCuts.filter_card_eq_zero)
+    (rTensor_counit_comp_comulOfCuts IsCounitalCuts.filter_card_eq_zero)
     (lTensor_counit_comp_comulOfCuts cuts)
 
 end ConnesKreimer

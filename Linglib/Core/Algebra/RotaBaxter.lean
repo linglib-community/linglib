@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Algebra.Group.Hom.Instances
 public import Mathlib.Algebra.Module.Defs
+public import Mathlib.Algebra.Order.Kleene
 public import Mathlib.Data.Set.Operations
 public import Mathlib.Tactic.Abel
 
@@ -31,6 +32,7 @@ the algebraic Birkhoff factorization of renormalization rests.
 * `IsRotaBaxter.mul_mem_range`, `IsRotaBaxter.mul_mem_range_smul_add`: the ranges of `P` and of
   `θ • id + P` are closed under multiplication.
 * `IsRotaBaxter.neg`: if the additive map `P` has weight `θ`, then `-P` has weight `-θ`.
+* `isRotaBaxter_id`: on an idempotent semiring the identity has weight `+1`.
 
 ## Implementation notes
 
@@ -91,6 +93,11 @@ theorem IsRotaBaxter.mul_mem_range_smul_add (h : IsRotaBaxter θ P)
   abel
 
 end Semiring
+
+/-- On an idempotent semiring the identity is a Rota–Baxter operator of weight `+1`, the three
+terms `a * b` of the right-hand side adding up to one. -/
+theorem isRotaBaxter_id [IdemSemiring A] : IsRotaBaxter (1 : ℕ) (id : A → A) := fun a b ↦ by
+  simp only [id, one_nsmul, add_idem]
 
 section Ring
 
