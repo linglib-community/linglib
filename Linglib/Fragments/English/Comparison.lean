@@ -32,7 +32,7 @@ open Comparative
 /-- The *than*-comparative, with a particle-marked standard and the degree marked by *more* or
 *-er*. -/
 def than : Comparative :=
-  { standardMarker := [.free "than"], caseAssignment := .derived
+  { standardMarker := [.free "than"], standard := .derived
     degreeMarkers := [Adjectives.more, Inflection.er] }
 
 /-- The superlative is morphological, *-est*. -/

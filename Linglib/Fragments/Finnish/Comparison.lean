@@ -27,11 +27,11 @@ def mpi : Morphology.Morph := .suff "mpi"
 
 /-- The *kuin*-comparative, the primary construction, with a particle-marked standard. -/
 def kuin : Comparative :=
-  { standardMarker := [.free "kuin"], caseAssignment := .derived, degreeMarkers := [mpi] }
+  { standardMarker := [.free "kuin"], standard := .derived, degreeMarkers := [mpi] }
 
 /-- The secondary construction, with the standard in the partitive. -/
 def partitive : Comparative :=
-  { caseAssignment := .fixed, fixedEncoding := some .adverbial, standardCase := some .part
+  { standard := .adverbial (some .part)
     degreeMarkers := [mpi] }
 
 /-- The superlative is morphological. -/

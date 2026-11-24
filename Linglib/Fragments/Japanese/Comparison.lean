@@ -29,12 +29,10 @@ open Comparative
 no degree morphology. -/
 def yori : Comparative :=
   { standardMarker := Adpositions.yori.morphs
-  , caseAssignment := .fixed
-  , fixedEncoding := some .adverbial
-  , standardCase := some .abl }
+  , standard := .adverbial (some .abl) }
 
-theorem standardCase_functions_inter_nonempty :
-    ∀ k ∈ yori.standardCase, (k.functions ∩ Adpositions.yori.functions).Nonempty := by
+theorem case?_standard_functions_inter_nonempty :
+    ∀ k ∈ yori.standard.case?, (k.functions ∩ Adpositions.yori.functions).Nonempty := by
   decide
 
 end Japanese.Comparison

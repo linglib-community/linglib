@@ -1,0 +1,460 @@
+{
+  "features": [
+    {
+      "key": "comparativeType",
+      "lean": "comparativeType",
+      "type": "ComparativeType",
+      "doc": "The six types of comparative construction, by the encoding of the standard.",
+      "levels": [
+        {
+          "name": "separative",
+          "label": "separative",
+          "doc": "the standard is in a source phrase"
+        },
+        {
+          "name": "allative",
+          "label": "allative",
+          "doc": "the standard is in a goal phrase"
+        },
+        {
+          "name": "locative",
+          "label": "locative",
+          "doc": "the standard is in a phrase of location or contact"
+        },
+        {
+          "name": "exceed",
+          "label": "exceed",
+          "doc": "the standard is the direct object of a verb of exceeding"
+        },
+        {
+          "name": "conjoined",
+          "label": "conjoined",
+          "doc": "two independent clauses, one for the comparee and one for the standard"
+        },
+        {
+          "name": "particle",
+          "label": "particle",
+          "doc": "a derived-case standard with a comparative particle"
+        }
+      ]
+    }
+  ],
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "standard",
+          "label": "standard",
+          "doc": "the word that carries the marker of the standard, or the place of the standard clause where there is no marker"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The comparative constructions of the rows, by the marker of the standard.",
+      "levels": [
+        {
+          "name": "dan",
+          "label": "dan",
+          "doc": "the Turkish ablative suffix -DAn"
+        },
+        {
+          "name": "se",
+          "label": "se",
+          "doc": "the Hindi-Urdu postposition se"
+        },
+        {
+          "name": "yori",
+          "label": "yori",
+          "doc": "the Japanese postposition yori"
+        },
+        {
+          "name": "min",
+          "label": "min",
+          "doc": "the Arabic preposition min"
+        },
+        {
+          "name": "bi",
+          "label": "bi",
+          "doc": "the Mandarin verb bǐ"
+        },
+        {
+          "name": "ju",
+          "label": "ju",
+          "doc": "the Yoruba verb ju"
+        },
+        {
+          "name": "kushinda",
+          "label": "kushinda",
+          "doc": "the Swahili infinitive ku-shinda"
+        },
+        {
+          "name": "kuliko",
+          "label": "kuliko",
+          "doc": "the Swahili infinitive ku-liko"
+        },
+        {
+          "name": "chem",
+          "label": "chem",
+          "doc": "the Russian particle chem"
+        },
+        {
+          "name": "que",
+          "label": "que",
+          "doc": "the French particle que"
+        },
+        {
+          "name": "kuin",
+          "label": "kuin",
+          "doc": "the Finnish particle kuin"
+        },
+        {
+          "name": "juxtaposition",
+          "label": "juxtaposition",
+          "doc": "the Swahili juxtaposition of two clauses, with no marker"
+        },
+        {
+          "name": "partitive",
+          "label": "partitive",
+          "doc": "the Finnish partitive standard"
+        }
+      ]
+    }
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the book that are recorded."
+  },
+  "examples": [
+    {
+      "id": "stassen1985_6_15",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 6 (15)"},
+      "language": "nucl1301",
+      "primaryText": "Sen gul-den güzel-sin",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Sen", "you"], ["gul-den", "rose-from"], ["güzel-sin", "beautiful-be-2SG"]
+      ],
+      "translation": "You are more beautiful than a rose",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "standard", "lexeme": "dan"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "separative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_6_24a",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 6 (24a)"},
+      "language": "hind1269",
+      "primaryText": "Ap us-se bare haim",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ap", "you"], ["us-se", "him-from"], ["bare", "big"], ["haim", "be-PRES.2SG"]
+      ],
+      "translation": "You are bigger than him",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "standard", "lexeme": "se"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "separative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_6_26a",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 6 (26a)"},
+      "language": "nucl1643",
+      "primaryText": "Nihon-go wa doits-go yori muzukashi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nihon-go", "Japanese"], ["wa", "TOP"], ["doits-go", "German"], ["yori", "from"],
+        ["muzukashi", "difficult"]
+      ],
+      "translation": "Japanese is more difficult than German",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "standard", "lexeme": "yori"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "separative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_6_32",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 6 (32)"},
+      "language": "kore1280",
+      "primaryText": "Na-eso to kheda",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Na-eso", "I-from"], ["to", "he"], ["kheda", "big-PRES"]
+      ],
+      "translation": "He is bigger than me",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "standard"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "separative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_6_42",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 6 (42)"},
+      "language": "stan1318",
+      "primaryText": "Laysat al-nisa 'adcafa min al-rijali",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Laysat", "not"], ["al-nisa", "the-women"], ["'adcafa", "weaker"], ["min", "from"],
+        ["al-rijali", "the-men"]
+      ],
+      "translation": "Women are not weaker than men",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "standard", "lexeme": "min"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "separative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_8_12b",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 8 (12b)"},
+      "language": "mand1415",
+      "primaryText": "Wo na p'i ma pi ni na p'i ma kwai",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Wo", "I"], ["na", "this"], ["p'i", "CLASS"], ["ma", "horse"], ["pi", "exceed"],
+        ["ni", "you"], ["na", "this"], ["p'i", "CLASS"], ["ma", "horse"], ["kwai", "is-big"]
+      ],
+      "translation": "My horse is bigger than your horse",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "standard", "lexeme": "bi"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "exceed"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_8_16b",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 8 (16b)"},
+      "language": "yoru1245",
+      "primaryText": "Ile mi kere ju tiwon",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ile", "house"], ["mi", "my"], ["kere", "small"], ["ju", "exceed"], ["tiwon", "theirs"]
+      ],
+      "translation": "My house is smaller than theirs",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "standard", "lexeme": "ju"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "exceed"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_8_24",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 8 (24)"},
+      "language": "swah1253",
+      "primaryText": "Mti huu ni mrefu ku-shinda ule",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Mti", "tree"], ["huu", "this"], ["ni", "is"], ["mrefu", "big"],
+        ["ku-shinda", "INF-exceed"], ["ule", "that"]
+      ],
+      "translation": "This tree is taller than that",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "standard", "lexeme": "kushinda"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "exceed"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_8_26",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 8 (26)"},
+      "language": "swah1253",
+      "primaryText": "Nyumba nyake nzuri sana ku-liko nyumba yangu",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nyumba", "house"], ["nyake", "his"], ["nzuri", "it-is"], ["sana", "good"],
+        ["ku-liko", "PRT"], ["nyumba", "house"], ["yangu", "my"]
+      ],
+      "translation": "His house is better than my house",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "standard", "lexeme": "kuliko"}
+      ],
+      "paperFeatures": [],
+      "comment": "The book calls the construction an indeterminate case and assigns it no type.",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_9_35",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 9 (35)"},
+      "language": "russ1263",
+      "primaryText": "On umnjee cem ja",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["On", "he"], ["umnjee", "clever-er"], ["cem", "PRT"], ["ja", "I"]
+      ],
+      "translation": "He is more clever than me",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "standard", "lexeme": "chem"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "particle"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_9_36",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 9 (36)"},
+      "language": "stan1290",
+      "primaryText": "Angélique est plus charmante que Marie",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Angélique", "A."], ["est", "is"], ["plus", "more"], ["charmante", "charming-FEM"],
+        ["que", "PRT"], ["Marie", "M."]
+      ],
+      "translation": "Angélique is more charming than Marie",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "standard", "lexeme": "que"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "particle"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_9_37",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 9 (37)"},
+      "language": "finn1318",
+      "primaryText": "Hän on pite-mpi kuin sina",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hän", "he"], ["on", "is"], ["pite-mpi", "big-PRT"], ["kuin", "PRT"], ["sina", "you"]
+      ],
+      "translation": "He is bigger than you",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "standard", "lexeme": "kuin"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "particle"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_10_5a",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 10 (5a)"},
+      "language": "swah1253",
+      "primaryText": "Joogoo wa Ali hodari, yule wa Juma dhaifu",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Joogoo", "rooster"], ["wa", "of"], ["Ali", "A."], ["hodari,", "strong"], ["yule", "that"],
+        ["wa", "of"], ["Juma", "J."], ["dhaifu", "weak"]
+      ],
+      "translation": "Ali's rooster is stronger than Juma's rooster",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "length": 0, "label": "standard", "lexeme": "juxtaposition"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "conjoined"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "stassen1985_10_54a",
+      "source": {"bibkey": "stassen-1985", "paperLabel": "ch. 10 (54a)"},
+      "language": "finn1318",
+      "primaryText": "Nykyinen professori on edellis-a heiko-mpi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nykyinen", "current"], ["professori", "professor"], ["on", "is"],
+        ["edellis-a", "former-PART"], ["heiko-mpi", "weak-er"]
+      ],
+      "translation": "The current professor is less strict than the former one",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "standard", "lexeme": "partitive"}
+      ],
+      "paperFeatures": [
+        ["comparativeType", "separative"]
+      ],
+      "comment": "The book classes the construction as the secondary separative comparative of Finnish.",
+      "verified": "page-image"
+    }
+  ]
+}

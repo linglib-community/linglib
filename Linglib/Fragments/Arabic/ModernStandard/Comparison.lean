@@ -24,9 +24,7 @@ open Comparative
 /-- The *min*-comparative, whose standard follows the separative preposition *min*. -/
 def min : Comparative :=
   { standardMarker := [.free "min"]
-  , caseAssignment := .fixed
-  , fixedEncoding := some .adverbial
-  , standardCase := some .abl }
+  , standard := .adverbial (some .abl) }
 
 /-- The superlative is the elative. -/
 def superlative : SuperlativeStrategy := .elative

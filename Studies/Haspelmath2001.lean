@@ -5,6 +5,7 @@ public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Statistics.Haspelmath2001
 public import Linglib.Fragments.Basque.Relativization
+public import Linglib.Fragments.English.Comparison
 public import Linglib.Fragments.English.Relativization
 public import Linglib.Fragments.Finnish.Comparison
 public import Linglib.Fragments.Finnish.Relativization
@@ -352,7 +353,7 @@ theorem comparative_fragments :
         (latin, [Latin.Comparison.quam, Latin.Comparison.ablative]),
         (russian, [Russian.Comparison.chem]), (turkish, [Turkish.Comparison.dan])],
       (x.1 ∈ isogloss .particleComparative ↔
-        ∃ c ∈ x.2, Stassen1985.type1985 c = some .particle) := by
+        ∃ c ∈ x.2, Stassen1985.typeOf c = some .particle) := by
   decide
 
 /-! ### The examples -/

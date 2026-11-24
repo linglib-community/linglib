@@ -43,8 +43,8 @@ open Comparative
 /-- The ablative comparative, whose standard takes *-DAn* and whose adjective is preceded by
 the optional *daha* and carries no comparative morphology. -/
 def dan : Comparative :=
-  { standardMarker := [.suff "DAn"], caseAssignment := .fixed, fixedEncoding := some .adverbial,
-    standardCase := some .abl, degreeMarkers := [.free "daha"] }
+  { standardMarker := [.suff "DAn"], standard := .adverbial (some .abl)
+    degreeMarkers := [.free "daha"] }
 
 /-- The construction is locational. -/
 theorem type_dan : dan.type = .locational := rfl

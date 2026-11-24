@@ -28,7 +28,7 @@ open Comparative
 
 /-- The *chem*-comparative, with a particle-marked standard. -/
 def chem : Comparative :=
-  { standardMarker := [.free "chem"], caseAssignment := .derived
+  { standardMarker := [.free "chem"], standard := .derived
     degreeMarkers := [.suff "ee", .suff "ej"] }
 
 /-- The superlative is morphological. -/
