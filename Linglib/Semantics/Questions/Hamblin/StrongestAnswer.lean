@@ -9,7 +9,7 @@ public import Linglib.Semantics.Questions.Hamblin.Basic
 
 Let `H` be a Hamblin set. A strongest true answer at a world `w` is a member of `H` that is true at
 `w` and entails every member of `H` that is true at `w`. We write `IsStrongestTrueAnswer H w p`,
-which unfolds to `IsLeast (trueAnswers H w) p`.
+which unfolds to `IsLeast (karttunen H w) p`.
 
 [dayal-1996] proposes that a question presupposes that it has a strongest true answer. We call this
 condition `HasStrongestTrueAnswer H w`.
@@ -36,7 +36,7 @@ variable {W : Type*} (H : Set (Set W)) (w : W)
 
 /-- A strongest true answer at `w` is a member of `H` true at `w` that entails every member true
 at `w`, [dayal-1996]'s maximally informative true member. -/
-abbrev IsStrongestTrueAnswer (p : Set W) : Prop := IsLeast (trueAnswers H w) p
+abbrev IsStrongestTrueAnswer (p : Set W) : Prop := IsLeast (karttunen H w) p
 
 /-- Dayal's existential presupposition holds at `w` when a strongest true member exists. -/
 def HasStrongestTrueAnswer : Prop := ∃ p, IsStrongestTrueAnswer H w p
@@ -88,8 +88,8 @@ section Range
 
 variable {α : Type*}
 
-theorem trueAnswers_image (P : α → Set W) (D : Set α) (w : W) :
-    trueAnswers (P '' D) w = P '' {a ∈ D | w ∈ P a} := by
+theorem karttunen_image (P : α → Set W) (D : Set α) (w : W) :
+    karttunen (P '' D) w = P '' {a ∈ D | w ∈ P a} := by
   ext p
   constructor
   · rintro ⟨⟨a, ha, rfl⟩, hw⟩
@@ -97,9 +97,9 @@ theorem trueAnswers_image (P : α → Set W) (D : Set α) (w : W) :
   · rintro ⟨a, ⟨ha, hw⟩, rfl⟩
     exact ⟨⟨a, ha, rfl⟩, hw⟩
 
-theorem trueAnswers_range (P : α → Set W) (w : W) :
-    trueAnswers (Set.range P) w = P '' {a | w ∈ P a} := by
-  rw [← Set.image_univ, trueAnswers_image, Set.sep_univ]
+theorem karttunen_range (P : α → Set W) (w : W) :
+    karttunen (Set.range P) w = P '' {a | w ∈ P a} := by
+  rw [← Set.image_univ, karttunen_image, Set.sep_univ]
 
 theorem hasStrongestTrueAnswer_range_iff (P : α → Set W) (w : W) :
     HasStrongestTrueAnswer (Set.range P) w ↔
@@ -112,7 +112,7 @@ theorem hasStrongestTrueAnswer_range_iff (P : α → Set W) (w : W) :
 
 theorem isStrongestTrueAnswer_range_iff {P : α → Set W} {a : α} {w : W} :
     IsStrongestTrueAnswer (Set.range P) w (P a) ↔ w ∈ P a ∧ ∀ b, w ∈ P b → P a ⊆ P b := by
-  rw [IsStrongestTrueAnswer, trueAnswers_range]
+  rw [IsStrongestTrueAnswer, karttunen_range]
   exact and_congr ⟨fun ⟨_, hb, h⟩ => h ▸ hb, fun h => ⟨a, h, rfl⟩⟩ Set.forall_mem_image
 
 theorem hasStrongestTrueAnswer_range_iff_exists {P : α → Set W} {w : W} :
@@ -145,7 +145,7 @@ theorem isLeast_singleton (p : Set W) : IsLeast {p} p :=
   ⟨Set.mem_singleton p, fun _ hq => le_of_eq (Set.mem_singleton_iff.1 hq).symm⟩
 
 theorem isStrongestTrueAnswer_iff_of_antichain (hH : IsAntichain (· ⊆ ·) H) {p : Set W} :
-    IsStrongestTrueAnswer H w p ↔ trueAnswers H w = {p} := by
+    IsStrongestTrueAnswer H w p ↔ karttunen H w = {p} := by
   constructor
   · intro h
     refine Set.eq_singleton_iff_unique_mem.2 ⟨h.1, fun q hq => ?_⟩
@@ -156,7 +156,7 @@ theorem isStrongestTrueAnswer_iff_of_antichain (hH : IsAntichain (· ⊆ ·) H) 
     exact isLeast_singleton p
 
 theorem hasStrongestTrueAnswer_iff_of_antichain (hH : IsAntichain (· ⊆ ·) H) :
-    HasStrongestTrueAnswer H w ↔ ∃ p, trueAnswers H w = {p} :=
+    HasStrongestTrueAnswer H w ↔ ∃ p, karttunen H w = {p} :=
   exists_congr fun _ => isStrongestTrueAnswer_iff_of_antichain H w hH
 
 open Classical in
@@ -192,9 +192,9 @@ def supported (s : Set W) : Set (Set W) := {p ∈ H | s ⊆ p}
 
 @[simp] theorem mem_supported {s p : Set W} : p ∈ supported H s ↔ p ∈ H ∧ s ⊆ p := Iff.rfl
 
-@[simp] theorem supported_singleton : supported H {w} = trueAnswers H w := by
+@[simp] theorem supported_singleton : supported H {w} = karttunen H w := by
   ext p
-  simp [supported, trueAnswers]
+  simp [supported, karttunen]
 
 /-- Dayal's presupposition holds on an information state when the state supports a least member.
 On the singleton state `{w}` it is the presupposition at `w`. -/

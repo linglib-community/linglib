@@ -20,6 +20,8 @@ possibilities, the same inquisitive content.
 * `Inquisitive.Unrestricted.IsAttentive`: some possibility is not maximal.
 * `Inquisitive.Unrestricted.pro`: the propositional closure.
 * `Inquisitive.Unrestricted.restrict`: a proposition restricted to an information set.
+* `Inquisitive.Unrestricted.InteractiveSincerity`: a proposition with several possibilities keeps
+  several within the speaker's information.
 
 ## Main statements
 
@@ -259,5 +261,34 @@ theorem subsingleton_restrict_of_subset_or_disjoint (h : ∀ p ∈ P, k ⊆ p �
 theorem subsingleton_restrict_singleton (w : W) : (restrict P {w}).Subsingleton :=
   subsingleton_restrict_of_subset_or_disjoint fun p _ ↦
     (em (w ∈ p)).imp singleton_subset_iff.2 disjoint_singleton_left.2
+
+/-! ### Interactive sincerity -/
+
+/-- The Maxim of Interactive Sincerity requires a proposition with several possibilities to keep
+several when restricted to the speaker's information set `k` ([coppock-brochhagen-2013], (68)). -/
+def InteractiveSincerity (P : Set (Set W)) (k : Set W) : Prop :=
+  P.Nontrivial → (restrict P k).Nontrivial
+
+theorem InteractiveSincerity.of_subsingleton (hP : P.Subsingleton) (k : Set W) :
+    InteractiveSincerity P k :=
+  fun h ↦ absurd hP h.not_subsingleton
+
+/-- A proposition with several possibilities is insincere for a speaker whose information leaves
+it at most one. -/
+theorem not_interactiveSincerity (hP : P.Nontrivial) (h : (restrict P k).Subsingleton) :
+    ¬ InteractiveSincerity P k :=
+  fun hs ↦ (hs hP).not_subsingleton h
+
+theorem interactiveSincerity_singleton_iff (w : W) :
+    InteractiveSincerity P {w} ↔ ¬ P.Nontrivial :=
+  ⟨fun hs hP ↦ not_interactiveSincerity hP (subsingleton_restrict_singleton w) hs,
+    fun h hP ↦ absurd hP h⟩
+
+/-- A proposition is sincere whatever the speaker knows just in case it has at most one
+possibility. -/
+theorem forall_interactiveSincerity_iff [Nonempty W] :
+    (∀ k, InteractiveSincerity P k) ↔ ¬ P.Nontrivial :=
+  ⟨fun h ↦ (interactiveSincerity_singleton_iff (Classical.arbitrary W)).1 (h _),
+    fun h _ hP ↦ absurd hP h⟩
 
 end Inquisitive.Unrestricted

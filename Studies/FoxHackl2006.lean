@@ -120,7 +120,7 @@ theorem hasStrongestTrueAnswer_box [DenselyOrdered D] {φ : D → Set W} (hφ : 
   have hanti : Antitone fun d => (requirementBase φ a).core (φ d) :=
     fun _ _ h _ hv _ hu => hφ.antitone h (hv hu)
   refine hasStrongestTrueAnswer_range_iff_exists.2 ⟨a, ?_⟩
-  rw [IsStrongestTrueAnswer, trueAnswers_range]
+  rw [IsStrongestTrueAnswer, karttunen_range]
   exact hanti.map_isGreatest (box_eq_Iic hφ a w ▸ isGreatest_Iic)
 
 /-- Under an existential modal, the true degrees of *allowed to φ d* have no greatest element ((14),

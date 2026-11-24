@@ -38,7 +38,7 @@ theorem completelyAnsweredBy_strongAnswer (Q : Proposition (Set W)) :
   · exact Or.inr fun _ hv => (hv p hp).not.1 hw
 
 theorem isStrongestTrueAnswer_alt_iff (Q : Proposition (Set W)) {p : Set W} :
-    IsStrongestTrueAnswer (alt Q) w p ↔ trueAnswers (alt Q) w = {p} :=
+    IsStrongestTrueAnswer (alt Q) w p ↔ karttunen (alt Q) w = {p} :=
   isStrongestTrueAnswer_iff_of_antichain _ w (alt_isAntichain Q)
 
 /-! ### Polar and declarative questions -/
@@ -48,8 +48,8 @@ section Polar
 variable {w} {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
 include hne hnu
 
-theorem trueAnswers_polar_of_pos (hwp : w ∈ p) :
-    trueAnswers (alt (polar p)) w = {p} := by
+theorem karttunen_polar_of_pos (hwp : w ∈ p) :
+    karttunen (alt (polar p)) w = {p} := by
   ext q
   constructor
   · rintro ⟨hq, hwq⟩
@@ -60,8 +60,8 @@ theorem trueAnswers_polar_of_pos (hwp : w ∈ p) :
     obtain rfl := Set.mem_singleton_iff.1 hq
     exact ⟨(mem_alt_polar_of_nontrivial hne hnu _).2 (Or.inl rfl), hwp⟩
 
-theorem trueAnswers_polar_of_neg (hwp : w ∉ p) :
-    trueAnswers (alt (polar p)) w = {pᶜ} := by
+theorem karttunen_polar_of_neg (hwp : w ∉ p) :
+    karttunen (alt (polar p)) w = {pᶜ} := by
   ext q
   constructor
   · rintro ⟨hq, hwq⟩
@@ -73,10 +73,10 @@ theorem trueAnswers_polar_of_neg (hwp : w ∉ p) :
     exact ⟨(mem_alt_polar_of_nontrivial hne hnu _).2 (Or.inr rfl), hwp⟩
 
 theorem weakAnswer_polar_of_pos (hwp : w ∈ p) : weakAnswer (alt (polar p)) w = p := by
-  rw [weakAnswer, trueAnswers_polar_of_pos hne hnu hwp, Set.sInter_singleton]
+  rw [weakAnswer, karttunen_polar_of_pos hne hnu hwp, Set.sInter_singleton]
 
 theorem weakAnswer_polar_of_neg (hwp : w ∉ p) : weakAnswer (alt (polar p)) w = pᶜ := by
-  rw [weakAnswer, trueAnswers_polar_of_neg hne hnu hwp, Set.sInter_singleton]
+  rw [weakAnswer, karttunen_polar_of_neg hne hnu hwp, Set.sInter_singleton]
 
 theorem strongAnswer_polar_of_pos (hwp : w ∈ p) : strongAnswer (alt (polar p)) w = p := by
   ext v
@@ -93,12 +93,12 @@ theorem strongAnswer_polar_of_neg (hwp : w ∉ p) : strongAnswer (alt (polar p))
 
 theorem isStrongestTrueAnswer_polar_of_pos (hwp : w ∈ p) :
     IsStrongestTrueAnswer (alt (polar p)) w p := by
-  rw [IsStrongestTrueAnswer, trueAnswers_polar_of_pos hne hnu hwp]
+  rw [IsStrongestTrueAnswer, karttunen_polar_of_pos hne hnu hwp]
   exact isLeast_singleton p
 
 theorem isStrongestTrueAnswer_polar_of_neg (hwp : w ∉ p) :
     IsStrongestTrueAnswer (alt (polar p)) w pᶜ := by
-  rw [IsStrongestTrueAnswer, trueAnswers_polar_of_neg hne hnu hwp]
+  rw [IsStrongestTrueAnswer, karttunen_polar_of_neg hne hnu hwp]
   exact isLeast_singleton pᶜ
 
 theorem hasStrongestTrueAnswer_polar_of_nontrivial (w : W) :
@@ -112,7 +112,7 @@ end Polar
 theorem weakAnswer_ofSet_of_pos {p : Set W} {w : W} (hwp : w ∈ p) :
     weakAnswer (alt (ofSet p)) w = p := by
   ext v
-  simp [weakAnswer, trueAnswers, alt_ofSet, hwp]
+  simp [weakAnswer, karttunen, alt_ofSet, hwp]
 
 theorem strongAnswer_ofSet_of_pos {p : Set W} {w : W} (hwp : w ∈ p) :
     strongAnswer (alt (ofSet p)) w = p := by

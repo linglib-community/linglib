@@ -78,11 +78,11 @@ def howMany : Set (Set ℕ) := range Ici
 /-- *At most `n`* is [coppock-brochhagen-2013]'s entry on the question of how many, with the
 answers ranked by their lower bounds. -/
 def atMost (n : ℕ) : Set (Set ℕ) :=
-  atMostInq (· ≥ ·) univ (oneSided id) n
+  Inquisitive.Unrestricted.atMost (· ≥ ·) univ (oneSided id) n
 
 -- (43c)
 theorem atMost_eq (n : ℕ) : atMost n = (Icc · n) '' Iic n :=
-  atMostInq_oneSided_id n
+  possibilities_atMost_id n
 
 theorem mem_sUnion_upTo : m ∈ ⋃₀ upTo s n ↔ s ≤ m ∧ s ≤ n := by
   simp only [upTo, sUnion_image, mem_iUnion, mem_Icc, mem_Ici, exists_prop]
@@ -142,12 +142,12 @@ theorem nontrivial_atMost : (atMost n).Nontrivial ↔ 0 < n := by
 speaker knows exactly when *up to n* fails the range requirement: the maxim is silent on (52),
 which the range requirement rules out. -/
 theorem forall_interactiveSincerity_upTo_iff : (∀ k, InteractiveSincerity (upTo s n) k) ↔ n ≤ s :=
-  by rw [CoppockBrochhagen2013.forall_interactiveSincerity_iff, nontrivial_upTo, not_lt]
+  by rw [forall_interactiveSincerity_iff, nontrivial_upTo, not_lt]
 
 -- (53a)
 theorem forall_interactiveSincerity_atMost_iff :
     (∀ k, InteractiveSincerity (atMost n) k) ↔ n = 0 := by
-  rw [CoppockBrochhagen2013.forall_interactiveSincerity_iff, nontrivial_atMost, not_lt,
+  rw [forall_interactiveSincerity_iff, nontrivial_atMost, not_lt,
     Nat.le_zero]
 
 /-! ### Monotonicity -/

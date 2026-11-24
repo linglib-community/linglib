@@ -87,7 +87,7 @@ def ansS (P : α → Set W) (w : W) : Set α := {a | MaxI P w a}
 def ansP (P : α → Set W) (w : W) : Set (Set W) := P '' ansS P w
 
 theorem mem_ansP_iff {P : α → Set W} {w : W} {p : Set W} :
-    p ∈ ansP P w ↔ Minimal (· ∈ trueAnswers (range P) w) p := by
+    p ∈ ansP P w ↔ Minimal (· ∈ karttunen (range P) w) p := by
   constructor
   · rintro ⟨a, ⟨ha, hmin⟩, rfl⟩
     refine ⟨⟨⟨a, rfl⟩, ha⟩, ?_⟩
