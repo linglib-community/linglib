@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Semantics.Quantifier.Defs
+public import Mathlib.Order.Hom.CompleteLattice
+public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Core.Data.Fintype.EquivFin
 public import Linglib.Core.Data.Set.Card
 public import Linglib.Core.Logic.Function.DependsOn
@@ -109,6 +111,7 @@ is imposed on the quantifier and on its complement.
 
 ## References
 
+* [keenan-stavi-1986]
 * [peters-westerstahl-2006]
 * [van-benthem-1984]
 * [van-benthem-1986]
@@ -167,13 +170,48 @@ theorem compl_all : NumberTree.allᶜ = NumberTree.notAll := rfl
 
 theorem compl_no : NumberTree.noᶜ = NumberTree.some := rfl
 
-/-- A cardinal quantifier holds according to `|A ∩ B|` alone, as the numerals do. -/
+/-! ### Cardinal quantifiers
+
+A cardinal quantifier holds according to `|A ∩ B|` alone: `cardinal s` holds if the number of
+members of the restrictor that are in the scope belongs to `s`. The numerals are cardinal. -/
+
+/-- The cardinal quantifier of a set `s` of numbers holds if `|A ∩ B| ∈ s`
+([keenan-stavi-1986]). -/
 def cardinal (s : Set ℕ) : NumberTree := fun _ b ↦ b ∈ s
 
 @[simp] theorem cardinal_apply {s : Set ℕ} : cardinal s a b ↔ b ∈ s := Iff.rfl
 
 instance {s : Set ℕ} [DecidablePred (· ∈ s)] : DecidableRel (cardinal s) :=
   fun _ b ↦ inferInstanceAs (Decidable (b ∈ s))
+
+theorem cardinal_injective : Function.Injective cardinal :=
+  fun _ _ h ↦ Set.ext fun b ↦ iff_of_eq (congrFun (congrFun h 0) b)
+
+@[simp] theorem cardinal_inj {s t : Set ℕ} : cardinal s = cardinal t ↔ s = t :=
+  cardinal_injective.eq_iff
+
+theorem cardinal_compl (s : Set ℕ) : cardinal sᶜ = (cardinal s)ᶜ := rfl
+
+theorem cardinal_inter (s t : Set ℕ) : cardinal (s ∩ t) = cardinal s ⊓ cardinal t := rfl
+
+theorem cardinal_union (s t : Set ℕ) : cardinal (s ∪ t) = cardinal s ⊔ cardinal t := rfl
+
+@[simp] theorem cardinal_univ : cardinal Set.univ = ⊤ := rfl
+
+@[simp] theorem cardinal_empty : cardinal ∅ = ⊥ := rfl
+
+/-- `cardinal` as a complete lattice homomorphism from the sets of numbers to the trees. -/
+def cardinalHom : CompleteLatticeHom (Set ℕ) NumberTree where
+  toFun := cardinal
+  map_sInf' S := by funext a b; simp [cardinal, sInf_apply]
+  map_sSup' S := by funext a b; simp [cardinal, sSup_apply]
+
+@[simp] theorem coe_cardinalHom : ⇑cardinalHom = cardinal := rfl
+
+/-- A tree is cardinal if and only if it does not depend on `|A \ B|`. -/
+theorem mem_range_cardinal_iff : q ∈ Set.range cardinal ↔ ∀ a b, q a b ↔ q 0 b :=
+  ⟨by rintro ⟨s, rfl⟩ a b; rfl,
+    fun h ↦ ⟨{b | q 0 b}, by funext a b; exact propext (h a b).symm⟩⟩
 
 theorem cardinal_singleton_zero : cardinal {0} = NumberTree.no := rfl
 
@@ -221,6 +259,16 @@ theorem ScopeMonotone.innerNeg (h : q.ScopeMonotone) : q.innerNeg.ScopeAntitone 
 
 theorem ScopeAntitone.innerNeg (h : q.ScopeAntitone) : q.innerNeg.ScopeMonotone :=
   fun a b ↦ h b a
+
+/-- A cardinal quantifier is scope monotone if and only if its set of numbers is an upper set. -/
+theorem scopeMonotone_cardinal_iff {s : Set ℕ} : (cardinal s).ScopeMonotone ↔ IsUpperSet s :=
+  ⟨fun h _ b hab ha ↦ Nat.le_induction ha (fun n _ hn ↦ h 0 n hn) b hab,
+    fun h _ b hb ↦ h (Nat.le_succ b) hb⟩
+
+/-- A cardinal quantifier is scope antitone if and only if its set of numbers is a lower set. -/
+theorem scopeAntitone_cardinal_iff {s : Set ℕ} : (cardinal s).ScopeAntitone ↔ IsLowerSet s := by
+  rw [← isUpperSet_compl, ← scopeMonotone_cardinal_iff, cardinal_compl]
+  exact ⟨ScopeAntitone.compl, fun h ↦ compl_compl (cardinal s) ▸ h.compl⟩
 
 theorem ScopeMonotone.shift (h : q.ScopeMonotone) (k : ℕ) {a b : ℕ} (hq : q (a + k) b) :
     q a (b + k) := by
