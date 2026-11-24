@@ -148,7 +148,7 @@ example : IsTrans U gt := inferInstance
 /-- On a grading relation the degree of `a` is its class in Cresswell's construction, though the
 paper sets its definition against his pair of a point and a relation (n. 15). -/
 theorem mem_degree_iff : x ∈ degree gt a ↔ (⟦x⟧ : CresswellDegree gt) = ⟦a⟧ :=
-  CresswellDegree.mk_eq_mk.symm
+  CresswellDegree.mk_eq_mk_iff_incompRel.symm
 
 -- p. 424
 theorem degree_eq_degree_iff : degree gt a = degree gt b ↔ ¬ gt a b ∧ ¬ gt b a := by

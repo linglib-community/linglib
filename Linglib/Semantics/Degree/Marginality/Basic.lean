@@ -218,15 +218,16 @@ theorem toBlock_surjective : Function.Surjective ml.toBlock := Block.ind fun x �
 
 /-- One block comes before another exactly when its degrees are largely smaller. -/
 @[simp]
-theorem toBlock_lt_toBlock : ml.toBlock x < ml.toBlock y ↔ ml.LargelyLT x y := Iff.rfl
+theorem toBlock_lt_toBlock : ml.toBlock x < ml.toBlock y ↔ ml.LargelyLT x y :=
+  CresswellDegree.mk_lt_mk
 
 @[simp]
 theorem toBlock_eq_toBlock : ml.toBlock x = ml.toBlock y ↔ ml.AtMostMarginal x y :=
-  CresswellDegree.mk_eq_mk.trans <|
+  CresswellDegree.mk_eq_mk_iff_incompRel.trans <|
     (incompRel_swap_apply _).trans atMostMarginal_iff_incompRel.symm
 
 theorem toBlock_le_toBlock : ml.toBlock x ≤ ml.toBlock y ↔ ¬ ml.LargelyLT y x :=
-  CresswellDegree.mk_le_mk
+  CresswellDegree.mk_le_mk_iff_not
 
 variable (ml) in
 theorem toBlock_mono : Monotone ml.toBlock :=

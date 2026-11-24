@@ -187,8 +187,10 @@ under the consistency constraint the comparative is such an order, so its classe
 and a measure into a linear order represents the ordering within the class. -/
 
 example {d : Delineation E} {C : Set E} (hd : d.IsGapless) (hm : d.IsMonotoneOn (𝒫 C)) :
-    IsStrictTotalOrder (CresswellDegree (d.Outranks C)) (· < ·) :=
-  CresswellDegree.isStrictTotalOrder_lt_iff.2 ⟨hm.asymm_outranks, hd.isOrderConnected_outranks⟩
+    Std.Total (α := CresswellDegree (d.Outranks C)) (· ≤ ·) ∧
+      ∀ a b, (⟦b⟧ : CresswellDegree (d.Outranks C)) < ⟦a⟧ ↔ d.Outranks C a b :=
+  CresswellDegree.total_and_forall_mk_lt_mk_iff.2
+    ⟨hm.asymm_outranks, hd.isOrderConnected_outranks⟩
 
 universe u in
 example {E : Type u} {d : Delineation E} {C : Set E} (hd : d.IsGapless)
@@ -219,7 +221,7 @@ objection that the relation need not be *exactly as A as* when the comparison is
 theorem cresswell_clever_not_equivalent :
     cresswellSetoid (clever.Outranks Set.univ) .j .m ∧
       ¬ clever.Equivalent cleverContexts Set.univ .j .m :=
-  ⟨⟨fun _ ↦ iff_of_false (fun ⟨_, _, h, _⟩ ↦ h) (fun ⟨_, _, h, _⟩ ↦ h),
+  ⟨cresswellSetoid_iff.2 ⟨fun _ ↦ iff_of_false (fun ⟨_, _, h, _⟩ ↦ h) (fun ⟨_, _, h, _⟩ ↦ h),
     fun _ ↦ iff_of_false (fun ⟨_, _, h, _⟩ ↦ h) (fun ⟨_, _, h, _⟩ ↦ h)⟩, not_equivalent_clever⟩
 
 /-! ### *As … as* and Kamp's *at least as* (§5.3)

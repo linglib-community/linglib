@@ -65,6 +65,7 @@ and not as a relation between propositions and degrees with a maximality operato
 namespace Villalta2008
 
 open Desire Desire.Conditional ComparativePossibility
+open scoped CresswellDegree
 
 variable {α W : Type*}
 
@@ -87,12 +88,14 @@ theorem beatsAlternatives_pair (h : q ≠ p) : BeatsAlternatives R {p, q} p ↔ 
   simp [BeatsAlternatives, h]
 
 /-- The comparison of alternatives is the superlative over the degrees of the comparison, the
-classes of things it cannot tell apart. -/
+classes of things it cannot tell apart, compared by the relation the comparison induces between
+them. -/
 theorem beatsAlternatives_iff_absoluteSuperlative (hp : p ∈ C) :
     BeatsAlternatives R C p ↔
+      letI : LT (CresswellDegree R) := ⟨fun x y ↦ y >[R] x⟩
       AbsoluteSuperlative (Quotient.mk (cresswellSetoid R)) C p := by
   simp only [AbsoluteSuperlative, hp, true_and, BeatsAlternatives]
-  exact forall₃_congr fun q _ _ ↦ CresswellDegree.mk_lt_mk.symm
+  exact forall₃_congr fun q _ _ ↦ Iff.rfl
 
 end BeatsAlternatives
 
