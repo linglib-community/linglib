@@ -31,8 +31,8 @@ zero `#`.
 ## Main results
 
 * `Relation.holds_iff`: a relation holds exactly when each of its constraints does.
-* `Relation.Holds.of_le`, `Relation.Holds.join`: a relation implies every relation above it, and
-  in a distributive lattice `x R y` and `y S z` give `x (R ⋈ S) z`.
+* `Relation.Holds.of_le`: a relation implies every relation above it.
+* `Relation.Holds.join`: in a distributive lattice, `x R y` and `y S z` give `x (R ⋈ S) z`.
 * `Relation.holds_map_iff`: an injective bounded lattice homomorphism preserves and reflects each
   relation.
 

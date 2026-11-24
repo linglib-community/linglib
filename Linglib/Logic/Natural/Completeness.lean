@@ -31,11 +31,7 @@ least signature, for which its guarantee holds.
 A relation is determined by the pairs of elements it holds of, and a signature by the maps it
 holds of. In the terms of formal concept analysis, a relation is a concept of the incidence
 between constraints and pairs, and a signature is a concept of the incidence between properties
-and maps. It follows that `R ≤ S` exactly when `R` implies `S`, and that `σ ≤ τ` exactly when
-every `σ`-function is a `τ`-function.
-
-Finally, two elements stand in a strongest relation exactly when neither is `⊥` or `⊤`, and a map
-has a most specific signature exactly when it is not constant.
+and maps.
 
 ## Main definitions
 
@@ -45,13 +41,20 @@ has a most specific signature exactly when it is not constant.
 
 ## Main results
 
-* `Relation.isLeast_join`, `ProjectivitySignature.isLeast_project`,
-  `ProjectivitySignature.isLeast_compose`: the join, the projection and the composition are least.
-* `Relation.le_iff_forall_holds`, `ProjectivitySignature.le_iff_forall_holdsFor`: the two orders
-  are implication and inclusion of function classes.
+* `Relation.isLeast_join`: `R * S` is the least relation that holds of `x` and `z` whenever
+  `x R y` and `y S z`.
+* `ProjectivitySignature.isLeast_project`: the projection of `R` through `σ` is the least relation
+  that every `σ`-function carries `R` to.
+* `ProjectivitySignature.isLeast_compose`: `ψ * φ` is the least signature that holds of every
+  `ψ`-function after a `φ`-function.
+* `Relation.le_iff_forall_holds`: `R ≤ S` exactly when `R` implies `S`.
+* `ProjectivitySignature.le_iff_forall_holdsFor`: `σ ≤ τ` exactly when every `σ`-function is a
+  `τ`-function.
 * `Relation.toSetRel_mul`: on a Boolean algebra the join is relational composition.
-* `Relation.exists_isLeast_holds_iff`, `ProjectivitySignature.exists_isLeast_holdsFor_iff`: when
-  a strongest relation and a most specific signature exist.
+* `Relation.exists_isLeast_holds_iff`: two elements stand in a strongest relation exactly when
+  neither is `⊥` or `⊤`.
+* `ProjectivitySignature.exists_isLeast_holdsFor_iff`: a map has a most specific signature exactly
+  when it is not constant.
 
 ## Implementation notes
 

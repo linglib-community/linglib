@@ -26,8 +26,8 @@ compose to a monotone map, and layers whose signs multiply to `-1` to an antiton
 
 ## Main results
 
-* `holdsFor_list_prod`, `sign_list_prod`: the product of a list of layers is a layer, and its sign
-  is the product of the signs.
+* `holdsFor_list_prod`: the product of a list of layers is a layer.
+* `sign_list_prod`: the sign of the product is the product of the signs.
 * `monotone_list_prod`, `antitone_list_prod`: the composite is monotone when the signs multiply to
   `1` and antitone when they multiply to `-1`.
 

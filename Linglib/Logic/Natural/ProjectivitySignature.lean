@@ -32,8 +32,8 @@ for an antitone class and `0` for `•`, is a homomorphism to the three signs.
 * `ProjectivitySignature`: the nine signatures, ordered by refinement.
 * `ProjectivitySignature.HoldsFor`: `σ.HoldsFor f` says that `f` has every property `σ` asserts.
 * `ProjectivitySignature.compose`: composition of signatures, the multiplication of the monoid.
-* `signHom`, `unitsEquiv`: the sign as a homomorphism of monoids with zero, and the invertible
-  signatures as the two polarities.
+* `signHom`: the sign of a signature, as a homomorphism of monoids with zero.
+* `unitsEquiv`: the invertible signatures are the two polarities.
 
 ## Main results
 
