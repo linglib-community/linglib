@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Order.Antichain
 public import Linglib.Semantics.Questions.Hamblin.Basic
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 
 /-!
 # The strongest true answer
@@ -16,6 +17,13 @@ condition `HasStrongestTrueAnswer H w`.
 
 The main result is that the presupposition holds at `w` if and only if the weak answer at `w` is
 itself a member of `H`. See `Question.hasStrongestTrueAnswer_iff`.
+
+A Hamblin set ranks worlds as a premise set does, and in that order the weak answer at `w` is the
+set of worlds at or below `w`. The presupposition holds everywhere just in case every such
+principal lower set is a member, so a Hamblin set satisfying it everywhere is a preorder on the
+worlds with a family of its lower sets containing the principal ones. See
+`Question.forall_hasStrongestTrueAnswer_iff_setOf_le_mem`,
+`Question.ofCriteria_mem_eq_of_isLowerSet` and `Question.eq_range_setOf_le_iff`.
 
 ## References
 
@@ -60,6 +68,72 @@ theorem hasStrongestTrueAnswer_iff : HasStrongestTrueAnswer H w ↔ weakAnswer H
     have h' := (isStrongestTrueAnswer_iff H w).1 h
     h'.2 ▸ h'.1,
    fun h => ⟨_, (isStrongestTrueAnswer_iff H w).2 ⟨h, rfl⟩⟩⟩
+
+/-! ### The order a Hamblin set induces
+
+A Hamblin set ranks worlds as a premise set does: `v` lies below `w` when every member true at
+`w` is true at `v`. The weak answer at `w` is the set of worlds at or below `w`, every member is a
+lower set, and Dayal's presupposition holds everywhere just in case each of these principal lower
+sets is a member. A Hamblin set satisfying the presupposition everywhere is thus a preorder on
+the worlds together with a family of its lower sets that contains the principal ones. -/
+
+/-- The weak answer at `w` is the set of worlds at or below `w` in the order `H` induces. -/
+theorem weakAnswer_eq_setOf_le :
+    weakAnswer H w = {v | (Preorder.ofCriteria (· ∈ ·) H).le v w} := by
+  ext v
+  simp [Preorder.ofCriteria_le_iff]
+
+/-- Every member of a Hamblin set is a lower set of the order it induces. -/
+theorem isLowerSet_of_mem {H : Set (Set W)} {p : Set W} (hp : p ∈ H) :
+    @IsLowerSet W (Preorder.ofCriteria (· ∈ ·) H).toLE p :=
+  fun _ _ hba ha ↦ hba p hp ha
+
+/-- Dayal's presupposition holds at every world just in case every principal lower set of the
+order `H` induces is a member of `H`. -/
+theorem forall_hasStrongestTrueAnswer_iff_setOf_le_mem :
+    (∀ w, HasStrongestTrueAnswer H w) ↔
+      ∀ w, {v | (Preorder.ofCriteria (· ∈ ·) H).le v w} ∈ H := by
+  simp only [hasStrongestTrueAnswer_iff, weakAnswer_eq_setOf_le]
+
+/-- Let `r` be a reflexive relation on worlds. If every member of `H` is closed downward under
+`r` and every set `{v | r v w}` is a member, then the order `H` induces is `r`. No transitivity
+is assumed: it follows. -/
+theorem ofCriteria_mem_le_iff_of_refl {H : Set (Set W)} {r : W → W → Prop} (hr : ∀ w, r w w)
+    (hlow : ∀ p ∈ H, ∀ ⦃v w⦄, r v w → w ∈ p → v ∈ p) (hprin : ∀ w, {v | r v w} ∈ H) {v w : W} :
+    (Preorder.ofCriteria (· ∈ ·) H).le v w ↔ r v w :=
+  ⟨fun h ↦ h _ (hprin w) (hr w), fun h p hp hw ↦ hlow p hp h hw⟩
+
+/-- A family of lower sets of a preorder that contains every principal lower set induces that
+preorder. -/
+theorem ofCriteria_mem_eq_of_isLowerSet {H : Set (Set W)} (P : Preorder W)
+    (hlow : ∀ p ∈ H, @IsLowerSet W P.toLE p) (hprin : ∀ w, {v | P.le v w} ∈ H) :
+    Preorder.ofCriteria (· ∈ ·) H = P :=
+  Preorder.ext fun _ _ ↦
+    ofCriteria_mem_le_iff_of_refl P.le_refl (fun p hp _ _ h hw ↦ hlow p hp h hw) hprin
+
+/-- A Hamblin set is the family of principal lower sets of the order it induces just in case
+Dayal's presupposition holds everywhere and every member is the strongest true answer at some
+world. -/
+theorem eq_range_setOf_le_iff :
+    H = Set.range (fun w ↦ {v | (Preorder.ofCriteria (· ∈ ·) H).le v w}) ↔
+      (∀ w, HasStrongestTrueAnswer H w) ∧ ∀ p ∈ H, ∃ w, IsStrongestTrueAnswer H w p := by
+  constructor
+  · intro h
+    have hD : ∀ w, {v | (Preorder.ofCriteria (· ∈ ·) H).le v w} ∈ H :=
+      fun w ↦ (Set.ext_iff.1 h _).2 ⟨w, rfl⟩
+    refine ⟨(forall_hasStrongestTrueAnswer_iff_setOf_le_mem H).2 hD, fun p hp ↦ ?_⟩
+    obtain ⟨w, hw⟩ := (Set.ext_iff.1 h p).1 hp
+    exact ⟨w, (isStrongestTrueAnswer_iff H w).2
+      ⟨hp, hw.symm.trans (weakAnswer_eq_setOf_le H w).symm⟩⟩
+  · rintro ⟨hD, hN⟩
+    ext p
+    constructor
+    · intro hp
+      obtain ⟨w, hw⟩ := hN p hp
+      exact ⟨w, (weakAnswer_eq_setOf_le H w).symm.trans
+        ((isStrongestTrueAnswer_iff H w).1 hw).2.symm⟩
+    · rintro ⟨w, rfl⟩
+      exact (forall_hasStrongestTrueAnswer_iff_setOf_le_mem H).1 hD w
 
 theorem HasStrongestTrueAnswer.exists_mem {H : Set (Set W)} {w : W}
     (h : HasStrongestTrueAnswer H w) : ∃ p ∈ H, w ∈ p :=
