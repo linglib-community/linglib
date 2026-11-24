@@ -2,8 +2,8 @@ module
 
 public import Linglib.Core.Probability.Distributions.Bernoulli
 public import Linglib.Data.Statistics.DegenTonhauser2021
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Verbs.Copular
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Copular
 
 /-!
 # Degen and Tonhauser (2021): Prior beliefs modulate projection
@@ -84,7 +84,7 @@ theorem prior_modulates_projection (d : Design) (p : Predicate) :
     certaintyMean d .lowerProbability p < certaintyMean d .higherProbability p := by
   revert d p; decide +kernel
 
-/-! ### The Fragment's predicates -/
+/-! ### The language file's predicates -/
 
 section Fragment
 

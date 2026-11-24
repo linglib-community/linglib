@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Rett2015a
-public import Linglib.Fragments.English.NumeralModifiers
+public import Linglib.Languages.English.NumeralModifiers
 public import Linglib.Semantics.Degree.Quantifier
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Basic

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.AckemaNeeleman2018
-public import Linglib.Fragments.Dutch.Pronouns
+public import Linglib.Languages.Dutch.Pronouns
 public import Linglib.Morphology.Exponence.SubsetRule
 public import Mathlib.Data.Set.Subsingleton
 public import Studies.Harbour2016

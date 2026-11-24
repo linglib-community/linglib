@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Aspect.AspectualClass
-public import Linglib.Fragments.English.TemporalConnectives
+public import Linglib.Languages.English.TemporalConnectives
 public import Linglib.Data.Examples.Heinamaki1974
 public import Linglib.Data.Examples.Readers
 

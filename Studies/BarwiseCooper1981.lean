@@ -4,7 +4,7 @@ public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Properties
 public import Linglib.Core.ModelTheory.Monadic
 public import Linglib.Semantics.Quantification.Witness
-public import Linglib.Fragments.English.Determiners
+public import Linglib.Languages.English.Determiners
 public import Linglib.Data.Examples.BarwiseCooper1981
 public import Mathlib.Data.Finset.Fin
 public import Mathlib.Data.Set.Card

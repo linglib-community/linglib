@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Fragments.English.Inflection
+public import Linglib.Languages.English.Inflection
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Inflection

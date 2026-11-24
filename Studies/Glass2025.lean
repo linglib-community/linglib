@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.Mandarin.Verbs
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.Mandarin.Verbs
 public import Linglib.Data.Examples.Glass2025
 public import Linglib.Data.Examples.Readers
 

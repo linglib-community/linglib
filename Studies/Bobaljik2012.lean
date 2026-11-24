@@ -4,9 +4,9 @@ public import Linglib.Morphology.Exponence.Containment.SupersetRule
 public import Linglib.Morphology.Paradigm.Contiguity
 public import Linglib.Morphology.DistributedMorphology.PhrasalLocality
 public import Mathlib.Logic.Relation
-public import Linglib.Fragments.English.Adjectives
-public import Linglib.Fragments.Latin.Adjectives
-public import Linglib.Fragments.Slavic.Russian.Adjectives
+public import Linglib.Languages.English.Adjectives
+public import Linglib.Languages.Latin.Adjectives
+public import Linglib.Languages.Slavic.Russian.Adjectives
 public import Linglib.Data.Wordlist.Bobaljik2012
 public import Linglib.Data.StructureDataset.Bobaljik2012
 
@@ -493,7 +493,7 @@ theorem exists_rootClasses_of_bearsOnCSG : ∀ r ∈ StructureDataset.broadSampl
       ¬ Quantifier t ∧ some t.lexeme.languageId = r.language.glottocode := by
   decide +kernel
 
-/-! ### The English Fragment -/
+/-! ### The English language file -/
 
 /-- A grade form of one word is synthetic, as *taller* is. -/
 def Synthetic (f : List Morph) : Prop := (Morph.wordsAt .clitic f).length = 1
@@ -505,13 +505,13 @@ instance (f : List Morph) : Decidable (Synthetic f) := inferInstanceAs (Decidabl
 
 instance (f : List Morph) : Decidable (Periphrastic f) := inferInstanceAs (Decidable (_ < _))
 
-/-- On the English Fragment a synthetic superlative comes with a synthetic comparative. This is
+/-- On the English language file a synthetic superlative comes with a synthetic comparative. This is
 the SSG (3), which `Synthesis.syntheticAt_of_le` derives structurally. -/
 theorem english_ssg :
     ∀ e ∈ allEntries, Synthetic e.comparison.superlative → Synthetic e.comparison.comparative := by
   decide
 
-/-- On the English Fragment a comparative not on the positive's root is synthetic (*better*,
+/-- On the English language file a comparative not on the positive's root is synthetic (*better*,
 *worse*, never *more bett*). This is the RSG (4). -/
 theorem english_rsg :
     ∀ e ∈ allEntries, e.comparison.comparative ≠ [] → .root e.form ∉ e.comparison.comparative →
@@ -788,7 +788,7 @@ theorem russian_bad_comparative_embedding :
 theorem russian_bad_synthetic_abb : Setoid.ker (realize russianBad) = Setoid.ker Paradigm.abb := by
   decide
 
-/-- In the English, Latin and Russian Fragments a superlative on the positive's root after a
+/-- In the English, Latin and Russian language files a superlative on the positive's root after a
 comparative on another is periphrastic, embedding the positive, so every morphological superlative
 satisfies CSG1. -/
 theorem periphrastic_of_aba :

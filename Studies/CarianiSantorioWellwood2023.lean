@@ -5,7 +5,7 @@ public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Core.Algebra.Order.Group.Indicator
 public import Linglib.Semantics.Delineation
 public import Linglib.Semantics.Degree.Quantifier
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 
 /-!
 # Cariani, Santorio and Wellwood (2023): Positive gradable adjective ascriptions without positive morphemes

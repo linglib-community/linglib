@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Discourse.SpeechAct.Basic
-public import Linglib.Fragments.Romance.French.Modals
+public import Linglib.Languages.Romance.French.Modals
 public import Linglib.Data.Examples.RuytenbeekEtAl2017
 public import Linglib.Data.Statistics.RuytenbeekEtAl2017
 

@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.SpalekMcNally2026
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.Romance.Spanish.Verbs
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.Romance.Spanish.Verbs
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Tactic.DeriveFintype

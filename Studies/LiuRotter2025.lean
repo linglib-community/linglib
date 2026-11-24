@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.Modality.Typology
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Adverbs
+public import Linglib.Languages.English.Auxiliaries
+public import Linglib.Languages.English.Adverbs
 public import Linglib.Data.Examples.LiuRotter2025
 public import Mathlib.Basic.Sign.Defs
 public import Linglib.Data.Examples.Readers

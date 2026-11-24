@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Fragments.German.Determiners
+public import Linglib.Languages.German.Determiners
 public import Studies.Schwarz2009
 
 /-!

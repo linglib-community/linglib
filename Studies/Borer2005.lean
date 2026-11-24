@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Borer2005
-public import Linglib.Fragments.English.Determiners
+public import Linglib.Languages.English.Determiners
 public import Linglib.Syntax.Minimalist.ExtendedProjection
 public import Mathlib.Order.Partition.Finpartition
 

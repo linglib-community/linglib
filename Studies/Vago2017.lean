@@ -2,7 +2,7 @@ module
 
 public import Studies.Casali1997
 public import Linglib.Phonology.OptimalityTheory.Evaluation
-public import Linglib.Fragments.Hungarian.Phonology
+public import Linglib.Languages.Hungarian.Phonology
 public import Linglib.Data.Wordlist.Vago2017
 
 /-!

@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Bresnan1973
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Data.Examples.Readers
 
 /-!

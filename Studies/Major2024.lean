@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Major2024
-public import Linglib.Fragments.Uyghur.Complementizers
-public import Linglib.Fragments.Washo.Clause
+public import Linglib.Languages.Uyghur.Complementizers
+public import Linglib.Languages.Washo.Clause
 public import Linglib.Syntax.Category.Verb.Defs
 public import Studies.BakerVinokurova2010
 public import Linglib.Syntax.Minimalist.ExtendedProjection

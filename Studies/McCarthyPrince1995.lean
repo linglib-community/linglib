@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.McCarthyPrince1995
-public import Linglib.Fragments.Akan.Phonology
+public import Linglib.Languages.Akan.Phonology
 public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
 public import Linglib.Phonology.OptimalityTheory.Typology

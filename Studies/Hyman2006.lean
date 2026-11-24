@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Japanese.Prosody
+public import Linglib.Languages.Japanese.Prosody
 public import Linglib.Phonology.Prosody.Grid
 public import Linglib.Phonology.Tone.Basic
 public import Mathlib.Data.Finset.Card

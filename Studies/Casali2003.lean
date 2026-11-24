@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Fragments.Akan.Phonology
-public import Linglib.Fragments.Yoruba.Phonology
+public import Linglib.Languages.Akan.Phonology
+public import Linglib.Languages.Yoruba.Phonology
 public import Linglib.Phonology.OptimalityTheory.Typology
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Mathlib.Tactic.DeriveFintype

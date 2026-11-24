@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.DalrympleHaug2024
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.Wan.Reciprocals
+public import Linglib.Languages.English.Pronouns
+public import Linglib.Languages.Wan.Reciprocals
 public import Studies.HaugDalrymple2020
 public import Studies.Landau2015
 public import Studies.Rakosi2020

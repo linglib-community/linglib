@@ -4,7 +4,7 @@ public import Linglib.Core.Data.List.Find
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Woolford1997
-public import Linglib.Fragments.NezPerce.Case
+public import Linglib.Languages.NezPerce.Case
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Obligatoriness

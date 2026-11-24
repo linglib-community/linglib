@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Pronouns
 public import Linglib.Semantics.Reference.Gender
 public import Linglib.Data.Examples.KonnellyCowper2020
 public import Linglib.Data.Examples.Readers

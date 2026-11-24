@@ -1,10 +1,10 @@
 module
 
 public import Linglib.Syntax.Clause.Basic
-public import Linglib.Fragments.Norwegian.WordOrder
-public import Linglib.Fragments.English.WordOrder
-public import Linglib.Fragments.German.WordOrder
-public import Linglib.Fragments.Danish.WordOrder
+public import Linglib.Languages.Norwegian.WordOrder
+public import Linglib.Languages.English.WordOrder
+public import Linglib.Languages.German.WordOrder
+public import Linglib.Languages.Danish.WordOrder
 public import Linglib.Data.Examples.Westergaard2009
 public import Linglib.Semantics.Focus.Marking
 public import Mathlib.Tactic.DeriveFintype

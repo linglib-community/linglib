@@ -2,14 +2,14 @@ module
 
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.Mandarin.Determiners
-public import Linglib.Fragments.Japanese.Determiners
-public import Linglib.Fragments.Romance.Spanish.Determiners
-public import Linglib.Fragments.Romance.Spanish.Pronouns
-public import Linglib.Fragments.Slavic.Russian.Determiners
-public import Linglib.Fragments.Slavic.Russian.Pronouns
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.English.Pronouns
+public import Linglib.Languages.Mandarin.Determiners
+public import Linglib.Languages.Japanese.Determiners
+public import Linglib.Languages.Romance.Spanish.Determiners
+public import Linglib.Languages.Romance.Spanish.Pronouns
+public import Linglib.Languages.Slavic.Russian.Determiners
+public import Linglib.Languages.Slavic.Russian.Pronouns
 public import Linglib.Data.Statistics.GundelHedbergZacharski1993
 
 /-!

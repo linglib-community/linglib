@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Data.Examples.Levin2026
 public import Linglib.Data.Examples.Readers
 

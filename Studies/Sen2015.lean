@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Segmental.Basic
-public import Linglib.Fragments.Latin.Phonology
+public import Linglib.Languages.Latin.Phonology
 public import Mathlib.Order.Basic
 
 /-!
@@ -14,7 +14,7 @@ preceding vowel, read off the grammarians' statements and the internal history o
 `darkness`; Figure 2.1, `colouring`). The distribution is categorical across three positions and
 gradient within one: coda /l/ is dark, geminate /ll/ is clear, and onset /l/ darkens with the
 backness of the following vowel. The equipollent analysis (23) states this as surface
-specifications on the Fragment's single /l/, `[+high, +back]` in the coda, `[+high, −back]` in
+specifications on the language file's single /l/, `[+high, +back]` in the coda, `[+high, −back]` in
 the geminate and `[+high, Ø back]` in the onset (`spec`, `spec_ternary`). The specified variants
 sit at the ends of the scale (`coda_darkest`, `geminate_clearest`), colouring follows the scale
 (`colouring_monotone`), and the unspecified onset ranges over three degrees (`onset_gradient`):
@@ -26,7 +26,7 @@ through the underspecified segment, in the sense of [keating-1988].
 
 * Sen takes /l/ to be underlyingly unspecified for [back], the coda and geminate values being
   filled once a string is syllabified (§2.4); `spec` is the surface specification by position,
-  built from the Fragment's /l/ with `Segment.setFeature`.
+  built from the language file's /l/ with `Segment.setFeature`.
 * `colouring` is the regular outcome of Figure 2.1; its exceptions (after /w j/, after dorsals,
   forms with particular histories) are not encoded. The gradient phonetic implementation
   (Figure 2.3), the diachronic account of the split, and the parallel analysis of /r/ in the
@@ -124,7 +124,7 @@ theorem coda_darkest (c : Context) : c ≤ .coda := by revert c; decide
 
 theorem geminate_clearest (c : Context) : Context.geminate ≤ c := by revert c; decide
 
-/-- The surface specification of /l/ by position (23) is the Fragment's /l/ with the dorsal
+/-- The surface specification of /l/ by position (23) is the language file's /l/ with the dorsal
 articulation `[+high]` common to the three variants, `[+back]` in the coda, `[−back]` in the
 geminate, and no value for `[back]` in the onset. -/
 def spec : Position → Segment

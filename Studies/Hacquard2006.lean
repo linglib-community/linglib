@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Modality.EventRelativity
 public import Studies.Condoravdi2002
-public import Linglib.Fragments.Romance.Italian.Modals
+public import Linglib.Languages.Romance.Italian.Modals
 public import Linglib.Data.Examples.Hacquard2006
 
 /-!

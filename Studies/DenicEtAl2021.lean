@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Statistics.DenicEtAl2021
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Linglib.Core.Probability.ConditionalProbability
 
 /-!

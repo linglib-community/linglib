@@ -3,10 +3,10 @@ module
 public import Linglib.Data.Examples.FarkasBruce2010
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Discourse.Response
-public import Linglib.Fragments.English.Particles
-public import Linglib.Fragments.German.Particles
-public import Linglib.Fragments.Romance.French.Particles
-public import Linglib.Fragments.Romanian.Particles
+public import Linglib.Languages.English.Particles
+public import Linglib.Languages.German.Particles
+public import Linglib.Languages.Romance.French.Particles
+public import Linglib.Languages.Romanian.Particles
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 

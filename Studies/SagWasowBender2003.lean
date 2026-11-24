@@ -4,7 +4,7 @@ public import Linglib.Syntax.HPSG.Binding.Description
 public import Linglib.Syntax.HPSG.Construction
 public import Linglib.Data.Examples.SagWasowBender2003
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Pronouns
 
 /-!
 # Sag, Wasow & Bender (2003): Syntactic Theory: A Formal Introduction

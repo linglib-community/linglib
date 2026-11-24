@@ -8,7 +8,7 @@ module
 public import Studies.Chierchia1984
 public import Linglib.Semantics.ArgumentStructure.Relation.MapArgs
 public import Linglib.Syntax.Voice.Apply
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Mathlib.Order.CompleteLattice.Basic
 
 /-!

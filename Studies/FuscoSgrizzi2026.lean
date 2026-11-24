@@ -4,7 +4,7 @@ public import Linglib.Semantics.Events.Closure
 public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Semantics.Modality.Background
 public import Linglib.Syntax.Minimalist.Clause.Size
-public import Linglib.Fragments.Romance.Italian.Verbs
+public import Linglib.Languages.Romance.Italian.Verbs
 public import Linglib.Data.Examples.FuscoSgrizzi2026
 public import Studies.Grano2024
 public import Linglib.Data.Examples.Readers
@@ -46,7 +46,7 @@ reaches (`rows_predicted`).
   closure head (23b) is `Event.closure` and the prejacent of *a* is `Event.causedClosure`, the
   operators of [grano-2024]'s account, so a complement takes its world before its eventuality.
 * The examples are `Data.Examples.FuscoSgrizzi2026`; the lexical entries are those of
-  `Fragments/Romance/Italian/Verbs.lean`.
+  `Languages/Romance/Italian/Verbs.lean`.
 
 ## References
 

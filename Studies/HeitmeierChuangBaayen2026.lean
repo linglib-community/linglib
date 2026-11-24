@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.LinearAlgebra.Basis.VectorSpace
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Processing.DiscriminativeLexicon.Realization
 public import Linglib.Processing.DiscriminativeLexicon.Training
 public import Linglib.Processing.ErrorDrivenLearning

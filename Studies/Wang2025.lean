@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Mandarin.Adverbs
-public import Linglib.Fragments.Mandarin.Verbs
+public import Linglib.Languages.Mandarin.Adverbs
+public import Linglib.Languages.Mandarin.Verbs
 public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Semantics.Presupposition.Again
 public import Linglib.Semantics.Aspect.Phasal

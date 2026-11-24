@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Data.Examples.ElkinsTorrenceBrown2026
-public import Linglib.Fragments.Mayan.Mam.Extraction
-public import Linglib.Fragments.Mayan.Kiche.Extraction
-public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
+public import Linglib.Languages.Mayan.Mam.Extraction
+public import Linglib.Languages.Mayan.Kiche.Extraction
+public import Linglib.Languages.Mayan.Kaqchikel.Extraction
 public import Linglib.Syntax.Minimalist.Spine
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Syntax.Minimalist.Feature.Valuation

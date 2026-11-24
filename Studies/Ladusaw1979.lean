@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Linglib.Data.Examples.Ladusaw1979
 public import Linglib.Data.Examples.Readers
 

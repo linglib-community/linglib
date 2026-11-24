@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.List.DropRight
 public import Mathlib.Data.List.Permutation
 public import Linglib.Morphology.DistributedMorphology.Spellout
-public import Linglib.Fragments.Taos.Agreement
+public import Linglib.Languages.Taos.Agreement
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Feature.Person.Features
 public import Linglib.Phonology.RuleInteraction
@@ -31,7 +31,7 @@ The rules the paper labels paradigmatic and syntagmatic are so (`paradigmatic_of
 
 After impoverishment the prefix is linearized into a string of feature terminals, to which
 metathesis, exponence, epenthesis and tone apply. `derive` composes these maps, and
-`derive_eq_form` compares its value with the paradigm of `Fragments/Taos/Agreement.lean`.
+`derive_eq_form` compares its value with the paradigm of `Languages/Taos/Agreement.lean`.
 Impoverishment feeds metathesis in Taos (`r24_feeds_m23`), as it does in Ondarru Basque
 (`ArregiNevins2012.ondarru_feeds`).
 

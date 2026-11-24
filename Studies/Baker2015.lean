@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Case.Dependent
-public import Linglib.Fragments.HindiUrdu.Case
+public import Linglib.Languages.HindiUrdu.Case
 public import Linglib.Data.Examples.Baker2015
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

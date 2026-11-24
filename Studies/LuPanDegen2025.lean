@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Questions.Partition.Basic
 public import Linglib.Data.VerbClasses.Levin1993.Class
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Data.Examples.LuPanDegen2025
 public import Linglib.Data.Examples.Readers
 
@@ -30,7 +30,7 @@ removes the island of a manner-of-speaking verb, Experiment 1 (`island_whisper_i
 *say* creates one, Experiment 2a (`island_say_iff`); and a manner adverb makes *say* behave as a
 manner-of-speaking verb, by default in Experiment 3a and under focus in 3b
 (`island_sayAdverb_iff_island_whisper`). The manner component is read from the verb's Levin class in
-`Fragments/English` (`MatrixPredicate.hasManner_of_mannerOfSpeaking`,
+`Languages/English` (`MatrixPredicate.hasManner_of_mannerOfSpeaking`,
 `MatrixPredicate.hasManner_say_iff`).
 
 ## Implementation notes

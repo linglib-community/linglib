@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Fragments.Indonesian.Aspect
-public import Linglib.Fragments.Indonesian.Complementation
+public import Linglib.Languages.Indonesian.Aspect
+public import Linglib.Languages.Indonesian.Complementation
 public import Linglib.Semantics.Tense.Reichenbach
 public import Linglib.Data.Examples.Arka2013
 public import Linglib.Data.Examples.Readers

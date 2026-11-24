@@ -4,7 +4,7 @@ public import Studies.McCarthy1981
 public import Linglib.Morphology.Realization
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Fragments.Hebrew.ConsonantalRoots
+public import Linglib.Languages.Hebrew.ConsonantalRoots
 public import Linglib.Data.Wordlist.Arad2005
 public import Mathlib.Data.List.Destutter
 public import Mathlib.Data.Sym.Sym2

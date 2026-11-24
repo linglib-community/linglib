@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Exponence.Containment.SupersetRule
-public import Linglib.Fragments.Slavic.Czech.Nouns
+public import Linglib.Languages.Slavic.Czech.Nouns
 public import Studies.Blake1994
 public import Linglib.Data.Wordlist.Caha2009
 public import Linglib.Morphology.Word.UD

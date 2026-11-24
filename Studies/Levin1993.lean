@@ -5,8 +5,8 @@ public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Adpositions
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.English.Adpositions
 public import Linglib.Data.Examples.Levin1993
 public import Linglib.Data.Examples.Readers
 

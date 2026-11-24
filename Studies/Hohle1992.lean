@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command.RoseTree
-public import Linglib.Fragments.German.WordOrder
+public import Linglib.Languages.German.WordOrder
 
 /-!
 # Höhle (1992): Über Verum-Fokus im Deutschen

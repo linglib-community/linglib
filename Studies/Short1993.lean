@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Slavic.Czech.Phonology
+public import Linglib.Languages.Slavic.Czech.Phonology
 public import Linglib.Data.Wordlist.Short1993
 public import Mathlib.Data.Finset.Card
 

@@ -5,8 +5,8 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Haspelmath2025a
 public import Linglib.Data.Examples.Languages
-public import Linglib.Fragments.Finnish.Morphotactics
-public import Linglib.Fragments.Turkish.Morphotactics
+public import Linglib.Languages.Finnish.Morphotactics
+public import Linglib.Languages.Turkish.Morphotactics
 public import Studies.Haspelmath2021
 public import Linglib.Syntax.Feature.Case.Spatial
 public import Linglib.Data.Examples.Readers

@@ -12,9 +12,9 @@ public import Linglib.Phonology.Prosody.Phrase
 public import Linglib.Phonology.Prosody.Match
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Syntax.Reflex
-public import Linglib.Fragments.Tangale.TAM
-public import Linglib.Fragments.Tangale.Focus
-public import Linglib.Fragments.Tangale.Phonology
+public import Linglib.Languages.Tangale.TAM
+public import Linglib.Languages.Tangale.Focus
+public import Linglib.Languages.Tangale.Phonology
 public import Linglib.Data.Examples.HartmannZimmermann2004
 public import Linglib.Data.Examples.Readers
 

@@ -7,8 +7,8 @@ public import Mathlib.Algebra.Order.Field.Rat
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Degree.Measurement
 public import Linglib.Semantics.Degree.ScalarDimension
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Data.Examples.HayKennedyLevin1999
 
 /-!

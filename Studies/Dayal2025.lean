@@ -2,10 +2,10 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Dayal2025
-public import Linglib.Fragments.English.Particles
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.HindiUrdu.Particles
-public import Linglib.Fragments.Japanese.Particles
+public import Linglib.Languages.English.Particles
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.HindiUrdu.Particles
+public import Linglib.Languages.Japanese.Particles
 public import Linglib.Semantics.Questions.Hamblin.Modal
 public import Linglib.Semantics.Questions.Hamblin.Exhaustification
 public import Linglib.Semantics.Questions.Inquisitive.Hamblin

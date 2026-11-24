@@ -2,9 +2,9 @@ module
 
 public import Linglib.Data.Examples.Aremu2025a
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.Yoruba.Focus
-public import Linglib.Fragments.Yoruba.Pronouns
-public import Linglib.Fragments.Yoruba.Relativization
+public import Linglib.Languages.Yoruba.Focus
+public import Linglib.Languages.Yoruba.Pronouns
+public import Linglib.Languages.Yoruba.Relativization
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Syntax.Minimalist.Label.RaisingHead

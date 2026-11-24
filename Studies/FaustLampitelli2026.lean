@@ -6,8 +6,8 @@ public import Linglib.Phonology.GovernmentPhonology.EmptyCategoryPrinciple
 public import Linglib.Phonology.GovernmentPhonology.Skeleton
 public import Linglib.Phonology.RuleInteraction
 public import Linglib.Phonology.Segmental.NaturalClass
-public import Linglib.Fragments.Tigrinya.Phonology
-public import Linglib.Fragments.Tigre.Phonology
+public import Linglib.Languages.Tigrinya.Phonology
+public import Linglib.Languages.Tigre.Phonology
 public import Linglib.Data.Examples.FaustLampitelli2026
 public import Linglib.Data.Examples.Languages
 public import Studies.KayeLowenstammVergnaud1985

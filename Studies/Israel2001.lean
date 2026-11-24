@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Mathlib.Order.Monotone.Basic
 
 /-!
@@ -31,7 +31,7 @@ perceptual-ability scale.
 * Pragmatic entailment between the propositions of a scalar model is modelled as inclusion of
   sets of worlds; the paper's point that the relevant inferences may be pragmatic rather than
   logical is not represented.
-* The paper's classifications of the English items of `Fragments/English/PolarityItems.lean`
+* The paper's classifications of the English items of `Languages/English/PolarityItems.lean`
   by force, quantity and role live here (`classified`), and the derived licensing context is
   checked against the fragment's record of each item as an NPI or PPI.
 

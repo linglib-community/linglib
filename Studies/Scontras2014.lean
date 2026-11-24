@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.MeasurePhrases
+public import Linglib.Languages.English.MeasurePhrases
 public import Linglib.Semantics.Mereology.Connection
 public import Linglib.Data.Examples.Scontras2014
 public import Linglib.Data.Examples.Readers

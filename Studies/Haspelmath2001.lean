@@ -4,20 +4,20 @@ public import Linglib.Data.Examples.Haspelmath2001
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Statistics.Haspelmath2001
-public import Linglib.Fragments.Basque.Relativization
-public import Linglib.Fragments.English.Comparison
-public import Linglib.Fragments.English.Relativization
-public import Linglib.Fragments.Finnish.Comparison
-public import Linglib.Fragments.Finnish.Relativization
-public import Linglib.Fragments.German.Relativization
-public import Linglib.Fragments.HindiUrdu.Relativization
-public import Linglib.Fragments.Latin.Comparison
-public import Linglib.Fragments.Romance.French.Comparison
-public import Linglib.Fragments.Romance.French.Relativization
-public import Linglib.Fragments.Slavic.Russian.Comparison
-public import Linglib.Fragments.Slavic.Russian.Relativization
-public import Linglib.Fragments.Turkish.Relativization
-public import Linglib.Fragments.Welsh.Relativization
+public import Linglib.Languages.Basque.Relativization
+public import Linglib.Languages.English.Comparison
+public import Linglib.Languages.English.Relativization
+public import Linglib.Languages.Finnish.Comparison
+public import Linglib.Languages.Finnish.Relativization
+public import Linglib.Languages.German.Relativization
+public import Linglib.Languages.HindiUrdu.Relativization
+public import Linglib.Languages.Latin.Comparison
+public import Linglib.Languages.Romance.French.Comparison
+public import Linglib.Languages.Romance.French.Relativization
+public import Linglib.Languages.Slavic.Russian.Comparison
+public import Linglib.Languages.Slavic.Russian.Relativization
+public import Linglib.Languages.Turkish.Relativization
+public import Linglib.Languages.Welsh.Relativization
 public import Mathlib.Data.Finset.Card
 public import Studies.Stassen1985
 
@@ -31,7 +31,8 @@ summaries of the table of languages by features. By feature, the share of the co
 of the neighbours: [every feature is commoner in the core](##standsOut), though read literally [the
 criteria pass three of the twelve](##isEuropeanism_iff). By language, the number of nine features
 held: it [reproduces Map 107.13](##clusterScore_eq_printed) and [leaves nothing between two and
-five](##clusterScore_gap). Fragments confirm [Map 107.2](##relativePronouns_fragments) and [Map
+five](##clusterScore_gap). The language files confirm [Map 107.2](##relativePronouns_fragments) and
+[Map
 107.9](##comparative_fragments).
 
 ## Implementation notes

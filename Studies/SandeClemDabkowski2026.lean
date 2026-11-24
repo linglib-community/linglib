@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Guebie.ParticleVerbs
+public import Linglib.Languages.Guebie.ParticleVerbs
 public import Linglib.Phonology.Harmony.Basic
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
 public import Linglib.Phonology.OptimalityTheory.Filtration

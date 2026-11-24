@@ -4,7 +4,7 @@ public import Linglib.Morphology.DistributedMorphology.Nominalization
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
-public import Linglib.Fragments.Icelandic.Nouns
+public import Linglib.Languages.Icelandic.Nouns
 public import Linglib.Data.Examples.Wood2023
 public import Linglib.Data.Examples.Readers
 
@@ -31,7 +31,7 @@ nominalizer is chosen by the verbalizer whenever that is overt, since it hides t
 the root otherwise (`Allomorphy.nominalizer_of_ne_zero`, `Allomorphy.nominalizer_of_eq_zero`),
 so that *-k* takes *-un* and *-er* takes *-ing* whatever the root; and a root that no item
 lists has no nominalization at all, the book's *borða* 'eat' (`Allomorphy.nominalizer_eq_none`).
-Every segmentation in `Fragments.Icelandic.Nouns` is derived this way
+Every segmentation in `Languages.Icelandic.Nouns` is derived this way
 (`Allomorphy.fragment_realize`).
 
 Special meaning is subject to phase locality: a dependency may cross at most one categorizer

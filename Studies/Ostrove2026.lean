@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Syntax.Binding.MinimalPronoun
-public import Linglib.Fragments.Mixtec.SMPM.Pronouns
-public import Linglib.Fragments.Mixtec.SMPM.Verbs
+public import Linglib.Languages.Mixtec.SMPM.Pronouns
+public import Linglib.Languages.Mixtec.SMPM.Verbs
 public import Studies.Landau2004
 public import Linglib.Syntax.Binding.Valuation
 public import Studies.Landau2013

@@ -141,7 +141,7 @@ def node_of(page):
         return "s", p[1]
     if p[0] != "Linglib" or len(p) < 3:
         return None
-    if p[1] == "Fragments":
+    if p[1] == "Languages":
         return "f", p[2]
     if p[1] in THEORY:
         return "t", f"{p[1]}.{p[2]}"
@@ -1093,7 +1093,7 @@ class TheoryPage(ModulePage):
                 pages_of[node_id(node)] = pages
                 edges.append([node_id(node), me, "use"])
             rows.append(file_item(node, first, self.own_names(anchors, 2), node in order[:FILES_SHOWN]))
-        parts.append(self.listing("Fragments using it", rows))
+        parts.append(self.listing("Languages using it", rows))
 
         # Among its neighbors, who names whom, which hovering a neighbor shows.
         users = [n for n in pages_of if n != me and nodes[n].get("b") != "up"]
@@ -1173,7 +1173,7 @@ def landing(lib, template, site_root, sha):
                        ("references.html", "References")))
     studies = study_tree(lib, [p for p in lib.modules if p.startswith("Studies/")])
     sections = [("theory", "t", "Theory", areas), ("studies", "s", "Studies", studies),
-                ("fragments", "f", "Fragments", tree("Linglib/Fragments")),
+                ("fragments", "f", "Languages", tree("Linglib/Languages")),
                 ("data", "d", "Data", tree("Linglib/Data")), ("core", "d", "Core", tree("Linglib/Core")),
                 ("other", "d", "Other", f'<ul>{general}</ul>')]
     tree = "\n".join(f'<section id="{sid}"><h2 class="{cls}">{esc(title)}</h2>{body}</section>'

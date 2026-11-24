@@ -2,8 +2,8 @@ module
 
 public import Linglib.Data.Examples.Cuervo2003
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
-public import Linglib.Fragments.Romance.Spanish.Verbs
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.Romance.Spanish.Verbs
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

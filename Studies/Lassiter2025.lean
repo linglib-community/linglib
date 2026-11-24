@@ -2,8 +2,8 @@ module
 
 public import Linglib.Data.Examples.Lassiter2025
 public import Studies.Israel2001
-public import Linglib.Fragments.Japanese.Conditionals
-public import Linglib.Fragments.German.Conditionals
+public import Linglib.Languages.Japanese.Conditionals
+public import Linglib.Languages.German.Conditionals
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Data.Examples.Readers
 

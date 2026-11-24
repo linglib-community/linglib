@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Aspect.AspectualClass
 public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Fragments.Sinhala.Verbs
+public import Linglib.Languages.Sinhala.Verbs
 public import Studies.KoontzGarboden2009
 public import Linglib.Core.Order.Cover
 public import Mathlib.Tactic.DeriveFintype

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.BroekhuisCorver2026
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.Dutch.Adpositions
+public import Linglib.Languages.Dutch.Adpositions
 public import Linglib.Syntax.WordOrder
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 public import Studies.Helmantel2002

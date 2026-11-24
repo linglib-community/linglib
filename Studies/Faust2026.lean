@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Morphotactics.Association
-public import Linglib.Fragments.Amharic.ConsonantalRoots
+public import Linglib.Languages.Amharic.ConsonantalRoots
 public import Studies.Arad2005
 public import Linglib.Syntax.Feature.Gender.Basic
 public import Linglib.Data.Examples.Faust2026

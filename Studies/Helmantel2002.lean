@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Helmantel2002
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.Dutch.Adpositions
+public import Linglib.Languages.Dutch.Adpositions
 public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Syntax.Projection.Tree
 public import Mathlib.Analysis.InnerProductSpace.Basic

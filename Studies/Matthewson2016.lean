@@ -3,11 +3,11 @@ module
 public import Linglib.Semantics.Modality.Universals
 public import Linglib.Semantics.Evidentiality.Evidence
 public import Linglib.Data.Examples.Matthewson2016
-public import Linglib.Fragments.Gitksan.Modals
-public import Linglib.Fragments.Statimcets.Modals
-public import Linglib.Fragments.NezPerce.Modals
-public import Linglib.Fragments.Niuean.Modals
-public import Linglib.Fragments.Nsyilxcen.Modals
+public import Linglib.Languages.Gitksan.Modals
+public import Linglib.Languages.Statimcets.Modals
+public import Linglib.Languages.NezPerce.Modals
+public import Linglib.Languages.Niuean.Modals
+public import Linglib.Languages.Nsyilxcen.Modals
 public import Studies.Condoravdi2002
 public import Studies.Deal2011
 public import Studies.Kratzer2012

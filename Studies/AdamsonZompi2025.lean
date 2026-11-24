@@ -2,9 +2,9 @@ module
 
 public import Linglib.Syntax.Person.CaseConstraint
 public import Linglib.Syntax.Feature.Person.Lattice
-public import Linglib.Fragments.Romance.Italian.Pronouns
-public import Linglib.Fragments.Romance.Spanish.Clitics
-public import Linglib.Fragments.German.Pronouns
+public import Linglib.Languages.Romance.Italian.Pronouns
+public import Linglib.Languages.Romance.Spanish.Clitics
+public import Linglib.Languages.German.Pronouns
 public import Studies.Deal2024
 public import Studies.CoonKeine2021
 public import Studies.CharnavelMateu2015

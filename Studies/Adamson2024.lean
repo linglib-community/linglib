@@ -4,12 +4,12 @@ public import Mathlib.Order.Basic
 public import Linglib.Morphology.DistributedMorphology.Gender
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Impoverishment
-public import Linglib.Fragments.Teop.Nouns
+public import Linglib.Languages.Teop.Nouns
 public import Linglib.Syntax.Gender.AgreementClasses
-public import Linglib.Fragments.Jarawara.PossessedNouns
-public import Linglib.Fragments.Romance.Italian.NumberGender
-public import Linglib.Fragments.Yanyuwa.Gender
-public import Linglib.Fragments.CoastalMarind.Gender
+public import Linglib.Languages.Jarawara.PossessedNouns
+public import Linglib.Languages.Romance.Italian.NumberGender
+public import Linglib.Languages.Yanyuwa.Gender
+public import Linglib.Languages.CoastalMarind.Gender
 public import Linglib.Semantics.Possession.Relationalizer
 public import Linglib.Data.Examples.Adamson2024
 public import Linglib.Data.Examples.Readers

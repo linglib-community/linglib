@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Indonesian.Phonology
+public import Linglib.Languages.Indonesian.Phonology
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Data.Wordlist.Sneddon1996
 

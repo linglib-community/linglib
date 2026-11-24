@@ -11,8 +11,8 @@ public import Linglib.Semantics.Plurality.Cardinality
 public import Linglib.Semantics.Plurality.Configuration
 public import Linglib.Syntax.Agreement.ConjunctAgreement
 public import Linglib.Syntax.Feature.Bundle
-public import Linglib.Fragments.Bayso.Number
-public import Linglib.Fragments.Teop.Nouns
+public import Linglib.Languages.Bayso.Number
+public import Linglib.Languages.Teop.Nouns
 public import Studies.Corbett1991
 public import Linglib.Syntax.Clause.Basic
 public import Linglib.Data.Examples.Corbett2000

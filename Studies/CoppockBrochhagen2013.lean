@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.NumeralModifiers
+public import Linglib.Languages.English.NumeralModifiers
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Questions.Hamblin.Unrestricted
 
@@ -150,7 +150,8 @@ open scoped Denotes
 
 variable {W : Type*} {μ : W → ℕ}
 
-/-- On the question of how many, *at least* is the Fragment's reading of the numeral it modifies,
+/-- On the question of how many, *at least* is the language file's reading of the numeral it
+modifies,
 pulled back along the count. -/
 theorem atLeast_fragment (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atLeast⟧,
@@ -158,7 +159,8 @@ theorem atLeast_fragment (n : ℕ) :
   rintro m (rfl : m = _)
   rw [atLeast_twoSided, Comparison.modifier_singleton, Comparison.interval_ge]
 
-/-- On the question of how many, *at most* is the Fragment's reading of the numeral it modifies,
+/-- On the question of how many, *at most* is the language file's reading of the numeral it
+modifies,
 pulled back along the count. -/
 theorem atMost_fragment (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atMost⟧,

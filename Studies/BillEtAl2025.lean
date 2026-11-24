@@ -4,10 +4,10 @@ public import Studies.MitrovicSauerland2016
 public import Linglib.Data.Statistics.BillEtAl2025
 public import Linglib.Data.Examples.BillEtAl2025
 public import Linglib.Data.Examples.Gloss
-public import Linglib.Fragments.Georgian.Coordination
-public import Linglib.Fragments.Georgian.FocusParticles
-public import Linglib.Fragments.Hungarian.Coordination
-public import Linglib.Fragments.Hungarian.FocusParticles
+public import Linglib.Languages.Georgian.Coordination
+public import Linglib.Languages.Georgian.FocusParticles
+public import Linglib.Languages.Hungarian.Coordination
+public import Linglib.Languages.Hungarian.FocusParticles
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Morphology.Realization
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -24,7 +24,7 @@ The particle `exponent l h` pronounces the head `h` in the language `l`, and `ex
 realization in which a sentence type realizes each head it pronounces as that particle. Each of
 the paper's examples realizes a sentence type of its language and each type has an example,
 `exists_marked_eq_realize` and `exists_example_realizing`, with the particles written as their
-Fragment entries say, `printed`. The J-μ type alone realizes every head,
+language file entries say, `printed`. The J-μ type alone realizes every head,
 `isDefective_transpose_exponence_iff`.
 
 Each head's particle stands on a side of a conjunct, and the pattern of a sentence type is the

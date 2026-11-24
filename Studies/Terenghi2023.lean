@@ -4,7 +4,7 @@ public import Mathlib.Tactic.Order
 public import Linglib.Semantics.Reference.Determiner
 public import Linglib.Data.Wordlist.Terenghi2023
 public import Linglib.Data.Examples.Languages
-public import Linglib.Fragments.Romance.Spanish.Determiners
+public import Linglib.Languages.Romance.Spanish.Determiners
 
 /-!
 # Terenghi (2023): Missing person

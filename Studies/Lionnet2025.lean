@@ -7,8 +7,8 @@ module
 
 public import Linglib.Phonology.Subregular.Transduction
 public import Linglib.Phonology.Tone.Register
-public import Linglib.Fragments.Drubea.Prosody
-public import Linglib.Fragments.Numee.Prosody
+public import Linglib.Languages.Drubea.Prosody
+public import Linglib.Languages.Numee.Prosody
 public import Studies.Hyman2006
 public import Linglib.Data.Examples.Lionnet2025
 import all Init.Data.List.Scan.Basic

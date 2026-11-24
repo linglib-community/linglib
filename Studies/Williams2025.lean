@@ -8,8 +8,8 @@ public import Linglib.Semantics.Events.Closure
 public import Linglib.Semantics.Tense.Lifespan
 public import Studies.Kratzer1998
 public import Studies.White2014
-public import Linglib.Fragments.English.Verbs.Attitude
-public import Linglib.Fragments.English.Verbs.Implicative
+public import Linglib.Languages.English.Verbs.Attitude
+public import Linglib.Languages.English.Verbs.Implicative
 public import Linglib.Data.Examples.Williams2025
 public import Linglib.Data.StructureDataset.Williams2025
 

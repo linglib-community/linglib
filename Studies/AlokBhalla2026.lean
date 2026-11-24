@@ -1,10 +1,10 @@
 module
 
 public import Linglib.Data.Examples.AlokBhalla2026
-public import Linglib.Fragments.Basque.Pronouns
-public import Linglib.Fragments.Magahi.Pronouns
-public import Linglib.Fragments.Romance.Galician.Pronouns
-public import Linglib.Fragments.Tamil.Pronouns
+public import Linglib.Languages.Basque.Pronouns
+public import Linglib.Languages.Magahi.Pronouns
+public import Linglib.Languages.Romance.Galician.Pronouns
+public import Linglib.Languages.Tamil.Pronouns
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

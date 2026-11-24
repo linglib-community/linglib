@@ -3,8 +3,8 @@ module
 public import Linglib.Data.Examples.Egressy2026
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Morphology.Word.Leipzig
-public import Linglib.Fragments.Hungarian.Verbs
-public import Linglib.Fragments.Hungarian.Pronouns
+public import Linglib.Languages.Hungarian.Verbs
+public import Linglib.Languages.Hungarian.Pronouns
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Minimalist.Linearization.Spellout

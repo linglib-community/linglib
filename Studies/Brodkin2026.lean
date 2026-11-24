@@ -51,7 +51,7 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
   ONSET, their suspension by Syllable Lifting ((71)–(73)), and the irreducible parallelism of
   (72b); the blocking of *a* 'maybe' (43b), which needs a null parse; prefixes in the parse, for
   *ya-do* (54)–(55).
-* Mandar segments in a Fragment, for syllables counted on typed segments.
+* Mandar segments in a language file, for syllables counted on typed segments.
 
 ## References
 

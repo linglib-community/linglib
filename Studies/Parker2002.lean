@@ -3,7 +3,7 @@ module
 public import Linglib.Phonology.Segmental.Sonority.Obstruent
 public import Studies.Anttila1997
 public import Linglib.Phonology.Segmental.Sonority.Sequencing
-public import Linglib.Fragments.English.Phonology
+public import Linglib.Languages.English.Phonology
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Fintype.Sigma
 import Mathlib.Order.Interval.Set.OrdConnected

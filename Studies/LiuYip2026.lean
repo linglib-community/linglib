@@ -3,12 +3,12 @@ module
 public import Linglib.Syntax.Minimalist.ExtendedProjection
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Clause.Complementation
-public import Linglib.Fragments.Mandarin.Adverbs
-public import Linglib.Fragments.Mandarin.Verbs
-public import Linglib.Fragments.Cantonese.Aspect
-public import Linglib.Fragments.Cantonese.Particles
-public import Linglib.Fragments.Cantonese.Verbs
-public import Linglib.Fragments.Cantonese.ResultativeComplements
+public import Linglib.Languages.Mandarin.Adverbs
+public import Linglib.Languages.Mandarin.Verbs
+public import Linglib.Languages.Cantonese.Aspect
+public import Linglib.Languages.Cantonese.Particles
+public import Linglib.Languages.Cantonese.Verbs
+public import Linglib.Languages.Cantonese.ResultativeComplements
 
 /-!
 # Liu and Yip (2026): Again, finiteness, and split aspect in Chinese languages

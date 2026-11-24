@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Mereology.Basic
-public import Linglib.Fragments.English.Determiners
+public import Linglib.Languages.English.Determiners
 public import Linglib.Data.Examples.HaslingerHienEtAl2025
 public import Mathlib.Data.PFun
 public import Mathlib.Tactic.DeriveFintype

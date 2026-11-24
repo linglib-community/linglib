@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Nominality
 public import Mathlib.Order.Prod.Lex.Basic
-public import Linglib.Fragments.Turkish.ObjectMarking
+public import Linglib.Languages.Turkish.ObjectMarking
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Filtration

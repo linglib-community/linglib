@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.Basic
-public import Linglib.Fragments.Zulu.Clause
+public import Linglib.Languages.Zulu.Clause
 public import Linglib.Data.Examples.Halpert2012
 public import Linglib.Data.Examples.Readers
 

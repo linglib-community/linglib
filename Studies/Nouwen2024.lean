@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.MeasureTheory.Measure.Real
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Pragmatics.Probabilistic.Latent
 public import Linglib.Pragmatics.Probabilistic.Literal
 

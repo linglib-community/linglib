@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Degree.Granularity
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Data.Examples.SauerlandStateva2011
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic

@@ -8,7 +8,7 @@ module
 public import Linglib.Phonology.GovernmentPhonology.ElementTheory.Basic
 public import Linglib.Phonology.Autosegmental.Skeleton
 public import Studies.Scheer2004
-public import Linglib.Fragments.Slavic.Czech.Phonology
+public import Linglib.Languages.Slavic.Czech.Phonology
 public import Linglib.Data.Wordlist.CaviraniVandenWyngaerd2026
 
 /-!

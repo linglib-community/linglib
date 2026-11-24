@@ -10,7 +10,7 @@ public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Negation.Polarity
-public import Linglib.Fragments.Turkish.QuestionParticles
+public import Linglib.Languages.Turkish.QuestionParticles
 public import Linglib.Data.Examples.TurkHirsch2026
 
 /-!

@@ -3,8 +3,8 @@ module
 public import Linglib.Data.Examples.Ozaki2026
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Minimalist.Verbal.Voice
-public import Linglib.Fragments.Japanese.Verbs
-public import Linglib.Fragments.Japanese.Voice
+public import Linglib.Languages.Japanese.Verbs
+public import Linglib.Languages.Japanese.Voice
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Data.Examples.Readers
 
@@ -30,7 +30,8 @@ ablative bleeds (`acc_variant`, `abl_variant`, `accusative_without_voice`).
 The examples are the generated rows of `Data/Examples/Ozaki2026`, the (9), (13), and (26)
 pairs split into an accusative and an ablative row. The case algorithm is the one-domain
 dependent-case assignment of `Syntax/Case/Dependent`, and the absence of thematic Voice is the
-non-thematic Voice head of `Syntax/Minimalist/Verbal/Voice`, which the Japanese Fragment records
+non-thematic Voice head of `Syntax/Minimalist/Verbal/Voice`, which the Japanese language file
+records
 for both verbs and from which it derives their unaccusativity.
 
 ## References

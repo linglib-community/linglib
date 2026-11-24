@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Nanosyntax.Lexicon
-public import Linglib.Fragments.Xhosa.Basic
+public import Linglib.Languages.Xhosa.Basic
 
 /-!
 # Taraldsen, Taraldsen Medová and Langa (2018): Class prefixes as specifiers in Southern Bantu

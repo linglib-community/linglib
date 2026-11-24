@@ -4,9 +4,9 @@ public import Linglib.Syntax.Minimalist.Feature.Interpretability
 public import Mathlib.Data.List.Iterate
 public import Linglib.Syntax.WordOrder
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Fragments.Greek.StandardModern.Gender
-public import Linglib.Fragments.Icelandic.Nouns
-public import Linglib.Fragments.Slavic.Serbian.Gender
+public import Linglib.Languages.Greek.StandardModern.Gender
+public import Linglib.Languages.Icelandic.Nouns
+public import Linglib.Languages.Slavic.Serbian.Gender
 public import Linglib.Data.Examples.AdamsonAnagnostopoulou2025
 public import Studies.Corbett1991
 public import Mathlib.Tactic.DeriveFintype

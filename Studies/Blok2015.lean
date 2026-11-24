@@ -2,8 +2,8 @@ module
 
 public import Linglib.Data.Examples.Blok2015
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.Dutch.NumeralModifiers
-public import Linglib.Fragments.Dutch.PolarityItems
+public import Linglib.Languages.Dutch.NumeralModifiers
+public import Linglib.Languages.Dutch.PolarityItems
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.Quantification.Counting
 public import Studies.CoppockBrochhagen2013
@@ -32,8 +32,9 @@ item](##Blok2015.admits_hoeven). [The paper's judgments follow](##Blok2015.judgm
   pointwise yields the set they choose from (`CoppockBrochhagen2013.range_choice_apply`).
 * *At most* is Coppock and Brochhagen's entry on the one-sided answers to the question of how
   many, ranked by their lower bounds.
-* The account covers the Fragment's Class B modifiers that set an upper bound, checked against
-  their Fragment readings, and a modifier is directional when its entry is built on a directional
+* The account covers the language file's Class B modifiers that set an upper bound, checked against
+  their language file readings, and a modifier is directional when its entry is built on a
+  directional
   preposition. A row's number is counted in the unit of its scale: eggs one by one, cake by the
   slice, an absence by the day.
 * The scope of a modified numeral is the cardinal quantifier of what the sentence asserts, as a
@@ -44,7 +45,7 @@ item](##Blok2015.admits_hoeven). [The paper's judgments follow](##Blok2015.judgm
 * The evaluative adverbs, which target what a sentence asserts, and the plurals and modals that
   supply a range of values are not formalized.
 * The examples in languages other than English and Dutch are not recorded, their modifiers having
-  no Fragment entries.
+  no language file entries.
 
 ## References
 
@@ -215,7 +216,7 @@ most* for any other. -/
 def raised (w : Numerals.NumeralModifier) (s n : ℕ) : Set (Set ℕ) :=
   if w.kind = some .directional then upTo s n else atMost n
 
-/-- The modifiers the account covers in the language of a row: the Fragment's Class B modifiers
+/-- The modifiers the account covers in the language of a row: the language file's Class B modifiers
 that set an upper bound. -/
 def upperBounded (l : Glottocode) : List Numerals.NumeralModifier :=
   (List.lookup l [(.english, [English.NumeralModifiers.atMost,
@@ -309,7 +310,7 @@ instance (w : Numerals.NumeralModifier) (t : Diagnostic) :
 def modifier? (e : Datum) : Option Numerals.NumeralModifier :=
   (e.feature? "modifier").bind fun f ↦ (upperBounded e.language).find? (·.form = f)
 
-/-- The diagnostic a row names; a negative polarity item needs the strength its Fragment entry
+/-- The diagnostic a row names; a negative polarity item needs the strength its language file entry
 records. -/
 def diagnostic? (e : Datum) : Option Diagnostic :=
   match e.feature? "test" with
@@ -323,7 +324,7 @@ def diagnostic? (e : Datum) : Option Diagnostic :=
   | _ => none
 
 /-- Every row is felicitous exactly when the account predicts it, for the modifier it names, read
-off the Fragment, with its number on a scale whose lowest positive point the row gives. -/
+off the language file, with its number on a scale whose lowest positive point the row gives. -/
 theorem judgment_rows :
     ∀ e ∈ Examples.all, ∃ w ∈ modifier? e, ∃ t ∈ diagnostic? e, ∃ s ∈ e.nat? "scaleBottom",
       ∃ n ∈ e.nat? "numeral", (e.JudgedFelicitous ↔ Felicitous (raised w s n) t) := by

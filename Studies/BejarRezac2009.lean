@@ -5,8 +5,8 @@ public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Syntax.Minimalist.Probe.Cyclic
 public import Linglib.Syntax.Minimalist.Probe.CyclicExpansion
 public import Studies.BejarRezac2003
-public import Linglib.Fragments.Basque.Agreement
-public import Linglib.Fragments.Georgian.Agreement
+public import Linglib.Languages.Basque.Agreement
+public import Linglib.Languages.Georgian.Agreement
 public import Linglib.Data.Examples.BejarRezac2009
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Korean.Evidentiality
+public import Linglib.Languages.Korean.Evidentiality
 public import Linglib.Semantics.Evidentiality.Temporal.Frame
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.Cumming2026

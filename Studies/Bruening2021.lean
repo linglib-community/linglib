@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Data.Examples.Bruening2021
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts

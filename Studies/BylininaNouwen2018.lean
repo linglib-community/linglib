@@ -4,7 +4,7 @@ public import Linglib.Semantics.Quantification.Numerals.Basic
 public import Linglib.Data.Examples.BylininaNouwen2018
 public import Mathlib.Data.Set.Card
 public import Linglib.Semantics.Plurality.Algebra
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Data.Examples.Readers
 

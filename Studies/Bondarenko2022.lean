@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Buryat.Complementizers
-public import Linglib.Fragments.Korean.Complementizers
+public import Linglib.Languages.Buryat.Complementizers
+public import Linglib.Languages.Korean.Complementizers
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 public import Linglib.Data.Examples.Bondarenko2022
 public import Linglib.Data.Examples.Languages

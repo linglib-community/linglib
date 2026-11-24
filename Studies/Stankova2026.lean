@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Particle.Basic
-public import Linglib.Fragments.Slavic.Czech.Particles
+public import Linglib.Languages.Slavic.Czech.Particles
 public import Studies.StankovaSimik2025
 public import Studies.Simik2024
 public import Linglib.Semantics.Questions.Bias

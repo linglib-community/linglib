@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Phonology
+public import Linglib.Languages.English.Phonology
 public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.FeatureGeometry
 public import Linglib.Phonology.Subregular.LocalRewrite
@@ -44,8 +44,9 @@ root's feature class is the paper's inventory rather than all of Hayes's; `[labi
 counts as primary by table (22). Spreading is `Finset.piecewise` on a node's feature class,
 so the trigger's unspecified features under the node replace the target's, as the delinking
 convention of (13) requires; single-feature spreading is `Function.update`
-(`Spreading.apply_feature`). The English segments are the Fragment's, except /r/: the
-Fragment's /ɹ/ is PHOIBLE's, [−consonantal, −anterior, +distributed], where table (10) makes /r/
+(`Spreading.apply_feature`). The English segments are the language file's, except /r/: the
+language file's /ɹ/ is PHOIBLE's, [−consonantal, −anterior, +distributed], where table (10) makes
+/r/
 [−distributed] and (11) makes it a trigger of (12), whose trigger is [+consonantal], as liquids
 are in SPE. The SPE rule (14) is `Effect.copyRight` on the two-feature set and (12) the same
 effect on the place class, so the comparison is between the sets a rule may copy, not between
@@ -58,7 +59,7 @@ formalisms.
   the insertion rule (18), which needs two such nodes, is blocked. This needs
   feature-level linking (`Autosegmental/AR.lean`), not the segment-wise spreading here.
 * §4's consonant–vowel asymmetries follow from plain consonants lacking S features
-  underlyingly while vowels always carry them. The Fragment's segments are PHOIBLE's surface
+  underlyingly while vowels always carry them. The language file's segments are PHOIBLE's surface
   specifications, in which every consonant carries `[round]` and /k/ carries `[high]` and
   `[back]`, so stating them needs the underspecified consonants.
 

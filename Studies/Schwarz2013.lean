@@ -2,13 +2,13 @@ module
 
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Fragments.German.Determiners
-public import Linglib.Fragments.Fering.Determiners
-public import Linglib.Fragments.Akan.Determiners
-public import Linglib.Fragments.MauritianCreole.Determiners
-public import Linglib.Fragments.HaitianCreole.Determiners
-public import Linglib.Fragments.Lakhota.Determiners
-public import Linglib.Fragments.Hausa.Determiners
+public import Linglib.Languages.German.Determiners
+public import Linglib.Languages.Fering.Determiners
+public import Linglib.Languages.Akan.Determiners
+public import Linglib.Languages.MauritianCreole.Determiners
+public import Linglib.Languages.HaitianCreole.Determiners
+public import Linglib.Languages.Lakhota.Determiners
+public import Linglib.Languages.Hausa.Determiners
 
 /-!
 # Schwarz (2013): Two Kinds of Definites Cross-linguistically

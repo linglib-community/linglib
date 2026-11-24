@@ -1,17 +1,17 @@
 module
 
 public import Linglib.Data.Examples.Stassen1985
-public import Linglib.Fragments.Arabic.ModernStandard.Comparison
-public import Linglib.Fragments.Finnish.Comparison
-public import Linglib.Fragments.HindiUrdu.Comparison
-public import Linglib.Fragments.Japanese.Comparison
-public import Linglib.Fragments.Mandarin.Comparison
-public import Linglib.Fragments.Romance.French.Comparison
-public import Linglib.Fragments.Slavic.Russian.Comparison
-public import Linglib.Fragments.Swahili.Comparison
-public import Linglib.Fragments.Turkish.Clause
-public import Linglib.Fragments.Turkish.Comparison
-public import Linglib.Fragments.Yoruba.Comparison
+public import Linglib.Languages.Arabic.ModernStandard.Comparison
+public import Linglib.Languages.Finnish.Comparison
+public import Linglib.Languages.HindiUrdu.Comparison
+public import Linglib.Languages.Japanese.Comparison
+public import Linglib.Languages.Mandarin.Comparison
+public import Linglib.Languages.Romance.French.Comparison
+public import Linglib.Languages.Slavic.Russian.Comparison
+public import Linglib.Languages.Swahili.Comparison
+public import Linglib.Languages.Turkish.Clause
+public import Linglib.Languages.Turkish.Comparison
+public import Linglib.Languages.Yoruba.Comparison
 public import Linglib.Syntax.Feature.Case.Spatial
 public import Mathlib.Basic.Rel
 

@@ -4,12 +4,12 @@ public import Linglib.Data.Examples.JinKoenig2021
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Tense.RunTimes
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Negation
-public import Linglib.Fragments.Romance.French.Negation
-public import Linglib.Fragments.Januubi.Negation
-public import Linglib.Fragments.Mandarin.Negation
-public import Linglib.Fragments.ZarmaSonrai.Negation
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.English.Negation
+public import Linglib.Languages.Romance.French.Negation
+public import Linglib.Languages.Januubi.Negation
+public import Linglib.Languages.Mandarin.Negation
+public import Linglib.Languages.ZarmaSonrai.Negation
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 

@@ -2,10 +2,10 @@ module
 
 public import Linglib.Semantics.Modality.Typology
 public import Linglib.Data.Examples.Matthewson2013
-public import Linglib.Fragments.Gitksan.Modals
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.Statimcets.Modals
-public import Linglib.Fragments.Javanese.Paciran.Modals
+public import Linglib.Languages.Gitksan.Modals
+public import Linglib.Languages.English.Auxiliaries
+public import Linglib.Languages.Statimcets.Modals
+public import Linglib.Languages.Javanese.Paciran.Modals
 public import Studies.Condoravdi2002
 public import Studies.Deal2011
 public import Linglib.Data.Examples.Readers

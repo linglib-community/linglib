@@ -6,7 +6,7 @@ public import Linglib.Core.Computability.ContextFreeGrammar.Regular
 public import Linglib.Core.Computability.ContextFreeGrammar.Map
 public import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 public import Linglib.Core.Computability.NonRegular.AnBn
-public import Linglib.Fragments.German.Zurich.Verbs
+public import Linglib.Languages.German.Zurich.Verbs
 public import Linglib.Data.Examples.Shieber1985
 public import Mathlib.Data.List.Sort
 public import Mathlib.Tactic.DeriveFintype

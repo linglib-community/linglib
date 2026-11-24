@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Japanese.Nouns
-public import Linglib.Fragments.Japanese.Pronouns
+public import Linglib.Languages.Japanese.Nouns
+public import Linglib.Languages.Japanese.Pronouns
 public import Studies.GundelHedbergZacharski1993
 public import Linglib.Data.Examples.Downing1996
 public import Linglib.Data.Examples.Readers

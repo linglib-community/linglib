@@ -1,12 +1,12 @@
 module
 
-public import Linglib.Fragments.Basque.Pronouns
-public import Linglib.Fragments.Dutch.Pronouns
-public import Linglib.Fragments.German.Pronouns
-public import Linglib.Fragments.Mayan.Kiche.Pronouns
-public import Linglib.Fragments.Romance.Italian.Pronouns
-public import Linglib.Fragments.Romance.Spanish.Pronouns
-public import Linglib.Fragments.Tamil.Pronouns
+public import Linglib.Languages.Basque.Pronouns
+public import Linglib.Languages.Dutch.Pronouns
+public import Linglib.Languages.German.Pronouns
+public import Linglib.Languages.Mayan.Kiche.Pronouns
+public import Linglib.Languages.Romance.Italian.Pronouns
+public import Linglib.Languages.Romance.Spanish.Pronouns
+public import Linglib.Languages.Tamil.Pronouns
 public import Mathlib.Data.Fintype.Pi
 
 /-!

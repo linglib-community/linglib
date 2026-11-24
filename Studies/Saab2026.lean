@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Romance.Spanish.Binominals
+public import Linglib.Languages.Romance.Spanish.Binominals
 public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Syntax.Minimalist.Ellipsis
 public import Linglib.Data.Examples.Saab2026

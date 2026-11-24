@@ -4,7 +4,7 @@ public import Linglib.Core.Combinatorics.SimpleGraph.Induce
 public import Linglib.Core.Order.OrdConnected
 public import Linglib.Syntax.Case.Function
 public import Studies.Blake1994
-public import Linglib.Fragments.Japanese.Case
+public import Linglib.Languages.Japanese.Case
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 
 /-!

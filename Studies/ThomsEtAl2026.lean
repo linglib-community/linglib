@@ -9,7 +9,7 @@ public import Linglib.Syntax.Minimalist.Spine
 public import Mathlib.Basic.Real.Basic
 public import Studies.ArregiPietraszko2021
 public import Studies.Myler2016
-public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Languages.English.Auxiliaries
 public import Linglib.Syntax.Minimalist.Probe.Minimal
 
 /-!

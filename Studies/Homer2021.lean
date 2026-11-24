@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.PolarityItem.Environment
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Linglib.Data.Examples.Homer2021
 public import Studies.Chierchia2004
 
@@ -54,7 +54,7 @@ impossible … not*, a derivation of this file.
   application to the connectives is this file's. Tense adds no scalar alternatives, so the
   strengthened TP has the meaning of the strengthened polarity phrase.
 * *Quoi que ce soit* and *some* are this file's entries, licensed and blocked by downward
-  entailment; *any* and *someone* are the Fragment's, *someone* blocked by anti-additivity.
+  entailment; *any* and *someone* are the language file's, *someone* blocked by anti-additivity.
 * The *when*-clause of the sentence with clausemate negation is left out, as in its logical form.
 * In the sentences with two indefinites, a world records which of two people did which of two
   things, every two items are entangled, and the constituents are numbered from the bottom of the
@@ -920,7 +920,7 @@ theorem licensed_notSureSubjObj_someone :
 /-- Below *not impossible … not* and below *not sure*, environments are downward entailing without
 being anti-additive. Blocked by downward entailment, *some* is anti-licensed in both, with
 narrowest scope in the first and entangled with *anything* in the second, as judged; blocked only
-by anti-additivity, as the Fragment classifies *someone*, it would be licensed in both. -/
+by anti-additivity, as the language file classifies *someone*, it would be licensed in both. -/
 theorem downwardEntailment :
     (¬notImpossibleNot.Licenses someItem ∧
         notImpossibleNot.Licenses English.PolarityItems.someone) ∧

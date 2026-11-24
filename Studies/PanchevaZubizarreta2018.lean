@@ -3,8 +3,8 @@ module
 public import Linglib.Syntax.Person.CaseConstraint
 public import Linglib.Discourse.LogophoricRole
 public import Linglib.Syntax.Feature.Person.Features
-public import Linglib.Fragments.Romance.Italian.Pronouns
-public import Linglib.Fragments.Romance.Spanish.Clitics
+public import Linglib.Languages.Romance.Italian.Pronouns
+public import Linglib.Languages.Romance.Spanish.Clitics
 
 /-!
 # Pancheva and Zubizarreta (2018): The Person Case Constraint
@@ -32,8 +32,8 @@ The roles a participant holds are a lower set of Sells's hierarchy, recorded by 
 element, so the addressee, a self, is also a pivot. The paper says of the addressee that it can
 be a pivot, and gives second person the feature [+proximate].
 
-The Italian and Spanish clitic combinations are read off the Fragments, the French, Catalan,
-Kambera, and Bulgarian ones off the parameter settings, since no clitic Fragment exists for
+The Italian and Spanish clitic combinations are read off the language files, the French, Catalan,
+Kambera, and Bulgarian ones off the parameter settings, since no clitic language file exists for
 those languages. The paper's separation of the Clitic Logophoric Restriction from the PCC,
 against the unification Charnavel and Mateu propose, the two phenomena sharing only
 the point-of-view marking on the applicative head, is not represented: the restriction is a

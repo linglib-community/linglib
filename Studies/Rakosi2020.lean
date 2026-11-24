@@ -6,9 +6,9 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Set.Restrict
-public import Linglib.Fragments.Hungarian.Pronouns
-public import Linglib.Fragments.Hungarian.Reciprocals
-public import Linglib.Fragments.Hungarian.Phonology
+public import Linglib.Languages.Hungarian.Pronouns
+public import Linglib.Languages.Hungarian.Reciprocals
+public import Linglib.Languages.Hungarian.Phonology
 public import Linglib.Data.Examples.Rakosi2020
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Gloss

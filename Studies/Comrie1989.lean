@@ -6,7 +6,7 @@ public import Linglib.Data.Examples.Comrie1989
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
-public import Linglib.Fragments.Turkish.ObjectMarking
+public import Linglib.Languages.Turkish.ObjectMarking
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Person.Class

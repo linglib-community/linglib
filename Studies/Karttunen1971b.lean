@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Semantics.Presupposition.FamilyVariant
 public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Logic.Modal.Basic

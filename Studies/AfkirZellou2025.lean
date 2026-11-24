@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Fin.VecNotation
-public import Linglib.Fragments.Tarifit.ConsonantalRoots
+public import Linglib.Languages.Tarifit.ConsonantalRoots
 public import Linglib.Phonology.Segmental.Sonority.Obstruent
 public import Linglib.Phonology.Segmental.Sonority.Sequencing
 public import Linglib.Morphology.Morphotactics.Association

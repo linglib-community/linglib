@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Semantics.Mereology.Basic
-public import Linglib.Fragments.English.Nouns
+public import Linglib.Languages.English.Nouns
 public import Linglib.Semantics.Mereology.Individuation
 
 /-!

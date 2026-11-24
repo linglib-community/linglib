@@ -7,17 +7,17 @@ public import Linglib.Data.WALS.Features.F106A
 public import Linglib.Syntax.Reciprocal
 public import Studies.Siloni2012
 public import Linglib.Semantics.Plurality.Reciprocal
-public import Linglib.Fragments.English.Reciprocals
-public import Linglib.Fragments.Chichewa.Reciprocals
-public import Linglib.Fragments.Romance.French.Reciprocals
-public import Linglib.Fragments.Greek.StandardModern.Reciprocals
-public import Linglib.Fragments.Hungarian.Reciprocals
-public import Linglib.Fragments.Icelandic.Reciprocals
-public import Linglib.Fragments.Mandarin.Reciprocals
-public import Linglib.Fragments.Slavic.Czech.Reciprocals
-public import Linglib.Fragments.Slavic.Russian.Reciprocals
-public import Linglib.Fragments.Swahili.Reciprocals
-public import Linglib.Fragments.Wambaya.Reciprocals
+public import Linglib.Languages.English.Reciprocals
+public import Linglib.Languages.Chichewa.Reciprocals
+public import Linglib.Languages.Romance.French.Reciprocals
+public import Linglib.Languages.Greek.StandardModern.Reciprocals
+public import Linglib.Languages.Hungarian.Reciprocals
+public import Linglib.Languages.Icelandic.Reciprocals
+public import Linglib.Languages.Mandarin.Reciprocals
+public import Linglib.Languages.Slavic.Czech.Reciprocals
+public import Linglib.Languages.Slavic.Russian.Reciprocals
+public import Linglib.Languages.Swahili.Reciprocals
+public import Linglib.Languages.Wambaya.Reciprocals
 
 /-!
 # Nordlinger (2023): The Typology of Reciprocal Constructions
@@ -56,7 +56,8 @@ example where no fragment exists (Warlpiri, Kuuk Thaayorre, Dalabon, Tonga), and
 valency indicators the review reports; the ergative and accusative glosses of its examples are
 checked against them (`ergative_iff_subjectCase_bivalent`, `objectSlot_bivalent_of_accusative`).
 The Wambaya clitic is classed as the review classes it, with the pronominal strategies; the
-Fragment's entry follows Evans and colleagues, who argue that it marks the predicate. The review
+language file's entry follows Evans and colleagues, who argue that it marks the predicate. The
+review
 gives no discontinuous example for Czech. The formation locus is Siloni's own classification where
 it covers the language and the review's extension otherwise. Malagasy, bivalent at f-structure and
 monovalent at c-structure on Hurst's analysis, is one of the four strategies of `Reciprocation` and

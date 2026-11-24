@@ -6,8 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Category.Numeral.Grammar
-public import Linglib.Fragments.English.Numerals
-public import Linglib.Fragments.Welsh.Numerals
+public import Linglib.Languages.English.Numerals
+public import Linglib.Languages.Welsh.Numerals
 
 /-!
 # Hurford (2007): A performed practice explains a linguistic universal

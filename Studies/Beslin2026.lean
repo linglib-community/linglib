@@ -9,9 +9,9 @@ public import Studies.Merchant2013
 public import Linglib.Data.Examples.AnandHardtMcCloskey2025
 public import Linglib.Data.Examples.Beslin2026
 public import Linglib.Data.Examples.Languages
-public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
-public import Linglib.Fragments.Mayan.Kaqchikel.Voice
-public import Linglib.Fragments.Mayan.Kiche.Voice
+public import Linglib.Languages.Mayan.Kaqchikel.Extraction
+public import Linglib.Languages.Mayan.Kaqchikel.Voice
+public import Linglib.Languages.Mayan.Kiche.Voice
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Minimalist.Verbal.LittleV

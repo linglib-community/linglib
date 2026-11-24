@@ -4,7 +4,7 @@ public import Linglib.Morphology.FeatureGeometry
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Morphology.DistributedMorphology.Fission
 public import Linglib.Morphology.DistributedMorphology.Impoverishment
-public import Linglib.Fragments.Georgian.Agreement
+public import Linglib.Languages.Georgian.Agreement
 public import Linglib.Data.Examples.McGinnis2013
 public import Mathlib.Order.Prod.Lex.Basic
 public import Linglib.Data.Examples.Readers
@@ -26,7 +26,7 @@ leaves no [#] for the default *-s*.
   they are never discharged.
 * Only the aorist and optative screeves are modelled, and the null second-person prefix without
   its *x-* allomorph.
-* [DAT] is the feature the Set B prefixes spell out, borne by the argument that the Fragment's
+* [DAT] is the feature the Set B prefixes spell out, borne by the argument that the language file's
   second-series pattern marks by Set B, though that pattern makes the direct object nominative.
 
 ## References
@@ -309,7 +309,7 @@ theorem plural_site : plural.features = {.node .individuation, .node .group} := 
 /-! ### The agreement sets -/
 
 /-- An aorist clause's agreement affixes are its person prefix and plural *-t*, the affixes the
-Fragment's agreement sets list. -/
+language file's agreement sets list. -/
 def agreementAffixes (subj obj : Argument) : List Morph :=
   ((personPrefix subj obj).filter (· ≠ "")).toList.map .pref ++
     if plural ∈ suffixItems .aorist subj obj then [.suff plural.exponent] else []

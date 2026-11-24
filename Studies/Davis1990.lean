@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Romance.Italian.Phonology
+public import Linglib.Languages.Romance.Italian.Phonology
 
 /-!
 # Davis (1990): Italian onset structure and the distribution of *il* and *lo*

@@ -1,12 +1,12 @@
 module
 
-public import Linglib.Fragments.Mandarin.Nouns
-public import Linglib.Fragments.Romance.French.Nouns
-public import Linglib.Fragments.Romance.Italian.Determiners
-public import Linglib.Fragments.Romance.Italian.Nouns
-public import Linglib.Fragments.Shona.Nouns
-public import Linglib.Fragments.Swahili.Nouns
-public import Linglib.Fragments.Xhosa.Nouns
+public import Linglib.Languages.Mandarin.Nouns
+public import Linglib.Languages.Romance.French.Nouns
+public import Linglib.Languages.Romance.Italian.Determiners
+public import Linglib.Languages.Romance.Italian.Nouns
+public import Linglib.Languages.Shona.Nouns
+public import Linglib.Languages.Swahili.Nouns
+public import Linglib.Languages.Xhosa.Nouns
 public import Studies.Corbett1991
 public import Studies.Downing1996
 public import Mathlib.Data.Finset.Image

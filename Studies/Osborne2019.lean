@@ -1,10 +1,10 @@
 module
 
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Adpositions
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.English.Auxiliaries
+public import Linglib.Languages.English.Adpositions
 public import Linglib.Syntax.DependencyGrammar.Valency
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Syntax.DependencyGrammar.Catena

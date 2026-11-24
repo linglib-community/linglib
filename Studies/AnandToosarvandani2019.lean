@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.TemporalDeictic
+public import Linglib.Languages.English.TemporalDeictic
 public import Linglib.Data.Examples.AnandToosarvandani2019
 public import Linglib.Data.Examples.Readers
 

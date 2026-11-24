@@ -1,8 +1,8 @@
 module
 
 public import Studies.DeSwartSag2002
-public import Linglib.Fragments.Slavic.Czech.Determiners
-public import Linglib.Fragments.Romance.Italian.Determiners
+public import Linglib.Languages.Slavic.Czech.Determiners
+public import Linglib.Languages.Romance.Italian.Determiners
 
 /-!
 # Zeijlstra (2004): Sentential Negation and Negative Concord

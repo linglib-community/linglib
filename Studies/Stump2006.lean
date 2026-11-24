@@ -4,9 +4,9 @@ public import Linglib.Data.Wordlist.Stump2006
 public import Linglib.Morphology.Paradigm.Linkage
 public import Linglib.Morphology.Exponence.DomainRule
 public import Linglib.Morphology.Word.UD
-public import Linglib.Fragments.Slavic.Czech.Nouns
-public import Linglib.Fragments.Slavic.Russian.Case
-public import Linglib.Fragments.Slavic.Russian.Gender
+public import Linglib.Languages.Slavic.Czech.Nouns
+public import Linglib.Languages.Slavic.Russian.Case
+public import Linglib.Languages.Slavic.Russian.Gender
 public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.Field.Rat

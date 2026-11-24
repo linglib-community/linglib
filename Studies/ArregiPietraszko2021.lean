@@ -6,7 +6,7 @@ public import Mathlib.Data.List.DropRight
 public import Linglib.Data.Examples.ArregiPietraszko2021
 public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Linglib.Data.Wordlist.ArregiPietraszko2021
-public import Linglib.Fragments.Ndebele.Phonology
+public import Linglib.Languages.Ndebele.Phonology
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.Spellout
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic

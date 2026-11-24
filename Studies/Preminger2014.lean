@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.Phi
-public import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-public import Linglib.Fragments.Mayan.Kiche.Agreement
-public import Linglib.Fragments.Mayan.Kiche.Pronouns
+public import Linglib.Languages.Mayan.Kaqchikel.Agreement
+public import Linglib.Languages.Mayan.Kiche.Agreement
+public import Linglib.Languages.Mayan.Kiche.Pronouns
 public import Studies.BejarRezac2003
 
 /-!

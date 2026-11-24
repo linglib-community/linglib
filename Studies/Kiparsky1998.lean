@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Kiparsky1998
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.Finnish.Case
+public import Linglib.Languages.Finnish.Case
 public import Linglib.Semantics.Mereology.Basic
 
 /-!

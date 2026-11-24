@@ -1,9 +1,9 @@
 module
 
 public import Studies.Deal2011
-public import Linglib.Fragments.Tlingit.Modals
-public import Linglib.Fragments.Statimcets.Modals
-public import Linglib.Fragments.Washo.Modals
+public import Linglib.Languages.Tlingit.Modals
+public import Linglib.Languages.Statimcets.Modals
+public import Linglib.Languages.Washo.Modals
 
 /-!
 # Cable (2017): The Expression of Modality in Tlingit: A Paucity of Grammatical Devices

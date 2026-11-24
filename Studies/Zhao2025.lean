@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Mandarin.Aspect
+public import Linglib.Languages.Mandarin.Aspect
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Degree.Comparison
 public import Mathlib.Algebra.Order.Interval.Basic
@@ -32,7 +32,7 @@ particles take the measurement of their evaluation argument as an interval, a po
 utterance time or a height and a run time for a matrix event. *Le* is commonly called a perfective
 marker; the dissertation strips its temporal content down to precedence, which is the relation
 `Aspect` assigns to the perfect, [not the perfective](##Zhao2025.not_denote_le_pure) under which
-`Fragments/Mandarin/Aspect.lean` enters it. A surpassing event is one whose trace has the
+`Languages/Mandarin/Aspect.lean` enters it. A surpassing event is one whose trace has the
 measurement of its theme `NonemptyInterval.During` it.
 
 The presupposition is formalized as printed, so a quantifier that applies at no trace is

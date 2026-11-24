@@ -7,9 +7,9 @@ public import Studies.Ogihara1996
 public import Linglib.Data.Examples.Wurmbrand2014
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Verbs.Implicative
-public import Linglib.Fragments.English.Verbs.Communication
+public import Linglib.Languages.English.Auxiliaries
+public import Linglib.Languages.English.Verbs.Implicative
+public import Linglib.Languages.English.Verbs.Communication
 
 /-!
 # Wurmbrand (2014): Tense and Aspect in English Infinitives

@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Berent2026
-public import Linglib.Fragments.English.Phonology
-public import Linglib.Fragments.Hebrew.ConsonantalRoots
+public import Linglib.Languages.English.Phonology
+public import Linglib.Languages.Hebrew.ConsonantalRoots
 public import Linglib.Morphology.Root.Consonantal
 public import Linglib.Phonology.Segmental.Sonority.Basic
 public import Linglib.Phonology.Subregular.StrictlyLocal

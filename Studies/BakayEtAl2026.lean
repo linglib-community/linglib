@@ -8,7 +8,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.LinearAlgebra.Matrix.DotProduct
 public import Linglib.Data.Examples.BakayEtAl2026
-public import Linglib.Fragments.Turkish.Anaphors
+public import Linglib.Languages.Turkish.Anaphors
 public import Linglib.Syntax.Binding.Tree
 public import Linglib.Data.Examples.Readers
 

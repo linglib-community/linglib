@@ -5,7 +5,7 @@ public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.List.GetD
 public import Mathlib.Algebra.Order.Field.Rat
 public import Linglib.Data.Statistics.FrischPierrehumbertBroe2004
-public import Linglib.Fragments.Arabic.ModernStandard.Phonology
+public import Linglib.Languages.Arabic.ModernStandard.Phonology
 public import Studies.Broe1993
 
 /-!

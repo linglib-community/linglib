@@ -2,9 +2,9 @@ module
 
 public import Mathlib.Tactic.FinCases
 public import Linglib.Data.Wordlist.Svenonius2004
-public import Linglib.Fragments.Slavic.Russian.Verbs
-public import Linglib.Fragments.Slavic.Polish.Verbs
-public import Linglib.Fragments.Slavic.Bulgarian.Verbs
+public import Linglib.Languages.Slavic.Russian.Verbs
+public import Linglib.Languages.Slavic.Polish.Verbs
+public import Linglib.Languages.Slavic.Bulgarian.Verbs
 public import Linglib.Morphology.Word.Tree
 
 /-!

@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.HymanMchombo1992
-public import Linglib.Fragments.Chichewa.Verbs
-public import Linglib.Fragments.Chichewa.Voice
+public import Linglib.Languages.Chichewa.Verbs
+public import Linglib.Languages.Chichewa.Voice
 public import Linglib.Phonology.OCP
 public import Linglib.Data.Examples.Readers
 public import Studies.Baker1985

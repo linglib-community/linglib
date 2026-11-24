@@ -6,11 +6,11 @@ public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Mathlib.Basic.Rel
 public import Linglib.Semantics.Reference.CovertShift
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.German.Determiners
-public import Linglib.Fragments.Cantonese.Determiners
-public import Linglib.Fragments.Thai.Determiners
-public import Linglib.Fragments.Shan.Determiners
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.German.Determiners
+public import Linglib.Languages.Cantonese.Determiners
+public import Linglib.Languages.Thai.Determiners
+public import Linglib.Languages.Shan.Determiners
 public import Studies.Jenks2018
 public import Studies.Schwarz2013
 

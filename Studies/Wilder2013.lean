@@ -8,11 +8,11 @@ public import Linglib.Semantics.Focus.Polarity
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Data.Examples.Readers
 public import Linglib.Syntax.Clause.Basic
-public import Linglib.Fragments.English.Verbs.Attitude
-public import Linglib.Fragments.English.Verbs.Levin
-public import Linglib.Fragments.English.Complementizers
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.English.Particles
+public import Linglib.Languages.English.Verbs.Attitude
+public import Linglib.Languages.English.Verbs.Levin
+public import Linglib.Languages.English.Complementizers
+public import Linglib.Languages.English.Pronouns
+public import Linglib.Languages.English.Particles
 
 /-!
 # Wilder (2013): English emphatic *do*

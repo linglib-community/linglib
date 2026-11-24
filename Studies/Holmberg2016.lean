@@ -4,10 +4,10 @@ public import Linglib.Discourse.Response
 public import Linglib.Semantics.Denotation
 public import Linglib.Syntax.Negation
 public import Linglib.Semantics.Questions.Inquisitive.Polar
-public import Linglib.Fragments.English.Particles
-public import Linglib.Fragments.Japanese.Particles
-public import Linglib.Fragments.Romance.French.Particles
-public import Linglib.Fragments.Swedish.Particles
+public import Linglib.Languages.English.Particles
+public import Linglib.Languages.Japanese.Particles
+public import Linglib.Languages.Romance.French.Particles
+public import Linglib.Languages.Swedish.Particles
 public import Studies.FarkasBruce2010
 public import Linglib.Data.Examples.Holmberg2016
 public import Mathlib.Data.Fintype.Sum

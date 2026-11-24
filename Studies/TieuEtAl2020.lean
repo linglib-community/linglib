@@ -4,7 +4,7 @@ public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Homogeneity.Usable
 public import Linglib.Semantics.Plurality.Multiplicity
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Fragments.English.Nouns
+public import Linglib.Languages.English.Nouns
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Data.Examples.TieuEtAl2020
 public import Linglib.Data.Examples.Readers

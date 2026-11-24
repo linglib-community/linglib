@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Semantics.Aspect.Phasal
 public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Semantics.Questions.Inquisitive.Answerhood

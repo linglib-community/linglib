@@ -2,8 +2,8 @@ module
 
 public import Linglib.Data.Examples.Enguehard2024
 public import Studies.TieuEtAl2020
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Pronouns
 public import Linglib.Semantics.Plurality.Cardinality
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Presupposition.Strengthening

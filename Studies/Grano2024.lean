@@ -4,11 +4,11 @@ public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Mood.Grammatical
 public import Linglib.Semantics.Events.Closure
 public import Linglib.Data.Examples.Grano2024
-public import Linglib.Fragments.Greek.StandardModern.Verbs
-public import Linglib.Fragments.Romance.Portuguese.Verbs
-public import Linglib.Fragments.Romance.Italian.Verbs
-public import Linglib.Fragments.Romance.Spanish.Verbs
-public import Linglib.Fragments.Romanian.Verbs
+public import Linglib.Languages.Greek.StandardModern.Verbs
+public import Linglib.Languages.Romance.Portuguese.Verbs
+public import Linglib.Languages.Romance.Italian.Verbs
+public import Linglib.Languages.Romance.Spanish.Verbs
+public import Linglib.Languages.Romanian.Verbs
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 

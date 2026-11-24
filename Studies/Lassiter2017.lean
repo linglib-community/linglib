@@ -5,7 +5,7 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
 public import Linglib.Semantics.Attitudes.Preference.ExpectedValue
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Studies.Lassiter2015
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 

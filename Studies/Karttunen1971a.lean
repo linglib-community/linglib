@@ -2,8 +2,8 @@ module
 
 public import Linglib.Semantics.Presupposition.Implicative
 public import Linglib.Syntax.Category.Verb.Defs
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Verbs.Copular
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Copular
 
 /-!
 # Karttunen (1971)

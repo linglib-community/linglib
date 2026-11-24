@@ -2,8 +2,8 @@ module
 
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Pi
-public import Linglib.Fragments.German.Verbs
-public import Linglib.Fragments.Icelandic.Verbs
+public import Linglib.Languages.German.Verbs
+public import Linglib.Languages.Icelandic.Verbs
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Syntax.Case.Assignment
 public import Linglib.Data.Examples.ZaenenMalingThrainsson1985

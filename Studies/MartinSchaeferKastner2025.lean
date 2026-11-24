@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Verbal.Voice.Diathesis
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
-public import Linglib.Fragments.Romance.French.Verbs
+public import Linglib.Languages.Romance.French.Verbs
 public import Linglib.Semantics.Reference.Animacy
 
 /-!

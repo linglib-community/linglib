@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.ArreguiKusumoto1998
-public import Linglib.Fragments.Japanese.TemporalConnectives
+public import Linglib.Languages.Japanese.TemporalConnectives
 public import Linglib.Semantics.Composition.Interpret
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Tense.Embedding

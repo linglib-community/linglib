@@ -10,39 +10,39 @@ public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Reference.Indefinite
 public import Mathlib.Data.Finset.Grade
 public import Linglib.Data.Examples.Haspelmath1997
-public import Linglib.Fragments.English.Indefinites
-public import Linglib.Fragments.Georgian.Indefinites
-public import Linglib.Fragments.Finnish.Indefinites
-public import Linglib.Fragments.HindiUrdu.Indefinites
-public import Linglib.Fragments.Hungarian.Indefinites
-public import Linglib.Fragments.German.Indefinites
-public import Linglib.Fragments.Japanese.Indefinites
-public import Linglib.Fragments.Kannada.Indefinites
-public import Linglib.Fragments.Korean.Indefinites
-public import Linglib.Fragments.Latin.Indefinites
-public import Linglib.Fragments.Latvian.Indefinites
-public import Linglib.Fragments.Mandarin.Indefinites
-public import Linglib.Fragments.Quechua.Indefinites
-public import Linglib.Fragments.Romance.French.Indefinites
-public import Linglib.Fragments.Romance.Italian.Indefinites
-public import Linglib.Fragments.Slavic.Russian.Indefinites
-public import Linglib.Fragments.Swahili.Indefinites
-public import Linglib.Fragments.Turkish.Indefinites
-public import Linglib.Fragments.Yakut.Indefinites
+public import Linglib.Languages.English.Indefinites
+public import Linglib.Languages.Georgian.Indefinites
+public import Linglib.Languages.Finnish.Indefinites
+public import Linglib.Languages.HindiUrdu.Indefinites
+public import Linglib.Languages.Hungarian.Indefinites
+public import Linglib.Languages.German.Indefinites
+public import Linglib.Languages.Japanese.Indefinites
+public import Linglib.Languages.Kannada.Indefinites
+public import Linglib.Languages.Korean.Indefinites
+public import Linglib.Languages.Latin.Indefinites
+public import Linglib.Languages.Latvian.Indefinites
+public import Linglib.Languages.Mandarin.Indefinites
+public import Linglib.Languages.Quechua.Indefinites
+public import Linglib.Languages.Romance.French.Indefinites
+public import Linglib.Languages.Romance.Italian.Indefinites
+public import Linglib.Languages.Slavic.Russian.Indefinites
+public import Linglib.Languages.Swahili.Indefinites
+public import Linglib.Languages.Turkish.Indefinites
+public import Linglib.Languages.Yakut.Indefinites
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
-public import Linglib.Fragments.English.PolarityItems
-public import Linglib.Fragments.Finnish.PolarityItems
-public import Linglib.Fragments.German.PolarityItems
-public import Linglib.Fragments.HindiUrdu.PolarityItems
-public import Linglib.Fragments.Hungarian.PolarityItems
-public import Linglib.Fragments.Japanese.PolarityItems
-public import Linglib.Fragments.Korean.PolarityItems
-public import Linglib.Fragments.Mandarin.PolarityItems
-public import Linglib.Fragments.Quechua.PolarityItems
-public import Linglib.Fragments.Romance.French.PolarityItems
-public import Linglib.Fragments.Romance.Italian.PolarityItems
-public import Linglib.Fragments.Slavic.Russian.PolarityItems
+public import Linglib.Languages.English.PolarityItems
+public import Linglib.Languages.Finnish.PolarityItems
+public import Linglib.Languages.German.PolarityItems
+public import Linglib.Languages.HindiUrdu.PolarityItems
+public import Linglib.Languages.Hungarian.PolarityItems
+public import Linglib.Languages.Japanese.PolarityItems
+public import Linglib.Languages.Korean.PolarityItems
+public import Linglib.Languages.Mandarin.PolarityItems
+public import Linglib.Languages.Quechua.PolarityItems
+public import Linglib.Languages.Romance.French.PolarityItems
+public import Linglib.Languages.Romance.Italian.PolarityItems
+public import Linglib.Languages.Slavic.Russian.PolarityItems
 
 /-!
 # Haspelmath (1997): Indefinite Pronouns
@@ -695,7 +695,8 @@ theorem regionOf_eq_theoryRegion_sdiff_union :
         some (theoryRegion German.PolarityItems.irgendein \ {.directNeg} ∪ {.specificUnknown}) := by
   decide +kernel
 
--- In the sources of the Fragment, Japanese *dare-mo* is a strict negative concord item licensed by
+-- In the sources of the language file, Japanese *dare-mo* is a strict negative concord item
+-- licensed by
 -- clausemate negation. The book, however, also draws *-mo* over indirect negation and the
 -- comparative, with *omow-ana-i* 'not think' (A286).
 theorem dareMo_region :

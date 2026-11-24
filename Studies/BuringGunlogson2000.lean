@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.Questions.Bias
-public import Linglib.Fragments.English.PolarityItems
-public import Linglib.Fragments.German.PolarityItems
+public import Linglib.Languages.English.PolarityItems
+public import Linglib.Languages.German.PolarityItems
 
 /-!
 # Büring and Gunlogson 2000: aren't positive and negative polar questions the same?

@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Morphology.Morphotactics.Association
-public import Linglib.Fragments.Arabic.ModernStandard.ConsonantalRoots
+public import Linglib.Languages.Arabic.ModernStandard.ConsonantalRoots
 public import Linglib.Data.Wordlist.McCarthy1981
 
 /-!

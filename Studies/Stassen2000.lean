@@ -1,20 +1,20 @@
 module
 
 public import Linglib.Data.Examples.Stassen2000
-public import Linglib.Fragments.English.Adpositions
-public import Linglib.Fragments.English.Coordination
-public import Linglib.Fragments.Farsi.Adpositions
-public import Linglib.Fragments.Farsi.Coordination
-public import Linglib.Fragments.Finnish.Coordination
-public import Linglib.Fragments.Hausa.Adpositions
-public import Linglib.Fragments.Hausa.Coordination
-public import Linglib.Fragments.Japanese.Adpositions
-public import Linglib.Fragments.Japanese.Coordination
-public import Linglib.Fragments.Korean.Coordination
-public import Linglib.Fragments.Latin.Coordination
-public import Linglib.Fragments.Turkish.Coordination
-public import Linglib.Fragments.Yakut.Case
-public import Linglib.Fragments.Yakut.Coordination
+public import Linglib.Languages.English.Adpositions
+public import Linglib.Languages.English.Coordination
+public import Linglib.Languages.Farsi.Adpositions
+public import Linglib.Languages.Farsi.Coordination
+public import Linglib.Languages.Finnish.Coordination
+public import Linglib.Languages.Hausa.Adpositions
+public import Linglib.Languages.Hausa.Coordination
+public import Linglib.Languages.Japanese.Adpositions
+public import Linglib.Languages.Japanese.Coordination
+public import Linglib.Languages.Korean.Coordination
+public import Linglib.Languages.Latin.Coordination
+public import Linglib.Languages.Turkish.Coordination
+public import Linglib.Languages.Yakut.Case
+public import Linglib.Languages.Yakut.Coordination
 public import Linglib.Syntax.WordOrder
 public import Mathlib.Data.Finset.Grade
 public import Linglib.Data.Examples.Readers
@@ -88,13 +88,13 @@ theorem postpositive_of_not_medial : ∀ d ∈ Examples.all, patterns d ≠ medi
     ∀ p ∈ patterns d, .before ∉ p 0 ∧ .before ∉ p 1 := by
   decide
 
-/-- An example whose coordinator has a Fragment entry. -/
+/-- An example whose coordinator has a language file entry. -/
 structure Attestation where
   datum : Datum
   coordinator : Coordinator
 
 open Examples in
-/-- The examples whose coordinators have Fragment entries: Persian *va*, Mahootian's *væ*, and
+/-- The examples whose coordinators have language file entries: Persian *va*, Mahootian's *væ*, and
 *-o*, Finnish *ja*, Turkish *ve*, Korean *-hago* and Latin *-que*. -/
 def attestations : List Attestation :=
   [⟨ex20b, Farsi.Coordination.va⟩, ⟨ex22, Finnish.Coordination.ja⟩,
@@ -105,7 +105,7 @@ theorem attestations_conjunctive :
     ∀ a ∈ attestations, a.coordinator.role = .conjunctive := by
   decide
 
-/-- A Fragment coordinator bound on a side of its host stands on that side of every noun phrase
+/-- A language file coordinator bound on a side of its host stands on that side of every noun phrase
 the example marks: the enclitics *-hago*, *-o* and *-que* follow theirs. -/
 theorem attestations_side : ∀ a ∈ attestations, ∀ p ∈ patterns a.datum,
     ∀ s ∈ a.coordinator.morph.kind.side?, ∀ t ∈ [p 0, p 1], t ≠ ∅ → t = {s} := by
@@ -187,7 +187,7 @@ example : ({ Agrees := False, encodings := {⊥, {.pluralAgreement}ᶜ} } : Lang
 
 end Language
 
-/-! ### The linker in the Fragments -/
+/-! ### The linker in the language files -/
 
 /-- English, the paper's example of an AND-language, links its coordinate strategy by *and*,
 distinct from its comitative *with*. -/

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Washo.Clause
+public import Linglib.Languages.Washo.Clause
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 public import Studies.Hanink2021
 public import Linglib.Syntax.Minimalist.Spine
@@ -11,7 +11,7 @@ public import Linglib.Syntax.Minimalist.Spine
 This file formalizes Bochnak and Hanink's two strategies of clausal embedding in Washo. A
 presuppositional predicate selects a nominalized clause as a DP complement. A
 non-presuppositional predicate is intransitive, and its dependent-mood clause is an adjoined
-modifier. We read selection off the Fragment's frames and derive Table 2 from it: a predicate
+modifier. We read selection off the language file's frames and derive Table 2 from it: a predicate
 selects iff it takes the nominalizer as clause-typer, and the selected clause is a CP under D
 while the modifier is a MoodP without C.
 

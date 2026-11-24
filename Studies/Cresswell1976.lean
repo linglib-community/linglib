@@ -5,9 +5,9 @@ public import Linglib.Semantics.Degree.CresswellDegree
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Data.Examples.Cresswell1976
-public import Linglib.Fragments.English.Adjectives
-public import Linglib.Fragments.English.MeasurePhrases
-public import Linglib.Fragments.English.Nouns
+public import Linglib.Languages.English.Adjectives
+public import Linglib.Languages.English.MeasurePhrases
+public import Linglib.Languages.English.Nouns
 
 /-!
 # The semantics of degree

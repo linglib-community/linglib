@@ -3,10 +3,10 @@ module
 public import Linglib.Semantics.Reference.CovertShift
 public import Linglib.Semantics.Reference.Kind
 public import Linglib.Data.Examples.Dayal2004
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.German.Determiners
-public import Linglib.Fragments.Romance.Italian.Determiners
-public import Linglib.Fragments.Mandarin.Determiners
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.German.Determiners
+public import Linglib.Languages.Romance.Italian.Determiners
+public import Linglib.Languages.Mandarin.Determiners
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 

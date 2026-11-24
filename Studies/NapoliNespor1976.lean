@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.NapoliNespor1976
 public import Linglib.Discourse.SpeechAct.Basic
-public import Linglib.Fragments.Romance.Italian.PolarityItems
+public import Linglib.Languages.Romance.Italian.PolarityItems
 public import Linglib.Semantics.Mood.Grammatical
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Data.Examples.Readers

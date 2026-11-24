@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.JereticEtAl2025
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.English.Determiners
+public import Linglib.Languages.English.Determiners
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Semantics.Presupposition.Basic

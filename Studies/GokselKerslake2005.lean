@@ -1,10 +1,10 @@
 module
 
 public import Linglib.Data.Examples.GokselKerslake2005
-public import Linglib.Fragments.Turkish.Clause
-public import Linglib.Fragments.Turkish.Possession
-public import Linglib.Fragments.Turkish.QuestionParticles
-public import Linglib.Fragments.Turkish.Verbs
+public import Linglib.Languages.Turkish.Clause
+public import Linglib.Languages.Turkish.Possession
+public import Linglib.Languages.Turkish.QuestionParticles
+public import Linglib.Languages.Turkish.Verbs
 public import Linglib.Morphology.Morphotactics.Concatenation
 
 /-!
@@ -14,7 +14,7 @@ We check the reference grammar's account of the form and order of Turkish suffix
 Turkish Fragment.
 
 A suffix vowel that lacks [back] or [round] takes it from the word before it, and a
-suffix-initial stop that lacks [voice] takes it from the segment before it. The Fragment states
+suffix-initial stop that lacks [voice] takes it from the segment before it. The language file states
 this as `Turkish.Phonology.fill w x`, the segment `x` after the harmonized string `w`. We prove
 that the search-and-copy rules of fronting, rounding and voicing compute the same form for
 every word (`harmonize_eq_searchCopy`), that harmony adds feature values and changes none

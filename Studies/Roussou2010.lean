@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Greek.StandardModern.Complementizers
-public import Linglib.Fragments.Greek.StandardModern.Verbs
+public import Linglib.Languages.Greek.StandardModern.Complementizers
+public import Linglib.Languages.Greek.StandardModern.Verbs
 public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Composition.Rules

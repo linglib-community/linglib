@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Shiwilu.Phonology
+public import Linglib.Languages.Shiwilu.Phonology
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Deletion
 public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Linglib.Phonology.OptimalityTheory.Candidate

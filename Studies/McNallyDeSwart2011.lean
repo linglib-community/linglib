@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Dutch.Adjectives
+public import Linglib.Languages.Dutch.Adjectives
 public import Linglib.Semantics.Modification.Basic
 
 /-!

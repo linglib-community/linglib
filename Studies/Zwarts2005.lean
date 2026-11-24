@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Zwarts2005
 public import Linglib.Semantics.Space.Denotation
-public import Linglib.Fragments.English.Adpositions
+public import Linglib.Languages.English.Adpositions
 public import Mathlib.Data.List.Infix
 public import Linglib.Semantics.Mereology.Basic
 public import Mathlib.Tactic.FinCases

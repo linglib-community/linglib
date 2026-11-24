@@ -2,8 +2,8 @@ module
 
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Fragments.Greek.StandardModern.Negation
-public import Linglib.Fragments.Greek.StandardModern.PolarityItems
+public import Linglib.Languages.Greek.StandardModern.Negation
+public import Linglib.Languages.Greek.StandardModern.PolarityItems
 public import Linglib.Data.Examples.Tsiakmakis2025
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

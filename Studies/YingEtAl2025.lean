@@ -3,7 +3,7 @@ module
 public import Mathlib.Probability.Kernel.Basic
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Order
-public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Languages.English.Auxiliaries
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Data.Examples.YingEtAl2025
 

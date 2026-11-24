@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Indonesian.Verbs
+public import Linglib.Languages.Indonesian.Verbs
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Studies.BeaversZubair2013
 public import Linglib.Data.Examples.BeaversUdayana2022

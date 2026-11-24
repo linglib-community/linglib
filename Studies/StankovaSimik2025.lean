@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Slavic.Czech.Particles
-public import Linglib.Fragments.Slavic.Czech.PolarityItems
+public import Linglib.Languages.Slavic.Czech.Particles
+public import Linglib.Languages.Slavic.Czech.PolarityItems
 public import Linglib.Logic.Modal.Defs
 public import Studies.Simik2024
 

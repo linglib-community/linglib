@@ -4,11 +4,11 @@ public import Linglib.Syntax.Reciprocal
 public import Linglib.Semantics.Plurality.Reciprocal
 public import Studies.Siloni2012
 public import Studies.Winter2018
-public import Linglib.Fragments.Romance.Portuguese.Verbs
-public import Linglib.Fragments.Romance.Catalan.Verbs
-public import Linglib.Fragments.Romance.Italian.Verbs
-public import Linglib.Fragments.Romance.Spanish.Verbs
-public import Linglib.Fragments.Swahili.Verbs
+public import Linglib.Languages.Romance.Portuguese.Verbs
+public import Linglib.Languages.Romance.Catalan.Verbs
+public import Linglib.Languages.Romance.Italian.Verbs
+public import Linglib.Languages.Romance.Spanish.Verbs
+public import Linglib.Languages.Swahili.Verbs
 
 /-!
 # Palmieri (2024): Lexical and Grammatical Reciprocity
@@ -41,7 +41,7 @@ cases that refine Siloni's French-based restriction (`withConstruction_iff_lexic
 ## Implementation notes
 
 The entries are primitive and the class tables derived. Appendix A's verbs are entries of the
-Romance Fragments (`appendixA`), and Appendix C pairs the Swahili lexical reciprocals of the
+Romance language files (`appendixA`), and Appendix C pairs the Swahili lexical reciprocals of the
 fourth chapter with their bases (`appendixC`), from which one theorem records that lexical
 reciprocity need not be derivational. The Swahili chapters and the questionnaires are not
 otherwise formalized.

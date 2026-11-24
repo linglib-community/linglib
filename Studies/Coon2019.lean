@@ -5,7 +5,7 @@ public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Syntax.Minimalist.Verbal.Voice.Diathesis
 public import Linglib.Data.Wordlist.Coon2019
-public import Linglib.Fragments.Mayan.Chuj.Voice
+public import Linglib.Languages.Mayan.Chuj.Voice
 public import Linglib.Data.Examples.Coon2019
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Readers

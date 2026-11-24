@@ -2,8 +2,8 @@ module
 
 public import Studies.Bondarenko2022
 public import Studies.Roussou2010
-public import Linglib.Fragments.Greek.StandardModern.Complementizers
-public import Linglib.Fragments.Greek.StandardModern.Verbs
+public import Linglib.Languages.Greek.StandardModern.Complementizers
+public import Linglib.Languages.Greek.StandardModern.Verbs
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 public import Linglib.Data.Examples.Angelopoulos2026
 public import Linglib.Data.Examples.Readers

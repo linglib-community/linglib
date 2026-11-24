@@ -3,8 +3,8 @@ module
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.UpperLower.Principal
 public import Linglib.Data.Examples.Sells1987
-public import Linglib.Fragments.Ewe.Pronouns
-public import Linglib.Fragments.Icelandic.Reciprocals
+public import Linglib.Languages.Ewe.Pronouns
+public import Linglib.Languages.Icelandic.Reciprocals
 public import Linglib.Discourse.LogophoricRole
 public import Linglib.Data.Examples.Readers
 

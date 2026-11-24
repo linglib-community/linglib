@@ -1,15 +1,15 @@
 module
 
 public import Linglib.Data.WALS.Features.F116A
-public import Linglib.Fragments.HindiUrdu.Particles
-public import Linglib.Fragments.Japanese.Particles
-public import Linglib.Fragments.Mandarin.QuestionParticles
-public import Linglib.Fragments.Slavic.Bulgarian.QuestionParticles
-public import Linglib.Fragments.Slavic.Polish.QuestionParticles
-public import Linglib.Fragments.Slavic.Russian.QuestionParticles
-public import Linglib.Fragments.Slavic.Serbian.QuestionParticles
-public import Linglib.Fragments.Slavic.Ukrainian.QuestionParticles
-public import Linglib.Fragments.Turkish.QuestionParticles
+public import Linglib.Languages.HindiUrdu.Particles
+public import Linglib.Languages.Japanese.Particles
+public import Linglib.Languages.Mandarin.QuestionParticles
+public import Linglib.Languages.Slavic.Bulgarian.QuestionParticles
+public import Linglib.Languages.Slavic.Polish.QuestionParticles
+public import Linglib.Languages.Slavic.Russian.QuestionParticles
+public import Linglib.Languages.Slavic.Serbian.QuestionParticles
+public import Linglib.Languages.Slavic.Ukrainian.QuestionParticles
+public import Linglib.Languages.Turkish.QuestionParticles
 
 /-!
 # Dryer (2013): Polar questions and the position of polar question particles

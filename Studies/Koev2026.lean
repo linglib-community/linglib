@@ -2,7 +2,7 @@ module
 
 public import Studies.Kennedy2007
 public import Studies.Lassiter2017
-public import Linglib.Fragments.English.Verbs.Attitude
+public import Linglib.Languages.English.Verbs.Attitude
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Core.MeasureTheory.Measure.AE
 public import Linglib.Data.Examples.Koev2026

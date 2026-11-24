@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.DavidsonGagne2022
-public import Linglib.Fragments.ASL.Determiners
+public import Linglib.Languages.ASL.Determiners
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Reference.Definite

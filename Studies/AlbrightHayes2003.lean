@@ -3,7 +3,7 @@ module
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Tactic.Positivity
 public import Linglib.Data.Examples.AlbrightHayes2003
-public import Linglib.Fragments.English.Phonology
+public import Linglib.Languages.English.Phonology
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Data.Examples.Readers
 

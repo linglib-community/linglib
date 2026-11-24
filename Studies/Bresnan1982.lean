@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 
 /-!
 # Bresnan (1982): Control and complementation

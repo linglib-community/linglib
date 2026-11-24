@@ -63,7 +63,7 @@ factives, is a list the fragment records.
 - `ArgumentFrame.Takes.mono` — monotone under complement extension
 - `Verb.mem_typers` — membership in the typer list
 
-Consistency checks against Fragment data live in Studies
+Consistency checks against language file data live in Studies
 (e.g. `Bondarenko2022.hanaxa_typers`).
 
 ## References

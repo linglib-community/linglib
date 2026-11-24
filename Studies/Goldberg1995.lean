@@ -5,7 +5,7 @@ public import Linglib.Syntax.ConstructionGrammar.Constructicon
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Semantics.ArgumentStructure.Linking
 public import Linglib.Syntax.Category.Verb.Argument
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 
 /-!
 # Goldberg (1995): Constructions

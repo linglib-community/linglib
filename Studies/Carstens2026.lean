@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Carstens2026
-public import Linglib.Fragments.Xhosa.Nouns
-public import Linglib.Fragments.Shona.Nouns
+public import Linglib.Languages.Xhosa.Nouns
+public import Linglib.Languages.Shona.Nouns
 public import Linglib.Syntax.Minimalist.Feature.Interpretability
 public import Linglib.Morphology.DistributedMorphology.Gender
 public import Studies.TaraldsenEtAl2018

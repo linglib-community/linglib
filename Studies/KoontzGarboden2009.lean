@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Position
-public import Linglib.Fragments.Romance.Spanish.Verbs
+public import Linglib.Languages.Romance.Spanish.Verbs
 
 /-!
 # Koontz-Garboden (2009): Anticausativization

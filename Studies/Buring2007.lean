@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Buring2007
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Semantics.Degree.Little
 public import Linglib.Semantics.Degree.Extent
 

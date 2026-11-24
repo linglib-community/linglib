@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Hausa.Focus
-public import Linglib.Fragments.Hausa.TAM
+public import Linglib.Languages.Hausa.Focus
+public import Linglib.Languages.Hausa.TAM
 public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Focus.Control

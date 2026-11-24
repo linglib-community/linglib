@@ -2,9 +2,9 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Data.Examples.LevinRappaportHovav1995
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.Romance.Italian.Verbs
-public import Linglib.Fragments.Dutch.Verbs
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.Romance.Italian.Verbs
+public import Linglib.Languages.Dutch.Verbs
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype

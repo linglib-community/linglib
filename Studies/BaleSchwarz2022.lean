@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantity.Basic
-public import Linglib.Fragments.English.MeasurePhrases
+public import Linglib.Languages.English.MeasurePhrases
 public import Linglib.Data.Examples.BaleSchwarz2022
 public import Mathlib.Data.PFun
 public import Mathlib.Data.Rat.Cast.Order

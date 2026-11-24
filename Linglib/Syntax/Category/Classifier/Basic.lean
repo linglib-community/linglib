@@ -7,7 +7,8 @@ public import Mathlib.Data.Fintype.Prod
 # Classifiers
 
 This file defines the word-class record for classifiers and the vocabulary of Aikhenvald's
-typology of noun categorization devices. `Classifier` is the lexical entry Fragments store in their
+typology of noun categorization devices. `Classifier` is the lexical entry language files store in
+their
 inventories: a morph, which is how the classifier attaches and its form, with its spelling in a
 native script and its gloss. Which nouns a classifier counts, whether it is a language's general
 classifier, and which semantic parameters motivate it are facts about a whole system or analyses

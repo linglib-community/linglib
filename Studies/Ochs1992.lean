@@ -6,7 +6,7 @@ public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Data.Examples.Ochs1992
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.StructureDataset.Ochs1992
-public import Linglib.Fragments.Japanese.Particles
+public import Linglib.Languages.Japanese.Particles
 public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 
 /-!

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Mayan.Mam.Agreement
-public import Linglib.Fragments.Mayan.Mam.Pronouns
+public import Linglib.Languages.Mayan.Mam.Agreement
+public import Linglib.Languages.Mayan.Mam.Pronouns
 public import Studies.Harbour2016
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Impoverishment
@@ -24,7 +24,7 @@ the probes (`agreedBy`).
 
 Vocabulary Insertion realizes the copied features by the Extended Subset Principle (53) over the
 Vocabulary of Tables 4.7, 4.8 and 4.10 and of (59), (65) and (66) (`vocabulary`), which derives
-the Fragment's Set A and Set B paradigms (`setA_realize`, `setB_realize`) and the default Set B
+the language file's Set A and Set B paradigms (`setA_realize`, `setB_realize`) and the default Set B
 of a transitive clause, where Infl carries no φ (`setB_transitive`). A pronoun hosts every item
 its features license, so first-person pronouns are bimorphemic (§4.4.1, `insertAll`). A probe
 that copies a goal's features flags the goal with its category (§4.4.3.2, `Feat.flag`), and the
@@ -276,7 +276,7 @@ object's cell. -/
 theorem setB_transitive (c : PronCell) : insert1 (inflTerminal .P c) = some (.procl "tz'") := by
   cases c <;> decide
 
-/-- The Fragment's Set A paradigm (Table 4.5, pre-consonantal) is the Vocabulary's spell-out of
+/-- The language file's Set A paradigm (Table 4.5, pre-consonantal) is the Vocabulary's spell-out of
 what Voice or Poss copies. -/
 theorem setA_realize (c : PronCell) :
     (setAExponent .consonant).realize (.personNumber c.person c.number)
@@ -329,7 +329,8 @@ def formWith (rules : List (ImpoverishmentRule (List Feat) Dim)) (l : Option Loc
 /-- The form of a pronoun under the grammar of (84). -/
 def form (l : Option Locus) (c : PronCell) : List Morph := formWith [rule84] l c
 
-/-- The morphemes of the Fragment's pronoun entries (Table 4.9) are *qin=i*, *qo'=y*, *qo*, *=i*,
+/-- The morphemes of the language file's pronoun entries (Table 4.9) are *qin=i*, *qo'=y*, *qo*,
+*=i*,
 *q=i*, *qa*, and the null third-person singular. -/
 def morphemes : Option PersonalPronoun → List Morph
   | some p =>

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Determiners
+public import Linglib.Languages.English.Determiners
 public import Linglib.Data.Examples.VanTielEtAl2021
 public import Linglib.Data.Statistics.VanTielEtAl2021
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -219,7 +219,7 @@ theorem some_few_no_entailment (θ : Word → ℕ) (hs : 1 ≤ θ .some) (hs' : 
 open English.Determiners Quantifier Det
 open scoped Denotes
 
-/-- A word of the study is a quantificational determiner of `Fragments/English/Determiners.lean`
+/-- A word of the study is a quantificational determiner of `Languages/English/Determiners.lean`
 when the fragment has it. -/
 def Word.toDeterminer? : Word → Option QuantificationalDeterminer
   | .none => .some none_

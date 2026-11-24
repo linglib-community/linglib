@@ -5,10 +5,10 @@ public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.Monotone.Defs
 public import Linglib.Data.Examples.Sorace2000
 public import Linglib.Data.Examples.Languages
-public import Linglib.Fragments.Dutch.Verbs
-public import Linglib.Fragments.German.Verbs
-public import Linglib.Fragments.Romance.French.Verbs
-public import Linglib.Fragments.Romance.Italian.Verbs
+public import Linglib.Languages.Dutch.Verbs
+public import Linglib.Languages.German.Verbs
+public import Linglib.Languages.Romance.French.Verbs
+public import Linglib.Languages.Romance.Italian.Verbs
 
 /-!
 # Sorace (2000): Gradients in auxiliary selection with intransitive verbs

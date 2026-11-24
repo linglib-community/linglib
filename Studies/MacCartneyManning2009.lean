@@ -4,9 +4,9 @@ public import Linglib.Logic.Natural.ImplicationSignature
 public import Linglib.Logic.Natural.Projection
 public import Linglib.Data.Examples.MacCartneyManning2009
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.English.Verbs.Implicative
-public import Linglib.Fragments.English.Verbs.Causative
-public import Linglib.Fragments.English.Verbs.Attitude
+public import Linglib.Languages.English.Verbs.Implicative
+public import Linglib.Languages.English.Verbs.Causative
+public import Linglib.Languages.English.Verbs.Attitude
 
 /-!
 # MacCartney and Manning (2009): implicatives and factives in natural logic
@@ -27,7 +27,7 @@ weakens](##MacCartneyManning2009.monotonicity_eq).
 ## TODO
 
 * The projectivity table for the quantifiers and the inference procedure that chains edits.
-* The English Fragment has no entries with the signatures of *permit to* and *refuse to*, and
+* The English language file has no entries with the signatures of *permit to* and *refuse to*, and
   records the factivity of *admit* and *pretend* outside their implication signatures.
 
 ## References

@@ -5,11 +5,11 @@ public import Linglib.Core.Computability.ContextFreeGrammar.Tree
 public import Linglib.Data.Examples.PullumGazdar1982
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
-public import Linglib.Fragments.Dutch.Nouns
-public import Linglib.Fragments.Dutch.Verbs
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Verbs.Basic
-public import Linglib.Fragments.Mohawk.Nouns
+public import Linglib.Languages.Dutch.Nouns
+public import Linglib.Languages.Dutch.Verbs
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Verbs.Basic
+public import Linglib.Languages.Mohawk.Nouns
 
 /-!
 # Pullum and Gazdar (1982): Natural Languages and Context-Free Languages

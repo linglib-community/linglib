@@ -4,7 +4,7 @@ public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Postulates
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Data.Examples.MartinRoseNichols2025
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Statistics.MartinRoseNichols2025

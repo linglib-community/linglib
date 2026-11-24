@@ -10,7 +10,7 @@ public import Linglib.Phonology.OCP
 public import Linglib.Phonology.Autosegmental.TierTree.Realization
 public import Linglib.Phonology.Autosegmental.TierTree.Spread
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Fragments.Laal.Prosody
+public import Linglib.Languages.Laal.Prosody
 
 /-!
 # Lionnet (2022): The Features and Geometry of Tone in Laal

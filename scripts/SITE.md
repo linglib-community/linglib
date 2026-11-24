@@ -26,7 +26,7 @@ wide, in light and dark mode, before opening a PR.
 `gen_docs_pages.py` rebuilds doc-gen4's study and theory pages from its output (read by
 `docgen_index.py`) and writes them over doc-gen4's at the same addresses, `/docs/Studies/` and
 `/docs/Linglib/{Semantics,Syntax,Pragmatics,Morphology,Phonology,Processing,Discourse,Logic}/`, so
-links to a page keep landing. Core, Data and Fragments stay doc-gen4's. `/docs-new/`, where the study
+links to a page keep landing. Core, Data and Languages stay doc-gen4's. `/docs-new/`, where the study
 pages were previewed, forwards to them. They depart from the rules above where a reference page
 needs it:
 

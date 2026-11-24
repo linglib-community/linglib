@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Fragments.Romance.Italian.Pronouns
+public import Linglib.Languages.Romance.Italian.Pronouns
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Comparative
 

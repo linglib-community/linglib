@@ -4,7 +4,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Morphology.DistributedMorphology.Nominalization
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Data.Examples.Benz2025
-public import Linglib.Fragments.German.Verbs
+public import Linglib.Languages.German.Verbs
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Data.Examples.Readers
 

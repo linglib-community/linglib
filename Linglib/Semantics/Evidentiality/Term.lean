@@ -20,13 +20,14 @@ A term covers every parameter its source takes in, so a reported evidential with
 beside it covers quotation as well as hearsay. A term whose source lies outside the six
 parameters covers none of them.
 
-A Fragment records evidentials proper, whose main meaning is information source. A form whose
+A language file records evidentials proper, whose main meaning is information source. A form whose
 main meaning is something else, such as a perfect, a conditional or a modal verb, may have an
-evidential extension, which makes it an evidentiality strategy; a Fragment lists those apart, as
+evidential extension, which makes it an evidentiality strategy; a language file lists those apart,
+as
 `strategies`, reading each from the entry that owns its main meaning where there is one, as a
 modal verb's from its evidential extension. The line between evidentials and strategies is
 Aikhenvald's, and grammars do not always draw it there. Lexical means, such as adverbs and
-parentheticals, are neither, and a Fragment records none.
+parentheticals, are neither, and a language file records none.
 
 ## References
 

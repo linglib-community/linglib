@@ -4,9 +4,9 @@ public import Linglib.Core.Order.OrdConnected
 public import Linglib.Data.Examples.Aitha2026
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.Telugu.Adpositions
-public import Linglib.Fragments.Telugu.Case
-public import Linglib.Fragments.Telugu.Phonology
+public import Linglib.Languages.Telugu.Adpositions
+public import Linglib.Languages.Telugu.Case
+public import Linglib.Languages.Telugu.Phonology
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 public import Linglib.Morphology.Word.Leipzig

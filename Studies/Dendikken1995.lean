@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Fragments.Norwegian.Verbs
+public import Linglib.Languages.Norwegian.Verbs
 public import Linglib.Data.Examples.Dendikken1995
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Tigrinya.Complementizers
-public import Linglib.Fragments.Tigrinya.Negation
+public import Linglib.Languages.Tigrinya.Complementizers
+public import Linglib.Languages.Tigrinya.Negation
 public import Linglib.Data.Examples.Cacchioli2026
 public import Linglib.Data.Examples.Readers
 

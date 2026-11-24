@@ -12,8 +12,8 @@ public import Studies.Harbour2014
 public import Studies.Cysouw2003
 public import Linglib.Semantics.Plurality.FeatureAction
 public import Linglib.Syntax.Category.Pronoun.Basic
-public import Linglib.Fragments.Tamil.Pronouns
-public import Linglib.Fragments.English.Determiners
+public import Linglib.Languages.Tamil.Pronouns
+public import Linglib.Languages.English.Determiners
 public import Linglib.Semantics.Reference.Determiner
 
 /-!

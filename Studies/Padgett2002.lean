@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Wordlist.Padgett2002
-public import Linglib.Fragments.Turkish.Phonology
+public import Linglib.Languages.Turkish.Phonology
 public import Linglib.Phonology.FeatureGeometry
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Core.Order.SuccPred.Tree

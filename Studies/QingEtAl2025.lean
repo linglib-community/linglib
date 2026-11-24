@@ -3,11 +3,11 @@ module
 public import Studies.UegakiSudo2019
 import Mathlib.Basic.Nontrivial.Basic
 public import Linglib.Semantics.Modality.Background
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.Mandarin.Verbs
-public import Linglib.Fragments.Japanese.Verbs
-public import Linglib.Fragments.Turkish.Verbs
-public import Linglib.Fragments.Romance.Spanish.Verbs
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.Mandarin.Verbs
+public import Linglib.Languages.Japanese.Verbs
+public import Linglib.Languages.Turkish.Verbs
+public import Linglib.Languages.Romance.Spanish.Verbs
 public import Linglib.Data.Examples.QingEtAl2025
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -235,9 +235,9 @@ end LAnalyticity
 
 /-! ### The paper's judgments -/
 
-/-- `attitude? s` is the attitude that the predicate name `s` denotes, read off the Fragment
+/-- `attitude? s` is the attitude that the predicate name `s` denotes, read off the language file
 entry for English, Mandarin, Japanese, Turkish, and Spanish *esperar*, and off the paper for the
-other Spanish predicates, *temer* and *preocupar*, which have no Fragment entry. -/
+other Spanish predicates, *temer* and *preocupar*, which have no language file entry. -/
 def attitude? : String → Option Attitude
   | "hope" => English.Verbs.hope.attitude
   | "fear" => English.Verbs.fear.attitude
@@ -329,7 +329,8 @@ theorem diye_rows :
     ∀ r ∈ Examples.all, r.feature? "embedding" = some "diye" → r.judgment = .acceptable := by
   decide +kernel
 
-/-- `turkishVerb? s` is the Fragment verb that the predicate name `s` of a Turkish row names. -/
+/-- `turkishVerb? s` is the language file verb that the predicate name `s` of a Turkish row names.
+-/
 def turkishVerb? : String → Option Turkish.Verb
   | "kork" => some Turkish.kork
   | "um" => some Turkish.um

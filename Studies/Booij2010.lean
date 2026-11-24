@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Order.Cover
 public import Linglib.Data.Wordlist.Booij2010
-public import Linglib.Fragments.Dutch.Verbs
+public import Linglib.Languages.Dutch.Verbs
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Morphology.ConstructionMorphology.Pattern
 public import Linglib.Morphology.ConstructionMorphology.Schema

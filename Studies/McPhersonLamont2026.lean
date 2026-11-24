@@ -7,7 +7,7 @@ public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 public import Linglib.Phonology.OptimalityTheory.Constraint.Directional
 public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Phonology.Tone.Basic
-public import Linglib.Fragments.Poko.Tone
+public import Linglib.Languages.Poko.Tone
 public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Mathlib.Tactic.Linarith
@@ -30,7 +30,7 @@ crowding, and forced tautomorphemic docking. Every step witness is decided.
 
 ## Implementation notes
 
-The stems are those of `Fragments.Poko.Tone`, and an input is their product, each token
+The stems are those of `Languages.Poko.Tone`, and an input is their product, each token
 sponsored by its position in the phrase, as the source colours each stem; the tableaux,
 rankings, and serial derivations are the substrate's harmonic-serialism and tableau
 apparatus.

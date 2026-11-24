@@ -6,8 +6,8 @@ public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
 public import Studies.Borer2005
 public import Studies.IoninMatushansky2006
-public import Linglib.Fragments.Mayan.Chol.Classifiers
-public import Linglib.Fragments.Shan.Classifiers
+public import Linglib.Languages.Mayan.Chol.Classifiers
+public import Linglib.Languages.Shan.Classifiers
 public import Linglib.Semantics.Mereology.Extensive
 
 /-!

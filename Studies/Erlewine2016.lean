@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Erlewine2016
 public import Linglib.Syntax.Feature.Person.Basic
-public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
+public import Linglib.Languages.Mayan.Kaqchikel.Extraction
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 public import Linglib.Syntax.Minimalist.SyntacticObject.Extend

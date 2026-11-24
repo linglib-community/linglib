@@ -49,16 +49,16 @@ LAYER_RULES: list[tuple[str, str, str]] = [
      "(compositional grounding goes Pragmatics → Semantics, not vice versa)"),
     ("Linglib/Theories/", "Linglib.Phenomena.",
      "Theories must not depend on Phenomena"),
-    ("Linglib/Theories/", "Linglib.Fragments.",
-     "Theories must not depend on Fragments"),
-    ("Linglib/Fragments/", "Linglib.Phenomena.",
-     "Fragments must not depend on Phenomena"),
+    ("Linglib/Theories/", "Linglib.Languages.",
+     "Theories must not depend on Languages"),
+    ("Linglib/Languages/", "Linglib.Phenomena.",
+     "Languages must not depend on Phenomena"),
     ("Linglib/Core/", "Linglib.Theories.",
      "Core is the foundation — must not depend on Theories"),
     ("Linglib/Core/", "Linglib.Phenomena.",
      "Core must not depend on Phenomena"),
-    ("Linglib/Core/", "Linglib.Fragments.",
-     "Core must not depend on Fragments"),
+    ("Linglib/Core/", "Linglib.Languages.",
+     "Core must not depend on Languages"),
 ]
 
 

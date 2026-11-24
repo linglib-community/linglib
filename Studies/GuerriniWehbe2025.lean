@@ -6,10 +6,10 @@ public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Data.Examples.GuerriniWehbe2025
 public import Studies.DelPinalBassiSauerland2024
 public import Linglib.Data.Examples.Gloss
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.PolarityItems
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Auxiliaries
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.English.PolarityItems
+public import Linglib.Languages.English.Pronouns
 
 /-!
 # Guerrini and Wehbe (2025): Homogeneity as presuppositional exhaustification

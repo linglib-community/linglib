@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Studies.CarianiSantorioWellwood2023
 public import Studies.Lassiter2017
 

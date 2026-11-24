@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Syntax.Case.Dependent
-public import Linglib.Fragments.Georgian.Agreement
-public import Linglib.Fragments.HindiUrdu.Case
+public import Linglib.Languages.Georgian.Agreement
+public import Linglib.Languages.HindiUrdu.Case
 public import Linglib.Data.Examples.Marantz1991
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -311,12 +311,12 @@ def clause : Georgian.VerbClass → Clause
 /-- The two series the paper treats. -/
 def series : List Georgian.Series := [.present, .aorist]
 
-/-- The rules derive the subject case of the Fragment for every class in both series. -/
+/-- The rules derive the subject case of the language file for every class in both series. -/
 theorem georgian_subject_eq_pattern : ∀ v : Georgian.VerbClass, ∀ s ∈ series,
     (georgian s).subjectCases (clause v) = {some (Georgian.pattern v s).subject.case.label} := by
   decide +kernel
 
-/-- The rules derive the object case of the Fragment for the two classes with an object. -/
+/-- The rules derive the object case of the language file for the two classes with an object. -/
 theorem georgian_object_eq_pattern : ∀ v ∈ [Georgian.VerbClass.transitive, .indirect],
     ∀ s ∈ series,
       (georgian s).objectCases (clause v) =

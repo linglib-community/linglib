@@ -2,10 +2,10 @@ module
 
 public import Linglib.Data.Examples.IatridouZeijlstra2021
 public import Linglib.Data.Examples.Gloss
-public import Linglib.Fragments.English.PolarityItems
-public import Linglib.Fragments.English.Adpositions
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.TemporalConnectives
+public import Linglib.Languages.English.PolarityItems
+public import Linglib.Languages.English.Adpositions
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.TemporalConnectives
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Quantification.Exceptive

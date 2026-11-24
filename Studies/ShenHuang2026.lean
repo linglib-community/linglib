@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
 public import Linglib.Syntax.Minimalist.Phase.Basic
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
@@ -354,7 +354,7 @@ theorem binding_linearizes : (derivation false false).Linearizes (schedule false
 
 end Linearization
 
-/-! ### Verbs of creation in the Fragment -/
+/-! ### Verbs of creation in the language file -/
 
 /-- The paper names as verbs of creation, after [davies-dubinsky-2003]'s verbs of creation
 selecting a result nominal (*write* for a book, *tell* for a joke, *paint* for a portrait),
@@ -366,7 +366,7 @@ def IsVerbOfCreation (v : English.Verbs.Verb) : Prop :=
 
 instance : DecidablePred IsVerbOfCreation := fun v ↦ inferInstanceAs (Decidable (v.form ∈ _))
 
-/-- The configuration of an item whose main verb is a Fragment entry. -/
+/-- The configuration of an item whose main verb is a language file entry. -/
 def Config.ofVerb (fronted : Bool) (o : Bool) (v : English.Verbs.Verb) : Config :=
   ⟨fronted, o, decide (IsVerbOfCreation v)⟩
 

@@ -3,24 +3,24 @@ module
 public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Core.Order.OrdConnected
 public import Linglib.Syntax.Clause.Relative
-public import Linglib.Fragments.English.Relativization
-public import Linglib.Fragments.Welsh.Relativization
-public import Linglib.Fragments.Arabic.ModernStandard.Relativization
-public import Linglib.Fragments.Hebrew.Relativization
-public import Linglib.Fragments.TobaBatak.Relativization
-public import Linglib.Fragments.TobaBatak.Voice
-public import Linglib.Fragments.Korean.Relativization
-public import Linglib.Fragments.Finnish.Relativization
-public import Linglib.Fragments.Malagasy.Relativization
-public import Linglib.Fragments.Mandarin.Relativization
-public import Linglib.Fragments.Basque.Relativization
-public import Linglib.Fragments.German.Relativization
-public import Linglib.Fragments.HindiUrdu.Relativization
-public import Linglib.Fragments.Japanese.Relativization
-public import Linglib.Fragments.Romance.French.Relativization
-public import Linglib.Fragments.Slavic.Russian.Relativization
-public import Linglib.Fragments.Tagalog.Relativization
-public import Linglib.Fragments.Turkish.Relativization
+public import Linglib.Languages.English.Relativization
+public import Linglib.Languages.Welsh.Relativization
+public import Linglib.Languages.Arabic.ModernStandard.Relativization
+public import Linglib.Languages.Hebrew.Relativization
+public import Linglib.Languages.TobaBatak.Relativization
+public import Linglib.Languages.TobaBatak.Voice
+public import Linglib.Languages.Korean.Relativization
+public import Linglib.Languages.Finnish.Relativization
+public import Linglib.Languages.Malagasy.Relativization
+public import Linglib.Languages.Mandarin.Relativization
+public import Linglib.Languages.Basque.Relativization
+public import Linglib.Languages.German.Relativization
+public import Linglib.Languages.HindiUrdu.Relativization
+public import Linglib.Languages.Japanese.Relativization
+public import Linglib.Languages.Romance.French.Relativization
+public import Linglib.Languages.Slavic.Russian.Relativization
+public import Linglib.Languages.Tagalog.Relativization
+public import Linglib.Languages.Turkish.Relativization
 
 /-!
 # Keenan and Comrie (1977): Noun Phrase Accessibility and Universal Grammar

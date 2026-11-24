@@ -2,8 +2,8 @@ module
 
 public import Linglib.Phonology.RuleInteraction
 public import Linglib.Phonology.Subregular.LocalRewrite
-public import Linglib.Fragments.Finnish.Phonology
-public import Linglib.Fragments.Turkish.Phonology
+public import Linglib.Languages.Finnish.Phonology
+public import Linglib.Languages.Turkish.Phonology
 
 /-!
 # Baković and Blumenfeld (2024): A formal typology of process interactions

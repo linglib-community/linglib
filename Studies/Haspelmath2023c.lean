@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Fragments.English.Particles
-public import Linglib.Fragments.Slavic.Russian.QuestionParticles
-public import Linglib.Fragments.Turkish.QuestionParticles
+public import Linglib.Languages.English.Particles
+public import Linglib.Languages.Slavic.Russian.QuestionParticles
+public import Linglib.Languages.Turkish.QuestionParticles
 public import Linglib.Morphology.Word.Comparative
 public import Studies.Haspelmath2021c
 public import Studies.Haspelmath2023

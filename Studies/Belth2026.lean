@@ -2,8 +2,8 @@ module
 
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Linglib.Phonology.Harmony.System
-public import Linglib.Fragments.Finnish.Phonology
-public import Linglib.Fragments.Turkish.Phonology
+public import Linglib.Languages.Finnish.Phonology
+public import Linglib.Languages.Turkish.Phonology
 public import Studies.Yang2016
 public import Linglib.Data.Examples.Belth2026
 public import Linglib.Morphology.Morph
@@ -452,7 +452,7 @@ namespace Finnish
 open _root_.Finnish Phonology
 
 /-- `ofChar c` is the segment that the letter `c` of the paper's IPA transcription writes, which
-is the Fragment's spelling but for the vowels `ɑ`, `æ` and `ø`. -/
+is the language file's spelling but for the vowels `ɑ`, `æ` and `ø`. -/
 def ofChar : Char → Option Segment
   | 'ɑ' => some a | 'æ' => some ä | 'ø' => some ö
   | c => _root_.Finnish.ofChar c
@@ -477,7 +477,7 @@ namespace Turkish
 open _root_.Turkish.Phonology Phonology
 
 /-- `ofChar c` is the segment that the letter `c` of the paper's IPA transcription writes, which
-is the Fragment's spelling but for the vowels `ɑ`, `ɯ`, `y` and `ø` and the glide `j`. -/
+is the language file's spelling but for the vowels `ɑ`, `ɯ`, `y` and `ø` and the glide `j`. -/
 def ofChar : Char → Option Segment
   | 'ɑ' => some a | 'ɯ' => some ı | 'y' => some ü | 'ø' => some ö | 'j' => some y
   | c => Turkish.Phonology.ofChar c

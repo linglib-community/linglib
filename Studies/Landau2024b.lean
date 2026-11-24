@@ -2,8 +2,8 @@ module
 
 public import Linglib.Syntax.Minimalist.Copy.FormCopy
 public import Linglib.Syntax.Binding.Valuation
-public import Linglib.Fragments.Mixtec.SMPM.Pronouns
-public import Linglib.Fragments.Mixtec.SMPM.Verbs
+public import Linglib.Languages.Mixtec.SMPM.Pronouns
+public import Linglib.Languages.Mixtec.SMPM.Verbs
 public import Studies.Landau2013
 public import Linglib.Data.Examples.Landau2024b
 public import Linglib.Data.Examples.Readers

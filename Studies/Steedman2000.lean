@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Steedman2000
-public import Linglib.Fragments.English.Coordination
+public import Linglib.Languages.English.Coordination
 public import Linglib.Semantics.Coordinator
 public import Linglib.Syntax.CCG.Derivation
 public import Linglib.Syntax.CCG.Grammar

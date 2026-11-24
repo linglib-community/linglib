@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Syntax.Feature.Person.Features
-public import Linglib.Fragments.Xhosa.Nouns
+public import Linglib.Languages.Xhosa.Nouns
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Data.Examples.HalpertHammerly2026
 public import Studies.Carstens2026
