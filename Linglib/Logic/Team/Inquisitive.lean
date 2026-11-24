@@ -440,6 +440,13 @@ theorem TruthConditional.impl (hψ : TruthConditional M ψ) (φ : Formula Atom) 
   exact (singleton_mem_support_impl M φ ψ w).1 (h w (hts hw))
     ((support M φ).lower (Finset.singleton_subset_iff.2 hw) hφ)
 
+/-- If `φ` is truth-conditional, then `φ → ψ ⩒ χ` and `(φ → ψ) ⩒ (φ → χ)` have the same support,
+the split equivalence (Corollary 3.7.14). -/
+theorem TruthConditional.support_impl_inqDisj (h : TruthConditional M φ)
+    (ψ χ : Formula Atom) :
+    support M (.impl φ (.inqDisj ψ χ)) = support M (.inqDisj (.impl φ ψ) (.impl φ χ)) :=
+  LowerSet.himp_sup_of_supClosed h.supClosed _ _
+
 variable (M φ ψ)
 
 /-- Every negation is truth-conditional (Proposition 3.4.8). -/

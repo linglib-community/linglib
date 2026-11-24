@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Semantics.Questions.Inquisitive.Generate
+public import Linglib.Core.Order.SupClosed
+public import Mathlib.Order.Ideal
 
 /-!
 # Declaratives and the Heyting structure
@@ -11,13 +13,17 @@ of a question is the declarative of the complement of its informative content (`
 non-inquisitive contents are the regular elements, and every content is the meet of its
 non-inquisitive and non-informative projections (`compl_compl_inf_query`). The lattice of
 questions is Heyting and not Boolean: excluded middle fails (`ofSet_sup_compl_ne_top`), and the
-declarative does not preserve joins (`ofSet_sup_ofSet_ne`).
+declarative does not preserve joins (`ofSet_sup_ofSet_ne`). The resolving states of a question
+form an ideal exactly when the question is prime, and exactly when implication from it
+distributes over inquisitive disjunction; among normal questions these are the declaratives
+(`IsNormal.isIdeal_coe_iff_not_isInquisitive`).
 
 ## References
 
 * [ciardelli-2022]
 * [ciardelli-groenendijk-roelofsen-2018]
 * [puncochar-2019]
+* [puncochar-2021]
 * [theiler-etal-2018]
 -/
 
@@ -176,5 +182,90 @@ and the declarative of their union is not. -/
 theorem ofSet_sup_ofSet_ne {A B : Set W} (hAB : ¬ A ⊆ B) (hBA : ¬ B ⊆ A) :
     ofSet A ⊔ ofSet B ≠ ofSet (A ∪ B) :=
   fun h ↦ not_isInquisitive_ofSet _ (h ▸ isInquisitive_ofSet_sup_ofSet hAB hBA)
+
+/-! ### Ideals
+
+The resolving states of a declarative are closed under union, so they form an ideal of states
+([puncochar-2019]). The resolving states of a question form an ideal exactly when the question is
+prime, and exactly when implication from it distributes over inquisitive disjunction, the
+declarative elements of [puncochar-2021]. Among normal questions these are the declaratives; on
+an infinite set of worlds the finite states form an ideal and resolve no declarative. -/
+
+section Ideal
+
+variable {P : Question W}
+
+theorem isIdeal_coe_iff_supClosed :
+    Order.IsIdeal (P : Set (Set W)) ↔ SupClosed (P : Set (Set W)) :=
+  ⟨fun h _ ha _ hb ↦ let ⟨_, hc, hac, hbc⟩ := h.Directed _ ha _ hb
+    h.IsLowerSet (sup_le hac hbc) hc,
+    fun h ↦ ⟨P.isLowerSet, ⟨∅, P.contains_empty⟩, h.directedOn⟩⟩
+
+theorem isIdeal_coe_ofSet (p : Set W) : Order.IsIdeal (ofSet p : Set (Set W)) :=
+  isIdeal_coe_iff_supClosed.2 fun _ ha _ hb ↦ Set.union_subset ha hb
+
+/-- The resolving states of `P` form an ideal iff `P` is prime: whenever `P` entails an
+inquisitive disjunction, it entails a disjunct. -/
+theorem isIdeal_coe_iff_forall_le_sup :
+    Order.IsIdeal (P : Set (Set W)) ↔ ∀ Q R : Question W, P ≤ Q ⊔ R → P ≤ Q ∨ P ≤ R := by
+  refine ⟨fun h Q R ↦
+      ((isIdeal_coe_iff_supClosed.1 h).subset_union_iff Q.isLowerSet R.isLowerSet).1,
+    fun h ↦ isIdeal_coe_iff_supClosed.2 fun a ha b hb ↦ by_contra fun hab ↦ ?_⟩
+  have hle : P ≤ generate {s | s ∈ P ∧ ¬ a ⊆ s} ⊔ generate {s | s ∈ P ∧ ¬ b ⊆ s} :=
+    fun s hs ↦ by
+      by_cases h1 : a ⊆ s
+      · by_cases h2 : b ⊆ s
+        · exact (hab (P.downward_closed s hs _ (Set.union_subset h1 h2))).elim
+        · exact .inr (mem_generate.2 (.inr ⟨s, ⟨hs, h2⟩, subset_rfl⟩))
+      · exact .inl (mem_generate.2 (.inr ⟨s, ⟨hs, h1⟩, subset_rfl⟩))
+  rcases h _ _ hle with h' | h'
+  · rcases mem_generate.1 (h' ha) with rfl | ⟨s, ⟨-, hs⟩, has⟩
+    · exact hab (by simpa using hb)
+    · exact hs has
+  · rcases mem_generate.1 (h' hb) with rfl | ⟨s, ⟨-, hs⟩, hbs⟩
+    · exact hab (by simpa using ha)
+    · exact hs hbs
+
+/-- The resolving states of `P` form an ideal iff implication from `P` distributes over
+inquisitive disjunction. -/
+theorem isIdeal_coe_iff_forall_himp_sup :
+    Order.IsIdeal (P : Set (Set W)) ↔
+      ∀ Q R : Question W, P ⇨ Q ⊔ R = (P ⇨ Q) ⊔ (P ⇨ R) := by
+  refine ⟨fun h Q R ↦ ext fun s ↦ ?_, fun h ↦ isIdeal_coe_iff_forall_le_sup.2 fun Q R hQR ↦ ?_⟩
+  · have key (X : Question W) : s ∈ P ⇨ X ↔ (P : Set (Set W)) ∩ Set.Iic s ⊆ X :=
+      mem_himp.trans ⟨fun h _ hr ↦ h _ hr.2 hr.1, fun h _ hrs hr ↦ h ⟨hr, hrs⟩⟩
+    rw [mem_sup, key, key, key]
+    exact ((isIdeal_coe_iff_supClosed.1 h).inter (show SupClosed (Set.Iic s) from
+      fun _ ha _ hb ↦ Set.union_subset ha hb)).subset_union_iff Q.isLowerSet R.isLowerSet
+  · have : (Set.univ : Set W) ∈ (P ⇨ Q) ⊔ (P ⇨ R) := h Q R ▸ mem_himp.2 fun r _ hr ↦ hQR hr
+    exact this.imp (fun h r hr ↦ mem_himp.1 h r (Set.subset_univ r) hr)
+      fun h r hr ↦ mem_himp.1 h r (Set.subset_univ r) hr
+
+/-- The resolving states of a normal question form an ideal iff the question is a declarative. -/
+theorem IsNormal.isIdeal_coe_iff_not_isInquisitive (hP : P.IsNormal) :
+    Order.IsIdeal (P : Set (Set W)) ↔ ¬ P.IsInquisitive := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · rw [← info_mem_iff_not_isInquisitive, ← hP.exists_alt_eq_singleton_iff]
+    obtain ⟨a, ha⟩ := hP.alt_nonempty
+    refine ⟨a, Set.eq_singleton_iff_unique_mem.2 ⟨ha, fun b hb ↦ ?_⟩⟩
+    obtain ⟨c, hc, habc⟩ := @hP (a ∪ b) (isIdeal_coe_iff_supClosed.1 h ha.1 hb.1)
+    exact (hb.2 c hc.1 (Set.subset_union_right.trans habc)).trans
+      (ha.2 c hc.1 (Set.subset_union_left.trans habc)).symm
+  · rw [(info_mem_iff_eq_ofSet_info P).1 ((info_mem_iff_not_isInquisitive P).2 h)]
+    exact isIdeal_coe_ofSet _
+
+/-- On an infinite set of worlds, the finite states form an ideal and resolve an inquisitive
+question. -/
+theorem exists_isIdeal_coe_and_isInquisitive [Infinite W] :
+    ∃ P : Question W, Order.IsIdeal (P : Set (Set W)) ∧ P.IsInquisitive := by
+  refine ⟨ofLowerSet {s | s.Finite} Set.finite_empty fun _ _ hba ha ↦ ha.subset hba,
+    isIdeal_coe_iff_supClosed.2 fun _ ha _ hb ↦ ha.union hb, fun h ↦ ?_⟩
+  have hinfo : info (ofLowerSet {s : Set W | s.Finite} Set.finite_empty
+      fun _ _ hba ha ↦ ha.subset hba) = Set.univ :=
+    Set.eq_univ_of_forall fun w ↦ ⟨{w}, Set.finite_singleton w, rfl⟩
+  rw [hinfo] at h
+  exact Set.infinite_univ h
+
+end Ideal
 
 end Question
