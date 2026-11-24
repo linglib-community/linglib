@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.DependencyGraph.Projectivity
+public import Linglib.Syntax.Dependency.Projectivity
 public import Linglib.Data.Statistics.Kuhlmann2013
 
 /-!
@@ -44,7 +44,7 @@ NP-hardness result are not formalized.
 
 namespace Kuhlmann2013
 
-open DependencyGrammar Relation
+open Dependency Relation
 open Data.Statistics (Decimal)
 
 variable {n : ℕ} {G : Digraph (Fin n)} [DecidableRel G.Adj]

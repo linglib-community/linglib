@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.DependencyGrammar.Stemma
-public import Linglib.Syntax.DependencyGrammar.Valency
+public import Linglib.Syntax.Dependency.Stemma
+public import Linglib.Syntax.Dependency.Valency
 public import Linglib.Data.UD.UPOS
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Data.Examples.OsborneLi2023
@@ -45,7 +45,7 @@ convention, and referential dependence is being a pronoun. The rows of
 
 namespace OsborneLi2023
 
-open DependencyGrammar
+open Dependency
 open Stemma (node leaf)
 open Morphology (Word)
 

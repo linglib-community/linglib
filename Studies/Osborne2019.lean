@@ -5,10 +5,10 @@ public import Linglib.Languages.English.Determiners
 public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Languages.English.Auxiliaries
 public import Linglib.Languages.English.Adpositions
-public import Linglib.Syntax.DependencyGrammar.Valency
+public import Linglib.Syntax.Dependency.Valency
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Syntax.DependencyGraph.Catena
-public import Linglib.Syntax.DependencyGrammar.Stemma
+public import Linglib.Syntax.Dependency.Catena
+public import Linglib.Syntax.Dependency.Stemma
 
 /-!
 # Osborne (2019): A Dependency Grammar of English
@@ -80,7 +80,7 @@ an argument when a participant of the verb fills its slot.
 
 namespace Osborne2019
 
-open DependencyGrammar Finset
+open Dependency Finset
 open Stemma (node leaf)
 open Morphology (Word)
 

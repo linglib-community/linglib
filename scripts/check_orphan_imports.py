@@ -39,8 +39,7 @@ IMPORT_RE = re.compile(
 
 # The frameworks of syntax, each a directory of `Linglib/Syntax/`, and the frameworks of
 # morphology that build on one of them.
-SYNTAX_FRAMEWORKS = ("Minimalist", "HPSG", "CCG", "DependencyGrammar", "ConstructionGrammar",
-                     "Mereological")
+SYNTAX_FRAMEWORKS = ("Minimalist", "HPSG", "CCG", "ConstructionGrammar", "Mereological")
 MORPHOLOGY_FRAMEWORKS = ("DistributedMorphology", "Nanosyntax")
 
 

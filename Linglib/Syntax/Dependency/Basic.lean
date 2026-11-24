@@ -108,7 +108,7 @@ end Digraph
 
 /-! ### Labelled graphs -/
 
-namespace DependencyGrammar
+namespace Dependency
 
 /-- A dependency graph on the vertices `V` with relations in `L` is a digraph each of whose arcs
 carries a relation. -/
@@ -196,4 +196,4 @@ def linearize (g : Graph L (Fin n)) (order : List (Fin n)) (h : order.Perm (List
 
 end Graph
 
-end DependencyGrammar
+end Dependency

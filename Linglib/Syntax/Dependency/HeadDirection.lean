@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.DependencyGraph.Basic
+public import Linglib.Syntax.Dependency.Basic
 public import Linglib.Syntax.WordOrder
 
 /-!

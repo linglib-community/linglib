@@ -480,7 +480,6 @@ import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.Composition
 import Linglib.Syntax.ConstructionGrammar.Licensing
-import Linglib.Syntax.DependencyGrammar.Valency
 import Linglib.Syntax.HPSG.Construction
 import Linglib.Syntax.Mereological.AngularLocality
 import Linglib.Syntax.Mereological.Parthood

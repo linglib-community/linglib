@@ -1,10 +1,10 @@
 module
 
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.DependencyGraph.Projectivity
-public import Linglib.Syntax.DependencyGraph.HeadDirection
-public import Linglib.Syntax.DependencyGraph.Length
-public import Linglib.Syntax.DependencyGrammar.Stemma
+public import Linglib.Syntax.Dependency.Projectivity
+public import Linglib.Syntax.Dependency.HeadDirection
+public import Linglib.Syntax.Dependency.Length
+public import Linglib.Syntax.Dependency.Stemma
 public import Linglib.Syntax.WordOrder
 public import Linglib.Morphology.Word.Basic
 
@@ -51,7 +51,7 @@ cost more only because they keep subjects before their verbs.
 
 namespace Gibson2025
 
-open DependencyGrammar Morphology
+open Dependency Morphology
 open Stemma (node leaf)
 
 variable {n : ℕ}
