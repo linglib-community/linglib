@@ -67,7 +67,7 @@ variable {W : Type*} (G N : List (Finset W)) (s : Setoid W) (bel p : Set W)
 def Live (w : W) : Prop := ∃ v ∈ s.cell w, v ∈ bel
 
 /-- The desires an answer entails, by whose inclusion answers are ordered. -/
-abbrev entailed : W → Set (Finset W) := Preorder.satisfied (fun w g ↦ s.cell w ⊆ ↑g) {g | g ∈ G}
+abbrev entailed : W → Set (Finset W) := fun w ↦ {g ∈ {g | g ∈ G} | s.cell w ⊆ ↑g}
 
 /-- `S wants p` holds when every best live answer entails `p`. -/
 def Want : Prop := ∀ w, MaximalFor (Live s bel) (entailed G s) w → s.cell w ⊆ p
@@ -97,6 +97,10 @@ variable [Fintype W] [DecidableEq W] [DecidableRel s] [DecidablePred (· ∈ bel
   [DecidablePred (· ∈ p)]
 
 instance (w : W) : Decidable (Live s bel w) := inferInstanceAs (Decidable (∃ v ∈ s.cell w, _))
+
+instance (w z : W) : Decidable (entailed G s w ⊆ entailed G s z) :=
+  decidable_of_iff (∀ g ∈ G, s.cell w ⊆ ↑g → s.cell z ⊆ ↑g)
+    ⟨fun h _ hg ↦ ⟨hg.1, h _ hg.1 hg.2⟩, fun h _ hg hw ↦ (h ⟨hg, hw⟩).2⟩
 
 instance (w : W) : Decidable (MaximalFor (Live s bel) (entailed G s) w) :=
   inferInstanceAs (Decidable (Live s bel w ∧ ∀ z, Live s bel z → _ → _))
@@ -144,7 +148,7 @@ theorem want_bot_iff :
     Want G ⊥ bel p ↔ BestWorlds.Want ((↑) '' {s | s ∈ G}) bel p := by
   simp only [Want, BestWorlds.want_iff, Preorder.ofCriteria_le_iff, Set.forall_mem_image,
     MaximalFor, Live,
-    entailed, Preorder.satisfied, Setoid.cell_bot, Set.mem_singleton_iff, exists_eq_left,
+    entailed, Setoid.cell_bot, Set.mem_singleton_iff, exists_eq_left,
     Set.singleton_subset_iff, Set.ofPred_subset_ofPred, Finset.mem_coe, and_imp]
   simp +contextual [Set.mem_ofPred_eq]
 

@@ -38,28 +38,23 @@ namespace Question
 
 variable {W ι : Type*} {a : ι → Set W}
 
-/-- The Karttunen denotation is the set of members a world satisfies, the valuation of the order
-the members induce on worlds. -/
-theorem karttunen_eq_satisfied (H : Set (Set W)) (w : W) :
-    karttunen H w = Preorder.satisfied (· ∈ ·) H w := rfl
-
 @[simp] theorem mem_satisfied_iff {w : W} {i : ι} :
-    i ∈ Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w ↔ w ∈ a i :=
-  Preorder.mem_satisfied_univ
+    i ∈ {i | w ∈ a i} ↔ w ∈ a i :=
+  Iff.rfl
 
 theorem mem_biInter_iff_subset {S : Finset ι} {w : W} :
-    w ∈ ⋂ i ∈ S, a i ↔ ↑S ⊆ Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w :=
-  Set.mem_iInter₂.trans ⟨fun h _ hi ↦ ⟨trivial, h _ hi⟩, fun h _ hi ↦ (h hi).2⟩
+    w ∈ ⋂ i ∈ S, a i ↔ ↑S ⊆ {i | w ∈ a i} :=
+  Set.mem_iInter₂.trans ⟨fun h _ hi ↦ h _ hi, fun h _ hi ↦ h hi⟩
 
 theorem ofProps_infClosure_range :
     Setoid.ofProps (infClosure (Set.range a)) =
-      Setoid.ker (Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ) := by
+      Setoid.ker fun v ↦ {i | v ∈ a i} := by
   ext v w
   rw [Setoid.ofProps_iff, Setoid.ker_def]
   constructor
   · intro h
     ext i
-    simpa only [Preorder.mem_satisfied, Set.mem_univ, true_and] using
+    simpa only [Set.mem_ofPred_eq, Set.mem_univ, true_and] using
       h _ (subset_infClosure (Set.mem_range_self i))
   · intro h q hq
     obtain ⟨S, -, rfl⟩ := Set.mem_infClosure_range.1 hq
@@ -67,17 +62,17 @@ theorem ofProps_infClosure_range :
 
 theorem ofProps_supClosure_range :
     Setoid.ofProps (supClosure (Set.range a)) =
-      Setoid.ker (Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ) := by
+      Setoid.ker fun v ↦ {i | v ∈ a i} := by
   ext v w
   rw [Setoid.ofProps_iff, Setoid.ker_def]
   constructor
   · intro h
     ext i
-    simpa only [Preorder.mem_satisfied, Set.mem_univ, true_and] using
+    simpa only [Set.mem_ofPred_eq, Set.mem_univ, true_and] using
       h _ (subset_supClosure (Set.mem_range_self i))
   · intro h q hq
     obtain ⟨S, -, rfl⟩ := Set.mem_supClosure_range.1 hq
-    simp only [Set.ext_iff, Preorder.mem_satisfied, Set.mem_univ, true_and] at h
+    simp only [Set.ext_iff, Set.mem_ofPred_eq] at h
     simp only [Set.mem_iUnion, exists_prop, h]
 
 theorem ofProps_infClosure_range_eq_supClosure_range :

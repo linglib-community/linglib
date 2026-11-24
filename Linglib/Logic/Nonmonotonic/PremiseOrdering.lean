@@ -13,14 +13,15 @@ relation `sat : α → C → Prop` and a set of criteria, `Preorder.ofCriteria s
 below `b` when `a` satisfies every criterion of the set that `b` satisfies. No structure is
 assumed on the points or on the criteria.
 
-The order is the pullback of `⊇` along `Preorder.satisfied`, the map sending a point to the
-criteria it satisfies, so it is one ranking of the points into a preordered type. Minimal points
-and the filter of what holds toward the bottom of a domain are defined for any such ranking, in
-`Preorder.minimals` and `Filter.atBotOn`, and the preferential consequence relation of
-`Nonmonotonic.Preferential` is stated for any ranking. This file supplies the ranking and what is
-special to it: adding a criterion meets the preorder with the preorder of that criterion, the
-minimal points of a set are those satisfying every criterion when some point does, and the bottom
-filter can be stated through the sets of criteria satisfied together, without the points.
+The order is the pullback of `⊇` along the map sending a point to the criteria it satisfies,
+`fun a ↦ {c ∈ criteria | sat a c}`, so it is one ranking of the points into a preordered type.
+Minimal points and the filter of what holds toward the bottom of a domain are defined for any
+such ranking, in `Preorder.minimals` and `Filter.atBotOn`, and the preferential consequence
+relation of `Nonmonotonic.Preferential` is stated for any ranking. This file supplies the ranking
+and what is special to it: adding a criterion meets the preorder with the preorder of that
+criterion, the minimal points of a set are those satisfying every criterion when some point does,
+and the bottom filter can be stated through the sets of criteria satisfied together, without the
+points.
 
 With propositions as criteria and truth as satisfaction this is the ordering a premise set induces
 on worlds. With the negations of alternatives as criteria it is the order whose minimal worlds a
@@ -30,13 +31,13 @@ minimal-world exhaustifier keeps and whose least worlds exhaustification keeps.
 
 * `Preorder.ofCriteria`: the preorder a set of criteria induces.
 * `Preorder.ofCriterion`: the preorder of a single criterion.
-* `Preorder.satisfied`: the criteria that a point satisfies.
 
 ## Main results
 
-* `Preorder.ofCriteria_eq_lift`: the preorder is the pullback of `⊇` along `Preorder.satisfied`.
-* `Preorder.satisfied_eq_inter_upperPolar`: the criteria a point satisfies are the criteria in
-  its upper polar, for the Galois connection the satisfaction relation induces.
+* `Preorder.ofCriteria_eq_lift`: the preorder is the pullback of `⊇` along the map sending a point
+  to the criteria it satisfies.
+* `Preorder.sep_sat_eq_inter_upperPolar`: the criteria a point satisfies are the criteria in its
+  upper polar, for the Galois connection the satisfaction relation induces.
 * `Preorder.ofCriteria_insert`: adding a criterion meets the preorder with that of the criterion.
 * `Preorder.antisymmRel_ofCriteria_iff`: two points are equivalent just in case they satisfy the
   same criteria.
@@ -47,7 +48,7 @@ minimal-world exhaustifier keeps and whose least worlds exhaustification keeps.
 ## Implementation notes
 
 `Preorder.ofCriteria` is defined by its unfolded condition `∀ c ∈ criteria, sat b c → sat a c`
-and not as `Preorder.lift` along `Preorder.satisfied`, so that the order of an inserted criterion
+and not as `Preorder.lift` along that map, so that the order of an inserted criterion
 unfolds to a conjunction and membership in the set of criteria is not repeated on both sides. The
 two agree by `Preorder.ofCriteria_eq_lift`.
 
@@ -139,32 +140,14 @@ theorem ofCriteria_eq_of_subset {sat : α → C → Prop} {criteria criteria' : 
 
 end ofCriterion
 
-/-! ### The satisfied criteria as a valuation -/
+/-! ### The criteria a point satisfies -/
 
-/-- The criteria that `a` satisfies. The criteria-derived order is the pullback of `⊇` along this
-map (`satisfied_subset_iff`), so the minimal elements of the order are the `MaximalFor` elements of
-the map: the best elements are those satisfying a maximal set of criteria, with no order instance
-on the type. -/
-def satisfied (sat : α → C → Prop) (criteria : Set C) (a : α) : Set C :=
-  {c ∈ criteria | sat a c}
-
-@[simp] theorem mem_satisfied {sat : α → C → Prop} {criteria : Set C} {a : α} {c : C} :
-    c ∈ satisfied sat criteria a ↔ c ∈ criteria ∧ sat a c :=
-  Iff.rfl
-
-@[simp] theorem mem_satisfied_univ {sat : α → C → Prop} {a : α} {c : C} :
-    c ∈ satisfied sat Set.univ a ↔ sat a c :=
-  ⟨And.right, fun h ↦ ⟨trivial, h⟩⟩
-
-/-- The criteria a point satisfies are the criteria in the upper polar of the point. -/
-theorem satisfied_eq_inter_upperPolar (sat : α → C → Prop) (criteria : Set C) (a : α) :
-    satisfied sat criteria a = criteria ∩ upperPolar sat {a} := by
+/-- The criteria a point satisfies are the criteria in the upper polar of the point, for the Galois
+connection the satisfaction relation induces. -/
+theorem sep_sat_eq_inter_upperPolar (sat : α → C → Prop) (criteria : Set C) (a : α) :
+    {c ∈ criteria | sat a c} = criteria ∩ upperPolar sat {a} := by
   ext c
   simp [upperPolar]
-
-theorem satisfied_subset_iff (sat : α → C → Prop) (criteria : Set C) (a b : α) :
-    satisfied sat criteria a ⊆ satisfied sat criteria b ↔ (ofCriteria sat criteria).le b a :=
-  (ofCriteria_le_iff_subset sat criteria b a).symm
 
 /-- With every criterion counted, `a` ranks below `b` just in case the upper polar of `b` lies
 within that of `a`. -/
@@ -174,16 +157,23 @@ theorem ofCriteria_univ_le_iff_upperPolar (sat : α → C → Prop) (a b : α) :
 
 /-- The criteria-derived preorder is the pullback of `⊇` along the criteria a point satisfies. -/
 theorem ofCriteria_eq_lift (sat : α → C → Prop) (criteria : Set C) :
-    ofCriteria sat criteria = Preorder.lift (OrderDual.toDual ∘ satisfied sat criteria) :=
-  Preorder.ext fun a b ↦ (satisfied_subset_iff sat criteria b a).symm
+    ofCriteria sat criteria =
+      Preorder.lift fun a ↦ OrderDual.toDual {c ∈ criteria | sat a c} :=
+  Preorder.ext fun a b ↦ ofCriteria_le_iff_subset sat criteria a b
 
 /-- Two elements are equivalent under the criteria-derived preorder exactly when they satisfy the
 same criteria. -/
 theorem antisymmRel_ofCriteria_iff {sat : α → C → Prop} {criteria : Set C} {a b : α} :
     AntisymmRel (ofCriteria sat criteria).le a b ↔
-      satisfied sat criteria a = satisfied sat criteria b :=
-  ((satisfied_subset_iff sat criteria b a).symm.and (satisfied_subset_iff sat criteria a b).symm)
+      {c ∈ criteria | sat a c} = {c ∈ criteria | sat b c} :=
+  ((ofCriteria_le_iff_subset sat criteria a b).and (ofCriteria_le_iff_subset sat criteria b a))
     |>.trans (and_comm.trans Set.Subset.antisymm_iff.symm)
+
+instance (sat : α → C → Prop) (l : List C) [∀ a c, Decidable (sat a c)] (a b : α) :
+    Decidable ({c ∈ {c | c ∈ l} | sat a c} ⊆ {c ∈ {c | c ∈ l} | sat b c}) :=
+  decidable_of_iff (∀ c ∈ l, sat a c → sat b c) (by
+    rw [← ofCriteria_le_iff_subset]
+    simp only [ofCriteria_le_iff, Set.mem_ofPred_eq])
 
 /-! ### Minimal points -/
 
@@ -211,11 +201,6 @@ theorem minimals_ofCriterion {P : α → Prop} (hex : ∃ a ∈ s, P a) :
 
 end Minimals
 
-instance (sat : α → C → Prop) (l : List C) [∀ a c, Decidable (sat a c)]
-    (a b : α) : Decidable (satisfied sat {c | c ∈ l} a ≤ satisfied sat {c | c ∈ l} b) :=
-  decidable_of_iff (∀ c ∈ l, sat a c → sat b c) (by
-    simp only [satisfied_subset_iff, ofCriteria_le_iff, Set.mem_ofPred_eq])
-
 end Preorder
 
 namespace Filter
@@ -231,27 +216,27 @@ points, and inclusion among them for the order. -/
 /-- The order derived from criteria is the ranking by the criteria satisfied. -/
 theorem atBotOn_ofCriteria {C : Type*} (sat : W → C → Prop) (crit : Set C) (s : Set W) :
     @atBotOn W W (Preorder.ofCriteria sat crit) id s =
-      atBotOn (OrderDual.toDual ∘ Preorder.satisfied sat crit) s := by
+      atBotOn (OrderDual.toDual ∘ (fun w ↦ {c ∈ crit | sat w c})) s := by
   ext t
   simp only [mem_atBotOn, Function.comp_apply, OrderDual.toDual_le_toDual,
-    Preorder.satisfied_subset_iff, id]
+    ← Preorder.ofCriteria_le_iff_subset sat crit, id]
 
 /-- Ranked by the criteria satisfied, `t` holds toward the bottom of `s` exactly when every set of
 criteria satisfied together at some point of `s` extends, within the criteria, to a set satisfied
 together at some point of `s` and only at points of `t`. -/
 theorem mem_atBotOn_satisfied_iff {C : Type*} {sat : W → C → Prop} {crit : Set C} :
-    t ∈ atBotOn (OrderDual.toDual ∘ Preorder.satisfied sat crit) s ↔
+    t ∈ atBotOn (OrderDual.toDual ∘ (fun w ↦ {c ∈ crit | sat w c})) s ↔
       ∀ B ⊆ crit, (∃ u ∈ s, ∀ c ∈ B, sat u c) → ∃ D ⊆ crit, (∃ v ∈ s, ∀ c ∈ D, sat v c) ∧
         B ⊆ D ∧ ∀ w ∈ s, (∀ c ∈ D, sat w c) → w ∈ t := by
   simp only [mem_atBotOn, Function.comp_apply, OrderDual.toDual_le_toDual,
-    Preorder.satisfied_subset_iff, Preorder.ofCriteria_le_iff]
+    ← Preorder.ofCriteria_le_iff_subset sat crit, Preorder.ofCriteria_le_iff]
   refine ⟨fun h B hB ⟨u, hu, huB⟩ ↦ ?_, fun h u hu ↦ ?_⟩
   · obtain ⟨v, hv, hvu, hvt⟩ := h u hu
-    exact ⟨Preorder.satisfied sat crit v, Set.sep_subset _ _, ⟨v, hv, fun _ hc ↦ hc.2⟩,
+    exact ⟨(fun w ↦ {c ∈ crit | sat w c}) v, Set.sep_subset _ _, ⟨v, hv, fun _ hc ↦ hc.2⟩,
       fun c hc ↦ ⟨hB hc, hvu c (hB hc) (huB c hc)⟩,
       fun w hw hwD ↦ hvt w hw fun c hc hvc ↦ hwD c ⟨hc, hvc⟩⟩
   · obtain ⟨D, hD, ⟨v, hv, hvD⟩, hBD, hDt⟩ :=
-      h (Preorder.satisfied sat crit u) (Set.sep_subset _ _) ⟨u, hu, fun _ hc ↦ hc.2⟩
+      h ((fun w ↦ {c ∈ crit | sat w c}) u) (Set.sep_subset _ _) ⟨u, hu, fun _ hc ↦ hc.2⟩
     exact ⟨v, hv, fun c hc huc ↦ hvD c (hBD ⟨hc, huc⟩),
       fun w hw hwv ↦ hDt w hw fun c hc ↦ hwv c (hD hc) (hvD c hc)⟩
 

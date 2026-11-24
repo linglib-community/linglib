@@ -296,7 +296,7 @@ theorem hope_alice_and_hope_sue (w : World) :
 source. -/
 def bestSets (f g : Background W) (w : W) : Set (Set W) :=
   {X | ∃ b ∈ bestWorlds f g w, X = {v ∈ bestWorlds f g w |
-    Preorder.satisfied (· ∈ ·) (g w) v = Preorder.satisfied (· ∈ ·) (g w) b}}
+    {a ∈ (g w) | v ∈ a} = {a ∈ (g w) | b ∈ a}}}
 
 -- Appendix B: under the Limit Assumption local necessity is truth throughout a best set.
 theorem goodPossibility_iff_exists_mem_bestSets {f g : Background W} {p : Set W} {w : W}
@@ -313,14 +313,15 @@ theorem goodPossibility_iff_exists_mem_bestSets {f g : Background W} {p : Set W}
 
 -- Appendix B as printed: no set holds exactly the pairs of best worlds with the same premises.
 theorem not_exists_printed_bestSet (w : World) : ¬ ∃ X : Set World, ∀ u v,
-    u ∈ X ∧ v ∈ X ↔ Preorder.satisfied (· ∈ ·) (bul w) u = Preorder.satisfied (· ∈ ·) (bul w) v ∧
+    u ∈ X ∧ v ∈ X ↔ {a ∈ (bul w) | u ∈ a} = {a ∈ (bul w) | v ∈ a} ∧
       u ∈ bestWorlds doxPlus bul w ∧ v ∈ bestWorlds doxPlus bul w := by
   rintro ⟨X, hX⟩
   have hA : ((true, false) : World) ∈ bestWorlds doxPlus bul w := by simp [bestWorlds_doxPlus_bul]
   have hS : ((false, true) : World) ∈ bestWorlds doxPlus bul w := by simp [bestWorlds_doxPlus_bul]
   have heq := ((hX _ _).1 ⟨((hX _ _).2 ⟨rfl, hA, hA⟩).1, ((hX _ _).2 ⟨rfl, hS, hS⟩).1⟩).1
-  have h : marriesAlice ∈ Preorder.satisfied (· ∈ ·) (bul w) ((false, true) : World) :=
-    heq ▸ ⟨by simp [bul], rfl⟩
+  have h : marriesAlice ∈ {a ∈ bul w | ((false, true) : World) ∈ a} :=
+    heq.subset (show marriesAlice ∈ {a ∈ bul w | ((true, false) : World) ∈ a} from
+      ⟨by simp [bul], rfl⟩)
   exact nomatch (h.2 : (false, true) ∈ marriesAlice)
 
 end PortnerRubinstein2020

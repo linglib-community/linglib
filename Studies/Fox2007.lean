@@ -192,7 +192,8 @@ theorem notMem : w ∉ ({s, n, e} : Set (Set W)) := by
 theorem exhMW_eq : exhMW {w, s, n, e} w = symmDiff s n := by
   obtain ⟨rfl, hs, hn, ⟨a, has, han⟩, -⟩ := h
   ext u
-  simp only [mem_exhMW, MinimalFor, Preorder.satisfied_subset_iff, Preorder.ofCriteria_le_iff,
+  simp only [mem_exhMW, MinimalFor, ← Preorder.ofCriteria_le_iff_subset (· ∈ ·)]
+  simp only [Preorder.ofCriteria_le_iff,
     mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq, Set.mem_symmDiff, mem_union]
   refine ⟨fun ⟨hu, hmin⟩ ↦ by_contra fun hc ↦ han ((hmin (Or.inl has) ⟨fun _ ↦ hu,
     fun _ ↦ by tauto, fun h' ↦ (han h').elim, fun h' ↦ (han (hn h')).elim⟩).2.2.1 (by tauto)), ?_⟩

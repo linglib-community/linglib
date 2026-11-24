@@ -11,7 +11,7 @@ public import Studies.McKayVanInwagen1977
 For a sentence with prejacent `S : Set W` and alternatives `ALT : Set (Set W)`, a subset `σ` of
 `ALT` is stable when some world of `S` verifies every member of `σ` and falsifies every other
 alternative, that is, when `(S ∩ ⋂₀ σ) \ ⋃₀ (ALT \ σ)` is nonempty. The stable sets are the sets
-`Preorder.satisfied (· ∈ ·) ALT w` of alternatives true at a world `w ∈ S`
+`(fun w ↦ {a ∈ ALT | w ∈ a}) w` of alternatives true at a world `w ∈ S`
 (`stable_iff_exists_eq_satisfied`), so the minimal stable sets are those of the minimal worlds
 `Exhaustification.exhMW ALT S` (`minimalStable_iff_exists_mem_exhMW`), and their complements in
 `ALT` are the maximal consistent exclusions of innocent exclusion
@@ -76,7 +76,6 @@ generated from a substitution source.
 namespace Santorio2018
 
 open Set Conditional Exhaustification
-open Preorder (satisfied)
 
 variable {W : Type*} (ALT : Set (Set W)) (S : Set W)
 
@@ -97,7 +96,7 @@ def truthmakers : Set (Set W) := {p | (∃ σ, MinimalStable ALT S σ ∧ ⋂₀
 variable {ALT S} {σ : Set (Set W)} {M : Set W} {p A B : Set W} {u v : W}
 
 theorem stable_iff_exists_eq_satisfied :
-    Stable ALT S σ ↔ ∃ w ∈ S, σ = satisfied (· ∈ ·) ALT w := by
+    Stable ALT S σ ↔ ∃ w ∈ S, σ = {a ∈ ALT | w ∈ a} := by
   refine ⟨fun ⟨hσ, w, ⟨hwS, hw⟩, hnw⟩ ↦ ⟨w, hwS, Subset.antisymm (fun A hA ↦ ⟨hσ hA, hw A hA⟩)
     fun A hA ↦ not_not.mp fun h ↦ hnw ⟨A, ⟨hA.left, h⟩, hA.right⟩⟩, ?_⟩
   rintro ⟨w, hw, rfl⟩
@@ -112,7 +111,7 @@ theorem Stable.mem_of_subset (h : Stable ALT S σ) (hA : A ∈ σ) (hB : B ∈ A
   exact ⟨hB, hAB hA.right⟩
 
 theorem minimalStable_satisfied_iff (hu : u ∈ S) :
-    MinimalStable ALT S (satisfied (· ∈ ·) ALT u) ↔ u ∈ exhMW ALT S := by
+    MinimalStable ALT S ({a ∈ ALT | u ∈ a}) ↔ u ∈ exhMW ALT S := by
   refine ⟨fun h ↦ ⟨hu, fun v hv hvu ↦
       h.le_of_le (stable_iff_exists_eq_satisfied.mpr ⟨v, hv, rfl⟩) hvu⟩,
     fun h ↦ ⟨stable_iff_exists_eq_satisfied.mpr ⟨u, hu, rfl⟩, fun τ hτ hτu ↦ ?_⟩⟩
@@ -120,7 +119,7 @@ theorem minimalStable_satisfied_iff (hu : u ∈ S) :
   exact (mem_exhMW.mp h).le_of_le hv hτu
 
 theorem minimalStable_iff_exists_mem_exhMW :
-    MinimalStable ALT S σ ↔ ∃ u ∈ exhMW ALT S, σ = satisfied (· ∈ ·) ALT u := by
+    MinimalStable ALT S σ ↔ ∃ u ∈ exhMW ALT S, σ = {a ∈ ALT | u ∈ a} := by
   refine ⟨fun h ↦ ?_, ?_⟩
   · obtain ⟨u, hu, rfl⟩ := stable_iff_exists_eq_satisfied.mp h.prop
     exact ⟨u, (minimalStable_satisfied_iff hu).mp h, rfl⟩
@@ -135,7 +134,7 @@ theorem minimalStable_iff_maximal_isConsistentExclusion :
   · obtain ⟨u, hu, rfl⟩ := minimalStable_iff_exists_mem_exhMW.mp h
     exact ⟨fun _ h ↦ h.left, (maximal_sdiff_satisfied_iff (exhMW_subset hu)).mpr hu⟩
   · obtain ⟨u, hu, heq⟩ := Exhaustification.Maximal.exists_eq_sdiff_satisfied h
-    have hu' : ALT ⊓ satisfied (· ∈ ·) ALT u = satisfied (· ∈ ·) ALT u :=
+    have hu' : ALT ⊓ {a ∈ ALT | u ∈ a} = {a ∈ ALT | u ∈ a} :=
       inf_eq_right.mpr fun _ h ↦ h.left
     rw [sdiff_eq_sdiff_iff_inf_eq_inf, inf_eq_right.mpr hσ, hu'] at heq
     exact minimalStable_iff_exists_mem_exhMW.mpr ⟨u, hu, heq⟩
@@ -143,16 +142,16 @@ theorem minimalStable_iff_maximal_isConsistentExclusion :
 /-! ### Truthmakers -/
 
 theorem satisfied_subset_satisfied :
-    satisfied (· ∈ ·) ALT u ⊆ satisfied (· ∈ ·) ALT v ↔ ∀ A ∈ ALT, u ∈ A → v ∈ A :=
-  Preorder.satisfied_subset_iff ..
+    {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | v ∈ a} ↔ ∀ A ∈ ALT, u ∈ A → v ∈ A :=
+  (Preorder.ofCriteria_le_iff_subset (· ∈ ·) ALT v u).symm
 
 theorem mem_sInter_satisfied :
-    v ∈ ⋂₀ satisfied (· ∈ ·) ALT u ↔ satisfied (· ∈ ·) ALT u ⊆ satisfied (· ∈ ·) ALT v :=
+    v ∈ ⋂₀ {a ∈ ALT | u ∈ a} ↔ {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | v ∈ a} :=
   ⟨fun h A hA ↦ ⟨hA.left, h A hA⟩, fun h _ hA ↦ (h hA).right⟩
 
 theorem mem_truthmakers_iff :
     p ∈ truthmakers ALT S ↔
-      (∃ u ∈ exhMW ALT S, ⋂₀ satisfied (· ∈ ·) ALT u = p) ∧ p ⊆ S := by
+      (∃ u ∈ exhMW ALT S, ⋂₀ {a ∈ ALT | u ∈ a} = p) ∧ p ⊆ S := by
   refine and_congr_left fun _ ↦ ⟨?_, fun ⟨u, hu, h⟩ ↦
     ⟨_, minimalStable_iff_exists_mem_exhMW.mpr ⟨u, hu, rfl⟩, h⟩⟩
   rintro ⟨σ, hσ, rfl⟩
@@ -160,14 +159,14 @@ theorem mem_truthmakers_iff :
   exact ⟨u, hu, rfl⟩
 
 theorem truthmakers_eq_image (hS : S ∈ ALT) :
-    truthmakers ALT S = (fun u ↦ ⋂₀ satisfied (· ∈ ·) ALT u) '' exhMW ALT S := by
+    truthmakers ALT S = (fun u ↦ ⋂₀ {a ∈ ALT | u ∈ a}) '' exhMW ALT S := by
   ext p
   rw [mem_truthmakers_iff]
   exact ⟨fun h ↦ h.left,
     fun ⟨u, hu, e⟩ ↦ ⟨⟨u, hu, e⟩, e ▸ sInter_subset_of_mem ⟨hS, exhMW_subset hu⟩⟩⟩
 
 theorem truthmakers_eq_image_of_isMinimalCover (hM : IsMinimalCover ALT S M) (hS : S ∈ ALT) :
-    truthmakers ALT S = (fun u ↦ ⋂₀ satisfied (· ∈ ·) ALT u) '' M := by
+    truthmakers ALT S = (fun u ↦ ⋂₀ {a ∈ ALT | u ∈ a}) '' M := by
   rw [truthmakers_eq_image hS, hM.exhMW_eq]
   ext p
   constructor
@@ -181,7 +180,7 @@ theorem isAntichain_truthmakers : IsAntichain (· ⊆ ·) (truthmakers ALT S) :=
   rintro p hp q hq hne hpq
   obtain ⟨⟨u, hu, rfl⟩, -⟩ := mem_truthmakers_iff.mp hp
   obtain ⟨⟨v, hv, rfl⟩, -⟩ := mem_truthmakers_iff.mp hq
-  have hvu : satisfied (· ∈ ·) ALT v ⊆ satisfied (· ∈ ·) ALT u :=
+  have hvu : {a ∈ ALT | v ∈ a} ⊆ {a ∈ ALT | u ∈ a} :=
     mem_sInter_satisfied.mp (hpq (mem_sInter_satisfied.mpr subset_rfl))
   exact hne (congrArg sInter (((mem_exhMW.mp hu).le_of_le (exhMW_subset hv) hvu).antisymm hvu))
 
@@ -195,12 +194,13 @@ theorem sUnion_truthmakers (hfin : ALT.Finite) (hS : S ∈ ALT) : ⋃₀ truthma
 
 theorem truthmakers_singleton (hS : S.Nonempty) : truthmakers {S} S = {S} := by
   obtain ⟨s, hs⟩ := hS
-  have le (u v : W) : satisfied (· ∈ ·) {S} u ⊆ satisfied (· ∈ ·) {S} v ↔ (u ∈ S → v ∈ S) := by
+  have le (u v : W) : {a ∈ ({S} : Set (Set W)) | u ∈ a} ⊆ {a ∈ ({S} : Set (Set W)) | v ∈ a} ↔
+      (u ∈ S → v ∈ S) := by
     rw [satisfied_subset_satisfied, forall_mem_singleton]
   have hM : IsMinimalCover {S} S {s} :=
     ⟨fun _ hv ↦ hv ▸ hs, fun w hw ↦ ⟨s, rfl, (le s w).mpr fun _ ↦ hw⟩,
       by rintro v rfl u rfl h; exact h⟩
-  have hs' : ⋂₀ satisfied (· ∈ ·) {S} s = S :=
+  have hs' : ⋂₀ {a ∈ ({S} : Set (Set W)) | s ∈ a} = S :=
     Set.ext fun v ↦ mem_sInter_satisfied.trans ((le s v).trans ⟨fun h ↦ h hs, fun h _ ↦ h⟩)
   rw [truthmakers_eq_image_of_isMinimalCover hM rfl, image_singleton, hs']
 
@@ -210,8 +210,8 @@ theorem truthmakers_disjunction (hA : ¬ A ⊆ B) (hB : ¬ B ⊆ A) :
     truthmakers {A ∪ B, A, B, A ∩ B} (A ∪ B) = {A, B} := by
   obtain ⟨a, haA, haB⟩ := not_subset.mp hA
   obtain ⟨b, hbB, hbA⟩ := not_subset.mp hB
-  have le (u v : W) : satisfied (· ∈ ·) {A ∪ B, A, B, A ∩ B} u ⊆
-      satisfied (· ∈ ·) {A ∪ B, A, B, A ∩ B} v ↔ (u ∈ A → v ∈ A) ∧ (u ∈ B → v ∈ B) := by
+  have le (u v : W) : {a ∈ ({A ∪ B, A, B, A ∩ B} : Set (Set W)) | u ∈ a} ⊆
+      {a ∈ ({A ∪ B, A, B, A ∩ B} : Set (Set W)) | v ∈ a} ↔ (u ∈ A → v ∈ A) ∧ (u ∈ B → v ∈ B) := by
     rw [satisfied_subset_satisfied]
     simp only [forall_mem_insert, forall_mem_singleton, mem_union, mem_inter_iff]
     tauto
@@ -225,10 +225,10 @@ theorem truthmakers_disjunction (hA : ¬ A ⊆ B) (hB : ¬ B ⊆ A) :
     · rintro v (rfl | rfl) u (rfl | rfl) h
       exacts [h, (haB (((le _ _).mp h).right hbB)).elim,
         (hbA (((le _ _).mp h).left haA)).elim, h]
-  have ha : ⋂₀ satisfied (· ∈ ·) {A ∪ B, A, B, A ∩ B} a = A :=
+  have ha : ⋂₀ {b ∈ {A ∪ B, A, B, A ∩ B} | a ∈ b} = A :=
     Set.ext fun v ↦ mem_sInter_satisfied.trans ((le a v).trans
       ⟨fun h ↦ h.left haA, fun h ↦ ⟨fun _ ↦ h, fun h' ↦ (haB h').elim⟩⟩)
-  have hb : ⋂₀ satisfied (· ∈ ·) {A ∪ B, A, B, A ∩ B} b = B :=
+  have hb : ⋂₀ {a ∈ ({A ∪ B, A, B, A ∩ B} : Set (Set W)) | b ∈ a} = B :=
     Set.ext fun v ↦ mem_sInter_satisfied.trans ((le b v).trans
       ⟨fun h ↦ h.right hbB, fun h ↦ ⟨fun h' ↦ (hbA h').elim, fun _ ↦ h⟩⟩)
   rw [truthmakers_eq_image_of_isMinimalCover hM (mem_insert ..), image_pair, ha, hb]
@@ -327,7 +327,7 @@ theorem karenina_truthmakers :
     truthmakers readingAlts (alt .every .either) =
       {alt .every .ak, alt .every .wp,
         alt .every .either ∩ alt .some .ak ∩ alt .some .wp} := by
-  have le (u v : World) : satisfied (· ∈ ·) readingAlts u ⊆ satisfied (· ∈ ·) readingAlts v ↔
+  have le (u v : World) : {a ∈ readingAlts | u ∈ a} ⊆ {a ∈ readingAlts | v ∈ a} ↔
       ∀ q P, u ∈ alt q P → v ∈ alt q P := by
     rw [satisfied_subset_satisfied, readingAlts, forall_mem_range, Prod.forall]
     rfl
@@ -336,11 +336,11 @@ theorem karenina_truthmakers :
     by
     refine ⟨by decide, by simp only [le]; decide, ?_⟩
     rintro v (rfl | rfl | rfl) u (rfl | rfl | rfl) <;> simp only [le] <;> decide
-  have h₁ : ⋂₀ satisfied (· ∈ ·) readingAlts ⟨.ak, .ak⟩ = alt .every .ak := by
+  have h₁ : ⋂₀ {a ∈ readingAlts | ⟨.ak, .ak⟩ ∈ a} = alt .every .ak := by
     ext v; rw [mem_sInter_satisfied, le]; revert v; decide
-  have h₂ : ⋂₀ satisfied (· ∈ ·) readingAlts ⟨.wp, .wp⟩ = alt .every .wp := by
+  have h₂ : ⋂₀ {a ∈ readingAlts | ⟨.wp, .wp⟩ ∈ a} = alt .every .wp := by
     ext v; rw [mem_sInter_satisfied, le]; revert v; decide
-  have h₃ : ⋂₀ satisfied (· ∈ ·) readingAlts ⟨.ak, .wp⟩ =
+  have h₃ : ⋂₀ {a ∈ readingAlts | ⟨.ak, .wp⟩ ∈ a} =
       alt .every .either ∩ alt .some .ak ∩ alt .some .wp := by
     ext v; rw [mem_sInter_satisfied, le]; revert v; decide
   rw [truthmakers_eq_image_of_isMinimalCover hM ⟨(.every, .either), rfl⟩, image_insert_eq,

@@ -87,13 +87,13 @@ def favoredWorlds (b : Backgrounds W) (w : W) : Set W :=
 
 /-- The promoted priorities a world verifies. -/
 def verified (b : Backgrounds W) (w u : W) : Set (Set W) :=
-  Preorder.satisfied (· ∈ ·) {q | q ∈ b.nonNegotiable w} u
+  {q ∈ {q | q ∈ b.nonNegotiable w} | u ∈ q}
 
 variable {b : Backgrounds W} {p : Set W} {w : W}
 
 theorem atLeastAsGoodAs_iff_verified_subset {u v : W} :
     (v ≤[b.nonNegotiable w] u) ↔ verified b w u ⊆ verified b w v :=
-  (Preorder.satisfied_subset_iff _ _ u v).symm
+  Preorder.ofCriteria_le_iff_subset _ _ v u
 
 /-- The priorities a best world verifies form a maximal consistent extension. -/
 theorem verified_mem_extensions {u : W} (hu : u ∈ bestWorlds b.circumstances b.nonNegotiable w) :

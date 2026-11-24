@@ -244,16 +244,16 @@ variable {ι : Type*} {a : ι → Set W}
 
 -- The atoms true at a world, the criteria it satisfies.
 set_option hygiene false in
-local notation "atoms " w:max => Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w
+local notation "atoms " w:max => {i | w ∈ a i}
 
 /-- Every set of atoms is the set true at some world. -/
 def Rich (a : ι → Set W) : Prop :=
-  ∀ T : Finset ι, ∃ w, Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w = ↑T
+  ∀ T : Finset ι, ∃ w, {i | w ∈ a i} = ↑T
 
 /-- The worlds at which exactly the atoms of `T` are true form a cell of the logical partition of
 either closure. -/
 def atomCell (a : ι → Set W) (T : Finset ι) : Set W :=
-  {v | Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ v = ↑T}
+  {v | {i | v ∈ a i} = ↑T}
 
 theorem mem_atomCell {T : Finset ι} {v : W} : v ∈ atomCell a T ↔ atoms v = ↑T := Iff.rfl
 
@@ -270,8 +270,8 @@ theorem strongAnswer_supClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w =
     mem_atomCell]
 
 theorem satisfied_infClosure_range_subset_iff {u v : W} :
-    Preorder.satisfied (· ∈ ·) (infClosure (range a)) u ⊆
-      Preorder.satisfied (· ∈ ·) (infClosure (range a)) v ↔ atoms u ⊆ atoms v := by
+    {q ∈ infClosure (range a) | u ∈ q} ⊆ {q ∈ infClosure (range a) | v ∈ q} ↔
+      atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
     exact mem_satisfied_iff.2
@@ -282,8 +282,8 @@ theorem satisfied_infClosure_range_subset_iff {u v : W} :
     exact mem_biInter_iff_subset.2 ((mem_biInter_iff_subset.1 hu).trans h)
 
 theorem satisfied_supClosure_range_subset_iff {u v : W} :
-    Preorder.satisfied (· ∈ ·) (supClosure (range a)) u ⊆
-      Preorder.satisfied (· ∈ ·) (supClosure (range a)) v ↔ atoms u ⊆ atoms v := by
+    {q ∈ supClosure (range a) | u ∈ q} ⊆ {q ∈ supClosure (range a) | v ∈ q} ↔
+      atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
     exact mem_satisfied_iff.2

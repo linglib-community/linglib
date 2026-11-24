@@ -406,9 +406,10 @@ private theorem maximal_isConsistentExclusion_range_iff {ι : Type*} {f : ι →
     Maximal (IsConsistentExclusion (Set.range f) φ) X ↔
       ∃ u ∈ exhMW (Set.range f) φ, X = f '' {i | u ∉ f i} := by
   have key (u : W) :
-      Set.range f \ Preorder.satisfied (· ∈ ·) (Set.range f) u = f '' {i | u ∉ f i} := by
+      Set.range f \ {a ∈ (Set.range f) | u ∈ a} = f '' {i | u ∉ f i} := by
     ext b
-    simp only [mem_sdiff_satisfied, Set.mem_range, Set.mem_image, Set.mem_ofPred_eq]
+    rw [mem_sdiff_satisfied]
+    simp only [Set.mem_range, Set.mem_image, Set.mem_ofPred_eq]
     exact ⟨fun ⟨⟨i, hi⟩, hu⟩ ↦ ⟨i, hi ▸ hu, hi⟩, fun ⟨i, hu, hi⟩ ↦ ⟨⟨i, hi⟩, hi ▸ hu⟩⟩
   simp_rw [← key]
   exact ⟨Maximal.exists_eq_sdiff_satisfied,

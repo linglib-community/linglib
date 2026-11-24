@@ -42,7 +42,7 @@ theorem exhMW_congr {ALT' : Set (Set World)}
     (h : Preorder.ofCriteria (· ∈ ·) ALT' = Preorder.ofCriteria (· ∈ ·) ALT) :
     exhMW ALT' φ = exhMW ALT φ := by
   ext u
-  simp only [mem_exhMW, MinimalFor, Preorder.satisfied_subset_iff]
+  simp only [mem_exhMW, MinimalFor, ← Preorder.ofCriteria_le_iff_subset (· ∈ ·)]
   rw [h]
 
 theorem exhMW_sUnion_image_powerset : exhMW (sUnion '' 𝒫 ALT) φ = exhMW ALT φ := by
@@ -83,9 +83,9 @@ theorem exhIE_eq_exhMW_of_infClosure_subset {E : Set (Set World)} (hfin : E.Fini
   rw [← hMW]
   refine (exhIE_eq_exhMW_iff ALT φ).2 fun u hu hmin ↦ ?_
   rw [hMW] at hmin ⊢
-  obtain ⟨v, hv, hvu, huv⟩ : ∃ v ∈ φ, Preorder.satisfied (· ∈ ·) E v ⊆
-      Preorder.satisfied (· ∈ ·) E u ∧ ¬ Preorder.satisfied (· ∈ ·) E u ⊆
-        Preorder.satisfied (· ∈ ·) E v := by
+  obtain ⟨v, hv, hvu, huv⟩ : ∃ v ∈ φ, {a ∈ E | v ∈ a} ⊆
+      {a ∈ E | u ∈ a} ∧ ¬ {a ∈ E | u ∈ a} ⊆
+        {a ∈ E | v ∈ a} := by
     simpa [mem_exhMW, MinimalFor, hu] using hmin
   have hne : {a ∈ E | u ∈ a}.Nonempty := by
     by_contra h
@@ -93,7 +93,7 @@ theorem exhIE_eq_exhMW_of_infClosure_subset {E : Set (Set World)} (hfin : E.Fini
   refine ⟨⋂₀ {a ∈ E | u ∈ a}, h₁ (infClosed_infClosure.sInf_mem_of_nonempty
     (hfin.subset fun _ h ↦ h.1) hne fun _ h ↦ subset_infClosure h.1), fun a ha ↦ ha.2,
     fun w hw hwA ↦ huv ?_⟩
-  have huw : Preorder.satisfied (· ∈ ·) E u ⊆ Preorder.satisfied (· ∈ ·) E w :=
+  have huw : {a ∈ E | u ∈ a} ⊆ {a ∈ E | w ∈ a} :=
     fun a ha ↦ ⟨ha.1, hwA a ha⟩
   exact huw.trans (hw.2 hv (hvu.trans huw))
 
