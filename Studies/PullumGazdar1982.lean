@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Regular
-public import Linglib.Core.Computability.ContextFreeGrammar.Tree
+public import Linglib.Core.Computability.ContextFreeGrammar.Tree.Basic
 public import Linglib.Data.Examples.PullumGazdar1982
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

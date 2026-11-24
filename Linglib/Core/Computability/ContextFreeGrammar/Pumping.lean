@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.ContextFreeGrammar.Tree
+public import Linglib.Core.Computability.ContextFreeGrammar.Tree.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Order.Minimal

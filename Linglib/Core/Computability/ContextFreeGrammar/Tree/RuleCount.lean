@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.ContextFreeGrammar.Tree
+public import Linglib.Core.Computability.ContextFreeGrammar.Tree.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
@@ -30,8 +30,6 @@ weight of a derivation under a weighted grammar depends on the tree only through
 * `RoseTree.prod_map_localTrees_eq_prod_ruleCounts`: the same for a multiset of licensed trees.
 * `RoseTree.Licensed.sum_ruleCount_eq_count_values`: the rules at a nonterminal are applied in a
   licensed tree as often as the nonterminal occurs.
-* `ContextFreeGrammar.prod_inputs_prod_rulesWithInput`: a product over the rules of a grammar is a
-  product over its nonterminals of the products over the rules at each.
 -/
 
 @[expose] public section
@@ -158,18 +156,3 @@ theorem Licensed.sum_ruleCount_eq_count_values (ht : t.Licensed g.Licenses) (A :
 end BigOperators
 
 end RoseTree
-
-namespace ContextFreeGrammar
-
-variable {T : Type*}
-
-/-- A product over the rules of a grammar is a product over the nonterminals it has a rule for
-of the products over the rules at each. -/
-@[to_additive /-- A sum over the rules of a grammar is a sum over the nonterminals it has a rule
-for of the sums over the rules at each. -/]
-theorem prod_inputs_prod_rulesWithInput {M : Type*} [CommMonoid M]
-    (g : ContextFreeGrammar T) [DecidableEq g.NT] (f : ContextFreeRule T g.NT → M) :
-    ∏ a ∈ g.inputs, ∏ r ∈ g.rulesWithInput a, f r = ∏ r ∈ g.rules, f r :=
-  Finset.prod_fiberwise_of_maps_to (fun _ hr ↦ g.input_mem_inputs hr) f
-
-end ContextFreeGrammar
