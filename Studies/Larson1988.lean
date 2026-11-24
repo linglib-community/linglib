@@ -7,7 +7,7 @@ module
 
 public import Linglib.Data.Examples.Larson1988
 public import Linglib.Syntax.Tree.Shell
-public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Cat
 public import Linglib.Languages.English.Nouns
 public import Linglib.Languages.English.Determiners
 public import Linglib.Languages.English.Verbs.Levin

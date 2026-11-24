@@ -8,7 +8,7 @@ public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Minimalist.SyntacticObject.Constituency
-public import Linglib.Syntax.Minimalist.Clause.Size
+public import Linglib.Syntax.Minimalist.ExtendedProjection.Size
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
 public import Linglib.Syntax.Minimalist.Verbal.Voice.Denotation
 public import Linglib.Data.Examples.Pylkkanen2008

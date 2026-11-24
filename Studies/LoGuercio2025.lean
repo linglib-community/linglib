@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Cat
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Data.Examples.LoGuercio2025

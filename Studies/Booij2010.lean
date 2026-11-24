@@ -11,7 +11,7 @@ public import Linglib.Languages.Dutch.Verbs
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Morphology.ConstructionMorphology.Pattern
 public import Linglib.Morphology.ConstructionMorphology.Schema
-public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Cat
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.FinCases
