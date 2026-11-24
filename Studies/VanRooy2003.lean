@@ -163,6 +163,34 @@ theorem newspaper_betterAnswer :
     have hb : NewsW.both ∈ ({NewsW.station} : Set NewsW) := by rw [h]; simp
     simp at hb
 
+instance : MeasurableSpace Walk := ⊤
+
+instance : DiscreteMeasurableSpace Walk := ⟨fun _ ↦ trivial⟩
+
+/-- Mention-some suffices: a respondent who names a place where the newspaper is sold, whichever
+it names where there are two, is worth as much as one who says exactly where it is sold. -/
+theorem newspaper_mentionSome (κ : Kernel NewsW Walk) [IsMarkovKernel κ]
+    (hκ : ∀ w a, κ w {a} ≠ 0 → w ∈ optimalityRegion newspaper a) :
+    valueOfInformation (decisionValue newspaper) κ newsPrior =
+      valueOfInformation (decisionValue newspaper) Kernel.id newsPrior :=
+  Proposition.valueOfInformation_eq_id_of_forall_mem_issue newspaper newsPrior hκ
+    (Proposition.optimalityRegion_mem_issue newspaper)
+
+/-- A respondent who names the station whether or not the newspaper is sold there is worth
+less. -/
+theorem newspaper_station_ne :
+    valueOfInformation (decisionValue newspaper) (Kernel.const NewsW (Measure.dirac Walk.station))
+        newsPrior ≠ valueOfInformation (decisionValue newspaper) Kernel.id newsPrior := by
+  rw [Ne, Proposition.valueOfInformation_eq_id_iff_forall_mem_issue]
+  intro h
+  have hmem (w : NewsW) : w ∈ {w | newsPrior {w} ≠ 0 ∧
+      Kernel.const NewsW (Measure.dirac Walk.station) w {Walk.station} ≠ 0} :=
+    ⟨uniformOn_univ_singleton_ne_zero w, by simp⟩
+  obtain ⟨a, ha⟩ := h .station
+  cases a
+  · exact absurd (ha .palace .palace (hmem _)) (by norm_num [newspaper])
+  · exact absurd (ha .station .station (hmem _)) (by norm_num [newspaper])
+
 end Value
 
 /-! ### Mention-some and mention-all from one rule -/

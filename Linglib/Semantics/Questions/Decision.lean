@@ -21,10 +21,14 @@ utility value of the answers, weighted by their probabilities.
 Information resolves a decision problem when one action is best in every world that it leaves open.
 The information that resolves the problem forms an inquisitive question, `issue U`.
 
-There are two main results. A finer question is never worth less. And, under a prior with full
+There are three main results. A finer question is never worth less. Under a prior with full
 support, a question is worth as much as knowing the world exactly if and only if each of its answers
-resolves the problem. See `Inquisitive.Proposition.utility_anti` and
-`Inquisitive.Proposition.utility_eq_utility_bot_iff`.
+resolves the problem. And a respondent, an experiment that draws a response at each world, is worth
+that much if and only if the worlds where each response may be given resolve the problem; so a
+truthful respondent to a question that entails the issue is worth it whichever true answer it
+gives. See `Inquisitive.Proposition.utility_anti`,
+`Inquisitive.Proposition.utility_eq_utility_bot_iff` and
+`Inquisitive.Proposition.valueOfInformation_eq_id_iff_forall_mem_issue`.
 
 ## Implementation notes
 
@@ -33,10 +37,6 @@ integral over cells of the prior conditioned on the cell. The two agree when the
 probability zero form a null set, as they do for countably many cells, and only the posterior is
 defined beyond that. The theorems assume finitely many worlds and actions, as the value of
 information they rest on does.
-
-## TODO
-
-* The value of a question whose answers overlap, through an experiment that draws a true answer.
 
 ## References
 
@@ -200,20 +200,6 @@ theorem decisionValue_cond_of_forall_eq {w : W} (hs : ∀ v ∈ s, U v = U w)
     ((ae_cond_mem hsm).mono fun v hv ↦ by simp only [hs v hv])]
   simp
 
-/-- Conditioned on information that resolves the problem, the decision value is the expected
-utility of the best action in each world. -/
-theorem decisionValue_cond_of_isResolved [Finite W] [DiscreteMeasurableSpace W] [Finite A]
-    (hs : IsResolved U s) (hμ : μ s ≠ 0) :
-    decisionValue U μ[|s] = ∫ w, ⨆ a, U w a ∂μ[|s] := by
-  obtain ⟨a, ha⟩ := hs
-  have : Nonempty A := ⟨a⟩
-  have := cond_isProbabilityMeasure (μ := μ) hμ
-  have hsup : ∀ᵐ w ∂μ[|s], ⨆ b, U w b = U w a := (ae_cond_mem .of_discrete).mono fun w hw ↦
-    le_antisymm (ciSup_le fun b ↦ ha b w hw) (le_ciSup (Set.finite_range _).bddAbove a)
-  rw [integral_congr_ae hsup]
-  exact le_antisymm (ciSup_le fun b ↦ integral_mono_ae .of_finite .of_finite
-    ((ae_cond_mem .of_discrete).mono fun w hw ↦ ha b w hw)) (integral_le_decisionValue _ a)
-
 end Answer
 
 /-! ### The utility of questions -/
@@ -299,47 +285,49 @@ theorem utility_bot : utility U μ ⊥ = valueOfInformation (decisionValue U) Ke
     decisionValue_cond_of_forall_eq U μ (fun v hv ↦ by rw [Set.mem_singleton_iff.1 hv])
       .of_discrete hw)
 
+omit [DiscreteMeasurableSpace W] in
+/-- A respondent is worth the value of perfect information exactly when, for each response, the
+worlds where it may be given resolve the decision problem. -/
+theorem valueOfInformation_eq_id_iff_forall_mem_issue [Finite A] [Nonempty A] {R : Type*}
+    [MeasurableSpace R] [Finite R] [MeasurableSingletonClass R] (κ : Kernel W R)
+    [IsMarkovKernel κ] :
+    valueOfInformation (decisionValue U) κ μ = valueOfInformation (decisionValue U) Kernel.id μ ↔
+      ∀ r, {w | μ {w} ≠ 0 ∧ κ w {r} ≠ 0} ∈ issue U :=
+  (valueOfInformation_decisionValue_eq_id_iff U κ μ).trans <| forall_congr' fun _ ↦
+    ⟨fun ⟨a, h⟩ ↦ ⟨a, fun b w hw ↦ h w hw.1 hw.2 b⟩,
+      fun ⟨a, h⟩ ↦ ⟨a, fun w h₁ h₂ b ↦ h b w ⟨h₁, h₂⟩⟩⟩
+
+omit [DiscreteMeasurableSpace W] in
+/-- A truthful respondent whose responses all resolve the decision problem is worth the value of
+perfect information, whichever true response it gives. -/
+theorem valueOfInformation_eq_id_of_forall_mem_issue [Finite A] [Nonempty A] {R : Type*}
+    [MeasurableSpace R] [Finite R] [MeasurableSingletonClass R] {κ : Kernel W R}
+    [IsMarkovKernel κ] {den : R → Set W} (hκ : ∀ w r, κ w {r} ≠ 0 → w ∈ den r)
+    (hden : ∀ r, den r ∈ issue U) :
+    valueOfInformation (decisionValue U) κ μ = valueOfInformation (decisionValue U) Kernel.id μ :=
+  (valueOfInformation_eq_id_iff_forall_mem_issue U μ κ).2 fun r ↦
+    (issue U).isLowerSet (fun w hw ↦ hκ w r hw.2) (hden r)
+
 /-- A question that entails the issue of the decision problem is worth the value of perfect
 information. -/
 theorem utility_eq_utility_bot [Finite A] [Nonempty A] {Q : Setoid W}
     (hQ : fromSetoid Q ≤ issue U) : utility U μ Q = utility U μ ⊥ := by
-  rw [utility_bot, utility_eq_integral_sub, valueOfInformation_id]
-  simp only [decisionValue_dirac]
-  rw [← integral_integral_cond_cell μ (fun w ↦ ⨆ a, U w a) Q]
-  congr 1
-  exact integral_congr_ae (ae_iff_of_countable.2 fun w hw ↦
-    decisionValue_cond_of_isResolved U μ ((fromSetoid_le_issue_iff U).1 hQ w) fun h ↦
-      hw (measure_mono_null (Set.singleton_subset_iff.2 (Q.mem_cell_self w)) h))
+  rw [utility_bot, utility, valueOfInformation_eq_id_iff_forall_mem_issue]
+  refine Quotient.ind fun w ↦ ((fromSetoid_le_issue_iff U).1 hQ w).mono fun v hv ↦ ?_
+  have h := hv.2
+  rw [Kernel.deterministic_apply, Ne, Measure.dirac_apply' _ (.singleton _),
+    Set.indicator_apply_eq_zero, not_imp] at h
+  exact Quotient.exact h.1
 
 /-- Under a prior with full support, a question worth the value of perfect information entails
 the issue of the decision problem. -/
 theorem fromSetoid_le_issue_of_utility_eq [Finite A] [Nonempty A] {Q : Setoid W}
     (hμ : ∀ w, μ {w} ≠ 0) (h : utility U μ Q = utility U μ ⊥) : fromSetoid Q ≤ issue U := by
-  rw [fromSetoid_le_issue_iff]
-  have hsup (v : W) (a : A) : U v a ≤ ⨆ b, U v b := le_ciSup (Set.finite_range _).bddAbove a
-  have hle (w : W) : decisionValue U μ[|Q.cell w] ≤ ∫ v, ⨆ a, U v a ∂μ[|Q.cell w] :=
-    ciSup_le fun a ↦ integral_mono .of_finite .of_finite fun v ↦ hsup v a
-  have hint : ∫ w, (∫ v, ⨆ a, U v a ∂μ[|Q.cell w] - decisionValue U μ[|Q.cell w]) ∂μ = 0 := by
-    rw [integral_sub .of_finite .of_finite, integral_integral_cond_cell μ (fun v ↦ ⨆ a, U v a) Q,
-      sub_eq_zero]
-    rw [utility_bot, utility_eq_integral_sub, valueOfInformation_id] at h
-    simp only [decisionValue_dirac] at h
-    linarith
-  have hae := (integral_eq_zero_iff_of_nonneg (fun w ↦ sub_nonneg.2 (hle w)) .of_finite).1 hint
-  intro w
-  have hw : ∫ v, ⨆ a, U v a ∂μ[|Q.cell w] = decisionValue U μ[|Q.cell w] :=
-    sub_eq_zero.1 (ae_iff_of_countable.1 hae w (hμ w))
-  obtain ⟨a, ha⟩ := Finite.exists_max fun a ↦ ∫ v, U v a ∂μ[|Q.cell w]
-  have hDV : decisionValue U μ[|Q.cell w] = ∫ v, U v a ∂μ[|Q.cell w] :=
-    le_antisymm (ciSup_le ha) (integral_le_decisionValue _ a)
-  have h0 : ∫ v, ((⨆ b, U v b) - U v a) ∂μ[|Q.cell w] = 0 := by
-    rw [integral_sub .of_finite .of_finite, hw, hDV, sub_self]
-  have hae' := (integral_eq_zero_iff_of_nonneg (fun v ↦ sub_nonneg.2 (hsup v a)) .of_finite).1 h0
-  refine ⟨a, fun b v hv ↦ ?_⟩
-  have hv0 : μ[|Q.cell w] {v} ≠ 0 := by
-    rw [cond_apply .of_discrete, Set.inter_eq_right.2 (Set.singleton_subset_iff.2 hv)]
-    exact mul_ne_zero (ENNReal.inv_ne_zero.2 (measure_ne_top μ _)) (hμ v)
-  exact (hsup v b).trans_eq (sub_eq_zero.1 (ae_iff_of_countable.1 hae' v hv0))
+  rw [utility_bot, utility, valueOfInformation_eq_id_iff_forall_mem_issue] at h
+  refine (fromSetoid_le_issue_iff U).2 fun w ↦ (h ⟦w⟧).mono fun v hv ↦ ⟨hμ v, ?_⟩
+  rw [Kernel.deterministic_apply, Measure.dirac_apply' _ (.singleton _),
+    Set.indicator_of_mem (Quotient.sound hv)]
+  exact one_ne_zero
 
 /-- Under a prior with full support, the questions worth the value of perfect information are
 those that entail the issue of the decision problem. -/
