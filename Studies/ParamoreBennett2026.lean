@@ -440,6 +440,14 @@ theorem counterfeeding_generalPublic :
       ¬ IsFixedPt harmony.apply (surface [«ɑɑ», «ʋ», «ɑɑ», m]) :=
   feeds_generalPublic.1.underapplication
 
+-- (5b): the two orders give different results, and the surface form is not its own surface form
+theorem not_isFixedPt_surface_generalPublic :
+    assimilation.apply (harmony.apply [«ɑɑ», «ʋ», «ɑɑ», m]) ≠
+        harmony.apply (assimilation.apply [«ɑɑ», «ʋ», «ɑɑ», m]) ∧
+      ¬ IsFixedPt surface (surface [«ɑɑ», «ʋ», «ɑɑ», m]) :=
+  ⟨feeds_generalPublic.1.apply_ne_apply,
+    feeds_generalPublic.1.not_isFixedPt_comp (by decide +kernel)⟩
+
 -- /ɑɑʋɑɑm/ is covert whether or not harmony applies; /tʃɑɑʋẽẽ/ only if it applies
 theorem covert_generalPublic :
     (Covert surface [«ɑɑ», «ʋ», «ɑɑ», m] ∧ Covert assimilation.apply [«ɑɑ», «ʋ», «ɑɑ», m]) ∧
