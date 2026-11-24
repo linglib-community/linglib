@@ -306,6 +306,34 @@ theorem apply_cons (hd : r.direction = .right) (hw : r.PreservesTier) (s : α) (
   rw [r.scan_concat hw, List.reverse_append, List.reverse_singleton, List.singleton_append,
     List.filter_reverse, List.head?_reverse]
 
+private theorem runFrom_eq_self_iff (ht : ∀ s, r.tier s) (q : Option α) (w : List α) :
+    r.toMealy.runFrom q w = w ↔
+      (∀ x ∈ w.head?, r.emit q x = x) ∧ w.IsChain fun a b ↦ r.emit (some a) b = b := by
+  induction w generalizing q with
+  | nil => simp
+  | cons x xs ih =>
+    rw [r.toMealy_runFrom_cons_of_tier (ht x), List.cons.injEq, List.isChain_cons]
+    constructor
+    · rintro ⟨hx, h⟩
+      rw [hx] at h
+      exact ⟨by simpa using hx, (ih _).1 h⟩
+    · rintro ⟨hx, h⟩
+      have hx' : r.emit q x = x := hx x rfl
+      exact ⟨hx', by rw [hx']; exact (ih _).2 h⟩
+
+/-- With every segment visible and no default, the left-to-right run fixes a word exactly when
+each segment is output unchanged with the segment before it as window. -/
+theorem scan_eq_self_iff_isChain (ht : ∀ s, r.tier s) (hd : r.default = none) (w : List α) :
+    r.scan w = w ↔ w.IsChain fun a b ↦ r.emit (some a) b = b := by
+  rw [scan_eq_runFrom, r.runFrom_eq_self_iff ht]
+  exact and_iff_right fun x _ ↦ r.emit_of_found_eq_none hd (r.found_none x)
+
+/-- With every segment visible and no default, a rule fixes a word exactly when each segment,
+read in the rule's direction, is output unchanged with the segment before it as window. -/
+theorem apply_eq_self_iff_isChain (ht : ∀ s, r.tier s) (hd : r.default = none) (w : List α) :
+    r.apply w = w ↔ (r.direction.orient w).IsChain fun a b ↦ r.emit (some a) b = b := by
+  rw [apply_eq_self_iff, r.scan_eq_self_iff_isChain ht hd]
+
 /-- A rule scanning from the right rewrites the end of a word as it does within the word. -/
 theorem apply_drop (hd : r.direction = .right) (n : ℕ) (w : List α) :
     r.apply (w.drop n) = (r.apply w).drop n := by
