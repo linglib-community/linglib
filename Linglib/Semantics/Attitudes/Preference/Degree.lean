@@ -12,11 +12,23 @@ subject prefers a proposition with a threshold set by a comparison class `C`, in
 semantics of Villalta that Romero and Uegaki and Sudo build on. Relating an agent to a set of
 propositions, the answers of a question or the singleton of a declarative's proposition, it holds
 when some proposition of the set lies in the comparison class and is preferred above the threshold.
-The predicate is therefore
-[clausally distributive](##Preferential.isClausallyDistributive_degreeComparison),
-and when the comparison class lies inside the question [it asserts only that the threshold is
-significant on the class](##Preferential.degreeComparison_iff_thresholdSignificant), which is how
-Uegaki and Sudo derive the anti-rogativity of *hope*.
+The predicate is therefore clausally distributive, and when the comparison class lies inside the
+question it asserts only that the threshold is significant on the class, which is how Uegaki and
+Sudo derive the anti-rogativity of *hope*.
+
+## Main definitions
+
+* `Preferential.preferred`: the members of the comparison class preferred above its threshold.
+* `Preferential.degreeComparison`: some proposition of the complement is preferred.
+* `Preferential.ThresholdSignificant`: some member of the comparison class measures above its
+  threshold.
+
+## Main results
+
+* `Preferential.isClausallyDistributive_degreeComparison`: degree-comparison predicates are
+  clausally distributive.
+* `Preferential.degreeComparison_iff_thresholdSignificant`: with the comparison class inside the
+  question, the predicate asserts that the threshold is significant.
 
 ## Implementation notes
 

@@ -53,10 +53,11 @@ expected value but `A ∨ B` ties with its negation, Sloman's Principle and Weak
 Read as the positive form of a measure of obligation, *ought* takes its logic from that measure.
 If the measure is intermediate, obligation is closed under the disjunction of disjoint
 propositions, and it satisfies the Smith Principle when no proposition is obligatory together with
-its negation. The positive form of expected value carries the Smith argument on the sample model
-in this way. It is not closed under disjunction in general, since on Cariani's model a threshold
-from 0 up to 25 lies below the expected values of `A` and of `B` and not below that of `A ∨ B`,
-and it can hold of a proposition and its negation, as a threshold below −25 does there.
+its negation, which Sloman's Principle ensures over polar alternatives. The positive form of
+expected value carries the Smith argument on the sample model in this way. It is not closed under
+disjunction in general, since on Cariani's model a threshold from 0 up to 25 lies below the
+expected values of `A` and of `B` and not below that of `A ∨ B`, and it can hold of a proposition
+and its negation, as a threshold below −25 does there.
 
 ## Implementation notes
 
@@ -441,6 +442,14 @@ proposition together with its negation (8.79). -/
 theorem smith_of_isIntermediate (hm : IsIntermediate m) (hex : ∀ ⦃χ⦄, θ < m χ → ¬ θ < m χᶜ)
     (h : φ ∪ ψ = Set.univ) (hφ : θ < m φ) (hψ : θ < m ψ) : θ < m (φ ∩ ψ) :=
   hm.inf_mem (s := Set.Ioi θ) (.Ioi θ) h hφ (hex hψ)
+
+-- §8.9, §8.11: with polar alternatives Sloman's Principle supplies the exclusivity
+theorem smith_of_sloman {μ : Set W → ℝ} {alt : Set W → Set (Set W)} [Nonempty W]
+    (hm : IsIntermediate m) (hs : ∀ ⦃χ⦄, θ < m χ → ∀ ξ ∈ alt χ, ξ ≠ χ → μ ξ < μ χ)
+    (halt : ∀ χ, χᶜ ∈ alt χ) (h : φ ∪ ψ = Set.univ) (hφ : θ < m φ) (hψ : θ < m ψ) :
+    θ < m (φ ∩ ψ) :=
+  smith_of_isIntermediate hm (fun χ h₁ h₂ ↦ lt_asymm (hs h₁ _ (halt χ) ne_compl_self.symm)
+    (hs h₂ _ (by simpa using halt χᶜ) ne_compl_self)) h hφ hψ
 
 end Scalar
 

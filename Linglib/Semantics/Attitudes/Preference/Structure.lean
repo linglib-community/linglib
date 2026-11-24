@@ -1,19 +1,44 @@
 module
 
 public import Mathlib.Order.Antichain
+public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Preference structures
 
 A preference structure is a set of propositions strictly ranked by importance. It is consistent
-with an information state when [every family of mutually unranked preferences is jointly
-realizable](##PreferenceStructure.consistent_iff_forall_isAntichain), in particular [the maximal
-ones](##PreferenceStructure.Consistent.inter_sInter_maximals_nonempty). For an unranked structure
-consistency is [joint realizability](##PreferenceStructure.consistent_discrete_iff), and for a
-totally ranked one [realism over a nonempty information
-state](##PreferenceStructure.consistent_iff_realistic_and_nonempty_of_isChain). *Want* relates an
-agent to the maximal preferences of the structure its context supplies.
+with an information state when every family of its preferences that the information state rules
+out together contains a strictly ranked pair, which is to say that every family of mutually
+unranked preferences is jointly realizable, the maximal ones in particular. For an unranked
+structure consistency is joint realizability, and for a totally ranked one it is realism over a
+nonempty information state.
+
+*Want* relates an agent to the maximal preferences of the structure its context supplies. On the
+exact-match reading the proposition wanted is one of them, on the success-oriented reading it
+entails one, and on the Quine–Hintikka reading one entails it, so the last two are the lower and
+the upper closure of the maximal preferences under entailment.
+
+## Main definitions
+
+* `PreferenceStructure`: a set of propositions with a strict ranking.
+* `PreferenceStructure.maximals`: the preferences with none ranked above them.
+* `PreferenceStructure.Consistent`, `PreferenceStructure.Realistic`: consistency and realism
+  relative to an information state.
+* `Desire.Preferential.Want`, `Desire.Preferential.WantSuccessOriented`,
+  `Desire.Preferential.WantQuineHintikka`: the three readings of *want*.
+
+## Main results
+
+* `PreferenceStructure.consistent_iff_forall_isAntichain`: consistency as joint realizability of
+  mutually unranked preferences.
+* `PreferenceStructure.Consistent.inter_sInter_maximals_nonempty`: the maximal preferences of a
+  consistent structure are jointly realizable.
+* `PreferenceStructure.consistent_discrete_iff`,
+  `PreferenceStructure.consistent_iff_realistic_and_nonempty_of_isChain`: consistency of an
+  unranked and of a totally ranked structure.
+* `Desire.Preferential.Want.not_compl`: over a consistent background a proposition and its
+  negation are not both wanted.
 
 ## Implementation notes
 
@@ -206,23 +231,33 @@ variable {Agent : Type*} (P : Agent → W → PreferenceStructure W) (a : Agent)
 
 /-- On the exact-match reading, `a` wants `φ` at `w` when `φ` is itself a maximal preference of
 the structure `P a w`. -/
+-- [condoravdi-lauer-2016] (69), (71c)
 def Want : Prop := φ ∈ (P a w).maximals
 
 /-- On the success-oriented reading, `a` wants `φ` when `φ` entails a maximal preference, which
 `φ` then satisfies. -/
-def WantSuccessOriented : Prop := ∃ p ∈ (P a w).maximals, φ ⊆ p
+-- [condoravdi-lauer-2016] (71a)
+def WantSuccessOriented : Prop := φ ∈ lowerClosure (P a w).maximals
 
 /-- On the Quine–Hintikka reading, `a` wants `φ` when a maximal preference entails `φ`, so that the
 preference is satisfied only if `φ` holds. -/
-def WantQuineHintikka : Prop := ∃ p ∈ (P a w).maximals, p ⊆ φ
+-- [condoravdi-lauer-2016] (71b)
+def WantQuineHintikka : Prop := φ ∈ upperClosure (P a w).maximals
 
 variable {P a φ w}
 
+theorem wantSuccessOriented_iff :
+    WantSuccessOriented P a φ w ↔ ∃ p ∈ (P a w).maximals, φ ⊆ p :=
+  mem_lowerClosure
+
+theorem wantQuineHintikka_iff : WantQuineHintikka P a φ w ↔ ∃ p ∈ (P a w).maximals, p ⊆ φ :=
+  mem_upperClosure
+
 theorem Want.wantSuccessOriented (h : Want P a φ w) : WantSuccessOriented P a φ w :=
-  ⟨φ, h, subset_rfl⟩
+  subset_lowerClosure h
 
 theorem Want.wantQuineHintikka (h : Want P a φ w) : WantQuineHintikka P a φ w :=
-  ⟨φ, h, subset_rfl⟩
+  subset_upperClosure h
 
 /-- Over a consistent background a proposition and its negation are not both wanted. -/
 theorem Want.not_compl {B : Set W} (hC : (P a w).Consistent B) (h : Want P a φ w) :
@@ -232,10 +267,10 @@ theorem Want.not_compl {B : Set W} (hC : (P a w).Consistent B) (h : Want P a φ 
 
 /-- The success-oriented reading is downward entailing. -/
 theorem antitone_wantSuccessOriented : Antitone (WantSuccessOriented P a · w) :=
-  fun _ _ hφψ ⟨p, hp, hψp⟩ ↦ ⟨p, hp, hφψ.trans hψp⟩
+  fun _ _ hφψ h ↦ (lowerClosure (P a w).maximals).lower hφψ h
 
 /-- The Quine–Hintikka reading is upward entailing. -/
 theorem monotone_wantQuineHintikka : Monotone (WantQuineHintikka P a · w) :=
-  fun _ _ hφψ ⟨p, hp, hpφ⟩ ↦ ⟨p, hp, hpφ.trans hφψ⟩
+  fun _ _ hφψ h ↦ (upperClosure (P a w).maximals).upper hφψ h
 
 end Desire.Preferential
