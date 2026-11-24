@@ -7,6 +7,8 @@ module
 
 public import Linglib.Core.ModelTheory.Semantics
 public import Linglib.Core.Data.List.DropRight
+public import Mathlib.Order.SuccPred.Fin
+public import Mathlib.Order.SuccPred.Nat
 
 /-!
 # String models
@@ -34,14 +36,19 @@ These formulas are the guards of logical transductions.
 * `StringFormula.Bounded.holdsAt_congr`: a bounded formula cannot distinguish positions whose
   windows agree.
 * `StringFormula.holdsAt_window`: `window r u` holds where the last `r` symbols spell `u`.
+* `StringModel.succ_eq_orderSucc`, `StringModel.pred_eq_orderPred`,
+  `StringModel.covBy_iff_succ_eq`: the successor and predecessor are those of the order of
+  positions, and one position covers another exactly when it is its successor and differs from it.
 
 ## Implementation notes
 
 The word models of `Subregular.WordModel` order positions by a binary relation, over which a
-quantifier-free formula cannot leave its variables; the window is reached here through the
-function symbols. `HoldsAt` evaluates at a natural-number position, false off the word, as the
-docking processes and transductions scan positions by index. The terms of boolean monadic
-recursive schemes, `Subregular.Walk`, instead step off the word into nothing.
+quantifier-free formula cannot leave its variables; the window is reached here through the function
+symbols. Both read the one linear order of the positions: the functions here are its `Order.succ`
+and `Order.pred`, which fix the last and the first position, and the successor relation of word
+models is its covering relation. `HoldsAt` evaluates at a natural-number position, false off the
+word, as the docking processes and transductions scan positions by index. The terms of boolean
+monadic recursive schemes, `Subregular.Walk`, instead step off the word into nothing.
 
 ## References
 
@@ -117,6 +124,37 @@ theorem val_succ (i : StringModel w) :
   unfold succ; split_ifs <;> rfl
 
 @[simp] theorem val_pred (i : StringModel w) : i.pred.val = i.val - 1 := rfl
+
+instance : LinearOrder (StringModel w) := inferInstanceAs (LinearOrder (Fin w.length))
+
+instance : SuccOrder (StringModel w) := inferInstanceAs (SuccOrder (Fin w.length))
+
+instance : PredOrder (StringModel w) := inferInstanceAs (PredOrder (Fin w.length))
+
+theorem le_iff_val_le {i j : StringModel w} : i ≤ j ↔ i.val ≤ j.val := .rfl
+
+/-- The successor of the string model is that of the order of positions. -/
+theorem succ_eq_orderSucc (i : StringModel w) : i.succ = Order.succ i := by
+  unfold succ
+  split_ifs with h
+  · exact (CovBy.succ_eq (Fin.covBy_iff.2 (Nat.covBy_iff_add_one_eq.2 rfl))).symm
+  · exact (Order.succ_eq_iff_isMax.2 fun j _ ↦ le_iff_val_le.2 (by have := j.val_lt; omega)).symm
+
+/-- The predecessor of the string model is that of the order of positions. -/
+theorem pred_eq_orderPred (i : StringModel w) : i.pred = Order.pred i := by
+  by_cases h : i.val = 0
+  · rw [Order.pred_eq_iff_isMin.2 fun j _ ↦ le_iff_val_le.2 (by omega)]
+    exact ext (by simp [h])
+  · have hc : i.pred ⋖ i :=
+      Fin.covBy_iff.2 (Nat.covBy_iff_add_one_eq.2 (by change i.val - 1 + 1 = i.val; omega))
+    exact hc.pred_eq.symm
+
+/-- One position covers another, as the successor relation of word models has it, exactly when the
+second is the successor of the first and differs from it. -/
+theorem covBy_iff_succ_eq {i j : StringModel w} : i ⋖ j ↔ i.succ = j ∧ i ≠ j := by
+  rw [succ_eq_orderSucc]
+  exact ⟨fun h ↦ ⟨h.succ_eq, h.lt.ne⟩, fun ⟨h, hne⟩ ↦ h ▸ Order.covBy_succ_of_not_isMax
+    fun hmax ↦ hne ((Order.succ_eq_iff_isMax.2 hmax).symm.trans h)⟩
 
 instance : (stringLanguage α).Structure (StringModel w) where
   funMap
