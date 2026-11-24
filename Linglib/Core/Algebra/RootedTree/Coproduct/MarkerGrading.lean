@@ -5,21 +5,29 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Workspace.Coproduct.Trace
-public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceConservation
+public import Linglib.Core.Algebra.RootedTree.Coproduct.Marker
+public import Linglib.Core.Combinatorics.RootedTree.MarkerCutConservation
 
 /-!
-# Edge-count grading of the Δ^c bialgebra
+# The edge grading of the marker coproduct
 
-The graded subspaces of `ConnesKreimer R (UnorderedTree (α ⊕ β))` under the
-edge-count grading (the summed `UnorderedTree.numEdges` of a forest),
-with the coproduct half of the grading compatibility
-(`traceComulAlgHom_of'_mem_gradedSpan`) — the graded content of Lemma 1.2.10.
+The algebra `ConnesKreimer R (UnorderedTree (α ⊕ β))` is graded by the number of edges of a forest.
+A marker cut conserves edges, so the marker coproduct takes a forest with `n` edges into the sum of
+the tensor products of the pieces of degrees `i` and `j` with `i + j = n`.
 
-TODO: once mathlib's graded coalgebra/bialgebra API lands
-(leanprover-community/mathlib4#39849), restate `gradedPiece` as a
-`DirectSum.Decomposition` and this file's content as a `GradedBialgebra`
-instance (with connectedness feeding the graded Hopf upgrade).
+## Main definitions
+
+* `ConnesKreimer.gradedPiece`: the span of the forests with `n` edges.
+
+## Main results
+
+* `ConnesKreimer.markerComulAlgHom_of'_mem_gradedSpan`: the marker coproduct preserves the grading.
+
+## TODO
+
+Once mathlib's graded coalgebra and bialgebra API lands (leanprover-community/mathlib4#39849),
+restate `gradedPiece` as a `DirectSum.Decomposition` and this file's content as a `GradedBialgebra`
+instance.
 
 ## References
 
@@ -36,21 +44,7 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommRing R] {α β : Type*}
 
-/-! ### Edge-count grading
-
-Per [marcolli-chomsky-berwick-2025] p. 37, Lemma 1.2.10:
-
-> Let V^c(𝔉_{SO_0}) denote the vector space (over ℚ) spanned by the
-> workspaces F ∈ 𝔉_{SO_0}, endowed with the product given by the
-> disjoint union ⊔ and the coproduct Δ^c of (1.2.8). The space
-> V(𝔉_{SO_0}) is graded by the number of edges. Then
-> (V^c(𝔉_{SO_0}), ⊔, Δ^c) is a graded bialgebra.
-
-This file defines the graded subspaces and proves the coproduct half of
-the grading compatibility (`traceComulAlgHom_of'_mem_gradedSpan`); the
-product half is edge-count additivity over disjoint union
-(`Multiset.map_add, Multiset.sum_add`), and edge conservation through the trace cuts is
-`traceCuts_numEdges` (`Coproduct/TraceConservation.lean`). -/
+/-! ### Edge-count grading -/
 
 /-- The graded piece `V_n` is the subspace of `ConnesKreimer R (UnorderedTree X)`
     spanned by forests with exactly `n` edges. -/
@@ -64,7 +58,7 @@ noncomputable def gradedPiece (X : Type*) (n : ℕ) :
 
 /-- The span of basis tensors `of' F₁ ⊗ of' F₂` with total edge count
     `n` — the homogeneous degree-`n` piece of the tensor square through
-    which Δ^c factors. -/
+    which the marker coproduct factors. -/
 private noncomputable def gradedTensorSpan (n : ℕ) :
     Submodule R (ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
       ConnesKreimer R (UnorderedTree (α ⊕ β))) :=
@@ -95,11 +89,11 @@ private theorem gradedTensorSpan_mul {m k : ℕ}
         ← ConnesKreimer.of'_add]
   exact hle (Submodule.mul_mem_mul hu hv)
 
-/-- Tree-level membership: `Δ^c` of a single tree is homogeneous of
+/-- Tree-level membership: the marker coproduct of a single tree is homogeneous of
     degree the tree's edge count. -/
 private theorem comulTree_mem (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
-    comulTreeOfCuts (R := R) (traceCuts τ) T ∈
+    comulTreeOfCuts (R := R) (markerCuts τ) T ∈
       gradedTensorSpan (R := R) (α := α) (β := β) T.numEdges := by
   unfold comulTreeOfCuts
   refine Submodule.add_mem _ ?_ ?_
@@ -113,13 +107,13 @@ private theorem comulTree_mem (τ : UnorderedTree (α ⊕ β) → β)
     obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hc
     refine Submodule.subset_span ⟨p.1, {p.2}, ?_, rfl⟩
     rw [Multiset.map_singleton, Multiset.sum_singleton]
-    exact traceCuts_numEdges τ T p hp
+    exact markerCuts_numEdges τ T p hp
 
-/-- Forest-level membership: `Δ^c` of a forest is homogeneous of degree
+/-- Forest-level membership: the marker coproduct of a forest is homogeneous of degree
     its edge count. -/
 private theorem comulForest_mem (τ : UnorderedTree (α ⊕ β) → β)
     (F : Forest (UnorderedTree (α ⊕ β))) :
-    comulForestOfCuts (R := R) (traceCuts τ) F ∈
+    comulForestOfCuts (R := R) (markerCuts τ) F ∈
       gradedTensorSpan (R := R) (α := α) (β := β) ((F.map UnorderedTree.numEdges).sum) := by
   induction F using Multiset.induction_on with
   | empty =>
@@ -127,25 +121,26 @@ private theorem comulForest_mem (τ : UnorderedTree (α ⊕ β) → β)
     refine Submodule.subset_span ⟨0, 0, rfl, ?_⟩
     rw [Algebra.TensorProduct.one_def, ConnesKreimer.of'_zero]
   | cons T F ih =>
-    rw [show comulForestOfCuts (R := R) (traceCuts τ) (T ::ₘ F) =
-          comulTreeOfCuts (R := R) (traceCuts τ) T * comulForestOfCuts (R := R) (traceCuts τ) F from
+    rw [show comulForestOfCuts (R := R) (markerCuts τ) (T ::ₘ F) =
+          comulTreeOfCuts (R := R) (markerCuts τ) T *
+            comulForestOfCuts (R := R) (markerCuts τ) F from
         comulForestOfCuts_cons _ T F,
         Multiset.map_cons, Multiset.sum_cons]
     exact gradedTensorSpan_mul (comulTree_mem τ T) ih
 
-/-- Δ^c preserves the edge-count grading ([marcolli-chomsky-berwick-2025] Lemma 1.2.10, p. 37). -/
-theorem traceComulAlgHom_of'_mem_gradedSpan
+/-- The marker coproduct preserves the edge-count grading. -/
+theorem markerComulAlgHom_of'_mem_gradedSpan
     (τ : UnorderedTree (α ⊕ β) → β) (F : Forest (UnorderedTree (α ⊕ β))) :
-    traceComulAlgHom (R := R) τ (ConnesKreimer.of' F) ∈
+    markerComulAlgHom (R := R) τ (ConnesKreimer.of' F) ∈
       Submodule.span R {y | ∃ (i j : ℕ) (_hi : i + j = (F.map UnorderedTree.numEdges).sum)
         (xi yi : ConnesKreimer R (UnorderedTree (α ⊕ β))),
         xi ∈ gradedPiece (α ⊕ β) i ∧
         yi ∈ gradedPiece (α ⊕ β) j ∧
         y = xi ⊗ₜ[R] yi} := by
-  -- Each cut splits the edges (the trace marker replaces the cut
-  -- subtree by a unit-weight leaf, `traceCuts_numEdges`), and the
+  -- Each cut splits the edges (the marker marker replaces the cut
+  -- subtree by a unit-weight leaf, `markerCuts_numEdges`), and the
   -- homogeneous tensor spans multiply additively (`gradedTensorSpan_mul`).
-  rw [traceComulAlgHom_apply_of']
+  rw [markerComulAlgHom_apply_of']
   refine IsConcreteLE.le_iff.mp (Submodule.span_le.mpr ?_)
     (comulForest_mem (R := R) τ F)
   rintro y ⟨F₁, F₂, hsum, rfl⟩

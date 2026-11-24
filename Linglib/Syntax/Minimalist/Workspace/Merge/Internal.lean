@@ -187,7 +187,7 @@ end DecidableEq
 theorem traceMergeOp_im_composition {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
     (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (m T Q : UnorderedTree (α ⊕ β))
     (p0 : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β))
-    (h_filter : (traceCuts τ T).filter
+    (h_filter : (markerCuts τ T).filter
       (fun p => p.1 = ({m} : Forest (UnorderedTree (α ⊕ β)))) = {p0})
     (h_remainder : p0.2 = Q) (hTm : T ≠ m) :
     traceMergeOp (R := R) τ lbl Q m

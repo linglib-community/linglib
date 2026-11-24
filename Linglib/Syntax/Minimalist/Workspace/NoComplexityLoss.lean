@@ -68,7 +68,7 @@ multiset of pairs it keeps apart equal components that go to different places.
 The results hold for any positive degree with a fixed extraction cost
 (`CutChoice.HasExtractionCost`), such as the degrees each cut conserves: the vertex count at the
 admissible cuts (`hasExtractionCost_numNodes_admissibleCuts`) and the size `σ` at the trace cuts
-(`hasExtractionCost_accessibleSize_traceCuts`, the book's (1.6.10)). -/
+(`hasExtractionCost_accessibleSize_markerCuts`, the book's (1.6.10)). -/
 
 section ComponentMap
 
@@ -233,7 +233,7 @@ variable {α β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))] {τ : Unorder
 /-- At the trace cuts, graded by the size `σ`, every term of Sideward Merge loses complexity along
     its component map ([marcolli-chomsky-berwick-2025] Proposition 1.6.10). -/
 theorem NoComplexityLoss.not_map_accessibleSize_componentMap_merge (a : α)
-    (hs : s ∈ forestCutChoices (traceCuts τ) F)
+    (hs : s ∈ forestCutChoices (markerCuts τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → x.1.value.isLeft)
     {S S' : UnorderedTree (α ⊕ β)} (hK : s.crown = {S, S'})
     (h : S ∉ F ∨ S' ∉ F) :
@@ -241,7 +241,7 @@ theorem NoComplexityLoss.not_map_accessibleSize_componentMap_merge (a : α)
       (componentMap (UnorderedTree.node (Sum.inl a) {S, S'}) s) := by
   have hmerge := accessibleCount_merge_of_crown_eq a hs hF hK
   refine NoComplexityLoss.not_map_componentMap_merge hs
-    (hasExtractionCost_accessibleSize_traceCuts hs hF) (fun T ↦ by simp) hK ?_ ?_ h <;>
+    (hasExtractionCost_accessibleSize_markerCuts hs hF) (fun T ↦ by simp) hK ?_ ?_ h <;>
     simp only [Forest.accessibleSize_singleton, hmerge] <;> omega
 
 end TraceCuts

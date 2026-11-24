@@ -60,83 +60,6 @@ Obligatory control is derived by External Merge alone: in *the man tried to read
 inscriptions of *the man* merge into theta positions as repetitions of one another, and Form Copy
 relates them, while *a book* is no copy of *the man*.
 
-## Correspondence with the book
-
-The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,Economy}/`:
-
-* Definitions 1.2.6 and 1.2.8 (admissible cuts, the coproducts `Δ^ω`):
-  `ConnesKreimer.admissibleCuts` and `comulAlgHom` for `Δ^ρ`, which Remark 1.2.9 identifies with the
-  Connes–Kreimer coproduct; `traceCuts` and `traceComulAlgHom` for `Δ^c`.
-* Lemma 1.2.10: `ConnesKreimer.traceComulAlgHom_coassoc` and the edge grading of
-  `Coproduct/TraceGrading`.
-* Lemma 1.2.11 and (1.2.12): `ConnesKreimer.instBialgebra`, the `HopfAlgebra` instance, and
-  `antipode_ofTree`.
-* The projections `Π_{ρ,c}` and `Π_{d,ρ}` and the relations `Δ^d = (id ⊗ Π_{d,ρ}) ∘ Δ^ρ =
-  (id ⊗ Π_{d,c}) ∘ Δ^c` displayed before (1.3.10): `ConnesKreimer.eraseTraces`,
-  `UnorderedTree.contractUnary`, `ConnesKreimer.deletionCuts`, `ConnesKreimer.deletionComulAlgHom`,
-  `ConnesKreimer.eraseTraces_traceComulAlgHom`, `contractUnary_eraseTraces_traceComulAlgHom`.
-* Definition 1.3.4: `Minimalist.Merge.mergeOpOfCuts` over a cut enumeration, with the book's
-  `mergeOp` at `Δ^d` and `traceMergeOp` at `Δ^c`; (1.3.10):
-  `Minimalist.Merge.mergeOp_eq_comp_comulAlgHom` and `mergeOp_eq_comp_traceComulAlgHom`, and on
-  objects without unary vertices `mergeOp_eq_rename_contractUnary_comp` and
-  `mergeOp_eq_comp_traceMergeOp`; (1.3.11): `Minimalist.Merge.mergeOpOfCuts_apply_of'`.
-* `T/d T₂ = Π_{d,c}(T/c T₂)` of §1.4.4 and p. 82, for the first stage of Internal Merge:
-  `Minimalist.Merge.mergeOpUnit_eq_comp_traceMergeOpUnit`.
-* Lemma 1.4.1: `Minimalist.Merge.mergeOpOfCuts_pair`, `mergeOpOfCuts_pair_residual`, with the
-  residual workspace passing through by `mergeOpOfCuts_of'_mul`.
-* Proposition 1.4.2: `Minimalist.Merge.mergeOpOfCuts_im_composition`, at `Δ^d`
-  `Minimalist.Merge.mergeOp_im_composition`; on syntactic objects
-  `Minimalist.SyntacticObject.mergeOp_im` and `traceMergeOp_im`, and for a derivation
-  `Minimalist.Derivation.mergeOpList_initial`.
-* Lemmas 1.4.4 and 1.4.5: `Minimalist.Merge.mergeOpOfCuts_sideward_2b`, `mergeOpOfCuts_sideward_3b`,
-  `mergeOpOfCuts_sideward_3a`.
-* (1.5.1) and the weights of §1.5.2: `Minimalist.Merge.comulEps`, `mergeOpEps`, with
-  `comulEps_one` and `comulEps_zero` (the primitive coproduct); Proposition 1.5.1 at `ε = 0`:
-  `mergeOpEps_zero_of'_of_not_le`, `mergeOpEps_zero_pair_add`; at every `ε`: `mergeOpEps_pair`,
-  `mergeOpEps_im_composition`, `mergeOpEps_of'_eq_smul_of_not_le`.
-* Definition 1.6.1 and Proposition 1.6.4: `Minimalist.MinimalYield` over a counting,
-  `MinimalYield.em_pair`, `em_pair_accessibleCount`, `im_accessibleCount_of_cut`.
-* Lemma 1.6.3 (1.6.8) and (1.6.10): `ConnesKreimer.traceCuts_accessibleCount`,
-  `traceCuts_accessibleSize`. Proposition 1.6.8 and
-  Remark 1.6.7, on the terms of Merge (`Minimalist.Merge.mergeOpOfCuts_apply_of'_eq_sum`):
-  `Minimalist.card_singleton_add_trunk_add_numWhole`, `accessibleCount_merge_term`,
-  `accessibleSize_merge_term`, `MinimalYield.merge_term_accessibleCount_iff`,
-  `accessibleCount_unit_term` for `Δ^c`, and `MinimalYield.merge_term_numEdges_iff` for `Δ^d`.
-  Remark 1.6.9, Sideward Merge of type 2(b) on the workspace of §1.3.4:
-  `MarcolliChomskyBerwick2025.sideward2b_minimalYield`.
-* Lemma 1.6.3 (1.6.7): `ConnesKreimer.deletionCuts_numEdges`, from the unary vertices a cut
-  leaves (`ConnesKreimer.admissibleCuts_numUnary`); for Internal Merge,
-  `Minimalist.numEdges_im_of_cut`, `MinimalYieldWeak.im_numEdges_of_cut`,
-  `MinimalYield.not_im_numEdges_of_cut`. Each cut's cost over a workspace:
-  `ConnesKreimer.CutChoice.HasExtractionCost`.
-* Definition 1.6.2 and Proposition 1.6.10: `Minimalist.NoComplexityLoss`, met by every admissible
-  derivation step (`Minimalist.Step.noComplexityLoss`); along the induced map of a term of Merge
-  (`Minimalist.componentMap`, `NoComplexityLoss.of_componentMap`),
-  `NoComplexityLoss.map_componentMap_merge_iff`,
-  `not_map_componentMap_merge`, `not_map_componentMap_unit`, and at the trace cuts graded by `σ`,
-  `not_map_accessibleSize_componentMap_merge`.
-* Definition 1.6.2's degree `#L`: `UnorderedTree.numLeaves`; Lemma 1.6.3:
-  `ConnesKreimer.traceCuts_numNodes`.
-* The functionals of (1.7.5) and their Lie algebra: `Bialgebra.IsDualPrimitive` and
-  `Bialgebra.dualPrimitives`; they are supported on single trees
-  (`ConnesKreimer.isDualPrimitive_iff`).
-* Lemma 1.7.3, for `Δ^ρ` and grafting at vertices: `ConnesKreimer.isDualPrimitive_lcoeff_iff`,
-  `lie_lcoeff_singleton_apply_ofTree`, `lie_lcoeff_singleton_apply_of'`, and
-  `GrossmanLarson.pairingLie` for the bracket of the grafting product.
-* Definition 3.1.1 and the weight `+1` identity of Definition 3.1.2: `IsRotaBaxter` at weights
-  `-1` and `+1`; the identity operator of Remark 3.2.2, at weight `+1` on an idempotent semiring:
-  `isRotaBaxter_id`.
-* Definitions 3.1.3, 3.1.5 and 3.1.6, Proposition 3.1.7, Remark 3.1.8:
-  `ConnesKreimer.birkhoffMinus`, `birkhoffPrepTree`, `birkhoffPlus`, `birkhoffPlus_eq_convMul`,
-  `birkhoffFactorization`, with the operator `-R`; the subalgebras of Proposition 3.1.7:
-  `ConnesKreimer.birkhoffMinus_of'_mem_range`, `birkhoffPlus_of'_mem_range`; Proposition 3.1.9:
-  `ConnesKreimer.convMul_birkhoffMinus_apply_ofTree`.
-* Proposition 3.5.2 and (3.5.4): `HahnSeries.isRotaBaxter_truncLT`. The gradings of §3.5.2.1:
-  `δb₀`, `δα`, `δσ`, `minimalYield_iff_gradings`, `minimalYieldWeak_iff_truncLT`. Proposition
-  3.5.3 for `δα`, without the derivation coefficients: `gradingChar`; Lemma 3.5.5:
-  `truncLT_gradingChar_of'`; the first step of the proof of Proposition 3.5.6:
-  `truncLT_birkhoffPlus_of'`.
-
 ## Implementation notes
 
 In §1.4.4 the book displays the result with the deletion quotient `T/d T₂ = {was, eaten}`, and
@@ -425,9 +348,9 @@ example :
     (deletionQuotient_of_isSyntacticObject appleN.isSyntacticObject_toUnorderedTree),
     show theApple = merge theD appleN by decide, toUnorderedTree_merge, Multiset.pair_comm]
 
-private theorem mem_traceCuts_theApple :
+private theorem mem_markerCuts_theApple :
     ({theD.toUnorderedTree}, (deleteAccessible theD
-        theApple).toUnorderedTree) ∈ traceCuts traceEncoder theApple.toUnorderedTree := by decide
+        theApple).toUnorderedTree) ∈ markerCuts traceEncoder theApple.toUnorderedTree := by decide
 
 /-- The term of Sideward Merge of type 2(b) at the trace cuts takes *eaten* whole and cuts *the*
     out of *the apple*. -/
@@ -444,13 +367,13 @@ private noncomputable def sidewardTermN : CutChoice Vertex :=
       {UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}}))}
 
 private theorem sidewardTermC_mem :
-    sidewardTermC ∈ forestCutChoices (traceCuts traceEncoder) {eaten.toUnorderedTree,
+    sidewardTermC ∈ forestCutChoices (markerCuts traceEncoder) {eaten.toUnorderedTree,
         theApple.toUnorderedTree} := by
   rw [Multiset.insert_eq_cons, forestCutChoices_cons, ← Multiset.cons_zero, forestCutChoices_cons,
     forestCutChoices_zero]
   exact Multiset.mem_bind.mpr ⟨({eaten.toUnorderedTree}, 0), Multiset.mem_cons_self _ _,
     Multiset.mem_map.mpr ⟨_, Multiset.mem_bind.mpr ⟨_,
-      Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem _ mem_traceCuts_theApple),
+      Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem _ mem_markerCuts_theApple),
       Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩, rfl⟩⟩
 
 private theorem sidewardTermN_mem :

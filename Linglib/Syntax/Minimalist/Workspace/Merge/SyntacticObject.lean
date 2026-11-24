@@ -26,7 +26,7 @@ contracts to ([marcolli-chomsky-berwick-2025] Definition 1.2.4), here compressed
 trace encoder: a moved object leaves the trace of its head under the encoder (`headTrace`), by
 default the head by selection (`traceEncoder`). A uniquely accessible mover is extracted by exactly
 one trace cut, whose trunk is the remainder `deleteAccessible mover current`
-(`traceCuts_filter_mover`), and Internal Merge is the composition `M_{T/β,β} ∘ M_{β,1}` of
+(`markerCuts_filter_mover`), and Internal Merge is the composition `M_{T/β,β} ∘ M_{β,1}` of
 [marcolli-chomsky-berwick-2025] Proposition 1.4.2 (`traceMergeOp_im`).
 
 The admissible cuts cannot carry Internal Merge on syntactic objects. A syntactic object is a full
@@ -46,7 +46,7 @@ vertices with children.
 ## Main results
 
 * `Minimalist.SyntacticObject.mergeOp_node`, `traceMergeOp_node`: External Merge on the carrier.
-* `Minimalist.SyntacticObject.traceCuts_filter_mover`: the trace cut extracting a uniquely
+* `Minimalist.SyntacticObject.markerCuts_filter_mover`: the trace cut extracting a uniquely
   accessible mover leaves `deleteAccessible`.
 * `Minimalist.SyntacticObject.traceMergeOpUnit_current`, `traceMergeOp_im`: Internal Merge on the
   carrier.
@@ -137,13 +137,13 @@ variable {mover current : SyntacticObject}
 
 /-- A uniquely accessible mover that is not a trace is extracted by exactly one trace cut, whose
     trunk is the remainder `deleteAccessible mover current`. -/
-theorem traceCuts_filter_mover (hm : mover.toUnorderedTree.value.isLeft)
+theorem markerCuts_filter_mover (hm : mover.toUnorderedTree.value.isLeft)
     (h : current.terms.count mover = 1) (hne : current ≠ mover) :
-    (traceCuts traceEncoder current.toUnorderedTree).filter (fun p ↦ p.1 = {mover.toUnorderedTree})
+    (markerCuts traceEncoder current.toUnorderedTree).filter (fun p ↦ p.1 = {mover.toUnorderedTree})
       = {({mover.toUnorderedTree}, (deleteAccessible mover current).toUnorderedTree)} := by
   rw [toUnorderedTree_deleteAccessible, toUnorderedTree_headTrace, TraceLabel.encoder_token,
     ← traceEncoder_toUnorderedTree]
-  refine traceCuts_filter_crown_eq_singleton traceEncoder hm ?_
+  refine markerCuts_filter_crown_eq_singleton traceEncoder hm ?_
     (fun h' ↦ hne (toUnorderedTree_injective h'))
   rw [← map_toUnorderedTree_terms, Multiset.count_map_eq_count' _ _ toUnorderedTree_injective, h]
 
@@ -157,7 +157,7 @@ theorem traceMergeOpUnit_current (hm : mover.toUnorderedTree.value.isLeft) (h : 
       = of' ({mover.toUnorderedTree, (deleteAccessible mover current).toUnorderedTree} :
           Forest (UnorderedTree Vertex)) := by
   rw [Merge.traceMergeOpUnit, Merge.mergeOpUnitOfCuts_apply_singleton_unique _ _ _
-      (traceCuts_filter_mover hm h hne) (fun h' ↦ hne (toUnorderedTree_injective h')),
+      (markerCuts_filter_mover hm h hne) (fun h' ↦ hne (toUnorderedTree_injective h')),
     ← of'_singleton, ← of'_add]
   rfl
 
@@ -173,7 +173,7 @@ theorem traceMergeOp_im (hm : mover.toUnorderedTree.value.isLeft) (h : current.t
       = of' (R := ℤ) ({(merge (deleteAccessible mover current) mover).toUnorderedTree} :
           Forest (UnorderedTree Vertex)) := by
   rw [Merge.traceMergeOp_im_composition traceEncoder Vertex.bare _ _ _ _
-      (traceCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (toUnorderedTree_injective
+      (markerCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (toUnorderedTree_injective
           h')), toUnorderedTree_merge]
 
 /-! ### Merge beside a spectator workspace -/
@@ -214,7 +214,7 @@ theorem traceMergeOp_im_residual (hm : mover.toUnorderedTree.value.isLeft) (h : 
   rw [Multiset.map_add, Multiset.map_add, Multiset.map_singleton, Multiset.map_singleton,
     toUnorderedTree_merge]
   refine Merge.mergeOpOfCuts_im_composition_residual Vertex.bare _ _ _ _
-    (traceCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (toUnorderedTree_injective h')) fun U hU ↦
+    (markerCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (toUnorderedTree_injective h')) fun U hU ↦
         ?_
   obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
   exact disjoint_pair_subtrees (hW U' hU')
@@ -274,7 +274,7 @@ theorem traceMergeOp_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Works
       exact disjoint_pair_subtrees (hW U' hU'),
     Multiset.map_add, Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
     ← Multiset.insert_eq_cons, Merge.mergeOpOfCuts_sideward_2b Vertex.bare hval hne',
-    traceCuts_filter_mover hS' hc hne]
+    markerCuts_filter_mover hS' hc hne]
   simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.map_add, of'_add,
     of'_singleton, toUnorderedTree_merge]
   ring
@@ -308,7 +308,7 @@ theorem traceMergeOp_sideward3b_of'_merge {T T' S S' : SyntacticObject} {W : Wor
     ← Multiset.insert_eq_cons, Merge.mergeOpOfCuts_sideward_3b Vertex.bare
       (fun h ↦ hneS (toUnorderedTree_injective h).symm) (fun h ↦ hneS' (toUnorderedTree_injective
           h).symm) hvS hvS',
-    traceCuts_filter_mover hS hcS hneS, traceCuts_filter_mover hS' hcS' hneS']
+    markerCuts_filter_mover hS hcS hneS, markerCuts_filter_mover hS' hcS' hneS']
   simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.map_add, of'_add,
     of'_singleton, toUnorderedTree_merge, Multiset.insert_eq_cons, Multiset.map_cons, of'_cons]
   ring

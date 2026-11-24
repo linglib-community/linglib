@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Workspace.Merge.Basic
-public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceConservation
+public import Linglib.Core.Combinatorics.RootedTree.MarkerCutConservation
 public import Linglib.Core.Combinatorics.RootedTree.Conservation
 public import Linglib.Core.Combinatorics.RootedTree.Crown
 public import Linglib.Core.Algebra.RootedTree.HopfAlgebra
@@ -62,10 +62,10 @@ instance : IsMergeCuts (admissibleCuts (α := α)) where
   mem_subtrees_of_mem_crown hp hx := (exists_mem_crown_admissibleCuts_iff.mp ⟨_, hp, hx⟩).1
   filter_empty := admissibleCuts_filter_empty
 
-instance {β : Type*} (τ : UnorderedTree (α ⊕ β) → β) : IsMergeCuts (traceCuts τ) where
-  crown_numEdges_lt := traceCuts_crown_numEdges_lt τ
-  mem_subtrees_of_mem_crown hp hx := traceCuts_mem_subtrees_of_mem_crown τ hp hx
-  filter_empty := traceCuts_filter_empty τ
+instance {β : Type*} (τ : UnorderedTree (α ⊕ β) → β) : IsMergeCuts (markerCuts τ) where
+  crown_numEdges_lt := markerCuts_crown_numEdges_lt τ
+  mem_subtrees_of_mem_crown hp hx := markerCuts_mem_subtrees_of_mem_crown τ hp hx
+  filter_empty := markerCuts_filter_empty τ
 
 /-- External Merge of a two-object workspace, over a cut enumeration admitting Merge. -/
 theorem mergeOpOfCuts_pair

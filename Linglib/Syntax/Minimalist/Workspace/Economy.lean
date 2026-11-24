@@ -55,9 +55,9 @@ private def emTerm : CutChoice Vertex :=
     W.map fun T ↦ (T, (0, {T}))
 
 private theorem emTerm_mem :
-    emTerm S S' W ∈ forestCutChoices (traceCuts traceEncoder) ({S, S'} + W) :=
+    emTerm S S' W ∈ forestCutChoices (markerCuts traceEncoder) ({S, S'} + W) :=
   add_mem_forestCutChoices (map_whole_mem_forestCutChoices _)
-    (map_uncut_mem_forestCutChoices fun T _ ↦ zero_mem_traceCuts _ T)
+    (map_uncut_mem_forestCutChoices fun T _ ↦ zero_mem_markerCuts _ T)
 
 private theorem emTerm_crown : (emTerm S S' W).crown = {S, S'} := by simp [emTerm]
 
@@ -83,13 +83,13 @@ end ExternalMerge
 variable {step : Step} {current : SyntacticObject} {W : Workspace}
 
 /-- The trace cut extracting the mover of an admissible Internal Merge. -/
-private theorem mem_traceCuts_mover {mover : SyntacticObject} (hm :
+private theorem mem_markerCuts_mover {mover : SyntacticObject} (hm :
     mover.toUnorderedTree.value.isLeft)
     (h : current.terms.count mover = 1) (hne : current ≠ mover) :
     ({mover.toUnorderedTree}, (deleteAccessible mover
-        current).toUnorderedTree) ∈ traceCuts traceEncoder current.toUnorderedTree :=
+        current).toUnorderedTree) ∈ markerCuts traceEncoder current.toUnorderedTree :=
   Multiset.mem_of_mem_filter (p := fun p ↦ p.1 = {mover.toUnorderedTree}) <| by
-    rw [traceCuts_filter_mover hm h hne]
+    rw [markerCuts_filter_mover hm h hne]
     exact Multiset.mem_singleton_self _
 
 /-- An admissible step whose operands are not traces satisfies No Complexity Loss under the size `σ`
@@ -107,13 +107,13 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur :
         SyntacticObject.toUnorderedTree)
     have hm := UnorderedTree.accessibleCount_merge none current.toUnorderedTree (item :
         SyntacticObject).toUnorderedTree
-      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hcur)
-      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hitems)
+      (UnorderedTree.numMarkers_lt_numNodes_of_isLeft hcur)
+      (UnorderedTree.numMarkers_lt_numNodes_of_isLeft hitems)
     have := NoComplexityLoss.of_componentMap hs
       (X := UnorderedTree.node Vertex.bare {current.toUnorderedTree, (item :
           SyntacticObject).toUnorderedTree})
       ((NoComplexityLoss.map_componentMap_merge_iff hs
-        (hasExtractionCost_accessibleSize_traceCuts hs (emTerm_lexical _ hcur hitems))
+        (hasExtractionCost_accessibleSize_markerCuts hs (emTerm_lexical _ hcur hitems))
         (fun T ↦ by simp) (emTerm_crown ..)
         (by simp only [Forest.accessibleSize_singleton, hm]; omega)
         (by simp only [Forest.accessibleSize_singleton, hm]; omega)).mpr
@@ -124,13 +124,13 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur :
     rwa [Multiset.singleton_add]
   | im mover _ =>
     obtain ⟨hm, hc, hne, -⟩ := h
-    have hp := mem_traceCuts_mover hm hc hne
-    have hσ := traceCuts_accessibleSize traceEncoder hcur hp
+    have hp := mem_markerCuts_mover hm hc hne
+    have hσ := markerCuts_accessibleSize traceEncoder hcur hp
     have hmerge := UnorderedTree.accessibleCount_merge none (deleteAccessible mover
         current).toUnorderedTree
-      mover.toUnorderedTree (UnorderedTree.numTraces_lt_numNodes_of_isLeft (by
-        rw [traceCuts_trunk_value traceEncoder _ _ hp]; exact hcur))
-      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hm)
+      mover.toUnorderedTree (UnorderedTree.numMarkers_lt_numNodes_of_isLeft (by
+        rw [markerCuts_trunk_value traceEncoder _ _ hp]; exact hcur))
+      (UnorderedTree.numMarkers_lt_numNodes_of_isLeft hm)
     simp only [Multiset.map_singleton, Multiset.sum_singleton,
       Forest.accessibleSize_singleton] at hσ
     refine ⟨{(current.toUnorderedTree, (merge (deleteAccessible mover current)
@@ -163,11 +163,11 @@ theorem Step.minimalYield (h : step.Admissible current W) (hcur :
     simp only [Step.items, Multiset.mem_singleton, forall_eq] at hitems
     simp only [Step.items, Multiset.map_add, Multiset.map_singleton, toUnorderedTree_merge]
     exact (MinimalYield.em_pair_accessibleCount none
-      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hcur)
-      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hitems)).add_right _
+      (UnorderedTree.numMarkers_lt_numNodes_of_isLeft hcur)
+      (UnorderedTree.numMarkers_lt_numNodes_of_isLeft hitems)).add_right _
   | im mover _ =>
     obtain ⟨hm, hc, hne, -⟩ := h
-    have hp := mem_traceCuts_mover hm hc hne
+    have hp := mem_markerCuts_mover hm hc hne
     obtain ⟨l, r, rfl⟩ := exists_eq_merge_of_count_terms hc hne
     simp only [Step.items, add_zero, Step.apply_im, Multiset.map_add, Multiset.map_singleton,
       toUnorderedTree_merge, Multiset.pair_comm (deleteAccessible mover (merge l

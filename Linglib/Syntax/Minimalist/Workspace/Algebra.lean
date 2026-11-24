@@ -33,7 +33,7 @@ are stated on workspaces.
 
 ## Main results
 
-* `Minimalist.IsSyntacticObject.of_mem_traceCuts`: a trace cut of a syntactic object leaves a
+* `Minimalist.IsSyntacticObject.of_mem_markerCuts`: a trace cut of a syntactic object leaves a
   syntactic object.
 * `Minimalist.Workspace.toTrees_injective`
 * `Minimalist.Workspace.toTrees_mergeOp`, `Minimalist.Workspace.toTrees_mergeOpUnit`: `toTrees`
@@ -66,11 +66,11 @@ namespace Minimalist
 open RoseTree UnorderedTree ConnesKreimer SyntacticObject
 
 /-- A trace cut of a syntactic object leaves a syntactic object. -/
-theorem IsSyntacticObject.of_mem_traceCuts
+theorem IsSyntacticObject.of_mem_markerCuts
     (τ : UnorderedTree Vertex → Option LexicalItem.Token) {T : UnorderedTree Vertex}
     (hT : IsSyntacticObject T) {p : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
-    (hp : p ∈ traceCuts τ T) : IsSyntacticObject p.2 :=
-  UnorderedTree.Licensed.of_mem_traceCuts (R := Vertex.Licenses)
+    (hp : p ∈ markerCuts τ T) : IsSyntacticObject p.2 :=
+  UnorderedTree.Licensed.of_mem_markerCuts (R := Vertex.Licenses)
     (fun _ _ _ h ↦ (Vertex.licenses_iff_of_card_eq h).1)
     (fun b ↦ show Vertex.Licenses (Sum.inr b) 0 from rfl) τ hT hp
 
@@ -79,15 +79,15 @@ namespace SyntacticObject
 /-- The trace cuts of a syntactic object, as pairs of the workspace of extracted terms and the
 object that remains, with the trace of the head of each extracted term in its place. -/
 noncomputable def cuts (S : SyntacticObject) : Multiset (Workspace × SyntacticObject) :=
-  (traceCuts traceEncoder S.toUnorderedTree).attach.map fun p ↦
+  (markerCuts traceEncoder S.toUnorderedTree).attach.map fun p ↦
     (p.1.1.attach.map fun t ↦ ofUnorderedTree t.1 (isSyntacticObject_of_mem_subtrees S t.1
-        (traceCuts_mem_subtrees_of_mem_crown traceEncoder p.2 t.2)),
+        (markerCuts_mem_subtrees_of_mem_crown traceEncoder p.2 t.2)),
       ofUnorderedTree p.1.2
-        (.of_mem_traceCuts traceEncoder S.isSyntacticObject_toUnorderedTree p.2))
+        (.of_mem_markerCuts traceEncoder S.isSyntacticObject_toUnorderedTree p.2))
 
 theorem map_cuts (S : SyntacticObject) :
     S.cuts.map (Prod.map (Multiset.map toUnorderedTree) toUnorderedTree) =
-      traceCuts traceEncoder S.toUnorderedTree := by
+      markerCuts traceEncoder S.toUnorderedTree := by
   rw [cuts, Multiset.map_map]
   refine (Multiset.map_congr rfl fun p _ ↦ ?_).trans (Multiset.attach_map_val _)
   refine Prod.ext ?_ (toUnorderedTree_ofUnorderedTree _ _)
@@ -133,7 +133,7 @@ noncomputable def mergeOpUnit (S : SyntacticObject) :
     fun p ↦ of' ({S} + p.2)).sum
 
 private theorem forestCuts_map_toUnorderedTree (W : Workspace) :
-    forestCuts (traceCuts traceEncoder) (W.map toUnorderedTree) =
+    forestCuts (markerCuts traceEncoder) (W.map toUnorderedTree) =
       (forestCuts SyntacticObject.cuts W).map
         (Prod.map (Multiset.map toUnorderedTree) (Multiset.map toUnorderedTree)) :=
   forestCuts_map (fun S ↦ (map_cuts S).symm) W

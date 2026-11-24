@@ -10,7 +10,7 @@ public import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 public import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
 public import Linglib.Core.Combinatorics.RootedTree.CutPrune
 public import Linglib.Core.Data.UnorderedTree.FilterMap
-public import Linglib.Syntax.Minimalist.Workspace.Coproduct.Trace
+public import Linglib.Core.Algebra.RootedTree.Coproduct.Marker
 
 /-!
 # The deletion coproduct and the erasure of traces
@@ -22,8 +22,8 @@ term and takes the largest binary tree the remainder contracts to. They relate t
 projections of the right channel: `Π_{ρ,c}` deletes the trace leaves, `Π_{d,ρ}` reduces the
 remainder, and `Δ^d = (id ⊗ Π_{d,ρ}) ∘ Δ^ρ = (id ⊗ Π_{d,ρ} ∘ Π_{ρ,c}) ∘ Δ^c`, displayed before
 their (1.3.10). Here `Δ^d` is defined by the first expression. The second is
-[proved for trees without traces](##deletionProj_eraseTraces_traceComulAlgHom), from
-[the same relation between `Δ^c` and `Δ^ρ`](##eraseTraces_traceComulAlgHom).
+[proved for trees without traces](##deletionProj_eraseTraces_markerComulAlgHom), from
+[the same relation between `Δ^c` and `Δ^ρ`](##eraseTraces_markerComulAlgHom).
 
 The remainder of a deletion is the trunk of the admissible cut restricted to its leaves: the
 vertices above a leaf of the tree, with those left a single child contracted. A deletion therefore
@@ -85,12 +85,12 @@ theorem eraseTraces_comp_rename_inl :
 /-- The trace cuts of a tree without traces are its admissible cuts with a trace leaf left at each
     cut site: the crowns agree, and erasing the trace leaves of a trunk gives the trunk of the
     admissible cut. -/
-theorem traceCuts_map_inl (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree α) :
-    (traceCuts τ (T.map Sum.inl)).map (Prod.map id (UnorderedTree.filterMap Sum.getLeft?)) =
+theorem markerCuts_map_inl (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree α) :
+    (markerCuts τ (T.map Sum.inl)).map (Prod.map id (UnorderedTree.filterMap Sum.getLeft?)) =
       (admissibleCuts T).map (Prod.map (Multiset.map (UnorderedTree.map Sum.inl)) some) :=
   Quotient.inductionOn T fun t ↦ by
-    have h := map_rootCuts_map (E := leaveTrace (τ ∘ UnorderedTree.mk)) (E' := leaveNothing)
-      (g := Sum.inl) (f := Sum.getLeft?) (fun t ↦ by cases t; simp [leaveNothing, traceLeaf]) t
+    have h := map_rootCuts_map (E := leaveMarker (τ ∘ UnorderedTree.mk)) (E' := leaveNothing)
+      (g := Sum.inl) (f := Sum.getLeft?) (fun t ↦ by cases t; simp [leaveNothing, markerLeaf]) t
     have h' := congrArg
       (Multiset.map (Prod.map (Multiset.map UnorderedTree.mk) (Option.map UnorderedTree.mk))) h
     simpa [UnorderedTree.map_mk, projCut, Multiset.map_map, Function.comp_def,
@@ -98,15 +98,15 @@ theorem traceCuts_map_inl (τ : UnorderedTree (α ⊕ β) → β) (T : Unordered
 
 /-- On trees without traces, erasing the traces that `Δ^c` leaves in the right channel gives the
     Connes–Kreimer coproduct `Δ^ρ`. -/
-theorem eraseTraces_traceComulAlgHom (τ : UnorderedTree (α ⊕ β) → β) :
-    ((Algebra.TensorProduct.map (.id R _) eraseTraces).comp (traceComulAlgHom τ)).comp
+theorem eraseTraces_markerComulAlgHom (τ : UnorderedTree (α ⊕ β) → β) :
+    ((Algebra.TensorProduct.map (.id R _) eraseTraces).comp (markerComulAlgHom τ)).comp
         (rename (UnorderedTree.map Sum.inl)) =
       (Algebra.TensorProduct.map (rename (UnorderedTree.map Sum.inl)) (.id R _)).comp
         (comulAlgHom (R := R) (α := α)) := by
   ext T
   have h := congrArg (fun s ↦ (s.map fun q : Multiset (UnorderedTree (α ⊕ β)) ×
       Option (UnorderedTree α) ↦ of' (R := R) q.1 ⊗ₜ[R] q.2.elim 1 (ofTree (R := R))).sum)
-    (traceCuts_map_inl τ T)
+    (markerCuts_map_inl τ T)
   simp only [Multiset.map_map, Function.comp_def, Prod.map_apply', id, Option.elim_some] at h
   simp [comulTreeOfCuts, map_multiset_sum, Multiset.map_map,
     Function.comp_def, h]
@@ -237,16 +237,16 @@ end Deletion
 
 /-- On trees without traces, erasing the traces that `Δ^c` leaves and projecting by `Π_{d,ρ}`
     gives the deletion coproduct `Δ^d`. -/
-theorem deletionProj_eraseTraces_traceComulAlgHom [DecidableEq α] (b : α)
+theorem deletionProj_eraseTraces_markerComulAlgHom [DecidableEq α] (b : α)
     (τ : UnorderedTree (α ⊕ β) → β) :
     ((Algebra.TensorProduct.map (.id R _)
-          ((deletionProj b).comp eraseTraces)).comp (traceComulAlgHom τ)).comp
+          ((deletionProj b).comp eraseTraces)).comp (markerComulAlgHom τ)).comp
         (rename (UnorderedTree.map Sum.inl)) =
       (Algebra.TensorProduct.map (rename (UnorderedTree.map Sum.inl)) (.id R _)).comp
         (deletionComulAlgHom (R := R) (α := α) b) := by
   have h := congrArg
     (AlgHom.comp (Algebra.TensorProduct.map (.id R _) (deletionProj (R := R) b)))
-    (eraseTraces_traceComulAlgHom (R := R) τ)
+    (eraseTraces_markerComulAlgHom (R := R) τ)
   simpa only [deletionComulAlgHom, ← AlgHom.comp_assoc, ← Algebra.TensorProduct.map_comp,
     AlgHom.comp_id, AlgHom.id_comp] using h
 

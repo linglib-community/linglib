@@ -4,7 +4,7 @@ public import Linglib.Core.Algebra.RootedTree.Coproduct.AdmissibleCut
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Linglib.Core.Data.UnorderedTree.Leaves
 public import Linglib.Syntax.Minimalist.Workspace.Coproduct.Deletion
-public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceCut
+public import Linglib.Core.Combinatorics.RootedTree.MarkerCut
 public import Mathlib.LinearAlgebra.TensorProduct.Basic
 public import Mathlib.RingTheory.TensorProduct.Maps
 
@@ -44,8 +44,8 @@ External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Inter
 * `Minimalist.Merge.mergeOpOfCuts_apply_of'`, `mergeOpOfCuts_apply_of'_eq_sum`: Merge on a workspace
   is a sum over its forest cuts, or over a choice of cut for each of its trees.
 * `Minimalist.Merge.mergeOpOfCuts_comm`: Merge does not depend on the order of the pair.
-* `Minimalist.Merge.mergeOp_eq_comp_comulAlgHom`, `mergeOp_eq_comp_traceComulAlgHom`: Merge at `Δ^d`
-  through the Connes–Kreimer coproduct and through the trace coproduct, the two expressions of the
+* `Minimalist.Merge.mergeOp_eq_comp_comulAlgHom`, `mergeOp_eq_comp_markerComulAlgHom`: Merge at
+  `Δ^d` through the Connes–Kreimer coproduct and through the trace coproduct, the two expressions of the
   book's (1.3.10).
 * `Minimalist.Merge.mergeOp_eq_deletionProj_comp`, `mergeOpUnit_eq_deletionProj_comp`: on
   objects that are their own remainders, Merge at the deletion coproduct is Merge at the
@@ -557,18 +557,18 @@ end DecidableEq
 
 /-! ### Merge at the trace cuts -/
 
-/-- The trace Merge operator is Merge at the trace cuts `traceCuts τ`, whose trunks carry a
+/-- The trace Merge operator is Merge at the trace cuts `markerCuts τ`, whose trunks carry a
     trace leaf at each cut site. -/
 noncomputable def traceMergeOp {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
     (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : UnorderedTree (α ⊕ β)) :
     ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
-  mergeOpOfCuts (R := R) (traceCuts τ) lbl S S'
+  mergeOpOfCuts (R := R) (markerCuts τ) lbl S S'
 
-/-- The unit stage `M_{S,1}` at the trace cuts `traceCuts τ`. -/
+/-- The unit stage `M_{S,1}` at the trace cuts `markerCuts τ`. -/
 noncomputable def traceMergeOpUnit {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
     (τ : UnorderedTree (α ⊕ β) → β) (S : UnorderedTree (α ⊕ β)) :
     ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
-  mergeOpUnitOfCuts (R := R) (traceCuts τ) S
+  mergeOpUnitOfCuts (R := R) (markerCuts τ) S
 
 /-! ### Erasing the traces of Merge
 
@@ -645,12 +645,12 @@ private theorem mul'_map_rename_inl {L : ConnesKreimer R (UnorderedTree α) →�
 
 /-- Erasing the product of the two channels of `Δ^c` on an embedded tree gives the product of the
     two channels of `Δ^ρ`, for a left channel that erasure carries to `L`. -/
-private theorem eraseTraces_mul'_traceComulAlgHom
+private theorem eraseTraces_mul'_markerComulAlgHom
     {L : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α)}
     {L' : ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β))}
     (hL : ∀ x, eraseTraces (R := R) (L' (ι x)) = L x) (x : ConnesKreimer R (UnorderedTree α)) :
     eraseTraces (R := R) (LinearMap.mul' R _ (TensorProduct.map L' LinearMap.id
-      (traceComulAlgHom τ (ι x)))) =
+      (markerComulAlgHom τ (ι x)))) =
       LinearMap.mul' R _ (TensorProduct.map L LinearMap.id (comulAlgHom x)) := by
   have hmul (z : ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
       ConnesKreimer R (UnorderedTree (α ⊕ β))) :
@@ -660,7 +660,7 @@ private theorem eraseTraces_mul'_traceComulAlgHom
     induction z using TensorProduct.inductionOn with
     | tmul a b => simp
     | add y z hy hz => simp only [map_add, hy, hz]
-  have h := DFunLike.congr_fun (eraseTraces_traceComulAlgHom (R := R) τ) x
+  have h := DFunLike.congr_fun (eraseTraces_markerComulAlgHom (R := R) τ) x
   simp only [AlgHom.comp_apply] at h
   rw [hmul, h]
   exact mul'_map_rename_inl (L' := eraseTraces.toLinearMap ∘ₗ L') hL _
@@ -690,14 +690,14 @@ theorem eraseTraces_comp_traceMergeOp (lbl : α) (S S' : UnorderedTree α) :
   refine LinearMap.ext fun x ↦ ?_
   simp only [LinearMap.comp_apply, traceMergeOp, mergeOpOfCuts, AlgHom.toLinearMap_apply,
     mergePost_eq]
-  exact eraseTraces_mul'_traceComulAlgHom τ (eraseTraces_graft_gamma_rename_inl lbl S S') x
+  exact eraseTraces_mul'_markerComulAlgHom τ (eraseTraces_graft_gamma_rename_inl lbl S S') x
 
 /-- Erasing the traces of the unit stage at the trace cuts gives the unit stage at the admissible
     cuts, on trees without traces. -/
 theorem eraseTraces_comp_traceMergeOpUnit (S : UnorderedTree α) :
     eraseTraces.toLinearMap ∘ₗ traceMergeOpUnit (R := R) τ (S.map Sum.inl) ∘ₗ (ι).toLinearMap =
       mergeOpUnitOfCuts admissibleCuts S := by
-  refine LinearMap.ext fun x ↦ eraseTraces_mul'_traceComulAlgHom τ (L := gammaMatchSingle S)
+  refine LinearMap.ext fun x ↦ eraseTraces_mul'_markerComulAlgHom τ (L := gammaMatchSingle S)
     (L' := gammaMatchSingle (S.map Sum.inl)) (fun y ↦ ?_) x
   rw [gammaMatchSingle, gammaMatchSingle, ← Multiset.map_singleton,
     forestProj_rename Sum.inl_injective]
@@ -708,16 +708,16 @@ variable [DecidableEq α]
 /-- Merge at `Δ^d` through the trace coproduct, the second expression of
     [marcolli-chomsky-berwick-2025] (1.3.10): `⊔ ∘ (B ⊗ id) ∘ (id ⊗ Π_{d,c}) ∘ δ_{S,S'} ∘ Δ^c`. The
     chain runs on the embedded tree, and `B` lands in the trees without traces through erasure. -/
-theorem mergeOp_eq_comp_traceComulAlgHom (lbl : α) (S S' : UnorderedTree α) :
+theorem mergeOp_eq_comp_markerComulAlgHom (lbl : α) (S S' : UnorderedTree α) :
     mergeOp (R := R) lbl S S' = LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ
       TensorProduct.map
         (eraseTraces.toLinearMap ∘ₗ graftBinaryAt (Sum.inl lbl) (S.map Sum.inl) (S'.map Sum.inl))
         LinearMap.id ∘ₗ
       TensorProduct.map LinearMap.id (Π_dc[lbl]).toLinearMap ∘ₗ
-      deltaMatch (S.map Sum.inl) (S'.map Sum.inl) ∘ₗ (traceComulAlgHom τ).toLinearMap ∘ₗ
+      deltaMatch (S.map Sum.inl) (S'.map Sum.inl) ∘ₗ (markerComulAlgHom τ).toLinearMap ∘ₗ
       (ι).toLinearMap := by
   refine LinearMap.ext fun x ↦ ?_
-  have h := DFunLike.congr_fun (deletionProj_eraseTraces_traceComulAlgHom (R := R) lbl τ) x
+  have h := DFunLike.congr_fun (deletionProj_eraseTraces_markerComulAlgHom (R := R) lbl τ) x
   simp only [AlgHom.comp_apply] at h
   have hchain {L : ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree α)}
       (z : ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
