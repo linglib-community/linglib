@@ -186,8 +186,10 @@ theorem isTransitive_of_concat (hp : IsCofinal R p) (hq : IsCoinitial R q)
 (11) of Chapter 2, which to her knowledge no language has a preposition for. -/
 theorem not_hasShape_of_concat (hp : IsCoinitial R p) (hq : IsCofinal R q)
     (h : p.last = q.head) (s : Shape) : ¬ HasShape R (p.smash q h) d s :=
-  fun hr ↦ RelSeries.not_ordConnected_preimage_smash h (p.coe_top ▸ hp.2.2) hp.2.1 hq.2.2
-    hr.ordConnected
+  fun hr ↦ by
+    have := hr.entries_eq_zero_of_head_mem (by simpa using hp.2.1)
+    rw [RelSeries.entries_smash, hp.entries_eq, hq.entries_eq] at this
+    exact absurd this (by decide)
 
 /-- Such a path can be formed, so what (11) lacks is a shape rather than a concatenation. -/
 example : ∃ p q : Path ℕ, IsCoinitial {1} p ∧ IsCofinal {1} q ∧ p.last = q.head := by

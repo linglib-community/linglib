@@ -444,6 +444,85 @@ theorem hasShape_reverse {β : Type*} [Preorder β] {d : Loc → β} {R : Set Lo
     HasShape R p.reverse d s ↔ HasShape R p d s.reverse :=
   (hasShape_comp (γ := p ∘ OrderDual.ofDual) Fin.revOrderIso.symm).trans hasShape_comp_ofDual
 
+/-! ### Entries and exits
+
+A shape fixes how many steps of a path lead into the region and how many lead out of it: one
+and none for a cofinal path, none and one for a coinitial path, one of each for a transitive
+path. Both counts add under concatenation. -/
+
+section Counts
+
+open RelSeries
+
+variable {p} {R : Set Loc}
+
+theorem IsCofinal.exits_eq (h : IsCofinal R p) : p.exits R = 0 :=
+  stepCount_eq_zero_iff.2 fun _ hi ↦ hi.2 (h.1 Fin.castSucc_lt_succ.le hi.1)
+
+theorem IsCofinal.entries_eq (h : IsCofinal R p) : p.entries R = 1 := by
+  classical
+  have h0 : p.head ∉ R := h.2.1
+  have h1 : p.last ∈ R := h.2.2
+  have := entries_add_head R p
+  simpa [h.exits_eq, h0, h1] using this
+
+theorem IsCoinitial.entries_eq (h : IsCoinitial R p) : p.entries R = 0 :=
+  stepCount_eq_zero_iff.2 fun _ hi ↦ hi.1 (h.1 Fin.castSucc_lt_succ.le hi.2)
+
+theorem IsCoinitial.exits_eq (h : IsCoinitial R p) : p.exits R = 1 := by
+  classical
+  have h0 : p.head ∈ R := h.2.1
+  have h1 : p.last ∉ R := h.2.2
+  have := entries_add_head R p
+  simpa [h.entries_eq, h0, h1] using this.symm
+
+theorem IsProlative.entries_eq (h : IsProlative R p) : p.entries R = 0 :=
+  stepCount_eq_zero_iff.2 fun _ hi ↦ hi.1 (h _)
+
+theorem IsProlative.exits_eq (h : IsProlative R p) : p.exits R = 0 :=
+  stepCount_eq_zero_iff.2 fun _ hi ↦ hi.2 (h _)
+
+/-- A transitive path enters the region once. -/
+theorem IsTransitive.entries_eq (h : IsTransitive R p) : p.entries R = 1 := by
+  obtain ⟨hc, ⟨k, hk⟩, h0, -⟩ := h
+  refine le_antisymm (stepCount_le_one fun i j hi hj ↦ ?_) (Nat.one_le_iff_ne_zero.2 fun hz ↦ ?_)
+  · by_contra hne
+    rcases lt_or_gt_of_ne hne with hlt | hlt
+    · exact hj.1 (hc.out (x := i.succ) (y := j.succ) hi.2 hj.2
+        ⟨by simp only [Fin.le_def, Fin.val_succ, Fin.val_castSucc]; exact hlt,
+          Fin.castSucc_lt_succ.le⟩)
+    · exact hi.1 (hc.out (x := j.succ) (y := i.succ) hj.2 hi.2
+        ⟨by simp only [Fin.le_def, Fin.val_succ, Fin.val_castSucc]; exact hlt,
+          Fin.castSucc_lt_succ.le⟩)
+  · have hall : ∀ i : Fin (p.length + 1), p i ∉ R := fun i ↦ by
+      induction i using Fin.induction with
+      | zero => exact h0
+      | succ i ih => exact fun hi ↦ stepCount_eq_zero_iff.1 hz i ⟨ih, hi⟩
+    exact hall k hk
+
+/-- A transitive path leaves the region once. -/
+theorem IsTransitive.exits_eq (h : IsTransitive R p) : p.exits R = 1 := by
+  classical
+  have h0 : p.head ∉ R := h.2.2.1
+  have h1 : p.last ∉ R := h.2.2.2
+  have := entries_add_head R p
+  simpa [h.entries_eq, h0, h1] using this.symm
+
+/-- A path with a shape that starts inside the region never enters it. -/
+theorem HasShape.entries_eq_zero_of_head_mem {β : Type*} [Preorder β] {d : Loc → β} {s : Shape}
+    (h : HasShape R p d s) (h0 : p.head ∈ R) : p.entries R = 0 := by
+  cases s with
+  | cofinal => exact absurd h0 h.2.1
+  | coinitial => exact IsCoinitial.entries_eq h
+  | transitive => exact absurd h0 h.2.2.1
+  | terminative => exact absurd h0 (IsTerminative.isCofinal h).2.1
+  | egressive => exact (IsEgressive.isCoinitial h).entries_eq
+  | prolative => exact IsProlative.entries_eq h
+  | approximative => exact absurd h0 (h.1 _)
+  | recessive => exact absurd h0 (h.1 _)
+
+end Counts
+
 /-! ### Positions of a concatenation -/
 
 section Concat
@@ -468,8 +547,8 @@ theorem HasShape.concat (hs : ¬ s.IsBounded) (hp : HasShape R p d s) (hq : HasS
   | _ => exact absurd (by decide) hs
 
 /-- Concatenation never keeps a shape with a transition: the ends of a cofinal or a coinitial path
-lie on opposite sides of `R`, so no two of them concatenate, and two transitive paths concatenate
-into more than one stretch inside `R`. -/
+lie on opposite sides of `R`, so no two of them concatenate, and a concatenation of two
+transitive paths enters `R` twice. -/
 theorem HasShape.not_concat (hs : s.IsBounded) (hp : HasShape R p d s) (hq : HasShape R q d s)
     (h : p.last = q.head) : ¬ HasShape R (p.smash q h) d s := by
   have cofinal (hp : IsCofinal R p) (hq : IsCofinal R q) : False :=
@@ -482,9 +561,10 @@ theorem HasShape.not_concat (hs : s.IsBounded) (hp : HasShape R p d s) (hq : Has
   | coinitial => exact (coinitial hp hq).elim
   | egressive => exact (coinitial (IsEgressive.isCoinitial hp) (IsEgressive.isCoinitial hq)).elim
   | transitive =>
-    obtain ⟨_, ⟨i, hi⟩, -, hg⟩ := id hp
-    obtain ⟨_, ⟨j, hj⟩, -, -⟩ := id hq
-    exact fun hr ↦ RelSeries.not_ordConnected_preimage_smash h (by rwa [coe_top] at hg) hi hj hr.1
+    intro hr
+    have := IsTransitive.entries_eq hr
+    rw [RelSeries.entries_smash, IsTransitive.entries_eq hp, IsTransitive.entries_eq hq] at this
+    exact absurd this (by decide)
   | _ => exact absurd hs (by decide)
 
 end Concat

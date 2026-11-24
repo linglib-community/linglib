@@ -169,14 +169,14 @@ theorem overPP_exists_pair {R : Set Loc} {x a : Loc} (hx : x ∈ R) (ha : a ∉ 
     exact Set.ordConnected_singleton
   exact ⟨_, hp, _, hp, _, rfl, rfl⟩
 
-/-- A route phrase is bounded, (39), since a concatenation of its paths has more than one interval
-in the region. -/
+/-- A route phrase is bounded, (39), since a concatenation of its paths enters the region
+twice. -/
 theorem overPP_bounded (R : Set Loc) : Bounded Concat (overPP R) := by
-  rintro ⟨⟨p, hp, q, hq, r, hr⟩, hc⟩
-  obtain ⟨-, ⟨i, hi⟩, -, hg⟩ := id hp
-  obtain ⟨-, ⟨j, hj⟩, -, -⟩ := id hq
-  obtain ⟨h, rfl⟩ := id hr
-  exact RelSeries.not_ordConnected_preimage_smash h (p.coe_top ▸ hg) hi hj (hc p hp q hq _ hr).1
+  rintro ⟨⟨p, hp, q, hq, _, h, rfl⟩, hc⟩
+  have := Path.IsTransitive.entries_eq (hc p hp q hq _ ⟨h, rfl⟩)
+  rw [RelSeries.entries_smash, Path.IsTransitive.entries_eq hp, Path.IsTransitive.entries_eq hq]
+    at this
+  exact absurd this (by decide)
 
 /-! ### Towards and away from (§4.1.3)
 
