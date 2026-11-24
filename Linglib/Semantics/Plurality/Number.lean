@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Mereology.Basic
+public import Linglib.Core.Order.Minimal
+public import Linglib.Semantics.Mereology.Atomic
 public import Linglib.Syntax.Feature.Number.Decomposition
 
 /-!
@@ -27,6 +28,9 @@ cells of their bundles, are computed in `Studies/Harbour2014.lean`.
   so `[+atomic]` entails `[+minimal]`.
 * `Number.atomize_eq_of_atoms`: `[+minimal]` applied to a region of atoms changes nothing.
 * `Number.not_restrict_minimal_false_atomize`: `[−minimal]` applied after `[+minimal]` is empty.
+* `Number.Feature.restrict_grade_preimage`: in a part structure graded by `ℕ`, a feature acts on
+  the individuals of given grades as it acts on the grades.
+* `Number.Feature.restrict_inter_of_isLowerSet`: a feature's selection restricts to a lower set.
 
 ## Implementation notes
 
@@ -138,5 +142,51 @@ theorem singular_subset_minimal (hP : ∀ y ∈ P, y ≠ ⊥)
 theorem atomize_eq_of_atoms (hAll : ∀ x ∈ P, IsAtom x) : atomize P = P :=
   (atomize_subset P).antisymm fun x hPx ↦
     singular_subset_minimal (fun y hy ↦ (hAll y hy).1) ⟨hPx, hAll x hPx⟩
+
+/-! ### Regions of numerosities
+
+In a part structure graded by `ℕ` the features act on the regions cut out by sets of grades as
+they act on the sets of grades. -/
+
+section Grade
+
+variable [GradeMinOrder ℕ D]
+
+omit [OrderBot D] in
+theorem atomize_grade_preimage (S : Set ℕ) :
+    atomize (grade ℕ ⁻¹' S : Set D) = grade ℕ ⁻¹' atomize S :=
+  Set.ext fun _ ↦ minimal_comp_iff_of_strictMono grade_strictMono fun _ _ ↦ exists_le_grade_eq
+
+/-- The region a valued feature selects from the individuals of the grades `S` is that of the
+grades it selects from `S`. -/
+theorem Feature.restrict_grade_preimage (f : Feature) (v : Bool) (S : Set ℕ) :
+    f.restrict v (grade ℕ ⁻¹' S : Set D) = grade ℕ ⁻¹' f.restrict v S := by
+  match f, v with
+  | .atomic, true => ext x; simp [isAtom_grade_iff]
+  | .atomic, false => ext x; simp [isAtom_grade_iff]
+  | .minimal, true => exact atomize_grade_preimage S
+  | .minimal, false =>
+    ext x
+    simp only [Feature.mem_restrict_minimal_false, atomize_grade_preimage, Set.mem_preimage]
+  | .additive, _ => rfl
+
+end Grade
+
+/-- A valued feature selects from the part of a region inside a lower set the part of its
+selection inside that set. -/
+theorem Feature.restrict_inter_of_isLowerSet (f : Feature) (v : Bool) (P : Set D) {L : Set D}
+    (hL : IsLowerSet L) : f.restrict v (P ∩ L) = f.restrict v P ∩ L := by
+  have key : atomize (P ∩ L) = atomize P ∩ L := Set.ext fun x ↦
+    ⟨fun h ↦ ⟨⟨h.1.1, fun y hy hyx ↦ h.2 ⟨hy, hL hyx h.1.2⟩ hyx⟩, h.1.2⟩,
+      fun h ↦ ⟨⟨h.1.1, h.2⟩, fun y hy hyx ↦ h.1.2 hy.1 hyx⟩⟩
+  match f, v with
+  | .atomic, true => ext x; simp only [mem_restrict_atomic_true, Set.mem_inter_iff]; tauto
+  | .atomic, false => ext x; simp only [mem_restrict_atomic_false, Set.mem_inter_iff]; tauto
+  | .minimal, true => exact key
+  | .minimal, false =>
+    ext x
+    simp only [mem_restrict_minimal_false, key, Set.mem_inter_iff]
+    tauto
+  | .additive, _ => rfl
 
 end Number

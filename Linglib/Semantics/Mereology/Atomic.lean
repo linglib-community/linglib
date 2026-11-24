@@ -1,5 +1,7 @@
 module
 
+public import Linglib.Core.Order.Grade
+public import Mathlib.Order.Interval.Finset.Defs
 public import Linglib.Semantics.Mereology.Basic
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Order.Hom.Lattice
@@ -10,12 +12,23 @@ public import Mathlib.Order.Hom.Lattice
 A part structure with a null individual is atomic, mathlib's `IsAtomic`, if every individual
 other than `⊥` has an atom as a part. Classical mereology leaves the choice open: count domains
 are taken to be atomic, while events, matter and time need not be. In an atomic generalized
-Boolean algebra every individual is the least upper bound of its atoms
-(`Mereology.isLUB_atomsBelow`) and parthood is inclusion of atoms
-(`Mereology.atomsBelowEmbedding`), which is what lets sums be treated as sets. In a distributive
-lattice an atom is part of a join only by being part of one of the two
-(`IsAtom.le_sup_iff`), so the atoms of a join are the atoms of the two
-(`Mereology.atomsBelow_sup`).
+Boolean algebra an individual is the sum of its atoms and parthood is inclusion of atoms, which is
+what lets sums be treated as sets and counted by `Mereology.atomCount`.
+
+## Main definitions
+
+* `Mereology.atomsBelowEmbedding`: an atomic generalized Boolean algebra embeds in the sets of its
+  atoms.
+* `Mereology.gradeMinOrder`: where individuals have finitely many parts, the algebra is graded by
+  the number of atoms.
+
+## Main results
+
+* `IsAtom.le_sup_iff`, `Mereology.atomsBelow_sup`: in a distributive lattice an atom is part of a
+  join only by being part of one of the two, so the atoms of a join are the atoms of the two.
+* `Mereology.isLUB_atomsBelow`: an individual is the least upper bound of its atoms.
+* `Mereology.isGreatest_atomCount_mem_iff`: the largest part of `c` whose number of atoms lies in
+  a set of positive numbers is `c`, and there is one only where the number of atoms of `c` does.
 
 ## References
 
@@ -50,6 +63,12 @@ theorem atomsBelow_nonempty [IsAtomic α] (hx : x ≠ ⊥) : (atomsBelow x).None
 theorem atomsBelow_mono (h : x ≤ y) : atomsBelow x ⊆ atomsBelow y :=
   fun _ ha ↦ ⟨ha.1, ha.2.trans h⟩
 
+@[simp] theorem atomsBelow_bot : atomsBelow (⊥ : α) = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ ha ↦ ha.1.1 (le_bot_iff.1 ha.2)
+
+@[simp] theorem atomCount_bot : atomCount α ⊥ = 0 := by
+  rw [atomCount_eq_ncard, atomsBelow_bot, Set.ncard_empty]
+
 end PartialOrder
 
 /-- The atoms of a join are the atoms of the two. -/
@@ -58,9 +77,19 @@ theorem atomsBelow_sup [DistribLattice α] [OrderBot α] (x y : α) :
   Set.ext fun _ ↦ ⟨fun ha ↦ (ha.1.le_sup_iff.1 ha.2).imp (⟨ha.1, ·⟩) (⟨ha.1, ·⟩),
     fun ha ↦ ha.elim (atomsBelow_mono le_sup_left ·) (atomsBelow_mono le_sup_right ·)⟩
 
+/-- Taking an atom away takes that atom away from the atoms. -/
+theorem atomsBelow_sdiff_of_isAtom [GeneralizedBooleanAlgebra α] {a x : α} (ha : IsAtom a) :
+    atomsBelow (x \ a) = atomsBelow x \ {a} := by
+  ext z
+  simp only [mem_atomsBelow, le_sdiff, Set.mem_sdiff, Set.mem_singleton_iff, and_assoc]
+  refine and_congr_right fun hz ↦ and_congr_right fun _ ↦ ⟨?_, fun hne ↦ ?_⟩
+  · rintro h rfl
+    exact hz.1 (disjoint_self.1 h)
+  · exact hz.disjoint_of_ne ha hne
+
 section Boolean
 
-variable [GeneralizedBooleanAlgebra α] [IsAtomic α] {x y : α}
+variable [GeneralizedBooleanAlgebra α] [IsAtomic α] {c x y : α}
 
 /-- In an atomic generalized Boolean algebra, parthood is inclusion of atoms. -/
 theorem atomsBelow_subset_iff : atomsBelow x ⊆ atomsBelow y ↔ x ≤ y := by
@@ -83,6 +112,54 @@ def atomsBelowEmbedding : α ↪o Set α :=
 
 @[simp]
 theorem atomsBelowEmbedding_apply (x : α) : atomsBelowEmbedding α x = atomsBelow x := rfl
+
+theorem atomCount_strictMono (hfin : ∀ x : α, (atomsBelow x).Finite) :
+    StrictMono (atomCount α) := fun x y h ↦ by
+  simp only [atomCount_eq_ncard]
+  exact Set.ncard_lt_ncard
+    ⟨atomsBelow_mono h.le, fun hs ↦ h.not_ge (atomsBelow_subset_iff.1 hs)⟩ (hfin y)
+
+theorem atomCount_of_covBy (hfin : ∀ x : α, (atomsBelow x).Finite) (h : x ⋖ y) :
+    atomCount α y = atomCount α x + 1 := by
+  obtain ⟨d, hd, hdy⟩ := (eq_bot_or_exists_atom_le (y \ x)).resolve_left
+    (mt sdiff_eq_bot_iff.1 h.lt.not_ge)
+  have hdx : ¬ d ≤ x := fun hx ↦ hd.1 (le_bot_iff.1 ((le_inf hx hdy).trans inf_sdiff_self_right.le))
+  have hy : x ⊔ d = y := (h.eq_or_eq le_sup_left (sup_le h.le (hdy.trans sdiff_le))).resolve_left
+    fun he ↦ hdx (he ▸ le_sup_right)
+  rw [atomCount_eq_ncard, atomCount_eq_ncard, ← hy, atomsBelow_sup, atomsBelow_of_isAtom hd,
+    Set.union_singleton, Set.ncard_insert_of_notMem (fun h : d ∈ atomsBelow x ↦ hdx h.2) (hfin x)]
+
+/-- An atomic generalized Boolean algebra whose individuals have finitely many parts is graded by
+the number of atoms. -/
+@[reducible] noncomputable def gradeMinOrder [LocallyFiniteOrderBot α] : GradeMinOrder ℕ α :=
+  have hfin (x : α) : (atomsBelow x).Finite := (Set.finite_Iic x).subset fun _ h ↦ h.2
+  { grade := atomCount α
+    grade_strictMono := atomCount_strictMono hfin
+    covBy_grade := fun _ _ h ↦ Order.covBy_iff_add_one_eq.2 (atomCount_of_covBy hfin h).symm
+    isMin_grade := fun a ha ↦ by
+      rw [isMin_iff_eq_bot.1 ha, atomCount_bot]
+      exact isMin_bot }
+
+/-- Among the parts of `c` whose number of atoms lies in `S`, one that the others are parts of is
+`c`: the largest sum of so many atoms of `c` exists only where `c` has so many. -/
+theorem isGreatest_atomCount_mem_iff {S : Set ℕ} (h0 : 0 ∉ S) :
+    IsGreatest {x | x ≤ c ∧ atomCount α x ∈ S} x ↔ x = c ∧ atomCount α c ∈ S := by
+  refine ⟨fun ⟨⟨hxc, hx⟩, hub⟩ ↦ ?_, by rintro ⟨rfl, h⟩; exact ⟨⟨le_rfl, h⟩, fun _ h ↦ h.1⟩⟩
+  suffices x = c from ⟨this, this ▸ hx⟩
+  by_contra hne
+  have hn : (atomsBelow x).ncard ≠ 0 := fun h ↦ h0 (by rwa [atomCount_eq_ncard, h] at hx)
+  obtain ⟨d, hd, hdc⟩ := (eq_bot_or_exists_atom_le (c \ x)).resolve_left
+    (mt sdiff_eq_bot_iff.1 fun h ↦ hne (hxc.antisymm h))
+  have hfin : (atomsBelow x).Finite := Set.finite_of_ncard_ne_zero hn
+  obtain ⟨a, ha⟩ := (Set.ncard_pos hfin).1 (Nat.pos_of_ne_zero hn)
+  have hdx : ¬ d ≤ x := fun h ↦ hd.1 (le_bot_iff.1 ((le_inf h hdc).trans inf_sdiff_self_right.le))
+  have hcard : atomCount α (x \ a ⊔ d) = atomCount α x := by
+    rw [atomCount_eq_ncard, atomCount_eq_ncard, atomsBelow_sup,
+      atomsBelow_sdiff_of_isAtom ha.1, atomsBelow_of_isAtom hd, Set.union_singleton,
+      Set.ncard_insert_of_notMem (fun h : d ∈ atomsBelow x \ {a} ↦ hdx h.1.2) hfin.sdiff,
+      Set.ncard_sdiff_singleton_add_one ha hfin]
+  exact hdx (le_sup_right.trans
+    (hub ⟨sup_le (sdiff_le.trans hxc) (hdc.trans sdiff_le), hcard ▸ hx⟩))
 
 end Boolean
 

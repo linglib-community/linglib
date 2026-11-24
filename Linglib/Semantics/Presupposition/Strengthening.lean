@@ -8,15 +8,31 @@ public import Mathlib.Order.Minimal
 /-!
 # Presuppositional strengthening
 
-This file defines the strengthening of a presupposition by its alternatives: the worlds where it
-holds and no strictly stronger alternative's does, the domain of the operator EXHp. Removing the
-stronger presuppositions gives Percus's anti-presuppositions and Sauerland's implicated
-presuppositions. Heim's Maximize Presupposition, as Schlenker states it, compares presuppositions
-satisfied in a context: an expression must be [a strongest alternative defined
-there](##Presupposition.minimalFor_preimage_Ici_iff). [Strengthening is that condition at one-point
-contexts](##Presupposition.mem_strengthen_iff_minimalFor_singleton), its form after Chemla's
-epistemic step, and the condition is [strengthening through a knowledge
-operator](##Presupposition.mem_strengthen_Iic_iff).
+For expressions `φ : S` with alternatives `alts φ` and presuppositions `content φ : Set W`, the
+strengthening of `φ` holds at the worlds where its presupposition holds and that of no strictly
+stronger alternative does, `w ∈ content φ` with `¬ content ψ ⊂ content φ` for every
+`ψ ∈ alts φ` such that `w ∈ content ψ`. It is exhaustification of `content φ` against the
+strictly stronger presuppositions of the alternatives, which gives Percus's anti-presuppositions
+and Sauerland's implicated presuppositions. Maximize Presupposition, as Schlenker states it,
+compares the presuppositions satisfied throughout a context `c`, and requires `φ` to be a
+strongest alternative defined there.
+
+## Main definitions
+
+* `Presupposition.strengthen`: the strengthening of a presupposition by its alternatives.
+
+## Main results
+
+* `Presupposition.mem_strengthen_iff`: membership in the strengthening.
+* `Presupposition.minimalFor_preimage_Ici_iff`: Maximize Presupposition in a context `c` holds of
+  `φ` when `c ⊆ content φ` and `c` lies in the presupposition of no strictly stronger alternative.
+* `Presupposition.mem_strengthen_iff_minimalFor_singleton`: strengthening is that condition at
+  one-point contexts.
+* `Presupposition.mem_strengthen_Iic_iff`: the condition at a context is strengthening of the
+  presuppositions `Set.Iic (content ψ)` of a knowledge operator.
+* `Presupposition.strengthen_eq_sdiff`: with one strictly stronger alternative above the others,
+  strengthening removes its presupposition.
+* `Presupposition.strengthen_anti`: more alternatives strengthen more.
 
 ## References
 
@@ -78,12 +94,14 @@ strictly stronger alternative is. -/
 theorem mem_strengthen_Iic_iff :
     c ∈ strengthen alts (fun ψ ↦ Set.Iic (content ψ)) φ ↔
       c ⊆ content φ ∧ ∀ ψ ∈ alts φ, content ψ ⊂ content φ → ¬ c ⊆ content ψ := by
-  have key {p q : Set W} : Set.Iic p ⊂ Set.Iic q ↔ p ⊂ q :=
-    ⟨fun h ↦ ⟨h.subset (le_refl p), fun hqp ↦ h.not_subset fun _ hr ↦ le_trans hr hqp⟩,
-      fun h ↦ ⟨fun _ hr ↦ le_trans hr h.subset, fun hqp ↦ h.not_subset (hqp (le_refl q))⟩⟩
   rw [mem_strengthen_iff]
-  exact and_congr_right fun _ ↦ ⟨fun h ψ hψ hss hc ↦ h ψ hψ hc (key.2 hss),
-    fun h ψ hψ hc hss ↦ h ψ hψ (key.1 hss) hc⟩
+  exact and_congr_right fun _ ↦ ⟨fun h ψ hψ hss hc ↦ h ψ hψ hc (Set.Iic_ssubset_Iic.2 hss),
+    fun h ψ hψ hc hss ↦ h ψ hψ (Set.Iic_ssubset_Iic.1 hss) hc⟩
+
+theorem strengthen_anti {alts' : S → Set S} (h : alts φ ⊆ alts' φ) :
+    strengthen alts' content φ ⊆ strengthen alts content φ := fun _ hw ↦
+  let ⟨hφ, hψ⟩ := mem_strengthen_iff.1 hw
+  mem_strengthen_iff.2 ⟨hφ, fun ψ h' ↦ hψ ψ (h h')⟩
 
 theorem strengthen_eq_self (h : ∀ ψ ∈ alts φ, ¬ content ψ ⊂ content φ) :
     strengthen alts content φ = content φ :=

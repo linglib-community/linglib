@@ -68,6 +68,20 @@ theorem not_exact_atomic_nonMinimal (P : Set D) (x : D) :
   exact fun h ↦ h.2 ((atomize_eq_of_atoms (P := Feature.restrict .atomic true P)
     fun _ h ↦ h.2).symm ▸ h.1)
 
+/-- The region of a bundle among the individuals of the grades `S` is that of the grades of its
+region in `S`. -/
+theorem exact_grade_preimage [GradeMinOrder ℕ D] (b : Bundle) (S : Set ℕ) :
+    b.exact (grade ℕ ⁻¹' S : Set D) = grade ℕ ⁻¹' b.exact S := by
+  simp only [exact, step]
+  split_ifs <;> simp only [Feature.restrict_grade_preimage, ← Feature.restrict_minimal_true]
+
+/-- The region of a bundle inside a lower set is the part of its region inside that set. -/
+theorem exact_inter_of_isLowerSet (b : Bundle) (P : Set D) {L : Set D} (hL : IsLowerSet L) :
+    b.exact (P ∩ L) = b.exact P ∩ L := by
+  simp only [exact, step]
+  split_ifs <;>
+    simp only [Feature.restrict_inter_of_isLowerSet _ _ _ hL, ← Feature.restrict_minimal_true]
+
 end Bundle
 
 end Number
