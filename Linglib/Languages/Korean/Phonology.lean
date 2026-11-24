@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.PHOIBLE.Inventories.Korean
 public import Linglib.Phonology.Segmental.PHOIBLE
-public import Linglib.Phonology.Subregular.LocalRewrite
+public import Linglib.Phonology.Subregular.Function.LocalRewrite
 
 /-!
 # Korean stop nasalization

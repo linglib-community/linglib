@@ -9,7 +9,7 @@ public import Linglib.Languages.Georgian.FocusParticles
 public import Linglib.Languages.Hungarian.Coordination
 public import Linglib.Languages.Hungarian.FocusParticles
 public import Linglib.Semantics.Exhaustification.Disjunctive
-public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Realization.Map
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Multiset.Filter
 

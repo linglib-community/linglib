@@ -7,8 +7,8 @@ module
 
 public import Mathlib.Data.Fintype.Option
 public import Linglib.Data.Wordlist.HeinzLai2013
-public import Linglib.Phonology.Subregular.Dependence
-public import Linglib.Phonology.Subregular.WeakDeterminism
+public import Linglib.Phonology.Subregular.Function.Dependence
+public import Linglib.Phonology.Subregular.Function.WeakDeterminism
 
 /-!
 # Heinz and Lai (2013): Vowel harmony and subsequentiality

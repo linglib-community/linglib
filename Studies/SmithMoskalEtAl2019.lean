@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Morphology.Exponence.Containment.SpanRule
-public import Linglib.Morphology.Paradigm.Contiguity
+public import Linglib.Morphology.Exponence.SpanRule
+public import Linglib.Morphology.Inflection.Paradigm.Contiguity
 public import Linglib.Data.Wordlist.SmithMoskalEtAl2019
 
 /-!

@@ -5,7 +5,7 @@ public import Linglib.Languages.English.Phonology
 public import Linglib.Languages.Hebrew.ConsonantalRoots
 public import Linglib.Morphology.Root.Consonantal
 public import Linglib.Phonology.Segmental.Sonority.Basic
-public import Linglib.Phonology.Subregular.StrictlyLocal
+public import Linglib.Phonology.Subregular.Stringset.StrictlyLocal
 public import Studies.BerentEtAl2016
 
 /-!

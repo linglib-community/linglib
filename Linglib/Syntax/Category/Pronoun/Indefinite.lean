@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Morphology.Paradigm.Basic
+public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 
 /-!

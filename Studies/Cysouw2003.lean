@@ -7,7 +7,7 @@ public import Linglib.Core.Data.Setoid.Basic
 public import Linglib.Syntax.Feature.Person.Features
 public import Linglib.Languages.English.Pronouns
 public import Linglib.Languages.Tagalog.Pronouns
-public import Linglib.Morphology.Paradigm.Morphome
+public import Linglib.Morphology.Inflection.Paradigm.Morphome
 public import Linglib.Core.Order.Concept
 public import Linglib.Data.Examples.Readers
 

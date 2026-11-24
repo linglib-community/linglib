@@ -122,8 +122,9 @@ The directory follows what a file imports. Whose idea it is goes in
 the file's name and its references.
 
 Three rules are checked on every push: nothing in `Generalizations/`
-imports a framework, no shared file of `Syntax/` imports a framework,
-and no framework of syntax imports another. Two frameworks are not
+imports a framework, no shared file of `Syntax/` or `Morphology/`
+imports a framework, and no framework of syntax or of morphology
+imports another of its kind. Two frameworks are not
 related in one file. Each proves what its own construction amounts to
 in a shared form, and the two results have one right-hand side.
 

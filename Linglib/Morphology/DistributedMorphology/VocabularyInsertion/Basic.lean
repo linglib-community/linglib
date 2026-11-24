@@ -2,7 +2,6 @@ module
 
 public import Linglib.Morphology.DistributedMorphology.Neighborhood
 public import Linglib.Morphology.Exponence.Select
-public import Linglib.Morphology.Realization
 public import Mathlib.Data.Finset.Option
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Image
@@ -46,8 +45,6 @@ pattern across nested neighborhoods.
   contiguous patterns over neighborhoods ordered by inclusion.
 * `DistributedMorphology.exists_not_isContextFree_of_subsetPrinciple_ne`: a terminal that gets
   different exponents in two environments is realized by a Vocabulary with a contextual item.
-* `DistributedMorphology.toRealization_isUnivalent`: Vocabulary Insertion, as a
-  `Morphology.Realization`, realizes no cell overabundantly.
 
 ## References
 
@@ -295,35 +292,5 @@ theorem isContiguous_subsetPrinciple (hv : items.Antihomophonous) :
   RuleSet.isContiguous_realize_of_monotone hv fun _ _ _ _ hn hs ↦ VocabularyItem.applies_mono hs hn
 
 end SubsetPrinciple
-
-/-! ### Vocabulary Insertion as a realization -/
-
-section Realization
-
-variable {F E R Ctx : Type*} [DecidableEq F] {items : RuleSet (VocabularyItem F E)}
-  {site : R → Ctx → Neighborhood (Finset F)} {r : R}
-
-/-- The realization by `items` inserts at each index and context the exponent the Subset Principle
-selects in the neighborhood `site r c`. -/
-def toRealization (items : RuleSet (VocabularyItem F E))
-    (site : R → Ctx → Neighborhood (Finset F)) : Morphology.Realization R Ctx E :=
-  .ofOption fun r c ↦ subsetPrinciple items (site r c)
-
-@[simp] theorem toRealization_realize (r : R) (c : Ctx) :
-    (toRealization items site).realize r c = (subsetPrinciple items (site r c)).toFinset := rfl
-
-/-- The Subset Principle selects one item, so Vocabulary Insertion realizes no cell
-overabundantly. -/
-theorem toRealization_isUnivalent : (toRealization items site).IsUnivalent :=
-  Morphology.Realization.isUnivalent_ofOption _
-
-/-- An index is suppletive exactly when two of its contexts select items with distinct
-exponents. -/
-theorem toRealization_isSuppletive_iff : (toRealization items site).IsSuppletive r ↔
-    ∃ c c' e e', subsetPrinciple items (site r c) = some e ∧
-      subsetPrinciple items (site r c') = some e' ∧ e ≠ e' :=
-  Morphology.Realization.isSuppletive_ofOption_iff
-
-end Realization
 
 end DistributedMorphology

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Wordlist.Stump2012
-public import Linglib.Morphology.Paradigm.Linkage
+public import Linglib.Morphology.Inflection.Linkage
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sum

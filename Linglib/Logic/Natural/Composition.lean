@@ -13,14 +13,23 @@ public import Mathlib.Algebra.BigOperators.Group.List.Basic
 /-!
 # Composing layers of signatures
 
-The maps in the function class of a signature, each paired with that signature, form a submonoid of
-`Function.End α × ProjectivitySignature` (`ProjectivitySignature.classPairs`), since function
-classes compose along `ProjectivitySignature.compose` and the identity is a morphism. A path of such
-layers is therefore in the class of the product of its signatures, the projectivity of a position,
-and the sign of that product is the product of the signs of the layers. The sign fixes the direction
-of the composite: it is monotone under a positive sign and antitone under a negative one, so
-composing with a layer of negative sign reverses the direction
-([`antitone_list_prod`](##NaturalLogic.ProjectivitySignature.antitone_list_prod)).
+A layer is a map from a bounded lattice to itself together with a signature that holds of it. The
+layers form a submonoid of `Function.End α × ProjectivitySignature`, since function classes
+compose as their signatures do and the identity is a morphism. The product of a list of layers is
+therefore a layer, and its sign is the product of the signs: layers whose signs multiply to `1`
+compose to a monotone map, and layers whose signs multiply to `-1` to an antitone map.
+
+## Main definitions
+
+* `ProjectivitySignature.classPairs`: the submonoid of layers.
+* `negation`: complementation as a layer of signature `⊖`.
+
+## Main results
+
+* `holdsFor_list_prod`: the product of a list of layers is a layer.
+* `sign_list_prod`: the sign of the product is the product of the signs.
+* `monotone_list_prod`, `antitone_list_prod`: the composite is monotone when the signs multiply to
+  `1` and antitone when they multiply to `-1`.
 
 ## References
 
@@ -33,9 +42,8 @@ namespace NaturalLogic
 
 variable (α : Type*) [Lattice α] [BoundedOrder α]
 
-/-- The maps paired with a signature whose function class contains them, a submonoid of
-`Function.End α × ProjectivitySignature`: function classes compose along
-`ProjectivitySignature.compose`, and the identity is a morphism. -/
+/-- The maps from a bounded lattice to itself paired with a signature that holds of them, as a
+submonoid of `Function.End α × ProjectivitySignature`. -/
 def ProjectivitySignature.classPairs : Submonoid (Function.End α × ProjectivitySignature) where
   carrier := {p | p.2.HoldsFor p.1}
   mul_mem' {a b} ha hb := show (a.2 * b.2).HoldsFor (a.1 ∘ b.1) from
@@ -59,7 +67,7 @@ theorem ProjectivitySignature.holdsFor_list_prod {l : List (Function.End α × P
 omit [Lattice α] [BoundedOrder α] in
 theorem ProjectivitySignature.sign_list_prod (l : List (Function.End α × ProjectivitySignature)) :
     l.prod.2.sign = (l.map fun p ↦ p.2.sign).prod :=
-  map_list_prod (ProjectivitySignature.signHom.comp (MonoidHom.snd _ _)) l
+  map_list_prod (ProjectivitySignature.signHom.toMonoidHom.comp (MonoidHom.snd _ _)) l
 
 theorem ProjectivitySignature.monotone_list_prod {l : List (Function.End α × ProjectivitySignature)}
     (h : ∀ p ∈ l, p.2.HoldsFor p.1) (hs : (l.map fun p ↦ p.2.sign).prod = 1) :

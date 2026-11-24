@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Morphology.Paradigm.Contiguity
+public import Linglib.Morphology.Inflection.Paradigm.Contiguity
 public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!

@@ -3,7 +3,7 @@ module
 public import Linglib.Languages.English.Phonology
 public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.FeatureGeometry
-public import Linglib.Phonology.Subregular.LocalRewrite
+public import Linglib.Phonology.Subregular.Function.LocalRewrite
 
 /-!
 # Clements (1985): the geometry of phonological features

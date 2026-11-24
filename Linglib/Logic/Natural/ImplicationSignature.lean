@@ -8,22 +8,33 @@ public import Linglib.Logic.Natural.Relation
 # Implication signatures
 
 A complement-taking operator such as *manage*, *force* or *refuse* implies something about its
-complement in a positive context, in a negative context, or in both. Nairn, Condoravdi and Karttunen
-classify these operators by their implication signature, the polarity of the complement each
-context implies, if any: *manage* is `+/−`, since *managed to leave* implies *left* and *didn't
-manage to leave* implies *didn't leave*; *force* is `+/◦`, *refuse* `−/◦`, *hesitate* `◦/+`, and
-*want* `◦/◦`. Each slot is a flat value, `◦` being `⊥`, so signatures are ordered by how much they
-imply.
+complement in a positive context, in a negative context, or in both. Its implication signature
+gives the polarity of the complement that each context implies, if any: *manage* is `+/−`, since
+*managed to leave* implies *left* and *didn't manage to leave* implies *didn't leave*; *force* is
+`+/◦`, *refuse* `−/◦`, *hesitate* `◦/+`, and *want* `◦/◦`. Each slot is a flat value with `◦` as
+`⊥`, so signatures are ordered by how much they imply.
 
-Each implication is [an atomic
-constraint](##NaturalLogic.ImplicationSignature.holds_ofPolarities_iff) of
-natural logic between the claim and its complement, and a signature implies more exactly when it
-[constrains more](##NaturalLogic.ImplicationSignature.constraints_subset_constraints). Its
-constraints are those of one of the seven relations [unless both slots imply the same
-polarity](##NaturalLogic.ImplicationSignature.exists_constraints_eq_iff); a factive `+/+` or a
-counterfactive `−/−` [settles the complement whatever the
-claim](##NaturalLogic.ImplicationSignature.forall_holds_constraints_factive_iff), so that its
-implication survives negation as a presupposition does.
+Each implication is an atomic constraint of natural logic between the claim and its complement,
+and a signature implies more exactly when it constrains more. The constraints of a signature are
+those of one of the seven relations unless both slots imply the same polarity; a factive `+/+` or
+a counterfactive `−/−` settles the complement whatever the claim.
+
+## Main definitions
+
+* `ImplicationSignature`: the polarity of the complement implied in a positive and in a negative
+  context.
+* `ImplicationSignature.constraints`: the atomic constraints a signature imposes between a claim
+  and its complement.
+
+## Main results
+
+* `holds_ofPolarities_iff`: over propositions, an implication is the entailment from the claim to
+  the complement, each taken with its polarity.
+* `constraints_subset_constraints`: a signature implies more exactly when it constrains more.
+* `exists_constraints_eq_iff`: the constraints of a signature are those of a relation exactly when
+  its slots do not imply the same polarity.
+* `forall_holds_constraints_factive_iff`, `forall_holds_constraints_counterfactive_iff`: a factive
+  or counterfactive signature settles the complement whatever the claim.
 
 ## References
 

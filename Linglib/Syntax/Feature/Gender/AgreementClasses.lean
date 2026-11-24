@@ -10,7 +10,7 @@ public import Mathlib.Data.Set.Finite.Range
 public import Mathlib.Order.Comparable
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Linglib.Core.Data.Setoid.Basic
-public import Linglib.Morphology.Paradigm.Polarity
+public import Linglib.Morphology.Inflection.Paradigm.Polarity
 public import Linglib.Syntax.Feature.Gender.Basic
 
 /-!
@@ -63,8 +63,8 @@ distinguish more target genders, which Greenberg's universal 37 excludes.
   Principle of [corbett-fedden-2016].
 * The relations between two numbers take any controllers; the language files state them of their
   genders rather than their nouns.
-* The kernel of a map is the syncretism of `Morphology/Paradigm/Basic.lean`, read here over the
-  controllers a target agrees with rather than over the cells of a paradigm.
+* The kernel of a map is the syncretism of `Morphology/Inflection/Paradigm/Basic.lean`, read here
+  over the controllers a target agrees with rather than over the cells of a paradigm.
 * Subgenders, agreement classes differing on a minority of forms, inquorate genders, small
   closed classes whose pattern mixes other genders, and overdifferentiated targets are the
   steps from agreement classes to controller genders that remain to be defined; until then

@@ -66,7 +66,8 @@ each of which is an affix given that the others are.
 
 * The free forms are a finite sample, and boundness and affixhood are relative to it. A morph that
   can be used on its own counts as bound unless the sample lists it as a free form.
-* One function `cls` says which morphs are roots and of what class. A root is a morph that
+* One function `cls` says which morphs are roots and of what class, in any type of classes;
+  `RootClass` and `Form` are the classes and morphs of the papers' examples. A root is a morph that
   denotes an action, an object or a property in [haspelmath-2021c], where `cls` is the class a
   morph denotes, and such a morph that occurs without another in [haspelmath-2023], where `cls`
   is `rootClass`.
@@ -80,6 +81,10 @@ each of which is an affix given that the others are.
   order, each of which occurs on the root only through the other in one of the two forms.
 * A required affix may be replaced by any other affix on its root, since replacement within one
   slot would need paradigm structure. Compounds are not covered.
+
+## TODO
+
+* Relate `Morph.wordsAt`, the words a spelling marks off at an attachment, to `IsWord`.
 
 ## References
 
@@ -178,7 +183,7 @@ theorem OccursOn.inter_mem (ho : OccursOn A w i y) : OccursOn (A ∩ {z | z ∈ 
 
 end
 
-variable (F : List (List M)) (cls : M → Option RootClass)
+variable {C : Type*} (F : List (List M)) (cls : M → Option C)
 
 /-! ### Roots -/
 
@@ -190,7 +195,7 @@ instance [DecidableEq M] (x : M) : Decidable (IsRoot F cls x) :=
   inferInstanceAs (Decidable (_ ∧ ∃ w ∈ F, _))
 
 /-- The class of a morph if it is a root, `cls` being the class a morph denotes. -/
-def rootClass [DecidableEq M] (x : M) : Option RootClass := if IsRoot F cls x then cls x else none
+def rootClass [DecidableEq M] (x : M) : Option C := if IsRoot F cls x then cls x else none
 
 /-! ### The step of the definition -/
 
@@ -198,10 +203,10 @@ section Step
 
 /-- The morph `x` selects the root class `c` through `A` when each occurrence of `x` in a free
 form occurs on a root of class `c` through the morphs of `A`. -/
-def Selects (A : Set M) (x : M) (c : RootClass) : Prop :=
+def Selects (A : Set M) (x : M) (c : C) : Prop :=
   ∀ w ∈ F, ∀ i, w[i]? = some x → ∃ y, OccursOn A w i y ∧ cls y = some c
 
-instance [DecidableEq M] (A : Set M) [DecidablePred (· ∈ A)] (x : M) (c : RootClass) :
+instance [DecidableEq M] [DecidableEq C] (A : Set M) [DecidablePred (· ∈ A)] (x : M) (c : C) :
     Decidable (Selects F cls A x c) :=
   decidable_of_iff (∀ w ∈ F, ∀ i < w.length, w[i]? = some x →
       ∃ y ∈ w, OccursOn A w i y ∧ cls y = some c)
@@ -223,13 +228,13 @@ structure AffixStep (A : Set M) (x : M) : Prop where
   /-- An affix always occurs on roots of one class. -/
   selects : ∃ c, Selects F cls A x c
 
-instance [DecidableEq M] (A : Set M) [DecidablePred (· ∈ A)] (x : M) :
+instance [DecidableEq M] [Fintype C] [DecidableEq C] (A : Set M) [DecidablePred (· ∈ A)] (x : M) :
     Decidable (AffixStep F cls A x) :=
   decidable_of_iff' _ (affixStep_iff F cls A x)
 
 variable {F cls} {A B : Set M} {x : M}
 
-theorem Selects.mono (h : A ⊆ B) {c : RootClass} (hs : Selects F cls A x c) :
+theorem Selects.mono (h : A ⊆ B) {c : C} (hs : Selects F cls A x c) :
     Selects F cls B x c :=
   fun w hw i hx ↦ (hs w hw i hx).imp fun _ hy ↦ ⟨hy.1.mono h, hy.2⟩
 
@@ -303,7 +308,7 @@ private theorem iterate_fixed_of_sublist {α : Type*} {g : List α → List α}
       have : (g S).length ≠ S.length := fun e ↦ hS ((hg S).eq_of_length e)
       omega
 
-variable [DecidableEq M]
+variable [DecidableEq M] [Fintype C] [DecidableEq C]
 
 /-- One round of the computation keeps the morphs of `S` that pass the step taken through `S`. -/
 def prune (S : List M) : List M := S.filter fun x ↦ AffixStep F cls {z | z ∈ S} x
@@ -376,7 +381,7 @@ def IsWord (w : List M) : Prop :=
         (RequiresAffix F cls r → ∃ y ∈ w, y ≠ r))
 
 section Decidable
-variable [DecidableEq M]
+variable [DecidableEq M] [Fintype C] [DecidableEq C]
 
 instance (x : M) : Decidable (IsClitic F cls x) := decidable_of_iff' _ (isClitic_iff F cls x)
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Subregular.Boundary
+public import Linglib.Phonology.Subregular.Stringset.Boundary
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Mathlib.Algebra.Group.Indicator
 public import Mathlib.Basic.Real.Basic

@@ -152,7 +152,7 @@ theorem universalDegree_eq_iff (hx : x ∈ C) (hy : y ∈ C) :
       cresswellSetoid (fun a b : C ↦ μ b ≤ μ a) ⟨x, hx⟩ ⟨y, hy⟩ := by
   rw [universalDegree, universalDegree,
     (relativeRank_strictMonoOn _).injOn.eq_iff (mem_image_of_mem μ hx) (mem_image_of_mem μ hy),
-    cresswellSetoid_le_measure fun a : C ↦ μ a]
+    cresswellSetoid_eq_ker_of_le (μ := fun a : C ↦ μ a) fun _ _ ↦ .rfl]
   rfl
 
 theorem universalDegree_lt_iff_of_image_eq {ν : F → D} {C' : Finset F} {y : F}

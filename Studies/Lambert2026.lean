@@ -2,10 +2,10 @@ module
 
 public import Linglib.Core.Computability.Variety.Definite
 public import Linglib.Core.Data.List.Sublist
-public import Linglib.Phonology.Subregular.Multitier
-public import Linglib.Phonology.Subregular.MultitierDefinite
-public import Linglib.Phonology.Subregular.ForbiddenPairs
-public import Linglib.Phonology.Subregular.Agree
+public import Linglib.Phonology.Subregular.Stringset.Multitier
+public import Linglib.Phonology.Subregular.Stringset.MultitierDefinite
+public import Linglib.Phonology.Subregular.Stringset.ForbiddenPairs
+public import Linglib.Phonology.Subregular.Stringset.Agree
 public import Linglib.Phonology.Tone.Plateauing
 public import Studies.Hansson2010
 

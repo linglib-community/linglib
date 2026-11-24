@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Phonology.Harmony.Basic
-public import Linglib.Phonology.Subregular.Agree
+public import Linglib.Phonology.Subregular.Stringset.Agree
 public import Linglib.Data.Wordlist.AksenovaEtAl2024
 public import Linglib.Data.Examples.Languages
 

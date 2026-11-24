@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 public import Linglib.Syntax.Category.Pronoun.Reflexive
 public import Linglib.Languages.Hungarian.Case
-public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Realization.Map
 
 /-!
 # Hungarian pronouns

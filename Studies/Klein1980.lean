@@ -187,8 +187,10 @@ under the consistency constraint the comparative is such an order, so its classe
 and a measure into a linear order represents the ordering within the class. -/
 
 example {d : Delineation E} {C : Set E} (hd : d.IsGapless) (hm : d.IsMonotoneOn (𝒫 C)) :
-    IsStrictTotalOrder (CresswellDegree (d.Outranks C)) (· < ·) :=
-  CresswellDegree.isStrictTotalOrder_lt_iff.2 (hd.isStrictWeakOrder_outranks hm)
+    Std.Total (α := CresswellDegree (d.Outranks C)) (· ≤ ·) ∧
+      ∀ a b, (⟦b⟧ : CresswellDegree (d.Outranks C)) < ⟦a⟧ ↔ d.Outranks C a b :=
+  CresswellDegree.total_and_forall_mk_lt_mk_iff.2
+    ⟨hm.asymm_outranks, hd.isOrderConnected_outranks⟩
 
 universe u in
 example {E : Type u} {d : Delineation E} {C : Set E} (hd : d.IsGapless)
@@ -201,9 +203,9 @@ example {E : Type u} {d : Delineation E} {C : Set E} (hd : d.IsGapless)
 theorem mem_kleinDegree_ofMeasure_iff_cresswell (μ : E → D) {u v : E} :
     v ∈ kleinDegree (ofMeasure μ) Set.univ u ↔
       cresswellSetoid ((ofMeasure μ).Outranks Set.univ) u v := by
-  have hO : (ofMeasure μ).Outranks Set.univ = fun a b ↦ μ b < μ a :=
-    funext₂ fun a b ↦ propext (outranks_ofMeasure_iff μ trivial trivial)
-  rw [kleinDegree_ofMeasure μ (Set.mem_univ u) (Set.mem_univ v), hO, cresswellSetoid_lt_measure,
+  rw [kleinDegree_ofMeasure μ (Set.mem_univ u) (Set.mem_univ v),
+    cresswellSetoid_eq_ker_of_lt (φ := (ofMeasure μ).Outranks Set.univ) fun _ _ ↦
+      outranks_ofMeasure_iff μ trivial trivial,
     Setoid.ker_def]
 
 -- (i), n. 5
@@ -219,7 +221,7 @@ objection that the relation need not be *exactly as A as* when the comparison is
 theorem cresswell_clever_not_equivalent :
     cresswellSetoid (clever.Outranks Set.univ) .j .m ∧
       ¬ clever.Equivalent cleverContexts Set.univ .j .m :=
-  ⟨⟨fun _ ↦ iff_of_false (fun ⟨_, _, h, _⟩ ↦ h) (fun ⟨_, _, h, _⟩ ↦ h),
+  ⟨cresswellSetoid_iff.2 ⟨fun _ ↦ iff_of_false (fun ⟨_, _, h, _⟩ ↦ h) (fun ⟨_, _, h, _⟩ ↦ h),
     fun _ ↦ iff_of_false (fun ⟨_, _, h, _⟩ ↦ h) (fun ⟨_, _, h, _⟩ ↦ h)⟩, not_equivalent_clever⟩
 
 /-! ### *As … as* and Kamp's *at least as* (§5.3)
