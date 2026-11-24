@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
-public import Linglib.Phonology.Subregular.WordModel
+public import Linglib.Phonology.Subregular.WordModel.Stringset
 public import Linglib.Core.Computability.Definite
 public import Linglib.Core.Computability.LocallyTestable
 public import Linglib.Core.Computability.PiecewiseTestable

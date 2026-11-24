@@ -9,7 +9,7 @@ public import Mathlib.Data.List.Basic
 public import Mathlib.Order.Notation
 public import Linglib.Core.Data.List.TakeDrop
 public import Mathlib.Data.Fintype.Prod
-public import Linglib.Phonology.Subregular.StringModel
+public import Linglib.Phonology.Subregular.WordModel.Formula
 
 /-!
 # Boolean monadic recursive schemes

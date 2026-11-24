@@ -10,7 +10,7 @@ public import Linglib.Core.Data.List.DropRight
 public import Linglib.Phonology.Subregular.WordModel.Basic
 
 /-!
-# String models
+# Terms and formulas of string models
 
 This file defines the string models of Chandlee and Jardine, the first-order structures over
 which quantifier-free formulas state local conditions on strings. The string model of a word has
