@@ -52,6 +52,12 @@ Taking `S = M` and `ι = id` recovers a single type of property sets. The univer
 listed rule of `ofRules` but the fallback of `RuleSet.realizeMinimalD`, the lexeme's
 root.
 
+## TODO
+
+* `Linkage.IsInvariantAlong p` and `Linkage.IsHeteroclite cls` are `IsInvariant` and `IsSuppletive`
+  of the image of the realization under `p` and `cls`. State them on `Realization`, in
+  `Morphology/Realization/Map.lean`, or write the image directly.
+
 ## References
 
 * [corbett-2007]
