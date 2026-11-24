@@ -57,6 +57,21 @@ bottom filter can be stated through the subfamilies of `A` with a common point.
 unfolds to a conjunction and membership in `A` is not repeated on both sides. The two agree by
 `Preorder.ofLowerSets_eq_lift`.
 
+## TODO
+
+* A family is the family of lower sets of the ordering it generates just in case it is closed
+  under arbitrary intersections and arbitrary unions, so that the closure operator of
+  `PremiseOrdering.gi` adds exactly these. The closure lemmas of `Exhaustification/Closure.lean`
+  and the expressible propositions of `Studies/Chemla2011.lean` are cases of it.
+* Adding a set to a family is an operation on orderings, by `Preorder.ofLowerSets_insert`.
+  Removing one is not: for independent `p` and `q`, the families `{p, q, p ∩ q}` and `{p, q}`
+  generate the same ordering, and `{q, p ∩ q}` and `{q}` do not. Characterize the operations on
+  families that descend to the orderings they generate.
+* The family of preimages of the members of `A` under a map generates the pullback of `≤[A]`
+  along it.
+* `Preorder.ofCriterion`, the decidability instance and `Filter.mem_atBotOn_satisfied_iff` are
+  stated for a predicate or a relation and its criteria; restate them for families of sets.
+
 ## References
 
 * [kratzer-1981]

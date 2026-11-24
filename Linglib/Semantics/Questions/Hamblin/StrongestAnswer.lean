@@ -25,6 +25,14 @@ worlds with a family of its lower sets containing the principal ones. See
 `Question.forall_hasStrongestTrueAnswer_iff_setOf_le_mem`,
 `Preorder.ofLowerSets_eq_of_subset_lowerSets` and `Question.eq_range_setOf_le_iff`.
 
+## TODO
+
+* A strongest true answer is a least element of the true answers under entailment. State beside
+  it the weaker condition that every true answer is entailed by a minimal true one, and relate the
+  pair to a least and to minimal closest worlds in ordering semantics:
+  `Consequence.entails_singleton_iff_ofLowerSets_theories_le` exchanges answers and worlds, and
+  `IsLeast.minimalFor` gives the implication on either side.
+
 ## References
 
 * [dayal-1996]

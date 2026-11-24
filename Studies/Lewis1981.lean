@@ -57,6 +57,7 @@ induced ordering frame (`neutralPremiseImp_eq_variablyStrictImp`).
 
 * Section 6's example of a counterfactual true under the neutral condition on a frame and false
   on one of its refinements.
+* Section 4's remark that equivalent frames both satisfy Universality or neither does.
 
 ## References
 
