@@ -31,7 +31,4 @@ theorem case?_standard_functions_inter_nonempty :
     ∀ k ∈ se.standard.case?, (k.functions ∩ Adpositions.se.functions).Nonempty := by
   decide
 
-/-- The superlative is the comparative with a universal standard, *sab se*. -/
-def superlative : SuperlativeStrategy := .comparativeUniversal
-
 end HindiUrdu.Comparison

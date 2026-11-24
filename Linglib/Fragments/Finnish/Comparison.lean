@@ -34,7 +34,4 @@ def partitive : Comparative :=
   { standard := .adverbial (some .part)
     degreeMarkers := [mpi] }
 
-/-- The superlative is morphological. -/
-def superlative : SuperlativeStrategy := .morphological
-
 end Finnish.Comparison

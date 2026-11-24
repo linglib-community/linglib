@@ -25,7 +25,4 @@ def kwaa : Comparative :=
   { standardMarker := [.free "kwaa"]
   , standard := .directObject }
 
-/-- The superlative exceeds a universal standard. -/
-def superlative : SuperlativeStrategy := .exceedAll
-
 end Thai.Comparison

@@ -25,7 +25,4 @@ def ju : Comparative :=
   { standardMarker := [.free "ju", .free "lo"]
   , standard := .directObject }
 
-/-- The superlative exceeds a universal standard. -/
-def superlative : SuperlativeStrategy := .exceedAll
-
 end Yoruba.Comparison

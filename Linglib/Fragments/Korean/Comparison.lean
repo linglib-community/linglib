@@ -30,7 +30,4 @@ def boda : Comparative :=
   { standardMarker := [.encl "boda"]
   , standard := .adverbial (some .abl) }
 
-/-- The superlative is the comparative with a universal standard. -/
-def superlative : SuperlativeStrategy := .comparativeUniversal
-
 end Korean.Comparison

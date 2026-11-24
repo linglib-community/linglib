@@ -30,9 +30,6 @@ bound ending *-er*. -/
 def als : Comparative :=
   { standardMarker := [.free "als"], standard := .derived, degreeMarkers := [.suff "er"] }
 
-/-- The superlative is marked by the ending *-st*, as in *das tiefste*. -/
-def superlative : SuperlativeStrategy := .morphological
-
 theorem als_type : als.type = .particle := rfl
 
 end German.Comparison

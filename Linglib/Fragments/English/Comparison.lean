@@ -15,7 +15,6 @@ comparative.
 ## Main definitions
 
 * `English.Comparison.than`: the *than*-comparative.
-* `English.Comparison.superlative`: the superlative strategy.
 
 ## References
 
@@ -34,8 +33,5 @@ open Comparative
 def than : Comparative :=
   { standardMarker := [.free "than"], standard := .derived
     degreeMarkers := [Adjectives.more, Inflection.er] }
-
-/-- The superlative is morphological, *-est*. -/
-def superlative : SuperlativeStrategy := .morphological
 
 end English.Comparison

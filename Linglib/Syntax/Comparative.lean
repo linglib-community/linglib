@@ -21,7 +21,6 @@ Structures.
 * `Comparative`: a construction, with the marker of its standard and its markers of degree as
   morphs.
 * `Comparative.type`: the type of a construction in the atlas.
-* `Comparative.SuperlativeStrategy`: the ways a language forms superlatives.
 
 ## Implementation notes
 
@@ -72,25 +71,6 @@ structure Comparative where
   deriving Repr, BEq, DecidableEq
 
 namespace Comparative
-
-/-! ### Superlatives -/
-
-/-- The ways a language forms superlatives, which are partly independent of its comparative
-type. -/
-inductive SuperlativeStrategy where
-  /-- Dedicated superlative morphology, as English *-est* and Latin *-issimus*. -/
-  | morphological
-  /-- The definite article with the comparative, as French *le plus grand*. -/
-  | definiteComparative
-  /-- The elative pattern without a comparison class, as Arabic *ʔafʕal*. -/
-  | elative
-  /-- A verb of exceeding with a universal quantifier, 'X exceeds all'. -/
-  | exceedAll
-  /-- The comparative with a universal standard, as Japanese *dare yori mo takai*. -/
-  | comparativeUniversal
-  /-- No dedicated superlative strategy. -/
-  | none
-  deriving DecidableEq, BEq, Repr
 
 /-! ### The derived type -/
 

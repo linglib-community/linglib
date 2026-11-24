@@ -26,7 +26,4 @@ def min : Comparative :=
   { standardMarker := [.free "min"]
   , standard := .adverbial (some .abl) }
 
-/-- The superlative is the elative. -/
-def superlative : SuperlativeStrategy := .elative
-
 end Arabic.ModernStandard.Comparison

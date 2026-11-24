@@ -25,7 +25,4 @@ def que : Comparative :=
   { standardMarker := [.free "que"], standard := .derived
     degreeMarkers := [.free "plus"] }
 
-/-- The superlative is the definite article with the comparative. -/
-def superlative : SuperlativeStrategy := .definiteComparative
-
 end French.Comparison

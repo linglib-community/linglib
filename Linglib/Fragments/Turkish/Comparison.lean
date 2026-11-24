@@ -23,11 +23,6 @@ Stassen's finer typology.
 
 * `Turkish.Comparison.type_dan`: the construction is locational
 
-## Implementation notes
-
-* The superlative *en* is a free adverb that `SuperlativeStrategy` has no case for, so none is
-  recorded.
-
 ## References
 
 * [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]

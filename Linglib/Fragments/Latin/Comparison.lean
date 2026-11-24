@@ -33,7 +33,4 @@ def ablative : Comparative :=
   { standard := .adverbial (some .abl)
     degreeMarkers := [Adjectives.ior] }
 
-/-- The superlative is morphological. -/
-def superlative : SuperlativeStrategy := .morphological
-
 end Latin.Comparison
