@@ -354,15 +354,14 @@ theorem IsGapless.outranks_cotrans (hd : d.IsGapless) (h : d.Outranks C u w) (v 
   · exact .inr ⟨X, hX, hv, hw⟩
   · exact .inl ⟨X, hX, hu, hd.mem_neg_iff.2 hv⟩
 
-/-- On a gapless delineation under the consistency constraint the ordering is a strict weak order,
-the order a degree scale would give. -/
-theorem IsGapless.isStrictWeakOrder_outranks (hd : d.IsGapless) (hm : d.IsMonotoneOn (𝒫 C)) :
-    IsStrictWeakOrder E (d.Outranks C) where
-  irrefl _ := Outranks.irrefl
-  trans _ _ _ := hm.outranks_trans
-  incomp_trans _ b _ := fun ⟨hab, hba⟩ ⟨hbc, hcb⟩ ↦
-    ⟨fun hac ↦ (hd.outranks_cotrans hac b).elim hab hbc,
-      fun hca ↦ (hd.outranks_cotrans hca b).elim hcb hba⟩
+/-- On a gapless delineation the ordering within a class is order connected. -/
+theorem IsGapless.isOrderConnected_outranks (hd : d.IsGapless) :
+    IsOrderConnected E (d.Outranks C) :=
+  ⟨fun _ v _ h ↦ hd.outranks_cotrans h v⟩
+
+/-- Under the consistency constraint the ordering within a class is asymmetric. -/
+theorem IsMonotoneOn.asymm_outranks (hm : d.IsMonotoneOn (𝒫 C)) : Std.Asymm (d.Outranks C) :=
+  ⟨fun _ _ ↦ hm.outranks_asymm⟩
 
 /-! ### The Fine duality
 

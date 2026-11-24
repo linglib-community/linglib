@@ -183,23 +183,16 @@ theorem isContextStructure_ofWeakOrder : IsContextStructure (ofWeakOrder R) wher
   pos_subset _ _ hx := hx.1
   neg_eq c := Set.ext fun x ↦ by simp [ofWeakOrder]
 
-variable {R} [IsStrictWeakOrder I R]
+attribute [local instance] isStrictWeakOrder_of_isOrderConnected
 
-omit [IsStrictWeakOrder I R] in
-private theorem cotrans_of_isStrictWeakOrder [IsStrictWeakOrder I R] (hij : R i j) (k : I) :
-    R i k ∨ R k j := by
-  by_contra hn
-  obtain ⟨hik, hkj⟩ := not_or.1 hn
-  by_cases hki : R k i
-  · exact hkj (_root_.trans hki hij)
-  by_cases hjk : R j k
-  · exact hik (_root_.trans hij hjk)
-  exact (IsStrictWeakOrder.incomp_trans i k j ⟨hik, hki⟩ ⟨hkj, hjk⟩).1 hij
+variable {R} [IsOrderConnected I R]
 
 theorem rel_of_differencePair_ofWeakOrder (hij : DifferencePair (ofWeakOrder R) c i j) :
     R i j :=
   let ⟨_, k, hk, hkj⟩ := hij.2
-  (cotrans_of_isStrictWeakOrder hkj i).resolve_left (hij.1.2 k hk)
+  (IsOrderConnected.conn k i j hkj).resolve_left (hij.1.2 k hk)
+
+variable [Std.Asymm R]
 
 theorem exists_differencePair_ofWeakOrder (hc : c.Finite) (hi : i ∈ c) (hj : j ∈ c)
     (hij : R i j) : ∃ i' j', DifferencePair (ofWeakOrder R) c i' j' := by
@@ -239,15 +232,13 @@ theorem exists_eq_inter_ofStandard.{u} {I : Type u} {d : Delineation I}
     (hDD : DownwardDifference d) :
     ∃ (D : Type u) (_ : LinearOrder D) (m : I → D) (σ : Set I → UpperSet D),
       (∀ c : Set I, c.Finite → d c = c ∩ ofStandard m σ c) ∧ ∀ i j, More d i j ↔ m j < m i := by
-  classical
-  have := isStrictWeakOrder_more h hNR hUD hDD
-  refine ⟨CresswellDegree (More d), inferInstance, fun i ↦ ⟦i⟧,
-    fun c ↦ upperClosure ((fun i ↦ (⟦i⟧ : CresswellDegree (More d))) '' d c),
-    fun c hc ↦ Set.ext fun x ↦ ⟨fun hx ↦ ⟨h.pos_subset c hx, ⟦x⟧, ⟨x, hx, rfl⟩, le_rfl⟩, ?_⟩,
-    fun i j ↦ CresswellDegree.mk_lt_mk.symm⟩
+  obtain ⟨D, _, m, hm⟩ := (asymm_and_isOrderConnected_iff_exists_measure (φ := More d)).1
+    ⟨⟨fun _ _ ↦ more_asymm hNR⟩, ⟨fun _ k _ hij ↦ more_cotrans h hNR hUD hDD hij k⟩⟩
+  refine ⟨D, inferInstance, m, fun c ↦ upperClosure (m '' d c),
+    fun c hc ↦ Set.ext fun x ↦ ⟨fun hx ↦ ⟨h.pos_subset c hx, m x, ⟨x, hx, rfl⟩, le_rfl⟩, ?_⟩, hm⟩
   rintro ⟨hxc, _, ⟨a, ha, rfl⟩, hle⟩
   by_contra hx
-  exact not_lt.2 hle (CresswellDegree.mk_lt_mk.2
+  exact not_lt.2 hle ((hm _ _).1
     (more_of_differencePair h hNR hDD hc ⟨ha, (h.neg_eq c).symm ▸ ⟨hxc, hx⟩⟩))
 
 end VanBenthem1982

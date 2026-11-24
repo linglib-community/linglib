@@ -35,8 +35,11 @@ Stalnaker selection function.
   the set of all men to walk.
 * A degree of (2.1) is a point of a scale in a family. That the point lie in the field of the
   scale's relation is not imposed on the family; for constructed degrees the field of the induced
-  comparison is [the set of classes of the field of the comparison](##field_lt), and everything
+  comparison is [the set of classes of the field of the comparison](##field_rel), and everything
   outside that field [falls into one class](##mk_eq_mk_of_notMem_field).
+* The comparative on constructed degrees, (62), is stated for a strict weak order, where the
+  relation the comparison induces between its degrees is their strict order. The degrees of any
+  comparison are ordered by its trace, and the induced relation is kept beside that order.
 * The scale of an example is read from `English.Adjectives`, `English.Nouns` and
   `English.MeasurePhrases` (`ScalarDimension.comparisonScale`), and *six feet* is the
   paper's degree on the relation ordering lengths: if it is the name of $⟨u, >⟩$ it cannot also be
@@ -342,10 +345,12 @@ end Plural
 
 section Constructed
 
+open scoped CresswellDegree
+
 variable {E : Type*} (φ : E → E → Prop) {a b : E}
 
 -- (62), (4.2)
-theorem erThan_singleton_mk (a b : E) :
+theorem erThan_singleton_mk [Std.Asymm φ] [IsOrderConnected E φ] (a b : E) :
     ErThan ({⟦a⟧} : Set (CresswellDegree φ)) {⟦b⟧} ↔ φ a b :=
   erThan_singleton.trans CresswellDegree.mk_lt_mk
 
@@ -359,24 +364,24 @@ other (2.1). -/
 def field : Set E := {a | ∃ c, φ a c ∨ φ c a}
 
 -- p. 281
-theorem field_lt :
-    field ((· < ·) : CresswellDegree φ → CresswellDegree φ → Prop) =
+theorem field_rel :
+    field (fun x y : CresswellDegree φ ↦ x >[φ] y) =
       Quotient.mk (cresswellSetoid φ) '' field φ := by
   ext x
   induction x using Quotient.inductionOn with | _ a
   constructor
   · rintro ⟨c, hc⟩
     induction c using Quotient.inductionOn with | _ c
-    exact ⟨a, ⟨c, hc.symm⟩, rfl⟩
+    exact ⟨a, ⟨c, hc⟩, rfl⟩
   · rintro ⟨b, ⟨c, hc⟩, hb⟩
-    exact ⟨⟦c⟧, by rw [← hb]; exact hc.symm⟩
+    exact ⟨⟦c⟧, by rw [← hb]; exact hc⟩
 
 variable {φ} in
 theorem mk_eq_mk_of_notMem_field (ha : a ∉ field φ) (hb : b ∉ field φ) :
     (⟦a⟧ : CresswellDegree φ) = ⟦b⟧ := by
   simp only [field, Set.mem_ofPred_eq, not_exists, not_or] at ha hb
-  exact Quotient.sound ⟨fun c ↦ iff_of_false (ha c).1 (hb c).1,
-    fun c ↦ iff_of_false (ha c).2 (hb c).2⟩
+  exact Quotient.sound (cresswellSetoid_iff.2 ⟨fun c ↦ iff_of_false (ha c).1 (hb c).1,
+    fun c ↦ iff_of_false (ha c).2 (hb c).2⟩)
 
 /-- A partial order and its strict part need not give the same degrees: of two dimensions, the
 points high on one and low on the other have the same strictly greater and lesser points, but
@@ -386,9 +391,10 @@ theorem cresswellSetoid_lt_ne_le :
   intro h
   have hlt : cresswellSetoid ((· < ·) : Bool × Bool → Bool × Bool → Prop) (true, false)
       (false, true) := by
-    refine ⟨fun c ↦ ?_, fun c ↦ ?_⟩ <;> obtain ⟨_ | _, _ | _⟩ := c <;> simp [Prod.lt_iff]
+    refine cresswellSetoid_iff.2 ⟨fun c ↦ ?_, fun c ↦ ?_⟩ <;> obtain ⟨_ | _, _ | _⟩ := c <;>
+      simp [Prod.lt_iff]
   rw [h] at hlt
-  exact absurd ((hlt.1 (true, false)).1 le_rfl) (by decide)
+  exact absurd (((cresswellSetoid_iff.1 hlt).1 (true, false)).1 le_rfl) (by decide)
 
 end Constructed
 
