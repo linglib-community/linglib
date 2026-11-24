@@ -197,20 +197,16 @@ example : Workspace.mergeOp (R := ℤ) wasEatenTrace theApple
 
 /-- This Internal Merge satisfies Minimal Yield under trace counting, the Δᶜ row of the table of
     Proposition 1.6.4. -/
-example :
-    MinimalYield UnorderedTree.accessibleCount
-      (({wasEatenTheApple} : Workspace).map SyntacticObject.toUnorderedTree)
-      (({merge wasEatenTrace theApple} : Workspace).map SyntacticObject.toUnorderedTree) := by
+example : MinimalYield SyntacticObject.accessibleCount
+    ({wasEatenTheApple} : Workspace) {merge wasEatenTrace theApple} := by
   rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
   exact Step.minimalYield (step := .im theApple) (W := 0)
     ⟨by decide, by decide, by decide, by simp⟩ (by decide) (by simp [Step.items])
 
 /-- It loses no complexity graded by the size `σ`: *was eaten the apple* goes to the Merge of
     *the apple* with the remainder, of one greater size (Proposition 1.6.10). -/
-example :
-    NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
-      (({wasEatenTheApple} : Workspace).map SyntacticObject.toUnorderedTree)
-      (({merge wasEatenTrace theApple} : Workspace).map SyntacticObject.toUnorderedTree) := by
+example : NoComplexityLoss (fun S : SyntacticObject ↦ S.accessibleCount + 1)
+    ({wasEatenTheApple} : Workspace) {merge wasEatenTrace theApple} := by
   rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
   exact Step.noComplexityLoss (step := .im theApple) (W := 0)
     ⟨by decide, by decide, by decide, by simp⟩ (by decide) (by simp [Step.items])
@@ -240,17 +236,15 @@ def eaten : SyntacticObject :=
 
 /-- External Merge of *the apple* with *eaten* loses no complexity graded by the size `σ`: its term
     of Merge takes both whole (Proposition 1.6.10). -/
-example :
-    NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
-      (({eaten, theApple} : Workspace).map SyntacticObject.toUnorderedTree)
-      (({merge theApple eaten} : Workspace).map SyntacticObject.toUnorderedTree) :=
+example : NoComplexityLoss (fun S : SyntacticObject ↦ S.accessibleCount + 1)
+    ({eaten, theApple} : Workspace) {merge theApple eaten} :=
   Step.noComplexityLoss (step := .em .left theApplePlanar) (W := 0) (by simp [Step.Admissible])
     (by decide) (by simp only [Step.items, Multiset.mem_singleton, forall_eq]; decide)
 
 private def admTok (i : Nat) : LexicalItem.Token := ⟨.of .N [], i⟩
 
-/-- Raising the item a derivation has just merged is admissible, so `mergeOpList_initial` applies
-    to it. -/
+/-- Raising the item a derivation has just merged is admissible, so the composite of its steps'
+    Merges sends its initial workspace to its final object. -/
 example :
     (Derivation.mk (admTok 0) [Step.em .left (admTok 1), Step.im (admTok 1)]).Admissible := by
   have hne : merge ↑(admTok 1) ↑(admTok 0) ≠ (↑(admTok 1) : SyntacticObject) := fun h ↦ by

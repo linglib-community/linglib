@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Derivation.Basic
-public import Linglib.Syntax.Minimalist.Workspace.Merge.SyntacticObject
+public import Linglib.Syntax.Minimalist.Workspace.Algebra
 
 /-!
 # Derivations on the workspace
@@ -67,16 +67,13 @@ workspace leaves out, so they are not admissible here. -/
 
 /-- A step applies an algebraic Merge at the current object, External Merge with the item or the
     unit stage followed by External Merge of the remainder with the mover. -/
-noncomputable def Step.mergeOp (step : Step)
-    (current : SyntacticObject) :
-    ConnesKreimer ℤ (UnorderedTree Vertex) →ₗ[ℤ] ConnesKreimer ℤ (UnorderedTree Vertex) :=
+noncomputable def Step.mergeOp (step : Step) (current : SyntacticObject) :
+    ConnesKreimer ℤ SyntacticObject →ₗ[ℤ] ConnesKreimer ℤ SyntacticObject :=
   match step with
-  | .em _ item => Merge.traceMergeOp traceEncoder Vertex.bare current.toUnorderedTree
-      item.toSyntacticObject.toUnorderedTree
-  | .im mover _ => Merge.traceMergeOp traceEncoder Vertex.bare (deleteAccessible mover
-      current).toUnorderedTree
-      mover.toUnorderedTree ∘ₗ Merge.traceMergeOpUnit traceEncoder mover.toUnorderedTree
-  | .extract mover => Merge.traceMergeOpUnit traceEncoder mover.toUnorderedTree
+  | .em _ item => Workspace.mergeOp current item.toSyntacticObject
+  | .im mover _ =>
+      Workspace.mergeOp (deleteAccessible mover current) mover ∘ₗ Workspace.mergeOpUnit mover
+  | .extract mover => Workspace.mergeOpUnit mover
   | .remerge _ => 0
 
 /-- A step at the current object is admissible beside a spectator workspace `W` when it matches
@@ -94,22 +91,24 @@ def Step.Admissible (current : SyntacticObject)
     it introduces, and the spectators. -/
 theorem Step.mergeOp_workspace {step : Step}
     {current : SyntacticObject} {W : Workspace} (h : step.Admissible current W) :
-    step.mergeOp current (ConnesKreimer.of' (({current} + step.items + W).map
-        SyntacticObject.toUnorderedTree))
-      = ConnesKreimer.of' (({step.apply current} + W).map SyntacticObject.toUnorderedTree) := by
+    step.mergeOp current (ConnesKreimer.of' ({current} + step.items + W)) =
+      ConnesKreimer.of' ({step.apply current} + W) := by
+  refine Workspace.toTrees_injective ?_
   cases step with
   | em side item =>
-    rw [Step.apply_em, merge_comm]
+    rw [Step.mergeOp, Workspace.toTrees_mergeOp, Workspace.toTrees_of', Workspace.toTrees_of',
+      Step.apply_em, merge_comm]
     exact traceMergeOp_node_residual traceEncoder current ↑item h
   | im mover _ =>
     obtain ⟨hm, hc, hne, hW⟩ := h
+    rw [Step.mergeOp, LinearMap.comp_apply, Workspace.toTrees_mergeOp,
+      Workspace.toTrees_mergeOpUnit, Workspace.toTrees_of', Workspace.toTrees_of']
     exact traceMergeOp_im_residual hm hc hne hW
   | extract _ | remerge _ => exact h.elim
 
 /-- The algebraic Merges of a list of steps from the current object, composed in order. -/
-noncomputable def Step.mergeOpList :
-    List Step → SyntacticObject →
-      ConnesKreimer ℤ (UnorderedTree Vertex) →ₗ[ℤ] ConnesKreimer ℤ (UnorderedTree Vertex)
+noncomputable def Step.mergeOpList : List Step → SyntacticObject →
+    ConnesKreimer ℤ SyntacticObject →ₗ[ℤ] ConnesKreimer ℤ SyntacticObject
   | [], _ => LinearMap.id
   | step :: steps, current => Step.mergeOpList steps (step.apply current) ∘ₗ step.mergeOp current
 
@@ -124,10 +123,8 @@ def Step.AdmissibleList : List Step → SyntacticObject → Prop
     the items they introduce to the object they build. -/
 theorem Step.mergeOpList_workspace :
     ∀ (steps : List Step) (current : SyntacticObject), Step.AdmissibleList steps current →
-      Step.mergeOpList steps current
-          (ConnesKreimer.of' (({current} + Step.itemsList steps).map
-              SyntacticObject.toUnorderedTree))
-        = ConnesKreimer.of' {(steps.foldl (fun so step => step.apply so) current).toUnorderedTree}
+      Step.mergeOpList steps current (ConnesKreimer.of' ({current} + Step.itemsList steps)) =
+        ConnesKreimer.of' {steps.foldl (fun so step => step.apply so) current}
   | [], current, _ => by
     simp [Step.mergeOpList]
   | step :: steps, current, ⟨h, hs⟩ => by
@@ -200,9 +197,8 @@ def Admissible (d : Derivation) : Prop := Step.AdmissibleList d.steps d.initial
 /-- An admissible derivation is the iterated algebraic Merge on the workspace of its initial object
     and its items: the composite of its steps' Merges sends that workspace to its final object. -/
 theorem mergeOpList_initial {d : Derivation} (hd : d.Admissible) :
-    Step.mergeOpList d.steps d.initial
-        (ConnesKreimer.of' (({d.initial} + d.items).map SyntacticObject.toUnorderedTree))
-      = ConnesKreimer.of' {d.final.toUnorderedTree} :=
+    Step.mergeOpList d.steps d.initial (ConnesKreimer.of' ({d.initial} + d.items)) =
+      ConnesKreimer.of' {d.final} :=
   (Step.mergeOpList_workspace d.steps d.initial hd).trans <| by
     rw [final, run, Step.foldl_run_of_admissibleList d.steps d.initial [] hd]
 

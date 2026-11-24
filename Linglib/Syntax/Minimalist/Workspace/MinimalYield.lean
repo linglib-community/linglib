@@ -85,6 +85,20 @@ theorem MinimalYield.add_right {acc : κ → ℕ} {F F' : Multiset κ} (h : Mini
     have := h.minimalYield
     omega
 
+theorem minimalYieldWeak_map_iff {κ' : Type*} {f : κ' → κ} {acc : κ → ℕ} {F F' : Multiset κ'} :
+    MinimalYieldWeak acc (F.map f) (F'.map f) ↔ MinimalYieldWeak (acc ∘ f) F F' :=
+  ⟨fun h ↦ ⟨by simpa using h.noDivergence, by simpa [Multiset.map_map] using h.noInfoLoss⟩,
+    fun h ↦ ⟨by simpa using h.noDivergence, by simpa [Multiset.map_map] using h.noInfoLoss⟩⟩
+
+/-- Minimal Yield for the images of two workspaces under a map is Minimal Yield for the count
+    read through the map. -/
+theorem minimalYield_map_iff {κ' : Type*} {f : κ' → κ} {acc : κ → ℕ} {F F' : Multiset κ'} :
+    MinimalYield acc (F.map f) (F'.map f) ↔ MinimalYield (acc ∘ f) F F' :=
+  ⟨fun h ↦ ⟨minimalYieldWeak_map_iff.1 h.toMinimalYieldWeak,
+      by simpa [Multiset.map_map] using h.minimalYield⟩,
+    fun h ↦ ⟨minimalYieldWeak_map_iff.2 h.toMinimalYieldWeak,
+      by simpa [Multiset.map_map] using h.minimalYield⟩⟩
+
 /-! ### `MinimalYieldWeak` as a Pareto pullback preorder -/
 
 /-- The Pareto signature `(b₀ᵒᵈ, α)`, `b₀` dualised so fewer components ranks higher. -/

@@ -333,6 +333,10 @@ theorem cons_accessibleTerms (s : SyntacticObject L ι) : s ::ₘ s.accessibleTe
 @[simp] theorem accessibleTerms_trace : (trace : SyntacticObject L ι).accessibleTerms = 0 := by
   simp [accessibleTerms]
 
+/-- The number of accessible terms of a syntactic object that are not traces. -/
+def accessibleCount [DecidableEq L] [DecidableEq ι] (s : SyntacticObject L ι) : ℕ :=
+  s.accessibleTerms.countP (¬ ·.IsTrace)
+
 @[simp] theorem accessibleTerms_labelledTrace (i : ι) :
     (labelledTrace i : SyntacticObject L ι).accessibleTerms = 0 := by
   simp [accessibleTerms]
