@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.ModelTheory.Semantics
 public import Linglib.Core.Data.List.DropRight
-public import Linglib.Phonology.Subregular.WordModel.Defs
+public import Linglib.Phonology.Subregular.WordModel.Basic
 
 /-!
 # String models

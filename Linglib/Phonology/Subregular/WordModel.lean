@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Subregular.Local
-public import Linglib.Phonology.Subregular.WordModel.Defs
+public import Linglib.Phonology.Subregular.WordModel.Basic
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
 public import Mathlib.Basic.Finite.Sum
