@@ -123,7 +123,7 @@ end Questions
 
 /-! ### The question under discussion and the island -/
 
-/-- The matrix predicate: a verb of the fragment, and whether a manner adverb modifies it. -/
+/-- The matrix predicate: a verb of the language file, and whether a manner adverb modifies it. -/
 structure MatrixPredicate where
   /-- The matrix verb. -/
   verb : English.Verbs.Verb

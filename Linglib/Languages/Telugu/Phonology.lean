@@ -14,7 +14,7 @@ sibilants other than /s/ came in with borrowed vocabulary, and speech without th
 consonants. The vowels are five pairs of a short and a long vowel and a long low front vowel. The
 feature values of a phoneme are not listed: each phoneme names its glyph in the PHOIBLE chart,
 and its segment is the segment of that chart entry. A form in the romanization of the other
-Telugu fragments is [transcribed](##transcribe) letter by letter, and its
+Telugu language files is [transcribed](##transcribe) letter by letter, and its
 [first syllable](##initialSyllable) is light when it ends in a short vowel.
 
 ## Implementation notes

@@ -90,10 +90,11 @@ and the verbs found with an omission or quality subject are the thin verbs other
   fact of the scenario and not of the sentence, so the rows with such subjects are tested only
   in the direction of `promoted_of_not_acceptable`.
 * The proportions the paper reports for the survey are left to the generated table. The
-  annotators judged *cool* non-alternating, against the fragment, which gives it an intransitive
+  annotators judged *cool* non-alternating, against the language file, which gives it an
+  intransitive
   with the patient as subject.
 * The verb types the survey takes from Levin's catalogue are sections of it
-  (`LevinType.number`), and each is a class of the fragment's entry for the verb
+  (`LevinType.number`), and each is a class of the language file's entry for the verb
   (`survey_levin`), except that the catalogue lists *cut* and *stretch* in other classes.
 
 ## TODO
@@ -365,7 +366,7 @@ theorem felicitous_iff :
 
 /-! ### The corpus survey -/
 
-/-- The fragment entry of each verb of the survey. -/
+/-- The language file entry of each verb of the survey. -/
 def SurveyVerb.entry : SurveyVerb → English.Verbs.Verb
   | .activate => English.Verbs.activate
   | .affect => English.Verbs.affect
@@ -439,7 +440,7 @@ def LevinType.number : LevinType → List ℕ
   | .mix => [22, 1]
   | .spatialConfiguration => [47, 6]
 
--- the verb types of Table 3 are catalogue classes of the fragment's entries
+-- the verb types of Table 3 are catalogue classes of the language file's entries
 theorem survey_levin : ∀ v, v ∉ [SurveyVerb.cut, .stretch] →
     (∀ t ∈ (survey v).levin, ∃ c ∈ v.entry.levinClasses, t.number <+: c.number) ∧
       ((survey v).levin.isSome ↔ v.entry.levin.isSome) := by
@@ -480,7 +481,7 @@ def Examples.Lexeme.Thick (l : Lexeme) : Prop :=
 
 instance : DecidablePred Lexeme.Thick := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The fragment entry of each verb of the examples. -/
+/-- The language file entry of each verb of the examples. -/
 def Examples.Lexeme.entry : Lexeme → English.Verbs.Verb
   | .burn => English.Verbs.burn
   | .melt => English.Verbs.melt

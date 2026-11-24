@@ -113,7 +113,7 @@ theorem evaluative_iff (c : Construction) (p : Polarity) :
 Chapter 1's *How short is Adam?* and *Adam is as short as Doug* are evaluative; their
 positive-antonym counterparts are not. -/
 
-/-- The implicature deriving evaluativity for a fragment adjective in a construction, read off
+/-- The implicature deriving evaluativity for a language file adjective in a construction, read off
 its lexicalized polarity. -/
 def evaluativity (a : Adjective) (c : Construction) : Option Implicature :=
   implicature c a.polarity

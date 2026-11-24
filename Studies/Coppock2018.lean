@@ -45,7 +45,7 @@ conditions on the three verbs are checked.
   conjunction of `Logic/Trivalent/Connectives.lean`, the paper's ∂ being the join `a ⊔ 0` with
   the gap, so that presupposition projection through negation is the logic's rather than a
   stipulation.
-* The formal fragment's syntax and translations (§5.1, §5.3), the context-of-utterance
+* The formal language file's syntax and translations (§5.1, §5.3), the context-of-utterance
   parameter, and the §4 pragmatics of assertion as a proposal are not modelled.
 
 ## TODO

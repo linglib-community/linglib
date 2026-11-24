@@ -41,7 +41,8 @@ declension](##SerboCroat.not_morphological).
 ## Implementation notes
 
 * Assignment systems, agreement classes, the hierarchy and resolution rules are the substrate's.
-  Rules read a language's fragment nouns or genders where there is a fragment; Lak, Slovene and
+  Rules read a language's language file nouns or genders where there is a language file; Lak,
+  Slovene and
   Ojibwa have study-local genders.
 * A hybrid records the availability of semantic agreement only where the book reports it;
   §8.3 divides the attributive position into the possessive and the rest (`FinePosition`).
@@ -49,17 +50,17 @@ declension](##SerboCroat.not_morphological).
   (`Slovene.numberResolve_ne_resolve`), so it is stated directly and matched to the substrate's
   `Number.resolve`.
 * The judgments are read off the book's glosses: a coordination's target form and its
-  conjuncts' genders from their category labels, its nouns by the fragment nouns their glosses
+  conjuncts' genders from their category labels, its nouns by the language file nouns their glosses
   name, the agreements of stacked targets from their labels. Rows still name the hybrid, target
   and agreement of chapter 8, the Swahili concords of chapter 3, and the conjuncts of Czech,
-  Archi, Luganda and Polish, whose rules read person or meaning that no fragment yet gives.
+  Archi, Luganda and Polish, whose rules read person or meaning that no language file yet gives.
 * Not modelled: chapters 4, 5, 7 and 10, Russian acronyms and indeclinables, and the optional
   Polish resolution rules of (60) to (62).
 
 ## TODO
 
 * Subgenders and consistent agreement patterns, which want chapter 6's paradigm tables in the
-  Russian fragment.
+  Russian language file.
 * §9.8: resolution is never less semantic than assignment.
 * §9.6.2: resolved forms are the semantically justified ones that mark number clearly, which
   excludes the Slovene neuter.
@@ -196,7 +197,7 @@ inductive Declension where
   | irregularIII
   deriving DecidableEq, Repr, Fintype
 
-/-- Corbett's typing of the fragment's declension classes puts *znamja* and *put'* in the
+/-- Corbett's typing of the language file's declension classes puts *znamja* and *put'* in the
 irregular third declension. -/
 def declension (n : Russian.Gender.Noun) : Option Declension :=
   if n = znamja ∨ n = put' then some .irregularIII else
@@ -259,7 +260,7 @@ def animate : Option Evaluative × Animacy → Option _root_.Swahili.Gender
   | (_, a) => if .animate ≤ a then some .genderA else none
 
 /-- The rules of §3.1.2 send augmentatives to 5/6, diminutives to 7/8 and remaining animates
-to 1/2, then each morphological class to its own gender, over the fragment's five genders (the
+to 1/2, then each morphological class to its own gender, over the language file's five genders (the
 book's 11/10 and 15 are not among them). -/
 def system : Gender.AssignmentSystem (Option Evaluative × Animacy) _root_.Swahili.Gender
     _root_.Swahili.Gender where
@@ -1014,7 +1015,7 @@ def MaleAnimate (n : Romanian.Gender.Noun) : Prop :=
 
 instance : DecidablePred MaleAnimate := fun _ ↦ by unfold MaleAnimate; infer_instance
 
-/-- Collapsed over the fragment's nouns, §9.5 gives the masculine if a conjunct is a male
+/-- Collapsed over the language file's nouns, §9.5 gives the masculine if a conjunct is a male
 animate or all are masculine, and the feminine otherwise. -/
 def rules : List (ResolutionRule Romanian.Gender.Noun Value) :=
   [.any MaleAnimate .masc, .all (·.gender = .masc) .masc, otherwise .fem]
@@ -1030,7 +1031,7 @@ open _root_.Serbian.Gender
 
 /-! #### From syntactic to semantic resolution (§9.7)
 
-A conjunct is a fragment noun, read for its gender by a syntactic rule and for the sex of its
+A conjunct is a language file noun, read for its gender by a syntactic rule and for the sex of its
 referents by a semantic one. -/
 
 /-- Stage 1, as still in Slovene: the feminine if all conjuncts are feminine, else the
@@ -1123,9 +1124,10 @@ end Ojibwa
 
 A coordination is read off its glosses: its target is the last word whose gloss marks a
 non-singular number with a form the language's rules select, as `new-MASC.PL` on French *neuf-s*
-in (43), and its conjuncts are the words whose glosses name the language's fragment nouns, or
+in (43), and its conjuncts are the words whose glosses name the language's language file nouns, or
 whose labels mark the gender the rules read, as `book.MASC`. Where the rules read a conjunct's
-person or meaning and no fragment gives the nouns, a `conjunct` feature names it. A coordination
+person or meaning and no language file gives the nouns, a `conjunct` feature names it. A
+coordination
 is acceptable exactly when the language's rules select the target's form. -/
 
 /-- The form a coordination's target shows: what `form` reads off the gloss of the last word

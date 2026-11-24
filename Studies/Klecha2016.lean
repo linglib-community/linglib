@@ -130,7 +130,7 @@ theorem hope_readings : ∀ a ∈ hope.attitude.toList,
 
 /-! ### The data, (1)–(3) -/
 
-/-- The attitude verb of a row, from the fragment. -/
+/-- The attitude verb of a row, from the language file. -/
 def verbOf : String → Option English.Verbs.Verb
   | "think" => some think
   | "hope" => some hope

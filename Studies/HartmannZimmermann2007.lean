@@ -33,7 +33,7 @@ context rather than tagged. Subject foci in TAMs lacking a Relative form (future
 subjunctive) are syntactically and morphologically unmarked, which the paper analyses as
 string-vacuous fronting, so the licensing predicate bans in-situ subjects unconditionally and the
 future subject focus of (8) is licensed yet reflex-free. The paper counts the subjunctive with the
-future and the habitual, but Newman excludes it from Rel environments, and the fragment's
+future and the habitual, but Newman excludes it from Rel environments, and the language file's
 licensing, which is his, rejects a fronted subjunctive (`not_licensed_exSitu_subjunctive`). Which
 TAMs show Relative morphology is not stipulated: a licensed fronted focus changes the TAM exactly
 when the TAM does not occur in Rel environments (`Hausa.FocusConfig.pacTAM_ne_iff`), the

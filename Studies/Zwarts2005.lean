@@ -28,7 +28,8 @@ cumulative although it is telic in Krifka's sense. Finally, suppose that the tra
 homomorphism for concatenation. Then a verb phrase is bounded if its prepositional phrase has no
 two paths that concatenate, as in *walk to the house*.
 
-The goal and source phrases agree with the English fragment. The paths that the spatial functions
+The goal and source phrases agree with the English language file. The paths that the spatial
+functions
 of *to* and *from* describe, as locatives, are the paths of the strict goal and source phrases.
 
 ## Implementation notes

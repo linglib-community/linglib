@@ -113,7 +113,7 @@ theorem exp1_predictions (s : Selection) (c : Complement) : ∀ v ∈ s.verbs,
       c = .coord ∨ s = .yes) := by
   cases s <;> cases c <;> decide
 
-/-- `entryOf form` is the fragment entry of the verb a row names. -/
+/-- `entryOf form` is the language file entry of the verb a row names. -/
 def entryOf (form : String) : Option German.Verb :=
   German.Verbs.allVerbs.find? (·.form = form)
 

@@ -42,7 +42,7 @@ controller's agreement bundle is realized by the cell of its person and number; 
 a list of `Morphology.Morph`, empty for zero exponence and of length two for a discontinuous
 marker such as a person prefix with a separate plural word. A cell whose only marker is a
 process also renders as `[]`. Tables with pre-consonantal and pre-vocalic shapes are
-`Phonology.Segment.Class → ExponentTable` functions. Each language's fragment carries its own
+`Phonology.Segment.Class → ExponentTable` functions. Each language's language file carries its own
 tables, its verbal template and its marking of the roles by marker set under whatever splits it,
 so the position of the absolutive is read off the template and the alignment off the marking
 rather than recorded beside them. The case labels that analyses give the two sets, ergative or

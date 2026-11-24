@@ -46,7 +46,7 @@ constraint is violated once by a syllable of palatal onset and front vowel befor
 coronal onset that is not itself of that kind. The overapplying candidate of the summary tableau
 then has one mark where the paper prints three; no ranking result depends on the count. The top
 constraint of the paper's Akan ranking, IDENT-IO(+cor), which no candidate here violates, is
-left out. The Akan segments are those of the Akan fragment.
+left out. The Akan segments are those of the Akan language file.
 
 ## References
 

@@ -10,7 +10,7 @@ public import Linglib.Data.Examples.Readers
 # Zimmermann (2008): Quantification in Hausa
 
 This file formalizes the scopal and quantificational observations of [zimmermann-2008]'s
-chapter on the Hausa quantifier system in [matthewson-2008], whose inventory the fragment
+chapter on the Hausa quantifier system in [matthewson-2008], whose inventory the language file
 `Hausa.Determiners` types after [newman-2000] and [jaggar-2001]. Bare indefinite noun phrases
 always scope under negation, whether they follow or precede the negation marker, (11)–(14); the
 chapter's preferred account makes them predicates whose existential force comes from the verb,

@@ -34,7 +34,7 @@ disappear](##Range.freeChoice_iff). [The paper's answer judgments follow](##rows
 * The free choice answers some informants accept to *-ro* questions under *must* are not fitted: the
   analysis predicts presupposition failure, and the paper takes them to be rejecting it.
 * The paper's taxonomy of interrogatives stays a row feature, since no theory-layer type of *wh*
-  phrase exists for a Farsi fragment entry to instantiate.
+  phrase exists for a Farsi language file entry to instantiate.
 
 ## TODO
 

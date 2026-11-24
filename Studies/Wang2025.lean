@@ -288,7 +288,7 @@ inductive Trigger
   | houhui
   deriving DecidableEq, Repr
 
-/-- The fragment entry of a trigger, an adverb or a verb. -/
+/-- The language file entry of a trigger, an adverb or a verb. -/
 def Trigger.entry : Trigger → Presupposition.TriggerItem ⊕ Verb
   | .ye => .inl Mandarin.Adverbs.ye
   | .faner => .inl Mandarin.Adverbs.faner
@@ -346,7 +346,7 @@ theorem Candidate.ofTrivalent_eq_presupSentence {a : Set W}
 /-- The meaning of an aspectual trigger with the prejacent `P`. `R` relates an index to the
 earlier ones, the `<` of (12), and `S` relates an index to the earlier index of (19), (24) and
 (38), a relation the dissertation writes `∞`. The meaning of *kaishi* is that of the phasal class
-of its fragment entry, and the other triggers of Table 4.1 are not aspectual. -/
+of its language file entry, and the other triggers of Table 4.1 are not aspectual. -/
 noncomputable def Trigger.aspectual (R S : SetRel W W) (P : W → Prop) :
     Trigger → Option (W → Trivalent)
   | .you | .zai => some (again R P)

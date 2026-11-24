@@ -35,7 +35,7 @@ def dovere : ModalItem where
   form := "dovere"
   meaning := {(.necessity, .epistemic), (.necessity, .deontic), (.necessity, .circumstantial)}
 
-/-- The modal verbs of the fragment. -/
+/-- The modal verbs of the language file. -/
 def modals : List ModalItem := [potere, dovere]
 
 end Italian

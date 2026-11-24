@@ -59,7 +59,7 @@ comparative.
 * The Principle of Parallel Chaining, the word orders of each type of deranking, the mixed
   comparatives and the procedure-based universals are not formalized.
 * The book's chaining examples are not recorded as rows, and its Korean separative marker
-  *-eso* is not in the fragment, so the universals are checked on Turkish alone.
+  *-eso* is not in the language file, so the universals are checked on Turkish alone.
 
 ## References
 
@@ -372,7 +372,7 @@ def Examples.ComparativeClass.toType : Examples.ComparativeClass → Comparative
   | .conjoined => .conjoined
   | .particle => .particle
 
-/-- The fragment's construction for each lexeme of the rows. -/
+/-- The language file's construction for each lexeme of the rows. -/
 def Examples.Lexeme.entry : Examples.Lexeme → Comparative
   | .dan => Turkish.Comparison.dan
   | .se => HindiUrdu.Comparison.se
@@ -388,7 +388,7 @@ def Examples.Lexeme.entry : Examples.Lexeme → Comparative
   | .juxtaposition => Swahili.Comparison.conjoined
   | .partitive => Finnish.Comparison.partitive
 
-/-- The type of the fragment's construction is the type the book classes the example under, for
+/-- The type of the language file's construction is the type the book classes the example under, for
 each example but that of the Finnish partitive standard. -/
 theorem typeOf_entry :
     ∀ x : Examples.Example, ∀ l ∈ x.lexemes .standard,

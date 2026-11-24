@@ -33,7 +33,7 @@ two conditions dissociate: the reflexive's judgment
 * The verb's agreement is read off the gloss line, and the reflexive's features off
   `Hungarian.Pronouns.reflexives`; a row records only the kind of its antecedent, a level of
   `Examples.Antecedent`, and marks its anaphor, naming the pronoun.
-* The anaphor a row names is checked against the fragment: each is [the reciprocal or a
+* The anaphor a row names is checked against the language file: each is [the reciprocal or a
   reflexive](##pronoun_mem_inventory), each marked word [begins as its pronoun is
   written](##printed), and [no other word does](##anaphors_marked).
 * The plural reflexive with a singular subject included in its reference is acceptable without
@@ -79,7 +79,7 @@ end Examples.Antecedent
 
 /-! ### The rows -/
 
-/-- The pronoun of the Hungarian fragment that a lexeme of the data is. -/
+/-- The pronoun of the Hungarian language file that a lexeme of the data is. -/
 def Examples.Lexeme.pronoun : Examples.Lexeme → Pronoun
   | .egymas => Hungarian.Reciprocals.egymas.toPronoun
   | .maga => Hungarian.Pronouns.maga.toPronoun
@@ -121,7 +121,7 @@ def verb? (e : Datum) : Option Morphology.Features :=
 /-- The number of the verb. -/
 def verbNumber? (e : Datum) : Option Number := (verb? e).bind (· .number)
 
--- every anaphor the data names is the reciprocal or a reflexive of the fragment
+-- every anaphor the data names is the reciprocal or a reflexive of the language file
 theorem pronoun_mem_inventory :
     ∀ l : Examples.Lexeme,
       l.pronoun = egymas.toPronoun ∨ ∃ r ∈ reflexives, l.pronoun = r.toPronoun := by

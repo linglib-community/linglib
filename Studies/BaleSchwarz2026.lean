@@ -22,7 +22,8 @@ only a composed *per*-PP can be fronted. Both facts reduce to dimensions: a comp
 ## TODO
 
 `rows_dimension` passes over five rows. *Pounds per square inch* in (22) is an idiom for *psi*
-over the pound-force, not the pound of the fragment; (25b) and (26b) verbalize the symbol `mph`;
+over the pound-force, not the pound of the language file; (25b) and (26b) verbalize the symbol
+`mph`;
 and (3) and (24) name no predicate dimension.
 
 ## References

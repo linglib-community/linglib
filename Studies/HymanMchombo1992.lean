@@ -21,7 +21,7 @@ on the thematic hierarchy, [not the passive subject](##rows_passive).
 
 ## Implementation notes
 
-* A feature's valency effect is that of the voice the fragment assigns it, added to or removed
+* A feature's valency effect is that of the voice the language file assigns it, added to or removed
   from any base; a voice that removes a core argument needs a base with at least the valency of
   its initial frame. The intensive, an adverbial, has no voice.
 * The intensive is spelled out by the causative morph with a high tone (5b), so the RMC treats

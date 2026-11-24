@@ -16,7 +16,7 @@ scope, requiring only that the Common Ground be compatible with not-p (`Compatib
 stronger requirement is unattested; the weaker is the postsupposition Glass gives Mandarin yǐwéi
 in earlier work (`yiweiDefined`). Table 1, the states of the Common Ground each profile admits,
 is derived from the requirements (`Profile.condition_iff`). The profiles of *know* and *think*
-come from the factivity of their fragment entries, and the presupposition of a factive sentence
+come from the factivity of their language file entries, and the presupposition of a factive sentence
 is the requirement of the factive profile (`subset_compl_gapExt_factive_iff`, `rows_admits`).
 
 ## Implementation notes
@@ -26,8 +26,8 @@ is the requirement of the factive profile (`subset_compl_gapExt_factive_iff`, `r
   report's at-issue content, as their argument.
 * The attestation facts, no strong contrafactive and yǐwéi a weak one, are the empirical premise
   of the reframed question (`Profile.Attested`), which Roberts and Özyıldız derive causally.
-* Verbs' profiles come from their fragment entries' factivity except yǐwéi's, the paper's own
-  analysis, since the fragment records only that it is non-factive.
+* Verbs' profiles come from their language file entries' factivity except yǐwéi's, the paper's own
+  analysis, since the language file records only that it is non-factive.
 
 ## References
 
@@ -173,7 +173,7 @@ theorem subset_compl_gapExt_factive_iff (att : (W → Prop) → W → Prop) :
     c ⊆ (Trivalent.gapExt (factive att p))ᶜ ↔ Profile.factive.condition c p := by
   simp [Set.subset_def, Profile.condition, EntailsP]
 
-/-- yǐwéi's profile on the paper's analysis, beyond the non-factivity its fragment entry
+/-- yǐwéi's profile on the paper's analysis, beyond the non-factivity its language file entry
 records. -/
 def yiweiProfile : Profile := .weakContrafactive
 
@@ -192,7 +192,7 @@ structure Row where
   judgment : Judgment
   deriving DecidableEq
 
-/-- The rows' verbs *know*, *think* and rènwéi take their profiles from their fragment entries'
+/-- The rows' verbs *know*, *think* and rènwéi take their profiles from their language file entries'
 factivity, and yǐwéi from the paper's analysis. -/
 def verbProfiles : List (String × Profile) :=
   [("know", .ofFactivity know.factivity), ("think", .ofFactivity think.factivity),

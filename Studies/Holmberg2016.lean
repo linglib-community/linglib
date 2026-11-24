@@ -358,7 +358,7 @@ inductive PolarityParticle where
   | yes | no | ja | nej | jo | oui | non | si | un | uun
   deriving DecidableEq, Repr, Fintype
 
-/-- The fragment entry of a particle. -/
+/-- The language file entry of a particle. -/
 def PolarityParticle.entry : PolarityParticle → Morphology.Morph
   | .yes => English.PolarityParticles.yes
   | .no => English.PolarityParticles.no

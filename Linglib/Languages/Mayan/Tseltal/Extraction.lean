@@ -8,7 +8,7 @@ public import Linglib.Languages.Mayan.Extraction
 
 Tseltal (Tseltalan Mayan) has no Agent Focus form, so a transitive subject extracts without a
 reflex on the verb, as the intransitive subject and the patient do; Polian notes an Agent Focus
-inverse voice in the Villa Las Rosas variety alone, which this fragment does not describe. A
+inverse voice in the Villa Las Rosas variety alone, which this language file does not describe. A
 recipient or benefactive
 is the primary object of the applicative *-bey* or *-be*, cross-referenced by Set B as the object
 of a transitive verb is. When an instrument is questioned, focused or relativized, the

@@ -188,7 +188,7 @@ inductive Alternatives where
   | property
   deriving DecidableEq, Repr
 
-/-- A row is a judged example, recording its environment, the fragment entry of its item with
+/-- A row is a judged example, recording its environment, the language file entry of its item with
 the alternatives it introduces, and the judgment. -/
 structure Row where
   env : Environment
@@ -196,7 +196,7 @@ structure Row where
   alternatives : Alternatives
   judgment : Judgment
 
-/-- The fragment entry of a row's item, with its alternatives; the paper does not classify
+/-- The language file entry of a row's item, with its alternatives; the paper does not classify
 *kabhii bhii* 'ever', read here with the property alternatives of *koii* and *kuch*. -/
 noncomputable def item? (r : Datum) : Option (PolarityItem × Alternatives) :=
   r.parse? "npi" [("koii bhii", (koiiBhii, .property)), ("koi bhii", (koiiBhii, .property)),

@@ -18,7 +18,7 @@ the enclitic =(y)a', and which classes of adjunct license the marker varies.
 
 Each language's `Extraction.realize` records the reflexes an extraction from each site licenses,
 as a finite set of `Reflex Mayan.Host`. The reflex of transitive-subject extraction is the
-marker of the voice the verb switches to, Agent Focus or the antipassive. A fragment whose
+marker of the voice the verb switches to, Agent Focus or the antipassive. A language file whose
 sources leave some sites undescribed gives its values in `Option`, `none` at those sites and
 `some ∅` where an extraction is documented as unmarked.
 

@@ -9,9 +9,9 @@ Bresnan distinguishes the open complements, whose subject is that of a function 
 under functional control, from the closed complements, which have a subject of their own. Which
 function controls an open complement is predictable: by her Lexical Rule of Functional Control it
 is the second object if there is one, else the object, else the subject, and [every control and
-raising verb of the English fragment follows the rule but *promise*](##lexicalRule_verbs). Only
+raising verb of the English language file follows the rule but *promise*](##lexicalRule_verbs). Only
 the semantically unrestricted functions control, or go unfilled under raising, [as every diathesis
-of the fragment bears out](##controllerSlot_mem_coreSlots).
+of the language file bears out](##controllerSlot_mem_coreSlots).
 
 ## Implementation notes
 
@@ -19,9 +19,10 @@ of the fragment bears out](##controllerSlot_mem_coreSlots).
   whether a participant fills it, under equi, or none does, under raising. The subject, object and
   second object are the frame's core slots (`ArgumentFrame.coreSlots`), its objects in the order of
   its complements. That the dependent is unpronounced in an open complement, as English's are, is
-  the fragment's record of its subject (`English.Verbs.toInfinitive`).
+  the language file's record of its subject (`English.Verbs.toInfinitive`).
 * The control of adjuncts, which c-structure induces, and anaphoric control, of a closed
-  complement's own unexpressed subject, are not encoded: the fragment's open complements are all
+  complement's own unexpressed subject, are not encoded: the language file's open complements are
+  all
   lexically controlled.
 
 ## References
@@ -49,7 +50,7 @@ def FollowsLexicalRule {n : ℕ} (d : Diathesis n) : Prop :=
 instance {n : ℕ} (d : Diathesis n) : Decidable (FollowsLexicalRule d) :=
   inferInstanceAs (Decidable (∀ s ∈ d.controllerSlot?, _))
 
-/-- The Lexical Rule of Functional Control holds of every verb of the English fragment but
+/-- The Lexical Rule of Functional Control holds of every verb of the English language file but
 *promise*, whose subject controls the infinitive across its object. -/
 theorem lexicalRule_verbs :
     (∀ v ∈ verbs, (∀ d ∈ v.valency.diatheses, FollowsLexicalRule d) ∨
@@ -59,7 +60,7 @@ theorem lexicalRule_verbs :
 
 /-- Only the semantically unrestricted functions, subject, object and second object, are
 functional controllers (p. 376) or go unpaired with an argument (p. 352): the slot controlling an
-open complement of the fragment is always a core one. -/
+open complement of the language file is always a core one. -/
 theorem controllerSlot_mem_coreSlots :
     ∀ v ∈ verbs, ∀ d ∈ v.valency.diatheses, ∀ s ∈ d.controllerSlot?, s ∈ d.coreSlots := by
   decide +kernel

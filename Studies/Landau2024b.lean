@@ -34,7 +34,7 @@ blind to.
 
 ## Implementation notes
 
-The controlled subject of (46c) is the feminine clitic of the San Martín Peras Mixtec fragment.
+The controlled subject of (46c) is the feminine clitic of the San Martín Peras Mixtec language file.
 The semantic clause of Form Copy, copies interpreted in exactly the same way, is exhaustive
 control over the copy relation (`Binding.IsExhaustive`). The example rows are read as
 diagnostics by `Landau2013.attests`: a reading on which the embedded subject
@@ -73,7 +73,7 @@ noncomputable def naJuana : SyntacticObject :=
 noncomputable def naJuana' : SyntacticObject := naJuana.renumber 2
 
 /-- (46c) as the Form Copy theory builds it, *ña Juana* merged into the theta positions of
-*nantǒso* 'forget', the fragment's entry (Landau prints *nàntŏso*), and *nakatsya* 'wash'. -/
+*nantǒso* 'forget', the language file's entry (Landau prints *nàntŏso*), and *nakatsya* 'wash'. -/
 noncomputable def forgotToWash : SyntacticObject :=
   merge naJuana (merge (leaf ⟨.of .V [.V] Mixtec.SMPM.forget.form, 4⟩)
     (merge naJuana' (leaf ⟨.of .V [] "nakatsya míí tsyàà", 5⟩)))

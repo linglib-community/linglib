@@ -327,7 +327,7 @@ def english (w : QuantificationalDeterminer) : Option Structure :=
   else none
 
 /-- At the lexicon the generalization says that the English forms carrying a ONE head are exactly
-the universal determiners the fragment records as selecting the singular. -/
+the universal determiners the language file records as selecting the singular. -/
 theorem one_iff_singular :
     ∀ w s, english w = some s →
       (s ≠ .bare ↔ w.numberRestriction = some .singular) := by

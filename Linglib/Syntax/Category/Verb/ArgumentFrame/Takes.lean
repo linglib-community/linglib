@@ -23,7 +23,7 @@ requires an overt accusative subject.
 Selection is by these features alone, so two typers recording the same
 coding, sentence types and subject are taken by the same predicates; a
 lexical restriction beyond them, as of Bulgarian *deto* to some emotive
-factives, is a list the fragment records.
+factives, is a list the language file records.
 
 ## Main definitions
 
@@ -288,7 +288,7 @@ theorem finiteClause_takes (hc : z.coding = some .indicative)
 /-! ### The frame a typer types -/
 
 /-- The frame whose one complement is the clause `z` types, with the subject
-    requirement `s`: the frame a fragment derives from its complementizer
+    requirement `s`: the frame a language file derives from its complementizer
     entry rather than retyping the typer's axes. -/
 def typedBy (z : Complementizer) (s : Option Clause.EmbeddedSubject := none) : ArgumentFrame :=
   ⟨some .nominal, [.typedBy z s]⟩

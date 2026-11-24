@@ -105,7 +105,7 @@ theorem preferred_ne_performative (a : Perfectivity) (S : Finset Parameter) :
 
 /-! ### The examples -/
 
-/-- The mode of the fragment an example's mode names. -/
+/-- The mode of the language file an example's mode names. -/
 def Examples.Mode.toMode : Examples.Mode → Kashaya.Evidentiality.Mode
   | .spontaneous => .spontaneous
   | .responsive => .responsive

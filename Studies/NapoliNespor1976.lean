@@ -138,7 +138,7 @@ inductive Element where
 
 namespace Element
 
-/-- An element is a negative polarity item when its fragment entry has a licensor. -/
+/-- An element is a negative polarity item when its language file entry has a licensor. -/
 def IsNPI : Element → Prop
   | pur => Italian.PolarityItems.pur.IsNPI
   | neanche => Italian.PolarityItems.neanche.IsNPI

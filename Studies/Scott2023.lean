@@ -40,7 +40,7 @@ dissertation's judgments (`Data/Examples/Scott2023`) instantiate the derivation
 * Features are Harbour's bivalent person and number features (Table 4.4) with the head a Set A
   or Set B terminal sits on and the flag a copying probe leaves; the person features of a cell
   are Harbour's signs of its referential category (`Harbour2016.signOf`), and the two pronoun
-  series the derivation targets are the fragment's `Mam.independent` and `Mam.subjPoss`.
+  series the derivation targets are the language file's `Mam.independent` and `Mam.subjPoss`.
   Contextual specifications of Vocabulary Items are features of the same terminal, so the
   Extended Subset Principle is the substrate's `subsetPrinciple` over sites.
 * Multiple insertion (§4.4.1) is read with the Extended Subset Principle: every applicable item
@@ -106,7 +106,7 @@ def PronCell.number : PronCell → Number
   | .firstSg | .secondSg | .thirdSg => .singular
   | .firstPlExcl | .firstPlIncl | .secondPl | .thirdPl => .plural
 
-/-- The cell of the fragment's pronoun paradigms, with clusivity on the person. -/
+/-- The cell of the language file's pronoun paradigms, with clusivity on the person. -/
 def PronCell.bundle : PronCell → Agreement.Bundle
   | .firstSg => .personNumber .first .singular
   | .firstPlExcl => .personNumber .firstExclusive .plural
@@ -124,10 +124,10 @@ def PronCell.sign (c : PronCell) : Harbour2016.Sign := Harbour2016.signOf c.cate
 /-- Whether a cell is singular. -/
 def PronCell.singular (c : PronCell) : Bool := c.number = .singular
 
-/-- The fragment's independent pronoun of a cell. -/
+/-- The language file's independent pronoun of a cell. -/
 def independentOf (c : PronCell) : Option PersonalPronoun := Mam.independent.realize c.bundle
 
-/-- The fragment's subject and possessor pronoun of a cell. -/
+/-- The language file's subject and possessor pronoun of a cell. -/
 def subjPossOf (c : PronCell) : Option PersonalPronoun := Mam.subjPoss.realize c.bundle
 
 /-! ### Features and Vocabulary Items -/

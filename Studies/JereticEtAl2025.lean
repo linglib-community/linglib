@@ -81,7 +81,7 @@ prediction is checked against the paper's judgments on nineteen sentences.
 
 * The combination *tous les deux*, the restriction of Avoid Ambiguity to phase boundaries, and
   the rejected alternatives with a core concept *both* or with category-free replacement.
-* The lexical duals of Japanese and Icelandic are not read from a fragment.
+* The lexical duals of Japanese and Icelandic are not read from a language file.
 * That the plural parse of *tous les verres sont pleins* is pronounceable, which needs a model
   with a world that separates it from each definite numeral.
 
@@ -608,7 +608,7 @@ def DualForm.size : DualForm → ℕ
   | .lexical => 1
   | .phrase n => n
 
-/-- A determiner of a fragment is a lexical dual when its number restriction is the dual. -/
+/-- A determiner of a language file is a lexical dual when its number restriction is the dual. -/
 def DualForm.ofDeterminer (d : QuantificationalDeterminer) : List DualForm :=
   if d.numberRestriction = some .dual then [.lexical] else []
 

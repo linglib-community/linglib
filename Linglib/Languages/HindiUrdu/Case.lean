@@ -44,7 +44,7 @@ takes *ko* when it is marked at all.
 
 Hindi and Urdu are literary styles of one colloquial language, with virtually identical grammar
 and core vocabulary (Masica §2.3, p. 27). The sources describe the case system from Hindi data,
-and the fragment records it for both.
+and the language file records it for both.
 
 The forms are [spencer-2005]'s transcription, `R` a retroflex rhotic, doubled vowels long and a
 tilde marking nasalization. His table gives the inanimates *makaan* 'house' and *mez* 'table' no

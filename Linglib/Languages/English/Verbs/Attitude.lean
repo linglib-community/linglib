@@ -94,7 +94,7 @@ def notice : Verb where
 /-- "believe" — doxastic attitude verb, creates opaque context. It is gradable, measuring the
 holder's degree of certainty in the complement ([hawthorne-rothschild-spectre-2016];
 [koev-2026] (3), (7)–(10)), and takes the maximizers *fully*, *completely* and *entirely* ((12)).
-The fragment enters it on the confidence scale of *certain*, *sure* and *confident*. Besides a
+The language file enters it on the confidence scale of *certain*, *sure* and *confident*. Besides a
 finite clause it takes an infinitive whose subject it raises to its object, an object that is no
 participant of its own (*believe Julia to be a princess*; [noonan-2007] §2.2) and that is the
 subject of the passive (*Julia is believed to be a princess*). -/

@@ -41,12 +41,13 @@ thus a presupposition, and a plural definite is odd
   modelled, and local accommodation below negation is the positive case for the negated
   predicate.
 * A row of §3 holds a plural definite and, as its alternatives, the quantified counterparts the
-  paper judges in the same context. Each sentence is linked to the fragment entries it shows:
+  paper judges in the same context. Each sentence is linked to the language file entries it shows:
   the article, possessive, quantifier or polarity item of its noun phrase and its negative
   auxiliary, each
   [attested among its words](##rows_attested). Whether it is quantified and whether it is
   negative are read off the entries. What its context establishes is stated here from the paper's
-  description of the context, as is that *lose* is the antonym of *win*, which the fragment does
+  description of the context, as is that *lose* is the antonym of *win*, which the language file
+  does
   not relate. Worlds record which of two atoms satisfy the context's predicate.
 
 ## TODO
@@ -365,7 +366,7 @@ private theorem separating_predicate (b : Bool) :
     Separating (univ ∩ univ) (atom (predicate b)) := by
   cases b <;> exact ⟨by decide, by decide⟩
 
-/-- A sentence's link to the fragment. -/
+/-- A sentence's link to the language file. -/
 structure Link where
   /-- The noun phrase the predicate applies to. -/
   np : NounPhrase

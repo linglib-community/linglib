@@ -223,7 +223,7 @@ def Role.features (s : Structure) (r : Role) (n : Number) (c : Case) : List Feat
       else []) ++ [.number n, .marking c]
 
 /-- *Birbirleri* cues the `local` feature, the clause-mate feature and the number of the
-fragment's reciprocal, which its antecedent shares. -/
+language file's reciprocal, which its antecedent shares. -/
 def birbirleriCues : List (Cue Feature) :=
   ⟨.hierarchical, .«local»⟩ :: ⟨.itemLevel, .clauseMate⟩ ::
     (Turkish.Anaphors.birbirlerini.number.map fun n ↦ ⟨.itemLevel, .number n⟩).toList

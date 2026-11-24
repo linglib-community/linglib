@@ -32,7 +32,8 @@ distributes to the conjuncts of a coordinate subject. A resolving value is a set
 the person or gender of a coordination is the union of its conjuncts' sets, the least set the
 subset annotations of the coordination rule allow. Resolving features are never indeterminate.
 
-We prove that an indeterminate value is a syncretism class of a paradigm, read off the fragments
+We prove that an indeterminate value is a syncretism class of a paradigm, read off the language
+files
 for *was*, *kogo*, *set*, *kaufen* and the Xhosa and Chichewa subject prefixes, that unification
 of the two verbs' atomic requirements fails, and that underspecification, the universal set,
 overgenerates. The marker set of a person value is its largest participant set, and union on

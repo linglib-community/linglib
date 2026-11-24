@@ -29,7 +29,7 @@ least](##familiar_mostFrequent).
 * The forms Table 1 aligns across languages are `Form.Kind`s. A printed form of Tables 2–6 has
   the kinds it may be: one, except a Spanish personal pronoun, which was not coded for stress, and
   which requires the weaker of the two statuses.
-* A demonstrative's deixis is the participant sets of its anchors, read off its fragment entry
+* A demonstrative's deixis is the participant sets of its anchors, read off its language file entry
   (Chinese *nèi* is *nà*, and the masculine singular stands for each paradigm). Spanish *ese*,
   usable at any distance from the speaker, covers every participant set without the speaker, and
   Japanese *so-* the listener's alone, its further reading slightly removed from both
@@ -181,7 +181,8 @@ theorem required_eq_inFocus :
   decide +kernel
 
 -- fn. 4: a noun phrase is definite when its form requires a uniquely identifiable referent, so
--- every English form is definite but *a N* and indefinite *this N*, as the fragment marks *the*
+-- every English form is definite but *a N* and indefinite *this N*, as the language file marks
+-- *the*
 -- and *a*.
 theorem uniquelyIdentifiable_le_iff_english :
     (∀ k, ∀ s ∈ required .english k,

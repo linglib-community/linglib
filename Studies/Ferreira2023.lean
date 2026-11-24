@@ -487,7 +487,7 @@ theorem forces_square :
     ∀ v : Vertex, (square v).forces = {if v.xg then .weakNecessity else .necessity} := by
   decide
 
-/-- Semantically (135), the necessity at a vertex is the operator of the force the fragment
+/-- Semantically (135), the necessity at a vertex is the operator of the force the language file
 gives the vertex's modal, over the vertex's base. -/
 theorem necessity_iff_interpret {φ : ModalForce} (v : Vertex) (hφ : φ ∈ (square v).forces) :
     v.necessity sim f g p q w ↔ interpret φ (v.base sim f q) g p q w := by

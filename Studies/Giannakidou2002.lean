@@ -28,7 +28,8 @@ imperfectives and not with a perfective achievement, negated or not, where the p
 nothing P-like ever happens](##wideScope_of_forall_not), whereas [eventive UNTIL is Karttunen's
 *not until* with the actualization his presupposition supplies](##eventiveUntil_iff). The
 paper's Greek, English, Icelandic and Dutch judgments [follow from the aspect of the main clause
-and the fragment entries of the connectives and their polarity items](##rows_predicted), and its
+and the language file entries of the connectives and their polarity items](##rows_predicted), and
+its
 stativity diagnostics [from homogeneity](##diagnostics_predicted), [which negation does not
 supply](##stativizer_refuted).
 
@@ -46,13 +47,13 @@ supply](##stativizer_refuted).
   form is stative when its clauses are homogeneous whatever their predicate (`StativeForm`). Each
   is decided through its characterization.
 * The connective of a glossed row is read off its gloss line (`Data/Examples/Gloss.lean`): a
-  wordform, or two adjacent ones, spelling the declared form of a fragment entry. The
+  wordform, or two adjacent ones, spelling the declared form of a language file entry. The
   `connective` column remains only on the unglossed rows.
-* The relation of each connective is read off its fragment entry. Which words are punctual
+* The relation of each connective is read off its language file entry. Which words are punctual
   *until*s, Greek *para monon*, Icelandic *fyrr en* and Dutch *pas*, is the paper's
   classification (`Connective.Punctual`). A row names the context the connective sits under, and
   whether that context admits the connective's polarity item is the library's licensing theory
-  applied to the item's fragment entry (`PolarityItem.Licenser.Admits`).
+  applied to the item's language file entry (`PolarityItem.Licenser.Admits`).
 * Giannakidou licenses *para monon* by antiveridical triggers only. The library licenses by
   Zwarts's strengths of negation, and *para monon*'s anti-additive licensor draws her line through
   the paper's contexts: negation and *xoris* 'without' carry anti-additivity, *amfivalo* 'I doubt'
@@ -212,7 +213,7 @@ pas om 9 uur aan* 'Marie only arrived at nine'. -/
 def pasEntry : Tense.Connective :=
   { form := Dutch.PolarityItems.pas.form, relation := .until_ }
 
-/-- `c.entry` is the connective entry of `c`, the fragment's, or the paper's own for *para
+/-- `c.entry` is the connective entry of `c`, the language file's, or the paper's own for *para
 monon* and *pas*. -/
 def Connective.entry : Connective → Tense.Connective
   | .until => English.TemporalConnectives.until_
@@ -396,7 +397,7 @@ def connectives : List Connective :=
   [.until, .mexri, .paraMonon, .prin, .til, .fyrrEn, .tot, .pas]
 
 /-- The connective a row's gloss line shows: the earliest span of the gloss stream spelling the
-declared form of a connective's fragment entry, multiword forms included. -/
+declared form of a connective's language file entry, multiword forms included. -/
 def connectiveOfForm? (ex : Datum) : Option Connective :=
   Gloss.lookup? (connectives.map fun c ↦ (c.entry.form, c)) ex.glossStream
 
@@ -427,7 +428,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
     ("noEventContinuation", .noEventContinuation)]
   pure ⟨connective, aspect, eventuality, licenser, test⟩
 
-/-- Every judgment on the UNTIL sentences follows from the connective's fragment entry, the
+/-- Every judgment on the UNTIL sentences follows from the connective's language file entry, the
 homogeneity of the main clause and the licensing of the polarity item. -/
 theorem rows_predicted :
     Datum.Checks Row.ofDatum (fun r ↦ .ofProp (Predicted r)) Examples.all 37 := by decide

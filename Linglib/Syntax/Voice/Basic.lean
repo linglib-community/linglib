@@ -212,7 +212,7 @@ instance : Decidable v.IsCoded := inferInstanceAs (Decidable (_ ≠ _))
 
 /-! ### Marking -/
 
-/-- The voice with the given marker. A fragment states a voice with its marker, as in
+/-- The voice with the given marker. A language file states a voice with its marker, as in
 `Voice.passive.marked [.suff "x"]`; the bare constants are unmarked. -/
 def marked (ms : List Morphology.Morph) : Voice := { v with marker := ms }
 

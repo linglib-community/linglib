@@ -23,8 +23,8 @@ Oaksford's probabilistic semantics of quantified sentences.
 
 ## Implementation notes
 
-* The English fragment gives *many* no reading; a model fixes one of Partee's cardinal and
-  proportional readings, and every result holds for both. *Few* is the fragment's proportional
+* The English language file gives *many* no reading; a model fixes one of Partee's cardinal and
+  proportional readings, and every result holds for both. *Few* is the language file's proportional
   reading.
 * *Only 12* is its presupposition and assertion together, at least and at most twelve, which is
   *exactly 12* (`Environment.denotation_only12`); the licensing context is still focus *only*,

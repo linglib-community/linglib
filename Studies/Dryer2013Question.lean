@@ -18,14 +18,15 @@ The atlas codes a language for how it marks a neutral polar question, by a quest
 interrogative morphology on the verb, by word order, by intonation alone or not at all, and, where
 it has a question particle, for where the particle stands in the sentence: at the beginning, at
 the end, in second position, elsewhere, or in either of two positions. This file reads the second
-value off the polar question particles of the fragments, `Clause.Marker.questionParticlePosition`,
+value off the polar question particles of the language files,
+`Clause.Marker.questionParticlePosition`,
 and compares it with the atlas's coding of the language.
 
 ## Implementation notes
 
-* The particles of a language are the ones its fragment gives for a neutral polar question;
+* The particles of a language are the ones its language file gives for a neutral polar question;
   mirative and biased particles are left out, since the atlas codes neutral questions.
-* A particle the fragment places by the focus has no position in the atlas's terms, so the
+* A particle the language file places by the focus has no position in the atlas's terms, so the
   comparison says nothing about it.
 
 ## References
@@ -39,7 +40,7 @@ namespace Dryer2013Question
 
 open Data.WALS Clause
 
-/-- The neutral polar question particles of each fragment, under the atlas's code for the
+/-- The neutral polar question particles of each language file, under the atlas's code for the
 language. -/
 def particles : List (String × List Clause.Marker) :=
   [("rus", [Russian.QuestionParticles.li]),
@@ -57,7 +58,8 @@ theorem questionParticle :
     ∀ x ∈ particles, F116A.allData.lookup x.1 = some .questionParticle := by
   decide +kernel
 
-/-- Where the particles of a fragment have a position in the clause, it is the position the atlas
+/-- Where the particles of a language file have a position in the clause, it is the position the
+atlas
 codes for the language, Hindi apart: second position in Russian, final in Japanese and Mandarin,
 initial in Polish and Ukrainian, and either of two positions in Serbian-Croatian. -/
 theorem questionParticlePosition_eq :

@@ -31,7 +31,7 @@ both forms (`SeMarking.HasChoice`).
 
 The two parses are the paper's diatheses, the anticausative and the reflexive, which expletive
 Voice and agentive Voice over an object understood as the subject derive after Schäfer (2008); the
-entailments of an anticausative's sole argument are those of the French fragment's entries; the
+entailments of an anticausative's sole argument are those of the French language file's entries; the
 account presupposes the reflexive–anticausative syncretism of Koontz-Garboden. The
 experiments' rating means are described in the paper and not represented.
 

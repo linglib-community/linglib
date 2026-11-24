@@ -31,7 +31,7 @@ plain count nouns, listed in `containerNouns` and `atomizers`.
   componentwise only because the units are coherent.
 * A unit's size is a convention, and the conventions are exact rationals: the SI prefixes are
   powers of ten, and the pound and the mile are exact decimals of the kilogram and the meter. The
-  fragment stores them in `ℚ`, and a measure term denotes a quantity with real magnitude.
+  language file stores them in `ℚ`, and a measure term denotes a quantity with real magnitude.
 
 ## References
 

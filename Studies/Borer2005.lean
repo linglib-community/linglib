@@ -197,9 +197,10 @@ theorem wellFormed_iff_judgment :
         e.judgment = .acceptable := by
   decide
 
-/-! ### The English fragment -/
+/-! ### The English language file -/
 
-/-- The selection a fragment records for a quantifier is the one an assigner predicts: a singular
+/-- The selection a language file records for a quantifier is the one an assigner predicts: a
+singular
 where the assigner divides a bare stem, a plural or dual where it takes plural inflection, and
 mass where it takes an undivided stem. -/
 @[mk_iff]

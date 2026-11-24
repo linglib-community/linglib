@@ -15,7 +15,8 @@ their referential categories govern the person-case constraint and resolved agre
 
 A pronoun records only features whose values are shared across languages. Honorific grades are
 not: each language has its own, ordered by the deference they present, and a form may serve
-several, as Maithili *tõ* is both the nonhonorific and the mid-honorific second person. A fragment
+several, as Maithili *tõ* is both the nonhonorific and the mid-honorific second person. A language
+file
 therefore states its grades as a type and its pronouns as a paradigm over them, a function from
 grades to entries like the tables the grammars print. The grades a form serves are a preimage of
 that function, its syncretisms the kernel, and paradigms are compared across languages by shape.

@@ -54,7 +54,7 @@ def ploxoj : Adjective := entry "ploxoj" "плохой" "xuže"
 
 /-! ### Inventory -/
 
-/-- Every entry of the fragment. -/
+/-- Every entry of the language file. -/
 def allEntries : List Adjective := [suxoj, prostoj, xoroshij, ploxoj]
 
 end Russian.Adjectives

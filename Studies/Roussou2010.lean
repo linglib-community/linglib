@@ -31,9 +31,9 @@ are rows, read by `rows` as the analysis predicts.
 
 ## Implementation notes
 
-The matrix predicates are entries of the Greek fragment, classified for selection as the paper
+The matrix predicates are entries of the Greek language file, classified for selection as the paper
 classifies them; the classification is the paper's, with the recollection sense of *thimáme*
-the fragment's stative entry, and *nomízo*'s need of an operator for its *na*-complement a
+the language file's stative entry, and *nomízo*'s need of an operator for its *na*-complement a
 lexical mark. The type-level incompatibility of the outside mergers with *na* is stated on the
 composition substrate's types, propositions as `t` and properties as `⟨e,t⟩`. Control, the
 dynamic modal reading of *kséro* with *na*, the Romance and English parallels, and the paper's
@@ -145,7 +145,7 @@ inductive Class
   | recollection
   deriving DecidableEq, Repr
 
-/-- The paper's classification of the fragment's predicates. -/
+/-- The paper's classification of the language file's predicates. -/
 def classOf (v : Verb) : Option Class :=
   if v == anarotjeme then some .interrogative
   else if v == ksero then some .knowing
@@ -231,7 +231,7 @@ theorem epistemic_na_present (k : Config) (b : Bool) (hc : k.comp = na)
 
 /-! ### The rows -/
 
-/-- The fragment entry named by a row. -/
+/-- The language file entry named by a row. -/
 def verbOf : String → Option Verb
   | "ksero" => some ksero
   | "anarotjeme" => some anarotjeme

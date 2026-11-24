@@ -19,7 +19,8 @@ to the scale, which a study supplies. The suffixes of the template respect the h
 
 ## Implementation notes
 
-The scale is a comparative concept and not an inventory of positions: a language's fragment owns
+The scale is a comparative concept and not an inventory of positions: a language's language file
+owns
 the positions of its templates. Bybee calls the order approximate, and her diagram lists number,
 person and gender agreement as three rows; the scale takes her single category of agreement. A
 category outside her list, such as derivation, negation or nonfiniteness, has no rank, and a

@@ -56,7 +56,7 @@ namespace Embick2015
 
 open DistributedMorphology Embick2015.Examples
 
-/-! ### The Latin fragment -/
+/-! ### The Latin language file -/
 
 namespace Latin
 
@@ -233,7 +233,7 @@ open Feature
 def vocab : List (VocabularyItem Feature String) :=
   [⟨{(0, nom), (-1, cFinal)}, "i"⟩, ⟨{(0, nom), (-1, vFinal)}, "ka"⟩]
 
-/-- The hosts of (10), transcribed into the segments of the fragment. -/
+/-- The hosts of (10), transcribed into the segments of the language file. -/
 def segments : List (String × List Phonology.Segment) :=
   [("pap", [Korean.p, Korean.a, Korean.p]), ("ai", [Korean.a, Korean.i])]
 

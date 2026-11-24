@@ -36,7 +36,7 @@ five models of OCP-Place to the O/E of every pair (Table V), is printed data in
 
 * `placeClasses`: the natural classes of the matrix whose description includes a place
   feature.
-* `similarity`: the similarity of two consonants of the Arabic fragment, equation (7).
+* `similarity`: the similarity of two consonants of the Arabic language file, equation (7).
 
 ## Implementation notes
 
@@ -44,7 +44,7 @@ five models of OCP-Place to the O/E of every pair (Table V), is printed data in
   that the kernel meets classes by `Nat.land`. The classes containing a column are generated
   from the place classes containing it by the attribute extents containing it (`classesAt`),
   which is how the table is computed.
-* The paper writes ج as the dorsal stop g and ظ as zˤ; their segments are the fragment's /dʒ/
+* The paper writes ج as the dorsal stop g and ظ as zˤ; their segments are the language file's /dʒ/
   and /ðˤ/ (`segment`).
 * The paper does not print the columns of the hypothetical /p/ and /v/; they are those of /b/
   and /f/ with the other value of [voice], which generate the four new classes it lists.
@@ -139,7 +139,7 @@ def Feature.all : List Feature :=
 /-- The place features. -/
 def Feature.places : List Feature := [.labial, .coronal, .dorsal, .phar]
 
-/-- The consonants of (8) in its column order, as the fragment's segments. -/
+/-- The consonants of (8) in its column order, as the language file's segments. -/
 def columns : List Segment :=
   [b, f, m, t, d, «tˤ», «dˤ», θ, ð, s, z, «sˤ», «ðˤ», «ʃ», k, «dʒ», q, χ, «ʁ», ħ, «ʕ», h, «ʔ»,
    l, r, n, w, j]
@@ -147,7 +147,7 @@ def columns : List Segment :=
 /-- The column of a consonant in (8). -/
 def col (x : Segment) : ℕ := columns.idxOf x
 
-/-- The fragment's segment for a consonant of (8). -/
+/-- The language file's segment for a consonant of (8). -/
 def segment : Consonant → Segment
   | .b => b | .f => f | .m => m | .t => t | .d => d | .tEmph => «tˤ» | .dEmph => «dˤ»
   | .theta => θ | .edh => ð | .s => s | .z => z | .sEmph => «sˤ» | .zEmph => «ðˤ»

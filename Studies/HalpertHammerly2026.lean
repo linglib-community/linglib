@@ -29,7 +29,7 @@ of Chiyao and Swahili and the animate-only object marking of Nyaturu.
 
 * A nominal has a secondary n only when its prefix class is a core class other than its core's;
   `ofEntry` is undefined for classes 3/4 and 5/6, whose features the paper leaves open.
-* The fragment's semantic animacy stands in for the grammatical core, which the paper allows to
+* The language file's semantic animacy stands in for the grammatical core, which the paper allows to
   be idiosyncratic.
 * Agreement with conjoined subjects, (15) to (18), is recorded as data only.
 
@@ -196,7 +196,7 @@ def ofAnimacy : Animacy → Core
 def gender (c : Core) : Xhosa.Gender :=
   if .human ∈ c.1 then .genderA else if .animate ∈ c.1 then .genderE else .genderD
 
-/-- The core class of a gender, read off the semantic core the fragment records for it; none
+/-- The core class of a gender, read off the semantic core the language file records for it; none
 for a purely formal gender. -/
 def ofGender (g : Xhosa.Gender) : Option Core :=
   match g.status with

@@ -229,8 +229,8 @@ theorem possible_eq_preimage : possible P = likelihood P ⁻¹' Set.Ioi ⊥ := b
   rw [mem_possible_iff, Set.mem_preimage, Set.mem_Ioi, ← Subtype.coe_lt_coe, coe_likelihood,
     Set.Icc.coe_bot]
 
-/-- The English fragment agrees, since its *possible* takes the minimum standard and its
-*impossible* the maximum of the dual (§5.2.5). The fragment's possibility scale is only lower
+/-- The English language file agrees, since its *possible* takes the minimum standard and its
+*impossible* the maximum of the dual (§5.2.5). The language file's possibility scale is only lower
 closed; the maximum of the probability scale is the book's claim that *possible* shares the scale
 of *likely*. -/
 example : English.Adjectives.possible.standard = some .minEndpoint ∧

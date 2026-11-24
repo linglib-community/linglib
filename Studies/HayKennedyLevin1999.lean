@@ -23,7 +23,7 @@ positive lower bound on the change. A bound can come from a measure phrase or *c
 from a conventional value supplied by context. A bound that is only implicated can be cancelled and
 one supplied by overt material cannot, which is why an unmodified degree achievement takes both
 adverbials and one modified by *completely* only the in-adverbial. The paper's closed-range and
-open-range adjectives are checked against the scales of the English fragment.
+open-range adjectives are checked against the scales of the English language file.
 
 ## Implementation notes
 

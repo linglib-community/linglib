@@ -259,7 +259,7 @@ def Language.defaultStrategy : Language → Strategy
   | .ukrainian | .polish | .serbian | .macedonian => .clauseInitialParticle
   | .bulgarian | .russian => .verbAttachedParticle
 
-/-- The question particles of each language's fragment. -/
+/-- The question particles of each language's language file. -/
 def Language.particles : Language → List Clause.Marker
   | .czech | .slovak | .upperSorbian => []
   | .slovenian =>
@@ -373,7 +373,7 @@ inductive SerbianPQForm
   | lnpq
   deriving DecidableEq, Repr, Fintype
 
-/-- The fragment marker of each strategy. -/
+/-- The language file marker of each strategy. -/
 def SerbianPQForm.particle : SerbianPQForm → Clause.Marker
   | .daLiPPQ => Serbian.QuestionParticles.daLi
   | .jeLiPPQ | .lnpq => Serbian.QuestionParticles.jeLi

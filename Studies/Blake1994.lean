@@ -64,7 +64,7 @@ and the cases of source with the ablative. The text was checked in the second ed
 ## TODO
 
 Blake observes that no language has both a case for A and a case for P unless it has a fourth
-case. This is not stated: the one fragment with both an ergative and an accusative,
+case. This is not stated: the one language file with both an ergative and an accusative,
 `NezPerce.Case`, records the three cases of the relative pronoun only.
 
 ## References
@@ -342,7 +342,7 @@ theorem ancient_greek_dat_functions :
       .argument .R ∈ Greek.Ancient.Case.dat.functions ∧
       .argument .R ∈ Latin.Case.dat.functions := by decide
 
-/-! ### The other case inventories of the fragments
+/-! ### The other case inventories of the language files
 
 The inventories that do not conform each miss a position Blake's two sources of gaps account for.
 Finnish has no dative, and its allative *-lle* has dative functions. Hungarian and Basel German

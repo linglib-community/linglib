@@ -51,8 +51,9 @@ Maslova, Evans, Siloni and Hurst.
 
 ## Implementation notes
 
-Each language's construction takes its marker from the language's fragment, or from the review's
-example where no fragment exists (Warlpiri, Kuuk Thaayorre, Dalabon, Tonga), and records the
+Each language's construction takes its marker from the language's language file, or from the
+review's
+example where no language file exists (Warlpiri, Kuuk Thaayorre, Dalabon, Tonga), and records the
 valency indicators the review reports; the ergative and accusative glosses of its examples are
 checked against them (`ergative_iff_subjectCase_bivalent`, `objectSlot_bivalent_of_accusative`).
 The Wambaya clitic is classed as the review classes it, with the pronominal strategies; the

@@ -58,7 +58,7 @@ namespace Major2024
 
 open Minimalist BakerVinokurova2010 Uyghur
 
-/-- `verb? key r` is the fragment entry that the feature `key` of the row `r` names. -/
+/-- `verb? key r` is the language file entry that the feature `key` of the row `r` names. -/
 def verb? (key : String) (r : Datum) : Option Verb := (r.feature? key).bind (Verb.find? verbs ·)
 
 /-- The linker of a row's embedded clause is the converb suffix on a *dep* clause, as on any

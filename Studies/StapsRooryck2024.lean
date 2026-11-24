@@ -17,7 +17,7 @@ external argument of Angelopoulos, Collins and Terzi, combined with the verb by 
 Identification. The agentive instantiations share the at-issue relation Initiator and differ in
 presupposition, high proto-agentivity for *par* and low for *de*, where proto-agentivity is
 relational in the terms of Dowty and of Hopper and Thompson: bringing about a change,
-volitionality and telicity, with change primary. Over the fragment's verbs this derives the
+volitionality and telicity, with change primary. Over the language file's verbs this derives the
 paper's readings, such as the exclusion of *de* by verbs of change.
 
 ## Main definitions

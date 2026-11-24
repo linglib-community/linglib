@@ -49,7 +49,7 @@ the marked [reverse] and [−], their double duty (`bearing`, `mem_bearing_iff`)
 and German *doch* the marked combination [reverse, +] (`reversePositive`). Both English particles
 can confirm a negative question, while in Romanian only *nu* does
 (`english_confirmsNegativeQuestion`, `romanian_confirmsNegativeQuestion_iff`). `rows` are the
-responding assertions of (4), (5) and (35)–(50), whose particles are the fragments' polarity
+responding assertions of (4), (5) and (35)–(50), whose particles are the language files' polarity
 particles; every acceptable response is one each of its particles marks (`mem_marks`), *si* and
 *doch* occur in [reverse, +] responses only (`si_doch_mem_reversePositive`), and *ba* is possible
 in every denial (`ba_denial`) and required to be absent from a [reverse, −] answer
@@ -67,7 +67,8 @@ in every denial (`ba_denial`) and required to be absent from a [reverse, −] an
 * Rows record the polarities of the initiating and responding sentences as a
   `Response`; since a responding assertion shares its radical with the initiating
   sentence, [same] is agreement of polarity and [reverse] its reversal.
-* `PolarityParticle` indexes the particles the paper discusses, each with its fragment entry: all
+* `PolarityParticle` indexes the particles the paper discusses, each with its language file entry:
+  all
   of English and Romanian, and of the French and German particles only *si* and *doch*.
 
 ## TODO
@@ -249,7 +250,7 @@ inductive PolarityParticle
   | yes | no | da | nu | ba | si | doch
   deriving DecidableEq, Repr, Fintype
 
-/-- The fragment entry of a particle. -/
+/-- The language file entry of a particle. -/
 def PolarityParticle.entry : PolarityParticle → Morphology.Morph
   | .yes => English.PolarityParticles.yes
   | .no => English.PolarityParticles.no

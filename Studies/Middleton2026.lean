@@ -56,7 +56,7 @@ Impoverishment feeds metathesis in Taos (`r24_feeds_m23`), as it does in Ondarru
   `[+author]`, as the appendix's trace reading has it; a third person object's number is null
   (`objectNumberNull`). The portmanteaux, epenthesis and tone carry the additions the appendix's
   prose uses but never states (see `exponence`).
-* Forms are strings, as in the fragment, so epenthesis and tone are stated on characters.
+* Forms are strings, as in the language file, so epenthesis and tone are stated on characters.
 
 ## TODO
 
@@ -1357,7 +1357,7 @@ inductive Tone where
   | falling
   deriving DecidableEq
 
-/-- A toned vowel, as the fragment prints it. -/
+/-- A toned vowel, as the language file prints it. -/
 def mark : Tone → Char → String
   | .high, 'o' => "ó"
   | .high, 'ǫ' => "ǫ́"

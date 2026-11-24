@@ -41,14 +41,14 @@ rather than the resolved one. The chapter's examples are the rows of
 
 * The asymmetry criterion is read off where a covarying feature's value originates, the
   chapter's classification of the five dimensions carried as data; what a Russian target is
-  inflected for is derived from its forms in the fragment, and what it agrees in is the
+  inflected for is derived from its forms in the language file, and what it agrees in is the
   inflected dimensions whose origin is the controller.
-* Polarity is the substrate's `Morphology.Polar`, which the Somali fragment proves of its
+* Polarity is the substrate's `Morphology.Polar`, which the Somali language file proves of its
   article (Table 9.1); the verbal prefix is shown not to be polar, the plural prefix
   coinciding with the masculine singular's instead.
 * Number-conditioned gender distinctions are the substrate's convergent maps between the
   target genders of two numbers; Chichewa's coordination rules are the substrate's ordered
-  resolution rules over fragment nouns, one per target form before the semantic rule.
+  resolution rules over language file nouns, one per target form before the semantic rule.
 * The agreement slots of a target, their controllers and their bound of four are described
   in the rows and not modelled.
 * The syncretism claims are stated over the languages' own gender carriers, not over the

@@ -20,7 +20,7 @@ core.
 ## Implementation notes
 
 The system is typed by the meaning `σ` its semantic rules read and the form `φ` its formal
-rules read; a language's fragment supplies the maps from nouns to both. Several rules of one
+rules read; a language's language file supplies the maps from nouns to both. Several rules of one
 kind applying in order are one partial function, the first defined value
 (`List.findSome?`). The formal rules are total, a default gender being their last clause, so a
 system with no formal rules has a constant one.

@@ -50,7 +50,7 @@ subject of a regular transitive extract.
   where the regular derivation would leave the object without Case or trap the extracting
   subject.
 * Rows carry the paper's high or low classification of their language, checked against the
-  fragment's verbal template; Kaqchikel Agent Focus and the nominal-stem and passive strategies
+  language file's verbal template; Kaqchikel Agent Focus and the nominal-stem and passive strategies
   for non-finite transitives are recorded as rows without a configuration.
 
 ## TODO
@@ -339,9 +339,9 @@ theorem formallyTransitive_iff_statusSuffix (f : VerbForm) (o : Object) :
       Qanjobal.StatusSuffix.ofVerbForm f = .tv := by
   decide +revert
 
-/-! ### The Mayan fragments -/
+/-! ### The Mayan language files -/
 
-/-- The Mayan languages with registered fragments. -/
+/-- The Mayan languages with registered language files. -/
 inductive Language where
   | chol | qanjobal | kaqchikel | tseltal | tsotsil | mam | kiche | yukatek
   deriving DecidableEq, Repr, Fintype
@@ -359,7 +359,7 @@ def glottocode : Language → Glottocode
   | .kiche => .kiche
   | .yukatek => .yucatecMaya
 
-/-- The verbal complex of a language, from its fragment. -/
+/-- The verbal complex of a language, from its language file. -/
 def template : Language → Morphotactics.Template VerbSlot
   | .chol => Chol.template
   | .qanjobal => Qanjobal.template
@@ -376,7 +376,7 @@ def absPosition (L : Language) : ABSPosition := Mayan.absPosition L.template
 /-- The head licensing a language's transitive objects. -/
 def licenser (L : Language) : Licenser := .ofPosition L.absPosition
 
-/-- The Set B exponents of a language, from its fragment. -/
+/-- The Set B exponents of a language, from its language file. -/
 def setB : Language → ExponentTable
   | .chol => Chol.setBExponent
   | .qanjobal => Qanjobal.setBExponent
@@ -387,7 +387,7 @@ def setB : Language → ExponentTable
   | .kiche => Kiche.setBExponent
   | .yukatek => Yukatek.setBExponent
 
-/-- The marking of a language's perfective clauses by marker set, from its fragment; the
+/-- The marking of a language's perfective clauses by marker set, from its language file; the
 Yucatec perfective is the completive status. -/
 def perfectiveMarking : Language → ArgumentRole → Option MarkerSet
   | .chol => Chol.markerSet .Perf
@@ -405,7 +405,7 @@ def IsErgativePerfective (L : Language) : Prop := Alignment.IsErgative L.perfect
 instance : DecidablePred IsErgativePerfective := fun _ ↦
   inferInstanceAs (Decidable (Alignment.IsErgative _))
 
-/-- The fragment records a reflex for the extraction of an argument on some verb, with
+/-- The language file records a reflex for the extraction of an argument on some verb, with
 third-person arguments where the marking depends on their person. -/
 def MarksExtraction : Language → ArgumentRole → Prop
   | .chol, r => ∃ m ∈ Chol.Extraction.realize (.argument r), m.Nonempty
@@ -456,7 +456,7 @@ theorem yukatek_marks_free_extraction :
   decide
 
 /-- With a third-person agent and a full DP object, a Q'anjob'al clause converges exactly under the
-Voice of the verb form the fragment records (§4.2, §5.1). -/
+Voice of the verb form the language file records (§4.2, §5.1). -/
 theorem converges_iff_verbForm {agent : Person} (ha : ¬ agent.IsSAP) (finite : Bool)
     (e : Option ArgumentRole) (f : VerbForm) :
     Converges ⟨Language.qanjobal.licenser, finite, .transitive (voiceOf f) .dp, e, false⟩ ↔

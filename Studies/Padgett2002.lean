@@ -32,7 +32,7 @@ a Color node carries both features or neither.
 
 Candidates are fully specified, as from (12) on. The segments are the vowels, as in (12)–(20),
 and in (21)–(22) the root's last vowel, the palatal lateral, which shares its [round]
-(footnote 6), and the suffix vowels, unspecified for color (§3.3): /I/ is the fragment's high
+(footnote 6), and the suffix vowels, unspecified for color (§3.3): /I/ is the language file's high
 archiphoneme and /A/ the meet of the four nonhigh vowels. [pharyngeal] has no counterpart in the
 inventory, so Place is left out of (25).
 

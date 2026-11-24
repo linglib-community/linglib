@@ -36,7 +36,7 @@ positions of a template under existential closure.
 The underspecified effector and the agent are
 relations between individuals and events beside the `EventStructure.Model`.
 A Spanish verb's causer specification is derived from the proto-role subject profile the
-fragment states for it, after Dowty: a causer that must be an agent entails volition. The
+language file states for it, after Dowty: a causer that must be an agent entails volition. The
 reflexive/anticausative syncretism in Haspelmath's survey, which the paper tabulates, is a
 typological argument left in prose.
 

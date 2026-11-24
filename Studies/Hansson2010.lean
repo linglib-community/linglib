@@ -22,7 +22,7 @@ every sibilant, and its fixed points are exactly the words of that language,
 and neutralizes the contrast in the sibilants it targets, the three characteristics the book
 draws from (4). It is the search-and-copy run, from the right, of the substrate's harmony
 `System` over segments with [anterior] as its feature, the decomposition Rose and Walker share
-with the vowel harmonies of the fragments, `anticipatory_eq_apply`. The book's own
+with the vowel harmonies of the language files, `anticipatory_eq_apply`. The book's own
 qualification (section 3.1.2) is the perseveratory assimilation of the first-person subject
 prefix after the s-perfective and s-destruct prefixes (12), (14), which the anticipatory map
 mispredicts, `perseveratory_rows`, while harmony from the root still overrides it (15).

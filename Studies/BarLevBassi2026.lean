@@ -42,7 +42,7 @@ answers, and accommodating it gives [their sentence](##BarLevBassi2026.pexPlural
   predicate at some world.
 * A row holds a plural definite and, as its alternatives, the quantified counterparts the paper
   judges in the same context. The word printed in capitals in an acceptable counterpart shows the
-  background question, by which fragment entry it is: a quantifier or an auxiliary. This is the
+  background question, by which language file entry it is: a quantifier or an auxiliary. This is the
   paper's method of taking the stress of the overt quantifier as the guide to the question.
 
 ## TODO

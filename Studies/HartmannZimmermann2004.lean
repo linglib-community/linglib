@@ -38,8 +38,8 @@ makes it audible.
 
 Realisation uses the shared `Reflex` vocabulary, and the paper's strategy
 labels are read off the reflex shape where `marking_matches_rows` pins the configurations to the
-data rows. Configurations carry the fragment's tense–aspect type: the perfective rows are
-Kidda's singular perfective and the paper's progressive is the fragment's continuous
+data rows. Configurations carry the language file's tense–aspect type: the perfective rows are
+Kidda's singular perfective and the paper's progressive is the language file's continuous
 (preposed *né*, transcribed *n* by the paper), with the paradigm restriction in the
 well-formedness predicate. The paper's fn. 6 notes that *-i* does not occur with all
 intransitive verbs; the realisation idealises it as the intransitive perfective strategy. The

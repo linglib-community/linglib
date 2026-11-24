@@ -194,7 +194,7 @@ itself' ([koontz-garboden-2009] ex. 65c). -/
 def crecer : Verb :=
   { morphs := [.root "crecer"], valency := .ofFrame ArgumentFrame.intransitive }
 
-/-- The verbs of the fragment. -/
+/-- The verbs of the language file. -/
 def allVerbs : List Verb :=
   [abrir, romper, hundir, caer, morir, cerrar, quebrar, hervir, olvidar, ocurrir, mejorar, rasgar,
     asesinar, cortar, cortarInchoative, ahogar, empeorar, crecer, quemar]

@@ -16,7 +16,7 @@ verbal negation. Under emphatic accent its members are the n-words of
 
 ## Implementation notes
 
-* Forms are romanized without stress, as elsewhere in the fragment, so *pote* 'ever' of the
+* Forms are romanized without stress, as elsewhere in the language file, so *pote* 'ever' of the
   *tipota*-series is written as the interrogative *póte* 'when' is.
 
 ## References

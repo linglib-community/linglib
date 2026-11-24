@@ -139,7 +139,7 @@ theorem instrumentNucleativization_neutral :
 
 theorem portative_isValencyIncreasing : portative.IsValencyIncreasing := by decide
 
-/-- English *break* is a decausativization in the fragment's own diatheses: the intransitive
+/-- English *break* is a decausativization in the language file's own diatheses: the intransitive
 leaves the breaker out of participant structure and makes the thing broken the S, so it is not a
 passivization. -/
 theorem break_decausativization :
@@ -460,7 +460,7 @@ theorem tagalog_pivotRoles : tagalog.symmetrical.pivotRoles = {some .A, some .P,
 -- §8.5.2
 theorem tagalog_isMultiple : tagalog.IsMultiple := by decide
 
-/-- The Indonesian *di-* voice read as a patient voice, beside the passive of the fragment. -/
+/-- The Indonesian *di-* voice read as a patient voice, beside the passive of the language file. -/
 def indonesianPatientVoice : Voice := patientVoice.marked [.pref "di"]
 
 /-- The Indonesian *di-* voice is ambiguous (52). With the noun phrase after the verb

@@ -81,7 +81,7 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   with the book's readings of them as theorems.
 * Second systems and constructed numbers are represented by what their forms cover; the
   data of Kiowa, Hopi, Rembarrnga and the Slavonic honorifics live here for want of
-  fragments.
+  language files.
 
 ## TODO
 

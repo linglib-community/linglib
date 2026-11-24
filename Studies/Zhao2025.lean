@@ -214,7 +214,8 @@ theorem le_get_some_iff_perfect (h : (le Event.τ (Det.some {e | P w e}) a).Dom)
       Aspect.ViewpointType.perfect.denote (P w) a :=
   le_get_some_iff_diamond h
 
--- the fragment's perfective holds at no point of evaluation of a predicate without point events
+-- the language file's perfective holds at no point of evaluation of a predicate without point
+-- events
 theorem not_denote_le_pure (hP : ∀ e, P w e → ¬ (Event.τ e).IsPoint) (t : T) :
     ¬ Mandarin.Aspect.le.viewpoint.denote (P w) (.pure t) := fun h ↦
   let ⟨e, hle, he⟩ := ViewpointType.denote_iff.1 h

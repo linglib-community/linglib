@@ -5,10 +5,10 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Bantu noun classes
 
-This file defines the types shared by the Bantu noun-class fragments: the noun classes in the
+This file defines the types shared by the Bantu noun-class language files: the noun classes in the
 comparative numbering, the semantic cores a gender may bear, [human], [animal] and [inanimate],
 or the [non-human] of a two-way system, and the status of a gender as interpretable, bearing a
-core, or uninterpretable, purely formal ([carstens-2026]). Each language's fragment says which
+core, or uninterpretable, purely formal ([carstens-2026]). Each language's language file says which
 classes it has and what marks them, and pairs its singular and plural classes into genders
 ([carstens-1991]).
 

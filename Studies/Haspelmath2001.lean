@@ -328,7 +328,8 @@ def HasRelativePronounStrategy (L : List Relativizer) : Prop :=
 instance (L : List Relativizer) : Decidable (HasRelativePronounStrategy L) :=
   List.decidableBEx _ _
 
-/-- Map 107.2 agrees with the relativizers of every language with a fragment on it, on both sides
+/-- Map 107.2 agrees with the relativizers of every language with a language file on it, on both
+sides
 of the line. -/
 theorem relativePronouns_fragments :
     ∀ x ∈ [(english, English.Relativization.relativizers), (finnish, Finnish.relativizers),
@@ -345,7 +346,7 @@ theorem hindiUrdu_relativePronoun :
       ¬ HasRelativePronounStrategy [HindiUrdu.relCorrelative] := by
   decide
 
--- Map 107.9 agrees with the comparatives of the fragments through Stassen's particle type, of
+-- Map 107.9 agrees with the comparatives of the language files through Stassen's particle type, of
 -- which Finnish and Latin have one beside a fixed-case construction.
 theorem comparative_fragments :
     ∀ x ∈ [(english, [English.Comparison.than]),

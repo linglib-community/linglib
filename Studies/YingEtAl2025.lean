@@ -26,7 +26,7 @@ strengthened superlative scales the threshold by a multiplier (`mostStr`). The e
 the expressions follow from the ordering of the thresholds alone (`Thresholds.Ordered`,
 `must_entails_might`, `certainAbout_believes`, `uncertainAbout_certainAbout`), and the fitted
 values of the paper's lexicon respect that ordering (`fitted`, `fitted_ordered`). The modal
-verbs' forces in the English fragment agree with the ordering: no possibility modal carries a
+verbs' forces in the English language file agree with the ordering: no possibility modal carries a
 higher threshold than a necessity modal (`force_threshold_le`).
 
 ## Implementation notes
@@ -249,7 +249,7 @@ def ModalVerb.aux : ModalVerb → ModalAuxiliary
   | .should => English.Auxiliaries.should
   | .must => English.Auxiliaries.must
 
-/-- The epistemic forces of each modal verb, read off the fragment. -/
+/-- The epistemic forces of each modal verb, read off the language file. -/
 def ModalVerb.forces (v : ModalVerb) : Finset ModalForce := v.aux.forcesOf .epistemic
 
 theorem forces_might : ModalVerb.might.forces = {.possibility} := by decide

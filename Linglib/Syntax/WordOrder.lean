@@ -32,7 +32,8 @@ orders of the typological literature, each labelled by its list of constituents 
 ## Implementation notes
 
 The WALS classification of a language's dominant orders, with its "no dominant order" value, is
-data (WALS Feature 81A and its siblings). A fragment records the arrangements a language admits as
+data (WALS Feature 81A and its siblings). A language file records the arrangements a language
+admits as
 a `Finset (Arrangement Constituent 3)`; the pairwise orders the language fixes are those every
 member agrees on, so no separate consistency invariant is needed. The rank count is a parameter
 rather than `Fintype.card α`, so that numerals and `decide` reduce; the ends are defined by rank

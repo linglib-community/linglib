@@ -181,7 +181,7 @@ def vidgerd : Deverbal := { preposition := some "við", root := "ger", nominaliz
 /-- *um-önn-un* 'care', from *annast um* 'take care of' ([wood-2023], (4.49)). -/
 def umonnun : Deverbal := { preposition := some "um", root := "önn", nominalizer := "un" }
 
-/-- The deverbal nouns of the fragment. -/
+/-- The deverbal nouns of the language file. -/
 def deverbals : List Deverbal :=
   [opnun, sofnun, vontun, misheyrn, seinkun, notkun, analysering, prentun, pvottur, vidvorun,
     addaun, vidgerd, umonnun]

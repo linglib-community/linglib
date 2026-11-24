@@ -21,7 +21,7 @@ and *made* 'until, as far as' an endpoint (p. 137).
 * *Yori* 'than' is the standard marker of the comparative (`Japanese.Comparison.yori`), recorded
   here as an ablative postposition after Stassen; Tsujimura does not classify it.
 * The postposition *ni* that Sadakane and Koizumi separate from the dative case marker is the
-  matter of `Studies/SadakaneKoizumi1995.lean`; the fragment keeps the single dative *ni*.
+  matter of `Studies/SadakaneKoizumi1995.lean`; the language file keeps the single dative *ni*.
 
 ## References
 

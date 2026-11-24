@@ -184,7 +184,7 @@ inductive Root where
   | kada | gila | mara | minimara | kapa | vinaashKara
   deriving DecidableEq, Fintype, Repr
 
-/-- `r.verb` is the fragment verb of the root `r`. -/
+/-- `r.verb` is the language file verb of the root `r`. -/
 def Root.verb : Root → Verb
   | .kada => kadann
   | .gila => gilann

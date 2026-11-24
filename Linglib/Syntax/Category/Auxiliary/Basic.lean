@@ -21,7 +21,7 @@ language, English's by the constructions of negation, inversion, code and emphas
 
 This file provides the entry of a member of such a class, a word form in the cells it is entered
 for with the features those cells share and its register, and the entry of a modal auxiliary,
-an auxiliary that is also a modal item, expressing force–flavor pairs. Per-language fragments
+an auxiliary that is also a modal item, expressing force–flavor pairs. Per-language language files
 supply the entries. A modal auxiliary may also mark the source of information, as German *sollen*
 reports a rumour; since its main meaning is modal, that evidential extension makes it an
 evidentiality strategy.

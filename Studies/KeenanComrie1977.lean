@@ -27,7 +27,7 @@ public import Linglib.Languages.Turkish.Relativization
 
 This file formalizes Keenan and Comrie's Hierarchy Constraints on the Accessibility Hierarchy,
 subject > direct object > indirect object > oblique > genitive > object of comparison, and
-checks them on the languages of Table 1 that the fragments record. A strategy is a placement of
+checks them on the languages of Table 1 that the language files record. A strategy is a placement of
 the clause together with ±case, and the positions it covers are derived from a language's
 relativizers. Toba Batak, whose two strategies leave the direct object between them, refutes the
 stronger constraint on languages and satisfies its weakening by promotion.
@@ -49,7 +49,7 @@ stronger constraint on languages and satisfies its weakening by promotion.
   agreeing with the head, English *who* (p. 65), leaves the relativized position a gap, so case
   coding is a property of what occupies that position (`IsCaseCoding`).
 * The sample takes Classical Arabic by the Modern Standard Arabic relativizer, the paper
-  considering only definite relative clauses (p. 64), and leaves out Yoruba, whose fragment
+  considering only definite relative clauses (p. 64), and leaves out Yoruba, whose language file
   follows Awobuluyi rather than Table 1. Entries +/− and +? count as +, and a blank, which marks
   missing data, as −, as for Toba Batak's object of comparison. Table 1 classes Hindi's
   correlative as internally headed.
@@ -156,7 +156,7 @@ theorem SatisfiesHC2.positions_eq_Icc_top {L : List Relativizer} (h : SatisfiesH
 
 /-! ### The sample (Table 1)
 
-The seventeen languages of Table 1 whose fragments follow it. -/
+The seventeen languages of Table 1 whose language files follow it. -/
 
 abbrev english := English.Relativization.relativizers
 abbrev welsh := Welsh.relativizers

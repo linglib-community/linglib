@@ -42,7 +42,8 @@ asymmetric, and of type SymAsy otherwise (`languageType`), so the definitional c
 book's fourth table follow (`languageType_eq_symmetric_iff`, `languageType_eq_asymmetric_iff`).
 
 The types are instantiated on the book's examples, the rows of `Data.Examples.Miestamo2005`, each
-language's pairs being its negative rows with the affirmatives they cite and its fragment's standard
+language's pairs being its negative rows with the affirmatives they cite and its language file's
+standard
 negator as the marker, the German and Italian paradigms by their first person singular. Spanish,
 German, Italian, French and Russian are of type Sym. The Finnish negative auxiliary takes the ending
 of the finite verb and leaves the lexical verb without it; the plain Japanese negative inflects as
@@ -126,7 +127,7 @@ def cite (l : Glottocode) (f : Form) : Form :=
 def forms (e : Datum) : List Form :=
   (Morphology.Morph.wordsOf e.primaryText).flatten.map (cite e.language)
 
-/-- The standard negators of a language, from its fragment. -/
+/-- The standard negators of a language, from its language file. -/
 def standard (l : Glottocode) : List Marker :=
   (List.lookup l [(.spanish, Spanish.Negation.standard), (.german, German.Negation.standard),
     (.italian, Italian.Negation.standard), (.french, French.Negation.standard),

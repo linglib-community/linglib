@@ -48,7 +48,7 @@ of the peripheral cases are close enough to semantic roles for this.
 P unmarked, which is a fact about the other cases of its language. See
 `Alignment.IsNominativeMarker`. The allative and the ablative are named for the goal and the
 source with no configuration, and also for the goal and the source of the exterior, as in the
-Uralic series. A fragment states which of these its case has. The oblique is named for no
+Uralic series. A language file states which of these its case has. The oblique is named for no
 function.
 
 ## References

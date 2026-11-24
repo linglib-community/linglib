@@ -46,18 +46,18 @@ reasonable starting points. `Studies/README.md` covers file naming.
 Theory-neutral empirical data lives separately under `Linglib/Data/`
 (see `Linglib/Data/README.md`).
 
-### Add a Fragment
+### Add a language
 
-A Fragment under `Linglib/Languages/{Language}/` exposes the lexical
+The files under `Linglib/Languages/{Language}/` hold the lexical
 entries and typological metadata for one language. Even a sparse
-fragment — say, a handful of pronouns and a tense paradigm — is
+language — say, a handful of pronouns and a tense paradigm — is
 useful, because it lets phenomena studies cite real cross-linguistic
 data instead of toy examples.
 
 If you work on a language whose typological profile is poorly
 represented (most non-Indo-European languages outside our existing
 sample), a small contribution here goes a long way. See an existing
-fragment (e.g. the files under `Linglib/Languages/English/`) for the
+language (e.g. the files under `Linglib/Languages/English/`) for the
 schema.
 
 ### Report a problem

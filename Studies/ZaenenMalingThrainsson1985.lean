@@ -306,7 +306,7 @@ def abhoeren : List (Arg German.Case) :=
 
 end Thematic
 
-/-- The paper's Icelandic verbs with the fragment entries they realize. -/
+/-- The paper's Icelandic verbs with the language file entries they realize. -/
 def entries : List (List (Arg Icelandic.Case) × Icelandic.Verbs.Verb) :=
   open Icelandic.Verbs in
   [(Thematic.dansa, dansa), (Thematic.kyssa, kyssa), (Thematic.hjalpa, hjalpa),

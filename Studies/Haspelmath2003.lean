@@ -19,7 +19,7 @@ the lines it lacks: with no line from purpose to anything but direction, [a gram
 another function has direction](##direction_mem_of_purpose_mem), the arrangement that [French *à*
 and German *zu* select among the three orders of purpose, direction and recipient](##arrangement),
 while on the map with all three lines [any two of them are a contiguous area](##vacuous).
-Of the cases of the fragments, [the Latin dative covers a contiguous area of the first map
+Of the cases of the language files, [the Latin dative covers a contiguous area of the first map
 but for its infrequent use for purpose](##latin_dative), and [Japanese *ni* does not of the
 second](##japanese_ni).
 
@@ -42,7 +42,7 @@ a linear map, as [in the case hierarchy](##conforms_iff_connected).
 
 ## TODO
 
-The grams of the figures are stated here as drawn. Of the fragments' own cases and adpositions
+The grams of the figures are stated here as drawn. Of the language files' own cases and adpositions
 only the Latin dative and Japanese *ni* list the functions of these maps from a grammar; the
 English prepositions of the figures do not yet.
 
@@ -355,7 +355,7 @@ theorem around :
       .recipient ∈ seychellesEk ∧ .cause ∈ seychellesEk ∧ .beneficiary ∉ seychellesEk := by
   decide
 
-/-! ### Two cases of the fragments
+/-! ### Two cases of the language files
 
 The chapter places no Latin or Japanese gram on its maps. In the prose of the grammar the Latin
 dative has every function of the first map but direction, which is left to the poets. Its use

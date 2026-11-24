@@ -24,7 +24,8 @@ and the negative verbs of (56), *prevent* and *dissuade*, are `−/◦`. The ana
 (`Implicative.Interpretation.material`), which gives the paper's entailment facts: double negation
 cancels as in (13) (`manage_neg_neg_imp`), and the one-way schemas and the non-implicatives leave
 the other direction open (`force_neg_not_entails`, `beAble_not_entails`,
-`nonImplicative_not_entails`). The English fragment's entries for the verbs of (2), (38), (44) and
+`nonImplicative_not_entails`). The English language file's entries for the verbs of (2), (38), (44)
+and
 (56) carry the signatures of their schemas (`implicative_eq`) and so are presupposition triggers
 (`isTrigger_of_mem_english`), while its entries for the non-implicatives of (2) carry `◦/◦`
 (`implicative_eq_bot`).
@@ -78,10 +79,11 @@ section Lexicon
 
 open English.Verbs hiding Verb
 
-/-- The English fragment's entries for the implicatives of (2), with the signature of schema
+/-- The English language file's entries for the implicatives of (2), with the signature of schema
 (37), for the negative implicatives of (38), with that of (41), for *be able* of (44), with that
 of (54), and for the verbs of (56), with that of (59) or its negative counterpart, as far as the
-fragment covers the lists. Its *get* is the causative sense, its *avoid* takes a noun phrase, and
+language file covers the lists. Its *get* is the causative sense, its *avoid* takes a noun phrase,
+and
 it has no *dissuade*. -/
 def english : List (Verb × ImplicationSignature) :=
   [(manage.toVerb, ⟨.some .positive, .some .negative⟩),
@@ -109,7 +111,7 @@ proposition with a presupposition. -/
 theorem isTrigger_of_mem_english : ∀ p ∈ english, p.1.IsTrigger := by
   decide
 
-/-- The fragment's entries for the non-implicatives of (2). -/
+/-- The language file's entries for the non-implicatives of (2). -/
 def nonImplicative : List Verb :=
   [try_.toVerb, promise.toVerb, want.toVerb, intend.toVerb, decide_.toVerb, hope.toVerb]
 

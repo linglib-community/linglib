@@ -27,7 +27,7 @@ negates it.
 
 * `E`, `Felicitous` — the proto-condition and the felicity condition of each question type
 * `Determiner`, `Question` — the morphosyntactic probes and a probed question; the polarity items
-  are the fragments' `either`, `too` and `brauchen`
+  are the language files' `either`, `too` and `brauchen`
 
 ## References
 

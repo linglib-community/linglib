@@ -370,7 +370,8 @@ section Distributivity
 variable {Entity E : Type*} [PartialOrder Entity] [OrderBot Entity] [SemilatticeSup E]
 
 /-- `ChampollionPostulates` records the book's postulates on the distributivity of verbs, over an
-interpretation `V` of the fragment's verbs as event predicates and the agent and theme roles. *See*
+interpretation `V` of the language file's verbs as event predicates and the agent and theme roles.
+*See*
 distributes on both roles and *kill* on its theme only, since a member of the posse need not have
 killed anyone, and *meet* does not distribute on its agent. -/
 structure ChampollionPostulates (V : Verb → E → Prop)

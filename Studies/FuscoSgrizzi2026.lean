@@ -160,11 +160,11 @@ def diSize : ComplementSize := .cP
 /-- The *a*-infinitive is a projection below tense with negation as its highest head (22). -/
 def aSize : ComplementSize := ⟨.Neg⟩
 
-/-- The complement an infinitival complementizer of the fragment selects. -/
+/-- The complement an infinitival complementizer of the language file selects. -/
 def sizeOf (z : Complementizer) : Option ComplementSize :=
   if z = di then some diSize else if z = a then some aSize else none
 
-/-- The readings a verb's complementizers yield, in the order the fragment lists them. -/
+/-- The readings a verb's complementizers yield, in the order the language file lists them. -/
 def readings (v : Italian.Verb) : List Reading :=
   v.clauseTypers.filterMap fun z ↦ (sizeOf z).map readingFromSize
 

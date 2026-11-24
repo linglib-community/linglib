@@ -89,7 +89,7 @@ structure Form where
   features : Finset Agreement.Dimension
   deriving DecidableEq
 
-/-- An adjectival target of a fragment as a form, its marker specified for the dimensions the
+/-- An adjectival target of a language file as a form, its marker specified for the dimensions the
 target inflects for. -/
 def form {V : Agreement.Dimension → Type*} {F : Type*} (t : Agreement.Target V F) : Form :=
   ⟨t.positions, t.inflection⟩

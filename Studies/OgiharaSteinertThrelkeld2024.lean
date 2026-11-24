@@ -336,7 +336,7 @@ theorem rows_precursor :
       (r.judgment = .acceptable ↔ r.feature? "precursor" = some "true") := by
   decide
 
-/-- The *before*-clause of (21) is non-past under a past, the tense the fragment records for
+/-- The *before*-clause of (21) is non-past under a past, the tense the language file records for
 *mae*. -/
 theorem rows_connective_tense :
     ∀ r ∈ Examples.all, ∀ c ∈ r.parse? "connective" [("mae", Japanese.TemporalConnectives.mae)],

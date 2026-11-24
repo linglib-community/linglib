@@ -28,7 +28,7 @@ entails no pro-drop (`Universal54`).
 ## Implementation notes
 
 The properties of (26) and the control profile are read off the paper's example rows
-(`Data/Examples/Ostrove2026.json`), whose clause types agree with the fragment's verbs
+(`Data/Examples/Ostrove2026.json`), whose clause types agree with the language file's verbs
 (`clauseTypeOf_mem_verbOf`). The rows bear out (26) except in its restructuring column, which
 footnote 8's exception under *kòni* 'want' breaks (`restructures_iff`). The paper's examples of
 non-exhaustive binding in tensed subjunctives are a missing cross-reference in the manuscript, so
@@ -92,12 +92,12 @@ def clauseTypeOf (row : Datum) : Option EmbeddedClauseType :=
   | some "untensedSubjunctive" => some .untensedSubjunctive
   | _ => none
 
-/-- The fragment verb a row's `verb` feature names. -/
+/-- The language file verb a row's `verb` feature names. -/
 def verbOf (row : Datum) : Option Verb :=
   (row.feature? "verb").bind (Verb.find? verbs ·)
 
 /-- The rows agree with the predicate lists (27): each row's clause type is one its matrix verb
-takes in the fragment. -/
+takes in the language file. -/
 theorem clauseTypeOf_mem_verbOf : ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row,
     ∃ v ∈ verbOf row, ∃ d ∈ v.valency.diatheses, EmbeddedClauseType.ofDiathesis d = c := by
   decide +kernel

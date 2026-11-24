@@ -30,7 +30,7 @@ restrictiveness only (`Exceptive.Restrictive`), which is why they also occur wit
 * The strengthening of a free exceptive to the *but* reading takes as hypothesis that the
   exception set contains only exceptions, the paper's gloss of the uniqueness condition, which
   pragmatics supplies.
-* The determiner *any* of Horn's paradigm has no reading in the paper or the fragment, so its
+* The determiner *any* of Horn's paradigm has no reading in the paper or the language file, so its
   rows are not predicted; likewise the definite of *except for Jane, my relatives* and the
   minimality-based *besides*, which the paper leaves to further research.
 * Not formalized: the two curryings of the *but*-phrase and the impossibility of an
@@ -177,7 +177,7 @@ inductive Marker
   | exceptFor
   deriving DecidableEq, Repr
 
-/-- These determiners of the paper's exceptive examples have a reading in the English fragment
+/-- These determiners of the paper's exceptive examples have a reading in the English language file
 or the quantification substrate; *any*, the definite and *besides*'s numeral have none. -/
 inductive Determiner
   | every
@@ -186,7 +186,8 @@ inductive Determiner
   | most
   deriving DecidableEq, Repr
 
-/-- A determiner reads as the English fragment's denotations for the words the fragment has
+/-- A determiner reads as the English language file's denotations for the words the language file
+has
 and as the quantification substrate's `no` for *no*. -/
 noncomputable def Determiner.readings : Determiner → Set Det.Family.{0}
   | .every => ⟦English.Determiners.every⟧

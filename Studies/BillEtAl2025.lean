@@ -161,7 +161,7 @@ def Language.glottocode : Language → Glottocode
   | .georgian => .georgian
   | .hungarian => .hungarian
 
-/-- The coordinator of a fragment that a lexeme of the data is. -/
+/-- The coordinator of a language file that a lexeme of the data is. -/
 def Examples.Lexeme.coordinator : Examples.Lexeme → Coordinator
   | .da => Georgian.Coordination.da
   | .c => Georgian.Coordination.c

@@ -26,12 +26,12 @@ root, and a language-specific rule assigns to the cells of its domain a coradica
 differs from the root in form or in inflection class. Rules compete by Pāṇini's principle, the
 rule with the narrower domain prevailing.
 
-For Czech, we define three rules as domain rules over the cells of the declension fragment. One
+For Czech, we define three rules as domain rules over the cells of the declension language file. One
 gives the nouns of the PRAMEN class their hard-masculine coradical in the plural, one gives the
 animate nouns of that class the same coradical in the dative and locative singular, and one
 gives a noun its soft-masculine coradical in the locative plural, where `inferSoftMasc` infers
 that coradical from a hard-masculine stem ending in a velar. `stemFor` is the stem the rules
-select and `czLinkage` the linkage they define. With the fragment's endings they realize every
+select and `czLinkage` the linkage they define. With the language file's endings they realize every
 form of the nine nouns of the forms data (`realize_matches_tables`), and exactly PRAMEN,
 PŘEDSEDA, SLUHA and FILOLOG are heteroclite (`heteroclite_iff`).
 
@@ -67,16 +67,18 @@ have a privileged category among their minimal intersective correlates is stated
 all privileged categories, and holds of any paradigm with two categories
 (`fracturedHavePrivilegedCorrelate_of_card_eq_two`).
 
-A Czech noun's segments are the stem of its entry in the Czech noun fragment, the citation form less
+A Czech noun's segments are the stem of its entry in the Czech noun language file, the citation
+form less
 the nominative singular ending of its class, so PŘEDSEDA's root and coradical share the segments
-*předsed*. A stem's endings are the fragment's endings of its noun in the class that the stem's
+*předsed*. A stem's endings are the language file's endings of its noun in the class that the stem's
 declension is for the noun's animacy, with the velar vocative singular -u and locative plural -ích
 and the noun's lexical nominative plural, MUŽ's -i or -ové and FILOLOG's -ové, and the stem is
-inflected as the fragment inflects it, palatalized before the masculine locative plural -ích and the
+inflected as the language file inflects it, palatalized before the masculine locative plural -ích
+and the
 animate nominative plural -i. Where the paper and the grammars differ the paper's forms stand and
 the difference is stated: the nominative and vocative plurals in -ové of PŘEDSEDA and SLUHA,
 realized on the hard-masculine coradical, whose class gives -i, are their lexical nominative
-plural in the fragment, and FILOSOF's, which neither grammar gives, is an override; Stump's
+plural in the language file, and FILOSOF's, which neither grammar gives, is an override; Stump's
 hard-feminine roots for the
 masculine a-stems rebuild Short's separate *hrdina* declension; and his soft-masculine coradical of
 velar stems gives the locative plurals in -ích that *Mluvnice češtiny*'s rule gives the
@@ -186,7 +188,7 @@ theorem Decl.ofClass_toClass (d : Decl) (p : Prop) [Decidable p] :
     Decl.ofClass (d.toClass p) = some d := by
   cases d <;> by_cases h : p <;> simp [Decl.toClass, Decl.ofClass, h]
 
-/-- `l.noun` is the entry of `l` in the Czech noun fragment. -/
+/-- `l.noun` is the entry of `l` in the Czech noun language file. -/
 def CzNoun.noun : CzNoun → Czech.Noun
   | .pokoj => Czech.pokoj | .pramen => Czech.pramen | .most => Czech.most | .zena => Czech.zena
   | .predseda => Czech.predseda | .filosof => Czech.filosof | .sluha => Czech.sluha
@@ -350,7 +352,7 @@ theorem stemFor_lexeme (l : CzNoun) (σ : CzCell) : (stemFor l σ).lexeme = l :=
 
 /-! ### Realization -/
 
-/-- The endings of a stem at a cell are the fragment's endings of its noun in the class its
+/-- The endings of a stem at a cell are the language file's endings of its noun in the class its
 declension is for the noun's animacy: the class's endings on the noun's stem, a velar stem of the
 hard masculines taking the vocative singular -u (Short, p. 465; *Mluvnice češtiny*, p. 292) and a
 velar stem of the hard masculines or the masculine a-stems the locative plural -ích (*Mluvnice
@@ -358,7 +360,7 @@ velar stem of the hard masculines or the masculine a-stems the locative plural -
 def Stem.classEndings (z : Stem) (σ : CzCell) : List (List String) :=
   z.lexeme.noun.endingsIn (z.decl.toClass z.lexeme.IsAnimate) σ
 
-/-- The endings of a stem at a cell in the fragment are its class endings, less the -u
+/-- The endings of a stem at a cell in the language file are its class endings, less the -u
 alternating with -ovi, which is "restricted to roots belonging to the hard-masculine
 declension" (n. 14). The restriction is Stump's, and the fact it derives is *Mluvnice
 češtiny*'s: "-u mají pouze jména podtypu I.A s tzv. skloňováním tvrdým" '-u is had only by the
@@ -381,13 +383,13 @@ def nomPlOverride : CzNoun → Option (List (List String))
   | .filosof => some [["o", "v", "é"]]
   | _ => none
 
-/-- The endings of a stem at a cell are those of the fragment, save FILOSOF's at the nominative
+/-- The endings of a stem at a cell are those of the language file, save FILOSOF's at the nominative
 and vocative plural, the vocative plural being the nominative (Short, p. 465). -/
 def Stem.endings (z : Stem) (σ : CzCell) : Finset (List String) :=
   if σ ∈ nomVocPl then ((nomPlOverride z.lexeme).map List.toFinset).getD (z.tableEndings σ)
   else z.tableEndings σ
 
-/-- A stem is inflected with an ending as the fragment inflects the noun's stem in the stem's
+/-- A stem is inflected with an ending as the language file inflects the noun's stem in the stem's
 class, palatalized before the masculine locative plural -ích and the animate nominative plural
 -i (*Mluvnice češtiny*, p. 279). So the soft-masculine coradical of a velar stem palatalizes
 before -ích, as Short's *geolozích* (Short, p. 462) and *sluzích* (Short, p. 467) show. -/
@@ -404,7 +406,7 @@ def czLinkage : Linkage CzNoun Stem CzCell CzCell := Linkage.ofRules id (·.dom)
 theorem czRealize_stemFor : ∀ l σ, czRealize (stemFor l σ) σ = attested l σ := by
   decide +kernel
 
-/-- The rules of paradigm linkage, with the endings of the fragment and FILOSOF's nominative
+/-- The rules of paradigm linkage, with the endings of the language file and FILOSOF's nominative
 plural, realize every form of Tables 1, 6 and 8. -/
 theorem realize_matches_tables (l : CzNoun) (σ : CzCell) :
     czLinkage.realized czRealize l σ = {(attested l σ, σ)} :=

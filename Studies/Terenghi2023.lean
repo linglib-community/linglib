@@ -239,7 +239,8 @@ theorem portuguese_local_centred :
 
 /-! ### Spanish
 
-The fragment enters the Spanish demonstratives as Butt and Benjamin describe them: *este* near the
+The language file enters the Spanish demonstratives as Butt and Benjamin describe them: *este* near
+the
 speaker, *ese* at any distance from the speaker, *aquel* away from both participants. -/
 
 -- (10a); Table 3.2

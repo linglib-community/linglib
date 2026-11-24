@@ -21,7 +21,7 @@ does in (1).
 * `PrefixClass`, `SuperlexicalSubtype`: the class of a prefix in a word.
 * `WellStacked`: no lexical prefix is outside a superlexical one, (4).
 * `Structure`: the Asp heads, highest first, and the optional R head over a verb.
-* `Analysis`: an attested form with its fragment verb and classified prefixes, outermost first.
+* `Analysis`: an attested form with its language file verb and classified prefixes, outermost first.
 * `Spells`: morphs spell out a written form.
 
 ## Implementation notes
@@ -172,14 +172,14 @@ def Spells (ms : List Morph) (w : String) : Prop := ms.foldr (·.form ++ ·) "" 
 instance (ms : List Morph) (w : String) : Decidable (Spells ms w) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- An analysis of an attested form gives the fragment verb it is built on and its classified
+/-- An analysis of an attested form gives the language file verb it is built on and its classified
 prefix sequence, outermost first. -/
 structure Analysis where
   /-- The attested form. -/
   form : Form UD.MorphFeatures
-  /-- The fragment verb. -/
+  /-- The language file verb. -/
   stem : Verb
-  /-- The classified fragment prefix morphs, outermost first. -/
+  /-- The classified language file prefix morphs, outermost first. -/
   prefixes : List (Morph × PrefixClass)
 
 namespace Analysis
@@ -208,7 +208,7 @@ def a1a : Analysis := ⟨Wordlist.f_1a, brosit, [(za, .lexical)]⟩
 def a1b : Analysis := ⟨Wordlist.f_1b, brosit, [(za, .lexical)]⟩
 
 /-- (1c) *za-brosal* has superlexical inceptive *za-* on imperfective *brosatj*, the minimal pair
-with (1a) on the same fragment morph. -/
+with (1a) on the same language file morph. -/
 def a1c : Analysis := ⟨Wordlist.f_1c, brosat, [(za, .superlexical .inceptive)]⟩
 
 /-- (4a) *po-vy-brasyvatj* has superlexical distributive *po-* outside lexical *vy-* on the

@@ -48,7 +48,7 @@ needs it:
 - A study's right column has the theorems whose statements name another paper's definitions, with
   their sentences: this page's about other papers, and other pages' about this one. Say "about",
   never "uses" or "cites": a theorem may name a definition to argue against it.
-- Color for the kind of node (study, theory, fragment) and solid against dashed for formalized
+- Color for the kind of node (study, theory, language) and solid against dashed for formalized
   or proved against not yet, the same vocabulary as the bibliography's roles.
 - Every entry of a References list links to its bibliography entry, the study's own paper too;
   a paper another study formalizes adds a "formalized" link to that study.
@@ -72,7 +72,7 @@ checks the statement, not that the sentence says the same thing.
 
 The landing page at `/docs/` (`docs_page/index.html`, where `/docs/Studies/` forwards) is the
 page's title, one box that filters the page as you type and sends Enter to doc-gen4's search, and
-every module in folds: theory by area, studies by decade, then fragments, data and core.
+every module in folds: theory by area, studies by decade, then languages, data and core.
 
 Every declaration doc-gen4 indexes keeps its anchor on the rebuilt page, so search and `find/`
 links still land. `--check` confirms it, and that every relative link on a rebuilt page lands on a

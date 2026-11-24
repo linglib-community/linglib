@@ -57,7 +57,7 @@ built on eventive v, on which the book prints no judgment. *endur-* is licensed 
 condition: a simple event noun and a simple entity noun have the same type, so composition does
 not tell them apart.
 
-The exponents of the roots and affixes are the surface morphs of the fragment, so the u-umlaut
+The exponents of the roots and affixes are the surface morphs of the language file, so the u-umlaut
 of *söfn-un* and *vönt-un* is not undone and the theme vowel *-a* of the verb is absent, as
 the book's own segmentation has it. The roots are identified by their forms. The prefixed
 preposition of *við-ger-ð* adjoins to n and is not inserted by the vocabulary; the derivation
@@ -110,7 +110,7 @@ def nAfter (m : Morph) (e : String) : VocabularyItem Feature Morph :=
 
 /-- The Vocabulary Items of v and n. v is *-k* after *sein* and, in a nominal only, after
 *not*, *-er* after *analýs*, and zero elsewhere; n is *-ing* after *-er*, *-un* after *-k*
-and after the roots the fragment shows with *-un*, *-n*, *-ttur* and *-ð* after their roots,
+and after the roots the language file shows with *-un*, *-n*, *-ttur* and *-ð* after their roots,
 and has no elsewhere item, as the rule (2.8) of the book has it. -/
 def vocab : RuleSet (VocabularyItem Feature Morph) :=
   [⟨{(0, (cat .v : Feature)), (-1, exp (.root "sein"))}, .suff "k"⟩,
@@ -598,7 +598,7 @@ theorem rows_licensed :
 
 /-! ### Allosemy conditioned by the root -/
 
-/-- The judgments of the rows on a nominal of the fragment under a reading. -/
+/-- The judgments of the rows on a nominal of the language file under a reading. -/
 def judgments (w : Deverbal) (reading : String) : List Judgment :=
   (Examples.all.filter fun ex ↦
     ex.feature? "nominal" = some (Morph.surface w.morphs) ∧

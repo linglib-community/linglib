@@ -36,13 +36,13 @@ different from the stem of their external noun](##stem_mismatches).
 * The data rows record each example with its gloss line, and mark as spans of it the subject
   nouns and the verbs of the English sentences, the Dutch verb phrase and its words, and the
   Mohawk verb with an incorporated stem and its external noun. Each of these spans names an entry
-  of the English, Dutch or Mohawk fragment, and [each marked word is a form of its
+  of the English, Dutch or Mohawk language file, and [each marked word is a form of its
   entry](##printed). The number of an English word and the category of a Dutch word are computed
   from the entry and the printed form.
 * The paper's lexicon lists some words of each category by example. Here the category of a verb
   follows from the frames of its entry and from whether the word is its infinitive or its finite
   form. The paper calls *laten* and *zien* transitive, the first noun phrase being "in some
-  sense" the object of the first verb and the subject of the second. The Dutch fragment follows
+  sense" the object of the first verb and the subject of the second. The Dutch language file follows
   the grammar of Broekhuis and Corver, for which that noun phrase is the accusative subject of
   the bare infinitival, and a verb counts as transitive here if its infinitival has one.
 * A marginal judgment counts as not acceptable.
@@ -65,7 +65,7 @@ open Examples
 
 /-! ### The marked words and their entries -/
 
-/-- An entry of the English, Dutch or Mohawk fragment. -/
+/-- An entry of the English, Dutch or Mohawk language file. -/
 inductive Entry
   /-- An English noun. -/
   | noun (n : English.Nouns.Noun)
@@ -78,7 +78,7 @@ inductive Entry
   /-- A Mohawk noun stem. -/
   | stem (n : Noun)
 
-/-- The fragment entry that a lexeme of the data rows names. -/
+/-- The language file entry that a lexeme of the data rows names. -/
 def Examples.Lexeme.entry : Lexeme → Entry
   | .woman => .noun English.Nouns.woman
   | .man => .noun English.Nouns.man

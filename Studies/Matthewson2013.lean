@@ -24,7 +24,7 @@ share a force and so form no scale, and are used for both, while *sgi* is the sc
 *da'aḵhlxw* and *anooḵ*, and each circumstantial modal is used for its own force. The system
 fills the empty diagonal of the classification of modal systems
 by selectivity for type and for strength (Fig. 2), whose other cells English, St'át'imcets and
-Javanese occupy in the fragments.
+Javanese occupy in the language files.
 
 Each modal's force and flavours predict its judgments in the paper's contexts, with one
 exception: *sgi* is rejected in the sneeze case, pure circumstantial strong necessity, though
@@ -91,7 +91,7 @@ theorem hasScalemate_iff : ∀ m ∈ modals,
 
 /-! ### Rows -/
 
-/-- `modalTable` keys the fragment's modals by their forms. -/
+/-- `modalTable` keys the language file's modals by their forms. -/
 def modalTable : List (String × ModalItem) := modals.map fun m ↦ (m.form, m)
 
 /-- `forceTable` maps a row's force label to the force its context supports. -/

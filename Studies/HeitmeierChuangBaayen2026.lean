@@ -31,7 +31,7 @@ regular](##imputed_eq_iff_isAnalogicallyRegular), so imputation regularizes. Ove
 embeddings, by contrast, any table is the paradigm of some linear mapping as soon as the
 embeddings are linearly independent, which fills the irregular-linear cell of Table 16.2. The English past tense at the book's letter-trigram coding
 (§12.9) is the irregular table, *walk, walked* against *go, went*, with the forms taken from
-the English fragment.
+the English language file.
 
 The file also relates the book's three ways of estimating a mapping. Incremental learning
 updates the mapping at each usage event by the Widrow–Hoff rule, and the mappings of endstate
@@ -249,7 +249,7 @@ end Incremental
 /-! ### The English past tense -/
 
 /-- The two verbs of the book's contrast, regular *walk* and suppletive *go*, are the English
-fragment's entries. -/
+language file's entries. -/
 def verb : Fin 2 → English.Verbs.Verb := ![English.Verbs.walk, English.Verbs.go]
 
 /-- *walk* is the first verb. -/
@@ -258,7 +258,7 @@ abbrev walk : Fin 2 := 0
 /-- *go* is the second verb. -/
 abbrev go : Fin 2 := 1
 
-/-- The cells of the table are the base and past cells of the fragment's verb paradigm. -/
+/-- The cells of the table are the base and past cells of the language file's verb paradigm. -/
 abbrev cells : Finset English.Verbs.Verb.Cell := {.base, .past}
 
 /-- The base cell. -/
@@ -276,7 +276,7 @@ def trigram : Fin 13 → Subregular.Augmented Char :=
     [some 'n', some 't', none]]
 
 /-- The past-tense form table at the trigram coding takes each verb's form at each cell from
-the fragment. -/
+the language file. -/
 noncomputable def pastTense : ParadigmSystem (Fin 2) cells (Fin 13 → ℝ) := fun v c ↦
   cueVector 3 trigram ((verb v).realize c).toList
 

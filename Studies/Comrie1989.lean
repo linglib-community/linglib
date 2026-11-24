@@ -247,7 +247,7 @@ theorem marking_contrast : ∀ role : ArgumentRole, role = .A ∨ role = .P →
   decide
 
 -- (13), (14) and (25): the Turkish rows mark P exactly on the degrees of definiteness the
--- fragment's accusative covers, the continuum cut at the specific indefinites.
+-- language file's accusative covers, the continuum cut at the specific indefinites.
 theorem turkish_rows : ∀ r ∈ Examples.all, r.language = .turkish → ∀ m ∈ Marking.ofRow r,
     ∀ d ∈ m.definiteness, (m.overtness = .obligatory ↔ d ∈ Turkish.ObjectMarking.accusative) := by
   decide

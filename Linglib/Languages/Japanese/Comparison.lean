@@ -9,7 +9,7 @@ public import Linglib.Languages.Japanese.Adpositions
 Japanese marks the standard of comparison with the postposition *yori* 'than' and leaves the
 predicate without degree marking: *Taroo-wa Hanako-yori zutto haya-ku ki-ta* 'Taro came a lot
 earlier than Hanako'. The standard's case is fixed by the construction, the ablative the case
-fragment records for *yori* (`Japanese.Adpositions.yori`), which `Studies/Stassen1985.lean`
+language file records for *yori* (`Japanese.Adpositions.yori`), which `Studies/Stassen1985.lean`
 reads as Stassen's separative type. The superlative is formed with the adverb *itiban* 'most',
 *itiban haya-ku* 'the fastest'.
 

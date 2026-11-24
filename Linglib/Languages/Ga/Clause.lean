@@ -27,7 +27,7 @@ other two, so they are not stored as clause properties: finiteness is read off
 the complementizer (`Complementizer.IsFinite`), and each diagnostic is a theorem
 over the paper's rows in `Studies/Allotey2021`. The verb-movement diagnostic
 (exx 120–125, after [pollock-1989]) needs phrase-structure substrate this
-fragment does not carry. Lean does not accept `ɛ` in plain identifiers, so names use Latin
+language file does not carry. Lean does not accept `ɛ` in plain identifiers, so names use Latin
 letters (`ake`, `keji`) and the orthography lives in the morphs.
 
 ## References

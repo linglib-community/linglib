@@ -19,7 +19,7 @@ is entitled to deference, [no one is in a symmetric
 exchange](##Silverstein2003.exists_deferenceEntitled_iff), and [no reading of one token
 recovers this](##Silverstein2003.not_exists_forall_deferenceEntitled_iff). The reading of a
 single polite form as elevated is a second-order construal, which takes the form as a figure
-on the literal second person singular. In six fragments every pronoun for one addressee is
+on the literal second person singular. In six language files every pronoun for one addressee is
 [the literal form or such a figure](##Silverstein2003.ordinary_or_tropes), and Dutch *u*, a
 form dedicated to politeness, [is neither](##Silverstein2003.dutch_u).
 
@@ -27,7 +27,7 @@ form dedicated to politeness, [is neither](##Silverstein2003.dutch_u).
 
 A form is literal for the addressee when its agreement person and number realize the single
 addressee, and it tropes when it denotes the addressee and its agreement does not. The pronouns
-are those of the fragments, which do not include French, Yokuts or Worora, three of the four
+are those of the language files, which do not include French, Yokuts or Worora, three of the four
 languages Silverstein names.
 
 ## TODO
@@ -97,7 +97,7 @@ def Tropes (p : PersonalPronoun) : Prop :=
 
 instance (p : PersonalPronoun) : Decidable (Tropes p) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- In the German, Italian, Spanish, Tamil, K'iche' and Basque fragments a pronoun for one
+/-- In the German, Italian, Spanish, Tamil, K'iche' and Basque language files a pronoun for one
 addressee denotes what its agreement realizes or tropes on the second person singular. -/
 theorem ordinary_or_tropes :
     ∀ I ∈ [German.Pronouns.personal, Italian.Pronouns.personal, Spanish.Pronouns.personal,

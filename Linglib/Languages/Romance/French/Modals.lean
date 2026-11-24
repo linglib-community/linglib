@@ -58,7 +58,7 @@ def ilEstPossibleDe : ModalItem where
   form := "il est possible de"
   meaning := {(.possibility, .deontic), (.possibility, .circumstantial)}
 
-/-- The modal expressions of the fragment. -/
+/-- The modal expressions of the language file. -/
 def modals : List ModalItem := [pouvoir, devoir, devoirConditional, falloir, ilEstPossibleDe]
 
 end French

@@ -38,7 +38,8 @@ may or may not apply to ∩.
   (39a): English *a* selects the singular, so it blocks ∃ for a bare singular and leaves ∃ to a
   bare plural or a mass noun (`Determiner.Inventory.Blocks`).
 * Which side of the cut-off each sampled language falls on is the paper's analysis
-  (`lexicalizationOf`); that ι is lexicalized exactly where the fragment's inventory blocks ι is
+  (`lexicalizationOf`); that ι is lexicalized exactly where the language file's inventory blocks ι
+  is
   checked (`iota_mem_lexicalized_iff`).
 * A mass term is morphologically neutral, fn. 25, outside the singular/plural contrast, so the
   number of a kind term is an `Option Number` and a mass term has none. A Chinese noun, which

@@ -33,7 +33,7 @@ agreement is the exception.
   carries the interpretability of its n and resolves by `Minimalist.DualFeature.resolve`, so
   u-genders drop out by the substrate's percolation; the cores resolve as interpretable.
 * A noun's core is the gender whose n bears the flavor of what it denotes, read off the
-  fragment's animacy and the genders' status; its outer layer is its own gender.
+  language file's animacy and the genders' status; its outer layer is its own gender.
 * The rows carry the example sentences with the classes they accept and reject, and the
   Table 13 counts on one example per cell. Single-conjunct agreement, the choices offered in at
   most 5% of cases and Taraldsen et al.'s Tables 4 and 6, which the paper sets aside, are not

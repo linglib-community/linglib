@@ -317,7 +317,7 @@ def vvTree (v1 v2 : Morph) : Word.Tree Morph :=
 @[simp] theorem toList_vvTree (v1 v2 : Morph) : (vvTree v1 v2).toList = [v1, nullMorph, v2] :=
   rfl
 
-/-- The word V1-∅-V2 of a compound of the fragment. -/
+/-- The word V1-∅-V2 of a compound of the language file. -/
 def word (c : Resultative) : Word.Tree Morph := vvTree (.root c.v1.form) (.root c.v2.form)
 
 theorem toList_word_erase (c : Resultative) :

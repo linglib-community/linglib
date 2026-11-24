@@ -222,7 +222,8 @@ def predicted? (e : Datum) : Option (List Negator) :=
     some (h.negator :: c)
   else none
 
-/-- The negators among the words of a row's sentence, in order: the entries of the Greek fragment,
+/-- The negators among the words of a row's sentence, in order: the entries of the Greek language
+file,
 classed by the mood they negate. -/
 def negators (e : Datum) : List Negator :=
   (Datum.wordsOf e.primaryText).filterMap fun w ↦

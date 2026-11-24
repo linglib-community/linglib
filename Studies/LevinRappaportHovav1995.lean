@@ -291,7 +291,7 @@ theorem locativeInversion_not_diagnostic :
       ∀ s ∈ construals Examples.ex6_22a, ¬ Unaccusative s := by
   decide
 
-/-! ### The English fragment -/
+/-! ### The English language file -/
 
 /-- The English entry of a row's verb, in its default sense. -/
 def entryOf (ex : Datum) : Option Verb :=
@@ -303,7 +303,8 @@ theorem entryOf_isSome :
       (entryOf ex).isSome := by
   decide
 
-/-- Where a row's class gives one verdict, the English fragment classifies the entry for its verb
+/-- Where a row's class gives one verdict, the English language file classifies the entry for its
+verb
 as the linking rules do: *break*, *burn*, *freeze*, *arrive* and *appear* are unaccusative, and
 *run* and *swim* unergative. -/
 theorem isUnaccusative_agrees :

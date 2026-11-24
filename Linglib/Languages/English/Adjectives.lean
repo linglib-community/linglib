@@ -583,7 +583,7 @@ abbrev impossible := possibility.neg
 
 /-! ### Inventory -/
 
-/-- The antonym pairs of the fragment. -/
+/-- The antonym pairs of the language file. -/
 def pairs : List AntonymPair := [
   height, elevation, happiness, fullness, heat, cost, wetness, cleanliness, straightness, openness,
   smoothness, hardness, life, size, extremeSize, pristineness, warmth, weight, thickness, depth,
@@ -598,7 +598,7 @@ def singletons : List Adjective := [
   acceptable, adequate, horrible, terrible, awful, dreadful, frightening, disgusting, annoying,
   scary, wonderful, delightful, gorgeous, surprising, remarkable, stunning, expected]
 
-/-- Every entry of the fragment. -/
+/-- Every entry of the language file. -/
 def allEntries : List Adjective :=
   pairs.flatMap (fun p ↦ [p.pos, p.neg]) ++ singletons
 

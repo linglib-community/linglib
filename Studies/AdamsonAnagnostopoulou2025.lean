@@ -54,7 +54,8 @@ resolution (`mismatchResolution`), and Table 2 follows from the geometries alone
 A geometry is given by its parent map on the six gender nodes, rooted in CLASS; the nodes a
 language does not use hang from CLASS and are never contributed.
 
-A nominal pairs a fragment noun with the referent the paper's example gives it, the man, woman or
+A nominal pairs a language file noun with the referent the paper's example gives it, the man, woman
+or
 inanimate its margin notation marks. Each theorem names the derivation it computes, so the paper's
 percolation generalization, that humans percolate interpretable features and inanimates either
 kind, is respected in the choice of derivation rather than derived.

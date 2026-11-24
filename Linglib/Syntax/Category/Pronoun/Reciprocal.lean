@@ -8,7 +8,7 @@ public import Linglib.Syntax.Reciprocal
 
 A reciprocal pronoun is a pronoun that is the nominal exponent of reciprocity: it carries the
 marker data of `Syntax/Reciprocal.lean` and the nominal strategy it realizes, and its kind fixes
-the reciprocal binding class. A fragment writes the pronoun once and
+the reciprocal binding class. A language file writes the pronoun once and
 derives its `Reciprocal.Marker` with `toMarker`; Hungarian *egymás*, Japanese *otagai* and Wan
 *ɔ̄ŋ̄* are such objects. Verbal and clitic reciprocal strategies are not pronouns and stay bare
 markers.

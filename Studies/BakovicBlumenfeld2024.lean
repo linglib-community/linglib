@@ -25,7 +25,7 @@ orders opaque](##seeding_turkish), and [flipping a feeding map makes it bleed](#
   input, so they compare membership in the output set.
 * The rules are the library's local rewrite rules, except epenthesis, which inserts and is a
   map. The Bedouin Arabic, Polish and hypothetical forms use chart segments, the Finnish and
-  Turkish forms their fragments' phonemes.
+  Turkish forms their language files' phonemes.
 
 ## TODO
 

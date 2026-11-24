@@ -10,17 +10,19 @@ public import Mathlib.Tactic.DeriveFintype
 
 The comparative case values, the concepts under which the case systems of different languages are
 compared, with the grammatical, spatial and semantic types they fall into. The cases of a language
-are its own categories and are not these values: a fragment defines them as an inductive type and
+are its own categories and are not these values: a language file defines them as an inductive type
+and
 matches them to the comparative values.
 
 ## Implementation notes
 
-A fragment's type `L.Case` is matched to the values by `L.Case.label`, the value its traditional
+A language file's type `L.Case` is matched to the values by `L.Case.label`, the value its
+traditional
 name corresponds to, and, where the grammar lists more than the name, `L.Case.functions`, the values
 it expresses ([haspelmath-2010], [blake-2001] ch. 2). Where the grammar gives its forms,
 `L.Case.exponents` lists the morphs that mark it, allomorphs and register variants among them. A
 language has a case when some word distinguishes it by form, and the other words may realize it
-with the form of another case ([corbett-2008]), so a fragment with paradigms proves that they
+with the form of another case ([corbett-2008]), so a language file with paradigms proves that they
 separate its cases. The hierarchies the literature places on the values are each stated where
 they are used, as Blake's in `Studies/Blake1994.lean`.
 

@@ -34,7 +34,7 @@ subschema overrides the recursive-modifier default that the NN subschema inherit
 (`compound_inheritance`). Dutch *-baar* is the paper's demand for default inheritance: the
 hierarchy of the schema and its words is derived from their descriptions, the regular
 *leesbaar* inherits the schema's transitive base (`leesbaar_inherits`), and *werkbaar*, whose
-base the Dutch verb fragment records as intransitive, overrides it (`werkbaar_overrides`).
+base the Dutch verb language file records as intransitive, overrides it (`werkbaar_overrides`).
 Schema unification composes *on-* prefixation with *-baar* suffixation into one schema whose
 instances are exactly their common instances (`onbaar_unifies`,
 `onbaarSchema_instantiates_iff`), so *onbedwingbaar* is generated over the empty lexicon, with
@@ -54,7 +54,7 @@ no intermediate *bedwingbaar* listed (`onbedwingbaar_generates`).
   matched monotonically by unification, the attribute inherited by default
   (`DefaultInheritance.inherited`). A regular word stores no value of its own, since the paper
   counts all its information as redundant, and the exceptional word stores the transitivity
-  of its base as the Dutch verb fragment records it.
+  of its base as the Dutch verb language file records it.
 * The holistic constructions (Malay reduplication, Romance VN compounds, the intensifying
   compounds, Maale *nayi*), the phrasal constructional idioms and the inflectional schemas
   are not formalized.
@@ -228,7 +228,7 @@ theorem le_schema : ∀ n : BaarNode, n ≤ .schema := by decide
 
 /-- Whether the base verb is transitive: the schema's default is transitive, the regular
 *leesbaar* stores nothing, and *werkbaar* stores the transitivity of *werken* as the Dutch verb
-fragment records its basic frame. -/
+language file records its basic frame. -/
 def baseTransitive : BaarNode → Option Bool
   | .schema => some true
   | .leesbaar => none

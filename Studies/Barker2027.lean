@@ -24,7 +24,7 @@ names the determiner does](##Barker2027.rows_everyIsland).
 
 ## Implementation notes
 
-* A tree's words are determiner entries of the English fragment and other words as strings, and
+* A tree's words are determiner entries of the English language file and other words as strings, and
   *everyone* is the determiner *every* with the noun *one*.
 * A tensed clause has the category `S`; an infinitival clause is a projection of *to*, a
   particle. An adjunction to a clause is a segment of the clause, so a constituent raised to the
@@ -65,7 +65,7 @@ namespace Barker2027
 
 open PhraseStructure PhraseStructure.Tree English.Determiners
 
-/-- A word is a determiner entry of the fragment or another word. -/
+/-- A word is a determiner entry of the language file or another word. -/
 abbrev Word := QuantificationalDeterminer ⊕ String
 
 /-- The determiners in a constituent. -/

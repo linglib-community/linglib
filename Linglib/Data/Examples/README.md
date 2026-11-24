@@ -95,7 +95,7 @@ examples.
 
 Declare a column when the paper's own taxonomy is finite: its constructions, conditions,
 diagnostics, classes. Leave as a string a column that names a lexical entry by its form (a verb,
-a particle), which a study matches against a fragment's inventory, and a number, which
+a particle), which a study matches against a language file's inventory, and a number, which
 `Datum.nat?` reads. A column that restates what the gloss line shows (the person and number of a
 verb, the case of a noun) is not recorded at all: read it off the gloss
 (`GlossedWord.features`).
@@ -143,15 +143,15 @@ carry no lexeme: it then marks the word under test, as a source marks it in ital
 replaces a column that repeats the word (`Karlsson2017.json`, whose rows have words and no
 glosses).
 
-The data layer does not see the fragments, so a lexeme is the file's own identifier and the study
+The data layer does not see the language files, so a lexeme is the file's own identifier and the study
 gives its entry by a total function, `Examples.Lexeme.entry : Examples.Lexeme → Entry`. A lexeme
-without a case, or an entry the fragment no longer has, then fails to compile. The study states
+without a case, or an entry the language file no longer has, then fails to compile. The study states
 three checks beside its prediction, so that a wrong or forgotten span fails a theorem and does not
 pass as an unmarked word:
 
-* each lexeme a row names is an entry of the fragment of the row's language;
+* each lexeme a row names is an entry of the language file of the row's language;
 * each span that names a lexeme is printed as the entry is written, under the transcription of
-  the source, which the fragment gives (`Mandarin.toneless`), or as a form the entry realizes;
+  the source, which the language file gives (`Mandarin.toneless`), or as a form the entry realizes;
 * within a marked phrase, no word written as an entry of the inventory goes unmarked.
 
 Spelling confirms a named entry and does not find one: transcriptions differ between sources and

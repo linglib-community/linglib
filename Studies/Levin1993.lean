@@ -36,7 +36,8 @@ the murder verbs excepts, shows the alternation the other murder verbs lack. The
 alternations that pair two argument frames are frame-pair schemas (`schema?`), which relate two
 diatheses of a verb when the verb's participants move as the schema says; the induced action
 alternation differs from the causative/inchoative one in the directional phrase of its transitive
-and in its volitional causee (`Shows`, `run_shatter`), and every English fragment verb Levin lists
+and in its volitional causee (`Shows`, `run_shatter`), and every English language file verb Levin
+lists
 has a class whose page it realizes on every line that applies to it
 (`shows_class_alternations`).
 

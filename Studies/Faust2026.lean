@@ -23,7 +23,7 @@ consonant left unexplained, and the No-Crossing Constraint keeps it out of the h
 ## Implementation notes
 
 * The derivations run over the squib's transcription. `fragment_roots` shows that its roots,
-  read as segments, are the Hebrew and Amharic fragments' roots, the alternating stops of √kl
+  read as segments, are the Hebrew and Amharic language files' roots, the alternating stops of √kl
   and √skt realized as stops by Arad's rule.
 * The root and the feminine morph share the consonantal plane, the morph's t after the radicals
   as (10c) draws them, so the No-Crossing Constraint on intrusion is the constraint on that plane.
@@ -610,7 +610,7 @@ def rootTable : List (String × ConsonantalRoot String) :=
    ("hid", hid)]
 
 /-- `segment l x` reads a letter of the squib's transcription of a root of language `l` as a
-segment of that language's fragment. -/
+segment of that language's language file. -/
 def segment : Lang → String → Phonology.Segment
   | .hebrew, "k" => Hebrew.Phonology.k
   | .hebrew, "l" => Hebrew.Phonology.l

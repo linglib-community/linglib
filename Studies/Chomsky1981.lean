@@ -41,7 +41,7 @@ excludes](##judgment_92v), as the book observes.
   reading; none of the examples turns on the others.
 * Material with no bearing on binding is left out of the trees: complementizers and *on sale*.
   Head nouns are singular tokens, the number of a noun phrase playing no part, and *about* and the
-  copula, which have no fragment entries, are plain tokens.
+  copula, which have no language file entries, are plain tokens.
 * Page numbers are those of the seventh edition (1993).
 
 ## TODO

@@ -21,7 +21,7 @@ predictions for Hungarian.
 
 * Each example is a row of `Data/Wordlist/Vago2017` giving its two morphs, their kinds, the morph
   before them, the attested deletion and the hierarchy its suffix is indexed to. Long vowels are
-  read off the accents of the spelling, length being prosodic in the Hungarian fragment.
+  read off the accents of the spelling, length being prosodic in the Hungarian language file.
 * The hierarchy that deletes the first vowel is taken as Table 2 prints it, without the
   constraints on long vowels and morphs of one segment, which the paper ranks above the regular
   hierarchy; with MAX on long vowels on top it would keep the long vowel of erdő

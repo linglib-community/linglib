@@ -3,7 +3,7 @@ module
 /-!
 # Pinyin without tone marks
 
-The Mandarin fragment writes its forms in pinyin with tone marks, as *nà* 'that'. Many sources
+The Mandarin language file writes its forms in pinyin with tone marks, as *nà* 'that'. Many sources
 print their examples without the marks, as Jenks does, so that *nà* appears as *na*. This file
 gives the toneless spelling of a form, by which a study checks that a word a source prints is a
 form of the entry its data names.

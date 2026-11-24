@@ -610,7 +610,7 @@ theorem card_coreCases :
     nezPerce.coreCases.card = 4 ∧ thangu.coreCases.card = 3 ∧ kalkatungu.coreCases.card = 4 := by
   decide
 
--- objective and accusative are one comparative accusative, as in the fragment's paradigm, and
+-- objective and accusative are one comparative accusative, as in the language file's paradigm, and
 -- Thangu's only object Case is Schebeck's accusative (note 35)
 theorem image_label_coreCases :
     nezPerce.coreCases.image AbstractCase.label = Finset.univ.image NezPerce.Case.label ∧

@@ -52,15 +52,15 @@ one that serves as the subject of its verbal valent (`control_selects_valents`,
 
 The trees are unlabeled, with function words as heads as the book draws them: the subject
 depends on the finite auxiliary, a preposition heads its noun. The trees of the valency frames
-have the shape of the book's examples over words and verbs of the fragment. The category of a
+have the shape of the book's examples over words and verbs of the language file. The category of a
 valent is read off the word that heads it (`category`) and compared with the positions of the
 verb's argument frame, so a frame's symbols are not stored: an optional valent is a position
 the verb has both an implicit and an expressed diathesis for, the ↑ mark is nonfiniteness, and
 an index is the participant a voice links to the position. The book's `R`, a subject of any
 category, is a nominal here, the only kind the trees have; the frames of the auxiliaries are
-stated in the study, the fragment recording none.
+stated in the study, the language file recording none.
 
-Whether a valent is an argument is read off the diatheses of the fragment's verbs: a valent is
+Whether a valent is an argument is read off the diatheses of the language file's verbs: a valent is
 an argument when a participant of the verb fills its slot.
 
 ## TODO
@@ -68,7 +68,7 @@ an argument when a participant of the verb fills its slot.
 * The pseudopassive, which keeps the stranded preposition as a valent, and valents of several
   admissible categories, as the copula's.
 * The *there* diagnostic for raising, an expletive standing only where a valent is not an
-  argument; the fragment has no infinitival diathesis for *refuse*, *appear*, *tell* or *deem*,
+  argument; the language file has no infinitival diathesis for *refuse*, *appear*, *tell* or *deem*,
   the verbs of the book's examples.
 
 ## References

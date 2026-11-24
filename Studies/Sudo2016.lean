@@ -25,7 +25,7 @@ the property of having that many atomic parts (`up`); by the Blocking Principle 
 unavailable in a language whose lexicon has overt items with the same function, the
 classifiers. The ways a numeral becomes a predicate are therefore the ∪-operator where no
 classifier blocks it and an overt classifier otherwise (`PredicateOf`): with classifiers in
-the lexicon, as the Japanese fragment has (`japanese_has_classifiers`), every predicate use
+the lexicon, as the Japanese language file has (`japanese_has_classifiers`), every predicate use
 of a numeral goes through a classifier and carries its sortal presupposition
 (`predicateOf_iff_of_hasClassifiers`), the paper's contrast between the ungrammatical bare
 predicative numeral of (15) and its classifier-suffixed counterpart (16). The inverse

@@ -32,7 +32,7 @@ an interpreted v, and (69a)'s two-place root under a vacuous v is read as a rela
 supplies. The co-occurrence and
 nominalization paradigms are predicted cell by cell against the example rows, the Table 3
 combinations, the resultative data of Creemers and the *-ung* and *Ge-…-e* forms of
-Ch. 5, with the base verbs read from the German fragment.
+Ch. 5, with the base verbs read from the German language file.
 
 ## References
 
@@ -53,7 +53,7 @@ open DistributedMorphology DistributedMorphology.Allosemy German.Verbs
   ArgumentStructure
 open Aspect
 
-/-- The fragment entry of a verb form named in a row. -/
+/-- The language file entry of a verb form named in a row. -/
 def entryOf (form : String) : Option German.Verb := allVerbs.find? (·.form = form)
 
 /-! ## Content nominalizations (Ch. 3) -/

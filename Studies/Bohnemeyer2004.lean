@@ -59,7 +59,7 @@ open Yukatek
 
 /-! ### Stem classes -/
 
-/-- The stem class of the fragment that a class of the paper's word list names. -/
+/-- The stem class of the language file that a class of the paper's word list names. -/
 def stemClass : Wordlist.StemClass → VerbStemClass
   | .active => .active
   | .inactive => .inactive

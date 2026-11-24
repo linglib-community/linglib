@@ -80,7 +80,7 @@ def parvus : Adjective :=
 
 /-! ### Inventory -/
 
-/-- Every entry of the fragment. -/
+/-- Every entry of the language file. -/
 def allEntries : List Adjective :=
   [longus, altus, fortis, bonus, malus, magnus, parvus]
 

@@ -35,7 +35,7 @@ Where nouns denote kinds, the extension of a noun is ∪ of its kind. That set i
 and in an atomic domain its plural is empty (`PL_up`), while the plural of the atoms is every
 other individual (`mem_PL_isMin`). The plural of a set of atoms is its closure under sums less
 the atoms (`PL_eq_supClosure_diff`), so its largest member is their sum
-(`isLUB_of_isGreatest_PL`). The sampled languages whose fragments count nouns through
+(`isLUB_of_isGreatest_PL`). The sampled languages whose language files count nouns through
 classifiers are the ones whose nouns denote kinds (`hasClassifiers_iff`). Such a language admits
 every bare nominal as an argument, and one whose nouns denote properties admits none unless it
 has a null determiner, which a governing head licenses. A language with both settings admits a
@@ -61,11 +61,11 @@ the existential one wherever the kind has a normal instance (`some_up_of_mem_dog
 
 ## Implementation notes
 
-Each language's blocking is derived from its fragment's determiner inventory by
-`Determiner.Inventory.Blocks`, and whether it has classifiers from its fragment's common nouns
+Each language's blocking is derived from its language file's determiner inventory by
+`Determiner.Inventory.Blocks`, and whether it has classifiers from its language file's common nouns
 (`Language.nouns`): a Mandarin or Japanese noun records the classifiers that count it, and a noun
 of the other languages is a `ClassifiedNoun` over no classifiers. The paper has every noun of a
-kind-denoting language counted through a classifier, while the fragments attest classifiers
+kind-denoting language counted through a classifier, while the language files attest classifiers
 rather than that: Mandarin counts the measure noun *tiān* bare (`exists_isBareCount_mandarin`).
 
 `PL_up` takes the atomicity of the domain as two hypotheses, that every individual has an atom
@@ -89,7 +89,7 @@ situation with exactly one instance, where the plural has no member.
 `Language.AdmitsBare` licenses the null determiner under government alone, leaving out
 licensing by focus, and under it chooses a shift as a language with both settings does. A
 predicate of kinds needs ∩ where nouns can be predicates. A mass noun, and a noun of a language
-without number, is given `Number.general`, which no article of the fragments selects. The
+without number, is given `Number.general`, which no article of the language files selects. The
 kinds of the model in which the examples are checked are all the concepts that the condition on
 kinds allows, so there every plural and mass extension has a kind; the paper's plurals without
 one, such as *parts of that machine*, are not among the rows.
@@ -159,7 +159,7 @@ def glottocode : Language → Glottocode
   | english => .english
   | russian => .russian
 
-/-- The language has classifiers: some common noun of its fragment is counted through one. -/
+/-- The language has classifiers: some common noun of its language file is counted through one. -/
 def HasClassifiers (l : Language) : Prop := ∃ n ∈ l.nouns, n.classifiers.Nonempty
 
 /-- Italian has a phonologically null determiner, and the other sampled languages none. -/

@@ -47,7 +47,7 @@ Between positive extents the comparative with MUCH is the max-quantified compara
 
 ## Implementation notes
 
-An adjective is a pole of an `AntonymPair` of the English fragment, the pair standing for the
+An adjective is a pole of an `AntonymPair` of the English language file, the pair standing for the
 positive adjective the paper decomposes both poles into; *short* is a pole of two pairs, with
 *tall* and with *long*. Degree intervals are arbitrary sets, where the paper restricts them to
 nonempty convex ones. The anomaly of a positive matrix adjective with a negative than-clause

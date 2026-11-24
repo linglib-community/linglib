@@ -17,7 +17,7 @@ necessity of [kaufmann-2012]'s imperative, the questioning of the addressee's ab
 [clark-1979]'s convention of means, or the enablement the possibility modals encode. The
 two accounts are predicates on the constructions of the paper's two French experiments
 (`Literalist.DirectivePrimary`, `NonLiteralist.DirectivePrimary`), with conventionalisation
-read off the paper's corpus counts and the modal semantics off the French fragment. In both
+read off the paper's corpus counts and the modal semantics off the French language file. In both
 experiments directive interpretations came with no fixations on the answer buttons and with
 response times matching the imperative, and they came for exactly the constructions
 non-literalism predicts (`nonLiteralist_predicts`); the non-conventionalised *Est-il possible
@@ -59,7 +59,7 @@ def Construction.sentenceType : Construction → Clause.SentenceType
   | .controlInterrogative | .canYou | .isItPossible => .polar
   | .youMust | .youCan | .itIsPossible | .controlDeclarative => .declarative
 
-/-- The modal of a construction, from the French fragment. -/
+/-- The modal of a construction, from the French language file. -/
 def Construction.modal : Construction → Option ModalItem
   | .canYou | .youCan => some pouvoir
   | .isItPossible | .itIsPossible => some ilEstPossibleDe

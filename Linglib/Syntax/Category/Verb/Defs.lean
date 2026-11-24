@@ -19,7 +19,7 @@ public import Linglib.Morphology.Morph
 /-!
 # Verb entries
 
-`Verb` is the framework-neutral verb entry shared by every language's fragment. Its fields are
+`Verb` is the framework-neutral verb entry shared by every language's language file. Its fields are
 grouped into the facets `Verb.ArgStructure` and `Verb.Aspect` and what it does with a clausal
 complement, `Clause.Embedding`, beside the selectional and inflectional enums `VoiceType`,
 `Verb.PerfectAuxiliary` and `SenseTag`.
@@ -31,8 +31,8 @@ implicative, trigger and so on, are read off these fields by the theories that m
 ## Implementation notes
 
 * `Verb` composes its facets by `extends`, so a field is reached flat, as `v.valency`, and a
-  language fragment extends `Verb` with its inflectional paradigm.
-* The citation form is the list `morphs`, and `Verb.form` is its surface string, so a fragment
+  language language file extends `Verb` with its inflectional paradigm.
+* The citation form is the list `morphs`, and `Verb.form` is its surface string, so a language file
   builds a derived form, a converb or a causative, by attaching morphs to `v.morphs`.
 
 ## References
@@ -166,7 +166,8 @@ The cross-linguistic verb core holds the semantic fields shared across languages
 
 Composes the `Verb.*` facets (argument structure, aspect) and `Clause.Embedding` with the root,
 the morphs of the citation form, speech-act status, and a polysemy disambiguator.
-Language-specific fragments extend this with morphological fields appropriate to their inflectional
+Language-specific language files extend this with morphological fields appropriate to their
+inflectional
 system.
 -/
 structure Verb extends Verb.ArgStructure, Verb.Aspect, Clause.Embedding where

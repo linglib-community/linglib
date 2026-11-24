@@ -228,7 +228,7 @@ def kosta : Verb := .ofCases "kosta" .nom [.acc, .acc]
 /-- *taka* 'take (time)', nominative–accusative–accusative ([thrainsson-2007] (4.74b)). -/
 def taka : Verb := .ofCases "taka" .nom [.acc, .acc]
 
-/-- The verbs of the fragment. -/
+/-- The verbs of the language file. -/
 def verbs : List Verb :=
   [dansa, opnast, splundrast, seljast, kyssast, dulbuast, reka, lida, gaeta, elska, lesa, kyssa,
     opna, hjalpa, strjuka, kasta, splundra, klaedast, sakna, krefjast, oska, thykja, finnast, lika,

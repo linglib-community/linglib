@@ -38,7 +38,7 @@ grounds the account [fits every judgment](##checks_predicted) of the two sentenc
 * Congruence is Roberts's, equality of the focus alternatives with the answers. Rooth's
   containment admits a sentence whose further focus answers the constituent question, as the
   object focus of the paper's *Fred did eat the beans* does, so it cannot reject *do* there.
-* Each row is linked to the fragment entries its sentence stands under: the embedding verb, the
+* Each row is linked to the language file entries its sentence stands under: the embedding verb, the
   complementizer or interrogative word typing its clause, its context's interrogative word, and
   *yes*. Its clause type is derived from their fields, the sentence types a typer allows and the
   verb's factivity, and checked against [the paper's heading](##heading_derived); the linked
@@ -57,7 +57,8 @@ grounds the account [fits every judgment](##checks_predicted) of the two sentenc
 * The example schema records no prosody, so the two patterns and the contrastive-topic
   constituent, which the paper defines by the printed contour, are still read off row labels.
 * The contrast of *believe*-type with factive complements is Hooper and Thompson's assertive versus
-  non-assertive embedding, read here off the fragment's factivity; the general clause API has no
+  non-assertive embedding, read here off the language file's factivity; the general clause API has
+  no
   assertive embedding, its embedding contexts being those of interrogative embedding.
 
 ## References
@@ -311,7 +312,7 @@ inductive Kind
 
 /-! ### What a sentence stands in
 
-Each row is linked to the fragment entries that embed or type its sentence: the verb whose
+Each row is linked to the language file entries that embed or type its sentence: the verb whose
 complement it is, the complementizer or interrogative word that types its clause, the interrogative
 word of a constituent question its context asks, and the answer particle it opens with. The clause
 types of sections 3.5 and 3.6 are derived from these, and the paper's heading for a row is a
@@ -396,7 +397,7 @@ def heading? (ex : Datum) : Option Heading :=
     ("restrictiveRelative", .restrictiveRelative), ("adverbialClause", .adverbialClause),
     ("whSubjectQuestion", .whSubjectQuestion), ("objectPreposing", .objectPreposing)]
 
-/-- A row's link to the fragment: what its sentence stands in, the interrogative word of the
+/-- A row's link to the language file: what its sentence stands in, the interrogative word of the
 constituent question its context asks, and the answer particle it opens with. -/
 structure Link where
   host : Host

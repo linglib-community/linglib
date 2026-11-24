@@ -224,7 +224,7 @@ inductive Language
   deriving DecidableEq, Repr
 
 open Negation in
-/-- The standard negators of a language, from its fragment. -/
+/-- The standard negators of a language, from its language file. -/
 def Language.standard : Language → List Marker
   | .english => English.Negation.standard
   | .french => French.Negation.standard
@@ -233,7 +233,7 @@ def Language.standard : Language → List Marker
   | .zarmaSonrai => ZarmaSonrai.Negation.standard
 
 open Negation in
-/-- The negators of a language's fragment, under the forms the rows cite them by. -/
+/-- The negators of a language's language file, under the forms the rows cite them by. -/
 def Language.negators : Language → List (String × Marker)
   | .english => [("not", English.Negation.not)]
   | .french => [("ne pas", French.Negation.nePas), ("ne", French.Negation.ne)]

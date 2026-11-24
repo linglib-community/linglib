@@ -22,7 +22,7 @@ since a comparison relation yields its own degrees by quotienting, and the count
 
 We take degrees on a family of scales to be mathlib's disjoint sum of the scales' orders and
 prove the same-scale restriction, on which [the judgments follow from the scales of the
-fragment's words](##scale_eq_iff_acceptable), the universal reading of disjoined standards, the
+language file's words](##scale_eq_iff_acceptable), the universal reading of disjoined standards, the
 reduction of the totality comparatives to volumes and cardinalities, the synonymy of *all* and
 *every* given that there are men, the [comparative](##erThan_singleton_mk) and the
 [*exactly*](##exactly_singleton_mk) on constructed degrees, and the counterfactual through a
@@ -40,7 +40,8 @@ Stalnaker selection function.
 * The scale of an example is read from `English.Adjectives`, `English.Nouns` and
   `English.MeasurePhrases` (`ScalarDimension.comparisonScale`), and *six feet* is the
   paper's degree on the relation ordering lengths: if it is the name of $⟨u, >⟩$ it cannot also be
-  the name of $⟨u, <⟩$ (p. 274). The fragment's *long* is the spatial clause of (4.3); the temporal
+  the name of $⟨u, <⟩$ (p. 274). The language file's *long* is the spatial clause of (4.3); the
+  temporal
   clause is the paper's and stays here.
 * (66) lies outside the prediction. Cresswell takes it to use the words as if they produced a
   common scale, and says that he does not know how this should be represented.
@@ -171,7 +172,7 @@ distance between its beginning and end (4.3). -/
 def long (a : E) : Set (Σ s, P s) :=
   {d | a ∈ ω ∧ (a ∈ object ∧ d = ⟨spatial, extent a⟩ ∨ a ∈ event ∧ d = ⟨temporal, duration a⟩)}
 
--- The fragment's *long* is the spatial clause.
+-- The language file's *long* is the spatial clause.
 example : English.Adjectives.long.directedScale? = some spatial := rfl
 
 variable {ω object event extent duration}

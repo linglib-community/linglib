@@ -46,7 +46,7 @@ is idle on an already closed set. The existential and universal operators are wh
 coordinators *ka* and *mo* denote on the set of alternatives (`opExists_eq_denote_ka`,
 `opForall_eq_denote_mo`), and on individual alternatives they give the readings of the
 indeterminate quantifiers in `Languages/Japanese/Determiners.lean` (`denote_image_eq_reading`),
-an identification of *ka* and *mo* with the coordinators that the fragment makes and the paper
+an identification of *ka* and *mo* with the coordinators that the language file makes and the paper
 does not. The modal semantics is stated for an accessibility relation
 on any type of worlds, and the free-choice computations are the paper's three tables with
 the derived implicature as a hypothesis. The Beck-effect paradigm and its scrambled

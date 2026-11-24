@@ -47,7 +47,8 @@ A directional phrase moves Dutch and German verbs of motion to *be* and leaves F
 
 An example marks its auxiliary and its participle, each with the lexeme it is a form of, and the
 study reads it through the typed readers of `Examples.Example`. A verb with an entry in its
-language's fragment is mapped to it. Where the paper accepts an auxiliary that the fragment's entry
+language's language file is mapped to it. Where the paper accepts an auxiliary that the language
+file's entry
 does not record for the verb, the verb is at neither end of the hierarchy
 (`position_mem_Ioo_of_not_mem_perfectAuxiliaries`).
 
@@ -288,9 +289,9 @@ theorem italian_directional_split :
         x.Selects .have := by
   decide
 
-/-! ### The fragments -/
+/-! ### The language files -/
 
-/-- The entry of a verb in its language's fragment, where the fragment has one. -/
+/-- The entry of a verb in its language's language file, where the language file has one. -/
 def Examples.Lexeme.entry? : Examples.Lexeme → Option Verb
   | .venire => some Italian.Verbs.venire.toVerb
   | .arrivare => some Italian.Verbs.arrivare.toVerb
@@ -353,14 +354,15 @@ theorem entry?_intransitive : ∀ l : Examples.Lexeme, ∀ v ∈ l.entry?,
     (v.valency.frames.headD .intransitive).IsIntransitive := by
   decide
 
--- (8a), (11), (21a), (23c), (47a): the paper accepts an auxiliary the fragment's entry lacks
+-- (8a), (11), (21a), (23c), (47a): the paper accepts an auxiliary the language file's entry lacks
 theorem acceptable_not_mem_perfectAuxiliaries :
     ({x : Example | ∃ v ∈ x.verb?.bind (·.entry?), ∃ a, x.judgment? a = some .acceptable ∧
       v.perfectAuxiliaries.Nonempty ∧ a ∉ v.perfectAuxiliaries} : Finset Example) =
       {.ex8a, .ex11, .ex21a, .ex23c, .ex47a} := by
   decide +kernel
 
-/-- Where the paper accepts an auxiliary that the fragment's entry does not record for a verb, the
+/-- Where the paper accepts an auxiliary that the language file's entry does not record for a verb,
+the
 verb is at neither end of the hierarchy. -/
 theorem position_mem_Ioo_of_not_mem_perfectAuxiliaries : ∀ x : Example,
     ∀ v ∈ x.verb?.bind (·.entry?), ∀ a, x.judgment? a = some .acceptable →

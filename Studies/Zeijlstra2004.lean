@@ -166,7 +166,7 @@ end Comparison
 
 /-! ### The readings of n-words
 
-N-words are non-negative indefinites, so of the readings the fragments list for an n-word,
+N-words are non-negative indefinites, so of the readings the language files list for an n-word,
 Zeijlstra's is the one that is upward monotone in its scope. -/
 
 section Readings

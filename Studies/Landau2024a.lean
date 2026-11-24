@@ -45,7 +45,8 @@ topic or by a logophoric center, and the paradigm (52) shows that neither is nec
 
 The rows are read as diagnostics by `Landau2013.attests`; a clause in a position shows obligatory
 control when its rows attest none. The tiers and their availability of partial control are those
-of `Studies/Landau2015.lean`, and a row's verb is the English fragment's entry. The persons of the
+of `Studies/Landau2015.lean`, and a row's verb is the English language file's entry. The persons of
+the
 jussives are the orientations the Element gives them in matrix clauses. The rows of (35) follow
 the translations and the prose, where the page's index on PRO in (35b) disagrees. An adjunct's
 head selects the complements of some tiers; the strict adjuncts of (84a) select predicative ones
@@ -220,7 +221,7 @@ theorem jussive_rows :
 
 /-! ### Partial control (36), (37) -/
 
-/-- The English fragment's entry for a row's verb. -/
+/-- The English language file's entry for a row's verb. -/
 def verbOf (row : Datum) : Option Verb :=
   (row.feature? "verb").bind (Verb.find? (English.Verbs.verbs.map (·.toVerb)) ·)
 
