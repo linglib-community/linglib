@@ -33,8 +33,8 @@ namespace Minimalist
 
 open SyntacticObject ConnesKreimer
 
-theorem Step.value_isLeft_apply {step : Step} {current : SyntacticObject} {W : Workspace}
-    (h : step.Admissible current W) : (step.apply current).toUnorderedTree.value.isLeft := by
+theorem Step.not_isTrace_apply {step : Step} {current : SyntacticObject} {W : Workspace}
+    (h : step.Admissible current W) : ¬ (step.apply current).IsTrace := by
   cases step with
   | em side item => cases side <;> simp [Step.apply]
   | im mover _ => simp [Step.apply]
@@ -84,7 +84,7 @@ variable {step : Step} {current : SyntacticObject} {W : Workspace}
 
 /-- The trace cut extracting the mover of an admissible Internal Merge. -/
 private theorem mem_markerCuts_mover {mover : SyntacticObject} (hm :
-    mover.toUnorderedTree.value.isLeft)
+    ¬ mover.IsTrace)
     (h : current.terms.count mover = 1) (hne : current ≠ mover) :
     ({mover.toUnorderedTree}, (deleteAccessible mover
         current).toUnorderedTree) ∈ markerCuts traceEncoder current.toUnorderedTree :=
@@ -95,11 +95,13 @@ private theorem mem_markerCuts_mover {mover : SyntacticObject} (hm :
 /-- An admissible step whose operands are not traces satisfies No Complexity Loss under the size `σ`
 (the book's (1.6.10)). -/
 theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur :
-    current.toUnorderedTree.value.isLeft)
-    (hitems : ∀ i ∈ step.items, i.toUnorderedTree.value.isLeft) :
+    ¬ current.IsTrace)
+    (hitems : ∀ i ∈ step.items, ¬ i.IsTrace) :
     NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
       (({current} + step.items + W).map SyntacticObject.toUnorderedTree)
       (({step.apply current} + W).map SyntacticObject.toUnorderedTree) := by
+  have hcur := not_isTrace_iff_isLeft.mp hcur
+  replace hitems := fun i hi ↦ not_isTrace_iff_isLeft.mp (hitems i hi)
   cases step with
   | em side item =>
     simp only [Step.items, Multiset.mem_singleton, forall_eq] at hitems
@@ -130,7 +132,7 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur :
         current).toUnorderedTree
       mover.toUnorderedTree (UnorderedTree.numMarkers_lt_numNodes_of_isLeft (by
         rw [markerCuts_trunk_value traceEncoder _ _ hp]; exact hcur))
-      (UnorderedTree.numMarkers_lt_numNodes_of_isLeft hm)
+      (UnorderedTree.numMarkers_lt_numNodes_of_isLeft (not_isTrace_iff_isLeft.mp hm))
     simp only [Multiset.map_singleton, Multiset.sum_singleton,
       Forest.accessibleSize_singleton] at hσ
     refine ⟨{(current.toUnorderedTree, (merge (deleteAccessible mover current)
@@ -152,11 +154,13 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur :
 /-- An admissible step whose operands are not traces satisfies Minimal Yield under trace
     counting. -/
 theorem Step.minimalYield (h : step.Admissible current W) (hcur :
-    current.toUnorderedTree.value.isLeft)
-    (hitems : ∀ i ∈ step.items, i.toUnorderedTree.value.isLeft) :
+    ¬ current.IsTrace)
+    (hitems : ∀ i ∈ step.items, ¬ i.IsTrace) :
     MinimalYield UnorderedTree.accessibleCount
       (({current} + step.items + W).map SyntacticObject.toUnorderedTree)
       (({step.apply current} + W).map SyntacticObject.toUnorderedTree) := by
+  have hcur := not_isTrace_iff_isLeft.mp hcur
+  replace hitems := fun i hi ↦ not_isTrace_iff_isLeft.mp (hitems i hi)
   cases step with
   | em side item =>
     rw [Step.apply_em, merge_comm]
@@ -229,26 +233,26 @@ theorem isChain_merge {d : Derivation} (hd : d.Admissible) :
 /-- Every step of an admissible derivation whose initial object and items are not traces satisfies
     No Complexity Loss, graded by the size `σ`. -/
 theorem isChain_noComplexityLoss {d : Derivation} (hd : d.Admissible)
-    (hinit : d.initial.toUnorderedTree.value.isLeft) (hitems : ∀ i ∈ d.items,
-        i.toUnorderedTree.value.isLeft) :
+    (hinit : ¬ d.initial.IsTrace) (hitems : ∀ i ∈ d.items,
+        ¬ i.IsTrace) :
     d.workspaces.IsChain (fun W W' : Workspace ↦ NoComplexityLoss
       (fun T ↦ Forest.accessibleSize {T}) (W.map SyntacticObject.toUnorderedTree)
       (W'.map SyntacticObject.toUnorderedTree)) :=
-  isChain_of_step (P := fun S ↦ S.toUnorderedTree.value.isLeft)
-    (fun h hcur hi ↦ Step.noComplexityLoss h hcur hi) Step.value_isLeft_apply d.steps d.initial hd
+  isChain_of_step (P := fun S ↦ ¬ S.IsTrace)
+    (fun h hcur hi ↦ Step.noComplexityLoss h hcur hi) Step.not_isTrace_apply d.steps d.initial hd
     hinit hitems
 
 /-- Every step of an admissible derivation whose initial object and items are not traces satisfies
     Minimal Yield under trace counting. -/
 theorem isChain_minimalYield {d : Derivation} (hd : d.Admissible)
-    (hinit : d.initial.toUnorderedTree.value.isLeft) (hitems : ∀ i ∈ d.items,
-        i.toUnorderedTree.value.isLeft) :
+    (hinit : ¬ d.initial.IsTrace) (hitems : ∀ i ∈ d.items,
+        ¬ i.IsTrace) :
     d.workspaces.IsChain (fun W W' : Workspace ↦
       MinimalYield UnorderedTree.accessibleCount (W.map SyntacticObject.toUnorderedTree)
         (W'.map SyntacticObject.toUnorderedTree)) :=
-  isChain_of_step (P := fun S ↦ S.toUnorderedTree.value.isLeft) (fun h hcur hi ↦ Step.minimalYield h
+  isChain_of_step (P := fun S ↦ ¬ S.IsTrace) (fun h hcur hi ↦ Step.minimalYield h
       hcur hi)
-    Step.value_isLeft_apply d.steps d.initial hd hinit hitems
+    Step.not_isTrace_apply d.steps d.initial hd hinit hitems
 
 end Derivation
 

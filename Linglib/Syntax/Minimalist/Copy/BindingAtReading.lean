@@ -252,17 +252,18 @@ private theorem has_node_map_markTree {v : CopyMark × Vertex} {cs : List MT} :
     show cs.map (RoseTree.map Prod.snd ∘ markTree m l) = cs.map (RoseTree.map Prod.snd) from
       List.map_congr_left fun c _ ↦ map_snd_markTree m l c]
 
-private theorem not_hit_of_some (hm : m.toUnorderedTree.value.isLeft) (l' : Option
+private theorem not_hit_of_some (hm : ¬ m.IsTrace) (l' : Option
     LexicalItem.Token)
     (a : Vertex) (cs : List MT) :
     UnorderedTree.mk (contractTree (.node (some l', a) cs)) ≠ m.toUnorderedTree := by
   rw [contractTree_some]
   intro h
   have hv := congrArg UnorderedTree.value h
+  replace hm := SyntacticObject.not_isTrace_iff_isLeft.mp hm
   rw [← hv] at hm
   simp at hm
 
-private theorem exists_mem_markTree (hm : m.toUnorderedTree.value.isLeft) {s r : MT} (hr : r ∈
+private theorem exists_mem_markTree (hm : ¬ m.IsTrace) {s r : MT} (hr : r ∈
     s.subtrees) :
     ∃ r' ∈ (markTree m l s).subtrees, termOf r' = termOf r ∧
       (r.value.1.isSome → r'.value.1 = r.value.1) := by
@@ -316,7 +317,7 @@ private theorem exists_mem_of_mem_markTree {s r' : MT} (h : r' ∈ (markTree m l
         exact .inr ⟨c, hc, hr⟩
 
 /-- Marking adds a lower copy only of a chain whose term the sister already holds. -/
-private theorem isSome_lowerCopy?_markTree (hm : m.toUnorderedTree.value.isLeft) {u v : MT}
+private theorem isSome_lowerCopy?_markTree (hm : ¬ m.IsTrace) {u v : MT}
     (hok : (∃ q ∈ v.subtrees, termOf q = termOf u) → (lowerCopy? u v).isSome) :
     (lowerCopy? (markTree m l u) (markTree m l v)).isSome ↔ (lowerCopy? u v).isSome := by
   rw [isSome_lowerCopy?_iff, termOf_markTree]
@@ -329,7 +330,7 @@ private theorem isSome_lowerCopy?_markTree (hm : m.toUnorderedTree.value.isLeft)
     obtain ⟨r', hr', hrt, hk'⟩ := exists_mem_markTree (l := l) hm hr
     exact ⟨r', hr', by rw [hk' hk]; exact hk, hrt.trans ht⟩
 
-private theorem chains_markTree (hm : m.toUnorderedTree.value.isLeft) {s : MT} (hs : Chains s) :
+private theorem chains_markTree (hm : ¬ m.IsTrace) {s : MT} (hs : Chains s) :
     Chains (markTree m l s) := by
   induction s with
   | node v cs ih =>
@@ -364,7 +365,7 @@ private theorem chains_markTree (hm : m.toUnorderedTree.value.isLeft) {s : MT} (
         exact ih c' hc'' (hc c' hc'')
 
 /-- If every occurrence marked holds `y`, marking leaves the reading unchanged. -/
-private theorem lfBy_markTree_of_has (hm : m.toUnorderedTree.value.isLeft) {s : MT} (hs : Chains s)
+private theorem lfBy_markTree_of_has (hm : ¬ m.IsTrace) {s : MT} (hs : Chains s)
     (H : ∀ r ∈ s.subtrees, UnorderedTree.mk (contractTree r) = m.toUnorderedTree → Has y r) :
     lfBy (Has y) (markTree m l s) = lfBy (Has y) s := by
   induction s with
@@ -402,7 +403,7 @@ private theorem lfBy_markTree_of_has (hm : m.toUnorderedTree.value.isLeft) {s : 
 
 /-- If no occurrence marked holds `y`, a c-command in the reading survives marking, unless the
 commander is what was marked. -/
-private theorem cc_lfBy_markTree (hm : m.toUnorderedTree.value.isLeft) (hxy : x ≠ y) {s : MT} (hs :
+private theorem cc_lfBy_markTree (hm : ¬ m.IsTrace) (hxy : x ≠ y) {s : MT} (hs :
     Chains s)
     (hDD : DistinctDaughters s)
     (H : ∀ r ∈ s.subtrees, UnorderedTree.mk (contractTree r) = m.toUnorderedTree → ¬ Has y r)
@@ -503,7 +504,7 @@ private theorem exists_marked_of_hit {s r₀ : MT} {τ : UnorderedTree Vertex}
         simp only [subtrees_node, List.mem_cons, List.mem_flatMap, List.mem_map]
         exact .inr ⟨_, ⟨c, hc, rfl⟩, hr'⟩
 
-private theorem marksName_of_markTree (hm : m.toUnorderedTree.value.isLeft) {s : MT}
+private theorem marksName_of_markTree (hm : ¬ m.IsTrace) {s : MT}
     (h : MarksName (markTree m l s)) : MarksName s := by
   intro r₁ h₁ r₂ h₂ hk he
   obtain ⟨r₁', hr₁, ht₁, hk₁⟩ := exists_mem_markTree (l := l) hm h₁
@@ -669,7 +670,7 @@ private theorem step_em {t : Marked} {item : PlanarSyntacticObject} (e : Edge)
 
 /-- Internal Merge of a phrase found in the object, other than the object itself. -/
 private theorem step_im {t s₀ : Marked} {m : SyntacticObject} {l : Option LexicalItem.Token}
-    (e : Edge) (hfind : t.find? m = some s₀) (hm : m.toUnorderedTree.value.isLeft) (hMN : MarksName
+    (e : Edge) (hfind : t.find? m = some s₀) (hm : ¬ m.IsTrace) (hMN : MarksName
         t.val)
     (hTF : TraceFree t.val) (hDD : DistinctDaughters t.val) (hne : termOf s₀.val ≠ termOf t.val)
     (hg : Good t.val) :
@@ -890,7 +891,7 @@ variable {x y : LexicalItem.Token}
 /-- What the steps of a derivation preserve, given what its final object satisfies. -/
 private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.Nodup)
     (hm : ∀ step ∈ d.steps, step.IsMerge)
-    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft) {c : Cfg Marked}
+    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, ¬ m.IsTrace) {c : Cfg Marked}
     (hc : d.replayWithCopies? = some c) (hMN : MarksName c.current.val)
     (hTF : TraceFree c.current.val) (hDD : DistinctDaughters c.current.val) :
     c.current.val.value.1 = none ∧ Good c.current.val ∧
@@ -932,7 +933,7 @@ private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.
     rw [lexTokens_append] at hd ⊢
     obtain ⟨hd₀, hdi, hdis⟩ := Multiset.nodup_add.1 hd
     have hm₀ : ∀ step ∈ ss, step.IsMerge := fun s hs ↦ hm s (List.mem_append_left _ hs)
-    have hmv₀ : ∀ step ∈ ss, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft := fun s hs ↦
+    have hmv₀ : ∀ step ∈ ss, ∀ m ∈ step.mover?, ¬ m.IsTrace := fun s hs ↦
       hmv s (List.mem_append_left _ hs)
     have hst : st.IsMerge := hm st (by simp)
     rcases st with ⟨side, item⟩ | ⟨mover, side⟩ | mover | side
@@ -962,7 +963,7 @@ private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.
     · obtain ⟨t, stk⟩ := c₀
       simp only [Step.replayWithCopies?] at hstep
       obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 hstep
-      have hmL : mover.toUnorderedTree.value.isLeft := hmv (.im mover side) (by simp) mover (by
+      have hmL : ¬ mover.IsTrace := hmv (.im mover side) (by simp) mover (by
           simp)
       obtain ⟨cs, hv, ht, hdc, hhas⟩ := attach_val (t.mark mover (TraceLabel.encoder mover)) s side
       simp only at hMN hTF hDD ⊢
@@ -1000,7 +1001,7 @@ are read low, in a derivation of Merge steps that merges no token twice and move
 marks name chains, the copy object has no traces and nothing moves from itself. -/
 theorem bindsAtReading_carrying_iff {d : Derivation} (hxy : x ≠ y) (hd : d.lexTokens.Nodup)
     (hm : ∀ step ∈ d.steps, step.IsMerge)
-    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft) {c : Cfg Marked}
+    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, ¬ m.IsTrace) {c : Cfg Marked}
     (hc : d.replayWithCopies? = some c) (hMN : MarksName c.current.val)
     (hTF : TraceFree c.current.val) (hDD : DistinctDaughters c.current.val) :
     d.BindsAtReading (c.current.carrying y) ↑x ↑y ↔ d.BindsAtLF ↑x ↑y := by
@@ -1017,7 +1018,7 @@ theorem bindsAtReading_carrying_iff {d : Derivation} (hxy : x ≠ y) (hd : d.lex
 /-- Binding at the copy object is binding at some reading. -/
 theorem exists_bindsAtReading_iff {d : Derivation} (hxy : x ≠ y) (hd : d.lexTokens.Nodup)
     (hm : ∀ step ∈ d.steps, step.IsMerge)
-    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft) {c : Cfg Marked}
+    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, ¬ m.IsTrace) {c : Cfg Marked}
     (hc : d.replayWithCopies? = some c) (hMN : MarksName c.current.val)
     (hTF : TraceFree c.current.val) (hDD : DistinctDaughters c.current.val) :
     (∃ low, d.BindsAtReading low ↑x ↑y) ↔ d.BindsAtLF ↑x ↑y :=

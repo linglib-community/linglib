@@ -85,7 +85,7 @@ noncomputable def Step.mergeOp (step : Step)
 def Step.Admissible (current : SyntacticObject)
     (W : Workspace) : Step → Prop
   | .em _ item => ∀ U ∈ W, current ∉ U.terms ∧ ↑item ∉ U.terms
-  | .im mover _ => mover.toUnorderedTree.value.isLeft ∧ current.terms.count mover = 1 ∧
+  | .im mover _ => ¬ mover.IsTrace ∧ current.terms.count mover = 1 ∧
       current ≠ mover ∧
       ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms
   | .extract _ | .remerge _ => False

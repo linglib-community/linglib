@@ -260,7 +260,7 @@ example :
     Step.itemsList_nil, Step.items, Step.apply_em, add_zero, Multiset.notMem_zero,
     IsEmpty.forall_iff, implies_true, and_true, true_and, ne_eq,
     PlanarSyntacticObject.toSyntacticObject_leaf, hne, not_false_eq_true]
-  refine ⟨rfl, ?_⟩
+  refine ⟨not_isTrace_iff_isLeft.mpr rfl, ?_⟩
   rw [terms_merge, Multiset.count_cons_of_ne hne.symm]
   simp [admTok]
 

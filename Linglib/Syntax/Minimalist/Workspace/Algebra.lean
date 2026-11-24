@@ -194,7 +194,7 @@ theorem mergeOp_of' (hle : {S, S'} ≤ W) (hW : ∀ U ∈ W - {S, S'}, S ∉ U.t
 
 /-- The unit stage on a single object splits off a uniquely accessible mover beside what it
 leaves. -/
-theorem mergeOpUnit_of'_singleton (hm : mover.toUnorderedTree.value.isLeft)
+theorem mergeOpUnit_of'_singleton (hm : ¬ mover.IsTrace)
     (h : current.terms.count mover = 1) (hne : current ≠ mover) :
     mergeOpUnit (R := ℤ) mover (of' {current}) = of' {mover, deleteAccessible mover current} :=
   toTrees_injective <| by
@@ -204,7 +204,7 @@ theorem mergeOpUnit_of'_singleton (hm : mover.toUnorderedTree.value.isLeft)
 
 /-- Internal Merge of a uniquely accessible mover in a single object is the composition
 `M_{T/β,β} ∘ M_{β,1}`. -/
-theorem mergeOp_mergeOpUnit_of'_singleton (hm : mover.toUnorderedTree.value.isLeft)
+theorem mergeOp_mergeOpUnit_of'_singleton (hm : ¬ mover.IsTrace)
     (h : current.terms.count mover = 1) (hne : current ≠ mover) :
     mergeOp (R := ℤ) (deleteAccessible mover current) mover (mergeOpUnit mover (of' {current})) =
       of' {SyntacticObject.merge (deleteAccessible mover current) mover} :=
@@ -214,7 +214,7 @@ theorem mergeOp_mergeOpUnit_of'_singleton (hm : mover.toUnorderedTree.value.isLe
 
 /-- Internal Merge: the unit stage followed by Merge of a uniquely accessible mover with what it
 leaves is MERGE of the mover with the member containing it, leaving the trace of its head. -/
-theorem mergeOp_mergeOpUnit_of' (hm : mover.toUnorderedTree.value.isLeft)
+theorem mergeOp_mergeOpUnit_of' (hm : ¬ mover.IsTrace)
     (h : current.terms.count mover = 1) (hne : current ≠ mover)
     (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
     mergeOp (R := ℤ) (deleteAccessible mover current) mover
@@ -226,7 +226,7 @@ theorem mergeOp_mergeOpUnit_of' (hm : mover.toUnorderedTree.value.isLeft)
 
 /-- Sideward Merge of type 2(b): Merge of a member `T` with the only occurrence of a term `S'` of
 another member `T'` is MERGE leaving the trace of the head of `S'` in `T'`. -/
-theorem mergeOp_of'_sideward_member (hS' : S'.toUnorderedTree.value.isLeft)
+theorem mergeOp_of'_sideward_member (hS' : ¬ S'.IsTrace)
     (hc : T'.terms.count S' = 1) (hne : T' ≠ S') (hT : T ∉ T'.terms) (hS'T : S' ∉ T.terms)
     (hW : ∀ U ∈ W, T ∉ U.terms ∧ S' ∉ U.terms) :
     mergeOp (R := ℤ) T S' (of' ({T, T'} + W)) =
@@ -236,8 +236,8 @@ theorem mergeOp_of'_sideward_member (hS' : S'.toUnorderedTree.value.isLeft)
 
 /-- Sideward Merge of type 3(b): Merge of the only occurrences of a term `S` of a member `T` and a
 term `S'` of another member `T'` is MERGE leaving the traces of their heads. -/
-theorem mergeOp_of'_sideward (hS : S.toUnorderedTree.value.isLeft)
-    (hS' : S'.toUnorderedTree.value.isLeft) (hcS : T.terms.count S = 1)
+theorem mergeOp_of'_sideward (hS : ¬ S.IsTrace)
+    (hS' : ¬ S'.IsTrace) (hcS : T.terms.count S = 1)
     (hcS' : T'.terms.count S' = 1) (hneS : T ≠ S) (hneS' : T' ≠ S') (hST' : S ∉ T'.terms)
     (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
     mergeOp (R := ℤ) S S' (of' ({T, T'} + W)) =

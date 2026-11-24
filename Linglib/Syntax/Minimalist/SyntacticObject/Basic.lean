@@ -207,6 +207,22 @@ theorem trace_ne_labelledTrace (i : ι) : (trace : SyntacticObject L ι) ≠ lab
 theorem trace_ne_merge (l r : SyntacticObject L ι) : (trace : SyntacticObject L ι) ≠ merge l r :=
   FreeCommMagma.of_ne_mul _ l r
 
+/-- A syntactic object is a trace when it is the index-free trace or a labelled trace. -/
+def IsTrace (s : SyntacticObject L ι) : Prop := s = trace ∨ ∃ i, s = labelledTrace i
+
+@[simp] theorem isTrace_trace : (trace : SyntacticObject L ι).IsTrace := .inl rfl
+
+@[simp] theorem isTrace_labelledTrace (i : ι) : (labelledTrace i : SyntacticObject L ι).IsTrace :=
+  .inr ⟨i, rfl⟩
+
+@[simp] theorem not_isTrace_leaf (a : L) : ¬ (leaf a : SyntacticObject L ι).IsTrace := by
+  rintro (h | ⟨i, h⟩)
+  exacts [leaf_ne_trace a h, leaf_ne_labelledTrace a i h]
+
+@[simp] theorem not_isTrace_merge (l r : SyntacticObject L ι) : ¬ (merge l r).IsTrace := by
+  rintro (h | ⟨i, h⟩)
+  exacts [trace_ne_merge l r h.symm, labelledTrace_ne_merge i l r h.symm]
+
 end SyntacticObject
 
 namespace PlanarSyntacticObject

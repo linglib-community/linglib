@@ -137,19 +137,19 @@ variable {mover current : SyntacticObject}
 
 /-- A uniquely accessible mover that is not a trace is extracted by exactly one trace cut, whose
     trunk is the remainder `deleteAccessible mover current`. -/
-theorem markerCuts_filter_mover (hm : mover.toUnorderedTree.value.isLeft)
+theorem markerCuts_filter_mover (hm : ¬ mover.IsTrace)
     (h : current.terms.count mover = 1) (hne : current ≠ mover) :
     (markerCuts traceEncoder current.toUnorderedTree).filter (fun p ↦ p.1 = {mover.toUnorderedTree})
       = {({mover.toUnorderedTree}, (deleteAccessible mover current).toUnorderedTree)} := by
   rw [toUnorderedTree_deleteAccessible, toUnorderedTree_headTrace, TraceLabel.encoder_token,
     ← traceEncoder_toUnorderedTree]
-  refine markerCuts_filter_crown_eq_singleton traceEncoder hm ?_
+  refine markerCuts_filter_crown_eq_singleton traceEncoder (not_isTrace_iff_isLeft.mp hm) ?_
     (fun h' ↦ hne (toUnorderedTree_injective h'))
   rw [← map_toUnorderedTree_terms, Multiset.count_map_eq_count' _ _ toUnorderedTree_injective, h]
 
 /-- The unit stage `M_{β,1}` on the current object splits off a uniquely accessible mover beside
     the remainder. -/
-theorem traceMergeOpUnit_current (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count
+theorem traceMergeOpUnit_current (hm : ¬ mover.IsTrace) (h : current.terms.count
     mover = 1)
     (hne : current ≠ mover) :
     Merge.traceMergeOpUnit (R := ℤ) traceEncoder mover.toUnorderedTree
@@ -163,7 +163,7 @@ theorem traceMergeOpUnit_current (hm : mover.toUnorderedTree.value.isLeft) (h : 
 
 /-- Internal Merge of a uniquely accessible mover is the composition `M_{T/β,β} ∘ M_{β,1}` of
     trace-cut Merges ([marcolli-chomsky-berwick-2025] Proposition 1.4.2). -/
-theorem traceMergeOp_im (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count mover =
+theorem traceMergeOp_im (hm : ¬ mover.IsTrace) (h : current.terms.count mover =
     1)
     (hne : current ≠ mover) :
     Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover
@@ -202,7 +202,7 @@ theorem traceMergeOp_node_residual (τ : UnorderedTree Vertex → Option Lexical
 
 /-- Internal Merge of a uniquely accessible mover beside a spectator workspace none of whose
     components contains the mover or the remainder. -/
-theorem traceMergeOp_im_residual (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count
+theorem traceMergeOp_im_residual (hm : ¬ mover.IsTrace) (h : current.terms.count
     mover = 1)
     (hne : current ≠ mover) {W : Workspace}
     (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
@@ -235,7 +235,7 @@ theorem traceMergeOp_of'_merge (τ : UnorderedTree Vertex → Option LexicalItem
 /-- Internal Merge ([marcolli-chomsky-berwick-2025] Proposition 1.4.2): the Merge operator at the
     trace cuts computes MERGE of a uniquely accessible mover with the member containing it, leaving
     the trace of its head. -/
-theorem traceMergeOp_im_of'_merge (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count
+theorem traceMergeOp_im_of'_merge (hm : ¬ mover.IsTrace) (h : current.terms.count
     mover = 1)
     (hne : current ≠ mover) {W : Workspace}
     (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
@@ -253,7 +253,7 @@ theorem traceMergeOp_im_of'_merge (hm : mover.toUnorderedTree.value.isLeft) (h :
     cuts computes MERGE leaving the trace of the head of `S'` in `T'`, when `S'` is no term of `T`.
     -/
 theorem traceMergeOp_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Workspace}
-    (hS' : S'.toUnorderedTree.value.isLeft) (hc : T'.terms.count S' = 1) (hne : T' ≠ S') (hT : T ∉
+    (hS' : ¬ S'.IsTrace) (hc : T'.terms.count S' = 1) (hne : T' ≠ S') (hT : T ∉
         T'.terms)
     (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, T ∉ U.terms ∧ S' ∉ U.terms) :
     Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare T.toUnorderedTree S'.toUnorderedTree
@@ -283,7 +283,7 @@ theorem traceMergeOp_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Works
     occurrences of a term `S` of a member `T` and a term `S'` of another member `T'`, the Merge
     operator at the trace cuts computes MERGE leaving the traces of their heads. -/
 theorem traceMergeOp_sideward3b_of'_merge {T T' S S' : SyntacticObject} {W : Workspace}
-    (hS : S.toUnorderedTree.value.isLeft) (hS' : S'.toUnorderedTree.value.isLeft) (hcS :
+    (hS : ¬ S.IsTrace) (hS' : ¬ S'.IsTrace) (hcS :
         T.terms.count S = 1)
     (hcS' : T'.terms.count S' = 1) (hneS : T ≠ S) (hneS' : T' ≠ S') (hST' : S ∉ T'.terms)
     (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :

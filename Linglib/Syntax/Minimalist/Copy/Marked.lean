@@ -307,7 +307,7 @@ theorem contract_eq_leaf_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
   · simp [PlanarSyntacticObject.yield_toSyntacticObject, hk] at hx
 
 theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject} {x : LexicalItem.Token}
-    (h : t.find? target = some s) (ht : target.toUnorderedTree.value.isLeft)
+    (h : t.find? target = some s) (ht : ¬ target.IsTrace)
     (hs : s.unmark.toSyntacticObject = SyntacticObject.leaf x) :
     target = SyntacticObject.leaf x := by
   have hc := mk_contractTree_of_find? h
@@ -316,7 +316,8 @@ theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject} {x : LexicalI
   rcases k with _ | l
   · exact SyntacticObject.toUnorderedTree_injective
       (by rw [← hc, contractTree_none, SyntacticObject.toUnorderedTree_leaf]; rfl)
-  · rw [← hc, contractTree_some] at ht
+  · replace ht := SyntacticObject.not_isTrace_iff_isLeft.mp ht
+    rw [← hc, contractTree_some] at ht
     simp at ht
 
 end PlanarSyntacticObject.Marked
