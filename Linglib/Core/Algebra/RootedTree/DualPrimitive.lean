@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Bialgebra
+public import Linglib.Core.RingTheory.Bialgebra.Contraction
 public import Linglib.Core.RingTheory.Bialgebra.Primitive
 
 /-!
@@ -23,6 +24,8 @@ their Hopf algebra.
 
 * `GrossmanLarson.pairingLie`: the pairing as a map of Lie algebras from the pre-Lie algebra of
   rooted trees to `Bialgebra.dualPrimitives`.
+* `ConnesKreimer.WithCuts.treeDerivation`: the derivation `D_T` of the algebra of forests,
+  contraction with the delta functional of a tree, for the coproduct of any admissible cut policy.
 
 ## Main results
 
@@ -161,6 +164,37 @@ theorem lie_lcoeff_singleton_apply_ofTree [DecidableEq α] :
     convMul_lcoeff_singleton_apply_ofTree]
 
 end CommRing
+
+/-! ### The derivation of a tree
+
+The delta functional of a tree is a dual primitive for the coproduct of every admissible cut
+policy, since the condition reads only the product and the counit. Contraction with it is a
+derivation `D_T` of the algebra of forests: `D_T` of a tree `T'` sums the trunks of the cuts of
+`T'` that extract exactly `T`. -/
+
+section TreeDerivation
+
+variable [CommSemiring R]
+  {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
+  [IsBialgebraCuts cuts]
+
+theorem WithCuts.isDualPrimitive_lcoeff_singleton (T : UnorderedTree α) :
+    IsDualPrimitive R (lcoeff R ({T} : Forest (UnorderedTree α)) : WithCuts R cuts →ₗ[R] R) :=
+  have h := ConnesKreimer.isDualPrimitive_lcoeff_singleton (R := R) T
+  ⟨h.map_one_eq_zero, h.leibniz⟩
+
+/-- The derivation `D_T` of the algebra of forests, contraction of the coproduct at `cuts` with
+the delta functional of the tree `T`. -/
+noncomputable def WithCuts.treeDerivation (T : UnorderedTree α) :
+    Derivation R (WithCuts R cuts) (WithCuts R cuts) :=
+  (WithCuts.isDualPrimitive_lcoeff_singleton T).derivation
+
+theorem WithCuts.treeDerivation_apply (T : UnorderedTree α) (x : WithCuts R cuts) :
+    WithCuts.treeDerivation T x =
+      Coalgebra.contract (lcoeff R ({T} : Forest (UnorderedTree α)) : WithCuts R cuts →ₗ[R] R) x :=
+  rfl
+
+end TreeDerivation
 
 end ConnesKreimer
 
