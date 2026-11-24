@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.Agree
+public import Linglib.Syntax.Feature.Geometry
 public import Linglib.Languages.Mayan.Kaqchikel.Agreement
 public import Linglib.Languages.Mayan.Kaqchikel.Pronouns
 public import Linglib.Languages.Mayan.Kiche.Pronouns
@@ -21,7 +22,7 @@ by a clitic, which bears the goal's whole φ-set. The slot shows that clitic if 
 otherwise the exponent of #⁰, that of a third person in the number #⁰ copied.
 
 We prove that the slot shows the cell of a participant argument if there is one, otherwise the
-third person plural if an argument is plural, and otherwise the third person singular, and that
+third person plural if an argument bears [plural], and otherwise the third person singular, and that
 it does not depend on which argument is the subject when at most one argument is a participant.
 Béjar and Rezac's Person Licensing Condition, on which the search of π⁰ reaches every argument
 that bears [participant], holds of the two arguments exactly when at most one of them does. A
@@ -32,8 +33,9 @@ verb shows the cell the probes give.
 
 ## Implementation notes
 
-The geometry is the paper's own, the nodes it keeps of Harley and Ritter's. A φ-cell bears [author]
-when every participant set its person covers has the speaker.
+The geometry is Harley and Ritter's, of which the paper's keeps four nodes: its root [φ] is the
+Referring Expression node, and its [participant], [author] and [plural] are Participant, Speaker
+and Group. A nominal bears the lower set of nodes of its φ-cell, `Agreement.Bundle.nodes`.
 
 The slot is a total function of the two arguments and licensing is a separate condition on them,
 since a probe that finds no goal leaves a form, the null third person singular, while a
@@ -61,88 +63,21 @@ alternative analyses, and the Zulu and Basque chapters are not formalized; the Z
 namespace Preminger2014
 
 open Kaqchikel Minimalist Agreement
+open Morphology.FeatureGeometry (Node)
 
-/-! ### The φ-feature geometry -/
-
-/-- (55): the φ-features. [φ] is borne by every nominal and dominates the others, and
-[participant] dominates [author]. -/
-inductive Feature where
-  /-- [φ], the root. -/
-  | phi
-  /-- [participant], borne by the first and second persons. -/
-  | participant
-  /-- [author], borne by the first person. -/
-  | author
-  /-- [plural]. -/
-  | plural
-  deriving DecidableEq, Fintype, Repr
-
-namespace Feature
-
-/-- `f` dominates `g` in (55). -/
-protected def LE (f g : Feature) : Prop := f = phi ∨ f = g ∨ f = participant ∧ g = author
-
-instance : DecidableRel Feature.LE := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-
-/-- A feature is below the features it dominates. -/
-instance : PartialOrder Feature where
-  le := Feature.LE
-  le_refl _ := .inr (.inl rfl)
-  le_trans := (by decide : ∀ f g h : Feature, f.LE g → g.LE h → f.LE h)
-  le_antisymm := (by decide : ∀ f g : Feature, f.LE g → g.LE f → f = g)
-
-instance : DecidableLE Feature := inferInstanceAs (DecidableRel Feature.LE)
-
-instance : OrderBot Feature where
-  bot := phi
-  bot_le _ := .inl rfl
-
-instance : LocallyFiniteOrderTop Feature :=
-  .ofIci' Feature (fun f ↦ Finset.univ.filter (f ≤ ·)) fun _ _ ↦ by simp
-
-end Feature
-
-variable {c s o : Bundle} {f g : Feature}
-
-/-- A φ-cell bears [participant] when its person is a speech-act participant's, [author] when its
-person includes the speaker, and [plural] when its number is plural. -/
-def Bears (c : Bundle) : Feature → Prop
-  | .phi => True
-  | .participant => c.IsSAP
-  | .author => ∀ r ∈ (c .person).sets, .speaker ∈ r
-  | .plural => c.IsPlural
-
-instance (c : Bundle) : DecidablePred (Bears c) := fun f ↦ by
-  cases f <;> unfold Bears <;> infer_instance
-
-@[simp] theorem bears_phi : Bears c .phi := trivial
-@[simp] theorem bears_participant : Bears c .participant ↔ c.IsSAP := .rfl
-@[simp] theorem bears_plural : Bears c .plural ↔ c.IsPlural := .rfl
-
-/-- The features a φ-cell bears. -/
-def feats (c : Bundle) : Finset Feature := Finset.univ.filter (Bears c)
-
-@[simp] theorem mem_feats : f ∈ feats c ↔ Bears c f := by simp [feats]
-
--- the geometry is privative: a cell bears whatever dominates a feature it bears
-theorem feats_isLowerSet (c : Bundle) : IsLowerSet (↑(feats c) : Set Feature) := by
-  intro g f hfg hg
-  rw [Finset.mem_coe, mem_feats] at hg ⊢
-  rcases hfg with rfl | rfl | ⟨rfl, rfl⟩
-  exacts [trivial, hg, fun r hr ↦ ⟨_, hg r hr⟩]
+variable {c s o : Bundle} {f g : Node}
 
 /-! ### Relativized probes -/
 
-/-- The probe relativized to the feature `f`, which the cells that bear `f` satisfy. -/
-def probe (f : Feature) : Probe Bundle := (Probe.Spec.relativized f).toProbe feats
+/-- The probe relativized to the node `f`, which the cells that bear `f` satisfy. -/
+def probe (f : Node) : Probe Bundle := (Probe.Spec.relativized f).toProbe Bundle.nodeFinset
 
-@[simp] theorem probe_sat : (probe f).sat c ↔ Bears c f :=
-  Probe.Spec.ofGeometry_toProbe_sat.trans mem_feats
+@[simp] theorem probe_sat : (probe f).sat c ↔ f ∈ c.nodes := Probe.Spec.ofGeometry_toProbe_sat
 
-/-- A probe relativized to a feature is satisfied by every cell that satisfies a probe relativized
-to a feature it dominates. -/
+/-- A probe relativized to a node is satisfied by every cell that satisfies a probe relativized
+to a node it dominates. -/
 theorem probe_sat_anti (h : f ≤ g) (hg : (probe g).sat c) : (probe f).sat c :=
-  Probe.Spec.relativized_toProbe_sat_anti (feats_isLowerSet c) h hg
+  Probe.Spec.relativized_toProbe_sat_anti c.nodes.lower h hg
 
 -- a probe finds a goal wherever a probe relativized below it does
 theorem search_isSome_of_le (h : f ≤ g) {goals : List Bundle}
@@ -151,25 +86,25 @@ theorem search_isSome_of_le (h : f ≤ g) {goals : List Bundle}
 
 -- a probe relativized to the root, as English Infl⁰ is, finds the closest goal
 theorem probe_bot_search (c : Bundle) (l : List Bundle) : (probe ⊥).search (c :: l) = some c := by
-  simp [Probe.search, show Bears c ⊥ from trivial]
+  simp [Probe.search]
 
 /-- π⁰, the person probe, relativized to [participant]. -/
 abbrev piProbe : Probe Bundle := probe .participant
 
-/-- #⁰, the number probe, relativized to [plural]. -/
-abbrev numProbe : Probe Bundle := probe .plural
+/-- #⁰, the number probe, relativized to [plural], the Group node. -/
+abbrev numProbe : Probe Bundle := probe .group
 
-/-- (112): the features that the obligatory operation copies to a head relativized to `f` from
-the subject and the object. -/
-def find (f : Feature) (s o : Bundle) : Finset Feature :=
-  ((Probe.Spec.relativized f).agree feats ∅ [s, o]).state.copied
+/-- (112): the nodes that the obligatory operation copies to a head relativized to `f` from the
+subject and the object. -/
+def find (f : Node) (s o : Bundle) : Finset Node :=
+  ((Probe.Spec.relativized f).agree Bundle.nodeFinset ∅ [s, o]).state.copied
 
-/-- The operation copies from the goal of the probe the features that `f` dominates, and nothing
-when the probe finds no goal. -/
-theorem find_eq (f : Feature) (s o : Bundle) :
-    find f s o = ((probe f).search [s, o]).elim ∅ fun c ↦ feats c ∩ Finset.Ici f := by
+/-- The operation copies from the goal of the probe the nodes that `f` dominates, and nothing when
+the probe finds no goal. -/
+theorem find_eq (f : Node) (s o : Bundle) :
+    find f s o = ((probe f).search [s, o]).elim ∅ fun c ↦ c.nodeFinset ∩ Finset.Ici f := by
   have h (a : Bundle) : (probe f).int a ↔ (probe f).sat a :=
-    (Probe.Spec.ofGeometry_toProbe_int_iff (feats_isLowerSet a)).trans
+    (Probe.Spec.ofGeometry_toProbe_int_iff a.nodes.lower).trans
       Probe.Spec.ofGeometry_toProbe_sat.symm
   rw [find, Probe.Spec.agree_empty]
   exact (Probe.agree_state_eq_elim h).trans (by simp [probe])
@@ -201,12 +136,13 @@ theorem clitic_eq (s o : Bundle) :
   by_cases hs : s.IsSAP <;> by_cases ho : o.IsSAP <;> simp [clitic, Probe.search, hs, ho]
 
 /-- The slot shows the cell of a participant argument, the subject's first; without one it shows
-the third person plural if an argument is plural, and the third person singular otherwise. -/
+the third person plural if an argument bears [plural], and the third person singular otherwise. -/
 theorem slot_eq (s o : Bundle) :
     slot s o = if s.IsSAP then s else if o.IsSAP then o
-      else .personNumber .third (if s.IsPlural ∨ o.IsPlural then .plural else .singular) := by
+      else .personNumber .third
+        (if .group ∈ s.nodes ∨ .group ∈ o.nodes then .plural else .singular) := by
   by_cases hs : s.IsSAP <;> by_cases ho : o.IsSAP <;>
-    by_cases hsp : s.IsPlural <;> by_cases hop : o.IsPlural <;>
+    by_cases hsp : Node.group ∈ s.nodes <;> by_cases hop : Node.group ∈ o.nodes <;>
     simp [slot, clitic_eq, Probe.search, hs, ho, hsp, hop]
 
 /-- The Person Licensing Condition holds of the two core arguments exactly when at most one of
@@ -222,8 +158,8 @@ theorem slot_comm (h : ¬ (s.IsSAP ∧ o.IsSAP)) : slot s o = slot o s := by
   by_cases hs : s.IsSAP <;> by_cases ho : o.IsSAP <;> simp_all [or_comm]
 
 -- (113): with no participant and no plural argument both probes fail and the marker is null
-theorem marker_eq_nil (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP) (hsp : ¬ s.IsPlural)
-    (hop : ¬ o.IsPlural) :
+theorem marker_eq_nil (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP) (hsp : .group ∉ s.nodes)
+    (hop : .group ∉ o.nodes) :
     piProbe.search [s, o] = none ∧ numProbe.search [s, o] = none ∧ marker s o = [] := by
   refine ⟨by simp [hs, ho], by simp [hsp, hop], ?_⟩
   rw [marker, slot_eq]
@@ -234,9 +170,9 @@ theorem marker_eq_nil (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP) (hsp : ¬ s.IsPlural)
 -- goal, whose clitics differ
 theorem find_participant_coarse :
     find .participant (.personNumber .first .singular) (.personNumber .third .singular) =
-        {.participant, .author} ∧
+        {.participant, .speaker} ∧
       find .participant (.personNumber .first .plural) (.personNumber .third .singular) =
-        {.participant, .author} ∧
+        {.participant, .speaker} ∧
       marker (.personNumber .first .singular) (.personNumber .third .singular) ≠
         marker (.personNumber .first .plural) (.personNumber .third .singular) := by
   decide

@@ -38,9 +38,9 @@ segments therefore form a tree, in which
 ## Implementation notes
 
 `π` is Harley and Ritter's root Referring Expression node, which Deal writes `[φ]`, and the
-segments are the person nodes of their geometry (`Morphology/FeatureGeometry.lean`). A segment
-is a `WithBot Person.Feature`, so the order is that of the features with the root below them and
-is not read off that geometry.
+segments are the person nodes of their geometry: `Person.Segment.toNode` in
+`Syntax/Feature/Geometry.lean` is the order embedding. A segment is a `WithBot Person.Feature`,
+so the order is that of the features with the root below them.
 
 ## References
 
