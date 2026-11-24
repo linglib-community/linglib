@@ -75,8 +75,10 @@ LOC = re.compile(rf"^<p>((?:(?:{KIND})\s*|(?=\()){NUM}(?:\s*(?:,|and|to|–)\s*{
 CITE_LINK = re.compile(r'<a href="([^"]*references\.html#ref_([^"]+))" title="[^"]*" id="[^"]*">'
                        r'(\[[^\]]+\])</a>', re.S)
 HEADING = re.compile(r'<h\d id="([^"]+)"[^>]*>(.*?)(?: <a class="hover-link"|</h\d>)', re.S)
-DECL_NAME = re.compile(r'<span class="decl_kind">\w+</span>\s*<span class="decl_name">.*?</a></span>',
-                       re.S)
+# doc-gen4 puts spaces around the link inside the name span, and a `title` on the span of a
+# declaration that uses `sorry`; the match ends at the link's own `</a>`, before any parent.
+DECL_NAME = re.compile(r'<span class="decl_kind">[^<]*</span>\s*<span class="decl_name"[^>]*>\s*'
+                       r'<a\b[^>]*>.*?</a>\s*</span>', re.S)
 REFS = re.compile(r'(<h2 [^>]*id="References"[^>]*>.*?</h2>)\s*<ul>(.*?)</ul>', re.S)
 BARE = '<span class="decl_args"> :</span>'
 # A proof that only evaluates, which a sentence read alone can make sound like a discovery.
