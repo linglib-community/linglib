@@ -13,7 +13,7 @@ public import Linglib.Pragmatics.Probabilistic.Speaker
 
 The speaker of the Rational Speech Act model who knows the state chooses the utterance `u` at the
 state `w` with probability proportional to `exp (α * (log (L u {w}) - C u))`, where `L` is the
-listener she addresses, `α` her rationality and `C` her costs. This file says when her choices
+listener she reasons about, `α` her rationality and `C` her costs. This file says when her choices
 determine `α` and `C`.
 
 The log odds of `u'` against `u` at `w` are
@@ -36,13 +36,14 @@ costs and leaves `α` times the same comparison for the listener. There are two 
   states, speakers who agree there have the same rationality.
 * `RSA.cost_sub_eq_of_speaker_dirac_apply_eq`: speakers of one rationality who agree at a state
   have the same cost differences.
-* `RSA.speaker_dirac_eq_iff`: against a listener who rules out no state, two speakers are equal
+* `RSA.speaker_dirac_eq_iff`: when the listener rules out no state, two speakers are equal
   exactly when they have the same rationality and costs that differ by a constant, or every
   utterance has the same listener and only `α * C` matters.
-* `RSA.speaker_dirac_eq_of_mul`: against a listener whose mass factors, the speaker at one
+* `RSA.speaker_dirac_eq_of_mul`: when the listener's mass factors, the speaker at one
   rationality is the speaker at any other with adjusted costs.
-* `RSA.speaker_literalListener_dirac_eq_of_cost`: the same against the literal listener, where
-  the adjustment is a multiple of the log prior probability that the utterance is true.
+* `RSA.speaker_literalListener_dirac_eq_of_cost`: the same for the speaker who reasons about the
+  literal listener, where the adjustment is a multiple of the log prior probability that the
+  utterance is true.
 
 ## Implementation notes
 
@@ -138,7 +139,7 @@ theorem cost_sub_eq_of_speaker_dirac_apply_eq (hα : 0 < α) (hu : L u {w} ≠ 0
   linarith [mul_left_cancel₀ hα.ne' key]
 
 omit [IsFiniteKernel L] in
-/-- Against a listener who rules out no state, two speakers are equal in exactly two cases: they
+/-- When the listener rules out no state, two speakers are equal in exactly two cases: they
 have the same `α` and costs that differ by a constant, or every utterance has the same listener
 and `α * C` and `α' * C'` differ by a constant. -/
 theorem speaker_dirac_eq_iff [IsMarkovKernel L] [Nonempty W] (hα : 0 < α) (hα' : 0 < α')
@@ -209,7 +210,7 @@ section Mimicry
 
 variable {L : U → Measure W}
 
-/-- The rationality is not identified against a listener whose mass factors: if
+/-- The rationality is not identified when the listener's mass factors: if
 `L u {w} = a u * h w` wherever it is not zero, the speaker at `α` with costs `C` is the speaker at
 any `α'` with the costs `C'` given by `α' * C' u = α * C u + (α' - α) * log (a u)`. -/
 theorem speaker_dirac_eq_of_mul {a : U → ℝ≥0∞} {h : W → ℝ≥0∞} (hα : 0 < α) (hα' : 0 < α')
@@ -256,8 +257,8 @@ end Mimicry
 
 end
 
-/-- The rationality is not identified against the literal listener: the speaker at `α` with costs
-`C` is the speaker at any `α'` whose costs satisfy
+/-- The rationality of a speaker who reasons about the literal listener is not identified: the
+speaker at `α` with costs `C` is the speaker at any `α'` whose costs satisfy
 `α' * C' u = α * C u - (α' - α) * log (μ (sem u))`, a shift by a multiple of the log prior
 probability that `u` is true. -/
 theorem speaker_literalListener_dirac_eq_of_cost [DiscreteMeasurableSpace W] (hα : 0 < α)
