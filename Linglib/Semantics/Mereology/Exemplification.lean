@@ -91,12 +91,11 @@ theorem _root_.IsOpen.exemplifies_iff (hp : IsOpen p) : Exemplifies p x ↔ x �
 
 theorem Exemplifies.inter (hp : Exemplifies p x) (hq : Exemplifies q x) :
     Exemplifies (p ∩ q) x := by
-  obtain hp | hp := hp
-  · obtain hq | hq := hq
-    · exact .inl (by rw [interior_inter]; exact ⟨hp, hq⟩)
-    · exact .inr ⟨⟨interior_subset hp, hq.1⟩,
-        fun h ↦ hq.2 (derivedSet_mono _ _ inter_subset_right h)⟩
-  · exact .inr ⟨⟨hp.1, hq.mem⟩, fun h ↦ hp.2 (derivedSet_mono _ _ inter_subset_left h)⟩
+  by_cases h : x ∈ derivedSet (p ∩ q)
+  · rw [Exemplifies, interior_inter]
+    exact .inl ⟨hp.resolve_right fun h' ↦ h'.2 (derivedSet_mono _ _ inter_subset_left h),
+      hq.resolve_right fun h' ↦ h'.2 (derivedSet_mono _ _ inter_subset_right h)⟩
+  · exact .inr ⟨⟨hp.mem, hq.mem⟩, h⟩
 
 /-- Whether `x` exemplifies a set depends only on the germ of the set at `x`. -/
 theorem exemplifies_congr (h : p =ᶠ[𝓝 x] q) : Exemplifies p x ↔ Exemplifies q x := by
