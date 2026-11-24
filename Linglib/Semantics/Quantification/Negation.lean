@@ -7,30 +7,38 @@ public import Mathlib.GroupTheory.NoncommCoprod
 /-!
 # The negations of a quantifier as an action of the polarities
 
-A quantifier has two polarities, one for its value and one for its scope. Reversing the first is
-outer negation, the complement `Qᶜ`; reversing the second is inner negation, `Q.innerNeg`, which
-complements the scope; reversing both is the dual. The two commute, so a pair of polarities acts
-on the quantifiers on a universe, and the square of opposition that a quantifier spans is its
-orbit: each of its members spans the same square. A pair of polarities changes the direction of a
-monotone or antitone quantifier by the product of the two.
+A quantifier `Q` can be negated in two places. Outer negation negates the value: it is the
+complement `Qᶜ`. Inner negation negates the scope: `Q.innerNeg B = Q Bᶜ`. Doing both gives the
+dual, `Q.dual B = ¬ Q Bᶜ`.
+
+This file defines the map `Quantifier.negHom` that sends a pair `(o, i)` of polarities to the
+operation that negates the value if `o` is negative and the scope if `i` is negative. It is a
+homomorphism from the group `Polarity × Polarity` to the functions from quantifiers to
+quantifiers, since the two negations commute and each is its own inverse.
+
+The images of a quantifier `Q` under these four operations are the corners of the square of
+opposition of `Q`. A monotone or antitone quantifier stays monotone or antitone under each of
+the operations, and the direction changes once for each negative polarity in the pair.
 
 ## Main definitions
 
-* `Quantifier.innerNegHom`: the polarities acting on quantifiers through the scope.
-* `Quantifier.negHom`: the pairs of an outer and an inner polarity acting on quantifiers.
+* `Quantifier.innerNegHom`: the homomorphism that sends the negative polarity to inner negation.
+* `Quantifier.negHom`: the homomorphism that sends `(o, i)` to outer negation if `o` is
+  negative, composed with inner negation if `i` is negative.
 
 ## Main results
 
-* `Quantifier.range_negHom`: the orbit of a quantifier is its inner negation, its dual, its
-  complement and itself, the corners of `Quantifier.square`.
-* `Quantifier.range_negHom_negHom`: each member of a square spans the same square.
-* `Polarity.MonoBy.negHom`: a quantifier directed by `s` is, after the outer polarity `o` and the
-  inner polarity `i`, directed by `o * i * s`.
+* `Quantifier.range_negHom`: the images of `Q` under `negHom` are `Q`, `Q.innerNeg`, `Q.dual`
+  and `Qᶜ`.
+* `Quantifier.range_negHom_negHom`: each of these four quantifiers has the same four images, so
+  each corner of a square of opposition has that same square.
+* `Polarity.MonoBy.negHom`: if `Q` is monotone or antitone, as given by a polarity `s`, then
+  `negHom (o, i) Q` is monotone or antitone as given by `o * i * s`.
 
 ## Implementation notes
 
-The action is stated as a homomorphism into `Function.End (Quantifier α)` and not as a `MulAction`
-instance: `Quantifier α` unfolds to the function type `Set α → Prop`, on which an instance would
+We define a homomorphism into `Function.End (Quantifier α)` and not a `MulAction` instance.
+`Quantifier α` is an abbreviation of the function type `Set α → Prop`, so an instance on it would
 apply to every function from sets to propositions.
 
 ## References
@@ -44,8 +52,8 @@ namespace Quantifier
 
 variable {α : Type*} {Q : Quantifier α}
 
-/-- The polarities act on quantifiers through the scope: the negative polarity is inner
-negation. -/
+/-- The homomorphism from the polarities to the operations on quantifiers that sends the negative
+polarity to inner negation. -/
 def innerNegHom : Polarity →* Function.End (Quantifier α) :=
   Polarity.lift ⟨innerNeg, (show Function.Involutive innerNeg from innerNeg_innerNeg).comp_self⟩
 
@@ -54,8 +62,8 @@ def innerNegHom : Polarity →* Function.End (Quantifier α) :=
 @[simp] theorem innerNegHom_negative (Q : Quantifier α) : innerNegHom .negative Q = Q.innerNeg :=
   rfl
 
-/-- A pair of an outer and an inner polarity acts on quantifiers: the outer one through the value,
-by complement, and the inner one through the scope. -/
+/-- The homomorphism that sends a pair `(o, i)` of polarities to the operation on quantifiers
+that takes the complement if `o` is negative and the inner negation if `i` is negative. -/
 def negHom : Polarity × Polarity →* Function.End (Quantifier α) :=
   Polarity.complHom.noncommCoprod innerNegHom fun o i ↦ by cases o <;> cases i <;> rfl
 
@@ -78,7 +86,8 @@ theorem negHom_mul_apply (p q : Polarity × Polarity) (Q : Quantifier α) :
     negHom (p * q) Q = negHom p (negHom q Q) := by
   rw [map_mul]; rfl
 
-/-- The orbit of a quantifier under the polarities is the square it spans. -/
+/-- The images of `Q` under `negHom` are `Q`, `Q.innerNeg`, `Q.dual` and `Qᶜ`, the corners of the
+square of opposition of `Q`. -/
 theorem range_negHom (Q : Quantifier α) :
     Set.range (negHom · Q) = {Q, Q.innerNeg, Q.dual, Qᶜ} := by
   ext Q'
@@ -89,7 +98,7 @@ theorem range_negHom (Q : Quantifier α) :
     exacts [⟨(.positive, .positive), rfl⟩, ⟨(.positive, .negative), rfl⟩,
       ⟨(.negative, .negative), rfl⟩, ⟨(.negative, .positive), rfl⟩]
 
-/-- Each quantifier in the square of `Q` spans the same square. -/
+/-- Each image of `Q` under `negHom` has the same images as `Q`. -/
 theorem range_negHom_negHom (p : Polarity × Polarity) (Q : Quantifier α) :
     Set.range (negHom · (negHom p Q)) = Set.range (negHom · Q) :=
   Set.ext fun _ ↦
@@ -105,7 +114,7 @@ open Quantifier
 
 variable {α : Type*} {Q : Quantifier α} {s : Polarity}
 
-/-- The outer polarity `o` takes a quantifier directed by `s` to one directed by `o * s`. -/
+/-- If `Q` is directed by `s`, then `Polarity.complHom o Q` is directed by `o * s`. -/
 protected theorem complHom (h : s.MonoBy Q) (o : Polarity) :
     (o * s).MonoBy (Polarity.complHom o Q) := by
   cases o
@@ -113,7 +122,7 @@ protected theorem complHom (h : s.MonoBy Q) (o : Polarity) :
   · cases s
     exacts [fun _ _ hB hn hq ↦ hn (h hB hq), fun _ _ hB hn hq ↦ hn (h hB hq)]
 
-/-- The inner polarity `i` takes a quantifier directed by `s` to one directed by `i * s`. -/
+/-- If `Q` is directed by `s`, then `innerNegHom i Q` is directed by `i * s`. -/
 protected theorem innerNegHom (h : s.MonoBy Q) (i : Polarity) :
     (i * s).MonoBy (innerNegHom i Q) := by
   cases i
@@ -122,8 +131,8 @@ protected theorem innerNegHom (h : s.MonoBy Q) (i : Polarity) :
     exacts [fun _ _ hB ↦ h (Set.compl_subset_compl.2 hB),
       fun _ _ hB ↦ h (Set.compl_subset_compl.2 hB)]
 
-/-- The outer polarity `o` and the inner polarity `i` take a quantifier directed by `s` to one
-directed by `o * i * s`, so that the dual of a monotone quantifier is monotone. -/
+/-- If `Q` is directed by `s`, then `negHom (o, i) Q` is directed by `o * i * s`. In particular
+the dual of a monotone quantifier is monotone. -/
 protected theorem negHom (h : s.MonoBy Q) (o i : Polarity) :
     (o * i * s).MonoBy (negHom (o, i) Q) := by
   rw [mul_assoc]
