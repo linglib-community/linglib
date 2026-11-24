@@ -10,7 +10,7 @@ public import Mathlib.Order.Nat
 public import Linglib.Core.Order.Flat.Finset
 public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
-public import Linglib.Morphology.Paradigm.Morphome
+public import Linglib.Morphology.Inflection.Paradigm.Morphome
 public import Linglib.Morphology.Word.Agree
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Feature.Case.Basic

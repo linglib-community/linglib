@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Image
 public import Linglib.Core.Data.Setoid.Basic
-public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Realization.Basic
 
 /-!
 # Paradigms: forms over cells

@@ -22,8 +22,9 @@ file is on disk; CI fails because the file is not in the git index.
 This check closes that gap.
 
 The same pass checks the layering of imports: nothing in `Linglib/Generalizations/` and no
-shared file of `Linglib/Syntax/` imports a framework, no framework of syntax imports another,
-and nothing in `Linglib/Data/` imports outside `Linglib/Core/` and `Linglib/Data/`.
+shared file of `Linglib/Syntax/` or `Linglib/Morphology/` imports a framework, no framework of
+syntax imports another and no framework of morphology imports another, and nothing in
+`Linglib/Data/` imports outside `Linglib/Core/` and `Linglib/Data/`.
 
 Dependencies: pure stdlib + `git`.
 """
@@ -39,10 +40,12 @@ IMPORT_RE = re.compile(
 
 
 # The frameworks of syntax, each a directory of `Linglib/Syntax/`, and the frameworks of
-# morphology that build on one of them.
+# morphology, each a directory of `Linglib/Morphology/`. A framework of morphology may build on
+# one of syntax.
 SYNTAX_FRAMEWORKS = ("Minimalist", "HPSG", "CCG", "DependencyGrammar", "ConstructionGrammar",
                      "Mereological")
-MORPHOLOGY_FRAMEWORKS = ("DistributedMorphology", "Nanosyntax")
+MORPHOLOGY_FRAMEWORKS = ("DistributedMorphology", "Nanosyntax", "ParadigmFunctionMorphology",
+                         "ConstructionMorphology")
 
 
 def framework_of(module: str) -> str | None:
@@ -58,8 +61,9 @@ def framework_of(module: str) -> str | None:
 def layering_error(importer: str, imported: str) -> str | None:
     """Why `importer` may not import `imported`, or None when it may.
 
-    A generalization is stated before any framework, a file of `Linglib/Syntax/` outside the
-    frameworks is shared by them, and one framework of syntax does not build on another.
+    A generalization is stated before any framework, a file of `Linglib/Syntax/` or
+    `Linglib/Morphology/` outside the frameworks is shared by them, and one framework of syntax
+    or of morphology does not build on another of its kind.
     `Linglib/Data/` holds observations and coding schemes that theory files import, so it
     imports no theory itself."""
     if importer.startswith("Linglib.Data.") and not imported.startswith(
@@ -73,8 +77,11 @@ def layering_error(importer: str, imported: str) -> str | None:
         return f"a generalization imports the framework {target}"
     if importer.startswith("Linglib.Syntax.") and source is None:
         return f"a shared file of Syntax imports the framework {target}"
-    if source in SYNTAX_FRAMEWORKS and target in SYNTAX_FRAMEWORKS and source != target:
-        return f"the framework {source} imports the framework {target}"
+    if importer.startswith("Linglib.Morphology.") and source is None:
+        return f"a shared file of Morphology imports the framework {target}"
+    for frameworks in (SYNTAX_FRAMEWORKS, MORPHOLOGY_FRAMEWORKS):
+        if source in frameworks and target in frameworks and source != target:
+            return f"the framework {source} imports the framework {target}"
     return None
 
 

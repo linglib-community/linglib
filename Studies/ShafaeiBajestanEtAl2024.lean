@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Paradigm.Analogy
+public import Linglib.Morphology.Inflection.Paradigm.Analogy
 public import Linglib.Processing.DiscriminativeLexicon.Training
 public import Linglib.Syntax.Feature.Number.Basic
 

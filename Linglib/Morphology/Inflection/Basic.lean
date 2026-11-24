@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Realization.Map
 public import Mathlib.Data.Set.Function
 
 /-!

@@ -15,26 +15,35 @@ public import Mathlib.Order.Setoid.Basic
 
 A realization assigns to an index `r` and a context `c` the finite set `realize r c` of forms that
 realize `r` in `c`: the exponent of a root at Vocabulary Insertion, the stem of a lexeme at a cell
-of its paradigm. Each index thus has a relation `Rel r` between contexts and forms, and the
-deviations from one form per cell are the ways this relation fails to be a bijection: the index is
-defective where the relation is not total, overabundant where it is not single-valued, and
-syncretic where it is not injective. The forms of an index across its contexts are its `exponents`;
-it is invariant when they are at most one and suppletive when they are at least two, which happens
-[within one cell or across two](##isSuppletive_iff_isOverabundant_or_isProperlySuppletive).
+of its paradigm. Each index has a relation `Rel r` between contexts and forms, and the deviations
+from one form per cell are the ways this relation fails to be a bijection: the index is defective
+where the relation is not total, overabundant where it is not single-valued, and syncretic where
+it is not injective. The forms of an index across its contexts are its exponents; it is invariant
+when they are at most one and suppletive when they are at least two. Read backwards, a realization
+analyses a form: the cells of a form are the contexts in which it realizes an index. Realizations
+are ordered by inclusion of the forms of each cell.
 
-Realizations with the same forms are ordered by inclusion of their cells, and `comap` pulls a
-realization back along maps of indices and contexts. A realization that equals a pullback of `T`
-has the forms of `T`, and one that is below a pullback has some of them, as a lexeme has some of
-the forms of its root; suppletion, overabundance and syncretism are monotone and so pass to `T`.
-A pullback [gives indices with the same image the same forms](##ker_le_ker_comap_realize), and
-every realization is [the pullback of its reduction](##comap_reduce), the quotient that merges
-exactly those indices.
+## Main definitions
 
-Read backwards, a realization analyses a form: [`cells r f`](##Morphology.Realization.cells) is
-the set of contexts in which `f` realizes `r`, a form is an exponent exactly when it fills a cell,
-and [syncretism is a form filling two](##Morphology.Realization.isSyncretic_iff_cells). A map of
-forms, as a transcription is, [pools the cells of the forms it
-identifies](##Morphology.Realization.mem_cells_map).
+* `Realization`: the forms that realize each index in each context.
+* `Realization.Rel`, `Realization.IsLicensed`: the relation of an index between contexts and
+  forms, and the contexts in which the index has a form.
+* `Realization.IsDefective`, `Realization.IsOverabundant`, `Realization.IsSyncretic`: the three
+  deviations from one form per cell.
+* `Realization.exponents`, `Realization.IsInvariant`, `Realization.IsSuppletive`: the forms of an
+  index, and whether they are at most one or at least two.
+* `Realization.cells`: the contexts in which a form realizes an index.
+* `Realization.ofOption`: the realization of a map that selects at most one form.
+
+## Main results
+
+* `Realization.isSuppletive_iff_isOverabundant_or_isProperlySuppletive`: an index is suppletive
+  within one cell or across two.
+* `Realization.isSyncretic_iff_cells`: an index is syncretic exactly when one of its forms fills
+  two cells.
+* `Realization.IsSuppletive.mono`, `Realization.IsOverabundant.mono`,
+  `Realization.IsSyncretic.mono`: suppletion, overabundance and syncretism pass to a realization
+  with more forms.
 
 ## Implementation notes
 
@@ -48,8 +57,6 @@ identifies](##Morphology.Realization.mem_cells_map).
   `exponents`.
 * Syncretism is two contexts sharing a form. Where no cell has two forms this is the kernel of
   `realize r`, an equivalence on contexts; with overabundant cells it need not be transitive.
-* A pullback translates contexts without consulting the index, so categorial information has to
-  sit in the context.
 
 ## References
 
@@ -118,11 +125,6 @@ def IsOverabundant (r : R) : Prop := ¬ RightUnique (S.Rel r)
 /-- `r` is syncretic when two of its contexts share a form, as the nominative and the accusative
 of a Latin neuter do. Of the transpose this says that two indices share a form in one context. -/
 def IsSyncretic (r : R) : Prop := ¬ LeftUnique (S.Rel r)
-
-/-- `r` is cross-categorial when it is licensed in two contexts whose categories `k` differ, as a
-category-free root is ([marantz-1997], [arad-2005]). -/
-def IsCrossCategorial (k : Ctx → K) (r : R) : Prop :=
-  ∃ c c', k c ≠ k c' ∧ S.IsLicensed r c ∧ S.IsLicensed r c'
 
 variable {S}
 
@@ -379,9 +381,6 @@ instance (r : R) : Decidable (S.IsSuppletive r) := decidable_of_iff _ isSuppleti
 instance (r : R) : Decidable (S.IsProperlySuppletive r) :=
   inferInstanceAs (Decidable (∃ _ _, _ ∧ _ ∧ _))
 
-instance [DecidableEq K] (k : Ctx → K) (r : R) : Decidable (S.IsCrossCategorial k r) :=
-  inferInstanceAs (Decidable (∃ _ _, _ ∧ _ ∧ _))
-
 instance [DecidableEq R] (r r' : R) : Decidable (S.IsHomophonous r r') :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -444,69 +443,6 @@ theorem IsTotal.mono (hs : S.IsTotal) : T.IsTotal := fun r c ↦ IsLicensed.mono
 
 end Mono
 
-/-! ### Transpose, image and composition -/
-
-variable (S)
-
-/-- The transpose of `S` realizes each context at each index as `S` realizes the index in the
-context, so that comparing one context across indices is comparing one index of the transpose
-across contexts. -/
-def transpose (S : Realization R Ctx F) : Realization Ctx R F := ⟨swap S.realize⟩
-
-@[simp] theorem transpose_realize (c : Ctx) (r : R) : S.transpose.realize c r = S.realize r c :=
-  rfl
-
-@[simp] theorem transpose_transpose : S.transpose.transpose = S := rfl
-
-/-- The cells of a form at a context of the transpose are the indices the form realizes there. -/
-@[simp] theorem mem_cells_transpose : r ∈ S.transpose.cells c f ↔ c ∈ S.cells r f := Iff.rfl
-
-/-- The contexts that the transpose does not distinguish are those that every index realizes
-alike. -/
-theorem ker_transpose_realize_iff :
-    Setoid.ker S.transpose.realize c c' ↔ ∀ r, Setoid.ker (S.realize r) c c' := by
-  simp [Setoid.ker_def, funext_iff]
-
-/-- The image of `S` under a map of forms. -/
-def map [DecidableEq G] (g : F → G) (S : Realization R Ctx F) : Realization R Ctx G :=
-  ⟨fun r c ↦ (S.realize r c).image g⟩
-
-section Map
-
-variable [DecidableEq G] (g : F → G)
-
-@[simp] theorem map_realize (r : R) (c : Ctx) : (S.map g).realize r c = (S.realize r c).image g :=
-  rfl
-
-@[simp] theorem exponents_map (r : R) : (S.map g).exponents r = g '' S.exponents r := by
-  ext; simp only [mem_exponents, map_realize, Finset.mem_image, Set.mem_image]; tauto
-
-/-- A form of the image fills the cells its preimages fill: forms that the map identifies, as a
-transcription that omits a distinction does, pool their cells. -/
-theorem mem_cells_map {y : G} : c ∈ (S.map g).cells r y ↔ ∃ f, c ∈ S.cells r f ∧ g f = y := by
-  simp [cells]
-
-variable {S}
-
-theorem IsInvariant.map (h : S.IsInvariant r) : (S.map g).IsInvariant r := by
-  simpa [IsInvariant] using Set.Subsingleton.image h g
-
-theorem IsSyncretic.map (h : S.IsSyncretic r) : (S.map g).IsSyncretic r :=
-  let ⟨_, _, hne, _, hf, hf'⟩ := isSyncretic_iff.1 h
-  isSyncretic_of_mem hne (Finset.mem_image_of_mem g hf) (Finset.mem_image_of_mem g hf')
-
-variable {g}
-
-theorem IsSuppletive.of_map (h : (S.map g).IsSuppletive r) : S.IsSuppletive r :=
-  Set.nontrivial_of_image g _ (by simpa [IsSuppletive] using h)
-
-@[simp] theorem isLicensed_map_iff : (S.map g).IsLicensed r c ↔ S.IsLicensed r c :=
-  Finset.image_nonempty
-
-@[simp] theorem isTotal_map_iff : (S.map g).IsTotal ↔ S.IsTotal := by simp [isTotal_iff]
-
-end Map
-
 /-! ### Realizations that select one form -/
 
 /-- The realization of a map that selects at most one form for each index and context, as an
@@ -538,135 +474,6 @@ theorem isSuppletive_ofOption_iff : (ofOption g).IsSuppletive r ↔
 
 end OfOption
 
-/-- The composite `S.comp T` realizes an index through the intermediate forms of `S`, each
-realized in the same context by `T`: the Kleisli composition of `Finset`-valued maps. A
-late-insertion grammar factors its realization this way, and so does a choice of stem followed by
-its inflection. -/
-def comp [DecidableEq G] (S : Realization R Ctx F) (T : Realization F Ctx G) :
-    Realization R Ctx G :=
-  ⟨fun r c ↦ (S.realize r c).biUnion fun f ↦ T.realize f c⟩
-
-section Comp
-
-variable [DecidableEq G] {S} {T : Realization F Ctx G} {g : G}
-
-@[simp] theorem mem_comp_realize :
-    g ∈ (S.comp T).realize r c ↔ ∃ f ∈ S.realize r c, g ∈ T.realize f c :=
-  Finset.mem_biUnion
-
-theorem mem_cells_comp : c ∈ (S.comp T).cells r g ↔ ∃ f ∈ S.realize r c, c ∈ T.cells f g :=
-  mem_comp_realize
-
-theorem IsTotal.comp (hS : S.IsTotal) (hT : T.IsTotal) : (S.comp T).IsTotal := fun r c ↦
-  let ⟨f, hf⟩ := hS r c
-  let ⟨g, hg⟩ := hT f c
-  ⟨g, mem_comp_realize.2 ⟨f, hf, hg⟩⟩
-
-theorem comp_assoc {H : Type*} [DecidableEq H] (S : Realization R Ctx F) (T : Realization F Ctx G)
-    (U : Realization G Ctx H) : (S.comp T).comp U = S.comp (T.comp U) := by
-  ext r c h; simp only [mem_comp_realize]; tauto
-
-end Comp
-
-/-! ### Pullback -/
-
-section Comap
-
-variable {R₁ C₁ R₂ C₂ R₃ C₃ : Type*} (i : R₁ → R₂) (k : C₁ → C₂) (T T' : Realization R₂ C₂ F)
-  {r r' : R₁} {c : C₁}
-
-/-- The pullback of `T` along maps of indices and of contexts realizes each index in each context
-as `T` realizes their images. A realization equal to a pullback of `T` merges indices and
-translates contexts while keeping the forms of each cell, and one below a pullback has, in each
-cell, some of the forms `T` gives its image. -/
-def comap : Realization R₁ C₁ F := ⟨fun r c ↦ T.realize (i r) (k c)⟩
-
-@[simp] theorem comap_realize (r : R₁) (c : C₁) :
-    (T.comap i k).realize r c = T.realize (i r) (k c) := rfl
-
-@[simp] theorem comap_id (S : Realization R Ctx F) : S.comap id id = S := rfl
-
-theorem comap_comap (j : R₂ → R₃) (l : C₂ → C₃) (U : Realization R₃ C₃ F) :
-    (U.comap j l).comap i k = U.comap (j ∘ i) (l ∘ k) := rfl
-
-variable {T T'} in
-@[gcongr] theorem comap_mono (h : T ≤ T') : T.comap i k ≤ T'.comap i k := fun _ _ ↦ h _ _
-
-@[simp] theorem isLicensed_comap_iff : (T.comap i k).IsLicensed r c ↔ T.IsLicensed (i r) (k c) :=
-  Iff.rfl
-
-/-- The cells of a form in a pullback are the contexts sent to its cells. -/
-@[simp] theorem cells_comap (r : R₁) (f : F) :
-    (T.comap i k).cells r f = k ⁻¹' T.cells (i r) f := rfl
-
-/-- The allomorphs of an index of a pullback are among those of its image. -/
-theorem exponents_comap_subset (r : R₁) : (T.comap i k).exponents r ⊆ T.exponents (i r) :=
-  fun _ ⟨c, hf⟩ ↦ ⟨k c, hf⟩
-
-variable {i k T}
-
-theorem IsSuppletive.of_comap (h : (T.comap i k).IsSuppletive r) : T.IsSuppletive (i r) :=
-  Set.Nontrivial.mono h (exponents_comap_subset i k T r)
-
-theorem IsInvariant.comap (h : T.IsInvariant (i r)) : (T.comap i k).IsInvariant r :=
-  Set.Subsingleton.anti h (exponents_comap_subset i k T r)
-
-theorem IsOverabundant.of_comap (h : (T.comap i k).IsOverabundant r) : T.IsOverabundant (i r) :=
-  mt (fun ht _ _ _ hf hf' ↦ ht hf hf') h
-
-/-- Syncretism passes from a pullback that keeps contexts apart. -/
-theorem IsSyncretic.of_comap (hk : Injective k) (h : (T.comap i k).IsSyncretic r) :
-    T.IsSyncretic (i r) :=
-  mt (fun ht _ _ _ hf hf' ↦ hk (ht hf hf')) h
-
-theorem IsUnivalent.comap (h : T.IsUnivalent) : (T.comap i k).IsUnivalent :=
-  fun r _ _ _ hf hf' ↦ h (i r) hf hf'
-
-theorem IsTotal.comap (h : T.IsTotal) : (T.comap i k).IsTotal := fun r c ↦ h (i r) (k c)
-
-variable (i k T)
-
-/-- A pullback gives indices with the same image the same forms in every context. -/
-theorem ker_le_ker_comap_realize : Setoid.ker i ≤ Setoid.ker (T.comap i k).realize :=
-  fun r r' (h : i r = i r') ↦ funext fun c ↦ by rw [comap_realize, comap_realize, h]
-
-end Comap
-
-/-! ### Reduction -/
-
-/-- The reduction of `S` merges the indices that have the same forms in every context. -/
-def reduce : Realization (Quotient (Setoid.ker S.realize)) Ctx F := ⟨Setoid.kerLift S.realize⟩
-
-@[simp] theorem reduce_realize_mk (r : R) : S.reduce.realize ⟦r⟧ = S.realize r := rfl
-
-/-- Every realization is the pullback of its reduction, which by `ker_le_ker_comap_realize` and
-`Setoid.ker_mk_eq` merges as many indices as a pullback can. -/
-@[simp] theorem comap_reduce : S.reduce.comap Quotient.mk'' id = S := rfl
-
-/-- Distinct indices of the reduction differ in their forms in some context. -/
-theorem reduce_realize_injective : Injective S.reduce.realize := Setoid.kerLift_injective _
-
 end Realization
-
-/-- An interpreted realization pairs the realization of indices by forms with a realization of the
-same indices, in the same contexts, by readings: the separation of the Vocabulary from the
-Encyclopedia in [marantz-1997]. -/
-structure Realization.Interpreted (R Ctx F M : Type*) extends Realization R Ctx F where
-  /-- `interp.realize r c` is the set of readings of `r` in `c`. -/
-  interp : Realization R Ctx M
-
-namespace Realization.Interpreted
-
-variable (S : Interpreted R Ctx F M)
-
-/-- `r` is intrinsic when it has one reading wherever it has any, as a lexeme with a listed meaning
-does. -/
-abbrev IsIntrinsic (r : R) : Prop := S.interp.IsInvariant r
-
-/-- `r` is allosemous when it has two distinct readings, the counterpart in meaning of
-suppletion. -/
-abbrev IsAllosemous (r : R) : Prop := S.interp.IsSuppletive r
-
-end Realization.Interpreted
 
 end Morphology

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.InformationTheory.Entropy.Empirical
-public import Linglib.Morphology.Paradigm.Complexity
+public import Linglib.Morphology.Inflection.Paradigm.Complexity
 public import Linglib.Languages.Greek.StandardModern.Declension
 public import Linglib.Languages.Burmeso.ObjectAgreement
 public import Linglib.Languages.Mazatec.Verbs

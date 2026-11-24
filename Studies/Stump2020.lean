@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Paradigm.Function
+public import Linglib.Morphology.ParadigmFunctionMorphology.Function
 public import Linglib.Morphology.Word.Features
 public import Mathlib.Tactic.DeriveFintype
 
@@ -9,8 +9,8 @@ public import Mathlib.Tactic.DeriveFintype
 
 This file formalizes the Old English paradigm with which Stump's survey of Paradigm
 Function Morphology illustrates the framework: the finite forms of the weak verb HIERAN
-'hear', run on the PFM engine of `Morphology.Paradigm.Function`. The paradigm's exploded
-segmentation is three affix blocks, the past formative, the theme vowel and agreement
+'hear', run on the PFM engine of `Morphology.ParadigmFunctionMorphology.Function`. The paradigm's
+exploded segmentation is three affix blocks, the past formative, the theme vowel and agreement
 (`blockI`, `blockII`, `blockIII`), with the Identity Function Default filling empty
 positions, so that the bare imperative is the default firing through every block and the
 past forms compose the past formative, the theme vowel and the agreement suffix

@@ -1,18 +1,20 @@
 module
 
 public import Linglib.Core.Order.OrdConnected
-public import Linglib.Morphology.Paradigm.Basic
+public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Order.Interval.Finset.Fin
 
 /-!
-# Paradigm contiguity: the *ABA generalization
+# Paradigm contiguity
 
-The *ABA generalization says graded paradigms are contiguous (`IsContiguous`), no form recurring
-across a distinct intervening form, for degree (positive < comparative < superlative, after
-Bobaljik), case (after Caha), and path roles (after Pantcheva). Of the five syncretism patterns of
-three cells, named as Bobaljik names the degree patterns, contiguity excludes exactly ABA.
+A paradigm over a chain of cells is contiguous (`IsContiguous`) when no form recurs across a
+distinct intervening form. Caha's Universal Case Contiguity says that case paradigms are
+contiguous along a sequence of cases, the first part of Bobaljik's Comparative-Superlative
+Generalization that the roots of the positive, the comparative and the superlative are, and
+Pantcheva says it of path roles. Of the five syncretism patterns of three cells, named as Bobaljik
+names the degree patterns, contiguity excludes exactly ABA.
 
 ## Main definitions
 
@@ -45,7 +47,7 @@ named as [bobaljik-2012] names the degree patterns over positive <
 comparative < superlative. A concrete paradigm has a pattern when its
 syncretism, the kernel `Setoid.ker`, is the pattern's. ABA is the pattern contiguity excludes; AAB
 is contiguous, and its exclusion for degree is a vocabulary-level matter
-(`Morphology/Exponence/Containment/SpanRule.lean`). -/
+(`Morphology/Exponence/SpanRule.lean`). -/
 
 namespace Paradigm
 

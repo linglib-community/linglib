@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Paradigm.Function
+public import Linglib.Morphology.ParadigmFunctionMorphology.Function
 public import Linglib.Morphology.Word.Features
 public import Mathlib.Tactic.DeriveFintype
 
@@ -8,11 +8,11 @@ public import Mathlib.Tactic.DeriveFintype
 # Bonami and Stump 2016: Paradigm Function Morphology
 
 This file formalizes the worked PFM1 fragments of Bonami and Stump's chapter on the engine of
-`Morphology/Paradigm/Function.lean`, with property sets as feature bundles: the paradigm function of
-the Icelandic verbs, the Sanskrit ninth-conjugation portmanteau, and the Sanskrit vocative rule of
-referral. The Icelandic rules meet Pāṇinian Determinism at every cell of (3), but under the
-chapter's narrowness (15) the weak-class theme vowel `-a` preempts the present subjunctive `-i`, so
-they derive *kalla* and *ætla* where Table 17.1 has *kalli* and *ætli*.
+`Morphology/ParadigmFunctionMorphology/Function.lean`, with property sets as feature bundles: the
+paradigm function of the Icelandic verbs, the Sanskrit ninth-conjugation portmanteau, and the
+Sanskrit vocative rule of referral. The Icelandic rules meet Pāṇinian Determinism at every cell of
+(3), but under the chapter's narrowness (15) the weak-class theme vowel `-a` preempts the present
+subjunctive `-i`, so they derive *kalla* and *ætla* where Table 17.1 has *kalli* and *ætli*.
 
 ## Main definitions
 

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.Greek.StandardModern.Case
-public import Linglib.Morphology.Paradigm.Basic
+public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Prod

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Morphology.Inflection
-public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Inflection.Basic
+public import Linglib.Morphology.Realization.Map
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Finset.Card
@@ -37,6 +37,9 @@ takes the lexeme's root.
 
 * `Linkage.IsHeteroclite.isSuppletive`, `Linkage.IsHeteroclite.not_isClassDetermined`: heteroclisis
   entails suppletion, the stems of a heteroclite lexeme being determined by no one class.
+* `Linkage.isInvariantAlong_iff_isInvariant_map`, `Linkage.isHeteroclite_iff_isSuppletive_map`:
+  invariance along a projection and heteroclisis are the invariance and the suppletion of the
+  image of the realization.
 * `Linkage.realized_eq_of_corr_eq`: equal correspondent sets force equal realizations.
 * `Linkage.ofFun_isCanonical_iff`: under an injective identification, the linkage of a stem
   choice is canonical exactly when each lexeme's stem is constant.
@@ -48,8 +51,8 @@ takes the lexeme's root.
 `IsTotal`, `IsUnivalent`, and the per-lexeme `IsInvariant`, `IsSuppletive`, and
 `IsOverabundant` (Thornton's cell-mates) are inherited from `Realization`; defectiveness and
 syncretism are its `IsDefective` of the stems and `IsSyncretic` of the form correspondents.
-Taking `S = M` and `ι = id` recovers a single type of property sets. The universal default rule (5) is not a
-listed rule of `ofRules` but the fallback of `RuleSet.realizeMinimalD`, the lexeme's
+Taking `S = M` and `ι = id` recovers a single type of property sets. The universal default rule
+(5) is not a listed rule of `ofRules` but the fallback of `RuleSet.realizeMinimalD`, the lexeme's
 root.
 
 ## References
@@ -225,6 +228,18 @@ theorem isInvariantAlong_id_iff : ℓ.IsInvariantAlong id l ↔ ℓ.IsInvariant 
 
 theorem isHeteroclite_id_iff : ℓ.IsHeteroclite id l ↔ ℓ.IsSuppletive l := by
   rw [IsHeteroclite, Set.image_id, Realization.IsSuppletive]
+
+/-- A lexeme is invariant along `p` exactly when it is invariant in the image of the realization
+under `p`. -/
+theorem isInvariantAlong_iff_isInvariant_map [DecidableEq X] :
+    ℓ.IsInvariantAlong p l ↔ (ℓ.toRealization.map p).IsInvariant l := by
+  rw [IsInvariantAlong, Realization.IsInvariant, Realization.exponents_map]
+
+/-- A lexeme is heteroclite along `cls` exactly when it is suppletive in the image of the
+realization under `cls`. -/
+theorem isHeteroclite_iff_isSuppletive_map [DecidableEq K] :
+    ℓ.IsHeteroclite cls l ↔ (ℓ.toRealization.map cls).IsSuppletive l := by
+  rw [IsHeteroclite, Realization.IsSuppletive, Realization.exponents_map]
 
 @[simp, push] theorem not_isInvariantAlong_iff :
     ¬ ℓ.IsInvariantAlong p l ↔ ℓ.IsHeteroclite p l :=

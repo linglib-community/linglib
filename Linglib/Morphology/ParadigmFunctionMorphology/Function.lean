@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Morphology.Exponence.Select
-public import Linglib.Morphology.Paradigm.Linkage
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Prod.Lex.Basic
@@ -38,8 +37,6 @@ least narrow rules of their blocks, and their behaviour as defaults is derived f
 * `PFM.Block.eval_portmanteau_of_applicable_eq_nil`,
   `PFM.Block.eval_portmanteau_of_applicable_ne_nil`: the Function Composition Default, and its
   override by a portmanteau rule.
-* `Morphology.Linkage.realized_eq_paradigmFunction`: under the default rule of paradigm linkage,
-  the realization of a content cell is the paradigm function.
 
 ## Implementation notes
 
@@ -271,17 +268,6 @@ theorem Block.eval_portmanteau_of_applicable_ne_nil
   rw [Block.eval_of_expo hr hf, Block.eval_of_expo hs hf]
 
 end Portmanteau
-
-/-- Under the default rule of paradigm linkage (27), with property-preserving property mapping,
-form cells realized by the block cascade at their stem's L-index, and the convention (11) that a
-basic stem's L-index is its lexeme, a content cell realizes as the paradigm function. -/
-theorem _root_.Morphology.Linkage.realized_eq_paradigmFunction [DecidableEq Z]
-    (ℓ : Linkage L Z P P) (lindex : Z → L) (stem : L × P → Z) (bs : List (Block L Z P))
-    (h : ℓ.IsPropertyPreserving id) (hstem : ∀ l σ, ℓ.realize l σ = {stem (l, σ)})
-    (hl : ∀ c, lindex (stem c) = c.1) (l : L) (σ : P) :
-    ℓ.realized (fun z τ ↦ evalBlocks bs (lindex z, τ) z) l σ
-      = {(paradigmFunction stem bs (l, σ), σ)} := by
-  simp [Linkage.realized, h l σ, hstem, hl, paradigmFunction]
 
 end Selection
 

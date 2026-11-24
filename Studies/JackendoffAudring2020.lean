@@ -14,8 +14,8 @@ public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Linglib.Phonology.Prosody.Syllable
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Core.Relation.ReflTransGen
-public import Linglib.Morphology.Paradigm.Linkage
-public import Linglib.Morphology.Paradigm.Morphome
+public import Linglib.Morphology.Inflection.Linkage
+public import Linglib.Morphology.Inflection.Paradigm.Morphome
 public import Linglib.Core.Order.Flat
 public import Studies.Audring2019
 public import Mathlib.Data.Fintype.Prod

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Data.Setoid.Basic
-public import Linglib.Morphology.Paradigm.Basic
+public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Mathlib.Order.Setoid.Partition
 public import Mathlib.Data.Set.Subsingleton
 

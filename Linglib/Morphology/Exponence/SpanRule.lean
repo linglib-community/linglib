@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Order.OrdConnected
 public import Linglib.Morphology.Exponence.Select
 public import Linglib.Morphology.Exponence.SubsetRule
-public import Linglib.Morphology.Paradigm.Basic
+public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Mathlib.Order.Interval.Finset.Fin
 public import Mathlib.Order.Minimal
 public import Mathlib.Order.SuccPred.Nat

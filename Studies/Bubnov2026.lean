@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.Nanosyntax.Lexicon
+public import Linglib.Morphology.Nanosyntax.SupersetRule
 public import Studies.DeganoAloni2025
 public import Studies.Dekier2021
 public import Studies.Haspelmath1997
