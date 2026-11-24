@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Regularity.Equitabilise
-public import Linglib.Syntax.Category.Numeral.Grammar
+public import Linglib.Syntax.Category.Numeral.Packing
 
 /-!
 # Ionin and Matushansky (2006): The Composition of Complex Cardinals

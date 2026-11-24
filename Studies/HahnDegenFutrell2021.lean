@@ -72,30 +72,32 @@ open Morphology (Word)
 
 /-- The unshifted order of example (2), *Lucy ate the extremely delicious bright green broccoli
 with a fork*, in which the object precedes the prepositional phrase. -/
-def longObjectFirst : Graph UD.DepRel (Fin 11) :=
+def longObjectFirst : DependencyGraph UD.DepRel (Fin 11) :=
   .ofArcs [(1, 0, .nsubj), (1, 7, .obj), (7, 2, .det), (4, 3, .advmod), (7, 4, .amod),
       (6, 5, .advmod), (7, 6, .amod), (10, 8, .case), (10, 9, .det), (1, 10, .obl)]
 
 /-- The shifted order of example (2), in which the prepositional phrase precedes the long
 object. -/
-def shifted : Graph UD.DepRel (Fin 11) :=
+def shifted : DependencyGraph UD.DepRel (Fin 11) :=
   .ofArcs [(1, 0, .nsubj), (1, 10, .obj), (10, 5, .det), (7, 6, .advmod), (10, 7, .amod),
       (9, 8, .advmod), (10, 9, .amod), (4, 2, .case), (4, 3, .det), (1, 4, .obl)]
 
-theorem longObjectFirst_adj_iff_reorderDependents : ∀ v w, longObjectFirst.Adj v w ↔
-    (shifted.reorderDependents 1 (.swap ⟨4, by decide⟩ ⟨10, by decide⟩)).Adj v w := by
+theorem longObjectFirst_adj_iff_reorderDependents : ∀ v w, longObjectFirst.unlabelled.Adj v w ↔
+    (shifted.unlabelled.reorderDependents 1 (.swap ⟨4, by decide⟩ ⟨10, by decide⟩)).Adj v w := by
   decide +kernel
 
 /-- Heavy NP shift cuts the verb's distance to the prepositional phrase from nine to three and
 raises its distance to the object from six to nine, so the total dependency length falls: by
 Behaghel's law at the verb, the phrases after it grow outward in the shifted order and not in the
 unshifted one ((2)). -/
-theorem heavyNPShift_shorter : shifted.totalLength < longObjectFirst.totalLength := by
-  have h := (Digraph.totalLength_lt_reorderDependents_iff (G := shifted.toDigraph) (v := 1)
+theorem heavyNPShift_shorter : shifted.unlabelled.totalLength <
+    longObjectFirst.unlabelled.totalLength := by
+  have h := (Digraph.totalLength_lt_reorderDependents_iff (G := shifted.unlabelled) (v := 1)
     (σ := .swap ⟨4, by decide⟩ ⟨10, by decide⟩) (by decide +kernel) (by decide +kernel)
     (by decide +kernel) (by decide +kernel)).2 (by decide +kernel)
-  have e : (shifted.reorderDependents 1 (.swap ⟨4, by decide⟩ ⟨10, by decide⟩)).totalLength =
-      longObjectFirst.totalLength := by decide +kernel
+  have e : (shifted.unlabelled.reorderDependents 1 (.swap ⟨4, by decide⟩ ⟨10,
+      by decide⟩)).totalLength =
+      longObjectFirst.unlabelled.totalLength := by decide +kernel
   exact e ▸ h
 
 /-! ### The information locality bound -/

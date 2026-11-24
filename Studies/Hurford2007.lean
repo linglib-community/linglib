@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Category.Numeral.Grammar
+public import Linglib.Syntax.Category.Numeral.Packing
 public import Linglib.Languages.English.Numerals
 public import Linglib.Languages.Welsh.Numerals
 

@@ -289,7 +289,7 @@ def fig1Stemma : Stemma UD.DepRel :=
         [(.case, leaf (.mk' "of" .ADP)), (.det, leaf (.mk' "the" .DET))] [])])]
 
 /-- The dependency graph of Figure 1. -/
-abbrev fig1 : Digraph (Fin 9) := fig1Stemma.toGraph.toDigraph
+abbrev fig1 : Digraph (Fin 9) := fig1Stemma.toGraph.unlabelled
 
 /-- The dependencies of Figure 1 between lexical words. -/
 abbrev fig1Lexical : Digraph (Fin 9) := lexical fig1Stemma.word fig1
@@ -320,7 +320,7 @@ theorem length_fig2a :
 /-! ### The four orders of a chain, (6) -/
 
 /-- The chain of (6): `A` heads `B`, which heads `C`. -/
-abbrev chain : Digraph (Fin 3) := Graph.toDigraph <| Stemma.toGraph (L := Unit) <|
+abbrev chain : Digraph (Fin 3) := DependencyGraph.unlabelled <| Stemma.toGraph (L := Unit) <|
   node (.mk' "A" .X) [] [((), node (.mk' "B" .X) [] [((), leaf (.mk' "C" .X))])]
 
 /-- (6c): the order `A C B`, initial over final; (6a) is the identity, (6b) its mirror image and

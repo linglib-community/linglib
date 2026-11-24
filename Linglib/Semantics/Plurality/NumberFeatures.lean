@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Feature.Number.Decomposition
+public import Linglib.Syntax.Feature.Number.Bivalent
 public import Linglib.Semantics.Plurality.Number
 
 /-!

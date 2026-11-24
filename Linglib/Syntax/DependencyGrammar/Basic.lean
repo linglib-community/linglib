@@ -16,8 +16,9 @@ the head of *dogs* and of *loudly*.
 
 We represent such a structure as a digraph on the positions of the sentence, with an arc from
 each head to each of its dependents. The positions of a sentence of `n` words are `Fin n`, in
-the order of the words. A *dependency graph* `Graph L V` is a digraph in which each arc also
-carries a relation of type `L`, such as the Universal Dependencies relations `UD.DepRel`.
+the order of the words. A *dependency graph* `DependencyGraph L V` also gives each arc a relation
+of type `L`, such as the Universal Dependencies relations `UD.DepRel`; its digraph is
+`DependencyGraph.unlabelled`.
 
 The terms of dependency grammar are those of digraphs. A word `v` *dominates* a word `w` if `w`
 is reachable from `v` (`G.Reachable v w`), and the *yield* of `v` is the set `G.reachSet v` of
@@ -31,9 +32,12 @@ graph read in another order of its words. Digraphs on positions, without relatio
 
 ## Main definitions
 
-* `Graph L V`: a digraph with a relation on each arc; `Graph.ofArcs` builds one from
-  (head, dependent, relation) triples, and `Graph.rel r` is its digraph of arcs bearing `r`.
-* `Graph.comap`, `Graph.linearize`: a dependency graph read in another order of its positions.
+* `DependencyGraph L V`: a relation on each arc; `DependencyGraph.ofArcs` builds one from
+  (head, dependent, relation) triples.
+* `DependencyGraph.unlabelled`: the arcs, without their relations; `DependencyGraph.rel r` is the
+  digraph of the arcs bearing `r`.
+* `DependencyGraph.comap`, `DependencyGraph.linearize`: a dependency graph read in another order of
+  its positions.
 
 ## Implementation notes
 
@@ -41,8 +45,8 @@ A structure carries no words: the words of a sentence are a function on its posi
 beside the graph by whatever reads them. It carries no root either. A tree is an arborescence
 `G.IsArborescence r`, whose root the digraph determines.
 
-`Graph L V` extends `Digraph V`, so the notions defined on digraphs apply to a labelled graph by
-dot notation. Its adjacency is that of having a label; `Graph.ofLabel` is the constructor.
+A dependency graph is its labelling, and its arcs are the pairs that bear a relation. The
+notions defined on digraphs apply to `g.unlabelled`, and depend on the relations only through it.
 Positions are 0-indexed; CoNLL-U is 1-indexed with `0` as an artificial root.
 
 ## References
@@ -54,41 +58,32 @@ Positions are 0-indexed; CoNLL-U is 1-indexed with `0` as an artificial root.
 
 @[expose] public section
 
-/-! ### Labelled graphs -/
+/-! ### Dependency graphs -/
 
 namespace DependencyGrammar
 
-/-- A dependency graph on the vertices `V` with relations in `L` is a digraph each of whose arcs
-carries a relation. -/
-structure Graph (L V : Type*) extends Digraph V where
+/-- A dependency graph on the vertices `V` with relations in `L` assigns a relation to each arc
+from a head to one of its dependents. -/
+@[ext] structure DependencyGraph (L V : Type*) where
   /-- The relation of the arc from head `v` to dependent `w`, if there is an arc. -/
   label : V → V → Option L
-  /-- The arcs are the pairs that carry a relation. -/
-  adj_iff_isSome (v w : V) : Adj v w ↔ (label v w).isSome
 
-namespace Graph
+namespace DependencyGraph
 
-variable {L V W : Type*} {n : ℕ} (g : Graph L V)
+variable {L V W : Type*} {n : ℕ} (g : DependencyGraph L V)
 
-/-- The dependency graph with the given partial labelling of pairs of vertices. -/
-def ofLabel (label : V → V → Option L) : Graph L V where
-  Adj v w := (label v w).isSome
-  label := label
-  adj_iff_isSome _ _ := Iff.rfl
+/-- The arcs of a dependency graph: the pairs of a head and a dependent that bear a relation. -/
+def unlabelled : Digraph V where
+  Adj v w := (g.label v w).isSome
 
-@[simp] theorem label_ofLabel (label : V → V → Option L) : (ofLabel label).label = label := rfl
+@[simp] theorem unlabelled_adj {v w : V} : g.unlabelled.Adj v w ↔ (g.label v w).isSome := Iff.rfl
 
-instance : DecidableRel g.Adj := fun _ _ ↦ decidable_of_iff _ (g.adj_iff_isSome _ _).symm
+instance : DecidableRel g.unlabelled.Adj :=
+  fun v w ↦ inferInstanceAs (Decidable ((g.label v w).isSome = true))
 
-theorem adj_iff_exists_label {g : Graph L V} {v w : V} : g.Adj v w ↔ ∃ r, g.label v w = some r :=
-  (g.adj_iff_isSome v w).trans Option.isSome_iff_exists
-
-theorem ext_label {g h : Graph L V} (e : g.label = h.label) : g = h := by
-  obtain ⟨⟨a⟩, l, hl⟩ := g
-  obtain ⟨⟨a'⟩, l', hl'⟩ := h
-  obtain rfl : l = l' := e
-  obtain rfl : a = a' := funext₂ fun v w ↦ propext ((hl v w).trans (hl' v w).symm)
-  rfl
+theorem adj_iff_exists_label {g : DependencyGraph L V} {v w : V} :
+    g.unlabelled.Adj v w ↔ ∃ r, g.label v w = some r :=
+  Option.isSome_iff_exists
 
 /-- The arcs of a graph that bear the relation `r`. -/
 def rel (r : L) : Digraph V where
@@ -97,7 +92,7 @@ def rel (r : L) : Digraph V where
 instance [DecidableEq L] (r : L) : DecidableRel (g.rel r).Adj :=
   fun v w ↦ inferInstanceAs (Decidable (g.label v w = some r))
 
-theorem rel_le (r : L) : g.rel r ≤ g.toDigraph := fun _ _ h ↦ adj_iff_exists_label.2 ⟨r, h⟩
+theorem rel_le (r : L) : g.rel r ≤ g.unlabelled := fun _ _ h ↦ adj_iff_exists_label.2 ⟨r, h⟩
 
 /-- The partial labelling given by a list of (head, dependent, relation) triples, the first
 triple for a pair deciding its relation. -/
@@ -115,33 +110,31 @@ theorem arcsLabel_isSome_iff [DecidableEq V] {arcs : List (V × V × L)} {v w : 
 
 /-- The dependency graph with the listed arcs, each a (head, dependent, relation) triple. Later
 triples for the same pair are ignored. -/
-def ofArcs [DecidableEq V] (arcs : List (V × V × L)) : Graph L V := ofLabel (arcsLabel arcs)
+def ofArcs [DecidableEq V] (arcs : List (V × V × L)) : DependencyGraph L V := ⟨arcsLabel arcs⟩
 
-@[simp] theorem ofArcs_adj [DecidableEq V] {arcs : List (V × V × L)} {v w : V} :
-    (ofArcs arcs).Adj v w ↔ ∃ r, (v, w, r) ∈ arcs := arcsLabel_isSome_iff
+@[simp] theorem unlabelled_ofArcs_adj [DecidableEq V] {arcs : List (V × V × L)} {v w : V} :
+    (ofArcs arcs).unlabelled.Adj v w ↔ ∃ r, (v, w, r) ∈ arcs := arcsLabel_isSome_iff
 
 /-- The pullback of a dependency graph along a function of vertices, relations following
 arcs. -/
-def comap (f : W → V) (g : Graph L V) : Graph L W where
-  toDigraph := g.toDigraph.comap f
+def comap (f : W → V) (g : DependencyGraph L V) : DependencyGraph L W where
   label v w := g.label (f v) (f w)
-  adj_iff_isSome v w := g.adj_iff_isSome (f v) (f w)
 
 @[simp] theorem label_comap (f : W → V) (v w : W) :
     (g.comap f).label v w = g.label (f v) (f w) := rfl
 
-@[simp] theorem toDigraph_comap (f : W → V) : (g.comap f).toDigraph = g.toDigraph.comap f := rfl
+@[simp] theorem unlabelled_comap (f : W → V) : (g.comap f).unlabelled = g.unlabelled.comap f := rfl
 
 /-- The dependency graph read in the order `order`, as `Digraph.linearize`. -/
-def linearize (g : Graph L (Fin n)) (order : List (Fin n)) (h : order.Perm (List.finRange n)) :
-    Graph L (Fin n) :=
+def linearize (g : DependencyGraph L (Fin n)) (order : List (Fin n))
+    (h : order.Perm (List.finRange n)) : DependencyGraph L (Fin n) :=
   g.comap (Digraph.orderPerm order h)
 
-@[simp] theorem toDigraph_linearize (g : Graph L (Fin n)) (order : List (Fin n))
+@[simp] theorem unlabelled_linearize (g : DependencyGraph L (Fin n)) (order : List (Fin n))
     (h : order.Perm (List.finRange n)) :
-    (g.linearize order h).toDigraph = g.toDigraph.linearize order h :=
-  g.toDigraph_comap _
+    (g.linearize order h).unlabelled = g.unlabelled.linearize order h :=
+  g.unlabelled_comap _
 
-end Graph
+end DependencyGraph
 
 end DependencyGrammar

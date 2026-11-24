@@ -10,7 +10,7 @@ public import Linglib.Languages.English.Pronouns
 # Sag, Wasow & Bender (2003): Syntactic Theory: A Formal Introduction
 
 This file formalizes the binding theory of Chapter 7 and the long-distance dependencies of
-Chapter 15, in the RSRL model theory of `Syntax/HPSG/RSRL`.
+Chapter 15, in the RSRL model theory of `Logic/RSRL`.
 
 A reflexive must be outranked by a coindexed argument on some argument-structure list, and a
 nonreflexive pronoun must not be. We model a sentence by two words with their argument

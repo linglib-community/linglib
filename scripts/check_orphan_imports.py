@@ -22,7 +22,8 @@ file is on disk; CI fails because the file is not in the git index.
 This check closes that gap.
 
 The same pass checks the layering of imports: nothing in `Linglib/Generalizations/` and no
-shared file of `Linglib/Syntax/` imports a framework, and no framework of syntax imports another.
+shared file of `Linglib/Syntax/` imports a framework, no framework of syntax imports another,
+and nothing in `Linglib/Data/` imports outside `Linglib/Core/` and `Linglib/Data/`.
 
 Dependencies: pure stdlib + `git`.
 """
@@ -58,7 +59,12 @@ def layering_error(importer: str, imported: str) -> str | None:
     """Why `importer` may not import `imported`, or None when it may.
 
     A generalization is stated before any framework, a file of `Linglib/Syntax/` outside the
-    frameworks is shared by them, and one framework of syntax does not build on another."""
+    frameworks is shared by them, and one framework of syntax does not build on another.
+    `Linglib/Data/` holds observations and coding schemes that theory files import, so it
+    imports no theory itself."""
+    if importer.startswith("Linglib.Data.") and not imported.startswith(
+            ("Linglib.Data.", "Linglib.Core.")):
+        return "a file of Data imports outside Core and Data"
     target = framework_of(imported)
     if target is None:
         return None

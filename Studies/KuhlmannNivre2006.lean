@@ -54,28 +54,28 @@ namespace KuhlmannNivre2006
 
 open DependencyGrammar Relation
 
-variable {L : Type*} {n : ℕ} (g : Graph L (Fin n))
+variable {L : Type*} {n : ℕ} (g : DependencyGraph L (Fin n))
 
 /-! ### Edge degree (Definition 9) -/
 
 /-- The roots of the connected components of the subgraph induced by the span of the arc from
 `h` to `d`: the positions of the span with no head inside it. -/
 def componentRoots (h d : Fin n) : Finset (Fin n) :=
-  (Finset.uIcc h d).filter fun v ↦ ∀ u, g.Adj u v → u ∉ Finset.uIcc h d
+  (Finset.uIcc h d).filter fun v ↦ ∀ u, g.unlabelled.Adj u v → u ∉ Finset.uIcc h d
 
 /-- The degree of the arc from `h` to `d`: the number of components of the subgraph induced by
 its span whose root `h` does not dominate. -/
 def edgeDegreeAt (h d : Fin n) : ℕ :=
-  ((componentRoots g h d).filter fun v ↦ ¬ g.Reachable h v).card
+  ((componentRoots g h d).filter fun v ↦ ¬ g.unlabelled.Reachable h v).card
 
 /-- The edge degree of a graph: the maximum degree of its arcs. -/
 def edgeDegree : ℕ :=
-  g.arcs.sup fun p ↦ edgeDegreeAt g p.1 p.2
+  g.unlabelled.arcs.sup fun p ↦ edgeDegreeAt g p.1 p.2
 
 variable {g}
 
-theorem edgeDegreeAt_eq_zero_iff {r : Fin n} (hT : g.IsArborescence r) {h d : Fin n} :
-    edgeDegreeAt g h d = 0 ↔ ∀ v ∈ Set.uIcc h d, g.Reachable h v := by
+theorem edgeDegreeAt_eq_zero_iff {r : Fin n} (hT : g.unlabelled.IsArborescence r) {h d : Fin n} :
+    edgeDegreeAt g h d = 0 ↔ ∀ v ∈ Set.uIcc h d, g.unlabelled.Reachable h v := by
   rw [edgeDegreeAt, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
   simp only [componentRoots, Finset.mem_filter, not_not, and_imp]
   simp only [← Finset.mem_coe, Finset.coe_uIcc]
@@ -89,12 +89,11 @@ theorem edgeDegreeAt_eq_zero_iff {r : Fin n} (hT : g.IsArborescence r) {h d : Fi
       exact (H (not_not.mp hq) fun u hu ↦ hT.leftUnique_adj hu hpq ▸ hp).trans hqv
   · exact fun H v hv _ ↦ H v hv
 
-theorem edgeDegree_eq_zero_iff {r : Fin n} (hT : g.IsArborescence r) : edgeDegree g = 0 ↔
-    g.IsProjective := by
-  rw [Digraph.isProjective_iff_isArcProjective, edgeDegree, ← Nat.bot_eq_zero,
+theorem edgeDegree_eq_zero_iff {r : Fin n} (hT : g.unlabelled.IsArborescence r) : edgeDegree g = 0 ↔
+    g.unlabelled.IsProjective := by
+  rw [Digraph.isProjective_iff_forall_adj, edgeDegree, ← Nat.bot_eq_zero,
     Finset.sup_eq_bot_iff]
   simp only [Digraph.mem_arcs, Nat.bot_eq_zero, Prod.forall, edgeDegreeAt_eq_zero_iff hT]
-  exact Iff.rfl
 
 /-! ### Figure 1: a dependency forest
 
@@ -103,18 +102,20 @@ punctuation mark without a head, so it is a forest and not a tree, and the yield
 *proto*. -/
 
 /-- Figure 1: nodes 2 and 8 have no head. -/
-def fig1 : Graph Unit (Fin 8) :=
+def fig1 : DependencyGraph Unit (Fin 8) :=
   .ofArcs
     [(1, 0, ()), (0, 2, ()), (0, 3, ()), (3, 6, ()), (6, 4, ()), (6, 5, ())]
 
 /-- Figure 1 is a forest whose roots are nodes 2 and 8, and so not a tree. -/
 theorem fig1_isBranching_not_isArborescence :
-    fig1.IsBranching ∧ ¬ fig1.IsArborescence 1 ∧ ∀ w, (∀ v, ¬ fig1.Adj v w) ↔ w = 1 ∨ w = 7 := by
+    fig1.unlabelled.IsBranching ∧ ¬ fig1.unlabelled.IsArborescence 1 ∧ ∀ w, (∀ v,
+        ¬ fig1.unlabelled.Adj v w) ↔ w = 1 ∨ w = 7 := by
   decide
 
 -- Figure 1
 theorem fig1_not_isProjective :
-    (fig1.reachSet 0).toFinset = {0, 2, 3, 4, 5, 6} ∧ ¬ fig1.IsProjective := by
+    (fig1.unlabelled.reachSet 0).toFinset = {0, 2, 3, 4, 5, 6} ∧
+        ¬ fig1.unlabelled.IsProjective := by
   decide
 
 /-! ### Figure 2: planarity
@@ -124,49 +125,52 @@ Figure 2a is planar but not projective, its root inside the gap where the substr
 its two named edges crossing. -/
 
 /-- Figure 2a: the yield of node 1, `{1, 3}`, skips the root. -/
-def fig2a : Graph Unit (Fin 3) := .ofArcs [(1, 0, ()), (0, 2, ())]
+def fig2a : DependencyGraph Unit (Fin 3) := .ofArcs [(1, 0, ()), (0, 2, ())]
 
 /-- Figure 2b: the edges (1, 4) and (3, 5) cross. -/
-def fig2b : Graph Unit (Fin 5) :=
+def fig2b : DependencyGraph Unit (Fin 5) :=
   .ofArcs [(1, 0, ()), (0, 3, ()), (3, 2, ()), (2, 4, ())]
 
-theorem fig2a_isArborescence : fig2a.IsArborescence 1 := by decide
-theorem fig2b_isArborescence : fig2b.IsArborescence 1 := by decide
+theorem fig2a_isArborescence : fig2a.unlabelled.IsArborescence 1 := by decide
+theorem fig2b_isArborescence : fig2b.unlabelled.IsArborescence 1 := by decide
 
 theorem fig2a_planar_not_projective :
-    fig2a.IsPlanar ∧ ¬ fig2a.IsProjective ∧ fig2a.IsArborescence 1 := by
+    fig2a.unlabelled.IsPlanar ∧ ¬ fig2a.unlabelled.IsProjective ∧
+        fig2a.unlabelled.IsArborescence 1 := by
   decide
 
 -- Figure 2b, (1, 4), (3, 5)
 theorem fig2b_crossing :
-    SymmGen fig2b.Adj 0 3 ∧ SymmGen fig2b.Adj 2 4 ∧ Alternate (0 : Fin 5) 3 2 4 ∧
-      fig2b.crossings = 1 := by
+    SymmGen fig2b.unlabelled.Adj 0 3 ∧ SymmGen fig2b.unlabelled.Adj 2 4 ∧
+        Alternate (0 : Fin 5) 3 2 4 ∧
+      fig2b.unlabelled.crossings = 1 := by
   decide +kernel
 
 /-! ### Figure 3: gap degree, edge degree, and well-nestedness -/
 
 /-- Figure 3a: the projection of node 2 is the interval `(2, 3, 4)`. -/
-def fig3a : Graph Unit (Fin 6) :=
+def fig3a : DependencyGraph Unit (Fin 6) :=
   .ofArcs
     [(0, 1, ()), (1, 2, ()), (2, 3, ()), (0, 4, ()), (4, 5, ())]
 
 /-- Figure 3b: the projection of node 2 is `(2, 3, 6)`, with the gap `(3, 6)`. -/
-def fig3b : Graph Unit (Fin 6) :=
+def fig3b : DependencyGraph Unit (Fin 6) :=
   .ofArcs
     [(0, 1, ()), (1, 2, ()), (2, 5, ()), (0, 3, ()), (3, 4, ())]
 
 /-- Figure 3c: the projection of node 2 is `(2, 4, 6)`, with the gaps `(2, 4)` and `(4, 6)`. -/
-def fig3c : Graph Unit (Fin 6) :=
+def fig3c : DependencyGraph Unit (Fin 6) :=
   .ofArcs
     [(0, 1, ()), (1, 3, ()), (3, 5, ()), (0, 2, ()), (2, 4, ())]
 
 theorem figure3_isArborescence :
-    fig3a.IsArborescence 0 ∧ fig3b.IsArborescence 0 ∧ fig3c.IsArborescence 0 := by decide
+    fig3a.unlabelled.IsArborescence 0 ∧ fig3b.unlabelled.IsArborescence 0 ∧
+        fig3c.unlabelled.IsArborescence 0 := by decide
 
 theorem figure3_gapDegree :
-    (fig3a.gapDegreeAt 1 = 0 ∧ fig3a.gapDegree = 0) ∧
-      (fig3b.gapDegreeAt 1 = 1 ∧ fig3b.gapDegree = 1) ∧
-        (fig3c.gapDegreeAt 1 = 2 ∧ fig3c.gapDegree = 2) := by
+    (fig3a.unlabelled.gapDegreeAt 1 = 0 ∧ fig3a.unlabelled.gapDegree = 0) ∧
+      (fig3b.unlabelled.gapDegreeAt 1 = 1 ∧ fig3b.unlabelled.gapDegree = 1) ∧
+        (fig3c.unlabelled.gapDegreeAt 1 = 2 ∧ fig3c.unlabelled.gapDegree = 2) := by
   decide +kernel
 
 -- (1, 5), Figure 3a, (3, 6), Figure 3b, (2, 4), (3, 5), (4, 6), Figure 3c
@@ -179,34 +183,38 @@ theorem figure3_edgeDegree :
 
 -- Figures 3a and 3b, Figure 3c
 theorem figure3_wellNested :
-    fig3a.IsWellNested ∧ fig3b.IsWellNested ∧
-      (fig3c.Interleave 1 2 ∧ ¬ fig3c.Reachable 1 2 ∧ ¬ fig3c.Reachable 2 1) := by
+    fig3a.unlabelled.IsWellNested ∧ fig3b.unlabelled.IsWellNested ∧
+      (fig3c.unlabelled.Interleave 1 2 ∧ ¬ fig3c.unlabelled.Reachable 1 2 ∧
+          ¬ fig3c.unlabelled.Reachable 2 1) := by
   decide +kernel
 
 -- Figure 2a, Figure 3b
 theorem hierarchy_strict :
-    (fig2a.IsPlanar ∧ ¬ fig2a.IsProjective) ∧ (fig3b.IsWellNested ∧ ¬ fig3b.IsPlanar) := by
+    (fig2a.unlabelled.IsPlanar ∧ ¬ fig2a.unlabelled.IsProjective) ∧
+        (fig3b.unlabelled.IsWellNested ∧ ¬ fig3b.unlabelled.IsPlanar) := by
   decide +kernel
 
 /-! ### Figure 4: gap degree against edge degree -/
 
 /-- Figure 4a: the subtree at node 2 has two gaps, each of its edges spanning one component
 node 2 does not dominate. -/
-def fig4a : Graph Unit (Fin 6) :=
+def fig4a : DependencyGraph Unit (Fin 6) :=
   .ofArcs
     [(0, 1, ()), (0, 2, ()), (2, 4, ()), (1, 3, ()), (3, 5, ())]
 
 /-- Figure 4b: the subtree at node 2 has one gap, containing two components node 2 does not
 dominate. -/
-def fig4b : Graph Unit (Fin 5) :=
+def fig4b : DependencyGraph Unit (Fin 5) :=
   .ofArcs [(0, 1, ()), (0, 2, ()), (0, 3, ()), (1, 4, ())]
 
-theorem figure4_isArborescence : fig4a.IsArborescence 0 ∧ fig4b.IsArborescence 0 := by decide
+theorem figure4_isArborescence : fig4a.unlabelled.IsArborescence 0 ∧
+    fig4b.unlabelled.IsArborescence 0 := by decide
 
 -- Figure 4
 theorem figure4_degrees :
-    (fig4a.gapDegreeAt 1 = 2 ∧ fig4a.gapDegree = 2 ∧ edgeDegree fig4a = 1) ∧
-      (fig4b.gapDegreeAt 1 = 1 ∧ fig4b.gapDegree = 1 ∧ edgeDegreeAt fig4b 1 4 = 2 ∧
+    (fig4a.unlabelled.gapDegreeAt 1 = 2 ∧ fig4a.unlabelled.gapDegree = 2 ∧ edgeDegree fig4a = 1) ∧
+      (fig4b.unlabelled.gapDegreeAt 1 = 1 ∧ fig4b.unlabelled.gapDegree = 1 ∧
+          edgeDegreeAt fig4b 1 4 = 2 ∧
         edgeDegree fig4b = 2) := by
   decide +kernel
 
@@ -218,21 +226,21 @@ over all structures, through the degree-zero theorems and the hierarchy. -/
 open Data.Statistics (Decimal)
 
 /-- What a binary constraint says of a graph. -/
-def Constraint.Holds : Constraint → Graph L (Fin n) → Prop
-  | .planar, g => g.IsPlanar
-  | .wellNested, g => g.IsWellNested
+def Constraint.Holds : Constraint → DependencyGraph L (Fin n) → Prop
+  | .planar, g => g.unlabelled.IsPlanar
+  | .wellNested, g => g.unlabelled.IsWellNested
 
-instance : ∀ (c : Constraint) (g : Graph L (Fin n)), Decidable (c.Holds g)
-  | .planar, g => inferInstanceAs (Decidable g.IsPlanar)
-  | .wellNested, g => inferInstanceAs (Decidable g.IsWellNested)
+instance : ∀ (c : Constraint) (g : DependencyGraph L (Fin n)), Decidable (c.Holds g)
+  | .planar, g => inferInstanceAs (Decidable g.unlabelled.IsPlanar)
+  | .wellNested, g => inferInstanceAs (Decidable g.unlabelled.IsWellNested)
 
 /-- The degree a graded measure gives a graph. -/
-def Measure.degree : Measure → Graph L (Fin n) → ℕ
-  | .gap, g => g.gapDegree
+def Measure.degree : Measure → DependencyGraph L (Fin n) → ℕ
+  | .gap, g => g.unlabelled.gapDegree
   | .edge, g => edgeDegree g
 
-theorem Measure.degree_eq_zero_iff {r : Fin n} (hT : g.IsArborescence r) {m : Measure} :
-    m.degree g = 0 ↔ g.IsProjective := by
+theorem Measure.degree_eq_zero_iff {r : Fin n} (hT : g.unlabelled.IsArborescence r) {m : Measure} :
+    m.degree g = 0 ↔ g.unlabelled.IsProjective := by
   cases m
   exacts [Digraph.isProjective_iff_gapDegree_eq_zero.symm, edgeDegree_eq_zero_iff hT]
 
@@ -245,12 +253,12 @@ def atMost (m : Measure) (t : Treebank) (k : ℕ) : ℕ := ∑ d ∈ Finset.rang
 theorem atMost_mono (m : Measure) (t : Treebank) : Monotone (atMost m t) := fun _ _ h ↦
   Finset.sum_le_sum_of_subset (Finset.range_subset_range.2 (Nat.succ_le_succ h))
 
-variable {T : Multiset (Σ n, Graph L (Fin n))} {t : Treebank}
+variable {T : Multiset (Σ n, DependencyGraph L (Fin n))} {t : Treebank}
 
 /-- A treebank has the counts Table 1 prints for `t` over all of its structures. -/
-structure HasCounts (T : Multiset (Σ n, Graph L (Fin n))) (t : Treebank) : Prop where
+structure HasCounts (T : Multiset (Σ n, DependencyGraph L (Fin n))) (t : Treebank) : Prop where
   card_eq : Multiset.card T = (structures t).all
-  countP_isProjective : T.countP (·.2.IsProjective) = (structures t).projective
+  countP_isProjective : T.countP (·.2.unlabelled.IsProjective) = (structures t).projective
   countP_holds (c : Constraint) : T.countP (c.Holds ·.2) = (coverage c t).all
 
 private theorem countP_replicate {α : Type*} (p : α → Prop) [DecidablePred p] (a : α) (k : ℕ) :
@@ -261,12 +269,16 @@ private theorem countP_replicate {α : Type*} (p : α → Prop) [DecidablePred p
 /-- Copies of the trees of Figures 2a, 3a, 3b and 3c make a treebank with the counts of Table 1,
 which is thus not vacuous. -/
 theorem exists_hasCounts (t : Treebank) :
-    ∃ T : Multiset (Σ n, Graph Unit (Fin n)),
-      (∀ g ∈ T, ∃ r, g.2.IsArborescence r) ∧ HasCounts T t := by
-  have h3a : fig3a.IsProjective ∧ fig3a.IsPlanar ∧ fig3a.IsWellNested := by decide +kernel
-  have h2a : ¬ fig2a.IsProjective ∧ fig2a.IsPlanar ∧ fig2a.IsWellNested := by decide +kernel
-  have h3b : ¬ fig3b.IsProjective ∧ ¬ fig3b.IsPlanar ∧ fig3b.IsWellNested := by decide +kernel
-  have h3c : ¬ fig3c.IsProjective ∧ ¬ fig3c.IsPlanar ∧ ¬ fig3c.IsWellNested := by
+    ∃ T : Multiset (Σ n, DependencyGraph Unit (Fin n)),
+      (∀ g ∈ T, ∃ r, g.2.unlabelled.IsArborescence r) ∧ HasCounts T t := by
+  have h3a : fig3a.unlabelled.IsProjective ∧ fig3a.unlabelled.IsPlanar ∧
+      fig3a.unlabelled.IsWellNested := by decide +kernel
+  have h2a : ¬ fig2a.unlabelled.IsProjective ∧ fig2a.unlabelled.IsPlanar ∧
+      fig2a.unlabelled.IsWellNested := by decide +kernel
+  have h3b : ¬ fig3b.unlabelled.IsProjective ∧ ¬ fig3b.unlabelled.IsPlanar ∧
+      fig3b.unlabelled.IsWellNested := by decide +kernel
+  have h3c : ¬ fig3c.unlabelled.IsProjective ∧ ¬ fig3c.unlabelled.IsPlanar ∧
+      ¬ fig3c.unlabelled.IsWellNested := by
     decide +kernel
   refine ⟨.replicate (structures t).projective ⟨6, fig3a⟩ +
     .replicate ((coverage .planar t).all - (structures t).projective) ⟨3, fig2a⟩ +
@@ -287,7 +299,7 @@ theorem exists_hasCounts (t : Treebank) :
 /-- Over a treebank of trees with the counts of Table 1, the structures at degree zero on either
 measure are as many as the table prints. -/
 theorem HasCounts.countP_degree_eq_zero (h : HasCounts T t)
-    (hT : ∀ g ∈ T, (∃ r, g.2.IsArborescence r))
+    (hT : ∀ g ∈ T, (∃ r, g.2.unlabelled.IsArborescence r))
     (m : Measure) : T.countP (m.degree ·.2 = 0) = count m t 0 := by
   rw
     [Multiset.countP_congr rfl fun g hg ↦ propext
@@ -299,19 +311,20 @@ theorem HasCounts.countP_degree_eq_zero (h : HasCounts T t)
 
 /-- Over a treebank of forests with the counts of Table 1, the non-projective structures, and
 those of them meeting each binary constraint, are as many as the table prints. -/
-theorem HasCounts.countP_nonProjective (h : HasCounts T t) (hF : ∀ g ∈ T, g.2.IsBranching) :
-    T.countP (¬ ·.2.IsProjective) = (structures t).nonProjective ∧
-      ∀ c : Constraint, T.countP (fun g ↦ c.Holds g.2 ∧ ¬ g.2.IsProjective) =
+theorem HasCounts.countP_nonProjective (h : HasCounts T t) (hF : ∀ g ∈ T,
+    g.2.unlabelled.IsBranching) :
+    T.countP (¬ ·.2.unlabelled.IsProjective) = (structures t).nonProjective ∧
+      ∀ c : Constraint, T.countP (fun g ↦ c.Holds g.2 ∧ ¬ g.2.unlabelled.IsProjective) =
         (coverage c t).nonProjective := by
   have hs : ∀ t, (structures t).nonProjective + (structures t).projective = (structures t).all ∧
       ∀ c, (coverage c t).nonProjective + (structures t).projective = (coverage c t).all := by
     decide
   refine ⟨?_, fun c ↦ ?_⟩
-  · have hp := Multiset.card_eq_countP_add_countP (·.2.IsProjective) T
+  · have hp := Multiset.card_eq_countP_add_countP (·.2.unlabelled.IsProjective) T
     rw [h.card_eq, h.countP_isProjective] at hp
     have := (hs t).1
     omega
-  · have hc := Multiset.countP_eq_countP_filter_add T (c.Holds ·.2) (·.2.IsProjective)
+  · have hc := Multiset.countP_eq_countP_filter_add T (c.Holds ·.2) (·.2.unlabelled.IsProjective)
     rw [Multiset.countP_filter, Multiset.countP_filter, Multiset.countP_congr rfl fun g hg ↦
       propext (and_iff_right_of_imp fun hP ↦ ?_), h.countP_holds, h.countP_isProjective] at hc
     · have := (hs t).2 c

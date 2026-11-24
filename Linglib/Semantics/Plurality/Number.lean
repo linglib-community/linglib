@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Order.Minimal
 public import Linglib.Semantics.Mereology.Atomic
-public import Linglib.Syntax.Feature.Number.Decomposition
+public import Linglib.Syntax.Feature.Number.Bivalent
 
 /-!
 # Number features as region operators

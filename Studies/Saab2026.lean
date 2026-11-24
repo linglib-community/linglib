@@ -93,7 +93,7 @@ def Structure.site (s : Structure) : Minimalist.NullSite Minimalist.Ellipsis.nom
   else .elided Minimalist.Ellipsis.nPEllipsis ⟨.head .N, by decide⟩
 
 /-- The depth of the gap, read from the Minimalist model of null sites. -/
-def Structure.depth (s : Structure) : Anaphor.Depth := Anaphor.DepthModel.depth s.site
+def Structure.depth (s : Structure) : Anaphor.Depth := s.site.depth
 
 theorem Structure.hasInternalStructure_depth_iff (s : Structure) :
     s.depth.HasInternalStructure ↔ s.site.Silences (.head .N) := by

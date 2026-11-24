@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.HPSG.Binding.Basic
-public import Linglib.Syntax.HPSG.RSRL.Subinterpretation
+public import Linglib.Logic.RSRL.Subinterpretation
 
 /-!
 # The binding principles as RSRL descriptions
