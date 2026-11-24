@@ -740,8 +740,8 @@ theorem amalgamation_at_pronounced {lo hi rest : List Cat} {s b : Cat}
     List.filter_eq_nil_iff.mpr fun y hy ↦ by simpa using fun h : y = s ↦ hs (by simp [← h, hy])
   simp [HeadChain.pronounced, HeadChain.ofHeads, ← h, List.filter_append, h₁, h₂]
 
-private theorem forall_isLeftComb_amalgamate {below : List (Spine.Word H)}
-    {pending : Option (FreeMagma H)} {hs : List (Terminal H)} {out : List (Spine.Word H)}
+private theorem forall_isLeftComb_amalgamate {below : List (MorphosyntacticWord H)}
+    {pending : Option (FreeMagma H)} {hs : List (Terminal H)} {out : List (MorphosyntacticWord H)}
     (h : amalgamate below pending hs = some out) :
     (∀ a ∈ out, IsLeftComb a.bracketing) ↔
       (∀ b ∈ below, IsLeftComb b.bracketing) ∧ (∀ p ∈ pending, IsLeftComb p) ∧
@@ -761,7 +761,7 @@ private theorem forall_isLeftComb_amalgamate {below : List (Spine.Word H)}
 /-- GenHM builds only complex heads in which each head is adjoined outside the heads below it,
 the bracketing of the Mirror Principle. Amalgamation builds only such complex heads exactly when
 no head Lowers right after a head has Raised into it. -/
-theorem forall_mem_range_comb_iff {hs : List (Terminal H)} {out : List (Spine.Word H)}
+theorem forall_mem_range_comb_iff {hs : List (Terminal H)} {out : List (MorphosyntacticWord H)}
     (h : amalgamateSpine hs = some out) :
     (∀ a ∈ out, a.bracketing ∈ Set.range comb) ↔
       (hs.map (·.m)).IsChain fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
@@ -771,7 +771,7 @@ theorem forall_mem_range_comb_iff {hs : List (Terminal H)} {out : List (Spine.Wo
   rcases hs with _ | ⟨⟨y, n⟩, hs⟩ <;> simp_all [List.isChain_cons_cons]
 
 theorem amalgamation_keeps_verb_site (m : Cat → Option Direction)
-    {out out' : List (Spine.Word Cat)} {a a' : Spine.Word Cat}
+    {out out' : List (MorphosyntacticWord Cat)} {a a' : MorphosyntacticWord Cat}
     (h : amalgamateSpine ([Cat.V, .T].map fun x ↦ ⟨x, m x⟩) = some out)
     (h' : amalgamateSpine ([Cat.V, .T, .C].map fun x ↦ ⟨x, m x⟩) = some out')
     (ha : a ∈ out) (ha' : a' ∈ out') (hV : .V ∈ a.heads) (hV' : .V ∈ a'.heads) :

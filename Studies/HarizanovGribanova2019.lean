@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Category
-public import Linglib.Syntax.Spine.Amalgamation
+public import Linglib.Morphology.DistributedMorphology.Amalgamation
 public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -48,7 +48,8 @@ Neg in Russian and in V in Danish.
 
 namespace HarizanovGribanova2019
 
-open FreeMagma Amalgamation
+open FreeMagma DistributedMorphology.Amalgamation
+open DistributedMorphology (MorphosyntacticWord)
 
 variable {H : Type*}
 

@@ -5,14 +5,15 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Spine.Word
+public import Linglib.Morphology.DistributedMorphology.MorphosyntacticWord
 public import Linglib.Core.Data.List.Sublist
 public import Mathlib.Data.List.Pairwise
 
 /-!
 # Amalgamation
 
-Amalgamation forms words on a spine after the syntax, in the account of Harizanov and Gribanova. A
+Amalgamation forms morphosyntactic words after the syntax, in the account of Harizanov and
+Gribanova, from the heads of an extended projection listed bottom-up. A
 head specified [M:+] Raises: it adjoins to the next head up. A head specified [M:−] Lowers: it
 adjoins to the nearest head below. A complex takes on the feature of the head it has adjoined to,
 and may amalgamate again. The heads are considered from the bottom of the spine up, and a
@@ -20,21 +21,29 @@ derivation in which a feature demands an operation that has no target does not c
 
 ## Main definitions
 
-* `Amalgamation.Direction`, `Amalgamation.Terminal`: the [M] feature and a head bearing it.
-* `Amalgamation.amalgamateSpine`: the words amalgamation forms on a spine.
-* `Amalgamation.moveToRoot`: a second occurrence of a head at the top of the spine, left by
-  syntactic movement before amalgamation.
-* `Amalgamation.PronouncedFrom`: the word containing a head is pronounced at a position or above.
+* `DistributedMorphology.Amalgamation.Direction`, `Terminal`: the [M] feature and a head bearing
+  it.
+* `DistributedMorphology.Amalgamation.amalgamateSpine`: the words amalgamation forms on a spine.
+* `DistributedMorphology.Amalgamation.moveToRoot`: a second occurrence of a head at the top of
+  the spine, left by syntactic movement before amalgamation.
+* `DistributedMorphology.Amalgamation.PronouncedFrom`: the word containing a head is pronounced at
+  a position or above.
 
 ## Main results
 
-* `Amalgamation.flatMap_heads_amalgamateSpine`: the words partition the spine in order.
-* `Amalgamation.heads_infix_of_mem_amalgamateSpine`: every word is a contiguous stretch of the
-  spine.
-* `Amalgamation.site_eq_of_append`: heads added above a spine do not change where the words
-  formed below are pronounced.
-* `Amalgamation.amalgamateSpine_raising_lowering`: with the heads below a position Raising and
-  the heads above it Lowering, the spine is one word pronounced there.
+* `DistributedMorphology.Amalgamation.flatMap_heads_amalgamateSpine`: the words partition the
+  spine in order.
+* `DistributedMorphology.Amalgamation.heads_infix_of_mem_amalgamateSpine`: every word is a
+  contiguous stretch of the spine.
+* `DistributedMorphology.Amalgamation.site_eq_of_append`: heads added above a spine do not change
+  where the words formed below are pronounced.
+* `DistributedMorphology.Amalgamation.amalgamateSpine_raising_lowering`: with the heads below a
+  position Raising and the heads above it Lowering, the spine is one word pronounced there.
+
+## Implementation notes
+
+Within this file `MWd`, Embick and Noyer's abbreviation, stands for
+`DistributedMorphology.MorphosyntacticWord`.
 
 ## References
 
@@ -44,7 +53,9 @@ derivation in which a feature demands an operation that has no target does not c
 
 @[expose] public section
 
-namespace Amalgamation
+namespace DistributedMorphology.Amalgamation
+
+@[inherit_doc] local notation "MWd" => MorphosyntacticWord
 
 open FreeMagma
 
@@ -69,8 +80,8 @@ structure Terminal (H : Type*) where
 heads still to be considered, lowest first. A Raising head adjoins to the next head up, whose
 [M] feature the complex takes on, a Lowering head adjoins to the nearest complex head below, and
 a demanded operation with no target is a derivation that does not converge. -/
-def amalgamate : List (Spine.Word H) → Option (FreeMagma H) → List (Terminal H) →
-    Option (List (Spine.Word H))
+def amalgamate : List (MWd H) → Option (FreeMagma H) → List (Terminal H) →
+    Option (List (MWd H))
   | below, none, [] => some below
   | _, some _, [] => none
   | below, pending, a :: above =>
@@ -84,18 +95,18 @@ def amalgamate : List (Spine.Word H) → Option (FreeMagma H) → List (Terminal
 
 /-- The complex heads that amalgamation forms on a spine, lowest first, or `none` when the
 postsyntactic derivation does not converge. -/
-def amalgamateSpine (spine : List (Terminal H)) : Option (List (Spine.Word H)) :=
+def amalgamateSpine (spine : List (Terminal H)) : Option (List (MWd H)) :=
   (amalgamate [] none spine).map List.reverse
 
 /-- Syntactic movement of the head `y` to the root, which precedes amalgamation, gives `y` a
 second occurrence at the top of the spine. -/
 def moveToRoot (spine : List (Terminal H)) (y : H) : List (Terminal H) := spine ++ [⟨y, none⟩]
 
-private theorem flatMap_heads_amalgamate {below : List (Spine.Word H)}
-    {pending : Option (FreeMagma H)} {above : List (Terminal H)} {out : List (Spine.Word H)}
+private theorem flatMap_heads_amalgamate {below : List (MWd H)}
+    {pending : Option (FreeMagma H)} {above : List (Terminal H)} {out : List (MWd H)}
     (h : amalgamate below pending above = some out) :
-    out.reverse.flatMap Spine.Word.heads =
-      below.reverse.flatMap Spine.Word.heads ++
+    out.reverse.flatMap MorphosyntacticWord.heads =
+      below.reverse.flatMap MorphosyntacticWord.heads ++
         pending.elim [] (fun x ↦ (toFreeSemigroup x).toFreeMonoid.toList) ++
         above.map (·.head) := by
   induction above generalizing below pending out with
@@ -103,32 +114,32 @@ private theorem flatMap_heads_amalgamate {below : List (Spine.Word H)}
   | cons a above ih =>
     rcases ha : a.m with _ | _ | _ <;> cases below <;> cases pending <;>
       simp only [amalgamate, ha] at h <;>
-      first | simpa [List.append_assoc, Spine.Word.heads] using ih h | simp at h
+      first | simpa [List.append_assoc, MorphosyntacticWord.heads] using ih h | simp at h
 
 /-- The complex heads partition the spine in the order of syntactic composition: the affixes of
 a complex head mirror that order, and no head gains or loses an occurrence. -/
-theorem flatMap_heads_amalgamateSpine {spine : List (Terminal H)} {out : List (Spine.Word H)}
+theorem flatMap_heads_amalgamateSpine {spine : List (Terminal H)} {out : List (MWd H)}
     (h : amalgamateSpine spine = some out) :
-    out.flatMap Spine.Word.heads = spine.map (·.head) := by
+    out.flatMap MorphosyntacticWord.heads = spine.map (·.head) := by
   obtain ⟨out', h', rfl⟩ := Option.map_eq_some_iff.mp h
   simpa using flatMap_heads_amalgamate h'
 
-theorem heads_infix_of_mem_amalgamateSpine {spine : List (Terminal H)} {out : List (Spine.Word H)}
-    (h : amalgamateSpine spine = some out) {a : Spine.Word H} (ha : a ∈ out) :
+theorem heads_infix_of_mem_amalgamateSpine {spine : List (Terminal H)} {out : List (MWd H)}
+    (h : amalgamateSpine spine = some out) {a : MWd H} (ha : a ∈ out) :
     a.heads <:+: spine.map (·.head) :=
   flatMap_heads_amalgamateSpine h ▸ List.infix_of_mem_flatten (List.mem_map_of_mem ha)
 
 theorem mem_of_mem_amalgamateSpine_of_nodup [DecidableEq H] {spine : List (Terminal H)}
-    {out : List (Spine.Word H)} (h : amalgamateSpine spine = some out)
-    (hnd : (spine.map (·.head)).Nodup) {a : Spine.Word H} (ha : a ∈ out) {x y z : H}
+    {out : List (MWd H)} (h : amalgamateSpine spine = some out)
+    (hnd : (spine.map (·.head)).Nodup) {a : MWd H} (ha : a ∈ out) {x y z : H}
     (hx : x ∈ a.heads) (hy : y ∈ a.heads) (hz : z ∈ spine.map (·.head))
     (hxz : (spine.map (·.head)).idxOf x ≤ (spine.map (·.head)).idxOf z)
     (hzy : (spine.map (·.head)).idxOf z ≤ (spine.map (·.head)).idxOf y) :
     z ∈ a.heads :=
   (heads_infix_of_mem_amalgamateSpine h ha).mem_of_idxOf_le_of_le hnd hx hy hz hxz hzy
 
-theorem amalgamate_append {below : List (Spine.Word H)} {pending : Option (FreeMagma H)}
-    {above : List (Terminal H)} {out : List (Spine.Word H)} (extra : List (Terminal H))
+theorem amalgamate_append {below : List (MWd H)} {pending : Option (FreeMagma H)}
+    {above : List (Terminal H)} {out : List (MWd H)} (extra : List (Terminal H))
     (h : amalgamate below pending above = some out) :
     amalgamate below pending (above ++ extra) = amalgamate out none extra := by
   induction above generalizing below pending out with
@@ -137,16 +148,16 @@ theorem amalgamate_append {below : List (Spine.Word H)} {pending : Option (FreeM
     rcases ha : a.m with _ | _ | _ <;> cases below <;>
       simp only [List.cons_append, amalgamate, ha] at h ⊢ <;> first | exact ih h | simp at h
 
-theorem amalgamateSpine_moveToRoot {spine : List (Terminal H)} {out : List (Spine.Word H)} (y : H)
+theorem amalgamateSpine_moveToRoot {spine : List (Terminal H)} {out : List (MWd H)} (y : H)
     (h : amalgamateSpine spine = some out) :
     amalgamateSpine (moveToRoot spine y) = some (out ++ [⟨y, of y⟩]) := by
   obtain ⟨out', h', rfl⟩ := Option.map_eq_some_iff.mp h
   rw [amalgamateSpine, moveToRoot, amalgamate_append _ h']
   cases out' <;> simp [amalgamate]
 
-private theorem exists_site_eq_of_amalgamate {below : List (Spine.Word H)}
-    {pending : Option (FreeMagma H)} {extra : List (Terminal H)} {res : List (Spine.Word H)}
-    (h : amalgamate below pending extra = some res) {b : Spine.Word H} (hb : b ∈ below) :
+private theorem exists_site_eq_of_amalgamate {below : List (MWd H)}
+    {pending : Option (FreeMagma H)} {extra : List (Terminal H)} {res : List (MWd H)}
+    (h : amalgamate below pending extra = some res) {b : MWd H} (hb : b ∈ below) :
     ∃ r ∈ res, r.site = b.site ∧ b.heads <+: r.heads := by
   induction extra generalizing below pending res b with
   | nil =>
@@ -163,29 +174,30 @@ private theorem exists_site_eq_of_amalgamate {below : List (Spine.Word H)}
     · exact ih h hb
     · rcases List.mem_cons.mp hb with rfl | hb
       · obtain ⟨r, hr, hs, hm⟩ := ih h (List.mem_cons_self ..)
-        exact ⟨r, hr, hs, (List.prefix_append _ _).trans (by simpa [Spine.Word.heads] using hm)⟩
+        exact ⟨r, hr, hs, (List.prefix_append _ _).trans
+          (by simpa [MorphosyntacticWord.heads] using hm)⟩
       · exact ih h (List.mem_cons_of_mem _ hb)
 
-theorem exists_site_eq_of_append {spine extra : List (Terminal H)} {out out' : List (Spine.Word H)}
+theorem exists_site_eq_of_append {spine extra : List (Terminal H)} {out out' : List (MWd H)}
     (h : amalgamateSpine spine = some out) (h' : amalgamateSpine (spine ++ extra) = some out')
-    {a : Spine.Word H} (ha : a ∈ out) : ∃ a' ∈ out', a'.site = a.site ∧ a.heads <+: a'.heads := by
+    {a : MWd H} (ha : a ∈ out) : ∃ a' ∈ out', a'.site = a.site ∧ a.heads <+: a'.heads := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   obtain ⟨r', hr', rfl⟩ := Option.map_eq_some_iff.mp h'
   rw [amalgamate_append extra hr] at hr'
   simpa using exists_site_eq_of_amalgamate hr' (List.mem_reverse.mp ha)
 
-theorem site_eq_of_append {spine extra : List (Terminal H)} {out out' : List (Spine.Word H)}
+theorem site_eq_of_append {spine extra : List (Terminal H)} {out out' : List (MWd H)}
     (h : amalgamateSpine spine = some out) (h' : amalgamateSpine (spine ++ extra) = some out')
-    (hnd : ((spine ++ extra).map (·.head)).Nodup) {a a' : Spine.Word H} (ha : a ∈ out)
+    (hnd : ((spine ++ extra).map (·.head)).Nodup) {a a' : MWd H} (ha : a ∈ out)
     (ha' : a' ∈ out') {x : H} (hx : x ∈ a.heads) (hx' : x ∈ a'.heads) : a'.site = a.site := by
   obtain ⟨b, hb, hs, hm⟩ := exists_site_eq_of_append h h' ha
   rw [← flatMap_heads_amalgamateSpine h', List.nodup_flatMap] at hnd
   by_contra hne
-  have : Std.Symm (Function.onFun List.Disjoint (Spine.Word.heads (H := H))) :=
-    ⟨fun _ _ hd ↦ hd.symm⟩
+  have : Std.Symm (Function.onFun List.Disjoint (MorphosyntacticWord.heads (H := H))) :=
+    ⟨fun _ _ hd _ h₁ h₂ ↦ hd h₂ h₁⟩
   exact hnd.2.forall hb ha' (fun hba ↦ hne (hba ▸ hs)) (hm.subset hx) hx'
 
-private theorem amalgamate_raising (below : List (Spine.Word H)) (pending : Option (FreeMagma H))
+private theorem amalgamate_raising (below : List (MWd H)) (pending : Option (FreeMagma H))
     (lo : List H) (above : List (Terminal H)) :
     amalgamate below pending (lo.map (Terminal.mk · (some .raising)) ++ above) =
       amalgamate below (lo.foldl (fun p h ↦ some (p.elim (of h) (· * of h))) pending) above := by
@@ -193,13 +205,13 @@ private theorem amalgamate_raising (below : List (Spine.Word H)) (pending : Opti
   | nil => rfl
   | cons h lo ih => cases below <;> simpa [amalgamate] using ih _
 
-private theorem amalgamate_none (below : List (Spine.Word H)) (pending : Option (FreeMagma H))
+private theorem amalgamate_none (below : List (MWd H)) (pending : Option (FreeMagma H))
     (s : H) (above : List (Terminal H)) :
     amalgamate below pending (⟨s, none⟩ :: above) =
       amalgamate (⟨s, pending.elim (of s) (· * of s)⟩ :: below) none above := by
   cases pending <;> cases below <;> rfl
 
-private theorem amalgamate_lowering (b : Spine.Word H) (below : List (Spine.Word H)) (hi : List H) :
+private theorem amalgamate_lowering (b : MWd H) (below : List (MWd H)) (hi : List H) :
     amalgamate (b :: below) none (hi.map (Terminal.mk · (some .lowering))) =
       some (⟨b.site, hi.foldl (· * of ·) b.bracketing⟩ :: below) := by
   induction hi generalizing b with
@@ -241,4 +253,4 @@ instance [DecidableEq H] (spine : List (Terminal H)) (h x : H) :
     Decidable (PronouncedFrom spine h x) :=
   inferInstanceAs (Decidable (∃ out ∈ amalgamateSpine spine, _))
 
-end Amalgamation
+end DistributedMorphology.Amalgamation
