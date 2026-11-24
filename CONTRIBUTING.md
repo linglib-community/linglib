@@ -90,7 +90,7 @@ When a study needs something a lower layer already provides, import it
 rather than defining a local copy. That sharing is what lets a change
 to one theory show its consequences everywhere else.
 
-### How a theory meets data
+### Generalizations, accounts and linking maps
 
 The library keeps three things apart, so that a claim about a theory
 can be checked against data and against other theories.
