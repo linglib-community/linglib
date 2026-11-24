@@ -90,6 +90,37 @@ When a study needs something a lower layer already provides, import it
 rather than defining a local copy. That sharing is what lets a change
 to one theory show its consequences everywhere else.
 
+### Where a file goes
+
+Directories are addresses. What a file assumes is what it imports, so
+the layering of the library is read from the import graph and is not
+declared anywhere. To place a file under `Linglib/Syntax/`, ask these
+questions in order. The first yes decides.
+
+1. **Is it a claim about data that names no construction?**
+   `Linglib/Generalizations/<Name>.lean`, named as the field names it.
+2. **Is it a type that descriptions are written in**, such as a
+   category, a feature or an order? `Syntax/<Object>/`.
+3. **Is it a structure any framework could build on**, such as a tree,
+   a spine or a graph? `Syntax/<Structure>/`.
+4. **Is it theory stated only on those shared types?** It lives with
+   the shared object it is about. One account's analysis is named for
+   the account, as `Tree/Shell.lean` is.
+5. **Does it need a framework's own objects**, such as a probe or a
+   sign? That framework's directory. A file that relates the
+   framework's objects to a shared type `T` is named for `T`, as
+   `Minimalist/Spine.lean` is.
+6. **Is it mathematics mathlib would accept?** `Linglib/Core/`.
+
+The directory follows what a file imports. Whose idea it is goes in
+the file's name and its references.
+
+Three rules are checked on every push: nothing in `Generalizations/`
+imports a framework, no shared file of `Syntax/` imports a framework,
+and no framework of syntax imports another. Two frameworks are not
+related in one file. Each proves what its own construction amounts to
+in a shared form, and the two results have one right-hand side.
+
 ### Generalizations, accounts and linking maps
 
 The library keeps three things apart, so that a claim about a theory
