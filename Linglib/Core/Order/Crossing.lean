@@ -7,29 +7,32 @@ public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Order.UpperLower.Basic
 
 /-!
-# How a map from a bounded linear order meets a set
+# Maps from a bounded linear order into a set
 
-Let `γ : ι → α` be a map from a bounded linear order, such as the positions of a finite series
-or the unit interval of a curve, and let `R : Set α`. This file defines the ways `γ` can meet
-`R`, by the positions it sends into `R`: `γ` *enters* `R` if they are an upper set that contains
-the last position and not the first, *leaves* it if they are a lower set that contains the first
-and not the last, and *crosses* it if they are one stretch that contains neither.
+Let `γ : ι → α` be a map from a bounded linear order, such as the positions of a finite series or
+the unit interval, and let `R : Set α`. This file defines predicates that say how `γ` passes
+through `R`. They are stated in terms of the set `γ ⁻¹' R` of positions that `γ` sends into `R`.
 
-For a series, each of these fixes the number of steps into `R` and out of it.
+We say that `γ` *enters* `R` if `γ ⁻¹' R` is an upper set that contains `⊤` and not `⊥`. That is,
+`γ` starts outside `R`, moves into it and stays there. Dually, `γ` *leaves* `R` if `γ ⁻¹' R` is a
+lower set that contains `⊥` and not `⊤`. We say that `γ` *crosses* `R` if `γ ⁻¹' R` is a nonempty
+order-connected set that contains neither `⊥` nor `⊤`.
 
 ## Main definitions
 
-* `Order.Enters`, `Order.Leaves`, `Order.Crosses`, `Order.StaysIn`: the map ends inside `R`
-  having started outside, starts inside and ends outside, passes through, or never leaves.
-* `Order.Reaches`, `Order.Departs`: the map is inside `R` at its last position only, or at its
-  first only.
-* `Order.Approaches`, `Order.Recedes`: the map stays outside `R` and a measure of the distance
-  to it strictly decreases, or strictly increases.
+* `Order.Enters`, `Order.Leaves`, `Order.Crosses`: the three predicates above.
+* `Order.StaysIn`: `γ` sends every position into `R`.
+* `Order.Reaches`, `Order.Departs`: `γ` is in `R` at its last position only, or at its first
+  position only.
+* `Order.Approaches`, `Order.Recedes`: `γ` stays outside `R`, and a given function on `α`
+  strictly decreases along `γ`, or strictly increases.
 
 ## Main results
 
-* `Order.Enters.entries_eq`, `Order.Enters.exits_eq`: a series that enters `R` has one step into
-  it and none out of it; likewise for `Order.Leaves`, `Order.Crosses` and `Order.StaysIn`.
+* `Order.enters_iff_ordConnected`: `γ` enters `R` if and only if `γ ⁻¹' R` is an order-connected
+  set that contains `⊤` and not `⊥`.
+* `Order.Enters.entries_eq`, `Order.Enters.exits_eq`: a relation series that enters `R` has one
+  entry into `R` and no exit from it. The other predicates have similar lemmas.
 -/
 
 @[expose] public section

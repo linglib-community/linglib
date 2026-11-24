@@ -10,31 +10,46 @@ public import Mathlib.Data.Fintype.Sum
 /-!
 # Functions of cases and adpositions
 
-A case or an adposition marks its noun phrase for some of the functions the noun phrase can have in
-a clause, and the functions, unlike the cases, are the same from language to language. Haspelmath
-compares the datives and the instrumentals of different languages by the functions they cover.
-The functions are not all semantic roles: the core arguments are the coding roles S, A and P, and
-the predicative possessor and the passive agent are tied to a construction. A comparative case
-value is named for functions, and [the four core values are named for roles that meet the
-definitions of their markers](##Case.isMarker_roles_functions).
+A case or an adposition marks a noun phrase for a *function* in the clause, such as recipient,
+instrument or goal of motion. The cases of two languages rarely match, but their functions can be
+compared. For example, the datives of two languages are compared by listing the functions that
+each one covers.
+
+This file defines the functions and the set of functions that a comparative case value is named
+for. Not every function is a semantic role. The core arguments are the coding roles S, A and P,
+and the predicative possessor and the passive agent belong to particular constructions.
+
+## Main definitions
+
+* `Case.Function`: the functions.
+* `Case.Function.kind`: the type of case a function belongs to.
+* `Case.functions`: the functions a case value is named for.
+* `Locative.ofFunction`: the locative of a spatial function.
+
+## Main results
+
+* `Case.isMarker_roles_functions`: the four core case values are named for roles that satisfy
+  the definitions of their markers.
 
 ## Implementation notes
 
-The recipient is the role `R`, the recipient of a transfer verb together with what is coded like
-it; [malchukov-narrog-2009]'s general map of case functions likewise sets A, P, T and R beside
-the instrument, the beneficiary and the possessor. A spatial function is a direction with or
-without a configuration, the two dimensions of a system of spatial cases, with a series that
-leaves the configuration unspecified ([creissels-2009], [haspelmath-2009]). Functions with no
-name of their own carry the name of the case value, as `essive`: the labels of the peripheral
-cases are close enough to semantic roles to name them ([haspelmath-2009]).
+The recipient is the role `R`: the recipient of a transfer verb, together with whatever is coded
+like it. The general map of case functions of [malchukov-narrog-2009] also places A, P, T and R
+beside the instrument, the beneficiary and the possessor.
 
-`Case.functions` gives the positive half of a name: a case called nominative also has to leave P
-unmarked, which is a fact about the other cases of its language (`Alignment.IsNominativeMarker`).
-A spatial value is named for its direction in its configuration. The allative and the ablative
-are named both for the goal and the source with no configuration, the basic terms for those
-directions, and for those of the exterior, as in the Uralic series ([haspelmath-2009]); a
-fragment states which its case has. The oblique
-is named for no function.
+A spatial function is a direction with or without a configuration. These are the two dimensions
+of a system of spatial cases, and a system with a single series leaves the configuration
+unspecified.
+
+A function with no name of its own has the name of its case value, as `essive` does. The labels
+of the peripheral cases are close enough to semantic roles for this.
+
+`Case.functions` gives only the positive half of a name. A case called nominative must also leave
+P unmarked, which is a fact about the other cases of its language. See
+`Alignment.IsNominativeMarker`. The allative and the ablative are named for the goal and the
+source with no configuration, and also for the goal and the source of the exterior, as in the
+Uralic series. A fragment states which of these its case has. The oblique is named for no
+function.
 
 ## References
 

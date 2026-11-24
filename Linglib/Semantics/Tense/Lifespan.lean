@@ -6,11 +6,13 @@ public import Linglib.Semantics.Tense.RunTimes
 # Life spans
 
 The life span of an individual is the interval of times at which it exists: the run time of an
-event, or the time from an entity's coming into existence to its going out of it. A description
-pre-exists an interval when some individual it describes has a life span starting before the
-interval does, that is, when its life spans are *before ever* the interval (`Tense.beforeEver`).
-A predicate of individuals at times is permanent when it holds of an individual throughout its
-life span if it holds of it at all, as individual-level predicates such as *tall* are taken to be.
+event, or the time from an entity's coming into existence to its going out of it.
+
+A description *pre-exists* an interval if some individual it describes has a life span that
+starts before the interval does. That is, the life spans of its individuals are *before ever* the
+interval, in the sense of `Tense.beforeEver`. A predicate of individuals at times is *permanent*
+if it holds of an individual throughout its life span whenever it holds of it at all.
+Individual-level predicates such as *tall* are taken to be permanent.
 
 ## Main definitions
 
@@ -20,8 +22,7 @@ life span if it holds of it at all, as individual-level predicates such as *tall
 ## Main statements
 
 * `Tense.preExists_iff`: some individual of `Q` has a life span starting before `t` does.
-* `Tense.PreExists.exists`: pre-existence entails existence, since *before ever* is veridical in
-  its first argument.
+* `Tense.PreExists.exists`: a description that pre-exists an interval describes some individual.
 * `Tense.preExists_iff_exists_of_precedes`, `Tense.not_preExists_of_le`: pre-existence under
   descriptions that locate their individuals before, or within, the interval.
 * `Tense.Permanent.forall_not_or_forall_iff_mem`: a permanent predicate that holds only within life

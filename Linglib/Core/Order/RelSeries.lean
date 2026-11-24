@@ -5,24 +5,30 @@ public import Mathlib.Order.Fin.Basic
 public import Mathlib.Order.RelSeries
 
 /-!
-# Positions of a concatenated series
+# Concatenation of relation series
 
-`RelSeries.smash p q h` concatenates two series when `p` ends where `q` starts. This file gives
-the value of the concatenation at a position on either side of the junction, and the properties
-of the two series that the concatenation keeps. It also counts the steps of a series with a given
-property, a count that adds under concatenation.
+Two relation series `p` and `q` such that `p` ends where `q` starts concatenate to the series
+`RelSeries.smash p q h`, which runs through `p` and then through `q`. This file describes the
+values of a concatenation and counts the steps of a series.
+
+A *step* of a series `p` is a pair of consecutive values `p i` and `p (i + 1)`. For a set `R`, an
+*entry* is a step from outside `R` into `R`, and an *exit* is a step from inside `R` out of it.
+We prove that the number of steps of a given kind adds under concatenation.
+
+## Main definitions
+
+* `RelSeries.stepCount`: the number of steps of a series that satisfy a relation.
+* `RelSeries.entries`, `RelSeries.exits`: the number of entries into a set and of exits from it.
 
 ## Main results
 
 * `RelSeries.smash_apply_of_le`, `RelSeries.smash_apply_of_ge`: the values of a concatenation
-  up to and from the junction.
-* `RelSeries.forall_smash_apply`: a property holds along a concatenation if and only if it holds
-  along both series.
-* `RelSeries.strictMono_comp_smash`: a concatenation of two series increasing under a map is
-  increasing under it.
-* `RelSeries.stepCount_smash`: the number of steps with a property adds under concatenation.
-* `RelSeries.entries_add_head`: the steps into a set and out of it differ by whether the series
-  starts and ends inside it.
+  before and after the junction.
+* `RelSeries.forall_smash_apply`: a property holds at every value of a concatenation if and only
+  if it holds at every value of both series.
+* `RelSeries.stepCount_smash`: the step count of a concatenation is the sum of the step counts.
+* `RelSeries.entries_add_head`: the number of entries, plus one if the series starts in the set,
+  equals the number of exits, plus one if it ends in the set.
 -/
 
 @[expose] public section

@@ -7,31 +7,37 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # Spatial cases
 
-A spatial case combines a configuration with a direction: the interior, surface and exterior
-series of the Finnish, Hungarian and Daghestanian local cases each cross a configuration with
-location, destination and source. The general locative, allative, ablative and perlative express
-a direction with no configuration. This file relates the values of `Case` to the configurations,
-directions and shapes of `Locative`.
+A *spatial case* places its noun phrase in space, as the Finnish inessive *talossa* 'in the
+house' and illative *taloon* 'into the house' do. Many languages arrange their spatial cases in
+series. The cases of a series have the same configuration and differ in direction. Hungarian has
+three series, for the interior, the surface and the exterior, each with a case for place, for
+goal and for source.
+
+This file gives the direction, the configuration and the shape of the path that a value of `Case`
+expresses, and the case of a given configuration and direction. The general locative, allative,
+ablative and perlative express a direction with no configuration.
 
 ## Main definitions
 
-* `Case.dirOf`, `Case.configurationOf`, `Case.shape?`: the direction, the configuration and the
-  shape of the path a case expresses.
+* `Case.dirOf`, `Case.configurationOf`, `Case.shape?`: the direction and the configuration of a
+  case, and the shape of its path.
 * `Case.ofSpatial`: the case of a configuration and a direction.
 * `Locative.ofCase`: the locative a case expresses.
 
 ## Main results
 
-* `Case.spatialDecomp_ofSpatial`: the case of a configuration and a direction decomposes into
-  them.
-* `Case.kind_eq_spatial_iff`: the spatial cases among Blake's types of case are those with a
-  direction.
+* `Case.spatialDecomp_ofSpatial`: the case of a configuration and a direction has that
+  configuration and that direction.
+* `Case.kind_eq_spatial_iff`: a case is of the spatial kind if and only if it has a direction.
 
 ## Implementation notes
 
-The terminative is a delimited goal, Pantcheva's *up to*. The exterior series is `ade`, `all` and
-`abl`, Finnish's external local cases; `all` and `abl` also serve as the general allative and
-ablative, with no configuration, a use the decomposition does not separate.
+The terminative expresses a goal. Its path is terminative: it runs up to the goal and stops
+there.
+
+The exterior series is `ade`, `all` and `abl`, as in Finnish. The values `all` and `abl` are also
+the general allative and ablative of a language with one series, and `Case.configurationOf` does
+not distinguish the two uses.
 
 ## References
 

@@ -6,23 +6,29 @@ public import Linglib.Semantics.Space.Locative
 /-!
 # Shapes of paths
 
-A path has a *shape* relative to a region: it is cofinal if it enters the region, coinitial if
-it leaves it, transitive if it crosses it, and so on for the eight shapes of `Locative.Shape`.
-This file defines `Locative.HasShape`, which gives each shape its condition on a map from a
-bounded linear order, and proves how shapes behave under reparametrization, reversal and
-concatenation.
+A *path* is a map `γ : ι → α` from a bounded linear order, and a *region* is a set `R : Set α`.
+Each of the eight shapes of `Locative.Shape` is a condition on how a path passes through a
+region. For example, a path is *cofinal* if it enters the region and *coinitial* if it leaves it.
+
+This file defines `Locative.HasShape R γ d s`, which says that the path `γ` has the shape `s`
+relative to the region `R`. The function `d` measures the distance to the region, and only the
+approximative and recessive shapes use it. We prove that a path keeps its shape when it is
+reparametrized, and we determine the shape of a reversed path and of a concatenation.
 
 ## Main definitions
 
-* `Locative.HasShape`: a map has a shape relative to a region.
+* `Locative.HasShape`: a path has a shape relative to a region.
 
 ## Main results
 
-* `Locative.exists_hasShape_iff`: a map that meets a region has a shape if and only if the positions
-  it sends into the region are one stretch.
-* `Locative.hasShape_reverse`: reversing a series reverses its shape.
-* `Locative.HasShape.concat`, `Locative.HasShape.not_concat`: concatenation keeps a shape without a
-  transition and never keeps one with a transition.
+* `Locative.exists_hasShape_iff`: a path that meets a region has some shape if and only if the
+  positions it sends into the region form an order-connected set.
+* `Locative.hasShape_reverse`: the reverse of a series has a shape if and only if the series has
+  the reversed shape.
+* `Locative.HasShape.concat`: if a shape is not bounded, the concatenation of two series of that
+  shape has that shape.
+* `Locative.HasShape.not_concat`: if a shape is bounded, the concatenation of two series of that
+  shape does not have it.
 
 ## References
 

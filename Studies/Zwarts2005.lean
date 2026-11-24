@@ -10,28 +10,34 @@ public import Mathlib.Tactic.FinCases
 /-!
 # Zwarts (2005): Prepositional Aspect and the Algebra of Paths
 
-Zwarts analyzes the aspect of directional prepositional phrases, which denote sets of paths. A
-telic phrase like *to the house* differs from an atelic one like *towards the house* in closure
-under the partial concatenation of paths: an atelic phrase is cumulative and a telic one bounded,
-that is, not cumulative. [Goal and source phrases](##Zwarts2005.toPP_no_pairs) are bounded because
-none of their paths concatenate, and [route phrases](##Zwarts2005.overPP_bounded) because their
-concatenations pass through the region twice. Bounded phrases
-[are not quantized](##Zwarts2005.toPP_not_quantized), and
-[loops are cumulative](##Zwarts2005.loops_cumulative) yet telic in Krifka's sense, so neither
-notion characterizes boundedness. A trace homomorphism for concatenation transfers closure from
-the phrase to the verb phrase, so [*walk to the house* is bounded](##Zwarts2005.vpp_toPP_bounded).
+A directional prepositional phrase such as *to the house* denotes a set of paths. A *path* is a
+finite sequence of locations, and two paths *concatenate* if the first ends where the second
+starts. A set of paths is *cumulative* if it has two paths that concatenate and it is closed
+under concatenation. It is *bounded* if it is not cumulative.
+
+We define the denotations of goal, source and route phrases and of *towards* and *away from*. A
+goal phrase holds of the paths that enter a region, a source phrase of the paths that leave it,
+and a route phrase of the paths that cross it. We prove that these three denotations are bounded
+and that the denotation of *towards* is cumulative. The main result,
+`Zwarts2005.bounded_iff_telic`, says that a phrase among the paper's examples is bounded if and
+only if the paper judges its sentence telic.
+
+We also prove that a goal phrase is not quantized, and that the set of loops at a location is
+cumulative although it is telic in Krifka's sense. Finally, suppose that the trace of events is a
+homomorphism for concatenation. Then a verb phrase is bounded if its prepositional phrase has no
+two paths that concatenate, as in *walk to the house*.
 
 ## Implementation notes
 
-* The strict goal, source and route denotations are the cofinal, coinitial and transitive shapes
-  of `Order`, relative to the region a preposition's locative basis picks out. Zwarts's
-  intervals are proper and nonempty, as his glosses of them say.
-* The paper's trace function respects Rothstein's partial event concatenation, not an
-  unrestricted mereological sum.
+The strict denotations of goal, source and route phrases are `Order.Enters`, `Order.Leaves` and
+`Order.Crosses`, applied to a path and the region of the phrase. The positions of a path inside
+the region form a proper nonempty interval.
+
+The trace of events respects a partial concatenation of events and not an unrestricted sum.
 
 ## TODO
 
-* The minimality and grinder operators (63) and (64).
+* The minimality operator and the grinder operator.
 
 ## References
 

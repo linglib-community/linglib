@@ -7,21 +7,22 @@ public import Mathlib.Data.Fintype.Sum
 /-!
 # Locatives
 
-A locative expression such as *in the house*, *into the house* or *from under the table* has two
-layers of meaning. Its *configuration* is a way of positioning an object with respect to a
-ground, as *in*, *on* and *at* are. Its *mode* is the way the object moves with respect to that
-configuration during an event: it stays in it, moves into it, moves out of it, and so on. Systems
-of spatial cases are organized along the same two dimensions, as the nine local cases of
-Hungarian cross three configurations with location, destination and source.
+A *locative* is an expression that places an object in space with respect to another object, the
+*ground*: *in the house*, *into the house*, *from under the table*. Its meaning has two parts.
+The *configuration* is a way of being positioned with respect to the ground, such as being in it,
+on it or at it. The *mode* is the way the object moves with respect to the configuration during
+an event. In the *static* mode the object stays in the configuration. In a *directional* mode it
+follows a path, which may lead into the configuration, out of it, through it, and so on.
 
-We define a locative as a configuration, where the expression specifies one, and a mode. A mode is
-static or the shape of a path, one of eight, and the direction of a mode is the coarser distinction
-between location, destination, source and route.
+This file defines the configurations, the modes and the eight shapes of a path. It also defines
+the *direction* of a mode, a coarser classification into place, goal, source and route. For
+example, *into the house* has the interior configuration and a cofinal path, and its direction is
+goal.
 
 ## Main definitions
 
 * `Locative.Configuration`: the interior, the surface and the exterior of a ground.
-* `Locative.Direction`: location, destination, source and route.
+* `Locative.Direction`: place, goal, source and route.
 * `Locative.Shape`: the eight shapes of a path relative to a region.
 * `Locative.Mode`: the static mode and the directional modes, one for each shape.
 * `Locative`: a configuration, if any, and a mode.
@@ -30,19 +31,22 @@ between location, destination, source and route.
 
 * `Locative.Shape.exists_direction_transition_iff`: the pairs of a direction and a transition
   that make a shape.
-* `Locative.Mode.direction_eq_place_iff`: the static mode is the only one whose direction is
-  location.
+* `Locative.Mode.direction_eq_place_iff`: the static mode is the only mode whose direction is
+  place.
 
 ## Implementation notes
 
-The static mode is a mode and not the absence of one, following Kracht and Lestrade, for whom the
-absence of a change of configuration is one of the values of the second dimension. A locative with
-no configuration is one of a system with a single series, a general locative, allative or ablative.
+The static mode is a value of `Locative.Mode`, so every locative has a mode. The alternative is
+an optional shape, but then the direction of a locative needs a default value.
 
-The configurations a language distinguishes are an open class. `Locative.Configuration` has the
-three that systems of spatial cases most often distinguish.
+The configuration of a locative is optional. A language with a single series of spatial cases has
+a locative, an allative and an ablative that specify no configuration.
 
-Descriptions of Daghestanian languages call the two dimensions localization and direction.
+`Locative.Configuration` has three values, the ones that systems of spatial cases most often
+distinguish. Adpositions distinguish many more.
+
+The literature also calls the configuration the *localization* and the direction the
+*directionality*.
 
 ## References
 

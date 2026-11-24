@@ -9,38 +9,34 @@ public import Studies.Zwarts2005
 /-!
 # Pantcheva (2011): Decomposing Path
 
-Pantcheva classifies paths by their shape relative to a region, crossing direction with
-transition (`Locative.Shape`). The shapes with a transition are those
-[Zwarts's closure under concatenation counts as bounded](##Pantcheva2011.cumulative_hasShape_iff).
-[A goal path followed by a source path](##Pantcheva2011.crosses_of_concat) is a route path,
-while the reverse order [yields no shape at all](##Pantcheva2011.not_hasShape_of_concat), which
-she takes up as the absence of any preposition for such a path, and which
-[reversing a route path](##Pantcheva2011.crosses_reverse) cannot derive.
+A directional expression has one of four heads, Place, Goal, Source and Route, and each head
+contains the one before it. A *syncretism pattern* says which of the four heads a language marks
+with the same form. Two constraints restrict the patterns. By \*ABA, a form shared by two heads
+is shared by every head between them. By \*A&¬A, Goal and Source never share a form.
 
-The directional heads Place, Goal, Source and Route form the containment sequence of
-`Locative.Direction`, and a syncretism pattern over the four is a paradigm over that sequence.
-Two constraints restrict the patterns: the *ABA generalization of Bobaljik (then circulating in
-manuscript), on which a syncretism targets only adjacent heads, the same contiguity that governs
-nominal case in Caha's analysis; and *A&¬A, on which Goal and Source never share a marker, because
-the Source head reverses the Goal path and
-[no path is both](##Order.Enters.not_leaves). Together they say exactly that
-[no syncretism crosses the seam between Goal and Source](##Pantcheva2011.possible_iff_respectsSeam),
-which [cuts the fifteen set-partitions of the four roles to
-four](##Pantcheva2011.possible_syncretisms): Place and Goal may merge, Source and Route may merge,
-and nothing else.
+We define a pattern as a function from the four heads to form classes. The main result,
+`Pantcheva2011.possible_iff_respectsSeam`, says that a pattern satisfies both constraints if and
+only if no form class has heads on both sides of the boundary between Goal and Source. Exactly
+four of the fifteen patterns do. They have four distinct forms, or merge Place with Goal, or
+merge Source with Route, or do both.
+
+Paths are also classified by their shape relative to a region. We prove that a path into a region
+followed by a path out of it crosses the region, and that a path out of a region followed by a
+path into it has none of the eight shapes. We also prove that the paths of a shape are cumulative
+under concatenation if and only if the shape is not bounded and two of its paths concatenate.
 
 ## Implementation notes
 
-The patterns are restricted-growth strings over the four positions, one representative per
-set-partition; the seam characterization is proved for every pattern, and the enumerations
-are its corollaries. The attested lexicalization patterns are described in prose.
+A pattern is a restricted-growth string over the four positions, which gives one representative
+of each partition of the four heads.
+
+The patterns attested in particular languages are not encoded as data.
 
 ## TODO
 
-* The Scale head that derives non-transitional paths from transitional ones, and the Bound head
-  that derives delimited ones.
-* The morphological containment of Goal markers in Source markers as data, rather than the order
-  of the heads alone.
+* The Scale head, which derives non-transitional paths from transitional ones, and the Bound
+  head, which derives delimited ones.
+* The containment of Goal markers in Source markers as data, and not only the order of the heads.
 
 ## References
 
