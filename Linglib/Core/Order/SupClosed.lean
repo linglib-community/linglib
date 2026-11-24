@@ -24,8 +24,6 @@ exactly when the points sent there are sup-closed.
 * `Set.mem_supClosure_image`, `Set.mem_infClosure_image`: the same for a family of sets.
 * `sInf_supClosure`, `sSup_infClosure`: the closures keep the infimum and the supremum.
 * `infClosure_union`: the inf-closure of a union.
-* `SupClosed.subset_union_iff`: a sup-closed set included in the union of two lower sets is
-  included in one of them.
 * `IsLowerSet.exists_isGreatest_iff`: a finite lower set has a greatest element iff it is
   nonempty and sup-closed.
 * `exists_isLeast_range_inter_iff`: the same for the least value of an order-reversing embedding.
@@ -81,14 +79,6 @@ theorem IsLowerSet.isGreatest_of_forall_not_le [Preorder α] {s : Set α} (hs : 
   ⟨ha, fun b hb ↦ by_contra fun hn ↦ let ⟨c, hc, hcb⟩ := ht b hn; hst c hc (hs hcb hb)⟩
 
 variable [SemilatticeSup α] {s : Set α}
-
-/-- A sup-closed set included in the union of two lower sets is included in one of them. -/
-theorem SupClosed.subset_union_iff {t u : Set α} (hs : SupClosed s) (ht : IsLowerSet t)
-    (hu : IsLowerSet u) : s ⊆ t ∪ u ↔ s ⊆ t ∨ s ⊆ u := by
-  refine ⟨fun h ↦ or_iff_not_imp_left.2 fun hst b hb ↦ ?_,
-    fun h ↦ h.elim (·.trans Set.subset_union_left) (·.trans Set.subset_union_right)⟩
-  obtain ⟨a, ha, hat⟩ := Set.not_subset.1 hst
-  exact (h (hs ha hb)).elim (fun h ↦ (hat (ht le_sup_left h)).elim) (hu le_sup_right)
 
 /-- A finite nonempty sup-closed set has a greatest element, the sup of its members. -/
 theorem SupClosed.exists_isGreatest (hs : SupClosed s) (hfin : s.Finite) (hne : s.Nonempty) :

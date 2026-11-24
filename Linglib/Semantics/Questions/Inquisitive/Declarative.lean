@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Inquisitive.Generate
-public import Linglib.Core.Order.SupClosed
+public import Mathlib.Order.SupClosed
 public import Mathlib.Order.Ideal
 
 /-!
@@ -195,6 +195,14 @@ section Ideal
 
 variable {P : Question W}
 
+/-- A sup-closed set included in the union of two lower sets is included in one of them. -/
+private theorem subset_or_subset_of_supClosed {α : Type*} [SemilatticeSup α] {s t u : Set α}
+    (hs : SupClosed s) (ht : IsLowerSet t) (hu : IsLowerSet u) (h : s ⊆ t ∪ u) :
+    s ⊆ t ∨ s ⊆ u := by
+  refine or_iff_not_imp_left.2 fun hst b hb ↦ ?_
+  obtain ⟨a, ha, hat⟩ := Set.not_subset.1 hst
+  exact (h (hs ha hb)).elim (fun h ↦ (hat (ht le_sup_left h)).elim) (hu le_sup_right)
+
 theorem isIdeal_coe_iff_supClosed :
     Order.IsIdeal (P : Set (Set W)) ↔ SupClosed (P : Set (Set W)) :=
   ⟨fun h _ ha _ hb ↦ let ⟨_, hc, hac, hbc⟩ := h.Directed _ ha _ hb
@@ -209,7 +217,7 @@ inquisitive disjunction, it entails a disjunct. -/
 theorem isIdeal_coe_iff_forall_le_sup :
     Order.IsIdeal (P : Set (Set W)) ↔ ∀ Q R : Question W, P ≤ Q ⊔ R → P ≤ Q ∨ P ≤ R := by
   refine ⟨fun h Q R ↦
-      ((isIdeal_coe_iff_supClosed.1 h).subset_union_iff Q.isLowerSet R.isLowerSet).1,
+      subset_or_subset_of_supClosed (isIdeal_coe_iff_supClosed.1 h) Q.isLowerSet R.isLowerSet,
     fun h ↦ isIdeal_coe_iff_supClosed.2 fun a ha b hb ↦ by_contra fun hab ↦ ?_⟩
   have hle : P ≤ generate {s | s ∈ P ∧ ¬ a ⊆ s} ⊔ generate {s | s ∈ P ∧ ¬ b ⊆ s} :=
     fun s hs ↦ by
@@ -235,8 +243,10 @@ theorem isIdeal_coe_iff_forall_himp_sup :
   · have key (X : Question W) : s ∈ P ⇨ X ↔ (P : Set (Set W)) ∩ Set.Iic s ⊆ X :=
       mem_himp.trans ⟨fun h _ hr ↦ h _ hr.2 hr.1, fun h _ hrs hr ↦ h ⟨hr, hrs⟩⟩
     rw [mem_sup, key, key, key]
-    exact ((isIdeal_coe_iff_supClosed.1 h).inter (show SupClosed (Set.Iic s) from
-      fun _ ha _ hb ↦ Set.union_subset ha hb)).subset_union_iff Q.isLowerSet R.isLowerSet
+    exact ⟨subset_or_subset_of_supClosed ((isIdeal_coe_iff_supClosed.1 h).inter
+        (show SupClosed (Set.Iic s) from fun _ ha _ hb ↦ Set.union_subset ha hb))
+        Q.isLowerSet R.isLowerSet,
+      fun h ↦ h.elim (·.trans Set.subset_union_left) (·.trans Set.subset_union_right)⟩
   · have : (Set.univ : Set W) ∈ (P ⇨ Q) ⊔ (P ⇨ R) := h Q R ▸ mem_himp.2 fun r _ hr ↦ hQR hr
     exact this.imp (fun h r hr ↦ mem_himp.1 h r (Set.subset_univ r) hr)
       fun h r hr ↦ mem_himp.1 h r (Set.subset_univ r) hr

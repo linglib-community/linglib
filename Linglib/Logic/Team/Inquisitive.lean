@@ -440,13 +440,6 @@ theorem TruthConditional.impl (hψ : TruthConditional M ψ) (φ : Formula Atom) 
   exact (singleton_mem_support_impl M φ ψ w).1 (h w (hts hw))
     ((support M φ).lower (Finset.singleton_subset_iff.2 hw) hφ)
 
-/-- If `φ` is truth-conditional, then `φ → ψ ⩒ χ` and `(φ → ψ) ⩒ (φ → χ)` have the same support,
-the split equivalence (Corollary 3.7.14). -/
-theorem TruthConditional.support_impl_inqDisj (h : TruthConditional M φ)
-    (ψ χ : Formula Atom) :
-    support M (.impl φ (.inqDisj ψ χ)) = support M (.inqDisj (.impl φ ψ) (.impl φ χ)) :=
-  LowerSet.himp_sup_of_supClosed h.supClosed _ _
-
 variable (M φ ψ)
 
 /-- Every negation is truth-conditional (Proposition 3.4.8). -/
@@ -517,6 +510,15 @@ theorem mem_support_impl_iff_of_truthConditional [DecidableRel M.val] {α : Form
   refine ⟨fun h ↦ h _ (Finset.filter_subset _ _) ((hα _).2 fun _ hw ↦ (Finset.mem_filter.1 hw).2),
     fun h t hts hαt ↦ (support M ψ).lower ?_ h⟩
   exact fun w hw ↦ Finset.mem_filter.2 ⟨hts hw, (hα t).1 hαt w hw⟩
+
+/-- For a statement `α`, `α → ψ ⩒ χ` and `(α → ψ) ⩒ (α → χ)` have the same support, the split
+equivalence (Corollary 3.7.14). -/
+theorem support_impl_inqDisj_of_truthConditional {α : Formula Atom} (hα : TruthConditional M α)
+    (χ : Formula Atom) :
+    support M (.impl α (.inqDisj ψ χ)) = support M (.inqDisj (.impl α ψ) (.impl α χ)) := by
+  classical
+  exact SetLike.ext fun s ↦ by
+    simp only [mem_support_inqDisj, fun θ ↦ mem_support_impl_iff_of_truthConditional M θ s hα]
 
 /-! ### Resolutions (§3.6) -/
 
