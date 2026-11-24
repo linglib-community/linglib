@@ -122,7 +122,7 @@ theorem IsPartition.completeAnswers_eq (hP : P.IsPartition) (hN : P.IsNormal) :
     · exact P.contains_empty
     obtain ⟨c, hc, hwc⟩ := Set.mem_sUnion.mp (hP.sUnion_alt_eq_univ ▸ Set.mem_univ w)
     exact mem_of_exists_alt_subset ⟨c, hc, (h c hc).resolve_right fun h' ↦ h' hw hwc⟩
-  · obtain ⟨c, hc, hσc⟩ := hN σ hσ
+  · obtain ⟨c, hc, hσc⟩ := hN hσ
     rcases eq_or_ne p c with rfl | hpc
     · exact Or.inl hσc
     · exact Or.inr (hσc.trans (hP.pairwiseDisjoint hc hp hpc.symm).le_compl_right)
@@ -132,7 +132,7 @@ complete answers are the states resolving it. -/
 theorem IsPartition.isSubquestionOf_of_le (C : Set W) (hP : P.IsPartition) (hP' : P.IsNormal)
     (hQ : Q.IsNormal) (h : P ≤ Q) : IsSubquestionOf C P Q := fun σ hσ ↦ by
   rw [hP.completeAnswers_eq hP'] at hσ
-  obtain ⟨q, hq, hσq⟩ := hQ σ (le_def.mp h hσ)
+  obtain ⟨q, hq, hσq⟩ := hQ (le_def.mp h hσ)
   exact ⟨q, hq, .inl (Set.inter_subset_right.trans hσq)⟩
 
 theorem IsPartition.completeAnswers_subset_iff_le (hP : P.IsPartition) (hP' : P.IsNormal)
