@@ -68,11 +68,12 @@ components. -/
 noncomputable def Step.mergeOp (step : Step) (c : Derivation.Cfg SyntacticObject) :
     ConnesKreimer ℤ SyntacticObject →ₗ[ℤ] ConnesKreimer ℤ SyntacticObject :=
   match step, c.stack with
-  | .em _ item, _ => Workspace.mergeOp c.current item.toSyntacticObject
+  | .em _ item, _ => Workspace.traceMergeOp c.current item.toSyntacticObject
   | .im mover _, _ =>
-      Workspace.mergeOp (deleteAccessible mover c.current) mover ∘ₗ Workspace.mergeOpUnit mover
-  | .extract mover, _ => Workspace.mergeOpUnit mover
-  | .remerge _, m :: _ => Workspace.mergeOp m c.current
+      Workspace.traceMergeOp (deleteAccessible mover c.current) mover ∘ₗ
+        Workspace.traceMergeOpUnit mover
+  | .extract mover, _ => Workspace.traceMergeOpUnit mover
+  | .remerge _, m :: _ => Workspace.traceMergeOp m c.current
   | .remerge _, [] => 0
 
 /-- A Merge step at the current object is admissible beside a spectator workspace `W` when it
@@ -130,21 +131,24 @@ theorem Step.mergeOp_run {step : Step} {c : Derivation.Cfg SyntacticObject} {W :
         ({current, ↑item} + (↑stack + W) : Workspace) := by
       rw [Multiset.insert_eq_cons, ← Multiset.singleton_add]
       abel
-    show Workspace.mergeOp current ↑item
+    show Workspace.traceMergeOp current ↑item
         (ConnesKreimer.of' ({current} + ↑stack + {↑item} + W : Workspace)) =
       ConnesKreimer.of' ({merge ↑item current} + ↑stack + W : Workspace)
-    rw [e, Workspace.mergeOp_of'_add h, merge_comm, add_assoc]
+    rw [e, Workspace.traceMergeOp_of'_add h, merge_comm, add_assoc]
   | im mover side =>
     obtain ⟨hm, hc, hne, hW⟩ := h
-    show Workspace.mergeOp (deleteAccessible mover current) mover (Workspace.mergeOpUnit mover
+    show Workspace.traceMergeOp (deleteAccessible mover current) mover
+      (Workspace.traceMergeOpUnit mover
         (ConnesKreimer.of' ({current} + ↑stack + 0 + W : Workspace))) =
       ConnesKreimer.of' ({merge (deleteAccessible mover current) mover} + ↑stack + W : Workspace)
-    rw [add_zero, add_assoc, Workspace.mergeOp_mergeOpUnit_of'_add hm hc hne hW, add_assoc]
+    rw [add_zero, add_assoc, Workspace.traceMergeOp_traceMergeOpUnit_of'_add hm hc hne hW,
+      add_assoc]
   | extract mover =>
     obtain ⟨hm, hc, hne, hW⟩ := h
-    show Workspace.mergeOpUnit mover (ConnesKreimer.of' ({current} + ↑stack + 0 + W : Workspace)) =
+    show Workspace.traceMergeOpUnit mover
+        (ConnesKreimer.of' ({current} + ↑stack + 0 + W : Workspace)) =
       ConnesKreimer.of' ({deleteAccessible mover current} + ↑(mover :: stack) + W : Workspace)
-    rw [add_zero, add_assoc, Workspace.mergeOpUnit_of'_add hm hc hne hW]
+    rw [add_zero, add_assoc, Workspace.traceMergeOpUnit_of'_add hm hc hne hW]
     congr 1
     rw [← Multiset.cons_coe, Multiset.insert_eq_cons, ← Multiset.singleton_add,
       ← Multiset.singleton_add]
@@ -156,10 +160,10 @@ theorem Step.mergeOp_run {step : Step} {c : Derivation.Cfg SyntacticObject} {W :
       rw [← Multiset.cons_coe, Multiset.insert_eq_cons, ← Multiset.singleton_add,
         ← Multiset.singleton_add]
       abel
-    show Workspace.mergeOp m current
+    show Workspace.traceMergeOp m current
         (ConnesKreimer.of' ({current} + ↑(m :: st) + 0 + W : Workspace)) =
       ConnesKreimer.of' ({merge m current} + ↑st + W : Workspace)
-    rw [e, Workspace.mergeOp_of'_add hW, add_assoc]
+    rw [e, Workspace.traceMergeOp_of'_add hW, add_assoc]
 
 /-- An admissible Merge step is the algebraic Merge on the workspace of the current object, the
     items it introduces, and the spectators. -/

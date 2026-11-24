@@ -34,7 +34,8 @@ binary tree, so it has an odd number of vertices (`numNodes_odd`); an admissible
 syntactic object conserves vertices, so it leaves an even number, and the remainder is never a
 syntactic object (`not_isSyntacticObject_of_mem_admissibleCuts`): the mover's parent is left unary.
 The deletion contracts that vertex, so the remainder of a deletion extracting one syntactic object
-is one (`isSyntacticObject_contractUnary_of_mem_admissibleCuts`), and the book's Merge carries
+is one (`isSyntacticObject_contractUnary_of_mem_admissibleCuts`), as the remainder of any
+deletion is (`isSyntacticObject_of_deletionQuotient`), and the book's Merge carries
 Internal Merge from a syntactic object to a syntactic object (`mergeOp_im`). A syntactic object is
 its own remainder (`deletionQuotient_of_isSyntacticObject`), the bare label marking exactly its
 vertices with children.
@@ -60,16 +61,14 @@ vertices with children.
 * `Minimalist.SyntacticObject.numNodes_odd`: a syntactic object has an odd number of vertices.
 * `Minimalist.SyntacticObject.not_isSyntacticObject_of_mem_admissibleCuts`: no admissible cut
   removing one syntactic object from another leaves a syntactic object.
+* `Minimalist.SyntacticObject.isSyntacticObject_of_deletionQuotient`: the remainder of a deletion
+  of a syntactic object is a syntactic object.
 * `Minimalist.SyntacticObject.isSyntacticObject_contractUnary_of_mem_admissibleCuts`,
   `Minimalist.SyntacticObject.mergeOp_im`: the remainder of a deletion removing at most one tree
   is a syntactic object, and Internal Merge at the deletion coproduct yields one.
 
 ## TODO
 
-* `isSyntacticObject_of_deletionQuotient`, the remainder of a deletion at any admissible cut, is
-  stated without proof; `isSyntacticObject_contractUnary_of_mem_admissibleCuts` proves it for cuts
-  extracting at most one tree. It is what Merge at the deletion coproduct needs to be an operator
-  on the algebra of workspaces.
 * Sideward Merge of type 3(a), two terms of one member, needs the uniqueness of the cut whose
   crown is both terms. Where one target contains the other, as in Countercyclic Merge, no
   admissible cut has the pair as its crown, so the operator should vanish there.
@@ -395,66 +394,83 @@ private theorem licensed_contractUnary {t : RoseTree Vertex}
       · obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
         exact ih y hy (hcs y hy)
 
-/-- An admissible cut extracting at most one tree from a syntactic object leaves a tree whose bare
-    vertices have one or two children and whose other vertices have none. -/
+/-- An admissible cut of a syntactic object leaves a tree whose bare vertices have at most two
+    children and whose other vertices have none. -/
 private theorem licensed_of_mem_rootCuts_leaveNothing {t : RoseTree Vertex}
     (ht : t.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex))
-    {p : Multiset (RoseTree Vertex) × RoseTree Vertex} (hp : p ∈ rootCuts leaveNothing t)
-    (hcard : Multiset.card p.1 ≤ 1) :
+    {p : Multiset (RoseTree Vertex) × RoseTree Vertex} (hp : p ∈ rootCuts leaveNothing t) :
     p.2.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex) ∨
-      (a = Vertex.bare ∧ ks.length = 1) := by
+      (a = Vertex.bare ∧ ks.length ≤ 2) := by
   have key := rootCuts_induction leaveNothing
     (P := fun cs q ↦ (∀ c ∈ cs, c.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex)) →
-      Multiset.card q.1 ≤ 1 →
         (∀ r ∈ q.2, r.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex) ∨
-          (a = Vertex.bare ∧ ks.length = 1)) ∧
-        cs.length ≤ q.2.length + Multiset.card q.1 ∧ q.2.length ≤ cs.length)
-    (fun _ _ ↦ ⟨by simp, by simp, by simp⟩)
-    (fun _ _ h _ _ ↦ by cases h; exact ⟨by simp, by simp, by simp⟩)
-    (fun a cs q _ hP hL hq ↦ by
+          (a = Vertex.bare ∧ ks.length ≤ 2)) ∧ q.2.length ≤ cs.length)
+    (fun _ ↦ ⟨by simp, by simp⟩)
+    (fun _ _ h _ ↦ by cases h; exact ⟨by simp, by simp⟩)
+    (fun a cs q _ hP hL ↦ by
       have hroot := (hL _ (List.mem_singleton_self _)).rel_root
-      obtain ⟨h1, h2, h3⟩ := hP (fun c hc ↦ (hL _ (List.mem_singleton_self _)).of_mem hc) hq
-      refine ⟨fun r hr ↦ ?_, by simp, by simp⟩
+      obtain ⟨h1, h3⟩ := hP (fun c hc ↦ (hL _ (List.mem_singleton_self _)).of_mem hc)
+      refine ⟨fun r hr ↦ ?_, by simp⟩
       rw [List.mem_singleton.mp hr]
       refine RoseTree.licensed_node_iff.mpr ⟨?_, h1⟩
-      dsimp only at hq
       rcases a with (_ | x) | x
       · simp only [Vertex.Licenses, Multiset.coe_card, List.length_map] at hroot ⊢
-        simp only [true_and]
-        omega
+        exact .inr ⟨trivial, by omega⟩
       · simp only [Vertex.Licenses, Multiset.coe_eq_zero, List.map_eq_nil_iff] at hroot ⊢
         subst hroot
         exact .inl (List.eq_nil_of_length_eq_zero (Nat.le_zero.mp h3))
       · simp only [Vertex.Licenses, Multiset.coe_eq_zero, List.map_eq_nil_iff] at hroot ⊢
         subst hroot
         exact .inl (List.eq_nil_of_length_eq_zero (Nat.le_zero.mp h3)))
-    (fun t ts a b _ _ ha hb hL hq ↦ by
-      dsimp only at hq ⊢
-      rw [Multiset.card_add] at hq
-      obtain ⟨ha1, ha2, ha3⟩ := ha (fun c hc ↦ hL c (by simp_all)) (by omega)
-      obtain ⟨hb1, hb2, hb3⟩ := hb (fun c hc ↦ hL c (List.mem_cons_of_mem _ hc)) (by omega)
-      refine ⟨fun r hr ↦ (List.mem_append.mp hr).elim (ha1 r) (hb1 r), ?_, ?_⟩ <;>
-        simp only [List.length_cons, List.length_nil, List.length_append,
-          Multiset.card_add] at ha2 ha3 ⊢ <;> omega)
+    (fun t ts a b _ _ ha hb hL ↦ by
+      obtain ⟨ha1, ha3⟩ := ha (fun c hc ↦ hL c (by simp_all))
+      obtain ⟨hb1, hb3⟩ := hb (fun c hc ↦ hL c (List.mem_cons_of_mem _ hc))
+      refine ⟨fun r hr ↦ (List.mem_append.mp hr).elim (ha1 r) (hb1 r), ?_⟩
+      simp only [List.length_cons, List.length_nil, List.length_append] at ha3 ⊢
+      omega)
     t p hp
-  exact (key (fun c hc ↦ List.mem_singleton.mp hc ▸ ht) hcard).1 _ (List.mem_singleton_self _)
+  exact (key fun c hc ↦ List.mem_singleton.mp hc ▸ ht).1 _ (List.mem_singleton_self _)
 
-/-- An admissible cut extracting at most one tree from a syntactic object leaves a syntactic
-    object once the vertex the extraction leaves unary is contracted. -/
-theorem isSyntacticObject_contractUnary_of_mem_admissibleCuts {T : SyntacticObject}
-    {q : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
-    (hq : q ∈ admissibleCuts T.toUnorderedTree) (hcard : Multiset.card q.1 ≤ 1) :
-    IsSyntacticObject q.2.contractUnary := by
-  have ht := T.isSyntacticObject_toUnorderedTree
-  generalize T.toUnorderedTree = t at ht hq
-  induction t using Quotient.inductionOn with
-  | h t =>
-    rw [UnorderedTree.quot_mk_eq_mk, isSyntacticObject_mk] at ht
-    rw [UnorderedTree.quot_mk_eq_mk, admissibleCuts_mk] at hq
-    obtain ⟨r, hr, rfl⟩ := Multiset.mem_map.mp hq
-    simp only [projCut, Multiset.card_map] at hcard ⊢
-    rw [UnorderedTree.contractUnary_mk, isSyntacticObject_mk]
-    exact licensed_contractUnary (licensed_of_mem_rootCuts_leaveNothing ht hr hcard)
+/-- Pruning the childless bare vertices of a tree whose bare vertices have at most two children
+    leaves a tree whose bare vertices have one or two. -/
+private theorem licensed_of_prune {t r : RoseTree Vertex}
+    (ht : t.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex) ∨
+      (a = Vertex.bare ∧ ks.length ≤ 2))
+    (hr : t.prune (· ≠ Vertex.bare) = some r) :
+    r.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex) ∨
+      (a = Vertex.bare ∧ ks.length = 1) := by
+  induction t generalizing r with
+  | node a cs ih =>
+    obtain ⟨hroot, hcs⟩ := RoseTree.licensed_node_iff.mp ht
+    rw [RoseTree.prune_node] at hr
+    split_ifs at hr with hc
+    cases hr
+    have hlen : (cs.filterMap (RoseTree.prune (· ≠ Vertex.bare))).length ≤ cs.length :=
+      List.length_filterMap_le _ _
+    refine RoseTree.licensed_node_iff.mpr ⟨?_, fun c hc' ↦ ?_⟩
+    · rcases a with (_ | x) | x
+      · have h0 : (cs.filterMap (RoseTree.prune (· ≠ Vertex.bare))).length ≠ 0 := fun h ↦
+          hc.elim (fun h' ↦ h' rfl) fun h' ↦ h' (List.eq_nil_of_length_eq_zero h)
+        have h2 : cs.length ≤ 2 := by
+          rcases hroot with h | h
+          · simp only [Vertex.Licenses, Multiset.coe_card, List.length_map] at h; omega
+          · simpa using h.2
+        simp only [Vertex.Licenses, Multiset.coe_card, List.length_map, true_and]
+        omega
+      · have : cs = [] := by
+          rcases hroot with h | h
+          · simpa [Vertex.Licenses] using h
+          · exact absurd h.1 (by simp)
+        subst this
+        exact .inl (by simp [Vertex.Licenses])
+      · have : cs = [] := by
+          rcases hroot with h | h
+          · simpa [Vertex.Licenses] using h
+          · exact absurd h.1 (by simp)
+        subst this
+        exact .inl (by simp [Vertex.Licenses])
+    · obtain ⟨d, hd, hdc⟩ := List.mem_filterMap.mp hc'
+      exact ih d hd (hcs d hd) hdc
 
 /-- The remainder of a deletion of a syntactic object, at any admissible cut, is a syntactic
     object. -/
@@ -462,11 +478,30 @@ theorem isSyntacticObject_of_deletionQuotient {T : SyntacticObject}
     {q : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
     (hq : q ∈ admissibleCuts T.toUnorderedTree) {r : UnorderedTree Vertex}
     (hr : deletionQuotient Vertex.bare q.2 = some r) : IsSyntacticObject r := by
-  -- TODO: the trunk of a cut is licensed with bare vertices allowed fewer than two children
-  -- (`rootCuts_induction`, as `licensed_of_mem_rootCuts_leaveNothing` without the bound on the
-  -- crown); pruning removes the childless bare vertices; `licensed_contractUnary` contracts the
-  -- unary ones.
-  sorry
+  have ht := T.isSyntacticObject_toUnorderedTree
+  generalize T.toUnorderedTree = t at ht hq
+  induction t using Quotient.inductionOn with
+  | h t =>
+    rw [UnorderedTree.quot_mk_eq_mk, isSyntacticObject_mk] at ht
+    rw [UnorderedTree.quot_mk_eq_mk, admissibleCuts_mk] at hq
+    obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hq
+    simp only [projCut, deletionQuotient, UnorderedTree.prune_mk, Option.map_map,
+      Option.map_eq_some_iff, Function.comp_apply] at hr
+    obtain ⟨r', hr', rfl⟩ := hr
+    rw [UnorderedTree.contractUnary_mk, isSyntacticObject_mk]
+    exact licensed_contractUnary
+      (licensed_of_prune (licensed_of_mem_rootCuts_leaveNothing ht hp) hr')
+
+/-- An admissible cut extracting at most one tree from a syntactic object leaves a syntactic
+    object once the vertex the extraction leaves unary is contracted. -/
+theorem isSyntacticObject_contractUnary_of_mem_admissibleCuts {T : SyntacticObject}
+    {q : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
+    (hq : q ∈ admissibleCuts T.toUnorderedTree) (hcard : Multiset.card q.1 ≤ 1) :
+    IsSyntacticObject q.2.contractUnary :=
+  isSyntacticObject_of_deletionQuotient hq <| by
+    rw [deletionQuotient, admissibleCuts_prune_eq_some _
+      (licensed_bare_of_isSyntacticObject T.isSyntacticObject_toUnorderedTree) hq hcard,
+      Option.map_some]
 
 /-- Internal Merge at the deletion coproduct carries a syntactic object to a syntactic object:
     when one admissible cut extracts the mover, the remainder of its trunk is a syntactic object

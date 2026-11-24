@@ -142,9 +142,9 @@ private def wasEatenTrace : SyntacticObject :=
 example : deleteAccessible theApple wasEatenTheApple = wasEatenTrace := by decide
 
 /-- The first stage `M_{T₂,1}` splits `T` into `T₂` beside the quotient `T/T₂`. -/
-example : Workspace.mergeOpUnit (R := ℤ) theApple (of' {wasEatenTheApple}) =
+example : Workspace.traceMergeOpUnit (R := ℤ) theApple (of' {wasEatenTheApple}) =
     of' {theApple, wasEatenTrace} := by
-  rw [Workspace.mergeOpUnit_of'_singleton (by decide) (by decide) (by decide),
+  rw [Workspace.traceMergeOpUnit_of'_singleton (by decide) (by decide) (by decide),
     show deleteAccessible theApple wasEatenTheApple = wasEatenTrace by decide]
 
 /-- The deletion quotient `T/d T₂ = {was, eaten}` that §1.4.4 displays. -/
@@ -189,11 +189,11 @@ example :
 
 /-- The composite `M_{T/T₂,T₂} ∘ M_{T₂,1}` is Internal Merge of *the apple*: it merges `T₂` with the
     quotient `T/T₂` (Proposition 1.4.2). -/
-example : Workspace.mergeOp (R := ℤ) wasEatenTrace theApple
-      (Workspace.mergeOpUnit theApple (of' {wasEatenTheApple})) =
+example : Workspace.traceMergeOp (R := ℤ) wasEatenTrace theApple
+      (Workspace.traceMergeOpUnit theApple (of' {wasEatenTheApple})) =
     of' {merge wasEatenTrace theApple} := by
   rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
-  exact Workspace.mergeOp_mergeOpUnit_of'_singleton (by decide) (by decide) (by decide)
+  exact Workspace.traceMergeOp_traceMergeOpUnit_of'_singleton (by decide) (by decide) (by decide)
 
 /-- This Internal Merge satisfies Minimal Yield under trace counting, the Δᶜ row of the table of
     Proposition 1.6.4. -/
@@ -290,12 +290,17 @@ private theorem filter_admissibleCuts_theApple :
       {({theD.toUnorderedTree}, UnorderedTree.node Vertex.bare {appleN.toUnorderedTree})} := by
   decide
 
+/-- External Merge at the deletion coproduct, on the algebra of workspaces (Lemma 1.4.1). -/
+example : Workspace.mergeOp (R := ℤ) eaten theD (of' {eaten, theD}) =
+    of' {SyntacticObject.merge eaten theD} :=
+  Workspace.mergeOp_of'_pair eaten theD
+
 /-- Sideward Merge of type 2(b) on workspaces is MERGE of *eaten* with *the*, leaving the trace of
     *the* in *the apple* (Lemma 1.4.4). -/
-example : Workspace.mergeOp (R := ℤ) eaten theD (of' ({eaten, theApple} + 0)) =
+example : Workspace.traceMergeOp (R := ℤ) eaten theD (of' ({eaten, theApple} + 0)) =
     of' (({eaten, theApple} + 0 : Workspace).mergeWith (·.headTrace) eaten theD) :=
-  Workspace.mergeOp_of'_sideward_member (by decide) (by decide) (by decide) (by decide) (by decide)
-    (by simp)
+  Workspace.traceMergeOp_of'_sideward_member (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by simp)
 
 /-- At `ε = 1` weighted Sideward Merge of type 2(b) is Sideward Merge at the admissible cuts. -/
 example :
