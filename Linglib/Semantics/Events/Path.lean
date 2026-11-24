@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.List.Infix
+public import Mathlib.Order.RelSeries
 public import Mathlib.Order.Fin.Basic
 public import Mathlib.Order.Hom.Bounded
 public import Mathlib.Order.Interval.Set.OrdConnected
@@ -10,10 +11,10 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Spatial paths
 
-A path is a finite sequence of locations, directed from a source to a goal. Paths carry a partial
-algebra: concatenation is defined only when one path ends where the next starts, and the
-[concatenants are subpaths](##Spatial.Path.IsConcat.le_left) of the result, in an order where
-[constant paths are minimal](##Spatial.Path.isMin_const).
+A path is a finite sequence of locations, directed from its first location to its last: a
+`RelSeries` with no condition on its steps. Concatenation is `RelSeries.smash`, which is defined
+only when one path ends where the next starts. One path is a subpath of another when its
+locations are a stretch of the other's.
 
 Relative to a region, a path parametrized by a bounded linear order of positions, those of a
 sequence or the unit interval of a curve, has the shape its positions inside the region give it:
@@ -28,7 +29,7 @@ its shape, and [concatenation keeps a shape](##Spatial.Path.HasShape.concat) exa
 
 Zwarts's own paths are constant-speed curves on the unit interval; he takes sequences of places to
 be compatible with the same algebra, and they keep every operation computable. Unlike such a
-curve, a sequence can repeat a location, so `⟨l, [l]⟩` assigns one point to every position without
+curve, a sequence can repeat a location, so `ofPoints l [l]` assigns one point to every position without
 being `const l`, and it has `const l` as a proper subpath.
 
 ## References
@@ -41,167 +42,97 @@ being `const l`, and it has `const l` as a proper subpath.
 
 namespace Spatial
 
-/-- A path is a directed trajectory through space, given by the finite sequence of locations it
-visits. -/
-structure Path (Loc : Type*) where
-  /-- The location the path starts from. -/
-  source : Loc
-  /-- The later locations, which are empty for a constant path. -/
-  steps : List Loc
-  deriving DecidableEq, Repr
+open scoped SetRel
+
+/-- A path is a directed trajectory through space, the finite sequence of locations it visits: a
+series with no condition on its steps. -/
+abbrev Path (Loc : Type*) := RelSeries (Set.univ : SetRel Loc Loc)
 
 namespace Path
 
 variable {Loc : Type*}
 
-/-- The goal of a path is its last location. -/
-def goal (p : Path Loc) : Loc := p.steps.getLastD p.source
+/-- The path through the locations `a :: l`, in order. -/
+def ofPoints (a : Loc) (l : List Loc) : Path Loc where
+  length := l.length
+  toFun i := (a :: l).get ⟨i, by simp⟩
+  step _ := trivial
 
-/-- The points of a path are its locations from source to goal. -/
-def points (p : Path Loc) : List Loc := p.source :: p.steps
+@[simp] theorem head_ofPoints (a : Loc) (l : List Loc) : (ofPoints a l).head = a := rfl
+
+@[simp] theorem toList_ofPoints (a : Loc) (l : List Loc) : (ofPoints a l).toList = a :: l := by
+  refine List.ext_getElem (by simp [RelSeries.toList, ofPoints]) fun i h₁ h₂ ↦ ?_
+  simp [RelSeries.toList, ofPoints]
 
 /-- The constant path at `l` visits only `l`. -/
-def const (l : Loc) : Path Loc := ⟨l, []⟩
+abbrev const (l : Loc) : Path Loc := RelSeries.singleton _ l
 
-@[simp] theorem goal_const (l : Loc) : (const l).goal = l := rfl
+@[simp] theorem coe_bot (p : Path Loc) : p ⊥ = p.head := rfl
 
-theorem points_ne_nil (p : Path Loc) : p.points ≠ [] := List.cons_ne_nil _ _
-
-theorem points_injective : Function.Injective (points : Path Loc → List Loc) := by
-  rintro ⟨s, l⟩ ⟨s', l'⟩ h
-  simpa [points] using h
-
-theorem dropLast_points_append (p : Path Loc) : p.points.dropLast ++ [p.goal] = p.points := by
-  have h : p.points.getLast p.points_ne_nil = p.goal := by
-    cases h : p.steps <;>
-      simp [points, goal, h, List.getLast_cons, List.getLastD_eq_getLast?,
-        List.getLast?_eq_some_getLast]
-  rw [← h, List.dropLast_append_getLast]
-
-private theorem getLastD_append {α : Type*} (l₁ l₂ : List α) (d : α) :
-    (l₁ ++ l₂).getLastD d = l₂.getLastD (l₁.getLastD d) := by
-  simp only [List.getLastD_eq_getLast?, List.getLast?_append]
-  cases l₂.getLast? <;> simp
+@[simp] theorem coe_top (p : Path Loc) : p ⊤ = p.last := rfl
 
 /-! ### Concatenation and subpaths -/
 
-/-- `IsConcat p q r` says that `r` is the concatenation `p + q`, defined only when `p` ends where
-`q` starts. -/
-def IsConcat (p q r : Path Loc) : Prop :=
-  p.goal = q.source ∧ r = ⟨p.source, p.steps ++ q.steps⟩
+/-- `IsConcat p q r` says that `r` is the concatenation of `p` and `q`, `RelSeries.smash`, which
+is defined when `p` ends where `q` starts. -/
+def IsConcat (p q r : Path Loc) : Prop := ∃ h : p.last = q.head, r = p.smash q h
 
-theorem IsConcat.source_eq {p q r : Path Loc} (h : IsConcat p q r) :
-    r.source = p.source := by rw [h.2]
+section
 
-theorem IsConcat.goal_eq {p q r : Path Loc} (h : IsConcat p q r) :
-    r.goal = q.goal := by
-  obtain ⟨h1, rfl⟩ := h
-  show (p.steps ++ q.steps).getLastD p.source = q.goal
-  rw [getLastD_append]
-  show q.steps.getLastD p.goal = q.goal
-  rw [h1]; rfl
+variable {p q r : Path Loc}
 
-theorem IsConcat.points_eq {p q r : Path Loc} (h : IsConcat p q r) :
-    r.points = p.points ++ q.steps := by
-  rw [h.2]; simp [points]
+theorem IsConcat.last_eq_head (h : IsConcat p q r) : p.last = q.head := h.fst
 
-theorem IsConcat.points_eq' {p q r : Path Loc} (h : IsConcat p q r) :
-    r.points = p.points.dropLast ++ q.points := by
-  rw [h.points_eq, ← dropLast_points_append p, List.dropLast_concat, h.1]
-  simp [points]
+theorem IsConcat.head_eq (h : IsConcat p q r) : r.head = p.head := by
+  obtain ⟨hc, rfl⟩ := h
+  simp
 
-/-- A constant path is a left identity for concatenation. -/
-theorem isConcat_const_left (p : Path Loc) : IsConcat (const p.source) p p := ⟨rfl, rfl⟩
+theorem IsConcat.last_eq (h : IsConcat p q r) : r.last = q.last := by
+  obtain ⟨hc, rfl⟩ := h
+  simp
 
-/-- A constant path is a right identity for concatenation. -/
-theorem isConcat_const_right (p : Path Loc) : IsConcat p (const p.goal) p := ⟨rfl, by simp [const]⟩
-
-/-- Concatenation is associative. -/
-theorem IsConcat.assoc {p q s t u : Path Loc} (hpq : IsConcat p q s) (hst : IsConcat s t u) :
-    ∃ v, IsConcat q t v ∧ IsConcat p v u := by
-  refine ⟨⟨q.source, q.steps ++ t.steps⟩, ⟨hpq.goal_eq.symm.trans hst.1, rfl⟩, hpq.1, ?_⟩
-  rw [hst.2, hpq.2]; simp
-
-/-- `p` is a subpath of `q` when concatenating some paths around `p` yields `q`. -/
-def Subpath (p q : Path Loc) : Prop :=
-  ∃ r r' m, IsConcat r p m ∧ IsConcat m r' q
-
-theorem subpath_iff_infix {p q : Path Loc} :
-    Subpath p q ↔ p.points <:+: q.points := by
-  constructor
-  · rintro ⟨r, r', m, hrp, hmq⟩
-    refine ⟨r.points.dropLast, r'.steps, ?_⟩
-    rw [hmq.points_eq, hrp.points_eq']
-  · rintro ⟨A, B, hAB⟩
-    match A with
-    | [] =>
-      obtain ⟨hs, hst⟩ : q.source = p.source ∧ q.steps = p.steps ++ B := by
-        simpa [points, List.cons.injEq] using hAB.symm
-      exact ⟨const p.source, ⟨p.goal, B⟩, p,
-        ⟨rfl, by cases p; rfl⟩, ⟨rfl, by cases q; simp_all [points]⟩⟩
-    | a :: A' =>
-      obtain ⟨hs, hst⟩ : q.source = a ∧ q.steps = A' ++ (p.source :: p.steps) ++ B := by
-        simpa [points, List.cons.injEq, List.append_assoc] using hAB.symm
-      refine ⟨⟨a, A' ++ [p.source]⟩, ⟨p.goal, B⟩,
-        ⟨a, (A' ++ [p.source]) ++ p.steps⟩,
-        ⟨by simp [goal], rfl⟩, ⟨?_, ?_⟩⟩
-      · show ((A' ++ [p.source]) ++ p.steps).getLastD a = p.goal
-        rw [getLastD_append, getLastD_append]
-        rfl
-      · cases q
-        simp_all [points, List.append_assoc]
-
-/-- The subpath order is a scoped instance, since a theory that sums paths by a total join instead
-of partial concatenation orders the same type differently. Activate it with
-`open scoped Spatial.Path`. -/
-scoped instance instSubpathOrder : PartialOrder (Path Loc) where
-  le := Subpath
-  le_refl p := subpath_iff_infix.mpr (List.infix_refl _)
-  le_trans _ _ _ hab hbc := subpath_iff_infix.mpr
-    ((subpath_iff_infix.mp hab).trans (subpath_iff_infix.mp hbc))
-  le_antisymm _ _ hab hba := points_injective
-    (List.infix_antisymm (subpath_iff_infix.mp hab) (subpath_iff_infix.mp hba))
-
-theorem const_le_iff {x : Loc} {p : Path Loc} : const x ≤ p ↔ x ∈ p.points :=
-  subpath_iff_infix.trans (List.singleton_infix_iff _ _)
-
-/-- A constant path has no proper subpaths. -/
-theorem isMin_const (l : Loc) : IsMin (const l) := fun p hp ↦ by
-  rcases (List.infix_singleton_iff p.points l).1 (subpath_iff_infix.mp hp) with h | h
-  · exact absurd h p.points_ne_nil
-  · exact (points_injective h).ge
-
-/-- Concatenants are subpaths of their concatenation. -/
-theorem IsConcat.le_left {p q r : Path Loc} (h : IsConcat p q r) : p ≤ r :=
-  ⟨const p.source, q, p, isConcat_const_left p, h⟩
-
-/-- Concatenants are subpaths of their concatenation. -/
-theorem IsConcat.le_right {p q r : Path Loc} (h : IsConcat p q r) : q ≤ r :=
-  ⟨p, const r.goal, r, h, isConcat_const_right r⟩
-
-/-! ### Reversal -/
-
-/-- The reverse of a path runs from its goal to its source. -/
-def reverse (p : Path Loc) : Path Loc := ⟨p.goal, p.points.reverse.tail⟩
-
-@[simp] theorem source_reverse (p : Path Loc) : p.reverse.source = p.goal := rfl
-
-@[simp] theorem points_reverse (p : Path Loc) : p.reverse.points = p.points.reverse := by
-  obtain ⟨s, l⟩ := p
-  induction l using List.reverseRecOn with
-  | nil => rfl
-  | append_singleton l x _ => simp [reverse, points, goal]
-
-@[simp] theorem goal_reverse (p : Path Loc) : p.reverse.goal = p.source := by
-  have h : p.reverse.points.getLast (points_ne_nil _) = p.reverse.goal := by
-    obtain ⟨s, l⟩ := p.reverse
-    cases l using List.reverseRecOn <;> simp [points, goal]
-  rw [← h]
-  simp only [points_reverse, List.getLast_reverse]
+theorem IsConcat.length_eq (h : IsConcat p q r) : r.length = p.length + q.length := by
+  obtain ⟨hc, rfl⟩ := h
   rfl
 
-@[simp] theorem reverse_reverse (p : Path Loc) : p.reverse.reverse = p :=
-  points_injective (by simp)
+theorem IsConcat.mem_of_mem_left (h : IsConcat p q r) {x : Loc} (hx : x ∈ p) : x ∈ r := by
+  obtain ⟨hc, rfl⟩ := h
+  obtain ⟨i, rfl⟩ := hx
+  exact ⟨_, RelSeries.smash_castLE hc i⟩
+
+/-- The positions of a concatenation up to the junction are those of its first path. -/
+theorem IsConcat.apply_of_le (h : IsConcat p q r) (k : Fin (r.length + 1))
+    (hk : (k : ℕ) ≤ p.length) : r k = p ⟨k, by omega⟩ := by
+  obtain ⟨hc, rfl⟩ := h
+  exact RelSeries.smash_castLE hc ⟨k, by omega⟩
+
+/-- The positions of a concatenation from the junction on are those of its second path. -/
+theorem IsConcat.apply_of_ge (h : IsConcat p q r) (k : Fin (r.length + 1))
+    (hk : p.length ≤ (k : ℕ)) :
+    r k = q ⟨k - p.length, by have := h.length_eq; omega⟩ := by
+  obtain ⟨hc, rfl⟩ := h
+  have hl : (p.smash q hc).length = p.length + q.length := rfl
+  have hk' : k = Fin.natAdd p.length (⟨k - p.length, by have := k.2; omega⟩ : Fin (q.length + 1)) := by
+    ext; simp; omega
+  conv_lhs => rw [hk']
+  simp only [RelSeries.smash]
+  exact Fin.addCases_right _
+
+/-- `p` is a subpath of `q` when the locations of `p` are a stretch of those of `q`. The order is
+a scoped instance, since a theory that sums paths by a total join instead of partial
+concatenation orders the same type differently. Activate it with `open scoped Spatial.Path`. -/
+scoped instance instSubpathOrder : PartialOrder (Path Loc) where
+  le p q := p.toList <:+: q.toList
+  le_refl _ := List.infix_refl _
+  le_trans _ _ _ := List.IsInfix.trans
+  le_antisymm _ _ h h' := RelSeries.toList_injective (List.infix_antisymm h h')
+
+theorem le_iff_infix : p ≤ q ↔ p.toList <:+: q.toList := .rfl
+
+theorem const_le_iff {x : Loc} : const x ≤ p ↔ x ∈ p := by
+  rw [le_iff_infix, RelSeries.toList_singleton, List.singleton_infix_iff, RelSeries.mem_toList]
+
+end
 
 /-! ### Directions -/
 
@@ -545,44 +476,14 @@ theorem hasShape_comp_ofDual [Preorder β] {d : α → β} {s : Shape} :
 
 end Shapes
 
-/-! ### Sequences of places as parametrized paths -/
+/-! ### Shapes of paths -/
 
-variable {Loc : Type*} (p : Path Loc)
-
-/-- A path's places, indexed by their positions. -/
-def toFun : Fin (p.steps.length + 1) → Loc := fun i ↦ p.points.get ⟨i, by simp [points]⟩
-
-instance : CoeFun (Path Loc) fun p ↦ Fin (p.steps.length + 1) → Loc := ⟨toFun⟩
-
-@[simp] theorem coe_bot : p ⊥ = p.source := rfl
-
-@[simp] theorem coe_top : p ⊤ = p.goal := by
-  obtain ⟨s, l⟩ := p
-  induction l using List.reverseRecOn with
-  | nil => rfl
-  | append_singleton l x _ => simp [toFun, points, goal, List.getElem_append_right]
-
-theorem length_steps_reverse : p.reverse.steps.length = p.steps.length := by
-  simpa [points] using congrArg List.length (points_reverse p)
-
-/-- The positions of a reversed path, as an order isomorphism onto the dual of the path's. -/
-def revIso : Fin (p.reverse.steps.length + 1) ≃o (Fin (p.steps.length + 1))ᵒᵈ :=
-  (Fin.castOrderIso (by rw [length_steps_reverse])).trans Fin.revOrderIso.symm
-
-theorem coe_reverse : ⇑p.reverse = (p ∘ OrderDual.ofDual) ∘ p.revIso := by
-  funext i
-  have h := points_reverse p
-  simp only [Function.comp_apply, revIso, OrderIso.trans_apply, Fin.revOrderIso_symm_apply,
-    OrderDual.ofDual_toDual]
-  simp only [toFun, List.get_eq_getElem, Fin.val_rev, Fin.castOrderIso_apply, Fin.val_cast]
-  simp only [h, List.getElem_reverse]
-  congr 1
-  simp [points]
+variable (p : Path Loc)
 
 /-- Reversing a path reverses its shape. -/
 theorem hasShape_reverse {β : Type*} [Preorder β] {d : Loc → β} {R : Set Loc} {s : Shape} :
-    HasShape R p.reverse d s ↔ HasShape R p d s.reverse := by
-  rw [coe_reverse, hasShape_comp, hasShape_comp_ofDual]
+    HasShape R p.reverse d s ↔ HasShape R p d s.reverse :=
+  (hasShape_comp (γ := p ∘ OrderDual.ofDual) Fin.revOrderIso.symm).trans hasShape_comp_ofDual
 
 /-! ### Positions of a concatenation -/
 
@@ -590,32 +491,14 @@ section Concat
 
 variable {p} {q r : Path Loc} {R : Set Loc} {β : Type*} [Preorder β] {d : Loc → β} {s : Shape}
 
-theorem IsConcat.length_steps (h : IsConcat p q r) :
-    r.steps.length = p.steps.length + q.steps.length := by
-  rw [h.2]; simp
-
-/-- The positions of a concatenation up to the junction are those of its first path. -/
-theorem IsConcat.apply_of_le (h : IsConcat p q r) (k : Fin (r.steps.length + 1))
-    (hk : (k : ℕ) ≤ p.steps.length) : r k = p ⟨k, by omega⟩ := by
-  simp only [toFun, List.get_eq_getElem, h.points_eq]
-  exact List.getElem_append_left (by simp [points]; omega)
-
-/-- The positions of a concatenation from the junction on are those of its second path. -/
-theorem IsConcat.apply_of_ge (h : IsConcat p q r) (k : Fin (r.steps.length + 1))
-    (hk : p.steps.length ≤ (k : ℕ)) :
-    r k = q ⟨k - p.steps.length, by have := h.length_steps; omega⟩ := by
-  simp only [toFun, List.get_eq_getElem, h.points_eq']
-  rw [List.getElem_append_right (by simpa [points] using hk)]
-  simp [points]
-
 theorem IsConcat.forall_apply (h : IsConcat p q r) {P : Loc → Prop} :
     (∀ k, P (r k)) ↔ (∀ i, P (p i)) ∧ ∀ j, P (q j) := by
-  have hl := h.length_steps
+  have hl := h.length_eq
   refine ⟨fun hr ↦ ⟨fun i ↦ ?_, fun j ↦ ?_⟩, fun ⟨hp, hq⟩ k ↦ ?_⟩
   · simpa [h.apply_of_le ⟨i, by omega⟩ (by have := i.2; simp; omega)] using hr ⟨i, by omega⟩
-  · simpa [h.apply_of_ge ⟨p.steps.length + j, by omega⟩ (by simp)] using
-      hr ⟨p.steps.length + j, by omega⟩
-  · rcases le_total (k : ℕ) p.steps.length with hk | hk
+  · simpa [h.apply_of_ge ⟨p.length + j, by omega⟩ (by simp)] using
+      hr ⟨p.length + j, by omega⟩
+  · rcases le_total (k : ℕ) p.length with hk | hk
     · rw [h.apply_of_le k hk]; exact hp _
     · rw [h.apply_of_ge k hk]; exact hq _
 
@@ -624,7 +507,7 @@ theorem IsConcat.strictMono_comp (h : IsConcat p q r) (hp : StrictMono (d ∘ p)
   rw [Fin.strictMono_iff_lt_succ]
   intro i
   simp only [Function.comp_apply]
-  rcases lt_or_ge (i : ℕ) p.steps.length with hi | hi
+  rcases lt_or_ge (i : ℕ) p.length with hi | hi
   · rw [h.apply_of_le _ (by simpa using hi.le), h.apply_of_le _ (by simp; omega)]
     exact hp (by simp [Fin.lt_def])
   · rw [h.apply_of_ge _ (by simpa using hi), h.apply_of_ge _ (by simp; omega)]
@@ -636,25 +519,25 @@ theorem IsConcat.strictAnti_comp (h : IsConcat p q r) (hp : StrictAnti (d ∘ p)
 
 /-- A path's positions inside `R` are not one stretch if its concatenants both meet `R` and their
 junction is outside it. -/
-theorem IsConcat.not_ordConnected (h : IsConcat p q r) (hgoal : p.goal ∉ R) {i j}
+theorem IsConcat.not_ordConnected (h : IsConcat p q r) (hgoal : p.last ∉ R) {i j}
     (hi : p i ∈ R) (hj : q j ∈ R) : ¬ (r ⁻¹' R).OrdConnected := fun hc ↦ by
-  have hl := h.length_steps
-  have hn : p.steps.length < r.steps.length + 1 := by omega
+  have hl := h.length_eq
+  have hn : p.length < r.length + 1 := by omega
   have ha := h.apply_of_le ⟨i, by omega⟩ (by have := i.2; simp; omega)
-  have hb := h.apply_of_le ⟨p.steps.length, hn⟩ le_rfl
-  have hc' := h.apply_of_ge ⟨p.steps.length + j, by omega⟩ (by simp)
-  have hmem := hc.out (x := ⟨i, by omega⟩) (y := ⟨p.steps.length + j, by omega⟩)
+  have hb := h.apply_of_le ⟨p.length, hn⟩ le_rfl
+  have hc' := h.apply_of_ge ⟨p.length + j, by omega⟩ (by simp)
+  have hmem := hc.out (x := ⟨i, by omega⟩) (y := ⟨p.length + j, by omega⟩)
     (by simpa [ha] using hi) (by simpa [hc'] using hj)
-    (a := ⟨p.steps.length, hn⟩) ⟨by have := i.2; simp [Fin.le_def]; omega, by simp [Fin.le_def]⟩
-  have htop : p ⟨p.steps.length, by omega⟩ = p.goal := p.coe_top
+    (a := ⟨p.length, hn⟩) ⟨by have := i.2; simp [Fin.le_def]; omega, by simp [Fin.le_def]⟩
+  have htop : p ⟨p.length, by omega⟩ = p.last := p.coe_top
   simp only [Set.mem_preimage, hb, htop] at hmem
   exact hgoal hmem
 
 /-- Concatenation keeps a shape without a transition. -/
 theorem HasShape.concat (hs : ¬ s.IsBounded) (hp : HasShape R p d s) (hq : HasShape R q d s)
     (h : IsConcat p q r) : HasShape R r d s := by
-  have hne (hne : (⊥ : Fin (p.steps.length + 1)) ≠ ⊤) : (⊥ : Fin (r.steps.length + 1)) ≠ ⊤ := by
-    have := h.length_steps
+  have hne (hne : (⊥ : Fin (p.length + 1)) ≠ ⊤) : (⊥ : Fin (r.length + 1)) ≠ ⊤ := by
+    have := h.length_eq
     simp only [ne_eq, Fin.ext_iff, bot_eq_zero, Fin.top_eq_last, Fin.val_zero, Fin.val_last]
       at hne ⊢
     omega
@@ -674,9 +557,9 @@ into more than one stretch inside `R`. -/
 theorem HasShape.not_concat (hs : s.IsBounded) (hp : HasShape R p d s) (hq : HasShape R q d s)
     (h : IsConcat p q r) : ¬ HasShape R r d s := by
   have cofinal (hp : IsCofinal R p) (hq : IsCofinal R q) : False :=
-    hq.2.1 (by rw [coe_bot, ← h.1, ← coe_top]; exact hp.2.2)
+    hq.2.1 (by rw [coe_bot, ← h.last_eq_head, ← coe_top]; exact hp.2.2)
   have coinitial (hp : IsCoinitial R p) (hq : IsCoinitial R q) : False :=
-    hp.2.2 (by rw [coe_top, h.1, ← coe_bot]; exact hq.2.1)
+    hp.2.2 (by rw [coe_top, h.last_eq_head, ← coe_bot]; exact hq.2.1)
   cases s with
   | cofinal => exact (cofinal hp hq).elim
   | terminative => exact (cofinal (IsTerminative.isCofinal hp) (IsTerminative.isCofinal hq)).elim
@@ -689,7 +572,6 @@ theorem HasShape.not_concat (hs : s.IsBounded) (hp : HasShape R p d s) (hq : Has
   | _ => exact absurd hs (by decide)
 
 end Concat
-
 end Path
 
 /-! ### Localization -/

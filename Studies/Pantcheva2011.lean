@@ -147,7 +147,7 @@ variable {Loc β : Type*} [Preorder β] {R : Set Loc} {d : Loc → β} {p q r : 
 
 /-- A path from outside a place into it is cofinal and not coinitial, and its reverse is
 coinitial, the semantic ground of *A&¬A (§5.4). -/
-example : let p : Path ℕ := ⟨0, [1]⟩
+example : let p : Path ℕ := Path.ofPoints 0 [1]
     IsCofinal {1} p ∧ ¬ IsCoinitial {1} p ∧ IsCoinitial {1} p.reverse := by
   intro p
   have h : IsCofinal {1} p := by
@@ -161,17 +161,17 @@ example : let p : Path ℕ := ⟨0, [1]⟩
 Chapter 2. -/
 theorem isTransitive_of_concat (hp : IsCofinal R p) (hq : IsCoinitial R q)
     (h : p.IsConcat q r) : IsTransitive R r := by
-  have hl := h.length_steps
-  refine ⟨⟨fun a ha b hb c hc ↦ ?_⟩, ⟨⟨p.steps.length, by omega⟩, ?_⟩, ?_, ?_⟩
-  · rcases le_total (c : ℕ) p.steps.length with hle | hle
+  have hl := h.length_eq
+  refine ⟨⟨fun a ha b hb c hc ↦ ?_⟩, ⟨⟨p.length, by omega⟩, ?_⟩, ?_, ?_⟩
+  · rcases le_total (c : ℕ) p.length with hle | hle
     · have hac := Fin.le_def.1 hc.1
-      have key : (⟨a, by omega⟩ : Fin (p.steps.length + 1)) ∈ p ⁻¹' R := by
+      have key : (⟨a, by omega⟩ : Fin (p.length + 1)) ∈ p ⁻¹' R := by
         rw [Set.mem_preimage, ← h.apply_of_le a (hac.trans hle)]; exact ha
       show r c ∈ R
       rw [h.apply_of_le c hle]
       exact hp.1 (Fin.le_def.2 hac) key
     · have hcb := Fin.le_def.1 hc.2
-      have key : (⟨b - p.steps.length, by omega⟩ : Fin (q.steps.length + 1)) ∈ q ⁻¹' R := by
+      have key : (⟨b - p.length, by omega⟩ : Fin (q.length + 1)) ∈ q ⁻¹' R := by
         rw [Set.mem_preimage, ← h.apply_of_ge b (hle.trans hcb)]; exact hb
       show r c ∈ R
       rw [h.apply_of_ge c hle]
@@ -179,8 +179,8 @@ theorem isTransitive_of_concat (hp : IsCofinal R p) (hq : IsCoinitial R q)
   · show r _ ∈ R
     rw [h.apply_of_le _ le_rfl]
     exact hp.2.2
-  · rw [coe_bot, h.source_eq]; exact hp.2.1
-  · rw [coe_top, h.goal_eq, ← coe_top]; exact hq.2.2
+  · rw [coe_bot, h.head_eq]; exact hp.2.1
+  · rw [coe_top, h.last_eq, ← coe_top]; exact hq.2.2
 
 /-- A source path followed by a goal path has two positive phases and so no shape, the *tsap of
 (11) of Chapter 2, which to her knowledge no language has a preposition for. -/
@@ -190,7 +190,7 @@ theorem not_hasShape_of_concat (hp : IsCoinitial R p) (hq : IsCofinal R q)
 
 /-- Such a path can be formed, so what (11) lacks is a shape rather than a concatenation. -/
 example : ∃ p q r : Path ℕ, IsCoinitial {1} p ∧ IsCofinal {1} q ∧ p.IsConcat q r := by
-  refine ⟨⟨1, [0]⟩, ⟨0, [1]⟩, _, ⟨fun a b hab hb ↦ ?_, by decide, by decide⟩,
+  refine ⟨Path.ofPoints 1 [0], Path.ofPoints 0 [1], _, ⟨fun a b hab hb ↦ ?_, by decide, by decide⟩,
     ⟨fun a b hab ha ↦ ?_, by decide, by decide⟩, rfl, rfl⟩
   · simp only [Set.mem_preimage, Set.mem_singleton_iff] at hb ⊢
     revert a b; decide

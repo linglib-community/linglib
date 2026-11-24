@@ -68,23 +68,23 @@ def reverse (σ : Segment E D) : Segment E D := ⟨σ.finish, σ.start, σ.scale
 @[simp] theorem reverse_reverse (σ : Segment E D) : σ.reverse.reverse = σ := rfl
 
 /-- The segment as a path of entities from its start to its end. -/
-def toPath (σ : Segment E D) : Path E := ⟨σ.start, [σ.finish]⟩
+def toPath (σ : Segment E D) : Path E := Path.ofPoints σ.start [σ.finish]
 
-@[simp] theorem source_toPath (σ : Segment E D) : σ.toPath.source = σ.start := rfl
+@[simp] theorem head_toPath (σ : Segment E D) : σ.toPath.head = σ.start := rfl
 
-@[simp] theorem goal_toPath (σ : Segment E D) : σ.toPath.goal = σ.finish := rfl
+@[simp] theorem last_toPath (σ : Segment E D) : σ.toPath.last = σ.finish := rfl
 
 /-- A segment with distinct ends is a coinitial path relative to an entity exactly when it
 starts at it. -/
 theorem isCoinitial_toPath_iff {σ : Segment E D} {x : E} (h : σ.start ≠ σ.finish) :
     IsCoinitial {x} σ.toPath ↔ σ.start = x := by
   refine ⟨fun hc ↦ by simpa using hc.2.1, fun hx ↦ ⟨fun i j hji hi ↦ ?_, by simpa using hx, ?_⟩⟩
-  · have key : ∀ i : Fin (σ.toPath.steps.length + 1), i ≠ ⊥ → i = ⊤ :=
+  · have key : ∀ i : Fin (σ.toPath.length + 1), i ≠ ⊥ → i = ⊤ :=
       (by decide : ∀ i : Fin 2, i ≠ ⊥ → i = ⊤)
     have hi0 : i = ⊥ := by
       by_contra hne
       have hi' : σ.toPath i = x := hi
-      rw [key i hne, coe_top, goal_toPath] at hi'
+      rw [key i hne, coe_top, last_toPath] at hi'
       exact h (hx.trans hi'.symm)
     obtain rfl : j = ⊥ := le_bot_iff.mp (hi0 ▸ hji)
     exact hi0 ▸ hi

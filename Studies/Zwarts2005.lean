@@ -75,7 +75,7 @@ Zwarts shows neither characterizes boundedness. Quantization is
 
 /-- A path set is telic in Krifka's sense, (22b), when comparable members share both endpoints. -/
 def TelicK (X : Set (Path Loc)) : Prop :=
-  ∀ p ∈ X, ∀ q ∈ X, p ≤ q → p.source = q.source ∧ p.goal = q.goal
+  ∀ p ∈ X, ∀ q ∈ X, p ≤ q → p.head = q.head ∧ p.last = q.last
 
 theorem quantized_telicK {X : Set (Path Loc)} (h : QUA X) :
     TelicK X := by
@@ -87,7 +87,7 @@ theorem quantized_telicK {X : Set (Path Loc)} (h : QUA X) :
 /-- `loops A` is the *round and round the block* set of non-constant loops at `A`, those that leave
 `A` somewhere along the way. -/
 def loops (A : Loc) : Set (Path Loc) :=
-  {p | p.source = A ∧ p.goal = A ∧ ∃ x ∈ p.steps, x ≠ A}
+  {p | p.head = A ∧ p.last = A ∧ ∃ x ∈ p, x ≠ A}
 
 theorem loops_telicK (A : Loc) : TelicK (loops (Loc := Loc) A) :=
   fun _ hp _ hq _ ↦ ⟨hp.1.trans hq.1.symm, hp.2.1.trans hq.2.1.symm⟩
@@ -97,26 +97,25 @@ theorem loops_cumulative [Nontrivial Loc] (A : Loc) :
     Cumulative Path.IsConcat (loops (Loc := Loc) A) := by
   obtain ⟨B, hB⟩ := exists_ne A
   constructor
-  · have h : (⟨A, [B, A]⟩ : Path Loc) ∈ loops A := ⟨rfl, rfl, B, by simp, hB⟩
+  · have h : Path.ofPoints A [B, A] ∈ loops A := ⟨rfl, rfl, B, ⟨1, rfl⟩, hB⟩
     exact ⟨_, h, _, h, _, ⟨rfl, rfl⟩⟩
   · rintro p hp q hq r hr
     obtain ⟨hs, -, x, hx, hxA⟩ := hp
-    exact ⟨hr.source_eq.trans hs, hr.goal_eq.trans hq.2.1,
-      x, by rw [hr.2]; simp [hx], hxA⟩
+    exact ⟨hr.head_eq.trans hs, hr.last_eq.trans hq.2.1, x, hr.mem_of_mem_left hx, hxA⟩
 
 -- p. 776
 theorem const_le_const_iff {a b : Loc} : Path.const a ≤ Path.const b ↔ a = b :=
-  Path.const_le_iff.trans List.mem_singleton
+  Path.const_le_iff.trans (by simp [RelSeries.mem_def, eq_comm])
 
 /-! ### Goal and source prepositions (§4.1.1) -/
 
 /-- The weak goal-phrase denotation, (30c), (33), holds of the paths ending in the region. -/
-def weakTo (R : Set Loc) : Set (Path Loc) := {p | p.goal ∈ R}
+def weakTo (R : Set Loc) : Set (Path Loc) := {p | p.last ∈ R}
 
 theorem weakTo_cumulative {R : Set Loc} {x : Loc} (hx : x ∈ R) :
     Cumulative Path.IsConcat (weakTo R) :=
-  ⟨⟨_, hx, _, hx, _, Path.isConcat_const_left (.const x)⟩,
-    fun _ _ _ hq r hr ↦ (hr.goal_eq.symm ▸ hq : r.goal ∈ R)⟩
+  ⟨⟨Path.const x, hx, Path.const x, hx, _, rfl, rfl⟩,
+    fun _ _ _ hq r hr ↦ (hr.last_eq.symm ▸ hq : r.last ∈ R)⟩
 
 /-- The strict goal phrase, (35), (36): the positions in the region form an interval including the
 last position and, being a proper interval, not the first. The goal prepositions differ only in
@@ -127,19 +126,19 @@ def toPP (R : Set Loc) : Set (Path Loc) := {p | Path.IsCofinal R p}
 def fromPP (R : Set Loc) : Set (Path Loc) := {p | Path.IsCoinitial R p}
 
 theorem toPP_subset_weakTo (R : Set Loc) : toPP R ⊆ weakTo R :=
-  fun p hp ↦ (p.coe_top ▸ hp.2.2 : p.goal ∈ R)
+  fun p hp ↦ (p.coe_top ▸ hp.2.2 : p.last ∈ R)
 
 -- (35)
 theorem toPP_no_pairs (R : Set Loc) :
     ¬ ∃ p ∈ toPP R, ∃ q ∈ toPP R, ∃ r, Path.IsConcat p q r := by
   rintro ⟨p, hp, q, hq, r, hr⟩
-  exact hq.2.1 (by rw [Path.coe_bot, ← hr.1, ← Path.coe_top]; exact hp.2.2)
+  exact hq.2.1 (by rw [Path.coe_bot, ← hr.last_eq_head, ← Path.coe_top]; exact hp.2.2)
 
 -- (36)
 theorem fromPP_no_pairs (R : Set Loc) :
     ¬ ∃ p ∈ fromPP R, ∃ q ∈ fromPP R, ∃ r, Path.IsConcat p q r := by
   rintro ⟨p, hp, q, hq, r, hr⟩
-  exact hp.2.2 (by rw [Path.coe_top, hr.1, ← Path.coe_bot]; exact hq.2.1)
+  exact hp.2.2 (by rw [Path.coe_top, hr.last_eq_head, ← Path.coe_bot]; exact hq.2.1)
 
 -- (21)
 theorem toPP_bounded (R : Set Loc) : Bounded Path.IsConcat (toPP R) :=
@@ -158,10 +157,11 @@ def overPP (R : Set Loc) : Set (Path Loc) := {p | Path.IsTransitive R p}
 -- (39)
 theorem overPP_exists_pair {R : Set Loc} {x a : Loc} (hx : x ∈ R) (ha : a ∉ R) :
     ∃ p ∈ overPP R, ∃ q ∈ overPP R, ∃ r, Path.IsConcat p q r := by
-  have hp : (⟨a, [x, a]⟩ : Path Loc) ∈ overPP R := by
+  have hp : Path.ofPoints a [x, a] ∈ overPP R := by
+    have key : ∀ i : Fin 3, Path.ofPoints a [x, a] i ∈ R ↔ i = 1 := by
+      intro i; fin_cases i <;> simp [Path.ofPoints, hx, ha]
     refine ⟨?_, ⟨1, hx⟩, ha, ha⟩
-    rw [show (⇑(⟨a, [x, a]⟩ : Path Loc)) ⁻¹' R = {1} by
-      ext i; fin_cases i <;> simp [Path.toFun, Path.points, hx, ha, Fin.ext_iff]]
+    rw [show (Path.ofPoints a [x, a]).toFun ⁻¹' R = {1} from Set.ext key]
     exact Set.ordConnected_singleton
   exact ⟨_, hp, _, hp, _, rfl, rfl⟩
 
@@ -181,33 +181,33 @@ hence unbounded, which grounds the atelic marking of the comparative preposition
 /-- *Towards x*, (45), holds of a path that ends nearer to the reference object than it starts,
 measured by `d`. -/
 def towardsPP [Preorder α] (d : Loc → α) : Set (Path Loc) :=
-  {p | d p.goal < d p.source}
+  {p | d p.last < d p.head}
 
 /-- *Away from x*, (48), holds of a path that ends further from the reference object than it
 starts. -/
 def awayFromPP [Preorder α] (d : Loc → α) : Set (Path Loc) :=
-  {p | d p.source < d p.goal}
+  {p | d p.head < d p.last}
 
 theorem towardsPP_concat_closed [Preorder α] (d : Loc → α) :
     ∀ p ∈ towardsPP d, ∀ q ∈ towardsPP d, ∀ r, Path.IsConcat p q r →
       r ∈ towardsPP d := by
   intro p hp q hq r hr
-  show d r.goal < d r.source
-  rw [hr.goal_eq, hr.source_eq]
-  exact hq.trans_le (hr.1 ▸ hp.le)
+  show d r.last < d r.head
+  rw [hr.last_eq, hr.head_eq]
+  exact hq.trans_le (hr.last_eq_head ▸ hp.le)
 
 theorem awayFromPP_concat_closed [Preorder α] (d : Loc → α) :
     ∀ p ∈ awayFromPP d, ∀ q ∈ awayFromPP d, ∀ r, Path.IsConcat p q r →
       r ∈ awayFromPP d := by
   intro p hp q hq r hr
-  show d r.source < d r.goal
-  rw [hr.goal_eq, hr.source_eq]
-  exact hp.trans_le (hr.1 ▸ hq.le)
+  show d r.head < d r.last
+  rw [hr.last_eq, hr.head_eq]
+  exact hp.trans_le (hr.last_eq_head ▸ hq.le)
 
 -- (45)
 theorem towardsPP_cumulative [Preorder α] {d : Loc → α} {a b c : Loc} (hab : d b < d a)
     (hbc : d c < d b) : Cumulative Path.IsConcat (towardsPP d) :=
-  ⟨⟨⟨a, [b]⟩, hab, ⟨b, [c]⟩, hbc, _, rfl, rfl⟩, towardsPP_concat_closed d⟩
+  ⟨⟨Path.ofPoints a [b], hab, Path.ofPoints b [c], hbc, _, rfl, rfl⟩, towardsPP_concat_closed d⟩
 
 -- (45)
 theorem toPP_subset_towardsPP [Preorder α] {d : Loc → α} {R : Set Loc}
@@ -219,13 +219,16 @@ also *to x*, against the [krifka-1998] characterization of telicity. -/
 theorem toPP_not_quantized {x a b : Loc} (ha : a ≠ x) (hb : b ≠ x) :
     ¬ QUA (toPP ({x} : Set Loc)) := by
   intro h
-  have hp : (⟨a, [x]⟩ : Path Loc) ∈ toPP {x} := by
-    refine Path.IsTerminative.isCofinal ⟨?_, by simp⟩
-    ext i; fin_cases i <;> simp [Path.toFun, Path.points, ha, Fin.top_eq_last]
-  have hq : (⟨b, [a, x]⟩ : Path Loc) ∈ toPP {x} := by
-    refine Path.IsTerminative.isCofinal ⟨?_, by simp⟩
-    ext i; fin_cases i <;> simp [Path.toFun, Path.points, ha, hb, Fin.top_eq_last, Fin.ext_iff]
-  exact h hp hq (by simp) (Path.subpath_iff_infix.mpr ⟨[b], [], rfl⟩)
+  have hp : Path.ofPoints a [x] ∈ toPP {x} := by
+    have key : ∀ i : Fin 2, Path.ofPoints a [x] i ∈ ({x} : Set Loc) ↔ i = ⊤ := by
+      intro i; fin_cases i <;> simp [Path.ofPoints, ha, Fin.top_eq_last]
+    exact Path.IsTerminative.isCofinal ⟨Set.ext key, (by decide : (⊥ : Fin 2) ≠ ⊤)⟩
+  have hq : Path.ofPoints b [a, x] ∈ toPP {x} := by
+    have key : ∀ i : Fin 3, Path.ofPoints b [a, x] i ∈ ({x} : Set Loc) ↔ i = ⊤ := by
+      intro i; fin_cases i <;> simp [Path.ofPoints, ha, hb, Fin.top_eq_last, Fin.ext_iff]
+    exact Path.IsTerminative.isCofinal ⟨Set.ext key, (by decide : (⊥ : Fin 3) ≠ ⊤)⟩
+  exact h hp hq (fun he ↦ by simpa [Path.ofPoints] using congrArg RelSeries.length he)
+    (Path.le_iff_infix.mpr ⟨[b], [], by simp⟩)
 
 /-! ### The judgments (1), (23) -/
 
