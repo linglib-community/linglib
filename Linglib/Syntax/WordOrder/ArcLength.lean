@@ -5,8 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.DependencyGrammar.Projectivity
-public import Linglib.Syntax.DependencyGrammar.Catena
+public import Linglib.Syntax.WordOrder.Projectivity
 public import Linglib.Core.Data.Finset.Sort
 public import Linglib.Syntax.WordOrder.BoundaryDistance
 public import Mathlib.Data.Nat.Dist

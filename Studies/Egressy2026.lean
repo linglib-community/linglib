@@ -6,7 +6,7 @@ public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Languages.Hungarian.Verbs
 public import Linglib.Languages.Hungarian.Pronouns
 public import Linglib.Semantics.Tense.Embedding
-public import Linglib.Syntax.Minimalist.Clause.Size
+public import Linglib.Syntax.Minimalist.ExtendedProjection.Size
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
 public import Linglib.Syntax.Minimalist.Probe.Horizon
 public import Linglib.Data.Examples.Readers

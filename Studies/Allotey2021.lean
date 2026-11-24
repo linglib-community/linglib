@@ -4,7 +4,7 @@ public import Linglib.Languages.Ga.Pronouns
 public import Linglib.Languages.Ga.Verbs
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Data.WALS.Features.F101A
-public import Linglib.Syntax.Binding.MinimalPronoun
+public import Linglib.Morphology.DistributedMorphology.MinimalPronoun
 public import Studies.Landau2004
 public import Linglib.Syntax.Binding.Valuation
 public import Studies.Landau2013
@@ -77,7 +77,7 @@ tense and no agreement (`Studies/Fujii2012.lean`).
 
 namespace Allotey2021
 
-open Binding.MinimalPronoun Binding Ga Ga.Pronouns Morphology
+open DistributedMorphology.MinimalPronoun Binding Ga Ga.Pronouns Morphology
 
 /-! ### Pronouns (Table 3) -/
 

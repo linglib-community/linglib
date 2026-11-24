@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Gender.AgreementClasses
+public import Linglib.Syntax.Feature.Gender.AgreementClasses
 public import Linglib.Syntax.Category.Noun.Basic
 
 /-!

@@ -5,7 +5,7 @@ public import Linglib.Semantics.Composition.Extension
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.Continuation
-public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Cat
 public import Linglib.Languages.English.Determiners
 public import Linglib.Data.Examples.Barker2027
 

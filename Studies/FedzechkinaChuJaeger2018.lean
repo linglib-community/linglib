@@ -2,7 +2,8 @@ module
 
 public import Linglib.Core.Probability.Independence.Basic
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Syntax.DependencyGrammar.Basic
+public import Linglib.Syntax.WordOrder.ArcLength
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Linglib.Core.Probability.ConditionalProbability

@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Core.Data.List.Sublist
+public import Linglib.Syntax.WordOrder
 public import Mathlib.Data.List.Sort
 public import Mathlib.Order.Extension.Linear
 
@@ -33,9 +34,11 @@ decides on concrete data.
 
 ## Main results
 
-* `Minimalist.Linearization.consistent_iff_isStrictOrder`: the crash condition is that
+* `Linearization.consistent_iff_isStrictOrder`: the crash condition is that
   Spell-out induces a strict order.
-* `Minimalist.Linearization.consistent_iff_exists_linearization`: a derivation converges
+* `Linearization.statement_singleton_iff_precedes`: the ordering statements of one snapshot are
+  precedence in its arrangement.
+* `Linearization.consistent_iff_exists_linearization`: a derivation converges
   exactly when a duplicate-free string extends every Spell-out.
 
 ## References
@@ -45,7 +48,7 @@ decides on concrete data.
 
 @[expose] public section
 
-namespace Minimalist.Linearization
+namespace Linearization
 
 open List
 
@@ -117,6 +120,12 @@ theorem spelloutOrder_singleton_idxOf (hnd : p.Nodup) (h : SpelloutOrder [p] a b
     obtain ⟨q, hq, hs⟩ := h
     rw [mem_singleton] at hq
     exact ih.trans (hq ▸ idxOf_lt_of_pair_sublist (hq ▸ hnd) hs)
+
+/-- The ordering statements of one snapshot are precedence in its arrangement. -/
+theorem statement_singleton_iff_precedes (hnd : p.Nodup) {x y : {x // x ∈ p}} :
+    Statement [p] x.1 y.1 ↔ (WordOrder.Arrangement.ofList p hnd).Precedes x y := by
+  simp [Statement, pair_sublist_iff_idxOf_lt hnd, WordOrder.Arrangement.ofList_precedes_iff, x.2,
+    y.2]
 
 theorem consistent_singleton (hnd : p.Nodup) : Consistent [p] :=
   fun _ h ↦ Nat.lt_irrefl _ (spelloutOrder_singleton_idxOf hnd h)
@@ -201,4 +210,4 @@ instance : Decidable (Consistent phases) :=
 
 end Decidability
 
-end Minimalist.Linearization
+end Linearization

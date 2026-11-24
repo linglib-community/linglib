@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.Cyclic
-public import Linglib.Syntax.Person.CaseConstraint
+public import Linglib.Generalizations.PersonCaseConstraint
 public import Linglib.Morphology.Exponence.Select
 public import Studies.BejarRezac2003
 public import Linglib.Data.Examples.CoonKeine2021

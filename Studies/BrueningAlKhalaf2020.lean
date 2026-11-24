@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Agreement.ConjunctAgreement
-public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Cat
 public import Linglib.Data.Examples.BrueningAlKhalaf2020
 public import Mathlib.Data.Finset.Insert
 public import Mathlib.Data.Fintype.Option

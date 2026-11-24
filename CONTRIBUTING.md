@@ -78,6 +78,8 @@ point downstream:
 - `Linglib/Semantics/`, `Syntax/`, `Pragmatics/`, `Morphology/`,
   `Phonology/`, `Processing/`, `Discourse/`, `Logic/`: reusable
   theory, shared by several studies.
+- `Linglib/Generalizations/`: statements about data that theories are
+  tested against. They mention no framework.
 - `Linglib/Data/`: empirical observations, with no theory imports.
 - `Linglib/Languages/{Language}/`: lexical data for one language,
   typed by the theory layer.
@@ -87,6 +89,77 @@ point downstream:
 When a study needs something a lower layer already provides, import it
 rather than defining a local copy. That sharing is what lets a change
 to one theory show its consequences everywhere else.
+
+### Where a file goes
+
+Directories are addresses. What a file assumes is what it imports, so
+the layering of the library is read from the import graph and is not
+declared anywhere. To place a file under `Linglib/Syntax/`, ask these
+questions in order. The first yes decides.
+
+1. **Is it a claim about data that names no construction, and that
+   other files need to refer to by name?**
+   `Linglib/Generalizations/<Name>.lean`, named as the field names it.
+   A claim nothing refers to yet is written out where it is used, in
+   mathlib's own terms, and needs no file.
+2. **Is it a type that descriptions are written in**, such as a
+   category, a feature or an order? `Syntax/<Object>/`.
+3. **Is it a structure any framework could build on**, such as a tree,
+   a spine or a graph? `Syntax/<Structure>/`.
+4. **Is it theory stated only on those shared types?** It lives with
+   the shared object it is about. One account's analysis is named for
+   the account.
+5. **Does it need a framework's own objects?** That framework's
+   directory. A file that relates the framework's objects to a shared
+   type `T` is named for `T`: `<Framework>/<T>.lean`.
+6. **Is it mathematics mathlib would accept?** `Linglib/Core/`.
+
+The directory follows what a file imports. Whose idea it is goes in
+the file's name and its references.
+
+Three rules are checked on every push: nothing in `Generalizations/`
+imports a framework, no shared file of `Syntax/` imports a framework,
+and no framework of syntax imports another. Two frameworks are not
+related in one file. Each proves what its own construction amounts to
+in a shared form, and the two results have one right-hand side.
+
+### Generalizations, accounts and linking maps
+
+The library keeps three things apart, so that a claim about a theory
+can be checked against data and against other theories.
+
+- **A generalization** is a statement about data: a predicate on a
+  descriptive type, such as a pairing of two persons or an order of
+  words. It mentions no framework. Generalizations live in
+  `Linglib/Generalizations/`.
+- **An account** is a framework's construction, stated in the
+  framework's own vocabulary. It lives in the framework's directory or
+  in a study.
+- **A linking map** takes the account's objects to a descriptive type.
+  It lives in the framework, in a file named for the type it maps
+  into.
+
+What an account predicts is the range of its linking map. The usual
+terms for comparing theories then have plain meanings:
+
+| Term | Meaning |
+|---|---|
+| the account derives a generalization | every description in its range satisfies it |
+| the account overgenerates | its range contains a description no language attests |
+| one account is more restrictive | its range is contained in the other's |
+| two accounts are notational variants | their ranges are equal |
+| a datum decides between two accounts | it is in one range and not the other |
+| a claim is testable on some data | it depends only on what the linking map shows |
+| parameters are identifiable | different settings give different descriptions |
+
+These are ordinary statements about functions and sets, written with
+mathlib's own vocabulary: `Set.range`, `⊆`, `Function.FactorsThrough`,
+`Function.Injective`. There is no interface to implement. Write the
+linking map, and state what you can prove about its range.
+
+These are statements about constructions and what they can produce,
+not about the papers that propose them. A study records where a
+construction comes from; it is not scored against the others.
 
 ## Code conventions
 

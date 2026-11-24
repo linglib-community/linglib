@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Combinatorics.Digraph.Arborescence
+public import Linglib.Syntax.WordOrder.Digraph
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Subgraph
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
@@ -27,7 +28,6 @@ Not every catena is a constituent: a head with one of its several dependents is 
 
 * `Digraph.IsCatena`: the words of `s` induce a connected subgraph.
 * `Digraph.IsConstituent`: `s` is the yield of a word.
-* `Digraph.localSubtree`: a word together with its dependents.
 
 ## Main statements
 
@@ -117,28 +117,6 @@ theorem Digraph.not_isConstituent_pair {G : Digraph (Fin n)} [DecidableRel G.Adj
     exact hF.not_reachable_of_adj hw ((hc v).1 (by simp))
 
 /-! ### Local subtrees -/
-
-/-- The *local subtree* of `v` is `v` together with its dependents. -/
-def Digraph.localSubtree (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n) :
-    Finset (Fin n) :=
-  insert v (G.outNeighborFinset v)
-
-@[simp] theorem Digraph.self_mem_localSubtree (G : Digraph (Fin n)) [DecidableRel G.Adj]
-    (v : Fin n) : v ∈ G.localSubtree v :=
-  mem_insert_self _ _
-
-theorem Digraph.mem_localSubtree_iff {G : Digraph (Fin n)} [DecidableRel G.Adj] {v w : Fin n} :
-    w ∈ G.localSubtree v ↔ w = v ∨ G.Adj v w := by
-  simp [Digraph.localSubtree]
-
-theorem Digraph.mem_localSubtree_of_adj {G : Digraph (Fin n)} [DecidableRel G.Adj] {v w : Fin n}
-    (h : G.Adj v w) : w ∈ G.localSubtree v :=
-  Digraph.mem_localSubtree_iff.2 (.inr h)
-
-theorem Digraph.coe_localSubtree_subset_reachSet (G : Digraph (Fin n)) [DecidableRel G.Adj]
-    (v : Fin n) : (G.localSubtree v : Set (Fin n)) ⊆ G.reachSet v := fun w hw ↦ by
-  rcases Digraph.mem_localSubtree_iff.1 (mem_coe.1 hw) with rfl | h
-  exacts [.refl, .single h]
 
 /-- The local subtree of a position is a catena. -/
 theorem Digraph.isCatena_localSubtree (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n) :

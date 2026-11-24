@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Function
+public import Linglib.Syntax.Feature.Case.Function
 
 /-!
 # Finnish case

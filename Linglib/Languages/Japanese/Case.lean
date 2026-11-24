@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Case.Function
+public import Linglib.Syntax.Feature.Case.Function
 
 /-!
 # Japanese case markers

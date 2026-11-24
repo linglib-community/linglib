@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Syntax.WordOrder.ArcLength
 public import Linglib.Core.Order.Monotone.Monovary
 public import Mathlib.Data.Fintype.Inv
 public import Mathlib.Tactic.Ring

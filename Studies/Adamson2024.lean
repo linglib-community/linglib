@@ -5,7 +5,7 @@ public import Linglib.Morphology.DistributedMorphology.Gender
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Impoverishment
 public import Linglib.Languages.Teop.Nouns
-public import Linglib.Syntax.Gender.AgreementClasses
+public import Linglib.Syntax.Feature.Gender.AgreementClasses
 public import Linglib.Languages.Jarawara.PossessedNouns
 public import Linglib.Languages.Romance.Italian.NumberGender
 public import Linglib.Languages.Yanyuwa.Gender

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Function
+public import Linglib.Syntax.Feature.Case.Function
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Basic
 public import Mathlib.Data.Finset.Image

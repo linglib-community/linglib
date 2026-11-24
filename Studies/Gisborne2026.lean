@@ -5,7 +5,7 @@ public import Linglib.Languages.English.Nouns
 public import Linglib.Languages.English.Pronouns
 public import Linglib.Languages.English.TemporalDeictic
 public import Linglib.Languages.English.Verbs.Inventory
-public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Linglib.Syntax.WordOrder.Projectivity
 public import Linglib.Syntax.WordOrder
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Core.Relation.ReflTransGen
@@ -59,7 +59,7 @@ extracted word is placed by a positional head outside the landmark tree.
 
 namespace Gisborne2026
 
-open DependencyGrammar DefaultInheritance Relation
+open DefaultInheritance Relation
 open Morphology (Word)
 
 /-! ### Word Grammar analyses -/

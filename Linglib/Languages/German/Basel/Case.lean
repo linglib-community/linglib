@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.German.Determiners
-public import Linglib.Syntax.Case.Function
+public import Linglib.Syntax.Feature.Case.Function
 
 /-!
 # Basel German case

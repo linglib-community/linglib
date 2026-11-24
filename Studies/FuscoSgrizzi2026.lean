@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Events.Closure
 public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Semantics.Modality.Background
-public import Linglib.Syntax.Minimalist.Clause.Size
+public import Linglib.Syntax.Minimalist.ExtendedProjection.Size
 public import Linglib.Languages.Romance.Italian.Verbs
 public import Linglib.Data.Examples.FuscoSgrizzi2026
 public import Studies.Grano2024

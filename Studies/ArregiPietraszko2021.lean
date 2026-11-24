@@ -8,6 +8,7 @@ public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Linglib.Data.Wordlist.ArregiPietraszko2021
 public import Linglib.Languages.Ndebele.Phonology
 public import Linglib.Morphology.DistributedMorphology.Basic
+public import Linglib.Syntax.Minimalist.HeadChain
 public import Linglib.Morphology.DistributedMorphology.Spellout
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Phonology.Hiatus
@@ -127,6 +128,11 @@ theorem pronounced_of_forall_not_mem {strong : Finset Cat} {c : HeadChain}
 theorem pronounced_extend_of_mem {strong : Finset Cat} {x : Cat} (hx : x ∈ strong)
     (c : HeadChain) : (c.extend x).pronounced strong = some x := by
   simp [pronounced, extend, List.filter_append, hx]
+
+-- Head Chain Pronunciation is the library's, on the positions of the chain.
+theorem pronounced_eq_site (strong : Finset Cat) (c : HeadChain) :
+    c.pronounced strong = Minimalist.HeadChain.site (· ∈ strong) c.positions :=
+  rfl
 
 end HeadChain
 
@@ -710,17 +716,23 @@ private theorem isLeftComb_iff_mem_range_comb {x : FreeMagma H} :
     | nil => trivial
     | append_singleton l a ih => simpa [comb] using ih
 
+-- On the French clause the two constructions give one hosting: every position is pronounced at T.
+theorem amalgamation_hosts_french :
+    (amalgamate HarizanovGribanova2019.french).map MorphosyntacticWord.hosts =
+      some (Minimalist.HeadChain.hosts (· ≠ Cat.V) (· = Cat.T) [.V, .v, .Neg, .T]) := by
+  decide
+
 theorem amalgamation_bracketing (x y z : Cat) :
-    amalgamateSpine [⟨z, none⟩, ⟨y, some .lowering⟩, ⟨x, some .lowering⟩] =
+    amalgamate [⟨z, none⟩, ⟨y, some .lowering⟩, ⟨x, some .lowering⟩] =
         some [⟨z, comb (HeadChain.ofHeads z [y, x]).mvalue⟩] ∧
-      amalgamateSpine [⟨z, none⟩, ⟨y, some .raising⟩, ⟨x, some .lowering⟩] =
+      amalgamate [⟨z, none⟩, ⟨y, some .raising⟩, ⟨x, some .lowering⟩] =
         some [⟨z, of z * (of y * of x)⟩] :=
   ⟨rfl, rfl⟩
 
 theorem amalgamation_class9 :
-    amalgamateSpine [⟨.T, none⟩, ⟨.C, some .lowering⟩, ⟨.D, some .lowering⟩,
+    amalgamate [⟨.T, none⟩, ⟨.C, some .lowering⟩, ⟨.D, some .lowering⟩,
         ⟨.Lnk, some .lowering⟩] = some [⟨.T, comb relative.mvalue⟩] ∧
-      ∃ a, amalgamateSpine [⟨.T, none⟩, ⟨.C, some .lowering⟩, ⟨.D, some .raising⟩,
+      ∃ a, amalgamate [⟨.T, none⟩, ⟨.C, some .lowering⟩, ⟨.D, some .raising⟩,
           ⟨.Lnk, some .lowering⟩] = some [a] ∧
         a.heads = relative.terminals ∧ a.bracketing ≠ comb relative.mvalue ∧
         ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis, (lift e a.bracketing).segments = [Ndebele.i] :=
@@ -729,10 +741,10 @@ theorem amalgamation_class9 :
 theorem amalgamation_at_pronounced {lo hi rest : List Cat} {s b : Cat}
     (h : lo ++ s :: hi = b :: rest) (hnd : (b :: rest).Nodup) :
     (HeadChain.ofHeads b rest).pronounced {s} = some s ∧
-      amalgamateSpine (lo.map (Terminal.mk · (some .raising)) ++ ⟨s, none⟩ ::
+      amalgamate (lo.map (Terminal.mk · (some .raising)) ++ ⟨s, none⟩ ::
           hi.map (Terminal.mk · (some .lowering))) =
         some [⟨s, comb (HeadChain.ofHeads b rest).mvalue⟩] := by
-  refine ⟨?_, amalgamateSpine_raising_lowering h⟩
+  refine ⟨?_, amalgamate_raising_lowering h⟩
   have hs : s ∉ lo ++ hi := (List.nodup_cons.mp (List.nodup_middle.mp (h ▸ hnd))).1
   have h₁ : lo.filter (· = s) = [] :=
     List.filter_eq_nil_iff.mpr fun y hy ↦ by simpa using fun h : y = s ↦ hs (by simp [← h, hy])
@@ -742,17 +754,17 @@ theorem amalgamation_at_pronounced {lo hi rest : List Cat} {s b : Cat}
 
 private theorem forall_isLeftComb_amalgamate {below : List (MorphosyntacticWord H)}
     {pending : Option (FreeMagma H)} {hs : List (Terminal H)} {out : List (MorphosyntacticWord H)}
-    (h : amalgamate below pending hs = some out) :
+    (h : amalgamateAux below pending hs = some out) :
     (∀ a ∈ out, IsLeftComb a.bracketing) ↔
       (∀ b ∈ below, IsLeftComb b.bracketing) ∧ (∀ p ∈ pending, IsLeftComb p) ∧
         ((pending.map fun _ ↦ Direction.raising) :: hs.map (·.m)).IsChain
           fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
   induction hs generalizing below pending out with
-  | nil => cases pending <;> simp_all [amalgamate]
+  | nil => cases pending <;> simp_all [amalgamateAux]
   | cons x hs ih =>
     obtain ⟨x, m⟩ := x
     rcases m with _ | _ | _ <;> cases below <;> cases pending <;>
-      simp only [amalgamate] at h <;>
+      simp only [amalgamateAux] at h <;>
       first
         | cases h
         | (rw [ih h]; rcases hs with _ | ⟨⟨y, n⟩, hs⟩ <;>
@@ -762,7 +774,7 @@ private theorem forall_isLeftComb_amalgamate {below : List (MorphosyntacticWord 
 the bracketing of the Mirror Principle. Amalgamation builds only such complex heads exactly when
 no head Lowers right after a head has Raised into it. -/
 theorem forall_mem_range_comb_iff {hs : List (Terminal H)} {out : List (MorphosyntacticWord H)}
-    (h : amalgamateSpine hs = some out) :
+    (h : amalgamate hs = some out) :
     (∀ a ∈ out, a.bracketing ∈ Set.range comb) ↔
       (hs.map (·.m)).IsChain fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
@@ -772,11 +784,11 @@ theorem forall_mem_range_comb_iff {hs : List (Terminal H)} {out : List (Morphosy
 
 theorem amalgamation_keeps_verb_site (m : Cat → Option Direction)
     {out out' : List (MorphosyntacticWord Cat)} {a a' : MorphosyntacticWord Cat}
-    (h : amalgamateSpine ([Cat.V, .T].map fun x ↦ ⟨x, m x⟩) = some out)
-    (h' : amalgamateSpine ([Cat.V, .T, .C].map fun x ↦ ⟨x, m x⟩) = some out')
+    (h : amalgamate ([Cat.V, .T].map fun x ↦ ⟨x, m x⟩) = some out)
+    (h' : amalgamate ([Cat.V, .T, .C].map fun x ↦ ⟨x, m x⟩) = some out')
     (ha : a ∈ out) (ha' : a' ∈ out') (hV : .V ∈ a.heads) (hV' : .V ∈ a'.heads) :
     a'.site = a.site :=
-  site_eq_of_append (extra := [⟨Cat.C, m .C⟩]) h h' (by simp) ha ha' hV hV'
+  site_eq_of_amalgamate_append (extra := [⟨Cat.C, m .C⟩]) h h' (by simp) ha ha' hV hV'
 
 theorem doSupport_iff_intervener {L : Language} (hV : .VERB ∈ L.strongVerbs)
     (hs : L.splitByIntervention) :

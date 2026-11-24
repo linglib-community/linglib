@@ -1,9 +1,10 @@
 module
 
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.DependencyGrammar.Projectivity
-public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Syntax.DependencyGrammar.Basic
 public import Linglib.Syntax.DependencyGrammar.Catena
+public import Linglib.Syntax.WordOrder.Projectivity
+public import Linglib.Syntax.WordOrder.ArcLength
 public import Linglib.Core.Combinatorics.SimpleGraph.Crossings
 
 /-!

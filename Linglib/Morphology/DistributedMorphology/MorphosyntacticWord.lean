@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Algebra.Free
 public import Mathlib.Algebra.FreeMonoid.FreeSemigroup
+public import Linglib.Generalizations.HeadMovementConstraint
 
 /-!
 # Morphosyntactic words
@@ -22,6 +23,13 @@ are formed differ in which bracketings and positions they allow, so the type all
 * `DistributedMorphology.MorphosyntacticWord`: a morphosyntactic word, its site and the
   bracketing of its terminals.
 * `DistributedMorphology.MorphosyntacticWord.heads`: its terminals, lowest first.
+* `DistributedMorphology.MorphosyntacticWord.hosts`: for the words on a spine, the head at which
+  each position of the spine is pronounced.
+
+## Main results
+
+* `DistributedMorphology.MorphosyntacticWord.hmc_hosts`: words with distinct sites obey the Head
+  Movement Constraint.
 
 ## Implementation notes
 
@@ -57,5 +65,34 @@ structure MorphosyntacticWord (H : Type*) where
 /-- The terminals of a morphosyntactic word, lowest first. -/
 def MorphosyntacticWord.heads (w : MorphosyntacticWord H) : List H :=
   (toFreeSemigroup w.bracketing).toFreeMonoid.toList
+
+namespace MorphosyntacticWord
+
+/-- The hosts of the words on a spine, lowest first: each position of the spine with the head at
+which its word is pronounced. -/
+def hosts (ws : List (MorphosyntacticWord H)) : List H :=
+  ws.flatMap fun w ↦ List.replicate w.heads.length w.site
+
+theorem length_hosts (ws : List (MorphosyntacticWord H)) :
+    (hosts ws).length = (ws.flatMap heads).length := by
+  simp [hosts, List.length_flatMap]
+
+theorem mem_map_site_of_mem_hosts {ws : List (MorphosyntacticWord H)} {h : H}
+    (hh : h ∈ hosts ws) : h ∈ ws.map (·.site) := by
+  simp only [hosts, List.mem_flatMap, List.mem_replicate] at hh
+  obtain ⟨w, hw, -, rfl⟩ := hh
+  exact List.mem_map_of_mem hw
+
+/-- Words on a spine with distinct sites obey the Head Movement Constraint. -/
+theorem hmc_hosts {ws : List (MorphosyntacticWord H)}
+    (h : (ws.map (·.site)).Nodup) : HMC.Holds (hosts ws) := by
+  induction ws with
+  | nil => exact fun i ↦ i.elim0
+  | cons w ws ih =>
+    rw [List.map_cons, List.nodup_cons] at h
+    exact List.isContiguous_get_replicate_append _ (ih h.2) fun hm ↦
+      h.1 (mem_map_site_of_mem_hosts hm)
+
+end MorphosyntacticWord
 
 end DistributedMorphology

@@ -9,7 +9,7 @@ public import Linglib.Languages.Somali.Gender
 public import Linglib.Languages.Latin.Gender
 public import Linglib.Languages.Chichewa.Gender
 public import Linglib.Languages.CoastalMarind.Gender
-public import Linglib.Syntax.Gender.AgreementClasses
+public import Linglib.Syntax.Feature.Gender.AgreementClasses
 public import Linglib.Syntax.Agreement.ResolutionRule
 public import Linglib.Data.Examples.Corbett1998
 public import Linglib.Data.Examples.Readers

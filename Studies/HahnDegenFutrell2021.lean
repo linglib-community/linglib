@@ -2,7 +2,8 @@ module
 
 public import Linglib.Core.InformationTheory.EntropyRate
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.DependencyGrammar.Reordering
+public import Linglib.Syntax.DependencyGrammar.Basic
+public import Linglib.Syntax.WordOrder.Reordering
 public import Linglib.Languages.Japanese.Morph
 public import Linglib.Languages.Sesotho.Morph
 public import Studies.Bybee1985

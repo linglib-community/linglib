@@ -7,7 +7,7 @@ module
 
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command.RoseTree
-public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Cat
 public import Linglib.Core.Data.RoseTree.Context
 
 /-!

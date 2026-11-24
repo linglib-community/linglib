@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Catena
-public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Syntax.WordOrder.ArcLength
 public import Linglib.Syntax.DependencyGrammar.Stemma
 public import Mathlib.Data.Fin.Tuple.Sort
 public import Mathlib.MeasureTheory.Measure.WithDensity

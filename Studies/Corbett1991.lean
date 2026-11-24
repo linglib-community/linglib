@@ -4,7 +4,7 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Agreement.Hierarchy
 public import Linglib.Syntax.Agreement.ResolutionRule
-public import Linglib.Syntax.Gender.AgreementClasses
+public import Linglib.Syntax.Feature.Gender.AgreementClasses
 public import Linglib.Syntax.Feature.Gender.Assignment
 public import Linglib.Semantics.Plurality.Cardinality
 public import Linglib.Syntax.Feature.Person.Lattice

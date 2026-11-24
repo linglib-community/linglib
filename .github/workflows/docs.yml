@@ -61,6 +61,26 @@ jobs:
       - name: Build project
         run: lake build
 
+      # Report only: lists the imports each module does not need. It never fails the job.
+      - name: Report unused imports
+        continue-on-error: true
+        timeout-minutes: 30
+        run: |
+          lake shake > shake.txt 2>&1 || true
+          {
+            echo '### Unused imports (report only)'
+            echo
+            echo "$(grep -c '\.lean:$' shake.txt) files have an import to remove or add."
+            echo
+            echo '<details><summary>First 400 lines</summary>'
+            echo
+            echo '```'
+            head -n 400 shake.txt
+            echo '```'
+            echo
+            echo '</details>'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Build documentation (Linglib only, skip Mathlib)
         run: |
           # Use doc-gen4 CLI directly. The Lake `:docs` facet cascades

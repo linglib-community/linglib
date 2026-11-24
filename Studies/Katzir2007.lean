@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Cat
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Exhaustification.Symmetric
 
