@@ -36,7 +36,8 @@ stated on workspaces.
   cuts of a syntactic object and the deletion coproduct on workspaces.
 * `Minimalist.Workspace.mergeOp`, `Minimalist.Workspace.mergeOpUnit`: Merge at the deletion
   coproduct and its unit stage, on the algebra of workspaces.
-* `Minimalist.SyntacticObject.cuts`: the trace cuts of a syntactic object.
+* `Minimalist.SyntacticObject.cuts`, `Minimalist.Workspace.traceComul`: the trace cuts of a
+  syntactic object and the trace coproduct on workspaces.
 * `Minimalist.Workspace.traceMergeOp`, `Minimalist.Workspace.traceMergeOpUnit`: Merge at the
   trace cuts and its unit stage, on the algebra of workspaces.
 
@@ -62,15 +63,13 @@ stated on workspaces.
 
 ## Implementation notes
 
-Merge at the deletion coproduct is defined from a coproduct on the algebra of workspaces, and
-`toTrees` intertwines it with the operator on trees because it intertwines the coproducts and
-contraction is natural.
+`toTrees` intertwines each operator with the operator on trees because it intertwines the
+coproducts and contraction is natural.
 
-The operators at the trace cuts are defined on the basis of workspaces by the formula that
-`Merge.mergeOpOfCuts_apply_of'` proves of the operator on trees, over the cuts of syntactic
-objects, and not as the restriction of the operator on trees to the range of `toTrees`: a
-restriction needs the range to be stable before the operator can be named, while the formula
-makes stability the theorem `toTrees_traceMergeOp`.
+Both operators are defined from a coproduct on the algebra of workspaces, and not as the
+restriction of the operator on trees to the range of `toTrees`: a restriction needs the range to
+be stable before the operator can be named, while a coproduct on workspaces makes stability the
+theorems `toTrees_mergeOp` and `toTrees_traceMergeOp`.
 
 Marcolli, Chomsky and Berwick define Merge at the deletion coproduct, which leaves no trace, and
 obtain it from the coproduct with traces by a projection of the right channel
@@ -166,71 +165,95 @@ theorem toTrees_injective :
     Function.Injective (toTrees : ConnesKreimer R SyntacticObject → _) :=
   rename_injective toUnorderedTree_injective
 
-/-- Merge at the trace cuts on the algebra of workspaces: on a workspace `W`, the sum over the
-cuts of `W` that extract `S` and `S'` of the workspace with `{S, S'}` beside what the cut leaves,
-a trace in place of each extracted term. -/
+open scoped TensorProduct in
+/-- `toTrees` carries the contraction of a coproduct on workspaces with a workspace to the
+contraction of a coproduct on trees with its trees, when it intertwines the two coproducts. -/
+private theorem toTrees_comp_contractAlong
+    {Δ : ConnesKreimer R SyntacticObject →ₐ[R]
+      ConnesKreimer R SyntacticObject ⊗[R] ConnesKreimer R SyntacticObject}
+    {Δ' : ConnesKreimer R (UnorderedTree Vertex) →ₐ[R]
+      ConnesKreimer R (UnorderedTree Vertex) ⊗[R] ConnesKreimer R (UnorderedTree Vertex)}
+    (h : (Algebra.TensorProduct.map toTrees toTrees).comp Δ = Δ'.comp toTrees) (W : Workspace)
+    (x : ConnesKreimer R SyntacticObject) :
+    toTrees (contractAlong Δ.toLinearMap (lcoeff R W) x) =
+      contractAlong Δ'.toLinearMap (lcoeff R (W.map toUnorderedTree)) (toTrees x) := by
+  have h' : TensorProduct.map (toTrees (R := R)).toLinearMap toTrees.toLinearMap ∘ₗ
+      Δ.toLinearMap = Δ'.toLinearMap ∘ₗ toTrees.toLinearMap := congrArg AlgHom.toLinearMap h
+  have key : toTrees.toLinearMap ∘ₗ contractAlong Δ.toLinearMap (lcoeff R W) =
+      contractAlong Δ'.toLinearMap (lcoeff R (W.map toUnorderedTree)) ∘ₗ toTrees.toLinearMap :=
+    calc _ = toTrees.toLinearMap ∘ₗ contractAlong Δ.toLinearMap
+            (lcoeff R (W.map toUnorderedTree) ∘ₗ toTrees.toLinearMap) := by
+          rw [toTrees, lcoeff_map_comp_rename toUnorderedTree_injective]
+      _ = contractAlong (TensorProduct.map (toTrees (R := R)).toLinearMap toTrees.toLinearMap ∘ₗ
+            Δ.toLinearMap) (lcoeff R (W.map toUnorderedTree)) :=
+          (contractAlong_map_comp _ _ _ _).symm
+      _ = _ := by rw [h']; rfl
+  exact LinearMap.congr_fun key x
+
+/-! ### Merge at the trace cuts -/
+
+open scoped TensorProduct in
+/-- The trace coproduct `Δ^c` on the algebra of workspaces, each cut leaving the trace of the head
+of each extracted term in its place. -/
+noncomputable def traceComul : ConnesKreimer R SyntacticObject →ₐ[R]
+    ConnesKreimer R SyntacticObject ⊗[R] ConnesKreimer R SyntacticObject :=
+  aeval fun S ↦ ofTree S ⊗ₜ[R] 1 + (S.cuts.map fun p ↦ of' (R := R) p.1 ⊗ₜ[R] ofTree p.2).sum
+
+/-- `toTrees` intertwines the trace coproduct on workspaces with the trace coproduct on trees. -/
+theorem map_toTrees_comp_traceComul :
+    (Algebra.TensorProduct.map toTrees toTrees).comp (traceComul (R := R)) =
+      (markerComulAlgHom (R := R) traceEncoder).comp toTrees := by
+  ext S
+  simp only [AlgHom.comp_apply, traceComul, aeval_ofTree, toTrees_ofTree, markerComulAlgHom,
+    comulOfCuts_apply_ofTree, comulTreeOfCuts, ← map_cuts, map_add, map_multiset_sum,
+    Multiset.map_map, Algebra.TensorProduct.map_tmul, map_one]
+  refine congrArg _ (congrArg Multiset.sum (Multiset.map_congr rfl fun p _ ↦ ?_))
+  simp
+
+/-- Merge at the trace cuts on the algebra of workspaces: multiplication by `{S, S'}` after
+contraction of the trace coproduct with the workspace of `S` and `S'`. On a workspace `W` it is
+the sum, over the cuts of `W` that extract `S` and `S'`, of the workspace with `{S, S'}` beside
+what the cut leaves, a trace in place of each extracted term. -/
 noncomputable def traceMergeOp (S S' : SyntacticObject) :
     ConnesKreimer R SyntacticObject →ₗ[R] ConnesKreimer R SyntacticObject :=
-  linearLift fun W ↦ (((forestCuts SyntacticObject.cuts W).filter (·.1 = {S, S'})).map
-    fun p ↦ of' ({SyntacticObject.merge S S'} + p.2)).sum
+  LinearMap.mulLeft R (ofTree (SyntacticObject.merge S S')) ∘ₗ
+    contractAlong (traceComul (R := R)).toLinearMap (lcoeff R ({S, S'} : Workspace))
 
 /-- The unit stage at the trace cuts on the algebra of workspaces: on a workspace `W`, the sum
 over the cuts of `W` that extract `S` of the workspace with `S` beside what the cut leaves. -/
 noncomputable def traceMergeOpUnit (S : SyntacticObject) :
     ConnesKreimer R SyntacticObject →ₗ[R] ConnesKreimer R SyntacticObject :=
-  linearLift fun W ↦ (((forestCuts SyntacticObject.cuts W).filter (·.1 = {S})).map
-    fun p ↦ of' ({S} + p.2)).sum
-
-private theorem forestCuts_map_toUnorderedTree (W : Workspace) :
-    forestCuts (markerCuts traceEncoder) (W.map toUnorderedTree) =
-      (forestCuts SyntacticObject.cuts W).map
-        (Prod.map (Multiset.map toUnorderedTree) (Multiset.map toUnorderedTree)) :=
-  forestCuts_map (fun S ↦ (map_cuts S).symm) W
-
-private theorem map_toUnorderedTree_eq_iff {V W : Workspace} :
-    V.map toUnorderedTree = W.map toUnorderedTree ↔ V = W :=
-  (Multiset.map_injective toUnorderedTree_injective).eq_iff
-
-theorem toTrees_traceMergeOp_of' (S S' : SyntacticObject) (W : Workspace) :
-    toTrees (traceMergeOp (R := R) S S' (of' W)) =
-      Merge.traceMergeOp traceEncoder Vertex.bare S.toUnorderedTree S'.toUnorderedTree
-        (of' (W.map toUnorderedTree)) := by
-  have hpair : ({S.toUnorderedTree, S'.toUnorderedTree} : Multiset (UnorderedTree Vertex)) =
-      Multiset.map toUnorderedTree {S, S'} := rfl
-  rw [Merge.traceMergeOp, Merge.mergeOpOfCuts_apply_of', forestCuts_map_toUnorderedTree,
-    Multiset.filter_map, Multiset.map_map, traceMergeOp, linearLift_of', map_multiset_sum,
-    Multiset.map_map, ← Multiset.sum_map_mul_left]
-  simp only [Function.comp_def, Prod.map_fst, Prod.map_snd, hpair, map_toUnorderedTree_eq_iff,
-    toTrees_of', Multiset.map_singleton, toUnorderedTree_merge, of'_add, map_mul]
-
-theorem toTrees_traceMergeOpUnit_of' (S : SyntacticObject) (W : Workspace) :
-    toTrees (traceMergeOpUnit (R := R) S (of' W)) =
-      Merge.traceMergeOpUnit traceEncoder S.toUnorderedTree (of' (W.map toUnorderedTree)) := by
-  have hone : ({S.toUnorderedTree} : Multiset (UnorderedTree Vertex)) =
-      Multiset.map toUnorderedTree {S} := rfl
-  rw [Merge.traceMergeOpUnit, Merge.mergeOpUnitOfCuts_apply_of', forestCuts_map_toUnorderedTree,
-    Multiset.filter_map, Multiset.map_map, traceMergeOpUnit, linearLift_of', map_multiset_sum,
-    Multiset.map_map]
-  simp only [Function.comp_def, Prod.map_fst, Prod.map_snd, hone, map_toUnorderedTree_eq_iff,
-    toTrees_of', ← Multiset.map_add]
+  LinearMap.mulLeft R (ofTree S) ∘ₗ
+    contractAlong (traceComul (R := R)).toLinearMap (lcoeff R ({S} : Workspace))
 
 /-- `toTrees` intertwines Merge on workspaces with Merge at the trace cuts. -/
 theorem toTrees_traceMergeOp (S S' : SyntacticObject) (x : ConnesKreimer R SyntacticObject) :
     toTrees (traceMergeOp S S' x) =
       Merge.traceMergeOp traceEncoder Vertex.bare S.toUnorderedTree S'.toUnorderedTree
-        (toTrees x) :=
-  LinearMap.congr_fun (lhom_ext' (f := toTrees.toLinearMap ∘ₗ traceMergeOp S S')
-    (g := Merge.traceMergeOp traceEncoder Vertex.bare S.toUnorderedTree S'.toUnorderedTree ∘ₗ
-      toTrees.toLinearMap) fun W ↦ by
-    simpa using toTrees_traceMergeOp_of' (R := R) S S' W) x
+        (toTrees x) := by
+  rw [traceMergeOp, LinearMap.comp_apply, LinearMap.mulLeft_apply, map_mul, toTrees_ofTree,
+    toUnorderedTree_merge, toTrees_comp_contractAlong map_toTrees_comp_traceComul,
+    Merge.traceMergeOp, Merge.mergeOpOfCuts_eq_mul_contractForest]
+  rfl
 
 /-- `toTrees` intertwines the unit stage on workspaces with the unit stage at the trace cuts. -/
 theorem toTrees_traceMergeOpUnit (S : SyntacticObject) (x : ConnesKreimer R SyntacticObject) :
     toTrees (traceMergeOpUnit S x) =
-      Merge.traceMergeOpUnit traceEncoder S.toUnorderedTree (toTrees x) :=
-  LinearMap.congr_fun (lhom_ext' (f := toTrees.toLinearMap ∘ₗ traceMergeOpUnit S)
-    (g := Merge.traceMergeOpUnit traceEncoder S.toUnorderedTree ∘ₗ toTrees.toLinearMap) fun W ↦ by
-    simpa using toTrees_traceMergeOpUnit_of' (R := R) S W) x
+      Merge.traceMergeOpUnit traceEncoder S.toUnorderedTree (toTrees x) := by
+  rw [traceMergeOpUnit, LinearMap.comp_apply, LinearMap.mulLeft_apply, map_mul, toTrees_ofTree,
+    toTrees_comp_contractAlong map_toTrees_comp_traceComul]
+  rfl
+
+theorem toTrees_traceMergeOp_of' (S S' : SyntacticObject) (W : Workspace) :
+    toTrees (traceMergeOp (R := R) S S' (of' W)) =
+      Merge.traceMergeOp traceEncoder Vertex.bare S.toUnorderedTree S'.toUnorderedTree
+        (of' (W.map toUnorderedTree)) := by
+  rw [toTrees_traceMergeOp, toTrees_of']
+
+theorem toTrees_traceMergeOpUnit_of' (S : SyntacticObject) (W : Workspace) :
+    toTrees (traceMergeOpUnit (R := R) S (of' W)) =
+      Merge.traceMergeOpUnit traceEncoder S.toUnorderedTree (of' (W.map toUnorderedTree)) := by
+  rw [toTrees_traceMergeOpUnit, toTrees_of']
 
 /-! ### Merge at the deletion coproduct
 
@@ -271,42 +294,21 @@ noncomputable def mergeOpUnit (S : SyntacticObject) :
   LinearMap.mulLeft R (ofTree S) ∘ₗ
     contractAlong (deletionComul (R := R)).toLinearMap (lcoeff R ({S} : Workspace))
 
-open scoped TensorProduct in
-/-- `toTrees` carries the contraction of `Δ^d` with a workspace to the contraction with its
-trees. -/
-private theorem toTrees_comp_contractAlong_deletionComul (W : Workspace) :
-    toTrees.toLinearMap ∘ₗ contractAlong (deletionComul (R := R)).toLinearMap (lcoeff R W) =
-      contractAlong (deletionComulAlgHom (R := R) Vertex.bare).toLinearMap
-        (lcoeff R (W.map toUnorderedTree)) ∘ₗ toTrees.toLinearMap := by
-  have h : TensorProduct.map (toTrees (R := R)).toLinearMap toTrees.toLinearMap ∘ₗ
-      (deletionComul (R := R)).toLinearMap =
-      (deletionComulAlgHom (R := R) Vertex.bare).toLinearMap ∘ₗ toTrees.toLinearMap :=
-    congrArg AlgHom.toLinearMap (map_toTrees_comp_deletionComul (R := R))
-  calc _ = toTrees.toLinearMap ∘ₗ contractAlong (deletionComul (R := R)).toLinearMap
-          (lcoeff R (W.map toUnorderedTree) ∘ₗ toTrees.toLinearMap) := by
-        rw [toTrees, lcoeff_map_comp_rename toUnorderedTree_injective]
-    _ = contractAlong (TensorProduct.map (toTrees (R := R)).toLinearMap toTrees.toLinearMap ∘ₗ
-          (deletionComul (R := R)).toLinearMap) (lcoeff R (W.map toUnorderedTree)) :=
-        (contractAlong_map_comp _ _ _ _).symm
-    _ = _ := by rw [h]; rfl
-
 /-- `toTrees` intertwines Merge on workspaces with Merge at the deletion coproduct on trees. -/
 theorem toTrees_mergeOp (S S' : SyntacticObject) (x : ConnesKreimer R SyntacticObject) :
     toTrees (mergeOp S S' x) =
       Merge.mergeOp Vertex.bare S.toUnorderedTree S'.toUnorderedTree (toTrees x) := by
-  have h := LinearMap.congr_fun (toTrees_comp_contractAlong_deletionComul (R := R) {S, S'}) x
-  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply] at h
   rw [mergeOp, LinearMap.comp_apply, LinearMap.mulLeft_apply, map_mul, toTrees_ofTree,
-    toUnorderedTree_merge, h, Merge.mergeOp, Merge.mergeAlong_pair_apply]
+    toUnorderedTree_merge, toTrees_comp_contractAlong map_toTrees_comp_deletionComul,
+    Merge.mergeOp, Merge.mergeAlong_pair_apply]
   rfl
 
 /-- `toTrees` intertwines the unit stage on workspaces with the unit stage at the deletion
 coproduct on trees. -/
 theorem toTrees_mergeOpUnit (S : SyntacticObject) (x : ConnesKreimer R SyntacticObject) :
     toTrees (mergeOpUnit S x) = Merge.mergeOpUnit Vertex.bare S.toUnorderedTree (toTrees x) := by
-  have h := LinearMap.congr_fun (toTrees_comp_contractAlong_deletionComul (R := R) {S}) x
-  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply] at h
-  rw [mergeOpUnit, LinearMap.comp_apply, LinearMap.mulLeft_apply, map_mul, toTrees_ofTree, h]
+  rw [mergeOpUnit, LinearMap.comp_apply, LinearMap.mulLeft_apply, map_mul, toTrees_ofTree,
+    toTrees_comp_contractAlong map_toTrees_comp_deletionComul]
   rfl
 
 /-- External Merge at the deletion coproduct: Merge of the two members of a workspace is their
