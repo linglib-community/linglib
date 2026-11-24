@@ -97,8 +97,11 @@ the layering of the library is read from the import graph and is not
 declared anywhere. To place a file under `Linglib/Syntax/`, ask these
 questions in order. The first yes decides.
 
-1. **Is it a claim about data that names no construction?**
+1. **Is it a claim about data that names no construction, and that
+   other files need to refer to by name?**
    `Linglib/Generalizations/<Name>.lean`, named as the field names it.
+   A claim nothing refers to yet is written out where it is used, in
+   mathlib's own terms, and needs no file.
 2. **Is it a type that descriptions are written in**, such as a
    category, a feature or an order? `Syntax/<Object>/`.
 3. **Is it a structure any framework could build on**, such as a tree,
