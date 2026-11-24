@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Discourse.Gameboard.Basic
+public import Linglib.Discourse.Gameboard.Rule
 public import Linglib.Discourse.Gameboard.Question
 public import Linglib.Discourse.Commitment.Table
 public import Mathlib.Order.CompleteLattice.Finset
@@ -68,8 +68,6 @@ open scoped Classical in
     (d.addFact p).commonGround = d.commonGround ⊓ 𝓟 p := by
   rw [commonGround, facts_addFact, Finset.iInf_insert, inf_comm, commonGround]
 
-@[simp] theorem commonGround_swapTurn : d.swapTurn.commonGround = d.commonGround := rfl
-
 @[simp] theorem commonGround_recordMove (m : U) : (d.recordMove m).commonGround = d.commonGround :=
   rfl
 
@@ -99,6 +97,8 @@ def toTable : Commitment.Table P W where
     (d.pushQud i).toTable = d.toTable.push (issue i.question) := rfl
 
 @[simp] theorem toTable_recordMove (m : U) : (d.recordMove m).toTable = d.toTable := rfl
+
+@[simp] theorem toTable_say (m : Move P U) : (d.say m).toTable = d.toTable := rfl
 
 @[simp] theorem toTable_pushPending (m : U) : (d.pushPending m).toTable = d.toTable := rfl
 

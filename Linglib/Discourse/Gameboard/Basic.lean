@@ -6,15 +6,14 @@ public import Linglib.Discourse.Gameboard.Defs
 # Dialogue gameboard updates
 
 This file defines the updates of the dialogue gameboard of Ginzburg's theory of dialogue, KoS:
-pushing a question onto QUD, adding a fact, recording a move or a pending utterance, and changing
-the turn. QUD-downdate removes from QUD every question that some fact resolves, and a gameboard
+pushing a question onto QUD, adding a fact, and recording a move or a pending utterance.
+QUD-downdate removes from QUD every question that some fact resolves, and a gameboard
 satisfies `non-resolve-cond` when no fact resolves a question under discussion.
 
 ## Main definitions
 
 * `Gameboard.pushQud`, `Gameboard.addFact`, `Gameboard.recordMove`, `Gameboard.pushPending`,
   `Gameboard.pendingUpdate`: the updates of QUD, FACTS, MOVES and PENDING.
-* `Gameboard.swapTurn`, `Gameboard.swapTurnEquiv`: the addressee takes the turn.
 * `Gameboard.NonResolveCond`, `Gameboard.downdateQud`: `non-resolve-cond` and QUD-downdate.
 
 ## Main results
@@ -28,7 +27,7 @@ satisfies `non-resolve-cond` when no fact resolves a question under discussion.
 
 ## Implementation notes
 
-* Turn taking and the updates of FACTS, MOVES, PENDING and QUD hold of every gameboard. The
+* The updates of FACTS, MOVES, PENDING and QUD hold of every gameboard. The
   operations that read a question are stated for gameboards whose QUD holds information
   structures, and those that read a content for gameboards whose utterances are locutionary
   propositions.
@@ -89,10 +88,6 @@ def pushPending (m : U) : Gameboard P F U I :=
 def pendingUpdate (u : U) (speaker addressee : P) : Gameboard P F U I :=
   { d.pushPending u with speaker, addressee }
 
-/-- The addressee takes the turn. -/
-def swapTurn : Gameboard P F U I :=
-  { d with speaker := d.addressee, addressee := d.speaker }
-
 section Initial
 
 variable (s a : P) (cg : Finset F)
@@ -111,29 +106,7 @@ end Initial
 @[simp] theorem facts_addFact [DecidableEq F] (p : F) :
     (d.addFact p).facts = insert p d.facts := rfl
 
-@[simp] theorem swapTurn_swapTurn : d.swapTurn.swapTurn = d := rfl
-
-theorem swapTurn_involutive : Function.Involutive (swapTurn (P := P) (F := F) (U := U) (I := I)) :=
-  swapTurn_swapTurn
-
-/-- Swapping the turn, as a permutation of gameboards. -/
-@[simps! apply symm_apply]
-def swapTurnEquiv : Gameboard P F U I ≃ Gameboard P F U I :=
-  swapTurn_involutive.toPerm
-
-@[simp] theorem swapTurnEquiv_symm :
-    (swapTurnEquiv : Gameboard P F U I ≃ Gameboard P F U I).symm = swapTurnEquiv := rfl
-
-@[simp] theorem swapTurn_pushQud (i : I) : d.swapTurn.pushQud i = (d.pushQud i).swapTurn := rfl
-
-@[simp] theorem swapTurn_recordMove (m : U) :
-    d.swapTurn.recordMove m = (d.recordMove m).swapTurn := rfl
-
 @[simp] theorem latestMove_recordMove (m : U) : (d.recordMove m).latestMove = some m := rfl
-
-@[simp] theorem latestMove_swapTurn : d.swapTurn.latestMove = d.latestMove := rfl
-
-@[simp] theorem speaker_swapTurn : d.swapTurn.speaker = d.addressee := rfl
 
 end Update
 
