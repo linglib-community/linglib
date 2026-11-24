@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.CoppockBrochhagen2013
 public import Linglib.Data.Examples.Readers
 public import Linglib.Languages.English.NumeralModifiers
 public import Linglib.Semantics.Focus.Inquisitive
+public import Linglib.Semantics.Questions.Hamblin.Degree
 
 /-!
 # Coppock and Brochhagen (2013): Raising and resolving issues with scalar modifiers
@@ -18,10 +19,13 @@ and *at most `i`* is `Focus.atMost`, what it asserts. For the question of how ma
 
 In unrestricted inquisitive semantics the modifiers raise the possibilities
 `Inquisitive.Unrestricted.atLeast` and `Inquisitive.Unrestricted.atMost`. Over two-sided answers
-*at least `a`* is inquisitive and not attentive, and over one-sided answers it is attentive. A
-speaker who knows the number restricts *at least `a`* to one possibility on either reading, which
-violates the Maxim of Interactive Sincerity, while the comparative *more than* raises one
-possibility with the same union. In the model of who snores, exhaustifying *Ann snores* against
+*at least `a`* is inquisitive and not attentive, and over one-sided answers it is attentive. On
+either reading *at least `a`* satisfies the Maxim of Interactive Sincerity just in case the
+speaker's information leaves open two numbers from `a` up, so a speaker who knows the number
+violates it, while the comparative *more than* raises one possibility with the same union.
+Exhaustified against the question of how many, `Question.degreeHamblin μ`, the one-sided numeral
+becomes two-sided, and the possibilities of *at least `a`* keep the one-sided answer as their
+union. In the model of who snores, exhaustifying *Ann snores* against
 the question excludes that Bill snores, and exhaustifying the possibilities of *at least Ann
 snores* does not.
 
@@ -202,47 +206,104 @@ theorem sUnion_atLeast_succ [SuccOrder α] [NoMaxOrder α] (a : α) :
   rw [sUnion_atLeast, atLeast_twoSided]
   exact congrArg _ (Order.Ici_succ a)
 
+-- (74a): exhaustified against the question of how many, the one-sided numeral is two-sided.
+theorem exh_oneSided (hμ : Surjective μ) (a : α) :
+    exh (Question.degreeHamblin μ) (oneSided μ a) = twoSided μ a :=
+  Question.exh_degreeHamblin_of_surjective hμ a
+
+/-- (74b): exhaustifying the possibilities of *at least `a`* against the question of how many
+leaves their union at the one-sided answer, with no upper bound. -/
+theorem sUnion_exh_atLeast_oneSided (hμ : Surjective μ) (a : α) :
+    ⋃₀ (exh (Question.degreeHamblin μ) '' Unrestricted.atLeast (· ≥ ·) univ (oneSided μ) a) =
+      oneSided μ a := by
+  rw [Unrestricted.atLeast_ge_univ, image_image, sUnion_image]
+  simp only [exh_oneSided hμ, twoSided, ← preimage_iUnion₂, biUnion_of_singleton]
+
 end Inquisitive
 
 /-! ### Ignorance (§3.4.1) -/
 
 section Ignorance
 
-variable {ι W α : Type*} {S : ι → ι → Prop} {C : Set ι} {μ : W → α} {b : α} {k : Set W}
+variable {W α : Type*} [LinearOrder α] {μ : W → α} {a b c : α} {k : Set W}
 
-theorem subset_or_disjoint_preimage (hk : k ⊆ μ ⁻¹' {b}) (s : Set α) :
-    k ⊆ μ ⁻¹' s ∨ Disjoint k (μ ⁻¹' s) := by
-  by_cases hb : b ∈ s
-  · exact .inl fun w hw ↦ by rw [mem_preimage, show μ w = b from hk hw]; exact hb
-  · exact .inr (disjoint_left.2 fun w hw hws ↦ hb (by rw [← show μ w = b from hk hw]; exact hws))
+-- (67): on the two-sided reading *at least `a`* is interactive in an information set just in
+-- case the set leaves open two numbers from `a` up.
+theorem nontrivial_restrict_atLeast_twoSided :
+    (restrict (Unrestricted.atLeast (· ≥ ·) univ (twoSided μ) a) k).Nontrivial ↔
+      (μ '' k ∩ Ici a).Nontrivial := by
+  rw [nontrivial_restrict_iff, Unrestricted.atLeast_ge_univ]
+  constructor
+  · rintro ⟨_, ⟨i, hi, rfl⟩, _, ⟨j, hj, rfl⟩, ⟨w, hwk, hwi⟩, ⟨v, hvk, hvj⟩, hne⟩
+    exact ⟨i, ⟨⟨w, hwk, hwi⟩, hi⟩, j, ⟨⟨v, hvk, hvj⟩, hj⟩, fun h ↦ hne (by rw [h])⟩
+  · rintro ⟨_, ⟨⟨w, hwk, rfl⟩, hi⟩, _, ⟨⟨v, hvk, rfl⟩, hj⟩, hne⟩
+    exact ⟨_, mem_image_of_mem _ hi, _, mem_image_of_mem _ hj, ⟨w, hwk, rfl⟩, ⟨v, hvk, rfl⟩,
+      fun h ↦ hne (h.subset (⟨hwk, rfl⟩ : w ∈ k ∩ twoSided μ (μ w))).2⟩
 
-/-- A speaker who knows the number restricts *at least*, over answers about the number, to at
-most one possibility. -/
-theorem subsingleton_restrict_atLeast_of_subset_fiber (s : ι → Set α) (i : ι)
-    (hk : k ⊆ μ ⁻¹' {b}) :
-    (restrict (Unrestricted.atLeast S C (fun j ↦ μ ⁻¹' s j) i) k).Subsingleton :=
-  subsingleton_restrict_of_subset_or_disjoint <| by
-    rintro _ ⟨j, -, rfl⟩
-    exact subset_or_disjoint_preimage hk (s j)
+-- (67), with one-sided answers
+theorem nontrivial_restrict_atLeast_oneSided :
+    (restrict (Unrestricted.atLeast (· ≥ ·) univ (oneSided μ) a) k).Nontrivial ↔
+      (μ '' k ∩ Ici a).Nontrivial := by
+  rw [nontrivial_restrict_iff, Unrestricted.atLeast_ge_univ]
+  constructor
+  · rintro ⟨_, ⟨i, hi, rfl⟩, _, ⟨j, hj, rfl⟩, ⟨w, hwk, hwi⟩, ⟨v, hvk, hvj⟩, hne⟩
+    have key : ∀ {i j : α} {v : W}, a ≤ i → a ≤ j → i ≤ j → v ∈ k → j ≤ μ v →
+        k ∩ oneSided μ i ≠ k ∩ oneSided μ j → (μ '' k ∩ Ici a).Nontrivial := by
+      intro i j v hi hj hij hvk hvj hne
+      obtain ⟨u, hu, hnu⟩ : ∃ u ∈ k ∩ oneSided μ i, u ∉ k ∩ oneSided μ j := by
+        by_contra hc
+        push_neg at hc
+        exact hne (Subset.antisymm hc (inter_subset_inter_right _ (antitone_oneSided hij)))
+      have hiu : i ≤ μ u := hu.2
+      exact ⟨μ u, ⟨⟨u, hu.1, rfl⟩, hi.trans hiu⟩, μ v, ⟨⟨v, hvk, rfl⟩, hj.trans hvj⟩,
+        fun h ↦ hnu ⟨hu.1, le_of_le_of_eq hvj h.symm⟩⟩
+    rcases le_total i j with hij | hji
+    · exact key hi hj hij hvk hvj hne
+    · exact key hj hi hji hwk hwi hne.symm
+  · rintro ⟨_, ⟨⟨w, hwk, rfl⟩, hi⟩, _, ⟨⟨v, hvk, rfl⟩, hj⟩, hne⟩
+    have key : ∀ {w v : W}, w ∈ k → v ∈ k → a ≤ μ w → a ≤ μ v → μ w < μ v →
+        ∃ p ∈ oneSided μ '' Ici a, ∃ q ∈ oneSided μ '' Ici a,
+          (k ∩ p).Nonempty ∧ (k ∩ q).Nonempty ∧ k ∩ p ≠ k ∩ q := by
+      intro w v hwk hvk hi hj hlt
+      refine ⟨_, mem_image_of_mem _ self_mem_Ici, _, mem_image_of_mem _ hj, ⟨w, hwk, hi⟩,
+        ⟨v, hvk, le_rfl⟩, fun h ↦ ?_⟩
+      have hw : w ∈ k ∩ oneSided μ (μ v) := h.subset ⟨hwk, hi⟩
+      exact absurd hw.2 (not_le.2 hlt)
+    rcases hne.lt_or_gt with hlt | hlt
+    · exact key hwk hvk hi hj hlt
+    · exact key hvk hwk hj hi hlt
 
-variable [LinearOrder α] {a c : α}
+/-- *At least `a`* satisfies the Maxim of Interactive Sincerity just in case the speaker's
+information leaves open two numbers from `a` up. -/
+theorem interactiveSincerity_atLeast_twoSided_iff (hμ : Surjective μ) (hac : a < c) :
+    InteractiveSincerity (Unrestricted.atLeast (· ≥ ·) univ (twoSided μ) a) k ↔
+      (μ '' k ∩ Ici a).Nontrivial :=
+  (imp_iff_right (nontrivial_iff_isInquisitive_or_isAttentive.2
+    (.inl (isInquisitive_atLeast_twoSided hμ hac)))).trans nontrivial_restrict_atLeast_twoSided
 
-/-- (70a): a speaker who knows how many cannot sincerely say *at least `a`* over two-sided
-answers. -/
+theorem interactiveSincerity_atLeast_oneSided_iff (hμ : Surjective μ) (hac : a < c) :
+    InteractiveSincerity (Unrestricted.atLeast (· ≥ ·) univ (oneSided μ) a) k ↔
+      (μ '' k ∩ Ici a).Nontrivial :=
+  (imp_iff_right (nontrivial_iff_isInquisitive_or_isAttentive.2
+    (.inr (isAttentive_atLeast_oneSided hμ hac)))).trans nontrivial_restrict_atLeast_oneSided
+
+omit [LinearOrder α] in
+theorem subsingleton_image_of_subset_twoSided (hk : k ⊆ twoSided μ b) : (μ '' k).Subsingleton :=
+  subsingleton_singleton.anti (image_subset_iff.2 hk)
+
+-- (70a): a speaker who knows how many cannot sincerely say *at least `a`*.
 theorem not_interactiveSincerity_atLeast_twoSided (hμ : Surjective μ) (hac : a < c)
     (hk : k ⊆ twoSided μ b) :
     ¬ InteractiveSincerity (Unrestricted.atLeast (· ≥ ·) univ (twoSided μ) a) k :=
-  not_interactiveSincerity
-    (nontrivial_iff_isInquisitive_or_isAttentive.2 (.inl (isInquisitive_atLeast_twoSided hμ hac)))
-    (subsingleton_restrict_atLeast_of_subset_fiber (fun i ↦ {i}) a hk)
+  fun h ↦ ((interactiveSincerity_atLeast_twoSided_iff hμ hac).1 h).not_subsingleton
+    ((subsingleton_image_of_subset_twoSided hk).anti inter_subset_left)
 
 -- (70a), with one-sided answers
 theorem not_interactiveSincerity_atLeast_oneSided (hμ : Surjective μ) (hac : a < c)
     (hk : k ⊆ twoSided μ b) :
     ¬ InteractiveSincerity (Unrestricted.atLeast (· ≥ ·) univ (oneSided μ) a) k :=
-  not_interactiveSincerity
-    (nontrivial_iff_isInquisitive_or_isAttentive.2 (.inr (isAttentive_atLeast_oneSided hμ hac)))
-    (subsingleton_restrict_atLeast_of_subset_fiber Ici a hk)
+  fun h ↦ ((interactiveSincerity_atLeast_oneSided_iff hμ hac).1 h).not_subsingleton
+    ((subsingleton_image_of_subset_twoSided hk).anti inter_subset_left)
 
 end Ignorance
 

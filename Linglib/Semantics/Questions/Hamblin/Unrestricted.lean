@@ -249,6 +249,15 @@ theorem subsingleton_restrict_iff :
   rintro h _ ⟨⟨p, hp, rfl⟩, hp0⟩ _ ⟨⟨q, hq, rfl⟩, hq0⟩
   exact h p hp q hq (nonempty_iff_ne_empty.2 hp0) (nonempty_iff_ne_empty.2 hq0)
 
+/-- A proposition restricted to `k` has several possibilities just in case two of its
+possibilities consistent with `k` differ on `k`. -/
+theorem nontrivial_restrict_iff :
+    (restrict P k).Nontrivial ↔
+      ∃ p ∈ P, ∃ q ∈ P, (k ∩ p).Nonempty ∧ (k ∩ q).Nonempty ∧ k ∩ p ≠ k ∩ q := by
+  rw [← not_subsingleton_iff, subsingleton_restrict_iff]
+  push_neg
+  rfl
+
 /-- Restricted to an information set that decides each of its possibilities, a proposition keeps
 at most one possibility. -/
 theorem subsingleton_restrict_of_subset_or_disjoint (h : ∀ p ∈ P, k ⊆ p ∨ Disjoint k p) :

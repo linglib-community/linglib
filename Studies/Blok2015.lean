@@ -103,11 +103,8 @@ theorem isUpperSet_sUnion_upTo : IsUpperSet (⋃₀ upTo s n) := fun _ _ hab h �
 
 /-! ### The implicated upper bound -/
 
-private theorem exh_howMany_Ici : Exhaustification.exh howMany (Ici m) = {m} := by
-  ext k
-  simp only [howMany, Exhaustification.mem_exh_range_iff, mem_Ici, Ici_subset_Ici,
-    mem_singleton_iff]
-  exact ⟨fun ⟨hk, h⟩ ↦ le_antisymm (h k le_rfl) hk, by rintro rfl; exact ⟨le_rfl, fun _ ↦ id⟩⟩
+private theorem exh_howMany_Ici : Exhaustification.exh howMany (Ici m) = {m} :=
+  Question.exh_degreeHamblin (μ := id) m
 
 -- (50), (51)
 theorem exh_upTo_howMany :
