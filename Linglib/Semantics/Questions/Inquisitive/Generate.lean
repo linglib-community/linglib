@@ -8,10 +8,11 @@ import Linglib.Core.Order.UpperLower.Closure
 
 The question `generate S` that a family of states generates is resolved by the states included
 in a member of `S`, a Galois insertion as `Filter.generate` is (`giGenerate`). A question is
-normal when its alternatives generate it, the resolutions theorem (`IsNormal.generate_alt`), and
-finitely generated when finitely many states do, which is to be normal with finitely many
-alternatives (`fg_iff_finite_alt_and_isNormal`). Generators are stated against `lowerClosure` on
-the coercion (`isNormal_iff_coe_eq_lowerClosure`).
+normal when its alternatives are cofinal among its resolving states, mathlib's `IsCofinalFor`;
+its alternatives then generate it, the resolutions theorem (`IsNormal.generate_alt`). A question
+is finitely generated when finitely many states generate it, which is to be normal with finitely
+many alternatives (`fg_iff_finite_alt_and_isNormal`). Generators are stated against
+`lowerClosure` on the coercion (`isNormal_iff_coe_eq_lowerClosure`).
 
 ## References
 
@@ -29,32 +30,29 @@ variable {W : Type u}
 
 /-! ### Normal questions
 
-A question is *normal* when its alternatives generate it: every resolving state is included
-in an alternative, so that the resolving states are the lower closure of the alternatives
-([ciardelli-2022]). An antichain generating a question is then its set of alternatives, and a
-question has such a basis exactly when it is normal. Finitely many resolving states suffice
-(`isNormal_of_finite`), declaratives are normal, and so is the inquisitive disjunction of two
-normal questions; but normality fails in general: on an infinite `W` the finite states form a
-question with no alternatives at all, although its informative content is all of `W`. -/
-
-theorem exists_alt_above (P : Question W) (hP : P.props.Finite)
-    {p : Set W} (hp : p ∈ P.props) : ∃ q ∈ alt P, p ⊆ q := by
-  obtain ⟨q, hpq, hmax⟩ := hP.exists_le_maximal hp
-  exact ⟨q, mem_alt_iff_maximal.mpr hmax, hpq⟩
+A question is *normal* when every resolving state is included in an alternative, so that the
+resolving states are the lower closure of the alternatives ([ciardelli-2022]). An antichain
+generating a question is then its set of alternatives, and a question has such a basis exactly
+when it is normal. Finitely many resolving states suffice (`isNormal_of_finite`), declaratives are
+normal, and so is the inquisitive disjunction of two normal questions; but normality fails in
+general: on an infinite `W` the finite states form a question with no alternatives at all,
+although its informative content is all of `W`. -/
 
 /-- A question is normal when every resolving state is included in an alternative. -/
 def IsNormal (P : Question W) : Prop :=
-  ∀ s ∈ P, ∃ a ∈ alt P, s ⊆ a
+  IsCofinalFor (P : Set (Set W)) (alt P)
+
+private theorem isCofinalFor_setOf_maximal {S : Set (Set W)} (hS : S.Finite) :
+    IsCofinalFor S {a | Maximal (· ∈ S) a} :=
+  fun _ ha ↦ let ⟨m, ham, hm⟩ := hS.exists_le_maximal ha; ⟨m, hm, ham⟩
 
 theorem isNormal_of_finite {P : Question W} (hP : P.props.Finite) : P.IsNormal :=
-  fun _ ↦ exists_alt_above P hP
+  (isCofinalFor_setOf_maximal hP).mono_right fun _ h ↦ mem_alt_iff_maximal.2 h
 
 theorem isNormal_iff_coe_eq_lowerClosure {P : Question W} :
-    P.IsNormal ↔ (P : Set (Set W)) = lowerClosure (alt P) := by
-  refine ⟨fun h ↦ Set.Subset.antisymm (fun s hs ↦ h s hs) ?_, fun h s hs ↦ ?_⟩
-  · exact lowerClosure_min (alt_subset_props P) P.isLowerSet
-  · rw [← SetLike.mem_coe, h] at hs
-    exact hs
+    P.IsNormal ↔ (P : Set (Set W)) = lowerClosure (alt P) :=
+  ⟨fun h ↦ Set.Subset.antisymm h (lowerClosure_min (alt_subset_props P) P.isLowerSet),
+    fun h ↦ h.le⟩
 
 alias ⟨IsNormal.coe_eq_lowerClosure, _⟩ := isNormal_iff_coe_eq_lowerClosure
 
@@ -72,14 +70,11 @@ theorem isNormal_of_coe_eq_lowerClosure {P : Question W} {T : Set (Set W)}
   exact h
 
 theorem IsNormal.info_eq_sUnion_alt {P : Question W} (hP : P.IsNormal) :
-    info P = ⋃₀ alt P := by
-  refine Set.Subset.antisymm ?_ (sUnion_alt_subset_info P)
-  rintro w ⟨p, hp, hwp⟩
-  obtain ⟨q, hq, hpq⟩ := hP p hp
-  exact ⟨q, hq, hpq hwp⟩
+    info P = ⋃₀ alt P :=
+  (sSup_le_sSup_of_isCofinalFor hP).antisymm (sUnion_alt_subset_info P)
 
 theorem IsNormal.alt_nonempty {P : Question W} (hP : P.IsNormal) : (alt P).Nonempty :=
-  (hP ∅ P.contains_empty).imp fun _ h ↦ h.1
+  IsCofinalFor.nonempty hP ⟨∅, P.contains_empty⟩
 
 theorem isNormal_ofSet (p : Set W) : (ofSet p).IsNormal :=
   fun _ hs ↦ ⟨p, self_mem_alt_ofSet p, hs⟩
@@ -90,7 +85,7 @@ private theorem exists_mem_alt_sup_of_mem_alt {P Q : Question W} (hQ : Q.IsNorma
   · exact ⟨a, mem_alt_sup_of_alt_left ha h, subset_rfl⟩
   push Not at h
   obtain ⟨q, hq, haq, -⟩ := h
-  obtain ⟨b, hb, hqb⟩ := hQ q hq
+  obtain ⟨b, hb, hqb⟩ := hQ hq
   refine ⟨b, mem_alt_sup_of_alt_right hb fun p hp hbp ↦ ?_, haq.trans hqb⟩
   obtain rfl := ha.2 p hp (haq.trans (hqb.trans hbp))
   exact hbp.antisymm (haq.trans hqb)
@@ -99,10 +94,10 @@ theorem IsNormal.sup {P Q : Question W} (hP : P.IsNormal) (hQ : Q.IsNormal) :
     (P ⊔ Q).IsNormal := by
   intro s hs
   rcases mem_sup.mp hs with hs | hs
-  · obtain ⟨a, ha, hsa⟩ := hP s hs
+  · obtain ⟨a, ha, hsa⟩ := hP hs
     obtain ⟨b, hb, hab⟩ := exists_mem_alt_sup_of_mem_alt hQ ha
     exact ⟨b, hb, hsa.trans hab⟩
-  · obtain ⟨a, ha, hsa⟩ := hQ s hs
+  · obtain ⟨a, ha, hsa⟩ := hQ hs
     obtain ⟨b, hb, hab⟩ := exists_mem_alt_sup_of_mem_alt hP ha
     exact ⟨b, sup_comm Q P ▸ hb, hsa.trans hab⟩
 
@@ -142,6 +137,11 @@ def giGenerate : GaloisInsertion (generate : Set (Set W) → Question W) (↑) :
 
 theorem generate_mono : Monotone (generate : Set (Set W) → Question W) :=
   gc_generate.monotone_l
+
+/-- If every member of `S` is included in a member of `T`, then `generate S ≤ generate T`. -/
+theorem generate_le_generate_of_isCofinalFor {S T : Set (Set W)} (h : IsCofinalFor S T) :
+    generate S ≤ generate T :=
+  generate_le_iff.2 fun _ ha ↦ mem_generate.2 (.inr (h ha))
 
 @[simp] theorem generate_coe (Q : Question W) : generate (Q : Set (Set W)) = Q :=
   giGenerate.l_u_eq Q
@@ -193,20 +193,19 @@ theorem alt_generate_subset (S : Set (Set W)) : alt (generate S) ⊆ insert ∅ 
   · exact Set.mem_insert _ _
   · exact Set.mem_insert_of_mem _ (hmax a (mem_generate.2 (.inr ⟨a, ha, subset_rfl⟩)) hqa ▸ ha)
 
+/-- The question a nonempty family generates is normal iff every member of the family is
+included in a maximal member. -/
+theorem isNormal_generate_iff {S : Set (Set W)} (hS : S.Nonempty) :
+    (generate S).IsNormal ↔ IsCofinalFor S {a | Maximal (· ∈ S) a} := by
+  rw [IsNormal, alt_generate hS, coe_generate hS]
+  exact ⟨fun h ↦ h.mono_left subset_lowerClosure, fun h _ ⟨a, ha, hsa⟩ ↦
+    (h ha).imp fun _ hm ↦ ⟨hm.1, hsa.trans hm.2⟩⟩
+
 theorem isNormal_generate {S : Set (Set W)} (hS : S.Finite) : (generate S).IsNormal := by
-  intro s hs
-  rcases S.eq_empty_or_nonempty with rfl | ⟨a₀, ha₀⟩
-  · rw [generate_empty] at hs ⊢
-    exact ⟨∅, by simp, (mem_bot.1 hs).le⟩
-  obtain ⟨a, ha, hsa⟩ : ∃ a ∈ S, s ⊆ a := by
-    rcases mem_generate.1 hs with rfl | h
-    · exact ⟨a₀, ha₀, Set.empty_subset _⟩
-    · exact h
-  obtain ⟨m, ham, hm⟩ := hS.exists_le_maximal ha
-  refine ⟨m, ⟨mem_generate.2 (.inr ⟨m, hm.prop, subset_rfl⟩), fun t ht hmt ↦ ?_⟩, hsa.trans ham⟩
-  rcases mem_generate.1 ht with rfl | ⟨b, hb, htb⟩
-  · exact Set.subset_empty_iff.1 hmt
-  · exact hmt.antisymm (htb.trans (hm.2 hb (hmt.trans htb)))
+  rcases S.eq_empty_or_nonempty with rfl | hne
+  · rw [generate_empty, ← ofSet_empty]
+    exact isNormal_ofSet ∅
+  · exact (isNormal_generate_iff hne).2 (isCofinalFor_setOf_maximal hS)
 
 /-- The meet of two generated questions is generated by the pairwise intersections. -/
 theorem generate_inf_generate (S T : Set (Set W)) :
@@ -249,10 +248,9 @@ theorem generate_himp_generate {S T : Set (Set W)} (hT : T.Nonempty) :
 
 /-- A finite family generates the same question as its maximal members. -/
 theorem generate_setOf_maximal {S : Set (Set W)} (hS : S.Finite) :
-    generate {a | Maximal (· ∈ S) a} = generate S := by
-  refine le_antisymm (generate_mono fun _ h ↦ h.prop) (generate_le_iff.2 fun a ha ↦ ?_)
-  obtain ⟨m, ham, hm⟩ := hS.exists_le_maximal ha
-  exact mem_generate.2 (.inr ⟨m, hm, ham⟩)
+    generate {a | Maximal (· ∈ S) a} = generate S :=
+  le_antisymm (generate_mono fun _ h ↦ h.prop)
+    (generate_le_generate_of_isCofinalFor (isCofinalFor_setOf_maximal hS))
 
 /-- The informative content of a generated question is the union of the family. -/
 theorem info_generate (S : Set (Set W)) : info (generate S) = ⋃₀ S := by
@@ -268,7 +266,8 @@ theorem generate_alt_le (P : Question W) : generate (alt P) ≤ P :=
 
 /-- A normal question is generated by its alternatives, the resolutions theorem. -/
 theorem IsNormal.generate_alt {P : Question W} (hP : P.IsNormal) : generate (alt P) = P :=
-  SetLike.coe_injective <| (coe_generate hP.alt_nonempty).trans hP.coe_eq_lowerClosure.symm
+  (generate_alt_le P).antisymm <|
+    (generate_coe P).ge.trans (generate_le_generate_of_isCofinalFor hP)
 
 /-! ### Finitely generated questions -/
 

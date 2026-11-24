@@ -166,7 +166,7 @@ theorem inter_diff_truth_nonempty_of_alt {φ ψ : Kalman (Question W)}
   obtain ⟨v, hvR, hva, hv⟩ := (isMinCover_iff_inter_sdiff.1 h).2 a (.inl ha)
   refine ⟨v, hvR, subset_info_of_mem (mem_of_mem_alt ha) hva, ?_⟩
   rintro ⟨s, hs, hvs⟩
-  obtain ⟨b, hb, hsb⟩ := hψ s hs
+  obtain ⟨b, hb, hsb⟩ := hψ hs
   exact hv ⟨b, ⟨.inr hb, fun hba ↦
     Set.disjoint_left.1 hφψ ha (hba ▸ mem_of_mem_alt hb)⟩, hsb hvs⟩
 

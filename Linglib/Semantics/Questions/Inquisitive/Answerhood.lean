@@ -65,11 +65,11 @@ theorem mem_of_exists_alt_subset (h : ∃ p ∈ alt Q, σ ⊆ p) : σ ∈ Q :=
   Q.downward_closed p (alt_subset_props _ hp) σ hsub
 
 theorem mem_iff_exists_alt_subset (hQ : Q.IsNormal) : σ ∈ Q ↔ ∃ p ∈ alt Q, σ ⊆ p :=
-  ⟨hQ σ, mem_of_exists_alt_subset⟩
+  ⟨fun h ↦ hQ h, mem_of_exists_alt_subset⟩
 
 theorem partiallyAnsweredBy_of_mem (hQ : Q.IsNormal) (h : σ ∈ Q) :
     PartiallyAnsweredBy Q σ :=
-  let ⟨p, hp, hsub⟩ := hQ σ h
+  let ⟨p, hp, hsub⟩ := hQ h
   ⟨p, hp, Or.inl hsub⟩
 
 theorem partiallyAnsweredBy_of_mem_alt {p : Set W} (h : p ∈ alt Q) :

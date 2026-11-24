@@ -153,7 +153,7 @@ theorem isTruthful_ofSet_of_subset (h : IsTruthful (ofSet q) w p) {r : Set W} (h
 variable [Finite W]
 
 theorem IsTruthful.exists_alt (h : IsTruthful P w p) : ∃ c ∈ alt P, w ∈ c ∧ p ⊆ c :=
-  let ⟨c, hc, hpc⟩ := exists_alt_above P (Set.toFinite _) h.mem
+  let ⟨c, hc, hpc⟩ := isNormal_of_finite (Set.toFinite _) h.mem
   ⟨c, hc, h.mem_of_subset hc hpc, hpc⟩
 
 theorem E_nonempty_iff : (E P w).Nonempty ↔ w ∈ info P := by
