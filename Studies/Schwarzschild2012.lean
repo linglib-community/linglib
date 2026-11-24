@@ -7,33 +7,26 @@ public import Studies.Stassen1985
 /-!
 # Schwarzschild (2012): Directed scale segments
 
-A directed scale segment is a part of a scale with a start and an end, $\sigma = \langle s, e,
-\prec_\sigma \rangle$. It is rising when its start is lower on the scale than its end and
-falling when it is higher. Schwarzschild analyses a comparative whose standard is marked by a
-spatial adposition as describing one segment in two places: the standard phrase gives its
-start and its direction, and the gradable predicate gives its end and its scale. Hindi *se*
-'from' quantifies over rising segments that start at the standard, so that *Anu Raj-se lambii
-hai* says that a rising segment of the height scale runs from Raj to Anu.
+This file defines directed scale segments and the denotations Schwarzschild gives the parts of
+a comparative whose standard is marked by a spatial adposition.
 
-We define a segment as a start, an end and the measure of its scale, and prove the truth
-conditions of the comparative, of the comparative with a differential measure phrase, and of
-the two comparatives of inferiority: Hindi *kam* inverts the scale of the predicate, and
-Navajo *-'oh* quantifies over falling segments, and both say that the subject is below the
-standard.
+A directed scale segment $\sigma = \langle s, e, \prec_\sigma \rangle$ is a part of a scale
+with a start $s$ and an end $e$. It is rising when $s \prec_\sigma e$ and falling when
+$e \prec_\sigma s$. A gradable predicate with the measure `μ` relates a segment to an
+individual `y` when the segment ends at `y` and lies on the scale of `μ`. Hindi *se* 'from'
+with the standard `x` quantifies over the rising segments that start at `x`, so that *Anu
+Raj-se lambii hai* 'Anu is taller than Raj' says that a rising segment of the height scale
+runs from Raj to Anu, which holds if and only if `μ x < μ y`.
 
-A segment is a two-point path of entities, and starting at the standard is being a coinitial
-path relative to it, the shape of a spatial path *from* a place. For the Hindi-Urdu
-construction of the fragment, the segment has the shape of the case of the standard, and the
-type of the construction in [stassen-1985]'s typology is the adverbial type of that shape's
-direction.
+A differential measure phrase restricts the predicate to segments of its length. Hindi *kam*
+'less' moves the predicate to the inverse scale, and Navajo *-'oh* quantifies over falling
+segments; the two comparatives of inferiority have the same truth conditions, `μ y < μ x`.
 
-## Main definitions
-
-* `Schwarzschild2012.Segment`: a directed scale segment, with `Segment.Rising`,
-  `Segment.Falling`, `Segment.reverse`, `Segment.inverse` and the path `Segment.toPath`
-* `Schwarzschild2012.se`, `Schwarzschild2012.oh`: the standard phrases of Hindi and Navajo
-* `Schwarzschild2012.gradable`, `Schwarzschild2012.differential`, `Schwarzschild2012.kam`:
-  the gradable predicate and its modifiers
+A segment is a two-point path of entities, and a rising segment starts at `x` if and only if it
+is a coinitial path relative to `{x}`, the shape of a spatial path from a place. For the
+Hindi-Urdu construction of the fragment, the segment has the shape of the case of the
+standard, and the type of the construction in [stassen-1985]'s typology is the adverbial type
+of the direction of that shape.
 
 ## Implementation notes
 

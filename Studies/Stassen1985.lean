@@ -5,8 +5,6 @@ public import Linglib.Fragments.Arabic.ModernStandard.Comparison
 public import Linglib.Fragments.Finnish.Comparison
 public import Linglib.Fragments.HindiUrdu.Comparison
 public import Linglib.Fragments.Japanese.Comparison
-public import Linglib.Fragments.Korean.Clause
-public import Linglib.Fragments.Korean.Comparison
 public import Linglib.Fragments.Mandarin.Comparison
 public import Linglib.Fragments.Romance.French.Comparison
 public import Linglib.Fragments.Slavic.Russian.Comparison
@@ -20,50 +18,35 @@ public import Mathlib.Basic.Rel
 /-!
 # Stassen (1985): Comparison and Universal Grammar
 
-Stassen classifies comparative constructions by the encoding of the standard of comparison. A
-standard whose case is derived from the comparee's belongs to a conjoined comparative, two
-independent clauses, or to a particle comparative. A standard in a fixed case is the direct
-object of a verb of exceeding, the exceed comparative, or part of an adverbial phrase, and the
-adverbial comparative is separative, allative or locative as the phrase is one of source, of
-goal or of location.
+This file defines Stassen's types of comparative construction and of temporal chaining, the
+relation of modelling between them, and the chaining-based universals of a language.
 
-A temporal chain expresses two events as consecutive or as simultaneous. It is balanced, both
-predicates keeping their rank, or deranked, one predicate reduced, either only under identity
-of subjects or absolutely, and an absolutely deranked predicate is anterior to, posterior to or
-simultaneous with the other.
+A comparative construction is classed by the encoding of its standard of comparison. The
+standard takes its case from the comparee, in a conjoined comparative of two independent
+clauses or in a particle comparative, or it has a fixed case, as the direct object of a verb of
+exceeding in an exceed comparative or in an adverbial phrase in an adverbial comparative. A
+temporal chain of two predicates is balanced, both keeping their rank, or deranked, one of
+them reduced, either only under identity of subjects or absolutely.
 
-The three adverbial comparatives and the three absolutely deranked chains are indexed by one
-type, `Ordering`, read as the comparison `cmp ground figure` of a ground with a figure along a
+An adverbial comparative `adverbial o` and an absolutely deranked chain `absolute o` are
+indexed by `o : Ordering`, the comparison `cmp g f` of a ground `g` with a figure `f` on a
 line. For a comparative the ground is the standard and the line a path: the standard is where
-the path starts, `lt`, where it ends, `gt`, or where the comparee is, `eq`. For a chain the
-ground is the deranked predicate and the line is time: it is before the main predicate, after
-it or simultaneous with it.
+the path starts in the separative comparative, `lt`, where it ends in the allative, `gt`, and
+where the comparee is in the locative, `eq`. For a chain the ground is the deranked predicate
+and the line is time: the deranked predicate is anterior to the other, posterior to it or
+simultaneous with it.
 
-The book's hypothesis is that a comparative is modelled on a chaining construction of its
-language. `Models c t` holds when a comparative of type `t` is modelled on a chain of type `c`:
-a particle comparative on a balanced chain, a conjoined one on the balanced simultaneous chain,
-an exceed comparative on a conditionally deranked chain, and an adverbial comparative on the
-absolutely deranked chain with the same order of ground and figure. Modelling is invariant
-under the reversal of the line, which exchanges the separative with the allative and the
-anterior with the posterior. For a language with the chaining constructions `C` and the
-comparatives `T` we state the book's chaining-based universals as `Universals C T`, and prove
-that they hold exactly when every comparative of the language is modelled on one of its
-chains, `T ⊆ models.image C`. Every type of chain models some comparative and every type of
-comparative is modelled on some chain.
+`Models c t` says that a comparative of type `t` is modelled on a chain of type `c`: a
+particle comparative on a balanced chain, a conjoined comparative on the balanced simultaneous
+chain, an exceed comparative on a conditionally deranked chain, and `adverbial o` on
+`absolute o`. Modelling is invariant under `Ordering.swap`, the reversal of the line. For a
+language with the chain types `C` and the comparative types `T`, the chaining-based universals
+hold if and only if `T ⊆ models.image C`.
 
-The examples are comparatives of the book whose construction a fragment records. The type each
-fragment construction has by the encoding of its standard is the type the book classes the
-example under, for every recorded example but the Finnish partitive.
-
-## Main definitions
-
-* `Stassen1985.ComparativeType`, `Stassen1985.typeOf`: the types of comparative and the type
-  of a construction
-* `Stassen1985.ChainType`: the types of temporal chaining
-* `Stassen1985.groundOrder?`: the order of ground and figure a spatial direction expresses
-* `Stassen1985.Models`, `Stassen1985.models`: the modelling relation between chains and
-  comparatives
-* `Stassen1985.Universals`: the chaining-based universals of a language
+The examples are comparatives of the book whose construction a fragment records. The type of
+each fragment construction is the type the book gives the example, except for the Finnish
+partitive standard. Turkish, with its ablative comparative and a gerund that precedes the main
+predicate and is neutral to switch-reference, satisfies the universals.
 
 ## Implementation notes
 
@@ -74,11 +57,11 @@ example under, for every recorded example but the Finnish partitive.
   seven values of these types. `Ordering` is used and not a type of spatial relations with a
   bijection to a type of relative times, since the bijection would be stipulated, while the
   comparison of ground and figure is what both sets of labels classify.
-* A language is a set of chaining constructions and a set of comparatives, since the book
-  allows a language several of each. A universal whose consequent is that the language is
-  balancing or deranking, or has conditional or absolute deranking, is read as saying that the
-  language has a chain of that kind, the reading under which the book takes a chaining type to
-  be a necessary and not a sufficient condition for a comparative type.
+* A language is a set of chain types and a set of comparative types, since the book allows a
+  language several of each. A universal whose consequent is that the language is balancing or
+  deranking, or has conditional or absolute deranking, is read as saying that the language has
+  a chain of that kind, the reading under which the book takes a chaining type to be a
+  necessary and not a sufficient condition for a comparative type.
 * An adverbial standard is classed by the direction of its case, `Case.dirOf`, extended to the
   non-spatial cases the book classes by the localist analysis. The partitive is none of these,
   so the Finnish partitive standard, which the book lists as a secondary separative
@@ -93,7 +76,8 @@ example under, for every recorded example but the Finnish partitive.
   the chaining data of the sample that Part Two tests the universals against, and the
   procedure-based universals of Part Three.
 * The Korean separative of the book marks the standard with *-eso*, which the fragment does
-  not record.
+  not record, so the universals are checked on Turkish alone. The book's chaining examples are
+  not recorded as rows, and the relative time of the Turkish gerund is given in the statement.
 
 ## References
 
@@ -431,11 +415,28 @@ theorem typeOf_entry :
       (typeOf l.entry = x.comparativeClass.map (·.toType) ↔ x ≠ .ex_10_54a) := by
   decide
 
--- Korean and Turkish have a fixed-case comparative and, as Universal 1B requires of them,
--- medial verb forms that are not finite.
-theorem deranking_fragments :
-    (∀ c ∈ [Korean.Comparison.boda, Turkish.Comparison.dan], ∀ t ∈ typeOf c, ¬ t.IsDerivedCase) ∧
-      (∃ m : Korean.Converb, m.verbForm ≠ .Fin) ∧ ∃ m : Turkish.Converb, m.verbForm ≠ .Fin := by
-  decide
+/-- The chain type of a medial form whose deranked predicate stands in the order `o` in time to
+the main predicate: conditionally deranked when the form marks the same subject, and absolutely
+deranked otherwise. -/
+def chainTypeOf {M : Type*} [MedialForm M] (o : Ordering) (m : M) : ChainType :=
+  if MedialForm.switchReference m = some .ss then
+    .conditional (if o = .eq then .simultaneous else .consecutive)
+  else .absolute o
+
+/-- Turkish satisfies the universals with its ablative comparative and the gerund in *-(y)IncA*,
+which the book describes as immediately prior to the main predicate and which is neutral to
+switch-reference. They would fail if the gerund were posterior. -/
+theorem universals_turkish :
+    Universals {chainTypeOf .lt Turkish.Converb.inca}
+        {t | typeOf Turkish.Comparison.dan = some t} ∧
+      ¬ Universals {chainTypeOf .gt Turkish.Converb.inca}
+        {t | typeOf Turkish.Comparison.dan = some t} := by
+  have hdan : typeOf Turkish.Comparison.dan = some (.adverbial .lt) := by decide
+  simp only [universals_iff_subset_image]
+  refine ⟨fun t ht ↦ ?_, fun h ↦ ?_⟩
+  · obtain rfl : ComparativeType.adverbial .lt = t := Option.some.inj (hdan.symm.trans ht)
+    exact ⟨_, rfl, .adverbial .lt⟩
+  · obtain ⟨c, rfl, hm⟩ := h hdan
+    exact absurd (models_adverbial_iff.mp hm) (by decide)
 
 end Stassen1985
