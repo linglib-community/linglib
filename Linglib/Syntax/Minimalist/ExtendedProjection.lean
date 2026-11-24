@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Order.Antisymmetrization
 public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Syntax.Cartography
+public import Linglib.Syntax.Minimalist.Category
 public import Mathlib.Order.RelClasses
 
 /-!
@@ -33,11 +34,17 @@ over that sequence.
 
 ## Main definitions
 
+* `Cartography.Head.cat`: the category of a head of Cinque's hierarchy.
 * `Minimalist.citedSequences`, `Minimalist.citedIdentifications`: the structures the sources draw.
 * `Minimalist.Cat.Step`: a cited step, from a head to the one a source merges directly above it.
 * `Minimalist.Cat.ExtendsTo`: the extension order, the reflexive-transitive closure of the steps.
 
 ## Implementation notes
+
+`Cartography.Head.cat` sends Cinque's four aspect heads below Voice to inner aspect, the aspect of
+the v shell, the other aspect heads to outer aspect, the speech-act mood to the speech-act head,
+as Speas and Tenny project their speech-act phrase from Cinque's speech-act mood head, and the
+other moods but the evidential to `Cat.Mood`.
 
 A root, a VP and the verb of a cited structure are its lexical head, an IP is `T`, Cinque's heads
 are read through `Cartography.Head.cat`, and the heads of a structure that are not categories here
@@ -80,6 +87,24 @@ demonstrative, so those pairs are incomparable.
 -/
 
 @[expose] public section
+
+namespace Cartography.Head
+
+/-- The category of a head among the categorial features. -/
+def cat : Head → Minimalist.Cat
+  | voice => .Voice
+  | aspSgCompletiveII | aspFrequentativeII | aspRepetitiveII | aspCelerativeII => .InnerAsp
+  | tAnterior | tFuture | tPast => .T
+  | modVolitional | modPossibility | modNecessity | modEpistemic => .Mod
+  | moodEvidential => .Evid
+  | moodSpeechAct => .SA
+  | moodIrrealis | moodEvaluative => .Mood
+  | _ => .Asp
+
+theorem family_cat (h : Head) : h.cat.family = .verbal := by
+  cases h <;> rfl
+
+end Cartography.Head
 
 namespace Minimalist
 
