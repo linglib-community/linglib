@@ -12,11 +12,15 @@ public import Linglib.Core.Computability.StarFree
 # Piecewise testable languages
 
 A language is *piecewise `k`-testable* when membership of a word depends only on the set of its
-subsequences of length at most `k`. These are the piecewise testable events of Simon.
+subsequences of length at most `k`. These are the piecewise testable events of Simon. Having the
+same subsequences of length at most `k` is a congruence of the free monoid, and the piecewise
+`k`-testable languages are those it saturates, so they form a Boolean algebra closed under
+quotients by words.
 
 ## Main definitions
 
 * `subseqSet k w`: the subsequences of `w` of length at most `k`.
+* `subseqCon α k`: Simon's congruence, relating words with the same `subseqSet k`.
 * `Language.IsPiecewiseTestable`: membership in the language factors through `subseqSet k`.
 
 ## Main results
@@ -25,6 +29,8 @@ subsequences of length at most `k`. These are the piecewise testable events of S
   same ones after concatenation.
 * `subseqSet_flatten_replicate_succ`: `k + 1` copies of a word have the same subsequences of
   length at most `k` as `k` copies.
+* `Language.isPiecewiseTestable_iff_mem_languages`: the piecewise `k`-testable languages are those
+  saturated by `subseqCon α k`.
 * `Language.IsPiecewiseTestable.isStarFree`: over a finite alphabet, piecewise testable languages
   are star-free.
 
@@ -91,6 +97,20 @@ theorem finite_range_subseqSet [Finite α] (k : ℕ) :
   ((List.finite_length_le α k).finite_subsets).subset
     (by rintro _ ⟨w, rfl⟩; exact fun s hs ↦ hs.2)
 
+variable (α) in
+/-- *Simon's congruence* relates two words with the same subsequences of length at most `k`. -/
+def subseqCon (k : ℕ) : Con (FreeMonoid α) where
+  toSetoid := Setoid.ker fun u : FreeMonoid α ↦ subseqSet k u.toList
+  mul' h₁ h₂ := subseqSet_append_congr h₁ h₂
+
+@[simp] theorem subseqCon_iff {k : ℕ} {u v : FreeMonoid α} :
+    subseqCon α k u v ↔ subseqSet k u.toList = subseqSet k v.toList :=
+  .rfl
+
+/-- Simon's congruences refine one another as the bound grows. -/
+theorem subseqCon_antitone : Antitone (subseqCon α) := fun _ _ hk _ _ e ↦
+  Set.ext fun _ ↦ and_congr_left fun hs ↦ subseqSet_eq_iff e (hs.trans hk)
+
 namespace Language
 
 /-- A language is *piecewise `k`-testable* when membership factors through the set `subseqSet k`
@@ -100,9 +120,27 @@ def IsPiecewiseTestable (L : Language α) (k : ℕ) : Prop :=
 
 variable {L M : Language α} {k : ℕ}
 
+/-- The piecewise `k`-testable languages are those Simon's congruence saturates. -/
+theorem isPiecewiseTestable_iff_mem_languages :
+    L.IsPiecewiseTestable k ↔ L ∈ (subseqCon α k).languages :=
+  Con.mem_languages_iff_forall.trans
+    ⟨fun h _ _ e ↦ propext (h (u := .ofList _) (v := .ofList _) e), fun h _ _ e ↦ iff_of_eq (h e)⟩
+    |>.symm
+
 theorem IsPiecewiseTestable.mono {k' : ℕ} (h : L.IsPiecewiseTestable k) (hk : k ≤ k') :
     L.IsPiecewiseTestable k' :=
-  fun _ _ e ↦ h <| Set.ext fun _ ↦ and_congr_left fun hs ↦ subseqSet_eq_iff e (hs.trans hk)
+  isPiecewiseTestable_iff_mem_languages.2 <|
+    Con.languages_antitone (subseqCon_antitone hk) (isPiecewiseTestable_iff_mem_languages.1 h)
+
+theorem IsPiecewiseTestable.leftQuotient (h : L.IsPiecewiseTestable k) (u : List α) :
+    (L.leftQuotient u).IsPiecewiseTestable k :=
+  isPiecewiseTestable_iff_mem_languages.2 <|
+    Con.leftQuotient_mem_languages (isPiecewiseTestable_iff_mem_languages.1 h) u
+
+theorem IsPiecewiseTestable.rightQuotient (h : L.IsPiecewiseTestable k) (u : List α) :
+    (L.rightQuotient u).IsPiecewiseTestable k :=
+  isPiecewiseTestable_iff_mem_languages.2 <|
+    Con.rightQuotient_mem_languages (isPiecewiseTestable_iff_mem_languages.1 h) u
 
 theorem IsPiecewiseTestable.compl (h : L.IsPiecewiseTestable k) : Lᶜ.IsPiecewiseTestable k :=
   fun _ _ e ↦ congrArg Not (h e)

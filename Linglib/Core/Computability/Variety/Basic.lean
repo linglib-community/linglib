@@ -44,6 +44,68 @@ of homomorphisms between free semigroups.
 
 universe u
 
+/-! ### The languages a congruence saturates -/
+
+namespace Con
+
+open Language
+
+variable {α β : Type*} {c d : Con (FreeMonoid α)} {L : Language α}
+
+/-- The languages a congruence `c` of the free monoid saturates, the unions of classes of `c`.
+They form a Boolean subalgebra of `Language α`. -/
+def languages (c : Con (FreeMonoid α)) : BooleanSubalgebra (Language α) where
+  carrier := {L | c ≤ L.syntacticCon}
+  supClosed' _ hL _ hM := (le_inf hL hM).trans inf_syntacticCon_le_syntacticCon_sup
+  infClosed' _ hL _ hM := (le_inf hL hM).trans inf_syntacticCon_le_syntacticCon_inf
+  compl_mem' h := h.trans syntacticCon_compl.ge
+  bot_mem' := le_syntactic_iff.2 fun _ _ _ ↦ iff_of_false (Set.notMem_empty _) (Set.notMem_empty _)
+
+@[simp] theorem mem_languages : L ∈ c.languages ↔ c ≤ L.syntacticCon := .rfl
+
+/-- A congruence saturates a language exactly when congruent words are both in it or both out. -/
+theorem mem_languages_iff_forall :
+    L ∈ c.languages ↔ ∀ ⦃u v : FreeMonoid α⦄, c u v → (u.toList ∈ L ↔ v.toList ∈ L) :=
+  le_syntactic_iff
+
+/-- A congruence saturates a language exactly when its quotient map recognizes the language. -/
+theorem mem_languages_iff_recognizes : L ∈ c.languages ↔ Recognizes c.mk' L := by
+  rw [recognizes_iff_ker_le, mk'_ker, mem_languages]
+
+/-- A language is saturated by its syntactic congruence, the coarsest that saturates it. -/
+theorem _root_.Language.mem_languages_syntacticCon (L : Language α) :
+    L ∈ L.syntacticCon.languages :=
+  mem_languages.2 le_rfl
+
+/-- A finer congruence saturates more languages. -/
+theorem languages_antitone : Antitone (languages (α := α)) := fun _ _ h _ hL ↦ h.trans hL
+
+theorem leftQuotient_mem_languages (h : L ∈ c.languages) (u : List α) :
+    L.leftQuotient u ∈ c.languages :=
+  h.trans (L.syntacticCon_le_leftQuotient u)
+
+theorem rightQuotient_mem_languages (h : L ∈ c.languages) (u : List α) :
+    L.rightQuotient u ∈ c.languages :=
+  h.trans (L.syntacticCon_le_rightQuotient u)
+
+/-- The inverse image of a language a congruence saturates, under a homomorphism of free monoids,
+is saturated by the inverse image of the congruence. -/
+theorem comap_mem_languages {d : Con (FreeMonoid β)} {L : Language β} (h : L ∈ d.languages)
+    (φ : FreeMonoid α →* FreeMonoid β) :
+    {w : List α | (φ (FreeMonoid.ofList w)).toList ∈ L} ∈ (d.comap φ (map_mul φ)).languages :=
+  mem_languages_iff_forall.2 fun _ _ huv ↦ mem_languages_iff_forall.1 h huv
+
+/-- A language saturated by a congruence of finite index is regular. -/
+theorem isRegular_of_mem_languages [Finite c.Quotient] (h : L ∈ c.languages) : L.IsRegular :=
+  .of_factorsThrough (g := fun w ↦ c.mk' (FreeMonoid.ofList w))
+    (fun _ _ e ↦ propext (mem_languages_iff_forall.1 h ((Con.eq c).1 e)))
+    (fun _ _ x e ↦ by
+      simp only [FreeMonoid.ofList_append, map_mul]
+      rw [e])
+    (Set.toFinite _)
+
+end Con
+
 namespace Monoid.Pseudovariety
 
 open Language
