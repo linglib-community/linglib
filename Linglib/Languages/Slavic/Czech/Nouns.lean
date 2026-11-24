@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.List.DropRight
 public import Linglib.Languages.Slavic.Czech.Declension
 public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Morphology.Realization.Basic
 
 /-!
 # Czech nouns
@@ -33,6 +34,7 @@ vocative plural.
 * `Czech.Noun.clsAt`, `Czech.Noun.stem`: the class of a number, and the stem
 * `Czech.Noun.endingsIn`, `Czech.Noun.endings`, `Czech.Noun.forms`: a noun's endings in a class,
   its endings and its forms
+* `Czech.declension`: the realization of the nouns by their forms in each cell
 * `Czech.nouns`: the entries
 
 ## Main results
@@ -102,6 +104,12 @@ def Noun.endings (n : Noun) (σ : Cell) : List (List String) := n.endingsIn (n.c
 /-- The forms of a noun at a cell are its stem inflected with each of its endings there. -/
 def Noun.forms (n : Noun) (σ : Cell) : List (List String) :=
   (n.endings σ).map ((n.clsAt σ.number).inflect n.stem σ)
+
+/-- The declension realizes each noun in each cell by its forms there. -/
+def declension : Morphology.Realization Noun Cell (List String) := ⟨fun n σ ↦ (n.forms σ).toFinset⟩
+
+@[simp] theorem declension_realize (n : Noun) (σ : Cell) :
+    declension.realize n σ = (n.forms σ).toFinset := rfl
 
 /-! ### The model nouns of Short's tables -/
 

@@ -413,6 +413,13 @@ theorem realize_matches_tables (l : CzNoun) (σ : CzCell) :
   (Linkage.ofFun_realized _ _ czRealize l σ).trans <|
     congrArg (fun w ↦ {(w, σ)}) (czRealize_stemFor l σ)
 
+-- The rules realize a noun in a cell by the forms of the Czech declension, except FILOSOF in the
+-- nominative and vocative plural.
+theorem czRealize_stemFor_eq_declension_iff : ∀ l σ,
+    czRealize (stemFor l σ) σ = Czech.declension.realize l.noun σ ↔
+      ¬ (l = .filosof ∧ σ ∈ nomVocPl) := by
+  decide +kernel
+
 -- Tables 6 and 8, Table 9.2
 theorem filosof_nomPl :
     attested .filosof (.of .nom .plural) = {Czech.Declension.segments "filosofové"} ∧

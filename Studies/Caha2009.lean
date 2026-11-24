@@ -180,11 +180,12 @@ his colloquial paradigms depart from the literary declension in the locative and
 instrumental. -/
 
 /-- A noun of the language file declines a paradigm of the tables at a place of the sequence when
-the
-paradigm's form there is one of the noun's forms in that case and the paradigm's number. -/
+the paradigm's form there is one of the forms by which the Czech declension realizes the noun in
+that case and the paradigm's number. -/
 def Declines (n : _root_.Czech.Noun) (p : Paradigm Wordlist.Cell) (i : Fin 6) : Prop :=
   ∃ m ∈ number p, ∃ h : m ∈ _root_.Czech.Declension.numbers,
-    _root_.Czech.Declension.segments (form p i) ∈ n.forms (czechCase i, ⟨_, h⟩)
+    _root_.Czech.Declension.segments (form p i) ∈
+      _root_.Czech.declension.realize n (czechCase i, ⟨_, h⟩)
 
 instance (n : _root_.Czech.Noun) (p : Paradigm Wordlist.Cell) (i : Fin 6) :
     Decidable (Declines n p i) :=
