@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Syntax.Minimalist.Probe.Minimal
 public import Linglib.Syntax.Minimalist.Probe.Phi
 public import Linglib.Syntax.Minimalist.Feature.Valuation
 
@@ -38,9 +39,9 @@ swaps the two constructions of (11); the diagram, which agrees with the low prep
 ## TODO
 
 The general form of the conclusion, that a nominal with unvalued Case is licensed iff it is the
-closest match of the head's first or reprojected person probe, is stated only configuration by
-configuration. Causatives and restructuring (2), nominalizations, and focused pronouns (§4) are not
-modelled.
+closest match of the head's first or reprojected person probe, is proved for a head without an
+EPP feature and stated only configuration by configuration for a head with one. Causatives and
+restructuring (2), nominalizations, and focused pronouns (§4) are not modelled.
 
 ## References
 
@@ -189,6 +190,55 @@ def PLC (ns : List Nominal) : Prop := ∀ n ∈ ns, n.features.agreement.IsSAP �
 
 instance : DecidablePred PLC := fun ns ↦
   inferInstanceAs (Decidable (∀ n ∈ ns, n.features.agreement.IsSAP → n.licensed = true))
+
+private theorem isSAP_valueCase (k : Case) (n : Nominal) :
+    (valueCase k n).features.agreement.IsSAP ↔ n.features.agreement.IsSAP := by
+  rw [valueCase, FeatureBundle.valueAt, FeatureBundle.unifyAt]
+  cases (n.features FeatureType.case).unifyWith _ _ <;> simp [FeatureBundle.agreement_update_agr]
+
+private theorem plc_cons {n : Nominal} {ns : List Nominal} :
+    PLC (n :: ns) ↔ (n.features.agreement.IsSAP → n.licensed = true) ∧ PLC ns :=
+  List.forall_mem_cons
+
+private theorem plc_agreeWith_valueCase (k : Case) (ns : List Nominal) :
+    PLC (agreeWith (valueCase k) ns) ↔ PLC ns := by
+  cases ns with
+  | nil => rfl
+  | cons n ns =>
+    rw [agreeWith_cons, plc_cons, plc_cons]
+    split_ifs
+    · exact and_congr_left' (imp_congr_left (isSAP_valueCase k n))
+    · rfl
+
+private theorem plc_numAgree (k : Case) (ns : List Nominal) :
+    PLC (numAgree k ns) ↔ PLC ns := by
+  cases ns with
+  | nil => rfl
+  | cons n ns =>
+    rw [numAgree]
+    split_ifs
+    · exact plc_agreeWith_valueCase k _
+    · rw [plc_cons, plc_cons, plc_agreeWith_valueCase]
+
+private theorem allLicensed_phiProbe_cons {needs : Nominal → Prop} {n : Nominal}
+    {ns : List Nominal} :
+    phiProbe.AllLicensed needs (n :: ns) ↔
+      (needs n → n.features.IsActive) ∧ ∀ m ∈ ns, ¬ needs m := by
+  rw [Probe.allLicensed_cons]
+  simp only [phiProbe, Probe.ofInt_int, Probe.ofInt_sat, not_true_eq_false, imp_false]
+  exact and_congr_right' ⟨And.left, fun h ↦ ⟨h, Probe.allLicensed_of_forall_not h⟩⟩
+
+/-- A head without an EPP feature derives a domain that obeys the condition exactly when its
+person probe Agrees with every nominal bearing an unlicensed 1st/2nd person feature. -/
+theorem plc_derive_iff (F : Head) (hF : F.epp = none) (ns : List Nominal) :
+    PLC (F.derive ns) ↔
+      phiProbe.AllLicensed (fun n ↦ n.features.agreement.IsSAP ∧ n.licensed = false) ns := by
+  rw [Head.derive, hF, plc_numAgree]
+  cases ns with
+  | nil => simp [piAgree, PLC]
+  | cons n ns =>
+    rw [piAgree, agreeWith_cons, plc_cons, allLicensed_phiProbe_cons]
+    by_cases h : n.features.IsActive <;> simp [h, PLC]
 
 /-- The applicative preposition assigns dative to its complement (§4). -/
 def applicative : Head := { case := .dat }
