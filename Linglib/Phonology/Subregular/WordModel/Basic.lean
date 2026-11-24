@@ -13,7 +13,7 @@ symbol. This file defines the type of positions and what every reading of it sha
 of `u` are those of `Fin u.length` with its linear order, which has two orderings a signature may
 name: successor, its covering relation, and precedence, its strict order. The relational signature
 `Subregular.wordLanguage P S` names the labels and the orderings in `S`, and the functional
-signature of `Subregular.StringModel` names the successor and predecessor of the order, which fix
+signature `Subregular.stringLanguage` names the successor and predecessor of the order, which fix
 the last and the first position.
 
 ## Main definitions

@@ -253,7 +253,7 @@ def toTerm : Walk → StringTerm α
 /-- Where a walk stays on the word, it reaches the position its term denotes in the string model:
 steps undefined past an edge and steps that fix the edge agree until one would cross it. -/
 theorem val_realize_toTerm (hn : n < w.length) : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v →
-    ((t.toTerm α).realize fun _ ↦ (WordModel.mk n hn : StringModel w)).val = v
+    ((t.toTerm α).realize fun _ ↦ (WordModel.mk n hn : WordModel ({·}) w)).val = v
   | .var, _, h => (eval_var_eq_some_iff.1 h).1.symm
   | .succ t, _, h => by
     obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
