@@ -25,6 +25,7 @@ goal.
 * `Locative.Direction`: place, goal, source and route.
 * `Locative.Shape`: the eight shapes of a path relative to a region.
 * `Locative.Mode`: the static mode and the directional modes, one for each shape.
+* `Locative.Direction.mode`: the basic mode of a direction.
 * `Locative`: a configuration, if any, and a mode.
 
 ## Main results
@@ -220,11 +221,26 @@ theorem direction_eq_place_iff {m : Mode} : m.direction = .place ↔ m = static 
   · simp
   · cases s <;> simp [Shape.direction]
 
-theorem direction_surjective : Function.Surjective direction
-  | .place => ⟨static, rfl⟩
-  | .goal => ⟨directional .cofinal, rfl⟩
-  | .source => ⟨directional .coinitial, rfl⟩
-  | .route => ⟨directional .transitive, rfl⟩
+end Mode
+
+/-- The basic mode of a direction: the static mode for Place, and a cofinal, a coinitial and a
+transitive path for Goal, Source and Route. -/
+def Direction.mode : Direction → Mode
+  | .place => .static
+  | .goal => .directional .cofinal
+  | .source => .directional .coinitial
+  | .route => .directional .transitive
+
+@[simp] theorem Direction.direction_mode (d : Direction) : d.mode.direction = d := by
+  cases d <;> rfl
+
+theorem Direction.mode_injective : Function.Injective Direction.mode :=
+  Function.LeftInverse.injective Direction.direction_mode
+
+namespace Mode
+
+theorem direction_surjective : Function.Surjective direction :=
+  Function.LeftInverse.surjective Direction.direction_mode
 
 /-- A mode is bounded when its path is, as that of *to* is and that of *towards* is not. -/
 def IsBounded : Mode → Prop

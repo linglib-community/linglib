@@ -136,18 +136,17 @@ def configuration? : Function → Option Configuration
   | spatial l _ => l
   | _ => none
 
-/-- The shape of the path of a spatial function, none for a location. -/
-def shape? : Function → Option Shape
-  | spatial _ .goal => some .cofinal
-  | spatial _ .source => some .coinitial
-  | spatial _ .route => some .transitive
-  | terminative => some .terminative
+/-- The mode of a spatial function: a terminative path for the terminative, and the basic mode
+of its direction otherwise. -/
+def mode? : Function → Option Mode
+  | spatial _ d => some d.mode
+  | terminative => some (.directional .terminative)
   | _ => none
 
 /-- The locative of a function, its configuration and the mode of its path, static where it has
 no path. -/
 def _root_.Locative.ofFunction (f : Function) : Locative :=
-  { configuration := f.configuration?, mode := f.shape?.elim .static .directional }
+  { configuration := f.configuration?, mode := f.mode?.getD .static }
 
 /-- The type of case a function belongs to: the arguments, the possessor, the partitive and the
 vocative to the grammatical cases, as `Case.kind` has their values. -/
@@ -204,8 +203,8 @@ theorem direction?_eq_dirOf_of_mem_functions (c : Case) :
   cases c <;> simp [functions, Function.direction?, dirOf, configurationOf]
 
 /-- A value is named for functions of the shape of its path. -/
-theorem shape?_eq_of_mem_functions (c : Case) : ∀ f ∈ c.functions, f.shape? = c.shape? := by
-  cases c <;> simp [functions, Function.shape?, shape?, dirOf, configurationOf]
+theorem mode?_eq_of_mem_functions (c : Case) : ∀ f ∈ c.functions, f.mode? = c.mode? := by
+  cases c <;> simp [functions, Function.mode?, mode?, dirOf, configurationOf]
 
 /-- A value is named for functions of its type. -/
 theorem kind_eq_of_mem_functions (c : Case) : ∀ f ∈ c.functions, f.kind = c.kind := by

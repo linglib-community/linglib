@@ -13,14 +13,14 @@ series. The cases of a series have the same configuration and differ in directio
 three series, for the interior, the surface and the exterior, each with a case for place, for
 goal and for source.
 
-This file gives the direction, the configuration and the shape of the path that a value of `Case`
-expresses, and the case of a given configuration and direction. The general locative, allative,
-ablative and perlative express a direction with no configuration.
+This file gives the direction, the configuration and the mode that a value of `Case` expresses,
+and the case of a given configuration and direction. The general locative, allative, ablative and
+perlative express a direction with no configuration.
 
 ## Main definitions
 
-* `Case.dirOf`, `Case.configurationOf`, `Case.shape?`: the direction and the configuration of a
-  case, and the shape of its path.
+* `Case.dirOf`, `Case.configurationOf`, `Case.mode?`: the direction, the configuration and the
+  mode of a case.
 * `Case.ofSpatial`: the case of a configuration and a direction.
 * `Locative.ofCase`: the locative a case expresses.
 
@@ -63,19 +63,14 @@ def dirOf : Case → Option Direction
   | .perl => some .route
   | _ => none
 
-/-- The shape of the paths a directional case expresses. The illative, allative and sublative are
-cofinal, the elative, ablative and delative coinitial, the perlative transitive, and the
-terminative terminative. -/
-def shape? : Case → Option Shape
-  | .ill | .all | .sub => some .cofinal
-  | .ela | .abl | .del => some .coinitial
-  | .perl => some .transitive
-  | .ter => some .terminative
-  | _ => none
+/-- The mode a spatial case expresses: a terminative path for the terminative, and the basic
+mode of its direction for every other case. -/
+def mode? : Case → Option Mode
+  | .ter => some (.directional .terminative)
+  | c => c.dirOf.map Direction.mode
 
-theorem dirOf_eq_of_shape?_eq {c : Case} {s : Shape} (h : c.shape? = some s) :
-    c.dirOf = some s.direction := by
-  cases c <;> simp_all [shape?] <;> subst h <;> rfl
+theorem map_direction_mode? (c : Case) : c.mode?.map Mode.direction = c.dirOf := by
+  cases c <;> rfl
 
 /-- The spatial case with a configuration and a direction, on the three series. A route has no
 configuration in these inventories. -/
@@ -142,7 +137,7 @@ theorem kind_eq_spatial_iff (c : Case) : c.kind = .spatial ↔ c.dirOf.isSome :=
 /-- The locative a case expresses, its configuration and the mode of its path: the illative is a
 cofinal path into the interior. A case with no path is static. -/
 def _root_.Locative.ofCase (c : Case) : Locative :=
-  { configuration := c.configurationOf, mode := c.shape?.elim .static .directional }
+  { configuration := c.configurationOf, mode := c.mode?.getD .static }
 
 @[simp] theorem _root_.Locative.direction_ofCase (c : Case) :
     (Locative.ofCase c).mode.direction = c.dirOf.getD .place := by

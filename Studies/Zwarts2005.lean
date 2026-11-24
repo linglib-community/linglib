@@ -2,7 +2,8 @@ module
 
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Zwarts2005
-public import Linglib.Core.Order.Crossing
+public import Linglib.Semantics.Space.Denotation
+public import Linglib.Fragments.English.Adpositions
 public import Mathlib.Data.List.Infix
 public import Linglib.Semantics.Mereology.Basic
 public import Mathlib.Tactic.FinCases
@@ -26,6 +27,9 @@ We also prove that a goal phrase is not quantized, and that the set of loops at 
 cumulative although it is telic in Krifka's sense. Finally, suppose that the trace of events is a
 homomorphism for concatenation. Then a verb phrase is bounded if its prepositional phrase has no
 two paths that concatenate, as in *walk to the house*.
+
+The goal and source phrases agree with the English fragment. The paths that the spatial functions
+of *to* and *from* describe, as locatives, are the paths of the strict goal and source phrases.
 
 ## Implementation notes
 
@@ -189,6 +193,25 @@ theorem toPP_bounded (R : Set Loc) : Bounded Concat (toPP R) :=
 -- (12a), (36)
 theorem fromPP_bounded (R : Set Loc) : Bounded Concat (fromPP R) :=
   bounded_of_no_pairs (fromPP_no_pairs R)
+
+-- The spatial functions of English *to* and *from* describe the paths of the strict goal and
+-- source phrases.
+theorem mem_paths_to_from [Preorder α] (place : Option Locative.Configuration → Set Loc → Set Loc)
+    (d : Loc → α) (G : Set Loc) (p : Path Loc) :
+    (∀ f ∈ English.Adpositions.to_.functions, f.kind = .spatial →
+      (⇑p ∈ Locative.paths place d (.ofFunction f) G ↔ p ∈ toPP (place (some .exterior) G))) ∧
+    (∀ f ∈ English.Adpositions.from_.functions, f.kind = .spatial →
+      (⇑p ∈ Locative.paths place d (.ofFunction f) G ↔
+        p ∈ fromPP (place (some .exterior) G))) := by
+  refine ⟨fun f hf hk ↦ ?_, fun f hf hk ↦ ?_⟩
+  · simp only [English.Adpositions.to_, Finset.mem_insert, Finset.mem_singleton] at hf
+    rcases hf with rfl | rfl | rfl
+    · exact Iff.rfl
+    · exact absurd hk (by decide)
+    · exact absurd hk (by decide)
+  · simp only [English.Adpositions.from_, Finset.mem_singleton] at hf
+    subst hf
+    exact Iff.rfl
 
 /-! ### Route prepositions (§4.1.2) -/
 

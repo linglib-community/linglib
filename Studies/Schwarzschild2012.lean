@@ -212,14 +212,14 @@ end Group
 fragment gives the standard of the Hindi-Urdu construction, and the type of the construction in
 Stassen's typology is the adverbial type of the direction of that shape. -/
 theorem se_shape {β : Type*} [LinearOrder D] [Preorder β] (near : E → β) :
-    ∀ k ∈ HindiUrdu.Comparison.se.standard.case?, ∀ s ∈ k.shape?,
+    ∀ k ∈ HindiUrdu.Comparison.se.standard.case?, ∀ s, k.mode? = some (.directional s) →
       (∀ (σ : Segment E D) (x : E), σ.Rising → σ.start = x → HasShape {x} σ.toPath near s) ∧
         Stassen1985.typeOf HindiUrdu.Comparison.se =
           (Stassen1985.groundOrder? s.direction).map .adverbial := by
   intro k hk s hs
   obtain rfl : k = .abl := by
     simpa [HindiUrdu.Comparison.se, Comparative.Standard.case?] using hk.symm
-  obtain rfl : s = .coinitial := by simpa [Case.shape?] using hs.symm
+  obtain rfl : s = .coinitial := by simpa [Case.mode?, Case.dirOf, Direction.mode] using hs.symm
   exact ⟨fun σ x hr hx ↦ (leaves_toPath_iff hr.start_ne_finish).mpr hx, by decide⟩
 
 end Schwarzschild2012
