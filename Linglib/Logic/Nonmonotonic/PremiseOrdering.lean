@@ -34,6 +34,8 @@ minimal-world exhaustifier keeps.
 * `≤[A]`, `w ≤[A] z`, `w <[A] z`: notation, in the scope `PremiseOrdering`, for the ordering a
   family of propositions induces, the criteria ordering with truth as satisfaction.
 * `Preorder.lowerSets`: the lower sets of a preorder given as a term.
+* `PremiseOrdering.gi`: the Galois insertion between families of propositions and preorders on the
+  worlds, formed by `≤[A]` and `Preorder.lowerSets`.
 
 ## Main results
 
@@ -42,8 +44,6 @@ minimal-world exhaustifier keeps.
 * `Preorder.gc_ofCriteria`: the ordering of a set of criteria and the criteria an ordering
   refines form a Galois connection.
 * `Preorder.ofCriteria_insert`: adding a criterion meets the preorder with that of the criterion.
-* `Preorder.gc_ofCriteria_mem_lowerSets`: the ordering of a family of propositions and the lower
-  sets of an ordering form a Galois connection.
 * `Preorder.ofCriteria_mem_eq_of_subset_lowerSets`: a family of lower sets of a preorder
   containing the principal ones has that preorder as its ordering.
 * `Preorder.antisymmRel_ofCriteria_iff`: two points are equivalent just in case they satisfy the
@@ -252,18 +252,10 @@ def lowerSets (p : Preorder W) : Set (Set W) := {s | @IsLowerSet W p.toLE s}
 @[simp] theorem mem_lowerSets {p : Preorder W} {s : Set W} :
     s ∈ p.lowerSets ↔ @IsLowerSet W p.toLE s := Iff.rfl
 
-/-- The ordering a family of propositions induces and the lower sets of an ordering form a Galois
-connection between families of propositions and preorders on the worlds. -/
-theorem gc_ofCriteria_mem_lowerSets :
-    GaloisConnection (fun A : Set (Set W) ↦ OrderDual.toDual (≤[A]))
-      (fun p ↦ (OrderDual.ofDual p).lowerSets) :=
-  fun A p ↦ (gc_ofCriteria (· ∈ ·) A p).trans
-    (forall₂_congr fun _ _ ↦ le_ofCriterion_iff_isLowerSet)
-
 /-- An ordering refines the ordering of `A` just in case every member of `A` is one of its lower
 sets. -/
 theorem le_ofCriteria_mem_iff {p : Preorder W} : p ≤ ≤[A] ↔ A ⊆ p.lowerSets :=
-  gc_ofCriteria_mem_lowerSets A (OrderDual.toDual p)
+  le_ofCriteria_iff.trans (forall₂_congr fun _ _ ↦ le_ofCriterion_iff_isLowerSet)
 
 /-- Every member of a family of propositions is a lower set of the ordering it induces. -/
 theorem subset_lowerSets_ofCriteria_mem (A : Set (Set W)) : A ⊆ (≤[A]).lowerSets :=
@@ -284,7 +276,23 @@ theorem ofCriteria_mem_eq_of_subset_lowerSets (P : Preorder W) (hlow : A ⊆ P.l
   Preorder.ext fun _ _ ↦
     ofCriteria_mem_le_iff_of_refl P.le_refl (fun _ hp _ _ h hw ↦ hlow hp h hw) hprin
 
+/-- Every ordering is the ordering its lower sets induce. -/
+@[simp] theorem ofCriteria_mem_lowerSets (p : Preorder W) : ≤[p.lowerSets] = p :=
+  ofCriteria_mem_eq_of_subset_lowerSets p subset_rfl
+    fun w _ _ hab (ha : p.le _ w) ↦ p.le_trans _ _ _ hab ha
+
 end Preorder
+
+/-- The ordering a family of propositions induces and the lower sets of an ordering form a Galois
+insertion between families of propositions and preorders on the worlds: an ordering refines `≤[A]`
+just in case every member of `A` is one of its lower sets, and every ordering is induced by its
+own lower sets. Both maps reverse inclusion, so it is stated into the dual order. Its closure
+operator sends `A` to `(≤[A]).lowerSets`, the largest family inducing the ordering of `A`. -/
+protected def PremiseOrdering.gi {W : Type*} :
+    GaloisInsertion (fun A : Set (Set W) ↦ OrderDual.toDual (≤[A]))
+      (fun p ↦ (OrderDual.ofDual p).lowerSets) :=
+  GaloisConnection.toGaloisInsertion (fun _ _ ↦ Preorder.le_ofCriteria_mem_iff)
+    fun p ↦ (Preorder.ofCriteria_mem_lowerSets (OrderDual.ofDual p)).le
 
 namespace Filter
 
