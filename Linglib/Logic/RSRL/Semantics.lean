@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Syntax.HPSG.RSRL.Interpretation
-public import Linglib.Syntax.HPSG.RSRL.Syntax
+public import Linglib.Logic.RSRL.Interpretation
+public import Linglib.Logic.RSRL.Syntax
 public import Mathlib.Logic.Function.Basic
 
 /-!

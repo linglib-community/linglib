@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.HPSG.RSRL.Semantics
+public import Linglib.Logic.RSRL.Semantics
 
 /-!
 # Generated sub-interpretations
