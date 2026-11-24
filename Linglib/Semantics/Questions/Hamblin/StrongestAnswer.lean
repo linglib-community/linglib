@@ -22,7 +22,7 @@ A Hamblin set ranks worlds as a premise set does, and in that order the weak ans
 set of worlds at or below `w`. The presupposition holds everywhere just in case every such
 principal lower set is a member, so a Hamblin set satisfying it everywhere is a preorder on the
 worlds with a family of its lower sets containing the principal ones. See
-`Question.forall_hasStrongestTrueAnswer_iff_setOf_le_mem`, `premisePreorder_eq_of_isLowerSet`
+`Question.forall_hasStrongestTrueAnswer_iff_setOf_le_mem`, `premisePreorder_eq_of_subset_lowerSets`
 and `Question.eq_range_setOf_le_iff`.
 
 ## References
@@ -73,20 +73,15 @@ theorem hasStrongestTrueAnswer_iff : HasStrongestTrueAnswer H w ↔ weakAnswer H
 
 A Hamblin set ranks worlds as a premise set does: `v` lies below `w` when every member true at
 `w` is true at `v`. The weak answer at `w` is the set of worlds at or below `w`, every member is a
-lower set, and Dayal's presupposition holds everywhere just in case each of these principal lower
-sets is a member. A Hamblin set satisfying the presupposition everywhere is thus a preorder on
-the worlds together with a family of its lower sets that contains the principal ones. -/
+lower set, and Dayal's presupposition holds everywhere just in case each of these principal
+lower sets is a member. A Hamblin set satisfying the presupposition everywhere is thus a preorder
+on the worlds together with a family of its lower sets that contains the principal ones. -/
 
 /-- The weak answer at `w` is the set of worlds at or below `w` in the order `H` induces. -/
 theorem weakAnswer_eq_setOf_le :
     weakAnswer H w = {v | v ≤[H] w} := by
   ext v
   simp [Preorder.ofCriteria_le_iff]
-
-/-- Every member of a Hamblin set is a lower set of the order it induces. -/
-theorem isLowerSet_of_mem {H : Set (Set W)} {p : Set W} (hp : p ∈ H) :
-    @IsLowerSet W (premisePreorder H).toLE p :=
-  fun _ _ hba ha ↦ hba p hp ha
 
 /-- Dayal's presupposition holds at every world just in case every principal lower set of the
 order `H` induces is a member of `H`. -/

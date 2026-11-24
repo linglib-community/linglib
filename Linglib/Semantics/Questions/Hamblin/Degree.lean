@@ -13,7 +13,7 @@ measure is at least `d`. These answers are nested, so at each world `w` the answ
 
 The order a degree question induces on worlds is the order of its measure. In general a Hamblin
 set with a strongest true answer at each world is a preorder on the worlds with a family of its
-lower sets, as `premisePreorder_eq_of_isLowerSet` states; the degree questions are those
+lower sets, as `premisePreorder_eq_of_subset_lowerSets` states; the degree questions are those
 whose order comes from a measure.
 
 ## Main definitions

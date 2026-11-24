@@ -33,6 +33,7 @@ minimal-world exhaustifier keeps.
 * `Preorder.ofCriterion`: the preorder of a single criterion.
 * `premisePreorder`, `w ≤[A] z`, `w <[A] z`: the ordering of a premise set, the criteria ordering
   with propositions as criteria and truth as satisfaction.
+* `Preorder.lowerSets`: the lower sets of a preorder given as a term.
 
 ## Main results
 
@@ -41,7 +42,9 @@ minimal-world exhaustifier keeps.
 * `Preorder.le_ofCriteria_iff`: an ordering refines that of a set of criteria just in case the
   satisfiers of each criterion form a lower set of it.
 * `Preorder.ofCriteria_insert`: adding a criterion meets the preorder with that of the criterion.
-* `premisePreorder_eq_of_isLowerSet`: a family of lower sets of a preorder containing the
+* `gc_premisePreorder_lowerSets`: the ordering of a premise set and the lower sets of an ordering
+  form a Galois connection between families of propositions and preorders.
+* `premisePreorder_eq_of_subset_lowerSets`: a family of lower sets of a preorder containing the
   principal ones has that preorder as its ordering.
 * `Preorder.antisymmRel_ofCriteria_iff`: two points are equivalent just in case they satisfy the
   same criteria.
@@ -228,6 +231,38 @@ theorem premisePreorder_insert (φ : Set W) (A : Set (Set W)) :
     premisePreorder (insert φ A) = premisePreorder A ⊓ .ofCriterion (· ∈ φ) :=
   Preorder.ofCriteria_insert _ φ A
 
+/-- The lower sets of a preorder given as a term. -/
+def Preorder.lowerSets (p : Preorder W) : Set (Set W) := {s | @IsLowerSet W p.toLE s}
+
+@[simp] theorem Preorder.mem_lowerSets {p : Preorder W} {s : Set W} :
+    s ∈ p.lowerSets ↔ @IsLowerSet W p.toLE s := Iff.rfl
+
+/-- The ordering of a premise set and the lower sets of an ordering form a Galois connection
+between families of propositions and preorders on the worlds: an ordering refines the ordering of
+`A` just in case every member of `A` is one of its lower sets. Both maps reverse inclusion, so the
+connection is stated into the dual order, as mathlib states the connection between polars. -/
+theorem gc_premisePreorder_lowerSets :
+    GaloisConnection (OrderDual.toDual ∘ premisePreorder (W := W))
+      (fun p ↦ (OrderDual.ofDual p).lowerSets) :=
+  fun _ _ ↦ ⟨fun h _ hs _ _ hba ha ↦ h hba _ hs ha, fun h _ _ hab _ hs hb ↦ h hs hab hb⟩
+
+theorem le_premisePreorder_iff {p : Preorder W} {A : Set (Set W)} :
+    p ≤ premisePreorder A ↔ A ⊆ p.lowerSets :=
+  gc_premisePreorder_lowerSets A (OrderDual.toDual p)
+
+/-- More premises give a finer ordering. -/
+theorem premisePreorder_anti : Antitone (premisePreorder (W := W)) :=
+  fun _ _ h ↦ gc_premisePreorder_lowerSets.monotone_l h
+
+/-- The ordering of a union of premise sets is the meet of their orderings. -/
+theorem premisePreorder_union (A B : Set (Set W)) :
+    premisePreorder (A ∪ B) = premisePreorder A ⊓ premisePreorder B :=
+  congrArg OrderDual.ofDual (gc_premisePreorder_lowerSets.l_sup (a₁ := A) (a₂ := B))
+
+/-- Every member of a premise set is a lower set of its ordering. -/
+theorem subset_lowerSets_premisePreorder (A : Set (Set W)) : A ⊆ (premisePreorder A).lowerSets :=
+  le_premisePreorder_iff.1 le_rfl
+
 /-- Let `r` be a reflexive relation on worlds. If every member of `A` is closed downward under
 `r` and every set `{v | r v w}` is a member, then the ordering of `A` is `r`. No transitivity is
 assumed: it follows. -/
@@ -238,11 +273,10 @@ theorem premisePreorder_le_iff_of_refl {A : Set (Set W)} {r : W → W → Prop} 
 
 /-- A family of lower sets of a preorder that contains every principal lower set has that
 preorder as its ordering. -/
-theorem premisePreorder_eq_of_isLowerSet {A : Set (Set W)} (P : Preorder W)
-    (hlow : ∀ p ∈ A, @IsLowerSet W P.toLE p) (hprin : ∀ w, {v | P.le v w} ∈ A) :
-    premisePreorder A = P :=
+theorem premisePreorder_eq_of_subset_lowerSets {A : Set (Set W)} (P : Preorder W)
+    (hlow : A ⊆ P.lowerSets) (hprin : ∀ w, {v | P.le v w} ∈ A) : premisePreorder A = P :=
   Preorder.ext fun _ _ ↦
-    premisePreorder_le_iff_of_refl P.le_refl (fun p hp _ _ h hw ↦ hlow p hp h hw) hprin
+    premisePreorder_le_iff_of_refl P.le_refl (fun _ hp _ _ h hw ↦ hlow hp h hw) hprin
 
 end Premises
 
