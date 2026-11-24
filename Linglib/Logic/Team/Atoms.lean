@@ -136,12 +136,8 @@ stated by its witnesses. -/
 def Var (T : Finset (V → E)) (Z : Finset V) (u : V) : Prop :=
   ∃ i ∈ T, ∃ j ∈ T, (∀ z ∈ Z, i z = j z) ∧ i u ≠ j u
 
-private theorem domRestrict_eq_iff {i j : V → E} :
-    (Z : Set V).domRestrict i = (Z : Set V).domRestrict j ↔ ∀ z ∈ Z, i z = j z :=
-  Set.domRestrict_eq_domRestrict_iff
-
 theorem dep_iff : Dep T Z u ↔ ∀ i ∈ T, ∀ j ∈ T, (∀ z ∈ Z, i z = j z) → i u = j u := by
-  simp only [Dep, mem_dep, Finset.mem_coe, domRestrict_eq_iff]
+  simp only [Dep, mem_dep, Finset.mem_coe, Set.domRestrict_eq_domRestrict_iff, Set.EqOn]
 
 theorem var_iff : Var T Z u ↔ ∃ i ∈ T, ∃ j ∈ T, (∀ z ∈ Z, i z = j z) ∧ i u ≠ j u := Iff.rfl
 
