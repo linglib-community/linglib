@@ -25,6 +25,9 @@ moraless syllable of Piuma Paiwan and Northwest Mari, and the moraic interior vo
   the correspondence and the markedness constraints the structure.
 * *μ/x counts the morae linked to a single segment of the class x, the restriction the paper
   places on it, and a geminate tap is a tap with two association lines.
+* A consonant, in *μ/C and CRISPEDGE, is a segment that is not a vowel: among the phonemes, a
+  consonant of the paper's table, the approximants /w/, /ð̞/ and /j/ included, which the chart
+  has [−consonantal].
 * The hypothetical word boundary has /ta/ for the following word, so that its first syllable
   has a nucleus.
 * Of the arrows the paper draws, one is not a ranking argument from the printed tableaux:
@@ -103,7 +106,7 @@ def gemTap : Constraint (Candidate Segment) := fun c ↦
 
 /-- CRISPEDGE(PRWD) (18): a violation for each consonant that two prosodic words dominate. -/
 def crispEdge : Constraint (Candidate Segment) := fun c ↦
-  (c.output.form.slots.filter fun i ↦ HasAt c.output.form Segment.IsConsonant i ∧
+  (c.output.form.slots.filter fun i ↦ HasAt c.output.form (fun x : Segment ↦ ¬ x.IsVowel) i ∧
     1 < (c.output.form.words.filter (i ∈ c.output.form.wordYield ·)).card).card
 
 /-- MAX-IO(INTV): a violation for each interior vowel of the input without a correspondent. -/
@@ -131,7 +134,7 @@ def marks (c : Candidate Segment) : Con → ℕ
   | .crispEdge => crispEdge c
   | .maxIntV => maxIntV c
   | .onset => c.output.onsetViol
-  | .starMuC => starMu Segment.IsConsonant c
+  | .starMuC => starMu (fun x : Segment ↦ ¬ x.IsVowel) c
 
 /-- The solid arrows of Figure 5, each from a dominating constraint to a dominated one. -/
 def figure5 : List (Con × Con) :=
