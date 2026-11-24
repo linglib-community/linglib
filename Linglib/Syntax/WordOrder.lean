@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Computability.Edge
 public import Mathlib.Data.Fin.Rev
+public import Mathlib.Data.List.NodupEquivFin
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Order.Cover
 public import Mathlib.Logic.Function.Basic
@@ -27,6 +28,7 @@ orders of the typological literature, each labelled by its list of constituents 
 * `Arrangement.Precedes`, `Adjacent`, `headDirection`, `mirror`: precedence, adjacency, the head
   direction of a pair, and the reversed arrangement.
 * `Arrangement.IsInitial`, `Arrangement.IsFinal`, `Arrangement.IsMedial`: first, last, or neither.
+* `Arrangement.ofList`: the arrangement of the elements of a duplicate-free list.
 * `Arrangement.sov` and its siblings, `Arrangement.label`: the six basic orders and their labels.
 
 ## Implementation notes
@@ -361,6 +363,27 @@ theorem toList_nodup (a : Arrangement α n) : a.toList.Nodup :=
 
 theorem mem_toList (a : Arrangement α n) (x : α) : x ∈ a.toList := by
   simpa [toList] using ⟨a x, by simp⟩
+
+section ofList
+
+variable [DecidableEq α] {l : List α}
+
+/-- The arrangement of the elements of a duplicate-free list, in the order of the list. -/
+def ofList (l : List α) (hl : l.Nodup) : Arrangement {x // x ∈ l} l.length :=
+  (hl.getEquiv l).symm
+
+@[simp] theorem coe_ofList_apply (hl : l.Nodup) (x : {x // x ∈ l}) :
+    (ofList l hl x : ℕ) = l.idxOf x.1 := rfl
+
+theorem ofList_precedes_iff (hl : l.Nodup) {x y : {x // x ∈ l}} :
+    (ofList l hl).Precedes x y ↔ l.idxOf x.1 < l.idxOf y.1 := Iff.rfl
+
+/-- The arrangement read from a list lists the same elements in the same order. -/
+theorem map_val_toList_ofList (hl : l.Nodup) : (ofList l hl).toList.map Subtype.val = l := by
+  refine List.ext_getElem (by simp) fun i h₁ h₂ ↦ ?_
+  simp [toList, ofList, List.Nodup.getEquiv]
+
+end ofList
 
 end Arrangement
 
