@@ -66,6 +66,10 @@ vertices with children.
 
 ## TODO
 
+* `isSyntacticObject_of_deletionQuotient`, the remainder of a deletion at any admissible cut, is
+  stated without proof; `isSyntacticObject_contractUnary_of_mem_admissibleCuts` proves it for cuts
+  extracting at most one tree. It is what Merge at the deletion coproduct needs to be an operator
+  on the algebra of workspaces.
 * Sideward Merge of type 3(a), two terms of one member, needs the uniqueness of the cut whose
   crown is both terms. Where one target contains the other, as in Countercyclic Merge, no
   admissible cut has the pair as its crown, so the operator should vanish there.
@@ -451,6 +455,18 @@ theorem isSyntacticObject_contractUnary_of_mem_admissibleCuts {T : SyntacticObje
     simp only [projCut, Multiset.card_map] at hcard ⊢
     rw [UnorderedTree.contractUnary_mk, isSyntacticObject_mk]
     exact licensed_contractUnary (licensed_of_mem_rootCuts_leaveNothing ht hr hcard)
+
+/-- The remainder of a deletion of a syntactic object, at any admissible cut, is a syntactic
+    object. -/
+theorem isSyntacticObject_of_deletionQuotient {T : SyntacticObject}
+    {q : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
+    (hq : q ∈ admissibleCuts T.toUnorderedTree) {r : UnorderedTree Vertex}
+    (hr : deletionQuotient Vertex.bare q.2 = some r) : IsSyntacticObject r := by
+  -- TODO: the trunk of a cut is licensed with bare vertices allowed fewer than two children
+  -- (`rootCuts_induction`, as `licensed_of_mem_rootCuts_leaveNothing` without the bound on the
+  -- crown); pruning removes the childless bare vertices; `licensed_contractUnary` contracts the
+  -- unary ones.
+  sorry
 
 /-- Internal Merge at the deletion coproduct carries a syntactic object to a syntactic object:
     when one admissible cut extracts the mover, the remainder of its trunk is a syntactic object
