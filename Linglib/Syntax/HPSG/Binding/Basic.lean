@@ -25,6 +25,9 @@ o-commands* another when it comes earlier on the argument structure of the same 
 * Principle A: an anaphor that something locally o-commands is locally o-bound.
 * Principle B: a personal pronoun is not locally o-bound.
 
+Among the arguments of one word, local o-command is their order wherever no other argument
+structure lists them differently (`HPSG.Binding.locallyOCommands_iff_lt`).
+
 `HPSG.Binding.principleA_and_principleB_iff` says that the two principles hold exactly when
 coindexation satisfies Conditions A and B of `Syntax/Binding` over local o-command. Person,
 number and gender belong to the index, so coindexed nominal objects agree
@@ -141,6 +144,39 @@ theorem locallyOCommands_iff {y x : U} :
         argAt I w 1 = some y ∧ argAt I w 2 = some x := by
   simp only [LocallyOCommands, Fin.exists_fin_succ]
   simp [or_assoc]
+
+variable {w : U} {f : Fin 3 → U}
+
+/-- The members of one argument structure locally o-command one another in their order. -/
+theorem locallyOCommands_of_lt (hf : ∀ m : Fin 3, argAt I w m = some (f m)) {i j : Fin 3}
+    (hij : i < j) : LocallyOCommands I (f i) (f j) :=
+  ⟨w, i, j, hij, hf i, hf j⟩
+
+/-- Where every argument structure that lists two arguments of a word lists them in the word's
+order, local o-command among those arguments is their order: the earlier commands the later. -/
+theorem locallyOCommands_iff_lt (hf : ∀ m : Fin 3, argAt I w m = some (f m))
+    (hord : ∀ w' (m n i j : Fin 3), argAt I w' m = some (f i) → argAt I w' n = some (f j) →
+      m < n → i < j) {i j : Fin 3} :
+    LocallyOCommands I (f i) (f j) ↔ i < j :=
+  ⟨fun ⟨w', m, n, hmn, hm, hn⟩ ↦ hord w' m n i j hm hn hmn, locallyOCommands_of_lt hf⟩
+
+/-- Two words, their argument structures and two nominal objects. -/
+private inductive Swap | w₁ | w₂ | l₁ | l₁' | l₂ | l₂' | a | b
+
+/-- The two words list the same two arguments in opposite orders. -/
+private def swap : Interpretation sig Swap where
+  S | .w₁ | .w₂ => .word | .a | .b => .npro | _ => .nelist
+  A | .ARGST, .w₁ => some .l₁ | .ARGST, .w₂ => some .l₂
+    | .FIRST, .l₁ => some .a | .REST, .l₁ => some .l₁' | .FIRST, .l₁' => some .b
+    | .FIRST, .l₂ => some .b | .REST, .l₂ => some .l₂' | .FIRST, .l₂' => some .a
+    | _, _ => none
+  R := nofun
+
+/-- Without the hypothesis of `locallyOCommands_iff_lt` each of two arguments can locally
+o-command the other. -/
+example : LocallyOCommands swap .a .b ∧ LocallyOCommands swap .b .a :=
+  ⟨⟨.w₁, 0, 1, by decide, rfl, rfl⟩, ⟨.w₂, 0, 1, by decide, rfl, rfl⟩⟩
+
 variable (I)
 
 /-- The binding configuration of local o-command, in which every domain is the whole universe. -/
