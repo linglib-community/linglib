@@ -106,22 +106,30 @@ def oralInput (l : Wordlist.Language) (w : List Segment) : List Segment :=
 
 /-! ### The forms -/
 
+/-- The symbols of the transcription, with the segments they write. -/
+def symbols : List (String × Segment) :=
+  [("a", .ofChart .«a»), ("i", .ofChart .«i»), ("u", .ofChart .«u»), ("ʊ", .ofChart .«ʊ»),
+   ("o", .ofChart .«o»), ("ɔ", .ofChart .«ɔ»), ("ə", .ofChart .«ə»), ("ɤ", .ofChart .«ɤ»),
+   ("h", .ofChart .«h»), ("ʔ", .ofChart .«ʔ»), ("j", .ofChart .«j»), ("w", .ofChart .«w»),
+   ("l", .ofChart .«l»), ("r", .ofChart .«r»), ("ɾ", .ofChart .«ɾ»), ("s", .ofChart .«s»),
+   ("z", .ofChart .«z»), ("p", .ofChart .«p»), ("b", .ofChart .«b»), ("t", .ofChart .«t»),
+   ("d", .ofChart .«d»), ("k", .ofChart .«k»), ("g", .ofChart .«ɡ»), ("gb", .ofChart .«ɡb»),
+   ("m", .ofChart .«m»), ("n", .ofChart .«n»), ("ɲ", .ofChart .«ɲ»), ("ŋ", .ofChart .«ŋ»)]
+
 /-- The segment that a symbol of the transcription writes, a tilde nasalizing it. -/
 def ofGlyph? (g : String) : Option Segment :=
-  let base : String → Option Segment
-    | "a" => some (.ofChart .«a») | "i" => some (.ofChart .«i») | "u" => some (.ofChart .«u»)
-    | "ʊ" => some (.ofChart .«ʊ»)
-    | "o" => some (.ofChart .«o») | "ɔ" => some (.ofChart .«ɔ») | "ə" => some (.ofChart .«ə»)
-    | "ɤ" => some (.ofChart .«ɤ») | "j" => some (.ofChart .«j») | "w" => some (.ofChart .«w»)
-    | "h" => some (.ofChart .«h») | "ʔ" => some (.ofChart .«ʔ») | "l" => some (.ofChart .«l»)
-    | "r" => some (.ofChart .«r») | "ɾ" => some (.ofChart .«ɾ») | "s" => some (.ofChart .«s»)
-    | "z" => some (.ofChart .«z») | "p" => some (.ofChart .«p») | "b" => some (.ofChart .«b»)
-    | "t" => some (.ofChart .«t») | "d" => some (.ofChart .«d») | "k" => some (.ofChart .«k»)
-    | "g" => some (.ofChart .«ɡ») | "gb" => some (.ofChart .«ɡb») | "m" => some (.ofChart .«m»)
-    | "n" => some (.ofChart .«n») | "ɲ" => some (.ofChart .«ɲ») | "ŋ" => some (.ofChart .«ŋ»)
-    | _ => none
-  (base g).or ((base (String.ofList (g.toList.filter (· ≠ '̃')))).map
+  (symbols.lookup g).or ((symbols.lookup (String.ofList (g.toList.filter (· ≠ '̃')))).map
     (·.setFeature .nasal true))
+
+-- the symbols each harmony spreads through: the vowels and glottals, the glides, the liquids
+theorem isTarget_symbols :
+    (symbols.filterMap fun (g, s) ↦ if (cut .sundanese).IsTarget s then some g else none) =
+        ["a", "i", "u", "ʊ", "o", "ɔ", "ə", "ɤ", "h", "ʔ"] ∧
+      (symbols.filterMap fun (g, s) ↦ if (cut .malay).IsTarget s then some g else none) =
+        ["a", "i", "u", "ʊ", "o", "ɔ", "ə", "ɤ", "h", "ʔ", "j", "w"] ∧
+      (symbols.filterMap fun (g, s) ↦ if (cut .ijo).IsTarget s then some g else none) =
+        ["a", "i", "u", "ʊ", "o", "ɔ", "ə", "ɤ", "h", "ʔ", "j", "w", "l", "r", "ɾ"] := by
+  decide +kernel
 
 /-- The printed form of a row. -/
 def form? (a : Wordlist.Analysis) : Option (List Segment) := a.form.segments.mapM ofGlyph?

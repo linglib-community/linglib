@@ -2,6 +2,7 @@ module
 
 public import Linglib.Phonology.Segmental.Sonority.Basic
 public import Mathlib.Order.Interval.Set.Basic
+import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
 # The nasalization hierarchy
@@ -158,6 +159,15 @@ theorem monotoneOn_toSonority : MonotoneOn toSonority {glottal, sonorantStop}ᶜ
 stops are the most compatible and less sonorous than the liquids. -/
 theorem not_monotone_toSonority : ¬ Monotone toSonority := fun h ↦
   absurd (h (by decide : liquid ≤ sonorantStop)) (by decide)
+
+open Data.PHOIBLE.FeatureMatrix in
+/-- Chart segments fall into the classes of their glyphs: the glottal stop, which the chart has
+[+consonantal], with [h] and [ɦ], and the tap with the liquids. -/
+example : [«p», «f», «l», «ɾ», «j», «ʔ», «h», «ɦ», «a», «m»].map
+      (ofSegment ∘ Data.PHOIBLE.FeatureMatrix.toSegment) =
+    [.obstruentStop, .fricative, .liquid, .liquid, .glide, .glottal, .glottal, .glottal, .vowel,
+      .sonorantStop] := by
+  decide
 
 end NasalCompatibility
 
