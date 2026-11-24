@@ -152,21 +152,21 @@ end Grammar
 /-! ### The examples of sections 4 and 6 -/
 
 /-- The successor diagram of a two-letter word. -/
-abbrev pair (a b : Char) : (wordLanguage Char).Factor 2 := succDiagram ({·}) [a, b] le_rfl
+abbrev pair (a b : Char) : (wordLanguage Char {.succ}).Factor 2 := succDiagram ({·}) [a, b] le_rfl
 
 /-- The grammar of sections 4 and 6 forbids aa, bb and c. -/
-def abGrammar : Set ((wordLanguage Char).Factor 2) :=
+def abGrammar : Set ((wordLanguage Char {.succ}).Factor 2) :=
   {pair 'a' 'a', pair 'b' 'b', succDiagram ({·}) ['c'] (by simp)}
 
 /-- The grammar of section 6 forbids the two-letter factors aa, bb and those with a c. -/
-def twoLetterGrammar : Set ((wordLanguage Char).Factor 2) :=
+def twoLetterGrammar : Set ((wordLanguage Char {.succ}).Factor 2) :=
   {pair 'a' 'a', pair 'b' 'b', pair 'a' 'c', pair 'b' 'c', pair 'c' 'c', pair 'c' 'a',
     pair 'c' 'b'}
 
 theorem mem_language_abGrammar_twoLetterGrammar :
-    ['a'] ∈ language (WordModel ({·}) · (· ⋖ ·)) abGrammar ∧
-      ['c'] ∉ language (WordModel ({·}) · (· ⋖ ·)) abGrammar ∧
-        ['c'] ∈ language (WordModel ({·}) · (· ⋖ ·)) twoLetterGrammar := by
+    ['a'] ∈ language (WordModel ({·}) ·) abGrammar ∧
+      ['c'] ∉ language (WordModel ({·}) ·) abGrammar ∧
+        ['c'] ∈ language (WordModel ({·}) ·) twoLetterGrammar := by
   simp only [mem_language_iff, abGrammar, twoLetterGrammar, Set.mem_insert_iff,
     Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, succDiagram_occurs_iff]
   decide
@@ -181,11 +181,11 @@ theorem featureValues_subset_iff {d x : Segment} : featureValues d ⊆ featureVa
   rw [featureValues, featureValues, Finset.coe_subset, Segment.le_iff_specs_subset]
 
 /-- The signature of feature-labelled models of segment words. -/
-abbrev featureLanguage : FirstOrder.Language := wordLanguage (Feature × Bool)
+abbrev featureLanguage : FirstOrder.Language := wordLanguage (Feature × Bool) {.prec}
 
 example (D : Set (List Segment)) :
-    IsAdequate (WordModel featureValues · (· < ·)) D
-      (mostGeneral featureLanguage (WordModel featureValues · (· < ·)) 2 D) :=
+    IsAdequate (WordModel featureValues ·) D
+      (mostGeneral featureLanguage (WordModel featureValues ·) 2 D) :=
   isAdequate_mostGeneral D
 
 /-- The class of the sibilants is [+strident]. -/
@@ -211,7 +211,7 @@ theorem postalveolar_le_iff (x : Segment) : postalveolar ≤ x ↔ sibilantClass
 
 
 theorem diagram_pair_occurs_iff (d e : Segment) (w : List Segment) :
-    (diagram featureValues [d, e] (k := 2) le_rfl).Occurs (WordModel featureValues w (· < ·)) ↔
+    (diagram featureValues [d, e] (k := 2) le_rfl).Occurs (WordModel featureValues w) ↔
       ∃ a b, [a, b] <+ w ∧ d ≤ a ∧ e ≤ b := by
   simp [diagram_occurs_iff_forall₂, featureValues_subset_iff, List.forall₂_cons_left_iff]
 
@@ -224,7 +224,7 @@ theorem diagram_pair_le_iff (d e x y : Segment) :
   exact ⟨hd, he⟩
 
 theorem mem_language_pair_iff {x y : Segment} {G : Set (featureLanguage.Factor 2)} :
-    [x, y] ∈ language (WordModel featureValues · (· < ·)) G ↔
+    [x, y] ∈ language (WordModel featureValues ·) G ↔
       ∀ g ∈ G, ¬ g ≤ diagram featureValues [x, y] le_rfl := by
   simp only [mem_language_iff, le_diagram_iff]
 
@@ -250,7 +250,7 @@ def stridents : featureLanguage.Factor 2 := diagram featureValues [strident, str
 /-- The grammar of section 5.2 admits the sibilants of the Samala word the paper judges acceptable
 and not those of the word it judges ungrammatical. -/
 theorem sibilantsOf_mem_language_iff : ∀ e ∈ Examples.all,
-    sibilantsOf e.primaryText.toList ∈ language (WordModel featureValues · (· < ·)) {antPost} ↔
+    sibilantsOf e.primaryText.toList ∈ language (WordModel featureValues ·) {antPost} ↔
       e.judgment = .acceptable := by
   simp only [Examples.all, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
     implies_true, and_true]
@@ -263,7 +263,7 @@ theorem sibilantsOf_mem_language_iff : ∀ e ∈ Examples.all,
 -- Forbidding [+str][+str] instead would exclude s…s, which the grammar admits (section 5.2).
 theorem s_s_mem_language :
     stridents ≤ diagram featureValues [s, s] le_rfl ∧
-      [s, s] ∈ language (WordModel featureValues · (· < ·)) {antPost} := by
+      [s, s] ∈ language (WordModel featureValues ·) {antPost} := by
   simp only [mem_language_pair_iff, Set.mem_singleton_iff, forall_eq, stridents, antPost,
     diagram_pair_le_iff, alveolar_le_iff, postalveolar_le_iff]
   decide
@@ -271,7 +271,7 @@ theorem s_s_mem_language :
 -- Forbidding [+ant][−ant] instead would exclude t…ʃ, which the grammar admits (section 5.2).
 theorem t_esh_mem_language :
     antNonant ≤ diagram featureValues [t, esh] le_rfl ∧
-      [t, esh] ∈ language (WordModel featureValues · (· < ·)) {antPost} := by
+      [t, esh] ∈ language (WordModel featureValues ·) {antPost} := by
   simp only [mem_language_pair_iff, Set.mem_singleton_iff, forall_eq, antNonant, antPost,
     diagram_pair_le_iff, alveolar_le_iff, postalveolar_le_iff]
   decide
@@ -295,7 +295,7 @@ private theorem pair_agree_iff (a b : Segment) :
 and its mirror image. -/
 theorem navajoSibilantHarmony_language_eq :
     navajoSibilantHarmony.language 2 =
-      language (WordModel featureValues · (· < ·)) {antPost, postAnt} := by
+      language (WordModel featureValues ·) {antPost, postAnt} := by
   ext w
   rw [TierStrictlyLocalGrammar.mem_ofForbiddenPairs_language_iff_forall_sublist_pair
     (R := fun x y ↦ x .anterior ≠ y .anterior) (p := OnTier) fun _ _ _ _ _ _ ↦ by simp_all,
@@ -306,7 +306,7 @@ theorem navajoSibilantHarmony_language_eq :
   exact forall₂_congr fun a b ↦ imp_congr_right fun _ ↦ pair_agree_iff a b
 
 theorem esh_s_mem_language :
-    [esh, s] ∈ language (WordModel featureValues · (· < ·)) {antPost} ∧
+    [esh, s] ∈ language (WordModel featureValues ·) {antPost} ∧
       [esh, s] ∉ navajoSibilantHarmony.language 2 := by
   simp only [Set.ext_iff.1 navajoSibilantHarmony_language_eq [esh, s], mem_language_pair_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, antPost, postAnt,

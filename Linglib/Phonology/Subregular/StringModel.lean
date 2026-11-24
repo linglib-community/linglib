@@ -25,8 +25,8 @@ These formulas are the guards of logical transductions.
 ## Main definitions
 
 * `Subregular.stringLanguage`: the signature $\{s, p, P_a\}$.
-* `Subregular.StringModel`: the string model of a word, the successor word model of
-  `Subregular.WordModel` in which a symbol is its own label.
+* `Subregular.StringModel`: the string model of a word, the word model of `Subregular.WordModel`
+  in which a symbol is its own label.
 * `Subregular.StringFormula`: formulas in the position variable, with `StringFormula.HoldsAt`.
 * `StringFormula.Bounded l r`: quantifier-free, with terms at most `l` back and `r` forward.
 * `StringFormula.window r u`: the last `r` symbols before the position spell `u`.
@@ -39,12 +39,12 @@ These formulas are the guards of logical transductions.
 
 ## Implementation notes
 
-A string model is the successor word model of `Subregular.WordModel` on the same positions, read
+A string model is a word model of `Subregular.WordModel`, on the same positions, read
 through function symbols where the word model has a binary relation: over a relation a
 quantifier-free formula cannot leave its variables, and the window is reached here through the
 functions. The two readings share the linear order of the positions. The functions are its successor
 and predecessor, which fix the last and the first position, and the relation is its covering
-relation; `WordModel.relMap_ord_covBy_iff` states one through the other. The positions interpret the
+relation; `WordModel.relMap_ord_succ_iff` states one through the other. The positions interpret the
 functional signature under any labelling, and the formulas of this file are stated for the
 conventional one, where a symbol is its own label. `HoldsAt` evaluates at a natural-number position,
 false off the word, as the docking processes and transductions scan positions by index. The terms of
@@ -81,24 +81,24 @@ variable {α : Type u}
 
 /-! ### The string model of a word -/
 
-/-- The string model of `w`: its positions as a successor word model in which a symbol is its own
-one label, read through the successor and predecessor functions. -/
-abbrev StringModel (w : List α) : Type := WordModel ({·}) w (· ⋖ ·)
+/-- The string model of `w`: its positions as a word model in which a symbol is its own one label,
+read through the successor and predecessor functions. -/
+abbrev StringModel (w : List α) : Type := WordModel ({·}) w
 
 namespace WordModel
 
-variable {β P : Type*} {ℓ : β → Set P} {u : List β} {R : Fin u.length → Fin u.length → Prop}
+variable {β P : Type*} {ℓ : β → Set P} {u : List β}
 
 /-- The positions of a word interpret the functions as the successor and predecessor that fix the
 last and the first position, and the labels as those of the symbol. -/
-instance : (stringLanguage P).Structure (WordModel ℓ u R) where
+instance : (stringLanguage P).Structure (WordModel ℓ u) where
   funMap
     | .succ, x => (x 0).succ
     | .pred, x => (x 0).pred
   RelMap
     | .label p, x => p ∈ ℓ (x 0).label
 
-@[simp] theorem relMap_stringLabel (p : P) (x : Fin 1 → WordModel ℓ u R) :
+@[simp] theorem relMap_stringLabel (p : P) (x : Fin 1 → WordModel ℓ u) :
     Structure.RelMap (L := stringLanguage P) (StringRel.label p) x ↔ p ∈ ℓ (x 0).label := .rfl
 
 end WordModel
