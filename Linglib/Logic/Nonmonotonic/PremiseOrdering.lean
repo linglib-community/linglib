@@ -36,8 +36,6 @@ minimal-world exhaustifier keeps.
 
 * `Preorder.ofCriteria_eq_lift`: the preorder is the pullback of `⊇` along the map sending a point
   to the criteria it satisfies.
-* `Preorder.sep_sat_eq_inter_upperPolar`: the criteria a point satisfies are the criteria in its
-  upper polar, for the Galois connection the satisfaction relation induces.
 * `Preorder.ofCriteria_insert`: adding a criterion meets the preorder with that of the criterion.
 * `Preorder.antisymmRel_ofCriteria_iff`: two points are equivalent just in case they satisfy the
   same criteria.
@@ -141,19 +139,6 @@ theorem ofCriteria_eq_of_subset {sat : α → C → Prop} {criteria criteria' : 
 end ofCriterion
 
 /-! ### The criteria a point satisfies -/
-
-/-- The criteria a point satisfies are the criteria in the upper polar of the point, for the Galois
-connection the satisfaction relation induces. -/
-theorem sep_sat_eq_inter_upperPolar (sat : α → C → Prop) (criteria : Set C) (a : α) :
-    {c ∈ criteria | sat a c} = criteria ∩ upperPolar sat {a} := by
-  ext c
-  simp [upperPolar]
-
-/-- With every criterion counted, `a` ranks below `b` just in case the upper polar of `b` lies
-within that of `a`. -/
-theorem ofCriteria_univ_le_iff_upperPolar (sat : α → C → Prop) (a b : α) :
-    (ofCriteria sat Set.univ).le a b ↔ upperPolar sat {b} ⊆ upperPolar sat {a} := by
-  simp [ofCriteria_le_iff, upperPolar, Set.subset_def]
 
 /-- The criteria-derived preorder is the pullback of `⊇` along the criteria a point satisfies. -/
 theorem ofCriteria_eq_lift (sat : α → C → Prop) (criteria : Set C) :
