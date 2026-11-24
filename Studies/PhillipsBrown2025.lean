@@ -53,6 +53,8 @@ is diverse, does not stack the deck, and the beliefs are sensitive to it (`Defin
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace PhillipsBrown2025
 
 open Desire Presupposition
@@ -206,7 +208,7 @@ theorem closure_under_doxastic_equivalence (A : Set (Set World))
   h.mono_on (by decide +kernel)
 
 local instance :
-    DecidableRel (premisePreorder ({↑benefit} : Set (Set World))).le :=
+    DecidableRel (≤[({↑benefit} : Set (Set World))]).le :=
   fun w z ↦ decidable_of_iff (z ∈ benefit → w ∈ benefit) (by simp [Preorder.ofCriteria_le_iff])
 
 /-- A context-sensitive preference relation overgenerates (§2.2), since the value of feeling

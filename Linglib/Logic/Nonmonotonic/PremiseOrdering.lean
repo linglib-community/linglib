@@ -31,21 +31,21 @@ minimal-world exhaustifier keeps.
 
 * `Preorder.ofCriteria`: the preorder a set of criteria induces.
 * `Preorder.ofCriterion`: the preorder of a single criterion.
-* `premisePreorder`, `w ≤[A] z`, `w <[A] z`: the ordering of a premise set, the criteria ordering
-  with propositions as criteria and truth as satisfaction.
+* `≤[A]`, `w ≤[A] z`, `w <[A] z`: notation, in the scope `PremiseOrdering`, for the ordering a
+  family of propositions induces, the criteria ordering with truth as satisfaction.
 * `Preorder.lowerSets`: the lower sets of a preorder given as a term.
 
 ## Main results
 
 * `Preorder.ofCriteria_eq_lift`: the preorder is the pullback of `⊇` along the map sending a point
   to the criteria it satisfies.
-* `Preorder.le_ofCriteria_iff`: an ordering refines that of a set of criteria just in case the
-  satisfiers of each criterion form a lower set of it.
+* `Preorder.gc_ofCriteria`: the ordering of a set of criteria and the criteria an ordering
+  refines form a Galois connection.
 * `Preorder.ofCriteria_insert`: adding a criterion meets the preorder with that of the criterion.
-* `gc_premisePreorder_lowerSets`: the ordering of a premise set and the lower sets of an ordering
-  form a Galois connection between families of propositions and preorders.
-* `premisePreorder_eq_of_subset_lowerSets`: a family of lower sets of a preorder containing the
-  principal ones has that preorder as its ordering.
+* `Preorder.gc_ofCriteria_mem_lowerSets`: the ordering of a family of propositions and the lower
+  sets of an ordering form a Galois connection.
+* `Preorder.ofCriteria_mem_eq_of_subset_lowerSets`: a family of lower sets of a preorder
+  containing the principal ones has that preorder as its ordering.
 * `Preorder.antisymmRel_ofCriteria_iff`: two points are equivalent just in case they satisfy the
   same criteria.
 * `Preorder.minimals_ofCriteria_eq`: the minimal points are those satisfying every criterion,
@@ -95,10 +95,6 @@ theorem ofCriteria_le_iff_subset (sat : α → C → Prop) (criteria : Set C)
       {c ∈ criteria | sat b c} ⊆ {c ∈ criteria | sat a c} :=
   ⟨fun h _ hc ↦ ⟨hc.1, h _ hc.1 hc.2⟩, fun h _ hc hb ↦ (h ⟨hc, hb⟩).2⟩
 
-/-- No criteria give the order relating every two elements. -/
-@[simp] theorem ofCriteria_empty (sat : α → C → Prop) : ofCriteria sat ∅ = ⊤ :=
-  top_unique fun _ _ _ _ h ↦ h.elim
-
 /-! ### A single criterion -/
 
 section ofCriterion
@@ -132,17 +128,38 @@ theorem ofCriteria_singleton (sat : α → C → Prop) (c : C) :
     ofCriteria sat {c} = ofCriterion (sat · c) :=
   Preorder.ext fun _ _ ↦ forall_eq
 
-/-- Adding a criterion meets the criteria-derived preorder with the preorder of that criterion. -/
-theorem ofCriteria_insert (sat : α → C → Prop) (c : C) (criteria : Set C) :
-    ofCriteria sat (insert c criteria) = ofCriteria sat criteria ⊓ ofCriterion (sat · c) :=
-  Preorder.ext fun _ _ ↦ Set.forall_mem_insert.trans and_comm
+/-- The ordering of a set of criteria and the criteria an ordering refines form a Galois
+connection between sets of criteria and preorders. Both maps reverse inclusion, so the connection
+is stated into the dual order, as mathlib states the connection between polars. -/
+theorem gc_ofCriteria (sat : α → C → Prop) :
+    GaloisConnection (OrderDual.toDual ∘ ofCriteria sat)
+      (fun p ↦ {c | OrderDual.ofDual p ≤ ofCriterion (sat · c)}) :=
+  fun _ _ ↦ ⟨fun h _ hc _ _ hab ↦ h hab _ hc, fun h _ _ hab _ hc ↦ h hc hab⟩
 
 /-- An ordering refines the ordering of a set of criteria just in case it refines the ordering of
 each criterion, that is, just in case the points satisfying each criterion form a lower set of
 it. -/
 theorem le_ofCriteria_iff {sat : α → C → Prop} {criteria : Set C} :
     p ≤ ofCriteria sat criteria ↔ ∀ c ∈ criteria, p ≤ ofCriterion (sat · c) :=
-  ⟨fun h c hc _ _ hab ↦ h hab c hc, fun h _ _ hab c hc ↦ h c hc hab⟩
+  gc_ofCriteria sat criteria (OrderDual.toDual p)
+
+/-- More criteria give a finer ordering. -/
+theorem ofCriteria_anti (sat : α → C → Prop) : Antitone (ofCriteria sat) :=
+  fun _ _ h ↦ (gc_ofCriteria sat).monotone_l h
+
+/-- No criteria give the order relating every two elements. -/
+@[simp] theorem ofCriteria_empty (sat : α → C → Prop) : ofCriteria sat ∅ = ⊤ :=
+  congrArg OrderDual.ofDual (gc_ofCriteria sat).l_bot
+
+/-- The ordering of a union of sets of criteria is the meet of their orderings. -/
+theorem ofCriteria_union (sat : α → C → Prop) (s t : Set C) :
+    ofCriteria sat (s ∪ t) = ofCriteria sat s ⊓ ofCriteria sat t :=
+  congrArg OrderDual.ofDual ((gc_ofCriteria sat).l_sup (a₁ := s) (a₂ := t))
+
+/-- Adding a criterion meets the criteria-derived preorder with the preorder of that criterion. -/
+theorem ofCriteria_insert (sat : α → C → Prop) (c : C) (criteria : Set C) :
+    ofCriteria sat (insert c criteria) = ofCriteria sat criteria ⊓ ofCriterion (sat · c) := by
+  rw [← Set.union_singleton, ofCriteria_union, ofCriteria_singleton]
 
 /-- Criteria whose satisfiers are lower sets of the criteria-derived preorder can be added to the
 criteria without changing it. -/
@@ -205,80 +222,69 @@ end Minimals
 
 end Preorder
 
-/-! ### The ordering of a premise set
+/-! ### The ordering a family of propositions induces
 
 With propositions as the criteria and truth as satisfaction, the ordering is that of a premise
-set: `w` lies below `z` when every premise true at `z` is true at `w`. -/
+set: `w` lies below `z` when every premise true at `z` is true at `w`. It is written `≤[A]`. -/
 
-section Premises
-
-variable {W : Type*}
-
-/-- The preorder a premise set `A` induces ranks `w` below `z` when every proposition of `A` true
-at `z` is true at `w`. -/
-abbrev premisePreorder (A : Set (Set W)) : Preorder W :=
-  Preorder.ofCriteria (· ∈ ·) A
+/-- `≤[A]` is the ordering a family `A` of propositions induces on the worlds, ranking `w` below
+`z` when every proposition of `A` true at `z` is true at `w`. -/
+scoped[PremiseOrdering] notation "≤[" A "]" => @Preorder.ofCriteria _ (Set _) (· ∈ ·) A
 
 /-- `w ≤[A] z` says that `w` is at least as good as `z` under the premise set `A`, verifying every
 premise of `A` that `z` verifies. -/
-notation:50 w " ≤[" A "] " z => @LE.le _ (@Preorder.toLE _ (premisePreorder A)) w z
+scoped[PremiseOrdering] notation:50 w " ≤[" A "] " z =>
+  @LE.le _ (@Preorder.toLE _ (Preorder.ofCriteria (· ∈ ·) A)) w z
 
 /-- `w <[A] z` says that `w` is strictly better than `z` under the premise set `A`. -/
-notation:50 w " <[" A "] " z => @LT.lt _ (@Preorder.toLT _ (premisePreorder A)) w z
+scoped[PremiseOrdering] notation:50 w " <[" A "] " z =>
+  @LT.lt _ (@Preorder.toLT _ (Preorder.ofCriteria (· ∈ ·) A)) w z
 
-/-- Adding a premise meets the ordering with the ordering of that premise. -/
-theorem premisePreorder_insert (φ : Set W) (A : Set (Set W)) :
-    premisePreorder (insert φ A) = premisePreorder A ⊓ .ofCriterion (· ∈ φ) :=
-  Preorder.ofCriteria_insert _ φ A
+open scoped PremiseOrdering
+
+namespace Preorder
+
+variable {W : Type*} {A : Set (Set W)}
 
 /-- The lower sets of a preorder given as a term. -/
-def Preorder.lowerSets (p : Preorder W) : Set (Set W) := {s | @IsLowerSet W p.toLE s}
+def lowerSets (p : Preorder W) : Set (Set W) := {s | @IsLowerSet W p.toLE s}
 
-@[simp] theorem Preorder.mem_lowerSets {p : Preorder W} {s : Set W} :
+@[simp] theorem mem_lowerSets {p : Preorder W} {s : Set W} :
     s ∈ p.lowerSets ↔ @IsLowerSet W p.toLE s := Iff.rfl
 
-/-- The ordering of a premise set and the lower sets of an ordering form a Galois connection
-between families of propositions and preorders on the worlds: an ordering refines the ordering of
-`A` just in case every member of `A` is one of its lower sets. Both maps reverse inclusion, so the
-connection is stated into the dual order, as mathlib states the connection between polars. -/
-theorem gc_premisePreorder_lowerSets :
-    GaloisConnection (OrderDual.toDual ∘ premisePreorder (W := W))
+/-- The ordering a family of propositions induces and the lower sets of an ordering form a Galois
+connection between families of propositions and preorders on the worlds. -/
+theorem gc_ofCriteria_mem_lowerSets :
+    GaloisConnection (fun A : Set (Set W) ↦ OrderDual.toDual (≤[A]))
       (fun p ↦ (OrderDual.ofDual p).lowerSets) :=
-  fun _ _ ↦ ⟨fun h _ hs _ _ hba ha ↦ h hba _ hs ha, fun h _ _ hab _ hs hb ↦ h hs hab hb⟩
+  fun A p ↦ (gc_ofCriteria (· ∈ ·) A p).trans
+    (forall₂_congr fun _ _ ↦ le_ofCriterion_iff_isLowerSet)
 
-theorem le_premisePreorder_iff {p : Preorder W} {A : Set (Set W)} :
-    p ≤ premisePreorder A ↔ A ⊆ p.lowerSets :=
-  gc_premisePreorder_lowerSets A (OrderDual.toDual p)
+/-- An ordering refines the ordering of `A` just in case every member of `A` is one of its lower
+sets. -/
+theorem le_ofCriteria_mem_iff {p : Preorder W} : p ≤ ≤[A] ↔ A ⊆ p.lowerSets :=
+  gc_ofCriteria_mem_lowerSets A (OrderDual.toDual p)
 
-/-- More premises give a finer ordering. -/
-theorem premisePreorder_anti : Antitone (premisePreorder (W := W)) :=
-  fun _ _ h ↦ gc_premisePreorder_lowerSets.monotone_l h
-
-/-- The ordering of a union of premise sets is the meet of their orderings. -/
-theorem premisePreorder_union (A B : Set (Set W)) :
-    premisePreorder (A ∪ B) = premisePreorder A ⊓ premisePreorder B :=
-  congrArg OrderDual.ofDual (gc_premisePreorder_lowerSets.l_sup (a₁ := A) (a₂ := B))
-
-/-- Every member of a premise set is a lower set of its ordering. -/
-theorem subset_lowerSets_premisePreorder (A : Set (Set W)) : A ⊆ (premisePreorder A).lowerSets :=
-  le_premisePreorder_iff.1 le_rfl
+/-- Every member of a family of propositions is a lower set of the ordering it induces. -/
+theorem subset_lowerSets_ofCriteria_mem (A : Set (Set W)) : A ⊆ (≤[A]).lowerSets :=
+  le_ofCriteria_mem_iff.1 le_rfl
 
 /-- Let `r` be a reflexive relation on worlds. If every member of `A` is closed downward under
 `r` and every set `{v | r v w}` is a member, then the ordering of `A` is `r`. No transitivity is
 assumed: it follows. -/
-theorem premisePreorder_le_iff_of_refl {A : Set (Set W)} {r : W → W → Prop} (hr : ∀ w, r w w)
+theorem ofCriteria_mem_le_iff_of_refl {r : W → W → Prop} (hr : ∀ w, r w w)
     (hlow : ∀ p ∈ A, ∀ ⦃v w⦄, r v w → w ∈ p → v ∈ p) (hprin : ∀ w, {v | r v w} ∈ A) {v w : W} :
     (v ≤[A] w) ↔ r v w :=
   ⟨fun h ↦ h _ (hprin w) (hr w), fun h p hp hw ↦ hlow p hp h hw⟩
 
 /-- A family of lower sets of a preorder that contains every principal lower set has that
 preorder as its ordering. -/
-theorem premisePreorder_eq_of_subset_lowerSets {A : Set (Set W)} (P : Preorder W)
-    (hlow : A ⊆ P.lowerSets) (hprin : ∀ w, {v | P.le v w} ∈ A) : premisePreorder A = P :=
+theorem ofCriteria_mem_eq_of_subset_lowerSets (P : Preorder W) (hlow : A ⊆ P.lowerSets)
+    (hprin : ∀ w, {v | P.le v w} ∈ A) : ≤[A] = P :=
   Preorder.ext fun _ _ ↦
-    premisePreorder_le_iff_of_refl P.le_refl (fun _ hp _ _ h hw ↦ hlow hp h hw) hprin
+    ofCriteria_mem_le_iff_of_refl P.le_refl (fun _ hp _ _ h hw ↦ hlow hp h hw) hprin
 
-end Premises
+end Preorder
 
 namespace Filter
 

@@ -22,8 +22,8 @@ A Hamblin set ranks worlds as a premise set does, and in that order the weak ans
 set of worlds at or below `w`. The presupposition holds everywhere just in case every such
 principal lower set is a member, so a Hamblin set satisfying it everywhere is a preorder on the
 worlds with a family of its lower sets containing the principal ones. See
-`Question.forall_hasStrongestTrueAnswer_iff_setOf_le_mem`, `premisePreorder_eq_of_subset_lowerSets`
-and `Question.eq_range_setOf_le_iff`.
+`Question.forall_hasStrongestTrueAnswer_iff_setOf_le_mem`,
+`Preorder.ofCriteria_mem_eq_of_subset_lowerSets` and `Question.eq_range_setOf_le_iff`.
 
 ## References
 
@@ -35,6 +35,8 @@ and `Question.eq_range_setOf_le_iff`.
 -/
 
 @[expose] public section
+
+open scoped PremiseOrdering
 
 namespace Question
 

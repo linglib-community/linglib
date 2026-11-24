@@ -68,6 +68,8 @@ induced ordering frame (`neutralPremiseImp_eq_variablyStrictImp`).
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Lewis1981
 
 open Conditional
@@ -90,7 +92,7 @@ def premiseImp : Set W :=
 
 /-- In the ordering a premise frame induces at `i`, `j` is at least as close as `k` when every
 premise for `i` that holds at `k` holds at `j`. -/
-abbrev premiseOrder (i : W) : Preorder W := premisePreorder (H i)
+abbrev premiseOrder (i : W) : Preorder W := ≤[H i]
 
 end Premise
 

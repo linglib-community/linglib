@@ -26,14 +26,13 @@ modal base at `w` fix the worlds accessible from `w`, and those of an ordering s
 * `Background.accessibleWorlds f w`: the worlds verifying every premise of `f w`.
 * `Background.IsRealistic`, `Background.IsTotallyRealistic`, `Background.IsConsistent`.
 * `Background.restrict f α`: `f` with the premise `α` added at every world.
-* `premisePreorder A`, `w ≤[A] z`, `w <[A] z`: the ordering a premise set induces.
 * `bestWorlds f g w`: the minimal worlds accessible under `f` ranked by `g`.
 
 ## Implementation notes
 
-* `w ≤[A] z` and `w <[A] z` are notation for the order of `premisePreorder A`. A `DecidableRel`
-  instance on that order would be keyed on every `≤`-goal downstream, so a study that decides a
-  premise ordering supplies a local instance for its own ordering source.
+* The ordering a premise set induces is written `≤[A]`, notation of the scope `PremiseOrdering`.
+  A `DecidableRel` instance on that order would be keyed on every `≤`-goal downstream, so a study
+  that decides a premise ordering supplies a local instance for its own ordering source.
 
 ## References
 
@@ -43,6 +42,8 @@ modal base at `w` fix the worlds accessible from `w`, and those of an ordering s
 -/
 
 @[expose] public section
+
+open scoped PremiseOrdering
 
 namespace Modality
 
@@ -133,7 +134,7 @@ practical-inference example, so minimality is the faithful reading. Kratzer's of
 is the limit-free `humanNecessity`, the principal filter of this set exactly under the Limit
 Assumption (`humanNecessity_eq_principal`). -/
 def bestWorlds (f g : Background W) (w : W) : Set W :=
-  (premisePreorder (g w)).minimals (f.accessibleWorlds w)
+  (≤[g w]).minimals (f.accessibleWorlds w)
 
 theorem mem_bestWorlds {f g : Background W} {w u : W} :
     u ∈ bestWorlds f g w ↔

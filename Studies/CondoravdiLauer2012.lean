@@ -65,6 +65,8 @@ effective structure alone where cooperation by default ranges over all of the ad
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace CondoravdiLauer2012
 
 open Commitment Desire.Preferential Modality
@@ -249,12 +251,12 @@ ranked by the participant's preferential commitments. -/
 /-- The mood state that a commitment state projects for `a`. -/
 def toState (K : State (A × Force) W) (a : A) : Mood.State W :=
   .ofOrderedInformationState ⟨K.commitmentSet (a, .doxastic),
-    premisePreorder (K.contents (a, .preferential))⟩
+    ≤[K.contents (a, .preferential)]⟩
 
 private theorem toState_insert_of_ne {K : State (A × Force) W} {a b : A} (h : b ≠ a) (m : Force)
     (p : Set W) : toState (insert ((a, m), p) K) b = toState K b :=
   Mood.State.ext (State.commitmentSet_insert_of_ne (by simp [h]))
-    (congrArg premisePreorder (State.contents_insert_of_ne (by simp [h]))) rfl
+    (congrArg (≤[·]) (State.contents_insert_of_ne (by simp [h]))) rfl
 
 -- (30): the declarative convention is assertion on the mood state of the participant it commits
 theorem toState_declarative [DecidableEq A] (K : State (A × Force) W) (a : A) (p : Set W) :
@@ -265,7 +267,7 @@ theorem toState_declarative [DecidableEq A] (K : State (A × Force) W) (a : A) (
   · subst hb
     rw [Function.update_self]
     exact Mood.State.ext (State.commitmentSet_insert_self.trans (Set.inter_comm _ _))
-      (congrArg premisePreorder (State.contents_insert_of_ne (by simp))) rfl
+      (congrArg (≤[·]) (State.contents_insert_of_ne (by simp))) rfl
   · rw [Function.update_of_ne hb, toState_insert_of_ne hb]
 
 /-- The imperative convention (47), read on the participants' mood states, promotes the content
@@ -281,8 +283,8 @@ theorem toState_imperative [DecidableEq A] (K : State (A × Force) W) (a : A) (p
   · subst hb
     rw [Function.update_self]
     refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
-    show premisePreorder _ = premisePreorder _ ⊓ .ofCriterion (· ∈ p)
-    rw [State.contents_insert_self, premisePreorder_insert]
+    show ≤[_] = ≤[_] ⊓ .ofCriterion (· ∈ p)
+    rw [State.contents_insert_self, Preorder.ofCriteria_insert]
   · rw [Function.update_of_ne hb, toState_insert_of_ne hb]
 
 -- one preferential commitment of the speaker ranks the content's worlds first in the speaker's

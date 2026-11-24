@@ -56,6 +56,8 @@ the probability space account validates V1–V12 and none of I1–I3 or E1.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Yalcin2010
 
 open ComparativeProbability ComparativePossibility Modality MeasureTheory ProbabilityTheory
@@ -69,13 +71,13 @@ section Kratzer
 
 variable {W : Type*} (O : Set (Set W))
 
-instance : IsPreorder W (premisePreorder O).le where
-  refl := (premisePreorder O).le_refl
-  trans _ _ _ := (premisePreorder _).le_trans _ _ _
+instance : IsPreorder W (≤[O]).le where
+  refl := (≤[O]).le_refl
+  trans _ _ _ := (≤[_]).le_trans _ _ _
 
 /-- On Kratzer's account `A` is at least as likely as `B` when every world of `B` is matched by
 an at least as high world of `A`. -/
-abbrev likelihood : Set W → Set W → Prop := Lewis (premisePreorder O).le
+abbrev likelihood : Set W → Set W → Prop := Lewis (≤[O]).le
 
 /-- Epistemic *must* at `w` is Kratzer's human necessity over the whole space. -/
 def must (A : Set W) (w : W) : Prop :=
@@ -111,10 +113,10 @@ theorem kratzer_V6 [Nonempty W] (w : W) : MustToProbably (likelihood O) (must O 
   rw [must_iff] at hA
   refine ⟨fun u _ ↦ ?_, fun h ↦ ?_⟩
   · obtain ⟨v, hvu, hv⟩ := hA u
-    exact ⟨v, hv v ((premisePreorder O).le_refl v), hvu⟩
+    exact ⟨v, hv v ((≤[O]).le_refl v), hvu⟩
   · obtain ⟨w₀⟩ := ‹Nonempty W›
     obtain ⟨v, -, hv⟩ := hA w₀
-    obtain ⟨u, hu, huv⟩ := h (hv v ((premisePreorder O).le_refl v))
+    obtain ⟨u, hu, huv⟩ := h (hv v ((≤[O]).le_refl v))
     exact hu (hv u huv)
 
 theorem kratzer_V7 [Nonempty W] (w : W) : ProbablyToMight (likelihood O) (might O · w) :=
@@ -123,7 +125,7 @@ theorem kratzer_V7 [Nonempty W] (w : W) : ProbablyToMight (likelihood O) (might 
 theorem kratzer_V10 (w : W) : ConditionalToComparative (likelihood O) (ifThen O · · w) := by
   intro A B hAB u hu
   obtain ⟨v, hvA, hvu, hall⟩ := (ifThen_iff O A B w).1 hAB u hu
-  exact ⟨v, hall v hvA ((premisePreorder O).le_refl v), hvu⟩
+  exact ⟨v, hall v hvA ((≤[O]).le_refl v), hvu⟩
 
 theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w) := by
   intro A B hAB ⟨hA, hAnot⟩
@@ -131,11 +133,11 @@ theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w)
   refine ⟨fun u hu ↦ ?_, fun h ↦ ?_⟩
   · by_cases huA : u ∈ A
     · obtain ⟨v, hvA, hvu, hall⟩ := hAB u huA
-      exact ⟨v, hall v hvA ((premisePreorder O).le_refl v), hvu⟩
+      exact ⟨v, hall v hvA ((≤[O]).le_refl v), hvu⟩
     · obtain ⟨a, ha, hau⟩ := hA huA
       obtain ⟨v, hvA, hva, hall⟩ := hAB a ha
-      exact ⟨v, hall v hvA ((premisePreorder O).le_refl v),
-        (premisePreorder _).le_trans _ _ _ hva hau⟩
+      exact ⟨v, hall v hvA ((≤[O]).le_refl v),
+        (≤[_]).le_trans _ _ _ hva hau⟩
   · apply hAnot
     by_contra hcon
     have hex : ∃ a ∈ A, ∀ u ∈ Aᶜ, ¬(u ≤[O] a) := by
@@ -144,10 +146,10 @@ theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w)
       exact hcon fun a ha ↦ hall a ha
     obtain ⟨a, ha, hnone⟩ := hex
     obtain ⟨v, hvA, hva, hall⟩ := hAB a ha
-    obtain ⟨u, hu, huv⟩ := h (hall v hvA ((premisePreorder O).le_refl v))
+    obtain ⟨u, hu, huv⟩ := h (hall v hvA ((≤[O]).le_refl v))
     have huA : u ∈ A := by
       by_contra huA
-      exact hnone u huA ((premisePreorder _).le_trans _ _ _ huv hva)
+      exact hnone u huA ((≤[_]).le_trans _ _ _ huv hva)
     exact hu (hall u huA huv)
 
 theorem kratzer_V9 (w : W) : ChancyModusTollens (likelihood O) (ifThen O · · w) :=

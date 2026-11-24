@@ -46,6 +46,8 @@ premise or two.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Kratzer1977
 
 open Modality
@@ -98,7 +100,7 @@ theorem canInView_of_mustInView [Nonempty W] (h : MustInView f φ i) : CanInView
   rw [mustInView_iff_mem_humanNecessity] at h
   rw [canInView_iff_not_mustInView_compl, mustInView_iff_mem_humanNecessity]
   have : (humanNecessity ⊥ f i).NeBot :=
-    letI := premisePreorder (f i); Filter.atBotOn_neBot_iff.2 (by simp)
+    letI := ≤[f i]; Filter.atBotOn_neBot_iff.2 (by simp)
   exact Filter.compl_notMem h
 
 -- On a consistent premise set Definition 7 is Definition 5, consequence from the premises

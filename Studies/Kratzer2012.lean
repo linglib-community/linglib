@@ -60,6 +60,8 @@ chapter proves.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Kratzer2012
 
 open Modality
@@ -242,8 +244,8 @@ theorem superincreasing_prob : Superincreasing prob := by
 -- p. 43: `p` is a better possibility than `q` (p. 41) when it is at least as good a possibility
 -- in the revised sense and not conversely.
 theorem betterPossibility_iff (p q : Set World) :
-    AsymmRel (Kratzer (premisePreorder (ideal 0)).le) p q ↔ prob q < prob p := by
-  have hr : (premisePreorder (ideal 0)).le = (· ≥ ·) :=
+    AsymmRel (Kratzer (≤[ideal 0]).le) p q ↔ prob q < prob p := by
+  have hr : (≤[ideal 0]).le = (· ≥ ·) :=
     funext₂ fun w z ↦ propext (atLeastAsGoodAs_ideal_iff 0 w z)
   have h := kratzer_iff_measure_le_iff.2 superincreasing_prob
   rw [AsymmRel, hr, h, h, lt_iff_le_not_ge]
@@ -379,7 +381,7 @@ theorem humanPossibility_tied_iff_probTied (s : Set World) :
 
 -- p. 46
 theorem not_kratzer_tied_iff (μ : Measure World) [IsFiniteMeasure μ] (h : μ {1} ≠ 0) :
-    ¬ ∀ A B : Set World, Kratzer (premisePreorder (tied 0)).le A B ↔ μ B ≤ μ A := by
+    ¬ ∀ A B : Set World, Kratzer (≤[tied 0]).le A B ↔ μ B ≤ μ A := by
   refine not_kratzer_iff_measure_le (a := 2) (b := 3) (c := 1) (by decide) (by decide)
     (by decide) ?_ ?_ ?_ h <;>
   simp [AsymmRel, Preorder.ofCriteria_le_iff, tied]

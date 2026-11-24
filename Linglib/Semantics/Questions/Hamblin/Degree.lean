@@ -13,8 +13,7 @@ measure is at least `d`. These answers are nested, so at each world `w` the answ
 
 The order a degree question induces on worlds is the order of its measure. In general a Hamblin
 set with a strongest true answer at each world is a preorder on the worlds with a family of its
-lower sets, as `premisePreorder_eq_of_subset_lowerSets` states; the degree questions are those
-whose order comes from a measure.
+lower sets; the degree questions are those whose order comes from a measure.
 
 ## Main definitions
 
@@ -28,8 +27,8 @@ whose order comes from a measure.
   at `w`.
 * `Question.exh_degreeHamblin`: exhaustifying the answer at an attained degree gives the worlds
   where the measure is exactly that degree.
-* `Question.premisePreorder_degreeHamblin`: the order a degree question induces on worlds is the order
-  of the measure.
+* `Question.ofCriteria_mem_degreeHamblin`: the order a degree question induces on worlds is the
+  order of the measure.
 
 ## References
 
@@ -40,6 +39,8 @@ whose order comes from a measure.
 -/
 
 @[expose] public section
+
+open scoped PremiseOrdering
 
 namespace Question
 
@@ -79,8 +80,8 @@ theorem hasStrongestTrueAnswer_degreeHamblin (w : W) :
 
 /-- The order a degree question induces on worlds is the order of the measure, with the worlds of
 greater measure below. -/
-theorem premisePreorder_degreeHamblin :
-    premisePreorder (degreeHamblin μ) = Preorder.lift (OrderDual.toDual ∘ μ) :=
+theorem ofCriteria_mem_degreeHamblin :
+    ≤[degreeHamblin μ] = Preorder.lift (OrderDual.toDual ∘ μ) :=
   Preorder.ext fun v w ↦ by
     simp only [Preorder.ofCriteria_le_iff, degreeHamblin, forall_mem_range, mem_preimage, mem_Ici]
     exact ⟨fun h ↦ h (μ w) le_rfl, fun h d hd ↦ hd.trans h⟩

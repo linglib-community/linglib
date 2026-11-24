@@ -63,6 +63,8 @@ contraposition fail](##inference_patterns_fail).
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Kratzer1981
 
 open Modality
@@ -74,7 +76,7 @@ theorem humanPossibility_of_goodPossibility {W : Type*} {f g : Background W} {p 
     (h : goodPossibility f g w p) : humanPossibility f g w p := fun hN ↦ by
   obtain ⟨u, hu, hp⟩ := goodPossibility_iff.1 h
   obtain ⟨v, hv, hvu, hz⟩ := mem_humanNecessity.1 hN u hu
-  exact hz v hv (@le_refl _ (premisePreorder (g w)) v) (hp v hv hvu)
+  exact hz v hv (@le_refl _ (≤[g w]) v) (hp v hv hvu)
 
 -- p. 50: over the empty ordering source human necessity is simple necessity.
 example {W : Type*} (f : Background W) (w : W) : humanNecessity f ⊥ w = simpleNecessity f w :=
@@ -215,7 +217,7 @@ theorem material_implication {W : Type*} {f g : Background W} (hf : f.IsTotallyR
   have hacc (u : W) : u ∈ (f.restrict α).accessibleWorlds w ↔ u = w ∧ u ∈ α := by
     rw [Background.mem_accessibleWorlds_restrict, hf w]
     rfl
-  have hrefl (u : W) : u ≤[g w] u := @le_refl _ (premisePreorder (g w)) u
+  have hrefl (u : W) : u ≤[g w] u := @le_refl _ (≤[g w]) u
   rw [mem_humanNecessity]
   refine ⟨fun h hα ↦ ?_, fun h u hu ↦ ?_⟩
   · obtain ⟨v, hv, -, hz⟩ := h w ((hacc w).2 ⟨rfl, hα⟩)
@@ -246,7 +248,7 @@ theorem counterfactual_of_antecedent {W : Type*} {g : Background W} (hg : g.IsTo
   refine ⟨fun h ↦ ?_, fun h u _ ↦ ⟨w, hw, ?_, fun z _ hz ↦ hbelow z hz ▸ h⟩⟩
   · obtain ⟨v, hv, hvw, hz⟩ := h w hw
     obtain rfl := hbelow v hvw
-    exact hz v hv (@le_refl _ (premisePreorder (g v)) v)
+    exact hz v hv (@le_refl _ (≤[g v]) v)
   · exact (Preorder.ofCriteria_le_iff ..).2 fun p hp _ ↦ htrue p hp
 
 /-- Two totally realistic backgrounds at a world: its facts severally, `g₁`, and jointly, `g₂`. -/

@@ -34,6 +34,8 @@ source by the secondary one.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Modality.Directive
 
 open Modality
@@ -48,7 +50,7 @@ def weakNecessity (f g g' : Background W) (w : W) : Filter W :=
   𝓟 (bestWorlds (.ofRel (bestAccessible f g)) g' w)
 
 theorem mem_weakNecessity :
-    s ∈ weakNecessity f g g' w ↔ (premisePreorder (g' w)).minimals (bestWorlds f g w) ⊆ s := by
+    s ∈ weakNecessity f g g' w ↔ (≤[g' w]).minimals (bestWorlds f g w) ⊆ s := by
   simp [weakNecessity, bestWorlds]
 
 /-- Every strong necessity, true at the best worlds, is a weak necessity. -/

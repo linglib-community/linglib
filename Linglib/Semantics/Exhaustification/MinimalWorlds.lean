@@ -34,6 +34,8 @@ from one.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Exhaustification
 
 variable {W : Type*} (ALT : Set (Set W)) (φ : Set W)
@@ -59,8 +61,8 @@ variable (ALT φ) in
 /-- Minimal worlds are Kratzer's best worlds of the prejacent, with the negated alternatives as
 the premises. -/
 theorem exhMW_eq_minimals :
-    exhMW ALT φ = (premisePreorder (compl '' ALT)).minimals φ := by
-  have key (u v : W) : (premisePreorder (compl '' ALT)).le u v ↔
+    exhMW ALT φ = (≤[compl '' ALT]).minimals φ := by
+  have key (u v : W) : (≤[compl '' ALT]).le u v ↔
       {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | v ∈ a} := by
     simp only [Preorder.ofCriteria_le_iff, Set.forall_mem_image, Set.mem_compl_iff,
       Set.subset_def, Set.mem_ofPred_eq, not_imp_not]

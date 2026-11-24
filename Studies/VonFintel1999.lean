@@ -47,6 +47,8 @@ entailing.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace VonFintel1999
 
 open Presupposition Modality Conditional Desire.BestWorlds

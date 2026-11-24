@@ -46,6 +46,8 @@ coreference of Groenendijk, Stokhof and Veltman.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace DynamicSemantics
 
 open Function
@@ -229,11 +231,11 @@ variable (f g : Background W) (w : W)
 
 /-- The ordered information state that a modal base and an ordering source induce at a world. -/
 def ofBackground : OrderedInformationState W :=
-  ⟨f.accessibleWorlds w, premisePreorder (g w)⟩
+  ⟨f.accessibleWorlds w, ≤[g w]⟩
 
 @[simp] theorem ofBackground_info : (ofBackground f g w).info = f.accessibleWorlds w := rfl
 
-@[simp] theorem ofBackground_order : (ofBackground f g w).order = premisePreorder (g w) := rfl
+@[simp] theorem ofBackground_order : (ofBackground f g w).order = ≤[g w] := rfl
 
 @[simp] theorem optimal_ofBackground : (ofBackground f g w).optimal = bestWorlds f g w := rfl
 

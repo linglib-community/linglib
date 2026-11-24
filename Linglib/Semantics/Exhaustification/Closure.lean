@@ -30,6 +30,8 @@ the closures under disjunction alone and conjunction alone are stated for arbitr
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Exhaustification
 
 open Set
@@ -39,7 +41,7 @@ variable {World : Type*} (ALT : Set (Set World)) (φ : Set World)
 variable {ALT φ} in
 /-- Alternative sets that rank worlds alike have the same minimal worlds. -/
 theorem exhMW_congr {ALT' : Set (Set World)}
-    (h : premisePreorder ALT' = premisePreorder ALT) :
+    (h : ≤[ALT'] = ≤[ALT]) :
     exhMW ALT' φ = exhMW ALT φ := by
   ext u
   simp only [mem_exhMW, MinimalFor, ← Preorder.ofCriteria_le_iff_subset (· ∈ ·)]

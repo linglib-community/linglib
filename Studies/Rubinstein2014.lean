@@ -53,6 +53,8 @@ Hebrew reaches weak necessity through the comparatives alone.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Rubinstein2014
 
 open Modality
@@ -128,7 +130,7 @@ def strongNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
 /-- Weak necessity (42) is human necessity over the favored worlds under the negotiable
 ordering source. -/
 def weakNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
-  (premisePreorder (b.negotiable w)).minimals (favoredWorlds b w) ⊆ p
+  (≤[b.negotiable w]).minimals (favoredWorlds b w) ⊆ p
 
 /-- Strong necessity is [von-fintel-iatridou-2008]'s, with the promoted priorities as the
 ordering source. -/

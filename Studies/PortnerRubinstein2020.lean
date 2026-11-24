@@ -48,6 +48,8 @@ outcomes](##want_alice_and_want_sue) but [not hope for both](##not_hope_both).
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace PortnerRubinstein2020
 
 open Modality Mood
@@ -302,7 +304,7 @@ def bestSets (f g : Background W) (w : W) : Set (Set W) :=
 theorem goodPossibility_iff_exists_mem_bestSets {f g : Background W} {p : Set W} {w : W}
     (hlim : LimitAssumption f g w) :
     goodPossibility f g w p ↔ ∃ X ∈ bestSets f g w, ∀ v ∈ X, v ∈ p := by
-  let o := premisePreorder (g w)
+  let o := ≤[g w]
   refine ⟨fun ⟨u, hu, hp⟩ ↦ ?_, fun ⟨_, ⟨b, hb, hX⟩, hp⟩ ↦ ⟨b, hb.1, fun v hv hvb ↦ ?_⟩⟩
   · obtain ⟨b, hb, hbu⟩ := hlim u hu
     exact ⟨_, ⟨b, hb, rfl⟩, fun v ⟨hv, hvb⟩ ↦ hp v hv.1

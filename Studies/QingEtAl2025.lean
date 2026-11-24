@@ -55,6 +55,8 @@ predicted.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace QingEtAl2025
 
 open Examples Preferential Modality UegakiSudo2019
