@@ -4,7 +4,7 @@ public import Linglib.Languages.Guebie.ParticleVerbs
 public import Linglib.Phonology.Harmony.Basic
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
 public import Linglib.Phonology.OptimalityTheory.Filtration
-public import Linglib.Syntax.Minimalist.Linearization.Cyclic
+public import Linglib.Syntax.Linearization.Cyclic
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
 public import Linglib.Data.Examples.SandeClemDabkowski2026

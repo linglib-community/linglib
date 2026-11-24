@@ -62,7 +62,7 @@ no account predicts the absence of a verb-of-creation effect in Mandarin
 
 namespace ShenHuang2026
 
-open Minimalist Minimalist.Linearization ArgumentStructure
+open Minimalist Linearization ArgumentStructure
 
 /-- A cell of the factorial design (20), (21) fixes whether the wh-phrase is fronted, as in
 English, or stays in situ, as in Mandarin; whether the object DP the wh-element sits in is

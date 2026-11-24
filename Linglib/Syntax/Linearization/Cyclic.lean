@@ -33,9 +33,9 @@ decides on concrete data.
 
 ## Main results
 
-* `Minimalist.Linearization.consistent_iff_isStrictOrder`: the crash condition is that
+* `Linearization.consistent_iff_isStrictOrder`: the crash condition is that
   Spell-out induces a strict order.
-* `Minimalist.Linearization.consistent_iff_exists_linearization`: a derivation converges
+* `Linearization.consistent_iff_exists_linearization`: a derivation converges
   exactly when a duplicate-free string extends every Spell-out.
 
 ## References
@@ -45,7 +45,7 @@ decides on concrete data.
 
 @[expose] public section
 
-namespace Minimalist.Linearization
+namespace Linearization
 
 open List
 
@@ -201,4 +201,4 @@ instance : Decidable (Consistent phases) :=
 
 end Decidability
 
-end Minimalist.Linearization
+end Linearization

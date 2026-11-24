@@ -8,7 +8,7 @@ public import Linglib.Data.Examples.Readers
 # Fox and Pesetsky (2005): Cyclic Linearization of Syntactic Structure
 
 This file formalizes [fox-pesetsky-2005]'s account of successive cyclicity and Holmberg's
-Generalization under cyclic linearization (`Minimalist.Linearization.Consistent`). The
+Generalization under cyclic linearization (`Linearization.Consistent`). The
 derivational scenarios (13)–(15) are theorems over arbitrary terminals: movement from the left
 edge of a domain converges, movement from a non-edge position crashes on the pair it reorders,
 and moving the edge material along restores the order. Swedish Object Shift is these scenarios

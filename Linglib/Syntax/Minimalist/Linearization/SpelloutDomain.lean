@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Linearization.Cyclic
+public import Linglib.Syntax.Linearization.Cyclic
 public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Syntax.Minimalist.Copy.Chain
 

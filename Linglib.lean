@@ -490,7 +490,6 @@ import Linglib.Syntax.Mereological.AngularLocality
 import Linglib.Syntax.Mereological.Parthood
 import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.LateMerger
-import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Linearization.Externalization
 import Linglib.Syntax.Minimalist.Linearization.Replay
 import Linglib.Syntax.Minimalist.Probe.Basic
