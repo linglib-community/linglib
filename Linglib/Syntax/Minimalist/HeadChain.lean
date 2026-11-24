@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.OrdConnected
+public import Linglib.Generalizations.HeadMovementConstraint
 public import Mathlib.Data.List.SplitBy
 
 /-!
@@ -28,8 +28,8 @@ pronounced.
 ## Main results
 
 * `Minimalist.HeadChain.flatten_chains`: the chains partition the spine in order.
-* `Minimalist.HeadChain.isContiguous_get_hosts`: on a spine without repeated heads, the positions
-  pronounced at one head are a stretch of the spine.
+* `Minimalist.HeadChain.hmc_hosts`: on a spine without repeated heads, head chains obey the Head
+  Movement Constraint.
 
 ## Implementation notes
 
@@ -76,10 +76,8 @@ theorem mem_of_site {c : List H} {x : H} (h : site strong c = some x) : x ∈ c 
   · exact (List.mem_filter.mp (List.mem_of_getLast? h)).1
   · exact List.mem_of_getLast? h
 
-/-- On a spine without repeated heads, the positions pronounced at one head are a stretch of the
-spine. -/
-theorem isContiguous_get_hosts {s : List H} (hs : s.Nodup) :
-    IsContiguous (hosts shares strong s).get := by
+/-- On a spine without repeated heads, head chains obey the Head Movement Constraint. -/
+theorem hmc_hosts {s : List H} (hs : s.Nodup) : HMC.Holds (hosts shares strong s) := by
   refine List.isContiguous_get_flatMap_replicate ?_
   rw [← flatten_chains (shares := shares) s, List.nodup_flatten] at hs
   rw [List.Nodup, List.pairwise_map]

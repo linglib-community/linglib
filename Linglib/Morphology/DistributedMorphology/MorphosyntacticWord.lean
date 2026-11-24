@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Algebra.Free
 public import Mathlib.Algebra.FreeMonoid.FreeSemigroup
-public import Linglib.Core.Order.OrdConnected
+public import Linglib.Generalizations.HeadMovementConstraint
 
 /-!
 # Morphosyntactic words
@@ -28,8 +28,8 @@ are formed differ in which bracketings and positions they allow, so the type all
 
 ## Main results
 
-* `DistributedMorphology.MorphosyntacticWord.isContiguous_get_hosts`: when the words have
-  distinct sites, the positions pronounced at one head are a stretch of the spine.
+* `DistributedMorphology.MorphosyntacticWord.hmc_hosts`: words with distinct sites obey the Head
+  Movement Constraint.
 
 ## Implementation notes
 
@@ -83,10 +83,9 @@ theorem mem_map_site_of_mem_hosts {ws : List (MorphosyntacticWord H)} {h : H}
   obtain ⟨w, hw, -, rfl⟩ := hh
   exact List.mem_map_of_mem hw
 
-/-- When the words on a spine have distinct sites, the positions pronounced at one head are a
-stretch of the spine. -/
-theorem isContiguous_get_hosts {ws : List (MorphosyntacticWord H)}
-    (h : (ws.map (·.site)).Nodup) : IsContiguous (hosts ws).get := by
+/-- Words on a spine with distinct sites obey the Head Movement Constraint. -/
+theorem hmc_hosts {ws : List (MorphosyntacticWord H)}
+    (h : (ws.map (·.site)).Nodup) : HMC.Holds (hosts ws) := by
   induction ws with
   | nil => exact fun i ↦ i.elim0
   | cons w ws ih =>

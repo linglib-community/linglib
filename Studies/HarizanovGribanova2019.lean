@@ -137,7 +137,7 @@ theorem french_hosts :
 theorem skipping_hosts :
     ∀ out ∈ amalgamate [⟨(0 : Fin 6), none⟩, ⟨5, some .lowering⟩, ⟨4, none⟩, ⟨3, none⟩,
         ⟨2, some .raising⟩, ⟨1, some .raising⟩, ⟨0, none⟩],
-      ¬ IsContiguous (MorphosyntacticWord.hosts out).get := by
+      ¬ HMC.Holds (MorphosyntacticWord.hosts out) := by
   decide
 
 /-! ### Verb placement -/
