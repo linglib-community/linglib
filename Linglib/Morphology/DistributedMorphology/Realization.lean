@@ -27,11 +27,6 @@ each cell.
 * `DistributedMorphology.toRealization_isSuppletive_iff`: an index is suppletive exactly when two
   of its contexts select items with distinct exponents.
 
-## TODO
-
-* A Vocabulary Item has the fields of a `SubsetRule` whose features are positioned; state the map
-  between them.
-
 ## References
 
 * [halle-marantz-1993]
