@@ -95,8 +95,8 @@ theorem isStrongest_maximizeStrength {φ : ProjectivitySignature} {C : Set W →
   intro r hr
   cases hpol : φ.sign <;> rw [hpol] at hr <;>
     simp only [maximizeStrength, Option.mem_def, Option.some.injEq, reduceCtorEq] at hr
-  · exact hr ▸ isStrongest_inclusive p q (hφ.antitone hpol)
-  · exact hr ▸ isStrongest_exclusive p q (hφ.monotone hpol)
+  · exact hr ▸ isStrongest_inclusive p q (hφ.antitone_of_sign_eq_neg_one hpol)
+  · exact hr ▸ isStrongest_exclusive p q (hφ.monotone_of_sign_eq_one hpol)
 
 end MaximizeStrength
 

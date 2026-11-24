@@ -170,16 +170,6 @@ theorem soundFor_anti_iff {f : α → β} :
     | reverse => exact h hR
     | negation | alternation | cover | independent => trivial
 
-theorem SoundFor.monotone {σ : ProjectivitySignature} {f : α → β} (h : σ.SoundFor f)
-    (hσ : σ.sign = 1) : Monotone f := by
-  intro x y hxy
-  cases σ <;> first | exact h .forward x y hxy | exact absurd hσ (by decide)
-
-theorem SoundFor.antitone {σ : ProjectivitySignature} {f : α → β} (h : σ.SoundFor f)
-    (hσ : σ.sign = -1) : Antitone f := by
-  intro x y hxy
-  cases σ <;> first | exact h .forward x y hxy | exact absurd hσ (by decide)
-
 /-- The `.additive` row is sound exactly for the monotone functions sending codisjoint pairs to
 codisjoint pairs. -/
 theorem soundFor_additive_iff {f : α → β} :

@@ -89,13 +89,8 @@ abbrev World := Bool × Finset (Fin 2)
 function of the meaning of the indefinite. -/
 def did (Q : Quantifier (Fin 2)) : Set World := {w | Q w.2}
 
-theorem holdsFor_did : ProjectivitySignature.HoldsFor .addMult did := by
-  intro r hr
-  simp only [ProjectivitySignature.properties, Finset.mem_insert, Finset.mem_singleton] at hr
-  rcases hr with rfl | rfl | rfl
-  · exact fun _ _ h _ hw ↦ h _ hw
-  · exact ⟨fun _ _ ↦ rfl, rfl⟩
-  · exact ⟨fun _ _ ↦ rfl, rfl⟩
+theorem holdsFor_did : ProjectivitySignature.HoldsFor .addMult did :=
+  ProjectivitySignature.holdsFor_addMult_iff.2 ⟨⟨fun _ _ ↦ rfl, rfl⟩, fun _ _ ↦ rfl, rfl⟩
 
 @[simp]
 theorem did_bot : did ⊥ = ∅ :=
@@ -388,9 +383,7 @@ theorem antitone_notConn_disj : Antitone fun Q ↦ (notConn disj Q).strong := fu
 -- (50e), (56d)
 /-- *John didn't drink wine and something*: the strengthened polarity phrase and TP. -/
 noncomputable def notAnd : Path (Quantifier (Fin 2)) (Set World) :=
-  ⟨⟨fun Q ↦ (notConn conj Q).strong, .all,
-    fun _ h ↦ absurd h (by simp [ProjectivitySignature.properties])⟩,
-    [1]⟩
+  ⟨⟨fun Q ↦ (notConn conj Q).strong, .all, ProjectivitySignature.holdsFor_all _⟩, [1]⟩
 
 -- (51b), (56e)
 /-- *John didn't drink wine or something*: the strengthened polarity phrase and TP. -/
@@ -402,7 +395,8 @@ noncomputable def notOr : Path (Quantifier (Fin 2)) (Set World) :=
 theorem not_holds_notAnd {t : List (ProjectivitySignature.classPairs (Set World))}
     (ht : t ∈ notAnd.layers.tails) {s : Negation.Strength} :
     ¬(Licenser.ofOperator (notAnd.environment t)).Holds s.toProjectivitySignature := fun hh ↦ by
-  have ha := ProjectivitySignature.holdsFor_anti_iff.1 ((hh ⟨⟩).of_le (by cases s <;> decide))
+  have ha := ProjectivitySignature.holdsFor_anti_iff.1
+    ((hh ⟨⟩).of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
   simp [notAnd] at ht
   rcases ht with rfl | rfl <;> exact not_antitone_notConn_conj (by simpa [notAnd,
     Function.End.one_def] using ha)

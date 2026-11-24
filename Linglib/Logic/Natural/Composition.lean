@@ -59,7 +59,7 @@ theorem ProjectivitySignature.holdsFor_list_prod {l : List (Function.End α × P
 omit [Lattice α] [BoundedOrder α] in
 theorem ProjectivitySignature.sign_list_prod (l : List (Function.End α × ProjectivitySignature)) :
     l.prod.2.sign = (l.map fun p ↦ p.2.sign).prod :=
-  map_list_prod (ProjectivitySignature.signHom.comp (MonoidHom.snd _ _)) l
+  map_list_prod (ProjectivitySignature.signHom.toMonoidHom.comp (MonoidHom.snd _ _)) l
 
 theorem ProjectivitySignature.monotone_list_prod {l : List (Function.End α × ProjectivitySignature)}
     (h : ∀ p ∈ l, p.2.HoldsFor p.1) (hs : (l.map fun p ↦ p.2.sign).prod = 1) :

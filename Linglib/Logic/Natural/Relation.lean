@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Negation.Polarity
-public import Mathlib.Algebra.Group.Defs
+public import Mathlib.Algebra.GroupWithZero.Defs
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Hom.BoundedLattice
 public import Mathlib.Data.Fintype.Basic
@@ -141,6 +141,16 @@ instance : OrderTop Relation where
   top := .independent
   le_top _ := le_iff.mpr (Finset.empty_subset _)
 
+/-- The constraints a relation asserts, as an order embedding into the sets of constraints under
+reverse inclusion. -/
+def constraintsOrderEmbedding : Relation ↪o (Finset Atom)ᵒᵈ where
+  toFun R := OrderDual.toDual R.constraints
+  inj' := OrderDual.toDual.injective.comp constraints_injective
+  map_rel_iff' := Iff.rfl
+
+@[simp] theorem constraintsOrderEmbedding_apply (R : Relation) :
+    constraintsOrderEmbedding R = OrderDual.toDual R.constraints := rfl
+
 namespace Atom
 
 /-- The polarity of the first argument when a constraint between elements of a Boolean lattice is
@@ -213,22 +223,27 @@ theorem mem_constraints_mul {R S : Relation} {c : Atom} :
   revert R S c
   decide
 
-/-- The relations form a monoid under ⋈ with identity `≡`. The identity and absorption laws are
-printed in [icard-2012] (p. 710); associativity, printed in neither [icard-2012] nor
-[maccartney-manning-2009], is that of the atom rule. The monoid is not commutative, since `^ ⋈ ⌣ =
-⊑` but `⌣ ⋈ ^ = ⊒`. -/
-instance : Monoid Relation where
-  mul_assoc R S T := constraints_injective <| Finset.ext fun _ ↦ by
-    simp only [mem_constraints_mul]
-    exact exists_bind_comm Atom.join_assoc
-  one_mul r := by cases r <;> rfl
-  mul_one r := by cases r <;> rfl
-
 /-- `#` absorbs on the left ([icard-2012] p. 710). -/
 @[simp] theorem top_mul (r : Relation) : ⊤ * r = ⊤ := by cases r <;> rfl
 
 /-- `#` absorbs on the right ([icard-2012] p. 710). -/
 @[simp] theorem mul_top (r : Relation) : r * ⊤ = ⊤ := by cases r <;> rfl
+
+/-- The relations form a monoid under ⋈ with identity `≡` and zero `#`. The identity and
+absorption laws are printed in [icard-2012] (p. 710); associativity, printed in neither
+[icard-2012] nor [maccartney-manning-2009], is that of the atom rule. The monoid is not
+commutative, since `^ ⋈ ⌣ = ⊑` but `⌣ ⋈ ^ = ⊒`. -/
+instance : MonoidWithZero Relation where
+  mul_assoc R S T := constraints_injective <| Finset.ext fun _ ↦ by
+    simp only [mem_constraints_mul]
+    exact exists_bind_comm Atom.join_assoc
+  one_mul r := by cases r <;> rfl
+  mul_one r := by cases r <;> rfl
+  zero := ⊤
+  zero_mul := top_mul
+  mul_zero := mul_top
+
+@[simp] theorem zero_eq_top : (0 : Relation) = ⊤ := rfl
 
 /-- The converse of a relation, holding of `x` and `y` when the relation holds of `y` and `x`
 (`Relation.holds_converse`): `⊑` and `⊒` exchange, and the other five are symmetric. -/
