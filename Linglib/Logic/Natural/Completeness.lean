@@ -117,15 +117,12 @@ variable (α) in
 /-- The incidence of the atomic constraints on pairs of elements of a bounded lattice. -/
 abbrev Atom.incidence : Atom → α × α → Prop := fun a p ↦ p ∈ a.toSetRel α
 
-/-- The pairs a relation holds of are the polar of its constraints. -/
 theorem toSetRel_eq_upperPolar (R : Relation) :
     R.toSetRel α = upperPolar (Atom.incidence α) ↑R.constraints :=
   Set.ext fun ⟨_, _⟩ ↦ holds_iff
 
 variable [Nontrivial α]
 
-/-- The constraints of a relation are the polar of the pairs it holds of: a relation asserts every
-constraint it guarantees. -/
 theorem coe_constraints_eq_lowerPolar (R : Relation) :
     (↑R.constraints : Set Atom) = lowerPolar (Atom.incidence α) (R.toSetRel α) := by
   refine Set.ext fun a ↦ ⟨fun ha ⟨_, _⟩ hp ↦ holds_iff.1 hp a ha, fun h ↦ ?_⟩
@@ -147,7 +144,6 @@ def toConcept (R : Relation) : Concept Atom (α × α) (Atom.incidence α) where
   upperPolar_extent := (toSetRel_eq_upperPolar R).symm
   lowerPolar_intent := (coe_constraints_eq_lowerPolar R).symm
 
-/-- A stronger relation is a larger concept. -/
 theorem toConcept_le_toConcept_iff {R S : Relation} : S.toConcept α ≤ R.toConcept α ↔ R ≤ S := by
   rw [← Concept.extent_subset_extent_iff, extent_toConcept, extent_toConcept,
     Finset.coe_subset, le_iff]
@@ -161,8 +157,6 @@ theorem le_iff_forall_holds {R S : Relation} :
 
 end Lattice
 
-/-- The constraints of the join are the polar of the pairs that `R` followed by `S` relates, in
-every nontrivial bounded distributive lattice. -/
 theorem coe_constraints_mul [DistribLattice α] [BoundedOrder α] [Nontrivial α] (R S : Relation) :
     (↑(R * S).constraints : Set Atom) =
       lowerPolar (Atom.incidence α) (R.toSetRel α ○ S.toSetRel α) := by
@@ -226,8 +220,6 @@ theorem isLeast_join_Ioo (R S : Relation) :
 
 /-! ### Relations as partial bijections of the polarities -/
 
-/-- The constraints of a relation are a partial bijection of the polarities: no two of them take
-the first argument with the same polarity, nor the second. -/
 theorem injOn_src_constraints (R : Relation) : Set.InjOn Atom.src R.constraints := by
   have : ∀ R : Relation, ∀ a ∈ R.constraints, ∀ b ∈ R.constraints, a.src = b.src → a = b := by
     decide
@@ -238,8 +230,6 @@ theorem injOn_tgt_constraints (R : Relation) : Set.InjOn Atom.tgt R.constraints 
     decide
   exact fun a ha b hb ↦ this R a ha b hb
 
-/-- The seven relations are the partial bijections of the two polarities: a set of constraints is
-a relation's exactly when no two of its members agree on the polarity of either argument. -/
 theorem mem_range_constraints_iff_injOn {s : Finset Atom} :
     s ∈ Set.range constraints ↔ Set.InjOn Atom.src s ∧ Set.InjOn Atom.tgt s := by
   have : ∀ s : Finset Atom, (∃ R : Relation, R.constraints = s) ↔
@@ -307,7 +297,6 @@ theorem toSetRel_mul (R S : Relation) :
       rw [compl_le_iff_compl_le]
       exact le_sup_of_le_right (by simpa [u, hbs] using Finset.le_sup (f := u) hb)
 
-/-- The identity of the join holds of equal elements. -/
 theorem toSetRel_one : (1 : Relation).toSetRel α = SetRel.id := rfl
 
 end BooleanAlgebra
@@ -318,9 +307,6 @@ section Lattice
 
 variable [Lattice α] [BoundedOrder α]
 
-/-- The constraints that hold of `x` and `y` take `x` with different polarities exactly when `x`
-is neither `⊥` nor `⊤`: at `⊥` both `x ≤ y` and disjointness hold, at `⊤` both `y ≤ x` and
-codisjointness. -/
 theorem injOn_src_setOf_holds_iff {x y : α} :
     Set.InjOn Atom.src {a | a.Holds x y} ↔ x ∈ Set.Ioo ⊥ ⊤ := by
   refine ⟨fun h ↦ ⟨bot_lt_iff_ne_bot.2 ?_, lt_top_iff_ne_top.2 ?_⟩, fun ⟨h0, h1⟩ a ha b hb hab ↦ ?_⟩
@@ -340,8 +326,6 @@ theorem injOn_src_setOf_holds_iff {x y : α} :
       | exact (h1.ne (Codisjoint.eq_top_of_le hb ha)).elim
       | exact (h1.ne (Codisjoint.eq_top_of_le ha hb)).elim
 
-/-- The constraints that hold of `x` and `y` take `y` with different polarities exactly when `y`
-is neither `⊥` nor `⊤`. -/
 theorem injOn_tgt_setOf_holds_iff {x y : α} :
     Set.InjOn Atom.tgt {a | a.Holds x y} ↔ y ∈ Set.Ioo ⊥ ⊤ := by
   refine ⟨fun h ↦ ⟨bot_lt_iff_ne_bot.2 ?_, lt_top_iff_ne_top.2 ?_⟩, fun ⟨h0, h1⟩ a ha b hb hab ↦ ?_⟩
@@ -361,8 +345,6 @@ theorem injOn_tgt_setOf_holds_iff {x y : α} :
       | exact (h1.ne (Codisjoint.eq_top_of_ge hb ha)).elim
       | exact (h1.ne (Codisjoint.eq_top_of_ge ha hb)).elim
 
-/-- Constraints that two elements other than `⊥` and `⊤` satisfy together are among those of a
-single relation. -/
 theorem mem_range_constraints_of_holds {s : Finset Atom} {x y : α}
     (h : ∀ a ∈ s, a.Holds x y) (hx : x ∈ Set.Ioo ⊥ ⊤) (hy : y ∈ Set.Ioo ⊥ ⊤) :
     s ∈ Set.range constraints :=
@@ -399,8 +381,6 @@ section BooleanAlgebra
 
 variable [BooleanAlgebra α]
 
-/-- In a Boolean algebra with an element other than `⊥` and `⊤`, every relation holds of two such
-elements: the element and itself, or the element and its complement. -/
 theorem exists_mem_Ioo_holds (h : (Set.Ioo (⊥ : α) ⊤).Nonempty) (R : Relation) :
     ∃ x ∈ Set.Ioo (⊥ : α) ⊤, ∃ y ∈ Set.Ioo (⊥ : α) ⊤, R.Holds x y := by
   obtain ⟨z, hz⟩ := h
@@ -444,7 +424,6 @@ section Lattice
 
 variable [Lattice α] [BoundedOrder α] [Lattice β] [BoundedOrder β] [Lattice γ] [BoundedOrder γ]
 
-/-- A morphism after a function with a property has the property. -/
 theorem Property.HoldsFor.addMult_comp {p : Property} {f : β → γ} {g : α → β}
     (hf : ProjectivitySignature.HoldsFor .addMult f) (hg : p.HoldsFor g) : p.HoldsFor (f ∘ g) := by
   cases p <;> first
@@ -452,7 +431,6 @@ theorem Property.HoldsFor.addMult_comp {p : Property} {f : β → γ} {g : α �
     | exact Property.HoldsFor.compose (by rfl) (hf .additive (by decide)) hg
     | exact Property.HoldsFor.compose (by rfl) (hf .multiplicative (by decide)) hg
 
-/-- A function with a property after a morphism has the property. -/
 theorem Property.HoldsFor.comp_addMult {p : Property} {f : β → γ} {g : α → β}
     (hf : p.HoldsFor f) (hg : ProjectivitySignature.HoldsFor .addMult g) : p.HoldsFor (f ∘ g) := by
   cases p <;> first
@@ -460,12 +438,10 @@ theorem Property.HoldsFor.comp_addMult {p : Property} {f : β → γ} {g : α �
     | exact Property.HoldsFor.compose (by rfl) hf (hg .additive (by decide))
     | exact Property.HoldsFor.compose (by rfl) hf (hg .multiplicative (by decide))
 
-/-- A morphism after a σ-function is a σ-function. -/
 theorem HoldsFor.addMult_comp {σ : ProjectivitySignature} {f : β → γ} {g : α → β}
     (hf : HoldsFor .addMult f) (hg : σ.HoldsFor g) : σ.HoldsFor (f ∘ g) :=
   fun p hp ↦ Property.HoldsFor.addMult_comp hf (hg p hp)
 
-/-- A σ-function after a morphism is a σ-function. -/
 theorem HoldsFor.comp_addMult {σ : ProjectivitySignature} {f : β → γ} {g : α → β}
     (hf : σ.HoldsFor f) (hg : HoldsFor .addMult g) : σ.HoldsFor (f ∘ g) :=
   fun p hp ↦ (hf p hp).comp_addMult hg
@@ -474,7 +450,6 @@ variable (α β) in
 /-- The incidence of the properties on functions between bounded lattices. -/
 abbrev Property.incidence : Property → (α → β) → Prop := fun p f ↦ p.HoldsFor f
 
-/-- The function class of a signature is the polar of its properties. -/
 theorem setOf_holdsFor_eq_upperPolar (σ : ProjectivitySignature) :
     {f : α → β | σ.HoldsFor f} = upperPolar (Property.incidence α β) ↑σ.properties :=
   rfl
@@ -486,8 +461,6 @@ section DistribLattice
 variable [DistribLattice α] [BoundedOrder α] [Nontrivial α]
 
 omit [Nontrivial α] in
-/-- A function on `Bool`, carried between two lattices along a homomorphism onto `Bool` and the
-homomorphism from it, has the properties it has on `Bool`. -/
 theorem Property.holdsFor_ofBool_comp_comp_iff [DistribLattice β] [BoundedOrder β] [Nontrivial β]
     (π : BoundedLatticeHom α Bool) {p : Property} {f : Bool → Bool} :
     p.HoldsFor ((ofBool : BoundedLatticeHom Bool β) ∘ f ∘ π) ↔ p.HoldsFor f := by
@@ -502,9 +475,6 @@ theorem Property.holdsFor_ofBool_comp_comp_iff [DistribLattice β] [BoundedOrder
   funext b
   simp
 
-/-- The constraints of a projection are the polar of the pairs of values that σ-functions give
-`R`-related arguments, for functions from a nontrivial bounded distributive lattice to a
-nontrivial bounded lattice. -/
 theorem coe_constraints_project [Lattice β] [BoundedOrder β] [Nontrivial β] (R : Relation)
     (σ : ProjectivitySignature) :
     (↑(project R σ).constraints : Set Relation.Atom) = lowerPolar (Relation.Atom.incidence β)
@@ -540,8 +510,6 @@ theorem isLeast_project [Lattice β] [BoundedOrder β] [Nontrivial β] (R : Rela
 
 variable [DistribLattice β] [BoundedOrder β] [Nontrivial β]
 
-/-- The properties of a signature are the polar of its function class, between nontrivial bounded
-distributive lattices: a signature asserts every property its functions share. -/
 theorem coe_properties_eq_lowerPolar (σ : ProjectivitySignature) :
     (↑σ.properties : Set Property) =
       lowerPolar (Property.incidence α β) {f | σ.HoldsFor f} := by
@@ -565,7 +533,6 @@ def toConcept (σ : ProjectivitySignature) : Concept Property (α → β) (Prope
   upperPolar_extent := (setOf_holdsFor_eq_upperPolar σ).symm
   lowerPolar_intent := (coe_properties_eq_lowerPolar σ).symm
 
-/-- A more specific signature is a larger concept. -/
 theorem toConcept_le_toConcept_iff {σ τ : ProjectivitySignature} :
     τ.toConcept α β ≤ σ.toConcept α β ↔ σ ≤ τ := by
   rw [← Concept.extent_subset_extent_iff, extent_toConcept, extent_toConcept,
@@ -580,8 +547,6 @@ theorem le_iff_forall_holdsFor {σ τ : ProjectivitySignature} :
 
 variable [DistribLattice γ] [BoundedOrder γ] [Nontrivial γ]
 
-/-- The properties of a composite signature are the polar of the composites of a ψ-function after a
-φ-function, between nontrivial bounded distributive lattices. -/
 theorem coe_properties_mul (ψ φ : ProjectivitySignature) :
     (↑(ψ * φ).properties : Set Property) = lowerPolar (Property.incidence α γ)
       {h | ∃ (f : β → γ) (g : α → β), ψ.HoldsFor f ∧ φ.HoldsFor g ∧ h = f ∘ g} := by

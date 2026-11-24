@@ -151,7 +151,6 @@ def Atom.toRelation : Atom → Relation
 
 @[simp] theorem constraints_toRelation : ∀ a : Atom, a.toRelation.constraints = {a} := by decide
 
-/-- A relation asserts the primitive relations it entails. -/
 theorem mem_constraints_iff_le {R : Relation} {a : Atom} :
     a ∈ R.constraints ↔ R ≤ a.toRelation := by
   rw [le_iff, constraints_toRelation, Finset.singleton_subset_iff]
@@ -213,7 +212,6 @@ def dual (a : Atom) : Atom := ofPolarities (.negative * a.src) (.negative * a.tg
 
 end Atom
 
-/-- The atom rule is associative. -/
 theorem Atom.join_assoc :
     ∀ a b c : Atom, (a.join b).bind (·.join c) = (b.join c).bind (a.join ·) := by
   decide
@@ -231,10 +229,8 @@ theorem mem_constraints_mul {R S : Relation} {c : Atom} :
   revert R S c
   decide
 
-/-- `#` absorbs on the left ([icard-2012] p. 710). -/
 @[simp] theorem top_mul (r : Relation) : ⊤ * r = ⊤ := by cases r <;> rfl
 
-/-- `#` absorbs on the right ([icard-2012] p. 710). -/
 @[simp] theorem mul_top (r : Relation) : r * ⊤ = ⊤ := by cases r <;> rfl
 
 /-- The relations form a monoid with zero under the join ([icard-2012] p. 710), with identity `≡`
@@ -293,8 +289,6 @@ theorem Relation.holds_iff {α : Type*} [Lattice α] [BoundedOrder α]
     simp [Relation.Holds, Relation.Atom.Holds, Relation.constraints,
       isCompl_iff, le_antisymm_iff]
 
-/-- In a Boolean algebra a constraint is an inequality between its arguments taken with its two
-polarities. -/
 theorem Relation.Atom.holds_iff_complHom_le {α : Type*} [BooleanAlgebra α] {a : Relation.Atom}
     {x y : α} : a.Holds x y ↔ Polarity.complHom a.src x ≤ Polarity.complHom a.tgt y := by
   cases a
@@ -336,7 +330,6 @@ theorem Relation.holds_converse {α : Type*} [Lattice α] [BoundedOrder α] {R :
   | alternation => exact disjoint_comm
   | cover => exact codisjoint_comm
 
-/-- A constraint holds in the order dual exactly when its dual holds. -/
 theorem Relation.Atom.holds_toDual {α : Type*} [Lattice α] [BoundedOrder α] {a : Relation.Atom}
     {x y : α} : a.Holds (OrderDual.toDual x) (OrderDual.toDual y) ↔ a.dual.Holds x y := by
   cases a
@@ -345,7 +338,6 @@ theorem Relation.Atom.holds_toDual {α : Type*} [Lattice α] [BoundedOrder α] {
   · exact disjoint_toDual_iff
   · exact codisjoint_toDual_iff
 
-/-- The converse reverses the join. -/
 theorem Relation.converse_mul : ∀ R S : Relation, (R * S).converse = S.converse * R.converse := by
   decide
 

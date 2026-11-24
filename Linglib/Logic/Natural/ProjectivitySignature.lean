@@ -181,7 +181,6 @@ def Property.compose : Property → Property → Option Property
       some .antiMultiplicative
   | _, _ => none
 
-/-- The property rule for composition is associative. -/
 theorem Property.compose_assoc : ∀ p q r : Property,
     (p.compose q).bind (·.compose r) = (q.compose r).bind (p.compose ·) := by
   decide
@@ -202,10 +201,8 @@ theorem mem_properties_mul {ψ φ : ProjectivitySignature} {r : Property} :
   revert ψ φ r
   decide
 
-/-- `•` absorbs on the left ([icard-2012] p. 716). -/
 @[simp] theorem top_mul (σ : ProjectivitySignature) : ⊤ * σ = ⊤ := by cases σ <;> rfl
 
-/-- `•` absorbs on the right ([icard-2012] p. 716). -/
 @[simp] theorem mul_top (σ : ProjectivitySignature) : σ * ⊤ = ⊤ := by cases σ <;> rfl
 
 /-- The signatures form a monoid with zero under composition ([icard-2012] Lemma 2.7), with identity
@@ -242,15 +239,12 @@ monotone, `-1` if it is antitone, and `0` otherwise, as for a non-monotone conte
 def sign (φ : ProjectivitySignature) : SignType :=
   if .monotone ∈ φ.properties then 1 else if .antitone ∈ φ.properties then -1 else 0
 
-/-- The signatures of positive sign are those refining `+`. -/
 theorem sign_eq_one_iff {φ : ProjectivitySignature} : φ.sign = 1 ↔ φ ≤ mono := by
   revert φ; decide
 
-/-- The signatures of negative sign are those refining `−`. -/
 theorem sign_eq_neg_one_iff {φ : ProjectivitySignature} : φ.sign = -1 ↔ φ ≤ anti := by
   revert φ; decide
 
-/-- Only `•` has no direction. -/
 @[simp] theorem sign_eq_zero_iff {φ : ProjectivitySignature} : φ.sign = 0 ↔ φ = ⊤ := by
   revert φ; decide
 
@@ -291,7 +285,6 @@ def ofPolarity : Polarity →* ProjectivitySignature := Polarity.lift ⟨.antiAd
 @[simp] theorem sign_ofPolarity (p : Polarity) : (ofPolarity p).sign = p := by
   cases p <;> decide
 
-/-- Only `⊕` and `⊖` are invertible, each its own inverse ([icard-2012] p. 716). -/
 theorem isUnit_iff {σ : ProjectivitySignature} : IsUnit σ ↔ σ ∈ Set.range ofPolarity := by
   rw [isUnit_iff_exists, Set.mem_range]
   revert σ
@@ -389,17 +382,14 @@ theorem holdsFor_antiAddMult_iff {f : α → β} :
 
 /-! #### Homomorphisms -/
 
-/-- A homomorphism of join-semilattices with top is additive. -/
 theorem holdsFor_additive_of_supHomClass {F : Type*} [FunLike F α β] [SupHomClass F α β]
     [TopHomClass F α β] (f : F) : HoldsFor .additive f :=
   holdsFor_additive_iff.2 ⟨map_sup f, map_top f⟩
 
-/-- A homomorphism of meet-semilattices with bottom is multiplicative. -/
 theorem holdsFor_mult_of_infHomClass {F : Type*} [FunLike F α β] [InfHomClass F α β]
     [BotHomClass F α β] (f : F) : HoldsFor .mult f :=
   holdsFor_mult_iff.2 ⟨map_inf f, map_bot f⟩
 
-/-- A bounded lattice homomorphism is a morphism. -/
 theorem holdsFor_addMult_of_boundedLatticeHomClass {F : Type*} [FunLike F α β]
     [BoundedLatticeHomClass F α β] (f : F) : HoldsFor .addMult f :=
   holdsFor_addMult_iff.2 ⟨⟨map_sup f, map_top f⟩, map_inf f, map_bot f⟩
@@ -423,11 +413,9 @@ theorem holdsFor_antiAddMult_compl {γ : Type*} [BooleanAlgebra γ] :
   holdsFor_antiAddMult_iff.2
     ⟨⟨isAntiAdditive_compl, compl_top⟩, isAntiMultiplicative_compl, compl_bot⟩
 
-/-- Passing to the order dual is an anti-morphism. -/
 theorem holdsFor_antiAddMult_toDual : HoldsFor .antiAddMult (OrderDual.toDual : α → αᵒᵈ) :=
   holdsFor_antiAddMult_iff.2 ⟨⟨fun _ _ ↦ rfl, rfl⟩, fun _ _ ↦ rfl, rfl⟩
 
-/-- Returning from the order dual is an anti-morphism. -/
 theorem holdsFor_antiAddMult_ofDual : HoldsFor .antiAddMult (OrderDual.ofDual : αᵒᵈ → α) :=
   holdsFor_antiAddMult_iff.2 ⟨⟨fun _ _ ↦ rfl, rfl⟩, fun _ _ ↦ rfl, rfl⟩
 
@@ -505,17 +493,14 @@ theorem holdsFor_comp_ofDual_iff {f : α → β} :
     σ.HoldsFor (f ∘ OrderDual.ofDual) ↔ (σ * antiAddMult).HoldsFor f :=
   holdsFor_comp_right_iff rfl holdsFor_antiAddMult_ofDual holdsFor_antiAddMult_toDual fun _ ↦ rfl
 
-/-- A bounded lattice homomorphism into the order dual is an anti-morphism. -/
 theorem holdsFor_antiAddMult_of_boundedLatticeHomClass {F : Type*} [FunLike F α βᵒᵈ]
     [BoundedLatticeHomClass F α βᵒᵈ] (f : F) : HoldsFor .antiAddMult (OrderDual.ofDual ∘ f) :=
   holdsFor_ofDual_comp_iff.2 (holdsFor_addMult_of_boundedLatticeHomClass f)
 
-/-- A map after complementation is a σ-function exactly when the map is a `σ * ⊖`-function. -/
 theorem holdsFor_comp_compl_iff {γ : Type*} [BooleanAlgebra γ] {g : γ → β} :
     σ.HoldsFor (g ∘ compl) ↔ (σ * .antiAddMult).HoldsFor g :=
   holdsFor_comp_right_iff rfl holdsFor_antiAddMult_compl holdsFor_antiAddMult_compl compl_compl
 
-/-- Complementation after a map is a σ-function exactly when the map is a `⊖ * σ`-function. -/
 theorem holdsFor_compl_comp_iff {γ : Type*} [BooleanAlgebra γ] {f : α → γ} :
     σ.HoldsFor (compl ∘ f) ↔ (antiAddMult * σ).HoldsFor f :=
   holdsFor_comp_left_iff rfl holdsFor_antiAddMult_compl holdsFor_antiAddMult_compl compl_compl
@@ -524,12 +509,10 @@ end Dual
 
 /-! #### Signs -/
 
-/-- A function in the class of a signature of positive sign is monotone. -/
 theorem HoldsFor.monotone_of_sign_eq_one {σ : ProjectivitySignature} {f : α → β}
     (h : σ.HoldsFor f) (hs : σ.sign = 1) : Monotone f :=
   holdsFor_mono_iff.1 (h.of_le (sign_eq_one_iff.1 hs))
 
-/-- A function in the class of a signature of negative sign is antitone. -/
 theorem HoldsFor.antitone_of_sign_eq_neg_one {σ : ProjectivitySignature} {f : α → β}
     (h : σ.HoldsFor f) (hs : σ.sign = -1) : Antitone f :=
   holdsFor_anti_iff.1 (h.of_le (sign_eq_neg_one_iff.1 hs))
@@ -569,15 +552,12 @@ theorem holdsFor_antiMult_sup {f g : α → β} (hf : HoldsFor .antiMult f)
 theorem holdsFor_additive_top : HoldsFor .additive (⊤ : α → β) :=
   holdsFor_additive_iff.2 ⟨fun _ _ ↦ (sup_idem _).symm, rfl⟩
 
-/-- The constant `⊥` is multiplicative. -/
 theorem holdsFor_mult_bot : HoldsFor .mult (⊥ : α → β) :=
   holdsFor_mult_iff.2 ⟨fun _ _ ↦ (inf_idem _).symm, rfl⟩
 
-/-- The constant `⊥` is anti-additive. -/
 theorem holdsFor_antiAdd_bot : HoldsFor .antiAdd (⊥ : α → β) :=
   holdsFor_antiAdd_iff.2 ⟨fun _ _ ↦ (inf_idem _).symm, rfl⟩
 
-/-- The constant `⊤` is anti-multiplicative. -/
 theorem holdsFor_antiMult_top : HoldsFor .antiMult (⊤ : α → β) :=
   holdsFor_antiMult_iff.2 ⟨fun _ _ ↦ (sup_idem _).symm, rfl⟩
 

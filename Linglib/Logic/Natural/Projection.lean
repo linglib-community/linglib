@@ -65,8 +65,6 @@ def Property.project : Relation.Atom → Property → Option Relation.Atom
   | .disjoint, .antiMultiplicative => some .codisjoint
   | _, _ => none
 
-/-- Projecting through a composite property is projecting through the inner one and then the
-outer. -/
 theorem Property.compose_project : ∀ (p q : Property) (a : Relation.Atom),
     (p.compose q).bind (Property.project a ·) =
       (Property.project a q).bind (Property.project · p) := by
@@ -91,7 +89,6 @@ theorem mem_constraints_project {R : Relation} (hR : R ≠ .equiv) {σ : Project
   revert R σ b
   decide
 
-/-- Projection through a less specific signature gives a weaker relation. -/
 theorem project_mono (R : Relation) : Monotone (project R) := by
   intro σ τ h
   by_cases hR : R = .equiv
@@ -101,7 +98,6 @@ theorem project_mono (R : Relation) : Monotone (project R) := by
   obtain ⟨p, hp, a, ha, hab⟩ := (mem_constraints_project hR).1 hb
   exact (mem_constraints_project hR).2 ⟨p, le_iff.1 h hp, a, ha, hab⟩
 
-/-- Only `≡` projects to `≡`. -/
 @[simp] theorem project_eq_equiv_iff : ∀ {R : Relation} {σ : ProjectivitySignature},
     project R σ = .equiv ↔ R = .equiv := by
   decide
@@ -177,8 +173,6 @@ theorem soundFor_anti_iff {f : α → β} :
     | reverse => exact h hR
     | negation | alternation | cover | independent => trivial
 
-/-- The `.additive` row is sound exactly for the monotone functions sending codisjoint pairs to
-codisjoint pairs. -/
 theorem soundFor_additive_iff {f : α → β} :
     SoundFor .additive f ↔
       Monotone f ∧ ∀ ⦃x y⦄, Codisjoint x y → Codisjoint (f x) (f y) := by
@@ -238,8 +232,6 @@ theorem soundFor_addMult_iff {f : α → β} :
   | cover => exact hc hR
   | independent => trivial
 
-/-- The `.antiAddMult` row is sound exactly for the antitone functions exchanging disjointness
-and codisjointness. -/
 theorem soundFor_antiAddMult_iff {f : α → β} :
     SoundFor .antiAddMult f ↔ Antitone f ∧
       (∀ ⦃x y⦄, Disjoint x y → Codisjoint (f x) (f y)) ∧
@@ -300,12 +292,10 @@ theorem project_forward_of_sign_eq_neg_one {σ : ProjectivitySignature} (h : σ.
     project .forward σ = .reverse := by
   revert h; cases σ <;> decide
 
-/-- A function a signature of positive sign is sound for is monotone. -/
 theorem SoundFor.monotone_of_sign_eq_one {σ : ProjectivitySignature} {f : α → β}
     (hf : σ.SoundFor f) (h : σ.sign = 1) : Monotone f := fun x y hxy ↦ by
   simpa [project_forward_of_sign_eq_one h, Relation.Holds] using hf .forward x y hxy
 
-/-- A function a signature of negative sign is sound for is antitone. -/
 theorem SoundFor.antitone_of_sign_eq_neg_one {σ : ProjectivitySignature} {f : α → β}
     (hf : σ.SoundFor f) (h : σ.sign = -1) : Antitone f := fun x y hxy ↦ by
   simpa [project_forward_of_sign_eq_neg_one h, Relation.Holds] using hf .forward x y hxy
