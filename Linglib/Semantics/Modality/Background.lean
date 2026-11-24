@@ -107,18 +107,6 @@ end Background
 
 /-! ### The ordering -/
 
-/-- The preorder that an ordering source induces ranks `w` below `z` when every proposition of `A`
-true at `z` is true at `w`. It is the criteria-derived preorder with truth as satisfaction. -/
-abbrev premisePreorder (A : Set (Set W)) : Preorder W :=
-  Preorder.ofCriteria (· ∈ ·) A
-
-/-- `w ≤[A] z` says that `w` is at least as good as `z` under the ordering source `A`, verifying
-every premise of `A` that `z` verifies. -/
-notation:50 w " ≤[" A "] " z => @LE.le _ (@Preorder.toLE _ (premisePreorder A)) w z
-
-/-- `w <[A] z` says that `w` is strictly better than `z` under the ordering source `A`. -/
-notation:50 w " <[" A "] " z => @LT.lt _ (@Preorder.toLT _ (premisePreorder A)) w z
-
 section Accessible
 
 variable {g : Background W} {w b v : W}
@@ -135,11 +123,6 @@ theorem mem_accessibleWorlds_iff_le (hb : b ∈ g.accessibleWorlds w) :
     fun _ hr ↦ hvb _ hr (Background.mem_accessibleWorlds.1 hb _ hr)⟩
 
 end Accessible
-
-/-- Adding a premise to an ordering source meets its ordering with the ordering of that premise. -/
-theorem premisePreorder_insert (φ : Set W) (A : Set (Set W)) :
-    premisePreorder (insert φ A) = premisePreorder A ⊓ .ofCriterion (· ∈ φ) :=
-  Preorder.ofCriteria_insert _ φ A
 
 /-! ### Best worlds -/
 

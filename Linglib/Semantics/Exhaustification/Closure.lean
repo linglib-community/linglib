@@ -39,11 +39,11 @@ variable {World : Type*} (ALT : Set (Set World)) (φ : Set World)
 variable {ALT φ} in
 /-- Alternative sets that rank worlds alike have the same minimal worlds. -/
 theorem exhMW_congr {ALT' : Set (Set World)}
-    (h : Preorder.ofCriteria (· ∈ ·) ALT' = Preorder.ofCriteria (· ∈ ·) ALT) :
+    (h : premisePreorder ALT' = premisePreorder ALT) :
     exhMW ALT' φ = exhMW ALT φ := by
   ext u
   simp only [mem_exhMW, MinimalFor, ← Preorder.ofCriteria_le_iff_subset (· ∈ ·)]
-  rw [h]
+  rw [show Preorder.ofCriteria (· ∈ ·) ALT' = Preorder.ofCriteria (· ∈ ·) ALT from h]
 
 theorem exhMW_sUnion_image_powerset : exhMW (sUnion '' 𝒫 ALT) φ = exhMW ALT φ := by
   refine exhMW_congr (Preorder.ofCriteria_eq_of_subset

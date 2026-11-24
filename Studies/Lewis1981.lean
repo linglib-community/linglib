@@ -90,7 +90,7 @@ def premiseImp : Set W :=
 
 /-- In the ordering a premise frame induces at `i`, `j` is at least as close as `k` when every
 premise for `i` that holds at `k` holds at `j`. -/
-abbrev premiseOrder (i : W) : Preorder W := Preorder.ofCriteria (· ∈ ·) (H i)
+abbrev premiseOrder (i : W) : Preorder W := premisePreorder (H i)
 
 end Premise
 
