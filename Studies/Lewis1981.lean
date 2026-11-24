@@ -130,21 +130,30 @@ field is at least as close as some given world of it. -/
 def ofOrdering (S : W → Set W) (ord : W → Preorder W) (i : W) : Set (Set W) :=
   (fun k ↦ {j ∈ S i | (ord i).le j k}) '' S i
 
+variable {S : W → Set W} {ord : W → Preorder W} {i j k : W}
+
+-- §4: the field of the induced ordering frame is the given field
+theorem sUnion_ofOrdering : ⋃₀ ofOrdering S ord i = S i :=
+  Set.ext fun j ↦
+    ⟨fun ⟨_, ⟨_, _, hk⟩, hj⟩ ↦ (hk ▸ hj).1, fun hj ↦ ⟨_, ⟨j, hj, rfl⟩, hj, (ord i).le_refl j⟩⟩
+
+-- §4: on the field, the ordering the induced premise frame induces is the given ordering
+theorem premiseOrder_ofOrdering_le_iff (hk : k ∈ S i) :
+    (premiseOrder (ofOrdering S ord) i).le j k ↔ j ∈ S i ∧ (ord i).le j k :=
+  Preorder.ofLowerSets_le_iff_of_mem (r := fun j k ↦ j ∈ S i ∧ (ord i).le j k)
+    (by rintro _ ⟨m, -, rfl⟩ a b ⟨ha, hab⟩ ⟨-, hbm⟩; exact ⟨ha, (ord i).le_trans _ _ _ hab hbm⟩)
+    ⟨hk, (ord i).le_refl k⟩ ⟨k, hk, rfl⟩
+
 /-- Every ordering frame is induced by a premise frame, so the correspondence of §4 exhausts both
 classes of frames. -/
 theorem orderingImp_eq_premiseImp (S : W → Set W) (ord : W → Preorder W) :
     orderingImp S ord A C = premiseImp (ofOrdering S ord) A C := by
   rw [premiseImp_eq_orderingImp]
   ext i
-  have hS : ⋃₀ ofOrdering S ord i = S i := Set.ext fun j ↦
-    ⟨fun ⟨_, ⟨_, _, hk⟩, hj⟩ ↦ (hk ▸ hj).1, fun hj ↦ ⟨_, ⟨j, hj, rfl⟩, hj, (ord i).le_refl j⟩⟩
   have hle : ∀ j ∈ S i ∩ A, ∀ k ∈ S i ∩ A,
-      (ord i).le j k ↔ (premiseOrder (ofOrdering S ord) i).le j k := by
-    rintro j ⟨hj, -⟩ k ⟨hk, -⟩
-    refine ⟨fun hjk ↦ ?_, fun h ↦ (h _ ⟨k, hk, rfl⟩ ⟨hk, (ord i).le_refl k⟩).2⟩
-    rintro _ ⟨m, -, rfl⟩ ⟨-, hkm⟩
-    exact ⟨hj, (ord i).le_trans _ _ _ hjk hkm⟩
-  simp only [mem_orderingImp, hS, Preorder.minimals_congr hle]
+      (ord i).le j k ↔ (premiseOrder (ofOrdering S ord) i).le j k :=
+    fun j hj k hk ↦ ((premiseOrder_ofOrdering_le_iff hk.1).trans (and_iff_right hj.1)).symm
+  simp only [mem_orderingImp, sUnion_ofOrdering, Preorder.minimals_congr hle]
 
 /-! ### Surplus information (§4)
 

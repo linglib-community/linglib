@@ -187,20 +187,19 @@ theorem le_ofLowerSets_iff {p : Preorder α} : p ≤ ≤[A] ↔ A ⊆ p.lowerSet
 theorem subset_lowerSets_ofLowerSets (A : Set (Set α)) : A ⊆ (≤[A]).lowerSets :=
   le_ofLowerSets_iff.1 le_rfl
 
-/-- Let `r` be a reflexive relation. If every member of `A` is closed downward under `r` and
-every set `{a | r a b}` is a member, then the ordering of `A` is `r`. No transitivity is assumed:
-it follows. -/
-theorem ofLowerSets_le_iff_of_refl {r : α → α → Prop} (hr : ∀ a, r a a)
-    (hlow : ∀ s ∈ A, ∀ ⦃a b⦄, r a b → b ∈ s → a ∈ s) (hprin : ∀ b, {a | r a b} ∈ A) :
+/-- If every member of `A` is closed downward under a relation `r`, then at a point `b` related to
+itself, with `{a | r a b}` a member, the ordering of `A` is `r`. No transitivity is assumed. -/
+theorem ofLowerSets_le_iff_of_mem {r : α → α → Prop}
+    (hlow : ∀ s ∈ A, ∀ ⦃a b⦄, r a b → b ∈ s → a ∈ s) (hr : r b b) (hb : {a | r a b} ∈ A) :
     (a ≤[A] b) ↔ r a b :=
-  ⟨fun h ↦ h _ (hprin b) (hr b), fun h s hs hb ↦ hlow s hs h hb⟩
+  ⟨fun h ↦ h _ hb hr, fun h s hs ↦ hlow s hs h⟩
 
 /-- A family of lower sets of a preorder that contains every principal lower set induces that
 preorder. -/
 theorem ofLowerSets_eq_of_subset_lowerSets (p : Preorder α) (hlow : A ⊆ p.lowerSets)
     (hprin : ∀ b, {a | p.le a b} ∈ A) : ≤[A] = p :=
-  Preorder.ext fun _ _ ↦
-    ofLowerSets_le_iff_of_refl p.le_refl (fun _ hs _ _ h hb ↦ hlow hs h hb) hprin
+  Preorder.ext fun _ b ↦
+    ofLowerSets_le_iff_of_mem (fun _ hs _ _ h hb ↦ hlow hs h hb) (p.le_refl b) (hprin b)
 
 /-- Every preorder is the ordering its lower sets induce. -/
 @[simp] theorem ofLowerSets_lowerSets (p : Preorder α) : ≤[p.lowerSets] = p :=
