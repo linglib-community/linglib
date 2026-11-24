@@ -15,6 +15,7 @@ public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Tense.Since
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Quantification.Projectivity
 public import Linglib.Semantics.Reference.Indefinite
 public import Linglib.Semantics.Tense.RunTimes
 public import Mathlib.Basic.Rel
@@ -120,25 +121,6 @@ theorem exhaustified_eq_of_forall_le (h : ∀ Q' ∈ C, ∀ P, Q' A P → Q A �
     exhaustified Q C A = Q A :=
   funext fun P ↦ congrArg (P ∈ ·) (Exhaustification.exh_eq_self_iff.2
     (by rintro _ ⟨Q', hQ', rfl⟩ ⟨P, _, hP⟩; exact h Q' hQ' P hP))
-
-open NaturalLogic in
-/-- The scope of a universal over a nonempty restrictor is multiplicative. -/
-theorem holdsFor_mult_every (hA : A.Nonempty) : ProjectivitySignature.mult.HoldsFor (every A) := by
-  intro p hp
-  simp only [ProjectivitySignature.properties, Finset.mem_insert, Finset.mem_singleton] at hp
-  rcases hp with rfl | rfl
-  exacts [fun _ _ h hB ↦ hB.trans h,
-    ⟨fun _ _ ↦ propext Set.subset_inter_iff,
-      eq_false fun h ↦ hA.ne_empty (Set.subset_empty_iff.1 h)⟩]
-
-open NaturalLogic in
-/-- The scope of a universal over a restrictor with two members is not additive. -/
-theorem not_holdsFor_additive_every {a b : α} (ha : a ∈ A) (hb : b ∈ A) (hab : a ≠ b) :
-    ¬ ProjectivitySignature.additive.HoldsFor (every A) := fun h ↦ by
-  have := eq_iff_iff.1 ((h .additive (by decide)).1 {a}ᶜ {b}ᶜ)
-  refine (this.1 fun x _ ↦ ?_).elim (fun h ↦ h ha rfl) fun h ↦ h hb rfl
-  by_cases hx : x = a
-  exacts [.inr (hx ▸ hab), .inl hx]
 
 theorem exhaustified_no : exhaustified (no : Det α) {everyᶜ} = no := by
   funext A
@@ -441,12 +423,9 @@ necessity, and a meet are multiplicative and not additive, each of these license
 anti-additive and no stronger, except *doubt*, which is downward entailing and no stronger. -/
 
 private theorem holdsFor_mult_mem_core {W : Type} {R : SetRel W W} {w : W} (h : ∃ v, (w, v) ∈ R) :
-    ProjectivitySignature.mult.HoldsFor fun P ↦ w ∈ R.core P := by
-  intro p hp
-  simp only [ProjectivitySignature.properties, Finset.mem_insert, Finset.mem_singleton] at hp
-  rcases hp with rfl | rfl
-  exacts [fun _ _ hPQ hP ↦ SetRel.core_mono hPQ hP,
-    ⟨fun _ _ ↦ by simp [SetRel.core_inter], eq_false fun hw ↦ h.elim fun _ hv ↦ hw hv⟩]
+    ProjectivitySignature.mult.HoldsFor fun P ↦ w ∈ R.core P :=
+  ProjectivitySignature.holdsFor_mult_iff.2
+    ⟨fun _ _ ↦ by simp [SetRel.core_inter], eq_false fun hw ↦ h.elim fun _ hv ↦ hw hv⟩
 
 private theorem holdsFor_mono_mem_core {W : Type} {R : SetRel W W} {w : W} :
     ProjectivitySignature.mono.HoldsFor fun P ↦ w ∈ R.core P :=
@@ -457,19 +436,16 @@ private theorem not_holdsFor_additive_mem_core :
     ¬ ProjectivitySignature.additive.HoldsFor
       fun P ↦ true ∈ SetRel.core (.univ : SetRel Bool Bool) P :=
   fun h ↦ by
-    have := eq_iff_iff.1 ((h .additive (by decide)).1 {true} {false})
+    have := eq_iff_iff.1 ((ProjectivitySignature.holdsFor_additive_iff.1 h).1 {true} {false})
     simp only [SetRel.mem_core, Set.mem_union, Set.mem_singleton_iff,
       sup_Prop_eq] at this
     exact (this.1 fun b _ ↦ by cases b <;> simp).elim
       (fun h ↦ absurd (h (b := false) trivial) (by decide))
       fun h ↦ absurd (h (b := true) trivial) (by decide)
 
-private theorem holdsFor_mult_inf {ι : Type} (A : Set ι) :
-    ProjectivitySignature.mult.HoldsFor (A ⊓ ·) := by
-  intro p hp
-  simp only [ProjectivitySignature.properties, Finset.mem_insert, Finset.mem_singleton] at hp
-  rcases hp with rfl | rfl
-  exacts [fun _ _ h ↦ inf_le_inf_left A h, ⟨fun _ _ ↦ inf_inf_distrib_left _ _ _, inf_bot_eq A⟩]
+private theorem holdsFor_mult_inf_left {ι : Type} (A : Set ι) :
+    ProjectivitySignature.mult.HoldsFor (A ⊓ ·) :=
+  ProjectivitySignature.holdsFor_mult_iff.2 ⟨fun _ _ ↦ inf_inf_distrib_left _ _ _, inf_bot_eq A⟩
 
 open Licenser
 
@@ -536,9 +512,9 @@ theorem holds_noRestrictor_iff {s : Negation.Strength} :
 theorem holds_withoutClause_iff {s : Negation.Strength} :
     withoutClause.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
   Negation.Strength.forall_holdsFor_iff_le_antiAdditive (g := fun p : Predicate ↦ (p.A ⊓ ·))
-    (fun _ ↦ funext fun _ ↦ sdiff_eq) (fun p ↦ holdsFor_mult_inf p.A)
-    ⟨⟨Unit, ∅⟩, fun h ↦ Set.empty_ne_univ ((h .additive (by decide)).2.symm.trans
-      (Set.empty_inter _)).symm⟩
+    (fun _ ↦ funext fun _ ↦ sdiff_eq) (fun p ↦ holdsFor_mult_inf_left p.A)
+    ⟨⟨Unit, ∅⟩, fun h ↦ Set.empty_ne_univ
+      ((ProjectivitySignature.holdsFor_additive_iff.1 h).2.symm.trans (Set.empty_inter _)).symm⟩
 
 theorem holds_beforeClause_iff {s : Negation.Strength} :
     beforeClause.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive := by

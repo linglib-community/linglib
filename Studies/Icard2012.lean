@@ -2,6 +2,7 @@ module
 
 public import Linglib.Logic.Natural.Completeness
 public import Linglib.Semantics.Negation.Strength
+public import Linglib.Semantics.Quantification.Projectivity
 public import Linglib.Data.Examples.Icard2012
 
 /-!
@@ -349,6 +350,36 @@ def lexicon : Lexicon Const where
 
 /-- A constant as a term. -/
 def k (c : Const) : Term lexicon (lexicon.ty c) := .const c
+
+section Determiners
+
+open Quantifier.Det
+
+variable {α : Type*} {A B : Set α}
+
+-- The markings of the four determiners hold of their generalized-quantifier denotations, the
+-- first of the restrictor and the second of the scope, when the other argument is not trivial.
+example (hA : A.Nonempty) (hB : B ≠ Set.univ) :
+    ((lexicon.marks .every).headD .all).HoldsFor (every · B) ∧
+      ((lexicon.marks .every).tail.headD .all).HoldsFor (every A) :=
+  ⟨holdsFor_antiAdd_every_left hB, holdsFor_mult_every hA⟩
+
+example (hA : A.Nonempty) (hB : B.Nonempty) :
+    ((lexicon.marks .some).headD .all).HoldsFor (Quantifier.Det.some · B) ∧
+      ((lexicon.marks .some).tail.headD .all).HoldsFor (Quantifier.Det.some A) :=
+  ⟨holdsFor_additive_some_left hB, holdsFor_additive_some hA⟩
+
+example (hA : A.Nonempty) (hB : B.Nonempty) :
+    ((lexicon.marks .no).headD .all).HoldsFor (no · B) ∧
+      ((lexicon.marks .no).tail.headD .all).HoldsFor (no A) :=
+  ⟨holdsFor_antiAdd_no_left hB, holdsFor_antiAdd_no hA⟩
+
+example (hA : A.Nonempty) (hB : B ≠ Set.univ) :
+    ((lexicon.marks .notEvery).headD .all).HoldsFor (fun A ↦ ¬ every A B) ∧
+      ((lexicon.marks .notEvery).tail.headD .all).HoldsFor (fun B ↦ ¬ every A B) :=
+  ⟨holdsFor_additive_not_every_left hB, holdsFor_antiMult_not_every hA⟩
+
+end Determiners
 
 /-- The assumption set Γ of Section 3.2. -/
 inductive Assumption : ∀ {τ}, Term lexicon τ → Relation → Term lexicon τ → Prop
