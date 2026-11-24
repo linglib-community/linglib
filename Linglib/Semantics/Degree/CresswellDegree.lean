@@ -16,7 +16,8 @@ with `φ a b` read as *`a` exceeds `b`*. The trace of `φ` is the preorder in wh
 is at most the other, that is, when they stand in `φ` to the same things on both sides. The
 degrees of `φ` are the classes of indistinguishable things, the antisymmetrization of the trace,
 and so they are partially ordered whatever `φ` is. The comparison also induces a relation between
-degrees, `⟦a⟧ >[φ] ⟦b⟧` when `φ a b`.
+degrees, `⟦a⟧ >[φ] ⟦b⟧` when `φ a b`. The degrees are linearly ordered exactly when `φ` is Ferrers
+and semitransitive, which a semiorder is.
 
 When `φ` is a strict weak order the trace is *does not exceed*, the degrees are linearly ordered,
 the induced relation is their strict order, and being indistinguishable is being incomparable. A
@@ -46,6 +47,8 @@ order.
   same things on the left and on the right.
 * `le_cresswellSetoid_iff`: an equivalence relation refines indistinguishability exactly when
   the comparison respects it.
+* `Preorder.total_trace_iff`, `CresswellDegree.total_iff`: the trace is total, and the degrees
+  linearly ordered, exactly when the comparison is Ferrers and semitransitive.
 * `Preorder.trace_le_iff_not`, `CresswellDegree.lt_iff`: on a strict weak order the trace is
   *does not exceed*, and the induced relation is the strict order of the degrees.
 * `CresswellDegree.total_and_forall_mk_lt_mk_iff`: the degrees are linearly ordered with the
@@ -66,7 +69,8 @@ Here the preorder is defined first and the equivalence is its symmetric part, so
 are mathlib's `Antisymmetrization` and carry its order for every `φ`. Cresswell's relation between
 classes is kept beside the order, as `Quotient.lift₂ φ` under the notation `x >[φ] y`, and not as
 the `<` of the degrees: the two agree when `φ` is a strict weak order (`CresswellDegree.lt_iff`),
-and otherwise the trace can be a linear order of which `φ` is only a part.
+and otherwise the trace can be a linear order of which `φ` is only a part, as it is for a
+semiorder that is not a weak order.
 
 `Preorder.trace` is [bouyssou-marchant-2011]'s trace of a relation on a set, the intersection of
 its left and right traces, written here with the lower thing on the left. It is a term and not an
@@ -82,12 +86,6 @@ assumptions in the accounts that supply them, mathlib derives `IsStrictWeakOrder
 A measure `μ` represents `φ` when `φ a b ↔ μ b < μ a`. The hypothesis is a pointwise
 equivalence, not an equation between `φ` and a relation pulled back along `μ`, so that a lemma
 about `φ` can supply it.
-
-## TODO
-
-* The trace is total exactly when the relation is Ferrers and semitransitive
-  ([bouyssou-marchant-2011]), so the degrees of a semiorder are linearly ordered although the
-  comparison is not their strict order.
 
 ## References
 
@@ -134,6 +132,28 @@ theorem le_trace_iff {p : Preorder E} :
     p ≤ trace φ ↔ ∀ ⦃a a' b b'⦄, p.le a a' → p.le b' b → φ a b → φ a' b' :=
   ⟨fun h _ a' b _ ha hb hab ↦ (h hb).2 a' ((h ha).1 b hab),
     fun h _ _ hab ↦ ⟨fun c ↦ h hab (p.le_refl c), fun c ↦ h (p.le_refl c) hab⟩⟩
+
+/-- The trace of a comparison is total exactly when the comparison is Ferrers and semitransitive:
+whenever `a` exceeds `b` and `c` exceeds `d`, `a` exceeds `d` or `c` exceeds `b`, and whenever `a`
+exceeds `b` and `b` exceeds `c`, anything is exceeded by `a` or exceeds `c`. -/
+theorem total_trace_iff :
+    Std.Total (trace φ).le ↔
+      (∀ ⦃a b c d⦄, φ a b → φ c d → φ a d ∨ φ c b) ∧
+        ∀ ⦃a b c⦄, φ a b → φ b c → ∀ d, φ a d ∨ φ d c := by
+  refine ⟨fun h ↦ ⟨fun a b c d hab hcd ↦ ?_, fun a b c hab hbc d ↦ ?_⟩,
+    fun ⟨hF, hS⟩ ↦ ⟨fun a b ↦ ?_⟩⟩
+  · exact (h.total a c).symm.imp (fun hca ↦ hca.1 d hcd) fun hac ↦ hac.1 b hab
+  · exact (h.total d b).imp (fun hdb ↦ hdb.2 a hab) fun hbd ↦ hbd.1 c hbc
+  · by_contra hn
+    obtain ⟨h₁, h₂⟩ := not_or.1 hn
+    rw [trace_le_iff, not_and_or] at h₁ h₂
+    push Not at h₁ h₂
+    obtain ⟨c, hac, hbc⟩ | ⟨c, hcb, hca⟩ := h₁ <;>
+      obtain ⟨d, hbd, had⟩ | ⟨d, hda, hdb⟩ := h₂
+    · exact (hF hac hbd).elim had hbc
+    · exact (hS hda hac b).elim hdb hbc
+    · exact (hS hcb hbd a).elim hca had
+    · exact (hF hcb hda).elim hca hdb
 
 /-- The trace of the converse comparison is the dual of the trace. -/
 theorem trace_swap_le_iff : (trace (swap φ)).le a b ↔ (trace φ).le b a :=
@@ -273,6 +293,15 @@ scoped notation:50 x " >[" φ "] " y => Quotient.lift₂ φ (rel_eq_of_cresswell
 
 theorem mk_rel_mk : ((⟦a⟧ : CresswellDegree φ) >[φ] ⟦b⟧) ↔ φ a b :=
   Iff.rfl
+
+/-- The degrees of a comparison are linearly ordered exactly when the comparison is Ferrers and
+semitransitive, as a semiorder is. -/
+theorem total_iff :
+    Std.Total (α := CresswellDegree φ) (· ≤ ·) ↔
+      (∀ ⦃a b c d⦄, φ a b → φ c d → φ a d ∨ φ c b) ∧
+        ∀ ⦃a b c⦄, φ a b → φ b c → ∀ d, φ a d ∨ φ d c :=
+  ⟨fun h ↦ Preorder.total_trace_iff.1 ⟨fun a b ↦ h.total ⟦a⟧ ⟦b⟧⟩,
+    fun h ↦ ⟨Quotient.ind₂ (Preorder.total_trace_iff.2 h).total⟩⟩
 
 /-! ### Scales -/
 
