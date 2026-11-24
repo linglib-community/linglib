@@ -19,19 +19,23 @@ public import Mathlib.Order.Interval.Set.Basic
 /-!
 # Completeness of the projectivity calculus
 
-The join of two relations, the projection of a relation through a signature and the composition
-of two signatures are sound: what each asserts holds in every bounded lattice. This file shows
-that each is also the strongest sound choice. The join `R * S` is the least relation that holds
-of `x` and `z` whenever `x R y` and `y S z`, the projection of `R` through `σ` is the least
-relation that every `σ`-function carries `R` to, and `ψ * φ` is the least signature that holds of
-every `ψ`-function after a `φ`-function.
+Natural logic has three operations: the join `R * S` of two relations, the projection of a
+relation through a signature, and the composition `ψ * φ` of two signatures. Each comes with a
+guarantee. If `x R y` and `y S z` in a distributive lattice, then `x (R * S) z`. If `x R y` and
+`f` is a `σ`-function, then `f x` and `f y` stand in the projection of `R` through `σ`. If `f` is
+a `ψ`-function and `g` a `φ`-function, then `f ∘ g` is a `ψ * φ`-function.
+
+This file shows that none of the three can be strengthened: each is the least relation, or the
+least signature, for which its guarantee holds.
 
 A relation is determined by the pairs of elements it holds of, and a signature by the maps it
-holds of: each is a formal concept, of the incidence between constraints and pairs or between
-properties and maps. So the order on relations is implication and the order on signatures is
-inclusion of function classes. We also say which combinations occur: two elements stand in a
-strongest relation exactly when neither is `⊥` or `⊤`, and a map has a most specific signature
-exactly when it is not constant.
+holds of. In the terms of formal concept analysis, a relation is a concept of the incidence
+between constraints and pairs, and a signature is a concept of the incidence between properties
+and maps. It follows that `R ≤ S` exactly when `R` implies `S`, and that `σ ≤ τ` exactly when
+every `σ`-function is a `τ`-function.
+
+Finally, two elements stand in a strongest relation exactly when neither is `⊥` or `⊤`, and a map
+has a most specific signature exactly when it is not constant.
 
 ## Main definitions
 
