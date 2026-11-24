@@ -48,10 +48,9 @@ application would be membership; the set of scopes `{B | Q B}` is written where 
 wanted, as for right continuity.
 
 `Quantifier` and `Det` are abbreviations, so the Boolean algebra is that of the function type and
-needs no instance of its own. An instance stated on `Quantifier α` would therefore be an instance
-on every function from sets to propositions; structure that is specific to quantifiers, such as
-the action of the polarities in `Quantifier/Negation.lean`, is stated as a homomorphism and not as
-an instance.
+needs no instance of its own, and an instance stated on `Quantifier α` is an instance on a
+function type. The actions of the polarities in `Quantifier/Negation.lean` are of this kind: they
+are mathlib's actions on a function type through its values and through its domain.
 
 ## References
 

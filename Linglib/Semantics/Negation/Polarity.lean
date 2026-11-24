@@ -174,6 +174,11 @@ instance decidableMemSMul (p : Polarity) (s : Set α) [DecidablePred (· ∈ s)]
   | .positive => fun a ↦ inferInstanceAs (Decidable (a ∈ s))
   | .negative => fun a ↦ inferInstanceAs (Decidable (a ∉ s))
 
+/-- The polarity of a sentence acts on truth values, the negative polarity negating. -/
+instance : MulAction Polarity Prop := .ofEndHom complHom
+
+@[simp] theorem negative_smul_prop (p : Prop) : negative • p = ¬ p := rfl
+
 /-- Over a nonempty type the action on propositions is free, since no proposition is its own
 complement. -/
 instance [Nonempty α] : IsCancelSMul Polarity (Set α) :=
