@@ -1,63 +1,95 @@
 module
 
-public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Fragments.Buryat.Complementizers
 public import Linglib.Fragments.Korean.Complementizers
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 public import Linglib.Data.Examples.Bondarenko2022
+public import Linglib.Data.Examples.Languages
+public import Linglib.Data.Examples.Readers
+public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Semantics.Composition.Interpret
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
+public import Linglib.Semantics.Mereology.Exemplification
 public import Linglib.Semantics.Modality.Content
+public import Mathlib.Order.Hom.Lattice
 
 /-!
-# [bondarenko-2022] — Anatomy of an Attitude
+# Bondarenko (2022): Anatomy of an Attitude
 
-Embedded clauses come in two sorts. A Cont-CP denotes a predicate of
-individuals with propositional content ([kratzer-2006]), those with
-CONT(x) = p ([moulton-2015]), and projects a ContP whose head is overt in Buryat (*gɘ*
-'say') and Korean (*-ta*) and null in English and Russian; a Sit-CP
-denotes a predicate of situations exemplifying p ([kratzer-1989]) and
-lacks that layer. Content nouns take truth predicates and reject
-occurrence predicates, situation nouns the reverse, and a Sit-CP is
-referentially transparent where a Cont-CP is opaque. Content is fixed by
-equality rather than subset or overlap, which makes CONT a function and
-rules out clausal conjunction under one content individual
-([bassi-bondarenko-2021]).
+Individuals are ordered by parthood, situations are individuals, and a proposition is a set of
+situations. Some individuals, such as claims, rumours and beliefs, have propositional content,
+which a partial function `cont` gives. An embedded clause is a predicate of individuals built by
+two heads. The Cont head takes a proposition `p` to the individuals whose content is `p`, the set
+`cont.preimage {p}`. The Comp head takes a predicate `P` to the parts of the evaluation
+situation that exemplify `P`, in the sense of `Mereology.Exemplifies`. A Cont-CP has both heads
+and a Sit-CP has Comp alone, so a Sit-CP with proposition `p` holds of the parts of the
+evaluation situation that exemplify `p`.
 
-With verbs, a clause composes either through the verb's situation
-argument by Predicate Modification or through a DP argument by Functional
-Application, and the thesis's mapping claim is that bare clauses take only
-the first path and nominalized clauses only the second: a bare CP is a
-predicate of situations, a nominalized CP an individual, and every Θ-head
-(Causer, Theme, About) wants an individual. The four combinations are trees
-interpreted by Functional Application and Predicate Modification: the two
-on the diagonal have one meaning each (`meanings_bareModifier`,
-`meanings_nominalizedArgument`) and the other two have no derivation
-(`derive_bareArgument`, `derive_nominalizedModifier`). [angelopoulos-2026]
-later attacks this mapping with Greek *oti*-clauses.
+Content is fixed by equality. Clauses with different propositions then hold of disjoint sets of
+individuals, so that two clauses do not stack on one noun or conjoin, and a clause is not
+monotone in its proposition. On the rival semantics, on which the content entails the
+proposition, a clause is a homomorphism of intersections `subsetClause cont`: stacked clauses
+have the meaning of the conjunction, and a clause is closed under weakening of its proposition.
 
-The ch. 2 diagnostics and the Buryat clause shapes are checked here against
-the thesis's own examples (`Bondarenko2022.Examples`); the per-language
-Cont/Comp head assignments are stated over the Buryat and Korean fragment
-inventories.
+A Sit-CP holds only where its proposition is true, if the proposition is persistent. It depends
+on its proposition only among the parts of the evaluation situation: descriptions that pick out
+one individual there, and keep their reference in its parts, may be substituted for one another.
+Something with a proper part in a set and a part outside it does not exemplify the set, so a
+clause with Comp does not hold of a larger individual that contains what the clause describes.
+Where the situations of a verb form an antichain and have proper parts, the proposition that one
+of them is part of a situation is exemplified by those situations alone, by
+`IsAntichain.exemplifies_upperClosure_iff`, so a Sit-CP holds of the situations of its verb.
+
+Content nouns denote contentful individuals that are not situations, and situation nouns denote
+situations without content. A predicate of truth is defined of the contentful individuals and a
+predicate of occurrence of the situations, and the rows of the two diagnostics are acceptable
+exactly where the extension of the noun's sort lies in the domain of the predicate in every
+model.
+
+With a verb, a clause modifies the verb's situation argument by Predicate Modification, or it is
+nominalized and is the argument of a head that introduces a participant. The trees are
+interpreted by Functional Application and Predicate Modification. A clause that is not
+nominalized has no derivation as the argument of such a head, and a proposition without Comp has
+none with a noun. A Sit-CP that modifies a verb has a derivation, and its meaning is the
+situations of the verb that exemplify the clause's proposition. In a model with a thinking and
+an eating there are none, while the thinking exemplifies the predicate of having the content
+that there is eating.
+
+In Buryat and Korean the Cont head has an exponent, and Comp has one allomorph next to a nominal
+projection and another next to a verb. The clause-typing morphemes that the rows mark on the
+Buryat complements of *hanaxa* 'think' and on the Korean complements of nouns are those the
+exponents give for the heads of the clause and for what the clause combines with.
 
 ## Implementation notes
 
-* Buryat *hanaxa* 'think' quantifies over doxastic alternatives in both of its frames, which
-  differ in opacity and factivity; its nominalized reading, 'remember', is factive through the
-  presupposition that the event its complement describes started before the thinking (§4.4.3),
-  which the fragment records on the nominalized frame. The reading is veridical and the bare-CP
-  reading is not (`hanaxa_isVeridical_nominalized`), so by `Doxastic.isVeridical_forall_iff`
-  every denotation of the nominalized reading is veridical and some denotation of the bare-CP
-  reading is not.
+* Situations are individuals, so one type carries both and a predicate of situations is a
+  predicate of individuals. In the trees the sort `s` types only the proposition that Cont and
+  Comp take, which the thesis supplies by intensional application. Comp is entered at both types
+  with one meaning, where the thesis applies it to a proposition because a set of situations is a
+  set of individuals.
+* A nominalized clause denotes the individual that a choice function `the` picks from the
+  clause's predicate, where the thesis has a definite or an indefinite determiner.
+* The thesis holds that no situation exemplifies two propositions that both characterize a
+  situation by what exists within it. This is shown in a model. In general what exemplifies two
+  sets exemplifies their intersection, `Mereology.Exemplifies.inter`.
+* Buryat *hanaxa* quantifies over doxastic alternatives in both of its frames, which differ in
+  opacity and factivity. Its nominalized reading, 'remember', is factive through the
+  presupposition that the event its complement describes started before the thinking, which the
+  fragment records on the nominalized frame.
+
+## TODO
+
+* The conjunction and disjunction of clauses, and the clauses of Russian, whose Cont head has no
+  exponent.
+* The verbs of occurrence, whose situation argument a Sit-CP modifies.
 
 ## References
 
 * [bondarenko-2022]
 * [kratzer-2006]
+* [kratzer-2012]
 * [moulton-2015]
-* [kratzer-1989]
 * [bassi-bondarenko-2021]
 -/
 
@@ -65,281 +97,390 @@ inventories.
 
 namespace Bondarenko2022
 
-open Buryat
+open Mereology Buryat
+
+/-! ### Equality and subset content -/
+
+section Content
+
+open Modality ModalLogic
+
+variable {X W : Type*} {cont : X →. Set W} {x : X} {p : Set W}
+
+/-- On the equality semantics, clauses with different propositions hold of disjoint sets of
+individuals, so that two clauses do not stack on one noun or conjoin. -/
+theorem pairwise_disjoint_preimage_singleton (cont : X →. Set W) :
+    Pairwise (Function.onFun Disjoint fun p : Set W ↦ cont.preimage {p}) :=
+  fun _ _ h ↦ cont.disjoint_preimage_of_disjoint (Set.disjoint_singleton.2 h)
+
+-- ch. 2 (189)
+theorem not_monotone_preimage_singleton :
+    ¬ Monotone fun p : Set Bool ↦ (PFun.pure {true} : Unit →. Set Bool).preimage {p} := fun h ↦ by
+  obtain ⟨_, rfl, hq⟩ := @h {true} Set.univ (Set.subset_univ _) () ⟨_, rfl, Part.mem_some _⟩
+  exact Bool.false_ne_true (Part.mem_some_iff.1 hq ▸ Set.mem_univ false : false ∈ ({true} : Set _))
+
+/-- On the subset semantics of ch. 1 (10) a clause holds of the individuals whose content entails
+its proposition. It preserves intersections, so that stacked clauses mean the conjunction, ch. 1
+(11), and it is monotone, the closure under entailment of ch. 2 (188). -/
+def subsetClause (cont : X →. Set W) : InfHom (Set W) (Set X) where
+  toFun p := cont.preimage (Set.Iic p)
+  map_inf' p q := by
+    rw [← PFun.preimage_inter, Set.Iic_inter_Iic]
+
+@[simp]
+theorem subsetClause_apply : subsetClause cont p = cont.preimage (Set.Iic p) := rfl
+
+-- ch. 1 (14)
+theorem mem_subsetClause_iff :
+    x ∈ subsetClause cont p ↔ x ∈ cont.Dom ∧ □[compatible cont] (· ∈ p) x :=
+  mem_preimage_Iic_iff
+
+end Content
+
+/-! ### Clauses with Comp -/
+
+section Comp
+
+variable {E : Type*} [PartialOrder E] {p : Set E} {s x : E}
+
+-- ch. 2, on (159)
+theorem mem_of_exemplifies_of_le (hp : IsUpperSet p) (hx : Exemplifies p x) (hxs : x ≤ s) :
+    s ∈ p :=
+  hp hxs hx.mem
+
+/-- A Sit-CP is referentially transparent: descriptions `a` and `b` that pick out one individual
+in the evaluation situation `s`, and keep their reference in the parts of `s`, may be substituted
+for one another in the clause's proposition without changing which parts of `s` exemplify it. -/
+theorem exemplifies_substitution {D : Type*} {a b : E → D} {R : D → Set E}
+    (ha : ∀ y ≤ s, a y = a s) (hb : ∀ y ≤ s, b y = b s) (hab : a s = b s) (hx : x ≤ s) :
+    Exemplifies {y | y ∈ R (a y)} x ↔ Exemplifies {y | y ∈ R (b y)} x :=
+  exemplifies_congr <| Set.ext fun y ↦ and_congr_left fun hy ↦ by
+    have hys := (Set.mem_Iic.1 hy).trans hx
+    simp only [Set.mem_ofPred_eq, ha y hys, hb y hys, hab]
+
+-- ch. 2 (120)–(122)
+theorem substitution_valid_iff_situation :
+    ∀ r ∈ Examples.all, ∀ n ∈ Examples.nounSort r, ∀ i ∈ Examples.inference r,
+      (i = .valid ↔ n = .situation) := by
+  decide +kernel
+
+end Comp
 
 /-! ### Nominal sorts -/
 
-/-- The two sorts of clause-taking noun (§2.2), content nouns (*idea*,
-*claim*, *rumor*) and situation nouns (*situation*, *event*, *case*). -/
+/-- The two sorts of clause-taking noun, content nouns (*idea*, *claim*, *rumor*) and situation
+nouns (*situation*, *event*, *case*). -/
 inductive NominalSort where
   | content
   | situation
   deriving DecidableEq, Fintype, Repr
 
-/-- Combines with 'true' / 'false' / 'mistaken'. -/
-def NominalSort.truthEvaluable : NominalSort → Prop
-  | .content => True
-  | .situation => False
+/-- The individuals that a noun of each sort may denote, where `S` is the set of situations:
+contentful individuals that are not situations, and situations without content. -/
+def NominalSort.extension {E W : Type*} (S : Set E) (cont : E →. Set W) : NominalSort → Set E
+  | .content => cont.Dom \ S
+  | .situation => S \ cont.Dom
 
-/-- Combines with 'occur' / 'happen' / 'notice'. -/
-def NominalSort.occurrenceCompatible : NominalSort → Prop
-  | .content => False
-  | .situation => True
+namespace NominalSort
 
-instance : DecidablePred NominalSort.truthEvaluable
-  | .content => isTrue trivial
-  | .situation => isFalse id
+variable {n : NominalSort}
 
-instance : DecidablePred NominalSort.occurrenceCompatible
-  | .content => isFalse id
-  | .situation => isTrue trivial
+theorem forall_extension_subset_dom_iff :
+    (∀ (E W : Type) (S : Set E) (cont : E →. Set W), n.extension S cont ⊆ cont.Dom) ↔
+      n = .content := by
+  refine ⟨fun h ↦ ?_, by rintro rfl _ _ _ _; exact Set.sdiff_subset⟩
+  cases n
+  · rfl
+  · exact (h Unit Unit Set.univ (fun _ ↦ Part.none) (a := ()) ⟨trivial, id⟩).elim
+
+theorem forall_extension_subset_iff :
+    (∀ (E W : Type) (S : Set E) (cont : E →. Set W), n.extension S cont ⊆ S) ↔
+      n = .situation := by
+  refine ⟨fun h ↦ ?_, by rintro rfl _ _ _ _; exact Set.sdiff_subset⟩
+  cases n
+  · exact (h Unit Unit ∅ (fun _ ↦ Part.some ∅) (a := ()) ⟨trivial, id⟩).elim
+  · rfl
+
+end NominalSort
 
 /-- The sort of noun a row names. -/
 def Examples.NounSort.toNominalSort : Examples.NounSort → NominalSort
   | .content => .content
   | .situation => .situation
 
--- §2.2.2
-theorem sort_predicts_cooccurrence :
-    ∀ r ∈ Examples.all, ∀ s ∈ Examples.nounSort r,
-      (Examples.diagnostic r = some .truthPredicates →
-        (r.judgment = .acceptable ↔ s.toNominalSort.truthEvaluable)) ∧
-      (Examples.diagnostic r ∈ [some .occurrencePredicates, some .notice] →
-        (r.judgment = .acceptable ↔ s.toNominalSort.occurrenceCompatible)) := by
+-- ch. 2 (105)–(107)
+theorem truthPredicates_iff_extension_subset_dom :
+    ∀ r ∈ Examples.all, Examples.diagnostic r = some .truthPredicates →
+      ∀ n ∈ Examples.nounSort r,
+        (r.judgment = .acceptable ↔ ∀ (E W : Type) (S : Set E) (cont : E →. Set W),
+          n.toNominalSort.extension S cont ⊆ cont.Dom) := by
+  simp only [NominalSort.forall_extension_subset_dom_iff]
   decide +kernel
 
-/-! ### Equality, subset and existential content
-
-The content function is partial: it is defined for ideas, beliefs and claims and undefined for
-other individuals. On the equality semantics (7) a clause with proposition `p` holds of `x` when
-`p ∈ cont x`, so its denotation is `cont.preimage {p}`. On the subset semantics (10) of
-[kratzer-2006], which the thesis rejects, it is `cont.preimage (Set.Iic p)`, the individuals with
-content at which `p` is necessary along `Modality.compatible cont`
-(`Modality.mem_preimage_Iic_iff`), and on the existential semantics (15) it is those at which `p`
-is possible. The law (11), that the subset semantics distributes over conjunction, is
-`ModalLogic.box_and`, both are monotone in `p` (`ModalLogic.box_mono`,
-`ModalLogic.diamond_mono`), and a clause that holds on the equality semantics holds on the other
-two, on the existential one where its proposition is consistent
-(`Modality.box_compatible_of_mem`, `Modality.diamond_compatible_of_mem`). -/
-
-section Content
-
-open Modality ModalLogic
-
-variable {X W : Type*} {cont : X →. Set W} {x : X} {p q : Set W}
-
-/-- On the equality semantics two clauses that hold of one individual have the same proposition,
-so clauses cannot stack or conjoin under one content individual. -/
-theorem eq_of_mem_cont (hp : p ∈ cont x) (hq : q ∈ cont x) : p = q :=
-  Part.mem_unique hp hq
-
-theorem mem_cont_iff_eq (hp : p ∈ cont x) : q ∈ cont x ↔ p = q :=
-  ⟨eq_of_mem_cont hp, fun h ↦ h ▸ hp⟩
-
--- (171)
-theorem disjoint_preimage_singleton (cont : X →. Set W) (h : p ≠ q) :
-    Disjoint (cont.preimage {p}) (cont.preimage {q}) := by
-  rw [Set.disjoint_iff_inter_eq_empty, ← PFun.preimage_inter,
-    Set.singleton_inter_eq_empty.2 (by simpa using h), PFun.preimage_empty]
-
-theorem box_compatible_not_functional :
-    ¬ ∀ (cont : Unit →. Set Bool) (p q : Set Bool),
-      □[compatible cont] (· ∈ p) () → □[compatible cont] (· ∈ q) () → p = q :=
-  fun h ↦ Bool.false_ne_true
-    (h (fun _ ↦ Part.some {true}) {true} Set.univ (box_compatible_of_mem (Part.mem_some _))
-      (fun _ _ ↦ trivial) ▸ Set.mem_univ false : false ∈ ({true} : Set Bool))
-
-end Content
-
-/-! ### Transparency -/
-
-variable {S : Type*}
-
-/-- A clause is referentially transparent at `s` when propositions agreeing at `s` are
-interchangeable in it. -/
-def ReferentiallyTransparentAt (clause : Set S → S → Prop) (s : S) : Prop :=
-  ∀ p q : Set S, (s ∈ p ↔ s ∈ q) → (clause p s ↔ clause q s)
-
-theorem sit_transparentAt (s : S) : ReferentiallyTransparentAt (fun p s' ↦ s' ∈ p) s :=
-  fun _ _ h ↦ h
-
-theorem mem_cont_not_transparentAt :
-    ¬ ∀ (cont : Unit →. Set Bool) (w : Bool),
-      ReferentiallyTransparentAt (fun p _ ↦ p ∈ cont ()) w :=
-  fun h ↦ Bool.false_ne_true
-    (Part.mem_some_iff.1 ((h (fun _ ↦ Part.some {false}) false {false} Set.univ
-      ⟨fun _ ↦ trivial, fun _ ↦ rfl⟩).mp (Part.mem_some _)) ▸ Set.mem_univ true :
-        true ∈ ({false} : Set Bool)).symm
-
--- §2.2.3
-theorem substitution_valid_iff_situation :
-    ∀ r ∈ Examples.all, ∀ s ∈ Examples.nounSort r, ∀ i ∈ Examples.inference r,
-      (i = .valid ↔ s = .situation) := by
+-- ch. 2 (108)–(112)
+theorem occurrencePredicates_iff_extension_subset :
+    ∀ r ∈ Examples.all, Examples.diagnostic r ∈ [some .occurrencePredicates, some .notice] →
+      ∀ n ∈ Examples.nounSort r,
+        (r.judgment = .acceptable ↔ ∀ (E W : Type) (S : Set E) (cont : E →. Set W),
+          n.toNominalSort.extension S cont ⊆ S) := by
+  simp only [NominalSort.forall_extension_subset_iff]
   decide +kernel
 
-/-! ### Clauses as modifiers and as arguments
-
-A verb denotes a predicate of situations, and a Θ-head (62) takes the verb's predicate and an
-individual. A bare clause denotes a predicate of situations and a nominalized clause an
-individual, so the two are never integrated with the verb in the same way: the types leave each
-one path. -/
+/-! ### Clauses with nouns and verbs -/
 
 section Composition
 
 open Interpreter PhraseStructure ManySorted
 
-/-- The Θ-heads of §4.4. -/
+/-- The heads of §4.4 that introduce a participant. -/
 inductive ThetaHead where
   | causer
   | theme
   | aboutAttitude
   deriving DecidableEq, Repr
 
-/-- The words of the four combinations, by semantic type. -/
+/-- The words of the trees, by semantic type. -/
 inductive Item : Ty Base → Type
+  /-- The proposition of the embedded clause below its left periphery. -/
+  | tp : Item (.intens .t)
+  /-- The Cont head, ch. 2 (150). -/
+  | cont : Item (.intens .t ⇒ .et)
+  /-- The Comp head, ch. 2 (151). -/
+  | comp : Item (.et ⇒ .et)
+  /-- The Comp head with a proposition as its sister. -/
+  | compProp : Item (.intens .t ⇒ .et)
+  /-- A noun. -/
+  | noun : Item .et
   /-- A verb, a predicate of situations. -/
-  | verb : Item (.s ⇒ .t)
-  /-- A Θ-head, (62). -/
-  | theta (θ : ThetaHead) : Item ((.s ⇒ .t) ⇒ .e ⇒ .s ⇒ .t)
-  /-- A bare clause, a predicate of situations. -/
-  | bareCP : Item (.s ⇒ .t)
-  /-- A nominalized clause, an individual. -/
-  | nominalizedCP : Item .e
+  | verb : Item .et
+  /-- A head that introduces a participant, ch. 4 (5). -/
+  | theta (θ : ThetaHead) : Item (.et ⇒ .e ⇒ .et)
+  /-- The determiner of a nominalized clause. -/
+  | the : Item (.et ⇒ .e)
 
 /-- Functional Application and Predicate Modification. -/
 abbrev grammar : Language (Ty Base) := application.sum predicateModification
 
-variable {E S : Type} (verb : S → Prop) (role : ThetaHead → S → E) (clause : S → Prop) (x : E)
+variable {E : Type} [PartialOrder E] (cont : E →. Set E) (s₀ : E) (p : Set E)
+  (noun verb : E → Prop) (role : ThetaHead → E → E) (the : (E → Prop) → E)
 
-/-- The denotations of the words: a Θ-head (62) holds of a predicate of situations, an individual
-and a situation of the predicate in which the individual has the head's role. -/
-def Item.val : {a : Ty Base} → Item a → a.Dom (Base.Dom E S)
+/-- The denotations of the words at the evaluation situation `s₀`: Cont holds of a proposition
+and an individual whose content it is, Comp of a predicate and a part of `s₀` that exemplifies it,
+and a head that introduces a participant of a predicate of situations, an individual and a
+situation of the predicate in which the individual has the head's role. -/
+def Item.val : {a : Ty Base} → Item a → a.Dom (Base.Dom E E)
+  | _, .tp => (· ∈ p)
+  | _, .cont => fun q x ↦ x ∈ cont.preimage {{w | q w}}
+  | _, .comp => fun P x ↦ x ≤ s₀ ∧ Exemplifies {y | P y} x
+  | _, .compProp => fun q x ↦ x ≤ s₀ ∧ Exemplifies {y | q y} x
+  | _, .noun => noun
   | _, .verb => verb
-  | _, .theta θ => fun p y s ↦ p s ∧ role θ s = y
-  | _, .bareCP => clause
-  | _, .nominalizedCP => x
+  | _, .theta θ => fun P y e ↦ P e ∧ role θ e = y
+  | _, .the => the
 
 /-- The leaf of a word. -/
 def leaf {a : Ty Base} (i : Item a) : Tree Unit (Σ a, Item a) := .leaf ⟨a, i⟩
 
-/-- A bare clause with a verb. -/
-def bareModifier : Tree Unit (Σ a, Item a) := .bin (leaf .bareCP) (leaf .verb)
+/-- A Cont-CP, ch. 2 (152b): Comp above Cont above the proposition. -/
+def contCP : Tree Unit (Σ a, Item a) := .bin (leaf .comp) (.bin (leaf .cont) (leaf .tp))
 
-/-- A nominalized clause with a verb and its Θ-head, as in (61). -/
-def nominalizedArgument (θ : ThetaHead) : Tree Unit (Σ a, Item a) :=
-  .bin (.bin (leaf .verb) (leaf (.theta θ))) (leaf .nominalizedCP)
+/-- A Sit-CP, ch. 2 (155a): Comp above the proposition. -/
+def sitCP : Tree Unit (Σ a, Item a) := .bin (leaf .compProp) (leaf .tp)
 
-/-- A bare clause in the position of the argument of a Θ-head. -/
-def bareArgument (θ : ThetaHead) : Tree Unit (Σ a, Item a) :=
-  .bin (.bin (leaf .verb) (leaf (.theta θ))) (leaf .bareCP)
+/-- A noun with the proposition as its sister. -/
+def nounTP : Tree Unit (Σ a, Item a) := .bin (leaf .noun) (leaf .tp)
 
-/-- A nominalized clause as the sister of a verb. -/
-def nominalizedModifier : Tree Unit (Σ a, Item a) := .bin (leaf .nominalizedCP) (leaf .verb)
+/-- A clause as a modifier of a verb, ch. 4 (12). -/
+def modifier (cp : Tree Unit (Σ a, Item a)) : Tree Unit (Σ a, Item a) := .bin cp (leaf .verb)
 
-/-- The meanings of a tree. -/
+/-- A nominalized clause as the argument of a head that introduces a participant, ch. 4 (11). -/
+def argument (θ : ThetaHead) (cp : Tree Unit (Σ a, Item a)) : Tree Unit (Σ a, Item a) :=
+  .bin (.bin (leaf .verb) (leaf (.theta θ))) (.bin (leaf .the) cp)
+
+/-- A clause that is not nominalized in the position of such an argument. -/
+def bareArgument (θ : ThetaHead) (cp : Tree Unit (Σ a, Item a)) : Tree Unit (Σ a, Item a) :=
+  .bin (.bin (leaf .verb) (leaf (.theta θ))) cp
+
+/-- The meanings of a tree at the evaluation situation `s₀`. -/
 def meanings (t : Tree Unit (Σ a, Item a)) :
-    List (Σ a : Ty Base, (ℕ → E) → a.Dom (Base.Dom E S)) :=
-  t.interpret grammar (Base.Dom E S) (fun _ ↦ .e) (fun i _ ↦ Item.val verb role clause x i)
-    fun w ↦ [w]
+    List (Σ a : Ty Base, (ℕ → E) → a.Dom (Base.Dom E E)) :=
+  t.interpret grammar (Base.Dom E E) (fun _ ↦ .e)
+    (fun i _ ↦ Item.val cont s₀ p noun verb role the i) fun w ↦ [w]
 
--- §4.5
-theorem meanings_bareModifier :
-    meanings verb role clause x bareModifier = [⟨.s ⇒ .t, fun _ s ↦ clause s ∧ verb s⟩] :=
+-- ch. 2 (152b)
+theorem meanings_contCP :
+    meanings cont s₀ p noun verb role the contCP =
+      [⟨.et, fun _ x ↦ x ≤ s₀ ∧ Exemplifies (cont.preimage {p}) x⟩] :=
   rfl
 
--- (61)
-theorem meanings_nominalizedArgument (θ : ThetaHead) :
-    meanings verb role clause x (nominalizedArgument θ) =
-      [⟨.s ⇒ .t, fun _ s ↦ verb s ∧ role θ s = x⟩] := by
+-- ch. 2 (155a)
+theorem meanings_sitCP :
+    meanings cont s₀ p noun verb role the sitCP = [⟨.et, fun _ x ↦ x ≤ s₀ ∧ Exemplifies p x⟩] :=
+  rfl
+
+-- ch. 2 (165)–(168)
+theorem derive_nounTP : nounTP.derive grammar (fun _ ↦ .e) (W := Item) (fun w ↦ [w]) = [] :=
+  rfl
+
+-- ch. 4 (24)
+theorem meanings_modifier_contCP :
+    meanings cont s₀ p noun verb role the (modifier contCP) =
+      [⟨.et, fun _ x ↦ (x ≤ s₀ ∧ Exemplifies (cont.preimage {p}) x) ∧ verb x⟩] :=
+  rfl
+
+-- ch. 4 (26)
+theorem meanings_modifier_sitCP :
+    meanings cont s₀ p noun verb role the (modifier sitCP) =
+      [⟨.et, fun _ x ↦ (x ≤ s₀ ∧ Exemplifies p x) ∧ verb x⟩] :=
+  rfl
+
+-- ch. 4 (20)
+theorem meanings_argument_contCP (θ : ThetaHead) :
+    meanings cont s₀ p noun verb role the (argument θ contCP) =
+      [⟨.et, fun _ e ↦ verb e ∧
+        role θ e = the fun x ↦ x ≤ s₀ ∧ Exemplifies (cont.preimage {p}) x⟩] := by
   cases θ <;> rfl
 
-/-- A bare clause saturates no Θ-head: the head with its verb wants an individual, and no rule
-applies to it and a predicate of situations. -/
+-- ch. 4 (21)
+theorem meanings_argument_sitCP (θ : ThetaHead) :
+    meanings cont s₀ p noun verb role the (argument θ sitCP) =
+      [⟨.et, fun _ e ↦ verb e ∧ role θ e = the fun x ↦ x ≤ s₀ ∧ Exemplifies p x⟩] := by
+  cases θ <;> rfl
+
+/-- A clause that is not nominalized saturates no head that introduces a participant: the head
+with its verb wants an individual, and no rule applies to it and a predicate of individuals. -/
 theorem derive_bareArgument (θ : ThetaHead) :
-    (bareArgument θ).derive grammar (fun _ ↦ .e) (W := Item) (fun w ↦ [w]) = [] := by
-  cases θ <;> rfl
-
-/-- A nominalized clause does not modify a verb: no rule applies to an individual and a predicate
-of situations. -/
-theorem derive_nominalizedModifier :
-    nominalizedModifier.derive grammar (fun _ ↦ .e) (W := Item) (fun w ↦ [w]) = [] :=
-  rfl
+    (bareArgument θ contCP).derive grammar (fun _ ↦ .e) (W := Item) (fun w ↦ [w]) = [] ∧
+      (bareArgument θ sitCP).derive grammar (fun _ ↦ .e) (W := Item) (fun w ↦ [w]) = [] := by
+  cases θ <;> exact ⟨rfl, rfl⟩
 
 end Composition
 
-/-! ### The Comp head -/
+/-! ### A model of the two paths
 
-/-- The Comp head (§2.3 ex. 151) holds of `x` at `s` when `x` is part of the evaluation
-situation and exactly verifies `p`. -/
-def compHead [Preorder S] (p : Set S) (x s : S) : Prop :=
-  x ≤ s ∧ x ∈ p
+The situations are the sets of two events, a thinking `0` and an eating `1`, ordered by
+inclusion, and the thinking has the content that there is eating. -/
 
-theorem mem_upperClosure_of_compHead [Preorder S] {p : Set S} {x s : S}
-    (h : compHead p x s) : s ∈ upperClosure p :=
-  mem_upperClosure.2 ⟨x, h.2, h.1⟩
+section Model
 
-/-! ### Cont exponence -/
+/-- The situations in which there is thinking. -/
+def thinking : Set (Finset (Fin 2)) := {x | 0 ∈ x}
 
-/-- A Cont-exponence analysis of a clause-typing inventory (ch. 4) names the
-morpheme, if any, that overtly expones Cont. -/
-structure ContAnalysis where
-  inventory : List Complementizer
-  contExponent : Option Complementizer
-  contExponent_mem : ∀ c ∈ contExponent, c ∈ inventory
+/-- The situations in which there is eating. -/
+def eating : Set (Finset (Fin 2)) := {x | 1 ∈ x}
 
-/-- A Cont analysis with the licenser-conditioned Comp allomorphy. -/
-structure ContCompAnalysis extends ContAnalysis where
-  compAllomorph : Complementizer.Licenser → Complementizer
-  compAllomorph_mem : ∀ l, compAllomorph l ∈ inventory
-  licenser_compAllomorph : ∀ l, (compAllomorph l).licenser = some l
-  cover : ∀ c ∈ inventory, c ∈ contExponent ∨ ∃ l, compAllomorph l = c
+instance : DecidablePred (· ∈ thinking) := fun x ↦ inferInstanceAs (Decidable (0 ∈ x))
 
-/-- In Buryat (§4.3.1 ex. 33) *gɘ* expones Cont, participial *-Aːša* is the
-Comp allomorph next to nouns, and converbial *-žA* is the one next to verbs. -/
-def buryatAnalysis : ContCompAnalysis where
-  inventory := complementizers
-  contExponent := some ge
-  contExponent_mem := by decide
-  compAllomorph
-    | .nominal => aasha
-    | .verbal => zha
-  compAllomorph_mem := by decide
-  licenser_compAllomorph := by decide
-  cover := by decide
+instance : DecidablePred (· ∈ eating) := fun x ↦ inferInstanceAs (Decidable (1 ∈ x))
 
-/-- In Korean (§4.3.2 ex. 46) *-ta* expones Cont, and adnominal *-nun* and
-adverbal *-ko* are the Comp allomorphs. -/
-def koreanAnalysis : ContCompAnalysis where
-  inventory := Korean.Complementizers.complementizers
-  contExponent := some Korean.Complementizers.ta
-  contExponent_mem := by decide
-  compAllomorph
-    | .nominal => Korean.Complementizers.nun
-    | .verbal => Korean.Complementizers.ko
-  compAllomorph_mem := by decide
-  licenser_compAllomorph := by decide
-  cover := by decide
+/-- The content function: the thinking has the content that there is eating, and nothing else
+has content. -/
+def thought : Finset (Fin 2) →. Set (Finset (Fin 2)) := PFun.res (fun _ ↦ eating) {{0}}
 
-theorem mem_buryatContExponent_iff :
-    ∀ c ∈ complementizers,
-      (c ∈ buryatAnalysis.contExponent ↔ ∀ m ∈ c.morphs, m.kind = .root) := by
+/-- No situation of the model exemplifies both the proposition that there is thinking and the
+proposition that there is eating, so a Sit-CP that modifies *think* holds of nothing. -/
+theorem not_exemplifies_thinking_and_eating :
+    ∀ x, ¬ (Exemplifies eating x ∧ Exemplifies thinking x) := by
   decide
 
-/-- The clause-typers of a Buryat clause shape (§4.3.1 ex. 30–32). -/
-def Examples.Shape.typers : Examples.Shape → List Complementizer
-  | .bareGeZhe => [ge, zha]
-  | .nominalizedParticipial => [aasha]
-  | .nominalizedGeParticipial => [ge, aasha]
+-- ch. 4 (24), (25)
+theorem exemplifies_thought_and_thinking :
+    Exemplifies (thought.preimage {eating}) {0} ∧ Exemplifies thinking {0} := by
+  have h : thought.preimage {eating} = {{0}} := by ext x; simp [thought, PFun.mem_res]
+  exact ⟨h ▸ (Set.subsingleton_singleton.isAntichain _).exemplifies_iff.2 rfl, by decide⟩
 
-theorem content_iff_contExponent_mem :
-    ∀ r ∈ Examples.all, ∀ sh ∈ Examples.shape r, ∀ ct ∈ Examples.clauseType r,
-      ∀ c ∈ buryatAnalysis.contExponent, (ct = .contCP ↔ c ∈ sh.typers) := by
+-- ch. 2 (198)–(201)
+theorem not_exemplifies_eating_sup : {0, 1} ∈ eating ∧ ¬ Exemplifies eating {0, 1} := by
+  decide
+
+end Model
+
+/-! ### Exponents of Cont and Comp -/
+
+/-- The exponents of the heads of an embedded clause, ch. 4 (33) and (46): of Cont, and of Comp
+next to a nominal projection and next to a verb. -/
+structure Exponence where
+  /-- The exponent of Cont. -/
+  cont : Complementizer
+  /-- The allomorph of Comp next to each licensing category. -/
+  comp : Complementizer.Licenser ↪ Complementizer
+
+/-- Ch. 4 (33): in Buryat *gɘ* 'say' expones Cont, and Comp is the participle *-Aːša* next to a
+nominal projection and the converb *-žA* next to a verb. -/
+def buryat : Exponence where
+  cont := ge
+  comp := ⟨fun | .nominal => aasha | .verbal => zha, by decide⟩
+
+/-- Ch. 4 (46): in Korean the declarative *-ta* expones Cont, and Comp is the adnominal *-nun*
+next to a nominal projection and *-ko* next to a verb. -/
+def korean : Exponence where
+  cont := Korean.Complementizers.ta
+  comp := ⟨fun | .nominal => Korean.Complementizers.nun | .verbal => Korean.Complementizers.ko,
+    by decide⟩
+
+/-- The clause-typing morphemes of a clause with the given heads next to the licensing category
+`l`, in the order of the heads. -/
+def Exponence.typers (v : Exponence) :
+    Examples.ClauseType → Complementizer.Licenser → List Complementizer
+  | .contCP, l => [v.cont, v.comp l]
+  | .sitCP, l => [v.comp l]
+
+-- the allomorphs of Comp are the fragments' entries licensed by each category
+theorem licenser_comp :
+    ∀ v ∈ [buryat, korean], ∀ l, (v.comp l).licenser = some l := by
+  decide
+
+-- the exponents are the fragments' inventories
+theorem complementizers_eq :
+    complementizers = [buryat.cont, buryat.comp .nominal, buryat.comp .verbal] ∧
+      Korean.Complementizers.complementizers =
+        [korean.cont, korean.comp .nominal, korean.comp .verbal] :=
+  ⟨rfl, rfl⟩
+
+/-- The fragment entry of a clause-typing morpheme that a row names. -/
+def Examples.Lexeme.entry : Examples.Lexeme → Complementizer
+  | .ge => Buryat.ge
+  | .aasha => Buryat.aasha
+  | .zha => Buryat.zha
+  | .ta => Korean.Complementizers.ta
+  | .nun => Korean.Complementizers.nun
+
+/-- The clause-typing morphemes that a row marks on its embedded clause, in order. -/
+def typers (e : Datum) : List Complementizer :=
+  e.spans.filterMap fun s ↦ (Examples.lexeme? s).map (·.entry)
+
+/-- The exponents of a row's language. -/
+def exponence? (e : Datum) : Option Exponence :=
+  e.byLanguage [(.russiaBuriat, buryat), (.korean, korean)]
+
+/-- The heads of a row's embedded clause: as the row gives them, and otherwise with Cont where
+the clause combines with a content noun and without it where it combines with a situation
+noun. -/
+def clause? (e : Datum) : Option Examples.ClauseType :=
+  Examples.clauseType e <|>
+    (Examples.nounSort e).map fun | .content => .contCP | .situation => .sitCP
+
+/-- What a row's embedded clause combines with: a nominal projection if the clause modifies a
+noun or its marked word bears a case, and a verb otherwise. -/
+def licenser (e : Datum) : Complementizer.Licenser :=
+  if (Examples.nounSort e).isSome ∨ ∃ s ∈ e.spans, ∃ w ∈ s.words e, (w.features .case).isSome
+  then .nominal else .verbal
+
+-- ch. 4 (30)–(32), Tables 4.2 and 4.3; ch. 2 (106)–(112), (121), (122)
+theorem typers_eq :
+    ∀ r ∈ Examples.all, ∀ v ∈ exponence? r, ∀ c ∈ clause? r,
+      typers r = v.typers c (licenser r) := by
+  decide +kernel
+
+example : Datum.ReadCount (fun r ↦ (exponence? r).bind fun _ ↦ clause? r) Examples.all 13 := by
   decide +kernel
 
 -- §4.4.3
 theorem hanaxa_typers :
-    (ArgumentFrame.finiteClause.Takes zha ∧ ¬ ArgumentFrame.finiteClause.Takes aasha) ∧
-      (nominalizedFrame.Takes aasha ∧ ¬ nominalizedFrame.Takes zha) ∧
+    (ArgumentFrame.finiteClause.Takes (buryat.comp .verbal) ∧
+        ¬ ArgumentFrame.finiteClause.Takes (buryat.comp .nominal)) ∧
+      (nominalizedFrame.Takes (buryat.comp .nominal) ∧
+        ¬ nominalizedFrame.Takes (buryat.comp .verbal)) ∧
       hanaxa.typers complementizers = [aasha, zha] := by
   decide
 

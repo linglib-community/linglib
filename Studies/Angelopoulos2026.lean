@@ -189,11 +189,15 @@ def Examples.NounSort.toNominalSort : Examples.NounSort → NominalSort
 
 -- (33), (34), (36), (37)
 theorem rows_sort_diagnostics :
-    ∀ r ∈ Examples.all, ∀ s ∈ Examples.nounSort r,
+    ∀ r ∈ Examples.all, ∀ n ∈ Examples.nounSort r,
       (Examples.diagnostic r = some .truthPredicates →
-        (r.judgment = .acceptable ↔ s.toNominalSort.truthEvaluable)) ∧
+        (r.judgment = .acceptable ↔ ∀ (E W : Type) (S : Set E) (cont : E →. Set W),
+          n.toNominalSort.extension S cont ⊆ cont.Dom)) ∧
       (Examples.diagnostic r = some .occurrencePredicates →
-        (r.judgment = .acceptable ↔ s.toNominalSort.occurrenceCompatible)) := by
+        (r.judgment = .acceptable ↔ ∀ (E W : Type) (S : Set E) (cont : E →. Set W),
+          n.toNominalSort.extension S cont ⊆ S)) := by
+  simp only [NominalSort.forall_extension_subset_dom_iff,
+    NominalSort.forall_extension_subset_iff]
   decide +kernel
 
 theorem situation_clause_factive :
@@ -207,12 +211,13 @@ theorem oti_pu_lexically_distinct :
 
 /-! ### Factivity from situation semantics (§3.2) -/
 
-/-- A report with a situation clause entails its complement, whatever the verb: the clause holds
-of a part of the evaluation situation that verifies the complement. -/
-theorem pu_report_factive {S X : Type*} [Preorder S] (verb : X → S → S → Prop) (a : X)
-    (q : Set S) (s : S) (h : ∃ x, verb a x s ∧ Bondarenko2022.compHead q x s) :
-    s ∈ upperClosure q :=
-  let ⟨_, _, hx⟩ := h; Bondarenko2022.mem_upperClosure_of_compHead hx
+/-- A report with a situation clause entails its complement, whatever the verb, where the
+complement is persistent: the clause holds of a part of the evaluation situation that exemplifies
+the complement. -/
+theorem pu_report_factive {S X : Type*} [PartialOrder S] (verb : X → S → S → Prop) (a : X)
+    {q : Set S} (hq : IsUpperSet q) (s : S)
+    (h : ∃ x, verb a x s ∧ x ≤ s ∧ Mereology.Exemplifies q x) : s ∈ q :=
+  let ⟨_, _, hxs, hx⟩ := h; Bondarenko2022.mem_of_exemplifies_of_le hq hx hxs
 
 -- (38a)
 theorem oti_report_not_factive :
@@ -223,11 +228,11 @@ theorem oti_report_not_factive :
 /-! ### Against the transparent syntax–semantics mapping (§7.3) -/
 
 theorem transparency_conflates_axes :
-    (Bondarenko2022.bareArgument .theme).derive Bondarenko2022.grammar (fun _ ↦ .e)
-        (W := Bondarenko2022.Item) (fun w ↦ [w]) = [] ∧
+    (Bondarenko2022.bareArgument .theme Bondarenko2022.contCP).derive Bondarenko2022.grammar
+        (fun _ ↦ .e) (W := Bondarenko2022.Item) (fun w ↦ [w]) = [] ∧
       ∃ r ∈ Examples.all, Examples.position r = some .internalArgument ∧
         Examples.diagnostic r = some .cliticDoubling ∧
         r.feature? "composition" = some "predicate_modification" :=
-  ⟨Bondarenko2022.derive_bareArgument .theme, by decide +kernel⟩
+  ⟨(Bondarenko2022.derive_bareArgument .theme).1, by decide +kernel⟩
 
 end Angelopoulos2026
