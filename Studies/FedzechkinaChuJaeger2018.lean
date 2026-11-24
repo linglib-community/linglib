@@ -125,43 +125,46 @@ theorem verbDependencyLength_eq_of_subject_eq_object {d : HeadDirection}
 
 /-- Fig. 1's verb-final sentence with subject first, MOUNTIE [[RED STOOL ON] HUNTER-OBJ] PUNCH,
 with the arcs of its bracketing. -/
-def fig1Sov : Graph UD.DepRel (Fin 6) :=
+def fig1Sov : DependencyGraph UD.DepRel (Fin 6) :=
   .ofArcs [(5, 0, .nsubj), (5, 4, .obj), (4, 2, .nmod), (2, 1, .amod), (2, 3, .case)]
 
 /-- Object first, [[RED STOOL ON] HUNTER-OBJ] MOUNTIE PUNCH. -/
-def fig1Osv : Graph UD.DepRel (Fin 6) := fig1Sov.linearize [1, 2, 3, 4, 0, 5] (by decide)
+def fig1Osv : DependencyGraph UD.DepRel (Fin 6) := fig1Sov.linearize [1, 2, 3, 4, 0, 5] (by decide)
 
 /-- The verb-initial sentence with subject first, PUNCH MOUNTIE [HUNTER-OBJ [ON RED STOOL]]. -/
-def fig1Vso : Graph UD.DepRel (Fin 6) := fig1Sov.linearize [5, 0, 4, 3, 1, 2] (by decide)
+def fig1Vso : DependencyGraph UD.DepRel (Fin 6) := fig1Sov.linearize [5, 0, 4, 3, 1, 2] (by decide)
 
 /-- Object first, PUNCH [HUNTER-OBJ [ON RED STOOL]] MOUNTIE. -/
-def fig1Vos : Graph UD.DepRel (Fin 6) := fig1Sov.linearize [5, 4, 3, 1, 2, 0] (by decide)
+def fig1Vos : DependencyGraph UD.DepRel (Fin 6) := fig1Sov.linearize [5, 4, 3, 1, 2, 0] (by decide)
 
 theorem fig1_isArborescence_isProjective : ∀ g ∈ [fig1Sov, fig1Osv, fig1Vso, fig1Vos],
-    (∃ r, g.IsArborescence r) ∧ g.IsProjective := by
+    (∃ r, g.unlabelled.IsArborescence r) ∧ g.unlabelled.IsProjective := by
   decide +kernel
 
 -- Fig. 1
 theorem fig1_reachSetDist :
     let ℓ := Function.update (1 : Constituent → ℕ) .object 4
-    fig1Sov.reachSetDist 5 0 = Arrangement.sov.boundaryDist ℓ .verb .subject ∧
-    fig1Sov.reachSetDist 5 4 = Arrangement.sov.boundaryDist ℓ .verb .object ∧
-    fig1Osv.reachSetDist 5 4 = Arrangement.osv.boundaryDist ℓ .verb .subject ∧
-    fig1Osv.reachSetDist 5 3 = Arrangement.osv.boundaryDist ℓ .verb .object ∧
-    fig1Vso.reachSetDist 0 1 = Arrangement.vso.boundaryDist ℓ .verb .subject ∧
-    fig1Vso.reachSetDist 0 2 = Arrangement.vso.boundaryDist ℓ .verb .object ∧
-    fig1Vos.reachSetDist 0 5 = Arrangement.vos.boundaryDist ℓ .verb .subject ∧
-    fig1Vos.reachSetDist 0 1 = Arrangement.vos.boundaryDist ℓ .verb .object := by
+    fig1Sov.unlabelled.reachSetDist 5 0 = Arrangement.sov.boundaryDist ℓ .verb .subject ∧
+    fig1Sov.unlabelled.reachSetDist 5 4 = Arrangement.sov.boundaryDist ℓ .verb .object ∧
+    fig1Osv.unlabelled.reachSetDist 5 4 = Arrangement.osv.boundaryDist ℓ .verb .subject ∧
+    fig1Osv.unlabelled.reachSetDist 5 3 = Arrangement.osv.boundaryDist ℓ .verb .object ∧
+    fig1Vso.unlabelled.reachSetDist 0 1 = Arrangement.vso.boundaryDist ℓ .verb .subject ∧
+    fig1Vso.unlabelled.reachSetDist 0 2 = Arrangement.vso.boundaryDist ℓ .verb .object ∧
+    fig1Vos.unlabelled.reachSetDist 0 5 = Arrangement.vos.boundaryDist ℓ .verb .subject ∧
+    fig1Vos.unlabelled.reachSetDist 0 1 = Arrangement.vos.boundaryDist ℓ .verb .object := by
   decide +kernel
 
 theorem fig1_reachSetDist_eq :
-    fig1Sov.reachSetDist 5 0 = 5 ∧ fig1Sov.reachSetDist 5 4 = 1 ∧ fig1Osv.reachSetDist 5 4 = 1 ∧
-    fig1Osv.reachSetDist 5 3 = 2 ∧ fig1Vso.reachSetDist 0 1 = 1 ∧ fig1Vso.reachSetDist 0 2 = 2 ∧
-    fig1Vos.reachSetDist 0 5 = 5 ∧ fig1Vos.reachSetDist 0 1 = 1 := by
+    fig1Sov.unlabelled.reachSetDist 5 0 = 5 ∧ fig1Sov.unlabelled.reachSetDist 5 4 = 1 ∧
+        fig1Osv.unlabelled.reachSetDist 5 4 = 1 ∧
+    fig1Osv.unlabelled.reachSetDist 5 3 = 2 ∧ fig1Vso.unlabelled.reachSetDist 0 1 = 1 ∧
+        fig1Vso.unlabelled.reachSetDist 0 2 = 2 ∧
+    fig1Vos.unlabelled.reachSetDist 0 5 = 5 ∧ fig1Vos.unlabelled.reachSetDist 0 1 = 1 := by
   decide +kernel
 
 theorem fig1_card_reachSet :
-    (fig1Sov.reachSet 4).toFinset.card = 4 ∧ (fig1Sov.reachSet 0).toFinset.card = 1 := by
+    (fig1Sov.unlabelled.reachSet 4).toFinset.card = 4 ∧
+        (fig1Sov.unlabelled.reachSet 0).toFinset.card = 1 := by
   decide +kernel
 
 /-! ### Two events and their symmetric difference -/

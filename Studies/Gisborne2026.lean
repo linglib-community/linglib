@@ -36,7 +36,7 @@ extracted word is placed by a positional head outside the landmark tree.
 
 * The landmark rules are a `DefaultInheritance` network over the concepts *parent* and
   *subordinate parent*, and a landmark relation is checked for `IsTree` and `IsProjective` as an
-  unlabeled `DependencyGrammar.Graph`.
+  unlabeled `DependencyGrammar.DependencyGraph`.
 * Each dependency type fixes the direction of its head with respect to its dependent
   (`Rel.direction`), and an extractee's direction overrides an object's.
 * Chosen landmarks range over each word's heads; the Best Landmark Principle's preference for the

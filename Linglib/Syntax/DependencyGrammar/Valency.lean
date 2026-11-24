@@ -29,24 +29,27 @@ valency that admits whatever it admits.
 
 * `Valency L` is the type of valencies over the relations `L`, and `Valency.withOptional` is the
   valency with given obligatory and optional valents.
-* `Graph.dependentsBy g p v` is the dependents of `v` by a relation satisfying `p`.
-* `Graph.valents g p v` is the multiset of the relations satisfying `p` that the dependents of
+* `DependencyGraph.dependentsBy g p v` is the dependents of `v` by a relation satisfying `p`.
+* `DependencyGraph.valents g p v` is the multiset of the relations satisfying `p` that the
+  dependents of
   `v` bear.
-* `Graph.Satisfies g p v val` says that the valents of `v` are those of the valency `val`.
+* `DependencyGraph.Satisfies g p v val` says that the valents of `v` are those of the valency `val`.
 
 ## Main results
 
-* `Graph.satisfies_iff_count`: a position satisfies a valency iff the quantity of each relation
+* `DependencyGraph.satisfies_iff_count`: a position satisfies a valency iff the quantity of each
+  relation
   among its valents lies between the quantities at the two ends.
-* `Graph.Satisfies.mono`: satisfaction is monotone in the valency.
-* `Graph.satisfies_comap_symm`: satisfaction is invariant under a change of linearization.
+* `DependencyGraph.Satisfies.mono`: satisfaction is monotone in the valency.
+* `DependencyGraph.satisfies_comap_symm`: satisfaction is invariant under a change of linearization.
 
 ## Implementation notes
 
 The valents are a multiset because a valency may call for several valents of one relation, as
 when relations are syntactic categories and a verb takes three nominals. A valency says nothing
 of word order: the side of the head a valent stands on is a property of the relation in a
-language, not of the word's valency, and `Graph.satisfies_comap_symm` holds for every permutation of
+language, not of the word's valency, and `DependencyGraph.satisfies_comap_symm` holds for every
+permutation of
 the positions.
 
 ## References
@@ -94,22 +97,23 @@ theorem mem_withOptional_singleton {required m : Multiset L} {a : L} :
 
 end Valency
 
-namespace Graph
+namespace DependencyGraph
 
 /-! ### Valents -/
 
 /-- The dependents of `v` by a relation satisfying `p`. -/
-def dependentsBy (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) :
+def dependentsBy (g : DependencyGraph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) :
     Finset (Fin n) :=
   {w | ∃ r ∈ g.label v w, p r}
 
 /-- The relations satisfying `p` that the dependents of `v` bear, each as often as `v` has a
 dependent by it. With `p` the predicate of the relations of valents, these are the valents of
 `v`. -/
-def valents (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) : Multiset L :=
+def valents (g : DependencyGraph L (Fin n)) (p : L →
+    Prop) [DecidablePred p] (v : Fin n) : Multiset L :=
   (univ : Finset (Fin n)).val.filterMap fun w ↦ (g.label v w).filter p
 
-variable {g : Graph L (Fin n)} {p : L → Prop} [DecidablePred p] {v w : Fin n} {r : L}
+variable {g : DependencyGraph L (Fin n)} {p : L → Prop} [DecidablePred p] {v w : Fin n} {r : L}
   {val val₁ val₂ : Valency L}
 
 @[simp] theorem mem_dependentsBy : w ∈ g.dependentsBy p v ↔ ∃ r ∈ g.label v w, p r := by
@@ -171,7 +175,8 @@ theorem valents_comap_symm (σ : Equiv.Perm (Fin n)) : (g.comap σ.symm).valents
 
 /-- The position `v` satisfies the valency `val` when its valents, the relations satisfying `p`
 that its dependents bear, lie between the obligatory valents of `val` and all its valents. -/
-def Satisfies (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) (val : Valency L) :
+def Satisfies (g : DependencyGraph L (Fin n)) (p : L →
+    Prop) [DecidablePred p] (v : Fin n) (val : Valency L) :
     Prop :=
   g.valents p v ∈ val
 
@@ -198,6 +203,6 @@ theorem Satisfies.mono (h : val₁ ≤ val₂) (hs : g.Satisfies p v val₁) : g
     (g.comap σ.symm).Satisfies p v val ↔ g.Satisfies p (σ.symm v) val := by
   rw [Satisfies, valents_comap_symm, Satisfies]
 
-end Graph
+end DependencyGraph
 
 end DependencyGrammar

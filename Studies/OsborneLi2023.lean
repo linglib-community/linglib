@@ -53,7 +53,7 @@ open Morphology (Word)
 
 section Valents
 
-variable {n : ℕ} (g : Graph UD.DepRel (Fin n))
+variable {n : ℕ} (g : DependencyGraph UD.DepRel (Fin n))
 
 /-- The relations of valents are the core-argument relations and the oblique, which UD classifies
 as non-core. -/
@@ -118,7 +118,8 @@ structure Stimulus where
   row : Datum
 
 /-- The dependency tree of the stimulus. -/
-abbrev Stimulus.tree (s : Stimulus) : Graph UD.DepRel (Fin s.stemma.size) := s.stemma.toGraph
+abbrev Stimulus.tree (s : Stimulus) : DependencyGraph UD.DepRel (Fin s.stemma.size) :=
+    s.stemma.toGraph
 
 /-- The stimulus violates the constraint. -/
 def Stimulus.Violates (s : Stimulus) : Prop :=

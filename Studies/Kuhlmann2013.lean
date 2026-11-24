@@ -86,29 +86,30 @@ The German order nests the verb–argument dependencies and is projective; the D
 crosses them and is not, at gap degree 1. -/
 
 /-- Dutch cross-serial: *dat Jan Piet Marie zag helpen lezen*. -/
-def dutchCrossSerial : Graph UD.DepRel (Fin 7) :=
+def dutchCrossSerial : DependencyGraph UD.DepRel (Fin 7) :=
   .ofArcs
     [(0, 4, .dep), (4, 1, .nsubj), (4, 5, .xcomp),
      (5, 2, .nsubj), (5, 6, .xcomp), (6, 3, .nsubj)]
 
 /-- German nested: *dass Jan Piet Marie lesen helfen sah*. -/
-def germanNested : Graph UD.DepRel (Fin 7) :=
+def germanNested : DependencyGraph UD.DepRel (Fin 7) :=
   .ofArcs
     [(0, 6, .dep), (6, 1, .nsubj), (6, 5, .xcomp),
      (5, 2, .nsubj), (5, 4, .xcomp), (4, 3, .nsubj)]
 
-theorem dutchCrossSerial_isArborescence : dutchCrossSerial.IsArborescence 0 := by decide
-theorem germanNested_isArborescence : germanNested.IsArborescence 0 := by decide
+theorem dutchCrossSerial_isArborescence : dutchCrossSerial.unlabelled.IsArborescence 0 := by decide
+theorem germanNested_isArborescence : germanNested.unlabelled.IsArborescence 0 := by decide
 
-theorem figure1_projectivity : ¬ dutchCrossSerial.IsProjective ∧ germanNested.IsProjective := by
+theorem figure1_projectivity : ¬ dutchCrossSerial.unlabelled.IsProjective ∧
+    germanNested.unlabelled.IsProjective := by
   decide
 
 theorem figure1_blockDegree :
-    blockDegree dutchCrossSerial.toDigraph = 2 ∧ blockDegree germanNested.toDigraph = 1 := by
+    blockDegree dutchCrossSerial.unlabelled = 2 ∧ blockDegree germanNested.unlabelled = 1 := by
   decide
 
 theorem dutchCrossSerial_isWellNested :
-    dutchCrossSerial.IsWellNested ∧ ¬ dutchCrossSerial.IsPlanar := by
+    dutchCrossSerial.unlabelled.IsWellNested ∧ ¬ dutchCrossSerial.unlabelled.IsPlanar := by
   decide +kernel
 
 /-! ### Figures 10 and 11: block-degree and well-nestedness -/

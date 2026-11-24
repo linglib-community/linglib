@@ -36,14 +36,14 @@ digraph is planar and every planar digraph is well-nested.
 
 ## Main definitions
 
-* `Digraph.IsProjective`: every yield is order-connected. `Digraph.IsArcProjective` is the same
-  condition stated arc by arc.
+* `Digraph.IsProjective`: every yield is order-connected.
 * `Digraph.gapDegree`: the greatest number of gaps in a yield.
 * `Digraph.IsPlanar`: no two arcs cross. `Digraph.crossings` counts the pairs that do.
 * `Digraph.Interleave`, `Digraph.IsWellNested`: interleaving yields, and the constraint on them.
 
 ## Main statements
 
+* `Digraph.isProjective_iff_forall_adj`: projectivity stated arc by arc.
 * `Digraph.isProjective_iff_gapDegree_eq_zero`, `Digraph.isPlanar_iff_crossings_eq_zero`: each
   constraint is the least value of a count.
 * `Digraph.IsProjective.isPlanar`, `Digraph.IsPlanar.isWellNested`: on a forest, projective
@@ -76,17 +76,14 @@ variable {V W : Type*} [LinearOrder V] [LinearOrder W] (G : Digraph V) {r : V}
 order-connected. -/
 def IsProjective : Prop := ∀ v, (G.reachSet v).OrdConnected
 
-/-- A digraph on a linear order is arc-projective when every vertex between the ends of an arc is
-reachable from the tail of the arc. -/
-def IsArcProjective : Prop := ∀ ⦃h d⦄, G.Adj h d → ∀ w ∈ Set.uIcc h d, G.Reachable h w
-
 theorem isProjective_iff :
     G.IsProjective ↔ ∀ v x, G.Reachable v x → ∀ y, G.Reachable v y →
       ∀ z, x ≤ z → z ≤ y → G.Reachable v z := by
   simp [IsProjective, Set.ordConnected_def, Set.subset_def]
 
 variable {G} in
-theorem IsArcProjective.reachable_of_mem_uIcc (hA : G.IsArcProjective) {v x : V}
+private theorem reachable_of_mem_uIcc_of_forall_adj
+    (hA : ∀ ⦃h d⦄, G.Adj h d → ∀ w ∈ Set.uIcc h d, G.Reachable h w) {v x : V}
     (hx : G.Reachable v x) {w : V} (hw : w ∈ Set.uIcc v x) : G.Reachable v w := by
   induction hx with
   | refl => exact (Set.uIcc_self.subset hw : w ∈ ({v} : Set V)) ▸ .refl
@@ -95,21 +92,21 @@ theorem IsArcProjective.reachable_of_mem_uIcc (hA : G.IsArcProjective) {v x : V}
     · exact ih h₁
     · exact hvc.trans (hA hcx w h₂)
 
-theorem isProjective_iff_isArcProjective : G.IsProjective ↔ G.IsArcProjective := by
+/-- A digraph is projective exactly when every vertex between the ends of an arc is reachable
+from the tail of the arc. -/
+theorem isProjective_iff_forall_adj :
+    G.IsProjective ↔ ∀ ⦃h d⦄, G.Adj h d → ∀ w ∈ Set.uIcc h d, G.Reachable h w := by
   constructor
   · intro hP h d hd w hw
     exact (hP h).uIcc_subset (mem_reachSet.2 .refl) (mem_reachSet.2 (.single hd)) hw
   · intro hA v
     refine ⟨fun x hx y hy z hz ↦ ?_⟩
     rcases Set.uIcc_subset_uIcc_union_uIcc (b := v) (Set.Icc_subset_uIcc hz) with h₁ | h₂
-    · exact hA.reachable_of_mem_uIcc hx (Set.uIcc_comm x v ▸ h₁)
-    · exact hA.reachable_of_mem_uIcc hy h₂
+    · exact reachable_of_mem_uIcc_of_forall_adj hA hx (Set.uIcc_comm x v ▸ h₁)
+    · exact reachable_of_mem_uIcc_of_forall_adj hA hy h₂
 
 instance [Fintype V] [DecidableRel G.Adj] : Decidable G.IsProjective :=
   decidable_of_iff _ G.isProjective_iff.symm
-
-instance [Fintype V] [DecidableRel G.Adj] : Decidable G.IsArcProjective :=
-  decidable_of_iff _ G.isProjective_iff_isArcProjective
 
 variable {G} in
 theorem IsProjective.reachable_of_mem_uIcc (hP : G.IsProjective) {p t x : V} (h : G.Adj p t)
