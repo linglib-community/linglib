@@ -89,7 +89,7 @@ prediction is checked against the paper's judgments on nineteen sentences.
 
 * [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 * [chemla-2007]
-* [buccola-kriz-chemla-2018]
+* [buccola-kriz-chemla-2022]
 * [percus-2006]
 * [sauerland-2008a]
 * [harbour-2014]
