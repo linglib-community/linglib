@@ -1,29 +1,73 @@
 module
 
 public import Linglib.Logic.Trivalent.Connectives
+public import Mathlib.Order.Antisymmetrization
+public import Mathlib.Order.UpperLower.Closure
+public import Mathlib.Order.UpperLower.CompleteLattice
 
 /-!
 # Delineation semantics
 
-In delineation semantics a gradable adjective has no degree argument. A `Delineation` sends each
+In delineation semantics a gradable adjective has no degree argument. A delineation sends each
 comparison class, a set of entities the adjective is evaluated against, to disjoint positive and
-negative extensions relative to it; what lies in neither is the extension gap, the borderline cases.
-*a is taller than b* holds when some comparison class puts `a` in the positive extension and `b` in
-the negative one, Klein's development of Kamp's account of the comparative. Under Klein's
-consistency constraint [the ordering this induces is a strict partial
-order](##Delineation.IsMonotoneOn.isStrictOrder_outranks), and under his second constraint [any two
-members of a complete class are equivalent or
-ranked](##Delineation.equivalent_or_outranks_or_outranks). A delineation [without gaps is
-complete](##Delineation.IsGapless.isComplete), and a measure function induces one [whose ordering is
-degree comparison](##Delineation.outranks_ofMeasure_iff).
+negative extensions relative to it; what lies in neither is the extension gap, the borderline
+cases. *a is taller than b* holds when some comparison class puts `a` in the positive extension
+and `b` in the negative one, Klein's development of Kamp's account of the comparative.
+
+Klein constrains delineations in two ways. The consistency constraint forbids a class from
+reversing a separation another class makes, and the second constraint requires a class with
+distinguishable members to have members in both extensions. A measure `m` and a standard `σ`, an
+upper set of degrees for each class, give the delineation whose positive extension relative to
+`C` is `m ⁻¹' σ C`, and the delineation of a measure alone takes for standard the degrees above
+some member of the class. We show that a delineation without gaps meets the consistency
+constraint exactly when it arises from a measure into a linear order and a standard in this way,
+with a measure that represents the comparative.
+
+## Main definitions
+
+* `Delineation`: positive and negative extensions relative to each comparison class.
+* `Delineation.Comparative`, `Delineation.Outranks`: Klein's comparative, and the ordering it
+  induces within a comparison class.
+* `Delineation.IsMonotoneOn`, `Delineation.IsNontrivialOn`: Klein's two constraints.
+* `Delineation.Nondistinct`, `Delineation.Equivalent`, `Delineation.IsComplete`: sameness of
+  value across the subclasses of a class, and across more determinate delineations.
+* `Delineation.ofStandard`: the delineation of a measure and a class-relative standard.
+* `Delineation.ofMeasure`: the delineation of a measure, positive above some member of the class.
+* `Delineation.very`, `Delineation.fairly`: degree modifiers as narrowings of the class.
+
+## Main results
+
+* `Delineation.IsMonotoneOn.isStrictOrder_outranks`: under the consistency constraint the
+  ordering within a class is a strict partial order.
+* `Delineation.equivalent_or_outranks_or_outranks`: under the second constraint any two members
+  of a complete class are equivalent or ranked.
+* `Delineation.isMonotoneOn_ofExtension_iff_isChain`: a gapless delineation meets the
+  consistency constraint on a set of classes exactly when their positive extensions form a chain.
+* `Delineation.IsGapless.isMonotoneOn_iff_exists_ofStandard`,
+  `Delineation.IsGapless.isMonotone_iff_exists_ofStandard`: a gapless delineation meets the
+  consistency constraint exactly when it is the delineation of a measure into a linear order and
+  a standard, with a measure that represents the comparative.
+* `Delineation.mem_ofStandard_of_forall_le`, `Delineation.ofStandard_subset_ofMeasure`: when a
+  class has members on both sides of a standard, its greatest members meet the standard and
+  whatever meets the standard measures above some member.
+* `Delineation.outranks_ofMeasure_iff`: under the delineation of a measure, the ordering within a
+  class is degree comparison.
 
 ## Implementation notes
 
 The comparison class of Klein's context is the parameter `C` of `Outranks`, and his constraints
 are imposed on the subclasses of `C`, `𝒫 C`. A delineation is not required to leave entities
 outside a class undecided, Klein's restriction of a valuation to its class; the results that need
-it assume it. Klein's equivalence quantifies over the contexts at least as determinate as the
-given one, which are here the delineations of an admissible family `𝒟` extending the given one.
+it assume it, and `ofStandard` and `ofMeasure` classify every entity, so that the consistency
+constraint, which compares classes that need not both contain the two entities, holds of them.
+Klein's equivalence quantifies over the contexts at least as determinate as the given one, which
+are here the delineations of an admissible family `𝒟` extending the given one.
+
+A standard is an upper set of degrees, as in `Semantics/Degree/PositiveStandard.lean`, and the
+class-relative standard `σ : Set E → UpperSet D` is Klein's shape. A standard an adjective fixes
+whatever the class is a constant `σ`, and a standard fixed from the measure on the class, as
+Kennedy's standard-fixing function is, is a `σ` that depends on `C` through the restriction of
+the measure to it.
 
 ## References
 
@@ -33,6 +77,7 @@ given one, which are here the delineations of an admissible family `𝒟` extend
 * [bochnak-2015]
 * [burnett-2017]
 * [cobreros-etal-2012]
+* [kennedy-2007]
 * [kennedy-2011]
 * [van-rooij-2011a]
 -/
@@ -90,6 +135,9 @@ def ofExtension (f : Set E → Set E) : Delineation E :=
 theorem isGapless_ofExtension (f : Set E → Set E) : (ofExtension f).IsGapless := fun _ ↦ rfl
 
 variable {d}
+
+theorem IsGapless.eq_ofExtension (hd : d.IsGapless) : d = ofExtension d.pos :=
+  Delineation.ext rfl (funext hd)
 
 theorem IsGapless.mem_neg_iff (hd : d.IsGapless) : x ∈ d.neg C ↔ x ∉ d C := by
   rw [hd C, Set.mem_compl_iff]
@@ -159,6 +207,21 @@ theorem isMonotoneOn_ofExtension_iff {f : Set E → Set E} {S : Set (Set E)} :
   simp only [IsMonotoneOn, pos_ofExtension, neg_ofExtension, Set.mem_compl_iff]
   exact ⟨fun h C₁ h₁ C₂ h₂ a b ha hb ↦ (h C₁ h₁ C₂ h₂ a b ha hb).1,
     fun h C₁ h₁ C₂ h₂ a b ha hb ↦ ⟨h C₁ h₁ C₂ h₂ a b ha hb, mt (h C₁ h₁ C₂ h₂ a b ha hb)⟩⟩
+
+/-- A gapless delineation meets the consistency constraint on a set of classes exactly when their
+positive extensions form a chain. -/
+theorem isMonotoneOn_ofExtension_iff_isChain {f : Set E → Set E} {S : Set (Set E)} :
+    (ofExtension f).IsMonotoneOn S ↔ IsChain (· ⊆ ·) (f '' S) := by
+  rw [isMonotoneOn_ofExtension_iff]
+  refine ⟨?_, fun hc C₁ h₁ C₂ h₂ a b ha hb hb' ↦ ?_⟩
+  · rintro h _ ⟨C₁, h₁, rfl⟩ _ ⟨C₂, h₂, rfl⟩ -
+    by_contra hn
+    obtain ⟨hn₁, hn₂⟩ := not_or.1 hn
+    obtain ⟨a, ha, ha'⟩ := Set.not_subset.1 hn₁
+    obtain ⟨b, hb, hb'⟩ := Set.not_subset.1 hn₂
+    exact ha' (h C₁ h₁ C₂ h₂ a b ha hb' hb)
+  · rcases hc.total (Set.mem_image_of_mem f h₁) (Set.mem_image_of_mem f h₂) with h | h
+    exacts [h ha, absurd (h hb') hb]
 
 theorem Nondistinct.refl (C : Set E) (u : E) : d.Nondistinct C u u :=
   fun _ _ _ _ ↦ ⟨Iff.rfl, Iff.rfl⟩
@@ -292,6 +355,109 @@ theorem supervaluation_ne_true_of_comparative (hdisc : ∃ C ∈ S, a ∈ d C �
 
 end Supervaluation
 
+/-! ### The delineation of a measure and a standard
+
+A standard is an upper set of degrees, and a class-relative standard `σ` assigns one to each
+comparison class. `ofStandard m σ` puts in the positive extension relative to `C` what the measure
+`m` places in `σ C`. -/
+
+section Standard
+
+variable {D : Type*} [Preorder D] (m : E → D) (σ : Set E → UpperSet D)
+
+/-- The delineation of a measure and a class-relative standard is gapless and puts `x` in the
+positive extension relative to `C` when the degree of `x` is in the standard of `C`. -/
+def ofStandard : Delineation E := ofExtension fun C ↦ m ⁻¹' σ C
+
+@[simp] theorem mem_ofStandard : x ∈ ofStandard m σ C ↔ m x ∈ σ C := Iff.rfl
+
+@[simp] theorem mem_neg_ofStandard : x ∈ (ofStandard m σ).neg C ↔ m x ∉ σ C := Iff.rfl
+
+theorem isGapless_ofStandard : (ofStandard m σ).IsGapless := isGapless_ofExtension _
+
+/-- A weaker standard has the larger positive extension. -/
+theorem antitone_ofStandard : Antitone fun σ ↦ (ofStandard m σ).pos :=
+  fun _ _ h C _ hx ↦ h C hx
+
+variable {m σ}
+
+/-- When some member of the class meets the standard, so does whatever measures at least as much
+as every member. -/
+theorem mem_ofStandard_of_forall_le (h : (C ∩ ofStandard m σ C).Nonempty)
+    (hx : ∀ y ∈ C, m y ≤ m x) : x ∈ ofStandard m σ C :=
+  let ⟨y, hy, hyσ⟩ := h
+  (σ C).upper (hx y hy) hyσ
+
+/-- When some member of the class falls short of the standard, so does whatever measures at most
+as much as every member. -/
+theorem mem_neg_ofStandard_of_forall_le (h : (C ∩ (ofStandard m σ).neg C).Nonempty)
+    (hx : ∀ y ∈ C, m x ≤ m y) : x ∈ (ofStandard m σ).neg C :=
+  let ⟨y, hy, hyσ⟩ := h
+  fun hxσ ↦ hyσ ((σ C).upper (hx y hy) hxσ)
+
+/-- The delineation of a measure into a linear order and a standard meets Klein's consistency
+constraint. -/
+theorem isMonotone_ofStandard {D : Type*} [LinearOrder D] (m : E → D) (σ : Set E → UpperSet D) :
+    (ofStandard m σ).IsMonotone := by
+  rw [IsMonotone, ofStandard, isMonotoneOn_ofExtension_iff]
+  exact fun C₁ _ C₂ _ a b ha hb hb' ↦
+    (σ C₂).upper (le_of_not_ge fun h ↦ hb ((σ C₁).upper h ha)) hb'
+
+end Standard
+
+/-- A gapless delineation meets the consistency constraint on a set `S` of classes exactly when
+some measure into a linear order and some standard give its positive extension relative to each
+class of `S`, and the measure can be taken to order two entities as the classes of `S` that
+separate them do. -/
+theorem IsGapless.isMonotoneOn_iff_exists_ofStandard.{u} {E : Type u} {d : Delineation E}
+    (hd : d.IsGapless) (S : Set (Set E)) :
+    d.IsMonotoneOn S ↔ ∃ (D : Type u) (_ : LinearOrder D) (m : E → D) (σ : Set E → UpperSet D),
+      (∀ X ∈ S, d X = ofStandard m σ X) ∧
+        ∀ a b, (∃ X ∈ S, a ∈ d X ∧ b ∈ d.neg X) ↔ m b < m a := by
+  classical
+  refine ⟨fun hm ↦ ?_, ?_⟩
+  · let _ : Preorder E := Preorder.lift fun u ↦ {X | X ∈ S ∧ u ∈ d X}
+    have : @Std.Total E (· ≤ ·) := ⟨fun a b ↦ by
+      by_cases h : a ≤ b
+      · exact .inl h
+      · obtain ⟨X₁, ⟨h₁, ha⟩, hb⟩ := Set.not_subset.1 h
+        exact .inr fun X₂ ⟨h₂, hb'⟩ ↦ ⟨h₂, (hm X₁ h₁ X₂ h₂ a b ha
+          (hd.mem_neg_iff.2 fun hb'' ↦ hb ⟨h₁, hb''⟩)).1 hb'⟩⟩
+    refine ⟨Antisymmetrization E (· ≤ ·), inferInstance, toAntisymmetrization (· ≤ ·),
+      fun X ↦ upperClosure (toAntisymmetrization (· ≤ ·) '' d X), fun X hX ↦ ?_, fun a b ↦ ?_⟩
+    · refine Set.ext fun x ↦ ?_
+      simp only [mem_ofStandard, mem_upperClosure, Set.exists_mem_image,
+        toAntisymmetrization_le_toAntisymmetrization_iff]
+      exact ⟨fun h ↦ ⟨x, h, le_rfl⟩, fun ⟨a, ha, hax⟩ ↦ (hax ⟨hX, ha⟩).2⟩
+    · rw [toAntisymmetrization_lt_toAntisymmetrization_iff, lt_iff_le_not_ge]
+      refine ⟨fun ⟨X, hX, ha, hb⟩ ↦ ?_, fun ⟨_, hab⟩ ↦ ?_⟩
+      · have hab : ¬ a ≤ b := fun h ↦ hd.mem_neg_iff.1 hb (h ⟨hX, ha⟩).2
+        exact ⟨(Std.Total.total a b).resolve_left hab, hab⟩
+      · obtain ⟨X, ⟨hX, ha⟩, hb⟩ := Set.not_subset.1 hab
+        exact ⟨X, hX, ha, hd.mem_neg_iff.2 fun hb' ↦ hb ⟨hX, hb'⟩⟩
+  · rintro ⟨D, _, m, σ, h, -⟩
+    have key : ∀ C₁ ∈ S, ∀ C₂ ∈ S, ∀ a b, a ∈ d C₁ → b ∉ d C₁ → b ∈ d C₂ → a ∈ d C₂ := by
+      intro C₁ h₁ C₂ h₂ a b ha hb hb'
+      rw [h C₁ h₁] at ha hb
+      rw [h C₂ h₂] at hb' ⊢
+      exact (σ C₂).upper (le_of_not_ge fun hle ↦ hb ((σ C₁).upper hle ha)) hb'
+    exact fun C₁ h₁ C₂ h₂ a b ha hb ↦ ⟨key C₁ h₁ C₂ h₂ a b ha (hd.mem_neg_iff.1 hb),
+      fun ha' ↦ hd.mem_neg_iff.2 fun hb' ↦
+        hd.mem_neg_iff.1 ha' (key C₁ h₁ C₂ h₂ a b ha (hd.mem_neg_iff.1 hb) hb')⟩
+
+/-- A gapless delineation meets the consistency constraint exactly when it is the delineation of
+a measure into a linear order and a standard, and the measure can be taken to represent the
+comparative. -/
+theorem IsGapless.isMonotone_iff_exists_ofStandard.{u} {E : Type u} {d : Delineation E}
+    (hd : d.IsGapless) :
+    d.IsMonotone ↔ ∃ (D : Type u) (_ : LinearOrder D) (m : E → D) (σ : Set E → UpperSet D),
+      d = ofStandard m σ ∧ ∀ a b, d.Comparative a b ↔ m b < m a := by
+  rw [IsMonotone, hd.isMonotoneOn_iff_exists_ofStandard]
+  refine exists₄_congr fun D _ m σ ↦ and_congr ⟨fun h ↦ ?_, fun h X _ ↦ h ▸ rfl⟩
+    (forall₂_congr fun a b ↦ by simp [Comparative])
+  rw [hd.eq_ofExtension]
+  exact congrArg ofExtension (funext fun X ↦ h X trivial)
+
 /-! ### The delineation of a measure
 
 `ofMeasure` maps threshold semantics into delineation semantics, and `outranks_ofMeasure_iff`
@@ -311,16 +477,30 @@ def ofMeasure : Delineation E := ofExtension fun C ↦ {x | ∃ y ∈ C, μ y < 
 @[simp] theorem mem_neg_ofMeasure : x ∈ (ofMeasure μ).neg C ↔ ∀ y ∈ C, μ x ≤ μ y := by
   simp [ofMeasure]
 
+/-- The delineation of a measure is its delineation at the standard of the degrees above some
+member of the class. -/
+theorem ofStandard_iInf_Ioi :
+    (ofStandard μ fun C ↦ ⨅ y ∈ C, UpperSet.Ioi (μ y)) = ofMeasure μ := by
+  rw [ofStandard, ofMeasure]
+  congr 1
+  refine funext fun C ↦ Set.ext fun x ↦ ?_
+  simp
+
 theorem isGapless_ofMeasure : (ofMeasure μ).IsGapless := isGapless_ofExtension _
 
 theorem isMonotone_ofMeasure : (ofMeasure μ).IsMonotone := by
-  rw [IsMonotone, ofMeasure, isMonotoneOn_ofExtension_iff]
-  rintro C₁ - C₂ - a b ⟨y₁, hy₁, hlt_a⟩ hnotb ⟨y₂, hy₂, hlt_b⟩
-  have hle : μ b ≤ μ y₁ := not_lt.mp fun h ↦ hnotb ⟨y₁, hy₁, h⟩
-  exact ⟨y₂, hy₂, hlt_b.trans (hle.trans_lt hlt_a)⟩
+  rw [← ofStandard_iInf_Ioi μ]
+  exact isMonotone_ofStandard μ _
 
 theorem monotone_ofMeasure : Monotone (ofMeasure μ).pos :=
   fun _ _ hle _ ⟨y, hy, hlt⟩ ↦ ⟨y, hle hy, hlt⟩
+
+/-- When some member of the class falls short of a standard, whatever meets the standard measures
+above some member. -/
+theorem ofStandard_subset_ofMeasure {σ : Set E → UpperSet D}
+    (h : (C ∩ (ofStandard μ σ).neg C).Nonempty) : ofStandard μ σ C ⊆ ofMeasure μ C :=
+  let ⟨y, hy, hyσ⟩ := h
+  fun _ hx ↦ ⟨y, hy, lt_of_not_ge fun hle ↦ hyσ ((σ C).upper hle hx)⟩
 
 /-- Under a measure-induced delineation, the ordering of two members of a comparison class is
 degree comparison. -/
@@ -391,9 +571,15 @@ theorem comparative_iff_of_isSoundFor_of_isCompleteFor {R : E → E → Prop} (h
 
 variable {D : Type*} [LinearOrder D] (μ : E → D)
 
-theorem isSoundFor_ofMeasure : (ofMeasure μ).IsSoundFor fun a b ↦ μ b < μ a :=
-  fun C x y hpos hneg ↦ (outranks_ofMeasure_iff μ (Set.mem_univ x) (Set.mem_univ y)).1
-    ⟨C, Set.subset_univ _, hpos, hneg⟩
+/-- Whatever a class puts in the positive extension of a standard measures above whatever it puts
+in the negative one. -/
+theorem isSoundFor_ofStandard (σ : Set E → UpperSet D) :
+    (ofStandard μ σ).IsSoundFor fun a b ↦ μ b < μ a :=
+  fun C _ _ ha hb ↦ lt_of_not_ge fun h ↦ hb ((σ C).upper h ha)
+
+theorem isSoundFor_ofMeasure : (ofMeasure μ).IsSoundFor fun a b ↦ μ b < μ a := by
+  rw [← ofStandard_iInf_Ioi μ]
+  exact isSoundFor_ofStandard μ _
 
 theorem isCompleteFor_ofMeasure : (ofMeasure μ).IsCompleteFor fun a b ↦ μ b < μ a :=
   fun x y hR ↦ (comparative_iff_outranks_univ _).2
