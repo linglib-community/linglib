@@ -27,10 +27,16 @@ and a Sit-CP has Comp alone, so a Sit-CP with proposition `p` holds of the parts
 evaluation situation that exemplify `p`.
 
 Content is fixed by equality. Clauses with different propositions then hold of disjoint sets of
-individuals, so that two clauses do not stack on one noun or conjoin, and a clause is not
-monotone in its proposition. On the rival semantics, on which the content entails the
-proposition, a clause is a homomorphism of intersections `subsetClause cont`: stacked clauses
-have the meaning of the conjunction, and a clause is closed under weakening of its proposition.
+individuals, so that two clauses do not stack on one noun [moulton-2009] or conjoin, and a clause is
+not monotone in its proposition. A disjunction of clauses holds of the individuals whose content is
+one of the two propositions, none of which has the disjunction of the propositions as its content
+unless one proposition entails the other [bassi-bondarenko-2021]. Where the facts of a world
+correspond one to one to its true propositions, exactly one fact has a given true proposition as its
+content [elliott-2020-embedding]. On the rival semantics, on which the content entails the
+proposition, a clause is a homomorphism of intersections `subsetClause cont`: stacked clauses have
+the meaning of the conjunction, a clause is closed under weakening of its proposition, and a fact is
+not unique, since the content of the fact with a stronger true proposition also entails the
+clause's.
 
 A Sit-CP holds only where its proposition is true, if the proposition is persistent. It depends
 on its proposition only among the parts of the evaluation situation: descriptions that pick out
@@ -80,7 +86,7 @@ exponents give for the heads of the clause and for what the clause combines with
 
 ## TODO
 
-* The conjunction and disjunction of clauses, and the clauses of Russian, whose Cont head has no
+* The non-Boolean conjunction of clauses, and the clauses of Russian, whose Cont head has no
   exponent.
 * The verbs of occurrence, whose situation argument a Sit-CP modifies.
 
@@ -89,8 +95,10 @@ exponents give for the heads of the clause and for what the clause combines with
 * [bondarenko-2022]
 * [kratzer-2006]
 * [kratzer-2012]
+* [moulton-2009]
 * [moulton-2015]
 * [bassi-bondarenko-2021]
+* [elliott-2020-embedding]
 -/
 
 @[expose] public section
@@ -105,7 +113,7 @@ section Content
 
 open Modality ModalLogic
 
-variable {X W : Type*} {cont : X →. Set W} {x : X} {p : Set W}
+variable {X W : Type*} {cont : X →. Set W} {x : X} {p q : Set W} {fact : Set X} {w : W}
 
 /-- On the equality semantics, clauses with different propositions hold of disjoint sets of
 individuals, so that two clauses do not stack on one noun or conjoin. -/
@@ -134,6 +142,35 @@ theorem subsetClause_apply : subsetClause cont p = cont.preimage (Set.Iic p) := 
 theorem mem_subsetClause_iff :
     x ∈ subsetClause cont p ↔ x ∈ cont.Dom ∧ □[compatible cont] (· ∈ p) x :=
   mem_preimage_Iic_iff
+
+-- ch. 3 (19), (20); (24), (25) of [bassi-bondarenko-2021]
+theorem disjoint_preimage_union_preimage_singleton_union (cont : X →. Set W) (hpq : ¬ p ⊆ q)
+    (hqp : ¬ q ⊆ p) :
+    Disjoint (cont.preimage {p} ∪ cont.preimage {q}) (cont.preimage {p ∪ q}) := by
+  rw [← PFun.preimage_union]
+  refine cont.disjoint_preimage_of_disjoint (Set.disjoint_singleton_right.2 ?_)
+  rintro (h | h)
+  exacts [hqp (h ▸ Set.subset_union_right), hpq (h ▸ Set.subset_union_left)]
+
+-- ch. 2 (179), (180); (282), (283) of [elliott-2020-embedding]
+theorem existsUnique_fact_preimage_singleton
+    (hinj : ∀ x ∈ fact, ∀ y ∈ fact, ∀ p, p ∈ cont x → p ∈ cont y → x = y)
+    (hsurj : ∀ p, w ∈ p → ∃ x ∈ fact, p ∈ cont x) (hp : w ∈ p) :
+    ∃! x, x ∈ fact ∧ x ∈ cont.preimage {p} := by
+  obtain ⟨x, hx, hpx⟩ := hsurj p hp
+  refine ⟨x, ⟨hx, p, rfl, hpx⟩, ?_⟩
+  rintro y ⟨hy, _, rfl, hpy⟩
+  exact hinj y hy x hx _ hpy hpx
+
+-- ch. 2 (181), (182); (284) of [elliott-2020-embedding]
+theorem not_existsUnique_fact_subsetClause (hsurj : ∀ p, w ∈ p → ∃ x ∈ fact, p ∈ cont x)
+    (hq : w ∈ q) (hqp : q ⊂ p) : ¬ ∃! x, x ∈ fact ∧ x ∈ subsetClause cont p := by
+  rintro ⟨_, -, h⟩
+  obtain ⟨y, hy, hpy⟩ := hsurj p (hqp.subset hq)
+  obtain ⟨z, hz, hqz⟩ := hsurj q hq
+  obtain rfl := (h y ⟨hy, p, Set.mem_Iic.2 le_rfl, hpy⟩).trans
+    (h z ⟨hz, q, Set.mem_Iic.2 hqp.subset, hqz⟩).symm
+  exact hqp.ne (Part.mem_unique hqz hpy)
 
 end Content
 

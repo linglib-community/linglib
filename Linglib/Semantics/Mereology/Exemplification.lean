@@ -42,14 +42,15 @@ exemplification recovers a set of situations from the proposition that one of th
 ## Implementation notes
 
 The definition is the disjunction of [kratzer-2012], whose two cases are the two ways of
-exemplifying a proposition; the conjunctive form of [bondarenko-2022], which is stated for
-arbitrary individuals and sets of them, is `Mereology.exemplifies_iff_mem_and`. The set is the
-first argument, as the predicate is the first argument of `Minimal`, so that `Exemplifies p` is
-the predicate of exemplifying `p`.
+exemplifying a proposition. The conjunctive form of [deigan-2020], which [bondarenko-2022] states
+for arbitrary individuals and sets of them, is `Mereology.exemplifies_iff_mem_and`. The set is
+the first argument, as the predicate is the first argument of `Minimal`, so that `Exemplifies p`
+is the predicate of exemplifying `p`.
 
 ## References
 
 * [kratzer-2012]
+* [deigan-2020]
 * [bondarenko-2022]
 -/
 
