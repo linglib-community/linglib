@@ -41,16 +41,16 @@ effect [is at-issue for the question whether it holds](##BeaverEtAl2017.atIssue_
 
 namespace BeaverEtAl2017
 
-open Question TonhauserEtAl2013
+open Inquisitive Inquisitive.Proposition TonhauserEtAl2013
 
-variable {W : Type*} {Q : Question W} {c m : Set W}
+variable {W : Type*} {Q : Proposition (Set W)} {c m : Set W}
 
 /-! ### Excluding an answer -/
 
 /-- In the context `c`, the content `m` entails that some possible answer to the question is
 false: the second condition of (32), and a partial answer as [simons-tonhauser-beaver-roberts-2010]
 gloss it, one that eliminates at least one alternative. -/
-def Excludes (c m : Set W) (Q : Question W) : Prop := ∃ a ∈ alt Q, c ∩ m ⊆ aᶜ
+def Excludes (c m : Set W) (Q : Proposition (Set W)) : Prop := ∃ a ∈ alt Q, c ∩ m ⊆ aᶜ
 
 theorem Excludes.partiallyAnsweredBy (h : Excludes c m Q) : PartiallyAnsweredBy Q (c ∩ m) :=
   let ⟨a, ha, hm⟩ := h; ⟨a, ha, .inr hm⟩
@@ -82,7 +82,7 @@ theorem excludes_polar (hne : m.Nonempty) (hnu : m ≠ Set.univ) : Excludes c m 
 whether it holds is relevant, that is when the content or its negation excludes an answer. The
 negation can do so where the content does not, and (32) then calls the content not at-issue. -/
 theorem exists_excludes_compl_and_not_excludes :
-    ∃ (Q : Question (Fin 3)) (m : Set (Fin 3)),
+    ∃ (Q : Proposition (Set (Fin 3))) (m : Set (Fin 3)),
       Excludes Set.univ mᶜ Q ∧ ¬ Excludes Set.univ m Q := by
   have halt : alt (ofSet ({0} : Set (Fin 3)) ⊔ ofSet {1, 2}) = {{0}, {1, 2}} :=
     alt_ofSet_sup_ofSet (by simp) (by simp [Set.subset_def])
@@ -101,7 +101,7 @@ variable {R : SetRel W W} {Acc : Set W → Prop}
 
 /-- (32): the content `m` is at-issue relative to the question under discussion `Q` in the
 context `c`. -/
-structure AtIssue (R : SetRel W W) (Acc : Set W → Prop) (c m : Set W) (Q : Question W) :
+structure AtIssue (R : SetRel W W) (Acc : Set W → Prop) (c m : Set W) (Q : Proposition (Set W)) :
     Prop where
   /-- The content contributes to the ordinary semantics of its clause. -/
   localEffect : ObligatoryLocalEffect R m Acc

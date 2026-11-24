@@ -63,6 +63,8 @@ which the paper offers as a direction rather than a result, are not modelled.
 
 @[expose] public section
 
+open Inquisitive
+
 namespace Lassiter2025
 
 open Conditional NaturalLogic PolarityItem
@@ -126,11 +128,11 @@ variable {A W : Type*} {K : Commitment.Table A W} {p : Set W}
 
 theorem anchoring_iff_felicitous
     (h : p ∈ K.commonGround ∨
-      (∀ a, p ∉ K.discourseCommitments a) ∧ ¬ (Question.polar p).DecidedBy K.commonGround)
+      (∀ a, p ∉ K.discourseCommitments a) ∧ ¬ (Proposition.polar p).DecidedBy K.commonGround)
     (ct : Reading) : anchoring (p ∈ K.commonGround) ct ↔ ct.Felicitous K p := by
   rcases h with h | ⟨h₁, h₂⟩
   · rw [Reading.felicitous_iff_of_mem_commonGround h]; simp [anchoring, h]
-  · have hp : p ∉ K.commonGround := fun hp ↦ h₂ (Question.decidedBy_polar.2 (.inl hp))
+  · have hp : p ∉ K.commonGround := fun hp ↦ h₂ (Proposition.decidedBy_polar.2 (.inl hp))
     rw [Reading.felicitous_iff_of_not_decidedBy h₁ h₂]
     cases ct <;> simp [anchoring, hp]
 

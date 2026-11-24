@@ -65,7 +65,7 @@ feature.
 
 namespace Thomas2026
 
-open MeasureTheory ProbabilityTheory Question
+open MeasureTheory ProbabilityTheory Inquisitive Inquisitive.Proposition
 open scoped ENNReal
 
 variable {W : Type*} [MeasurableSpace W] (μ : Measure W)
@@ -75,7 +75,7 @@ variable {W : Type*} [MeasurableSpace W] (μ : Measure W)
 /-- Relevance (61a): a question is relevant to a question if some alternative of the first
 shifts the probability of some alternative of the second, that is, if their alternatives are not
 independent. -/
-def Relevant (R S : Question W) : Prop :=
+def Relevant (R S : Proposition (Set W)) : Prop :=
   ¬ IndepSets (alt R) (alt S) μ
 
 /-- The impact of a proposition on a proposition: the factor by which learning the first
@@ -85,7 +85,7 @@ noncomputable def impact (R A : Set W) : ℝ≥0∞ := μ[A | R] / μ A
 /-- Answerhood (62): a nonempty set of alternatives is the resolution of a question evidenced
 by a proposition when the proposition raises the probability of its conjunction and impacts
 it more than the conjunction of any set of alternatives not entailed by it. -/
-structure IsResolutionOf (Q : Question W) (𝒜 : Set (Set W)) (R : Set W) : Prop where
+structure IsResolutionOf (Q : Proposition (Set W)) (𝒜 : Set (Set W)) (R : Set W) : Prop where
   subset_alt : 𝒜 ⊆ alt Q
   nonempty : 𝒜.Nonempty
   raises : μ (⋂₀ 𝒜) < μ[⋂₀ 𝒜 | R]
@@ -93,7 +93,7 @@ structure IsResolutionOf (Q : Question W) (𝒜 : Set (Set W)) (R : Set W) : Pro
     impact μ R (⋂₀ 𝒜') < impact μ R (⋂₀ 𝒜)
 
 /-- A proposition answers a question when it evidences some resolution of it. -/
-def Answers (R : Set W) (Q : Question W) : Prop := ∃ 𝒜, IsResolutionOf μ Q 𝒜 R
+def Answers (R : Set W) (Q : Proposition (Set W)) : Prop := ∃ 𝒜, IsResolutionOf μ Q 𝒜 R
 
 /-- (63): a proposition evidences a resolution more strongly than another proposition. -/
 def EvidencesMore (A R R' : Set W) : Prop := μ[A | R'] < μ[A | R]
@@ -104,17 +104,17 @@ def EvidencesMore (A R R' : Set W) : Prop := μ[A | R'] < μ[A | R]
 prejacent answers it and evidences its resolution more strongly than the antecedent; the
 prejacent does not entail that resolution, and any weaker prejacent would evidence it less
 strongly. -/
-def TooFelicitous (π ant : Set W) (rq : Question W) : Prop :=
+def TooFelicitous (π ant : Set W) (rq : Proposition (Set W)) : Prop :=
   Answers μ ant rq ∧ ∃ 𝒜, IsResolutionOf μ rq 𝒜 (ant ∩ π) ∧
     EvidencesMore μ (⋂₀ 𝒜) (ant ∩ π) ant ∧ ¬ π ⊆ ⋂₀ 𝒜 ∧
     ∀ S, π ⊂ S → EvidencesMore μ (⋂₀ 𝒜) (ant ∩ π) (ant ∩ S)
 
 /-- (64): *too* is licensed by an antecedent and a question relevant to a question in the
 discourse tree. -/
-def Too (π ant : Set W) (rq dq : Question W) : Prop :=
+def Too (π ant : Set W) (rq dq : Proposition (Set W)) : Prop :=
   TooFelicitous μ π ant rq ∧ Relevant μ rq dq
 
-variable {μ} {Q rq : Question W} {𝒜 : Set (Set W)} {A R R' π ant : Set W}
+variable {μ} {Q rq : Proposition (Set W)} {𝒜 : Set (Set W)} {A R R' π ant : Set W}
 
 /-! ### Consequences -/
 
@@ -135,7 +135,7 @@ theorem IsResolutionOf.subset_or_subset {𝒜' : Set (Set W)} (h : IsResolutionO
   exact lt_asymm (h.dominates 𝒜' h'.subset_alt h'.nonempty hcon.1)
     (h'.dominates 𝒜 h.subset_alt h.nonempty hcon.2)
 
-theorem Relevant.symm {R S : Question W} (h : Relevant μ R S) : Relevant μ S R :=
+theorem Relevant.symm {R S : Proposition (Set W)} (h : Relevant μ R S) : Relevant μ S R :=
   fun h' ↦ h h'.symm
 
 -- A proposition of probability zero is relevant to no question.
@@ -146,7 +146,7 @@ theorem not_relevant_ofSet_of_measure_eq_zero (h : μ R = 0) : ¬ Relevant μ (o
 
 -- The printed form of (61a), when the alternatives of the first question are measurable and
 -- have positive probability.
-theorem relevant_iff_exists_cond_ne [IsFiniteMeasure μ] {R S : Question W}
+theorem relevant_iff_exists_cond_ne [IsFiniteMeasure μ] {R S : Proposition (Set W)}
     (hR : ∀ A ∈ alt R, MeasurableSet A ∧ μ A ≠ 0) :
     Relevant μ R S ↔ ∃ A ∈ alt R, ∃ A' ∈ alt S, μ[A' | A] ≠ μ A' := by
   rw [Relevant, IndepSets_iff]

@@ -75,7 +75,7 @@ lacks. Question particles sit at the layer their embedding distribution shows.
 
 namespace Dayal2025
 
-open Question Clause
+open Question Inquisitive Inquisitive.Proposition Clause
 open English English.Particles HindiUrdu.Particles Japanese.Particles English.Verbs
 
 /-! ### The left periphery

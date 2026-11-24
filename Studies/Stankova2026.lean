@@ -32,7 +32,7 @@ low like inner negation but non-propositional like FALSUM.
 
 namespace Stankova2026
 
-open Question Simik2024
+open Question Inquisitive Inquisitive.Proposition Simik2024
 open StankovaSimik2025 (LicensedAt)
 
 /-! ### The three positions -/

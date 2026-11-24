@@ -26,10 +26,10 @@ item](##Blok2015.admits_hoeven). [The paper's judgments follow](##Blok2015.judgm
 
 ## Implementation notes
 
-* Worlds are counts, one for each number, as in the paper's simplified model, and a proposition
-  is a `Set (Set ℕ)`: the library's `Question` is closed downward and would merge the nested
-  possibilities of *up to*. The choice functions of the entries are dropped, since applying them
-  pointwise yields the set they choose from (`CoppockBrochhagen2013.range_choice_apply`).
+* Worlds are counts, one for each number, as in the paper's simplified model, and a proposition is a
+  `Set (Set ℕ)`: the library's `Inquisitive.Proposition` is closed downward and would merge the
+  nested possibilities of *up to*. The choice functions of the entries are dropped, since applying
+  them pointwise yields the set they choose from (`CoppockBrochhagen2013.range_choice_apply`).
 * *At most* is Coppock and Brochhagen's entry on the one-sided answers to the question of how
   many, ranked by their lower bounds.
 * The account covers the language file's Class B modifiers that set an upper bound, checked against

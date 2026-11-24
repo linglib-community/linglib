@@ -62,7 +62,7 @@ a reverse tag disjoins it with the monopolar question of the negation.
 
 namespace Krifka2015
 
-open Commitment Space Question
+open Commitment Space Question Inquisitive Inquisitive.Proposition
 
 /-! ### Answers
 
@@ -302,17 +302,17 @@ def continuations : Set (Set (Set W)) := ↑C \ {C.root}
 open scoped Classical in
 /-- The issue a space raises is settled by the information states inside what some continuation
 entails, or inside what the root entails when the space has no continuations. -/
-noncomputable def toIssue : Question W :=
-  if continuations C = ∅ then Question.ofSet (⋂₀ C.root)
-  else Question.generate ((⋂₀ ·) '' continuations C)
+noncomputable def toIssue : Proposition (Set W) :=
+  if continuations C = ∅ then Proposition.ofSet (⋂₀ C.root)
+  else Proposition.generate ((⋂₀ ·) '' continuations C)
 
 theorem mem_toIssue_iff {i : Set W} :
     i ∈ toIssue C ↔
       (continuations C = ∅ ∧ i ⊆ ⋂₀ C.root) ∨ ∃ c ∈ continuations C, i ⊆ ⋂₀ c := by
   unfold toIssue
   split_ifs with h
-  · simp [h, Question.mem_ofSet]
-  · simp only [h, false_and, false_or, Question.mem_generate, Set.exists_mem_image]
+  · simp [h, Proposition.mem_ofSet]
+  · simp only [h, false_and, false_or, Proposition.mem_generate, Set.exists_mem_image]
     refine ⟨fun h' ↦ h'.elim (fun e ↦ ?_) id, Or.inr⟩
     obtain ⟨c, hc⟩ := Set.nonempty_iff_ne_empty.2 h
     exact ⟨c, hc, e ▸ Set.empty_subset _⟩

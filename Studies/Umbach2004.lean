@@ -61,7 +61,7 @@ follows the main text.
 
 namespace Umbach2004
 
-open Question
+open Inquisitive Inquisitive.Proposition
 
 variable {W α : Type*}
 

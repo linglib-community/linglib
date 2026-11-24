@@ -146,8 +146,8 @@ theorem oFelicitous_iff_of_not_contingent {F : TWFrame W T} {i : Index W T}
   or_iff_right h
 
 theorem not_decidedBy_of_live (h₁ : ¬ D ⊆ A) (h₂ : ¬ Disjoint A D) :
-    ¬ (Question.polar A).DecidedBy (Filter.principal D) := by
-  rw [Question.decidedBy_polar, Filter.mem_principal, Filter.mem_principal]
+    ¬ (Inquisitive.Proposition.polar A).DecidedBy (Filter.principal D) := by
+  rw [Inquisitive.Proposition.decidedBy_polar, Filter.mem_principal, Filter.mem_principal]
   exact not_or.2 ⟨h₁, fun h ↦ h₂ (Set.subset_compl_iff_disjoint_right.1 h).symm⟩
 
 theorem felicitous_iff_of_live {P : Type*} {K : Commitment.Table P W}

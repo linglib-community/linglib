@@ -18,11 +18,12 @@ plurality of propositions a disjunction denotes is not formalized.
 
 ## Implementation notes
 
-* The semantics is `MinimalCovering`: `Question W` supplies Def 10's subset-closed families
-  (`Question.ofSet` is `↓{·}` of Def 11, `Question.info` is `info` of Def 12, `Question.alt` is
-  `alt` of Def 13), Def 10's bilateral propositions are `Kalman (Question W)`, whose
-  third bullet `P⁺ ∩ P⁻ = {∅}` is disjointness in `Question W`, and Def 14's ¬-, ∧- and ∨-clauses
-  are its `ᶜ`, `⊓` and `⊔`. Def 14 defines `◇φ` as `¬□¬φ`, which is
+* The semantics is `MinimalCovering`: `Inquisitive.Proposition (Set W)` supplies Def 10's
+  subset-closed families (`Inquisitive.Proposition.ofSet` is `↓{·}` of Def 11,
+  `Inquisitive.Proposition.info` is `info` of Def 12, `Inquisitive.Proposition.alt` is `alt` of Def
+  13), Def 10's bilateral propositions are `Kalman (Inquisitive.Proposition (Set W))`, whose third
+  bullet `P⁺ ∩ P⁻ = {∅}` is disjointness in `Inquisitive.Proposition (Set W)`, and Def 14's ¬-, ∧-
+  and ∨-clauses are its `ᶜ`, `⊓` and `⊔`. Def 14 defines `◇φ` as `¬□¬φ`, which is
   `MinimalCovering.possibility_eq_compl_necessity_compl`.
 * Def 14's □⁺ clause adds the conjunct `R(w) ≠ ∅`, which [booth-2022a]'s clause lacks. The two
   differ only on propositions without alternatives, and every sentence has one (Fact 5), so they
@@ -55,7 +56,7 @@ plurality of propositions a disjunction denotes is not formalized.
 
 namespace Booth2022b
 
-open MinimalCovering Question
+open MinimalCovering Inquisitive Inquisitive.Proposition
 
 variable {W : Type*}
 
@@ -65,14 +66,14 @@ variable {W : Type*}
 theorem kratzer_monotone (R : W → Set W) : Monotone fun A : Set W ↦ {w | R w ⊆ A} :=
   fun _ _ hAB _ hw ↦ hw.trans hAB
 
-theorem truth_necessity_subset (R : W → Set W) (φ : Kalman (Question W)) :
+theorem truth_necessity_subset (R : W → Set W) (φ : Kalman (Proposition (Set W))) :
     truth (necessity R φ) ⊆ {w | R w ⊆ truth φ} := by
   rw [truth_necessity]
   exact fun _ h ↦ h.subset_sUnion.trans φ.pro.sUnion_alt_subset_info
 
 -- Figure 1
 theorem not_monotone_necessity :
-    ¬ ∀ φ ψ : Kalman (Question Booth2022a.Figures.W4), truth φ ⊆ truth ψ →
+    ¬ ∀ φ ψ : Kalman (Proposition (Set Booth2022a.Figures.W4)), truth φ ⊆ truth ψ →
       truth (necessity Booth2022a.Figures.rP φ) ⊆ truth (necessity Booth2022a.Figures.rP ψ) :=
   fun h ↦ (Booth2022a.ross_gap Booth2022a.Figures.incomp_val Booth2022a.Figures.box_p).1
     (h (atom Booth2022a.Figures.vp) (atom Booth2022a.Figures.vp ⊔ atom Booth2022a.Figures.vq)
@@ -82,25 +83,26 @@ theorem not_monotone_necessity :
 
 /-- **Booth Def 22**: `φ ∨ ψ` is non-Hurford when the positive interpretations of the disjuncts
 are incomparable. -/
-def NonHurford (φ ψ : Kalman (Question W)) : Prop :=
+def NonHurford (φ ψ : Kalman (Proposition (Set W))) : Prop :=
   IncompRel (· ≤ ·) φ.pro ψ.pro
 
-theorem NonHurford.symm {φ ψ : Kalman (Question W)} (h : NonHurford φ ψ) : NonHurford ψ φ :=
+theorem NonHurford.symm {φ ψ : Kalman (Proposition (Set W))} (h : NonHurford φ ψ) :
+    NonHurford ψ φ :=
   IncompRel.symm h
 
 theorem nonHurford_atom_iff {Vp Vq : Set W} :
     NonHurford (atom Vp) (atom Vq) ↔ IncompRel (· ⊆ ·) Vp Vq :=
   and_congr (not_congr ofSet_le_ofSet_iff) (not_congr ofSet_le_ofSet_iff)
 
-theorem alt_sup_pro_eq_union {φ ψ : Kalman (Question W)}
+theorem alt_sup_pro_eq_union {φ ψ : Kalman (Proposition (Set W))}
     (hφψ : Disjoint (alt φ.pro) ψ.pro) (hψφ : Disjoint (alt ψ.pro) φ.pro) :
     alt (φ ⊔ ψ).pro = alt φ.pro ∪ alt ψ.pro := by
   refine (alt_sup_subset_union φ.pro ψ.pro).antisymm ?_
   rintro q (hq | hq)
   · exact mem_alt_sup_of_alt_left hq fun r hr hqr ↦
-      (Set.disjoint_left.1 hφψ hq (ψ.pro.downward_closed r hr q hqr)).elim
+      (Set.disjoint_left.1 hφψ hq (ψ.pro.isLowerSet hqr hr)).elim
   · exact mem_alt_sup_of_alt_right hq fun r hr hqr ↦
-      (Set.disjoint_left.1 hψφ hq (φ.pro.downward_closed r hr q hqr)).elim
+      (Set.disjoint_left.1 hψφ hq (φ.pro.isLowerSet hqr hr)).elim
 
 /-! ### The language (Def 8) and compactness (Fact 5) -/
 
@@ -145,7 +147,7 @@ alternative of either disjunct is a state of the other, which is strictly strong
 under that condition and fail under Def 22. -/
 
 -- Fact 7
-theorem ross_strongly_invalid_of_alt {φ ψ : Kalman (Question W)}
+theorem ross_strongly_invalid_of_alt {φ ψ : Kalman (Proposition (Set W))}
     (hφψ : Disjoint (alt φ.pro) ψ.pro) (hψφ : Disjoint (alt ψ.pro) φ.pro)
     (hψ : (alt ψ.pro).Nonempty) (R : W → Set W) :
     Disjoint (truth (necessity R φ)) (truth (necessity R (φ ⊔ ψ))) := by
@@ -157,7 +159,7 @@ theorem ross_strongly_invalid_of_alt {φ ψ : Kalman (Question W)}
     (h₂.le_of_le h₁.subset_sUnion Set.subset_union_left (Set.mem_union_right _ hb)))
 
 -- Fact 6
-theorem inter_diff_truth_nonempty_of_alt {φ ψ : Kalman (Question W)}
+theorem inter_diff_truth_nonempty_of_alt {φ ψ : Kalman (Proposition (Set W))}
     (hφψ : Disjoint (alt φ.pro) ψ.pro) (hψφ : Disjoint (alt ψ.pro) φ.pro)
     (hφ : (alt φ.pro).Nonempty) (hψ : ψ.pro.IsNormal) {R : W → Set W} {w : W}
     (h : w ∈ truth (necessity R (φ ⊔ ψ))) : (R w ∩ (truth φ \ truth ψ)).Nonempty := by
@@ -202,7 +204,7 @@ end Formula
 /-- Booth Fact 7 as printed, for every non-Hurford disjunction of Def 22, fails on a three-world
 model with `R(0) = {0, 1}`. -/
 theorem not_forall_disjoint_of_nonHurford :
-    ¬ ∀ (W : Type) (R : W → Set W) (φ ψ : Kalman (Question W)), NonHurford φ ψ →
+    ¬ ∀ (W : Type) (R : W → Set W) (φ ψ : Kalman (Proposition (Set W))), NonHurford φ ψ →
       Disjoint (truth (necessity R φ)) (truth (necessity R (φ ⊔ ψ))) := by
   intro hall
   have h01 : IncompRel (· ⊆ ·) ({0} : Set (Fin 3)) {1} :=
@@ -230,7 +232,7 @@ theorem not_forall_disjoint_of_nonHurford :
 /-- Booth Fact 6 as printed, for every non-Hurford disjunction of Def 22, fails on a three-world
 model with `R(0) = W`. -/
 theorem not_forall_independence_of_nonHurford :
-    ¬ ∀ (W : Type) (R : W → Set W) (φ ψ : Kalman (Question W)), NonHurford φ ψ →
+    ¬ ∀ (W : Type) (R : W → Set W) (φ ψ : Kalman (Proposition (Set W))), NonHurford φ ψ →
       ∀ w ∈ truth (necessity R (φ ⊔ ψ)),
         (R w ∩ (truth φ \ truth ψ)).Nonempty ∧ (R w ∩ (truth ψ \ truth φ)).Nonempty := by
   intro hall

@@ -34,13 +34,14 @@ Knowing *whether p* is knowing `p` where it holds and its negation elsewhere
 
 ## Implementation notes
 
-The substrate's `Question` is a downward-closed set of propositions whose alternatives
-`Question.alt` are its maximal members, so `Question.polar` and `Question.which` reproduce
-the paper's alternative sets only up to maximality: the polar identification holds for a
-non-trivial proposition (`trueAnswers_alt_polar`) and the wh one when the domain is fixed
-across worlds and the answers form an antichain (`trueAnswers_alt_which`). The paper's syntax,
-the proto-questions and the rules building questions from them, is not represented, nor are the
-multiple-wh and scope ambiguities of its later sections.
+The substrate's `Inquisitive.Proposition` is a downward-closed set of propositions whose
+alternatives `Inquisitive.Proposition.alt` are its maximal members, so
+`Inquisitive.Proposition.polar` and `Inquisitive.Proposition.which` reproduce the paper's
+alternative sets only up to maximality: the polar identification holds for a non-trivial proposition
+(`trueAnswers_alt_polar`) and the wh one when the domain is fixed across worlds and the answers form
+an antichain (`trueAnswers_alt_which`). The paper's syntax, the proto-questions and the rules
+building questions from them, is not represented, nor are the multiple-wh and scope ambiguities of
+its later sections.
 
 ## References
 
@@ -50,7 +51,7 @@ multiple-wh and scope ambiguities of its later sections.
 
 @[expose] public section
 
-open Question
+open Question Inquisitive Inquisitive.Proposition
 open scoped SetRel
 
 namespace Karttunen1977

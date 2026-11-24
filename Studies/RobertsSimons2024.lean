@@ -57,7 +57,7 @@ equiprobable, the paper's "roughly equal" probabilities.
 
 namespace RobertsSimons2024
 
-open Aspect Question MeasureTheory ProbabilityTheory
+open Aspect Inquisitive Inquisitive.Proposition MeasureTheory ProbabilityTheory
 open scoped SetRel
 
 variable {ι : Type*}
@@ -157,7 +157,8 @@ theorem not_presumes_of_doubt {C S pre : Set ι} (hS : S ⊆ C) (h : ¬ S ⊆ pr
   fun hp ↦ h (hS.trans hp)
 
 -- (25), §3.2.1
-theorem resolves_of_presumes {C pre : Set ι} {Q : Question ι} (h : pre ∈ alt Q) (hp : C ⊆ pre) :
+theorem resolves_of_presumes {C pre : Set ι} {Q : Proposition (Set ι)} (h : pre ∈ alt Q)
+    (hp : C ⊆ pre) :
     C ∈ Q :=
   mem_of_exists_alt_subset ⟨_, h, hp⟩
 

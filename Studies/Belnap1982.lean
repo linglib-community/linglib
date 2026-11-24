@@ -19,8 +19,8 @@ question is to know some answer to it, which yields a necessary test for answerh
 
 A question is its Hamblin set, with Bennett's denotation `Question.trueAnswers` and Karttunen's
 answer `Question.weakAnswer`, and the Distributivity Principle is `Question.KnowsSomeAnswer`. The
-inquisitive `Question.alt` keeps only maximal answers, and so loses *three apples* beside *some
-apples* (`alt_generate_basket`, p. 172).
+inquisitive `Inquisitive.Proposition.alt` keeps only maximal answers, and so loses *three apples*
+beside *some apples* (`alt_generate_basket`, p. 172).
 
 ## TODO
 
@@ -38,7 +38,7 @@ apples* (`alt_generate_basket`, p. 172).
 
 namespace Belnap1982
 
-open Question Quantifier
+open Question Inquisitive Inquisitive.Proposition Quantifier
 
 variable {W E : Type*}
 

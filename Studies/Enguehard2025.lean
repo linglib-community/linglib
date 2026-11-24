@@ -81,7 +81,7 @@ communicative stability](##Enguehard2025.weaklyStable_iff_isOptimal).
 
 namespace Enguehard2025
 
-open Question Exhaustification Set Quantifier
+open Question Inquisitive Inquisitive.Proposition Exhaustification Set Quantifier
 
 variable {W ι : Type*}
 

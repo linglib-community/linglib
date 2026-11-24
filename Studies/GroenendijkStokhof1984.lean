@@ -20,11 +20,11 @@ the information inside one cell, and answers it partially when it rules out a ce
 
 Extensions are topical properties `E → Set W` and attitudes are `SetRel W W` read through
 `SetRel.core`. Mathlib's order on `Setoid` is the dissertation's inclusion of questions
-(`Setoid.le_iff_forall_classes`), whose dual atoms are the bipartitions (`Setoid.isCoatom_iff`).
-The domain of individuals is fixed across indices, as the dissertation assumes in accepting (X);
-the update of information is classical, and giving an answer leaves out chapter IV's
-presupposition that the question is open. The mention-some question is `Question.which`. Two
-printed claims are corrected, the equation for the answers compatible with a conjunction
+(`Setoid.le_iff_forall_classes`), whose dual atoms are the bipartitions (`Setoid.isCoatom_iff`). The
+domain of individuals is fixed across indices, as the dissertation assumes in accepting (X); the
+update of information is classical, and giving an answer leaves out chapter IV's presupposition that
+the question is open. The mention-some question is `Inquisitive.Proposition.which`. Two printed
+claims are corrected, the equation for the answers compatible with a conjunction
 (`TwoCells.determined_inter_ne`) and the cells that *(at least) an M G's* rules out in figure 15
 (`Figure15.indefinite_partial_false`). Page numbers are the dissertation's printed ones.
 
@@ -46,7 +46,7 @@ printed claims are corrected, the equation for the answers compatible with a con
 
 @[expose] public section
 
-open Question Setoid
+open Question Inquisitive Inquisitive.Proposition Setoid
 open scoped SetRel
 
 namespace GroenendijkStokhof1984

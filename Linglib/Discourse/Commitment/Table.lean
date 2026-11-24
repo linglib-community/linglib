@@ -8,14 +8,14 @@ public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 
 Farkas and Bruce's context structure records the participants' discourse commitments, the common
 ground, and the Table, a stack of the issues under discussion with the most recent on top. A
-declarative raises its proposition as an issue, `Question.ofSet p`, and a polar interrogative
-raises `Question.polar p`; the complete answers of an issue are its alternatives,
-`Question.alt`, Karttunen's interrogative denotation, and a common ground decides an issue when
-it entails one of them. Each issue on the Table projects the common
-grounds that would decide it, and the projected set is derived from the common ground and the
-stack. The moves of the paper are functions on the structure, and the file proves what each does
-to the projected set, the commitment lists, and the Table. Parenthesized numbers are the paper's
-example and definition numbers.
+declarative raises its proposition as an issue, `Inquisitive.Proposition.ofSet p`, and a polar
+interrogative raises `Inquisitive.Proposition.polar p`; the complete answers of an issue are its
+alternatives, `Inquisitive.Proposition.alt`, Karttunen's interrogative denotation, and a common
+ground decides an issue when it entails one of them. Each issue on the Table projects the common
+grounds that would decide it, and the projected set is derived from the common ground and the stack.
+The moves of the paper are functions on the structure, and the file proves what each does to the
+projected set, the commitment lists, and the Table. Parenthesized numbers are the paper's example
+and definition numbers.
 
 A Table has the `commonGround` coordinate as its common ground and the top of the stack as its
 current issue (`Table.issue`). Its `assert` is a proposal, which leaves the common ground alone and
@@ -57,7 +57,7 @@ update.
 * A common ground is a filter of propositions, so a proposition follows from it when it belongs
   to the filter. This is the intersection-based entailment the paper's footnote 8 sets aside as
   too coarse-grained, so every necessary proposition is decided by every common ground, and
-  `Question.decidedBy_top` records that the trivial issue is always decided.
+  `Inquisitive.Proposition.decidedBy_top` records that the trivial issue is always decided.
 * M' (17) applies in the paper only once the proposition is on every commitment list;
   `Table.settle` is the operation itself, and the trigger is a hypothesis on the caller,
   `p ∈ K.commitments.jointContents`. Its popping clause is read as "pop from the top while
@@ -86,13 +86,13 @@ open Filter
 
 namespace Commitment
 
-open Question
+open Inquisitive Inquisitive.Proposition
 
 /-- The context structure `K` of [farkas-bruce-2010] consists of the Table as a stack of issues,
 the participants' discourse commitments, and the common ground. -/
 @[ext]
 structure Table (A W : Type*) where
-  stack : List (Question W)
+  stack : List (Proposition (Set W))
   commitments : State A W
   commonGround : Filter W
 
@@ -104,12 +104,12 @@ variable {A W : Type*}
 
 /-- The projection `ps ∪ P` adds each complete answer of `P` to each projected common ground and
 discards the inconsistent results. -/
-def project (ps : Set (Filter W)) (P : Question W) : Set (Filter W) :=
+def project (ps : Set (Filter W)) (P : Proposition (Set W)) : Set (Filter W) :=
   Set.image2 (fun f q ↦ f ⊓ 𝓟 q) ps (alt P) \ {⊥}
 
 section Project
 
-variable {ps : Set (Filter W)} {f : Filter W} {p : Set W} {P : Question W}
+variable {ps : Set (Filter W)} {f : Filter W} {p : Set W} {P : Proposition (Set W)}
 
 
 @[simp] theorem mem_project :
@@ -138,7 +138,7 @@ theorem project_singleton_polar (hp : f ⊓ 𝓟 p ≠ ⊥) (hnp : f ⊓ 𝓟 p�
 
 end Project
 
-variable (K : Table A W) (a : A) (p : Set W) (P : Question W)
+variable (K : Table A W) (a : A) (p : Set W) (P : Proposition (Set W))
 
 /-- The initial context has nothing on the Table, no commitments, and the trivial common ground. -/
 def empty : Table A W := ⟨[], ∅, ⊤⟩
@@ -146,7 +146,7 @@ def empty : Table A W := ⟨[], ∅, ⊤⟩
 instance : Inhabited (Table A W) := ⟨empty⟩
 
 /-- The current issue is the top of the Table, the trivial issue when the Table is empty. -/
-def issue : Question W := K.stack.headD ⊤
+def issue : Proposition (Set W) := K.stack.headD ⊤
 
 /-- A conversation is stable when its Table is empty. -/
 def IsStable : Prop := K.stack = []

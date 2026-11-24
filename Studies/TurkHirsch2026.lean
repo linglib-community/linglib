@@ -75,7 +75,7 @@ as rows and not modelled. The examples are the rows of `Data.Examples.TurkHirsch
 
 namespace TurkHirsch2026
 
-open Modality Question PhraseStructure
+open Modality Question Inquisitive Inquisitive.Proposition PhraseStructure
 
 /-! ### The polar morphemes and the deontic modal -/
 

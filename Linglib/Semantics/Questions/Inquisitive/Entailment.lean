@@ -8,10 +8,10 @@ public import Mathlib.Order.BooleanSubalgebra
 # Question entailment
 
 A question `P` entails a question `Q` when every information state that resolves `P` also resolves
-`Q`. This is the order `P ≤ Q` on `Question W`.
+`Q`. This is the order `P ≤ Q` on `Inquisitive.Proposition (Set W)`.
 
 For a normal question it is enough to look at the alternatives: `P` entails `Q` if and only if every
-alternative of `P` resolves `Q`. See `Question.IsNormal.le_iff_forall_alt_mem`.
+alternative of `P` resolves `Q`. See `Inquisitive.Proposition.IsNormal.le_iff_forall_alt_mem`.
 
 There is a second notion of entailment, due to [groenendijk-stokhof-1984]: every complete answer to
 `P` is a complete answer to `Q`. For partition questions the two notions agree. For Hamblin
@@ -28,9 +28,9 @@ in the order but harder to answer completely.
 
 public section
 
-namespace Question
+namespace Inquisitive.Proposition
 
-variable {W : Type*} {P Q : Question W}
+variable {W : Type*} {P Q : Proposition (Set W)}
 
 /-! ### Entailment on generators -/
 
@@ -95,7 +95,7 @@ theorem le_polar_union {p q : Set W} (hp : Q ≤ polar p) (hq : Q ≤ polar q) :
 
 /-- The propositions a question determines, those whose polar question it entails, form a Boolean
 subalgebra of the propositions. -/
-def determined (Q : Question W) : BooleanSubalgebra (Set W) where
+def determined (Q : Proposition (Set W)) : BooleanSubalgebra (Set W) where
   carrier := {p | Q ≤ polar p}
   supClosed' _ hp _ hq := le_polar_union hp hq
   infClosed' _ hp _ hq := le_polar_inter hp hq
@@ -119,7 +119,7 @@ theorem IsPartition.completeAnswers_eq (hP : P.IsPartition) (hN : P.IsNormal) :
   ext σ
   refine ⟨fun h ↦ ?_, fun hσ p hp ↦ ?_⟩
   · rcases σ.eq_empty_or_nonempty with rfl | ⟨w, hw⟩
-    · exact P.contains_empty
+    · exact P.empty_mem
     obtain ⟨c, hc, hwc⟩ := Set.mem_sUnion.mp (hP.sUnion_alt_eq_univ ▸ Set.mem_univ w)
     exact mem_of_exists_alt_subset ⟨c, hc, (h c hc).resolve_right fun h' ↦ h' hw hwc⟩
   · obtain ⟨c, hc, hσc⟩ := hN hσ
@@ -149,4 +149,4 @@ theorem completeAnswers_fromSetoid_subset_iff {r₁ r₂ : Setoid W} :
   · rw [(isPartition_fromSetoid r₁).completeAnswers_subset_iff_le (isNormal_fromSetoid r₁)
       (isPartition_fromSetoid r₂) (isNormal_fromSetoid r₂), fromSetoid_le_iff]
 
-end Question
+end Inquisitive.Proposition

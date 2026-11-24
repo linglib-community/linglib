@@ -103,7 +103,7 @@ noncomputable def puClause (p : Set W) : W → Trivalent :=
   fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p)) .true
 
 /-- The *an*-clause is the polar set of the proposition and its negation. -/
-def anClause (p : Set W) : Question W := Question.polar p
+def anClause (p : Set W) : Inquisitive.Proposition (Set W) := Inquisitive.Proposition.polar p
 
 theorem puClause_ne_undefined_iff (p : Set W) (w : W) : puClause p w ≠ .undefined ↔ w ∈ p := by
   simp [puClause]
@@ -117,7 +117,7 @@ theorem posExt_puClause_subset (p : Set W) :
   simp_all [puClause, otiClause]
 
 theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=
-  Question.not_isInformative_polar p
+  Inquisitive.Proposition.not_isInformative_polar p
 
 open Interpreter in
 theorem comp_over_na_type_clash (b : Ty Base) :

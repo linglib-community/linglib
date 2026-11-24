@@ -64,7 +64,7 @@ The examples are the rows of `Data.Examples.Theiler2021`.
 
 namespace Theiler2021
 
-open ModalLogic Question
+open ModalLogic Inquisitive Inquisitive.Proposition
 
 /-! ### Highlighted content (section 3.1) -/
 

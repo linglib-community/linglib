@@ -32,8 +32,8 @@ taken into account. The examples are rows of `Data.Examples.VanRooy2003`.
 ## TODO
 
 * The group-valued domain example of section 5.3, the questions (23) and (25), the individual-wise
-  relevance condition on wh-domains of section 4.2 (`Question.better_ofProps_image` covers
-  utilities that depend only on the domain), and the argumentative value of section 5.4.
+  relevance condition on wh-domains of section 4.2 (`Inquisitive.Proposition.better_ofProps_image`
+  covers utilities that depend only on the domain), and the argumentative value of section 5.4.
 
 ## References
 
@@ -51,7 +51,7 @@ taken into account. The examples are rows of `Data.Examples.VanRooy2003`.
 
 namespace VanRooy2003
 
-open MeasureTheory ProbabilityTheory Question
+open MeasureTheory ProbabilityTheory Question Inquisitive Inquisitive.Proposition
 
 universe u
 
@@ -135,7 +135,7 @@ private theorem newspaper_value : decisionValue newspaper newsPrior = 2 / 3 := b
   simp only [decisionValue, h, ciSup_const]
 
 private theorem newspaper_utilityValue {C : Set NewsW} (hC : C.Nonempty) (hs : .palace ∉ C) :
-    Question.utilityValue newspaper newsPrior C = 1 / 3 := by
+    Proposition.utilityValue newspaper newsPrior C = 1 / 3 := by
   obtain ⟨w₀, hw₀⟩ := hC
   have hpos : newsPrior C ≠ 0 := fun h ↦ uniformOn_univ_singleton_ne_zero w₀
     (measure_mono_null (Set.singleton_subset_iff.2 hw₀) h)
@@ -149,15 +149,15 @@ private theorem newspaper_utilityValue {C : Set NewsW} (hC : C.Nonempty) (hs : .
     le_antisymm (ciSup_le fun a ↦ (integral_mono .of_finite (integrable_const 1) fun w ↦ by
       cases w <;> cases a <;> simp [newspaper]).trans (by simp))
       (hstation ▸ integral_le_decisionValue _ Walk.station)
-  rw [Question.utilityValue, hval, newspaper_value]
+  rw [Proposition.utilityValue, hval, newspaper_value]
   norm_num
 
 /-- Taking effort into account, the mention-some answer *at least at the station* is a better
 answer than the complete answer *only at the station*, since both resolve the problem and the
 first says less. -/
 theorem newspaper_betterAnswer :
-    Question.BetterAnswer newspaper newsPrior {.station, .both} {.station} := by
-  refine Question.betterAnswer_iff.2 (.inr ⟨?_, ?_⟩)
+    Proposition.BetterAnswer newspaper newsPrior {.station, .both} {.station} := by
+  refine Proposition.betterAnswer_iff.2 (.inr ⟨?_, ?_⟩)
   · rw [newspaper_utilityValue (by simp) (by simp), newspaper_utilityValue (by simp) (by simp)]
   · refine Set.ssubset_iff_subset_ne.2 ⟨by simp, fun h ↦ ?_⟩
     have hb : NewsW.both ∈ ({NewsW.station} : Set NewsW) := by rw [h]; simp

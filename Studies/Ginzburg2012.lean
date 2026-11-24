@@ -70,6 +70,8 @@ self-repair and a bare follow-up question.
 
 @[expose] public section
 
+open Inquisitive
+
 namespace Ginzburg2012
 
 open Gameboard
@@ -232,8 +234,8 @@ def PotentiallyResolves (p : Set W) (q : R →. Set W) : Prop :=
 the issue `q` raises. -/
 theorem potentiallyResolves_iff_mem_query :
     PotentiallyResolves p q ↔ p ∈ (Gameboard.issue q).query := by
-  simp only [PotentiallyResolves, Gameboard.issue, Question.mem_query, Question.mem_generate,
-    Question.info_generate, Set.subset_compl_comm (s := p), Set.sUnion_subset_iff]
+  simp only [PotentiallyResolves, Gameboard.issue, Proposition.mem_query, Proposition.mem_generate,
+    Inquisitive.Proposition.info_generate, Set.subset_compl_comm (s := p), Set.sUnion_subset_iff]
   constructor
   · rintro (h | h)
     · exact .inl (.inr h)

@@ -151,8 +151,8 @@ theorem valueOfInformation_id_utility (hε : (ε : ℝ) ≤ 1 / 2) (hδ : 0 ≤ 
   simp [hbest]
 
 theorem questionUtility_bot (hε : (ε : ℝ) ≤ 1 / 2) (hδ : 0 ≤ δ) :
-    Question.utility (utility δ) (prior ε) ⊥ = min (ε : ℝ) δ := by
-  rw [Question.utility_bot, valueOfInformation_id_utility hε hδ]
+    Inquisitive.Proposition.utility (utility δ) (prior ε) ⊥ = min (ε : ℝ) δ := by
+  rw [Inquisitive.Proposition.utility_bot, valueOfInformation_id_utility hε hδ]
 
 /-! ### The clarification gate -/
 

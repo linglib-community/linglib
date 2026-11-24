@@ -17,16 +17,14 @@ non-informative projection `?P` (Chapter 3, Facts 3.1–3.15); polar, alternativ
 disjunctive and wh-questions, and their conjunctions, disjunctions and conditionalizations, are
 these operations applied to declarative contents (Chapter 5).
 
-The substrate `Semantics/Questions/` is this theory: `Question W` is the proposition, `info`,
-`alt`, `IsInformative` and `IsInquisitive` its attributes, the lattice order its entailment with
-`⊤`, `⊥`, `⊓`, `⊔` and `⇨` the operations, the double complement `Pᶜᶜ` and `query` the two
-projections with `compl_compl_inf_query` the division law, the regular elements
+The substrate `Semantics/Questions/` is this theory: `Inquisitive.Proposition (Set W)` is the
+proposition, `info`, `alt`, `IsInformative` and `IsInquisitive` its attributes, the lattice order
+its entailment with `⊤`, `⊥`, `⊓`, `⊔` and `⇨` the operations, the double complement `Pᶜᶜ` and
+`query` the two projections with `compl_compl_inf_query` the division law, the regular elements
 (`Heyting.IsRegular`) the non-inquisitive propositions, and `polar` and `which` the polar and
-mention-some forms.
-This file proves the one Chapter 2 fact stated over two contents at once,
-`update_nonInquisitive` (Fact 2.36). The logical language of Chapter 4 is the modal-free
-fragment of `Inquisitive.Formula` (`Inquisitive.Formula.IsModalFree`); Chapters 6–9 are not
-represented.
+mention-some forms. This file proves the one Chapter 2 fact stated over two contents at once,
+`update_nonInquisitive` (Fact 2.36). The logical language of Chapter 4 is the modal-free fragment of
+`Inquisitive.Formula` (`Inquisitive.Formula.IsModalFree`); Chapters 6–9 are not represented.
 
 ## References
 
@@ -40,17 +38,17 @@ namespace CiardelliGroenendijkRoelofsen2018
 
 variable {W : Type*}
 
-open Question
+open Inquisitive Inquisitive.Proposition
 
 /-- Updating a non-inquisitive context with a non-inquisitive proposition is non-inquisitive, with
 the intersected informative content (Fact 2.36). -/
-theorem update_nonInquisitive (C P : Question W) (hC : C.info ∈ C)
+theorem update_nonInquisitive (C P : Proposition (Set W)) (hC : C.info ∈ C)
     (hP : P.info ∈ P) :
     (C ⊓ P).info ∈ C ⊓ P ∧ (C ⊓ P).info = C.info ∩ P.info := by
   refine ⟨?_, info_inf C P⟩
-  show (C ⊓ P).info ∈ (C ⊓ P).props
+  show (C ⊓ P).info ∈ C ⊓ P
   rw [info_inf]
-  exact ⟨C.downward_closed C.info hC _ Set.inter_subset_left,
-    P.downward_closed P.info hP _ Set.inter_subset_right⟩
+  exact ⟨C.isLowerSet Set.inter_subset_left hC,
+    P.isLowerSet Set.inter_subset_right hP⟩
 
 end CiardelliGroenendijkRoelofsen2018

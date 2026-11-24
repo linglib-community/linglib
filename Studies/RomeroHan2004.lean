@@ -73,7 +73,7 @@ namespace RomeroHan2004
 
 open scoped ModalLogic SetRel
 open NaturalLogic PolarityItem
-open Question (polar polar_smul)
+open Inquisitive.Proposition (polar polar_smul)
 
 variable {W : Type*} (epi conv : SetRel W W) (cg : W → Filter W) (p : Set W)
 
@@ -105,7 +105,7 @@ variable (l : LF)
 def pronounced : Set W := l.outer • {w | □[epi ○ conv] (l.inner • p ∈ cg ·) w}
 
 /-- The question a logical form denotes is the polar question over the pronounced cell. -/
-def denotation : Question W := polar (l.pronounced epi conv cg p)
+def denotation : Inquisitive.Proposition (Set W) := polar (l.pronounced epi conv cg p)
 
 /-- A question over VERUM denotes the partition on certainty about the clause under VERUM,
 whichever cell it pronounces. -/

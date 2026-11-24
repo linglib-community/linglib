@@ -76,6 +76,7 @@ answers, and accommodating it gives [their sentence](##BarLevBassi2026.pexPlural
 namespace BarLevBassi2026
 
 open Exhaustification Homogeneity BarLev2021 GuerriniWehbe2025 Presupposition Focus Question
+  Inquisitive Inquisitive.Proposition
 
 /-! ### The homogeneity presupposition and informativity (§2, §3) -/
 

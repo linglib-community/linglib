@@ -58,9 +58,9 @@ in every denial (`ba_denial`) and required to be absent from a [reverse, −] an
 ## Implementation notes
 
 * The Table records the issue a sentence raises, not its syntactic object, so a negative polar
-  question raises the same issue as its positive counterpart (15), `Question.polar_compl`, and
-  the relative polarity of a response is computed from the sentences of the exchange rather
-  than read off the Table.
+  question raises the same issue as its positive counterpart (15),
+  `Inquisitive.Proposition.polar_compl`, and the relative polarity of a response is computed from
+  the sentences of the exchange rather than read off the Table.
 * `M'` is `Table.settle`, which strips the shared proposition from the individual
   commitment lists as (17) prescribes; the projected set is derived from the Table rather than
   stored, as the paper notes it can be.
@@ -83,6 +83,8 @@ in every denial (`ba_denial`) and required to be absent from a [reverse, −] an
 -/
 
 @[expose] public section
+
+open Inquisitive
 
 namespace FarkasBruce2010
 
@@ -165,10 +167,10 @@ theorem projectedSet_polarQuestion_assert (hK : K.IsStable) {q : Set W}
   rw [Table.projectedSet_assert, Table.projectedSet_polarQuestion,
     Table.projectedSet_of_isStable hK]
   ext f
-  simp only [Table.mem_project, Question.alt_ofSet, Set.mem_singleton_iff, exists_eq_left]
+  simp only [Table.mem_project, Proposition.alt_ofSet, Set.mem_singleton_iff, exists_eq_left]
   constructor
   · rintro ⟨⟨_, ⟨⟨r, hr, rfl⟩, -⟩, rfl⟩, hf⟩
-    rcases (Question.alt_polar_iff p r).1 hr with ⟨-, rfl⟩ | ⟨-, -, rfl | rfl⟩
+    rcases (Inquisitive.Proposition.alt_polar_iff p r).1 hr with ⟨-, rfl⟩ | ⟨-, -, rfl | rfl⟩
     · rw [principal_univ, inf_top_eq]
     · rcases hq with rfl | rfl
       · rw [inf_assoc, inf_idem]
@@ -180,12 +182,12 @@ theorem projectedSet_polarQuestion_assert (hK : K.IsStable) {q : Set W}
     refine ⟨⟨K.commonGround ⊓ 𝓟 q, ⟨⟨q, ?_, rfl⟩, hc⟩, by rw [inf_assoc, inf_idem]⟩, hc⟩
     rcases hq with rfl | rfl
     · by_cases hu : q = Set.univ
-      · exact (Question.alt_polar_iff _ _).2 (Or.inl ⟨Or.inr hu, hu⟩)
-      · exact (Question.alt_polar_iff _ _).2
+      · exact (Inquisitive.Proposition.alt_polar_iff _ _).2 (Or.inl ⟨Or.inr hu, hu⟩)
+      · exact (Inquisitive.Proposition.alt_polar_iff _ _).2
           (Or.inr ⟨fun e ↦ hc (by simp [e]), hu, Or.inl rfl⟩)
     · by_cases he : p = ∅
-      · exact (Question.alt_polar_iff _ _).2 (Or.inl ⟨Or.inl he, by simp [he]⟩)
-      · exact (Question.alt_polar_iff _ _).2
+      · exact (Inquisitive.Proposition.alt_polar_iff _ _).2 (Or.inl ⟨Or.inl he, by simp [he]⟩)
+      · exact (Inquisitive.Proposition.alt_polar_iff _ _).2
           (Or.inr ⟨he, fun e ↦ hc (by simp [e]), Or.inr rfl⟩)
 
 /-- A reverse answer (27) is no crisis, since the question projected both resolutions. -/

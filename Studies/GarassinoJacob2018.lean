@@ -66,7 +66,7 @@ responses outside it (`rows_siChe_siQue_not_mem_reversePositive`).
 
 namespace GarassinoJacob2018
 
-open Question
+open Question Inquisitive Inquisitive.Proposition
 
 variable {W F : Type*}
 
@@ -87,7 +87,7 @@ theorem agentStrategy_isComplete {agents : List F} (hcov : ∀ f, f ∈ agents)
     (P : F → Set W) : (agentStrategy agents P).IsComplete := by
   refine .node (fun _ ↦ ?_) (fun c hc ↦ ?_)
   · have hmem : ∀ q, q ∈ ((agents.map fun f ↦ RoseTree.leaf (ofSet (P f)).query).map
-        RoseTree.value : Multiset (Question W)) ↔ ∃ f, (ofSet (P f)).query = q := by
+        RoseTree.value : Multiset (Proposition (Set W))) ↔ ∃ f, (ofSet (P f)).query = q := by
       intro q
       simp only [Multiset.mem_coe, List.mem_map, List.map_map, Function.comp_def, RoseTree.leaf,
         RoseTree.value_node]

@@ -74,7 +74,7 @@ sentence and so no quiz row.
 
 namespace Simik2024
 
-open Question
+open Question Inquisitive Inquisitive.Proposition
 open scoped ModalLogic
 
 /-! ### Bias and the polarity of the prejacent (§3.1) -/
@@ -511,7 +511,7 @@ noncomputable def falsumCz : W → Trivalent := fun w ↦
 
 /-- The question (45) over the Czech FALSUM asks whether the prejacent is outside the common
 ground. -/
-def falsumCzQuestion : Question W := polar {w | p ∉ cg w}
+def falsumCzQuestion : Proposition (Set W) := polar {w | p ∉ cg w}
 
 theorem falsumCz_eq_undefined_iff (w : W) :
     falsumCz epi cg p w = .undefined ↔ ModalLogic.Box epi (· ∉ p) w := by

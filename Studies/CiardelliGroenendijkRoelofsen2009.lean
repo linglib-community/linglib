@@ -109,37 +109,39 @@ section Coincidence
 variable [Fintype W] [DecidableEq W] (M : Model W Atom) {φ : Formula Atom}
 
 theorem generate_unrestricted (hφ : φ.IsModalFree) :
-    Question.generate (unrestricted M.val φ) = proposition M φ := by
+    Inquisitive.Proposition.generate (unrestricted M.val φ) = proposition M φ := by
   induction φ with
-  | atom p => rw [unrestricted, Question.generate_singleton, proposition_atom]
-  | bot => rw [unrestricted, Question.generate_singleton, Question.ofSet_empty, proposition_bot]
+  | atom p => rw [unrestricted, Inquisitive.Proposition.generate_singleton, proposition_atom]
+  | bot => rw [unrestricted, Proposition.generate_singleton, Proposition.ofSet_empty,
+    proposition_bot]
   | conj φ ψ ihφ ihψ =>
-    rw [unrestricted, generate_pro, ← Question.generate_inf_generate, ihφ hφ.1, ihψ hφ.2,
+    rw [unrestricted, generate_pro, ← Proposition.generate_inf_generate, ihφ hφ.1, ihψ hφ.2,
       proposition_conj]
   | impl φ ψ ihφ ihψ =>
     rw [unrestricted, generate_pro,
-      ← Question.generate_himp_generate (isProposition_unrestricted _ ψ).1, ihφ hφ.1,
+      ← Inquisitive.Proposition.generate_himp_generate (isProposition_unrestricted _ ψ).1, ihφ hφ.1,
       ihψ hφ.2, proposition_impl]
   | inqDisj φ ψ ihφ ihψ =>
-    rw [unrestricted, generate_pro, Question.generate_union, ihφ hφ.1, ihψ hφ.2,
+    rw [unrestricted, generate_pro, Inquisitive.Proposition.generate_union, ihφ hφ.1, ihψ hφ.2,
       proposition_inqDisj]
   | nec => exact hφ.elim
   | ent => exact hφ.elim
 
 theorem generate_restricted (hφ : φ.IsModalFree) :
-    Question.generate (restricted M.val φ) = proposition M φ := by
+    Inquisitive.Proposition.generate (restricted M.val φ) = proposition M φ := by
   induction φ with
-  | atom p => rw [restricted, Question.generate_singleton, proposition_atom]
-  | bot => rw [restricted, Question.generate_singleton, Question.ofSet_empty, proposition_bot]
+  | atom p => rw [restricted, Inquisitive.Proposition.generate_singleton, proposition_atom]
+  | bot => rw [restricted, Proposition.generate_singleton, Proposition.ofSet_empty, proposition_bot]
   | conj φ ψ ihφ ihψ =>
-    rw [restricted, Question.generate_setOf_maximal (toFinite _),
-      ← Question.generate_inf_generate, ihφ hφ.1, ihψ hφ.2, proposition_conj]
+    rw [restricted, Inquisitive.Proposition.generate_setOf_maximal (toFinite _),
+      ← Inquisitive.Proposition.generate_inf_generate, ihφ hφ.1, ihψ hφ.2, proposition_conj]
   | impl φ ψ ihφ ihψ =>
-    rw [restricted, Question.generate_setOf_maximal (toFinite _),
-      ← Question.generate_himp_generate (restricted_nonempty _ ψ), ihφ hφ.1, ihψ hφ.2,
+    rw [restricted, Inquisitive.Proposition.generate_setOf_maximal (toFinite _),
+      ← Proposition.generate_himp_generate (restricted_nonempty _ ψ), ihφ hφ.1, ihψ hφ.2,
       proposition_impl]
   | inqDisj φ ψ ihφ ihψ =>
-    rw [restricted, Question.generate_setOf_maximal (toFinite _), Question.generate_union, ihφ hφ.1,
+    rw [restricted, Proposition.generate_setOf_maximal (toFinite _), Proposition.generate_union, ihφ
+      hφ.1,
       ihψ hφ.2, proposition_inqDisj]
   | nec => exact hφ.elim
   | ent => exact hφ.elim
@@ -148,9 +150,9 @@ theorem generate_restricted (hφ : φ.IsModalFree) :
 formula's restricted possibilities (p. 99). -/
 theorem setOf_maximal_unrestricted (hφ : φ.IsModalFree) :
     {p | Maximal (· ∈ unrestricted M.val φ) p} = restricted M.val φ := by
-  rw [← Question.alt_generate (isProposition_unrestricted _ φ).1,
+  rw [← Inquisitive.Proposition.alt_generate (isProposition_unrestricted _ φ).1,
     generate_unrestricted M hφ, ← generate_restricted M hφ,
-    Question.alt_generate_of_isAntichain (restricted_nonempty _ φ) (isAntichain_restricted _ φ)]
+    Proposition.alt_generate_of_isAntichain (restricted_nonempty _ φ) (isAntichain_restricted _ φ)]
 
 -- p. 99
 theorem isInquisitive_unrestricted_iff (hφ : φ.IsModalFree) :
@@ -159,10 +161,10 @@ theorem isInquisitive_unrestricted_iff (hφ : φ.IsModalFree) :
 
 /-- The possibilities for a formula cover its truth set (Proposition 15). -/
 theorem sUnion_unrestricted (hφ : φ.IsModalFree) : ⋃₀ unrestricted M.val φ = truthSet M φ := by
-  rw [← Question.info_generate, generate_unrestricted M hφ, info_proposition]
+  rw [← Inquisitive.Proposition.info_generate, generate_unrestricted M hφ, info_proposition]
 
 theorem sUnion_restricted (hφ : φ.IsModalFree) : ⋃₀ restricted M.val φ = truthSet M φ := by
-  rw [← Question.info_generate, generate_restricted M hφ, info_proposition]
+  rw [← Inquisitive.Proposition.info_generate, generate_restricted M hφ, info_proposition]
 
 end Coincidence
 

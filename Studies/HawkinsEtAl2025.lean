@@ -89,7 +89,7 @@ off than the exhaustive list does (`value_generalYes_lt_value_exhaustive`).
 
 namespace HawkinsEtAl2025
 
-open MeasureTheory ProbabilityTheory InformationTheory Finset Question
+open MeasureTheory ProbabilityTheory InformationTheory Finset Inquisitive Inquisitive.Proposition
 open scoped ENNReal NNReal
 
 variable {W Q R A D : Type*}

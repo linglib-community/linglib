@@ -39,6 +39,8 @@ showed only the usual small reduction.
 
 @[expose] public section
 
+open Inquisitive
+
 namespace BaleEtAl2025
 
 open GoodmanStuhlmuller2013 NeoGricean Set
@@ -74,12 +76,12 @@ instance (S : Finset (Fin 4)) : DecidablePred (· ∈ (↑S : Set (Fin 4))) :=
   fun w ↦ decidable_of_iff (w ∈ S) Finset.mem_coe.symm
 
 instance (S : Set (Fin 4)) [DecidablePred (· ∈ S)] :
-    Decidable (S ∈ (Question.polar all : Set (Set (Fin 4)))) :=
-  decidable_of_iff (S ⊆ all ∨ S ⊆ allᶜ) Question.mem_polar.symm
+    Decidable (S ∈ (Inquisitive.Proposition.polar all : Set (Set (Fin 4)))) :=
+  decidable_of_iff (S ⊆ all ∨ S ⊆ allᶜ) Inquisitive.Proposition.mem_polar.symm
 
 /-- The speaker is competent about *all* exactly when he looked into the third box. -/
 theorem competent_iff_looked (a w : Fin 4) (hw : w ∈ seen) :
-    speakerState a w ∈ Question.polar all ↔ a = 3 := by
+    speakerState a w ∈ Inquisitive.Proposition.polar all ↔ a = 3 := by
   rw [← SetLike.mem_coe]; revert a w; decide
 
 /-! ### The recipe and its integration with context -/
@@ -124,19 +126,19 @@ instance (a : Fin 4) (q : QUtt) : DecidablePred (· ∈ contextual a q) :=
 /-- Competence by default with integration keeps the default where the speaker's contextual
 state bears it out and cancels it where that state contradicts it everywhere. -/
 def competenceDefault (a : Fin 4) (q : QUtt) : Set (Fin 4) :=
-  {w | w ∈ integrated a (uttered q ∩ Question.polar all) ∨
-    ((∀ w', w' ∉ integrated a (uttered q ∩ Question.polar all)) ∧ w ∈ contextual a q)}
+  {w | w ∈ integrated a (uttered q ∩ Inquisitive.Proposition.polar all) ∨
+    ((∀ w', w' ∉ integrated a (uttered q ∩ Proposition.polar all)) ∧ w ∈ contextual a q)}
 
 instance (a : Fin 4) (q : QUtt) : DecidablePred (· ∈ competenceDefault a q) :=
-  fun w ↦ inferInstanceAs (Decidable (w ∈ integrated a (uttered q ∩ Question.polar all) ∨
-    ((∀ w', w' ∉ integrated a (uttered q ∩ Question.polar all)) ∧ w ∈ contextual a q)))
+  fun w ↦ inferInstanceAs (Decidable (w ∈ integrated a (uttered q ∩ Proposition.polar all) ∨
+    ((∀ w', w' ∉ integrated a (uttered q ∩ Proposition.polar all)) ∧ w ∈ contextual a q)))
 
 /-- The default with integration blocked, as under cognitive load. -/
 def competenceDefaultLoad (q : QUtt) : Set (Fin 4) :=
-  unintegrated (uttered q ∩ Question.polar all)
+  unintegrated (uttered q ∩ Inquisitive.Proposition.polar all)
 
 instance (q : QUtt) : DecidablePred (· ∈ competenceDefaultLoad q) :=
-  fun w ↦ inferInstanceAs (Decidable (w ∈ unintegrated (uttered q ∩ Question.polar all)))
+  fun w ↦ inferInstanceAs (Decidable (w ∈ unintegrated (uttered q ∩ Proposition.polar all)))
 
 /-- A participant answers *Do you think there are red cubes in this box?* with one of these. -/
 inductive Answer

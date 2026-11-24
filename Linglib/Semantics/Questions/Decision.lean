@@ -23,7 +23,8 @@ The information that resolves the problem forms an inquisitive question, `issue 
 
 There are two main results. A finer question is never worth less. And, under a prior with full
 support, a question is worth as much as knowing the world exactly if and only if each of its answers
-resolves the problem. See `Question.utility_anti` and `Question.utility_eq_utility_bot_iff`.
+resolves the problem. See `Inquisitive.Proposition.utility_anti` and
+`Inquisitive.Proposition.utility_eq_utility_bot_iff`.
 
 ## Implementation notes
 
@@ -48,7 +49,7 @@ information they rest on does.
 
 @[expose] public section
 
-namespace Question
+namespace Inquisitive.Proposition
 
 open MeasureTheory ProbabilityTheory
 
@@ -91,10 +92,9 @@ variable [Nonempty A] (U : W → A → ℝ)
 
 /-- The issue of a decision problem is the question resolved by exactly the information that
 resolves the problem. -/
-def issue : Question W where
-  props := {C | IsResolved U C}
-  contains_empty := ⟨Classical.arbitrary A, fun _ _ h ↦ h.elim⟩
-  downward_closed _ h _ hqp := h.mono hqp
+def issue : Proposition (Set W) :=
+  ofLowerSet {C | IsResolved U C} ⟨Classical.arbitrary A, fun _ _ h ↦ h.elim⟩
+    fun _ _ hqp h ↦ h.mono hqp
 
 @[simp] theorem mem_issue {C : Set W} : C ∈ issue U ↔ IsResolved U C := Iff.rfl
 
@@ -118,27 +118,27 @@ theorem fromSetoid_le_issue_iff {Q : Setoid W} :
   refine ⟨fun h w ↦ h (mem_fromSetoid.2 fun x hx y hy ↦ Q.trans' hx (Q.symm' hy)),
     fun h q hq ↦ ?_⟩
   rcases q.eq_empty_or_nonempty with rfl | ⟨w, hw⟩
-  · exact (issue U).contains_empty
+  · exact (issue U).empty_mem
   · exact (h w).mono fun x hx ↦ mem_fromSetoid.1 hq x hx w hw
 
 end Issue
 
-instance (P : Question W) : Nonempty P := ⟨⟨∅, P.contains_empty⟩⟩
+instance (P : Proposition (Set W)) : Nonempty P := ⟨⟨∅, P.empty_mem⟩⟩
 
 /-- The decision problem of naming a state that resolves `P` and holds: an action is such a
 state, worth `1` in its worlds and `0` elsewhere. -/
-noncomputable def indicatorUtility (P : Question W) (w : W) (s : P) : ℝ :=
+noncomputable def indicatorUtility (P : Proposition (Set W)) (w : W) (s : P) : ℝ :=
   (s : Set W).indicator 1 w
 
 /-- Every question whose resolving states cover the worlds is the issue of a decision problem
 with utilities `0` and `1`. -/
-theorem issue_indicatorUtility (P : Question W) (hP : P.info = Set.univ) :
+theorem issue_indicatorUtility (P : Proposition (Set W)) (hP : P.info = Set.univ) :
     issue P.indicatorUtility = P := by
   ext C
   rw [mem_issue]
   constructor
   · rintro ⟨s, hs⟩
-    refine P.downward_closed s s.2 C fun w hw ↦ ?_
+    refine P.isLowerSet (fun w hw ↦ ?_) s.2
     have h1 := hs ⟨{w}, (P.mem_info_iff_singleton_mem w).1 (by rw [hP]; trivial)⟩ w hw
     by_contra hws
     simp [indicatorUtility, hws] at h1
@@ -434,4 +434,4 @@ theorem better_ofProps_image [Nonempty A] (h : D ⊆ D')
 
 end Domain
 
-end Question
+end Inquisitive.Proposition
