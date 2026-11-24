@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Quantifier.Global
-public import Mathlib.SetTheory.Cardinal.NatCard
 
 /-!
 # Westerståhl (2017): Sameness
@@ -13,13 +12,13 @@ when its value at given arguments does not change as the universe grows around t
 proposal is to take the two together as the definition of sameness. For determiner denotations
 that is `Quantifier.Det.Family.Constant`, invariance along every embedding of universes.
 
-This file states extension for quantifiers of type ⟨1⟩, the global quantifiers of
-`Quantifier/Global.lean`, and proves the paper's results about them on finite universes. An
-isomorphism-closed quantifier that satisfies extension holds of a set according to its size alone.
-Among the isomorphism-closed quantifiers that are monotone on every universe, those satisfying
-extension are the quantifier that never holds and the quantifiers *at least `k`*. Every
-isomorphism-closed quantifier is nonetheless recovered from one that satisfies both properties:
-its relativization is a conservative constant determiner denotation, and the quantifier is that
+This file proves the paper's results about quantifiers of type ⟨1⟩, the global quantifiers of
+`Quantifier/Global.lean`, on finite universes. An isomorphism-closed quantifier is given by a tree
+of numbers, and it satisfies extension when that tree is cardinal and is monotone when the tree is
+scope monotone. Among the isomorphism-closed quantifiers that are monotone on every universe, those
+satisfying extension are the quantifier that never holds and the quantifiers *at least `k`*. Every
+isomorphism-closed quantifier is nonetheless recovered from one that satisfies both properties: its
+relativization is a conservative constant determiner denotation, and the quantifier is that
 denotation with the universe as restrictor.
 
 For the monotone quantifiers the paper proposes a weaker condition. Such a quantifier holds of the
@@ -33,8 +32,8 @@ smooth either.
 ## Implementation notes
 
 The paper states extension for an inclusion `M ⊆ M'` of universes. A type is not a subset of
-another type, so extension is stated here, as in `Quantifier/Global.lean`, for a subset `M` of a
-universe `β` and the universe `↥M`. Universes are finite types, as throughout that file, which is
+another type, so `Quantifier.Family.Ext` is stated for a subset `M` of a universe `β` and the
+universe `↥M`. Universes are finite types, as throughout that file, which is
 the paper's setting for its results on monotone quantifiers.
 
 A quantifier that never holds on a universe of `n` individuals has minimum size `n + 1`; `Smooth`
@@ -60,18 +59,13 @@ is stated for any function, and the minimum sizes below satisfy `f n ≤ n + 1`.
 
 namespace Westerstahl2017
 
-open Quantifier
+open Quantifier Quantifier.NumberTree
 
 universe u
 
 variable {Q : Quantifier.Family.{u}}
 
 /-! ### Extension -/
-
-/-- Section 4: a global quantifier satisfies extension when, for `B` inside `M ⊆ β`, it holds of
-`B` on the universe `M` exactly when it holds of `B` on `β`. -/
-def Ext (Q : Quantifier.Family.{u}) : Prop :=
-  ∀ ⦃β : Type u⦄ [Finite β] (M B : Set β), B ⊆ M → (Q M (Subtype.val ⁻¹' B) ↔ Q β B)
 
 /-- (5-b): the quantifier *at least `k`*, the determiner denotation *at least `k`* with the
 universe as its restrictor. -/
@@ -88,55 +82,31 @@ theorem all_apply (α : Type u) [Finite α] (B : Set α) : all α B ↔ B = Set.
   simp [all, Det.Family.atUniv, Det.Family.every, Det.every, Set.univ_subset_iff]
 
 -- (5-b)
-theorem ext_atLeast (k : ℕ) : Ext (atLeast.{u} k) := fun _ _ M B hB ↦ by
+theorem ext_atLeast (k : ℕ) : (atLeast.{u} k).Ext := fun _ _ M B hB ↦ by
   rw [atLeast_apply, atLeast_apply,
     Set.ncard_preimage_of_injective_subset_range Subtype.val_injective (by simpa using hB)]
 
 -- (5-d)
-theorem ext_bot : Ext (⊥ : Quantifier.Family.{u}) := fun _ _ _ _ _ ↦ Iff.rfl
+theorem ext_bot : (⊥ : Quantifier.Family.{u}).Ext := fun _ _ _ _ _ ↦ Iff.rfl
 
 -- (5-d)
-theorem ext_top : Ext (⊤ : Quantifier.Family.{u}) := fun _ _ _ _ _ ↦ Iff.rfl
+theorem ext_top : (⊤ : Quantifier.Family.{u}).Ext := fun _ _ _ _ _ ↦ Iff.rfl
 
 -- (5-c)
-theorem not_ext_all : ¬ Ext all.{u} := fun h ↦
+theorem not_ext_all : ¬ all.{u}.Ext := fun h ↦
   Set.empty_ne_univ <| (all_apply _ _).1 <| (h (∅ : Set PUnit.{u + 1}) ∅ subset_rfl).1 <|
     (all_apply _ _).2 <| Set.eq_univ_of_forall fun x ↦ (Set.notMem_empty _ x.2).elim
-
-theorem iff_of_ncard_eq (hI : Q.Isom) (hE : Ext Q) {α β : Type u} [Finite α] [Finite β]
-    {B : Set α} {C : Set β} (h : B.ncard = C.ncard) : Q α B ↔ Q β C := by
-  have hB := hE B B subset_rfl
-  have hC := hE C C subset_rfl
-  rw [Subtype.coe_preimage_self] at hB hC
-  rw [← hB, ← hC]
-  obtain ⟨e⟩ : Nonempty (↥B ≃ ↥C) := Finite.card_eq.1 h
-  simpa using hI e Set.univ
 
 /-- Proposition 4: an isomorphism-closed quantifier that is monotone on every finite universe
 satisfies extension if and only if it never holds or is *at least `k`* for some `k`. -/
 theorem ext_iff_eq_bot_or_atLeast (hI : Q.Isom) (hm : ∀ (α : Type u) [Finite α], Monotone (Q α)) :
-    Ext Q ↔ Q = ⊥ ∨ ∃ k, Q = atLeast k := by
+    Q.Ext ↔ Q = ⊥ ∨ ∃ k, Q = atLeast k := by
   refine ⟨fun hE ↦ ?_, ?_⟩
-  · let s : Set ℕ := {b | ∃ (α : Type u) (_ : Finite α) (B : Set α), B.ncard = b ∧ Q α B}
-    have key (α : Type u) [Finite α] (B : Set α) : Q α B ↔ B.ncard ∈ s :=
-      ⟨fun h ↦ ⟨α, inferInstance, B, rfl, h⟩,
-        fun ⟨β, _, C, hC, h⟩ ↦ (iff_of_ncard_eq hI hE hC).1 h⟩
-    have hs : IsUpperSet s := by
-      intro b c hbc hb
-      induction c, hbc using Nat.le_induction with
-      | base => exact hb
-      | succ c _ ih =>
-        obtain ⟨α, _, B, hB, hQ⟩ := ih
-        have h₁ : (some '' B : Set (Option α)).ncard = c := by
-          rw [Set.ncard_image_of_injective _ (Option.some_injective α), hB]
-        refine ⟨Option α, inferInstance, insert none (some '' B), ?_,
-          hm _ (Set.subset_insert _ _) ((iff_of_ncard_eq hI hE (hB.trans h₁.symm)).1 hQ)⟩
-        rw [Set.ncard_insert_of_notMem (by simp), h₁]
-    rcases hs.eq_empty_or_Ici with h0 | ⟨k, hk⟩
-    · exact .inl <| eq_bot_iff.2 <| Quantifier.Family.le_def.2 fun α _ B h ↦
-        absurd ((key α B).1 h) (by rw [h0]; exact Set.notMem_empty _)
-    · exact .inr ⟨k, funext fun α ↦ funext fun _ ↦ funext fun B ↦
-        propext ((key α B).trans (by rw [hk, atLeast_apply]; rfl))⟩
+  · obtain ⟨s, hs⟩ := hI.ext_iff.1 hE
+    have hup : IsUpperSet s := scopeMonotone_cardinal_iff.1 (hs ▸ hI.monotone_iff.1 hm)
+    rw [hI.eq_atUniv_toFamily, ← hs]
+    rcases hup.eq_empty_or_Ici with rfl | ⟨k, rfl⟩
+    exacts [.inl rfl, .inr ⟨k, rfl⟩]
   · rintro (rfl | ⟨k, rfl⟩)
     exacts [ext_bot, ext_atLeast k]
 

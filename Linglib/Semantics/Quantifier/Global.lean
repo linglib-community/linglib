@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantifier.Counting
+public import Mathlib.SetTheory.Cardinal.NatCard
 
 /-!
 # Global quantifiers
@@ -9,8 +10,8 @@ A determiner has a denotation on every universe, not on one. This file defines g
 and global determiner denotations, which give a value on every finite universe, and the
 conditions that tie the values on different universes together:
 
-* isomorphism closure: an equivalence of universes carries the value on one to the value on the
-  other;
+* isomorphism closure, `Isom`: an equivalence of universes carries the value on one to the value
+  on the other;
 * extension: enlarging the universe does not change the value at sets inside the smaller one;
 * constancy: the two together, invariance along every embedding of universes.
 
@@ -43,6 +44,9 @@ define the global denotations of the determiners of `Quantifier/Basic.lean` and
   denotations.
 * `Quantifier.Family.Isom.apply_iff`: an isomorphism-closed global quantifier holds of `B`
   according to `|Bᶜ|` and `|B|`, by the tree of its relativization.
+* `Quantifier.Family.Isom.ext_iff`, `Quantifier.Family.Isom.monotone_iff`: such a quantifier
+  satisfies extension if and only if that tree is cardinal, and is monotone on every universe if
+  and only if that tree is scope monotone.
 * `Quantifier.Det.Symbol.conservative_denote`, `Quantifier.Det.Symbol.constant_denote`: what a
   determiner symbol denotes is conservative and constant.
 
@@ -160,6 +164,11 @@ variable (Q : Family.{u})
 `e : α ≃ β` carries its value on `β` to its value on `α`. -/
 def Isom : Prop :=
   ∀ ⦃α β : Type u⦄ [Finite α] [Finite β] (e : α ≃ β) (B : Set β), Q α (e ⁻¹' B) ↔ Q β B
+
+/-- A global quantifier satisfies extension when enlarging the universe does not change it: for
+`B` inside `M ⊆ β`, it holds of `B` on the universe `M` exactly when it holds of `B` on `β`. -/
+def Ext : Prop :=
+  ∀ ⦃β : Type u⦄ [Finite β] (M B : Set β), B ⊆ M → (Q M (Subtype.val ⁻¹' B) ↔ Q β B)
 
 /-- The relativization of a global quantifier evaluates it on the restrictor as the universe:
 `Q.rel A B` holds when `Q` holds, on the universe `A`, of the part of `B` inside `A`. -/
@@ -406,6 +415,67 @@ theorem _root_.Quantifier.Family.Isom.apply_iff (h : Q.Isom) (α : Type u) [Fini
   rw [key]
   conv_lhs => rw [← h.atUniv_rel]
   rfl
+
+/-- Some finite universe has a set with `b` members and `a` individuals outside it. -/
+theorem exists_ncard_compl_eq (a b : ℕ) :
+    ∃ (γ : Type u) (_ : Finite γ) (B : Set γ), Bᶜ.ncard = a ∧ B.ncard = b := by
+  obtain ⟨γ, _, X, Y, ha, hb, hc, hu⟩ := exists_ncard_eq.{u} a b 0
+  have hYX : Y ⊆ X := Set.sdiff_eq_empty.1 ((Set.ncard_eq_zero (Set.toFinite _)).1 hc)
+  have hX : X = Set.univ := by
+    rw [← Set.union_eq_left.2 hYX]; exact Set.compl_empty_iff.1 hu
+  refine ⟨γ, inferInstance, Y, ?_, ?_⟩
+  · rw [Set.compl_eq_univ_sdiff, ← hX]; exact ha
+  · rw [← Set.inter_eq_right.2 hYX]; exact hb
+
+/-- An isomorphism-closed global quantifier is the global determiner denotation of the tree of
+its relativization, with the universe as the restrictor. -/
+theorem _root_.Quantifier.Family.Isom.eq_atUniv_toFamily (h : Q.Isom) :
+    Q = (ofFamily Q.rel).toFamily.atUniv := by
+  rw [toFamily_ofFamily Q.conservative_rel h.constant_rel, h.atUniv_rel]
+
+/-- An isomorphism-closed global quantifier that satisfies extension holds of a set according to
+its size alone, on whatever universe. -/
+theorem _root_.Quantifier.Family.Isom.iff_of_ncard_eq (h : Q.Isom) (hE : Q.Ext) {α β : Type u}
+    [Finite α] [Finite β] {B : Set α} {C : Set β} (hBC : B.ncard = C.ncard) : Q α B ↔ Q β C := by
+  have hB := hE B B subset_rfl
+  have hC := hE C C subset_rfl
+  rw [Subtype.coe_preimage_self] at hB hC
+  rw [← hB, ← hC]
+  obtain ⟨e⟩ : Nonempty (↥B ≃ ↥C) := Finite.card_eq.1 hBC
+  simpa using h e Set.univ
+
+/-- An isomorphism-closed global quantifier satisfies extension if and only if the tree of its
+relativization is cardinal. -/
+theorem _root_.Quantifier.Family.Isom.ext_iff (h : Q.Isom) :
+    Q.Ext ↔ ofFamily Q.rel ∈ Set.range cardinal := by
+  rw [mem_range_cardinal_iff]
+  refine ⟨fun hE a b ↦ ?_, fun hq β _ M B hB ↦ ?_⟩
+  · obtain ⟨γ, _, B, ha, hb⟩ := exists_ncard_compl_eq.{u} a b
+    obtain ⟨γ', _, B', ha', hb'⟩ := exists_ncard_compl_eq.{u} 0 b
+    calc ofFamily Q.rel a b ↔ Q γ B := by rw [h.apply_iff, ha, hb]
+      _ ↔ Q γ' B' := h.iff_of_ncard_eq hE (hb.trans hb'.symm)
+      _ ↔ ofFamily Q.rel 0 b := by rw [h.apply_iff, ha', hb']
+  · rw [h.apply_iff, h.apply_iff, hq, hq Bᶜ.ncard,
+      Set.ncard_preimage_of_injective_subset_range Subtype.val_injective (by simpa using hB)]
+
+/-- An isomorphism-closed global quantifier is monotone on every universe if and only if the tree
+of its relativization is scope monotone. -/
+theorem _root_.Quantifier.Family.Isom.monotone_iff (h : Q.Isom) :
+    (∀ (α : Type u) [Finite α], Monotone (Q α)) ↔ (ofFamily Q.rel).ScopeMonotone := by
+  refine ⟨fun hm a b hq ↦ ?_, fun hq α _ ↦ ?_⟩
+  · obtain ⟨γ, _, B, ha, hb⟩ := exists_ncard_compl_eq.{u} (a + 1) b
+    obtain ⟨x, hx⟩ : Bᶜ.Nonempty := (Set.ncard_pos (Set.toFinite _)).1 (by omega)
+    have hQ : Q γ (insert x B) :=
+      hm γ (Set.subset_insert x B) ((h.apply_iff γ B).2 (by rwa [ha, hb]))
+    have h₁ : (insert x B).ncard = b + 1 := by rw [Set.ncard_insert_of_notMem hx, hb]
+    have h₂ : (insert x B)ᶜ.ncard = a := by
+      have := Set.ncard_add_ncard_compl (insert x B)
+      have := Set.ncard_add_ncard_compl B
+      omega
+    have := (h.apply_iff γ _).1 hQ
+    rwa [h₁, h₂] at this
+  · rw [h.eq_atUniv_toFamily]
+    exact hq.toDet Set.univ
 
 end Relativization
 
