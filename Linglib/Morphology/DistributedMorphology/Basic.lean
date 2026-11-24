@@ -67,7 +67,7 @@ open Morphology (Morph)
 
 /-- A root is individuated by an arbitrary index alone, with deliberately no form or meaning, and
 receives its form at Vocabulary Insertion. A different object from the comparative-concept root
-`Morphology.Comparative.Inventory.IsRoot`, which is a contentful morph. -/
+`Morphology.Distributional.IsRoot`, which is a contentful morph. -/
 @[ext]
 structure Root where
   /-- The individuating index. -/
