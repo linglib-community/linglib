@@ -24,8 +24,8 @@ their Hopf algebra.
 
 * `GrossmanLarson.pairingLie`: the pairing as a map of Lie algebras from the pre-Lie algebra of
   rooted trees to `Bialgebra.dualPrimitives`.
-* `ConnesKreimer.WithCuts.treeDerivation`: the derivation `D_T` of the algebra of forests,
-  contraction with the delta functional of a tree, for the coproduct of any admissible cut policy.
+* `ConnesKreimer.treeDerivation`: the derivation `D_T` of the algebra of forests, contraction of
+  the coproduct of a cut policy with the delta functional of a tree.
 
 ## Main results
 
@@ -167,31 +167,34 @@ end CommRing
 
 /-! ### The derivation of a tree
 
-The delta functional of a tree is a dual primitive for the coproduct of every admissible cut
-policy, since the condition reads only the product and the counit. Contraction with it is a
+Contraction of the coproduct of a cut policy with the delta functional of a tree `T` is a
 derivation `D_T` of the algebra of forests: `D_T` of a tree `T'` sums the trunks of the cuts of
-`T'` that extract exactly `T`. -/
+`T'` that extract exactly `T`. It needs the policy only to have the tree itself as its one cut with
+an empty crown, which makes the coproduct counital on the left; the coproduct need not be
+coassociative. -/
 
 section TreeDerivation
 
 variable [CommSemiring R]
-  {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
-  [IsBialgebraCuts cuts]
-
-theorem WithCuts.isDualPrimitive_lcoeff_singleton (T : UnorderedTree α) :
-    IsDualPrimitive R (lcoeff R ({T} : Forest (UnorderedTree α)) : WithCuts R cuts →ₗ[R] R) :=
-  have h := ConnesKreimer.isDualPrimitive_lcoeff_singleton (R := R) T
-  ⟨h.map_one_eq_zero, h.leibniz⟩
 
 /-- The derivation `D_T` of the algebra of forests, contraction of the coproduct at `cuts` with
 the delta functional of the tree `T`. -/
-noncomputable def WithCuts.treeDerivation (T : UnorderedTree α) :
-    Derivation R (WithCuts R cuts) (WithCuts R cuts) :=
-  (WithCuts.isDualPrimitive_lcoeff_singleton T).derivation
+noncomputable def treeDerivation
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (hcuts : ∀ T, (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}) (T : UnorderedTree α) :
+    Derivation R (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α)) :=
+  Derivation.ofContract (comulOfCuts cuts) counit
+    (fun a ↦ AlgHom.congr_fun (rTensor_counit_comp_comulOfCuts hcuts) a)
+    (lcoeff R ({T} : Forest (UnorderedTree α)))
+    (isDualPrimitive_lcoeff_singleton (R := R) T).map_one_eq_zero
+    (isDualPrimitive_lcoeff_singleton (R := R) T).leibniz
 
-theorem WithCuts.treeDerivation_apply (T : UnorderedTree α) (x : WithCuts R cuts) :
-    WithCuts.treeDerivation T x =
-      Coalgebra.contract (lcoeff R ({T} : Forest (UnorderedTree α)) : WithCuts R cuts →ₗ[R] R) x :=
+theorem treeDerivation_apply
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (hcuts : ∀ T, (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}) (T : UnorderedTree α)
+    (x : ConnesKreimer R (UnorderedTree α)) :
+    treeDerivation cuts hcuts T x = _root_.TensorProduct.lid R _
+      ((lcoeff R ({T} : Forest (UnorderedTree α))).rTensor _ (comulOfCuts cuts x)) :=
   rfl
 
 end TreeDerivation

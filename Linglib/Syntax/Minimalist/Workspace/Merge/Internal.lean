@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Algebra.RootedTree.DualPrimitive
 public import Linglib.Syntax.Minimalist.Workspace.Merge.External
 
 /-!
@@ -86,38 +87,45 @@ theorem mergeOpUnitOfCuts_apply_singleton_unique (β T : UnorderedTree α)
   obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hx
   exact ite_eq_right (Multiset.mem_filter.mp hp).2
 
+/-- The unit stage `M_{β,1}` is multiplication by `β` after the derivation `D_β`, contraction of
+    the coproduct with the delta functional of `β`. -/
+theorem mergeOpUnitOfCuts_eq_mul_treeDerivation [IsMergeCuts cuts] (β : UnorderedTree α)
+    (x : ConnesKreimer R (UnorderedTree α)) :
+    mergeOpUnitOfCuts (R := R) cuts β x =
+      ofTree β * treeDerivation cuts IsMergeCuts.filter_empty β x := by
+  have h : mergePostUnit (R := R) β =
+      LinearMap.mulLeft R (ofTree β : ConnesKreimer R (UnorderedTree α)) ∘ₗ
+        (_root_.TensorProduct.lid R _).toLinearMap ∘ₗ
+          (lcoeff R ({β} : Forest (UnorderedTree α))).rTensor _ :=
+    TensorProduct.ext (lhom_ext' fun F ↦ LinearMap.ext fun r ↦ by
+      simp [mergePostUnit_basis_tensor, coeff_of', of'_singleton])
+  rw [mergeOpUnitOfCuts, h]
+  rfl
+
+/-- The derivation `D_β` vanishes on a tree that does not contain `β`. -/
+theorem treeDerivation_ofTree_of_notMem [IsMergeCuts cuts] {β T : UnorderedTree α}
+    (hT : β ∉ T.subtrees) :
+    treeDerivation (R := R) cuts IsMergeCuts.filter_empty β (ofTree T) = 0 := by
+  have hTβ : ({T} : Forest (UnorderedTree α)) ≠ {β} := fun h ↦
+    hT (Multiset.singleton_inj.1 h ▸ self_mem_subtrees T)
+  rw [treeDerivation_apply, comulOfCuts_apply_ofTree, comulTreeOfCuts, map_add, map_add,
+    map_multiset_sum, map_multiset_sum, Multiset.map_map, Multiset.map_map]
+  simp only [← of'_singleton, LinearMap.rTensor_tmul, lcoeff_apply, coeff_of', if_neg hTβ,
+    TensorProduct.zero_tmul, map_zero, zero_add]
+  refine Multiset.sum_eq_zero fun x hx ↦ ?_
+  obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.1 hx
+  have hpβ : p.1 ≠ {β} := fun h ↦
+    hT (IsMergeCuts.mem_subtrees_of_mem_crown hp (h ▸ Multiset.mem_singleton_self β))
+  simp [coeff_of', hpβ]
+
 /-- The unit stage commutes with a spectator component `T` that does not have `β` as a subtree. -/
 theorem mergeOpUnitOfCuts_ofTree_mul [IsMergeCuts cuts] {β T : UnorderedTree α}
     (hT : β ∉ T.subtrees) (w : ConnesKreimer R (UnorderedTree α)) :
     mergeOpUnitOfCuts (R := R) cuts β (ofTree T * w) =
       ofTree T * mergeOpUnitOfCuts (R := R) cuts β w := by
-  rw [mergeOpUnitOfCuts, LinearMap.comp_apply, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-    AlgHom.toLinearMap_apply, map_mul, comulOfCuts_apply_ofTree, comulTreeOfCuts, add_mul, map_add,
-    ← of'_singleton]
-  -- The primitive term vanishes, since `T ≠ β`.
-  rw [mergePostUnit_left_mul_eq_zero_of_not_le _ _ _ ?prim, zero_add]
-  case prim =>
-    intro h_le
-    rw [Multiset.singleton_le, Multiset.mem_singleton] at h_le
-    exact hT (h_le ▸ T.self_mem_subtrees)
-  -- Split off the empty cut `(0, T)`; the nonempty cuts vanish.
-  rw [← Multiset.sum_map_mul_right,
-    ← Multiset.filter_add_not (fun pf => pf.1.card = 0) (cuts T),
-    Multiset.map_add, Multiset.sum_add, map_add, IsMergeCuts.filter_empty,
-    Multiset.map_singleton, Multiset.sum_singleton, _root_.map_multiset_sum,
-    Multiset.sum_eq_zero, add_zero]
-  · rw [of'_zero,
-      mul_comm ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree T) _,
-      mergePostUnit_right_one_tmul, mul_comm]
-    rfl
-  · intro x hx
-    obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp (Multiset.map_map _ _ _ ▸ hx)
-    obtain ⟨hp, hcard⟩ := Multiset.mem_filter.mp hp
-    refine mergePostUnit_left_mul_eq_zero_of_not_le _ _ _ (fun h_le ↦ hcard ?_) _
-    rw [Multiset.card_eq_zero]
-    refine Multiset.eq_zero_of_forall_notMem fun x hx_mem => ?_
-    rw [Multiset.mem_singleton.mp (Multiset.subset_of_le h_le hx_mem)] at hx_mem
-    exact hT (IsMergeCuts.mem_subtrees_of_mem_crown hp hx_mem)
+  rw [mergeOpUnitOfCuts_eq_mul_treeDerivation, mergeOpUnitOfCuts_eq_mul_treeDerivation,
+    Derivation.leibniz, treeDerivation_ofTree_of_notMem hT, smul_zero, add_zero, smul_eq_mul,
+    mul_left_comm]
 
 /-- With a residual workspace `F̂` none of whose components has `β` as a subtree, the unit stage
     on `{T} + F̂` splits `β` off `T` and leaves `F̂` unchanged. -/

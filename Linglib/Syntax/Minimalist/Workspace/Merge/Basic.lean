@@ -349,23 +349,6 @@ theorem mergePostUnit_basis_tensor (β : UnorderedTree α)
   · rw [ite_eq_right hF, TensorProduct.zero_tmul, ite_eq_right hF]
     exact map_zero _
 
-/-- The unit chain kills every term whose left channel carries a forest that does not fit inside
-    `{β}`. -/
-theorem mergePostUnit_left_mul_eq_zero_of_not_le (β : UnorderedTree α)
-    (F : Forest (UnorderedTree α)) (b : ConnesKreimer R (UnorderedTree α))
-    (hF : ¬ F ≤ ({β} : Forest (UnorderedTree α)))
-    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-    mergePostUnit (R := R) β ((of' (R := R) F ⊗ₜ[R] b) * z) = 0 :=
-  mul'_map_tmul_mul_eq_zero _ (forestProj_mul_eq_zero_of_not_le hF) b z
-
-/-- The unit chain commutes with right multiplication by a right-channel factor `1 ⊗ y`. -/
-theorem mergePostUnit_right_one_tmul (β : UnorderedTree α)
-    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
-    (y : ConnesKreimer R (UnorderedTree α)) :
-    mergePostUnit (R := R) β (z * ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] y))
-      = mergePostUnit (R := R) β z * y :=
-  mul'_map_mul_one_tmul _ z y
-
 /-! ### Merge over a cut enumeration -/
 
 /-- Merge `M_{S,S'}` over a cut enumeration `cuts`, whose coproduct is `comulOfCuts cuts`. -/

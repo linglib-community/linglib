@@ -246,7 +246,7 @@ private def admTok (i : Nat) : LexicalItem.Token := ⟨.of .N [], i⟩
 /-- Raising the item a derivation has just merged is admissible, so the composite of its steps'
     Merges sends its initial workspace to its final object. -/
 example :
-    (Derivation.mk (admTok 0) [Step.em .left (admTok 1), Step.im (admTok 1)]).Admissible := by
+    (Minimalist.Derivation.mk (admTok 0) [Step.em .left (admTok 1), Step.im (admTok 1)]).Admissible := by
   have hne : merge ↑(admTok 1) ↑(admTok 0) ≠ (↑(admTok 1) : SyntacticObject) := fun h ↦ by
     have := congrArg (fun s : SyntacticObject ↦ s.toUnorderedTree.numNodes) h
     simp at this
@@ -260,7 +260,7 @@ example :
 
 /-- The same raising in its two stages, the unit stage putting a copy on the stack and External
     Merge taking it back, is admissible on its configurations. -/
-example : (Derivation.mk (admTok 0)
+example : (Minimalist.Derivation.mk (admTok 0)
     [Step.em .left (admTok 1), Step.extract (admTok 1), Step.remerge]).AdmissibleAt := by
   have hne : merge ↑(admTok 1) ↑(admTok 0) ≠ (↑(admTok 1) : SyntacticObject) := fun h ↦ by
     have := congrArg (fun s : SyntacticObject ↦ s.toUnorderedTree.numNodes) h
@@ -274,7 +274,7 @@ example : (Derivation.mk (admTok 0)
   · simp [Step.itemsList, Step.run]
 
 /-- With nothing on the stack there is no copy to merge back. -/
-example : ¬ (Derivation.mk (admTok 0) [Step.remerge]).AdmissibleAt := by
+example : ¬ (Minimalist.Derivation.mk (admTok 0) [Step.remerge]).AdmissibleAt := by
   rintro ⟨⟨m, st, h, -⟩, -⟩
   cases h
 

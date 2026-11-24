@@ -28,8 +28,8 @@ are stated on workspaces.
 
 * `Minimalist.Workspace.toTrees`: the algebra of workspaces in the algebra of forests of trees.
 * `Minimalist.SyntacticObject.cuts`: the trace cuts of a syntactic object.
-* `Minimalist.Workspace.mergeOp`, `Minimalist.Workspace.mergeOpUnit`: Merge `M_{S,S'}` and its
-  unit stage `M_{S,1}` on the algebra of workspaces.
+* `Minimalist.Workspace.mergeOp`, `Minimalist.Workspace.mergeOpUnit`: Merge at the trace cuts
+  and its unit stage, on the algebra of workspaces.
 
 ## Main results
 
@@ -51,8 +51,12 @@ The operators are defined on the basis of workspaces by the formula that
 `Merge.mergeOpOfCuts_apply_of'` proves of the operator on trees, over the cuts of syntactic
 objects, and not as the restriction of the operator on trees to the range of `toTrees`: a
 restriction needs the range to be stable before the operator can be named, while the formula
-makes stability the theorem `toTrees_mergeOp`. Merge at the deletion coproduct also preserves
-workspaces, and Merge at the admissible cuts does not, a remainder there having a unary vertex.
+makes stability the theorem `toTrees_mergeOp`.
+
+Marcolli, Chomsky and Berwick define Merge at the deletion coproduct, which leaves no trace, and
+obtain it from the coproduct with traces by a projection of the right channel. The operators of
+this file keep the traces. Merge at the deletion coproduct also preserves workspaces, and Merge at
+the admissible cuts does not, a remainder there having a unary vertex.
 
 ## References
 
@@ -118,15 +122,16 @@ theorem toTrees_injective :
     Function.Injective (toTrees : ConnesKreimer R SyntacticObject → _) :=
   rename_injective toUnorderedTree_injective
 
-/-- Merge `M_{S,S'}` on the algebra of workspaces: on a workspace `W`, the sum over the cuts of
-`W` that extract `S` and `S'` of the workspace with `{S, S'}` beside what the cut leaves. -/
+/-- Merge at the trace cuts on the algebra of workspaces: on a workspace `W`, the sum over the
+cuts of `W` that extract `S` and `S'` of the workspace with `{S, S'}` beside what the cut leaves,
+a trace in place of each extracted term. -/
 noncomputable def mergeOp (S S' : SyntacticObject) :
     ConnesKreimer R SyntacticObject →ₗ[R] ConnesKreimer R SyntacticObject :=
   linearLift fun W ↦ (((forestCuts SyntacticObject.cuts W).filter (·.1 = {S, S'})).map
     fun p ↦ of' ({SyntacticObject.merge S S'} + p.2)).sum
 
-/-- The unit stage `M_{S,1}` on the algebra of workspaces: on a workspace `W`, the sum over the
-cuts of `W` that extract `S` of the workspace with `S` beside what the cut leaves. -/
+/-- The unit stage at the trace cuts on the algebra of workspaces: on a workspace `W`, the sum
+over the cuts of `W` that extract `S` of the workspace with `S` beside what the cut leaves. -/
 noncomputable def mergeOpUnit (S : SyntacticObject) :
     ConnesKreimer R SyntacticObject →ₗ[R] ConnesKreimer R SyntacticObject :=
   linearLift fun W ↦ (((forestCuts SyntacticObject.cuts W).filter (·.1 = {S})).map
