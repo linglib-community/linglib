@@ -192,6 +192,41 @@ theorem mergeOp_of' (hle : {S, S'} ≤ W) (hW : ∀ U ∈ W - {S, S'}, S ∉ U.t
   toTrees_injective <| by
     rw [toTrees_mergeOp_of', traceMergeOp_of'_merge traceEncoder hle hW, toTrees_of']
 
+/-- External Merge of two objects beside spectators that contain neither. -/
+theorem mergeOp_of'_add (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
+    mergeOp (R := ℤ) S S' (of' ({S, S'} + W)) = of' ({SyntacticObject.merge S S'} + W) :=
+  toTrees_injective <| by
+    rw [toTrees_mergeOp_of', traceMergeOp_node_residual traceEncoder S S' hW, toTrees_of']
+
+/-- The unit stage beside spectators that do not contain the mover splits a uniquely accessible
+mover off the object containing it. -/
+theorem mergeOpUnit_of'_add (hm : ¬ mover.IsTrace) (h : current.terms.count mover = 1)
+    (hne : current ≠ mover) (hW : ∀ U ∈ W, mover ∉ U.terms) :
+    mergeOpUnit (R := ℤ) mover (of' ({current} + W)) =
+      of' ({mover, deleteAccessible mover current} + W) :=
+  toTrees_injective <| by
+    rw [toTrees_mergeOpUnit_of', toTrees_of', Multiset.map_add, Multiset.map_add,
+      Multiset.map_singleton, Merge.traceMergeOpUnit,
+      Merge.mergeOpUnitOfCuts_apply_singleton_unique_residual _ _ _
+        (markerCuts_filter_mover hm h hne) (fun h' ↦ hne (toUnorderedTree_injective h'))
+        fun U hU ↦ ?_]
+    · rfl
+    · obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
+      rw [toUnorderedTree_mem_subtrees]
+      exact hW U' hU'
+
+/-- Internal Merge of a uniquely accessible mover beside spectators that contain neither the mover
+nor what it leaves. -/
+theorem mergeOp_mergeOpUnit_of'_add (hm : ¬ mover.IsTrace) (h : current.terms.count mover = 1)
+    (hne : current ≠ mover)
+    (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
+    mergeOp (R := ℤ) (deleteAccessible mover current) mover
+        (mergeOpUnit mover (of' ({current} + W))) =
+      of' ({SyntacticObject.merge (deleteAccessible mover current) mover} + W) :=
+  toTrees_injective <| by
+    rw [toTrees_mergeOp, toTrees_mergeOpUnit_of', traceMergeOp_im_residual hm h hne hW,
+      toTrees_of']
+
 /-- The unit stage on a single object splits off a uniquely accessible mover beside what it
 leaves. -/
 theorem mergeOpUnit_of'_singleton (hm : ¬ mover.IsTrace)

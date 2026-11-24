@@ -258,6 +258,26 @@ example :
   rw [terms_merge, Multiset.count_cons_of_ne hne.symm]
   simp [admTok]
 
+/-- The same raising in its two stages, the unit stage putting a copy on the stack and External
+    Merge taking it back, is admissible on its configurations. -/
+example : (Derivation.mk (admTok 0)
+    [Step.em .left (admTok 1), Step.extract (admTok 1), Step.remerge]).AdmissibleAt := by
+  have hne : merge ↑(admTok 1) ↑(admTok 0) ≠ (↑(admTok 1) : SyntacticObject) := fun h ↦ by
+    have := congrArg (fun s : SyntacticObject ↦ s.toUnorderedTree.numNodes) h
+    simp at this
+  refine ⟨?_, ⟨not_isTrace_iff_isLeft.mpr rfl, ?_, hne, ?_⟩, ⟨_, _, rfl, ?_⟩, trivial⟩
+  · exact fun U hU ↦ by simp [Step.itemsList, Step.items] at hU
+  · show (merge ↑(admTok 1) ↑(admTok 0) : SyntacticObject).terms.count ↑(admTok 1) = 1
+    rw [terms_merge, Multiset.count_cons_of_ne hne.symm]
+    simp [admTok]
+  · simp [Step.itemsList, Step.items, Step.run]
+  · simp [Step.itemsList, Step.run]
+
+/-- With nothing on the stack there is no copy to merge back. -/
+example : ¬ (Derivation.mk (admTok 0) [Step.remerge]).AdmissibleAt := by
+  rintro ⟨⟨m, st, h, -⟩, -⟩
+  cases h
+
 private theorem admissibleCuts_theApple : admissibleCuts theApple.toUnorderedTree =
     {({theD.toUnorderedTree, appleN.toUnorderedTree}, UnorderedTree.leaf Vertex.bare),
       ({theD.toUnorderedTree}, UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}),
