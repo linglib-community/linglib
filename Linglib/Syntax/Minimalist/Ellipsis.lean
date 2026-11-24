@@ -43,7 +43,7 @@ complements [E] silences and the null pro-forms.
   `Minimalist.Ellipsis.Nondistinct`.
 * `Minimalist.AgainReading`: the two readings of *again* and their adjunction sites.
 * `Minimalist.NullSite`: a null site of a spine, an [E] deletion domain or a null pro-form, with
-  its `Anaphor.DepthModel` instance.
+  `Minimalist.NullSite.depth`, its depth as an anaphor.
 
 ## Main results
 
@@ -55,6 +55,8 @@ complements [E] silences and the null pro-forms.
 * `Minimalist.Ellipsis.eq_vpEllipsis_iff`, `Minimalist.Ellipsis.eq_vStrandingVPE_iff`,
   `Minimalist.Ellipsis.eq_vpEllipsis_iff_spares_voice`: the *again* test and the voice test, which
   place [E] on Voice or on v.
+* `Minimalist.NullSite.depth_eq_surface_iff`: a null site is a surface anaphor exactly when it
+  leaves some site unpronounced.
 
 ## Implementation notes
 
@@ -64,8 +66,7 @@ of the complement of [E] survives the ellipsis as restitutive *again* survives [
 adjoined to a head, as a manner root adjoins to v, is part of that head and shares its site. A head
 the spine lacks is ranked above every site of the spine and so is never deleted. A null site built
 from [E] carries a site of its deletion domain, since a head at the bottom of a spine has no
-complement to silence; that witness is what the surface condition of `Anaphor.DepthModel` asks
-for.
+complement to silence; with that witness every surface site leaves a site unpronounced.
 
 ## TODO
 
@@ -339,17 +340,16 @@ def Silences : NullSite s → Spine.Site → Prop
   | .elided e _, x => e.Deletes x
   | .proform _, _ => False
 
-/-- [E]-deletion realizes Hankamer and Sag's depth: an [E] site silences its complement, and a
-null pro-form silences nothing. -/
-instance : Anaphor.DepthModel (NullSite s) Spine.Site where
-  depth := depth
-  Silences := Silences
-  exists_silences_of_surface
-    | .elided _ h, _ => h
-    | .proform _, h => nomatch h
-  not_silences_of_deep
-    | .elided .., _, h => nomatch h
-    | .proform _, _, _ => id
+/-- A null site is a surface anaphor exactly when it leaves some site unpronounced, the defining
+property of depth in [hankamer-sag-1976]. -/
+theorem depth_eq_surface_iff : ∀ {n : NullSite s}, n.depth = .surface ↔ ∃ x, n.Silences x
+  | .elided _ h => iff_of_true rfl h
+  | .proform _ => iff_of_false nofun fun ⟨_, h⟩ ↦ h
+
+/-- A null site is a deep anaphor exactly when it leaves no site unpronounced. -/
+theorem depth_eq_deep_iff : ∀ {n : NullSite s}, n.depth = .deep ↔ ∀ x, ¬ n.Silences x
+  | .elided _ h => iff_of_false nofun fun h' ↦ h.elim h'
+  | .proform _ => iff_of_true rfl fun _ ↦ id
 
 instance : ∀ (n : NullSite s) (x : Spine.Site), Decidable (n.Silences x)
   | .elided e _, _ => inferInstanceAs (Decidable (e.Deletes _))
