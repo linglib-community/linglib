@@ -9,8 +9,14 @@
 <style>
 /* Home */
 .home p { margin: 24px 0 0; }
+.home .method { margin: 32px 0 0; padding: 4px 20px 20px; border: 1px solid var(--border); border-radius: 8px; }
+.home .method dl { margin: 20px 0 0; }
+.home .method dt { font-weight: 500; color: var(--primary); }
+.home .method dd { margin: 2px 0 14px; color: var(--content); }
+.home .method p { margin-top: 6px; color: var(--secondary); }
 @media (max-width: 768px) {
   .home p { margin-top: 12px; }
+  .home .method { margin-top: 20px; padding: 0 14px 14px; }
 }
 </style>
 </head>
@@ -19,6 +25,17 @@
 
 <main class="main home">
   <p>A Lean 4 library for formal linguistics across semantics, syntax, pragmatics, morphology, phonology, and processing.</p>
+  <section class="method">
+    <dl>
+      <dt>Generalization</dt>
+      <dd>A statement about data, which mentions no framework.</dd>
+      <dt>Account</dt>
+      <dd>A framework's construction, in the framework's own vocabulary.</dd>
+      <dt>Linking map</dt>
+      <dd>The map from an account's objects to a description of data.</dd>
+    </dl>
+    <p>What an account predicts is the range of its linking map, and theories are compared by comparing ranges.</p>
+  </section>
 </main>
 
 <!--SITE_FOOTER-->
