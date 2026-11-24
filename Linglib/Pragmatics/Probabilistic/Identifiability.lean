@@ -11,39 +11,38 @@ public import Linglib.Pragmatics.Probabilistic.Speaker
 /-!
 # Identifiability of the speaker's rationality and costs
 
-The speaker of the Rational Speech Act model who knows the state has two parameters, a rationality
-`α` and a cost `C u` for each utterance. This file says when her distribution determines them.
+The speaker of the Rational Speech Act model who knows the state chooses the utterance `u` at the
+state `w` with probability proportional to `exp (α * (log (L u {w}) - C u))`, where `L` is the
+listener she addresses, `α` her rationality and `C` her costs. This file says when her choices
+determine `α` and `C`.
 
-At a state `w`, the log of the odds of two utterances `u'` and `u` is
-`α * (log (L u' {w}) - log (L u {w}) - (C u' - C u))`, where `L` is the listener she addresses.
-The difference of these log odds between two states is therefore `α` times the same difference
-for the listener, and the costs cancel. Two utterances whose odds under the listener differ
-between two states determine the rationality, and at a given rationality the speaker determines
-the differences of the costs. Against a Markov listener who rules out no state, the speaker
-determines her rationality and, up to a constant, her costs, unless every utterance has the same
-listener.
+The log odds of `u'` against `u` at `w` are
+`α * (log (L u' {w}) - log (L u {w}) - (C u' - C u))`. Comparing them at two states cancels the
+costs and leaves `α` times the same comparison for the listener. There are two cases.
 
-Where the listener's mass at a state is a factor for the utterance times a factor for the state,
-the difference vanishes, and a speaker of any rationality is the speaker of any other at adjusted
-costs. The literal listener is of this kind: his mass at a state where the utterance is true is
-the prior mass of the state over the prior mass of the utterance's extension.
+* Where the listener's odds of two utterances differ between two states, the speaker determines
+  `α`, and then her costs up to a constant.
+* Where the listener's mass factors as `L u {w} = a u * h w`, the comparison is zero, and the
+  speaker at one rationality is the speaker at any other with adjusted costs. The literal listener
+  is of this kind: `a u` is the inverse of the prior probability that `u` is true, and `h w` is
+  the prior probability of `w`.
 
 ## Main results
 
-* `RSA.log_speaker_dirac_real_singleton_div`: the log odds of two utterances under the speaker.
-* `RSA.log_speaker_dirac_real_singleton_div_sub`: the difference of the log odds between two
-  states is the rationality times that of the listener.
-* `RSA.rationality_eq_of_speaker_dirac_apply_eq`: two utterances whose odds under the listener
-  differ between two states determine the rationality.
-* `RSA.cost_sub_eq_of_speaker_dirac_apply_eq`: at one rationality, the speaker determines the
-  differences of the costs.
-* `RSA.speaker_dirac_eq_iff`: against a Markov listener who rules out no state, two speakers agree
-  exactly when their rationalities agree and their costs differ by a constant, or every utterance
-  has the same listener and their costs scaled by the rationalities differ by a constant.
-* `RSA.speaker_dirac_eq_of_mul`: against a listener whose mass factors, a speaker of any
-  rationality is the speaker of any other at adjusted costs.
-* `RSA.speaker_literalListener_dirac_eq_of_cost`: against the literal listener, the adjustment is
-  a multiple of the log of the prior probability that the utterance is true.
+* `RSA.log_speaker_dirac_real_singleton_div`: the log odds of two utterances at a state.
+* `RSA.log_speaker_dirac_real_singleton_div_sub`: comparing the log odds at two states cancels the
+  costs.
+* `RSA.rationality_eq_of_speaker_dirac_apply_eq`: where the listener's odds differ between two
+  states, speakers who agree there have the same rationality.
+* `RSA.cost_sub_eq_of_speaker_dirac_apply_eq`: speakers of one rationality who agree at a state
+  have the same cost differences.
+* `RSA.speaker_dirac_eq_iff`: against a listener who rules out no state, two speakers are equal
+  exactly when they have the same rationality and costs that differ by a constant, or every
+  utterance has the same listener and only `α * C` matters.
+* `RSA.speaker_dirac_eq_of_mul`: against a listener whose mass factors, the speaker at one
+  rationality is the speaker at any other with adjusted costs.
+* `RSA.speaker_literalListener_dirac_eq_of_cost`: the same against the literal listener, where
+  the adjustment is a multiple of the log prior probability that the utterance is true.
 
 ## Implementation notes
 
@@ -75,8 +74,9 @@ section LogOdds
 
 variable {L : Kernel U W} [IsFiniteKernel L] {w w' : W} {u u' : U}
 
-/-- The log of the odds of two utterances under the speaker who knows the state is the
-rationality times the difference of their utilities. -/
+/-- The log odds of `u'` against `u` at the state `w` are
+`α * (log (L u' {w}) - log (L u {w}) - (C u' - C u))`: the rationality times how much more useful
+`u'` is than `u`. -/
 theorem log_speaker_dirac_real_singleton_div (hα : 0 ≤ α) (hu : L u {w} ≠ 0)
     (hu' : L u' {w} ≠ 0) :
     Real.log ((speaker α C L Measure.dirac w).real {u'} /
@@ -89,8 +89,8 @@ theorem log_speaker_dirac_real_singleton_div (hα : 0 ≤ α) (hu : L u {w} ≠ 
     Real.log_rpow (div_pos h' h), Real.log_div h'.ne' h.ne', Real.log_exp]
   ring
 
-/-- The difference between two states of the log odds of two utterances under the speaker is the
-rationality times that difference under the listener: the costs cancel. -/
+/-- Comparing the log odds of `u'` against `u` at two states `w` and `w'` cancels the costs: the
+difference is `α` times the same difference for the listener. -/
 theorem log_speaker_dirac_real_singleton_div_sub (hα : 0 ≤ α) (hu : L u {w} ≠ 0)
     (hu' : L u' {w} ≠ 0) (hv : L u {w'} ≠ 0) (hv' : L u' {w'} ≠ 0) :
     Real.log ((speaker α C L Measure.dirac w).real {u'} /
@@ -103,8 +103,9 @@ theorem log_speaker_dirac_real_singleton_div_sub (hα : 0 ≤ α) (hu : L u {w} 
     log_speaker_dirac_real_singleton_div hα hv hv']
   ring
 
-/-- Two utterances whose odds under the listener differ between two states determine the
-rationality. -/
+/-- The rationality is identified where the listener discriminates: if `L u' {w} / L u {w}`
+differs from `L u' {w'} / L u {w'}`, two speakers who agree at the states `w` and `w'` have the
+same `α`, whatever their costs. -/
 theorem rationality_eq_of_speaker_dirac_apply_eq (hα : 0 ≤ α) (hα' : 0 ≤ α') (hu : L u {w} ≠ 0)
     (hu' : L u' {w} ≠ 0) (hv : L u {w'} ≠ 0) (hv' : L u' {w'} ≠ 0)
     (hL : L u' {w} * L u {w'} ≠ L u {w} * L u' {w'})
@@ -126,7 +127,8 @@ theorem rationality_eq_of_speaker_dirac_apply_eq (hα : 0 ≤ α) (hα' : 0 ≤ 
   exact (ENNReal.toReal_eq_toReal_iff' (ENNReal.mul_ne_top (measure_ne_top _ _)
     (measure_ne_top _ _)) (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))).1 this
 
-/-- At one rationality, the speaker determines the differences of the costs. -/
+/-- The costs are identified up to a constant: two speakers of the same rationality who agree at
+a state have the same cost differences `C u' - C u`. -/
 theorem cost_sub_eq_of_speaker_dirac_apply_eq (hα : 0 < α) (hu : L u {w} ≠ 0)
     (hu' : L u' {w} ≠ 0)
     (h : speaker α C L Measure.dirac w = speaker α C' L Measure.dirac w) :
@@ -136,8 +138,9 @@ theorem cost_sub_eq_of_speaker_dirac_apply_eq (hα : 0 < α) (hu : L u {w} ≠ 0
   linarith [mul_left_cancel₀ hα.ne' key]
 
 omit [IsFiniteKernel L] in
-/-- Against a Markov listener who rules out no state, the speaker who knows the state determines
-her rationality and, up to a constant, her costs, unless every utterance has the same listener. -/
+/-- Against a listener who rules out no state, two speakers are equal in exactly two cases: they
+have the same `α` and costs that differ by a constant, or every utterance has the same listener
+and `α * C` and `α' * C'` differ by a constant. -/
 theorem speaker_dirac_eq_iff [IsMarkovKernel L] [Nonempty W] (hα : 0 < α) (hα' : 0 < α')
     (hL : ∀ u w, L u {w} ≠ 0) :
     speaker α C L Measure.dirac = speaker α' C' L Measure.dirac ↔
@@ -206,9 +209,9 @@ section Mimicry
 
 variable {L : U → Measure W}
 
-/-- Against a listener whose mass at a state, where it is not zero, is a factor for the utterance
-times a factor for the state, a speaker of any rationality is the speaker of any other at
-adjusted costs. -/
+/-- The rationality is not identified against a listener whose mass factors: if
+`L u {w} = a u * h w` wherever it is not zero, the speaker at `α` with costs `C` is the speaker at
+any `α'` with the costs `C'` given by `α' * C' u = α * C u + (α' - α) * log (a u)`. -/
 theorem speaker_dirac_eq_of_mul {a : U → ℝ≥0∞} {h : W → ℝ≥0∞} (hα : 0 < α) (hα' : 0 < α')
     (ha0 : ∀ u, a u ≠ 0) (ha : ∀ u, a u ≠ ∞) (hh : ∀ w, h w ≠ ∞)
     (hL : ∀ u w, L u {w} = 0 ∨ L u {w} = a u * h w)
@@ -253,8 +256,10 @@ end Mimicry
 
 end
 
-/-- Against the literal listener, a speaker of any rationality is the speaker of any other whose
-costs differ by a multiple of the log of the prior probability that the utterance is true. -/
+/-- The rationality is not identified against the literal listener: the speaker at `α` with costs
+`C` is the speaker at any `α'` whose costs satisfy
+`α' * C' u = α * C u - (α' - α) * log (μ (sem u))`, a shift by a multiple of the log prior
+probability that `u` is true. -/
 theorem speaker_literalListener_dirac_eq_of_cost [DiscreteMeasurableSpace W] (hα : 0 < α)
     (hα' : 0 < α') (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W)
     (hμ : ∀ u, μ (sem u) ≠ 0)
