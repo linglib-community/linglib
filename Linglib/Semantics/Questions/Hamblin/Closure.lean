@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Hamblin.StrongestAnswer
-public import Linglib.Core.Order.OfCriteria
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.CompleteLattice.Finset
 public import Mathlib.Order.UpperLower.Basic

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Minimals
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Linglib.Semantics.Events.Precedence
 public import Linglib.Semantics.Mereology.Relation
 public import Mathlib.Order.Comparable

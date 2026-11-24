@@ -5,7 +5,7 @@ public import Linglib.Semantics.Questions.Partition.OfProps
 public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 public import Linglib.Semantics.Attitudes.Preference.Conditional
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Core.Order.OfCriteria
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Powerset

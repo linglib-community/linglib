@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Filter.AtBotOn
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Linglib.Core.Order.Minimals
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Fintype.Powerset

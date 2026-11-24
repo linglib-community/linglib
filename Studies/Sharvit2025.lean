@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Presupposition.TwoDimensional
 public import Linglib.Core.Order.Minimals
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Linglib.Data.Examples.Sharvit2025
 
 /-!

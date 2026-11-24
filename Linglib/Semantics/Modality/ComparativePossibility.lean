@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.Antisymmetrization
 public import Linglib.Core.Order.Filter.AtBotOn
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Mathlib.Basic.Rel
 public import Mathlib.Order.Defs.Unbundled
 public import Mathlib.Order.RelClasses

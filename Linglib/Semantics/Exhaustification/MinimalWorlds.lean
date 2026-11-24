@@ -4,6 +4,7 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Data.Set.Finite.Powerset
 public import Linglib.Core.Order.Minimals
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 
 /-!
 # Minimal-world exhaustification
