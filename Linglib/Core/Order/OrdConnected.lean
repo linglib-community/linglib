@@ -29,6 +29,7 @@ lower intervals, a map is contiguous iff some monotone map to `ℕ` has the same
 
 * `isContiguous_iff_ordConnected_preimage`: contiguity in terms of fibres.
 * `Monotone.isContiguous`: monotone maps are contiguous.
+* `List.isContiguous_get_replicate_append`: contiguity of a list built from blocks.
 * `isContiguous_iff_exists_monotone`: contiguous maps are those with the kernel of a monotone map
   to `ℕ`.
 * `Finset.eq_Icc_top_of_ordConnected_coe`: an order-connected finset containing `⊤` is
@@ -192,6 +193,26 @@ theorem isContiguous_iff_exists_monotone (p : ι → F) :
     exact (hker i j).mpr (hg.isContiguous hij hjk ((hker i k).mp heq))
 
 end LinearOrder
+
+/-- A block of copies of `a` before a contiguous list that does not contain `a` is contiguous. -/
+theorem List.isContiguous_get_replicate_append {α : Type*} {a : α} {L : List α} (n : ℕ)
+    (hL : IsContiguous L.get) (ha : a ∉ L) : IsContiguous (List.replicate n a ++ L).get := by
+  intro i j k hij hjk h
+  have hi := i.2; have hj := j.2; have hk := k.2
+  simp only [List.length_append, List.length_replicate] at hi hj hk
+  simp only [List.get_eq_getElem, List.getElem_append, List.length_replicate,
+    List.getElem_replicate] at h ⊢
+  have hij' : i.1 ≤ j.1 := hij
+  have hjk' : j.1 ≤ k.1 := hjk
+  by_cases h1 : i.1 < n
+  · by_cases h3 : k.1 < n
+    · simp only [h1, show j.1 < n by omega, ↓reduceDIte]
+    · simp only [h1, h3, ↓reduceDIte] at h
+      exact absurd (h ▸ List.getElem_mem _) ha
+  · simp only [h1, show ¬ k.1 < n by omega, ↓reduceDIte] at h
+    simp only [h1, show ¬ j.1 < n by omega, ↓reduceDIte]
+    exact @hL ⟨i - n, by omega⟩ ⟨j - n, by omega⟩ ⟨k - n, by omega⟩
+      (by simp [Fin.le_def]; omega) (by simp [Fin.le_def]; omega) h
 
 /-! ### Sets order-connected along a map -/
 

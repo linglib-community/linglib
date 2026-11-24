@@ -49,24 +49,24 @@ Neg in Russian and in V in Danish.
 namespace HarizanovGribanova2019
 
 open FreeMagma DistributedMorphology.Amalgamation
-open DistributedMorphology (MorphosyntacticWord)
+open DistributedMorphology
 
 variable {H : Type*}
 
 /-! ### The paper's derivations -/
 
 theorem raising_and_lowering (x y z : H) :
-    amalgamateSpine [⟨z, some .raising⟩, ⟨y, none⟩, ⟨x, some .lowering⟩] =
+    amalgamate [⟨z, some .raising⟩, ⟨y, none⟩, ⟨x, some .lowering⟩] =
       some [⟨y, of z * of y * of x⟩] :=
   rfl
 
 theorem lowering_twice (x y z : H) :
-    amalgamateSpine [⟨z, none⟩, ⟨y, some .lowering⟩, ⟨x, some .lowering⟩] =
+    amalgamate [⟨z, none⟩, ⟨y, some .lowering⟩, ⟨x, some .lowering⟩] =
       some [⟨z, of z * of y * of x⟩] :=
   rfl
 
 theorem lowering_without_target (x y z : H) :
-    amalgamateSpine [⟨z, some .raising⟩, ⟨y, some .lowering⟩, ⟨x, none⟩] = none :=
+    amalgamate [⟨z, some .raising⟩, ⟨y, some .lowering⟩, ⟨x, none⟩] = none :=
   rfl
 
 /-! ### The clausal spine -/
@@ -92,41 +92,53 @@ def german : List (Terminal Minimalist.Cat) := [⟨V, some .raising⟩, ⟨T, no
 /-- The Hebrew clause with a topic, in which V Raises into T. -/
 def hebrew : List (Terminal Minimalist.Cat) := [⟨V, some .raising⟩, ⟨T, none⟩, ⟨Top, none⟩]
 
-theorem russian_amalgamateSpine :
-    amalgamateSpine russian = some [⟨.Neg, of V * of v * of Asp * of .Neg * of T⟩] :=
+theorem russian_amalgamate :
+    amalgamate russian = some [⟨.Neg, of V * of v * of Asp * of .Neg * of T⟩] :=
   rfl
 
-theorem danish_amalgamateSpine : amalgamateSpine danish = some [⟨V, of V * of v * of T⟩] :=
+theorem danish_amalgamate : amalgamate danish = some [⟨V, of V * of v * of T⟩] :=
   rfl
 
-theorem french_amalgamateSpine :
-    amalgamateSpine french = some [⟨T, of V * of v * of .Neg * of T⟩] :=
+theorem french_amalgamate :
+    amalgamate french = some [⟨T, of V * of v * of .Neg * of T⟩] :=
   rfl
 
 /-! ### Syntactic movement of a head -/
 
 theorem german_root :
-    amalgamateSpine (moveToRoot german T) = some [⟨T, of V * of T⟩, ⟨T, of T⟩] :=
+    amalgamate (moveToRoot german T) = some [⟨T, of V * of T⟩, ⟨T, of T⟩] :=
   rfl
 
 theorem danish_root :
-    amalgamateSpine (moveToRoot danish V) = some [⟨V, of V * of v * of T⟩, ⟨V, of V⟩] :=
-  amalgamateSpine_moveToRoot V danish_amalgamateSpine
+    amalgamate (moveToRoot danish V) = some [⟨V, of V * of v * of T⟩, ⟨V, of V⟩] :=
+  amalgamate_moveToRoot V danish_amalgamate
 
 theorem russian_polarity_focus :
-    amalgamateSpine (moveToRoot russian .Neg) =
+    amalgamate (moveToRoot russian .Neg) =
       some [⟨.Neg, of V * of v * of Asp * of .Neg * of T⟩, ⟨.Neg, of .Neg⟩] :=
-  amalgamateSpine_moveToRoot .Neg russian_amalgamateSpine
+  amalgamate_moveToRoot .Neg russian_amalgamate
 
 theorem hebrew_fronting :
-    amalgamateSpine (moveToRoot hebrew V) = some [⟨T, of V * of T⟩, ⟨.Top, of .Top⟩, ⟨V, of V⟩] :=
+    amalgamate (moveToRoot hebrew V) = some [⟨T, of V * of T⟩, ⟨.Top, of .Top⟩, ⟨V, of V⟩] :=
   rfl
 
 theorem skipping :
-    amalgamateSpine [⟨(0 : Fin 6), none⟩, ⟨5, some .lowering⟩, ⟨4, none⟩, ⟨3, none⟩,
+    amalgamate [⟨(0 : Fin 6), none⟩, ⟨5, some .lowering⟩, ⟨4, none⟩, ⟨3, none⟩,
         ⟨2, some .raising⟩, ⟨1, some .raising⟩, ⟨0, none⟩] =
       some [⟨0, of 0 * of 5⟩, ⟨4, of 4⟩, ⟨3, of 3⟩, ⟨0, of 2 * of 1 * of 0⟩] :=
   rfl
+
+-- In the French clause every position is pronounced at T.
+theorem french_hosts :
+    (amalgamate french).map MorphosyntacticWord.hosts = some [T, T, T, T] :=
+  rfl
+
+-- With a head occurring twice, the positions pronounced at it need not be a stretch of the spine.
+theorem skipping_hosts :
+    ∀ out ∈ amalgamate [⟨(0 : Fin 6), none⟩, ⟨5, some .lowering⟩, ⟨4, none⟩, ⟨3, none⟩,
+        ⟨2, some .raising⟩, ⟨1, some .raising⟩, ⟨0, none⟩],
+      ¬ IsContiguous (MorphosyntacticWord.hosts out).get := by
+  decide
 
 /-! ### Verb placement -/
 
