@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Person.CaseConstraint
+public import Linglib.Generalizations.PersonCaseConstraint
 public import Linglib.Discourse.LogophoricRole
 public import Linglib.Syntax.Feature.Person.Features
 public import Linglib.Languages.Romance.Italian.Pronouns
