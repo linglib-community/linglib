@@ -8,8 +8,8 @@ module
 public import Linglib.Languages.English.Inflection
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.Morph
-public import Linglib.Morphology.Inflection
-public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Inflection.Basic
+public import Linglib.Morphology.Realization.Map
 public import Linglib.Morphology.Root.Basic
 public import Mathlib.Tactic.DeriveFintype
 

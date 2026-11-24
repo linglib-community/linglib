@@ -14,9 +14,9 @@ one exponent in each context, and so realizes each index in each context by at m
 ## TODO
 
 * State the realization of a rule set for every type of rule, as `Realization.ofOption` of the
-  selection. `Morphology/DistributedMorphology/VocabularyInsertion/Basic.lean` defines it for
-  Vocabulary Items alone (`toRealization`), and neither `Morphology/Exponence/` nor
-  `Morphology/Realization.lean` imports the other.
+  selection. `Morphology/DistributedMorphology/Realization.lean` defines it for Vocabulary Items
+  alone (`toRealization`), and neither `Morphology/Exponence/` nor `Morphology/Realization/`
+  imports the other.
 * Derive the properties every such realization has: it is single-valued, and it is defective where
   no rule applies.
 

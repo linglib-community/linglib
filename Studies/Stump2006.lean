@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Wordlist.Stump2006
-public import Linglib.Morphology.Paradigm.Linkage
+public import Linglib.Morphology.Inflection.Linkage
 public import Linglib.Morphology.Exponence.DomainRule
 public import Linglib.Morphology.Word.UD
 public import Linglib.Languages.Slavic.Czech.Nouns

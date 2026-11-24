@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.OrdConnected
-public import Linglib.Morphology.Paradigm.Basic
+public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Order.Interval.Finset.Fin
@@ -45,7 +45,7 @@ named as [bobaljik-2012] names the degree patterns over positive <
 comparative < superlative. A concrete paradigm has a pattern when its
 syncretism, the kernel `Setoid.ker`, is the pattern's. ABA is the pattern contiguity excludes; AAB
 is contiguous, and its exclusion for degree is a vocabulary-level matter
-(`Morphology/Exponence/Containment/SpanRule.lean`). -/
+(`Morphology/Exponence/SpanRule.lean`). -/
 
 namespace Paradigm
 

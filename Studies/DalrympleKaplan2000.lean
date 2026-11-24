@@ -10,7 +10,7 @@ public import Linglib.Languages.German.Pronouns
 public import Linglib.Languages.German.Verbs
 public import Linglib.Languages.Slavic.Polish.Pronouns
 public import Linglib.Languages.Xhosa.Basic
-public import Linglib.Morphology.Paradigm.Morphome
+public import Linglib.Morphology.Inflection.Paradigm.Morphome
 public import Studies.Corbett1991
 public import Studies.Shieber1986
 public import Mathlib.Data.Finset.Lattice.Fold

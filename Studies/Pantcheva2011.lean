@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Paradigm.Contiguity
+public import Linglib.Morphology.Inflection.Paradigm.Contiguity
 public import Linglib.Core.Algebra.Order.Interval.Set.Instances
 public import Mathlib.Topology.UnitInterval
 public import Linglib.Semantics.Space.Path

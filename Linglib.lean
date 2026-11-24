@@ -299,14 +299,6 @@ import Linglib.Morphology.Exponence.Elsewhere
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Morph
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
-import Linglib.Morphology.Paradigm.Analogy
-import Linglib.Morphology.Paradigm.Basic
-import Linglib.Morphology.Paradigm.Complexity
-import Linglib.Morphology.Paradigm.Contiguity
-import Linglib.Morphology.Paradigm.Function
-import Linglib.Morphology.Paradigm.Linkage
-import Linglib.Morphology.Paradigm.Morphome
-import Linglib.Morphology.Realization
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Consonantal
 import Linglib.Morphology.Word.Agree

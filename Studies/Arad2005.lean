@@ -1,7 +1,7 @@
 module
 
 public import Studies.McCarthy1981
-public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Realization.Map
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Languages.Hebrew.ConsonantalRoots
@@ -861,6 +861,24 @@ theorem words_derived_seg : ∀ p ∈ fragmentRoots, ∀ a ∈ Wordlist.analyses
 
 /-! ### Multiple Contextualized Meaning (Ch. 3, Ch. 7) -/
 
+/-- An interpreted realization pairs the realization of indices by forms with a realization of the
+same indices, in the same contexts, by readings: the separation of the Vocabulary from the
+Encyclopedia in [marantz-1997]. -/
+structure Interpreted (R Ctx F M : Type*) extends Realization R Ctx F where
+  /-- `interp.realize r c` is the set of readings of `r` in `c`. -/
+  interp : Realization R Ctx M
+
+/-- `r` is allosemous when it has two distinct readings, the counterpart in meaning of
+suppletion. -/
+abbrev Interpreted.IsAllosemous {R Ctx F M : Type*} (S : Interpreted R Ctx F M) (r : R) : Prop :=
+  S.interp.IsSuppletive r
+
+/-- `r` is cross-categorial when it is licensed in two contexts whose categories `k` differ, as a
+category-free root is. -/
+def Interpreted.IsCrossCategorial {R Ctx F M K : Type*} (S : Interpreted R Ctx F M) (k : Ctx → K)
+    (r : R) : Prop :=
+  ∃ c c', k c ≠ k c' ∧ S.IsLicensed r c ∧ S.IsLicensed r c'
+
 /-- `pattern? a` is the pattern of a word, its binyan number or its mišqal. -/
 def pattern? (a : Wordlist.Analysis) : Option String := a.binyan.orElse fun _ ↦ a.pattern
 
@@ -875,7 +893,7 @@ def rootMeanings (root pattern : String) : Finset String :=
     (·.form.parameterId)).toFinset
 
 /-- `roots` is the interpreted realization system of roots over the patterns. -/
-def roots : Realization.Interpreted String String String String where
+def roots : Interpreted String String String String where
   realize := rootForms
   interp := ⟨rootMeanings⟩
 
@@ -906,7 +924,7 @@ theorem crossCategorial_iff :
   have key (r : String) : roots.IsCrossCategorial patternHead r ↔
       ∃ a ∈ Wordlist.analyses, ∃ b ∈ Wordlist.analyses, a.root = some r ∧ b.root = some r ∧
         ∃ p ∈ pattern? a, ∃ q ∈ pattern? b, patternHead p ≠ patternHead q := by
-    simp only [Realization.IsCrossCategorial, isLicensed_roots_iff]
+    simp only [Interpreted.IsCrossCategorial, isLicensed_roots_iff]
     constructor
     · rintro ⟨p, q, hk, ⟨a, ha, har, hp⟩, b, hb, hbr, hq⟩
       exact ⟨a, ha, b, hb, har, hbr, p, hp, q, hq, hk⟩

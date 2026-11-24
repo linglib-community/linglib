@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.Mealy
-public import Linglib.Morphology.Inflection
+public import Linglib.Morphology.Inflection.Basic
 public import Linglib.Morphology.Morphotactics.Template.Basic
 
 /-!

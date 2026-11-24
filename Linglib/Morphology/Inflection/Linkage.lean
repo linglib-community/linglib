@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Morphology.Inflection
-public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Inflection.Basic
+public import Linglib.Morphology.Realization.Map
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Finset.Card

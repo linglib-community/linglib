@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Morphology.Paradigm.Analogy
-public import Linglib.Morphology.Paradigm.Basic
+public import Linglib.Morphology.Inflection.Paradigm.Analogy
+public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Linglib.Core.InformationTheory.Entropy.Basic
 public import Mathlib.Data.Fintype.Pi
 

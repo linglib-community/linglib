@@ -4,7 +4,7 @@ public import Linglib.Morphology.Morphotactics.Template.Basic
 public import Linglib.Languages.Finnish.Declension
 public import Linglib.Languages.Finnish.Infinitives
 public import Linglib.Languages.Finnish.Possession
-public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Realization.Basic
 
 /-!
 # Finnish morphotactics
