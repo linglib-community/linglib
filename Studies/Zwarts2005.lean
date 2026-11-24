@@ -296,12 +296,10 @@ theorem star_cumulative {X : Set (Path Loc)}
 
 section Transfer
 
-open Event (σ)
+variable {E : Type*} (σ : E → Path Loc) (C : E → E → E → Prop)
 
-variable {E : Type*} [SpatialTrace E Loc] (C : E → E → E → Prop)
-
-/-- The spatial trace is a homomorphism for concatenation when the trace of a fused event is the
-concatenation of the traces. -/
+/-- The spatial trace `σ` is a homomorphism for concatenation when the trace of a fused event is
+the concatenation of the traces. -/
 def IsTraceHom : Prop :=
   ∀ e e' f, C e e' f → Concat (σ e) (σ e') (σ f)
 
@@ -309,26 +307,26 @@ def IsTraceHom : Prop :=
 def vpp (V : Set E) (X : Set (Path Loc)) : Set E :=
   {e ∈ V | σ e ∈ X}
 
-variable {C}
+variable {σ C}
 
-theorem vpp_concat_closed (hhom : IsTraceHom (E := E) C) {V : Set E}
+theorem vpp_concat_closed (hhom : IsTraceHom σ C) {V : Set E}
     {X : Set (Path Loc)}
     (hV : ∀ e ∈ V, ∀ e' ∈ V, ∀ f, C e e' f → f ∈ V)
     (hX : ∀ p ∈ X, ∀ q ∈ X, ∀ r, Concat p q r → r ∈ X) :
-    ∀ e ∈ vpp V X, ∀ e' ∈ vpp V X, ∀ f, C e e' f → f ∈ vpp V X :=
+    ∀ e ∈ vpp σ V X, ∀ e' ∈ vpp σ V X, ∀ f, C e e' f → f ∈ vpp σ V X :=
   fun e he e' he' f hf ↦
     ⟨hV e he.1 e' he'.1 f hf, hX _ he.2 _ he'.2 _ (hhom e e' f hf)⟩
 
-theorem vpp_bounded_of_no_pairs (hhom : IsTraceHom (E := E) C) {V : Set E}
+theorem vpp_bounded_of_no_pairs (hhom : IsTraceHom σ C) {V : Set E}
     {X : Set (Path Loc)}
     (hX : ¬ ∃ p ∈ X, ∃ q ∈ X, ∃ r, Concat p q r) :
-    Bounded C (vpp V X) :=
+    Bounded C (vpp σ V X) :=
   bounded_of_no_pairs fun ⟨e, he, e', he', f, hf⟩ ↦
     hX ⟨σ e, he.2, σ e', he'.2, σ f, hhom e e' f hf⟩
 
 /-- *Walk to the house* is bounded, (26), by the negative transfer at the strict goal phrase. -/
-theorem vpp_toPP_bounded (hhom : IsTraceHom (E := E) C) {V : Set E} (R : Set Loc) :
-    Bounded C (vpp V (toPP R)) :=
+theorem vpp_toPP_bounded (hhom : IsTraceHom σ C) {V : Set E} (R : Set Loc) :
+    Bounded C (vpp σ V (toPP R)) :=
   vpp_bounded_of_no_pairs hhom (toPP_no_pairs R)
 
 end Transfer

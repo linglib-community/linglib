@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Linking
-public import Linglib.Semantics.Events.Path
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Syntax.Category.Verb.Argument
 public import Linglib.Fragments.English.Verbs.Inventory
@@ -35,7 +34,7 @@ intransitive property resultative.
 The verbal and constructional subevents are identified as one event, the paper's cotemporal means
 (§4.2). End-boundedness is rendered by quantization and its absence by cumulativity, the reading
 Krifka gives the event-path homomorphism that the paper takes from Jackendoff. The path of an event
-is its spatial trace `Event.σ`, and its preservation of sums a hypothesis. The paper labels result
+is given by a homomorphism `σ` of part structures from events to paths. The paper labels result
 phrases only as AP or PP; a row's subconstruction follows the summary (97), where a PP naming a
 state (*into pieces*, *to death*) is a property result phrase, and the paper presents the examples
 (49) as transitive spatial resultatives. A row's `subjectRole` and `objectRole` are the paper's
@@ -142,32 +141,29 @@ example : ¬ Disjoint {.agent} ((⟨false, .path⟩ : Subconstruction).link.admi
 
 section Aspect
 
-open Mereology Spatial
-open Event (σ)
+open Mereology
 
-variable {E Loc : Type*} [SemilatticeSup E] [SemilatticeSup (Path Loc)] [SpatialTrace E Loc]
-  {V : E → Prop} {R : Path Loc → Prop}
+variable {E P : Type*} [SemilatticeSup E] [SemilatticeSup P] (σ : SupHom E P)
+  {V : E → Prop} {R : P → Prop}
 
-/-- `resultative V R e` holds when `e` is an event of the verb whose path `σ e`, the path of the
+/-- `resultative σ V R e` holds when `e` is an event of the verb whose path `σ e`, the path of the
 constructional subevent, is one the result phrase describes, the two subevents being
 cotemporal. -/
-def resultative (V : E → Prop) (R : Path Loc → Prop) (e : E) : Prop :=
+def resultative (V : E → Prop) (R : P → Prop) (e : E) : Prop :=
   V e ∧ R (σ e)
 
-/-- If paths are additive and injective on events, an end-bounded result phrase makes the
+/-- If the path of an event is injective on events, an end-bounded result phrase makes the
 resultative telic (27). -/
-theorem qua_resultative (hσ : ∀ e e' : E, σ (e ⊔ e') = σ e ⊔ σ e')
-    (hinj : Function.Injective (σ : E → Path Loc)) (hR : QUA {p | R p}) :
-    QUA {e | resultative V R e} :=
+theorem qua_resultative (hinj : Function.Injective σ) (hR : QUA {p | R p}) :
+    QUA {e | resultative σ V R e} :=
   IsAntichain.subset
-    (QUA.preimage ((OrderHomClass.monotone (SupHom.mk σ hσ)).strictMono_of_injective hinj) hR)
+    (QUA.preimage ((OrderHomClass.monotone σ).strictMono_of_injective hinj) hR)
     fun _ h ↦ h.2
 
-/-- If paths are additive, a non-end-bounded result phrase leaves the resultative of an activity
-atelic (27). -/
-theorem cum_resultative (hσ : ∀ e e' : E, σ (e ⊔ e') = σ e ⊔ σ e') (hV : CUM {e | V e})
-    (hR : CUM {p | R p}) : CUM {e | resultative V R e} :=
-  SupClosed.inter hV (hR.preimage (SupHom.mk σ hσ))
+/-- A non-end-bounded result phrase leaves the resultative of an activity atelic (27). -/
+theorem cum_resultative (hV : CUM {e | V e}) (hR : CUM {p | R p}) :
+    CUM {e | resultative σ V R e} :=
+  SupClosed.inter hV (hR.preimage σ)
 
 end Aspect
 
