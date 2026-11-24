@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.Subregular.Local
 public import Linglib.Phonology.Subregular.WordModel.Factor
-public import Linglib.Phonology.Subregular.Stringset.TierStrictlyLocal
+public import Linglib.Phonology.Subregular.Stringset.Multitier
 public import Linglib.Phonology.Subregular.Stringset.StrictlyPiecewise
 public import Mathlib.Order.SuccPred.Nat
 public import Linglib.Core.Computability.Edge
@@ -33,6 +33,11 @@ testable stringsets those of the strictly local ones.
   of the projections to a tier.
 * `Language.isPiecewiseTestable_iff_mem_closure`, `Language.isLocallyTestable_iff_mem_closure`:
   over a finite alphabet the testable stringsets are the Boolean combinations of the strict ones.
+* `Language.multitier_isLocallyTestable`, `Language.mem_multitierLocallyTestable_iff`: the
+  multitier extension of the locally testable stringsets is that of the strictly local ones, and
+  the test vectors of the tier projections of a word decide membership in it.
+* `Subregular.WordModel.factors_eq_iff_subseqSet`: under precedence the factors of a word are
+  determined by its subsequences of bounded length.
 
 ## Implementation notes
 
@@ -68,6 +73,30 @@ open FirstOrder FirstOrder.Language List
 namespace Subregular
 
 variable {α : Type u}
+
+/-! ### Factors under precedence and subsequences -/
+
+namespace WordModel
+
+variable {β : Type*} {w w' : List β}
+
+theorem factors_subset_of_subseqSet_subset {k : ℕ} (h : subseqSet k w ⊆ subseqSet k w') :
+    (wordLanguage β {.prec}).factors k (WordModel ({·}) w) ⊆
+      (wordLanguage β {.prec}).factors k (WordModel ({·}) w') := fun _ hf ↦
+  let ⟨_, hsw, hs, hfs⟩ := exists_sublist_of_occurs hf
+  factors_subset_of_sublist (h ⟨hsw, hs⟩).1 hfs
+
+theorem factors_eq_iff_subseqSet {k : ℕ} :
+    (wordLanguage β {.prec}).factors k (WordModel ({·}) w) =
+        (wordLanguage β {.prec}).factors k (WordModel ({·}) w') ↔
+      subseqSet k w = subseqSet k w' := by
+  refine ⟨fun h ↦ Set.ext fun s ↦ ⟨fun ⟨hsw, hs⟩ ↦ ⟨?_, hs⟩, fun ⟨hsw, hs⟩ ↦ ⟨?_, hs⟩⟩,
+    fun h ↦ (factors_subset_of_subseqSet_subset h.subset).antisymm
+      (factors_subset_of_subseqSet_subset h.symm.subset)⟩
+  · exact (diagram_occurs_iff hs).1 (h.subset ((diagram_occurs_iff hs).2 hsw))
+  · exact (diagram_occurs_iff hs).1 (h.symm.subset ((diagram_occurs_iff hs).2 hsw))
+
+end WordModel
 
 /-! ### Anchored words -/
 
@@ -374,5 +403,26 @@ theorem isLocallyTestable_iff_mem_closure [Finite α] (hk : 2 ≤ k) :
         (fun w ↦ WordModel ({·}) (anchor w)) k S} :=
     Set.ext fun _ ↦ isStrictlyLocal_iff_wordModel hk
   rw [isLocallyTestable_iff_wordModel, FirstOrder.Language.isLocallyTestable_iff_mem_closure, h]
+
+/-! ### Multitier locally testable stringsets -/
+
+/-- Over a finite alphabet and for `2 ≤ k`, the multitier locally testable languages are the
+multitier extension of the locally `k`-testable languages as well, since the strictly `k`-local
+languages generate those. -/
+theorem multitier_isLocallyTestable [Finite α] (hk : 2 ≤ k) :
+    multitier {K : Language α | K.IsLocallyTestable k} = multitierLocallyTestable k := by
+  have h : {K : Language α | K.IsLocallyTestable k} =
+      (BooleanSubalgebra.closure {K : Language α | K.IsStrictlyLocal k} : Set (Language α)) :=
+    Set.ext fun _ ↦ isLocallyTestable_iff_mem_closure hk
+  rw [h, multitier_closure, multitierLocallyTestable]
+
+/-- Over a finite alphabet and for `2 ≤ k`, a language is multitier locally testable with window
+`k` exactly when the `k`-test vectors of the tier projections of a word decide its membership. -/
+theorem mem_multitierLocallyTestable_iff [Finite α] (hk : 2 ≤ k) :
+    L ∈ multitierLocallyTestable k ↔ ∀ w w' : List α,
+      (∀ (T : α → Prop) [DecidablePred T],
+        (w.filter T).kTestVector k = (w'.filter T).kTestVector k) → (w ∈ L ↔ w' ∈ L) := by
+  rw [← multitier_isLocallyTestable hk]
+  exact mem_multitier_factorsThrough_iff (List.finite_range_kTestVector k)
 
 end Language

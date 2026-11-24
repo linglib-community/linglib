@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Core.ModelTheory.Factor
-public import Linglib.Core.Computability.PiecewiseTestable
 public import Linglib.Phonology.Subregular.WordModel.Basic
 public import Mathlib.Basic.Finite.Sum
 public import Mathlib.Data.Finset.Sort
@@ -15,8 +14,8 @@ A homomorphism of word models carries the labels of each position and the orderi
 names. Under precedence it picks out a subsequence carrying the labels position by position, and
 under successor an infix. A word's diagram occurs in a structure exactly when the word maps into
 it, so the subfactor order on words is the subsequence order under precedence and the infix order
-under successor, and two words have the same factors exactly when they have the same subsequences,
-respectively infixes, of bounded length. In a feature-labelled model a symbol carries the values of
+under successor, and under successor two words have the same factors exactly when they have the
+same infixes of bounded length. In a feature-labelled model a symbol carries the values of
 its features, so that a position of a factor stands for a natural class.
 
 ## Main definitions
@@ -37,8 +36,8 @@ its features, so that a position of a factor stands for a natural class.
 * `Subregular.WordModel.diagram_le_diagram_iff`,
   `Subregular.WordModel.succDiagram_le_succDiagram_iff`: the subfactor order on words is the
   subsequence order, respectively the infix order.
-* `Subregular.WordModel.factors_eq_iff_subseqSet`, `Subregular.WordModel.factors_eq_iff_infix`: the
-  factors of a word are determined by its subsequences, respectively infixes, of bounded length.
+* `Subregular.WordModel.factors_eq_iff_infix`: under successor the factors of a word are determined
+  by its infixes of bounded length.
 * `Subregular.WordModel.factors_append_append_subset`: under successor a factor of a word around
   enough symbols occurs on one side of them.
 
@@ -227,22 +226,6 @@ theorem diagram_singleton_occurs_iff {d : β} {k : ℕ} (hk : [d].length ≤ k) 
       exact ⟨_, htw.subset (List.mem_singleton_self _), h⟩
   · rintro ⟨x, hx, hdx⟩
     exact ⟨[x], List.singleton_sublist.2 hx, .cons hdx .nil⟩
-
-theorem factors_subset_of_subseqSet_subset {k : ℕ} (h : subseqSet k w ⊆ subseqSet k w') :
-    (wordLanguage β {.prec}).factors k (WordModel ({·}) w) ⊆
-      (wordLanguage β {.prec}).factors k (WordModel ({·}) w') := fun _ hf ↦
-  let ⟨_, hsw, hs, hfs⟩ := exists_sublist_of_occurs hf
-  factors_subset_of_sublist (h ⟨hsw, hs⟩).1 hfs
-
-theorem factors_eq_iff_subseqSet {k : ℕ} :
-    (wordLanguage β {.prec}).factors k (WordModel ({·}) w) =
-        (wordLanguage β {.prec}).factors k (WordModel ({·}) w') ↔
-      subseqSet k w = subseqSet k w' := by
-  refine ⟨fun h ↦ Set.ext fun s ↦ ⟨fun ⟨hsw, hs⟩ ↦ ⟨?_, hs⟩, fun ⟨hsw, hs⟩ ↦ ⟨?_, hs⟩⟩,
-    fun h ↦ (factors_subset_of_subseqSet_subset h.subset).antisymm
-      (factors_subset_of_subseqSet_subset h.symm.subset)⟩
-  · exact (diagram_occurs_iff hs).1 (h.subset ((diagram_occurs_iff hs).2 hsw))
-  · exact (diagram_occurs_iff hs).1 (h.symm.subset ((diagram_occurs_iff hs).2 hsw))
 
 end Precedence
 

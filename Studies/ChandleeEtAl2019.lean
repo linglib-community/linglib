@@ -2,6 +2,7 @@ module
 
 public import Studies.Hansson2010
 public import Linglib.Data.Examples.ChandleeEtAl2019
+public import Linglib.Phonology.Subregular.Local
 public import Linglib.Phonology.Subregular.WordModel.Factor
 public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Order.Minimal
