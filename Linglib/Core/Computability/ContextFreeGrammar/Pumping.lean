@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Tree
 public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Order.Minimal
 public import Mathlib.Tactic.Abel
 
 /-!
@@ -148,16 +149,17 @@ theorem Language.IsContextFree.hasCFLPumpingProperty {T : Type*} {L : Language T
     (hcf : L.IsContextFree) : L.HasCFLPumpingProperty := by
   obtain ⟨g, rfl⟩ := hcf
   refine ⟨g.pumpingConstant, g.pumpingConstant_pos, fun w hw hlen ↦ ?_⟩
-  obtain ⟨t, ht, rfl, hroot⟩ := g.exists_licensed_tree hw
-  -- a licensed tree of least size with the same yield and root
-  obtain ⟨t₁, ht₁, hy₁, hr₁, hmin⟩ := ht.exists_min_numNodes
+  -- a derivation tree of `w` with the fewest nodes
+  obtain ⟨t₁, ⟨⟨ht₁, hr₁⟩, rfl⟩, hmin⟩ := exists_minimalFor_of_wellFoundedLT
+    (fun t ↦ t ∈ g.derivationTrees ∧ t.yield = w) numNodes
+    (ContextFreeGrammar.mem_language_iff_exists_mem_derivationTrees.mp hw)
   obtain ⟨po, pr, outer, inner, hpr, hpo, hpri, hv, hh⟩ :=
-    ht₁.exists_repeat_of_lt_height (ht₁.card_rules_add_one_lt_height (hy₁ ▸ hlen))
+    ht₁.exists_repeat_of_lt_height (ht₁.card_rules_add_one_lt_height hlen)
   have houter := ht₁.of_getElem? hpo
   obtain ⟨u, z, hyu, hyu'⟩ := yield_replaceAt hpo
   obtain ⟨v, y, hyv, hyv'⟩ := yield_replaceAt hpri
   refine ⟨u, v, inner.yield, y, z, ?_, ?_, ?_, fun k ↦ ?_⟩
-  · rw [← hy₁, hyu, hyv]; simp only [append_assoc]
+  · rw [hyu, hyv]; simp only [append_assoc]
   · rw [← hyv]
     exact houter.length_yield_le.trans
       (Nat.pow_le_pow_right (Nat.zero_lt_of_lt g.two_le_maxBranch) (by omega))
@@ -165,12 +167,11 @@ theorem Language.IsContextFree.hasCFLPumpingProperty {T : Type*} {L : Language T
     intro hvy
     obtain ⟨rfl, rfl⟩ := append_eq_nil_iff.1 hvy
     obtain ⟨i, rest, rfl⟩ := exists_cons_of_ne_nil hpr
-    have := hmin _ (ht₁.replaceAt hpo (houter.of_getElem? hpri) hv)
-      (by rw [hyu', ← hy₁, hyu, hyv]; simp) (by rw [value_replaceAt hpo hv, hr₁])
-    have := numNodes_replaceAt_lt hpo (numNodes_lt_of_getElem?_cons hpri)
-    omega
+    have hlt := numNodes_replaceAt_lt hpo (numNodes_lt_of_getElem?_cons hpri)
+    exact hlt.not_ge <| hmin ⟨⟨ht₁.replaceAt hpo (houter.of_getElem? hpri) hv,
+      by rw [value_replaceAt hpo hv, hr₁]⟩, by rw [hyu', hyu, hyv]; simp⟩ hlt.le
   · obtain ⟨s, hs, hsv, hsy⟩ := houter.exists_pump hpri hv hyv' k
-    rw [ContextFreeGrammar.mem_language_iff, ← hroot, ← hr₁, ← value_replaceAt hpo (hsv.trans hv),
+    rw [ContextFreeGrammar.mem_language_iff, ← hr₁, ← value_replaceAt hpo (hsv.trans hv),
       show u ++ (replicate k v).flatten ++ inner.yield ++ (replicate k y).flatten ++ z =
         (t₁.replaceAt po s).yield by rw [hyu', hsy]; simp only [append_assoc]]
     exact (ht₁.replaceAt hpo hs (hsv.trans hv)).derives

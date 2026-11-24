@@ -99,34 +99,15 @@ variable {T : Type*} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.N
 
 theorem ruleWeight_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)}
     (ht : t.Licensed G.Licenses) :
-    t.ruleWeight w = ∏ r ∈ G.rules, w r ^ ruleCount r t := by
-  induction ht using Licensed.grammar_induction with
-  | terminal a => simp [leaf, ruleWeight_node, ruleCount_node_terminal]
-  | nonterminal A cs hrule hcs ih =>
-    simp only [ruleWeight_node, ruleCount_node_nonterminal, pow_add,
-      Finset.prod_mul_distrib, pow_ite, pow_one, pow_zero, Finset.prod_ite_eq', ite_eq_left hrule,
-      Symbol.ruleWeight_nonterminal]
-    congr 1
-    clear hrule hcs
-    induction cs with
-    | nil => simp
-    | cons c cs ihl =>
-      simp only [List.map_cons, List.prod_cons, List.sum_cons, pow_add, Finset.prod_mul_distrib]
-      rw [ih c (List.mem_cons_self ..), ihl fun c' hc' ↦ ih c' (List.mem_cons_of_mem _ hc')]
+    t.ruleWeight w = ∏ r ∈ G.rules, w r ^ ruleCount r t :=
+  ht.prod_map_localTrees fun _ ↦ rfl
 
 /-- Over licensed derivation trees, the product of the weights of the trees of a corpus is the
 product over the grammar's rules of the rule weight raised to the rule's count. -/
 theorem prod_map_ruleWeight (D : Multiset (RoseTree (Symbol T G.NT)))
     (h : ∀ t ∈ D, t.Licensed G.Licenses) :
-    (D.map (ruleWeight w)).prod = ∏ r ∈ G.rules, w r ^ ruleCounts D r := by
-  induction D using Multiset.induction_on with
-  | empty => simp
-  | cons t D ih =>
-    rw [← Multiset.singleton_add, Multiset.map_add, Multiset.prod_add,
-      ih fun t' ht' ↦ h t' (Multiset.mem_cons_of_mem ht')]
-    simp only [Multiset.map_singleton, Multiset.prod_singleton, map_add,
-      Pi.add_apply, pow_add, Finset.prod_mul_distrib, ruleCounts_singleton,
-      ruleWeight_eq_prod_pow_ruleCount w (h t (Multiset.mem_cons_self t D))]
+    (D.map (ruleWeight w)).prod = ∏ r ∈ G.rules, w r ^ ruleCounts D r :=
+  prod_map_localTrees_eq_prod_ruleCounts h fun _ ↦ rfl
 
 end RoseTree
 

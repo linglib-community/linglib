@@ -274,10 +274,6 @@ theorem yield_dutch_mem_weakGrammar (n : ℕ) : (dutch n).yield ∈ weakGrammar.
 
 /-! ### Strong non-context-freeness -/
 
-/-- The derivation trees of `g` from its start symbol. -/
-def trees (g : ContextFreeGrammar Word) : Set (RoseTree (Symbol Word g.NT)) :=
-  {t | t.Licensed g.Licenses ∧ t.value = nonterminal g.initial}
-
 /-- The path from the root down the verb cluster goes into the VP, into the V′, then `L` steps
 along the cluster. -/
 def path (L : ℕ) : List ℕ := 1 :: 2 :: List.replicate L 1
@@ -312,10 +308,10 @@ nonterminals to the categories S, VP, V′ — so no finite feature decoration h
 replacing the lower repeat by the upper one gives a licensed tree of the same root with more verbs
 than noun phrases, which no `dutch n` has. -/
 theorem not_strongly_contextFree (g : ContextFreeGrammar Word) (ℓ : g.NT → Cat) :
-    map (Symbol.mapNonterminal ℓ) '' trees g ≠ Set.range dutch := by
+    map (Symbol.mapNonterminal ℓ) '' g.derivationTrees ≠ Set.range dutch := by
   intro hEq
   set L := g.rules.card with hL
-  have hmem : dutch (L + 1) ∈ map (Symbol.mapNonterminal ℓ) '' trees g := by
+  have hmem : dutch (L + 1) ∈ map (Symbol.mapNonterminal ℓ) '' g.derivationTrees := by
     rw [hEq]; exact Set.mem_range_self _
   obtain ⟨t, ⟨ht, hroot⟩, htℓ⟩ := hmem
   -- the subtrees of `t` along the cluster path relabel to clusters
