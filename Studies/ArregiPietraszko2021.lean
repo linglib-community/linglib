@@ -8,6 +8,7 @@ public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Linglib.Data.Wordlist.ArregiPietraszko2021
 public import Linglib.Languages.Ndebele.Phonology
 public import Linglib.Morphology.DistributedMorphology.Basic
+public import Linglib.Syntax.Minimalist.HeadChain
 public import Linglib.Morphology.DistributedMorphology.Spellout
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Phonology.Hiatus
@@ -127,6 +128,11 @@ theorem pronounced_of_forall_not_mem {strong : Finset Cat} {c : HeadChain}
 theorem pronounced_extend_of_mem {strong : Finset Cat} {x : Cat} (hx : x ∈ strong)
     (c : HeadChain) : (c.extend x).pronounced strong = some x := by
   simp [pronounced, extend, List.filter_append, hx]
+
+-- Head Chain Pronunciation is the library's, on the positions of the chain.
+theorem pronounced_eq_site (strong : Finset Cat) (c : HeadChain) :
+    c.pronounced strong = Minimalist.HeadChain.site (· ∈ strong) c.positions :=
+  rfl
 
 end HeadChain
 
@@ -709,6 +715,12 @@ private theorem isLeftComb_iff_mem_range_comb {x : FreeMagma H} :
     induction hs using List.reverseRec with
     | nil => trivial
     | append_singleton l a ih => simpa [comb] using ih
+
+-- On the French clause the two constructions give one hosting: every position is pronounced at T.
+theorem amalgamation_hosts_french :
+    (amalgamate HarizanovGribanova2019.french).map MorphosyntacticWord.hosts =
+      some (Minimalist.HeadChain.hosts (· ≠ Cat.V) (· = Cat.T) [.V, .v, .Neg, .T]) := by
+  decide
 
 theorem amalgamation_bracketing (x y z : Cat) :
     amalgamate [⟨z, none⟩, ⟨y, some .lowering⟩, ⟨x, some .lowering⟩] =

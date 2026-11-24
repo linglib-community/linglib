@@ -29,7 +29,8 @@ lower intervals, a map is contiguous iff some monotone map to `ℕ` has the same
 
 * `isContiguous_iff_ordConnected_preimage`: contiguity in terms of fibres.
 * `Monotone.isContiguous`: monotone maps are contiguous.
-* `List.isContiguous_get_replicate_append`: contiguity of a list built from blocks.
+* `List.isContiguous_get_replicate_append`, `List.isContiguous_get_flatMap_replicate`: contiguity
+  of a list built from blocks.
 * `isContiguous_iff_exists_monotone`: contiguous maps are those with the kernel of a monotone map
   to `ℕ`.
 * `Finset.eq_Icc_top_of_ordConnected_coe`: an order-connected finset containing `⊤` is
@@ -213,6 +214,18 @@ theorem List.isContiguous_get_replicate_append {α : Type*} {a : α} {L : List �
     simp only [h1, show ¬ j.1 < n by omega, ↓reduceDIte]
     exact @hL ⟨i - n, by omega⟩ ⟨j - n, by omega⟩ ⟨k - n, by omega⟩
       (by simp [Fin.le_def]; omega) (by simp [Fin.le_def]; omega) h
+
+/-- Blocks of copies of distinct elements, one after another, form a contiguous list. -/
+theorem List.isContiguous_get_flatMap_replicate {α : Type*} {l : List (ℕ × α)}
+    (h : (l.map Prod.snd).Nodup) :
+    IsContiguous (l.flatMap fun p ↦ List.replicate p.1 p.2).get := by
+  induction l with
+  | nil => exact fun i ↦ i.elim0
+  | cons p l ih =>
+    rw [List.map_cons, List.nodup_cons] at h
+    refine List.isContiguous_get_replicate_append _ (ih h.2) fun hm ↦ h.1 ?_
+    obtain ⟨q, hq, hpq⟩ := List.mem_flatMap.mp hm
+    exact (List.eq_of_mem_replicate hpq) ▸ List.mem_map_of_mem hq
 
 /-! ### Sets order-connected along a map -/
 

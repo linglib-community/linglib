@@ -124,6 +124,10 @@ mathlib's own vocabulary: `Set.range`, `⊆`, `Function.FactorsThrough`,
 `Function.Injective`. There is no interface to implement. Write the
 linking map, and state what you can prove about its range.
 
+These are statements about constructions and what they can produce,
+not about the papers that propose them. A study records where a
+construction comes from; it is not scored against the others.
+
 ## Code conventions
 
 A few conventions are worth knowing before your first PR. Look at
