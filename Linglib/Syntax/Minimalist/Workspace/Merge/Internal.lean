@@ -49,15 +49,6 @@ section DecidableEq
 variable [DecidableEq (UnorderedTree α)]
   {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
 
-omit [DecidableEq (UnorderedTree α)] in
-/-- The unit stage `M_{β,1}` over a cut enumeration is multiplication by `β` after contraction of
-    the coproduct with the forest `{β}`. -/
-theorem mergeOpUnitOfCuts_eq_mul_contractForest
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (β : UnorderedTree α) (x : ConnesKreimer R (UnorderedTree α)) :
-    mergeOpUnitOfCuts (R := R) cuts β x = ofTree β * contractForest cuts {β} x :=
-  rfl
-
 /-- On one tree `T`, the primitive term of the unit stage contributes `β` if `T = β`, and each
     cut with crown `{β}` contributes `β` beside its trunk. -/
 theorem mergeOpUnitOfCuts_apply_singleton (β T : UnorderedTree α) :

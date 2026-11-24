@@ -48,7 +48,7 @@ every Sideward term costs at least one, and in the limit only External and Inter
   Proposition 1.5.1.
 * The weights are put on the Connes–Kreimer coproduct `Δ^ρ`. The book's `Δ` is `Δ^d`, which differs
   from `Δ^ρ` only by contracting the unary vertices of the right channel
-  (`mergeOp_eq_comp_comulAlgHom`), the channel the weights do not read.
+  (`mergeOp_eq_mergeAlong_comulAlgHom`), the channel the weights do not read.
 * The weights are polynomial in `ε`, and the limit `ε → 0` is evaluation at `ε = 0`, the book's
   `M^ε_{S,S'}|_{ε=0}`.
 
@@ -329,7 +329,7 @@ variable [DecidableEq (UnorderedTree α)]
     matching term with the weight of its extractions. -/
 noncomputable def mergeOpEps (ε : R) (lbl : α) (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  mergePost lbl S S' ∘ₗ (comulEps ε).toLinearMap
+  mergeAlong (comulEps ε).toLinearMap lbl {S, S'}
 
 omit [DecidableEq (UnorderedTree α)] in
 /-- At `ε = 1` weighted Merge is Merge at the admissible cuts. -/
@@ -404,9 +404,10 @@ theorem mergeOpEps_eq_add_smul (ε : R) (lbl : α) (S S' : UnorderedTree α)
     (x : ConnesKreimer R (UnorderedTree α)) :
     ∃ y, mergeOpEps ε lbl S S' x = mergeOpEps 0 lbl S S' x + ε • y := by
   obtain ⟨y, hy⟩ := comulEps_eq_add_smul ε x
-  exact ⟨mergePost lbl S S' y, by
-    rw [mergeOpEps, mergeOpEps, LinearMap.comp_apply, LinearMap.comp_apply,
-      AlgHom.toLinearMap_apply, AlgHom.toLinearMap_apply, hy, map_add, map_smul]⟩
+  exact ⟨ofTree (.node lbl {S, S'}) * TensorProduct.lid R _ ((lcoeff R {S, S'}).rTensor _ y), by
+    rw [mergeOpEps, mergeOpEps, mergeAlong_pair_apply, mergeAlong_pair_apply, contractAlong_apply,
+      contractAlong_apply, AlgHom.toLinearMap_apply, AlgHom.toLinearMap_apply, hy, map_add,
+      map_add, map_smul, map_smul, mul_add, mul_smul_comm]⟩
 
 /-- Unless `S` and `S'` are both workspace components, weighted Merge is a multiple of `ε`
 ([marcolli-chomsky-berwick-2025] Proposition 1.5.1). -/
@@ -416,20 +417,24 @@ theorem mergeOpEps_of'_eq_smul_of_not_le (ε : R) (lbl : α) {S S' : UnorderedTr
   obtain ⟨y, hy⟩ := mergeOpEps_eq_add_smul ε lbl S S' (of' F)
   exact ⟨y, by rw [hy, mergeOpEps_zero_of'_of_not_le lbl h, zero_add]⟩
 
-private theorem mergePost_eq_zero_of_mem_leftSpan (lbl : α) {S S' : UnorderedTree α} {k : ℕ}
+/-- Contraction of the left channel with `{S, S'}` kills the terms whose left channel has fewer
+    vertices than `S` and `S'` together. -/
+private theorem lid_rTensor_lcoeff_eq_zero_of_mem_leftSpan {S S' : UnorderedTree α} {k : ℕ}
     (hk : k < S.numNodes + S'.numNodes)
     {z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)}
-    (hz : z ∈ leftSpan R k) : mergePost lbl S S' z = 0 := by
+    (hz : z ∈ leftSpan R k) :
+    TensorProduct.lid R _ ((lcoeff R ({S, S'} : Forest (UnorderedTree α))).rTensor _ z) = 0 := by
   induction hz using Submodule.span_induction with
   | mem z hz =>
     obtain ⟨A, y, hA, rfl⟩ := hz
-    rw [mergePost_basis_tensor, ite_eq_right]
+    rw [LinearMap.rTensor_tmul, lcoeff_apply, coeff_of', ite_eq_right, TensorProduct.zero_tmul,
+      map_zero]
     rintro rfl
     simp [Multiset.insert_eq_cons] at hA
     omega
-  | zero => exact map_zero _
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
-  | smul r x _ hx => rw [map_smul, hx, smul_zero]
+  | zero => rw [map_zero, map_zero]
+  | add x y _ _ hx hy => rw [map_add, map_add, hx, hy, add_zero]
+  | smul r x _ hx => rw [map_smul, map_smul, hx, smul_zero]
 
 /-- External Merge has weight `1` at every `ε` ([marcolli-chomsky-berwick-2025]
     Proposition 1.5.1), since its two objects are taken whole, at no cost. -/
@@ -451,16 +456,19 @@ theorem mergeOpEps_pair (ε : R) (lbl : α) (S S' : UnorderedTree α) :
       (leftSpan_mono (by omega) (mul_mem_leftSpan h1 hz'))
       (leftSpan_mono (by omega) (mul_mem_leftSpan hz h2)))
       (leftSpan_mono (by omega) (mul_mem_leftSpan hz hz'))
-  rw [mergeOpEps, LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulEps, aeval_of',
-    Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton, Multiset.prod_cons,
-    Multiset.prod_singleton, hS, hS',
-    show ∀ a b c d : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α),
-      (a + b) * (c + d) = a * c + (a * d + b * c + b * d) from fun a b c d ↦ by ring,
-    map_add, mergePost_eq_zero_of_mem_leftSpan lbl (by omega) hrest, add_zero,
-    Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_singleton, ← of'_add,
-    mergePost_basis_tensor, ite_eq_left (show ({S} : Forest (UnorderedTree α)) + {S'} = {S, S'}
-      from rfl), mul_one]
-  rfl
+  have hΔ : comulEps ε (of' ({S, S'} : Forest (UnorderedTree α))) =
+      ofTree S ⊗ₜ[R] 1 * ofTree S' ⊗ₜ[R] 1 +
+        (ofTree S ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) * z' +
+          z * (ofTree S' ⊗ₜ[R] 1) + z * z') := by
+    rw [comulEps, aeval_of', Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
+      Multiset.prod_cons, Multiset.prod_singleton, hS, hS']
+    ring
+  rw [mergeOpEps, mergeAlong_pair_apply, contractAlong_apply, AlgHom.toLinearMap_apply, hΔ,
+    map_add, map_add, lid_rTensor_lcoeff_eq_zero_of_mem_leftSpan (by omega) hrest, add_zero,
+    Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_singleton,
+    ← of'_singleton, ← of'_add, LinearMap.rTensor_tmul, lcoeff_apply, coeff_of',
+    ite_eq_left (show ({S} : Forest (UnorderedTree α)) + {S'} = {S, S'} from rfl),
+    TensorProduct.lid_tmul, one_smul, mul_one]
 
 /-- Internal Merge has weight `1` at every `ε` ([marcolli-chomsky-berwick-2025]
     Proposition 1.5.1), since its unit stage is weightless and its second stage merges two

@@ -23,12 +23,15 @@ first constructed from those data, without coassociativity.
 ## Main definitions
 
 * `Coalgebra.contract f`: contraction with the functional `f`.
+* `contractAlong Δ f`: contraction of the left channel of a map `Δ` into a tensor product.
 * `Derivation.ofContract`: contraction along an algebra map `Δ` with a left counit, as a derivation.
 * `Bialgebra.IsDualPrimitive.derivation`: contraction with a dual primitive, as a derivation.
 
 ## Main results
 
 * `Coalgebra.contract_counit`: the counit contracts to the identity.
+* `contractAlong_map_comp`: contraction is natural in both channels.
+* `contractAlong_mul`: a decomposition of a functional on products gives a product rule.
 * `Bialgebra.isDualPrimitive_counit_comp`: the counit after a derivation is a dual primitive.
 
 ## Implementation notes
@@ -65,15 +68,36 @@ end Coalgebra
 
 section Explicit
 
+section Module
+
+variable {R M N N' P P' : Type*} [CommSemiring R] [AddCommMonoid M] [Module R M]
+  [AddCommMonoid N] [Module R N] [AddCommMonoid N'] [Module R N'] [AddCommMonoid P] [Module R P]
+  [AddCommMonoid P'] [Module R P']
+
+/-- Contraction of the left channel of a map `Δ` into a tensor product with a functional:
+`contractAlong Δ f a = (f ⊗ id) (Δ a)`. -/
+noncomputable def contractAlong (Δ : M →ₗ[R] P ⊗[R] N) (f : P →ₗ[R] R) : M →ₗ[R] N :=
+  (_root_.TensorProduct.lid R N).toLinearMap ∘ₗ f.rTensor N ∘ₗ Δ
+
+theorem contractAlong_apply (Δ : M →ₗ[R] P ⊗[R] N) (f : P →ₗ[R] R) (a : M) :
+    contractAlong Δ f a = _root_.TensorProduct.lid R N (f.rTensor N (Δ a)) := rfl
+
+/-- Contraction is natural in both channels: contracting after a pair of maps is the right map
+after contraction with the functional pulled back along the left map. -/
+theorem contractAlong_map_comp (Δ : M →ₗ[R] P ⊗[R] N) (g : P →ₗ[R] P') (φ : N →ₗ[R] N')
+    (f : P' →ₗ[R] R) :
+    contractAlong (_root_.TensorProduct.map g φ ∘ₗ Δ) f = φ ∘ₗ contractAlong Δ (f ∘ₗ g) := by
+  have h : (_root_.TensorProduct.lid R N').toLinearMap ∘ₗ f.rTensor N' ∘ₗ
+      _root_.TensorProduct.map g φ =
+      φ ∘ₗ (_root_.TensorProduct.lid R N).toLinearMap ∘ₗ (f ∘ₗ g).rTensor N :=
+    _root_.TensorProduct.ext' fun a b ↦ by simp
+  simp only [contractAlong, ← LinearMap.comp_assoc]
+  rw [LinearMap.comp_assoc _ (f.rTensor N'), h]
+  rfl
+
+end Module
+
 variable {R A : Type*} [CommSemiring R] [CommSemiring A] [Algebra R A]
-
-/-- Contraction of the left channel of a comultiplication `Δ`, given as a linear map, with a
-functional: `contractAlong Δ f a = (f ⊗ id) (Δ a)`. -/
-noncomputable def contractAlong (Δ : A →ₗ[R] A ⊗[R] A) (f : A →ₗ[R] R) : A →ₗ[R] A :=
-  (_root_.TensorProduct.lid R A).toLinearMap ∘ₗ f.rTensor A ∘ₗ Δ
-
-theorem contractAlong_apply (Δ : A →ₗ[R] A ⊗[R] A) (f : A →ₗ[R] R) (a : A) :
-    contractAlong Δ f a = _root_.TensorProduct.lid R A (f.rTensor A (Δ a)) := rfl
 
 /-- Contraction along an algebra map turns a decomposition of a functional on products,
 `f (a * b) = ∑ i, g i a * h i b`, into a product rule:

@@ -29,8 +29,6 @@ from the contractions of a single tree.
 
 * `Minimalist.Merge.mergeOpOfCuts_pair`, `mergeOp_pair`, `traceMergeOp_pair`: External Merge on a
   two-object workspace.
-* `Minimalist.Merge.mergeOpOfCuts_eq_mul_contractForest`: Merge is multiplication by the grafted
-  pair after contraction of the coproduct with `{S, S'}`.
 * `Minimalist.Merge.mergeOpOfCuts_mul_of_contractForest_eq_zero`, `mergeOpOfCuts_of'_mul`: Merge
   commutes with a spectator.
 * `Minimalist.Merge.mergeOpOfCuts_pair_residual`, `mergeOp_pair_residual`,
@@ -63,16 +61,6 @@ instance {β : Type*} (τ : UnorderedTree (α ⊕ β) → β) : IsMergeCuts (mar
   crown_numEdges_lt := markerCuts_crown_numEdges_lt τ
   mem_subtrees_of_mem_crown hp hx := markerCuts_mem_subtrees_of_mem_crown τ hp hx
   filter_empty := markerCuts_filter_empty τ
-
-omit [DecidableEq (UnorderedTree α)] in
-/-- Merge `M_{S,S'}` over a cut enumeration is multiplication by the grafted pair after
-    contraction of the coproduct with the forest `{S, S'}`. -/
-theorem mergeOpOfCuts_eq_mul_contractForest
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) (lbl : α)
-    (S S' : UnorderedTree α) (x : ConnesKreimer R (UnorderedTree α)) :
-    mergeOpOfCuts (R := R) cuts lbl S S' x =
-      ofTree (UnorderedTree.node lbl {S, S'}) * contractForest cuts {S, S'} x :=
-  rfl
 
 /-! ### Contraction of a tree
 
