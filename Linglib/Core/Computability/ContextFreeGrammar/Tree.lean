@@ -8,10 +8,6 @@ module
 public import Linglib.Core.Computability.ContextFreeGrammar
 public import Linglib.Core.Data.RoseTree.Licensed
 public import Linglib.Core.Data.RoseTree.Span
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
-public import Mathlib.Data.Finset.Card
 
 /-!
 # Derivation trees of a context-free grammar
@@ -32,8 +28,6 @@ as its yield, so the language of a grammar is the set of yields of its derivatio
 * `ContextFreeGrammar.derivationTrees`: the licensed trees with the start symbol at the root.
 * `RoseTree.rule?`, `RoseTree.rules`, `RoseTree.ruleAt?`: the rule applied at the root, the rules
   applied in a tree, and the rule applied at a Gorn address.
-* `RoseTree.ruleCount`, `RoseTree.ruleCounts`: the number of applications of a rule in a tree,
-  and the rule counts of a multiset of trees.
 
 ## Main results
 
@@ -41,12 +35,8 @@ as its yield, so the language of a grammar is the set of yields of its derivatio
   licensed tree has the symbol at its root and the word as its yield.
 * `ContextFreeGrammar.image_yield_derivationTrees`: the language is the set of yields of the
   derivation trees.
-* `RoseTree.Licensed.prod_map_localTrees`: a product over the local trees of a licensed tree is a
-  product over the rules of the grammar, each raised to its count.
 * `RoseTree.Licensed.map_mapNonterminal`: a relabelling of nonterminals that sends rules to rules
   sends licensed trees to licensed trees.
-* `RoseTree.Licensed.exists_repeat`: a long enough path in a licensed tree passes two nodes with
-  the same nonterminal.
 
 ## Implementation notes
 
@@ -193,6 +183,18 @@ theorem yield_eq_of_value_terminal {t : RoseTree (Symbol T g.NT)} (ht : t.Licens
     simp [leaf]
   | nonterminal => simp at hv
 
+theorem exists_mem_output_of_isSubtree
+    {t s : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses) (hs : IsSubtree s t)
+    (hne : s ≠ t) : ∃ r ∈ g.rules, s.value ∈ r.output := by
+  obtain rfl | ⟨u, hsu, hut⟩ := hs.cases_head
+  · exact absurd rfl hne
+  have hlic := ht u hut
+  obtain ⟨b, cs⟩ := u
+  cases b with
+  | terminal a => exact absurd hsu (by simp [ContextFreeGrammar.Licenses] at hlic; simp [hlic])
+  | nonterminal A =>
+    exact ⟨⟨A, cs.map value⟩, hlic, List.mem_map_of_mem hsu⟩
+
 /-- A relabelling of nonterminals that sends rules to rules sends licensed trees to licensed
 trees. -/
 theorem map_mapNonterminal {g' : ContextFreeGrammar T} {f : g.NT → g'.NT}
@@ -258,9 +260,9 @@ theorem mem_rules {t : RoseTree (Symbol T N)} {r : ContextFreeRule T N} :
   simp [rules, subtrees_map, List.filterMap_map, List.map_filterMap]
 
 /-- A licensed tree applies only rules of the grammar. -/
-theorem Licensed.mem_rules {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
+theorem Licensed.mem_of_mem_rules {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
     (ht : t.Licensed g.Licenses) {r : ContextFreeRule T g.NT} (hr : r ∈ t.rules) : r ∈ g.rules := by
-  obtain ⟨s, hs, hr⟩ := RoseTree.mem_rules.mp hr
+  obtain ⟨s, hs, hr⟩ := mem_rules.mp hr
   obtain ⟨hv, hc⟩ := rule?_eq_some_iff.mp hr
   have h := ht s hs
   rwa [hv, hc] at h
@@ -278,186 +280,7 @@ theorem ruleAt?_eq_some {t : RoseTree (Symbol T N)} {p : List ℕ} {A : N}
     ruleAt? t p = some ⟨A, cs.map value⟩ := by
   simp [ruleAt?, h]
 
-theorem Licensed.exists_mem_output_of_isSubtree {g : ContextFreeGrammar T}
-    {t s : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses) (hs : IsSubtree s t)
-    (hne : s ≠ t) : ∃ r ∈ g.rules, s.value ∈ r.output := by
-  obtain rfl | ⟨u, hsu, hut⟩ := hs.cases_head
-  · exact absurd rfl hne
-  have hlic := ht u hut
-  obtain ⟨b, cs⟩ := u
-  cases b with
-  | terminal a => exact absurd hsu (by simp [ContextFreeGrammar.Licenses] at hlic; simp [hlic])
-  | nonterminal A =>
-    exact ⟨⟨A, cs.map value⟩, hlic, List.mem_map_of_mem hsu⟩
-
 end Rules
-
-/-! ### Rule counts -/
-
-section RuleCount
-
-variable [DecidableEq T] [DecidableEq N]
-
-/-- `ruleCount r t` counts the applications of the rule `r` in `t`, the nonterminal nodes whose
-symbol and children's symbols spell out `r`. -/
-def ruleCount (r : ContextFreeRule T N) (t : RoseTree (Symbol T N)) : ℕ := t.rules.count r
-
-theorem ruleCount_node_nonterminal (r : ContextFreeRule T N) (A : N)
-    (cs : List (RoseTree (Symbol T N))) :
-    ruleCount r (node (.nonterminal A) cs) =
-      (if r = ⟨A, cs.map value⟩ then 1 else 0) + (cs.map (ruleCount r)).sum := by
-  rw [ruleCount, rules_node_nonterminal, List.count_cons, List.count_flatten, List.map_map,
-    add_comm]
-  exact congrArg₂ (· + ·) (if_congr (by rw [beq_iff_eq, eq_comm]) rfl rfl) rfl
-
-theorem ruleCount_node_terminal (r : ContextFreeRule T N) (a : T)
-    (cs : List (RoseTree (Symbol T N))) :
-    ruleCount r (node (.terminal a) cs) = (cs.map (ruleCount r)).sum := by
-  rw [ruleCount, rules_node_terminal, List.count_flatten, List.map_map]
-  rfl
-
-/-- The rule counts of a multiset of trees record how often each rule is applied across its
-trees. -/
-def ruleCounts : Multiset (RoseTree (Symbol T N)) →+ ContextFreeRule T N → ℕ where
-  toFun D r := (D.map (ruleCount r)).sum
-  map_zero' := by
-    funext r
-    simp
-  map_add' D₁ D₂ := by
-    funext r
-    simp
-
-theorem ruleCounts_apply (D : Multiset (RoseTree (Symbol T N))) (r : ContextFreeRule T N) :
-    ruleCounts D r = (D.map (ruleCount r)).sum :=
-  rfl
-
-@[simp] theorem ruleCounts_singleton (t : RoseTree (Symbol T N)) (r : ContextFreeRule T N) :
-    ruleCounts {t} r = ruleCount r t := by
-  simp [ruleCounts_apply]
-
-@[simp] theorem ruleCounts_cons (t : RoseTree (Symbol T N)) (D : Multiset (RoseTree (Symbol T N)))
-    (r : ContextFreeRule T N) : ruleCounts (t ::ₘ D) r = ruleCount r t + ruleCounts D r := by
-  simp [ruleCounts_apply]
-
-end RuleCount
-
-section BigOperators
-
-variable {M : Type*} {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
-  {F : Symbol T g.NT × List (Symbol T g.NT) → M}
-
-/-- A product over the local trees of a licensed tree is a product over the rules it applies, for
-a quantity that is `1` at terminal leaves. -/
-@[to_additive /-- A total over the local trees of a licensed tree is a total over the rules it
-applies, for a quantity that vanishes at terminal leaves. -/]
-theorem Licensed.prod_map_localTrees_eq_prod_map_rules [Monoid M] (ht : t.Licensed g.Licenses)
-    (hF : ∀ a, F (.terminal a, []) = 1) :
-    (t.localTrees.map F).prod = (t.rules.map fun r ↦ F (.nonterminal r.input, r.output)).prod := by
-  induction ht using Licensed.grammar_induction with
-  | terminal a => simp [leaf, hF]
-  | nonterminal A cs hrule hcs ih =>
-    simp only [localTrees_node, rules_node_nonterminal, List.map_cons, List.prod_cons,
-      List.map_flatten, List.prod_flatten, List.map_map, Function.comp_def]
-    rw [List.map_congr_left ih]
-
-variable [DecidableEq T] [DecidableEq g.NT]
-
-/-- A product over the local trees of a licensed tree is a product over the rules of the grammar,
-each raised to its count, for a quantity that is `1` at terminal leaves. -/
-@[to_additive /-- A total over the local trees of a licensed tree is a total over the rules by
-their counts, for a quantity that vanishes at terminal leaves. -/]
-theorem Licensed.prod_map_localTrees [CommMonoid M] (ht : t.Licensed g.Licenses)
-    (hF : ∀ a, F (.terminal a, []) = 1) :
-    (t.localTrees.map F).prod =
-      ∏ r ∈ g.rules, F (.nonterminal r.input, r.output) ^ ruleCount r t := by
-  rw [ht.prod_map_localTrees_eq_prod_map_rules hF, Finset.prod_list_map_count]
-  exact Finset.prod_subset (fun r hr ↦ ht.mem_rules (List.mem_toFinset.mp hr)) fun r _ hr ↦ by
-    rw [List.count_eq_zero_of_not_mem (mt List.mem_toFinset.mpr hr), pow_zero]
-
-/-- A product over the local trees of a corpus of licensed trees is a product over the rules of
-the grammar, each raised to its count, for a quantity that is `1` at terminal leaves. -/
-@[to_additive /-- A total over the local trees of a corpus of licensed trees is a total over the
-rules by their counts, for a quantity that vanishes at terminal leaves. -/]
-theorem prod_map_localTrees_eq_prod_ruleCounts [CommMonoid M]
-    {D : Multiset (RoseTree (Symbol T g.NT))} (hD : ∀ t ∈ D, t.Licensed g.Licenses)
-    (hF : ∀ a, F (.terminal a, []) = 1) :
-    (D.map fun t ↦ (t.localTrees.map F).prod).prod =
-      ∏ r ∈ g.rules, F (.nonterminal r.input, r.output) ^ ruleCounts D r := by
-  induction D using Multiset.induction_on with
-  | empty => simp
-  | cons t D ih =>
-    rw [Multiset.map_cons, Multiset.prod_cons, ih fun t' ht' ↦ hD t' (Multiset.mem_cons_of_mem ht'),
-      (hD t (Multiset.mem_cons_self t D)).prod_map_localTrees hF, ← Finset.prod_mul_distrib]
-    simp [pow_add]
-
-/-- The rules at a nonterminal are applied in a licensed tree as often as the nonterminal
-occurs. -/
-theorem Licensed.sum_ruleCount_eq_count_values (ht : t.Licensed g.Licenses) (A : g.NT) :
-    ∑ r ∈ g.rulesWithInput A, ruleCount r t = t.values.count (.nonterminal A) := by
-  have hcount (l : List (Symbol T g.NT × List (Symbol T g.NT))) :
-      (l.map fun p ↦ if p.1 = .nonterminal A then 1 else 0).sum =
-        (l.map Prod.fst).count (.nonterminal A) := by
-    induction l with
-    | nil => rfl
-    | cons p l ih =>
-      simp only [List.map_cons, List.sum_cons, List.count_cons, ih, beq_iff_eq]
-      exact add_comm _ _
-  rw [← map_fst_localTrees, ← hcount, ht.sum_map_localTrees (by simp),
-    ContextFreeGrammar.rulesWithInput, Finset.sum_filter]
-  simp
-
-end BigOperators
-
-theorem Licensed.exists_getElem?_take {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
-    (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
-    (hs : t[p]? = some s)
-    (hh : 1 < s.height) {k : ℕ} (hk : k ≤ p.length) :
-    ∃ A cs, t[p.take k]? = some (node (.nonterminal A) cs) := by
-  obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp (getElem?_take_isSome hs k)
-  obtain ⟨s₀, cs, rfl⟩ : ∃ s₀ cs, u = node s₀ cs := by cases u; exact ⟨_, _, rfl⟩
-  have hne : cs ≠ [] := by
-    rcases Nat.lt_or_ge k p.length with hlt | hge
-    · rw [← List.take_append_drop k p, getElem?_append, hu, Option.bind_some,
-        List.drop_eq_getElem_cons hlt] at hs
-      obtain ⟨c, hc, -⟩ := getElem?_cons_eq_some_iff.mp hs
-      exact List.ne_nil_of_mem (List.mem_of_getElem? hc)
-    · rw [List.take_of_length_le (le_antisymm hk hge ▸ le_rfl), hs] at hu
-      obtain rfl := Option.some.inj hu
-      obtain ⟨c, hc, -⟩ := exists_mem_children_height_add_one hh
-      exact List.ne_nil_of_mem hc
-  obtain ⟨A, rfl⟩ := (ht.of_getElem? hu).exists_nonterminal_of_ne_nil hne
-  exact ⟨A, cs, hu⟩
-
-/-- By pigeonhole, a path of at least `g.rules.card` steps through a licensed tree, ending at a
-node with children, passes two nodes with the same nonterminal. -/
-theorem Licensed.exists_repeat {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
-    (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
-    (hs : t[p]? = some s)
-    (hh : 1 < s.height) (hlen : g.rules.card ≤ p.length) :
-    ∃ i j, i < j ∧ j ≤ p.length ∧ ∃ A csᵢ csⱼ,
-      t[p.take i]? = some (node (.nonterminal A) csᵢ) ∧
-      t[p.take j]? = some (node (.nonterminal A) csⱼ) := by
-  classical
-  let f : ℕ → ContextFreeRule T g.NT := fun k ↦ (ruleAt? t (p.take k)).getD ⟨g.initial, []⟩
-  have hf : ∀ k ∈ Finset.range (p.length + 1), f k ∈ g.rules := fun k hk ↦ by
-    obtain ⟨A, cs, hA⟩ :=
-      ht.exists_getElem?_take hs hh (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))
-    simp only [f, ruleAt?_eq_some hA, Option.getD_some]
-    exact (ht.of_getElem? hA).rule_mem
-  obtain ⟨a, ha, b, hb, hne, hfeq⟩ := Finset.exists_ne_map_eq_of_card_lt_of_maps_to
-    (by simp only [Finset.card_range]; omega) hf
-  wlog hab : a < b generalizing a b
-  · exact this b hb a ha hne.symm hfeq.symm (lt_of_le_of_ne (not_lt.mp hab) hne.symm)
-  rw [Finset.mem_range] at ha hb
-  obtain ⟨A, csₐ, hA⟩ := ht.exists_getElem?_take hs hh (Nat.lt_succ_iff.mp ha)
-  obtain ⟨B, cs_b, hB⟩ := ht.exists_getElem?_take hs hh (Nat.lt_succ_iff.mp hb)
-  have : A = B := by
-    have h := hfeq
-    simp only [f, ruleAt?_eq_some hA, ruleAt?_eq_some hB, Option.getD_some,
-      ContextFreeRule.mk.injEq] at h
-    exact h.1
-  subst this
-  exact ⟨a, b, hab, Nat.lt_succ_iff.mp hb, A, csₐ, cs_b, hA, hB⟩
 
 end RoseTree
 
@@ -465,7 +288,7 @@ namespace ContextFreeGrammar
 
 variable {T : Type*} {g : ContextFreeGrammar T}
 
-/-! ### Soundness and completeness -/
+/-! ### Derivations and trees -/
 
 private theorem derives_flatten_yield {cs : List (RoseTree (Symbol T g.NT))}
     (h : ∀ c ∈ cs, g.Derives [c.value] (c.yield.map Symbol.terminal)) :
@@ -488,71 +311,66 @@ theorem _root_.RoseTree.Licensed.derives {t : RoseTree (Symbol T g.NT)}
     exact (Produces.single ⟨⟨A, cs.map RoseTree.value⟩, hrule,
       ContextFreeRule.Rewrites.input_output⟩).trans (derives_flatten_yield ih)
 
-private theorem exists_forest {sf : List (Symbol T g.NT)} {w : List T}
-    (h : g.Derives sf (w.map Symbol.terminal)) :
-    ∃ ts : List (RoseTree (Symbol T g.NT)), ts.map RoseTree.value = sf ∧
-      (∀ t ∈ ts, t.Licensed g.Licenses) ∧ (ts.map RoseTree.yield).flatten = w := by
-  induction h using Relation.ReflTransGen.head_induction_on with
-  | refl =>
-    refine ⟨w.map fun a ↦ RoseTree.leaf (.terminal a), ?_, ?_, ?_⟩
-    · simp [Function.comp_def, RoseTree.leaf]
-    · rintro t ht
-      obtain ⟨a, -, rfl⟩ := List.mem_map.mp ht
-      exact .terminal a
-    · induction w <;> simp_all
-  | head hstep _ ih =>
-    obtain ⟨ts, hroot, hvalid, hyield⟩ := ih
-    obtain ⟨r, hr, hrew⟩ := hstep
-    obtain ⟨p, q, hsf, hc⟩ := hrew.exists_parts
-    subst hsf hc
-    have hlen : p.length + r.output.length ≤ ts.length := by
-      have := congrArg List.length hroot; simp at this; omega
-    refine ⟨ts.take p.length ++ [RoseTree.node (.nonterminal r.input)
-      ((ts.drop p.length).take r.output.length)] ++ ts.drop (p.length + r.output.length),
-      ?_, ?_, ?_⟩
-    · have h1 : (ts.take p.length).map RoseTree.value = p := by
-        rw [List.map_take, hroot]; simp
-      have h2 : ((ts.drop p.length).take r.output.length).map RoseTree.value = r.output := by
-        rw [List.map_take, List.map_drop, hroot]; simp
-      have h3 : (ts.drop (p.length + r.output.length)).map RoseTree.value = q := by
-        rw [List.map_drop, hroot]; simp
-      simp only [List.map_append, List.map_cons, List.map_nil, RoseTree.value_node, h1, h3]
-    · intro t ht
-      simp only [List.mem_append, List.mem_singleton] at ht
-      rcases ht with (ht | rfl) | ht
-      · exact hvalid t (List.mem_of_mem_take ht)
-      · refine .nonterminal r.input _ ?_ fun c hc ↦
-          hvalid c (List.mem_of_mem_drop (List.mem_of_mem_take hc))
-        rw [List.map_take, List.map_drop, hroot]; simpa using hr
-      · exact hvalid t (List.mem_of_mem_drop ht)
-    · have hsplit : ts = ts.take p.length ++ (ts.drop p.length).take r.output.length ++
-          ts.drop (p.length + r.output.length) := by
-        rw [List.append_assoc, ← List.drop_drop, List.take_append_drop, List.take_append_drop]
-      conv_rhs => rw [← hyield, hsplit]
-      simp only [List.map_append, List.flatten_append, List.map_cons, List.map_nil,
-        List.flatten_cons, List.flatten_nil, List.append_nil, RoseTree.yield_node_nonterminal]
-
 /-- A string of symbols derives a word if and only if the word is the concatenation of the
 yields of licensed trees with those symbols at their roots. -/
 theorem derives_iff_exists_forest {sf : List (Symbol T g.NT)} {w : List T} :
     g.Derives sf (w.map Symbol.terminal) ↔
       ∃ ts : List (RoseTree (Symbol T g.NT)), ts.map RoseTree.value = sf ∧
         (∀ t ∈ ts, t.Licensed g.Licenses) ∧ (ts.map RoseTree.yield).flatten = w := by
-  refine ⟨exists_forest, ?_⟩
-  rintro ⟨ts, rfl, hts, rfl⟩
-  exact derives_flatten_yield fun t ht ↦ (hts t ht).derives
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · induction h using Relation.ReflTransGen.head_induction_on with
+    | refl =>
+      refine ⟨w.map fun a ↦ RoseTree.leaf (.terminal a), ?_, ?_, ?_⟩
+      · simp [Function.comp_def, RoseTree.leaf]
+      · rintro t ht
+        obtain ⟨a, -, rfl⟩ := List.mem_map.mp ht
+        exact .terminal a
+      · induction w <;> simp_all
+    | head hstep _ ih =>
+      obtain ⟨ts, hroot, hvalid, hyield⟩ := ih
+      obtain ⟨r, hr, hrew⟩ := hstep
+      obtain ⟨p, q, hsf, hc⟩ := hrew.exists_parts
+      subst hsf hc
+      have hlen : p.length + r.output.length ≤ ts.length := by
+        have := congrArg List.length hroot; simp at this; omega
+      refine ⟨ts.take p.length ++ [RoseTree.node (.nonterminal r.input)
+        ((ts.drop p.length).take r.output.length)] ++ ts.drop (p.length + r.output.length),
+        ?_, ?_, ?_⟩
+      · have h1 : (ts.take p.length).map RoseTree.value = p := by
+          rw [List.map_take, hroot]; simp
+        have h2 : ((ts.drop p.length).take r.output.length).map RoseTree.value = r.output := by
+          rw [List.map_take, List.map_drop, hroot]; simp
+        have h3 : (ts.drop (p.length + r.output.length)).map RoseTree.value = q := by
+          rw [List.map_drop, hroot]; simp
+        simp only [List.map_append, List.map_cons, List.map_nil, RoseTree.value_node, h1, h3]
+      · intro t ht
+        simp only [List.mem_append, List.mem_singleton] at ht
+        rcases ht with (ht | rfl) | ht
+        · exact hvalid t (List.mem_of_mem_take ht)
+        · refine .nonterminal r.input _ ?_ fun c hc ↦
+            hvalid c (List.mem_of_mem_drop (List.mem_of_mem_take hc))
+          rw [List.map_take, List.map_drop, hroot]; simpa using hr
+        · exact hvalid t (List.mem_of_mem_drop ht)
+      · have hsplit : ts = ts.take p.length ++ (ts.drop p.length).take r.output.length ++
+            ts.drop (p.length + r.output.length) := by
+          rw [List.append_assoc, ← List.drop_drop, List.take_append_drop, List.take_append_drop]
+        conv_rhs => rw [← hyield, hsplit]
+        simp only [List.map_append, List.flatten_append, List.map_cons, List.map_nil,
+          List.flatten_cons, List.flatten_nil, List.append_nil, RoseTree.yield_node_nonterminal]
+  · rintro ⟨ts, rfl, hts, rfl⟩
+    exact derives_flatten_yield fun t ht ↦ (hts t ht).derives
 
 /-- A symbol derives a word if and only if a licensed tree has the symbol at its root and the
 word as its yield. -/
 theorem derives_iff_exists_licensed {s : Symbol T g.NT} {w : List T} :
     g.Derives [s] (w.map Symbol.terminal) ↔
-      ∃ t : RoseTree (Symbol T g.NT), t.Licensed g.Licenses ∧ t.yield = w ∧ t.value = s := by
+      ∃ t : RoseTree (Symbol T g.NT), t.Licensed g.Licenses ∧ t.value = s ∧ t.yield = w := by
   refine ⟨fun h ↦ ?_, ?_⟩
-  · obtain ⟨ts, hroot, hvalid, hyield⟩ := exists_forest h
+  · obtain ⟨ts, hroot, hvalid, hyield⟩ := derives_iff_exists_forest.mp h
     obtain ⟨t, rfl⟩ : ∃ t, ts = [t] := by
       rcases ts with _ | ⟨t, _ | ⟨_, _⟩⟩ <;> simp at hroot
       exact ⟨t, rfl⟩
-    exact ⟨t, hvalid t (List.mem_singleton_self t), by simpa using hyield, by simpa using hroot⟩
+    exact ⟨t, hvalid t (List.mem_singleton_self t), by simpa using hroot, by simpa using hyield⟩
   · rintro ⟨t, ht, rfl, rfl⟩
     exact ht.derives
 
@@ -568,26 +386,11 @@ theorem mem_derivationTrees {t : RoseTree (Symbol T g.NT)} :
 theorem mem_language_iff_exists_mem_derivationTrees {w : List T} :
     w ∈ g.language ↔ ∃ t ∈ g.derivationTrees, t.yield = w := by
   rw [mem_language_iff, derives_iff_exists_licensed]
-  exact exists_congr fun t ↦ by rw [mem_derivationTrees, and_assoc, and_comm (a := t.yield = w)]
+  exact exists_congr fun t ↦ by rw [mem_derivationTrees, and_assoc]
 
 /-- The language of a grammar is the set of yields of its derivation trees. -/
 theorem image_yield_derivationTrees (g : ContextFreeGrammar T) :
     RoseTree.yield '' g.derivationTrees = g.language :=
   Set.ext fun _ ↦ mem_language_iff_exists_mem_derivationTrees.symm
-
-/-- Every word of the language has a licensed derivation tree from the start symbol. -/
-theorem exists_licensed_tree (g : ContextFreeGrammar T) {w : List T} (hw : w ∈ g.language) :
-    ∃ t : RoseTree (Symbol T g.NT), t.Licensed g.Licenses ∧ t.yield = w ∧
-      t.value = .nonterminal g.initial :=
-  derives_iff_exists_licensed.mp hw
-
-/-- A product over the rules of a grammar is a product over the nonterminals it has a rule for
-of the products over the rules at each. -/
-@[to_additive /-- A sum over the rules of a grammar is a sum over the nonterminals it has a rule
-for of the sums over the rules at each. -/]
-theorem prod_inputs_prod_rulesWithInput {M : Type*} [CommMonoid M]
-    (g : ContextFreeGrammar T) [DecidableEq g.NT] (f : ContextFreeRule T g.NT → M) :
-    ∏ a ∈ g.inputs, ∏ r ∈ g.rulesWithInput a, f r = ∏ r ∈ g.rules, f r :=
-  Finset.prod_fiberwise_of_maps_to (fun _ hr ↦ g.input_mem_inputs hr) f
 
 end ContextFreeGrammar

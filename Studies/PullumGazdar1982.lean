@@ -596,7 +596,8 @@ theorem xyGrammar_language : xyGrammar.language = ({w | IsXY w} : Language Sym) 
   ext w
   constructor
   · intro hw
-    obtain ⟨t, ht, rfl, hv⟩ := xyGrammar.exists_licensed_tree hw
+    obtain ⟨t, ⟨ht, hv⟩, rfl⟩ :=
+      ContextFreeGrammar.mem_language_iff_exists_mem_derivationTrees.mp hw
     exact xy_sound ht .S hv
   · exact fun hw ↦ (ContextFreeGrammar.mem_language_iff _ _).2 (derives_xy hw)
 
@@ -804,7 +805,8 @@ theorem dutchGrammar_language : dutchGrammar.language = ({w | IsVerbPhrase w} : 
   ext w
   constructor
   · intro hw
-    obtain ⟨t, ht, rfl, hv⟩ := dutchGrammar.exists_licensed_tree hw
+    obtain ⟨t, ⟨ht, hv⟩, rfl⟩ :=
+      ContextFreeGrammar.mem_language_iff_exists_mem_derivationTrees.mp hw
     exact (dutch_sound ht).2 hv
   · exact fun hw ↦ (ContextFreeGrammar.mem_language_iff _ _).2 (derives_verbPhrase hw)
 

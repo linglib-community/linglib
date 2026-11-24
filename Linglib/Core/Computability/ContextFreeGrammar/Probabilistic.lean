@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Analysis.Convex.StdSimplex
 public import Linglib.Core.Basic.ENNReal.BigOperators
-public import Linglib.Core.Computability.ContextFreeGrammar.Tree
+public import Linglib.Core.Computability.ContextFreeGrammar.RuleCount
 public import Mathlib.Algebra.BigOperators.Finprod
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Basic.ENNReal.Inv

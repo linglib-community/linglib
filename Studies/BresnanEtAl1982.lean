@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Computability.ContextFreeGrammar.Tree
+public import Linglib.Core.Computability.ContextFreeGrammar.Pumping
 
 /-!
 # Bresnan, Kaplan, Peters and Zaenen 1982: cross-serial dependencies in Dutch
