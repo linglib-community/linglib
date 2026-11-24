@@ -257,7 +257,7 @@ def toOrderedInformationState (i : OrdState W) : OrderedInformationState W :=
 theorem best_singleton {d p : Set W} (h : (d ∩ p).Nonempty) : best ⟨d, {p}⟩ = d ∩ p := by
   obtain ⟨w, hwd, hwp⟩ := h
   simpa [best, Set.sep_mem_eq] using
-    Preorder.minimals_ofCriteria_eq (sat := (· ∈ ·)) (criteria := {p}) (s := d)
+    Preorder.minimals_ofLowerSets_eq (A := {p}) (s := d)
       ⟨w, hwd, by simpa using hwp⟩
 
 end OrdState
@@ -289,7 +289,7 @@ theorem toOrderedInformationState_mightOrdUpdate (h : (c.base ∩ p).Nonempty) :
     (mightOrdUpdate p c).toOrderedInformationState =
       c.toOrderedInformationState.promote (· ∈ p) := by
   rw [mightOrdUpdate, ite_eq_left h]
-  exact congrArg (OrderedInformationState.mk _) (Preorder.ofCriteria_insert _ _ _)
+  exact congrArg (OrderedInformationState.mk _) (Preorder.ofLowerSets_insert _ _)
 
 theorem commensurate_mightOrdUpdate [Finite W] (p : Set W) :
     Commensurate OrdState.base (mightOrd p) (mightOrdUpdate p) := by
@@ -327,7 +327,7 @@ theorem compatible_mustOrd [Finite W] :
 /-- Decide a claim about a three-world state by unfolding the operators. -/
 local macro "decide_states" : tactic =>
   `(tactic| (simp only [MI, mustOrd, OrdState.best, Preorder.mem_minimals_iff,
-      Preorder.ofCriteria_le_iff,
+      Preorder.ofLowerSets_le_iff,
       Set.mem_ofPred_eq, Set.mem_univ, Set.mem_insert_iff, Set.mem_singleton_iff, Set.subset_def,
       Set.mem_inter_iff, Set.Nonempty, forall_eq_or_imp, forall_eq, Set.mem_empty_iff_false,
       false_implies, implies_true, true_and, and_true, forall_const]; decide))

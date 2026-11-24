@@ -52,12 +52,6 @@ variable {D ι : Type*} {r : D → ι → Prop} {d e f : D}
 /-- `e` is at least as round as `d` when it has every roundness property that `d` has. -/
 def AtLeastAsRound (r : D → ι → Prop) (d e : D) : Prop := ∀ ⦃i⦄, r d i → r e i
 
-/-- Being at least as round is the criteria-derived preorder with every roundness property as a
-criterion. -/
-theorem atLeastAsRound_iff_ofCriteria :
-    AtLeastAsRound r d e ↔ (Preorder.ofCriteria r Set.univ).le e d :=
-  ⟨fun h _ _ hi ↦ h hi, fun h _ hi ↦ h _ trivial hi⟩
-
 @[refl] theorem AtLeastAsRound.refl (r : D → ι → Prop) (d : D) : AtLeastAsRound r d d :=
   fun _ h ↦ h
 

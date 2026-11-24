@@ -143,7 +143,7 @@ theorem minimalStable_iff_maximal_isConsistentExclusion :
 
 theorem satisfied_subset_satisfied :
     {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | v ∈ a} ↔ ∀ A ∈ ALT, u ∈ A → v ∈ A :=
-  (Preorder.ofCriteria_le_iff_subset (· ∈ ·) ALT v u).symm
+  (Preorder.ofLowerSets_le_iff_subset ALT v u).symm
 
 theorem mem_sInter_satisfied :
     v ∈ ⋂₀ {a ∈ ALT | u ∈ a} ↔ {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | v ∈ a} :=

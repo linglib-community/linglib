@@ -178,7 +178,7 @@ theorem kratzer_refutes_E1 :
   have hle : ∀ v u : Fin 4, (v ≤[({{0, 1}, {2, 3}} : Set (Set (Fin 4)))] u)
       ↔ (u ∈ ({0, 1} : Set (Fin 4)) → v ∈ ({0, 1} : Set (Fin 4))) ∧
         (u ∈ ({2, 3} : Set (Fin 4)) → v ∈ ({2, 3} : Set (Fin 4))) := fun v u ↦ by
-    simp [Preorder.ofCriteria_le_iff]
+    simp [Preorder.ofLowerSets_le_iff]
   have hφ : Probably (likelihood ({{0, 1}, {2, 3}} : Set (Set (Fin 4))))
       {0, 2, 3} := by
     refine ⟨fun u hu ↦ ⟨0, by simp, ?_⟩, fun hc ↦ ?_⟩

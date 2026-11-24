@@ -23,7 +23,7 @@ set of worlds at or below `w`. The presupposition holds everywhere just in case 
 principal lower set is a member, so a Hamblin set satisfying it everywhere is a preorder on the
 worlds with a family of its lower sets containing the principal ones. See
 `Question.forall_hasStrongestTrueAnswer_iff_setOf_le_mem`,
-`Preorder.ofCriteria_mem_eq_of_subset_lowerSets` and `Question.eq_range_setOf_le_iff`.
+`Preorder.ofLowerSets_eq_of_subset_lowerSets` and `Question.eq_range_setOf_le_iff`.
 
 ## References
 
@@ -83,7 +83,7 @@ on the worlds together with a family of its lower sets that contains the princip
 theorem weakAnswer_eq_setOf_le :
     weakAnswer H w = {v | v ≤[H] w} := by
   ext v
-  simp [Preorder.ofCriteria_le_iff]
+  simp [Preorder.ofLowerSets_le_iff]
 
 /-- Dayal's presupposition holds at every world just in case every principal lower set of the
 order `H` induces is a member of `H`. -/

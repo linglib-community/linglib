@@ -194,7 +194,7 @@ theorem isStrawsonUE_glad : IsStrawsonUE (glad dox base g) :=
 theorem not_isStrawsonDE_glad :
     ¬ IsStrawsonDE (glad (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {{1}})) := by
   have hb : (≤[{{(1 : Fin 3)}}]).minimals (Set.univ : Set (Fin 3)) = {1} := by
-    rw [Preorder.minimals_ofCriteria_eq ⟨1, Set.mem_univ _, by simp⟩]
+    rw [Preorder.minimals_ofLowerSets_eq ⟨1, Set.mem_univ _, by simp⟩]
     ext
     simp
   intro h
@@ -223,7 +223,7 @@ theorem not_antitone_posExt_regret :
         (regret (fun _ ↦ {Bool.true}) (fun _ ↦ .univ) (fun _ ↦ {{Bool.false}}) p) := by
   have hb : (≤[{{Bool.false}}]).minimals ({Bool.false, Bool.true} : Set Bool) =
       {Bool.false} := by
-    rw [Preorder.minimals_ofCriteria_eq ⟨Bool.false, by simp, by simp⟩]
+    rw [Preorder.minimals_ofLowerSets_eq ⟨Bool.false, by simp, by simp⟩]
     ext
     simp
   exact not_antitone_posExt (p := ∅) (q := {Bool.true}) (w := Bool.true) (Set.empty_subset _)
@@ -235,7 +235,7 @@ prefers world `1`. -/
 theorem not_isStrawsonUE_regret :
     ¬ IsStrawsonUE (regret (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {{1}})) := by
   have hb : (≤[{{(1 : Fin 3)}}]).minimals (Set.univ : Set (Fin 3)) = {1} := by
-    rw [Preorder.minimals_ofCriteria_eq ⟨1, Set.mem_univ _, by simp⟩]
+    rw [Preorder.minimals_ofLowerSets_eq ⟨1, Set.mem_univ _, by simp⟩]
     ext
     simp
   exact not_isStrawsonUE (p := {0}) (q := {0, 1}) (w := 0) (by simp)

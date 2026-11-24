@@ -44,17 +44,17 @@ theorem exhMW_congr {ALT' : Set (Set World)}
     (h : ≤[ALT'] = ≤[ALT]) :
     exhMW ALT' φ = exhMW ALT φ := by
   ext u
-  simp only [mem_exhMW, MinimalFor, ← Preorder.ofCriteria_le_iff_subset (· ∈ ·)]
-  rw [show Preorder.ofCriteria (· ∈ ·) ALT' = Preorder.ofCriteria (· ∈ ·) ALT from h]
+  simp only [mem_exhMW, MinimalFor, ← Preorder.ofLowerSets_le_iff_subset]
+  rw [show Preorder.ofLowerSets ALT' = Preorder.ofLowerSets ALT from h]
 
 theorem exhMW_sUnion_image_powerset : exhMW (sUnion '' 𝒫 ALT) φ = exhMW ALT φ := by
-  refine exhMW_congr (Preorder.ofCriteria_eq_of_subset
+  refine exhMW_congr (Preorder.ofLowerSets_eq_of_subset
     (fun a ha ↦ ⟨{a}, singleton_subset_iff.2 ha, sUnion_singleton a⟩) ?_)
   rintro _ ⟨X, hX, rfl⟩ u v h ⟨q, hq, hvq⟩
   exact ⟨q, hq, h q (hX hq) hvq⟩
 
 theorem exhMW_sInter_image_powerset : exhMW (sInter '' 𝒫 ALT) φ = exhMW ALT φ := by
-  refine exhMW_congr (Preorder.ofCriteria_eq_of_subset
+  refine exhMW_congr (Preorder.ofLowerSets_eq_of_subset
     (fun a ha ↦ ⟨{a}, singleton_subset_iff.2 ha, sInter_singleton a⟩) ?_)
   rintro _ ⟨X, hX, rfl⟩ u v h hv q hq
   exact h q (hX hq) (hv q hq)
@@ -65,7 +65,7 @@ leaves the minimal worlds unchanged ([spector-2016]): the propositions true at `
 are true at `u` form a sublattice. -/
 theorem exhMW_eq_of_subset_latticeClosure {S : Set (Set World)} (h₁ : S ⊆ ALT)
     (h₂ : ALT ⊆ latticeClosure S) : exhMW ALT φ = exhMW S φ := by
-  refine exhMW_congr (Preorder.ofCriteria_eq_of_subset h₁ fun q hq u v h ↦ ?_)
+  refine exhMW_congr (Preorder.ofLowerSets_eq_of_subset h₁ fun q hq u v h ↦ ?_)
   have hsub : IsSublattice {q : Set World | v ∈ q → u ∈ q} :=
     ⟨fun _ hp _ hq hv ↦ hv.imp hp hq, fun _ hp _ hq hv ↦ ⟨hp hv.1, hq hv.2⟩⟩
   exact latticeClosure_min h hsub (h₂ hq)

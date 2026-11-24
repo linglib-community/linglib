@@ -216,7 +216,7 @@ induces the ranking `O₁` of §2.5. -/
 def ideal : Background World := fun _ ↦ {Set.Ici 3, Set.Ici 2, Set.Ici 1}
 
 theorem atLeastAsGoodAs_ideal_iff (v w z : World) : (w ≤[ideal v] z) ↔ z ≤ w := by
-  simp only [Preorder.ofCriteria_le_iff, ideal, Set.mem_insert_iff, Set.mem_singleton_iff,
+  simp only [Preorder.ofLowerSets_le_iff, ideal, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp, forall_eq, Set.mem_Ici]
   fin_omega
 
@@ -270,7 +270,7 @@ theorem bestWorlds_ideal : bestWorlds ⊥ ideal 0 = {3} := by
 theorem bestWorlds_swapped : bestWorlds ⊥ swapped 0 = {2} := by
   ext x
   simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
-    forall_const, Preorder.ofCriteria_le_iff, swapped, Set.mem_insert_iff, Set.mem_singleton_iff,
+    forall_const, Preorder.ofLowerSets_le_iff, swapped, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp,
     forall_eq]
   revert x
@@ -279,7 +279,7 @@ theorem bestWorlds_swapped : bestWorlds ⊥ swapped 0 = {2} := by
 theorem bestWorlds_tied : bestWorlds ⊥ tied 0 = {2, 3} := by
   ext x
   simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
-    forall_const, Preorder.ofCriteria_le_iff, tied, Set.mem_insert_iff, Set.mem_singleton_iff,
+    forall_const, Preorder.ofLowerSets_le_iff, tied, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp,
     forall_eq]
   revert x
@@ -384,7 +384,7 @@ theorem not_kratzer_tied_iff (μ : Measure World) [IsFiniteMeasure μ] (h : μ {
     ¬ ∀ A B : Set World, Kratzer (≤[tied 0]).le A B ↔ μ B ≤ μ A := by
   refine not_kratzer_iff_measure_le (a := 2) (b := 3) (c := 1) (by decide) (by decide)
     (by decide) ?_ ?_ ?_ h <;>
-  simp [AsymmRel, Preorder.ofCriteria_le_iff, tied]
+  simp [AsymmRel, Preorder.ofLowerSets_le_iff, tied]
 
 end Grades
 

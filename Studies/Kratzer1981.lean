@@ -94,8 +94,8 @@ theorem mem_of_mem_humanNecessity_bot {W : Type*} {f : Background W} (hf : f.IsR
 -- (41), p. 57: an ordering source of less reliable information frees *must* from its prejacent.
 theorem must_without_prejacent :
     {true} ∈ humanNecessity (⊥ : Background Bool) (Function.const Bool {{true}}) false :=
-  mem_humanNecessity.2 fun _ _ ↦ ⟨true, by simp, by simp [Preorder.ofCriteria_le_iff],
-    fun z _ hz ↦ by simpa [Preorder.ofCriteria_le_iff] using hz⟩
+  mem_humanNecessity.2 fun _ _ ↦ ⟨true, by simp, by simp [Preorder.ofLowerSets_le_iff],
+    fun z _ hz ↦ by simpa [Preorder.ofLowerSets_le_iff] using hz⟩
 
 /-! ### Two kinds of modal base -/
 
@@ -126,7 +126,7 @@ def desires : Background World :=
 
 /-- Decide a claim about the backgrounds and the ordering over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
-  `(tactic| (simp only [Background.mem_accessibleWorlds, Preorder.ofCriteria_le_iff,
+  `(tactic| (simp only [Background.mem_accessibleWorlds, Preorder.ofLowerSets_le_iff,
       circumstances, desires, wantsOffice, Function.const_apply, Set.mem_insert_iff,
       Set.mem_singleton_iff, Set.mem_ofPred_eq, Set.subset_def, forall_eq_or_imp, forall_eq,
       false_implies, implies_true, and_true, Pi.sup_apply, Set.mem_union,
@@ -240,7 +240,7 @@ theorem counterfactual_of_antecedent {W : Type*} {g : Background W} (hg : g.IsTo
   have htrue : ∀ p ∈ g w, w ∈ p := Background.mem_accessibleWorlds.1 (by rw [hg w]; rfl)
   have hbelow (z : W) (hz : z ≤[g w] w) : z = w := by
     have hz' : z ∈ g.accessibleWorlds w := Background.mem_accessibleWorlds.2 fun p hp ↦
-      (Preorder.ofCriteria_le_iff ..).1 hz p hp (htrue p hp)
+      (Preorder.ofLowerSets_le_iff ..).1 hz p hp (htrue p hp)
     rwa [hg w] at hz'
   have hw : w ∈ (Background.restrict ⊥ α).accessibleWorlds w :=
     Background.mem_accessibleWorlds_restrict.2 ⟨by simp, hα⟩
@@ -249,7 +249,7 @@ theorem counterfactual_of_antecedent {W : Type*} {g : Background W} (hg : g.IsTo
   · obtain ⟨v, hv, hvw, hz⟩ := h w hw
     obtain rfl := hbelow v hvw
     exact hz v hv (@le_refl _ (≤[g v]) v)
-  · exact (Preorder.ofCriteria_le_iff ..).2 fun p hp _ ↦ htrue p hp
+  · exact (Preorder.ofLowerSets_le_iff ..).2 fun p hp _ ↦ htrue p hp
 
 /-- Two totally realistic backgrounds at a world: its facts severally, `g₁`, and jointly, `g₂`. -/
 def factsSeverally : Background World := fun w ↦ {{v | v.1 = w.1}, {v | v.2 = w.2}}
@@ -268,13 +268,13 @@ theorem isTotallyRealistic_factsJointly : factsJointly.IsTotallyRealistic := fun
 -- p. 70: `g₁(w) = {r, s}` and `g₂(w) = {r ∩ s}` order `u`, with `r` only, and `v`, with neither.
 theorem ordering_differs {W : Type*} {r s : Set W} {u v : W} (hr : u ∈ r) (hs : u ∉ s)
     (hr' : v ∉ r) : (v ≤[{r ∩ s}] u) ∧ ¬ (v ≤[{r, s}] u) := by
-  simp [Preorder.ofCriteria_le_iff, hr, hs, hr']
+  simp [Preorder.ofLowerSets_le_iff, hr, hs, hr']
 
 /-- Decide a claim about a conditional over a finite set of worlds. -/
 scoped macro "decide_conditional" : tactic =>
   `(tactic| (simp only [humanNecessity_eq_principal_of_finite, Filter.mem_principal,
       Set.subset_def, mem_bestWorlds, Background.mem_accessibleWorlds_restrict,
-      Background.accessibleWorlds_bot, Set.mem_univ, true_and, Preorder.ofCriteria_le_iff,
+      Background.accessibleWorlds_bot, Set.mem_univ, true_and, Preorder.ofLowerSets_le_iff,
       factsSeverally, factsJointly, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
       Set.mem_ofPred_eq, forall_eq, Prod.forall, Bool.forall_bool]; simp))
 
@@ -331,7 +331,7 @@ scoped macro "decide_situations" : tactic =>
   `(tactic| (simp only [humanNecessity_eq_principal_of_finite, Filter.mem_principal,
       mem_simpleNecessity, Set.subset_def, mem_bestWorlds, Background.mem_accessibleWorlds,
       Background.mem_accessibleWorlds_restrict, Background.accessibleWorlds_bot, Set.mem_univ,
-      true_and, Preorder.ofCriteria_le_iff, morallyCommanded, Function.const_apply,
+      true_and, Preorder.ofLowerSets_le_iff, morallyCommanded, Function.const_apply,
       Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, false_implies,
       implies_true, and_true, injustice, amended, silenced, Background.restrict, Pi.bot_apply,
       Set.bot_eq_empty, Set.mem_empty_iff_false, or_false, Set.mem_ofPred_eq, Set.mem_compl_iff,

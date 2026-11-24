@@ -247,7 +247,7 @@ theorem lifts_lottery_collapse (r : Ticket → Ticket → Prop) :
 def onlyBest (w₀ : W) : Set (Set W) := {{w₀}}
 
 theorem onlyBest_le (w₀ v u : W) : (v ≤[onlyBest w₀] u) ↔ (u = w₀ → v = w₀) := by
-  simp [onlyBest, Preorder.ofCriteria_le_iff]
+  simp [onlyBest, Preorder.ofLowerSets_le_iff]
 
 theorem bestWorlds_onlyBest (w₀ w : W) : bestWorlds ⊥ (fun _ ↦ onlyBest w₀) w = {w₀} := by
   ext x
@@ -535,7 +535,7 @@ def crossed : Set (Set (Fin 4)) := {{0, 2}, {1, 3}, {0, 1}}
 theorem crossed_le (v u : Fin 4) : (v ≤[crossed] u) ↔
     ((u = 0 ∨ u = 2) → (v = 0 ∨ v = 2)) ∧ ((u = 1 ∨ u = 3) → (v = 1 ∨ v = 3)) ∧
       ((u = 0 ∨ u = 1) → (v = 0 ∨ v = 1)) := by
-  simp [crossed, Preorder.ofCriteria_le_iff]
+  simp [crossed, Preorder.ofLowerSets_le_iff]
 
 theorem bestWorlds_crossed : bestWorlds ⊥ (fun _ ↦ crossed) 0 = {0, 1} := by
   ext x

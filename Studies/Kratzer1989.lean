@@ -52,6 +52,8 @@ drying up](##would_crucialSet_compl_ad).
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Kratzer1989
 
 open Set Conditional
@@ -128,8 +130,8 @@ variably strict conditional over the worlds ordered by which facts relevant to t
 evaluation they verify, as [lewis-1981] showed of premise semantics in general. -/
 theorem would_consistentPremiseSets_iff {F : S → Set (Set S)} :
     Would (consistentPremiseSets (F w) p) q ↔
-      w ∈ variablyStrictImp (fun _ ↦ worlds S) (fun v ↦ .ofCriteria (· ∈ ·) (F v)) p q := by
-  rw [mem_variablyStrictImp, Filter.atBotOn_ofCriteria, Filter.mem_atBotOn_satisfied_iff]
+      w ∈ variablyStrictImp (fun _ ↦ worlds S) (fun v ↦ ≤[F v]) p q := by
+  rw [mem_variablyStrictImp, Filter.atBotOn_ofLowerSets, Filter.mem_atBotOn_satisfied_iff]
   refine ⟨fun h B hB ⟨u, ⟨hu, hup⟩, huB⟩ ↦ ?_, fun h A ⟨hA, hpA, u, hu, huA⟩ ↦ ?_⟩
   · obtain ⟨A', ⟨hA', hpA', v, hv, hvA'⟩, hBA', hA'q⟩ := h (insert p B)
       ⟨insert_subset_insert hB, mem_insert p B, u, hu, forall_mem_insert.2 ⟨hup, huB⟩⟩
@@ -150,7 +152,7 @@ theorem would_consistentPremiseSets_iff {F : S → Set (Set S)} :
 
 theorem might_consistentPremiseSets_iff {F : S → Set (Set S)} :
     Might (consistentPremiseSets (F w) p) q ↔
-      w ∈ might (variablyStrictImp (fun _ ↦ worlds S) (fun v ↦ .ofCriteria (· ∈ ·) (F v))) p q :=
+      w ∈ might (variablyStrictImp (fun _ ↦ worlds S) (fun v ↦ ≤[F v])) p q :=
   might_iff_not_would_compl.trans (not_congr would_consistentPremiseSets_iff)
 
 /-! ### The crucial set (§4.6) -/
@@ -285,7 +287,7 @@ theorem might_consistentPremiseSets_atlantic : Might (consistentPremiseSets fact
 (10a): if Paula weren't buying a pound of apples, the Atlantic Ocean might be drying up. -/
 theorem might_variablyStrictImp_atlantic :
     Sit.actual ∈ might (variablyStrictImp (fun _ ↦ worlds Sit)
-      (fun _ ↦ .ofCriteria (· ∈ ·) facts)) notPa ad :=
+      (fun _ ↦ ≤[facts])) notPa ad :=
   might_consistentPremiseSets_iff (F := fun _ ↦ facts).1 might_consistentPremiseSets_atlantic
 
 /-! ### The repair (§4.4) -/

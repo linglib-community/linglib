@@ -150,7 +150,7 @@ theorem bestWorlds_eq_accessibleWorlds_sup {f g : Background W} {w : W}
     bestWorlds f g w = (f ⊔ g).accessibleWorlds w := by
   rw [Background.accessibleWorlds_sup] at h ⊢
   obtain ⟨b, hbf, hbg⟩ := h
-  rw [bestWorlds, Preorder.minimals_ofCriteria_eq ⟨b, hbf, Background.mem_accessibleWorlds.1 hbg⟩]
+  rw [bestWorlds, Preorder.minimals_ofLowerSets_eq ⟨b, hbf, Background.mem_accessibleWorlds.1 hbg⟩]
   exact Set.ext fun _ ↦ and_congr_right' Background.mem_accessibleWorlds.symm
 
 theorem mem_bestWorlds_insert {f g : Background W} {p q : Set W} {w u : W}

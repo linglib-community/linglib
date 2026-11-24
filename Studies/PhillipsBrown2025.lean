@@ -148,7 +148,7 @@ theorem want_strawsonEntails (hpq : p ⊆ q) :
 /-- On the finest question, question-based *want* is best-worlds *want* (§3.4). -/
 theorem want_bot_iff :
     Want G ⊥ bel p ↔ BestWorlds.Want ((↑) '' {s | s ∈ G}) bel p := by
-  simp only [Want, BestWorlds.want_iff, Preorder.ofCriteria_le_iff, Set.forall_mem_image,
+  simp only [Want, BestWorlds.want_iff, Preorder.ofLowerSets_le_iff, Set.forall_mem_image,
     MaximalFor, Live,
     entailed, Setoid.cell_bot, Set.mem_singleton_iff, exists_eq_left,
     Set.singleton_subset_iff, Set.ofPred_subset_ofPred, Finset.mem_coe, and_imp]
@@ -209,7 +209,7 @@ theorem closure_under_doxastic_equivalence (A : Set (Set World))
 
 local instance :
     DecidableRel (≤[({↑benefit} : Set (Set World))]).le :=
-  fun w z ↦ decidable_of_iff (z ∈ benefit → w ∈ benefit) (by simp [Preorder.ofCriteria_le_iff])
+  fun w z ↦ decidable_of_iff (z ∈ benefit → w ∈ benefit) (by simp [Preorder.ofLowerSets_le_iff])
 
 /-- A context-sensitive preference relation overgenerates (§2.2), since the value of feeling
 rested makes *Nap* true, and with it *Fail*. -/

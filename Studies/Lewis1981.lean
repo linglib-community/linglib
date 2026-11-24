@@ -161,9 +161,9 @@ def split : Fin 3 → Set (Set (Fin 3)) := fun _ ↦ {{0, 1}, {0, 2}}
 
 theorem premiseOrder_tied_ne_split : premiseOrder tied 0 ≠ premiseOrder split 0 := by
   intro h
-  have h12 : (premiseOrder tied 0).le 1 2 := by simp [tied, Preorder.ofCriteria_le_iff]
+  have h12 : (premiseOrder tied 0).le 1 2 := by simp [tied, Preorder.ofLowerSets_le_iff]
   rw [h] at h12
-  simp [split, Preorder.ofCriteria_le_iff] at h12
+  simp [split, Preorder.ofLowerSets_le_iff] at h12
 
 theorem premiseImp_tied_iff_split (A C : Set (Fin 3)) :
     0 ∈ premiseImp tied A C ↔ 0 ∈ premiseImp split A C := by
@@ -172,7 +172,7 @@ theorem premiseImp_tied_iff_split (A C : Set (Fin 3)) :
   have hlt : ∀ a b, (premiseOrder tied 0).lt a b ↔ (premiseOrder split 0).lt a b := by
     intro a b
     rw [(premiseOrder tied 0).lt_iff_le_not_ge, (premiseOrder split 0).lt_iff_le_not_ge]
-    simp only [Preorder.ofCriteria_le_iff, tied, split, Set.mem_insert_iff, Set.mem_singleton_iff,
+    simp only [Preorder.ofLowerSets_le_iff, tied, split, Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp, forall_eq]
     revert a b; decide
   simp only [premiseImp_eq_orderingImp, mem_orderingImp, hS,
@@ -191,7 +191,7 @@ evaluate every counterfactual alike: truth condition P is the variably strict co
 theorem neutralPremiseImp_eq_variablyStrictImp :
     neutralPremiseImp H A C = variablyStrictImp (fun i ↦ ⋃₀ H i) (premiseOrder H) A C := by
   ext i
-  rw [mem_variablyStrictImp, Filter.atBotOn_ofCriteria, Filter.mem_atBotOn_satisfied_iff]
+  rw [mem_variablyStrictImp, Filter.atBotOn_ofLowerSets, Filter.mem_atBotOn_satisfied_iff]
   refine ⟨fun h B hB ⟨u, ⟨⟨c, hc, huc⟩, huA⟩, huB⟩ ↦ ?_, fun h J hJ ⟨c, hc⟩ ↦ ?_⟩
   · obtain ⟨K, ⟨hK, v, hvA, hvK⟩, hBK, hKC⟩ := h (insert c B)
       ⟨Set.insert_subset hc hB, u, huA, Set.forall_mem_insert.2 ⟨huc, huB⟩⟩ ⟨c, B.mem_insert c⟩

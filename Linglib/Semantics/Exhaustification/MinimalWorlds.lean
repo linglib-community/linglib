@@ -64,7 +64,7 @@ theorem exhMW_eq_minimals :
     exhMW ALT φ = (≤[compl '' ALT]).minimals φ := by
   have key (u v : W) : (≤[compl '' ALT]).le u v ↔
       {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | v ∈ a} := by
-    simp only [Preorder.ofCriteria_le_iff, Set.forall_mem_image, Set.mem_compl_iff,
+    simp only [Preorder.ofLowerSets_le_iff, Set.forall_mem_image, Set.mem_compl_iff,
       Set.subset_def, Set.mem_ofPred_eq, not_imp_not]
     exact ⟨fun h a ⟨ha, hu⟩ ↦ ⟨ha, h ha hu⟩, fun h a ha hu ↦ (h a ⟨ha, hu⟩).2⟩
   ext u

@@ -79,7 +79,7 @@ def CanInView (f : Background W) (φ : Set W) (i : W) : Prop :=
 stands for the premises it verifies, and a consistent subset for the worlds verifying it. This is
 the modal case of [lewis-1981]'s equivalence of premise and ordering semantics. -/
 theorem mustInView_iff_mem_humanNecessity : MustInView f φ i ↔ φ ∈ humanNecessity ⊥ f i := by
-  rw [humanNecessity, Background.accessibleWorlds_bot, Filter.atBotOn_ofCriteria,
+  rw [humanNecessity, Background.accessibleWorlds_bot, Filter.atBotOn_ofLowerSets,
     Filter.mem_atBotOn_satisfied_iff]
   simp [MustInView, consistentSubsets, Set.Nonempty, Set.subset_def, and_assoc]
 

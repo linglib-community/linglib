@@ -67,6 +67,6 @@ theorem exists_mem_weakNecessity_not_bestWorlds_subset :
       s ∈ weakNecessity f g g' w ∧ ¬ bestWorlds f g w ⊆ s := by
   refine ⟨⊥, ⊥, fun _ ↦ {{true}}, {true}, true, ?_,
     fun h ↦ absurd (h (a := false) (by simp)) (by simp)⟩
-  simp [mem_weakNecessity, Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff]
+  simp [mem_weakNecessity, Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff]
 
 end Modality.Directive

@@ -27,7 +27,7 @@ lower sets; the degree questions are those whose order comes from a measure.
   at `w`.
 * `Question.exh_degreeHamblin`: exhaustifying the answer at an attained degree gives the worlds
   where the measure is exactly that degree.
-* `Question.ofCriteria_mem_degreeHamblin`: the order a degree question induces on worlds is the
+* `Question.ofLowerSets_degreeHamblin`: the order a degree question induces on worlds is the
   order of the measure.
 
 ## References
@@ -80,10 +80,10 @@ theorem hasStrongestTrueAnswer_degreeHamblin (w : W) :
 
 /-- The order a degree question induces on worlds is the order of the measure, with the worlds of
 greater measure below. -/
-theorem ofCriteria_mem_degreeHamblin :
+theorem ofLowerSets_degreeHamblin :
     ≤[degreeHamblin μ] = Preorder.lift (OrderDual.toDual ∘ μ) :=
   Preorder.ext fun v w ↦ by
-    simp only [Preorder.ofCriteria_le_iff, degreeHamblin, forall_mem_range, mem_preimage, mem_Ici]
+    simp only [Preorder.ofLowerSets_le_iff, degreeHamblin, forall_mem_range, mem_preimage, mem_Ici]
     exact ⟨fun h ↦ h (μ w) le_rfl, fun h d hd ↦ hd.trans h⟩
 
 /-- Dayal's presupposition holds of a degree question at every world. -/

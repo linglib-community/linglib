@@ -284,7 +284,7 @@ theorem toState_imperative [DecidableEq A] (K : State (A × Force) W) (a : A) (p
     rw [Function.update_self]
     refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
     show ≤[_] = ≤[_] ⊓ .ofCriterion (· ∈ p)
-    rw [State.contents_insert_self, Preorder.ofCriteria_insert]
+    rw [State.contents_insert_self, Preorder.ofLowerSets_insert]
   · rw [Function.update_of_ne hb, toState_insert_of_ne hb]
 
 -- one preferential commitment of the speaker ranks the content's worlds first in the speaker's

@@ -139,8 +139,8 @@ theorem bestOf_starstar (g : Background W) (p : Set W) (w : W) (D : Set W) :
     bestOf (starstar g p w D) D =
       (≤[{p}]).minimals ((≤[g w]).minimals D) := by
   ext u
-  simp only [bestOf, starstar, Preorder.ofCriteria_lt_iff, Preorder.mem_minimals_iff,
-    Preorder.ofCriteria_le_iff, Set.mem_singleton_iff, forall_eq,
+  simp only [bestOf, starstar, Preorder.ofLowerSets_lt_iff, Preorder.mem_minimals_iff,
+    Preorder.ofLowerSets_le_iff, Set.mem_singleton_iff, forall_eq,
     Set.mem_ofPred_eq]
   grind
 
@@ -188,7 +188,7 @@ abbrev g₃ : Background (Fin 3) := fun _ ↦ {{0}, {1, 2}, {2}}
 
 theorem minimals_pair_g₃ : (≤[g₃ 0]).minimals ({0, 1} : Set (Fin 3)) = {0, 1} := by
   ext u
-  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp, forall_eq,
     implies_true]
@@ -197,7 +197,7 @@ theorem minimals_pair_g₃ : (≤[g₃ 0]).minimals ({0, 1} : Set (Fin 3)) = {0,
 
 theorem minimals_univ_g₃ : (≤[g₃ 0]).minimals Set.univ = {0, 2} := by
   ext u
-  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff,
     Set.mem_univ, true_and, Set.mem_insert_iff,
     Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
     ]
@@ -306,7 +306,7 @@ private theorem minimals_singleton (a : W) (A : Set (Set W)) :
 
 private theorem minimals_eq_singleton {S : Set W} {b : W} (hb : b ∈ S) :
     (≤[{({b} : Set W)}]).minimals S = {b} := by
-  rw [Preorder.minimals_ofCriteria_eq ⟨b, hb, by simp⟩]
+  rw [Preorder.minimals_ofLowerSets_eq ⟨b, hb, by simp⟩]
   ext v
   simp only [Set.mem_singleton_iff, forall_eq, Set.mem_ofPred_eq, and_iff_right_iff_imp]
   rintro rfl
@@ -368,7 +368,7 @@ private theorem M2_iff (v : Vertex) :
       (fun _ ↦ {{true}}) {true} {true} true := by
     rw [Vertex.necessity_xg_false, bestWorlds]
     simp only [Vertex.base, ↓reduceIte]
-    rw [Preorder.minimals_ofCriteria_eq ⟨true, M2_mem, by simp⟩]
+    rw [Preorder.minimals_ofLowerSets_eq ⟨true, M2_mem, by simp⟩]
     exact fun _ hw' ↦ hw'.2 _ (Set.mem_singleton _)
   obtain ⟨_ | _, _ | _⟩ := v
   · exact iff_of_false
@@ -398,7 +398,7 @@ private theorem accessibleWorlds_revise_f₃ :
   rw [accessibleWorlds_revise, accessibleWorlds_f₃]
   ext u
   simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_ofPred_eq,
-    Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff, forall_eq, Set.mem_univ, iff_true]
+    Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff, forall_eq, Set.mem_univ, iff_true]
   revert u
   decide
 
@@ -416,7 +416,7 @@ private theorem M3_not_tt : ¬ Vertex.necessity ⟨true, true⟩ sim₃ f₃ g�
   rw [accessibleWorlds_revise_f₃, minimals_univ_g₃]
   have h0 : (0 : Fin 3) ∈ (≤[{({1} : Set (Fin 3))}]).minimals
       ({0, 2} : Set (Fin 3)) := by
-    simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
+    simp only [Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff,
       Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq]
     decide
   exact fun h ↦ absurd (h h0) (by decide)
@@ -653,7 +653,7 @@ private theorem minimals_ofRev (acc rev : Option Bool) :
       {v | v ∈ topList acc rev} := by
   ext u
   rcases acc with _ | _ | _ <;> rcases rev with _ | _ | _ <;> cases u <;>
-    simp [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff, accList, topList, ofRev]
+    simp [Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff, accList, topList, ofRev]
 
 private def famProfile (acc rev : Option Bool) (q : Bool → Bool) : Profile :=
   ⟨(accList acc).any q, (accList acc).any (!q ·), (topList acc rev).any q,
@@ -850,7 +850,7 @@ private theorem minimals_atOffice_sim (w : Day) :
     (≤[sim w]).minimals atOffice = {⟨true, w.holiday⟩} := by
   ext ⟨o, h⟩
   obtain ⟨o', h'⟩ := w
-  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff,
     sim, atOffice, Set.mem_ofPred_eq,
     Set.mem_singleton_iff, Set.mem_insert_iff, forall_eq_or_imp, forall_eq,
     ]
@@ -860,8 +860,8 @@ private theorem minimals_workday_sim (w : Day) :
     (≤[sim w]).minimals workday = {⟨w.office, false⟩} := by
   ext ⟨o, h⟩
   obtain ⟨o', h'⟩ := w
-  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff, sim, workday, Set.mem_ofPred_eq,
-    Set.mem_singleton_iff, Set.mem_insert_iff, forall_eq_or_imp, forall_eq,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff, sim, workday,
+    Set.mem_ofPred_eq, Set.mem_singleton_iff, Set.mem_insert_iff, forall_eq_or_imp, forall_eq,
     ]
   cases o <;> cases h <;> cases o' <;> cases h' <;> decide
 
@@ -894,15 +894,15 @@ private theorem accessibleWorlds_revise_workday (w : Day) :
 private theorem minimals_normal_univ (w : Day) :
     (≤[normal w]).minimals Set.univ = {⟨true, false⟩, ⟨false, true⟩} := by
   ext ⟨o, h⟩
-  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff, normal, Set.mem_univ, true_and,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff, normal, Set.mem_univ, true_and,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
     ]
   cases o <;> cases h <;> decide
 
 private theorem minimals_normal_away (w : Day) :
     (≤[normal w]).minimals {v | v.office = false} = {⟨false, true⟩} := by
-  rw [Preorder.minimals_ofCriteria_eq (s := ({v | v.office = false} : Set Day))
-    (criteria := normal w)
+  rw [Preorder.minimals_ofLowerSets_eq (s := ({v | v.office = false} : Set Day))
+    (A := normal w)
     ⟨⟨false, true⟩, by simp, by simp [normal]⟩]
   ext ⟨o, h⟩
   simp only [normal, Set.mem_ofPred_eq, Set.mem_singleton_iff, Set.mem_insert_iff,
@@ -912,8 +912,8 @@ private theorem minimals_normal_away (w : Day) :
 
 private theorem minimals_normal_holiday (w : Day) :
     (≤[normal w]).minimals {v | v.holiday = true} = {⟨false, true⟩} := by
-  rw [Preorder.minimals_ofCriteria_eq (s := ({v | v.holiday = true} : Set Day))
-    (criteria := normal w)
+  rw [Preorder.minimals_ofLowerSets_eq (s := ({v | v.holiday = true} : Set Day))
+    (A := normal w)
     ⟨⟨false, true⟩, by simp, by simp [normal]⟩]
   ext ⟨o, h⟩
   simp only [normal, Set.mem_ofPred_eq, Set.mem_singleton_iff, Set.mem_insert_iff,
@@ -925,7 +925,7 @@ private theorem minimals_workday_pair :
     (≤[{workday}]).minimals ({⟨true, false⟩, ⟨false, true⟩} : Set Day) =
       {⟨true, false⟩} := by
   ext ⟨o, h⟩
-  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff, workday, Set.mem_insert_iff,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff, workday, Set.mem_insert_iff,
     Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
     ]
   cases o <;> cases h <;> decide
