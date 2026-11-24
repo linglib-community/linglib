@@ -42,12 +42,14 @@ variable {α D W : Type*}
 semantic reflex of [bobaljik-2012]'s containment `[[[ADJ] CMPR] SPRL]`. -/
 
 section Absolute
-variable [LinearOrder D] {μ : α → D} {C : Set α} {x y : α}
+variable {μ : α → D} {C : Set α} {x y : α}
 
 /-- The absolute superlative holds of `x` when `x` is in the comparison class `C` and beats every
 other member on the comparative. -/
-def AbsoluteSuperlative (μ : α → D) (C : Set α) (x : α) : Prop :=
+def AbsoluteSuperlative [LT D] (μ : α → D) (C : Set α) (x : α) : Prop :=
   x ∈ C ∧ ∀ y ∈ C, y ≠ x → μ y < μ x
+
+variable [Preorder D]
 
 theorem absoluteSuperlative_unique (hx : AbsoluteSuperlative μ C x)
     (hy : AbsoluteSuperlative μ C y) : x = y :=
