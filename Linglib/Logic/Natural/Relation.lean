@@ -9,15 +9,46 @@ public import Mathlib.Order.Disjoint
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# The seven relations of natural logic
+# The relations of natural logic
 
-MacCartney and Manning relate denotations by equivalence `≡`, forward and reverse entailment `⊑`
-and `⊒`, negation `^`, alternation `|`, cover `⌣` and independence `#`. Following Icard, each
-relation is a conjunction of atomic lattice constraints, `x ≤ y`, `y ≤ x`, disjointness and
-codisjointness, so that `≡` also satisfies `⊑` and the relations are ordered by implication;
-MacCartney and Manning's mutually exclusive relations are their strict versions. The join `R ⋈ S`,
-the strongest relation that `R` followed by `S` guarantees, makes the relations a monoid, and it
-is [sound](##NaturalLogic.Relation.Holds.join) over distributive lattices.
+Natural logic relates two denotations by one of seven relations: equivalence `≡`, forward and
+reverse entailment `⊑` and `⊒`, negation `^`, alternation `|`, cover `⌣` and independence `#`.
+For elements `x` and `y` of a bounded lattice, `x ⊑ y` says that `x ≤ y`, `x | y` that `x` and `y`
+are disjoint, `x ⌣ y` that they are codisjoint, and `x ^ y` that they are complements. Each
+relation is a conjunction of atomic constraints, `x ≤ y`, `y ≤ x`, disjointness and
+codisjointness, and the relations are ordered by implication.
+
+The join `R ⋈ S` of two relations is the strongest relation that holds of `x` and `z` whenever
+`x R y` and `y S z`. Under the join the relations form a monoid with zero, with identity `≡` and
+zero `#`.
+
+## Main definitions
+
+* `NaturalLogic.Relation`: the seven relations.
+* `NaturalLogic.Relation.Atom`: the four atomic constraints.
+* `NaturalLogic.Relation.constraints`: the atomic constraints a relation asserts.
+* `NaturalLogic.Relation.Holds`: `R.Holds x y` says that `R` holds of two elements of a bounded
+  lattice.
+* `NaturalLogic.Relation.join`: the join `R ⋈ S`, the multiplication of the monoid.
+* `NaturalLogic.Relation.converse`: the converse of a relation.
+
+## Main results
+
+* `NaturalLogic.Relation.holds_iff`: a relation holds exactly when each of its constraints does.
+* `NaturalLogic.Relation.Holds.of_le`: a relation implies every relation above it.
+* `NaturalLogic.Relation.Holds.join`: in a distributive lattice, `x R y` and `y S z` give
+  `x (R ⋈ S) z`.
+* `NaturalLogic.Relation.holds_map_iff`: an injective bounded lattice homomorphism preserves and
+  reflects each relation.
+
+## Implementation notes
+
+* `⊑` is `≤` and not strict inclusion, so `≡` implies `⊑`. MacCartney and Manning's relations
+  exclude one another; they are the strict versions of these.
+* `R ≤ S` says that `R` implies `S`, so the most informative relations are the least and `#` is
+  the top.
+* The join is computed from a rule on pairs of atomic constraints and is not tabulated: `R ⋈ S`
+  asserts what the rule derives from a constraint of `R` and one of `S`.
 
 ## References
 
@@ -85,10 +116,8 @@ inductive Atom where
   | codisjoint
   deriving DecidableEq, Fintype, Repr
 
-/-- The atomic constraints a relation asserts, `{le, ge}` for `≡`, `{disjoint, codisjoint}` for `^`
-and `∅` for `#`. A relation holds iff all its constraints do (`Relation.holds_iff`), and of the
-sixteen constraint sets exactly these seven are nondegenerately realizable
-(`Relation.mem_range_constraints_iff` in `Logic/Natural/Completeness.lean`). -/
+/-- The atomic constraints a relation asserts: `{le, ge}` for `≡`, `{disjoint, codisjoint}` for `^`
+and `∅` for `#`. -/
 def constraints : Relation → Finset Atom
   | .equiv => {.le, .ge}
   | .forward => {.le}
@@ -100,18 +129,13 @@ def constraints : Relation → Finset Atom
 
 theorem constraints_injective : Function.Injective constraints := by decide
 
-/-- The strongest relation all of whose constraints satisfy `P`, found by trying the relations
-from the strongest down to `#`, which has none. When the atoms satisfying `P` are the constraints
-of a relation, it is that relation. -/
+/-- The first relation, from the strongest down to `#`, all of whose constraints satisfy `P`. -/
 def ofAtoms (P : Atom → Prop) [DecidablePred P] : Relation :=
   ([equiv, negation, forward, reverse, alternation, cover].find?
     (fun R ↦ ∀ a ∈ R.constraints, P a)).getD independent
 
-/-- In the implication order ([icard-2012]'s ≪), `R ≤ R'` iff `xRy` entails `xR'y`, i.e. iff the
-constraints of `R'` are among those of `R` (`Relation.Holds.of_le`). It consists of two diamonds
-sharing only the top `#`, one with `≡` below `⊑` and `⊒`, the other with `^` below `|` and `⌣`;
-there is no bottom, since `x = y` makes `x` and `y` neither disjoint nor exhaustive. The most
-informative relation, which [icard-2012] calls ≪-maximal, is the least one in this order. -/
+/-- The implication order ([icard-2012]'s ≪): `R ≤ R'` when the constraints of `R'` are among those
+of `R`, so that `x R y` entails `x R' y`. The top is `#`, and there is no bottom. -/
 instance : PartialOrder Relation :=
   .lift (fun R ↦ OrderDual.toDual (constraints R))
     (OrderDual.toDual.injective.comp constraints_injective)
@@ -182,11 +206,9 @@ theorem ofPolarities_injective : Function.Injective2 ofPolarities := by
 
 @[simp] theorem tgt_ofPolarities : ∀ m q : Polarity, (ofPolarities m q).tgt = q := by decide
 
-/-- The constraint between `x` and `z` that a constraint between `x` and `y` and one between `y`
-and `z` guarantee, when there is one (`Relation.Atom.Holds.join`): read as inequalities, the two
-chain by transitivity when they take `y` with the same polarity. So `≤` and `≥` are transitive,
-disjointness is inherited downward and codisjointness upward, and `x` disjoint from `y` and `y`
-codisjoint with `z` give `x ≤ z`. -/
+/-- The constraint between `x` and `z` that a constraint between `x` and `y` and one between `y` and
+`z` give, when there is one: read as inequalities, the two chain when they take `y` with the same
+polarity. -/
 def join (a b : Atom) : Option Atom :=
   if a.tgt = b.src then some (ofPolarities a.src b.tgt) else none
 
@@ -201,17 +223,8 @@ theorem Atom.join_assoc :
     ∀ a b c : Atom, (a.join b).bind (·.join c) = (b.join c).bind (a.join ·) := by
   decide
 
-/-- The join `R ⋈ R'` ([icard-2012], Lemma 1.5) is the strongest relation guaranteed between `x`
-and `z` given `xRy` and `yR'z`, the relation asserting what the atom rule gives for each pair of
-constraints of `R` and `R'` (`Relation.mem_constraints_mul`). It approximates relational
-composition, which [maccartney-manning-2009] call join after the database operation; it is not the
-lattice join.
-Each cell is sound (`Relation.Holds.join`) and is the least
-sound relation (`Relation.isLeast_join` in `Logic/Natural/Completeness.lean`), as [icard-2012]'s
-Definition 1.4 requires. On a Boolean lattice it is relational composition (`Relation.toSetRel_mul`
-in `Logic/Natural/Completeness.lean`), the middle term ranging over every element;
-[maccartney-manning-2009]'s relations exclude one another and the elements `⊥` and `⊤`, and their
-composition is a union of relations on 17 of the 49 cells (§3). -/
+/-- The join `R ⋈ S` ([icard-2012] Lemma 1.5) is the relation asserting what the atom rule gives for
+each constraint of `R` and each constraint of `S`. -/
 def join (R S : Relation) : Relation :=
   ofAtoms fun c ↦ ∃ a ∈ R.constraints, ∃ b ∈ S.constraints, a.join b = some c
 
@@ -229,10 +242,8 @@ theorem mem_constraints_mul {R S : Relation} {c : Atom} :
 /-- `#` absorbs on the right ([icard-2012] p. 710). -/
 @[simp] theorem mul_top (r : Relation) : r * ⊤ = ⊤ := by cases r <;> rfl
 
-/-- The relations form a monoid under ⋈ with identity `≡` and zero `#`. The identity and
-absorption laws are printed in [icard-2012] (p. 710); associativity, printed in neither
-[icard-2012] nor [maccartney-manning-2009], is that of the atom rule. The monoid is not
-commutative, since `^ ⋈ ⌣ = ⊑` but `⌣ ⋈ ^ = ⊒`. -/
+/-- The relations form a monoid with zero under the join ([icard-2012] p. 710), with identity `≡`
+and zero `#`. It is not commutative: `^ ⋈ ⌣ = ⊑` but `⌣ ⋈ ^ = ⊒`. -/
 instance : MonoidWithZero Relation where
   mul_assoc R S T := constraints_injective <| Finset.ext fun _ ↦ by
     simp only [mem_constraints_mul]
@@ -245,8 +256,8 @@ instance : MonoidWithZero Relation where
 
 @[simp] theorem zero_eq_top : (0 : Relation) = ⊤ := rfl
 
-/-- The converse of a relation, holding of `x` and `y` when the relation holds of `y` and `x`
-(`Relation.holds_converse`): `⊑` and `⊒` exchange, and the other five are symmetric. -/
+/-- The converse of a relation holds of `x` and `y` when the relation holds of `y` and `x`: `⊑` and
+`⊒` exchange, and the other five are symmetric. -/
 def converse : Relation → Relation
   | .forward => .reverse
   | .reverse => .forward
@@ -258,11 +269,9 @@ end Relation
 
 /-! ### Lattice content of the relations -/
 
-/-- The lattice content of a natural-logic relation ([icard-2012]
-Definition 1.2), in mathlib's complementation vocabulary: `negation` is
-`IsCompl`, `alternation` is `Disjoint`, `cover` is `Codisjoint`; `forward`
-is non-strict `≤` (MacCartney's exclusive reading takes it proper, which
-the projectivity tables do not need). -/
+/-- `R.Holds x y` says that the relation `R` holds of two elements of a bounded lattice
+([icard-2012] Definition 1.2): `⊑` is `≤`, `|` is `Disjoint`, `⌣` is `Codisjoint` and `^` is
+`IsCompl`. -/
 def Relation.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
     Relation → α → α → Prop
   | .equiv => (· = ·)
@@ -273,8 +282,8 @@ def Relation.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
   | .cover => Codisjoint
   | .independent => fun _ _ => True
 
-/-- The lattice content of an atomic constraint ([icard-2012]
-Definition 1.2). -/
+/-- `a.Holds x y` says that the atomic constraint `a` holds of two elements of a bounded lattice
+([icard-2012] Definition 1.2). -/
 def Relation.Atom.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
     Relation.Atom → α → α → Prop
   | .le => (· ≤ ·)
@@ -366,8 +375,7 @@ instance Relation.decidableHolds {α : Type*} [Lattice α] [BoundedOrder α]
   | .cover, x, y => decidable_of_iff (x ⊔ y = ⊤) codisjoint_iff.symm
   | .independent, _, _ => .isTrue trivial
 
-/-- Relation-level order soundness: `≤` is the implication order on
-the lattice content ([icard-2012] §1). -/
+/-- A relation implies every relation above it ([icard-2012] §1). -/
 theorem Relation.Holds.of_le {β : Type*} [Lattice β] [BoundedOrder β]
     {R R' : Relation} {u v : β} (h : R.Holds u v) (href : R ≤ R') :
     R'.Holds u v := by
@@ -394,8 +402,8 @@ theorem Relation.Holds.apply {β ι : Type*} [Lattice β] [BoundedOrder β] {R :
 
 /-! ### Join soundness -/
 
-/-- The atom rule is sound: chained constraints give the constraint `Relation.Atom.join` says.
-Distributivity is needed for a disjoint pair followed by a codisjoint one, which gives `≤`. -/
+/-- The atom rule is sound in a distributive lattice: chained constraints give the constraint that
+`Relation.Atom.join` computes. -/
 theorem Relation.Atom.Holds.join {β : Type*} [DistribLattice β] [BoundedOrder β]
     {a b c : Relation.Atom} (h : a.join b = some c) {x y z : β} (ha : a.Holds x y)
     (hb : b.Holds y z) : c.Holds x z := by

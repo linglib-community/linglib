@@ -16,18 +16,16 @@ public import Linglib.Semantics.Negation.Polarity
 
 A map between bounded lattices is *additive* if it preserves `⊔` and `⊤`, *multiplicative* if it
 preserves `⊓` and `⊥`, and *anti-additive* or *anti-multiplicative* if it is additive or
-multiplicative as a map into the order dual. Icard's nine projectivity signatures name classes of
-maps: all maps, the monotone maps and those of them that are additive, multiplicative or both, and
-the antitone maps and those of them that are anti-additive, anti-multiplicative or both.
+multiplicative as a map into the order dual. A projectivity signature names a class of maps: all
+maps, the monotone maps and those of them that are additive, multiplicative or both, and the
+antitone maps and those of them that are anti-additive, anti-multiplicative or both. There are
+nine.
 
-We define the signatures, the function class of each, and the composition `ψ * φ` of two
-signatures, which holds of a `ψ`-function after a `φ`-function. Under composition the signatures
-form a monoid with zero whose zero is the signature of all maps. Its two invertible elements hold
-of the bounded lattice homomorphisms and of the homomorphisms into the order dual, and a map
-composed with an invertible map of signature `υ` is a `σ`-function exactly when the map itself is
-a `σ * υ⁻¹`-function or a `υ⁻¹ * σ`-function, by the side of the composition. The marking of the
-Monotonicity Calculus, `1` for a monotone class, `-1` for an antitone one and `0` otherwise, is a
-homomorphism to the three signs.
+We define the signatures and say when a signature holds of a map. The composition `ψ * φ` of two
+signatures holds of every `ψ`-function after a `φ`-function. Under composition the signatures form
+a monoid with zero: the identity is the signature `⊕` of the bounded lattice homomorphisms, and
+the zero is the signature `•` of all maps. The sign of a signature, `1` for a monotone class, `-1`
+for an antitone class and `0` for `•`, is a homomorphism to the three signs.
 
 ## Main definitions
 
@@ -113,9 +111,7 @@ inductive ProjectivitySignature where
 
 namespace ProjectivitySignature
 
-/-- The function properties a signature can assert, closed under
-implication (an additive function is monotone, so `.additive`'s set contains
-`monotone`). -/
+/-- The six properties of maps that a signature can assert. -/
 inductive Property where
   /-- Preserves `≤`. -/
   | monotone
@@ -131,8 +127,7 @@ inductive Property where
   | antiMultiplicative
   deriving DecidableEq, Fintype, Repr
 
-/-- The properties a signature asserts. Since `≤` is reverse inclusion, `addMult` and
-`antiAddMult` are the least elements of their halves and `all` (`•`, no property) is the top. -/
+/-- The properties a signature asserts. -/
 def properties : ProjectivitySignature → Finset Property
   | .all => ∅
   | .mono => {.monotone}
@@ -146,17 +141,13 @@ def properties : ProjectivitySignature → Finset Property
 
 theorem properties_injective : Function.Injective properties := by decide
 
-/-- The most specific signature all of whose properties satisfy `P`, found by trying the
-signatures from the most specific up to `•`, which has none. When the properties satisfying `P`
-are those of a signature, it is that signature. -/
+/-- The first signature, from the most specific up to `•`, all of whose properties satisfy `P`. -/
 def ofProperties (P : Property → Prop) [DecidablePred P] : ProjectivitySignature :=
   ([addMult, antiAddMult, additive, mult, antiAdd, antiMult, mono, anti].find?
     (fun σ ↦ ∀ p ∈ σ.properties, P p)).getD all
 
-/-- In the refinement order ([icard-2012]'s ≼, §2.2), `σ ≤ τ` iff every σ-function is a τ-function,
-i.e. iff the properties of `τ` are among those of `σ` (`ProjectivitySignature.SoundFor.of_le` in
-`Logic/Natural/Projection.lean`). The most specific signature, which [icard-2012] calls
-≼-maximal, is the least one in this order. -/
+/-- The refinement order ([icard-2012]'s ≼): `σ ≤ τ` when the properties of `τ` are among those of
+`σ`, so that every σ-function is a τ-function. -/
 instance : PartialOrder ProjectivitySignature :=
   .lift (fun σ ↦ OrderDual.toDual (properties σ))
     (OrderDual.toDual.injective.comp properties_injective)
@@ -187,8 +178,8 @@ def propertiesOrderEmbedding : ProjectivitySignature ↪o (Finset Property)ᵒ�
 @[simp] theorem propertiesOrderEmbedding_apply (σ : ProjectivitySignature) :
     propertiesOrderEmbedding σ = OrderDual.toDual σ.properties := rfl
 
-/-- The property a function with property `p` after one with property `q` has for that pair, when
-there is one (`ProjectivitySignature.Property.HoldsFor.compose`). -/
+/-- The property that a function with property `p` after a function with property `q` has, when the
+two determine one. -/
 def Property.compose : Property → Property → Option Property
   | .monotone, .monotone | .antitone, .antitone => some .monotone
   | .monotone, .antitone | .antitone, .monotone => some .antitone
@@ -226,9 +217,9 @@ theorem mem_properties_mul {ψ φ : ProjectivitySignature} {r : Property} :
 /-- `•` absorbs on the right ([icard-2012] p. 716). -/
 @[simp] theorem mul_top (σ : ProjectivitySignature) : σ * ⊤ = ⊤ := by cases σ <;> rfl
 
-/-- The signatures form a monoid under composition ([icard-2012] Lemma 2.7), associative because
-the property rule is, with identity `⊕` and zero `•`. It is not commutative, since
-`antiMult * antiAdd = additive` but `antiAdd * antiMult = mult` (p. 716). -/
+/-- The signatures form a monoid with zero under composition ([icard-2012] Lemma 2.7), with identity
+`⊕` and zero `•`. It is not commutative: `antiMult * antiAdd = additive` but
+`antiAdd * antiMult = mult`. -/
 instance : MonoidWithZero ProjectivitySignature where
   mul_assoc ψ φ χ := properties_injective <| Finset.ext fun _ ↦ by
     simp only [mem_properties_mul]
@@ -336,7 +327,7 @@ section HoldsFor
 
 variable {α β : Type*} [Lattice α] [BoundedOrder α] [Lattice β] [BoundedOrder β]
 
-/-- The function class a property asserts. -/
+/-- `p.HoldsFor f` says that the map `f` has the property `p`. -/
 def Property.HoldsFor : Property → (α → β) → Prop
   | .monotone => Monotone
   | .antitone => Antitone
@@ -345,8 +336,8 @@ def Property.HoldsFor : Property → (α → β) → Prop
   | .antiAdditive => fun f ↦ IsAntiAdditive f ∧ f ⊤ = ⊥
   | .antiMultiplicative => fun f ↦ IsAntiMultiplicative f ∧ f ⊥ = ⊤
 
-/-- A function has signature σ — is a "σ-function" — when it has every
-property σ asserts. -/
+/-- `σ.HoldsFor f` says that `f` has every property `σ` asserts; [icard-2012] calls such an `f` a
+σ-function. -/
 def HoldsFor (σ : ProjectivitySignature) (f : α → β) : Prop :=
   ∀ p ∈ σ.properties, p.HoldsFor f
 

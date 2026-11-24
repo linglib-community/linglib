@@ -19,32 +19,51 @@ public import Mathlib.Order.Interval.Set.Basic
 /-!
 # Completeness of the projectivity calculus
 
-The join, projection and composition tables of natural logic are sound, and this file proves that
-they cannot be improved. A relation is [a formal concept](##NaturalLogic.Relation.toConcept) of
-the incidence between constraints and pairs of elements, as a signature is [of the
-incidence](##NaturalLogic.ProjectivitySignature.toConcept) between properties and functions, and
-the join, projection and composition assert [the polar of what the semantics
-relates](##NaturalLogic.Relation.coe_constraints_mul). On a Boolean algebra the join [is relational
-composition](##NaturalLogic.Relation.toSetRel_mul). The order on relations is
-[implication](##NaturalLogic.Relation.le_iff_forall_holds) in every nontrivial bounded lattice, and
-the join is [the least sound chaining](##NaturalLogic.Relation.isLeast_join) in every nontrivial
-distributive one, [even among denotations other than `⊥` and
-`⊤`](##NaturalLogic.Relation.isLeast_join_Ioo). Between nontrivial distributive lattices each
-projection is [least](##NaturalLogic.ProjectivitySignature.isLeast_project) for its function class,
-refinement of signatures is [inclusion of
-classes](##NaturalLogic.ProjectivitySignature.le_iff_forall_holdsFor), and composition is [least for
-composites](##NaturalLogic.ProjectivitySignature.isLeast_compose). Two elements stand in a strongest
-relation [exactly when neither is `⊥` or `⊤`](##NaturalLogic.Relation.exists_isLeast_holds_iff), and
-the constraints such elements can satisfy together are [those of the seven
-relations](##NaturalLogic.Relation.mem_range_constraints_iff). Likewise a map has a most specific
-signature exactly when it is not constant, and the properties of such a map are those of one of
-the nine signatures.
+The join of two relations, the projection of a relation through a signature and the composition
+of two signatures are sound: what each asserts holds in every bounded lattice. This file shows
+that each is also the strongest sound choice. The join `R * S` is the least relation that holds
+of `x` and `z` whenever `x R y` and `y S z`, the projection of `R` through `σ` is the least
+relation that every `σ`-function carries `R` to, and `ψ * φ` is the least signature that holds of
+every `ψ`-function after a `φ`-function.
+
+A relation is determined by the pairs of elements it holds of, and a signature by the maps it
+holds of: each is a formal concept, of the incidence between constraints and pairs or between
+properties and maps. So the order on relations is implication and the order on signatures is
+inclusion of function classes. We also say which combinations occur: two elements stand in a
+strongest relation exactly when neither is `⊥` or `⊤`, and a map has a most specific signature
+exactly when it is not constant.
+
+## Main definitions
+
+* `NaturalLogic.Relation.toSetRel`: the pairs of elements of a bounded lattice that a relation
+  holds of.
+* `NaturalLogic.Relation.toConcept`, `NaturalLogic.ProjectivitySignature.toConcept`: a relation
+  and a signature as formal concepts.
+
+## Main results
+
+* `NaturalLogic.Relation.le_iff_forall_holds`: `R ≤ S` exactly when `R` implies `S` in a
+  nontrivial bounded lattice.
+* `NaturalLogic.Relation.isLeast_join`: the join is the least sound chaining in a nontrivial
+  bounded distributive lattice.
+* `NaturalLogic.Relation.toSetRel_mul`: on a Boolean algebra the join is relational composition.
+* `NaturalLogic.Relation.exists_isLeast_holds_iff`: two elements stand in a strongest relation
+  exactly when neither is `⊥` or `⊤`.
+* `NaturalLogic.Relation.mem_range_constraints_iff`: the seven relations are the sets of
+  constraints that two elements other than `⊥` and `⊤` can satisfy together.
+* `NaturalLogic.ProjectivitySignature.isLeast_project`: each projection is least for its function
+  class.
+* `NaturalLogic.ProjectivitySignature.le_iff_forall_holdsFor`: refinement of signatures is
+  inclusion of function classes.
+* `NaturalLogic.ProjectivitySignature.isLeast_compose`: composition is least for composites.
+* `NaturalLogic.ProjectivitySignature.exists_isLeast_holdsFor_iff`: a map has a most specific
+  signature exactly when it is not constant.
 
 ## Implementation notes
 
 * Countermodels are computed on `Bool` and carried to other lattices: `Bool` embeds in a bounded
-  lattice as `⊥` and `⊤`, and a nontrivial bounded distributive lattice maps back onto `Bool` along
-  a [prime ideal](##DistribLattice.nonempty_boundedLatticeHom_bool). The function-class
+  lattice as `⊥` and `⊤`, and a nontrivial bounded distributive lattice maps back onto `Bool`
+  along a prime ideal, `DistribLattice.nonempty_boundedLatticeHom_bool`. The function-class
   theorems need distributivity for this map, since the five-element modular lattice `M₃` has no
   morphism to `Bool` and its morphism class into `Bool` is empty.
 * The nine signatures classify the properties of the maps that are not constant. A constant map
@@ -149,8 +168,7 @@ theorem le_iff_forall_holds {R S : Relation} :
 end Lattice
 
 /-- The constraints of the join are the polar of the pairs that `R` followed by `S` relates, in
-every nontrivial bounded distributive lattice: the atom rule derives every constraint that chaining
-guarantees (`Relation.mem_constraints_mul`). -/
+every nontrivial bounded distributive lattice. -/
 theorem coe_constraints_mul [DistribLattice α] [BoundedOrder α] [Nontrivial α] (R S : Relation) :
     (↑(R * S).constraints : Set Atom) =
       lowerPolar (Atom.incidence α) (R.toSetRel α ○ S.toSetRel α) := by
@@ -247,9 +265,7 @@ section BooleanAlgebra
 variable [BooleanAlgebra α]
 
 /-- On a Boolean algebra the join is relational composition: `R * S` holds of `x` and `z` exactly
-when some `y` has `x R y` and `y S z`. The constraints bound `y` and its complement from both sides,
-and the bounds are compatible when `R * S` holds. The middle term may be `⊥` or `⊤`; among other
-elements the join is only the least sound relation (`Relation.isLeast_join_Ioo`). -/
+when some `y` has `x R y` and `y S z`. -/
 theorem toSetRel_mul (R S : Relation) :
     (R * S).toSetRel α = R.toSetRel α ○ S.toSetRel α := by
   ext ⟨x, z⟩
@@ -492,10 +508,9 @@ theorem Property.holdsFor_ofBool_comp_comp_iff [DistribLattice β] [BoundedOrder
   funext b
   simp
 
-/-- A projection asserts the polar of the pairs of values that σ-functions give `R`-related
-arguments, for functions from a nontrivial bounded distributive lattice to a nontrivial bounded
-lattice: the property rule derives every constraint that projection guarantees
-(`ProjectivitySignature.mem_constraints_project`). -/
+/-- The constraints of a projection are the polar of the pairs of values that σ-functions give
+`R`-related arguments, for functions from a nontrivial bounded distributive lattice to a
+nontrivial bounded lattice. -/
 theorem coe_constraints_project [Lattice β] [BoundedOrder β] [Nontrivial β] (R : Relation)
     (σ : ProjectivitySignature) :
     (↑(project R σ).constraints : Set Relation.Atom) = lowerPolar (Relation.Atom.incidence β)
@@ -571,9 +586,8 @@ theorem le_iff_forall_holdsFor {σ τ : ProjectivitySignature} :
 
 variable [DistribLattice γ] [BoundedOrder γ] [Nontrivial γ]
 
-/-- The properties of a composite signature are the polar of the composites of a ψ-function after
-a φ-function, between nontrivial bounded distributive lattices: the property rule derives every
-property that composites share (`ProjectivitySignature.mem_properties_mul`). -/
+/-- The properties of a composite signature are the polar of the composites of a ψ-function after a
+φ-function, between nontrivial bounded distributive lattices. -/
 theorem coe_properties_mul (ψ φ : ProjectivitySignature) :
     (↑(ψ * φ).properties : Set Property) = lowerPolar (Property.incidence α γ)
       {h | ∃ (f : β → γ) (g : α → β), ψ.HoldsFor f ∧ φ.HoldsFor g ∧ h = f ∘ g} := by

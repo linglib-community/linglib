@@ -9,20 +9,41 @@ public import Mathlib.Order.Hom.Set
 /-!
 # Projection through projectivity signatures
 
-A map of known projectivity signature carries a relation between two arguments to a relation
-between their values: a monotone map keeps `⊑`, an antitone one turns it into `⊒`, and the
-additive and multiplicative properties carry disjointness and codisjointness. Projection is an
-[action](##NaturalLogic.ProjectivitySignature.project_project) of the signature monoid on the
-relations, and each signature's row is
-[sound](##NaturalLogic.ProjectivitySignature.soundFor_of_holdsFor) for the maps in its function
-class, as it is for bounded lattice homomorphisms and, into the order dual, for complementation.
-Between Boolean algebras a row is sound for more maps than its function class holds: for those of
-its direction that take complementary elements to disjoint ones, to codisjoint ones, or to
-complementary ones, that is, that lie below, above, or at their De Morgan dual.
+A map carries a relation between two arguments to a relation between their values: a monotone map
+keeps `⊑`, an antitone map turns it into `⊒`, and a map that takes disjoint elements to disjoint
+elements keeps `|`. The projection of a relation `R` through a signature `σ` is the relation that
+every `σ`-function carries `R` to. We define projection, show that it is an action of the monoid
+of signatures on the relations, and call a signature sound for a map when the map carries every
+relation to its projection.
+
+## Main definitions
+
+* `NaturalLogic.ProjectivitySignature.project`: the projection of a relation through a signature.
+* `NaturalLogic.ProjectivitySignature.SoundFor`: `σ.SoundFor f` says that `f` carries every
+  relation `R` to `project R σ`.
+* `NaturalLogic.ProjectivitySignature.Property.Carries`: a map carries the constraints of a
+  property.
+
+## Main results
+
+* `NaturalLogic.ProjectivitySignature.project_project`: projecting through `φ` and then through
+  `ψ` is projecting through `ψ * φ`.
+* `NaturalLogic.ProjectivitySignature.soundFor_of_holdsFor`: a signature is sound for every map in
+  its function class.
+* `NaturalLogic.ProjectivitySignature.SoundFor.comp`: if `ψ` is sound for `f` and `φ` for `g`,
+  then `ψ * φ` is sound for `f ∘ g`.
+* `NaturalLogic.ProjectivitySignature.soundFor_iff_forall_carries`: a signature is sound for
+  exactly the maps that carry the constraints of each of its properties.
+* `NaturalLogic.ProjectivitySignature.soundFor_mult_iff_map_compl_le` and its five companions:
+  between Boolean algebras, a signature with a direction is sound for exactly the maps of that
+  direction that take complementary elements to disjoint, codisjoint or complementary ones.
 
 ## Implementation notes
 
-* Icard works over Boolean algebras; the proofs need only bounded lattices.
+* Icard works over Boolean algebras. The definitions, and every result that does not mention
+  complements, need only bounded lattices.
+* A signature is sound for more maps than its function class holds: carrying codisjoint elements
+  to codisjoint elements is weaker than preserving joins.
 
 ## References
 
@@ -37,12 +58,10 @@ namespace NaturalLogic
 
 namespace ProjectivitySignature
 
-/-- The constraint between the values of a function with property `p` that a constraint `a`
-between its arguments guarantees, when there is one
-(`ProjectivitySignature.Property.HoldsFor.project`): a monotone function keeps `≤` and `≥` and an
-antitone one swaps them, an additive function keeps codisjointness and a multiplicative one
-disjointness, an anti-additive function turns codisjointness into disjointness and an
-anti-multiplicative one the reverse. -/
+/-- The constraint between the values of a function with property `p` that a constraint `a` between
+its arguments gives, when there is one: a monotone function keeps `≤` and `≥` and an antitone one
+swaps them, an additive function keeps codisjointness and a multiplicative one disjointness, and
+an anti-additive or anti-multiplicative function exchanges the two. -/
 def Property.project : Relation.Atom → Property → Option Relation.Atom
   | .le, .monotone => some .le
   | .ge, .monotone => some .ge
@@ -61,14 +80,9 @@ theorem Property.compose_project : ∀ (p q : Property) (a : Relation.Atom),
       (Property.project a q).bind (Property.project · p) := by
   decide
 
-/-- The projection of a relation through a function of the given signature is the strongest relation
-guaranteed between `f x` and `f y` when `x R y` and `f` has signature `σ` ([icard-2012] Definition
-2.3, computed by his Lemma 2.4): `≡`, since every function preserves equality, and otherwise the
-relation asserting what the property rule gives for each property of `σ` and constraint of `R`
-(`ProjectivitySignature.mem_constraints_project`). Each row is sound
-(`ProjectivitySignature.soundFor_of_holdsFor`) and least (`ProjectivitySignature.isLeast_project` in
-`Logic/Natural/Completeness.lean`). [icard-2012] remarks under the table that `[R]^• = #` for all
-`R` (p. 715), which is what the property rule alone gives for `≡` too. -/
+/-- The projection of a relation `R` through a signature `σ` ([icard-2012] Definition 2.3) is `≡`
+when `R` is `≡`, since every function preserves equality, and otherwise the relation asserting
+what the property rule gives for each property of `σ` and each constraint of `R`. -/
 def project (R : Relation) (σ : ProjectivitySignature) : Relation :=
   if R = .equiv then .equiv else
     Relation.ofAtoms fun b ↦ ∃ p ∈ σ.properties, ∃ a ∈ R.constraints, Property.project a p = some b
@@ -116,8 +130,7 @@ instance : SMul ProjectivitySignature Relation := ⟨fun σ R ↦ project R σ�
 
 @[simp] theorem smul_def (σ : ProjectivitySignature) (R : Relation) : σ • R = project R σ := rfl
 
-/-- Projection is an action of the signature monoid on the relations, with
-`ProjectivitySignature.project_project` as its `mul_smul` law. -/
+/-- Projection is an action of the monoid of signatures on the relations. -/
 instance : MulAction ProjectivitySignature Relation where
   one_smul := by decide
   mul_smul ψ φ R := (project_project R φ ψ).symm
@@ -142,9 +155,8 @@ section SoundFor
 variable {α β γ : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
   [BoundedOrder β] [Lattice γ] [BoundedOrder γ]
 
-/-- A signature σ is **sound for** `f` when `f` projects every relation as
-σ's row of the projection table says ([icard-2012] Lemma 2.5: every
-φ-function projects `R` to `[R]^φ`). -/
+/-- `σ.SoundFor f` says that `f` takes arguments related by `R` to values related by the projection
+of `R` through `σ`, for every relation `R` ([icard-2012] Lemma 2.5). -/
 def SoundFor (σ : ProjectivitySignature) (f : α → β) : Prop :=
   ∀ (R : Relation) (x y : α), R.Holds x y →
     (project R σ).Holds (f x) (f y)
@@ -418,19 +430,16 @@ theorem Property.HoldsFor.project {p : Property} {f : α → β}
     | exact disjoint_iff.2 (by rw [← hf.1, ha.eq_top, hf.2])
     | exact codisjoint_iff.2 (by rw [← hf.1, ha.eq_bot, hf.2])
 
-/-- A function carries the constraints of a property when it takes each constraint between its
-arguments to the constraint `Property.project` says between its values. A function with the
-property does (`Property.HoldsFor.project`), and so do others: carrying codisjointness to
-codisjointness is weaker than preserving joins. -/
+/-- A function carries the constraints of a property `p` when it takes arguments satisfying a
+constraint to values satisfying the constraint that `Property.project` gives for `p`. -/
 def Property.Carries (p : Property) (f : α → β) : Prop :=
   ∀ ⦃a b⦄, Property.project a p = some b → ∀ ⦃x y⦄, a.Holds x y → b.Holds (f x) (f y)
 
 theorem Property.HoldsFor.carries {p : Property} {f : α → β} (hf : p.HoldsFor f) : p.Carries f :=
   fun _ _ h _ _ ha ↦ hf.project h ha
 
-/-- σ's projection row is sound for exactly the functions that carry the constraints of each of
-σ's properties, as its function class is the functions with each of them
-(`ProjectivitySignature.HoldsFor`). -/
+/-- The row of `σ` is sound for exactly the functions that carry the constraints of each property
+of `σ`. -/
 theorem soundFor_iff_forall_carries {σ : ProjectivitySignature} {f : α → β} :
     σ.SoundFor f ↔ ∀ p ∈ σ.properties, p.Carries f := by
   refine ⟨fun h p hp a b hab x y ha ↦ ?_, fun h R x y hR ↦ ?_⟩
@@ -444,8 +453,7 @@ theorem soundFor_iff_forall_carries {σ : ProjectivitySignature} {f : α → β}
     obtain ⟨p, hp, a, ha, hab⟩ := (mem_constraints_project hRe).1 hb
     exact h p hp hab (Relation.holds_iff.1 hR a ha)
 
-/-- σ's projection row is sound for every σ-function ([icard-2012] Lemma 2.5): a function with a
-property carries its constraints. -/
+/-- The row of `σ` is sound for every σ-function ([icard-2012] Lemma 2.5). -/
 theorem soundFor_of_holdsFor {σ : ProjectivitySignature} {f : α → β}
     (h : σ.HoldsFor f) : σ.SoundFor f :=
   soundFor_iff_forall_carries.2 fun p hp ↦ (h p hp).carries
