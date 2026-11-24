@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.Transduction
+public import Linglib.Phonology.Subregular.Function.Transduction
 public import Linglib.Data.Examples.Dolatian2020
 
 /-!

@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.List.DropRight
-public import Linglib.Phonology.Subregular.OSL
+public import Linglib.Phonology.Subregular.Function.OSL
 
 /-!
 # Search and copy

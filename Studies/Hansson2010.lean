@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Phonology.Segmental.PHOIBLE
-public import Linglib.Phonology.Subregular.Agree
-public import Linglib.Phonology.Subregular.Multitier
+public import Linglib.Phonology.Subregular.Stringset.Agree
+public import Linglib.Phonology.Subregular.Stringset.Multitier
 public import Linglib.Phonology.Harmony.System
 public import Linglib.Data.Examples.Hansson2010
 public import Linglib.Data.Examples.Readers

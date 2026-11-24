@@ -7,7 +7,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OCP
-public import Linglib.Phonology.Subregular.ForbiddenPairs
+public import Linglib.Phonology.Subregular.Stringset.ForbiddenPairs
 
 /-!
 # Forbidden-factor constraints

@@ -2,8 +2,8 @@ module
 
 public import Linglib.Phonology.Subregular.Local
 public import Linglib.Phonology.Subregular.WordModel.Factor
-public import Linglib.Phonology.Subregular.TierStrictlyLocal
-public import Linglib.Phonology.Subregular.StrictlyPiecewise
+public import Linglib.Phonology.Subregular.Stringset.TierStrictlyLocal
+public import Linglib.Phonology.Subregular.Stringset.StrictlyPiecewise
 public import Mathlib.Order.SuccPred.Nat
 public import Linglib.Core.Computability.Edge
 

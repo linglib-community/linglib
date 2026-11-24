@@ -6,10 +6,10 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.Mealy
-public import Linglib.Phonology.Subregular.ISL
-public import Linglib.Phonology.Subregular.OSL
+public import Linglib.Phonology.Subregular.Function.ISL
+public import Linglib.Phonology.Subregular.Function.OSL
 public import Linglib.Core.Computability.Subsequential
-public import Linglib.Phonology.Subregular.Dependence
+public import Linglib.Phonology.Subregular.Function.Dependence
 public import Linglib.Core.Computability.Bimachine.MyhillNerode
 public import Studies.LamontOHaraSmith2019
 public import Studies.McCollumEtAl2020

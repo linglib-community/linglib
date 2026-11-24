@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.StrictlyLocal
-public import Linglib.Phonology.Subregular.TierBased
+public import Linglib.Phonology.Subregular.Stringset.StrictlyLocal
+public import Linglib.Phonology.Subregular.Stringset.TierBased
 public import Mathlib.Data.List.Basic
 public import Mathlib.Computability.Language
 

@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.StrictlyPiecewise
-public import Linglib.Phonology.Subregular.ForbiddenPairs
+public import Linglib.Phonology.Subregular.Stringset.StrictlyPiecewise
+public import Linglib.Phonology.Subregular.Stringset.ForbiddenPairs
 
 /-!
 # AGREE as a tier-based strictly 2-local language

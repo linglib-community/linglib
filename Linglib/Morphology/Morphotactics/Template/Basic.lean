@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Subregular.StrictlyPiecewise
+public import Linglib.Phonology.Subregular.Stringset.StrictlyPiecewise
 public import Mathlib.Data.Finset.Defs
 
 /-!

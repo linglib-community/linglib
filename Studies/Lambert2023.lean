@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.TierStrictlyLocal
-public import Linglib.Phonology.Subregular.StrictlyPiecewise
+public import Linglib.Phonology.Subregular.Stringset.TierStrictlyLocal
+public import Linglib.Phonology.Subregular.Stringset.StrictlyPiecewise
 public import Linglib.Core.Computability.ShuffleIdeal
 public import Mathlib.Computability.DFA
 public import Mathlib.Tactic.DeriveFintype

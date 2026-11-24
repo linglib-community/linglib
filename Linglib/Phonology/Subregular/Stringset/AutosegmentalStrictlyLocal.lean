@@ -7,7 +7,7 @@ module
 
 public import Linglib.Phonology.Autosegmental.Factors
 public import Linglib.Phonology.Autosegmental.Realization
-public import Linglib.Phonology.Subregular.StrictlyLocal
+public import Linglib.Phonology.Subregular.Stringset.StrictlyLocal
 
 /-!
 # Autosegmental strictly local languages
