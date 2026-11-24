@@ -76,11 +76,17 @@ constraint, which compares classes that need not both contain the two entities, 
 Klein's equivalence quantifies over the contexts at least as determinate as the given one, which
 are here the delineations of an admissible family `𝒟` extending the given one.
 
-On a gapless delineation the consistency constraint is the Ferrers condition on the relation
-between entities and classes, *u is in the positive extension relative to X*: of two entities,
-one is positive wherever the other is. Measurement theory calls a relation that meets it a
-biorder, or a Guttman scale, and calls the ordering of the degrees its trace. The condition is
-stated here with mathlib's `IsChain`, on the degrees and on the positive extensions.
+On a gapless delineation the consistency constraint is the condition that defines a biorder in
+[doignon-ducamp-falmagne-1984], imposed on the relation between entities and classes, *u is in
+the positive extension relative to X*. [ducamp-falmagne-1969] study such relations as
+bi-quasi-series, which generalize Guttman scales, and they are also called Ferrers relations. The
+degree of an entity is the set of classes related to it, the ordering of entities by inclusion of
+degrees is the left trace of [bouyssou-marchant-2011], and that a relation is a biorder exactly
+when this ordering, or the like ordering of the classes, is connected is a proposition of
+[doignon-ducamp-falmagne-1984]. The condition is stated here with mathlib's `IsChain`, on the
+degrees and on the positive extensions. For finite sets a biorder is represented by two real
+scales, with `u` related to `X` when the scale value of `u` exceeds that of `X`; here the
+threshold of a class is an upper set of degrees, which needs no finiteness.
 
 A standard is an upper set of degrees, as in `Semantics/Degree/PositiveStandard.lean`, and the
 class-relative standard `σ : Set E → UpperSet D` is Klein's shape. A standard an adjective fixes
@@ -93,6 +99,9 @@ the measure to it.
 * [klein-1980]
 * [kamp-1975]
 * [fine-1975]
+* [ducamp-falmagne-1969]
+* [doignon-ducamp-falmagne-1984]
+* [bouyssou-marchant-2011]
 * [bochnak-2015]
 * [burnett-2017]
 * [cobreros-etal-2012]
