@@ -657,7 +657,38 @@ def toDet (q : NumberTree) : Det α := fun A B ↦ q (A \ B).ncard (A ∩ B).nca
 theorem toDet_apply (q : NumberTree) (A B : Set α) :
     q.toDet A B ↔ q (A \ B).ncard (A ∩ B).ncard := Iff.rfl
 
+theorem ofDet_le_iff_le_toDet {q : NumberTree} : ofDet d ≤ q ↔ d ≤ q.toDet :=
+  ⟨fun h A B hd ↦ h _ _ ⟨A, B, rfl, rfl, hd⟩, fun h _ _ ⟨A, B, ha, hb, hd⟩ ↦ ha ▸ hb ▸ h A B hd⟩
+
+/-- Reading the tree of a determiner denotation off and reading a tree back as a determiner
+denotation form a Galois connection, as the image and the preimage of a set under a function
+do. -/
+theorem gc_ofDet_toDet : GaloisConnection (ofDet (α := α)) toDet :=
+  fun _ _ ↦ ofDet_le_iff_le_toDet
+
+theorem le_toDet_ofDet (d : Det α) : d ≤ (ofDet d).toDet := gc_ofDet_toDet.le_u_l d
+
+/-- A conservative, permutation-invariant determiner denotation on a finite universe is the
+determiner denotation of its tree. -/
+theorem toDet_ofDet [Finite α] (hC : d.Conservative) (hQ : d.QuantityInvariant) :
+    (ofDet d).toDet = d :=
+  funext₂ fun A B ↦ propext (ofDet_iff hC hQ A B)
+
 @[simp] theorem toDet_inf (q r : NumberTree) : (q ⊓ r).toDet = (q.toDet ⊓ r.toDet : Det α) := rfl
+
+@[simp] theorem toDet_sup (q r : NumberTree) : (q ⊔ r).toDet = (q.toDet ⊔ r.toDet : Det α) := rfl
+
+@[simp] theorem toDet_top : (⊤ : NumberTree).toDet = (⊤ : Det α) := rfl
+
+@[simp] theorem toDet_bot : (⊥ : NumberTree).toDet = (⊥ : Det α) := rfl
+
+/-- `toDet` as a complete lattice homomorphism from the trees to the determiner denotations. -/
+def toDetHom : CompleteLatticeHom NumberTree (Det α) where
+  toFun := toDet
+  map_sInf' S := by funext A B; simp [toDet, sInf_apply]
+  map_sSup' S := by funext A B; simp [toDet, sSup_apply]
+
+@[simp] theorem coe_toDetHom : ⇑(toDetHom (α := α)) = toDet := rfl
 
 @[simp] theorem toDet_compl (q : NumberTree) : qᶜ.toDet = (q.toDetᶜ : Det α) := rfl
 
@@ -692,22 +723,56 @@ theorem toDet_preimage {β : Type*} {f : α → β} (hf : f.Injective) {A : Set 
     Set.ncard_preimage_of_injective_subset_range hf (Set.sdiff_subset.trans hA),
     Set.ncard_preimage_of_injective_subset_range hf (Set.inter_subset_left.trans hA)]
 
-/-- The determiner denotation of a scope-monotone tree is scope monotone, since enlarging `B`
-within `A` moves `|(A \ B) ∩ B'|` individuals from `A \ B` to `A ∩ B`. -/
+/-! ### Cardinal determiner denotations -/
+
+/-- A determiner denotation is cardinal when it depends only on `|A ∩ B|`: `d A B ↔ d A' B'`
+whenever `A ∩ B` and `A' ∩ B'` have the same number of members ([keenan-stavi-1986]). -/
+def _root_.Quantifier.Det.Cardinal (d : Det α) : Prop :=
+  ∀ A B A' B' : Set α, (A ∩ B).ncard = (A' ∩ B').ncard → (d A B ↔ d A' B')
+
+theorem _root_.Quantifier.Det.Cardinal.intersective (h : d.Cardinal) : d.Intersective :=
+  fun _ _ _ _ he ↦ h _ _ _ _ (by rw [he])
+
+theorem _root_.Quantifier.Det.Cardinal.quantityInvariant (h : d.Cardinal) :
+    d.QuantityInvariant :=
+  fun σ A B ↦ h _ _ _ _ (by rw [← Set.preimage_inter]; exact ncard_preimage_perm σ (A ∩ B))
+
+/-- The determiner denotation of a cardinal quantifier is cardinal. -/
+theorem cardinal_toDet_cardinal (s : Set ℕ) : ((cardinal s).toDet : Det α).Cardinal :=
+  fun _ _ _ _ h ↦ by rw [toDet_apply, toDet_apply, cardinal_apply, cardinal_apply, h]
+
+/-- A determiner denotation is cardinal if and only if it is the determiner denotation of the
+cardinal quantifier of some set of numbers. -/
+theorem _root_.Quantifier.Det.cardinal_iff_exists_toDet :
+    d.Cardinal ↔ ∃ s : Set ℕ, (cardinal s).toDet = d :=
+  ⟨fun h ↦ ⟨{n | ∃ A B : Set α, (A ∩ B).ncard = n ∧ d A B}, funext₂ fun A B ↦ propext
+      ⟨fun ⟨_, _, he, hd⟩ ↦ (h _ _ _ _ he).1 hd, fun hd ↦ ⟨A, B, rfl, hd⟩⟩⟩,
+    fun ⟨s, hs⟩ ↦ hs ▸ cardinal_toDet_cardinal s⟩
+
+/-- Enlarging the scope from `B` to `B'` moves the `k` members of `A` that are in `B'` and not in
+`B` from outside the scope to inside it: a step of length `k` to the right along a row of the
+tree. -/
+theorem exists_ncard_eq_add_of_subset [Finite α] (A : Set α) {B B' : Set α} (hB : B ⊆ B') :
+    ∃ k, (A \ B).ncard = (A \ B').ncard + k ∧ (A ∩ B').ncard = (A ∩ B).ncard + k := by
+  refine ⟨((A \ B) ∩ B').ncard, ?_, ?_⟩
+  · have h := Set.ncard_inter_add_ncard_sdiff_eq_ncard (A \ B) B'
+    have e : (A \ B) \ B' = A \ B' := by ext x; have := @hB x; grind
+    rw [e] at h
+    omega
+  · have h := Set.ncard_inter_add_ncard_sdiff_eq_ncard (A ∩ B') B
+    have e₁ : A ∩ B' ∩ B = A ∩ B := by ext x; have := @hB x; grind
+    have e₂ : (A ∩ B') \ B = (A \ B) ∩ B' := by ext; grind
+    rw [e₁, e₂] at h
+    omega
+
+/-- The determiner denotation of a scope-monotone tree is scope monotone. -/
 theorem ScopeMonotone.toDet [Finite α] {q : NumberTree} (h : q.ScopeMonotone) :
     (q.toDet : Det α).ScopeMonotone := by
   intro A B B' hB hq
-  rw [toDet_apply] at hq ⊢
-  have h₁ := Set.ncard_inter_add_ncard_sdiff_eq_ncard (A \ B) B'
-  have h₂ := Set.ncard_inter_add_ncard_sdiff_eq_ncard (A ∩ B') B
-  have e₁ : A ∩ B' ∩ B = A ∩ B := by ext x; have := @hB x; grind
-  have e₂ : (A \ B) \ B' = A \ B' := by ext x; have := @hB x; grind
-  have e₃ : (A ∩ B') \ B = (A \ B) ∩ B' := by ext; grind
-  rw [e₂] at h₁
-  rw [e₁, e₃] at h₂
-  rw [← h₂]
-  rw [← h₁, Nat.add_comm] at hq
-  exact h.shift _ hq
+  obtain ⟨k, h₁, h₂⟩ := exists_ncard_eq_add_of_subset A hB
+  rw [toDet_apply, h₁] at hq
+  rw [toDet_apply, h₂]
+  exact h.shift k hq
 
 /-- The determiner denotation of a scope-antitone tree is scope antitone. -/
 theorem ScopeAntitone.toDet [Finite α] {q : NumberTree} (h : q.ScopeAntitone) :
