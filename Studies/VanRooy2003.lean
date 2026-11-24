@@ -523,6 +523,40 @@ theorem liveIn_visit_better (μ : Measure Address) [IsProbabilityMeasure μ] :
   rw [h, Setoid.bot_def] at this
   exact absurd this (by decide)
 
+/-- What one chooses on an errand: an address for a letter, a city for a visit. -/
+abbrev Choice (toSend : Bool) : Type := bif toSend then Address else City
+
+instance : ∀ b, Nonempty (Choice b)
+  | true => inferInstanceAs (Nonempty Address)
+  | false => inferInstanceAs (Nonempty City)
+
+/-- The two decision problems of the example, as a family. -/
+def errand : (toSend : Bool) → Address → Choice toSend → ℝ
+  | true => letter
+  | false => visit
+
+/-- Someone who may either send a letter or pay a visit needs the address: the two problems
+together call for the complete answer. -/
+theorem iInf_issue_errand_le : ⨅ b, issue (errand b) ≤ fromSetoid ⊥ := by
+  refine (iInf_issue_le_fromSetoid_iff errand).2 fun w v h ↦ ?_
+  obtain ⟨a, ha⟩ := h true
+  have hw : a = w := by
+    by_contra hne
+    exact absurd (ha w w (by simp)) (by simp [errand, letter, hne])
+  have hv : a = v := by
+    by_contra hne
+    exact absurd (ha v v (by simp)) (by simp [errand, letter, hne])
+  rw [Setoid.bot_def]
+  exact hw.symm.trans hv
+
+/-- The visit alone does not: the city resolves it. -/
+theorem not_issue_visit_le : ¬ issue visit ≤ fromSetoid ⊥ := fun h ↦ by
+  have hs : {v : Address | v.city = .amsterdam} ∈ issue visit :=
+    visit_isResolved .amsterdam fun _ hv ↦ hv
+  have := mem_fromSetoid.1 (h hs) .amsterdam₁ rfl .amsterdam₂ rfl
+  rw [Setoid.bot_def] at this
+  exact absurd this (by decide)
+
 /-! #### Conceptual covers -/
 
 /-- In the worlds of *Who killed spiderman?* John or Bill did it, wearing a blue or a green

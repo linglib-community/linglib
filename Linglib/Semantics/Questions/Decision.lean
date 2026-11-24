@@ -19,7 +19,11 @@ information of the experiment that reveals the answer. On finitely many worlds t
 utility value of the answers, weighted by their probabilities.
 
 Information resolves a decision problem when one action is best in every world that it leaves open.
-The information that resolves the problem forms an inquisitive question, `issue U`.
+The information that resolves the problem forms an inquisitive question, `issue U`. Information
+that resolves each of several problems forms the meet of their issues, which is the issue of
+choosing an action in each (`iInf_issue`), and the problems together call for the answer to a
+partition question exactly when any two worlds that every one of them can treat alike lie in one
+cell (`iInf_issue_le_fromSetoid_iff`).
 
 There are three main results. A finer question is never worth less. Under a prior with full
 support, a question is worth as much as knowing the world exactly if and only if each of its answers
@@ -122,6 +126,47 @@ theorem fromSetoid_le_issue_iff {Q : Setoid W} :
   · exact (h w).mono fun x hx ↦ mem_fromSetoid.1 hq x hx w hw
 
 end Issue
+
+/-! ### Several decision problems -/
+
+section Family
+
+variable {ι : Type*} {B : ι → Type*} [∀ i, Nonempty (B i)] (U : ∀ i, W → B i → ℝ)
+
+/-- Information resolves each of several decision problems exactly when it resolves the problem
+of choosing an action in each of them, paid the sum of their utilities. -/
+theorem iInf_issue [Fintype ι] :
+    ⨅ i, issue (U i) = issue fun w (a : ∀ i, B i) ↦ ∑ i, U i w (a i) := by
+  classical
+  ext C
+  rw [mem_iInf_iff]
+  simp only [mem_issue]
+  constructor
+  · intro h
+    choose a ha using h
+    exact ⟨a, fun b w hw ↦ Finset.sum_le_sum fun i _ ↦ ha i (b i) w hw⟩
+  · rintro ⟨a, ha⟩ i
+    refine ⟨a i, fun b w hw ↦ ?_⟩
+    have h : ∑ j, U j w (Function.update a i b j) ≤ ∑ j, U j w (a j) :=
+      ha (Function.update a i b) w hw
+    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i),
+      ← Finset.add_sum_erase _ (fun j ↦ U j w (a j)) (Finset.mem_univ i), Function.update_self,
+      Finset.sum_congr rfl fun j hj ↦ by
+        rw [Function.update_of_ne (Finset.ne_of_mem_erase hj)]] at h
+    exact le_of_add_le_add_right h
+
+/-- The decision problems of a family together call for the answer to a partition question
+exactly when any two worlds that every one of them can treat alike lie in one cell. -/
+theorem iInf_issue_le_fromSetoid_iff {Q : Setoid W} :
+    ⨅ i, issue (U i) ≤ fromSetoid Q ↔ ∀ w v, (∀ i, IsResolved (U i) {w, v}) → Q w v := by
+  constructor
+  · intro h w v hres
+    exact mem_fromSetoid.1 (h (mem_iInf_iff.2 fun i ↦ hres i)) w (by simp) v (by simp)
+  · intro h C hC
+    refine mem_fromSetoid.2 fun x hx y hy ↦ h x y fun i ↦ (mem_iInf_iff.1 hC i).mono ?_
+    rintro z (rfl | rfl) <;> assumption
+
+end Family
 
 instance (P : Proposition (Set W)) : Nonempty P := ⟨⟨∅, P.empty_mem⟩⟩
 
