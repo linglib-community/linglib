@@ -289,6 +289,13 @@ theorem value_mono [Nonempty A] (U : W → A → ℝ) (π : Measure W) :
   rw [value_eq_sum, value_eq_sum]
   exact Real.monotone_sum_softmax_smul_mul (fun a ↦ ∫ w, U w a ∂π) h
 
+/-- As the policy's rationality grows, the value of a decision problem tends to the expected
+utility of its best action, the value that [van-rooy-2003] gives it. -/
+theorem tendsto_value_atTop [Nonempty A] (U : W → A → ℝ) (π : Measure W) :
+    Filter.Tendsto (fun αℵ ↦ value U αℵ π) .atTop (nhds (decisionValue U π)) := by
+  simp only [value_eq_sum]
+  exact Real.tendsto_sum_softmax_smul_mul_atTop fun a ↦ ∫ w, U w a ∂π
+
 private theorem mul_sigmoid_sub_half_lt_iff {k x y : ℝ} (hk : 0 < k) :
     x * (Real.sigmoid (k * x) - 1 / 2) < y * (Real.sigmoid (k * y) - 1 / 2) ↔ |x| < |y| := by
   have even (t : ℝ) :

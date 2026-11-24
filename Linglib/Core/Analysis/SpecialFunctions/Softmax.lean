@@ -37,8 +37,9 @@ derivative is the softmax expectation of the derivative of the scores.
 * `Real.hasDerivAt_log_sum_exp_mul`, `Real.monotone_sum_softmax_smul_mul`: the mean of the scores
   under `softmax (α • s)` is the derivative of `log (∑ i, exp (α * s i))` in `α`, and is monotone
   in `α`.
-* `Real.tendsto_softmax_atTop`: softmax concentrates on a strict maximizer as the inverse
-  temperature grows.
+* `Real.tendsto_softmax_atTop`, `Real.tendsto_sum_softmax_smul_mul_atTop`: as the inverse
+  temperature grows, softmax concentrates on a strict maximizer, and the mean of the scores under
+  it tends to the largest score.
 * `Real.softmax_eq_sigmoid_of_univ_eq_pair`, `Real.softmax_fin_two`: two alternatives give
   `Real.sigmoid`.
 * `Real.softmax_sum_apply`: a separable score on a product type gives a product distribution.
@@ -236,6 +237,34 @@ theorem tendsto_softmax_atTop {s : ι → ℝ} {i : ι} (h : ∀ j ≠ i, s j < 
     · simpa [Function.comp_def] using
         tendsto_exp_atBot.comp (tendsto_id.atTop_mul_const_of_neg (sub_neg.2 (h j hj)))
   simpa using this.inv₀ (by simp)
+
+/-- As the inverse temperature grows, the softmax average of the scores tends to the largest
+score. -/
+theorem tendsto_sum_softmax_smul_mul_atTop [Nonempty ι] (s : ι → ℝ) :
+    Tendsto (fun α : ℝ ↦ ∑ i, softmax (α • s) i * s i) atTop (𝓝 (⨆ i, s i)) := by
+  obtain ⟨m, hm⟩ := Finite.exists_max s
+  rw [show ⨆ i, s i = s m from
+    le_antisymm (ciSup_le hm) (le_ciSup (Set.finite_range s).bddAbove m)]
+  have key (α : ℝ) :
+      ∑ i, softmax (α • s) i * s i = s m + ∑ i, softmax (α • s) i * (s i - s m) := by
+    simp only [mul_sub, sum_sub_distrib, ← sum_mul, sum_softmax, one_mul]
+    ring
+  simp only [key]
+  suffices h : Tendsto (fun α : ℝ ↦ ∑ i, softmax (α • s) i * (s i - s m)) atTop (𝓝 0) by
+    simpa using tendsto_const_nhds.add h
+  rw [show (0 : ℝ) = ∑ _i : ι, 0 by simp]
+  refine tendsto_finsetSum _ fun i _ ↦ ?_
+  rcases eq_or_lt_of_le (hm i) with h | h
+  · simp [h]
+  · have hle (α : ℝ) : softmax (α • s) i ≤ exp (α * (s i - s m)) := by
+      rw [softmax_eq_inv_sum_exp_sub, mul_sub, ← neg_sub (α * s m), exp_neg]
+      exact inv_anti₀ (exp_pos _) (single_le_sum (f := fun j ↦ exp ((α • s) j - (α • s) i))
+        (fun _ _ ↦ (exp_pos _).le) (mem_univ m))
+    have h0 : Tendsto (fun α : ℝ ↦ softmax (α • s) i) atTop (𝓝 0) :=
+      tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds
+        (tendsto_exp_atBot.comp (tendsto_id.atTop_mul_const_of_neg (sub_neg.2 h)))
+        (fun α ↦ softmax_nonneg _ i) hle
+    simpa using h0.mul_const (s i - s m)
 
 end Limit
 
