@@ -39,6 +39,20 @@ theorem karttunen_eq_of_isStrongestTrueAnswer {p : Set W}
   Set.ext fun _ => ⟨fun hq => ⟨hq.1, h.2 hq⟩, fun ⟨hq, hpq⟩ => ⟨hq, hpq h.1.2⟩⟩
 
 variable {H w} in
+/-- A world is in the exclusion of `p` just in case `p` entails the weak answer there. -/
+theorem mem_excludes_iff_subset_weakAnswer {p : Set W} :
+    w ∈ Exhaustification.excludes H p ↔ p ⊆ weakAnswer H w := by
+  simp only [Exhaustification.mem_excludes, Set.subset_def, mem_weakAnswer]
+  exact ⟨fun h v hv q hq hw ↦ h q hq hw v hv, fun h q hq hw v hv ↦ h v hv q hq hw⟩
+
+variable {H w} in
+/-- Exhaustification keeps the worlds of the prejacent at which the prejacent entails the weak
+answer, for any prejacent. -/
+theorem mem_exh_iff_subset_weakAnswer {p : Set W} :
+    w ∈ Exhaustification.exh H p ↔ w ∈ p ∧ p ⊆ weakAnswer H w :=
+  and_congr_right fun _ ↦ mem_excludes_iff_subset_weakAnswer
+
+variable {H w} in
 /-- A member exhaustified against the question holds where it is the strongest true member: Fox's
 `Exh(Q, p)` is the set of worlds `w` with `Max_inf(Q, w) = p` ([fox-2018], (11), after
 [dayal-1996]'s `Max_inf`). -/

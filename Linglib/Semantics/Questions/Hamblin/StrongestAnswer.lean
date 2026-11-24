@@ -192,6 +192,9 @@ def supported (s : Set W) : Set (Set W) := {p ∈ H | s ⊆ p}
 
 @[simp] theorem mem_supported {s p : Set W} : p ∈ supported H s ↔ p ∈ H ∧ s ⊆ p := Iff.rfl
 
+theorem supported_eq_inter_upperPolar (s : Set W) :
+    supported H s = H ∩ upperPolar (· ∈ ·) s := rfl
+
 @[simp] theorem supported_singleton : supported H {w} = karttunen H w := by
   ext p
   simp [supported, karttunen]
