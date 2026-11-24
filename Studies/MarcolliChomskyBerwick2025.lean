@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Algebra.FreeCommNonUnitalNonAssocAlgebra
 public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Core.RingTheory.HahnSeries.RotaBaxter
@@ -16,57 +17,47 @@ public import Linglib.Syntax.Minimalist.Label.Selection
 public import Linglib.Syntax.Minimalist.Copy.FormCopy
 public import Mathlib.Combinatorics.Enumerative.Catalan.Tree
 public import Mathlib.RingTheory.LaurentSeries
+public import Mathlib.Tactic.Abel
 
 /-!
 # Marcolli, Chomsky and Berwick (2025): Mathematical Structure of Syntactic Merge
 
-This file formalizes parts of Marcolli, Chomsky and Berwick's algebraic model of Merge.
+Marcolli, Chomsky and Berwick model Merge as an operator on the Hopf algebra of workspaces. The
+algebra itself is the `Syntax/Minimalist/` theory layer and `Core/Algebra/RootedTree/`; this file
+holds the book's worked examples and the results that are stated for one construction.
 
-Internal Merge (§1.4.4) is checked on the book's example, which raises *the apple* out of
-`T = {was, {eaten, {the, apple}}}`. The unit stage `M_{T₂,1}` splits `T` into *the apple* beside
-the quotient `T/T₂`, the composite with `M_{T/T₂,T₂}` merges the two (Proposition 1.4.2), and the
-step satisfies Minimal Yield under trace counting (Proposition 1.6.4).
+Internal Merge is checked on the book's example, which raises *the apple* out of
+`T = {was, {eaten, {the, apple}}}`: the unit stage `M_{T₂,1}` splits `T` into *the apple* beside the
+quotient `T/T₂`, and the composite with `M_{T/T₂,T₂}` merges the two. On the workspace
+`{eaten, {the, apple}}` Sideward Merge has a nonzero term, which Minimal Search removes at `ε = 0`
+while it keeps External and Internal Merge, and which Minimal Yield under trace counting does not
+exclude.
 
-The core computational structure of Merge (§1.10) is a fixed point. Proposition 1.10.2 works in
-`V(𝔗)`, the free `ℤ`-module on the nonplanar binary trees with unlabelled leaves, graded by the
-number of leaves. It generates these trees by recursively solving `X = 𝔐(X, X)` over formal sums
-`X = ∑ Xₗ`, with the initial condition `X₁ = x`, and reads the integer coefficients of the solution
-as numbers of planar embeddings. Here `V(𝔗)` sits in the Connes–Kreimer algebra of unlabelled
-trees, Merge is the grafting operator after the disjoint union (Lemma 1.3.3), and a formal sum is a
-power series whose degree counts leaves. The sum of the planar binary trees, their planar
-structure forgotten, solves the equation (`isMergeSolution_mergeSolution`) and is its only solution
-(`IsMergeSolution.eq`). The coefficient of each tree is its number of planar embeddings
-(`coeff_planarSum_succ`), and the coefficients of `Xₙ₊₁` sum to the Catalan number `Cₙ`
-(`aeval_planarSum_succ`). On syntactic objects, Lemma 1.3.3 is `toCK_merge`.
+The core computational structure of Merge is a fixed point. Let `𝔗 = FreeCommMagma Unit` be the
+nonplanar binary rooted trees with unlabelled leaves and `V(𝔗)` the free commutative
+nonassociative algebra on one generator `x`, whose product is Merge. A formal sum `X = ∑ₗ Xₗ`
+graded by the number of leaves solves `X = 𝔐(X, X)` with `X₁ = x` when
+`Xₙ = ∑_{i+j=n} Xᵢ * Xⱼ` for `n ≥ 2`. In any nonassociative semiring such a solution is unique,
+and a homomorphism takes solutions to solutions. The sum of the planar binary trees with `n`
+leaves solves the equation in the free nonassociative algebra, so its image under the quotient by
+commutativity solves it in `V(𝔗)`, where the coefficient of a tree is its number of planar
+embeddings; its image under the sum of coefficients is the sequence of Catalan numbers.
 
-The book's worked examples of externalization are stated on the `SyntacticObject` carrier of
-the Minimalist substrate: the harmonic head-initial and head-final orders of a determiner–noun
-Merge, the head-side convention flipping the yield, and exocentric elimination, two saturated
-nouns determining no head and hence no order. The framework itself is the `Syntax/Minimalist/`
-theory layer; the examples are kernel-checked against it.
-
-FormSet (§1.16) groups components of a workspace under a new root. Definition 1.16.1 writes it as
+FormSet groups components of a workspace under a new root. It is the composite
 `⊔ ∘ (B ⊗ id) ∘ Π_(k) ∘ Δ_P`, where the primitive coproduct `Δ_P` splits a workspace in every way,
-so `FS^(k)(F)` sums `B(S) ⊔ (F - S)` over the `k`-component subworkspaces `S` (`formSet_of'`). On
-workspaces of syntactic objects it lands in the extended workspaces of (1.16.3) (`map_formSet_le`).
+so `FS^(k)(F)` sums `B(S) ⊔ (F - S)` over the `k`-component subworkspaces `S`, and on workspaces of
+syntactic objects it lands in the extended workspaces.
 
-The book's syntax–semantics interface (Chapter 3) replaces per-feature checking by a single
-recursive map, the Birkhoff renormalization of a character of the Connes–Kreimer Hopf algebra
-of the syntactic object. The Boolean parsing semiring `Consistency` of §3.5 is the target,
-`toCK` embeds a syntactic object into the Hopf algebra, `featureConsistency` is the renormalized
-character, and `headConsistency` instantiates it for the head-following character of Lemma 3.2.5,
-whose probe reads the §1.13 selection head. The machinery is noncomputable, so these are
-specifications of consistency rather than checkers. In §3.5.2 the operator is the projection of
-Laurent series onto their polar part. The renormalized part of any character then lands in the
-power series (`truncLT_birkhoffPlus_of'`), while the grading character `ϕt` is already nonpolar
-and is its own renormalized part (`birkhoffPlus_gradingChar`), so it cannot single out Sideward
-Merge.
+In the book's syntax–semantics interface a character of the Hopf algebra into a semiring is
+renormalized by Birkhoff factorization. For the head-following character, which sends a tree to
+the value of a probe at its head and a tree without a head to zero, and the identity operator on
+an idempotent semiring, the renormalized value of a syntactic object is at least the value at its
+head. For the projection of Laurent series onto their polar part, the renormalized part of any
+character lands in the power series, and the grading character `ϕt` is its own renormalized part.
 
-Obligatory control (§3.8.2) is derived by External Merge alone. In *the man tried to read a
-book* both inscriptions of *the man* merge into theta positions, as repetitions of one another,
-and Form Copy restricts the object to the diagonal on which they are one
-(`theMan_mem_copyRel`), while *a book*, not structurally identical to *the man*, is no copy of it
-(`not_mem_copyRel_aBook`).
+Obligatory control is derived by External Merge alone: in *the man tried to read a book* both
+inscriptions of *the man* merge into theta positions as repetitions of one another, and Form Copy
+relates them, while *a book* is no copy of *the man*.
 
 ## Correspondence with the book
 
@@ -75,7 +66,8 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
 * Definitions 1.2.6 and 1.2.8 (admissible cuts, the coproducts `Δ^ω`):
   `ConnesKreimer.admissibleCuts` and `comulAlgHom` for `Δ^ρ`, which Remark 1.2.9 identifies with the
   Connes–Kreimer coproduct; `traceCuts` and `traceComulAlgHom` for `Δ^c`.
-* Lemma 1.2.10: `ConnesKreimer.traceComulAlgHom_coassoc` and the edge grading of `Coproduct/TraceGrading`.
+* Lemma 1.2.10: `ConnesKreimer.traceComulAlgHom_coassoc` and the edge grading of
+  `Coproduct/TraceGrading`.
 * Lemma 1.2.11 and (1.2.12): `ConnesKreimer.instBialgebra`, the `HopfAlgebra` instance, and
   `antipode_ofTree`.
 * The projections `Π_{ρ,c}` and `Π_{d,ρ}` and the relations `Δ^d = (id ⊗ Π_{d,ρ}) ∘ Δ^ρ =
@@ -131,8 +123,8 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   `lie_lcoeff_singleton_apply_ofTree`, `lie_lcoeff_singleton_apply_of'`, and
   `GrossmanLarson.pairingLie` for the bracket of the grafting product.
 * Definition 3.1.1 and the weight `+1` identity of Definition 3.1.2: `IsRotaBaxter` at weights
-  `-1` and `+1`; the identity operator of Remark 3.2.2, at weight `+1` on the Boolean semiring:
-  `Consistency.isRotaBaxter_id`.
+  `-1` and `+1`; the identity operator of Remark 3.2.2, at weight `+1` on an idempotent semiring:
+  `isRotaBaxter_id`.
 * Definitions 3.1.3, 3.1.5 and 3.1.6, Proposition 3.1.7, Remark 3.1.8:
   `ConnesKreimer.birkhoffMinus`, `birkhoffPrepTree`, `birkhoffPlus`, `birkhoffPlus_eq_convMul`,
   `birkhoffFactorization`, with the operator `-R`; the subalgebras of Proposition 3.1.7:
@@ -152,22 +144,23 @@ extracted term `{the, apple}`. The trace cuts of the carrier label that leaf by 
 extracted term (`traceEncoder`), so the example's quotient is `{was, {eaten, t}}` with `t` the
 trace of *the*.
 
-The equation carries its initial term, `X = x t + 𝔐(X, X)`. The book writes `X = 𝔐(X, X)` and
-supplies `X₁ = x` as an initial condition, but `𝔐(X, X)` has no degree-one term
-(`coeff_one_mergeSeries`), so the leaf enters as an inhomogeneous term.
+The book writes the equation as `X = 𝔐(X, X)` with the initial condition `X₁ = x`.
+`IsMergeSolution` takes the initial condition as its degree-one clause and the equation from
+degree two on, the form to which the proof of Proposition 1.10.2 reduces it. A formal sum is a
+sequence of its homogeneous terms, power series over a nonassociative ring not being available.
 
-`TreeAlgebra` is spanned by the forests of unlabelled trees, not only by the binary trees of `𝔗`.
-`V(𝔗)` is the span of the single binary trees in it, and every term of the solution lies there.
+The planar binary trees are enumerated by mathlib's `BinaryTree.treesOfNumNodesEq`, whose trees
+with `n` internal nodes have `n + 1` leaves, and read in the free magma by `toFreeMagma`.
 
 `formSet` is defined for every `k` on all forests, with the root label of `B` a parameter.
 Definition 1.16.1 takes `k ≥ 3` and the domain `V(𝔉_{SO₀})` of workspaces of syntactic objects;
 `map_formSet_le` is stated on that domain, with the bare root label of the syntactic objects.
 
-Definition 3.1.2's weight `-1` semiring identity
-`R(a) ⊙ R(b) ⊡ R(a ⊙ b) = R(a ⊙ R(b)) ⊡ R(R(a) ⊙ b)` is not the `IsRotaBaxter` identity at any
-weight, and Remark 3.2.2 and Lemma 3.2.7 use `R = id` at that weight on the tropical semiring. On
-`Consistency` the identity has weight `+1` as well, since disjunction is idempotent, and the
-consistency maps use it at that weight.
+Lemma 3.2.5 takes the tropical semiring `(ℝ ∪ {-∞}, max, +)` as target, with `-∞`, its zero, on
+a tree without a head, and §3.2.5 the Boolean semiring. `headProbeChar` takes any commutative
+semiring, and the comparison of Lemma 3.2.7 any idempotent one, with its canonical order. The
+Bogolyubov recursion takes its operator at weight `+1`, which the identity has on an idempotent
+semiring (`isRotaBaxter_id`).
 
 ## TODO
 
@@ -176,12 +169,6 @@ consistency maps use it at that weight.
 solution (1.17.3), which the book cites rather than proves. Stating it needs `B` on formal series
 in the grading by vertices, in which `B` raises the degree by one. With `x = B(1)` the Merge case
 is `P(t) = 1 + t²`, while the book writes `P(X) = X²` next to its requirement `a₀ = 1`.
-
-Lemma 1.10.1 identifies `𝔗` with the free nonassociative commutative magma on one generator,
-stated below as `carrierEmptyEquiv` on the carrier over the empty lexicon; the carrier over a
-lexicon is by definition the free commutative magma on its leaves. The identification of
-`TreeAlgebra`'s binary span with the
-carrier over the empty lexicon is not stated.
 
 Lemma 1.16.5 extends the coproducts `Δ^ω` to extended workspaces by excluding the cuts of edges at
 a root of valence at least three, so that Merge does not undo the grouping FormSet builds
@@ -194,9 +181,6 @@ children of the root: the deletion leaves nothing of the component, and Merge re
 Corollary 3.5.4's character `ψt` sums over the pairs of intermediate derivations of a target,
 which needs a Merge step relation on workspaces; it, and Proposition 3.5.6 beyond the first step of
 its proof, are not formalized.
-
-The book's section locators (§1.12.1, §1.13, §1.13.2) are transcribed from an earlier
-version of this file and are UNVERIFIED against the published text.
 
 ## References
 
@@ -366,34 +350,12 @@ private theorem admissibleCuts_theApple : admissibleCuts theApple.toUnorderedTre
     {({theD.toUnorderedTree, appleN.toUnorderedTree}, UnorderedTree.leaf Vertex.bare),
       ({theD.toUnorderedTree}, UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}),
       ({appleN.toUnorderedTree}, UnorderedTree.node Vertex.bare {theD.toUnorderedTree}),
-      (0, theApple.toUnorderedTree)} := by
-  rw [show theApple.toUnorderedTree = UnorderedTree.node Vertex.bare {theD.toUnorderedTree,
-      appleN.toUnorderedTree} from
-      congrArg SyntacticObject.toUnorderedTree (by decide : theApple = merge theD appleN),
-    admissibleCuts_node, forestCuts_pair,
-    show theD.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
-    show appleN.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
-    treeCuts, treeCuts, admissibleCuts_leaf, admissibleCuts_leaf]
-  simp [Multiset.cons_product, -admissibleCuts_mk]
-  exact Multiset.cons_swap _ _ _
+      (0, theApple.toUnorderedTree)} := by decide
 
 private theorem filter_admissibleCuts_theApple :
     (admissibleCuts theApple.toUnorderedTree).filter (·.1 = {theD.toUnorderedTree}) =
       {({theD.toUnorderedTree}, UnorderedTree.node Vertex.bare {appleN.toUnorderedTree})} := by
-  have hne : (UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) : UnorderedTree Vertex) ≠
-      UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) :=
-    fun h ↦ (by decide : appleN ≠ theD) (SyntacticObject.toUnorderedTree_injective h)
-  have hcard (a b : UnorderedTree Vertex) : a ::ₘ {b} ≠ {a} := fun h ↦ by
-    simpa using congrArg Multiset.card h
-  rw [show theApple.toUnorderedTree = UnorderedTree.node Vertex.bare {theD.toUnorderedTree,
-      appleN.toUnorderedTree} from
-      congrArg SyntacticObject.toUnorderedTree (by decide : theApple = merge theD appleN),
-    admissibleCuts_node, forestCuts_pair,
-    show theD.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
-    show appleN.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
-    treeCuts, treeCuts, admissibleCuts_leaf, admissibleCuts_leaf]
-  simp [Multiset.cons_product, Multiset.filter_singleton, hne, hcard,
-    -admissibleCuts_mk]
+  decide
 
 /-- Sideward Merge of type 2(b) at the trace cuts merges *eaten* with *the* beside the remainder
     of *the apple* (Lemma 1.4.4). -/
@@ -477,10 +439,7 @@ example :
 
 private theorem mem_traceCuts_theApple :
     ({theD.toUnorderedTree}, (deleteAccessible theD
-        theApple).toUnorderedTree) ∈ traceCuts traceEncoder theApple.toUnorderedTree :=
-  Multiset.mem_of_mem_filter (p := fun p ↦ p.1 = {theD.toUnorderedTree}) (by
-    rw [traceCuts_filter_mover (by decide) (by decide) (by decide)]
-    exact Multiset.mem_singleton_self _)
+        theApple).toUnorderedTree) ∈ traceCuts traceEncoder theApple.toUnorderedTree := by decide
 
 /-- The term of Sideward Merge of type 2(b) at the trace cuts takes *eaten* whole and cuts *the*
     out of *the apple*. -/
@@ -489,7 +448,8 @@ private noncomputable def sidewardTermC : CutChoice Vertex :=
     (theApple.toUnorderedTree, ({theD.toUnorderedTree}, {(deleteAccessible theD
         theApple).toUnorderedTree}))}
 
-/-- The same term at the admissible cuts. -/
+/-- The same term at the admissible cuts, where the trunk of *the apple* keeps *apple* under a
+    unary vertex that the deletion contracts. -/
 private noncomputable def sidewardTermN : CutChoice Vertex :=
   {(eaten.toUnorderedTree, ({eaten.toUnorderedTree}, 0)),
     (theApple.toUnorderedTree, ({theD.toUnorderedTree},
@@ -518,8 +478,6 @@ private theorem sidewardTermN_mem :
           by rw [admissibleCuts_theApple]; simp)),
       Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩, rfl⟩⟩
 
-/-- The 2(b) term satisfies Minimal Yield under trace counting, so Minimal Yield does not tell it
-    apart from Internal Merge (Remark 1.6.9). -/
 theorem sideward2b_minimalYield :
     MinimalYield UnorderedTree.accessibleCount {eaten.toUnorderedTree, theApple.toUnorderedTree}
       {(merge eaten theD).toUnorderedTree, (deleteAccessible theD theApple).toUnorderedTree} := by
@@ -610,25 +568,6 @@ example : ¬ IsSyntacticObject (UnorderedTree.contractUnary
 example : deletionQuotient Vertex.bare (.leaf Vertex.bare : UnorderedTree Vertex) = none := by
   decide
 
-/-- The 2(b) term: *eaten* taken whole, and *the* extracted from *the apple*, whose trunk keeps
-    *apple* under a unary vertex that the deletion contracts. -/
-private def sidewardTermD : CutChoice Vertex :=
-  {(eaten.toUnorderedTree, ({eaten.toUnorderedTree}, 0)), (theApple.toUnorderedTree,
-      ({theD.toUnorderedTree}, {UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}}))}
-
-private theorem sidewardTermD_mem :
-    sidewardTermD ∈ forestCutChoices admissibleCuts {eaten.toUnorderedTree,
-        theApple.toUnorderedTree} := by
-  rw [Multiset.insert_eq_cons, forestCutChoices_cons, ← Multiset.cons_zero, forestCutChoices_cons,
-    forestCutChoices_zero]
-  exact Multiset.mem_bind.mpr ⟨({eaten.toUnorderedTree}, 0), Multiset.mem_cons_self _ _,
-    Multiset.mem_map.mpr ⟨_, Multiset.mem_bind.mpr ⟨_,
-      Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem (fun p ↦ (p.1, {p.2}))
-        (show ({theD.toUnorderedTree}, UnorderedTree.node Vertex.bare
-            {appleN.toUnorderedTree}) ∈ admissibleCuts theApple.toUnorderedTree
-          by rw [admissibleCuts_theApple]; simp)),
-      Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩, rfl⟩⟩
-
 /-- Under deletion counting the 2(b) term satisfies the weak form of Minimal Yield but not the
     strong one, since it takes only *eaten* whole (Proposition 1.6.8). -/
 example : MinimalYieldWeak UnorderedTree.numEdges {eaten.toUnorderedTree, theApple.toUnorderedTree}
@@ -643,215 +582,161 @@ example : MinimalYieldWeak UnorderedTree.numEdges {eaten.toUnorderedTree, theApp
     rintro _ (rfl | rfl)
     exacts [licensed_bare_of_isSyntacticObject eaten.isSyntacticObject_toUnorderedTree,
       licensed_bare_of_isSyntacticObject theApple.isSyntacticObject_toUnorderedTree]
-  have hK : sidewardTermD.crown = {eaten.toUnorderedTree, theD.toUnorderedTree} := by
-      simp [sidewardTermD]
+  have hK : sidewardTermN.crown = {eaten.toUnorderedTree, theD.toUnorderedTree} := by
+      simp [sidewardTermN]
   have hX : (merge eaten theD).toUnorderedTree.numEdges = eaten.toUnorderedTree.numEdges +
       theD.toUnorderedTree.numEdges + 2 := by
     rw [toUnorderedTree_merge]; exact UnorderedTree.numEdges_node_pair _ _ _
-  have hne : ∀ t ∈ sidewardTermD.trunk, deletionQuotient Vertex.bare t ≠ none := by decide
+  have hne : ∀ t ∈ sidewardTermN.trunk, deletionQuotient Vertex.bare t ≠ none := by decide
   have hu (S : SyntacticObject) : S.toUnorderedTree.numUnary = 0 :=
     S.isSyntacticObject_toUnorderedTree.isFullBinary.numUnary_eq_zero
   rw [show ({(merge eaten theD).toUnorderedTree, appleN.toUnorderedTree} : Forest (UnorderedTree
       Vertex)) =
       {(merge eaten theD).toUnorderedTree} +
-        sidewardTermD.trunk.filterMap (deletionQuotient Vertex.bare) by decide,
-    MinimalYieldWeak.merge_term_numEdges_iff Vertex.bare hF sidewardTermD_mem hne hK (hu _) (hu _)
+        sidewardTermN.trunk.filterMap (deletionQuotient Vertex.bare) by decide,
+    MinimalYieldWeak.merge_term_numEdges_iff Vertex.bare hF sidewardTermN_mem hne hK (hu _) (hu _)
       (hu _) hX,
-    MinimalYield.merge_term_numEdges_iff Vertex.bare hF sidewardTermD_mem hne hK (hu _) (hu _)
+    MinimalYield.merge_term_numEdges_iff Vertex.bare hF sidewardTermN_mem hne hK (hu _) (hu _)
       (hu _) hX,
-    show sidewardTermD.numWhole = 1 by decide]
+    show sidewardTermN.numWhole = 1 by decide]
   decide
 
-/-! ### The core computational structure of Merge (§1.10) -/
+/-! ### The core computational structure of Merge (§1.10)
+
+The set `𝔗` of binary rooted trees without planar structure and without labels is
+`FreeCommMagma Unit`, and `V(𝔗)` is `FreeCommNonUnitalNonAssocAlgebra ℤ Unit`, whose product is
+Merge extended bilinearly. -/
 
 section CoreMerge
 
-open PowerSeries Finset
+open Finset
 open Finset.HasAntidiagonal.antidiagonal (fst_le snd_le)
 
-/-- The Connes–Kreimer algebra of unlabelled trees over `ℤ`, in which the free `ℤ`-module `V(𝔗)`
-on the nonplanar binary trees sits as the span of single trees. -/
-abbrev TreeAlgebra := ConnesKreimer ℤ (UnorderedTree Unit)
+section Solution
 
-/-- Forgetting the planar structure of a planar binary tree, whose leaves are its `nil`s. -/
-def forgetPlanar : BinaryTree Unit → UnorderedTree Unit
-  | .nil => UnorderedTree.leaf ()
-  | .node _ l r => UnorderedTree.node () {forgetPlanar l, forgetPlanar r}
+variable {A B : Type*} [NonUnitalNonAssocSemiring A] [NonUnitalNonAssocSemiring B]
 
-/-- The single variable `x`, the one-leaf tree. -/
-noncomputable def generator : TreeAlgebra := ofTree (UnorderedTree.leaf ())
+/-- (1.10.1): a formal sum `X = ∑ₗ Xₗ` solves `X = 𝔐(X, X)` with the initial condition `X₁ = x`
+when it has no term of degree zero, its term of degree one is `x`, and each further term is
+`Xₙ = ∑_{i+j=n} Xᵢ * Xⱼ`. -/
+structure IsMergeSolution (x : A) (X : ℕ → A) : Prop where
+  /-- There is no term of degree zero. -/
+  zero : X 0 = 0
+  /-- The initial condition. -/
+  one : X 1 = x
+  /-- The equation in degree `n + 2`. -/
+  add_two (n : ℕ) : X (n + 2) = ∑ p ∈ antidiagonal (n + 2), X p.1 * X p.2
 
-/-- Over the empty lexicon every leaf is the bare trace, and the carrier is the free commutative
-magma on one generator, the reading of Lemma 1.10.1 on the syntactic-object carrier. -/
-def carrierEmptyEquiv : SyntacticObject Empty ≃* FreeCommMagma Unit where
-  toFun := FreeCommMagma.lift fun _ ↦ FreeCommMagma.of ()
-  invFun := FreeCommMagma.lift fun _ ↦ SyntacticObject.trace
-  left_inv x := by
-    have h : (FreeCommMagma.lift fun _ ↦ (SyntacticObject.trace : SyntacticObject Empty)).comp
-          (FreeCommMagma.lift fun _ ↦ FreeCommMagma.of (α := Unit) ())
-        = MulHom.id (SyntacticObject Empty) :=
-      FreeCommMagma.hom_ext fun y ↦ by
-        rcases y with e | _ | e
-        · exact e.elim
-        · rfl
-        · exact e.elim
-    exact MulHom.ext_iff.1 h x
-  right_inv x := by
-    have h : (FreeCommMagma.lift fun _ ↦ FreeCommMagma.of (α := Unit) ()).comp
-          (FreeCommMagma.lift fun _ ↦ (SyntacticObject.trace : SyntacticObject Empty))
-        = MulHom.id (FreeCommMagma Unit) :=
-      FreeCommMagma.hom_ext fun _ ↦ rfl
-    exact MulHom.ext_iff.1 h x
-  map_mul' := map_mul _
+variable {x : A} {X Y : ℕ → A}
 
-/-- Merge on `V(𝔗)` is the grafting operator after the disjoint union (Lemma 1.3.3), a bilinear
-map. -/
-noncomputable def mergeLin : TreeAlgebra →ₗ[ℤ] TreeAlgebra →ₗ[ℤ] TreeAlgebra :=
-  (LinearMap.mul ℤ TreeAlgebra).compr₂ (bPlus ())
+-- The recursive relation of the proof of Proposition 1.10.2
+theorem isMergeSolution_iff : IsMergeSolution x X ↔
+    X 0 = 0 ∧ X 1 = x ∧ ∀ n, X (n + 2) = ∑ p ∈ antidiagonal n, X (p.1 + 1) * X (p.2 + 1) := by
+  refine ⟨fun h ↦ ⟨h.zero, h.one, fun n ↦ ?_⟩, fun ⟨h0, h1, h⟩ ↦ ⟨h0, h1, fun n ↦ ?_⟩⟩
+  · rw [h.add_two, Finset.Nat.sum_antidiagonal_succ, Finset.Nat.sum_antidiagonal_succ', h.zero]
+    simp
+  · rw [h, Finset.Nat.sum_antidiagonal_succ, Finset.Nat.sum_antidiagonal_succ', h0]
+    simp
 
-@[simp] theorem mergeLin_apply (a b : TreeAlgebra) : mergeLin a b = bPlus () (a * b) := rfl
+theorem IsMergeSolution.add_two' (h : IsMergeSolution x X) (n : ℕ) :
+    X (n + 2) = ∑ p ∈ antidiagonal n, X (p.1 + 1) * X (p.2 + 1) :=
+  (isMergeSolution_iff.1 h).2.2 n
 
-theorem mergeLin_comm (a b : TreeAlgebra) : mergeLin a b = mergeLin b a := by
-  rw [mergeLin_apply, mergeLin_apply, _root_.mul_comm]
+theorem IsMergeSolution.map {F : Type*} [FunLike F A B] [NonUnitalRingHomClass F A B] (f : F)
+    (h : IsMergeSolution x X) : IsMergeSolution (f x) (f ∘ X) :=
+  ⟨by simp [h.zero], by simp [h.one], fun n ↦ by simp [h.add_two n]⟩
 
-theorem mergeLin_ofTree (s t : UnorderedTree Unit) :
-    mergeLin (ofTree s) (ofTree t) = ofTree (UnorderedTree.node () {s, t}) := by
-  rw [mergeLin_apply, ← of'_singleton, ← of'_singleton, ← of'_add, bPlus_of']
-  rfl
-
-/-- Merge extends to formal series `X = ∑ Xₗ` degree by degree, the degree-`n` term of `𝔐(X, Y)`
-being `∑_{i+j=n} 𝔐(Xᵢ, Yⱼ)`. -/
-noncomputable def mergeSeries (X Y : TreeAlgebra⟦X⟧) : TreeAlgebra⟦X⟧ :=
-  PowerSeries.mk fun n ↦ bPlus () (coeff n (X * Y))
-
-@[simp] theorem coeff_mergeSeries (X Y : TreeAlgebra⟦X⟧) (n : ℕ) :
-    coeff n (mergeSeries X Y) = ∑ p ∈ antidiagonal n, mergeLin (coeff p.1 X) (coeff p.2 Y) := by
-  rw [mergeSeries, coeff_mk, coeff_mul, map_sum]; rfl
-
-/-- `𝔐(X, X)` has no degree-one term, so the equation leaves `X₁` to the initial condition. -/
-theorem coeff_one_mergeSeries {X : TreeAlgebra⟦X⟧} (h0 : coeff 0 X = 0) :
-    coeff 1 (mergeSeries X X) = 0 := by
-  simp [Finset.Nat.sum_antidiagonal_succ, h0]
-
-/-- A series solves (1.10.1) with its initial condition `X₁ = x` when it has no constant term and
-`X = x t + 𝔐(X, X)`. -/
-def IsMergeSolution (X : TreeAlgebra⟦X⟧) : Prop :=
-  coeff 0 X = 0 ∧ X = monomial 1 generator + mergeSeries X X
-
-/-- The formal sum of the planar binary trees with `n` leaves, planarity forgotten. -/
-noncomputable def planarSum : ℕ → TreeAlgebra
-  | 0 => 0
-  | n + 1 => ∑ P ∈ BinaryTree.treesOfNumNodesEq n, ofTree (forgetPlanar P)
-
-/-- The series `X = ∑ₗ Xₗ` of Proposition 1.10.2. -/
-noncomputable def mergeSolution : TreeAlgebra⟦X⟧ := PowerSeries.mk planarSum
-
--- Proposition 1.10.2
-theorem planarSum_add_two (n : ℕ) :
-    planarSum (n + 2) =
-      ∑ p ∈ antidiagonal n, mergeLin (planarSum (p.1 + 1)) (planarSum (p.2 + 1)) := by
-  rw [planarSum, BinaryTree.treesOfNumNodesEq_succ, sum_biUnion]
-  · refine sum_congr rfl fun p _ ↦ ?_
-    simp only [BinaryTree.pairwiseNode, sum_map, sum_product, planarSum, map_sum,
-      LinearMap.sum_apply, mergeLin_ofTree]
-    rw [sum_comm]
-    rfl
-  · simp_rw [Set.PairwiseDisjoint, Set.Pairwise, disjoint_left]
-    aesop
-
-private theorem sum_antidiagonal_add_two {f : ℕ → TreeAlgebra} (h0 : f 0 = 0) (n : ℕ) :
-    ∑ p ∈ antidiagonal (n + 2), mergeLin (f p.1) (f p.2) =
-      ∑ p ∈ antidiagonal n, mergeLin (f (p.1 + 1)) (f (p.2 + 1)) := by
-  rw [Finset.Nat.sum_antidiagonal_succ, Finset.Nat.sum_antidiagonal_succ', h0]
-  simp
-
-/-- The sum of the planar binary trees solves (1.10.1) with `X₁ = x` (Proposition 1.10.2). -/
-theorem isMergeSolution_mergeSolution : IsMergeSolution mergeSolution := by
-  refine ⟨by simp [mergeSolution, planarSum], PowerSeries.ext fun n ↦ ?_⟩
-  rw [map_add, coeff_mergeSeries, coeff_monomial]
-  rcases n with _ | _ | n
-  · simp [mergeSolution, planarSum]
-  · simp [mergeSolution, planarSum, generator, Finset.Nat.sum_antidiagonal_succ, forgetPlanar]
-  · rw [ite_eq_right (by omega), zero_add, mergeSolution]
-    simp only [coeff_mk]
-    show planarSum (n + 2) = ∑ p ∈ antidiagonal (n + 2), mergeLin (planarSum p.1) (planarSum p.2)
-    rw [sum_antidiagonal_add_two (f := planarSum) rfl n]
-    exact planarSum_add_two n
-
-/-- The solution of Proposition 1.10.2 is unique, since the recursion determines each term from
-the lower ones. -/
-theorem IsMergeSolution.eq {X : TreeAlgebra⟦X⟧} (h : IsMergeSolution X) : X = mergeSolution := by
-  obtain ⟨h0, hX⟩ := h
-  refine PowerSeries.ext fun n ↦ ?_
+theorem IsMergeSolution.eq (hX : IsMergeSolution x X) (hY : IsMergeSolution x Y) : X = Y := by
+  funext n
   induction n using Nat.strong_induction_on with
   | _ n ih =>
     rcases n with _ | _ | n
-    · simp [h0, mergeSolution, planarSum]
-    · have := congrArg (PowerSeries.coeff 1) hX
-      rw [this, map_add, coeff_mergeSeries, coeff_monomial_same, Finset.Nat.sum_antidiagonal_succ,
-        h0]
-      simp [mergeSolution, planarSum, generator, forgetPlanar, h0]
-    · have := congrArg (PowerSeries.coeff (n + 2)) hX
-      rw [this, map_add, coeff_mergeSeries, coeff_monomial, ite_eq_right (by omega), zero_add]
-      show ∑ p ∈ antidiagonal (n + 2), mergeLin (PowerSeries.coeff p.1 X) (PowerSeries.coeff p.2 X)
-        = PowerSeries.coeff (n + 2) mergeSolution
-      rw [sum_antidiagonal_add_two (f := fun i ↦ PowerSeries.coeff i X) h0, mergeSolution,
-        coeff_mk, planarSum_add_two]
+    · rw [hX.zero, hY.zero]
+    · rw [hX.one, hY.one]
+    · rw [hX.add_two', hY.add_two']
       refine sum_congr rfl fun p hp ↦ ?_
-      rw [ih (p.1 + 1) (by have := fst_le hp; omega), ih (p.2 + 1) (by have := snd_le hp; omega),
-        mergeSolution, coeff_mk, coeff_mk]
+      rw [ih (p.1 + 1) (by have := fst_le hp; omega), ih (p.2 + 1) (by have := snd_le hp; omega)]
 
-/-- The coefficient of a nonplanar tree in `Xₙ₊₁` is its number of planar embeddings. -/
-theorem coeff_planarSum_succ (n : ℕ) (T : UnorderedTree Unit) :
-    (planarSum (n + 1)).coeff {T} =
-      #{P ∈ BinaryTree.treesOfNumNodesEq n | forgetPlanar P = T} := by
-  rw [planarSum, ← lcoeff_apply (R := ℤ), map_sum, card_filter, Nat.cast_sum]
-  refine sum_congr rfl fun P _ ↦ ?_
-  rw [lcoeff_apply, ← of'_singleton, coeff_of']
-  simp [Multiset.singleton_inj]
+theorem IsMergeSolution.two (h : IsMergeSolution x X) : X 2 = x * x := by
+  simp [h.add_two' 0, h.one]
 
-/-- The coefficients of `Xₙ₊₁` sum to the Catalan number `Cₙ`, the number of planar binary trees
-with `n + 1` leaves. -/
-theorem aeval_planarSum_succ (n : ℕ) :
-    aeval (R := ℤ) (fun _ ↦ (1 : ℤ)) (planarSum (n + 1)) = catalan n := by
-  simp [planarSum, BinaryTree.treesOfNumNodesEq_card_eq_catalan]
+end Solution
 
-theorem planarSum_one : planarSum 1 = generator := by
-  simp [planarSum, generator, forgetPlanar]
+section Comm
 
-theorem planarSum_two : planarSum 2 = mergeLin generator generator := by
-  rw [planarSum_add_two]
-  simp [planarSum_one]
+variable {A : Type*} [NonUnitalNonAssocCommSemiring A] {x : A} {X : ℕ → A}
 
-theorem planarSum_three :
-    planarSum 3 = 2 • mergeLin generator (mergeLin generator generator) := by
-  rw [planarSum_add_two]
-  simp [Finset.Nat.sum_antidiagonal_succ, planarSum_one, planarSum_two, two_smul, _root_.mul_comm]
+theorem IsMergeSolution.three (h : IsMergeSolution x X) : X 3 = 2 • (x * (x * x)) := by
+  simp [h.add_two' 1, Finset.Nat.sum_antidiagonal_succ, h.one, h.two, two_nsmul, mul_comm]
 
-/-- `X₄ = 4{x{x{xx}}} + {{xx}{xx}}`; the proof of Proposition 1.10.2 prints the coefficient
-`2`. -/
-theorem planarSum_four :
-    planarSum 4 = 4 • mergeLin generator (mergeLin generator (mergeLin generator generator)) +
-      mergeLin (mergeLin generator generator) (mergeLin generator generator) := by
-  rw [planarSum_add_two]
-  simp only [Finset.Nat.sum_antidiagonal_succ, Finset.Nat.antidiagonal_zero, sum_singleton,
-    zero_add, Nat.reduceAdd, planarSum_one, planarSum_two, planarSum_three, map_nsmul,
-    LinearMap.smul_apply]
-  rw [mergeLin_comm (mergeLin generator (mergeLin generator generator)) generator]
+-- `X₄ = 4{x{x{xx}}} + {{xx}{xx}}`
+theorem IsMergeSolution.four (h : IsMergeSolution x X) :
+    X 4 = 4 • (x * (x * (x * x))) + x * x * (x * x) := by
+  simp only [h.add_two' 2, Finset.Nat.sum_antidiagonal_succ, Finset.Nat.antidiagonal_zero,
+    sum_singleton, zero_add, Nat.reduceAdd, h.one, h.two, h.three, two_nsmul, mul_add, add_mul]
+  rw [mul_comm (x * (x * x)) x]
   abel
 
-/-- The tree `{x{x{xx}}}` has coefficient `4` in `X₄`, not `2`: it has four planar embeddings. -/
-example : planarSum 4 ≠
-    2 • mergeLin generator (mergeLin generator (mergeLin generator generator)) +
-      mergeLin (mergeLin generator generator) (mergeLin generator generator) := by
-  rw [planarSum_four]
-  intro h
-  have h' := congrArg (lcoeff ℤ {UnorderedTree.node () {UnorderedTree.leaf (),
-    UnorderedTree.node () {UnorderedTree.leaf (), UnorderedTree.node () {UnorderedTree.leaf (),
-      UnorderedTree.leaf ()}}}}) (add_right_cancel h)
-  simp only [generator, mergeLin_ofTree] at h'
-  simp only [map_nsmul, lcoeff_apply, ← of'_singleton, coeff_of'] at h'
-  norm_num at h'
+end Comm
+
+/-- A planar binary tree with unlabelled leaves as an element of the free magma on one generator,
+its leaves being the `nil`s. -/
+def toFreeMagma : BinaryTree Unit → FreeMagma Unit
+  | .nil => .of ()
+  | .node _ l r => toFreeMagma l * toFreeMagma r
+
+/-- The formal sum of the planar binary trees with `n` leaves. -/
+noncomputable def planarSum : ℕ → FreeNonUnitalNonAssocAlgebra ℤ Unit
+  | 0 => 0
+  | n + 1 => ∑ P ∈ BinaryTree.treesOfNumNodesEq n, MonoidAlgebra.single (toFreeMagma P) 1
+
+theorem isMergeSolution_planarSum :
+    IsMergeSolution (FreeNonUnitalNonAssocAlgebra.of ℤ ()) planarSum := by
+  refine isMergeSolution_iff.2 ⟨rfl, ?_, fun n ↦ ?_⟩
+  · simp [planarSum, toFreeMagma, FreeNonUnitalNonAssocAlgebra.of]
+  · rw [planarSum, BinaryTree.treesOfNumNodesEq_succ, sum_biUnion]
+    · refine sum_congr rfl fun p _ ↦ ?_
+      simp only [BinaryTree.pairwiseNode, sum_map, sum_product, planarSum, sum_mul, mul_sum,
+        MonoidAlgebra.single_mul_single, mul_one]
+      rw [sum_comm]
+      rfl
+    · simp_rw [Set.PairwiseDisjoint, Set.Pairwise, disjoint_left]
+      aesop
+
+/-- The series `X = ∑ₗ Xₗ` of Proposition 1.10.2: the sum of the planar binary trees, their planar
+structure forgotten. -/
+noncomputable def mergeSolution : ℕ → FreeCommNonUnitalNonAssocAlgebra ℤ Unit :=
+  FreeNonUnitalNonAssocAlgebra.toComm ℤ ∘ planarSum
+
+/-- Proposition 1.10.2: the sum of the planar binary trees, their planar structure forgotten,
+solves (1.10.1) with `X₁ = x`. -/
+theorem isMergeSolution_mergeSolution :
+    IsMergeSolution (FreeCommNonUnitalNonAssocAlgebra.of ℤ ()) mergeSolution :=
+  FreeNonUnitalNonAssocAlgebra.toComm_of ℤ () ▸
+    isMergeSolution_planarSum.map (FreeNonUnitalNonAssocAlgebra.toComm ℤ)
+
+/-- The coefficient of a nonplanar tree in `Xₙ₊₁` is its number of planar embeddings. -/
+theorem coeff_mergeSolution_succ (n : ℕ) (T : FreeCommMagma Unit) :
+    (mergeSolution (n + 1)).coeff T =
+      #{P ∈ BinaryTree.treesOfNumNodesEq n | (toFreeMagma P).toFreeCommMagma = T} := by
+  simp only [mergeSolution, Function.comp_apply, planarSum, map_sum,
+    FreeNonUnitalNonAssocAlgebra.toComm_single, MonoidAlgebra.coeff_sum, Finset.sum_apply',
+    MonoidAlgebra.coeff_single, Finsupp.single_apply, card_filter, Nat.cast_sum, Nat.cast_ite,
+    Nat.cast_one, Nat.cast_zero]
+
+/-- The sum of the coefficients, the homomorphism to `ℤ` sending the generator to `1`. -/
+noncomputable def coeffSum : FreeCommNonUnitalNonAssocAlgebra ℤ Unit →ₙₐ[ℤ] ℤ :=
+  FreeCommNonUnitalNonAssocAlgebra.lift ℤ fun _ ↦ 1
+
+theorem isMergeSolution_catalan :
+    IsMergeSolution (1 : ℤ) fun n ↦ n.casesOn 0 fun k ↦ (catalan k : ℤ) :=
+  isMergeSolution_iff.2 ⟨rfl, by simp, fun n ↦ by simp [catalan_succ']⟩
+
+-- The coefficients of `Xₙ₊₁` sum to the Catalan number `Cₙ`.
+theorem coeffSum_mergeSolution_succ (n : ℕ) : coeffSum (mergeSolution (n + 1)) = catalan n := by
+  have h := isMergeSolution_mergeSolution.map coeffSum
+  rw [coeffSum, FreeCommNonUnitalNonAssocAlgebra.lift_of_apply] at h
+  exact congrFun (h.eq isMergeSolution_catalan) (n + 1)
 
 end CoreMerge
 
@@ -873,18 +758,21 @@ example : (theDog.linearize? .left).map (·.yield.filterMap (·.item.phonForm?))
 /-- Merging *the* on the left of *dog*, which it selects, is harmonic for a head-initial
 language, so that derivation records the head-initial planarization
 (`Derivation.externalize?_eq_linearized?`); merging it on the right is not harmonic. -/
-example : Step.HarmonicList (headHom .left) selectionHead [.em .left (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
-      ⟨.leaf ⟨.of .N [] (phonForm := "dog"), 1⟩, []⟩ ∧
-    ¬ Step.HarmonicList (headHom .left) selectionHead [.em .right (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
-      ⟨.leaf ⟨.of .N [] (phonForm := "dog"), 1⟩, []⟩ :=
+example :
+    Step.HarmonicList (headHom .left) selectionHead
+        [.em .left (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
+        ⟨.leaf ⟨.of .N [] (phonForm := "dog"), 1⟩, []⟩ ∧
+      ¬ Step.HarmonicList (headHom .left) selectionHead
+        [.em .right (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
+        ⟨.leaf ⟨.of .N [] (phonForm := "dog"), 1⟩, []⟩ :=
   ⟨⟨⟨rfl, by decide⟩, trivial⟩, fun ⟨⟨_, h⟩, _⟩ ↦ absurd h (by decide)⟩
 
 /-- A harmonic derivation with movement: the verb selects the determiner, tense selects the verb
 and then the determiner, which raises to the right of a head-initial tense, leaving the trace
 numbered by its place among the movers. -/
 private def raisedD : Derivation ℕ :=
-  ⟨.leaf ⟨.of .D [], 2⟩, [.em .left (.leaf ⟨.of .V [.D], 1⟩), .em .left (.leaf ⟨.of .T [.V, .D], 3⟩),
-    .im (.leaf ⟨.of .D [], 2⟩) .right]⟩
+  ⟨.leaf ⟨.of .D [], 2⟩, [.em .left (.leaf ⟨.of .V [.D], 1⟩),
+    .em .left (.leaf ⟨.of .T [.V, .D], 3⟩), .im (.leaf ⟨.of .D [], 2⟩) .right]⟩
 
 example : raisedD.externalize? raisedD.moverIndex =
     ((LinearizationState.licensing .left).hom raisedD
@@ -943,8 +831,7 @@ def IsExtendedWorkspace (G : Forest (UnorderedTree Vertex)) : Prop :=
   ∀ T ∈ G, IsSyntacticObject T ∨
     ∃ S : Forest (UnorderedTree Vertex), T = .node Vertex.bare S ∧ ∀ T' ∈ S, IsSyntacticObject T'
 
-/-- On workspaces of syntactic objects, the range of FormSet lies in the span of the extended
-workspaces (Definition 1.16.1). -/
+-- Definition 1.16.1
 theorem map_formSet_le (k : ℕ) :
     (Submodule.span R (of' '' {F | ∀ T ∈ F, IsSyntacticObject T})).map
         (formSet Vertex.bare k) ≤
@@ -962,127 +849,78 @@ theorem map_formSet_le (k : ℕ) :
 
 end FormSet
 
-/-! ### Feature consistency as Birkhoff renormalization (Chapter 3) -/
+/-! ### Head-following characters and their renormalization (§3.2) -/
 
-/-- The Boolean consistency semiring of §3.5, the two-element idempotent commutative semiring
-with disjunction as addition, some decomposition being consistent, and conjunction as
-multiplication, all parts agreeing. -/
-inductive Consistency where
-  | inconsistent
-  | consistent
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-namespace Consistency
-
-/-- Disjunction, consistent iff at least one argument is. -/
-def or : Consistency → Consistency → Consistency
-  | consistent, _ => consistent
-  | _, consistent => consistent
-  | _, _ => inconsistent
-
-/-- Conjunction, consistent iff both arguments are. -/
-def and : Consistency → Consistency → Consistency
-  | consistent, consistent => consistent
-  | _, _ => inconsistent
-
-instance : CommSemiring Consistency where
-  add := or
-  mul := and
-  zero := inconsistent
-  one := consistent
-  nsmul n a := n.rec inconsistent fun _ acc ↦ or acc a
-  nsmul_zero _ := rfl
-  nsmul_succ _ _ := rfl
-  add_assoc := by rintro ⟨⟩ ⟨⟩ ⟨⟩ <;> rfl
-  zero_add := by rintro ⟨⟩ <;> rfl
-  add_zero := by rintro ⟨⟩ <;> rfl
-  add_comm := by rintro ⟨⟩ ⟨⟩ <;> rfl
-  mul_assoc := by rintro ⟨⟩ ⟨⟩ ⟨⟩ <;> rfl
-  one_mul := by rintro ⟨⟩ <;> rfl
-  mul_one := by rintro ⟨⟩ <;> rfl
-  mul_comm := by rintro ⟨⟩ ⟨⟩ <;> rfl
-  left_distrib := by rintro ⟨⟩ ⟨⟩ ⟨⟩ <;> rfl
-  right_distrib := by rintro ⟨⟩ ⟨⟩ ⟨⟩ <;> rfl
-  zero_mul := by rintro ⟨⟩ <;> rfl
-  mul_zero := by rintro ⟨⟩ <;> rfl
-
-/-- The identity is a Rota–Baxter operator of weight `+1` on `Consistency`, since disjunction is
-idempotent and absorbs the weight term. On a Boolean target the threshold operator collapses to
-the identity, disagreement already being the additive zero. -/
-theorem isRotaBaxter_id : IsRotaBaxter (1 : ℕ) (id : Consistency → Consistency) := by
-  rintro ⟨⟩ ⟨⟩ <;> rfl
-
-end Consistency
-
-/-- A syntactic object as an element of the Connes–Kreimer Hopf algebra over `ℕ`, the singleton
-forest of its underlying nonplanar tree. The base ring is `ℕ` because every commutative
-semiring, `Consistency` included, is an `ℕ`-algebra, while a Boolean target is no `ℤ`-algebra. -/
-noncomputable def toCK (S : SyntacticObject) : ConnesKreimer ℕ (UnorderedTree Vertex) :=
-  ofTree S.toUnorderedTree
-
-/-- Merge factors through the grafting operator on the disjoint union of its arguments, with the
-bare root label (Lemma 1.3.3). -/
-theorem toCK_merge (l r : SyntacticObject) :
-    toCK (merge l r) = bPlus Vertex.bare (toCK l * toCK r) := by
-  rw [toCK, toCK, toCK, ← of'_singleton (R := ℕ) l.toUnorderedTree, ← of'_singleton (R := ℕ)
-      r.toUnorderedTree, ← of'_add,
-    bPlus_of', toUnorderedTree_merge]
+-- Lemma 1.3.3
+theorem ofTree_toUnorderedTree_merge {R : Type*} [CommSemiring R] (l r : SyntacticObject) :
+    (ofTree (merge l r).toUnorderedTree : ConnesKreimer R (UnorderedTree Vertex)) =
+      bPlus Vertex.bare (ofTree l.toUnorderedTree * ofTree r.toUnorderedTree) := by
+  rw [← of'_singleton l.toUnorderedTree, ← of'_singleton r.toUnorderedTree, ← of'_add, bPlus_of',
+    toUnorderedTree_merge]
   rfl
 
-open WithConv
+section HeadProbe
 
-/-- The feature-consistency map `φ₊` on a syntactic object, the value at the object of the
-renormalized part of a feature character `φ` under an operator `P` on `Consistency`. It is the
-single recursive map of §3.1.5 that checks consistency over all substructures. -/
-noncomputable def featureConsistency
-    (φ : ConnesKreimer ℕ (UnorderedTree Vertex) →ₗ[ℕ] Consistency)
-    (P : Consistency →+ Consistency) (S : SyntacticObject) : Consistency :=
-  birkhoffPlusTree φ P S.toUnorderedTree
+variable {ℛ : Type*}
 
--- Definition 3.1.6, Proposition 3.1.9
-theorem featureConsistency_eq_convMul
-    (φ : ConnesKreimer ℕ (UnorderedTree Vertex) →ₗ[ℕ] Consistency)
-    (P : Consistency →+ Consistency) (hφ : φ 1 = 1) (S : SyntacticObject) :
-    (toConv (birkhoffMinus φ P).toLinearMap * toConv φ) (toCK S) = featureConsistency φ P S :=
-  convMul_birkhoffMinus_apply_ofTree φ P hφ S.toUnorderedTree
+section CommSemiring
 
-/-- The head-probe value `Υ_{s,h}` on a tree (equation (3.2.1)), the probe `Υ` applied to the
-tree's selection head, and `inconsistent` when the tree has no well-defined head. -/
-def headProbeTree (Υ : LexicalItem.Token → Consistency) (T : UnorderedTree Vertex) : Consistency :=
-  (treeSelectionState T).head.elim Consistency.inconsistent Υ
+variable [CommSemiring ℛ] (Υ : LexicalItem.Token → ℛ)
 
-/-- The head-following feature character `ϕ_{Υ,s,h}` of Lemma 3.2.5 is the algebra homomorphism
-extending `Υ_{s,h}` multiplicatively to forests, so that a workspace is consistent iff each of its
-trees is. It is the unrenormalized feature assignment whose Birkhoff renormalization is the
-consistency map. -/
-noncomputable def headProbeChar (Υ : LexicalItem.Token → Consistency) :
-    ConnesKreimer ℕ (UnorderedTree Vertex) →ₐ[ℕ] Consistency :=
+/-- (3.2.1): the head-probe value `Υ_{s,h}` of a tree, the probe `Υ` at the head of the tree by
+selection, and zero on a tree without a head. -/
+def headProbeTree (T : UnorderedTree Vertex) : ℛ :=
+  (treeSelectionState T).head.elim 0 Υ
+
+@[simp] theorem headProbeTree_toUnorderedTree (S : SyntacticObject) :
+    headProbeTree Υ S.toUnorderedTree = S.selectionHead.elim 0 Υ := by
+  rw [headProbeTree, treeSelectionState_toUnorderedTree]
+  rfl
+
+/-- The head-following character `ϕ_{Υ,s,h}` of Lemma 3.2.5, the algebra homomorphism extending
+`Υ_{s,h}` multiplicatively to forests. -/
+noncomputable def headProbeChar : ConnesKreimer ℕ (UnorderedTree Vertex) →ₐ[ℕ] ℛ :=
   aeval (headProbeTree Υ)
 
-@[simp] theorem headProbeChar_apply_of' (Υ : LexicalItem.Token → Consistency)
-    (F : Forest (UnorderedTree Vertex)) :
+@[simp] theorem headProbeChar_apply_of' (F : Forest (UnorderedTree Vertex)) :
     headProbeChar Υ (of' F) = (F.map (headProbeTree Υ)).prod :=
   aeval_of' _ F
 
-@[simp] theorem headProbeChar_apply_ofTree (Υ : LexicalItem.Token → Consistency)
-    (T : UnorderedTree Vertex) :
+@[simp] theorem headProbeChar_apply_ofTree (T : UnorderedTree Vertex) :
     headProbeChar Υ (ofTree T) = headProbeTree Υ T :=
   aeval_ofTree _ T
 
-theorem headProbeChar_one (Υ : LexicalItem.Token → Consistency) : headProbeChar Υ 1 = 1 := map_one _
+-- A probe that is zero on every item has renormalized part zero, under any operator.
+theorem birkhoffPlusTree_headProbeChar_zero (P : ℛ →+ ℛ) (T : UnorderedTree Vertex) :
+    birkhoffPlusTree (headProbeChar (0 : LexicalItem.Token → ℛ)).toLinearMap P T = 0 :=
+  birkhoffPlusTree_eq_zero (fun T ↦ by
+    rw [AlgHom.toLinearMap_apply, headProbeChar_apply_ofTree, headProbeTree]
+    cases (treeSelectionState T).head <;> rfl) T
 
-/-- The feature-consistency verdict on a syntactic object (§3.1.5, Lemmas 3.2.5 and 3.2.7), the
-Birkhoff renormalization with the identity operator of the head-following character, consistent
-iff the head-probe agreements cohere across all substructures. -/
-noncomputable def headConsistency (Υ : LexicalItem.Token → Consistency) (S : SyntacticObject) :
-    Consistency :=
-  featureConsistency (headProbeChar Υ).toLinearMap (.id _) S
+/-- The character is zero on the exocentric Merge of two saturated nouns, which has no head. -/
+example : headProbeChar Υ (ofTree exoNN.toUnorderedTree) = 0 := by
+  rw [headProbeChar_apply_ofTree, headProbeTree_toUnorderedTree,
+    show exoNN.selectionHead = none by decide]
+  rfl
 
--- Definition 3.1.6, Lemma 3.2.7
-theorem headConsistency_eq_convMul (Υ : LexicalItem.Token → Consistency) (S : SyntacticObject) :
-    (toConv (birkhoffMinus (headProbeChar Υ).toLinearMap (.id _)).toLinearMap
-        * toConv (headProbeChar Υ).toLinearMap) (toCK S) = headConsistency Υ S :=
-  featureConsistency_eq_convMul _ _ (headProbeChar_one Υ) S
+end CommSemiring
+
+variable [IdemCommSemiring ℛ] (Υ : LexicalItem.Token → ℛ)
+
+/-- Lemma 3.2.7: into an idempotent semiring, the Birkhoff factorization with respect to the
+identity gives a syntactic object a value at least that of the probe at its head. -/
+theorem selectionHead_le_birkhoffPlusTree (S : SyntacticObject) :
+    S.selectionHead.elim 0 Υ ≤
+      birkhoffPlusTree (headProbeChar Υ).toLinearMap (.id ℛ) S.toUnorderedTree := by
+  simpa using le_birkhoffPlusTree_id (headProbeChar Υ).toLinearMap S.toUnorderedTree
+
+/-- On *the dog* the renormalized value is at least the probe at the determiner. -/
+example : Υ ⟨.of .D [.N] (phonForm := "the"), 0⟩ ≤
+    birkhoffPlusTree (headProbeChar Υ).toLinearMap (.id ℛ) theDog.toUnorderedTree := by
+  simpa [show theDog.selectionHead = some ⟨.of .D [.N] (phonForm := "the"), 0⟩ by decide] using
+    selectionHead_le_birkhoffPlusTree Υ theDog
+
+end HeadProbe
 
 /-! ### Minimal Yield and the polar part of Laurent series (§3.5.2) -/
 
@@ -1121,7 +959,6 @@ theorem minimalYield_iff_gradings :
   rw [← and_assoc, ← minimalYieldWeak_iff_gradings, δσ_eq, δα, δb₀]
   exact ⟨fun h ↦ ⟨h.1, by have := h.2; omega⟩, fun h ↦ ⟨h.1, by have := h.2; omega⟩⟩
 
-/-- Weak Minimal Yield holds iff the `δb₀`- and `δα`-monomials of `F → F'` are both nonpolar. -/
 theorem minimalYieldWeak_iff_truncLT [Nontrivial R] :
     MinimalYieldWeak UnorderedTree.numEdges F F' ↔
       truncLT 0 (single (δb₀ F F') (1 : R)) = 0 ∧ truncLT 0 (single (δα F F') (1 : R)) = 0 := by
@@ -1141,7 +978,7 @@ theorem gradingChar_apply_of' (F : Forest (UnorderedTree α)) :
   | empty => simp
   | cons T F ih => simp [ih, single_mul_single, add_comm]
 
-/-- `ϕt` is nonpolar on every forest, since `α(F) ≥ 0` (Lemma 3.5.5). -/
+-- Lemma 3.5.5
 theorem truncLT_gradingChar_of' (F : Forest (UnorderedTree α)) :
     truncLT 0 (gradingChar (R := R) (of' F)) = 0 := by
   rw [gradingChar_apply_of', truncLT_single, ite_eq_right_iff]
@@ -1176,8 +1013,7 @@ theorem truncLT_birkhoffMinus_of' (φ : ConnesKreimer R (UnorderedTree α) →�
   rw [← hy]
   simp [truncLT_neg]
 
-/-- The renormalized part of every Laurent-series character is nonpolar, landing in `A[[t]]`
-(Proposition 3.1.7), the first step toward Proposition 3.5.6. -/
+-- Proposition 3.1.7, Proposition 3.5.6
 theorem truncLT_birkhoffPlus_of' (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R)
     (F : Forest (UnorderedTree α)) : truncLT 0 (birkhoffPlus φ.toLinearMap (-𝐑) (of' F)) = 0 := by
   rcases eq_or_ne F 0 with rfl | hF
@@ -1211,13 +1047,9 @@ noncomputable def triedToRead : SyntacticObject :=
 theorem theMan_isRepetition : IsRepetition theMan theMan' :=
   ⟨structurallyIdentical_renumber 4 theMan, by simp [theMan, theMan', renumber, merge_eq_merge_iff]⟩
 
-/-- Form Copy relates the controller to the controlled subject, the restriction of (3.8.4) to
-the diagonal `Diag₁,₄` of (3.8.5). -/
 theorem theMan_mem_copyRel : (theMan, theMan') ∈ triedToRead.copyRel :=
   mk_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains]) theMan_isRepetition.1
 
-/-- *a book* is no copy of *the man*, since Form Copy relates only structurally identical
-inscriptions. -/
 theorem not_mem_copyRel_aBook : (theMan, aBook) ∉ triedToRead.copyRel := fun h ↦ by
   have := h.2
   simp only [StructurallyIdentical, theMan, aBook, erase, SyntacticObject.map_merge,
