@@ -12,8 +12,8 @@ This file formalizes the conversational rules of [ginzburg-2012] over the dialog
 made, the questions under discussion and, once metacommunication enters, the ungrounded utterances
 PENDING. The rules form a labelled relation between gameboards: a step integrates a move, or is
 the participant's own bookkeeping. The move rules of Ch. 4 are one such relation and the rules
-of grounding and clarification a second that includes it, and a conversation develops by reading
-a word of steps.
+of grounding and clarification a second that includes it, and a conversation develops along the
+reflexive transitive closure of the steps.
 
 A move a genre makes initiating is coherent. Each clarification rule is a question merged with
 Utterance Interpolation, so it makes the clarified constituent of the maximal pending utterance
@@ -259,7 +259,7 @@ records (ex. 93 p. 107); here the genre is an argument. -/
 /-- `m` is relevant to `G` in `d` when some development of `d` extended by `m` is of type `G`. -/
 def GenreRelevant (G : Set (Board P Fact Q)) (d : Board P Fact Q)
     (m : Move P (Utterance Fact Q)) : Prop :=
-  ∃ w d', Relation.Reads Step (d.say m) w d' ∧ d' ∈ G
+  ∃ d', Relation.ReflTransGen (fun d d' ↦ ∃ l, Step d l d') (d.say m) d' ∧ d' ∈ G
 
 /-- Initiating Move: with QUD empty, a move relevant to the assumed genre. -/
 def IsInitiating (G : Set (Board P Fact Q)) (d : Board P Fact Q)
@@ -388,28 +388,29 @@ instance : Content Fact Q where
 
 /-- After (65), in which A asks `q₀`, B asks `q₁`, A asserts `p₁`, B accepts, B asserts `p₂` and
 A accepts: FACTS `{p₁, p₂}`, QUD `⟨q₀⟩`, the six moves recorded. -/
-theorem trace : ∃ d, Relation.Reads Step (initial : Board Agent Fact Q)
-    [some (tells .A .B (.ask .q₀)), none, some (tells .B .A (.ask .q₁)), none,
-      some (tells .A .B (.assert .p₁)), none, some (tells .B .A (.accept .p₁)), none,
-      some (tells .B .A (.assert .p₂)), none, some (tells .A .B (.accept .p₂)), none] d ∧
+theorem trace : ∃ d,
+    Relation.ReflTransGen (fun d d' ↦ ∃ l, Step d l d') (initial : Board Agent Fact Q) d ∧
     table d = ({.p₁, .p₂}, [.q₀],
       [.accept .p₂, .assert .p₂, .accept .p₁, .assert .p₁, .ask .q₁, .ask .q₀]) :=
-  ⟨_, .cons (.freeSpeech _ rfl) <| .cons (.askQud rfl) <|
-    .cons (.qspec _ rfl (by decide)) <| .cons (.askQud rfl) <|
-    .cons (.qspec _ rfl (by decide)) <| .cons (.assertQud rfl) <|
-    .cons (.accept _ rfl rfl rfl ⟨rfl, rfl⟩) <| .cons (.factUpdate (.inl rfl) rfl) <|
-    .cons (.qspec _ rfl (by decide)) <| .cons (.assertQud rfl) <|
-    .cons (.accept _ rfl rfl rfl ⟨rfl, rfl⟩) <| .cons (.factUpdate (.inl rfl) rfl) .nil,
-    by decide⟩
+  ⟨_, .head ⟨_, .freeSpeech (tells .A .B (.ask .q₀)) rfl⟩ <| .head ⟨_, .askQud rfl⟩ <|
+    .head ⟨_, .qspec (tells .B .A (.ask .q₁)) rfl (by decide)⟩ <| .head ⟨_, .askQud rfl⟩ <|
+    .head ⟨_, .qspec (tells .A .B (.assert .p₁)) rfl (by decide)⟩ <|
+    .head ⟨_, .assertQud rfl⟩ <|
+    .head ⟨_, .accept (tells .B .A (.accept .p₁)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .factUpdate (.inl rfl) rfl⟩ <|
+    .head ⟨_, .qspec (tells .B .A (.assert .p₂)) rfl (by decide)⟩ <|
+    .head ⟨_, .assertQud rfl⟩ <|
+    .head ⟨_, .accept (tells .A .B (.accept .p₂)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .factUpdate (.inl rfl) rfl⟩ .refl, by decide⟩
 
 -- (67)-(68)
-theorem trace68 : ∃ d, Relation.Reads Step (initial : Board Agent Fact Q)
-    [some (tells .A .B (.assert .p₁)), none, some (tells .A .B (.check .p₁)),
-      some (tells .B .A (.confirm .p₁)), none] d ∧
+theorem trace68 : ∃ d,
+    Relation.ReflTransGen (fun d d' ↦ ∃ l, Step d l d') (initial : Board Agent Fact Q) d ∧
     table d = ({.p₁}, [], [.confirm .p₁, .check .p₁, .assert .p₁]) :=
-  ⟨_, .cons (.freeSpeech _ rfl) <| .cons (.assertQud rfl) <| .cons (.check _ rfl rfl rfl) <|
-    .cons (.confirm _ rfl rfl rfl ⟨rfl, rfl⟩) <| .cons (.factUpdate (.inr rfl) rfl) .nil,
-    by decide⟩
+  ⟨_, .head ⟨_, .freeSpeech (tells .A .B (.assert .p₁)) rfl⟩ <| .head ⟨_, .assertQud rfl⟩ <|
+    .head ⟨_, .check (tells .A .B (.check .p₁)) rfl rfl rfl⟩ <|
+    .head ⟨_, .confirm (tells .B .A (.confirm .p₁)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .factUpdate (.inr rfl) rfl⟩ .refl, by decide⟩
 
 end Ex66
 
@@ -440,17 +441,18 @@ instance : Content Fact Q where
 
 /-- After (78), in which A asks `q₀` then `q₁` (QCoord), B answers `q₀`, A accepts and B answers
 `q₁`: FACTS `{p₀}`, QUD `⟨p₁?, q₁⟩`. -/
-theorem trace : ∃ d, Relation.Reads Step (initial : Board Agent Fact Q)
-    [some (tells .A .B (.ask .q₀)), none, some (tells .A .B (.ask .q₁)),
-      some (tells .B .A (.assert .p₀)), none, some (tells .A .B (.accept .p₀)), none,
-      some (tells .B .A (.assert .p₁)), none] d ∧
+theorem trace : ∃ d,
+    Relation.ReflTransGen (fun d d' ↦ ∃ l, Step d l d') (initial : Board Agent Fact Q) d ∧
     table d = ({.p₀}, [.polar .p₁, .q₁],
       [.assert .p₁, .accept .p₀, .assert .p₀, .ask .q₁, .ask .q₀]) :=
-  ⟨_, .cons (.freeSpeech _ rfl) <| .cons (.askQud rfl) <|
-    .cons (.qcoord _ rfl rfl rfl rfl (by decide)) <|
-    .cons (.qspec _ rfl (by decide)) <| .cons (.assertQud rfl) <|
-    .cons (.accept _ rfl rfl rfl ⟨rfl, rfl⟩) <| .cons (.factUpdate (.inl rfl) rfl) <|
-    .cons (.qspec _ rfl (by decide)) <| .cons (.assertQud rfl) .nil, by decide⟩
+  ⟨_, .head ⟨_, .freeSpeech (tells .A .B (.ask .q₀)) rfl⟩ <| .head ⟨_, .askQud rfl⟩ <|
+    .head ⟨_, .qcoord (tells .A .B (.ask .q₁)) rfl rfl rfl rfl (by decide)⟩ <|
+    .head ⟨_, .qspec (tells .B .A (.assert .p₀)) rfl (by decide)⟩ <|
+    .head ⟨_, .assertQud rfl⟩ <|
+    .head ⟨_, .accept (tells .A .B (.accept .p₀)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .factUpdate (.inl rfl) rfl⟩ <|
+    .head ⟨_, .qspec (tells .B .A (.assert .p₁)) rfl (by decide)⟩ <|
+    .head ⟨_, .assertQud rfl⟩ .refl, by decide⟩
 
 end Ex79
 
@@ -493,9 +495,9 @@ instance : DecidablePred (· ∈ casualChat) := fun _ ↦ inferInstanceAs (Decid
 theorem initiating_off :
     IsInitiating casualChat ((initial {.here}).recordMove (ofMove IllocutionaryAct.greet))
       (tells .A .B (.assert .off)) :=
-  ⟨rfl, [none, some (tells .B .A (.accept .off)), none], _,
-    .cons (.assertQud rfl) <| .cons (.accept _ rfl rfl rfl ⟨rfl, rfl⟩) <|
-      .cons (.factUpdate (.inl rfl) rfl) .nil, by decide⟩
+  ⟨rfl, _, .head ⟨_, .assertQud rfl⟩ <|
+    .head ⟨_, .accept (tells .B .A (.accept .off)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .factUpdate (.inl rfl) rfl⟩ .refl, by decide⟩
 
 end Ex95
 
@@ -561,16 +563,18 @@ def dgbB : Board Agent Fact Q :=
     moves := [u₁] }
 
 -- A utters `u₀`, instantiates it, integrates it by Free Speech and hears `u₁`
-theorem reads_dgbA :
-    Relation.Reads GroundingStep initial [none, none, some ⟨.A, .B, w₀⟩, none, none] dgbA :=
-  .cons (.pendingUpdate ⟨.A, .B, u₀⟩) <| .cons (.contextualInstantiation {.george} rfl) <|
-    .cons (.pendified rfl (by decide) (.freeSpeech _ rfl)) <| .cons (.step (.askQud rfl)) <|
-    .cons (.pendingUpdate ⟨.B, .A, u₁⟩) .nil
+theorem reflTransGen_dgbA :
+    Relation.ReflTransGen (fun d d' ↦ ∃ l, GroundingStep d l d') initial dgbA :=
+  .head ⟨_, .pendingUpdate ⟨.A, .B, u₀⟩⟩ <|
+    .head ⟨_, .contextualInstantiation {.george} rfl⟩ <|
+    .head ⟨_, .pendified rfl (by decide) (.freeSpeech _ rfl)⟩ <|
+    .head ⟨_, .step (.askQud rfl)⟩ <| .head ⟨_, .pendingUpdate ⟨.B, .A, u₁⟩⟩ .refl
 
 -- B hears `u₀` and clarifies by Parameter Focussing with `u₁`
-theorem reads_dgbB : Relation.Reads GroundingStep initial [none, some ⟨.B, .A, u₁⟩] dgbB :=
-  .cons (.pendingUpdate ⟨.A, .B, u₀⟩) <| .cons (.parameterFocussing
-    ⟨⟨rfl, rfl⟩, george, u₀, rfl, Finset.mem_singleton_self _, rfl, rfl⟩) .nil
+theorem reflTransGen_dgbB :
+    Relation.ReflTransGen (fun d d' ↦ ∃ l, GroundingStep d l d') initial dgbB :=
+  .head ⟨_, .pendingUpdate ⟨.A, .B, u₀⟩⟩ <| .head ⟨_, .parameterFocussing (m := ⟨.B, .A, u₁⟩)
+    ⟨⟨rfl, rfl⟩, george, u₀, rfl, Finset.mem_singleton_self _, rfl, rfl⟩⟩ .refl
 
 theorem differ : dgbA.qud ≠ dgbB.qud ∧ dgbA.pending ≠ dgbB.pending := by
   decide

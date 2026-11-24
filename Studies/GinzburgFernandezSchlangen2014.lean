@@ -28,8 +28,9 @@ Questions are partial functions from entities to propositions, and co-propositio
 of `u₀`'s denotation. We prove that an assertion that the speaker meant `x` by `u₀` is
 co-propositional with that question exactly when `x` is of that type, so *quite a bit* answers
 what was meant by *a little bit* and *swimming* does not; that whether an utterance can be
-integrated does not depend on which participant makes it; and that a wh-question is co-propositional with
-what the speaker means to say next only if it is built from the same abstract. The examples are
+integrated does not depend on which participant makes it; and that a wh-question is
+co-propositional with what the speaker means to say next only if it is built from the same
+abstract. The examples are
 licensed exactly when acceptable, and the derivations of the cross-turn and the mid-utterance
 self-correction reach the paper's gameboards.
 
@@ -532,9 +533,10 @@ def dgb2 : Board :=
 def dgb3 : Board := { dgb2 with pending := [v₀] }
 
 -- (43)
-theorem reads_dgb1_dgb2 : Relation.Reads Step dgb1 [some ⟨.A, .B, u₁⟩, none] dgb2 :=
-  .cons (.backwardRepair (u := georges) _ ⟨u₀, rfl, Finset.mem_singleton_self _,
-    Act.copropositional_assert_meant.mpr rfl, rfl⟩) (.cons (.assertQud rfl) .nil)
+theorem reflTransGen_dgb1_dgb2 :
+    Relation.ReflTransGen (fun d d' ↦ ∃ l, Step d l d') dgb1 dgb2 :=
+  .head ⟨_, .backwardRepair (u := georges) ⟨.A, .B, u₁⟩ ⟨u₀, rfl, Finset.mem_singleton_self _,
+    Act.copropositional_assert_meant.mpr rfl, rfl⟩⟩ (.head ⟨_, .assertQud rfl⟩ .refl)
 
 -- (44)
 theorem step_dgb2_dgb3 : Step dgb2 none dgb3 :=

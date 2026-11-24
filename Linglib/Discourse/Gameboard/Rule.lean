@@ -2,7 +2,7 @@ module
 
 public import Linglib.Discourse.Gameboard.Basic
 public import Linglib.Discourse.Gameboard.Utterance
-public import Linglib.Core.Relation.Reads
+public import Mathlib.Logic.Relation
 
 /-!
 # Conversational rules
@@ -14,7 +14,8 @@ labelled relation `R d l d'` between gameboards: `l` is `some m` when the step i
 QUD-incrementation or the instantiation of a contextual parameter. A study defines its system as
 an inductive relation with one constructor for each rule, its preconditions as hypotheses and its
 effect in the conclusion. A move `m` is coherent on a gameboard `d` when `∃ d', R d (some m) d'`,
-and a conversation develops by `Relation.Reads R`.
+and a conversation develops by `Relation.ReflTransGen fun d d' ↦ ∃ l, R d l d'`; the moves
+integrated on the way are the MOVES of the gameboard reached.
 
 A move records who speaks and to whom, so a rule that leaves the turn underspecified is one with
 no hypothesis on the speaker of its move.
