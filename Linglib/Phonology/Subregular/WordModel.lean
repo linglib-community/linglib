@@ -1,8 +1,10 @@
 module
 
 public import Linglib.Phonology.Subregular.Local
+public import Linglib.Phonology.Subregular.WordModel.Defs
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
+public import Mathlib.Basic.Finite.Sum
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.List.NodupEquivFin
 public import Mathlib.Order.SuccPred.Nat
@@ -27,7 +29,10 @@ locally testable sets of word models under precedence are the
 between their edges under successor are the
 [strictly local](##Language.isStrictlyLocal_iff_wordModel) and
 [locally testable](##Language.isLocallyTestable_iff_wordModel) ones, and on the projection to a
-tier the [tier-based strictly local](##Language.isTierStrictlyLocal_iff_wordModel) ones. In a
+tier the [tier-based strictly local](##Language.isTierStrictlyLocal_iff_wordModel) ones. Over a
+finite alphabet the piecewise testable stringsets are therefore the Boolean combinations of the
+strictly piecewise ones, and for widths from two up the locally testable stringsets those of the
+strictly local ones. In a
 feature-labelled model a symbol carries the values of its features, so that a position of a
 factor stands for a natural class.
 
@@ -75,53 +80,14 @@ namespace Subregular
 
 variable {α : Type u}
 
-/-- The relation symbols of word models, a unary label for each symbol and a binary
-ordering. -/
-inductive WordRel (α : Type u) : ℕ → Type u
-  | label (a : α) : WordRel α 1
-  | ord : WordRel α 2
-
-/-- The signature of word models over `α`. -/
-def wordLanguage (α : Type u) : FirstOrder.Language := ⟨fun _ ↦ Empty, WordRel α⟩
-
-instance : (wordLanguage α).IsRelational := fun _ ↦ inferInstanceAs (IsEmpty Empty)
-
 instance [Finite α] : Finite (Σ n, (wordLanguage α).Relations n) :=
   .of_injective (β := Option α) (fun | ⟨_, .label a⟩ => some a | ⟨_, .ord⟩ => none) <| by
     rintro ⟨_, _ | _⟩ ⟨_, _ | _⟩ h <;> simp_all
-
-/-- The word model of `u` under a labelling `ℓ` of its symbols and an ordering `R` of its
-positions: a position carries the labels `ℓ` gives its symbol. In the conventional model a
-symbol is its own one label, `ℓ = ({·})`. -/
-def WordModel {β P : Type*} (_ : β → Set P) (u : List β)
-    (_ : Fin u.length → Fin u.length → Prop) : Type :=
-  Fin u.length
 
 namespace WordModel
 
 variable {β P : Type*} {ℓ : β → Set P} {u u' : List β} {R : Fin u.length → Fin u.length → Prop}
   {R' : Fin u'.length → Fin u'.length → Prop}
-
-instance : LinearOrder (WordModel ℓ u R) := inferInstanceAs (LinearOrder (Fin u.length))
-
-/-- A position, as an index into the word. -/
-def toFin (i : WordModel ℓ u R) : Fin u.length := i
-
-/-- The symbol at a position. -/
-def label (i : WordModel ℓ u R) : β := u.get i
-
-/-- A position satisfies the unary relations of the labels its symbol carries. -/
-instance : (wordLanguage P).Structure (WordModel ℓ u R) where
-  RelMap
-    | .label p, x => p ∈ ℓ (x 0).label
-    | .ord, x => R (x 0) (x 1)
-
-@[simp] theorem relMap_label (p : P) (x : Fin 1 → WordModel ℓ u R) :
-    Structure.RelMap (L := wordLanguage P) (WordRel.label p) x ↔
-      p ∈ ℓ (x 0).label := .rfl
-
-@[simp] theorem relMap_ord (x : Fin 2 → WordModel ℓ u R) :
-    Structure.RelMap (L := wordLanguage P) WordRel.ord x ↔ R (x 0) (x 1) := .rfl
 
 /-- A map of positions under which symbols keep their labels and positions their order is a
 homomorphism of word models. -/
@@ -790,7 +756,7 @@ theorem isTierStrictlyLocal_iff_wordModel (hk : 2 ≤ k) :
   constructor
   · rintro ⟨G, rfl⟩
     exact ⟨G.tier, inferInstance,
-      ((isStrictlyLocal_iff_wordModel hk).1 ⟨G.permitted, rfl⟩).comap
+      ((isStrictlyLocal_iff_wordModel hk).1 ⟨G.permitted, rfl⟩).preimage
         fun w : List α ↦ w.filter (G.tier ·)⟩
   · rintro ⟨T, _, G', rfl⟩
     obtain ⟨G₀, hG₀⟩ := (isStrictlyLocal_iff_wordModel hk).2 ⟨G', rfl⟩
@@ -814,5 +780,26 @@ theorem isLocallyTestable_iff_wordModel :
         (wordLanguage (α ⊕ Edge)).factors k (WordModel ({·}) (anchor v) (· ⋖ ·)) :=
     kTestVector_eq_iff.trans WordModel.factors_eq_iff_infix.symm
   exact ⟨fun h _ _ e ↦ h ((key _ _).2 e), fun h _ _ e ↦ h ((key _ _).1 e)⟩
+
+/-- Over a finite alphabet, a stringset is piecewise `k`-testable exactly when it is a Boolean
+combination of strictly `k`-piecewise stringsets. -/
+theorem isPiecewiseTestable_iff_mem_closure [Finite α] :
+    L.IsPiecewiseTestable k ↔
+      L ∈ BooleanSubalgebra.closure {K : Language α | K.IsStrictlyPiecewise k} := by
+  have h : {K : Language α | K.IsStrictlyPiecewise k} =
+      {S | (wordLanguage α).IsStrictlyLocal (WordModel ({·}) · (· < ·)) k S} :=
+    Set.ext fun _ ↦ isStrictlyPiecewise_iff_wordModel
+  rw [isPiecewiseTestable_iff_wordModel, FirstOrder.Language.isLocallyTestable_iff_mem_closure, h]
+
+/-- Over a finite alphabet, a stringset is locally `k`-testable, for `2 ≤ k`, exactly when it is a
+Boolean combination of strictly `k`-local stringsets. -/
+theorem isLocallyTestable_iff_mem_closure [Finite α] (hk : 2 ≤ k) :
+    L.IsLocallyTestable k ↔
+      L ∈ BooleanSubalgebra.closure {K : Language α | K.IsStrictlyLocal k} := by
+  have h : {K : Language α | K.IsStrictlyLocal k} =
+      {S | (wordLanguage (α ⊕ Edge)).IsStrictlyLocal
+        (fun w ↦ WordModel ({·}) (anchor w) (· ⋖ ·)) k S} :=
+    Set.ext fun _ ↦ isStrictlyLocal_iff_wordModel hk
+  rw [isLocallyTestable_iff_wordModel, FirstOrder.Language.isLocallyTestable_iff_mem_closure, h]
 
 end Language
