@@ -2,8 +2,8 @@ module
 
 public import Linglib.Discourse.Gameboard.Rule
 public import Linglib.Discourse.Gameboard.Question
+public import Linglib.Discourse.Gameboard.Proposition
 public import Linglib.Semantics.Questions.Inquisitive.Declarative
-public import Linglib.Semantics.Questions.Answerhood
 public import Linglib.Data.Examples.Ginzburg2012
 public import Linglib.Data.Examples.Readers
 
@@ -23,11 +23,11 @@ Utterance Interpolation, so it makes the clarified constituent of the maximal pe
 the focus-establishing constituent of MaxQUD. Parameter Identification and self-repair
 accommodate the same question, the first as a reply and the second as a continuation.
 
-For propositions that are sets of worlds, a potentially resolving answer to a question is a
-proposition that resolves the polar closure of the issue the question raises, and every
-proposition is about every question that has a value: a proposition entails the disjunction of a
-simple answer and its negation. The book's entailment is that of situation semantics, on which
-this fails, so the traces take aboutness, influence and resolution as given.
+A proposition is about a question when it entails a disjunction of two simple answers to it.
+In a model with one situation that settles whether Kim left and not whether Kim is tall, the
+proposition that at most one student left is about whether Kim left and not about whether Kim is
+tall. For propositions that are sets of worlds, a potentially resolving answer to a question is
+a proposition that resolves the polar closure of the issue the question raises.
 
 The worked traces of Ch. 4 reach the tabulated gameboards, and after "Is George here? / Is WHO
 here?" the two participants' gameboards differ in QUD and PENDING although both processed the
@@ -152,12 +152,72 @@ def Agent.other : Agent → Agent
   | .A => .B
   | .B => .A
 
-/-! ### Answerhood over sets of worlds (§3.3.7)
+/-! ### Answerhood (§3.3.7)
 
-A question is a propositional abstract, a partial function `q : R →. Set W` from records to
-propositions, and its instantiations are `q.ran`. A simple answer is an instantiation or the
-negation of one, `Answerhood.simpleAnswers q.ran`, and the propositions about `q` are those that
-entail a disjunction of simple answers, `Answerhood.about q.ran`. -/
+A proposition is about a question when it entails a disjunction of two simple answers to it,
+`Gameboard.About`. In frameworks with partial situations, "At most one student left" entails "Either
+Kim left or Kim did not leave" and not "Either Kim is tall or Kim is not tall" (p. 53). -/
+
+namespace AtMostOne
+
+/-- Situation types about Kim: leaving, being tall, and at most one student leaving, each with
+its dual. -/
+inductive Ty
+  | left
+  | notLeft
+  | tall
+  | notTall
+  | atMostOne
+  | moreThanOne
+  deriving DecidableEq
+
+instance : Compl Ty where
+  compl
+    | .left => .notLeft
+    | .notLeft => .left
+    | .tall => .notTall
+    | .notTall => .tall
+    | .atMostOne => .moreThanOne
+    | .moreThanOne => .atMostOne
+
+/-- Two possibilities for one situation: Kim left, or Kim did not leave. In both at most one
+student left, and neither settles whether Kim is tall. -/
+def ofType : Bool → Unit → Ty → Prop
+  | true, _, T => T = .left ∨ T = .atMostOne
+  | false, _, T => T = .notLeft ∨ T = .atMostOne
+
+theorem isExclusive : IsExclusive ofType := by
+  rintro (_ | _) _ T (rfl | rfl) <;> simp [ofType, compl]
+
+theorem not_isBivalent : ¬IsBivalent ofType := fun h ↦ by
+  simpa [ofType, compl] using h true () .tall
+
+/-- That at most one student left is about whether Kim left. -/
+theorem about_left :
+    About ofType ⟨(), .atMostOne⟩ (PFun.pure ⟨(), .left⟩ : Unit →. Austinian Unit Ty) := by
+  refine about_iff.mpr ⟨⟨(), .left⟩, ?_, ⟨(), .notLeft⟩, ?_, ?_⟩
+  · exact Answerhood.subset_simpleAnswers (by simp [ran_pure])
+  · exact Answerhood.compl_mem_simpleAnswers (p := (⟨(), .left⟩ : Austinian Unit Ty))
+      (by simp [ran_pure])
+  · rintro (_ | _) _ <;> simp [ofType]
+
+/-- That at most one student left is not about whether Kim is tall. -/
+theorem not_about_tall :
+    ¬About ofType ⟨(), .atMostOne⟩ (PFun.pure ⟨(), .tall⟩ : Unit →. Austinian Unit Ty) := by
+  rw [about_iff]
+  rintro ⟨a, ha, b, hb, h⟩
+  have h' := h (show true ∈ Austinian.truthSet ofType ⟨(), .atMostOne⟩ from .inr rfl)
+  simp only [Answerhood.mem_simpleAnswers, ran_pure, Set.mem_singleton_iff, exists_eq_left]
+    at ha hb
+  rcases ha with rfl | rfl <;> rcases hb with rfl | rfl <;>
+    simp [ofType, compl] at h'
+
+end AtMostOne
+
+/-! ### Resolution over sets of worlds (§3.3.7)
+
+A question whose propositions are sets of worlds is a partial function `q : R →. Set W` from
+records to propositions. -/
 
 section Answerhood
 
@@ -167,11 +227,6 @@ variable {R W : Type*} {p : Set W} {q : R →. Set W}
 every instantiation. -/
 def PotentiallyResolves (p : Set W) (q : R →. Set W) : Prop :=
   (∃ a ∈ q.ran, p ⊆ a) ∨ ∀ a ∈ q.ran, p ⊆ aᶜ
-
-/-- Over sets of worlds, every proposition is about every question that has a value: it entails
-the disjunction of a simple answer (45) and its negation. -/
-theorem about_ran_eq_top_iff : Answerhood.about q.ran = ⊤ ↔ q.ran.Nonempty :=
-  Answerhood.about_eq_top_iff
 
 /-- A potentially resolving answer to `q` is a proposition that resolves the polar closure of
 the issue `q` raises. -/
