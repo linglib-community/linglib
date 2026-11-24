@@ -263,8 +263,11 @@ theorem isSUM_tautology_contradiction (A : Set E) :
     IsSUM (scope (W := W) (Det.atLeast 0) A) ∧
       IsSUM (scope (W := W) (Det.atMost 1 ⊓ Det.atLeast 3) A) :=
   ⟨isSUM_ofProp_iff.2 ⟨fun _ _ _ _ _ ↦ Nat.zero_le _, fun _ _ _ _ _ ↦ Nat.zero_le _⟩,
-    isSUM_ofProp_iff.2 ⟨fun _ _ _ _ h ↦ absurd (h.2.trans h.1) (by norm_num),
-      fun _ _ _ h ↦ absurd (h.2.trans h.1) (by norm_num)⟩⟩
+    isSUM_ofProp_iff.2
+      ⟨fun _ _ _ _ h ↦
+          absurd ((Det.atLeast_apply.1 h.2).trans (Det.atMost_apply.1 h.1)) (by norm_num),
+        fun _ _ _ h ↦
+          absurd ((Det.atLeast_apply.1 h.2).trans (Det.atMost_apply.1 h.1)) (by norm_num)⟩⟩
 
 -- *\*The student with any books sold them* has an environment SUM for one premise: *the novel
 -- was long* and *there was exactly one book* entail *the book was long* (19).

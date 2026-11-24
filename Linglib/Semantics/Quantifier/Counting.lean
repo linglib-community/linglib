@@ -72,19 +72,25 @@ protected def both : NumberTree := fun a b ↦ a = 0 ∧ b = 2
 protected def neither : NumberTree := fun a b ↦ a = 2 ∧ b = 0
 
 /-- *At least `n`* holds when at least `n` members of `A` lie in `B`. -/
-protected def atLeast (n : ℕ) : NumberTree := fun _ b ↦ n ≤ b
+protected def atLeast (n : ℕ) : NumberTree := cardinal (Set.Ici n)
 
 /-- *At most `n`* holds when at most `n` members of `A` lie in `B`. -/
-protected def atMost (n : ℕ) : NumberTree := fun _ b ↦ b ≤ n
+protected def atMost (n : ℕ) : NumberTree := cardinal (Set.Iic n)
 
 /-- *Exactly `n`* holds when exactly `n` members of `A` lie in `B`. -/
-protected def exactly (n : ℕ) : NumberTree := fun _ b ↦ b = n
+protected def exactly (n : ℕ) : NumberTree := cardinal {n}
+
+/-- *More than `n`* holds when more than `n` members of `A` lie in `B`. -/
+protected def moreThan (n : ℕ) : NumberTree := cardinal (Set.Ioi n)
+
+/-- *Fewer than `n`* holds when fewer than `n` members of `A` lie in `B`. -/
+protected def fewerThan (n : ℕ) : NumberTree := cardinal (Set.Iio n)
 
 /-- *All but `n`* holds when exactly `n` members of `A` lie outside `B`. -/
 protected def allBut (n : ℕ) : NumberTree := fun a _ ↦ a = n
 
 /-- *Between `n` and `k`* holds when between `n` and `k` members of `A` lie in `B`. -/
-protected def between (n k : ℕ) : NumberTree := fun _ b ↦ n ≤ b ∧ b ≤ k
+protected def between (n k : ℕ) : NumberTree := cardinal (Set.Icc n k)
 
 /-- The threshold `n / d` holds when at least that proportion of `A` lies in `B`. -/
 def threshold (n d : ℕ) : NumberTree := ofSizes fun x p ↦ n * p ≤ d * x
@@ -97,12 +103,19 @@ instance : DecidableRel NumberTree.few := fun a b ↦ Nat.decLt b a
 instance : DecidableRel NumberTree.half := fun a b ↦ Nat.decEq a b
 instance : DecidableRel NumberTree.both := fun a b ↦ inferInstanceAs (Decidable (a = 0 ∧ b = 2))
 instance : DecidableRel NumberTree.neither := fun a b ↦ inferInstanceAs (Decidable (a = 2 ∧ b = 0))
-instance (n : ℕ) : DecidableRel (NumberTree.atLeast n) := fun _ b ↦ Nat.decLe n b
-instance (n : ℕ) : DecidableRel (NumberTree.atMost n) := fun _ b ↦ Nat.decLe b n
-instance (n : ℕ) : DecidableRel (NumberTree.exactly n) := fun _ b ↦ Nat.decEq b n
+instance (n : ℕ) : DecidableRel (NumberTree.atLeast n) :=
+  inferInstanceAs (DecidableRel (cardinal (Set.Ici n)))
+instance (n : ℕ) : DecidableRel (NumberTree.atMost n) :=
+  inferInstanceAs (DecidableRel (cardinal (Set.Iic n)))
+instance (n : ℕ) : DecidableRel (NumberTree.exactly n) :=
+  inferInstanceAs (DecidableRel (cardinal {n}))
+instance (n : ℕ) : DecidableRel (NumberTree.moreThan n) :=
+  inferInstanceAs (DecidableRel (cardinal (Set.Ioi n)))
+instance (n : ℕ) : DecidableRel (NumberTree.fewerThan n) :=
+  inferInstanceAs (DecidableRel (cardinal (Set.Iio n)))
 instance (n : ℕ) : DecidableRel (NumberTree.allBut n) := fun a _ ↦ Nat.decEq a n
-instance (n k : ℕ) : DecidableRel (NumberTree.between n k) := fun _ b ↦
-  inferInstanceAs (Decidable (n ≤ b ∧ b ≤ k))
+instance (n k : ℕ) : DecidableRel (NumberTree.between n k) :=
+  inferInstanceAs (DecidableRel (cardinal (Set.Icc n k)))
 instance (n d : ℕ) : DecidableRel (threshold n d) := fun a b ↦
   inferInstanceAs (Decidable (n * (a + b) ≤ d * b))
 instance (n d : ℕ) : DecidableRel (thresholdGt n d) := fun a b ↦
@@ -129,11 +142,11 @@ theorem scopeMonotone_most : NumberTree.most.ScopeMonotone := fun _ _ h ↦ by
 
 theorem scopeAntitone_few : NumberTree.few.ScopeAntitone := scopeMonotone_most.innerNeg
 
-theorem scopeMonotone_atLeast (n : ℕ) : (NumberTree.atLeast n).ScopeMonotone := fun _ _ h ↦ by
-  grind [NumberTree.atLeast]
+theorem scopeMonotone_atLeast (n : ℕ) : (NumberTree.atLeast n).ScopeMonotone :=
+  scopeMonotone_cardinal_iff.2 (.Ici n)
 
-theorem scopeAntitone_atMost (n : ℕ) : (NumberTree.atMost n).ScopeAntitone := fun _ _ h ↦ by
-  grind [NumberTree.atMost]
+theorem scopeAntitone_atMost (n : ℕ) : (NumberTree.atMost n).ScopeAntitone :=
+  scopeAntitone_cardinal_iff.2 (.Iic n)
 
 theorem scopeMonotone_threshold (n d : ℕ) : (threshold n d).ScopeMonotone := fun _ _ h ↦ by
   simp only [threshold, ofSizes] at *; nlinarith
