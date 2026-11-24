@@ -24,6 +24,9 @@ from one.
   the premise set of negated alternatives.
 * `Exhaustification.exists_mem_exhMW_le`: over finitely many alternatives, every world of the
   prejacent lies above a minimal world.
+* `Exhaustification.ofLowerSets_image_union_le_iff`: the premises that some individuals lack a
+  property and others have it rank a world lower when fewer of the first and more of the second
+  have the property.
 
 ## References
 
@@ -129,5 +132,41 @@ theorem IsMinimalCover.exhMW_eq (hM : IsMinimalCover ALT φ M) :
     exact ⟨v, hv, hvu.antisymm (hmin (hM.mem v hv) hvu)⟩
   · obtain ⟨v', hv', hv'x⟩ := hM.le x hx
     exact hvu.ge.trans ((hM.antisymm v hv v' hv' (hv'x.trans (hxu.trans hvu.ge))).trans hv'x)
+
+/-! ### The orderings of a property
+
+A property `P : W → Set E` of individuals that varies with the world gives two families of
+propositions for a set `s` of individuals: that an individual of `s` lacks the property, and that
+it has it. As premises, the first family ranks a world lower when fewer individuals of `s` have
+the property, and the second when more do. The two families together rank worlds by both at
+once. -/
+
+section Property
+
+variable {E : Type*} (P : W → Set E) (s pos neg : Set E) (v w : W)
+
+theorem ofLowerSets_image_notMem_le_iff :
+    (v ≤[(fun x ↦ {u | x ∉ P u}) '' s] w) ↔ P v ∩ s ⊆ P w ∩ s := by
+  rw [Preorder.ofLowerSets_image_le_iff]
+  exact ⟨fun h x hx ↦ ⟨by_contra fun hw ↦ h x hx.2 hw hx.1, hx.2⟩,
+    fun h x hx hw hv ↦ hw (h ⟨hv, hx⟩).1⟩
+
+theorem ofLowerSets_image_mem_le_iff :
+    (v ≤[(fun x ↦ {u | x ∈ P u}) '' s] w) ↔ P w ∩ s ⊆ P v ∩ s := by
+  rw [Preorder.ofLowerSets_image_le_iff]
+  exact ⟨fun h x hx ↦ ⟨h x hx.2 hx.1, hx.2⟩, fun h x hx hw ↦ (h ⟨hw, hx⟩).1⟩
+
+/-- Under the premises that the individuals of `pos` lack the property and those of `neg` have it,
+a world is at least as good as another when fewer individuals of `pos` and more of `neg` have the
+property in it. -/
+theorem ofLowerSets_image_union_le_iff :
+    (v ≤[(fun x ↦ {u | x ∉ P u}) '' pos ∪ (fun x ↦ {u | x ∈ P u}) '' neg] w) ↔
+      P v ∩ pos ⊆ P w ∩ pos ∧ P w ∩ neg ⊆ P v ∩ neg := by
+  rw [← ofLowerSets_image_notMem_le_iff, ← ofLowerSets_image_mem_le_iff]
+  simp only [Preorder.ofLowerSets_le_iff, Set.mem_union]
+  exact ⟨fun h ↦ ⟨fun s hs ↦ h s (.inl hs), fun s hs ↦ h s (.inr hs)⟩,
+    fun h s hs ↦ hs.elim (h.1 s) (h.2 s)⟩
+
+end Property
 
 end Exhaustification

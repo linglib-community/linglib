@@ -21,6 +21,9 @@ agree within the answer's restriction. So *some of the linguists but not all of 
 scientists* says that exactly one linguist and all but one computer scientist have the property.
 The dual order prefers a larger extension; interpreting an answer under it is interpreting the
 inner negation of the answer under the default order for the complement of the question-property.
+The hybrid order contains the strict part of the ordering whose premises are that the individuals
+of the positive restriction lack the property and those of the negative restriction have it, so
+it excludes at least the worlds that ordering excludes.
 
 An answer takes the default order when it is positively skewed, its restriction being its positive
 restriction, which is Spector's quasi-positivity, and the hybrid order otherwise. The two
@@ -45,6 +48,9 @@ minimal sets cover it.
   participants might assume (§3.2.1), are not formalized; nor are answers to second-order
   questions (§2.4) or the conditions under which the dual order is chosen (§3.3).
 * The answers of Table 3.1 are not recorded as data.
+* The inclusion `exh_ltHybrid_subset` is strict for some answers: with three individuals, for the
+  answer that holds of nobody, of exactly two given individuals and of exactly the third, the
+  hybrid order excludes a world that is minimal in the ordering by the two restrictions.
 * `someButNotAll L C` and `allOrNone L` are `Det.some L ⊓ (Det.every C)ᶜ` and
   `Det.every L ⊔ Det.no L`; they are still defined here by their truth conditions.
 
@@ -194,6 +200,28 @@ theorem mem_exh_ltHybrid_iff_of_inter [Finite E] {w w' : W}
     rw [livesOn_restriction T (P w), livesOn_restriction T (P w'), inter_comm, h,
       inter_comm]
   simp only [exh, mem_ofPred_eq, hT, ltHybrid_iff_of_inter_eq rfl h]
+
+open Exhaustification in
+open scoped PremiseOrdering in
+-- the hybrid order contains the strict part of the ordering by the answer's two restrictions
+theorem ltHybrid_of_lt {v w : W}
+    (h : v <[(fun x ↦ {u | x ∉ P u}) '' T.positiveRestriction ∪
+      (fun x ↦ {u | x ∈ P u}) '' T.negativeRestriction] w) : ltHybrid P T v w := by
+  rw [Preorder.ofLowerSets_lt_iff, ofLowerSets_image_union_le_iff,
+    ofLowerSets_image_union_le_iff] at h
+  obtain ⟨⟨hp, hn⟩, hne⟩ := h
+  refine ⟨(not_and_or.1 hne).elim (fun h ↦ .inl ⟨hp, h⟩) fun h ↦ .inr ⟨hn, h⟩, ?_⟩
+  rintro (h | h)
+  exacts [h.2 hp, h.2 hn]
+
+open scoped PremiseOrdering in
+-- so exhaustive interpretation under the hybrid order keeps only worlds minimal in that ordering
+theorem exh_ltHybrid_subset :
+    exh P T (ltHybrid P T) ⊆
+      (≤[(fun x ↦ {u | x ∉ P u}) '' T.positiveRestriction ∪
+        (fun x ↦ {u | x ∈ P u}) '' T.negativeRestriction]).minimals {w | T (P w)} :=
+  fun _ ⟨hw, hmin⟩ ↦ ⟨hw, fun v hv hvw ↦ by_contra fun hwv ↦
+    hmin ⟨v, hv, ltHybrid_of_lt ⟨hvw, hwv⟩⟩⟩
 
 theorem not_ltHybrid_of_eq (h : T.positiveRestriction = T.negativeRestriction) (v w : W) :
     ¬ ltHybrid P T v w := fun ⟨hvw, hwv⟩ ↦ hwv <| by
