@@ -211,6 +211,25 @@ theorem treeDerivation_apply_eq_contractForest
     (x : ConnesKreimer R (UnorderedTree α)) :
     treeDerivation cuts hcuts T x = contractForest cuts {T} x := rfl
 
+/-- Contraction of a tree `T` with a forest `A` sums the trunks of the cuts of `T` with crown `A`,
+and adds `1` when `A` is `T` itself. -/
+theorem contractForest_ofTree [DecidableEq (UnorderedTree α)]
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (A : Forest (UnorderedTree α)) (T : UnorderedTree α) :
+    contractForest (R := R) cuts A (ofTree T) =
+      (if A = {T} then 1 else 0) + (((cuts T).filter (·.1 = A)).map fun p ↦ ofTree p.2).sum := by
+  show _root_.TensorProduct.lid R _ ((lcoeff R A).rTensor _ (comulOfCuts cuts (ofTree T))) = _
+  rw [comulOfCuts_apply_ofTree, comulTreeOfCuts, map_add, map_add, map_multiset_sum,
+    map_multiset_sum, Multiset.map_map, Multiset.map_map, Multiset.sum_map_filter]
+  simp [← of'_singleton, coeff_of', eq_comm (a := A)]
+
+theorem contractForest_ofTree_of_ne [DecidableEq (UnorderedTree α)]
+    {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
+    {A : Forest (UnorderedTree α)} {T : UnorderedTree α} (h : A ≠ {T}) :
+    contractForest (R := R) cuts A (ofTree T) =
+      (((cuts T).filter (·.1 = A)).map fun p ↦ ofTree p.2).sum := by
+  rw [contractForest_ofTree, ite_eq_right h, zero_add]
+
 /-- The contractions `∂_F` obey the product rule of a higher derivation indexed by forests:
 `∂_F (x * y) = ∑ ∂_A x * ∂_B y` over the ways to split `F` as `A + B`. -/
 theorem contractForest_mul [DecidableEq (UnorderedTree α)]

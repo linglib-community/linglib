@@ -49,6 +49,15 @@ section DecidableEq
 variable [DecidableEq (UnorderedTree α)]
   {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
 
+omit [DecidableEq (UnorderedTree α)] in
+/-- The unit stage `M_{β,1}` over a cut enumeration is multiplication by `β` after contraction of
+    the coproduct with the forest `{β}`. -/
+theorem mergeOpUnitOfCuts_eq_mul_contractForest
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (β : UnorderedTree α) (x : ConnesKreimer R (UnorderedTree α)) :
+    mergeOpUnitOfCuts (R := R) cuts β x = ofTree β * contractForest cuts {β} x :=
+  rfl
+
 /-- On one tree `T`, the primitive term of the unit stage contributes `β` if `T = β`, and each
     cut with crown `{β}` contributes `β` beside its trunk. -/
 theorem mergeOpUnitOfCuts_apply_singleton (β T : UnorderedTree α) :
@@ -57,16 +66,10 @@ theorem mergeOpUnitOfCuts_apply_singleton (β T : UnorderedTree α) :
         + ((cuts T).map
             (fun p => if p.1 = ({β} : Forest (UnorderedTree α))
               then of' (R := R) ({β} : Forest (UnorderedTree α)) * ofTree p.2 else 0)).sum := by
-  rw [mergeOpUnitOfCuts, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-    show (of' ({T} : Forest (UnorderedTree α)) : ConnesKreimer R (UnorderedTree α)) = ofTree T
-      from rfl, comulOfCuts_apply_ofTree, comulTreeOfCuts, map_add, map_multiset_sum,
-    Multiset.map_map]
-  congr 1
-  · rw [show (ofTree T : ConnesKreimer R (UnorderedTree α)) = of' {T} from rfl,
-      mergePostUnit_basis_tensor, mul_one]
-    simp only [Multiset.singleton_inj]
-  · exact congrArg Multiset.sum
-      (Multiset.map_congr rfl fun p _ ↦ mergePostUnit_basis_tensor β p.1 (ofTree p.2))
+  rw [mergeOpUnitOfCuts_eq_mul_contractForest, of'_singleton, contractForest_ofTree, mul_add,
+    mul_ite, mul_one, mul_zero, Multiset.sum_map_filter, ← Multiset.sum_map_mul_left,
+    of'_singleton]
+  simp only [Multiset.singleton_inj, eq_comm (a := β), mul_ite, mul_zero]
 
 /-- When `T ≠ β` and exactly one cut of `T` has crown `{β}`, the unit stage moves `β` to its own
     component beside that cut's trunk. -/
