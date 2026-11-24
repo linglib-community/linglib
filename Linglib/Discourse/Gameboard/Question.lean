@@ -4,7 +4,7 @@ public import Mathlib.Data.PFun
 public import Mathlib.Data.Set.Image
 
 /-!
-# Co-propositional questions
+# Questions and co-propositionality
 
 In Ginzburg's theory of dialogue, KoS, a question is a propositional abstract: a partial function
 `q : R →. P` from records to propositions, defined on the records of its domain. A polar question

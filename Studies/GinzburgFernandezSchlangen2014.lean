@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Discourse.Gameboard.Basic
-public import Linglib.Discourse.Gameboard.Copropositional
+public import Linglib.Discourse.Gameboard.Rule
+public import Linglib.Discourse.Gameboard.Question
 public import Linglib.Data.Examples.GinzburgFernandezSchlangen2014
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Gloss
@@ -45,14 +45,14 @@ self-correction reach the paper's gameboards.
   `MeanNextUtt(A, in, Boston)`); resolution itself is not modelled.
 * An utterance in progress has no represented content, and its constituents list only the
   sub-utterances the examples repair.
-* Co-propositionality of arbitrary partial functions is not decidable, so the rules test it
-  classically and `Disfluency.Licensed` is decided through its characterizations.
-* Grounding asks that the locutionary proposition be true, which is not represented: `ground`
+* A rule is a relation between gameboards, so `Disfluency.Licensed` is an existential over the
+  gameboards a rule allows and is decided through its characterizations.
+* Grounding asks that the locutionary proposition be true, which is not represented: `Gameboard.PendingDowndate`
   integrates MaxPending unconditionally, and the facts Utterance Interpolation adds about the
   speech event are left out.
 * Pending replacement asks that the replacement be a substitution instance of MaxPending that
-  reflects the speaker's intention; the first holds of any two utterances whose fields have fixed
-  types, and the second is the argument of `Gameboard.replaceMaxPending`.
+  reflects the speaker's intention. The first holds of any two utterances whose fields have fixed
+  types and the second is not represented, so the rule is `Gameboard.PendingReplacement ⊤`.
 
 ## TODO
 
@@ -200,8 +200,6 @@ is. -/
 def Copropositional (m : Act) (q : Question) : Prop :=
   ∃ q₀ ∈ m.qudContrib, Gameboard.Copropositional q₀ q
 
-noncomputable instance : DecidableRel Copropositional := fun _ _ ↦ Classical.propDecidable _
-
 theorem copropositional_assert :
     (assert p).Copropositional q ↔ Gameboard.Copropositional (PFun.pure p) q := by
   simp [Copropositional, qudContrib]
@@ -254,28 +252,23 @@ abbrev Board := Gameboard Agent Proposition Utterance (InformationStructure Ques
 
 /-! ### The rules -/
 
-/-- (31): Move update/Pending downdate, which integrates MaxPending as LatestMove. -/
-def ground (d : Board) : Option Board :=
-  match d.pending with
-  | v :: rest => some { d.recordMove v with pending := rest }
-  | [] => none
+/-- (48): Backward Looking Appropriateness Repair accommodates what the speaker meant by a
+constituent `u` of MaxPending, with `u` as focus-establishing constituent, and leaves the turn
+open. -/
+def BackwardRepair : Board → Board → Prop :=
+  turnUnderspec fun d d' ↦
+    ∃ u, Clarification Act.Copropositional u (fun _ ↦ ⟨meant d.speaker u, {u}⟩) d d'
 
-/-- (48): Backward Looking Appropriateness Repair accommodates what the speaker meant by the
-constituent `u` of MaxPending, with `u` as focus-establishing constituent. -/
-noncomputable def backwardRepair (t : Turn) (u : Constituent) (m : Utterance) (d : Board) :
-    Option Board :=
-  d.clarify Act.Copropositional t (fun _ u ↦ ⟨meant d.speaker u, {u}⟩) u m
-
-/-- (65): the Forward Looking Utterance Rule accommodates, after an editing phrase following `u`,
-what the speaker means to say next, with no focus-establishing constituent. -/
-noncomputable def forwardUtterance (t : Turn) (m : Utterance) (d : Board) : Option Board :=
-  d.latestContent.bind fun
-    | .fldEdit u => d.clarify Act.Copropositional t (fun _ u ↦ ⟨meantNext d.speaker u, ∅⟩) u m
-    | _ => none
+/-- (65): the Forward Looking Utterance Rule accommodates, after an editing phrase following a
+constituent `u` of MaxPending, what the speaker means to say next, with no focus-establishing
+constituent, and leaves the turn open. -/
+def ForwardUtterance : Board → Board → Prop :=
+  turnUnderspec fun d d' ↦ ∃ u, d.latestContent = some (.fldEdit u) ∧
+    Clarification Act.Copropositional u (fun _ ↦ ⟨meantNext d.speaker u, ∅⟩) d d'
 
 /-- (22c): Assert QUD-incrementation, which makes `p?` MaxQUD once `p` is asserted. -/
-def assertQud (d : Board) : Option Board :=
-  d.incrementQud fun
+def AssertQud : Board → Board → Prop :=
+  QudIncrementation fun
     | .assert p => some (PFun.pure p)
     | _ => none
 
@@ -292,28 +285,35 @@ def editing (u : Constituent) : Utterance :=
 
 section
 
-variable {t t' : Turn} {u : Constituent} {m : Utterance} {d d' : Board}
+variable {m : Utterance} {d d' : Board} {a : Agent}
 
-theorem isSome_backwardRepair_iff : (backwardRepair t u m d).isSome ↔
-    (∃ v ∈ d.maxPending, u ∈ v.constituents) ∧ m.content.Copropositional (meant d.speaker u) := by
-  simp only [backwardRepair, isSome_clarify_iff]
-  exact ⟨fun ⟨v, hv, hu, h⟩ ↦ ⟨⟨v, hv, hu⟩, h⟩, fun ⟨⟨v, hv, hu⟩, h⟩ ↦ ⟨v, hv, hu, h⟩⟩
+theorem backwardRepair_swapTurn_iff : BackwardRepair d d'.swapTurn ↔ BackwardRepair d d' :=
+  turnUnderspec_swapTurn_iff
 
-theorem isSome_forwardUtterance_iff : (forwardUtterance t m d).isSome ↔
-    ∃ u, d.latestContent = some (.fldEdit u) ∧ (∃ v ∈ d.maxPending, u ∈ v.constituents) ∧
-      m.content.Copropositional (meantNext d.speaker u) := by
-  unfold forwardUtterance
-  rcases d.latestContent with _ | _ | _ | u' | _ <;> simp [isSome_clarify_iff]
-  exact ⟨fun ⟨v, hv, hu, h⟩ ↦ ⟨⟨v, hv, hu⟩, h⟩, fun ⟨⟨v, hv, hu⟩, h⟩ ↦ ⟨v, hv, hu, h⟩⟩
+theorem forwardUtterance_swapTurn_iff : ForwardUtterance d d'.swapTurn ↔ ForwardUtterance d d' :=
+  turnUnderspec_swapTurn_iff
 
-theorem backwardRepair_eq_map_act :
-    backwardRepair t u m d = (backwardRepair .keep u m d).map t.act :=
-  d.clarify_eq_map_act t
+theorem exists_backwardRepair_iff (ha : a = d.speaker ∨ a = d.addressee) :
+    (∃ d', BackwardRepair d d' ∧ d'.latestMove = some m ∧ d'.speaker = a) ↔
+      ∃ u, ∃ v ∈ d.maxPending, u ∈ v.constituents ∧
+        m.content.Copropositional (meant d.speaker u) := by
+  rw [BackwardRepair, exists_turnUnderspec_speaker_iff
+    (fun _ ⟨_, h⟩ ↦ ⟨h.speaker, h.addressee⟩) ha]
+  exact ⟨fun ⟨d', ⟨u, h⟩, hm⟩ ↦ ⟨u, coherent_clarification_iff.mp ⟨d', h, hm⟩⟩,
+    fun ⟨u, h⟩ ↦
+      let ⟨d', hd, hm⟩ := coherent_clarification_iff.mpr h
+      ⟨d', ⟨u, hd⟩, hm⟩⟩
 
-theorem qud_backwardRepair (h : backwardRepair t u m d = some d') :
-    d'.qud = ⟨meant d.speaker u, {u}⟩ :: d.qud :=
-  let ⟨_, _, _, h⟩ := d.qud_clarify h
-  h
+theorem exists_forwardUtterance_iff (ha : a = d.speaker ∨ a = d.addressee) :
+    (∃ d', ForwardUtterance d d' ∧ d'.latestMove = some m ∧ d'.speaker = a) ↔
+      ∃ u, d.latestContent = some (.fldEdit u) ∧ ∃ v ∈ d.maxPending, u ∈ v.constituents ∧
+        m.content.Copropositional (meantNext d.speaker u) := by
+  rw [ForwardUtterance, exists_turnUnderspec_speaker_iff
+    (fun _ ⟨_, _, h⟩ ↦ ⟨h.speaker, h.addressee⟩) ha]
+  exact ⟨fun ⟨d', ⟨u, hu, h⟩, hm⟩ ↦ ⟨u, hu, coherent_clarification_iff.mp ⟨d', h, hm⟩⟩,
+    fun ⟨u, hu, h⟩ ↦
+      let ⟨d', hd, hm⟩ := coherent_clarification_iff.mpr h
+      ⟨d', ⟨u, hu, hd⟩, hm⟩⟩
 
 end
 
@@ -343,7 +343,7 @@ inductive FollowUp
 question is about, and what follows. -/
 structure Disfluency where
   direction : Examples.Direction
-  turn : Turn
+  continuer : Agent
   u₀ : Constituent
   followUp : FollowUp
   deriving DecidableEq
@@ -363,43 +363,61 @@ def content : Act :=
 def pending : Utterance :=
   { form := "", category := .s, content := .inProgress, constituents := {i.u₀} }
 
-/-- The gameboard the disfluency's rule yields: A's utterance in progress, the editing phrase
-grounded after it for a forward looking disfluency, and the rule licensing the follow-up. -/
-noncomputable def derive : Option Board :=
-  let d := initial.pendingUpdate i.pending .A .B
+/-- The gameboard at the moment of interruption: A's utterance in progress is pending. -/
+def board : Board := initial.pendingUpdate i.pending .A .B
+
+/-- The disfluency's rule licenses its follow-up, uttered by its continuer: Backward Looking
+Appropriateness Repair at the moment of interruption, or the Forward Looking Utterance Rule once
+an editing phrase has been uttered and grounded. -/
+def Licensed : Prop :=
   match i.direction with
-  | .backward => backwardRepair i.turn i.u₀ (utterance i.content) d
-  | .forward =>
-    (ground (d.pendingUpdate (editing i.u₀) .A .B)).bind
-      (forwardUtterance i.turn (utterance i.content))
+  | .backward => ∃ d', BackwardRepair i.board d' ∧ d'.latestMove = some (utterance i.content) ∧
+      d'.speaker = i.continuer
+  | .forward => ∃ d₁ d', PendingDowndate (i.board.pendingUpdate (editing i.u₀) .A .B) d₁ ∧
+      ForwardUtterance d₁ d' ∧ d'.latestMove = some (utterance i.content) ∧
+      d'.speaker = i.continuer
 
-/-- The disfluency's rule licenses its follow-up. -/
-def Licensed : Prop := i.derive.isSome
+variable {a a' : Agent} {u : Constituent} {x : Entity} {s : Finset Entity} {f : FollowUp}
 
-variable {t t' : Turn} {u : Constituent} {x : Entity} {s : Finset Entity}
+private theorem agent_cases (a : Agent) : a = .A ∨ a = .B := by cases a <;> simp
 
-theorem licensed_backward_iff {f : FollowUp} : Licensed ⟨.backward, t, u, f⟩ ↔
-    (content ⟨.backward, t, u, f⟩).Copropositional (meant .A u) := by
-  simp [Licensed, derive, isSome_backwardRepair_iff, pending, utterance, initial, maxPending,
-    pendingUpdate, pushPending, Gameboard.initial]
+theorem licensed_backward_iff : Licensed ⟨.backward, a, u, f⟩ ↔
+    (content ⟨.backward, a, u, f⟩).Copropositional (meant .A u) := by
+  refine (exists_backwardRepair_iff (agent_cases a)).trans ⟨?_, fun h ↦ ⟨u, _, rfl, ?_, h⟩⟩
+  · rintro ⟨u', v, hv, hu, h⟩
+    cases hv
+    cases Finset.mem_singleton.mp hu
+    exact h
+  · exact Finset.mem_singleton_self u
 
-theorem licensed_forward_iff {f : FollowUp} : Licensed ⟨.forward, t, u, f⟩ ↔
-    (content ⟨.forward, t, u, f⟩).Copropositional (meantNext .A u) := by
-  simp [Licensed, derive, ground, isSome_forwardUtterance_iff, pending, utterance, editing,
-    initial, maxPending, latestContent, latestMove, recordMove, pendingUpdate, pushPending,
-    Gameboard.initial]
+theorem licensed_forward_iff : Licensed ⟨.forward, a, u, f⟩ ↔
+    (content ⟨.forward, a, u, f⟩).Copropositional (meantNext .A u) := by
+  let d₀ : Board := (board ⟨.forward, a, u, f⟩).pendingUpdate (editing u) .A .B
+  let d₁ : Board := { d₀.recordMove (editing u) with pending := [pending ⟨.forward, a, u, f⟩] }
+  have h₁ : ∀ e, PendingDowndate d₀ e ↔ e = d₁ := fun _ ↦ pendingDowndate_iff rfl
+  have h₂ := exists_forwardUtterance_iff (d := d₁)
+    (m := utterance (content ⟨.forward, a, u, f⟩)) (agent_cases a)
+  refine ⟨?_, fun h ↦ ?_⟩
+  · rintro ⟨e, d', he, hd⟩
+    obtain rfl := (h₁ e).mp he
+    obtain ⟨u', hu', v, hv, -, h⟩ := h₂.mp ⟨d', hd⟩
+    cases hu'
+    exact h
+  · obtain ⟨d', hd⟩ := h₂.mpr ⟨u, rfl, _, rfl, Finset.mem_singleton_self u, h⟩
+    exact ⟨d₁, d', (h₁ d₁).mpr rfl, hd⟩
 
+-- p. 9:38
 theorem licensed_backward_answer_iff :
-    Licensed ⟨.backward, t, u, .answer x⟩ ↔ x.type = u.denotation.type :=
+    Licensed ⟨.backward, a, u, .answer x⟩ ↔ x.type = u.denotation.type :=
   licensed_backward_iff.trans Act.copropositional_assert_meant
 
-theorem not_licensed_backward_query : ¬Licensed ⟨.backward, t, u, .query s⟩ :=
+theorem not_licensed_backward_query : ¬Licensed ⟨.backward, a, u, .query s⟩ :=
   fun h ↦ Act.not_copropositional_ask_meantNext_meant (licensed_backward_iff.mp h)
 
-theorem licensed_forward_answer : Licensed ⟨.forward, t, u, .answer x⟩ :=
+theorem licensed_forward_answer : Licensed ⟨.forward, a, u, .answer x⟩ :=
   licensed_forward_iff.mpr (Act.copropositional_assert_meantNext.mpr trivial)
 
-theorem licensed_forward_query_iff : Licensed ⟨.forward, t, u, .query s⟩ ↔ s.Nonempty :=
+theorem licensed_forward_query_iff : Licensed ⟨.forward, a, u, .query s⟩ ↔ s.Nonempty :=
   licensed_forward_iff.trans (Act.copropositional_ask_meantNext.trans Finset.coe_nonempty)
 
 instance : DecidablePred Licensed
@@ -409,11 +427,11 @@ instance : DecidablePred Licensed
   | ⟨.forward, _, _, .query _⟩ => decidable_of_iff _ licensed_forward_query_iff.symm
 
 /-- Whether a follow-up is licensed does not depend on which participant utters it. -/
-theorem licensed_turn_iff {dir : Examples.Direction} {f : FollowUp} :
-    Licensed ⟨dir, t, u, f⟩ ↔ Licensed ⟨dir, t', u, f⟩ := by
+theorem licensed_continuer_iff {dir : Examples.Direction} :
+    Licensed ⟨dir, a, u, f⟩ ↔ Licensed ⟨dir, a', u, f⟩ := by
   cases dir
-  · exact licensed_backward_iff.trans (licensed_backward_iff (t := t')).symm
-  · exact licensed_forward_iff.trans (licensed_forward_iff (t := t')).symm
+  · exact licensed_backward_iff.trans (licensed_backward_iff (a := a')).symm
+  · exact licensed_forward_iff.trans (licensed_forward_iff (a := a')).symm
 
 end Disfluency
 
@@ -440,17 +458,17 @@ def _root_.GinzburgFernandezSchlangen2014.Examples.Lexeme.constituent :
 def _root_.GinzburgFernandezSchlangen2014.Examples.Query.domain : Examples.Query → Finset Entity
   | .name => {x | x.type = .individual}
 
-/-- Who utters the follow-up, as a turn of the gameboard. -/
-def _root_.GinzburgFernandezSchlangen2014.Examples.Continuer.turn : Examples.Continuer → Turn
-  | .kept => .keep
-  | .taken => .change
+/-- Who utters the follow-up: A, whose utterance is interrupted, or B. -/
+def _root_.GinzburgFernandezSchlangen2014.Examples.Continuer.agent : Examples.Continuer → Agent
+  | .kept => .A
+  | .taken => .B
 
 /-- The disfluency of an example: the reparandum, and the alteration or else the query. -/
 def disfluency (x : Examples.Example) : Option Disfluency := do
   let u₀ ← (x.lexemes .reparandum).head?
   let f ← ((x.lexemes .alteration).head?.map fun l ↦ FollowUp.answer l.constituent.denotation) <|>
     x.query.map fun q ↦ .query q.domain
-  pure ⟨← x.direction, (← x.continuer).turn, u₀.constituent, f⟩
+  pure ⟨← x.direction, (← x.continuer).agent, u₀.constituent, f⟩
 
 -- every example is read
 example : ∀ x : Examples.Example, (disfluency x).isSome := by decide
@@ -486,22 +504,24 @@ def v₀ : Utterance :=
   { form := "Is Jacques here?", category := .s, content := .ask (PFun.pure ⟨.here, .jacques⟩),
     constituents := {⟨"Jacques", .np, .jacques⟩} }
 
--- (43)
-theorem dgb2 :
-    (backwardRepair .keep georges u₁ (initial.pendingUpdate u₀ .A .B)).bind assertQud = some
-      { speaker := .A, addressee := .B, pending := [u₀], moves := [u₁],
-        qud := [⟨PFun.pure ⟨.mean .A georges, .jacques⟩, ∅⟩, ⟨meant .A georges, {georges}⟩] } := by
-  have h : (Act.assert ⟨.mean .A georges, .jacques⟩).Copropositional (meant .A georges) :=
-    Act.copropositional_assert_meant.mpr rfl
-  simp [backwardRepair, clarify, interpolate, assertQud, incrementQud, h, initial, maxPending,
-    latestContent, latestMove, recordMove, pushQud, pendingUpdate, pushPending, Gameboard.initial,
-    u₀, u₁]
+/-- (42): A's question is pending. -/
+def dgb1 : Board := initial.pendingUpdate u₀ .A .B
 
--- (44)
-theorem dgb3 :
-    (((backwardRepair .keep georges u₁ (initial.pendingUpdate u₀ .A .B)).bind assertQud).bind
-      (·.replaceMaxPending v₀)).map (fun d ↦ (d.pending, d.moves)) = some ([v₀], [u₁]) := by
-  simp [dgb2, replaceMaxPending]
+/-- (43): what A meant by *Georges* and the polar question of the correction are under
+discussion, and the correction is LatestMove. -/
+def dgb2 : Board :=
+  { speaker := .A, addressee := .B, pending := [u₀], moves := [u₁],
+    qud := [⟨PFun.pure ⟨.mean .A georges, .jacques⟩, ∅⟩, ⟨meant .A georges, {georges}⟩] }
+
+/-- (44): the corrected question is pending. -/
+def dgb3 : Board := { dgb2 with pending := [v₀] }
+
+theorem comp_dgb1_dgb2 : Relation.Comp BackwardRepair AssertQud dgb1 dgb2 :=
+  ⟨_, le_turnUnderspec _ _ ⟨georges, u₀, rfl, Finset.mem_singleton_self _, u₁,
+    Act.copropositional_assert_meant.mpr rfl, rfl⟩, _, rfl, rfl⟩
+
+theorem pendingReplacement_dgb2_dgb3 : PendingReplacement ⊤ dgb2 dgb3 :=
+  ⟨u₀, [], v₀, rfl, trivial, rfl⟩
 
 end Ex41
 
@@ -525,21 +545,24 @@ def v₀ : Utterance :=
   { form := "Take that book from", category := .s, content := .inProgress,
     constituents := {⟨"from", .p, .«from»⟩} }
 
--- (52)
-theorem dgb2 :
-    backwardRepair .keep «in» u₁ (initial.pendingUpdate u₀ .A .B) = some
-      { speaker := .A, addressee := .B, pending := [u₀], moves := [u₁],
-        qud := [⟨meant .A «in», {«in»}⟩] } := by
-  have h : (Act.assert ⟨.mean .A «in», .«from»⟩).Copropositional (meant .A «in») :=
-    Act.copropositional_assert_meant.mpr rfl
-  simp [backwardRepair, clarify, interpolate, h, initial, maxPending, recordMove, pushQud,
-    pendingUpdate, pushPending, Gameboard.initial, u₀, u₁]
+/-- (50): *Take that book in* is pending. -/
+def dgb1 : Board := initial.pendingUpdate u₀ .A .B
 
--- (53)
-theorem dgb3 :
-    ((backwardRepair .keep «in» u₁ (initial.pendingUpdate u₀ .A .B)).bind
-      (·.replaceMaxPending v₀)).map (fun d ↦ (d.pending, d.moves)) = some ([v₀], [u₁]) := by
-  simp [dgb2, replaceMaxPending]
+/-- (52): what A meant by *in* is MaxQUD with *in* as focus-establishing constituent, and
+*I meant from* is LatestMove. -/
+def dgb2 : Board :=
+  { speaker := .A, addressee := .B, pending := [u₀], moves := [u₁],
+    qud := [⟨meant .A «in», {«in»}⟩] }
+
+/-- (53): *Take that book from* is pending. -/
+def dgb3 : Board := { dgb2 with pending := [v₀] }
+
+theorem backwardRepair_dgb1_dgb2 : BackwardRepair dgb1 dgb2 :=
+  le_turnUnderspec _ _ ⟨«in», u₀, rfl, Finset.mem_singleton_self _, u₁,
+    Act.copropositional_assert_meant.mpr rfl, rfl⟩
+
+theorem pendingReplacement_dgb2_dgb3 : PendingReplacement ⊤ dgb2 dgb3 :=
+  ⟨u₀, [], v₀, rfl, trivial, rfl⟩
 
 end Ex49
 

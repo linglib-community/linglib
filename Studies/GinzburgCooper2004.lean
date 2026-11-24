@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Discourse.Gameboard.Basic
+public import Linglib.Discourse.Gameboard.Utterance
 public import Linglib.Data.Examples.GinzburgCooper2004
 public import Linglib.Data.Examples.Readers
 
