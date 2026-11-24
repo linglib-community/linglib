@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Mereology.Basic
+public import Linglib.Semantics.Mereology.Atomic
 public import Linglib.Syntax.Feature.Number.Decomposition
 
 /-!
@@ -27,6 +27,8 @@ cells of their bundles, are computed in `Studies/Harbour2014.lean`.
   so `[+atomic]` entails `[+minimal]`.
 * `Number.atomize_eq_of_atoms`: `[+minimal]` applied to a region of atoms changes nothing.
 * `Number.not_restrict_minimal_false_atomize`: `[−minimal]` applied after `[+minimal]` is empty.
+* `Number.mem_atomize_restrict_atomic_false_Ioc`: among the parts of an individual of an atomic
+  generalized Boolean algebra, `(+minimal(−atomic(P)))` holds of those with two atoms.
 
 ## Implementation notes
 
@@ -138,5 +140,16 @@ theorem singular_subset_minimal (hP : ∀ y ∈ P, y ≠ ⊥)
 theorem atomize_eq_of_atoms (hAll : ∀ x ∈ P, IsAtom x) : atomize P = P :=
   (atomize_subset P).antisymm fun x hPx ↦
     singular_subset_minimal (fun y hy ↦ (hAll y hy).1) ⟨hPx, hAll x hPx⟩
+
+/-- Among the parts of `c`, `(+minimal(−atomic(P)))` holds of those with two atoms: the dual. -/
+theorem mem_atomize_restrict_atomic_false_Ioc {B : Type*} [GeneralizedBooleanAlgebra B]
+    [IsAtomic B] {c x : B} :
+    x ∈ atomize (Feature.restrict .atomic false (Set.Ioc ⊥ c)) ↔
+      x ≤ c ∧ Mereology.atomCount B x = 2 := by
+  rw [← Mereology.minimal_ne_bot_and_not_isAtom_iff, Mereology.mem_atomize]
+  exact ⟨fun ⟨⟨⟨hx, hxc⟩, hxa⟩, hmin⟩ ↦ ⟨hxc, ⟨hx.ne', hxa⟩, fun y hy hyx ↦
+    hmin ⟨⟨bot_lt_iff_ne_bot.2 hy.1, hyx.trans hxc⟩, hy.2⟩ hyx⟩,
+    fun ⟨hxc, ⟨hx, hxa⟩, hmin⟩ ↦ ⟨⟨⟨bot_lt_iff_ne_bot.2 hx, hxc⟩, hxa⟩, fun y hy hyx ↦
+      hmin ⟨hy.1.1.ne', hy.2⟩ hyx⟩⟩
 
 end Number

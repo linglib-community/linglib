@@ -1,51 +1,80 @@
 module
 
 public import Linglib.Data.Examples.JereticEtAl2025
-public import Linglib.Syntax.Cat
-public import Linglib.Semantics.Presupposition.Strengthening
-public import Linglib.Semantics.Alternatives.Structural
-public import Linglib.Fragments.Romance.French.Determiners
-public import Linglib.Fragments.English.Determiners
-public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Semantics.Alternatives.Structural
+public import Linglib.Semantics.Plurality.Number
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Presupposition.Strengthening
+public import Linglib.Semantics.Reference.Iota
 
 /-!
 # Jeretič et al. (2025): Core concepts and indirect alternatives
 
-This file formalizes Jeretič, Bassi, Gonzalez, Yatsushiro, Meyer and Sauerland's account of the
-anti-duality of French *tous*. English *all* and *every* are unusable in a domain known to hold
-two individuals because Maximize Presupposition prefers *both* (Percus, Sauerland); *tous* is
-anti-dual too although French has no word for *both*, the puzzle of Chemla taken by Buccola,
-Križ and Chemla to show a conceptual alternative at work.
-The account posits a dual number feature in every language, syncretic with the plural in French, so
-that the string *tous les NP* is ambiguous between a plural and a dual parse; Avoid Ambiguity
-(`BarredByAmbiguity`) bars the dual parse from pronunciation because *les deux NP* realizes its
-meaning at no greater node count, and that expression, an indirect alternative (`indirectFrom`),
-licenses the Maximize Presupposition competition the silent parse cannot enter on its own. The
-worked example runs this on (25): the dual parse is barred, pronounceability is thereby derived
-rather than stipulated, and *tous* violates Maximize Presupposition through *les deux*
-(`tous_blocked_via_indirect`), so that it is used in the domain of three cups and not in the domain
-of two (`strengthen_tous`).
+French *tous* is odd in a domain known to hold two individuals, as English *all* is beside
+*both*, though French has no word for *both*, and it is not odd in a domain of three. Jeretič,
+Bassi, Gonzalez, Yatsushiro, Meyer and Sauerland take the dual of Harbour's number features to be
+present in every language and null in French, so that the string *tous les NP* has a plural and a
+dual parse.
 
-Across languages and quantifier slots a plain quantifier is predicted anti-dual exactly when a
-dual competitor exists, a lexical dual item or a pronounceable dual expression at most as
-complex as the plain one, which `Slot.competitor` derives from the paper's forms and their
-node counts; `theory_matches_data` checks the prediction against the judgments the paper
-reports, as rows: English *no* and *always* anti-dual, French *aucun* and *toujours* not,
-Japanese *which*, *each*, and *one* anti-dual by the lexical dual *dotti* where English and
-French are not. An account with direct alternatives only, Sauerland's, predicts
-anti-duality from lexical duals alone and so misses the indirect cells. The combination *tous
-les deux*, the domain restriction of Avoid Ambiguity, and the alternatives the paper rejects
-are not formalized.
+For a spell-out `spell : P → S` of parses as strings, with a meaning and a node count for each
+parse, a parse `q` bars a parse `p` when `q` is at most as complex as `p` and means the same, and
+the string of `p` has a parse with another meaning that no parse of the string of `q` has. A parse
+is pronounceable when none bars it. An indirect alternative of `s` is a pronounceable parse, at
+most as complex as `s`, that means what an unpronounceable alternative of `s` means. A parse that
+bars an alternative of `s` is therefore an indirect alternative of `s` once it is pronounceable
+and the alternative is at most as complex as `s`.
+
+A noun denotes the nonnull parts `Set.Ioc ⊥ c` of the sum `c` of its atoms. The dual
+`[+minimal]` over `[−atomic]` selects the parts with two atoms, as the numeral *deux* does, and the
+definite article takes the largest member of its restrictor, so *les deux NP* and *tous les NP*
+with a dual noun both refer to `c` where it has two atoms and are undefined elsewhere, while
+*tous les NP* with a plural noun refers to `c` wherever it is not null.
+
+The parses are those of *tous les verres sont pleins*, *les verres sont pleins*, *les deux verres
+sont pleins* and *les trois verres sont pleins*, each with either value of `[±minimal]`. No
+definite numeral is a structural alternative of the universal sentence, whose subject is a
+quantifier phrase. The dual parse of the universal sentence is a structural alternative of the
+plural one, and *les deux verres sont pleins* bars it, so the definite numeral with *deux* is an
+indirect alternative of the plural parse and the one with *trois* is not. Strengthened by its
+indirect alternatives, the presupposition of the plural parse holds where there are cups and
+they are not two; strengthened by its pronounceable structural alternatives alone it is
+unchanged. The dual parse of the plain definite is pronounceable, since every parse of another
+string is more complex.
+
+Across languages a plain quantifier is predicted to be odd in a domain of two when the language
+has a dual expression for it with at most as many nodes, a lexical dual counting one. The
+prediction is checked against the paper's judgments on nineteen sentences.
 
 ## Implementation notes
 
-* Node counts follow the paper: three heads each for *tous les NP* and *les deux NP* (38),
-  two morphemes for *always* as *all* plus *ways*, for *toujours*, for suppletive *immer*, for
-  *itu-mo*, and for *ni-kai*, four for *ni-kai-to-mo* and the English partitives, three for
-  the French partitives; where the paper names no dual expression the list is empty.
-* The English lexical duals are read from the fragment, their lexical status being their dual
-  number restriction; French *les deux* is the fragment's entry, a two-word expression.
+* The categories are those of the paper's bracketings. The quantifier `Q` is distinct from the
+  determiner `D`, a distinction the Universal Dependencies categories of `PhraseStructure.Cat` do
+  not draw, and the result that no determiner phrase is the subject of an alternative rests on it.
+* `[±minimal]` is a null head between the determiner and the noun, so the spell-out of a parse is
+  its yield without that head, and the two parses of a string differ in its value alone. The
+  value `false` leaves the noun's region as it is and `true` applies `[+minimal]` to the exclusive
+  `[−atomic]` region, the paper's exhaustified `[−atomic]`. Under the reading of a bundle at its
+  positive values alone, `Number.dom`, the dual restricts nothing.
+* A sentence denotes a trivalent proposition through `Presupposition.presupOfReferent`. The
+  universal quantifier and the distributivity operator both say that every atom of the subject's
+  referent is full, so *tous les NP* and *les NP* mean the same; homogeneity and non-maximality
+  are not modelled.
+* Equality of meanings is equality over the worlds of one model, so the results that need two
+  meanings to differ take a world that separates them as a hypothesis.
+* Node counts of the cross-linguistic cells follow the paper: *always* is *all* and *ways*,
+  *toujours* is *tous* and *jours*, *immer* is suppletive for the same two heads, and the partitive
+  *which of the two* has four.
+
+## TODO
+
+* The combination *tous les deux*, the restriction of Avoid Ambiguity to phase boundaries, and
+  the rejected alternatives with a core concept *both* or with category-free replacement.
+* The lexical duals of Japanese and Icelandic are not read from a fragment.
+* That the plural parse of *tous les verres sont pleins* is pronounceable, which needs a model
+  with a world that separates it from each definite numeral.
 
 ## References
 
@@ -54,347 +83,555 @@ are not formalized.
 * [buccola-kriz-chemla-2018]
 * [percus-2006]
 * [sauerland-2008a]
-* [sauerland-2003]
+* [harbour-2014]
+* [katzir-2007]
 -/
 
 @[expose] public section
 
 namespace JereticEtAl2025
 
+/-! ### Avoid Ambiguity and indirect alternatives -/
 
-/-! ### The typology -/
+section Blocking
 
-/-- The languages with reported judgments. -/
-inductive Language where
-  | english
-  | french
-  | german
-  | japanese
-  | icelandic
+variable {P S M : Type*} (spell : P → S) (meaning : P → M) (size : P → ℕ)
+
+/-- (37): the parse `q` bars the parse `p` from pronunciation when `q` is at most as complex and
+means the same, and the string of `p` has another parse whose meaning no parse of the string of
+`q` has. -/
+structure Bars (q p : P) : Prop where
+  /-- The barring parse is at most as complex as the barred one. -/
+  size_le : size q ≤ size p
+  /-- The two parses mean the same. -/
+  meaning_eq : meaning q = meaning p
+  /-- The string of `p` has a parse with another meaning, which the string of `q` lacks. -/
+  exists_parse : ∃ p₂, spell p₂ = spell p ∧ meaning p₂ ≠ meaning p ∧
+    ∀ q₂, spell q₂ = spell q → meaning q₂ ≠ meaning p₂
+
+/-- A parse is pronounceable when no parse bars it. -/
+def Pronounceable (p : P) : Prop := ∀ q, ¬ Bars spell meaning size q p
+
+/-- (43): the indirect alternatives of `s` are the pronounceable parses at most as complex as `s`
+that mean what some unpronounceable alternative of `s` means. -/
+def indirect (alts : P → Set P) (s : P) : Set P :=
+  {i | Pronounceable spell meaning size i ∧ size i ≤ size s ∧
+    ∃ x ∈ alts s, ¬ Pronounceable spell meaning size x ∧ meaning i = meaning x}
+
+variable {spell meaning size} {alts alts' : P → Set P} {p q s x : P}
+
+theorem Bars.spell_ne (h : Bars spell meaning size q p) : spell q ≠ spell p := fun he ↦
+  let ⟨p₂, hp₂, _, hq⟩ := h.exists_parse
+  hq p₂ (hp₂.trans he.symm) rfl
+
+theorem pronounceable_of_forall_meaning_eq
+    (h : ∀ p₂, spell p₂ = spell p → meaning p₂ = meaning p) :
+    Pronounceable spell meaning size p := fun _ hb ↦
+  let ⟨p₂, hp₂, hne, _⟩ := hb.exists_parse
+  hne (h p₂ hp₂)
+
+theorem Bars.mem_indirect (h : Bars spell meaning size q x)
+    (hq : Pronounceable spell meaning size q) (hx : x ∈ alts s) (hs : size x ≤ size s) :
+    q ∈ indirect spell meaning size alts s :=
+  ⟨hq, h.size_le.trans hs, x, hx, fun hp ↦ hp q h, h.meaning_eq⟩
+
+theorem indirect_mono (h : alts s ⊆ alts' s) :
+    indirect spell meaning size alts s ⊆ indirect spell meaning size alts' s :=
+  fun _ ⟨hi, hs, x, hx, hp, hm⟩ ↦ ⟨hi, hs, x, h hx, hp, hm⟩
+
+theorem indirect_eq_empty_of_forall_pronounceable
+    (h : ∀ x ∈ alts s, Pronounceable spell meaning size x) :
+    indirect spell meaning size alts s = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ ⟨_, _, x, hx, hn, _⟩ ↦ hn (h x hx)
+
+end Blocking
+
+/-! ### The dual and the definite numeral -/
+
+section Region
+
+open Mereology Number
+
+/-- (26a): the members of a region with `n` atoms, the numeral's restriction. -/
+def exactly {E : Type*} [PartialOrder E] [OrderBot E] (n : ℕ) (P : Set E) : Set E :=
+  {x ∈ P | atomCount E x = n}
+
+/-- The region of a noun under a value of `[±minimal]` over `[−atomic]`: `[+minimal]` selects
+the minimal members that are not atoms, the dual (98b), and `[−minimal]` selects all (95b). -/
+def number {E : Type*} [PartialOrder E] [OrderBot E] (minimal : Bool) (P : Set E) : Set E :=
+  if minimal then atomize (Feature.restrict .atomic false P) else P
+
+variable {E : Type*} [GeneralizedBooleanAlgebra E] [IsAtomic E] {c x : E} {m n : ℕ}
+
+omit [IsAtomic E] in
+theorem exactly_Ioc (hn : n ≠ 0) :
+    exactly n (Set.Ioc ⊥ c) = {x | x ≤ c ∧ atomCount E x = n} :=
+  Set.ext fun x ↦ ⟨fun h ↦ ⟨h.1.2, h.2⟩, fun h ↦
+    ⟨⟨bot_lt_iff_ne_bot.2 fun hx ↦ hn (by rw [← h.2, hx, atomCount_bot]), h.1⟩, h.2⟩⟩
+
+-- (103)
+theorem number_true_Ioc : number true (Set.Ioc ⊥ c) = exactly 2 (Set.Ioc ⊥ c) := by
+  rw [exactly_Ioc two_ne_zero]
+  exact Set.ext fun _ ↦ mem_atomize_restrict_atomic_false_Ioc
+
+omit [IsAtomic E] in
+theorem exactly_exactly (P : Set E) : exactly n (exactly n P) = exactly n P :=
+  Set.ext fun _ ↦ ⟨fun h ↦ h.1, fun h ↦ ⟨h, h.2⟩⟩
+
+omit [IsAtomic E] in
+theorem exactly_exactly_of_ne (h : m ≠ n) (P : Set E) : exactly n (exactly m P) = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ hx ↦ h (hx.1.2.symm.trans hx.2)
+
+theorem isGreatest_exactly_Ioc (hn : n ≠ 0) :
+    IsGreatest (exactly n (Set.Ioc ⊥ c)) x ↔ x = c ∧ atomCount E c = n := by
+  rw [exactly_Ioc hn]
+  exact isGreatest_atomCount_iff hn
+
+omit [IsAtomic E] in
+theorem isGreatest_Ioc_bot : IsGreatest (Set.Ioc ⊥ c) x ↔ x = c ∧ c ≠ ⊥ :=
+  ⟨fun h ↦ ⟨h.1.2.antisymm (h.2 ⟨h.1.1.trans_le h.1.2, le_rfl⟩), (h.1.1.trans_le h.1.2).ne'⟩,
+    by rintro ⟨rfl, hc⟩; exact ⟨⟨bot_lt_iff_ne_bot.2 hc, le_rfl⟩, fun _ h ↦ h.2⟩⟩
+
+end Region
+
+/-! ### The parses of (25) and (38) -/
+
+/-- The categories of the bracketings in (38), with the head `Nb` of number below the
+numeral. -/
+inductive Cat where
+  | Q
+  | D
+  | Num
+  | Nb
+  | N
+  | V
+  | S
   deriving DecidableEq, Repr
 
-/-- The quantifier slots are universal, negative, interrogative, distributive, existential, and
-the temporal universal *always*. -/
-inductive QSlot where
-  | universal
-  | negative
-  | which
-  | each
-  | one
-  | always
+/-- The numerals of the fragment. -/
+inductive Numeral where
+  | deux
+  | trois
   deriving DecidableEq, Repr
 
-/-- A dual expression a language offers for a slot records its form, whether it is a single
-lexical item, and its node count. -/
-structure DualForm where
-  form : String
-  lexical : Bool
-  size : ℕ
+/-- The number a numeral names. -/
+def Numeral.card : Numeral → ℕ
+  | .deux => 2
+  | .trois => 3
+
+/-- The words of the fragment, among them the two values of `[±minimal]`. -/
+inductive Word where
+  | tous
+  | les
+  | numeral (n : Numeral)
+  | minimal (v : Bool)
+  | verres
+  | sontPleins
   deriving DecidableEq, Repr
 
-/-- A lexical dual item of a fragment is a quantifier whose number restriction is the dual. -/
-def lexicalDual (form : String) (restriction : Option Number) : DualForm :=
-  ⟨form, decide (restriction = some .dual), 1⟩
+/-- The `[±minimal]` heads are null in French. -/
+def Word.IsNull : Word → Prop
+  | .minimal _ => True
+  | _ => False
 
-/-- The plain expression of a slot with its node count and the dual expressions the language
-offers for it. -/
-structure Slot where
-  plain : String
-  size : ℕ
+instance : DecidablePred Word.IsNull := fun w ↦ by
+  cases w <;> unfold Word.IsNull <;> infer_instance
+
+/-- The subjects of the fragment are *tous les NP*, *les NP* and *les n NP*. -/
+inductive Subject where
+  | tous
+  | les
+  | lesNum (n : Numeral)
+  deriving DecidableEq, Repr
+
+/-- A parse is a subject with a value of `[±minimal]` on its noun. -/
+structure Parse where
+  subject : Subject
+  minimal : Bool
+  deriving DecidableEq, Repr
+
+open PhraseStructure Tree
+
+/-- The noun phrase under its number head. -/
+def nounPhrase (minimal : Bool) : Tree Cat Word :=
+  .node .Nb [.terminal .Nb (.minimal minimal), .terminal .N .verres]
+
+/-- (38): the tree of a subject, a quantifier phrase for *tous* and a determiner phrase
+otherwise. -/
+def Subject.tree (minimal : Bool) : Subject → Tree Cat Word
+  | .tous => .node .Q [.terminal .Q .tous, .node .D [.terminal .D .les, nounPhrase minimal]]
+  | .les => .node .D [.terminal .D .les, nounPhrase minimal]
+  | .lesNum n =>
+    .node .D [.terminal .D .les, .node .Num [.terminal .Num (.numeral n), nounPhrase minimal]]
+
+namespace Parse
+
+/-- The tree of a parse is its subject over the predicate *sont pleins*. -/
+def tree (p : Parse) : Tree Cat Word :=
+  .node .S [p.subject.tree p.minimal, .terminal .V .sontPleins]
+
+/-- The string of a parse is its yield without the null heads. -/
+def spell (p : Parse) : List Word := p.tree.yield.filter (¬ ·.IsNull)
+
+/-- (38), (43): the complexity of a parse is the number of nodes of its tree. -/
+def size (p : Parse) : ℕ := RoseTree.numNodes p.tree
+
+end Parse
+
+/-- The lexicon holds the words of the fragment under their categories. -/
+def lexicon : Finset (Tree Cat Word) :=
+  {.terminal .Q .tous, .terminal .D .les, .terminal .Num (.numeral .deux),
+    .terminal .Num (.numeral .trois), .terminal .Nb (.minimal true),
+    .terminal .Nb (.minimal false), .terminal .N .verres, .terminal .V .sontPleins}
+
+/-- (42): the alternatives of a parse are the parses whose trees are structural alternatives of
+its tree. -/
+def Parse.alts (p : Parse) : Set Parse := {q | q.tree ∈ structuralAlternatives lexicon p.tree}
+
+theorem Parse.spell_eq_spell_iff {p q : Parse} : p.spell = q.spell ↔ p.subject = q.subject := by
+  rcases p with ⟨_ | _ | (_ | _), _ | _⟩ <;> rcases q with ⟨_ | _ | (_ | _), _ | _⟩ <;> decide
+
+theorem Parse.size_les_lt (m m' : Bool) (s : Subject) (hs : s ≠ .les) :
+    Parse.size ⟨.les, m⟩ < Parse.size ⟨s, m'⟩ := by
+  rcases s with _ | _ | (_ | _) <;> cases m <;> cases m' <;> first | decide | exact absurd rfl hs
+
+theorem Parse.size_lesNum_eq (n : Numeral) (m m' : Bool) :
+    Parse.size ⟨.lesNum n, m⟩ = Parse.size ⟨.tous, m'⟩ := by
+  cases n <;> cases m <;> cases m' <;> decide
+
+theorem tous_true_mem_alts : (⟨.tous, true⟩ : Parse) ∈ Parse.alts ⟨.tous, false⟩ := by
+  apply Relation.ReflTransGen.single
+  apply RoseTree.Rewrites.set _ ⟨0, by simp⟩
+  apply RoseTree.Rewrites.set _ ⟨1, by simp⟩
+  apply RoseTree.Rewrites.set _ ⟨1, by simp⟩
+  apply RoseTree.Rewrites.set _ ⟨0, by simp⟩
+  refine .here (StructuralOp.subst rfl ?_)
+  simp [substitutionSource, lexicon]
+
+/-- No definite description, with a numeral or without, is a structural alternative of the
+universal sentence: the subject of an alternative is never a determiner phrase. -/
+theorem subject_eq_tous_of_mem_alts {m : Bool} {q : Parse} (h : q ∈ Parse.alts ⟨.tous, m⟩) :
+    q.subject = .tous := by
+  have hlic : q.tree.Licensed
+      (fun l ks ↦ Label.cat l = Cat.S → ∀ k ∈ ks, Label.cat k ≠ Cat.D) :=
+    licensed_of_atMostAsComplex
+      (forall_mem_substitutionSource.2 ⟨by decide, by cases m <;> decide⟩)
+      (fun _ _ _ _ h hS k hk ↦ h hS k (List.mem_of_mem_eraseIdx hk))
+      (fun _ _ _ _ _ hc h hS x hx ↦ by
+        rcases List.mem_append.1 hx with h₁ | h₂
+        · exact h hS x (List.mem_append_left _ h₁)
+        · rcases List.mem_cons.1 h₂ with rfl | h₃
+          · exact hc ▸ h hS _ (by simp)
+          · exact h hS x (by simp [h₃]))
+      (by cases m <;> decide) h
+  rcases q with ⟨_ | _ | n, m'⟩
+  · rfl
+  · exact absurd rfl (hlic.rel_root rfl _ List.mem_cons_self)
+  · exact absurd rfl (hlic.rel_root rfl _ List.mem_cons_self)
+
+/-! ### The meanings of the parses -/
+
+section Meaning
+
+open Mereology Presupposition
+
+variable {W E : Type*} [GeneralizedBooleanAlgebra E]
+
+/-- (26d), (28c), (39b): the restrictor of the definite in the subject of a parse, the region of
+the noun under its number and, with a numeral, its members of that many atoms. -/
+def Parse.region (p : Parse) (c : E) : Set E :=
+  match p.subject with
+  | .lesNum n => exactly n.card (number p.minimal (Set.Ioc ⊥ c))
+  | _ => number p.minimal (Set.Ioc ⊥ c)
+
+variable (c : W → E) (full : W → Set E)
+
+/-- (27b), (28f), (40): a parse says of the largest member of its restrictor that its atoms are
+all full, and is undefined where the restrictor has no largest member. -/
+noncomputable def Parse.meaning (p : Parse) : W → Trivalent :=
+  presupOfReferent (fun w ↦ iota {x | IsGreatest (p.region (c w)) x})
+    fun x w ↦ atomsBelow x ⊆ full w
+
+/-- The presupposition of a parse holds at the worlds where it is defined. -/
+noncomputable def Parse.presup (p : Parse) : Set W := (Trivalent.gapExt (p.meaning c full))ᶜ
+
+variable {c full} {p q : Parse} {w : W} {m : Bool}
+
+theorem Parse.mem_presup_iff : w ∈ p.presup c full ↔ ∃ x, IsGreatest (p.region (c w)) x := by
+  simp only [Parse.presup, Set.mem_compl_iff, Trivalent.gapExt, Set.mem_ofPred_eq, Parse.meaning,
+    presupOfReferent_eq_undefined_iff, not_not, iota_isGreatest_dom]
+
+theorem Parse.meaning_congr (h : ∀ c : E, p.region c = q.region c) :
+    p.meaning c full = q.meaning c full := by
+  simp only [Parse.meaning, h]
+
+theorem Parse.presup_congr (h : p.meaning c full = q.meaning c full) :
+    p.presup c full = q.presup c full := by
+  rw [Parse.presup, Parse.presup, h]
+
+theorem Parse.meaning_apply_of_isGreatest {x : E} (hp : IsGreatest (p.region (c w)) x)
+    (hq : IsGreatest (q.region (c w)) x) : p.meaning c full w = q.meaning c full w :=
+  (presupOfReferent_of_mem (referent := fun w ↦ iota {x | IsGreatest (p.region (c w)) x})
+    (scope := fun x w ↦ atomsBelow x ⊆ full w) (mem_iota_isGreatest.2 hp)).trans
+    (presupOfReferent_of_mem (referent := fun w ↦ iota {x | IsGreatest (q.region (c w)) x})
+      (scope := fun x w ↦ atomsBelow x ⊆ full w) (mem_iota_isGreatest.2 hq)).symm
+
+theorem meaning_les : Parse.meaning c full ⟨.les, m⟩ = Parse.meaning c full ⟨.tous, m⟩ := rfl
+
+variable [IsAtomic E]
+
+theorem region_dual (c : E) : Parse.region ⟨.tous, true⟩ c = exactly 2 (Set.Ioc ⊥ c) :=
+  number_true_Ioc
+
+-- (40), (41)
+theorem region_lesNum_deux (c : E) :
+    Parse.region ⟨.lesNum .deux, m⟩ c = Parse.region ⟨.tous, true⟩ c := by
+  cases m
+  · exact number_true_Ioc.symm
+  · exact (congrArg (exactly 2) number_true_Ioc).trans
+      ((exactly_exactly _).trans number_true_Ioc.symm)
+
+-- (40), (41)
+theorem meaning_lesNum_deux :
+    Parse.meaning c full ⟨.lesNum .deux, m⟩ = Parse.meaning c full ⟨.tous, true⟩ :=
+  Parse.meaning_congr region_lesNum_deux
+
+omit [IsAtomic E] in
+theorem presup_tous_false : Parse.presup c full ⟨.tous, false⟩ = {w | c w ≠ ⊥} :=
+  Set.ext fun _ ↦ Parse.mem_presup_iff.trans
+    ⟨fun ⟨_, h⟩ ↦ (isGreatest_Ioc_bot.1 h).2, fun h ↦ ⟨_, isGreatest_Ioc_bot.2 ⟨rfl, h⟩⟩⟩
+
+theorem presup_tous_true :
+    Parse.presup c full ⟨.tous, true⟩ = {w | atomCount E (c w) = 2} :=
+  Set.ext fun w ↦ Parse.mem_presup_iff.trans <| by
+    rw [region_dual]
+    exact ⟨fun ⟨_, h⟩ ↦ ((isGreatest_exactly_Ioc two_ne_zero).1 h).2,
+      fun h ↦ ⟨_, (isGreatest_exactly_Ioc two_ne_zero).2 ⟨rfl, h⟩⟩⟩
+
+theorem presup_lesNum_trois_subset :
+    Parse.presup c full ⟨.lesNum .trois, m⟩ ⊆ {w | atomCount E (c w) = 3} := fun w hw ↦ by
+  obtain ⟨x, hx⟩ := Parse.mem_presup_iff.1 hw
+  cases m
+  · exact ((isGreatest_exactly_Ioc three_ne_zero).1 hx).2
+  · have h : Parse.region ⟨.lesNum .trois, true⟩ (c w) = ∅ :=
+      (congrArg (exactly 3) number_true_Ioc).trans (exactly_exactly_of_ne (by decide) _)
+    exact absurd hx.1 (h ▸ Set.notMem_empty x)
+
+theorem presup_tous_true_subset :
+    Parse.presup c full ⟨.tous, true⟩ ⊆ Parse.presup c full ⟨.tous, false⟩ := by
+  rw [presup_tous_true, presup_tous_false]
+  rintro w (hw : atomCount E (c w) = 2) h
+  simp [h] at hw
+
+-- (19b)
+theorem meaning_tous_apply_of_atomCount (h : atomCount E (c w) = 2) :
+    Parse.meaning c full ⟨.tous, false⟩ w = Parse.meaning c full ⟨.tous, true⟩ w := by
+  have hc : c w ≠ ⊥ := fun hc ↦ by simp [hc] at h
+  exact Parse.meaning_apply_of_isGreatest (isGreatest_Ioc_bot.2 ⟨rfl, hc⟩)
+    (region_dual (c w) ▸ (isGreatest_exactly_Ioc two_ne_zero).2 ⟨rfl, h⟩)
+
+end Meaning
+
+/-! ### Blocking and competition -/
+
+section Competition
+
+open Mereology Presupposition
+
+variable {W E : Type*} [GeneralizedBooleanAlgebra E] [IsAtomic E] {c : W → E} {full : W → Set E}
+  {m : Bool}
+
+local notation "Bars'" => Bars Parse.spell (Parse.meaning c full) Parse.size
+local notation "Pronounceable'" => Pronounceable Parse.spell (Parse.meaning c full) Parse.size
+local notation "indirect'" => indirect Parse.spell (Parse.meaning c full) Parse.size Parse.alts
+
+theorem meaning_tous_ne (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
+    Parse.meaning c full ⟨.tous, false⟩ ≠ Parse.meaning c full ⟨.tous, true⟩ := fun h ↦ by
+  obtain ⟨w, hc, hn⟩ := hw
+  have := Parse.presup_congr h
+  rw [presup_tous_false, presup_tous_true] at this
+  exact hn (this ▸ hc : w ∈ {w | atomCount E (c w) = 2})
+
+/-- Avoid Ambiguity: *les deux verres sont pleins* bars the dual parse of *tous les verres sont
+pleins*, in a model with a world whose cups are not two. -/
+theorem bars_lesNum_deux_tous_true (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
+    Bars' ⟨.lesNum .deux, m⟩ ⟨.tous, true⟩ where
+  size_le := (Parse.size_lesNum_eq ..).le
+  meaning_eq := meaning_lesNum_deux
+  exists_parse := ⟨⟨.tous, false⟩, Parse.spell_eq_spell_iff.2 rfl, meaning_tous_ne hw,
+    fun ⟨s, m'⟩ hs ↦ by
+      obtain rfl : s = .lesNum .deux := Parse.spell_eq_spell_iff.1 hs
+      exact fun h ↦ meaning_tous_ne hw (h.symm.trans meaning_lesNum_deux)⟩
+
+theorem pronounceable_lesNum_deux : Pronounceable' ⟨.lesNum .deux, m⟩ :=
+  pronounceable_of_forall_meaning_eq fun ⟨s, m'⟩ hs ↦ by
+    obtain rfl : s = .lesNum .deux := Parse.spell_eq_spell_iff.1 hs
+    exact meaning_lesNum_deux.trans meaning_lesNum_deux.symm
+
+omit [IsAtomic E] in
+-- (78)
+theorem pronounceable_les : Pronounceable' ⟨.les, m⟩ := by
+  rintro ⟨s, m'⟩ ⟨hsize, -, p₂, hp₂, -, hq⟩
+  by_cases hs : s = .les
+  · subst hs
+    exact hq p₂ (Parse.spell_eq_spell_iff.2 (Parse.spell_eq_spell_iff.1 hp₂)) rfl
+  · exact (Parse.size_les_lt m m' s hs).not_ge hsize
+
+/-- *Les deux verres sont pleins* is an indirect alternative of the plural parse of *tous les
+verres sont pleins*. -/
+theorem lesNum_deux_mem_indirect (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
+    (⟨.lesNum .deux, m⟩ : Parse) ∈ indirect' ⟨.tous, false⟩ :=
+  (bars_lesNum_deux_tous_true hw).mem_indirect pronounceable_lesNum_deux tous_true_mem_alts
+    (by decide)
+
+theorem lesNum_trois_notMem_indirect (h₂ : ∃ w, atomCount E (c w) = 2) :
+    (⟨.lesNum .trois, m⟩ : Parse) ∉ indirect' ⟨.tous, false⟩ := by
+  rintro ⟨-, -, ⟨s, m'⟩, hx, -, hm⟩
+  obtain rfl : s = .tous := subject_eq_tous_of_mem_alts hx
+  obtain ⟨w, hw⟩ := h₂
+  have hdual : w ∈ Parse.presup c full ⟨.tous, true⟩ := by rwa [presup_tous_true]
+  have hmem : w ∈ Parse.presup c full ⟨.tous, m'⟩ := by
+    cases m'
+    · exact presup_tous_true_subset hdual
+    · exact hdual
+  have h3 : atomCount E (c w) = 3 := presup_lesNum_trois_subset (Parse.presup_congr hm ▸ hmem)
+  omega
+
+-- (19b)
+theorem meaning_apply_of_mem_indirect {q : Parse} (hq : q ∈ indirect' ⟨.tous, false⟩) {w : W}
+    (hw : w ∈ Parse.presup c full q) :
+    Parse.meaning c full q w = Parse.meaning c full ⟨.tous, false⟩ w := by
+  obtain ⟨-, -, ⟨s, m'⟩, hx, -, hm⟩ := hq
+  obtain rfl : s = .tous := subject_eq_tous_of_mem_alts hx
+  cases m'
+  · rw [hm]
+  · have hdual : w ∈ Parse.presup c full ⟨.tous, true⟩ := Parse.presup_congr hm ▸ hw
+    rw [presup_tous_true] at hdual
+    rw [hm, meaning_tous_apply_of_atomCount hdual]
+
+/-- Maximize Presupposition over indirect alternatives: the plural parse of *tous les verres sont
+pleins* is used where there are cups and they are not two, in a model with such a world. -/
+theorem strengthen_indirect_tous (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
+    strengthen indirect' (Parse.presup c full) ⟨.tous, false⟩ =
+      {w | c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2} := by
+  rw [strengthen_eq_sdiff (ψ := ⟨.lesNum .deux, false⟩) (lesNum_deux_mem_indirect hw),
+    Parse.presup_congr meaning_lesNum_deux, presup_tous_false, presup_tous_true]
+  · rfl
+  · rw [Parse.presup_congr meaning_lesNum_deux]
+    exact ⟨presup_tous_true_subset, fun h ↦ meaning_tous_ne (full := full) hw <| by
+      obtain ⟨w, hc, hn⟩ := hw
+      rw [presup_tous_false, presup_tous_true] at h
+      exact absurd (h hc) hn⟩
+  · rintro χ ⟨-, -, ⟨s, m'⟩, hx, -, hm⟩ hss
+    obtain rfl : s = .tous := subject_eq_tous_of_mem_alts hx
+    rw [Parse.presup_congr hm, Parse.presup_congr meaning_lesNum_deux] at *
+    cases m'
+    · exact absurd rfl hss.ne
+    · exact subset_rfl
+
+-- (2a)
+theorem strengthen_pronounceable_tous (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
+    strengthen (fun p ↦ {q ∈ p.alts | Pronounceable' q}) (Parse.presup c full) ⟨.tous, false⟩ =
+      Parse.presup c full ⟨.tous, false⟩ := by
+  refine strengthen_eq_self ?_
+  rintro ⟨s, m'⟩ ⟨hx, hp⟩ hss
+  obtain rfl : s = .tous := subject_eq_tous_of_mem_alts hx
+  cases m'
+  · exact hss.ne rfl
+  · exact hp _ (bars_lesNum_deux_tous_true (m := false) hw)
+
+end Competition
+
+/-! ### Other quantifiers and other languages -/
+
+/-- A dual expression of a language is a lexical item or a phrase with a count of nodes. -/
+inductive DualForm where
+  | lexical
+  | phrase (size : ℕ)
+  deriving DecidableEq, Repr
+
+/-- The node count of a dual expression, a lexical item counting one. -/
+def DualForm.size : DualForm → ℕ
+  | .lexical => 1
+  | .phrase n => n
+
+/-- A determiner of a fragment is a lexical dual when its number restriction is the dual. -/
+def DualForm.ofDeterminer (d : QuantificationalDeterminer) : List DualForm :=
+  if d.numberRestriction = some .dual then [.lexical] else []
+
+/-- The plain expression of a quantifier in a language, by its node count, with the dual
+expressions the language has for it. -/
+structure Cell where
+  plain : ℕ
   duals : List DualForm
   deriving DecidableEq, Repr
 
-/-- The dual competitor a slot provides is a lexical dual item, the standard Maximize
-Presupposition competitor; or a pronounceable dual expression at most as complex as the plain
-one, which blocks the silent dual parse and stands in for it as an indirect alternative; or
-nothing simple enough. -/
-inductive Competitor where
-  | lexicalDual
-  | indirect
-  | none
-  deriving DecidableEq, Repr
+/-- A plain quantifier is predicted to be odd in a domain of two when some dual expression is at
+most as complex: a lexical dual is a structural alternative, and a phrase bars the dual parse and
+stands in for it as an indirect alternative. -/
+def Cell.AntiDual (c : Cell) : Prop := ∃ d ∈ c.duals, d.size ≤ c.plain
 
-/-- The competitor a slot provides, from its dual expressions. -/
-def Slot.competitor (s : Slot) : Competitor :=
-  if s.duals.any (·.lexical) then .lexicalDual
-  else if s.duals.any (·.size ≤ s.size) then .indirect
-  else .none
+instance : DecidablePred Cell.AntiDual := fun c ↦ by unfold Cell.AntiDual; infer_instance
 
-/-- Each of the paper's cells records the plain expression, its node count, and the dual
-expressions of the language with their counts. -/
-def typology : Language → QSlot → Option Slot
-  | .english, .universal =>
-    some ⟨"all", 1, [lexicalDual English.Determiners.both.form
-      English.Determiners.both.numberRestriction]⟩
-  | .english, .negative =>
-    some ⟨"no", 1, [lexicalDual English.Determiners.neither.form
-      English.Determiners.neither.numberRestriction]⟩
-  | .english, .which => some ⟨"which", 1, [⟨"which of the two", false, 4⟩]⟩
-  | .english, .each => some ⟨"each", 1, [⟨"each of the two", false, 4⟩]⟩
-  | .english, .one => some ⟨"one", 1, [⟨"one of the two", false, 4⟩]⟩
-  | .english, .always => some ⟨"always", 2, [⟨"both times", false, 2⟩]⟩
-  | .french, .universal =>
-    some ⟨"tous les", 3, [⟨French.Determiners.les_deux.form, false, 3⟩]⟩
-  | .french, .negative =>
-    some ⟨"aucun", 1, [⟨"aucun des deux", false, 3⟩, ⟨"ni l'un ni l'autre", false, 5⟩]⟩
-  | .french, .which => some ⟨"quel", 1, []⟩
-  | .french, .each => some ⟨"chaque", 1, []⟩
-  | .french, .one => some ⟨"un", 1, []⟩
-  | .french, .always => some ⟨"toujours", 2, [⟨"les deux fois", false, 3⟩]⟩
-  | .german, .negative => some ⟨"keine", 1, []⟩
-  | .german, .always => some ⟨"immer", 2, [⟨"beide Male", false, 2⟩]⟩
-  | .japanese, .which => some ⟨"dono", 1, [⟨"dotti", true, 1⟩]⟩
-  | .japanese, .each => some ⟨"dono ... mo", 1, [⟨"dotti ... mo", true, 1⟩]⟩
-  | .japanese, .one => some ⟨"dono ... ka", 1, [⟨"dotti ... ka", true, 1⟩]⟩
-  | .japanese, .always =>
-    some ⟨"itu-mo", 2, [⟨"ni-kai", false, 2⟩, ⟨"ni-kai-to-mo", false, 4⟩]⟩
-  | .icelandic, .which => some ⟨"hvaða", 1, [⟨"hvor", true, 1⟩]⟩
-  | _, _ => none
+open Examples in
+/-- English: *both* and *neither*, the partitives *which*, *each* and *one of the two*, and
+*both times* beside *always*. -/
+def english : Slot → Option Cell
+  | .universal => some ⟨1, DualForm.ofDeterminer English.Determiners.both⟩
+  | .negative => some ⟨1, DualForm.ofDeterminer English.Determiners.neither⟩
+  | .which | .each | .one => some ⟨1, [.phrase 4]⟩
+  | .always => some ⟨2, [.phrase 2]⟩
+  | .definite => none
 
-theorem universal_competitors :
-    (typology .english .universal).map Slot.competitor = some .lexicalDual ∧
-      (typology .french .universal).map Slot.competitor = some .indirect := by
+open Examples in
+/-- French: *les deux NP* beside *tous les NP*, *aucun des deux* and *ni l'un ni l'autre* beside
+*aucun*, and *les deux fois* beside *toujours*. -/
+def french : Slot → Option Cell
+  | .universal => some ⟨3, [.phrase 3]⟩
+  | .negative => some ⟨1, [.phrase 3, .phrase 5]⟩
+  | .which | .each | .one => some ⟨1, []⟩
+  | .always => some ⟨2, [.phrase 3]⟩
+  | .definite => none
+
+open Examples in
+/-- German: no dual beside *keine*, and *beide Male* beside *immer*. -/
+def german : Slot → Option Cell
+  | .negative => some ⟨1, []⟩
+  | .always => some ⟨2, [.phrase 2]⟩
+  | _ => none
+
+open Examples in
+/-- Japanese: the dual indeterminate *dotti* beside *dono*, and *ni-kai* and *ni-kai-to-mo* beside
+*itu-mo*. -/
+def japanese : Slot → Option Cell
+  | .which | .each | .one => some ⟨1, [.lexical]⟩
+  | .always => some ⟨2, [.phrase 2, .phrase 4]⟩
+  | _ => none
+
+open Examples in
+/-- Icelandic: the dual *hvor* beside *hvaða*. -/
+def icelandic : Slot → Option Cell
+  | .which => some ⟨1, [.lexical]⟩
+  | _ => none
+
+/-- The cell of a row with the plain expression of a slot. -/
+def cell (e : Datum) : Option Cell := do
+  let language ← e.byLanguage [(.english, english), (.french, french), (.german, german),
+    (.japanese, japanese), (.icelandic, icelandic)]
+  let slot ← Examples.slot e
+  if Examples.marking e = some .plain then language slot else none
+
+/-- A plain quantifier is less than acceptable in a domain of two exactly where its language has
+a dual expression at most as complex, in each of the nineteen sentences. -/
+theorem antiDual_iff_not_accepted :
+    (∀ e ∈ Examples.all, ∀ c ∈ cell e, (c.AntiDual ↔ e.judgment.band ≠ .accepted)) ∧
+      Datum.ReadCount cell Examples.all 19 := by
   decide
 
-/-! ### The judgments -/
-
-/-- A reported judgment on a plain quantifier records its language, its slot, and whether it is
-anti-dual, degraded in a domain of two. -/
-def cellRow (r : Datum) : Option (Language × QSlot × Bool) := do
-  let l ← r.parse? "language" [("english", Language.english), ("french", .french),
-    ("german", .german), ("japanese", .japanese), ("icelandic", .icelandic)]
-  let q ← r.parse? "slot" [("universal", QSlot.universal), ("negative", .negative),
-    ("which", .which), ("each", .each), ("one", .one), ("always", .always)]
-  let dual ← r.parse? "dual" [("true", true), ("false", false)]
-  if dual then none else pure (l, q, decide (r.judgment ≠ .acceptable))
-
-/-- The paper's judgments on plain quantifiers in a domain of two. -/
-def cells : List (Language × QSlot × Bool) := Examples.all.filterMap cellRow
-
-theorem theory_matches_data :
-    ∀ c ∈ cells, ∀ s ∈ typology c.1 c.2.1, (s.competitor ≠ .none ↔ c.2.2 = true) := by
-  decide +kernel
-
-theorem direct_account_misses_indirect :
-    ∀ c ∈ cells, ∀ s ∈ typology c.1 c.2.1, s.competitor = .indirect → c.2.2 = true := by
-  decide +kernel
-
-/-! ### Avoid Ambiguity
-
-(37): if a string is ambiguous between two parses and a string at most as complex realizes
-the meaning of the first parse but has no parse equivalent to the second, the string cannot
-realize the first parse; complexity is node count (38). The paper restricts the principle's
-domain of application; `BarredByAmbiguity` is the unrestricted (37). -/
-
-section AvoidAmbiguity
-
-variable {S P M : Type*}
-
-/-- A string is ambiguous iff it has two parses with distinct meanings. -/
-def IsAmbiguous (parses : S → List P) (meaning : P → M) (s : S) : Prop :=
-  ∃ p₁ ∈ parses s, ∃ p₂ ∈ parses s, meaning p₁ ≠ meaning p₂
-
-/-- Under Avoid Ambiguity (37), `s` cannot realize its parse `p₁` when `s` is ambiguous between `p₁`
-and some `p₂`, and a string `s'` at most as complex realizes `p₁`'s meaning but has no parse
-equivalent to `p₂`. -/
-def BarredByAmbiguity (parses : S → List P) (meaning : P → M) (size : S → Nat)
-    (s : S) (p₁ : P) : Prop :=
-  p₁ ∈ parses s ∧
-  ∃ p₂ ∈ parses s, meaning p₂ ≠ meaning p₁ ∧
-    ∃ s' : S, size s' ≤ size s ∧
-      (∃ p₁' ∈ parses s', meaning p₁' = meaning p₁) ∧
-      ∀ p₂' ∈ parses s', meaning p₂' ≠ meaning p₂
-
-variable {parses : S → List P} {meaning : P → M} {size : S → Nat}
-  {s : S} {p₁ : P}
-
-theorem BarredByAmbiguity.isAmbiguous (h : BarredByAmbiguity parses meaning size s p₁) :
-    IsAmbiguous parses meaning s :=
-  let ⟨h₁, p₂, h₂, hne, _⟩ := h
-  ⟨p₂, h₂, p₁, h₁, hne⟩
-
-instance [DecidableEq P] [DecidableEq M] [Fintype S] :
-    Decidable (BarredByAmbiguity parses meaning size s p₁) := by
-  unfold BarredByAmbiguity; infer_instance
-
-end AvoidAmbiguity
-
-/-! ### Indirect alternatives -/
-
-section Indirect
-
-variable {S M : Type*} {base : S → Set S} {pron : S → Prop} {meaning : S → M} {size : S → Nat}
-  {s s' : S}
-
-/-- The indirect alternatives of `s` (43) are the pronounceable expressions `s'` at most as
-complex as `s` that mean what some unpronounceable alternative `sₓ ∈ base s` means. -/
-def indirectFrom (base : S → Set S) (pron : S → Prop) (meaning : S → M) (size : S → Nat) :
-    S → Set S :=
-  fun s ↦ {s' | pron s' ∧ size s' ≤ size s ∧ ∃ sₓ ∈ base s, ¬ pron sₓ ∧ meaning s' = meaning sₓ}
-
-@[simp] theorem mem_indirectFrom :
-    s' ∈ indirectFrom base pron meaning size s ↔
-      pron s' ∧ size s' ≤ size s ∧ ∃ sₓ ∈ base s, ¬ pron sₓ ∧ meaning s' = meaning sₓ :=
-  Iff.rfl
-
-theorem indirectFrom_eq_empty_of_forall_pron (h : ∀ x ∈ base s, pron x) :
-    indirectFrom base pron meaning size s = ∅ :=
-  Set.eq_empty_of_forall_notMem fun _ ⟨_, _, sₓ, hsₓ, hn, _⟩ ↦ hn (h sₓ hsₓ)
-
-end Indirect
-
-/-! ### The worked example (25)
-
-*Tous les verres sont pleins* against *les deux verres sont pleins*, collapsed to head
-structure: *tous V*, *les deux V*, and the silent witness *tous_DUAL V*. Trees are shallow,
-one NP over two terminals, so every step is a `decide` or one Katzir substitution. -/
-
-section WorkedExample
-
-open PhraseStructure Tree Presupposition
-
-/-- The two evaluation contexts are a domain of two cups and a domain of three; the dual
-presupposition is satisfied only in the first. -/
-inductive WorldEx where
-  | w2
-  | w3
-  deriving DecidableEq, Repr, Fintype
-
-/-- The universal *tous*. -/
-def tousLex : Tree Cat String := .terminal .Det "tous"
-
-/-- The silent dual-bearing realization of *tous*, of the same category and so
-Katzir-substitutable for `tousLex`. -/
-def tousDualLex : Tree Cat String := .terminal .Det "tous_DUAL"
-
-/-- The indirect alternative *les deux*, a portmanteau determiner for minimality. -/
-def lesDeuxLex : Tree Cat String := .terminal .Det "les_deux"
-
-/-- The common noun *verres*. -/
-def verresLex : Tree Cat String := .terminal .N "verres"
-
-/-- The lexicon of the worked example. -/
-def frenchLex : Finset (Tree Cat String) := {tousLex, tousDualLex, lesDeuxLex, verresLex}
-
-/-- *tous V*, the surface universal. -/
-def tousVerres : Tree Cat String := .node .N [tousLex, verresLex]
-
-/-- *tous_DUAL V*, the silent witness, one Katzir substitution from `tousVerres` at the same
-size. -/
-def tousDualVerres : Tree Cat String := .node .N [tousDualLex, verresLex]
-
-/-- *les deux V*, the indirect alternative, of the same size as `tousVerres`. -/
-def lesDeuxVerres : Tree Cat String := .node .N [lesDeuxLex, verresLex]
-
-/-- Whether a tree contains the silent dual marker. -/
-def hasDualMarker (t : Tree Cat String) : Bool :=
-  t.subtrees.any fun s ↦ match s with
-    | Tree.terminal _ "tous_DUAL" => true
-    | _ => false
-
-/-- Whether a tree contains *les deux*. -/
-def hasLesDeux (t : Tree Cat String) : Bool :=
-  t.subtrees.any fun s ↦ match s with
-    | Tree.terminal _ "les_deux" => true
-    | _ => false
-
-/-- Under French pronounceability, trees containing the silent dual marker are silent. Stipulated
-here and derived from Avoid Ambiguity in `frenchPron_iff_not_barred`. -/
-abbrev frenchPron : Tree Cat String → Prop := fun t ↦ hasDualMarker t = false
-
-/-- In the toy semantics *tous V* asserts that all cups are full with a trivial presupposition;
-the dual variants, silent or *les deux*, presuppose exactly two cups and are defined only in
-the two-cup domain. -/
-def meaning (t : Tree Cat String) (w : WorldEx) : Bool :=
-  if hasDualMarker t || hasLesDeux t then
-    match w with | .w2 => true | .w3 => false
-  else
-    true
-
-/-- The two surface strings of (25). -/
-inductive Str where
-  | tousV
-  | lesDeuxV
-  deriving DecidableEq, Fintype
-
-/-- The parses of each string, where *tous les verres* is ambiguous between the plural and the
-dual parse by syncretism and *les deux verres* is unambiguous. -/
-def strParses : Str → List (Tree Cat String)
-  | .tousV => [tousVerres, tousDualVerres]
-  | .lesDeuxV => [lesDeuxVerres]
-
-/-- String complexity is the maximal node count over the string's parses, uniform here. -/
-def strSize (s : Str) : Nat := ((strParses s).map RoseTree.numNodes).foldr max 0
-
--- (37)
-theorem tousDual_barred : BarredByAmbiguity strParses meaning strSize .tousV tousDualVerres := by
+-- §5.4
+theorem antiDual_of_phrase :
+    ∀ c ∈ [french .universal, english .always, german .always, japanese .always].filterMap id,
+      c.AntiDual ∧ DualForm.lexical ∉ c.duals := by
   decide
-
-theorem tousPl_not_barred : ¬ BarredByAmbiguity strParses meaning strSize .tousV tousVerres := by
-  decide
-
--- (37)
-theorem frenchPron_iff_not_barred : ∀ st : Str, ∀ p ∈ strParses st,
-    (frenchPron p ↔ ¬ BarredByAmbiguity strParses meaning strSize st p) := by
-  decide
-
-/-- The presupposition is the set of worlds where the sentence is defined. -/
-def presupFn (t : Tree Cat String) : Set WorldEx := {w | meaning t w = true}
-
-/-- The at-issue assertion, uniform across the three sentences, which differ only in
-presupposition. -/
-def assertionFn : Tree Cat String → Set WorldEx := fun _ ↦ Set.univ
-
-/-- The indirect-alternative source (43) filters Katzir alternatives by pronounceability and
-meaning-equivalence to a silent witness, with complexity measured by `RoseTree.numNodes`. -/
-def frenchIndirectSrc : Tree Cat String → Set (Tree Cat String) :=
-  indirectFrom (structuralAlternatives frenchLex) frenchPron meaning RoseTree.numNodes
-
-theorem tousDual_katzir_alt : tousDualVerres ∈ structuralAlternatives frenchLex tousVerres := by
-  apply Relation.ReflTransGen.single
-  refine RoseTree.Rewrites.set _ (cs := [tousLex, verresLex]) ⟨0, by decide⟩
-    (.here (StructuralOp.subst (φ := tousLex) (ψ := tousDualLex) rfl ?_))
-  exact Set.mem_union_left _ (by simp [frenchLex])
-
--- (43)
-theorem lesDeux_indirectAlt_tous : lesDeuxVerres ∈ frenchIndirectSrc tousVerres := by
-  refine ⟨by decide, by decide, tousDualVerres, tousDual_katzir_alt, by decide, ?_⟩
-  funext w; cases w <;> rfl
-
-/-- The indirect alternatives with the same assertion, the competitors of Maximize
-Presupposition. -/
-def sameAssertionAlts (t : Tree Cat String) : Set (Tree Cat String) :=
-  {t' ∈ frenchIndirectSrc t | assertionFn t' = assertionFn t}
-
-theorem lesDeux_mem_sameAssertionAlts : lesDeuxVerres ∈ sameAssertionAlts tousVerres :=
-  ⟨lesDeux_indirectAlt_tous, rfl⟩
-
-theorem presupFn_lesDeux_ssubset_tous : presupFn lesDeuxVerres ⊂ presupFn tousVerres :=
-  LE.le.ssubset_of_not_superset (fun w _ ↦ by cases w <;> rfl)
-    (Set.not_subset.2 ⟨.w3, rfl, (by decide : ¬ meaning lesDeuxVerres .w3 = true)⟩)
-
-theorem tous_blocked_via_indirect :
-    ∃ ψ ∈ sameAssertionAlts tousVerres, presupFn ψ ⊂ presupFn tousVerres :=
-  ⟨lesDeuxVerres, lesDeux_mem_sameAssertionAlts, presupFn_lesDeux_ssubset_tous⟩
-
-private theorem presupFn_eq_univ_of_w3 {t : Tree Cat String} (h : WorldEx.w3 ∈ presupFn t) :
-    presupFn t = Set.univ :=
-  Set.eq_univ_of_forall fun w ↦ by
-    simp only [presupFn, Set.mem_ofPred_eq, meaning] at h ⊢
-    split_ifs at h ⊢
-    simp_all
-
-theorem strengthen_tous : strengthen sameAssertionAlts presupFn tousVerres = {.w3} := by
-  ext w
-  cases w
-  · simp only [Set.mem_singleton_iff, reduceCtorEq, iff_false]
-    exact Set.disjoint_left.1 (disjoint_strengthen_of_ssubset lesDeux_mem_sameAssertionAlts
-      presupFn_lesDeux_ssubset_tous) (by decide : meaning lesDeuxVerres .w2 = true)
-  · simp only [Set.mem_singleton_iff, iff_true]
-    have htous : WorldEx.w3 ∈ presupFn tousVerres := rfl
-    exact mem_strengthen_iff.2 ⟨htous, fun ψ _ hψ hss ↦
-      hss.ne ((presupFn_eq_univ_of_w3 hψ).trans (presupFn_eq_univ_of_w3 htous).symm)⟩
-
-end WorkedExample
 
 end JereticEtAl2025
