@@ -9,6 +9,7 @@ public import Mathlib.Data.List.Basic
 public import Mathlib.Order.Notation
 public import Linglib.Core.Data.List.TakeDrop
 public import Mathlib.Data.Fintype.Prod
+public import Linglib.Phonology.Subregular.StringModel
 
 /-!
 # Boolean monadic recursive schemes
@@ -29,6 +30,7 @@ rounds settle by round `card F * n`, so evaluation is decidable.
 
 * `Subregular.Walk`, `Walk.eval`: terms, successor and predecessor steps from the position
   variable, and the position a term denotes (`none` off an edge).
+* `Walk.toTerm`: a walk as a term of the string model.
 * `BMRS.Expr`, `BMRS.Program`: syntax.
 * `BMRS.Eval`: the derivation system.
 * `Program.approx`, `Program.eval`: the rounds of evaluation and the value they settle on.
@@ -40,6 +42,8 @@ rounds settle by round `card F * n`, so evaluation is decidable.
 * `Program.eval_eq_some_iff`: the rounds settle on the derivation system, so `Eval` is decidable.
 * `Eval.congr_take` / `Eval.congr_drop`: one-sided locality: a backward program evaluated at `i`
   reads only the prefix through `i` (dually, the suffix from `i`).
+* `Walk.val_realize_toTerm`: where a walk stays on the word it reaches the position its term
+  denotes in the string model, whose successor and predecessor fix the edges.
 
 ## Implementation notes
 
@@ -226,6 +230,41 @@ theorem le_eval_of_forward (ht : t.Forward) (h : t.eval w n = some v) : n ≤ v 
   have := neg_pdepth_le_disp t
   rw [show t.pdepth = 0 from ht] at this
   omega
+
+/-! ### Walks as terms of the string model -/
+
+variable (α) in
+/-- A walk as a term of the string model in the position variable. -/
+def toTerm : Walk → StringTerm α
+  | .var => .var 0
+  | .succ t => StringTerm.succ t.toTerm
+  | .pred t => StringTerm.pred t.toTerm
+
+@[simp] theorem pdepth_toTerm : ∀ t : Walk, StringTerm.pdepth (t.toTerm α) = t.pdepth
+  | .var => rfl
+  | .succ t => (StringTerm.pdepth_succ _).trans (pdepth_toTerm t)
+  | .pred t => (StringTerm.pdepth_pred _).trans (congrArg (· + 1) (pdepth_toTerm t))
+
+@[simp] theorem sdepth_toTerm : ∀ t : Walk, StringTerm.sdepth (t.toTerm α) = t.sdepth
+  | .var => rfl
+  | .succ t => (StringTerm.sdepth_succ _).trans (congrArg (· + 1) (sdepth_toTerm t))
+  | .pred t => (StringTerm.sdepth_pred _).trans (sdepth_toTerm t)
+
+/-- Where a walk stays on the word, it reaches the position its term denotes in the string model:
+steps undefined past an edge and steps that fix the edge agree until one would cross it. -/
+theorem val_realize_toTerm (hn : n < w.length) : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v →
+    ((t.toTerm α).realize fun _ ↦ (WordModel.mk n hn : StringModel w)).val = v
+  | .var, _, h => (eval_var_eq_some_iff.1 h).1.symm
+  | .succ t, _, h => by
+    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, hlt⟩ := succ?_eq_some_iff.mp huv
+    rw [toTerm, StringTerm.realize_succ, WordModel.val_succ, val_realize_toTerm hn hu,
+      ite_eq_left hlt]
+  | .pred t, _, h => by
+    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, -⟩ := pred?_eq_some_iff.mp huv
+    rw [toTerm, StringTerm.realize_pred, WordModel.val_pred, val_realize_toTerm hn hu]
+    rfl
 
 end Walk
 

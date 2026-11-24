@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Phonology.Subregular.Local
+public import Linglib.Phonology.Subregular.WordModel.Defs
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
 public import Mathlib.Basic.Finite.Sum
@@ -79,53 +80,14 @@ namespace Subregular
 
 variable {α : Type u}
 
-/-- The relation symbols of word models, a unary label for each symbol and a binary
-ordering. -/
-inductive WordRel (α : Type u) : ℕ → Type u
-  | label (a : α) : WordRel α 1
-  | ord : WordRel α 2
-
-/-- The signature of word models over `α`. -/
-def wordLanguage (α : Type u) : FirstOrder.Language := ⟨fun _ ↦ Empty, WordRel α⟩
-
-instance : (wordLanguage α).IsRelational := fun _ ↦ inferInstanceAs (IsEmpty Empty)
-
 instance [Finite α] : Finite (Σ n, (wordLanguage α).Relations n) :=
   .of_injective (β := Option α) (fun | ⟨_, .label a⟩ => some a | ⟨_, .ord⟩ => none) <| by
     rintro ⟨_, _ | _⟩ ⟨_, _ | _⟩ h <;> simp_all
-
-/-- The word model of `u` under a labelling `ℓ` of its symbols and an ordering `R` of its
-positions: a position carries the labels `ℓ` gives its symbol. In the conventional model a
-symbol is its own one label, `ℓ = ({·})`. -/
-def WordModel {β P : Type*} (_ : β → Set P) (u : List β)
-    (_ : Fin u.length → Fin u.length → Prop) : Type :=
-  Fin u.length
 
 namespace WordModel
 
 variable {β P : Type*} {ℓ : β → Set P} {u u' : List β} {R : Fin u.length → Fin u.length → Prop}
   {R' : Fin u'.length → Fin u'.length → Prop}
-
-instance : LinearOrder (WordModel ℓ u R) := inferInstanceAs (LinearOrder (Fin u.length))
-
-/-- A position, as an index into the word. -/
-def toFin (i : WordModel ℓ u R) : Fin u.length := i
-
-/-- The symbol at a position. -/
-def label (i : WordModel ℓ u R) : β := u.get i
-
-/-- A position satisfies the unary relations of the labels its symbol carries. -/
-instance : (wordLanguage P).Structure (WordModel ℓ u R) where
-  RelMap
-    | .label p, x => p ∈ ℓ (x 0).label
-    | .ord, x => R (x 0) (x 1)
-
-@[simp] theorem relMap_label (p : P) (x : Fin 1 → WordModel ℓ u R) :
-    Structure.RelMap (L := wordLanguage P) (WordRel.label p) x ↔
-      p ∈ ℓ (x 0).label := .rfl
-
-@[simp] theorem relMap_ord (x : Fin 2 → WordModel ℓ u R) :
-    Structure.RelMap (L := wordLanguage P) WordRel.ord x ↔ R (x 0) (x 1) := .rfl
 
 /-- A map of positions under which symbols keep their labels and positions their order is a
 homomorphism of word models. -/
