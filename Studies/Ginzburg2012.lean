@@ -3,6 +3,7 @@ module
 public import Linglib.Discourse.Gameboard.Rule
 public import Linglib.Discourse.Gameboard.Question
 public import Linglib.Semantics.Questions.Inquisitive.Declarative
+public import Linglib.Semantics.Questions.Answerhood
 public import Linglib.Data.Examples.Ginzburg2012
 public import Linglib.Data.Examples.Readers
 
@@ -154,29 +155,23 @@ def Agent.other : Agent → Agent
 /-! ### Answerhood over sets of worlds (§3.3.7)
 
 A question is a propositional abstract, a partial function `q : R →. Set W` from records to
-propositions. -/
+propositions, and its instantiations are `q.ran`. A simple answer is an instantiation or the
+negation of one, `Answerhood.simpleAnswers q.ran`, and the propositions about `q` are those that
+entail a disjunction of simple answers, `Answerhood.about q.ran`. -/
 
 section Answerhood
 
 variable {R W : Type*} {p : Set W} {q : R →. Set W}
-
-/-- (45): a simple answer to `q` is an instantiation of `q` or the negation of one. -/
-def SimpleAnswer (q : R →. Set W) (p : Set W) : Prop :=
-  ∃ a ∈ q.ran, p = a ∨ p = aᶜ
-
-/-- `p` is about `q` when it entails a disjunction of simple answers to `q`. -/
-def About (p : Set W) (q : R →. Set W) : Prop :=
-  ∃ p₁ p₂, SimpleAnswer q p₁ ∧ SimpleAnswer q p₂ ∧ p ⊆ p₁ ∪ p₂
 
 /-- A potentially resolving answer to `q` entails an instantiation of `q` or the negation of
 every instantiation. -/
 def PotentiallyResolves (p : Set W) (q : R →. Set W) : Prop :=
   (∃ a ∈ q.ran, p ⊆ a) ∨ ∀ a ∈ q.ran, p ⊆ aᶜ
 
-/-- Over sets of worlds, every proposition is about every question that has a value. -/
-theorem about_iff : About p q ↔ q.ran.Nonempty :=
-  ⟨fun ⟨_, _, ⟨a, ha, _⟩, _⟩ ↦ ⟨a, ha⟩, fun ⟨a, ha⟩ ↦
-    ⟨a, aᶜ, ⟨a, ha, .inl rfl⟩, ⟨a, ha, .inr rfl⟩, by simp⟩⟩
+/-- Over sets of worlds, every proposition is about every question that has a value: it entails
+the disjunction of a simple answer (45) and its negation. -/
+theorem about_ran_eq_top_iff : Answerhood.about q.ran = ⊤ ↔ q.ran.Nonempty :=
+  Answerhood.about_eq_top_iff
 
 /-- A potentially resolving answer to `q` is a proposition that resolves the polar closure of
 the issue `q` raises. -/
