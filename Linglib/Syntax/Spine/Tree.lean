@@ -14,7 +14,7 @@ The spine of a phrase is read off its tree by following each head to the head of
 leaving specifiers and adjuncts aside. This file is to hold that map for a constituency tree,
 `PhraseStructure.Tree`, and the heights at which the phrases off the spine attach. A framework's
 own structure has its spine in the framework, in a file named for the spine, as
-`Minimalist.HorizonSetting.spineOf` is for a syntactic object.
+`Minimalist.spineOf` is for a syntactic object.
 
 ## TODO
 
