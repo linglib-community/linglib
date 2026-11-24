@@ -86,10 +86,10 @@ theorem strongAnswer_mentionSome_mem : strongAnswer (mentionSome α) w ∈ stron
   ⟨α w, (strongAnswer_mentionSome α w).symm⟩
 
 -- p. 41
-theorem trueAnswers_stronglyExhaustive :
-    trueAnswers (stronglyExhaustive α) w = {strongAnswer (mentionSome α) w} := by
+theorem karttunen_stronglyExhaustive :
+    karttunen (stronglyExhaustive α) w = {strongAnswer (mentionSome α) w} := by
   ext p
-  simp only [mem_trueAnswers, mem_stronglyExhaustive, Set.mem_singleton_iff,
+  simp only [mem_karttunen, mem_stronglyExhaustive, Set.mem_singleton_iff,
     strongAnswer_mentionSome]
   constructor
   · rintro ⟨⟨S, rfl⟩, hw⟩
@@ -143,8 +143,8 @@ theorem isStrongestTrueAnswer_weaklyExhaustive :
     exact Set.preimage_mono (Set.Ici_subset_Ici.2 hv)⟩
 
 -- p. 76
-theorem weakAnswer_mem_trueAnswers_weaklyExhaustive_iff (v : W) :
-    weakAnswer (mentionSome α) v ∈ trueAnswers (weaklyExhaustive α) w ↔ α v ⊆ α w := by
+theorem weakAnswer_mem_karttunen_weaklyExhaustive_iff (v : W) :
+    weakAnswer (mentionSome α) v ∈ karttunen (weaklyExhaustive α) w ↔ α v ⊆ α w := by
   simp [weaklyExhaustive, weakAnswer_mentionSome]
 
 /-! ### Negation: (9) -/

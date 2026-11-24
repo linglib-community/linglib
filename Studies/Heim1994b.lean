@@ -50,7 +50,7 @@ common noun at the world of evaluation. -/
 
 -- (6)
 theorem Karttunen.wh_univ (C : E → Set W) :
-    Karttunen1977.wh (fun _ ↦ Set.univ) C = trueAnswers (Set.range C) := by
+    Karttunen1977.wh (fun _ ↦ Set.univ) C = karttunen (Set.range C) := by
   funext w
   simp [Karttunen1977.wh]
 
@@ -68,12 +68,12 @@ def ans₁ (q : W → Set (Set W)) (w : W) : Set W := ⋂₀ q w
 what it is. -/
 def ans₂ (q : W → Set (Set W)) (w : W) : Set W := {v | ans₁ q v = ans₁ q w}
 
-theorem ans₁_trueAnswers (H : Set (Set W)) : ans₁ (trueAnswers H) = weakAnswer H := rfl
+theorem ans₁_karttunen (H : Set (Set W)) : ans₁ (karttunen H) = weakAnswer H := rfl
 
 -- §6
-theorem ans₂_trueAnswers (H : Set (Set W)) (w : W) :
-    ans₂ (trueAnswers H) w = strongAnswer H w := by
-  rw [ans₂, ans₁_trueAnswers, strongAnswer_eq_cell, ← ker_weakAnswer]
+theorem ans₂_karttunen (H : Set (Set W)) (w : W) :
+    ans₂ (karttunen H) w = strongAnswer H w := by
+  rw [ans₂, ans₁_karttunen, strongAnswer_eq_cell, ← ker_weakAnswer]
   rfl
 
 theorem self_mem_ans₁ {q : W → Set (Set W)} (hq : IsVeridical q) (w : W) : w ∈ ans₁ q w :=
@@ -128,35 +128,35 @@ theorem Karttunen.knows_iff_generalizedKnows_of_eq_empty (h : q w = ∅) :
 
 -- §4: the de re reading, quantifying in the common noun
 theorem generalizedKnows_deRe (S C : E → Set W) (u : W) :
-    GeneralizedKnows (trueAnswers (C '' extension S u)) w R ↔
+    GeneralizedKnows (karttunen (C '' extension S u)) w R ↔
       GroenendijkStokhof1984.Knows (GroenendijkStokhof1984.whichDeRe S C u) w R := by
-  rw [GroenendijkStokhof1984.whichDeRe_eq_ofProps, ← ker_trueAnswers]
+  rw [GroenendijkStokhof1984.whichDeRe_eq_ofProps, ← ker_karttunen]
   rfl
 
 /-! ### *Whether*-questions -/
 
 -- (2), (12), footnote 11
-theorem ker_trueAnswers_pair (φ : Set W) :
-    Setoid.ker (trueAnswers {φ, φᶜ}) = Setoid.polar φ := by
-  rw [ker_trueAnswers]
+theorem ker_karttunen_pair (φ : Set W) :
+    Setoid.ker (karttunen {φ, φᶜ}) = Setoid.polar φ := by
+  rw [ker_karttunen]
   ext v u
   rw [Setoid.ofProps_iff, Setoid.polar_iff]
   simp [not_iff_not]
 
-theorem trueAnswers_pair_nonempty (φ : Set W) (w : W) : (trueAnswers {φ, φᶜ} w).Nonempty := by
+theorem karttunen_pair_nonempty (φ : Set W) (w : W) : (karttunen {φ, φᶜ} w).Nonempty := by
   by_cases h : w ∈ φ
   · exact ⟨φ, Set.mem_insert _ _, h⟩
   · exact ⟨φᶜ, Set.mem_insert_of_mem _ rfl, h⟩
 
 -- §4, footnote 11
 theorem knows_whether_tfae (φ : Set W) :
-    [Karttunen.SimplifiedKnows (trueAnswers {φ, φᶜ}) w R,
-      Karttunen1977.Knows (trueAnswers {φ, φᶜ}) w R,
-      GeneralizedKnows (trueAnswers {φ, φᶜ}) w R,
+    [Karttunen.SimplifiedKnows (karttunen {φ, φᶜ}) w R,
+      Karttunen1977.Knows (karttunen {φ, φᶜ}) w R,
+      GeneralizedKnows (karttunen {φ, φᶜ}) w R,
       GroenendijkStokhof1984.Knows (Setoid.polar φ) w R].TFAE := by
   tfae_have 1 ↔ 2 :=
-    (and_iff_left fun h ↦ absurd h (trueAnswers_pair_nonempty φ w).ne_empty).symm
-  tfae_have 3 ↔ 4 := by rw [generalizedKnows_iff_knows_ker, ker_trueAnswers_pair]
+    (and_iff_left fun h ↦ absurd h (karttunen_pair_nonempty φ w).ne_empty).symm
+  tfae_have 3 ↔ 4 := by rw [generalizedKnows_iff_knows_ker, ker_karttunen_pair]
   tfae_have 2 ↔ 4 := by
     rw [Karttunen1977.knows_pair_iff]
     simp [GroenendijkStokhof1984.Knows, iff_comm]

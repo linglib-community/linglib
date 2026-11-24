@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Hamblin.Closure
-public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Hamblin.Degree
 public import Linglib.Semantics.Exhaustification.InnocentInclusion
 public import Studies.Fox2007
 public import Studies.FoxHackl2006
@@ -522,10 +522,8 @@ theorem not_admissible_of_union {W : Type*} {H : Set (Set W)} {q₁ q₂ : Set W
 
 variable {D : Type*} [LinearOrder D]
 
-theorem isStrongestTrueAnswer_Ici (w : D) : IsStrongestTrueAnswer (range Ici) w (Ici w) := by
-  refine ⟨⟨⟨w, rfl⟩, self_mem_Ici⟩, ?_⟩
-  rintro _ ⟨⟨d, rfl⟩, hw⟩
-  exact Ici_subset_Ici.2 hw
+theorem isStrongestTrueAnswer_Ici (w : D) : IsStrongestTrueAnswer (range Ici) w (Ici w) :=
+  isStrongestTrueAnswer_degreeHamblin (μ := id) w
 
 -- (16a), (17a), (18a)
 theorem admissible_Ici [Nonempty D] : Admissible (range Ici : Set (Set D)) :=

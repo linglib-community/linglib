@@ -83,7 +83,7 @@ theorem sSup_whDomain_le (n : Option Number) (w : E) : sSup {x ∈ whDomain n | 
     sSup_le_sSup fun _ ⟨ha, haw⟩ ↦ ⟨mem_whDomain_of_isAtom n ha, haw⟩
 
 theorem weakAnswer_whHamblin (n : Option Number) (w : E) : weakAnswer (whHamblin n) w = Ici w := by
-  rw [whHamblin, weakAnswer, trueAnswers_image, sInter_image, ← Ici_sSup]
+  rw [whHamblin, weakAnswer, karttunen_image, sInter_image, ← Ici_sSup]
   exact congrArg Ici (sSup_whDomain_le n w)
 
 /-- Ans-D is defined on the Hamblin set of a *wh* phrase exactly in the situations its domain

@@ -78,11 +78,11 @@ def howMany : Set (Set ℕ) := range Ici
 /-- *At most `n`* is [coppock-brochhagen-2013]'s entry on the question of how many, with the
 answers ranked by their lower bounds. -/
 def atMost (n : ℕ) : Set (Set ℕ) :=
-  atMostInq (· ≥ ·) univ (oneSided id) n
+  Inquisitive.Unrestricted.atMost (· ≥ ·) univ (oneSided id) n
 
 -- (43c)
 theorem atMost_eq (n : ℕ) : atMost n = (Icc · n) '' Iic n :=
-  atMostInq_oneSided_id n
+  possibilities_atMost_id n
 
 theorem mem_sUnion_upTo : m ∈ ⋃₀ upTo s n ↔ s ≤ m ∧ s ≤ n := by
   simp only [upTo, sUnion_image, mem_iUnion, mem_Icc, mem_Ici, exists_prop]
@@ -103,11 +103,8 @@ theorem isUpperSet_sUnion_upTo : IsUpperSet (⋃₀ upTo s n) := fun _ _ hab h �
 
 /-! ### The implicated upper bound -/
 
-private theorem exh_howMany_Ici : Exhaustification.exh howMany (Ici m) = {m} := by
-  ext k
-  simp only [howMany, Exhaustification.mem_exh_range_iff, mem_Ici, Ici_subset_Ici,
-    mem_singleton_iff]
-  exact ⟨fun ⟨hk, h⟩ ↦ le_antisymm (h k le_rfl) hk, by rintro rfl; exact ⟨le_rfl, fun _ ↦ id⟩⟩
+private theorem exh_howMany_Ici : Exhaustification.exh howMany (Ici m) = {m} :=
+  Question.exh_degreeHamblin (μ := id) m
 
 -- (50), (51)
 theorem exh_upTo_howMany :
@@ -142,12 +139,12 @@ theorem nontrivial_atMost : (atMost n).Nontrivial ↔ 0 < n := by
 speaker knows exactly when *up to n* fails the range requirement: the maxim is silent on (52),
 which the range requirement rules out. -/
 theorem forall_interactiveSincerity_upTo_iff : (∀ k, InteractiveSincerity (upTo s n) k) ↔ n ≤ s :=
-  by rw [CoppockBrochhagen2013.forall_interactiveSincerity_iff, nontrivial_upTo, not_lt]
+  by rw [forall_interactiveSincerity_iff, nontrivial_upTo, not_lt]
 
 -- (53a)
 theorem forall_interactiveSincerity_atMost_iff :
     (∀ k, InteractiveSincerity (atMost n) k) ↔ n = 0 := by
-  rw [CoppockBrochhagen2013.forall_interactiveSincerity_iff, nontrivial_atMost, not_lt,
+  rw [forall_interactiveSincerity_iff, nontrivial_atMost, not_lt,
     Nat.le_zero]
 
 /-! ### Monotonicity -/

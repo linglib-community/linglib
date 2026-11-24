@@ -34,8 +34,8 @@ Exhaustifying a member `p` against `H`, `Exhaustification.exh H p`, asserts `p` 
 member `p` does not entail. On a member it holds exactly where `p` is the strongest true member,
 so it is a cell of the partition. -/
 
-theorem trueAnswers_eq_of_isStrongestTrueAnswer {p : Set W}
-    (h : IsStrongestTrueAnswer H w p) : trueAnswers H w = {q ∈ H | p ⊆ q} :=
+theorem karttunen_eq_of_isStrongestTrueAnswer {p : Set W}
+    (h : IsStrongestTrueAnswer H w p) : karttunen H w = {q ∈ H | p ⊆ q} :=
   Set.ext fun _ => ⟨fun hq => ⟨hq.1, h.2 hq⟩, fun ⟨hq, hpq⟩ => ⟨hq, hpq h.1.2⟩⟩
 
 variable {H w} in

@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Order.Bounds.Defs
 public import Mathlib.Order.Monotone.Basic
+public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Presupposition.Strawson
@@ -17,7 +18,10 @@ strength: it presupposes that some true alternative is at least as strong as the
 asserts that no true alternative is stronger. The alternatives are indexed, each with a
 proposition as its content, so that one operator is *only* over propositions, with contents `id`,
 and von Fintel's *only x is P* over individuals on the identity scale; the two
-[agree](##Focus.only_eq_eq_only_subset_range) unless two individuals share a predication. An
+[agree](##Focus.only_eq_eq_only_subset_range) unless two individuals share a predication. With
+the alternatives ordered by strength, *at least* says that the prejacent lies in the lower closure
+of the alternatives true at a world and *at most* that it bounds them above, so that where each
+world has a strongest true alternative the two compare it with the prejacent. An
 additive asserts its prejacent and presupposes what *only* asserts to be false, and the
 presupposition of *even*, after Karttunen and Peters, is that the prejacent is less likely than
 every alternative. On a partial order of alternatives, *only* says that the prejacent is [the
@@ -113,14 +117,83 @@ theorem antitone_atMost {S : Set W → Set W → Prop} {C : Set (Set W)}
     (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p r) : Antitone (atMost S C id) :=
   fun _ _ hpq _ hw r hr hwr ↦ hS hpq (hw r hr hwr)
 
-/-! #### Ordered alternatives -/
+/-! #### Ordered alternatives
+
+With the stronger alternatives above, the three operators are order-theoretic conditions on
+`{j ∈ C | w ∈ P j}`, the alternatives true at a world. -/
+
+section Ordered
+
+open Set
+
+section Preorder
+
+variable [Preorder ι] {μ : W → ι}
+
+theorem mem_atLeast_ge : w ∈ atLeast (· ≥ ·) C P i ↔ i ∈ lowerClosure {j ∈ C | w ∈ P j} := by
+  simp only [mem_atLeast, mem_lowerClosure, mem_ofPred_eq]
+  exact ⟨fun ⟨j, hj, hw, h⟩ ↦ ⟨j, ⟨hj, hw⟩, h⟩, fun ⟨j, ⟨hj, hw⟩, h⟩ ↦ ⟨j, hj, hw, h⟩⟩
+
+theorem mem_atMost_ge : w ∈ atMost (· ≥ ·) C P i ↔ i ∈ upperBounds {j ∈ C | w ∈ P j} :=
+  ⟨fun h _ hj ↦ h _ hj.1 hj.2, fun h _ hj hw ↦ h ⟨hj, hw⟩⟩
+
+theorem antitone_atLeast_ge : Antitone (atLeast (· ≥ ·) C P) :=
+  fun _ _ hab _ ⟨j, hj, hw, hjb⟩ ↦ ⟨j, hj, hw, hab.trans hjb⟩
+
+theorem monotone_atMost_ge : Monotone (atMost (· ≥ ·) C P) :=
+  fun _ _ hab _ h j hj hw ↦ (h j hj hw).trans hab
+
+/-- Where each world has a strongest true alternative `μ w`, *at least `a`* holds where `μ` is at
+least `a`. -/
+theorem atLeast_ge_of_isGreatest (h : ∀ w, IsGreatest {j ∈ C | w ∈ P j} (μ w)) (a : ι) :
+    atLeast (· ≥ ·) C P a = μ ⁻¹' Ici a :=
+  Set.ext fun w ↦ ⟨fun ⟨_, hj, hw, haj⟩ ↦ le_trans haj ((h w).2 ⟨hj, hw⟩),
+    fun ha ↦ ⟨μ w, (h w).1.1, (h w).1.2, ha⟩⟩
+
+/-- Where each world has a strongest true alternative `μ w`, *at most `a`* holds where `μ` is at
+most `a`. -/
+theorem atMost_ge_of_isGreatest (h : ∀ w, IsGreatest {j ∈ C | w ∈ P j} (μ w)) (a : ι) :
+    atMost (· ≥ ·) C P a = μ ⁻¹' Iic a :=
+  Set.ext fun w ↦ ⟨fun hw ↦ hw _ (h w).1.1 (h w).1.2,
+    fun ha _ hj hw ↦ ((h w).2 ⟨hj, hw⟩).trans ha⟩
+
+theorem atLeast_ge_univ (a : ι) : atLeast (· ≥ ·) univ P a = ⋃ i ∈ Ici a, P i := by
+  ext w
+  simp only [mem_atLeast, mem_univ, true_and, mem_iUnion, mem_Ici, exists_prop]
+  exact ⟨fun ⟨i, hw, hi⟩ ↦ ⟨i, hi, hw⟩, fun ⟨i, hi, hw⟩ ↦ ⟨i, hw, hi⟩⟩
+
+theorem atMost_ge_univ (a : ι) : atMost (· ≥ ·) univ P a = (⋃ i ∈ (Iic a)ᶜ, P i)ᶜ := by
+  ext w
+  simp only [mem_atMost, mem_univ, true_implies, mem_compl_iff, mem_iUnion, mem_Iic,
+    exists_prop, not_exists, not_and]
+  exact ⟨fun h i hi hw ↦ hi (h i hw), fun h i hw ↦ not_not.1 fun hi ↦ h i hi hw⟩
+
+theorem subset_atLeast_ge (hi : i ∈ C) : P i ⊆ atLeast (· ≥ ·) C P i :=
+  fun _ hw ↦ ⟨i, hi, hw, le_rfl⟩
+
+/-- *At least* leaves every alternative unchanged just in case stronger alternatives entail weaker
+ones. -/
+theorem atLeast_ge_univ_eq_self_iff : atLeast (· ≥ ·) univ P = P ↔ Antitone P :=
+  ⟨fun h ↦ by rw [← h]; exact antitone_atLeast_ge, fun h ↦ funext fun a ↦
+    (subset_atLeast_ge (mem_univ a)).antisymm' fun _ ⟨_, _, hw, hj⟩ ↦ h hj hw⟩
+
+end Preorder
+
+variable [PartialOrder ι] {μ : W → ι}
 
 /-- With the stronger alternatives above, *only* is true exactly where the prejacent is the greatest
 true alternative. -/
-theorem only_ge_eq_true_iff [PartialOrder ι] :
-    only (· ≥ ·) C P i w = .true ↔ IsGreatest {j ∈ C | w ∈ P j} i := by
+theorem only_ge_eq_true_iff : only (· ≥ ·) C P i w = .true ↔ IsGreatest {j ∈ C | w ∈ P j} i := by
   simp only [only_eq_true_iff, mem_atLeast, mem_atMost, IsGreatest, upperBounds]
   grind
+
+/-- Where each world has a strongest true alternative `μ w`, *only `a`* is true where `μ` is
+`a`. -/
+theorem only_ge_eq_true_iff_of_isGreatest (h : ∀ w, IsGreatest {j ∈ C | w ∈ P j} (μ w)) {a : ι} :
+    only (· ≥ ·) C P a w = .true ↔ μ w = a :=
+  only_ge_eq_true_iff.trans ⟨fun ha ↦ (h w).unique ha, fun e ↦ e ▸ h w⟩
+
+end Ordered
 
 /-! #### The entailment scale -/
 

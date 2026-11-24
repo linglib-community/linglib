@@ -20,6 +20,8 @@ possibilities, the same inquisitive content.
 * `Inquisitive.Unrestricted.IsAttentive`: some possibility is not maximal.
 * `Inquisitive.Unrestricted.pro`: the propositional closure.
 * `Inquisitive.Unrestricted.restrict`: a proposition restricted to an information set.
+* `Inquisitive.Unrestricted.InteractiveSincerity`: a proposition with several possibilities keeps
+  several within the speaker's information.
 
 ## Main statements
 
@@ -31,6 +33,8 @@ possibilities, the same inquisitive content.
   the question it generates is.
 * `Inquisitive.Unrestricted.univ_mem_iff`: a finite proposition contains the trivial possibility
   iff it is neither informative nor inquisitive.
+* `Inquisitive.Unrestricted.subsingleton_restrict_iff`: a restricted proposition has at most one
+  possibility iff its possibilities consistent with the information set agree on it.
 
 ## References
 
@@ -81,6 +85,14 @@ than one possibility. -/
 theorem isInquisitive_iff_nontrivial (h : IsAntichain (· ⊆ ·) P) :
     IsInquisitive P ↔ P.Nontrivial := by
   rw [IsInquisitive, show {p | Maximal (· ∈ P) p} = P from ext fun _ ↦ h.maximal_mem_iff]
+
+/-- A proposition whose possibilities are nested has at most one maximal possibility, so it is
+not inquisitive. -/
+theorem not_isInquisitive_of_isChain (h : IsChain (· ⊆ ·) P) : ¬ IsInquisitive P := by
+  rintro ⟨p, hp, q, hq, hne⟩
+  rcases h.total hp.1 hq.1 with hpq | hqp
+  · exact hne (hp.eq_of_subset hq.1 hpq)
+  · exact hne (hq.eq_of_subset hp.1 hqp).symm
 
 /-- A proposition has more than one possibility just in case it is inquisitive or attentive,
 which [coppock-brochhagen-2013] call interactive ((51)); the propositions with one possibility
@@ -223,25 +235,77 @@ theorem isAttentive_pro_iff : IsAttentive (pro P) ↔ IsAttentive (P \ {∅}) :=
     simp [IsAttentive]
   · rfl
 
-theorem pro_eq_singleton {k : Set W} (hk : k ≠ ∅) (hkP : k ∈ P) (hP : P ⊆ {k, ∅}) :
-    pro P = {k} := by
-  have hne : P ≠ {∅} := fun h ↦ hk (mem_singleton_iff.1 (h ▸ hkP))
-  simp only [pro, hne, ↓reduceIte]
-  ext p
-  refine ⟨fun ⟨hp, hp0⟩ ↦ ?_, ?_⟩
-  · rcases hP hp with rfl | rfl
-    · rfl
-    · exact absurd rfl hp0
-  · rintro rfl
-    exact ⟨hkP, hk⟩
+/-- The propositional closure has at most one possibility just in case the set of possibilities
+has at most one nonempty member. -/
+theorem subsingleton_pro_iff : (pro P).Subsingleton ↔ (P \ {∅}).Subsingleton := by
+  unfold pro
+  split_ifs with h
+  · subst h
+    simp
+  · rfl
+
+variable {k : Set W}
+
+/-- A proposition restricted to `k` has at most one possibility just in case its possibilities
+consistent with `k` agree on `k`. -/
+theorem subsingleton_restrict_iff :
+    (restrict P k).Subsingleton ↔
+      ∀ p ∈ P, ∀ q ∈ P, (k ∩ p).Nonempty → (k ∩ q).Nonempty → k ∩ p = k ∩ q := by
+  rw [restrict, subsingleton_pro_iff]
+  refine ⟨fun h p hp q hq hkp hkq ↦
+    h ⟨mem_image_of_mem _ hp, hkp.ne_empty⟩ ⟨mem_image_of_mem _ hq, hkq.ne_empty⟩, ?_⟩
+  rintro h _ ⟨⟨p, hp, rfl⟩, hp0⟩ _ ⟨⟨q, hq, rfl⟩, hq0⟩
+  exact h p hp q hq (nonempty_iff_ne_empty.2 hp0) (nonempty_iff_ne_empty.2 hq0)
+
+/-- A proposition restricted to `k` has several possibilities just in case two of its
+possibilities consistent with `k` differ on `k`. -/
+theorem nontrivial_restrict_iff :
+    (restrict P k).Nontrivial ↔
+      ∃ p ∈ P, ∃ q ∈ P, (k ∩ p).Nonempty ∧ (k ∩ q).Nonempty ∧ k ∩ p ≠ k ∩ q := by
+  rw [← not_subsingleton_iff, subsingleton_restrict_iff]
+  push_neg
+  rfl
+
+/-- Restricted to an information set that decides each of its possibilities, a proposition keeps
+at most one possibility. -/
+theorem subsingleton_restrict_of_subset_or_disjoint (h : ∀ p ∈ P, k ⊆ p ∨ Disjoint k p) :
+    (restrict P k).Subsingleton :=
+  subsingleton_restrict_iff.2 fun p hp q hq hkp hkq ↦ by
+    rw [inter_eq_left.2 ((h p hp).resolve_right (not_disjoint_iff_nonempty_inter.2 hkp)),
+      inter_eq_left.2 ((h q hq).resolve_right (not_disjoint_iff_nonempty_inter.2 hkq))]
 
 /-- Restricted to a single world, a proposition keeps at most one possibility. -/
-theorem subsingleton_restrict_singleton (w : W) : (restrict P {w}).Subsingleton := by
-  unfold restrict pro
-  split_ifs with h
-  · exact h ▸ subsingleton_singleton
-  · refine (subsingleton_singleton (a := {w})).anti ?_
-    rintro _ ⟨⟨p, -, rfl⟩, hne⟩
-    exact singleton_inter_of_mem (not_not.1 (mt singleton_inter_eq_empty.2 hne))
+theorem subsingleton_restrict_singleton (w : W) : (restrict P {w}).Subsingleton :=
+  subsingleton_restrict_of_subset_or_disjoint fun p _ ↦
+    (em (w ∈ p)).imp singleton_subset_iff.2 disjoint_singleton_left.2
+
+/-! ### Interactive sincerity -/
+
+/-- The Maxim of Interactive Sincerity requires a proposition with several possibilities to keep
+several when restricted to the speaker's information set `k` ([coppock-brochhagen-2013], (68)). -/
+def InteractiveSincerity (P : Set (Set W)) (k : Set W) : Prop :=
+  P.Nontrivial → (restrict P k).Nontrivial
+
+theorem InteractiveSincerity.of_subsingleton (hP : P.Subsingleton) (k : Set W) :
+    InteractiveSincerity P k :=
+  fun h ↦ absurd hP h.not_subsingleton
+
+/-- A proposition with several possibilities is insincere for a speaker whose information leaves
+it at most one. -/
+theorem not_interactiveSincerity (hP : P.Nontrivial) (h : (restrict P k).Subsingleton) :
+    ¬ InteractiveSincerity P k :=
+  fun hs ↦ (hs hP).not_subsingleton h
+
+theorem interactiveSincerity_singleton_iff (w : W) :
+    InteractiveSincerity P {w} ↔ ¬ P.Nontrivial :=
+  ⟨fun hs hP ↦ not_interactiveSincerity hP (subsingleton_restrict_singleton w) hs,
+    fun h hP ↦ absurd hP h⟩
+
+/-- A proposition is sincere whatever the speaker knows just in case it has at most one
+possibility. -/
+theorem forall_interactiveSincerity_iff [Nonempty W] :
+    (∀ k, InteractiveSincerity P k) ↔ ¬ P.Nontrivial :=
+  ⟨fun h ↦ (interactiveSincerity_singleton_iff (Classical.arbitrary W)).1 (h _),
+    fun h _ hP ↦ absurd hP h⟩
 
 end Inquisitive.Unrestricted

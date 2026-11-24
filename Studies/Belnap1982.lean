@@ -17,7 +17,7 @@ question is to know some answer to it, which yields a necessary test for answerh
 
 ## Implementation notes
 
-A question is its Hamblin set, with Bennett's denotation `Question.trueAnswers` and Karttunen's
+A question is its Hamblin set, with Bennett's denotation `Question.karttunen` and Karttunen's
 answer `Question.weakAnswer`, and the Distributivity Principle is `Question.KnowsSomeAnswer`. The
 inquisitive `Inquisitive.Proposition.alt` keeps only maximal answers, and so loses *three apples*
 beside *some apples* (`alt_generate_basket`, p. 172).
@@ -52,24 +52,24 @@ variable {Ans : W → Set (Set W)}
 world where it is true (p. 173). -/
 def Assumption (Ans : W → Set (Set W)) : Prop := ∀ ⦃w v p⦄, p ∈ Ans w → v ∈ p → p ∈ Ans v
 
-theorem assumption_trueAnswers (H : Set (Set W)) : Assumption (trueAnswers H) :=
+theorem assumption_karttunen (H : Set (Set W)) : Assumption (karttunen H) :=
   fun _ _ _ hp hv ↦ ⟨hp.1, hv⟩
 
-theorem trueAnswers_iUnion (hT : IsVeridical Ans) (hA : Assumption Ans) :
-    trueAnswers (⋃ w, Ans w) = Ans := by
+theorem karttunen_iUnion (hT : IsVeridical Ans) (hA : Assumption Ans) :
+    karttunen (⋃ w, Ans w) = Ans := by
   ext w p
-  simp only [mem_trueAnswers, Set.mem_iUnion]
+  simp only [mem_karttunen, Set.mem_iUnion]
   exact ⟨fun ⟨⟨_, hp⟩, hw⟩ ↦ hA hp hw, fun hp ↦ ⟨⟨w, hp⟩, hT w p hp⟩⟩
 
 /-- Answers at each world are the true members of a Hamblin set exactly when they are true and
 satisfy the Assumption (p. 173). -/
-theorem exists_eq_trueAnswers_iff :
-    (∃ H, Ans = trueAnswers H) ↔ IsVeridical Ans ∧ Assumption Ans := by
+theorem exists_eq_karttunen_iff :
+    (∃ H, Ans = karttunen H) ↔ IsVeridical Ans ∧ Assumption Ans := by
   constructor
   · rintro ⟨H, rfl⟩
-    exact ⟨isVeridical_trueAnswers H, assumption_trueAnswers H⟩
+    exact ⟨isVeridical_karttunen H, assumption_karttunen H⟩
   · rintro ⟨hT, hA⟩
-    exact ⟨_, (trueAnswers_iUnion hT hA).symm⟩
+    exact ⟨_, (karttunen_iUnion hT hA).symm⟩
 
 theorem possibleAnswer_iff_iff_assumption (hT : IsVeridical Ans) :
     (∀ p, (p.Nonempty ∧ ∀ w ∈ p, p ∈ Ans w) ↔ ∃ w, p ∈ Ans w) ↔ Assumption Ans := by
@@ -110,7 +110,7 @@ end Schemes
 /-- On an antichain of answers, Karttunen's answer is an answer exactly when the true answer is
 unique (p. 174). -/
 theorem weakAnswer_mem_iff_of_antichain {H : Set (Set W)} (hH : IsAntichain (· ⊆ ·) H) (w : W) :
-    weakAnswer H w ∈ H ↔ ∃ p, trueAnswers H w = {p} :=
+    weakAnswer H w ∈ H ↔ ∃ p, karttunen H w = {p} :=
   (hasStrongestTrueAnswer_iff H w).symm.trans
     (hasStrongestTrueAnswer_iff_of_antichain H w hH)
 
@@ -135,17 +135,17 @@ theorem isAntichain_gas : IsAntichain (· ⊆ ·) gas := by
   rintro _ ⟨s, rfl⟩ _ ⟨t, rfl⟩ hne hsub
   exact hne (congrArg isOpen (hsub (a := {s}) (Set.mem_singleton s) : t ∈ ({s} : Set Station)).symm)
 
-theorem trueAnswers_gas_univ : trueAnswers gas Set.univ = {isOpen .a, isOpen .b} := by
+theorem karttunen_gas_univ : karttunen gas Set.univ = {isOpen .a, isOpen .b} := by
   ext p
   refine ⟨fun ⟨⟨s, hs⟩, _⟩ ↦ ?_, ?_⟩
   · cases s <;> simp [← hs]
   · rintro (rfl | rfl) <;> exact ⟨⟨_, rfl⟩, trivial⟩
 
 theorem gas_unique_answer_fallacy :
-    trueAnswers gas Set.univ = {isOpen .a, isOpen .b} ∧ weakAnswer gas Set.univ ∉ gas := by
-  refine ⟨trueAnswers_gas_univ, fun h ↦ ?_⟩
+    karttunen gas Set.univ = {isOpen .a, isOpen .b} ∧ weakAnswer gas Set.univ ∉ gas := by
+  refine ⟨karttunen_gas_univ, fun h ↦ ?_⟩
   obtain ⟨p, hp⟩ := (weakAnswer_mem_iff_of_antichain isAntichain_gas _).1 h
-  rw [trueAnswers_gas_univ] at hp
+  rw [karttunen_gas_univ] at hp
   have ha : isOpen .a ∈ ({p} : Set _) := hp ▸ Or.inl rfl
   have hb : isOpen .b ∈ ({p} : Set _) := hp ▸ Or.inr rfl
   exact isOpen_a_ne_b (ha.trans hb.symm)
@@ -155,7 +155,7 @@ with the answers *some apples* and *three apples*. -/
 def basket : Set (Set ℕ) := {{n | 0 < n}, {3}}
 
 theorem basket_answers :
-    trueAnswers basket 3 = basket ∧ ({n | 0 < n} : Set ℕ) ≠ {3} ∧ weakAnswer basket 3 ∈ basket := by
+    karttunen basket 3 = basket ∧ ({n | 0 < n} : Set ℕ) ≠ {3} ∧ weakAnswer basket 3 ∈ basket := by
   have hw : weakAnswer basket 3 = {3} := by
     ext n
     simp only [mem_weakAnswer, basket, Set.mem_insert_iff, Set.mem_singleton_iff,
@@ -163,7 +163,7 @@ theorem basket_answers :
     omega
   refine ⟨?_, fun h ↦ ?_, hw ▸ Or.inr rfl⟩
   · ext p
-    simp only [mem_trueAnswers, basket, Set.mem_insert_iff, Set.mem_singleton_iff]
+    simp only [mem_karttunen, basket, Set.mem_insert_iff, Set.mem_singleton_iff]
     constructor
     · exact And.left
     · rintro (rfl | rfl) <;> simp
@@ -185,12 +185,12 @@ theorem alt_generate_basket : alt (generate basket) = {{n | 0 < n}} := by
     · exact absurd (hle (show 1 ∈ {n : ℕ | 0 < n} from Nat.one_pos)) (by simp)
 
 theorem fallacy_rows :
-    ((∃ p ∈ trueAnswers gas Set.univ, ∃ q ∈ trueAnswers gas Set.univ, p ≠ q) ↔
+    ((∃ p ∈ karttunen gas Set.univ, ∃ q ∈ karttunen gas Set.univ, p ≠ q) ↔
       Examples.gas.feature? "answers" = some "multiple, each full and complete and true") ∧
-    ((∃ p ∈ trueAnswers basket 3, ∃ q ∈ trueAnswers basket 3, p ≠ q) ↔
+    ((∃ p ∈ karttunen basket 3, ∃ q ∈ karttunen basket 3, p ≠ q) ↔
       Examples.basket.feature? "answers" = some "multiple, each full and complete and true") := by
   refine ⟨iff_of_true ?_ rfl, iff_of_true ?_ rfl⟩
-  · rw [trueAnswers_gas_univ]
+  · rw [karttunen_gas_univ]
     exact ⟨_, Or.inl rfl, _, Or.inr rfl, isOpen_a_ne_b⟩
   · rw [basket_answers.1]
     exact ⟨_, Or.inl rfl, _, Or.inr rfl, basket_answers.2.1⟩
@@ -206,7 +206,7 @@ theorem isClausallyDistributive_knowsSomeAnswer (K : E → SetRel W W)
     (𝒬 : Set (Set (Set W))) :
     IsClausallyDistributive 𝒬 fun x H w ↦ KnowsSomeAnswer H w (K x) :=
   .of_forall_iff_exists (fun x p w ↦ w ∈ p ∧ w ∈ (K x).core p) fun x H w ↦ by
-    simp [KnowsSomeAnswer, trueAnswers, and_assoc]
+    simp [KnowsSomeAnswer, karttunen, and_assoc]
 
 /-- The inference from knowing that `p` to knowing `H` fails when an agent with factive knowledge
 knows that `p` without knowing some answer to `H` (p. 177). -/
@@ -228,19 +228,19 @@ private theorem mem_core_alsoPossible {v : W} {q : Set W} :
     fun ⟨hw, hv⟩ u hu ↦ hu.elim (fun h : w = u ↦ h ▸ hw) fun h : u = v ↦ h ▸ hv⟩
 
 private theorem inferenceFails_of {v : W} (hw : w ∈ p) (hv : v ∈ p)
-    (hn : ∀ q ∈ trueAnswers H w, v ∉ q) : InferenceFails p H :=
+    (hn : ∀ q ∈ karttunen H w, v ∉ q) : InferenceFails p H :=
   ⟨alsoPossible v, w, inferInstance, mem_core_alsoPossible.2 ⟨hw, hv⟩,
     fun ⟨q, hq, hk⟩ ↦ hn q hq (mem_core_alsoPossible.1 hk).2⟩
 
 /-- On a question with a unique true answer, knowing some answer is knowing the question by
 Karttunen's postulate. -/
-theorem knowsSomeAnswer_iff_knows (h : trueAnswers H w = {p}) :
-    KnowsSomeAnswer H w K ↔ Karttunen1977.Knows (trueAnswers H) w K := by
+theorem knowsSomeAnswer_iff_knows (h : karttunen H w = {p}) :
+    KnowsSomeAnswer H w K ↔ Karttunen1977.Knows (karttunen H) w K := by
   simp [Karttunen1977.Knows, knowsSomeAnswer_iff_knowsAnswer h, KnowsAnswer, weakAnswer, h]
 
 theorem knowsSomeAnswer_not_knows :
     ∃ K : SetRel (Set Station) (Set Station), K.IsRefl ∧ KnowsSomeAnswer gas Set.univ K ∧
-      ¬Karttunen1977.Knows (trueAnswers gas) Set.univ K := by
+      ¬Karttunen1977.Knows (karttunen gas) Set.univ K := by
   refine ⟨alsoPossible {Station.a}, inferInstance,
     ⟨isOpen .a, ⟨⟨_, rfl⟩, trivial⟩, mem_core_alsoPossible.2 ⟨trivial, rfl⟩⟩,
     fun ⟨hk, _⟩ ↦ ?_⟩
@@ -269,15 +269,15 @@ def quantifyIn (det : Det E) (cn : E → Set W) (φ : E → Set (Set W)) : Set (
   {O | ∃ (P : W → Set E) (f : W → E → Set W), O = {w | det {y | w ∈ cn y} (P w) ∧
     ∀ y ∈ P w, w ∈ cn y ∧ f w y ∈ φ y ∧ w ∈ f w y}}
 
-theorem exists_mem_of_mem_trueAnswers_every (hO : O ∈ trueAnswers (quantifyIn Det.every cn φ) w)
+theorem exists_mem_of_mem_karttunen_every (hO : O ∈ karttunen (quantifyIn Det.every cn φ) w)
     {y : E} (hy : w ∈ cn y) : ∃ p ∈ φ y, w ∈ p := by
   obtain ⟨⟨P, f, rfl⟩, hdet, hall⟩ := hO
   obtain ⟨-, hf, hw⟩ := hall y (hdet hy)
   exact ⟨_, hf, hw⟩
 
 /-- A question introducing *the* `cn` has no true answer where nothing is a `cn` (p. 181). -/
-theorem trueAnswers_quantifyIn_the (h : ∀ y, w ∉ cn y) :
-    trueAnswers (quantifyIn Det.the cn φ) w = ∅ :=
+theorem karttunen_quantifyIn_the (h : ∀ y, w ∉ cn y) :
+    karttunen (quantifyIn Det.the cn φ) w = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨⟨_, _, hO⟩, hw⟩ ↦ by
     subst hO
     obtain ⟨⟨x, hx, -⟩, -⟩ := hw
@@ -290,9 +290,9 @@ def kingOfFrance : Unit → Set (Option Bool) := fun _ ↦ Set.range some
 def whetherBald : Unit → Set (Set (Option Bool)) := fun _ ↦ {{some true}, {some false}}
 
 theorem king_row :
-    trueAnswers (quantifyIn Det.the kingOfFrance whetherBald) none = ∅ ↔
+    karttunen (quantifyIn Det.the kingOfFrance whetherBald) none = ∅ ↔
       Examples.king.feature? "status" = some "no true answers" :=
-  iff_of_true (trueAnswers_quantifyIn_the fun _ ↦ by simp [kingOfFrance]) rfl
+  iff_of_true (karttunen_quantifyIn_the fun _ ↦ by simp [kingOfFrance]) rfl
 
 /-- On the external view of answerhood, `O` says only that each `P` has its `f`-answer, and it
 answers at `w` when the `P`s are `det` `cn`s there (p. 181). -/
@@ -328,15 +328,15 @@ theorem mem_theAnswer {x : E} : w ∈ theAnswer η φ x ↔ ∀ y, w ∈ η y �
 p. 192). -/
 def singularWhich (η φ : E → Set W) : Set (Set W) := Set.range (theAnswer η φ)
 
-theorem trueAnswers_singularWhich_eq_empty {x y : E} (hxy : x ≠ y) (hx : w ∈ η x ∧ w ∈ φ x)
-    (hy : w ∈ η y ∧ w ∈ φ y) : trueAnswers (singularWhich η φ) w = ∅ :=
+theorem karttunen_singularWhich_eq_empty {x y : E} (hxy : x ≠ y) (hx : w ∈ η x ∧ w ∈ φ x)
+    (hy : w ∈ η y ∧ w ∈ φ y) : karttunen (singularWhich η φ) w = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨⟨_, hz⟩, hw⟩ ↦ hxy <| by
     subst hz
     exact ((mem_theAnswer.1 hw x).1 hx).trans ((mem_theAnswer.1 hw y).1 hy).symm
 
 theorem inferenceFails_of_ne {x y : E} (hxy : x ≠ y) (hx : w ∈ η x ∧ w ∈ φ x)
     (hy : w ∈ η y ∧ w ∈ φ y) : InferenceFails (φ x) (singularWhich η φ) :=
-  inferenceFails_of hx.2 hx.2 (by simp [trueAnswers_singularWhich_eq_empty hxy hx hy])
+  inferenceFails_of hx.2 hx.2 (by simp [karttunen_singularWhich_eq_empty hxy hx hy])
 
 theorem knowsSomeAnswer_of_knows_presupposition [K.IsRefl] {x : E} (hx : w ∈ K.core (η x ∩ φ x))
     (hpre : w ∈ K.core (⋃₀ singularWhich η φ)) : KnowsSomeAnswer (singularWhich η φ) w K :=
@@ -379,7 +379,7 @@ def whichPersonKickedSam : Set (Set World) := singularWhich (fun _ ↦ Set.univ)
 def whichManMaryLoves : Set (Set World) := singularWhich (fun _ ↦ Set.univ) maryLoves
 
 private theorem billAlone_notMem {q : Set World}
-    (hq : q ∈ trueAnswers whichPersonKickedSam ⟨{Person.john}, ∅, True⟩) :
+    (hq : q ∈ karttunen whichPersonKickedSam ⟨{Person.john}, ∅, True⟩) :
     (⟨{Person.bill}, ∅, True⟩ : World) ∉ q := by
   obtain ⟨⟨x, rfl⟩, hw⟩ := hq
   intro hv
