@@ -49,6 +49,10 @@ for an antitone class and `0` for `•`, is a homomorphism to the three signs.
 
 ## Implementation notes
 
+* MacCartney and Manning introduce projectivity as the generalization of monotonicity from
+  inclusion to the exclusion relations, and a projectivity signature as a map from relations to
+  relations that says how a function projects each relation. The nine signatures here are Icard's:
+  each names a class of maps, and it determines such a map, its row of the projection table.
 * Icard states the definitions for maps between Boolean lattices. Only the bounded lattice
   structure is used here.
 * An additive map is a homomorphism of what Icard calls ∨-1-semilattices, a join-semilattice with
@@ -65,6 +69,7 @@ for an antitone class and `0` for `•`, is a homomorphism to the three signs.
 
 ## References
 
+* [maccartney-manning-2009]
 * [icard-2012]
 -/
 
