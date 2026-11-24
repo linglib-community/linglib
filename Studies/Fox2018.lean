@@ -29,11 +29,11 @@ their denotations are admissible.
 
 ## Implementation notes
 
-* Questions are Hamblin sets `Set (Set W)` rather than `Question` lower sets, since the paper's sets
-  are not antichains. The three-location model is a family of atoms `a : ι → Set W` with every set
-  of atoms true at some world (`Rich`); the closures of the atoms under conjunction and under
-  disjunction, `infClosure (range a)` and `supClosure (range a)`, are the paper's two denotations
-  (21)''a and (21)''b.
+* Questions are Hamblin sets `Set (Set W)` rather than `Inquisitive.Proposition` lower sets, since
+  the paper's sets are not antichains. The three-location model is a family of atoms `a : ι → Set W`
+  with every set of atoms true at some world (`Rich`); the closures of the atoms under conjunction
+  and under disjunction, `infClosure (range a)` and `supClosure (range a)`, are the paper's two
+  denotations (21)''a and (21)''b.
 * The exhaustification (32) is Fox's simplification of [bar-lev-fox-2017]'s operator,
   `Exhaustification.cell`, which agrees with theirs wherever it is consistent (fn. 33).
 * The answer operator `ans` quantifies over the cell identifiers instead of taking the unique one
@@ -57,7 +57,7 @@ their denotations are admissible.
 
 namespace Fox2018
 
-open Question Exhaustification Set
+open Question Inquisitive Inquisitive.Proposition Exhaustification Set
 open scoped SetRel
 
 variable {W : Type*}

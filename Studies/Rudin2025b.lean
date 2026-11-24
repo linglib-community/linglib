@@ -33,10 +33,10 @@ view that it denotes a proposition and on the view that it denotes a question al
 * Reenactment and content are relations from events, `SetRel`. A postulate of the form
   "$V(e)$ iff every $u$ that $e$ relates to has $Q$" makes the verb's extension `□[R] Q`, so
   consistency is the existence of a reenactment relation that makes the report true.
-* An uttered sentence is its denotation, a `Question` (a proposition is `Question.ofSet p`), and
-  whether its tune is rising; clause type matters only through the denotation it determines. The
-  rows read a declarative as denoting its radical and an interrogative as the polar question on
-  it, with the radical a fixed contingent proposition.
+* An uttered sentence is its denotation, a `Inquisitive.Proposition` (a proposition is
+  `Inquisitive.Proposition.ofSet p`), and whether its tune is rising; clause type matters only
+  through the denotation it determines. The rows read a declarative as denoting its radical and an
+  interrogative as the polar question on it, with the radical a fixed contingent proposition.
 * The paper derives its three update tables, for falling and rising declaratives and rising polar
   interrogatives, from the update rule above, and here they are
   [instances of the rule](##utter_ofSet_false). A state resolves an issue when it belongs to it,
@@ -64,7 +64,7 @@ view that it denotes a proposition and on the view that it denotes a question al
 
 namespace Rudin2025b
 
-open ModalLogic SetRel Commitment Question
+open ModalLogic SetRel Commitment Inquisitive Inquisitive.Proposition
 
 variable {E X W : Type*}
 
@@ -101,7 +101,7 @@ sentence that denotes `D`, with a rising tune or not. -/
 inductive Material (W : Type*) where
   | none
   | inarticulate
-  | utterance (D : Question W) (rising : Bool)
+  | utterance (D : Proposition (Set W)) (rising : Bool)
 
 /-- A performance consists of its linguistic material and its volume. -/
 structure Performance (W : Type*) where
@@ -118,7 +118,7 @@ instance : DecidablePred (Material.Linguistic (W := W)) := fun m ↦ by
 
 /-- Uttering a sentence that denotes `D` raises `D` as an issue and, unless the tune is rising,
 commits the speaker to the informative content of `D`. -/
-def utter (D : Question W) : Bool → Table SpeechAct.Role W → Table SpeechAct.Role W
+def utter (D : Proposition (Set W)) : Bool → Table SpeechAct.Role W → Table SpeechAct.Role W
   | true, K => K.push D
   | false, K => (K.commit .speaker D.info).push D
 
@@ -151,9 +151,10 @@ def Performance.Assertion (u : Performance W) : Prop :=
 
 namespace Performance
 
-variable {D : Question W} {rising : Bool} {v : Volume}
+variable {D : Proposition (Set W)} {rising : Bool} {v : Volume}
 
-private theorem stack_ne_of_update_eq_id {u : Performance W} (h : u.update = id) {i : Question W} :
+private theorem stack_ne_of_update_eq_id {u : Performance W} (h : u.update = id)
+    {i : Proposition (Set W)} :
     (u.update Table.empty).stack ≠ [i] := by
   rw [h]
   exact (List.cons_ne_nil i []).symm
@@ -260,7 +261,7 @@ noncomputable instance (v : Verb) (u : Performance W) : Decidable (v.property u)
 
 /-- Whatever a rising declarative is taken to denote, a proposition or a question, its quotation is
 consistent under *ask* and contradictory under *assert*. -/
-theorem report_rising_ask_assert [Nonempty E] (D : Question W) (v : Volume) :
+theorem report_rising_ask_assert [Nonempty E] (D : Proposition (Set W)) (v : Volume) :
     (∃ R : SetRel E (Performance W), ∃ e,
         report (□[R] Verb.ask.property) R ⟨.utterance D true, v⟩ e) ∧
       ∀ (R : SetRel E (Performance W)) e,
@@ -290,7 +291,7 @@ def volumes : List (String × Volume) :=
 
 /-- `moods` gives the denotation of a quoted sentence of each mood on its radical: a declarative
 denotes the radical, an interrogative the polar question on it. -/
-def moods : List (String × (Set W → Question W)) :=
+def moods : List (String × (Set W → Proposition (Set W))) :=
   [("declarative", ofSet), ("interrogative", polar)]
 
 /-- `performance? x` is the quoted performance of the row `x`, its sentence radical a fixed

@@ -53,7 +53,7 @@ paraphrases it.
 
 namespace Zheng2025
 
-open MeasureTheory Modality DTS Question
+open MeasureTheory Modality DTS Question Inquisitive Inquisitive.Proposition
 open Theiler2021 (Property instantiations instantiations_zero Necessary Sufficient)
 
 /-! ### Felicity conditions, (11) and (13) -/

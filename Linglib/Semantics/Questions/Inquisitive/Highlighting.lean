@@ -39,6 +39,8 @@ Roelofsen and Farkas.
 
 @[expose] public section
 
+open Inquisitive
+
 variable {W : Type*}
 
 namespace Highlighting
@@ -90,8 +92,8 @@ namespace Formula
 variable {A : Type*} (v : A → Set W)
 
 /-- The proposition a formula expresses under the valuation `v` of its atoms (26). -/
-def proposition : Formula A → Question W
-  | atom a => Question.ofSet (v a)
+def proposition : Formula A → Inquisitive.Proposition (Set W)
+  | atom a => Inquisitive.Proposition.ofSet (v a)
   | neg φ => (proposition φ)ᶜ
   | inqDisj φ ψ => proposition φ ⊔ proposition ψ
   | bang φ => (proposition φ)ᶜᶜ
@@ -113,21 +115,21 @@ def ofPolarity : Polarity → A → Formula A
   | .negative, a => neg (atom a)
 
 @[simp] theorem proposition_ofPolarity (s : Polarity) (a : A) :
-    (ofPolarity s a).proposition v = Question.ofSet (s • v a) := by
+    (ofPolarity s a).proposition v = Inquisitive.Proposition.ofSet (s • v a) := by
   cases s
   · rfl
-  · simp [ofPolarity, Question.compl_eq, Question.info_ofSet]
+  · simp [ofPolarity, Inquisitive.Proposition.compl_eq, Inquisitive.Proposition.info_ofSet]
 
 @[simp] theorem highlights_ofPolarity (s : Polarity) (a : A) :
     (ofPolarity s a).highlights v = {s • (.positive, v a)} := by
   cases s <;> simp [ofPolarity, Prod.smul_mk]
 
 theorem proposition_query_ofPolarity (s : Polarity) (a : A) :
-    (query (ofPolarity s a)).proposition v = Question.polar (v a) := by
-  rw [proposition, proposition_ofPolarity, Question.query_ofSet, Question.polar_smul]
+    (query (ofPolarity s a)).proposition v = Inquisitive.Proposition.polar (v a) := by
+  rw [proposition, proposition_ofPolarity, Proposition.query_ofSet, Proposition.polar_smul]
 
 theorem not_exists_highlights_eq_comp_proposition [Nonempty A] :
-    ¬ ∃ f : Question W → Set (Polarity × Set W),
+    ¬ ∃ f : Inquisitive.Proposition (Set W) → Set (Polarity × Set W),
       ∀ φ : Formula A, φ.highlights v = f (φ.proposition v) := by
   rintro ⟨f, hf⟩
   obtain ⟨a⟩ := ‹Nonempty A›
@@ -170,7 +172,7 @@ theorem proposition_toInquisitive [Fintype W] [DecidableEq W] (M : Inquisitive.M
   | query φ ih =>
     simp only [toInquisitive, Inquisitive.Formula.polarQ, Inquisitive.Formula.neg,
       Inquisitive.proposition_inqDisj, Inquisitive.proposition_impl, Inquisitive.proposition_bot,
-      himp_bot, proposition, ih, Question.query, Question.compl_eq]
+      himp_bot, proposition, ih, Inquisitive.Proposition.query, Inquisitive.Proposition.compl_eq]
 
 theorem not_exists_highlights_eq_comp_toInquisitive [Nonempty A] :
     ¬ ∃ f : Inquisitive.Formula A → Set (Polarity × Set W),

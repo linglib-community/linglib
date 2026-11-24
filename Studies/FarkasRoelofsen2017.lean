@@ -16,13 +16,14 @@ the Fregean force operators, and the special discourse effects of the marked for
 is a clause-type marker with an intonation, or a declarative anchor with a tag (`Form`, §4.1); the
 markers are interpreted by the projection operators of inquisitive semantics (31), (34), (36). `dec`
 is the non-inquisitive projection, the double complement `Pᶜᶜ`, `int` the non-informative projection
-`Question.query` applied only to a non-inquisitive argument, falling intonation is vacuous and
-rising intonation is `Question.query` again. `Form.interpret` composes them as in (37)–(40), so that
-a falling declarative expresses `!P` and every other form `?!P`, and with a non-inquisitive radical
-the rising declarative, the polar interrogatives and the tag interrogatives express one and the same
-inquisitive proposition (`interpret_declarative_falling`, `interpret_marked`,
-`interpret_interrogative_ofSet`, `isInquisitive_interpret_ofSet`; (41) and (43)). Among the forms
-for that content the polar interrogatives are optimal and the rest marked (`Form.IsMarked`, (47)).
+`Inquisitive.Proposition.query` applied only to a non-inquisitive argument, falling intonation is
+vacuous and rising intonation is `Inquisitive.Proposition.query` again. `Form.interpret` composes
+them as in (37)–(40), so that a falling declarative expresses `!P` and every other form `?!P`, and
+with a non-inquisitive radical the rising declarative, the polar interrogatives and the tag
+interrogatives express one and the same inquisitive proposition (`interpret_declarative_falling`,
+`interpret_marked`, `interpret_interrogative_ofSet`, `isInquisitive_interpret_ofSet`; (41) and
+(43)). Among the forms for that content the polar interrogatives are optimal and the rest marked
+(`Form.IsMarked`, (47)).
 
 A discourse context is a stack of propositions, a commitment state, and for each participant the
 possibilities she has signalled evidence for with a credence interval (the paper's (22) and §3.2;
@@ -68,7 +69,7 @@ section on a `Situation`, and `rows_felicitous` checks it against all sixty judg
 
 namespace FarkasRoelofsen2017
 
-open Commitment Question
+open Commitment Inquisitive Inquisitive.Proposition
 
 /-! ### Sentence forms and their semantics -/
 
@@ -93,9 +94,9 @@ namespace Intonation
 
 /-- `closed` intonation is vacuous and `open` intonation is the non-informative projection
 (36). -/
-def interpret : Intonation → Question W → Question W
+def interpret : Intonation → Proposition (Set W) → Proposition (Set W)
   | .falling => id
-  | .rising => Question.query
+  | .rising => Proposition.query
 
 end Intonation
 
@@ -104,7 +105,7 @@ namespace Form
 open scoped Classical in
 /-- `dec` is `!`, `int` is `⟨?⟩`, which applies `?` only to a non-inquisitive argument, and a
 tag applies `int` to the falling declarative anchor, as in (37)–(40). -/
-noncomputable def interpret : Form → Question W → Question W
+noncomputable def interpret : Form → Proposition (Set W) → Proposition (Set W)
   | .declarative i, P => i.interpret Pᶜᶜ
   | .interrogative i, P => i.interpret (if P.IsInquisitive then P else P.query)
   | .tag i, P => i.interpret (if Pᶜᶜ.IsInquisitive then Pᶜᶜ else Pᶜᶜ.query)
@@ -125,11 +126,11 @@ instance : DecidablePred IsMarked := λ f => by
 end Form
 
 /-- A falling declarative expresses the non-inquisitive projection of its radical (41a). -/
-theorem interpret_declarative_falling (P : Question W) :
+theorem interpret_declarative_falling (P : Proposition (Set W)) :
     (Form.declarative .falling).interpret P = Pᶜᶜ := rfl
 
 /-- A rising declarative and a tag interrogative express `?!P`, as in (39) and (40). -/
-theorem interpret_marked (P : Question W) (i : Intonation) :
+theorem interpret_marked (P : Proposition (Set W)) (i : Intonation) :
     (Form.declarative .rising).interpret P = Pᶜᶜ.query ∧
       (Form.tag i).interpret P = Pᶜᶜ.query := by
   refine ⟨rfl, ?_⟩
@@ -185,7 +186,7 @@ end CredenceLevel
 participants' commitments, and for each participant the possibilities they have signalled
 evidence for, each with a credence interval. -/
 structure Context (A W : Type*) where
-  table : List (Question W)
+  table : List (Proposition (Set W))
   commitments : State A W
   evidence : A → Set (Set W × Set CredenceLevel)
 
@@ -202,11 +203,11 @@ def cg : Set W := ⋃ x, K.cs x
 
 /-- The participants have commonly decided on `P` when the common ground complies with it or
 cannot comply with it. -/
-def CommonlyDecided (P : Question W) : Prop := K.cg ∈ P ∨ ∀ s ∈ P, K.cg ∩ s = ∅
+def CommonlyDecided (P : Proposition (Set W)) : Prop := K.cg ∈ P ∨ ∀ s ∈ P, K.cg ∩ s = ∅
 
 /-- The basic convention of use (48) puts the proposition on the table and its informative
 content into the speaker's commitments. -/
-def basic (φ : Question W) : Context A W :=
+def basic (φ : Proposition (Set W)) : Context A W :=
   ⟨φ :: K.table, insert (x, φ.info) K.commitments, K.evidence⟩
 
 /-- A special effect enters the highlighted alternative into the speaker's evidence with a
@@ -262,7 +263,7 @@ theorem cs_basic_declarative_falling (α : Set W) :
 omit [DecidableEq A] in
 /-- An inquisitive proposition commits the speaker only to the trivial possibility, as in (50)
 and (51). -/
-theorem cs_basic_of_isInquisitive {φ : Question W} (h : φ.info = Set.univ) :
+theorem cs_basic_of_isInquisitive {φ : Proposition (Set W)} (h : φ.info = Set.univ) :
     (K.basic x φ).cs x = K.cs x := by
   simp only [cs, basic, h]
   rw [State.commitmentSet_insert_self, Set.univ_inter]

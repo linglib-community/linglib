@@ -20,7 +20,7 @@ nontrivial polar question has the alternatives `p` and `pᶜ` (`alt_polar_of_non
 
 @[expose] public section
 
-namespace Question
+namespace Inquisitive.Proposition
 
 variable {W : Type*}
 
@@ -30,7 +30,7 @@ variable {W : Type*}
     via [puncochar-2019]'s `?α := α ⩒ ¬α`. Alternatives are `p`
     and `pᶜ`; non-informative (`info = univ`); inquisitive iff `p` is
     non-trivial. -/
-def polar (p : Set W) : Question W :=
+def polar (p : Set W) : Proposition (Set W) :=
   ofSet p ⊔ ofSet pᶜ
 
 @[simp] theorem polar_compl (p : Set W) : polar pᶜ = polar p := by
@@ -131,4 +131,4 @@ theorem mem_polar_inf_polar_iff {p q σ : Set W} :
   simp only [mem_inf, mem_polar, Set.subset_inter_iff]
   tauto
 
-end Question
+end Inquisitive.Proposition

@@ -38,9 +38,9 @@ discussion, addressing being partial answerhood. Exhaustification is innocent ex
 glosses the alternatives it may deny as those entailing the prejacent, under which a correction
 would not entail `¬p`. Highlighting is the paper's notion, not the compositional highlighting of
 `Semantics/Questions/Inquisitive/Highlighting.lean`. The operator name `present` is Faller's. The
-examples are evaluated in a model whose worlds are sets of events. The paper's survey of *=mi* across Quechuan,
-after Faller, Sánchez, Tellings, Grzech and Bendezú, finds the analyses hard to compare at present
-and is not formalized.
+examples are evaluated in a model whose worlds are sets of events. The paper's survey of *=mi*
+across Quechuan, after Faller, Sánchez, Tellings, Grzech and Bendezú, finds the analyses hard to
+compare at present and is not formalized.
 
 ## TODO
 
@@ -65,6 +65,8 @@ and is not formalized.
 -/
 
 @[expose] public section
+
+open Inquisitive
 
 namespace MartinezVera2026
 
@@ -159,7 +161,7 @@ structure Context (A W : Type*) where
   /-- The moves on record. -/
   moves : Set (Move A W)
   /-- The question under discussion. -/
-  qud : Question W
+  qud : Inquisitive.Proposition (Set W)
 
 namespace Context
 
@@ -172,7 +174,7 @@ def declare (c : Context A W) (s : A) (e : Evidential) (S : TwoDim W (Set W)) : 
   ((Move.declare s e S).map c.update).getD c
 
 /-- Asking a question that addresses no prior one makes it the question under discussion. -/
-def ask (c : Context A W) (Q : Question W) : Context A W := ⟨c.moves, Q⟩
+def ask (c : Context A W) (Q : Inquisitive.Proposition (Set W)) : Context A W := ⟨c.moves, Q⟩
 
 /-- The commitment state of the record commits the speaker of each move to each of its
 commitments. -/
@@ -345,7 +347,7 @@ def Answer.prop : Answer → Set (Set Event)
   | variant k => happened (vary k false)
 
 /-- The question under discussion of the model asks which event happened. -/
-def whichEvent : Question (Set Event) := Question.which Set.univ happened
+def whichEvent : Proposition (Set (Set Event)) := Proposition.which Set.univ happened
 
 /-- The alternatives of *=mi* on a clause are all propositions ((44d), (51d)), and those of *=mi*
 on the constituent at a site are the variants at that site ((46d)). -/
@@ -509,21 +511,22 @@ theorem mem_alternatives_iff {a : Answer} {k : Site} :
     · exact ⟨false, rfl⟩
 
 theorem happened_mem_alt_whichEvent (e : Event) : happened e ∈ whichEvent.alt :=
-  Question.mem_alt_which_of_maximal e trivial ⟨{e}, Set.mem_singleton e⟩
+  Inquisitive.Proposition.mem_alt_which_of_maximal e trivial ⟨{e}, Set.mem_singleton e⟩
     fun _ _ h ↦ by rw [happened_subset_happened.1 h]
 
 theorem partiallyAnsweredBy_whichEvent (a : Answer) : whichEvent.PartiallyAnsweredBy a.prop := by
   cases a with
-  | scope => exact Question.partiallyAnsweredBy_of_mem_alt (happened_mem_alt_whichEvent _)
-  | negation => exact Question.partiallyAnsweredBy_compl_of_mem_alt (happened_mem_alt_whichEvent _)
-  | variant k => exact Question.partiallyAnsweredBy_of_mem_alt (happened_mem_alt_whichEvent _)
+  | scope => exact Proposition.partiallyAnsweredBy_of_mem_alt (happened_mem_alt_whichEvent _)
+  | negation => exact Proposition.partiallyAnsweredBy_compl_of_mem_alt (happened_mem_alt_whichEvent
+    _)
+  | variant k => exact Proposition.partiallyAnsweredBy_of_mem_alt (happened_mem_alt_whichEvent _)
 
 theorem partiallyAnsweredBy_polar_iff (a : Answer) :
-    (Question.polar Answer.scope.prop).PartiallyAnsweredBy a.prop ↔ ∀ k, a ≠ .variant k := by
+    (Proposition.polar Answer.scope.prop).PartiallyAnsweredBy a.prop ↔ ∀ k, a ≠ .variant k := by
   have hne : Answer.scope.prop ≠ ∅ := Set.nonempty_iff_ne_empty.1 ⟨{fun _ ↦ true}, rfl⟩
   have hnu : Answer.scope.prop ≠ Set.univ := fun h ↦
     empty_notMem_happened (fun _ ↦ true) (show ∅ ∈ Answer.scope.prop by rw [h]; trivial)
-  rw [Question.partiallyAnsweredBy_polar_iff hne hnu]
+  rw [Inquisitive.Proposition.partiallyAnsweredBy_polar_iff hne hnu]
   cases a with
   | scope => simp
   | negation => simp [Answer.prop]

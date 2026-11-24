@@ -7,8 +7,8 @@ public import Mathlib.Order.Filter.Ker
 /-!
 # Answerhood predicates on questions
 
-Let `Q : Question W` be a question and `σ` an information state, a set of worlds. This file defines
-three senses in which `σ` answers `Q`.
+Let `Q : Inquisitive.Proposition (Set W)` be a question and `σ` an information state, a set of
+worlds. This file defines three senses in which `σ` answers `Q`.
 
 * `σ` resolves `Q` when `σ ∈ Q`. For a normal question this means that `σ` is included in some
   alternative.
@@ -42,27 +42,27 @@ answers everything, as in [roberts-2012].
 
 @[expose] public section
 
-namespace Question
+namespace Inquisitive.Proposition
 
 variable {W : Type*}
 
 /-- `σ` partially answers `Q` if it settles some alternative positively
 (`σ ⊆ p`) or negatively (`σ ⊆ pᶜ`). -/
-def PartiallyAnsweredBy (Q : Question W) (σ : Set W) : Prop :=
+def PartiallyAnsweredBy (Q : Proposition (Set W)) (σ : Set W) : Prop :=
   ∃ p ∈ alt Q, σ ⊆ p ∨ σ ⊆ pᶜ
 
 /-- `σ` mention-all answers `Q` if it decides every alternative, either
 entailing it or ruling it out. -/
-def CompletelyAnsweredBy (Q : Question W) (σ : Set W) : Prop :=
+def CompletelyAnsweredBy (Q : Proposition (Set W)) (σ : Set W) : Prop :=
   ∀ p ∈ alt Q, σ ⊆ p ∨ σ ⊆ pᶜ
 
-variable {σ : Set W} {Q : Question W}
+variable {σ : Set W} {Q : Proposition (Set W)}
 
 /-! ### Basic relationships -/
 
 theorem mem_of_exists_alt_subset (h : ∃ p ∈ alt Q, σ ⊆ p) : σ ∈ Q :=
   let ⟨p, hp, hsub⟩ := h
-  Q.downward_closed p (alt_subset_props _ hp) σ hsub
+  Q.isLowerSet hsub (alt_subset _ hp)
 
 theorem mem_iff_exists_alt_subset (hQ : Q.IsNormal) : σ ∈ Q ↔ ∃ p ∈ alt Q, σ ⊆ p :=
   ⟨fun h ↦ hQ h, mem_of_exists_alt_subset⟩
@@ -82,7 +82,7 @@ theorem partiallyAnsweredBy_compl_of_mem_alt {p : Set W} (h : p ∈ alt Q) :
 
 /-! ### Answerhood transmission -/
 
-theorem CompletelyAnsweredBy.mono {P : Question W} (h : CompletelyAnsweredBy Q σ)
+theorem CompletelyAnsweredBy.mono {P : Proposition (Set W)} (h : CompletelyAnsweredBy Q σ)
     (hsub : alt P ⊆ alt Q) : CompletelyAnsweredBy P σ :=
   fun p hp => h p (hsub hp)
 
@@ -91,12 +91,12 @@ states that decide every alternative. Her question entailment (8), after
 [groenendijk-stokhof-1984], is `completeAnswers P ⊆ completeAnswers Q`,
 diverging from the lattice order off partition-shaped alternatives (see
 `Entailment.lean`). -/
-def completeAnswers (Q : Question W) : Set (Set W) := {σ | CompletelyAnsweredBy Q σ}
+def completeAnswers (Q : Proposition (Set W)) : Set (Set W) := {σ | CompletelyAnsweredBy Q σ}
 
-@[simp] theorem mem_completeAnswers {Q : Question W} :
+@[simp] theorem mem_completeAnswers {Q : Proposition (Set W)} :
     σ ∈ completeAnswers Q ↔ CompletelyAnsweredBy Q σ := Iff.rfl
 
-theorem completeAnswers_anti {P Q : Question W} (h : alt Q ⊆ alt P) :
+theorem completeAnswers_anti {P Q : Proposition (Set W)} (h : alt Q ⊆ alt P) :
     completeAnswers P ⊆ completeAnswers Q :=
   fun _ hσ => CompletelyAnsweredBy.mono hσ h
 
@@ -108,11 +108,11 @@ theorem completelyAnsweredBy_iff_of_alt_eq_range {ι : Type*} {P : ι → Set W}
   exact Set.forall_mem_range
 
 @[simp] theorem completeAnswers_top :
-    completeAnswers (⊤ : Question W) = Set.univ := by
+    completeAnswers (⊤ : Proposition (Set W)) = Set.univ := by
   ext σ; simp [completeAnswers, CompletelyAnsweredBy, alt_top]
 
 @[simp] theorem completeAnswers_bot :
-    completeAnswers (⊥ : Question W) = Set.univ := by
+    completeAnswers (⊥ : Proposition (Set W)) = Set.univ := by
   ext σ
   simp only [completeAnswers, CompletelyAnsweredBy, alt_bot, Set.mem_ofPred_eq,
     Set.mem_univ, iff_true, Set.mem_singleton_iff]
@@ -144,26 +144,27 @@ theorem completeAnswers_iSup_ofSet {ι : Type*} [Nonempty ι] {P : ι → Set W}
 /-- `P` is a subquestion of `Q` relative to the context `C` ([roberts-2012]): every complete
 answer to `P` contextually partially answers `Q`. The entailment is contextual, not question
 entailment, so the relation is not transitive in general. -/
-def IsSubquestionOf (C : Set W) (P Q : Question W) : Prop :=
+def IsSubquestionOf (C : Set W) (P Q : Proposition (Set W)) : Prop :=
   ∀ σ ∈ completeAnswers P, PartiallyAnsweredBy Q (C ∩ σ)
 
 /-- A question with an alternative is a subquestion of any question whose alternatives include
 its own, since each of its complete answers decides one of them. -/
-theorem isSubquestionOf_of_alt_subset (C : Set W) {P Q : Question W} (hP : (alt P).Nonempty)
+theorem isSubquestionOf_of_alt_subset (C : Set W) {P Q : Proposition (Set W)}
+    (hP : (alt P).Nonempty)
     (h : alt P ⊆ alt Q) : IsSubquestionOf C P Q := fun _ hσ ↦
   let ⟨a, ha⟩ := hP
   ⟨a, h ha, (hσ a ha).imp (Set.inter_subset_right.trans ·) (Set.inter_subset_right.trans ·)⟩
 
-theorem IsSubquestionOf.refl (C : Set W) {P : Question W} (hP : (alt P).Nonempty) :
+theorem IsSubquestionOf.refl (C : Set W) {P : Proposition (Set W)} (hP : (alt P).Nonempty) :
     IsSubquestionOf C P P :=
   isSubquestionOf_of_alt_subset C hP subset_rfl
 
-theorem partiallyAnsweredBy_inter_iff {Q : Question W} {C σ : Set W} :
+theorem partiallyAnsweredBy_inter_iff {Q : Proposition (Set W)} {C σ : Set W} :
     PartiallyAnsweredBy Q (C ∩ σ) ↔
       ∃ p ∈ alt Q, σ ∈ (ofSet p).relativeTo C ∨ σ ∈ (ofSet pᶜ).relativeTo C := by
   simp only [PartiallyAnsweredBy, mem_relativeTo, mem_ofSet]
 
-theorem isSubquestionOf_iff {C : Set W} {P Q : Question W} :
+theorem isSubquestionOf_iff {C : Set W} {P Q : Proposition (Set W)} :
     IsSubquestionOf C P Q ↔ ∀ σ ∈ completeAnswers P,
       ∃ p ∈ alt Q, σ ∈ (ofSet p).relativeTo C ∨ σ ∈ (ofSet pᶜ).relativeTo C := by
   simp only [IsSubquestionOf, partiallyAnsweredBy_inter_iff]
@@ -214,22 +215,22 @@ section DecidedBy
 
 open Filter
 
-variable {f g : Filter W} {p : Set W} {P : Question W}
+variable {f g : Filter W} {p : Set W} {P : Proposition (Set W)}
 
 /-- The common ground `f` decides the issue `P` when it entails one of its complete answers. -/
-def DecidedBy (P : Question W) (f : Filter W) : Prop := ∃ q ∈ alt P, q ∈ f
+def DecidedBy (P : Proposition (Set W)) (f : Filter W) : Prop := ∃ q ∈ alt P, q ∈ f
 
 theorem DecidedBy.mono (h : f ≤ g) : P.DecidedBy g → P.DecidedBy f :=
   Exists.imp fun _ ⟨hq, hg⟩ ↦ ⟨hq, h hg⟩
 
 theorem DecidedBy.ker_mem (h : P.DecidedBy f) : f.ker ∈ P :=
   let ⟨q, hq, hf⟩ := h
-  P.downward_closed q (mem_of_mem_alt hq) _ (Set.sInter_subset_of_mem hf)
+  P.isLowerSet (Set.sInter_subset_of_mem hf) (mem_of_mem_alt hq)
 
 theorem decidedBy_principal (hQ : Q.IsNormal) : Q.DecidedBy (𝓟 σ) ↔ σ ∈ Q :=
   (mem_iff_exists_alt_subset hQ).symm
 
-@[simp] theorem decidedBy_top : (⊤ : Question W).DecidedBy f := ⟨_, by simp, univ_mem⟩
+@[simp] theorem decidedBy_top : (⊤ : Proposition (Set W)).DecidedBy f := ⟨_, by simp, univ_mem⟩
 
 @[simp] theorem decidedBy_ofSet : (ofSet p).DecidedBy f ↔ p ∈ f := by simp [DecidedBy]
 
@@ -240,4 +241,4 @@ theorem decidedBy_principal (hQ : Q.IsNormal) : Q.DecidedBy (𝓟 σ) ↔ σ ∈
 
 end DecidedBy
 
-end Question
+end Inquisitive.Proposition

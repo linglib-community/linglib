@@ -6,8 +6,8 @@ public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 /-!
 # The alternatives of a question as a Hamblin set
 
-The alternatives `alt Q` of an inquisitive question `Q : Question W` form a Hamblin set, so the
-answerhood operators for Hamblin sets apply to them.
+The alternatives `alt Q` of an inquisitive question `Q : Inquisitive.Proposition (Set W)` form a
+Hamblin set, so the answerhood operators for Hamblin sets apply to them.
 
 No alternative is included in another. It follows that an alternative is the strongest true answer
 at a world exactly when it is the only alternative true there. See
@@ -24,18 +24,20 @@ at a world exactly when it is the only alternative true there. See
 
 namespace Question
 
+open Inquisitive Inquisitive.Proposition
+
 variable {W : Type*} (H : Set (Set W)) (w : W)
 
 /-! ### The strong answer as a complete answer -/
 
-theorem completelyAnsweredBy_strongAnswer (Q : Question W) :
+theorem completelyAnsweredBy_strongAnswer (Q : Proposition (Set W)) :
     CompletelyAnsweredBy Q (strongAnswer (alt Q) w) := by
   intro p hp
   by_cases hw : w ∈ p
   · exact Or.inl fun _ hv => (hv p hp).1 hw
   · exact Or.inr fun _ hv => (hv p hp).not.1 hw
 
-theorem isStrongestTrueAnswer_alt_iff (Q : Question W) {p : Set W} :
+theorem isStrongestTrueAnswer_alt_iff (Q : Proposition (Set W)) {p : Set W} :
     IsStrongestTrueAnswer (alt Q) w p ↔ trueAnswers (alt Q) w = {p} :=
   isStrongestTrueAnswer_iff_of_antichain _ w (alt_isAntichain Q)
 

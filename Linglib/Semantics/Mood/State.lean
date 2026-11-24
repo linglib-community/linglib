@@ -23,13 +23,13 @@ worlds from the context set, `Mood.State.promote` refines the ordering, and `Moo
 refines the inquiry. Each meets the state with a fixed content (`Mood.State.isAdditive_assert`,
 `Mood.State.isAdditive_promote`, `Mood.State.isAdditive_inquire`).
 
-The issue of a mood state, `Mood.State.issue`, is the question resolved by the sets of worlds of
-the context set that lie in one cell of the inquiry. It is a meet-preserving function of the
-state, so asserting and asking both meet it with a content (`Mood.State.issue_assert`,
+The issue of a mood state, `Mood.State.issue`, is the question resolved by the sets of worlds of the
+context set that lie in one cell of the inquiry. It is a meet-preserving function of the state, so
+asserting and asking both meet it with a content (`Mood.State.issue_assert`,
 `Mood.State.issue_inquire`). The propositions the issue determines form a Boolean subalgebra,
-`Question.determined`, and they are the propositions constant on the part of each inquiry cell
-inside the context set (`Mood.State.mem_determined_issue`). `Mood.Component` names the three
-coordinates of a mood state, and `Mood.Component.update` is the update of each with a
+`Inquisitive.Proposition.determined`, and they are the propositions constant on the part of each
+inquiry cell inside the context set (`Mood.State.mem_determined_issue`). `Mood.Component` names the
+three coordinates of a mood state, and `Mood.Component.update` is the update of each with a
 proposition, the inquiry being refined with the polar question whether it holds.
 
 ## Implementation notes
@@ -47,7 +47,8 @@ proposition, the inquiry being refined with the polar question whether it holds.
   open in his sketch, and so is the statement that the determined propositions form a Boolean
   subalgebra.
 * The inquiry is a partition. Questions that are not partitions, such as mention-some questions,
-  live in `Question W`, into which `Question.fromSetoid` embeds the partitions.
+  live in `Inquisitive.Proposition (Set W)`, into which `Inquisitive.Proposition.fromSetoid` embeds
+  the partitions.
 
 ## References
 
@@ -61,6 +62,8 @@ proposition, the inquiry being refined with the polar question whether it holds.
 -/
 
 @[expose] public section
+
+open Inquisitive
 
 namespace Mood
 
@@ -228,18 +231,18 @@ theorem semiconj_assert (φ : Set W) :
 
 /-- The issue of a mood state is resolved by the sets of worlds of the context set that lie in
 one cell of the inquiry. -/
-def issue (c : State W) : Question W := .ofSet c.info ⊓ .fromSetoid c.inquiry
+def issue (c : State W) : Inquisitive.Proposition (Set W) := .ofSet c.info ⊓ .fromSetoid c.inquiry
 
 theorem issue_inf (c₁ c₂ : State W) : (c₁ ⊓ c₂).issue = c₁.issue ⊓ c₂.issue :=
-  show Question.ofSet (c₁.info ∩ c₂.info) ⊓ .fromSetoid (c₁.inquiry ⊓ c₂.inquiry) = _ by
-    rw [← Question.ofSet_inf, Question.fromSetoid_inf, issue, issue, inf_inf_inf_comm]
+  show Proposition.ofSet (c₁.info ∩ c₂.info) ⊓ .fromSetoid (c₁.inquiry ⊓ c₂.inquiry) = _ by
+    rw [← Proposition.ofSet_inf, Proposition.fromSetoid_inf, issue, issue, inf_inf_inf_comm]
 
 @[simp] theorem issue_top : (⊤ : State W).issue = ⊤ :=
-  show Question.ofSet Set.univ ⊓ .fromSetoid ⊤ = ⊤ by
-    rw [Question.ofSet_univ, Question.fromSetoid_top, top_inf_eq]
+  show Inquisitive.Proposition.ofSet Set.univ ⊓ .fromSetoid ⊤ = ⊤ by
+    rw [Inquisitive.Proposition.ofSet_univ, Inquisitive.Proposition.fromSetoid_top, top_inf_eq]
 
 /-- The issue of a mood state, as a map preserving meets and the top. -/
-def issueHom : InfTopHom (State W) (Question W) where
+def issueHom : InfTopHom (State W) (Inquisitive.Proposition (Set W)) where
   toFun := issue
   map_inf' := issue_inf
   map_top' := issue_top
@@ -250,22 +253,22 @@ theorem issue_mono : Monotone (issue (W := W)) := OrderHomClass.mono issueHom
 
 @[simp] theorem issue_assert (c : State W) (p : W → Prop) :
     (c.assert p).issue = c.issue ⊓ .ofSet {w | p w} :=
-  show Question.ofSet (c.info ∩ {w | p w}) ⊓ .fromSetoid c.inquiry = _ by
-    rw [← Question.ofSet_inf, issue, inf_right_comm]
+  show Inquisitive.Proposition.ofSet (c.info ∩ {w | p w}) ⊓ .fromSetoid c.inquiry = _ by
+    rw [← Inquisitive.Proposition.ofSet_inf, issue, inf_right_comm]
 
 @[simp] theorem issue_promote (c : State W) (p : W → Prop) : (c.promote p).issue = c.issue := rfl
 
 @[simp] theorem issue_inquire (c : State W) (q : Setoid W) :
     (c.inquire q).issue = c.issue ⊓ .fromSetoid q :=
-  show Question.ofSet c.info ⊓ .fromSetoid (c.inquiry ⊓ q) = _ by
-    rw [Question.fromSetoid_inf, issue, inf_assoc]
+  show Inquisitive.Proposition.ofSet c.info ⊓ .fromSetoid (c.inquiry ⊓ q) = _ by
+    rw [Inquisitive.Proposition.fromSetoid_inf, issue, inf_assoc]
 
 /-- The issue of a state determines `p` exactly when `p` is constant on the part of each inquiry
 cell inside the context set. -/
 theorem mem_determined_issue {c : State W} {p : Set W} :
     p ∈ c.issue.determined ↔ c.inquiry.DeterminesOn p c.info := by
-  rw [Question.mem_determined, issue, inf_comm, ← le_himp_iff,
-    Question.determinesOn_iff_fromSetoid_le_relativeTo]
+  rw [Inquisitive.Proposition.mem_determined, issue, inf_comm, ← le_himp_iff,
+    Inquisitive.Proposition.determinesOn_iff_fromSetoid_le_relativeTo]
   rfl
 
 end State

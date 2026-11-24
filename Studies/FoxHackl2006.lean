@@ -44,7 +44,7 @@ The paper's example sentences are the rows of `Examples.all`.
 
 namespace FoxHackl2006
 
-open Question ModalLogic OrderDual Set
+open Question Inquisitive Inquisitive.Proposition ModalLogic OrderDual Set
 open SetRel
 
 variable {D W : Type*} [LinearOrder D]

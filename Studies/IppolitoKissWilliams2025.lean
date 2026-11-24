@@ -44,7 +44,7 @@ and interrogative cases derived in it.
 
 namespace IppolitoKissWilliams2025
 
-open Question IppolitoKissWilliams2022
+open Question Inquisitive Inquisitive.Proposition IppolitoKissWilliams2022
 
 variable {W : Type*}
 
@@ -59,17 +59,17 @@ variable (c : Context W)
 
 /-- (16), definedness: both arguments are relevant to the question under discussion and the
 left argument supports one of its answers. -/
-def Defined (S S' : Question W) : Prop :=
+def Defined (S S' : Proposition (Set W)) : Prop :=
   S.IsRelevantTo c.issues ∧ S'.IsRelevantTo c.issues ∧ ∃ α ∈ alt c.qud, c.QSupports S α
 
 /-- (16), the conventional implicature: some answer to the question under discussion that every
 established true partial answer outside the question and other than the prejacent supports,
 and the prejacent does not. -/
-def CI (S' : Question W) : Prop :=
+def CI (S' : Proposition (Set W)) : Prop :=
   ∃ α ∈ alt c.qud,
     (∀ p ∈ c.partialAnswers, p ∉ alt c.qud → p ∉ alt S' → c.Supports p α) ∧ ¬ c.QSupports S' α
 
-variable {c} {S S' : Question W}
+variable {c} {S S' : Proposition (Set W)}
 
 -- Section 5.2, (19b), (6a)
 theorem not_defined_of_no_belief (h : ∀ q ∈ alt S, ¬ c.dox ⊆ q) : ¬ c.Defined S S' :=

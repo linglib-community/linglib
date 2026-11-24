@@ -8,15 +8,20 @@ public import Mathlib.Order.BooleanSubalgebra
 # Question entailment
 
 A question `P` entails a question `Q` when every information state that resolves `P` also resolves
-`Q`. This is the order `P ≤ Q` on `Question W`.
+`Q`. This is the order `P ≤ Q` on `Inquisitive.Proposition (Set W)`.
 
 For a normal question it is enough to look at the alternatives: `P` entails `Q` if and only if every
-alternative of `P` resolves `Q`. See `Question.IsNormal.le_iff_forall_alt_mem`.
+alternative of `P` resolves `Q`. See `Inquisitive.Proposition.IsNormal.le_iff_forall_alt_mem`.
 
 There is a second notion of entailment, due to [groenendijk-stokhof-1984]: every complete answer to
 `P` is a complete answer to `Q`. For partition questions the two notions agree. For Hamblin
 alternative sets they go in opposite directions, because adding alternatives makes a question weaker
 in the order but harder to answer completely.
+
+Every question has a partition, which identifies two worlds when no proposition the question
+determines tells them apart. It is the finest partition whose question the question entails: taking
+the partition is left adjoint to `fromSetoid`, and the pair is a Galois insertion. See
+`Inquisitive.Proposition.gi_partition_fromSetoid`.
 
 ## References
 
@@ -28,9 +33,9 @@ in the order but harder to answer completely.
 
 public section
 
-namespace Question
+namespace Inquisitive.Proposition
 
-variable {W : Type*} {P Q : Question W}
+variable {W : Type*} {P Q : Proposition (Set W)}
 
 /-! ### Entailment on generators -/
 
@@ -95,7 +100,7 @@ theorem le_polar_union {p q : Set W} (hp : Q ≤ polar p) (hq : Q ≤ polar q) :
 
 /-- The propositions a question determines, those whose polar question it entails, form a Boolean
 subalgebra of the propositions. -/
-def determined (Q : Question W) : BooleanSubalgebra (Set W) where
+def determined (Q : Proposition (Set W)) : BooleanSubalgebra (Set W) where
   carrier := {p | Q ≤ polar p}
   supClosed' _ hp _ hq := le_polar_union hp hq
   infClosed' _ hp _ hq := le_polar_inter hp hq
@@ -112,6 +117,42 @@ as a partition. -/
 theorem determined_fromSetoid (r : Setoid W) : (fromSetoid r).determined = r.determined :=
   SetLike.ext fun p ↦ (determines_iff_fromSetoid_le r p).symm
 
+/-! ### The partition of a question -/
+
+/-- The partition of a question identifies two worlds when no proposition that the question
+determines tells them apart. -/
+def partition (Q : Proposition (Set W)) : Setoid W := Setoid.ofProps (Q.determined : Set (Set W))
+
+/-- The partition of a question and the question of a partition are adjoint: the partition of
+`P` is the finest one whose question `P` entails. -/
+theorem gc_partition_fromSetoid :
+    GaloisConnection (partition : Proposition (Set W) → Setoid W) fromSetoid := by
+  intro Q r
+  constructor
+  · intro h s hs
+    refine mem_fromSetoid.2 fun x hx y hy ↦ h (Setoid.ofProps_iff.2 fun p hp ↦ ?_)
+    rcases mem_polar.1 (mem_determined.1 hp hs) with hsp | hsp
+    · exact iff_of_true (hsp hx) (hsp hy)
+    · exact iff_of_false (hsp hx) (hsp hy)
+  · intro h
+    rw [← Setoid.ofProps_determined r, ← determined_fromSetoid]
+    exact Setoid.ofProps_anti fun p hp ↦ h.trans hp
+
+@[simp] theorem partition_fromSetoid (r : Setoid W) : (fromSetoid r).partition = r := by
+  rw [partition, determined_fromSetoid, Setoid.ofProps_determined]
+
+/-- The adjunction is a Galois insertion: a partition is the partition of its question. -/
+def gi_partition_fromSetoid :
+    GaloisInsertion (partition : Proposition (Set W) → Setoid W) fromSetoid :=
+  gc_partition_fromSetoid.toGaloisInsertion fun r ↦ (partition_fromSetoid r).ge
+
+/-- The normal partition questions are the questions of partitions. -/
+theorem isPartition_and_isNormal_iff_mem_range [Nonempty W] :
+    P.IsPartition ∧ P.IsNormal ↔ P ∈ Set.range fromSetoid :=
+  ⟨fun ⟨h, hN⟩ ↦ ⟨toSetoid h, fromSetoid_toSetoid h hN⟩, by
+    rintro ⟨r, rfl⟩
+    exact ⟨isPartition_fromSetoid r, isNormal_fromSetoid r⟩⟩
+
 /-! ### Complete-answer entailment -/
 
 theorem IsPartition.completeAnswers_eq (hP : P.IsPartition) (hN : P.IsNormal) :
@@ -119,7 +160,7 @@ theorem IsPartition.completeAnswers_eq (hP : P.IsPartition) (hN : P.IsNormal) :
   ext σ
   refine ⟨fun h ↦ ?_, fun hσ p hp ↦ ?_⟩
   · rcases σ.eq_empty_or_nonempty with rfl | ⟨w, hw⟩
-    · exact P.contains_empty
+    · exact P.empty_mem
     obtain ⟨c, hc, hwc⟩ := Set.mem_sUnion.mp (hP.sUnion_alt_eq_univ ▸ Set.mem_univ w)
     exact mem_of_exists_alt_subset ⟨c, hc, (h c hc).resolve_right fun h' ↦ h' hw hwc⟩
   · obtain ⟨c, hc, hσc⟩ := hN hσ
@@ -149,4 +190,4 @@ theorem completeAnswers_fromSetoid_subset_iff {r₁ r₂ : Setoid W} :
   · rw [(isPartition_fromSetoid r₁).completeAnswers_subset_iff_le (isNormal_fromSetoid r₁)
       (isPartition_fromSetoid r₂) (isNormal_fromSetoid r₂), fromSetoid_le_iff]
 
-end Question
+end Inquisitive.Proposition

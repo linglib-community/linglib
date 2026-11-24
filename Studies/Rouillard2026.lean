@@ -61,7 +61,7 @@ namespace Rouillard2026
 
 open Event (τ)
 
-open Question Aspect MeasureTheory NonemptyInterval Set
+open Question Inquisitive Inquisitive.Proposition Aspect MeasureTheory NonemptyInterval Set
 
 /-! ### Measuring times (§2.2) -/
 

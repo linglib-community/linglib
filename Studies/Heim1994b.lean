@@ -37,7 +37,7 @@ property. Structured answers [give their partition for every predicate](##ker_wh
 
 namespace Heim1994b
 
-open Question
+open Question Inquisitive Inquisitive.Proposition
 open GroenendijkStokhof1984 (extension whichDeDicto who who_iff)
 open scoped SetRel
 

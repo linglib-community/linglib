@@ -58,6 +58,8 @@ with belief `μ` can obtain. For it we also prove Blackwell's theorem comparing 
   factors through `f`.
 * `valueOfInformation_id`, `valueOfInformation_decisionValue_le_id`: observing the parameter is
   worth the expected value of its point-mass beliefs, and no experiment is worth more.
+* `valueOfInformation_decisionValue_eq_id_iff`: an experiment is worth that much exactly when,
+  at each observation, one action is best at every parameter still possible.
 
 ## Implementation notes
 
@@ -392,6 +394,38 @@ theorem riskIncrease_ofReal_sub :
 
 end Regret
 
+section Perfect
+
+variable [Finite Θ] [MeasurableSingletonClass Θ] [Finite 𝓨] [Nonempty 𝓨] (U : Θ → 𝓨 → ℝ)
+  (μ : Measure Θ) [IsFiniteMeasure μ]
+
+/-- No belief is worth more than choosing the best action at each parameter. -/
+theorem decisionValue_le_integral_iSup : decisionValue U μ ≤ ∫ θ, ⨆ a, U θ a ∂μ :=
+  ciSup_le fun a ↦ integral_mono .of_finite .of_finite fun θ ↦
+    le_ciSup (Set.finite_range (U θ)).bddAbove a
+
+/-- A belief is worth as much as knowing the parameter exactly when one action is best at every
+parameter it gives weight to. -/
+theorem decisionValue_eq_integral_iSup_iff :
+    decisionValue U μ = ∫ θ, ⨆ a, U θ a ∂μ ↔ ∃ a, ∀ θ, μ {θ} ≠ 0 → ∀ b, U θ b ≤ U θ a := by
+  have hsup (θ : Θ) (a : 𝓨) : U θ a ≤ ⨆ b, U θ b := le_ciSup (Set.finite_range (U θ)).bddAbove a
+  constructor
+  · intro h
+    obtain ⟨a, ha⟩ := Finite.exists_max fun a ↦ ∫ θ, U θ a ∂μ
+    have hDV : decisionValue U μ = ∫ θ, U θ a ∂μ :=
+      le_antisymm (ciSup_le ha) (integral_le_decisionValue μ a)
+    have h0 : ∫ θ, ((⨆ b, U θ b) - U θ a) ∂μ = 0 := by
+      rw [integral_sub .of_finite .of_finite, ← h, hDV, sub_self]
+    have hae := (integral_eq_zero_iff_of_nonneg (fun θ ↦ sub_nonneg.2 (hsup θ a)) .of_finite).1 h0
+    exact ⟨a, fun θ hθ b ↦ (hsup θ b).trans_eq (sub_eq_zero.1 (ae_iff_of_countable.1 hae θ hθ))⟩
+  · rintro ⟨a, ha⟩
+    refine le_antisymm (decisionValue_le_integral_iSup U μ)
+      (le_trans (le_of_eq ?_) (integral_le_decisionValue μ a))
+    exact integral_congr_ae (ae_iff_of_countable.2 fun θ hθ ↦
+      le_antisymm (ciSup_le (ha θ hθ)) (hsup θ a))
+
+end Perfect
+
 section Inequalities
 
 variable [Finite Θ] [MeasurableSingletonClass Θ] [StandardBorelSpace Θ] [Nonempty Θ] [Finite 𝓧]
@@ -415,6 +449,30 @@ theorem valueOfInformation_decisionValue_le_id :
     valueOfInformation (decisionValue U) κ π ≤
       valueOfInformation (decisionValue U) Kernel.id π := by
   simpa only [Kernel.comp_id] using valueOfInformation_decisionValue_comp_le U Kernel.id π κ
+
+/-- An experiment is worth the value of perfect information exactly when, at each observation,
+one action is best at every parameter that the prior and the experiment leave possible. -/
+theorem valueOfInformation_decisionValue_eq_id_iff [Nonempty 𝓨] :
+    valueOfInformation (decisionValue U) κ π = valueOfInformation (decisionValue U) Kernel.id π ↔
+      ∀ x, ∃ a, ∀ θ, π {θ} ≠ 0 → κ θ {x} ≠ 0 → ∀ b, U θ b ≤ U θ a := by
+  have htot : ∫ x, ∫ θ, ⨆ a, U θ a ∂(κ†π) x ∂(κ ∘ₘ π) = ∫ θ, ⨆ a, U θ a ∂π := by
+    conv_rhs => rw [← posterior_comp_self (κ := κ) (μ := π)]
+    exact (Measure.integral_comp .of_finite).symm
+  rw [valueOfInformation, valueOfInformation_id]
+  simp only [decisionValue_dirac]
+  rw [sub_left_inj, ← htot,
+    integral_eq_iff_of_ae_le .of_finite .of_finite
+      (ae_of_all _ fun x ↦ decisionValue_le_integral_iSup U ((κ†π) x)),
+    Filter.EventuallyEq, ae_iff_of_countable]
+  refine forall_congr' fun x ↦ ?_
+  by_cases hx : (κ ∘ₘ π) {x} = 0
+  · refine iff_of_true (fun h ↦ (h hx).elim) ⟨Classical.arbitrary 𝓨, fun θ hθ hκ ↦ ?_⟩
+    rw [Measure.bind_apply (.singleton x) κ.aemeasurable,
+      lintegral_eq_zero_iff (κ.measurable_coe (.singleton x))] at hx
+    exact (hκ (ae_iff_of_countable.1 hx θ hθ)).elim
+  · rw [imp_iff_right hx, decisionValue_eq_integral_iSup_iff]
+    exact exists_congr fun a ↦ forall_congr' fun θ ↦ by
+      rw [posterior_apply_singleton_ne_zero_iff κ π hx, and_imp]
 
 end Inequalities
 

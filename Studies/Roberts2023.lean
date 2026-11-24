@@ -187,7 +187,7 @@ structure Scoreboard (I W T : Type*) where
   /-- The common ground, the propositions the interlocutors accept. -/
   cg : Filter (Index W T)
   /-- The questions under discussion, the immediate one first. -/
-  qud : List (Question (Index W T))
+  qud : List (Inquisitive.Proposition (Set (Index W T)))
   /-- Each interlocutor's evident goals, highest priority first. -/
   goals : I → List (Set (Index W T))
 
@@ -197,7 +197,7 @@ inductive Denotation (I W T : Type*)
   /-- A declarative's proposition. -/
   | proposition (p : Set (Index W T))
   /-- An interrogative's question. -/
-  | question (q : Question (Index W T))
+  | question (q : Inquisitive.Proposition (Set (Index W T)))
   /-- An imperative's property, indexed to the addressee. -/
   | property (P : Index W T → I → Prop)
 

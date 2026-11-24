@@ -25,8 +25,8 @@ opposite answer from the salient proposition disagrees with it and licenses both
 
 ## Implementation notes
 
-* Relevance to the question under discussion, which the paper does not define, is the
-  substrate's `Question.IsRelevantTo` to the question under discussion together with the
+* Relevance to the question under discussion, which the paper does not define, is the substrate's
+  `Inquisitive.Proposition.IsRelevantTo` to the question under discussion together with the
   subquestions of its strategy, as the sequel [ippolito-kiss-williams-2025] assumes.
 * A declarative argument of *ma* or *but* is asserted, so its support is that of the singleton
   question: belief plus evidence (Section 3.2.3).
@@ -45,7 +45,7 @@ opposite answer from the salient proposition disagrees with it and licenses both
 
 namespace IppolitoKissWilliams2022
 
-open Question
+open Question Inquisitive Inquisitive.Proposition
 
 variable {W : Type*}
 
@@ -53,8 +53,8 @@ variable {W : Type*}
 speaker's doxastic state, the propositions made salient by previous verbal or non-verbal moves,
 and the evidence relation, `Evidence p r` when `p` provides evidence for `r` in the context. -/
 structure Context (W : Type*) where
-  qud : Question W
-  subquestions : Set (Question W)
+  qud : Proposition (Set W)
+  subquestions : Set (Proposition (Set W))
   dox : Set W
   salient : Set (Set W)
   Evidence : Set W → Set W → Prop
@@ -65,7 +65,7 @@ variable (c : Context W)
 
 /-- The questions a move must be relevant to: the question under discussion and the
 subquestions of its strategy. -/
-def issues : Set (Question W) := insert c.qud c.subquestions
+def issues : Set (Proposition (Set W)) := insert c.qud c.subquestions
 
 /-- (15): a proposition supports an answer to the question under discussion when it provides
 evidence for it. -/
@@ -73,7 +73,8 @@ def Supports (p r : Set W) : Prop := c.Evidence p r
 
 /-- (21): a question uttered by the speaker supports an answer when some answer to it that the
 speaker believes provides evidence for it. -/
-def QSupports (S : Question W) (r : Set W) : Prop := ∃ q ∈ alt S, c.dox ⊆ q ∧ c.Evidence q r
+def QSupports (S : Proposition (Set W)) (r : Set W) :
+    Prop := ∃ q ∈ alt S, c.dox ⊆ q ∧ c.Evidence q r
 
 /-- (16) and (22): two moves, given by what they support, agree when they support a common
 answer to the question under discussion. -/
@@ -85,17 +86,17 @@ def Disagree (s t : Set W → Prop) : Prop :=
 
 /-- (18) and (24): discourse *ma* with a declarative or interrogative argument is defined when
 the argument is relevant and some salient relevant proposition does not agree with it. -/
-def Ma (S : Question W) : Prop :=
+def Ma (S : Proposition (Set W)) : Prop :=
   S.IsRelevantTo c.issues ∧
     ∃ p ∈ c.salient, (ofSet p).IsRelevantTo c.issues ∧ ¬ c.Agree (c.Supports p) (c.QSupports S)
 
 /-- (29) and (34): discourse *but* is defined when some salient relevant proposition disagrees
 with its argument. -/
-def But (S : Question W) : Prop :=
+def But (S : Proposition (Set W)) : Prop :=
   S.IsRelevantTo c.issues ∧
     ∃ p ∈ c.salient, (ofSet p).IsRelevantTo c.issues ∧ c.Disagree (c.Supports p) (c.QSupports S)
 
-variable {c} {s t : Set W → Prop} {S : Question W}
+variable {c} {s t : Set W → Prop} {S : Proposition (Set W)}
 
 theorem Agree.symm (h : c.Agree s t) : c.Agree t s :=
   let ⟨r, hr, hs, ht⟩ := h

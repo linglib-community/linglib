@@ -58,7 +58,7 @@ upward-entailing scopes](##readings_ssubset_iff), where the experiment finds no 
 
 namespace Geurts2010
 
-open Set NeoGricean Question
+open Set NeoGricean Inquisitive Inquisitive.Proposition
 
 variable {W : Type*} {s φ ψ : Set W}
 
@@ -123,7 +123,7 @@ theorem notMem_polar_Ici_of_mem_primaryImplicatures (ha : IsAtom a) (hb : IsAtom
     {s : Set α} (hq : s ⊆ Ioi ⊥) (hp : s ∈ primaryImplicatures {χ | IsUpperSet χ} (Ioi ⊥)) :
     s ∉ polar (Ici a) := by
   have hweak := mem_primaryImplicatures.1 hp
-  refine fun h ↦ (Question.mem_polar.1 h).elim
+  refine fun h ↦ (Proposition.mem_polar.1 h).elim
     (hweak _ (IsUpperSet.Ici a) (Ici_ssubset_Ioi_bot ha hb hab)) fun hna ↦ ?_
   exact hweak _ (IsLowerSet.Iic a).compl (compl_Iic_ssubset_Ioi_bot ha) fun y hy hya ↦
     hna hy ((ha.le_iff_eq (mem_Ioi.1 (hq hy)).ne').1 hya).ge
@@ -453,7 +453,7 @@ theorem subset_inter_compl_ofSuccessors
     (h32 : t ⊆ SetRel.ofSuccessors sailor ∩ SetRel.ofSuccessors some)
     (h34 : ¬ t ⊆ SetRel.ofSuccessors all) (hc : t ∈ polar (SetRel.ofSuccessors all)) :
     t ⊆ SetRel.ofSuccessors sailor ∩ SetRel.ofSuccessors some ∩ (SetRel.ofSuccessors all)ᶜ :=
-  subset_inter h32 ((Question.mem_polar.1 hc).resolve_left h34)
+  subset_inter h32 ((Proposition.mem_polar.1 hc).resolve_left h34)
 
 end Indefinites
 

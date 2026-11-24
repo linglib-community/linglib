@@ -776,7 +776,7 @@ end Sauerland
 
 section Hamblin
 
-open Question
+open Question Inquisitive Inquisitive.Proposition
 
 variable {ι : Type*} {a : ι → Set W} (ha : Irredundant a)
 include ha

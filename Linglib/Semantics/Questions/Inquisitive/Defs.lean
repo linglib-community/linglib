@@ -18,23 +18,36 @@ public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Basic.Finite.Prod
 
 /-!
-# Questions as inquisitive contents
+# Inquisitive propositions
 
-A `Question W` is a nonempty downward-closed family of information states over `W`, the states
-that resolve an inquisitive proposition ([ciardelli-groenendijk-roelofsen-2018],
-[ciardelli-2022]). Its alternatives `alt P` are the maximal resolving states and its informative
-content `info P` is their union. A question is informative when `info P` is not every world and
-inquisitive when `info P` does not itself resolve it. The declarative `ofSet p` of a proposition
-is the family of states included in `p`, the principal ideal below `p`.
+An inquisitive proposition over an order of information states `α` is a lower set of states that
+contains the least state: the states that resolve it ([roelofsen-2013],
+[ciardelli-groenendijk-roelofsen-2018], [ciardelli-2022]). Statements and questions are both
+propositions; the questions are the inquisitive ones.
+
+Over the states `Set W` of a set of worlds the least state is the inconsistent state `∅`. The
+alternatives `alt P` of a proposition are its maximal resolving states and its informative
+content `info P` is the union of its resolving states. A proposition is informative when `info P`
+is not every world and inquisitive when `info P` does not itself resolve it. The declarative
+`ofSet p` of a set of worlds is resolved by the states included in `p`, the principal ideal
+below `p`.
+
+## Main definitions
+
+* `Inquisitive.Proposition α`: the inquisitive propositions over the states `α`.
+* `Inquisitive.Proposition.alt`, `Inquisitive.Proposition.info`: alternatives and informative
+  content, over sets of worlds.
+* `Inquisitive.Proposition.ofSet`: the declarative of a set of worlds.
 
 ## Implementation notes
 
-`Question W` is a bundled structure with a `SetLike` instance rather than a `LowerSet (Set W)`
-because the bottom elements differ: the bottom question is `{∅}`, resolved only by the
-inconsistent state, while the bottom lower set is empty.
+`Proposition α` extends `LowerSet α` and is not a `LowerSet α` because the bottom elements
+differ: the least proposition is resolved by the least state alone, while the bottom lower set
+is empty.
 
 ## References
 
+* [roelofsen-2013]
 * [ciardelli-2022]
 * [ciardelli-groenendijk-roelofsen-2018]
 * [puncochar-2019]
@@ -44,128 +57,103 @@ inconsistent state, while the bottom lower set is empty.
 
 universe u
 
-/-- A question is a non-empty downward-closed family of information states over `W`, the states
-that resolve it. -/
-structure Question (W : Type u) where
-  /-- The set of propositions resolving the issue. -/
-  props : Set (Set W)
-  /-- Contains the empty proposition (= the inconsistent information
-  state). Equivalent to non-emptiness given downward closure. -/
-  contains_empty : ∅ ∈ props
-  /-- A state included in a resolving state resolves the question. -/
-  downward_closed : ∀ p ∈ props, ∀ q : Set W, q ⊆ p → q ∈ props
+namespace Inquisitive
 
-namespace Question
+/-- An inquisitive proposition over states `α` is a lower set of states that contains the least
+state: the states that resolve it. -/
+structure Proposition (α : Type u) [LE α] [OrderBot α] extends LowerSet α where
+  /-- The least state resolves every proposition. -/
+  bot_mem' : ⊥ ∈ carrier
+
+namespace Proposition
+
+section Order
+
+variable {α : Type u} [LE α] [OrderBot α]
+
+/-- A proposition coerces to its set of resolving states. -/
+instance : SetLike (Proposition α) α where
+  coe P := P.carrier
+  coe_injective := fun ⟨_, _⟩ ⟨_, _⟩ h ↦ by congr; exact SetLike.coe_injective h
+
+@[ext]
+theorem ext {P Q : Proposition α} (h : ∀ a, a ∈ P ↔ a ∈ Q) : P = Q :=
+  SetLike.ext h
+
+theorem bot_mem (P : Proposition α) : ⊥ ∈ P := P.bot_mem'
+
+protected theorem isLowerSet (P : Proposition α) : IsLowerSet (P : Set α) := P.lower'
+
+/-- The proposition resolved by the members of a lower set of states that contains the least
+state. -/
+def ofLowerSet (s : Set α) (bot_mem : ⊥ ∈ s) (lower : IsLowerSet s) : Proposition α :=
+  ⟨⟨s, lower⟩, bot_mem⟩
+
+@[simp, norm_cast] theorem coe_ofLowerSet (s : Set α) (bot_mem : ⊥ ∈ s) (lower : IsLowerSet s) :
+    (ofLowerSet s bot_mem lower : Set α) = s := rfl
+
+@[simp] theorem mem_ofLowerSet {s : Set α} {bot_mem : ⊥ ∈ s} {lower : IsLowerSet s} {a : α} :
+    a ∈ ofLowerSet s bot_mem lower ↔ a ∈ s := Iff.rfl
+
+end Order
 
 variable {W : Type u}
 
-/-- A question coerces to its set of resolving states. -/
-instance : SetLike (Question W) (Set W) where
-  coe := props
-  coe_injective P Q h := by cases P; cases Q; congr
+/-- The inconsistent state resolves every proposition. -/
+theorem empty_mem (P : Proposition (Set W)) : ∅ ∈ P := P.bot_mem
 
-@[simp] theorem mem_props {P : Question W} {q : Set W} :
-    q ∈ P.props ↔ q ∈ P := Iff.rfl
+/-- The alternatives of a proposition are its maximal resolving states. -/
+def alt (P : Proposition (Set W)) : Set (Set W) :=
+  {p | p ∈ P ∧ ∀ q ∈ P, p ⊆ q → p = q}
 
-@[simp, norm_cast] theorem coe_mk (s : Set (Set W)) (h₁ h₂) :
-    ((⟨s, h₁, h₂⟩ : Question W) : Set (Set W)) = s := rfl
+theorem mem_of_mem_alt {P : Proposition (Set W)} {p : Set W} (h : p ∈ alt P) : p ∈ P := h.1
 
-@[ext]
-theorem ext {P Q : Question W} (h : ∀ q, q ∈ P ↔ q ∈ Q) : P = Q :=
-  SetLike.ext h
+/-- The informative content of a proposition is the union of its resolving states. -/
+def info (P : Proposition (Set W)) : Set W :=
+  ⋃₀ (P : Set (Set W))
 
-/-- The alternatives of a question are its maximal resolving states. -/
-def alt (P : Question W) : Set (Set W) :=
-  {p ∈ P.props | ∀ q ∈ P.props, p ⊆ q → p = q}
-
-theorem mem_of_mem_alt {P : Question W} {p : Set W} (h : p ∈ alt P) : p ∈ P := h.1
-
-/-- The informative content of a question is the union of its resolving states. -/
-def info (P : Question W) : Set W :=
-  ⋃₀ P.props
-
-/-- A sentence is informative iff its informative content excludes
-at least one possible world. -/
-def IsInformative (P : Question W) : Prop :=
+/-- A proposition is informative if its informative content excludes some world. -/
+def IsInformative (P : Proposition (Set W)) : Prop :=
   info P ≠ Set.univ
 
-/-- A sentence is inquisitive iff resolving the issue it raises
-requires more than the information it provides — equivalently, iff
-`info P` itself is not in `props` (so no single proposition in
-`props` covers all of `info P`). -/
-def IsInquisitive (P : Question W) : Prop :=
-  info P ∉ P.props
+/-- A proposition is inquisitive if its informative content does not resolve it. -/
+def IsInquisitive (P : Proposition (Set W)) : Prop :=
+  info P ∉ P
 
-/-- A content's own informative content resolves it iff it is not
-inquisitive — the condition declarative sentences satisfy; `props`
-is then a principal ideal ([puncochar-2019]), see
+/-- The informative content of a proposition resolves it iff the proposition is not inquisitive.
+Its resolving states are then a principal ideal ([puncochar-2019]), see
 `info_mem_iff_eq_ofSet_info`. -/
-theorem info_mem_iff_not_isInquisitive (P : Question W) :
+theorem info_mem_iff_not_isInquisitive (P : Proposition (Set W)) :
     P.info ∈ P ↔ ¬ P.IsInquisitive :=
   not_not.symm
 
-theorem mem_info_iff_singleton_mem (P : Question W) (w : W) :
-    w ∈ P.info ↔ ({w} : Set W) ∈ P := by
-  constructor
-  · rintro ⟨q, hq, hwq⟩
-    exact P.downward_closed q hq {w} (Set.singleton_subset_iff.mpr hwq)
-  · intro h
-    exact ⟨{w}, h, rfl⟩
+theorem mem_info_iff_singleton_mem (P : Proposition (Set W)) (w : W) :
+    w ∈ P.info ↔ ({w} : Set W) ∈ P :=
+  ⟨fun ⟨_, hq, hwq⟩ ↦ P.isLowerSet (Set.singleton_subset_iff.2 hwq) hq, fun h ↦ ⟨{w}, h, rfl⟩⟩
 
-theorem subset_info_of_mem {P : Question W} {q : Set W} (h : q ∈ P) : q ⊆ P.info :=
+theorem subset_info_of_mem {P : Proposition (Set W)} {q : Set W} (h : q ∈ P) : q ⊆ P.info :=
   Set.subset_sUnion_of_mem h
 
-/-! ### Constructors -/
-
-/-- Smart constructor from a lower (downward-closed) family of
-information states containing `∅`. Packages the two `Question`
-obligations in mathlib's `IsLowerSet` vocabulary, so a caller holding
-a persistence proof (`IsLowerSet`) and an empty-state witness builds
-the `Question` directly instead of re-deriving `downward_closed`
-inline. -/
-def ofLowerSet (s : Set (Set W)) (empty_mem : ∅ ∈ s) (lower : IsLowerSet s) :
-    Question W where
-  props := s
-  contains_empty := empty_mem
-  downward_closed := fun _p hp _q hq => lower hq hp
-
-@[simp] theorem props_ofLowerSet (s : Set (Set W)) (empty_mem : ∅ ∈ s)
-    (lower : IsLowerSet s) : (ofLowerSet s empty_mem lower).props = s := rfl
-
-@[simp] theorem mem_ofLowerSet {s : Set (Set W)} {empty_mem : ∅ ∈ s}
-    {lower : IsLowerSet s} {q : Set W} :
-    q ∈ ofLowerSet s empty_mem lower ↔ q ∈ s := Iff.rfl
-
-protected theorem isLowerSet (P : Question W) : IsLowerSet (P : Set (Set W)) :=
-  fun _ _ hba ha ↦ P.downward_closed _ ha _ hba
+/-! ### Declaratives -/
 
 /-- The declarative of `p` is resolved by the states included in `p`, the principal ideal below
 `p`, as `Filter.principal` is the principal filter. -/
-def ofSet (p : Set W) : Question W where
-  props := {q | q ⊆ p}
-  contains_empty := Set.empty_subset p
-  downward_closed := fun _ hq _ hr => hr.trans hq
-
-/-! ### Basic theorems on ofSet -/
+def ofSet (p : Set W) : Proposition (Set W) :=
+  ofLowerSet {q | q ⊆ p} (Set.empty_subset p) fun _ _ hba ha ↦ hba.trans ha
 
 @[simp] theorem mem_ofSet {p q : Set W} :
     q ∈ ofSet p ↔ q ⊆ p := Iff.rfl
 
-@[simp] theorem info_ofSet (p : Set W) : (ofSet p).info = p := by
-  ext w
-  simp only [info, ofSet, Set.mem_sUnion, Set.mem_ofPred_eq]
-  refine ⟨?_, ?_⟩
-  · rintro ⟨q, hq, hwq⟩; exact hq hwq
-  · intro hw; exact ⟨p, Set.Subset.refl p, hw⟩
+@[simp] theorem info_ofSet (p : Set W) : (ofSet p).info = p :=
+  Set.Subset.antisymm (Set.sUnion_subset fun _ hq ↦ hq) fun _ hw ↦ ⟨p, Set.Subset.refl p, hw⟩
 
-theorem info_mem_ofSet (p : Set W) :
-    (ofSet p).info ∈ ofSet p := by
-  show (ofSet p).info ∈ ofSet p
+theorem info_mem_ofSet (p : Set W) : (ofSet p).info ∈ ofSet p := by
   rw [info_ofSet]
   exact Set.Subset.refl p
 
-theorem not_isInquisitive_ofSet (p : Set W) :
-    ¬ (ofSet p).IsInquisitive :=
-  fun h => h (info_mem_ofSet p)
+theorem not_isInquisitive_ofSet (p : Set W) : ¬ (ofSet p).IsInquisitive :=
+  fun h ↦ h (info_mem_ofSet p)
 
-end Question
+end Proposition
+
+end Inquisitive

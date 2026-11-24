@@ -47,7 +47,7 @@ and Rupert's state is Maggie's: the scenarios differ in their questions.
 
 namespace George2011
 
-open Question
+open Question Inquisitive Inquisitive.Proposition
 
 variable {W τ E : Type*}
 

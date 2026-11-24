@@ -49,7 +49,7 @@ derives where the egophoric form is excluded, not where it is required.
 
 namespace CoppockWechsler2018
 
-open Commitment Question Filter
+open Commitment Inquisitive Inquisitive.Proposition Filter
 open Pearson2015 (Centered SayDeSe)
 
 variable {W E P T : Type*}

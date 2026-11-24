@@ -93,7 +93,7 @@ question is neutral or whose negation the annotation locates (`judgment_iff_pred
 
 namespace Holmberg2016
 
-open Question
+open Inquisitive Inquisitive.Proposition
 open scoped Denotes
 
 /-! ### The polarity head -/
@@ -172,17 +172,18 @@ def primary : Set W := q.negation.primaryPolarity • q.radical
 
 /-- A polar interrogative denotes the polar question of its primary alternative, the
 disjunction of that alternative and its negation. -/
-instance : Denotes (PolarInterrogative W) (Question W) := ⟨fun q ↦ Question.polar q.primary⟩
+instance :
+    Denotes (PolarInterrogative W) (Proposition (Set W)) := ⟨fun q ↦ Proposition.polar q.primary⟩
 
-theorem denote_def : ⟦q⟧ = Question.polar q.primary := rfl
+theorem denote_def : ⟦q⟧ = Proposition.polar q.primary := rfl
 
-@[simp] theorem denote_eq_polar_radical : ⟦q⟧ = Question.polar q.radical :=
-  Question.polar_smul _ _
+@[simp] theorem denote_eq_polar_radical : ⟦q⟧ = Proposition.polar q.radical :=
+  Proposition.polar_smul _ _
 
 theorem alt_denote {q : PolarInterrogative W} (hne : q.radical ≠ ∅)
-    (hnu : q.radical ≠ Set.univ) : Question.alt ⟦q⟧ = MulAction.orbit Polarity q.radical := by
+    (hnu : q.radical ≠ Set.univ) : Proposition.alt ⟦q⟧ = MulAction.orbit Polarity q.radical := by
   rw [denote_eq_polar_radical]
-  exact Question.alt_polar_eq_orbit hne hnu
+  exact Proposition.alt_polar_eq_orbit hne hnu
 
 end PolarInterrogative
 

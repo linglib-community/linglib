@@ -7,12 +7,12 @@ public import Linglib.Semantics.Questions.Inquisitive.Polar
 # Neo-Gricean pragmatics: primary and secondary implicatures
 
 The epistemic step of neo-Gricean scalar reasoning, after Sauerland's primary and secondary
-implicatures and Geurts's Standard Recipe. A speaker's epistemic state is a set of worlds
-`s : Set W`, and an epistemic proposition, what an utterance implicates about the speaker, is a
-set of states `Set (Set W)`. Certainty `Kφ` is the principal down-set `Set.Iic φ`, so the primary
-implicature `¬Kψ` is `(Set.Iic ψ)ᶜ` and the secondary implicature `K¬ψ` is `Set.Iic ψᶜ`, and
-competence `Kψ ∨ K¬ψ` is resolving the polar question `Question.polar ψ`. The empty state, a
-member of every `Set.Iic`, is the inconsistent speaker.
+implicatures and Geurts's Standard Recipe. A speaker's epistemic state is a set of worlds `s : Set
+W`, and an epistemic proposition, what an utterance implicates about the speaker, is a set of states
+`Set (Set W)`. Certainty `Kφ` is the principal down-set `Set.Iic φ`, so the primary implicature
+`¬Kψ` is `(Set.Iic ψ)ᶜ` and the secondary implicature `K¬ψ` is `Set.Iic ψᶜ`, and competence `Kψ ∨
+K¬ψ` is resolving the polar question `Inquisitive.Proposition.polar ψ`. The empty state, a member of
+every `Set.Iic`, is the inconsistent speaker.
 
 Asserting `φ` implicates `Kφ` by Quality and the primary implicature `¬Kψ` of each alternative
 `ψ` that asymmetrically entails `φ`; for such a `ψ`, `K¬ψ` is a secondary implicature iff it is
@@ -52,6 +52,8 @@ turns the speaker's commitment to the asserted `φ` into the belief `Kφ`.
 -/
 
 @[expose] public section
+
+open Inquisitive
 
 namespace NeoGricean
 
@@ -102,9 +104,9 @@ theorem isSecondaryImplicature_singleton : IsSecondaryImplicature {ψ} φ ψ ↔
 competence about `ψ`, resolving the polar question whether `ψ`, is the strong implicature
 `K¬ψ`. -/
 theorem compl_Iic_inter_polar (ψ : Set W) :
-    (Iic ψ)ᶜ ∩ Question.polar ψ = Iic ψᶜ \ {∅} := by
+    (Iic ψ)ᶜ ∩ Inquisitive.Proposition.polar ψ = Iic ψᶜ \ {∅} := by
   ext s
-  simp only [mem_inter_iff, mem_compl_iff, mem_Iic, SetLike.mem_coe, Question.mem_polar,
+  simp only [mem_inter_iff, mem_compl_iff, mem_Iic, SetLike.mem_coe, Proposition.mem_polar,
     mem_sdiff, mem_singleton_iff]
   refine ⟨fun ⟨h, hc⟩ ↦ ⟨hc.resolve_left h, fun he ↦ h (he ▸ empty_subset ψ)⟩,
     fun ⟨hψ, hs⟩ ↦ ⟨fun h ↦ ?_, Or.inr hψ⟩⟩

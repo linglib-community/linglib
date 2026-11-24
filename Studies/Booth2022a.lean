@@ -46,7 +46,7 @@ a modal disjunction false although her truth conditions make it true
 
 namespace Booth2022a
 
-open MinimalCovering Question
+open MinimalCovering Inquisitive Inquisitive.Proposition
 
 variable {W At : Type*} (V : At → Set W) (R : W → Set W) {p q : At}
 
@@ -113,13 +113,13 @@ theorem truth_diamond_conj_neg_subset (p q : At) :
   exact fun _ hw ↦ hw.mono (Set.inter_subset_inter_right _ Set.sdiff_subset)
 
 -- §6, fn. 13 [kratzer-1991]
-theorem truth_necessity_bang (φ : Kalman (Question W)) :
+theorem truth_necessity_bang (φ : Kalman (Proposition (Set W))) :
     truth (necessity R (bang φ)) =
       {w | (R w).Nonempty ∧ ModalLogic.Box (.ofSuccessors R) (· ∈ truth φ) w} :=
   truth_necessity_of_alt_eq_singleton R _ (alt_bang_pro φ)
 
 -- §6
-theorem truth_possibility_bang (φ : Kalman (Question W)) :
+theorem truth_possibility_bang (φ : Kalman (Proposition (Set W))) :
     truth (possibility R (bang φ)) =
       {w | ModalLogic.Diamond (.ofSuccessors R) (· ∈ truth φ) w} := by
   rw [truth_possibility_of_alt_eq_singleton R _ (alt_bang_pro φ)]
@@ -136,11 +136,11 @@ theorem box_bang_disj (p q : At) :
 /-! ### The unilateral semantics loses duality and distribution (§7)
 
 In the unilateral semantics of §6 a sentence denotes one inquisitive proposition, negation is the
-pseudocomplement `ᶜ` of `Question W` (the states disjoint from the informative content), and the
-modals are `box` and `diamond`. Booth's scenario: in all relevant worlds Alicia burns the letter.
-Then `¬◇(M ∨ B)` is true, since there is no relevant mailing-without-burning world, yet `◇B` is true
-and `□¬(M ∨ B)` is not. The worlds record whether Alicia mails (`M`) and whether she burns (`B`)
-the letter; the relevant worlds are the two burning worlds, one of them a mailing world. -/
+pseudocomplement `ᶜ` of `Proposition (Set W)` (the states disjoint from the informative content),
+and the modals are `box` and `diamond`. Booth's scenario: in all relevant worlds Alicia burns the
+letter. Then `¬◇(M ∨ B)` is true, since there is no relevant mailing-without-burning world, yet `◇B`
+is true and `□¬(M ∨ B)` is not. The worlds record whether Alicia mails (`M`) and whether she burns
+(`B`) the letter; the relevant worlds are the two burning worlds, one of them a mailing world. -/
 
 namespace Unilateral
 

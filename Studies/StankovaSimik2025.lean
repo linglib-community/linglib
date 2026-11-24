@@ -54,7 +54,7 @@ stated in prose only.
 namespace StankovaSimik2025
 
 open Czech.Particles (nahodou copak)
-open Question Quantifier
+open Question Inquisitive Inquisitive.Proposition Quantifier
 open Simik2024
 open scoped Denotes
 

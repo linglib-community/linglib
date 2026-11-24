@@ -46,7 +46,8 @@ off than the exhaustive list does (`value_generalYes_lt_value_exhaustive`).
 * A decision problem is an `Agent` that observes nothing (`problem`), and its policy is
   `Agent.policy`. The value is monotone in the rationality (`value_mono`) and at most the best
   expected utility `decisionValue`, the value of a decision problem in [van-rooy-2003]
-  (`value_le_decisionValue`). It is not convex in the belief: `decisionValue` gives information
+  (`value_le_decisionValue`), to which it tends as the rationality grows
+  (`tendsto_value_atTop`). It is not convex in the belief: `decisionValue` gives information
   nonnegative value (`valueOfInformation_decisionValue_nonneg`), and under `value` learning the
   world can have negative value (`valueOfInformation_value_gamble_neg`).
 * The questioner's utility for a question at a world integrates over the base respondent's answer
@@ -89,7 +90,7 @@ off than the exhaustive list does (`value_generalYes_lt_value_exhaustive`).
 
 namespace HawkinsEtAl2025
 
-open MeasureTheory ProbabilityTheory InformationTheory Finset Question
+open MeasureTheory ProbabilityTheory InformationTheory Finset Inquisitive Inquisitive.Proposition
 open scoped ENNReal NNReal
 
 variable {W Q R A D : Type*}
@@ -288,6 +289,12 @@ theorem value_mono [Nonempty A] (U : W → A → ℝ) (π : Measure W) :
   show value U α π ≤ value U β π
   rw [value_eq_sum, value_eq_sum]
   exact Real.monotone_sum_softmax_smul_mul (fun a ↦ ∫ w, U w a ∂π) h
+
+-- [van-rooy-2003]
+theorem tendsto_value_atTop [Nonempty A] (U : W → A → ℝ) (π : Measure W) :
+    Filter.Tendsto (fun αℵ ↦ value U αℵ π) .atTop (nhds (decisionValue U π)) := by
+  simp only [value_eq_sum]
+  exact Real.tendsto_sum_softmax_smul_mul_atTop fun a ↦ ∫ w, U w a ∂π
 
 private theorem mul_sigmoid_sub_half_lt_iff {k x y : ℝ} (hk : 0 < k) :
     x * (Real.sigmoid (k * x) - 1 / 2) < y * (Real.sigmoid (k * y) - 1 / 2) ↔ |x| < |y| := by
