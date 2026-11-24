@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Combinatorics.Digraph.Arborescence
-public import Linglib.Syntax.Dependency.Basic
+public import Linglib.Syntax.WordOrder.Digraph
 public import Mathlib.Order.Fin.Basic
 public import Linglib.Core.Combinatorics.SimpleGraph.Crossings
 public import Mathlib.Data.Finset.Lattice.Fold

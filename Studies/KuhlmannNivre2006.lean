@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Syntax.Dependency.Projectivity
+public import Linglib.Syntax.DependencyGrammar.Basic
+public import Linglib.Syntax.WordOrder.Projectivity
 public import Linglib.Data.Statistics.KuhlmannNivre2006
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Order.Interval.Finset.Fin
@@ -11,7 +12,7 @@ public import Mathlib.Order.Interval.Finset.Fin
 This file formalizes the paper's comparison of the constraints proposed for mildly
 non-projective dependency structures: planarity, well-nestedness, gap degree, and the edge
 degree of [nivre-2006]. The first three, with the dominance and projection they are stated
-through, are the substrate of `Syntax/Dependency/`, whose definitions follow the paper;
+through, are the substrate of `Syntax/DependencyGrammar/`, whose definitions follow the paper;
 edge degree, the number of constituents an edge spans without dominating, is `edgeDegree`, and
 [degree zero is projectivity](##edgeDegree_eq_zero_iff) on it as on gap degree. The hierarchy
 projective ⊂ planar ⊂ well-nested is the substrate's, proved there for the paper's dependency
@@ -51,7 +52,7 @@ the counts by `Decimal.RoundsPercent`, at the precision the text prints it.
 
 namespace KuhlmannNivre2006
 
-open Dependency Relation
+open DependencyGrammar Relation
 
 variable {L : Type*} {n : ℕ} (g : Graph L (Fin n))
 

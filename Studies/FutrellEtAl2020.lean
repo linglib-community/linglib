@@ -1,8 +1,9 @@
 module
 
-public import Linglib.Syntax.Dependency.HeadDirection
-public import Linglib.Syntax.Dependency.Projectivity
-public import Linglib.Syntax.Dependency.Reordering
+public import Linglib.Syntax.DependencyGrammar.Catena
+public import Linglib.Syntax.WordOrder.HeadDirection
+public import Linglib.Syntax.WordOrder.Projectivity
+public import Linglib.Syntax.WordOrder.Reordering
 
 /-!
 # Futrell, Levy and Gibson (2020): Dependency Locality as an Explanatory Principle for Word Order

@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.Dependency.Catena
-public import Linglib.Syntax.Dependency.Length
-public import Linglib.Syntax.Dependency.Stemma
+public import Linglib.Syntax.DependencyGrammar.Catena
+public import Linglib.Syntax.WordOrder.ArcLength
+public import Linglib.Syntax.DependencyGrammar.Stemma
 public import Mathlib.Data.Fin.Tuple.Sort
 public import Mathlib.MeasureTheory.Measure.WithDensity
 public import Mathlib.Probability.ConditionalProbability
@@ -61,7 +61,7 @@ their
 
 namespace JingBlasiBickel2022
 
-open Dependency WordOrder MeasureTheory ProbabilityTheory Finset Morphology Relation
+open DependencyGrammar WordOrder MeasureTheory ProbabilityTheory Finset Morphology Relation
 open Stemma (node leaf)
 open scoped ENNReal Nat
 

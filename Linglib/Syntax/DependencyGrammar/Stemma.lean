@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Dependency.Projectivity
+public import Linglib.Syntax.DependencyGrammar.Basic
+public import Linglib.Syntax.WordOrder.Projectivity
 public import Linglib.Morphology.Word.Basic
 
 /-!
@@ -22,7 +23,7 @@ position of the stemma's head (`Stemma.isArborescence_toGraph`), and it is proje
 
 ## Main definitions
 
-* `Dependency.Stemma`: the stemmas with relations in `L`.
+* `DependencyGrammar.Stemma`: the stemmas with relations in `L`.
 * `Stemma.yield`: the sentence a stemma spells out.
 * `Stemma.toGraph`, `Stemma.root`: the dependency graph on the positions of the sentence, and
   the position of the stemma's head.
@@ -43,7 +44,7 @@ The converse: every projective tree is the graph of a stemma.
 
 @[expose] public section
 
-namespace Dependency
+namespace DependencyGrammar
 
 open Morphology (Word)
 
@@ -322,4 +323,4 @@ end Layout
 
 end Stemma
 
-end Dependency
+end DependencyGrammar

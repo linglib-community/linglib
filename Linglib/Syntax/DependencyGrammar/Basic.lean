@@ -5,9 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Combinatorics.Digraph.Maps
-public import Mathlib.Data.List.NodupEquivFin
-public import Mathlib.Order.Fin.Basic
+public import Linglib.Syntax.WordOrder.Digraph
 
 /-!
 # Dependency graphs
@@ -27,16 +25,15 @@ the words it dominates. The dependents of `v` are its out-neighbours, and its he
 in-neighbours. A *forest* is a branching (`G.IsBranching`), and a *tree* with root `r` is an
 arborescence (`G.IsArborescence r`).
 
-This file defines dependency graphs, builds digraphs and dependency graphs from lists of arcs,
-and defines a structure read in another order of its words.
+This file defines dependency graphs, builds them from lists of arcs, and defines a dependency
+graph read in another order of its words. Digraphs on positions, without relations, are in
+`Syntax/WordOrder/Digraph.lean`.
 
 ## Main definitions
 
-* `Digraph.ofArcs`: the digraph with the listed arcs.
 * `Graph L V`: a digraph with a relation on each arc; `Graph.ofArcs` builds one from
   (head, dependent, relation) triples, and `Graph.rel r` is its digraph of arcs bearing `r`.
-* `Digraph.linearize`, `Digraph.mirror`, and `Graph.comap`, `Graph.linearize`: a structure read
-  in another order of its positions.
+* `Graph.comap`, `Graph.linearize`: a dependency graph read in another order of its positions.
 
 ## Implementation notes
 
@@ -57,58 +54,9 @@ Positions are 0-indexed; CoNLL-U is 1-indexed with `0` as an artificial root.
 
 @[expose] public section
 
-/-! ### Digraphs from arcs, and their linearizations -/
-
-namespace Digraph
-
-variable {V : Type*} {n : ℕ}
-
-/-- The digraph whose arcs are the listed pairs, each of a head and one of its dependents. -/
-def ofArcs [DecidableEq V] (arcs : List (V × V)) : Digraph V where
-  Adj v w := (v, w) ∈ arcs
-
-@[simp] theorem ofArcs_adj [DecidableEq V] {arcs : List (V × V)} {v w : V} :
-    (ofArcs arcs).Adj v w ↔ (v, w) ∈ arcs := Iff.rfl
-
-instance [DecidableEq V] (arcs : List (V × V)) : DecidableRel (ofArcs arcs).Adj :=
-  fun v w ↦ inferInstanceAs (Decidable ((v, w) ∈ arcs))
-
-/-- The permutation of the positions given by a listing of them in a new order, sending the new
-position `p` to the old position `order[p]`. -/
-def orderPerm (order : List (Fin n)) (h : order.Perm (List.finRange n)) : Equiv.Perm (Fin n) :=
-  (finCongr (h.length_eq.trans List.length_finRange).symm).trans
-    ((h.nodup_iff.mpr (List.nodup_finRange n)).getEquivOfForallMemList order
-      fun x ↦ h.mem_iff.mpr (List.mem_finRange x))
-
-/-- The digraph read in the order `order`, which lists every position once. The word at position `p`
-is the word of `G` at `order[p]`, and the arcs follow the words. -/
-def linearize (G : Digraph (Fin n)) (order : List (Fin n)) (h : order.Perm (List.finRange n)) :
-    Digraph (Fin n) :=
-  G.comap (orderPerm order h)
-
-instance (G : Digraph (Fin n)) [DecidableRel G.Adj] (order : List (Fin n))
-    (h : order.Perm (List.finRange n)) : DecidableRel (G.linearize order h).Adj :=
-  inferInstanceAs (DecidableRel (G.comap _).Adj)
-
-/-- The mirror image of a digraph on positions, read from the last word to the first. -/
-def mirror (G : Digraph (Fin n)) : Digraph (Fin n) := G.comap Fin.rev
-
-@[simp] theorem mirror_adj (G : Digraph (Fin n)) (v w : Fin n) :
-    G.mirror.Adj v w ↔ G.Adj v.rev w.rev := Iff.rfl
-
-instance (G : Digraph (Fin n)) [DecidableRel G.Adj] : DecidableRel G.mirror.Adj :=
-  inferInstanceAs (DecidableRel (G.comap _).Adj)
-
-@[simp] theorem mirror_mirror (G : Digraph (Fin n)) : G.mirror.mirror = G :=
-  Digraph.ext (by ext; simp)
-
-theorem mirror_involutive : Function.Involutive (mirror (n := n)) := mirror_mirror
-
-end Digraph
-
 /-! ### Labelled graphs -/
 
-namespace Dependency
+namespace DependencyGrammar
 
 /-- A dependency graph on the vertices `V` with relations in `L` is a digraph each of whose arcs
 carries a relation. -/
@@ -196,4 +144,4 @@ def linearize (g : Graph L (Fin n)) (order : List (Fin n)) (h : order.Perm (List
 
 end Graph
 
-end Dependency
+end DependencyGrammar

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Dependency.Basic
+public import Linglib.Syntax.DependencyGrammar.Basic
 public import Mathlib.Data.Multiset.Filter
 public import Mathlib.Order.Interval.Basic
 
@@ -60,7 +60,7 @@ the positions.
 
 open Finset
 
-namespace Dependency
+namespace DependencyGrammar
 
 variable {L : Type*} {n : ℕ}
 
@@ -200,4 +200,4 @@ theorem Satisfies.mono (h : val₁ ≤ val₂) (hs : g.Satisfies p v val₁) : g
 
 end Graph
 
-end Dependency
+end DependencyGrammar

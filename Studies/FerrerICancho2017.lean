@@ -1,9 +1,10 @@
 module
 
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.Dependency.Projectivity
-public import Linglib.Syntax.Dependency.Length
-public import Linglib.Syntax.Dependency.Catena
+public import Linglib.Syntax.DependencyGrammar.Basic
+public import Linglib.Syntax.DependencyGrammar.Catena
+public import Linglib.Syntax.WordOrder.Projectivity
+public import Linglib.Syntax.WordOrder.ArcLength
 public import Linglib.Core.Combinatorics.SimpleGraph.Crossings
 
 /-!
@@ -56,7 +57,7 @@ $(n - 2) (n - 3) / 6$.
 
 namespace FerrerICancho2017
 
-open Dependency Finset Equiv Nat Relation
+open DependencyGrammar Finset Equiv Nat Relation
 
 variable {n : ℕ} {G : Digraph (Fin n)} [DecidableRel G.Adj]
 

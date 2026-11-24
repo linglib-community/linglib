@@ -1,8 +1,9 @@
 module
 
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.Dependency.Projectivity
-public import Linglib.Syntax.Dependency.Length
+public import Linglib.Syntax.DependencyGrammar.Basic
+public import Linglib.Syntax.WordOrder.Projectivity
+public import Linglib.Syntax.WordOrder.ArcLength
 public import Mathlib.Data.Fin.VecNotation
 public import Linglib.Morphology.Word.Basic
 
@@ -54,7 +55,7 @@ representable on a graph over words and are not formalized.
 
 namespace DeMarneffeNivre2019
 
-open Dependency Morphology
+open DependencyGrammar Morphology
 
 /-! ### Dependency trees and projectivity, §2.4 -/
 
