@@ -213,8 +213,9 @@ theorem mem_of_exemplifies_of_le (hp : IsClosed p) (hx : Exemplifies p x) (hxs :
   Topology.IsLowerSet.isClosed_iff_isUpper.1 hp hxs hx.mem
 
 -- ch. 2 (164)
-theorem dependsOn_exemplifies_Iic (hx : x ≤ s) : Set.DependsOn (Exemplifies · x) (Set.Iic s) :=
-  (dependsOn_exemplifies (Topology.IsLowerSet.Iic_mem_nhds x)).mono (Set.Iic_subset_Iic.2 hx)
+theorem dependsOn_exemplifies_of_le (hx : x ≤ s) :
+    Set.DependsOn (Exemplifies · x) (Set.Iic s) :=
+  (dependsOn_exemplifies_Iic x).mono (Set.Iic_subset_Iic.2 hx)
 
 /-- A Sit-CP is referentially transparent: descriptions `a` and `b` that pick out one individual
 in the evaluation situation `s`, and keep their reference in the parts of `s`, may be substituted
@@ -222,7 +223,7 @@ for one another in the clause's proposition without changing which parts of `s` 
 theorem exemplifies_substitution {D : Type*} {a b : E → D} {R : D → Set E}
     (ha : ∀ y ≤ s, a y = a s) (hb : ∀ y ≤ s, b y = b s) (hab : a s = b s) (hx : x ≤ s) :
     Exemplifies {y | y ∈ R (a y)} x ↔ Exemplifies {y | y ∈ R (b y)} x :=
-  exemplifies_congr <| Set.ext fun y ↦ and_congr_right fun hy ↦ by
+  iff_of_eq <| (dependsOn_exemplifies_Iic x).congr <| Set.ext fun y ↦ and_congr_right fun hy ↦ by
     have hys := (Set.mem_Iic.1 hy).trans hx
     simp only [Set.mem_ofPred_eq, ha y hys, hb y hys, hab]
 

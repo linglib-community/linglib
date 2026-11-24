@@ -1,9 +1,11 @@
 module
 
 public import Linglib.Core.Logic.Function.DependsOn
-public import Linglib.Core.Topology.Order.UpperLowerSetTopology
+public import Linglib.Core.Order.UpperLower.Closure
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Lattice
+public import Mathlib.Topology.DerivedSet
+public import Mathlib.Topology.Order.UpperLowerSetTopology
 
 /-!
 # Exemplification
@@ -35,8 +37,9 @@ of its exemplifiers.
 
 ## Main results
 
-* `Mereology.dependsOn_exemplifies`: exemplification by `x` depends only on a neighbourhood of
-  `x`.
+* `Mereology.exemplifies_congr`: exemplification by `x` depends only on the germ of the set at
+  `x`, so only on a neighbourhood of `x`, `Mereology.dependsOn_exemplifies`, and in a part order
+  only on the parts of `x`, `Mereology.dependsOn_exemplifies_Iic`.
 * `Mereology.forall_not_exemplifies_iff`: a set has no exemplifier iff it has empty interior and
   no isolated point.
 * `Mereology.exemplifies_iff`: in a part order, `x` exemplifies `p` iff every part of `x` is in
@@ -95,18 +98,19 @@ theorem Exemplifies.inter (hp : Exemplifies p x) (hq : Exemplifies q x) :
         fun h ↦ hq.2 (derivedSet_mono _ _ inter_subset_right h)⟩
   · exact .inr ⟨⟨hp.1, hq.mem⟩, fun h ↦ hp.2 (derivedSet_mono _ _ inter_subset_left h)⟩
 
-theorem exemplifies_inter_of_mem_nhds (hu : u ∈ 𝓝 x) :
-    Exemplifies (u ∩ p) x ↔ Exemplifies p x := by
-  have hx : x ∈ u := mem_of_mem_nhds hu
-  simp only [Exemplifies, mem_interior_iff_mem_nhds, Filter.inter_mem_iff, hu, true_and,
-    mem_sdiff, mem_inter_iff, hx, mem_derivedSet, accPt_iff_frequently]
-  refine or_congr_right (and_congr_right fun _ ↦ not_congr (Filter.frequently_congr ?_))
-  filter_upwards [hu] with y hy
-  simp [hy]
+/-- Whether `x` exemplifies a set depends only on the germ of the set at `x`. -/
+theorem exemplifies_congr (h : p =ᶠ[𝓝 x] q) : Exemplifies p x ↔ Exemplifies q x := by
+  have h' := Filter.eventuallyEqSet_iff.1 h
+  simp only [Exemplifies, mem_interior_iff_mem_nhds, mem_sdiff, mem_derivedSet,
+    accPt_iff_frequently]
+  exact or_congr (Filter.eventually_congr h') (and_congr h'.self_of_nhds
+    (not_congr (Filter.frequently_congr (h'.mono fun _ hy ↦ and_congr_right fun _ ↦ hy))))
 
 /-- Whether `x` exemplifies a set depends only on the set in a neighbourhood of `x`. -/
 theorem dependsOn_exemplifies (hu : u ∈ 𝓝 x) : Set.DependsOn (Exemplifies · x) u :=
-  fun _ ↦ propext (exemplifies_inter_of_mem_nhds hu)
+  fun _ ↦ propext <| exemplifies_congr <| Filter.eventuallyEqSet_iff.2 <| by
+    filter_upwards [hu] with y hy
+    simp [hy]
 
 /-- A set has no exemplifier exactly when it has empty interior and no isolated point. -/
 theorem forall_not_exemplifies_iff :
@@ -124,8 +128,17 @@ open Topology.IsLowerSet
 
 /-- In a part order, `x` exemplifies `p` when every part of `x` is in `p` or `x` is a minimal
 member of `p`. -/
-theorem exemplifies_iff : Exemplifies p x ↔ Iic x ⊆ p ∨ Minimal (· ∈ p) x :=
-  or_congr mem_interior_iff mem_sdiff_derivedSet_iff
+theorem exemplifies_iff : Exemplifies p x ↔ Iic x ⊆ p ∨ Minimal (· ∈ p) x := by
+  simp only [Exemplifies, mem_interior_iff_mem_nhds, mem_sdiff, mem_derivedSet,
+    accPt_iff_frequently, nhds_eq_principal_Iic, Filter.mem_principal,
+    Filter.frequently_principal, minimal_iff_forall_lt]
+  exact or_congr_right (and_congr_right fun _ ↦
+    ⟨fun h y hy hyp ↦ h ⟨y, hy.le, hy.ne, hyp⟩,
+      fun h ⟨y, hyx, hne, hyp⟩ ↦ h (lt_of_le_of_ne hyx hne) hyp⟩)
+
+/-- Whether `x` exemplifies a set depends only on its members among the parts of `x`. -/
+theorem dependsOn_exemplifies_Iic (x : α) : Set.DependsOn (Exemplifies · x) (Iic x) :=
+  dependsOn_exemplifies (by rw [nhds_eq_principal_Iic]; exact Filter.mem_principal_self _)
 
 instance [Fintype α] [DecidableLE α] [DecidablePred (· ∈ p)] : DecidablePred (Exemplifies p) :=
   fun x ↦ decidable_of_iff ((∀ y ≤ x, y ∈ p) ∨ x ∈ p ∧ ∀ y ∈ p, y ≤ x → x ≤ y)
@@ -167,10 +180,6 @@ theorem _root_.IsAntichain.exemplifies_iff (hp : IsAntichain (· ≤ ·) p) :
     obtain rfl | hne := eq_or_ne y x
     exacts [le_rfl, absurd hyx (hp hy hx hne)]⟩⟩
 
-/-- Whether `x` exemplifies a set depends only on its members among the parts of `x`. -/
-theorem exemplifies_congr (h : Iic x ∩ p = Iic x ∩ q) : Exemplifies p x ↔ Exemplifies q x :=
-  iff_of_eq ((dependsOn_exemplifies (Iic_mem_nhds x)).congr h)
-
 /-- The exemplifiers of the closure of `s` are its interior points and the minimal elements of
 `s`. -/
 theorem exemplifies_upperClosure_iff :
@@ -196,9 +205,10 @@ theorem _root_.IsAntichain.exemplifies_upperClosure_iff (hs : IsAntichain (· �
 theorem closure_setOf_exemplifies [WellFoundedLT α] (hp : IsClosed p) :
     closure {x | Exemplifies p x} = p := by
   have hsub : {x | Exemplifies p x} ⊆ p := fun _ h ↦ Exemplifies.mem h
-  refine (closure_minimal hsub hp).antisymm ?_
-  calc p = closure (p \ derivedSet p) := by rw [closure_sdiff_derivedSet, hp.closure_eq]
-    _ ⊆ closure {x | Exemplifies p x} := closure_mono fun _ h ↦ Or.inr h
+  refine (closure_minimal hsub hp).antisymm fun x hx ↦ ?_
+  obtain ⟨m, hmx, hm⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ p) x hx
+  rw [closure_eq_upperClosure]
+  exact ⟨m, hm.exemplifies, hmx⟩
 
 end PartialOrder
 
