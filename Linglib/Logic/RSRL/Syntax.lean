@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.HPSG.RSRL.Signature
+public import Linglib.Logic.RSRL.Signature
 public import Mathlib.Data.Finset.Image
 
 /-!

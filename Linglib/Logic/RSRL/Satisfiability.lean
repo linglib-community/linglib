@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.HPSG.RSRL.Subinterpretation
+public import Linglib.Logic.RSRL.Subinterpretation
 public import Mathlib.Logic.Small.Basic
 
 /-!

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.HPSG.Construction
-public import Linglib.Syntax.HPSG.RSRL.Satisfiability
+public import Linglib.Logic.RSRL.Satisfiability
 public import Linglib.Data.Examples.Sag2010
 public import Linglib.Data.Examples.Readers
 
