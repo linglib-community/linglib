@@ -164,7 +164,7 @@ assignments, so an exhaustified atomic plural fails there ((113)–(121)). -/
 theorem notMem_dom_intro_test_of_injOn (hwy : w ≠ y) (hH : Set.InjOn (val w) H)
     (hC : C ⊆ (Team.dep (val w) (val y))ᶜ) : H ∉ (intro y ○ test C ○ D).dom := by
   rintro ⟨_, _, ⟨J, hJ, rfl, hJC⟩, -⟩
-  exact hC hJC (Set.InjOn.factorsThrough_domRestrict (injOn_of_mem_intro hwy hH hJ))
+  exact hC hJC (Team.mem_dep_of_injOn (injOn_of_mem_intro hwy hH hJ))
 
 -- (117), (121)
 theorem notMem_dom_intro_test_singleton (hwy : w ≠ y) (hC : C ⊆ (Team.dep (val w) (val y))ᶜ) :
@@ -366,8 +366,7 @@ theorem wideScope_iff (hxy : x ≠ y) (hwx : w ≠ x) (hwy : w ≠ y) (hxw' : x 
       atomsBelow s)).Subsingleton := by
     rintro _ ⟨_, ⟨a, -, rfl⟩, rfl⟩ _ ⟨_, ⟨a', -, rfl⟩, rfl⟩
     simp [val_extend_of_ne _ _ _ _ hwy, val_extend_of_ne _ _ _ _ hwx]
-  simp only [Set.mem_inter_iff, Set.mem_compl_iff, Team.dep, Set.mem_ofPred_eq,
-    Set.factorsThrough_domRestrict_iff_of_subsingleton hw,
+  simp only [Set.mem_inter_iff, Set.mem_compl_iff, Team.mem_dep_iff_of_subsingleton_image hw,
     mem_lex₂, atomic, Set.mem_ofPred_eq, Set.image_image, Set.forall_mem_image,
     Set.image_nonempty, Set.subset_def, val_extend_self,
     val_extend_of_ne _ _ _ _ hwy, val_extend_of_ne _ _ _ _ hwx, val_extend_of_ne _ _ _ _ hxy,

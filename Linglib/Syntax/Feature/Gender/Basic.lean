@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Fintype.BigOperators
-public import Linglib.Core.Logic.Function.FactorsThrough
 
 /-!
 # Gender systems

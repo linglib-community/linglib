@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Syntax.Feature.Gender.Basic
 
 /-!

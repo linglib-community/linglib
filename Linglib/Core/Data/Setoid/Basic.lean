@@ -11,13 +11,14 @@ public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Order.Setoid.Partition
 
 /-!
-# Kernel monotonicity, meets, and decidable equality for setoids
+# Kernel monotonicity, meets, and decidable order for setoids
 
 This file adds to `Mathlib/Data/Setoid/Basic.lean` the monotonicity of `Setoid.ker` under
 composition and its equality case for an injective outer map, the relation of an indexed meet
 of setoids, the kernel of a map into a product as the meet of its coordinates' kernels, the
 classes of a meet and the order in terms of classes, the strict antitonicity of the number of
-classes on a finite type, and decidable equality of setoids on a finite type. Mathlib has the
+classes on a finite type, and decidability of the order and of equality of setoids on a finite
+type. Mathlib has the
 monotonicity for algebraic kernels (`LinearMap.ker_le_ker_comp`, `MonoidHom.comap_ker`,
 `RingHom.ker_comp_of_injective`) but not for the plain `Setoid.ker` they specialize. [UPSTREAM]
 -/
@@ -87,6 +88,12 @@ theorem Setoid.le_iff_forall_classes {α : Type*} {r s : Setoid α} :
 instance Setoid.ker.decidableRel {α β : Type*} (f : α → β) [DecidableEq β] :
     DecidableRel (⇑(Setoid.ker f)) :=
   fun a b ↦ inferInstanceAs (Decidable (f a = f b))
+
+/-- The order of setoids on a finite type is decided pairwise. [UPSTREAM] -/
+instance Setoid.decidableLEOfDecidableRel {α : Type*} [Fintype α] (s t : Setoid α)
+    [DecidableRel (⇑s)] [DecidableRel (⇑t)] : Decidable (s ≤ t) :=
+  decidable_of_iff (∀ a b, s a b → t a b)
+    ⟨fun h ↦ Setoid.le_def.2 (h _ _), fun h _ _ ↦ Setoid.le_def.1 h⟩
 
 /-- Equality of setoids on a finite type is decided pairwise. [UPSTREAM] -/
 instance Setoid.decidableEqOfDecidableRel {α : Type*} [Fintype α] (s t : Setoid α)

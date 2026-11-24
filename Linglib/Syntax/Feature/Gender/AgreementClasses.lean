@@ -10,7 +10,6 @@ public import Mathlib.Data.Set.Finite.Range
 public import Mathlib.Order.Comparable
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Linglib.Core.Data.Setoid.Basic
-public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Morphology.Paradigm.Polarity
 public import Linglib.Syntax.Feature.Gender.Basic
 
@@ -149,18 +148,6 @@ theorem convergent_or_parallel_or_convergent_or_crossed (sg : G → F) (pl : G �
     Convergent sg pl ∨ Parallel sg pl ∨ Convergent pl sg ∨ Crossed sg pl :=
   lt_or_eq_or_gt_or_incompRel _ _
 
-theorem parallel_iff_factorsThrough :
-    Parallel sg pl ↔ Function.FactorsThrough pl sg ∧ Function.FactorsThrough sg pl :=
-  le_antisymm_iff
-
-theorem convergent_iff_factorsThrough :
-    Convergent sg pl ↔ Function.FactorsThrough pl sg ∧ ¬ Function.FactorsThrough sg pl :=
-  lt_iff_le_not_ge
-
-theorem crossed_iff_factorsThrough :
-    Crossed sg pl ↔ ¬ Function.FactorsThrough pl sg ∧ ¬ Function.FactorsThrough sg pl :=
-  Iff.rfl
-
 /-- A convergent map distinguishes strictly fewer target genders in the second number. -/
 theorem Convergent.card_range_lt [Finite G] (h : Convergent sg pl) :
     Nat.card (Set.range pl) < Nat.card (Set.range sg) := by
@@ -170,11 +157,12 @@ theorem Convergent.card_range_lt [Finite G] (h : Convergent sg pl) :
 
 variable [Fintype G] [DecidableEq F] [DecidableEq F']
 
-instance : Decidable (Parallel sg pl) := decidable_of_iff _ parallel_iff_factorsThrough.symm
+instance : Decidable (Parallel sg pl) := inferInstanceAs (Decidable (Setoid.ker sg = Setoid.ker pl))
 
-instance : Decidable (Convergent sg pl) := decidable_of_iff _ convergent_iff_factorsThrough.symm
+instance : Decidable (Convergent sg pl) := decidable_of_iff _ lt_iff_le_not_ge.symm
 
-instance : Decidable (Crossed sg pl) := decidable_of_iff _ crossed_iff_factorsThrough.symm
+instance : Decidable (Crossed sg pl) :=
+  inferInstanceAs (Decidable (¬ Setoid.ker sg ≤ Setoid.ker pl ∧ ¬ Setoid.ker pl ≤ Setoid.ker sg))
 
 end NumberMap
 

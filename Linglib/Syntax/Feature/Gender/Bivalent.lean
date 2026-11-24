@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Syntax.Feature.Gender.Basic
 public import Linglib.Data.UD.Features

@@ -172,7 +172,7 @@ instance {K : Type*} [DecidableEq K] (π : Row → K) (rows : List Row) :
 theorem Determines.of_factorsThrough {K K' : Type*} {π : Row → K} {π' : Row → K'}
     (h : Function.FactorsThrough π π') {rows : List Row} (hπ : Determines π rows) :
     Determines π' rows :=
-  λ d hd d' hd' he => hπ d hd d' hd' (h he)
+  fun d hd d' hd' he ↦ hπ d hd d' hd' (h he)
 
 /-- Selection by the root (12a), where the root determines the preposition. -/
 abbrev RootDetermined (rows : List Row) : Prop := Determines Row.root rows
@@ -180,19 +180,19 @@ abbrev RootDetermined (rows : List Row) : Prop := Determines Row.root rows
 /-- Selection by the categorizing head (12b), where the root and its category determine the
 preposition, the prediction root-based selection makes as well. -/
 abbrev CategoryDetermined (rows : List Row) : Prop :=
-  Determines (λ d => (d.root, d.cat)) rows
+  Determines (fun d ↦ (d.root, d.cat)) rows
 
 /-- Joint selection, where the root, its category and the template determine the preposition. -/
 abbrev TemplateDetermined (rows : List Row) : Prop :=
-  Determines (λ d => (d.root, d.cat, d.template)) rows
+  Determines (fun d ↦ (d.root, d.cat, d.template)) rows
 
 theorem CategoryDetermined.of_rootDetermined {rows : List Row} (h : RootDetermined rows) :
     CategoryDetermined rows :=
-  h.of_factorsThrough λ _ _ he => congrArg Prod.fst he
+  h.of_factorsThrough fun _ _ he ↦ congrArg Prod.fst he
 
 theorem TemplateDetermined.of_categoryDetermined {rows : List Row}
     (h : CategoryDetermined rows) : TemplateDetermined rows :=
-  h.of_factorsThrough λ _ _ he => Prod.ext (congrArg (·.1) he) (congrArg (·.2.1) he)
+  h.of_factorsThrough fun _ _ he ↦ Prod.ext (congrArg (·.1) he) (congrArg (·.2.1) he)
 
 -- (1)
 theorem apologi_rootDetermined : RootDetermined (rows .apologi) := by decide
@@ -259,7 +259,7 @@ def activate (idx : ActivationIndex) (key : Key) : ActivationIndex :=
 /-- The tuple is exhausted and the feature it indexes is active. -/
 def IsActive (idx : ActivationIndex) : Prop := idx.remaining = []
 
-instance : DecidablePred IsActive := λ idx => inferInstanceAs (Decidable (idx.remaining = []))
+instance : DecidablePred IsActive := fun idx ↦ inferInstanceAs (Decidable (idx.remaining = []))
 
 end ActivationIndex
 
@@ -284,7 +284,7 @@ def activate (f : SelectionalFeature) (k : Key) : SelectionalFeature :=
 /-- The feature is active once its tuple is exhausted. -/
 def IsActive (f : SelectionalFeature) : Prop := f.activation.IsActive
 
-instance : DecidablePred IsActive := λ f => inferInstanceAs (Decidable f.activation.IsActive)
+instance : DecidablePred IsActive := fun f ↦ inferInstanceAs (Decidable f.activation.IsActive)
 
 variable (p : Prep) (t : Template)
 
@@ -311,16 +311,16 @@ end SelectionalFeature
 /-- The lexical entry of a root (§4), one dormant feature per attested template in which it
 selects a preposition, `[SEL: {b⟨V, XaYaZ⟩, ʕala⟨V, XaYYaZ⟩}]` for √dwr. -/
 def entry (r : Root) : List SelectionalFeature :=
-  (rows r).filterMap λ d => d.template.bind λ t => d.prep.map λ p => .dormant p t
+  (rows r).filterMap fun d ↦ d.template.bind fun t ↦ d.prep.map fun p ↦ .dormant p t
 
 /-- The derivations (24) and (25), in which the categorizing head activates the root's features
 and the template-defining head follows. -/
 def derive (r : Root) (t : Template) : List SelectionalFeature :=
-  (entry r).map λ f => (f.activate (.inl .V)).activate (.inr t)
+  (entry r).map fun f ↦ (f.activate (.inl .V)).activate (.inr t)
 
 /-- The prepositions the active features select after the derivation. -/
 def selected (r : Root) (t : Template) : List Prep :=
-  (derive r t).filterMap λ f => if f.IsActive then some f.prep else none
+  (derive r t).filterMap fun f ↦ if f.IsActive then some f.prep else none
 
 -- (24)
 theorem dwr_XaYaZ : selected .dwr .XaYaZ = [.b] := by decide
