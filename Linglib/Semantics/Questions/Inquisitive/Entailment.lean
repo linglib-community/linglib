@@ -18,6 +18,11 @@ There is a second notion of entailment, due to [groenendijk-stokhof-1984]: every
 alternative sets they go in opposite directions, because adding alternatives makes a question weaker
 in the order but harder to answer completely.
 
+Every question has a partition, which identifies two worlds when no proposition the question
+determines tells them apart. It is the finest partition whose question the question entails: taking
+the partition is left adjoint to `fromSetoid`, and the pair is a Galois insertion. See
+`Inquisitive.Proposition.gi_partition_fromSetoid`.
+
 ## References
 
 * [ciardelli-2022]
@@ -111,6 +116,42 @@ def determined (Q : Proposition (Set W)) : BooleanSubalgebra (Set W) where
 as a partition. -/
 theorem determined_fromSetoid (r : Setoid W) : (fromSetoid r).determined = r.determined :=
   SetLike.ext fun p ↦ (determines_iff_fromSetoid_le r p).symm
+
+/-! ### The partition of a question -/
+
+/-- The partition of a question identifies two worlds when no proposition that the question
+determines tells them apart. -/
+def partition (Q : Proposition (Set W)) : Setoid W := Setoid.ofProps (Q.determined : Set (Set W))
+
+/-- The partition of a question and the question of a partition are adjoint: the partition of
+`P` is the finest one whose question `P` entails. -/
+theorem gc_partition_fromSetoid :
+    GaloisConnection (partition : Proposition (Set W) → Setoid W) fromSetoid := by
+  intro Q r
+  constructor
+  · intro h s hs
+    refine mem_fromSetoid.2 fun x hx y hy ↦ h (Setoid.ofProps_iff.2 fun p hp ↦ ?_)
+    rcases mem_polar.1 (mem_determined.1 hp hs) with hsp | hsp
+    · exact iff_of_true (hsp hx) (hsp hy)
+    · exact iff_of_false (hsp hx) (hsp hy)
+  · intro h
+    rw [← Setoid.ofProps_determined r, ← determined_fromSetoid]
+    exact Setoid.ofProps_anti fun p hp ↦ h.trans hp
+
+@[simp] theorem partition_fromSetoid (r : Setoid W) : (fromSetoid r).partition = r := by
+  rw [partition, determined_fromSetoid, Setoid.ofProps_determined]
+
+/-- The adjunction is a Galois insertion: a partition is the partition of its question. -/
+def gi_partition_fromSetoid :
+    GaloisInsertion (partition : Proposition (Set W) → Setoid W) fromSetoid :=
+  gc_partition_fromSetoid.toGaloisInsertion fun r ↦ (partition_fromSetoid r).ge
+
+/-- The normal partition questions are the questions of partitions. -/
+theorem isPartition_and_isNormal_iff_mem_range [Nonempty W] :
+    P.IsPartition ∧ P.IsNormal ↔ P ∈ Set.range fromSetoid :=
+  ⟨fun ⟨h, hN⟩ ↦ ⟨toSetoid h, fromSetoid_toSetoid h hN⟩, by
+    rintro ⟨r, rfl⟩
+    exact ⟨isPartition_fromSetoid r, isNormal_fromSetoid r⟩⟩
 
 /-! ### Complete-answer entailment -/
 

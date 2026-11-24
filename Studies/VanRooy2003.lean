@@ -59,10 +59,6 @@ variable {W : Type u} {A G R : Type*}
 
 /-! ### Resolving a decision problem -/
 
-theorem iUnion_optimalityRegion [Finite A] [Nonempty A] (U : W → A → ℝ) :
-    ⋃ a, optimalityRegion U a = Set.univ :=
-  Set.eq_univ_of_forall fun w ↦ Set.mem_iUnion.2 (Finite.exists_max (U w))
-
 theorem pairwise_disjoint_optimalityRegion (U : W → A → ℝ)
     (hstrict : ∀ w, ∃ a, ∀ b, b ≠ a → U w b < U w a) :
     Pairwise (Function.onFun Disjoint (optimalityRegion U)) := by
@@ -175,6 +171,18 @@ theorem newspaper_mentionSome (κ : Kernel NewsW Walk) [IsMarkovKernel κ]
       valueOfInformation (decisionValue newspaper) Kernel.id newsPrior :=
   Proposition.valueOfInformation_eq_id_of_forall_mem_issue newspaper newsPrior hκ
     (Proposition.optimalityRegion_mem_issue newspaper)
+
+/-- The only partition question the newspaper problem calls for is the trivial one, since its
+two mention-some answers overlap. -/
+theorem partition_issue_newspaper : (Proposition.issue newspaper).partition = ⊤ := by
+  have h := (Proposition.partition_issue_le_iff newspaper).1 le_rfl
+  have hb (x : NewsW) : (Proposition.issue newspaper).partition x .both := by
+    cases x
+    · exact h _ _ newspaper_station_resolves
+    · exact h _ _ (isResolved_iff_exists_subset_optimalityRegion.2
+        ⟨.palace, newspaper_optimalityRegions.2.ge⟩)
+    · exact Setoid.refl' _ _
+  exact Setoid.eq_top_iff.2 fun w v ↦ Setoid.trans' _ (hb w) (Setoid.symm' _ (hb v))
 
 /-- A respondent who names the station whether or not the newspaper is sold there is worth
 less. -/

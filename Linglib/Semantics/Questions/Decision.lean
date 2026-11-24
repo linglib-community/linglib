@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.Decision.ValueOfInformation
-public import Linglib.Semantics.Questions.Inquisitive.OfPartition
+public import Linglib.Semantics.Questions.Inquisitive.Entailment
 
 /-!
 # The value of a question
@@ -19,7 +19,9 @@ information of the experiment that reveals the answer. On finitely many worlds t
 utility value of the answers, weighted by their probabilities.
 
 Information resolves a decision problem when one action is best in every world that it leaves open.
-The information that resolves the problem forms an inquisitive question, `issue U`. Information
+The information that resolves the problem forms an inquisitive question, `issue U`. It is the
+mention-some reading of the propositions that the actions are best, and their exhaustive reading
+entails it (`issue_eq_generate`, `fromSetoid_ofProps_optimalityRegion_le_issue`). Information
 that resolves each of several problems forms the meet of their issues, which is the issue of
 choosing an action in each (`iInf_issue`), and the problems together call for the answer to a
 partition question exactly when any two worlds that every one of them can treat alike lie in one
@@ -86,6 +88,11 @@ theorem isResolved_iff_exists_subset_optimalityRegion :
 theorem IsResolved.mono (h : IsResolved U D) (hCD : C ⊆ D) : IsResolved U C :=
   h.imp fun _ ha b w hw ↦ ha b w (hCD hw)
 
+variable (U) in
+/-- With finitely many actions, some action is best in each world. -/
+theorem iUnion_optimalityRegion [Finite A] [Nonempty A] : ⋃ a, optimalityRegion U a = Set.univ :=
+  Set.eq_univ_of_forall fun w ↦ Set.mem_iUnion.2 (Finite.exists_max (U w))
+
 end Resolved
 
 /-! ### The issue of a decision problem -/
@@ -125,6 +132,19 @@ theorem fromSetoid_le_issue_iff {Q : Setoid W} :
   · exact (issue U).empty_mem
   · exact (h w).mono fun x hx ↦ mem_fromSetoid.1 hq x hx w hw
 
+/-- Saying exactly which actions are best resolves the decision problem: the exhaustive reading
+of the optimality regions entails the issue, their mention-some reading. -/
+theorem fromSetoid_ofProps_optimalityRegion_le_issue [Finite A] :
+    fromSetoid (Setoid.ofProps (Set.range (optimalityRegion U))) ≤ issue U := by
+  rw [issue_eq_generate]
+  exact fromSetoid_ofProps_le_generate (by rw [Set.sUnion_range, iUnion_optimalityRegion])
+
+/-- The partition a decision problem calls for is finer than `Q` exactly when any two worlds
+with a common best action lie in one cell of `Q`. -/
+theorem partition_issue_le_iff {Q : Setoid W} :
+    (issue U).partition ≤ Q ↔ ∀ w v, IsResolved U {w, v} → Q w v :=
+  (gc_partition_fromSetoid _ _).trans le_fromSetoid_iff
+
 end Issue
 
 /-! ### Several decision problems -/
@@ -159,12 +179,7 @@ theorem iInf_issue [Fintype ι] :
 exactly when any two worlds that every one of them can treat alike lie in one cell. -/
 theorem iInf_issue_le_fromSetoid_iff {Q : Setoid W} :
     ⨅ i, issue (U i) ≤ fromSetoid Q ↔ ∀ w v, (∀ i, IsResolved (U i) {w, v}) → Q w v := by
-  constructor
-  · intro h w v hres
-    exact mem_fromSetoid.1 (h (mem_iInf_iff.2 fun i ↦ hres i)) w (by simp) v (by simp)
-  · intro h C hC
-    refine mem_fromSetoid.2 fun x hx y hy ↦ h x y fun i ↦ (mem_iInf_iff.1 hC i).mono ?_
-    rintro z (rfl | rfl) <;> assumption
+  simp only [le_fromSetoid_iff, mem_iInf_iff, mem_issue]
 
 end Family
 
