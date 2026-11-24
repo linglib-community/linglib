@@ -27,7 +27,7 @@ second](##japanese_ni).
 
 A map has its own functions, at the grain at which some language tells them apart, so each map is
 a graph on its own type of nodes, and `toFunction` gives the function of a case or adposition
-each node stands for. Direction is motion to a goal in any localization, and the source of the
+each node stands for. Direction is motion to a goal in any configuration, and the source of the
 instrumental map covers the giver of *a pension from the government* with the place of *aus
 Paris*.
 
@@ -79,7 +79,7 @@ inductive DativeFunction where
 namespace DativeFunction
 
 /-- The function of a case or adposition a node stands for, direction as the goal with no
-localization. -/
+configuration. -/
 def toFunction : DativeFunction → Case.Function
   | direction => .spatial none .goal
   | purpose => .purpose
@@ -90,7 +90,7 @@ def toFunction : DativeFunction → Case.Function
   | beneficiary => .beneficiary
   | judicantis => .judicantis
 
-/-- The node a function belongs to, a goal in any localization to direction. -/
+/-- The node a function belongs to, a goal in any configuration to direction. -/
 def ofFunction : Case.Function → Option DativeFunction
   | .spatial _ .goal => some direction
   | .purpose => some purpose
@@ -181,7 +181,7 @@ inductive InstrumentalFunction where
 namespace InstrumentalFunction
 
 /-- The function of a case or adposition a node stands for, source as the source with no
-localization. -/
+configuration. -/
 def toFunction : InstrumentalFunction → Case.Function
   | recipient => .argument .R
   | beneficiary => .beneficiary
@@ -193,7 +193,7 @@ def toFunction : InstrumentalFunction → Case.Function
   | passiveAgent => .passiveAgent
   | source => .spatial none .source
 
-/-- The node a function belongs to, a source in any localization to source. -/
+/-- The node a function belongs to, a source in any configuration to source. -/
 def ofFunction : Case.Function → Option InstrumentalFunction
   | .argument .R => some recipient
   | .beneficiary => some beneficiary

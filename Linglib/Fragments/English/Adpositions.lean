@@ -17,7 +17,7 @@ The central prepositions of English as `Adposition` entries, after the Cambridge
 ## Main results
 
 * `English.Adpositions.cells_biUnion_functions`: the location, goal and source prepositions fill
-  every localization.
+  every configuration.
 * `English.Adpositions.exists_direction?_eq_source_iff`: the source prepositions are *from*, *away*,
   *off* and *out*.
 
@@ -167,11 +167,11 @@ def inventory : List Adposition :=
   [at_, to_, from_, on, onto, off, in_, into, out, away, by_, with_, for_, of_, ago]
 
 open Case.Function (cells) in
-/-- The location, goal and source prepositions fill every localization
+/-- The location, goal and source prepositions fill every configuration
 ([huddleston-pullum-2002] p. 648). -/
 theorem cells_biUnion_functions :
     cells (inventory.toFinset.biUnion Adposition.functions) =
-      .univ ×ˢ ({.place, .goal, .source} : Finset Case.Direction) := by
+      .univ ×ˢ ({.place, .goal, .source} : Finset Locative.Direction) := by
   decide
 
 /-- There are no source prepositions beside *from*, *away*, *off* and *out*

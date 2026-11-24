@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.PathShape
+public import Linglib.Semantics.Locative.Shape
 public import Mathlib.Algebra.Order.Group.Abs
 public import Studies.Stassen1985
 public import Studies.Zwarts2005
@@ -48,7 +48,7 @@ predicate saturated by its subject. The paper leaves the mode of combination ope
 
 namespace Schwarzschild2012
 
-open Case Order Zwarts2005
+open Case Locative Order Zwarts2005
 
 /-- (5): A directed scale segment, with the measure of its scale. -/
 structure Segment (E D : Type*) where

@@ -786,7 +786,6 @@ import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Category.Adjective.Basic
 import Linglib.Syntax.Category.Adjective.ClauseEmbedding
 import Linglib.Syntax.Category.Adposition.Basic
-import Linglib.Syntax.Category.Adposition.Spatial
 import Linglib.Syntax.Category.Auxiliary.Basic
 import Linglib.Syntax.Category.Classifier.Basic
 import Linglib.Syntax.Category.Complementizer.Basic

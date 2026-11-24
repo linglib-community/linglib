@@ -23,15 +23,15 @@ definitions of their markers](##Case.isMarker_roles_functions).
 The recipient is the role `R`, the recipient of a transfer verb together with what is coded like
 it; [malchukov-narrog-2009]'s general map of case functions likewise sets A, P, T and R beside
 the instrument, the beneficiary and the possessor. A spatial function is a direction with or
-without a localization, the two dimensions of a system of spatial cases, with a series that
-leaves the localization unspecified ([creissels-2009], [haspelmath-2009]). Functions with no
+without a configuration, the two dimensions of a system of spatial cases, with a series that
+leaves the configuration unspecified ([creissels-2009], [haspelmath-2009]). Functions with no
 name of their own carry the name of the case value, as `essive`: the labels of the peripheral
 cases are close enough to semantic roles to name them ([haspelmath-2009]).
 
 `Case.functions` gives the positive half of a name: a case called nominative also has to leave P
 unmarked, which is a fact about the other cases of its language (`Alignment.IsNominativeMarker`).
-A spatial value is named for its direction in its localization. The allative and the ablative
-are named both for the goal and the source with no localization, the basic terms for those
+A spatial value is named for its direction in its configuration. The allative and the ablative
+are named both for the goal and the source with no configuration, the basic terms for those
 directions, and for those of the exterior, as in the Uralic series ([haspelmath-2009]); a
 fragment states which its case has. The oblique
 is named for no function.
@@ -51,14 +51,16 @@ is named for no function.
 
 namespace Case
 
+open Locative
+
 
 /-- The functions a case or an adposition marks, the nodes of [haspelmath-2003]'s maps of dative
 and of instrumental functions among them. -/
 inductive Function where
   /-- A core argument or an object of a transfer verb, the recipient as `R`. -/
   | argument (r : ArgumentRole)
-  /-- Location at a place, or motion to, from or past it, in a localization of it or in none. -/
-  | spatial (l : Option Localization) (d : Direction)
+  /-- Location at a place, or motion to, from or past it, in a configuration of it or in none. -/
+  | spatial (l : Option Configuration) (d : Direction)
   /-- The limit a motion or a time reaches (*as far as*, *until*). -/
   | terminative
   /-- The possessor in a noun phrase (*Adam's apple*). -/
@@ -114,8 +116,8 @@ def direction? : Function → Option Direction
   | terminative => some .goal
   | _ => none
 
-/-- The localization of a spatial function. -/
-def localization? : Function → Option Localization
+/-- The configuration of a spatial function. -/
+def configuration? : Function → Option Configuration
   | spatial l _ => l
   | _ => none
 
@@ -127,6 +129,11 @@ def shape? : Function → Option Shape
   | terminative => some .terminative
   | _ => none
 
+/-- The locative of a function, its configuration and the mode of its path, static where it has
+no path. -/
+def _root_.Locative.ofFunction (f : Function) : Locative :=
+  { configuration := f.configuration?, mode := f.shape?.elim .static .directional }
+
 /-- The type of case a function belongs to: the arguments, the possessor, the partitive and the
 vocative to the grammatical cases, as `Case.kind` has their values. -/
 def kind : Function → Kind
@@ -134,11 +141,11 @@ def kind : Function → Kind
   | spatial _ _ | terminative => .spatial
   | _ => .semantic
 
-/-- The localization-direction pairs among a set of functions. -/
-def cells (fs : Finset Function) : Finset (Localization × Direction) :=
+/-- The pairs of a configuration and a direction among a set of functions. -/
+def cells (fs : Finset Function) : Finset (Configuration × Direction) :=
   Finset.univ.filter fun p ↦ spatial (some p.1) p.2 ∈ fs
 
-@[simp] theorem mem_cells {fs : Finset Function} {p : Localization × Direction} :
+@[simp] theorem mem_cells {fs : Finset Function} {p : Configuration × Direction} :
     p ∈ cells fs ↔ spatial (some p.1) p.2 ∈ fs := by
   simp [cells]
 
@@ -174,20 +181,20 @@ def functions : Case → Finset Function
   | ter => {.terminative}
   | all => {.spatial none .goal, .spatial (some .exterior) .goal}
   | abl => {.spatial none .source, .spatial (some .exterior) .source}
-  | c => (c.dirOf.map (.spatial c.localizationOf)).toFinset
+  | c => (c.dirOf.map (.spatial c.configurationOf)).toFinset
 
 /-- A value is named for functions of its direction. -/
 theorem direction?_eq_dirOf_of_mem_functions (c : Case) :
     ∀ f ∈ c.functions, f.direction? = c.dirOf := by
-  cases c <;> simp [functions, Function.direction?, dirOf, localizationOf]
+  cases c <;> simp [functions, Function.direction?, dirOf, configurationOf]
 
 /-- A value is named for functions of the shape of its path. -/
 theorem shape?_eq_of_mem_functions (c : Case) : ∀ f ∈ c.functions, f.shape? = c.shape? := by
-  cases c <;> simp [functions, Function.shape?, shape?, dirOf, localizationOf]
+  cases c <;> simp [functions, Function.shape?, shape?, dirOf, configurationOf]
 
 /-- A value is named for functions of its type. -/
 theorem kind_eq_of_mem_functions (c : Case) : ∀ f ∈ c.functions, f.kind = c.kind := by
-  cases c <;> simp [functions, Function.kind, kind, dirOf, localizationOf]
+  cases c <;> simp [functions, Function.kind, kind, dirOf, configurationOf]
 
 open Alignment in
 /-- The four core values are named for roles that meet [haspelmath-2022]'s definitions of the

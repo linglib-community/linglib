@@ -151,7 +151,7 @@ structure Aspect where
       *leave*, and `.place` for a verb of manner of motion, which displaces its theme without a
       direction ([levin-hovav-1995] p. 147, *roll*, *walk*, *swim* against *arrive*, *come*,
       *fall*), and `none` for a verb that says nothing of its theme's path. -/
-  direction : Option Case.Direction := none
+  direction : Option Locative.Direction := none
   /-- The [krifka-1998] incrementality class of the theme relation, `none` for intransitives
       and clause-embedding verbs. -/
   incrementality : Option Incrementality := none

@@ -1,26 +1,27 @@
 module
 
 public import Linglib.Core.Order.Crossing
-public import Linglib.Syntax.Feature.Case.Spatial
+public import Linglib.Semantics.Locative.Basic
 
 /-!
 # Shapes of paths
 
 A path has a *shape* relative to a region: it is cofinal if it enters the region, coinitial if
-it leaves it, transitive if it crosses it, and so on for the eight shapes of `Case.Shape`. This
-file defines `Case.HasShape`, which gives each shape its condition on a map from a bounded
-linear order, and proves how shapes behave under reparametrization, reversal and concatenation.
+it leaves it, transitive if it crosses it, and so on for the eight shapes of `Locative.Shape`.
+This file defines `Locative.HasShape`, which gives each shape its condition on a map from a
+bounded linear order, and proves how shapes behave under reparametrization, reversal and
+concatenation.
 
 ## Main definitions
 
-* `Case.HasShape`: a map has a shape relative to a region.
+* `Locative.HasShape`: a map has a shape relative to a region.
 
 ## Main results
 
-* `Case.exists_hasShape_iff`: a map that meets a region has a shape if and only if the positions
+* `Locative.exists_hasShape_iff`: a map that meets a region has a shape if and only if the positions
   it sends into the region are one stretch.
-* `Case.hasShape_reverse`: reversing a series reverses its shape.
-* `Case.HasShape.concat`, `Case.HasShape.not_concat`: concatenation keeps a shape without a
+* `Locative.hasShape_reverse`: reversing a series reverses its shape.
+* `Locative.HasShape.concat`, `Locative.HasShape.not_concat`: concatenation keeps a shape without a
   transition and never keeps one with a transition.
 
 ## References
@@ -31,7 +32,7 @@ linear order, and proves how shapes behave under reparametrization, reversal and
 
 @[expose] public section
 
-namespace Case
+namespace Locative
 
 open Order OrderDual Set
 open scoped SetRel
@@ -246,4 +247,4 @@ theorem HasShape.not_concat (hs : s.IsBounded) (hp : HasShape R p d s) (hq : Has
 
 end Series
 
-end Case
+end Locative

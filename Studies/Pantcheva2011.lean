@@ -3,14 +3,14 @@ module
 public import Linglib.Morphology.Paradigm.Contiguity
 public import Linglib.Core.Algebra.Order.Interval.Set.Instances
 public import Mathlib.Topology.UnitInterval
-public import Linglib.Semantics.PathShape
+public import Linglib.Semantics.Locative.Shape
 public import Studies.Zwarts2005
 
 /-!
 # Pantcheva (2011): Decomposing Path
 
 Pantcheva classifies paths by their shape relative to a region, crossing direction with
-transition (`Case.Shape`). The shapes with a transition are those
+transition (`Locative.Shape`). The shapes with a transition are those
 [Zwarts's closure under concatenation counts as bounded](##Pantcheva2011.cumulative_hasShape_iff).
 [A goal path followed by a source path](##Pantcheva2011.crosses_of_concat) is a route path,
 while the reverse order [yields no shape at all](##Pantcheva2011.not_hasShape_of_concat), which
@@ -18,7 +18,7 @@ she takes up as the absence of any preposition for such a path, and which
 [reversing a route path](##Pantcheva2011.crosses_reverse) cannot derive.
 
 The directional heads Place, Goal, Source and Route form the containment sequence of
-`Case.Direction`, and a syncretism pattern over the four is a paradigm over that sequence.
+`Locative.Direction`, and a syncretism pattern over the four is a paradigm over that sequence.
 Two constraints restrict the patterns: the *ABA generalization of Bobaljik (then circulating in
 manuscript), on which a syncretism targets only adjacent heads, the same contiguity that governs
 nominal case in Caha's analysis; and *A&¬A, on which Goal and Source never share a marker, because
@@ -55,7 +55,7 @@ are its corollaries. The attested lexicalization patterns are described in prose
 namespace Pantcheva2011
 
 open Morphology
-open Case Order Zwarts2005
+open Locative Order Zwarts2005
 
 /-- A syncretism pattern assigns form-class indices to the four path roles, in containment order
 Place, Goal, Source, Route, as the four-cell instance of `Morphology.Paradigm`. -/

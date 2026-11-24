@@ -32,7 +32,7 @@ but *af* 'off' is also a preposition, and the complement of a non-spatial prepos
 
 * The values an entry marks are those of the uses its docstring lists: *voor* marks a place,
   'in front of', a time, 'before', and a beneficiary, 'for'. The spatial functions are computed
-  from the directions, with no localization, since the grammar does not record it; *door* marks
+  from the directions, with no configuration, since the grammar does not record it; *door* marks
   a cause and a means besides its spatial uses, and its agent use is not recorded. The
   grammar's complement types are the root's, a *te*-infinitive counting as a clause.
 * The direction of a position records the grammar's classification of the use as locational or
@@ -67,7 +67,7 @@ structure Adposition extends _root_.Adposition where
   /-- `direction l` is `.place` when the use in position `l` is locational and `.goal`, `.source`
   or `.route` when it denotes a path whose endpoint, starting point or interior is the reference
   object; it is `none` when the entry has no spatial use in `l` or does not take `l`. -/
-  direction : _root_.Adposition.Linearization → Option Case.Direction := fun _ ↦ none
+  direction : _root_.Adposition.Linearization → Option Locative.Direction := fun _ ↦ none
   /-- The complement can be replaced by an R-word, as *met de pop* 'with the doll' beside *er
   ... mee* 'with it'. -/
   rPronoun : Bool := true
@@ -94,21 +94,21 @@ def locational (form : String) : Adposition :=
 
 /-- `directional form d ls` is the adposition over a noun phrase denoting a path in direction `d`
 in each of the positions `ls`, by default a preposition. -/
-def directional (form : String) (d : Case.Direction)
+def directional (form : String) (d : Locative.Direction)
     (ls : Finset _root_.Adposition.Linearization := {.pre}) : Adposition :=
   { preposition form {.spatial none d} with
     linearization := ls, direction := fun l ↦ if l ∈ ls then some d else none }
 
 /-- `ambipositional form d` is the spatial adposition over a noun phrase that is locational
 before its complement and denotes a path in direction `d` after it. -/
-def ambipositional (form : String) (d : Case.Direction) : Adposition :=
+def ambipositional (form : String) (d : Locative.Direction) : Adposition :=
   { preposition form {.spatial none .place, .spatial none d} with
     linearization := {.pre, .post},
     direction := fun | .pre => some .place | .post => some d | _ => none }
 
 /-- `circumposition first second d` is the circumposition *first … second* over a noun phrase,
 denoting a path in direction `d`, or locational when `d` is `.place`. -/
-def circumposition (first second : String) (d : Case.Direction) : Adposition :=
+def circumposition (first second : String) (d : Locative.Direction) : Adposition :=
   { morphs := [.free first, .free second], linearization := {.circum},
     functions := {.spatial none d}, complements := {some .np},
     direction := fun | .circum => some d | _ => none }
