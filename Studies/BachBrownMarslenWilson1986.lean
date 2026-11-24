@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.BachBrownMarslenWilson1986
 public import Linglib.Data.Statistics.BachBrownMarslenWilson1986
-public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Linglib.Syntax.DependencyGraph.Projectivity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fin.Rev
 public import Mathlib.Order.Interval.Finset.Fin

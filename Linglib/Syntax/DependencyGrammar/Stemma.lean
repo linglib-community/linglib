@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Linglib.Syntax.DependencyGraph.Projectivity
 public import Linglib.Morphology.Word.Basic
 
 /-!

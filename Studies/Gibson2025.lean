@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.DependencyGrammar.Projectivity
-public import Linglib.Syntax.DependencyGrammar.HeadDirection
-public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Syntax.DependencyGraph.Projectivity
+public import Linglib.Syntax.DependencyGraph.HeadDirection
+public import Linglib.Syntax.DependencyGraph.Length
 public import Linglib.Syntax.DependencyGrammar.Stemma
 public import Linglib.Syntax.WordOrder
 public import Linglib.Morphology.Word.Basic

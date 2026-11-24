@@ -5,7 +5,7 @@ public import Linglib.Languages.English.Nouns
 public import Linglib.Languages.English.Pronouns
 public import Linglib.Languages.English.TemporalDeictic
 public import Linglib.Languages.English.Verbs.Inventory
-public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Linglib.Syntax.DependencyGraph.Projectivity
 public import Linglib.Syntax.WordOrder
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Core.Relation.ReflTransGen

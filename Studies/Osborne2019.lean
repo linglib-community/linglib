@@ -7,7 +7,7 @@ public import Linglib.Languages.English.Auxiliaries
 public import Linglib.Languages.English.Adpositions
 public import Linglib.Syntax.DependencyGrammar.Valency
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Syntax.DependencyGrammar.Catena
+public import Linglib.Syntax.DependencyGraph.Catena
 public import Linglib.Syntax.DependencyGrammar.Stemma
 
 /-!
