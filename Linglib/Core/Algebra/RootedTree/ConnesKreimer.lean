@@ -453,19 +453,21 @@ theorem lcoeff_mul [DecidableEq T] (F : Forest T) (x y : ConnesKreimer R T) :
         by_cases hA : G = p.1 <;> by_cases hB : H = p.2 <;> simp_all
   simpa using LinearMap.congr_fun (LinearMap.congr_fun h x) y
 
-/-- Renaming along an injective map is injective: the coefficient of `F.map f` in `rename f p` is
-that of `F` in `p`. -/
-theorem rename_injective {T' : Type*} {f : T → T'} (hf : Function.Injective f) :
-    Function.Injective (rename (R := R) f) := by
+/-- Along an injective map, the coefficient of the image of a forest in a renamed element is the
+coefficient of the forest in the element. -/
+theorem lcoeff_map_comp_rename {T' : Type*} {f : T → T'} (hf : Function.Injective f)
+    (F : Forest T) :
+    lcoeff R (F.map f) ∘ₗ (rename (R := R) f).toLinearMap = lcoeff R F := by
   classical
-  intro p q h
-  have key (F : Forest T) :
-      lcoeff R (F.map f) ∘ₗ (rename (R := R) f).toLinearMap = lcoeff R F :=
-    lhom_ext' fun G ↦ by
-      simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, rename_of', lcoeff_apply,
-        coeff_of', (Multiset.map_injective hf).eq_iff]
-  exact ext_coeff fun F ↦ (LinearMap.congr_fun (key F) p).symm.trans
-    ((congrArg (lcoeff R (F.map f)) h).trans (LinearMap.congr_fun (key F) q))
+  exact lhom_ext' fun G ↦ by
+    simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, rename_of', lcoeff_apply,
+      coeff_of', (Multiset.map_injective hf).eq_iff]
+
+/-- Renaming along an injective map is injective. -/
+theorem rename_injective {T' : Type*} {f : T → T'} (hf : Function.Injective f) :
+    Function.Injective (rename (R := R) f) := fun p q h ↦
+  ext_coeff fun F ↦ (LinearMap.congr_fun (lcoeff_map_comp_rename hf F) p).symm.trans
+    ((congrArg (lcoeff R (F.map f)) h).trans (LinearMap.congr_fun (lcoeff_map_comp_rename hf F) q))
 
 /-! ## The counit -/
 
