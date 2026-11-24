@@ -5,8 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.TierStrictlyLocal
-public import Linglib.Phonology.Subregular.WordModel
+public import Linglib.Phonology.Subregular.Stringset.TierStrictlyLocal
 public import Linglib.Core.Computability.Definite
 public import Linglib.Core.Computability.LocallyTestable
 public import Linglib.Core.Computability.PiecewiseTestable
@@ -31,10 +30,8 @@ tier](##Language.mem_iff_of_mem_multitier). When `𝒞` is the class of language
 by an invariant of the word, such as its suffix of length `k`, and the alphabet is finite, the
 converse holds: the multitier extension consists of [the languages deciding membership by the
 invariants of the tier projections](##Language.mem_multitier_factorsThrough_iff). For the definite
-languages and their relatives these are the Boolean combinations of Lambert's tier affixes, and
-for the strictly local languages of width two or more, which generate the locally testable ones,
-the invariant is the test vector of a word. The finite and cofinite languages have no such
-invariant, but their multitier extension [is piecewise
+languages and their relatives these are the Boolean combinations of Lambert's tier affixes. The
+finite and cofinite languages have no such invariant, but their multitier extension [is piecewise
 testable](##Language.exists_isPiecewiseTestable_of_mem_multitierFiniteOrCofinite).
 
 ## Implementation notes
@@ -205,25 +202,6 @@ theorem multitierReverseDefinite_le_multitierGeneralizedDefinite :
 theorem IsTierStrictlyLocal.mem_multitierLocallyTestable (h : L.IsTierStrictlyLocal k) :
     L ∈ multitierLocallyTestable k :=
   tierBased_subset_multitier (isTierStrictlyLocal_iff_mem_tierBased.1 h)
-
-/-- Over a finite alphabet and for `2 ≤ k`, the multitier locally testable languages are the
-multitier extension of the locally `k`-testable languages as well, since the strictly `k`-local
-languages generate those. -/
-theorem multitier_isLocallyTestable [Finite α] (hk : 2 ≤ k) :
-    multitier {K : Language α | K.IsLocallyTestable k} = multitierLocallyTestable k := by
-  have h : {K : Language α | K.IsLocallyTestable k} =
-      (closure {K : Language α | K.IsStrictlyLocal k} : Set (Language α)) :=
-    Set.ext fun _ ↦ isLocallyTestable_iff_mem_closure hk
-  rw [h, multitier_closure, multitierLocallyTestable]
-
-/-- Over a finite alphabet and for `2 ≤ k`, a language is multitier locally testable with window
-`k` exactly when the `k`-test vectors of the tier projections of a word decide its membership. -/
-theorem mem_multitierLocallyTestable_iff [Finite α] (hk : 2 ≤ k) :
-    L ∈ multitierLocallyTestable k ↔ ∀ w w' : List α,
-      (∀ (T : α → Prop) [DecidablePred T],
-        (w.filter T).kTestVector k = (w'.filter T).kTestVector k) → (w ∈ L ↔ w' ∈ L) := by
-  rw [← multitier_isLocallyTestable hk]
-  exact mem_multitier_factorsThrough_iff (List.finite_range_kTestVector k)
 
 /-! ### Reversal
 

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Phonology.Subregular.WeakDeterminism
+public import Linglib.Phonology.Subregular.Function.WeakDeterminism
 public import Linglib.Phonology.Tone.Plateauing
 
 /-!

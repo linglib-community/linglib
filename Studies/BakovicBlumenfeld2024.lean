@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.RuleInteraction
-public import Linglib.Phonology.Subregular.LocalRewrite
+public import Linglib.Phonology.Subregular.Function.LocalRewrite
 public import Linglib.Languages.Finnish.Phonology
 public import Linglib.Languages.Turkish.Phonology
 

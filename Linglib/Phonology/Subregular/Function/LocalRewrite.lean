@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Segmental.Basic
-public import Linglib.Phonology.Subregular.ISL
+public import Linglib.Phonology.Subregular.Function.ISL
 public import Mathlib.Data.Finset.Piecewise
 
 /-!

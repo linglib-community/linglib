@@ -3,7 +3,7 @@ module
 public import Mathlib.Order.FixedPoints
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.IntervalCases
-public import Linglib.Phonology.Subregular.BMRS
+public import Linglib.Phonology.Subregular.Function.BMRS
 
 /-!
 # Yolyan and Comer (2026): Phonological Processes as Modal Transductions

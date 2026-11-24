@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Computability.Language
-public import Linglib.Phonology.Subregular.Boundary
+public import Linglib.Phonology.Subregular.Stringset.Boundary
 public import Linglib.Core.Computability.LocallyTestable
 public import Linglib.Core.Relation.SetRel
 

@@ -7,8 +7,8 @@ module
 
 public import Mathlib.Computability.Language
 public import Linglib.Phonology.Autosegmental.MergeAR
-public import Linglib.Phonology.Subregular.AutosegmentalStrictlyLocal
-public import Linglib.Phonology.Subregular.TierStrictlyLocal
+public import Linglib.Phonology.Subregular.Stringset.AutosegmentalStrictlyLocal
+public import Linglib.Phonology.Subregular.Stringset.TierStrictlyLocal
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Data.Examples.Jardine2019
 public import Linglib.Data.Examples.Readers

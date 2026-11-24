@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Linglib.Phonology.Subregular.Multitier
+public import Linglib.Phonology.Subregular.Stringset.Multitier
 public import Linglib.Core.Computability.Variety.Definite
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 

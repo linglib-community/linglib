@@ -6,8 +6,8 @@ public import Linglib.Languages.Punjabi.Phonology
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Transderivational
 public import Linglib.Phonology.RuleInteraction
 public import Linglib.Phonology.Harmony.Nasal
-public import Linglib.Phonology.Subregular.ForbiddenPairs
-public import Linglib.Phonology.Subregular.LocalRewrite
+public import Linglib.Phonology.Subregular.Stringset.ForbiddenPairs
+public import Linglib.Phonology.Subregular.Function.LocalRewrite
 
 /-!
 # Paramore and Bennett (2026): Covert URs: Evidence from nasalization in Panjabi

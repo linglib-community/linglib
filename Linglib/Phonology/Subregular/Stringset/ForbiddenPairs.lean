@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.TierStrictlyLocal
+public import Linglib.Phonology.Subregular.Stringset.TierStrictlyLocal
 public import Linglib.Core.Data.List.Chain
 
 /-!

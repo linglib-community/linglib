@@ -9,7 +9,7 @@ public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Core.Computability.ElgotMezei
 public import Linglib.Data.Wordlist.McCollumEtAl2020
-public import Linglib.Phonology.Subregular.Dependence
+public import Linglib.Phonology.Subregular.Function.Dependence
 
 /-!
 # McCollum, Baković, Mai and Meinhardt (2020): Unbounded circumambient patterns

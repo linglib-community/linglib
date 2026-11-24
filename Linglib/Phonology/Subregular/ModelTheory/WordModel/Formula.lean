@@ -7,10 +7,10 @@ module
 
 public import Linglib.Core.ModelTheory.Semantics
 public import Linglib.Core.Data.List.DropRight
-public import Linglib.Phonology.Subregular.WordModel.Defs
+public import Linglib.Phonology.Subregular.ModelTheory.WordModel.Basic
 
 /-!
-# String models
+# Terms and formulas of string models
 
 This file defines the string models of Chandlee and Jardine, the first-order structures over
 which quantifier-free formulas state local conditions on strings. The string model of a word has
@@ -25,8 +25,8 @@ These formulas are the guards of logical transductions.
 ## Main definitions
 
 * `Subregular.stringLanguage`: the signature $\{s, p, P_a\}$.
-* `Subregular.StringModel`: the string model of a word, the successor word model of
-  `Subregular.WordModel` in which a symbol is its own label.
+* The string model of a word `w` is its word model `WordModel ({·}) w`, in which a symbol is its
+  own label, under the structure of `Subregular.stringLanguage` defined here.
 * `Subregular.StringFormula`: formulas in the position variable, with `StringFormula.HoldsAt`.
 * `StringFormula.Bounded l r`: quantifier-free, with terms at most `l` back and `r` forward.
 * `StringFormula.window r u`: the last `r` symbols before the position spell `u`.
@@ -39,12 +39,12 @@ These formulas are the guards of logical transductions.
 
 ## Implementation notes
 
-A string model is the successor word model of `Subregular.WordModel` on the same positions, read
+A string model is a word model of `Subregular.WordModel`, on the same positions, read
 through function symbols where the word model has a binary relation: over a relation a
 quantifier-free formula cannot leave its variables, and the window is reached here through the
 functions. The two readings share the linear order of the positions. The functions are its successor
 and predecessor, which fix the last and the first position, and the relation is its covering
-relation; `WordModel.relMap_ord_covBy_iff` states one through the other. The positions interpret the
+relation; `WordModel.relMap_ord_succ_iff` states one through the other. The positions interpret the
 functional signature under any labelling, and the formulas of this file are stated for the
 conventional one, where a symbol is its own label. `HoldsAt` evaluates at a natural-number position,
 false off the word, as the docking processes and transductions scan positions by index. The terms of
@@ -81,30 +81,26 @@ variable {α : Type u}
 
 /-! ### The string model of a word -/
 
-/-- The string model of `w`: its positions as a successor word model in which a symbol is its own
-one label, read through the successor and predecessor functions. -/
-abbrev StringModel (w : List α) : Type := WordModel ({·}) w (· ⋖ ·)
-
 namespace WordModel
 
-variable {β P : Type*} {ℓ : β → Set P} {u : List β} {R : Fin u.length → Fin u.length → Prop}
+variable {β P : Type*} {ℓ : β → Set P} {u : List β}
 
 /-- The positions of a word interpret the functions as the successor and predecessor that fix the
 last and the first position, and the labels as those of the symbol. -/
-instance : (stringLanguage P).Structure (WordModel ℓ u R) where
+instance : (stringLanguage P).Structure (WordModel ℓ u) where
   funMap
     | .succ, x => (x 0).succ
     | .pred, x => (x 0).pred
   RelMap
     | .label p, x => p ∈ ℓ (x 0).label
 
-@[simp] theorem relMap_stringLabel (p : P) (x : Fin 1 → WordModel ℓ u R) :
+@[simp] theorem relMap_stringLabel (p : P) (x : Fin 1 → WordModel ℓ u) :
     Structure.RelMap (L := stringLanguage P) (StringRel.label p) x ↔ p ∈ ℓ (x 0).label := .rfl
 
 end WordModel
 
 instance {w : List α} [DecidableEq α] :
-    ∀ (n : ℕ) (R : (stringLanguage α).Relations n) (x : Fin n → StringModel w),
+    ∀ (n : ℕ) (R : (stringLanguage α).Relations n) (x : Fin n → WordModel ({·}) w),
       Decidable (RelMap R x)
   | _, .label a, x => decidable_of_iff ((x 0).label = a)
       ⟨fun h ↦ Set.mem_singleton_iff.2 h.symm, fun h ↦ (Set.mem_singleton_iff.1 h).symm⟩
@@ -131,13 +127,13 @@ def back : ℕ → StringTerm α
 
 variable {w : List α} {γ : Type*}
 
-@[simp] theorem realize_succ (v : Fin 1 → StringModel w) (t : StringTerm α) :
+@[simp] theorem realize_succ (v : Fin 1 → WordModel ({·}) w) (t : StringTerm α) :
     t.succ.realize v = (t.realize v).succ := rfl
 
-@[simp] theorem realize_pred (v : Fin 1 → StringModel w) (t : StringTerm α) :
+@[simp] theorem realize_pred (v : Fin 1 → WordModel ({·}) w) (t : StringTerm α) :
     t.pred.realize v = (t.realize v).pred := rfl
 
-theorem val_realize_back (v : Fin 1 → StringModel w) :
+theorem val_realize_back (v : Fin 1 → WordModel ({·}) w) :
     ∀ j, ((back j : StringTerm α).realize v).val = (v 0).val - j
   | 0 => rfl
   | j + 1 => by rw [back, realize_pred, WordModel.val_pred, val_realize_back v j, Nat.sub_sub]
@@ -182,10 +178,11 @@ def sdepth : (stringLanguage α).Term γ → ℕ
 /-- A term evaluated where every variable denotes position `i` lands within its depths of `i`, and
 at the same offset from `i` in `w` as from `i'` in `w'` when the two positions are equally far
 from the left edge up to `l` and the same offsets up to `r` forward are positions. -/
-theorem realize_offset {w' : List α} {i : StringModel w} {i' : StringModel w'} {l r : ℕ}
+theorem realize_offset {w' : List α} {i : WordModel ({·}) w} {i' : WordModel ({·}) w'} {l r : ℕ}
     (hedge : min i.val l = min i'.val l)
     (hright : ∀ j ≤ r, (i.val + j < w.length ↔ i'.val + j < w'.length))
-    {v : γ → StringModel w} {v' : γ → StringModel w'} (hv : ∀ a, v a = i) (hv' : ∀ a, v' a = i') :
+    {v : γ → WordModel ({·}) w} {v' : γ → WordModel ({·}) w'} (hv : ∀ a, v a = i)
+    (hv' : ∀ a, v' a = i') :
     ∀ t : (stringLanguage α).Term γ, pdepth t ≤ l → sdepth t ≤ r →
       -(pdepth t : Int) ≤ (t.realize v).val - i.val ∧ (t.realize v).val - (i.val : Int) ≤ sdepth t ∧
       ((t.realize v).val : Int) - i.val = (t.realize v').val - i'.val
@@ -237,7 +234,7 @@ def first (t : StringTerm α) : StringFormula α := t.pred.equal t
 /-- $\mathrm{last}(t)$, that is $s(t) ≈ t$: term `t` reads the last position. -/
 def last (t : StringTerm α) : StringFormula α := t.succ.equal t
 
-variable {w : List α} {v : Fin 1 → StringModel w} {a : α} {t : StringTerm α}
+variable {w : List α} {v : Fin 1 → WordModel ({·}) w} {a : α} {t : StringTerm α}
 
 @[simp] theorem realize_label : (label a t).Realize v ↔ (t.realize v).label = a := by
   simp only [label, Formula.realize_rel₁]
@@ -259,11 +256,11 @@ variable {w : List α} {v : Fin 1 → StringModel w} {a : α} {t : StringTerm α
 
 /-- `φ.HoldsAt w n`: `n` is a position of `w`, and `φ` holds there. -/
 def HoldsAt (φ : StringFormula α) (w : List α) (n : ℕ) : Prop :=
-  ∃ h : n < w.length, φ.Realize fun _ ↦ (WordModel.mk n h : StringModel w)
+  ∃ h : n < w.length, φ.Realize fun _ ↦ (WordModel.mk n h : WordModel ({·}) w)
 
 instance [DecidableEq α] (φ : StringFormula α) (w : List α) (n : ℕ) : Decidable (φ.HoldsAt w n) :=
   inferInstanceAs
-    (Decidable (∃ h : n < w.length, φ.Realize fun _ ↦ (WordModel.mk n h : StringModel w)))
+    (Decidable (∃ h : n < w.length, φ.Realize fun _ ↦ (WordModel.mk n h : WordModel ({·}) w)))
 
 variable {φ ψ : StringFormula α} {n : ℕ}
 
@@ -336,7 +333,7 @@ variable {l r : ℕ}
     sdepth_relabel, sdepth_succ]
   omega
 
-private theorem realize_congr_aux {w' : List α} {i : StringModel w} {i' : StringModel w'}
+private theorem realize_congr_aux {w' : List α} {i : WordModel ({·}) w} {i' : WordModel ({·}) w'}
     (hedge : min i.val l = min i'.val l) (hleft : ∀ j ≤ l, w[i.val - j]? = w'[i'.val - j]?)
     (hright : ∀ j ≤ r, w[i.val + j]? = w'[i'.val + j]?) :
     ∀ {n} (φ : (stringLanguage α).BoundedFormula (Fin 1) n), Bounded l r φ → n = 0 →
@@ -404,12 +401,12 @@ theorem Bounded.holdsAt_congr (hφ : Bounded l r φ) {w' : List α} {n' : ℕ}
     simp only [← Nat.not_le, ← List.getElem?_eq_none_iff, h0]
   constructor
   · rintro ⟨h, hφ'⟩
-    exact ⟨hlen.1 h, (realize_congr_aux (i := (WordModel.mk n h : StringModel w))
-      (i' := (WordModel.mk n' (hlen.1 h) : StringModel w')) hedge hleft hright φ hφ rfl default
+    exact ⟨hlen.1 h, (realize_congr_aux (i := (WordModel.mk n h : WordModel ({·}) w))
+      (i' := (WordModel.mk n' (hlen.1 h) : WordModel ({·}) w')) hedge hleft hright φ hφ rfl default
       default).1 hφ'⟩
   · rintro ⟨h, hφ'⟩
-    exact ⟨hlen.2 h, (realize_congr_aux (i := (WordModel.mk n (hlen.2 h) : StringModel w))
-      (i' := (WordModel.mk n' h : StringModel w')) hedge hleft hright φ hφ rfl default
+    exact ⟨hlen.2 h, (realize_congr_aux (i := (WordModel.mk n (hlen.2 h) : WordModel ({·}) w))
+      (i' := (WordModel.mk n' h : WordModel ({·}) w')) hedge hleft hright φ hφ rfl default
       default).2 hφ'⟩
 
 /-! ### Window tests -/
@@ -425,7 +422,7 @@ are fewer than `r`, spell `u`. -/
 def window (r : ℕ) (u : List α) : StringFormula α :=
   readBack u.reverse 0 ⊓ if u.length < r then first (back u.length) else ⊤
 
-theorem realize_readBack {i : StringModel w} :
+theorem realize_readBack {i : WordModel ({·}) w} :
     ∀ {v : List α} {j : ℕ}, j ≤ i.val →
       ((readBack v j).Realize (fun _ ↦ i) ↔ v <+: (w.take (i.val - j)).reverse)
   | [], _, _ => by simp [readBack]
@@ -459,7 +456,7 @@ position spell `u`. -/
 theorem holdsAt_window {u : List α} (hn : n < w.length) (hu : u.length ≤ r) :
     (window r u).HoldsAt w n ↔ (w.take n).rtake r = u := by
   have hR : (window r u).HoldsAt w n ↔
-      (window r u).Realize fun _ ↦ (WordModel.mk n hn : StringModel w) :=
+      (window r u).Realize fun _ ↦ (WordModel.mk n hn : WordModel ({·}) w) :=
     ⟨fun ⟨_, h⟩ ↦ h, fun h ↦ ⟨hn, h⟩⟩
   rw [hR, List.rtake_eq_iff, window, Formula.realize_inf, realize_readBack (Nat.zero_le _),
     WordModel.val_mk, Nat.sub_zero, List.reverse_prefix]

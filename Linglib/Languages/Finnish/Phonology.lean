@@ -5,7 +5,7 @@ public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Phonology.Segmental.PHOIBLE
 public import Linglib.Phonology.Segmental.Sonority.Basic
 public import Linglib.Phonology.Harmony.System
-public import Linglib.Phonology.Subregular.LocalRewrite
+public import Linglib.Phonology.Subregular.Function.LocalRewrite
 
 /-!
 # Finnish phonology

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.ISL
+public import Linglib.Phonology.Subregular.Function.ISL
 
 /-!
 # Output strictly local functions
@@ -26,7 +26,7 @@ functions of the rules themselves are the `k`-OSL functions that fix `[]` and pr
 
 The classes nest in `k` (`IsLeftOutputStrictlyLocal.mono`) and are subsequential over a finite
 output alphabet (`IsLeftOutputStrictlyLocal.isLeftSubsequential`). They are compared with the
-input strictly local functions in `Linglib.Phonology.Subregular.StrictlyLocalSeparation`.
+input strictly local functions in `Linglib.Phonology.Subregular.Function.StrictlyLocalSeparation`.
 
 `OSLRule.applyOnTier` runs a rule with its window over the tier projection of its output, after
 Burness and McMullin.

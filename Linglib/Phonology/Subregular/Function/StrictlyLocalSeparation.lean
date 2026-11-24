@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.Mealy.MyhillNerode
-public import Linglib.Phonology.Subregular.OSL
+public import Linglib.Phonology.Subregular.Function.OSL
 
 /-!
 # Separating the input and output strictly local functions

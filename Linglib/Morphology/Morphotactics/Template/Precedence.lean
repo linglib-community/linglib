@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Morphotactics.Template.Basic
-public import Linglib.Phonology.Subregular.Precedence
+public import Linglib.Phonology.Subregular.Stringset.Precedence
 
 /-!
 # The precedence relation of a template
