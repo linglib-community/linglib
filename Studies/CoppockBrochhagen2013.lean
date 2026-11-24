@@ -19,7 +19,8 @@ and *at most `i`* is `Focus.atMost`, what it asserts. For the question of how ma
 
 In unrestricted inquisitive semantics the modifiers raise the possibilities
 `Inquisitive.Unrestricted.atLeast` and `Inquisitive.Unrestricted.atMost`. Over two-sided answers
-*at least `a`* is inquisitive and not attentive, and over one-sided answers it is attentive. On
+*at least `a`* is inquisitive and not attentive, and over one-sided answers it is attentive and
+not inquisitive. On
 either reading *at least `a`* satisfies the Maxim of Interactive Sincerity just in case the
 speaker's information leaves open two numbers from `a` up, so a speaker who knows the number
 violates it, while the comparative *more than* raises one possibility with the same union.
@@ -171,6 +172,14 @@ theorem range_choice_apply {T : Set (Set W)} (hT : T.Nonempty) :
 theorem isAttentive_atLeast_oneSided (hμ : Surjective μ) (hab : a < b) :
     IsAttentive (Unrestricted.atLeast (· ≥ ·) univ (oneSided μ) a) :=
   isAttentive_atLeast_ge hab.le (strictAnti_oneSided hμ hab)
+
+-- (58): over one-sided answers the possibilities are nested, so *at least* is not inquisitive.
+theorem not_isInquisitive_atLeast_oneSided (a : α) :
+    ¬ IsInquisitive (Unrestricted.atLeast (· ≥ ·) univ (oneSided μ) a) := by
+  rw [Unrestricted.atLeast_ge_univ]
+  refine not_isInquisitive_of_isChain ?_
+  rintro _ ⟨i, -, rfl⟩ _ ⟨j, -, rfl⟩ -
+  exact (le_total i j).symm.imp (fun h ↦ antitone_oneSided h) fun h ↦ antitone_oneSided h
 
 -- (59b)
 theorem not_isAttentive_atLeast_twoSided (hμ : Surjective μ) (a : α) :

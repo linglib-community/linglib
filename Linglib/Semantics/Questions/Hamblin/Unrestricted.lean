@@ -86,6 +86,14 @@ theorem isInquisitive_iff_nontrivial (h : IsAntichain (· ⊆ ·) P) :
     IsInquisitive P ↔ P.Nontrivial := by
   rw [IsInquisitive, show {p | Maximal (· ∈ P) p} = P from ext fun _ ↦ h.maximal_mem_iff]
 
+/-- A proposition whose possibilities are nested has at most one maximal possibility, so it is
+not inquisitive. -/
+theorem not_isInquisitive_of_isChain (h : IsChain (· ⊆ ·) P) : ¬ IsInquisitive P := by
+  rintro ⟨p, hp, q, hq, hne⟩
+  rcases h.total hp.1 hq.1 with hpq | hqp
+  · exact hne (hp.eq_of_subset hq.1 hpq)
+  · exact hne (hq.eq_of_subset hp.1 hqp).symm
+
 /-- A proposition has more than one possibility just in case it is inquisitive or attentive,
 which [coppock-brochhagen-2013] call interactive ((51)); the propositions with one possibility
 are the assertions of [ciardelli-groenendijk-roelofsen-2009] (Proposition 21). -/
