@@ -18,13 +18,15 @@ public import Mathlib.Order.Hom.Lattice
 # Bondarenko (2022): Anatomy of an Attitude
 
 Individuals are ordered by parthood, situations are individuals, and a proposition is a set of
-situations. Some individuals, such as claims, rumours and beliefs, have propositional content,
-which a partial function `cont` gives. An embedded clause is a predicate of individuals built by
-two heads. The Cont head takes a proposition `p` to the individuals whose content is `p`, the set
-`cont.preimage {p}`. The Comp head takes a predicate `P` to the parts of the evaluation
-situation that exemplify `P`, in the sense of `Mereology.Exemplifies`. A Cont-CP has both heads
-and a Sit-CP has Comp alone, so a Sit-CP with proposition `p` holds of the parts of the
-evaluation situation that exemplify `p`.
+situations. The individuals carry the topology whose open sets are the sets closed under parts, so
+that the persistent propositions are the closed sets. Some individuals, such as claims, rumours and
+beliefs, have propositional content, which a partial function `cont` gives. An embedded clause is a
+predicate of individuals built by two heads. The Cont head takes a proposition `p` to the
+individuals whose content is `p`, the set `cont.preimage {p}`. The Comp head takes a predicate `P`
+to the parts of the evaluation situation that exemplify `P`, in the sense of
+`Mereology.Exemplifies`: the interior points of `P`, all of whose parts are in `P`, and its isolated
+points, the minimal members of `P`. A Cont-CP has both heads and a Sit-CP has Comp alone, so a
+Sit-CP with proposition `p` holds of the parts of the evaluation situation that exemplify `p`.
 
 Content is fixed by equality. Clauses with different propositions then hold of disjoint sets of
 individuals, so that two clauses do not stack on one noun [moulton-2009] or conjoin, and a clause is
@@ -38,14 +40,18 @@ the meaning of the conjunction, a clause is closed under weakening of its propos
 not unique, since the content of the fact with a stronger true proposition also entails the
 clause's.
 
-A Sit-CP holds only where its proposition is true, if the proposition is persistent. It depends
-on its proposition only among the parts of the evaluation situation: descriptions that pick out
-one individual there, and keep their reference in its parts, may be substituted for one another.
-Something with a proper part in a set and a part outside it does not exemplify the set, so a
-clause with Comp does not hold of a larger individual that contains what the clause describes.
-Where the situations of a verb form an antichain and have proper parts, the proposition that one
-of them is part of a situation is exemplified by those situations alone, by
-`IsAntichain.exemplifies_upperClosure_iff`, so a Sit-CP holds of the situations of its verb.
+A Sit-CP holds only where its proposition is true, if the proposition is persistent. The clauses
+differ in how much of the proposition they depend on, in the sense of `Set.DependsOn`. Whether a
+part of the evaluation situation exemplifies a proposition depends on the proposition only among the
+parts of that situation, a clause of the subset semantics depends on it only within the content of
+the individual, and a clause of the equality semantics depends on the whole of it. So a Sit-CP is
+referentially transparent: descriptions that pick out one individual in the evaluation situation,
+and keep their reference in its parts, may be substituted for one another. Something with a proper
+part in a set and a part outside it does not exemplify the set, so a clause with Comp does not hold
+of a larger individual that contains what the clause describes. Where the situations of a verb form
+an antichain and have proper parts, the proposition that one of them is part of a situation is
+exemplified by those situations alone, by `IsAntichain.exemplifies_upperClosure_iff`, so a Sit-CP
+holds of the situations of its verb.
 
 Content nouns denote contentful individuals that are not situations, and situation nouns denote
 situations without content. A predicate of truth is defined of the contentful individuals and a
@@ -172,18 +178,43 @@ theorem not_existsUnique_fact_subsetClause (hsurj : ∀ p, w ∈ p → ∃ x ∈
     (h z ⟨hz, q, Set.mem_Iic.2 hqp.subset, hqz⟩).symm
   exact hqp.ne (Part.mem_unique hqz hpy)
 
+-- ch. 2 (163)
+theorem dependsOn_mem_cont_iff (hx : x ∈ cont.Dom) {s : Set W} :
+    Set.DependsOn (· ∈ cont x) s ↔ s = Set.univ := by
+  obtain ⟨c, hc⟩ := Part.dom_iff_mem.1 hx
+  refine ⟨fun h ↦ Set.eq_univ_of_forall fun w ↦ by_contra fun hws ↦ ?_,
+    fun h ↦ h ▸ Set.dependsOn_univ _⟩
+  have h₁ : s ∩ c = c := Part.mem_unique ((iff_of_eq (h c)).2 hc) hc
+  have h₂ : insert w c = c := Part.mem_unique
+    ((iff_of_eq (h (insert w c))).1 (by rwa [Set.inter_insert_of_notMem hws, h₁])) hc
+  exact hws (Set.inter_eq_right.1 h₁ (h₂ ▸ Set.mem_insert w c))
+
+theorem dependsOn_mem_subsetClause_iff {s : Set W} :
+    Set.DependsOn (x ∈ subsetClause cont ·) s ↔ ∀ c ∈ cont x, c ⊆ s := by
+  refine ⟨fun h c hc ↦ ?_, fun h p ↦ propext ⟨?_, ?_⟩⟩
+  · obtain ⟨d, hd, hdc⟩ := (h Set.univ).mpr ⟨c, Set.subset_univ c, hc⟩
+    exact Part.mem_unique hdc hc ▸ (Set.mem_Iic.1 hd).trans Set.inter_subset_left
+  · rintro ⟨c, hc, hcx⟩
+    exact ⟨c, (Set.mem_Iic.1 hc).trans Set.inter_subset_right, hcx⟩
+  · rintro ⟨c, hc, hcx⟩
+    exact ⟨c, Set.subset_inter (h c hcx) hc, hcx⟩
+
 end Content
 
 /-! ### Clauses with Comp -/
 
 section Comp
 
-variable {E : Type*} [PartialOrder E] {p : Set E} {s x : E}
+variable {E : Type*} [TopologicalSpace E] [PartialOrder E] [Topology.IsLowerSet E] {p : Set E}
+  {s x : E}
 
 -- ch. 2, on (159)
-theorem mem_of_exemplifies_of_le (hp : IsUpperSet p) (hx : Exemplifies p x) (hxs : x ≤ s) :
-    s ∈ p :=
-  hp hxs hx.mem
+theorem mem_of_exemplifies_of_le (hp : IsClosed p) (hx : Exemplifies p x) (hxs : x ≤ s) : s ∈ p :=
+  Topology.IsLowerSet.isClosed_iff_isUpper.1 hp hxs hx.mem
+
+-- ch. 2 (164)
+theorem dependsOn_exemplifies_Iic (hx : x ≤ s) : Set.DependsOn (Exemplifies · x) (Set.Iic s) :=
+  (dependsOn_exemplifies (Topology.IsLowerSet.Iic_mem_nhds x)).mono (Set.Iic_subset_Iic.2 hx)
 
 /-- A Sit-CP is referentially transparent: descriptions `a` and `b` that pick out one individual
 in the evaluation situation `s`, and keep their reference in the parts of `s`, may be substituted
@@ -191,7 +222,7 @@ for one another in the clause's proposition without changing which parts of `s` 
 theorem exemplifies_substitution {D : Type*} {a b : E → D} {R : D → Set E}
     (ha : ∀ y ≤ s, a y = a s) (hb : ∀ y ≤ s, b y = b s) (hab : a s = b s) (hx : x ≤ s) :
     Exemplifies {y | y ∈ R (a y)} x ↔ Exemplifies {y | y ∈ R (b y)} x :=
-  exemplifies_congr <| Set.ext fun y ↦ and_congr_left fun hy ↦ by
+  exemplifies_congr <| Set.ext fun y ↦ and_congr_right fun hy ↦ by
     have hys := (Set.mem_Iic.1 hy).trans hx
     simp only [Set.mem_ofPred_eq, ha y hys, hb y hys, hab]
 
@@ -298,7 +329,8 @@ inductive Item : Ty Base → Type
 /-- Functional Application and Predicate Modification. -/
 abbrev grammar : Language (Ty Base) := application.sum predicateModification
 
-variable {E : Type} [PartialOrder E] (cont : E →. Set E) (s₀ : E) (p : Set E)
+variable {E : Type} [TopologicalSpace E] [PartialOrder E] (cont : E →. Set E) (s₀ : E)
+  (p : Set E)
   (noun verb : E → Prop) (role : ThetaHead → E → E) (the : (E → Prop) → E)
 
 /-- The denotations of the words at the evaluation situation `s₀`: Cont holds of a proposition
@@ -399,6 +431,8 @@ The situations are the sets of two events, a thinking `0` and an eating `1`, ord
 inclusion, and the thinking has the content that there is eating. -/
 
 section Model
+
+attribute [local instance] Topology.lowerSet
 
 /-- The situations in which there is thinking. -/
 def thinking : Set (Finset (Fin 2)) := {x | 0 ∈ x}

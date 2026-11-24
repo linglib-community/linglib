@@ -212,10 +212,10 @@ theorem oti_pu_lexically_distinct :
 /-! ### Factivity from situation semantics (§3.2) -/
 
 /-- A report with a situation clause entails its complement, whatever the verb, where the
-complement is persistent: the clause holds of a part of the evaluation situation that exemplifies
-the complement. -/
-theorem pu_report_factive {S X : Type*} [PartialOrder S] (verb : X → S → S → Prop) (a : X)
-    {q : Set S} (hq : IsUpperSet q) (s : S)
+complement is persistent, a closed set of the topology of parts: the clause holds of a part of
+the evaluation situation that exemplifies the complement. -/
+theorem pu_report_factive {S X : Type*} [TopologicalSpace S] [PartialOrder S]
+    [Topology.IsLowerSet S] (verb : X → S → S → Prop) (a : X) {q : Set S} (hq : IsClosed q) (s : S)
     (h : ∃ x, verb a x s ∧ x ≤ s ∧ Mereology.Exemplifies q x) : s ∈ q :=
   let ⟨_, _, hxs, hx⟩ := h; Bondarenko2022.mem_of_exemplifies_of_le hq hx hxs
 
