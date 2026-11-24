@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Algebra.RootedTree.DualPrimitive
 public import Linglib.Syntax.Minimalist.Workspace.Merge.Basic
 public import Linglib.Core.Combinatorics.RootedTree.MarkerCutConservation
 public import Linglib.Core.Combinatorics.RootedTree.Conservation
@@ -120,6 +121,41 @@ theorem mergeOp_pair [DecidableEq α] (lbl : α) {S S' : UnorderedTree α}
     AlgHom.toLinearMap_apply, of'_singleton, deletionProj_ofTree,
     deletionQuotient_node_pair lbl hS hS', Option.elim_some]
 
+/-- Merge `M_{S,S'}` over a cut enumeration is multiplication by the grafted pair after
+    contraction of the coproduct with the forest `{S, S'}`. -/
+theorem mergeOpOfCuts_eq_mul_contractForest
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) (lbl : α)
+    (S S' : UnorderedTree α) (x : ConnesKreimer R (UnorderedTree α)) :
+    mergeOpOfCuts (R := R) cuts lbl S S' x =
+      ofTree (UnorderedTree.node lbl {S, S'}) * contractForest cuts {S, S'} x := by
+  have h : mergePost (R := R) lbl S S' =
+      LinearMap.mulLeft R (ofTree (UnorderedTree.node lbl {S, S'}) :
+          ConnesKreimer R (UnorderedTree α)) ∘ₗ
+        (_root_.TensorProduct.lid R _).toLinearMap ∘ₗ
+          (lcoeff R ({S, S'} : Forest (UnorderedTree α))).rTensor _ :=
+    TensorProduct.ext (lhom_ext' fun F ↦ LinearMap.ext fun r ↦ by
+      simp [mergePost_basis_tensor, coeff_of', of'_singleton])
+  rw [mergeOpOfCuts, h]
+  rfl
+
+/-- Contraction with a forest vanishes on a tree that does not contain one of its members. -/
+theorem contractForest_ofTree_of_notMem
+    {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
+    [IsMergeCuts cuts] {A : Forest (UnorderedTree α)} {T t : UnorderedTree α} (ht : t ∈ A)
+    (hT : t ∉ T.subtrees) : contractForest (R := R) cuts A (ofTree T) = 0 := by
+  have hTA : ({T} : Forest (UnorderedTree α)) ≠ A := fun h ↦ by
+    have h' : t = T := Multiset.mem_singleton.1 (h ▸ ht)
+    exact hT (h' ▸ UnorderedTree.self_mem_subtrees T)
+  show _root_.TensorProduct.lid R _ ((lcoeff R A).rTensor _ (comulOfCuts cuts (ofTree T))) = 0
+  rw [comulOfCuts_apply_ofTree, comulTreeOfCuts, map_add, map_add, map_multiset_sum,
+    map_multiset_sum, Multiset.map_map, Multiset.map_map]
+  simp only [← of'_singleton, LinearMap.rTensor_tmul, lcoeff_apply, coeff_of', hTA, ↓reduceIte,
+    TensorProduct.zero_tmul, map_zero, zero_add]
+  refine Multiset.sum_eq_zero fun x hx ↦ ?_
+  obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.1 hx
+  have hpA : p.1 ≠ A := fun h ↦ hT (IsMergeCuts.mem_subtrees_of_mem_crown hp (h ▸ ht))
+  simp [coeff_of', hpA]
+
 /-- Merge commutes with a spectator component having neither `S` nor `S'` as a subtree
 ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). -/
 theorem mergeOpOfCuts_ofTree_mul
@@ -129,40 +165,18 @@ theorem mergeOpOfCuts_ofTree_mul
     (w : ConnesKreimer R (UnorderedTree α)) :
     mergeOpOfCuts (R := R) cuts lbl S S' (ofTree T * w) =
       ofTree T * mergeOpOfCuts (R := R) cuts lbl S S' w := by
-  rw [mergeOpOfCuts, LinearMap.comp_apply, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-    AlgHom.toLinearMap_apply, map_mul, comulOfCuts_apply_ofTree, comulTreeOfCuts, add_mul, map_add,
-    ← of'_singleton]
-  -- The primitive term vanishes, since `{T}` does not fit inside `{S, S'}`.
-  rw [mergePost_left_mul_eq_zero_of_not_le _ _ _ _ _ ?prim, zero_add]
-  case prim =>
-    intro h_le
-    have hT_mem : T ∈ ({S, S'} : Forest (UnorderedTree α)) :=
-      Multiset.subset_of_le h_le (Multiset.mem_singleton.mpr rfl)
-    rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
-    rcases hT_mem with rfl | rfl
-    exacts [hT_S T.self_mem_subtrees, hT_S' T.self_mem_subtrees]
-  -- Split off the empty cut `(0, T)`; the nonempty cuts vanish.
-  rw [← Multiset.sum_map_mul_right,
-    ← Multiset.filter_add_not (fun pf => pf.1.card = 0) (cuts T),
-    Multiset.map_add, Multiset.sum_add, map_add, IsMergeCuts.filter_empty,
-    Multiset.map_singleton, Multiset.sum_singleton, _root_.map_multiset_sum,
-    Multiset.sum_eq_zero, add_zero]
-  · -- The empty cut passes `T` to the right channel.
-    rw [of'_zero,
-      mul_comm ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree T) _,
-      mergePost_right_one_tmul, mul_comm]
-    rfl
-  · intro x hx
-    obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp (Multiset.map_map _ _ _ ▸ hx)
-    obtain ⟨hp, hcard⟩ := Multiset.mem_filter.mp hp
-    refine mergePost_left_mul_eq_zero_of_not_le _ _ _ _ _ (fun h_le ↦ hcard ?_) _
-    rw [Multiset.card_eq_zero]
-    refine Multiset.eq_zero_of_forall_notMem fun x hx_mem => ?_
-    have hx_in : x ∈ ({S, S'} : Forest (UnorderedTree α)) := Multiset.subset_of_le h_le hx_mem
-    rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hx_in
-    rcases hx_in with rfl | rfl
-    exacts [hT_S (IsMergeCuts.mem_subtrees_of_mem_crown hp hx_mem),
-      hT_S' (IsMergeCuts.mem_subtrees_of_mem_crown hp hx_mem)]
+  rw [mergeOpOfCuts_eq_mul_contractForest, mergeOpOfCuts_eq_mul_contractForest, contractForest_mul,
+    Finset.sum_eq_single ((0 : Forest (UnorderedTree α)), ({S, S'} : Forest (UnorderedTree α)))]
+  · rw [contractForest_zero IsMergeCuts.filter_empty, mul_left_comm]
+  · rintro ⟨A, B⟩ hp hne
+    have hAB : A + B = {S, S'} := Multiset.mem_antidiagonal.1 (Multiset.mem_toFinset.1 hp)
+    have hA : A ≠ 0 := fun h ↦ hne (by subst h; simpa using hAB)
+    obtain ⟨t, ht⟩ := Multiset.exists_mem_of_ne_zero hA
+    have hmem : t ∈ ({S, S'} : Forest (UnorderedTree α)) := hAB ▸ Multiset.mem_add.2 (.inl ht)
+    have ht' : t ∉ T.subtrees := by
+      rcases (by simpa using hmem : t = S ∨ t = S') with rfl | rfl <;> assumption
+    rw [contractForest_ofTree_of_notMem ht ht', zero_mul]
+  · exact fun h ↦ absurd (by simp) h
 
 /-- Merge commutes with a spectator workspace `F` none of whose components has `S` or `S'` as a
     subtree. -/

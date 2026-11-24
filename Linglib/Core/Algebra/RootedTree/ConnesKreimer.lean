@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Algebra.Algebra.Bilinear
 public import Linglib.Core.Algebra.MonoidAlgebra.Multiset
 public import Mathlib.Algebra.MonoidAlgebra.Basic
 public import Mathlib.LinearAlgebra.Finsupp.VectorSpace
@@ -428,6 +429,29 @@ def linearLift (f : Forest T → M) : ConnesKreimer R T →ₗ[R] M :=
   rw [← smul_of', map_smul, linearLift_of']
 
 end LinearMap
+
+/-- The coefficient of a forest in a product is the sum, over the ways to split the forest in two,
+of the products of the coefficients of the parts (`MvPolynomial.coeff_mul` analogue). -/
+theorem lcoeff_mul [DecidableEq T] (F : Forest T) (x y : ConnesKreimer R T) :
+    lcoeff R F (x * y) =
+      ∑ p ∈ (Multiset.antidiagonal F).toFinset, lcoeff R p.1 x * lcoeff R p.2 y := by
+  have h : (LinearMap.mul R (ConnesKreimer R T)).compr₂ (lcoeff R F) =
+      ∑ p ∈ (Multiset.antidiagonal F).toFinset,
+        (LinearMap.mul R R).compl₁₂ (lcoeff R p.1) (lcoeff R p.2) :=
+    lhom_ext' fun G ↦ lhom_ext' fun H ↦ by
+      simp only [LinearMap.compr₂_apply, LinearMap.mul_apply', ← of'_add, lcoeff_apply, coeff_of',
+        LinearMap.sum_apply, LinearMap.compl₁₂_apply, mul_ite, mul_one, mul_zero]
+      by_cases hF : G + H = F
+      · rw [Finset.sum_eq_single (G, H), ite_eq_left hF]
+        · simp
+        · rintro ⟨A, B⟩ - hne
+          by_cases hA : G = A <;> by_cases hB : H = B <;> simp_all
+        · exact fun hmem ↦ absurd (by simpa using hF) hmem
+      · rw [ite_eq_right hF]
+        refine (Finset.sum_eq_zero fun p hp ↦ ?_).symm
+        have hp' : p.1 + p.2 = F := by simpa using hp
+        by_cases hA : G = p.1 <;> by_cases hB : H = p.2 <;> simp_all
+  simpa using LinearMap.congr_fun (LinearMap.congr_fun h x) y
 
 /-- Renaming along an injective map is injective: the coefficient of `F.map f` in `rename f p` is
 that of `F` in `p`. -/

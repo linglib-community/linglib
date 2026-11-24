@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.Algebra.RootedTree.DualPrimitive
 public import Linglib.Syntax.Minimalist.Workspace.Merge.External
 
 /-!
@@ -106,17 +105,8 @@ theorem mergeOpUnitOfCuts_eq_mul_treeDerivation [IsMergeCuts cuts] (β : Unorder
 theorem treeDerivation_ofTree_of_notMem [IsMergeCuts cuts] {β T : UnorderedTree α}
     (hT : β ∉ T.subtrees) :
     treeDerivation (R := R) cuts IsMergeCuts.filter_empty β (ofTree T) = 0 := by
-  have hTβ : ({T} : Forest (UnorderedTree α)) ≠ {β} := fun h ↦
-    hT (Multiset.singleton_inj.1 h ▸ self_mem_subtrees T)
-  rw [treeDerivation_apply, comulOfCuts_apply_ofTree, comulTreeOfCuts, map_add, map_add,
-    map_multiset_sum, map_multiset_sum, Multiset.map_map, Multiset.map_map]
-  simp only [← of'_singleton, LinearMap.rTensor_tmul, lcoeff_apply, coeff_of', if_neg hTβ,
-    TensorProduct.zero_tmul, map_zero, zero_add]
-  refine Multiset.sum_eq_zero fun x hx ↦ ?_
-  obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.1 hx
-  have hpβ : p.1 ≠ {β} := fun h ↦
-    hT (IsMergeCuts.mem_subtrees_of_mem_crown hp (h ▸ Multiset.mem_singleton_self β))
-  simp [coeff_of', hpβ]
+  rw [treeDerivation_apply_eq_contractForest]
+  exact contractForest_ofTree_of_notMem (Multiset.mem_singleton_self β) hT
 
 /-- The unit stage commutes with a spectator component `T` that does not have `β` as a subtree. -/
 theorem mergeOpUnitOfCuts_ofTree_mul [IsMergeCuts cuts] {β T : UnorderedTree α}

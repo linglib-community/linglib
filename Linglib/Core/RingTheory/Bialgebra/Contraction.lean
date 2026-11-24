@@ -67,6 +67,36 @@ section Explicit
 
 variable {R A : Type*} [CommSemiring R] [CommSemiring A] [Algebra R A]
 
+/-- Contraction of the left channel of a comultiplication `Δ`, given as a linear map, with a
+functional: `contractAlong Δ f a = (f ⊗ id) (Δ a)`. -/
+noncomputable def contractAlong (Δ : A →ₗ[R] A ⊗[R] A) (f : A →ₗ[R] R) : A →ₗ[R] A :=
+  (_root_.TensorProduct.lid R A).toLinearMap ∘ₗ f.rTensor A ∘ₗ Δ
+
+theorem contractAlong_apply (Δ : A →ₗ[R] A ⊗[R] A) (f : A →ₗ[R] R) (a : A) :
+    contractAlong Δ f a = _root_.TensorProduct.lid R A (f.rTensor A (Δ a)) := rfl
+
+/-- Contraction along an algebra map turns a decomposition of a functional on products,
+`f (a * b) = ∑ i, g i a * h i b`, into a product rule:
+`f ⇀ (x * y) = ∑ i, (g i ⇀ x) * (h i ⇀ y)`. -/
+theorem contractAlong_mul {ι : Type*} (Δ : A →ₐ[R] A ⊗[R] A) (s : Finset ι)
+    (g h : ι → A →ₗ[R] R) (f : A →ₗ[R] R) (hf : ∀ a b, f (a * b) = ∑ i ∈ s, g i a * h i b)
+    (x y : A) :
+    contractAlong Δ.toLinearMap f (x * y) =
+      ∑ i ∈ s, contractAlong Δ.toLinearMap (g i) x * contractAlong Δ.toLinearMap (h i) y := by
+  have key (u v : A ⊗[R] A) :
+      _root_.TensorProduct.lid R A (f.rTensor A (u * v)) =
+        ∑ i ∈ s, _root_.TensorProduct.lid R A ((g i).rTensor A u) *
+          _root_.TensorProduct.lid R A ((h i).rTensor A v) := by
+    induction u using TensorProduct.inductionOn with
+    | add u₁ u₂ h₁ h₂ => simp only [add_mul, map_add, h₁, h₂, Finset.sum_add_distrib]
+    | tmul a b =>
+      induction v using TensorProduct.inductionOn with
+      | add v₁ v₂ h₁ h₂ => simp only [mul_add, map_add, h₁, h₂, Finset.sum_add_distrib]
+      | tmul c d =>
+        simp only [Algebra.TensorProduct.tmul_mul_tmul, LinearMap.rTensor_tmul,
+          _root_.TensorProduct.lid_tmul, hf, Finset.sum_smul, smul_mul_smul_comm]
+  simpa [contractAlong_apply] using key (Δ x) (Δ y)
+
 /-- Contraction with a functional `f` along a comultiplication `Δ` that is an algebra map with a
 left counit `ε`, as a derivation, when `f 1 = 0` and `f (a * b) = f a * ε b + ε a * f b`.
 Coassociativity of `Δ` is not assumed. -/
