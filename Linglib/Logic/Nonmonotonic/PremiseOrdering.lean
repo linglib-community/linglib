@@ -25,7 +25,7 @@ points.
 
 With propositions as criteria and truth as satisfaction this is the ordering a premise set induces
 on worlds. With the negations of alternatives as criteria it is the order whose minimal worlds a
-minimal-world exhaustifier keeps and whose least worlds exhaustification keeps.
+minimal-world exhaustifier keeps.
 
 ## Main definitions
 

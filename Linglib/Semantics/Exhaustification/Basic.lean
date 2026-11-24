@@ -88,6 +88,20 @@ theorem mem_exh_iff_isLeast_of_mem (hp : p ∈ C) : w ∈ exh C p ↔ IsLeast {q
   ⟨fun ⟨hw, h⟩ ↦ ⟨⟨hp, hw⟩, fun q ⟨hq, hwq⟩ ↦ h q hq hwq⟩,
     fun ⟨⟨_, hw⟩, h⟩ ↦ ⟨hw, fun _ hq hwq ↦ h ⟨hq, hwq⟩⟩⟩
 
+/-- A world is in the exclusion of `p` just in case its true alternatives are a lower bound of the
+sets of alternatives true at the worlds of `p`. -/
+theorem mem_excludes_iff_lowerBounds :
+    w ∈ excludes C p ↔ {a ∈ C | w ∈ a} ∈ lowerBounds ((fun v ↦ {a ∈ C | v ∈ a}) '' p) := by
+  simp only [mem_excludes, mem_lowerBounds, Set.forall_mem_image]
+  exact ⟨fun h v hv a ha ↦ ⟨ha.1, h a ha.1 ha.2 hv⟩, fun h a ha hw v hv ↦ (h hv ⟨ha, hw⟩).2⟩
+
+/-- A world is exhaustified, for any prejacent, where it is a world of the prejacent whose set of
+true alternatives is the least among those of the prejacent's worlds. -/
+theorem mem_exh_iff_isLeast_image :
+    w ∈ exh C p ↔ w ∈ p ∧ IsLeast ((fun v ↦ {a ∈ C | v ∈ a}) '' p) {a ∈ C | w ∈ a} :=
+  ⟨fun h ↦ ⟨h.1, Set.mem_image_of_mem _ h.1, mem_excludes_iff_lowerBounds.1 h.2⟩,
+    fun h ↦ ⟨h.1, mem_excludes_iff_lowerBounds.2 h.2.2⟩⟩
+
 theorem mem_exh_image_iff {ι : Type*} {f : ι → Set W} {A : Set ι} :
     w ∈ exh (f '' A) p ↔ w ∈ p ∧ ∀ i ∈ A, w ∈ f i → p ⊆ f i := by
   simp only [mem_exh, Set.forall_mem_image]

@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Minimal
 public import Linglib.Semantics.Exhaustification.MinimalWorlds
 public import Linglib.Semantics.Exhaustification.Basic
 public import Mathlib.Data.Set.Finite.Powerset
@@ -229,27 +230,10 @@ theorem exhMW_subset_exhIE : exhMW ALT φ ⊆ exhIE ALT φ := fun _ hu ↦
 theorem exhIE_univ : exhIE univ φ = φ :=
   (exhIE_subset _ _).antisymm (exhMW_univ.ge.trans (exhMW_subset_exhIE _ _))
 
-/-- The exclusion of `φ` is the set of its lower bounds in the order the alternatives induce on
-worlds, which ranks `w` below `v` when every alternative true at `w` is true at `v`. -/
-theorem excludes_eq_lowerBounds :
-    excludes ALT φ = @lowerBounds World (Preorder.ofCriteria (fun w a ↦ w ∉ a) ALT).toLE φ := by
-  ext w
-  simp only [mem_excludes, lowerBounds, Set.mem_ofPred_eq, Preorder.ofCriteria_le_iff,
-    Set.subset_def]
-  exact ⟨fun h v hv q hq hvq hw ↦ hvq (h q hq hw v hv),
-    fun h q hq hw v hv ↦ by_contra fun hvq ↦ h hv q hq hvq hw⟩
-
-/-- Exhaustification keeps the least worlds of the prejacent in the order the alternatives induce,
-as `exhMW` keeps the minimal ones. -/
-theorem mem_exh_iff_isLeast_ofCriteria {w : World} :
-    w ∈ exh ALT φ ↔
-      @IsLeast World (Preorder.ofCriteria (fun w a ↦ w ∉ a) ALT).toLE φ w := by
-  show w ∈ φ ∧ w ∈ excludes ALT φ ↔ _
-  rw [excludes_eq_lowerBounds]
-  rfl
-
+/-- Exhaustification keeps the worlds whose true alternatives are least, and the minimal-world
+exhaustifier those whose true alternatives are minimal. -/
 theorem exh_subset_exhMW : exh ALT φ ⊆ exhMW ALT φ :=
-  fun _ ⟨hu, hex⟩ ↦ ⟨hu, fun _ hv _ a ⟨ha, hua⟩ ↦ ⟨ha, hex a ha hua hv⟩⟩
+  fun _ hu ↦ mem_exhMW.2 ((mem_exh_iff_isLeast_image.1 hu).2.minimalFor hu.1)
 
 theorem exh_subset_exhIE : exh ALT φ ⊆ exhIE ALT φ :=
   (exh_subset_exhMW ALT φ).trans (exhMW_subset_exhIE ALT φ)
@@ -297,9 +281,11 @@ theorem exhIE_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhIE ALT φ = ex
 
 /-- When the prejacent is consistent with the denial of every alternative it does not entail,
 minimal-world exhaustification denies them all too ([spector-2016]). -/
-theorem exhMW_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhMW ALT φ = exh ALT φ :=
-  ((exhMW_subset_exhIE ALT φ).trans (exhIE_eq_exh_of_nonempty ALT φ h).subset).antisymm
-    (exh_subset_exhMW ALT φ)
+theorem exhMW_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhMW ALT φ = exh ALT φ := by
+  obtain ⟨w, hw⟩ := h
+  ext u
+  rw [mem_exhMW, minimalFor_iff_of_isLeast (mem_exh_iff_isLeast_image.1 hw).2,
+    mem_exh_iff_isLeast_image]
 
 theorem exhIE_eq_self_of_forall (h : ∀ a ∈ ALT, (φ ∩ a).Nonempty → φ ⊆ a) : exhIE ALT φ = φ :=
   (exhIE_subset ALT φ).antisymm ((exh_eq_self_iff.2 h).ge.trans (exh_subset_exhIE ALT φ))

@@ -20,8 +20,8 @@ from one.
 
 ## Main statements
 
-* `Exhaustification.exhMW_eq_minimals`: minimal worlds are the minimal elements of the criteria
-  preorder with the negated alternatives as criteria.
+* `Exhaustification.exhMW_eq_minimals`: minimal worlds are the best worlds of the prejacent under
+  the premise set of negated alternatives.
 * `Exhaustification.exists_mem_exhMW_le`: over finitely many alternatives, every world of the
   prejacent lies above a minimal world.
 
@@ -56,14 +56,15 @@ theorem mem_exhMW_iff_minimal : u ∈ exhMW ALT φ ↔ u ∈ φ ∧
   exact h.2 hv hvu
 
 variable (ALT φ) in
-/-- Minimal worlds are Kratzer's best worlds: the minimal elements of the criteria preorder whose
-criteria are the negated alternatives. -/
+/-- Minimal worlds are Kratzer's best worlds of the prejacent, with the negated alternatives as
+the premises. -/
 theorem exhMW_eq_minimals :
-    exhMW ALT φ = (Preorder.ofCriteria (fun w a ↦ w ∉ a) ALT).minimals φ := by
-  have key (u v : W) : (Preorder.ofCriteria (fun w a ↦ w ∉ a) ALT).le u v ↔
+    exhMW ALT φ = (Preorder.ofCriteria (· ∈ ·) (compl '' ALT)).minimals φ := by
+  have key (u v : W) : (Preorder.ofCriteria (· ∈ ·) (compl '' ALT)).le u v ↔
       {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | v ∈ a} := by
-    simp only [Preorder.ofCriteria_le_iff, Set.subset_def, Set.mem_ofPred_eq, not_imp_not]
-    exact ⟨fun h a ⟨ha, hu⟩ ↦ ⟨ha, h a ha hu⟩, fun h a ha hu ↦ (h a ⟨ha, hu⟩).2⟩
+    simp only [Preorder.ofCriteria_le_iff, Set.forall_mem_image, Set.mem_compl_iff,
+      Set.subset_def, Set.mem_ofPred_eq, not_imp_not]
+    exact ⟨fun h a ⟨ha, hu⟩ ↦ ⟨ha, h ha hu⟩, fun h a ha hu ↦ (h a ⟨ha, hu⟩).2⟩
   ext u
   simp only [mem_exhMW, MinimalFor, Preorder.mem_minimals_iff, key]
 
