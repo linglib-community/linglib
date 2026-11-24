@@ -67,7 +67,7 @@ universes, such as the Montague lift of a fixed individual, have no counterpart 
 * [peters-westerstahl-2006]
 * [van-benthem-1984]
 * [van-benthem-1986]
-* [westerstahl-2024]
+* [westerstahl-2017]
 -/
 
 @[expose] public section
@@ -112,8 +112,9 @@ def Ext : Prop :=
 /-- A global determiner denotation is constant when it is invariant along every embedding of
 universes: for `A` and `B` inside the range of `f : α ↪ β`, it holds of their preimages on `α`
 exactly when it holds of them on `β`. Constancy is extension together with isomorphism closure,
-an embedding being an isomorphism onto its range followed by an inclusion, and it is
-[westerstahl-2024]'s explication of a quantifier meaning the same on every universe. -/
+an embedding being an isomorphism onto its range followed by an inclusion: the closure under
+injections of [peters-westerstahl-2006], which [westerstahl-2017] proposes as the explication of
+a quantifier being the same on every universe. -/
 def Constant : Prop :=
   ∀ ⦃α β : Type u⦄ [Finite α] [Finite β] (f : α ↪ β) (A B : Set β),
     A ⊆ Set.range f → B ⊆ Set.range f → (Q α (f ⁻¹' A) (f ⁻¹' B) ↔ Q β A B)
