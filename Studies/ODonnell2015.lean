@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
+public import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic.Dirichlet
 public import Linglib.Core.Probability.Combinatorics.PitmanYor.Basic
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Data.Statistics.ODonnell2015

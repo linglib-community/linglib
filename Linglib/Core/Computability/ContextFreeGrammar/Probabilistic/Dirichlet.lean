@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.ContextFreeGrammar.Measure
+public import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic.Measure
 public import Linglib.Core.Probability.Distributions.Dirichlet
 public import Mathlib.Probability.Independence.Integration
 public import Mathlib.Basic.ENNReal.BigOperators

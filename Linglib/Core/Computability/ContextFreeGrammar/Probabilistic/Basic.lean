@@ -34,7 +34,7 @@ may be zero on a rule. `PCFG.normalize` is total: at a nonterminal where the wei
 `⊤` it gives the rules equal weights, where [chi-1999] defines relative frequencies only for a
 sample in which every nonterminal occurs. The measure on trees whose singleton masses are the tree
 weights, and its total mass ([booth-thompson-1973]), are in
-`Linglib.Core.Computability.ContextFreeGrammar.Measure`.
+`Linglib.Core.Computability.ContextFreeGrammar.Probabilistic.Measure`.
 
 ## References
 

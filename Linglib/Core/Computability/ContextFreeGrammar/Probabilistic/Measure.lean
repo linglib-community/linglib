@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic
+public import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic.Basic
 public import Linglib.Core.Probability.BranchingProcess.GaltonWatson
 
 /-!
