@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Syntax.Minimalist.Probe.Minimal
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Languages.Zulu.Clause
 public import Linglib.Data.Examples.Halpert2012
@@ -149,7 +150,7 @@ theorem countP_le_one (h : c.Converges) (hc : c.extensions = []) :
     c.vP.countP (decide ·.NeedsL) ≤ 1 := by
   have hi : ¬ c.Inherits := not_not.2 hc
   simp only [Converges, hi, ↓reduceIte] at h
-  exact h.2.countP_le_one
+  exact h.2.countP_le_one fun a _ ↦ Probe.indiscriminate_sat a
 
 /-- Two phrases in vP at most need licensing, whatever extensions the verb carries (p. 105,
 (135), (141)). -/
@@ -157,11 +158,11 @@ theorem countP_le_two (h : c.Converges) : c.vP.countP (decide ·.NeedsL) ≤ 2 :
   by_cases hi : c.Inherits
   · simp only [Converges, hi, ↓reduceIte] at h
     rw [vP, List.countP_append]
-    have := h.2.1.countP_le_one
-    have := h.2.2.countP_le_one
+    have := h.2.1.countP_le_one fun a _ ↦ Probe.indiscriminate_sat a
+    have := h.2.2.countP_le_one fun a _ ↦ Probe.indiscriminate_sat a
     omega
   · simp only [Converges, hi, ↓reduceIte] at h
-    have := h.2.countP_le_one
+    have := h.2.countP_le_one fun a _ ↦ Probe.indiscriminate_sat a
     omega
 
 end Clause

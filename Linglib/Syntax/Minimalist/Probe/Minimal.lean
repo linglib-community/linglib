@@ -25,6 +25,8 @@ than and agrees with those of them that interact. Keyed by position, these are `
 * `Minimalist.Probe.Finds`: a goal is a closest satisfier.
 * `Minimalist.Probe.Inspects`, `Minimalist.Probe.AgreesWith`: no satisfier is closer than a goal,
   and the goal also interacts.
+* `Minimalist.Probe.AllLicensed`: the probe agrees with every position holding a goal that
+  needs licensing.
 * `Minimalist.Probe.Spec.bestMatch`, `Minimalist.Probe.Spec.copied`: Best Match as a refinement of
   a closeness key, and the features Agree copies.
 
@@ -41,6 +43,12 @@ than and agrees with those of them that interact. Keyed by position, these are `
 * `Minimalist.Probe.search_eq_some_iff_finds`, `Minimalist.Probe.mem_inspected_iff_inspects`,
   `Minimalist.Probe.mem_agree_interacted_iff`: the list search and the list Agree, keyed by
   position.
+* `Minimalist.Probe.allLicensed_iff`: over a goal sequence, licensing is that every needy goal
+  interacts and no goal before a needy one satisfies the probe.
+* `Minimalist.Probe.AllLicensed.countP_le_one`, `Minimalist.Probe.allLicensed_sat_iff`: one search
+  licenses at most one goal.
+* `Minimalist.Probe.indiscriminate_allLicensed_iff`: under bare minimality only the closest goal
+  may need licensing.
 * `Minimalist.Probe.finds_ancestors_iff`, `Minimalist.Probe.not_finds_ancestors_of_lt`: keyed by
   the generators above a node, finding is the Minimal Link Condition among satisfiers none of which
   dominates another, and a goal inside a satisfier is not found.
@@ -51,6 +59,9 @@ than and agrees with those of them that interact. Keyed by position, these are `
 * [deal-2025a]
 * [hiraiwa-2001]
 * [hammerly-mathieu-2026]
+* [bejar-rezac-2003]
+* [halpert-2012]
+* [preminger-2014]
 -/
 
 @[expose] public section
@@ -275,5 +286,98 @@ theorem mem_agree_interacted_iff {σ : Type*} {copy : α → σ → σ} {st : σ
   rw [agree_interacted, List.mem_filter, mem_inspected_iff_inspects, AgreesWith, decide_eq_true_iff]
 
 end List
+
+/-! ### Licensing -/
+
+section Licensing
+
+variable {γ : Type*} {q : Probe γ} {needs : γ → Prop} {goals : List γ}
+
+/-- The goals that `needs` selects are all licensed when the probe Agrees with every position of
+the sequence that holds one, since for [bejar-rezac-2003] licensing is an Agree relation with the
+probe. The condition is on positions, so that a probe its goals satisfy does not license two
+equal needy goals. Which goals need licensing and which satisfy the probe come apart in general,
+as for [halpert-2012]'s Zulu L⁰, which every goal satisfies while only augmentless nominals need
+it. -/
+def AllLicensed (q : Probe γ) (needs : γ → Prop) (goals : List γ) : Prop :=
+  ∀ i : Fin goals.length, needs (goals.get i) → (q.comap goals.get).AgreesWith Set.univ id i
+
+/-- Over a goal sequence, every needy goal interacts with the probe and no goal before a needy
+one satisfies it. -/
+theorem allLicensed_iff :
+    q.AllLicensed needs goals ↔
+      (∀ a ∈ goals, needs a → q.int a) ∧ goals.Pairwise fun a b ↦ needs b → ¬ q.sat a := by
+  simp only [AllLicensed, List.pairwise_iff_get, AgreesWith, Inspects, Set.mem_univ, true_and,
+    forall_true_left, comap_sat, comap_int, id]
+  refine ⟨fun h ↦ ⟨fun a ha hn ↦ ?_, fun i j hij hn hs ↦ (h j hn).1 hs hij⟩,
+    fun ⟨h₁, h₂⟩ i hn ↦ ⟨fun b hb hlt ↦ h₂ b i hlt hn hb, h₁ _ (List.get_mem ..) hn⟩⟩
+  obtain ⟨i, rfl⟩ := List.get_of_mem ha
+  exact (h i hn).2
+
+instance (q : Probe γ) (needs : γ → Prop) [DecidablePred needs] (goals : List γ) :
+    Decidable (q.AllLicensed needs goals) :=
+  decidable_of_iff _ allLicensed_iff.symm
+
+@[simp] theorem allLicensed_nil : q.AllLicensed needs [] := allLicensed_iff.2 (by simp)
+
+theorem allLicensed_cons {a : γ} :
+    q.AllLicensed needs (a :: goals) ↔
+      (needs a → q.int a) ∧ (∀ b ∈ goals, needs b → ¬ q.sat a) ∧
+        q.AllLicensed needs goals := by
+  simp only [allLicensed_iff, List.mem_cons, forall_eq_or_imp, List.pairwise_cons]
+  tauto
+
+/-- A licensed goal that satisfies the probe is the goal of Agree. -/
+theorem AllLicensed.goal_eq_some (h : q.AllLicensed needs goals) {a : γ} (ha : a ∈ goals)
+    (hn : needs a) (hs : q.sat a) : q.goal goals = some a := by
+  obtain ⟨h₁, h₂⟩ := allLicensed_iff.1 h
+  obtain ⟨l₁, l₂, rfl⟩ := List.append_of_mem ha
+  exact goal_eq_some_iff.2 ⟨search_eq_some_iff_closest.2 ⟨hs, l₁, l₂, rfl,
+    fun b hb ↦ (List.pairwise_append.1 h₂).2.2 b hb a List.mem_cons_self hn⟩, h₁ a ha hn⟩
+
+theorem allLicensed_of_forall_not (h : ∀ a ∈ goals, ¬ needs a) : q.AllLicensed needs goals :=
+  allLicensed_iff.2 ⟨fun a ha hn ↦ absurd hn (h a ha),
+    List.pairwise_of_forall_mem_list fun _ _ b hb hn ↦ absurd hn (h b hb)⟩
+
+/-- When the goals a probe interacts with halt it, one search licenses at most one needy goal. -/
+theorem AllLicensed.countP_le_one [DecidablePred needs] (hq : ∀ a, q.int a → q.sat a)
+    (h : q.AllLicensed needs goals) : goals.countP (needs ·) ≤ 1 := by
+  induction goals with
+  | nil => simp
+  | cons a l ih =>
+    obtain ⟨ha, hl, h⟩ := allLicensed_cons.1 h
+    rw [List.countP_cons]
+    by_cases hn : needs a
+    · rw [List.countP_eq_zero.2 fun b hb hb' ↦ hl b hb (of_decide_eq_true hb') (hq a (ha hn))]
+      simp [hn]
+    · simpa [hn] using ih h
+
+/-- On the diagonal, where the goals that need licensing are exactly those that satisfy a probe
+interacting with the goals that satisfy it, all of them are licensed iff at most one goal
+satisfies the probe, the fact behind [preminger-2014]'s person restriction. -/
+theorem allLicensed_sat_iff (hq : ∀ a, q.int a ↔ q.sat a) :
+    q.AllLicensed q.sat goals ↔ goals.countP (q.sat ·) ≤ 1 := by
+  refine ⟨AllLicensed.countP_le_one fun a ↦ (hq a).1, fun h ↦ ?_⟩
+  induction goals with
+  | nil => simp
+  | cons a l ih =>
+    rw [List.countP_cons] at h
+    refine allLicensed_cons.2 ⟨(hq a).2, fun b hb hfb ha ↦ ?_, ih (by split at h <;> omega)⟩
+    have := List.countP_pos_iff (p := (q.sat ·)).2 ⟨b, hb, decide_eq_true hfb⟩
+    simp only [show q.sat a from ha, decide_true, ite_true] at h
+    omega
+
+/-- Licensing by the indiscriminate probe allows no needy goal below the head of the sequence,
+the highest-element condition of [halpert-2012]. -/
+theorem indiscriminate_allLicensed_iff :
+    (indiscriminate : Probe γ).AllLicensed needs goals ↔ ∀ a ∈ goals.tail, ¬ needs a := by
+  rw [allLicensed_iff]
+  cases goals with
+  | nil => simp
+  | cons a l =>
+    simpa [indiscriminate, relativized] using
+      fun h ↦ List.pairwise_of_forall_mem_list fun _ _ b hb ↦ h b hb
+
+end Licensing
 
 end Minimalist.Probe

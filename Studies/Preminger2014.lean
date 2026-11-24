@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Syntax.Minimalist.Probe.Minimal
 public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Linglib.Syntax.Feature.Geometry
 public import Linglib.Languages.Mayan.Kaqchikel.Agreement
@@ -30,6 +31,13 @@ probe relativized to a feature is satisfied by every goal that satisfies a probe
 it, so that a probe relativized to the root, as English Infl⁰ is, finds the subject. Each of the
 paper's Kaqchikel examples is acceptable exactly when its arguments obey the condition and its
 verb shows the cell the probes give.
+
+The book compares three models of what makes agreement obligatory. On the obligatory-operations
+model a probe ends with what the operation copies, which is nothing when it finds no goal. On the
+derivational time-bombs model a probe that ends unvalued crashes the derivation. On the
+violable-constraints model an unvalued probe violates a constraint. We prove that the unranked
+constraint allows what the obligatory operation gives, that the time-bombs model allows it
+exactly where the probe finds a goal, and that an acceptable example has a probe that finds none.
 
 ## Implementation notes
 
@@ -74,15 +82,18 @@ def probe (f : Node) : Probe Bundle := (Probe.Spec.relativized f).toProbe Bundle
 
 @[simp] theorem probe_sat : (probe f).sat c ↔ f ∈ c.nodes := Probe.Spec.ofGeometry_toProbe_sat
 
-/-- A probe relativized to a node is satisfied by every cell that satisfies a probe relativized
-to a node it dominates. -/
-theorem probe_sat_anti (h : f ≤ g) (hg : (probe g).sat c) : (probe f).sat c :=
-  Probe.Spec.relativized_toProbe_sat_anti c.nodes.lower h hg
+@[simp] theorem probe_int : (probe f).int c ↔ f ∈ c.nodes :=
+  Probe.Spec.ofGeometry_toProbe_int_iff c.nodes.lower
+
+/-- The probe relativized to a node is at least the probe relativized to a node it dominates:
+the higher in the geometry a probe is relativized, the fewer cells it skips. -/
+theorem probe_anti : Antitone probe :=
+  Probe.Spec.relativized_toProbe_anti fun c ↦ c.nodes.lower
 
 -- a probe finds a goal wherever a probe relativized below it does
 theorem search_isSome_of_le (h : f ≤ g) {goals : List Bundle}
     (hg : ((probe g).search goals).isSome) : ((probe f).search goals).isSome :=
-  Probe.search_isSome_mono (fun _ _ ↦ probe_sat_anti h) hg
+  Probe.search_isSome_mono (fun a _ ↦ (probe_anti h).2 a) hg
 
 -- a probe relativized to the root, as English Infl⁰ is, finds the closest goal
 theorem probe_bot_search (c : Bundle) (l : List Bundle) : (probe ⊥).search (c :: l) = some c := by
@@ -99,15 +110,21 @@ subject and the object. -/
 def find (f : Node) (s o : Bundle) : Finset Node :=
   ((Probe.Spec.relativized f).agree Bundle.nodeFinset ∅ [s, o]).state.copied
 
-/-- The operation copies from the goal of the probe the nodes that `f` dominates, and nothing when
-the probe finds no goal. -/
+-- §4.2.3: the operation copies from the goal of the probe the nodes that `f` dominates, and
+-- nothing when the probe finds no goal
 theorem find_eq (f : Node) (s o : Bundle) :
     find f s o = ((probe f).search [s, o]).elim ∅ fun c ↦ c.nodeFinset ∩ Finset.Ici f := by
-  have h (a : Bundle) : (probe f).int a ↔ (probe f).sat a :=
-    (Probe.Spec.ofGeometry_toProbe_int_iff a.nodes.lower).trans
-      Probe.Spec.ofGeometry_toProbe_sat.symm
   rw [find, Probe.Spec.agree_empty]
-  exact (Probe.agree_state_eq_elim h).trans (by simp [probe])
+  exact (Probe.agree_state_eq_elim fun a ↦ probe_int.trans probe_sat.symm).trans
+    (by simp [probe])
+
+theorem find_nonempty_iff : (find f s o).Nonempty ↔ ((probe f).search [s, o]).isSome := by
+  rw [find_eq]
+  cases h : (probe f).search [s, o] with
+  | none => simp
+  | some c =>
+    exact iff_of_true ⟨f, Finset.mem_inter.2 ⟨probe_sat.1 (Probe.sat_of_search_eq_some h),
+      Finset.mem_Ici.2 le_rfl⟩⟩ rfl
 
 /-! ### The agreement slot -/
 
@@ -123,8 +140,8 @@ def slot (s o : Bundle) : Bundle :=
 /-- The marker in the slot, the Set B exponent of the cell it shows. -/
 def marker (s o : Bundle) : List Morphology.Morph := (setBExponent.realize (slot s o)).getD []
 
-/-- (75): the Person Licensing Condition holds of the two core arguments when the search of π⁰
-reaches each of them that bears [participant], the feature π⁰ seeks. -/
+/-- (75): the Person Licensing Condition holds of the two core arguments when π⁰ Agrees with each
+of them that bears [participant], the feature π⁰ seeks. -/
 def PLC (s o : Bundle) : Prop := piProbe.AllLicensed piProbe.sat [s, o]
 
 instance (s o : Bundle) : Decidable (PLC s o) :=
@@ -148,7 +165,7 @@ theorem slot_eq (s o : Bundle) :
 /-- The Person Licensing Condition holds of the two core arguments exactly when at most one of
 them bears [participant]. -/
 theorem plc_iff (s o : Bundle) : PLC s o ↔ ¬ (s.IsSAP ∧ o.IsSAP) := by
-  rw [PLC, Probe.allLicensed_sat_iff]
+  rw [PLC, Probe.allLicensed_sat_iff fun a ↦ probe_int.trans probe_sat.symm]
   by_cases hs : s.IsSAP <;> by_cases ho : o.IsSAP <;> simp [hs, ho]
 
 -- (22): when at most one argument bears [participant], the slot does not depend on which
@@ -176,6 +193,31 @@ theorem find_participant_coarse :
       marker (.personNumber .first .singular) (.personNumber .third .singular) ≠
         marker (.personNumber .first .plural) (.personNumber .third .singular) := by
   decide
+
+/-! ### Models of obligatoriness -/
+
+variable {v : Finset Node}
+
+/-- The copying of (112): a goal adds to what the probe holds the nodes it bears that `f`
+dominates. -/
+def copy (f : Node) (c : Bundle) (v : Finset Node) : Finset Node :=
+  v ∪ (Probe.Spec.relativized f).intFeatures Bundle.nodeFinset c
+
+-- the operation is Agree of the relativized probe with this copying
+theorem find_eq_state : find f s o = ((probe f).agree (copy f) ∅ [s, o]).state := by
+  rw [find, Probe.Spec.agree_empty]
+  rfl
+
+-- §2.2.2: the unranked constraint admits what the obligatory operation gives
+theorem haveAgr_iff : (probe f).HaveAgr (copy f) ∅ [s, o] v ↔ v = find f s o := by
+  rw [Probe.haveAgr_iff, find_eq_state]
+
+/-- The time-bombs model admits the value the obligatory operation gives exactly where the probe
+finds a goal, and admits no value where it finds none. -/
+theorem timeBomb_iff :
+    (probe f).TimeBomb (copy f) ∅ [s, o] v ↔
+      v = find f s o ∧ ((probe f).search [s, o]).isSome := by
+  rw [Probe.timeBomb_iff, ← find_eq_state, ← find_nonempty_iff, Finset.nonempty_iff_ne_empty]
 
 /-! ### The examples -/
 
@@ -221,6 +263,16 @@ theorem examples_fit :
       (e.judgment = .acceptable ↔
         PLC s o ∧ slot s o .person = c .person ∧ slot s o .number = c .number) := by
   decide
+
+-- (8): an example with two third person singular arguments is acceptable, and the time-bombs
+-- model allows #⁰ no value in it
+theorem acceptable_not_timeBomb :
+    ∃ e ∈ all, e.judgment = .acceptable ∧
+      ∃ s ∈ argument? e .subject, ∃ o ∈ argument? e .object,
+        ∀ v, ¬ (probe .group).TimeBomb (copy .group) ∅ [s, o] v := by
+  refine ⟨Examples.ex_14a, by decide, by decide, .personNumber .third .singular, by decide,
+    .personNumber .third .singular, by decide, fun v hv ↦ ?_⟩
+  exact absurd (timeBomb_iff.1 hv).2 (by decide)
 
 /-! ### The hierarchy and the Person Case Constraint -/
 

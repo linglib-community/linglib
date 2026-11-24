@@ -45,9 +45,13 @@ matter: [Agree joins the initial state with the contributions of the goals it fl
 * `Minimalist.Probe.agree`: Agree for a fixed probe and a copying operation.
 * `Minimalist.Probe.inspected`: the goals up to and including the first satisfier.
 * `Minimalist.Probe.agreeList`: Agree over the entries of a list that is itself the state.
+* `Minimalist.Probe.TimeBomb`, `Minimalist.Probe.HaveAgr`: the final states that the derivational
+  time-bombs model and the violable-constraints model admit.
 * `Minimalist.Probe.Spec`: interaction and satisfaction conditions, each a finite set of feature
   bundles presenting the upper set of bundles containing one of them.
 * `Minimalist.Probe.Spec.ofFeatures`: the conditions met by bearing any one of some features.
+* `Minimalist.Probe.Spec.intCond`, `Minimalist.Probe.Spec.satCond`: the upper sets of bundles a
+  specification's two conditions present.
 * `Minimalist.Probe.Spec.ofGeometry`, `Minimalist.Probe.Spec.relativized`: `[INT:f, SAT:g]` over a
   feature geometry, interaction copying `f` and the features it dominates.
 * `Minimalist.Probe.Spec.agree`: Agree over goals exposing feature sets, with dynamic interaction.
@@ -58,16 +62,22 @@ matter: [Agree joins the initial state with the contributions of the goals it fl
   the first goal that satisfies the probe.
 * `Minimalist.Probe.agree_interacted`, `Minimalist.Probe.agree_state`: a fixed probe flags the
   interacting inspected goals and copies from them in order.
+* `Minimalist.Probe.haveAgr_iff`, `Minimalist.Probe.timeBomb_iff`: the unranked constraint admits
+  the state the obligatory operation leaves, and the time-bombs model admits it exactly when
+  Agree changed the state.
 * `Minimalist.Probe.agree_interacted_eq_goal`, `Minimalist.Probe.insatiable_agree_interacted`:
   single-goal Agree and Multiple Agree as special cases.
 * `Minimalist.Probe.Spec.agree_empty`: without dynamic interaction a specification Agrees as the
   probe it denotes.
 * `Minimalist.Probe.Spec.sup_toProbe_int`, `Minimalist.Probe.Spec.sup_toProbe_sat`: the join of
-  two specifications is a disjunctive probe.
+  two specifications is a disjunctive probe, so that `Minimalist.Probe.Spec.toProbeSupHom`
+  preserves joins.
 * `Minimalist.Probe.Spec.ofGeometry_toProbe_int_iff`: over a privative geometry, interacting with
   `[INT:f]` is bearing `f`.
-* `Minimalist.Probe.Spec.relativized_toProbe_sat_anti`: over a privative geometry, a probe
-  relativized to a feature is satisfied by the goals that satisfy one relativized below it.
+* `Minimalist.Probe.Spec.relativized_toProbe_anti`: over a privative geometry, relativization
+  reverses dominance.
+* `Minimalist.Probe.Spec.toProbe_congr`: specifications presenting the same conditions denote
+  the same probe.
 * `Minimalist.Probe.Spec.subset_Ici_of_mem_dynamicUpdate`: dynamic interaction narrows the
   interaction condition to the features a dynamic feature dominates.
 * `Minimalist.Probe.Spec.foldl_dynamicUpdate`, `Minimalist.Probe.Spec.mem_agree_interacted_iff`:
@@ -75,6 +85,12 @@ matter: [Agree joins the initial state with the contributions of the goals it fl
   feature sets, so the goals Agree flags are fixed by their position in the search.
 
 ## Implementation notes
+
+A specification is a presentation: its order and join are those of the lists of bundles, and two
+specifications listing different bundles may present the same conditions. `Spec.intCond` and
+`Spec.satCond` are the conditions, and `Spec.toProbe` depends on a specification through them
+alone. The meet of two presentations presents no meet of conditions, so specifications are a
+join-semilattice only.
 
 Movement, the M subfeatures of lines 5–6 and 9–10 of (30), is not modelled; `Probe.attract` gives
 movement a search of its own instead. Line 13 installs the closure of one feature marked for
@@ -87,6 +103,7 @@ them dominate, which on a chain of features is the closure of the most specific 
 * [deal-2024]
 * [hiraiwa-2001]
 * [preminger-2014]
+* [chomsky-2000]
 -/
 
 @[expose] public section
@@ -221,6 +238,48 @@ theorem agree_state_eq_of_forall_not_int (h : ∀ a ∈ goals, ¬ p.int a) :
   · rfl
   · exact fun a ha hi ↦ h a (mem_of_mem_inspected ha) (of_decide_eq_true hi)
 
+/-! ### Models of obligatoriness
+
+On the obligatory-operations model a probe ends a derivation in the state Agree leaves, whether
+or not a goal interacted with it. The two rival models of [preminger-2014] say which final states
+`v` a derivation may end in. -/
+
+/-- The derivational time-bombs model: Agree applies freely, so that a probe ends in its initial
+state or in the state Agree leaves, and a probe that ends in its initial state crashes the
+derivation, as an unvalued feature does for [chomsky-2000]. -/
+def TimeBomb (p : Probe α) (copy : α → σ → σ) (s : σ) (goals : List α) (v : σ) : Prop :=
+  (v = s ∨ v = (p.agree copy s goals).state) ∧ v ≠ s
+
+/-- The violable-constraints model with the one constraint that a probe change state: of the two
+candidates, the probe ends in one that violates the constraint least. -/
+def HaveAgr (p : Probe α) (copy : α → σ → σ) (s : σ) (goals : List α) (v : σ) : Prop :=
+  (v = s ∨ v = (p.agree copy s goals).state) ∧ (v = s → (p.agree copy s goals).state = s)
+
+/-- The unranked constraint admits exactly the state the obligatory operation leaves. -/
+theorem haveAgr_iff {v : σ} : p.HaveAgr copy s goals v ↔ v = (p.agree copy s goals).state := by
+  constructor
+  · rintro ⟨h | h, h'⟩
+    exacts [h ▸ (h' h).symm, h]
+  · rintro rfl
+    exact ⟨.inr rfl, id⟩
+
+/-- The time-bombs model admits the state the obligatory operation leaves exactly when Agree
+changed the state. -/
+theorem timeBomb_iff {v : σ} :
+    p.TimeBomb copy s goals v ↔
+      v = (p.agree copy s goals).state ∧ (p.agree copy s goals).state ≠ s := by
+  constructor
+  · rintro ⟨h | h, hv⟩
+    exacts [absurd h hv, ⟨h, h ▸ hv⟩]
+  · rintro ⟨rfl, hv⟩
+    exact ⟨.inr rfl, hv⟩
+
+/-- Where no goal interacts with the probe, the time-bombs model admits no final state, while the
+obligatory operation leaves the initial one. -/
+theorem not_timeBomb_of_forall_not_int {v : σ} (h : ∀ a ∈ goals, ¬ p.int a) :
+    ¬ p.TimeBomb copy s goals v :=
+  fun hv ↦ (timeBomb_iff.1 hv).2 (agree_state_eq_of_forall_not_int h)
+
 theorem inspected_filter_int_eq_goal (h : ∀ a, p.int a → p.sat a) :
     (p.inspected goals).filter (p.int ·) = (p.goal goals).toList := by
   rw [inspected, List.filter_append, List.filter_eq_nil_iff.mpr, List.nil_append]
@@ -331,7 +390,7 @@ instance : OrderBot (Spec F) where
 @[simp] theorem bot_sat : (⊥ : Spec F).sat = ∅ := rfl
 
 /-- The join of two specifications lists the bundles of either, a disjunctive probe. -/
-instance [DecidableEq F] : Lattice (Spec F) := equivProd.lattice
+instance [DecidableEq F] : SemilatticeSup (Spec F) := equivProd.semilatticeSup
 
 @[simp] theorem sup_int [DecidableEq F] (sp sp' : Spec F) : (sp ⊔ sp').int = sp.int ∪ sp'.int :=
   rfl
@@ -387,6 +446,42 @@ theorem sup_toProbe_sat {sp' : Spec F} {a : α} :
     ((sp ⊔ sp').toProbe feats).sat a ↔ (sp.toProbe feats).sat a ∨ (sp'.toProbe feats).sat a := by
   simp [or_and_right, exists_or]
 
+variable (sp) in
+/-- The interaction condition a specification presents, the bundles containing one it lists.
+`UpperSet` is ordered by reverse inclusion, so a weaker condition is a smaller upper set. -/
+def intCond : UpperSet (Finset F) := upperClosure (sp.int : Set (Finset F))
+
+variable (sp) in
+/-- The satisfaction condition a specification presents. -/
+def satCond : UpperSet (Finset F) := upperClosure (sp.sat : Set (Finset F))
+
+theorem toProbe_int_iff_mem_intCond {a : α} : (sp.toProbe feats).int a ↔ feats a ∈ sp.intCond :=
+  .rfl
+
+theorem toProbe_sat_iff_mem_satCond {a : α} : (sp.toProbe feats).sat a ↔ feats a ∈ sp.satCond :=
+  .rfl
+
+@[simp] theorem intCond_sup (sp sp' : Spec F) : (sp ⊔ sp').intCond = sp.intCond ⊓ sp'.intCond := by
+  simp [intCond, upperClosure_union]
+
+@[simp] theorem satCond_sup (sp sp' : Spec F) : (sp ⊔ sp').satCond = sp.satCond ⊓ sp'.satCond := by
+  simp [satCond, upperClosure_union]
+
+/-- Specifications that present the same conditions denote the same probe. -/
+theorem toProbe_congr {sp' : Spec F} (hi : sp.intCond = sp'.intCond)
+    (hs : sp.satCond = sp'.satCond) : sp.toProbe feats = sp'.toProbe feats :=
+  Probe.ext (fun _ ↦ by rw [toProbe_int_iff_mem_intCond, hi, toProbe_int_iff_mem_intCond])
+    fun _ ↦ by rw [toProbe_sat_iff_mem_satCond, hs, toProbe_sat_iff_mem_satCond]
+
+variable (feats) in
+/-- The probe a specification denotes over goals exposing feature sets, as a join-preserving
+map: the join of two specifications denotes the join of their probes. -/
+def toProbeSupHom : SupHom (Spec F) (Probe α) where
+  toFun sp := sp.toProbe feats
+  map_sup' _ _ := Probe.ext (fun _ ↦ sup_toProbe_int) fun _ ↦ sup_toProbe_sat
+
+@[simp] theorem toProbeSupHom_apply : toProbeSupHom feats sp = sp.toProbe feats := rfl
+
 variable {int sat : Finset F} {a : α}
 
 @[simp] theorem ofFeatures_toProbe_int :
@@ -437,12 +532,14 @@ theorem ofGeometry_toProbe_sat : ((ofGeometry f g).toProbe feats).sat a ↔ g �
   rw [ofGeometry, ofFeatures_toProbe_sat]
   simp [Finset.Nonempty]
 
-/-- Over a privative geometry, a probe relativized to a feature is satisfied by every goal that
-satisfies a probe relativized to a feature it dominates: the higher in the geometry a probe is
-relativized, the fewer goals it skips ([preminger-2014]). -/
-theorem relativized_toProbe_sat_anti (hc : IsLowerSet (↑(feats a) : Set F)) (h : f ≤ g)
-    (hg : ((relativized g).toProbe feats).sat a) : ((relativized f).toProbe feats).sat a :=
-  ofGeometry_toProbe_sat.2 (hc h (ofGeometry_toProbe_sat.1 hg))
+/-- Over a privative geometry relativization reverses dominance: the probe relativized to a
+feature is at least the probe relativized to a feature it dominates, so the higher in the
+geometry a probe is relativized, the fewer goals it skips ([preminger-2014]). -/
+theorem relativized_toProbe_anti (hc : ∀ a, IsLowerSet (↑(feats a) : Set F)) :
+    Antitone fun f ↦ (relativized f).toProbe feats := fun _ _ h ↦
+  ⟨fun a ha ↦ (ofGeometry_toProbe_int_iff (hc a)).2
+      (hc a h ((ofGeometry_toProbe_int_iff (hc a)).1 ha)),
+    fun a ha ↦ ofGeometry_toProbe_sat.2 (hc a h (ofGeometry_toProbe_sat.1 ha))⟩
 
 end Geometry
 

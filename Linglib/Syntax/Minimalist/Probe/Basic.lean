@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.List.Basic
+public import Mathlib.Order.Hom.Lattice
 
 /-!
 # Probes as interaction and satisfaction specifications
@@ -11,9 +12,8 @@ the probe copies, and *satisfies* it when it bears features that halt the search
 ordered goal sequence stops at the first satisfying goal, and the probe Agrees with that goal when
 it also interacts; a satisfying goal that does not interact absorbs the probe, Deal's satisfaction
 without interaction. A search that finds no goal is failed Agree, tolerated under Preminger's
-obligatory-operations model. A goal is licensed when the search reaches it, as for Béjar and Rezac;
-which goals need licensing and which satisfy the probe come apart in general, as for Halpert's
-Zulu L⁰, which every goal satisfies while only augmentless nominals need it. The full operation,
+obligatory-operations model. Probes are ordered by their two conditions, and reading goals through a
+map is a lattice homomorphism. The full operation,
 which copies from every interacting goal up to the satisfier, is `Probe.agree` in
 `Probe/Agree.lean`.
 
@@ -30,10 +30,9 @@ the probe searches rather than relativizing the probe.
   `[INT:F, SAT:⊥]` and `[INT:⊤, SAT:⊤]`.
 * `Minimalist.Probe.search`, `Minimalist.Probe.goal`: the first satisfying goal, and that goal
   when it interacts, the goal of Agree.
-* `Minimalist.Probe.Licensed`, `Minimalist.Probe.AllLicensed`: a goal the search reaches, and
-  every needy goal occurrence being reached.
 * `Minimalist.Probe.comap`: a probe read through a map into its goals, as a probe on the
   positions of a tree reads the features of the term at each.
+* `Minimalist.Probe.comapLatticeHom`: `comap` as a lattice homomorphism.
 
 ## Main results
 
@@ -41,11 +40,6 @@ the probe searches rather than relativizing the probe.
 * `Minimalist.Probe.search_isSome`: a search succeeds iff some goal satisfies the probe.
 * `Minimalist.Probe.not_rel_of_search_eq_some`: the found goal is minimal for any precedence
   the sequence respects.
-* `Minimalist.Probe.AllLicensed.countP_le_one`, `Minimalist.Probe.allLicensed_sat_iff`:
-  one search licenses at most one goal.
-* `Minimalist.Probe.indiscriminate_allLicensed_iff`: under bare minimality only the closest goal
-  may need licensing.
-
 ## References
 
 * [deal-2025a], [deal-2024]
@@ -114,6 +108,68 @@ def comap {β : Type*} (f : β → α) (p : Probe α) : Probe β :=
 
 @[simp] theorem comap_sat {β : Type*} (f : β → α) (p : Probe α) (b : β) :
     (p.comap f).sat b ↔ p.sat (f b) := .rfl
+
+/-! ### The order on probes -/
+
+@[ext]
+theorem ext {p q : Probe α} (hi : ∀ a, p.int a ↔ q.int a) (hs : ∀ a, p.sat a ↔ q.sat a) :
+    p = q := by
+  rcases p with @⟨pi, ps, dpi, dps⟩
+  rcases q with @⟨qi, qs, dqi, dqs⟩
+  obtain rfl : pi = qi := funext fun a ↦ propext (hi a)
+  obtain rfl : ps = qs := funext fun a ↦ propext (hs a)
+  obtain rfl : dpi = dqi := Subsingleton.elim _ _
+  obtain rfl : dps = dqs := Subsingleton.elim _ _
+  rfl
+
+/-- Probes are ordered by their conditions: a smaller probe interacts with fewer goals and is
+satisfied by fewer. -/
+instance : PartialOrder (Probe α) where
+  le p q := (∀ a, p.int a → q.int a) ∧ ∀ a, p.sat a → q.sat a
+  le_refl _ := ⟨fun _ h ↦ h, fun _ h ↦ h⟩
+  le_trans _ _ _ h₁ h₂ := ⟨fun a h ↦ h₂.1 a (h₁.1 a h), fun a h ↦ h₂.2 a (h₁.2 a h)⟩
+  le_antisymm _ _ h₁ h₂ := ext (fun a ↦ ⟨h₁.1 a, h₂.1 a⟩) fun a ↦ ⟨h₁.2 a, h₂.2 a⟩
+
+theorem le_def {p q : Probe α} :
+    p ≤ q ↔ (∀ a, p.int a → q.int a) ∧ ∀ a, p.sat a → q.sat a :=
+  .rfl
+
+/-- The join of two probes interacts with and is satisfied by the goals of either, and their meet
+by the goals of both. -/
+instance : Lattice (Probe α) where
+  sup p q := ⟨fun a ↦ p.int a ∨ q.int a, fun a ↦ p.sat a ∨ q.sat a⟩
+  le_sup_left _ _ := ⟨fun _ ↦ .inl, fun _ ↦ .inl⟩
+  le_sup_right _ _ := ⟨fun _ ↦ .inr, fun _ ↦ .inr⟩
+  sup_le _ _ _ h₁ h₂ := ⟨fun a h ↦ h.elim (h₁.1 a) (h₂.1 a), fun a h ↦ h.elim (h₁.2 a) (h₂.2 a)⟩
+  inf p q := ⟨fun a ↦ p.int a ∧ q.int a, fun a ↦ p.sat a ∧ q.sat a⟩
+  inf_le_left _ _ := ⟨fun _ ↦ And.left, fun _ ↦ And.left⟩
+  inf_le_right _ _ := ⟨fun _ ↦ And.right, fun _ ↦ And.right⟩
+  le_inf _ _ _ h₁ h₂ := ⟨fun a h ↦ ⟨h₁.1 a h, h₂.1 a h⟩, fun a h ↦ ⟨h₁.2 a h, h₂.2 a h⟩⟩
+
+@[simp] theorem sup_int (p q : Probe α) (a : α) : (p ⊔ q).int a ↔ p.int a ∨ q.int a := .rfl
+@[simp] theorem sup_sat (p q : Probe α) (a : α) : (p ⊔ q).sat a ↔ p.sat a ∨ q.sat a := .rfl
+@[simp] theorem inf_int (p q : Probe α) (a : α) : (p ⊓ q).int a ↔ p.int a ∧ q.int a := .rfl
+@[simp] theorem inf_sat (p q : Probe α) (a : α) : (p ⊓ q).sat a ↔ p.sat a ∧ q.sat a := .rfl
+
+theorem relativized_le_relativized {f g : α → Prop} [DecidablePred f] [DecidablePred g] :
+    relativized f ≤ relativized g ↔ ∀ a, f a → g a :=
+  and_self_iff
+
+@[simp] theorem comap_id (p : Probe α) : p.comap id = p := ext (fun _ ↦ .rfl) fun _ ↦ .rfl
+
+theorem comap_comap {β γ : Type*} (f : γ → β) (g : β → α) (p : Probe α) :
+    (p.comap g).comap f = p.comap (g ∘ f) :=
+  ext (fun _ ↦ .rfl) fun _ ↦ .rfl
+
+/-- Reading goals through a map, as a lattice homomorphism of probes. -/
+def comapLatticeHom {β : Type*} (f : β → α) : LatticeHom (Probe α) (Probe β) where
+  toFun := comap f
+  map_sup' _ _ := ext (fun _ ↦ .rfl) fun _ ↦ .rfl
+  map_inf' _ _ := ext (fun _ ↦ .rfl) fun _ ↦ .rfl
+
+@[simp] theorem comapLatticeHom_apply {β : Type*} (f : β → α) (p : Probe α) :
+    comapLatticeHom f p = p.comap f :=
+  rfl
 
 /-! ### Search -/
 
@@ -218,121 +274,6 @@ theorem search_isSome_mono {q : Probe α} (h : ∀ a ∈ goals, p.sat a → q.sa
     (hp : (p.search goals).isSome) : (q.search goals).isSome := by
   obtain ⟨a, ha, hva⟩ := search_isSome.1 hp
   exact search_isSome.2 ⟨a, ha, h a ha hva⟩
-
-/-! ### Licensing -/
-
-/-- A goal is licensed by a probe iff the probe's single search reaches it, since for
-[bejar-rezac-2003] licensing is an Agree relation with the probe. -/
-def Licensed (p : Probe α) (goals : List α) (a : α) : Prop :=
-  p.search goals = some a
-
-instance [DecidableEq α] (p : Probe α) (goals : List α) (a : α) :
-    Decidable (p.Licensed goals a) :=
-  inferInstanceAs (Decidable (p.search goals = some a))
-
-theorem Licensed.unique {a b : α} (ha : p.Licensed goals a) (hb : p.Licensed goals b) : a = b :=
-  Option.some.inj (ha.symm.trans hb)
-
-theorem licensed_iff_closest {a : α} :
-    p.Licensed goals a ↔ p.sat a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, ¬ p.sat b :=
-  search_eq_some_iff_closest
-
-theorem Licensed.mem {a : α} (h : p.Licensed goals a) : a ∈ goals :=
-  mem_of_search_eq_some h
-
-theorem Licensed.sat {a : α} (h : p.Licensed goals a) : p.sat a :=
-  sat_of_search_eq_some h
-
-theorem indiscriminate_licensed_iff {a : α} :
-    (indiscriminate : Probe α).Licensed goals a ↔ goals.head? = some a := by
-  cases goals <;> exact Iff.rfl
-
-/-- The goals that `needs` selects are all licensed by the probe's single search when each of them
-satisfies the probe and no goal before it does. The condition is on occurrences, like
-`List.Nodup`, so one search licenses one occurrence and two equal needy goals are not both
-licensed. -/
-def AllLicensed (p : Probe α) (needs : α → Prop) (goals : List α) : Prop :=
-  (∀ a ∈ goals, needs a → p.sat a) ∧ goals.Pairwise fun a b ↦ needs b → ¬ p.sat a
-
-instance (p : Probe α) (needs : α → Prop) [DecidablePred needs] (goals : List α) :
-    Decidable (p.AllLicensed needs goals) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-variable {needs : α → Prop}
-
-@[simp] theorem allLicensed_nil : p.AllLicensed needs [] := by simp [AllLicensed]
-
-theorem allLicensed_cons {a : α} :
-    p.AllLicensed needs (a :: goals) ↔
-      (needs a → p.sat a) ∧ (∀ b ∈ goals, needs b → ¬ p.sat a) ∧
-        p.AllLicensed needs goals := by
-  simp only [AllLicensed, List.mem_cons, forall_eq_or_imp, List.pairwise_cons]
-  tauto
-
-theorem AllLicensed.licensed (h : p.AllLicensed needs goals) {a : α} (ha : a ∈ goals)
-    (hn : needs a) : p.Licensed goals a := by
-  obtain ⟨l₁, l₂, rfl⟩ := List.append_of_mem ha
-  exact search_eq_some_iff_closest.2 ⟨h.1 a ha hn, l₁, l₂, rfl,
-    fun b hb ↦ (List.pairwise_append.1 h.2).2.2 b hb a List.mem_cons_self hn⟩
-
-theorem allLicensed_of_forall_not (h : ∀ a ∈ goals, ¬ needs a) :
-    p.AllLicensed needs goals :=
-  ⟨fun a ha hn ↦ absurd hn (h a ha),
-    List.pairwise_of_forall_mem_list fun _ _ b hb hn ↦ absurd hn (h b hb)⟩
-
-/-- One search licenses at most one needy goal. -/
-theorem AllLicensed.countP_le_one [DecidablePred needs] (h : p.AllLicensed needs goals) :
-    goals.countP (needs ·) ≤ 1 := by
-  induction goals with
-  | nil => simp
-  | cons a l ih =>
-    obtain ⟨ha, hl, h⟩ := allLicensed_cons.1 h
-    rw [List.countP_cons]
-    by_cases hn : needs a
-    · rw [List.countP_eq_zero.2 fun b hb hb' ↦ hl b hb (of_decide_eq_true hb') (ha hn)]
-      simp [hn]
-    · simpa [hn] using ih h
-
-theorem allLicensed_iff_forall_licensed (hnd : goals.Nodup) :
-    p.AllLicensed needs goals ↔ ∀ a ∈ goals, needs a → p.Licensed goals a := by
-  refine ⟨fun h a ha hn ↦ h.licensed ha hn, fun h ↦ ?_⟩
-  induction goals with
-  | nil => simp
-  | cons x l ih =>
-    obtain ⟨hx, hnd⟩ := List.nodup_cons.1 hnd
-    have hsat : ∀ b ∈ l, needs b → ¬ p.sat x := fun b hb hn hs ↦ by
-      have := h b (List.mem_cons_of_mem _ hb) hn
-      simp only [Licensed, search, List.find?_cons, hs, decide_true, Option.some.injEq] at this
-      subst this
-      exact hx hb
-    refine allLicensed_cons.2 ⟨fun hn ↦ (h x List.mem_cons_self hn).sat, hsat, ih hnd ?_⟩
-    intro b hb hn
-    simpa [Licensed, search, List.find?_cons, hsat b hb hn] using
-      h b (List.mem_cons_of_mem _ hb) hn
-
-/-- On the diagonal, where the goals that need licensing are exactly those that satisfy the probe,
-all of them are licensed iff at most one goal satisfies it, one search licensing one goal, the
-fact behind [preminger-2014]'s person restriction. -/
-theorem allLicensed_sat_iff : p.AllLicensed p.sat goals ↔ goals.countP (p.sat ·) ≤ 1 := by
-  refine ⟨AllLicensed.countP_le_one, fun h ↦ ?_⟩
-  induction goals with
-  | nil => simp
-  | cons a l ih =>
-    rw [List.countP_cons] at h
-    refine allLicensed_cons.2 ⟨id, fun b hb hfb ha ↦ ?_, ih (by split at h <;> omega)⟩
-    have := List.countP_pos_iff (p := (p.sat ·)).2 ⟨b, hb, decide_eq_true hfb⟩
-    simp only [show p.sat a from ha, decide_true, ite_true] at h
-    omega
-
-/-- Licensing by the indiscriminate probe allows no needy goal below the head of the sequence,
-the highest-element condition of [halpert-2012]. -/
-theorem indiscriminate_allLicensed_iff :
-    (indiscriminate : Probe α).AllLicensed needs goals ↔ ∀ a ∈ goals.tail, ¬ needs a := by
-  cases goals with
-  | nil => simp
-  | cons a l =>
-    simpa [indiscriminate, relativized, AllLicensed] using
-      fun h ↦ List.pairwise_of_forall_mem_list fun _ _ b hb ↦ h b hb
 
 end Probe
 
