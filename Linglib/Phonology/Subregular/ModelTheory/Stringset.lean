@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Phonology.Subregular.Local
-public import Linglib.Phonology.Subregular.WordModel.Factor
+public import Linglib.Phonology.Subregular.ModelTheory.Local
+public import Linglib.Phonology.Subregular.ModelTheory.WordModel.Factor
 public import Linglib.Phonology.Subregular.Stringset.Multitier
 public import Linglib.Phonology.Subregular.Stringset.StrictlyPiecewise
 public import Mathlib.Order.SuccPred.Nat

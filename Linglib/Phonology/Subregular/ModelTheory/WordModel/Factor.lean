@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.ModelTheory.Factor
-public import Linglib.Phonology.Subregular.WordModel.Basic
+public import Linglib.Phonology.Subregular.ModelTheory.WordModel.Basic
 public import Mathlib.Basic.Finite.Sum
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.List.NodupEquivFin

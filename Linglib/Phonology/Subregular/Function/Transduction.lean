@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.WordModel.Formula
+public import Linglib.Phonology.Subregular.ModelTheory.WordModel.Formula
 public import Linglib.Phonology.Subregular.Function.Dependence
 public import Linglib.Phonology.Subregular.Function.ISL
 public import Mathlib.Data.List.Find
