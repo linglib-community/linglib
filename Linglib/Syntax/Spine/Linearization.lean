@@ -34,7 +34,6 @@ the subject of `Syntax/Spine/Occurrence.lean`.
   Svenonius a phrase attached at or above the position where a word is pronounced precedes the
   word and a phrase attached below it follows, so that the finite verb precedes a phrase exactly
   when it is pronounced above the height at which the phrase attaches.
-* The relation to the accounts of linearization in `Syntax/Minimalist/Linearization/`.
 * The order of the verbs of a periphrastic form, which English and German reverse relative to
   each other on the same `Tense.Form`.
 
