@@ -51,8 +51,6 @@ is named for no function.
 
 namespace Case
 
-open Spatial (Localization)
-open Spatial.Path (Direction)
 
 /-- The functions a case or an adposition marks, the nodes of [haspelmath-2003]'s maps of dative
 and of instrumental functions among them. -/
@@ -122,7 +120,7 @@ def localization? : Function → Option Localization
   | _ => none
 
 /-- The shape of the path of a spatial function, none for a location. -/
-def shape? : Function → Option Spatial.Path.Shape
+def shape? : Function → Option Shape
   | spatial _ .goal => some .cofinal
   | spatial _ .source => some .coinitial
   | spatial _ .route => some .transitive

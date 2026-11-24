@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Order.Fin.Basic
 public import Mathlib.Order.RelSeries
 
 /-!
@@ -31,6 +32,10 @@ namespace RelSeries
 open scoped SetRel
 
 variable {α β : Type*} {r : SetRel α α} {p q : RelSeries r} (h : p.last = q.head)
+
+@[simp] theorem apply_bot (p : RelSeries r) : p ⊥ = p.head := rfl
+
+@[simp] theorem apply_top (p : RelSeries r) : p ⊤ = p.last := rfl
 
 /-- The positions of a concatenation up to the junction are those of its first series. -/
 theorem smash_apply_of_le (k : Fin (p.length + q.length + 1)) (hk : (k : ℕ) ≤ p.length) :

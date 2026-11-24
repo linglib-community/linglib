@@ -80,8 +80,8 @@ def cases : Infinitive → Finset Case
 /-- Of the local cases the MA infinitive takes the internal cases and, of the external cases,
 the adessive alone. -/
 theorem cells_image_cases_ma : _root_.Case.cells (ma.cases.image Case.label) =
-    ({.interior} : Finset Spatial.Localization) ×ˢ
-      ({.place, .source, .goal} : Finset Spatial.Path.Direction) ∪ {(.exterior, .place)} := by
+    ({.interior} : Finset Case.Localization) ×ˢ
+      ({.place, .source, .goal} : Finset Case.Direction) ∪ {(.exterior, .place)} := by
   decide
 
 /-- The A infinitive ends in -dA after a long vowel or a diphthong, -tA after `s`, the stem's

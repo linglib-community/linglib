@@ -8,7 +8,7 @@ public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Aspect.AspectualClass
 public import Linglib.Semantics.Aspect.Viewpoint.Defs
-public import Linglib.Semantics.Events.Path
+public import Linglib.Syntax.Feature.Case.Spatial
 public import Linglib.Semantics.Aspect.Phasal
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.Degree.Gradability
@@ -151,7 +151,7 @@ structure Aspect where
       *leave*, and `.place` for a verb of manner of motion, which displaces its theme without a
       direction ([levin-hovav-1995] p. 147, *roll*, *walk*, *swim* against *arrive*, *come*,
       *fall*), and `none` for a verb that says nothing of its theme's path. -/
-  direction : Option Spatial.Path.Direction := none
+  direction : Option Case.Direction := none
   /-- The [krifka-1998] incrementality class of the theme relation, `none` for intransitives
       and clause-embedding verbs. -/
   incrementality : Option Incrementality := none

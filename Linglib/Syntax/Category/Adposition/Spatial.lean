@@ -1,15 +1,15 @@
 module
 
 public import Linglib.Syntax.Category.Adposition.Basic
-public import Linglib.Semantics.Events.Path
+public import Linglib.Syntax.Feature.Case.Spatial
 
 /-!
 # Spatial adpositions
 
 A theory refines a spatial `Adposition` by decomposing its relation into an axial part, a
 localization and the shape of its path, as Svenonius does in the cartographic sequence. The
-shape is one of Pantcheva's eight, `Spatial.Path.Shape`, or none for a locative reading, and the
-localization is `Spatial.Localization`, the vocabulary spatial cases decompose into as well. The
+shape is one of Pantcheva's eight, `Case.Shape`, or none for a locative reading, and the
+localization is `Case.Localization`, the vocabulary spatial cases decompose into as well. The
 axial parts are what case morphology lacks, a flat paradigm rather than a ranked containment.
 
 ## Main declarations
@@ -57,15 +57,15 @@ structure SpatialReading where
   *from*. -/
   axPart : Option AxPart := none
   /-- The localization, interior, surface or exterior. -/
-  localization : Option Spatial.Localization := none
+  localization : Option Case.Localization := none
   /-- The shape of the path, `none` for a locative reading. -/
-  shape : Option Spatial.Path.Shape := none
+  shape : Option Case.Shape := none
   deriving Repr, DecidableEq
 
 namespace SpatialReading
 
 /-- The direction of a reading is its shape's, and Place for a locative reading. -/
-def direction (r : SpatialReading) : Spatial.Path.Direction :=
+def direction (r : SpatialReading) : Case.Direction :=
   (r.shape.map (·.direction)).getD .place
 
 /-- A reading is bounded when its path is, as *to* is and *towards* is not. -/
@@ -79,7 +79,7 @@ variable {r : SpatialReading}
 theorem direction_eq_place_iff : r.direction = .place ↔ r.shape = none := by
   rcases r with ⟨_, _, _ | s⟩
   · simp [direction]
-  · cases s <;> simp [direction, Spatial.Path.Shape.direction]
+  · cases s <;> simp [direction, Case.Shape.direction]
 
 theorem IsBounded.direction_ne_place (h : r.IsBounded) : r.direction ≠ .place := by
   obtain ⟨s, hs, -⟩ := h

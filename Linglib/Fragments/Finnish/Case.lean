@@ -123,8 +123,7 @@ theorem isSome_spatialDecomp_label_iff (c : Case) :
   cases c <;> decide
 
 open _root_.Case (cells)
-open Spatial (Localization)
-open Spatial.Path (Direction)
+open _root_.Case (Localization Direction)
 
 /-- The local cases are the internal and external cases, each static, away from or towards
 ([karlsson-2017] p. 228). -/

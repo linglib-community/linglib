@@ -2,7 +2,8 @@ module
 
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Zwarts2005
-public import Linglib.Semantics.Events.Path
+public import Linglib.Core.Order.Crossing
+public import Mathlib.Data.List.Infix
 public import Linglib.Semantics.Mereology.Basic
 public import Mathlib.Tactic.FinCases
 
@@ -23,7 +24,7 @@ the phrase to the verb phrase, so [*walk to the house* is bounded](##Zwarts2005.
 ## Implementation notes
 
 * The strict goal, source and route denotations are the cofinal, coinitial and transitive shapes
-  of `Spatial.Path`, relative to the region a preposition's locative basis picks out. Zwarts's
+  of `Order`, relative to the region a preposition's locative basis picks out. Zwarts's
   intervals are proper and nonempty, as his glosses of them say.
 * The paper's trace function respects Rothstein's partial event concatenation, not an
   unrestricted mereological sum.
@@ -43,10 +44,40 @@ the phrase to the verb phrase, so [*walk to the house* is bounded](##Zwarts2005.
 namespace Zwarts2005
 
 open Mereology (QUA)
-open Spatial
-open scoped Spatial.Path
 
 variable {Loc α : Type*}
+
+/-! ### Paths -/
+
+/-- A path is the finite sequence of locations it visits, a series with no condition on its
+steps. -/
+abbrev Path (Loc : Type*) := RelSeries (Set.univ : SetRel Loc Loc)
+
+/-- The path through the locations `a :: l`, in order. -/
+def Path.ofPoints (a : Loc) (l : List Loc) : Path Loc where
+  length := l.length
+  toFun i := (a :: l).get ⟨i, by have := i.2; simp; omega⟩
+  step _ := trivial
+
+@[simp] theorem Path.head_ofPoints (a : Loc) (l : List Loc) : (Path.ofPoints a l).head = a := rfl
+
+@[simp] theorem Path.toList_ofPoints (a : Loc) (l : List Loc) :
+    (Path.ofPoints a l).toList = a :: l := by
+  refine List.ext_getElem (by simp [RelSeries.toList, Path.ofPoints]) fun i h₁ h₂ ↦ ?_
+  simp [RelSeries.toList, Path.ofPoints]
+
+/-- `p` is a subpath of `q` when the locations of `p` are a stretch of those of `q`. -/
+scoped instance instSubpathOrder : PartialOrder (Path Loc) where
+  le p q := p.toList <:+: q.toList
+  le_refl _ := List.infix_refl _
+  le_trans _ _ _ := List.IsInfix.trans
+  le_antisymm _ _ h h' := RelSeries.toList_injective (List.infix_antisymm h h')
+
+theorem Path.le_iff_infix {p q : Path Loc} : p ≤ q ↔ p.toList <:+: q.toList := .rfl
+
+theorem Path.singleton_le_iff {x : Loc} {p : Path Loc} : RelSeries.singleton _ x ≤ p ↔ x ∈ p := by
+  rw [Path.le_iff_infix, RelSeries.toList_singleton, List.singleton_infix_iff,
+    RelSeries.mem_toList]
 
 /-! ### Cumulativity and boundedness (17b), (21)
 
@@ -108,8 +139,9 @@ theorem loops_cumulative [Nontrivial Loc] (A : Loc) :
     exact ⟨by simpa using hs, by simpa using hq.2.1, x, RelSeries.mem_smash_of_mem_left h hx, hxA⟩
 
 -- p. 776
-theorem const_le_const_iff {a b : Loc} : Path.const a ≤ Path.const b ↔ a = b :=
-  Path.const_le_iff.trans (by simp [RelSeries.mem_def, eq_comm])
+theorem const_le_const_iff {a b : Loc} :
+    (RelSeries.singleton _ a : Path Loc) ≤ RelSeries.singleton _ b ↔ a = b :=
+  Path.singleton_le_iff.trans (by simp [RelSeries.mem_def, eq_comm])
 
 /-! ### Goal and source prepositions (§4.1.1) -/
 
@@ -118,31 +150,31 @@ def weakTo (R : Set Loc) : Set (Path Loc) := {p | p.last ∈ R}
 
 theorem weakTo_cumulative {R : Set Loc} {x : Loc} (hx : x ∈ R) :
     Cumulative Concat (weakTo R) :=
-  ⟨⟨Path.const x, hx, Path.const x, hx, _, rfl, rfl⟩,
+  ⟨⟨RelSeries.singleton _ x, hx, RelSeries.singleton _ x, hx, _, rfl, rfl⟩,
     fun _ _ _ hq _ ⟨_, hr⟩ ↦ by subst hr; simpa [weakTo] using hq⟩
 
 /-- The strict goal phrase, (35), (36): the positions in the region form an interval including the
 last position and, being a proper interval, not the first. The goal prepositions differ only in
 the region. -/
-def toPP (R : Set Loc) : Set (Path Loc) := {p | Path.IsCofinal R p}
+def toPP (R : Set Loc) : Set (Path Loc) := {p | Order.Enters p R}
 
 /-- The strict source phrase, (36), including the first position and not the last. -/
-def fromPP (R : Set Loc) : Set (Path Loc) := {p | Path.IsCoinitial R p}
+def fromPP (R : Set Loc) : Set (Path Loc) := {p | Order.Leaves p R}
 
 theorem toPP_subset_weakTo (R : Set Loc) : toPP R ⊆ weakTo R :=
-  fun p hp ↦ (p.coe_top ▸ hp.2.2 : p.last ∈ R)
+  fun p hp ↦ (p.apply_top ▸ hp.2.2 : p.last ∈ R)
 
 -- (35)
 theorem toPP_no_pairs (R : Set Loc) :
     ¬ ∃ p ∈ toPP R, ∃ q ∈ toPP R, ∃ r, Concat p q r := by
   rintro ⟨p, hp, q, hq, r, hr⟩
-  exact hq.2.1 (by rw [Path.coe_bot, ← hr.fst, ← Path.coe_top]; exact hp.2.2)
+  exact hq.2.1 (by rw [RelSeries.apply_bot, ← hr.fst, ← RelSeries.apply_top]; exact hp.2.2)
 
 -- (36)
 theorem fromPP_no_pairs (R : Set Loc) :
     ¬ ∃ p ∈ fromPP R, ∃ q ∈ fromPP R, ∃ r, Concat p q r := by
   rintro ⟨p, hp, q, hq, r, hr⟩
-  exact hp.2.2 (by rw [Path.coe_top, hr.fst, ← Path.coe_bot]; exact hq.2.1)
+  exact hp.2.2 (by rw [RelSeries.apply_top, hr.fst, ← RelSeries.apply_bot]; exact hq.2.1)
 
 -- (21)
 theorem toPP_bounded (R : Set Loc) : Bounded Concat (toPP R) :=
@@ -156,7 +188,7 @@ theorem fromPP_bounded (R : Set Loc) : Bounded Concat (fromPP R) :=
 
 /-- The strict route phrase, (39), (40): the positions in the region form an interval including
 neither the first nor the last position. -/
-def overPP (R : Set Loc) : Set (Path Loc) := {p | Path.IsTransitive R p}
+def overPP (R : Set Loc) : Set (Path Loc) := {p | Order.Crosses p R}
 
 -- (39)
 theorem overPP_exists_pair {R : Set Loc} {x a : Loc} (hx : x ∈ R) (ha : a ∉ R) :
@@ -173,8 +205,8 @@ theorem overPP_exists_pair {R : Set Loc} {x a : Loc} (hx : x ∈ R) (ha : a ∉ 
 twice. -/
 theorem overPP_bounded (R : Set Loc) : Bounded Concat (overPP R) := by
   rintro ⟨⟨p, hp, q, hq, _, h, rfl⟩, hc⟩
-  have := Path.IsTransitive.entries_eq (hc p hp q hq _ ⟨h, rfl⟩)
-  rw [RelSeries.entries_smash, Path.IsTransitive.entries_eq hp, Path.IsTransitive.entries_eq hq]
+  have := Order.Crosses.entries_eq (hc p hp q hq _ ⟨h, rfl⟩)
+  rw [RelSeries.entries_smash, Order.Crosses.entries_eq hp, Order.Crosses.entries_eq hq]
     at this
   exact absurd this (by decide)
 
@@ -229,11 +261,11 @@ theorem toPP_not_quantized {x a b : Loc} (ha : a ≠ x) (hb : b ≠ x) :
   have hp : Path.ofPoints a [x] ∈ toPP {x} := by
     have key : ∀ i : Fin 2, Path.ofPoints a [x] i ∈ ({x} : Set Loc) ↔ i = ⊤ := by
       intro i; fin_cases i <;> simp [Path.ofPoints, ha, Fin.top_eq_last]
-    exact Path.IsTerminative.isCofinal ⟨Set.ext key, (by decide : (⊥ : Fin 2) ≠ ⊤)⟩
+    exact Order.Reaches.enters ⟨Set.ext key, (by decide : (⊥ : Fin 2) ≠ ⊤)⟩
   have hq : Path.ofPoints b [a, x] ∈ toPP {x} := by
     have key : ∀ i : Fin 3, Path.ofPoints b [a, x] i ∈ ({x} : Set Loc) ↔ i = ⊤ := by
       intro i; fin_cases i <;> simp [Path.ofPoints, ha, hb, Fin.top_eq_last, Fin.ext_iff]
-    exact Path.IsTerminative.isCofinal ⟨Set.ext key, (by decide : (⊥ : Fin 3) ≠ ⊤)⟩
+    exact Order.Reaches.enters ⟨Set.ext key, (by decide : (⊥ : Fin 3) ≠ ⊤)⟩
   exact h hp hq (fun he ↦ by simpa [Path.ofPoints] using congrArg RelSeries.length he)
     (Path.le_iff_infix.mpr ⟨[b], [], by simp⟩)
 

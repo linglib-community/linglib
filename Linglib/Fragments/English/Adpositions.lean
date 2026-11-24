@@ -171,7 +171,7 @@ open Case.Function (cells) in
 ([huddleston-pullum-2002] p. 648). -/
 theorem cells_biUnion_functions :
     cells (inventory.toFinset.biUnion Adposition.functions) =
-      .univ ×ˢ ({.place, .goal, .source} : Finset Spatial.Path.Direction) := by
+      .univ ×ˢ ({.place, .goal, .source} : Finset Case.Direction) := by
   decide
 
 /-- There are no source prepositions beside *from*, *away*, *off* and *out*

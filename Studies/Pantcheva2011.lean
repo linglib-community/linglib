@@ -3,26 +3,27 @@ module
 public import Linglib.Morphology.Paradigm.Contiguity
 public import Linglib.Core.Algebra.Order.Interval.Set.Instances
 public import Mathlib.Topology.UnitInterval
+public import Linglib.Semantics.PathShape
 public import Studies.Zwarts2005
 
 /-!
 # Pantcheva (2011): Decomposing Path
 
 Pantcheva classifies paths by their shape relative to a region, crossing direction with
-transition (`Spatial.Path.Shape`). The shapes with a transition are those
+transition (`Case.Shape`). The shapes with a transition are those
 [Zwarts's closure under concatenation counts as bounded](##Pantcheva2011.cumulative_hasShape_iff).
-[A goal path followed by a source path](##Pantcheva2011.isTransitive_of_concat) is a route path,
+[A goal path followed by a source path](##Pantcheva2011.crosses_of_concat) is a route path,
 while the reverse order [yields no shape at all](##Pantcheva2011.not_hasShape_of_concat), which
 she takes up as the absence of any preposition for such a path, and which
-[reversing a route path](##Pantcheva2011.isTransitive_reverse) cannot derive.
+[reversing a route path](##Pantcheva2011.crosses_reverse) cannot derive.
 
 The directional heads Place, Goal, Source and Route form the containment sequence of
-`Spatial.Path.Direction`, and a syncretism pattern over the four is a paradigm over that sequence.
+`Case.Direction`, and a syncretism pattern over the four is a paradigm over that sequence.
 Two constraints restrict the patterns: the *ABA generalization of Bobaljik (then circulating in
 manuscript), on which a syncretism targets only adjacent heads, the same contiguity that governs
 nominal case in Caha's analysis; and *A&¬A, on which Goal and Source never share a marker, because
 the Source head reverses the Goal path and
-[no path is both](##Spatial.Path.IsCofinal.not_isCoinitial). Together they say exactly that
+[no path is both](##Order.Enters.not_leaves). Together they say exactly that
 [no syncretism crosses the seam between Goal and Source](##Pantcheva2011.possible_iff_respectsSeam),
 which [cuts the fifteen set-partitions of the four roles to
 four](##Pantcheva2011.possible_syncretisms): Place and Goal may merge, Source and Route may merge,
@@ -54,7 +55,7 @@ are its corollaries. The attested lexicalization patterns are described in prose
 namespace Pantcheva2011
 
 open Morphology
-open Spatial Spatial.Path
+open Case Order Zwarts2005
 
 /-- A syncretism pattern assigns form-class indices to the four path roles, in containment order
 Place, Goal, Source, Route, as the four-cell instance of `Morphology.Paradigm`. -/
@@ -148,19 +149,19 @@ variable {Loc β : Type*} [Preorder β] {R : Set Loc} {d : Loc → β} {p q : Pa
 /-- A path from outside a place into it is cofinal and not coinitial, and its reverse is
 coinitial, the semantic ground of *A&¬A (§5.4). -/
 example : let p : Path ℕ := Path.ofPoints 0 [1]
-    IsCofinal {1} p ∧ ¬ IsCoinitial {1} p ∧ IsCoinitial {1} p.reverse := by
+    Enters p {1} ∧ ¬ Leaves p {1} ∧ Leaves p.reverse {1} := by
   intro p
-  have h : IsCofinal {1} p := by
+  have h : Enters p {1} := by
     refine ⟨fun a b hab ha ↦ ?_, by decide, by decide⟩
     simp only [Set.mem_preimage, Set.mem_singleton_iff] at ha ⊢
     revert a b; decide
-  exact ⟨h, h.not_isCoinitial,
+  exact ⟨h, h.not_leaves,
     (hasShape_reverse p (d := (id : ℕ → ℕ)) (s := .coinitial)).2 h⟩
 
 /-- A goal path followed by a source path is a route path with one positive phase, (10) of
 Chapter 2. -/
-theorem isTransitive_of_concat (hp : IsCofinal R p) (hq : IsCoinitial R q)
-    (h : p.last = q.head) : IsTransitive R (p.smash q h) := by
+theorem crosses_of_concat (hp : Enters p R) (hq : Leaves q R)
+    (h : p.last = q.head) : Crosses (p.smash q h) R := by
   have hl : (p.smash q h).length = p.length + q.length := rfl
   refine ⟨⟨fun a ha b hb c hc ↦ ?_⟩, ⟨⟨p.length, by omega⟩, ?_⟩, ?_, ?_⟩
   · rcases le_total (c : ℕ) p.length with hle | hle
@@ -179,12 +180,12 @@ theorem isTransitive_of_concat (hp : IsCofinal R p) (hq : IsCoinitial R q)
   · show p.smash q h _ ∈ R
     rw [RelSeries.smash_apply_of_le h _ le_rfl]
     exact hp.2.2
-  · rw [coe_bot, RelSeries.head_smash]; exact hp.2.1
-  · rw [coe_top, RelSeries.last_smash, ← coe_top]; exact hq.2.2
+  · rw [RelSeries.apply_bot, RelSeries.head_smash]; exact hp.2.1
+  · rw [RelSeries.apply_top, RelSeries.last_smash, ← RelSeries.apply_top]; exact hq.2.2
 
 /-- A source path followed by a goal path has two positive phases and so no shape, the *tsap of
 (11) of Chapter 2, which to her knowledge no language has a preposition for. -/
-theorem not_hasShape_of_concat (hp : IsCoinitial R p) (hq : IsCofinal R q)
+theorem not_hasShape_of_concat (hp : Leaves p R) (hq : Enters q R)
     (h : p.last = q.head) (s : Shape) : ¬ HasShape R (p.smash q h) d s :=
   fun hr ↦ by
     have := hr.entries_eq_zero_of_head_mem (by simpa using hp.2.1)
@@ -192,7 +193,7 @@ theorem not_hasShape_of_concat (hp : IsCoinitial R p) (hq : IsCofinal R q)
     exact absurd this (by decide)
 
 /-- Such a path can be formed, so what (11) lacks is a shape rather than a concatenation. -/
-example : ∃ p q : Path ℕ, IsCoinitial {1} p ∧ IsCofinal {1} q ∧ p.last = q.head := by
+example : ∃ p q : Path ℕ, Leaves p {1} ∧ Enters q {1} ∧ p.last = q.head := by
   refine ⟨Path.ofPoints 1 [0], Path.ofPoints 0 [1], ⟨fun a b hab hb ↦ ?_, by decide, by decide⟩,
     ⟨fun a b hab ha ↦ ?_, by decide, by decide⟩, rfl⟩
   · simp only [Set.mem_preimage, Set.mem_singleton_iff] at hb ⊢
@@ -201,7 +202,7 @@ example : ∃ p q : Path ℕ, IsCoinitial {1} p ∧ IsCofinal {1} q ∧ p.last =
     revert a b; decide
 
 -- §5.5
-theorem isTransitive_reverse : IsTransitive R p.reverse ↔ IsTransitive R p :=
+theorem crosses_reverse : Crosses p.reverse R ↔ Crosses p R :=
   hasShape_reverse p (d := fun _ ↦ ()) (s := .transitive)
 
 -- §5.4, §5.5
@@ -225,19 +226,21 @@ theorem cumulative_hasShape_iff :
         fun _ hp _ hq _ ⟨h, hr⟩ ↦ hr ▸ HasShape.concat hs hp hq h⟩⟩
 
 -- [zwarts-2005]
-theorem mem_towardsPP_of_isApproximative (h : IsApproximative R p d) :
+theorem mem_towardsPP_of_approaches (h : Approaches p R d) :
     p ∈ Zwarts2005.towardsPP d := by
   have : d (p ⊤) < d (p ⊥) := h.2.1 (lt_of_le_of_ne bot_le h.2.2)
-  rwa [coe_top, coe_bot] at this
+  rwa [RelSeries.apply_top, RelSeries.apply_bot] at this
 
 -- [zwarts-2005]
-theorem mem_awayFromPP_of_isRecessive (h : IsRecessive R p d) :
+theorem mem_awayFromPP_of_recedes (h : Recedes p R d) :
     p ∈ Zwarts2005.awayFromPP d := by
   have : d (p ⊥) < d (p ⊤) := h.2.1 (lt_of_le_of_ne bot_le h.2.2)
-  rwa [coe_top, coe_bot] at this
+  rwa [RelSeries.apply_top, RelSeries.apply_bot] at this
 
 /-- A stationary path neither approaches a region nor recedes from it. -/
-example (l : Loc) : ¬ IsApproximative R (const l) d ∧ ¬ IsRecessive R (const l) d :=
+example (l : Loc) :
+    ¬ Approaches (RelSeries.singleton _ l : Path Loc) R d ∧
+      ¬ Recedes (RelSeries.singleton _ l : Path Loc) R d :=
   ⟨fun h ↦ h.2.2 rfl, fun h ↦ h.2.2 rfl⟩
 
 end Shapes
