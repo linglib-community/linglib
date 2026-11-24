@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Discourse.Gameboard.Rule
+public import Linglib.Discourse.Gameboard.Question
+public import Linglib.Semantics.Questions.Inquisitive.Declarative
 public import Linglib.Data.Examples.Ginzburg2012
 public import Linglib.Data.Examples.Readers
 
@@ -20,6 +22,12 @@ Utterance Interpolation, so it makes the clarified constituent of the maximal pe
 the focus-establishing constituent of MaxQUD. Parameter Identification and self-repair
 accommodate the same question, the first as a reply and the second as a continuation.
 
+For propositions that are sets of worlds, a potentially resolving answer to a question is a
+proposition that resolves the polar closure of the issue the question raises, and every
+proposition is about every question that has a value: a proposition entails the disjunction of a
+simple answer and its negation. The book's entailment is that of situation semantics, on which
+this fails, so the traces take aboutness, influence and resolution as given.
+
 The worked traces of Ch. 4 reach the tabulated gameboards, and after "Is George here? / Is WHO
 here?" the two participants' gameboards differ in QUD and PENDING although both processed the
 same utterances. QSPEC puts no condition on who
@@ -28,6 +36,13 @@ self-repair and a bare follow-up question.
 
 ## Implementation notes
 
+* The move rules follow Ch. 4, where Accept requires `p?` to be MaxQUD; the version of Appendix B
+  drops that precondition and updates the contextual parameters of the assertion. Initiating
+  Move is stated without its effect on QUD: in the book the issue the move is relevant to
+  becomes MaxQUD and the move is co-propositional with it.
+* The trace of the dialogue in which an assertion is checked and confirmed ends with QUD empty,
+  the result of Fact update on `⟨p₁?⟩`.
+* CR Accommodation removes the clarification request from PENDING when it makes it LatestMove.
 * The schematic content types of the traces (`Content`, `Clarifiable`) fix exactly the aboutness,
   influence and resolution relations each trace's side conditions require. Utterances are
   written orthographically, and the categories and contextual parameters are those the examples
@@ -136,6 +151,50 @@ def Agent.other : Agent → Agent
   | .A => .B
   | .B => .A
 
+/-! ### Answerhood over sets of worlds (§3.3.7)
+
+A question is a propositional abstract, a partial function `q : R →. Set W` from records to
+propositions. -/
+
+section Answerhood
+
+variable {R W : Type*} {p : Set W} {q : R →. Set W}
+
+/-- (45): a simple answer to `q` is an instantiation of `q` or the negation of one. -/
+def SimpleAnswer (q : R →. Set W) (p : Set W) : Prop :=
+  ∃ a ∈ q.ran, p = a ∨ p = aᶜ
+
+/-- `p` is about `q` when it entails a disjunction of simple answers to `q`. -/
+def About (p : Set W) (q : R →. Set W) : Prop :=
+  ∃ p₁ p₂, SimpleAnswer q p₁ ∧ SimpleAnswer q p₂ ∧ p ⊆ p₁ ∪ p₂
+
+/-- A potentially resolving answer to `q` entails an instantiation of `q` or the negation of
+every instantiation. -/
+def PotentiallyResolves (p : Set W) (q : R →. Set W) : Prop :=
+  (∃ a ∈ q.ran, p ⊆ a) ∨ ∀ a ∈ q.ran, p ⊆ aᶜ
+
+/-- Over sets of worlds, every proposition is about every question that has a value. -/
+theorem about_iff : About p q ↔ q.ran.Nonempty :=
+  ⟨fun ⟨_, _, ⟨a, ha, _⟩, _⟩ ↦ ⟨a, ha⟩, fun ⟨a, ha⟩ ↦
+    ⟨a, aᶜ, ⟨a, ha, .inl rfl⟩, ⟨a, ha, .inr rfl⟩, by simp⟩⟩
+
+/-- A potentially resolving answer to `q` is a proposition that resolves the polar closure of
+the issue `q` raises. -/
+theorem potentiallyResolves_iff_mem_query :
+    PotentiallyResolves p q ↔ p ∈ (Gameboard.issue q).query := by
+  simp only [PotentiallyResolves, Gameboard.issue, Question.mem_query, Question.mem_generate,
+    Question.info_generate, Set.subset_compl_comm (s := p), Set.sUnion_subset_iff]
+  constructor
+  · rintro (h | h)
+    · exact .inl (.inr h)
+    · exact .inr h
+  · rintro ((rfl | h) | h)
+    · exact .inr fun a _ ↦ by simp
+    · exact .inl h
+    · exact .inr h
+
+end Answerhood
+
 section Rules
 
 variable {P Fact Q : Type} [DecidableEq Fact] [DecidableEq Q] [Content Fact Q]
@@ -194,11 +253,12 @@ condition on who speaks. -/
 inductive Step : Board P Fact Q → Option (Move P (Utterance Fact Q)) → Board P Fact Q → Prop
   /-- Greeting opens a conversation with no moves made and nothing under discussion. -/
   | greeting {d : Board P Fact Q} (m : Move P (Utterance Fact Q)) :
-      d.moves = [] → d.qud = [] → m.utterance.content = .greet → Step d (some m) (d.say m)
+      d.moves = [] → d.qud = [] → m.utterance.content = .greet → d.IsContinuation m →
+      Step d (some m) (d.say m)
   /-- Counter-greeting answers a greeting. -/
   | counterGreeting {d : Board P Fact Q} (m : Move P (Utterance Fact Q)) :
-      d.latestContent = some .greet → m.utterance.content = .counterGreet → d.IsReply m →
-      Step d (some m) (d.say m)
+      d.latestContent = some .greet → d.qud = [] → m.utterance.content = .counterGreet →
+      d.IsReply m → Step d (some m) (d.say m)
   /-- Free Speech: with nothing under discussion, any move may be made. -/
   | freeSpeech {d : Board P Fact Q} (m : Move P (Utterance Fact Q)) :
       d.qud = [] → Step d (some m) (d.say m)
@@ -213,7 +273,8 @@ inductive Step : Board P Fact Q → Option (Move P (Utterance Fact Q)) → Board
   /-- Assert QUD-incrementation: `p?` becomes MaxQUD once `p` is asserted. -/
   | assertQud {d : Board P Fact Q} {p : Fact} :
       d.latestContent = some (.assert p) → Step d none (d.pushQud ⟨Content.polar p, ∅⟩)
-  /-- Assertion checking: the asserter asks for confirmation of `p` while `p?` is MaxQUD. -/
+  /-- Assertion checking: once `p` is asserted and `p?` is MaxQUD, either participant may ask
+  for confirmation of `p`. -/
   | check {d : Board P Fact Q} {p : Fact} (m : Move P (Utterance Fact Q)) :
       d.latestContent = some (.assert p) → m.utterance.content = .check p →
       d.maxQud = some (Content.polar p) → Step d (some m) (d.say m)
@@ -236,11 +297,10 @@ inductive Step : Board P Fact Q → Option (Move P (Utterance Fact Q)) → Board
   | qcoord {d : Board P Fact Q} {q q₁ : Q} {i : InformationStructure Q Constituent}
       {rest : List (InformationStructure Q Constituent)} (m : Move P (Utterance Fact Q)) :
       d.latestContent = some (.ask q) → m.utterance.content = .ask q₁ → d.qud = i :: rest →
-      i.question = q → ¬Content.Influences (Fact := Fact) q₁ q →
+      i.question = q → ¬Content.Influences (Fact := Fact) q₁ q → d.IsContinuation m →
       Step d (some m) { d.say m with qud := i :: ⟨q₁, ∅⟩ :: rest }
 
 omit [DecidableEq Q] in
-/-- After Fact update on `p`, `p?` is no longer under discussion. -/
 theorem factUpdate_polar (d : Board P Fact Q) (p : Fact) :
     ∀ i ∈ ((d.addFact p).downdateQud Content.Resolves).qud, i.question ≠ Content.polar p :=
   fun i hi hq ↦ Gameboard.nonResolveCond_downdateQud _ _ i hi
@@ -386,8 +446,7 @@ instance : Content Fact Q where
   decInfluences _ _ := inferInstanceAs (Decidable (_ ∧ _))
   resolves_polar _ := Or.inl rfl
 
-/-- After (65), in which A asks `q₀`, B asks `q₁`, A asserts `p₁`, B accepts, B asserts `p₂` and
-A accepts: FACTS `{p₁, p₂}`, QUD `⟨q₀⟩`, the six moves recorded. -/
+-- (65)
 theorem trace : ∃ d,
     Relation.ReflTransGen (fun d d' ↦ ∃ l, Step d l d') (initial : Board Agent Fact Q) d ∧
     table d = ({.p₁, .p₂}, [.q₀],
@@ -439,14 +498,13 @@ instance : Content Fact Q where
   decInfluences _ _ := inferInstanceAs (Decidable False)
   resolves_polar _ := Or.inl rfl
 
-/-- After (78), in which A asks `q₀` then `q₁` (QCoord), B answers `q₀`, A accepts and B answers
-`q₁`: FACTS `{p₀}`, QUD `⟨p₁?, q₁⟩`. -/
+-- (78)
 theorem trace : ∃ d,
     Relation.ReflTransGen (fun d d' ↦ ∃ l, Step d l d') (initial : Board Agent Fact Q) d ∧
     table d = ({.p₀}, [.polar .p₁, .q₁],
       [.assert .p₁, .accept .p₀, .assert .p₀, .ask .q₁, .ask .q₀]) :=
   ⟨_, .head ⟨_, .freeSpeech (tells .A .B (.ask .q₀)) rfl⟩ <| .head ⟨_, .askQud rfl⟩ <|
-    .head ⟨_, .qcoord (tells .A .B (.ask .q₁)) rfl rfl rfl rfl (by decide)⟩ <|
+    .head ⟨_, .qcoord (tells .A .B (.ask .q₁)) rfl rfl rfl rfl (by decide) ⟨rfl, rfl⟩⟩ <|
     .head ⟨_, .qspec (tells .B .A (.assert .p₀)) rfl (by decide)⟩ <|
     .head ⟨_, .assertQud rfl⟩ <|
     .head ⟨_, .accept (tells .A .B (.accept .p₀)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
@@ -494,9 +552,9 @@ instance : DecidablePred (· ∈ casualChat) := fun _ ↦ inferInstanceAs (Decid
 
 theorem initiating_off :
     IsInitiating casualChat ((initial {.here}).recordMove (ofMove IllocutionaryAct.greet))
-      (tells .A .B (.assert .off)) :=
+      (tells .B .A (.assert .off)) :=
   ⟨rfl, _, .head ⟨_, .assertQud rfl⟩ <|
-    .head ⟨_, .accept (tells .B .A (.accept .off)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .accept (tells .A .B (.accept .off)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
     .head ⟨_, .factUpdate (.inl rfl) rfl⟩ .refl, by decide⟩
 
 end Ex95
