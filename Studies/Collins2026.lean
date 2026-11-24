@@ -271,7 +271,7 @@ term of `Δ^c`, cutting the lower copy, and the low reading a term of `Δ^d`, cu
 The low reading is no term of `Δ^c`, whose cuts each leave a trace. -/
 theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
     let C := UnorderedTree.mk c.current.unmark.toRoseTree
-    let τ := termTrace SyntacticObject.selHead
+    let τ := termTrace SyntacticObject.selectionHead
     let lowReading := UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree
     ({UnorderedTree.mk everyPlayer.toRoseTree}, UnorderedTree.mk c.current.contract.toRoseTree) ∈
         traceCuts τ C ∧
@@ -279,7 +279,8 @@ theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
         deletionCuts SyntacticObject.Vertex.bare C ∧
       ∀ F, (F, lowReading) ∉ traceCuts τ C := by
   have h : ∀ c ∈ everyDidntScore.replayWithCopies?,
-      c.current.val.value.1 = none ∧ MarkedBy (termTrace SyntacticObject.selHead) c.current.val ∧
+      c.current.val.value.1 = none ∧
+      MarkedBy (termTrace SyntacticObject.selectionHead) c.current.val ∧
       c.current.cutForest ∅ = {everyPlayer.toRoseTree} ∧
       c.current.cutForest {everyPlayer.toSyntacticObject} = {everyPlayer.toRoseTree} ∧
       (∀ r ∈ c.current.val.subtrees, r.value.1.isSome →

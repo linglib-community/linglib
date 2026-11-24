@@ -28,9 +28,9 @@ externalization section σ_L, which must extend it noncanonically off that domai
 * `Minimalist.LinearizationState`: the value of the head function in its two descriptions, the
   selection state and the linearized object the head determines, `0` off `Dom(h)`; a `CommMagma`
   and `MulZeroClass` under the Merge-local product.
-* `Minimalist.LinearizationState.sel`: the projection morphism to `SelectionState`.
+* `Minimalist.LinearizationState.sel`: the projection morphism to `SelectionRule.stack.State`.
 * `Minimalist.SyntacticObject.headHom`: the head function as a morphism of magmas
-  `SyntacticObject →ₙ* LinearizationState side`, refining `selCheck`.
+  `SyntacticObject →ₙ* LinearizationState side`, refining `selectionState`.
 * `Minimalist.SyntacticObject.linearize?`: the harmonic linearization.
 
 ## Main results
@@ -80,7 +80,7 @@ open RoseTree UnorderedTree
     stack, and the linearized object it determines; `0` off `Dom(h)`. The head side is phantom in
     the carrier; the multiplication reads it. -/
 structure LinearizationState (side : Edge) (ι : Type := LexicalItem.Token) : Type where
-  toOption : Option ((LexicalItem.Token × List Cat) × PlanarSyntacticObject (ι := ι))
+  toOption : Option (SelectionRule.stack.Constituent × PlanarSyntacticObject (ι := ι))
 deriving DecidableEq
 
 namespace LinearizationState
@@ -90,37 +90,39 @@ variable {side : Edge} {ι : Type}
 /-- A defined state: projecting head `tok`, residual stack `stack`, linearized object `p`. -/
 def of (tok : LexicalItem.Token) (stack : List Cat) (p : PlanarSyntacticObject (ι := ι)) :
     LinearizationState side ι :=
-  ⟨some ((tok, stack), p)⟩
+  ⟨some (⟨tok, stack⟩, p)⟩
 
-/-- Merge-local externalization: the `selCombine` decision attaches the projecting daughter on
-    the head side; `0` is absorbing. -/
+/-- Merge-local externalization: the sister that projects is attached on the head side, the
+    other on the other side; `0` is absorbing. -/
 instance : MulZeroClass (LinearizationState side ι) where
   mul x y :=
     match x, y with
     | ⟨some (s₁, p₁)⟩, ⟨some (s₂, p₂)⟩ =>
-        ⟨(selCombine ⟨some s₁⟩ ⟨some s₂⟩).map fun d =>
-          (d.2, (bif d.1 then p₂ else p₁).attach side (bif d.1 then p₁ else p₂))⟩
+        if s₁.Projects s₂ then ⟨some (s₁.select s₂, p₂.attach side p₁)⟩
+        else if s₂.Projects s₁ then ⟨some (s₂.select s₁, p₁.attach side p₂)⟩ else ⟨none⟩
     | _, _ => ⟨none⟩
   zero := ⟨none⟩
   zero_mul _ := rfl
   mul_zero x := by rcases x with ⟨_ | _⟩ <;> rfl
 
-theorem some_mul_some (s₁ s₂ : LexicalItem.Token × List Cat)
+theorem some_mul_some (s₁ s₂ : SelectionRule.stack.Constituent)
     (p₁ p₂ : PlanarSyntacticObject (ι := ι)) :
     (⟨some (s₁, p₁)⟩ * ⟨some (s₂, p₂)⟩ : LinearizationState side ι) =
-      ⟨(selCombine ⟨some s₁⟩ ⟨some s₂⟩).map fun d =>
-          (d.2, (bif d.1 then p₂ else p₁).attach side (bif d.1 then p₁ else p₂))⟩ := rfl
+      if s₁.Projects s₂ then ⟨some (s₁.select s₂, p₂.attach side p₁)⟩
+      else if s₂.Projects s₁ then ⟨some (s₂.select s₁, p₁.attach side p₂)⟩ else ⟨none⟩ := rfl
 
 instance : CommMagma (LinearizationState side ι) where
   mul_comm x y := by
     match x, y with
     | ⟨none⟩, ⟨none⟩ | ⟨none⟩, ⟨some _⟩ | ⟨some _⟩, ⟨none⟩ => rfl
     | ⟨some (s₁, p₁)⟩, ⟨some (s₂, p₂)⟩ =>
-      rw [some_mul_some, some_mul_some, selCombine_comm]
-      rcases selCombine ⟨some s₂⟩ ⟨some s₁⟩ with _ | ⟨_ | _, _, _⟩ <;> rfl
+      rw [some_mul_some, some_mul_some]
+      by_cases h : s₁.Projects s₂
+      · simp [h, h.asymm]
+      · by_cases h' : s₂.Projects s₁ <;> simp [h, h']
 
 /-- The projection to the selection state: forgetting the order description. -/
-def sel : LinearizationState side ι →ₙ* SelectionState (List Cat) where
+def sel : LinearizationState side ι →ₙ* SelectionRule.stack.State where
   toFun x := ⟨x.toOption.map (·.1)⟩
   map_mul' x y := by
     match x, y with
@@ -128,8 +130,9 @@ def sel : LinearizationState side ι →ₙ* SelectionState (List Cat) where
     | ⟨some _⟩, ⟨none⟩ => exact (mul_zero _).symm
     | ⟨some (s₁, p₁)⟩, ⟨some (s₂, p₂)⟩ =>
       rw [some_mul_some]
-      simp only [Option.map_map]
-      rfl
+      show _ = SelectionRule.State.merge s₁ s₂
+      unfold SelectionRule.State.merge
+      split_ifs <;> rfl
 
 @[simp] theorem sel_of (tok : LexicalItem.Token) (stack : List Cat)
     (p : PlanarSyntacticObject (ι := ι)) :
@@ -156,9 +159,10 @@ theorem linearized?_mul_eq_some {x y : LinearizationState side ι}
   match x, y with
   | ⟨some (s₁, p₁)⟩, ⟨some (s₂, p₂)⟩ =>
     rw [some_mul_some] at h
-    simp only [linearized?, Option.map_map] at h
-    obtain ⟨⟨b, _⟩, -, rfl⟩ := Option.map_eq_some_iff.1 h
-    exact ⟨p₁, p₂, rfl, rfl, by cases b <;> simp⟩
+    split_ifs at h
+    · exact ⟨p₁, p₂, rfl, rfl, .inl (Option.some.inj h).symm⟩
+    · exact ⟨p₁, p₂, rfl, rfl, .inr (Option.some.inj h).symm⟩
+    · cases h
   | ⟨none⟩, _ => cases h
   | ⟨some _⟩, ⟨none⟩ => cases h
 
@@ -214,14 +218,15 @@ side. -/
 theorem linearized?_merge {d l : SyntacticObject (ι := ι)}
     {pd pl : PlanarSyntacticObject (ι := ι)} {e : Edge}
     (hd : (φ d).linearized? = some pd) (hl : (φ l).linearized? = some pl)
-    (h : selSide (sel (φ d)) (sel (φ l)) = some (decide (e = side))) :
+    (h : SelectionRule.State.side (sel (φ d)) (sel (φ l)) = some (decide (e = side))) :
     (φ (merge d l)).linearized? = some (pl.attach e pd) := by
   obtain ⟨σd, hσd, hsd⟩ := eq_of_linearized? hd
   obtain ⟨σl, hσl, hsl⟩ := eq_of_linearized? hl
-  rw [hσd, hσl, selSide] at h
-  obtain ⟨⟨_, x⟩, hc, rfl⟩ := Option.map_eq_some_iff.1 h
-  rw [show merge d l = d * l from rfl, map_mul, hsd, hsl, some_mul_some, hc]
-  cases e <;> cases side <;> rfl
+  rw [hσd, hσl] at h
+  change (if σd.Projects σl then some true else if σl.Projects σd then some false else none) =
+    some (decide (e = side)) at h
+  rw [show merge d l = d * l from rfl, map_mul, hsd, hsl, some_mul_some]
+  split_ifs at h ⊢ with h₁ h₂ <;> cases e <;> cases side <;> first | rfl | simp at h
 
 /-- The subtrees of a linearized object are the linearizations of its terms. -/
 theorem linearized?_of_mem_subtrees {cur : SyntacticObject (ι := ι)}
@@ -295,11 +300,11 @@ def headHom : SyntacticObject →ₙ* LinearizationState side :=
 /-- Fusion: the selection component of the head function's value is the selection
     check — two morphisms agreeing on the leaves (`hom_ext`). -/
 theorem sel_comp_headHom :
-    LinearizationState.sel.comp (headHom side) = selCheck :=
+    LinearizationState.sel.comp (headHom side) = selectionState :=
   FreeCommMagma.hom_ext fun x ↦ by cases x <;> rfl
 
 @[simp] theorem sel_headHom (s : SyntacticObject) :
-    LinearizationState.sel (headHom side s) = selCheck s :=
+    LinearizationState.sel (headHom side s) = selectionState s :=
   DFunLike.congr_fun (sel_comp_headHom side) s
 
 /-- The harmonic linearization, the projecting daughter on the head side at every node

@@ -5,7 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Logic.Function.Basic
+public import Mathlib.Data.Finset.Insert
+public import Mathlib.Logic.Equiv.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Categories
@@ -14,9 +16,10 @@ The categories that label heads, those of the clausal spine and of the nominal a
 extended projections, and the selectional stack, the categories a head selects, consumed left to
 right. Each category belongs to one of four families, verbal, nominal, adjectival and
 adpositional, each with its lexical head, V, N, A and P, and a functional head belongs to the
-family of the lexical head it extends. The families carry the categorial features `[±V, ±N]`, and
-the two binary features have four combinations, one for each family, so two categories share their
-features exactly when they share their family.
+family of the lexical head it extends. There are two categorial features, `N` and `V`, and a family
+is specified by the set of them it is positive for: `{V}` for the verbal family, `{N}` for the
+nominal, both for the adjectival and neither for the adpositional. The four sets are the four
+families, so two categories share their features exactly when they share their family.
 
 ## Main definitions
 
@@ -24,8 +27,10 @@ features exactly when they share their family.
 * `Minimalist.Cat.IsCategorizer`: the categorizers n, v and a.
 * `Minimalist.CatFamily`, `Minimalist.Cat.family`: the four families.
 * `Minimalist.CatFamily.lexical`: the lexical head of a family.
-* `Minimalist.CatFeatures`, `Minimalist.Cat.features`: the features `[±V, ±N]`, read off the
-  family.
+* `Minimalist.CategorialFeature`: the categorial features `N` and `V`.
+* `Minimalist.CatFamily.features`, `Minimalist.Cat.features`: the features a family, and a
+  category of it, is positive for.
+* `Minimalist.CatFamily.featuresEquiv`: the families as the sets of categorial features.
 
 ## Main results
 
@@ -35,7 +40,9 @@ features exactly when they share their family.
 
 ## Implementation notes
 
-Chomsky's features first classified the noun, the verb and the adjective; the fourth combination,
+A specification `[±V, ±N]` is the set of features it is positive for, so that the class `[+N]` is
+the families whose set contains `N` and `[−N]` those whose set does not. Chomsky's features first
+classified the noun, the verb and the adjective; the fourth combination,
 `[−V, −N]`, was given to the adposition afterwards [baker-2003].
 
 ## References
@@ -174,31 +181,41 @@ def Cat.family : Cat → CatFamily
 
 /-! ### Categorial features -/
 
-/-- The categorial features `[±V, ±N]`, which cross-classify the four lexical categories: V is
-`[+V, −N]`, N is `[−V, +N]`, A is `[+V, +N]` and P is `[−V, −N]`. -/
-structure CatFeatures where
-  plusV : Bool
-  plusN : Bool
-  deriving DecidableEq, Repr
+/-- The categorial features. -/
+inductive CategorialFeature where
+  | N
+  | V
+  deriving DecidableEq, Repr, Fintype
 
-/-- The features of a family are those of its lexical head. -/
-def CatFamily.features : CatFamily → CatFeatures
-  | .verbal => ⟨true, false⟩
-  | .nominal => ⟨false, true⟩
-  | .adjectival => ⟨true, true⟩
-  | .adpositional => ⟨false, false⟩
+/-- The categorial features a family is positive for: V is `[+V, −N]`, N is `[−V, +N]`, A is
+`[+V, +N]` and P is `[−V, −N]`. -/
+def CatFamily.features : CatFamily → Finset CategorialFeature
+  | .verbal => {.V}
+  | .nominal => {.N}
+  | .adjectival => {.N, .V}
+  | .adpositional => ∅
 
-/-- Each of the four combinations of the two features is the features of exactly one family. -/
+/-- The families are the sets of categorial features. -/
+def CatFamily.featuresEquiv : CatFamily ≃ Finset CategorialFeature where
+  toFun := features
+  invFun s :=
+    if .N ∈ s then (if .V ∈ s then .adjectival else .nominal)
+    else if .V ∈ s then .verbal else .adpositional
+  left_inv f := by cases f <;> simp [features]
+  right_inv s := by
+    ext x
+    by_cases hN : CategorialFeature.N ∈ s <;> by_cases hV : CategorialFeature.V ∈ s <;>
+      cases x <;> simp [features, hN, hV]
+
+@[simp] theorem CatFamily.coe_featuresEquiv : ⇑CatFamily.featuresEquiv = CatFamily.features := rfl
+
+/-- Each set of categorial features is the features of exactly one family. -/
 theorem CatFamily.features_bijective : Function.Bijective CatFamily.features :=
-  ⟨fun a b h ↦ by cases a <;> cases b <;> simp_all [features], fun
-    | ⟨true, false⟩ => ⟨.verbal, rfl⟩
-    | ⟨false, true⟩ => ⟨.nominal, rfl⟩
-    | ⟨true, true⟩ => ⟨.adjectival, rfl⟩
-    | ⟨false, false⟩ => ⟨.adpositional, rfl⟩⟩
+  CatFamily.featuresEquiv.bijective
 
 /-- The features of a category are those of its family, so that every functional head inherits
 the features of its lexical head. -/
-def Cat.features (c : Cat) : CatFeatures := c.family.features
+def Cat.features (c : Cat) : Finset CategorialFeature := c.family.features
 
 theorem Cat.features_eq_iff {c d : Cat} : c.features = d.features ↔ c.family = d.family :=
   CatFamily.features_bijective.injective.eq_iff

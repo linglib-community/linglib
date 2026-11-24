@@ -191,7 +191,7 @@ instance (p : Clause) (a : Analysis) : Decidable (p.Licensed a) := by
 Voice head, voice in the sense of (121), after [storment-2025]. -/
 def SmugglesViaVoice (d : Derivation) (x w : SyntacticObject) : Prop :=
   ∃ i < d.length, d.IsSmugglingStep i x w ∧
-    ∃ q ∈ (d.take i).externalize?, ∃ v ∈ q.toSyntacticObject.selHead, v.item.cat = .Voice
+    ∃ q ∈ (d.take i).externalize?, ∃ v ∈ q.toSyntacticObject.selectionHead, v.item.cat = .Voice
 
 instance (d : Derivation) (x w : SyntacticObject) : Decidable (SmugglesViaVoice d x w) := by
   unfold SmugglesViaVoice; infer_instance

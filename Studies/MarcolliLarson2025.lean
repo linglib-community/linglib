@@ -112,7 +112,7 @@ theorem realize_gaveMoved (hb : book ≠ gave) (hj : toJohn ≠ gave) :
     realize (gaveMoved mary gave book toJohn) = ↑(merge (.leaf mary)
       ((Step.im (.leaf gave) : Step).apply
         (merge (.leaf book) (merge (.leaf toJohn) (.leaf gave))))) := by
-  rw [Step.apply_im, deleteAccessible, headTrace, TraceLabel.encoder_token, selHead_leaf,
+  rw [Step.apply_im, deleteAccessible, headTrace, TraceLabel.encoder_token, selectionHead_leaf,
     Option.elim,
     replace_merge_of_ne (leaf_ne_merge _ _ _).symm, replace_merge_of_ne (leaf_ne_merge _ _ _).symm,
     replace_of_toUnorderedTree_eq_leaf (toUnorderedTree_leaf book) (by simpa using hb),

@@ -66,7 +66,7 @@ heads, which satisfies selection as that phrase and is otherwise invisible to th
 algorithm. -/
 inductive CopyState where
   /-- The selection state of a constituent the raising head sees. -/
-  | sel (x : SelectionState (List Cat))
+  | sel (x : SelectionRule.stack.State)
   /-- A lower copy of the phrase `tok` heads. -/
   | copy (tok : LexicalItem.Token)
   deriving DecidableEq
@@ -80,17 +80,19 @@ otherwise invisible; two lower copies leave nothing to see. -/
 instance : Mul CopyState where
   mul
     | sel x, sel y => sel (x * y)
-    | copy a, sel y => if SelectionState.of a [] * y = 0 then sel y else sel (.of a [] * y)
-    | sel x, copy a => if x * SelectionState.of a [] = 0 then sel x else sel (x * .of a [])
+    | copy a, sel y => if SelectionRule.State.of a [] * y = 0 then sel y else sel (.of a [] * y)
+    | sel x, copy a => if x * SelectionRule.State.of a [] = 0 then sel x else sel (x * .of a [])
     | copy _, copy _ => 0
 
-@[simp] theorem sel_mul_sel (x y : SelectionState (List Cat)) : sel x * sel y = sel (x * y) := rfl
+@[simp] theorem sel_mul_sel (x y : SelectionRule.stack.State) : sel x * sel y = sel (x * y) := rfl
 
-theorem copy_mul_sel (a : LexicalItem.Token) (y : SelectionState (List Cat)) :
-    copy a * sel y = if SelectionState.of a [] * y = 0 then sel y else sel (.of a [] * y) := rfl
+theorem copy_mul_sel (a : LexicalItem.Token) (y : SelectionRule.stack.State) :
+    copy a * sel y = if SelectionRule.State.of a [] * y = 0 then sel y else sel (.of a [] * y) :=
+  rfl
 
-theorem sel_mul_copy (x : SelectionState (List Cat)) (a : LexicalItem.Token) :
-    sel x * copy a = if x * SelectionState.of a [] = 0 then sel x else sel (x * .of a []) := rfl
+theorem sel_mul_copy (x : SelectionRule.stack.State) (a : LexicalItem.Token) :
+    sel x * copy a = if x * SelectionRule.State.of a [] = 0 then sel x else sel (x * .of a []) :=
+  rfl
 
 instance : CommMagma CopyState where
   mul_comm
@@ -117,26 +119,25 @@ def head : CopyState → Option LexicalItem.Token
 @[simp] theorem mul_self (l : CopyState) : l * l = 0 := by
   rcases l with x | a
   · show sel (x * x) = sel 0
-    rw [SelectionState.mul_self]
+    rw [SelectionRule.State.mul_self]
   · rfl
 
 /-- The head of a product of copy states is a factor's head. -/
-instance : Head CopyState where
-  head := head
-  head_zero := rfl
-  mem_head_or_mem_head_of_mem_head_mul {x y h} hxy := by
+theorem isHeadFunction_head : IsHeadFunction head where
+  map_zero := rfl
+  mem_or_mem_of_mem_mul {x y h} hxy := by
     rcases x with x | a <;> rcases y with y | b
-    · exact mem_head_or_mem_head_of_mem_head_mul (β := SelectionState (List Cat)) hxy
+    · exact SelectionRule.State.isHeadFunction_head.mem_or_mem_of_mem_mul hxy
     · rw [sel_mul_copy] at hxy
       split_ifs at hxy with h0
       · exact .inl hxy
-      · change (x * SelectionState.of b []).head = some h at hxy
+      · change (x * SelectionRule.State.of b []).head = some h at hxy
         rw [_root_.mul_comm x] at hxy
-        exact .inl (SelectionState.head_of_mul_of hxy)
+        exact .inl (SelectionRule.State.head_of_mul_of hxy)
     · rw [copy_mul_sel] at hxy
       split_ifs at hxy with h0
       · exact .inr hxy
-      · exact .inr (SelectionState.head_of_mul_of hxy)
+      · exact .inr (SelectionRule.State.head_of_mul_of hxy)
     · cases hxy
 
 end CopyState
@@ -183,13 +184,12 @@ instance : CommMagma RaisingState where
   mul_comm x y := by simp only [mul_def, raise_comm, add_comm]
 
 /-- The raising head of a product is a factor's raising head. -/
-instance : Head RaisingState where
-  head x := x.state.head
-  head_zero := rfl
-  mem_head_or_mem_head_of_mem_head_mul {x y t} h := by
+theorem isHeadFunction_head : IsHeadFunction fun x : RaisingState ↦ x.state.head where
+  map_zero := rfl
+  mem_or_mem_of_mem_mul {x y t} h := by
     simp only [mul_def, raise] at h
     split_ifs at h with h0
-    · exact mem_head_or_mem_head_of_mem_head_mul (β := CopyState) h
+    · exact CopyState.isHeadFunction_head.mem_or_mem_of_mem_mul h
     · rcases hx : x.state.head with _ | a <;> rcases hy : y.state.head with _ | b <;>
         simp only [hx, hy] at h ⊢
       · cases h
@@ -241,7 +241,7 @@ def raisingCheckHom : SyntacticObject →ₙ* RaisingState :=
 ([marcolli-chomsky-berwick-2025] Lemma 1.13.7). -/
 theorem raisingHead_merge {l r : SyntacticObject} {h : LexicalItem.Token}
     (hlr : (merge l r).raisingHead = some h) : l.raisingHead = some h ∨ r.raisingHead = some h :=
-  mem_head_or_mem_head_of_mem_head_map_mul raisingCheckHom (x := l) (y := r) hlr
+  RaisingState.isHeadFunction_head.comp raisingCheckHom (x := l) (y := r) hlr
 
 @[simp] theorem raisingHead_merge_self (x : SyntacticObject) : (merge x x).raisingHead = none := by
   rw [raisingHead, raisingCheck_merge, RaisingState.mul_def]

@@ -220,7 +220,7 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
           (hmv _ (List.mem_append_right _ (List.mem_singleton_self _)) mover rfl) hx.symm
         subst hmover
         have hy := hpron y (mem_terms.2 hzy)
-        have hrep := PlanarSyntacticObject.yield_replace_add_yield selHead (hT ▸ hd0) hsT
+        have hrep := PlanarSyntacticObject.yield_replace_add_yield selectionHead (hT ▸ hd0) hsT
         rw [PlanarSyntacticObject.toSyntacticObject_find? hsT, yield_leaf] at hrep
         rw [← hrep, Multiset.mem_add, Multiset.mem_singleton] at hy
         have hy' := mem_yield_iff.1 (hy.resolve_right hxy.symm)

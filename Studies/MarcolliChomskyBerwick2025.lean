@@ -873,9 +873,9 @@ example : (theDog.linearize? .left).map (·.yield.filterMap (·.item.phonForm?))
 /-- Merging *the* on the left of *dog*, which it selects, is harmonic for a head-initial
 language, so that derivation records the head-initial planarization
 (`Derivation.externalize?_eq_linearized?`); merging it on the right is not harmonic. -/
-example : Step.HarmonicList (headHom .left) selHead [.em .left (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
+example : Step.HarmonicList (headHom .left) selectionHead [.em .left (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
       ⟨.leaf ⟨.of .N [] (phonForm := "dog"), 1⟩, []⟩ ∧
-    ¬ Step.HarmonicList (headHom .left) selHead [.em .right (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
+    ¬ Step.HarmonicList (headHom .left) selectionHead [.em .right (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
       ⟨.leaf ⟨.of .N [] (phonForm := "dog"), 1⟩, []⟩ :=
   ⟨⟨⟨rfl, by decide⟩, trivial⟩, fun ⟨⟨_, h⟩, _⟩ ↦ absurd h (by decide)⟩
 
@@ -1049,7 +1049,7 @@ theorem featureConsistency_eq_convMul
 /-- The head-probe value `Υ_{s,h}` on a tree (equation (3.2.1)), the probe `Υ` applied to the
 tree's selection head, and `inconsistent` when the tree has no well-defined head. -/
 def headProbeTree (Υ : LexicalItem.Token → Consistency) (T : UnorderedTree Vertex) : Consistency :=
-  (selCheckN T).head.elim Consistency.inconsistent Υ
+  (treeSelectionState T).head.elim Consistency.inconsistent Υ
 
 /-- The head-following feature character `ϕ_{Υ,s,h}` of Lemma 3.2.5 is the algebra homomorphism
 extending `Υ_{s,h}` multiplicatively to forests, so that a workspace is consistent iff each of its
