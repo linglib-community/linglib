@@ -2,7 +2,6 @@ module
 
 public import Linglib.Logic.Truthmaker.Formula
 public import Linglib.Semantics.Mereology.Exemplification
-public import Mathlib.Data.Set.Finite.Basic
 
 /-!
 # Deigan (2020): A plea for inexact truthmaking
@@ -23,8 +22,8 @@ propositions: the inexact verifiers of a proposition are the closure of their ex
 the other order they compose to the identity on a proposition whose verifiers and falsifiers are
 antichains of states that have proper parts, and every formula over such letters then denotes
 under Deigan's definition what it denotes under the exact valuation. A proposition has no
-exemplifier exactly when its verifiers have empty interior and no isolated point, as the sets of
-infinitely many stars do.
+exemplifier exactly when its verifiers have empty interior and no isolated point, as the
+proposition that there are infinitely many stars has none, `Kratzer2002.not_exemplifies_infinite`.
 
 Two simpler definitions fail. The minimal inexact verifiers are no definition where the
 verifiers are open and every state has a proper part, since nothing is then minimal, though
@@ -150,20 +149,5 @@ theorem sup_mem_pro_disj_conj_and_not_exemplifies (ha : P.pro = {a}) (hb : b ∈
     exact not_exemplifies_sup Set.self_mem_Ici hab hba
 
 end SemilatticeSup
-
-section Stars
-
-attribute [local instance] Topology.lowerSet
-
--- (5)
-theorem not_exemplifies_infinite (x : Set ℕ) : ¬ Exemplifies {s : Set ℕ | s.Infinite} x := by
-  rw [exemplifies_iff]
-  rintro (h | h)
-  · exact h (Set.empty_subset x) Set.finite_empty
-  · obtain ⟨a, ha⟩ := h.prop.nonempty
-    exact h.not_prop_of_lt (Set.sdiff_singleton_ssubset.2 ha)
-      (h.prop.sdiff (Set.finite_singleton a))
-
-end Stars
 
 end Deigan2020

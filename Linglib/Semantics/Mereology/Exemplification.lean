@@ -5,6 +5,7 @@ public import Linglib.Core.Order.UpperLower.Closure
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Lattice
 public import Mathlib.Topology.DerivedSet
+public import Mathlib.Topology.Irreducible
 public import Mathlib.Topology.Order.UpperLowerSetTopology
 
 /-!
@@ -29,7 +30,7 @@ the proposition that there is mud and a situation with three teapots and nothing
 proposition that there are three teapots. Equivalently `x` is a member of `p` whose proper parts
 are all members or all non-members. The exemplifiers of the closure of `s` are its interior
 points and the minimal elements of `s`. In a well-founded part order a closed set is the closure
-of its exemplifiers.
+of its exemplifiers, and the closures of its minimal members are its irreducible components.
 
 ## Main definitions
 
@@ -50,6 +51,8 @@ of its exemplifiers.
   interior points and the minimal elements of `s`.
 * `Mereology.closure_setOf_exemplifies`: in a well-founded part order a closed set is the
   closure of its exemplifiers.
+* `Mereology.minimal_mem_iff_maximal_isIrreducible`: the minimal members of a closed set are the
+  generic points of its irreducible components.
 
 ## Implementation notes
 
@@ -208,6 +211,22 @@ theorem closure_setOf_exemplifies [WellFoundedLT α] (hp : IsClosed p) :
   obtain ⟨m, hmx, hm⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ p) x hx
   rw [closure_eq_upperClosure]
   exact ⟨m, hm.exemplifies, hmx⟩
+
+/-- The minimal members of a closed set are the generic points of its irreducible components:
+the closure of `x` is a maximal irreducible subset of `p` exactly when `x` is a minimal member of
+`p`. -/
+theorem minimal_mem_iff_maximal_isIrreducible (hp : IsClosed p) :
+    Minimal (· ∈ p) x ↔ Maximal (fun s : Set α ↦ IsIrreducible s ∧ s ⊆ p) (closure {x}) := by
+  have hup := isClosed_iff_isUpper.1 hp
+  have hirr (y : α) : IsIrreducible (Ici y) := IsLowerSet.closure_singleton (a := y) ▸
+    isIrreducible_singleton.closure
+  rw [IsLowerSet.closure_singleton]
+  refine ⟨fun hx ↦ ⟨⟨hirr x, fun y hy ↦ hup hy hx.prop⟩, fun F ⟨hF, hFp⟩ hxF y hy ↦ ?_⟩,
+    fun hx ↦ ⟨hx.prop.2 self_mem_Ici, fun z hz hzx ↦ ?_⟩⟩
+  · obtain ⟨z, hzF, hzx, hzy⟩ := hF.2 (Iic x) (Iic y) (isOpen_iff_isLowerSet.2 (.Iic x))
+      (isOpen_iff_isLowerSet.2 (.Iic y)) ⟨x, hxF self_mem_Ici, le_rfl⟩ ⟨y, hy, le_rfl⟩
+    exact hx.eq_of_le (hFp hzF) hzx ▸ hzy
+  · exact hx.le_of_ge ⟨hirr z, fun y hy ↦ hup hy hz⟩ (Ici_subset_Ici.2 hzx) self_mem_Ici
 
 end PartialOrder
 
