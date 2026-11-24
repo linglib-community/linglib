@@ -8,27 +8,36 @@ public import Studies.Spector2007
 # Fagen (2026): Order selection: the logical foundations of exhaustivity
 
 Fagen derives the exhaustive interpretation of an answer from its meaning and the question, with
-no alternative sentences: an answer holds in the best worlds where it is true, and what varies is
-the order that ranks them. The default order minimizes the question-property, as [the
-minimal-worlds exhaustifier](##Fagen2026.exh_ltDefault) does; the hybrid order minimizes it within
-an answer's positive restriction and maximizes it within the negative one, [concluding nothing
-outside](##Fagen2026.mem_exh_ltHybrid_iff_of_inter), so that *some of the linguists but not all
-of the computer scientists* [says that exactly one linguist and all but one computer scientist
-attended](##Fagen2026.exh_selectedOrder_someButNotAll). Fagen selects the default order by
-positive skew, [Spector's quasi-positivity](##Fagen2026.quasiPositive_iff_positivelySkewed), and
-derives the choice from Preserve Restriction; yet when something lies outside an answer's
-restriction, the default order preserves it [exactly when the answer's minimal sets cover
-it](##Fagen2026.preservesRestriction_ltDefault_iff), which positive skew does not ensure.
+no alternative sentences. An answer is a quantifier `T` over individuals and a question a property
+`P` of individuals that varies with the world. The answer is interpreted as holding in the worlds
+where `T (P w)` is true and no world where it is true is better; what varies is the order that
+ranks the worlds.
+
+The default order prefers a smaller extension of the question-property. Under it, exhaustive
+interpretation is the minimal-worlds exhaustifier over the propositions that each individual has
+the property. The hybrid order prefers a smaller extension within the answer's positive
+restriction and a larger one within its negative restriction, and it treats alike two worlds that
+agree within the answer's restriction. So *some of the linguists but not all of the computer
+scientists* says that exactly one linguist and all but one computer scientist have the property.
+The dual order prefers a larger extension; interpreting an answer under it is interpreting the
+inner negation of the answer under the default order for the complement of the question-property.
+
+An answer takes the default order when it is positively skewed, its restriction being its positive
+restriction, which is Spector's quasi-positivity, and the hybrid order otherwise. The two
+negations of a quantifier exchange positive and negative skew. When something lies outside an
+answer's restriction, the default order preserves the restriction if and only if the answer's
+minimal sets cover it.
 
 ## Implementation notes
 
-* An answer is a quantifier `T` over individuals and the question a property `P : W → Set E` of
-  worlds; exhaustive interpretation `exh P T r` takes the order `r` as a parameter, as (29) does.
+* Exhaustive interpretation `exh P T r` takes the order `r` as a parameter, as (29) does.
 * The worked examples take the worlds to be all extensions of the question-property, as Fagen's
   diagrams do. There the restriction operators over property intensions that Preserve Restriction
   applies to an exhaustified answer (25) are those of `exh id T r` as a quantifier.
 * A proposition of Spector's question-relative language, a set of valuations of the atoms, is a
   quantifier over the atoms, `quantifierOf`.
+* The hybrid relation (31d) is asymmetric. It is not transitive, as `not_transitive_ltHybrid`
+  shows with three linguists and three computer scientists.
 
 ## TODO
 
@@ -36,13 +45,14 @@ it](##Fagen2026.preservesRestriction_ltDefault_iff), which positive skew does no
   participants might assume (§3.2.1), are not formalized; nor are answers to second-order
   questions (§2.4) or the conditions under which the dual order is chosen (§3.3).
 * The answers of Table 3.1 are not recorded as data.
+* `someButNotAll L C` and `allOrNone L` are `Det.some L ⊓ (Det.every C)ᶜ` and
+  `Det.every L ⊔ Det.no L`; they are still defined here by their truth conditions.
 
 ## References
 
-* [L. Fagen, *Order selection: the logical foundations of exhaustivity* (2026)][fagen-2026]
-* [B. Spector, *Scalar implicatures: exhaustivity and Gricean reasoning* (2007)][spector-2007]
-* [J. Groenendijk and M. Stokhof, *Studies on the semantics of questions and the pragmatics of
-  answers* (1984)][groenendijk-stokhof-1984]
+* [fagen-2026]
+* [spector-2007]
+* [groenendijk-stokhof-1984]
 -/
 
 @[expose] public section
@@ -91,6 +101,13 @@ theorem positivelySkewed_of_monotone (hT : Monotone T) : PositivelySkewed T :=
 -- A13
 theorem negativelySkewed_of_antitone (hT : Antitone T) : NegativelySkewed T :=
   negativelySkewed_iff.2 (positiveRestriction_eq_empty_of_antitone hT ▸ empty_subset _)
+
+-- the two negations exchange positive and negative skew
+theorem positivelySkewed_compl_iff : PositivelySkewed Tᶜ ↔ NegativelySkewed T := by
+  rw [PositivelySkewed, NegativelySkewed, restriction_compl, positiveRestriction_compl]
+
+theorem negativelySkewed_compl_iff : NegativelySkewed Tᶜ ↔ PositivelySkewed T := by
+  rw [PositivelySkewed, NegativelySkewed, restriction_compl, negativeRestriction_compl]
 
 end Restriction
 
@@ -142,6 +159,16 @@ theorem exh_ltDefault :
   ext w
   simp only [exh, mem_exhMW, MinimalFor, mem_ofPred_eq, h, ltDefault, ssubset_def, not_exists,
     not_and, not_not]
+
+-- §3.3: the dual order is the default order for the inner negation of the answer and the
+-- complement of the question-property
+theorem exh_ltDual :
+    exh P T (ltDual P) =
+      exh (fun w ↦ (P w)ᶜ) T.innerNeg (ltDefault fun w ↦ (P w)ᶜ) := by
+  ext w
+  simp only [exh, mem_ofPred_eq, ltDual, ltDefault, innerNeg_apply, compl_compl]
+  exact and_congr_right fun _ ↦ not_congr <| exists_congr fun v ↦ and_congr_right fun _ ↦
+    compl_lt_compl_iff_lt.symm
 
 -- p. 70: the hybrid order is antisymmetric
 theorem ltHybrid_asymm {v w : W} (h : ltHybrid P T v w) : ¬ ltHybrid P T w v :=

@@ -14,12 +14,23 @@ that the sets it lives on are exactly the supersets of the restriction. The rest
 into a positive restriction, the individuals whose addition can make the quantifier apply, and a
 negative restriction, those whose removal can. On a finite universe a quantifier is monotone
 exactly when its negative restriction is empty, and antitone exactly when its positive one is.
+The complement and the inner negation of a quantifier have its restriction, with the positive and
+the negative restriction exchanged.
 
 ## Main definitions
 
 * `Quantifier.restriction`: the intersection of the sets a quantifier lives on.
 * `Quantifier.positiveRestriction`, `Quantifier.negativeRestriction`: the individuals whose
   addition, or removal, turns a set the quantifier does not apply to into one it applies to.
+
+## Main results
+
+* `Quantifier.livesOn_restriction`: on a finite universe a quantifier lives on its restriction.
+* `Quantifier.negativeRestriction_eq_empty_iff`, `Quantifier.positiveRestriction_eq_empty_iff`: on
+  a finite universe a quantifier is monotone if and only if its negative restriction is empty,
+  and antitone if and only if its positive restriction is.
+* `Quantifier.positiveRestriction_compl`, `Quantifier.positiveRestriction_innerNeg`: the positive
+  restriction of the complement, and of the inner negation, is the negative restriction.
 
 ## References
 
@@ -127,6 +138,59 @@ theorem positiveRestriction_subset_restriction : Q.positiveRestriction ⊆ Q.res
 
 theorem negativeRestriction_subset_restriction : Q.negativeRestriction ⊆ Q.restriction :=
   Q.positiveRestriction_union_negativeRestriction ▸ subset_union_right
+
+/-! ### Negation
+
+A quantifier and its complement live on the same sets, and so do a quantifier and its inner
+negation. Each negation exchanges the positive and the negative restriction, so the dual has the
+same two restrictions as the quantifier. -/
+
+theorem livesOn_compl_iff : Qᶜ.LivesOn A ↔ Q.LivesOn A :=
+  forall_congr' fun _ ↦ not_iff_not
+
+@[simp] theorem restriction_compl : Qᶜ.restriction = Q.restriction := by
+  simp only [restriction, livesOn_compl_iff]
+
+@[simp] theorem positiveRestriction_compl : Qᶜ.positiveRestriction = Q.negativeRestriction := by
+  ext x
+  constructor
+  · rintro ⟨S, hS, hx⟩
+    have hQS : Q S := not_not.1 hS
+    have hxS : x ∉ S := fun h ↦ hx (by rw [insert_eq_of_mem h]; exact hQS)
+    have e : insert x S \ {x} = S := by ext y; by_cases hy : y = x <;> simp [hy, hxS]
+    exact ⟨insert x S, hx, by rw [e]; exact hQS⟩
+  · rintro ⟨S, hS, hx⟩
+    refine ⟨S \ {x}, not_not.2 hx, fun h ↦ hS ?_⟩
+    by_cases hxS : x ∈ S
+    · have e : insert x (S \ {x}) = S := by ext y; by_cases hy : y = x <;> simp [hy, hxS]
+      rwa [e] at h
+    · have e : S \ {x} = S := by ext y; by_cases hy : y = x <;> simp [hy, hxS]
+      rw [e] at hx
+      exact (hS hx).elim
+
+@[simp] theorem negativeRestriction_compl : Qᶜ.negativeRestriction = Q.positiveRestriction := by
+  rw [← positiveRestriction_compl, compl_compl]
+
+@[simp] theorem positiveRestriction_innerNeg :
+    Q.innerNeg.positiveRestriction = Q.negativeRestriction := by
+  ext x
+  constructor
+  · rintro ⟨S, hS, hx⟩
+    have e : (insert x S)ᶜ = Sᶜ \ {x} := by ext y; simp [not_or, and_comm]
+    exact ⟨Sᶜ, hS, by rw [← e]; exact hx⟩
+  · rintro ⟨S, hS, hx⟩
+    have e : (insert x Sᶜ)ᶜ = S \ {x} := by ext y; simp [not_or, and_comm]
+    exact ⟨Sᶜ, by rwa [innerNeg_apply, compl_compl], by rw [innerNeg_apply, e]; exact hx⟩
+
+@[simp] theorem negativeRestriction_innerNeg :
+    Q.innerNeg.negativeRestriction = Q.positiveRestriction := by
+  rw [← positiveRestriction_innerNeg, innerNeg_innerNeg]
+
+theorem positiveRestriction_dual : Q.dual.positiveRestriction = Q.positiveRestriction := by
+  rw [dual, positiveRestriction_compl, negativeRestriction_innerNeg]
+
+theorem negativeRestriction_dual : Q.dual.negativeRestriction = Q.negativeRestriction := by
+  rw [dual, negativeRestriction_compl, positiveRestriction_innerNeg]
 
 theorem positiveRestriction_subset_sUnion : Q.positiveRestriction ⊆ ⋃₀ {S | Q S} := fun x hx ↦
   let ⟨S, hS, hSx⟩ := mem_positiveRestriction_iff.1 hx
