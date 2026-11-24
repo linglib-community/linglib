@@ -20,12 +20,16 @@ present in every language and null in French, so that the string *tous les NP* h
 dual parse.
 
 For a spell-out `spell : P → S` of parses as strings, with a meaning and a node count for each
-parse, a parse `q` bars a parse `p` when `q` is at most as complex as `p` and means the same, and
-the string of `p` has a parse with another meaning that no parse of the string of `q` has. A parse
-is pronounceable when none bars it. An indirect alternative of `s` is a pronounceable parse, at
-most as complex as `s`, that means what an unpronounceable alternative of `s` means. A parse that
-bars an alternative of `s` is therefore an indirect alternative of `s` once it is pronounceable
-and the alternative is at most as complex as `s`.
+parse, the readings of a string are the meanings of its parses. A parse `q` bars a parse `p` when
+`q` is at most as complex as `p` and means the same, and the string of `p` has a reading that the
+string of `q` lacks. A parse is pronounceable when none bars it, and then its string is a least
+ambiguous one, by inclusion of readings, among the parses that mean the same and are at most as
+complex; the converse holds where those readings are comparable.
+
+An indirect alternative of `s` is a pronounceable parse, at most as complex as `s`, that means
+what an unpronounceable alternative of `s` means. A parse that bars an alternative of `s` is
+therefore an indirect alternative of `s` once it is pronounceable and the alternative is at most
+as complex as `s`.
 
 A noun denotes the nonnull parts `Set.Ioc ⊥ c` of the sum `c` of its atoms. The dual
 `[+minimal]` over `[−atomic]` selects the parts with two atoms, as the numeral *deux* does, and the
@@ -97,17 +101,18 @@ section Blocking
 
 variable {P S M : Type*} (spell : P → S) (meaning : P → M) (size : P → ℕ)
 
+/-- The readings of a string are the meanings of its parses. -/
+def readings (s : S) : Set M := meaning '' (spell ⁻¹' {s})
+
 /-- (37): the parse `q` bars the parse `p` from pronunciation when `q` is at most as complex and
-means the same, and the string of `p` has another parse whose meaning no parse of the string of
-`q` has. -/
+means the same, and the string of `p` has a reading that the string of `q` lacks. -/
 structure Bars (q p : P) : Prop where
   /-- The barring parse is at most as complex as the barred one. -/
   size_le : size q ≤ size p
   /-- The two parses mean the same. -/
   meaning_eq : meaning q = meaning p
-  /-- The string of `p` has a parse with another meaning, which the string of `q` lacks. -/
-  exists_parse : ∃ p₂, spell p₂ = spell p ∧ meaning p₂ ≠ meaning p ∧
-    ∀ q₂, spell q₂ = spell q → meaning q₂ ≠ meaning p₂
+  /-- The string of `p` has a reading that the string of `q` lacks. -/
+  not_subset : ¬ readings spell meaning (spell p) ⊆ readings spell meaning (spell q)
 
 /-- A parse is pronounceable when no parse bars it. -/
 def Pronounceable (p : P) : Prop := ∀ q, ¬ Bars spell meaning size q p
@@ -120,15 +125,41 @@ def indirect (alts : P → Set P) (s : P) : Set P :=
 
 variable {spell meaning size} {alts alts' : P → Set P} {p q s x : P}
 
-theorem Bars.spell_ne (h : Bars spell meaning size q p) : spell q ≠ spell p := fun he ↦
-  let ⟨p₂, hp₂, _, hq⟩ := h.exists_parse
-  hq p₂ (hp₂.trans he.symm) rfl
+theorem mem_readings {t : S} {a : M} :
+    a ∈ readings spell meaning t ↔ ∃ p, spell p = t ∧ meaning p = a :=
+  Iff.rfl
+
+-- (37)
+theorem bars_iff : Bars spell meaning size q p ↔ size q ≤ size p ∧ meaning q = meaning p ∧
+    ∃ p₂, spell p₂ = spell p ∧ meaning p₂ ≠ meaning p ∧
+      ∀ q₂, spell q₂ = spell q → meaning q₂ ≠ meaning p₂ := by
+  refine ⟨fun ⟨h₁, h₂, h₃⟩ ↦ ⟨h₁, h₂, ?_⟩, fun ⟨h₁, h₂, p₂, hp₂, _, h⟩ ↦
+    ⟨h₁, h₂, fun hs ↦ let ⟨q₂, hq₂, he⟩ := hs ⟨p₂, hp₂, rfl⟩; h q₂ hq₂ he⟩⟩
+  obtain ⟨_, ⟨p₂, hp₂, rfl⟩, hn⟩ := Set.not_subset.1 h₃
+  exact ⟨p₂, hp₂, fun he ↦ hn ⟨q, rfl, h₂.trans he.symm⟩, fun q₂ hq₂ he ↦ hn ⟨q₂, hq₂, he⟩⟩
+
+theorem Bars.spell_ne (h : Bars spell meaning size q p) : spell q ≠ spell p :=
+  fun he ↦ h.not_subset (he ▸ subset_rfl)
 
 theorem pronounceable_of_forall_meaning_eq
     (h : ∀ p₂, spell p₂ = spell p → meaning p₂ = meaning p) :
-    Pronounceable spell meaning size p := fun _ hb ↦
-  let ⟨p₂, hp₂, hne, _⟩ := hb.exists_parse
-  hne (h p₂ hp₂)
+    Pronounceable spell meaning size p := fun q hb ↦
+  hb.not_subset fun _ ⟨p₂, hp₂, he⟩ ↦ ⟨q, rfl, hb.meaning_eq.trans ((h p₂ hp₂).symm.trans he)⟩
+
+theorem Pronounceable.minimalFor (h : Pronounceable spell meaning size p) :
+    MinimalFor (fun q ↦ meaning q = meaning p ∧ size q ≤ size p)
+      (fun q ↦ readings spell meaning (spell q)) p :=
+  ⟨⟨rfl, le_rfl⟩, fun q hq _ ↦ not_not.1 fun hn ↦ h q ⟨hq.2, hq.1, hn⟩⟩
+
+theorem pronounceable_iff_minimalFor
+    (hc : ∀ q, meaning q = meaning p →
+      readings spell meaning (spell q) ⊆ readings spell meaning (spell p) ∨
+        readings spell meaning (spell p) ⊆ readings spell meaning (spell q)) :
+    Pronounceable spell meaning size p ↔
+      MinimalFor (fun q ↦ meaning q = meaning p ∧ size q ≤ size p)
+        (fun q ↦ readings spell meaning (spell q)) p :=
+  ⟨Pronounceable.minimalFor, fun h q hb ↦ hb.not_subset
+    ((hc q hb.meaning_eq).elim (h.2 ⟨hb.meaning_eq, hb.size_le⟩) id)⟩
 
 theorem Bars.mem_indirect (h : Bars spell meaning size q x)
     (hq : Pronounceable spell meaning size q) (hx : x ∈ alts s) (hs : size x ≤ size s) :
@@ -455,11 +486,9 @@ theorem meaning_tous_ne (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
 /-- Avoid Ambiguity: *les deux verres sont pleins* bars the dual parse of *tous les verres sont
 pleins*, in a model with a world whose cups are not two. -/
 theorem bars_lesNum_deux_tous_true (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
-    Bars' ⟨.lesNum .deux, m⟩ ⟨.tous, true⟩ where
-  size_le := (Parse.size_lesNum_eq ..).le
-  meaning_eq := meaning_lesNum_deux
-  exists_parse := ⟨⟨.tous, false⟩, Parse.spell_eq_spell_iff.2 rfl, meaning_tous_ne hw,
-    fun ⟨s, m'⟩ hs ↦ by
+    Bars' ⟨.lesNum .deux, m⟩ ⟨.tous, true⟩ :=
+  bars_iff.2 ⟨(Parse.size_lesNum_eq ..).le, meaning_lesNum_deux, ⟨.tous, false⟩,
+    Parse.spell_eq_spell_iff.2 rfl, meaning_tous_ne hw, fun ⟨s, m'⟩ hs ↦ by
       obtain rfl : s = .lesNum .deux := Parse.spell_eq_spell_iff.1 hs
       exact fun h ↦ meaning_tous_ne hw (h.symm.trans meaning_lesNum_deux)⟩
 
@@ -471,11 +500,10 @@ theorem pronounceable_lesNum_deux : Pronounceable' ⟨.lesNum .deux, m⟩ :=
 omit [IsAtomic E] in
 -- (78)
 theorem pronounceable_les : Pronounceable' ⟨.les, m⟩ := by
-  rintro ⟨s, m'⟩ ⟨hsize, -, p₂, hp₂, -, hq⟩
+  rintro ⟨s, m'⟩ hb
   by_cases hs : s = .les
-  · subst hs
-    exact hq p₂ (Parse.spell_eq_spell_iff.2 (Parse.spell_eq_spell_iff.1 hp₂)) rfl
-  · exact (Parse.size_les_lt m m' s hs).not_ge hsize
+  · exact hb.spell_ne (Parse.spell_eq_spell_iff.2 hs)
+  · exact (Parse.size_les_lt m m' s hs).not_ge hb.size_le
 
 /-- *Les deux verres sont pleins* is an indirect alternative of the plural parse of *tous les
 verres sont pleins*. -/
