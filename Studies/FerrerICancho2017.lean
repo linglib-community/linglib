@@ -162,17 +162,17 @@ example {G : Digraph (Fin 4)} [DecidableRel G.Adj] {r : Fin 4} (hT : G.IsArbores
 /-- Fig. 1: *She loved me for the dangers I had passed* in [melcuk-1988]'s analysis, where the
 preposition heads its object and the auxiliary heads the relative clause. Relations other than
 the subject and object of *loved*, which the caption names, are `dep`. -/
-def fig1 : Graph UD.DepRel (Fin 9) :=
+def fig1 : DependencyGraph UD.DepRel (Fin 9) :=
   .ofArcs [(1, 0, .nsubj), (1, 2, .obj), (1, 3, .dep), (3, 5, .dep), (5, 4, .dep), (5, 7, .dep),
     (7, 6, .dep), (7, 8, .dep)]
 
-theorem fig1_isArborescence : fig1.IsArborescence 1 := by decide
+theorem fig1_isArborescence : fig1.unlabelled.IsArborescence 1 := by decide
 
 -- Fig. 1: the sentence in its own order has no crossing
-theorem fig1_crossings : fig1.crossings = 0 := by decide +kernel
+theorem fig1_crossings : fig1.unlabelled.crossings = 0 := by decide +kernel
 
 -- Fig. 1: mean dependency length 11 / 8
-theorem fig1_totalLength : fig1.totalLength = 11 := by decide +kernel
+theorem fig1_totalLength : fig1.unlabelled.totalLength = 11 := by decide +kernel
 
 /-- Fig. 2: the order *loved had me for dangers I she the passed*, as the position each word of
 Fig. 1 moves to. -/
@@ -180,20 +180,21 @@ def fig2 : Perm (Fin 9) :=
   ⟨![6, 0, 2, 3, 7, 4, 5, 1, 8], ![1, 7, 2, 3, 5, 6, 0, 4, 8], by decide, by decide⟩
 
 -- Fig. 2
-theorem fig2_crossings : (fig1.toDigraph.comap fig2.symm).crossings = 9 := by decide +kernel
+theorem fig2_crossings : (fig1.unlabelled.comap fig2.symm).crossings = 9 := by decide +kernel
 
 -- Fig. 1
-theorem fig1_sum_degree_sq : ∑ v, fig1.toSimpleGraphInclusive.degree v ^ 2 = 36 := by decide
+theorem fig1_sum_degree_sq : ∑ v, fig1.unlabelled.toSimpleGraphInclusive.degree v ^ 2 = 36 :=
+    by decide
 
 -- Fig. 1
-theorem fig1_disjointEdgePairs : fig1.toSimpleGraphInclusive.disjointEdgePairs = 18 := by
+theorem fig1_disjointEdgePairs : fig1.unlabelled.toSimpleGraphInclusive.disjointEdgePairs = 18 := by
   have h := two_mul_disjointEdgePairs_add_sum_degree_sq_of_isArborescence fig1_isArborescence
   rw [fig1_sum_degree_sq] at h
   omega
 
 -- Fig. 1 expects six crossings under a random linearization, the value after eq. 14
 theorem fig1_sum_crossings_comap :
-    ∑ σ : Perm (Fin 9), (fig1.toDigraph.comap σ.symm).crossings = 6 * 9 ! := by
+    ∑ σ : Perm (Fin 9), (fig1.unlabelled.comap σ.symm).crossings = 6 * 9 ! := by
   have h := six_mul_sum_crossings_comap_add_of_isArborescence fig1_isArborescence
   rw [fig1_sum_degree_sq] at h
   omega

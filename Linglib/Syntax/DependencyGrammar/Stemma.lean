@@ -133,9 +133,9 @@ def root (s : Stemma L) : Fin s.size := ⟨s.headIndex, s.headIndex_lt_size⟩
 
 /-- The dependency graph on the positions of a stemma's sentence: an arc from each word's head to
 the word, labelled with its relation. -/
-def toGraph (s : Stemma L) : Graph L (Fin s.size) :=
-  .ofLabel fun v w ↦ ((s.heads 0 none)[w.val]?.bind id).bind fun p ↦
-    if p.1 = v.val then some p.2 else none
+def toGraph (s : Stemma L) : DependencyGraph L (Fin s.size) :=
+  ⟨fun v w ↦ ((s.heads 0 none)[w.val]?.bind id).bind fun p ↦
+    if p.1 = v.val then some p.2 else none⟩
 
 mutual
 
@@ -162,9 +162,8 @@ theorem getElem?_heads_headIndex (s : Stemma L) (o : ℕ) (up : Option (ℕ × L
     simp [heads, headIndex, length_headsDeps]
 
 theorem toGraph_adj {s : Stemma L} {v w : Fin s.size} :
-    s.toGraph.Adj v w ↔ ∃ r, (s.heads 0 none)[w.val]? = some (some (v.val, r)) := by
-  rw [Graph.adj_iff_isSome]
-  simp only [toGraph, Graph.label_ofLabel]
+    s.toGraph.unlabelled.Adj v w ↔ ∃ r, (s.heads 0 none)[w.val]? = some (some (v.val, r)) := by
+  simp only [DependencyGraph.unlabelled_adj, toGraph]
   rcases h : (s.heads 0 none)[w.val]? with _ | _ | ⟨u, r⟩ <;> simp
 
 /-! ### Tree-hood and projectivity -/
@@ -274,7 +273,7 @@ end
 
 private theorem reachable_of_reflTransGen {s : Stemma L} {a b : ℕ} (ha : a < s.size)
     (h : ReflTransGen (HeadIn (s.heads 0 none)) a b) :
-    ∃ hb : b < s.size, s.toGraph.Reachable ⟨a, ha⟩ ⟨b, hb⟩ := by
+    ∃ hb : b < s.size, s.toGraph.unlabelled.Reachable ⟨a, ha⟩ ⟨b, hb⟩ := by
   induction h with
   | refl => exact ⟨ha, .refl⟩
   | tail _ hcb ih =>
@@ -286,13 +285,14 @@ private theorem reachable_of_reflTransGen {s : Stemma L} {a b : ℕ} (ha : a < s
 
 private theorem occurs_self {α : Type*} (H : List α) : Occurs H 0 H := fun _ _ ↦ by simp
 
-private theorem not_adj_root {s : Stemma L} {v : Fin s.size} : ¬ s.toGraph.Adj v s.root :=
+private theorem not_adj_root {s : Stemma L} {v : Fin s.size} :
+    ¬ s.toGraph.unlabelled.Adj v s.root :=
   fun hv ↦ by
     obtain ⟨r, hr⟩ := toGraph_adj.1 hv
     simp [root, getElem?_heads_headIndex] at hr
 
 /-- The graph of a stemma is an arborescence rooted at the stemma's head. -/
-theorem isArborescence_toGraph (s : Stemma L) : s.toGraph.IsArborescence s.root := by
+theorem isArborescence_toGraph (s : Stemma L) : s.toGraph.unlabelled.IsArborescence s.root := by
   refine Digraph.isArborescence_iff_leftUnique_adj.2
     ⟨fun u v w hu hv ↦ ?_, fun _ ↦ not_adj_root, fun v ↦ ?_⟩
   · obtain ⟨r, hr⟩ := toGraph_adj.1 hu
@@ -305,8 +305,8 @@ theorem isArborescence_toGraph (s : Stemma L) : s.toGraph.IsArborescence s.root 
     exact (reachable_of_reflTransGen s.headIndex_lt_size this).2
 
 /-- The graph of a stemma is projective. -/
-theorem isProjective_toGraph (s : Stemma L) : s.toGraph.IsProjective := by
-  refine (Digraph.isProjective_iff_isArcProjective _).2 fun h d hhd p hp ↦ ?_
+theorem isProjective_toGraph (s : Stemma L) : s.toGraph.unlabelled.IsProjective := by
+  refine (Digraph.isProjective_iff_forall_adj _).2 fun h d hhd p hp ↦ ?_
   obtain ⟨r, hr⟩ := toGraph_adj.1 hhd
   have hne : d.val ≠ 0 + s.headIndex := fun he ↦ not_adj_root (s := s) (v := h) <| by
     rw [Nat.zero_add] at he
