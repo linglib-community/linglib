@@ -1,0 +1,745 @@
+{
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The two core arguments of the Agent-Focus clause.",
+      "levels": [
+        {
+          "name": "subject",
+          "label": "subject",
+          "doc": "the focused agent, before the verb"
+        },
+        {
+          "name": "object",
+          "label": "object",
+          "doc": "the patient, after the verb"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The strong pronouns of the rows.",
+      "levels": [
+        {
+          "name": "yin",
+          "label": "yin",
+          "doc": "the first person singular yïn"
+        },
+        {
+          "name": "rat",
+          "label": "rat",
+          "doc": "the second person singular rat"
+        },
+        {
+          "name": "rja",
+          "label": "rja",
+          "doc": "the third person singular rja'"
+        },
+        {
+          "name": "roj",
+          "label": "roj",
+          "doc": "the first person plural röj"
+        },
+        {
+          "name": "rje",
+          "label": "rje",
+          "doc": "the third person plural rje'"
+        }
+      ]
+    }
+  },
+  "examples": [
+    {
+      "id": "preminger2014_14a",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(14a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja ri tz'i' x-Ø-etzel-an ri sian",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["ri", "the"], ["tz'i'", "dog"], ["x-Ø-etzel-an", "COM-3SG.ABS-hate-AF"],
+        ["ri", "the"], ["sian", "cat"]
+      ],
+      "translation": "It was the dog that hated the cat.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "length": 2},
+        {"start": 4, "label": "object", "length": 2}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_14b",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(14b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja ri xoq x-Ø-tz'et-ö ri achin",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["ri", "the"], ["xoq", "woman"], ["x-Ø-tz'et-ö", "COM-3SG.ABS-see-AF"],
+        ["ri", "the"], ["achin", "man"]
+      ],
+      "translation": "It was the woman who saw the man.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "length": 2},
+        {"start": 4, "label": "object", "length": 2}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_15a_2sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(15a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rat x-at-ax-an ri achin",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rat", "you(SG)"], ["x-at-ax-an", "COM-2SG.ABS-hear-AF"], ["ri", "the"],
+        ["achin", "man"]
+      ],
+      "translation": "It was you(SG) that heard the man.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rat"},
+        {"start": 3, "label": "object", "length": 2}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_15a_3sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(15a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rat x-Ø-ax-an ri achin",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rat", "you(SG)"], ["x-Ø-ax-an", "COM-3SG.ABS-hear-AF"], ["ri", "the"],
+        ["achin", "man"]
+      ],
+      "translation": "It was you(SG) that heard the man.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rat"},
+        {"start": 3, "label": "object", "length": 2}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_15b_2sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(15b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja ri achin x-at-ax-an rat",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["ri", "the"], ["achin", "man"], ["x-at-ax-an", "COM-2SG.ABS-hear-AF"],
+        ["rat", "you(SG)"]
+      ],
+      "translation": "It was the man that heard you(SG).",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "length": 2},
+        {"start": 4, "label": "object", "lexeme": "rat"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_15b_3sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(15b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja ri achin x-Ø-ax-an rat",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["ri", "the"], ["achin", "man"], ["x-Ø-ax-an", "COM-3SG.ABS-hear-AF"],
+        ["rat", "you(SG)"]
+      ],
+      "translation": "It was the man that heard you(SG).",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "length": 2},
+        {"start": 4, "label": "object", "lexeme": "rat"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_17",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(17)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rat x-at-ax-an rje'",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rat", "you(SG)"], ["x-at-ax-an", "COM-2SG.ABS-hear-AF"], ["rje'", "them"]
+      ],
+      "translation": "It was you(SG) who heard them.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rat"},
+        {"start": 3, "label": "object", "lexeme": "rje"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_18a_1sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(18a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja yïn x-in-ax-an ri achin",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["yïn", "me"], ["x-in-ax-an", "COM-1SG.ABS-hear-AF"], ["ri", "the"],
+        ["achin", "man"]
+      ],
+      "translation": "It was me that heard the man.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "yin"},
+        {"start": 3, "label": "object", "length": 2}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_18a_3sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(18a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja yïn x-Ø-ax-an ri achin",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["yïn", "me"], ["x-Ø-ax-an", "COM-3SG.ABS-hear-AF"], ["ri", "the"],
+        ["achin", "man"]
+      ],
+      "translation": "It was me that heard the man.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "yin"},
+        {"start": 3, "label": "object", "length": 2}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_18b_1sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(18b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja ri achin x-in-ax-an yïn",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["ri", "the"], ["achin", "man"], ["x-in-ax-an", "COM-1SG.ABS-hear-AF"],
+        ["yïn", "me"]
+      ],
+      "translation": "It was the man that heard me.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "length": 2},
+        {"start": 4, "label": "object", "lexeme": "yin"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_18b_3sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(18b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja ri achin x-Ø-ax-an yïn",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["ri", "the"], ["achin", "man"], ["x-Ø-ax-an", "COM-3SG.ABS-hear-AF"],
+        ["yïn", "me"]
+      ],
+      "translation": "It was the man that heard me.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "length": 2},
+        {"start": 4, "label": "object", "lexeme": "yin"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_19a_3pl",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(19a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rje' x-e-tz'et-ö rja'",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rje'", "them"], ["x-e-tz'et-ö", "COM-3PL.ABS-see-AF"], ["rja'", "him"]
+      ],
+      "translation": "It was them who saw him.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rje"},
+        {"start": 3, "label": "object", "lexeme": "rja"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_19a_3sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(19a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rje' x-Ø-tz'et-ö rja'",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rje'", "them"], ["x-Ø-tz'et-ö", "COM-3SG.ABS-see-AF"], ["rja'", "him"]
+      ],
+      "translation": "It was them who saw him.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rje"},
+        {"start": 3, "label": "object", "lexeme": "rja"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_19b_3pl",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(19b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rja' x-e-tz'et-ö rje'",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rja'", "him"], ["x-e-tz'et-ö", "COM-3PL.ABS-see-AF"], ["rje'", "them"]
+      ],
+      "translation": "It was him who saw them.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rja"},
+        {"start": 3, "label": "object", "lexeme": "rje"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_19b_3sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(19b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rja' x-Ø-tz'et-ö rje'",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rja'", "him"], ["x-Ø-tz'et-ö", "COM-3SG.ABS-see-AF"], ["rje'", "them"]
+      ],
+      "translation": "It was him who saw them.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rja"},
+        {"start": 3, "label": "object", "lexeme": "rje"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_20a_1sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(20a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rje' x-i-tz'et-ö yïn",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rje'", "them"], ["x-i-tz'et-ö", "COM-1SG.ABS-see-AF"], ["yïn", "me"]
+      ],
+      "translation": "It was them who saw me.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rje"},
+        {"start": 3, "label": "object", "lexeme": "yin"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_20a_1pl",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(20a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rje' x-oj-tz'et-ö yïn",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rje'", "them"], ["x-oj-tz'et-ö", "COM-1PL.ABS-see-AF"], ["yïn", "me"]
+      ],
+      "translation": "It was them who saw me.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rje"},
+        {"start": 3, "label": "object", "lexeme": "yin"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_20b_1sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(20b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja yïn x-i-tz'et-ö rje'",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["yïn", "me"], ["x-i-tz'et-ö", "COM-1SG.ABS-see-AF"], ["rje'", "them"]
+      ],
+      "translation": "It was me who saw them.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "yin"},
+        {"start": 3, "label": "object", "lexeme": "rje"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_20b_1pl",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(20b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja yïn x-oj-tz'et-ö rje'",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["yïn", "me"], ["x-oj-tz'et-ö", "COM-1PL.ABS-see-AF"], ["rje'", "them"]
+      ],
+      "translation": "It was me who saw them.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "yin"},
+        {"start": 3, "label": "object", "lexeme": "rje"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_21a_1pl",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(21a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rja' x-oj-tz'et-ö röj",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rja'", "him"], ["x-oj-tz'et-ö", "COM-1PL.ABS-see-AF"], ["röj", "us"]
+      ],
+      "translation": "It was him who saw us.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rja"},
+        {"start": 3, "label": "object", "lexeme": "roj"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_21a_1sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(21a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rja' x-i-tz'et-ö röj",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rja'", "him"], ["x-i-tz'et-ö", "COM-1SG.ABS-see-AF"], ["röj", "us"]
+      ],
+      "translation": "It was him who saw us.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rja"},
+        {"start": 3, "label": "object", "lexeme": "roj"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_21b_1pl",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(21b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja röj x-oj-tz'et-ö rja'",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["röj", "us"], ["x-oj-tz'et-ö", "COM-1PL.ABS-see-AF"], ["rja'", "him"]
+      ],
+      "translation": "It was us who saw him.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "roj"},
+        {"start": 3, "label": "object", "lexeme": "rja"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_21b_1sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(21b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja röj x-i-tz'et-ö rja'",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["röj", "us"], ["x-i-tz'et-ö", "COM-1SG.ABS-see-AF"], ["rja'", "him"]
+      ],
+      "translation": "It was us who saw him.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "roj"},
+        {"start": 3, "label": "object", "lexeme": "rja"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_24a_1sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(24a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rat x-in-ax-an yïn",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rat", "you(SG)"], ["x-in-ax-an", "COM-1SG.ABS-hear-AF"], ["yïn", "me"]
+      ],
+      "translation": "It was you(SG) that heard me.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rat"},
+        {"start": 3, "label": "object", "lexeme": "yin"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_24a_2sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(24a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rat x-at-ax-an yïn",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rat", "you(SG)"], ["x-at-ax-an", "COM-2SG.ABS-hear-AF"], ["yïn", "me"]
+      ],
+      "translation": "It was you(SG) that heard me.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rat"},
+        {"start": 3, "label": "object", "lexeme": "yin"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_24a_3sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(24a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rat x-Ø-ax-an yïn",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rat", "you(SG)"], ["x-Ø-ax-an", "COM-3SG.ABS-hear-AF"], ["yïn", "me"]
+      ],
+      "translation": "It was you(SG) that heard me.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rat"},
+        {"start": 3, "label": "object", "lexeme": "yin"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_24b_1sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(24b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja yïn x-in-ax-an rat",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["yïn", "me"], ["x-in-ax-an", "COM-1SG.ABS-hear-AF"], ["rat", "you(SG)"]
+      ],
+      "translation": "It was me that heard you(SG).",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "yin"},
+        {"start": 3, "label": "object", "lexeme": "rat"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_24b_2sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(24b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja yïn x-at-ax-an rat",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["yïn", "me"], ["x-at-ax-an", "COM-2SG.ABS-hear-AF"], ["rat", "you(SG)"]
+      ],
+      "translation": "It was me that heard you(SG).",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "yin"},
+        {"start": 3, "label": "object", "lexeme": "rat"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_24b_3sg",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(24b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja yïn x-Ø-ax-an rat",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["yïn", "me"], ["x-Ø-ax-an", "COM-3SG.ABS-hear-AF"], ["rat", "you(SG)"]
+      ],
+      "translation": "It was me that heard you(SG).",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "yin"},
+        {"start": 3, "label": "object", "lexeme": "rat"}
+      ],
+      "paperFeatures": [],
+      "comment": "The paper prints the markers of this example in one slot, starring the excluded ones; this row has one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_77a",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(77a)"},
+      "language": "kaqc1270",
+      "primaryText": "ja rje' x-oj-tz'et-ö röj",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["rje'", "them"], ["x-oj-tz'et-ö", "COM-1PL.ABS-see-AF"], ["röj", "us"]
+      ],
+      "translation": "It was them who saw us.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "rje"},
+        {"start": 3, "label": "object", "lexeme": "roj"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "preminger2014_77b",
+      "source": {"bibkey": "preminger-2014", "paperLabel": "(77b)"},
+      "language": "kaqc1270",
+      "primaryText": "ja röj x-oj-tz'et-ö rje'",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ja", "FOC"], ["röj", "us"], ["x-oj-tz'et-ö", "COM-1PL.ABS-see-AF"], ["rje'", "them"]
+      ],
+      "translation": "It was us who saw them.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "roj"},
+        {"start": 3, "label": "object", "lexeme": "rje"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

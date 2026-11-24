@@ -1,39 +1,58 @@
 module
 
-public import Linglib.Syntax.Minimalist.Probe.Phi
+public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Linglib.Languages.Mayan.Kaqchikel.Agreement
-public import Linglib.Languages.Mayan.Kiche.Agreement
+public import Linglib.Languages.Mayan.Kaqchikel.Pronouns
 public import Linglib.Languages.Mayan.Kiche.Pronouns
+public import Linglib.Morphology.Word.Leipzig
+public import Linglib.Data.Examples.Preminger2014
+public import Linglib.Data.Examples.Readers
 public import Studies.BejarRezac2003
 
 /-!
-# Preminger (2014): Agreement and Its Failures
+# Preminger 2014: Agreement and Its Failures
 
-Preminger accounts for φ-agreement in the Kichean Agent-Focus construction (chapters 3 to 5 and
-7), whose single agreement slot follows the hierarchy *1st/2nd person > 3rd plural > 3rd singular*
-in subject and object alike (22), (23). Two feature-relativized probes derive the hierarchy, a
-person probe seeking [participant], merged first, whose goal is clitic-doubled, and a number probe
-seeking [plural], whose exponent surfaces only when no clitic fills the slot (65), (71), (74).
-Béjar and Rezac's Person Licensing Condition makes the person restriction, at most one 1st/2nd
-person core argument, the consequence of a single person probe (75), (76), and under the
-obligatory-operations model of chapter 5 a probe that finds no goal ends unvalued (112), (113).
-The probes read agreement features, not salience, so the K'ichee' formal addressee, which agrees as
-a third person singular, does not outrank the third person (§7.1).
+The verb of the Kichean Agent-Focus construction has one agreement slot, filled from the absolutive
+paradigm, for two core arguments. Preminger derives what fills it from two probes relativized to
+nodes of a φ-feature geometry, a person probe π⁰ seeking [participant] and a number probe #⁰
+seeking [plural]. A probe relativized to a feature `f` is satisfied by the goals that bear `f` and
+skips the rest, and it copies from its goal the features `f` dominates. The goal of π⁰ is doubled
+by a clitic, which bears the goal's whole φ-set. The slot shows that clitic if there is one, and
+otherwise the exponent of #⁰, that of a third person in the number #⁰ copied.
+
+We prove that the slot shows the cell of a participant argument if there is one, otherwise the
+third person plural if an argument is plural, and otherwise the third person singular, and that
+it does not depend on which argument is the subject when at most one argument is a participant.
+Béjar and Rezac's Person Licensing Condition, on which the search of π⁰ reaches every argument
+that bears [participant], holds of the two arguments exactly when at most one of them does. A
+probe relativized to a feature is satisfied by every goal that satisfies a probe relativized below
+it, so that a probe relativized to the root, as English Infl⁰ is, finds the subject. Each of the
+paper's Kaqchikel examples is acceptable exactly when its arguments obey the condition and its
+verb shows the cell the probes give.
 
 ## Implementation notes
 
-The probes are the substrate's `Probe.Target.participant` and `.plural`, and their competition
-for the slot (71) is their `Probe.cascade`; the marker is the language file's Set B exponent of the
-cascade's goal. The paradigm (22) enters as the hierarchy (23) read as `rank`. The
-morphophonology (§3.4), §4.5–§4.6, and the Zulu and Basque studies of chapter 6 are prose; the
-Zulu analysis is `Studies/Halpert2012.lean`.
+The geometry is the paper's own, the nodes it keeps of Harley and Ritter's. A φ-cell bears [author]
+when every participant set its person covers has the speaker.
+
+The slot is a total function of the two arguments and licensing is a separate condition on them,
+since a probe that finds no goal leaves a form, the null third person singular, while a
+participant the person probe does not reach leaves none. The exponent of #⁰ is read off the third
+person cells of the Set B table, a privative geometry having no feature for the third person.
+
+An argument that is not a pronoun is read as a third person, plural if its gloss says so. The
+rows record each marker the paper prints in a slot as a row of its own, and the model is compared
+with the cell a marker is glossed as, not with its shape, which varies with the following segment.
+
+The morphophonology of the markers, agreement in regular transitives and intransitives, the
+alternative analyses, and the Zulu and Basque chapters are not formalized; the Zulu analysis is
+`Studies/Halpert2012.lean`.
 
 ## References
 
 * [preminger-2014]
 * [bejar-rezac-2003]
 * [harley-ritter-2002]
-* [nevins-2011]
 * [halpert-2012]
 -/
 
@@ -43,165 +62,259 @@ namespace Preminger2014
 
 open Kaqchikel Minimalist Agreement
 
-/-! ### The probes and the slot (§4.4) -/
+/-! ### The φ-feature geometry -/
+
+/-- (55): the φ-features. [φ] is borne by every nominal and dominates the others, and
+[participant] dominates [author]. -/
+inductive Feature where
+  /-- [φ], the root. -/
+  | phi
+  /-- [participant], borne by the first and second persons. -/
+  | participant
+  /-- [author], borne by the first person. -/
+  | author
+  /-- [plural]. -/
+  | plural
+  deriving DecidableEq, Fintype, Repr
+
+namespace Feature
+
+/-- `f` dominates `g` in (55). -/
+protected def LE (f g : Feature) : Prop := f = phi ∨ f = g ∨ f = participant ∧ g = author
+
+instance : DecidableRel Feature.LE := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
+/-- A feature is below the features it dominates. -/
+instance : PartialOrder Feature where
+  le := Feature.LE
+  le_refl _ := .inr (.inl rfl)
+  le_trans := (by decide : ∀ f g h : Feature, f.LE g → g.LE h → f.LE h)
+  le_antisymm := (by decide : ∀ f g : Feature, f.LE g → g.LE f → f = g)
+
+instance : DecidableLE Feature := inferInstanceAs (DecidableRel Feature.LE)
+
+instance : OrderBot Feature where
+  bot := phi
+  bot_le _ := .inl rfl
+
+instance : LocallyFiniteOrderTop Feature :=
+  .ofIci' Feature (fun f ↦ Finset.univ.filter (f ≤ ·)) fun _ _ ↦ by simp
+
+end Feature
+
+variable {c s o : Bundle} {f g : Feature}
+
+/-- A φ-cell bears [participant] when its person is a speech-act participant's, [author] when its
+person includes the speaker, and [plural] when its number is plural. -/
+def Bears (c : Bundle) : Feature → Prop
+  | .phi => True
+  | .participant => c.IsSAP
+  | .author => ∀ r ∈ (c .person).sets, .speaker ∈ r
+  | .plural => c.IsPlural
+
+instance (c : Bundle) : DecidablePred (Bears c) := fun f ↦ by
+  cases f <;> unfold Bears <;> infer_instance
+
+@[simp] theorem bears_phi : Bears c .phi := trivial
+@[simp] theorem bears_participant : Bears c .participant ↔ c.IsSAP := .rfl
+@[simp] theorem bears_plural : Bears c .plural ↔ c.IsPlural := .rfl
+
+/-- The features a φ-cell bears. -/
+def feats (c : Bundle) : Finset Feature := Finset.univ.filter (Bears c)
+
+@[simp] theorem mem_feats : f ∈ feats c ↔ Bears c f := by simp [feats]
+
+-- the geometry is privative: a cell bears whatever dominates a feature it bears
+theorem feats_isLowerSet (c : Bundle) : IsLowerSet (↑(feats c) : Set Feature) := by
+  intro g f hfg hg
+  rw [Finset.mem_coe, mem_feats] at hg ⊢
+  rcases hfg with rfl | rfl | ⟨rfl, rfl⟩
+  exacts [trivial, hg, fun r hr ↦ ⟨_, hg r hr⟩]
+
+/-! ### Relativized probes -/
+
+/-- The probe relativized to the feature `f`, which the cells that bear `f` satisfy. -/
+def probe (f : Feature) : Probe Bundle := (Probe.Spec.relativized f).toProbe feats
+
+@[simp] theorem probe_sat : (probe f).sat c ↔ Bears c f :=
+  Probe.Spec.ofGeometry_toProbe_sat.trans mem_feats
+
+/-- A probe relativized to a feature is satisfied by every cell that satisfies a probe relativized
+to a feature it dominates. -/
+theorem probe_sat_anti (h : f ≤ g) (hg : (probe g).sat c) : (probe f).sat c :=
+  Probe.Spec.relativized_toProbe_sat_anti (feats_isLowerSet c) h hg
+
+-- a probe finds a goal wherever a probe relativized below it does
+theorem search_isSome_of_le (h : f ≤ g) {goals : List Bundle}
+    (hg : ((probe g).search goals).isSome) : ((probe f).search goals).isSome :=
+  Probe.search_isSome_mono (fun _ _ ↦ probe_sat_anti h) hg
+
+-- a probe relativized to the root, as English Infl⁰ is, finds the closest goal
+theorem probe_bot_search (c : Bundle) (l : List Bundle) : (probe ⊥).search (c :: l) = some c := by
+  simp [Probe.search, show Bears c ⊥ from trivial]
 
 /-- π⁰, the person probe, relativized to [participant]. -/
-def piProbe : Probe Bundle := Probe.Target.participant.toProbe
+abbrev piProbe : Probe Bundle := probe .participant
 
 /-- #⁰, the number probe, relativized to [plural]. -/
-def numProbe : Probe Bundle := Probe.Target.plural.toProbe
+abbrev numProbe : Probe Bundle := probe .plural
 
-/-- The Agent-Focus slot reflects the person probe's goal, else the number probe's, else none,
-the competition for the single slot (71) run as a cascade over the subject's and object's cells. -/
-def afTarget (subj obj : Bundle) : Option Bundle := Probe.cascade [piProbe, numProbe] [subj, obj]
+/-- (112): the features that the obligatory operation copies to a head relativized to `f` from
+the subject and the object. -/
+def find (f : Feature) (s o : Bundle) : Finset Feature :=
+  ((Probe.Spec.relativized f).agree feats ∅ [s, o]).state.copied
 
-/-- The Person Licensing Condition holds of the clause's two core arguments when the person
-probe's search licenses each argument bearing [participant]. -/
-def Plc (subj obj : Bundle) : Prop :=
-  piProbe.AllLicensed (·.visibleTo .participant) [subj, obj]
+/-- The operation copies from the goal of the probe the features that `f` dominates, and nothing
+when the probe finds no goal. -/
+theorem find_eq (f : Feature) (s o : Bundle) :
+    find f s o = ((probe f).search [s, o]).elim ∅ fun c ↦ feats c ∩ Finset.Ici f := by
+  have h (a : Bundle) : (probe f).int a ↔ (probe f).sat a :=
+    (Probe.Spec.ofGeometry_toProbe_int_iff (feats_isLowerSet a)).trans
+      Probe.Spec.ofGeometry_toProbe_sat.symm
+  rw [find, Probe.Spec.agree_empty]
+  exact (Probe.agree_state_eq_elim h).trans (by simp [probe])
 
-instance (subj obj : Bundle) : Decidable (Plc subj obj) :=
+/-! ### The agreement slot -/
+
+/-- (66): the clitic that doubles the goal of π⁰, which bears the goal's whole φ-set. -/
+def clitic (s o : Bundle) : Option Bundle := piProbe.search [s, o]
+
+/-- (71): the cell the agreement slot shows, the clitic's, and without a clitic the third person
+in the number #⁰ copies. -/
+def slot (s o : Bundle) : Bundle :=
+  (clitic s o).getD
+    (.personNumber .third (if (numProbe.search [s, o]).isSome then .plural else .singular))
+
+/-- The marker in the slot, the Set B exponent of the cell it shows. -/
+def marker (s o : Bundle) : List Morphology.Morph := (setBExponent.realize (slot s o)).getD []
+
+/-- (75): the Person Licensing Condition holds of the two core arguments when the search of π⁰
+reaches each of them that bears [participant], the feature π⁰ seeks. -/
+def PLC (s o : Bundle) : Prop := piProbe.AllLicensed piProbe.sat [s, o]
+
+instance (s o : Bundle) : Decidable (PLC s o) :=
   inferInstanceAs (Decidable (Probe.AllLicensed _ _ _))
 
-/-- The absolutive exponent of a cell, empty where the paradigm has none. -/
-def exponent (c : Bundle) : List Morphology.Morph := (setBExponent.realize c).getD []
+-- (66)
+theorem clitic_eq (s o : Bundle) :
+    clitic s o = if s.IsSAP then some s else if o.IsSAP then some o else none := by
+  by_cases hs : s.IsSAP <;> by_cases ho : o.IsSAP <;> simp [clitic, Probe.search, hs, ho]
 
-/-- The Agent-Focus marker is the exponent of the slot's goal, the empty exponent when both probes
-fail, and undefined when the Person Licensing Condition fails. -/
-def afMarker (subj obj : Bundle) : Option (List Morphology.Morph) :=
-  if Plc subj obj then some (((afTarget subj obj).map exponent).getD []) else none
+/-- The slot shows the cell of a participant argument, the subject's first; without one it shows
+the third person plural if an argument is plural, and the third person singular otherwise. -/
+theorem slot_eq (s o : Bundle) :
+    slot s o = if s.IsSAP then s else if o.IsSAP then o
+      else .personNumber .third (if s.IsPlural ∨ o.IsPlural then .plural else .singular) := by
+  by_cases hs : s.IsSAP <;> by_cases ho : o.IsSAP <;>
+    by_cases hsp : s.IsPlural <;> by_cases hop : o.IsPlural <;>
+    simp [slot, clitic_eq, Probe.search, hs, ho, hsp, hop]
 
-/-- The person restriction (25) allows at most one core argument to bear [participant]. -/
-def PersonRestriction (subj obj : Bundle) : Prop := ¬ (subj.IsSAP ∧ obj.IsSAP)
+/-- The Person Licensing Condition holds of the two core arguments exactly when at most one of
+them bears [participant]. -/
+theorem plc_iff (s o : Bundle) : PLC s o ↔ ¬ (s.IsSAP ∧ o.IsSAP) := by
+  rw [PLC, Probe.allLicensed_sat_iff]
+  by_cases hs : s.IsSAP <;> by_cases ho : o.IsSAP <;> simp [hs, ho]
 
-instance : DecidableRel PersonRestriction := fun s o ↦
-  inferInstanceAs (Decidable ¬ (s.IsSAP ∧ o.IsSAP))
+-- (22): when at most one argument bears [participant], the slot does not depend on which
+-- argument is the subject
+theorem slot_comm (h : ¬ (s.IsSAP ∧ o.IsSAP)) : slot s o = slot o s := by
+  rw [slot_eq, slot_eq]
+  by_cases hs : s.IsSAP <;> by_cases ho : o.IsSAP <;> simp_all [or_comm]
 
-/-! ### Relativized probing (§4.2, §4.4) -/
+-- (113): with no participant and no plural argument both probes fail and the marker is null
+theorem marker_eq_nil (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP) (hsp : ¬ s.IsPlural)
+    (hop : ¬ o.IsPlural) :
+    piProbe.search [s, o] = none ∧ numProbe.search [s, o] = none ∧ marker s o = [] := by
+  refine ⟨by simp [hs, ho], by simp [hsp, hop], ?_⟩
+  rw [marker, slot_eq]
+  simp only [hs, ho, hsp, hop, ite_false, or_self]
+  decide
 
-/-- Under skipping the slot reflects a participant if either argument is one, the subject first,
-otherwise a plural argument, and otherwise nothing (66), (73). -/
-theorem afTarget_eq (s o : Bundle) :
-    afTarget s o = if s.IsSAP then some s else if o.IsSAP then some o
-      else if s.IsPlural then some s else if o.IsPlural then some o else none := by
-  by_cases h1 : s.IsSAP <;> by_cases h2 : o.IsSAP <;>
-    by_cases h3 : s.IsPlural <;> by_cases h4 : o.IsPlural <;>
-    simp [afTarget, piProbe, numProbe, Probe.Target.toProbe, Bundle.visibleTo, Probe.cascade,
-      Probe.search, Probe.relativized, List.find?_cons, h1, h2, h3, h4]
+-- (60): π⁰ copies the same features from a first person singular and a first person plural
+-- goal, whose clitics differ
+theorem find_participant_coarse :
+    find .participant (.personNumber .first .singular) (.personNumber .third .singular) =
+        {.participant, .author} ∧
+      find .participant (.personNumber .first .plural) (.personNumber .third .singular) =
+        {.participant, .author} ∧
+      marker (.personNumber .first .singular) (.personNumber .third .singular) ≠
+        marker (.personNumber .first .plural) (.personNumber .third .singular) := by
+  decide
 
-/-- The rank of a cell on the hierarchy (23) puts [participant] above [plural] above the rest. -/
+/-! ### The examples -/
+
+open Examples (all)
+
+/-- The pronoun of the Kaqchikel language file that a lexeme of the rows is. -/
+def Examples.Lexeme.pronoun : Examples.Lexeme → PersonalPronoun
+  | .yin => Pronouns.yin
+  | .rat => Pronouns.rat
+  | .rja => Pronouns.rja'
+  | .roj => Pronouns.roj
+  | .rje => Pronouns.rje'
+
+/-- The φ-cell of the argument of a row marked `l`, a pronoun's agreement, and for another noun
+phrase the third person, plural if a word of it is glossed so. -/
+def argument? (e : Datum) (l : Examples.SpanLabel) : Option Bundle :=
+  (e.spans.find? fun x ↦ Examples.label? x = some l).map fun x ↦
+    match Examples.lexeme? x with
+    | some p => p.pronoun.agreement
+    | none => .personNumber .third
+        (if ∃ w ∈ x.words e, w.features .number = some .plural then .plural else .singular)
+
+/-- The cell the absolutive marker of a row's verb is glossed as. -/
+def shown? (e : Datum) : Option Bundle :=
+  (e.glossedWords.flatMap (·.glossedMorphemes)).findSome? fun m ↦
+    if "ABS".toList ∈ Gloss.elements m.gloss then
+      some (.ofFeatures (.ofLabels (Gloss.elements m.gloss)))
+    else none
+
+-- each lexeme of the rows is a strong pronoun of the language file
+theorem pronoun_mem_personal : ∀ l : Examples.Lexeme, l.pronoun ∈ Pronouns.personal := by decide
+
+-- each marked pronoun is printed as the language file writes it
+theorem printed :
+    ∀ e ∈ all, ∀ x ∈ e.spans, ∀ l ∈ Examples.lexeme? x,
+      (x.words e).map (·.word) = [l.pronoun.form.toList] := by
+  decide
+
+/-- Each example is acceptable exactly when its arguments obey the Person Licensing Condition and
+its verb shows the person and number the probes give. -/
+theorem examples_fit :
+    ∀ e ∈ all, ∃ s ∈ argument? e .subject, ∃ o ∈ argument? e .object, ∃ c ∈ shown? e,
+      (e.judgment = .acceptable ↔
+        PLC s o ∧ slot s o .person = c .person ∧ slot s o .number = c .number) := by
+  decide
+
+/-! ### The hierarchy and the Person Case Constraint -/
+
+/-- (23): the rank of a cell on the hierarchy 1st/2nd person > 3rd plural > 3rd singular. -/
 def rank (c : Bundle) : ℕ := if c.IsSAP then 2 else if c.IsPlural then 1 else 0
 
-/-- The probes derive the hierarchy, since the slot reflects the higher-ranked argument, the
-subject at a tie, and nothing when both rank lowest. -/
-theorem afTarget_eq_rank (s o : Bundle) :
-    afTarget s o = if rank s = 0 ∧ rank o = 0 then none
-      else if rank o ≤ rank s then some s else some o := by
-  rw [afTarget_eq]
-  by_cases h1 : s.IsSAP <;> by_cases h2 : o.IsSAP <;>
-    by_cases h3 : s.IsPlural <;> by_cases h4 : o.IsPlural <;>
-    simp [rank, h1, h2, h3, h4]
-
-/-- The hierarchy (23) as an account is the morphological competition of §3.3.2, in which the slot
-shows the higher-ranked argument's absolutive marker. -/
-def hierarchyMarker (subj obj : Bundle) : List Morphology.Morph :=
-  exponent (if rank obj ≤ rank subj then subj else obj)
-
-/-- On every licit pair of person–number cells of the paradigm (22), (74), the probes deliver the
-hierarchy's marker. -/
-theorem af_paradigm :
+-- (22), (74): on the cells of the paradigm the slot shows the higher-ranked argument, the
+-- subject at a tie
+theorem slot_eq_of_rank :
     ∀ s ∈ Bundle.personNumberCells, ∀ o ∈ Bundle.personNumberCells,
-      PersonRestriction s o → afMarker s o = some (hierarchyMarker s o) := by
+      slot s o = if rank o ≤ rank s then s else o := by
   decide
 
-/-- The marker is symmetric in subject and object (22, note a), (74), a consequence of skipping,
-since the probe finds its goal in either position. -/
-theorem afMarker_comm :
-    ∀ s ∈ Bundle.personNumberCells, ∀ o ∈ Bundle.personNumberCells,
-      afMarker s o = afMarker o s := by
-  decide
-
-/-! ### Licensing (§4.4.2) -/
-
-/-- The person restriction is the Person Licensing Condition on the clause's two core arguments
-(76). -/
-theorem personRestriction_iff_plc (s o : Bundle) : PersonRestriction s o ↔ Plc s o := by
-  unfold PersonRestriction Plc piProbe Probe.Target.toProbe
-  rw [Probe.relativized_allLicensed_iff]
-  by_cases hs : s.IsSAP <;> by_cases ho : o.IsSAP <;>
-    simp [Bundle.visibleTo, hs, ho]
-
--- (77)
-theorem afMarker_eq_none_iff (s o : Bundle) : afMarker s o = none ↔ ¬ PersonRestriction s o := by
-  rw [afMarker, personRestriction_iff_plc]
-  split_ifs with h <;> simp [h]
-
-/-- With one participant argument, the marker is that argument's whole exponent, number included,
-whether subject or object (68), (69). -/
-theorem participant_marker (s o : Bundle) (h : ¬ (s.IsSAP ∧ o.IsSAP)) :
-    (s.IsSAP → afMarker s o = some (exponent s)) ∧
-      (o.IsSAP → afMarker s o = some (exponent o)) := by
-  have hplc : Plc s o := (personRestriction_iff_plc s o).1 h
-  rw [afMarker, ite_eq_left hplc, afTarget_eq]
-  refine ⟨fun hs ↦ by simp [hs], fun ho ↦ ?_⟩
-  have hs : ¬ s.IsSAP := fun hs ↦ h ⟨hs, ho⟩
-  simp [hs, ho]
-
-/-! ### Obligatory operations (chapter 5) -/
-
-/-- The slot is empty exactly when both probes' searches fail, so failed Agree at the level of
-the probes and at the level of the slot are one fact. -/
-theorem afTarget_eq_none_iff (s o : Bundle) :
-    afTarget s o = none ↔ piProbe.search [s, o] = none ∧ numProbe.search [s, o] = none := by
-  rw [afTarget, Probe.cascade_eq_none_iff, Probe.search_eq_none_iff, Probe.search_eq_none_iff]
-  simp
-
-/-- With no participant and no plural argument, both probes end unvalued, the derivation converges,
-and the marker is null (112), (113). -/
-theorem failed_agree_tolerated (s o : Bundle) (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP)
-    (hsp : ¬ s.IsPlural) (hop : ¬ o.IsPlural) :
-    afTarget s o = none ∧ afMarker s o = some [] := by
-  have hplc : Plc s o := (personRestriction_iff_plc s o).1 fun h ↦ hs h.1
-  rw [afMarker, ite_eq_left hplc, afTarget_eq]
-  simp [hs, ho, hsp, hop]
-
-/-- With no participant argument, a plural argument is agreed with, the subject first, and the
-marker is its exponent (114). -/
-theorem plural_marker (s o : Bundle) (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP) :
-    (s.IsPlural → afMarker s o = some (exponent s)) ∧
-      (¬ s.IsPlural → o.IsPlural → afMarker s o = some (exponent o)) := by
-  have hplc : Plc s o := (personRestriction_iff_plc s o).1 fun h ↦ hs h.1
-  rw [afMarker, ite_eq_left hplc, afTarget_eq]
-  exact ⟨fun hsp ↦ by simp [hs, ho, hsp], fun hsp hop ↦ by simp [hs, ho, hsp, hop]⟩
-
-/-! ### Against the alternatives (§4.2, chapter 7) -/
-
-/-- The unrelativized person probe of [bejar-rezac-2003] yields the PCC, while the Kichean probe
-relativized to [participant] licenses a participant below a third-person dative (§4.2). -/
+-- §4.2: the person probe of [bejar-rezac-2003], which every nominal halts, leaves a participant
+-- below a third person dative unlicensed, and π⁰ skips a third person subject to license it
 theorem relativization_contrast :
     ¬ BejarRezac2003.PLC (BejarRezac2003.v.derive
         [.dat (.personNumber .third .singular), .caseless (.personNumber .first .singular)]) ∧
-      Plc (.personNumber .third .singular) (.personNumber .first .singular) := by
+      PLC (.personNumber .third .singular) (.personNumber .first .singular) := by
   decide
 
-/-- A person hierarchy assigns a marker to two participant arguments, which the probes exclude
-(§7.1). -/
-theorem hierarchy_silent_on_restriction :
-    afMarker (.personNumber .first .singular) (.personNumber .second .singular) = none ∧
-      hierarchyMarker (.personNumber .first .singular) (.personNumber .second .singular) =
-        exponent (.personNumber .first .singular) ∧
-      afMarker (.personNumber .third .plural) (.personNumber .third .plural) =
-        some (exponent (.personNumber .third .plural)) := by
-  decide
-
-/-- The K'ichee' formal addressee *laal* agrees as a third person singular and does not outrank the
-third person (§7.1, quoting Stiebels). -/
+-- §7.1: the K'ichee' formal addressee *laal* agrees as a third person singular, so that it
+-- occurs with a first person and does not outrank a third person plural
 theorem formal_addressee :
-    afTarget Kiche.Pronouns.laal.agreement (.personNumber .first .singular) =
-        some (.personNumber .first .singular) ∧
-      ¬ PersonRestriction Kiche.Pronouns.at_.agreement (.personNumber .first .singular) ∧
-      afTarget Kiche.Pronouns.laal.agreement (.personNumber .third .plural) =
-        some (.personNumber .third .plural) := by
+    ¬ PLC Kiche.Pronouns.at_.agreement (.personNumber .first .singular) ∧
+      PLC Kiche.Pronouns.laal.agreement (.personNumber .first .singular) ∧
+      slot Kiche.Pronouns.laal.agreement (.personNumber .first .singular) =
+        .personNumber .first .singular ∧
+      slot Kiche.Pronouns.laal.agreement (.personNumber .third .plural) =
+        .personNumber .third .plural := by
   decide
 
 end Preminger2014

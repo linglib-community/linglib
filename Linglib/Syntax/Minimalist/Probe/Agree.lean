@@ -66,6 +66,8 @@ matter: [Agree joins the initial state with the contributions of the goals it fl
   two specifications is a disjunctive probe.
 * `Minimalist.Probe.Spec.ofGeometry_toProbe_int_iff`: over a privative geometry, interacting with
   `[INT:f]` is bearing `f`.
+* `Minimalist.Probe.Spec.relativized_toProbe_sat_anti`: over a privative geometry, a probe
+  relativized to a feature is satisfied by the goals that satisfy one relativized below it.
 * `Minimalist.Probe.Spec.subset_Ici_of_mem_dynamicUpdate`: dynamic interaction narrows the
   interaction condition to the features a dynamic feature dominates.
 * `Minimalist.Probe.Spec.foldl_dynamicUpdate`, `Minimalist.Probe.Spec.mem_agree_interacted_iff`:
@@ -423,12 +425,24 @@ variable {f g : F}
 
 /-- When a goal bears every feature dominating one it bears, as in a privative geometry, it
 interacts with `[INT:f]` exactly when it bears `f`. -/
-theorem ofGeometry_toProbe_int_iff (hc : ∀ x ∈ feats a, ∀ y ≤ x, y ∈ feats a) :
+theorem ofGeometry_toProbe_int_iff (hc : IsLowerSet (↑(feats a) : Set F)) :
     ((ofGeometry f g).toProbe feats).int a ↔ f ∈ feats a := by
   rw [ofGeometry, ofFeatures_toProbe_int]
   refine ⟨fun ⟨x, hx⟩ ↦ ?_, fun hf ↦ ⟨f, Finset.mem_inter.2 ⟨hf, Finset.mem_Ici.2 le_rfl⟩⟩⟩
   rw [Finset.mem_inter, Finset.mem_Ici] at hx
-  exact hc x hx.1 f hx.2
+  exact hc hx.2 hx.1
+
+/-- `[SAT:g]` is satisfied by the goals bearing `g`. -/
+theorem ofGeometry_toProbe_sat : ((ofGeometry f g).toProbe feats).sat a ↔ g ∈ feats a := by
+  rw [ofGeometry, ofFeatures_toProbe_sat]
+  simp [Finset.Nonempty]
+
+/-- Over a privative geometry, a probe relativized to a feature is satisfied by every goal that
+satisfies a probe relativized to a feature it dominates: the higher in the geometry a probe is
+relativized, the fewer goals it skips ([preminger-2014]). -/
+theorem relativized_toProbe_sat_anti (hc : IsLowerSet (↑(feats a) : Set F)) (h : f ≤ g)
+    (hg : ((relativized g).toProbe feats).sat a) : ((relativized f).toProbe feats).sat a :=
+  ofGeometry_toProbe_sat.2 (hc h (ofGeometry_toProbe_sat.1 hg))
 
 end Geometry
 

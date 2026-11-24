@@ -201,7 +201,7 @@ def segmentProbe (x : Person.Segment) : Probe Person := (Probe.Spec.ofGeometry x
 
 variable (x) in
 theorem segmentProbe_int : (segmentProbe x).int p ↔ x ∈ spec p :=
-  Probe.Spec.ofGeometry_toProbe_int_iff fun _ hy _ hzy ↦ spec_isLowerSet p hzy hy
+  Probe.Spec.ofGeometry_toProbe_int_iff (spec_isLowerSet p)
 
 variable (x) in
 theorem segmentProbe_sat : (segmentProbe x).sat p :=

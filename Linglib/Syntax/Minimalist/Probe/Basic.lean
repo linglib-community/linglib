@@ -32,7 +32,6 @@ the probe searches rather than relativizing the probe.
   when it interacts, the goal of Agree.
 * `Minimalist.Probe.Licensed`, `Minimalist.Probe.AllLicensed`: a goal the search reaches, and
   every needy goal occurrence being reached.
-* `Minimalist.Probe.cascade`: the first finding of an ordered sequence of probes.
 * `Minimalist.Probe.comap`: a probe read through a map into its goals, as a probe on the
   positions of a tree reads the features of the term at each.
 
@@ -42,7 +41,7 @@ the probe searches rather than relativizing the probe.
 * `Minimalist.Probe.search_isSome`: a search succeeds iff some goal satisfies the probe.
 * `Minimalist.Probe.not_rel_of_search_eq_some`: the found goal is minimal for any precedence
   the sequence respects.
-* `Minimalist.Probe.AllLicensed.countP_le_one`, `Minimalist.Probe.relativized_allLicensed_iff`:
+* `Minimalist.Probe.AllLicensed.countP_le_one`, `Minimalist.Probe.allLicensed_sat_iff`:
   one search licenses at most one goal.
 * `Minimalist.Probe.indiscriminate_allLicensed_iff`: under bare minimality only the closest goal
   may need licensing.
@@ -311,19 +310,18 @@ theorem allLicensed_iff_forall_licensed (hnd : goals.Nodup) :
     simpa [Licensed, search, List.find?_cons, hsat b hb hn] using
       h b (List.mem_cons_of_mem _ hb) hn
 
-/-- On the diagonal, where the probe is relativized to exactly the needy goals, all needy goals
-are licensed iff at most one goal is needy, one search licensing one goal, the fact behind
-[preminger-2014]'s person restriction. -/
-theorem relativized_allLicensed_iff :
-    (relativized f).AllLicensed f goals ↔ goals.countP (f ·) ≤ 1 := by
+/-- On the diagonal, where the goals that need licensing are exactly those that satisfy the probe,
+all of them are licensed iff at most one goal satisfies it, one search licensing one goal, the
+fact behind [preminger-2014]'s person restriction. -/
+theorem allLicensed_sat_iff : p.AllLicensed p.sat goals ↔ goals.countP (p.sat ·) ≤ 1 := by
   refine ⟨AllLicensed.countP_le_one, fun h ↦ ?_⟩
   induction goals with
   | nil => simp
   | cons a l ih =>
     rw [List.countP_cons] at h
     refine allLicensed_cons.2 ⟨id, fun b hb hfb ha ↦ ?_, ih (by split at h <;> omega)⟩
-    have := List.countP_pos_iff (p := (f ·)).2 ⟨b, hb, decide_eq_true hfb⟩
-    simp only [show f a from ha, decide_true, ite_true] at h
+    have := List.countP_pos_iff (p := (p.sat ·)).2 ⟨b, hb, decide_eq_true hfb⟩
+    simp only [show p.sat a from ha, decide_true, ite_true] at h
     omega
 
 /-- Licensing by the indiscriminate probe allows no needy goal below the head of the sequence,
@@ -335,46 +333,6 @@ theorem indiscriminate_allLicensed_iff :
   | cons a l =>
     simpa [indiscriminate, relativized, AllLicensed] using
       fun h ↦ List.pairwise_of_forall_mem_list fun _ _ b hb ↦ h b hb
-
-/-! ### Cascades -/
-
-/-- The goal an ordered sequence of probes delivers, the first probe's finding, else the next's,
-and so on. This is `Probe.search` at the goal level composed with `List.findSome?` at the probe
-level, and also the single-slot morphological competition in which the first probe with output
-wins the slot, as in [preminger-2014] where π⁰'s clitic beats #⁰'s exponent beats nothing. -/
-def cascade (ps : List (Probe α)) (goals : List α) : Option α :=
-  ps.findSome? (·.search goals)
-
-variable {ps : List (Probe α)}
-
-@[simp]
-theorem cascade_eq_none_iff : cascade ps goals = none ↔ ∀ q ∈ ps, ∀ a ∈ goals, ¬ q.sat a := by
-  simp [cascade, List.findSome?_eq_none_iff]
-
-theorem cascade_cons {q : Probe α} :
-    cascade (q :: ps) goals = (q.search goals <|> cascade ps goals) := by
-  rw [cascade, List.findSome?_cons]
-  cases q.search goals <;> rfl
-
-@[simp] theorem cascade_nil : cascade ([] : List (Probe α)) goals = none := rfl
-
-@[simp] theorem cascade_singleton {q : Probe α} : cascade [q] goals = q.search goals := by
-  rw [cascade_cons, cascade_nil]
-  cases q.search goals <;> rfl
-
-theorem cascade_append {qs : List (Probe α)} :
-    cascade (ps ++ qs) goals = (cascade ps goals <|> cascade qs goals) := by
-  unfold cascade
-  rw [List.findSome?_append]
-  cases ps.findSome? (·.search goals) <;> rfl
-
-theorem exists_licensed_of_cascade_eq_some {a : α} (h : cascade ps goals = some a) :
-    ∃ q ∈ ps, q.Licensed goals a :=
-  List.exists_of_findSome?_eq_some h
-
-theorem mem_of_cascade_eq_some {a : α} (h : cascade ps goals = some a) : a ∈ goals :=
-  let ⟨_, _, hq⟩ := exists_licensed_of_cascade_eq_some h
-  mem_of_search_eq_some hq
 
 end Probe
 
