@@ -75,12 +75,16 @@ point downstream:
 
 - `Linglib/Core/`: framework-neutral mathematics, organized like
   mathlib.
+- `Linglib/Data/`: empirical observations, and the coding schemes of
+  external datasets such as Universal Dependencies tags, WALS feature
+  values and PHOIBLE feature charts. It imports nothing but `Core/`,
+  which is checked on every push.
 - `Linglib/Semantics/`, `Syntax/`, `Pragmatics/`, `Morphology/`,
   `Phonology/`, `Processing/`, `Discourse/`, `Logic/`: reusable
-  theory, shared by several studies.
+  theory, shared by several studies. A theory file may import a coding
+  scheme from `Data/` to say how its own types correspond to it.
 - `Linglib/Generalizations/`: statements about data that theories are
   tested against. They mention no framework.
-- `Linglib/Data/`: empirical observations, with no theory imports.
 - `Linglib/Languages/{Language}/`: lexical data for one language,
   typed by the theory layer.
 - `Studies/`: one paper per file, named `AuthorYear.lean`. The studies
