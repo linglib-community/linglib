@@ -74,6 +74,9 @@ theorem atomize_subset (s : Set α) : atomize s ⊆ s := fun _ h ↦ h.prop
 
 theorem atomize_qua {s : Set α} : QUA (atomize s) := setOfPred_minimal_antichain (· ∈ s)
 
+@[simp] theorem atomize_Ici (a : α) : atomize (Set.Ici a) = {a} :=
+  Set.ext fun _ ↦ minimal_ge_iff
+
 end PartialOrder
 
 section SemilatticeSup

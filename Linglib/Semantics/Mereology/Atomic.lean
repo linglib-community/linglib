@@ -1,5 +1,7 @@
 module
 
+public import Linglib.Core.Order.Grade
+public import Mathlib.Order.Interval.Finset.Defs
 public import Linglib.Semantics.Mereology.Basic
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Order.Hom.Lattice
@@ -17,16 +19,16 @@ what lets sums be treated as sets and counted by `Mereology.atomCount`.
 
 * `Mereology.atomsBelowEmbedding`: an atomic generalized Boolean algebra embeds in the sets of its
   atoms.
+* `Mereology.gradeMinOrder`: where individuals have finitely many parts, the algebra is graded by
+  the number of atoms.
 
 ## Main results
 
 * `IsAtom.le_sup_iff`, `Mereology.atomsBelow_sup`: in a distributive lattice an atom is part of a
   join only by being part of one of the two, so the atoms of a join are the atoms of the two.
 * `Mereology.isLUB_atomsBelow`: an individual is the least upper bound of its atoms.
-* `Mereology.isGreatest_atomCount_iff`: the largest part of `c` with `n` atoms is `c`, and there
-  is one only where `c` has `n` atoms.
-* `Mereology.minimal_ne_bot_and_not_isAtom_iff`: the minimal individuals that are neither null nor
-  atoms are those with two atoms.
+* `Mereology.isGreatest_atomCount_mem_iff`: the largest part of `c` whose number of atoms lies in
+  a set of positive numbers is `c`, and there is one only where the number of atoms of `c` does.
 
 ## References
 
@@ -111,61 +113,53 @@ def atomsBelowEmbedding : α ↪o Set α :=
 @[simp]
 theorem atomsBelowEmbedding_apply (x : α) : atomsBelowEmbedding α x = atomsBelow x := rfl
 
-/-- Among the parts of `c` with `n` atoms, one that the others are parts of is `c`: there is a
-largest sum of `n` atoms of `c` only where `c` has `n` atoms. -/
-theorem isGreatest_atomCount_iff {n : ℕ} (hn : n ≠ 0) :
-    IsGreatest {x | x ≤ c ∧ atomCount α x = n} x ↔ x = c ∧ atomCount α c = n := by
+theorem atomCount_strictMono (hfin : ∀ x : α, (atomsBelow x).Finite) :
+    StrictMono (atomCount α) := fun x y h ↦ by
   simp only [atomCount_eq_ncard]
+  exact Set.ncard_lt_ncard
+    ⟨atomsBelow_mono h.le, fun hs ↦ h.not_ge (atomsBelow_subset_iff.1 hs)⟩ (hfin y)
+
+theorem atomCount_of_covBy (hfin : ∀ x : α, (atomsBelow x).Finite) (h : x ⋖ y) :
+    atomCount α y = atomCount α x + 1 := by
+  obtain ⟨d, hd, hdy⟩ := (eq_bot_or_exists_atom_le (y \ x)).resolve_left
+    (mt sdiff_eq_bot_iff.1 h.lt.not_ge)
+  have hdx : ¬ d ≤ x := fun hx ↦ hd.1 (le_bot_iff.1 ((le_inf hx hdy).trans inf_sdiff_self_right.le))
+  have hy : x ⊔ d = y := (h.eq_or_eq le_sup_left (sup_le h.le (hdy.trans sdiff_le))).resolve_left
+    fun he ↦ hdx (he ▸ le_sup_right)
+  rw [atomCount_eq_ncard, atomCount_eq_ncard, ← hy, atomsBelow_sup, atomsBelow_of_isAtom hd,
+    Set.union_singleton, Set.ncard_insert_of_notMem (fun h : d ∈ atomsBelow x ↦ hdx h.2) (hfin x)]
+
+/-- An atomic generalized Boolean algebra whose individuals have finitely many parts is graded by
+the number of atoms. -/
+@[reducible] noncomputable def gradeMinOrder [LocallyFiniteOrderBot α] : GradeMinOrder ℕ α :=
+  have hfin (x : α) : (atomsBelow x).Finite := (Set.finite_Iic x).subset fun _ h ↦ h.2
+  { grade := atomCount α
+    grade_strictMono := atomCount_strictMono hfin
+    covBy_grade := fun _ _ h ↦ Order.covBy_iff_add_one_eq.2 (atomCount_of_covBy hfin h).symm
+    isMin_grade := fun a ha ↦ by
+      rw [isMin_iff_eq_bot.1 ha, atomCount_bot]
+      exact isMin_bot }
+
+/-- Among the parts of `c` whose number of atoms lies in `S`, one that the others are parts of is
+`c`: the largest sum of so many atoms of `c` exists only where `c` has so many. -/
+theorem isGreatest_atomCount_mem_iff {S : Set ℕ} (h0 : 0 ∉ S) :
+    IsGreatest {x | x ≤ c ∧ atomCount α x ∈ S} x ↔ x = c ∧ atomCount α c ∈ S := by
   refine ⟨fun ⟨⟨hxc, hx⟩, hub⟩ ↦ ?_, by rintro ⟨rfl, h⟩; exact ⟨⟨le_rfl, h⟩, fun _ h ↦ h.1⟩⟩
   suffices x = c from ⟨this, this ▸ hx⟩
   by_contra hne
+  have hn : (atomsBelow x).ncard ≠ 0 := fun h ↦ h0 (by rwa [atomCount_eq_ncard, h] at hx)
   obtain ⟨d, hd, hdc⟩ := (eq_bot_or_exists_atom_le (c \ x)).resolve_left
     (mt sdiff_eq_bot_iff.1 fun h ↦ hne (hxc.antisymm h))
-  have hfin : (atomsBelow x).Finite := Set.finite_of_ncard_ne_zero (hx ▸ hn)
-  obtain ⟨a, ha⟩ := (Set.ncard_pos hfin).1 (hx ▸ Nat.pos_of_ne_zero hn)
+  have hfin : (atomsBelow x).Finite := Set.finite_of_ncard_ne_zero hn
+  obtain ⟨a, ha⟩ := (Set.ncard_pos hfin).1 (Nat.pos_of_ne_zero hn)
   have hdx : ¬ d ≤ x := fun h ↦ hd.1 (le_bot_iff.1 ((le_inf h hdc).trans inf_sdiff_self_right.le))
-  have hcard : (atomsBelow (x \ a ⊔ d)).ncard = n := by
-    rw [atomsBelow_sup, atomsBelow_sdiff_of_isAtom ha.1, atomsBelow_of_isAtom hd,
-      Set.union_singleton, Set.ncard_insert_of_notMem
-        (fun h : d ∈ atomsBelow x \ {a} ↦ hdx h.1.2) hfin.sdiff,
-      Set.ncard_sdiff_singleton_add_one ha hfin, hx]
-  exact hdx (le_sup_right.trans (hub ⟨sup_le (sdiff_le.trans hxc) (hdc.trans sdiff_le), hcard⟩))
-
-/-- The minimal individuals that are neither null nor atoms are those with two atoms. -/
-theorem minimal_ne_bot_and_not_isAtom_iff :
-    Minimal (fun y : α ↦ y ≠ ⊥ ∧ ¬ IsAtom y) x ↔ atomCount α x = 2 := by
-  rw [atomCount_eq_ncard]
-  constructor
-  · rintro ⟨⟨hx, hxa⟩, hmin⟩
-    obtain ⟨a, ha, hax⟩ := (eq_bot_or_exists_atom_le x).resolve_left hx
-    obtain ⟨b, hb, hbx⟩ := (eq_bot_or_exists_atom_le (x \ a)).resolve_left
-      (mt sdiff_eq_bot_iff.1 fun h ↦ hxa ((ha.le_iff.1 h).resolve_left hx ▸ ha))
-    have hab : a ≠ b := by
-      rintro rfl
-      exact ha.1 (le_bot_iff.1 ((le_inf hbx le_rfl).trans inf_sdiff_self_left.le))
-    have hle : x ≤ a ⊔ b := hmin ⟨fun h ↦ ha.1 (le_bot_iff.1 (le_sup_left.trans h.le)),
-      fun h ↦ hab (((h.le_iff.1 le_sup_left).resolve_left ha.1).trans
-        ((h.le_iff.1 le_sup_right).resolve_left hb.1).symm)⟩ (sup_le hax (hbx.trans sdiff_le))
-    rw [hle.antisymm (sup_le hax (hbx.trans sdiff_le)), atomsBelow_sup, atomsBelow_of_isAtom ha,
-      atomsBelow_of_isAtom hb, Set.singleton_union, Set.ncard_pair hab]
-  · intro h
-    obtain ⟨a, b, hab, hx⟩ := Set.ncard_eq_two.1 h
-    have ha : a ∈ atomsBelow x := hx ▸ Set.mem_insert _ _
-    have hb : b ∈ atomsBelow x := hx ▸ Set.mem_insert_of_mem _ rfl
-    refine ⟨⟨fun h ↦ ha.1.1 (le_bot_iff.1 (h ▸ ha.2)), fun hx' ↦ hab
-      (((hx'.le_iff.1 ha.2).resolve_left ha.1.1).trans
-        ((hx'.le_iff.1 hb.2).resolve_left hb.1.1).symm)⟩, fun y ⟨hy, hya⟩ hyx ↦ ?_⟩
-    obtain ⟨d, hd, hdy⟩ := (eq_bot_or_exists_atom_le y).resolve_left hy
-    obtain ⟨e, he, hey⟩ := (eq_bot_or_exists_atom_le (y \ d)).resolve_left
-      (mt sdiff_eq_bot_iff.1 fun h ↦ hya ((hd.le_iff.1 h).resolve_left hy ▸ hd))
-    have hde : d ≠ e := by
-      rintro rfl
-      exact hd.1 (le_bot_iff.1 ((le_inf hey le_rfl).trans inf_sdiff_self_left.le))
-    have hd' : d ∈ ({a, b} : Set α) := hx ▸ ⟨hd, hdy.trans hyx⟩
-    have he' : e ∈ ({a, b} : Set α) := hx ▸ ⟨he, (hey.trans sdiff_le).trans hyx⟩
-    refine atomsBelow_subset_iff.1 (hx ▸ ?_)
-    rintro z (rfl | rfl) <;> rcases hd' with rfl | rfl <;> rcases he' with rfl | rfl <;>
-      first | exact ⟨hd, hdy⟩ | exact ⟨he, hey.trans sdiff_le⟩ | exact absurd rfl hde
+  have hcard : atomCount α (x \ a ⊔ d) = atomCount α x := by
+    rw [atomCount_eq_ncard, atomCount_eq_ncard, atomsBelow_sup,
+      atomsBelow_sdiff_of_isAtom ha.1, atomsBelow_of_isAtom hd, Set.union_singleton,
+      Set.ncard_insert_of_notMem (fun h : d ∈ atomsBelow x \ {a} ↦ hdx h.1.2) hfin.sdiff,
+      Set.ncard_sdiff_singleton_add_one ha hfin]
+  exact hdx (le_sup_right.trans
+    (hub ⟨sup_le (sdiff_le.trans hxc) (hdc.trans sdiff_le), hcard ▸ hx⟩))
 
 end Boolean
 

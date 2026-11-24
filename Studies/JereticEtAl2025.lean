@@ -5,7 +5,7 @@ public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Semantics.Alternatives.Structural
-public import Linglib.Semantics.Plurality.Number
+public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Reference.Iota
@@ -31,11 +31,14 @@ what an unpronounceable alternative of `s` means. A parse that bars an alternati
 therefore an indirect alternative of `s` once it is pronounceable and the alternative is at most
 as complex as `s`.
 
-A noun denotes the nonnull parts `Set.Ioc ⊥ c` of the sum `c` of its atoms. The dual
-`[+minimal]` over `[−atomic]` selects the parts with two atoms, as the numeral *deux* does, and the
-definite article takes the largest member of its restrictor, so *les deux NP* and *tous les NP*
-with a dual noun both refer to `c` where it has two atoms and are undefined elsewhere, while
-*tous les NP* with a plural noun refers to `c` wherever it is not null.
+A noun denotes the nonnull parts `Set.Ioc ⊥ c` of the sum `c` of its atoms, in an atomic
+generalized Boolean algebra whose individuals have finitely many parts, which the number of atoms
+grades. Harbour's features act on a region of given numbers of atoms as they act on those numbers,
+so the dual `[+minimal]` over `[−atomic]` selects the parts with two atoms, as the numeral *deux*
+does. Each parse thereby allows its subject's referent a set of numbers of atoms: the positive
+numbers for a plural noun, two for a dual one, and with a numeral the number it names. The
+definite article takes the largest member of its restrictor, which is `c` and exists exactly where
+the number of atoms of `c` is one the parse allows.
 
 The parses are those of *tous les verres sont pleins*, *les verres sont pleins*, *les deux verres
 sont pleins* and *les trois verres sont pleins*, each with either value of `[±minimal]`. No
@@ -43,8 +46,8 @@ definite numeral is a structural alternative of the universal sentence, whose su
 quantifier phrase. The dual parse of the universal sentence is a structural alternative of the
 plural one, and *les deux verres sont pleins* bars it, so the definite numeral with *deux* is an
 indirect alternative of the plural parse and the one with *trois* is not. Strengthened by its
-indirect alternatives, the presupposition of the plural parse holds where there are cups and
-they are not two; strengthened by its pronounceable structural alternatives alone it is
+indirect alternatives, the presupposition of the plural parse holds where the cups number one or
+more than two; strengthened by its pronounceable structural alternatives alone it is
 unchanged. The dual parse of the plain definite is pronounceable, since every parse of another
 string is more complex.
 
@@ -68,6 +71,8 @@ prediction is checked against the paper's judgments on nineteen sentences.
   are not modelled.
 * Equality of meanings is equality over the worlds of one model, so the results that need two
   meanings to differ take a world that separates them as a hypothesis.
+* The grading by the number of atoms is `Mereology.gradeMinOrder`, a local instance here: on
+  `Finset` it would stand beside mathlib's grading by cardinality.
 * Node counts of the cross-linguistic cells follow the paper: *always* is *all* and *ways*,
   *toujours* is *tous* and *jours*, *immer* is suppletive for the same two heads, and the partitive
   *which of the two* has four.
@@ -177,51 +182,45 @@ theorem indirect_eq_empty_of_forall_pronounceable
 
 end Blocking
 
-/-! ### The dual and the definite numeral -/
+/-! ### Number and numerals as regions -/
 
 section Region
 
 open Mereology Number
 
-/-- (26a): the members of a region with `n` atoms, the numeral's restriction. -/
-def exactly {E : Type*} [PartialOrder E] [OrderBot E] (n : ℕ) (P : Set E) : Set E :=
-  {x ∈ P | atomCount E x = n}
+/-- (93b), (102b): the dual is `[+minimal]` over `[−atomic]`. -/
+def dual : Number.Bundle := {(.atomic, false), (.minimal, true)}
 
-/-- The region of a noun under a value of `[±minimal]` over `[−atomic]`: `[+minimal]` selects
-the minimal members that are not atoms, the dual (98b), and `[−minimal]` selects all (95b). -/
-def number {E : Type*} [PartialOrder E] [OrderBot E] (minimal : Bool) (P : Set E) : Set E :=
-  if minimal then atomize (Feature.restrict .atomic false P) else P
+variable {D : Type*} [PartialOrder D] [OrderBot D]
 
-variable {E : Type*} [GeneralizedBooleanAlgebra E] [IsAtomic E] {c x : E} {m n : ℕ}
+/-- The region of a noun under a value of `[±minimal]` over `[−atomic]`: `[+minimal]` gives the
+region of the dual (98b), and `[−minimal]`, like `[−atomic]`, selects all (94b), (95b). -/
+def number (minimal : Bool) (P : Set D) : Set D := if minimal then dual.exact P else P
 
-omit [IsAtomic E] in
-theorem exactly_Ioc (hn : n ≠ 0) :
-    exactly n (Set.Ioc ⊥ c) = {x | x ≤ c ∧ atomCount E x = n} :=
-  Set.ext fun x ↦ ⟨fun h ↦ ⟨h.1.2, h.2⟩, fun h ↦
-    ⟨⟨bot_lt_iff_ne_bot.2 fun hx ↦ hn (by rw [← h.2, hx, atomCount_bot]), h.1⟩, h.2⟩⟩
+theorem number_subset (m : Bool) (P : Set D) : number m P ⊆ P := by
+  cases m
+  · exact subset_rfl
+  · exact fun _ ↦ Bundle.exact_le dual P
 
--- (103)
-theorem number_true_Ioc : number true (Set.Ioc ⊥ c) = exactly 2 (Set.Ioc ⊥ c) := by
-  rw [exactly_Ioc two_ne_zero]
-  exact Set.ext fun _ ↦ mem_atomize_restrict_atomic_false_Ioc
+theorem number_inter_of_isLowerSet (m : Bool) (P : Set D) {L : Set D} (hL : IsLowerSet L) :
+    number m (P ∩ L) = number m P ∩ L := by
+  cases m
+  · rfl
+  · exact Bundle.exact_inter_of_isLowerSet dual P hL
 
-omit [IsAtomic E] in
-theorem exactly_exactly (P : Set E) : exactly n (exactly n P) = exactly n P :=
-  Set.ext fun _ ↦ ⟨fun h ↦ h.1, fun h ↦ ⟨h, h.2⟩⟩
+theorem number_grade_preimage [GradeMinOrder ℕ D] (m : Bool) (S : Set ℕ) :
+    number m (grade ℕ ⁻¹' S : Set D) = grade ℕ ⁻¹' number m S := by
+  cases m
+  · rfl
+  · exact Bundle.exact_grade_preimage dual S
 
-omit [IsAtomic E] in
-theorem exactly_exactly_of_ne (h : m ≠ n) (P : Set E) : exactly n (exactly m P) = ∅ :=
-  Set.eq_empty_of_forall_notMem fun _ hx ↦ h (hx.1.2.symm.trans hx.2)
-
-theorem isGreatest_exactly_Ioc (hn : n ≠ 0) :
-    IsGreatest (exactly n (Set.Ioc ⊥ c)) x ↔ x = c ∧ atomCount E c = n := by
-  rw [exactly_Ioc hn]
-  exact isGreatest_atomCount_iff hn
-
-omit [IsAtomic E] in
-theorem isGreatest_Ioc_bot : IsGreatest (Set.Ioc ⊥ c) x ↔ x = c ∧ c ≠ ⊥ :=
-  ⟨fun h ↦ ⟨h.1.2.antisymm (h.2 ⟨h.1.1.trans_le h.1.2, le_rfl⟩), (h.1.1.trans_le h.1.2).ne'⟩,
-    by rintro ⟨rfl, hc⟩; exact ⟨⟨bot_lt_iff_ne_bot.2 hc, le_rfl⟩, fun _ h ↦ h.2⟩⟩
+-- (93b), (103)
+theorem number_true_Ici_one : number true (Set.Ici 1 : Set ℕ) = {2} := by
+  have h : Feature.restrict .atomic false (Set.Ici 1 : Set ℕ) = Set.Ici 2 := by
+    ext k
+    simp only [Feature.mem_restrict_atomic_false, Nat.isAtom_iff_eq_one, Set.mem_Ici]
+    omega
+  simp [number, dual, Bundle.exact, Bundle.step, h]
 
 end Region
 
@@ -366,7 +365,36 @@ section Meaning
 
 open Mereology Presupposition
 
-variable {W E : Type*} [GeneralizedBooleanAlgebra E]
+/-- The numbers of atoms a parse allows its subject's referent: those the number of its noun
+selects from the positive numbers and, with a numeral, the one the numeral names. -/
+def Parse.numerosity (p : Parse) : Set ℕ :=
+  match p.subject with
+  | .lesNum n => number p.minimal (Set.Ici 1) ∩ {n.card}
+  | _ => number p.minimal (Set.Ici 1)
+
+theorem Parse.numerosity_subset (p : Parse) : p.numerosity ⊆ Set.Ici 1 := by
+  rcases p with ⟨_ | _ | n, m⟩
+  · exact number_subset m _
+  · exact number_subset m _
+  · exact Set.inter_subset_left.trans (number_subset m _)
+
+theorem numerosity_tous_false : Parse.numerosity ⟨.tous, false⟩ = Set.Ici 1 := rfl
+
+theorem numerosity_tous_true : Parse.numerosity ⟨.tous, true⟩ = {2} := number_true_Ici_one
+
+-- (40), (41)
+theorem numerosity_lesNum_deux (m : Bool) : Parse.numerosity ⟨.lesNum .deux, m⟩ = {2} := by
+  cases m
+  · exact Set.ext fun k ↦ ⟨fun h ↦ h.2, fun h ↦ ⟨by simp_all [number], h⟩⟩
+  · exact (congrArg (· ∩ {2}) number_true_Ici_one).trans (Set.inter_self _)
+
+theorem numerosity_lesNum_trois_subset (m : Bool) :
+    Parse.numerosity ⟨.lesNum .trois, m⟩ ⊆ {3} := Set.inter_subset_right
+
+variable {W E : Type*} [GeneralizedBooleanAlgebra E] [IsAtomic E] [LocallyFiniteOrderBot E]
+
+/-- (26a): the members of a region with `n` atoms, the numeral's restriction. -/
+def exactly (n : ℕ) (P : Set E) : Set E := {x ∈ P | atomCount E x = n}
 
 /-- (26d), (28c), (39b): the restrictor of the definite in the subject of a parse, the region of
 the noun under its number and, with a numeral, its members of that many atoms. -/
@@ -374,6 +402,33 @@ def Parse.region (p : Parse) (c : E) : Set E :=
   match p.subject with
   | .lesNum n => exactly n.card (number p.minimal (Set.Ioc ⊥ c))
   | _ => number p.minimal (Set.Ioc ⊥ c)
+
+attribute [local instance] Mereology.gradeMinOrder
+
+theorem Parse.region_eq (p : Parse) (c : E) :
+    p.region c = {x | x ≤ c ∧ atomCount E x ∈ p.numerosity} := by
+  have hIoc : Set.Ioc ⊥ c = (grade ℕ ⁻¹' Set.Ici 1 : Set E) ∩ Set.Iic c := Set.ext fun x ↦
+    and_congr_left fun _ ↦
+      ⟨fun hx ↦ by
+        have h := grade_strictMono (𝕆 := ℕ) hx
+        rw [grade_bot] at h
+        exact Nat.one_le_iff_ne_zero.2 h.ne',
+        fun h ↦ bot_lt_iff_ne_bot.2 fun hx ↦ by simp [hx, grade_bot] at h⟩
+  have key (m : Bool) : number m (Set.Ioc ⊥ c) =
+      {x | x ≤ c ∧ atomCount E x ∈ number m (Set.Ici 1)} := by
+    rw [hIoc, number_inter_of_isLowerSet _ _ (IsLowerSet.Iic c), number_grade_preimage]
+    exact Set.ext fun _ ↦ and_comm
+  rcases p with ⟨_ | _ | n, m⟩
+  · exact key m
+  · exact key m
+  · exact Set.ext fun x ↦ by
+      simp only [Parse.region, exactly, key m, Parse.numerosity, Set.mem_ofPred_eq,
+        Set.mem_inter_iff, Set.mem_singleton_iff, and_assoc]
+
+theorem Parse.isGreatest_region_iff {p : Parse} {c x : E} :
+    IsGreatest (p.region c) x ↔ x = c ∧ atomCount E c ∈ p.numerosity := by
+  rw [Parse.region_eq]
+  exact isGreatest_atomCount_mem_iff fun h ↦ absurd (p.numerosity_subset h) (by decide)
 
 variable (c : W → E) (full : W → Set E)
 
@@ -388,78 +443,44 @@ noncomputable def Parse.presup (p : Parse) : Set W := (Trivalent.gapExt (p.meani
 
 variable {c full} {p q : Parse} {w : W} {m : Bool}
 
-theorem Parse.mem_presup_iff : w ∈ p.presup c full ↔ ∃ x, IsGreatest (p.region (c w)) x := by
-  simp only [Parse.presup, Set.mem_compl_iff, Trivalent.gapExt, Set.mem_ofPred_eq, Parse.meaning,
-    presupOfReferent_eq_undefined_iff, not_not, iota_isGreatest_dom]
+theorem Parse.mem_presup_iff : w ∈ p.presup c full ↔ atomCount E (c w) ∈ p.numerosity := by
+  have h : w ∈ p.presup c full ↔ ∃ x, IsGreatest (p.region (c w)) x := by
+    simp only [Parse.presup, Set.mem_compl_iff, Trivalent.gapExt, Set.mem_ofPred_eq,
+      Parse.meaning, presupOfReferent_eq_undefined_iff, not_not]
+    exact iota_isGreatest_dom
+  rw [h]
+  simp only [Parse.isGreatest_region_iff, exists_eq_left]
 
-theorem Parse.meaning_congr (h : ∀ c : E, p.region c = q.region c) :
+theorem Parse.meaning_congr (h : p.numerosity = q.numerosity) :
     p.meaning c full = q.meaning c full := by
-  simp only [Parse.meaning, h]
+  simp only [Parse.meaning, Parse.region_eq, h]
 
+omit [IsAtomic E] [LocallyFiniteOrderBot E] in
 theorem Parse.presup_congr (h : p.meaning c full = q.meaning c full) :
     p.presup c full = q.presup c full := by
   rw [Parse.presup, Parse.presup, h]
 
-theorem Parse.meaning_apply_of_isGreatest {x : E} (hp : IsGreatest (p.region (c w)) x)
-    (hq : IsGreatest (q.region (c w)) x) : p.meaning c full w = q.meaning c full w :=
+-- (19b)
+theorem Parse.meaning_apply_of_mem_presup (hp : w ∈ p.presup c full) (hq : w ∈ q.presup c full) :
+    p.meaning c full w = q.meaning c full w :=
   (presupOfReferent_of_mem (referent := fun w ↦ iota {x | IsGreatest (p.region (c w)) x})
-    (scope := fun x w ↦ atomsBelow x ⊆ full w) (mem_iota_isGreatest.2 hp)).trans
+    (scope := fun x w ↦ atomsBelow x ⊆ full w) (e := c w) (mem_iota_isGreatest.2
+      (Parse.isGreatest_region_iff.2 ⟨rfl, Parse.mem_presup_iff.1 hp⟩))).trans
     (presupOfReferent_of_mem (referent := fun w ↦ iota {x | IsGreatest (q.region (c w)) x})
-      (scope := fun x w ↦ atomsBelow x ⊆ full w) (mem_iota_isGreatest.2 hq)).symm
-
-theorem meaning_les : Parse.meaning c full ⟨.les, m⟩ = Parse.meaning c full ⟨.tous, m⟩ := rfl
-
-variable [IsAtomic E]
-
-theorem region_dual (c : E) : Parse.region ⟨.tous, true⟩ c = exactly 2 (Set.Ioc ⊥ c) :=
-  number_true_Ioc
-
--- (40), (41)
-theorem region_lesNum_deux (c : E) :
-    Parse.region ⟨.lesNum .deux, m⟩ c = Parse.region ⟨.tous, true⟩ c := by
-  cases m
-  · exact number_true_Ioc.symm
-  · exact (congrArg (exactly 2) number_true_Ioc).trans
-      ((exactly_exactly _).trans number_true_Ioc.symm)
+      (scope := fun x w ↦ atomsBelow x ⊆ full w) (e := c w) (mem_iota_isGreatest.2
+        (Parse.isGreatest_region_iff.2 ⟨rfl, Parse.mem_presup_iff.1 hq⟩))).symm
 
 -- (40), (41)
 theorem meaning_lesNum_deux :
     Parse.meaning c full ⟨.lesNum .deux, m⟩ = Parse.meaning c full ⟨.tous, true⟩ :=
-  Parse.meaning_congr region_lesNum_deux
+  Parse.meaning_congr ((numerosity_lesNum_deux m).trans numerosity_tous_true.symm)
 
-omit [IsAtomic E] in
-theorem presup_tous_false : Parse.presup c full ⟨.tous, false⟩ = {w | c w ≠ ⊥} :=
-  Set.ext fun _ ↦ Parse.mem_presup_iff.trans
-    ⟨fun ⟨_, h⟩ ↦ (isGreatest_Ioc_bot.1 h).2, fun h ↦ ⟨_, isGreatest_Ioc_bot.2 ⟨rfl, h⟩⟩⟩
-
-theorem presup_tous_true :
-    Parse.presup c full ⟨.tous, true⟩ = {w | atomCount E (c w) = 2} :=
-  Set.ext fun w ↦ Parse.mem_presup_iff.trans <| by
-    rw [region_dual]
-    exact ⟨fun ⟨_, h⟩ ↦ ((isGreatest_exactly_Ioc two_ne_zero).1 h).2,
-      fun h ↦ ⟨_, (isGreatest_exactly_Ioc two_ne_zero).2 ⟨rfl, h⟩⟩⟩
-
-theorem presup_lesNum_trois_subset :
-    Parse.presup c full ⟨.lesNum .trois, m⟩ ⊆ {w | atomCount E (c w) = 3} := fun w hw ↦ by
-  obtain ⟨x, hx⟩ := Parse.mem_presup_iff.1 hw
-  cases m
-  · exact ((isGreatest_exactly_Ioc three_ne_zero).1 hx).2
-  · have h : Parse.region ⟨.lesNum .trois, true⟩ (c w) = ∅ :=
-      (congrArg (exactly 3) number_true_Ioc).trans (exactly_exactly_of_ne (by decide) _)
-    exact absurd hx.1 (h ▸ Set.notMem_empty x)
+omit [IsAtomic E] [LocallyFiniteOrderBot E] in
+theorem meaning_les : Parse.meaning c full ⟨.les, m⟩ = Parse.meaning c full ⟨.tous, m⟩ := rfl
 
 theorem presup_tous_true_subset :
-    Parse.presup c full ⟨.tous, true⟩ ⊆ Parse.presup c full ⟨.tous, false⟩ := by
-  rw [presup_tous_true, presup_tous_false]
-  rintro w (hw : atomCount E (c w) = 2) h
-  simp [h] at hw
-
--- (19b)
-theorem meaning_tous_apply_of_atomCount (h : atomCount E (c w) = 2) :
-    Parse.meaning c full ⟨.tous, false⟩ w = Parse.meaning c full ⟨.tous, true⟩ w := by
-  have hc : c w ≠ ⊥ := fun hc ↦ by simp [hc] at h
-  exact Parse.meaning_apply_of_isGreatest (isGreatest_Ioc_bot.2 ⟨rfl, hc⟩)
-    (region_dual (c w) ▸ (isGreatest_exactly_Ioc two_ne_zero).2 ⟨rfl, h⟩)
+    Parse.presup c full ⟨.tous, true⟩ ⊆ Parse.presup c full ⟨.tous, false⟩ := fun _ h ↦
+  Parse.mem_presup_iff.2 (Parse.numerosity_subset _ (Parse.mem_presup_iff.1 h))
 
 end Meaning
 
@@ -469,23 +490,23 @@ section Competition
 
 open Mereology Presupposition
 
-variable {W E : Type*} [GeneralizedBooleanAlgebra E] [IsAtomic E] {c : W → E} {full : W → Set E}
-  {m : Bool}
+variable {W E : Type*} [GeneralizedBooleanAlgebra E] [IsAtomic E] [LocallyFiniteOrderBot E]
+  {c : W → E} {full : W → Set E} {m : Bool}
 
 local notation "Bars'" => Bars Parse.spell (Parse.meaning c full) Parse.size
 local notation "Pronounceable'" => Pronounceable Parse.spell (Parse.meaning c full) Parse.size
 local notation "indirect'" => indirect Parse.spell (Parse.meaning c full) Parse.size Parse.alts
 
-theorem meaning_tous_ne (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
+theorem meaning_tous_ne (hw : ∃ w, atomCount E (c w) ∈ Set.Ici 1 \ {2}) :
     Parse.meaning c full ⟨.tous, false⟩ ≠ Parse.meaning c full ⟨.tous, true⟩ := fun h ↦ by
-  obtain ⟨w, hc, hn⟩ := hw
-  have := Parse.presup_congr h
-  rw [presup_tous_false, presup_tous_true] at this
-  exact hn (this ▸ hc : w ∈ {w | atomCount E (c w) = 2})
+  obtain ⟨w, h₁, h₂⟩ := hw
+  have hmem : w ∈ Parse.presup c full ⟨.tous, true⟩ :=
+    Parse.presup_congr h ▸ Parse.mem_presup_iff.2 h₁
+  exact h₂ (numerosity_tous_true ▸ Parse.mem_presup_iff.1 hmem)
 
 /-- Avoid Ambiguity: *les deux verres sont pleins* bars the dual parse of *tous les verres sont
 pleins*, in a model with a world whose cups are not two. -/
-theorem bars_lesNum_deux_tous_true (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
+theorem bars_lesNum_deux_tous_true (hw : ∃ w, atomCount E (c w) ∈ Set.Ici 1 \ {2}) :
     Bars' ⟨.lesNum .deux, m⟩ ⟨.tous, true⟩ :=
   bars_iff.2 ⟨(Parse.size_lesNum_eq ..).le, meaning_lesNum_deux, ⟨.tous, false⟩,
     Parse.spell_eq_spell_iff.2 rfl, meaning_tous_ne hw, fun ⟨s, m'⟩ hs ↦ by
@@ -497,7 +518,7 @@ theorem pronounceable_lesNum_deux : Pronounceable' ⟨.lesNum .deux, m⟩ :=
     obtain rfl : s = .lesNum .deux := Parse.spell_eq_spell_iff.1 hs
     exact meaning_lesNum_deux.trans meaning_lesNum_deux.symm
 
-omit [IsAtomic E] in
+omit [IsAtomic E] [LocallyFiniteOrderBot E] in
 -- (78)
 theorem pronounceable_les : Pronounceable' ⟨.les, m⟩ := by
   rintro ⟨s, m'⟩ hb
@@ -507,7 +528,7 @@ theorem pronounceable_les : Pronounceable' ⟨.les, m⟩ := by
 
 /-- *Les deux verres sont pleins* is an indirect alternative of the plural parse of *tous les
 verres sont pleins*. -/
-theorem lesNum_deux_mem_indirect (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
+theorem lesNum_deux_mem_indirect (hw : ∃ w, atomCount E (c w) ∈ Set.Ici 1 \ {2}) :
     (⟨.lesNum .deux, m⟩ : Parse) ∈ indirect' ⟨.tous, false⟩ :=
   (bars_lesNum_deux_tous_true hw).mem_indirect pronounceable_lesNum_deux tous_true_mem_alts
     (by decide)
@@ -517,12 +538,14 @@ theorem lesNum_trois_notMem_indirect (h₂ : ∃ w, atomCount E (c w) = 2) :
   rintro ⟨-, -, ⟨s, m'⟩, hx, -, hm⟩
   obtain rfl : s = .tous := subject_eq_tous_of_mem_alts hx
   obtain ⟨w, hw⟩ := h₂
-  have hdual : w ∈ Parse.presup c full ⟨.tous, true⟩ := by rwa [presup_tous_true]
+  have hdual : w ∈ Parse.presup c full ⟨.tous, true⟩ :=
+    Parse.mem_presup_iff.2 (numerosity_tous_true ▸ hw)
   have hmem : w ∈ Parse.presup c full ⟨.tous, m'⟩ := by
     cases m'
     · exact presup_tous_true_subset hdual
     · exact hdual
-  have h3 : atomCount E (c w) = 3 := presup_lesNum_trois_subset (Parse.presup_congr hm ▸ hmem)
+  have h3 : atomCount E (c w) = 3 :=
+    numerosity_lesNum_trois_subset m (Parse.mem_presup_iff.1 (Parse.presup_congr hm ▸ hmem))
   omega
 
 -- (19b)
@@ -531,34 +554,36 @@ theorem meaning_apply_of_mem_indirect {q : Parse} (hq : q ∈ indirect' ⟨.tous
     Parse.meaning c full q w = Parse.meaning c full ⟨.tous, false⟩ w := by
   obtain ⟨-, -, ⟨s, m'⟩, hx, -, hm⟩ := hq
   obtain rfl : s = .tous := subject_eq_tous_of_mem_alts hx
+  have hw' : w ∈ Parse.presup c full ⟨.tous, m'⟩ := Parse.presup_congr hm ▸ hw
+  rw [hm]
   cases m'
-  · rw [hm]
-  · have hdual : w ∈ Parse.presup c full ⟨.tous, true⟩ := Parse.presup_congr hm ▸ hw
-    rw [presup_tous_true] at hdual
-    rw [hm, meaning_tous_apply_of_atomCount hdual]
+  · rfl
+  · exact Parse.meaning_apply_of_mem_presup hw' (presup_tous_true_subset hw')
 
 /-- Maximize Presupposition over indirect alternatives: the plural parse of *tous les verres sont
-pleins* is used where there are cups and they are not two, in a model with such a world. -/
-theorem strengthen_indirect_tous (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
+pleins* is used where the cups number one or more than two, in a model with such a world. -/
+theorem strengthen_indirect_tous (hw : ∃ w, atomCount E (c w) ∈ Set.Ici 1 \ {2}) :
     strengthen indirect' (Parse.presup c full) ⟨.tous, false⟩ =
-      {w | c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2} := by
-  rw [strengthen_eq_sdiff (ψ := ⟨.lesNum .deux, false⟩) (lesNum_deux_mem_indirect hw),
-    Parse.presup_congr meaning_lesNum_deux, presup_tous_false, presup_tous_true]
-  · rfl
-  · rw [Parse.presup_congr meaning_lesNum_deux]
-    exact ⟨presup_tous_true_subset, fun h ↦ meaning_tous_ne (full := full) hw <| by
-      obtain ⟨w, hc, hn⟩ := hw
-      rw [presup_tous_false, presup_tous_true] at h
-      exact absurd (h hc) hn⟩
+      {w | atomCount E (c w) ∈ Set.Ici 1 \ {2}} := by
+  have hdeux : Parse.presup c full ⟨.lesNum .deux, false⟩ = Parse.presup c full ⟨.tous, true⟩ :=
+    Parse.presup_congr meaning_lesNum_deux
+  rw [strengthen_eq_sdiff (ψ := ⟨.lesNum .deux, false⟩) (lesNum_deux_mem_indirect hw), hdeux]
+  · ext w
+    rw [Set.mem_sdiff, Parse.mem_presup_iff, Parse.mem_presup_iff, numerosity_tous_true]
+    rfl
+  · rw [hdeux]
+    refine ⟨presup_tous_true_subset, fun h ↦ ?_⟩
+    obtain ⟨w, h₁, h₂⟩ := hw
+    exact h₂ (numerosity_tous_true ▸ Parse.mem_presup_iff.1 (h (Parse.mem_presup_iff.2 h₁)))
   · rintro χ ⟨-, -, ⟨s, m'⟩, hx, -, hm⟩ hss
     obtain rfl : s = .tous := subject_eq_tous_of_mem_alts hx
-    rw [Parse.presup_congr hm, Parse.presup_congr meaning_lesNum_deux] at *
+    rw [Parse.presup_congr hm, hdeux] at *
     cases m'
     · exact absurd rfl hss.ne
     · exact subset_rfl
 
 -- (2a)
-theorem strengthen_pronounceable_tous (hw : ∃ w, c w ≠ ⊥ ∧ atomCount E (c w) ≠ 2) :
+theorem strengthen_pronounceable_tous (hw : ∃ w, atomCount E (c w) ∈ Set.Ici 1 \ {2}) :
     strengthen (fun p ↦ {q ∈ p.alts | Pronounceable' q}) (Parse.presup c full) ⟨.tous, false⟩ =
       Parse.presup c full ⟨.tous, false⟩ := by
   refine strengthen_eq_self ?_

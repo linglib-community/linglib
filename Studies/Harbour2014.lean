@@ -71,16 +71,6 @@ section Region
 
 variable {α : Type*}
 
-theorem isAtom_iff_eq_one {k : ℕ} : IsAtom k ↔ k = 1 := by
-  rw [isAtom_iff_le_of_ge]
-  simp only [Nat.bot_eq_zero]
-  constructor
-  · rintro ⟨h0, h⟩
-    have := h 1 (by simp) (by omega)
-    omega
-  · rintro rfl
-    exact ⟨by simp, fun b hb _ ↦ by omega⟩
-
 /-- A region of the person lattice over `B` consists of the sums containing `B` whose number of
 atoms lies in `S`, a union of strata (12). -/
 def region (B : Finset α) (S : Set ℕ) : Set (Finset α) := {s | B ⊆ s ∧ s.card ∈ S}
@@ -98,7 +88,7 @@ theorem atomize_region (hS : ∀ k ∈ S, B.card ≤ k) :
   · exact (Finset.eq_of_subset_of_card_le hts (h.2.2 ht.2 (Finset.card_le_card hts))).ge
 
 theorem atom_iff_card {s : Finset α} : IsAtom s ↔ IsAtom s.card := by
-  rw [isAtom_finset_iff_card_eq_one, isAtom_iff_eq_one]
+  rw [isAtom_finset_iff_card_eq_one, Nat.isAtom_iff_eq_one]
 
 variable [DecidableEq α]
 
@@ -125,11 +115,6 @@ section Successor
 
 variable {α : Type*} [DecidableEq α]
 
-private theorem atomize_le (k : ℕ) : atomize (Set.Ici k) = {k} := by
-  ext j
-  exact ⟨fun h ↦ le_antisymm (h.2 Set.self_mem_Ici h.1) h.1,
-    by rintro rfl; exact ⟨Set.self_mem_Ici, fun _ h _ ↦ h⟩⟩
-
 private theorem restrict_minimal_false_iterate (n : ℕ) :
     (Feature.restrict .minimal false)^[n] (Set.Ici 2) = Set.Ici (n + 2) := by
   induction n with
@@ -137,7 +122,7 @@ private theorem restrict_minimal_false_iterate (n : ℕ) :
   | succ n ih =>
     rw [Function.iterate_succ_apply', ih]
     ext j
-    simp only [Feature.mem_restrict_minimal_false, atomize_le, Set.mem_Ici,
+    simp only [Feature.mem_restrict_minimal_false, atomize_Ici, Set.mem_Ici,
       Set.mem_singleton_iff]
     omega
 
@@ -161,10 +146,10 @@ theorem atomize_restrict_iterate (n : ℕ) (s : Finset α) :
     s ∈ atomize ((Feature.restrict .minimal false)^[n]
       (Feature.restrict .atomic false {t | t.Nonempty})) ↔ s.card = n + 2 := by
   have hna : Feature.restrict .atomic false (Set.Ici 1) = Set.Ici 2 := by
-    ext j; simp only [Feature.mem_restrict_atomic_false, isAtom_iff_eq_one, Set.mem_Ici]; omega
+    ext j; simp only [Feature.mem_restrict_atomic_false, Nat.isAtom_iff_eq_one, Set.mem_Ici]; omega
   rw [nonempty_eq_region, restrict_region _ _ fun _ _ ↦ Nat.zero_le _, hna,
     restrict_minimal_false_iterate_region, restrict_minimal_false_iterate,
-    atomize_region fun _ _ ↦ Nat.zero_le _, atomize_le]
+    atomize_region fun _ _ ↦ Nat.zero_le _, atomize_Ici]
   simp
 
 -- (30)
@@ -173,7 +158,7 @@ theorem atomize_restrict_atomic_true (s : Finset α) :
     s ∈ atomize (Feature.restrict .atomic true {t | t.Nonempty}) ↔ s.card = 1 := by
   have ha : Feature.restrict .atomic true (Set.Ici 1) = ({1} : Set ℕ) := by
     ext j
-    simp only [Feature.mem_restrict_atomic_true, isAtom_iff_eq_one, Set.mem_Ici,
+    simp only [Feature.mem_restrict_atomic_true, Nat.isAtom_iff_eq_one, Set.mem_Ici,
       Set.mem_singleton_iff]
     omega
   rw [nonempty_eq_region, restrict_region _ _ fun _ _ ↦ Nat.zero_le _, ha,
@@ -245,7 +230,7 @@ theorem additiveIn_atomize_superset (B : Finset α) : B ∈ additiveIn (atomize 
 theorem not_additiveIn_atomize_nonempty [Nontrivial α] (s : Finset α) :
     s ∉ additiveIn (atomize {t | t.Nonempty}) := by
   have key : ∀ t : Finset α, t ∈ atomize {t | t.Nonempty} ↔ t.card = 1 := fun t ↦ by
-    rw [nonempty_eq_region, atomize_region fun _ _ ↦ Nat.zero_le _, atomize_le]; simp
+    rw [nonempty_eq_region, atomize_region fun _ _ ↦ Nat.zero_le _, atomize_Ici]; simp
   rintro ⟨hs, h⟩
   obtain ⟨a, rfl⟩ := Finset.card_eq_one.mp ((key s).mp hs)
   obtain ⟨b, hb⟩ := exists_ne a
@@ -474,7 +459,7 @@ theorem atomize_toSet (s : Strata) : atomize s.toSet = (s.restrict .minimal true
   cases s with
   | empty => exact (atomize_subset _).antisymm (Set.empty_subset _)
   | point n => exact Set.ext fun _ ↦ (Set.subsingleton_singleton.isAntichain _).minimal_mem_iff
-  | ray n => exact atomize_le _
+  | ray n => exact atomize_Ici _
 
 theorem restrict_toSet (f : Feature) (v : Bool) (s : Strata) :
     f.restrict v s.toSet = (s.restrict f v).toSet := by
@@ -484,19 +469,19 @@ theorem restrict_toSet (f : Feature) (v : Bool) (s : Strata) :
     cases s with
     | empty => simp [toSet, restrict]
     | point n =>
-      by_cases h : n = 1 <;> simp [toSet, restrict, isAtom_iff_eq_one, h]
+      by_cases h : n = 1 <;> simp [toSet, restrict, Nat.isAtom_iff_eq_one, h]
       omega
     | ray n =>
-      by_cases h : n ≤ 1 <;> simp [toSet, restrict, isAtom_iff_eq_one, h]
+      by_cases h : n ≤ 1 <;> simp [toSet, restrict, Nat.isAtom_iff_eq_one, h]
       all_goals omega
   | .atomic, false =>
     ext k
     cases s with
     | empty => simp [toSet, restrict]
     | point n =>
-      by_cases h : n = 1 <;> simp [toSet, restrict, isAtom_iff_eq_one, h]
+      by_cases h : n = 1 <;> simp [toSet, restrict, Nat.isAtom_iff_eq_one, h]
       omega
-    | ray n => simp [toSet, restrict, isAtom_iff_eq_one]; omega
+    | ray n => simp [toSet, restrict, Nat.isAtom_iff_eq_one]; omega
   | .minimal, true => exact atomize_toSet s
   | .minimal, false =>
     ext k
