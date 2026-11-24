@@ -5,8 +5,8 @@ public import Linglib.Semantics.Plurality.Reciprocal
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Tactic.Abel
 public import Mathlib.Tactic.Ring
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Lindstrom
+public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Lindstrom
 
 /-!
 # Peters and Westerståhl (2006): Quantifiers in Language and Logic

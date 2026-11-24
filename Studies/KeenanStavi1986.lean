@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantification.Lattice
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Lattice
+public import Linglib.Semantics.Quantifier.Counting
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Mathlib.Order.Atoms
 public import Mathlib.Data.Sym.Card

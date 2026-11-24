@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Mathlib.Order.Hom.CompleteLattice
 public import Mathlib.Order.UpperLower.Closure
 
@@ -19,7 +19,7 @@ entities (`Quantifier.some_Iic_eq_individual_iff`): a predicate holds of all the
 entity, or of some part. Partee's `lower` is the partial inverse of the
 lift, so *the king* [lowers to `iota` of its noun](##Quantifier.lower_the), and *a man* and
 *every man* do only where there is one man. Predicative content is in
-`Quantification/Predicative.lean`.
+`Quantifier/Predicative.lean`.
 
 ## References
 

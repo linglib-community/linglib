@@ -8,8 +8,9 @@ public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Core.Data.RoseTree.Licensed
 public import Linglib.Semantics.Presupposition.Strengthening
-public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Quantification.Continuation
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.Square
+public import Linglib.Semantics.Quantifier.Continuation
 public import Studies.Fox2007
 public import Studies.Katzir2007
 public import Studies.TrinhHaida2015

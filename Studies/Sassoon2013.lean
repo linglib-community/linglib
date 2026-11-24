@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Aggregation.Rules
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Syntax.Category.Adjective.Basic
 public import Linglib.Data.Examples.Sassoon2013
 public import Linglib.Data.Examples.Readers

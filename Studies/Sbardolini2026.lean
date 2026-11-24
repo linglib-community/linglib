@@ -5,7 +5,7 @@ public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 public import Linglib.Semantics.Conditionals.Horizon
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Semantics.Reference.Iota
 
 /-!

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.BhattPancheva2004
 public import Linglib.Semantics.Degree.HeimKennedy
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Syntax.Minimalist.LateMerger

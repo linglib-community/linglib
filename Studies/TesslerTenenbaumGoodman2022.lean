@@ -3,7 +3,7 @@ module
 public import Linglib.Core.MeasureTheory.Constructions.List
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Pragmatics.Probabilistic.KullbackLeibler
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 
 /-!
 # Tessler, Tenenbaum and Goodman (2022): Logic, Probability, and Pragmatics in Syllogistic Reasoning

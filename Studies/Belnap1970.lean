@@ -2,7 +2,8 @@ module
 
 public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Logic.Aristotelian.Square
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.Square
 public import Linglib.Data.Examples.Belnap1970
 
 /-!

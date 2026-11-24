@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Core.ModelTheory.Monadic
-public import Linglib.Semantics.Quantification.Individual
-public import Linglib.Semantics.Quantification.Polyadic
+public import Linglib.Semantics.Quantifier.Individual
+public import Linglib.Semantics.Quantifier.Polyadic
 public import Mathlib.ModelTheory.Graph
 public import Studies.KeenanStavi1986
 
@@ -29,7 +29,7 @@ in prose that there be at least two members of the restrictor; that case is the 
 sets have two members: with more members of the restrictor than subsets of the second set the
 function is constantly false, hence reducible, and its proof's relation witnesses only three
 pupils. The accusative extension and the two tests for reducibility, stated in that paper, are in
-`Quantifier.Polyadic`. Sizes are `Set.ncard`, as in `Quantification/Counting`, so the determiners
+`Quantifier.Polyadic`. Sizes are `Set.ncard`, as in `Quantifier/Counting`, so the determiners
 counting with them are meant for finite sets.
 
 ## TODO

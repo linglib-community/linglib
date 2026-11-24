@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.Coordinator
 public import Linglib.Data.Examples.MitrovicSauerland2016
 public import Linglib.Languages.English.Coordination

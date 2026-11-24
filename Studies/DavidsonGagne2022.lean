@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.DavidsonGagne2022
 public import Linglib.Languages.ASL.Determiners
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.Reference.Definite
 public import Linglib.Data.Examples.Readers
 

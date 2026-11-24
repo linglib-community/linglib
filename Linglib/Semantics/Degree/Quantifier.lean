@@ -6,7 +6,7 @@ public import Mathlib.Order.Hom.CompleteLattice
 public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Core.Order.StrictBounds
 public import Linglib.Semantics.Degree.Comparison
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Core.Order.AntiAdditive
 public import Mathlib.Order.Completion
 

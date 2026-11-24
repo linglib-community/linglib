@@ -7,7 +7,7 @@ public import Linglib.Core.Probability.UniformOn
 public import Linglib.Pragmatics.Probabilistic.Recursion
 public import Linglib.Pragmatics.Probabilistic.Uniform
 public import Linglib.Semantics.Degree.Comparison
-public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Quantifier.NumberTree
 
 /-!
 # Goodman and Stuhlmüller (2013): Knowledge and Implicature

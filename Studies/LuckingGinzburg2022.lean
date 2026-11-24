@@ -1,8 +1,8 @@
 module
 
 public import Mathlib.Data.Finset.Interval
-public import Linglib.Semantics.Quantification.Witness
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Witness
+public import Linglib.Semantics.Quantifier.Counting
 public import Mathlib.Data.Finset.Powerset
 
 /-!

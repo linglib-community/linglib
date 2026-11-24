@@ -1,8 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantification.Defs
-public import Linglib.Semantics.Quantification.Properties
-public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Semantics.Quantifier.Defs
+public import Linglib.Semantics.Quantifier.Properties
 public import Linglib.Semantics.Reference.Iota
 public import Mathlib.Order.CompleteLattice.Basic
 
@@ -18,14 +17,11 @@ restrictor `A` and a scope `B`, both sets of individuals:
 * `the A B` means that `A` has exactly one member and that member is in `B`.
 
 We prove how the four are related by negation, how each depends on the restrictor and on the
-scope, and which of the properties of determiner denotations defined in
-`Quantification/Defs.lean` each one has.
+scope, and which of the properties of determiner denotations defined in `Quantifier/Defs.lean`
+each one has.
 
-We then define the square of opposition of a quantifier `Q`. Its corners are `Q`, the inner
-negation of `Q`, the dual of `Q` and the complement of `Q`. The square of `every A` has the
-corners `every A`, `no A`, `Det.some A` and *not every* `A`.
-
-The counting determiners, such as *most* and *few*, are in `Quantification/Counting.lean`.
+The counting determiners, such as *most* and *few*, are in `Quantifier/Counting.lean`. The square
+of opposition of `every`, `no`, `some` and *not every* is in `Quantifier/Square.lean`.
 
 ## Main definitions
 
@@ -34,9 +30,6 @@ The counting determiners, such as *most* and *few*, are in `Quantification/Count
 * `Quantifier.Det.someOrderEmbedding`, `Quantifier.Det.everyOrderEmbedding`,
   `Quantifier.Det.noOrderEmbedding`: each determiner as an order embedding of the restrictors
   into the quantifiers; `every` and `no` reverse the order.
-* `Quantifier.square`: the square of opposition of a quantifier.
-* `Quantifier.Det.square`: the square of opposition of `every`, `no`, `some` and *not every* at a
-  restrictor.
 
 ## Main results
 
@@ -48,25 +41,14 @@ The counting determiners, such as *most* and *few*, are in `Quantification/Count
   it commutes with arbitrary unions of scopes.
 * `Quantifier.Det.exists_eq_no_iff`: a quantifier is `no A` for some `A` if and only if it holds
   of a union of scopes exactly when it holds of each of them.
-* `Quantifier.squareRelations_square_iff`: the square of `Q` has the relations of the classical
-  square of opposition if and only if `Q ≤ Q.dual`.
-* `Quantifier.Det.squareRelations_square`: the square at a restrictor `A` has these relations if
-  and only if `A` is nonempty.
-* `Quantifier.Det.isContrary_every_no_iff`: `every A` and `no A` are contrary if and only if `A`
-  has at least two members.
-
-## Implementation notes
-
-`Quantifier.Det.square A` has `Det.some A` as a corner, where the square of the quantifier
-`every A` has the dual of `every A`. The two squares are equal, by `Quantifier.Det.square_eq`.
-We keep both because `Det.some A` is the form that the consumers of the square use.
+* `Quantifier.Det.disjoint_every_no_iff`: `every A` and `no A` are disjoint if and only if `A` is
+  nonempty.
 
 ## References
 
 * [barwise-cooper-1981]
 * [keenan-stavi-1986]
 * [partee-1987]
-* [peters-westerstahl-2006]
 * [russell-1905]
 * [van-benthem-1984]
 -/
@@ -467,100 +449,23 @@ theorem satisfiesUniversals_every : (every : Det α).SatisfiesUniversals :=
 theorem satisfiesUniversals_no : (no : Det α).SatisfiesUniversals :=
   satisfiesUniversals_iff.2 ⟨conservative_no, scopeAntitone_no.rightContinuous⟩
 
-end Det
+/-! ### Existential import
 
-/-! ### The square of opposition of a quantifier
-
-The square of opposition of a quantifier `Q` has the corners `Q`, `Q.innerNeg`, `Q.dual` and
-`Qᶜ`. In every such square the diagonals are contradictory. The other relations of the classical
-square say that the two universal corners `Q` and `Q.innerNeg` cannot both hold; this is the
-case if and only if `Q ≤ Q.dual`. -/
-
-/-- The square of opposition of a quantifier `Q`, with corners `Q`, `Q.innerNeg`, `Q.dual` and
-`Qᶜ` ([peters-westerstahl-2006]). -/
-@[simps]
-def square (Q : Quantifier α) : Aristotelian.Square (Quantifier α) := ⟨Q, Q.innerNeg, Q.dual, Qᶜ⟩
-
-variable {Q : Quantifier α}
-
-theorem square_eq_ofUniversals (Q : Quantifier α) : Q.square = .ofUniversals Q Q.innerNeg := rfl
-
-/-- The square of `Q.innerNeg` is the square of `Q` with the two universal corners exchanged
-and the two particular corners exchanged. -/
-theorem square_innerNeg (Q : Quantifier α) : Q.innerNeg.square = Q.square.inner :=
-  Aristotelian.Square.ext rfl (innerNeg_innerNeg Q) (congrArg (·ᶜ) (innerNeg_innerNeg Q)) rfl
-
-theorem disjoint_innerNeg_iff : Disjoint Q Q.innerNeg ↔ Q ≤ Q.dual :=
-  le_compl_iff_disjoint_right.symm
-
-/-- The square of `Q` has the relations of the classical square of opposition if and only if
-`Q ≤ Q.dual`. -/
-theorem squareRelations_square_iff : Aristotelian.SquareRelations Q.square ↔ Q ≤ Q.dual :=
-  Aristotelian.squareRelations_ofUniversals.trans disjoint_innerNeg_iff
-
-/-- If `Q` is monotone and closed under intersections of scopes, then `Q ≤ Q.dual` if and only
-if `Q` does not hold of the empty set. -/
-theorem le_dual_iff_not_apply_empty (hm : Monotone Q) (hi : ∀ B C, Q B → Q C → Q (B ∩ C)) :
-    Q ≤ Q.dual ↔ ¬ Q ∅ :=
-  ⟨fun h h₀ ↦ h ∅ h₀ (hm (Set.empty_subset _) h₀),
-    fun h B hB hB' ↦ h (Set.inter_compl_self B ▸ hi _ _ hB hB')⟩
-
-namespace Det
-
-variable {A B : Set α}
-
-/-! ### The square of opposition at a restrictor
-
-For a restrictor `A`, the quantifiers `every A`, `no A`, `Det.some A` and `everyᶜ A` are the
-corners of the square of opposition of `every A`. If `A` is empty then `every A` and `no A` both
-hold of every scope, so the relations of the classical square hold only for a nonempty `A`. -/
-
-/-- The square of opposition with corners `every A`, `no A`, `Det.some A` and `everyᶜ A`. -/
-def square (A : Set α) : Aristotelian.Square (Quantifier α) where
-  A := every A
-  E := no A
-  I := Det.some A
-  O := (every : Det α)ᶜ A
-
-theorem square_eq (A : Set α) : square A = (every A).square :=
-  Aristotelian.Square.ext rfl rfl (congrFun dual_every A).symm rfl
+`every A` and `no A` both hold of every scope when `A` is empty. For a nonempty `A` they cannot
+both hold, and `every A` entails `Det.some A`. -/
 
 theorem eq_empty_of_every_of_no (hA : every A B) (hE : no A B) : A = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ hx ↦ hE hx (hA hx)
 
-/-- The square at a restrictor `A` has the relations of the classical square of opposition if
-and only if `A` is nonempty. -/
-theorem squareRelations_square : Aristotelian.SquareRelations (square A) ↔ A.Nonempty := by
-  rw [square_eq, Quantifier.squareRelations_square_iff,
-    le_dual_iff_not_apply_empty (monotone_every A) fun _ _ ↦ Set.subset_inter, every_apply_empty,
-    Set.nonempty_iff_ne_empty]
-
-theorem disjoint_every_no_iff : Disjoint (every A) (no A) ↔ A.Nonempty :=
-  Aristotelian.squareRelations_ofUniversals.symm.trans <|
-  (square_eq A ▸ squareRelations_square (A := A) :)
+theorem disjoint_every_no_iff : Disjoint (every A) (no A) ↔ A.Nonempty := by
+  rw [Set.nonempty_iff_ne_empty]
+  refine ⟨fun h hA ↦ ?_, fun hA ↦ Pi.disjoint_iff.mpr fun _ ↦ Prop.disjoint_iff.mpr
+    fun ⟨h₁, h₂⟩ ↦ hA (eq_empty_of_every_of_no h₁ h₂)⟩
+  subst hA
+  exact Prop.disjoint_iff.1 (Pi.disjoint_iff.1 h ∅) ⟨Set.empty_subset _, Set.empty_subset _⟩
 
 theorem every_le_some (hA : A.Nonempty) : every A ≤ Det.some A :=
-  (squareRelations_square.2 hA).subalternAI
-
-theorem some_inf_compl_every_ne_bot_iff :
-    Det.some A ⊓ (every : Det α)ᶜ A ≠ ⊥ ↔ A.Nontrivial := by
-  rw [Function.ne_iff]
-  constructor
-  · rintro ⟨B, hB⟩
-    obtain ⟨⟨x, hxA, hxB⟩, hne⟩ : Det.some A B ∧ ¬ every A B := by simpa using hB
-    obtain ⟨y, hyA, hyB⟩ := Set.not_subset.1 hne
-    exact ⟨x, hxA, y, hyA, fun h ↦ hyB (h ▸ hxB)⟩
-  · rintro ⟨x, hx, y, hy, hne⟩
-    have h : Det.some A {x} ∧ ¬ every A {x} := ⟨⟨x, hx, rfl⟩, fun h ↦ hne (h hy).symm⟩
-    exact ⟨{x}, by simpa using h⟩
-
-/-- `every A` and `no A` are contrary, that is, they cannot both hold and they can both fail,
-if and only if `A` has at least two members. -/
-theorem isContrary_every_no_iff : Aristotelian.IsContrary (every A) (no A) ↔ A.Nontrivial :=
-  ⟨fun h ↦ some_inf_compl_every_ne_bot_iff.1 <|
-      (squareRelations_square.2 (disjoint_every_no_iff.1 h.disjoint)).isContrary_AE_iff.1 h,
-    fun h ↦ (squareRelations_square.2 h.nonempty).isContrary_AE_iff.2 <|
-      some_inf_compl_every_ne_bot_iff.2 h⟩
+  fun _ h ↦ let ⟨x, hx⟩ := hA; ⟨x, hx, h hx⟩
 
 end Det
 

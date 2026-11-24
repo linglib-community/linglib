@@ -6,7 +6,7 @@ public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Kernel.Basic
 public import Linglib.Pragmatics.Probabilistic.QUD
 public import Linglib.Pragmatics.Probabilistic.Uniform
-public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Quantifier.NumberTree
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Core.Probability.Distributions.Binomial
 public import Linglib.Core.Probability.Kernel.Posterior

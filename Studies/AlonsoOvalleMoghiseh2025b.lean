@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Plurality.Number
-public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Quantifier.Defs
 public import Linglib.Semantics.Questions.Hamblin.Closure
 public import Linglib.Semantics.Questions.Hamblin.Modal
 public import Linglib.Semantics.Questions.Hamblin.Number

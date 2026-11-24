@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Mathlib.Order.Minimal
 public import Mathlib.Order.UpperLower.Closure
 

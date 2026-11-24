@@ -5,9 +5,9 @@ public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Logic.Equiv.Defs
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.NumberTree
-public import Linglib.Semantics.Quantification.Witness
+public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.NumberTree
+public import Linglib.Semantics.Quantifier.Witness
 public import Linglib.Data.Examples.Cooper2023
 public import Linglib.Data.Examples.Readers
 

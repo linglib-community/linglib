@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Defs
+public import Linglib.Logic.Aristotelian.Square
 public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.GroupTheory.NoncommCoprod
 
@@ -22,12 +23,16 @@ the operations, and the direction changes once for each negative polarity in the
 
 ## Main definitions
 
+* `Quantifier.square`: the square of opposition of a quantifier `Q`, with corners `Q`,
+  `Q.innerNeg`, `Q.dual` and `Qᶜ`.
 * `Quantifier.innerNegHom`: the homomorphism that sends the negative polarity to inner negation.
 * `Quantifier.negHom`: the homomorphism that sends `(o, i)` to outer negation if `o` is
   negative, composed with inner negation if `i` is negative.
 
 ## Main results
 
+* `Quantifier.squareRelations_square_iff`: the square of `Q` has the relations of the classical
+  square of opposition if and only if `Q ≤ Q.dual`.
 * `Quantifier.range_negHom`: the images of `Q` under `negHom` are `Q`, `Q.innerNeg`, `Q.dual`
   and `Qᶜ`.
 * `Quantifier.range_negHom_negHom`: each of these four quantifiers has the same four images, so
@@ -51,6 +56,42 @@ apply to every function from sets to propositions.
 namespace Quantifier
 
 variable {α : Type*} {Q : Quantifier α}
+
+/-! ### The square of opposition of a quantifier
+
+The square of opposition of a quantifier `Q` has the corners `Q`, `Q.innerNeg`, `Q.dual` and
+`Qᶜ`. In every such square the diagonals are contradictory. The other relations of the classical
+square say that the two universal corners `Q` and `Q.innerNeg` cannot both hold; this is the
+case if and only if `Q ≤ Q.dual`. -/
+
+/-- The square of opposition of a quantifier `Q`, with corners `Q`, `Q.innerNeg`, `Q.dual` and
+`Qᶜ` ([peters-westerstahl-2006]). -/
+@[simps]
+def square (Q : Quantifier α) : Aristotelian.Square (Quantifier α) := ⟨Q, Q.innerNeg, Q.dual, Qᶜ⟩
+
+theorem square_eq_ofUniversals (Q : Quantifier α) : Q.square = .ofUniversals Q Q.innerNeg := rfl
+
+/-- The square of `Q.innerNeg` is the square of `Q` with the two universal corners exchanged
+and the two particular corners exchanged. -/
+theorem square_innerNeg (Q : Quantifier α) : Q.innerNeg.square = Q.square.inner :=
+  Aristotelian.Square.ext rfl (innerNeg_innerNeg Q) (congrArg (·ᶜ) (innerNeg_innerNeg Q)) rfl
+
+theorem disjoint_innerNeg_iff : Disjoint Q Q.innerNeg ↔ Q ≤ Q.dual :=
+  le_compl_iff_disjoint_right.symm
+
+/-- The square of `Q` has the relations of the classical square of opposition if and only if
+`Q ≤ Q.dual`. -/
+theorem squareRelations_square_iff : Aristotelian.SquareRelations Q.square ↔ Q ≤ Q.dual :=
+  Aristotelian.squareRelations_ofUniversals.trans disjoint_innerNeg_iff
+
+/-- If `Q` is monotone and closed under intersections of scopes, then `Q ≤ Q.dual` if and only
+if `Q` does not hold of the empty set. -/
+theorem le_dual_iff_not_apply_empty (hm : Monotone Q) (hi : ∀ B C, Q B → Q C → Q (B ∩ C)) :
+    Q ≤ Q.dual ↔ ¬ Q ∅ :=
+  ⟨fun h h₀ ↦ h ∅ h₀ (hm (Set.empty_subset _) h₀),
+    fun h B hB hB' ↦ h (Set.inter_compl_self B ▸ hi _ _ hB hB')⟩
+
+/-! ### The action of the polarities -/
 
 /-- The homomorphism from the polarities to the operations on quantifiers that sends the negative
 polarity to inner negation. -/

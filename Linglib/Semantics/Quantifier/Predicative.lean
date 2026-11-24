@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantification.Individual
+public import Linglib.Semantics.Quantifier.Continuation
+public import Linglib.Semantics.Quantifier.Individual
 public import Mathlib.Order.GaloisConnection.Defs
 
 /-!

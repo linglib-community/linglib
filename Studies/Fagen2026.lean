@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Restriction
+public import Linglib.Semantics.Quantifier.Restriction
 public import Linglib.Semantics.Exhaustification.MinimalWorlds
 public import Studies.Spector2007
 

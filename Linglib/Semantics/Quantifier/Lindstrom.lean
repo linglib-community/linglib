@@ -3,8 +3,8 @@ module
 public import Linglib.Core.Data.Fin.VecNotation
 public import Linglib.Core.ModelTheory.Lindstrom
 public import Linglib.Core.ModelTheory.Monadic
-public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.NumberTree
 public import Mathlib.Data.Nat.Cast.Order.Basic
 
 /-!

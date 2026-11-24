@@ -1,7 +1,7 @@
 module
 
 public import Studies.Fox2018
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.TFAE
 public import Linglib.Pragmatics.Probabilistic.Literal

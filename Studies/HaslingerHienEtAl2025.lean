@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Languages.English.Determiners
 public import Linglib.Data.Examples.HaslingerHienEtAl2025

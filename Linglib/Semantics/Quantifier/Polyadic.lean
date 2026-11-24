@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Continuation
+public import Linglib.Semantics.Quantifier.Counting
 public import Mathlib.Logic.Function.Basic
 
 /-!

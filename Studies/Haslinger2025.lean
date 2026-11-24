@@ -7,7 +7,7 @@ public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Ring
-public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Linglib.Semantics.Quantifier.Numerals.Roundness
 public import Studies.Krifka2007
 public import Linglib.Data.Examples.Haslinger2025
 

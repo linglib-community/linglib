@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Witness
+public import Linglib.Semantics.Quantifier.Witness
 public import Linglib.Data.Examples.PurverGinzburg2004
 public import Mathlib.Data.Finset.SDiff
 public import Mathlib.Data.Finset.Union

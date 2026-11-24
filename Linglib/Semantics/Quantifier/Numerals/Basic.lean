@@ -9,7 +9,7 @@ public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Denotation
 public import Linglib.Core.Order.Cover
 public import Linglib.Semantics.Exhaustification.Basic
-public import Linglib.Semantics.Quantification.Predicative
+public import Linglib.Semantics.Quantifier.Predicative
 
 /-!
 # Numeral meanings

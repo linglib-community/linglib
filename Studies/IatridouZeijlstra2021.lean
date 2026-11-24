@@ -8,7 +8,7 @@ public import Linglib.Languages.English.Nouns
 public import Linglib.Languages.English.TemporalConnectives
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Exhaustification.Basic
-public import Linglib.Semantics.Quantification.Exceptive
+public import Linglib.Semantics.Quantifier.Exceptive
 public import Studies.Giannakidou2002
 public import Mathlib.Data.Set.Finite.Lemmas
 public import Linglib.Data.Examples.Readers

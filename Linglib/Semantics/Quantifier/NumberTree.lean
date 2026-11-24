@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Quantifier.Defs
 public import Linglib.Core.Data.Fintype.EquivFin
 public import Linglib.Core.Data.Set.Card
 public import Linglib.Core.Logic.Function.DependsOn

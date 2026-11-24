@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Exhaustification.Basic
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Mathlib.Order.Bounds.Basic
 
 /-!

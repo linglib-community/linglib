@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Typology
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Semantics.Denotation
 
 /-!

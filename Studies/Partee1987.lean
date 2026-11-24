@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Predicative
+public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Predicative
 public import Mathlib.Basic.PEquiv
 public import Mathlib.Order.Filter.Cofinite
 public import Mathlib.Order.Filter.Ultrafilter.Basic
@@ -27,7 +27,7 @@ owner of this land* is [a role that no set represents](##Quantifier.BE_the_not_m
   (fn. 2); a property here is a set of individuals at each index, `W → Set E`, and a set is the
   rigid property `Function.const W` of it.
 * The general results are stated where their objects live: the lift and `lower` in
-  `Quantification/Individual.lean`, `BE` and its sections in `Quantification/Predicative.lean`.
+  `Quantifier/Individual.lean`, `BE` and its sections in `Quantifier/Predicative.lean`.
   This file keeps the correlate of a property, the paper's comparison of `A` with *exactly one*,
   *most* under `BE`, and Fact 2 on an infinite domain.
 * On entities ordered by part-of the singleton becomes the set of parts and `iota` the largest

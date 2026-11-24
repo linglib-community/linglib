@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Aristotelian.Morphism
 public import Linglib.Logic.Modal.Basic
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Studies.DemeySmessaert2018
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Option

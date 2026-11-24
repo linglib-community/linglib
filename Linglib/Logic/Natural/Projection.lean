@@ -343,7 +343,7 @@ determiner is one signature in its restrictor and another in its scope.
 sound for the corresponding section (the other argument held constant), and
 `ProjectivitySignature.SoundFor.comp₂` composes an outer context into both
 positions at once. Certified instances for generalized quantifiers live
-in `Semantics/Quantification/Signatures.lean`. -/
+in `Semantics/Quantifier/Signatures.lean`. -/
 
 /-- A per-position signature profile for a two-place operator. For
 determiners the positions are restrictor and scope; under the restrictor

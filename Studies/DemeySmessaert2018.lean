@@ -4,7 +4,7 @@ public import Linglib.Core.Order.Hom.CompleteLattice
 public import Linglib.Logic.Aristotelian.Morphism
 public import Linglib.Logic.Aristotelian.Square.Hom
 public import Linglib.Logic.Modal.Basic
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Lattice
 public import Mathlib.Data.Fintype.Prod

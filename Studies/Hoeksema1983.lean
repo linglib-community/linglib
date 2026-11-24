@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Order.Hom.CompleteLattice
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Degree.CresswellDegree
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 
 /-!
 # Hoeksema (1983): negative polarity and the comparative

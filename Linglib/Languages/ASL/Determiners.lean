@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Semantics.Denotation
 
 /-!

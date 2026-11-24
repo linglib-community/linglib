@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.GenerateCompleteBoolean
-public import Linglib.Semantics.Quantification.Properties
+public import Linglib.Semantics.Quantifier.Properties
 public import Mathlib.Order.Atoms
 public import Mathlib.SetTheory.Cardinal.Finite
 

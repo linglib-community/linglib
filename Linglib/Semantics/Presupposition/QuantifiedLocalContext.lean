@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Presupposition.LocalContext
-public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Quantifier.NumberTree
 public import Linglib.Logic.Trivalent.Deployment
 
 /-!

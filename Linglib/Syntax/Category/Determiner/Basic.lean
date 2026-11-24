@@ -10,7 +10,7 @@ public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Morphology.Word.Basic
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 
 /-!
 # Determiners
@@ -48,7 +48,7 @@ with its own account of when a presupposition is marked.
 This file is the Frame-free lexical layer. The denotations of articles, demonstratives and
 possessives are in `Semantics/Reference/Determiner.lean`. A `QuantificationalDeterminer` records
 its readings as determiner symbols (`Quantifier.Det.Symbol`), whose generalized-quantifier
-denotations are in `Semantics/Quantification/Determiner.lean`. `Inventory` is a `def`
+denotations are in `Semantics/Quantifier/Determiner.lean`. `Inventory` is a `def`
 rather than an `abbrev` so that its operations resolve by dot notation; its membership is the
 list's, and facts about one-entry inventories go through `Inventory.marks_singleton`.
 `Realizes` is

@@ -389,7 +389,6 @@ import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Semantics.Dynamic.State
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Logic.Natural.Completeness
-import Linglib.Semantics.Quantification.Signatures
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Exhaustification.Disjunctive
 import Linglib.Semantics.Exhaustification.DomainAlternatives
@@ -422,18 +421,6 @@ import Linglib.Semantics.Possession.Relationalizer
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Presupposition.PhiFeatures
-import Linglib.Semantics.Quantification.Basic
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Quantification.Defs
-import Linglib.Semantics.Quantification.Exceptive
-import Linglib.Semantics.Quantification.Lattice
-import Linglib.Semantics.Quantification.Lindstrom
-import Linglib.Semantics.Quantification.NumberTree
-import Linglib.Semantics.Quantification.Numerals.Basic
-import Linglib.Semantics.Quantification.Numerals.Roundness
-import Linglib.Semantics.Quantification.Polyadic
-import Linglib.Semantics.Quantification.Properties
-import Linglib.Semantics.Quantification.Witness
 import Linglib.Semantics.Questions.Bias
 import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Reference.Context.Basic

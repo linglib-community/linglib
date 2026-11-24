@@ -10,8 +10,8 @@ public import Linglib.Semantics.Composition.CallByValue
 public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Composition.PredicateAbstraction
-public import Linglib.Semantics.Quantification.Polyadic
-public import Linglib.Semantics.Quantification.Continuation
+public import Linglib.Semantics.Quantifier.Polyadic
+public import Linglib.Semantics.Quantifier.Continuation
 public import Linglib.Languages.English.Determiners
 public import Linglib.Data.Examples.HeimKratzer1998
 

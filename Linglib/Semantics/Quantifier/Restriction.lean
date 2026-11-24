@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Data.Set.Lattice.Bounded
-public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Quantifier.Defs
 
 /-!
 # The restriction of a quantifier

@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Set.Card
 public import Linglib.Semantics.Mereology.Basic
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.PolarityItem.Licenser
 public import Linglib.Semantics.PolarityItem.Environment
 public import Studies.Chierchia2004

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Determiner
+public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Languages.Romance.Italian.Gender
 public import Linglib.Languages.Romance.Italian.Phonology
 

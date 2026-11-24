@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Possession.Relationalizer
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 
 /-!
 # Possessive quantifiers
