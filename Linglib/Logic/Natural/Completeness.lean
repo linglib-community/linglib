@@ -10,6 +10,7 @@ public import Linglib.Logic.Natural.Projection
 public import Mathlib.Data.Finset.BooleanAlgebra
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Logic.Function.Const
 public import Mathlib.Order.Bounds.Basic
 public import Mathlib.Basic.Rel
 public import Mathlib.Order.Concept
@@ -35,7 +36,9 @@ classes](##NaturalLogic.ProjectivitySignature.le_iff_forall_holdsFor), and compo
 composites](##NaturalLogic.ProjectivitySignature.isLeast_compose). Two elements stand in a strongest
 relation [exactly when neither is `⊥` or `⊤`](##NaturalLogic.Relation.exists_isLeast_holds_iff), and
 the constraints such elements can satisfy together are [those of the seven
-relations](##NaturalLogic.Relation.mem_range_constraints_iff).
+relations](##NaturalLogic.Relation.mem_range_constraints_iff). Likewise a map has a most specific
+signature exactly when it is not constant, and the properties of such a map are those of one of
+the nine signatures.
 
 ## Implementation notes
 
@@ -44,9 +47,10 @@ relations](##NaturalLogic.Relation.mem_range_constraints_iff).
   a [prime ideal](##DistribLattice.nonempty_boundedLatticeHom_bool). The function-class
   theorems need distributivity for this map, since the five-element modular lattice `M₃` has no
   morphism to `Bool` and its morphism class into `Bool` is empty.
-* The nine signatures do not classify the property profiles a function can have: the constant-`⊤`
-  function is monotone, antitone, additive and anti-multiplicative at once, which is no signature's
-  property set. Each signature is least for its own projection row.
+* The nine signatures classify the properties of the maps that are not constant. A constant map
+  has further combinations: the constant-`⊤` function is monotone, antitone, additive and
+  anti-multiplicative at once, which is no signature's property set. Each signature is least for
+  its own projection row.
 
 ## TODO
 
@@ -601,6 +605,55 @@ theorem isLeast_compose (ψ φ : ProjectivitySignature) :
       fun _ ⟨f, g, hf, hg, hh⟩ ↦ hh ▸ hχ f g hf hg r hr⟩
 
 end DistribLattice
+
+/-! ### Why nine signatures
+
+A map that is monotone and antitone is constant, so a map that is not constant has one direction
+at most, and its properties are those of a signature. -/
+
+/-- The sets of properties the nine signatures assert are those that contain at most one of the
+two directions and, with each further property, its direction. -/
+theorem mem_range_properties_iff {s : Finset Property} :
+    s ∈ Set.range properties ↔ (.monotone ∉ s ∨ .antitone ∉ s) ∧
+      (.additive ∈ s → .monotone ∈ s) ∧ (.multiplicative ∈ s → .monotone ∈ s) ∧
+      (.antiAdditive ∈ s → .antitone ∈ s) ∧ (.antiMultiplicative ∈ s → .antitone ∈ s) := by
+  have : ∀ s : Finset Property, (∃ σ : ProjectivitySignature, σ.properties = s) ↔
+      (.monotone ∉ s ∨ .antitone ∉ s) ∧
+      (.additive ∈ s → .monotone ∈ s) ∧ (.multiplicative ∈ s → .monotone ∈ s) ∧
+      (.antiAdditive ∈ s → .antitone ∈ s) ∧ (.antiMultiplicative ∈ s → .antitone ∈ s) := by
+    decide
+  exact this s
+
+section Lattice
+
+variable [Lattice α] [BoundedOrder α] [Lattice β] [BoundedOrder β] {f : α → β}
+
+/-- The properties of a map that is not constant are those of a signature. -/
+theorem exists_properties_eq_setOf_holdsFor (hf : ¬ f.IsConst) :
+    ∃ σ : ProjectivitySignature, (↑σ.properties : Set Property) = {p | p.HoldsFor f} := by
+  classical
+  obtain ⟨σ, hσ⟩ := (mem_range_properties_iff
+      (s := Finset.univ.filter fun p : Property ↦ p.HoldsFor f)).2 <| by
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    refine ⟨not_and_or.1 fun ⟨hm, ha⟩ ↦ hf fun x y ↦ ?_, fun h ↦ .of_map_sup h.1,
+      fun h ↦ .of_map_inf h.1, fun h ↦ h.1.antitone, fun h ↦ h.1.antitone⟩
+    exact le_antisymm ((hm le_top).trans (ha le_top)) ((hm le_top).trans (ha le_top))
+  exact ⟨σ, Set.ext fun p ↦ by simp [hσ]⟩
+
+/-- A map between bounded lattices has a most specific signature exactly when it is not constant:
+the properties of a map that is not constant are those of a signature, and a constant map is both
+monotone and antitone, which no signature asserts together. -/
+theorem exists_isLeast_holdsFor_iff :
+    (∃ σ : ProjectivitySignature, IsLeast {τ | τ.HoldsFor f} σ) ↔ ¬ f.IsConst := by
+  refine ⟨fun ⟨σ, hσ⟩ hc ↦ ?_, fun hc ↦ ?_⟩
+  · have hm := sign_eq_one_iff.2 (hσ.2 (holdsFor_mono_iff.2 fun _ _ _ ↦ (hc _ _).le))
+    have ha := sign_eq_neg_one_iff.2 (hσ.2 (holdsFor_anti_iff.2 fun _ _ _ ↦ (hc _ _).le))
+    exact absurd (hm.symm.trans ha) (by decide)
+  · obtain ⟨σ, hσ⟩ := exists_properties_eq_setOf_holdsFor hc
+    exact ⟨σ, fun p hp ↦ (Set.ext_iff.1 hσ p).1 hp, fun τ hτ ↦ le_iff.2 fun p hp ↦
+      Finset.mem_coe.1 ((Set.ext_iff.1 hσ p).2 (hτ p hp))⟩
+
+end Lattice
 
 end ProjectivitySignature
 
