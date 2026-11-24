@@ -55,12 +55,10 @@ variable [DecidableEq (UnorderedTree α)]
 instance : IsMergeCuts (admissibleCuts (α := α)) where
   crown_numEdges_lt := admissibleCuts_crown_numEdges_lt
   mem_subtrees_of_mem_crown hp hx := (exists_mem_crown_admissibleCuts_iff.mp ⟨_, hp, hx⟩).1
-  filter_empty := admissibleCuts_filter_empty
 
 instance {β : Type*} (τ : UnorderedTree (α ⊕ β) → β) : IsMergeCuts (markerCuts τ) where
   crown_numEdges_lt := markerCuts_crown_numEdges_lt τ
   mem_subtrees_of_mem_crown hp hx := markerCuts_mem_subtrees_of_mem_crown τ hp hx
-  filter_empty := markerCuts_filter_empty τ
 
 /-! ### Contraction of a tree
 
@@ -166,7 +164,7 @@ theorem mergeOpOfCuts_mul_of_contractForest_eq_zero
     mergeOpOfCuts (R := R) cuts lbl S S' (x * w) = x * mergeOpOfCuts (R := R) cuts lbl S S' w := by
   rw [mergeOpOfCuts_eq_mul_contractForest, mergeOpOfCuts_eq_mul_contractForest, contractForest_mul,
     Finset.sum_eq_single ((0 : Forest (UnorderedTree α)), ({S, S'} : Forest (UnorderedTree α)))]
-  · rw [contractForest_zero IsMergeCuts.filter_empty, mul_left_comm]
+  · rw [contractForest_zero, mul_left_comm]
   · rintro ⟨A, B⟩ hp hne
     have hAB : A + B = {S, S'} := Multiset.mem_antidiagonal.1 (Multiset.mem_toFinset.1 hp)
     rw [hx A (fun h ↦ hne (by subst h; simpa using hAB)) (hAB ▸ Multiset.le_add_right A B),

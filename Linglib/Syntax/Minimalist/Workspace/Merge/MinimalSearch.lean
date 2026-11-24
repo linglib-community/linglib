@@ -72,7 +72,6 @@ instance : IsMergeCuts (emptyCuts (α := α)) where
   crown_numEdges_lt hp h := (h (congrArg Prod.fst (Multiset.mem_singleton.mp hp))).elim
   mem_subtrees_of_mem_crown hp hx := by
     rw [Multiset.mem_singleton.mp hp] at hx; exact absurd hx (Multiset.notMem_zero _)
-  filter_empty T := by simp [emptyCuts, Multiset.filter_singleton]
 
 /-! ### The weighted coproduct -/
 

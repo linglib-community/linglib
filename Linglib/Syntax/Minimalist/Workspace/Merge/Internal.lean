@@ -86,13 +86,13 @@ omit [DecidableEq (UnorderedTree α)] in
 theorem mergeOpUnitOfCuts_eq_mul_treeDerivation [IsMergeCuts cuts] (β : UnorderedTree α)
     (x : ConnesKreimer R (UnorderedTree α)) :
     mergeOpUnitOfCuts (R := R) cuts β x =
-      ofTree β * treeDerivation cuts IsMergeCuts.filter_empty β x :=
+      ofTree β * treeDerivation cuts β x :=
   rfl
 
 /-- The derivation `D_β` vanishes on a tree that does not contain `β`. -/
 theorem treeDerivation_ofTree_of_notMem [IsMergeCuts cuts] {β T : UnorderedTree α}
     (hT : β ∉ T.subtrees) :
-    treeDerivation (R := R) cuts IsMergeCuts.filter_empty β (ofTree T) = 0 := by
+    treeDerivation (R := R) cuts β (ofTree T) = 0 := by
   rw [treeDerivation_apply_eq_contractForest]
   exact contractForest_ofTree_of_notMem (Multiset.mem_singleton_self β) hT
 

@@ -123,10 +123,13 @@ theorem markerComulAlgHom_coassoc {τ : UnorderedTree (α ⊕ β) → β} (hτ :
 /-- For a coherent marker function, `markerCuts τ` is an admissible cut policy, so
 `WithCuts R (markerCuts τ)` is a bialgebra.
 Coherence enters through `Fact`, since instance search cannot find the hypothesis otherwise. -/
+instance instIsCounitalCutsMarkerCuts (τ : UnorderedTree (α ⊕ β) → β) :
+    IsCounitalCuts (markerCuts τ) where
+  filter_card_eq_zero := markerCuts_filter_empty τ
+
 instance instIsBialgebraCutsMarkerCuts (τ : UnorderedTree (α ⊕ β) → β) [Fact (MarkerCoherent τ)] :
     IsBialgebraCuts (markerCuts τ) where
   doubleCutsCrown_eq := doubleCutsCrown_markerCuts Fact.out
-  filter_card_eq_zero := markerCuts_filter_empty τ
 
 /-- A coherent marker function gives the bialgebra of the marker coproduct by instance search. -/
 noncomputable example (τ : UnorderedTree (α ⊕ β) → β) (hτ : MarkerCoherent τ) :

@@ -108,17 +108,17 @@ variable {R : Type*} [CommSemiring R] {α : Type*}
 
 /-! ### Cut enumerations that admit Merge -/
 
-/-- A cut enumeration admits Merge when its crowns are subtrees with fewer edges in total than
-    their tree, and its only empty cut is the tree itself. The edge bound makes External Merge of
-    a pair exact (`mergeOpOfCuts_pair`); the other two let a spectator component pass through
+/-- A cut enumeration admits Merge when it is counital and its crowns are subtrees with fewer
+    edges in total than their tree. The edge bound makes External Merge of a pair exact
+    (`mergeOpOfCuts_pair`); the other two let a spectator component pass through
     (`mergeOpOfCuts_ofTree_mul`). -/
 class IsMergeCuts
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) : Prop where
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) : Prop
+    extends IsCounitalCuts cuts where
   crown_numEdges_lt {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α} :
     p ∈ cuts T → p.1 ≠ 0 → (p.1.map numEdges).sum < T.numEdges
   mem_subtrees_of_mem_crown {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α}
     {x : UnorderedTree α} : p ∈ cuts T → x ∈ p.1 → x ∈ T.subtrees
-  filter_empty (T : UnorderedTree α) : (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}
 
 namespace IsMergeCuts
 

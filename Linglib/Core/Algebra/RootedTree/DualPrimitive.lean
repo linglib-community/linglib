@@ -181,19 +181,22 @@ variable [CommSemiring R]
 the delta functional of the tree `T`. -/
 noncomputable def treeDerivation
     (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (hcuts : ∀ T, (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}) (T : UnorderedTree α) :
+    [IsCounitalCuts cuts]
+    (T : UnorderedTree α) :
     Derivation R (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α)) :=
   Derivation.ofContract (comulOfCuts cuts) counit
-    (fun a ↦ AlgHom.congr_fun (rTensor_counit_comp_comulOfCuts hcuts) a)
+    (fun a ↦
+      AlgHom.congr_fun (rTensor_counit_comp_comulOfCuts IsCounitalCuts.filter_card_eq_zero) a)
     (lcoeff R ({T} : Forest (UnorderedTree α)))
     (isDualPrimitive_lcoeff_singleton (R := R) T).map_one_eq_zero
     (isDualPrimitive_lcoeff_singleton (R := R) T).leibniz
 
 theorem treeDerivation_apply
     (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (hcuts : ∀ T, (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}) (T : UnorderedTree α)
+    [IsCounitalCuts cuts]
+    (T : UnorderedTree α)
     (x : ConnesKreimer R (UnorderedTree α)) :
-    treeDerivation cuts hcuts T x = _root_.TensorProduct.lid R _
+    treeDerivation cuts T x = _root_.TensorProduct.lid R _
       ((lcoeff R ({T} : Forest (UnorderedTree α))).rTensor _ (comulOfCuts cuts x)) :=
   rfl
 
@@ -207,9 +210,10 @@ noncomputable def contractForest
 
 theorem treeDerivation_apply_eq_contractForest
     (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (hcuts : ∀ T, (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}) (T : UnorderedTree α)
+    [IsCounitalCuts cuts]
+    (T : UnorderedTree α)
     (x : ConnesKreimer R (UnorderedTree α)) :
-    treeDerivation cuts hcuts T x = contractForest cuts {T} x := rfl
+    treeDerivation cuts T x = contractForest cuts {T} x := rfl
 
 /-- Contraction of a forest `F` with a forest `A` sums the trunks of the forest cuts of `F` with
 crown `A`. -/
@@ -261,7 +265,7 @@ theorem contractForest_mul [DecidableEq (UnorderedTree α)]
 /-- Contraction with the empty forest is the identity. -/
 theorem contractForest_zero
     {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
-    (hcuts : ∀ T, (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)})
+    [IsCounitalCuts cuts]
     (x : ConnesKreimer R (UnorderedTree α)) : contractForest cuts 0 x = x := by
   classical
   have hl : lcoeff R (0 : Forest (UnorderedTree α)) =
@@ -270,7 +274,7 @@ theorem contractForest_zero
       simp [coeff_of', eq_comm (a := F), Multiset.card_eq_zero]
   have h : (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R).toLinearMap.rTensor _
       (comulOfCuts cuts x) = 1 ⊗ₜ[R] x :=
-    AlgHom.congr_fun (rTensor_counit_comp_comulOfCuts hcuts) x
+    AlgHom.congr_fun (rTensor_counit_comp_comulOfCuts IsCounitalCuts.filter_card_eq_zero) x
   simp only [contractForest, contractAlong_apply, AlgHom.toLinearMap_apply, hl, h,
     _root_.TensorProduct.lid_tmul, one_smul]
 
