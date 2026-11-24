@@ -15,7 +15,7 @@ public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Tense.Since
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Defs
-public import Linglib.Semantics.Quantification.Signatures
+public import Linglib.Semantics.Quantification.Projectivity
 public import Linglib.Semantics.Reference.Indefinite
 public import Linglib.Semantics.Tense.RunTimes
 public import Mathlib.Basic.Rel

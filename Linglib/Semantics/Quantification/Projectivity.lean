@@ -9,7 +9,7 @@ public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Logic.Natural.Projection
 
 /-!
-# Projectivity signatures of the determiners
+# Projectivity of the determiners
 
 This file places the argument positions of *every*, *some* and *no* in the function classes of
 natural logic. A determiner is a map of its scope for each restrictor and a map of its restrictor

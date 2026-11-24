@@ -389,7 +389,6 @@ import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Semantics.Dynamic.State
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Logic.Natural.Completeness
-import Linglib.Semantics.Quantification.Signatures
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Exhaustification.Disjunctive
 import Linglib.Semantics.Exhaustification.DomainAlternatives
