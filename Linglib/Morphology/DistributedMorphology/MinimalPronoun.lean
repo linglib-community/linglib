@@ -49,9 +49,8 @@ minimal pronouns, Landau's two tiers, is in `Studies/Landau2015.lean`.
 
 @[expose] public section
 
-namespace Binding.MinimalPronoun
+namespace DistributedMorphology.MinimalPronoun
 
-open DistributedMorphology
 
 /-- The binding contexts a vocabulary item for minimal pronouns can be conditioned on. -/
 inductive Context where
@@ -145,4 +144,4 @@ theorem exists_null_item_of_controlForm_eq_null {v : Vocabulary Form}
 
 end Vocabulary
 
-end Binding.MinimalPronoun
+end DistributedMorphology.MinimalPronoun
