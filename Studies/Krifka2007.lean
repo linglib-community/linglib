@@ -5,7 +5,7 @@ public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.OptimalityTheory.ViolationProfile
 public import Linglib.Semantics.Degree.Granularity
-public import Linglib.Semantics.Quantifier.Numerals.Roundness
+public import Linglib.Semantics.Degree.Roundness
 public import Mathlib.Probability.UniformOn
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.MeasureTheory.Measure.Prod

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantifier.Numerals.Basic
+public import Linglib.Semantics.Degree.Numeral
 public import Mathlib.Order.Interval.Set.Basic
 
 /-!
@@ -38,7 +38,7 @@ classes of modifier are derived from the kind of construction, not stored.
 
 ## Implementation notes
 
-The amounts are natural numbers, as in `Semantics/Quantifier/Numerals/Basic.lean`, and
+The amounts are natural numbers, as in `Semantics/Degree/Numeral.lean`, and
 truncated subtraction keeps the lower end of a tolerance interval at zero. *Between … and …*
 takes two numerals and is not recorded.
 

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Data.Examples.JansenPollmann2001
-public import Linglib.Semantics.Quantifier.Numerals.Roundness
+public import Linglib.Semantics.Degree.Roundness
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.FieldSimp

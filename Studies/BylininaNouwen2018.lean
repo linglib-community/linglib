@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantifier.Numerals.Basic
+public import Linglib.Semantics.Degree.Numeral
 public import Linglib.Data.Examples.BylininaNouwen2018
 public import Mathlib.Data.Set.Card
 public import Linglib.Semantics.Plurality.Algebra

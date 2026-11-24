@@ -2,7 +2,7 @@ module
 
 public import Linglib.Pragmatics.DecisionTheoretic.Basic
 public import Linglib.Core.MeasureTheory.Measure.Prod
-public import Linglib.Semantics.Quantifier.Numerals.Roundness
+public import Linglib.Semantics.Degree.Roundness
 public import Studies.Cummins2015
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Tactic.IntervalCases

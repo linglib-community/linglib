@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Statistics.Cummins2015
 public import Linglib.Phonology.OptimalityTheory.Evaluation
-public import Linglib.Semantics.Quantifier.Numerals.Roundness
+public import Linglib.Semantics.Degree.Roundness
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Data.Finset.Pairwise

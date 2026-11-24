@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Quantifier.Numerals.Basic
+public import Linglib.Semantics.Degree.Numeral
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Semantics.Exhaustification.Basic
 public import Mathlib.Data.Set.Card

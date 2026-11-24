@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.English.NumeralModifiers
-public import Linglib.Semantics.Quantifier.Numerals.Basic
+public import Linglib.Semantics.Degree.Numeral
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Pragmatics.NeoGricean.Basic
 public import Studies.CoppockBrochhagen2013
