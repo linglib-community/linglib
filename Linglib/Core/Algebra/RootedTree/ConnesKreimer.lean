@@ -429,6 +429,20 @@ def linearLift (f : Forest T → M) : ConnesKreimer R T →ₗ[R] M :=
 
 end LinearMap
 
+/-- Renaming along an injective map is injective: the coefficient of `F.map f` in `rename f p` is
+that of `F` in `p`. -/
+theorem rename_injective {T' : Type*} {f : T → T'} (hf : Function.Injective f) :
+    Function.Injective (rename (R := R) f) := by
+  classical
+  intro p q h
+  have key (F : Forest T) :
+      lcoeff R (F.map f) ∘ₗ (rename (R := R) f).toLinearMap = lcoeff R F :=
+    lhom_ext' fun G ↦ by
+      simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, rename_of', lcoeff_apply,
+        coeff_of', (Multiset.map_injective hf).eq_iff]
+  exact ext_coeff fun F ↦ (LinearMap.congr_fun (key F) p).symm.trans
+    ((congrArg (lcoeff R (F.map f)) h).trans (LinearMap.congr_fun (key F) q))
+
 /-! ## The counit -/
 
 /-- The counit takes the coefficient of the empty forest; it is the algebra hom sending every

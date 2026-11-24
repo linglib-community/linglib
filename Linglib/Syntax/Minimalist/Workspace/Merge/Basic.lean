@@ -436,6 +436,16 @@ theorem mergeOpUnitOfCuts_apply_of'_eq_sum (cuts : UnorderedTree α → Multiset
   · rw [← of'_add]
   · simp
 
+/-- The unit stage on a workspace `F` puts `β` beside the trunk of each forest cut of `F` with
+    crown `{β}`. -/
+theorem mergeOpUnitOfCuts_apply_of' (cuts : UnorderedTree α → Multiset (Forest
+    (UnorderedTree α) × UnorderedTree α)) (β : UnorderedTree α) (F : Forest (UnorderedTree α)) :
+    mergeOpUnitOfCuts (R := R) cuts β (of' F) =
+      (((forestCuts cuts F).filter (·.1 = {β})).map fun p ↦ of' ({β} + p.2)).sum := by
+  rw [mergeOpUnitOfCuts_apply_of'_eq_sum, forestCuts_eq_map_forestCutChoices, Multiset.filter_map,
+    Multiset.map_map]
+  rfl
+
 /-- Merge does not depend on the order of the pair. -/
 theorem mergeOpOfCuts_comm (cuts : UnorderedTree α → Multiset (Forest
     (UnorderedTree α) × UnorderedTree α)) (lbl : α) (S S' : UnorderedTree α) :

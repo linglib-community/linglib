@@ -10,6 +10,7 @@ public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Core.RingTheory.HahnSeries.RotaBaxter
 public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Syntax.Minimalist.Workspace.Algebra
 public import Linglib.Syntax.Minimalist.Workspace.Economy
 public import Linglib.Syntax.Minimalist.Workspace.Merge.MinimalSearch
 public import Linglib.Syntax.Minimalist.Workspace.Merge.Sideward
@@ -218,12 +219,9 @@ private def wasEatenTrace : SyntacticObject :=
 example : deleteAccessible theApple wasEatenTheApple = wasEatenTrace := by decide
 
 /-- The first stage `M_{T₂,1}` splits `T` into `T₂` beside the quotient `T/T₂`. -/
-example :
-    Merge.traceMergeOpUnit (R := ℤ) traceEncoder theApple.toUnorderedTree
-        (of' ({wasEatenTheApple.toUnorderedTree} : Forest (UnorderedTree Vertex)))
-      = of' ({theApple.toUnorderedTree, wasEatenTrace.toUnorderedTree} : Forest (UnorderedTree
-          Vertex)) := by
-  rw [traceMergeOpUnit_current (by decide) (by decide) (by decide),
+example : Workspace.mergeOpUnit (R := ℤ) theApple (of' {wasEatenTheApple}) =
+    of' {theApple, wasEatenTrace} := by
+  rw [Workspace.mergeOpUnit_of'_singleton (by decide) (by decide) (by decide),
     show deleteAccessible theApple wasEatenTheApple = wasEatenTrace by decide]
 
 /-- The deletion quotient `T/d T₂ = {was, eaten}` that §1.4.4 displays. -/
@@ -268,14 +266,11 @@ example :
 
 /-- The composite `M_{T/T₂,T₂} ∘ M_{T₂,1}` is Internal Merge of *the apple*: it merges `T₂` with the
     quotient `T/T₂` (Proposition 1.4.2). -/
-example :
-    Merge.traceMergeOp (R :=
-        ℤ) traceEncoder Vertex.bare wasEatenTrace.toUnorderedTree theApple.toUnorderedTree
-        (Merge.traceMergeOpUnit traceEncoder theApple.toUnorderedTree
-          (of' ({wasEatenTheApple.toUnorderedTree} : Forest (UnorderedTree Vertex))))
-      = of' ({(merge wasEatenTrace theApple).toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
+example : Workspace.mergeOp (R := ℤ) wasEatenTrace theApple
+      (Workspace.mergeOpUnit theApple (of' {wasEatenTheApple})) =
+    of' {merge wasEatenTrace theApple} := by
   rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
-  exact traceMergeOp_im (by decide) (by decide) (by decide)
+  exact Workspace.mergeOp_mergeOpUnit_of'_singleton (by decide) (by decide) (by decide)
 
 /-- This Internal Merge satisfies Minimal Yield under trace counting, the Δᶜ row of the table of
     Proposition 1.6.4. -/
@@ -357,19 +352,12 @@ private theorem filter_admissibleCuts_theApple :
       {({theD.toUnorderedTree}, UnorderedTree.node Vertex.bare {appleN.toUnorderedTree})} := by
   decide
 
-/-- Sideward Merge of type 2(b) at the trace cuts merges *eaten* with *the* beside the remainder
-    of *the apple* (Lemma 1.4.4). -/
-example :
-    Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare eaten.toUnorderedTree theD.toUnorderedTree
-        (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree Vertex))) =
-      of' ({(merge eaten theD).toUnorderedTree, (deleteAccessible theD theApple).toUnorderedTree} :
-        Forest (UnorderedTree Vertex)) := by
-  rw [Merge.traceMergeOp, Merge.mergeOpOfCuts_sideward_2b Vertex.bare
-      (by rw [toUnorderedTree_mem_subtrees]; decide)
-      (fun h ↦ (by decide : theD ≠ theApple) (SyntacticObject.toUnorderedTree_injective h)),
-    traceCuts_filter_mover (by decide) (by decide) (by decide), Multiset.map_singleton,
-    Multiset.sum_singleton, toUnorderedTree_merge, ← of'_singleton, ← of'_add]
-  rfl
+/-- Sideward Merge of type 2(b) on workspaces is MERGE of *eaten* with *the*, leaving the trace of
+    *the* in *the apple* (Lemma 1.4.4). -/
+example : Workspace.mergeOp (R := ℤ) eaten theD (of' ({eaten, theApple} + 0)) =
+    of' (({eaten, theApple} + 0 : Workspace).mergeWith (·.headTrace) eaten theD) :=
+  Workspace.mergeOp_of'_sideward_member (by decide) (by decide) (by decide) (by decide) (by decide)
+    (by simp)
 
 /-- At `ε = 1` weighted Sideward Merge of type 2(b) is Sideward Merge at the admissible cuts. -/
 example :

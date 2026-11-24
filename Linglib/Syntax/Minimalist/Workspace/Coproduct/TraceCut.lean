@@ -145,6 +145,50 @@ theorem traceCuts_mem_subtrees_of_mem_crown (τ : UnorderedTree (α ⊕ β) → 
     obtain ⟨y, hy, rfl⟩ := Multiset.mem_map.mp hx
     exact Multiset.mem_cons_of_mem (mk_mem_of_mem_crown_rootCuts _ _ q hq y hy)
 
+/-- The trunk of a Δ^c cut of a tree licensed by `R` is licensed by `R`, when `R` reads only the
+    number of children and licenses a trace leaf: a cut child leaves one trace leaf in its slot. -/
+theorem _root_.RoseTree.Licensed.of_mem_rootCuts_leaveTrace {R : α ⊕ β → List (α ⊕ β) → Prop}
+    (hR : ∀ a ks ls, ks.length = ls.length → R a ks → R a ls) (hleaf : ∀ b, R (Sum.inr b) [])
+    (τ : RoseTree (α ⊕ β) → β) {t : RoseTree (α ⊕ β)} (ht : t.Licensed R)
+    {p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β)} (hp : p ∈ rootCuts (leaveTrace τ) t) :
+    p.2.Licensed R := by
+  refine ((rootCuts_induction (leaveTrace τ)
+    (P := fun cs q ↦ (∀ c ∈ cs, c.Licensed R) →
+      (∀ c ∈ q.2, c.Licensed R) ∧ q.2.length = cs.length) ?_ ?_ ?_ ?_ t p hp)
+    fun c hc ↦ List.mem_singleton.1 hc ▸ ht).1 p.2 (List.mem_singleton_self _)
+  · exact fun _ ↦ ⟨by simp, rfl⟩
+  · rintro ⟨a | b, cs⟩ r hr -
+    · obtain rfl : [traceLeaf _] = r := Option.some.inj hr
+      refine ⟨fun c hc ↦ ?_, rfl⟩
+      rw [List.mem_singleton.1 hc]
+      exact licensed_node_iff.2 ⟨hleaf _, by simp⟩
+    · cases hr
+  · intro a cs q _ ih h
+    have hn := h _ (List.mem_singleton_self _)
+    obtain ⟨hq, hlen⟩ := ih fun c hc ↦ hn.of_mem hc
+    refine ⟨fun c hc ↦ ?_, rfl⟩
+    rw [List.mem_singleton.1 hc]
+    exact licensed_node_iff.2 ⟨hR a _ _ (by simp [hlen]) hn.rel_root, hq⟩
+  · intro t ts a b _ _ iha ihb h
+    obtain ⟨ha, hla⟩ := iha fun c hc ↦ h c (List.mem_singleton.1 hc ▸ List.mem_cons_self)
+    obtain ⟨hb, hlb⟩ := ihb fun c hc ↦ h c (List.mem_cons_of_mem _ hc)
+    exact ⟨fun c hc ↦ (List.mem_append.1 hc).elim (ha c) (hb c), by simp [hla, hlb, add_comm]⟩
+
+/-- The trunk of a Δ^c cut of an unordered tree licensed by `R` is licensed by `R`, when `R` reads
+    only the number of children and licenses a trace leaf. -/
+theorem _root_.UnorderedTree.Licensed.of_mem_traceCuts {R : α ⊕ β → Multiset (α ⊕ β) → Prop}
+    (hR : ∀ a ks ls, Multiset.card ks = Multiset.card ls → R a ks → R a ls)
+    (hleaf : ∀ b, R (Sum.inr b) 0) (τ : UnorderedTree (α ⊕ β) → β) {T : UnorderedTree (α ⊕ β)}
+    (hT : T.Licensed R) {p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)}
+    (hp : p ∈ traceCuts τ T) : p.2.Licensed R := by
+  induction T using Quotient.inductionOn with
+  | h t =>
+    rw [UnorderedTree.quot_mk_eq_mk, traceCuts_mk] at hp
+    obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+    exact RoseTree.Licensed.of_mem_rootCuts_leaveTrace
+      (R := fun a (ks : List (α ⊕ β)) ↦ R a (ks : Multiset (α ⊕ β)))
+      (fun a ks ls h ↦ hR a _ _ (by simpa using h)) hleaf _ hT hq
+
 /-- A lexical subtree `M` occurring exactly once below the root of `T` is extracted by exactly one
     Δ^c cut, whose trunk is `T` with `M` replaced by its trace. -/
 theorem traceCuts_filter_crown_eq_singleton [DecidableEq α] [DecidableEq β]
