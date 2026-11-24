@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Algebra.Ring.BooleanRing
 public import Linglib.Semantics.Quantifier.Defs
 public import Linglib.Logic.Aristotelian.Square
 public import Linglib.Semantics.Negation.Polarity
@@ -19,13 +20,13 @@ A quantifier with its inner negation, its dual and its complement forms a square
 The diagonals of the square are contradictory for every quantifier, and its other classical
 relations hold if and only if `Q ≤ Q.dual`.
 
-The two negations are the two ways a group acting on truth values and on sets acts on the
-functions from sets to truth values. The polarities act on truth values by negation, and so on a
-quantifier through its value; they act on sets by complement, and so on a quantifier through its
-scope, which is the action of `Polarityᵈᵐᵃ`. The two actions commute. Together they are an action
-of the pairs of an outer and an inner polarity, and the orbit of a quantifier is its square. A
-monotone or antitone quantifier stays monotone or antitone under each action, and the direction
-changes once for each negative polarity.
+The two negations are the two ways a group acting on truth values and on sets acts on the functions
+from sets to truth values. The polarities act on truth values by negation, and so on a quantifier
+through its value; they act on sets by complement, and so on a quantifier through its scope, which
+is the action of `DomMulAct Polarity`. The two actions commute. Together they are an action of the
+pairs of an outer and an inner polarity, and the orbit of a quantifier is its square. A monotone or
+antitone quantifier stays monotone or antitone under each action, and the direction changes once for
+each negative polarity.
 
 ## Main definitions
 
@@ -42,6 +43,8 @@ changes once for each negative polarity.
   and `Qᶜ`.
 * `Polarity.MonoBy.smul`, `Polarity.MonoBy.mk_smul`: a polarity acting on a quantifier through
   either place multiplies its direction by that polarity.
+* `Quantifier.mk_toBoolRing_univ_vadd`: a set acts on a quantifier by complementing the scope
+  within that set, and inner negation is the action of the whole universe.
 
 ## Implementation notes
 
@@ -110,13 +113,13 @@ theorem negative_smul_mk_negative_smul (Q : Quantifier α) :
 
 /-- The pairs of an outer and an inner polarity act on quantifiers, the outer one through the
 value and the inner one through the scope. -/
-instance : MulAction (Polarity × Polarityᵈᵐᵃ) (Quantifier α) :=
+instance : MulAction (Polarity × DomMulAct Polarity) (Quantifier α) :=
   MulAction.prodOfSMulCommClass _ _ _
 
 /-- The orbit of a quantifier under the two actions of the polarities is its square of
 opposition. -/
 theorem orbit_eq (Q : Quantifier α) :
-    MulAction.orbit (Polarity × Polarityᵈᵐᵃ) Q = {Q, Q.innerNeg, Q.dual, Qᶜ} := by
+    MulAction.orbit (Polarity × DomMulAct Polarity) Q = {Q, Q.innerNeg, Q.dual, Qᶜ} := by
   ext Q'
   simp only [MulAction.mem_orbit_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
@@ -127,6 +130,21 @@ theorem orbit_eq (Q : Quantifier α) :
   · rintro (rfl | rfl | rfl | rfl)
     exacts [⟨1, one_smul _ _⟩, ⟨(.positive, mk .negative), rfl⟩,
       ⟨(.negative, mk .negative), rfl⟩, ⟨(.negative, mk .positive), rfl⟩]
+
+/-! ### Flipping part of the scope
+
+Inner negation complements the whole scope. A set `N` of individuals acts on a quantifier by
+complementing the scope within `N` only, taking `Q` to the quantifier that holds of `B` when `Q`
+holds of `N ∆ B`. These are the actions of the sets under symmetric difference, and inner negation
+is the action of the whole universe. -/
+
+theorem mk_toBoolRing_vadd_apply (N B : Set α) (Q : Quantifier α) :
+    (DomAddAct.mk (toBoolRing N) +ᵥ Q) B = Q (symmDiff N B) := rfl
+
+/-- Inner negation is the flip of the whole scope. -/
+theorem mk_toBoolRing_univ_vadd (Q : Quantifier α) :
+    DomAddAct.mk (toBoolRing (Set.univ : Set α)) +ᵥ Q = Q.innerNeg :=
+  funext fun B ↦ congrArg Q (AsBoolRing.toBoolRing_top_vadd B)
 
 end Quantifier
 
