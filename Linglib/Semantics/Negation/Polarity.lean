@@ -22,7 +22,7 @@ involution. The polarity of a sentence acts on propositions by complement, and
 [the orbit of a proposition](##Polarity.orbit_eq_pair_compl) is the pair of its polarity
 alternatives, the focus value of a focused polarity and the answers of a polar question. The
 polarity of an antonym acts on degrees by negation. A polarity
-[directs a function](##Polarity.StrictMonoBy), and directions compose as polarities multiply.
+[directs a function](##Polarity.MonoBy), and directions compose as polarities multiply.
 
 ## Implementation notes
 
@@ -227,6 +227,22 @@ theorem StrictMonoBy.comp {s t : Polarity} {g : β → γ} {f : α → β} (hg :
   cases s <;> cases t
   exacts [StrictMono.comp hg hf, StrictMono.comp_strictAnti hg hf,
     StrictAnti.comp_strictMono hg hf, StrictAnti.comp hg hf]
+
+/-- A function directed by a polarity is monotone under the positive polarity and antitone under
+the negative one. -/
+def MonoBy : Polarity → (α → β) → Prop
+  | positive, f => Monotone f
+  | negative, f => Antitone f
+
+@[simp] theorem monoBy_positive {f : α → β} : positive.MonoBy f ↔ Monotone f := .rfl
+
+@[simp] theorem monoBy_negative {f : α → β} : negative.MonoBy f ↔ Antitone f := .rfl
+
+theorem MonoBy.comp {s t : Polarity} {g : β → γ} {f : α → β} (hg : s.MonoBy g)
+    (hf : t.MonoBy f) : (s * t).MonoBy (g ∘ f) := by
+  cases s <;> cases t
+  exacts [Monotone.comp (g := g) hg hf, Monotone.comp_antitone (g := g) hg hf,
+    Antitone.comp_monotone (g := g) hg hf, Antitone.comp (g := g) hg hf]
 
 end Directed
 
