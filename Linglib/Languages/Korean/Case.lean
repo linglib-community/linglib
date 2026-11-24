@@ -4,7 +4,7 @@ public import Linglib.Core.Data.Fintype.Order
 public import Linglib.Languages.Korean.Phonology
 public import Linglib.Morphology.Exponence.SubsetRule
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Case.Function
+public import Linglib.Syntax.Feature.Case.Function
 
 /-!
 # Korean case markers

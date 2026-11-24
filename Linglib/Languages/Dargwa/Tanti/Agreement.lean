@@ -4,7 +4,7 @@ public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Feature.Gender.Basic
-public import Linglib.Syntax.Person.Class
+public import Linglib.Syntax.Feature.Person.Class
 
 /-!
 # Tanti Dargwa agreement

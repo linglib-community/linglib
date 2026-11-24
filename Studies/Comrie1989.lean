@@ -9,7 +9,7 @@ public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Languages.Turkish.ObjectMarking
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Definiteness
-public import Linglib.Syntax.Person.Class
+public import Linglib.Syntax.Feature.Person.Class
 public import Linglib.Syntax.Voice.Causativization
 public import Linglib.Syntax.Clause.Relative
 public import Linglib.Data.Examples.Readers

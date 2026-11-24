@@ -13,7 +13,7 @@ public import Studies.BejarRezac2009
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Syntax.Feature.Person.Basic
-public import Linglib.Syntax.Person.Class
+public import Linglib.Syntax.Feature.Person.Class
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 

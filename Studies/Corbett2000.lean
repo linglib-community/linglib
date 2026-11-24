@@ -6,7 +6,7 @@ public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.NormNum
-public import Linglib.Syntax.Gender.AgreementClasses
+public import Linglib.Syntax.Feature.Gender.AgreementClasses
 public import Linglib.Semantics.Plurality.Cardinality
 public import Linglib.Semantics.Plurality.Configuration
 public import Linglib.Syntax.Agreement.ConjunctAgreement

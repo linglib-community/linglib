@@ -7,7 +7,7 @@ public import Studies.CoonKeine2021
 public import Studies.PanchevaZubizarreta2018
 public import Studies.Haspelmath2021
 public import Linglib.Syntax.Clause.Scenario
-public import Linglib.Syntax.Person.Class
+public import Linglib.Syntax.Feature.Person.Class
 public import Linglib.Data.Examples.Deal2024
 public import Linglib.Data.Examples.Readers
 

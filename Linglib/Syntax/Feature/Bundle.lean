@@ -38,7 +38,7 @@ by morphology, so the file stands with the feature inventories below `Syntax/Agr
 
 The slots hold the cross-linguistic values of the token features, so that bundles of different
 languages compare. A language-particular system, such as a set of noun classes, is not a
-bundle; `Syntax/Gender/AgreementClasses.lean` treats those over an arbitrary feature type.
+bundle; `Syntax/Feature/Gender/AgreementClasses.lean` treats those over an arbitrary feature type.
 
 ## References
 
