@@ -31,21 +31,16 @@ intersections.
 
 ## Main results
 
-* `Quantifier.Det.holdsFor_antiAdd_every_left`, `Quantifier.Det.holdsFor_mult_every`: *every* is
-  anti-additive in its restrictor and multiplicative in its scope.
-* `Quantifier.Det.holdsFor_additive_some_left`, `Quantifier.Det.holdsFor_additive_some`: *some* is
-  additive in both arguments.
-* `Quantifier.Det.holdsFor_antiAdd_no_left`, `Quantifier.Det.holdsFor_antiAdd_no`: *no* is
-  anti-additive in both arguments.
-* `Quantifier.Det.holdsFor_additive_not_every_left`,
-  `Quantifier.Det.holdsFor_antiMult_not_every`: *not every* is additive in its restrictor and
-  anti-multiplicative in its scope, by composition with negation.
-* `Quantifier.Det.not_holdsFor_additive_every`: the scope of *every* is not additive.
-* `Quantifier.soundFor_mult_iff_le_dual`, `Quantifier.soundFor_additive_iff_dual_le`,
-  `Quantifier.soundFor_addMult_iff_dual_eq`: the multiplicative, additive and morphism rows are
-  sound for the monotone quantifiers below, above and equal to their duals.
-* `Quantifier.Det.soundFor_mult_most`, `Quantifier.Det.not_holdsFor_mult_most`: the multiplicative
-  row is sound for the scope of *most*, which is not multiplicative.
+* `holdsFor_antiAdd_every_left`, `holdsFor_mult_every`: *every* is anti-additive in its restrictor
+  and multiplicative in its scope.
+* `holdsFor_additive_some_left`, `holdsFor_additive_some`: *some* is additive in both arguments.
+* `holdsFor_antiAdd_no_left`, `holdsFor_antiAdd_no`: *no* is anti-additive in both arguments.
+* `holdsFor_additive_not_every_left`, `holdsFor_antiMult_not_every`: *not every* is additive in
+  its restrictor and anti-multiplicative in its scope, by composition with negation.
+* `Quantifier.soundFor_mult_iff_le_dual` and its two companions: the multiplicative, additive and
+  morphism rows are sound for the monotone quantifiers below, above and equal to their duals.
+* `soundFor_mult_most`, `not_holdsFor_mult_most`: the multiplicative row is sound for the scope of
+  *most*, which is not multiplicative.
 
 ## References
 

@@ -24,22 +24,17 @@ zero `#`.
 
 ## Main definitions
 
-* `NaturalLogic.Relation`: the seven relations.
-* `NaturalLogic.Relation.Atom`: the four atomic constraints.
-* `NaturalLogic.Relation.constraints`: the atomic constraints a relation asserts.
-* `NaturalLogic.Relation.Holds`: `R.Holds x y` says that `R` holds of two elements of a bounded
-  lattice.
-* `NaturalLogic.Relation.join`: the join `R ⋈ S`, the multiplication of the monoid.
-* `NaturalLogic.Relation.converse`: the converse of a relation.
+* `Relation`: the seven relations, with `Relation.Atom` the four atomic constraints.
+* `Relation.Holds`: `R.Holds x y` says that `R` holds of two elements of a bounded lattice.
+* `Relation.join`: the join `R ⋈ S`, the multiplication of the monoid.
 
 ## Main results
 
-* `NaturalLogic.Relation.holds_iff`: a relation holds exactly when each of its constraints does.
-* `NaturalLogic.Relation.Holds.of_le`: a relation implies every relation above it.
-* `NaturalLogic.Relation.Holds.join`: in a distributive lattice, `x R y` and `y S z` give
-  `x (R ⋈ S) z`.
-* `NaturalLogic.Relation.holds_map_iff`: an injective bounded lattice homomorphism preserves and
-  reflects each relation.
+* `Relation.holds_iff`: a relation holds exactly when each of its constraints does.
+* `Relation.Holds.of_le`, `Relation.Holds.join`: a relation implies every relation above it, and
+  in a distributive lattice `x R y` and `y S z` give `x (R ⋈ S) z`.
+* `Relation.holds_map_iff`: an injective bounded lattice homomorphism preserves and reflects each
+  relation.
 
 ## Implementation notes
 

@@ -39,29 +39,19 @@ has a most specific signature exactly when it is not constant.
 
 ## Main definitions
 
-* `NaturalLogic.Relation.toSetRel`: the pairs of elements of a bounded lattice that a relation
-  holds of.
-* `NaturalLogic.Relation.toConcept`, `NaturalLogic.ProjectivitySignature.toConcept`: a relation
-  and a signature as formal concepts.
+* `Relation.toSetRel`: the pairs of elements a relation holds of.
+* `Relation.toConcept`, `ProjectivitySignature.toConcept`: a relation and a signature as formal
+  concepts.
 
 ## Main results
 
-* `NaturalLogic.Relation.le_iff_forall_holds`: `R ≤ S` exactly when `R` implies `S` in a
-  nontrivial bounded lattice.
-* `NaturalLogic.Relation.isLeast_join`: the join is the least sound chaining in a nontrivial
-  bounded distributive lattice.
-* `NaturalLogic.Relation.toSetRel_mul`: on a Boolean algebra the join is relational composition.
-* `NaturalLogic.Relation.exists_isLeast_holds_iff`: two elements stand in a strongest relation
-  exactly when neither is `⊥` or `⊤`.
-* `NaturalLogic.Relation.mem_range_constraints_iff`: the seven relations are the sets of
-  constraints that two elements other than `⊥` and `⊤` can satisfy together.
-* `NaturalLogic.ProjectivitySignature.isLeast_project`: each projection is least for its function
-  class.
-* `NaturalLogic.ProjectivitySignature.le_iff_forall_holdsFor`: refinement of signatures is
-  inclusion of function classes.
-* `NaturalLogic.ProjectivitySignature.isLeast_compose`: composition is least for composites.
-* `NaturalLogic.ProjectivitySignature.exists_isLeast_holdsFor_iff`: a map has a most specific
-  signature exactly when it is not constant.
+* `Relation.isLeast_join`, `ProjectivitySignature.isLeast_project`,
+  `ProjectivitySignature.isLeast_compose`: the join, the projection and the composition are least.
+* `Relation.le_iff_forall_holds`, `ProjectivitySignature.le_iff_forall_holdsFor`: the two orders
+  are implication and inclusion of function classes.
+* `Relation.toSetRel_mul`: on a Boolean algebra the join is relational composition.
+* `Relation.exists_isLeast_holds_iff`, `ProjectivitySignature.exists_isLeast_holdsFor_iff`: when
+  a strongest relation and a most specific signature exist.
 
 ## Implementation notes
 

@@ -18,25 +18,17 @@ relation to its projection.
 
 ## Main definitions
 
-* `NaturalLogic.ProjectivitySignature.project`: the projection of a relation through a signature.
-* `NaturalLogic.ProjectivitySignature.SoundFor`: `σ.SoundFor f` says that `f` carries every
-  relation `R` to `project R σ`.
-* `NaturalLogic.ProjectivitySignature.Property.Carries`: a map carries the constraints of a
-  property.
+* `ProjectivitySignature.project`: the projection of a relation through a signature.
+* `SoundFor`: `σ.SoundFor f` says that `f` carries every relation `R` to `project R σ`.
 
 ## Main results
 
-* `NaturalLogic.ProjectivitySignature.project_project`: projecting through `φ` and then through
-  `ψ` is projecting through `ψ * φ`.
-* `NaturalLogic.ProjectivitySignature.soundFor_of_holdsFor`: a signature is sound for every map in
-  its function class.
-* `NaturalLogic.ProjectivitySignature.SoundFor.comp`: if `ψ` is sound for `f` and `φ` for `g`,
-  then `ψ * φ` is sound for `f ∘ g`.
-* `NaturalLogic.ProjectivitySignature.soundFor_iff_forall_carries`: a signature is sound for
-  exactly the maps that carry the constraints of each of its properties.
-* `NaturalLogic.ProjectivitySignature.soundFor_mult_iff_map_compl_le` and its five companions:
-  between Boolean algebras, a signature with a direction is sound for exactly the maps of that
-  direction that take complementary elements to disjoint, codisjoint or complementary ones.
+* `project_project`: projecting through `φ` and then through `ψ` is projecting through `ψ * φ`.
+* `soundFor_of_holdsFor`: a signature is sound for every map in its function class.
+* `SoundFor.comp`: if `ψ` is sound for `f` and `φ` for `g`, then `ψ * φ` is sound for `f ∘ g`.
+* `soundFor_mult_iff_map_compl_le` and its five companions: between Boolean algebras, a signature
+  with a direction is sound for exactly the maps of that direction that take complementary
+  elements to disjoint, codisjoint or complementary ones.
 
 ## Implementation notes
 

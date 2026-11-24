@@ -29,32 +29,23 @@ for an antitone class and `0` for `•`, is a homomorphism to the three signs.
 
 ## Main definitions
 
-* `NaturalLogic.ProjectivitySignature`: the nine signatures, ordered by refinement.
-* `NaturalLogic.ProjectivitySignature.Property`: the six properties of maps a signature asserts.
-* `NaturalLogic.ProjectivitySignature.HoldsFor`: `σ.HoldsFor f` says that `f` has every property
-  `σ` asserts.
-* `NaturalLogic.ProjectivitySignature.compose`: composition of signatures, the multiplication of
-  the monoid.
-* `NaturalLogic.ProjectivitySignature.signHom`: the sign of a signature, as a homomorphism of
-  monoids with zero.
-* `NaturalLogic.ProjectivitySignature.unitsEquiv`: the invertible signatures are the two
-  polarities.
+* `ProjectivitySignature`: the nine signatures, ordered by refinement.
+* `ProjectivitySignature.HoldsFor`: `σ.HoldsFor f` says that `f` has every property `σ` asserts.
+* `ProjectivitySignature.compose`: composition of signatures, the multiplication of the monoid.
+* `signHom`, `unitsEquiv`: the sign as a homomorphism of monoids with zero, and the invertible
+  signatures as the two polarities.
 
 ## Main results
 
-* `NaturalLogic.ProjectivitySignature.HoldsFor.comp`: a `ψ`-function after a `φ`-function is a
-  `ψ * φ`-function.
-* `NaturalLogic.ProjectivitySignature.holdsFor_comp_left_iff`,
-  `NaturalLogic.ProjectivitySignature.holdsFor_comp_right_iff`: a map composed with an invertible
-  map of signature `υ` is a `σ`-function exactly when the map is a `υ⁻¹ * σ`-function or a
+* `HoldsFor.comp`: a `ψ`-function after a `φ`-function is a `ψ * φ`-function.
+* `holdsFor_comp_left_iff`, `holdsFor_comp_right_iff`: a map composed with an invertible map of
+  signature `υ` is a `σ`-function exactly when the map is a `υ⁻¹ * σ`-function or a
   `σ * υ⁻¹`-function.
-* `NaturalLogic.ProjectivitySignature.holdsFor_toDual_comp_iff`: a map into the order dual is a
-  `σ`-function exactly when the map is a `⊖ * σ`-function.
-* `NaturalLogic.ProjectivitySignature.holdsFor_additive_sup`,
-  `NaturalLogic.ProjectivitySignature.holdsFor_additive_top`: the additive maps are closed under
-  pointwise joins and contain the constant `⊤`, and likewise for the other three properties.
-* `NaturalLogic.ProjectivitySignature.mul_eq_top`: a composite is the signature of all maps only
-  when a factor is.
+* `holdsFor_toDual_comp_iff`: a map into the order dual is a `σ`-function exactly when the map is
+  a `⊖ * σ`-function.
+* `holdsFor_additive_sup`, `holdsFor_additive_top`: the additive maps are closed under pointwise
+  joins and contain the constant `⊤`, and likewise for the other three properties.
+* `mul_eq_top`: a composite is the signature of all maps only when a factor is.
 
 ## Implementation notes
 

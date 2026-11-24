@@ -21,24 +21,20 @@ a counterfactive `−/−` settles the complement whatever the claim.
 
 ## Main definitions
 
-* `NaturalLogic.ImplicationSignature`: the polarity of the complement implied in a positive and in
-  a negative context.
-* `NaturalLogic.ImplicationSignature.implied`: the polarity implied in a context of a given
-  polarity.
-* `NaturalLogic.ImplicationSignature.constraints`: the atomic constraints a signature imposes
-  between a claim and its complement.
+* `ImplicationSignature`: the polarity of the complement implied in a positive and in a negative
+  context.
+* `ImplicationSignature.constraints`: the atomic constraints a signature imposes between a claim
+  and its complement.
 
 ## Main results
 
-* `NaturalLogic.ImplicationSignature.holds_ofPolarities_iff`: over propositions, an implication is
-  the entailment from the claim to the complement, each taken with its polarity.
-* `NaturalLogic.ImplicationSignature.constraints_subset_constraints`: a signature implies more
-  exactly when it constrains more.
-* `NaturalLogic.ImplicationSignature.exists_constraints_eq_iff`: the constraints of a signature
-  are those of a relation exactly when its slots do not imply the same polarity.
-* `NaturalLogic.ImplicationSignature.forall_holds_constraints_factive_iff`,
-  `NaturalLogic.ImplicationSignature.forall_holds_constraints_counterfactive_iff`: a factive or
-  counterfactive signature settles the complement whatever the claim.
+* `holds_ofPolarities_iff`: over propositions, an implication is the entailment from the claim to
+  the complement, each taken with its polarity.
+* `constraints_subset_constraints`: a signature implies more exactly when it constrains more.
+* `exists_constraints_eq_iff`: the constraints of a signature are those of a relation exactly when
+  its slots do not imply the same polarity.
+* `forall_holds_constraints_factive_iff`, `forall_holds_constraints_counterfactive_iff`: a factive
+  or counterfactive signature settles the complement whatever the claim.
 
 ## References
 
