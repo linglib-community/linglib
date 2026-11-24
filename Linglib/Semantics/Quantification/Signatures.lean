@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Logic.Natural.ProjectivitySignature
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Logic.Natural.Projection
 
 /-!
 # Projectivity signatures of the determiners
@@ -17,6 +17,11 @@ for each scope, and each of these maps has a projectivity signature: *some* is a
 arguments, *no* is anti-additive in both, and *every* is anti-additive in its restrictor and
 multiplicative in its scope. The unit condition of each class holds when the other argument is not
 trivial, a nonempty restrictor or a scope that is neither empty nor everything.
+
+A row of the projection table is sound for more quantifiers than its function class contains: it
+is sound for a monotone quantifier exactly when the quantifier compares with its dual as the row
+says. *Most* lies below its dual, so the multiplicative row is sound for it, though it does not
+preserve intersections.
 
 ## Main results
 
@@ -30,6 +35,11 @@ trivial, a nonempty restrictor or a scope that is neither empty nor everything.
   `Quantifier.Det.holdsFor_antiMult_not_every`: *not every* is additive in its restrictor and
   anti-multiplicative in its scope, by composition with negation.
 * `Quantifier.Det.not_holdsFor_additive_every`: the scope of *every* is not additive.
+* `Quantifier.soundFor_mult_iff_le_dual`, `Quantifier.soundFor_additive_iff_dual_le`,
+  `Quantifier.soundFor_addMult_iff_dual_eq`: the multiplicative, additive and morphism rows are
+  sound for the monotone quantifiers below, above and equal to their duals.
+* `Quantifier.Det.soundFor_mult_most`, `Quantifier.Det.not_holdsFor_mult_most`: the multiplicative
+  row is sound for the scope of *most*, which is not multiplicative.
 
 ## References
 
@@ -38,6 +48,33 @@ trivial, a nonempty restrictor or a scope that is neither empty nor everything.
 -/
 
 @[expose] public section
+
+namespace Quantifier
+
+open NaturalLogic ProjectivitySignature
+
+variable {α : Type*} {Q : Quantifier α}
+
+/-! ### Quantifiers and their duals -/
+
+/-- The multiplicative row is sound for the monotone quantifiers that lie below their dual. -/
+theorem soundFor_mult_iff_le_dual : mult.SoundFor Q ↔ Monotone Q ∧ Q ≤ Q.dual :=
+  soundFor_mult_iff_map_compl_le.trans <| and_congr_right fun _ ↦
+    ⟨fun h B hB hB' ↦ h B hB' hB, fun h B hB hB' ↦ h B hB' hB⟩
+
+/-- The additive row is sound for the monotone quantifiers that lie above their dual. -/
+theorem soundFor_additive_iff_dual_le : additive.SoundFor Q ↔ Monotone Q ∧ Q.dual ≤ Q :=
+  soundFor_additive_iff_compl_map_le.trans <| and_congr_right fun _ ↦
+    ⟨fun h B hB ↦ by_contra fun hB' ↦ hB (h B hB'), fun h B hB ↦ by
+      simpa using h Bᶜ (by simpa using hB)⟩
+
+/-- The morphism row is sound for the monotone quantifiers that are their own dual. -/
+theorem soundFor_addMult_iff_dual_eq : addMult.SoundFor Q ↔ Monotone Q ∧ Q.dual = Q :=
+  soundFor_addMult_iff_map_compl.trans <| and_congr_right fun _ ↦
+    ⟨fun h ↦ funext fun B ↦ by simp [h B], fun h B ↦ by
+      rw [← congrFun h B, dual_apply]; simp⟩
+
+end Quantifier
 
 namespace Quantifier.Det
 
@@ -99,5 +136,19 @@ theorem holdsFor_antiAdd_no_left (hB : B.Nonempty) : antiAdd.HoldsFor (no · B) 
 theorem holdsFor_antiAdd_no (hA : A.Nonempty) : antiAdd.HoldsFor (no A) :=
   holdsFor_antiAdd_iff.2 ⟨rightAntiAdditive_no A,
     eq_false fun h ↦ hA.ne_empty (Set.subset_empty_iff.1 (by simpa [no] using h))⟩
+
+/-! ### Most -/
+
+/-- The multiplicative row is sound for the scope of *most*, which lies below its dual. -/
+theorem soundFor_mult_most [Finite α] : mult.SoundFor (most A) :=
+  soundFor_mult_iff_le_dual.2 ⟨scopeMonotone_most A, most_le_dual A⟩
+
+/-- The scope of *most* is not multiplicative: most of three things are not the first and most
+are not the last, but not most are the middle one. -/
+theorem not_holdsFor_mult_most : ¬ mult.HoldsFor (most (Set.univ : Set (Fin 3))) := fun h ↦ by
+  have h₀ : most (Set.univ : Set (Fin 3)) {x | x ≠ 0} := by decide
+  have h₂ : most (Set.univ : Set (Fin 3)) {x | x ≠ 2} := by decide
+  have h₁ : ¬ most (Set.univ : Set (Fin 3)) {x | x ≠ 0 ∧ x ≠ 2} := by decide
+  exact h₁ ((eq_iff_iff.1 ((holdsFor_mult_iff.1 h).1 {x | x ≠ 0} {x | x ≠ 2})).2 ⟨h₀, h₂⟩)
 
 end Quantifier.Det

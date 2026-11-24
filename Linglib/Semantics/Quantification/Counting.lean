@@ -274,6 +274,13 @@ theorem allBut_zero_eq_every [Finite α] : (allBut 0 : Det α) = every := by
 theorem scopeMonotone_most [Finite α] : (most : Det α).ScopeMonotone :=
   NumberTree.scopeMonotone_most.toDet
 
+/-- *Most* lies below its dual: if most `A` are `B`, then it is not the case that most `A` are not
+`B`. -/
+theorem most_le_dual (A : Set α) : most A ≤ (most A).dual := fun B h h' ↦ by
+  have h' : (A \ Bᶜ).ncard < (A ∩ Bᶜ).ncard := h'
+  rw [Set.diff_compl, ← Set.diff_eq] at h'
+  exact lt_asymm (most_apply.1 h) h'
+
 theorem scopeAntitone_few [Finite α] : (few : Det α).ScopeAntitone :=
   NumberTree.scopeAntitone_few.toDet
 

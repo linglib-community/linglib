@@ -16,6 +16,9 @@ additive and multiplicative properties carry disjointness and codisjointness. Pr
 relations, and each signature's row is
 [sound](##NaturalLogic.ProjectivitySignature.soundFor_of_holdsFor) for the maps in its function
 class, as it is for bounded lattice homomorphisms and, into the order dual, for complementation.
+Between Boolean algebras a row is sound for more maps than its function class holds: for those of
+its direction that take complementary elements to disjoint ones, to codisjoint ones, or to
+complementary ones, that is, that lie below, above, or at their De Morgan dual.
 
 ## Implementation notes
 
@@ -319,6 +322,76 @@ theorem compl_soundFor_antiAddMult :
   soundFor_antiAddMult_of_boundedLatticeHomClass (OrderIso.compl α)
 
 end ComplInstance
+
+/-! ### Maps of Boolean algebras and complementation
+
+Between Boolean algebras a row of the projection table is sound for a map exactly when the map has
+the direction of the row and compares with complementation as the row says: `f xᶜ ≤ (f x)ᶜ` when it
+takes complementary elements to disjoint ones, `(f x)ᶜ ≤ f xᶜ` when it takes them to codisjoint
+ones, and equality when it commutes with complementation. A map of the first kind lies below its
+De Morgan dual `x ↦ (f xᶜ)ᶜ` and one of the second kind above it. -/
+
+section BooleanAlgebra
+
+variable {α β : Type*} [BooleanAlgebra α] [BooleanAlgebra β] {f : α → β}
+
+/-- The `⊞` row is sound for the monotone maps that take complements to disjoint elements. -/
+theorem soundFor_mult_iff_map_compl_le :
+    SoundFor .mult f ↔ Monotone f ∧ ∀ x, f xᶜ ≤ (f x)ᶜ := by
+  rw [soundFor_mult_iff]
+  exact and_congr_right fun hf ↦ ⟨fun h _ ↦ (h disjoint_compl_right).le_compl_left,
+    fun h x _ hxy ↦ (disjoint_compl_right.mono_right (h x)).mono_right (hf hxy.le_compl_left)⟩
+
+/-- The additive row is sound for the monotone maps that take complements to codisjoint
+elements. -/
+theorem soundFor_additive_iff_compl_map_le :
+    SoundFor .additive f ↔ Monotone f ∧ ∀ x, (f x)ᶜ ≤ f xᶜ := by
+  rw [soundFor_additive_iff]
+  exact and_congr_right fun hf ↦
+    ⟨fun h x ↦ codisjoint_iff_compl_le_right.1 (h (isCompl_compl (x := x)).codisjoint),
+      fun h x _ hxy ↦ codisjoint_iff_compl_le_right.2
+        ((h x).trans (hf (codisjoint_iff_compl_le_right.1 hxy)))⟩
+
+/-- The `⊕` row is sound for the monotone maps that commute with complementation. -/
+theorem soundFor_addMult_iff_map_compl :
+    SoundFor .addMult f ↔ Monotone f ∧ ∀ x, f xᶜ = (f x)ᶜ := by
+  have : SoundFor .addMult f ↔ SoundFor .mult f ∧ SoundFor .additive f := by
+    rw [soundFor_addMult_iff, soundFor_mult_iff, soundFor_additive_iff]
+    exact ⟨fun ⟨hm, hd, hc⟩ ↦ ⟨⟨hm, hd⟩, hm, hc⟩, fun ⟨⟨hm, hd⟩, _, hc⟩ ↦ ⟨hm, hd, hc⟩⟩
+  rw [this, soundFor_mult_iff_map_compl_le, soundFor_additive_iff_compl_map_le]
+  exact ⟨fun h ↦ ⟨h.1.1, fun x ↦ le_antisymm (h.1.2 x) (h.2.2 x)⟩,
+    fun h ↦ ⟨⟨h.1, fun x ↦ (h.2 x).le⟩, h.1, fun x ↦ (h.2 x).ge⟩⟩
+
+/-- The anti-additive row is sound for the antitone maps that take complements to disjoint
+elements. -/
+theorem soundFor_antiAdd_iff_map_compl_le :
+    SoundFor .antiAdd f ↔ Antitone f ∧ ∀ x, f xᶜ ≤ (f x)ᶜ := by
+  rw [soundFor_antiAdd_iff]
+  exact and_congr_right fun hf ↦
+    ⟨fun h x ↦ (h (isCompl_compl (x := x)).codisjoint).le_compl_left,
+      fun h x _ hxy ↦ disjoint_compl_right.mono_right
+        ((hf (codisjoint_iff_compl_le_right.1 hxy)).trans (h x))⟩
+
+/-- The anti-multiplicative row is sound for the antitone maps that take complements to
+codisjoint elements. -/
+theorem soundFor_antiMult_iff_compl_map_le :
+    SoundFor .antiMult f ↔ Antitone f ∧ ∀ x, (f x)ᶜ ≤ f xᶜ := by
+  rw [soundFor_antiMult_iff]
+  exact and_congr_right fun hf ↦
+    ⟨fun h x ↦ codisjoint_iff_compl_le_right.1 (h (disjoint_compl_right (a := x))),
+      fun h x _ hxy ↦ codisjoint_iff_compl_le_right.2 ((h x).trans (hf hxy.le_compl_left))⟩
+
+/-- The `⊖` row is sound for the antitone maps that commute with complementation. -/
+theorem soundFor_antiAddMult_iff_map_compl :
+    SoundFor .antiAddMult f ↔ Antitone f ∧ ∀ x, f xᶜ = (f x)ᶜ := by
+  have : SoundFor .antiAddMult f ↔ SoundFor .antiAdd f ∧ SoundFor .antiMult f := by
+    rw [soundFor_antiAddMult_iff, soundFor_antiAdd_iff, soundFor_antiMult_iff]
+    exact ⟨fun ⟨ha, hd, hc⟩ ↦ ⟨⟨ha, hc⟩, ha, hd⟩, fun ⟨⟨ha, hc⟩, _, hd⟩ ↦ ⟨ha, hd, hc⟩⟩
+  rw [this, soundFor_antiAdd_iff_map_compl_le, soundFor_antiMult_iff_compl_map_le]
+  exact ⟨fun h ↦ ⟨h.1.1, fun x ↦ le_antisymm (h.1.2 x) (h.2.2 x)⟩,
+    fun h ↦ ⟨⟨h.1, fun x ↦ (h.2 x).le⟩, h.1, fun x ↦ (h.2 x).ge⟩⟩
+
+end BooleanAlgebra
 
 end ProjectivitySignature
 
