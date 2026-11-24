@@ -32,7 +32,7 @@ def ex_6_15 : Datum :=
     contrasts := []
     readings := []
     spans := [⟨1, 1, "standard", some "dan"⟩]
-    paperFeatures := [("comparativeType", "separative")] }
+    paperFeatures := [("comparativeClass", "separative")] }
 
 def ex_6_24a : Datum :=
   { id := "stassen1985_6_24a"
@@ -49,7 +49,7 @@ def ex_6_24a : Datum :=
     contrasts := []
     readings := []
     spans := [⟨1, 1, "standard", some "se"⟩]
-    paperFeatures := [("comparativeType", "separative")] }
+    paperFeatures := [("comparativeClass", "separative")] }
 
 def ex_6_26a : Datum :=
   { id := "stassen1985_6_26a"
@@ -66,7 +66,7 @@ def ex_6_26a : Datum :=
     contrasts := []
     readings := []
     spans := [⟨3, 1, "standard", some "yori"⟩]
-    paperFeatures := [("comparativeType", "separative")] }
+    paperFeatures := [("comparativeClass", "separative")] }
 
 def ex_6_32 : Datum :=
   { id := "stassen1985_6_32"
@@ -83,7 +83,7 @@ def ex_6_32 : Datum :=
     contrasts := []
     readings := []
     spans := [⟨0, 1, "standard", none⟩]
-    paperFeatures := [("comparativeType", "separative")] }
+    paperFeatures := [("comparativeClass", "separative")] }
 
 def ex_6_42 : Datum :=
   { id := "stassen1985_6_42"
@@ -100,7 +100,7 @@ def ex_6_42 : Datum :=
     contrasts := []
     readings := []
     spans := [⟨3, 1, "standard", some "min"⟩]
-    paperFeatures := [("comparativeType", "separative")] }
+    paperFeatures := [("comparativeClass", "separative")] }
 
 def ex_8_12b : Datum :=
   { id := "stassen1985_8_12b"
@@ -117,7 +117,7 @@ def ex_8_12b : Datum :=
     contrasts := []
     readings := []
     spans := [⟨4, 1, "standard", some "bi"⟩]
-    paperFeatures := [("comparativeType", "exceed")] }
+    paperFeatures := [("comparativeClass", "exceed")] }
 
 def ex_8_16b : Datum :=
   { id := "stassen1985_8_16b"
@@ -134,7 +134,7 @@ def ex_8_16b : Datum :=
     contrasts := []
     readings := []
     spans := [⟨3, 1, "standard", some "ju"⟩]
-    paperFeatures := [("comparativeType", "exceed")] }
+    paperFeatures := [("comparativeClass", "exceed")] }
 
 def ex_8_24 : Datum :=
   { id := "stassen1985_8_24"
@@ -151,7 +151,7 @@ def ex_8_24 : Datum :=
     contrasts := []
     readings := []
     spans := [⟨4, 1, "standard", some "kushinda"⟩]
-    paperFeatures := [("comparativeType", "exceed")] }
+    paperFeatures := [("comparativeClass", "exceed")] }
 
 def ex_8_26 : Datum :=
   { id := "stassen1985_8_26"
@@ -185,7 +185,7 @@ def ex_9_35 : Datum :=
     contrasts := []
     readings := []
     spans := [⟨2, 1, "standard", some "chem"⟩]
-    paperFeatures := [("comparativeType", "particle")] }
+    paperFeatures := [("comparativeClass", "particle")] }
 
 def ex_9_36 : Datum :=
   { id := "stassen1985_9_36"
@@ -202,7 +202,7 @@ def ex_9_36 : Datum :=
     contrasts := []
     readings := []
     spans := [⟨4, 1, "standard", some "que"⟩]
-    paperFeatures := [("comparativeType", "particle")] }
+    paperFeatures := [("comparativeClass", "particle")] }
 
 def ex_9_37 : Datum :=
   { id := "stassen1985_9_37"
@@ -219,7 +219,7 @@ def ex_9_37 : Datum :=
     contrasts := []
     readings := []
     spans := [⟨3, 1, "standard", some "kuin"⟩]
-    paperFeatures := [("comparativeType", "particle")] }
+    paperFeatures := [("comparativeClass", "particle")] }
 
 def ex_10_5a : Datum :=
   { id := "stassen1985_10_5a"
@@ -236,7 +236,7 @@ def ex_10_5a : Datum :=
     contrasts := []
     readings := []
     spans := [⟨4, 0, "standard", some "juxtaposition"⟩]
-    paperFeatures := [("comparativeType", "conjoined")] }
+    paperFeatures := [("comparativeClass", "conjoined")] }
 
 def ex_10_54a : Datum :=
   { id := "stassen1985_10_54a"
@@ -253,12 +253,12 @@ def ex_10_54a : Datum :=
     contrasts := []
     readings := []
     spans := [⟨3, 1, "standard", some "partitive"⟩]
-    paperFeatures := [("comparativeType", "separative")] }
+    paperFeatures := [("comparativeClass", "separative")] }
 
 def all : List Datum := [ex_6_15, ex_6_24a, ex_6_26a, ex_6_32, ex_6_42, ex_8_12b, ex_8_16b, ex_8_24, ex_8_26, ex_9_35, ex_9_36, ex_9_37, ex_10_5a, ex_10_54a]
 
-/-- The six types of comparative construction, by the encoding of the standard. -/
-inductive ComparativeType where
+/-- The class of comparative construction the book lists the example under. -/
+inductive ComparativeClass where
   /-- separative: the standard is in a source phrase -/
   | separative
   /-- allative: the standard is in a goal phrase -/
@@ -273,9 +273,9 @@ inductive ComparativeType where
   | particle
   deriving DecidableEq, Repr, Fintype
 
-/-- The value a row records under `comparativeType`. -/
-def comparativeType (e : Datum) : Option ComparativeType :=
-  e.parse? "comparativeType" [("separative", .separative), ("allative", .allative), ("locative", .locative),
+/-- The value a row records under `comparativeClass`. -/
+def comparativeClass (e : Datum) : Option ComparativeClass :=
+  e.parse? "comparativeClass" [("separative", .separative), ("allative", .allative), ("locative", .locative),
     ("exceed", .exceed), ("conjoined", .conjoined), ("particle", .particle)]
 
 /-- The labels of the spans the rows mark. -/
@@ -365,8 +365,8 @@ def Example.datum : Example → Datum
 theorem Example.map_datum_all :
     Example.all.map Example.datum = _root_.Stassen1985.Examples.all := rfl
 
-/-- The value the example records under `comparativeType`. -/
-def Example.comparativeType : Example → Option ComparativeType
+/-- The value the example records under `comparativeClass`. -/
+def Example.comparativeClass : Example → Option ComparativeClass
   | .ex_6_15 => some .separative
   | .ex_6_24a => some .separative
   | .ex_6_26a => some .separative
@@ -382,8 +382,8 @@ def Example.comparativeType : Example → Option ComparativeType
   | .ex_10_5a => some .conjoined
   | .ex_10_54a => some .separative
 
-theorem Example.comparativeType_datum :
-    ∀ x : Example, _root_.Stassen1985.Examples.comparativeType x.datum = x.comparativeType := by
+theorem Example.comparativeClass_datum :
+    ∀ x : Example, _root_.Stassen1985.Examples.comparativeClass x.datum = x.comparativeClass := by
   decide +kernel
 
 /-- The lexemes the spans of the example name, each with the span's label, in order. -/

@@ -1,10 +1,10 @@
 {
   "features": [
     {
-      "key": "comparativeType",
-      "lean": "comparativeType",
-      "type": "ComparativeType",
-      "doc": "The six types of comparative construction, by the encoding of the standard.",
+      "key": "comparativeClass",
+      "lean": "comparativeClass",
+      "type": "ComparativeClass",
+      "doc": "The class of comparative construction the book lists the example under.",
       "levels": [
         {
           "name": "separative",
@@ -146,7 +146,7 @@
         {"start": 1, "label": "standard", "lexeme": "dan"}
       ],
       "paperFeatures": [
-        ["comparativeType", "separative"]
+        ["comparativeClass", "separative"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -169,7 +169,7 @@
         {"start": 1, "label": "standard", "lexeme": "se"}
       ],
       "paperFeatures": [
-        ["comparativeType", "separative"]
+        ["comparativeClass", "separative"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -193,7 +193,7 @@
         {"start": 3, "label": "standard", "lexeme": "yori"}
       ],
       "paperFeatures": [
-        ["comparativeType", "separative"]
+        ["comparativeClass", "separative"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -216,7 +216,7 @@
         {"start": 0, "label": "standard"}
       ],
       "paperFeatures": [
-        ["comparativeType", "separative"]
+        ["comparativeClass", "separative"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -240,7 +240,7 @@
         {"start": 3, "label": "standard", "lexeme": "min"}
       ],
       "paperFeatures": [
-        ["comparativeType", "separative"]
+        ["comparativeClass", "separative"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -264,7 +264,7 @@
         {"start": 4, "label": "standard", "lexeme": "bi"}
       ],
       "paperFeatures": [
-        ["comparativeType", "exceed"]
+        ["comparativeClass", "exceed"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -287,7 +287,7 @@
         {"start": 3, "label": "standard", "lexeme": "ju"}
       ],
       "paperFeatures": [
-        ["comparativeType", "exceed"]
+        ["comparativeClass", "exceed"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -311,7 +311,7 @@
         {"start": 4, "label": "standard", "lexeme": "kushinda"}
       ],
       "paperFeatures": [
-        ["comparativeType", "exceed"]
+        ["comparativeClass", "exceed"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -356,7 +356,7 @@
         {"start": 2, "label": "standard", "lexeme": "chem"}
       ],
       "paperFeatures": [
-        ["comparativeType", "particle"]
+        ["comparativeClass", "particle"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -380,7 +380,7 @@
         {"start": 4, "label": "standard", "lexeme": "que"}
       ],
       "paperFeatures": [
-        ["comparativeType", "particle"]
+        ["comparativeClass", "particle"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -403,7 +403,7 @@
         {"start": 3, "label": "standard", "lexeme": "kuin"}
       ],
       "paperFeatures": [
-        ["comparativeType", "particle"]
+        ["comparativeClass", "particle"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -427,7 +427,7 @@
         {"start": 4, "length": 0, "label": "standard", "lexeme": "juxtaposition"}
       ],
       "paperFeatures": [
-        ["comparativeType", "conjoined"]
+        ["comparativeClass", "conjoined"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -451,7 +451,7 @@
         {"start": 3, "label": "standard", "lexeme": "partitive"}
       ],
       "paperFeatures": [
-        ["comparativeType", "separative"]
+        ["comparativeClass", "separative"]
       ],
       "comment": "The book classes the construction as the secondary separative comparative of Finnish.",
       "verified": "page-image"
