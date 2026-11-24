@@ -511,6 +511,15 @@ theorem mem_support_impl_iff_of_truthConditional [DecidableRel M.val] {α : Form
     fun h t hts hαt ↦ (support M ψ).lower ?_ h⟩
   exact fun w hw ↦ Finset.mem_filter.2 ⟨hts hw, (hα t).1 hαt w hw⟩
 
+/-- For a statement `α`, `α → ψ ⩒ χ` and `(α → ψ) ⩒ (α → χ)` have the same support, the split
+equivalence (Corollary 3.7.14). -/
+theorem support_impl_inqDisj_of_truthConditional {α : Formula Atom} (hα : TruthConditional M α)
+    (χ : Formula Atom) :
+    support M (.impl α (.inqDisj ψ χ)) = support M (.inqDisj (.impl α ψ) (.impl α χ)) := by
+  classical
+  exact SetLike.ext fun s ↦ by
+    simp only [mem_support_inqDisj, fun θ ↦ mem_support_impl_iff_of_truthConditional M θ s hα]
+
 /-! ### Resolutions (§3.6) -/
 
 theorem mem_support_conjList :
