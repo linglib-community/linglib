@@ -11,17 +11,23 @@ public import Linglib.Logic.Natural.Projection
 /-!
 # Projectivity of the determiners
 
+The projectivity of a quantifier is what it does to a relation between two scopes: whether it
+keeps an inclusion or reverses it, and whether it takes disjoint, exhaustive or complementary
+scopes to truth values that are so related. Monotonicity is the inclusion part. The rest is the
+position of the quantifier relative to its dual: a monotone quantifier takes disjoint scopes to
+incompatible truth values exactly when it lies below its dual, and exhaustive scopes to exhaustive
+truth values exactly when it lies above it. Natural logic names the classes of maps by
+projectivity signatures and computes the signature of a composite from those of its parts.
+
 This file places the argument positions of *every*, *some* and *no* in the function classes of
 natural logic. A determiner is a map of its scope for each restrictor and a map of its restrictor
-for each scope, and each of these maps has a projectivity signature: *some* is additive in both
-arguments, *no* is anti-additive in both, and *every* is anti-additive in its restrictor and
-multiplicative in its scope. The unit condition of each class holds when the other argument is not
-trivial, a nonempty restrictor or a scope that is neither empty nor everything.
-
-A row of the projection table is sound for more quantifiers than its function class contains: it
-is sound for a monotone quantifier exactly when the quantifier compares with its dual as the row
-says. *Most* lies below its dual, so the multiplicative row is sound for it, though it does not
-preserve intersections.
+for each scope: *some* is additive in both arguments, *no* is anti-additive in both, and *every*
+is anti-additive in its restrictor and multiplicative in its scope, so that *not every* is additive
+and anti-multiplicative by composition with negation. The unit condition of each class holds when
+the other argument is not trivial, a nonempty restrictor or a scope that is neither empty nor
+everything. The row of a function class is sound for more quantifiers than the class contains:
+*most* lies below its dual, so the multiplicative row is sound for it, though it does not preserve
+intersections.
 
 ## Main results
 
