@@ -1,0 +1,914 @@
+{
+  "description": "The forms with nasal harmony that Walker (2000) gives for Sundanese, the Johore dialect of Malay and the Kolokuma dialect of Ijo, examples (3) to (5), as printed: a tilde marks a nasalized segment, the glottals included. The forms of Scottish Gaelic and Tuyuca are not entered. The labial-velar stop of (5i), printed gb, is one segment.",
+  "Types": {
+    "Language": [
+      {
+        "Value": "Sundanese",
+        "Lean": "sundanese",
+        "Description": "Sundanese, where nasality spreads rightward from a nasal stop through vowels and glottals"
+      },
+      {
+        "Value": "Malay (Johore dialect)",
+        "Lean": "malay",
+        "Description": "the Johore dialect of Malay, where it spreads rightward from a nasal stop through glides as well"
+      },
+      {
+        "Value": "Ijo (Kolokuma dialect)",
+        "Lean": "ijo",
+        "Description": "the Kolokuma dialect of Ijo, where it spreads leftward from a nasal consonant or vowel, through liquids as well"
+      }
+    ]
+  },
+  "ParameterTable": [
+    {
+      "ID": "toWet",
+      "Name": "to wet",
+      "Description": ""
+    },
+    {
+      "ID": "how",
+      "Name": "how?",
+      "Description": ""
+    },
+    {
+      "ID": "toBeRich",
+      "Name": "to be rich",
+      "Description": ""
+    },
+    {
+      "ID": "toLove",
+      "Name": "to love",
+      "Description": ""
+    },
+    {
+      "ID": "toSift",
+      "Name": "to sift",
+      "Description": ""
+    },
+    {
+      "ID": "toSpread",
+      "Name": "to spread",
+      "Description": ""
+    },
+    {
+      "ID": "toStare",
+      "Name": "to stare",
+      "Description": ""
+    },
+    {
+      "ID": "toHalve",
+      "Name": "to halve",
+      "Description": ""
+    },
+    {
+      "ID": "toPursue",
+      "Name": "to pursue",
+      "Description": ""
+    },
+    {
+      "ID": "toArrange",
+      "Name": "to arrange",
+      "Description": ""
+    },
+    {
+      "ID": "toDrink",
+      "Name": "to drink",
+      "Description": ""
+    },
+    {
+      "ID": "toRise",
+      "Name": "to rise",
+      "Description": ""
+    },
+    {
+      "ID": "pardon",
+      "Name": "pardon",
+      "Description": ""
+    },
+    {
+      "ID": "centralFocus",
+      "Name": "central focus",
+      "Description": ""
+    },
+    {
+      "ID": "stalk",
+      "Name": "stalk (palm)",
+      "Description": ""
+    },
+    {
+      "ID": "toCapture",
+      "Name": "to capture (active)",
+      "Description": ""
+    },
+    {
+      "ID": "toCauseToCry",
+      "Name": "to cause to cry",
+      "Description": ""
+    },
+    {
+      "ID": "supervision",
+      "Name": "supervision",
+      "Description": ""
+    },
+    {
+      "ID": "toEat",
+      "Name": "to eat",
+      "Description": ""
+    },
+    {
+      "ID": "breath",
+      "Name": "breath",
+      "Description": ""
+    },
+    {
+      "ID": "wrestle",
+      "Name": "wrestle",
+      "Description": ""
+    },
+    {
+      "ID": "prepareSugarcane",
+      "Name": "prepare sugarcane",
+      "Description": ""
+    },
+    {
+      "ID": "shake",
+      "Name": "shake",
+      "Description": ""
+    },
+    {
+      "ID": "five",
+      "Name": "five",
+      "Description": ""
+    },
+    {
+      "ID": "gills",
+      "Name": "gills",
+      "Description": ""
+    },
+    {
+      "ID": "jug",
+      "Name": "jug",
+      "Description": ""
+    },
+    {
+      "ID": "loft",
+      "Name": "loft",
+      "Description": ""
+    },
+    {
+      "ID": "mosquito",
+      "Name": "mosquito",
+      "Description": ""
+    },
+    {
+      "ID": "light",
+      "Name": "light (a lamp)",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "toWet",
+      "Language_ID": "sund1252",
+      "Parameter_ID": "toWet"
+    },
+    {
+      "ID": "how",
+      "Language_ID": "sund1252",
+      "Parameter_ID": "how"
+    },
+    {
+      "ID": "toBeRich",
+      "Language_ID": "sund1252",
+      "Parameter_ID": "toBeRich"
+    },
+    {
+      "ID": "toLove",
+      "Language_ID": "sund1252",
+      "Parameter_ID": "toLove"
+    },
+    {
+      "ID": "toSift",
+      "Language_ID": "sund1252",
+      "Parameter_ID": "toSift"
+    },
+    {
+      "ID": "toSpread",
+      "Language_ID": "sund1252",
+      "Parameter_ID": "toSpread"
+    },
+    {
+      "ID": "toStare",
+      "Language_ID": "sund1252",
+      "Parameter_ID": "toStare"
+    },
+    {
+      "ID": "toHalve",
+      "Language_ID": "sund1252",
+      "Parameter_ID": "toHalve"
+    },
+    {
+      "ID": "toPursue",
+      "Language_ID": "sund1252",
+      "Parameter_ID": "toPursue"
+    },
+    {
+      "ID": "toArrange",
+      "Language_ID": "sund1252",
+      "Parameter_ID": "toArrange"
+    },
+    {
+      "ID": "toDrink",
+      "Language_ID": "stan1306",
+      "Parameter_ID": "toDrink",
+      "Variety": "Johore"
+    },
+    {
+      "ID": "toRise",
+      "Language_ID": "stan1306",
+      "Parameter_ID": "toRise",
+      "Variety": "Johore"
+    },
+    {
+      "ID": "pardon",
+      "Language_ID": "stan1306",
+      "Parameter_ID": "pardon",
+      "Variety": "Johore"
+    },
+    {
+      "ID": "centralFocus",
+      "Language_ID": "stan1306",
+      "Parameter_ID": "centralFocus",
+      "Variety": "Johore"
+    },
+    {
+      "ID": "stalk",
+      "Language_ID": "stan1306",
+      "Parameter_ID": "stalk",
+      "Variety": "Johore"
+    },
+    {
+      "ID": "toCapture",
+      "Language_ID": "stan1306",
+      "Parameter_ID": "toCapture",
+      "Variety": "Johore"
+    },
+    {
+      "ID": "toCauseToCry",
+      "Language_ID": "stan1306",
+      "Parameter_ID": "toCauseToCry",
+      "Variety": "Johore"
+    },
+    {
+      "ID": "supervision",
+      "Language_ID": "stan1306",
+      "Parameter_ID": "supervision",
+      "Variety": "Johore"
+    },
+    {
+      "ID": "toEat",
+      "Language_ID": "stan1306",
+      "Parameter_ID": "toEat",
+      "Variety": "Johore"
+    },
+    {
+      "ID": "breath",
+      "Language_ID": "izon1238",
+      "Parameter_ID": "breath",
+      "Variety": "Kolokuma"
+    },
+    {
+      "ID": "wrestle",
+      "Language_ID": "izon1238",
+      "Parameter_ID": "wrestle",
+      "Variety": "Kolokuma"
+    },
+    {
+      "ID": "prepareSugarcane",
+      "Language_ID": "izon1238",
+      "Parameter_ID": "prepareSugarcane",
+      "Variety": "Kolokuma"
+    },
+    {
+      "ID": "shake",
+      "Language_ID": "izon1238",
+      "Parameter_ID": "shake",
+      "Variety": "Kolokuma"
+    },
+    {
+      "ID": "five",
+      "Language_ID": "izon1238",
+      "Parameter_ID": "five",
+      "Variety": "Kolokuma"
+    },
+    {
+      "ID": "gills",
+      "Language_ID": "izon1238",
+      "Parameter_ID": "gills",
+      "Variety": "Kolokuma"
+    },
+    {
+      "ID": "jug",
+      "Language_ID": "izon1238",
+      "Parameter_ID": "jug",
+      "Variety": "Kolokuma"
+    },
+    {
+      "ID": "loft",
+      "Language_ID": "izon1238",
+      "Parameter_ID": "loft",
+      "Variety": "Kolokuma"
+    },
+    {
+      "ID": "mosquito",
+      "Language_ID": "izon1238",
+      "Parameter_ID": "mosquito",
+      "Variety": "Kolokuma"
+    },
+    {
+      "ID": "light",
+      "Language_ID": "izon1238",
+      "Parameter_ID": "light",
+      "Variety": "Kolokuma"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "walker2000_toWet",
+      "Lexeme_ID": "toWet",
+      "Form": "ɲãĩãn",
+      "Segments": [
+        "ɲ",
+        "ã",
+        "ĩ",
+        "ã",
+        "n"
+      ],
+      "Source": [
+        "walker-2000[(3a)]"
+      ]
+    },
+    {
+      "ID": "walker2000_how",
+      "Lexeme_ID": "how",
+      "Form": "kumãh̃ã",
+      "Segments": [
+        "k",
+        "u",
+        "m",
+        "ã",
+        "h̃",
+        "ã"
+      ],
+      "Source": [
+        "walker-2000[(3b)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toBeRich",
+      "Lexeme_ID": "toBeRich",
+      "Form": "bɤŋh̃ãr",
+      "Segments": [
+        "b",
+        "ɤ",
+        "ŋ",
+        "h̃",
+        "ã",
+        "r"
+      ],
+      "Source": [
+        "walker-2000[(3c)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toLove",
+      "Lexeme_ID": "toLove",
+      "Form": "mĩʔ̃ãsih",
+      "Segments": [
+        "m",
+        "ĩ",
+        "ʔ̃",
+        "ã",
+        "s",
+        "i",
+        "h"
+      ],
+      "Source": [
+        "walker-2000[(3d)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toSift",
+      "Lexeme_ID": "toSift",
+      "Form": "ŋãjak",
+      "Segments": [
+        "ŋ",
+        "ã",
+        "j",
+        "a",
+        "k"
+      ],
+      "Source": [
+        "walker-2000[(3e)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toSpread",
+      "Lexeme_ID": "toSpread",
+      "Form": "mãwur",
+      "Segments": [
+        "m",
+        "ã",
+        "w",
+        "u",
+        "r"
+      ],
+      "Source": [
+        "walker-2000[(3f)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toStare",
+      "Lexeme_ID": "toStare",
+      "Form": "mõlohok",
+      "Segments": [
+        "m",
+        "õ",
+        "l",
+        "o",
+        "h",
+        "o",
+        "k"
+      ],
+      "Source": [
+        "walker-2000[(3g)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toHalve",
+      "Lexeme_ID": "toHalve",
+      "Form": "mãro",
+      "Segments": [
+        "m",
+        "ã",
+        "r",
+        "o"
+      ],
+      "Source": [
+        "walker-2000[(3h)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toPursue",
+      "Lexeme_ID": "toPursue",
+      "Form": "ŋũdag",
+      "Segments": [
+        "ŋ",
+        "ũ",
+        "d",
+        "a",
+        "g"
+      ],
+      "Source": [
+        "walker-2000[(3i)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toArrange",
+      "Lexeme_ID": "toArrange",
+      "Form": "ŋãtur",
+      "Segments": [
+        "ŋ",
+        "ã",
+        "t",
+        "u",
+        "r"
+      ],
+      "Source": [
+        "walker-2000[(3j)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toDrink",
+      "Lexeme_ID": "toDrink",
+      "Form": "mĩnõm",
+      "Segments": [
+        "m",
+        "ĩ",
+        "n",
+        "õ",
+        "m"
+      ],
+      "Source": [
+        "walker-2000[(4a)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toRise",
+      "Lexeme_ID": "toRise",
+      "Form": "baŋõn",
+      "Segments": [
+        "b",
+        "a",
+        "ŋ",
+        "õ",
+        "n"
+      ],
+      "Source": [
+        "walker-2000[(4b)]"
+      ]
+    },
+    {
+      "ID": "walker2000_pardon",
+      "Lexeme_ID": "pardon",
+      "Form": "mãʔ̃ãp",
+      "Segments": [
+        "m",
+        "ã",
+        "ʔ̃",
+        "ã",
+        "p"
+      ],
+      "Source": [
+        "walker-2000[(4c)]"
+      ]
+    },
+    {
+      "ID": "walker2000_centralFocus",
+      "Lexeme_ID": "centralFocus",
+      "Form": "pənə̃ŋãh̃ãn",
+      "Segments": [
+        "p",
+        "ə",
+        "n",
+        "ə̃",
+        "ŋ",
+        "ã",
+        "h̃",
+        "ã",
+        "n"
+      ],
+      "Source": [
+        "walker-2000[(4d)]"
+      ]
+    },
+    {
+      "ID": "walker2000_stalk",
+      "Lexeme_ID": "stalk",
+      "Form": "mãj̃ãŋ",
+      "Segments": [
+        "m",
+        "ã",
+        "j̃",
+        "ã",
+        "ŋ"
+      ],
+      "Source": [
+        "walker-2000[(4e)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toCapture",
+      "Lexeme_ID": "toCapture",
+      "Form": "mə̃nãw̃ãn",
+      "Segments": [
+        "m",
+        "ə̃",
+        "n",
+        "ã",
+        "w̃",
+        "ã",
+        "n"
+      ],
+      "Source": [
+        "walker-2000[(4f)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toCauseToCry",
+      "Lexeme_ID": "toCauseToCry",
+      "Form": "mə̃ratappi",
+      "Segments": [
+        "m",
+        "ə̃",
+        "r",
+        "a",
+        "t",
+        "a",
+        "p",
+        "p",
+        "i"
+      ],
+      "Source": [
+        "walker-2000[(4g)]"
+      ]
+    },
+    {
+      "ID": "walker2000_supervision",
+      "Lexeme_ID": "supervision",
+      "Form": "pəŋãw̃ãsan",
+      "Segments": [
+        "p",
+        "ə",
+        "ŋ",
+        "ã",
+        "w̃",
+        "ã",
+        "s",
+        "a",
+        "n"
+      ],
+      "Source": [
+        "walker-2000[(4h)]"
+      ]
+    },
+    {
+      "ID": "walker2000_toEat",
+      "Lexeme_ID": "toEat",
+      "Form": "mãkan",
+      "Segments": [
+        "m",
+        "ã",
+        "k",
+        "a",
+        "n"
+      ],
+      "Source": [
+        "walker-2000[(4i)]"
+      ]
+    },
+    {
+      "ID": "walker2000_breath",
+      "Lexeme_ID": "breath",
+      "Form": "ʊ̃mba",
+      "Segments": [
+        "ʊ̃",
+        "m",
+        "b",
+        "a"
+      ],
+      "Source": [
+        "walker-2000[(5a)]"
+      ]
+    },
+    {
+      "ID": "walker2000_wrestle",
+      "Lexeme_ID": "wrestle",
+      "Form": "ãnda",
+      "Segments": [
+        "ã",
+        "n",
+        "d",
+        "a"
+      ],
+      "Source": [
+        "walker-2000[(5b)]"
+      ]
+    },
+    {
+      "ID": "walker2000_prepareSugarcane",
+      "Lexeme_ID": "prepareSugarcane",
+      "Form": "w̃ãĩ",
+      "Segments": [
+        "w̃",
+        "ã",
+        "ĩ"
+      ],
+      "Source": [
+        "walker-2000[(5c)]"
+      ]
+    },
+    {
+      "ID": "walker2000_shake",
+      "Lexeme_ID": "shake",
+      "Form": "j̃ãɾ̃ĩ",
+      "Segments": [
+        "j̃",
+        "ã",
+        "ɾ̃",
+        "ĩ"
+      ],
+      "Source": [
+        "walker-2000[(5d)]"
+      ]
+    },
+    {
+      "ID": "walker2000_five",
+      "Lexeme_ID": "five",
+      "Form": "sɔ̃ɾ̃ɔ̃",
+      "Segments": [
+        "s",
+        "ɔ̃",
+        "ɾ̃",
+        "ɔ̃"
+      ],
+      "Source": [
+        "walker-2000[(5e)]"
+      ]
+    },
+    {
+      "ID": "walker2000_gills",
+      "Lexeme_ID": "gills",
+      "Form": "sãnlo",
+      "Segments": [
+        "s",
+        "ã",
+        "n",
+        "l",
+        "o"
+      ],
+      "Source": [
+        "walker-2000[(5f)]"
+      ]
+    },
+    {
+      "ID": "walker2000_jug",
+      "Lexeme_ID": "jug",
+      "Form": "izõŋgo",
+      "Segments": [
+        "i",
+        "z",
+        "õ",
+        "ŋ",
+        "g",
+        "o"
+      ],
+      "Source": [
+        "walker-2000[(5g)]"
+      ]
+    },
+    {
+      "ID": "walker2000_loft",
+      "Lexeme_ID": "loft",
+      "Form": "abãmu",
+      "Segments": [
+        "a",
+        "b",
+        "ã",
+        "m",
+        "u"
+      ],
+      "Source": [
+        "walker-2000[(5h)]"
+      ]
+    },
+    {
+      "ID": "walker2000_mosquito",
+      "Lexeme_ID": "mosquito",
+      "Form": "otõŋgbolo",
+      "Segments": [
+        "o",
+        "t",
+        "õ",
+        "ŋ",
+        "gb",
+        "o",
+        "l",
+        "o"
+      ],
+      "Source": [
+        "walker-2000[(5i)]"
+      ]
+    },
+    {
+      "ID": "walker2000_light",
+      "Lexeme_ID": "light",
+      "Form": "tɔ̃nĩ",
+      "Segments": [
+        "t",
+        "ɔ̃",
+        "n",
+        "ĩ"
+      ],
+      "Source": [
+        "walker-2000[(5j)]"
+      ]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Language",
+      "Lean": "language",
+      "Type": "Language",
+      "Description": "the language of the form"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "walker2000_toWet",
+      "Language": "Sundanese"
+    },
+    {
+      "Form_ID": "walker2000_how",
+      "Language": "Sundanese"
+    },
+    {
+      "Form_ID": "walker2000_toBeRich",
+      "Language": "Sundanese"
+    },
+    {
+      "Form_ID": "walker2000_toLove",
+      "Language": "Sundanese"
+    },
+    {
+      "Form_ID": "walker2000_toSift",
+      "Language": "Sundanese"
+    },
+    {
+      "Form_ID": "walker2000_toSpread",
+      "Language": "Sundanese"
+    },
+    {
+      "Form_ID": "walker2000_toStare",
+      "Language": "Sundanese"
+    },
+    {
+      "Form_ID": "walker2000_toHalve",
+      "Language": "Sundanese"
+    },
+    {
+      "Form_ID": "walker2000_toPursue",
+      "Language": "Sundanese"
+    },
+    {
+      "Form_ID": "walker2000_toArrange",
+      "Language": "Sundanese"
+    },
+    {
+      "Form_ID": "walker2000_toDrink",
+      "Language": "Malay (Johore dialect)"
+    },
+    {
+      "Form_ID": "walker2000_toRise",
+      "Language": "Malay (Johore dialect)"
+    },
+    {
+      "Form_ID": "walker2000_pardon",
+      "Language": "Malay (Johore dialect)"
+    },
+    {
+      "Form_ID": "walker2000_centralFocus",
+      "Language": "Malay (Johore dialect)"
+    },
+    {
+      "Form_ID": "walker2000_stalk",
+      "Language": "Malay (Johore dialect)"
+    },
+    {
+      "Form_ID": "walker2000_toCapture",
+      "Language": "Malay (Johore dialect)"
+    },
+    {
+      "Form_ID": "walker2000_toCauseToCry",
+      "Language": "Malay (Johore dialect)"
+    },
+    {
+      "Form_ID": "walker2000_supervision",
+      "Language": "Malay (Johore dialect)"
+    },
+    {
+      "Form_ID": "walker2000_toEat",
+      "Language": "Malay (Johore dialect)"
+    },
+    {
+      "Form_ID": "walker2000_breath",
+      "Language": "Ijo (Kolokuma dialect)"
+    },
+    {
+      "Form_ID": "walker2000_wrestle",
+      "Language": "Ijo (Kolokuma dialect)"
+    },
+    {
+      "Form_ID": "walker2000_prepareSugarcane",
+      "Language": "Ijo (Kolokuma dialect)"
+    },
+    {
+      "Form_ID": "walker2000_shake",
+      "Language": "Ijo (Kolokuma dialect)"
+    },
+    {
+      "Form_ID": "walker2000_five",
+      "Language": "Ijo (Kolokuma dialect)"
+    },
+    {
+      "Form_ID": "walker2000_gills",
+      "Language": "Ijo (Kolokuma dialect)"
+    },
+    {
+      "Form_ID": "walker2000_jug",
+      "Language": "Ijo (Kolokuma dialect)"
+    },
+    {
+      "Form_ID": "walker2000_loft",
+      "Language": "Ijo (Kolokuma dialect)"
+    },
+    {
+      "Form_ID": "walker2000_mosquito",
+      "Language": "Ijo (Kolokuma dialect)"
+    },
+    {
+      "Form_ID": "walker2000_light",
+      "Language": "Ijo (Kolokuma dialect)"
+    }
+  ]
+}

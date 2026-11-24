@@ -47,6 +47,8 @@ entailing.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace VonFintel1999
 
 open Presupposition Modality Conditional Desire.BestWorlds
@@ -91,12 +93,12 @@ theorem not_gladBetter_of_want :
       (w : Fin 3), dox w ⊆ p ∧ want rel g p w = .true ∧ gladBetter dox rel g p w = .false := by
   refine ⟨fun _ ↦ {0}, fun _ ↦ Set.univ, fun _ ↦ {{1}}, {0, 1}, 0, by simp, ?_, ?_⟩
   · refine want_eq_true_iff.2 ⟨⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
-    simp only [Want, Set.subset_def, Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
+    simp only [Want, Set.subset_def, Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_univ, Set.mem_insert_iff]
     decide
   · simp only [gladBetter, Trivalent.condEvent_eq_false_iff]
     refine ⟨by simpa [glad] using ⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
-    simp only [Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
+    simp only [Better, Preorder.ofLowerSets_lt_iff, Preorder.ofLowerSets_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff]
     decide
 
@@ -122,12 +124,12 @@ theorem not_isStrawsonDE_regretBetter :
     have := h (p := {0}) (q := {0, 1}) (by simp) 0 (by
         simp only [regretBetter, Trivalent.condEvent_eq_true_iff]
         refine ⟨by simpa [glad] using ⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
-        simp only [Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
+        simp only [Better, Preorder.ofLowerSets_lt_iff, Preorder.ofLowerSets_le_iff,
           Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff]
         decide)
       (by simpa [regretBetter, glad] using ⟨⟨0, by simp⟩, ⟨1, by simp⟩⟩)
-    simp only [regretBetter, Trivalent.condEvent_eq_true_iff, Better, Preorder.ofCriteria_lt_iff,
-      Preorder.ofCriteria_le_iff, Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ,
+    simp only [regretBetter, Trivalent.condEvent_eq_true_iff, Better, Preorder.ofLowerSets_lt_iff,
+      Preorder.ofLowerSets_le_iff, Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ,
       true_and] at this
     exact absurd (this.2 1 (by decide)) (by decide)
 
@@ -173,7 +175,7 @@ theorem not_antitone_humanNecessity_restrict :
     have := @h {1} .univ (Set.subset_univ _) 0
     simp only [humanNecessity_eq_principal_of_finite, Filter.mem_principal, Set.subset_def,
       bestWorlds, Preorder.mem_minimals_iff,
-      Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
+      Background.mem_accessibleWorlds, Background.restrict, Preorder.ofLowerSets_le_iff,
       Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
       Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,
       Set.mem_ofPred_eq] at this

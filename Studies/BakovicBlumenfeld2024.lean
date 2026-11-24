@@ -141,10 +141,19 @@ omit [DecidableEq σ] in
 /-- In the counterfeeding order the fed map underapplies: where `P` makes a string `Q` applies
 to, applying `Q` first changes nothing, and `P` then gives a string in `Q`'s input set. -/
 theorem underapplication (h : Feeds P (· ∈ inputSet Q) x) :
-    P (Q x) = P x ∧ P (Q x) ∈ inputSet Q := by
-  have hQ : Q x = x := h.isFixedPt fun _ ↦ not_not.mp
-  rw [hQ]
-  exact ⟨rfl, (feeds_iff.mp h).2⟩
+    P (Q x) = P x ∧ P (Q x) ∈ inputSet Q :=
+  Feeds.underapplication h
+
+omit [DecidableEq σ] in
+-- (18): the first clause, that `P` changes the string, follows from the other two
+theorem mem_inputSet_of_feeds {α : Type*} [Preorder α] {m : List σ → α} (h : Feeds P m x) :
+    x ∈ inputSet P :=
+  h.not_isFixedPt
+
+omit [DecidableEq σ] in
+-- the order-dependence clause of (9) holds where `P` feeds `Q` in the sense of (18)
+theorem apply_ne_apply (h : Feeds P (· ∈ inputSet Q) x) : P (Q x) ≠ Q (P x) :=
+  Feeds.apply_ne_apply h
 
 end Maps
 
@@ -337,6 +346,12 @@ theorem feeding_bedouin : Feeding vocalization.apply raising.apply [b, a, d, w] 
   · exact notMem_outputSet (by decide) rfl (by decide +kernel)
   · rw [hd]
     exact ⟨[b, a, d, u], by decide +kernel, by decide +kernel⟩
+
+-- (10): the two orders of raising and vocalization differ at *badw*, the first clause of (9)
+theorem order_bedouin :
+    vocalization.apply (raising.apply [b, a, d, w]) ≠
+      raising.apply (vocalization.apply [b, a, d, w]) :=
+  apply_ne_apply (P := vocalization.apply) (Q := raising.apply) (by decide +kernel)
 
 -- (5): in the attested order raising underapplies to *badu*
 theorem underapplication_bedouin :

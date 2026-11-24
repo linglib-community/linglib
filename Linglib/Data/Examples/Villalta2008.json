@@ -1,0 +1,36 @@
+[
+  {
+    "id": "villalta2008_30",
+    "source": {"bibkey": "villalta-2008", "paperLabel": "(30)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Victoria wishes Sofía would bring an apple pie.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Sofía has promised to bring a dessert to the picnic. Victoria believes that there are three possibilities for what she may actually do. She could prepare a chocolate cake, even though Victoria considers that extremely unlikely because it represents far too much work. She might bring an apple pie, which Victoria considers very likely since she can just buy it at the bakery nearby. Or Sofía might bring ice-cream, which seems most likely to Victoria, since she usually has some in her freezer. Victoria prefers the chocolate cake over the apple pie and the apple pie over the ice-cream.",
+    "judgment": "acceptable",
+    "verdict": false,
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Context is (28). Judged false; Heim's conditional semantics predicts it true.",
+    "verified": "page-image"
+  },
+  {
+    "id": "villalta2008_31",
+    "source": {"bibkey": "villalta-2008", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Victoria is disappointed that Sofía brought an apple pie.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Sofía has promised to bring a dessert to the picnic. Victoria believes that there are three possibilities for what she may actually do. She could prepare a chocolate cake, even though Victoria considers that extremely unlikely because it represents far too much work. She might bring an apple pie, which Victoria considers very likely since she can just buy it at the bakery nearby. Or Sofía might bring ice-cream, which seems most likely to Victoria, since she usually has some in her freezer. Victoria prefers the chocolate cake over the apple pie and the apple pie over the ice-cream. Sofía does in fact bring the apple pie to the picnic.",
+    "judgment": "acceptable",
+    "verdict": true,
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Context is (28) with its continuation. Can be true; a conditional semantics predicts it false.",
+    "verified": "page-image"
+  }
+]

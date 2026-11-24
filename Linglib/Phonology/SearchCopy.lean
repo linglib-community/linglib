@@ -27,7 +27,8 @@ only what the search can see.
 Where no write changes a target's visibility (`SearchCopy.PreservesTier`), the run is a
 tier-based output strictly 2-local function (`SearchCopy.toOSLRule_applyOnTier`), and the run of
 a word with one more segment is the run of the word followed by one output
-(`SearchCopy.scan_concat`). Where the targets are invisible, the run is a tier-based input
+(`SearchCopy.scan_concat`), or preceded by one when the rule scans from the right
+(`SearchCopy.apply_cons`). Where the targets are invisible, the run is a tier-based input
 strictly 2-local function (`SearchCopy.toISLRule_applyOnTier`). Over a finite alphabet every
 rule is subsequential in its direction (`SearchCopy.apply_isSubsequential`). A rule whose writes
 add to their targets changes no value that a segment has (`SearchCopy.forall₂_le_scan`).
@@ -223,6 +224,8 @@ def sourceValue (w : List α) : Option Bool := (r.sourceAfter w).bind r.value
 
 @[simp] theorem scan_nil : r.scan [] = [] := rfl
 
+@[simp] theorem apply_nil : r.apply [] = [] := by cases h : r.direction <;> simp [apply, h]
+
 @[simp] theorem length_scan (w : List α) : (r.scan w).length = w.length :=
   r.toMealy.length_run w
 
@@ -294,6 +297,55 @@ theorem scan_concat (hw : r.PreservesTier) (w : List α) (x : α) :
     r.scan (w ++ [x]) = r.scan w ++ [r.emit ((r.scan w).filter (r.tier ·)).getLast? x] := by
   rw [r.getLast?_filter_scan hw, scan_eq_runFrom, Mealy.runFrom_append, ← scan_eq_runFrom]
   rfl
+
+/-- When writes preserve visibility, a rule scanning from the right outputs the first segment of
+a word with the first visible segment of the run of the rest as window. -/
+theorem apply_cons (hd : r.direction = .right) (hw : r.PreservesTier) (s : α) (w : List α) :
+    r.apply (s :: w) = r.emit ((r.apply w).filter (r.tier ·)).head? s :: r.apply w := by
+  simp only [apply, hd, Edge.orient_right, List.reverse_cons]
+  rw [r.scan_concat hw, List.reverse_append, List.reverse_singleton, List.singleton_append,
+    List.filter_reverse, List.head?_reverse]
+
+private theorem runFrom_eq_self_iff (ht : ∀ s, r.tier s) (q : Option α) (w : List α) :
+    r.toMealy.runFrom q w = w ↔
+      (∀ x ∈ w.head?, r.emit q x = x) ∧ w.IsChain fun a b ↦ r.emit (some a) b = b := by
+  induction w generalizing q with
+  | nil => simp
+  | cons x xs ih =>
+    rw [r.toMealy_runFrom_cons_of_tier (ht x), List.cons.injEq, List.isChain_cons]
+    constructor
+    · rintro ⟨hx, h⟩
+      rw [hx] at h
+      exact ⟨by simpa using hx, (ih _).1 h⟩
+    · rintro ⟨hx, h⟩
+      have hx' : r.emit q x = x := hx x rfl
+      exact ⟨hx', by rw [hx']; exact (ih _).2 h⟩
+
+/-- With every segment visible and no default, the left-to-right run fixes a word exactly when
+each segment is output unchanged with the segment before it as window. -/
+theorem scan_eq_self_iff_isChain (ht : ∀ s, r.tier s) (hd : r.default = none) (w : List α) :
+    r.scan w = w ↔ w.IsChain fun a b ↦ r.emit (some a) b = b := by
+  rw [scan_eq_runFrom, r.runFrom_eq_self_iff ht]
+  exact and_iff_right fun x _ ↦ r.emit_of_found_eq_none hd (r.found_none x)
+
+/-- With every segment visible and no default, a rule fixes a word exactly when each segment,
+read in the rule's direction, is output unchanged with the segment before it as window. -/
+theorem apply_eq_self_iff_isChain (ht : ∀ s, r.tier s) (hd : r.default = none) (w : List α) :
+    r.apply w = w ↔ (r.direction.orient w).IsChain fun a b ↦ r.emit (some a) b = b := by
+  rw [apply_eq_self_iff, r.scan_eq_self_iff_isChain ht hd]
+
+/-- A rule scanning from the right rewrites the end of a word as it does within the word. -/
+theorem apply_drop (hd : r.direction = .right) (n : ℕ) (w : List α) :
+    r.apply (w.drop n) = (r.apply w).drop n := by
+  rcases le_or_gt n w.length with hn | hn
+  · simp only [apply, hd, Edge.orient_right, scan, List.reverse_drop, Mealy.run_take,
+      List.reverse_take, Mealy.length_run, List.length_reverse, Nat.sub_sub_self hn]
+  · rw [List.drop_of_length_le hn.le, List.drop_of_length_le (by simpa using hn.le), apply_nil]
+
+/-- A projection of the segments that every output preserves is preserved by the run. -/
+theorem map_apply {γ : Type*} {g : α → γ} (h : ∀ q s, g (r.emit q s) = g s) (w : List α) :
+    (r.apply w).map g = w.map g := by
+  rw [apply, Edge.map_orient, scan, r.toMealy.map_run _ h, ← Edge.map_orient, Edge.orient_orient]
 
 /-! ### Words without targets -/
 

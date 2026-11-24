@@ -48,6 +48,8 @@ outcomes](##want_alice_and_want_sue) but [not hope for both](##not_hope_both).
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace PortnerRubinstein2020
 
 open Modality Mood
@@ -245,7 +247,7 @@ theorem bestWorlds_doxPlus_bul (w : World) :
     bestWorlds doxPlus bul w = {(true, false), (false, true)} := by
   ext ⟨a, b⟩
   cases a <;> cases b <;>
-    simp [mem_bestWorlds, doxPlus, bul, Preorder.ofCriteria_le_iff, marriesAlice, marriesSue]
+    simp [mem_bestWorlds, doxPlus, bul, Preorder.ofLowerSets_le_iff, marriesAlice, marriesSue]
 
 /-- An attitude holder who desires to marry Alice and to marry Sue, and whose one consistent
 desire is to marry Alice. -/
@@ -296,31 +298,32 @@ theorem hope_alice_and_hope_sue (w : World) :
 source. -/
 def bestSets (f g : Background W) (w : W) : Set (Set W) :=
   {X | ∃ b ∈ bestWorlds f g w, X = {v ∈ bestWorlds f g w |
-    Preorder.satisfied (· ∈ ·) (g w) v = Preorder.satisfied (· ∈ ·) (g w) b}}
+    {a ∈ (g w) | v ∈ a} = {a ∈ (g w) | b ∈ a}}}
 
 -- Appendix B: under the Limit Assumption local necessity is truth throughout a best set.
 theorem goodPossibility_iff_exists_mem_bestSets {f g : Background W} {p : Set W} {w : W}
     (hlim : LimitAssumption f g w) :
     goodPossibility f g w p ↔ ∃ X ∈ bestSets f g w, ∀ v ∈ X, v ∈ p := by
-  let o := premisePreorder (g w)
+  let o := ≤[g w]
   refine ⟨fun ⟨u, hu, hp⟩ ↦ ?_, fun ⟨_, ⟨b, hb, hX⟩, hp⟩ ↦ ⟨b, hb.1, fun v hv hvb ↦ ?_⟩⟩
   · obtain ⟨b, hb, hbu⟩ := hlim u hu
     exact ⟨_, ⟨b, hb, rfl⟩, fun v ⟨hv, hvb⟩ ↦ hp v hv.1
-      (o.le_trans _ _ _ (Preorder.antisymmRel_ofCriteria_iff.2 hvb).1 hbu)⟩
+      (o.le_trans _ _ _ (Preorder.antisymmRel_ofLowerSets_iff.2 hvb).1 hbu)⟩
   · exact hp v (hX ▸ ⟨⟨hv, fun ⦃z⦄ hz hzv ↦ o.le_trans _ _ _ hvb
       (hb.2 hz (o.le_trans _ _ _ hzv hvb))⟩,
-      Preorder.antisymmRel_ofCriteria_iff.1 ⟨hvb, hb.2 hv hvb⟩⟩)
+      Preorder.antisymmRel_ofLowerSets_iff.1 ⟨hvb, hb.2 hv hvb⟩⟩)
 
 -- Appendix B as printed: no set holds exactly the pairs of best worlds with the same premises.
 theorem not_exists_printed_bestSet (w : World) : ¬ ∃ X : Set World, ∀ u v,
-    u ∈ X ∧ v ∈ X ↔ Preorder.satisfied (· ∈ ·) (bul w) u = Preorder.satisfied (· ∈ ·) (bul w) v ∧
+    u ∈ X ∧ v ∈ X ↔ {a ∈ (bul w) | u ∈ a} = {a ∈ (bul w) | v ∈ a} ∧
       u ∈ bestWorlds doxPlus bul w ∧ v ∈ bestWorlds doxPlus bul w := by
   rintro ⟨X, hX⟩
   have hA : ((true, false) : World) ∈ bestWorlds doxPlus bul w := by simp [bestWorlds_doxPlus_bul]
   have hS : ((false, true) : World) ∈ bestWorlds doxPlus bul w := by simp [bestWorlds_doxPlus_bul]
   have heq := ((hX _ _).1 ⟨((hX _ _).2 ⟨rfl, hA, hA⟩).1, ((hX _ _).2 ⟨rfl, hS, hS⟩).1⟩).1
-  have h : marriesAlice ∈ Preorder.satisfied (· ∈ ·) (bul w) ((false, true) : World) :=
-    heq ▸ ⟨by simp [bul], rfl⟩
+  have h : marriesAlice ∈ {a ∈ bul w | ((false, true) : World) ∈ a} :=
+    heq.subset (show marriesAlice ∈ {a ∈ bul w | ((true, false) : World) ∈ a} from
+      ⟨by simp [bul], rfl⟩)
   exact nomatch (h.2 : (false, true) ∈ marriesAlice)
 
 end PortnerRubinstein2020

@@ -62,6 +62,8 @@ reaches (`rows_predicted`).
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace FuscoSgrizzi2026
 
 open Modality Minimalist Italian.Verbs Event
@@ -76,7 +78,7 @@ circumstances under an inertial ordering of its own ([dowty-1979], [kratzer-2013
 with the state in place of a world. -/
 def inertiaWorlds (circumstances : V → Set (W → Prop)) (inertia : V → Set (Set W)) (s : V) :
     Set W :=
-  (premisePreorder (inertia s)).minimals {w | sInf (circumstances s) w}
+  (≤[inertia s]).minimals {w | sInf (circumstances s) w}
 
 /-- The head *a* (25), anchored to the attitude state, is necessity over the state's inertia
 worlds, with the eventuality argument of its complement closed over what the state causes. -/

@@ -1665,14 +1665,14 @@ variable {G : InterpGame T M}
 
 omit [Fintype T] [DecidableEq T] [DecidableEq M] in
 theorem satisfied_alternatives_subset_iff {t' t : T} :
-    Preorder.satisfied (· ∈ ·) (alternatives G) t' ⊆ Preorder.satisfied (· ∈ ·) (alternatives G) t ↔
+    {a ∈ (alternatives G) | t' ∈ a} ⊆ {a ∈ (alternatives G) | t ∈ a} ↔
       G.trueMessages t' ⊆ G.trueMessages t := by
-  simp only [Set.subset_def, Preorder.mem_satisfied, and_imp, alternatives, Set.forall_mem_range,
+  simp only [Set.subset_def, Set.mem_ofPred_eq, and_imp, alternatives, Set.forall_mem_range,
     Set.mem_range_self, true_and, Set.mem_ofPred_eq, subset_iff, InterpGame.mem_trueMessages]
 
 omit [Fintype T] [DecidableEq T] [DecidableEq M] in
 theorem satisfied_alternatives_ssubset_iff {t' t : T} :
-    Preorder.satisfied (· ∈ ·) (alternatives G) t' ⊂ Preorder.satisfied (· ∈ ·) (alternatives G) t ↔
+    {a ∈ (alternatives G) | t' ∈ a} ⊂ {a ∈ (alternatives G) | t ∈ a} ↔
       G.trueMessages t' ⊂ G.trueMessages t := by
   simp only [ssubset_iff_subset_not_subset, satisfied_alternatives_subset_iff]
 
@@ -1728,12 +1728,12 @@ variable {W : Type*} (ALT : Set (Set W)) (φ : Set W)
 /-- `A` is monotonically determined by the alternatives when, whenever every alternative true at
 `w` is true at `v`, `A` at `w` forces `A` at `v`. -/
 def MonotoneDetermined (A : Set W) : Prop :=
-  ∀ w v, Preorder.satisfied (· ∈ ·) ALT w ⊆ Preorder.satisfied (· ∈ ·) ALT v → w ∈ A → v ∈ A
+  ∀ w v, {a ∈ ALT | w ∈ a} ⊆ {a ∈ ALT | v ∈ a} → w ∈ A → v ∈ A
 
 theorem satisfied_insert_subset_iff_of_monotoneDetermined {A : Set W}
     (hA : MonotoneDetermined ALT A) {w v : W} :
-    Preorder.satisfied (· ∈ ·) (insert A ALT) w ⊆ Preorder.satisfied (· ∈ ·) (insert A ALT) v ↔
-      Preorder.satisfied (· ∈ ·) ALT w ⊆ Preorder.satisfied (· ∈ ·) ALT v := by
+    {a ∈ (insert A ALT) | w ∈ a} ⊆ {a ∈ (insert A ALT) | v ∈ a} ↔
+      {a ∈ ALT | w ∈ a} ⊆ {a ∈ ALT | v ∈ a} := by
   refine ⟨fun h a ⟨ha, hwa⟩ ↦ ⟨ha, (h ⟨Set.mem_insert_of_mem _ ha, hwa⟩).2⟩,
     fun h a ⟨ha, hwa⟩ ↦ ⟨ha, ?_⟩⟩
   rcases ha with rfl | ha
@@ -1742,8 +1742,8 @@ theorem satisfied_insert_subset_iff_of_monotoneDetermined {A : Set W}
 -- Fact 2
 theorem satisfied_insert_ssubset_iff_of_monotoneDetermined {A : Set W}
     (hA : MonotoneDetermined ALT A) {w v : W} :
-    Preorder.satisfied (· ∈ ·) (insert A ALT) w ⊂ Preorder.satisfied (· ∈ ·) (insert A ALT) v ↔
-      Preorder.satisfied (· ∈ ·) ALT w ⊂ Preorder.satisfied (· ∈ ·) ALT v := by
+    {a ∈ (insert A ALT) | w ∈ a} ⊂ {a ∈ (insert A ALT) | v ∈ a} ↔
+      {a ∈ ALT | w ∈ a} ⊂ {a ∈ ALT | v ∈ a} := by
   simp only [ssubset_iff_subset_not_subset,
     satisfied_insert_subset_iff_of_monotoneDetermined ALT hA]
 
@@ -1754,10 +1754,10 @@ theorem exhMW_insert_of_monotoneDetermined {A : Set W} (hA : MonotoneDetermined 
 
 -- Fact 2
 theorem not_satisfied_ssubset_insert_compl :
-    Preorder.satisfied (· ∈ ·) ({{true}} : Set (Set Bool)) false ⊂
-        Preorder.satisfied (· ∈ ·) {{true}} true ∧
-      ¬ Preorder.satisfied (· ∈ ·) ({{false}, {true}} : Set (Set Bool)) false ⊂
-        Preorder.satisfied (· ∈ ·) {{false}, {true}} true := by
+    {a ∈ ({{true}} : Set (Set Bool)) | false ∈ a} ⊂
+        {a ∈ ({{true}} : Set (Set Bool)) | true ∈ a} ∧
+      ¬ {a ∈ ({{false}, {true}} : Set (Set Bool)) | false ∈ a} ⊂
+        {a ∈ ({{false}, {true}} : Set (Set Bool)) | true ∈ a} := by
   refine ⟨⟨fun a ⟨ha, h⟩ ↦ ?_, fun h ↦ Bool.false_ne_true (h ⟨rfl, rfl⟩).2⟩,
     fun h ↦ Bool.noConfusion (h.1 ⟨Set.mem_insert _ _, rfl⟩).2⟩
   obtain rfl := ha
@@ -1801,7 +1801,7 @@ def alt₂ : Set (Set (Bool × Bool)) := insert (A ∩ B) alt₁
 
 theorem exhMW_alt₁ : exhMW alt₁ (A ∪ B) = {(true, false), (false, true)} := by
   ext ⟨a, b⟩
-  simp only [mem_exhMW, MinimalFor, Set.subset_def, Preorder.mem_satisfied, alt₁,
+  simp only [mem_exhMW, MinimalFor, Set.subset_def, Set.mem_ofPred_eq, alt₁,
     Set.mem_insert_iff, Set.mem_singleton_iff, A, B, Set.mem_union, Set.mem_ofPred_eq,
     Prod.forall, Bool.forall_bool, Prod.mk.injEq]
   cases a <;> cases b <;> simp

@@ -183,11 +183,19 @@ theorem kleinDegree_ofMeasure (μ : E → D) {C : Set E} {a b : E} (ha : a ∈ C
 
 Klein's (6) is Cresswell's relation over the comparative, and on a strict weak order his gloss on
 it, neither more nor less A, is `cresswellSetoid_iff_incompRel`. On a gapless delineation
-under the consistency constraint the comparative is such an order, so its classes form a scale. -/
+under the consistency constraint the comparative is such an order, so its classes form a scale,
+and a measure into a linear order represents the ordering within the class. -/
 
 example {d : Delineation E} {C : Set E} (hd : d.IsGapless) (hm : d.IsMonotoneOn (𝒫 C)) :
     IsStrictTotalOrder (CresswellDegree (d.Outranks C)) (· < ·) :=
   CresswellDegree.isStrictTotalOrder_lt_iff.2 (hd.isStrictWeakOrder_outranks hm)
+
+universe u in
+example {E : Type u} {d : Delineation E} {C : Set E} (hd : d.IsGapless)
+    (hm : d.IsMonotoneOn (𝒫 C)) :
+    ∃ (D : Type u) (_ : LinearOrder D) (m : E → D), ∀ a b, d.Outranks C a b ↔ m b < m a :=
+  let ⟨D, i, m, _, _, h⟩ := (hd.isMonotoneOn_iff_exists_ofStandard (𝒫 C)).1 hm
+  ⟨D, i, m, h⟩
 
 -- p. 30: for *tall*, Klein's degree (62) is Cresswell's class.
 theorem mem_kleinDegree_ofMeasure_iff_cresswell (μ : E → D) {u v : E} :

@@ -35,7 +35,7 @@ theorem exhMW_inter_union (hc : (c \ (a ∪ b)).Nonempty) :
     exhMW {a, b, c} ((a ∩ b) ∪ c) = ((a ∩ b) \ c) ∪ (c \ (a ∪ b)) := by
   obtain ⟨y, hyc, hyab⟩ := hc
   ext u
-  simp only [mem_exhMW, MinimalFor, Set.subset_def, Preorder.mem_satisfied, mem_insert_iff,
+  simp only [mem_exhMW, MinimalFor, Set.subset_def, Set.mem_ofPred_eq, mem_insert_iff,
     mem_singleton_iff, and_imp, forall_eq_or_imp, forall_eq, true_or, or_true, true_and,
     mem_union, mem_inter_iff, mem_sdiff] at hyab ⊢
   refine ⟨fun ⟨hu, hmin⟩ ↦ ?_, fun hu ↦ ⟨by tauto, fun v hv ↦ by tauto⟩⟩

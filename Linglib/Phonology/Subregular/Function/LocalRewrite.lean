@@ -48,6 +48,8 @@ needs the final flush of `Rule.toSubsequentialTransducer`.
   factors through `leftReach` symbols to the left and `rightReach` to the right.
 * `Rule.length_apply`, `length_derive`: a rule that does not delete, and a cascade of such
   rules, preserve the length of the word.
+* `Rule.map_apply`, `Rule.apply_drop`: a rule preserves a projection that its verdicts preserve,
+  and a rule reading nothing to its left commutes with dropping a prefix.
 * `Rule.isLeftInputStrictlyLocal`: a rule reading nothing to its right is
   `(leftReach + 1)`-Left-ISL.
 * `Rule.isLeftSubsequential`: over a finite segment alphabet every rule is
@@ -374,6 +376,36 @@ theorem Rule.apply_cons_of_leftReach_eq_zero {r : Rule} (h : r.leftReach = 0) (s
     (input : List Segment) : r.apply (s :: input) = r.verdict [] s input ++ r.apply input := by
   rw [r.apply_eq_scan, Rule.scan, h]
   simp
+
+/-! ### Projections and tails -/
+
+private theorem Rule.map_apply_go {γ : Type*} {r : Rule} {g : Segment → γ}
+    (h : ∀ w s d, (r.verdict w s d).map g = [g s]) (left right : List Segment) :
+    (Rule.apply.go r left right).map g = right.map g := by
+  induction right generalizing left with
+  | nil => rfl
+  | cons s right ih => rw [Rule.apply_go_cons, List.map_append, h, ih, List.map_cons]; rfl
+
+/-- A projection of the segments that every verdict of a rule preserves is preserved by the
+rule. -/
+theorem Rule.map_apply {γ : Type*} {r : Rule} {g : Segment → γ}
+    (h : ∀ w s d, (r.verdict w s d).map g = [g s]) (input : List Segment) :
+    (r.apply input).map g = input.map g :=
+  Rule.map_apply_go h [] input
+
+/-- A rule that reads nothing to its left and does not delete rewrites the end of a word as it
+does within the word. -/
+theorem Rule.apply_drop {r : Rule} (hl : r.leftReach = 0) (h : r.effect ≠ .delete) (n : ℕ)
+    (input : List Segment) : r.apply (input.drop n) = (r.apply input).drop n := by
+  induction n generalizing input with
+  | zero => rfl
+  | succ n ih =>
+    cases input with
+    | nil => rfl
+    | cons s input =>
+      obtain ⟨t, ht⟩ := List.length_eq_one_iff.1 (Rule.length_verdict h [] s input)
+      rw [Rule.apply_cons_of_leftReach_eq_zero hl, ht, List.singleton_append,
+        List.drop_succ_cons, List.drop_succ_cons, ih]
 
 /-! ### No right reach: Input Strict Locality
 

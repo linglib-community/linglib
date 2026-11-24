@@ -11,9 +11,9 @@ measure is at least `d`. These answers are nested, so at each world `w` the answ
 `μ w` is the strongest true one, and exhaustifying it against the question gives the fibre
 `μ ⁻¹' {μ w}`, the answer that the measure is exactly `μ w`.
 
-Every Hamblin set with a strongest true answer at each world arises this way: it is the degree
-question of the measure that sends a world to its strongest true answer, with the answers ordered
-by reverse entailment.
+The order a degree question induces on worlds is the order of its measure. In general a Hamblin
+set with a strongest true answer at each world is a preorder on the worlds with a family of its
+lower sets; the degree questions are those whose order comes from a measure.
 
 ## Main definitions
 
@@ -27,8 +27,8 @@ by reverse entailment.
   at `w`.
 * `Question.exh_degreeHamblin`: exhaustifying the answer at an attained degree gives the worlds
   where the measure is exactly that degree.
-* `Question.degreeHamblin_eq_of_isStrongestTrueAnswer`: a Hamblin set with a strongest true answer
-  at each world is a degree question.
+* `Question.ofLowerSets_degreeHamblin`: the order a degree question induces on worlds is the
+  order of the measure.
 
 ## References
 
@@ -39,6 +39,8 @@ by reverse entailment.
 -/
 
 @[expose] public section
+
+open scoped PremiseOrdering
 
 namespace Question
 
@@ -76,6 +78,14 @@ theorem hasStrongestTrueAnswer_degreeHamblin (w : W) :
     HasStrongestTrueAnswer (degreeHamblin μ) w :=
   ⟨_, isStrongestTrueAnswer_degreeHamblin w⟩
 
+/-- The order a degree question induces on worlds is the order of the measure, with the worlds of
+greater measure below. -/
+theorem ofLowerSets_degreeHamblin :
+    ≤[degreeHamblin μ] = Preorder.lift (OrderDual.toDual ∘ μ) :=
+  Preorder.ext fun v w ↦ by
+    simp only [Preorder.ofLowerSets_le_iff, degreeHamblin, forall_mem_range, mem_preimage, mem_Ici]
+    exact ⟨fun h ↦ h (μ w) le_rfl, fun h d hd ↦ hd.trans h⟩
+
 /-- Dayal's presupposition holds of a degree question at every world. -/
 theorem presupposition_degreeHamblin : presupposition (degreeHamblin μ) = univ :=
   eq_univ_of_forall hasStrongestTrueAnswer_degreeHamblin
@@ -110,23 +120,5 @@ theorem exh_degreeHamblin_of_surjective (hμ : Function.Surjective μ) (d : α) 
   exact exh_degreeHamblin v
 
 end PartialOrder
-
-/-- A Hamblin set with a strongest true answer at each world is the degree question of the
-measure taking a world to that answer, with the answers ordered by reverse entailment. -/
-theorem degreeHamblin_eq_of_isStrongestTrueAnswer {H : Set (Set W)} (a : W → (↥H)ᵒᵈ)
-    (ha : ∀ w, IsStrongestTrueAnswer H w (OrderDual.ofDual (a w)).val) :
-    degreeHamblin a = H := by
-  have key (d : (↥H)ᵒᵈ) : a ⁻¹' Ici d = (OrderDual.ofDual d).val := by
-    ext w
-    constructor
-    · intro h
-      have h' : (OrderDual.ofDual (a w)).val ⊆ (OrderDual.ofDual d).val := h
-      exact h' (ha w).1.2
-    · intro h
-      exact (ha w).2 ⟨(OrderDual.ofDual d).property, h⟩
-  ext p
-  simp only [degreeHamblin, key, mem_range]
-  exact ⟨fun ⟨d, hd⟩ ↦ hd ▸ (OrderDual.ofDual d).property,
-    fun hp ↦ ⟨OrderDual.toDual ⟨p, hp⟩, rfl⟩⟩
 
 end Question

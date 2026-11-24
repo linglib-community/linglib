@@ -46,6 +46,8 @@ coreference of Groenendijk, Stokhof and Veltman.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace DynamicSemantics
 
 open Function
@@ -207,12 +209,13 @@ theorem mem_foldl_assert_info (ps : List (W → Prop)) (σ : OrderedInformationS
 so that a pattern learnt from the minimal state ranks `w` below `v` when every rule that holds
 at `v` holds at `w`, as Veltman glosses patterns. -/
 theorem foldl_promote_order (ps : List (W → Prop)) (σ : OrderedInformationState W) :
-    (ps.foldl promote σ).order = σ.order ⊓ Preorder.ofCriteria (fun w p ↦ p w) {p | p ∈ ps} := by
+    (ps.foldl promote σ).order = σ.order ⊓ ≤[setOf '' {p | p ∈ ps}] := by
   induction ps generalizing σ with
   | nil => simp
   | cons p ps ih =>
     rw [List.foldl_cons, ih, promote_order, show {q | q ∈ p :: ps} = insert p {q | q ∈ ps} by
-      ext; simp, Preorder.ofCriteria_insert, inf_assoc, inf_comm (Preorder.ofCriterion p)]
+      ext; simp, Set.image_insert_eq, Preorder.ofLowerSets_insert, inf_assoc,
+      inf_comm (Preorder.ofCriterion p)]
 
 /-! ### The state of a modal base and an ordering source
 
@@ -229,11 +232,11 @@ variable (f g : Background W) (w : W)
 
 /-- The ordered information state that a modal base and an ordering source induce at a world. -/
 def ofBackground : OrderedInformationState W :=
-  ⟨f.accessibleWorlds w, premisePreorder (g w)⟩
+  ⟨f.accessibleWorlds w, ≤[g w]⟩
 
 @[simp] theorem ofBackground_info : (ofBackground f g w).info = f.accessibleWorlds w := rfl
 
-@[simp] theorem ofBackground_order : (ofBackground f g w).order = premisePreorder (g w) := rfl
+@[simp] theorem ofBackground_order : (ofBackground f g w).order = ≤[g w] := rfl
 
 @[simp] theorem optimal_ofBackground : (ofBackground f g w).optimal = bestWorlds f g w := rfl
 

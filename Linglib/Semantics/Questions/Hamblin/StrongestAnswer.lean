@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Order.Antichain
 public import Linglib.Semantics.Questions.Hamblin.Basic
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 
 /-!
 # The strongest true answer
@@ -17,6 +18,21 @@ condition `HasStrongestTrueAnswer H w`.
 The main result is that the presupposition holds at `w` if and only if the weak answer at `w` is
 itself a member of `H`. See `Question.hasStrongestTrueAnswer_iff`.
 
+A Hamblin set ranks worlds as a premise set does, and in that order the weak answer at `w` is the
+set of worlds at or below `w`. The presupposition holds everywhere just in case every such
+principal lower set is a member, so a Hamblin set satisfying it everywhere is a preorder on the
+worlds with a family of its lower sets containing the principal ones. See
+`Question.forall_hasStrongestTrueAnswer_iff_setOf_le_mem`,
+`Preorder.ofLowerSets_eq_of_subset_lowerSets` and `Question.eq_range_setOf_le_iff`.
+
+## TODO
+
+* A strongest true answer is a least element of the true answers under entailment. State beside
+  it the weaker condition that every true answer is entailed by a minimal true one, and relate the
+  pair to a least and to minimal closest worlds in ordering semantics:
+  `Consequence.entails_singleton_iff_ofLowerSets_theories_le` exchanges answers and worlds, and
+  `IsLeast.minimalFor` gives the implication on either side.
+
 ## References
 
 * [dayal-1996]
@@ -27,6 +43,8 @@ itself a member of `H`. See `Question.hasStrongestTrueAnswer_iff`.
 -/
 
 @[expose] public section
+
+open scoped PremiseOrdering
 
 namespace Question
 
@@ -60,6 +78,51 @@ theorem hasStrongestTrueAnswer_iff : HasStrongestTrueAnswer H w ↔ weakAnswer H
     have h' := (isStrongestTrueAnswer_iff H w).1 h
     h'.2 ▸ h'.1,
    fun h => ⟨_, (isStrongestTrueAnswer_iff H w).2 ⟨h, rfl⟩⟩⟩
+
+/-! ### The order a Hamblin set induces
+
+A Hamblin set ranks worlds as a premise set does: `v` lies below `w` when every member true at
+`w` is true at `v`. The weak answer at `w` is the set of worlds at or below `w`, every member is a
+lower set, and Dayal's presupposition holds everywhere just in case each of these principal
+lower sets is a member. A Hamblin set satisfying the presupposition everywhere is thus a preorder
+on the worlds together with a family of its lower sets that contains the principal ones. -/
+
+/-- The weak answer at `w` is the set of worlds at or below `w` in the order `H` induces. -/
+theorem weakAnswer_eq_setOf_le :
+    weakAnswer H w = {v | v ≤[H] w} := by
+  ext v
+  simp [Preorder.ofLowerSets_le_iff]
+
+/-- Dayal's presupposition holds at every world just in case every principal lower set of the
+order `H` induces is a member of `H`. -/
+theorem forall_hasStrongestTrueAnswer_iff_setOf_le_mem :
+    (∀ w, HasStrongestTrueAnswer H w) ↔
+      ∀ w, {v | v ≤[H] w} ∈ H := by
+  simp only [hasStrongestTrueAnswer_iff, weakAnswer_eq_setOf_le]
+
+/-- A Hamblin set is the family of principal lower sets of the order it induces just in case
+Dayal's presupposition holds everywhere and every member is the strongest true answer at some
+world. -/
+theorem eq_range_setOf_le_iff :
+    H = Set.range (fun w ↦ {v | v ≤[H] w}) ↔
+      (∀ w, HasStrongestTrueAnswer H w) ∧ ∀ p ∈ H, ∃ w, IsStrongestTrueAnswer H w p := by
+  constructor
+  · intro h
+    have hD : ∀ w, {v | v ≤[H] w} ∈ H :=
+      fun w ↦ (Set.ext_iff.1 h _).2 ⟨w, rfl⟩
+    refine ⟨(forall_hasStrongestTrueAnswer_iff_setOf_le_mem H).2 hD, fun p hp ↦ ?_⟩
+    obtain ⟨w, hw⟩ := (Set.ext_iff.1 h p).1 hp
+    exact ⟨w, (isStrongestTrueAnswer_iff H w).2
+      ⟨hp, hw.symm.trans (weakAnswer_eq_setOf_le H w).symm⟩⟩
+  · rintro ⟨hD, hN⟩
+    ext p
+    constructor
+    · intro hp
+      obtain ⟨w, hw⟩ := hN p hp
+      exact ⟨w, (weakAnswer_eq_setOf_le H w).symm.trans
+        ((isStrongestTrueAnswer_iff H w).1 hw).2.symm⟩
+    · rintro ⟨w, rfl⟩
+      exact (forall_hasStrongestTrueAnswer_iff_setOf_le_mem H).1 hD w
 
 theorem HasStrongestTrueAnswer.exists_mem {H : Set (Set W)} {w : W}
     (h : HasStrongestTrueAnswer H w) : ∃ p ∈ H, w ∈ p :=

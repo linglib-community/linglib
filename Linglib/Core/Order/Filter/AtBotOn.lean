@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.OfCriteria
+public import Linglib.Core.Order.PreorderLattice
+public import Mathlib.Order.Concept
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Minimal
 
@@ -22,8 +23,7 @@ points](##Filter.atBotOn_eq_principal), and in general its sets obey [the rules 
 consequence](##Filter.atBotOn_inter_of_mem) under changes of domain.
 
 This is Lewis's truth condition for counterfactuals and Kratzer's for necessity with an ordering
-source, both over a ranking of worlds; ranked by the criteria a point satisfies, it is
-[premise semantics](##Filter.mem_atBotOn_satisfied_iff).
+source, both over a ranking of worlds.
 
 ## Implementation notes
 
@@ -231,38 +231,5 @@ theorem atBotOn_inter_of_frequently [Std.Total (α := β) (· ≤ ·)] (ht : ∃
       exact ⟨y₂, hy₂, hy₂x₀.trans (h.trans hy₁u), hy₂x₀, hy₂b⟩
   obtain ⟨z, hz, hzy, hzt⟩ := h₀ y hy hyx₀
   exact ⟨z, ⟨hz, hzt⟩, hzy.trans hyu, fun w hw hwz ↦ hyb w hw.1 (hwz.trans hzy)⟩
-
-/-! ### Premise semantics
-
-Ranked by the criteria a point satisfies, more being better, the filter can be stated without
-points: the sets of criteria satisfied together at some point of the domain stand in for the
-points, and inclusion among them for the order. -/
-
-/-- The order derived from criteria is the ranking by the criteria satisfied. -/
-theorem atBotOn_ofCriteria {C : Type*} (sat : W → C → Prop) (crit : Set C) (s : Set W) :
-    @atBotOn W W (Preorder.ofCriteria sat crit) id s =
-      atBotOn (OrderDual.toDual ∘ Preorder.satisfied sat crit) s := by
-  ext t
-  simp only [mem_atBotOn, Function.comp_apply, OrderDual.toDual_le_toDual,
-    Preorder.satisfied_subset_iff, id]
-
-/-- Ranked by the criteria satisfied, `t` holds toward the bottom of `s` exactly when every set of
-criteria satisfied together at some point of `s` extends, within the criteria, to a set satisfied
-together at some point of `s` and only at points of `t`. -/
-theorem mem_atBotOn_satisfied_iff {C : Type*} {sat : W → C → Prop} {crit : Set C} :
-    t ∈ atBotOn (OrderDual.toDual ∘ Preorder.satisfied sat crit) s ↔
-      ∀ B ⊆ crit, (∃ u ∈ s, ∀ c ∈ B, sat u c) → ∃ D ⊆ crit, (∃ v ∈ s, ∀ c ∈ D, sat v c) ∧
-        B ⊆ D ∧ ∀ w ∈ s, (∀ c ∈ D, sat w c) → w ∈ t := by
-  simp only [mem_atBotOn, Function.comp_apply, OrderDual.toDual_le_toDual,
-    Preorder.satisfied_subset_iff, Preorder.ofCriteria_le_iff]
-  refine ⟨fun h B hB ⟨u, hu, huB⟩ ↦ ?_, fun h u hu ↦ ?_⟩
-  · obtain ⟨v, hv, hvu, hvt⟩ := h u hu
-    exact ⟨Preorder.satisfied sat crit v, Set.sep_subset _ _, ⟨v, hv, fun _ hc ↦ hc.2⟩,
-      fun c hc ↦ ⟨hB hc, hvu c (hB hc) (huB c hc)⟩,
-      fun w hw hwD ↦ hvt w hw fun c hc hvc ↦ hwD c ⟨hc, hvc⟩⟩
-  · obtain ⟨D, hD, ⟨v, hv, hvD⟩, hBD, hDt⟩ :=
-      h (Preorder.satisfied sat crit u) (Set.sep_subset _ _) ⟨u, hu, fun _ hc ↦ hc.2⟩
-    exact ⟨v, hv, fun c hc huc ↦ hvD c (hBD ⟨hc, huc⟩),
-      fun w hw hwv ↦ hDt w hw fun c hc ↦ hwv c (hD hc) (hvD c hc)⟩
 
 end Filter
