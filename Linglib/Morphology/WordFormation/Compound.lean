@@ -8,14 +8,18 @@ module
 /-!
 # Compounds
 
-Compounding is among the morphological patterns of [haspelmath-sims-2010], whose chapter on
-morphological trees treats the types of compounds and their hierarchical structure.
+A compound is a complex lexeme made up of more than one lexeme stem. An endocentric compound
+consists of a head and a dependent, and the source names coordinative, exocentric, appositional,
+affix, phrasal and synthetic compounds beside it.
 
 ## TODO
 
-* Read the source before fixing a definition.
-* `Morphology.Word.Tree` has a constructor for compounding, and the distributional definition of
-  the word does not cover compounds.
+* `Morphology.Word.Tree` has a constructor for compounding; a compound is a tree whose root is
+  built by it, and its head is one of the two stems.
+* The types of compounds and their hierarchical structure are in the chapter on morphological
+  trees, which is not read yet.
+* The distributional definition of the word (`Morphology/Word/Distributional.lean`) does not cover
+  compounds.
 * Compounds against phrases, and incorporation, which many studies treat and no shared file
   defines.
 

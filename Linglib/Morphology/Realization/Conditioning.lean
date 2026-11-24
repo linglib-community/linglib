@@ -27,8 +27,9 @@ exactly when it is a pullback along `k`.
 
 ## TODO
 
-* Phonological, morphological and lexical conditioning as three choices of `k`: the shape of the
-  neighbouring form, the cell, and the lexical item.
+* Phonological, morphological and lexical conditioning are three choices of `k`, the shape of
+  the neighbouring form, the cell and the lexical item, and need no definitions of their own. A
+  study of an allomorphy states which `k` its realization factors through.
 * Welded forms: a bound form is welded when it has shape variants phonologically conditioned by
   its host, or phonologically conditions shape variants of its host ([haspelmath-2021c]).
   `Studies/Haspelmath2021c` identifies Italian *mi* with *-mmi* and English *a* with *an* by hand.
