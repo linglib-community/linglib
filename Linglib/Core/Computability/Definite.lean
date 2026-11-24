@@ -10,6 +10,7 @@ module
 public import Linglib.Core.Computability.Edge
 public import Linglib.Core.Data.List.Infix
 public import Linglib.Core.Computability.MyhillNerode
+public import Mathlib.Basic.Finite.Prod
 public import Mathlib.Data.Fintype.Order
 public import Mathlib.Data.Set.Finite.Lemmas
 public import Mathlib.Data.Set.Finite.List
@@ -77,10 +78,9 @@ lemma isGeneralizedDefinite_iff_edges {k : ℕ} {L : Language α} :
    fun h _ _ hpair ↦ propext (h (congrArg Prod.fst hpair) (congrArg Prod.snd hpair))⟩
 
 lemma isDefinite_iff_mem_takeAt {k : ℕ} {L : Language α} :
-    L.IsDefinite k ↔ ∀ w, w ∈ L ↔ Edge.right.takeAt k w ∈ L := by
-  unfold IsDefinite
-  rw [Function.factorsThrough_iff_of_idempotent (fun a ↦ Edge.right.takeAt_idem k a)]
-  simp only [eq_iff_iff]
+    L.IsDefinite k ↔ ∀ w, w ∈ L ↔ Edge.right.takeAt k w ∈ L :=
+  ⟨fun h w ↦ iff_of_eq (h (Edge.right.takeAt_idem k w).symm),
+    fun h a b hab ↦ propext ((h a).trans (hab ▸ (h b).symm))⟩
 
 /-- A language is *finite or cofinite* when it or its complement is finite. -/
 def IsFiniteOrCofinite (L : Language α) : Prop :=

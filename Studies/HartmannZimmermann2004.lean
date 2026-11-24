@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Tactic.FinCases
-public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.Prosody.Phrase
 public import Linglib.Phonology.Prosody.Match

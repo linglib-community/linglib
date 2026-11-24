@@ -42,7 +42,7 @@ quiz-felicitous one (`default_quiz_felicitous`), declaratives never are
 and Macedonian *dali* (`negationTriggersBias_iff`). Serbian *je li* is neutral in Table 1 yet
 quiz-infelicitous (`jeLi_neutral_yet_quiz_infelicitous`), the contrast the chapter
 attributes to a covert 'wonder' selecting the question (`wonderLF`), which denotes the
-unique true answer (`trueAnswers_polar_existsUnique`). Russian *razve* resolves a conflict
+unique true answer (`karttunen_polar_existsUnique`). Russian *razve* resolves a conflict
 between evidence for the prejacent and a prior against it (`razveProfile`), invariantly
 across inner and outer negation (`razveProfile_negation_invariant`), and is a root
 phenomenon while *li* embeds (`razve_root_li_embedded`). The chapter's Czech FALSUM
@@ -448,7 +448,7 @@ section Wonder
 
 variable {W : Type*} (p : Set W) (w : W)
 
-theorem trueAnswers_polar_existsUnique : ∃! q, q ∈ trueAnswers {p, pᶜ} w := by
+theorem karttunen_polar_existsUnique : ∃! q, q ∈ karttunen {p, pᶜ} w := by
   by_cases hw : w ∈ p
   · exact ⟨p, ⟨by simp, hw⟩, by rintro q ⟨rfl | rfl, hwq⟩ <;> simp_all⟩
   · exact ⟨pᶜ, ⟨by simp, hw⟩, by rintro q ⟨rfl | rfl, hwq⟩ <;> simp_all⟩
@@ -457,7 +457,7 @@ theorem trueAnswers_polar_existsUnique : ∃! q, q ∈ trueAnswers {p, pᶜ} w :
 (36)); the embedded (10b) is the same form with the attitude holder in place of the
 speaker. -/
 def wonderLF {E : Type*} (wantToKnow : E → Set W → Set W) (x : E) : Set W :=
-  {w | ∃ q ∈ trueAnswers {p, pᶜ} w, w ∈ wantToKnow x q}
+  {w | ∃ q ∈ karttunen {p, pᶜ} w, w ∈ wantToKnow x q}
 
 end Wonder
 

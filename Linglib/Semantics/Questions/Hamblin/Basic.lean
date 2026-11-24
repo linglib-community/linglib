@@ -11,14 +11,14 @@ in the same world.
 
 This file defines three ways to say what the answer is at a world `w`.
 
-* `trueAnswers H w`: the members of `H` that are true at `w`.
+* `karttunen H w`: the Karttunen denotation, the members of `H` that are true at `w`.
 * `weakAnswer H w`: the intersection of the true answers. It says that each of them holds.
 * `strongAnswer H w`: the set of worlds that agree with `w` on every member of `H`. It says which
   members hold and which do not.
 
 Two worlds have the same true answers if and only if every member of `H` treats them alike. So the
 true answers determine a partition question, `Setoid.ofProps H`, and its cells are the strong
-answers. See `Question.ker_trueAnswers` and `Question.strongAnswer_eq_cell`.
+answers. See `Question.ker_karttunen` and `Question.strongAnswer_eq_cell`.
 
 ## References
 
@@ -34,30 +34,32 @@ namespace Question
 
 variable {W : Type*} (H : Set (Set W)) (w : W)
 
-/-! ### Karttunen sets and the weak and strong answers -/
+/-! ### The Karttunen denotation and the weak and strong answers -/
 
-/-- The true answers at `w` are the members of `H` true at `w`, the [karttunen-1977] denotation. -/
-def trueAnswers : Set (Set W) := {p ∈ H | w ∈ p}
+/-- The Karttunen denotation at `w` of a question with Hamblin set `H` is the set of its true
+answers, the members of `H` true at `w` ([karttunen-1977]; the term is [beck-rullmann-1999]'s). As
+a function of the world it is the Karttunen intension. -/
+def karttunen : Set (Set W) := {p ∈ H | w ∈ p}
 
-@[simp] theorem mem_trueAnswers {p : Set W} :
-    p ∈ trueAnswers H w ↔ p ∈ H ∧ w ∈ p := Iff.rfl
+@[simp] theorem mem_karttunen {p : Set W} :
+    p ∈ karttunen H w ↔ p ∈ H ∧ w ∈ p := Iff.rfl
 
-theorem trueAnswers_subset : trueAnswers H w ⊆ H := fun _ h => h.1
+theorem karttunen_subset : karttunen H w ⊆ H := fun _ h => h.1
 
 /-- A question intension, a set of answers at each world, is veridical when each answer it gives at
 `w` holds at `w`. -/
 def IsVeridical (q : W → Set (Set W)) : Prop := ∀ w, ∀ p ∈ q w, w ∈ p
 
-theorem isVeridical_trueAnswers : IsVeridical (trueAnswers H) := fun _ _ hp ↦ hp.2
+theorem isVeridical_karttunen : IsVeridical (karttunen H) := fun _ _ hp ↦ hp.2
 
-theorem iUnion_trueAnswers : ⋃ w, trueAnswers H w = {p ∈ H | p.Nonempty} := by
+theorem iUnion_karttunen : ⋃ w, karttunen H w = {p ∈ H | p.Nonempty} := by
   ext p
-  simp only [Set.mem_iUnion, mem_trueAnswers, Set.mem_ofPred_eq, Set.Nonempty]
+  simp only [Set.mem_iUnion, mem_karttunen, Set.mem_ofPred_eq, Set.Nonempty]
   exact ⟨fun ⟨w, hp, hw⟩ ↦ ⟨hp, w, hw⟩, fun ⟨hp, w, hw⟩ ↦ ⟨w, hp, hw⟩⟩
 
 /-- The weakly exhaustive answer is the intersection of the true members ([heim-1994]'s Ans₁,
 [beck-rullmann-1999]'s Ans-BR). -/
-def weakAnswer : Set W := ⋂₀ trueAnswers H w
+def weakAnswer : Set W := ⋂₀ karttunen H w
 
 @[simp] theorem mem_weakAnswer {v : W} :
     v ∈ weakAnswer H w ↔ ∀ p ∈ H, w ∈ p → v ∈ p := by
@@ -96,9 +98,9 @@ theorem weakAnswer_union_image_compl : weakAnswer (H ∪ compl '' H) w = strongA
 kernel of the [karttunen-1977] denotation is the partition of [groenendijk-stokhof-1984], the
 question the members raise, whose cell [heim-1994]'s generalized analysis has the agent
 believe. -/
-theorem ker_trueAnswers : Setoid.ker (trueAnswers H) = Setoid.ofProps H := by
+theorem ker_karttunen : Setoid.ker (karttunen H) = Setoid.ofProps H := by
   ext v w
-  simp only [Setoid.ker_def, Setoid.ofProps_iff, Set.ext_iff, mem_trueAnswers,
+  simp only [Setoid.ker_def, Setoid.ofProps_iff, Set.ext_iff, mem_karttunen,
     and_congr_right_iff]
 
 theorem ker_weakAnswer : Setoid.ker (weakAnswer H) = Setoid.ofProps H := by

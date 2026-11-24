@@ -4,6 +4,7 @@ public import Linglib.Languages.English.NumeralModifiers
 public import Linglib.Semantics.Quantification.Numerals.Basic
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Pragmatics.NeoGricean.Basic
+public import Studies.CoppockBrochhagen2013
 
 /-!
 # Kennedy (2015): A "de-Fregean" Semantics (and Neo-Gricean Pragmatics) for Modified and Unmodified Numerals
@@ -36,6 +37,11 @@ Class A forms are entailed by no alternative at all and have no primary implicat
 ((44)), each of a Class B form contradicting the assertion together with the other
 (`not_isSecondaryImplicature`).
 
+The focus-based *at least*, *at most* and *only* of Coppock and Brochhagen, over ranked answers,
+are this degree quantifier on the answers true at a world, at `Ici`, `Iic` and the singleton,
+wherever a strongest true answer exists; on the question of how many they have the truth
+conditions of the Class B forms.
+
 ## Implementation notes
 
 The worlds of the pragmatics are counts, so a form's content is the set `c.interval m` of counts,
@@ -50,6 +56,7 @@ of Class B modifiers with root modals (Section 4.2) are not formalized.
 * [kennedy-2015]
 * [sauerland-2004]
 * [nouwen-2010]
+* [coppock-brochhagen-2013]
 -/
 
 @[expose] public section
@@ -66,6 +73,49 @@ stands in the relation `c` to `m`, the substrate's `MaxIn (c.interval m)`. -/
 theorem maxIn_interval_Iic (c : Comparison) (m n : ℕ) :
     MaxIn (c.interval m) (Iic n) ↔ n ∈ c.interval m :=
   maxIn_Iic
+
+/-! ### The focus-based entries (Section 5)
+
+[coppock-brochhagen-2013]'s modifiers range over ranked answers to the question under discussion.
+On the answers true at a world they are the degree quantifier `MaxIn`. -/
+
+section FocusBased
+
+variable {W ι : Type*} [PartialOrder ι] {C : Set ι} {P : ι → Set W} {i : ι} {w : W}
+
+theorem only_ge_eq_true_iff_maxIn :
+    Focus.only (· ≥ ·) C P i w = .true ↔ MaxIn {i} {j ∈ C | w ∈ P j} :=
+  Focus.only_ge_eq_true_iff.trans maxIn_singleton.symm
+
+theorem mem_atLeast_ge_iff_maxIn (h : ∃ m, IsGreatest {j ∈ C | w ∈ P j} m) :
+    w ∈ Focus.atLeast (· ≥ ·) C P i ↔ MaxIn (Ici i) {j ∈ C | w ∈ P j} := by
+  obtain ⟨m, hm⟩ := h
+  exact ⟨fun ⟨j, hj, hw, hij⟩ ↦ ⟨m, le_trans hij (hm.2 ⟨hj, hw⟩), hm⟩,
+    fun ⟨m', hm', h'⟩ ↦ ⟨m', h'.1.1, h'.1.2, hm'⟩⟩
+
+theorem mem_atMost_ge_iff_maxIn (h : ∃ m, IsGreatest {j ∈ C | w ∈ P j} m) :
+    w ∈ Focus.atMost (· ≥ ·) C P i ↔ MaxIn (Iic i) {j ∈ C | w ∈ P j} := by
+  obtain ⟨m, hm⟩ := h
+  exact ⟨fun hw ↦ ⟨m, hw m hm.1.1 hm.1.2, hm⟩,
+    fun ⟨m', hm', h'⟩ j hj hw ↦ (h'.2 ⟨hj, hw⟩).trans hm'⟩
+
+variable {μ : W → ℕ}
+
+-- On the question of how many, focus-based *at least `m`* and *at most `m`* have the truth
+-- conditions of (42).
+theorem mem_atLeast_twoSided_iff_maxIn (m : ℕ) (w : W) :
+    w ∈ Focus.atLeast (· ≥ ·) univ (CoppockBrochhagen2013.twoSided μ) m ↔
+      MaxIn (Comparison.ge.interval m) (Iic (μ w)) :=
+  (Set.ext_iff.1 (congrFun CoppockBrochhagen2013.atLeast_twoSided m) w).trans
+    (maxIn_Iic (U := Comparison.ge.interval m) (a := μ w)).symm
+
+theorem mem_atMost_twoSided_iff_maxIn (m : ℕ) (w : W) :
+    w ∈ Focus.atMost (· ≥ ·) univ (CoppockBrochhagen2013.twoSided μ) m ↔
+      MaxIn (Comparison.le.interval m) (Iic (μ w)) :=
+  (Set.ext_iff.1 (CoppockBrochhagen2013.atMost_twoSided m) w).trans
+    (maxIn_Iic (U := Comparison.le.interval m) (a := μ w)).symm
+
+end FocusBased
 
 /-! ### The two classes (Section 1) -/
 

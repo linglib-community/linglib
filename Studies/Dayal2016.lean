@@ -16,12 +16,12 @@ public import Linglib.Semantics.Questions.Hamblin.Exhaustification
 This file formalizes the theory of questions of the second chapter of Dayal's *Questions*. A
 question denotes its Hamblin set, and the answerhood operator Ans-D returns the true member that
 entails every true member, if there is one. [Scope marking needs the false members
-too](##trueAnswers_karttunen_composition). [Ans-D is defined exactly where the situation lies in
+too](##karttunen_composition). [Ans-D is defined exactly where the situation lies in
 the domain of the *wh* phrase](##Question.hasStrongestTrueAnswer_whHamblin_iff), the atoms for
 singular *which N*, so [a polar question with one is
 unanswerable](##not_hasStrongestTrueAnswer_polarWh_singular), while [Beck and Rullmann's
 intersection of the true members ignores number](##Question.weakAnswer_whHamblin) and [maximality
-inside the *wh* phrase agrees with Ans-D](##mem_trueAnswers_maxHamblin_iff). The plurality of plural
+inside the *wh* phrase agrees with Ans-D](##mem_karttunen_maxHamblin_iff). The plurality of plural
 *which N* is [an implicature of competition with the singular](##Question.whFelicitous_plural). The
 existential presupposition is soft and that of a cleft hard, so [only another speaker can deny it
 and only an ordinary question suspend it](##coherent_iff).
@@ -110,13 +110,13 @@ def scopeMarked : Set (Set World) := think '' whereMary
 def w₀ : World := (.paris, .london)
 
 -- (36b), (37c)
-theorem trueAnswers_whereMary : trueAnswers whereMary w₀ = {isAt .paris} := by
-  rw [whereMary, trueAnswers_range,
+theorem karttunen_whereMary : karttunen whereMary w₀ = {isAt .paris} := by
+  rw [whereMary, karttunen_range,
     show {x | w₀ ∈ isAt x} = {.paris} by ext x; simp [isAt, w₀, eq_comm], image_singleton]
 
 -- (35b), (37b)
-theorem trueAnswers_scopeMarked : trueAnswers scopeMarked w₀ = {think (isAt .london)} := by
-  rw [scopeMarked, whereMary, ← range_comp, trueAnswers_range,
+theorem karttunen_scopeMarked : karttunen scopeMarked w₀ = {think (isAt .london)} := by
+  rw [scopeMarked, whereMary, ← range_comp, karttunen_range,
     show {x | w₀ ∈ (think ∘ isAt) x} = {.london} by
       ext x
       simp only [think, ModalLogic.Box, believes, isAt, w₀, mem_ofPred_eq, Function.comp]
@@ -126,17 +126,17 @@ theorem trueAnswers_scopeMarked : trueAnswers scopeMarked w₀ = {think (isAt .l
 
 /-- Built on the true members of *Where is Mary?* alone, *What does John think? Where is Mary?*
 has no true member, although *John thinks Mary is in London* answers it. -/
-theorem trueAnswers_karttunen_composition :
-    trueAnswers (think '' trueAnswers whereMary w₀) w₀ = ∅ := by
-  rw [trueAnswers_whereMary, image_singleton]
+theorem karttunen_composition :
+    karttunen (think '' karttunen whereMary w₀) w₀ = ∅ := by
+  rw [karttunen_whereMary, image_singleton]
   ext p
-  simp only [mem_trueAnswers, mem_singleton_iff, mem_empty_iff_false, iff_false, not_and]
+  simp only [mem_karttunen, mem_singleton_iff, mem_empty_iff_false, iff_false, not_and]
   rintro rfl hw
   exact absurd (hw (.london, .london) rfl) (by simp [isAt])
 
 -- (37b)
 theorem dayalAns_scopeMarked : dayalAns scopeMarked w₀ = some (think (isAt .london)) := by
-  rw [dayalAns_eq_some_iff, IsStrongestTrueAnswer, trueAnswers_scopeMarked]
+  rw [dayalAns_eq_some_iff, IsStrongestTrueAnswer, karttunen_scopeMarked]
   exact isLeast_singleton _
 
 /-! ### Number -/
@@ -205,8 +205,8 @@ likes, true in the situation `x` alone. -/
 def maxHamblin (n : Option Number) : Set (Set E) := (fun x ↦ {x}) '' whDomain n
 
 -- p. 46: maximality in the wh phrase replicates Ans-D on single wh questions
-theorem mem_trueAnswers_maxHamblin_iff {n : Option Number} {w : E} {p : Set E} :
-    p ∈ trueAnswers (maxHamblin n) w ↔ dayalStrongAns (whHamblin n) w = some p := by
+theorem mem_karttunen_maxHamblin_iff {n : Option Number} {w : E} {p : Set E} :
+    p ∈ karttunen (maxHamblin n) w ↔ dayalStrongAns (whHamblin n) w = some p := by
   rw [dayalStrongAns_eq_some_iff, hasStrongestTrueAnswer_whHamblin_iff, strongAnswer_hamblin]
   constructor
   · rintro ⟨⟨x, hx, rfl⟩, rfl⟩

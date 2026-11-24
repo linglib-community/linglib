@@ -99,7 +99,7 @@ def BilaterallyStronglyStable (A : Set (Set W)) : Prop :=
 /-- Weakly stable over the atoms (non-atomic STA): every world has a strongest true member, or
 only atoms are minimal among the true members. -/
 def WeaklyStable (atoms A : Set (Set W)) : Prop :=
-  ∀ w, HasStrongestTrueAnswer A w ∨ ∀ φ, Minimal (· ∈ trueAnswers A w) φ → φ ∈ atoms
+  ∀ w, HasStrongestTrueAnswer A w ∨ ∀ φ, Minimal (· ∈ karttunen A w) φ → φ ∈ atoms
 
 /-- Bilaterally weakly stable: the alternatives weakly stable over the atoms, and their negations
 over the negated atoms. -/
@@ -543,7 +543,7 @@ theorem mem_corners_of_weaklyStable [Finite ι] (hat : ∀ i, {I | i ∈ I} ∈ 
     by_contra hJ
     have hna : ∀ k, ¬ {I | k ∈ I} ⊆ φ := fun k hk ↦ hJ (mem_of_atom_subset (hsym φ hφ hφa) hk hj)
     obtain ⟨b, hb⟩ := (ne_univ_iff_exists_notMem I).1 hIu
-    obtain ⟨ψ, hψφ, hψ⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ trueAnswers A I) φ ⟨hφ, hI⟩
+    obtain ⟨ψ, hψφ, hψ⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ karttunen A I) φ ⟨hφ, hI⟩
     rcases h I with ⟨σ, hσ, hmin⟩ | hat'
     · have hσφ : σ ⊆ φ := hmin ⟨hφ, hI⟩
       have hσa : σ ∉ range fun i ↦ {I : Set ι | i ∈ I} := by
@@ -584,7 +584,7 @@ theorem mem_every_some_of_bilaterallyWeaklyStable [Finite ι] [Nontrivial ι]
     intro χ hχ h0 i
     by_contra hiχ
     obtain ⟨ψ, hψχ, hψ⟩ := exists_minimal_le_of_wellFoundedLT
-      (· ∈ trueAnswers (compl '' A) {i}ᶜ) χᶜ ⟨⟨χ, hχ, rfl⟩, hiχ⟩
+      (· ∈ karttunen (compl '' A) {i}ᶜ) χᶜ ⟨⟨χ, hχ, rfl⟩, hiχ⟩
     rcases h.2 {i}ᶜ with ⟨_, ⟨⟨θ, hθ, rfl⟩, hiθ⟩, hmin⟩ | hat'
     · have hχθ : χ ⊆ θ := fun I hI ↦ by_contra fun hIθ ↦ hmin ⟨⟨χ, hχ, rfl⟩, hiχ⟩ hIθ hI
       have hiθ' : {I | i ∈ I} ⊆ θ := fun I hI ↦ by_contra fun hIθ ↦
@@ -1114,7 +1114,7 @@ theorem isUpperSet_of_isClone {F : ∀ n : ℕ, Set (Set (Set (Fin n)))} (hF : I
     obtain ⟨n, hn, hFn⟩ := hL
     have hq : {I : Set (Fin 2) | 1 ∈ I}ᶜ ∈ F 2 := hF.compl_mem hneg (hF.atom_mem 2 1)
     obtain ⟨m, hmq, hm⟩ := exists_minimal_le_of_wellFoundedLT
-      (· ∈ trueAnswers (F 2) {0}) _ ⟨hq, by simp⟩
+      (· ∈ karttunen (F 2) {0}) _ ⟨hq, by simp⟩
     rcases (h 2 two_pos).1 {0} with ⟨σ, ⟨hσ, h0σ⟩, hmin⟩ | hat
     · have hσ0 : σ = {{0}} := by
         refine subset_antisymm (fun I hI ↦ ?_) (singleton_subset_iff.2 h0σ)
@@ -1219,7 +1219,7 @@ meaning is minimal among the meanings true at `w`, so that which message the pra
 chooses does not depend on the prior exactly where a strongest true meaning exists. -/
 theorem exists_prior_iff_minimal [Fintype W] {w : W} {u : U} :
     (∃ μ : Measure W, IsProbabilityMeasure μ ∧ (∀ v, μ {v} ≠ 0) ∧ IsOptimal sem μ w u) ↔
-      Minimal (· ∈ trueAnswers (range sem) w) (sem u) := by
+      Minimal (· ∈ karttunen (range sem) w) (sem u) := by
   -- the literal listener's mass at `w` falls as the prior mass of the meaning rises
   have key : ∀ (μ : Measure W) [IsFiniteMeasure μ], μ {w} ≠ 0 → ∀ {u u' : U}, w ∈ sem u →
       w ∈ sem u' → (RSA.literalListener μ sem u' {w} <
@@ -1275,17 +1275,17 @@ theorem stronglyStable_iff_isOptimal [Fintype W] (hcov : ∀ w, ∃ u, w ∈ sem
   constructor
   · intro h w u u' μ μ' hμ hμ' hp hp' ho ho'
     obtain ⟨l, hl⟩ := h w
-    have e : ∀ {x}, Minimal (· ∈ trueAnswers (range sem) w) x → x = l :=
+    have e : ∀ {x}, Minimal (· ∈ karttunen (range sem) w) x → x = l :=
       fun hx ↦ le_antisymm (hx.2 hl.1 (hl.2 hx.1)) (hl.2 hx.1)
     exact (e ((exists_prior_iff_minimal sem).1 ⟨μ, hμ, hp, ho⟩)).trans
       (e ((exists_prior_iff_minimal sem).1 ⟨μ', hμ', hp', ho'⟩)).symm
   · intro h w
     obtain ⟨u, hu⟩ := hcov w
     obtain ⟨m, -, hm⟩ := exists_minimal_le_of_wellFoundedLT
-      (· ∈ trueAnswers (range sem) w) (sem u) ⟨⟨u, rfl⟩, hu⟩
+      (· ∈ karttunen (range sem) w) (sem u) ⟨⟨u, rfl⟩, hu⟩
     refine ⟨m, hm.1, fun q hq ↦ ?_⟩
     obtain ⟨m', hm'q, hm'⟩ := exists_minimal_le_of_wellFoundedLT
-      (· ∈ trueAnswers (range sem) w) q hq
+      (· ∈ karttunen (range sem) w) q hq
     obtain ⟨⟨u₁, rfl⟩, -⟩ := hm.1
     obtain ⟨⟨u₂, rfl⟩, -⟩ := hm'.1
     obtain ⟨μ, hμ, hp, ho⟩ := (exists_prior_iff_minimal sem).2 hm
@@ -1303,16 +1303,16 @@ theorem weaklyStable_iff_isOptimal [Fintype W] (atoms : Set (Set W)) :
     have hm := (exists_prior_iff_minimal sem).1 ⟨μ, hμ, hp, ho⟩
     have hm' := (exists_prior_iff_minimal sem).1 ⟨μ', hμ', hp', ho'⟩
     rcases h w with ⟨l, hl⟩ | hat
-    · have e : ∀ {x}, Minimal (· ∈ trueAnswers (range sem) w) x → x = l :=
+    · have e : ∀ {x}, Minimal (· ∈ karttunen (range sem) w) x → x = l :=
         fun hx ↦ le_antisymm (hx.2 hl.1 (hl.2 hx.1)) (hl.2 hx.1)
       exact (e hm).trans (e hm').symm
     · exact absurd (hat _ hm) hua
   · intro h w
-    by_cases hex : ∃ m, Minimal (· ∈ trueAnswers (range sem) w) m ∧ m ∉ atoms
+    by_cases hex : ∃ m, Minimal (· ∈ karttunen (range sem) w) m ∧ m ∉ atoms
     · obtain ⟨m, hm, hma⟩ := hex
       refine .inl ⟨m, hm.1, fun q hq ↦ ?_⟩
       obtain ⟨m', hm'q, hm'⟩ := exists_minimal_le_of_wellFoundedLT
-        (· ∈ trueAnswers (range sem) w) q hq
+        (· ∈ karttunen (range sem) w) q hq
       obtain ⟨⟨u₁, rfl⟩, -⟩ := hm.1
       obtain ⟨⟨u₂, rfl⟩, -⟩ := hm'.1
       obtain ⟨μ, hμ, hp, ho⟩ := (exists_prior_iff_minimal sem).2 hm
