@@ -76,6 +76,11 @@ constraint, which compares classes that need not both contain the two entities, 
 Klein's equivalence quantifies over the contexts at least as determinate as the given one, which
 are here the delineations of an admissible family `𝒟` extending the given one.
 
+Imposed on all classes, the consistency constraint alone makes the ordering within a class
+transitive. Imposed only on the classes that contain both entities, as the No Reversal principle
+of [van-benthem-1982] is, it needs the existence of difference pairs as well, and the delineations
+it then characterizes have the form `X ∩ ofStandard m σ X`.
+
 On a gapless delineation the consistency constraint is the condition that defines a biorder in
 [doignon-ducamp-falmagne-1984], imposed on the relation between entities and classes, *u is in
 the positive extension relative to X*. [ducamp-falmagne-1969] study such relations as
@@ -102,6 +107,7 @@ the measure to it.
 * [ducamp-falmagne-1969]
 * [doignon-ducamp-falmagne-1984]
 * [bouyssou-marchant-2011]
+* [van-benthem-1982]
 * [bochnak-2015]
 * [burnett-2017]
 * [cobreros-etal-2012]
