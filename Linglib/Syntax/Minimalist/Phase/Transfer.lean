@@ -28,7 +28,10 @@ Sealed sets are [closed under dominance](##Minimalist.isUpperSet_sealed),
 condition on chain links [are](##Minimalist.escapes_iff) [cuts](##Minimalist.crosses_iff). A
 position reaches its `phaseLevel` when the phase of the lowest phase head whose complement contains
 it is complete. An object `RespectsCut` when no chain link of a pronounced token leaves the cut,
-and a derivation `Respects` a cut when the object it derives does.
+and a derivation `Respects` a cut when the object it derives does. The chain links of an object
+are themselves a cut, `chainLinks`, and an object respects a cut exactly when the two are
+[disjoint](##Minimalist.respectsCut_iff_disjoint), so that it respects a join of cuts exactly
+when it [respects each](##Minimalist.respectsCut_sup).
 
 ## Implementation notes
 
@@ -338,9 +341,33 @@ theorem respectsCut_iff_forall_mem :
 instance [∀ s, DecidablePred (· ∈ cut s)] : Decidable (RespectsCut hd t cut) :=
   decidable_of_iff _ respectsCut_iff_forall_mem.symm
 
+variable (hd t) in
+/-- The chain links of the pronounced tokens of `t` as a cut: at the stage of a link's landing
+site, the position of its lower copy. -/
+def chainLinks : Cut := fun s ↦
+  {q | ∃ y ∈ tokenList t.toRoseTree, ∃ x ∈ links hd t y.2, x.1.parent = s ∧ x.2 = q}
+
+/-- An object respects a cut exactly when the cut is disjoint from its chain links. -/
+theorem respectsCut_iff_disjoint : RespectsCut hd t cut ↔ Disjoint cut (chainLinks hd t) := by
+  simp only [Pi.disjoint_iff, Set.disjoint_left, RespectsCut, LinkLeaves, chainLinks,
+    Set.mem_ofPred_eq]
+  constructor
+  · rintro h s q hq ⟨y, hy, x, hx, rfl, rfl⟩
+    exact h y.1 y.2 hy ⟨x, hx, hq⟩
+  · rintro h q tok hq ⟨x, hx, hc⟩
+    exact h _ hc ⟨(q, tok), hq, x, hx, rfl, rfl⟩
+
 /-- An object that respects a cut respects any cut that seals less. -/
 theorem RespectsCut.anti (h : cut ≤ cut') (hr : RespectsCut hd t cut') : RespectsCut hd t cut :=
-  fun q tok hq hl ↦ hr q tok hq (hl.mono h)
+  respectsCut_iff_disjoint.2 ((respectsCut_iff_disjoint.1 hr).mono_left h)
+
+variable (hd t) in
+@[simp] theorem respectsCut_bot : RespectsCut hd t ⊥ := respectsCut_iff_disjoint.2 disjoint_bot_left
+
+/-- An object respects the join of two cuts exactly when it respects each. -/
+theorem respectsCut_sup :
+    RespectsCut hd t (cut ⊔ cut') ↔ RespectsCut hd t cut ∧ RespectsCut hd t cut' := by
+  simp only [respectsCut_iff_disjoint, disjoint_sup_left]
 
 theorem mem_validPaths_of_mem_tokenList {q : GornAddress} {tok : LexicalItem.Token}
     (h : (q, tok) ∈ tokenList t.toRoseTree) : q ∈ t.toRoseTree.validPaths := by
@@ -373,6 +400,16 @@ theorem Derivation.Respects.anti {d : Derivation} {cut cut' : PlanarSyntacticObj
     (h : ∀ t, cut t ≤ cut' t) (hr : d.Respects hd cut') : d.Respects hd cut :=
   let ⟨t, ht, hr⟩ := hr
   ⟨t, ht, hr.anti (h t)⟩
+
+/-- A derivation respects the join of two cuts exactly when it respects each. -/
+theorem Derivation.respects_sup {d : Derivation} {cut cut' : PlanarSyntacticObject → Cut} :
+    d.Respects hd (cut ⊔ cut') ↔ d.Respects hd cut ∧ d.Respects hd cut' := by
+  constructor
+  · rintro ⟨t, ht, h⟩
+    exact ⟨⟨t, ht, (respectsCut_sup.1 h).1⟩, t, ht, (respectsCut_sup.1 h).2⟩
+  · rintro ⟨⟨t, ht, h⟩, t', ht', h'⟩
+    obtain rfl := Option.mem_unique ht ht'
+    exact ⟨t, ht, respectsCut_sup.2 ⟨h, h'⟩⟩
 
 end RespectsCut
 

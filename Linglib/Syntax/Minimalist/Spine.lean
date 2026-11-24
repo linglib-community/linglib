@@ -24,7 +24,8 @@ labels. A head divides a spine into its complement, the heads below it, and the 
 ## Main definitions
 
 * `Minimalist.Spine`: the list of heads a phrase projects, bottom-up.
-* `Minimalist.Spine.label`: the bilateral label, the finset of heads a spine projects.
+* `Minimalist.Spine.label`: the bilateral label, the finset of heads a spine projects, and
+  `Minimalist.Spine.labelHom`, the same as an order homomorphism.
 * `Minimalist.Spine.IsExtendedProjection`: a spine each of whose heads extends the one
   below it.
 * `Minimalist.Spine.append`: the spine with a nominal or adpositional shell over it.
@@ -40,6 +41,8 @@ labels. A head divides a spine into its complement, the heads below it, and the 
   extends each head below it.
 * `Minimalist.Spine.below_le_below`: the complement of a head lies inside the complement
   of every head above it.
+* `Minimalist.Spine.notMem_iff_le_below`: a truncation of a spine lacks a head exactly when it
+  lies inside that head's complement.
 
 ## Implementation notes
 
@@ -114,6 +117,15 @@ instance : DecidableLE Spine := fun s t ↦ inferInstanceAs (Decidable (s.label 
 
 instance : DecidableLT Spine := fun s t ↦ inferInstanceAs (Decidable (s.label ⊂ t.label))
 
+/-- `Spine.label` as an order homomorphism. -/
+def labelHom : Spine →o Finset Cat := ⟨label, fun _ _ h ↦ h⟩
+
+@[simp] theorem coe_labelHom : ⇑labelHom = label := rfl
+
+/-- A truncation of a spine lies below it. -/
+theorem le_of_prefix (h : t.heads <+: s.heads) : t ≤ s :=
+  le_iff_forall_mem.2 fun _ hx ↦ h.subset hx
+
 /-! ### Shells -/
 
 /-- Appending heads to a spine projects a nominal or adpositional shell over the phrase. -/
@@ -149,13 +161,32 @@ theorem notMem_below_self (s : Spine) (c : Cat) : c ∉ s.below c := fun h ↦ b
 theorem below_le (s : Spine) (c : Cat) : s.below c ≤ s :=
   le_iff_forall_mem.2 fun _ h ↦ (List.takeWhile_prefix _).subset h
 
+/-- A truncation of a spine that does not project `c` is a truncation of the complement of
+`c`. -/
+theorem prefix_below_of_notMem (h : t.heads <+: s.heads) (hc : c ∉ t) :
+    t.heads <+: (s.below c).heads := by
+  obtain ⟨r, hr⟩ := h
+  have ht : ∀ x ∈ t.heads, (x != c) = true := fun x hx ↦ bne_iff_ne.2 fun hxc ↦ hc (hxc ▸ hx)
+  rw [heads_below, ← hr, List.takeWhile_append_of_pos ht]
+  exact List.prefix_append _ _
+
+/-- A truncation of a spine that projects `c` contains the complement of `c`. -/
+theorem below_prefix_of_mem (h : t.heads <+: s.heads) (hc : c ∈ t) :
+    (s.below c).heads <+: t.heads :=
+  (List.prefix_or_prefix_of_prefix (List.takeWhile_prefix _) h).resolve_right fun h' ↦
+    s.notMem_below_self c (h'.subset hc)
+
+/-- A truncation of a spine lacks a head exactly when it lies inside that head's complement. -/
+theorem notMem_iff_le_below (h : t.heads <+: s.heads) : c ∉ t ↔ t ≤ s.below c :=
+  ⟨fun hc ↦ le_of_prefix (prefix_below_of_notMem h hc),
+    fun ht hc ↦ s.notMem_below_self c (le_iff_forall_mem.1 ht c hc)⟩
+
 /-- The complement of a head lies inside the complement of every head above it. -/
 theorem below_prefix (h : c ∈ s.below d) : (s.below c).heads <+: (s.below d).heads :=
-  (List.prefix_or_prefix_of_prefix (List.takeWhile_prefix _)
-    (List.takeWhile_prefix _)).resolve_right fun h' ↦ s.notMem_below_self c (h'.subset h)
+  below_prefix_of_mem (List.takeWhile_prefix _) h
 
 theorem below_le_below (h : c ∈ s.below d) : s.below c ≤ s.below d :=
-  le_iff_forall_mem.2 fun _ hx ↦ (below_prefix h).subset hx
+  le_of_prefix (below_prefix h)
 
 private theorem mem_takeWhile_or_rel {r : Cat → Cat → Prop} [Std.Refl r] :
     ∀ {l : List Cat}, l.Pairwise r → c ∈ l → d ∈ l → d ∈ l.takeWhile (· != c) ∨ r c d
