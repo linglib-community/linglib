@@ -62,6 +62,12 @@ policy `leaveNothing`, which always leaves nothing, gives the cuts of the Connes
 
 ## Implementation notes
 
+`rootCuts` and `childrenCuts` recurse structurally, on the tree and on its list of children, with
+the choices at one child written out in `childrenCuts` and named afterwards as `childCuts`. A
+third mutually recursive function for those choices would call `rootCuts` on its own argument,
+which only well-founded recursion accepts, and the kernel does not unfold that: with the structural
+definitions the cuts of a closed tree are computed by `decide`.
+
 `crown` is this library's word for the forest a cut removes, which none of its sources names. The
 book writes it `π_C(T)`, and Connes and Kreimer speak of cut branches and a trunk.
 
@@ -86,24 +92,29 @@ mutual
 def rootCuts (extract : RoseTree α → Option (List (RoseTree α))) :
     RoseTree α → Multiset (Multiset (RoseTree α) × RoseTree α)
   | .node a cs => (childrenCuts extract cs).map fun p ↦ (p.1, .node a p.2)
+termination_by structural t => t
 /-- The cuts of a list of children, as pairs of a crown and the list of what remains. A surviving
     child contributes its trunk and a cut child contributes `extract` of it. -/
 def childrenCuts (extract : RoseTree α → Option (List (RoseTree α))) :
     List (RoseTree α) → Multiset (Multiset (RoseTree α) × List (RoseTree α))
   | [] => {((0 : Multiset (RoseTree α)), ([] : List (RoseTree α)))}
   | t :: ts =>
-      ((childCuts extract t ×ˢ childrenCuts extract ts) : Multiset _).map
-        fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2)
+      ((((match extract t with
+          | none => (0 : Multiset _)
+          | some r => {(({t} : Multiset (RoseTree α)), r)})
+        + (rootCuts extract t).map fun p ↦ (p.1, [p.2])) ×ˢ childrenCuts extract ts) :
+          Multiset _).map fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2)
+termination_by structural ts => ts
+end
+
 /-- The choices at one child `t` are to cut `t` itself, with crown `{t}` and remainder
     `extract t` when the policy allows it, or to cut inside `t`. -/
-def childCuts (extract : RoseTree α → Option (List (RoseTree α))) :
-    RoseTree α → Multiset (Multiset (RoseTree α) × List (RoseTree α))
-  | t =>
-      (match extract t with
-       | none => (0 : Multiset _)
-       | some r => {(({t} : Multiset (RoseTree α)), r)})
-      + (rootCuts extract t).map fun p ↦ (p.1, [p.2])
-end
+def childCuts (extract : RoseTree α → Option (List (RoseTree α))) (t : RoseTree α) :
+    Multiset (Multiset (RoseTree α) × List (RoseTree α)) :=
+  (match extract t with
+   | none => (0 : Multiset _)
+   | some r => {(({t} : Multiset (RoseTree α)), r)})
+  + (rootCuts extract t).map fun p ↦ (p.1, [p.2])
 
 variable (extract : RoseTree α → Option (List (RoseTree α)))
 
@@ -122,14 +133,14 @@ variable (extract : RoseTree α → Option (List (RoseTree α)))
       ((childCuts extract t ×ˢ childrenCuts extract ts) : Multiset _).map
         fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2) := by
   conv_lhs => unfold childrenCuts
+  rfl
 
 @[simp] theorem childCuts_eq (t : RoseTree α) :
     childCuts extract t =
       (match extract t with
        | none => (0 : Multiset _)
        | some r => {(({t} : Multiset (RoseTree α)), r)})
-      + (rootCuts extract t).map fun p ↦ (p.1, [p.2]) := by
-  conv_lhs => unfold childCuts
+      + (rootCuts extract t).map fun p ↦ (p.1, [p.2]) := rfl
 
 theorem childCuts_eq_none (t : RoseTree α) (h : extract t = none) :
     childCuts extract t = (rootCuts extract t).map fun p ↦ (p.1, [p.2]) := by
@@ -340,7 +351,8 @@ private theorem childrenCuts_proj_perm (extract : RoseTree α → Option (List (
 
 /-- For an invariant policy, the projected cuts of a tree depend only on the unordered tree. -/
 theorem rootCuts_proj_perm (hExt : ExtractInvariant extract) {t s : RoseTree α}
-    (h : RoseTree.Perm t s) : (rootCuts extract t).map projCut = (rootCuts extract s).map projCut := by
+    (h : RoseTree.Perm t s) :
+    (rootCuts extract t).map projCut = (rootCuts extract s).map projCut := by
   refine h.induction_on fun a cs ds ih ↦ ?_
   have hL : (childrenCuts extract cs).map projChildrenCut =
       (childrenCuts extract ds).map projChildrenCut := by
