@@ -34,7 +34,7 @@ the leaf of that item.
   trace a head: the selection head of a labelled trace is the item it is the trace of. What is
   proved about the leaf of a head therefore assumes that the head heads no trace of the object.
 * A head function here is a function of the object. The head daughter at each position of a planar
-  object, which may depend on the object the position lies in, is `Minimalist.HeadFunction` of
+  object, which may depend on the object the position lies in, is `Minimalist.HeadDaughter` of
   `SyntacticObject/Projection.lean`.
 
 ## References

@@ -44,9 +44,9 @@ same way (`mergeOpUnit_subject_eq_zero`).
   of (42) with its preposition. Successive-cyclic and verb-second specifiers share none.
 * The phases are those of [chomsky-2000], CP, vP and DP, and in Serbo-Croatian, which lacks DP,
   the noun phrase. Transfer seals the complement of a phase head once its phase is complete, the
-  phase being the head's projection under `HeadFunction.raising`, so that a phase head's
+  phase being the head's projection under `HeadDaughter.raising`, so that a phase head's
   specifiers are in its phase however they are labeled. Read off labels instead
-  (`HeadFunction.label`), the unlabeled verb-second clause of (22) would be complete before its
+  (`HeadDaughter.label`), the unlabeled verb-second clause of (22) would be complete before its
   specifier merged, and raising to Spec,CP would leave it (`v2InSitu_label_raising`): labels and
   phase edges are two notions of projection here.
 * Of the derivations of (17), the two that extract from the moved subject are compared. Chain
@@ -159,12 +159,12 @@ instance : DecidablePred IsPhaseHeadNP := fun _ ↦ inferInstanceAs (Decidable (
 
 /-- The cut of the PIC on an object: the complement of each phase head, sealed once its phase,
 the head's projection under `hd`, is complete. -/
-abbrev picCut (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
+abbrev picCut (hd : HeadDaughter) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
     (t : PlanarSyntacticObject) : Cut :=
   sealed (occurrencesWith t Φ).toFinset complementDomain (.atCompletion hd t)
 
 /-- The PIC on a derivation: it derives an object none of whose chain links leaves the cut. -/
-abbrev ObeysPic (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
+abbrev ObeysPic (hd : HeadDaughter) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
     (d : Derivation) : Prop :=
   d.Respects hd (picCut hd Φ)
 
@@ -364,8 +364,8 @@ theorem ex22 : v2Moved.ObeysFreezing ∧
 -- (22c): the verb-second clause has no head daughter by labels and C′ by the raising head, and
 -- with phases read off labels *Peter* raising to Spec,CP would leave C's sealed complement
 theorem v2InSitu_label_raising :
-    (v2InSitu.externalize?.map fun t ↦ HeadFunction.label t ⟨[1]⟩) = some none ∧
-    (v2InSitu.externalize?.map fun t ↦ HeadFunction.raising t ⟨[1]⟩) = some (some 1) ∧
+    (v2InSitu.externalize?.map fun t ↦ HeadDaughter.label t ⟨[1]⟩) = some none ∧
+    (v2InSitu.externalize?.map fun t ↦ HeadDaughter.raising t ⟨[1]⟩) = some (some 1) ∧
     ∃ t ∈ v2InSitu.externalize?, ¬ RespectsCut .label t (picCut .label IsPhaseHead t) := by
   decide +kernel
 

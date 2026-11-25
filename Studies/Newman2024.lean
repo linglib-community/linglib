@@ -50,7 +50,7 @@ it checks, and the order of a head's arguments follows from that closure.
 * `System`, `System.Run`: the operations at a head, and a sequence of them each checking a feature
   still unchecked; `System.Derivation` is a run under Weak Economy, and `System.runs` is the
   finite set of the runs from a state.
-* `selectionHead`, `configuration`: the head function of Merge as selection, and the binding
+* `selectionHead`, `configuration`: the head daughters of Merge as selection, and the binding
   theory, m-command without reverse c-command.
 * `IsDitransitive`, `Binds`: a vP that Merge licenses from a ditransitive's arguments, and binding
   between its objects under a word order.
@@ -79,11 +79,11 @@ it checks, and the order of a head's arguments follows from that closure.
   doubling and clitic doubling checks more features.
 * The trees of the dative alternation are planar syntactic objects. The daughter that projects
   at a node is the sister that selects the other (`selectionHead`), and the maximal projections
-  that m-command reads are those of that head function. `IsDitransitive` takes every vP whose
-  heads select their arguments with the direct object at V and the subject at v, a VP specifier
-  on either side. That is seven trees (`isDitransitive_iff`): the book draws three, and not the
-  four with the subject as v's complement or VP outermost. The binding prediction holds on all
-  seven.
+  that m-command reads are those of that choice of head daughters. `IsDitransitive` takes every
+  vP whose heads select their arguments with the direct object at V and the subject at v, a VP
+  specifier on either side. That is seven trees (`isDitransitive_iff`): the book draws three, and
+  not the four with the subject as v's complement or VP outermost. The binding prediction holds
+  on all seven.
 * A language of the Mayan type moves the object to check v's `[·D·]` before the subject merges
   wherever that leaves the subject licensed (`Realizes`), and its `[·wh·]` stays active once
   checked. An operation applies at most once. The agent-focus form is read off a row's gloss
@@ -744,9 +744,9 @@ def headIndex : PlanarSyntacticObject → List ℕ → Option ℕ
   | .mul _ r, 1 :: q => headIndex r q
   | _, _ => none
 
-/-- The head function of Merge as selection: at each position the daughter whose head selects
+/-- The head daughters of Merge as selection: at each position the daughter whose head selects
 its sister projects. -/
-def selectionHead : HeadFunction := fun t q ↦ headIndex t q.toList
+def selectionHead : HeadDaughter := fun t q ↦ headIndex t q.toList
 
 /-- `bar R h comp specs` is the stack of intermediate projections of the phrase headed by `h`,
 with complement `comp` and specifiers `specs`, those satisfying `R` linearized on the right. -/

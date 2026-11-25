@@ -10,15 +10,15 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 /-!
 # Projection on planar syntactic objects
 
-The theories of headedness differ in which daughter of a phrase projects, so a head function, the
-index of the head daughter at each position of each object, is a parameter, and the projections of
-`Syntax/Projection/GornAddress.lean` follow from it: the maximal projections, the maximal projection of a
-position, and the lexical head of the phrase there. Whatever reads projection takes the head
-function its analysis assumes.
+The theories of headedness differ in which daughter of a phrase projects, so the head daughter, by
+its index at each position of each object, is a parameter, and the projections of
+`Syntax/Projection/GornAddress.lean` follow from it: the maximal projections, the maximal
+projection of a position, and the lexical head of the phrase there. Whatever reads projection
+takes the head daughters its analysis assumes.
 
 ## Main definitions
 
-* `Minimalist.HeadFunction`: the head daughter at each position of each planar object.
+* `Minimalist.HeadDaughter`: the head daughter at each position of each planar object.
 * `Minimalist.maximalProjections`, `Minimalist.projectionAt`, `Minimalist.lexicalHeadAt`.
 
 ## References
@@ -33,11 +33,11 @@ namespace Minimalist
 
 open PhraseStructure
 
-/-- A head function gives, at each position of a planar syntactic object, the index of its head
-daughter, `none` where no daughter projects. -/
-abbrev HeadFunction := PlanarSyntacticObject → GornAddress → Option ℕ
+/-- The head daughter at each position of a planar syntactic object, by its index, `none` where no
+daughter projects. -/
+abbrev HeadDaughter := PlanarSyntacticObject → GornAddress → Option ℕ
 
-variable (hd : HeadFunction) (t : PlanarSyntacticObject)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject)
 
 /-- The maximal projections of a planar object, the positions that are no position's head
 daughter. -/

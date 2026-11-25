@@ -77,7 +77,7 @@ namespace ClemDeal2026
 open Deal2024 Person.Segment DistributedMorphology Morphology
 open Clause (Scenario)
 open Baker2015 (Arg)
-open Minimalist (Derivation LexicalItem CaseAssigners HeadFunction)
+open Minimalist (Derivation LexicalItem CaseAssigners HeadDaughter)
 open scoped DistributedMorphology.VocabularyItem
 
 /-! ### Goal flagging -/

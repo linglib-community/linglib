@@ -25,7 +25,7 @@ criterial position leaves the interrogative C to label the clause by itself, as 
   (`Minimalist.phaseLevel`), and the label stays.
 * Transfer seals the complement of a phase head, or of the head inheriting its phasehood, once its
   phase is complete (`Minimalist.Schedule.atCompletion`). A phase is its head's projection by labels
-  (`HeadFunction.label`), projection being labeling.
+  (`HeadDaughter.label`), projection being labeling.
 * The matrix clauses of (2′), (3′) and (4) are cut down to the raised wh-phrase over the verb or
   *do*.
 * Weakness is fixed by the richness of agreement the paper attributes to a language.

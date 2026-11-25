@@ -38,7 +38,7 @@ namespace Minimalist
 
 open RoseTree SyntacticObject PhraseStructure
 
-variable (hd : HeadFunction) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The positions a phase head occurring only at `a` c-commands carry the terms within its
 complement. -/

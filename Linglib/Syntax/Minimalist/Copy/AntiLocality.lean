@@ -36,7 +36,7 @@ namespace Minimalist
 
 open RoseTree
 
-variable (hd : HeadFunction) (t : PlanarSyntacticObject)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject)
 
 /-- A pronounced head occupies the position. -/
 def IsHeadPosition (p : GornAddress) : Prop := ∃ x ∈ tokenList t.toRoseTree, x.1 = p

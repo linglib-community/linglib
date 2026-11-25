@@ -17,7 +17,7 @@ of, so the landing site of a wh-phrase beside a C is headed by C. The raising he
 the finished object from the selection head, a lower copy satisfying selection as the phrase it
 copies and otherwise invisible (`CopyState`): where two phrases merge and the head of one has a
 lower copy inside the other, the first has raised out of the second, which projects. A planar
-embedding is a total head function extending it, and the head function `HeadFunction.raising`
+embedding is a total head function extending it, and `HeadDaughter.raising`
 takes the daughter carrying the raising head, and the embedding's head where there is none.
 
 ## Main definitions
@@ -25,8 +25,8 @@ takes the daughter carrying the raising head, and the embedding's head where the
 * `Minimalist.CopyState`: a selection state or a lower copy, a commutative magma with zero.
 * `Minimalist.RaisingState`, `Minimalist.SyntacticObject.raisingHead`: the raising state and the
   raising head of a syntactic object.
-* `Minimalist.headIndex?`, `Minimalist.HeadFunction.raising`: the head daughter of a planar tree,
-  and the head function it gives.
+* `Minimalist.headIndex?`, `Minimalist.HeadDaughter.raising`: the head daughter of a planar tree,
+  and the head daughters it gives at the positions of an object.
 
 ## Main results
 
@@ -40,7 +40,7 @@ takes the daughter carrying the raising head, and the embedding's head where the
   complements: a left leaf that selects nothing is a specifier and the right daughter heads, a left
   leaf that selects is the head, and otherwise the right daughter heads. It decides only where the
   raising head is undefined, at a phrase merged in place beside another phrase, which the labeling
-  algorithm leaves unlabeled until one of the two moves on (`HeadFunction.label`).
+  algorithm leaves unlabeled until one of the two moves on (`HeadDaughter.label`).
 * The raising head also delimits the phases of `Phase/Basic.lean`.
 
 ## TODO
@@ -291,10 +291,10 @@ def headIndex? (s : RoseTree Vertex) : Option ℕ :=
   ((treeRaisingHead s).bind fun h ↦ s.children.findIdx? (treeRaisingHead · = some h)) <|>
     (conventionHeadPos? s).bind List.head?
 
-/-- The raising head function, [marcolli-chomsky-berwick-2025]'s raising head extended to a total
-head function by the drawing convention: the head daughter of the subtree at each position,
-`none` off the object. -/
-def HeadFunction.raising : HeadFunction := fun t q ↦ t.toRoseTree[q]?.bind headIndex?
+/-- The head daughters under [marcolli-chomsky-berwick-2025]'s raising head, extended by the
+drawing convention where an object has no raising head: the head daughter of the subtree at each
+position, `none` off the object. -/
+def HeadDaughter.raising : HeadDaughter := fun t q ↦ t.toRoseTree[q]?.bind headIndex?
 
 /-- Where a planar syntactic object with daughters has a raising head, its head daughter carries
 it. -/

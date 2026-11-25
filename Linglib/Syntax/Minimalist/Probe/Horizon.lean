@@ -304,18 +304,18 @@ theorem HorizonSetting.cut_eq_opaqueCut :
 variable (η t) in
 /-- The cut of the movement probes that `probe` assigns to lexical items: at a stage, the
 positions behind the horizon of the probe on the lexical head of that stage. -/
-def horizonCut (hd : HeadFunction) (probe : LexicalItem.Token → Option HorizonSetting) : Cut :=
+def horizonCut (hd : HeadDaughter) (probe : LexicalItem.Token → Option HorizonSetting) : Cut :=
   fun s ↦ {q | ∃ tok ∈ t.toRoseTree[lexicalHeadAt hd t s]?.bind rootLex?, ∃ p ∈ probe tok,
     q ∈ p.cut η t (lexicalHeadAt hd t s)}
 
-instance (hd : HeadFunction) (probe : LexicalItem.Token → Option HorizonSetting)
+instance (hd : HeadDaughter) (probe : LexicalItem.Token → Option HorizonSetting)
     (s : GornAddress) : DecidablePred (· ∈ horizonCut η t hd probe s) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, _))
 
 /-- Selective opacity: in an object that respects the horizons of its probes, the lower copy of
 a chain link lies under no node that the attracting head c-commands and that is not transparent
 to its probe. -/
-theorem RespectsCut.transparentTo {hd : HeadFunction}
+theorem RespectsCut.transparentTo {hd : HeadDaughter}
     {probe : LexicalItem.Token → Option HorizonSetting}
     (hr : RespectsCut hd t (horizonCut η t hd probe)) {r l x : GornAddress}
     {mover tok : LexicalItem.Token} (hm : (r, mover) ∈ tokenList t.toRoseTree)
