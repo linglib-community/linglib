@@ -1,10 +1,8 @@
 module
 
-public import Linglib.Core.Order.OrdConnected
 public import Linglib.Data.Examples.Harley2017
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Mathlib.Order.Partition.Finpartition
 public import Studies.Pylkkanen2008
 
 /-!
@@ -14,28 +12,28 @@ Harley adopts Pylkkänen's view that the features of the verbal domain may be bu
 or split across several, and proposes the hierarchy of projections
 vP > ApplP > CausP1 > VoiceP > CausP2. A causative feature is expressed at three positions of it:
 the two causative projections project [+CAUS], and the verbalizer of a lexical causative bears it
-besides [+v]. A pattern is a partition of the projections a structure realizes; its parts are the
-heads, and the terminal of a head bears the features of its projections.
+besides [+v]. A pattern lists the heads of a structure from the root up, each with the
+projections it bears. The terminal of a head bears the features of its projections, and a word is
+the string of its root and its terminals.
 
-Read as spanning, in the sense of [svenonius-2012], the hierarchy constrains the patterns: a head
-bundles only projections that are neighbours among those realized. The patterns Harley gives for
-Turkish, Hiaki, Korean and Italian are of this kind. In such a pattern a head bearing v and Voice
-bears every projection realized up to Voice, so an applicative or a lower Caus has no head of its
-own.
+The projections of a pattern rise along the hierarchy, so each head bears a stretch of the
+projections realized, a span in the sense of [svenonius-2012]. The patterns Harley gives for
+Turkish, Hiaki, Korean and Italian are of this kind. A head bearing v and Voice then bears every
+projection realized up to Voice, so an applicative or a lower Caus has no head of its own.
 
-Key's analysis of Turkish causatives follows by Vocabulary Insertion over the terminals. The
-lexical causative allomorph of a root is specified for [+v, +CAUS] and the elsewhere *-DIr* for
-[+CAUS]. The allomorph is therefore inserted exactly at a terminal bearing both features next to
-its root. A head with a causative projection and without v is realized by *-DIr* in every
-context, whichever causative projection it is and whatever else the head bundles, and a
-structure expressing the causative feature at all three positions has *-DIr* at each of them
-when its root has no allomorph.
+Key's analysis of Turkish causatives follows by Vocabulary Insertion along the word, each head in
+the neighbourhood of the root and the other heads. The lexical causative allomorph of a root is
+specified for [+v, +CAUS] next to the root and the elsewhere *-DIr* for [+CAUS]. The lowest head
+is therefore realized by the allomorph when it bears both features and the root has one, and
+every other head bearing [+CAUS] is realized by *-DIr*, whichever causative projection it bears
+and whatever else it bundles. A structure expressing the causative feature at all three positions
+has *-DIr* at each of them when its root has no allomorph.
 
 Pylkkänen's causative heads are read on the hierarchy: Cause is expressed on v when it selects a
-root, at the lower Caus when it selects a verb and at the upper Caus when it selects a phase, and
-is bundled with Voice when its position is on the head of Voice. The patterns of the six heads
-bundle only neighbours, a head has a causee position iff its pattern puts v and Voice on
-different heads, and only a root-selecting Cause is realized by an allomorph of the root.
+root, at the lower Caus when it selects a verb and at the upper Caus when it selects a phase. The
+pattern of a head joins the position of Cause to Voice when the two are bundled and gives every
+other projection a head of its own. A head has a causee position iff its pattern puts v and Voice
+on different heads, and only a root-selecting Cause is realized by an allomorph of the root.
 
 The order of the hierarchy is paired with Jung's Hiaki judgments: an applicative suffix outside a
 causative one is acceptable when the causative is lexical, expressed on v below the applicative,
@@ -43,10 +41,11 @@ and unacceptable when it is the causative of an unergative, expressed at the upp
 
 ## Implementation notes
 
-* A projection absent from a pattern lies outside the set it partitions; the projections Harley
-  calls distinct are singleton parts.
-* Harley raises spanning only as an alternative to bundling, so that the heads bundle only
-  neighbours is a hypothesis, or a theorem about a pattern, and not part of the type of patterns.
+* A pattern is a list of heads and not a partition of a set of projections, since the heads of a
+  word come in order and insertion at a head reads its neighbours. A projection a structure does
+  not realize is on no head.
+* Bundling and spanning both put neighbouring projections on one head. Whether that head is one
+  terminal of the syntax or several spelled out together is not represented.
 * The causative flavor of the verbalizer is an argument of `terminal`, the features v bears
   besides [+v], and not a projection: in [key-2013] a lexical causative occurs below the
   productive causative head.
@@ -112,61 +111,53 @@ def Projection.features (fv : Finset Feature) : Projection → Finset Feature
   | .caus₁ | .caus₂ => {.caus}
   | .voice => {.voice}
 
-/-- v, the lower Caus and Voice, the projections of (49a) and of Pylkkänen's causatives. -/
-abbrev vCausVoice : Finset Projection := {.v, .caus₁, .voice}
-
 /-- (49a) Turkish: v, the lower Caus and Voice on separate heads. -/
-def turkish : Finpartition vCausVoice := ⊥
+def turkish : List (List Projection) := [[.v], [.caus₁], [.voice]]
 
 /-- (49b) Hiaki: all five projections on separate heads. -/
-def hiaki : Finpartition (.univ : Finset Projection) := ⊥
+def hiaki : List (List Projection) := [[.v], [.appl], [.caus₁], [.voice], [.caus₂]]
 
 /-- (49c) Korean: v and Appl on separate heads, the upper Caus on the head of Voice. -/
-def korean : Finpartition ({.v, .appl, .voice, .caus₂} : Finset Projection) :=
-  ⟨{{.v}, {.appl}, {.voice, .caus₂}}, by decide, by decide, by decide⟩
+def korean : List (List Projection) := [[.v], [.appl], [.voice, .caus₂]]
 
 /-- (49d) Italian: v and Voice on one head. -/
-def italian : Finpartition ({.v, .voice} : Finset Projection) := .indiscrete (by decide)
+def italian : List (List Projection) := [[.v, .voice]]
+
+-- the projections of (49a–d) rise along the hierarchy
+theorem pairwise_flatten_patterns :
+    ∀ bs ∈ [turkish, hiaki, korean, italian], bs.flatten.Pairwise (· < ·) := by
+  decide
 
 -- among (49a–d), only Italian puts Voice on the head of v
-theorem voice_mem_part_v :
-    Projection.voice ∉ turkish.part .v ∧ Projection.voice ∉ hiaki.part .v ∧
-      Projection.voice ∉ korean.part .v ∧ Projection.voice ∈ italian.part .v := by
-  decide
-
--- (49), read as spanning: each head bundles only projections neighbouring among those realized
-theorem patterns_isContiguous :
-    IsContiguous (fun x : vCausVoice ↦ turkish.part x) ∧
-      IsContiguous (fun x : (.univ : Finset Projection) ↦ hiaki.part x) ∧
-      IsContiguous (fun x : ({.v, .appl, .voice, .caus₂} : Finset Projection) ↦ korean.part x) ∧
-      IsContiguous (fun x : ({.v, .voice} : Finset Projection) ↦ italian.part x) := by
-  decide
-
--- a head bundling v with Voice past a realized lower Caus is not a span
-example : ¬ IsContiguous fun x : vCausVoice ↦
-    (⟨{{.v, .voice}, {.caus₁}}, by decide, by decide, by decide⟩ :
-      Finpartition vCausVoice).part x := by
+theorem exists_v_mem_voice_mem_iff : ∀ bs ∈ [turkish, hiaki, korean, italian],
+    (∃ b ∈ bs, Projection.v ∈ b ∧ Projection.voice ∈ b) ↔ bs = italian := by
   decide
 
 section Pattern
 
-variable {s : Finset Projection} {P : Finpartition s} {x : Projection}
+variable {bs : List (List Projection)} {b : List Projection} {x : Projection}
 
-/-- In a pattern whose heads bundle only neighbours, a head bearing v and Voice bears every
-projection realized up to Voice, so an applicative or a lower Caus has no head of its own. -/
-theorem part_eq_part_v_of_voice_mem (hP : IsContiguous fun x : s ↦ P.part x)
-    (h : Projection.voice ∈ P.part .v) (hx : x ∈ s) (hle : x ≤ .voice) :
-    P.part x = P.part .v :=
-  have hv : Projection.v ∈ s := P.part_nonempty.1 ⟨_, h⟩
-  have hvoice : Projection.voice ∈ s := P.part_subset _ h
-  (hP (i := ⟨.v, hv⟩) (j := ⟨x, hx⟩) (k := ⟨.voice, hvoice⟩)
-    (show Projection.v ≤ x by cases x <;> decide) hle
-    ((P.mem_part_iff_part_eq_part hvoice hv).1 h).symm).symm
+/-- A head bearing v and Voice bears every projection realized up to Voice, so an applicative or
+a lower Caus has no head of its own. -/
+theorem mem_of_v_mem_of_voice_mem (h : bs.flatten.Pairwise (· < ·)) (hb : b ∈ bs)
+    (hv : Projection.v ∈ b) (hvoice : Projection.voice ∈ b) (hx : x ∈ bs.flatten)
+    (hle : x ≤ .voice) : x ∈ b := by
+  obtain ⟨b', hb', hxb'⟩ := List.mem_flatten.1 hx
+  have hlt := (List.pairwise_flatten.1 h).2
+  rcases List.Pairwise.forall_of_forall_of_flip
+      (R := fun l₁ l₂ : List Projection ↦ l₁ = l₂ ∨ (∀ y ∈ l₁, ∀ z ∈ l₂, y < z) ∨
+        ∀ y ∈ l₂, ∀ z ∈ l₁, y < z)
+      (fun _ _ ↦ .inl rfl) (hlt.imp fun h ↦ .inr (.inl h)) (hlt.imp fun h ↦ .inr (.inr h))
+      hb' hb with rfl | h | h
+  · exact hxb'
+  · exact absurd (h x hxb' .v hv) (by cases x <;> decide)
+  · exact absurd (h .voice hvoice x hxb') (not_lt.2 hle)
 
--- (24b-ii): a pattern with a high applicative on a head of its own splits Voice from v
-theorem voice_notMem_part_v_of_part_appl_ne (hP : IsContiguous fun x : s ↦ P.part x)
-    (hs : Projection.appl ∈ s) (h : P.part .appl ≠ P.part .v) : Projection.voice ∉ P.part .v :=
-  fun hv ↦ h (part_eq_part_v_of_voice_mem hP hv hs (by decide))
+-- (24b-ii): a pattern with an applicative off the head of v has Voice off it too
+theorem voice_notMem_of_appl_notMem (h : bs.flatten.Pairwise (· < ·)) (hb : b ∈ bs)
+    (hv : Projection.v ∈ b) (hs : Projection.appl ∈ bs.flatten) (ha : Projection.appl ∉ b) :
+    Projection.voice ∉ b :=
+  fun hvoice ↦ ha (mem_of_v_mem_of_voice_mem h hb hv hvoice hs (by decide))
 
 /-! ### Key's Turkish causatives -/
 
@@ -181,21 +172,27 @@ inductive Exponent where
 /-- Terminals: finsets of features and roots. -/
 abbrev Terminal := Finset (Feature ⊕ Root)
 
-variable {fv : Finset Feature}
+variable {fv : Finset Feature} {ρ ρ' : Root}
 
-/-- The terminal of the head of `x`, bearing the features of its projections, where the
-verbalizer bears `fv` besides [+v]. -/
-def terminal (P : Finpartition s) (fv : Finset Feature) (x : Projection) : Terminal :=
-  ((P.part x).biUnion (·.features fv)).map .inl
+/-- The terminal of a head, bearing the features of its projections, where the verbalizer bears
+`fv` besides [+v]. -/
+def terminal (fv : Finset Feature) (b : List Projection) : Terminal :=
+  (b.toFinset.biUnion (·.features fv)).map .inl
 
 @[simp] theorem inl_mem_terminal {f : Feature} :
-    Sum.inl f ∈ terminal P fv x ↔ ∃ y ∈ P.part x, f ∈ y.features fv := by
+    Sum.inl f ∈ terminal fv b ↔ ∃ y ∈ b, f ∈ y.features fv := by
   simp [terminal]
 
-theorem inl_v_mem_terminal : Sum.inl Feature.v ∈ terminal P fv x ↔ Projection.v ∈ P.part x := by
+@[simp] theorem inr_notMem_terminal : Sum.inr ρ ∉ terminal fv b := by simp [terminal]
+
+@[simp] theorem inl_v_mem_terminal : Sum.inl Feature.v ∈ terminal fv b ↔ Projection.v ∈ b := by
   rw [inl_mem_terminal]
   refine ⟨fun ⟨y, hy, h⟩ ↦ ?_, fun h ↦ ⟨_, h, Finset.mem_insert_self _ _⟩⟩
   cases y <;> first | exact hy | simp [Projection.features] at h
+
+/-- The string of terminals of a word: the root, then its heads from the lowest up. -/
+def word (ρ : Root) (fv : Finset Feature) (bs : List (List Projection)) : List Terminal :=
+  {.inr ρ} :: bs.map (terminal fv)
 
 /-- The lexical causative allomorph of `ρ`, realizing [+v, +CAUS] next to `ρ`. -/
 def lexicalItem (ρ : Root) : VocabularyItem (Feature ⊕ Root) Exponent :=
@@ -208,7 +205,9 @@ def dirItem : VocabularyItem (Feature ⊕ Root) Exponent := {.inl .caus} ⟷ .di
 def vocabulary (ρ : Root) : RuleSet (VocabularyItem (Feature ⊕ Root) Exponent) :=
   [lexicalItem ρ, dirItem]
 
-variable {ρ ρ' : Root} {n : Neighborhood Terminal}
+section Neighborhood
+
+variable {n : Neighborhood Terminal}
 
 theorem applies_lexicalItem_iff : Applies (lexicalItem ρ) n ↔
     Sum.inl Feature.v ∈ n.focus ∧ Sum.inl Feature.caus ∈ n.focus ∧ Sum.inr ρ ∈ n.nth (-1) := by
@@ -236,64 +235,105 @@ theorem subsetPrinciple_vocabulary (ρ : Root) (n : Neighborhood Terminal) :
   by_cases hl : Applies (lexicalItem ρ) n <;> by_cases hd : Applies dirItem n <;>
     simp [RuleSet.applicable, vocabulary, hl, hd, ← applies_dirItem_iff] <;> rfl
 
--- the allomorph of a root is inserted exactly at a terminal bearing [+v, +CAUS] next to the root
-theorem subsetPrinciple_eq_lexical_iff : subsetPrinciple (vocabulary ρ) n = some (.lexical ρ) ↔
-    Sum.inl Feature.v ∈ n.focus ∧ Sum.inl Feature.caus ∈ n.focus ∧ Sum.inr ρ ∈ n.nth (-1) := by
-  rw [subsetPrinciple_vocabulary, ← applies_lexicalItem_iff]
-  split_ifs <;> simp [*]
+end Neighborhood
 
--- *-DIr* is inserted at the other terminals bearing [+CAUS]
-theorem subsetPrinciple_eq_dir_iff : subsetPrinciple (vocabulary ρ) n = some .dir ↔
-    Sum.inl Feature.caus ∈ n.focus ∧
-      ¬ (Sum.inl Feature.v ∈ n.focus ∧ Sum.inr ρ ∈ n.nth (-1)) := by
-  have h := applies_lexicalItem_iff (ρ := ρ) (n := n)
-  rw [subsetPrinciple_vocabulary]
-  split_ifs <;> simp_all
+/-- The exponents Key's vocabulary for `ρ` inserts along the word of the root `ρ'`, one for the
+root and one for each head. -/
+def exponents (ρ ρ' : Root) (fv : Finset Feature) (bs : List (List Projection)) :
+    List (Option Exponent) :=
+  (Neighborhood.along (word ρ' fv bs)).map (subsetPrinciple (vocabulary ρ))
 
-/-- A head with a causative projection and without v is realized by *-DIr* in every context,
-whichever causative projection it is and whatever else the head bundles. -/
-theorem subsetPrinciple_terminal_of_v_notMem (ρ : Root) (hx : x ∈ s)
-    (hc : Feature.caus ∈ x.features fv) (hv : Projection.v ∉ P.part x) (l r : List Terminal) :
-    subsetPrinciple (vocabulary ρ) ⟨terminal P fv x, l, r⟩ = some .dir :=
-  subsetPrinciple_eq_dir_iff.2
-    ⟨inl_mem_terminal.2 ⟨x, P.mem_part_self.2 hx, hc⟩, fun h ↦ hv (inl_v_mem_terminal.1 h.1)⟩
+@[simp] theorem length_exponents : (exponents ρ ρ' fv bs).length = bs.length + 1 := by
+  simp [exponents, word]
 
--- the productive causative (49a)
-theorem subsetPrinciple_turkish (ρ : Root) (l r : List Terminal) :
-    subsetPrinciple (vocabulary ρ) ⟨terminal turkish fv .caus₁, l, r⟩ = some .dir :=
-  subsetPrinciple_terminal_of_v_notMem ρ (by decide) (Finset.mem_singleton_self _) (by decide) l r
+private theorem getElem?_word_zero : (word ρ' fv bs)[0]? = some {.inr ρ'} := rfl
 
--- the verbalizer of a lexical causative: the allomorph of the root next to it, or else *-DIr*
-theorem subsetPrinciple_terminal_v (ρ ρ' : Root) (hv : Projection.v ∈ s) (r : List Terminal) :
-    subsetPrinciple (vocabulary ρ) ⟨terminal P {.caus} .v, [{.inr ρ'}], r⟩ =
-      some (if ρ' = ρ then .lexical ρ else .dir) := by
-  have hcaus : Sum.inl Feature.caus ∈ terminal P {.caus} .v :=
-    inl_mem_terminal.2 ⟨.v, P.mem_part_self.2 hv, by simp [Projection.features]⟩
-  have hvt : Sum.inl Feature.v ∈ terminal P {.caus} .v :=
-    inl_v_mem_terminal.2 (P.mem_part_self.2 hv)
-  split_ifs with h
-  · exact subsetPrinciple_eq_lexical_iff.2 ⟨hvt, hcaus, by simp [h]⟩
-  · exact subsetPrinciple_eq_dir_iff.2 ⟨hcaus, fun h' ↦ h (by simpa [eq_comm] using h'.2)⟩
+private theorem getElem?_word_succ (k : ℕ) :
+    (word ρ' fv bs)[k + 1]? = bs[k]?.map (terminal fv) := by
+  simp [word]
 
-/-- A structure that expresses the causative feature on v and at both causative projections,
-each on a head of its own, has *-DIr* at all three when its root has no allomorph. -/
-theorem subsetPrinciple_eq_dir_of_ne (h : ρ' ≠ ρ) (hv : Projection.v ∈ s)
-    (h₁ : Projection.caus₁ ∈ s) (h₂ : Projection.caus₂ ∈ s)
-    (hv₁ : Projection.v ∉ P.part .caus₁) (hv₂ : Projection.v ∉ P.part .caus₂)
-    (r l₁ r₁ l₂ r₂ : List Terminal) :
-    subsetPrinciple (vocabulary ρ) ⟨terminal P {.caus} .v, [{.inr ρ'}], r⟩ = some .dir ∧
-      subsetPrinciple (vocabulary ρ) ⟨terminal P {.caus} .caus₁, l₁, r₁⟩ = some .dir ∧
-      subsetPrinciple (vocabulary ρ) ⟨terminal P {.caus} .caus₂, l₂, r₂⟩ = some .dir :=
-  ⟨by simp [subsetPrinciple_terminal_v ρ ρ' hv, h],
-    subsetPrinciple_terminal_of_v_notMem ρ h₁ (Finset.mem_singleton_self _) hv₁ l₁ r₁,
-    subsetPrinciple_terminal_of_v_notMem ρ h₂ (Finset.mem_singleton_self _) hv₂ l₂ r₂⟩
+private theorem subsetPrinciple_around_word {k : ℕ} (hk : k ≤ bs.length) (b : List Projection) :
+    subsetPrinciple (vocabulary ρ)
+        (Neighborhood.around (word ρ' fv bs) (k + 1) (terminal fv b)) =
+      if k = 0 ∧ ρ' = ρ ∧ Projection.v ∈ b ∧ ∃ y ∈ b, Feature.caus ∈ y.features fv then
+        some (.lexical ρ)
+      else if ∃ y ∈ b, Feature.caus ∈ y.features fv then some .dir else none := by
+  have hk' : k < (word ρ' fv bs).length := by simp [word]; omega
+  have hρ : Sum.inr ρ ∈ (word ρ' fv bs)[k] ↔ k = 0 ∧ ρ' = ρ := by
+    rcases k with _ | k
+    · simp only [word, List.getElem_cons_zero, Finset.mem_singleton, Sum.inr.injEq, true_and]
+      exact eq_comm
+    · simp [word]
+  simp only [subsetPrinciple_vocabulary, applies_lexicalItem_iff, Neighborhood.focus_around,
+    Neighborhood.nth_neg_one_around _ _ hk', hρ, inl_v_mem_terminal]
+  simp only [inl_mem_terminal]
+  split_ifs <;> first | rfl | grind
 
--- (49b) is such a pattern
-example (h : ρ' ≠ ρ) (r l₁ r₁ l₂ r₂ : List Terminal) :=
-  subsetPrinciple_eq_dir_of_ne (P := hiaki) h (by decide) (by decide) (by decide) (by decide)
-    (by decide) r l₁ r₁ l₂ r₂
+/-- The lowest head is realized by the allomorph of the root when it bears [+v, +CAUS] and the
+root has one. Every other head bearing [+CAUS] is realized by *-DIr*, whatever else it bundles
+and whatever stands next to it. -/
+theorem exponents_eq (ρ ρ' : Root) (fv : Finset Feature) (bs : List (List Projection)) :
+    exponents ρ ρ' fv bs = none :: bs.mapIdx fun i b ↦
+      if i = 0 ∧ ρ' = ρ ∧ Projection.v ∈ b ∧ ∃ y ∈ b, Feature.caus ∈ y.features fv then
+        some (.lexical ρ)
+      else if ∃ y ∈ b, Feature.caus ∈ y.features fv then some .dir else none := by
+  refine List.ext_getElem? fun i ↦ ?_
+  rcases i with _ | k
+  · simp [exponents, Neighborhood.along, getElem?_word_zero, subsetPrinciple_vocabulary,
+      applies_lexicalItem_iff]
+  · simp only [exponents, Neighborhood.along, List.getElem?_map, List.getElem?_mapIdx,
+      getElem?_word_succ, List.getElem?_cons_succ, Option.map_map]
+    rcases h : bs[k]? with _ | b
+    · rfl
+    · simp only [Option.map_some, Function.comp_apply,
+        subsetPrinciple_around_word (List.getElem?_eq_some_iff.1 h).1.le]
+
+-- the allomorph of the root appears iff the lowest head bears v and [+CAUS]
+theorem lexical_mem_exponents_iff : some (.lexical ρ) ∈ exponents ρ ρ fv bs ↔
+    ∃ b ∈ bs.head?, Projection.v ∈ b ∧ ∃ y ∈ b, Feature.caus ∈ y.features fv := by
+  rw [exponents_eq]
+  rcases bs with _ | ⟨b, t⟩
+  · simp
+  · have ht : ∀ {F : ℕ → List Projection → Option Exponent},
+        (∀ i b, F i b ≠ some (.lexical ρ)) → some (.lexical ρ) ∉ t.mapIdx F := fun hF h ↦ by
+      obtain ⟨i, hi, h⟩ := List.mem_mapIdx.1 h
+      exact hF _ _ h
+    rw [List.mapIdx_cons]
+    simp only [List.mem_cons, reduceCtorEq, false_or, List.head?_cons, Option.mem_def,
+      Option.some.injEq, exists_eq_left']
+    refine ⟨?_, fun ⟨hv, hc⟩ ↦ .inl (by simp [hv, hc])⟩
+    rintro (h | h)
+    · split_ifs at h with h1 <;> simp_all
+    · exact absurd h (ht fun i b' h' ↦ by split_ifs at h' <;> simp_all)
 
 end Pattern
+
+/-! ### The patterns under Key's vocabulary -/
+
+section Words
+
+variable (ρ : Root) {ρ' : Root}
+
+-- (49a): *-DIr* at the lower Caus, whatever the root
+theorem exponents_turkish : exponents ρ ρ' ∅ turkish = [none, none, some .dir, none] := by
+  simp [exponents_eq, List.mapIdx_cons, turkish, Projection.features]
+
+-- a lexical causative under the productive one: the allomorph of the root, then *-DIr*
+theorem exponents_turkish_caus :
+    exponents ρ ρ {.caus} turkish = [none, some (.lexical ρ), some .dir, none] := by
+  simp [exponents_eq, List.mapIdx_cons, turkish, Projection.features]
+
+/-- A structure that expresses the causative feature on v and at both causative projections, each
+on a head of its own, has *-DIr* at all three when its root has no allomorph. -/
+theorem exponents_hiaki_caus (h : ρ' ≠ ρ) : exponents ρ ρ' {.caus} hiaki =
+    [none, some .dir, none, some .dir, none, some .dir] := by
+  simp [exponents_eq, List.mapIdx_cons, hiaki, Projection.features, h]
+
+-- (49c): the head bundling Voice with the upper Caus is realized by *-DIr*
+theorem exponents_korean : exponents ρ ρ' ∅ korean = [none, none, none, some .dir] := by
+  simp [exponents_eq, List.mapIdx_cons, korean, Projection.features]
+
+end Words
 
 /-! ### Pylkkänen's causative heads -/
 
@@ -322,47 +362,48 @@ def vFeatures : Layer → Finset Feature
   | .root => {.caus}
   | _ => ∅
 
-/-- The projections a causative structure realizes: v, Voice and the position of Cause. -/
-abbrev realized (l : Layer) : Finset Projection := {.v, .voice, causPosition l}
+/-- The projections a causative structure realizes, from the root up: v, Voice and the position
+of Cause. -/
+def spine : Layer → List Projection
+  | .root => [.v, .voice]
+  | .verb => [.v, .caus₁, .voice]
+  | .phase => [.v, .voice, .caus₂]
 
-/-- The pattern of a causative head: the position of Cause is on the head of Voice when the two
+/-- The pattern of a causative head: the position of Cause and Voice are on one head when the two
 are bundled, and every other projection is on a head of its own. -/
-def pattern : (c : CauseHead) → Finpartition (realized c.selects)
-  | ⟨.root, true⟩ => .indiscrete (by decide)
-  | ⟨.verb, true⟩ => ⟨{{.v}, {.caus₁, .voice}}, by decide, by decide, by decide⟩
-  | ⟨.phase, true⟩ => ⟨{{.v}, {.voice, .caus₂}}, by decide, by decide, by decide⟩
-  | ⟨_, false⟩ => ⊥
+def pattern (c : CauseHead) : List (List Projection) :=
+  (spine c.selects).splitBy fun x y ↦
+    c.bundled && decide ((x = .voice ∨ y = .voice) ∧
+      (x = causPosition c.selects ∨ y = causPosition c.selects))
 
 variable (c : CauseHead)
 
--- Cause is bundled with Voice iff its position is on the head of Voice
-theorem voice_mem_part_causPosition_iff :
-    Projection.voice ∈ (pattern c).part (causPosition c.selects) ↔ c.bundled = true := by
+theorem flatten_pattern : (pattern c).flatten = spine c.selects := List.flatten_splitBy _ _
+
+-- the projections of a causative structure rise along the hierarchy
+theorem pairwise_flatten_pattern : (pattern c).flatten.Pairwise (· < ·) := by
+  rw [flatten_pattern]
   obtain ⟨_ | _ | _, _ | _⟩ := c <;> decide
 
--- the heads of Pylkkänen's patterns bundle only neighbours
-theorem isContiguous_pattern : IsContiguous fun x : realized c.selects ↦ (pattern c).part x := by
+-- Cause is bundled with Voice iff its position is on the head of Voice
+theorem exists_voice_mem_causPosition_mem_iff :
+    (∃ b ∈ pattern c, Projection.voice ∈ b ∧ causPosition c.selects ∈ b) ↔ c.bundled = true := by
   obtain ⟨_ | _ | _, _ | _⟩ := c <;> decide
 
 -- the verb-selecting Cause that is not bundled with Voice has the pattern (49a)
-theorem parts_pattern_verb : (pattern ⟨.verb, false⟩).parts = turkish.parts := by decide
+theorem pattern_verb : pattern ⟨.verb, false⟩ = turkish := by decide
 
 /-- A causative head has a causee position iff its pattern puts v and Voice on different heads. -/
-theorem hasCauseePosition_iff : c.HasCauseePosition ↔ Projection.voice ∉ (pattern c).part .v := by
+theorem hasCauseePosition_iff :
+    c.HasCauseePosition ↔ ¬ ∃ b ∈ pattern c, Projection.v ∈ b ∧ Projection.voice ∈ b := by
   obtain ⟨_ | _ | _, _ | _⟩ := c <;>
     simp [Pylkkanen2008.hasCauseePosition_iff] <;> decide
 
 -- under Key's vocabulary only a root-selecting Cause is realized by an allomorph of the root
-theorem subsetPrinciple_causPosition (ρ : Root) (r : List Terminal) :
-    subsetPrinciple (vocabulary ρ)
-        ⟨terminal (pattern c) (vFeatures c.selects) (causPosition c.selects), [{.inr ρ}], r⟩ =
-      some (if c.selects = .root then .lexical ρ else .dir) := by
-  obtain ⟨_ | _ | _, _ | _⟩ := c
-  case root.false | root.true =>
-    simpa [causPosition, vFeatures] using subsetPrinciple_terminal_v ρ ρ (by decide) r
-  all_goals
-    exact subsetPrinciple_terminal_of_v_notMem ρ (by decide) (Finset.mem_singleton_self _)
-      (by decide) _ r
+theorem lexical_mem_exponents_pattern_iff (ρ : Root) :
+    some (.lexical ρ) ∈ exponents ρ ρ (vFeatures c.selects) (pattern c) ↔ c.selects = .root := by
+  rw [lexical_mem_exponents_iff]
+  obtain ⟨_ | _ | _, _ | _⟩ := c <;> decide
 
 end CauseHead
 
