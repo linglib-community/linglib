@@ -30,6 +30,7 @@ top: Kleene's values lack the glut of Belnap's four values, of which they are th
 * the `Negation Trivalent` instance, `Trivalent.inf_kLE_inf_left`, `Trivalent.sup_kLE_sup_left`:
   the Strong Kleene connectives are knowledge-monotone.
 * `Trivalent.kLE_ofProp_eq_true`: Bochvar's assertion operator only adds information.
+* `Trivalent.transplication_kLE`: transplication only removes it.
 * `Trivalent.meetWeak_not_truthMono`, `Trivalent.joinWeak_not_truthMono`: the Weak Kleene ones are
   not truth-monotone.
 * `Trivalent.toKnow_supervaluation`: over a nonempty family, the supervaluation is the knowledge
@@ -111,6 +112,16 @@ theorem sup_kLE_sup_left {a a' : Trivalent} (b : Trivalent) (h : a ≤ₖ a') : 
 /-- Bochvar's assertion operator only adds information. -/
 theorem kLE_ofProp_eq_true (a : Trivalent) : a ≤ₖ ofProp (a = .true) := by
   cases a <;> decide
+
+/-- A value has at most the information of a two-valued one when, if it is defined, it is true
+exactly when the two-valued one is. -/
+theorem kLE_ofProp_iff {a : Trivalent} {P : Prop} [Decidable P] :
+    a ≤ₖ ofProp P ↔ (a ≠ .undefined → (a = .true ↔ P)) := by
+  rw [kLE_iff]; by_cases h : P <;> cases a <;> simp [h]
+
+/-- Transplication only removes information from the value it guards. -/
+theorem transplication_kLE (a b : Trivalent) : transplication a b ≤ₖ b := by
+  cases a <;> first | exact kLE_refl b | exact undefined_kLE b
 
 /-- Weak Kleene conjunction is not truth-monotone, since `undefined ≤ true` but
 `meetWeak undefined false = undefined` is not below `meetWeak true false = false`; unlike `⊓` it is

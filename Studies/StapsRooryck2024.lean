@@ -148,10 +148,11 @@ noncomputable def deAgentive (init : Entity → E → Prop) (High : Entity → E
 
 variable (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity)
 
-theorem agentive_eq_true_iff_of_ne_undefined (e : E) :
-    (parAgentive init High x e ≠ .undefined → (parAgentive init High x e = .true ↔ init x e)) ∧
-      (deAgentive init High x e ≠ .undefined → (deAgentive init High x e = .true ↔ init x e)) := by
-  simp_all [parAgentive, deAgentive]
+open Classical Bilattice in
+theorem agentive_kLE (e : E) :
+    parAgentive init High x e ≤ₖ Trivalent.ofProp (init x e) ∧
+      deAgentive init High x e ≤ₖ Trivalent.ofProp (init x e) :=
+  ⟨Trivalent.condEvent_kLE, Trivalent.condEvent_kLE⟩
 
 theorem parAgentive_ne_undefined_iff (e : E) :
     parAgentive init High x e ≠ .undefined ↔ deAgentive init High x e = .undefined := by

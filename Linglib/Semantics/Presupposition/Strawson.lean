@@ -11,9 +11,10 @@ propositions. An operator is Strawson downward entailing when shrinking its argu
 conclusion that the original Strawson-entails, the inference being checked only where the
 presuppositions involved hold. Von Fintel introduces the notion to keep the Fauconnier–Ladusaw
 theory of negative polarity licensing for operators that are not downward entailing, and Gajewski
-adds Strawson anti-additivity. Each property holds as soon as the operator's values, where defined,
-[follow an assertion with the classical property](##Presupposition.IsStrawsonDE.of_antitone),
-whatever the presupposition, and [without presuppositions the Strawson notions are the classical
+adds Strawson anti-additivity. Each property holds as soon as the operator's values lie, in the
+knowledge order, [below an assertion with the classical
+property](##Presupposition.IsStrawsonDE.of_antitone), whatever the presupposition, and [without
+presuppositions the Strawson notions are the classical
 ones](##Presupposition.isStrawsonDE_ofProp_iff).
 
 ## Implementation notes
@@ -35,7 +36,7 @@ Gajewski's cross-categorial definition at type `t`.
 
 namespace Presupposition
 
-open Trivalent
+open Trivalent Bilattice
 
 variable {α W : Type*}
 
@@ -60,17 +61,19 @@ theorem isStrawsonDE_iff :
   forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ forall_congr' fun _ ↦
     ⟨fun h a b ↦ h b a, fun h a b ↦ h b a⟩
 
-/-- An operator whose values, where defined, follow an antitone assertion is Strawson downward
-entailing, whatever the presupposition. -/
-theorem IsStrawsonDE.of_antitone {a : α → W → Prop} (h : Antitone a)
-    (hf : ∀ p w, f p w ≠ .undefined → (f p w = .true ↔ a p w)) : IsStrawsonDE f :=
-  fun _ _ hpq w hq hp ↦ (hf _ w hp).2 (h hpq w ((hf _ w (by simp [hq])).1 hq))
+/-- An operator whose values have at most the information of an antitone assertion is Strawson
+downward entailing, whatever the presupposition. -/
+theorem IsStrawsonDE.of_antitone {a : α → W → Prop} [∀ p w, Decidable (a p w)] (h : Antitone a)
+    (hf : ∀ p w, f p w ≤ₖ ofProp (a p w)) : IsStrawsonDE f :=
+  fun _ _ hpq w hq hp ↦ (kLE_ofProp_iff.1 (hf _ w) hp).2
+    (h hpq w ((kLE_ofProp_iff.1 (hf _ w) (by simp [hq])).1 hq))
 
-/-- An operator whose values, where defined, follow a monotone assertion is Strawson upward
-entailing, whatever the presupposition. -/
-theorem IsStrawsonUE.of_monotone {a : α → W → Prop} (h : Monotone a)
-    (hf : ∀ p w, f p w ≠ .undefined → (f p w = .true ↔ a p w)) : IsStrawsonUE f :=
-  fun _ _ hpq w hp hq ↦ (hf _ w hq).2 (h hpq w ((hf _ w (by simp [hp])).1 hp))
+/-- An operator whose values have at most the information of a monotone assertion is Strawson
+upward entailing, whatever the presupposition. -/
+theorem IsStrawsonUE.of_monotone {a : α → W → Prop} [∀ p w, Decidable (a p w)] (h : Monotone a)
+    (hf : ∀ p w, f p w ≤ₖ ofProp (a p w)) : IsStrawsonUE f :=
+  fun _ _ hpq w hp hq ↦ (kLE_ofProp_iff.1 (hf _ w) hq).2
+    (h hpq w ((kLE_ofProp_iff.1 (hf _ w) (by simp [hp])).1 hp))
 
 theorem IsStrawsonDE.of_antitone_posExt (h : Antitone fun p ↦ Trivalent.posExt (f p)) :
     IsStrawsonDE f :=
@@ -124,10 +127,11 @@ def IsStrawsonAntiAdditive (f : α → W → Trivalent) : Prop :=
   ∀ p q, strawsonEntails (f (p ⊔ q)) (fun w ↦ (f p w).meetWeak (f q w)) ∧
     strawsonEntails (fun w ↦ (f p w).meetWeak (f q w)) (f (p ⊔ q))
 
-/-- An operator whose values, where defined, follow an anti-additive assertion is Strawson
-anti-additive, whatever the presupposition. -/
-theorem IsStrawsonAntiAdditive.of_isAntiAdditive {a : α → W → Prop} (h : IsAntiAdditive a)
-    (hf : ∀ p w, f p w ≠ .undefined → (f p w = .true ↔ a p w)) : IsStrawsonAntiAdditive f := by
+/-- An operator whose values have at most the information of an anti-additive assertion is
+Strawson anti-additive, whatever the presupposition. -/
+theorem IsStrawsonAntiAdditive.of_isAntiAdditive {a : α → W → Prop} [∀ p w, Decidable (a p w)]
+    (h : IsAntiAdditive a) (hf : ∀ p w, f p w ≤ₖ ofProp (a p w)) : IsStrawsonAntiAdditive f := by
+  replace hf := fun p w ↦ kLE_ofProp_iff.1 (hf p w)
   refine fun p q ↦ ⟨fun w h₁ h₂ ↦ ?_, fun w h₁ h₂ ↦ ?_⟩
   · have ha := (hf _ w (by simp [h₁])).1 h₁
     rw [h p q] at ha

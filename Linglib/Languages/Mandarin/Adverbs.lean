@@ -44,10 +44,12 @@ def you : TriggerItem := { form := "yòu", script := "又", triggerClass := .ite
 def zai : TriggerItem := { form := "zài", script := "再", triggerClass := .iterative }
 
 /-- *réng* 仍 'still', of a state continuing from the past. -/
-def reng : TriggerItem := { form := "réng", script := "仍", triggerClass := .continuative }
+def reng : TriggerItem :=
+  { form := "réng", script := "仍", triggerClass := .phasal .continuation }
 
 /-- *búzài* 不再 'no longer', of a state that held until the reference time. -/
-def buzai : TriggerItem := { form := "búzài", script := "不再", triggerClass := .changeOfState }
+def buzai : TriggerItem :=
+  { form := "búzài", script := "不再", triggerClass := .phasal .cessation }
 
 /-- *jiù* 就 in its use as 'only', associating with a focus to its right. -/
 def jiu : TriggerItem := { form := "jiù", script := "就", triggerClass := .exclusive }
