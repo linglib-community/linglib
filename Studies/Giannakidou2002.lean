@@ -106,6 +106,17 @@ theorem durativeUntil_iff_of_antitone {p : NonemptyInterval T → Prop} (hp : An
     durativeUntil p t' ↔ ∃ i, p i ∧ i.fst < i.snd ∧ i.snd = t' := by
   simp only [durativeUntil, durative_eq_of_antitone hp]
 
+-- Of a description with the subinterval property, durative UNTIL is Karttunen's durative *until*.
+theorem durativeUntil_iff_until {p : NonemptyInterval T → Prop} (hp : Antitone p) (t' : T) :
+    durativeUntil p t' ↔ until_ {i | p i} {NonemptyInterval.pure t'} := by
+  rw [durativeUntil_iff_of_antitone hp]
+  constructor
+  · rintro ⟨i, hi, hlt, rfl⟩
+    exact ⟨i, hi, i.snd, mem_timeTrace_pure.2 rfl, hlt, le_rfl⟩
+  · rintro ⟨J, hJ, s, hs, hlt, hle⟩
+    obtain rfl := mem_timeTrace_pure.1 hs
+    exact ⟨⟨(J.fst, s), hlt.le⟩, hp (b := J) (NonemptyInterval.le_def.2 ⟨le_rfl, hle⟩) hJ, hlt, rfl⟩
+
 theorem not_durativeUntil_perfective {P : W → E → Prop} {w : W}
     (hP : ∀ e e', P w e → P w e' → e = e') (t' : T) : ¬ durativeUntil (perfective (P w)) t' := by
   rintro ⟨i, h, hi, -⟩
@@ -146,6 +157,15 @@ theorem antitone_notState (P : W → E → Prop) (w : W) :
 /-- Mittwoch's wide-scope reading is durative UNTIL of the state of not-P-ing. -/
 def wideScope (P : W → E → Prop) (w : W) (t' : T) : Prop := durativeUntil (notState P w) t'
 
+-- The wide-scope reading is the structure (3a) of Karttunen, durative *until* of the negated
+-- clause.
+theorem wideScope_iff (P : W → E → Prop) (w : W) (t' : T) :
+    wideScope P w t' ↔ until_ (negated (τ '' {e | P w e})) {NonemptyInterval.pure t'} := by
+  have h : {i | notState P w i} = negated (τ '' {e | P w e}) := Set.ext fun i ↦
+    ⟨fun h ↦ Set.disjoint_left.2 fun a ha ⟨_, ⟨e, he, rfl⟩, hae⟩ ↦ h e he a hae ha,
+      fun h e he a hae ha ↦ Set.disjoint_left.1 h ha ⟨τ e, ⟨e, he, rfl⟩, hae⟩⟩
+  rw [wideScope, durativeUntil_iff_until (antitone_notState P w), h]
+
 /-- External negation denies the durative UNTIL claim. -/
 def narrowScope (p : NonemptyInterval T → Prop) (t' : T) : Prop :=
   ¬ durativeUntil p t'
@@ -165,14 +185,15 @@ theorem wideScope_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P
     (h : t < t') : wideScope P w t' :=
   ⟨⟨(t, t'), h.le⟩, durative_iff.2 fun _ _ e he ↦ absurd he (hP e), h, rfl⟩
 
-/-- Eventive UNTIL is Karttunen's *not until* together with the actualization his presupposition
-supplies. -/
+/-- Eventive UNTIL holds exactly where Karttunen's *not until* is true, with the actualization his
+presupposition supplies. -/
 theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
-    eventiveUntil P w t ↔ notUntil (τ '' {e | P w e}) {NonemptyInterval.pure t} ∧
-      when_ (τ '' {e | P w e}) {NonemptyInterval.pure t} := by
+    eventiveUntil P w t ↔
+      notUntil (fun w ↦ τ '' {e | P w e}) (fun _ ↦ {NonemptyInterval.pure t}) w = .true := by
+  rw [notUntil_eq_true_iff]
   constructor
   · rintro ⟨⟨e, he, ht⟩, hall⟩
-    refine ⟨(notUntil_iff _ _).mpr fun s ⟨_, ⟨e', he', rfl⟩, hs⟩ ↦
+    refine ⟨beforeEver_iff_not_subset_upperClosure.not_left.2 fun s ⟨_, ⟨e', he', rfl⟩, hs⟩ ↦
       ⟨t, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩,
         (hall e' he').trans (NonemptyInterval.mem_def.mp hs).1⟩,
       t, ⟨τ e, ⟨e, he, rfl⟩, ht⟩, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩⟩
@@ -181,7 +202,8 @@ theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
     rw [NonemptyInterval.mem_pure] at hsj
     subst hsj
     refine ⟨⟨e, he, hs⟩, fun e' he' ↦ ?_⟩
-    obtain ⟨t', ⟨j, hj, ht'⟩, hle⟩ := mem_upperClosure.1 ((notUntil_iff _ _).mp hnu
+    obtain ⟨t', ⟨j, hj, ht'⟩, hle⟩ :=
+      mem_upperClosure.1 (beforeEver_iff_not_subset_upperClosure.not_left.1 hnu
       ⟨τ e', ⟨e', he', rfl⟩, NonemptyInterval.mem_def.mpr ⟨le_rfl, (τ e').fst_le_snd⟩⟩)
     obtain rfl := Set.mem_singleton_iff.mp hj
     rw [NonemptyInterval.mem_pure] at ht'
@@ -189,7 +211,7 @@ theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
 
 theorem eventiveUntil_not_before {P : W → E → Prop} {w : W} {t : T}
     (h : eventiveUntil P w t) : ¬ beforeEver (τ '' {e | P w e}) {NonemptyInterval.pure t} :=
-  ((eventiveUntil_iff P w t).1 h).1
+  (notUntil_eq_true_iff.1 ((eventiveUntil_iff P w t).1 h)).1
 
 theorem not_before_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) (t : T) :
     ¬ beforeEver (τ '' {e | P w e}) {NonemptyInterval.pure t} :=

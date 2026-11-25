@@ -1,0 +1,1592 @@
+{
+  "features": [
+    {
+      "key": "adverbial",
+      "lean": "adverbial",
+      "type": "Adverbial",
+      "doc": "The time expression a sentence tests.",
+      "levels": [
+        {
+          "name": "until",
+          "label": "until",
+          "doc": "English until"
+        },
+        {
+          "name": "before",
+          "label": "before",
+          "doc": "English before"
+        },
+        {
+          "name": "to",
+          "label": "to",
+          "doc": "English to, as in to 9 o'clock"
+        },
+        {
+          "name": "howLong",
+          "label": "howLong",
+          "doc": "English how long"
+        },
+        {
+          "name": "whilePhrase",
+          "label": "while",
+          "doc": "English while"
+        },
+        {
+          "name": "asLongAs",
+          "label": "asLongAs",
+          "doc": "English as long as"
+        },
+        {
+          "name": "forPhrase",
+          "label": "for",
+          "doc": "English for, as in for two more years"
+        },
+        {
+          "name": "erst",
+          "label": "erst",
+          "doc": "German erst"
+        },
+        {
+          "name": "bis",
+          "label": "bis",
+          "doc": "German bis"
+        },
+        {
+          "name": "ennenKuin",
+          "label": "ennenKuin",
+          "doc": "Finnish ennen kuin, printed ennenkuin"
+        },
+        {
+          "name": "vasta",
+          "label": "vasta",
+          "doc": "Finnish vasta"
+        }
+      ]
+    },
+    {
+      "key": "host",
+      "lean": "host",
+      "type": "Host",
+      "doc": "The class of the clause the time expression modifies, apart from its negation.",
+      "levels": [
+        {
+          "name": "durative",
+          "label": "durative",
+          "doc": "about something that takes place over an interval of time: an activity, a generic, a progressive or an iterative clause"
+        },
+        {
+          "name": "nondurative",
+          "label": "nondurative",
+          "doc": "of the achievement or accomplishment type"
+        }
+      ]
+    },
+    {
+      "key": "negation",
+      "lean": "negation",
+      "type": "Negation",
+      "doc": "The negation the time expression stands under, where there is one.",
+      "levels": [
+        {
+          "name": "clausal",
+          "label": "clausal",
+          "doc": "negation of the clause the expression modifies"
+        },
+        {
+          "name": "superordinate",
+          "label": "superordinate",
+          "doc": "negation of a superordinate think, as in (2) and (17)"
+        }
+      ]
+    },
+    {
+      "key": "modifier",
+      "lean": "modifier",
+      "type": "Modifier",
+      "doc": "The qualification of the until-phrase in (11)-(14) and (32b).",
+      "levels": [
+        {
+          "name": "atTheEarliest",
+          "label": "atTheEarliest",
+          "doc": "at the earliest"
+        },
+        {
+          "name": "atTheLatest",
+          "label": "atTheLatest",
+          "doc": "at the latest"
+        },
+        {
+          "name": "only",
+          "label": "only",
+          "doc": "only"
+        },
+        {
+          "name": "orLonger",
+          "label": "orLonger",
+          "doc": "or longer"
+        },
+        {
+          "name": "orMore",
+          "label": "orMore",
+          "doc": "or more"
+        },
+        {
+          "name": "andBeyond",
+          "label": "andBeyond",
+          "doc": "and beyond"
+        }
+      ]
+    },
+    {
+      "key": "complement",
+      "lean": "complement",
+      "type": "Complement",
+      "doc": "The clause an until-phrase contains, in (18) and (20a).",
+      "levels": [
+        {
+          "name": "inchoative",
+          "label": "inchoative",
+          "doc": "a clause with a punctual, inchoative interpretation, as the princess slept 'the princess began to sleep'"
+        },
+        {
+          "name": "durative",
+          "label": "durative",
+          "doc": "a clause with a verb that is exclusively durative, as last"
+        }
+      ]
+    }
+  ],
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the file."
+  },
+  "examples": [
+    {
+      "id": "karttunen1974_1a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(1a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess slept until the prince kissed her.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_1b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(1b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John studied the piano until he got married.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_1c",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(1c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Bill was writing a novel until he became an actor.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_1c_cf",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(1c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Bill wrote a novel until he became an actor.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"]
+      ],
+      "comment": "The paper prints the starred sentence up to the temporal phrase, which is that of (1c).",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_1d",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(1d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Guests arrived until midnight.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_1d_cf",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(1d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "A guest arrived until midnight.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"]
+      ],
+      "comment": "The paper prints the starred sentence up to the temporal phrase, which is that of (1d).",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_1e",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(1e)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess didn't wake up until the prince kissed her.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_1e_cf",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(1e)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess woke up until the prince kissed her.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"]
+      ],
+      "comment": "The paper prints the starred sentence up to the temporal phrase, which is that of (1e).",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_p284",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "p. 284"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess woke up until 9.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_2",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(2)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I don't think the princess woke up until the prince kissed her.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "superordinate"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_5a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(5a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The investigation will continue until all the questions have been answered.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_5b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(5b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The investigation will continue as long as there are unanswered questions.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "asLongAs"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_5c",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(5c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The investigation will continue for two more years.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "for"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_6a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(6a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The investigation will not end until all the questions have been answered.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_6b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(6b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The investigation will not end as long as there are unanswered questions.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "asLongAs"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_6c",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(6c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The investigation will not end for two more years.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "for"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_7a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(7a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The investigation will end until all the questions have been answered.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_7b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(7b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The investigation will end as long as there are unanswered questions.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "asLongAs"],
+        ["host", "nondurative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_7c",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(7c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The investigation will end for two more years.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "for"],
+        ["host", "nondurative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_8a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(8a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess slept to 9 o'clock.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "to"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_8b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(8b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess woke up to 9 o'clock.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "to"],
+        ["host", "nondurative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_8c",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(8c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess didn't wake up to 9 o'clock.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "to"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_9a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(9a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "How long did the princess sleep?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "howLong"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_9b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(9b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "How long did the princess not wake up?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "howLong"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_10a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(10a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I washed the dishes while you slept.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "while"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_10b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(10b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I washed the dishes while you were not in the kitchen.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "while"],
+        ["host", "durative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_10c",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(10c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I washed the dishes while you didn't wake up.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "while"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_11a_earliest",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(11a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess slept until 9 at the earliest.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["modifier", "atTheEarliest"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_11a_latest",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(11a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess slept until 9 at the latest.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["modifier", "atTheLatest"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_11b_earliest",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(11b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess didn't wake up until 9 at the earliest.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"],
+        ["modifier", "atTheEarliest"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_11b_latest",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(11b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess didn't wake up until 9 at the latest.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"],
+        ["modifier", "atTheLatest"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_12a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(12a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess slept only until 9.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["modifier", "only"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_12b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(12b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess didn't wake up only until 9.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"],
+        ["modifier", "only"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_13a_longer",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(13a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess slept until 9 or longer.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["modifier", "orLonger"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_13a_more",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(13a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess slept until 9 or more.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["modifier", "orMore"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_13b_longer",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(13b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess didn't wake up until 9 or longer.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"],
+        ["modifier", "orLonger"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_13b_more",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(13b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess didn't wake up until 9 or more.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"],
+        ["modifier", "orMore"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_14a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(14a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess slept until 9 and beyond.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["modifier", "andBeyond"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_14b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(14b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess didn't wake up until 9 and beyond.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"],
+        ["modifier", "andBeyond"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_15",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(15)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess didn't sleep until 9.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "durative", "judgment": "acceptable"},
+        {"name": "inchoative", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_17",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(17)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I don't think the princess slept until 9.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["negation", "superordinate"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_18",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(18)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The frog waited until the princess slept.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["complement", "inchoative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_19",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(19)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess slept before the Queen left the room.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "inchoative", "judgment": "acceptable"},
+        {"name": "accomplishment", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["adverbial", "before"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_20a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(20a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The frog waited until the party lasted.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["complement", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_20b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(20b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The party didn't last until morning.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_21",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(21)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Nancy remained a spinster until 1974.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_22",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(22)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Nancy remained a spinster until she died.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_23",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(23)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Nancy didn't get married until she died.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "marginal",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_24",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(24)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Nancy didn't get married until 1974.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_25a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(25a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I won't marry you until my mother dies.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_25b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(25b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I won't marry you before my mother dies.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "before"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_26",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(26)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Nancy didn't marry until she met Henry.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_28",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(28)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess didn't wake up until 9.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_30a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(30a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I wish the princess hadn't woken up until 9.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_30b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(30b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "If the princess hadn't woken up until 9, the Queen would have been much happier than she was.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_32a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(32a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I wish the princess had slept until 9.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_32b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(32b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I wish the princess had slept only until 9.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"],
+        ["host", "durative"],
+        ["modifier", "only"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_38a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(38a)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Die Prinzessin wachte erst um 9 Uhr auf.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "The princess didn't wake up until 9",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "erst"],
+        ["host", "nondurative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_38a_neg",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(38a)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Die Prinzessin wachte nicht erst um 9 Uhr auf.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "erst"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_38b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(38b)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Ich wünschte die Prinzessin wäre erst um 9 Uhr aufgewacht.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "I wish the princess had not woken up until 9",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "erst"],
+        ["host", "nondurative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_39a",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(39a)"},
+      "reportedIn": null,
+      "language": "finn1318",
+      "primaryText": "Prinsessa ei herännyt ennenkuin yhdeksältä.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "The princess didn't wake up until 9",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "ennenKuin"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_39b",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "(39b)"},
+      "reportedIn": null,
+      "language": "finn1318",
+      "primaryText": "Prinsessa heräsi vasta yhdeksältä.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "The princess didn't wake up until 9",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "vasta"],
+        ["host", "nondurative"]
+      ],
+      "comment": "The paper translates the sentence by the German of (38a), 'Die Prinzessin wachte erst um 9 Uhr auf'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_fn3",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "p. 295, fn. 3"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The princess woke up for two years.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "for"],
+        ["host", "nondurative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_fn6_before_reduced",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "p. 295, fn. 6"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I won't leave before you.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "before"]
+      ],
+      "comment": "Printed 'I won't leave before you (do)'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_fn6_until_reduced",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "p. 295, fn. 6"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I won't leave until you.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_fn6_before_measure",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "p. 295, fn. 6"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John didn't arrive five hours before Bill came.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "before"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_fn6_until_measure",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "pp. 295-296, fn. 6"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John didn't arrive five hours until Bill came.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "until"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_fn8_clause",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "p. 296, fn. 8"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Die Prinzessin wachte nicht auf, bis ich sie um 9 Uhr weckte.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "The princess didn't wake up until when I woke her up at 9 o'clock",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "bis"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karttunen1974_fn8_np",
+      "source": {"bibkey": "karttunen-1974", "paperLabel": "p. 296, fn. 8"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Die Prinzessin wachte nicht auf, bis 9 Uhr.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["adverbial", "bis"],
+        ["host", "nondurative"],
+        ["negation", "clausal"]
+      ],
+      "comment": "Printed as the starred alternative '(/*bis 9 Uhr)' to the clause of the acceptable sentence.",
+      "verified": "page-image"
+    }
+  ]
+}
