@@ -39,13 +39,26 @@ endpoint, *È corso al campo sportivo in un'ora* 'he ran to the sports ground in
 ## Implementation notes
 
 The mood and complementizer facts of the attitude and causative entries are Grano's and Fusco
-and Sgrizzi's; the attitude classifications and the non-passivizability of *volere*, *sperare*
-and *intendere* are carried over from the earlier entries and are not in those sources.
+and Sgrizzi's. Grano treats *volere* 'want', *sperare* 'hope' and *intendere* 'intend' as desire
+predicates, the last with a causative component the other two lack; the entries give all three
+the preferential attitude of [anand-hacquard-2013]'s classification and do not record that
+difference.
+
+The passive is possible with every transitive verb but a few that denote a relation, *avere*
+among them, and with a finite complement clause as object it is nearly always possible
+([renzi-1988] ch. I §4.2). A sentence with a restructuring infinitive passivizes the infinitive
+and not the governing verb, *Questa parete deve essere ridipinta* and not **è dovuta
+ridipingere*, and the modals *volere*, *potere*, *dovere* and *sapere* are restructuring verbs.
+`passivizable` is one value for a verb: *avere* and *volere* are marked as not passivizing on
+that account, and *sperare*, which takes a finite clause, is not. The value of *intendere* is
+carried over from an earlier entry and is not in these sources.
 
 ## References
 
 * [fusco-sgrizzi-2026]
 * [grano-2024]
+* [anand-hacquard-2013]
+* [renzi-1988]
 * [palmieri-2024]
 * [maiden-robustelli-2007]
 * [sorace-2000]
@@ -114,7 +127,8 @@ def pensare : Verb where
   clauseTypers := [di, a]
 
 /-- *volere* 'want' takes a *che* clause in the subjunctive, the indicative being marginal for
-some speakers, and a bare infinitive under subject control. -/
+some speakers, and a bare infinitive under subject control, with which it is a modal verb and
+does not itself take the passive form ([renzi-1988] ch. I §4.2.3). -/
 def volere : Verb where
   morphs := [.root "volere"]
   valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
@@ -129,7 +143,6 @@ some speakers. -/
 def sperare : Verb where
   morphs := [.root "sperare"]
   valency := .ofFrame ArgumentFrame.subjunctiveClause
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
   clauseTypers := [che]
@@ -217,10 +230,12 @@ def vedere : Verb where
 /-! ### The auxiliaries of the perfect -/
 
 /-- *avere* 'have', the auxiliary of the perfect of transitive verbs and of intransitive verbs
-of activity. -/
+of activity. As a transitive verb it denotes a relation and has no passive ([renzi-1988] ch. I
+§4.2.1). -/
 def avere : Verb where
   morphs := [.root "avere"]
   valency := .ofFrame ArgumentFrame.np
+  passivizable := false
   perfectAuxiliaries := {.have}
 
 /-- *essere* 'be', the auxiliary of the perfect of verbs of change and of state and of verbs
