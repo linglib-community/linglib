@@ -5,9 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Spine.Basic
 public import Linglib.Syntax.Spine.Hosting
-public import Mathlib.Data.List.SplitBy
+public import Linglib.Syntax.Spine.SplitBefore
 
 /-!
 # Head chains
@@ -59,7 +58,7 @@ variable {H : Type*} (shares strong : H → Prop) [DecidablePred shares] [Decida
 
 /-- The head chains of a spine, lowest first: a head that shares its M-value with the head of its
 complement joins the chain of the head below it. -/
-def chains (s : Spine H) : List (List H) := s.heads.splitBy fun _ b ↦ decide (shares b)
+def chains (s : Spine H) : List (List H) := s.splitBefore (¬ shares ·)
 
 /-- Head Chain Pronunciation: a chain is pronounced at its highest strong position, or at its
 highest position when none is strong. -/
@@ -75,7 +74,7 @@ def hosts (s : Spine H) : List H := Spine.hosting (sited shares strong s)
 variable {shares strong}
 
 theorem flatten_chains (s : Spine H) : (chains shares s).flatten = s.heads :=
-  List.flatten_splitBy _ _
+  s.flatten_splitBefore _
 
 theorem mem_of_site {c : List H} {x : H} (h : site strong c = some x) : x ∈ c := by
   rcases Option.or_eq_some_iff.mp h with h | ⟨-, h⟩
@@ -85,7 +84,7 @@ theorem mem_of_site {c : List H} {x : H} (h : site strong c = some x) : x ∈ c 
 /-- Each head chain is a stretch of the spine. -/
 theorem infix_of_mem_chains {s : Spine H} {c : List H} (h : c ∈ chains shares s) :
     c <:+: s.heads :=
-  flatten_chains (shares := shares) s ▸ List.infix_of_mem_flatten h
+  Spine.infix_of_mem_splitBefore h
 
 theorem map_fst_sited_sublist (s : Spine H) :
     ((sited shares strong s).map Prod.fst).Sublist (chains shares s) := by
