@@ -23,8 +23,8 @@ the object, so the lower copy of a phrase that has moved on is invisible to it.
   occurrence of another.
 * `Minimalist.PlanarSyntacticObject.FindsHead`, `labelsAt`, `labels`: what minimal search finds.
 * `Minimalist.PlanarSyntacticObject.IsLabeledBy`, `IsLabeledByFeature`, `IsLabeled`.
-* `Minimalist.PlanarSyntacticObject.LabelDaughter`, `Minimalist.HeadFunction.label`: the head
-  relation labels induce, and the head function it gives.
+* `Minimalist.PlanarSyntacticObject.LabelDaughter`, `Minimalist.HeadDaughter.label`: the head
+  relation labels induce, and the head daughters it gives.
 
 ## Main results
 
@@ -34,8 +34,8 @@ the object, so the lower copy of a phrase that has moved on is invisible to it.
   and two heads are both found.
 * `labelsAt_merge`, `labelsAt_merge_of_not_inDomain`: two non-heads leave the heads of both, and a
   daughter that has moved on is invisible.
-* `Minimalist.HeadFunction.labelDaughter_of_headDaughterRel_label`: the head daughters of the label
-  head function are label daughters.
+* `Minimalist.HeadDaughter.labelDaughter_of_headDaughterRel_label`: the head daughters under
+  labeling are label daughters.
 
 ## Implementation notes
 
@@ -372,14 +372,14 @@ theorem labelDaughter_iff_of_merge_head (hn : t.termAt n = SyntacticObject.merge
 
 end Minimalist.PlanarSyntacticObject
 
-namespace Minimalist.HeadFunction
+namespace Minimalist.HeadDaughter
 
 open RoseTree PhraseStructure
 
-/-- The label head function, [chomsky-2013]'s: the head daughter of a position is the daughter
-containing the one head minimal search from it finds, and there is none where search finds no head
-or several. -/
-def label : HeadFunction := fun t x ↦
+/-- The head daughters under [chomsky-2013]'s labeling: the head daughter of a position is the
+daughter containing the one head minimal search from it finds, and there is none where search
+finds no head or several. -/
+def label : HeadDaughter := fun t x ↦
   if hx : x ∈ t.toRoseTree.validPaths then
     (List.range 2).find? fun i ↦
       if hc : x * .of i ∈ t.toRoseTree.validPaths then
@@ -387,7 +387,7 @@ def label : HeadFunction := fun t x ↦
       else false
   else none
 
-/-- The head daughters of the label head function are label daughters. -/
+/-- The head daughters under labeling are label daughters. -/
 theorem labelDaughter_of_headDaughterRel_label {t : PlanarSyntacticObject}
     {n c : t.toRoseTree.Positions} (h : headDaughterRel (label t) n.val c.val) :
         t.LabelDaughter n c := by
@@ -403,4 +403,4 @@ theorem labelDaughter_of_headDaughterRel_label {t : PlanarSyntacticObject}
   have : (⟨n.val * .of i, hci ▸ c.2⟩ : t.toRoseTree.Positions) = c := Subtype.ext hci
   exact this ▸ hsub (ha ▸ Finset.mem_singleton_self a)
 
-end Minimalist.HeadFunction
+end Minimalist.HeadDaughter

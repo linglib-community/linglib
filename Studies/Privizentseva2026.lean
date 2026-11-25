@@ -309,7 +309,7 @@ structure Pending where
 
 /-- Selection before saturation: a head selects a sister of the category on top of its stack,
 which need not be saturated; the sister's remaining selectors become pending. -/
-def beforeSaturation : SelectionRule Pending where
+def beforeSaturation : SelectionRule LexicalItem.Token Pending where
   Selects r b _ := r.stack.head? = some b.item.cat
   rest r _ u := ⟨r.stack.tail, r.pending + u.pending + u.stack⟩
 

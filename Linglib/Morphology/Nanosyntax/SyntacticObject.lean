@@ -1,15 +1,16 @@
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.Term
+public import Linglib.Syntax.Minimalist.Next.SyntacticObject
 
 /-!
 # Nanosyntax: syntactic objects
 
-A syntactic object of nanosyntax is a Minimalist syntactic object whose lexical items are single
-features, an element of the free commutative magma `Minimalist.SyntacticObject F`. A feature `f`
-merged with a complement `t` is `phrase f t`, the set $\{f, t\}$. A phrase whose complement is
-absent, at the bottom of a sequence or after its complement has evacuated, is the singleton
-$\{f\}$ of [blix-2022], written `bare f`. The phrase a feature sequence builds without movement
+A syntactic object of nanosyntax is a Minimalist syntactic object whose leaves are single
+features or the mark of an absent complement, an element of the free commutative magma
+`Minimalist.Next.SyntacticObject (Option F)`. A feature `f` merged with a complement `t` is
+`phrase f t`, the set $\{f, t\}$. A phrase whose complement is absent, at the bottom of a
+sequence or after its complement has evacuated, is the singleton $\{f\}$ of [blix-2022], written
+`bare f`. The phrase a feature sequence builds without movement
 is its `spine`. An evacuated constituent beside the remnant it left is their Merge, a set of two
 phrases, which no feature labels (`IsUnlabelled`).
 
@@ -20,9 +21,10 @@ size and no larger one (`merge_spine_containsOrEq_spine_iff`).
 
 ## Implementation notes
 
-* The free commutative magma has no singletons, so `bare f` is `phrase f trace`, the index-free
-  trace standing for the absent complement. The bottom of a sequence and a phrase whose
-  complement has evacuated are the same object.
+* The free commutative magma has no singletons, so the leaves are `Option F` and `bare f` is the
+  Merge of `f` with the leaf `none`, which stands for the absent complement. It is what tells the
+  feature of a phrase from its complement at the bottom of a sequence. The bottom of a sequence and
+  a phrase whose complement has evacuated are the same object.
 * A derivation is built on planar objects, an evacuated constituent to the left of its remnant,
   since the pronunciation reads that order. `pphrase`, `pbare` and `pspine` are the planar
   counterparts, and stored objects and matching are unordered.
@@ -39,18 +41,20 @@ size and no larger one (`merge_spine_containsOrEq_spine_iff`).
 
 namespace Morphology.Nanosyntax
 
-open Minimalist SyntacticObject
+open Minimalist.Next SyntacticObject
 
-variable {F : Type}
+variable {F : Type*}
 
 /-- The phrase of the feature `f` over the complement `t`, the set `{f, t}`. -/
-abbrev phrase (f : F) (t : SyntacticObject F) : SyntacticObject F := merge (leaf f) t
+abbrev phrase (f : F) (t : SyntacticObject (Option F)) : SyntacticObject (Option F) :=
+  leaf (some f) * t
 
 /-- The phrase of `f` with no complement, the set `{f}`. -/
-abbrev bare (f : F) : SyntacticObject F := phrase f trace
+abbrev bare (f : F) : SyntacticObject (Option F) := phrase f (leaf none)
 
 /-- The phrase a feature sequence builds without evacuation, its first feature at the bottom. -/
-def spine (f₀ : F) (fs : List F) : SyntacticObject F := fs.foldl (fun t f ↦ phrase f t) (bare f₀)
+def spine (f₀ : F) (fs : List F) : SyntacticObject (Option F) :=
+  fs.foldl (fun t f ↦ phrase f t) (bare f₀)
 
 @[simp] theorem spine_nil (f₀ : F) : spine f₀ [] = bare f₀ := rfl
 
@@ -59,23 +63,22 @@ def spine (f₀ : F) (fs : List F) : SyntacticObject F := fs.foldl (fun t f ↦ 
 
 theorem exists_spine_eq_phrase (f₀ : F) (fs : List F) : ∃ f t, spine f₀ fs = phrase f t := by
   cases fs using List.reverseRecOn with
-  | nil => exact ⟨f₀, trace, rfl⟩
+  | nil => exact ⟨f₀, leaf none, rfl⟩
   | append_singleton fs f => exact ⟨f, spine f₀ fs, spine_concat ..⟩
 
-theorem spine_ne_leaf (f₀ : F) (fs : List F) (a : F) : spine f₀ fs ≠ leaf a := by
+theorem spine_ne_leaf (f₀ : F) (fs : List F) (a : Option F) : spine f₀ fs ≠ leaf a := by
   obtain ⟨f, t, h⟩ := exists_spine_eq_phrase f₀ fs
-  exact h ▸ Ne.symm (leaf_ne_merge _ _ _)
+  exact h ▸ Ne.symm (FreeCommMagma.of_ne_mul _ _ _)
 
-theorem spine_ne_trace (f₀ : F) (fs : List F) : spine f₀ fs ≠ (trace : SyntacticObject F) := by
-  obtain ⟨f, t, h⟩ := exists_spine_eq_phrase f₀ fs
-  exact h ▸ Ne.symm (trace_ne_merge _ _)
+theorem leaf_none_ne_leaf_some (f : F) : (leaf none : SyntacticObject (Option F)) ≠ leaf (some f) :=
+  fun h ↦ by cases FreeCommMagma.of_injective h
 
-theorem phrase_eq_phrase_iff {f g : F} {t s : SyntacticObject F} (hs : s ≠ leaf f) :
-    phrase f t = phrase g s ↔ f = g ∧ t = s := by
-  rw [merge_eq_merge_iff]
+theorem phrase_eq_phrase_iff {f g : F} {t s : SyntacticObject (Option F)}
+    (hs : s ≠ leaf (some f)) : phrase f t = phrase g s ↔ f = g ∧ t = s := by
+  rw [FreeCommMagma.mul_eq_mul_iff]
   constructor
   · rintro (⟨h, rfl⟩ | ⟨h, -⟩)
-    · exact ⟨leaf_inj.1 h, rfl⟩
+    · exact ⟨Option.some.inj (FreeCommMagma.of_injective h), rfl⟩
     · exact absurd h.symm hs
   · rintro ⟨rfl, rfl⟩
     exact .inl ⟨rfl, rfl⟩
@@ -86,26 +89,26 @@ theorem spine_inj {f₀ g₀ : F} {fs gs : List F} :
   induction fs using List.reverseRecOn generalizing gs with
   | nil =>
     cases gs using List.reverseRecOn with
-    | nil => exact ⟨((phrase_eq_phrase_iff (leaf_ne_trace _).symm).1 h).1, rfl⟩
+    | nil => exact ⟨((phrase_eq_phrase_iff (leaf_none_ne_leaf_some _)).1 h).1, rfl⟩
     | append_singleton gs g =>
       rw [spine_nil, spine_concat, phrase_eq_phrase_iff (spine_ne_leaf g₀ gs _)] at h
-      exact absurd h.2.symm (spine_ne_trace g₀ gs)
+      exact absurd h.2.symm (spine_ne_leaf g₀ gs _)
   | append_singleton fs f ih =>
     cases gs using List.reverseRecOn with
     | nil =>
-      rw [spine_nil, spine_concat, phrase_eq_phrase_iff (leaf_ne_trace _).symm] at h
-      exact absurd h.2 (spine_ne_trace f₀ fs)
+      rw [spine_nil, spine_concat, phrase_eq_phrase_iff (leaf_none_ne_leaf_some _)] at h
+      exact absurd h.2 (spine_ne_leaf f₀ fs _)
     | append_singleton gs g =>
       rw [spine_concat, spine_concat, phrase_eq_phrase_iff (spine_ne_leaf g₀ gs _)] at h
       obtain ⟨rfl, rfl⟩ := ih h.2
       exact ⟨rfl, by rw [h.1]⟩
 
 theorem spine_eq_bare_iff {f₀ g₀ : F} {gs : List F} :
-    spine f₀ gs = merge (leaf g₀) trace ↔ f₀ = g₀ ∧ gs = [] :=
+    spine f₀ gs = leaf (some g₀) * leaf none ↔ f₀ = g₀ ∧ gs = [] :=
   spine_inj (g₀ := g₀) (gs := [])
 
 theorem spine_eq_phrase_spine_iff {f₀ g₀ f : F} {fs gs : List F} :
-    spine f₀ gs = merge (leaf f) (spine g₀ fs) ↔ f₀ = g₀ ∧ gs = fs ++ [f] := by
+    spine f₀ gs = leaf (some f) * spine g₀ fs ↔ f₀ = g₀ ∧ gs = fs ++ [f] := by
   have := spine_inj (f₀ := f₀) (fs := gs) (g₀ := g₀) (gs := fs ++ [f])
   rwa [spine_concat] at this
 
@@ -118,21 +121,21 @@ theorem spine_containsOrEq_spine_iff {f₀ : F} {fs gs : List F} :
     (spine f₀ fs).ContainsOrEq (spine f₀ gs) ↔ gs <+: fs := by
   induction fs using List.reverseRecOn with
   | nil =>
-    simp only [spine_nil, containsOrEq_merge, containsOrEq_leaf, containsOrEq_trace,
-      spine_ne_leaf, spine_ne_trace, or_false, List.prefix_nil, spine_eq_bare_iff, true_and]
+    simp only [spine_nil, containsOrEq_mul, containsOrEq_leaf, spine_ne_leaf, or_false,
+      List.prefix_nil, spine_eq_bare_iff, true_and]
   | append_singleton fs f ih =>
-    simp only [spine_concat, containsOrEq_merge, containsOrEq_leaf, spine_ne_leaf, false_or, ih,
+    simp only [spine_concat, containsOrEq_mul, containsOrEq_leaf, spine_ne_leaf, false_or, ih,
       List.prefix_concat_iff, spine_eq_phrase_spine_iff, true_and]
 
 theorem eq_of_spine_containsOrEq_spine {f₀ g₀ : F} {fs gs : List F}
     (h : (spine g₀ fs).ContainsOrEq (spine f₀ gs)) : f₀ = g₀ := by
   induction fs using List.reverseRecOn with
   | nil =>
-    simp only [spine_nil, containsOrEq_merge, containsOrEq_leaf, containsOrEq_trace,
-      spine_ne_leaf, spine_ne_trace, or_false, spine_eq_bare_iff] at h
+    simp only [spine_nil, containsOrEq_mul, containsOrEq_leaf, spine_ne_leaf, or_false,
+      spine_eq_bare_iff] at h
     exact h.1
   | append_singleton fs f ih =>
-    simp only [spine_concat, containsOrEq_merge, containsOrEq_leaf, spine_ne_leaf, false_or] at h
+    simp only [spine_concat, containsOrEq_mul, containsOrEq_leaf, spine_ne_leaf, false_or] at h
     rcases h with h | h
     · exact (spine_eq_phrase_spine_iff.1 h).1
     · exact ih h
@@ -140,30 +143,46 @@ theorem eq_of_spine_containsOrEq_spine {f₀ g₀ : F} {fs gs : List F}
 /-- A spine beside a remnant with another foot contains the spines on its foot up to its own
 size and no larger one. -/
 theorem merge_spine_containsOrEq_spine_iff {f₀ g₀ : F} (h : f₀ ≠ g₀) {fs gs hs : List F} :
-    (merge (spine f₀ fs) (spine g₀ hs)).ContainsOrEq (spine f₀ gs) ↔ gs <+: fs := by
-  rw [containsOrEq_merge, spine_containsOrEq_spine_iff]
+    (spine f₀ fs * spine g₀ hs).ContainsOrEq (spine f₀ gs) ↔ gs <+: fs := by
+  rw [containsOrEq_mul, spine_containsOrEq_spine_iff]
   refine ⟨?_, fun h ↦ .inr (.inl h)⟩
   rintro (he | h' | h')
   · obtain ⟨f, t, hf⟩ := exists_spine_eq_phrase f₀ gs
-    rw [hf, merge_eq_merge_iff] at he
+    rw [hf, FreeCommMagma.mul_eq_mul_iff] at he
     rcases he with ⟨he, -⟩ | ⟨he, -⟩
     · exact absurd he.symm (spine_ne_leaf _ _ _)
     · exact absurd he.symm (spine_ne_leaf _ _ _)
   · exact h'
   · exact absurd (eq_of_spine_containsOrEq_spine h') h
 
+/-! ### Features -/
+
+/-- The features of an object, the marks of absent complements left out. -/
+def features (s : SyntacticObject (Option F)) : Multiset F := s.yield.filterMap id
+
+@[simp] theorem features_mul (l r : SyntacticObject (Option F)) :
+    features (l * r) = features l + features r := by
+  simp [features, Multiset.filterMap_add]
+
+@[simp] theorem features_leaf_some (f : F) : features (leaf (some f)) = {f} := rfl
+
+@[simp] theorem features_leaf_none : features (leaf (none : Option F)) = 0 := rfl
+
+theorem features_le_of_mem_terms {x y : SyntacticObject (Option F)} (h : y ∈ x.terms) :
+    features y ≤ features x :=
+  Multiset.filterMap_le_filterMap _ (yield_le_of_mem_terms h)
 
 /-! ### Planar objects -/
 
 /-- The planar phrase of `f` over `t`, the feature first. -/
-abbrev pphrase (f : F) (t : PlanarSyntacticObject F) : PlanarSyntacticObject F :=
-  PlanarSyntacticObject.leaf f * t
+abbrev pphrase (f : F) (t : PlanarSyntacticObject (Option F)) : PlanarSyntacticObject (Option F) :=
+  FreeMagma.of (some f) * t
 
 /-- The planar phrase of `f` with no complement. -/
-abbrev pbare (f : F) : PlanarSyntacticObject F := pphrase f PlanarSyntacticObject.trace
+abbrev pbare (f : F) : PlanarSyntacticObject (Option F) := pphrase f (FreeMagma.of none)
 
 /-- The planar spine of a feature sequence. -/
-def pspine (f₀ : F) (fs : List F) : PlanarSyntacticObject F :=
+def pspine (f₀ : F) (fs : List F) : PlanarSyntacticObject (Option F) :=
   fs.foldl (fun t f ↦ pphrase f t) (pbare f₀)
 
 @[simp] theorem pspine_nil (f₀ : F) : pspine f₀ [] = pbare f₀ := rfl
@@ -172,17 +191,18 @@ def pspine (f₀ : F) (fs : List F) : PlanarSyntacticObject F :=
     pspine f₀ (fs ++ [f]) = pphrase f (pspine f₀ fs) := by simp [pspine]
 
 @[simp] theorem toSyntacticObject_pspine (f₀ : F) (fs : List F) :
-    (pspine f₀ fs).toSyntacticObject = spine f₀ fs := by
+    PlanarSyntacticObject.toSyntacticObject (pspine f₀ fs) = spine f₀ fs := by
   induction fs using List.reverseRecOn with
   | nil => rfl
   | append_singleton fs f ih =>
     rw [pspine_concat, spine_concat, ← ih]
-    exact PlanarSyntacticObject.toSyntacticObject_merge _ _
+    exact map_mul _ _ _
 
 /-- An object with two phrasal daughters, which no feature labels. -/
-def IsUnlabelled (s : SyntacticObject F) : Prop := ∃ a b c d, s = merge (merge a b) (merge c d)
+def IsUnlabelled (s : SyntacticObject (Option F)) : Prop := ∃ a b c d, s = (a * b) * (c * d)
 
 /-- An object with an unlabelled constituent. -/
-def HasUnlabelled (s : SyntacticObject F) : Prop := ∃ u, s.ContainsOrEq u ∧ IsUnlabelled u
+def HasUnlabelled (s : SyntacticObject (Option F)) : Prop :=
+  ∃ u, s.ContainsOrEq u ∧ IsUnlabelled u
 
 end Morphology.Nanosyntax

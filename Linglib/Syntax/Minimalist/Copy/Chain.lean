@@ -138,7 +138,7 @@ def tokenList : RoseTree Vertex → List (GornAddress × LexicalItem.Token) :=
 def traceList : RoseTree Vertex → List (GornAddress × LexicalItem.Token) :=
   positions (Sum.elim (fun _ ↦ none) id)
 
-variable (hd : HeadFunction) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The positions of the pronounced copies of `tok`. -/
 def occurrences : List GornAddress :=

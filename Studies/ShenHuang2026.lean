@@ -107,7 +107,7 @@ def vp (o : Bool) : PlanarSyntacticObject := verb * dp o
 /-- The wh-phrase lies in the domain of the determiner, so the PIC (4) freezes it in any phase the
 determiner heads (5). -/
 theorem impenetrable (o : Bool) :
-    (vp o : SyntacticObject).WithinComplement (determiner o) wh := by
+    (vp o : SyntacticObject).WithinComplement SyntacticObject.raisingHead (determiner o) wh := by
   cases o <;> decide
 
 /-- The escape hatch the account denies (§2.1) is the verb phrase with the wh-phrase moved to
@@ -115,7 +115,8 @@ Spec,DP. -/
 def vpEdge : PlanarSyntacticObject := verb * (wh * (that * (book * (about * .traceOf wh))))
 
 theorem edge_not_impenetrable :
-    (wh : SyntacticObject) ∈ (vpEdge : SyntacticObject).phaseEdge that := by
+    (wh : SyntacticObject) ∈
+      (vpEdge : SyntacticObject).phaseEdge SyntacticObject.raisingHead that := by
   decide
 
 /-- The wh-phrase fronted out of the object DP, leaving a deleted copy in the complement of

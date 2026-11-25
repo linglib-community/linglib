@@ -15,12 +15,15 @@ A spine of categories is an extended projection in Grimshaw's sense when each he
 one below it. Keine observes that category features project bilaterally within an extended
 projection, so the label of a spine is the set of heads it projects. A functional head inherits
 the categories of its complement, and a lexical head starts an extended projection of its own.
+The extended projection at the top of a spine is what its heads project in turn, from the bottom
+up.
 
 ## Main definitions
 
 * `Spine.IsExtendedProjection`: a spine each of whose heads extends the one below it.
 * `Spine.Inherits`, `Spine.project`: category inheritance, and the spine of the phrase a head
   projects over a complement.
+* `Spine.extendedProjection`: the extended projection at the top of a spine.
 * `Spine.vP`, `Spine.tP`, `Spine.cP`: the clause sizes of the verbal extended projection.
 
 ## Main results
@@ -108,6 +111,29 @@ theorem IsExtendedProjection.project (hs : s.IsExtendedProjection) (c : Cat) :
       obtain rfl : _ = b := by simpa using hb
       exact hdc
   next => exact .singleton _
+
+/-! ### The extended projection at the top of a spine -/
+
+/-- The extended projection at the top of a spine: each head in turn, from the bottom up, projects
+over the heads below it that it inherits. -/
+def extendedProjection (s : Spine Cat) : Spine Cat := s.heads.foldl project ⟨[]⟩
+
+@[simp] theorem extendedProjection_nil : (⟨[]⟩ : Spine Cat).extendedProjection = ⟨[]⟩ := rfl
+
+@[simp] theorem extendedProjection_mk_append_singleton (l : List Cat) (c : Cat) :
+    (⟨l ++ [c]⟩ : Spine Cat).extendedProjection = (⟨l⟩ : Spine Cat).extendedProjection.project c := by
+  simp [extendedProjection]
+
+theorem extendedProjection_append_singleton (s : Spine Cat) (c : Cat) :
+    (s.append [c]).extendedProjection = s.extendedProjection.project c :=
+  extendedProjection_mk_append_singleton s.heads c
+
+theorem isExtendedProjection_extendedProjection (s : Spine Cat) :
+    s.extendedProjection.IsExtendedProjection := by
+  obtain ⟨l⟩ := s
+  induction l using List.reverseRecOn with
+  | nil => exact .nil
+  | append_singleton l c ih => simpa using ih.project c
 
 /-! ### Clause sizes -/
 

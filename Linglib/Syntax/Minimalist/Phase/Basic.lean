@@ -5,22 +5,19 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Label.RaisingHead
-public import Linglib.Syntax.Minimalist.SyntacticObject.Term
+public import Linglib.Syntax.Minimalist.Label.Head
 
 /-!
 # Phases
 
-[marcolli-chomsky-berwick-2025] read the phases of [chomsky-2013] off a head function, here the
-raising head `SyntacticObject.raisingHead`. The terms a lexical item heads run from its leaf up to
-its maximal projection, and it heads a phase when it
-[heads more than its leaf](##Minimalist.SyntacticObject.isPhaseHead_iff_exists_raisingHead). Its
-complement is the sister it projects over. The phase is what lies within the terms it heads, the
-interior what lies within the complement, and the edge the rest: the head and what is merged above
-it, a phrase raised there included. A term is `Inaccessible` when it lies in the interior of a
-phase other than the highest. The Phase Impenetrability Condition, which seals the interior, is
-stated on positions in `Phase/Transfer.lean`, and as a restriction of the coproduct in
-`Workspace/Merge/Phase.lean`.
+[marcolli-chomsky-berwick-2025] read the phases of [chomsky-2013] off a head function, here a
+parameter `h`. The terms a lexical item heads run from its leaf up to its maximal projection, and
+it heads a phase when it heads more than its leaf. Its complement is the sister it projects over.
+The phase is what lies within the terms it heads, the interior what lies within the complement,
+and the edge the rest: the head and what is merged above it, a phrase raised there included. A
+term is `Inaccessible` when it lies in the interior of a phase other than the highest. The Phase
+Impenetrability Condition, which seals the interior, is stated on positions in
+`Phase/Transfer.lean`, and as a restriction of the coproduct in `Workspace/Merge/Phase.lean`.
 
 ## Implementation notes
 
@@ -28,10 +25,12 @@ stated on positions in `Phase/Transfer.lean`, and as a restriction of the coprod
   copies of a moved phrase are one term; positions tell copies apart in `Copy/Chain.lean`.
 * Every head that projects heads a phase, as in the book; the heads a study counts as phase heads
   (C alone, or also v, D, or Voice) are the positions `sealed` takes in `Phase/Transfer.lean`.
-* Under the raising head a phrase raised to the edge of a head lies in its phase; a phrase merged
-  there in place lies in it only when the head selects it.
-* The bare trace is headed by the dummy token `LexicalItem.Token.bareTrace`, which the statements
-  about the leaf of a head exclude.
+* Which phrases lie in the phase of a head depends on the head function. Under the raising head
+  a phrase raised to the edge of a head lies in its phase, and a phrase merged there in place
+  lies in it only when the head selects it.
+* A head function may give a trace a head, and it may head the Merge of a leaf with itself by
+  that leaf's item, which then projects over no sister. The statements that find the leaf of a
+  head, or the complement of a phase head, assume the case away.
 
 ## TODO
 
@@ -53,133 +52,113 @@ namespace SyntacticObject
 
 open Relation
 
-variable (T : SyntacticObject) (ℓ : LexicalItem.Token) (x z : SyntacticObject)
+variable {L ι : Type} (h : SyntacticObject L ι → Option L) (T : SyntacticObject L ι) (ℓ : L)
+  (x z : SyntacticObject L ι)
 
 /-- `ℓ` heads a phase of `T` when it projects, heading a mother of its leaf. -/
-def IsPhaseHead : Prop := ∃ m ∈ T.terms, m.raisingHead = some ℓ ∧ ImmediatelyContains m (leaf ℓ)
+def IsPhaseHead : Prop := ∃ m ∈ T.terms, h m = some ℓ ∧ ImmediatelyContains m (leaf ℓ)
 
-instance : Decidable (IsPhaseHead T ℓ) := Multiset.decidableExistsMultiset
+instance [DecidableEq L] [DecidableEq ι] : Decidable (IsPhaseHead h T ℓ) :=
+  Multiset.decidableExistsMultiset
 
 /-- `z` is the complement of `ℓ` in `T` when `ℓ` projects over its sister `z`. -/
 def IsComplementOf : Prop :=
-  ∃ m ∈ T.terms, m.raisingHead = some ℓ ∧ ImmediatelyContains m (leaf ℓ) ∧
+  ∃ m ∈ T.terms, h m = some ℓ ∧ ImmediatelyContains m (leaf ℓ) ∧
     ImmediatelyContains m z ∧ z ≠ leaf ℓ
 
-instance : Decidable (IsComplementOf T ℓ z) := Multiset.decidableExistsMultiset
+instance [DecidableEq L] [DecidableEq ι] : Decidable (IsComplementOf h T ℓ z) :=
+  Multiset.decidableExistsMultiset
 
 /-- `x` lies within the projection of `ℓ` in `T` when a term of `T` that `ℓ` heads contains it. -/
-def WithinProjection : Prop := ∃ p ∈ T.terms, p.raisingHead = some ℓ ∧ ContainsOrEq p x
+def WithinProjection : Prop := ∃ p ∈ T.terms, h p = some ℓ ∧ ContainsOrEq p x
 
-instance : Decidable (WithinProjection T ℓ x) := Multiset.decidableExistsMultiset
+instance [DecidableEq L] [DecidableEq ι] : Decidable (WithinProjection h T ℓ x) :=
+  Multiset.decidableExistsMultiset
 
 /-- `x` lies within the complement of `ℓ` in `T` when a complement of `ℓ` contains it. -/
-def WithinComplement : Prop := ∃ z ∈ T.terms, IsComplementOf T ℓ z ∧ ContainsOrEq z x
+def WithinComplement : Prop := ∃ z ∈ T.terms, IsComplementOf h T ℓ z ∧ ContainsOrEq z x
 
-instance : Decidable (WithinComplement T ℓ x) := Multiset.decidableExistsMultiset
-
-/-- The phase of `ℓ` in `T` is the multiset of terms within its projection. -/
-def phase : Multiset SyntacticObject := T.terms.filter (WithinProjection T ℓ)
-
-/-- The interior of the phase of `ℓ` in `T` is the multiset of terms within its complement. -/
-def phaseInterior : Multiset SyntacticObject := T.terms.filter (WithinComplement T ℓ)
-
-/-- The edge of the phase of `ℓ` in `T` is the multiset of terms of the phase outside its
-interior. -/
-def phaseEdge : Multiset SyntacticObject := (T.phase ℓ).filter (· ∉ T.phaseInterior ℓ)
+instance [DecidableEq L] [DecidableEq ι] : Decidable (WithinComplement h T ℓ x) :=
+  Multiset.decidableExistsMultiset
 
 /-- `x` is inaccessible in `T`, with `Φ` the phase heads: it lies within the complement of a
 phase head other than the head of `T`, the interior of a lower phase. -/
-def Inaccessible (T : SyntacticObject) (Φ : LexicalItem.Token → Prop) (x : SyntacticObject) :
-    Prop :=
-  ∃ m ∈ T.terms, ∃ ℓ ∈ m.raisingHead, Φ ℓ ∧ T.raisingHead ≠ some ℓ ∧ WithinComplement T ℓ x
+def Inaccessible (h : SyntacticObject L ι → Option L) (T : SyntacticObject L ι) (Φ : L → Prop)
+    (x : SyntacticObject L ι) : Prop :=
+  ∃ m ∈ T.terms, ∃ ℓ ∈ h m, Φ ℓ ∧ h T ≠ some ℓ ∧ WithinComplement h T ℓ x
 
-instance (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] : Decidable (Inaccessible T Φ x) :=
+instance [DecidableEq L] [DecidableEq ι] (Φ : L → Prop) [DecidablePred Φ] :
+    Decidable (Inaccessible h T Φ x) :=
   Multiset.decidableExistsMultiset
 
-variable {T ℓ x z} {y : SyntacticObject}
+variable {h T ℓ x z} {y T' : SyntacticObject L ι}
 
-theorem IsComplementOf.mem_terms (h : IsComplementOf T ℓ z) : z ∈ T.terms :=
-  let ⟨_, hm, _, _, hz, _⟩ := h
-  SyntacticObject.mem_terms.2 (.tail (SyntacticObject.mem_terms.1 hm) hz)
+theorem IsComplementOf.mem_terms (hz : IsComplementOf h T ℓ z) : z ∈ T.terms :=
+  let ⟨_, hm, _, _, hmz, _⟩ := hz
+  SyntacticObject.mem_terms.2 (.tail (SyntacticObject.mem_terms.1 hm) hmz)
 
-theorem WithinProjection.mem_terms (h : WithinProjection T ℓ x) : x ∈ T.terms :=
-  let ⟨_, hp, _, hpx⟩ := h
+theorem WithinProjection.mem_terms (hx : WithinProjection h T ℓ x) : x ∈ T.terms :=
+  let ⟨_, hp, _, hpx⟩ := hx
   terms_subset_terms (SyntacticObject.mem_terms.1 hp) (SyntacticObject.mem_terms.2 hpx)
 
-theorem WithinComplement.withinProjection (h : WithinComplement T ℓ x) : WithinProjection T ℓ x :=
-  let ⟨_, _, ⟨m, hm, hℓ, _, hz, _⟩, hzx⟩ := h
+theorem WithinComplement.withinProjection (hx : WithinComplement h T ℓ x) :
+    WithinProjection h T ℓ x :=
+  let ⟨_, _, ⟨m, hm, hℓ, _, hz, _⟩, hzx⟩ := hx
   ⟨m, hm, hℓ, .head hz hzx⟩
 
-theorem WithinComplement.mem_terms (h : WithinComplement T ℓ x) : x ∈ T.terms :=
-  h.withinProjection.mem_terms
+theorem WithinComplement.mem_terms (hx : WithinComplement h T ℓ x) : x ∈ T.terms :=
+  hx.withinProjection.mem_terms
 
-theorem WithinProjection.trans (hx : WithinProjection T ℓ x) (hxy : ContainsOrEq x y) :
-    WithinProjection T ℓ y :=
+theorem WithinProjection.trans (hx : WithinProjection h T ℓ x) (hxy : ContainsOrEq x y) :
+    WithinProjection h T ℓ y :=
   let ⟨p, hp, hℓ, hpx⟩ := hx
   ⟨p, hp, hℓ, hpx.trans hxy⟩
 
 /-- Whatever a frozen term contains is frozen. -/
-theorem WithinComplement.trans (hx : WithinComplement T ℓ x) (hxy : ContainsOrEq x y) :
-    WithinComplement T ℓ y :=
+theorem WithinComplement.trans (hx : WithinComplement h T ℓ x) (hxy : ContainsOrEq x y) :
+    WithinComplement h T ℓ y :=
   let ⟨z, hz, hc, hzx⟩ := hx
   ⟨z, hz, hc, hzx.trans hxy⟩
 
-theorem WithinComplement.cCommands (h : WithinComplement T ℓ x) : T.CCommands (leaf ℓ) x :=
-  let ⟨z, hz, ⟨m, hm, _, hmℓ, hmz, hne⟩, hzx⟩ := h
+theorem WithinComplement.cCommands (hx : WithinComplement h T ℓ x) : T.CCommands (leaf ℓ) x :=
+  let ⟨z, hz, ⟨m, hm, _, hmℓ, hmz, hne⟩, hzx⟩ := hx
   ⟨z, hz, ⟨m, hm, hmℓ, hmz, hne.symm⟩, hzx⟩
 
-theorem IsPhaseHead.mono {T' : SyntacticObject} (h : IsPhaseHead T ℓ)
-    (hT : T.terms ⊆ T'.terms) : IsPhaseHead T' ℓ :=
-  let ⟨m, hm, hℓ, hmℓ⟩ := h
+theorem IsPhaseHead.mono (hp : IsPhaseHead h T ℓ) (hT : T.terms ⊆ T'.terms) :
+    IsPhaseHead h T' ℓ :=
+  let ⟨m, hm, hℓ, hmℓ⟩ := hp
   ⟨m, hT hm, hℓ, hmℓ⟩
 
-theorem IsComplementOf.mono {T' : SyntacticObject} (h : IsComplementOf T ℓ z)
-    (hT : T.terms ⊆ T'.terms) : IsComplementOf T' ℓ z :=
-  let ⟨m, hm, hrest⟩ := h
+theorem IsComplementOf.mono (hz : IsComplementOf h T ℓ z) (hT : T.terms ⊆ T'.terms) :
+    IsComplementOf h T' ℓ z :=
+  let ⟨m, hm, hrest⟩ := hz
   ⟨m, hT hm, hrest⟩
 
 /-- A phase keeps its terms as structure is built above it. -/
-theorem WithinProjection.mono {T' : SyntacticObject} (h : WithinProjection T ℓ x)
-    (hT : T.terms ⊆ T'.terms) : WithinProjection T' ℓ x :=
-  let ⟨p, hp, hrest⟩ := h
+theorem WithinProjection.mono (hx : WithinProjection h T ℓ x) (hT : T.terms ⊆ T'.terms) :
+    WithinProjection h T' ℓ x :=
+  let ⟨p, hp, hrest⟩ := hx
   ⟨p, hT hp, hrest⟩
 
-theorem WithinComplement.mono {T' : SyntacticObject} (h : WithinComplement T ℓ x)
-    (hT : T.terms ⊆ T'.terms) : WithinComplement T' ℓ x :=
-  let ⟨z, hz, hc, hzx⟩ := h
+theorem WithinComplement.mono (hx : WithinComplement h T ℓ x) (hT : T.terms ⊆ T'.terms) :
+    WithinComplement h T' ℓ x :=
+  let ⟨z, hz, hc, hzx⟩ := hx
   ⟨z, hT hz, hc.mono hT, hzx⟩
 
-theorem IsComplementOf.withinComplement (h : IsComplementOf T ℓ z) : WithinComplement T ℓ z :=
-  ⟨z, h.mem_terms, h, .refl⟩
-
-/-- A term headed by `ℓ` contains the leaf of `ℓ`. -/
-theorem leaf_mem_terms_of_raisingHead {s : SyntacticObject} (hℓ : ℓ ≠ .bareTrace)
-    (h : s.raisingHead = some ℓ) : leaf ℓ ∈ s.terms := by
-  induction s using SyntacticObject.ind with
-  | leaf a => simp_all
-  | trace => exact absurd (by simpa using h.symm) hℓ
-  | traceOf a => simp at h
-  | merge l r ihl ihr =>
-    rw [terms_merge]
-    exact Multiset.mem_cons_of_mem <| Multiset.mem_add.2 <|
-      (raisingHead_merge h).imp ihl ihr
+theorem IsComplementOf.withinComplement (hz : IsComplementOf h T ℓ z) :
+    WithinComplement h T ℓ z :=
+  ⟨z, hz.mem_terms, hz, .refl⟩
 
 /-- The head of a phase lies in the phase. -/
-theorem IsPhaseHead.withinProjection_leaf (h : IsPhaseHead T ℓ) : WithinProjection T ℓ (leaf ℓ) :=
-  let ⟨m, hm, hℓ, hmℓ⟩ := h
+theorem IsPhaseHead.withinProjection_leaf (hp : IsPhaseHead h T ℓ) :
+    WithinProjection h T ℓ (leaf ℓ) :=
+  let ⟨m, hm, hℓ, hmℓ⟩ := hp
   ⟨m, hm, hℓ, .single hmℓ⟩
 
-@[simp] theorem mem_phase : x ∈ T.phase ℓ ↔ WithinProjection T ℓ x :=
-  Multiset.mem_filter.trans (and_iff_right_of_imp WithinProjection.mem_terms)
-
-@[simp] theorem mem_phaseInterior : x ∈ T.phaseInterior ℓ ↔ WithinComplement T ℓ x :=
-  Multiset.mem_filter.trans (and_iff_right_of_imp WithinComplement.mem_terms)
-
-@[simp] theorem mem_phaseEdge :
-    x ∈ T.phaseEdge ℓ ↔ WithinProjection T ℓ x ∧ ¬ WithinComplement T ℓ x :=
-  Multiset.mem_filter.trans (and_congr mem_phase (not_congr mem_phaseInterior))
-
-theorem isPhaseHead_iff_exists_isComplementOf : IsPhaseHead T ℓ ↔ ∃ z, IsComplementOf T ℓ z := by
+/-- A lexical item that does not head the Merge of its leaf with itself heads a phase exactly when
+it projects over a sister. -/
+theorem isPhaseHead_iff_exists_isComplementOf (hself : h (merge (leaf ℓ) (leaf ℓ)) ≠ some ℓ) :
+    IsPhaseHead h T ℓ ↔ ∃ z, IsComplementOf h T ℓ z := by
   refine ⟨fun ⟨m, hm, hℓ, hmℓ⟩ ↦ ?_, fun ⟨_, m, hm, hℓ, hmℓ, _⟩ ↦ ⟨m, hm, hℓ, hmℓ⟩⟩
   induction m using SyntacticObject.ind with
   | leaf => simp at hmℓ
@@ -187,44 +166,78 @@ theorem isPhaseHead_iff_exists_isComplementOf : IsPhaseHead T ℓ ↔ ∃ z, IsC
   | traceOf => simp at hmℓ
   | merge l r _ _ =>
     rcases (immediatelyContains_merge _ _ _).1 hmℓ with rfl | rfl
-    · exact ⟨r, _, hm, hℓ, by simp, by simp, by rintro rfl; simp at hℓ⟩
-    · exact ⟨l, _, hm, hℓ, by simp, by simp, by rintro rfl; simp at hℓ⟩
+    · exact ⟨r, _, hm, hℓ, by simp, by simp, by rintro rfl; exact hself hℓ⟩
+    · exact ⟨l, _, hm, hℓ, by simp, by simp, by rintro rfl; exact hself hℓ⟩
 
-/-- A lexical item heads a phase exactly when it heads a term other than its leaf: the terms it
-heads run down to the mother of the leaf ([marcolli-chomsky-berwick-2025], Lemma 1.14.1 and
-(1.14.1)). -/
-theorem isPhaseHead_iff_exists_raisingHead (hℓ : ℓ ≠ .bareTrace) :
-    IsPhaseHead T ℓ ↔ ∃ p ∈ T.terms, p.raisingHead = some ℓ ∧ p ≠ leaf ℓ := by
-  refine ⟨fun ⟨m, hm, h, hmℓ⟩ ↦ ⟨m, hm, h, by rintro rfl; simp at hmℓ⟩, fun ⟨p, hp, h, hne⟩ ↦ ?_⟩
+/-- A lexical item that heads no trace of `T` heads a phase exactly when it heads a term other
+than its leaf: the terms it heads run down to the mother of the leaf
+([marcolli-chomsky-berwick-2025], Lemma 1.14.1 and (1.14.1)). -/
+theorem isPhaseHead_iff_exists_head (hh : IsHeadFunction h)
+    (htr : ∀ x ∈ T.terms, x.IsTrace → h x ≠ some ℓ) :
+    IsPhaseHead h T ℓ ↔ ∃ p ∈ T.terms, h p = some ℓ ∧ p ≠ leaf ℓ := by
+  refine ⟨fun ⟨m, hm, hmh, hmℓ⟩ ↦ ⟨m, hm, hmh, by rintro rfl; simp at hmℓ⟩,
+    fun ⟨p, hp, hph, hne⟩ ↦ ?_⟩
   induction p using SyntacticObject.ind with
-  | leaf a => simp_all
-  | trace => exact absurd (by simpa using h.symm) hℓ
-  | traceOf a => simp at h
+  | leaf a => exact absurd (by rw [hh.eq_of_mem_leaf hph]) hne
+  | trace => exact absurd hph (htr _ hp (.inl rfl))
+  | traceOf i => exact absurd hph (htr _ hp (.inr ⟨i, rfl⟩))
   | merge l r ihl ihr =>
     obtain ⟨hl, hr⟩ := mem_terms_of_merge_mem_terms hp
-    rcases raisingHead_merge h with h' | h'
+    rcases hh.mem_or_mem hph with h' | h'
     · by_cases hl' : l = leaf ℓ
-      · exact ⟨_, hp, h, by simp [hl']⟩
+      · exact ⟨_, hp, hph, by simp [hl']⟩
       · exact ihl hl h' hl'
     · by_cases hr' : r = leaf ℓ
-      · exact ⟨_, hp, h, by simp [hr']⟩
+      · exact ⟨_, hp, hph, by simp [hr']⟩
       · exact ihr hr h' hr'
 
-/-- A head projects exactly when its phase has a nonempty interior. -/
-theorem isPhaseHead_iff_phaseInterior_ne_zero : IsPhaseHead T ℓ ↔ T.phaseInterior ℓ ≠ 0 := by
-  rw [isPhaseHead_iff_exists_isComplementOf]
+/-! ### The phase, its interior and its edge -/
+
+section Multiset
+
+variable [DecidableEq L] [DecidableEq ι]
+
+variable (h T ℓ) in
+/-- The phase of `ℓ` in `T` is the multiset of terms within its projection. -/
+def phase : Multiset (SyntacticObject L ι) := T.terms.filter (WithinProjection h T ℓ)
+
+variable (h T ℓ) in
+/-- The interior of the phase of `ℓ` in `T` is the multiset of terms within its complement. -/
+def phaseInterior : Multiset (SyntacticObject L ι) := T.terms.filter (WithinComplement h T ℓ)
+
+variable (h T ℓ) in
+/-- The edge of the phase of `ℓ` in `T` is the multiset of terms of the phase outside its
+interior. -/
+def phaseEdge : Multiset (SyntacticObject L ι) :=
+  (T.phase h ℓ).filter (· ∉ T.phaseInterior h ℓ)
+
+@[simp] theorem mem_phase : x ∈ T.phase h ℓ ↔ WithinProjection h T ℓ x :=
+  Multiset.mem_filter.trans (and_iff_right_of_imp WithinProjection.mem_terms)
+
+@[simp] theorem mem_phaseInterior : x ∈ T.phaseInterior h ℓ ↔ WithinComplement h T ℓ x :=
+  Multiset.mem_filter.trans (and_iff_right_of_imp WithinComplement.mem_terms)
+
+@[simp] theorem mem_phaseEdge :
+    x ∈ T.phaseEdge h ℓ ↔ WithinProjection h T ℓ x ∧ ¬ WithinComplement h T ℓ x :=
+  Multiset.mem_filter.trans (and_congr mem_phase (not_congr mem_phaseInterior))
+
+/-- A head that does not head the Merge of its leaf with itself projects exactly when its phase
+has a nonempty interior. -/
+theorem isPhaseHead_iff_phaseInterior_ne_zero (hself : h (merge (leaf ℓ) (leaf ℓ)) ≠ some ℓ) :
+    IsPhaseHead h T ℓ ↔ T.phaseInterior h ℓ ≠ 0 := by
+  rw [isPhaseHead_iff_exists_isComplementOf hself]
   refine ⟨fun ⟨z, hz⟩ h0 ↦ Multiset.filter_eq_nil.1 h0 z hz.mem_terms ⟨z, hz.mem_terms, hz, .refl⟩,
-    fun h ↦ ?_⟩
-  obtain ⟨x, hx⟩ := Multiset.exists_mem_of_ne_zero h
+    fun hne ↦ ?_⟩
+  obtain ⟨x, hx⟩ := Multiset.exists_mem_of_ne_zero hne
   obtain ⟨z, -, hz, -⟩ := mem_phaseInterior.1 hx
   exact ⟨z, hz⟩
 
-theorem phaseInterior_le_phase : T.phaseInterior ℓ ≤ T.phase ℓ :=
-  Multiset.monotone_filter_right _ fun _ h ↦ h.withinProjection
+theorem phaseInterior_le_phase : T.phaseInterior h ℓ ≤ T.phase h ℓ :=
+  Multiset.monotone_filter_right _ fun _ hx ↦ hx.withinProjection
 
 /-- The interior and the edge partition the phase. -/
-theorem phaseInterior_add_phaseEdge : T.phaseInterior ℓ + T.phaseEdge ℓ = T.phase ℓ := by
-  conv_rhs => rw [← Multiset.filter_add_not (· ∈ T.phaseInterior ℓ) (T.phase ℓ)]
+theorem phaseInterior_add_phaseEdge : T.phaseInterior h ℓ + T.phaseEdge h ℓ = T.phase h ℓ := by
+  conv_rhs => rw [← Multiset.filter_add_not (· ∈ T.phaseInterior h ℓ) (T.phase h ℓ)]
   congr 1
   rw [phase, Multiset.filter_filter]
   exact Multiset.filter_congr fun _ _ ↦ by
@@ -232,9 +245,9 @@ theorem phaseInterior_add_phaseEdge : T.phaseInterior ℓ + T.phaseEdge ℓ = T.
 
 /-- A phase head that occurs once lies in the edge of its phase, not in its interior
 ([marcolli-chomsky-berwick-2025], Remark 1.14.4). -/
-theorem IsPhaseHead.leaf_mem_phaseEdge (h : IsPhaseHead T ℓ) (h1 : T.terms.count (leaf ℓ) ≤ 1) :
-    leaf ℓ ∈ T.phaseEdge ℓ := by
-  refine mem_phaseEdge.2 ⟨h.withinProjection_leaf, fun ⟨z, _, ⟨m, hm, _, hmℓ, hmz, hne⟩, hzℓ⟩ ↦ ?_⟩
+theorem IsPhaseHead.leaf_mem_phaseEdge (hp : IsPhaseHead h T ℓ)
+    (h1 : T.terms.count (leaf ℓ) ≤ 1) : leaf ℓ ∈ T.phaseEdge h ℓ := by
+  refine mem_phaseEdge.2 ⟨hp.withinProjection_leaf, fun ⟨z, _, ⟨m, hm, _, hmℓ, hmz, hne⟩, hzℓ⟩ ↦ ?_⟩
   have hz : 1 ≤ z.terms.count (leaf ℓ) :=
     Multiset.one_le_count_iff_mem.2 (SyntacticObject.mem_terms.2 hzℓ)
   have h2 : 2 ≤ m.terms.count (leaf ℓ) := by
@@ -251,15 +264,17 @@ theorem IsPhaseHead.leaf_mem_phaseEdge (h : IsPhaseHead T ℓ) (h1 : T.terms.cou
       · exact absurd rfl hne
   exact absurd (h2.trans (Multiset.count_le_of_le _ (terms_le_terms hm))) (by omega)
 
-theorem phaseInterior_le_cCommandDomain : T.phaseInterior ℓ ≤ T.cCommandDomain (leaf ℓ) :=
-  Multiset.monotone_filter_right _ fun _ h ↦ h.cCommands
+theorem phaseInterior_le_cCommandDomain : T.phaseInterior h ℓ ≤ T.cCommandDomain (leaf ℓ) :=
+  Multiset.monotone_filter_right _ fun _ hx ↦ hx.cCommands
 
 /-- The interior of a head that projects wherever it occurs is its c-command domain. -/
 theorem phaseInterior_eq_cCommandDomain
-    (h : ∀ m ∈ T.terms, ImmediatelyContains m (leaf ℓ) → m.raisingHead = some ℓ) :
-    T.phaseInterior ℓ = T.cCommandDomain (leaf ℓ) :=
+    (hℓ : ∀ m ∈ T.terms, ImmediatelyContains m (leaf ℓ) → h m = some ℓ) :
+    T.phaseInterior h ℓ = T.cCommandDomain (leaf ℓ) :=
   Multiset.filter_congr fun _ _ ↦ by
     grind [WithinComplement, IsComplementOf, CCommands, Sisters]
+
+end Multiset
 
 end SyntacticObject
 

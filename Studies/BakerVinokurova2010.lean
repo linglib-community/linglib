@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Minimalist.Case.Assignment
 public import Linglib.Syntax.Minimalist.Case.SyntacticObject
 public import Linglib.Syntax.Minimalist.Linearization.Replay

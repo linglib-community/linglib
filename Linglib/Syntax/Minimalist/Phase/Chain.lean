@@ -38,15 +38,16 @@ namespace Minimalist
 
 open RoseTree SyntacticObject PhraseStructure
 
-variable (hd : HeadFunction) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The positions a phase head occurring only at `a` c-commands carry the terms within its
 complement. -/
 theorem withinComplement_iff_exists_cCommands {t : PlanarSyntacticObject}
-    {ℓ : LexicalItem.Token} {a : t.toRoseTree.Positions} {x : SyntacticObject}
+    {h : SyntacticObject → Option LexicalItem.Token} {ℓ : LexicalItem.Token}
+    {a : t.toRoseTree.Positions} {x : SyntacticObject}
     (hu : ∀ q, t.termAt q = SyntacticObject.leaf ℓ ↔ q = a)
-    (hph : (t : SyntacticObject).IsPhaseHead ℓ) :
-    (t : SyntacticObject).WithinComplement ℓ x ↔
+    (hph : (t : SyntacticObject).IsPhaseHead h ℓ) :
+    (t : SyntacticObject).WithinComplement h ℓ x ↔
       ∃ q : t.toRoseTree.Positions, t.toRoseTree.CCommands a q ∧ t.termAt q = x := by
   have ha : t.termAt a = SyntacticObject.leaf ℓ := (hu a).2 rfl
   have hu' : ∀ q, t.termAt q = t.termAt a → q = a := fun q hq ↦ (hu q).1 (hq.trans ha)

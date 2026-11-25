@@ -50,7 +50,7 @@ it checks, and the order of a head's arguments follows from that closure.
 * `System`, `System.Run`: the operations at a head, and a sequence of them each checking a feature
   still unchecked; `System.Derivation` is a run under Weak Economy, and `System.runs` is the
   finite set of the runs from a state.
-* `selectionHead`, `configuration`: the head function of Merge as selection, and the binding
+* `selectionHead`, `configuration`: the head daughters of Merge as selection, and the binding
   theory, m-command without reverse c-command.
 * `IsDitransitive`, `Binds`: a vP that Merge licenses from a ditransitive's arguments, and binding
   between its objects under a word order.
@@ -79,11 +79,11 @@ it checks, and the order of a head's arguments follows from that closure.
   doubling and clitic doubling checks more features.
 * The trees of the dative alternation are planar syntactic objects. The daughter that projects
   at a node is the sister that selects the other (`selectionHead`), and the maximal projections
-  that m-command reads are those of that head function. `IsDitransitive` takes every vP whose
-  heads select their arguments with the direct object at V and the subject at v, a VP specifier
-  on either side. That is seven trees (`isDitransitive_iff`): the book draws three, and not the
-  four with the subject as v's complement or VP outermost. The binding prediction holds on all
-  seven.
+  that m-command reads are those of that choice of head daughters. `IsDitransitive` takes every
+  vP whose heads select their arguments with the direct object at V and the subject at v, a VP
+  specifier on either side. That is seven trees (`isDitransitive_iff`): the book draws three, and
+  not the four with the subject as v's complement or VP outermost. The binding prediction holds
+  on all seven.
 * A language of the Mayan type moves the object to check v's `[·D·]` before the subject merges
   wherever that leaves the subject licensed (`Realizes`), and its `[·wh·]` stays active once
   checked. An operation applies at most once. The agent-focus form is read off a row's gloss
@@ -208,7 +208,7 @@ theorem checks_subset_checks {a b : LexicalItem.Token} (hc : b.item.cat = a.item
 constituent's head checks a Merge feature of `s`, and every feature it checks is then checked.
 The constituent's own features may be left unchecked. Of two heads that can each select the
 other, the higher in its extended projection projects. -/
-def featureMaximality : SelectionRule (Finset Selector) where
+def featureMaximality : SelectionRule LexicalItem.Token (Finset Selector) where
   Selects s b _ := ∃ f ∈ s ∩ checks b, f.IsMerge
   rest s b _ := s \ checks b
   Outranks a b := b.item.cat.ExtendsTo a.item.cat ∧ ¬ a.item.cat.ExtendsTo b.item.cat
@@ -731,22 +731,13 @@ private theorem mem_arrangements_length {α : Type*} [DecidableEq α] {l es : Li
   mem_arrangements hnd hsub (hnd.subperm hsub).length_le
 /-! ### The dative alternation -/
 
-/-- The categorial selection state of a planar syntactic object without traces. -/
-def state : PlanarSyntacticObject → featureMaximality.State
-  | .of (.lex a) => categorial.lex a
-  | .of _ => 0
-  | .mul l r => state l * state r
+/-- The categorial selection state of a syntactic object without traces. -/
+def state : SyntacticObject →ₙ* featureMaximality.State :=
+  FreeCommMagma.lift (SyntacticObject.Leaf.elim categorial.lex fun _ ↦ 0)
 
-/-- The head daughter of the subtree at an address: the sister that selects the other. -/
-def headIndex : PlanarSyntacticObject → List ℕ → Option ℕ
-  | .mul l r, [] => (SelectionRule.State.side (state l) (state r)).map fun b ↦ bif b then 0 else 1
-  | .mul l _, 0 :: q => headIndex l q
-  | .mul _ r, 1 :: q => headIndex r q
-  | _, _ => none
-
-/-- The head function of Merge as selection: at each position the daughter whose head selects
+/-- The head daughters of Merge as selection: at each position the daughter whose head selects
 its sister projects. -/
-def selectionHead : HeadFunction := fun t q ↦ headIndex t q.toList
+def selectionHead : HeadDaughter := .ofProjects fun x y ↦ (state x).Projects (state y)
 
 /-- `bar R h comp specs` is the stack of intermediate projections of the phrase headed by `h`,
 with complement `comp` and specifiers `specs`, those satisfying `R` linearized on the right. -/

@@ -257,11 +257,11 @@ open RoseTree PhraseStructure Minimalist
 variable (t : PlanarSyntacticObject)
 
 /-- The head relation on the positions of `t`, from the head daughter of each subtree. -/
-def HeadDaughterAt (m d : t.toRoseTree.Positions) : Prop := headDaughterRel (HeadFunction.raising
+def HeadDaughterAt (m d : t.toRoseTree.Positions) : Prop := headDaughterRel (HeadDaughter.raising
     t) m d
 
 instance : DecidableRel (HeadDaughterAt t) := fun m d ↦
-  inferInstanceAs (Decidable (headDaughterRel (HeadFunction.raising t) m d))
+  inferInstanceAs (Decidable (headDaughterRel (HeadDaughter.raising t) m d))
 
 theorem headDaughterAt_covBy {m d : t.toRoseTree.Positions} (h : HeadDaughterAt t m d) : m ⋖ d :=
   Positions.covBy_iff.2 (headDaughterRel_covBy _ h)
@@ -329,8 +329,8 @@ def position (l : List ℕ) (h : (⟨l⟩ : GornAddress) ∈ t.toRoseTree.validP
 
 -- (11)
 theorem maximalProjectionAt_theManSawIt :
-    maximalProjectionAt (HeadFunction.raising theManSawIt) ⟨[1, 0]⟩ = ⊥ ∧
-      maximalProjectionAt (HeadFunction.raising theManSawIt) ⟨[0, 0]⟩ = ⟨[0]⟩ := by
+    maximalProjectionAt (HeadDaughter.raising theManSawIt) ⟨[1, 0]⟩ = ⊥ ∧
+      maximalProjectionAt (HeadDaughter.raising theManSawIt) ⟨[0, 0]⟩ = ⟨[0]⟩ := by
   decide
 
 -- (11), (10)

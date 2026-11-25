@@ -127,6 +127,17 @@ The positions `a` c-commands are its c-command domain. -/
 abbrev CCommands (t : RoseTree β) (a b : GornAddress) : Prop :=
   Commands t.branching a b
 
+/-- C-command between the positions of a tree, a relation of their order, is the c-command of the
+tree at their addresses. -/
+theorem Positions.cCommands_iff {t : RoseTree β} (a b : t.Positions) :
+    PhraseStructure.CCommands a b ↔ t.CCommands a.val b.val := by
+  show Commands _ a b ↔ Commands _ a.val b.val
+  rw [commands_iff, commands_iff, mem_commandRelation_isBranching_iff]
+  exact Iff.rfl
+
+instance {t : RoseTree β} (a b : t.Positions) : Decidable (PhraseStructure.CCommands a b) :=
+  decidable_of_iff _ (Positions.cCommands_iff a b).symm
+
 /-- C-command is sisterhood plus dominance: a position whose parent branches c-commands exactly
 the positions properly below its parent and not below itself. -/
 theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : GornAddress} (ha : a ≠ ⊥)

@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Syntax.Minimalist.Label.Head
 public import Linglib.Syntax.Minimalist.Label.SelectionRule
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
@@ -67,7 +68,7 @@ open RoseTree UnorderedTree SyntacticObject
 
 /-- The stack rule: a head whose stack has the category of a saturated sister on top selects it,
 and is left with the rest of the stack. -/
-def SelectionRule.stack : SelectionRule (List Cat) where
+def SelectionRule.stack : SelectionRule LexicalItem.Token (List Cat) where
   Selects r b u := r.head? = some b.item.cat ∧ u = []
   rest r _ _ := r.tail
 
@@ -136,6 +137,12 @@ theorem head_of_mul_of {a t : LexicalItem.Token} {y : stack.State}
     · simp at h₁
     · exact h
     · cases h
+
+/-- Where a constituent merges with a saturated one, its own head is the head of the result. -/
+theorem head_mul_of_nil {x : stack.State} {a : LexicalItem.Token} (h : x * of a [] ≠ 0) :
+    (x * of a []).head = x.head := by
+  obtain ⟨t, ht⟩ := exists_head_of_ne_zero h
+  rw [ht, head_of_mul_of (mul_comm x _ ▸ ht)]
 
 /-! ### Triggered Merge -/
 
@@ -230,7 +237,13 @@ def cat? : Option Cat := s.selectionHead.map (·.item.cat)
 theorem selectionHead_merge {l r : SyntacticObject} {t : LexicalItem.Token}
     (h : (merge l r).selectionHead = some t) :
     l.selectionHead = some t ∨ r.selectionHead = some t :=
-  SelectionRule.State.isHeadFunction_head.comp selectionState (x := l) (y := r) h
+  SelectionRule.State.head_mul (map_mul selectionState l r ▸ h)
+
+/-- The selection head is a head function. -/
+theorem isHeadFunction_selectionHead :
+    IsHeadFunction (selectionHead : SyntacticObject → Option LexicalItem.Token) where
+  eq_of_mem_leaf h := by simpa [eq_comm] using h
+  mem_or_mem := selectionHead_merge
 
 variable {f : LexicalItem.Token → LexicalItem.Token}
 

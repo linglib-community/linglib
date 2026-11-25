@@ -55,13 +55,13 @@ tables in `DeClercqEtAl2025.Wordlist`.
 namespace DeClercqEtAl2025
 
 open Morphology.Nanosyntax Morphology
-open Minimalist (PlanarSyntacticObject SyntacticObject)
+open Minimalist.Next (PlanarSyntacticObject SyntacticObject)
 
 variable {F : Type} [DecidableEq F]
 
 /-- Under the spellout `σ` the algorithm gives each analysed form the exponents of its row in a
 lexicalization table, for the feature sequence `seq` assigns to the form's cell. -/
-abbrev Derives (σ : SyntacticObject F → Option String) (seq : Wordlist.Cell → List F)
+abbrev Derives (σ : SyntacticObject (Option F) → Option String) (seq : Wordlist.Cell → List F)
     (rows : List Wordlist.Analysis) : Prop :=
   ∀ a ∈ rows, exponents σ (seq a.form.cell) = some a.exponents
 

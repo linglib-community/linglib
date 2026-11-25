@@ -69,7 +69,7 @@ def Step.applyInside (step : Step) (D : PlanarSyntacticObject) : PlanarSyntactic
 
 namespace Derivation
 
-variable (d : Derivation) (hd : HeadFunction) (m n : ℕ)
+variable (d : Derivation) (hd : HeadDaughter) (m n : ℕ)
 
 /-- `d.stage? n` is the ordered object after the first `n` steps, if the replay succeeds. -/
 def stage? : Option PlanarSyntacticObject := (d.take n).externalize?

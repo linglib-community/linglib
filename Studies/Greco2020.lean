@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Minimalist.Phase.Basic
 public import Mathlib.Data.Finset.Insert
 public import Linglib.Data.Examples.Greco2020
@@ -238,8 +239,8 @@ def spine : PlanarSyntacticObject := force * (non * (foc * (top * (fin * (t * vP
 phase `p` heads and *non* does not, so `p` merged first and transferred the v*P before *non*
 could bind into it ([chomsky-2001]'s Phase Impenetrability Condition). -/
 def Closed (p : LexicalItem.Token) : Prop :=
-  (spine : SyntacticObject).WithinComplement p vP ∧
-    ¬ (spine : SyntacticObject).WithinComplement p non
+  (spine : SyntacticObject).WithinComplement SyntacticObject.raisingHead p vP ∧
+    ¬ (spine : SyntacticObject).WithinComplement SyntacticObject.raisingHead p non
 
 instance (p : LexicalItem.Token) : Decidable (Closed p) := inferInstanceAs (Decidable (_ ∧ _))
 

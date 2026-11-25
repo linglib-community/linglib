@@ -35,7 +35,7 @@ subjects raise, but not its embedded CP.
   (`Minimalist.Derivation.phaseSchedule`), a complement when its phase head merges.
 * Transfer is read off the chains of the derived object, a link failing when its lower copy lies in
   a domain transferred by the stage it lands at. A phase is its head's projection under
-  `HeadFunction.raising`, so a phase head's specifiers are in its phase. The root is the last
+  `HeadDaughter.raising`, so a phase head's specifiers are in its phase. The root is the last
   stage, so the transfer of the root phase seals nothing.
 * A phase is spelled out when it is complete, whether or not its transfer waits. Spelled out only
   when the next phase is complete, vP₁ no longer holds the wh-phrase, and
@@ -74,7 +74,7 @@ section Schedule
 
 open Schedule
 
-variable (hd : HeadFunction) (t : PlanarSyntacticObject)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject)
 
 /-- Ke's schedule: the domain of a phase head in `W` is transferred once the next phase is
 complete, that of any other once its own phase is complete. -/

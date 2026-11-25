@@ -169,6 +169,10 @@ theorem commands_preimage_iff {β : Type*} [Preorder β] (f : α ↪o β)
     Commands (f ⁻¹' P) a b ↔ Commands P (f a) (f b) := by
   simp only [commands_iff, mem_commandRelation_preimage_iff f hf, IncompRel, f.le_iff_le]
 
+/-- `a` c-commands `b` when neither dominates the other and every branching node properly
+dominating `a` dominates `b`: command under the branching nodes of the order. -/
+abbrev CCommands (a b : α) : Prop := Commands {p : α | IsBranching p} a b
+
 end Commands
 
 /-! ### Command on trees
@@ -254,6 +258,20 @@ theorem not_commands_of_covBy_of_lt {b' : α} (ha : m ⋖ a) (hm' : m' ∈ P) (h
   not_le_of_covBy_of_lt ha hmm hoff (h.command hm' hb) hb'
 
 end ForestOrder
+
+/-- In a tree `a` c-commands `b` exactly when neither dominates the other and no branching node
+lies strictly between their lowest common ancestor and `a`. -/
+theorem cCommands_iff_inf {α : Type*} [SemilatticeInf α] [IsForestOrder α] {a b : α} :
+    CCommands a b ↔ IncompRel (· ≤ ·) a b ∧ ∀ x, a ⊓ b < x → x < a → ¬ IsBranching x := by
+  show Commands _ a b ↔ _
+  rw [commands_iff, and_comm]
+  refine and_congr_right fun _ ↦ ⟨fun h x hx hxa hbr ↦ ?_, fun h x hbr hxa ↦ ?_⟩
+  · exact absurd (le_inf hxa.le (h hbr hxa)) hx.not_ge
+  · rcases IsForestOrder.le_total_of_le_of_le hxa.le (inf_le_left : a ⊓ b ≤ a) with hle | hle
+    · exact hle.trans inf_le_right
+    · rcases hle.lt_or_eq with hlt | heq
+      · exact absurd hbr (h x hlt hxa)
+      · exact heq ▸ inf_le_right
 
 /-! ### Mates -/
 
