@@ -507,7 +507,7 @@ Cause is bundled with Voice (10). -/
 structure CauseHead where
   selects : Layer
   bundled : Bool
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- `c.Embeds l` holds when a constituent of layer `l` can occur between the root and Cause. -/
 def CauseHead.Embeds (c : CauseHead) (l : Layer) : Prop := l ≤ c.selects

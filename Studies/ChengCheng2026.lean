@@ -15,7 +15,7 @@ noun phrase.
 
 ## Implementation notes
 
-* Heads are parts of a partition of the `Harley2017.Feature`s. The paper's causative v is
+* Heads are parts of a partition of the `Harley2017.Projection`s. The paper's causative v is
   Harley's lower Caus, which Harley takes to be productive; the paper's (28) calls it lexical.
 * One linking hypothesis connects the tests to structure: a form separating *dǎ* from what
   follows it is acceptable iff the two do not share a complex head.
@@ -45,8 +45,8 @@ noun phrase.
 namespace ChengCheng2026
 
 open DistributedMorphology DistributedMorphology.RootCategorization
-open Morphology hiding Feature
-open Harley2017 (Feature)
+open Morphology
+open Harley2017 (Projection)
 open PhraseStructure
 
 /-! ### Three heads -/
@@ -66,16 +66,16 @@ def exponentTable : List (String × Exponent) := [("dǎ", .da), ("gěi", .gei), 
 
 /-- The context-free items *dǎ* for v, *gěi* for the lower Caus and *bǎ* for Voice; the last two
 follow [sybesma-2021]. -/
-def vocabulary : RuleSet (VocabularyItem Feature Exponent) :=
+def vocabulary : RuleSet (VocabularyItem Projection Exponent) :=
   [{.v} ⟷ .da, {.caus₁} ⟷ .gei, {.voice} ⟷ .ba]
 
-theorem subsetPrinciple_v (l r : List (Finset Feature)) :
+theorem subsetPrinciple_v (l r : List (Finset Projection)) :
     subsetPrinciple vocabulary ⟨{.v}, l, r⟩ = some .da := by
   rw [subsetPrinciple_eq_head?_applicable (by decide)]
   simp [RuleSet.applicable, vocabulary]
 
 /-- The exponents of the heads bearing Voice, the lower Caus and v, in that order. -/
-def topDown {s : Finset Feature} (P : Finpartition s) : List (Option Exponent) :=
+def topDown {s : Finset Projection} (P : Finpartition s) : List (Option Exponent) :=
   [.voice, .caus₁, .v].map fun f ↦ subsetPrinciple vocabulary (P.part f)
 
 /-- The exponents a datum lists, in surface order. -/
