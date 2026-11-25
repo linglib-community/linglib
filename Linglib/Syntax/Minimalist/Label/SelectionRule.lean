@@ -33,14 +33,12 @@ as a morphism of magmas (`Minimalist.Licensing`), and the head of a product is t
   projecting head of a state and its residue.
 * `Minimalist.SelectionRule.State.side`, `Minimalist.SelectionRule.State.Projects`: which of two
   sisters projects.
-* `Minimalist.SelectionRule.State.map`: the state with its head relabelled.
 
 ## Main results
 
 * `Minimalist.SelectionRule.Constituent.Projects.asymm`: of two sisters at most one projects.
 * `Minimalist.SelectionRule.State.head_mul`: the head of a product is a factor's head.
 * `Minimalist.SelectionRule.State.mul_self`: no constituent merges with itself.
-* `Minimalist.SelectionRule.State.foldl_mul_of`: along a spine the product is iterated selection.
 
 ## Implementation notes
 
@@ -94,19 +92,6 @@ instance (S : SelectionRule α R) (r : R) (b : α) (u : R) :
 
 instance (S : SelectionRule α R) : DecidableRel S.Outranks := S.decidableOutranks
 
-/-- The residue left to a head with residue `r` once it selects a sister whose head is `b` and
-whose residue is `u`, and `none` when it does not select it. -/
-def select (S : SelectionRule α R) (r : R) (b : α) (u : R) : Option R :=
-  if S.Selects r b u then some (S.rest r b u) else none
-
-theorem select_eq_some_iff {S : SelectionRule α R} {r u r' : R} {b : α} :
-    S.select r b u = some r' ↔ S.Selects r b u ∧ S.rest r b u = r' := by
-  simp [select]
-
-theorem select_eq_none_iff {S : SelectionRule α R} {r u : R} {b : α} :
-    S.select r b u = none ↔ ¬ S.Selects r b u := by
-  simp [select]
-
 /-- A constituent under the rule `S`: its projecting head with what that head has yet to
 select. -/
 structure Constituent (S : SelectionRule α R) where
@@ -138,10 +123,6 @@ theorem not_projects_self (x : S.Constituent) : ¬ x.Projects x := fun h ↦ h.a
 def select (x y : S.Constituent) : S.Constituent := ⟨x.head, S.rest x.residue y.head y.residue⟩
 
 @[simp] theorem head_select (x y : S.Constituent) : (x.select y).head = x.head := rfl
-
-/-- The constituent with its head relabelled by `f`. -/
-def map (f : α → α) (x : S.Constituent) : S.Constituent :=
-  ⟨f x.head, x.residue⟩
 
 end Constituent
 
@@ -192,21 +173,6 @@ theorem exists_head_of_ne_zero {x : S.State} (h : x ≠ 0) : ∃ t, x.head = som
 
 @[simp] theorem of_ne_zero (tok : α) (r : R) : (of tok r : S.State) ≠ 0 :=
   mt (congrArg toOption) (Option.some_ne_none _)
-
-/-- The state with its head relabelled by `f`. -/
-def map (f : α → α) (x : S.State) : S.State :=
-  ⟨x.toOption.map (Constituent.map f)⟩
-
-@[simp] theorem map_zero (f : α → α) : (0 : S.State).map f = 0 :=
-  rfl
-
-@[simp] theorem map_of (f : α → α) (tok : α)
-    (r : R) : (of tok r : S.State).map f = of (f tok) r :=
-  rfl
-
-@[simp] theorem head_map (f : α → α) (x : S.State) :
-    (x.map f).head = x.head.map f := by
-  cases x <;> rfl
 
 /-! ### The product -/
 
@@ -331,54 +297,6 @@ theorem mul_eq_zero_iff (x y : S.State) : x * y = 0 ↔ ¬ x.Projects y ∧ ¬ y
     · simp [h, h']
       exact fun h0 ↦ by cases h0
     · simp [h, h']
-
-/-- A relabelling of heads that selection does not see commutes with the product. -/
-theorem map_mul {f : α → α}
-    (hsel : ∀ (r : R) b u, S.Selects r (f b) u ↔ S.Selects r b u)
-    (hrest : ∀ (r : R) b u, S.rest r (f b) u = S.rest r b u)
-    (hout : ∀ a b, S.Outranks (f a) (f b) ↔ S.Outranks a b)
-    (x y : S.State) : (x * y).map f = x.map f * y.map f := by
-  rcases x with ⟨_ | x⟩ <;> rcases y with ⟨_ | y⟩ <;> try rfl
-  have hp : ∀ a b : S.Constituent, (a.map f).Projects (b.map f) ↔ a.Projects b := fun a b ↦ by
-    simp [Constituent.Projects, Constituent.map, hsel, hout]
-  show (merge x y).map f = merge (x.map f) (y.map f)
-  unfold merge
-  simp only [hp]
-  split_ifs
-  · simp [map, Constituent.map, Constituent.select, hrest]
-  · simp [map, Constituent.map, Constituent.select, hrest]
-  · rfl
-
-/-! ### Spines -/
-
-private theorem foldl_mul_zero {α : Type*} (f : α → S.State) (l : List α) :
-    l.foldl (fun x a ↦ x * f a) 0 = 0 := by
-  induction l with
-  | nil => rfl
-  | cons a l ih => rw [List.foldl_cons, zero_mul, ih]
-
-/-- Along a spine, the product is iterated selection: when no sister selects the head `h`,
-merging them in turn leaves `h` projecting with the residue of selecting each, and fails where
-`h` does not select one. -/
-theorem foldl_mul_of (h : α) (r : R)
-    (args : List (α × R))
-    (hargs : ∀ a ∈ args, ∀ r', ¬ S.Selects a.2 h r') :
-    args.foldl (fun x a ↦ x * of a.1 a.2) (of h r : S.State) =
-      (args.foldlM (fun r a ↦ S.select r a.1 a.2) r).elim 0 (of h) := by
-  induction args generalizing r with
-  | nil => rfl
-  | cons a args ih =>
-    obtain ⟨b, u⟩ := a
-    have hu := hargs (b, u) List.mem_cons_self r
-    have key : (of h r : S.State) * of b u = (S.select r b u).elim 0 (of h) := by
-      rw [of_mul_of]
-      by_cases hs : S.Selects r b u
-      · rw [merge_of_projects ⟨hs, fun h' ↦ (hu h').elim⟩, select_eq_some_iff.2 ⟨hs, rfl⟩]; rfl
-      · rw [merge_eq_zero (fun hp ↦ hs hp.1) (fun hp ↦ hu hp.1), select_eq_none_iff.2 hs]; rfl
-    rw [List.foldl_cons, List.foldlM_cons, key]
-    cases hsel : S.select r b u with
-    | none => exact foldl_mul_zero _ _
-    | some r' => exact ih r' fun a ha ↦ hargs a (List.mem_cons_of_mem _ ha)
 
 end State
 

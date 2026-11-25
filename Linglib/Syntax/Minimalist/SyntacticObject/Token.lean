@@ -41,9 +41,4 @@ instance (c : Cat) : DecidablePred (isLeafOf c) := fun _ ↦ inferInstanceAs (De
     isLeafOf c (SyntacticObject.leaf tok) ↔ tok.item.cat = c := by
   simp [isLeafOf]
 
-theorem isLeafOf_map {f : LexicalItem.Token → LexicalItem.Token}
-    (hcat : ∀ t, (f t).item.cat = t.item.cat) (c : Cat) (s : SyntacticObject TokenLeaf) :
-    isLeafOf c (s.map f) ↔ isLeafOf c s := by
-  simp [isLeafOf, token?_map, Option.map_map, Function.comp_def, hcat]
-
 end Minimalist.SyntacticObject

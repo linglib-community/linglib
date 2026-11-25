@@ -35,8 +35,6 @@ it.
 
 * `Minimalist.SelectionRule.stack_projects_iff`: under the stack rule a constituent projects over
   a sister exactly when it selects it.
-* `Minimalist.SyntacticObject.selectionHead_map`: a relabelling that preserves selection commutes
-  with the selection head.
 * `Minimalist.SelectionRule.State.isSaturated_iff_not_isSaturated_of_mul_ne_zero`,
   `Minimalist.SelectionRule.State.head_mul_of_not_isSaturated`: Merge is triggered, one factor
   selecting and the other saturated, and the selecting factor projects.
@@ -114,12 +112,6 @@ theorem of_cons_mul_of_cons (c' : Cat) :
   simp [stack_of_mul_of]
 
 variable {x y}
-
-/-- A relabelling that keeps each token's category commutes with the product. -/
-theorem map_mul_of_preservesSelection {f : LexicalItem.Token → LexicalItem.Token}
-    (hf : LexicalItem.Token.PreservesSelection f) (x y : stack.State) :
-    (x * y).map f = x.map f * y.map f :=
-  map_mul (f := f) (fun r b u ↦ by simp [hf.cat]) (fun _ _ _ ↦ rfl) (fun _ _ ↦ Iff.rfl) x y
 
 theorem head_of_mul_of {a t : LexicalItem.Token} {y : stack.State}
     (h : (of a [] * y).head = some t) : y.head = some t := by
@@ -226,29 +218,10 @@ theorem isHeadFunction_selectionHead :
   eq_of_mem_leaf h := by simpa [eq_comm] using h
   mem_or_mem := selectionHead_merge
 
-variable {f : LexicalItem.Token → LexicalItem.Token}
-
-theorem selectionState_map (hf : LexicalItem.Token.PreservesSelection f) :
-    selectionState (s.map f) = (selectionState s).map f := by
-  induction s using FreeCommMagma.inductionOn with
-  | of a => simp [selectionState, hf.sel]
-  | mul l r ihl ihr => rw [map_merge, map_mul, map_mul, ihl, ihr,
-      SelectionRule.State.map_mul_of_preservesSelection hf]
-
-theorem selectionHead_map (hf : LexicalItem.Token.PreservesSelection f) :
-    (s.map f).selectionHead = s.selectionHead.map f := by
-  rw [selectionHead, selectionHead, selectionState_map s hf, SelectionRule.State.head_map]
-
 @[simp] theorem cat?_leaf : (SyntacticObject.leaf tok).cat?
     = some tok.item.cat := rfl
 
 end SyntacticObject
 
-
-theorem LexicalItem.Token.PreservesSelection.swap {a b : LexicalItem.Token}
-    (hc : a.item.cat = b.item.cat) (hs : a.item.sel = b.item.sel) :
-    LexicalItem.Token.PreservesSelection (Equiv.swap a b) where
-  cat t := by rw [Equiv.swap_apply_def]; split_ifs <;> subst_vars <;> simp [hc]
-  sel t := by rw [Equiv.swap_apply_def]; split_ifs <;> subst_vars <;> simp [hs]
 
 end Minimalist

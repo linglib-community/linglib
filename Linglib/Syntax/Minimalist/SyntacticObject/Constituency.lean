@@ -22,8 +22,7 @@ of prosodic constituency read a Minimalist object through this tree.
 ## Implementation notes
 
 * Categories are `Unit`. The engine, c-command and the yield ignore categories; the categories a
-  head function assigns (`Minimalist.lexicalHeadAt`) depend on the position, not on the vertex, and
-  are not a relabelling.
+  head function assigns depend on the position, not on the vertex, and are not a relabelling.
 * The tree has no traces and no binders: a copy of a term is the term again at another vertex.
 
 ## References
