@@ -80,6 +80,44 @@
           "doc": "elsewhere"
         }
       ]
+    },
+    {
+      "key": "setup",
+      "lean": "setup",
+      "type": "Setup",
+      "doc": "The conversational setup, if any, that introduces a specific purpose.",
+      "levels": [
+        {
+          "name": "none",
+          "label": "none",
+          "doc": "none"
+        },
+        {
+          "name": "question",
+          "label": "question",
+          "doc": "question"
+        },
+        {
+          "name": "assertion",
+          "label": "assertion",
+          "doc": "assertion"
+        },
+        {
+          "name": "directive",
+          "label": "directive",
+          "doc": "directive"
+        },
+        {
+          "name": "priorGoal",
+          "label": "priorGoal",
+          "doc": "priorGoal"
+        },
+        {
+          "name": "displacement",
+          "label": "displacement",
+          "doc": "displacement"
+        }
+      ]
     }
   ],
   "examples": [

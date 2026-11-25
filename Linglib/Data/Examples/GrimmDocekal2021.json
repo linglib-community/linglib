@@ -75,6 +75,92 @@
           "doc": "the context is a fast-food order, section 2.2.2"
         }
       ]
+    },
+    {
+      "key": "numeral",
+      "lean": "numeral",
+      "type": "Numeral",
+      "doc": "A phrase carries one of these numerals, or none.",
+      "levels": [
+        {
+          "name": "none",
+          "label": "none",
+          "doc": "none"
+        },
+        {
+          "name": "simple",
+          "label": "simple",
+          "doc": "simple"
+        },
+        {
+          "name": "group",
+          "label": "group",
+          "doc": "the group numeral is *-ice*"
+        },
+        {
+          "name": "aggregate",
+          "label": "aggregate",
+          "doc": "the aggregate numerals are *-oje* and *-ery*"
+        },
+        {
+          "name": "taxonomic",
+          "label": "taxonomic",
+          "doc": "the taxonomic numerals are *-ojí* and *-ero*"
+        }
+      ]
+    },
+    {
+      "key": "operation",
+      "lean": "operation",
+      "type": "Operation",
+      "doc": "A judged phrase tests one of these operations.",
+      "levels": [
+        {
+          "name": "none",
+          "label": "none",
+          "doc": "none"
+        },
+        {
+          "name": "pluralization",
+          "label": "pluralization",
+          "doc": "pluralization"
+        },
+        {
+          "name": "simpleCardinal",
+          "label": "simpleCardinal",
+          "doc": "simpleCardinal"
+        },
+        {
+          "name": "vagueQuantifier",
+          "label": "vagueQuantifier",
+          "doc": "the vague quantifier is *mnohé* 'many'"
+        },
+        {
+          "name": "universal",
+          "label": "universal",
+          "doc": "the universal quantifier is *všechny* 'all'"
+        },
+        {
+          "name": "outerCardinal",
+          "label": "outerCardinal",
+          "doc": "A simple cardinal applies over a complex numeral"
+        },
+        {
+          "name": "packaging",
+          "label": "packaging",
+          "doc": "packaging"
+        },
+        {
+          "name": "grinding",
+          "label": "grinding",
+          "doc": "grinding"
+        },
+        {
+          "name": "derivation",
+          "label": "derivation",
+          "doc": "an aggregate is derived with *-í*"
+        }
+      ]
     }
   ],
   "examples": [

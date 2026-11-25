@@ -67,6 +67,8 @@ stated over closed intervals of times that may run to the end of time.
 
 namespace Condoravdi2002
 
+open Examples (Zone Context Complement Order)
+
 open Event (τ)
 
 open Aspect Temporal
@@ -432,19 +434,14 @@ def winOn (d : ℤ) : Unit → NonemptyInterval ℤ → Prop := fun _ e ↦ e = 
 /-- The unrestricted modal base admits every world. -/
 def anyWorld : Unit → ℤ → Set Unit := fun _ _ ↦ Set.univ
 
-/-- A `Zone` says where a period sits relative to the present. -/
-inductive Zone
-  | past | present | future
-  deriving DecidableEq
-
 /-- `z.day` is the day the zone `z` names, the utterance being on day 0. -/
-def Zone.day : Zone → ℤ
+def Examples.Zone.day : Zone → ℤ
   | .past => -1
   | .present => 0
   | .future => 1
 
 /-- The period a zone names is its day. -/
-def Zone.period (z : Zone) : Interval (WithTop ℤ) := Interval.pure ↑z.day
+def Examples.Zone.period (z : Zone) : Interval (WithTop ℤ) := Interval.pure ↑z.day
 
 /-- `s.zones` are the zones the reference interval of the scoping `s` reaches, the forward interval
 of the present, the intervals before it, or the forward interval of a past time. -/
@@ -516,11 +513,6 @@ theorem adverb_rows : ∀ row ∈ Examples.all, ∀ a ∈ Adverbial.ofRow row,
         a.scope = .modal ∧ a.sort = .dynamic ∧ a.zone = .present) := by
   decide
 
-/-- A `Context` records what the context says about the issue. -/
-inductive Context
-  | settled | unsettled | absent
-  deriving DecidableEq
-
 /-- A reading row records the scoping, the zone the instantiation refers to, and the context. -/
 structure Reading where
   /-- The scoping. -/
@@ -535,8 +527,8 @@ paper finds the metaphysical reading available. -/
 def Reading.ofRow (row : Datum) : Option (Reading × Bool) := do
   guard (row.feature? "construction" = some "reading")
   return (⟨← row.parse? "scope" scopes,
-    ← row.parse? "reference" [("past", Zone.past), ("present", .present), ("future", .future)],
-    ← row.parse? "context" [("settled", Context.settled), ("open", .unsettled), ("none", .absent)]⟩,
+    ← (Examples.reference row),
+    ← (Examples.context row)⟩,
     ← row.parse? "metaphysical" [("available", true), ("unavailable", false)])
 
 /-- The metaphysical base is assignable when the instantiation is neither in the past of the
@@ -551,20 +543,15 @@ theorem reading_rows : ∀ row ∈ Examples.all, ∀ p ∈ Reading.ofRow row,
     (p.2 = true ↔ p.1.Metaphysical) := by
   decide
 
-/-- A `Complement` is the complement that a phase adverb applies to. -/
-inductive Complement
-  | eventive | perfect
-  deriving DecidableEq
-
 /-- `c.property` is a representative property of the sort of the complement `c`. -/
-def Complement.property : Complement → SortedProperty Unit (NonemptyInterval Unit) Unit
+def Examples.Complement.property : Complement → SortedProperty Unit (NonemptyInterval Unit) Unit
   | .eventive => .eventive fun _ _ ↦ True
   | .perfect => PERF (.eventive fun _ _ ↦ True)
 
 /-- A sortal row records the complement of *already* or *yet*. -/
-def Complement.ofRow (row : Datum) : Option Complement := do
+def Examples.Complement.ofRow (row : Datum) : Option Complement := do
   guard (row.feature? "construction" = some "sortal")
-  return ← row.parse? "complement" [("eventive", Complement.eventive), ("perfect", .perfect)]
+  return ← (Examples.complement row)
 
 theorem sortal_rows : ∀ row ∈ Examples.all, ∀ c ∈ Complement.ofRow row,
     (row.judgment = .acceptable ↔ (phase c.property).isSome = true) := by
@@ -584,15 +571,6 @@ theorem phase_rows : ∀ row ∈ Examples.all, ∀ p ∈ Phase.ofRow row,
     (row.judgment = .acceptable ↔ p = .still) := by
   decide
 
-/-- An `Order` is one of the German orders of the modal and the perfect auxiliary, which mirror
-scope. -/
-inductive Order
-  /-- *Könnte ... haben* puts the modal over the perfect. -/
-  | modalHave
-  /-- *Hätte ... können* puts the perfect over the modal. -/
-  | hadModal
-  deriving DecidableEq
-
 /-- `p.order` is the order that the presuppositions of the adverb `p` require, *schon* the modal
 over *already* over the perfect, since *already* can scope neither over a possibility modal,
 `not_already_may`, nor under it on an eventive radical, `phase`; *noch* the perfect over *still*
@@ -602,9 +580,9 @@ def Phase.order : Phase → Order
   | .still => .hadModal
 
 /-- A German row records the order and the adverb. -/
-def Order.ofRow (row : Datum) : Option (Order × Phase) := do
+def Examples.Order.ofRow (row : Datum) : Option (Order × Phase) := do
   guard (row.feature? "construction" = some "german")
-  return (← row.parse? "order" [("modalHave", Order.modalHave), ("hadModal", .hadModal)],
+  return (← (Examples.order row),
     ← row.parse? "adverb" [("schon", Phase.already), ("noch", .still)])
 
 theorem german_rows : ∀ row ∈ Examples.all, ∀ p ∈ Order.ofRow row,

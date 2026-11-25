@@ -67,6 +67,8 @@ run of voices moving the participants) are both read. The word determines the se
 
 namespace Baker1985
 
+open Examples (Level)
+
 open Morphology Morphology.Word
 open ArgumentFrame (Slot Position)
 
@@ -340,19 +342,6 @@ theorem rows_word :
     ∀ r ∈ Examples.all, (word (rootMorph r) (derivation r)).toList.Sublist (morphs r) := by
   decide +kernel
 
-/-- The level of grammatical functions an agreement references is the surface subject, the
-semantic subject, or an intermediate one. -/
-inductive Level
-  | surface
-  | semantic
-  | intermediate
-  deriving DecidableEq, Repr
-
-/-- The subject a row reports its agreement registering. -/
-def level? (r : Datum) : Option Level :=
-  r.parse? "agreesWith" [("surface subject", .surface), ("semantic subject", .semantic),
-    ("intermediate subject", .intermediate)]
-
 /-- The level of a single registration is the surface subject, the semantic subject, or
 neither. -/
 def level (start final : Stage) : Option Level :=
@@ -365,7 +354,7 @@ def level (start final : Stage) : Option Level :=
 subject outside the passive, the semantic subject inside the causative, and the subject
 between passive and causative in their combination. -/
 theorem rows_agreement :
-    ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ w ∈ level? r,
+    ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ w ∈ Examples.level r,
       ∀ st ∈ outcomes g (processes r) (initialOf r), level (initialOf r) st = some w := by
   decide +kernel
 

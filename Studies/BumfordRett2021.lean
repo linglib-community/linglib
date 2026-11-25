@@ -661,7 +661,7 @@ antonym's own cost. -/
 
 /-- A simulated construction instantiates the positive construction, the equative for the
 comparisons `=` and `≥`, or the comparative for `>`, in Rett's classification. -/
-def construction : Option Comparison → Rett2015b.Construction
+def construction : Option Comparison → Rett2015b.Examples.Construction
   | none => .positive
   | some .gt | some .lt => .comparative
   | some _ => .equative

@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Cruse1973` — typed example data
@@ -1147,5 +1149,17 @@ def ex_91 : Datum :=
     paperFeatures := [("frame", "manner"), ("participant", "John")] }
 
 def all : List Datum := [ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35, ex_36, ex_37, ex_38, ex_39, ex_40, ex_41, ex_42, ex_43, ex_44, ex_45, ex_46, ex_47, ex_48, ex_49, ex_50, ex_51, ex_52, ex_53, ex_54, ex_55, ex_56, ex_57, ex_58, ex_59, ex_60, ex_61, ex_62, ex_63, ex_64, ex_65, ex_66, ex_67, ex_68, ex_69, ex_70, ex_71, ex_72, ex_73, ex_74, ex_75, ex_76, ex_77, ex_78, ex_79, ex_80, ex_81, ex_82, ex_83, ex_84, ex_85a, ex_85b, ex_86a, ex_86b, ex_87, ex_88, ex_89, ex_90, ex_91]
+
+/-- Lyons's verb classes at issue in the received opinions. -/
+inductive VerbClass where
+  /-- process: an obligatorily process verb, *die* -/
+  | process
+  /-- stative: A stative verb, *stand*, *have* -/
+  | stative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `verbClass`. -/
+def verbClass (e : Datum) : Option VerbClass :=
+  e.parse? "verbClass" [("process", .process), ("stative", .stative)]
 
 end Cruse1973.Examples

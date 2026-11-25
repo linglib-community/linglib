@@ -1,4 +1,30 @@
-[
+{
+  "features": [
+    {
+      "key": "agreesWith",
+      "lean": "level",
+      "type": "Level",
+      "doc": "The level of grammatical functions an agreement references is the surface subject, the semantic subject, or an intermediate one.",
+      "levels": [
+        {
+          "name": "surface",
+          "label": "surface subject",
+          "doc": "surface subject"
+        },
+        {
+          "name": "semantic",
+          "label": "semantic subject",
+          "doc": "semantic subject"
+        },
+        {
+          "name": "intermediate",
+          "label": "intermediate subject",
+          "doc": "intermediate subject"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "baker1985_chamorro_15a",
     "source": {"bibkey": "gibson-1980", "paperLabel": "(15a)"},
@@ -428,3 +454,4 @@
     "verified": "page-image"
   }
 ]
+}

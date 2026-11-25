@@ -66,6 +66,8 @@ book names.
 
 namespace Cysouw2003
 
+open Examples (Ubiquity)
+
 open Person Morphology
 
 /-! ### Marking types of the first person complex -/
@@ -588,11 +590,6 @@ inductive Marking where
   | independent | inflectional
   deriving DecidableEq, Repr
 
-/-- Chapter 4's frequency classes. -/
-inductive Ubiquity where
-  | common | semiCommon | rare
-  deriving DecidableEq, Repr
-
 /-- A paradigm the book prints, its eight forms and the book's classification of it. -/
 structure Row where
   /-- The example id. -/
@@ -636,8 +633,7 @@ def ofDatum? (e : Datum) : Option Row := do
   let secondGrp ← e.feature? "2+3"
   let thirdGrp ← e.feature? "3+3"
   let chapter ← e.nat? "chapter"
-  let ubiquity ← e.parse? "ubiquity"
-    [("common", .common), ("semi-common", .semiCommon), ("rare", .rare)]
+  let ubiquity ← (Examples.ubiquity e)
   let marking ← optional? e "marking"
     [("independent", .independent), ("inflectional", .inflectional)]
   let kind ← optional? e "kind" Kind.names

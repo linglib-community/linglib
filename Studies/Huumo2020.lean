@@ -34,15 +34,9 @@ so does [a single level of culmination](##not_fits_one_level).
 
 namespace Huumo2020
 
-open Examples (Adverbial)
+open Examples (Adverbial Quantifier)
 
 open Kiparsky1998
-
-/-- The quantifier of an object: none, a mass quantifier such as *paljon* 'a lot of', or a number
-quantifier such as *usea* 'a number of'. -/
-inductive Quantifier
-  | none | mass | number
-  deriving DecidableEq, Repr
 
 /-- A clause by its object's quantifier and case and its time adverbial. -/
 structure Clause where
@@ -93,7 +87,7 @@ end Clause
 
 /-- A row read through the paper's terms. -/
 def Clause.ofDatum (e : Datum) : Option Clause := do
-  let q ← e.parse? "quantifier" [("none", Quantifier.none), ("mass", .mass), ("number", .number)]
+  let q ← (Examples.quantifier e)
   let c ← e.parse? "case" [("part", Finnish.Case.part), ("acc", .acc)]
   let a ← (Examples.adverbial e)
   some ⟨q, c, a⟩

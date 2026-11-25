@@ -1,4 +1,30 @@
-[
+{
+  "features": [
+    {
+      "key": "condition",
+      "lean": "condition",
+      "type": "Scenario",
+      "doc": "In the scenarios of the grid all, none, or some but not all of the best worlds satisfy the prejacent.",
+      "levels": [
+        {
+          "name": "all",
+          "label": "ALL",
+          "doc": "ALL"
+        },
+        {
+          "name": "none",
+          "label": "NONE",
+          "doc": "NONE"
+        },
+        {
+          "name": "gap",
+          "label": "GAP",
+          "doc": "GAP"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "aghajeretic2022_2a",
     "source": {
@@ -1634,3 +1660,4 @@
     "verified": "page-image"
   }
 ]
+}

@@ -1,4 +1,89 @@
-[
+{
+  "features": [
+    {
+      "key": "reference",
+      "lean": "reference",
+      "type": "Zone",
+      "doc": "A `Zone` says where a period sits relative to the present.",
+      "levels": [
+        {
+          "name": "past",
+          "label": "past",
+          "doc": "past"
+        },
+        {
+          "name": "present",
+          "label": "present",
+          "doc": "present"
+        },
+        {
+          "name": "future",
+          "label": "future",
+          "doc": "future"
+        }
+      ]
+    },
+    {
+      "key": "context",
+      "lean": "context",
+      "type": "Context",
+      "doc": "A `Context` records what the context says about the issue.",
+      "levels": [
+        {
+          "name": "settled",
+          "label": "settled",
+          "doc": "settled"
+        },
+        {
+          "name": "unsettled",
+          "label": "open",
+          "doc": "open"
+        },
+        {
+          "name": "absent",
+          "label": "none",
+          "doc": "none"
+        }
+      ]
+    },
+    {
+      "key": "complement",
+      "lean": "complement",
+      "type": "Complement",
+      "doc": "A `Complement` is the complement that a phase adverb applies to.",
+      "levels": [
+        {
+          "name": "eventive",
+          "label": "eventive",
+          "doc": "eventive"
+        },
+        {
+          "name": "perfect",
+          "label": "perfect",
+          "doc": "perfect"
+        }
+      ]
+    },
+    {
+      "key": "order",
+      "lean": "order",
+      "type": "Order",
+      "doc": "An `Order` is one of the German orders of the modal and the perfect auxiliary, which mirror scope.",
+      "levels": [
+        {
+          "name": "modalHave",
+          "label": "modalHave",
+          "doc": "*Könnte ... haben* puts the modal over the perfect"
+        },
+        {
+          "name": "hadModal",
+          "label": "hadModal",
+          "doc": "*Hätte ... können* puts the perfect over the modal"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "condoravdi2002_ex1a_tomorrow",
     "source": {"bibkey": "condoravdi-2002", "paperLabel": "[1a]"},
@@ -943,3 +1028,4 @@
     "verified": "page-image"
   }
 ]
+}

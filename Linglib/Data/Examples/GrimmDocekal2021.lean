@@ -856,4 +856,52 @@ inductive Context where
 def context (e : Datum) : Option Context :=
   e.parse? "context" [("episodic", .episodic), ("generic", .generic), ("portion", .portion)]
 
+/-- A phrase carries one of these numerals, or none. -/
+inductive Numeral where
+  /-- none: none -/
+  | none
+  /-- simple: simple -/
+  | simple
+  /-- group: the group numeral is *-ice* -/
+  | group
+  /-- aggregate: the aggregate numerals are *-oje* and *-ery* -/
+  | aggregate
+  /-- taxonomic: the taxonomic numerals are *-ojí* and *-ero* -/
+  | taxonomic
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `numeral`. -/
+def numeral (e : Datum) : Option Numeral :=
+  e.parse? "numeral" [("none", .none), ("simple", .simple), ("group", .group), ("aggregate", .aggregate),
+    ("taxonomic", .taxonomic)]
+
+/-- A judged phrase tests one of these operations. -/
+inductive Operation where
+  /-- none: none -/
+  | none
+  /-- pluralization: pluralization -/
+  | pluralization
+  /-- simpleCardinal: simpleCardinal -/
+  | simpleCardinal
+  /-- vagueQuantifier: the vague quantifier is *mnohé* 'many' -/
+  | vagueQuantifier
+  /-- universal: the universal quantifier is *všechny* 'all' -/
+  | universal
+  /-- outerCardinal: A simple cardinal applies over a complex numeral -/
+  | outerCardinal
+  /-- packaging: packaging -/
+  | packaging
+  /-- grinding: grinding -/
+  | grinding
+  /-- derivation: an aggregate is derived with *-í* -/
+  | derivation
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `operation`. -/
+def operation (e : Datum) : Option Operation :=
+  e.parse? "operation" [("none", .none), ("pluralization", .pluralization), ("simpleCardinal", .simpleCardinal),
+    ("vagueQuantifier", .vagueQuantifier), ("universal", .universal),
+    ("outerCardinal", .outerCardinal), ("packaging", .packaging), ("grinding", .grinding),
+    ("derivation", .derivation)]
+
 end GrimmDocekal2021.Examples

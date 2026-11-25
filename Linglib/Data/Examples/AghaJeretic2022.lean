@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `AghaJeretic2022` — typed example data
@@ -588,5 +590,19 @@ def ex_47b : Datum :=
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("qud", "Which train is best?")] }
 
 def all : List Datum := [ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b, should_pos_all, should_pos_none, should_pos_gap, should_neg_all, should_neg_none, should_neg_gap, haveTo_pos_gap, haveTo_neg_gap, ex_8a, ex_8b, ex_10a, ex_10b, ex_11a, ex_11b, ex_12a, ex_12b, ex_14a, ex_14b, ex_15a, ex_15b, ex_17a_qud1, ex_17a_qud2, ex_17b_qud1, ex_17b_qud2, ex_19a, ex_19b, ex_31a, ex_31b, ex_32a, ex_32b, ex_38a, ex_38b, ex_40a, ex_40b, ex_41a, ex_41b, ex_47a, ex_47b]
+
+/-- In the scenarios of the grid all, none, or some but not all of the best worlds satisfy the prejacent. -/
+inductive Scenario where
+  /-- ALL: ALL -/
+  | all
+  /-- NONE: NONE -/
+  | none
+  /-- GAP: GAP -/
+  | gap
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `condition`. -/
+def condition (e : Datum) : Option Scenario :=
+  e.parse? "condition" [("ALL", .all), ("NONE", .none), ("GAP", .gap)]
 
 end AghaJeretic2022.Examples

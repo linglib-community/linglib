@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Condoravdi2002` — typed example data
@@ -609,5 +611,57 @@ def ex38d : Datum :=
     paperFeatures := [("construction", "german"), ("order", "modalHave"), ("adverb", "noch")] }
 
 def all : List Datum := [ex1a_tomorrow, ex1a_now, ex1a_yesterday, ex1b_now, ex1b_yesterday, ex1c_now, ex1c_tomorrow, ex1c_yesterday, ex2a_yesterday, ex2a_tomorrow, ex2b_yesterday, ex2b_tomorrow, ex29a, ex29b, ex34a_yesterday, ex34a_nextMonth, ex34b_yesterday, ex34b_now, ex35a_yesterday, ex35a_nextMonth, ex35b_yesterday, ex35b_now, ex6a, ex7a, ex7b, ex41a, ex41b, ex42b, ex42c, ex14a, ex14b, ex14c, ex14d, ex15a, ex15b, ex15c, ex15d, ex36a, ex37a, ex40a, ex40b, ex38a, ex38b, ex38c, ex38d]
+
+/-- A `Zone` says where a period sits relative to the present. -/
+inductive Zone where
+  /-- past: past -/
+  | past
+  /-- present: present -/
+  | present
+  /-- future: future -/
+  | future
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `reference`. -/
+def reference (e : Datum) : Option Zone :=
+  e.parse? "reference" [("past", .past), ("present", .present), ("future", .future)]
+
+/-- A `Context` records what the context says about the issue. -/
+inductive Context where
+  /-- settled: settled -/
+  | settled
+  /-- open: open -/
+  | unsettled
+  /-- none: none -/
+  | absent
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `context`. -/
+def context (e : Datum) : Option Context :=
+  e.parse? "context" [("settled", .settled), ("open", .unsettled), ("none", .absent)]
+
+/-- A `Complement` is the complement that a phase adverb applies to. -/
+inductive Complement where
+  /-- eventive: eventive -/
+  | eventive
+  /-- perfect: perfect -/
+  | perfect
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `complement`. -/
+def complement (e : Datum) : Option Complement :=
+  e.parse? "complement" [("eventive", .eventive), ("perfect", .perfect)]
+
+/-- An `Order` is one of the German orders of the modal and the perfect auxiliary, which mirror scope. -/
+inductive Order where
+  /-- modalHave: *Könnte ... haben* puts the modal over the perfect -/
+  | modalHave
+  /-- hadModal: *Hätte ... können* puts the perfect over the modal -/
+  | hadModal
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `order`. -/
+def order (e : Datum) : Option Order :=
+  e.parse? "order" [("modalHave", .modalHave), ("hadModal", .hadModal)]
 
 end Condoravdi2002.Examples

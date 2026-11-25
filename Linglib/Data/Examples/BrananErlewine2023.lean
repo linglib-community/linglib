@@ -603,4 +603,18 @@ inductive LeftmostRequirement where
 def leftmost (e : Datum) : Option LeftmostRequirement :=
   e.parse? "leftmost" [("strong", .strong), ("weak", .weak), ("free", .free)]
 
+/-- The constituent the morphosyntax marks is the focus, properly contains it, or is properly contained in it ((76)–(78)). -/
+inductive Mismatch where
+  /-- none: none -/
+  | none
+  /-- piedPiping: piedPiping -/
+  | piedPiping
+  /-- antiPiedPiping: antiPiedPiping -/
+  | antiPiedPiping
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `mismatch`. -/
+def mismatch (e : Datum) : Option Mismatch :=
+  e.parse? "mismatch" [("none", .none), ("piedPiping", .piedPiping), ("antiPiedPiping", .antiPiedPiping)]
+
 end BrananErlewine2023.Examples

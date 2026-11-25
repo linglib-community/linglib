@@ -57,21 +57,11 @@ The second, `?` on (9a) and `??` on (63) and (64), is not among the judgments th
 
 namespace NapoliNespor1976
 
-open Examples (Holder Complementizer Standard Predicate)
+open Examples (Holder Complementizer Standard Predicate Evidence)
 
 open SpeechAct (Force)
 
 /-! ### What a row records -/
-
-/-- How the speaker knows the belief that the comparison bears on. -/
-inductive Evidence where
-  /-- The listener has revealed nothing (6). -/
-  | none
-  /-- The speaker infers the belief from what the listener said (7), (9). -/
-  | inferred
-  /-- The listener stated the belief (8), (30). -/
-  | explicit
-  deriving DecidableEq, Repr, Fintype
 
 /-- The constructions of the rows. -/
 inductive Construction where
@@ -343,13 +333,9 @@ def sentence? (d : Datum) : Option Sentence := do
            plainMood := (d.parse? "plainMood" moods).getD .indicative
            predicate := (Examples.predicate d) }
 
-/-- The evidence a row records, for an example judged in a context. -/
-def evidence? (d : Datum) : Option Evidence :=
-  d.parse? "evidence" [("none", Evidence.none), ("inferred", .inferred), ("explicit", .explicit)]
-
 /-- The analysis allows the judgment of every row. -/
 theorem rows_judgment : ∀ d ∈ Examples.all,
-    ∃ s ∈ sentence? d, d.judgment ∈ (s.verdict (evidence? d)).judgments := by
+    ∃ s ∈ sentence? d, d.judgment ∈ (s.verdict (Examples.evidence d)).judgments := by
   decide
 
 /-- The readings of an indefinite in the embedded clause. -/

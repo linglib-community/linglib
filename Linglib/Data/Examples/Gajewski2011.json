@@ -17,6 +17,44 @@
           "doc": "strong"
         }
       ]
+    },
+    {
+      "key": "licenser",
+      "lean": "licenser",
+      "type": "Licenser",
+      "doc": "The paper's licensers.",
+      "levels": [
+        {
+          "name": "no",
+          "label": "no",
+          "doc": "no"
+        },
+        {
+          "name": "atMostFive",
+          "label": "atMostFive",
+          "doc": "atMostFive"
+        },
+        {
+          "name": "some",
+          "label": "some",
+          "doc": "some"
+        },
+        {
+          "name": "only",
+          "label": "only",
+          "doc": "only"
+        },
+        {
+          "name": "conditional",
+          "label": "conditional",
+          "doc": "conditional"
+        },
+        {
+          "name": "sorryThat",
+          "label": "sorry",
+          "doc": "sorry"
+        }
+      ]
     }
   ],
   "examples": [

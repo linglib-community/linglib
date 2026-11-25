@@ -265,4 +265,25 @@ inductive Strength where
 def strength (e : Datum) : Option Strength :=
   e.parse? "strength" [("weak", .weak), ("strong", .strong)]
 
+/-- The paper's licensers. -/
+inductive Licenser where
+  /-- no: no -/
+  | no
+  /-- atMostFive: atMostFive -/
+  | atMostFive
+  /-- some: some -/
+  | some
+  /-- only: only -/
+  | only
+  /-- conditional: conditional -/
+  | conditional
+  /-- sorry: sorry -/
+  | sorryThat
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `licenser`. -/
+def licenser (e : Datum) : Option Licenser :=
+  e.parse? "licenser" [("no", .no), ("atMostFive", .atMostFive), ("some", .some), ("only", .only),
+    ("conditional", .conditional), ("sorry", .sorryThat)]
+
 end Gajewski2011.Examples

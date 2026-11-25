@@ -70,6 +70,8 @@ non-control complements under 'intend' altogether are recorded as rows without a
 
 namespace Grano2024
 
+open Examples (Complement Reading Diagnostic)
+
 open Mood Event
 open scoped SetRel
 
@@ -92,16 +94,6 @@ inductive Class where
   | aspectual
   | memory
   | perception
-  deriving DecidableEq, Repr, Fintype
-
-/-- The complement types of the pool. -/
-inductive Complement where
-  | indicative
-  | subjunctive
-  | infinitive
-  | forTo
-  | gerund
-  | bareInfinitive
   deriving DecidableEq, Repr, Fintype
 
 /-! ### Section 5: mood heads and the eventuality argument -/
@@ -147,37 +139,18 @@ theorem MoodHead.mood_of_opens {m : MoodHead} (h : m.Opens) : m.mood = .subjunct
 theorem MoodHead.not_opens_sbjv₁ : ¬ MoodHead.sbjv₁.Opens := by decide
 
 /-- The mood heads a complement type may carry. -/
-def Complement.heads : Complement → List MoodHead
+def Examples.Complement.heads : Complement → List MoodHead
   | .indicative => [.indic]
   | _ => [.sbjv₁, .sbjv₂]
 
 /-- Premise 3 for complement types: some head of the complement leaves its eventuality argument
 open. -/
-def Complement.Abstracts (c : Complement) : Prop := ∃ m ∈ c.heads, m.Opens
+def Examples.Complement.Abstracts (c : Complement) : Prop := ∃ m ∈ c.heads, m.Opens
 
 instance (c : Complement) : Decidable c.Abstracts := by unfold Complement.Abstracts; infer_instance
 
-theorem Complement.abstracts_iff {c : Complement} : c.Abstracts ↔ c ≠ .indicative := by
+theorem Examples.Complement.abstracts_iff {c : Complement} : c.Abstracts ↔ c ≠ .indicative := by
   cases c <;> decide
-
-/-- The reading a row is judged on, where the predicate has more than one. -/
-inductive Reading where
-  | intention
-  | belief
-  | assertion
-  /-- *plan* as 'regard as fixed for planning purposes', section 6.1. -/
-  | foresee
-  | event
-  | proposition
-  deriving DecidableEq, Repr
-
-/-- The logical diagnostics of section 3: an impossible prejacent, two incompatible prejacents,
-and a prejacent with a rejected superset. -/
-inductive Diagnostic where
-  | realism
-  | consistency
-  | monotonicity
-  deriving DecidableEq, Repr, Fintype
 
 /-- A judged complement clause. -/
 structure Row where
@@ -194,17 +167,10 @@ def Row.ofDatum (ex : Datum) : Option Row := do
     [("want", Class.want), ("hope", .hope), ("intend", .intend), ("causative", .causative),
       ("intentionRigid", .intentionRigid), ("hybrid", .hybrid), ("commissive", .commissive),
       ("plan", .plan), ("aspectual", .aspectual), ("memory", .memory), ("perception", .perception)]
-  let complement ← ex.parse? "complement"
-    [("indicative", Complement.indicative), ("subjunctive", .subjunctive),
-      ("infinitive", .infinitive), ("forTo", .forTo), ("gerund", .gerund),
-      ("bareInfinitive", .bareInfinitive)]
+  let complement ← (Examples.complement ex)
   pure ⟨ex.language, cls, complement,
-    ex.parse? "reading"
-      [("intention", Reading.intention), ("belief", .belief), ("assertion", .assertion),
-        ("foresee", .foresee), ("event", .event), ("proposition", .proposition)],
-    ex.parse? "diagnostic"
-      [("realism", Diagnostic.realism), ("consistency", .consistency),
-        ("monotonicity", .monotonicity)],
+    (Examples.reading ex),
+    (Examples.diagnostic ex),
     ex.judgment⟩
 
 /-- The paper's judged complements, sections 2, 3, 6, and 7. -/
@@ -253,7 +219,7 @@ theorem hope_varies :
 /-! ### Table 1 and the language file entries -/
 
 /-- The finite moods among the complement types, as codings of a clausal argument position. -/
-def Complement.coding? : Complement → Option Clause.ComplementType
+def Examples.Complement.coding? : Complement → Option Clause.ComplementType
   | .indicative => some .indicative
   | .subjunctive => some .subjunctive
   | _ => none

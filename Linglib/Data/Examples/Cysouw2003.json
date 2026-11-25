@@ -1,4 +1,30 @@
-[
+{
+  "features": [
+    {
+      "key": "ubiquity",
+      "lean": "ubiquity",
+      "type": "Ubiquity",
+      "doc": "Chapter 4's frequency classes.",
+      "levels": [
+        {
+          "name": "common",
+          "label": "common",
+          "doc": "common"
+        },
+        {
+          "name": "semiCommon",
+          "label": "semi-common",
+          "doc": "semi-common"
+        },
+        {
+          "name": "rare",
+          "label": "rare",
+          "doc": "rare"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "cysouw2003_fig3_6",
     "source": {"bibkey": "cysouw-2003", "paperLabel": "Fig. 3.6"},
@@ -3237,3 +3263,4 @@
     "verified": "page-image"
   }
 ]
+}

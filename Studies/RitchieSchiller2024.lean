@@ -48,7 +48,7 @@ formalized.
 
 namespace RitchieSchiller2024
 
-open Examples (Restriction Anchor)
+open Examples (Restriction Anchor Setup)
 
 open Quantifier.Det
 
@@ -197,16 +197,6 @@ def Examples.Restriction.IsHeuristic : Restriction → Prop
 instance : DecidablePred Restriction.IsHeuristic := λ r => by
   cases r <;> unfold Restriction.IsHeuristic <;> infer_instance
 
-/-- The conversational setup, if any, that introduces a specific purpose. -/
-inductive Setup where
-  | none
-  | question
-  | assertion
-  | directive
-  | priorGoal
-  | displacement
-  deriving DecidableEq, Fintype
-
 /-- An example records the intended restriction, its anchor, the setup, and the judgment. -/
 structure Row where
   restriction : Restriction
@@ -225,9 +215,7 @@ otherwise. -/
 def Row.ofDatum (e : Datum) : Option Row := do
   let r ← (Examples.restriction e)
   let a := ((Examples.anchor e)).getD .hereNow
-  let s ← e.parse? "setup"
-    [("none", .none), ("question", .question), ("assertion", .assertion),
-     ("directive", .directive), ("priorGoal", .priorGoal), ("displacement", .displacement)]
+  let s ← (Examples.setup e)
   pure ⟨r, a, s, e.judgment⟩
 
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide

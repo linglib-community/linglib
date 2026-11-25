@@ -55,7 +55,7 @@ tell pied-piping from anti-pied-piping.
 
 namespace BrananErlewine2023
 
-open Examples (Process LeftmostRequirement)
+open Examples (Process LeftmostRequirement Mismatch)
 
 open PhraseStructure Minimalist Focus Reflex OrderDual
 
@@ -429,16 +429,8 @@ theorem not_strong_of_free :
 
 /-! ### The examples -/
 
-/-- The constituent the morphosyntax marks is the focus, properly contains it, or is properly
-contained in it ((76)–(78)). -/
-inductive Mismatch
-  | none
-  | piedPiping
-  | antiPiedPiping
-  deriving DecidableEq, Repr
-
 /-- The relation of host to focus that a label names. -/
-def Mismatch.Holds : Mismatch → GornAddress → GornAddress → Prop
+def Examples.Mismatch.Holds : Mismatch → GornAddress → GornAddress → Prop
   | none, host, focus => host = focus
   | piedPiping, host, focus => host < focus
   | antiPiedPiping, host, focus => focus < host
@@ -496,8 +488,7 @@ def Row.ofDatum (d : Datum) : Option Row := do
     ((partLabels.lookup rd.1).bind fr.site).map (·, rd.2)
   pure ⟨process, BrananErlewine2023.prominent fr.phase skipped, host, readings,
     (Examples.leftmost d),
-    d.parse? "mismatch" [("none", .none), ("piedPiping", .piedPiping),
-      ("antiPiedPiping", .antiPiedPiping)]⟩
+    (Examples.mismatch d)⟩
 
 /-- The examples. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum

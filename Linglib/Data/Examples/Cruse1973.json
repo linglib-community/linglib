@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "verbClass",
+      "lean": "verbClass",
+      "type": "VerbClass",
+      "doc": "Lyons's verb classes at issue in the received opinions.",
+      "levels": [
+        {
+          "name": "process",
+          "label": "process",
+          "doc": "an obligatorily process verb, *die*"
+        },
+        {
+          "name": "stative",
+          "label": "stative",
+          "doc": "A stative verb, *stand*, *have*"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "cruse1973_7",
     "source": {"bibkey": "cruse-1973", "paperLabel": "(7)"},
@@ -1902,3 +1923,4 @@
     "verified": "page-image"
   }
 ]
+}

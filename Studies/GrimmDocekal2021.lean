@@ -53,40 +53,11 @@ the aggregate numeral counts two, is not given.
 
 namespace GrimmDocekal2021
 
-open Examples (Noun Context)
+open Examples (Noun Context Numeral Operation)
 
 open Mereology
 
 /-! ### The judged noun phrases, section 2 -/
-
-/-- A phrase carries one of these numerals, or none. -/
-inductive Numeral where
-  | none
-  | simple
-  /-- The group numeral is *-ice*. -/
-  | group
-  /-- The aggregate numerals are *-oje* and *-ery*. -/
-  | aggregate
-  /-- The taxonomic numerals are *-ojí* and *-ero*. -/
-  | taxonomic
-  deriving DecidableEq, Repr
-
-/-- A judged phrase tests one of these operations. -/
-inductive Operation where
-  | none
-  | pluralization
-  | simpleCardinal
-  /-- The vague quantifier is *mnohé* 'many'. -/
-  | vagueQuantifier
-  /-- The universal quantifier is *všechny* 'all'. -/
-  | universal
-  /-- A simple cardinal applies over a complex numeral. -/
-  | outerCardinal
-  | packaging
-  | grinding
-  /-- An aggregate is derived with *-í*. -/
-  | derivation
-  deriving DecidableEq, Repr
 
 /-- A row records a noun phrase and its judgment. -/
 structure Row where
@@ -100,14 +71,8 @@ structure Row where
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let noun ← (Examples.noun ex)
-  let numeral ← ex.parse? "numeral"
-    [("none", Numeral.none), ("simple", .simple), ("group", .group), ("aggregate", .aggregate),
-      ("taxonomic", .taxonomic)]
-  let operation ← ex.parse? "operation"
-    [("none", Operation.none), ("pluralization", .pluralization),
-      ("simpleCardinal", .simpleCardinal), ("vagueQuantifier", .vagueQuantifier),
-      ("universal", .universal), ("outerCardinal", .outerCardinal), ("packaging", .packaging),
-      ("grinding", .grinding), ("derivation", .derivation)]
+  let numeral ← (Examples.numeral ex)
+  let operation ← (Examples.operation ex)
   pure ⟨noun, numeral, operation,
     (Examples.context ex),
     ex.feature? "reading" = some "taxonomic", ex.judgment⟩

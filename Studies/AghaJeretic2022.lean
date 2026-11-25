@@ -40,6 +40,8 @@ and the conditionals, generics and habituals of the closing section, are not for
 
 namespace AghaJeretic2022
 
+open Examples (Scenario)
+
 open Trivalent (supervaluation supervaluation_eq_true_iff supervaluation_eq_false_iff
   supervaluation_eq_undefined_iff supervaluation_not)
 open Homogeneity
@@ -224,14 +226,6 @@ theorem possibility_witnesses (h : 1 < #(D w)) :
 
 /-! ### The data -/
 
-/-- In the scenarios of the grid all, none, or some but not all of the best worlds satisfy the
-prejacent. -/
-inductive Scenario where
-  | all
-  | none
-  | gap
-  deriving DecidableEq, Repr
-
 /-- A cell of the grid records the polarity of a sentence, its scenario and the value judged. -/
 structure Cell where
   /-- The polarity of the sentence. -/
@@ -247,7 +241,7 @@ polarity fixes where all or no best worlds satisfy the prejacent, and in the mix
 where the paper reports one and the recorded classical value otherwise. -/
 def Cell.ofDatum (e : Datum) : Option Cell := do
   let pol ← e.parse? "polarity" [("positive", .positive), ("negative", .negative)]
-  let sc ← e.parse? "condition" [("ALL", .all), ("NONE", .none), ("GAP", .gap)]
+  let sc ← (Examples.condition e)
   let observed ← match sc, pol with
     | .all, .positive | .none, .negative => some .true
     | .all, .negative | .none, .positive => some .false

@@ -81,6 +81,29 @@
           "doc": "the clitic *lo* for the predicate adjective (79)"
         }
       ]
+    },
+    {
+      "key": "evidence",
+      "lean": "evidence",
+      "type": "Evidence",
+      "doc": "How the speaker knows the belief that the comparison bears on.",
+      "levels": [
+        {
+          "name": "none",
+          "label": "none",
+          "doc": "the listener has revealed nothing (6)"
+        },
+        {
+          "name": "inferred",
+          "label": "inferred",
+          "doc": "the speaker infers the belief from what the listener said (7), (9)"
+        },
+        {
+          "name": "explicit",
+          "label": "explicit",
+          "doc": "the listener stated the belief (8), (30)"
+        }
+      ]
     }
   ],
   "examples": [

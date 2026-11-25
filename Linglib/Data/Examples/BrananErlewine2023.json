@@ -40,6 +40,29 @@
           "doc": "free"
         }
       ]
+    },
+    {
+      "key": "mismatch",
+      "lean": "mismatch",
+      "type": "Mismatch",
+      "doc": "The constituent the morphosyntax marks is the focus, properly contains it, or is properly contained in it ((76)–(78)).",
+      "levels": [
+        {
+          "name": "none",
+          "label": "none",
+          "doc": "none"
+        },
+        {
+          "name": "piedPiping",
+          "label": "piedPiping",
+          "doc": "piedPiping"
+        },
+        {
+          "name": "antiPiedPiping",
+          "label": "antiPiedPiping",
+          "doc": "antiPiedPiping"
+        }
+      ]
     }
   ],
   "examples": [

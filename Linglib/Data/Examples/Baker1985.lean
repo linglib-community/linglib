@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Baker1985` — typed example data
@@ -211,5 +213,20 @@ def kinyarwanda_57d : Datum :=
     paperFeatures := [("root", "write"), ("valence", "transitive"), ("surfaceSubject", "patient"), ("m1", "SP"), ("f1", "i"), ("m2", "PRS"), ("f2", "ra"), ("m3", "write"), ("f3", "andik"), ("m4", "INSTR"), ("f4", "iish"), ("m5", "PASS"), ("f5", "w"), ("m6", "ASP"), ("f6", "a")] }
 
 def all : List Datum := [chamorro_15a, chamorro_15b, chamorro_15c, chamorro_25, quechua_39a, quechua_39b, bemba_49a, bemba_49b, huichol_55, chimwiini_56c, chimwiini_56d, kinyarwanda_57c, kinyarwanda_57d]
+
+/-- The level of grammatical functions an agreement references is the surface subject, the semantic subject, or an intermediate one. -/
+inductive Level where
+  /-- surface subject: surface subject -/
+  | surface
+  /-- semantic subject: semantic subject -/
+  | semantic
+  /-- intermediate subject: intermediate subject -/
+  | intermediate
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `agreesWith`. -/
+def level (e : Datum) : Option Level :=
+  e.parse? "agreesWith" [("surface subject", .surface), ("semantic subject", .semantic),
+    ("intermediate subject", .intermediate)]
 
 end Baker1985.Examples

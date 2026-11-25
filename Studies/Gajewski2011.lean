@@ -52,7 +52,7 @@ and a presupposition trigger's full meaning fails plain downward entailment.
 
 namespace Gajewski2011
 
-open Examples (Strength)
+open Examples (Strength Licenser)
 
 open NaturalLogic Presupposition Quantifier Quantifier.Det Desire.BestWorlds
 
@@ -106,11 +106,6 @@ theorem atMostFive_not_strong :
       fun Q' hQ' h ↦ (h4 (Set.mem_singleton_iff.mp hQ' ▸ h)).elim⟩)
     (not_exhaustified_of_not_le (Set.mem_singleton _) (by decide)
       fun hle ↦ h4 (hle {x | x ≠ 0} (by decide)))
-
-/-- The paper's licensers. -/
-inductive Licenser
-  | no | atMostFive | some | only | conditional | sorryThat
-  deriving DecidableEq, Repr
 
 /-- The two licensing principles applied to a licenser's analysis, on which a weak item needs
 the plain meaning Strawson downward entailing and a strong item needs the enriched meaning
@@ -188,7 +183,7 @@ the paper's licensers the two agree, as the paper's conjecture (48) has it for s
 
 /-- The library's context for each licenser that has one. *Some* NP licenses nothing and has
 none. -/
-def Licenser.context : Licenser → Option PolarityItem.LicensingContext
+def Examples.Licenser.context : Licenser → Option PolarityItem.LicensingContext
   | .no => Option.some .nobody
   | .atMostFive => Option.some .atMost
   | .some => Option.none
@@ -254,8 +249,7 @@ structure Row where
   deriving DecidableEq, Repr
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let licenser ← ex.parse? "licenser" [("no", Licenser.no), ("atMostFive", .atMostFive),
-    ("some", .some), ("only", .only), ("conditional", .conditional), ("sorry", .sorryThat)]
+  let licenser ← (Examples.licenser ex)
   let strength ← (Examples.strength ex)
   pure ⟨licenser, strength, ex.judgment⟩
 

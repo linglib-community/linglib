@@ -17,6 +17,29 @@
           "doc": "measure"
         }
       ]
+    },
+    {
+      "key": "quantifier",
+      "lean": "quantifier",
+      "type": "Quantifier",
+      "doc": "The quantifier of an object: none, a mass quantifier such as *paljon* 'a lot of', or a number quantifier such as *usea* 'a number of'.",
+      "levels": [
+        {
+          "name": "none",
+          "label": "none",
+          "doc": "none"
+        },
+        {
+          "name": "mass",
+          "label": "mass",
+          "doc": "mass"
+        },
+        {
+          "name": "number",
+          "label": "number",
+          "doc": "number"
+        }
+      ]
     }
   ],
   "examples": [

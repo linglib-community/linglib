@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `KonnellyCowper2020` — typed example data
@@ -497,5 +499,17 @@ def ex26c : Datum :=
     paperFeatures := [("antecedent", "referential"), ("noun", "fem"), ("referent", "masc"), ("pronoun", "he"), ("stage", "3")] }
 
 def all : List Datum := [ex1a, ex1b, ex1c, ex3a, ex3b, ex3c, ex4a, ex4b, ex4c, ex5a, ex5b, ex6a, ex6b, ex7a, ex7b, ex7c, ex7d, ex8a, ex8b, ex10_it, ex10_them, ex12a, ex12b, ex12c, ex12d, ex13_its, ex13_their, ex16b, ex21a, ex21b, ex23, ex24, ex25a, ex25b, ex26a, ex26b, ex26c]
+
+/-- What the D head of an antecedent hosts, a quantifier or, in a referential DP, nothing. -/
+inductive Determiner where
+  /-- quantified: quantified -/
+  | quantifier
+  /-- referential: referential -/
+  | referential
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `antecedent`. -/
+def antecedent (e : Datum) : Option Determiner :=
+  e.parse? "antecedent" [("quantified", .quantifier), ("referential", .referential)]
 
 end KonnellyCowper2020.Examples

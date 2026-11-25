@@ -160,15 +160,9 @@ section Data
 
 open Examples
 
-/-- The universal of a collective-predicate row. -/
-inductive RowUniversal where
-  | kowWh
-  | duk
-  deriving DecidableEq, Repr
-
 /-- A collective test row: its universal quantifier. -/
 def collectiveTest? (e : Datum) : Option RowUniversal := do
-  let q ← e.parse? "quantifier" [("koo+wh", .kowWh), ("duk", .duk)]
+  let q ← (Examples.quantifier e)
   let _ ← e.parse? "predicate" [("collective", ())]
   pure q
 

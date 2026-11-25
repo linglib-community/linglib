@@ -1,4 +1,98 @@
 {
+  "features": [
+    {
+      "key": "aspect",
+      "lean": "aspect",
+      "type": "Resultativity",
+      "doc": "Whether the action leads to an 'important' final result (section 12.2.2, rule 2a), as *Tyttö luk-i kirja-n* 'The girl read (= completed reading) a/the book' does and *Tyttö luk-i kirja-a* 'The girl was reading a/the book' does not.",
+      "levels": [
+        {
+          "name": "resultative",
+          "label": "resultative",
+          "doc": "resultative"
+        },
+        {
+          "name": "irresultative",
+          "label": "irresultative",
+          "doc": "irresultative"
+        }
+      ]
+    },
+    {
+      "key": "quantity",
+      "lean": "quantity",
+      "type": "Quantity",
+      "doc": "The quantity an object expresses (section 12.2.2, rule 3): a whole or a definite quantity, or an indefinite, non-limited quantity, as divisible and plural words express. It is not the definiteness of the object: *Osta-n jäätelö-n* 'I('ll) buy an/the ice-cream' expresses a definite quantity on either reading.",
+      "levels": [
+        {
+          "name": "definite",
+          "label": "definite",
+          "doc": "definite"
+        },
+        {
+          "name": "indefinite",
+          "label": "indefinite",
+          "doc": "indefinite"
+        }
+      ]
+    },
+    {
+      "key": "nominal",
+      "lean": "nominal",
+      "type": "Nominal",
+      "doc": "The kind of nominal serving as object, as the total-object rules of section 13.3.2 tell them apart: a personal pronoun or *kuka* 'who' (rule 1), a numeral heading its phrase (rule 3), or any other nominal, plural (rule 2) or singular (rule 4).",
+      "levels": [
+        {
+          "name": "personalPronoun",
+          "label": "personalPronoun",
+          "doc": "personalPronoun"
+        },
+        {
+          "name": "numeral",
+          "label": "numeral",
+          "doc": "numeral"
+        },
+        {
+          "name": "other",
+          "label": "other",
+          "doc": "other"
+        }
+      ]
+    },
+    {
+      "key": "clause",
+      "lean": "clause",
+      "type": "Clause",
+      "doc": "The clause types, the last four being those under which a singular total object is in the nominative (section 13.3.2, rule 4b).",
+      "levels": [
+        {
+          "name": "finite",
+          "label": "finite",
+          "doc": "finite"
+        },
+        {
+          "name": "imperative",
+          "label": "imperative",
+          "doc": "imperative"
+        },
+        {
+          "name": "passive",
+          "label": "passive",
+          "doc": "passive"
+        },
+        {
+          "name": "obligation",
+          "label": "obligation",
+          "doc": "obligation"
+        },
+        {
+          "name": "infinitival",
+          "label": "infinitival",
+          "doc": "infinitival"
+        }
+      ]
+    }
+  ],
   "spans": {
     "labels": {
       "type": "SpanLabel",

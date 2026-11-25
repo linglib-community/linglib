@@ -49,6 +49,8 @@ agentivity, as the paper reanalyzes them, pick out strictly nested classes of no
 
 namespace Cruse1973
 
+open Examples (VerbClass)
+
 open ArgumentStructure
 
 /-- The features whose presence makes a noun a doer. -/
@@ -123,14 +125,6 @@ def Frame.Normal : Frame → Profile → Prop
 instance (t : Frame) : DecidablePred t.Normal := fun _ ↦ by
   cases t <;> unfold Frame.Normal <;> infer_instance
 
-/-- Lyons's verb classes at issue in the received opinions. -/
-inductive VerbClass where
-  /-- An obligatorily process verb, *die*. -/
-  | process
-  /-- A stative verb, *stand*, *have*. -/
-  | stative
-  deriving DecidableEq
-
 /-! ### Gruber's criteria -/
 
 theorem carefully_lt_purpose_lt_doForm :
@@ -177,7 +171,7 @@ def Row.ofDatum (e : Datum) : Option Row := do
          profile := e.parse? "features" Profile.labels
          inferred := decide (e.feature? "inferred" = some "true")
          inanimate := decide (e.feature? "animate" = some "false")
-         verbClass := e.parse? "verbClass" [("process", .process), ("stative", .stative)]
+         verbClass := (Examples.verbClass e)
          neutralized := decide (e.feature? "neutralized" = some "true")
          judgment := e.judgment
          denied := decide (e.feature? "entailment" = some "denied") }

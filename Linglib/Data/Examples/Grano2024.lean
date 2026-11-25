@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Grano2024` — typed example data
@@ -1862,5 +1864,61 @@ def ex_128b : Datum :=
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
 def all : List Datum := [ex_1a_sbjv, ex_1a_ind, ex_1b, ex_2a_sbjv, ex_2a_ind, ex_2b, ex_3a_sbjv, ex_3a_ind, ex_3b, ex_4a_sbjv, ex_4a_ind, ex_4b, ex_5_sbjv, ex_5_ind, ex_6a, ex_6b, ex_6c, ex_7a, ex_7b, ex_8a, ex_8b, ex_9_sbjv, ex_9_ind, ex_10_sbjv, ex_10_ind, ex_11_sbjv, ex_11_ind, ex_12_sbjv, ex_12_ind, ex_13_sbjv, ex_13_ind, ex_14a, ex_14b, ex_15a, ex_15b, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22_sbjv, ex_22_ind, ex_23a, ex_23b, ex_24a, ex_24b, ex_25_sbjv, ex_25_ind, ex_25_fut, ex_26_sbjv, ex_26_ind, ex_26_fut, ex_27_sbjv, ex_27_ind, ex_28_sbjv, ex_28_ind, ex_36, ex_37, ex_38, ex_39, ex_40_sbjv, ex_40_ind, ex_41_sbjv, ex_41_ind, ex_42a_sbjv, ex_42a_ind, ex_42b_sbjv, ex_42b_ind, ex_45a, ex_45b, ex_46a, ex_46b, ex_47a, ex_47b, ex_49a_want, ex_49a_hope, ex_50a, ex_50b, ex_51a, ex_52, ex_53, ex_54, ex_63, ex_64, ex_65, ex_66, ex_67, ex_90_aim, ex_90_try, ex_91_aim, ex_91_try, ex_92, ex_93, ex_94, ex_96a, ex_96b, ex_97a, ex_97b, ex_98a, ex_99a, ex_100, ex_101, ex_102, ex_103, ex_104, ex_105, ex_106, ex_107a, ex_107b, ex_112_plan, ex_112_hope, ex_113_plan, ex_113_hope, ex_115a, ex_115b, ex_116, ex_117, ex_118, ex_119, ex_120, ex_121, ex_122, ex_123, ex_124, ex_125, ex_126, ex_127, ex_128a, ex_128b]
+
+/-- The complement types of the pool. -/
+inductive Complement where
+  /-- indicative: indicative -/
+  | indicative
+  /-- subjunctive: subjunctive -/
+  | subjunctive
+  /-- infinitive: infinitive -/
+  | infinitive
+  /-- forTo: forTo -/
+  | forTo
+  /-- gerund: gerund -/
+  | gerund
+  /-- bareInfinitive: bareInfinitive -/
+  | bareInfinitive
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `complement`. -/
+def complement (e : Datum) : Option Complement :=
+  e.parse? "complement" [("indicative", .indicative), ("subjunctive", .subjunctive), ("infinitive", .infinitive),
+    ("forTo", .forTo), ("gerund", .gerund), ("bareInfinitive", .bareInfinitive)]
+
+/-- The reading a row is judged on, where the predicate has more than one. -/
+inductive Reading where
+  /-- intention: intention -/
+  | intention
+  /-- belief: belief -/
+  | belief
+  /-- assertion: assertion -/
+  | assertion
+  /-- foresee: *plan* as 'regard as fixed for planning purposes', section 6.1 -/
+  | foresee
+  /-- event: event -/
+  | event
+  /-- proposition: proposition -/
+  | proposition
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `reading`. -/
+def reading (e : Datum) : Option Reading :=
+  e.parse? "reading" [("intention", .intention), ("belief", .belief), ("assertion", .assertion),
+    ("foresee", .foresee), ("event", .event), ("proposition", .proposition)]
+
+/-- The logical diagnostics of section 3: an impossible prejacent, two incompatible prejacents, and a prejacent with a rejected superset. -/
+inductive Diagnostic where
+  /-- realism: realism -/
+  | realism
+  /-- consistency: consistency -/
+  | consistency
+  /-- monotonicity: monotonicity -/
+  | monotonicity
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `diagnostic`. -/
+def diagnostic (e : Datum) : Option Diagnostic :=
+  e.parse? "diagnostic" [("realism", .realism), ("consistency", .consistency), ("monotonicity", .monotonicity)]
 
 end Grano2024.Examples

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -721,6 +722,63 @@ def sg_house_inf : Datum :=
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "infinitival")] }
 
 def all : List Datum := [neg1, neg2, neg3, neg4, ex_2a_read_part, ex_2a_read_tot, ex_2a_drive_part, ex_2a_drive_tot, ex_2a_shoot_part, ex_2a_shoot_tot, ex_2b_love, ex_2b_interest, ex_2b_fear, ex_3_icecream_part, ex_3_icecream_tot, ex_3_beer_part, ex_3_beer_tot, ex_3_people_part, ex_3_people_tot, ex_3_guests_part, ex_3_guests_tot, tot_message, tot_milk, tot_car_imp, tot_computers, tot_cars, acc_took, acc_take_imp, acc_taken, acc_whom, pl_articles, pl_children_imp, pl_children_pass, num_articles, num_children_imp, num_children_pass, sg_camera, sg_child, sg_window, sg_paper_imp, sg_book_pass, sg_dog_pass, sg_book_must, sg_house_inf]
+
+/-- Whether the action leads to an 'important' final result (section 12.2.2, rule 2a), as *Tyttö luk-i kirja-n* 'The girl read (= completed reading) a/the book' does and *Tyttö luk-i kirja-a* 'The girl was reading a/the book' does not. -/
+inductive Resultativity where
+  /-- resultative: resultative -/
+  | resultative
+  /-- irresultative: irresultative -/
+  | irresultative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `aspect`. -/
+def aspect (e : Datum) : Option Resultativity :=
+  e.parse? "aspect" [("resultative", .resultative), ("irresultative", .irresultative)]
+
+/-- The quantity an object expresses (section 12.2.2, rule 3): a whole or a definite quantity, or an indefinite, non-limited quantity, as divisible and plural words express. It is not the definiteness of the object: *Osta-n jäätelö-n* 'I('ll) buy an/the ice-cream' expresses a definite quantity on either reading. -/
+inductive Quantity where
+  /-- definite: definite -/
+  | definite
+  /-- indefinite: indefinite -/
+  | indefinite
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `quantity`. -/
+def quantity (e : Datum) : Option Quantity :=
+  e.parse? "quantity" [("definite", .definite), ("indefinite", .indefinite)]
+
+/-- The kind of nominal serving as object, as the total-object rules of section 13.3.2 tell them apart: a personal pronoun or *kuka* 'who' (rule 1), a numeral heading its phrase (rule 3), or any other nominal, plural (rule 2) or singular (rule 4). -/
+inductive Nominal where
+  /-- personalPronoun: personalPronoun -/
+  | personalPronoun
+  /-- numeral: numeral -/
+  | numeral
+  /-- other: other -/
+  | other
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `nominal`. -/
+def nominal (e : Datum) : Option Nominal :=
+  e.parse? "nominal" [("personalPronoun", .personalPronoun), ("numeral", .numeral), ("other", .other)]
+
+/-- The clause types, the last four being those under which a singular total object is in the nominative (section 13.3.2, rule 4b). -/
+inductive Clause where
+  /-- finite: finite -/
+  | finite
+  /-- imperative: imperative -/
+  | imperative
+  /-- passive: passive -/
+  | passive
+  /-- obligation: obligation -/
+  | obligation
+  /-- infinitival: infinitival -/
+  | infinitival
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `clause`. -/
+def clause (e : Datum) : Option Clause :=
+  e.parse? "clause" [("finite", .finite), ("imperative", .imperative), ("passive", .passive),
+    ("obligation", .obligation), ("infinitival", .infinitival)]
 
 /-- The labels of the spans the rows mark. -/
 inductive SpanLabel where

@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "antecedent",
+      "lean": "antecedent",
+      "type": "Determiner",
+      "doc": "What the D head of an antecedent hosts, a quantifier or, in a referential DP, nothing.",
+      "levels": [
+        {
+          "name": "quantifier",
+          "label": "quantified",
+          "doc": "quantified"
+        },
+        {
+          "name": "referential",
+          "label": "referential",
+          "doc": "referential"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "konnellycowper2020_ex1a",
     "source": {"bibkey": "konnelly-cowper-2020", "paperLabel": "(1a)"},
@@ -840,3 +861,4 @@
     "verified": "page-image"
   }
 ]
+}

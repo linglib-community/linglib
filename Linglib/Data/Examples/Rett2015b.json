@@ -1,4 +1,45 @@
-[
+{
+  "features": [
+    {
+      "key": "construction",
+      "lean": "construction",
+      "type": "Construction",
+      "doc": "The surface forms of a gradable predicate in the book's Table 3.1.",
+      "levels": [
+        {
+          "name": "positive",
+          "label": "positive",
+          "doc": "*Adam is tall*"
+        },
+        {
+          "name": "measurePhrase",
+          "label": "measurePhrase",
+          "doc": "*Adam is six feet tall*"
+        },
+        {
+          "name": "comparative",
+          "label": "comparative",
+          "doc": "*Adam is taller than Doug*"
+        },
+        {
+          "name": "equative",
+          "label": "equative",
+          "doc": "*Adam is as tall as Doug*"
+        },
+        {
+          "name": "degreeQuestion",
+          "label": "degreeQuestion",
+          "doc": "*How tall is Adam?*"
+        },
+        {
+          "name": "degreeDemonstrative",
+          "label": "degreeDemonstrative",
+          "doc": "*Doug's (about) that tall too*"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "rett2015b_positive_tall",
     "source": {
@@ -392,3 +433,4 @@
     "verified": "page-image"
   }
 ]
+}

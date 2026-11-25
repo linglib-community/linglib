@@ -37,23 +37,9 @@ so their rows of `IsPolarInvariant` are the book's classification.
 
 namespace Rett2015b
 
-open English.Adjectives
+open Examples (Construction)
 
-/-- The surface forms of a gradable predicate in the book's Table 3.1. -/
-inductive Construction where
-  /-- *Adam is tall*. -/
-  | positive
-  /-- *Adam is six feet tall*. -/
-  | measurePhrase
-  /-- *Adam is taller than Doug*. -/
-  | comparative
-  /-- *Adam is as tall as Doug*. -/
-  | equative
-  /-- *How tall is Adam?* -/
-  | degreeQuestion
-  /-- *Doug's (about) that tall too*. -/
-  | degreeDemonstrative
-  deriving DecidableEq, Repr
+open English.Adjectives
 
 /-! ### Polar (in)variance and markedness -/
 
@@ -177,9 +163,7 @@ end PolarVarianceGrounding
 evaluative. The ungrammatical negative-antonym measure phrase carries no judgment. -/
 def datum (e : Datum) : Option (Construction × Polarity × Bool) :=
   do
-    let c ← e.parse? "construction" [("positive", Construction.positive),
-      ("comparative", .comparative), ("equative", .equative), ("measurePhrase", .measurePhrase),
-      ("degreeQuestion", .degreeQuestion), ("degreeDemonstrative", .degreeDemonstrative)]
+    let c ← (Examples.construction e)
     let p ← e.parse? "polarity" [("positive", Polarity.positive), ("negative", .negative)]
     let v ← e.parse? "evaluative" [("true", true), ("false", false)]
     pure (c, p, v)

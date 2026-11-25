@@ -1407,4 +1407,18 @@ inductive Predicate where
 def predicate (e : Datum) : Option Predicate :=
   e.parse? "predicate" [("adjective", .adjective), ("lo", .lo)]
 
+/-- How the speaker knows the belief that the comparison bears on. -/
+inductive Evidence where
+  /-- none: the listener has revealed nothing (6) -/
+  | none
+  /-- inferred: the speaker infers the belief from what the listener said (7), (9) -/
+  | inferred
+  /-- explicit: the listener stated the belief (8), (30) -/
+  | explicit
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `evidence`. -/
+def evidence (e : Datum) : Option Evidence :=
+  e.parse? "evidence" [("none", .none), ("inferred", .inferred), ("explicit", .explicit)]
+
 end NapoliNespor1976.Examples

@@ -1,4 +1,106 @@
-[
+{
+  "features": [
+    {
+      "key": "complement",
+      "lean": "complement",
+      "type": "Complement",
+      "doc": "The complement types of the pool.",
+      "levels": [
+        {
+          "name": "indicative",
+          "label": "indicative",
+          "doc": "indicative"
+        },
+        {
+          "name": "subjunctive",
+          "label": "subjunctive",
+          "doc": "subjunctive"
+        },
+        {
+          "name": "infinitive",
+          "label": "infinitive",
+          "doc": "infinitive"
+        },
+        {
+          "name": "forTo",
+          "label": "forTo",
+          "doc": "forTo"
+        },
+        {
+          "name": "gerund",
+          "label": "gerund",
+          "doc": "gerund"
+        },
+        {
+          "name": "bareInfinitive",
+          "label": "bareInfinitive",
+          "doc": "bareInfinitive"
+        }
+      ]
+    },
+    {
+      "key": "reading",
+      "lean": "reading",
+      "type": "Reading",
+      "doc": "The reading a row is judged on, where the predicate has more than one.",
+      "levels": [
+        {
+          "name": "intention",
+          "label": "intention",
+          "doc": "intention"
+        },
+        {
+          "name": "belief",
+          "label": "belief",
+          "doc": "belief"
+        },
+        {
+          "name": "assertion",
+          "label": "assertion",
+          "doc": "assertion"
+        },
+        {
+          "name": "foresee",
+          "label": "foresee",
+          "doc": "*plan* as 'regard as fixed for planning purposes', section 6.1"
+        },
+        {
+          "name": "event",
+          "label": "event",
+          "doc": "event"
+        },
+        {
+          "name": "proposition",
+          "label": "proposition",
+          "doc": "proposition"
+        }
+      ]
+    },
+    {
+      "key": "diagnostic",
+      "lean": "diagnostic",
+      "type": "Diagnostic",
+      "doc": "The logical diagnostics of section 3: an impossible prejacent, two incompatible prejacents, and a prejacent with a rejected superset.",
+      "levels": [
+        {
+          "name": "realism",
+          "label": "realism",
+          "doc": "realism"
+        },
+        {
+          "name": "consistency",
+          "label": "consistency",
+          "doc": "consistency"
+        },
+        {
+          "name": "monotonicity",
+          "label": "monotonicity",
+          "doc": "monotonicity"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "grano2024_1a_sbjv",
     "source": {
@@ -6178,3 +6280,4 @@
     "verified": "page-image"
   }
 ]
+}

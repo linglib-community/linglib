@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Rett2015b` — typed example data
@@ -172,5 +174,27 @@ def demonstrative_short : Datum :=
     paperFeatures := [("construction", "degreeDemonstrative"), ("polarity", "negative"), ("evaluative", "true")] }
 
 def all : List Datum := [positive_tall, positive_short, comparative_tall, comparative_short, equative_tall, equative_short, mp_tall, mp_short, question_tall, question_short, demonstrative_tall, demonstrative_short]
+
+/-- The surface forms of a gradable predicate in the book's Table 3.1. -/
+inductive Construction where
+  /-- positive: *Adam is tall* -/
+  | positive
+  /-- measurePhrase: *Adam is six feet tall* -/
+  | measurePhrase
+  /-- comparative: *Adam is taller than Doug* -/
+  | comparative
+  /-- equative: *Adam is as tall as Doug* -/
+  | equative
+  /-- degreeQuestion: *How tall is Adam?* -/
+  | degreeQuestion
+  /-- degreeDemonstrative: *Doug's (about) that tall too* -/
+  | degreeDemonstrative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `construction`. -/
+def construction (e : Datum) : Option Construction :=
+  e.parse? "construction" [("positive", .positive), ("measurePhrase", .measurePhrase), ("comparative", .comparative),
+    ("equative", .equative), ("degreeQuestion", .degreeQuestion),
+    ("degreeDemonstrative", .degreeDemonstrative)]
 
 end Rett2015b.Examples

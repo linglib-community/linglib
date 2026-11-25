@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Zimmermann2008` — typed example data
@@ -316,5 +318,17 @@ def ex_91b : Datum :=
     paperFeatures := [("quantifier", "duk"), ("negation", "sentential"), ("scope", "negative universal")] }
 
 def all : List Datum := [ex_11a, ex_12a, ex_13a, ex_63a, ex_64, ex_65a, ex_69a, ex_69b, ex_70, ex_71, ex_73, ex_74a, ex_75, ex_78, ex_85a, ex_86, ex_89a, ex_90a, ex_91a, ex_91b]
+
+/-- The universal of a collective-predicate row. -/
+inductive RowUniversal where
+  /-- koo+wh: koo+wh -/
+  | kowWh
+  /-- duk: duk -/
+  | duk
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `quantifier`. -/
+def quantifier (e : Datum) : Option RowUniversal :=
+  e.parse? "quantifier" [("koo+wh", .kowWh), ("duk", .duk)]
 
 end Zimmermann2008.Examples

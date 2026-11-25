@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "quantifier",
+      "lean": "quantifier",
+      "type": "RowUniversal",
+      "doc": "The universal of a collective-predicate row.",
+      "levels": [
+        {
+          "name": "kowWh",
+          "label": "koo+wh",
+          "doc": "koo+wh"
+        },
+        {
+          "name": "duk",
+          "label": "duk",
+          "doc": "duk"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "zimmermann2008_11a",
     "source": {"bibkey": "zimmermann-2008", "paperLabel": "(11a)"},
@@ -459,3 +480,4 @@
     "verified": "page-image"
   }
 ]
+}

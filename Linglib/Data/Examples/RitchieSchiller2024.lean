@@ -454,4 +454,25 @@ inductive Anchor where
 def anchor (e : Datum) : Option Anchor :=
   e.parse? "anchor" [("hereNow", .hereNow), ("elsewhere", .elsewhere)]
 
+/-- The conversational setup, if any, that introduces a specific purpose. -/
+inductive Setup where
+  /-- none: none -/
+  | none
+  /-- question: question -/
+  | question
+  /-- assertion: assertion -/
+  | assertion
+  /-- directive: directive -/
+  | directive
+  /-- priorGoal: priorGoal -/
+  | priorGoal
+  /-- displacement: displacement -/
+  | displacement
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `setup`. -/
+def setup (e : Datum) : Option Setup :=
+  e.parse? "setup" [("none", .none), ("question", .question), ("assertion", .assertion),
+    ("directive", .directive), ("priorGoal", .priorGoal), ("displacement", .displacement)]
+
 end RitchieSchiller2024.Examples

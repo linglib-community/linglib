@@ -242,4 +242,18 @@ inductive Adverbial where
 def adverbial (e : Datum) : Option Adverbial :=
   e.parse? "adverbial" [("timeFrame", .timeFrame), ("measure", .measure)]
 
+/-- The quantifier of an object: none, a mass quantifier such as *paljon* 'a lot of', or a number quantifier such as *usea* 'a number of'. -/
+inductive Quantifier where
+  /-- none: none -/
+  | none
+  /-- mass: mass -/
+  | mass
+  /-- number: number -/
+  | number
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `quantifier`. -/
+def quantifier (e : Datum) : Option Quantifier :=
+  e.parse? "quantifier" [("none", .none), ("mass", .mass), ("number", .number)]
+
 end Huumo2020.Examples

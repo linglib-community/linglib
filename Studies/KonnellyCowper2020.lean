@@ -49,6 +49,8 @@ and the theorems over rows hold for either binary gender.
 
 namespace KonnellyCowper2020
 
+open Examples (Determiner)
+
 open DistributedMorphology
 open scoped DistributedMorphology
 
@@ -141,12 +143,6 @@ def genderContrastivity : Stage → Contrastivity
   | .three => .nonContrastive
 
 end Stage
-
-/-- What the D head of an antecedent hosts, a quantifier or, in a referential DP, nothing. -/
-inductive Determiner
-  | quantifier
-  | referential
-  deriving DecidableEq, Repr
 
 /-- An antecedent as a pronoun sees it (14). -/
 structure Antecedent where
@@ -310,7 +306,7 @@ theorem it_of_inanimate (hs : a.number = .singular) (hi : a.Inanimate) :
 /-- The antecedent a row describes, with `g` as the gender of a referent the row says only is
 known. -/
 def Antecedent.ofRow (g : ReferentGender) (e : Datum) : Option Antecedent := do
-  let det ← e.parse? "antecedent" [("quantified", .quantifier), ("referential", .referential)]
+  let det ← (Examples.antecedent e)
   let lexical ← e.parse? "noun" [("ungendered", none), ("fem", some (.gender .female)),
     ("masc", some (.gender .male)), ("inanimate", some .inanim)]
   let referentGender ← e.parse? "referent"

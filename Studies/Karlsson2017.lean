@@ -39,33 +39,7 @@ printed object of each of the grammar's examples in the case the rules assign](#
 
 namespace Karlsson2017
 
-/-- The kind of nominal serving as object, as the total-object rules of section 13.3.2 tell them
-apart: a personal pronoun or *kuka* 'who' (rule 1), a numeral heading its phrase (rule 3), or any
-other nominal, plural (rule 2) or singular (rule 4). -/
-inductive Nominal
-  | personalPronoun | numeral | other
-  deriving DecidableEq, Repr
-
-/-- The clause types, the last four being those under which a singular total object is in the
-nominative (section 13.3.2, rule 4b). -/
-inductive Clause
-  | finite | imperative | passive | obligation | infinitival
-  deriving DecidableEq, Repr
-
-/-- Whether the action leads to an 'important' final result (section 12.2.2, rule 2a), as
-*Tyttö luk-i kirja-n* 'The girl read (= completed reading) a/the book' does and *Tyttö luk-i
-kirja-a* 'The girl was reading a/the book' does not. -/
-inductive Resultativity
-  | resultative | irresultative
-  deriving DecidableEq, Repr
-
-/-- The quantity an object expresses (section 12.2.2, rule 3): a whole or a definite quantity, or
-an indefinite, non-limited quantity, as divisible and plural words express. It is not the
-definiteness of the object: *Osta-n jäätelö-n* 'I('ll) buy an/the ice-cream' expresses a definite
-quantity on either reading. -/
-inductive Quantity
-  | definite | indefinite
-  deriving DecidableEq, Repr
+open Examples (Resultativity Quantity Nominal Clause)
 
 /-- An object with the factors the grammar's rules read: the polarity of the sentence, the
 resultativity of the action, the quantity the object expresses, its kind of nominal, its number
@@ -161,15 +135,12 @@ def object? (e : Datum) : Option GlossedWord :=
 /-- A row read through the grammar's terms, failing on a term it does not use. -/
 def Row.ofDatum (e : Datum) : Option Row := do
   let p ← e.parse? "negated" [("yes", Polarity.negative), ("no", .positive)]
-  let t ← e.parse? "aspect" [("resultative", Resultativity.resultative),
-    ("irresultative", .irresultative)]
-  let q ← e.parse? "quantity" [("definite", Quantity.definite), ("indefinite", .indefinite)]
-  let n ← e.parse? "nominal" [("personalPronoun", Nominal.personalPronoun),
-    ("numeral", .numeral), ("other", .other)]
+  let t ← (Examples.aspect e)
+  let q ← (Examples.quantity e)
+  let n ← (Examples.nominal e)
   let num ← e.parse? "number" [("singular", ⟨.singular, by decide⟩),
     ("plural", ⟨.plural, by decide⟩)]
-  let cl ← e.parse? "clause" [("finite", Clause.finite), ("imperative", .imperative),
-    ("passive", .passive), ("obligation", .obligation), ("infinitival", .infinitival)]
+  let cl ← (Examples.clause e)
   let w ← object? e
   some ⟨⟨p, t, q, n, num, cl⟩,
     ← spell ((w.glossedMorphemes.takeWhile
