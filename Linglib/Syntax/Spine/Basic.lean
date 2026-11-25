@@ -98,7 +98,7 @@ def append (s : Spine H) (l : List H) : Spine H := ⟨s.heads ++ l⟩
 
 section Map
 
-variable {K L : Type*} {f : H → K}
+variable {K : Type*} {f : H → K}
 
 /-- The spine of the images of the heads, as when a head's features are forgotten for its
 category. -/
@@ -106,19 +106,7 @@ def map (f : H → K) (s : Spine H) : Spine K := ⟨s.heads.map f⟩
 
 @[simp] theorem heads_map (f : H → K) (s : Spine H) : (s.map f).heads = s.heads.map f := rfl
 
-@[simp] theorem map_id (s : Spine H) : s.map id = s := by cases s; simp [map]
-
-theorem map_map (g : K → L) (f : H → K) (s : Spine H) : (s.map f).map g = s.map (g ∘ f) := by
-  simp [map]
-
 @[simp] theorem mem_map {k : K} : k ∈ s.map f ↔ ∃ c ∈ s, f c = k := List.mem_map
-
-theorem map_take (f : H → K) (s : Spine H) (n : ℕ) : (s.take n).map f = (s.map f).take n := by
-  simp [map, take, List.map_take]
-
-theorem map_append (f : H → K) (s : Spine H) (l : List H) :
-    (s.append l).map f = (s.map f).append (l.map f) := by
-  simp [map, append]
 
 end Map
 

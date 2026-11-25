@@ -23,9 +23,8 @@ cyclic heads.
 
 The stretches of a spine are characterized by four conditions: they flatten to the spine, none
 is empty, no head of a stretch but its lowest satisfies `p`, and the lowest head of every stretch
-but the first does. Their number is one more than the number of heads satisfying `p` above the
-lowest head of the spine, so that in a truncation of the spine the highest stretch is numbered
-by the heads satisfying `p` it has passed.
+but the first does. A head merged over a spine starts a new stretch if it is in the class and
+joins the highest stretch if it is not.
 
 ## Main definitions
 
@@ -36,7 +35,6 @@ by the heads satisfying `p` it has passed.
 * `Spine.splitBefore_eq_iff`: the characterization of the stretches.
 * `Spine.splitBefore_cons`: the lowest stretch is the lowest head with the heads above it up to
   the first in the class, and the others are the stretches of the rest.
-* `Spine.length_splitBefore`: the number of stretches.
 * `Spine.splitBefore_append_singleton_of_pos`, `Spine.splitBefore_append_singleton_of_neg`: a head
   merged over a spine starts a new stretch if it is in the class and joins the highest if not.
 
@@ -44,7 +42,7 @@ by the heads satisfying `p` it has passed.
 
 `Spine.splitBefore` is `List.splitBy` at the relation joining a head to the one below it unless
 it is in the class. The stretches are a list and not a partition of the positions, so that they
-come in order and can be counted.
+come in order.
 
 ## References
 
@@ -65,6 +63,10 @@ def splitBefore (s : Spine H) (p : H → Prop) [DecidablePred p] : List (List H)
 @[simp] theorem flatten_splitBefore (s : Spine H) (p : H → Prop) [DecidablePred p] :
     (s.splitBefore p).flatten = s.heads :=
   List.flatten_splitBy _ _
+
+@[simp] theorem splitBefore_nil (p : H → Prop) [DecidablePred p] :
+    (⟨[]⟩ : Spine H).splitBefore p = [] :=
+  rfl
 
 theorem infix_of_mem_splitBefore (h : b ∈ s.splitBefore p) : b <:+: s.heads :=
   flatten_splitBefore s p ▸ List.infix_of_mem_flatten h
@@ -118,35 +120,6 @@ theorem splitBefore_cons :
   rw [splitBefore, h, List.splitBy_of_isChain (List.cons_ne_nil _ _) hc]
   rfl
 
-private theorem length_splitBy_aux : ∀ (n : ℕ) (l : List H), l.length = n → l ≠ [] →
-    (l.splitBy fun _ b ↦ !decide (p b)).length = l.tail.countP (p ·) + 1 := by
-  intro n
-  induction n using Nat.strong_induction_on with
-  | _ n ih =>
-    rintro (_ | ⟨a, l⟩) hn hl
-    · exact absurd rfl hl
-    have hc := splitBefore_cons (a := a) (l := l) (p := p)
-    simp only [splitBefore] at hc
-    rw [hc, List.length_cons, List.tail_cons,
-      ← List.takeWhile_append_dropWhile (p := fun x ↦ !decide (p x)) (l := l), List.countP_append,
-      List.takeWhile_append_dropWhile,
-      List.countP_eq_zero.2 fun y hy ↦ by simpa using List.mem_takeWhile_imp hy, Nat.zero_add]
-    rcases hd : l.dropWhile (fun x ↦ !decide (p x)) with _ | ⟨x, m⟩
-    · simp
-    · have hx : p x := by
-        have := List.head?_dropWhile_not (fun x ↦ !decide (p x)) l
-        simpa [hd] using this
-      have hlen : (x :: m).length < n := by
-        have := List.length_dropWhile_le (fun x ↦ !decide (p x)) l
-        simp only [hd, List.length_cons] at this hn ⊢
-        omega
-      rw [ih _ hlen (x :: m) rfl (List.cons_ne_nil _ _)]
-      simp [hx]
-
-/-- A spine has one stretch, and one more for each head of the class above its lowest head. -/
-theorem length_splitBefore (hs : s.heads ≠ []) :
-    (s.splitBefore p).length = s.heads.tail.countP (p ·) + 1 :=
-  length_splitBy_aux _ _ rfl hs
 /-- Merging a head of the class starts a new stretch. -/
 theorem splitBefore_append_singleton_of_pos (s : Spine H) (hp : p h) :
     (s.append [h]).splitBefore p = s.splitBefore p ++ [[h]] := by

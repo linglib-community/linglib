@@ -91,8 +91,7 @@ theorem visible_eq_agreeingGender (r : Root) :
         some n.visible ∧
       agreeingGender some n.genders.reverse = some n.visible := by
   rcases h : n.outer with _ | o <;>
-    simp [visible, genders, h, ComplexHead.lastCycle, Spine.splitBefore, List.splitBy,
-      List.splitBy.loop]
+    simp [visible, genders, h, ComplexHead.lastCycle, Spine.splitBefore_cons]
 
 /-- The visible gender's feature as percolation sees it, annotated with the interpretability of
 the gender's n. -/
