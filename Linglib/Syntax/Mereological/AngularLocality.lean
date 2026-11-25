@@ -11,27 +11,35 @@ public import Linglib.Syntax.Mereological.Parthood
 # Angular Locality
 
 Angular Locality is the locality principle of mereological syntax: a part `γ` may subjoin to
-`β` only if `γ` is an `n`-part of some object `α` that is a 1-part of `β`. Since parthood is
-transitive within a dimension only, a subjunction path may turn through at most one angle, from
-dimension `n` into dimension 1. Everything the classical theory stipulates about cyclic domains
-and their escape hatches follows: 2-parts are the locality domains, and an object leaves a 2-part
-just when it is a 2-part of it.
+`β` only if `γ` is an `n`-part of some object `α` that is a 1-part of `β`. The mover is found by
+going down the extended projection of the target to some head `α`, and from there in one
+dimension only: further down the same extended projection, or to the specifier of `α`, the
+specifier of that, and so on. The path turns through at most one angle. So the specifier of `v`
+can subjoin to `T`, as a subject does, and so can a specifier of that specifier. Reaching a
+complement inside that specifier would take a second turn.
 
-A domain of a 2-part `b` is a set of parts that parthood leaves only through 2-edges from `b` or
-from a 2-part of `b`, the edge of `b`. The material inside a 2-part is such a domain, and it stays
-one while its edge moves out.
+Two consequences are proved here. The target contains the mover, which excludes lowering,
+sideward and parallel subjunction. And in an acyclic structure a complement cannot subjoin again
+to its own head, which is antilocality.
+
+A domain of an object `b`, typically a specifier, is a set of parts that parthood leaves only in
+the second dimension, from `b` or from a 2-part of `b`. Those objects are the edge of `b`.
+Whether the objects inside a specifier form a domain depends on the structure, so being a domain
+is a hypothesis here; the licensed derivations of `Derivation.lean` preserve it. An object inside
+a domain can subjoin to an object outside it only if it is `b` or lies on the edge of `b`, so the
+edge is the escape hatch of the domain.
 
 ## Main definitions
 
-* `Parthood.CanSubjoin γ β`: Angular Locality for subjunction of `γ` to `β`.
-* `Parthood.IsDomain P S b`: `S` is a locality domain of `b`.
+* `Parthood.CanSubjoin`: Angular Locality for subjunction of one object to another.
+* `Parthood.IsDomain`: a set of objects is a locality domain of an object.
 
-## Main statements
+## Main results
 
 * `Parthood.descendant_of_canSubjoin`: the target contains the mover.
-* `Parthood.not_canSubjoin_of_imm_one`: antilocality, from irreflexivity of parthood.
+* `Parthood.not_canSubjoin_of_imm_one`: antilocality, in an acyclic structure.
 * `Parthood.IsDomain.canSubjoin_iff_nPart_two`: an object inside a domain reaches an object
-  outside it exactly when it lies on the edge of `b`.
+  outside it exactly when it lies on the edge of the domain.
 
 ## References
 
@@ -65,28 +73,26 @@ theorem descendant_of_canSubjoin (h : P.CanSubjoin γ β) : P.Descendant γ β :
   let ⟨_, _, h₁, h₂⟩ := h
   (descendant_of_nPart h₁).trans (descendant_of_nPart h₂)
 
-theorem isSome_onePart_of_canSubjoin (h : P.CanSubjoin γ β) : (P.onePart β).isSome :=
+theorem isSome_part_one_of_canSubjoin (h : P.CanSubjoin γ β) : (P.part .one β).isSome :=
   let ⟨_, _, _, h₂⟩ := h
   let ⟨c, _, hc⟩ := TransGen.tail'_iff.1 h₂
   Option.isSome_iff_exists.2 ⟨c, hc⟩
 
 /-! ### Antilocality -/
 
-/-- An immediate 1-part cannot resubjoin to its whole, since the only object it is a part of is
-the whole, which is not a 1-part of itself. -/
+/-- In an acyclic structure a complement cannot subjoin again to its own head, which is
+antilocality. -/
 theorem not_canSubjoin_of_imm_one (hP : P.Acyclic) (h : P.Imm .one γ β) :
     ¬ P.CanSubjoin γ β := by
   rintro ⟨_, a, hγa, haβ⟩
-  obtain ⟨c, hac, hcβ⟩ := TransGen.tail'_iff.1 haβ
-  obtain rfl : c = γ := Option.some_injective _ (hcβ.symm.trans h)
-  rcases reflTransGen_iff_eq_or_transGen.1 hac with rfl | hac
+  rcases haβ.eq_or_nPart_of_imm h with rfl | haγ
   · exact hP _ (descendant_of_nPart hγa)
-  · exact hP _ ((descendant_of_nPart hγa).trans (descendant_of_nPart hac))
+  · exact hP _ ((descendant_of_nPart hγa).trans (descendant_of_nPart haγ))
 
 /-! ### Locality domains -/
 
 /-- `S` is a domain of `b` when its objects are parts and every parthood edge leaving `S` is a
-2-edge from `b` or from a 2-part of `b`. -/
+2-edge from `b` or from a 2-part of `b`, the edge of `b`. -/
 structure IsDomain (P : Parthood α) (S : Set α) (b : α) : Prop where
   /-- The objects of the domain are parts. -/
   isPart : ∀ x ∈ S, P.IsPart x
