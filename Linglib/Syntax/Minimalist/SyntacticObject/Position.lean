@@ -19,13 +19,16 @@ The positions of a planar syntactic object, the paths to its vertices, form a ro
 (`RoseTree.Positions`). Each carries a term, the object at that address: the
 terms at the covers of a position are the terms its term immediately contains, and the terms at
 the positions below it are the terms its term contains, so c-command by a term occurring once is
-c-command from its position. Which daughter heads a position is not part of the object but of a
-head function (`SyntacticObject/Projection.lean`).
+c-command from its position. A term at several positions has copies there, and those positions are
+its chain; nothing marks a copy, so a moved term is the same object at both places. Which daughter
+heads a position is not part of the object but of a head function
+(`SyntacticObject/Projection.lean`).
 
 ## Main definitions
 
 * `PlanarSyntacticObject.planarTermAt`, `PlanarSyntacticObject.termAt`: the planar object and the
   term at a position.
+* `PlanarSyntacticObject.chain`: the positions holding one term, its copies.
 * `PlanarSyntacticObject.above`: the branching positions
   of a planar object, and the generators above a position, its closeness key.
 
@@ -39,6 +42,10 @@ head function (`SyntacticObject/Projection.lean`).
   `PlanarSyntacticObject.cCommands_termAt_of_cCommands`: c-command between terms is witnessed by
   c-command between occurrences, and conversely when sister terms are distinct: Collins and
   Stabler's theorem relating c-command between objects to c-command between occurrences.
+* `PlanarSyntacticObject.isAntichain_chain`, `PlanarSyntacticObject.cCommands_of_chain`: no copy of
+  a term dominates another, and a copy c-commands the other copies below its mother, as the copy
+  Internal Merge adds c-commands the earlier ones.
+* `PlanarSyntacticObject.card_chain`: a chain has as many positions as its term has occurrences.
 * `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
 * `PlanarSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
   asymmetric c-command.
@@ -278,6 +285,54 @@ theorem exists_covBy_termAt_eq_right {y : SyntacticObject α}
     (hn : t.termAt a = x * y) :
     ∃ d, a ⋖ d ∧ t.termAt d = y :=
   immediatelyContains_termAt.1 (hn ▸ immediatelyContains_mul.2 (.inr rfl))
+
+/-! ### Copies -/
+
+section Copies
+
+variable {a b c : t.toRoseTree.Positions}
+
+/-- The term at a position contains the terms at the positions strictly below it. -/
+theorem contains_termAt_of_lt (h : a < b) : Contains (t.termAt a) (t.termAt b) := by
+  obtain ⟨c, hac, hcb⟩ := exists_covBy_le_of_lt h
+  exact contains_iff_exists_immediatelyContains.2
+    ⟨t.termAt c, immediatelyContains_termAt.2 ⟨c, hac, rfl⟩, containsOrEq_termAt.2 ⟨b, hcb, rfl⟩⟩
+
+variable (t) in
+/-- The chains of a planar object: two positions are in one chain when the same term is at both,
+so the positions of a chain are the copies of that term. -/
+def chain : Setoid t.toRoseTree.Positions := Setoid.ker t.termAt
+
+theorem chain_iff : t.chain a b ↔ t.termAt a = t.termAt b := Iff.rfl
+
+instance [DecidableEq α] : DecidableRel t.chain := fun a b ↦
+  inferInstanceAs (Decidable (t.termAt a = t.termAt b))
+
+/-- No copy of a term is below another. -/
+theorem not_lt_of_chain (h : t.chain a b) : ¬ a < b := fun hlt ↦ by
+  have hc := contains_termAt_of_lt hlt
+  rw [chain_iff.1 h] at hc
+  exact contains_irrefl _ hc
+
+/-- The copies of a term are an antichain: none dominates another. -/
+theorem isAntichain_chain (a : t.toRoseTree.Positions) : IsAntichain (· ≤ ·) {b | t.chain a b} :=
+  fun _ hb _ hc hne hle ↦
+    not_lt_of_chain (t.chain.trans (t.chain.symm hb) hc) (lt_of_le_of_ne hle hne)
+
+/-- A copy of a term c-commands every other copy below its mother. After Internal Merge, the
+Merge of a term of an object with that object, the new copy c-commands the earlier ones. -/
+theorem cCommands_of_chain (hc : a ⋖ c) (h : t.chain c b) (hab : a < b) (hne : b ≠ c) :
+    t.toRoseTree.CCommands c b :=
+  cCommands_of_covBy hc hab fun hle ↦ not_lt_of_chain h (lt_of_le_of_ne hle hne.symm)
+
+variable (t) in
+/-- A chain has as many positions as its term has occurrences among the terms of the object. -/
+theorem card_chain [DecidableEq α] (a : t.toRoseTree.Positions) :
+    (Finset.univ.filter (t.chain a ·)).card = t.toSyntacticObject.terms.count (t.termAt a) := by
+  rw [count_terms]
+  exact congrArg Finset.card (Finset.filter_congr fun b _ ↦ by rw [chain_iff, eq_comm])
+
+end Copies
 
 /-! ### Heads -/
 
