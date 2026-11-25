@@ -216,6 +216,40 @@ for m in mods:
                   imp=[mid[i] for i in imports[m]], need=bits(needF & ic),
                   ndecl=sum(1 for x in xs if is_written[x])))
 
+# ---------------------------------------------------------------- threads worth cutting
+# For a file B and a direct import m: X = the files B reaches only through m. If few declarations of B
+# need anything in X, moving them out frees every file above B that uses none of them from X.
+rev = {x: set() for x in nodes}
+for x in nodes:
+    for y in full_e[x]: rev[y].add(x)
+Ru = closure_masks(rev, bit)             # the modules whose declarations depend on a declaration
+importers = [0] * len(mods)
+for m in mods:
+    ic = iclo(m); i = mid[m]
+    for j in bits(ic): importers[j] |= 1 << i
+cuts = []
+for m in mods:
+    if layer(m) == 'study' or m not in mod_nodes: continue
+    B = mid[m]; xs = [x for x in mod_nodes[m] if is_written[x]]
+    if len(xs) < 4 or not importers[B]: continue
+    reach = {i: (1 << mid[i]) | iclo(i) for i in imports[m]}
+    for i in imports[m]:
+        others = 0
+        for k, v in reach.items():
+            if k != i: others |= v
+        X = reach[i] & ~others
+        if not X: continue
+        D = [x for x in xs if Mf[x] & X]
+        if not D or len(D) * 4 > len(xs): continue
+        users = 0
+        for x in D: users |= Ru[x]
+        free = importers[B] & ~users
+        nfree, nx = bin(free).count('1'), bin(X).count('1')
+        if nfree and nx:
+            cuts.append((nfree * nx, m, i, nx, len(D), len(xs), nfree, bin(importers[B]).count('1'),
+                         sorted(rows[x]['name'] for x in D)[:6]))
+cuts.sort(reverse=True)
+
 # ---------------------------------------------------------------- claims
 CLASS = ['rooted', 'data', 'study', 'local', 'lean']   # how far a statement reaches
 
@@ -299,6 +333,8 @@ for x in knodes:
                  traffic.get(x, 0)])
 for m, cl in study_claims.items():
     recs.append(["C", mid[m], [[kid[x], classify(x), int(has_doc[x]), nshared[x]] for x in cl]])
+for c in cuts[:60]:
+    recs.append(["S", mid[c[1]], mid[c[2]], c[3], c[4], c[5], c[6], c[7], c[8]])
 recs.append(["X", sorted({l.strip() for l in open(MISSING_FILE) if l.strip()})])
 with open(OUT + '/graph.json', 'w', encoding='utf-8') as fh:
     fh.write('[\n' + ',\n'.join(json.dumps(r, separators=(',', ':'), ensure_ascii=False) for r in recs) + '\n]\n')
@@ -320,3 +356,6 @@ for d in sorted(th, key=lambda d: -(d['nimp'] - d['nuse']) * (1 + d['traffic']))
     print(f"  {d['name'][8:]:52} {d['nimp']:4d} {d['nuse']:4d} {d['lines']:5d} {d['traffic']:4d}")
 print('\nflagged declarations by studies resting on them (d default argument, b literal of 1000 or more, s sorry):')
 for t, n, m, fl in hot[:25]: print(f'  {t:4d} {fl:3} {n}  [{m[8:]}]')
+print('\nthreads worth cutting: file, import, files only that import brings, declarations needing them / all, files freed / files above')
+for c in cuts[:22]:
+    print(f"  {c[1][8:]:46} -> {c[2][8:]:44} {c[3]:3d}  {c[4]:3d}/{c[5]:<4d} {c[6]:4d}/{c[7]:<4d} {', '.join(c[8][:3])[:70]}")
