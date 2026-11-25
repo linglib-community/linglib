@@ -9,7 +9,7 @@ completion, attainment or result of the event, following [matthews-yip-1994] and
 [wong-shing-kit-2018]. The continuous *-zyu* is an aspect suffix and is entered in
 `Languages/Cantonese/Aspect.lean`. The classification of these complements as inner aspect, and
 the diagnostics separating them from resultative verb compounds, are the analysis of
-[liu-yip-2026] and live in `Studies/LiuYip2026.lean`.
+[liu-yip-2026].
 
 ## References
 

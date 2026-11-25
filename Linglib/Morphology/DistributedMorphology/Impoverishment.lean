@@ -34,7 +34,7 @@ whose deletion shrinks bundles only deletes; on a bundle of features it erases i
 ## Implementation notes
 
 The deletion is a parameter of `apply`, not of the rule, since a rule system shares it;
-`Studies/Middleton2026.lean` deletes from the slots of the Taos agreement prefix. On the tree
+[middleton-2026] deletes from the slots of the Taos agreement prefix. On the tree
 carrier, impoverishment derives from fission and the coproduct
 (`Studies/SenturiaMarcolli2025.lean`).
 

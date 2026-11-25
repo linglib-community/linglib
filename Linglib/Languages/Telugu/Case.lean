@@ -14,7 +14,7 @@ among them *lō* 'in' and *nunci* 'from' (`Telugu.Adpositions`). Krishnamurti an
 case suffixes among the postpositions that only occur bound to the stem (§§9.12–9.14), and Aitha
 separates them, the postpositions standing outside the noun's prosodic word. The forms
 are those of the paradigms of *illu* 'house' and *samudram* 'ocean' that Aitha reproduces from
-Krishnamurti and Gwynn's grammar; the oblique stem is the matter of `Studies/Aitha2026.lean`.
+Krishnamurti and Gwynn's grammar; the oblique stem is analysed by [aitha-2026].
 
 ## Main definitions
 

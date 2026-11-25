@@ -11,7 +11,7 @@ adverbs *jau* 又 and *zoi* 再, the counterparts of Mandarin *you* and *zai*
 postverbal repetitive *-gwo* 過 'again, anew', homophonous with the experiential aspect suffix of
 `Languages/Cantonese/Aspect.lean`. Their
 association with the outer and inner aspect projections and their scope behaviour are the
-analysis of Liu and Yip and live in `Studies/LiuYip2026.lean`.
+analysis of [liu-yip-2026].
 
 ## References
 

@@ -111,7 +111,7 @@ def kaishi : Verb := {
 The entries record the surface form, whether the complement is finite, and who controls its
 subject, the matrix subject for *xiǎng*, *dǎsuàn* and *shèfǎ* and the causee object for *ràng*,
 *quàn* and *bī*, as Liu and Yip's examples show. The sizes and the dynamicity of the complements
-each predicate selects are the analysis of Liu and Yip and live in `Studies/LiuYip2026.lean`. -/
+each predicate selects are the analysis of [liu-yip-2026]. -/
 
 /-- 想 *xiǎng* 'want' is a desiderative verb with a nonfinite complement. -/
 def xiang : Verb := {

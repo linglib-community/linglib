@@ -9,9 +9,9 @@ The postverbal aspect suffixes of Cantonese (ISO `yue`) with the viewpoint each 
 [matthews-yip-1994] and [cheung-2007]: the perfective *-zo*, the experiential *-gwo*, an
 experiential perfect, and the two imperfectives, the progressive *-gan* of ongoing activity and
 the continuous *-zyu* of a maintained state or posture. The association of these suffixes with
-the outer and inner aspect projections is the analysis of [liu-yip-2026] and lives in
-`Studies/LiuYip2026.lean`; the postverbal *again*-suffix *-faan* is a presupposition trigger and
-is entered with the other *again*-elements in `Languages/Cantonese/Particles.lean`.
+the outer and inner aspect projections is the analysis of [liu-yip-2026]; the postverbal
+*again*-suffix *-faan* is a presupposition trigger and is entered with the other *again*-elements
+in `Languages/Cantonese/Particles.lean`.
 
 ## References
 
