@@ -31,8 +31,7 @@ for the radical and for its negation follows from the goals of a hopeful wonderi
 
 A Class 1 predicate compares degrees on declaratives and relates the agent to a question by a
 parameter, since the paper characterizes the class only as a relation to the question not reducible
-to one to any answer. The paper contrasts positive with negative predicates; a neutral one is taken
-to lack threshold significance. The pragmatic derivation compares coming to believe the radical or
+to one to any answer. The pragmatic derivation compares coming to believe the radical or
 not by Kratzer's ordering with the event's goals as ordering source; the event summation of the
 adjunction analysis is not formalized. Rows carry the paper's truth values where it gives them and
 its felicity judgments otherwise; the attested *hope whether* examples are recorded as marginal, and
@@ -84,9 +83,9 @@ def ComparesDegrees (V : Family) : Prop :=
 /-- A positive preferential predicate presupposes threshold significance of a question. A
 negative one triggers no such presupposition (§3.2) and presupposes only that the question has an
 answer in the comparison class. -/
-def presupposition : EvaluativeValence → Family
+def presupposition : Polarity → Family
   | .positive => thresholdSignificance
-  | .negative | .neutral => fun _ _ C _ Q _ ↦ (Q ∩ C).Nonempty
+  | .negative => fun _ _ C _ Q _ ↦ (Q ∩ C).Nonempty
 
 omit [LinearOrder D] in
 theorem TrueWhereDefined.isLAnalytic {V π : Family} (h : TrueWhereDefined V π) : IsLAnalytic V π :=
@@ -116,16 +115,15 @@ theorem trueWhereDefined_of_isClausallyDistributive {V : Family} (hV : ComparesD
 
 -- Class 2, §3.2: without the presupposition the assertion stays contingent
 theorem not_isLAnalytic_of_isClausallyDistributive [Nontrivial D] [Inhabited E] [Inhabited W]
-    {V : Family} (hV : ComparesDegrees V) (hd : ∀ μ θ C, IsClausallyDistributive Set.univ (V μ θ C))
-    {v : EvaluativeValence} (hv : v ≠ .positive) : ¬ IsLAnalytic V (presupposition v) := by
+    {V : Family} (hV : ComparesDegrees V)
+    (hd : ∀ μ θ C, IsClausallyDistributive Set.univ (V μ θ C)) :
+    ¬ IsLAnalytic V (presupposition .negative) := by
   rintro ⟨t, ht⟩
   obtain ⟨a, b, hab⟩ := exists_pair_lt D
   let Q : Set (Set W) := {∅, Set.univ}
   have hQ : Q.Nontrivial := ⟨∅, by simp [Q], Set.univ, by simp [Q], Set.empty_ne_univ⟩
-  have hπ : ∀ (μ : E → W → Set W → D) θ, presupposition v μ θ Q default Q default := fun μ θ ↦ by
-    cases v
-    · exact absurd rfl hv
-    all_goals exact ⟨∅, by simp [Q], by simp [Q]⟩
+  have hπ : ∀ (μ : E → W → Set W → D) θ, presupposition .negative μ θ Q default Q default :=
+    fun μ θ ↦ ⟨∅, by simp [Q], by simp [Q]⟩
   have ht₁ := (ht (fun _ _ _ ↦ b) (fun _ ↦ a) Q default Q default subset_rfl hQ (hπ _ _)).1 <|
     (hd _ _ _ Q trivial _ _).2 ⟨∅, by simp [Q], (hV ..).2 ⟨by simp [Q], hab⟩⟩
   obtain ⟨p, -, hp⟩ := (hd _ _ _ Q trivial _ _).1 <|
@@ -144,7 +142,7 @@ theorem comparesDegrees_relational (R : E → Set (Set W) → W → Prop) :
 variable {R : E → Set (Set W) → W → Prop}
 
 -- Class 1, §3.1: `R` is contingent on questions wherever the presupposition holds
-theorem not_isLAnalytic_relational [Nontrivial D] (v : EvaluativeValence)
+theorem not_isLAnalytic_relational [Nontrivial D] (v : Polarity)
     (hT : ∃ x Q w, Q.Nontrivial ∧ R x Q w) (hF : ∃ x Q w, Q.Nontrivial ∧ ¬ R x Q w) :
     ¬ IsLAnalytic (D := D) (relational R) (presupposition v) := by
   rintro ⟨t, ht⟩
@@ -153,8 +151,7 @@ theorem not_isLAnalytic_relational [Nontrivial D] (v : EvaluativeValence)
       presupposition v (fun (_ : E) (_ : W) _ ↦ b) (fun _ ↦ a) Q x Q w := fun x Q w hQ ↦ by
     obtain ⟨p, hp⟩ := hQ.nonempty
     cases v
-    · exact ⟨p, hp, hab⟩
-    all_goals exact ⟨p, hp, hp⟩
+    exacts [⟨p, hp, hab⟩, ⟨p, hp, hp⟩]
   obtain ⟨x₁, Q₁, w₁, hQ₁, hR₁⟩ := hT
   obtain ⟨x₂, Q₂, w₂, hQ₂, hR₂⟩ := hF
   have ht₁ := (ht _ _ Q₁ x₁ Q₁ w₁ subset_rfl hQ₁ (hπ x₁ Q₁ w₁ hQ₁)).1 (.inr ⟨hQ₁, hR₁⟩)
@@ -197,7 +194,7 @@ theorem isLAnalytic_degreeComparisonOr (hR : ∀ x p w, ¬ R x {p} w) {x : E} {Q
 /-- The three classes of non-veridical preferential predicates. -/
 inductive PredicateClass
   /-- Class 1 consists of the predicates that are not clausally distributive, of either valence. -/
-  | nonDistributive (v : EvaluativeValence)
+  | nonDistributive (v : Polarity)
   /-- Class 2 consists of the distributive negative predicates. -/
   | distributiveNegative
   /-- Class 3 consists of the positive predicates Uegaki and Sudo describe, only presumed
@@ -206,7 +203,7 @@ inductive PredicateClass
   deriving DecidableEq, Repr
 
 /-- The valence of a class. -/
-def PredicateClass.valence : PredicateClass → EvaluativeValence
+def PredicateClass.valence : PredicateClass → Polarity
   | .nonDistributive v => v
   | .distributiveNegative => .negative
   | .distributivePositive => .positive
@@ -227,8 +224,7 @@ theorem isLAnalytic_iff_class [Nontrivial D] [Inhabited E] [Inhabited W] (c : Pr
   cases c
   · exact iff_of_false (not_isLAnalytic_relational _ hT hF) nofun
   · exact iff_of_false
-      (not_isLAnalytic_of_isClausallyDistributive (v := .negative)
-        comparesDegrees_degreeComparison hd nofun) nofun
+      (not_isLAnalytic_of_isClausallyDistributive comparesDegrees_degreeComparison hd) nofun
   · exact iff_of_true
       (trueWhereDefined_of_isClausallyDistributive comparesDegrees_degreeComparison hd).isLAnalytic
       rfl
@@ -265,14 +261,13 @@ def nonDistributive : List String :=
   ["qidai", "tanosimi", "worry", "sinpai", "danxin", "preocupar", "endiselen"]
 
 /-- The class of a predicate named `s`, by Table 2's distributivity and the valence its attitude
-records. A distributive predicate of neutral valence is outside the classification. -/
+records. -/
 def classOf (s : String) : Attitude → Option PredicateClass
   | .preferential v =>
-    if s ∈ nonDistributive then some (.nonDistributive v) else
+    some <| if s ∈ nonDistributive then .nonDistributive v else
       match v with
-      | .negative => some .distributiveNegative
-      | .positive => some .distributivePositive
-      | .neutral => none
+      | .positive => .distributivePositive
+      | .negative => .distributiveNegative
   | .doxastic _ => none
 
 /-- The class of a row's predicate. -/
@@ -281,7 +276,7 @@ def class? (r : Datum) : Option PredicateClass :=
 
 /-- The valence of a row's predicate, or of its manner adverb or veridical preferential where
 the paper's argument turns on valence alone. -/
-def valence? (r : Datum) : Option EvaluativeValence :=
+def valence? (r : Datum) : Option Polarity :=
   match r.feature? "valence" with
   | some "positive" => some .positive
   | some "negative" => some .negative
