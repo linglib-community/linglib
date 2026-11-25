@@ -16,18 +16,24 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 # Positions of planar syntactic objects
 
 The positions of a planar syntactic object, the paths to its vertices, form a rooted tree
-(`RoseTree.Positions`). Each carries a term, the subtree there read as a syntactic object: the
+(`RoseTree.Positions`). Each carries a term, the object at that address: the
 terms at the covers of a position are the terms its term immediately contains, and the terms at
 the positions below it are the terms its term contains, so c-command by a term occurring once is
-c-command from its position. Which daughter heads a position is not part of the object but of a
-head function (`SyntacticObject/Projection.lean`).
+c-command from its position. A term at several positions has copies there, and those positions are
+its chain; nothing marks a copy, so a moved term is the same object at both places. Which daughter
+heads a position is not part of the object but of a head function
+(`SyntacticObject/Projection.lean`).
 
 ## Main definitions
 
-* `PlanarSyntacticObject.termAt`: the term at a position.
+* `PlanarSyntacticObject.planarTermAt`, `PlanarSyntacticObject.termAt`: the planar object and the
+  term at a position.
+* `PlanarSyntacticObject.chain`: the positions holding one term, its copies.
+* `PlanarSyntacticObject.IsLowerCopy`, `PlanarSyntacticObject.IsSilent`,
+  `PlanarSyntacticObject.pronounced`: a copy another copy asymmetrically c-commands, what lies in
+  one, and the leaves outside all of them.
 * `PlanarSyntacticObject.above`: the branching positions
   of a planar object, and the generators above a position, its closeness key.
-* `Minimalist.complement`: the sister of a head.
 
 ## Main statements
 
@@ -39,9 +45,24 @@ head function (`SyntacticObject/Projection.lean`).
   `PlanarSyntacticObject.cCommands_termAt_of_cCommands`: c-command between terms is witnessed by
   c-command between occurrences, and conversely when sister terms are distinct: Collins and
   Stabler's theorem relating c-command between objects to c-command between occurrences.
+* `PlanarSyntacticObject.isAntichain_chain`, `PlanarSyntacticObject.cCommands_of_chain`: no copy of
+  a term dominates another, and a copy c-commands the other copies below its mother, as the copy
+  Internal Merge adds c-commands the earlier ones.
+* `PlanarSyntacticObject.card_chain`: a chain has as many positions as its term has occurrences.
+* `PlanarSyntacticObject.isLowerCopy_of_chain`,
+  `PlanarSyntacticObject.not_isLowerCopy_of_bot_covBy`: after Internal Merge the earlier copies
+  are lower copies and the copy at the root is not.
 * `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
 * `PlanarSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
   asymmetric c-command.
+
+## Implementation notes
+
+* A lower copy is one that a copy of the same term asymmetrically c-commands. A copy inside a
+  moved remnant, which no copy of its term c-commands, is no lower copy on this definition, and a
+  moved head does not c-command the position it left; an account of either states its own
+  condition on positions.
+* Two sisters that are the same term c-command each other, so neither is a lower copy.
 
 ## References
 
@@ -54,7 +75,7 @@ namespace Minimalist
 
 open RoseTree SyntacticObject PhraseStructure
 
-variable {L ι : Type}
+variable {α : Type}
 
 /-! ### Terms at positions -/
 
@@ -62,34 +83,48 @@ namespace PlanarSyntacticObject
 
 open RoseTree SyntacticObject
 
-variable {t : PlanarSyntacticObject (SyntacticObject.Leaf L ι)} {p : t.toRoseTree.Positions}
-    {y : SyntacticObject (SyntacticObject.Leaf L ι)}
+variable {t : PlanarSyntacticObject α} {p : t.toRoseTree.Positions}
+    {y : SyntacticObject α}
 
-theorem isSyntacticObject_subtree (p : t.toRoseTree.Positions) :
-    IsSyntacticObject (UnorderedTree.mk p.subtree) :=
-  isSyntacticObject_of_mem_subtrees t.toSyntacticObject _ <| by
-    rw [toUnorderedTree_toSyntacticObject]
-    exact mem_unorderedSubtrees.2 ⟨_, _, p.getElem?_eq, rfl⟩
+theorem isSome_subAt? (p : t.toRoseTree.Positions) : (t.subAt? p.val.toList).isSome := by
+  have h := p.getElem?_eq
+  rw [getElem?_toRoseTree] at h
+  cases hs : t.subAt? p.val.toList with
+  | none => rw [hs] at h; cases h
+  | some x => rfl
+
+variable (t) in
+/-- The planar object at a position, with the order of daughters it has in `t`. -/
+def planarTermAt (p : t.toRoseTree.Positions) : PlanarSyntacticObject α :=
+  (t.subAt? p.val.toList).get (isSome_subAt? p)
+
+/-- The subtree at a position is the tree of the planar object there. -/
+@[simp] theorem toRoseTree_planarTermAt : (t.planarTermAt p).toRoseTree = p.subtree := by
+  have h := p.getElem?_eq
+  rw [getElem?_toRoseTree, ← Option.some_get (isSome_subAt? p), Option.map_some] at h
+  exact Option.some.inj h
 
 variable (t) in
 /-- The term of `t` at a position. -/
-def termAt (p : t.toRoseTree.Positions) : SyntacticObject (SyntacticObject.Leaf L ι) :=
-  SyntacticObject.ofUnorderedTree _ (isSyntacticObject_subtree p)
+def termAt (p : t.toRoseTree.Positions) : SyntacticObject α :=
+  (t.planarTermAt p).toSyntacticObject
+
+@[simp] theorem toSyntacticObject_planarTermAt :
+    (t.planarTermAt p).toSyntacticObject = t.termAt p := rfl
 
 @[simp] theorem toUnorderedTree_termAt : (t.termAt p).toUnorderedTree =
-    UnorderedTree.mk p.subtree :=
-  SyntacticObject.toUnorderedTree_ofUnorderedTree _ _
+    UnorderedTree.mk p.subtree := by
+  rw [termAt, toUnorderedTree_toSyntacticObject, toRoseTree_planarTermAt]
 
 @[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject :=
   SyntacticObject.toUnorderedTree_injective
     (by rw [toUnorderedTree_termAt, toUnorderedTree_toSyntacticObject]; rfl)
 
 theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 2 := by
-  have hs := isSyntacticObject_subtree p
   rw [Positions.isMax_iff] at hp
-  rcases hsub : p.subtree with ⟨v, cs⟩
-  rw [hsub] at hp hs
-  exact (SyntacticObject.length_eq_zero_or_two hs).resolve_left (by simpa using hp)
+  have h := length_children_toRoseTree (t.planarTermAt p)
+  rw [toRoseTree_planarTermAt] at h
+  exact h.resolve_left (by simpa using hp)
 
 /-- A position that is not a leaf branches. -/
 theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p :=
@@ -136,24 +171,25 @@ theorem terms_eq_map_termAt :
     unorderedSubtrees_eq_map, Multiset.map_coe]
 
 variable (t) in
-theorem count_terms [DecidableEq L] [DecidableEq ι]
-    (u : SyntacticObject (SyntacticObject.Leaf L ι)) :
+theorem count_terms [DecidableEq α]
+    (u : SyntacticObject α) :
     t.toSyntacticObject.terms.count u = (Finset.univ.filter (t.termAt · = u)).card := by
   rw [terms_eq_map_termAt, Multiset.count_map, Finset.card_def, Finset.filter_val]
   simp only [eq_comm]
 
 
-variable {a : t.toRoseTree.Positions} {x : SyntacticObject (SyntacticObject.Leaf L ι)}
+variable {a : t.toRoseTree.Positions} {x : SyntacticObject α}
 
 theorem parent_mem_branching (ha : a ≠ ⊥) : a.val.parent ∈ t.toRoseTree.branching := by
   have hc : a.subtree ∈ (Order.pred a).subtree.children :=
     Positions.mem_children_subtree.2
       ⟨a, Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha), rfl⟩
-  have hso := isSyntacticObject_subtree (Order.pred a)
+  have hso := length_children_toRoseTree (t.planarTermAt (Order.pred a))
+  rw [toRoseTree_planarTermAt] at hso
   refine mem_positionsWhere.2 ⟨_, (Order.pred a).getElem?_eq, ?_⟩
   generalize (Order.pred a).subtree = s at hc hso
   obtain ⟨v, cs⟩ := s
-  rcases length_eq_zero_or_two hso with h0 | h2 <;>
+  rcases hso with h0 | h2 <;>
     grind [arity, List.length_eq_zero_iff, children_node]
 
 /-- C-command between terms is witnessed by c-command between occurrences of them, with no
@@ -198,7 +234,7 @@ theorem cCommands_termAt_iff (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
   exact ⟨q, hu p hpa ▸ hpq, rfl⟩
 
 theorem eq_termAt_pred_of_immediatelyContains (hu : ∀ q, t.termAt q = t.termAt a → q = a)
-    {m : SyntacticObject (SyntacticObject.Leaf L ι)} (hm : m ∈ t.toSyntacticObject.terms)
+    {m : SyntacticObject α} (hm : m ∈ t.toSyntacticObject.terms)
     (h : ImmediatelyContains m (t.termAt a)) : m = t.termAt (Order.pred a) := by
   obtain ⟨m, rfl⟩ := mem_terms_iff.1 hm
   obtain ⟨c, hmc, hca⟩ := immediatelyContains_termAt.1 h
@@ -250,42 +286,142 @@ theorem not_cCommands_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (hc
     (fun h ↦ hcd (IsForestOrder.eq_of_covBy_of_le hc hd le_rfl (Subtype.coe_le_coe.1 h)))
     (Subtype.coe_lt_coe.2 hcq) (Subtype.coe_le_coe.2 hdq')
 
-theorem termAt_eq_or_eq_of_covBy {y : SyntacticObject (SyntacticObject.Leaf L ι)}
-    (hn : t.termAt a = SyntacticObject.merge x y) (he : a ⋖ e) : t.termAt e = x ∨ t.termAt e = y :=
-  (immediatelyContains_merge _ _ _).1 (hn ▸ immediatelyContains_termAt.2 ⟨e, he, rfl⟩)
+theorem termAt_eq_or_eq_of_covBy {y : SyntacticObject α}
+    (hn : t.termAt a = x * y) (he : a ⋖ e) : t.termAt e = x ∨ t.termAt e = y :=
+  immediatelyContains_mul.1 (hn ▸ immediatelyContains_termAt.2 ⟨e, he, rfl⟩)
 
-theorem exists_covBy_termAt_eq_left {y : SyntacticObject (SyntacticObject.Leaf L ι)}
-    (hn : t.termAt a = SyntacticObject.merge x y) :
+theorem exists_covBy_termAt_eq_left {y : SyntacticObject α}
+    (hn : t.termAt a = x * y) :
     ∃ c, a ⋖ c ∧ t.termAt c = x :=
-  immediatelyContains_termAt.1 (hn ▸ (immediatelyContains_merge _ _ _).2 (.inl rfl))
+  immediatelyContains_termAt.1 (hn ▸ immediatelyContains_mul.2 (.inl rfl))
 
-theorem exists_covBy_termAt_eq_right {y : SyntacticObject (SyntacticObject.Leaf L ι)}
-    (hn : t.termAt a = SyntacticObject.merge x y) :
+theorem exists_covBy_termAt_eq_right {y : SyntacticObject α}
+    (hn : t.termAt a = x * y) :
     ∃ d, a ⋖ d ∧ t.termAt d = y :=
-  immediatelyContains_termAt.1 (hn ▸ (immediatelyContains_merge _ _ _).2 (.inr rfl))
+  immediatelyContains_termAt.1 (hn ▸ immediatelyContains_mul.2 (.inr rfl))
 
-/-! ### Heads -/
+/-! ### Copies -/
+
+section Copies
+
+variable {a b c : t.toRoseTree.Positions}
+
+/-- The term at a position contains the terms at the positions strictly below it. -/
+theorem contains_termAt_of_lt (h : a < b) : Contains (t.termAt a) (t.termAt b) := by
+  obtain ⟨c, hac, hcb⟩ := exists_covBy_le_of_lt h
+  exact contains_iff_exists_immediatelyContains.2
+    ⟨t.termAt c, immediatelyContains_termAt.2 ⟨c, hac, rfl⟩, containsOrEq_termAt.2 ⟨b, hcb, rfl⟩⟩
 
 variable (t) in
-/-- The term at a position is a lexical item, a head. -/
-def IsHeadAt (q : t.toRoseTree.Positions) : Prop := (t.termAt q).token?.isSome
+/-- The chains of a planar object: two positions are in one chain when the same term is at both,
+so the positions of a chain are the copies of that term. -/
+def chain : Setoid t.toRoseTree.Positions := Setoid.ker t.termAt
 
-instance : DecidablePred t.IsHeadAt := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+theorem chain_iff : t.chain a b ↔ t.termAt a = t.termAt b := Iff.rfl
 
-theorem isHeadAt_iff : t.IsHeadAt q ↔ ∃ tok : L, t.termAt q = SyntacticObject.leaf tok := by
-  unfold IsHeadAt
-  rw [Option.isSome_iff_exists]
-  exact exists_congr fun _ ↦ token?_eq_some_iff
+instance [DecidableEq α] : DecidableRel t.chain := fun a b ↦
+  inferInstanceAs (Decidable (t.termAt a = t.termAt b))
 
-theorem IsHeadAt.isMax (h : t.IsHeadAt q) : IsMax q := by
-  obtain ⟨tok, htok⟩ := isHeadAt_iff.1 h
-  refine fun r hqr ↦ hqr.lt_or_eq.elim (fun hlt ↦ ?_) (·.ge)
-  obtain ⟨e, he, -⟩ := exists_covBy_le_of_lt hlt
-  exact (immediatelyContains_leaf tok _ (htok ▸ immediatelyContains_termAt.2 ⟨e, he, rfl⟩)).elim
+/-- No copy of a term is below another. -/
+theorem not_lt_of_chain (h : t.chain a b) : ¬ a < b := fun hlt ↦ by
+  have hc := contains_termAt_of_lt hlt
+  rw [chain_iff.1 h] at hc
+  exact contains_irrefl _ hc
 
-theorem IsHeadAt.exists_covBy_le (h : t.IsHeadAt q) (ha : ¬ IsMax a) (haq : a ≤ q) :
-    ∃ e, a ⋖ e ∧ e ≤ q :=
-  exists_covBy_le_of_lt (lt_of_le_of_ne haq fun he ↦ ha (he ▸ h.isMax))
+/-- The copies of a term are an antichain: none dominates another. -/
+theorem isAntichain_chain (a : t.toRoseTree.Positions) : IsAntichain (· ≤ ·) {b | t.chain a b} :=
+  fun _ hb _ hc hne hle ↦
+    not_lt_of_chain (t.chain.trans (t.chain.symm hb) hc) (lt_of_le_of_ne hle hne)
+
+/-- A copy of a term c-commands every other copy below its mother. After Internal Merge, the
+Merge of a term of an object with that object, the new copy c-commands the earlier ones. -/
+theorem cCommands_of_chain (hc : a ⋖ c) (h : t.chain c b) (hab : a < b) (hne : b ≠ c) :
+    t.toRoseTree.CCommands c b :=
+  cCommands_of_covBy hc hab fun hle ↦ not_lt_of_chain h (lt_of_le_of_ne hle hne.symm)
+
+variable (t) in
+/-- A chain has as many positions as its term has occurrences among the terms of the object. -/
+theorem card_chain [DecidableEq α] (a : t.toRoseTree.Positions) :
+    (Finset.univ.filter (t.chain a ·)).card = t.toSyntacticObject.terms.count (t.termAt a) := by
+  rw [count_terms]
+  exact congrArg Finset.card (Finset.filter_congr fun b _ ↦ by rw [chain_iff, eq_comm])
+
+/-! ### Lower copies -/
+
+variable {d p q : t.toRoseTree.Positions}
+
+variable (t) in
+/-- A position holds a lower copy when another position of its chain asymmetrically c-commands
+it. -/
+def IsLowerCopy (p : t.toRoseTree.Positions) : Prop :=
+  ∃ q, t.chain q p ∧ t.toRoseTree.CCommands q p ∧ ¬ t.toRoseTree.CCommands p q
+
+instance [DecidableEq α] : DecidablePred t.IsLowerCopy := fun _ ↦
+  inferInstanceAs (Decidable (∃ _, _))
+
+/-- A term at one position only has no lower copy. -/
+theorem not_isLowerCopy_of_forall_chain (h : ∀ q, t.chain q p → q = p) : ¬ t.IsLowerCopy p := by
+  rintro ⟨q, hq, hqp, hpq⟩
+  obtain rfl := h q hq
+  exact hpq hqp
+
+/-- After Internal Merge the earlier copies are lower copies: where `c` and `d` are the daughters
+of a position, a copy of the term at `c` properly inside `d` is a lower copy. -/
+theorem isLowerCopy_of_chain (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (h : t.chain c p)
+    (hdp : d < p) : t.IsLowerCopy p :=
+  ⟨c, h, cCommands_of_covBy hc (hd.lt.trans hdp) fun hle ↦
+      (lt_or_eq_of_le hle).elim (not_lt_of_chain h) fun he ↦ hc.2 hd.lt (he ▸ hdp),
+    not_cCommands_of_covBy hd hc hcd.symm hdp le_rfl⟩
+
+/-- A daughter of the root is no lower copy: the copy Internal Merge adds at the root is the
+highest of its chain. -/
+theorem not_isLowerCopy_of_bot_covBy (hc : ⊥ ⋖ c) : ¬ t.IsLowerCopy c := by
+  rintro ⟨q, hq, hqc, hcq⟩
+  have hq0 : q ≠ ⊥ := fun h ↦ not_lt_of_chain hq (h ▸ hc.lt)
+  have hpq : Order.pred q ⋖ q :=
+    Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hq0)
+  have hlt : Order.pred q < c ∧ ¬ q ≤ c := by
+    have hpar : q.val.parent = (Order.pred q).val := by
+      rw [← Positions.pred_val]
+    exact (commands_iff_lt_of_covBy (Positions.covBy_iff.1 hpq)
+      (hpar ▸ parent_mem_branching hq0)).1 hqc
+  have hbot : Order.pred q = ⊥ := by
+    by_contra hne
+    exact hc.2 (bot_lt_iff_ne_bot.2 hne) hlt.1
+  rw [hbot] at hpq
+  exact hcq (cCommands_of_covBy hc hpq.lt fun hle ↦
+    hlt.2 (IsForestOrder.eq_of_covBy_of_le hpq hc le_rfl hle).le)
+
+/-! ### Silence -/
+
+variable (t) in
+/-- A position is silent when it is a lower copy or inside one. -/
+def IsSilent (p : t.toRoseTree.Positions) : Prop := ∃ q ≤ p, t.IsLowerCopy q
+
+instance [DecidableEq α] : DecidablePred t.IsSilent := fun _ ↦
+  inferInstanceAs (Decidable (∃ _, _))
+
+theorem IsLowerCopy.isSilent (h : t.IsLowerCopy p) : t.IsSilent p := ⟨p, le_rfl, h⟩
+
+/-- What is inside a silent position is silent. -/
+theorem IsSilent.mono (h : t.IsSilent p) (hpq : p ≤ q) : t.IsSilent q :=
+  let ⟨r, hr, hl⟩ := h; ⟨r, hr.trans hpq, hl⟩
+
+variable (t) in
+/-- The pronounced positions of a planar object: its leaves outside every lower copy. -/
+def pronounced : Set t.toRoseTree.Positions := {p | IsMax p ∧ ¬ t.IsSilent p}
+
+instance [DecidableEq α] : DecidablePred (· ∈ t.pronounced) := fun p ↦
+  decidable_of_iff (p.subtree.children.length = 0 ∧ ¬ t.IsSilent p)
+    (and_congr (List.length_eq_zero_iff.trans Positions.isMax_iff.symm) Iff.rfl)
+
+/-- With no term at two positions every leaf is pronounced. -/
+theorem pronounced_eq_of_injective (h : Function.Injective t.termAt) :
+    t.pronounced = {p | IsMax p} :=
+  Set.ext fun _ ↦ and_iff_left fun ⟨_, _, hl⟩ ↦
+    not_isLowerCopy_of_forall_chain (fun _ hq ↦ h hq) hl
+
+end Copies
 
 end PlanarSyntacticObject
 
@@ -293,7 +429,7 @@ end PlanarSyntacticObject
 
 namespace PlanarSyntacticObject
 
-variable (t : PlanarSyntacticObject (SyntacticObject.Leaf L ι))
+variable (t : PlanarSyntacticObject α)
 
 /-- The generators in `P` properly dominating a position, the key under which a probe searching the
 object compares goals (`PhraseStructure.ancestors`). -/
@@ -322,32 +458,5 @@ theorem above_branching_lt_of_cCommands (hqg : t.toRoseTree.CCommands q g)
   (above_branching_lt_iff hqg.2).2 ⟨hqg, hgq⟩
 
 end PlanarSyntacticObject
-
-/-! ### Complements -/
-
-section Complement
-
-variable (t : PlanarSyntacticObject (SyntacticObject.Leaf L ι))
-
-variable {t} in
--- A position other than the root is one of the two daughters of its parent.
-private theorem exists_eq_parent_mul_of {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
-    (h0 : h ≠ ⊥) : ∃ s i, t.toRoseTree[h.parent]? = some s ∧ s.arity = 2 ∧ i < 2 ∧
-      h = h.parent * .of i := by
-  set hp : t.toRoseTree.Positions := ⟨h, hh⟩
-  have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
-  have hm : Order.pred hp ⋖ hp :=
-    Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
-  have hlen := PlanarSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
-  obtain ⟨i, hi⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 hm)
-  have hlt : i < 2 := by
-    have hv := hp.2
-    rw [hi] at hv
-    obtain ⟨s, hs, his⟩ := mem_validPaths_append_singleton_iff.1 hv
-    rw [(Order.pred hp).getElem?_eq, Option.some.injEq] at hs
-    exact hlen ▸ hs ▸ his
-  exact ⟨_, i, (Order.pred hp).getElem?_eq, hlen, hlt, hi⟩
-
-end Complement
 
 end Minimalist

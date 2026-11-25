@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Label.Head
+public import Linglib.Syntax.Minimalist.SyntacticObject.Projection
 
 /-!
 # The head a projection relation gives
@@ -19,11 +20,13 @@ and not a trace.
 
 ## Main definitions
 
-* `Minimalist.headLeaf`: the leaf that heads an object under a projection relation.
+* `Minimalist.headLeaf`: the leaf that heads an object under a projection relation, on any leaves.
 * `Minimalist.headItem`: the lexical item that heads it.
 
 ## Main results
 
+* `Minimalist.bind_subAt?_headPath`: the leaf that heads an object is the leaf at the end of the
+  head path of a planar form of it.
 * `Minimalist.isHeadFunction_headItem`: the head item is a head function.
 
 ## Implementation notes
@@ -46,31 +49,62 @@ namespace Minimalist
 
 open SyntacticObject
 
-variable {L ι : Type}
-    (P : SyntacticObject (SyntacticObject.Leaf L ι) → SyntacticObject (SyntacticObject.Leaf L ι) →
-    Prop) [DecidableRel P]
+section Leaves
+
+variable {α : Type} (P : SyntacticObject α → SyntacticObject α → Prop) [DecidableRel P]
   [Std.Asymm P]
 
 /-- The leaf that heads an object, where `P x y` says that `x` projects over `y`: a leaf heads
 itself, and a Merge is headed by the head of the daughter that projects. -/
-def headLeaf : SyntacticObject (SyntacticObject.Leaf L ι) → Option (Leaf L ι) :=
+def headLeaf : SyntacticObject α → Option α :=
   FreeCommMagma.elim some (fun l r a b ↦ if P l r then a else if P r l then b else none)
     fun l r a b ↦ by
       by_cases h : P l r
       · simp [h, Std.Asymm.asymm _ _ h]
       · simp [h]
 
-@[simp] theorem headLeaf_of (x : Leaf L ι) : headLeaf P (FreeCommMagma.of x) = some x := rfl
+@[simp] theorem headLeaf_of (x : α) : headLeaf P (FreeCommMagma.of x) = some x := rfl
 
-theorem headLeaf_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    headLeaf P (merge l r) = if P l r then headLeaf P l else if P r l then headLeaf P r else none :=
+theorem headLeaf_mul (l r : SyntacticObject α) :
+    headLeaf P (l * r) = if P l r then headLeaf P l else if P r l then headLeaf P r else none :=
   FreeCommMagma.elim_mul _ _ _ l r
 
 /-- No object merged with itself has a head. -/
-@[simp] theorem headLeaf_merge_self (x : SyntacticObject (SyntacticObject.Leaf L ι)) : headLeaf P
-    (merge x x) = none := by
+@[simp] theorem headLeaf_mul_self (x : SyntacticObject α) : headLeaf P (x * x) = none := by
   have hx : ¬ P x x := fun h ↦ Std.Asymm.asymm x x h h
-  simp [headLeaf_merge, hx]
+  simp [headLeaf_mul, hx]
+
+/-- The leaf that heads an object is the leaf at the end of the head path of any planar form of
+it: the head read off the object and the head reached through the daughters that project are the
+same leaf. -/
+theorem bind_subAt?_headPath (t : PlanarSyntacticObject α) :
+    (headPath P t).bind t.subAt? = (headLeaf P t.toSyntacticObject).map FreeMagma.of := by
+  induction t using FreeMagma.recOnMul with
+  | ih1 a => rfl
+  | ih2 l r ihl ihr =>
+    rw [headPath_mul, PlanarSyntacticObject.toSyntacticObject_mul, headLeaf_mul]
+    split_ifs
+    · rw [← ihl]
+      cases headPath P l <;> rfl
+    · rw [← ihr]
+      cases headPath P r <;> rfl
+    · rfl
+
+end Leaves
+
+variable {L ι : Type}
+    (P : SyntacticObject (SyntacticObject.Leaf L ι) → SyntacticObject (SyntacticObject.Leaf L ι) →
+    Prop) [DecidableRel P]
+  [Std.Asymm P]
+
+theorem headLeaf_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
+    headLeaf P (merge l r) = if P l r then headLeaf P l else if P r l then headLeaf P r else none :=
+  headLeaf_mul P l r
+
+/-- No object merged with itself has a head. -/
+theorem headLeaf_merge_self (x : SyntacticObject (SyntacticObject.Leaf L ι)) : headLeaf P
+    (merge x x) = none :=
+  headLeaf_mul_self P x
 
 /-- The lexical item that heads an object: its head leaf, where that is a lexical item. -/
 def headItem (s : SyntacticObject (SyntacticObject.Leaf L ι)) : Option L :=

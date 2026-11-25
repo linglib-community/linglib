@@ -71,7 +71,7 @@ instance : Singleton (SyntacticObject (SyntacticObject.Leaf L ι))
 
 /-- The pronounced tokens of a syntactic object, its lexical leaves; traces are unpronounced. -/
 def yield (s : SyntacticObject (SyntacticObject.Leaf L ι)) : Multiset L :=
-  s.toUnorderedTree.leaves.filterMap (Sum.elim id fun _ ↦ none)
+  s.toUnorderedTree.leaves.filterMap (·.bind (Leaf.elim some fun _ ↦ none))
 
 @[simp] theorem yield_leaf (tok : L) :
     (leaf tok : SyntacticObject (SyntacticObject.Leaf L ι)).yield = {tok} := rfl
@@ -126,10 +126,11 @@ theorem isEmpty_mulHom : IsEmpty
 
 /-- The pronounced tokens of a planar object, left to right; traces are unpronounced. -/
 def yield (p : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) : List L :=
-  p.toRoseTree.leafList.filterMap (Sum.elim id fun _ ↦ none)
+  p.toRoseTree.leafList.filterMap (·.bind (Leaf.elim some fun _ ↦ none))
 
 theorem yield_toSyntacticObject (p : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) :
-    p.toSyntacticObject.yield = p.toRoseTree.leaves.filterMap (Sum.elim id fun _ ↦ none) := by
+    p.toSyntacticObject.yield =
+      p.toRoseTree.leaves.filterMap (·.bind (Leaf.elim some fun _ ↦ none)) := by
   rw [SyntacticObject.yield, toUnorderedTree_toSyntacticObject]
   rfl
 
@@ -164,9 +165,7 @@ namespace SyntacticObject
 
 /-- The lexical token at the root, if the root is a lexical leaf. -/
 def token? (s : SyntacticObject (SyntacticObject.Leaf L ι)) : Option L :=
-  match UnorderedTree.value s.toUnorderedTree with
-  | .inl o => o
-  | .inr _ => none
+  (UnorderedTree.value s.toUnorderedTree).bind (Leaf.elim some fun _ ↦ none)
 
 @[simp] theorem token?_leaf (tok : L) :
     (SyntacticObject.leaf tok : SyntacticObject (SyntacticObject.Leaf L ι)).token? = some tok := rfl
@@ -179,7 +178,7 @@ def token? (s : SyntacticObject (SyntacticObject.Leaf L ι)) : Option L :=
 
 theorem traceOf_ne_trace (tok : L) : traceOf tok ≠ trace := by
   intro h
-  have h' : (Sum.inr (some tok) : Vertex L) = Sum.inr none :=
+  have h' : (some (.traceOf tok) : Option (SyntacticObject.Leaf L L)) = some .trace :=
     congrArg (fun s : SyntacticObject (SyntacticObject.Leaf L L) ↦ UnorderedTree.value
         s.toUnorderedTree) h
   simp at h'
@@ -187,6 +186,7 @@ theorem traceOf_ne_trace (tok : L) : traceOf tok ≠ trace := by
 @[simp] theorem token?_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
     (merge l r).token? = none := by
   rw [token?, toUnorderedTree_merge, UnorderedTree.value_node]
+  rfl
 
 theorem token?_eq_some_iff {s : SyntacticObject (SyntacticObject.Leaf L ι)} {tok : L} :
     s.token? = some tok ↔ s = leaf tok := by

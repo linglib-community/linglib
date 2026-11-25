@@ -55,10 +55,11 @@ variable {L : Type}
 
 /-- The label of a vertex in a constituency tree: a lexical item is a terminal, the unlabelled
 vertex a projection, and a trace the trace of the index `τ` gives it. -/
-def Vertex.toLabel (τ : Option L → ℕ) : Vertex L → Tree.Label Unit L
-  | Vertex.lex a => .terminal () a
-  | Vertex.bare => .phrase () .projection
-  | .inr o => .trace (τ o) ()
+def vertexLabel (τ : Option L → ℕ) : Option (Leaf L L) → Tree.Label Unit L
+  | some (.lex a) => .terminal () a
+  | none => .phrase () .projection
+  | some .trace => .trace (τ none) ()
+  | some (.traceOf i) => .trace (τ (some i)) ()
 
 end SyntacticObject
 
@@ -69,7 +70,7 @@ variable {L : Type} (τ : Option L → ℕ)
 /-- The constituency tree of a planar object, its ordered tree relabelled, a trace having the
 index `τ` gives it. -/
 def toTree (t : PlanarSyntacticObject (SyntacticObject.Leaf L L)) : Tree Unit L :=
-  t.toRoseTree.map (SyntacticObject.Vertex.toLabel τ)
+  t.toRoseTree.map (SyntacticObject.vertexLabel τ)
 
 /-- The tree pronounces the object's tokens, in order. -/
 theorem yield_toTree (t : PlanarSyntacticObject (SyntacticObject.Leaf L L)) : (t.toTree τ).yield =
@@ -78,7 +79,7 @@ theorem yield_toTree (t : PlanarSyntacticObject (SyntacticObject.Leaf L L)) : (t
     List.filterMap_map, List.map_filterMap]
   congr 1
   funext v
-  rcases v with (_ | _) | (_ | _) <;> rfl
+  rcases v with _ | _ | _ | _ <;> rfl
 
 end PlanarSyntacticObject
 
