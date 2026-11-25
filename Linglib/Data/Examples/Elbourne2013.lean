@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Elbourne2013` — typed example data
@@ -289,5 +291,17 @@ def ch10_47 : Datum :=
     paperFeatures := [("chapter", "10"), ("structure", "[[he [person [who ...]]] si]")] }
 
 def all : List Datum := [ch3_5, ch5_2, ch5_13, ch5_16, ch6_3, ch6_15, ch6_21, ch7_7, ch7_16, ch8_3, ch8_5, ch8_22, ch8_33, ch8_36, ch9_4, ch9_17a, ch9_17b, ch10_10a, ch10_21, ch10_34, ch10_47]
+
+/-- The repeated description of a ch. 9 sloppy-identity row, bare or carrying a bound relation. -/
+inductive DescriptionType where
+  /-- the donkey: the donkey -/
+  | bare
+  /-- the donkey he owns: the donkey he owns -/
+  | relational
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `description`. -/
+def description (e : Datum) : Option DescriptionType :=
+  e.parse? "description" [("the donkey", .bare), ("the donkey he owns", .relational)]
 
 end Elbourne2013.Examples

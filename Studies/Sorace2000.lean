@@ -59,7 +59,7 @@ does not record for the verb, the verb is at neither end of the hierarchy
   'yield', from the controlled affecting processes, a subclass of the controlled processes, is a
   nonmotional process.
 * The diacritics are read on the `Judgment` scale: unmarked is acceptable, `?` marginal, `??`
-  questionable, `?*` and `*?` unacceptable, `*` ungrammatical.
+  questionable, `?*` and `*?` nearly ungrammatical, `*` ungrammatical.
 * A sentence printed with one auxiliary selects it where it is acceptable, as the paper prints such
   sentences to show the auxiliary a verb takes; a sentence printed with both and judged alike
   selects neither, and an example attested in a text or cited from a grammar, which shows that an
@@ -188,7 +188,7 @@ theorem changeOfLocation_selects_be : ∀ x : Example, x.position? = some .chang
 /-- A verb of controlled nonmotional process takes *have* in all four languages, and *be* at best
 marginally. -/
 theorem nonmotionalProcess_selects_have : ∀ x : Example, x.position? = some .nonmotionalProcess →
-    (∀ j ∈ x.judgment? .have, j = .acceptable) ∧ ∀ j ∈ x.judgment? .be, j ≤ .marginal := by
+    (∀ j ∈ x.judgment? .have, j = .acceptable) ∧ ∀ j ∈ x.judgment? .be, j ≠ .acceptable := by
   decide
 
 /-- Some verb of a type takes both auxiliaries acceptably exactly when the type is not at either

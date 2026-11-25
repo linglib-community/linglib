@@ -221,9 +221,10 @@ def ex_86 : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .questionable
+    alsoJudged := [.ungrammatical]
     contrasts := []
     readings := []
-    paperFeatures := [("kind", "scrambling"), ("construction", "LDS"), ("binder", "embedded subject"), ("mover", "DP-lexical"), ("alsoJudged", "ungrammatical")] }
+    paperFeatures := [("kind", "scrambling"), ("construction", "LDS"), ("binder", "embedded subject"), ("mover", "DP-lexical")] }
 
 def ex_93b : Datum :=
   { id := "gong2022_93b"

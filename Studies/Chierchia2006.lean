@@ -821,6 +821,16 @@ def Reading.ofKey : String → Option Reading
   | "negativePolarity" => some .negativePolarity
   | _ => none
 
+/-- The paper accepts a reading or a sentence it leaves unmarked or marks `?`. -/
+def Accepted (j : Judgment) : Prop := j = .acceptable ∨ j = .marginal
+
+instance (j : Judgment) : Decidable (Accepted j) := inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The paper rejects a reading or a sentence it marks `??`, `#` or `*`. -/
+def Rejected (j : Judgment) : Prop := j = .questionable ∨ j = .unacceptable ∨ j = .ungrammatical
+
+instance (j : Judgment) : Decidable (Rejected j) := inferInstanceAs (Decidable (_ ∨ _))
+
 /-- `judgedReadings` parses each judged reading of a row that needs no covert device into the
 item's profile, the environment, the reading and its judgment. -/
 def judgedReadings : List (Profile × Environment × Reading × Judgment) :=
@@ -872,8 +882,8 @@ local macro "excluded" : tactic => `(tactic| first
 /-- Every judged reading is predicted: a reading the paper marks `??` or worse is excluded, and
 one it marks at most `?` is available. -/
 theorem judgedReadings_predicted : ∀ x ∈ judgedReadings,
-    (x.2.2.2 ≤ .questionable → Excluded x.1 x.2.1 x.2.2.1) ∧
-      (.marginal ≤ x.2.2.2 → Available x.1 x.2.1 x.2.2.1) := by
+    (Rejected x.2.2.2 → Excluded x.1 x.2.1 x.2.2.1) ∧
+      (Accepted x.2.2.2 → Available x.1 x.2.1 x.2.2.1) := by
   intro x hx
   fin_cases hx <;> dsimp only <;>
     first
@@ -883,8 +893,8 @@ theorem judgedReadings_predicted : ∀ x ∈ judgedReadings,
 /-- Every sentence judged as a whole is predicted: one the paper marks `??` or worse has every
 reading excluded, and one it marks at most `?` has a reading available. -/
 theorem judgedSentences_predicted : ∀ x ∈ judgedSentences,
-    (x.2.2 ≤ .questionable → ∀ r, Excluded x.1 x.2.1 r) ∧
-      (.marginal ≤ x.2.2 → ∃ r, Available x.1 x.2.1 r) := by
+    (Rejected x.2.2 → ∀ r, Excluded x.1 x.2.1 r) ∧
+      (Accepted x.2.2 → ∃ r, Available x.1 x.2.1 r) := by
   intro x hx
   fin_cases hx <;> dsimp only <;>
     first

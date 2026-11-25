@@ -60,6 +60,8 @@ later *maaloo* changes what a past activity has been](##credited_exchange).
 
 namespace Ochs1992
 
+open Examples (Stance Gender)
+
 open MeasureTheory ProbabilityTheory
 open CLDF.StructureDataset (Language Coded)
 open Japanese.Particles (ze wa)
@@ -200,18 +202,6 @@ end Model
 
 section Japanese
 
-/-- The stances that the particles of Figure 14.1 directly index. -/
-inductive Stance where
-  | coarseIntensity
-  | delicateIntensity
-  deriving DecidableEq, Fintype
-
-/-- The genders of the figure's indirect indexes, a male and a female "voice". -/
-inductive Gender where
-  | male
-  | female
-  deriving DecidableEq, Fintype
-
 instance : MeasurableSpace Stance := ⊤
 instance : DiscreteMeasurableSpace Stance := ⟨fun _ ↦ trivial⟩
 instance : MeasurableSpace Gender := ⊤
@@ -222,15 +212,6 @@ instance : DiscreteMeasurableSpace Clause.Marker := ⟨fun _ ↦ trivial⟩
 /-- The rows of Figure 14.1 with their particles. -/
 def figure141 : List (Datum × Clause.Marker) := [(Examples.ze, ze), (Examples.wa, wa)]
 
-/-- The direct index a row of Figure 14.1 prints. -/
-def direct (d : Datum) : Option Stance :=
-  d.parse? "directIndex"
-    [("coarse intensity", .coarseIntensity), ("delicate intensity", .delicateIntensity)]
-
-/-- The indirect index a row of Figure 14.1 prints. -/
-def voice (d : Datum) : Option Gender :=
-  d.parse? "indirectIndex" [("male voice", .male), ("female voice", .female)]
-
 example : ∀ x ∈ figure141, x.1.primaryText = x.2.form := by decide
 
 variable {η : Kernel Stance Clause.Marker} [IsFiniteKernel η]
@@ -239,9 +220,10 @@ variable {η : Kernel Stance Clause.Marker} [IsFiniteKernel η]
 /-- Given the direct indexes of Figure 14.1 and one difference between men and women, in coarse
 intensity, each particle is used more by the gender of its indirect index (pp. 341-342). -/
 theorem rows_figure_14_1
-    (hη : ∀ x ∈ figure141, ∀ s, direct x.1 = some s → ExclusivelyIndexes η x.2 s)
+    (hη : ∀ x ∈ figure141, ∀ s, Examples.directIndex x.1 = some s → ExclusivelyIndexes η x.2 s)
     (h : κ .female {.coarseIntensity} < κ .male {.coarseIntensity}) :
-    ∀ x ∈ figure141, ∀ g, voice x.1 = some g → ∀ g' ≠ g, (η ∘ₖ κ) g' {x.2} < (η ∘ₖ κ) g {x.2} := by
+    ∀ x ∈ figure141, ∀ g, Examples.indirectIndex x.1 = some g →
+      ∀ g' ≠ g, (η ∘ₖ κ) g' {x.2} < (η ∘ₖ κ) g {x.2} := by
   have hze : ExclusivelyIndexes η ze .coarseIntensity :=
     hη (Examples.ze, ze) (by simp [figure141]) _ (by decide)
   have hwa : ExclusivelyIndexes η wa .delicateIntensity :=

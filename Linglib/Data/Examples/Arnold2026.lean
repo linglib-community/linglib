@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Arnold2026` — typed example data
@@ -185,5 +187,17 @@ def butler : Datum :=
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("pronounsIntroduced", "true")] }
 
 def all : List Datum := [homework, lovato, bed, teacher, clerk, neighbor, shakespeare, landlord, son, alex, dillon, mother, butler]
+
+/-- The two kinds of singular *they*. -/
+inductive Kind where
+  /-- underspecified: underspecified -/
+  | underspecified
+  /-- personal: personal -/
+  | personal
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `kind`. -/
+def kind (e : Datum) : Option Kind :=
+  e.parse? "kind" [("underspecified", .underspecified), ("personal", .personal)]
 
 end Arnold2026.Examples

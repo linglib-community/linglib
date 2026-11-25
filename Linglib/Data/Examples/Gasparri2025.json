@@ -1,4 +1,111 @@
-[
+{
+  "features": [
+    {
+      "key": "subject",
+      "lean": "subject",
+      "type": "Subject",
+      "doc": "The subject of a sentence, as the paper classifies it.",
+      "levels": [
+        {
+          "name": "bareName",
+          "label": "bareName",
+          "doc": "bareName"
+        },
+        {
+          "name": "modifiedName",
+          "label": "modifiedName",
+          "doc": "modifiedName"
+        },
+        {
+          "name": "pluralName",
+          "label": "pluralName",
+          "doc": "pluralName"
+        },
+        {
+          "name": "quotedName",
+          "label": "quotedName",
+          "doc": "quotedName"
+        },
+        {
+          "name": "definiteName",
+          "label": "definiteName",
+          "doc": "definiteName"
+        },
+        {
+          "name": "definiteCommon",
+          "label": "definiteCommon",
+          "doc": "definiteCommon"
+        },
+        {
+          "name": "modifiedCommon",
+          "label": "modifiedCommon",
+          "doc": "modifiedCommon"
+        },
+        {
+          "name": "bareCommonPlural",
+          "label": "bareCommonPlural",
+          "doc": "bareCommonPlural"
+        }
+      ]
+    },
+    {
+      "key": "context",
+      "lean": "context",
+      "type": "Context",
+      "doc": "What the sentence is embedded in: nothing, a locative adjunct, a discourse about naming conventions, a binding quantifier, a discourse with kinds in focus, or a contrastive adjunct.",
+      "levels": [
+        {
+          "name": "outOfTheBlue",
+          "label": "outOfTheBlue",
+          "doc": "outOfTheBlue"
+        },
+        {
+          "name": "locative",
+          "label": "locative",
+          "doc": "locative"
+        },
+        {
+          "name": "naming",
+          "label": "naming",
+          "doc": "naming"
+        },
+        {
+          "name": "binding",
+          "label": "binding",
+          "doc": "binding"
+        },
+        {
+          "name": "focusedKinds",
+          "label": "focusedKinds",
+          "doc": "focusedKinds"
+        },
+        {
+          "name": "contrast",
+          "label": "contrast",
+          "doc": "contrast"
+        }
+      ]
+    },
+    {
+      "key": "level",
+      "lean": "level",
+      "type": "Level",
+      "doc": "Whether the predicate is characterizing or kind-level.",
+      "levels": [
+        {
+          "name": "characterizing",
+          "label": "characterizing",
+          "doc": "characterizing"
+        },
+        {
+          "name": "kindLevel",
+          "label": "kindLevel",
+          "doc": "kindLevel"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "gasparri2025_ex4a",
     "source": {
@@ -2305,3 +2412,4 @@
     "verified": "page-image"
   }
 ]
+}

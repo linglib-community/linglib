@@ -70,6 +70,8 @@ restrictor and in a bound possessive, and competition by informativeness are not
 
 namespace BaleKhanjian2014
 
+open Examples (NumberHead)
+
 open Mereology Number Presupposition PhraseStructure Tree Interpreter
 
 /-! ### Denotations -/
@@ -85,15 +87,10 @@ def boy (B : Finset α) : Set (Finset α) := Set.Ioc ∅ B
 theorem mem_boy : x ∈ boy B ↔ x ⊆ B ∧ 1 ≤ x.card := by
   rw [boy, Set.mem_Ioc, Finset.empty_ssubset, Finset.one_le_card, and_comm]
 
-/-- The head of the number phrase: the null singular *-∅* or the plural *-ner*. -/
-inductive NumberHead
-  | sg
-  | pl
-  deriving DecidableEq, Fintype, Repr
-
 /-- A number head restricts the noun it heads: *-ner* to its non-atoms, Harbour's
 $[-\text{atomic}]$ (19), and the null singular, on this analysis, to nothing. -/
-def NumberHead.denote {E : Type*} [PartialOrder E] [OrderBot E] : NumberHead → Set E → Set E
+def Examples.NumberHead.denote {E : Type*} [PartialOrder E] [OrderBot E] :
+    NumberHead → Set E → Set E
   | .sg, X => X
   | .pl, X => {x | x ∈ X ∧ ¬ IsAtom x}
 
@@ -850,7 +847,7 @@ predicate noun, and its numeral. -/
 def predicative? (r : Datum) : Option (Finset Boy × NumberHead × Option ℕ) :=
   if r.feature? "construction" = some "predicative" then
     (r.parse? "subject" [("atom", {.john}), ("group", {.john, .brad})]).bind fun s ↦
-      (r.parse? "number" [("SG", .sg), ("PL", .pl)]).map fun n ↦
+      ((Examples.number r)).map fun n ↦
         (s, n, r.parse? "numeral" [("one", 1), ("two", 2)])
   else none
 
@@ -867,7 +864,7 @@ theorem rows_predicative :
 /-- The definite numeral phrases of (14). -/
 def numeralDefinite? (r : Datum) : Option NumberHead :=
   if r.feature? "construction" = some "definite" ∧ r.feature? "numeral" = some "two" then
-    r.parse? "number" [("SG", .sg), ("PL", .pl)]
+    Examples.number r
   else none
 
 -- (14): with John and Brad the boys, the rows fit Maximize Presupposition at NumP*

@@ -1097,7 +1097,7 @@
     ],
     "translation": "Eat even a little.",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "nearlyUngrammatical",
     "paperFeatures": [
       ["npi", "zaraa bhii"],
       ["environment", "imperative"]
@@ -1115,7 +1115,7 @@
     ],
     "translation": "Pick even one apple.",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "nearlyUngrammatical",
     "paperFeatures": [
       ["npi", "ek bhii"],
       ["environment", "imperative"]

@@ -1,4 +1,48 @@
-[
+{
+  "features": [
+    {
+      "key": "vcause",
+      "lean": "vcause",
+      "type": "Vcause",
+      "doc": "How [Vcause] is realized in a one-clause causative (§2.3): fused with [Veffect] beyond morphological analysis (English *kill*), bound to it (Turkish *-dür*), or a free verb beside it (French *faire*).",
+      "levels": [
+        {
+          "name": "fused",
+          "label": "fused",
+          "doc": "fused"
+        },
+        {
+          "name": "bound",
+          "label": "bound",
+          "doc": "bound"
+        },
+        {
+          "name": "free",
+          "label": "free",
+          "doc": "free"
+        }
+      ]
+    },
+    {
+      "key": "order",
+      "lean": "order",
+      "type": "ClauseOrder",
+      "doc": "The order of the clause of cause and the clause of effect.",
+      "levels": [
+        {
+          "name": "causeEffect",
+          "label": "cause-effect",
+          "doc": "cause-effect"
+        },
+        {
+          "name": "effectCause",
+          "label": "effect-cause",
+          "doc": "effect-cause"
+        }
+      ]
+    }
+  ],
+  "examples": [
  {
   "id": "song1996_1b",
   "source": {
@@ -1277,3 +1321,4 @@
   "verified": "page-image"
  }
 ]
+}

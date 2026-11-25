@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Toosarvandani2016` — typed example data
@@ -206,5 +208,17 @@ def ex_71b : Datum :=
     paperFeatures := [("suffix", "seq"), ("aspect", "pfv"), ("markedEvent", "dance"), ("markedEvent", "play"), ("unmarkedAspect", "pfv"), ("unmarkedEvent", "enter")] }
 
 def all : List Datum := [ex_39a, ex_39b, ex_40b, ex_40c, ex_47a, ex_47b, ex_66a, ex_66b, ex_66c, ex_66d, ex_71a, ex_71b]
+
+/-- The suffixes of a marked clause, the simultaneous *-na* and the sequential *-si*. -/
+inductive Suffix where
+  /-- sim: sim -/
+  | sim
+  /-- seq: seq -/
+  | seq
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `suffix`. -/
+def suffix (e : Datum) : Option Suffix :=
+  e.parse? "suffix" [("sim", .sim), ("seq", .seq)]
 
 end Toosarvandani2016.Examples

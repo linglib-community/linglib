@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "adverbial",
+      "lean": "adverbial",
+      "type": "Adverbial",
+      "doc": "The time adverbial of a clause: a time-frame adverbial in the inessive, 'in an hour', or a temporal measure phrase in the accusative, 'for an hour'.",
+      "levels": [
+        {
+          "name": "timeFrame",
+          "label": "timeFrame",
+          "doc": "timeFrame"
+        },
+        {
+          "name": "measure",
+          "label": "measure",
+          "doc": "measure"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "huumo2020_17",
     "source": {
@@ -673,3 +694,4 @@
     "method": "corpus"
   }
 ]
+}

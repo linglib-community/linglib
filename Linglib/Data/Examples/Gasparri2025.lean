@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Gasparri2025` — typed example data
@@ -705,5 +707,65 @@ def ex35d : Datum :=
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
 def all : List Datum := [ex4a, ex4b, ex4c, ex4d, ex5a, ex5b, ex6a, ex6b, ex7a, ex7b, ex8a, ex8b, ex11a, ex11b, ex12, ex13, ex14a, ex14b, ex14c, ex15a, ex15b, ex16a, ex16b, ex17a, ex17b, ex18a, ex18b, ex20, ex21, ex22a, ex22b, ex23b, ex26, ex27a, ex28a, ex28b, ex31a, ex31b, ex32a, ex32b, ex32c, ex33a, ex33b, ex34a, ex34b, ex34d, ex34e, ex34f, ex34g, ex35a, ex35b, ex35c, ex35d]
+
+/-- The subject of a sentence, as the paper classifies it. -/
+inductive Subject where
+  /-- bareName: bareName -/
+  | bareName
+  /-- modifiedName: modifiedName -/
+  | modifiedName
+  /-- pluralName: pluralName -/
+  | pluralName
+  /-- quotedName: quotedName -/
+  | quotedName
+  /-- definiteName: definiteName -/
+  | definiteName
+  /-- definiteCommon: definiteCommon -/
+  | definiteCommon
+  /-- modifiedCommon: modifiedCommon -/
+  | modifiedCommon
+  /-- bareCommonPlural: bareCommonPlural -/
+  | bareCommonPlural
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `subject`. -/
+def subject (e : Datum) : Option Subject :=
+  e.parse? "subject" [("bareName", .bareName), ("modifiedName", .modifiedName), ("pluralName", .pluralName),
+    ("quotedName", .quotedName), ("definiteName", .definiteName),
+    ("definiteCommon", .definiteCommon), ("modifiedCommon", .modifiedCommon),
+    ("bareCommonPlural", .bareCommonPlural)]
+
+/-- What the sentence is embedded in: nothing, a locative adjunct, a discourse about naming conventions, a binding quantifier, a discourse with kinds in focus, or a contrastive adjunct. -/
+inductive Context where
+  /-- outOfTheBlue: outOfTheBlue -/
+  | outOfTheBlue
+  /-- locative: locative -/
+  | locative
+  /-- naming: naming -/
+  | naming
+  /-- binding: binding -/
+  | binding
+  /-- focusedKinds: focusedKinds -/
+  | focusedKinds
+  /-- contrast: contrast -/
+  | contrast
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `context`. -/
+def context (e : Datum) : Option Context :=
+  e.parse? "context" [("outOfTheBlue", .outOfTheBlue), ("locative", .locative), ("naming", .naming),
+    ("binding", .binding), ("focusedKinds", .focusedKinds), ("contrast", .contrast)]
+
+/-- Whether the predicate is characterizing or kind-level. -/
+inductive Level where
+  /-- characterizing: characterizing -/
+  | characterizing
+  /-- kindLevel: kindLevel -/
+  | kindLevel
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `level`. -/
+def level (e : Datum) : Option Level :=
+  e.parse? "level" [("characterizing", .characterizing), ("kindLevel", .kindLevel)]
 
 end Gasparri2025.Examples

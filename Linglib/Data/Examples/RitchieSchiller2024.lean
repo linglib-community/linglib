@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `RitchieSchiller2024` — typed example data
@@ -406,5 +408,50 @@ def ex_26 : Datum :=
     paperFeatures := [("restriction", "location"), ("setup", "displacement"), ("anchor", "elsewhere")] }
 
 def all : List Datum := [ex_1, ex_1_fig2, ex_2a, ex_2b, ex_2c, ex_3, ex_4a, ex_4b, ex_4c, ex_3_now, ex_3_tomorrow, fn4, ex_5, ex_7, ex_9, ex_10, ex_16, ex_17, ex_18_room, ex_18_window, ex_18_meadow, ex_19, ex_20_hands, ex_20_hammers, ex_21, ex_22, ex_23, library, ex_25, ex_26]
+
+/-- What an implicit restriction restricts by. -/
+inductive Restriction where
+  /-- location: location -/
+  | location
+  /-- time: time -/
+  | time
+  /-- availability: availability -/
+  | availability
+  /-- salience: salience -/
+  | salience
+  /-- manipulability: manipulability -/
+  | manipulability
+  /-- color: color -/
+  | color
+  /-- aesthetic: aesthetic -/
+  | aesthetic
+  /-- history: history -/
+  | history
+  /-- subkind: subkind -/
+  | subkind
+  /-- shape: shape -/
+  | shape
+  /-- plan: plan -/
+  | plan
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `restriction`. -/
+def restriction (e : Datum) : Option Restriction :=
+  e.parse? "restriction" [("location", .location), ("time", .time), ("availability", .availability),
+    ("salience", .salience), ("manipulability", .manipulability), ("color", .color),
+    ("aesthetic", .aesthetic), ("history", .history), ("subkind", .subkind), ("shape", .shape),
+    ("plan", .plan)]
+
+/-- Whether a locational or temporal restriction is to the speaker's here and now. -/
+inductive Anchor where
+  /-- hereNow: hereNow -/
+  | hereNow
+  /-- elsewhere: elsewhere -/
+  | elsewhere
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `anchor`. -/
+def anchor (e : Datum) : Option Anchor :=
+  e.parse? "anchor" [("hereNow", .hereNow), ("elsewhere", .elsewhere)]
 
 end RitchieSchiller2024.Examples

@@ -1,4 +1,40 @@
-[
+{
+  "features": [
+    {
+      "key": "type",
+      "lean": "phrase",
+      "type": "Phrase",
+      "doc": "An interrogative phrase, by the paper's taxonomy of its rows.",
+      "levels": [
+        {
+          "name": "sci",
+          "label": "SCI",
+          "doc": "A singular complex phrase, *which student*"
+        },
+        {
+          "name": "pci",
+          "label": "PCI",
+          "doc": "A plural complex phrase, *which students*"
+        },
+        {
+          "name": "bi",
+          "label": "BI",
+          "doc": "an English bare phrase, *who*"
+        },
+        {
+          "name": "sbi",
+          "label": "SBI",
+          "doc": "A singular bare phrase, *quién*"
+        },
+        {
+          "name": "pbi",
+          "label": "PBI",
+          "doc": "A plural bare phrase, *quiénes*"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "alonsoovallerouillard2023_1",
     "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(1)"},
@@ -293,3 +329,4 @@
     "verified": "page-image"
   }
 ]
+}

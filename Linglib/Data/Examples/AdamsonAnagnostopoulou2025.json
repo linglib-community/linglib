@@ -330,6 +330,7 @@
     "translation": "The thief and the ring are gone.",
     "context": "",
     "judgment": "questionable",
+    "alsoJudged": ["ungrammatical"],
     "contrasts": [
       {
         "form": "O kleftis ke to daxtilidi ine afanta.",
@@ -339,8 +340,7 @@
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "human M + inanimate N"],
-      ["resolved", "ineffable"],
-      ["alsoJudged", "ungrammatical"]
+      ["resolved", "ineffable"]
     ],
     "comment": "Ineffable: no exponent realizes the thief's MASC and the ring's CLASS together. The paper marks the example ??/* over both variants {afanti /afanta}.",
     "verified": "page-image"

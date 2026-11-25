@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `BaleKhanjian2014` — typed example data
@@ -346,5 +348,17 @@ def ex_27a : Datum :=
     paperFeatures := [("construction", "negated"), ("number", "PL"), ("numeral", "two"), ("definite", "no"), ("scopeAmbiguous", "yes")] }
 
 def all : List Datum := [ex_3, ex_4a, ex_4b, ex_5a, ex_5b, ex_5c, ex_6a, ex_6b, ex_7, ex_8a, ex_8b, ex_10a, ex_10b, ex_11b, ex_13a, ex_13b, ex_14a, ex_14b, ex_24a, ex_25a, ex_26a, ex_27a]
+
+/-- The head of the number phrase: the null singular *-∅* or the plural *-ner*. -/
+inductive NumberHead where
+  /-- SG: SG -/
+  | sg
+  /-- PL: PL -/
+  | pl
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `number`. -/
+def number (e : Datum) : Option NumberHead :=
+  e.parse? "number" [("SG", .sg), ("PL", .pl)]
 
 end BaleKhanjian2014.Examples

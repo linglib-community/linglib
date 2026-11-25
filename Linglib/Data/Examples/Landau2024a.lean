@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Landau2024a` — typed example data
@@ -296,5 +298,29 @@ def ex_88b : Datum :=
     paperFeatures := [("adjunct", "justification"), ("antecedent", "nonCCommanding")] }
 
 def all : List Datum := [ex_20a, ex_20b, ex_22a, ex_35a, ex_35b, ex_35c, ex_35d, ex_36b, ex_36c, ex_37a, ex_41a, ex_41b, ex_41c, ex_41d, ex_52a, ex_52b, ex_87a, ex_87b, ex_88a, ex_88b]
+
+/-- The clause types of the Spanish paradigm (41). -/
+inductive ClauseType where
+  /-- infinitive: infinitive -/
+  | infinitive
+  /-- finite: finite -/
+  | finite
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `clause`. -/
+def clause (e : Datum) : Option ClauseType :=
+  e.parse? "clause" [("infinitive", .infinitive), ("finite", .finite)]
+
+/-- The positions of the Spanish paradigm (41). -/
+inductive Position where
+  /-- complement: complement -/
+  | complement
+  /-- subject: subject -/
+  | subject
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `position`. -/
+def position (e : Datum) : Option Position :=
+  e.parse? "position" [("complement", .complement), ("subject", .subject)]
 
 end Landau2024a.Examples

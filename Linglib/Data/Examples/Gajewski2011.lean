@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Gajewski2011` — typed example data
@@ -250,5 +252,17 @@ def ex41d : Datum :=
     paperFeatures := [("licenser", "sorry"), ("strength", "strong"), ("npi", "until")] }
 
 def all : List Datum := [ex14a, ex15a, ex14b, ex15b, ex1f, ex7f, ex39a, ex39b, ex39c, ex39d, ex40a, ex40b, ex40c, ex40d, ex41a, ex41b, ex41c, ex41d]
+
+/-- Weak items are *any* and *ever*, strong ones *in weeks*, *either* and *until*. -/
+inductive Strength where
+  /-- weak: weak -/
+  | weak
+  /-- strong: strong -/
+  | strong
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `strength`. -/
+def strength (e : Datum) : Option Strength :=
+  e.parse? "strength" [("weak", .weak), ("strong", .strong)]
 
 end Gajewski2011.Examples

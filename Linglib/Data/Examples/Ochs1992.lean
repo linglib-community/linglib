@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Ochs1992` — typed example data
@@ -142,5 +144,29 @@ def maaloo : Datum :=
     paperFeatures := [("strategy", "Bidirectional"), ("community", "Samoan")] }
 
 def all : List Datum := [ze, wa, tummy, what, dontUnderstand, huh, good, castle, maaloo]
+
+/-- The stances that the particles of Figure 14.1 directly index. -/
+inductive Stance where
+  /-- coarse intensity: coarse intensity -/
+  | coarseIntensity
+  /-- delicate intensity: delicate intensity -/
+  | delicateIntensity
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `directIndex`. -/
+def directIndex (e : Datum) : Option Stance :=
+  e.parse? "directIndex" [("coarse intensity", .coarseIntensity), ("delicate intensity", .delicateIntensity)]
+
+/-- The genders of the figure's indirect indexes, a male and a female "voice". -/
+inductive Gender where
+  /-- male voice: male voice -/
+  | male
+  /-- female voice: female voice -/
+  | female
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `indirectIndex`. -/
+def indirectIndex (e : Datum) : Option Gender :=
+  e.parse? "indirectIndex" [("male voice", .male), ("female voice", .female)]
 
 end Ochs1992.Examples

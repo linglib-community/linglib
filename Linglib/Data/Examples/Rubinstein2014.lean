@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Rubinstein2014` — typed example data
@@ -240,5 +242,20 @@ def nr_carix : Datum :=
     paperFeatures := [("modal", "carix"), ("category", "modalVerb"), ("diagnostic", "negRaising"), ("hybrid", "true")] }
 
 def all : List Datum := [nr_should, nr_ought, nr_better, nr_good, nr_must, nr_haveTo, nr_adif, ought_lexical, compositional_deberia, test1_carix, test2_carix, heb_yoter_tov, heb_adif, heb_kday, comp_better, nr_carix]
+
+/-- The routes to weak necessity are a dedicated item, a strong modal with weakening morphology, and evaluative comparative language. -/
+inductive Strategy where
+  /-- lexical: A dedicated weak necessity modal, English *ought* -/
+  | lexical
+  /-- compositional: A strong necessity modal with counterfactual morphology, Spanish *debería* -/
+  | compositional
+  /-- evaluativeComparative: an evaluative comparative, Hebrew *yoter tov* -/
+  | evaluativeComparative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `strategy`. -/
+def strategy (e : Datum) : Option Strategy :=
+  e.parse? "strategy" [("lexical", .lexical), ("compositional", .compositional),
+    ("evaluativeComparative", .evaluativeComparative)]
 
 end Rubinstein2014.Examples

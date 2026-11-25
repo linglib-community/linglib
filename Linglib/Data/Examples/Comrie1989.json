@@ -1,4 +1,40 @@
-[
+{
+  "features": [
+    {
+      "key": "test",
+      "lean": "test",
+      "type": "Test",
+      "doc": "The constructions tested.",
+      "levels": [
+        {
+          "name": "coordination",
+          "label": "coordination",
+          "doc": "coordination"
+        },
+        {
+          "name": "imperative",
+          "label": "imperative",
+          "doc": "imperative"
+        },
+        {
+          "name": "indirectCommand",
+          "label": "indirectCommand",
+          "doc": "indirectCommand"
+        },
+        {
+          "name": "resultative",
+          "label": "resultative",
+          "doc": "resultative"
+        },
+        {
+          "name": "infinitive",
+          "label": "infinitive",
+          "doc": "infinitive"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "comrie1989_ch5_ex11",
     "source": {"bibkey": "comrie-1989", "paperLabel": "ch. 5, (11)"},
@@ -1338,3 +1374,4 @@
     "verified": "page-image"
   }
 ]
+}

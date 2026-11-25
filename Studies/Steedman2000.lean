@@ -52,6 +52,8 @@ of their constants.
 
 namespace Steedman2000
 
+open Examples (GappingDirection)
+
 open CCG Interpreter
 
 /-! ### Categories -/
@@ -327,13 +329,6 @@ theorem transitiveCat_vso : transitiveCat .vso = vsoTV := by decide
 
 theorem transitiveCat_svo : transitiveCat .svo = TV := by decide
 
-/-- The two directions of gapping. Forward gapping keeps the verb in the first conjunct and
-backward gapping in the last. -/
-inductive GappingDirection where
-  | forward
-  | backward
-  deriving DecidableEq, Repr
-
 /-- The direction of gapping over the verb category `v`, read off the cluster of its arguments,
 is backward when the cluster looks rightward for the verb and forward when it looks leftward. -/
 def gappingDirection (v : Cat Atom) : Option GappingDirection :=
@@ -393,7 +388,7 @@ def gappingData : List Datum := Examples.all.filter (·.feature? "phenomenon" = 
 the direction its clause's basic order predicts. -/
 theorem gapping_acceptable_iff :
     ∀ ex ∈ gappingData, ex.judgment = .acceptable ↔
-      ex.parse? "gappingDirection" [("forward", .forward), ("backward", .backward)] =
+      (Examples.gappingDirection ex) =
         ((ex.feature? "wordOrder").bind Arrangement.ofLabel?).bind predictedDirection := by
   decide
 

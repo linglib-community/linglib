@@ -64,6 +64,8 @@ the participants share the sub-utterance's content, the constituent reading does
 
 namespace GinzburgCooper2004
 
+open Examples (Access)
+
 open Gameboard
 
 /-- The syntactic categories of the examples, distinguished by the case or verb form the
@@ -329,12 +331,6 @@ def DeclFrag (c : Clarification Cont) (frag : Constituent) : Prop :=
 instance (c : Clarification Cont) (frag : Constituent) : Decidable (DeclFrag c frag) :=
   inferInstanceAs (Decidable (∃ u ∈ c.focusEstablishing, _))
 
-/-- Whether the participants share (a belief about) the content of the sub-utterance. -/
-inductive Access
-  | shared
-  | distinct
-  deriving DecidableEq, Repr
-
 /-- On the clausal reading the fragment resolves against a focussing context to the polar question
 whether the speaker is asking about this value of the parameter (58), identifying the fragment's
 index with the sub-utterance's, which presupposes shared content. -/
@@ -379,7 +375,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
   let antCat ← ex.parse? "antecedentCat" categories
   let frag ← ex.feature? "fragment"
   let fragCat ← ex.parse? "fragmentCat" categories
-  let access ← ex.parse? "access" [("shared", .shared), ("distinct", .distinct)]
+  let access ← (Examples.access ex)
   pure ⟨⟨ant, antCat, "x"⟩, ⟨frag, fragCat, ""⟩, access, ex.readings.lookup "clausal",
     ex.readings.lookup "constituent", ex.judgment⟩
 

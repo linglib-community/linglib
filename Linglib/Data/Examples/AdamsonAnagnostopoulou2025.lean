@@ -219,9 +219,10 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
+    alsoJudged := [.ungrammatical]
     contrasts := [("O kleftis ke to daxtilidi ine afanta.", .questionable)]
     readings := []
-    paperFeatures := [("conjuncts", "human M + inanimate N"), ("resolved", "ineffable"), ("alsoJudged", "ungrammatical")] }
+    paperFeatures := [("conjuncts", "human M + inanimate N"), ("resolved", "ineffable")] }
 
 def ex_48b : Datum :=
   { id := "adamsonanagnostopoulou2025_48b"

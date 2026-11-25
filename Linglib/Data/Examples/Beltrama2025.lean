@@ -89,9 +89,10 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
+    alsoJudged := [.questionable]
     contrasts := []
     readings := []
-    paperFeatures := [("diagnostic", "strong intensifiers"), ("property", "restricted gradability"), ("alsoJudged", "questionable")] }
+    paperFeatures := [("diagnostic", "strong intensifiers"), ("property", "restricted gradability")] }
 
 def ex_12a : Datum :=
   { id := "beltrama2025_12a"

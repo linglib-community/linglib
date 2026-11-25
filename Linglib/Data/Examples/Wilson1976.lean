@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Wilson1976` — typed example data
@@ -874,5 +876,31 @@ def ex_47_noho : Datum :=
     paperFeatures := [("marker", "o"), ("relationship", "location"), ("possessed", "noho")] }
 
 def all : List Datum := [ex_41_kii_o, ex_41_kii_a, ex_41_hale_o, ex_41_hale_a, ex_41_ake_o, ex_41_ake_a, ex_41_makua_o, ex_41_makua_a, ex_43_hale, ex_43_ia, ex_43_hua, ex_44_lima, ex_44_puuwai, ex_44_lauoho, ex_44_mimi, ex_44_makuahine, ex_44_kupuna, ex_44_kaikaina, ex_44_alii, ex_44_kanaka, ex_44_inoa_o, ex_44_kii_o, ex_44_mele_o, ex_44_inoa_a, ex_44_kii_a, ex_44_mele_a, ex_44_wahine, ex_44_haumana, ex_44_malihini, ex_44_keiki, ex_44_moopuna, ex_44_hua, ex_45_kala, ex_45_puaa, ex_45_pakaukau, ex_45_pahuhau, ex_45_koi, ex_45_kopa, ex_45_pia, ex_45_pahi, ex_45_kalo, ex_45_moena, ex_45_penalehelehe, ex_45_mamalu, ex_45_papale, ex_45_hale, ex_45_lio, ex_45_mokupuni, ex_45_lei, ex_45_uluna, ex_45_papaheenalu, ex_45_wailukini, ex_46_lole_o, ex_46_lole_a, ex_46_pua_o, ex_46_pua_a, ex_47_fij_taba, ex_47_fij_waqa, ex_47_fij_vale, ex_47_fij_isulu, ex_47_fij_idabedabe, ex_47_kii, ex_47_waa, ex_47_hale, ex_47_lole, ex_47_noho]
+
+/-- The groups under which the paper lists its examples (pp. 43–45). -/
+inductive Group where
+  /-- inanimate: inanimate -/
+  | inanimate
+  /-- body: body -/
+  | body
+  /-- kin: kin -/
+  | kin
+  /-- agency: agency -/
+  | agency
+  /-- instigated: instigated -/
+  | instigated
+  /-- offspring: offspring -/
+  | offspring
+  /-- ownership: ownership -/
+  | ownership
+  /-- location: location -/
+  | location
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `relationship`. -/
+def group (e : Datum) : Option Group :=
+  e.parse? "relationship" [("inanimate", .inanimate), ("body", .body), ("kin", .kin), ("agency", .agency),
+    ("instigated", .instigated), ("offspring", .offspring), ("ownership", .ownership),
+    ("location", .location)]
 
 end Wilson1976.Examples

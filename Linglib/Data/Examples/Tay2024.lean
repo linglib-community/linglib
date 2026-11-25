@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Tay2024` — typed example data
@@ -406,5 +408,22 @@ def ex_668 : Datum :=
     paperFeatures := [("externalArgument", "agent")] }
 
 def all : List Datum := [ex_41, ex_42, ex_45, ex_46, ex_107, ex_131, ex_132, ex_133, ex_134, ex_137, ex_139, ex_146, ex_148, ex_149, ex_150, ex_151, ex_202, ex_205, ex_206, ex_216, ex_217, ex_219, ex_221, ex_224, ex_330, ex_668]
+
+/-- The paper's reading of the external argument of a transitive compound relative to V1. -/
+inductive ExternalArgument where
+  /-- agent: agent -/
+  | agent
+  /-- theme: theme -/
+  | theme
+  /-- subjectMatter: subjectMatter -/
+  | subjectMatter
+  /-- pureCauser: pureCauser -/
+  | pureCauser
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `externalArgument`. -/
+def externalArgument (e : Datum) : Option ExternalArgument :=
+  e.parse? "externalArgument" [("agent", .agent), ("theme", .theme), ("subjectMatter", .subjectMatter),
+    ("pureCauser", .pureCauser)]
 
 end Tay2024.Examples

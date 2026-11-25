@@ -86,6 +86,8 @@ its pivot](##bias_rows) and [need not match case marking](##dyirbal_marking_synt
 
 namespace Comrie1989
 
+open Examples (Test)
+
 open Alignment ArgumentStructure Causativization
 
 /-! ### The discriminatory function of case -/
@@ -428,16 +430,11 @@ theorem compactness_rows :
 
 /-! ### Subject as a prototype (chapter 5) -/
 
-/-- The constructions tested. -/
-inductive Test
-  | coordination | imperative | indirectCommand | resultative | infinitive
-  deriving DecidableEq, Repr, Fintype
-
 /-- The property a construction asks of its pivot, on the book's explanation: the addressee of an
 imperative and the recipient of an indirect command must control the resulting situation, and a
 resultative attributes a change of state; coordination and the Chukchi infinitive ask for
 neither (§5.3, §5.4). -/
-def Test.property : Test → Option ProtoRoleFeature
+def Examples.Test.property : Test → Option ProtoRoleFeature
   | .imperative | .indirectCommand => some .volition
   | .resultative => some .changeOfState
   | .coordination | .infinitive => none
@@ -445,7 +442,7 @@ def Test.property : Test → Option ProtoRoleFeature
 /-- A construction is biased toward the alignment identifying S with the transitive argument whose
 prototype has its property: A, the agent of the prototypical transitive situation, for a
 proto-agent property, and P, the patient, for a proto-patient one. -/
-def Test.bias (t : Test) : Option AlignmentType :=
+def Examples.Test.bias (t : Test) : Option AlignmentType :=
   t.property.map fun f ↦ if f ∈ ProtoRoleFeature.agentCluster then .accusative else .ergative
 
 /-- A grouping row's configuration: the construction and the core roles that may bear its shared
@@ -463,9 +460,7 @@ def Grouped.marking (g : Grouped) (r : ArgumentRole) : Bool := decide (r ∈ g.p
 /-- The configuration a grouping row records. -/
 def Grouped.ofRow (row : Datum) : Option Grouped := do
   guard (row.feature? "construction" = some "grouping")
-  return ⟨← row.parse? "test" [("coordination", Test.coordination), ("imperative", .imperative),
-      ("indirectCommand", .indirectCommand), ("resultative", .resultative),
-      ("infinitive", .infinitive)],
+  return ⟨← (Examples.test row),
     ← row.parseAll? "pivot" [("S", ArgumentRole.S), ("A", .A), ("P", .P)]⟩
 
 /-- Imperative addressee deletion follows its bias in every language, accusative even in Dyirbal,

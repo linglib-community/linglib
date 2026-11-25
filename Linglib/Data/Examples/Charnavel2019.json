@@ -1,4 +1,35 @@
-[
+{
+  "features": [
+    {
+      "key": "antecedent",
+      "lean": "antecedent",
+      "type": "Center",
+      "doc": "The kinds of perspective center the book tells apart.",
+      "levels": [
+        {
+          "name": "nonAttitudinalSource",
+          "label": "non-attitudinal source",
+          "doc": "the source of a report who holds no attitude toward its content"
+        },
+        {
+          "name": "attitudeHolder",
+          "label": "attitude holder",
+          "doc": "one whose thought or speech a clause reports, the speaker included"
+        },
+        {
+          "name": "empathyLocus",
+          "label": "empathy locus",
+          "doc": "one whose sensory or emotional experience the speaker takes up"
+        },
+        {
+          "name": "deicticCenter",
+          "label": "deictic center",
+          "doc": "A spatial point of reference, which need have no mental state"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "charnavel2019_2_2a",
     "source": {"bibkey": "charnavel-sportiche-2016", "paperLabel": "p. 43"},
@@ -375,3 +406,4 @@
     "verified": "page-image"
   }
 ]
+}

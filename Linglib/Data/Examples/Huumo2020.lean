@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Huumo2020` — typed example data
@@ -227,5 +229,17 @@ def ex_38 : Datum :=
     paperFeatures := [("quantifier", "number"), ("case", "part"), ("adverbial", "timeFrame")] }
 
 def all : List Datum := [ex_17, ex_17_for, ex_18, ex_18_in, ex_19, ex_27, ex_27_for, ex_28, ex_28_in, ex_34, ex_35, ex_36, ex_37, ex_38]
+
+/-- The time adverbial of a clause: a time-frame adverbial in the inessive, 'in an hour', or a temporal measure phrase in the accusative, 'for an hour'. -/
+inductive Adverbial where
+  /-- timeFrame: timeFrame -/
+  | timeFrame
+  /-- measure: measure -/
+  | measure
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `adverbial`. -/
+def adverbial (e : Datum) : Option Adverbial :=
+  e.parse? "adverbial" [("timeFrame", .timeFrame), ("measure", .measure)]
 
 end Huumo2020.Examples

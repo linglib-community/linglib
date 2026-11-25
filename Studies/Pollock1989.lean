@@ -184,7 +184,8 @@ def interpret (r : Datum) : Option (Clause × Verb × Diagnostic × Bool) := do
 attested side of the diagnostic element. -/
 def Predicted (r : Datum) : Prop :=
   match interpret r with
-  | some (c, v, d, b) => .marginal ≤ r.judgment ↔ ∃ h, Admits c v h ∧ precedes h d = b
+  | some (c, v, d, b) =>
+    r.judgment = .acceptable ∨ r.judgment = .marginal ↔ ∃ h, Admits c v h ∧ precedes h d = b
   | none => False
 
 instance (r : Datum) : Decidable (Predicted r) := by

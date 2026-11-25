@@ -58,6 +58,8 @@ upward-entailing scopes](##readings_ssubset_iff), where the experiment finds no 
 
 namespace Geurts2010
 
+open Examples (Item)
+
 open Set NeoGricean Inquisitive Inquisitive.Proposition
 
 variable {W : Type*} {s φ ψ : Set W}
@@ -499,13 +501,8 @@ theorem rows_table2 {a : Fin 4 → Set W} (ha : StrictAnti a) :
   · simpa using ha.lt_iff_gt.symm
   · simpa using (compl_lt_compl_iff_lt.trans ha.lt_iff_gt).symm
 
-/-- The three contrasts on which Gricean reasoning derives one inference and not its neighbour. -/
-inductive Item where
-  | sameLength | longer | figs | mango | referent | everySailor
-  deriving DecidableEq
-
 /-- The statement that the theory derives the inference, over any model of the sentence. -/
-def Item.Derived : Item → Prop
+def Examples.Item.Derived : Item → Prop
   | .sameLength => ∀ {W : Type} (V : Bool → Set W) (s : Set W),
       s ∈ survivors V size (atom true) (altsScalar V (atom true) (atom false)) →
         ¬ (atom false).Believes V s
@@ -523,7 +520,7 @@ def Item.Derived : Item → Prop
       t ⊆ SetRel.ofSuccessors sailor → t ⊆ (SetRel.ofSuccessors all)ᶜ →
         t ⊆ Prod.fst ⁻¹' (SetRel.ofSuccessors (sailor ⊓ all)).dom ᶜ
 
-theorem Item.derived_iff : ∀ i : Item, i.Derived ↔ i ∉ [Item.longer, .mango, .everySailor]
+theorem Examples.Item.derived_iff : ∀ i : Item, i.Derived ↔ i ∉ [Item.longer, .mango, .everySailor]
   | .sameLength => iff_of_true (fun _ _ h ↦ (mem_survivors_scalar_iff.1 h).2.2 le_rfl) (by decide)
   -- (26b), p. 124: *big toe* is longer than *toe*, so that nothing rules out believing it
   | .longer => iff_of_false (fun h ↦ @h Unit (fun _ ↦ univ) univ
@@ -548,8 +545,7 @@ theorem Item.derived_iff : ∀ i : Item, i.Derived ↔ i ∉ [Item.longer, .mang
 
 /-- Reads the item of a row and whether the text says the inference is conveyed. -/
 def inference? (ex : Datum) : Option (Item × Bool) := do
-  let item ← ex.parse? "item" [("sameLength", Item.sameLength), ("longer", .longer),
-    ("figs", .figs), ("mango", .mango), ("referent", .referent), ("everySailor", .everySailor)]
+  let item ← (Examples.item ex)
   let conveys ← ex.bool? "conveys"
   pure (item, conveys)
 

@@ -52,6 +52,8 @@ and a presupposition trigger's full meaning fails plain downward entailment.
 
 namespace Gajewski2011
 
+open Examples (Strength)
+
 open NaturalLogic Presupposition Quantifier Quantifier.Det Desire.BestWorlds
 
 variable {α : Type*}
@@ -108,11 +110,6 @@ theorem atMostFive_not_strong :
 /-- The paper's licensers. -/
 inductive Licenser
   | no | atMostFive | some | only | conditional | sorryThat
-  deriving DecidableEq, Repr
-
-/-- Weak items are *any* and *ever*, strong ones *in weeks*, *either* and *until*. -/
-inductive Strength
-  | weak | strong
   deriving DecidableEq, Repr
 
 /-- The two licensing principles applied to a licenser's analysis, on which a weak item needs
@@ -200,7 +197,7 @@ def Licenser.context : Licenser → Option PolarityItem.LicensingContext
   | .sorryThat => Option.some .adversative
 
 /-- An English item of each strength, *ever* and *in years*. -/
-def Strength.item : Strength → PolarityItem
+def Examples.Strength.item : Strength → PolarityItem
   | .weak => English.PolarityItems.ever
   | .strong => English.PolarityItems.inYears
 
@@ -259,7 +256,7 @@ structure Row where
 def Row.ofDatum (ex : Datum) : Option Row := do
   let licenser ← ex.parse? "licenser" [("no", Licenser.no), ("atMostFive", .atMostFive),
     ("some", .some), ("only", .only), ("conditional", .conditional), ("sorry", .sorryThat)]
-  let strength ← ex.parse? "strength" [("weak", Strength.weak), ("strong", .strong)]
+  let strength ← (Examples.strength ex)
   pure ⟨licenser, strength, ex.judgment⟩
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum

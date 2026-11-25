@@ -53,25 +53,11 @@ the aggregate numeral counts two, is not given.
 
 namespace GrimmDocekal2021
 
+open Examples (Noun Context)
+
 open Mereology
 
 /-! ### The judged noun phrases, section 2 -/
-
-/-- A noun falls into one of these classes, which numerals and operations select. -/
-inductive Noun where
-  | ordinary
-  | animate
-  /-- The noun is derived by *-í*. -/
-  | derivedAggregate
-  | pluraleTantum
-  /-- The noun is countable, and its referents typically come in multiples, *klíče* 'keys'. -/
-  | multiple
-  | substance
-  | abstract
-  /-- The phrase refers uniquely, *noha tohoto stolu* 'this table's leg'. -/
-  | unique
-  | proper
-  deriving DecidableEq, Repr
 
 /-- A phrase carries one of these numerals, or none. -/
 inductive Numeral where
@@ -102,14 +88,6 @@ inductive Operation where
   | derivation
   deriving DecidableEq, Repr
 
-/-- A reading is judged in one of these contexts. -/
-inductive Context where
-  | episodic
-  | generic
-  /-- The context is a fast-food order, section 2.2.2. -/
-  | portion
-  deriving DecidableEq, Repr
-
 /-- A row records a noun phrase and its judgment. -/
 structure Row where
   noun : Noun
@@ -121,10 +99,7 @@ structure Row where
   deriving DecidableEq, Repr
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let noun ← ex.parse? "noun"
-    [("ordinary", Noun.ordinary), ("animate", .animate), ("derivedAggregate", .derivedAggregate),
-      ("pluraleTantum", .pluraleTantum), ("multiple", .multiple), ("substance", .substance),
-      ("abstract", .abstract), ("unique", .unique), ("proper", .proper)]
+  let noun ← (Examples.noun ex)
   let numeral ← ex.parse? "numeral"
     [("none", Numeral.none), ("simple", .simple), ("group", .group), ("aggregate", .aggregate),
       ("taxonomic", .taxonomic)]
@@ -134,8 +109,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
       ("universal", .universal), ("outerCardinal", .outerCardinal), ("packaging", .packaging),
       ("grinding", .grinding), ("derivation", .derivation)]
   pure ⟨noun, numeral, operation,
-    ex.parse? "context"
-      [("episodic", Context.episodic), ("generic", .generic), ("portion", .portion)],
+    (Examples.context ex),
     ex.feature? "reading" = some "taxonomic", ex.judgment⟩
 
 /-- The rows are the judged phrases of sections 2, 4, and 5. -/

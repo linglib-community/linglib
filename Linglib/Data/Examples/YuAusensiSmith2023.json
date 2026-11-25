@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "root class",
+      "lean": "rootClass",
+      "type": "RootClass",
+      "doc": "The two classes of result roots (footnotes 1 and 4).",
+      "levels": [
+        {
+          "name": "propertyConcept",
+          "label": "property concept",
+          "doc": "roots that do not entail change, such as that of *open*"
+        },
+        {
+          "name": "changeOfState",
+          "label": "change of state",
+          "doc": "roots that entail change, Beavers and Koontz-Garboden's result roots, such as that of *break*"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "yuausensismith2023_16a",
     "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(16a)"},
@@ -601,3 +622,4 @@
     "verified": "page-image"
   }
 ]
+}

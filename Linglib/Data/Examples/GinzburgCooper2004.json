@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "access",
+      "lean": "access",
+      "type": "Access",
+      "doc": "Whether the participants share (a belief about) the content of the sub-utterance.",
+      "levels": [
+        {
+          "name": "shared",
+          "label": "shared",
+          "doc": "shared"
+        },
+        {
+          "name": "distinct",
+          "label": "distinct",
+          "doc": "distinct"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "ginzburgcooper2004_4a_bo",
     "source": {
@@ -850,3 +871,4 @@
     "verified": "page-image"
   }
 ]
+}

@@ -94,11 +94,11 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
+    "alsoJudged": ["questionable"],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "strong intensifiers"],
-      ["property", "restricted gradability"],
-      ["alsoJudged", "questionable"]
+      ["property", "restricted gradability"]
     ],
     "comment": "Moderate modifiers (quite, pretty, somewhat) are fine; high and extreme ones degrade. The page marks ?very/??incredibly/??super.",
     "verified": "page-image"

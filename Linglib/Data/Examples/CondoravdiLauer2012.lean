@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `CondoravdiLauer2012` — typed example data
@@ -562,5 +564,43 @@ def ex40_wish : Datum :=
     paperFeatures := [("construction", "followUp"), ("use", "advice"), ("denial", "wish")] }
 
 def all : List Datum := [ex6a, ex6b, ex6c, ex6d, ex6e, ex7a, ex7b, ex7c, ex7d, ex8a, ex8b, ex8c, ex9, ex10a, ex10b, ex10c, ex11, ex12, ex13, ex14, ex15, ex16, ex17, ex18a, ex18b, ex18c, ex21a, ex21b, ex22, ex23a, ex23b, ex24a, ex24b, ex25, ex26, ex27, ex37, ex38a, ex38b, ex41, ex40_want, ex40_wish]
+
+/-- The second utterance of a sequence. -/
+inductive Second where
+  /-- imperative: imperative -/
+  | imperative
+  /-- assertion: assertion -/
+  | assertion
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `second`. -/
+def second (e : Datum) : Option Second :=
+  e.parse? "second" [("imperative", .imperative), ("assertion", .assertion)]
+
+/-- Whether the context lets the second utterance revise the first. -/
+inductive Continuation where
+  /-- revising: revising -/
+  | revising
+  /-- conflicting: conflicting -/
+  | conflicting
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `continuation`. -/
+def continuation (e : Datum) : Option Continuation :=
+  e.parse? "continuation" [("revising", .revising), ("conflicting", .conflicting)]
+
+/-- The form of an utterance challenged as a lie or disbelieved. -/
+inductive Form where
+  /-- imperative: imperative -/
+  | imperative
+  /-- performative: performative -/
+  | performative
+  /-- assertion: assertion -/
+  | assertion
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `form`. -/
+def form (e : Datum) : Option Form :=
+  e.parse? "form" [("imperative", .imperative), ("performative", .performative), ("assertion", .assertion)]
 
 end CondoravdiLauer2012.Examples

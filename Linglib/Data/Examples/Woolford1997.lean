@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Woolford1997` — typed example data
@@ -976,5 +978,19 @@ def ex_58_kal_acc : Datum :=
     paperFeatures := [("cell", "accusative"), ("exponent", "Ø"), ("agreement", "none")] }
 
 def all : List Datum := [ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_16A1, ex_16A2, ex_16B1, ex_16B2, ex_22A1, ex_22A2, ex_22A3, ex_22A4, ex_22B1, ex_22B2, ex_22B3, ex_22B4, ex_22B5, ex_22B6, ex_22B7, ex_22B8, ex_29a, ex_29b, ex_30a, ex_30b, ex_31a, ex_31b, ex_32, ex_33, ex_34, ex_37, ex_39, ex_40, ex_41, ex_42, ex_43, ex_44, ex_45, ex_49, ex_50, ex_51, ex_55, ex_56, ex_57, ex_10a, ex_10b, fn16i, fn16ii, fn16iii, fn18i, ex_11, ex_12, ex_13, ex_63, ex_58_nez_nom, ex_58_nez_erg, ex_58_nez_obj, ex_58_nez_acc, ex_58_kal_nom, ex_58_kal_erg, ex_58_kal_obj, ex_58_kal_acc]
+
+/-- Where an argument sits at LF: the specifier of Agr-S, the specifier of Agr-O, or inside VP. -/
+inductive Position where
+  /-- subject: subject -/
+  | specAgrS
+  /-- object: object -/
+  | specAgrO
+  /-- none: none -/
+  | inVP
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `agreement`. -/
+def agreement (e : Datum) : Option Position :=
+  e.parse? "agreement" [("subject", .specAgrS), ("object", .specAgrO), ("none", .inVP)]
 
 end Woolford1997.Examples

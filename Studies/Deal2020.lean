@@ -314,6 +314,11 @@ def depth? : String → Option ℕ
   | "lowest reported context" => some 2
   | _ => none
 
+/-- The paper accepts a reading it leaves unmarked or marks `?`. -/
+def Accepted (j : Judgment) : Prop := j = .acceptable ∨ j = .marginal
+
+instance (j : Judgment) : Decidable (Accepted j) := inferInstanceAs (Decidable (_ ∨ _))
+
 /-- A row's verb, and the coordinates its indexicals read. -/
 def verbCoords? (r : Datum) : Option (Verb × List Coord) :=
   ((r.feature? "verb").bind verb?).bind fun v ↦ ((r.features "indexical").mapM coord?).map (v, ·)
@@ -323,14 +328,14 @@ exactly the coordinates it shifts, per (G2) and Shift Together (72). -/
 theorem rows_shift :
     ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ x ∈ r.readings,
       ∀ ps ∈ (shifted? x.1).toList,
-        (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ q ∈ p.2.zipIdx, (q.1 ∈ s ↔ q.2 ∈ ps)) := by
+        (Accepted x.2 ↔ ∃ s ∈ p.1.options, ∀ q ∈ p.2.zipIdx, (q.1 ∈ s ↔ q.2 ∈ ps)) := by
   decide +kernel
 
 /-- A judged de se reading of the rows' shifted indexicals is available exactly when a complement
 the verb selects shifts their coordinates. -/
 theorem rows_deSe :
     ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ x ∈ r.readings, x.1 = "de se" →
-      (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s) := by
+      (Accepted x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s) := by
   decide +kernel
 
 /-- (G3) in the rows: a judged non-de se reading of the rows' shifted indexicals is available
@@ -339,7 +344,7 @@ complementizer, `eventShifted n c = shifted n \ shifted c`. -/
 theorem rows_nonDeSe :
     ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ c ∈ p.1.cPosition.toList,
       ∀ x ∈ r.readings, x.1 = "non-de se" →
-        (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s \ shifted c) := by
+        (Accepted x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s \ shifted c) := by
   decide +kernel
 
 /-- In the lowest of two reports, a first-person reading is available iff the two verbs' complements
@@ -348,7 +353,7 @@ theorem rows_double_report :
     ∀ r ∈ Examples.all, r.feature? "lowest_shift" = some "yes" →
       ∀ p ∈ (verbCoords? r).toList, ∀ v₂ ∈ ((r.feature? "lower_verb").bind verb?).toList,
         ∀ x ∈ r.readings, ∀ d ∈ (depth? x.1).toList,
-          (.marginal ≤ x.2 ↔ ∃ s₁ ∈ p.1.options, ∃ s₂ ∈ v₂.options, .addressee ∈ s₂ ∧
+          (Accepted x.2 ↔ ∃ s₁ ∈ p.1.options, ∃ s₂ ∈ v₂.options, .addressee ∈ s₂ ∧
             ∀ k ∈ p.2, localDepth [s₁, s₂] k = d) := by
   decide +kernel
 

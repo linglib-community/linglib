@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Geurts2010` — typed example data
@@ -341,5 +343,26 @@ def ex_56c : Datum :=
     paperFeatures := [("attitude", "want"), ("inference", "I want you not to give me all of your biscuits."), ("conveys", "false")] }
 
 def all : List Datum := [table2_i, table2_ii, table2_iii, table2_iv, table2_v, table2_vi, table2_vii, table2_viii, ex_11, ex_12, ex_19, ex_13, ex_23, ex_26a, ex_26b, ex_6_figs, ex_3, ex_31_x, ex_29, ex_61a, ex_61b, ex_61c, ex_56a, ex_56b, ex_56c]
+
+/-- The three contrasts on which Gricean reasoning derives one inference and not its neighbour. -/
+inductive Item where
+  /-- sameLength: sameLength -/
+  | sameLength
+  /-- longer: longer -/
+  | longer
+  /-- figs: figs -/
+  | figs
+  /-- mango: mango -/
+  | mango
+  /-- referent: referent -/
+  | referent
+  /-- everySailor: everySailor -/
+  | everySailor
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `item`. -/
+def item (e : Datum) : Option Item :=
+  e.parse? "item" [("sameLength", .sameLength), ("longer", .longer), ("figs", .figs), ("mango", .mango),
+    ("referent", .referent), ("everySailor", .everySailor)]
 
 end Geurts2010.Examples

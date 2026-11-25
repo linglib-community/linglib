@@ -467,13 +467,6 @@ inductive BoundaryAdverbial where
   | widener
   deriving DecidableEq, Repr
 
-/-- The canceling continuations of Section 1: professing ignorance of earlier events, or denying
-any. -/
-inductive Continuation where
-  | ignorance
-  | denial
-  deriving DecidableEq, Repr
-
 /-- A row's boundary adverbial, read off its words: the strong-NPI idiom *in years*
 (`English.PolarityItems.inYears`) is the widener, and a boundary is named compositionally, by
 *in* with a numeral and the plural of *year*, or by *since* with a date. The slash-written
@@ -492,7 +485,7 @@ def adverbialOfForm? (e : Datum) : Option BoundaryAdverbial :=
 cell the row's `continuation` feature records. -/
 def cancellation? (e : Datum) : Option (BoundaryAdverbial × Continuation) := do
   pure (← adverbialOfForm? e,
-    ← e.parse? "continuation" [("ignorance", .ignorance), ("denial", .denial)])
+    ← (Examples.continuation e))
 
 /-- A canceling continuation is consistent with a named boundary, whose span has an event-free
 model (`cancelable_of_lb`, `lbNamed_cancellable`), and contradicts the widener, whose widened

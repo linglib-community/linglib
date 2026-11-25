@@ -75,6 +75,8 @@ postverbal phrase is an argument of V2, and that chapter, the V-*de* constructio
 
 namespace Tay2024
 
+open Examples (ExternalArgument)
+
 open Mandarin Morphology
 
 /-! ### The null affix (chapter 2, section 3.3) -/
@@ -245,26 +247,12 @@ theorem ji_chen_participant :
 
 /-! ### The external argument in the data (chapter 3, sections 2.1–2.2) -/
 
-/-- The paper's reading of the external argument of a transitive compound relative to V1. -/
-inductive ExternalArgument
-  | agent
-  | theme
-  | subjectMatter
-  | pureCauser
-  deriving DecidableEq
+example : Examples.externalArgument Examples.ex_146 = some .pureCauser := rfl
 
-/-- The reading of the external argument a row records. -/
-def externalArgument? (ex : Datum) : Option ExternalArgument :=
-  ex.parse? "externalArgument"
-    [("agent", .agent), ("theme", .theme), ("subjectMatter", .subjectMatter),
-     ("pureCauser", .pureCauser)]
-
-example : externalArgument? Examples.ex_146 = some .pureCauser := rfl
-
-example : externalArgument? Examples.ex_150 = some .subjectMatter := rfl
+example : Examples.externalArgument Examples.ex_150 = some .subjectMatter := rfl
 
 theorem ungrammatical_iff_pureCauser :
-    ∀ ex ∈ Examples.all, ∀ a ∈ externalArgument? ex,
+    ∀ ex ∈ Examples.all, ∀ a ∈ Examples.externalArgument ex,
       ex.judgment = .ungrammatical ↔ a = .pureCauser := by
   decide
 

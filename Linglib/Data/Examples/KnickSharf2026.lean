@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `KnickSharf2026` — typed example data
@@ -94,5 +96,17 @@ def ex_12 : Datum :=
     paperFeatures := [("reading", "experiential")] }
 
 def all : List Datum := [ex_5, ex_6, ex_8a, ex_8b, ex_10, ex_12]
+
+/-- The universal and the experiential reading of the perfect. -/
+inductive Reading where
+  /-- universal: universal -/
+  | universal
+  /-- experiential: experiential -/
+  | experiential
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `reading`. -/
+def reading (e : Datum) : Option Reading :=
+  e.parse? "reading" [("universal", .universal), ("experiential", .experiential)]
 
 end KnickSharf2026.Examples

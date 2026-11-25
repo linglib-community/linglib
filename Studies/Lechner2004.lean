@@ -83,9 +83,9 @@ instance (t : Tree Cat Unit) (p q : GornAddress) (k : BindingClass) :
   inferInstanceAs (Decidable (_ → _))
 
 /-- A judgment attests the coreferential reading when it is acceptable or marginal. -/
-def Attested (e : Datum) : Prop := .marginal ≤ e.judgment
+def Attested (e : Datum) : Prop := e.judgment = .acceptable ∨ e.judgment = .marginal
 
-instance (e : Datum) : Decidable (Attested e) := inferInstanceAs (Decidable (_ ≤ _))
+instance (e : Datum) : Decidable (Attested e) := inferInstanceAs (Decidable (_ ∨ _))
 
 /-! ### Comparative Deletion (chapter 2, §2.1) -/
 

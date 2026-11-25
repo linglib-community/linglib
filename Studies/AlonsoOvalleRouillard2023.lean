@@ -65,6 +65,8 @@ and under *must* keep [disjunctions competition cannot remove](##mem_strengthen_
 
 namespace AlonsoOvalleRouillard2023
 
+open Examples (Phrase)
+
 open ElliottNicolaeSauerland2022 Question Set Presupposition Mereology
 
 variable {E W : Type*}
@@ -73,25 +75,11 @@ variable {E W : Type*}
 
 section Phrases
 
-/-- An interrogative phrase, by the paper's taxonomy of its rows. -/
-inductive Phrase
-  /-- A singular complex phrase, *which student*. -/
-  | sci
-  /-- A plural complex phrase, *which students*. -/
-  | pci
-  /-- An English bare phrase, *who*. -/
-  | bi
-  /-- A singular bare phrase, *quién*. -/
-  | sbi
-  /-- A plural bare phrase, *quiénes*. -/
-  | pbi
-  deriving DecidableEq
-
 variable [CompleteLattice E] [IsAtomistic E]
 
 /-- The worlds where a question is defined, as in Dayal for complex phrases and *who*, and over the
 weak singular (36a) and the strong plural (36b) for Spanish bare phrases. -/
-def Phrase.felicitous : Phrase → Set E
+def Examples.Phrase.felicitous : Phrase → Set E
   | .sci => whFelicitous (some .singular)
   | .pci => whFelicitous (some .plural)
   | .bi => whFelicitous none
@@ -100,14 +88,16 @@ def Phrase.felicitous : Phrase → Set E
 
 variable [Finite E] {a b : E}
 
-theorem Phrase.atom_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (p : Phrase) :
+theorem Examples.Phrase.atom_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
+    (p : Phrase) :
     a ∈ p.felicitous ↔ p ≠ .pci ∧ p ≠ .pbi := by
   cases p <;> simp [Phrase.felicitous, whFelicitous_singular, whFelicitous_plural ha hb hab,
     whFelicitous_none, presupposition_hamblin_whDomain,
     presupposition_hamblin_Ici (toFinite _) isUpperSet_whStrongPlural, mem_whStrongPlural, ha,
     ha.ne_bot]
 
-theorem Phrase.sup_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (p : Phrase) :
+theorem Examples.Phrase.sup_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
+    (p : Phrase) :
     a ⊔ b ∈ p.felicitous ↔ p ≠ .sci := by
   have hne : a ⊔ b ≠ ⊥ := fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
   have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_isAtom_sup_of_ne (ha)
@@ -330,13 +320,9 @@ end Forms
 
 /-! ### The paper's judgments -/
 
-/-- A row's interrogative phrase, by its type in the paper's taxonomy. -/
-def phrase? (e : Datum) : Option Phrase :=
-  e.parse? "type" [("SCI", .sci), ("PCI", .pci), ("BI", .bi), ("SBI", .sbi), ("PBI", .pbi)]
-
 /-- A row's phrase, where the paper judges its singular and plural answers. -/
 def answers? (e : Datum) : Option Phrase :=
-  (phrase? e).filter fun _ ↦ (e.readings.lookup "singular answer").isSome
+  (Examples.phrase e).filter fun _ ↦ (e.readings.lookup "singular answer").isSome
 
 /-- The complete disjunctive answers the paper judges under *must*. -/
 inductive Disjunction
@@ -407,9 +393,9 @@ theorem Disjunction.answer_mem_hamblin_whStrongPlural_iff (ha : IsAtom a) (hb : 
 theorem disjunction_rows_agree (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c) (hd : IsAtom d)
     (hab : a ≠ b) (hcd : c ≠ d) :
     ∀ e ∈ Examples.all, ∀ r ∈ e.readings, ∀ k ∈ disjunction? r.1,
-      (phrase? e = some .sbi →
+      (Examples.phrase e = some .sbi →
         (k.answer a b c d ∈ hamblin Ici (whDomain none) ↔ r.2 = .acceptable)) ∧
-      (phrase? e = some .pbi →
+      (Examples.phrase e = some .pbi →
         (k.answer a b c d ∈ hamblin Ici whStrongPlural ↔ r.2 = .acceptable)) := by
   simp only [Disjunction.answer_mem_hamblin_whStrongPlural_iff ha hb hc hd hab hcd,
     iff_true_intro (Disjunction.answer_mem_hamblin_whDomain ha hb hc _), true_iff]

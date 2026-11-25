@@ -1,4 +1,43 @@
-[
+{
+  "features": [
+    {
+      "key": "clause",
+      "lean": "clause",
+      "type": "ClauseType",
+      "doc": "The clause types of the Spanish paradigm (41).",
+      "levels": [
+        {
+          "name": "infinitive",
+          "label": "infinitive",
+          "doc": "infinitive"
+        },
+        {
+          "name": "finite",
+          "label": "finite",
+          "doc": "finite"
+        }
+      ]
+    },
+    {
+      "key": "position",
+      "lean": "position",
+      "type": "Position",
+      "doc": "The positions of the Spanish paradigm (41).",
+      "levels": [
+        {
+          "name": "complement",
+          "label": "complement",
+          "doc": "complement"
+        },
+        {
+          "name": "subject",
+          "label": "subject",
+          "doc": "subject"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "landau2024a_20a",
     "source": {
@@ -888,3 +927,4 @@
     "verified": "page-image"
   }
 ]
+}

@@ -297,9 +297,10 @@ def bp2004_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
+    alsoJudged := [.ungrammatical]
     contrasts := []
     readings := []
-    paperFeatures := [("section", "5.2"), ("claim", "crossing degree abstractions, excluded by the Heim-Kennedy Constraint"), ("alsoJudged", "ungrammatical")] }
+    paperFeatures := [("section", "5.2"), ("claim", "crossing degree abstractions, excluded by the Heim-Kennedy Constraint")] }
 
 def bp2004_50b : Datum :=
   { id := "bp2004_50b"

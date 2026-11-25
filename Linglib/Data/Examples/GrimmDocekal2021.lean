@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `GrimmDocekal2021` — typed example data
@@ -811,5 +813,47 @@ def ex_69 : Datum :=
     paperFeatures := [("noun", "substance"), ("numeral", "aggregate"), ("operation", "packaging")] }
 
 def all : List Datum := [ex_9b, ex_10a, ex_10b, ex_11, ex_12, ex_13a, ex_13b, ex_13c, ex_15b, ex_17, ex_18, ex_19, ex_20a, ex_20b, ex_20c, ex_20d, ex_24a, ex_24b, ex_24b_simple, ex_25a, ex_25b, ex_25c, ex_26a, ex_26b, ex_26c, ex_27a, ex_27b, ex_27c, ex_28a, ex_28b, ex_28c, ex_28d, ex_32a, ex_32b, ex_32c, ex_33a, ex_33b, ex_33c, ex_34, ex_35, ex_36b, ex_37a, ex_37b, ex_38a, ex_39, ex_40a, ex_40b, ex_40c, ex_40d, ex_52a, ex_52b, ex_68, ex_69]
+
+/-- A noun falls into one of these classes, which numerals and operations select. -/
+inductive Noun where
+  /-- ordinary: ordinary -/
+  | ordinary
+  /-- animate: animate -/
+  | animate
+  /-- derivedAggregate: the noun is derived by *-í* -/
+  | derivedAggregate
+  /-- pluraleTantum: pluraleTantum -/
+  | pluraleTantum
+  /-- multiple: the noun is countable, and its referents typically come in multiples, *klíče* 'keys' -/
+  | multiple
+  /-- substance: substance -/
+  | substance
+  /-- abstract: abstract -/
+  | abstract
+  /-- unique: the phrase refers uniquely, *noha tohoto stolu* 'this table's leg' -/
+  | unique
+  /-- proper: proper -/
+  | proper
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `noun`. -/
+def noun (e : Datum) : Option Noun :=
+  e.parse? "noun" [("ordinary", .ordinary), ("animate", .animate), ("derivedAggregate", .derivedAggregate),
+    ("pluraleTantum", .pluraleTantum), ("multiple", .multiple), ("substance", .substance),
+    ("abstract", .abstract), ("unique", .unique), ("proper", .proper)]
+
+/-- A reading is judged in one of these contexts. -/
+inductive Context where
+  /-- episodic: episodic -/
+  | episodic
+  /-- generic: generic -/
+  | generic
+  /-- portion: the context is a fast-food order, section 2.2.2 -/
+  | portion
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `context`. -/
+def context (e : Datum) : Option Context :=
+  e.parse? "context" [("episodic", .episodic), ("generic", .generic), ("portion", .portion)]
 
 end GrimmDocekal2021.Examples
