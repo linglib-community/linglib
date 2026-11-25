@@ -305,7 +305,7 @@ variable (η t) in
 /-- The cut of the movement probes that `probe` assigns to lexical items: at a stage, the
 positions behind the horizon of the probe on the lexical head of that stage. -/
 def horizonCut (hd : HeadFunction) (probe : LexicalItem.Token → Option HorizonSetting) : Cut :=
-  fun s ↦ {q | ∃ tok ∈ t.toRoseTree[lexicalHeadAt hd t s]?.bind rootToken?, ∃ p ∈ probe tok,
+  fun s ↦ {q | ∃ tok ∈ t.toRoseTree[lexicalHeadAt hd t s]?.bind rootLex?, ∃ p ∈ probe tok,
     q ∈ p.cut η t (lexicalHeadAt hd t s)}
 
 instance (hd : HeadFunction) (probe : LexicalItem.Token → Option HorizonSetting)
@@ -320,7 +320,7 @@ theorem RespectsCut.transparentTo {hd : HeadFunction}
     (hr : RespectsCut hd t (horizonCut η t hd probe)) {r l x : GornAddress}
     {mover tok : LexicalItem.Token} (hm : (r, mover) ∈ tokenList t.toRoseTree)
     (hl : (l, q) ∈ links hd t mover)
-    (htok : t.toRoseTree[lexicalHeadAt hd t l.parent]?.bind rootToken? = some tok)
+    (htok : t.toRoseTree[lexicalHeadAt hd t l.parent]?.bind rootLex? = some tok)
     (hp : probe tok = some p) (hx : x < q)
     (hc : t.toRoseTree.CCommands (lexicalHeadAt hd t l.parent) x) :
     p.TransparentTo (spineAt η t x) :=

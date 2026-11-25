@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Syntax.Minimalist.Label.Head
 public import Linglib.Syntax.Minimalist.Label.SelectionRule
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
@@ -230,7 +231,13 @@ def cat? : Option Cat := s.selectionHead.map (·.item.cat)
 theorem selectionHead_merge {l r : SyntacticObject} {t : LexicalItem.Token}
     (h : (merge l r).selectionHead = some t) :
     l.selectionHead = some t ∨ r.selectionHead = some t :=
-  SelectionRule.State.isHeadFunction_head.comp selectionState (x := l) (y := r) h
+  SelectionRule.State.head_mul (map_mul selectionState l r ▸ h)
+
+/-- The selection head is a head function. -/
+theorem isHeadFunction_selectionHead :
+    IsHeadFunction (selectionHead : SyntacticObject → Option LexicalItem.Token) where
+  eq_of_mem_leaf h := by simpa [eq_comm] using h
+  mem_or_mem := selectionHead_merge
 
 variable {f : LexicalItem.Token → LexicalItem.Token}
 

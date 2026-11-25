@@ -123,22 +123,21 @@ def head : CopyState → Option LexicalItem.Token
   · rfl
 
 /-- The head of a product of copy states is a factor's head. -/
-theorem isHeadFunction_head : IsHeadFunction head where
-  map_zero := rfl
-  mem_or_mem_of_mem_mul {x y h} hxy := by
-    rcases x with x | a <;> rcases y with y | b
-    · exact SelectionRule.State.isHeadFunction_head.mem_or_mem_of_mem_mul hxy
-    · rw [sel_mul_copy] at hxy
-      split_ifs at hxy with h0
-      · exact .inl hxy
-      · change (x * SelectionRule.State.of b []).head = some h at hxy
-        rw [_root_.mul_comm x] at hxy
-        exact .inl (SelectionRule.State.head_of_mul_of hxy)
-    · rw [copy_mul_sel] at hxy
-      split_ifs at hxy with h0
-      · exact .inr hxy
-      · exact .inr (SelectionRule.State.head_of_mul_of hxy)
-    · cases hxy
+theorem head_mul {x y : CopyState} {h : LexicalItem.Token} (hxy : h ∈ (x * y).head) :
+    h ∈ x.head ∨ h ∈ y.head := by
+  rcases x with x | a <;> rcases y with y | b
+  · exact SelectionRule.State.head_mul hxy
+  · rw [sel_mul_copy] at hxy
+    split_ifs at hxy with h0
+    · exact .inl hxy
+    · change (x * SelectionRule.State.of b []).head = some h at hxy
+      rw [_root_.mul_comm x] at hxy
+      exact .inl (SelectionRule.State.head_of_mul_of hxy)
+  · rw [copy_mul_sel] at hxy
+    split_ifs at hxy with h0
+    · exact .inr hxy
+    · exact .inr (SelectionRule.State.head_of_mul_of hxy)
+  · cases hxy
 
 end CopyState
 
@@ -184,21 +183,20 @@ instance : CommMagma RaisingState where
   mul_comm x y := by simp only [mul_def, raise_comm, add_comm]
 
 /-- The raising head of a product is a factor's raising head. -/
-theorem isHeadFunction_head : IsHeadFunction fun x : RaisingState ↦ x.state.head where
-  map_zero := rfl
-  mem_or_mem_of_mem_mul {x y t} h := by
-    simp only [mul_def, raise] at h
-    split_ifs at h with h0
-    · exact CopyState.isHeadFunction_head.mem_or_mem_of_mem_mul h
-    · rcases hx : x.state.head with _ | a <;> rcases hy : y.state.head with _ | b <;>
-        simp only [hx, hy] at h ⊢
-      · cases h
-      · cases h
-      · cases h
-      · split_ifs at h
-        · right; simp_all
-        · left; simp_all
-        · exact absurd (show (none : Option LexicalItem.Token) = some t from h) (by simp)
+theorem head_mul {x y : RaisingState} {t : LexicalItem.Token} (h : t ∈ (x * y).state.head) :
+    t ∈ x.state.head ∨ t ∈ y.state.head := by
+  simp only [mul_def, raise] at h
+  split_ifs at h with h0
+  · exact CopyState.head_mul h
+  · rcases hx : x.state.head with _ | a <;> rcases hy : y.state.head with _ | b <;>
+      simp only [hx, hy] at h ⊢
+    · cases h
+    · cases h
+    · cases h
+    · split_ifs at h
+      · right; simp_all
+      · left; simp_all
+      · exact absurd (show (none : Option LexicalItem.Token) = some t from h) (by simp)
 
 end RaisingState
 
@@ -241,7 +239,13 @@ def raisingCheckHom : SyntacticObject →ₙ* RaisingState :=
 ([marcolli-chomsky-berwick-2025] Lemma 1.13.7). -/
 theorem raisingHead_merge {l r : SyntacticObject} {h : LexicalItem.Token}
     (hlr : (merge l r).raisingHead = some h) : l.raisingHead = some h ∨ r.raisingHead = some h :=
-  RaisingState.isHeadFunction_head.comp raisingCheckHom (x := l) (y := r) hlr
+  RaisingState.head_mul (raisingCheck_merge l r ▸ hlr)
+
+/-- The raising head is a head function. -/
+theorem isHeadFunction_raisingHead :
+    IsHeadFunction (raisingHead : SyntacticObject → Option LexicalItem.Token) where
+  eq_of_mem_leaf h := by simpa [eq_comm] using h
+  mem_or_mem := raisingHead_merge
 
 @[simp] theorem raisingHead_merge_self (x : SyntacticObject) : (merge x x).raisingHead = none := by
   rw [raisingHead, raisingCheck_merge, RaisingState.mul_def]

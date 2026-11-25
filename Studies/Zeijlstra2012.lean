@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Minimalist.Phase.Basic
 public import Linglib.Syntax.Minimalist.Probe.Minimal
 
@@ -88,11 +89,12 @@ phase interior may Agree with a goal outside the phase only if an element of the
 carries the uninterpretable feature `uF` too. -/
 def EdgeParticipates (root probe goal : SyntacticObject) (uF : SyntacticObject → Prop)
     (ℓ : LexicalItem.Token) : Prop :=
-  probe ∈ root.phaseInterior ℓ → goal ∉ root.phase ℓ → ∃ e ∈ root.phaseEdge ℓ, uF e
+  probe ∈ root.phaseInterior raisingHead ℓ → goal ∉ root.phase raisingHead ℓ →
+    ∃ e ∈ root.phaseEdge raisingHead ℓ, uF e
 
 instance {uF : SyntacticObject → Prop} [DecidablePred uF] (root probe goal : SyntacticObject)
     (ℓ : LexicalItem.Token) : Decidable (EdgeParticipates root probe goal uF ℓ) :=
-  have : Decidable (∃ e ∈ root.phaseEdge ℓ, uF e) := Multiset.decidableExistsMultiset
+  have : Decidable (∃ e ∈ root.phaseEdge raisingHead ℓ, uF e) := Multiset.decidableExistsMultiset
   inferInstanceAs (Decidable (_ → _ → _))
 
 /-! ### Sequence of Tense -/
@@ -146,8 +148,8 @@ theorem sot_not_downward :
   decide
 
 theorem sot_licit :
-    (sot : SyntacticObject).WithinComplement ⟨.of .C [.V] "that", 4⟩ was ∧
-      ¬ (sot : SyntacticObject).WithinProjection ⟨.of .C [.V] "that", 4⟩ opPast ∧
+    (sot : SyntacticObject).WithinComplement raisingHead ⟨.of .C [.V] "that", 4⟩ was ∧
+      ¬ (sot : SyntacticObject).WithinProjection raisingHead ⟨.of .C [.V] "that", 4⟩ opPast ∧
       EdgeParticipates sot was opPast uPast ⟨.of .C [.V] "that", 4⟩ := by decide
 
 /-! ### Negative Concord -/

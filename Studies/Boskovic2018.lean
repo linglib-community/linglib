@@ -263,12 +263,13 @@ theorem mergeOpUnit_subject_eq_zero (cuts : _) :
 -- extracted from the moved subject, *who* is in the interior of the subject phase when it would
 -- move, and from the edge it is not
 theorem inaccessible_who_iff (r : Route) :
-    (beforeExtraction r).final.Inaccessible IsPhaseHead ↑who ↔ r = .direct := by
+    (beforeExtraction r).final.Inaccessible SyntacticObject.raisingHead IsPhaseHead ↑who ↔
+      r = .direct := by
   cases r <;> decide +kernel
 
 -- so the unit stage of the Internal Merge of *who* vanishes at the phase coproduct
 theorem mergeOpUnit_who_eq_zero (cuts : _) :
-    Merge.mergeOpUnitOfCuts (R := ℤ) (Merge.phaseCuts IsPhaseHead cuts)
+    Merge.mergeOpUnitOfCuts (R := ℤ) (Merge.phaseCuts SyntacticObject.raisingHead IsPhaseHead cuts)
       (who : SyntacticObject).toUnorderedTree
       (ConnesKreimer.of' {(beforeExtraction .direct).final.toUnorderedTree}) = 0 :=
   Merge.mergeOpUnitOfCuts_phaseCuts_eq_zero (by decide +kernel)
@@ -435,8 +436,8 @@ theorem ex42a : ¬ rPronounExtraction.ObeysFreezing ∧
 
 -- the specifiers that share a feature are accessible in the moved phrase
 theorem not_inaccessible_specifier :
-    ¬ objectFronting.final.Inaccessible IsPhaseHeadNP ↑possessor ∧
-      ¬ ppFronting.final.Inaccessible IsPhaseHead ↑waar := by
+    ¬ objectFronting.final.Inaccessible SyntacticObject.raisingHead IsPhaseHeadNP ↑possessor ∧
+      ¬ ppFronting.final.Inaccessible SyntacticObject.raisingHead IsPhaseHead ↑waar := by
   decide +kernel
 
 /-! ### Labels at each stage -/

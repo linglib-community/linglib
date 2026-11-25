@@ -11,19 +11,23 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 /-!
 # The spine of a syntactic object
 
-The spine of a syntactic object lists the heads of its extended projection from the bottom up.
-Given the head daughter of each node, a head projects its category over the spine of its sister
-and a phrase keeps the spine of its head daughter, Keine's Category Inheritance. We define the
-spine of a tree of vertices, and of the node at a position of a syntactic object, as a
-`Spine Cat`.
+Given the head daughter of each node, the heads of a tree are read off from the bottom up: a head
+sits on the heads of its sister, and a phrase keeps those of its head daughter. This is a spine of
+lexical items, for any type of them. The spine of a syntactic object in categories lists the heads
+of its extended projection: a head projects its category over the spine of its sister, Keine's
+Category Inheritance. It is the extended projection at the top of the spine of items, read in
+categories.
 
 ## Main definitions
 
-* `Minimalist.spineOf`: the spine of a tree, by category inheritance.
+* `Minimalist.toSpine`: the spine of lexical items of a tree.
+* `Minimalist.spineOf`: the spine of a tree in categories, by category inheritance.
 * `Minimalist.spineAt`: the spine of the node at a position.
 
 ## Main results
 
+* `Minimalist.spineOf_eq`: the spine in categories is the extended projection of the spine of
+  items.
 * `Minimalist.isExtendedProjection_spineOf`: the spine of a tree is an extended projection.
 * `Minimalist.spineOf_le_spineOf_node`: the phrase of a head that inherits from its complement
   carries every category the complement does.
@@ -39,12 +43,30 @@ namespace Minimalist
 
 open RoseTree SyntacticObject
 
-variable (η : RoseTree Vertex → Option ℕ) (t : PlanarSyntacticObject)
+section
+
+variable {L ι : Type} (η : RoseTree (Vertex L ι) → Option ℕ)
 
 /-- The lexical item at the root of a tree, if it is a pronounced leaf. -/
-def rootToken? : RoseTree Vertex → Option LexicalItem.Token
-  | .node (.inl tok) _ => tok
+def rootLex? : RoseTree (Vertex L ι) → Option L
+  | .node (.inl a) _ => a
   | _ => none
+
+/-- The spine of lexical items of a tree, its heads from the bottom up, given the index `η` of the
+head daughter of each tree: a head sits on the heads of its sister, and a phrase keeps those of
+its head daughter. -/
+def toSpine : RoseTree (Vertex L ι) → Spine L
+  | .node (.inl (some a)) _ => ⟨[a]⟩
+  | .node (.inl none) [l, r] =>
+    match η (.node (.inl none) [l, r]) with
+    | some 0 => (rootLex? l).elim (toSpine l) fun a ↦ (toSpine r).append [a]
+    | some 1 => (rootLex? r).elim (toSpine r) fun a ↦ (toSpine l).append [a]
+    | _ => ⟨[]⟩
+  | _ => ⟨[]⟩
+
+end
+
+variable (η : RoseTree Vertex → Option ℕ) (t : PlanarSyntacticObject)
 
 /-- The spine of a tree, the heads of its extended projection, given the index `η` of the head
 daughter of each tree: a head projects its category over the spine of its sister, and a phrase
@@ -53,8 +75,8 @@ def spineOf : RoseTree Vertex → Spine Cat
   | .node (.inl (some tok)) _ => ⟨[tok.item.cat]⟩
   | .node (.inl none) [l, r] =>
     match η (.node (.inl none) [l, r]) with
-    | some 0 => (rootToken? l).elim (spineOf l) fun tok ↦ (spineOf r).project tok.item.cat
-    | some 1 => (rootToken? r).elim (spineOf r) fun tok ↦ (spineOf l).project tok.item.cat
+    | some 0 => (rootLex? l).elim (spineOf l) fun tok ↦ (spineOf r).project tok.item.cat
+    | some 1 => (rootLex? r).elim (spineOf r) fun tok ↦ (spineOf l).project tok.item.cat
     | _ => ⟨[]⟩
   | _ => ⟨[]⟩
 
@@ -63,29 +85,47 @@ def spineAt (p : GornAddress) : Spine Cat := t.toRoseTree[p]?.elim ⟨[]⟩ (spi
 
 variable {η t} {l r : RoseTree Vertex} {tok : LexicalItem.Token}
 
+variable (η) in
+/-- The spine of a tree in categories is the extended projection at the top of its spine of
+lexical items, read in categories. -/
+theorem spineOf_eq (s : RoseTree Vertex) :
+    spineOf η s = ((toSpine η s).map (·.item.cat)).extendedProjection := by
+  fun_induction toSpine η s with
+  | case1 a cs => simp [spineOf, Spine.map, Spine.extendedProjection, Spine.project, Spine.Inherits]
+  | case2 l r h ihl ihr =>
+    rw [spineOf, h]
+    rcases l with ⟨(_ | tok) | _, _⟩ <;> simp_all [rootLex?, Spine.map, Spine.append]
+  | case3 l r h ihl ihr =>
+    rw [spineOf, h]
+    rcases r with ⟨(_ | tok) | _, _⟩ <;> simp_all [rootLex?, Spine.map, Spine.append]
+  | case4 l r h0 h1 =>
+    rw [spineOf]
+    split <;> simp_all [Spine.map]
+  | case5 s h0 h1 =>
+    rw [spineOf]
+    · simp [Spine.map]
+    · exact fun tok cs hs ↦ h0 tok cs hs
+    · exact fun l r hs ↦ h1 l r hs
+
 /-- The spine of a tree is an extended projection. -/
 theorem isExtendedProjection_spineOf (s : RoseTree Vertex) :
-    (spineOf η s).IsExtendedProjection := by
-  fun_induction spineOf η s
-  case case1 => exact .singleton _
-  case case2 ihl ihr | case3 ihl ihr =>
-    cases rootToken? _ <;> first | assumption | exact .project ‹_› _
-  all_goals exact .nil
+    (spineOf η s).IsExtendedProjection :=
+  spineOf_eq η s ▸ Spine.isExtendedProjection_extendedProjection _
 
 theorem spineOf_node_zero (h : η (.node (.inl none) [l, r]) = some 0) :
     spineOf η (.node (.inl none) [l, r]) =
-      (rootToken? l).elim (spineOf η l) fun tok ↦ (spineOf η r).project tok.item.cat := by
+      (rootLex? l).elim (spineOf η l) fun tok ↦ (spineOf η r).project tok.item.cat := by
   simp [spineOf, h]
 
 theorem spineOf_node_one (h : η (.node (.inl none) [l, r]) = some 1) :
     spineOf η (.node (.inl none) [l, r]) =
-      (rootToken? r).elim (spineOf η r) fun tok ↦ (spineOf η l).project tok.item.cat := by
+      (rootLex? r).elim (spineOf η r) fun tok ↦ (spineOf η l).project tok.item.cat := by
   simp [spineOf, h]
 
 /-- Horizon inheritance: the phrase of a head that inherits from its complement carries every
 category the complement does, so it is a horizon for every probe the complement is. -/
 theorem spineOf_le_spineOf_node (h : η (.node (.inl none) [l, r]) = some 0)
-    (hl : rootToken? l = some tok) (hi : (spineOf η r).Inherits tok.item.cat) :
+    (hl : rootLex? l = some tok) (hi : (spineOf η r).Inherits tok.item.cat) :
     spineOf η r ≤ spineOf η (.node (.inl none) [l, r]) := by
   simpa [spineOf_node_zero h, hl] using Spine.le_project hi
 

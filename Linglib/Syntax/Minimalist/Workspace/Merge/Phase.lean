@@ -13,9 +13,9 @@ public import Linglib.Syntax.Minimalist.Phase.Basic
 
 Marcolli, Chomsky and Berwick read Phase Theory as a restriction of the coproduct: their phase
 coproduct (Definition 1.14.5) extracts the accessible terms that are not in the interior of a lower
-phase. `phaseCuts Φ cuts` is that restriction of a cut enumeration, with `Φ` the phase heads, to
-the terms that are not `SyntacticObject.Inaccessible`, and the unit stage of Internal Merge at it
-vanishes on an inaccessible mover (`mergeOpUnitOfCuts_phaseCuts_eq_zero`).
+phase. `phaseCuts h Φ cuts` is that restriction of a cut enumeration, with `h` the head function
+and `Φ` the phase heads, to the terms that are not `SyntacticObject.Inaccessible`, and the unit
+stage of Internal Merge at it vanishes on an inaccessible mover.
 
 ## TODO
 
@@ -33,22 +33,25 @@ namespace Minimalist.Merge
 
 open RoseTree UnorderedTree ConnesKreimer SyntacticObject
 
-variable {R : Type*} [CommSemiring R] {Φ : LexicalItem.Token → Prop} [DecidablePred Φ]
+variable {R : Type*} [CommSemiring R] {h : SyntacticObject → Option LexicalItem.Token}
+  {Φ : LexicalItem.Token → Prop} [DecidablePred Φ]
   {cuts : UnorderedTree Vertex → Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex)}
 
-/-- The cuts of the phase coproduct, with `Φ` the phase heads: those of `cuts` that extract no term
-in the interior of a lower phase. -/
-abbrev phaseCuts (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
+/-- The cuts of the phase coproduct, with `h` the head function and `Φ` the phase heads: those of
+`cuts` that extract no term in the interior of a lower phase. -/
+abbrev phaseCuts (h : SyntacticObject → Option LexicalItem.Token)
+    (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
     (cuts : UnorderedTree Vertex →
       Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex)) :
     UnorderedTree Vertex → Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex) :=
-  restrictCutsOf (fun T x ↦ ¬ T.Inaccessible Φ x) cuts
+  restrictCutsOf (fun T x ↦ ¬ T.Inaccessible h Φ x) cuts
 
 /-- The unit stage of Internal Merge at the phase coproduct vanishes on an inaccessible mover: a
 term in the interior of a lower phase does not move. -/
 theorem mergeOpUnitOfCuts_phaseCuts_eq_zero {T x : SyntacticObject} (hne : T ≠ x)
-    (h : T.Inaccessible Φ x) :
-    mergeOpUnitOfCuts (R := R) (phaseCuts Φ cuts) x.toUnorderedTree (of' {T.toUnorderedTree}) = 0 :=
-  mergeOpUnitOfCuts_restrictCutsOf_eq_zero hne (not_not.2 h)
+    (hx : T.Inaccessible h Φ x) :
+    mergeOpUnitOfCuts (R := R) (phaseCuts h Φ cuts) x.toUnorderedTree
+      (of' {T.toUnorderedTree}) = 0 :=
+  mergeOpUnitOfCuts_restrictCutsOf_eq_zero hne (not_not.2 hx)
 
 end Minimalist.Merge

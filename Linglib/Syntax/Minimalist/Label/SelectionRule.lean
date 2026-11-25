@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Algebra.GroupWithZero.Defs
-public import Linglib.Syntax.Minimalist.Label.Head
+public import Linglib.Syntax.Minimalist.LexicalItem
 
 /-!
 # Selection rules and their states
@@ -21,7 +21,7 @@ where neither selects, or neither outranks, the node has no head.
 The states of a rule are its constituents together with `0`, the failure of Merge. Their
 product is the constituent that projects, after it has selected its sister. It makes them a
 commutative magma with zero, so a selection state extends from lexical items to syntactic objects
-as a morphism of magmas (`Minimalist.Licensing`), and their head is a head function.
+as a morphism of magmas (`Minimalist.Licensing`), and the head of a product is the head of a factor.
 
 ## Main definitions
 
@@ -37,7 +37,7 @@ as a morphism of magmas (`Minimalist.Licensing`), and their head is a head funct
 ## Main results
 
 * `Minimalist.SelectionRule.Constituent.Projects.asymm`: of two sisters at most one projects.
-* `Minimalist.SelectionRule.State.isHeadFunction_head`: the head of a product is a factor's head.
+* `Minimalist.SelectionRule.State.head_mul`: the head of a product is a factor's head.
 * `Minimalist.SelectionRule.State.mul_self`: no constituent merges with itself.
 * `Minimalist.SelectionRule.State.foldl_mul_of`: along a spine the product is iterated selection.
 
@@ -253,13 +253,12 @@ theorem head_merge (x y : S.Constituent) {t : LexicalItem.Token} (h : t ∈ (mer
   · cases h
 
 /-- The head of a product of selection states is one of its factors' heads. -/
-theorem isHeadFunction_head : IsHeadFunction (head : S.State → Option LexicalItem.Token) where
-  map_zero := rfl
-  mem_or_mem_of_mem_mul {x y t} h := by
-    rcases x with ⟨_ | x⟩ <;> rcases y with ⟨_ | y⟩ <;> try cases h
-    rcases head_merge x y h with rfl | rfl
-    · exact .inl rfl
-    · exact .inr rfl
+theorem head_mul {x y : S.State} {t : LexicalItem.Token} (h : t ∈ (x * y).head) :
+    t ∈ x.head ∨ t ∈ y.head := by
+  rcases x with ⟨_ | x⟩ <;> rcases y with ⟨_ | y⟩ <;> try cases h
+  rcases head_merge x y h with rfl | rfl
+  · exact .inl rfl
+  · exact .inr rfl
 
 /-- The projecting daughter, `some true` for the left and `some false` for the right. -/
 def side : S.State → S.State → Option Bool
