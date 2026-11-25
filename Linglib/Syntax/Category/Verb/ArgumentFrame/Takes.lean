@@ -240,13 +240,13 @@ theorem takes_of_le (h : z.axes ≤ p.axes) (hz : z.axes ≠ ⊥) : p.Takes z :=
 theorem Takes.mono_of_compat (hpq : p ≤ q) (hc : Compat q.axes z.axes) (h : p.Takes z) :
     q.Takes z :=
   ⟨hc, h.2.imp fun a ⟨hp, hz⟩ ↦
-    ⟨fun hq ↦ hp (le_bot_iff.mp (hq ▸ (le_def.1 hpq).2 a)), hz⟩⟩
+    ⟨fun hq ↦ hp (le_bot_iff.mp (hq ▸ axes_mono hpq a)), hz⟩⟩
 
 /-- Coarsening a position keeps a typer it takes, as long as the coarsening
     still overlaps the typer. -/
 theorem Takes.of_le_of_overlap (hpq : p ≤ q) (ho : Overlap p.axes z.axes) (h : q.Takes z) :
     p.Takes z :=
-  ⟨h.1.mono (le_def.1 hpq).2 le_rfl, ho⟩
+  ⟨h.1.mono (axes_mono hpq) le_rfl, ho⟩
 
 end ArgumentFrame.Position
 
