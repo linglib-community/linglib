@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
@@ -49,9 +50,11 @@ among them, and with a finite complement clause as object it is nearly always po
 ([renzi-1988] ch. I §4.2). A sentence with a restructuring infinitive passivizes the infinitive
 and not the governing verb, *Questa parete deve essere ridipinta* and not **è dovuta
 ridipingere*, and the modals *volere*, *potere*, *dovere* and *sapere* are restructuring verbs.
-`passivizable` is one value for a verb: *avere* and *volere* are marked as not passivizing on
-that account, and *sperare*, which takes a finite clause, is not. The value of *intendere* is
-carried over from an earlier entry and is not in these sources.
+`Verb.Passivizes` states the rule on a verb and a frame, and the one exception these entries
+record is *avere* on its transitive frame (`Verb.noPassive`). `passivizable` is one value for a
+verb: *avere* and *volere* are marked as not passivizing on that account, and *sperare*, which
+takes a finite clause, is not. The value of *intendere* is carried over from an earlier entry
+and is not in these sources.
 
 ## References
 
@@ -237,6 +240,7 @@ def avere : Verb where
   valency := .ofFrame ArgumentFrame.np
   passivizable := false
   perfectAuxiliaries := {.have}
+  noPassive := [.np]
 
 /-- *essere* 'be', the auxiliary of the perfect of verbs of change and of state and of verbs
 with a clitic reflexive pronoun. -/
@@ -442,5 +446,18 @@ example :
     perfectAuxiliary correre .intransitive (some { mode := .directional .approximative }) = .have ∧
     perfectAuxiliary nuotare .intransitive (some (.ofCase .ill)) = .have := by
   decide
+
+/-- The passive is possible with a transitive verb, with the causative *fare*, and with a finite
+clause as object, and not with *avere*, with an unaccusative verb, or on the infinitive of
+*volere* ([renzi-1988] ch. I §4.2). -/
+example :
+    lavare.toVerb.Passivizes .np ∧
+      fare.toVerb.Passivizes ArgumentFrame.infinitival.withObject ∧
+      sperare.toVerb.Passivizes ArgumentFrame.subjunctiveClause ∧
+      volere.toVerb.Passivizes ArgumentFrame.subjunctiveClause ∧
+      ¬ avere.toVerb.Passivizes .np ∧ ¬ volere.toVerb.Passivizes ArgumentFrame.infinitival ∧
+      ∀ fr, ¬ venire.toVerb.Passivizes fr :=
+  ⟨by decide, by decide, by decide, by decide, by decide, by decide,
+    fun _ ↦ (by decide : venire.toVerb.IsUnaccusative).not_passivizes⟩
 
 end Italian.Verbs
