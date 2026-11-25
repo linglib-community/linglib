@@ -11,6 +11,11 @@ entails](##RSA.speaker_literalListener_apply_eq_iff), and when she knows the sta
 exactly the utterances true there](##RSA.speaker_literalListener_dirac_apply_singleton_ne_zero_iff).
 The pragmatic listener is the listener of this speaker.
 
+A belief that entails strictly fewer utterances puts strictly more mass on each of them, so a
+state that makes strictly fewer utterances true is a better state for each of them, whatever the
+prior and the costs. Pulling the denotations back along a map of states gives the speaker of the
+original denotations at the image state, against the prior carried forward along the map.
+
 ## References
 
 * [M. C. Frank and N. D. Goodman, *Predicting Pragmatic Reasoning in Language Games*
