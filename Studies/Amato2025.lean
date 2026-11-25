@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.List.Permutation
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Amato2025
 public import Linglib.Syntax.Clause.Alignment
@@ -279,17 +280,6 @@ instance (h : Head) (t : FeatureType) : Decidable (AllActive h t) :=
 def person (p : Person) : Σ t : FeatureType, FeatureSlot t.Slot :=
   ⟨.person, ↑(FeatureType.Slot.ofValue .person p)⟩
 
-private theorem eq_or_eq_of_perm_pair {α : Type*} {a b : α} {l : List α} (h : l.Perm [a, b]) :
-    l = [a, b] ∨ l = [b, a] := by
-  match l, h.length_eq with
-  | [x, y], _ =>
-    have hx : x ∈ [a, b] := h.subset (by simp)
-    have hy : y ∈ [a, b] := h.subset (by simp)
-    have ha : a ∈ [x, y] := h.symm.subset (by simp)
-    have hb : b ∈ [x, y] := h.symm.subset (by simp)
-    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx hy ha hb
-    grind
-
 /-! ### Standard Italian auxiliary selection (§3)
 
 Perf bears `[∗Infl:perf∗]` and `[∗π:_∗]`, ordered as in (7) or (22). v first runs its own
@@ -551,13 +541,13 @@ alignment. -/
 theorem isIndirective_caseMarking_of_agreement {ts : List FeatureType}
     (hts : ts.Perm [.case, .person]) (d : Bool) :
     IsIndirective (agreement ts d) → IsIndirective (caseMarking ts d) := by
-  rcases eq_or_eq_of_perm_pair hts with rfl | rfl <;> (revert d; decide)
+  rcases List.perm_pair.1 hts with rfl | rfl <;> (revert d; decide)
 
 -- (26), (28): a secundative case alignment comes with a secundative agreement alignment
 theorem isSecundative_agreement_of_caseMarking {ts : List FeatureType}
     (hts : ts.Perm [.case, .person]) (d : Bool) :
     IsSecundative (caseMarking ts d) → IsSecundative (agreement ts d) := by
-  rcases eq_or_eq_of_perm_pair hts with rfl | rfl <;> (revert d; decide)
+  rcases List.perm_pair.1 hts with rfl | rfl <;> (revert d; decide)
 
 /-! ### Icelandic DAT-NOM constructions (§4.1.2) -/
 
@@ -602,7 +592,7 @@ theorem icelandic_monoclausal_phiFirst (n : FeatureType.number.Value) :
 -- (29b)
 theorem icelandic_biclausal (n : FeatureType.number.Value) {ts : List FeatureType}
     (hts : ts.Perm [.case, .number]) : icelandic .biclausal n ts = .unvalued := by
-  rcases eq_or_eq_of_perm_pair hts with rfl | rfl <;> (revert n; decide)
+  rcases List.perm_pair.1 hts with rfl | rfl <;> (revert n; decide)
 
 /-- The construction of the derivations for each construction of the examples. -/
 def Examples.Construction.clausal : Examples.Construction → Clausal
