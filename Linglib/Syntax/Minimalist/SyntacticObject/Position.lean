@@ -30,8 +30,8 @@ heads a position is not part of the object but of a head function
   term at a position.
 * `PlanarSyntacticObject.chain`: the positions holding one term, its copies.
 * `PlanarSyntacticObject.IsLowerCopy`, `PlanarSyntacticObject.IsSilent`,
-  `PlanarSyntacticObject.pronounced`: a copy another copy asymmetrically c-commands, what lies in
-  one, and the leaves outside all of them.
+  `PlanarSyntacticObject.pronounced`: under a relation on positions, a copy another copy is
+  asymmetrically related to, what lies in one, and the leaves outside all of them.
 * `PlanarSyntacticObject.above`: the branching positions
   of a planar object, and the generators above a position, its closeness key.
 
@@ -50,18 +50,20 @@ heads a position is not part of the object but of a head function
   Internal Merge adds c-commands the earlier ones.
 * `PlanarSyntacticObject.card_chain`: a chain has as many positions as its term has occurrences.
 * `PlanarSyntacticObject.isLowerCopy_of_chain`,
-  `PlanarSyntacticObject.not_isLowerCopy_of_bot_covBy`: after Internal Merge the earlier copies
-  are lower copies and the copy at the root is not.
+  `PlanarSyntacticObject.not_isLowerCopy_of_bot_covBy`: under c-command, after Internal Merge the
+  earlier copies are lower copies and the copy at the root is not.
+* `PlanarSyntacticObject.isLowerCopy_commands_of_chain`: under command bounded by a set of
+  positions, a copy whose mother is no boundary commands the copies inside its mother's sister.
 * `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
 * `PlanarSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
   asymmetric c-command.
 
 ## Implementation notes
 
-* A lower copy is one that a copy of the same term asymmetrically c-commands. A copy inside a
-  moved remnant, which no copy of its term c-commands, is no lower copy on this definition, and a
-  moved head does not c-command the position it left; an account of either states its own
-  condition on positions.
+* The relation that orders the copies of a term is a parameter. Under c-command a head adjoined to
+  a head does not command the position it left; it does under command bounded by categories,
+  where the upper segment of the host is no boundary. A copy inside a moved remnant, which no
+  copy of its term commands, is no lower copy under either.
 * Two sisters that are the same term c-command each other, so neither is a lower copy.
 
 ## References
@@ -349,34 +351,39 @@ theorem card_chain [DecidableEq α] (a : t.toRoseTree.Positions) :
 /-! ### Lower copies -/
 
 variable {d p q : t.toRoseTree.Positions}
+  {R : t.toRoseTree.Positions → t.toRoseTree.Positions → Prop}
 
 variable (t) in
-/-- A position holds a lower copy when another position of its chain asymmetrically c-commands
-it. -/
-def IsLowerCopy (p : t.toRoseTree.Positions) : Prop :=
-  ∃ q, t.chain q p ∧ t.toRoseTree.CCommands q p ∧ ¬ t.toRoseTree.CCommands p q
+/-- A position holds a lower copy under a relation `R` on positions, c-command or another command
+relation, when another position of its chain is `R`-related to it and not conversely. -/
+def IsLowerCopy (R : t.toRoseTree.Positions → t.toRoseTree.Positions → Prop)
+    (p : t.toRoseTree.Positions) : Prop :=
+  ∃ q, t.chain q p ∧ R q p ∧ ¬ R p q
 
-instance [DecidableEq α] : DecidablePred t.IsLowerCopy := fun _ ↦
+instance [DecidableEq α] [DecidableRel R] : DecidablePred (t.IsLowerCopy R) := fun _ ↦
   inferInstanceAs (Decidable (∃ _, _))
 
 /-- A term at one position only has no lower copy. -/
-theorem not_isLowerCopy_of_forall_chain (h : ∀ q, t.chain q p → q = p) : ¬ t.IsLowerCopy p := by
+theorem not_isLowerCopy_of_forall_chain (h : ∀ q, t.chain q p → q = p) :
+    ¬ t.IsLowerCopy R p := by
   rintro ⟨q, hq, hqp, hpq⟩
   obtain rfl := h q hq
   exact hpq hqp
 
-/-- After Internal Merge the earlier copies are lower copies: where `c` and `d` are the daughters
-of a position, a copy of the term at `c` properly inside `d` is a lower copy. -/
+/-- After Internal Merge the earlier copies are lower copies under c-command: where `c` and `d`
+are the daughters of a position, a copy of the term at `c` properly inside `d` is a lower copy. -/
 theorem isLowerCopy_of_chain (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (h : t.chain c p)
-    (hdp : d < p) : t.IsLowerCopy p :=
-  ⟨c, h, cCommands_of_covBy hc (hd.lt.trans hdp) fun hle ↦
-      (lt_or_eq_of_le hle).elim (not_lt_of_chain h) fun he ↦ hc.2 hd.lt (he ▸ hdp),
-    not_cCommands_of_covBy hd hc hcd.symm hdp le_rfl⟩
+    (hdp : d < p) : t.IsLowerCopy PhraseStructure.CCommands p :=
+  ⟨c, h, (Positions.cCommands_iff _ _).2 (cCommands_of_covBy hc (hd.lt.trans hdp) fun hle ↦
+      (lt_or_eq_of_le hle).elim (not_lt_of_chain h) fun he ↦ hc.2 hd.lt (he ▸ hdp)),
+    fun h' ↦ not_cCommands_of_covBy hd hc hcd.symm hdp le_rfl ((Positions.cCommands_iff _ _).1 h')⟩
 
-/-- A daughter of the root is no lower copy: the copy Internal Merge adds at the root is the
-highest of its chain. -/
-theorem not_isLowerCopy_of_bot_covBy (hc : ⊥ ⋖ c) : ¬ t.IsLowerCopy c := by
+/-- A daughter of the root is no lower copy under c-command: the copy Internal Merge adds at the
+root is the highest of its chain. -/
+theorem not_isLowerCopy_of_bot_covBy (hc : ⊥ ⋖ c) :
+    ¬ t.IsLowerCopy PhraseStructure.CCommands c := by
   rintro ⟨q, hq, hqc, hcq⟩
+  rw [Positions.cCommands_iff] at hqc hcq
   have hq0 : q ≠ ⊥ := fun h ↦ not_lt_of_chain hq (h ▸ hc.lt)
   have hpq : Order.pred q ⋖ q :=
     Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hq0)
@@ -392,32 +399,57 @@ theorem not_isLowerCopy_of_bot_covBy (hc : ⊥ ⋖ c) : ¬ t.IsLowerCopy c := by
   exact hcq (cCommands_of_covBy hc hpq.lt fun hle ↦
     hlt.2 (IsForestOrder.eq_of_covBy_of_le hpq hc le_rfl hle).le)
 
+/-- Where command is bounded by a set `S` of positions, a copy whose mother is no boundary commands
+the copies properly inside its mother's sister, a boundary, so those are lower copies. A head
+adjoined to a head commands its lower copy in this way when command is bounded by categories, the
+upper segment of the head it adjoins to being no boundary. -/
+theorem isLowerCopy_commands_of_chain {S : Set t.toRoseTree.Positions}
+    {g m : t.toRoseTree.Positions} (hm : g ⋖ m) (hd : g ⋖ d) (hmd : m ≠ d) (hc : m ⋖ c)
+    (hmS : m ∉ S) (hdS : d ∈ S) (h : t.chain c p) (hdp : d < p) :
+    t.IsLowerCopy (Commands S) p := by
+  have hdc : ¬ d ≤ c := fun hle ↦
+    (IsForestOrder.le_total_of_le_of_le hle hc.le).elim (CovBy.not_le_of_ne hd hm hmd.symm)
+      (CovBy.not_le_of_ne hm hd hmd)
+  have hcp : ¬ c ≤ p := fun hle ↦
+    (IsForestOrder.le_total_of_le_of_le hle hdp.le).elim
+      (fun hcd ↦ CovBy.not_le_of_ne hm hd hmd (hc.le.trans hcd)) hdc
+  refine ⟨c, h, ⟨fun x hx hxc ↦ ?_, hcp, fun hpc ↦ hdc (hdp.le.trans hpc)⟩,
+    fun h' ↦ hdc (h'.command hdS hdp)⟩
+  have hxm : x ≤ m := IsForestOrder.le_of_lt_of_covBy hc hxc
+  have hxg : x ≤ g :=
+    IsForestOrder.le_of_lt_of_covBy hm (lt_of_le_of_ne hxm fun e ↦ hmS (e ▸ hx))
+  exact hxg.trans (hd.le.trans hdp.le)
+
 /-! ### Silence -/
 
 variable (t) in
-/-- A position is silent when it is a lower copy or inside one. -/
-def IsSilent (p : t.toRoseTree.Positions) : Prop := ∃ q ≤ p, t.IsLowerCopy q
+/-- A position is silent under `R` when it is a lower copy or inside one. -/
+def IsSilent (R : t.toRoseTree.Positions → t.toRoseTree.Positions → Prop)
+    (p : t.toRoseTree.Positions) : Prop :=
+  ∃ q ≤ p, t.IsLowerCopy R q
 
-instance [DecidableEq α] : DecidablePred t.IsSilent := fun _ ↦
+instance [DecidableEq α] [DecidableRel R] : DecidablePred (t.IsSilent R) := fun _ ↦
   inferInstanceAs (Decidable (∃ _, _))
 
-theorem IsLowerCopy.isSilent (h : t.IsLowerCopy p) : t.IsSilent p := ⟨p, le_rfl, h⟩
+theorem IsLowerCopy.isSilent (h : t.IsLowerCopy R p) : t.IsSilent R p := ⟨p, le_rfl, h⟩
 
 /-- What is inside a silent position is silent. -/
-theorem IsSilent.mono (h : t.IsSilent p) (hpq : p ≤ q) : t.IsSilent q :=
+theorem IsSilent.mono (h : t.IsSilent R p) (hpq : p ≤ q) : t.IsSilent R q :=
   let ⟨r, hr, hl⟩ := h; ⟨r, hr.trans hpq, hl⟩
 
 variable (t) in
-/-- The pronounced positions of a planar object: its leaves outside every lower copy. -/
-def pronounced : Set t.toRoseTree.Positions := {p | IsMax p ∧ ¬ t.IsSilent p}
+/-- The pronounced positions of a planar object under `R`: its leaves outside every lower copy. -/
+def pronounced (R : t.toRoseTree.Positions → t.toRoseTree.Positions → Prop) :
+    Set t.toRoseTree.Positions :=
+  {p | IsMax p ∧ ¬ t.IsSilent R p}
 
-instance [DecidableEq α] : DecidablePred (· ∈ t.pronounced) := fun p ↦
-  decidable_of_iff (p.subtree.children.length = 0 ∧ ¬ t.IsSilent p)
+instance [DecidableEq α] [DecidableRel R] : DecidablePred (· ∈ t.pronounced R) := fun p ↦
+  decidable_of_iff (p.subtree.children.length = 0 ∧ ¬ t.IsSilent R p)
     (and_congr (List.length_eq_zero_iff.trans Positions.isMax_iff.symm) Iff.rfl)
 
 /-- With no term at two positions every leaf is pronounced. -/
 theorem pronounced_eq_of_injective (h : Function.Injective t.termAt) :
-    t.pronounced = {p | IsMax p} :=
+    t.pronounced R = {p | IsMax p} :=
   Set.ext fun _ ↦ and_iff_left fun ⟨_, _, hl⟩ ↦
     not_isLowerCopy_of_forall_chain (fun _ hq ↦ h hq) hl
 

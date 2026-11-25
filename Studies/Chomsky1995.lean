@@ -43,9 +43,9 @@ specifier of that head, and it is the target that projects although neither sele
 
 * Positions individuate occurrences, so the LCA is read on the positions of a planar object,
   whose order it ignores by `linearizes_bareCCommand_image_iff`.
-* The trace of a raised term is its lower copy, `PlanarSyntacticObject.IsLowerCopy`, and the
-  terminals the LCA orders are `PlanarSyntacticObject.pronounced`, the leaves outside every lower
-  copy.
+* The trace of a raised term is its lower copy under c-command,
+  `PlanarSyntacticObject.IsLowerCopy`, and the terminals the LCA orders are
+  `PlanarSyntacticObject.pronounced`, the leaves outside every lower copy.
 * Raising is the Merge of (15). A clitic attaching to a higher head and a noun incorporating, the
   raisings the book gives for a single-terminal complement, adjoin to a head.
 * The inflectional head I is a `T` that selects a verb phrase.
@@ -360,14 +360,15 @@ theorem levels_theManSawIt :
 
 /-- (11) violates the LCA, since *the* and *man* are unordered, and so are *saw* and *it*. -/
 theorem not_linearizes_theManSawIt :
-    ¬ Linearizes (bareCCommand (HeadDaughterAt theManSawIt)) theManSawIt.pronounced := by
+    ¬ Linearizes (bareCCommand (HeadDaughterAt theManSawIt))
+      (theManSawIt.pronounced CCommands) := by
   decide
 
 /-! ### The copy theory of movement, (14) and (15) -/
 
 /-- (14) violates the LCA: its two terminals are sisters. -/
 theorem not_linearizes_sawIt :
-    ¬ Linearizes (bareCCommand (HeadDaughterAt sawIt)) sawIt.pronounced := by
+    ¬ Linearizes (bareCCommand (HeadDaughterAt sawIt)) (sawIt.pronounced CCommands) := by
   decide
 
 /-- In (15) the raised term occurs twice, and the two occurrences have different sisters. -/
@@ -380,15 +381,15 @@ theorem chain_sawItRaised :
 -- (15): the phrase projects, and the occurrence in the complement position is the lower copy
 theorem isLowerCopy_sawItRaised :
     HeadDaughter.raising sawItRaised ⊥ = some 1 ∧
-      sawItRaised.IsLowerCopy (position sawItRaised [1, 1]) ∧
-      ¬ sawItRaised.IsLowerCopy (position sawItRaised [0]) := by
+      sawItRaised.IsLowerCopy CCommands (position sawItRaised [1, 1]) ∧
+      ¬ sawItRaised.IsLowerCopy CCommands (position sawItRaised [0]) := by
   decide
 
 /-- With its complement raised the phrase satisfies the LCA: the lower copy is silent, and the
 raised term precedes the head. -/
 theorem linearizes_sawItRaised :
-    Linearizes (bareCCommand (HeadDaughterAt sawItRaised)) sawItRaised.pronounced ∧
-      (∀ p, p ∈ sawItRaised.pronounced ↔
+    Linearizes (bareCCommand (HeadDaughterAt sawItRaised)) (sawItRaised.pronounced CCommands) ∧
+      (∀ p, p ∈ sawItRaised.pronounced CCommands ↔
         p = position sawItRaised [0] ∨ p = position sawItRaised [1, 0]) ∧
       Precedes (bareCCommand (HeadDaughterAt sawItRaised))
         (position sawItRaised [0]) (position sawItRaised [1, 0]) := by
@@ -427,14 +428,14 @@ theorem isMaximalProjection_subjectRaised :
 -- the subject occurs twice, and its occurrence inside the verb phrase is the lower copy
 theorem isLowerCopy_subjectRaised :
     subjectRaised.chain (position subjectRaised [0]) (position subjectRaised [1, 1, 0]) ∧
-      subjectRaised.IsLowerCopy (position subjectRaised [1, 1, 0]) ∧
-      ¬ subjectRaised.IsLowerCopy (position subjectRaised [0]) := by
+      subjectRaised.IsLowerCopy CCommands (position subjectRaised [1, 1, 0]) ∧
+      ¬ subjectRaised.IsLowerCopy CCommands (position subjectRaised [0]) := by
   decide
 
 /-- The raised subject is pronounced and its lower copy is silent: the pronounced terminals are
 *the*, *man*, I, *saw* and *it*. -/
 theorem pronounced_subjectRaised (p : subjectRaised.toRoseTree.Positions) :
-    p ∈ subjectRaised.pronounced ↔
+    p ∈ subjectRaised.pronounced CCommands ↔
       p = position subjectRaised [0, 0] ∨ p = position subjectRaised [0, 1] ∨
         p = position subjectRaised [1, 0] ∨ p = position subjectRaised [1, 1, 1, 0] ∨
         p = position subjectRaised [1, 1, 1, 1] := by
