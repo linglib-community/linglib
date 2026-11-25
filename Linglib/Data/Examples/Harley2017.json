@@ -1,134 +1,97 @@
-{
-  "features": [
-    {
-      "key": "base",
-      "lean": "base",
-      "type": "Base",
-      "doc": "The class of the verb a causative is built on, as the paper heads its examples.",
-      "levels": [
-        {
-          "name": "unaccusative",
-          "label": "unaccusative",
-          "doc": "an unaccusative verb"
-        },
-        {
-          "name": "unergative",
-          "label": "unergative",
-          "doc": "an unergative verb"
-        }
-      ]
-    }
-  ],
-  "examples": [
-    {
-      "id": "harley2017_47a",
-      "source": {"bibkey": "harley-2017", "paperLabel": "(47a)"},
-      "language": "yaqu1251",
-      "primaryText": "Mario Alle-ta uka karo-ta wee-tua-ria-k.",
-      "discourseSegments": [],
-      "glossedTokens": [
-        ["Mario", "Mario"], ["Alle-ta", "Alex-ACC"], ["uka", "that"], ["karo-ta", "car-ACC"],
-        ["wee-tua-ria-k", "go-CAUS-APPL-PRF"]
-      ],
-      "translation": "Mario drove that car for Alex.",
-      "context": "",
-      "judgment": "acceptable",
-      "contrasts": [],
-      "readings": [],
-      "paperFeatures": [
-        ["section", "1.4.3"],
-        ["base", "unaccusative"]
-      ],
-      "comment": "",
-      "verified": "page-image"
-    },
-    {
-      "id": "harley2017_47b",
-      "source": {"bibkey": "harley-2017", "paperLabel": "(47b)"},
-      "language": "yaqu1251",
-      "primaryText": "Mario usi-ta uka vakot-ta sim-tua-ria-k.",
-      "discourseSegments": [],
-      "glossedTokens": [
-        ["Mario", "Mario"], ["usi-ta", "child-ACC"], ["uka", "the"], ["vakot-ta", "snake-ACC"],
-        ["sim-tua-ria-k", "leave-CAUS-APPL-PRF"]
-      ],
-      "translation": "Mario made the snake leave for the child.",
-      "context": "",
-      "judgment": "acceptable",
-      "contrasts": [],
-      "readings": [],
-      "paperFeatures": [
-        ["section", "1.4.3"],
-        ["base", "unaccusative"]
-      ],
-      "comment": "",
-      "verified": "page-image"
-    },
-    {
-      "id": "harley2017_48a",
-      "source": {"bibkey": "harley-2017", "paperLabel": "(48a)"},
-      "language": "yaqu1251",
-      "primaryText": "Jose Maria-ta uka kavai-ta chepti-tua-ria-k.",
-      "discourseSegments": [],
-      "glossedTokens": [
-        ["Jose", "Jose"], ["Maria-ta", "Maria-ACC"], ["uka", "that"], ["kavai-ta", "horse-ACC"],
-        ["chepti-tua-ria-k", "jump-CAUS-APPL-PRF"]
-      ],
-      "translation": "Jose made that horse jump for Maria.",
-      "context": "",
-      "judgment": "unacceptable",
-      "contrasts": [],
-      "readings": [],
-      "paperFeatures": [
-        ["section", "1.4.3"],
-        ["base", "unergative"]
-      ],
-      "comment": "",
-      "verified": "page-image"
-    },
-    {
-      "id": "harley2017_48b",
-      "source": {"bibkey": "harley-2017", "paperLabel": "(48b)"},
-      "language": "yaqu1251",
-      "primaryText": "Nee mala-ta Mario-ta yi'i-tua-ria-k.",
-      "discourseSegments": [],
-      "glossedTokens": [
-        ["Nee", "I"], ["mala-ta", "mother-ACC"], ["Mario-ta", "Mario-ACC"],
-        ["yi'i-tua-ria-k", "dance-CAUS-APPL-PRF"]
-      ],
-      "translation": "I made Mario dance for mother.",
-      "context": "",
-      "judgment": "unacceptable",
-      "contrasts": [],
-      "readings": [],
-      "paperFeatures": [
-        ["section", "1.4.3"],
-        ["base", "unergative"]
-      ],
-      "comment": "",
-      "verified": "page-image"
-    },
-    {
-      "id": "harley2017_48c",
-      "source": {"bibkey": "harley-2017", "paperLabel": "(48c)"},
-      "language": "yaqu1251",
-      "primaryText": "Jose yoemia-ta uka hamut-ta nok-tua-ria-k.",
-      "discourseSegments": [],
-      "glossedTokens": [
-        ["Jose", "Jose"], ["yoemia-ta", "people-ACC"], ["uka", "the"], ["hamut-ta", "woman-ACC"],
-        ["nok-tua-ria-k", "speak-CAUS-APPL-PRF"]
-      ],
-      "translation": "Jose made the woman speak for the people.",
-      "context": "",
-      "judgment": "unacceptable",
-      "contrasts": [],
-      "readings": [],
-      "paperFeatures": [
-        ["section", "1.4.3"],
-        ["base", "unergative"]
-      ],
-      "comment": "",
-      "verified": "page-image"
-    }
-  ]
-}
+[
+  {
+    "id": "harley2017_47a",
+    "source": {"bibkey": "harley-2017", "paperLabel": "(47a)"},
+    "language": "yaqu1251",
+    "primaryText": "Mario Alle-ta uka karo-ta wee-tua-ria-k.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mario", "Mario"], ["Alle-ta", "Alex-ACC"], ["uka", "that"], ["karo-ta", "car-ACC"],
+      ["wee-tua-ria-k", "go-CAUS-APPL-PRF"]
+    ],
+    "translation": "Mario drove that car for Alex.",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "harley2017_47b",
+    "source": {"bibkey": "harley-2017", "paperLabel": "(47b)"},
+    "language": "yaqu1251",
+    "primaryText": "Mario usi-ta uka vakot-ta sim-tua-ria-k.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mario", "Mario"], ["usi-ta", "child-ACC"], ["uka", "the"], ["vakot-ta", "snake-ACC"],
+      ["sim-tua-ria-k", "leave-CAUS-APPL-PRF"]
+    ],
+    "translation": "Mario made the snake leave for the child.",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "harley2017_48a",
+    "source": {"bibkey": "harley-2017", "paperLabel": "(48a)"},
+    "language": "yaqu1251",
+    "primaryText": "Jose Maria-ta uka kavai-ta chepti-tua-ria-k.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jose", "Jose"], ["Maria-ta", "Maria-ACC"], ["uka", "that"], ["kavai-ta", "horse-ACC"],
+      ["chepti-tua-ria-k", "jump-CAUS-APPL-PRF"]
+    ],
+    "translation": "Jose made that horse jump for Maria.",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "harley2017_48b",
+    "source": {"bibkey": "harley-2017", "paperLabel": "(48b)"},
+    "language": "yaqu1251",
+    "primaryText": "Nee mala-ta Mario-ta yi'i-tua-ria-k.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nee", "I"], ["mala-ta", "mother-ACC"], ["Mario-ta", "Mario-ACC"],
+      ["yi'i-tua-ria-k", "dance-CAUS-APPL-PRF"]
+    ],
+    "translation": "I made Mario dance for mother.",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "harley2017_48c",
+    "source": {"bibkey": "harley-2017", "paperLabel": "(48c)"},
+    "language": "yaqu1251",
+    "primaryText": "Jose yoemia-ta uka hamut-ta nok-tua-ria-k.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jose", "Jose"], ["yoemia-ta", "people-ACC"], ["uka", "the"], ["hamut-ta", "woman-ACC"],
+      ["nok-tua-ria-k", "speak-CAUS-APPL-PRF"]
+    ],
+    "translation": "Jose made the woman speak for the people.",
+    "context": "",
+    "judgment": "unacceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

@@ -1,8 +1,6 @@
 module
 
 public import Linglib.Data.Examples.Schema
-public import Linglib.Data.Examples.Readers
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Harley2017` — typed example data
@@ -30,7 +28,7 @@ def ex_47a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("section", "1.4.3"), ("base", "unaccusative")] }
+    paperFeatures := [] }
 
 def ex_47b : Datum :=
   { id := "harley2017_47b"
@@ -45,7 +43,7 @@ def ex_47b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("section", "1.4.3"), ("base", "unaccusative")] }
+    paperFeatures := [] }
 
 def ex_48a : Datum :=
   { id := "harley2017_48a"
@@ -60,7 +58,7 @@ def ex_48a : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("section", "1.4.3"), ("base", "unergative")] }
+    paperFeatures := [] }
 
 def ex_48b : Datum :=
   { id := "harley2017_48b"
@@ -75,7 +73,7 @@ def ex_48b : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("section", "1.4.3"), ("base", "unergative")] }
+    paperFeatures := [] }
 
 def ex_48c : Datum :=
   { id := "harley2017_48c"
@@ -90,20 +88,8 @@ def ex_48c : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("section", "1.4.3"), ("base", "unergative")] }
+    paperFeatures := [] }
 
 def all : List Datum := [ex_47a, ex_47b, ex_48a, ex_48b, ex_48c]
-
-/-- The class of the verb a causative is built on, as the paper heads its examples. -/
-inductive Base where
-  /-- unaccusative: an unaccusative verb -/
-  | unaccusative
-  /-- unergative: an unergative verb -/
-  | unergative
-  deriving DecidableEq, Repr, Fintype
-
-/-- The value a row records under `base`. -/
-def base (e : Datum) : Option Base :=
-  e.parse? "base" [("unaccusative", .unaccusative), ("unergative", .unergative)]
 
 end Harley2017.Examples

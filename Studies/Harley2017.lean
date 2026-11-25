@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Harley2017
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
@@ -53,9 +54,12 @@ and unacceptable when it is the causative of an unergative, expressed at the upp
   bundled with Voice put the upper Caus on the head of that Voice, which is below it; the Voice
   above a phase-selecting Cause is not represented.
 * `vocabulary ρ` lists the allomorph of the one root `ρ`; any other root has none.
+* The class of a Hiaki verb is read off its gloss by `base?`, which stands in for lexical
+  entries: there is no Hiaki fragment to take it from.
 
 ## TODO
 
+* Hiaki verb entries, so that the class of a causativized verb is derived and not listed.
 * Harley's diagnostics for Chol, Persian, Hiaki and Chemehuevi; Italian passives and light verb
   constructions; the footnote setting English apart from Pylkkänen's analysis.
 
@@ -409,17 +413,35 @@ end CauseHead
 
 /-! ### Jung's Hiaki applicatives -/
 
+/-- The classes of verb the chapter sorts its causatives by. -/
+inductive Base where
+  /-- An unaccusative verb. -/
+  | unaccusative
+  /-- An unergative verb. -/
+  | unergative
+  deriving DecidableEq, Repr
+
+/-- The class of a Hiaki verb, by its gloss, as the chapter heads its examples. -/
+def base? (gloss : List Char) : Option Base :=
+  if gloss ∈ ["go".toList, "leave".toList] then some .unaccusative
+  else if gloss ∈ ["jump".toList, "dance".toList, "speak".toList] then some .unergative
+  else none
+
+/-- The verb a row causativizes: the lexical gloss of the word bearing the causative. -/
+def verb? (d : Datum) : Option (List Char) :=
+  (d.glossedWords.find? fun w ↦ "CAUS".toList ∈ w.labels).bind (·.lexicalGloss?)
+
 open Pylkkanen2008 in
 /-- The layer the causative of a verb selects: the causative of an unaccusative is lexical, and
 that of an unergative, whose external argument Voice introduces, selects a phase. -/
-def selects : Examples.Base → Layer
+def selects : Base → Layer
   | .unaccusative => .root
   | .unergative => .phase
 
 /-- (47), (48): an applicative outside a causative is acceptable iff Cause is expressed below the
 applicative in the hierarchy. -/
-theorem applicative_iff : ∀ d ∈ Examples.all, ∀ b ∈ Examples.base d,
-    d.judgment = .acceptable ↔ causPosition (selects b) < .appl := by
+theorem applicative_iff : ∀ d ∈ Examples.all, ∃ b ∈ (verb? d).bind base?,
+    (d.judgment = .acceptable ↔ causPosition (selects b) < .appl) := by
   decide +kernel
 
 end Harley2017
