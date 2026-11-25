@@ -165,6 +165,42 @@ theorem speaker_literalListener_apply_singleton_le (hα : 0 < α) [IsProbability
   exact ENNReal.div_le_div_left (Finset.sum_le_sum fun v _ ↦
     Set.indicator_le_indicator_of_subset (fun v hv ↦ h v hv) (fun _ ↦ zero_le) v) _
 
+/-- An utterance a belief entails strictly loses mass to a belief that entails strictly more. -/
+theorem speaker_literalListener_apply_singleton_lt (hα : 0 < α) [IsProbabilityMeasure (b o)]
+    [IsProbabilityMeasure (b' o')] (hb : b o ≪ μ) (hb' : b' o' ≪ μ)
+    (h : ∀ v, (∀ᵐ w ∂b o, w ∈ sem v) → ∀ᵐ w ∂b' o', w ∈ sem v) (hu : ∀ᵐ w ∂b o, w ∈ sem u)
+    (hu' : ∀ᵐ w ∂b' o', w ∈ sem u') (hnu' : ¬ ∀ᵐ w ∂b o, w ∈ sem u') :
+    speaker α C (literalListener μ sem) b' o' {u} <
+      speaker α C (literalListener μ sem) b o {u} := by
+  classical
+  have hwt {β : Measure W} [IsProbabilityMeasure β] (hβ : β ≪ μ) {v : U}
+      (hv : ∀ᵐ w ∂β, w ∈ sem v) :
+      (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v))) ≠ 0 ∧
+        (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v))) ≠ ∞ := by
+    have h0 : μ (sem v) ≠ 0 := fun h0 ↦
+      one_ne_zero (((prob_compl_eq_zero_iff .of_discrete).1 (ae_iff.1 hv)).symm.trans (hβ h0))
+    exact ⟨mul_ne_zero (ENNReal.rpow_ne_zero_of_ne_zero hα.le
+        (ENNReal.inv_ne_zero.2 (measure_ne_top _ _))) (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne',
+      ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα.le (ENNReal.inv_ne_top.2 h0))
+        ENNReal.ofReal_ne_top⟩
+  rw [speaker_literalListener_apply_singleton hα hb,
+    speaker_literalListener_apply_singleton hα hb',
+    Set.indicator_of_mem (show u ∈ {v | ∀ᵐ w ∂b o, w ∈ sem v} from hu),
+    Set.indicator_of_mem (show u ∈ {v | ∀ᵐ w ∂b' o', w ∈ sem v} from h u hu)]
+  refine ENNReal.div_lt_div_left (hwt hb hu).1 (hwt hb hu).2 ?_
+  rw [← Finset.add_sum_erase _ _ (Finset.mem_univ u'),
+    ← Finset.add_sum_erase _ _ (Finset.mem_univ u'),
+    Set.indicator_of_notMem (show u' ∉ {v | ∀ᵐ w ∂b o, w ∈ sem v} from hnu'),
+    Set.indicator_of_mem (show u' ∈ {v | ∀ᵐ w ∂b' o', w ∈ sem v} from hu'), zero_add, add_comm]
+  refine (Finset.sum_le_sum fun v _ ↦ Set.indicator_le_indicator_of_subset (fun v hv ↦ h v hv)
+    (fun _ ↦ zero_le) v).trans_lt
+    (ENNReal.lt_add_right (ENNReal.sum_ne_top.2 fun v _ ↦ ?_) (hwt hb' hu').1)
+  by_cases hv : ∀ᵐ w ∂b' o', w ∈ sem v
+  · rw [Set.indicator_of_mem (show v ∈ {v | ∀ᵐ w ∂b' o', w ∈ sem v} from hv)]
+    exact (hwt hb' hv).2
+  · rw [Set.indicator_of_notMem (show v ∉ {v | ∀ᵐ w ∂b' o', w ∈ sem v} from hv)]
+    exact ENNReal.zero_ne_top
+
 /-- Among the utterances her belief entails, the speaker at no cost prefers the one of smaller
 prior mass. -/
 theorem speaker_zero_literalListener_real_singleton_lt_iff (hα : 0 < α)
@@ -290,6 +326,21 @@ theorem speaker_literalListener_dirac_le_of_subset (hα : 0 < α)
   · exact speaker_literalListener_apply_singleton_le hα (dirac_absolutelyContinuous hw)
       (dirac_absolutelyContinuous hw')
       (fun v hv ↦ ae_dirac_mem_iff.2 (hsub v (ae_dirac_mem_iff.1 hv))) (ae_dirac_mem_iff.2 hu)
+
+/-- A state that makes strictly fewer utterances true is a strictly better state for each of
+them: the speaker who knows it has less to choose from. -/
+theorem speaker_literalListener_dirac_lt_of_ssubset (hα : 0 < α)
+    (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) {w w' : W}
+    (hw : μ {w} ≠ 0) (hw' : μ {w'} ≠ 0) (hsub : {u | w ∈ sem u} ⊂ {u | w' ∈ sem u}) {u : U}
+    (hu : w ∈ sem u) :
+    speaker α C (literalListener μ sem) Measure.dirac w' {u}
+      < speaker α C (literalListener μ sem) Measure.dirac w {u} := by
+  obtain ⟨u', hu', hnu'⟩ := Set.exists_of_ssubset hsub
+  exact speaker_literalListener_apply_singleton_lt hα (dirac_absolutelyContinuous hw)
+    (dirac_absolutelyContinuous hw')
+    (fun v hv ↦ ae_dirac_mem_iff.2 (hsub.1 (show w ∈ sem v from ae_dirac_mem_iff.1 hv)))
+    (ae_dirac_mem_iff.2 hu) (ae_dirac_mem_iff.2 hu')
+    fun h ↦ hnu' (show w ∈ sem u' from ae_dirac_mem_iff.1 h)
 
 theorem speaker_literalListener_dirac_zero_real_singleton_of_pair (hα : 0 < α)
     (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
