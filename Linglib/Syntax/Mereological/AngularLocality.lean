@@ -12,14 +12,13 @@ public import Linglib.Syntax.Mereological.Parthood
 
 Angular Locality is the locality principle of mereological syntax: a part `γ` may subjoin to
 `β` only if `γ` is an `n`-part of some object `α` that is a 1-part of `β`. Since parthood is
-transitive within a dimension only, a subjunction path may turn through at most one angle, from
-dimension `n` into dimension 1. Everything the classical theory stipulates about cyclic domains
-and their escape hatches follows: 2-parts are the locality domains, and an object leaves a 2-part
-just when it is a 2-part of it.
+transitive within a dimension only, the path from the target down to the mover turns through at
+most one angle, from dimension 1 into dimension `n`. The target then contains the mover, and an
+immediate 1-part cannot subjoin again to its whole.
 
-A domain of a 2-part `b` is a set of parts that parthood leaves only through 2-edges from `b` or
-from a 2-part of `b`, the edge of `b`. The material inside a 2-part is such a domain, and it stays
-one while its edge moves out.
+A domain of an object `b` is a set of parts that parthood leaves only through 2-edges from `b` or
+from a 2-part of `b`, the edge of `b`. An object inside a domain can subjoin to an object outside
+it only if it is `b` or lies on the edge of `b`.
 
 ## Main definitions
 
@@ -29,7 +28,7 @@ one while its edge moves out.
 ## Main statements
 
 * `Parthood.descendant_of_canSubjoin`: the target contains the mover.
-* `Parthood.not_canSubjoin_of_imm_one`: antilocality, from irreflexivity of parthood.
+* `Parthood.not_canSubjoin_of_imm_one`: antilocality, in an acyclic structure.
 * `Parthood.IsDomain.canSubjoin_iff_nPart_two`: an object inside a domain reaches an object
   outside it exactly when it lies on the edge of `b`.
 
@@ -65,7 +64,7 @@ theorem descendant_of_canSubjoin (h : P.CanSubjoin γ β) : P.Descendant γ β :
   let ⟨_, _, h₁, h₂⟩ := h
   (descendant_of_nPart h₁).trans (descendant_of_nPart h₂)
 
-theorem isSome_onePart_of_canSubjoin (h : P.CanSubjoin γ β) : (P.onePart β).isSome :=
+theorem isSome_part_one_of_canSubjoin (h : P.CanSubjoin γ β) : (P.part .one β).isSome :=
   let ⟨_, _, _, h₂⟩ := h
   let ⟨c, _, hc⟩ := TransGen.tail'_iff.1 h₂
   Option.isSome_iff_exists.2 ⟨c, hc⟩
@@ -77,11 +76,9 @@ the whole, which is not a 1-part of itself. -/
 theorem not_canSubjoin_of_imm_one (hP : P.Acyclic) (h : P.Imm .one γ β) :
     ¬ P.CanSubjoin γ β := by
   rintro ⟨_, a, hγa, haβ⟩
-  obtain ⟨c, hac, hcβ⟩ := TransGen.tail'_iff.1 haβ
-  obtain rfl : c = γ := Option.some_injective _ (hcβ.symm.trans h)
-  rcases reflTransGen_iff_eq_or_transGen.1 hac with rfl | hac
+  rcases haβ.eq_or_nPart_of_imm h with rfl | haγ
   · exact hP _ (descendant_of_nPart hγa)
-  · exact hP _ ((descendant_of_nPart hγa).trans (descendant_of_nPart hac))
+  · exact hP _ ((descendant_of_nPart hγa).trans (descendant_of_nPart haγ))
 
 /-! ### Locality domains -/
 

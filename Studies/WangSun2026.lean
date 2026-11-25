@@ -65,36 +65,37 @@ inductive Node
 the 1-part of Cl, Cl the 1-part and the numeral the 2-part of Q, and Q the 1-part of D; Mod, the
 spell-out of *de*, has the degree object Deg as its 1-part, whose 1-part is A and 2-part Adv. -/
 def numClN : Parthood Node where
-  onePart
-    | .D => some .Q | .Q => some .Cl | .Cl => some .N | .Mod => some .Deg | .Deg => some .A
-    | _ => none
-  twoPart | .Q => some .Num | .Deg => some .Adv | _ => none
+  part
+    | .one => fun
+      | .D => some .Q | .Q => some .Cl | .Cl => some .N | .Mod => some .Deg | .Deg => some .A
+      | _ => none
+    | .two => fun | .Q => some .Num | .Deg => some .Adv | _ => none
 
 /-- In *yī zhāng hěn dà de zhuōzi*, (28a), the modifier is the classifier's 2-part. -/
-def numClModN : Parthood Node :=
-  { numClN with twoPart := Function.update numClN.twoPart .Cl (some .Mod) }
+def numClModN : Parthood Node := numClN.addPart .two .Mod .Cl
 
 /-- In *hěn dà de yī zhāng zhuōzi*, (28b), the modifier is D's 2-part. -/
-def modNumClN : Parthood Node :=
-  { numClN with twoPart := Function.update numClN.twoPart .D (some .Mod) }
+def modNumClN : Parthood Node := numClN.addPart .two .Mod .D
 
 /-- In *sān bēi de jiǔ* 'three glassfuls of liquor', (34b), the noun is D's 1-part, and the quantity
 phrase, with a bare classifier, is the 1-part of Mod, D's 2-part. -/
 def numClDeN : Parthood Node where
-  onePart | .D => some .N | .Mod => some .Q | .Q => some .Cl | _ => none
-  twoPart | .D => some .Mod | .Q => some .Num | _ => none
+  part
+    | .one => fun | .D => some .N | .Mod => some .Q | .Q => some .Cl | _ => none
+    | .two => fun | .D => some .Mod | .Q => some .Num | _ => none
 
 /-- In *duō sān kē* 'three (units) more', (45b), the quantity phrase, with a bare classifier, is the
 2-part of Deg, whose 1-part is the adjective, under the predicate object. -/
 def numClPred : Parthood Node where
-  onePart | .Pred => some .Deg | .Deg => some .A | .Q => some .Cl | _ => none
-  twoPart | .Deg => some .Q | .Q => some .Num | _ => none
+  part
+    | .one => fun | .Pred => some .Deg | .Deg => some .A | .Q => some .Cl | _ => none
+    | .two => fun | .Deg => some .Q | .Q => some .Num | _ => none
 
 /-! ### Modification, (28)–(29), (37) -/
 
 /-- Q has both parts, so the modifier cannot subjoin between the numeral and the classifier,
 (29a). -/
-theorem subjoin_modifier_q : numClN.subjoin .Mod .Q = none := subjoin_eq_none_of_full rfl rfl
+theorem subjoin_modifier_q : numClN.subjoin .Mod .Q = none := subjoin_eq_none_iff.2 ⟨rfl, rfl⟩
 
 /-- The classifier has room for the modifier as its 2-part, (28a). -/
 theorem subjoin_modifier_cl : numClN.subjoin .Mod .Cl = some numClModN := by decide +kernel
@@ -104,7 +105,7 @@ theorem subjoin_modifier_d : numClN.subjoin .Mod .D = some modNumClN := by decid
 
 /-- With *de* after the classifier D is full, so nothing more subjoins to it, (37a). -/
 theorem subjoin_numClDeN (x : Node) : numClDeN.subjoin x .D = none :=
-  subjoin_eq_none_of_full rfl rfl
+  subjoin_eq_none_iff.2 ⟨rfl, rfl⟩
 
 /-! ### Spell-out lines, (26b), (45b) -/
 
@@ -156,11 +157,12 @@ theorem reading_modNumClN : reading modNumClN = .sortal := by decide +kernel
 /-- In *Sān gè píngguǒ, Zhāngsān chī-le* before topicalisation, (41), (43), D is the 2-part of O, O
 the 1-part of v, v of Asp, Asp of C, and the agent, the 2-part of v, has subjoined to Asp. -/
 def clause : Parthood Node where
-  onePart
-    | .C => some .Asp | .Asp => some .v | .v => some .O | .O => some .V
-    | .D => some .Q | .Q => some .Cl | .Cl => some .N | _ => none
-  twoPart
-    | .Asp => some .Agent | .v => some .Agent | .O => some .D | .Q => some .Num | _ => none
+  part
+    | .one => fun
+      | .C => some .Asp | .Asp => some .v | .v => some .O | .O => some .V
+      | .D => some .Q | .Q => some .Cl | .Cl => some .N | _ => none
+    | .two => fun
+      | .Asp => some .Agent | .v => some .Agent | .O => some .D | .Q => some .Num | _ => none
 
 /-- `clause` with a modifier as the classifier's 2-part, (39a), (44a). -/
 def clauseModCl : Parthood Node := clause.addPart .two .Mod .Cl
@@ -191,7 +193,7 @@ part of C (42). -/
 theorem wh_numeral_modifier :
     clauseModD.CanSubjoin .Num .D ∧ clauseModD.subjoin .Num .D = none ∧
       ¬ clauseModD.Reaches .Num .C :=
-  ⟨by decide +kernel, subjoin_eq_none_of_full rfl rfl,
+  ⟨by decide +kernel, subjoin_eq_none_iff.2 ⟨rfl, rfl⟩,
     IsDomain.not_reaches (S := inD) (b := .D) (c := .Mod) (by decide +kernel) rfl (by decide)
       (by decide) (by decide) (by decide +kernel) (by decide)⟩
 
@@ -216,7 +218,7 @@ theorem topic_n_modifier_cl :
 noun a part of C, (44b). -/
 theorem topic_n_modifier_d :
     clauseModD.subjoin .N .D = none ∧ ¬ clauseModD.Reaches .N .C :=
-  ⟨subjoin_eq_none_of_full rfl rfl,
+  ⟨subjoin_eq_none_iff.2 ⟨rfl, rfl⟩,
     IsDomain.not_reaches (S := inD) (b := .D) (c := .Mod) (by decide +kernel) rfl (by decide)
       (by decide) (by decide) (by decide +kernel) (by decide)⟩
 

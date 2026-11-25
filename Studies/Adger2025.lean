@@ -13,7 +13,9 @@ extended-projection complement, the second its 2-part, the specifier (`Parthood`
 transitive within a dimension only, and Angular Locality lets a part subjoin to a target only
 through a single angle: it must be an n-part of some 1-part of the target (`CanSubjoin`). A
 derivation is a sequence of subjunctions licensed by Dimensionality, Angular Locality and
-Mereological Extension (`Derives`).
+Mereological Extension (`Derives`). The structure of *you jumped* is derived in this way from
+objects without parts, so it has no cycle of parts. An unattached object subjoins neither to an
+object that has both parts nor to a part of another object.
 
 The book's list of consequences is verified on its own structures. The complement of a head
 cannot resubjoin to it (`antilocality`), and subjunction to an unattached object, to a specifier,
@@ -73,23 +75,39 @@ inductive Obj
 
 /-- `a` with `b` as its 1-part, (28). -/
 def superlocal : Parthood Obj where
-  onePart | .a => some .b | _ => none
-  twoPart _ := none
+  part
+    | .one => fun | .a => some .b | _ => none
+    | .two => fun _ ↦ none
 
 theorem antilocality : ¬ superlocal.CanSubjoin .b .a :=
   not_canSubjoin_of_imm_one (by decide) rfl
 
+/-- `f` with 2-part `d` and 1-part `e`, beside an unattached `a`, (31) of chapter 3. -/
+def external : Parthood Obj where
+  part
+    | .one => fun | .f => some .e | _ => none
+    | .two => fun | .f => some .d | _ => none
+
+-- (31) and (33) of chapter 3: Dimensionality at `f`, Mereological Extension at `e` and `d`
+theorem external_blocked :
+    external.subjoin .a .f = none ∧
+      ∀ Q, ¬ external.Subjoins .a .e Q ∧ ¬ external.Subjoins .a .d Q :=
+  ⟨subjoin_eq_none_iff.2 ⟨rfl, rfl⟩, fun _ ↦
+    ⟨fun h ↦ h.extension (by decide) (by decide), fun h ↦ h.extension (by decide) (by decide)⟩⟩
+
 /-- Two roots, (30), `d` with 1-part `e` and `b` with 2-part `a` and 1-part `c`. -/
 def parallel : Parthood Obj where
-  onePart | .d => some .e | .b => some .c | _ => none
-  twoPart | .b => some .a | _ => none
+  part
+    | .one => fun | .d => some .e | .b => some .c | _ => none
+    | .two => fun | .b => some .a | _ => none
 
 theorem parallel_blocked : ¬ parallel.CanSubjoin .a .d := by decide +kernel
 
 /-- `c` with 2-part `b` and 1-part `a`, (31a). -/
 def sideward : Parthood Obj where
-  onePart | .c => some .a | _ => none
-  twoPart | .c => some .b | _ => none
+  part
+    | .one => fun | .c => some .a | _ => none
+    | .two => fun | .c => some .b | _ => none
 
 theorem sideward_blocked {Q : Parthood Obj} (h : sideward.Derives Q) :
     ¬ Q.CanSubjoin .a .b ∧ ¬ Q.CanSubjoin .b .a :=
@@ -99,8 +117,9 @@ theorem sideward_blocked {Q : Parthood Obj} (h : sideward.Derives Q) :
 /-- `e` with 2-part `a` and 1-part `f`; `a` with 2-part `d` and 1-part `b`, whose 1-part chain
 continues `c`, `g`, (32). -/
 def lowering : Parthood Obj where
-  onePart | .e => some .f | .a => some .b | .b => some .c | .c => some .g | _ => none
-  twoPart | .e => some .a | .a => some .d | _ => none
+  part
+    | .one => fun | .e => some .f | .a => some .b | .b => some .c | .c => some .g | _ => none
+    | .two => fun | .e => some .a | .a => some .d | _ => none
 
 theorem lowering_blocked {Q : Parthood Obj} (h : lowering.Derives Q) :
     ¬ Q.CanSubjoin .d .c :=
@@ -109,17 +128,24 @@ theorem lowering_blocked {Q : Parthood Obj} (h : lowering.Derives Q) :
 /-- `y` with 1-part `e`; `e` with 2-part `u` and 1-part `w`; `u` with 2-part `z` and 1-part `x`,
 (38). -/
 def angle : Parthood Obj where
-  onePart | .y => some .e | .e => some .w | .u => some .x | _ => none
-  twoPart | .e => some .u | .u => some .z | _ => none
+  part
+    | .one => fun | .y => some .e | .e => some .w | .u => some .x | _ => none
+    | .two => fun | .e => some .u | .u => some .z | _ => none
 
 theorem angle_turns_once : angle.CanSubjoin .z .y ∧ ¬ angle.CanSubjoin .x .y := by
+  decide +kernel
+
+-- (5) of chapter 3: `x` is a 1-part of `u` and `u` a 2-part of `e`, but `x` is no part of `e`
+theorem not_nPart_across_dimensions :
+    angle.NPart .one .x .u ∧ angle.NPart .two .u .e ∧ ∀ n, ¬ angle.NPart n .x .e := by
   decide +kernel
 
 /-- As `angle`, but `u` has only the 1-part `x`, whose 2-part is `z` and whose 1-part is `g`,
 (41a). -/
 def escape : Parthood Obj where
-  onePart | .y => some .e | .e => some .w | .u => some .x | .x => some .g | _ => none
-  twoPart | .e => some .u | .x => some .z | _ => none
+  part
+    | .one => fun | .y => some .e | .e => some .w | .u => some .x | .x => some .g | _ => none
+    | .two => fun | .e => some .u | .x => some .z | _ => none
 
 /-- `escape` after `z` subjoins to `u`, (41b). -/
 def escape' : Parthood Obj := escape.addPart .two .z .u
@@ -146,19 +172,42 @@ inductive Node
   | Poss | rel | rel' | P | N | N'
   deriving DecidableEq, Fintype, Repr
 
+/-- `v` with `V` as its 1-part, (13) of chapter 3. -/
+def jump : Parthood Node := addPart ⊥ .one .V .v
+
+/-- *You jump*, (15) of chapter 3: `you` is the 2-part of `v`. -/
+def youJump : Parthood Node := jump.addPart .two .you .v
+
+/-- `youJump` as the 1-part of `T`, (16) of chapter 3. -/
+def tensed : Parthood Node := youJump.addPart .one .v .T
+
+/-- *You jumped*, (17) of chapter 3: `you`, the 2-part of `v`, has subjoined to `T`. -/
+def youJumped : Parthood Node := tensed.addPart .two .you .T
+
+-- (13)–(17) of chapter 3
+theorem derives_youJumped : (⊥ : Parthood Node).Derives youJumped :=
+  have h : (⊥ : Parthood Node).Subjoins .V .v jump ∧ jump.Subjoins .you .v youJump ∧
+      youJump.Subjoins .v .T tensed ∧ tensed.Subjoins .you .T youJumped := by decide +kernel
+  ((h.1.derives.trans h.2.1.derives).trans h.2.2.1.derives).trans h.2.2.2.derives
+
+theorem youJumped_wellFormed : youJumped.Acyclic ∧ youJumped.Dimensional :=
+  ⟨derives_youJumped.acyclic acyclic_bot, derives_youJumped.dimensional dimensional_bot⟩
+
 /-- In *We asked who Anson wrote the book*, (34), `who` is the 2-part of `Appl`, whose 1-part
 `O` has the embedded `C` as its 2-part. -/
 def asked : Parthood Node where
-  onePart | .Appl => some .O | .O => some .V | .C => some .T | _ => none
-  twoPart | .Appl => some .who | .O => some .C | _ => none
+  part
+    | .one => fun | .Appl => some .O | .O => some .V | .C => some .T | _ => none
+    | .two => fun | .Appl => some .who | .O => some .C | _ => none
 
 /-- In *Guess who you said fell*, (44) and (2) of chapter 5, the clausal complement is the 2-part
 of `O`, and `who` the 2-part of the embedded `O'`. -/
 def said : Parthood Node where
-  onePart
-    | .C => some .T | .T => some .v | .v => some .O | .O => some .V
-    | .C' => some .T' | .T' => some .v' | .v' => some .O' | .O' => some .V' | _ => none
-  twoPart | .v => some .you | .O => some .C' | .O' => some .who | _ => none
+  part
+    | .one => fun
+      | .C => some .T | .T => some .v | .v => some .O | .O => some .V
+      | .C' => some .T' | .T' => some .v' | .v' => some .O' | .O' => some .V' | _ => none
+    | .two => fun | .v => some .you | .O => some .C' | .O' => some .who | _ => none
 
 /-- `said` after `who` subjoins to the embedded `C'`. -/
 def said' : Parthood Node := said.addPart .two .who .C'
@@ -179,12 +228,13 @@ theorem said_successive_cyclic {Q : Parthood Node} (h : said.Derives Q) {β : No
 /-- In *(guess) what you asked who bought*, (3) of chapter 5, the embedded clause is the 2-part of
 `O`; `who` has subjoined to `T'` and `C'` from `v'`, and `what` is the 2-part of `O'`. -/
 def askedWhoBought : Parthood Node where
-  onePart
-    | .C => some .T | .T => some .v | .v => some .O | .O => some .V
-    | .C' => some .T' | .T' => some .v' | .v' => some .O' | .O' => some .V' | _ => none
-  twoPart
-    | .v => some .you | .O => some .C' | .C' => some .who | .T' => some .who
-    | .v' => some .who | .O' => some .what | _ => none
+  part
+    | .one => fun
+      | .C => some .T | .T => some .v | .v => some .O | .O => some .V
+      | .C' => some .T' | .T' => some .v' | .v' => some .O' | .O' => some .V' | _ => none
+    | .two => fun
+      | .v => some .you | .O => some .C' | .C' => some .who | .T' => some .who
+      | .v' => some .who | .O' => some .what | _ => none
 
 /-- In the wh-island (1b) of chapter 5, no derivation makes `what` a part of the matrix `C`. -/
 theorem wh_island : ¬ askedWhoBought.Reaches .what .C :=
@@ -197,12 +247,13 @@ theorem wh_island : ¬ askedWhoBought.Reaches .what .C :=
 relational `rel`, with 2-part `P` and 1-part `N`. The 1-part of `P` is the wh-phrase `D'`, whose
 relational `rel'` has `who` as its 2-part, and `who` has subjoined to `P`. -/
 def statue : Parthood Node where
-  onePart
-    | .C => some .T | .T => some .v | .v => some .O | .O => some .V | .D => some .rel
-    | .rel => some .N | .P => some .D' | .D' => some .rel' | .rel' => some .N' | _ => none
-  twoPart
-    | .v => some .you | .O => some .D | .rel => some .P | .P => some .who | .rel' => some .who
-    | _ => none
+  part
+    | .one => fun
+      | .C => some .T | .T => some .v | .v => some .O | .O => some .V | .D => some .rel
+      | .rel => some .N | .P => some .D' | .D' => some .rel' | .rel' => some .N' | _ => none
+    | .two => fun
+      | .v => some .you | .O => some .D | .rel => some .P | .P => some .who | .rel' => some .who
+      | _ => none
 
 /-- *Who did you buy the statue of*, (33): `Det` has subjoined to `D`. -/
 def theStatue : Parthood Node := statue.addPart .two .Det .D
@@ -219,7 +270,7 @@ abbrev nominal : Set Node := {.D, .rel, .N, .P, .D', .rel', .N', .who}
 theorem statue_definite :
     theStatue.CanSubjoin .who .D ∧ theStatue.subjoin .who .D = none ∧
       ¬ theStatue.Reaches .who .C :=
-  ⟨by decide +kernel, subjoin_eq_none_of_full rfl rfl,
+  ⟨by decide +kernel, subjoin_eq_none_iff.2 ⟨rfl, rfl⟩,
     IsDomain.not_reaches (S := nominal) (b := .D) (c := .Det) (by decide +kernel) rfl
       (by decide) (by decide) (by decide) (by decide +kernel) (by decide)⟩
 
@@ -228,11 +279,12 @@ theorem statue_definite :
 /-- A subject `D` in the 2-part of `v`, subjoined to `T`. Its 1-part `rel` has 2-part `Det` and
 1-part `rel'`, whose 2-part is `who`, (56)–(57). -/
 def subject : Parthood Node where
-  onePart
-    | .C => some .T | .T => some .v | .v => some .V | .D => some .rel | .rel => some .rel'
-    | .rel' => some .N | _ => none
-  twoPart
-    | .T => some .D | .v => some .D | .rel => some .Det | .rel' => some .who | _ => none
+  part
+    | .one => fun
+      | .C => some .T | .T => some .v | .v => some .V | .D => some .rel | .rel => some .rel'
+      | .rel' => some .N | _ => none
+    | .two => fun
+      | .T => some .D | .v => some .D | .rel => some .Det | .rel' => some .who | _ => none
 
 /-- `subject` after `who` subjoins to `D`, under `T[uD]`, (57). -/
 def thetic : Parthood Node := subject.addPart .two .who .D
@@ -266,9 +318,9 @@ theorem subject_topic :
 theorem thetic_not_topic {Q : Parthood Node} (h : thetic.Derives Q) : ¬ FamChecked Q := by
   have leaf : ∀ y, ¬ thetic.Descendant y .who := by decide +kernel
   rintro ⟨y, hyT, hy⟩
-  rcases hyT.eq_or_nPart_of_imm (h.le (show thetic.Imm .two .D .T from rfl)) with rfl | hyD
+  rcases hyT.eq_or_nPart_of_imm ((show thetic.Imm .two .D .T from rfl).mono h.le) with rfl | hyD
   · simp [Fam] at hy
-  rcases hyD.eq_or_nPart_of_imm (h.le (show thetic.Imm .two .who .D from rfl)) with rfl | hyw
+  rcases hyD.eq_or_nPart_of_imm ((show thetic.Imm .two .who .D from rfl).mono h.le) with rfl | hyw
   · simp [Fam] at hy
   exact leaf y (h.descendant_of_isPart (by decide +kernel) (descendant_of_nPart hyw))
 
@@ -323,7 +375,7 @@ def cases : List (Parthood Node × Node) :=
 private theorem mem_cases : ∀ e ∈ Examples.all, ∀ P ∈ structureOf e, (P, moverOf e) ∈ cases := by
   decide +kernel
 
-private theorem reaches_iff : ∀ p ∈ cases, p.1.Reaches p.2 .C ↔ p.1.twoPart .D = none := by
+private theorem reaches_iff : ∀ p ∈ cases, p.1.Reaches p.2 .C ↔ p.1.part .two .D = none := by
   have trapped (f γ : Node) (hf : f = .Det ∨ f = .Dem ∨ f = .Poss) (hγ : γ = .who ∨ γ = .P) :
       ¬ (statue.addPart .two f .D).Reaches γ .C := by
     rcases hγ with rfl | rfl <;> rcases hf with rfl | rfl | rfl <;>
@@ -343,7 +395,7 @@ theorem nominal_rows :
       (P.Reaches (moverOf e) .C ↔ e.judgment = .acceptable) := by
   have h : ∀ e ∈ Examples.all, ∀ P ∈ structureOf e,
       e.feature? "wh" ≠ some "in situ, echo question only" →
-        (P.twoPart .D = none ↔ e.judgment = .acceptable) := by
+        (P.part .two .D = none ↔ e.judgment = .acceptable) := by
     decide +kernel
   intro e he P hP hecho
   rw [reaches_iff _ (mem_cases e he P hP)]

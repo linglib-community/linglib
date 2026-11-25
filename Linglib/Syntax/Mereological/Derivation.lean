@@ -32,7 +32,7 @@ successive cyclicity. And once the 2-part slot of a 2-part `b` is filled by `c`,
 ## Main statements
 
 * `Parthood.Subjoins.imm_two_of_isPart`: a part always subjoins as a 2-part.
-* `Parthood.Derives.acyclic`: derivations preserve Irreflexivity.
+* `Parthood.Derives.acyclic`: derivations preserve acyclicity.
 * `Parthood.IsDomain.eq_or_nPart_two_of_derives`: an object escapes a 2-part only from its edge.
 * `Parthood.IsDomain.not_reaches`: a filled 2-part is an island in every derivation.
 
@@ -94,7 +94,7 @@ theorem imm_iff (h : P.Subjoins x y Q) :
 already. -/
 theorem imm_two_of_isPart (h : P.Subjoins x y Q) (hx : P.IsPart x) : Q.Imm .two x y := by
   obtain ⟨n, hn, hQ⟩ := h.imm_iff
-  obtain rfl := nextDim_eq_two (isSome_onePart_of_canSubjoin (h.canSubjoin hx)) hn
+  obtain rfl := nextDim_eq_two (isSome_part_one_of_canSubjoin (h.canSubjoin hx)) hn
   exact (hQ _ _ _).2 (.inr ⟨rfl, rfl, rfl⟩)
 
 private theorem edge_iff (h : P.Subjoins x y Q) (a b : α) :
@@ -192,7 +192,7 @@ theorem dimensional (h : P.Derives Q) (hP : P.Dimensional) : Q.Dimensional := by
 
 theorem eq_or_descendant_of_nPart_two {b c γ : α} (h : P.Derives Q) (hc : P.Imm .two c b)
     (hγ : Q.NPart .two γ b) : γ = c ∨ P.Descendant γ c :=
-  (hγ.eq_or_nPart_of_imm (h.le hc)).imp_right fun hγc ↦
+  (hγ.eq_or_nPart_of_imm (hc.mono h.le)).imp_right fun hγc ↦
     h.descendant_of_isPart ⟨.two, b, hc⟩ (descendant_of_nPart hγc)
 
 theorem not_canSubjoin_of_not_descendant {γ β : α} (h : P.Derives Q) (hβ : P.IsPart β)
@@ -229,7 +229,7 @@ theorem subjoins (hD : P.IsDomain S b) (h : P.Subjoins x y Q) : Q.IsDomain S b w
     rcases (hQ _ _ _).1 hzw with hzw | ⟨rfl, rfl, rfl⟩
     · exact (hD.exit z hz n w hzw hw).imp_right (·.imp_right (·.mono h.le))
     · have hx := h.canSubjoin (hD.isPart _ hz)
-      exact ⟨nextDim_eq_two (isSome_onePart_of_canSubjoin hx) hd,
+      exact ⟨nextDim_eq_two (isSome_part_one_of_canSubjoin hx) hd,
         (hD.eq_or_nPart_two_of_canSubjoin hz hw hx).imp_right (·.mono h.le)⟩
 
 theorem derives (hD : P.IsDomain S b) (h : P.Derives Q) : Q.IsDomain S b := by
