@@ -29,7 +29,7 @@ predicate concepts; the relative clauses carry no presupposition of their own.
 
 `Complementizer` is the substrate's clause-typing morpheme, not a C head: Caponigro and Polinsky
 argue that *ze-re-* is no complementizer, and the entry's morphs are the relativizer and the
-high applicative. Deal's relativization analysis is in `Studies/Deal2026.lean`.
+high applicative. The relativization analysis is [deal-2026]'s.
 
 ## References
 

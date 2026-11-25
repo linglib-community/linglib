@@ -47,7 +47,7 @@ tables, its verbal template and its marking of the roles by marker set under wha
 so the position of the absolutive is read off the template and the alignment off the marking
 rather than recorded beside them. The case labels that analyses give the two sets, ergative or
 genitive for Set A and absolutive for Set B, are the analyses' and live in their studies;
-quantification over the family is a study's, in `Studies/CoonMateoPedroPreminger2014.lean`.
+quantification over the family is a study's, as in [coon-mateo-pedro-preminger-2014].
 
 ## References
 

@@ -19,7 +19,7 @@ neuter *znamja* 'banner' (Wade §64) and the masculine *put'* of its exceptions 
 kinship and animal nouns stand for the semantic core (17). *Vrač* 'doctor' is masculine but takes
 feminine agreement on a predicate when the referent is female, *Врач обязана помочь больному* 'The
 doctor is obliged to help the patient' (Wade §313); the file records its declensional
-gender, and the hybrid agreement is in `Studies/Kramer2020.lean`.
+gender; the hybrid agreement is analysed by [kramer-2020].
 
 Each gender divides into an animate and an inanimate subgender, by which the accusative of a
 masculine singular or a plural takes the form of the genitive or of the nominative (Wade §47). The

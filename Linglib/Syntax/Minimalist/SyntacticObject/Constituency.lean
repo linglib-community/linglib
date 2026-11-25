@@ -13,22 +13,17 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 # Planar syntactic objects as constituency trees
 
 The constituency tree of a planar syntactic object is its ordered tree with the vertices
-relabelled: a lexical item becomes a terminal, an unlabelled vertex a projection, and a trace a
-trace with an index. The tree has the object's positions, so whatever is stated on positions,
-c-command among them, carries over by the lemmas about relabelling a tree
-(`RoseTree.cCommands_map`), and it [pronounces the object's tokens in order](##yield_toTree). The
-type-driven composition engine, binding configurations and the spans of prosodic constituency read
-a Minimalist object through this tree.
+relabelled: an item becomes a terminal and an unlabelled vertex a projection. The tree has the
+object's positions, so whatever is stated on positions, c-command among them, carries over by the
+lemmas about relabelling a tree (`RoseTree.cCommands_map`), and it [has the object's items in
+order](##yield_toTree). The type-driven composition engine, binding configurations and the spans
+of prosodic constituency read a Minimalist object through this tree.
 
 ## Implementation notes
 
 * Categories are `Unit`. The engine, c-command and the yield ignore categories; the categories a
-  head function assigns (`Minimalist.lexicalHeadAt`) depend on the position, not on the vertex, and
-  are not a relabelling.
-* A constituency tree has traces and binders only, so a copy is not represented, and no binder is
-  introduced: a trace is free in the tree, interpreted by the assignment. The index of a trace is
-  a parameter, `traceIndex` being the choice that keeps the index-free trace apart from the trace
-  of every token.
+  head function assigns depend on the position, not on the vertex, and are not a relabelling.
+* The tree has no traces and no binders: a copy of a term is the term again at another vertex.
 
 ## References
 
@@ -43,43 +38,33 @@ namespace Minimalist
 
 open PhraseStructure
 
-/-- The index of a trace by the token it is the trace of: `0` for the index-free trace and the
-token's identifier plus one otherwise, so that no token's trace shares the index-free trace's. -/
-def traceIndex : Option LexicalItem.Token → ℕ
-  | none => 0
-  | some a => a.id + 1
-
 namespace SyntacticObject
 
 variable {L : Type}
 
-/-- The label of a vertex in a constituency tree: a lexical item is a terminal, the unlabelled
-vertex a projection, and a trace the trace of the index `τ` gives it. -/
-def vertexLabel (τ : Option L → ℕ) : Option (Leaf L L) → Tree.Label Unit L
-  | some (.lex a) => .terminal () a
+/-- The label of a vertex in a constituency tree: an item is a terminal and the unlabelled vertex
+a projection. -/
+def vertexLabel : Option L → Tree.Label Unit L
+  | some a => .terminal () a
   | none => .phrase () .projection
-  | some .trace => .trace (τ none) ()
-  | some (.traceOf i) => .trace (τ (some i)) ()
 
 end SyntacticObject
 
 namespace PlanarSyntacticObject
 
-variable {L : Type} (τ : Option L → ℕ)
+variable {L : Type}
 
-/-- The constituency tree of a planar object, its ordered tree relabelled, a trace having the
-index `τ` gives it. -/
-def toTree (t : PlanarSyntacticObject (SyntacticObject.Leaf L L)) : Tree Unit L :=
-  t.toRoseTree.map (SyntacticObject.vertexLabel τ)
+/-- The constituency tree of a planar object, its ordered tree relabelled. -/
+def toTree (t : PlanarSyntacticObject L) : Tree Unit L :=
+  t.toRoseTree.map SyntacticObject.vertexLabel
 
-/-- The tree pronounces the object's tokens, in order. -/
-theorem yield_toTree (t : PlanarSyntacticObject (SyntacticObject.Leaf L L)) : (t.toTree τ).yield =
-    t.yield := by
+/-- The tree has the object's items, in order. -/
+theorem yield_toTree (t : PlanarSyntacticObject L) : t.toTree.yield = t.yield := by
   simp only [toTree, Tree.yield, Tree.terminals, RoseTree.leafList_map, yield,
     List.filterMap_map, List.map_filterMap]
   congr 1
   funext v
-  rcases v with _ | _ | _ | _ <;> rfl
+  rcases v with _ | _ <;> rfl
 
 end PlanarSyntacticObject
 

@@ -35,8 +35,6 @@ it.
 
 * `Minimalist.SelectionRule.stack_projects_iff`: under the stack rule a constituent projects over
   a sister exactly when it selects it.
-* `Minimalist.SyntacticObject.selectionHead_map`: a relabelling that preserves selection commutes
-  with the selection head.
 * `Minimalist.SelectionRule.State.isSaturated_iff_not_isSaturated_of_mul_ne_zero`,
   `Minimalist.SelectionRule.State.head_mul_of_not_isSaturated`: Merge is triggered, one factor
   selecting and the other saturated, and the selecting factor projects.
@@ -44,12 +42,9 @@ it.
 ## Implementation notes
 
 Two sisters never each select the other under the stack rule, so no head outranks another.
-The trace of a token is a lower copy of the phrase it heads, so it gets that phrase's value,
-saturated with the token's category (`traceState`), and a head that selected the moved phrase
-still selects its trace; the bare trace remembers no token and gets the saturated dummy
-`.of .bareTrace []`. `selectionState` reads only the token's category and `sel`. Two saturated
-sisters have no head, as in [marcolli-chomsky-berwick-2025]'s partial head functions: a specifier
-and its sister are labeled, if at all, by the labeling algorithm.
+`selectionState` reads only the token's category and `sel`. Two saturated sisters have no head,
+as in [marcolli-chomsky-berwick-2025]'s partial head functions: a specifier and its sister are
+labeled, if at all, by the labeling algorithm.
 
 ## References
 
@@ -118,16 +113,6 @@ theorem of_cons_mul_of_cons (c' : Cat) :
 
 variable {x y}
 
-/-- A relabelling that keeps each token's category commutes with the product. -/
-theorem map_mul_of_preservesSelection {f : LexicalItem.Token → LexicalItem.Token}
-    (hf : LexicalItem.Token.PreservesSelection f) (x y : stack.State) :
-    (x * y).map f = x.map f * y.map f :=
-  map_mul (f := f) (fun r b u ↦ by simp [hf.cat]) (fun _ _ _ ↦ rfl) (fun _ _ ↦ Iff.rfl) x y
-
-/-- Exocentricity is a zero divisor, since two saturated nonzero states multiply to `0`. -/
-example : ∃ x y : stack.State, x ≠ 0 ∧ y ≠ 0 ∧ x * y = 0 :=
-  ⟨.of .bareTrace [], .of .bareTrace [], of_ne_zero _ _, of_ne_zero _ _, of_nil_mul_of_nil _ _⟩
-
 theorem head_of_mul_of {a t : LexicalItem.Token} {y : stack.State}
     (h : (of a [] * y).head = some t) : y.head = some t := by
   cases y with
@@ -192,14 +177,6 @@ end State
 
 end SelectionRule
 
-/-! ### Selection states on the carriers -/
-
-/-- The selection state of a trace is a saturated copy of the phrase its token heads, and for the
-    bare trace the saturated dummy. -/
-def traceState : Option LexicalItem.Token → SelectionRule.stack.State
-  | some tok => .of tok []
-  | none => .of .bareTrace []
-
 /-! ### The selection head on `SyntacticObject` -/
 
 variable (s : SyntacticObject TokenLeaf) (tok : LexicalItem.Token)
@@ -210,7 +187,7 @@ namespace SyntacticObject
 leaves as a morphism of magmas: Merge multiplies constituents and selection multiplies their
 states. It is the selection instance of [marcolli-chomsky-berwick-2025]'s head functions. -/
 def selectionState : SyntacticObject TokenLeaf →ₙ* SelectionRule.stack.State :=
-  FreeCommMagma.lift (Leaf.elim (fun tok ↦ .of tok tok.item.sel) traceState)
+  FreeCommMagma.lift fun tok ↦ .of tok tok.item.sel
 
 /-- The projecting head's lexical item, by c-selection. -/
 def selectionHead : Option LexicalItem.Token := (selectionState s).head
@@ -222,11 +199,6 @@ def cat? : Option Cat := s.selectionHead.map (·.item.cat)
 @[simp] theorem selectionState_leaf :
     selectionState (SyntacticObject.leaf tok) = .of tok tok.item.sel :=
   rfl
-
-@[simp] theorem selectionState_trace :
-    selectionState (trace : SyntacticObject TokenLeaf) = .of .bareTrace [] := rfl
-
-@[simp] theorem selectionState_traceOf : selectionState (traceOf tok) = .of tok [] := rfl
 
 @[simp] theorem selectionHead_leaf : (SyntacticObject.leaf tok).selectionHead = some tok := rfl
 
@@ -246,32 +218,10 @@ theorem isHeadFunction_selectionHead :
   eq_of_mem_leaf h := by simpa [eq_comm] using h
   mem_or_mem := selectionHead_merge
 
-variable {f : LexicalItem.Token → LexicalItem.Token}
-
-theorem selectionState_map (hf : LexicalItem.Token.PreservesSelection f) :
-    selectionState (s.map f) = (selectionState s).map f := by
-  induction s using ind with
-  | leaf a => simp [hf.sel]
-  | trace => simp [hf.bareTrace]
-  | traceOf a => simp
-  | merge l r ihl ihr => rw [map_merge, map_mul, map_mul, ihl, ihr,
-      SelectionRule.State.map_mul_of_preservesSelection hf]
-
-theorem selectionHead_map (hf : LexicalItem.Token.PreservesSelection f) :
-    (s.map f).selectionHead = s.selectionHead.map f := by
-  rw [selectionHead, selectionHead, selectionState_map s hf, SelectionRule.State.head_map]
-
 @[simp] theorem cat?_leaf : (SyntacticObject.leaf tok).cat?
     = some tok.item.cat := rfl
 
 end SyntacticObject
 
-
-theorem LexicalItem.Token.PreservesSelection.swap {a b : LexicalItem.Token}
-    (hc : a.item.cat = b.item.cat) (hs : a.item.sel = b.item.sel) (ha : a ≠ .bareTrace)
-    (hb : b ≠ .bareTrace) : LexicalItem.Token.PreservesSelection (Equiv.swap a b) where
-  cat t := by rw [Equiv.swap_apply_def]; split_ifs <;> subst_vars <;> simp [hc]
-  sel t := by rw [Equiv.swap_apply_def]; split_ifs <;> subst_vars <;> simp [hs]
-  bareTrace := Equiv.swap_apply_of_ne_of_ne ha.symm hb.symm
 
 end Minimalist

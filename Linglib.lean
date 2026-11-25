@@ -285,7 +285,6 @@ import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.QUD.Basic
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.DistributedMorphology.Basic
-import Linglib.Morphology.DistributedMorphology.Fission
 import Linglib.Morphology.DistributedMorphology.Fusion
 import Linglib.Morphology.DistributedMorphology.Impoverishment
 import Linglib.Morphology.DistributedMorphology.Locality
@@ -449,7 +448,6 @@ import Linglib.Syntax.HPSG.Construction
 import Linglib.Syntax.Mereological.AngularLocality
 import Linglib.Syntax.Mereological.Parthood
 import Linglib.Syntax.Minimalist.Ellipsis
-import Linglib.Syntax.Minimalist.LateMerger
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic

@@ -20,13 +20,10 @@ built over tokens are in `SyntacticObject/Token.lean`.
 ## Main definitions
 
 * `Minimalist.LexicalItem`, `Minimalist.LexicalItem.Token`
-* `Minimalist.LexicalItem.Token.PreservesSelection`: relabellings of tokens that selection does
-  not see.
 
 ## References
 
 * [marcolli-chomsky-berwick-2025], §1.1 (Definition 1.1.1)
-* [merchant-2001]
 -/
 
 @[expose] public section
@@ -61,34 +58,5 @@ structure LexicalItem.Token where
   /-- The index among the tokens of `item`. -/
   id : ℕ
   deriving Repr, DecidableEq
-
-/-- The placeholder head of a bare trace, which remembers no token. Selection reads it as a
-saturated silent noun, and its index lies above those lexical tokens use, so it equals none of
-them. -/
-def LexicalItem.Token.bareTrace : LexicalItem.Token := ⟨.of .N [], 10000⟩
-
-/-- A relabelling of tokens preserves selection when it keeps each token's category and
-selectional stack and fixes the placeholder of the bare trace, so that it may change only what
-selection does not read, such as the phonological form; the term is this library's. -/
-structure LexicalItem.Token.PreservesSelection (f : LexicalItem.Token → LexicalItem.Token) :
-    Prop where
-  /-- The category is kept. -/
-  cat : ∀ t, (f t).item.cat = t.item.cat
-  /-- The selectional stack is kept. -/
-  sel : ∀ t, (f t).item.sel = t.item.sel
-  /-- The placeholder of the bare trace is fixed. -/
-  bareTrace : f .bareTrace = .bareTrace
-
-namespace LexicalItem.Token.PreservesSelection
-
-protected theorem id : PreservesSelection (_root_.id : LexicalItem.Token → LexicalItem.Token) :=
-  ⟨fun _ ↦ rfl, fun _ ↦ rfl, rfl⟩
-
-theorem comp {f g : LexicalItem.Token → LexicalItem.Token} (hf : PreservesSelection f)
-    (hg : PreservesSelection g) : PreservesSelection (f ∘ g) :=
-  ⟨fun t ↦ (hf.cat _).trans (hg.cat t), fun t ↦ (hf.sel _).trans (hg.sel t),
-    (congrArg f hg.bareTrace).trans hf.bareTrace⟩
-
-end LexicalItem.Token.PreservesSelection
 
 end Minimalist

@@ -34,8 +34,8 @@ unmarked.
 
 ## Implementation notes
 
-The distribution of the enclitic across clause sizes and movement paths is formalized in
-`Studies/ElkinsTorrenceBrown2026.lean`.
+The distribution of the enclitic across clause sizes and movement paths is the subject of
+[elkins-torrence-brown-2026].
 
 ## References
 

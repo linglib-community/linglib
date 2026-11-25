@@ -38,7 +38,7 @@ classifications are [disjoint](##Verb.IsUnergative.not_isUnaccusative).
 * The classifications are not exhaustive: an entry without a voice, a directed change or a
   profile for its sole argument is classified as neither. Unaccusativity asks for no intransitive
   frame, since Japanese *deru* 'exit' is an unaccusative with an *o*-marked path
-  (`Studies/Ozaki2026.lean`); unergativity does.
+  ([ozaki-2026]); unergativity does.
 * Unaccusativity is not read off the perfect auxiliary: German *rennen* 'run' takes *sein* and
   is not unaccusative, and French *rougir* 'redden' alternates and takes *avoir*. A grammar
   that relates the two states its rule against the auxiliaries an entry records

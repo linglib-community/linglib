@@ -15,19 +15,17 @@ When two syntactic objects merge, at most one of them projects. A projection rel
 which: `P x y` holds when `x` projects over `y`, and it is asymmetric. The accounts of labeling
 differ in this relation, and the head of an object follows from it. A leaf heads itself, and a
 Merge is headed by the head of the daughter that projects, so an object is headed by one of its
-leaves or by none. The lexical item that heads an object is that leaf, where it is a lexical item
-and not a trace.
+leaves or by none.
 
 ## Main definitions
 
-* `Minimalist.headLeaf`: the leaf that heads an object under a projection relation, on any leaves.
-* `Minimalist.headItem`: the lexical item that heads it.
+* `Minimalist.headLeaf`: the leaf that heads an object under a projection relation.
 
 ## Main results
 
 * `Minimalist.bind_subAt?_headPath`: the leaf that heads an object is the leaf at the end of the
   head path of a planar form of it.
-* `Minimalist.isHeadFunction_headItem`: the head item is a head function.
+* `Minimalist.isHeadFunction_headLeaf`: the head a projection relation gives is a head function.
 
 ## Implementation notes
 
@@ -90,43 +88,16 @@ theorem bind_subAt?_headPath (t : PlanarSyntacticObject α) :
       cases headPath P r <;> rfl
     · rfl
 
-end Leaves
-
-variable {L ι : Type}
-    (P : SyntacticObject (SyntacticObject.Leaf L ι) → SyntacticObject (SyntacticObject.Leaf L ι) →
-    Prop) [DecidableRel P]
-  [Std.Asymm P]
-
-theorem headLeaf_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    headLeaf P (merge l r) = if P l r then headLeaf P l else if P r l then headLeaf P r else none :=
-  headLeaf_mul P l r
-
-/-- No object merged with itself has a head. -/
-theorem headLeaf_merge_self (x : SyntacticObject (SyntacticObject.Leaf L ι)) : headLeaf P
-    (merge x x) = none :=
-  headLeaf_mul_self P x
-
-/-- The lexical item that heads an object: its head leaf, where that is a lexical item. -/
-def headItem (s : SyntacticObject (SyntacticObject.Leaf L ι)) : Option L :=
-  (headLeaf P s).bind (Leaf.elim some fun _ ↦ none)
-
-@[simp] theorem headItem_leaf (a : L) : headItem P
-    (leaf a : SyntacticObject (SyntacticObject.Leaf L ι)) = some a := rfl
-
-theorem headItem_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    headItem P (merge l r) =
-      if P l r then headItem P l else if P r l then headItem P r else none := by
-  rw [headItem, headLeaf_merge]
-  split_ifs <;> rfl
-
-/-- The head item of a projection relation is a head function. -/
-theorem isHeadFunction_headItem : IsHeadFunction (headItem P) where
+/-- The head a projection relation gives is a head function. -/
+theorem isHeadFunction_headLeaf : IsHeadFunction (headLeaf P) where
   eq_of_mem_leaf h := by simpa [eq_comm] using h
   mem_or_mem {x y a} h := by
-    rw [headItem_merge] at h
+    rw [headLeaf_mul] at h
     split_ifs at h
     · exact .inl h
     · exact .inr h
     · cases h
+
+end Leaves
 
 end Minimalist

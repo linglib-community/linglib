@@ -20,14 +20,13 @@ the emotive *văzmuštavam se* 'resent', which takes no *za* phrase, and the sem
 Forms follow Krapova's scientific transliteration, *ă* for ъ; several citation forms are
 multiword impersonals with an experiencer clitic, as *jad me e*. The predicate lists are the
 ones Krapova names and are open-ended in the paper. The data are Krapova's; the hidden-relative
-analysis of *deto* and the double requirement behind its distribution are stated in
-`Studies/Deal2026.lean`.
+analysis of *deto* and the double requirement behind its distribution are [deal-2026]'s.
 
 ## Implementation notes
 
 *deto* and *zadeto* record the coding and sentence type of *če*, so `Verb.Takes`, which selects
 by those, takes all three alike. The predicates *deto* introduces are `detoTakers`, a lexical
-list, which `Studies/Deal2026.lean` proves the double requirement picks out.
+list.
 
 ## References
 
