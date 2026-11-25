@@ -50,18 +50,18 @@ the phrase moved only to the mover's own edge, pronounces `h` and is no remnant 
 
 namespace Minimalist.SyntacticObject
 
-variable {m : SyntacticObject} {h : LexicalItem.Token}
+variable {m : SyntacticObject TokenLeaf} {h : LexicalItem.Token}
 
 /-- `m` is a remnant of the phrase headed by `h`: it holds a trace of `h` but does not pronounce
 `h`. -/
-def IsRemnantOf (m : SyntacticObject) (h : LexicalItem.Token) : Prop :=
+def IsRemnantOf (m : SyntacticObject TokenLeaf) (h : LexicalItem.Token) : Prop :=
   traceOf h ∈ m.terms ∧ h ∉ m.yield
 
 instance : Decidable (m.IsRemnantOf h) := inferInstanceAs (Decidable (_ ∧ _))
 
 theorem isRemnantOf_map_iff {f : LexicalItem.Token → LexicalItem.Token}
     (hf : Function.Injective f) : (m.map f).IsRemnantOf (f h) ↔ m.IsRemnantOf h := by
-  have hmem (x : SyntacticObject) : x.map f ∈ (m.map f).terms ↔ x ∈ m.terms := by
+  have hmem (x : SyntacticObject TokenLeaf) : x.map f ∈ (m.map f).terms ↔ x ∈ m.terms := by
     rw [terms_map, Multiset.mem_map_of_injective (map_injective hf)]
   rw [IsRemnantOf, IsRemnantOf, mem_yield_iff, mem_yield_iff, ← map_traceOf, ← map_leaf, hmem,
     hmem]

@@ -733,7 +733,7 @@ private theorem mem_arrangements_length {α : Type*} [DecidableEq α] {l es : Li
 /-! ### The dative alternation -/
 
 /-- The categorial selection state of a syntactic object without traces. -/
-def state : SyntacticObject →ₙ* featureMaximality.State :=
+def state : SyntacticObject TokenLeaf →ₙ* featureMaximality.State :=
   FreeCommMagma.lift (SyntacticObject.Leaf.elim categorial.lex fun _ ↦ 0)
 
 /-- The head daughters of Merge as selection: at each position the daughter whose head selects
@@ -742,25 +742,29 @@ def selectionHead : HeadDaughter := .ofProjects fun x y ↦ (state x).Projects (
 
 /-- `bar R h comp specs` is the stack of intermediate projections of the phrase headed by `h`,
 with complement `comp` and specifiers `specs`, those satisfying `R` linearized on the right. -/
-def bar (R : PlanarSyntacticObject → Prop) [DecidablePred R] (h comp : PlanarSyntacticObject) :
-    List PlanarSyntacticObject → PlanarSyntacticObject
+def bar (R : PlanarSyntacticObject TokenLeaf → Prop) [DecidablePred R]
+    (h comp : PlanarSyntacticObject TokenLeaf) :
+    List (PlanarSyntacticObject TokenLeaf) → PlanarSyntacticObject TokenLeaf
   | [] => h * comp
   | s :: ss => if R s then bar R h comp ss * s else s * bar R h comp ss
 
 /-- `projectWith R h es` is the phrase the head `h` projects when `es` merge with it. The first
 is the complement, and each later one tucks in below the specifiers already merged, so the first
 specifier is outermost; specifiers satisfying `R` are linearized on the right. -/
-def projectWith (R : PlanarSyntacticObject → Prop) [DecidablePred R] (h : PlanarSyntacticObject) :
-    List PlanarSyntacticObject → PlanarSyntacticObject
+def projectWith (R : PlanarSyntacticObject TokenLeaf → Prop) [DecidablePred R]
+    (h : PlanarSyntacticObject TokenLeaf) :
+    List (PlanarSyntacticObject TokenLeaf) → PlanarSyntacticObject TokenLeaf
   | [] => h
   | comp :: ss => bar R h comp ss
 
 /-- `project h es` is the projection with every specifier on the left. -/
-abbrev project : PlanarSyntacticObject → List PlanarSyntacticObject → PlanarSyntacticObject :=
+abbrev project : PlanarSyntacticObject TokenLeaf → List (PlanarSyntacticObject TokenLeaf) →
+    PlanarSyntacticObject TokenLeaf :=
   projectWith fun _ ↦ False
 
 /-- `projectR h es` is the projection with each specifier headed by V on the right. -/
-abbrev projectR : PlanarSyntacticObject → List PlanarSyntacticObject → PlanarSyntacticObject :=
+abbrev projectR : PlanarSyntacticObject TokenLeaf → List (PlanarSyntacticObject TokenLeaf) →
+    PlanarSyntacticObject TokenLeaf :=
   projectWith fun s ↦ (state s).head.map (·.item.cat) = some .V
 
 /-- The head v. -/
@@ -780,23 +784,25 @@ head. -/
 def iobj : LexicalItem.Token := item .P 4
 
 /-- The VP whose head merges with the constituents headed by `Vs` in order. -/
-def vp (Vs : List LexicalItem.Token) : PlanarSyntacticObject :=
+def vp (Vs : List LexicalItem.Token) : PlanarSyntacticObject TokenLeaf :=
   project (.leaf VHead) (Vs.map .leaf)
 
 /-- The constituents merging with v, given the heads `es` of each in order and the heads `Vs` of
 those merging with V: `VHead` stands for VP. -/
-def vArgs (Vs es : List LexicalItem.Token) : List PlanarSyntacticObject :=
+def vArgs (Vs es : List LexicalItem.Token) : List (PlanarSyntacticObject TokenLeaf) :=
   es.map fun b ↦ if b = VHead then vp Vs else .leaf b
 
 /-- `lowXP` is the ditransitive with the indirect object in V's complement. -/
-def lowXP : PlanarSyntacticObject := project (.leaf vHead) (vArgs [iobj, dobj] [VHead, subj])
+def lowXP : PlanarSyntacticObject TokenLeaf := project (.leaf vHead)
+    (vArgs [iobj, dobj] [VHead, subj])
 
 /-- `highXP` is the ditransitive with the indirect object in v's complement and VP a specifier
 linearized on the left. -/
-def highXP : PlanarSyntacticObject := project (.leaf vHead) (vArgs [dobj] [iobj, subj, VHead])
+def highXP : PlanarSyntacticObject TokenLeaf := project (.leaf vHead)
+    (vArgs [dobj] [iobj, subj, VHead])
 
 /-- `highXPRight` is `highXP` with the VP specifier linearized on the right. -/
-def highXPRight : PlanarSyntacticObject :=
+def highXPRight : PlanarSyntacticObject TokenLeaf :=
   projectR (.leaf vHead) (vArgs [dobj] [iobj, subj, VHead])
 
 /-- VP cannot merge with v before the phrase containing the indirect object. -/
@@ -805,33 +811,36 @@ example : ¬ Selects (mergeFeatures .v) [VHead, iobj, subj] := by decide
 /-- In the binding configuration of a planar object, `a` commands `b` when every maximal
 projection properly dominating `a` dominates `b` and `b` does not c-command `a`. Binding is not
 restricted to a domain. -/
-def configuration (t : PlanarSyntacticObject) : Binding.Configuration GornAddress where
+def configuration (t : PlanarSyntacticObject TokenLeaf) : Binding.Configuration GornAddress where
   commands a b :=
     (a, b) ∈ PhraseStructure.commandRelation (maximalProjections selectionHead t) ∧
       ¬ RoseTree.CCommands t.toRoseTree b a
   domain _ := Set.univ
 
-instance (t : PlanarSyntacticObject) : DecidableRel (configuration t).commands := fun a b ↦
+instance (t : PlanarSyntacticObject TokenLeaf) : DecidableRel (configuration t).commands := fun a b
+    ↦
   inferInstanceAs (Decidable
     ((a, b) ∈ PhraseStructure.commandRelation (maximalProjections selectionHead t) ∧ _))
 
 /-- `leafPaths t` pairs each lexical item of `t` with its position. -/
-def leafPaths (t : PlanarSyntacticObject) : List (LexicalItem.Token × GornAddress) :=
+def leafPaths (t : PlanarSyntacticObject TokenLeaf) : List (LexicalItem.Token × GornAddress) :=
   (positions (fun x ↦ match x with | .lex a => some a | _ => none) t.toRoseTree).map
     fun x ↦ (x.2, x.1)
 
 /-- The item `x` can bind the item `y` in `t`. -/
-def CanBind (t : PlanarSyntacticObject) (x y : LexicalItem.Token) : Prop :=
+def CanBind (t : PlanarSyntacticObject TokenLeaf) (x y : LexicalItem.Token) : Prop :=
   ∃ a ∈ (leafPaths t).lookup x, ∃ b ∈ (leafPaths t).lookup y, (configuration t).commands a b
 
-instance (t : PlanarSyntacticObject) (x y : LexicalItem.Token) : Decidable (CanBind t x y) :=
+instance (t : PlanarSyntacticObject TokenLeaf) (x y : LexicalItem.Token) : Decidable
+    (CanBind t x y) :=
   inferInstanceAs (Decidable (∃ a ∈ _, _))
 
 /-- The item `x` precedes the item `y` in `t` when its position precedes `y`'s. -/
-def Precedes (t : PlanarSyntacticObject) (x y : LexicalItem.Token) : Prop :=
+def Precedes (t : PlanarSyntacticObject TokenLeaf) (x y : LexicalItem.Token) : Prop :=
   ∃ a ∈ (leafPaths t).lookup x, ∃ b ∈ (leafPaths t).lookup y, a.Precedes b
 
-instance (t : PlanarSyntacticObject) (x y : LexicalItem.Token) : Decidable (Precedes t x y) :=
+instance (t : PlanarSyntacticObject TokenLeaf) (x y : LexicalItem.Token) : Decidable
+    (Precedes t x y) :=
   inferInstanceAs (Decidable (∃ a ∈ _, _))
 
 theorem highXP_not_cCommands :
@@ -852,7 +861,7 @@ instance (Vs es : List LexicalItem.Token) : Decidable (DitransitiveMerge Vs es) 
 
 /-- `t` is a vP that Merge licenses from a ditransitive's arguments, a VP specifier on either
 side. -/
-def IsDitransitive (t : PlanarSyntacticObject) : Prop :=
+def IsDitransitive (t : PlanarSyntacticObject TokenLeaf) : Prop :=
   ∃ Vs es, DitransitiveMerge Vs es ∧
     (t = project (.leaf vHead) (vArgs Vs es) ∨ t = projectR (.leaf vHead) (vArgs Vs es))
 
@@ -862,12 +871,12 @@ def ditransitiveMerges : List (List LexicalItem.Token × List LexicalItem.Token)
     ([dobj], [iobj, subj, VHead]), ([dobj], [iobj, VHead, subj])]
 
 /-- The vPs of `ditransitiveMerges`, on each linearization. -/
-def ditransitiveVPs : List PlanarSyntacticObject :=
+def ditransitiveVPs : List (PlanarSyntacticObject TokenLeaf) :=
   ditransitiveMerges.flatMap fun m ↦
     [project (.leaf vHead) (vArgs m.1 m.2), projectR (.leaf vHead) (vArgs m.1 m.2)]
 
 -- (157), (158)
-theorem isDitransitive_iff {t : PlanarSyntacticObject} :
+theorem isDitransitive_iff {t : PlanarSyntacticObject TokenLeaf} :
     IsDitransitive t ↔ t ∈ ditransitiveVPs := by
   constructor
   · rintro ⟨Vs, es, hm, ht⟩
@@ -907,20 +916,20 @@ theorem isDitransitive_iff {t : PlanarSyntacticObject} :
     obtain ⟨m, -, h⟩ := key t ht
     exact ⟨m.1, m.2, h⟩
 
-theorem nodup_leaves {t : PlanarSyntacticObject} (ht : IsDitransitive t) :
+theorem nodup_leaves {t : PlanarSyntacticObject TokenLeaf} (ht : IsDitransitive t) :
     ((leafPaths t).map Prod.fst).Nodup :=
   (by decide +kernel : ∀ t ∈ ditransitiveVPs, ((leafPaths t).map Prod.fst).Nodup) t
     (isDitransitive_iff.1 ht)
 
 -- (142)
-theorem head_state_eq {t : PlanarSyntacticObject} (ht : IsDitransitive t) :
+theorem head_state_eq {t : PlanarSyntacticObject TokenLeaf} (ht : IsDitransitive t) :
     (state t).head = some vHead :=
   (by decide +kernel : ∀ t ∈ ditransitiveVPs, (state t).head = some vHead) t
     (isDitransitive_iff.1 ht)
 
 /-- **Word order and binding.** On a ditransitive vP that Merge licenses, an indirect object
 preceding the direct object binds into it and is not bound from it (148). -/
-theorem canBind_iobj_of_precedes {t : PlanarSyntacticObject} (ht : IsDitransitive t)
+theorem canBind_iobj_of_precedes {t : PlanarSyntacticObject TokenLeaf} (ht : IsDitransitive t)
     (hp : Precedes t iobj dobj) : CanBind t iobj dobj ∧ ¬ CanBind t dobj iobj :=
   (by decide +kernel : ∀ t ∈ ditransitiveVPs, Precedes t iobj dobj →
     CanBind t iobj dobj ∧ ¬ CanBind t dobj iobj) t (isDitransitive_iff.1 ht) hp

@@ -45,8 +45,10 @@ open RoseTree SyntacticObject ConnesKreimer
 /-- A copy's part in a reading as a cut of the copy object: the forest it cuts, and what stays. A
 lower copy of a chain read high is cut and leaves its trace. A higher copy of a chain read low is
 cut and leaves nothing, so that its mother goes unary. -/
-def readCut (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low] :
-    RoseTree (CopyMark × Vertex) → Multiset (RoseTree Vertex) × List (RoseTree Vertex) :=
+def readCut (low : RoseTree (CopyMark × Vertex LexicalItem.Token) → Prop) [DecidablePred low] :
+    RoseTree (CopyMark × Vertex LexicalItem.Token) → Multiset (RoseTree (Vertex LexicalItem.Token))
+        ×
+        List (RoseTree (Vertex LexicalItem.Token)) :=
   reading low (fun r l ↦ ({r.map Prod.snd}, [.node (.inr l) []]))
     (fun v bs ↦ ((bs.map Prod.fst).sum, [.node v (bs.flatMap Prod.snd)]))
     (fun _ b ↦ b)
@@ -100,18 +102,19 @@ private theorem mem_childrenCuts_map {β : Type*}
 
 end Mem
 
-variable (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low]
-  (e : RoseTree Vertex → Option (List (RoseTree Vertex)))
+variable (low : RoseTree (CopyMark × Vertex LexicalItem.Token) → Prop) [DecidablePred low]
+  (e : RoseTree (Vertex LexicalItem.Token) → Option (List (RoseTree (Vertex LexicalItem.Token))))
 
-theorem readCut_some (l : Option LexicalItem.Token) (a : Vertex)
-    (cs : List (RoseTree (CopyMark × Vertex))) :
+theorem readCut_some (l : Option LexicalItem.Token) (a : Vertex LexicalItem.Token)
+    (cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))) :
     readCut low (.node (some l, a) cs) =
       if low (.node (some l, a) cs) then readCut low (.node (none, a) cs)
       else ({(RoseTree.node (some l, a) cs).map Prod.snd}, [.node (.inr l) []]) :=
   reading_some ..
 
 /-- An unmarked node reads as a node over its daughters, or as a daughter with the other cut. -/
-private theorem readCut_none_cases (a : Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
+private theorem readCut_none_cases (a : Vertex LexicalItem.Token)
+    (cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))) :
     (readCut low (.node (none, a) cs) =
         (((cs.map (readCut low)).map Prod.fst).sum,
           [.node a ((cs.map (readCut low)).flatMap Prod.snd)]) ∧
@@ -122,7 +125,8 @@ private theorem readCut_none_cases (a : Vertex) (cs : List (RoseTree (CopyMark �
       lfBy low (.node (none, a) cs) = lfBy low y := by
   by_cases hlen : cs.length = 2
   · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
-    have hcut := reading_pair low (fun r l ↦ (({r.map Prod.snd} : Multiset (RoseTree Vertex)),
+    have hcut := reading_pair low
+        (fun r l ↦ (({r.map Prod.snd} : Multiset (RoseTree (Vertex LexicalItem.Token))),
         [RoseTree.node (.inr l) []]))
       (fun v bs ↦ ((bs.map Prod.fst).sum, [RoseTree.node v (bs.flatMap Prod.snd)]))
       (fun _ b ↦ b) (fun x v b ↦ (x.map Prod.snd ::ₘ b.1, [RoseTree.node v b.2])) (fun _ _ ↦ rfl) a
@@ -139,8 +143,8 @@ private theorem readCut_none_cases (a : Vertex) (cs : List (RoseTree (CopyMark �
   · exact .inl ⟨reading_of_length_ne _ _ _ _ _ a hlen, lfBy_of_length_ne _ a hlen⟩
 
 /-- An unmarked node reads as one cut of the copy object, with its root as the root of the trunk. -/
-private theorem exists_mem_rootCuts_none {a : Vertex}
-    {cs : List (RoseTree (CopyMark × Vertex))}
+private theorem exists_mem_rootCuts_none {a : Vertex LexicalItem.Token}
+    {cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))}
     (ih : ∀ c ∈ cs, readCut low c ∈ childCuts e (c.map Prod.snd))
     (hl : ∀ c ∈ cs, low c → e (c.map Prod.snd) = some []) :
     ∃ T, (readCut low (.node (none, a) cs)).2 = [T] ∧
@@ -162,12 +166,14 @@ private theorem exists_mem_rootCuts_none {a : Vertex}
       simp only [List.append_nil] at h
       rwa [Multiset.add_comm, Multiset.singleton_add] at h
 
-private theorem subtrees_subset {v : CopyMark × Vertex} {cs : List (RoseTree (CopyMark × Vertex))}
-    {c : RoseTree (CopyMark × Vertex)} (hc : c ∈ cs) {r : RoseTree (CopyMark × Vertex)}
+private theorem subtrees_subset {v : CopyMark × Vertex LexicalItem.Token}
+    {cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))}
+    {c : RoseTree (CopyMark × Vertex LexicalItem.Token)} (hc : c ∈ cs)
+        {r : RoseTree (CopyMark × Vertex LexicalItem.Token)}
     (hr : r ∈ c.subtrees) : r ∈ (RoseTree.node v cs).subtrees :=
   mem_subtrees.2 ((mem_subtrees.1 hr).trans (.of_mem_children hc))
 
-variable {low e} {s : RoseTree (CopyMark × Vertex)}
+variable {low e} {s : RoseTree (CopyMark × Vertex LexicalItem.Token)}
 
 /-- A copy's part in a reading is one of the choices a cut has at it, when the policy cuts a lower
 copy of a chain read high leaving its trace and a copy of a chain read low leaving nothing. -/
@@ -247,14 +253,14 @@ theorem map_contractUnary_readCut (hs : IsSyntacticObject (UnorderedTree.mk (s.m
       · simp
 
 /-- With no chain read low, the trunk of a reading is the contraction. -/
-theorem readCut_readLow_empty (s : RoseTree (CopyMark × Vertex)) :
+theorem readCut_readLow_empty (s : RoseTree (CopyMark × Vertex LexicalItem.Token)) :
     (readCut (ReadLow ∅) s).2 = [contractTree s] := by
   induction s with
   | node v cs ih =>
     obtain ⟨k, a⟩ := v
     rcases k with _ | l
     · rcases readCut_none_cases (ReadLow ∅) a cs with ⟨h, -⟩ | ⟨x, y, -, hx, -⟩
-      · have key : ∀ ds : List (RoseTree (CopyMark × Vertex)),
+      · have key : ∀ ds : List (RoseTree (CopyMark × Vertex LexicalItem.Token)),
             (∀ d ∈ ds, (readCut (ReadLow ∅) d).2 = [contractTree d]) →
               (ds.map (readCut (ReadLow ∅))).flatMap Prod.snd = ds.map contractTree := by
           intro ds hds
@@ -268,33 +274,36 @@ theorem readCut_readLow_empty (s : RoseTree (CopyMark × Vertex)) :
 
 /-! ### Readings and the coproducts -/
 
-variable (τ : UnorderedTree Vertex → Option LexicalItem.Token)
+variable (τ : UnorderedTree (Vertex LexicalItem.Token) → Option LexicalItem.Token)
 
 /-- Every lower copy of `s` is a tree of the copy object with a root that is not a trace, and has
 `τ` of its term as its mark. -/
-def MarkedBy (s : RoseTree (CopyMark × Vertex)) : Prop :=
+def MarkedBy (s : RoseTree (CopyMark × Vertex LexicalItem.Token)) : Prop :=
   ∀ r ∈ s.subtrees, r.value.1.isSome → r.value.2.isLeft ∧ r.value.1 = some (τ (termOf r))
 
 instance : DecidablePred (MarkedBy τ) := fun _ ↦ inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- A trace encoder on syntactic objects as one on terms, with no label off them. -/
-def termTrace (σ : SyntacticObject → Option LexicalItem.Token) (u : UnorderedTree Vertex) :
+def termTrace (σ : SyntacticObject TokenLeaf → Option LexicalItem.Token)
+    (u : UnorderedTree (Vertex LexicalItem.Token)) :
     Option LexicalItem.Token :=
   if h : IsSyntacticObject u then σ (SyntacticObject.ofUnorderedTree u h) else none
 
 /-- The policy of a reading: a copy of a chain read low leaves nothing when it is cut, as under
 `leaveNothing`, and any other subtree its trace, as under `leaveMarker`. -/
-def extractReading (low : Finset SyntacticObject) (τ : RoseTree Vertex → Option LexicalItem.Token) :
-    RoseTree Vertex → Option (List (RoseTree Vertex)) := fun r ↦
+def extractReading (low : Finset (SyntacticObject TokenLeaf))
+    (τ : RoseTree (Vertex LexicalItem.Token) → Option LexicalItem.Token) :
+    RoseTree (Vertex LexicalItem.Token) → Option (List (RoseTree (Vertex LexicalItem.Token))) :=
+        fun r ↦
   if ∃ m ∈ low, m.toUnorderedTree = UnorderedTree.mk r then leaveNothing r else leaveMarker τ r
 
-variable {τ} (t : Marked) (low : Finset SyntacticObject)
+variable {τ} (t : Marked) (low : Finset (SyntacticObject TokenLeaf))
 
 /-- The trees a reading cuts from the copy object: the lower copies of the chains read high, and
 the higher copies of the chains read low, each outermost. -/
-def cutForest : Multiset (RoseTree Vertex) := (readCut (ReadLow low) t.val).1
+def cutForest : Multiset (RoseTree (Vertex LexicalItem.Token)) := (readCut (ReadLow low) t.val).1
 
-private theorem leaveMarker_map_snd {r : RoseTree (CopyMark × Vertex)}
+private theorem leaveMarker_map_snd {r : RoseTree (CopyMark × Vertex LexicalItem.Token)}
     {l : Option LexicalItem.Token}
     (hτ : r.value.2.isLeft ∧ r.value.1 = some (τ (termOf r))) (hl : r.value.1 = some l) :
     leaveMarker (τ ∘ UnorderedTree.mk) (r.map Prod.snd) = some [.node (.inr l) []] := by
@@ -308,14 +317,16 @@ private theorem leaveMarker_map_snd {r : RoseTree (CopyMark × Vertex)}
     rfl
   · exact absurd ha (by simp [value])
 
-private theorem extractReading_of_not_low {low : Finset SyntacticObject}
-    {τ : RoseTree Vertex → Option LexicalItem.Token} {r : RoseTree (CopyMark × Vertex)}
+private theorem extractReading_of_not_low {low : Finset (SyntacticObject TokenLeaf)}
+    {τ : RoseTree (Vertex LexicalItem.Token) → Option LexicalItem.Token}
+        {r : RoseTree (CopyMark × Vertex LexicalItem.Token)}
     (h : ¬ ReadLow low r) :
     extractReading low τ (r.map Prod.snd) = leaveMarker τ (r.map Prod.snd) :=
   ite_eq_right h
 
-private theorem extractReading_of_low {low : Finset SyntacticObject}
-    {τ : RoseTree Vertex → Option LexicalItem.Token} {r : RoseTree (CopyMark × Vertex)}
+private theorem extractReading_of_low {low : Finset (SyntacticObject TokenLeaf)}
+    {τ : RoseTree (Vertex LexicalItem.Token) → Option LexicalItem.Token}
+        {r : RoseTree (CopyMark × Vertex LexicalItem.Token)}
     (h : ReadLow low r) : extractReading low τ (r.map Prod.snd) = some [] :=
   ite_eq_left h
 

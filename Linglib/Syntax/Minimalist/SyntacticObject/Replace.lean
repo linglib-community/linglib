@@ -231,7 +231,8 @@ instance : TraceLabel L ℕ := ⟨fun _ ↦ none⟩
 
 omit [DecidableEq L] [DecidableEq ι] in
 theorem TraceLabel.encoder_token :
-    (TraceLabel.encoder : SyntacticObject → Option LexicalItem.Token) = selectionHead := rfl
+    (TraceLabel.encoder : SyntacticObject TokenLeaf → Option LexicalItem.Token) = selectionHead :=
+        rfl
 
 /-- A moved object leaves the trace of its head under the encoder `τ`, by default the head by
     selection, or the bare trace when it has none. -/
@@ -294,12 +295,13 @@ section Map
 variable {f : LexicalItem.Token → LexicalItem.Token}
 
 /-- Replacement commutes with an injective relabelling. -/
-theorem replace_map (hf : Function.Injective f) (s target replacement : SyntacticObject) :
+theorem replace_map (hf : Function.Injective f) (s target replacement : SyntacticObject TokenLeaf) :
     (s.replace target replacement).map f =
       (s.map f).replace (target.map f) (replacement.map f) := by
-  have hmem (x : SyntacticObject) : target.map f ∈ (x.map f).terms ↔ target ∈ x.terms := by
+  have hmem (x : SyntacticObject TokenLeaf) : target.map f ∈ (x.map f).terms ↔ target ∈ x.terms :=
+      by
     rw [terms_map, Multiset.mem_map_of_injective (map_injective hf)]
-  have leafCase (x : SyntacticObject) (hx : x.terms = {x}) :
+  have leafCase (x : SyntacticObject TokenLeaf) (hx : x.terms = {x}) :
       (x.replace target replacement).map f =
         (x.map f).replace (target.map f) (replacement.map f) := by
     by_cases h : x = target
@@ -525,30 +527,30 @@ theorem SyntacticObject.not_sisters_of_toPlanarLeaf?
 section Map
 
 variable {f : LexicalItem.Token → LexicalItem.Token}
-  {τ τ' : SyntacticObject → Option LexicalItem.Token}
+  {τ τ' : SyntacticObject TokenLeaf → Option LexicalItem.Token}
 
 theorem SyntacticObject.toPlanarLeaf?_map (f : LexicalItem.Token → LexicalItem.Token)
-    (s : SyntacticObject) :
+    (s : SyntacticObject TokenLeaf) :
     (s.map f).toPlanarLeaf? = s.toPlanarLeaf?.map (PlanarSyntacticObject.map f) := by
   rcases s.exists_form with ⟨a, rfl⟩ | rfl | ⟨a, rfl⟩ | ⟨l, r, rfl⟩ <;>
     simp [toPlanarLeaf?, toUnorderedTree_merge]
 
 theorem SyntacticObject.headTrace_map (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
-    (s : SyntacticObject) : (s.headTrace τ).map f = (s.map f).headTrace τ' := by
+    (s : SyntacticObject TokenLeaf) : (s.headTrace τ).map f = (s.map f).headTrace τ' := by
   unfold headTrace; rw [hτ]; cases τ s <;> simp
 
 theorem SyntacticObject.tracePlanar_map (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
-    (s : SyntacticObject) : (s.tracePlanar τ).map f = (s.map f).tracePlanar τ' := by
+    (s : SyntacticObject TokenLeaf) : (s.tracePlanar τ).map f = (s.map f).tracePlanar τ' := by
   unfold tracePlanar; rw [hτ]; cases τ s <;> simp
 
 namespace PlanarSyntacticObject
 
-theorem map_toRoseTree_find? (p : PlanarSyntacticObject) (t : SyntacticObject) :
+theorem map_toRoseTree_find? (p : PlanarSyntacticObject TokenLeaf) (t : SyntacticObject TokenLeaf) :
     (p.find? t).map toRoseTree = p.toRoseTree.subtrees.find? (mk · = t.toUnorderedTree) := by
   simp only [find?, Option.map_pmap, toRoseTree_ofRoseTree, Option.pmap_eq_map, Option.map_id']
 
-theorem find?_map (hf : Function.Injective f) (p : PlanarSyntacticObject)
-    (t : SyntacticObject) : (p.map f).find? (t.map f) = (p.find? t).map (map f) := by
+theorem find?_map (hf : Function.Injective f) (p : PlanarSyntacticObject TokenLeaf)
+    (t : SyntacticObject TokenLeaf) : (p.map f).find? (t.map f) = (p.find? t).map (map f) := by
   have hv := UnorderedTree.map_injective (SyntacticObject.Vertex.map_injective hf)
   apply Option.map_injective toRoseTree_injective
   rw [map_toRoseTree_find?, Option.map_map, toRoseTree_map, RoseTree.subtrees_map, List.find?_map,
@@ -560,8 +562,8 @@ theorem find?_map (hf : Function.Injective f) (p : PlanarSyntacticObject)
   funext q
   simp only [Function.comp_apply, ← UnorderedTree.map_mk, hv.eq_iff]
 
-theorem replace_map (hf : Function.Injective f) (p : PlanarSyntacticObject)
-    (t : SyntacticObject) (r : PlanarSyntacticObject) :
+theorem replace_map (hf : Function.Injective f) (p : PlanarSyntacticObject TokenLeaf)
+    (t : SyntacticObject TokenLeaf) (r : PlanarSyntacticObject TokenLeaf) :
     (p.replace t r).map f = (p.map f).replace (t.map f) (r.map f) :=
   toRoseTree_injective <| by
     rw [toRoseTree_map, toRoseTree_replace, toRoseTree_replace, toRoseTree_map, toRoseTree_map]

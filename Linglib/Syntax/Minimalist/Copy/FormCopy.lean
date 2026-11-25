@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Basic.Rel
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # Form Copy
@@ -69,18 +70,19 @@ namespace Minimalist.SyntacticObject
 
 open UnorderedTree
 
-variable {s t x y l r l' r' : SyntacticObject}
+variable {s t x y l r l' r' : SyntacticObject TokenLeaf}
 
 /-! ### Structural identity -/
 
 /-- The syntactic object over lexical items that an object inscribes, forgetting which token fills
 each leaf. -/
-def erase (s : SyntacticObject) : SyntacticObject (SyntacticObject.Leaf LexicalItem LexicalItem) :=
+def erase (s : SyntacticObject TokenLeaf) : SyntacticObject
+    (SyntacticObject.Leaf LexicalItem LexicalItem) :=
     s.map LexicalItem.Token.item
 
 /-- Two inscriptions are structurally identical when they coincide once token identity is
 forgotten. -/
-def StructurallyIdentical (x y : SyntacticObject) : Prop := x.erase = y.erase
+def StructurallyIdentical (x y : SyntacticObject TokenLeaf) : Prop := x.erase = y.erase
 
 instance : DecidableRel StructurallyIdentical := fun x y ↦
   inferInstanceAs (Decidable (x.erase = y.erase))
@@ -89,7 +91,8 @@ theorem structurallyIdentical_equivalence : Equivalence StructurallyIdentical :=
   InvImage.equivalence _ _ eq_equivalence
 
 @[refl]
-theorem StructurallyIdentical.refl (x : SyntacticObject) : StructurallyIdentical x x := rfl
+theorem StructurallyIdentical.refl (x : SyntacticObject TokenLeaf) : StructurallyIdentical x x :=
+    rfl
 
 theorem StructurallyIdentical.symm (h : StructurallyIdentical x y) : StructurallyIdentical y x :=
   Eq.symm h
@@ -110,7 +113,7 @@ theorem StructurallyIdentical.numNodes_eq (h : StructurallyIdentical x y) :
 
 /-- Two inscriptions are repetitions when they are structurally identical but distinct objects,
 built from different tokens: the default relation between identical inscriptions. -/
-def IsRepetition (x y : SyntacticObject) : Prop := StructurallyIdentical x y ∧ x ≠ y
+def IsRepetition (x y : SyntacticObject TokenLeaf) : Prop := StructurallyIdentical x y ∧ x ≠ y
 
 instance : DecidableRel IsRepetition := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -118,18 +121,18 @@ instance : DecidableRel IsRepetition := fun _ _ ↦ inferInstanceAs (Decidable (
 
 variable {f : LexicalItem.Token → LexicalItem.Token}
 
-theorem erase_map (hf : ∀ t, (f t).item = t.item) (s : SyntacticObject) :
+theorem erase_map (hf : ∀ t, (f t).item = t.item) (s : SyntacticObject TokenLeaf) :
     (s.map f).erase = s.erase := by
   rw [erase, erase, map_map]
   exact congrArg (map · s) (funext hf)
 
 /-- The inscription of `s` from fresh tokens, each index raised by `k`, as External Merge
 introduces a second inscription of an object. -/
-def renumber (k : ℕ) : SyntacticObject → SyntacticObject :=
+def renumber (k : ℕ) : SyntacticObject TokenLeaf → SyntacticObject TokenLeaf :=
   map fun t ↦ ⟨t.item, t.id + k⟩
 
 /-- A renumbered inscription is structurally identical to the original. -/
-theorem structurallyIdentical_renumber (k : ℕ) (s : SyntacticObject) :
+theorem structurallyIdentical_renumber (k : ℕ) (s : SyntacticObject TokenLeaf) :
     StructurallyIdentical s (s.renumber k) :=
   (erase_map (f := fun t ↦ ⟨t.item, t.id + k⟩) (fun _ ↦ rfl) s).symm
 
@@ -137,14 +140,16 @@ theorem structurallyIdentical_renumber (k : ℕ) (s : SyntacticObject) :
 
 /-- The copy relation Form Copy assigns in `s` holds of a pair of structurally identical
 inscriptions, the first c-commanding the second. -/
-def copyRel (s : SyntacticObject) : SetRel SyntacticObject SyntacticObject :=
+def copyRel (s : SyntacticObject TokenLeaf) : SetRel (SyntacticObject TokenLeaf)
+    (SyntacticObject TokenLeaf) :=
   {p | CCommands s p.1 p.2 ∧ StructurallyIdentical p.1 p.2}
 
 @[simp]
 theorem mem_copyRel : (x, y) ∈ s.copyRel ↔ CCommands s x y ∧ StructurallyIdentical x y :=
   Iff.rfl
 
-instance (s : SyntacticObject) (p : SyntacticObject × SyntacticObject) :
+instance (s : SyntacticObject TokenLeaf)
+    (p : SyntacticObject TokenLeaf × SyntacticObject TokenLeaf) :
     Decidable (p ∈ s.copyRel) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -174,7 +179,7 @@ theorem self_mem_copyRel_merge_iff (hx : x ∈ t.terms) : (x, x) ∈ (merge x t)
 /-! ### Objects without repetitions -/
 
 /-- No two distinct tokens of `s` inscribe one lexical item, at a leaf or at a trace. -/
-def HasDistinctItems (s : SyntacticObject) : Prop :=
+def HasDistinctItems (s : SyntacticObject TokenLeaf) : Prop :=
   ∀ ⦃a b : LexicalItem.Token⦄, (leaf a ∈ s.terms ∨ traceOf a ∈ s.terms) →
     (leaf b ∈ s.terms ∨ traceOf b ∈ s.terms) → a.item = b.item → a = b
 

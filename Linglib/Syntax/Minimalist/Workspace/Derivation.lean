@@ -34,7 +34,7 @@ namespace Minimalist.SyntacticObject
 open ConnesKreimer
 
 /-- An object with a unique accessible proper term is a Merge. -/
-theorem exists_eq_merge_of_count_terms {mover current : SyntacticObject}
+theorem exists_eq_merge_of_count_terms {mover current : SyntacticObject TokenLeaf}
     (h : current.terms.count mover = 1) (hne : current ≠ mover) : ∃ l r, current = merge l r := by
   induction current using ind with
   | leaf tok =>
@@ -65,8 +65,8 @@ components. -/
 /-- A step applies an algebraic Merge at a configuration: External Merge with the item, the unit
     stage followed by External Merge of the remainder with the mover, the unit stage alone, or
     External Merge of the copy on top of the stack with the current object. -/
-noncomputable def Step.mergeOp (step : Step) (c : Derivation.Cfg SyntacticObject) :
-    ConnesKreimer ℤ SyntacticObject →ₗ[ℤ] ConnesKreimer ℤ SyntacticObject :=
+noncomputable def Step.mergeOp (step : Step) (c : Derivation.Cfg (SyntacticObject TokenLeaf)) :
+    ConnesKreimer ℤ (SyntacticObject TokenLeaf) →ₗ[ℤ] ConnesKreimer ℤ (SyntacticObject TokenLeaf) :=
   match step, c.stack with
   | .em _ item, _ => Workspace.traceMergeOp c.current item.toSyntacticObject
   | .im mover _, _ =>
@@ -79,7 +79,7 @@ noncomputable def Step.mergeOp (step : Step) (c : Derivation.Cfg SyntacticObject
 /-- A Merge step at the current object is admissible beside a spectator workspace `W` when it
     matches no accessible term of `W`, and an Internal Merge raises a uniquely accessible proper
     term that is not a trace. The two stages of Internal Merge are not Merge steps. -/
-def Step.Admissible (current : SyntacticObject)
+def Step.Admissible (current : SyntacticObject TokenLeaf)
     (W : Workspace) : Step → Prop
   | .em _ item => ∀ U ∈ W, current ∉ U.terms ∧ ↑item ∉ U.terms
   | .im mover _ => ¬ mover.IsTrace ∧ current.terms.count mover = 1 ∧
@@ -91,7 +91,7 @@ def Step.Admissible (current : SyntacticObject)
     accessible term of the stack or of `W`: a Merge step is admissible beside the stack and `W`,
     `extract` takes a uniquely accessible proper term that is not a trace, and `remerge` finds a
     copy on the stack. -/
-def Step.AdmissibleAt (c : Derivation.Cfg SyntacticObject) (W : Workspace) : Step → Prop
+def Step.AdmissibleAt (c : Derivation.Cfg (SyntacticObject TokenLeaf)) (W : Workspace) : Step → Prop
   | .extract mover => ¬ mover.IsTrace ∧ c.current.terms.count mover = 1 ∧ c.current ≠ mover ∧
       ∀ U ∈ (↑c.stack + W : Workspace), mover ∉ U.terms
   | .remerge _ => ∃ m st, c.stack = m :: st ∧
@@ -99,28 +99,30 @@ def Step.AdmissibleAt (c : Derivation.Cfg SyntacticObject) (W : Workspace) : Ste
   | step => step.Admissible c.current (↑c.stack + W)
 
 /-- A Merge step keeps the stack. -/
-theorem Step.Admissible.run_eq {step : Step} {current : SyntacticObject} {W : Workspace}
-    (h : step.Admissible current W) (st : List SyntacticObject) :
+theorem Step.Admissible.run_eq {step : Step} {current : SyntacticObject TokenLeaf} {W : Workspace}
+    (h : step.Admissible current W) (st : List (SyntacticObject TokenLeaf)) :
     step.run ⟨current, st⟩ = ⟨step.apply current, st⟩ := by
   cases step with
   | em _ _ | im _ _ => rfl
   | extract _ | remerge _ => exact h.elim
 
 /-- A Merge step admissible beside `W` is admissible at the configuration with an empty stack. -/
-theorem Step.Admissible.admissibleAt {step : Step} {current : SyntacticObject} {W : Workspace}
+theorem Step.Admissible.admissibleAt {step : Step} {current : SyntacticObject TokenLeaf}
+    {W : Workspace}
     (h : step.Admissible current W) : step.AdmissibleAt ⟨current, []⟩ W := by
   cases step with
   | em side item =>
-    show (Step.em side item).Admissible current (↑([] : List SyntacticObject) + W)
+    show (Step.em side item).Admissible current (↑([] : List (SyntacticObject TokenLeaf)) + W)
     rwa [Multiset.coe_nil, zero_add]
   | im mover side =>
-    show (Step.im mover side).Admissible current (↑([] : List SyntacticObject) + W)
+    show (Step.im mover side).Admissible current (↑([] : List (SyntacticObject TokenLeaf)) + W)
     rwa [Multiset.coe_nil, zero_add]
   | extract _ | remerge _ => exact h.elim
 
 /-- An admissible step is the algebraic Merge on the workspace of the current object, the stack,
     the items it introduces and the spectators. -/
-theorem Step.mergeOp_run {step : Step} {c : Derivation.Cfg SyntacticObject} {W : Workspace}
+theorem Step.mergeOp_run {step : Step} {c : Derivation.Cfg (SyntacticObject TokenLeaf)}
+    {W : Workspace}
     (h : step.AdmissibleAt c W) :
     step.mergeOp c (ConnesKreimer.of' ({c.current} + ↑c.stack + step.items + W : Workspace)) =
       ConnesKreimer.of' ({(step.run c).current} + ↑(step.run c).stack + W : Workspace) := by
@@ -168,19 +170,19 @@ theorem Step.mergeOp_run {step : Step} {c : Derivation.Cfg SyntacticObject} {W :
 /-- An admissible Merge step is the algebraic Merge on the workspace of the current object, the
     items it introduces, and the spectators. -/
 theorem Step.mergeOp_workspace {step : Step}
-    {current : SyntacticObject} {W : Workspace} (h : step.Admissible current W) :
+    {current : SyntacticObject TokenLeaf} {W : Workspace} (h : step.Admissible current W) :
     step.mergeOp ⟨current, []⟩ (ConnesKreimer.of' ({current} + step.items + W)) =
       ConnesKreimer.of' ({step.apply current} + W) := by
   simpa [h.run_eq] using Step.mergeOp_run h.admissibleAt
 
 /-- The algebraic Merges of a list of steps from a configuration, composed in order. -/
-noncomputable def Step.mergeOpList : List Step → Derivation.Cfg SyntacticObject →
-    ConnesKreimer ℤ SyntacticObject →ₗ[ℤ] ConnesKreimer ℤ SyntacticObject
+noncomputable def Step.mergeOpList : List Step → Derivation.Cfg (SyntacticObject TokenLeaf) →
+    ConnesKreimer ℤ (SyntacticObject TokenLeaf) →ₗ[ℤ] ConnesKreimer ℤ (SyntacticObject TokenLeaf)
   | [], _ => LinearMap.id
   | step :: steps, c => Step.mergeOpList steps (step.run c) ∘ₗ step.mergeOp c
 
 /-- Every Merge step of a list is admissible beside the items still to come. -/
-def Step.AdmissibleList : List Step → SyntacticObject → Prop
+def Step.AdmissibleList : List Step → SyntacticObject TokenLeaf → Prop
   | [], _ => True
   | step :: steps, current =>
       step.Admissible current (Step.itemsList steps) ∧
@@ -188,13 +190,13 @@ def Step.AdmissibleList : List Step → SyntacticObject → Prop
 
 /-- Every step of a list is admissible at the configuration it is run at, beside the items still
     to come. -/
-def Step.AdmissibleListAt : List Step → Derivation.Cfg SyntacticObject → Prop
+def Step.AdmissibleListAt : List Step → Derivation.Cfg (SyntacticObject TokenLeaf) → Prop
   | [], _ => True
   | step :: steps, c =>
       step.AdmissibleAt c (Step.itemsList steps) ∧ Step.AdmissibleListAt steps (step.run c)
 
 theorem Step.AdmissibleList.admissibleListAt :
-    ∀ (steps : List Step) (current : SyntacticObject), Step.AdmissibleList steps current →
+    ∀ (steps : List Step) (current : SyntacticObject TokenLeaf), Step.AdmissibleList steps current →
       Step.AdmissibleListAt steps ⟨current, []⟩
   | [], _, _ => trivial
   | step :: steps, current, ⟨h, hs⟩ => by
@@ -205,7 +207,8 @@ theorem Step.AdmissibleList.admissibleListAt :
 /-- Admissible steps compose to the algebraic Merge from the workspace of a configuration and the
     items they introduce to the workspace of the configuration they reach. -/
 theorem Step.mergeOpList_run :
-    ∀ (steps : List Step) (c : Derivation.Cfg SyntacticObject), Step.AdmissibleListAt steps c →
+    ∀ (steps : List Step) (c : Derivation.Cfg (SyntacticObject TokenLeaf)), Step.AdmissibleListAt
+        steps c →
       Step.mergeOpList steps c
           (ConnesKreimer.of' ({c.current} + ↑c.stack + Step.itemsList steps : Workspace)) =
         ConnesKreimer.of' ({(steps.foldl (fun c step ↦ step.run c) c).current} +
@@ -219,7 +222,8 @@ theorem Step.mergeOpList_run :
 
 /-- Admissible Merge steps leave the stack alone and build what they build on the object. -/
 theorem Step.foldl_run_of_admissibleList :
-    ∀ (steps : List Step) (current : SyntacticObject) (st : List SyntacticObject),
+    ∀ (steps : List Step) (current : SyntacticObject TokenLeaf)
+        (st : List (SyntacticObject TokenLeaf)),
       Step.AdmissibleList steps current →
       steps.foldl (fun c step ↦ step.run c) ⟨current, st⟩
         = ⟨steps.foldl (fun so step ↦ step.apply so) current, st⟩
@@ -230,14 +234,14 @@ theorem Step.foldl_run_of_admissibleList :
 
 /-- Admissible Merge steps compose to the algebraic Merge from the workspace of the current object
     and the items they introduce to the object they build. -/
-theorem Step.mergeOpList_workspace (steps : List Step) (current : SyntacticObject)
+theorem Step.mergeOpList_workspace (steps : List Step) (current : SyntacticObject TokenLeaf)
     (h : Step.AdmissibleList steps current) :
     Step.mergeOpList steps ⟨current, []⟩ (ConnesKreimer.of' ({current} + Step.itemsList steps)) =
       ConnesKreimer.of' {steps.foldl (fun so step => step.apply so) current} := by
   simpa [Step.foldl_run_of_admissibleList steps current [] h] using
     Step.mergeOpList_run steps ⟨current, []⟩ (Step.AdmissibleList.admissibleListAt steps current h)
 
-variable {τ : SyntacticObject → Option LexicalItem.Token}
+variable {τ : SyntacticObject TokenLeaf → Option LexicalItem.Token}
 
 /-! ### Steps as MERGE
 
@@ -248,8 +252,8 @@ contracts and puts the mover's copy on the stack, and `remerge` is MERGE of that
 current object on the workspace that holds the stack. -/
 
 /-- External Merge is MERGE of the item and the current object. -/
-theorem Step.apply_em_eq_merge (side : Edge) (item : PlanarSyntacticObject)
-    (current : SyntacticObject) (W : Workspace) :
+theorem Step.apply_em_eq_merge (side : Edge) (item : PlanarSyntacticObject TokenLeaf)
+    (current : SyntacticObject TokenLeaf) (W : Workspace) :
     {(Step.em side item).apply current τ} + W =
       ({current} + (Step.em side item).items + W : Workspace).merge ↑item current := by
   have h : ({current} + {↑item} + W : Workspace) = ({↑item} + {current}) + W := by abel
@@ -258,7 +262,8 @@ theorem Step.apply_em_eq_merge (side : Edge) (item : PlanarSyntacticObject)
 
 /-- Internal Merge is MERGE of the mover and the current object leaving the trace of the mover's
     head. -/
-theorem Step.apply_im_eq_mergeWith (side : Edge) {mover current : SyntacticObject} {W : Workspace}
+theorem Step.apply_im_eq_mergeWith (side : Edge) {mover current : SyntacticObject TokenLeaf}
+    {W : Workspace}
     (hmc : mover ∈ current.terms) (hne : current ≠ mover) (hW : ∀ U ∈ W, mover ∉ U.terms) :
     {(Step.im mover side).apply current τ} + W =
       ({current} + W).mergeWith (·.headTrace τ) mover current := by
@@ -267,8 +272,8 @@ theorem Step.apply_im_eq_mergeWith (side : Edge) {mover current : SyntacticObjec
 
 /-- Merging the copy on top of the stack back is MERGE of the copy and the current object, on the
     workspace of the object, its stack and the spectators. -/
-theorem Step.run_remerge_eq_merge (side : Edge) (current m : SyntacticObject)
-    (st : List SyntacticObject) (W : Workspace) :
+theorem Step.run_remerge_eq_merge (side : Edge) (current m : SyntacticObject TokenLeaf)
+    (st : List (SyntacticObject TokenLeaf)) (W : Workspace) :
     {((Step.remerge side).run ⟨current, m :: st⟩ τ).current} +
         ↑((Step.remerge side).run ⟨current, m :: st⟩ τ).stack + W =
       ({current} + ↑(m :: st) + W).merge m current := by

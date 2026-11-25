@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Position
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # Projection on planar syntactic objects
@@ -36,9 +37,9 @@ open PhraseStructure
 
 /-- The head daughter at each position of a planar syntactic object, by its index, `none` where no
 daughter projects. -/
-abbrev HeadDaughter := PlanarSyntacticObject → GornAddress → Option ℕ
+abbrev HeadDaughter := PlanarSyntacticObject TokenLeaf → GornAddress → Option ℕ
 
-variable (hd : HeadDaughter) (t : PlanarSyntacticObject)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject TokenLeaf)
 
 /-- The maximal projections of a planar object, the positions that are no position's head
 daughter. -/
@@ -76,7 +77,8 @@ def headDaughterAt {L ι : Type}
 
 /-- The head daughters a projection relation on objects gives: at each position, the daughter
 that projects over its sister. -/
-def HeadDaughter.ofProjects (P : SyntacticObject → SyntacticObject → Prop) [DecidableRel P] :
+def HeadDaughter.ofProjects (P : SyntacticObject TokenLeaf → SyntacticObject TokenLeaf → Prop)
+    [DecidableRel P] :
     HeadDaughter :=
   fun t q ↦ headDaughterAt P t q.toList
 

@@ -102,31 +102,32 @@ A matrix clause over a finite, a large nonfinite and a small nonfinite complemen
 the edge of each. A probe's search space is cut at every node it c-commands that inherits its
 horizon (`HorizonSetting.cut`), so the edge of an opaque clause is out of reach with the rest. -/
 
-def C₀ : PlanarSyntacticObject := .leaf ⟨.of .C [.T], 1⟩
-def T₀ : PlanarSyntacticObject := .leaf ⟨.of .T [.V], 2⟩
-def V₀ (c : Cat) : PlanarSyntacticObject := .leaf ⟨.of .V [c], 3⟩
-def XP : PlanarSyntacticObject := .leaf ⟨.of .D [], 4⟩
-def C₁ : PlanarSyntacticObject := .leaf ⟨.of .C [.T], 5⟩
-def Subj : PlanarSyntacticObject := .leaf ⟨.of .D [], 6⟩
-def T₁ : PlanarSyntacticObject := .leaf ⟨.of .T [.v], 7⟩
-def v₁ : PlanarSyntacticObject := .leaf ⟨.of .v [.D], 8⟩
-def Obj : PlanarSyntacticObject := .leaf ⟨.of .D [], 9⟩
+def C₀ : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .C [.T], 1⟩
+def T₀ : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .T [.V], 2⟩
+def V₀ (c : Cat) : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .V [c], 3⟩
+def XP : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .D [], 4⟩
+def C₁ : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .C [.T], 5⟩
+def Subj : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .D [], 6⟩
+def T₁ : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .T [.v], 7⟩
+def v₁ : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .v [.D], 8⟩
+def Obj : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .D [], 9⟩
 
 /-- The small nonfinite complement, `[vP v DP]`. -/
-def embVP : PlanarSyntacticObject := {v₁, Obj}
+def embVP : PlanarSyntacticObject TokenLeaf := {v₁, Obj}
 
 /-- The large nonfinite complement, `[TP DP [T vP]]`. -/
-def embTP : PlanarSyntacticObject := {Subj, {T₁, embVP}}
+def embTP : PlanarSyntacticObject TokenLeaf := {Subj, {T₁, embVP}}
 
 /-- The finite complement, `[CP XP [C TP]]`. -/
-def embCP : PlanarSyntacticObject := {XP, {C₁, embTP}}
+def embCP : PlanarSyntacticObject TokenLeaf := {XP, {C₁, embTP}}
 
 /-- The matrix clause over a complement of category `c`. -/
-def matrix (c : Cat) (emb : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def matrix (c : Cat) (emb : PlanarSyntacticObject TokenLeaf) : PlanarSyntacticObject TokenLeaf :=
   {C₀, {T₀, {V₀ c, emb}}}
 
 /-- The DPs a probe with setting `p` on `host` finds in `t`, searching short of its horizon. -/
-def found (p : HorizonSetting) (host t : PlanarSyntacticObject) : Finset SyntacticObject :=
+def found (p : HorizonSetting) (host t : PlanarSyntacticObject TokenLeaf) : Finset
+    (SyntacticObject TokenLeaf) :=
   t.goalsUnder (t.leafProbe .D) host (p.cut headIndex? t)
 
 /-- (47), (58): the A-probe reaches into a vP complement only, wh-licensing into TP and vP, and

@@ -35,7 +35,7 @@ namespace Minimalist
 
 open SyntacticObject ConnesKreimer
 
-theorem Step.not_isTrace_apply {step : Step} {current : SyntacticObject} {W : Workspace}
+theorem Step.not_isTrace_apply {step : Step} {current : SyntacticObject TokenLeaf} {W : Workspace}
     (h : step.Admissible current W) : ¬ (step.apply current).IsTrace := by
   cases step with
   | em side item => cases side <;> simp [Step.apply]
@@ -49,11 +49,12 @@ whole and leaving every spectator uncut. -/
 
 section ExternalMerge
 
-variable (S S' : UnorderedTree Vertex) (W : Multiset (UnorderedTree Vertex))
+variable (S S' : UnorderedTree (Vertex LexicalItem.Token))
+    (W : Multiset (UnorderedTree (Vertex LexicalItem.Token)))
 
 /-- The term of Merge taking `S` and `S'` whole and leaving the spectators uncut. -/
-private def emTerm : CutChoice Vertex :=
-  ({S, S'} : Multiset (UnorderedTree Vertex)).map (fun T ↦ (T, ({T}, 0))) +
+private def emTerm : CutChoice (Vertex LexicalItem.Token) :=
+  ({S, S'} : Multiset (UnorderedTree (Vertex LexicalItem.Token))).map (fun T ↦ (T, ({T}, 0))) +
     W.map fun T ↦ (T, (0, {T}))
 
 private theorem emTerm_mem :
@@ -82,10 +83,10 @@ private theorem emTerm_lexical (hS : S.value.isLeft) (hS' : S'.value.isLeft) :
 
 end ExternalMerge
 
-variable {step : Step} {current : SyntacticObject} {W : Workspace}
+variable {step : Step} {current : SyntacticObject TokenLeaf} {W : Workspace}
 
 /-- The trace cut extracting the mover of an admissible Internal Merge. -/
-private theorem mem_markerCuts_mover {mover : SyntacticObject} (hm :
+private theorem mem_markerCuts_mover {mover : SyntacticObject TokenLeaf} (hm :
     ¬ mover.IsTrace)
     (h : current.terms.count mover = 1) (hne : current ≠ mover) :
     ({mover.toUnorderedTree}, (deleteAccessible mover
@@ -105,15 +106,16 @@ private theorem Step.noComplexityLoss_map (h : step.Admissible current W)
   cases step with
   | em side item =>
     simp only [Step.items, Multiset.mem_singleton, forall_eq] at hitems
-    have hs := emTerm_mem current.toUnorderedTree (item : SyntacticObject).toUnorderedTree (W.map
+    have hs := emTerm_mem current.toUnorderedTree
+        (item : SyntacticObject TokenLeaf).toUnorderedTree (W.map
         SyntacticObject.toUnorderedTree)
     have hm := UnorderedTree.accessibleCount_merge none current.toUnorderedTree (item :
-        SyntacticObject).toUnorderedTree
+        SyntacticObject TokenLeaf).toUnorderedTree
       (UnorderedTree.numMarkers_lt_numNodes_of_isLeft hcur)
       (UnorderedTree.numMarkers_lt_numNodes_of_isLeft hitems)
     have := NoComplexityLoss.of_componentMap hs
       (X := UnorderedTree.node Vertex.bare {current.toUnorderedTree, (item :
-          SyntacticObject).toUnorderedTree})
+          SyntacticObject TokenLeaf).toUnorderedTree})
       ((NoComplexityLoss.map_componentMap_merge_iff hs
         (hasExtractionCost_accessibleSize_markerCuts hs (emTerm_lexical _ hcur hitems))
         (fun T ↦ by simp) (emTerm_crown ..)
@@ -181,9 +183,10 @@ private theorem Step.minimalYield_map (h : step.Admissible current W)
 
 /-- The trace-aware count of the tree of a syntactic object is its number of accessible terms that
     are not traces. -/
-theorem SyntacticObject.accessibleCount_toUnorderedTree (s : SyntacticObject) :
+theorem SyntacticObject.accessibleCount_toUnorderedTree (s : SyntacticObject TokenLeaf) :
     s.toUnorderedTree.accessibleCount = s.accessibleCount := by
-  have key : ∀ s : SyntacticObject, s.terms.countP (¬ ·.IsTrace) + s.toUnorderedTree.numMarkers =
+  have key : ∀ s : SyntacticObject TokenLeaf, s.terms.countP (¬ ·.IsTrace) +
+      s.toUnorderedTree.numMarkers =
       s.toUnorderedTree.numNodes := fun s ↦ by
     induction s using SyntacticObject.ind with
     | leaf a => simp [Multiset.countP_eq_card_filter, Multiset.filter_singleton]
@@ -202,19 +205,21 @@ theorem SyntacticObject.accessibleCount_toUnorderedTree (s : SyntacticObject) :
   by_cases hs : s.IsTrace
   · rcases hs with rfl | ⟨i, rfl⟩ <;> simp
   · simp only [hs, not_false_eq_true, ite_true] at hk
-    omega
+    exact Nat.sub_eq_of_eq_add
+      (Nat.succ.inj ((he.trans hk.symm).trans (Nat.add_right_comm _ 1 _)))
 
 /-- An admissible step whose operands are not traces satisfies No Complexity Loss, graded by the
     number of accessible terms that are not traces, plus one. -/
 theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : ¬ current.IsTrace)
     (hitems : ∀ i ∈ step.items, ¬ i.IsTrace) :
-    NoComplexityLoss (fun S : SyntacticObject ↦ S.accessibleCount + 1)
+    NoComplexityLoss (fun S : SyntacticObject TokenLeaf ↦ S.accessibleCount + 1)
       ({current} + step.items + W) ({step.apply current} + W) := by
-  have : Nonempty SyntacticObject := ⟨SyntacticObject.trace⟩
+  have : Nonempty (SyntacticObject TokenLeaf) := ⟨SyntacticObject.trace⟩
   have := NoComplexityLoss.of_map toUnorderedTree_injective
     (Step.noComplexityLoss_map h hcur hitems)
-  rwa [show (fun T : UnorderedTree Vertex ↦ Forest.accessibleSize {T}) ∘ toUnorderedTree =
-    fun S : SyntacticObject ↦ S.accessibleCount + 1 from funext fun S ↦ by
+  rwa [show (fun T : UnorderedTree (Vertex LexicalItem.Token) ↦ Forest.accessibleSize {T}) ∘
+      toUnorderedTree =
+    fun S : SyntacticObject TokenLeaf ↦ S.accessibleCount + 1 from funext fun S ↦ by
       simp [accessibleCount_toUnorderedTree]] at this
 
 /-- An admissible step whose operands are not traces satisfies Minimal Yield, counting the
@@ -229,19 +234,21 @@ theorem Step.minimalYield (h : step.Admissible current W) (hcur : ¬ current.IsT
 
 /-- The workspaces after each of a list of steps hold the object built so far beside the items
     still to come. -/
-noncomputable def Step.workspacesAfter : List Step → SyntacticObject → List Workspace
+noncomputable def Step.workspacesAfter : List Step → SyntacticObject TokenLeaf → List Workspace
   | [], _ => []
   | step :: steps, current =>
       ({step.apply current} + Step.itemsList steps) ::
         Step.workspacesAfter steps (step.apply current)
 
-private theorem isChain_of_step {R : Workspace → Workspace → Prop} {P : SyntacticObject → Prop}
-    (hR : ∀ {step : Step} {current : SyntacticObject} {W : Workspace}, step.Admissible current W →
+private theorem isChain_of_step {R : Workspace → Workspace → Prop}
+    {P : SyntacticObject TokenLeaf → Prop}
+    (hR : ∀ {step : Step} {current : SyntacticObject TokenLeaf} {W : Workspace}, step.Admissible
+        current W →
       P current → (∀ i ∈ step.items, P i) →
         R ({current} + step.items + W) ({step.apply current} + W))
-    (hP : ∀ {step : Step} {current : SyntacticObject} {W : Workspace},
+    (hP : ∀ {step : Step} {current : SyntacticObject TokenLeaf} {W : Workspace},
       step.Admissible current W → P (step.apply current)) :
-    ∀ (steps : List Step) (current : SyntacticObject), Step.AdmissibleList steps current →
+    ∀ (steps : List Step) (current : SyntacticObject TokenLeaf), Step.AdmissibleList steps current →
       P current → (∀ i ∈ Step.itemsList steps, P i) →
       List.IsChain R (({current} + Step.itemsList steps) :: Step.workspacesAfter steps current)
   | [], _, _, _, _ => .singleton _
@@ -262,7 +269,7 @@ noncomputable def workspaces (d : Derivation) : List Workspace :=
 /-- Each step of an admissible derivation is MERGE on the workspaces of its stages: an External
     Merge step leaving copies, and an Internal Merge step leaving the trace of the mover's head. -/
 theorem isChain_merge {d : Derivation} (hd : d.Admissible) :
-    d.workspaces.IsChain fun W W' : Workspace ↦ ∃ P Q : SyntacticObject,
+    d.workspaces.IsChain fun W W' : Workspace ↦ ∃ P Q : SyntacticObject TokenLeaf,
       W' = W.merge P Q ∨ W' = W.mergeWith (·.headTrace) P Q := by
   refine isChain_of_step (P := fun _ ↦ True) (fun {step current W} h _ _ ↦ ?_) (fun _ ↦ trivial)
     d.steps d.initial hd trivial fun _ _ ↦ trivial
@@ -281,7 +288,7 @@ theorem isChain_merge {d : Derivation} (hd : d.Admissible) :
 theorem isChain_noComplexityLoss {d : Derivation} (hd : d.Admissible)
     (hinit : ¬ d.initial.IsTrace) (hitems : ∀ i ∈ d.items, ¬ i.IsTrace) :
     d.workspaces.IsChain
-      (NoComplexityLoss fun S : SyntacticObject ↦ S.accessibleCount + 1) :=
+      (NoComplexityLoss fun S : SyntacticObject TokenLeaf ↦ S.accessibleCount + 1) :=
   isChain_of_step (P := fun S ↦ ¬ S.IsTrace)
     (fun h hcur hi ↦ Step.noComplexityLoss h hcur hi) Step.not_isTrace_apply d.steps d.initial hd
     hinit hitems

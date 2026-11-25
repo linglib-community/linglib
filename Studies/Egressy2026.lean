@@ -507,70 +507,70 @@ def lexicon : List LexicalItem :=
     liSzomorú, liTelesírt, liSajnos, liKorábban] : List LexicalItem.Token).map (·.item)
 
 /-- The embedded clause the rows share, *Mari szomorú volt*. -/
-def wSad : PlanarSyntacticObject := liMari * (liSzomorú * liVolt)
+def wSad : PlanarSyntacticObject TokenLeaf := liMari * (liSzomorú * liVolt)
 
 /-- (4): *Peti saw with his own eyes that Mari was sad*. -/
-def w4 : PlanarSyntacticObject :=
+def w4 : PlanarSyntacticObject TokenLeaf :=
   liPeti * (liA * (liSaját * (liSzemével * (liLátta * (liAzt * (liHogy * wSad))))))
 
 /-- (5): the heard variant of (4), *that Mari cried*. -/
-def w5 : PlanarSyntacticObject :=
+def w5 : PlanarSyntacticObject TokenLeaf :=
   liPeti * (liA * (liSaját * (liFülével * (liHallotta * (liAzt * (liHogy * (liMari * liSírt)))))))
 
 /-- (6): *Peti dreamt it that Mari was sad*. -/
-def w6 : PlanarSyntacticObject :=
+def w6 : PlanarSyntacticObject TokenLeaf :=
   liPeti * (liAzt * (liÁlmodta * (liHogy * wSad)))
 
 /-- (7): the *think* variant of (6). -/
-def w7 : PlanarSyntacticObject :=
+def w7 : PlanarSyntacticObject TokenLeaf :=
   liPeti * (liAzt * (liGondolta * (liHogy * wSad)))
 
 /-- (8): *It worried Peti that Mari was sad*, the subject clause. -/
-def w8 : PlanarSyntacticObject :=
+def w8 : PlanarSyntacticObject TokenLeaf :=
   liAz * (liAggasztotta * (liPetit * (liHogy * wSad)))
 
 /-- (9): *You growled because of it that Mari was sad*, the adjunct clause. -/
-def w9 : PlanarSyntacticObject :=
+def w9 : PlanarSyntacticObject TokenLeaf :=
   liMorogtál * (liAmiatt * (liHogy * wSad))
 
 /-- (11a): *Peti said it that (unfortunately) Mari was sad*. -/
-def w11a : PlanarSyntacticObject :=
+def w11a : PlanarSyntacticObject TokenLeaf :=
   liPeti * (liAzt * (liMondta * (liHogy * (liSajnos * wSad))))
 
 /-- (11b): the *shout* variant of (11a). -/
-def w11b : PlanarSyntacticObject :=
+def w11b : PlanarSyntacticObject TokenLeaf :=
   liPeti * (liAzt * (liRikoltotta * (liHogy * (liSajnos * wSad))))
 
 /-- (11c): the *growl* variant of (11a). -/
-def w11c : PlanarSyntacticObject :=
+def w11c : PlanarSyntacticObject TokenLeaf :=
   liPeti * (liAzt * (liMorogta * (liHogy * (liSajnos * wSad))))
 
 /-- (12): *You phoned with it that (unfortunately) Mari was sad*, the adjunct clause. -/
-def w12 : PlanarSyntacticObject :=
+def w12 : PlanarSyntacticObject TokenLeaf :=
   liTelefonáltál * (liAzzal * (liHogy * (liSajnos * wSad)))
 
 /-- (13): *Zsuzsi heard it from Peti that unfortunately Mari was sad*. -/
-def w13 : PlanarSyntacticObject :=
+def w13 : PlanarSyntacticObject TokenLeaf :=
   liZsuzsi * (liPetitől * (liAzt * (liHallotta * (liHogy * (liSajnos * wSad)))))
 
 /-- (14): *Peti saw from the cried-in handkerchiefs that (earlier) Mari was sad*. -/
-def w14 : PlanarSyntacticObject :=
+def w14 : PlanarSyntacticObject TokenLeaf :=
   liPeti * (liA * (liTelesírt * (liZsebkendőkből *
     (liLátta * (liAzt * (liHogy * (liKorábban * wSad)))))))
 
 /-- The matrix verb token of a witness: the verb-category token pronounced before the
 complementizer. -/
-def matrixToken? (t : PlanarSyntacticObject) : Option LexicalItem.Token :=
+def matrixToken? (t : PlanarSyntacticObject TokenLeaf) : Option LexicalItem.Token :=
   ((Minimalist.pfYield t).takeWhile fun tok ↦ tok.item.cat ≠ .C).find? fun tok ↦
     tok.item.cat = .V
 
 /-- The clause role a witness shows: the role its pronounced expletive diagnoses. -/
-def roleOf (t : PlanarSyntacticObject) : Option ClauseRole :=
+def roleOf (t : PlanarSyntacticObject TokenLeaf) : Option ClauseRole :=
   (Minimalist.pfYield t).findSome? fun tok ↦
     tok.item.phonForm?.bind fun f ↦ roleOfForm? f.toList
 
 /-- The single-embedding rows with their witnesses. -/
-def witnessRows : List (Datum × PlanarSyntacticObject) :=
+def witnessRows : List (Datum × PlanarSyntacticObject TokenLeaf) :=
   [(ex_4, w4), (ex_5, w5), (ex_6, w6), (ex_7, w7), (ex_8, w8), (ex_9, w9), (ex_11a, w11a),
     (ex_11b, w11b), (ex_11c, w11c), (ex_12, w12), (ex_13, w13), (ex_14, w14)]
 

@@ -43,7 +43,7 @@ namespace Minimalist.PlanarSyntacticObject.Marked
 
 open RoseTree SyntacticObject
 
-local notation "MT" => RoseTree (CopyMark × Vertex)
+local notation "MT" => RoseTree (CopyMark × Vertex LexicalItem.Token)
 
 variable {x y : LexicalItem.Token}
 
@@ -52,11 +52,11 @@ variable {x y : LexicalItem.Token}
 /-- The copy holds the token `y`. -/
 private abbrev Has (y : LexicalItem.Token) (r : MT) : Prop := Holds y (r.map Prod.snd)
 
-private theorem has_node {k : CopyMark} {a : Vertex} {cs : List MT} :
+private theorem has_node {k : CopyMark} {a : Vertex LexicalItem.Token} {cs : List MT} :
     Has y (.node (k, a) cs) ↔ Holds y (.node a (cs.map (RoseTree.map Prod.snd))) := by
   rw [Has, map_node]
 
-private theorem has_pair {k : CopyMark} {a : Vertex} {u v : MT} :
+private theorem has_pair {k : CopyMark} {a : Vertex LexicalItem.Token} {u v : MT} :
     Has y (.node (k, a) [u, v]) ↔ Has y u ∨ Has y v := by
   rw [has_node]
   exact holds_pair _ _ _
@@ -115,7 +115,7 @@ private def NodeOK (r : MT) : Prop :=
 /-- Daughters share a term only at movement nodes. -/
 private def Chains (s : MT) : Prop := ∀ r ∈ s.subtrees, NodeOK r
 
-private theorem chains_node {v : CopyMark × Vertex} {cs : List MT} :
+private theorem chains_node {v : CopyMark × Vertex LexicalItem.Token} {cs : List MT} :
     Chains (.node v cs) ↔ NodeOK (.node v cs) ∧ ∀ c ∈ cs, Chains c := by
   simp only [Chains, subtrees_node, List.mem_cons, List.mem_flatMap, forall_eq_or_imp]
   exact and_congr_right fun _ ↦ ⟨fun h c hc r hr ↦ h r ⟨c, hc, hr⟩,
@@ -134,7 +134,7 @@ def TraceFree (s : MT) : Prop := ∀ r ∈ (s.map Prod.snd).subtrees, r.value.is
 instance : DecidablePred TraceFree := fun _ ↦ inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- The two daughters of a binary node have different terms. -/
-def DaughtersDiffer : RoseTree Vertex → Prop
+def DaughtersDiffer : RoseTree (Vertex LexicalItem.Token) → Prop
   | .node _ [u, v] => UnorderedTree.mk u ≠ UnorderedTree.mk v
   | _ => True
 
@@ -187,7 +187,8 @@ private theorem eq_node_of_lfBy_eq {w : LexicalItem.Token} (hw : w ≠ y) {s : M
       (has_node.1 hp))))] at h
     simp at h
 
-private theorem distinct_of_mem {v : CopyMark × Vertex} {cs : List MT} {c : MT} (hc : c ∈ cs)
+private theorem distinct_of_mem {v : CopyMark × Vertex LexicalItem.Token} {cs : List MT} {c : MT}
+    (hc : c ∈ cs)
     (h : DistinctDaughters (.node v cs)) : DistinctDaughters c := fun r hr ↦
   h r (mem_subtrees_trans hr (by
     rw [map_node]
@@ -237,7 +238,7 @@ private theorem termOf_eq_of_contract_eq {t : MT} (hMN : MarksName t) (hTF : Tra
 
 section Mark
 
-variable {m : SyntacticObject} {l : Option LexicalItem.Token}
+variable {m : SyntacticObject TokenLeaf} {l : Option LexicalItem.Token}
 
 private theorem termOf_markTree (s : MT) : termOf (markTree m l s) = termOf s :=
   congrArg UnorderedTree.mk (map_snd_markTree m l s)
@@ -245,7 +246,7 @@ private theorem termOf_markTree (s : MT) : termOf (markTree m l s) = termOf s :=
 private theorem has_markTree {s : MT} : Has y (markTree m l s) ↔ Has y s := by
   rw [Has, map_snd_markTree]
 
-private theorem has_node_map_markTree {v : CopyMark × Vertex} {cs : List MT} :
+private theorem has_node_map_markTree {v : CopyMark × Vertex LexicalItem.Token} {cs : List MT} :
     Has y (.node v (cs.map (markTree m l))) ↔ Has y (.node v cs) := by
   obtain ⟨k, a⟩ := v
   rw [has_node, has_node, List.map_map,
@@ -254,7 +255,7 @@ private theorem has_node_map_markTree {v : CopyMark × Vertex} {cs : List MT} :
 
 private theorem not_hit_of_some (hm : ¬ m.IsTrace) (l' : Option
     LexicalItem.Token)
-    (a : Vertex) (cs : List MT) :
+    (a : Vertex LexicalItem.Token) (cs : List MT) :
     UnorderedTree.mk (contractTree (.node (some l', a) cs)) ≠ m.toUnorderedTree := by
   rw [contractTree_some]
   intro h
@@ -480,7 +481,7 @@ private theorem cc_lfBy_markTree (hm : ¬ m.IsTrace) (hxy : x ≠ y) {s : MT} (h
         · exact absurd h (not_tokenCCommands_of_length_ne (by simp))
 
 /-- A copy of a chain every occurrence of which has the term `τ` is marked. -/
-private theorem exists_marked_of_hit {s r₀ : MT} {τ : UnorderedTree Vertex}
+private theorem exists_marked_of_hit {s r₀ : MT} {τ : UnorderedTree (Vertex LexicalItem.Token)}
     (hu : ∀ r ∈ s.subtrees, UnorderedTree.mk (contractTree r) = m.toUnorderedTree → termOf r = τ)
     (h₀ : r₀ ∈ s.subtrees) (hit : UnorderedTree.mk (contractTree r₀) = m.toUnorderedTree) :
     ∃ r' ∈ (markTree m l s).subtrees, r'.value.1.isSome ∧ termOf r' = τ := by
@@ -518,10 +519,12 @@ end Mark
 /-! ### The steps of a derivation -/
 
 /-- An object with no marks, whose tokens are distinct, has no movement nodes and needs none. -/
-private theorem chains_map_none {p : RoseTree Vertex} (h : IsSyntacticObject (UnorderedTree.mk p))
+private theorem chains_map_none {p : RoseTree (Vertex LexicalItem.Token)}
+    (h : IsSyntacticObject (UnorderedTree.mk p))
     (hTF : ∀ r ∈ p.subtrees, r.value.isLeft)
     (hd : (PlanarSyntacticObject.ofRoseTree p h).toSyntacticObject.yield.Nodup) :
-    Chains (p.map ((none, ·) : Vertex → CopyMark × Vertex)) := by
+    Chains (p.map ((none, ·) : Vertex LexicalItem.Token → CopyMark × Vertex LexicalItem.Token)) :=
+        by
   induction p with
   | node a cs ih =>
     rw [map_node]
@@ -557,9 +560,14 @@ private theorem chains_map_none {p : RoseTree Vertex} (h : IsSyntacticObject (Un
         simp only [List.map_cons, List.map_nil, RoseTree.node.injEq, List.cons.injEq, and_true,
           Prod.mk.injEq] at he
         obtain ⟨-, rfl, rfl⟩ := he
-        have shared : ∀ {w : LexicalItem.Token} {p₁ p₂ : RoseTree Vertex}, Holds w p₁ →
-            (∃ q ∈ (p₂.map ((none, ·) : Vertex → CopyMark × Vertex)).subtrees, termOf q =
-              termOf (p₁.map ((none, ·) : Vertex → CopyMark × Vertex))) → Holds w p₂ :=
+        have shared : ∀ {w : LexicalItem.Token} {p₁ p₂ : RoseTree (Vertex LexicalItem.Token)}, Holds
+            w p₁ →
+            (∃ q ∈ (p₂.map
+                ((none, ·) : Vertex LexicalItem.Token → CopyMark ×
+                (Vertex LexicalItem.Token))).subtrees, termOf q =
+              termOf (p₁.map
+                  ((none, ·) : Vertex LexicalItem.Token → CopyMark × Vertex LexicalItem.Token))) →
+                  Holds w p₂ :=
           @fun w _ _ hw ⟨q, hq, ht⟩ ↦ by
             have hq' : Has w q := (holds_congr ht).2 (by simpa [map_snd_map] using hw)
             simpa [map_snd_map] using holds_of_mem_subtrees (map_mem_subtrees hq) hq'
@@ -572,7 +580,7 @@ private theorem chains_map_none {p : RoseTree Vertex} (h : IsSyntacticObject (Un
         · exact ih _ (by simp) hu htu hdu
         · exact ih _ (by simp) hv htv hdv
 
-private theorem val_mem_subtrees_of_find? {t s : Marked} {m : SyntacticObject}
+private theorem val_mem_subtrees_of_find? {t s : Marked} {m : SyntacticObject TokenLeaf}
     (h : t.find? m = some s) : s.val ∈ t.val.subtrees := by
   obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 h
   exact mem_subtrees.2 (isSubtree_of_mem_subtreesUntil hr)
@@ -584,7 +592,7 @@ private def Good (s : MT) : Prop :=
   Chains s ∧ ∀ x y, x ≠ y → CC x y (s.map Prod.snd) → CC x y (lfBy (Has y) s)
 
 /-- A node with at most one movement direction is `Good` in either order of its daughters. -/
-private theorem Good.swap {a : Vertex} {u v : MT}
+private theorem Good.swap {a : Vertex LexicalItem.Token} {u v : MT}
     (h : ¬ ((lowerCopy? u v).isSome ∧ (lowerCopy? v u).isSome))
     (hg : Good (.node (none, a) [u, v])) : Good (.node (none, a) [v, u]) := by
   obtain ⟨hn, hc⟩ := chains_node.1 hg.1
@@ -614,14 +622,14 @@ private theorem Good.swap {a : Vertex} {u v : MT}
         exact this.swap
 
 /-- External Merge of an item that shares no token with the object. -/
-private theorem step_em {t : Marked} {item : PlanarSyntacticObject} (e : Edge)
+private theorem step_em {t : Marked} {item : PlanarSyntacticObject TokenLeaf} (e : Edge)
     (hroot : t.val.value.1 = none) (hdis : ∀ w, Has w t.val → ¬ Holds w item.toRoseTree)
     (hTFi : ∀ r ∈ item.toRoseTree.subtrees, r.value.isLeft) (hdi :
         item.toSyntacticObject.yield.Nodup)
     (hTFt : TraceFree t.val) (hg : Good t.val) : Good (t.attach e (ofPlanar item)).val := by
-  let p : RoseTree Vertex := item.toRoseTree
+  let p : RoseTree (Vertex LexicalItem.Token) := item.toRoseTree
   have hp : IsSyntacticObject (UnorderedTree.mk p) := item.isSyntacticObject_toRoseTree
-  let d : MT := p.map ((none, ·) : Vertex → CopyMark × Vertex)
+  let d : MT := p.map ((none, ·) : Vertex LexicalItem.Token → CopyMark × Vertex LexicalItem.Token)
   have hdm : d.map Prod.snd = p := map_snd_map p
   obtain ⟨w₀, hw₀⟩ := exists_holds hp hTFi
   obtain ⟨w₁, hw₁⟩ := exists_holds t.2 hTFt
@@ -669,7 +677,8 @@ private theorem step_em {t : Marked} {item : PlanarSyntacticObject} (e : Edge)
   | right => exact hleft.swap fun h ↦ hdet₁ h.1
 
 /-- Internal Merge of a phrase found in the object, other than the object itself. -/
-private theorem step_im {t s₀ : Marked} {m : SyntacticObject} {l : Option LexicalItem.Token}
+private theorem step_im {t s₀ : Marked} {m : SyntacticObject TokenLeaf}
+    {l : Option LexicalItem.Token}
     (e : Edge) (hfind : t.find? m = some s₀) (hm : ¬ m.IsTrace) (hMN : MarksName
         t.val)
     (hTF : TraceFree t.val) (hDD : DistinctDaughters t.val) (hne : termOf s₀.val ≠ termOf t.val)
@@ -775,12 +784,14 @@ private theorem step_im {t s₀ : Marked} {m : SyntacticObject} {l : Option Lexi
       .node (none, Vertex.bare) [markTree m l t.val, s₀.val] from rfl, hs]
     exact hleft.swap fun h ↦ hndet h.2
 
-private theorem marksName_of_mem {v : CopyMark × Vertex} {cs : List MT} {c : MT} (hc : c ∈ cs)
+private theorem marksName_of_mem {v : CopyMark × Vertex LexicalItem.Token} {cs : List MT} {c : MT}
+    (hc : c ∈ cs)
     (h : MarksName (.node v cs)) : MarksName c := fun r₁ h₁ r₂ h₂ ↦
   h r₁ (mem_subtrees_trans h₁ (child_mem_subtrees hc)) r₂
     (mem_subtrees_trans h₂ (child_mem_subtrees hc))
 
-private theorem traceFree_of_mem {v : CopyMark × Vertex} {cs : List MT} {c : MT} (hc : c ∈ cs)
+private theorem traceFree_of_mem {v : CopyMark × Vertex LexicalItem.Token} {cs : List MT} {c : MT}
+    (hc : c ∈ cs)
     (h : TraceFree (.node v cs)) : TraceFree c := fun r hr ↦
   h r (mem_subtrees_trans hr (by
     rw [map_node]
@@ -909,7 +920,8 @@ private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.
           = p.toRoseTree from hm₀]; exact hr)
     refine ⟨?_, ⟨chains_map_none p.isSyntacticObject_toRoseTree hTFp ?_, fun x y _ hcc ↦ ?_⟩,
       fun w hw ↦ ?_⟩
-    · change (p.toRoseTree.map ((none, ·) : Vertex → CopyMark × Vertex)).value.1 = none
+    · change (p.toRoseTree.map
+        ((none, ·) : Vertex LexicalItem.Token → CopyMark × Vertex LexicalItem.Token)).value.1 = none
       rcases p.toRoseTree with ⟨a, cs⟩
       simp [map_node]
     · rw [PlanarSyntacticObject.ofRoseTree_toRoseTree, hinit]
@@ -917,7 +929,10 @@ private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.
     · have hcc' : CC x y p.toRoseTree := by
         have : CC x y ((Marked.ofPlanar p).val.map Prod.snd) := hcc
         rwa [hm₀] at this
-      change CC x y (lfBy (Has y) (p.toRoseTree.map ((none, ·) : Vertex → CopyMark × Vertex)))
+      change CC x y
+          (lfBy (Has y)
+          (p.toRoseTree.map
+          ((none, ·) : Vertex LexicalItem.Token → CopyMark × Vertex LexicalItem.Token)))
       rwa [lfBy_map_none]
     · have hw' : Holds w p.toRoseTree := by
         have : Has w (Marked.ofPlanar p).val := hw
@@ -989,7 +1004,8 @@ private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.
     · simp [Step.IsMerge] at hst
 
 /-- Binding at a reading is binding at the copy object, when nothing moves from itself. -/
-theorem BindsAtReading.bindsAtLF {d : Derivation} {low : Finset SyntacticObject} (hxy : x ≠ y)
+theorem BindsAtReading.bindsAtLF {d : Derivation} {low : Finset (SyntacticObject TokenLeaf)}
+    (hxy : x ≠ y)
     {c : Cfg Marked} (hc : d.replayWithCopies? = some c) (hDD : DistinctDaughters c.current.val)
     (h : d.BindsAtReading low ↑x ↑y) : d.BindsAtLF ↑x ↑y := by
   simp only [BindsAtReading, BindsAtLF, lf?, copyObject?, hc, Option.map_some, Option.mem_def,

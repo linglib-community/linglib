@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Workspace.Merge.Internal
 public import Linglib.Syntax.Minimalist.SyntacticObject.Tree
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # Merge at a restricted coproduct
@@ -78,14 +79,21 @@ end
 
 open SyntacticObject
 
-variable {C : SyntacticObject → SyntacticObject → Prop} [DecidableRel C]
-  {cuts : UnorderedTree Vertex → Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex)}
+variable {C : SyntacticObject TokenLeaf → SyntacticObject TokenLeaf → Prop} [DecidableRel C]
+  {cuts : UnorderedTree (Vertex LexicalItem.Token) → Multiset
+      (Forest (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+          (Vertex LexicalItem.Token))}
 
 /-- The cuts that extract from a syntactic object only terms satisfying `C` in it. -/
-def restrictCutsOf (C : SyntacticObject → SyntacticObject → Prop) [DecidableRel C]
-    (cuts : UnorderedTree Vertex →
-      Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex)) :
-    UnorderedTree Vertex → Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex) :=
+def restrictCutsOf (C : SyntacticObject TokenLeaf → SyntacticObject TokenLeaf → Prop)
+    [DecidableRel C]
+    (cuts : UnorderedTree (Vertex LexicalItem.Token) →
+      Multiset (Forest (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+          (Vertex LexicalItem.Token))) :
+    UnorderedTree (Vertex LexicalItem.Token) → Multiset
+        (Forest (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+            (Vertex LexicalItem.Token))
+        :=
   restrictCuts (fun T x ↦ ∀ (hT : IsSyntacticObject T) (hx : IsSyntacticObject x),
     C (ofUnorderedTree T hT) (ofUnorderedTree x hx)) cuts
 
@@ -94,7 +102,7 @@ instance [IsMergeCuts cuts] : IsMergeCuts (restrictCutsOf C cuts) := by
 
 /-- The unit stage of Internal Merge at restricted cuts vanishes on a mover that fails the
 condition. -/
-theorem mergeOpUnitOfCuts_restrictCutsOf_eq_zero {T x : SyntacticObject} (hne : T ≠ x)
+theorem mergeOpUnitOfCuts_restrictCutsOf_eq_zero {T x : SyntacticObject TokenLeaf} (hne : T ≠ x)
     (h : ¬ C T x) :
     mergeOpUnitOfCuts (R := R) (restrictCutsOf C cuts) x.toUnorderedTree
       (of' {T.toUnorderedTree}) = 0 :=

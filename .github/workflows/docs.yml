@@ -59,7 +59,9 @@ jobs:
         run: lake exe cache get
 
       - name: Build project
-        run: lake build
+        run: |
+          set -o pipefail
+          lake build 2>&1 | tee build.log
 
       # Report only: lists the imports each module does not need. It never fails the job.
       - name: Report unused imports
@@ -86,7 +88,9 @@ jobs:
       - name: Extract declaration dependencies
         continue-on-error: true
         timeout-minutes: 20
-        run: python3 scripts/gen_tendrils.py --extract-only .lake/build/declaration-dependencies
+        run: |
+          python3 scripts/gen_tendrils.py --times build.log
+          python3 scripts/gen_tendrils.py --extract-only .lake/build/declaration-dependencies
 
       - name: Upload declaration dependencies
         continue-on-error: true

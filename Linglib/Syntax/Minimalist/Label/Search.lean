@@ -8,6 +8,7 @@ module
 public import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 public import Mathlib.Data.Finset.Insert
 public import Mathlib.Data.Finset.Lattice.Basic
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # Minimal search on a syntactic object
@@ -85,17 +86,17 @@ end SearchState
 namespace SyntacticObject
 
 /-- Minimal search as a morphism of magmas: Merge multiplies what search finds in the daughters. -/
-def search : SyntacticObject →ₙ* SearchState :=
+def search : SyntacticObject TokenLeaf →ₙ* SearchState :=
   FreeCommMagma.lift (Leaf.elim SearchState.head fun _ ↦ SearchState.trace)
 
 /-- The heads minimal search finds in a syntactic object. -/
-def searchHeads (s : SyntacticObject) : Finset LexicalItem.Token := (search s).heads
+def searchHeads (s : SyntacticObject TokenLeaf) : Finset LexicalItem.Token := (search s).heads
 
 @[simp] theorem search_leaf (tok : LexicalItem.Token) : search (leaf tok) = .head tok := rfl
 
 @[simp] theorem search_traceOf (tok : LexicalItem.Token) : search (traceOf tok) = .trace := rfl
 
-@[simp] theorem search_merge (l r : SyntacticObject) :
+@[simp] theorem search_merge (l r : SyntacticObject TokenLeaf) :
     search (merge l r) = search l * search r :=
   map_mul search l r
 

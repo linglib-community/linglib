@@ -81,7 +81,7 @@ def john : LexicalItem.Token := ⟨.of .N [] "John", 3⟩
 def loves : LexicalItem.Token := ⟨.of .V [.N, .N] "loves", 4⟩
 
 /-- *pictures of himself*. -/
-def picturesOfHimself : PlanarSyntacticObject :=
+def picturesOfHimself : PlanarSyntacticObject TokenLeaf :=
   .merge (.leaf pictures) (.merge (.leaf ofP) (.leaf himself))
 
 /-- *John loves pictures of himself*. -/
@@ -91,10 +91,10 @@ def basic : Derivation := ⟨loves, [.em .right picturesOfHimself, .em .left (.l
 def fronted : Derivation := basic.append [.im picturesOfHimself.toSyntacticObject]
 
 /-- The clause `fronted` starts from, before the object moves. -/
-noncomputable def clause : SyntacticObject := basic.stageAt basic.length
+noncomputable def clause : SyntacticObject TokenLeaf := basic.stageAt basic.length
 
 /-- What the object leaves behind when it moves: the contraction quotient. -/
-noncomputable def remnant : SyntacticObject :=
+noncomputable def remnant : SyntacticObject TokenLeaf :=
   clause.replace picturesOfHimself.toSyntacticObject picturesOfHimself.toSyntacticObject.headTrace
 
 -- (14): the final stage of `fronted` is the moved phrase merged with the contraction quotient.
@@ -147,7 +147,7 @@ def didnt : LexicalItem.Token := ⟨.of .T [.V] "didn't", 7⟩
 def score : LexicalItem.Token := ⟨.of .V [.D] "score", 8⟩
 
 /-- *every player*. -/
-def everyPlayer : PlanarSyntacticObject := .merge (.leaf every) (.leaf player)
+def everyPlayer : PlanarSyntacticObject TokenLeaf := .merge (.leaf every) (.leaf player)
 
 /-- *Every player didn't score*: the subject raised past negation. -/
 def everyDidntScore : Derivation :=

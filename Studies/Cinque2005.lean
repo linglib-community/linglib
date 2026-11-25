@@ -115,13 +115,13 @@ def tokNum : LexicalItem.Token := ⟨.of .Num [], 3⟩
 def tokDem : LexicalItem.Token := ⟨.of .Dem [], 4⟩
 
 /-- The tree contains the overt noun; a trace does not count (7b-vi). -/
-def hasN : RoseTree SyntacticObject.Vertex → Bool
+def hasN : RoseTree (SyntacticObject.Vertex LexicalItem.Token) → Bool
   | .node (.inl (some t)) _ => t == tokN
   | .node (.inl none) [l, r] => hasN l || hasN r
   | .node _ _ => false
 
 /-- The noun is the tree's specifier, `[NP [XP]]` (fn. 21). -/
-def specHasN : RoseTree SyntacticObject.Vertex → Bool
+def specHasN : RoseTree (SyntacticObject.Vertex LexicalItem.Token) → Bool
   | .node (.inl (some t)) _ => t == tokN
   | .node (.inl none) [l, _] => hasN l
   | .node _ _ => false
@@ -129,7 +129,7 @@ def specHasN : RoseTree SyntacticObject.Vertex → Bool
 /-- The marked option used by raising `s` past a modifier whose complement is `c`. The whole
 complement pied-pipes, of the whose-picture type when the noun is its specifier and of the
 picture-of-who type otherwise, and a proper part strands the rest. -/
-def markOf (c s : RoseTree SyntacticObject.Vertex) : Option Marked :=
+def markOf (c s : RoseTree (SyntacticObject.Vertex LexicalItem.Token)) : Option Marked :=
   if s == c then (if specHasN s then none else some .pictureOfWho) else some .withoutPiedPiping
 
 /-- A stage of the enumeration records the derivation, the marked options of its raises and
@@ -183,12 +183,12 @@ def mergeOrder : Derivation :=
 /-- The derivation of (6o): NP raises past A, and `[N [A t]]` past Num. -/
 def derivation6o : Derivation :=
   ⟨leaf tokN, [.em .left tokA, .im (leaf tokN), .em .left tokNum,
-    .im (tokN * (tokA * .traceOf tokN) : PlanarSyntacticObject), .em .left tokDem]⟩
+    .im (tokN * (tokA * .traceOf tokN) : PlanarSyntacticObject TokenLeaf), .em .left tokDem]⟩
 
 /-- The derivation of (6n): `[A N]` raises past Num. -/
 def derivation6n : Derivation :=
   ⟨leaf tokN, [.em .left tokA, .em .left tokNum,
-    .im (tokA * tokN : PlanarSyntacticObject), .em .left tokDem]⟩
+    .im (tokA * tokN : PlanarSyntacticObject TokenLeaf), .em .left tokDem]⟩
 
 -- (6a)
 theorem surfaceCats_mergeOrder : mergeOrder.surfaceCats = [.Dem, .Num, .A, .N] := by decide

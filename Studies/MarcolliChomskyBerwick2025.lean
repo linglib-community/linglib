@@ -121,20 +121,20 @@ open RoseTree UnorderedTree Minimalist SyntacticObject ConnesKreimer
 /-! ### Internal Merge: an example (§1.4.4) -/
 
 /-- *the apple*, the term `T₂` that Internal Merge raises in §1.4.4. -/
-def theApplePlanar : PlanarSyntacticObject :=
+def theApplePlanar : PlanarSyntacticObject Minimalist.TokenLeaf :=
   PlanarSyntacticObject.merge (.leaf ⟨.of .D [.N] "the", 0⟩) (.leaf ⟨.of .N [] "apple", 1⟩)
 
 /-- *the apple* as a syntactic object. -/
-def theApple : SyntacticObject := theApplePlanar.toSyntacticObject
+def theApple : SyntacticObject Minimalist.TokenLeaf := theApplePlanar.toSyntacticObject
 
 /-- The workspace `T = {was, {eaten, {the, apple}}}` of §1.4.4. -/
-private def wasEatenTheApple : SyntacticObject :=
+private def wasEatenTheApple : SyntacticObject Minimalist.TokenLeaf :=
   (PlanarSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
     (.merge (.leaf ⟨.of .V [.D] "eaten", 3⟩)
       (.merge (.leaf ⟨.of .D [.N] "the", 0⟩) (.leaf ⟨.of .N [] "apple", 1⟩)))).toSyntacticObject
 
 /-- The quotient `T/T₂`, with the trace of the head *the* in place of *the apple*. -/
-private def wasEatenTrace : SyntacticObject :=
+private def wasEatenTrace : SyntacticObject Minimalist.TokenLeaf :=
   (PlanarSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
     (.merge (.leaf ⟨.of .V [.D] "eaten", 3⟩) (.traceOf ⟨.of .D [.N] "the", 0⟩))).toSyntacticObject
 
@@ -148,12 +148,13 @@ example : Workspace.traceMergeOpUnit (R := ℤ) theApple (of' {wasEatenTheApple}
     show deleteAccessible theApple wasEatenTheApple = wasEatenTrace by decide]
 
 /-- The deletion quotient `T/d T₂ = {was, eaten}` that §1.4.4 displays. -/
-private def wasEaten : SyntacticObject :=
+private def wasEaten : SyntacticObject Minimalist.TokenLeaf :=
   (PlanarSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
     (.leaf ⟨.of .V [.D] "eaten", 3⟩)).toSyntacticObject
 
 /-- A syntactic object with its traces erased, on the labels of the trees without traces. -/
-private def erased (T : SyntacticObject) : UnorderedTree (Option LexicalItem.Token) :=
+private def erased (T : SyntacticObject Minimalist.TokenLeaf) : UnorderedTree
+    (Option LexicalItem.Token) :=
   (T.toUnorderedTree.filterMap Sum.getLeft?).getD (.leaf none)
 
 /-- The projection `Π_{d,c}` takes `T/c T₂` to `T/d T₂`, as §1.4.4 displays. -/
@@ -205,7 +206,7 @@ example : MinimalYield SyntacticObject.accessibleCount
 
 /-- It loses no complexity graded by the size `σ`: *was eaten the apple* goes to the Merge of
     *the apple* with the remainder, of one greater size (Proposition 1.6.10). -/
-example : NoComplexityLoss (fun S : SyntacticObject ↦ S.accessibleCount + 1)
+example : NoComplexityLoss (fun S : SyntacticObject Minimalist.TokenLeaf ↦ S.accessibleCount + 1)
     ({wasEatenTheApple} : Workspace) {merge wasEatenTrace theApple} := by
   rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
   exact Step.noComplexityLoss (step := .im theApple) (W := 0)
@@ -223,20 +224,20 @@ the trace cuts graded by the size `σ`. At the trace cuts the vertex count does 
 because the trace of *the* takes the place of *the*. -/
 
 /-- *the*, a term of *the apple*. -/
-def theD : SyntacticObject :=
+def theD : SyntacticObject Minimalist.TokenLeaf :=
   (PlanarSyntacticObject.leaf ⟨.of .D [.N] "the", 0⟩).toSyntacticObject
 
 /-- *apple*, the other term of *the apple*. -/
-def appleN : SyntacticObject :=
+def appleN : SyntacticObject Minimalist.TokenLeaf :=
   (PlanarSyntacticObject.leaf ⟨.of .N [] "apple", 1⟩).toSyntacticObject
 
 /-- *eaten*, the other component of the workspace of §1.3.4. -/
-def eaten : SyntacticObject :=
+def eaten : SyntacticObject Minimalist.TokenLeaf :=
   (PlanarSyntacticObject.leaf ⟨.of .V [.D] "eaten", 3⟩).toSyntacticObject
 
 /-- External Merge of *the apple* with *eaten* loses no complexity graded by the size `σ`: its term
     of Merge takes both whole (Proposition 1.6.10). -/
-example : NoComplexityLoss (fun S : SyntacticObject ↦ S.accessibleCount + 1)
+example : NoComplexityLoss (fun S : SyntacticObject Minimalist.TokenLeaf ↦ S.accessibleCount + 1)
     ({eaten, theApple} : Workspace) {merge theApple eaten} :=
   Step.noComplexityLoss (step := .em .left theApplePlanar) (W := 0) (by simp [Step.Admissible])
     (by decide) (by simp only [Step.items, Multiset.mem_singleton, forall_eq]; decide)
@@ -248,8 +249,9 @@ private def admTok (i : Nat) : LexicalItem.Token := ⟨.of .N [], i⟩
 example :
     (Minimalist.Derivation.mk (admTok 0)
       [Step.em .left (admTok 1), Step.im (admTok 1)]).Admissible := by
-  have hne : merge ↑(admTok 1) ↑(admTok 0) ≠ (↑(admTok 1) : SyntacticObject) := fun h ↦ by
-    have := congrArg (fun s : SyntacticObject ↦ s.toUnorderedTree.numNodes) h
+  have hne : merge ↑(admTok 1) ↑(admTok 0) ≠ (↑(admTok 1) : SyntacticObject Minimalist.TokenLeaf)
+      := fun h ↦ by
+    have := congrArg (fun s : SyntacticObject Minimalist.TokenLeaf ↦ s.toUnorderedTree.numNodes) h
     simp at this
   simp only [Derivation.Admissible, Step.AdmissibleList, Step.Admissible, Step.itemsList_cons,
     Step.itemsList_nil, Step.items, Step.apply_em, add_zero, Multiset.notMem_zero,
@@ -263,12 +265,14 @@ example :
     Merge taking it back, is admissible on its configurations. -/
 example : (Minimalist.Derivation.mk (admTok 0)
     [Step.em .left (admTok 1), Step.extract (admTok 1), Step.remerge]).AdmissibleAt := by
-  have hne : merge ↑(admTok 1) ↑(admTok 0) ≠ (↑(admTok 1) : SyntacticObject) := fun h ↦ by
-    have := congrArg (fun s : SyntacticObject ↦ s.toUnorderedTree.numNodes) h
+  have hne : merge ↑(admTok 1) ↑(admTok 0) ≠ (↑(admTok 1) : SyntacticObject Minimalist.TokenLeaf)
+      := fun h ↦ by
+    have := congrArg (fun s : SyntacticObject Minimalist.TokenLeaf ↦ s.toUnorderedTree.numNodes) h
     simp at this
   refine ⟨?_, ⟨not_isTrace_iff_isLeft.mpr rfl, ?_, hne, ?_⟩, ⟨_, _, rfl, ?_⟩, trivial⟩
   · exact fun U hU ↦ by simp [Step.itemsList, Step.items] at hU
-  · show (merge ↑(admTok 1) ↑(admTok 0) : SyntacticObject).terms.count ↑(admTok 1) = 1
+  · show (merge ↑(admTok 1) ↑(admTok 0) : SyntacticObject Minimalist.TokenLeaf).terms.count
+      ↑(admTok 1) = 1
     rw [terms_merge, Multiset.count_cons_of_ne hne.symm]
     simp [admTok]
   · simp [Step.itemsList, Step.items, Step.run]
@@ -305,10 +309,11 @@ example : Workspace.traceMergeOp (R := ℤ) eaten theD (of' ({eaten, theApple} +
 /-- At `ε = 1` weighted Sideward Merge of type 2(b) is Sideward Merge at the admissible cuts. -/
 example :
     Merge.mergeOpEps (R := ℤ) 1 Vertex.bare eaten.toUnorderedTree theD.toUnorderedTree
-        (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree Vertex))) =
+        (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest
+            (UnorderedTree (Vertex LexicalItem.Token)))) =
       of' ({(merge eaten theD).toUnorderedTree,
           UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}} :
-        Forest (UnorderedTree Vertex)) := by
+        Forest (UnorderedTree (Vertex LexicalItem.Token))) := by
   rw [Merge.mergeOpEps_one, Merge.mergeOpOfCuts_sideward_2b Vertex.bare
       (by rw [toUnorderedTree_mem_subtrees]; decide)
       (fun h ↦ (by decide : theD ≠ theApple) (SyntacticObject.toUnorderedTree_injective h)),
@@ -320,22 +325,26 @@ example :
 /-- At `ε = 0` Minimal Search removes it (Proposition 1.5.1). -/
 example :
     Merge.mergeOpEps (R := ℤ) 0 Vertex.bare eaten.toUnorderedTree theD.toUnorderedTree
-      (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree Vertex))) =
+      (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest
+          (UnorderedTree (Vertex LexicalItem.Token)))) =
           0 :=
   Merge.mergeOpEps_zero_of'_of_not_le _ (by decide)
 
 /-- At every `ε` it is a multiple of `ε`, so Sideward Merge costs at least one
     (Proposition 1.5.1). -/
 example (ε : ℤ) : ∃ y, Merge.mergeOpEps ε Vertex.bare eaten.toUnorderedTree theD.toUnorderedTree
-    (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree Vertex))) =
+    (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest
+        (UnorderedTree (Vertex LexicalItem.Token)))) =
         ε • y :=
   Merge.mergeOpEps_of'_eq_smul_of_not_le ε _ (by decide)
 
 /-- At `ε = 0` External Merge of the two components survives. -/
 example :
     Merge.mergeOpEps (R := ℤ) 0 Vertex.bare eaten.toUnorderedTree theApple.toUnorderedTree
-        (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree Vertex))) =
-      of' ({(merge eaten theApple).toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
+        (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest
+            (UnorderedTree (Vertex LexicalItem.Token)))) =
+      of' ({(merge eaten theApple).toUnorderedTree} : Forest
+          (UnorderedTree (Vertex LexicalItem.Token))) := by
   simpa using Merge.mergeOpEps_zero_pair_add (R := ℤ) (F := 0) Vertex.bare
     (S := eaten.toUnorderedTree) (S' := theApple.toUnorderedTree) (Multiset.notMem_zero
         _) (Multiset.notMem_zero _)
@@ -347,10 +356,10 @@ example :
     Merge.mergeOpEps (R := ℤ) 0 Vertex.bare (UnorderedTree.node Vertex.bare
         {appleN.toUnorderedTree}) theD.toUnorderedTree
         (Merge.mergeOpUnitOfCuts admissibleCuts theD.toUnorderedTree
-          (of' ({theApple.toUnorderedTree} : Forest (UnorderedTree Vertex)))) =
+          (of' ({theApple.toUnorderedTree} : Forest (UnorderedTree (Vertex LexicalItem.Token))))) =
       of' ({UnorderedTree.node Vertex.bare
               {UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}, theD.toUnorderedTree}} :
-        Forest (UnorderedTree Vertex)) :=
+        Forest (UnorderedTree (Vertex LexicalItem.Token))) :=
   Merge.mergeOpEps_im_composition _ _ _ _ _ _ filter_admissibleCuts_theApple rfl
     (fun h ↦ (by decide : theApple ≠ theD) (SyntacticObject.toUnorderedTree_injective h))
 
@@ -359,8 +368,8 @@ example :
 example :
     Merge.mergeOp (R := ℤ) Vertex.bare appleN.toUnorderedTree theD.toUnorderedTree
         (Merge.mergeOpUnit Vertex.bare theD.toUnorderedTree
-          (of' ({theApple.toUnorderedTree} : Forest (UnorderedTree Vertex)))) =
-      of' ({theApple.toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
+          (of' ({theApple.toUnorderedTree} : Forest (UnorderedTree (Vertex LexicalItem.Token))))) =
+      of' ({theApple.toUnorderedTree} : Forest (UnorderedTree (Vertex LexicalItem.Token))) := by
   rw [Merge.mergeOp_im_composition Vertex.bare _ _ _ _ filter_admissibleCuts_theApple
     (by decide)
     (fun h ↦ (by decide : theApple ≠ theD) (SyntacticObject.toUnorderedTree_injective h))
@@ -374,14 +383,14 @@ private theorem mem_markerCuts_theApple :
 
 /-- The term of Sideward Merge of type 2(b) at the trace cuts takes *eaten* whole and cuts *the*
     out of *the apple*. -/
-private noncomputable def sidewardTermC : CutChoice Vertex :=
+private noncomputable def sidewardTermC : CutChoice (Vertex LexicalItem.Token) :=
   {(eaten.toUnorderedTree, ({eaten.toUnorderedTree}, 0)),
     (theApple.toUnorderedTree, ({theD.toUnorderedTree}, {(deleteAccessible theD
         theApple).toUnorderedTree}))}
 
 /-- The same term at the admissible cuts, where the trunk of *the apple* keeps *apple* under a
     unary vertex that the deletion contracts. -/
-private noncomputable def sidewardTermN : CutChoice Vertex :=
+private noncomputable def sidewardTermN : CutChoice (Vertex LexicalItem.Token) :=
   {(eaten.toUnorderedTree, ({eaten.toUnorderedTree}, 0)),
     (theApple.toUnorderedTree, ({theD.toUnorderedTree},
       {UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}}))}
@@ -452,13 +461,14 @@ example : ¬ NoComplexityLoss.Map (fun T ↦ Forest.accessibleSize {T})
         decide))
 
 /-- The term of Sideward Merge of type 3(a) of *the* and *apple* cuts both out of *the apple*. -/
-private noncomputable def sideward3a : CutChoice Vertex :=
+private noncomputable def sideward3a : CutChoice (Vertex LexicalItem.Token) :=
   {(theApple.toUnorderedTree, ({theD.toUnorderedTree, appleN.toUnorderedTree},
     {UnorderedTree.leaf Vertex.bare}))}
 
 /-- It raises the number of components, so it violates Minimal Yield under any counting
     (Proposition 1.6.8). -/
-example (acc : UnorderedTree Vertex → ℕ) (X : UnorderedTree Vertex) :
+example (acc : UnorderedTree (Vertex LexicalItem.Token) → ℕ)
+    (X : UnorderedTree (Vertex LexicalItem.Token)) :
     ¬ MinimalYieldWeak acc {theApple.toUnorderedTree} ({X} + sideward3a.trunk) := by
   have hs : sideward3a ∈ forestCutChoices admissibleCuts {theApple.toUnorderedTree} := by
     rw [← Multiset.cons_zero, forestCutChoices_cons, forestCutChoices_zero]
@@ -496,7 +506,9 @@ example : ¬ IsSyntacticObject (UnorderedTree.contractUnary
     (.node Vertex.bare {eaten.toUnorderedTree, .leaf Vertex.bare})) := by decide
 
 /-- A trunk with no leaf of the object left has no remainder. -/
-example : deletionQuotient Vertex.bare (.leaf Vertex.bare : UnorderedTree Vertex) = none := by
+example : deletionQuotient Vertex.bare
+    (.leaf Vertex.bare : UnorderedTree (Vertex LexicalItem.Token))
+    = none := by
   decide
 
 /-- Under deletion counting the 2(b) term satisfies the weak form of Minimal Yield but not the
@@ -506,7 +518,7 @@ example : MinimalYieldWeak UnorderedTree.numEdges {eaten.toUnorderedTree, theApp
     ¬ MinimalYield UnorderedTree.numEdges {eaten.toUnorderedTree, theApple.toUnorderedTree}
       {(merge eaten theD).toUnorderedTree, appleN.toUnorderedTree} := by
   have hF : ∀ T ∈ ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree
-      Vertex)),
+      (Vertex LexicalItem.Token))),
       T.Licensed fun a ks ↦ (a = Vertex.bare ↔ ks ≠ 0) ∧
         (Multiset.card ks = 0 ∨ Multiset.card ks = 2) := by
     simp only [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton]
@@ -519,10 +531,10 @@ example : MinimalYieldWeak UnorderedTree.numEdges {eaten.toUnorderedTree, theApp
       theD.toUnorderedTree.numEdges + 2 := by
     rw [toUnorderedTree_merge]; exact UnorderedTree.numEdges_node_pair _ _ _
   have hne : ∀ t ∈ sidewardTermN.trunk, deletionQuotient Vertex.bare t ≠ none := by decide
-  have hu (S : SyntacticObject) : S.toUnorderedTree.numUnary = 0 :=
+  have hu (S : SyntacticObject Minimalist.TokenLeaf) : S.toUnorderedTree.numUnary = 0 :=
     S.isSyntacticObject_toUnorderedTree.isFullBinary.numUnary_eq_zero
   rw [show ({(merge eaten theD).toUnorderedTree, appleN.toUnorderedTree} : Forest (UnorderedTree
-      Vertex)) =
+      (Vertex LexicalItem.Token))) =
       {(merge eaten theD).toUnorderedTree} +
         sidewardTermN.trunk.filterMap (deletionQuotient Vertex.bare) by decide,
     MinimalYieldWeak.merge_term_numEdges_iff Vertex.bare hF sidewardTermN_mem hne hK (hu _) (hu _)
@@ -674,7 +686,7 @@ end CoreMerge
 /-! ### Externalization (§1.12–1.13) -/
 
 /-- A determiner over a noun, in which `D` selects `N` and so projects. -/
-private def theDog : SyntacticObject :=
+private def theDog : SyntacticObject Minimalist.TokenLeaf :=
   merge (leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩) (leaf ⟨.of .N [] (phonForm := "dog"), 1⟩)
 
 /-- In the harmonic head-initial planarization the projecting `D` comes first. -/
@@ -713,7 +725,7 @@ example : raisedD.externalize? raisedD.moverIndex =
 
 /-- Exocentric Merge of two saturated `N`s, neither selecting the other, determines no head and
 no order. -/
-private def exoNN : SyntacticObject :=
+private def exoNN : SyntacticObject Minimalist.TokenLeaf :=
   merge (leaf ⟨.of .N [] (phonForm := "cats"), 0⟩) (leaf ⟨.of .N [] (phonForm := "dogs"), 1⟩)
 
 example : exoNN.linearize? .left = none ∧ exoNN.linearize? .right = none := by decide
@@ -758,9 +770,10 @@ theorem formSet_of'_card (a : α) (F : Forest (UnorderedTree α)) :
 
 /-- A forest is an extended workspace, in `𝔉̃ᴿ` of (1.16.3), when each component is a syntactic
 object or a bare root of any valence over syntactic objects, binary below that root. -/
-def IsExtendedWorkspace (G : Forest (UnorderedTree Vertex)) : Prop :=
+def IsExtendedWorkspace (G : Forest (UnorderedTree (Vertex LexicalItem.Token))) : Prop :=
   ∀ T ∈ G, IsSyntacticObject T ∨
-    ∃ S : Forest (UnorderedTree Vertex), T = .node Vertex.bare S ∧ ∀ T' ∈ S, IsSyntacticObject T'
+    ∃ S : Forest (UnorderedTree (Vertex LexicalItem.Token)), T = .node Vertex.bare S ∧ ∀ T' ∈ S,
+        IsSyntacticObject T'
 
 -- Definition 1.16.1
 theorem map_formSet_le (k : ℕ) :
@@ -783,8 +796,11 @@ end FormSet
 /-! ### Head-following characters and their renormalization (§3.2) -/
 
 -- Lemma 1.3.3
-theorem ofTree_toUnorderedTree_merge {R : Type*} [CommSemiring R] (l r : SyntacticObject) :
-    (ofTree (merge l r).toUnorderedTree : ConnesKreimer R (UnorderedTree Vertex)) =
+theorem ofTree_toUnorderedTree_merge {R : Type*} [CommSemiring R]
+    (l r : SyntacticObject Minimalist.TokenLeaf) :
+    (ofTree (merge l r).toUnorderedTree : ConnesKreimer R
+        (UnorderedTree (Vertex LexicalItem.Token)))
+        =
       bPlus Vertex.bare (ofTree l.toUnorderedTree * ofTree r.toUnorderedTree) := by
   rw [← of'_singleton l.toUnorderedTree, ← of'_singleton r.toUnorderedTree, ← of'_add, bPlus_of',
     toUnorderedTree_merge]
@@ -800,29 +816,31 @@ variable [CommSemiring ℛ] (Υ : LexicalItem.Token → ℛ)
 
 /-- (3.2.1): the head-probe value `Υ_{s,h}` of a tree, the probe `Υ` at the head of the tree by
 selection, and zero on a tree without a head. -/
-def headProbeTree (T : UnorderedTree Vertex) : ℛ :=
+def headProbeTree (T : UnorderedTree (Vertex LexicalItem.Token)) : ℛ :=
   (treeSelectionState T).head.elim 0 Υ
 
-@[simp] theorem headProbeTree_toUnorderedTree (S : SyntacticObject) :
+@[simp] theorem headProbeTree_toUnorderedTree (S : SyntacticObject Minimalist.TokenLeaf) :
     headProbeTree Υ S.toUnorderedTree = S.selectionHead.elim 0 Υ := by
   rw [headProbeTree, treeSelectionState_toUnorderedTree]
   rfl
 
 /-- The head-following character `ϕ_{Υ,s,h}` of Lemma 3.2.5, the algebra homomorphism extending
 `Υ_{s,h}` multiplicatively to forests. -/
-noncomputable def headProbeChar : ConnesKreimer ℕ (UnorderedTree Vertex) →ₐ[ℕ] ℛ :=
+noncomputable def headProbeChar : ConnesKreimer ℕ (UnorderedTree (Vertex LexicalItem.Token)) →ₐ[ℕ] ℛ
+    :=
   aeval (headProbeTree Υ)
 
-@[simp] theorem headProbeChar_apply_of' (F : Forest (UnorderedTree Vertex)) :
+@[simp] theorem headProbeChar_apply_of' (F : Forest (UnorderedTree (Vertex LexicalItem.Token))) :
     headProbeChar Υ (of' F) = (F.map (headProbeTree Υ)).prod :=
   aeval_of' _ F
 
-@[simp] theorem headProbeChar_apply_ofTree (T : UnorderedTree Vertex) :
+@[simp] theorem headProbeChar_apply_ofTree (T : UnorderedTree (Vertex LexicalItem.Token)) :
     headProbeChar Υ (ofTree T) = headProbeTree Υ T :=
   aeval_ofTree _ T
 
 -- A probe that is zero on every item has renormalized part zero, under any operator.
-theorem birkhoffPlusTree_headProbeChar_zero (P : ℛ →+ ℛ) (T : UnorderedTree Vertex) :
+theorem birkhoffPlusTree_headProbeChar_zero (P : ℛ →+ ℛ)
+    (T : UnorderedTree (Vertex LexicalItem.Token)) :
     birkhoffPlusTree (headProbeChar (0 : LexicalItem.Token → ℛ)).toLinearMap P T = 0 :=
   birkhoffPlusTree_eq_zero (fun T ↦ by
     rw [AlgHom.toLinearMap_apply, headProbeChar_apply_ofTree, headProbeTree]
@@ -840,7 +858,7 @@ variable [IdemCommSemiring ℛ] (Υ : LexicalItem.Token → ℛ)
 
 /-- Lemma 3.2.7: into an idempotent semiring, the Birkhoff factorization with respect to the
 identity gives a syntactic object a value at least that of the probe at its head. -/
-theorem selectionHead_le_birkhoffPlusTree (S : SyntacticObject) :
+theorem selectionHead_le_birkhoffPlusTree (S : SyntacticObject Minimalist.TokenLeaf) :
     S.selectionHead.elim 0 Υ ≤
       birkhoffPlusTree (headProbeChar Υ).toLinearMap (.id ℛ) S.toUnorderedTree := by
   simpa using le_birkhoffPlusTree_id (headProbeChar Υ).toLinearMap S.toUnorderedTree
@@ -958,20 +976,20 @@ end Laurent
 /-! ### Obligatory control by Form Copy (§3.8.2) -/
 
 /-- The controller *the man*, from tokens 0 and 1. -/
-noncomputable def theMan : SyntacticObject :=
+noncomputable def theMan : SyntacticObject Minimalist.TokenLeaf :=
   merge (leaf ⟨.of .D [.N] "the", 0⟩) (leaf ⟨.of .N [] "man", 1⟩)
 
 /-- The controlled subject *the man*, from fresh tokens 4 and 5. -/
-noncomputable def theMan' : SyntacticObject := theMan.renumber 4
+noncomputable def theMan' : SyntacticObject Minimalist.TokenLeaf := theMan.renumber 4
 
 /-- *a book*, the object of *read*. -/
-noncomputable def aBook : SyntacticObject :=
+noncomputable def aBook : SyntacticObject Minimalist.TokenLeaf :=
   merge (leaf ⟨.of .D [.N] "a", 7⟩) (leaf ⟨.of .N [] "book", 8⟩)
 
 /-- The syntactic object (3.8.4) of *the man tried to read a book* is built by External Merge
 alone. The controller merges into the theta position of *tried* and the controlled subject into
 that of *read*, since Internal Merge into a theta position would break the dichotomy of §3.8.1. -/
-noncomputable def triedToRead : SyntacticObject :=
+noncomputable def triedToRead : SyntacticObject Minimalist.TokenLeaf :=
   merge theMan (merge (leaf ⟨.of .V [.T] "tried", 2⟩) (merge (leaf ⟨.of .T [.V] "to", 3⟩)
     (merge theMan' (merge (leaf ⟨.of .V [.D] "read", 6⟩) aBook))))
 

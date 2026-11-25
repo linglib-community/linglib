@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Spine
 public import Linglib.Syntax.Minimalist.SyntacticObject.Position
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # The spine of a syntactic object
@@ -66,12 +67,12 @@ def toSpine : RoseTree (Vertex L ι) → Spine L
 
 end
 
-variable (η : RoseTree Vertex → Option ℕ) (t : PlanarSyntacticObject)
+variable (η : RoseTree (Vertex LexicalItem.Token) → Option ℕ) (t : PlanarSyntacticObject TokenLeaf)
 
 /-- The spine of a tree, the heads of its extended projection, given the index `η` of the head
 daughter of each tree: a head projects its category over the spine of its sister, and a phrase
 keeps the spine of its head daughter ([keine-2019]'s Category Inheritance). -/
-def spineOf : RoseTree Vertex → Spine Cat
+def spineOf : RoseTree (Vertex LexicalItem.Token) → Spine Cat
   | .node (.inl (some tok)) _ => ⟨[tok.item.cat]⟩
   | .node (.inl none) [l, r] =>
     match η (.node (.inl none) [l, r]) with
@@ -83,12 +84,12 @@ def spineOf : RoseTree Vertex → Spine Cat
 /-- The spine of the node at `p`. -/
 def spineAt (p : GornAddress) : Spine Cat := t.toRoseTree[p]?.elim ⟨[]⟩ (spineOf η)
 
-variable {η t} {l r : RoseTree Vertex} {tok : LexicalItem.Token}
+variable {η t} {l r : RoseTree (Vertex LexicalItem.Token)} {tok : LexicalItem.Token}
 
 variable (η) in
 /-- The spine of a tree in categories is the extended projection at the top of its spine of
 lexical items, read in categories. -/
-theorem spineOf_eq (s : RoseTree Vertex) :
+theorem spineOf_eq (s : RoseTree (Vertex LexicalItem.Token)) :
     spineOf η s = ((toSpine η s).map (·.item.cat)).extendedProjection := by
   fun_induction toSpine η s with
   | case1 a cs => simp [spineOf, Spine.map, Spine.extendedProjection, Spine.project, Spine.Inherits]
@@ -108,7 +109,7 @@ theorem spineOf_eq (s : RoseTree Vertex) :
     · exact fun l r hs ↦ h1 l r hs
 
 /-- The spine of a tree is an extended projection. -/
-theorem isExtendedProjection_spineOf (s : RoseTree Vertex) :
+theorem isExtendedProjection_spineOf (s : RoseTree (Vertex LexicalItem.Token)) :
     (spineOf η s).IsExtendedProjection :=
   spineOf_eq η s ▸ Spine.isExtendedProjection_extendedProjection _
 

@@ -127,10 +127,10 @@ end Derivation
 section Map
 
 variable {f : LexicalItem.Token → LexicalItem.Token}
-  {τ τ' : SyntacticObject → Option LexicalItem.Token}
+  {τ τ' : SyntacticObject TokenLeaf → Option LexicalItem.Token}
 
 theorem Step.replay?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
-    (step : Step) (c : Cfg PlanarSyntacticObject) :
+    (step : Step) (c : Cfg (PlanarSyntacticObject TokenLeaf)) :
     (step.map f).replay? (c.map (PlanarSyntacticObject.map f)) τ' =
       (step.replay? c τ).map (Cfg.map (PlanarSyntacticObject.map f)) := by
   rcases c with ⟨p, _ | ⟨m, st⟩⟩ <;> cases step <;>

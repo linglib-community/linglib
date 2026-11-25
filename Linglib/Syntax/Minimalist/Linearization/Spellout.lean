@@ -63,7 +63,7 @@ namespace Minimalist
 
 open RoseTree SyntacticObject
 
-variable (t : PlanarSyntacticObject)
+variable (t : PlanarSyntacticObject TokenLeaf)
 
 /-! ### Ellipsis -/
 

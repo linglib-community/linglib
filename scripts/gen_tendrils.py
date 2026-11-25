@@ -4,6 +4,7 @@
     python3 scripts/gen_tendrils.py [--out DIR] [--lib DIR] [--modules FILE]
     python3 scripts/gen_tendrils.py --extract-only DIR
     python3 scripts/gen_tendrils.py --from-table DIR [--out DIR]
+    python3 scripts/gen_tendrils.py --times BUILD_LOG
 
 Run it after `lake build`. It reads the compiled modules under `.lake/build/lib/lean` (or `--lib`), so a
 module that is not compiled, or whose imports are not, is left out and listed as unmeasured. `--modules`
@@ -12,6 +13,10 @@ restricts the run to the modules a file lists. The page and its data land in `--
 
 `--extract-only` stops after writing the declaration table to a directory, which the nightly build
 uploads; `--from-table` builds the page from such a directory without a compiled library.
+
+`--times` reads the seconds `lake build` printed for each module it built and merges them into
+`.lake/build/module-times.tsv`. A build only prints the modules it rebuilt, so the file keeps the
+last time seen for every other module; `--extract-only` copies it beside the table.
 """
 import argparse, collections, datetime, functools, os, re, subprocess, sys, tempfile
 
@@ -20,6 +25,27 @@ IMPORT = re.compile(r'^(?:public )?(?:meta )?import (?:all )?((?:Linglib|Studies
 
 
 CONFLICT = re.compile(r"import (\S+) failed, environment already contains '([^']+)' from (\S+)")
+
+
+TIMES = os.path.join(ROOT, '.lake/build/module-times.tsv')
+BUILT = re.compile(r'Built ((?:Linglib|Studies)\.\S+) \((?:(\d+)m\s*)?([\d.]+)(ms|s)\)')
+
+
+def merge_times(log):
+    """Merge the per-module build times of a `lake build` log into `TIMES`."""
+    times = {}
+    if os.path.exists(TIMES):
+        for line in open(TIMES):
+            m, _, t = line.strip().partition('\t')
+            if t: times[m] = float(t)
+    n = 0
+    for x in BUILT.finditer(open(log, encoding='utf-8', errors='replace').read()):
+        sec = float(x.group(3)) / (1000 if x.group(4) == 'ms' else 1) + 60 * int(x.group(2) or 0)
+        times[x.group(1)] = sec; n += 1
+    os.makedirs(os.path.dirname(TIMES), exist_ok=True)
+    with open(TIMES, 'w') as fh:
+        for m in sorted(times): fh.write(f'{m}\t{times[m]:.2f}\n')
+    print(f'{n} module times read, {len(times)} kept')
 
 
 def extract(args, table_dir):
@@ -72,6 +98,8 @@ def extract(args, table_dir):
     open(missing, 'w').write('\n'.join(miss) + ('\n' if miss else ''))
     commit = subprocess.run(['git', 'rev-parse', '--short=10', 'HEAD'], capture_output=True, text=True).stdout.strip()
     open(os.path.join(table_dir, 'source.txt'), 'w').write(f'{commit}\n{datetime.date.today().isoformat()}\n')
+    if os.path.exists(TIMES):
+        with open(TIMES) as src, open(os.path.join(table_dir, 'times.tsv'), 'w') as dst: dst.write(src.read())
     print(f'{len(keep)} modules measured, {len(miss)} unmeasured')
 
 
@@ -82,10 +110,14 @@ def main():
     ap.add_argument('--modules')
     ap.add_argument('--extract-only', metavar='DIR')
     ap.add_argument('--from-table', metavar='DIR')
+    ap.add_argument('--times', metavar='BUILD_LOG')
     args = ap.parse_args()
     for k in ('out', 'lib', 'modules', 'extract_only', 'from_table'):
         if getattr(args, k): setattr(args, k, os.path.abspath(getattr(args, k)))
+    if args.times: args.times = os.path.abspath(args.times)
     os.chdir(ROOT)
+    if args.times:
+        return merge_times(args.times)
     if args.extract_only:
         return extract(args, args.extract_only)
     with tempfile.TemporaryDirectory() as tmp:

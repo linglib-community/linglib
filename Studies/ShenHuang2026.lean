@@ -99,34 +99,36 @@ def determiner : Bool → LexicalItem.Token
   | false => a
 
 /-- The object DP of (25) has the wh-phrase in the complement of the determiner. -/
-def dp (o : Bool) : PlanarSyntacticObject := determiner o * (book * (about * wh))
+def dp (o : Bool) : PlanarSyntacticObject TokenLeaf := determiner o * (book * (about * wh))
 
 /-- The verb phrase of (25). -/
-def vp (o : Bool) : PlanarSyntacticObject := verb * dp o
+def vp (o : Bool) : PlanarSyntacticObject TokenLeaf := verb * dp o
 
 /-- The wh-phrase lies in the domain of the determiner, so the PIC (4) freezes it in any phase the
 determiner heads (5). -/
 theorem impenetrable (o : Bool) :
-    (vp o : SyntacticObject).WithinComplement SyntacticObject.raisingHead (determiner o) wh := by
+    (vp o : SyntacticObject TokenLeaf).WithinComplement SyntacticObject.raisingHead (determiner o)
+        wh := by
   cases o <;> decide
 
 /-- The escape hatch the account denies (§2.1) is the verb phrase with the wh-phrase moved to
 Spec,DP. -/
-def vpEdge : PlanarSyntacticObject := verb * (wh * (that * (book * (about * .traceOf wh))))
+def vpEdge : PlanarSyntacticObject TokenLeaf := verb *
+    (wh * (that * (book * (about * .traceOf wh))))
 
 theorem edge_not_impenetrable :
-    (wh : SyntacticObject) ∈
-      (vpEdge : SyntacticObject).phaseEdge SyntacticObject.raisingHead that := by
+    (wh : SyntacticObject TokenLeaf) ∈
+      (vpEdge : SyntacticObject TokenLeaf).phaseEdge SyntacticObject.raisingHead that := by
   decide
 
 /-- The wh-phrase fronted out of the object DP, leaving a deleted copy in the complement of
 *about*. -/
-def extracted (o : Bool) : PlanarSyntacticObject :=
+def extracted (o : Bool) : PlanarSyntacticObject TokenLeaf :=
   wh * (verb * (determiner o * (book * (about * .traceOf wh))))
 
 /-- The LF-movement analysis of an in-situ wh-phrase ([huang-1982b], §5.2) puts a deleted copy
 above the pronounced one. -/
-def covert (o : Bool) : PlanarSyntacticObject := .traceOf wh * vp o
+def covert (o : Bool) : PlanarSyntacticObject TokenLeaf := .traceOf wh * vp o
 
 /-- Covert movement leaves the string of the in-situ object. -/
 example (o : Bool) : pfPhon (covert o) = pfPhon (vp o) := by
@@ -134,11 +136,11 @@ example (o : Bool) : pfPhon (covert o) = pfPhon (vp o) := by
 
 /-- The object of a cell is the wh-phrase extracted, or in situ, bound by an operator after
 [li-1992]. -/
-def Config.tree (c : Config) : PlanarSyntacticObject :=
+def Config.tree (c : Config) : PlanarSyntacticObject TokenLeaf :=
   if c.fronted then extracted c.definiteObject else vp c.definiteObject
 
 /-- The object of a cell on the LF-movement analysis of wh-in-situ. -/
-def Config.covertTree (c : Config) : PlanarSyntacticObject :=
+def Config.covertTree (c : Config) : PlanarSyntacticObject TokenLeaf :=
   if c.fronted then extracted c.definiteObject else covert c.definiteObject
 
 /-! ### The two constraints -/
@@ -149,15 +151,15 @@ def Config.phaseHead (c : Config) : Option LexicalItem.Token :=
   if c.definiteObject = true ∧ c.creation = false then some that else none
 
 /-- The demonstrative-marked DP is the specific one, in [fiengo-1987]'s sense of familiar. -/
-def Config.specific (c : Config) : Option SyntacticObject :=
+def Config.specific (c : Config) : Option (SyntacticObject TokenLeaf) :=
   if c.definiteObject = true then some (dp c.definiteObject) else none
 
 /-- The PIC (4) is violated in `t` when a link of the wh-phrase's chain leaves the phase that the
 cell's determiner heads, from its interior. -/
-def Config.ViolatesPIC (c : Config) (t : PlanarSyntacticObject) : Prop :=
+def Config.ViolatesPIC (c : Config) (t : PlanarSyntacticObject TokenLeaf) : Prop :=
   ∃ ℓ ∈ c.phaseHead, ∃ h ∈ occurrences t ℓ, Crosses .raising t wh h
 
-instance (c : Config) (t : PlanarSyntacticObject) : Decidable (c.ViolatesPIC t) :=
+instance (c : Config) (t : PlanarSyntacticObject TokenLeaf) : Decidable (c.ViolatesPIC t) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The two constraints. -/

@@ -33,22 +33,28 @@ namespace Minimalist.Merge
 
 open RoseTree UnorderedTree ConnesKreimer SyntacticObject
 
-variable {R : Type*} [CommSemiring R] {h : SyntacticObject → Option LexicalItem.Token}
+variable {R : Type*} [CommSemiring R] {h : SyntacticObject TokenLeaf → Option LexicalItem.Token}
   {Φ : LexicalItem.Token → Prop} [DecidablePred Φ]
-  {cuts : UnorderedTree Vertex → Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex)}
+  {cuts : UnorderedTree (Vertex LexicalItem.Token) → Multiset
+      (Forest (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+          (Vertex LexicalItem.Token))}
 
 /-- The cuts of the phase coproduct, with `h` the head function and `Φ` the phase heads: those of
 `cuts` that extract no term in the interior of a lower phase. -/
-abbrev phaseCuts (h : SyntacticObject → Option LexicalItem.Token)
+abbrev phaseCuts (h : SyntacticObject TokenLeaf → Option LexicalItem.Token)
     (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
-    (cuts : UnorderedTree Vertex →
-      Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex)) :
-    UnorderedTree Vertex → Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex) :=
+    (cuts : UnorderedTree (Vertex LexicalItem.Token) →
+      Multiset (Forest (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+          (Vertex LexicalItem.Token))) :
+    UnorderedTree (Vertex LexicalItem.Token) → Multiset
+        (Forest (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+            (Vertex LexicalItem.Token))
+        :=
   restrictCutsOf (fun T x ↦ ¬ T.Inaccessible h Φ x) cuts
 
 /-- The unit stage of Internal Merge at the phase coproduct vanishes on an inaccessible mover: a
 term in the interior of a lower phase does not move. -/
-theorem mergeOpUnitOfCuts_phaseCuts_eq_zero {T x : SyntacticObject} (hne : T ≠ x)
+theorem mergeOpUnitOfCuts_phaseCuts_eq_zero {T x : SyntacticObject TokenLeaf} (hne : T ≠ x)
     (hx : T.Inaccessible h Φ x) :
     mergeOpUnitOfCuts (R := R) (phaseCuts h Φ cuts) x.toUnorderedTree
       (of' {T.toUnorderedTree}) = 0 :=

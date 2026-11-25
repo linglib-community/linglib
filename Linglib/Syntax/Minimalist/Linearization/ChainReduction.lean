@@ -36,7 +36,7 @@ open RoseTree SyntacticObject
 open Derivation (Cfg)
 open PlanarSyntacticObject (toSyntacticObject)
 
-variable {τ : SyntacticObject → Option LexicalItem.Token}
+variable {τ : SyntacticObject TokenLeaf → Option LexicalItem.Token}
 
 /-- When no token is merged twice and no extracted copy is left on the stack, the externalized
 object pronounces every token the derivation merges exactly once, the outcome [nunes-2004]'s chain
@@ -51,7 +51,8 @@ theorem Derivation.coe_surfaceTokens {d : Derivation} (hd : d.lexTokens.Nodup)
 
 /-- In a derivation of Merge steps with no token merged twice, every token merged is pronounced in
 its object. -/
-theorem Derivation.mem_yield_of_mem_lexTokens {d : Derivation} {c : Cfg PlanarSyntacticObject}
+theorem Derivation.mem_yield_of_mem_lexTokens {d : Derivation}
+    {c : Cfg (PlanarSyntacticObject TokenLeaf)}
     (hd : d.lexTokens.Nodup) (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c)
     {tok : LexicalItem.Token} (ht : tok ∈ d.lexTokens) :
     tok ∈ c.current.toSyntacticObject.yield := by

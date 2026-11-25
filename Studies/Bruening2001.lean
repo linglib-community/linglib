@@ -43,17 +43,20 @@ open Minimalist Minimalist.SyntacticObject
 licenses attracting a quantifier first only when no other candidate asymmetrically c-commands it,
 since such a candidate would form a smaller well-formed pair with the attractor, so these are the
 candidates the head's probe finds among the positions it c-commands. -/
-def firsts (t : PlanarSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
-    Finset SyntacticObject :=
+def firsts (t : PlanarSyntacticObject TokenLeaf) (h : SyntacticObject TokenLeaf)
+    (qs : List (SyntacticObject TokenLeaf)) :
+    Finset (SyntacticObject TokenLeaf) :=
   t.goals (.relativized fun q ↦ decide (t.termAt q ∈ qs)) h
 
 /-- Since later movements tuck in beneath earlier ones, the quantifier attracted first takes widest
 scope, so scope is ambiguous exactly when two candidates may be attracted first. -/
-def Ambiguous (t : PlanarSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
+def Ambiguous (t : PlanarSyntacticObject TokenLeaf) (h : SyntacticObject TokenLeaf)
+    (qs : List (SyntacticObject TokenLeaf)) :
     Prop :=
   1 < (firsts t h qs).card
 
-instance (t : PlanarSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
+instance (t : PlanarSyntacticObject TokenLeaf) (h : SyntacticObject TokenLeaf)
+    (qs : List (SyntacticObject TokenLeaf)) :
     Decidable (Ambiguous t h qs) :=
   inferInstanceAs (Decidable (1 < _))
 
@@ -77,14 +80,14 @@ lexicon tokens from 400 where
 /-- `[Ozzy [v [gave [a-girl [Appl every-telescope]]]]]`. The first object is the argument of
 the applicative head, merged above the projection containing the second, so it asymmetrically
 c-commands it. -/
-def doc : PlanarSyntacticObject := so% [ozzy [v [gave [aGirl [appl everyTelescope]]]]]
+def doc : PlanarSyntacticObject TokenLeaf := so% [ozzy [v [gave [aGirl [appl everyTelescope]]]]]
 
 /-- The quantifiers competing for attraction in the double object construction. -/
-def docQuantifiers : List SyntacticObject := [aGirl, everyTelescope]
+def docQuantifiers : List (SyntacticObject TokenLeaf) := [aGirl, everyTelescope]
 
 -- The first object asymmetrically c-commands the second ([barss-lasnik-1986]).
-example : CCommands doc aGirl (everyTelescope : SyntacticObject) ∧
-    ¬ CCommands doc (everyTelescope : SyntacticObject) aGirl := by decide
+example : CCommands doc aGirl (everyTelescope : SyntacticObject TokenLeaf) ∧
+    ¬ CCommands doc (everyTelescope : SyntacticObject TokenLeaf) aGirl := by decide
 
 theorem doc_frozen : firsts doc v docQuantifiers = {↑aGirl} := by decide +kernel
 
@@ -93,19 +96,19 @@ theorem doc_not_ambiguous : ¬ Ambiguous doc v docQuantifiers := by decide +kern
 /-! ### The locative variant -/
 
 /-- The PP that pied-pipes the goal. -/
-def toAGirl : PlanarSyntacticObject := so% [toP aGirl]
+def toAGirl : PlanarSyntacticObject TokenLeaf := so% [toP aGirl]
 
 /-- `[Ozzy [v [gave [every-telescope [to a-girl]]]]]`. The direct object and the PP are
 co-arguments of the same head, hence sisters, and c-command each other. -/
-def locative : PlanarSyntacticObject := so% [ozzy [v [gave [everyTelescope (toAGirl)]]]]
+def locative : PlanarSyntacticObject TokenLeaf := so% [ozzy [v [gave [everyTelescope (toAGirl)]]]]
 
 /-- The candidates in the locative, the direct object and the PP that pied-pipes the goal. -/
-def locativeQuantifiers : List SyntacticObject := [everyTelescope, toAGirl]
+def locativeQuantifiers : List (SyntacticObject TokenLeaf) := [everyTelescope, toAGirl]
 
 -- Direct object and PP c-command each other, so neither asymmetrically c-commands the other.
 example :
-    CCommands locative everyTelescope (toAGirl : SyntacticObject) ∧
-      CCommands locative toAGirl (everyTelescope : SyntacticObject) := by
+    CCommands locative everyTelescope (toAGirl : SyntacticObject TokenLeaf) ∧
+      CCommands locative toAGirl (everyTelescope : SyntacticObject TokenLeaf) := by
   constructor <;> decide
 
 theorem locative_firsts :
@@ -121,7 +124,7 @@ theorem subject_not_attractable : firsts doc v [ozzy] = ∅ := by decide +kernel
 
 /-- The passive of a double object construction. With no external argument, the goal raises to the
 subject position, out of the attractor's domain, leaving the theme as the only candidate. -/
-def passive : PlanarSyntacticObject := so% [aGirl [v [gave [appl everyTelescope]]]]
+def passive : PlanarSyntacticObject TokenLeaf := so% [aGirl [v [gave [appl everyTelescope]]]]
 
 theorem passive_ambiguous : firsts passive v docQuantifiers = {↑everyTelescope} := by
   decide +kernel

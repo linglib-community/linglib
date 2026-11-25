@@ -74,7 +74,7 @@ section Schedule
 
 open Schedule
 
-variable (hd : HeadDaughter) (t : PlanarSyntacticObject)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject TokenLeaf)
 
 /-- Ke's schedule: the domain of a phase head in `W` is transferred once the next phase is
 complete, that of any other once its own phase is complete. -/
@@ -158,17 +158,17 @@ def IsPhaseHead (a : LexicalItem.Token) : Prop := a.item.cat = .v ∨ a.item.cat
 instance : DecidablePred IsPhaseHead := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Ke's schedule on an object, the phases whose heads `W` holds of waiting. -/
-def Waiting (W : LexicalItem.Token → Prop) [DecidablePred W] (t : PlanarSyntacticObject) :
+def Waiting (W : LexicalItem.Token → Prop) [DecidablePred W] (t : PlanarSyntacticObject TokenLeaf) :
     Schedule :=
   Hybrid .raising t (occurrencesWith t W).toFinset
 
-instance (W : LexicalItem.Token → Prop) [DecidablePred W] (t : PlanarSyntacticObject)
+instance (W : LexicalItem.Token → Prop) [DecidablePred W] (t : PlanarSyntacticObject TokenLeaf)
     (Φ : Finset GornAddress) (h s : GornAddress) : Decidable (Waiting W t Φ h s) :=
   inferInstanceAs (Decidable (Hybrid _ _ _ _ _ _))
 
 /-- The cut of an object: the domains `D` of its phase heads, transferred under `σ`. -/
-abbrev transferCut (D : PlanarSyntacticObject → GornAddress → Set GornAddress)
-    (σ : PlanarSyntacticObject → Schedule) (t : PlanarSyntacticObject) : Cut :=
+abbrev transferCut (D : PlanarSyntacticObject TokenLeaf → GornAddress → Set GornAddress)
+    (σ : PlanarSyntacticObject TokenLeaf → Schedule) (t : PlanarSyntacticObject TokenLeaf) : Cut :=
   sealed (occurrencesWith t IsPhaseHead).toFinset (D t) (σ t)
 
 -- p. 684: the approach keeps what the complement domain derives

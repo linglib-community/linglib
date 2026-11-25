@@ -112,7 +112,8 @@ theorem obeysFreezing_append_iff :
 
 section Map
 
-variable {f : LexicalItem.Token → LexicalItem.Token} {d : Derivation} {x : SyntacticObject}
+variable {f : LexicalItem.Token → LexicalItem.Token} {d : Derivation}
+    {x : SyntacticObject TokenLeaf}
 
 theorem frozen_map_iff (hf : Function.Injective f) : (d.map f).Frozen (x.map f) ↔ d.Frozen x := by
   simp only [Frozen, movedItems_map, List.mem_map, exists_exists_and_eq_and, contains_map_iff hf]

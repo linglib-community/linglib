@@ -2,6 +2,7 @@ module
 
 public import Studies.MarcolliChomskyBerwick2025
 public import Linglib.Syntax.Minimalist.Workspace.Basic
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # Kitahara and Seely (2026): Merge and the formal recognition of the workspace
@@ -39,7 +40,7 @@ accessible where it was and violates Minimal Yield (`sideward2b`).
 
 namespace KitaharaSeely2026
 
-open Minimalist (Workspace SyntacticObject Step)
+open Minimalist (Workspace SyntacticObject Step TokenLeaf)
 open Minimalist.SyntacticObject (merge leaf deleteAccessible)
 open MarcolliChomskyBerwick2025 (eaten theD theApple)
 
@@ -62,13 +63,13 @@ theorem minimalYield_of_minimalist {W W' : Workspace}
   h.minimalYield
 
 /-- A schematic lexical item. -/
-def item (i : ℕ) : SyntacticObject := leaf ⟨.of .N [], i⟩
+def item (i : ℕ) : SyntacticObject TokenLeaf := leaf ⟨.of .N [], i⟩
 
 /-- The schematic items `a`, `b`, `c` and `d`. -/
-def a : SyntacticObject := item 0
-@[inherit_doc a] def b : SyntacticObject := item 1
-@[inherit_doc a] def c : SyntacticObject := item 2
-@[inherit_doc a] def d : SyntacticObject := item 3
+def a : SyntacticObject TokenLeaf := item 0
+@[inherit_doc a] def b : SyntacticObject TokenLeaf := item 1
+@[inherit_doc a] def c : SyntacticObject TokenLeaf := item 2
+@[inherit_doc a] def d : SyntacticObject TokenLeaf := item 3
 
 -- (17), (20), (21)
 theorem ex21 : ({a, b, c} : Workspace).merge a b = {merge a b, c} ∧

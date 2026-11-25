@@ -74,28 +74,29 @@ instance (ag : Agreement) : DecidablePred (Weak ag) := fun _ ↦ inferInstanceAs
 def vStar := tok 100 .v "v*" (sel := [.V])
 
 /-- A root that minimal search finds in the sister of v*, which inherits its φ-features. -/
-def InheritsPhi (t : PlanarSyntacticObject) (r : LexicalItem.Token) : Prop :=
+def InheritsPhi (t : PlanarSyntacticObject TokenLeaf) (r : LexicalItem.Token) : Prop :=
   IsRoot r ∧ ∃ p d : t.toRoseTree.Positions, t.termAt p = ↑vStar ∧ p ≠ ⊥ ∧ d ≠ ⊥ ∧ p ≠ d ∧
     p.val.parent = d.val.parent ∧ r ∈ t.labelsAt d
 
-instance (t : PlanarSyntacticObject) : DecidablePred (InheritsPhi t) :=
+instance (t : PlanarSyntacticObject TokenLeaf) : DecidablePred (InheritsPhi t) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The heads bearing the probe for a feature: those of [chomsky-2013], and the roots that inherit
 φ-features from v*. -/
-def Probes (t : PlanarSyntacticObject) (f : Feature) (a : LexicalItem.Token) : Prop :=
+def Probes (t : PlanarSyntacticObject TokenLeaf) (f : Feature) (a : LexicalItem.Token) : Prop :=
   Chomsky2013.Probes f a ∨ (f = .phi ∧ InheritsPhi t a)
 
-instance (t : PlanarSyntacticObject) (f : Feature) : DecidablePred (Probes t f) :=
+instance (t : PlanarSyntacticObject TokenLeaf) (f : Feature) : DecidablePred (Probes t f) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Agreement in this paper. -/
-abbrev Agreed (t : PlanarSyntacticObject) : Feature → LexicalItem.Token →
+abbrev Agreed (t : PlanarSyntacticObject TokenLeaf) : Feature → LexicalItem.Token →
     LexicalItem.Token → Prop :=
   AgreedVia (Probes t) t
 
 /-- Labeling in this paper: weak heads do not qualify as labels. -/
-abbrev IsLabeled (ag : Agreement) (t : PlanarSyntacticObject) (x : SyntacticObject) : Prop :=
+abbrev IsLabeled (ag : Agreement) (t : PlanarSyntacticObject TokenLeaf)
+    (x : SyntacticObject TokenLeaf) : Prop :=
   IsLabeledWith (Weak ag) (Agreed t) t x
 
 /-! ### Phases -/
@@ -115,33 +116,36 @@ def Invisible (a : LexicalItem.Token) : Prop := a = vStar ∨ a = cNull
 instance : DecidablePred Invisible := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The object built at the phase level of a position. -/
-def stageOf (t : PlanarSyntacticObject) (n : t.toRoseTree.Positions) : PlanarSyntacticObject :=
+def stageOf (t : PlanarSyntacticObject TokenLeaf) (n : t.toRoseTree.Positions) :
+    PlanarSyntacticObject TokenLeaf :=
   t.planarTermAt (phaseLevel .label t (occurrencesWith t IsPhaseHead).toFinset n)
 
 /-- Labeling at the phase level: an occurrence of `x` is labeled in the object built at its phase
 level, and later movement leaves the label in place. -/
-def IsLabeledAtPhase (ag : Agreement) (t : PlanarSyntacticObject) (x : SyntacticObject) :
+def IsLabeledAtPhase (ag : Agreement) (t : PlanarSyntacticObject TokenLeaf)
+    (x : SyntacticObject TokenLeaf) :
     Prop :=
   ∃ n, t.termAt n = x ∧ IsLabeled ag (stageOf t n) x
 
-instance (ag : Agreement) (t : PlanarSyntacticObject) (x : SyntacticObject) :
+instance (ag : Agreement) (t : PlanarSyntacticObject TokenLeaf) (x : SyntacticObject TokenLeaf) :
     Decidable (IsLabeledAtPhase ag t x) :=
   inferInstanceAs (Decidable (∃ _, _))
 
 /-- A link of the chain of `tok` leaves a transferred complement, that of a phase head or, where
 the phase heads `I` holds of are invisible, of the head inheriting its phasehood: the PIC. -/
-def ViolatesPic (I : LexicalItem.Token → Prop) [DecidablePred I] (t : PlanarSyntacticObject)
+def ViolatesPic (I : LexicalItem.Token → Prop) [DecidablePred I]
+    (t : PlanarSyntacticObject TokenLeaf)
     (tok : LexicalItem.Token) : Prop :=
   LinkLeaves .label t tok (sealed (occurrencesWith t IsPhaseHead).toFinset
     (fun h ↦ complementDomain (transferHead .label t (occurrencesWith t I).toFinset h))
     (.atCompletion .label t))
 
-instance (I : LexicalItem.Token → Prop) [DecidablePred I] (t : PlanarSyntacticObject)
+instance (I : LexicalItem.Token → Prop) [DecidablePred I] (t : PlanarSyntacticObject TokenLeaf)
     (tok : LexicalItem.Token) : Decidable (ViolatesPic I t tok) :=
   inferInstanceAs (Decidable (LinkLeaves _ _ _ _))
 
 /-- A nominal of the examples, its determiner selecting the nominalizer, which selects the root. -/
-def dp (id : ℕ) (d r : String) : PlanarSyntacticObject :=
+def dp (id : ℕ) (d r : String) : PlanarSyntacticObject TokenLeaf :=
   nominal (tok id .D d (sel := [.n])) (tok (id + 1) .n (sel := [.N])) (tok (id + 2) .N r)
 
 /-! ### Categorizers and roots -/
@@ -151,11 +155,12 @@ def the₁ := tok 102 .D "the" (sel := [.n])
 def dogRoot := tok 103 .N "dog"
 
 theorem categorizer_root_isLabeled (ag : Agreement) :
-    IsLabeled ag (n₁ * dogRoot) (n₁ * dogRoot : PlanarSyntacticObject) := by
+    IsLabeled ag (n₁ * dogRoot) (n₁ * dogRoot : PlanarSyntacticObject TokenLeaf) := by
   cases ag <;> decide +kernel
 
 theorem determiner_root_not_isLabeled (ag : Agreement) :
-    ¬ IsLabeled ag (vStar * (the₁ * dogRoot)) (the₁ * dogRoot : PlanarSyntacticObject) := by
+    ¬ IsLabeled ag (vStar * (the₁ * dogRoot)) (the₁ * dogRoot : PlanarSyntacticObject TokenLeaf) :=
+        by
   cases ag <;> decide +kernel
 
 /-! ### Subjects of CP: EPP and ECP (2), (2′), (4) -/
@@ -165,21 +170,21 @@ def t := tok 105 .T (sel := [.v])
 def think := tok 106 .V "think" (sel := [.C])
 def read := tok 107 .V "read" (sel := [.D])
 /-- *Tom*. -/
-def tom : PlanarSyntacticObject := dp 108 "" "Tom"
+def tom : PlanarSyntacticObject TokenLeaf := dp 108 "" "Tom"
 /-- *a book*. -/
-def aBook : PlanarSyntacticObject := dp 111 "a" "book"
+def aBook : PlanarSyntacticObject TokenLeaf := dp 111 "a" "book"
 
 /-- `β`: the verb phrase with its external argument *Tom*. -/
-def beta : PlanarSyntacticObject := tom * (vStar * (read * aBook))
+def beta : PlanarSyntacticObject TokenLeaf := tom * (vStar * (read * aBook))
 
 /-- T merged with `β`, before the subject raises. -/
-def tBeta : PlanarSyntacticObject := t * beta
+def tBeta : PlanarSyntacticObject TokenLeaf := t * beta
 
 /-- `α` of (2): the subject raised over T. -/
-def alpha : PlanarSyntacticObject := tom * (t * beta)
+def alpha : PlanarSyntacticObject TokenLeaf := tom * (t * beta)
 
 /-- (2): *Tom read a book*, `[δ C [α Tom T [β t v* …]]]`. -/
-def clause : PlanarSyntacticObject := c * alpha
+def clause : PlanarSyntacticObject TokenLeaf := c * alpha
 
 theorem tBeta_isLabeled_iff (ag : Agreement) : IsLabeled ag tBeta tBeta ↔ ag = .rich := by
   cases ag <;> decide +kernel
@@ -192,16 +197,16 @@ theorem ex2 : ∀ ag ∈ agreementOf Examples.ex2.language,
 def vSmall := tok 114 .v (sel := [.V])
 def arrive := tok 115 .V "arrive" (sel := [.D])
 /-- *a dog*. -/
-def aDog : PlanarSyntacticObject := dp 116 "a" "dog"
+def aDog : PlanarSyntacticObject TokenLeaf := dp 116 "a" "dog"
 
 /-- An unaccusative verb phrase, *arrive a dog*, which has no external argument. -/
-def vUnacc : PlanarSyntacticObject := vSmall * (arrive * aDog)
+def vUnacc : PlanarSyntacticObject TokenLeaf := vSmall * (arrive * aDog)
 
 /-- T merged with the unaccusative verb phrase. -/
-def tUnacc : PlanarSyntacticObject := t * vUnacc
+def tUnacc : PlanarSyntacticObject TokenLeaf := t * vUnacc
 
 /-- The internal argument raised over T. -/
-def unaccRaised : PlanarSyntacticObject := aDog * (t * vUnacc)
+def unaccRaised : PlanarSyntacticObject TokenLeaf := aDog * (t * vUnacc)
 
 theorem unaccusative_epp (ag : Agreement) :
     (IsLabeled ag tUnacc tUnacc ↔ ag = .rich) ∧ IsLabeled ag unaccRaised unaccRaised := by
@@ -210,16 +215,17 @@ theorem unaccusative_epp (ag : Agreement) :
 /-- The determiner of *who*. -/
 def whoD := tok 119 .D "who" (features := .single .wh true) (sel := [.n])
 /-- *who*, a wh-nominal. -/
-def who : PlanarSyntacticObject := nominal whoD (tok 120 .n (sel := [.N])) (tok 121 .N "who")
+def who : PlanarSyntacticObject TokenLeaf :=
+  nominal whoD (tok 120 .n (sel := [.N])) (tok 121 .N "who")
 
 /-- `α` of (2′): *who* in the specifier of T. -/
-def alphaWho : PlanarSyntacticObject := who * (t * (who * (vStar * (read * aBook))))
+def alphaWho : PlanarSyntacticObject TokenLeaf := who * (t * (who * (vStar * (read * aBook))))
 
 /-- *who* raised from the specifier of T straight out of the clause of *that*. -/
-def whoThinkDirect : PlanarSyntacticObject := who * (think * (c * alphaWho))
+def whoThinkDirect : PlanarSyntacticObject TokenLeaf := who * (think * (c * alphaWho))
 
 /-- (2′): *who do you think that read the book*, *who* moved on through the specifier of C. -/
-def whoThink : PlanarSyntacticObject := who * (think * (who * (c * alphaWho)))
+def whoThink : PlanarSyntacticObject TokenLeaf := who * (think * (who * (c * alphaWho)))
 
 theorem ex2prime :
     ViolatesPic Invisible whoThinkDirect whoD ∧ ¬ ViolatesPic Invisible whoThink whoD ∧
@@ -229,7 +235,7 @@ theorem ex2prime :
   decide +kernel
 
 /-- (4): *who do you think read the book*, the complementizer deleted. -/
-def whoThinkNoC : PlanarSyntacticObject := who * (think * (cNull * alphaWho))
+def whoThinkNoC : PlanarSyntacticObject TokenLeaf := who * (think * (cNull * alphaWho))
 
 -- (4)
 theorem ex4 : ¬ ViolatesPic Invisible whoThinkNoC whoD ∧
@@ -245,23 +251,23 @@ def vInf := tok 123 .v (sel := [.V])
 def win := tok 124 .V "win"
 def expect := tok 125 .V "expect" (sel := [.T])
 /-- *John*. -/
-def john : PlanarSyntacticObject := dp 126 "" "John"
+def john : PlanarSyntacticObject TokenLeaf := dp 126 "" "John"
 
 /-- The embedded infinitive *John to win*, its subject raised from the verb phrase. -/
-def infinitive : PlanarSyntacticObject := john * (toInf * (john * (vInf * win)))
+def infinitive : PlanarSyntacticObject TokenLeaf := john * (toInf * (john * (vInf * win)))
 
 /-- v* over the root *expect* merged with the infinitive, before the object raises. -/
-def expectInSitu : PlanarSyntacticObject := vStar * (expect * infinitive)
+def expectInSitu : PlanarSyntacticObject TokenLeaf := vStar * (expect * infinitive)
 
 /-- `α` of (3): the object raised to the specifier of *expect*. -/
-def alphaObject : PlanarSyntacticObject := john * (expect * infinitive)
+def alphaObject : PlanarSyntacticObject TokenLeaf := john * (expect * infinitive)
 
 /-- (3): *they expected John to win*, `[δ v* [α John R [β t …]]]`. -/
-def expectRaised : PlanarSyntacticObject := vStar * alphaObject
+def expectRaised : PlanarSyntacticObject TokenLeaf := vStar * alphaObject
 
 -- (3)
 theorem expect_not_isLabeled (ag : Agreement) :
-    ¬ IsLabeled ag expectInSitu (expect * infinitive : PlanarSyntacticObject) := by
+    ¬ IsLabeled ag expectInSitu (expect * infinitive : PlanarSyntacticObject TokenLeaf) := by
   cases ag <;> decide +kernel
 
 -- (3)
@@ -271,15 +277,15 @@ theorem ex3 : ∀ ag ∈ agreementOf Examples.ex3.language,
 
 def doT := tok 136 .T "do" (sel := [.v])
 /-- *you*. -/
-def you : PlanarSyntacticObject := dp 137 "" "you"
+def you : PlanarSyntacticObject TokenLeaf := dp 137 "" "you"
 
 /-- `α` of (3′), *who* raised to the specifier of *expect*. -/
-def alphaWhoObject : PlanarSyntacticObject :=
+def alphaWhoObject : PlanarSyntacticObject TokenLeaf :=
   who * (expect * (who * (toInf * (who * (vInf * win)))))
 
 /-- (3′): *who do you expect to win*, *who* moved on from the specifier of *expect*, with the
 external argument *you* in the specifier of v*. -/
-def whoExpect : PlanarSyntacticObject := who * (doT * (you * (vStar * alphaWhoObject)))
+def whoExpect : PlanarSyntacticObject TokenLeaf := who * (doT * (you * (vStar * alphaWhoObject)))
 
 theorem ex3prime : ¬ ViolatesPic Invisible whoExpect whoD ∧
     ViolatesPic (· = cNull) whoExpect whoD ∧ ¬ IsLabeled .weak whoExpect alphaWhoObject ∧
@@ -294,22 +300,22 @@ def cQ := tok 129 .C (features := .single .wh true) (sel := [.T])
 def wonder := tok 130 .V "wonder" (sel := [.C])
 def like := tok 131 .V "like" (sel := [.D])
 /-- *which dog*. -/
-def whichDog : PlanarSyntacticObject :=
+def whichDog : PlanarSyntacticObject TokenLeaf :=
   nominal (tok 132 .D "which" (features := .single .wh true) (sel := [.n]))
     (tok 133 .n (sel := [.N]))
     (tok 134 .N "dog")
 
 /-- *John likes which dog*, the subject raised from the verb phrase. -/
-def likes : PlanarSyntacticObject := john * (t * (john * (vStar * (like * whichDog))))
+def likes : PlanarSyntacticObject TokenLeaf := john * (t * (john * (vStar * (like * whichDog))))
 
 /-- `α` of (1): *which dog* in its criterial position, the specifier of the interrogative C. -/
-def alphaQ : PlanarSyntacticObject := whichDog * (cQ * likes)
+def alphaQ : PlanarSyntacticObject TokenLeaf := whichDog * (cQ * likes)
 
 /-- *you wonder which dog John likes*, *which dog* in its criterial position. -/
-def wonderInSitu : PlanarSyntacticObject := wonder * alphaQ
+def wonderInSitu : PlanarSyntacticObject TokenLeaf := wonder * alphaQ
 
 /-- (1): *which dog do you wonder John likes*, *which dog* raised out of its criterial position. -/
-def wonderRaised : PlanarSyntacticObject := whichDog * (wonder * alphaQ)
+def wonderRaised : PlanarSyntacticObject TokenLeaf := whichDog * (wonder * alphaQ)
 
 theorem alphaQ_isLabeledByFeature :
     wonderInSitu.IsLabeledByFeature (Agreed wonderInSitu) alphaQ .Q ∧

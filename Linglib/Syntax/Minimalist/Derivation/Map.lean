@@ -23,7 +23,7 @@ namespace Minimalist
 
 open SyntacticObject
 
-variable {τ : SyntacticObject → Option LexicalItem.Token}
+variable {τ : SyntacticObject TokenLeaf → Option LexicalItem.Token}
 
 section Map
 
@@ -56,10 +56,10 @@ variable (d : Derivation)
     (d.append steps).map f = (d.map f).append (steps.map (Step.map f)) := by
   simp [map, append]
 
-variable {f} {τ' : SyntacticObject → Option LexicalItem.Token}
+variable {f} {τ' : SyntacticObject TokenLeaf → Option LexicalItem.Token}
 
 theorem _root_.Minimalist.Step.run_map (hf : Function.Injective f)
-    (hτ : ∀ s, τ' (s.map f) = (τ s).map f) (step : Step) (c : Cfg SyntacticObject) :
+    (hτ : ∀ s, τ' (s.map f) = (τ s).map f) (step : Step) (c : Cfg (SyntacticObject TokenLeaf)) :
     (step.map f).run (c.map (SyntacticObject.map f)) τ' =
       (step.run c τ).map (SyntacticObject.map f) := by
   rcases c with ⟨cur, _ | ⟨m, st⟩⟩ <;> cases step <;>
@@ -70,7 +70,7 @@ theorem _root_.Minimalist.Step.run_map (hf : Function.Injective f)
 the trace encoder commutes with. -/
 theorem run_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f) :
     (d.map f).run τ' = (d.run τ).map (SyntacticObject.map f) := by
-  have key : ∀ (steps : List Step) (c : Cfg SyntacticObject),
+  have key : ∀ (steps : List Step) (c : Cfg (SyntacticObject TokenLeaf)),
       (steps.map (Step.map f)).foldl (fun c step ↦ step.run c τ')
           (c.map (SyntacticObject.map f)) =
         (steps.foldl (fun c step ↦ step.run c τ) c).map (SyntacticObject.map f) := by

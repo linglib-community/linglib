@@ -112,12 +112,13 @@ variable {β : Type*} [Preorder β] [DecidableRel ((· < ·) : β → β → Pro
 
 /-- The Internal Merge a movement probe searching the positions `s` of `t` triggers, those its head
 c-commands or a part of them: the term at the goal it attracts re-merges. -/
-def attractStep? (t : PlanarSyntacticObject) (p : Probe t.toRoseTree.Positions)
+def attractStep? (t : PlanarSyntacticObject TokenLeaf) (p : Probe t.toRoseTree.Positions)
     (s : Set t.toRoseTree.Positions) [DecidablePred (· ∈ s)] (key : t.toRoseTree.Positions → β) :
         Option Step :=
   (p.attract s key).map fun q ↦ .im (t.termAt q)
 
-theorem attractStep?_eq_some_iff {t : PlanarSyntacticObject} {p : Probe t.toRoseTree.Positions}
+theorem attractStep?_eq_some_iff {t : PlanarSyntacticObject TokenLeaf}
+    {p : Probe t.toRoseTree.Positions}
     {s : Set t.toRoseTree.Positions} [DecidablePred (· ∈ s)] {key : t.toRoseTree.Positions →
         β} {step : Step} :
     t.attractStep? p s key = some step ↔

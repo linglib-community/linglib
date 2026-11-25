@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.FreeCommMagma
-public import Linglib.Syntax.Minimalist.LexicalItem
 
 /-!
 # Syntactic objects
@@ -28,8 +27,10 @@ injective. The trees of the two kinds of object are in `SyntacticObject/Tree.lea
   removed; the default `ι = L` labels it by the head of that subtree.
 * The two types are abbreviations, so the API of `FreeMagma` and `FreeCommMagma` applies to them
   directly: `*` is Merge, and a map out of either is determined by its values on the leaves.
-* The lexical alphabet `L` defaults to `LexicalItem.Token`, so a bare `SyntacticObject` is over
-  tokens; the default pins `L` to `Type`.
+* The leaves have no default, so this file does not import the lexicon. The objects of a
+  derivation are on `Minimalist.TokenLeaf` of `SyntacticObject/Token.lean`, the tokens of lexical
+  items with their traces; a file that names it is about lexical items, and a file that does not
+  is about any leaves.
 
 ## References
 
@@ -106,16 +107,12 @@ end Leaf
 end SyntacticObject
 
 /-- The planar syntactic objects on the leaves `α`, the free magma on them:
-[marcolli-chomsky-berwick-2025] §1.12's planar syntactic objects. The default leaves are the
-tokens of lexical items with their traces. -/
-abbrev PlanarSyntacticObject
-    (α : Type := SyntacticObject.Leaf LexicalItem.Token LexicalItem.Token) : Type :=
+[marcolli-chomsky-berwick-2025] §1.12's planar syntactic objects. -/
+abbrev PlanarSyntacticObject (α : Type) : Type :=
   FreeMagma α
 
-/-- The syntactic objects on the leaves `α`, the free commutative magma on them. The default
-leaves are the tokens of lexical items with their traces. -/
-abbrev SyntacticObject
-    (α : Type := SyntacticObject.Leaf LexicalItem.Token LexicalItem.Token) : Type :=
+/-- The syntactic objects on the leaves `α`, the free commutative magma on them. -/
+abbrev SyntacticObject (α : Type) : Type :=
   FreeCommMagma α
 
 namespace PlanarSyntacticObject

@@ -41,7 +41,7 @@ open RoseTree UnorderedTree
 
 /-- A vertex carries structure on the left, a leaf of the lexical alphabet `L` or the bare
     internal label, and a trace on the right, index-free or labelled in `ι`. -/
-abbrev SyntacticObject.Vertex (L : Type := LexicalItem.Token) (ι : Type := L) : Type :=
+abbrev SyntacticObject.Vertex (L : Type) (ι : Type := L) : Type :=
   Option L ⊕ Option ι
 
 namespace SyntacticObject

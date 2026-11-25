@@ -44,7 +44,7 @@ variable {side : Edge}
 
 open Derivation (Cfg)
 
-variable {τ : SyntacticObject → Option LexicalItem.Token}
+variable {τ : SyntacticObject TokenLeaf → Option LexicalItem.Token}
 
 namespace Derivation
 

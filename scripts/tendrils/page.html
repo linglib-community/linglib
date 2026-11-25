@@ -118,6 +118,8 @@ td.r, th.r { text-align: right; }
         <option value="unused">share of imported files nothing in the file uses</option>
         <option value="traffic">studies whose claims rest on the file</option>
         <option value="flags">flagged declarations</option>
+        <option value="secs" hidden>seconds to build the file</option>
+        <option value="above" hidden>seconds to rebuild the file and everything above it</option>
       </select></label>
     </div>
     <div class="legend" id="lleg"></div>
@@ -165,7 +167,7 @@ fetch('graph.json').then(r => r.json()).then(rows => {
     else if (r[0] === 'I') SOURCE.push(...r[1]);
     else if (r[0] === 'S') CUTS.push(r);
     else if (r[0] === 'M') MODS.push({ i: MODS.length, name: r[1], layer: r[2], group: r[3], lines: r[4], compiled: r[5], nimp: r[6],
-      nuse: r[7], nmean: r[8], ndflt: r[9], traffic: r[10], ndecl: r[11], imp: r[14], need: r[15], dead: r[16], flags: r[17] });
+      nuse: r[7], nmean: r[8], ndflt: r[9], traffic: r[10], ndecl: r[11], imp: r[14], need: r[15], dead: r[16], flags: r[17], secs: r[18], above: r[19] });
     else if (r[0] === 'N') NODES.push({ name: r[1], mod: r[2], kind: r[3], fl: r[4], deps: r[5], areas: r[6], traffic: r[7] });
     else if (r[0] === 'C') CLAIMS[r[1]] = r[2];
     else if (r[0] === 'X') MISSING.push(...r[1]);
@@ -193,6 +195,7 @@ function init() {
   for (const id of ['smetric', 'shead']) $(id).addEventListener('change', () => drawStudies(studies));
   $('sfind').addEventListener('change', e => { const m = studies.find(m => short(m.name) === e.target.value.trim()); if (m) pick(m.i, studies); });
   $('lmetric').addEventListener('change', () => drawLibrary(lib));
+  if (MODS.some(m => m.secs != null)) for (const o of $('lmetric').options) o.hidden = false;
   const mix = m => { const cl = CLAIMS[m.i], stop = cl.filter(c => level(c) >= 3).length; return Math.min(stop, cl.length - stop) * 1000 + cl.length; };
   selStudy = studies.reduce((a, b) => (mix(b) > mix(a) ? b : a)).i;
   drawStudies(studies); drawTendrils(selStudy); drawLibrary(lib); drawTables(lib); drawCuts();
@@ -332,11 +335,15 @@ function sideModule(i, info) {
 function libValue(m, metric) {
   if (metric === 'unused') return m.nimp ? 1 - m.nuse / m.nimp : 0;
   if (metric === 'traffic') return m.traffic;
+  if (metric === 'secs') return m.secs || 0;
+  if (metric === 'above') return m.above || 0;
   return m.flags.length;
 }
 const LBINS = { unused: [v => bin(v), ['none', '1–20%', '21–40%', '41–60%', '61–80%', '81–100%'], 'Imported files that go unused'],
   traffic: [v => v === 0 ? 0 : v <= 2 ? 1 : v <= 5 ? 2 : v <= 15 ? 3 : v <= 40 ? 4 : 5, ['0', '1–2', '3–5', '6–15', '16–40', '41+'], 'Studies resting on the file'],
-  flags: [v => v === 0 ? 0 : v === 1 ? 1 : v === 2 ? 2 : v <= 4 ? 3 : v <= 8 ? 4 : 5, ['0', '1', '2', '3–4', '5–8', '9+'], 'Flagged declarations'] };
+  flags: [v => v === 0 ? 0 : v === 1 ? 1 : v === 2 ? 2 : v <= 4 ? 3 : v <= 8 ? 4 : 5, ['0', '1', '2', '3–4', '5–8', '9+'], 'Flagged declarations'],
+  secs: [v => v < 2 ? 0 : v < 5 ? 1 : v < 15 ? 2 : v < 40 ? 3 : v < 120 ? 4 : 5, ['under 2 s', '2–5 s', '5–15 s', '15–40 s', '40–120 s', 'over 2 min'], 'Seconds to build'],
+  above: [v => v < 60 ? 0 : v < 300 ? 1 : v < 900 ? 2 : v < 1800 ? 3 : v < 3600 ? 4 : 5, ['under 1 min', '1–5 min', '5–15 min', '15–30 min', '30–60 min', 'over 1 h'], 'To rebuild it and everything above'] };
 function drawLibrary(lib) {
   const metric = $('lmetric').value, [f, labels, title] = LBINS[metric];
   $('lleg').innerHTML = rampLegend(labels, title) + '<span class="key"><span class="sw none"></span>not measured</span>';
@@ -370,7 +377,8 @@ function sideLib(m) {
     `<li>its declarations use <span class="num">${m.nuse}</span> of them, proofs included</li>` +
     `<li>its statements and definitions use <span class="num">${m.nmean}</span></li>` +
     (m.ndflt ? `<li><span class="num">${m.ndflt}</span> more are reached only through a default argument</li>` : '') +
-    `<li><span class="num">${m.traffic}</span> studies have claims resting on it</li></ul>` +
+    `<li><span class="num">${m.traffic}</span> studies have claims resting on it</li>` +
+    (m.secs != null ? `<li>builds in <span class="num">${m.secs}</span> s; rebuilding it and everything above takes <span class="num">${Math.round(m.above / 60)}</span> min</li>` : '') + '</ul>' +
     (m.dead.length ? '<span>Direct imports nothing here uses:</span><ul>' + m.dead.map(j => `<li class="mono">${esc(short(MODS[j].name))}</li>`).join('') + '</ul>' : '') +
     (m.flags.length ? '<span>Flagged declarations:</span><ul>' + m.flags.sort((a, b) => b[2] - a[2]).slice(0, 12).map(f => `<li><span class="mono">${esc(f[0])}</span><br>${[...f[1]].map(x => FLAG[x]).join('; ')}; ${f[2]} studies</li>`).join('') + '</ul>' : '') +
     (unused.length ? `<span>Imported and unused (${unused.length}):</span><span class="mono">${esc(unused.slice(0, 40).join(', '))}${unused.length > 40 ? ' …' : ''}</span>` : '');

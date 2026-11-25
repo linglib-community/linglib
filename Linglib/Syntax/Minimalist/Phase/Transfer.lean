@@ -59,7 +59,7 @@ abbrev Cut := GornAddress → Set GornAddress
 -/
 abbrev Schedule := Finset GornAddress → GornAddress → GornAddress → Prop
 
-variable (hd : HeadDaughter) (t : PlanarSyntacticObject)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject TokenLeaf)
 
 /-- The head that transfers for a phase head: the phase head itself, or, where it has deleted, the
 lexical head of its complement, which inherits its phasehood. -/
@@ -326,7 +326,7 @@ theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : GornAddress × G
 
 section RespectsCut
 
-variable {hd : HeadDaughter} {t : PlanarSyntacticObject} {cut cut' : Cut}
+variable {hd : HeadDaughter} {t : PlanarSyntacticObject TokenLeaf} {cut cut' : Cut}
 
 variable (hd t) in
 /-- No chain link of a pronounced token of `t` leaves the cut. With the complements of the phase
@@ -388,21 +388,23 @@ theorem RespectsCut.not_crosses {Φ : Finset GornAddress} {h q : GornAddress}
   exact ⟨k, hΦ, hσ, hp⟩
 
 /-- The object a derivation derives respects the cut assigned to it. -/
-def Derivation.Respects (d : Derivation) (hd : HeadDaughter) (cut : PlanarSyntacticObject → Cut) :
+def Derivation.Respects (d : Derivation) (hd : HeadDaughter)
+    (cut : PlanarSyntacticObject TokenLeaf → Cut) :
     Prop :=
   ∃ t ∈ d.externalize?, RespectsCut hd t (cut t)
 
-instance {d : Derivation} {cut : PlanarSyntacticObject → Cut}
+instance {d : Derivation} {cut : PlanarSyntacticObject TokenLeaf → Cut}
     [∀ t s, DecidablePred (· ∈ cut t s)] : Decidable (d.Respects hd cut) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-theorem Derivation.Respects.anti {d : Derivation} {cut cut' : PlanarSyntacticObject → Cut}
+theorem Derivation.Respects.anti {d : Derivation} {cut cut' : PlanarSyntacticObject TokenLeaf → Cut}
     (h : ∀ t, cut t ≤ cut' t) (hr : d.Respects hd cut') : d.Respects hd cut :=
   let ⟨t, ht, hr⟩ := hr
   ⟨t, ht, hr.anti (h t)⟩
 
 /-- A derivation respects the join of two cuts exactly when it respects each. -/
-theorem Derivation.respects_sup {d : Derivation} {cut cut' : PlanarSyntacticObject → Cut} :
+theorem Derivation.respects_sup {d : Derivation} {cut cut' : PlanarSyntacticObject TokenLeaf → Cut}
+    :
     d.Respects hd (cut ⊔ cut') ↔ d.Respects hd cut ∧ d.Respects hd cut' := by
   constructor
   · rintro ⟨t, ht, h⟩

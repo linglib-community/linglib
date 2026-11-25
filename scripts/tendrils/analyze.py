@@ -320,13 +320,26 @@ hot.sort(reverse=True)
 # ---------------------------------------------------------------- page data
 knodes = sorted(keep)
 kid = {x: i for i, x in enumerate(knodes)}
+times_file = os.path.join(os.path.dirname(os.path.abspath(TSV)), 'times.tsv')
+secs = {}
+if os.path.exists(times_file):
+    for line in open(times_file):
+        m, _, t = line.strip().partition('\t')
+        if t: secs[m] = float(t)
+above = [0.0] * len(mods)                # seconds to rebuild a file and every file above it
+if secs:
+    for m in mods:
+        t = secs.get(m, 0.0); above[mid[m]] += t
+        for j in bits(iclo(m)): above[j] += t
 src_file = os.path.join(os.path.dirname(os.path.abspath(TSV)), 'source.txt')
 source = open(src_file).read().split() if os.path.exists(src_file) else []
 recs = [["A", AREAS], ["I", source]]
 for d in M:
     recs.append(["M", d['name'], d['layer'], d['group'], d['lines'], int(d['compiled']), d['nimp'], d['nuse'],
                  d['nmean'], d['ndflt'], d['traffic'], d['ndecl'], d.get('cls'), d.get('hcls'), d['imp'], d['need'],
-                 d['dead'], d.get('flags', [])])
+                 d['dead'], d.get('flags', []),
+                 round(secs[d['name']], 1) if d['name'] in secs else None,
+                 round(above[mid[d['name']]]) if secs else None])
 for x in knodes:
     recs.append(["N", rows[x]['name'], mid[rows[x]['mod']], rows[x]['kind'] if is_written[x] else 'gen', flags(x),
                  [kid[y] for y in sorted(mean_e[x]) if y in kid], [aid[a] for a in sorted(mean_a[x])],

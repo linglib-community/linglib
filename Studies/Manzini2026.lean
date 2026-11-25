@@ -39,23 +39,23 @@ namespace Manzini2026
 open Minimalist SyntacticObject Binding
 
 /-- *Gianni*, the matrix subject of (31a). -/
-def gianni : SyntacticObject := leaf ⟨.of .N [] "Gianni", 0⟩
+def gianni : SyntacticObject TokenLeaf := leaf ⟨.of .N [] "Gianni", 0⟩
 
 /-- *Gianni* from a fresh token, the embedded subject of the root parse. -/
-def gianni' : SyntacticObject := gianni.renumber 3
+def gianni' : SyntacticObject TokenLeaf := gianni.renumber 3
 
 /-- *berlo* 'drink it'. -/
-noncomputable def berlo : SyntacticObject :=
+noncomputable def berlo : SyntacticObject TokenLeaf :=
   merge (leaf ⟨.of .V [.D] "bere", 4⟩) (leaf ⟨.of .D [] "lo", 5⟩)
 
 /-- The root parse of (31a), a control structure in which *Gianni* is merged into the theta
 positions of both *dovere* and *bere*. -/
-noncomputable def rootParse : SyntacticObject :=
+noncomputable def rootParse : SyntacticObject TokenLeaf :=
   merge gianni (merge (leaf ⟨.of .V [.V] "deve", 1⟩) (merge gianni' berlo))
 
 /-- (31a) on the epistemic reading of *dovere* that (31b) shows, a raising structure in which
 *Gianni* is merged once and its copy left in the embedded subject position by Internal Merge. -/
-noncomputable def epistemicParse : SyntacticObject :=
+noncomputable def epistemicParse : SyntacticObject TokenLeaf :=
   merge gianni (merge (leaf ⟨.of .V [.V] "deve", 1⟩) (merge gianni berlo))
 
 /-- The two parses of (31a) are structurally identical at Transfer, with Form Copy relating the
@@ -70,7 +70,7 @@ theorem dovere_transfer :
 
 /-- A condition on the structure Transfer sees holds of the root parse iff it holds of the epistemic
 one (§5.2). -/
-theorem structural_iff (P : SyntacticObject → Prop)
+theorem structural_iff (P : SyntacticObject TokenLeaf → Prop)
     (hP : ∀ a b, StructurallyIdentical a b → (P a ↔ P b)) : P rootParse ↔ P epistemicParse :=
   hP _ _ dovere_transfer.1
 
@@ -93,8 +93,8 @@ theorem gianni'_not_mem_copyRel : (gianni', gianni') ∉ rootParse.copyRel := by
   · simp [containsOrEq_iff_eq_or_contains] at hz
 
 theorem isPartial_rootParse_not_epistemicParse :
-    (∃ val : SyntacticObject → Set ℕ, IsPartial val rootParse.copyRel) ∧
-      ∀ val : SyntacticObject → Set ℕ, ¬ IsPartial val epistemicParse.copyRel := by
+    (∃ val : SyntacticObject TokenLeaf → Set ℕ, IsPartial val rootParse.copyRel) ∧
+      ∀ val : SyntacticObject TokenLeaf → Set ℕ, ¬ IsPartial val epistemicParse.copyRel := by
   refine ⟨⟨fun x ↦ if x = gianni' then {0, 1} else {0}, gianni', ⟨gianni, dovere_transfer.2.1⟩,
     {0}, ?_, ?_⟩, fun val h ↦ ?_⟩
   · rintro _ ⟨x, ⟨_, rfl, hx⟩, rfl⟩

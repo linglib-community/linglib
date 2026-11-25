@@ -75,7 +75,7 @@ theorem pf_earlySpellout {toks : List LexicalItem.Token} (hnd : toks.Nodup) :
 /-- `pfPhon` is the early-insertion pipeline: handing the pronounced terminals over as atomic
 features and inserting each token's lexically listed form returns the carrier's own
 pronunciation, silent tokens dropped. -/
-theorem pfPhon_eq_earlyInsertion (t : PlanarSyntacticObject) :
+theorem pfPhon_eq_earlyInsertion (t : PlanarSyntacticObject Minimalist.TokenLeaf) :
     pfPhon t = ((earlySpellout (pfYield t)).pf
       ((pfYield t).map ({·}))).flatten.filter (· ≠ "") := by
   rw [pf_earlySpellout (nodup_pfYield t), pfPhon]

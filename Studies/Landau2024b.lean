@@ -66,15 +66,15 @@ open Minimalist SyntacticObject Binding
 /-! ### Controlled pronouns (46) -/
 
 /-- *ña Juana*, the controller of (46c). -/
-noncomputable def naJuana : SyntacticObject :=
+noncomputable def naJuana : SyntacticObject TokenLeaf :=
   merge (leaf ⟨.of .D [.N] "ña", 0⟩) (leaf ⟨.of .N [] "Juana", 1⟩)
 
 /-- *ña Juana* from fresh tokens, the controlled subject of (46c) on the Form Copy theory. -/
-noncomputable def naJuana' : SyntacticObject := naJuana.renumber 2
+noncomputable def naJuana' : SyntacticObject TokenLeaf := naJuana.renumber 2
 
 /-- (46c) as the Form Copy theory builds it, *ña Juana* merged into the theta positions of
 *nantǒso* 'forget', the language file's entry (Landau prints *nàntŏso*), and *nakatsya* 'wash'. -/
-noncomputable def forgotToWash : SyntacticObject :=
+noncomputable def forgotToWash : SyntacticObject TokenLeaf :=
   merge naJuana (merge (leaf ⟨.of .V [.V] Mixtec.SMPM.forget.form, 4⟩)
     (merge naJuana' (leaf ⟨.of .V [] "nakatsya míí tsyàà", 5⟩)))
 
@@ -85,24 +85,24 @@ theorem naJuana_mem_copyRel : (naJuana, naJuana') ∈ forgotToWash.copyRel :=
     (structurallyIdentical_renumber 2 naJuana)
 
 /-- The controlled subject of (46c), the feminine clitic *=ñá*. -/
-def nya : SyntacticObject := leaf ⟨.of .D [] (Mixtec.SMPM.Pronouns.cl3 .feminine).form, 6⟩
+def nya : SyntacticObject TokenLeaf := leaf ⟨.of .D [] (Mixtec.SMPM.Pronouns.cl3 .feminine).form, 6⟩
 
 /-- The pronoun that (46c) requires is a copy of its controller in no object, since the two are
 not structurally identical. -/
-theorem pronoun_not_mem_copyRel (s : SyntacticObject) : (naJuana, nya) ∉ s.copyRel :=
+theorem pronoun_not_mem_copyRel (s : SyntacticObject TokenLeaf) : (naJuana, nya) ∉ s.copyRel :=
   fun h ↦ by simpa [naJuana, nya] using h.2.numNodes_eq
 
 /-! ### Partial control by Form Copy (§7) -/
 
 /-- *John*, the controller of (48a). -/
-def john : SyntacticObject := leaf ⟨.of .N [] "John", 0⟩
+def john : SyntacticObject TokenLeaf := leaf ⟨.of .N [] "John", 0⟩
 
 /-- *John* from a fresh token, the controlled subject of (48a) on the Form Copy theory. -/
-def john' : SyntacticObject := john.renumber 3
+def john' : SyntacticObject TokenLeaf := john.renumber 3
 
 /-- (48a) *John arranged to meet at noon*, the controller and the controlled subject merged
 separately into the theta positions of *arranged* and *meet*. -/
-noncomputable def arrangedToMeet : SyntacticObject :=
+noncomputable def arrangedToMeet : SyntacticObject TokenLeaf :=
   merge john (merge (leaf ⟨.of .V [.T] "arranged", 1⟩) (merge (leaf ⟨.of .T [.V] "to", 2⟩)
     (merge john' (leaf ⟨.of .V [] "meet at noon", 4⟩))))
 
@@ -113,7 +113,7 @@ theorem john_mem_copyRel : (john, john') ∈ arrangedToMeet.copyRel :=
 
 /-- The partial reading of (48a), on which the controlled subject denotes a group of John, `0`,
 and an associate, `1`. -/
-def pcReading (x : SyntacticObject) : Set ℕ := if x = john' then {0, 1} else {0}
+def pcReading (x : SyntacticObject TokenLeaf) : Set ℕ := if x = john' then {0, 1} else {0}
 
 theorem john'_not_mem_copyRel : (john', john') ∉ arrangedToMeet.copyRel := by
   rintro ⟨⟨z, -, ⟨w, hw, hwx, hwz, hne⟩, hz⟩, -⟩
@@ -137,17 +137,18 @@ theorem not_isExhaustive_pcReading : ¬ IsExhaustive pcReading arrangedToMeet.co
   fun h ↦ h.not_isPartial isPartial_pcReading
 
 theorem exists_isRepetition_of_isPartial {Ref : Type*} [Preorder Ref]
-    {val : SyntacticObject → Ref} {s : SyntacticObject} (h : IsPartial val s.copyRel) :
+    {val : SyntacticObject TokenLeaf → Ref} {s : SyntacticObject TokenLeaf}
+        (h : IsPartial val s.copyRel) :
     ∃ x y, (x, y) ∈ s.copyRel ∧ IsRepetition x y ∧ val x < val y :=
   let ⟨x, y, hxy, hlt⟩ := h.exists_lt
   ⟨x, y, hxy, ⟨hxy.2, ne_of_apply_ne val hlt.ne⟩, hlt⟩
 
 /-- *the chair*, raised in Landau's example of the missing partial raising. -/
-def chair : SyntacticObject := leaf ⟨.of .D [] "the chair", 0⟩
+def chair : SyntacticObject TokenLeaf := leaf ⟨.of .D [] "the chair", 0⟩
 
 /-- *The chair appeared to be gathering*, the raised subject left as its own copy by Internal
 Merge. -/
-noncomputable def appearedToGather : SyntacticObject :=
+noncomputable def appearedToGather : SyntacticObject TokenLeaf :=
   merge chair (merge (leaf ⟨.of .V [.T] "appeared", 1⟩) (merge (leaf ⟨.of .T [.V] "to", 2⟩)
     (merge chair (leaf ⟨.of .V [] "be gathering", 3⟩))))
 
@@ -162,12 +163,12 @@ theorem hasDistinctItems_appearedToGather : appearedToGather.HasDistinctItems :=
   rcases ha with rfl | rfl | rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl | rfl | rfl <;>
     first | rfl | simp [LexicalItem.of] at hab
 
-theorem isExhaustive_appearedToGather {Ref : Type*} (val : SyntacticObject → Ref) :
+theorem isExhaustive_appearedToGather {Ref : Type*} (val : SyntacticObject TokenLeaf → Ref) :
     IsExhaustive val appearedToGather.copyRel :=
   .of_subset_id (copyRel_subset_id hasDistinctItems_appearedToGather)
 
 theorem not_isPartial_appearedToGather {Ref : Type*} [Preorder Ref]
-    (val : SyntacticObject → Ref) : ¬ IsPartial val appearedToGather.copyRel :=
+    (val : SyntacticObject TokenLeaf → Ref) : ¬ IsPartial val appearedToGather.copyRel :=
   (isExhaustive_appearedToGather val).not_isPartial
 
 /-! ### Partial control by deletion of a *for*-subject (§7) -/

@@ -60,7 +60,8 @@ open SyntacticObject
 /-- Inside a constituent built earlier, External Merge and merging back do nothing, and Internal
 Merge and extraction replace the mover by its trace, unless the constituent is itself the mover,
 which then moves intact. -/
-def Step.applyInside (step : Step) (D : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def Step.applyInside (step : Step) (D : PlanarSyntacticObject TokenLeaf) :
+    (PlanarSyntacticObject TokenLeaf) :=
   match step with
   | .em _ _ | .remerge _ => D
   | .im mover _ | .extract mover =>
@@ -72,18 +73,18 @@ namespace Derivation
 variable (d : Derivation) (hd : HeadDaughter) (m n : ℕ)
 
 /-- `d.stage? n` is the ordered object after the first `n` steps, if the replay succeeds. -/
-def stage? : Option PlanarSyntacticObject := (d.take n).externalize?
+def stage? : Option (PlanarSyntacticObject TokenLeaf) := (d.take n).externalize?
 
 /-- The constituent built by the first `m` steps stands at stage `n` with the movers of the steps
 in between replaced by their traces. -/
-def spelloutDomain : Option PlanarSyntacticObject :=
+def spelloutDomain : Option (PlanarSyntacticObject TokenLeaf) :=
   (d.stage? m).map fun D ↦ ((d.steps.drop m).take (n - m)).foldl (fun D step ↦ step.applyInside D) D
 
 /-- The Spell-out at stage `n` of the domain built by stage `m` is its pronounced yield. -/
 def spellout : List LexicalItem.Token := ((d.spelloutDomain m n).map (·.yield)).getD []
 
 /-- `d.mergeStage? item` is the stage right after `item` is externally merged, if it is. -/
-def mergeStage? (item : SyntacticObject) : Option ℕ :=
+def mergeStage? (item : SyntacticObject TokenLeaf) : Option ℕ :=
   (d.steps.findIdx? fun step ↦ match step with
     | .em _ x => decide (x = item)
     | _ => false).map (· + 1)

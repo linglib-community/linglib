@@ -58,7 +58,8 @@ abbrev CopyMark : Type := Option (Option LexicalItem.Token)
 /-- A planar syntactic object with its lower copies marked, the datum externalization reads. The
 copy object itself is a syntactic object, order and marks forgotten. -/
 def PlanarSyntacticObject.Marked : Type :=
-  {t : RoseTree (CopyMark × Vertex) // IsSyntacticObject (UnorderedTree.mk (t.map Prod.snd))}
+  {t : RoseTree (CopyMark × Vertex LexicalItem.Token) // IsSyntacticObject
+      (UnorderedTree.mk (t.map Prod.snd))}
 
 instance : DecidableEq PlanarSyntacticObject.Marked := Subtype.instDecidableEq
 
@@ -67,19 +68,21 @@ namespace PlanarSyntacticObject.Marked
 /-! ### Contraction -/
 
 /-- The contraction of a marked tree: each marked subtree becomes the trace leaf of its mark. -/
-def contractTree : RoseTree (CopyMark × Vertex) → RoseTree Vertex :=
+def contractTree : RoseTree (CopyMark × Vertex LexicalItem.Token) → RoseTree
+    (Vertex LexicalItem.Token) :=
   fold fun v cs ↦ v.1.elim (.node v.2 cs) fun l ↦ .node (.inr l) []
 
-@[simp] theorem contractTree_some (l : Option LexicalItem.Token) (a : Vertex)
-    (cs : List (RoseTree (CopyMark × Vertex))) :
+@[simp] theorem contractTree_some (l : Option LexicalItem.Token) (a : Vertex LexicalItem.Token)
+    (cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))) :
     contractTree (.node (some l, a) cs) = .node (.inr l) [] := by
   simp [contractTree, fold_node]
 
-@[simp] theorem contractTree_none (a : Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
+@[simp] theorem contractTree_none (a : Vertex LexicalItem.Token)
+    (cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))) :
     contractTree (.node (none, a) cs) = .node a (cs.map contractTree) := by
   simp [contractTree, fold_node]
 
-theorem isSyntacticObject_contractTree {t : RoseTree (CopyMark × Vertex)}
+theorem isSyntacticObject_contractTree {t : RoseTree (CopyMark × Vertex LexicalItem.Token)}
     (h : IsSyntacticObject (UnorderedTree.mk (t.map Prod.snd))) :
     IsSyntacticObject (UnorderedTree.mk (contractTree t)) := by
   induction t with
@@ -97,7 +100,8 @@ theorem isSyntacticObject_contractTree {t : RoseTree (CopyMark × Vertex)}
 variable (t : Marked)
 
 /-- The copy object, the marks forgotten. -/
-def unmark : PlanarSyntacticObject := PlanarSyntacticObject.ofRoseTree (t.val.map Prod.snd) t.2
+def unmark : PlanarSyntacticObject TokenLeaf := PlanarSyntacticObject.ofRoseTree
+    (t.val.map Prod.snd) t.2
 
 @[simp] theorem toRoseTree_unmark : t.unmark.toRoseTree = t.val.map Prod.snd :=
   PlanarSyntacticObject.toRoseTree_ofRoseTree _ _
@@ -106,7 +110,7 @@ def unmark : PlanarSyntacticObject := PlanarSyntacticObject.ofRoseTree (t.val.ma
 reads. It has the shape of the contraction quotient $T/^c F$ of [marcolli-chomsky-berwick-2025]
 (Definition 1.2.4), though the book sends that quotient to the Conceptual-Intensional interface and
 its deletion $T/^d F$ to externalization (pp. 33, 82). -/
-def contract : PlanarSyntacticObject :=
+def contract : PlanarSyntacticObject TokenLeaf :=
   PlanarSyntacticObject.ofRoseTree (contractTree t.val) (isSyntacticObject_contractTree t.2)
 
 @[simp] theorem toRoseTree_contract : t.contract.toRoseTree = contractTree t.val :=
@@ -114,27 +118,28 @@ def contract : PlanarSyntacticObject :=
 
 /-! ### Planar objects without lower copies -/
 
-theorem map_snd_map (s : RoseTree Vertex) :
-    (s.map ((none, ·) : Vertex → CopyMark × Vertex)).map Prod.snd = s := by
+theorem map_snd_map (s : RoseTree (Vertex LexicalItem.Token)) :
+    (s.map ((none, ·) : Vertex LexicalItem.Token → CopyMark × Vertex LexicalItem.Token)).map
+        Prod.snd = s := by
   rw [RoseTree.map_map]
   exact RoseTree.map_id s
 
 /-- A planar object with no lower copy. -/
-def ofPlanar (p : PlanarSyntacticObject) : Marked :=
+def ofPlanar (p : PlanarSyntacticObject TokenLeaf) : Marked :=
   ⟨p.toRoseTree.map ((none, ·)), by rw [map_snd_map]; exact p.isSyntacticObject_toRoseTree⟩
 
-theorem contractTree_map (s : RoseTree Vertex) :
+theorem contractTree_map (s : RoseTree (Vertex LexicalItem.Token)) :
     contractTree (s.map ((none, ·))) = s := by
   induction s with
   | node a cs ih =>
     rw [map_node, contractTree_none, List.map_map]
     exact congrArg _ ((List.map_congr_left ih).trans (List.map_id cs))
 
-@[simp] theorem unmark_ofPlanar (p : PlanarSyntacticObject) : (ofPlanar p).unmark = p :=
+@[simp] theorem unmark_ofPlanar (p : PlanarSyntacticObject TokenLeaf) : (ofPlanar p).unmark = p :=
   PlanarSyntacticObject.toRoseTree_injective ((toRoseTree_unmark _).trans (map_snd_map
       p.toRoseTree))
 
-@[simp] theorem contract_ofPlanar (p : PlanarSyntacticObject) :
+@[simp] theorem contract_ofPlanar (p : PlanarSyntacticObject TokenLeaf) :
     (ofPlanar p).contract = p :=
   PlanarSyntacticObject.toRoseTree_injective ((toRoseTree_contract _).trans (contractTree_map
       p.toRoseTree))
@@ -165,25 +170,28 @@ variable {t}
 
 section Mark
 
-variable (m : SyntacticObject) (l : Option LexicalItem.Token)
+variable (m : SyntacticObject TokenLeaf) (l : Option LexicalItem.Token)
 
 /-- The tree with its root marked as a lower copy whose trace carries `l`. -/
-def setMark : RoseTree (CopyMark × Vertex) → RoseTree (CopyMark × Vertex)
+def setMark : RoseTree (CopyMark × Vertex LexicalItem.Token) → RoseTree
+    (CopyMark × Vertex LexicalItem.Token)
   | .node (_, a) cs => .node (some l, a) cs
 
 /-- Mark every outermost subtree whose contraction is `m` as a lower copy whose trace carries `l`:
 `replaceIf` on the contraction. -/
-def markTree : RoseTree (CopyMark × Vertex) → RoseTree (CopyMark × Vertex) :=
+def markTree : RoseTree (CopyMark × Vertex LexicalItem.Token) → RoseTree
+    (CopyMark × Vertex LexicalItem.Token) :=
   modifyIf (fun s ↦ UnorderedTree.mk (contractTree s) = m.toUnorderedTree) (setMark l)
 
-theorem markTree_node (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
+theorem markTree_node (v : CopyMark × Vertex LexicalItem.Token)
+    (cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))) :
     markTree m l (.node v cs) =
       if UnorderedTree.mk (contractTree (.node v cs)) = m.toUnorderedTree then setMark l (.node v
           cs)
       else .node v (cs.map (markTree m l)) :=
   modifyIf_node _ _ v cs
 
-theorem map_snd_markTree (s : RoseTree (CopyMark × Vertex)) :
+theorem map_snd_markTree (s : RoseTree (CopyMark × Vertex LexicalItem.Token)) :
     (markTree m l s).map Prod.snd = s.map Prod.snd := by
   induction s with
   | node v cs ih =>
@@ -193,7 +201,7 @@ theorem map_snd_markTree (s : RoseTree (CopyMark × Vertex)) :
     · rw [map_node, map_node, List.map_map]
       exact congrArg _ (List.map_congr_left ih)
 
-theorem contractTree_markTree (s : RoseTree (CopyMark × Vertex)) :
+theorem contractTree_markTree (s : RoseTree (CopyMark × Vertex LexicalItem.Token)) :
     contractTree (markTree m l s) =
       replaceIf (UnorderedTree.mk · = m.toUnorderedTree) (.node (.inr l) []) (contractTree s) := by
   induction s with
@@ -214,16 +222,17 @@ theorem contractTree_markTree (s : RoseTree (CopyMark × Vertex)) :
 end Mark
 
 /-- Mark every outermost copy of `m` as a lower copy whose trace carries `l`. -/
-def mark (t : Marked) (m : SyntacticObject) (l : Option LexicalItem.Token) : Marked :=
+def mark (t : Marked) (m : SyntacticObject TokenLeaf) (l : Option LexicalItem.Token) : Marked :=
   ⟨markTree m l t.val, by rw [map_snd_markTree]; exact t.2⟩
 
-@[simp] theorem unmark_mark (m : SyntacticObject) (l : Option LexicalItem.Token) :
+@[simp] theorem unmark_mark (m : SyntacticObject TokenLeaf) (l : Option LexicalItem.Token) :
     (t.mark m l).unmark = t.unmark :=
   PlanarSyntacticObject.toRoseTree_injective
     ((toRoseTree_unmark _).trans ((map_snd_markTree m l t.val).trans (toRoseTree_unmark _).symm))
 
 /-- Marking the copies of `m` with its trace contracts to replacing `m` by its trace. -/
-theorem contract_mark (m : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
+theorem contract_mark (m : SyntacticObject TokenLeaf)
+    (τ : SyntacticObject TokenLeaf → Option LexicalItem.Token) :
     (t.mark m (τ m)).contract = t.contract.replace m (m.tracePlanar τ) :=
   PlanarSyntacticObject.toRoseTree_injective (by
     rw [toRoseTree_contract, PlanarSyntacticObject.toRoseTree_replace, toRoseTree_contract,
@@ -234,10 +243,11 @@ theorem contract_mark (m : SyntacticObject) (τ : SyntacticObject → Option Lex
 
 /-- The subtrees outside the lower copies, in preorder, a lower copy itself included: the subtrees
 whose contractions are the subtrees of the contraction. -/
-abbrev outerSubtrees (s : RoseTree (CopyMark × Vertex)) : List (RoseTree (CopyMark × Vertex)) :=
+abbrev outerSubtrees (s : RoseTree (CopyMark × Vertex LexicalItem.Token)) : List
+    (RoseTree (CopyMark × Vertex LexicalItem.Token)) :=
   s.subtreesUntil (·.value.1.isSome)
 
-theorem map_contractTree_outerSubtrees (s : RoseTree (CopyMark × Vertex)) :
+theorem map_contractTree_outerSubtrees (s : RoseTree (CopyMark × Vertex LexicalItem.Token)) :
     (outerSubtrees s).map contractTree = (contractTree s).subtrees := by
   induction s with
   | node v cs ih =>
@@ -249,7 +259,7 @@ theorem map_contractTree_outerSubtrees (s : RoseTree (CopyMark × Vertex)) :
     · simp [subtreesUntil_node]
 
 /-- The leftmost, outermost subtree outside the lower copies whose contraction is `target`. -/
-def find? (t : Marked) (target : SyntacticObject) : Option Marked :=
+def find? (t : Marked) (target : SyntacticObject TokenLeaf) : Option Marked :=
   ((outerSubtrees t.val).find? fun s ↦ UnorderedTree.mk (contractTree s) =
       target.toUnorderedTree).pmap
     (p := (· ∈ outerSubtrees t.val))
@@ -257,7 +267,8 @@ def find? (t : Marked) (target : SyntacticObject) : Option Marked :=
       (((isSyntacticObject_mk _).1 t.2).of_isSubtree ((isSubtree_of_mem_subtreesUntil hs).map _))⟩)
     fun _ h ↦ List.mem_of_find?_eq_some h
 
-theorem mem_terms_of_find? {target : SyntacticObject} {s : Marked} (h : t.find? target = some s) :
+theorem mem_terms_of_find? {target : SyntacticObject TokenLeaf} {s : Marked}
+    (h : t.find? target = some s) :
     s.unmark.toSyntacticObject ∈ t.unmark.toSyntacticObject.terms := by
   obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 h
   exact PlanarSyntacticObject.mem_terms_toSyntacticObject.2
@@ -265,14 +276,14 @@ theorem mem_terms_of_find? {target : SyntacticObject} {s : Marked} (h : t.find? 
       rw [toRoseTree_unmark]; exact mem_subtrees.2 ((isSubtree_of_mem_subtreesUntil hr).map _),
       by rw [PlanarSyntacticObject.toUnorderedTree_toSyntacticObject, toRoseTree_unmark]⟩
 
-theorem mk_contractTree_of_find? {target : SyntacticObject} {s : Marked}
+theorem mk_contractTree_of_find? {target : SyntacticObject TokenLeaf} {s : Marked}
     (h : t.find? target = some s) : UnorderedTree.mk (contractTree s.val) =
         target.toUnorderedTree := by
   obtain ⟨r, -, hr, rfl⟩ := Option.pmap_eq_some_iff.1 h
   simpa using List.find?_some hr
 
 /-- The occurrence found contracts to the occurrence found in the contraction. -/
-theorem map_contract_find? (target : SyntacticObject) :
+theorem map_contract_find? (target : SyntacticObject TokenLeaf) :
     (t.find? target).map contract = t.contract.find? target := by
   apply Option.map_injective PlanarSyntacticObject.toRoseTree_injective
   rw [Option.map_map, find?, PlanarSyntacticObject.find?, Option.map_pmap, Option.map_pmap]
@@ -306,7 +317,7 @@ theorem contract_eq_leaf_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
       SyntacticObject.toUnorderedTree_leaf])
   · simp [PlanarSyntacticObject.yield_toSyntacticObject, hk] at hx
 
-theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject} {x : LexicalItem.Token}
+theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject TokenLeaf} {x : LexicalItem.Token}
     (h : t.find? target = some s) (ht : ¬ target.IsTrace)
     (hs : s.unmark.toSyntacticObject = SyntacticObject.leaf x) :
     target = SyntacticObject.leaf x := by

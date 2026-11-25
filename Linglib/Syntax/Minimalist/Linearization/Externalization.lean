@@ -294,7 +294,7 @@ def traceLinearizationState : Option LexicalItem.Token → LinearizationState si
 
 /-- The head function as a morphism of magmas ([marcolli-chomsky-berwick-2025]
     §1.13's algebraic frame): Merge multiplies constituents, `h` multiplies states. -/
-def headHom : SyntacticObject →ₙ* LinearizationState side :=
+def headHom : SyntacticObject TokenLeaf →ₙ* LinearizationState side :=
   FreeCommMagma.lift
     (Leaf.elim (fun tok ↦ .of tok tok.item.sel (.leaf tok)) (traceLinearizationState side))
 
@@ -302,7 +302,7 @@ def headHom : SyntacticObject →ₙ* LinearizationState side :=
     headHom side (SyntacticObject.leaf tok) = .of tok tok.item.sel (.leaf tok) := rfl
 
 @[simp] theorem headHom_trace :
-    headHom side (trace : SyntacticObject) = .of .bareTrace [] .trace := rfl
+    headHom side (trace : SyntacticObject TokenLeaf) = .of .bareTrace [] .trace := rfl
 
 @[simp] theorem headHom_traceOf (tok : LexicalItem.Token) :
     headHom side (traceOf tok) = .of tok [] (.traceOf tok) := rfl
@@ -313,13 +313,13 @@ theorem sel_comp_headHom :
     LinearizationState.sel.comp (headHom side) = selectionState :=
   FreeCommMagma.hom_ext fun x ↦ by cases x <;> rfl
 
-@[simp] theorem sel_headHom (s : SyntacticObject) :
+@[simp] theorem sel_headHom (s : SyntacticObject TokenLeaf) :
     LinearizationState.sel (headHom side s) = selectionState s :=
   DFunLike.congr_fun (sel_comp_headHom side) s
 
 /-- The harmonic linearization, the projecting daughter on the head side at every node
     ([marcolli-chomsky-berwick-2025] Lemma 1.13.5); `none` off `Dom(h)`. -/
-def linearize? (s : SyntacticObject) : Option PlanarSyntacticObject :=
+def linearize? (s : SyntacticObject TokenLeaf) : Option (PlanarSyntacticObject TokenLeaf) :=
   (headHom side s).linearized?
 
 variable {side}

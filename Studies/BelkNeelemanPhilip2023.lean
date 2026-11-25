@@ -52,7 +52,7 @@ second at `[1]`, with the branches it prunes, each paired with its proxy in the 
 first the branches to multidominated material, then the free ones. -/
 structure Derivation where
   /-- The coordination, multidominated material shared. -/
-  input : PlanarSyntacticObject
+  input : PlanarSyntacticObject TokenLeaf
   /-- The branches to multidominated material, with their proxies. -/
   forced : List (GornAddress × GornAddress)
   /-- The branches whose material goes unrealized, with their proxies. -/
@@ -74,7 +74,8 @@ def realizedAt (P : List (GornAddress × GornAddress)) (x : GornAddress) : GornA
 when `p` lies inside the first conjunct and `q` inside the second, and the proxy's yield satisfies
 the ordering statements of `p`'s yield in the first conjunct: pronounced material of the first
 conjunct that precedes `p` is realized before `q`, and material that follows `p` after it. -/
-def MayPrune (t : PlanarSyntacticObject) (P : List (GornAddress × GornAddress)) (p q : GornAddress)
+def MayPrune (t : PlanarSyntacticObject TokenLeaf) (P : List (GornAddress × GornAddress))
+    (p q : GornAddress)
     :
     Prop :=
   p.toList.head? = some 0 ∧ 1 < p.depth ∧ q.toList.head? = some 1 ∧
@@ -84,7 +85,8 @@ def MayPrune (t : PlanarSyntacticObject) (P : List (GornAddress × GornAddress))
       (Precedes x.1 p → Precedes (realizedAt P x.1) q) ∧
         (Precedes p x.1 → Precedes q (realizedAt P x.1))
 
-instance (t : PlanarSyntacticObject) (P : List (GornAddress × GornAddress)) (p q : GornAddress) :
+instance (t : PlanarSyntacticObject TokenLeaf) (P : List (GornAddress × GornAddress))
+    (p q : GornAddress) :
     Decidable (MayPrune t P p q) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -166,7 +168,7 @@ def opera : LexicalItem.Token := ⟨.of .D [] "opera", 5⟩
 def opera' : LexicalItem.Token := ⟨.of .D [] "opera", 6⟩
 
 /-- `[John likes x] and [Mary dislikes y]`. -/
-def likesDislikes (x y : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def likesDislikes (x y : PlanarSyntacticObject TokenLeaf) : PlanarSyntacticObject TokenLeaf :=
   (john * (likes * x)) * (mary * (dislikes * y))
 
 /-- Multidominance (84) puts one *opera* under both verbs and prunes the first branch (85). -/
@@ -199,7 +201,7 @@ def aBook : LexicalItem.Token := ⟨.of .D [] "a book about opera", 11⟩
 def aBook' : LexicalItem.Token := ⟨.of .D [] "a book about opera", 12⟩
 
 /-- `[John [[bought x] for Mary]] and [Bill [wrapped y]]` (91). -/
-def boughtWrapped (x y : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def boughtWrapped (x y : PlanarSyntacticObject TokenLeaf) : PlanarSyntacticObject TokenLeaf :=
   (john * ((bought * x) * forMary)) * (bill * (wrapped * y))
 
 /-- Material of the first conjunct follows the gap (90), so neither (91a) nor (91b) is licensed. -/
@@ -217,7 +219,7 @@ def excessively' : LexicalItem.Token := ⟨.of .A [] "excessively", 16⟩
 def john' : LexicalItem.Token := ⟨.of .D [] "John", 17⟩
 
 /-- `[Mary [[flattered x] y]] and [Bill [[disparaged x'] y']]` (92). -/
-def flatteredDisparaged (x y x' y' : LexicalItem.Token) : PlanarSyntacticObject :=
+def flatteredDisparaged (x y x' y' : LexicalItem.Token) : PlanarSyntacticObject TokenLeaf :=
   (mary * ((flattered * x) * y)) * (bill * ((disparaged * x') * y'))
 
 /-- Two pivots, by ellipsis (92a) or multidominance (92b), pruning the adverb's branch before the
@@ -254,7 +256,7 @@ def avasPaper : LexicalItem.Token := ⟨.of .D [] "Ava's paper", 43⟩
 def avasPaper' : LexicalItem.Token := ⟨.of .D [] "Ava's paper", 44⟩
 
 /-- `[she [is going to [show [x y]]]] and [Ryo [will soon [show [x' y']]]]` (58), (60). -/
-def showVP (x y x' y' : LexicalItem.Token) : PlanarSyntacticObject :=
+def showVP (x y x' y' : LexicalItem.Token) : PlanarSyntacticObject TokenLeaf :=
   (she * (isGoingTo * (showV * (x * y)))) * (ryo * (willSoon * (showV' * (x' * y'))))
 
 /-- In (58) the verb phrase is an elided pivot, the indirect object showing vehicle change, and
@@ -303,7 +305,7 @@ def same : LexicalItem.Token := ⟨.of .A [] "same", 40⟩
 def country : LexicalItem.Token := ⟨.of .N [] "country", 41⟩
 
 /-- The pivot *to the same country*, whose internal reading requires it to be multidominated. -/
-def samePivot : PlanarSyntacticObject := toP * (the * (same * country))
+def samePivot : PlanarSyntacticObject TokenLeaf := toP * (the * (same * country))
 
 /-- Example (51) with the auxiliary phrase multidominated, and no ellipsis. -/
 def shareAuxP : Derivation :=

@@ -480,35 +480,35 @@ def lexicon : List LexicalItem :=
     liTomorrow, liTonight, liWhen] : List LexicalItem.Token).map (·.item)
 
 /-- The deepest clause the rows share, *they were having their last meal together*. -/
-def wMeal : PlanarSyntacticObject :=
+def wMeal : PlanarSyntacticObject TokenLeaf :=
   liThey * (liWere * (liHaving * (liTheir * (liLast * (liMeal * liTogether)))))
 
 /-- *tell his mother tomorrow* with the complement `k`. -/
-def wTell (k : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def wTell (k : PlanarSyntacticObject TokenLeaf) : PlanarSyntacticObject TokenLeaf :=
   liTell * (liHis * (liMother * (liTomorrow * k)))
 
 /-- (24a): *John promised me yesterday that he will tell … that they were … (when …)*. -/
-def w24a : PlanarSyntacticObject :=
+def w24a : PlanarSyntacticObject TokenLeaf :=
   liJohn * (liPromised * (liMe * (liYesterday * (liThat * (liHe * (liWill *
     wTell (liThat' * (wMeal * liWhen))))))))
 
 /-- (25a): the infinitival variant of (24a). -/
-def w25a : PlanarSyntacticObject :=
+def w25a : PlanarSyntacticObject TokenLeaf :=
   liJohn * (liPromised * (liMe * (liYesterday * (liTo * wTell (liThat * wMeal)))))
 
 /-- (27a): the *would* variant of (24a). -/
-def w27a : PlanarSyntacticObject :=
+def w27a : PlanarSyntacticObject TokenLeaf :=
   liJohn * (liPromised * (liMe * (liYesterday * (liThat * (liHe * (liWould *
     wTell (liThat' * wMeal)))))))
 
 /-- (29a): *John will promise me tonight that he would tell … that …*, the deepest clause
 elided in the text. -/
-def w29a : PlanarSyntacticObject :=
+def w29a : PlanarSyntacticObject TokenLeaf :=
   liJohn * (liWill * (liPromise * (liMe * (liTonight * (liThat * (liHe * (liWould *
     wTell ↑liThat')))))))
 
 /-- (30a): the infinitival variant of (29a). -/
-def w30a : PlanarSyntacticObject :=
+def w30a : PlanarSyntacticObject TokenLeaf :=
   liJohn * (liWill * (liPromise * (liMe * (liTonight * (liTo *
     wTell (liThat * (wMeal * liWhen)))))))
 
@@ -523,11 +523,11 @@ def tenseOf (tok : LexicalItem.Token) : Option (List Morpheme) :=
 
 /-- The chain of a witness: the tense morphemes of its clauses, outermost first, in pronounced
 order. -/
-def chainOf (t : PlanarSyntacticObject) : List (List Morpheme) :=
+def chainOf (t : PlanarSyntacticObject TokenLeaf) : List (List Morpheme) :=
   (Minimalist.pfYield t).filterMap tenseOf
 
 /-- The five sequence-of-tense rows with their witnesses. -/
-def witnessRows : List (Datum × PlanarSyntacticObject) :=
+def witnessRows : List (Datum × PlanarSyntacticObject TokenLeaf) :=
   [(ex_17, w24a), (ex_18, w25a), (ex_19, w27a), (ex_21, w29a), (ex_22, w30a)]
 
 theorem witnesses_spell : ∀ p ∈ witnessRows,

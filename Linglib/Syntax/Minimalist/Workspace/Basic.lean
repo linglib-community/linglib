@@ -51,35 +51,39 @@ namespace Minimalist
 open RoseTree UnorderedTree SyntacticObject
 
 /-- A workspace is a forest of syntactic objects. -/
-abbrev Workspace : Type := Forest SyntacticObject
+abbrev Workspace : Type := Forest (SyntacticObject TokenLeaf)
 
 namespace Workspace
 
-variable (W : Workspace) (P Q : SyntacticObject)
+variable (W : Workspace) (P Q : SyntacticObject TokenLeaf)
 
 /-- The terms of a workspace are the terms of its members, the objects MERGE may target. -/
-def terms : Multiset SyntacticObject := W.bind SyntacticObject.terms
+def terms : Multiset (SyntacticObject TokenLeaf) := W.bind SyntacticObject.terms
 
-theorem mem_terms {W : Workspace} {S : SyntacticObject} : S ∈ W.terms ↔ ∃ U ∈ W, S ∈ U.terms :=
+theorem mem_terms {W : Workspace} {S : SyntacticObject TokenLeaf} : S ∈ W.terms ↔ ∃ U ∈ W, S ∈
+    U.terms :=
   Multiset.mem_bind
 
 /-- The substitution contracting the targets `P` and `Q` of MERGE to what they leave behind. -/
-def contraction (leave : SyntacticObject → SyntacticObject) (P Q u : SyntacticObject) :
-    Option SyntacticObject :=
+def contraction (leave : SyntacticObject TokenLeaf → SyntacticObject TokenLeaf)
+    (P Q u : SyntacticObject TokenLeaf) :
+    Option (SyntacticObject TokenLeaf) :=
   if u = P then some (leave P) else if u = Q then some (leave Q) else none
 
 /-- MERGE `P` and `Q` in `W`, leaving `leave P` and `leave Q` behind: `{P, Q}` joins the
 workspace, `P` and `Q` leave it where they were members, and their other occurrences, in the rest
 and in each other, are replaced by what they leave. -/
-noncomputable def mergeWith (leave : SyntacticObject → SyntacticObject) (W : Workspace)
-    (P Q : SyntacticObject) : Workspace :=
+noncomputable def mergeWith (leave : SyntacticObject TokenLeaf → SyntacticObject TokenLeaf)
+    (W : Workspace)
+    (P Q : SyntacticObject TokenLeaf) : Workspace :=
   (W - {P, Q}).map (subst (contraction leave P Q)) +
     {SyntacticObject.merge (P.replace Q (leave Q)) (Q.replace P (leave P))}
 
 /-- MERGE `P` and `Q` in `W` leaving copies. -/
 noncomputable def merge : Workspace := W.mergeWith id P Q
 
-variable {W P Q} {leave : SyntacticObject → SyntacticObject} {U : SyntacticObject}
+variable {W P Q} {leave : SyntacticObject TokenLeaf → SyntacticObject TokenLeaf}
+    {U : SyntacticObject TokenLeaf}
 
 theorem subst_contraction_of_notMem (hP : P ∉ U.terms) (hQ : Q ∉ U.terms) :
     U.subst (contraction leave P Q) = U :=
@@ -110,7 +114,7 @@ theorem merge_def : W.merge P Q = W - {P, Q} + {SyntacticObject.merge P Q} := by
     Multiset.map_congr rfl fun U _ ↦ subst_contraction_id, Multiset.map_id']
 
 /-- MERGE of an object with one of its terms in the workspace of the object alone. -/
-theorem singleton_merge (u C : SyntacticObject) :
+theorem singleton_merge (u C : SyntacticObject TokenLeaf) :
     ({C} : Workspace).merge u C = {SyntacticObject.merge u C} := by
   rw [merge_def, Multiset.insert_eq_cons, Multiset.sub_cons, Multiset.sub_singleton]
   by_cases h : u = C
@@ -139,7 +143,7 @@ private theorem map_subst_contraction {W : Workspace} (hW : ∀ U ∈ W, P ∉ U
   conv_rhs => rw [← Multiset.map_id W]
   exact Multiset.map_congr rfl fun U hU ↦ subst_contraction_of_notMem (hW U hU).1 (hW U hU).2
 
-theorem mergeWith_internal {mover current : SyntacticObject} {W : Workspace}
+theorem mergeWith_internal {mover current : SyntacticObject TokenLeaf} {W : Workspace}
     (hmc : mover ∈ current.terms) (hne : current ≠ mover) (hW : ∀ U ∈ W, mover ∉ U.terms) :
     ({current} + W).mergeWith leave mover current =
       W + {SyntacticObject.merge mover (current.replace mover (leave mover))} := by
@@ -150,7 +154,7 @@ theorem mergeWith_internal {mover current : SyntacticObject} {W : Workspace}
     map_subst_contraction fun U hU ↦ ⟨hW U hU, fun h ↦ hW U hU (terms_subset_terms
       (SyntacticObject.mem_terms.1 h) hmc)⟩, replace_of_notMem_terms hcm]
 
-theorem mergeWith_sideward_member {T T' S' : SyntacticObject} {W : Workspace}
+theorem mergeWith_sideward_member {T T' S' : SyntacticObject TokenLeaf} {W : Workspace}
     (hS' : S' ∈ T'.terms) (hne : T' ≠ S') (hT : T ∉ T'.terms) (hS'T : S' ∉ T.terms)
     (hW : ∀ U ∈ W, T ∉ U.terms ∧ S' ∉ U.terms) :
     ({T, T'} + W).mergeWith leave T S' =
@@ -164,7 +168,8 @@ theorem mergeWith_sideward_member {T T' S' : SyntacticObject} {W : Workspace}
     Multiset.map_singleton, subst_contraction_of_notMem_left hT, map_subst_contraction hW,
     replace_of_notMem_terms hS'T, replace_of_notMem_terms hTS']
 
-theorem mergeWith_sideward {T T' S S' : SyntacticObject} {W : Workspace} (hS : S ∈ T.terms)
+theorem mergeWith_sideward {T T' S S' : SyntacticObject TokenLeaf} {W : Workspace}
+    (hS : S ∈ T.terms)
     (hS' : S' ∈ T'.terms) (hneS : T ≠ S) (hneS' : T' ≠ S') (hST' : S ∉ T'.terms)
     (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
     ({T, T'} + W).mergeWith leave S S' =

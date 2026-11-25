@@ -86,7 +86,8 @@ open RoseTree UnorderedTree ConnesKreimer
 
 /-- In a syntactic object the bare label marks exactly the vertices with children, and those
     have two. -/
-theorem licensed_bare_of_isSyntacticObject {t : UnorderedTree Vertex} (h : IsSyntacticObject t) :
+theorem licensed_bare_of_isSyntacticObject {t : UnorderedTree (Vertex LexicalItem.Token)}
+    (h : IsSyntacticObject t) :
     t.Licensed fun a ks ↦ (a = Vertex.bare ↔ ks ≠ 0) ∧
       (Multiset.card ks = 0 ∨ Multiset.card ks = 2) :=
   UnorderedTree.Licensed.mono (R := Vertex.Licenses) (fun a ks h ↦ by
@@ -100,7 +101,7 @@ theorem licensed_bare_of_isSyntacticObject {t : UnorderedTree Vertex} (h : IsSyn
       simp [hz] at hk) h
 
 /-- A syntactic object is its own remainder under deletion. -/
-theorem deletionQuotient_of_isSyntacticObject {t : UnorderedTree Vertex}
+theorem deletionQuotient_of_isSyntacticObject {t : UnorderedTree (Vertex LexicalItem.Token)}
     (h : IsSyntacticObject t) : deletionQuotient Vertex.bare t = some t :=
   deletionQuotient_eq_self _
     (ne_of_mem_leaves _ ((licensed_bare_of_isSyntacticObject h).mono fun _ _ h ↦ h.1))
@@ -108,10 +109,12 @@ theorem deletionQuotient_of_isSyntacticObject {t : UnorderedTree Vertex}
 
 /-- External Merge on the carrier is the algebraic Merge with the bare root label on the
     two-object workspace. -/
-theorem mergeOp_node (S S' : SyntacticObject) :
+theorem mergeOp_node (S S' : SyntacticObject TokenLeaf) :
     Merge.mergeOp (R := ℤ) Vertex.bare S.toUnorderedTree S'.toUnorderedTree
-        (of' ({S.toUnorderedTree, S'.toUnorderedTree} : Forest (UnorderedTree Vertex)))
-      = of' (R := ℤ) ({(merge S S').toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
+        (of' ({S.toUnorderedTree, S'.toUnorderedTree} : Forest
+            (UnorderedTree (Vertex LexicalItem.Token))))
+      = of' (R := ℤ)
+          ({(merge S S').toUnorderedTree} : Forest (UnorderedTree (Vertex LexicalItem.Token))) := by
   rw [Merge.mergeOp_pair Vertex.bare
       (deletionQuotient_of_isSyntacticObject S.isSyntacticObject_toUnorderedTree)
       (deletionQuotient_of_isSyntacticObject S'.isSyntacticObject_toUnorderedTree),
@@ -119,24 +122,26 @@ theorem mergeOp_node (S S' : SyntacticObject) :
 
 /-- External Merge on the carrier is the trace-cut Merge with the bare root label on the
     two-object workspace, for any trace encoder. -/
-theorem traceMergeOp_node (τ : UnorderedTree Vertex → Option LexicalItem.Token)
-    (S S' : SyntacticObject) :
+theorem traceMergeOp_node (τ : UnorderedTree (Vertex LexicalItem.Token) → Option LexicalItem.Token)
+    (S S' : SyntacticObject TokenLeaf) :
     Merge.traceMergeOp (R := ℤ) τ Vertex.bare S.toUnorderedTree S'.toUnorderedTree
-        (of' ({S.toUnorderedTree, S'.toUnorderedTree} : Forest (UnorderedTree Vertex)))
-      = of' (R := ℤ) ({(merge S S').toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
+        (of' ({S.toUnorderedTree, S'.toUnorderedTree} : Forest
+            (UnorderedTree (Vertex LexicalItem.Token))))
+      = of' (R := ℤ)
+          ({(merge S S').toUnorderedTree} : Forest (UnorderedTree (Vertex LexicalItem.Token))) := by
   rw [Merge.traceMergeOp_pair, toUnorderedTree_merge]
 
 /-! ### Internal Merge through the trace cuts -/
 
 /-- The trace encoder of derivations sends a tree to its head by selection. -/
-def traceEncoder (t : UnorderedTree Vertex) : Option LexicalItem.Token :=
+def traceEncoder (t : UnorderedTree (Vertex LexicalItem.Token)) : Option LexicalItem.Token :=
   (treeSelectionState t).head
 
-@[simp] theorem traceEncoder_toUnorderedTree (s : SyntacticObject) :
+@[simp] theorem traceEncoder_toUnorderedTree (s : SyntacticObject TokenLeaf) :
     traceEncoder s.toUnorderedTree = s.selectionHead := by
   rw [traceEncoder, treeSelectionState_toUnorderedTree]; rfl
 
-variable {mover current : SyntacticObject}
+variable {mover current : SyntacticObject TokenLeaf}
 
 /-- A uniquely accessible mover that is not a trace is extracted by exactly one trace cut, whose
     trunk is the remainder `deleteAccessible mover current`. -/
@@ -156,9 +161,9 @@ theorem traceMergeOpUnit_current (hm : ¬ mover.IsTrace) (h : current.terms.coun
     mover = 1)
     (hne : current ≠ mover) :
     Merge.traceMergeOpUnit (R := ℤ) traceEncoder mover.toUnorderedTree
-        (of' ({current.toUnorderedTree} : Forest (UnorderedTree Vertex)))
+        (of' ({current.toUnorderedTree} : Forest (UnorderedTree (Vertex LexicalItem.Token))))
       = of' ({mover.toUnorderedTree, (deleteAccessible mover current).toUnorderedTree} :
-          Forest (UnorderedTree Vertex)) := by
+          Forest (UnorderedTree (Vertex LexicalItem.Token))) := by
   rw [Merge.traceMergeOpUnit, Merge.mergeOpUnitOfCuts_apply_singleton_unique _ _ _
       (markerCuts_filter_mover hm h hne) (fun h' ↦ hne (toUnorderedTree_injective h')),
     ← of'_singleton, ← of'_add]
@@ -172,19 +177,19 @@ theorem traceMergeOp_im (hm : ¬ mover.IsTrace) (h : current.terms.count mover =
     Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover
         current).toUnorderedTree
         mover.toUnorderedTree (Merge.traceMergeOpUnit traceEncoder mover.toUnorderedTree
-          (of' ({current.toUnorderedTree} : Forest (UnorderedTree Vertex))))
+          (of' ({current.toUnorderedTree} : Forest (UnorderedTree (Vertex LexicalItem.Token)))))
       = of' (R := ℤ) ({(merge (deleteAccessible mover current) mover).toUnorderedTree} :
-          Forest (UnorderedTree Vertex)) := by
+          Forest (UnorderedTree (Vertex LexicalItem.Token))) := by
   rw [Merge.traceMergeOp_im_composition traceEncoder Vertex.bare _ _ _ _
       (markerCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (toUnorderedTree_injective
           h')), toUnorderedTree_merge]
 
 /-! ### Merge beside a spectator workspace -/
 
-private theorem disjoint_pair_subtrees {S S' U : SyntacticObject}
+private theorem disjoint_pair_subtrees {S S' U : SyntacticObject TokenLeaf}
     (h : S ∉ U.terms ∧ S' ∉ U.terms) :
     Disjoint ({S.toUnorderedTree, S'.toUnorderedTree} : Forest (UnorderedTree
-        Vertex)) U.toUnorderedTree.subtrees := by
+        (Vertex LexicalItem.Token))) U.toUnorderedTree.subtrees := by
   rw [Multiset.disjoint_left]
   intro a ha
   rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at ha
@@ -193,8 +198,9 @@ private theorem disjoint_pair_subtrees {S S' U : SyntacticObject}
 
 /-- External Merge on the carrier beside a spectator workspace none of whose components contains
     `S` or `S'`. -/
-theorem traceMergeOp_node_residual (τ : UnorderedTree Vertex → Option LexicalItem.Token)
-    (S S' : SyntacticObject) {W : Workspace} (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
+theorem traceMergeOp_node_residual
+    (τ : UnorderedTree (Vertex LexicalItem.Token) → Option LexicalItem.Token)
+    (S S' : SyntacticObject TokenLeaf) {W : Workspace} (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
     Merge.traceMergeOp (R := ℤ) τ Vertex.bare S.toUnorderedTree S'.toUnorderedTree (of' (({S, S'} +
         W).map toUnorderedTree))
       = of' (({merge S S'} + W).map toUnorderedTree) := by
@@ -226,8 +232,9 @@ theorem traceMergeOp_im_residual (hm : ¬ mover.IsTrace) (h : current.terms.coun
 
 /-- External Merge: the Merge operator at the trace cuts computes MERGE on a workspace of which `S`
     and `S'` are members, when no other member contains them. -/
-theorem traceMergeOp_of'_merge (τ : UnorderedTree Vertex → Option LexicalItem.Token)
-    {S S' : SyntacticObject} {W : Workspace} (hle : {S, S'} ≤ W)
+theorem traceMergeOp_of'_merge
+    (τ : UnorderedTree (Vertex LexicalItem.Token) → Option LexicalItem.Token)
+    {S S' : SyntacticObject TokenLeaf} {W : Workspace} (hle : {S, S'} ≤ W)
     (hW : ∀ U ∈ W - {S, S'}, S ∉ U.terms ∧ S' ∉ U.terms) :
     Merge.traceMergeOp (R := ℤ) τ Vertex.bare S.toUnorderedTree S'.toUnorderedTree (of' (W.map
         toUnorderedTree))
@@ -255,7 +262,7 @@ theorem traceMergeOp_im_of'_merge (hm : ¬ mover.IsTrace) (h : current.terms.cou
     with the only occurrence of a term `S'` of another member `T'`, the Merge operator at the trace
     cuts computes MERGE leaving the trace of the head of `S'` in `T'`, when `S'` is no term of `T`.
     -/
-theorem traceMergeOp_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Workspace}
+theorem traceMergeOp_sideward2b_of'_merge {T T' S' : SyntacticObject TokenLeaf} {W : Workspace}
     (hS' : ¬ S'.IsTrace) (hc : T'.terms.count S' = 1) (hne : T' ≠ S') (hT : T ∉
         T'.terms)
     (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, T ∉ U.terms ∧ S' ∉ U.terms) :
@@ -285,7 +292,7 @@ theorem traceMergeOp_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Works
 /-- Sideward Merge of type 3(b) ([marcolli-chomsky-berwick-2025] Lemma 1.4.4): merging the only
     occurrences of a term `S` of a member `T` and a term `S'` of another member `T'`, the Merge
     operator at the trace cuts computes MERGE leaving the traces of their heads. -/
-theorem traceMergeOp_sideward3b_of'_merge {T T' S S' : SyntacticObject} {W : Workspace}
+theorem traceMergeOp_sideward3b_of'_merge {T T' S S' : SyntacticObject TokenLeaf} {W : Workspace}
     (hS : ¬ S.IsTrace) (hS' : ¬ S'.IsTrace) (hcS :
         T.terms.count S = 1)
     (hcS' : T'.terms.count S' = 1) (hneS : T ≠ S) (hneS' : T' ≠ S') (hST' : S ∉ T'.terms)
@@ -318,7 +325,7 @@ theorem traceMergeOp_sideward3b_of'_merge {T T' S S' : SyntacticObject} {W : Wor
 
 private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.of .N [], i⟩
 
-private def demoCurrent : SyntacticObject :=
+private def demoCurrent : SyntacticObject TokenLeaf :=
   (PlanarSyntacticObject.merge (.leaf (demoTok 0))
     (.leaf (demoTok 1))).toSyntacticObject
 
@@ -328,14 +335,15 @@ example :
         (deleteAccessible (leaf (demoTok 0)) demoCurrent).toUnorderedTree (leaf (demoTok
             0)).toUnorderedTree
         (Merge.traceMergeOpUnit traceEncoder (leaf (demoTok 0)).toUnorderedTree
-          (of' ({demoCurrent.toUnorderedTree} : Forest (UnorderedTree Vertex))))
+          (of' ({demoCurrent.toUnorderedTree} : Forest (UnorderedTree (Vertex LexicalItem.Token)))))
       = of' (R := ℤ) ({(merge (deleteAccessible (leaf (demoTok 0)) demoCurrent)
-          (leaf (demoTok 0))).toUnorderedTree} : Forest (UnorderedTree Vertex)) :=
+          (leaf (demoTok 0))).toUnorderedTree} : Forest (UnorderedTree (Vertex LexicalItem.Token)))
+              :=
   traceMergeOp_im (by decide) (by decide) (by decide)
 
 /-! ### The admissible cuts on syntactic objects -/
 
-private theorem odd_numNodes_of_isSyntacticObject {t : RoseTree Vertex}
+private theorem odd_numNodes_of_isSyntacticObject {t : RoseTree (Vertex LexicalItem.Token)}
     (h : IsSyntacticObject (UnorderedTree.mk t)) : Odd t.numNodes := by
   induction t with
   | node a cs ih =>
@@ -352,7 +360,7 @@ private theorem odd_numNodes_of_isSyntacticObject {t : RoseTree Vertex}
       exact ⟨x + y + 1, by omega⟩
 
 /-- A syntactic object, being a full binary tree, has an odd number of vertices. -/
-theorem numNodes_odd (s : SyntacticObject) : Odd s.toUnorderedTree.numNodes := by
+theorem numNodes_odd (s : SyntacticObject TokenLeaf) : Odd s.toUnorderedTree.numNodes := by
   have ht := s.isSyntacticObject_toUnorderedTree
   generalize s.toUnorderedTree = t at ht
   induction t using Quotient.inductionOn with
@@ -360,8 +368,10 @@ theorem numNodes_odd (s : SyntacticObject) : Odd s.toUnorderedTree.numNodes := b
 
 /-- An admissible cut removing one syntactic object from another leaves no syntactic object, since
     the remainder has an even number of vertices. -/
-theorem not_isSyntacticObject_of_mem_admissibleCuts {T mover : SyntacticObject}
-    {p : Forest (UnorderedTree Vertex) × UnorderedTree Vertex} (hp : p ∈ admissibleCuts
+theorem not_isSyntacticObject_of_mem_admissibleCuts {T mover : SyntacticObject TokenLeaf}
+    {p : Forest (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+        (Vertex LexicalItem.Token)}
+        (hp : p ∈ admissibleCuts
         T.toUnorderedTree)
     (hcrown : p.1 = {mover.toUnorderedTree}) : ¬ IsSyntacticObject p.2 := fun h ↦ by
   have hw := admissibleCuts_numNodes T.toUnorderedTree p hp
@@ -374,10 +384,11 @@ theorem not_isSyntacticObject_of_mem_admissibleCuts {T mover : SyntacticObject}
 
 /-- A tree whose bare vertices have one or two children and whose other vertices have none
     contracts to a syntactic object. -/
-private theorem licensed_contractUnary {t : RoseTree Vertex}
-    (ht : t.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex) ∨
+private theorem licensed_contractUnary {t : RoseTree (Vertex LexicalItem.Token)}
+    (ht : t.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset (Vertex LexicalItem.Token)) ∨
       (a = Vertex.bare ∧ ks.length = 1)) :
-    t.contractUnary.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex) := by
+    t.contractUnary.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset (Vertex LexicalItem.Token))
+        := by
   induction t with
   | node a cs ih =>
     obtain ⟨hr, hcs⟩ := RoseTree.licensed_node_iff.mp ht
@@ -396,14 +407,18 @@ private theorem licensed_contractUnary {t : RoseTree Vertex}
 
 /-- An admissible cut of a syntactic object leaves a tree whose bare vertices have at most two
     children and whose other vertices have none. -/
-private theorem licensed_of_mem_rootCuts_leaveNothing {t : RoseTree Vertex}
-    (ht : t.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex))
-    {p : Multiset (RoseTree Vertex) × RoseTree Vertex} (hp : p ∈ rootCuts leaveNothing t) :
-    p.2.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex) ∨
+private theorem licensed_of_mem_rootCuts_leaveNothing {t : RoseTree (Vertex LexicalItem.Token)}
+    (ht : t.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset (Vertex LexicalItem.Token)))
+    {p : Multiset (RoseTree (Vertex LexicalItem.Token)) × RoseTree (Vertex LexicalItem.Token)}
+        (hp : p ∈ rootCuts leaveNothing t) :
+    p.2.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset (Vertex LexicalItem.Token)) ∨
       (a = Vertex.bare ∧ ks.length ≤ 2) := by
   have key := rootCuts_induction leaveNothing
-    (P := fun cs q ↦ (∀ c ∈ cs, c.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex)) →
-        (∀ r ∈ q.2, r.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex) ∨
+    (P := fun cs q ↦
+        (∀ c ∈ cs, c.Licensed fun a ks ↦ Vertex.Licenses a
+        (ks : Multiset (Vertex LexicalItem.Token))) →
+        (∀ r ∈ q.2, r.Licensed fun a ks ↦ Vertex.Licenses a
+            (ks : Multiset (Vertex LexicalItem.Token)) ∨
           (a = Vertex.bare ∧ ks.length ≤ 2)) ∧ q.2.length ≤ cs.length)
     (fun _ ↦ ⟨by simp, by simp⟩)
     (fun _ _ h _ ↦ by cases h; exact ⟨by simp, by simp⟩)
@@ -433,11 +448,11 @@ private theorem licensed_of_mem_rootCuts_leaveNothing {t : RoseTree Vertex}
 
 /-- Pruning the childless bare vertices of a tree whose bare vertices have at most two children
     leaves a tree whose bare vertices have one or two. -/
-private theorem licensed_of_prune {t r : RoseTree Vertex}
-    (ht : t.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex) ∨
+private theorem licensed_of_prune {t r : RoseTree (Vertex LexicalItem.Token)}
+    (ht : t.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset (Vertex LexicalItem.Token)) ∨
       (a = Vertex.bare ∧ ks.length ≤ 2))
     (hr : t.prune (· ≠ Vertex.bare) = some r) :
-    r.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset Vertex) ∨
+    r.Licensed fun a ks ↦ Vertex.Licenses a (ks : Multiset (Vertex LexicalItem.Token)) ∨
       (a = Vertex.bare ∧ ks.length = 1) := by
   induction t generalizing r with
   | node a cs ih =>
@@ -474,9 +489,10 @@ private theorem licensed_of_prune {t r : RoseTree Vertex}
 
 /-- The remainder of a deletion of a syntactic object, at any admissible cut, is a syntactic
     object. -/
-theorem isSyntacticObject_of_deletionQuotient {T : SyntacticObject}
-    {q : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
-    (hq : q ∈ admissibleCuts T.toUnorderedTree) {r : UnorderedTree Vertex}
+theorem isSyntacticObject_of_deletionQuotient {T : SyntacticObject TokenLeaf}
+    {q : Forest (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+        (Vertex LexicalItem.Token)}
+    (hq : q ∈ admissibleCuts T.toUnorderedTree) {r : UnorderedTree (Vertex LexicalItem.Token)}
     (hr : deletionQuotient Vertex.bare q.2 = some r) : IsSyntacticObject r := by
   have ht := T.isSyntacticObject_toUnorderedTree
   generalize T.toUnorderedTree = t at ht hq
@@ -494,8 +510,9 @@ theorem isSyntacticObject_of_deletionQuotient {T : SyntacticObject}
 
 /-- An admissible cut extracting at most one tree from a syntactic object leaves a syntactic
     object once the vertex the extraction leaves unary is contracted. -/
-theorem isSyntacticObject_contractUnary_of_mem_admissibleCuts {T : SyntacticObject}
-    {q : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
+theorem isSyntacticObject_contractUnary_of_mem_admissibleCuts {T : SyntacticObject TokenLeaf}
+    {q : Forest (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+        (Vertex LexicalItem.Token)}
     (hq : q ∈ admissibleCuts T.toUnorderedTree) (hcard : Multiset.card q.1 ≤ 1) :
     IsSyntacticObject q.2.contractUnary :=
   isSyntacticObject_of_deletionQuotient hq <| by
@@ -507,16 +524,18 @@ theorem isSyntacticObject_contractUnary_of_mem_admissibleCuts {T : SyntacticObje
     when one admissible cut extracts the mover, the remainder of its trunk is a syntactic object
     `Q`, and the composition `M_{Q,β} ∘ M_{β,1}` of Proposition 1.4.2 yields the one object
     `merge Q mover`. -/
-theorem mergeOp_im {current mover : SyntacticObject}
-    {p0 : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
+theorem mergeOp_im {current mover : SyntacticObject TokenLeaf}
+    {p0 : Forest (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+        (Vertex LexicalItem.Token)}
     (h : (admissibleCuts current.toUnorderedTree).filter
         (fun p ↦ p.1 = {mover.toUnorderedTree}) = {p0})
     (hne : current ≠ mover) :
-    ∃ Q : SyntacticObject, Q.toUnorderedTree = p0.2.contractUnary ∧
+    ∃ Q : SyntacticObject TokenLeaf, Q.toUnorderedTree = p0.2.contractUnary ∧
       Merge.mergeOp (R := ℤ) Vertex.bare Q.toUnorderedTree mover.toUnorderedTree
           (Merge.mergeOpUnit Vertex.bare mover.toUnorderedTree
-            (of' ({current.toUnorderedTree} : Forest (UnorderedTree Vertex)))) =
-        of' ({(merge Q mover).toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
+            (of' ({current.toUnorderedTree} : Forest (UnorderedTree (Vertex LexicalItem.Token))))) =
+        of' ({(merge Q mover).toUnorderedTree} : Forest (UnorderedTree (Vertex LexicalItem.Token)))
+            := by
   obtain ⟨hp0, hcrown⟩ := Multiset.mem_filter.mp (h ▸ Multiset.mem_singleton_self p0)
   have hcard : Multiset.card p0.1 ≤ 1 := by rw [hcrown, Multiset.card_singleton]
   have hQ := isSyntacticObject_contractUnary_of_mem_admissibleCuts hp0 hcard

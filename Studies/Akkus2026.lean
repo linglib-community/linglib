@@ -49,8 +49,8 @@ def subjTok (n : Number) : LexicalItem.Token :=
 def verbTok (r : Root) : LexicalItem.Token := ⟨.of .V [.D], r.1⟩
 
 /-- The Hiaki clause, the internal argument below the clause-final verb. -/
-def clause (r : Root) (n : Number) : PlanarSyntacticObject :=
-  (subjTok n : PlanarSyntacticObject) * verbTok r
+def clause (r : Root) (n : Number) : PlanarSyntacticObject TokenLeaf :=
+  (subjTok n : PlanarSyntacticObject TokenLeaf) * verbTok r
 
 /-- The feature bundles the terminals hand over: the verb its root's index, the argument its
 number. -/

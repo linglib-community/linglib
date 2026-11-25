@@ -79,7 +79,7 @@ namespace Boskovic2018
 open Minimalist Minimalist.PlanarSyntacticObject
 open Chomsky2013 (tok nominal IsRoot)
 
-variable {Φ : LexicalItem.Token → Prop} {x : SyntacticObject} {d : Derivation}
+variable {Φ : LexicalItem.Token → Prop} {x : SyntacticObject TokenLeaf} {d : Derivation}
 
 /-! ### Labeling, phases and the PIC -/
 
@@ -108,26 +108,26 @@ abbrev Agreed (f : Feature) : LexicalItem.Token → LexicalItem.Token → Prop :
   Relation.SymmGen (Shares f)
 
 /-- The heads minimal search finds that can label `x`: roots are too weak to label. -/
-def labelers (x : SyntacticObject) : Finset LexicalItem.Token :=
+def labelers (x : SyntacticObject TokenLeaf) : Finset LexicalItem.Token :=
   x.searchHeads.filter (¬ IsRoot ·)
 
 /-- Labeling in the paper, that of [chomsky-2013]: by the one head that can label, or by a feature
 the heads that can label share, when none of them is a daughter. -/
-def IsLabeled (x : SyntacticObject) : Prop :=
+def IsLabeled (x : SyntacticObject TokenLeaf) : Prop :=
   (∃ a ∈ labelers x, labelers x = {a}) ∨
     ((labelers x).Nontrivial ∧ (∀ a ∈ labelers x, ¬ SyntacticObject.ImmediatelyContains x ↑a) ∧
       ∃ f, (labelers x : Set LexicalItem.Token).Pairwise (Agreed f))
 
-instance (x : SyntacticObject) : Decidable (IsLabeled x) :=
+instance (x : SyntacticObject TokenLeaf) : Decidable (IsLabeled x) :=
   haveI : Decidable (labelers x).Nontrivial :=
     decidable_of_iff _ Finset.one_lt_card_iff_nontrivial
   inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A phase, given the phase heads: an object one of them labels. -/
-def IsPhase (Φ : LexicalItem.Token → Prop) (x : SyntacticObject) : Prop :=
+def IsPhase (Φ : LexicalItem.Token → Prop) (x : SyntacticObject TokenLeaf) : Prop :=
   ∃ a ∈ labelers x, Φ a ∧ labelers x = {a}
 
-instance [DecidablePred Φ] (x : SyntacticObject) : Decidable (IsPhase Φ x) :=
+instance [DecidablePred Φ] (x : SyntacticObject TokenLeaf) : Decidable (IsPhase Φ x) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 theorem IsPhase.isLabeled (h : IsPhase Φ x) : IsLabeled x :=
@@ -160,7 +160,7 @@ instance : DecidablePred IsPhaseHeadNP := fun _ ↦ inferInstanceAs (Decidable (
 /-- The cut of the PIC on an object: the complement of each phase head, sealed once its phase,
 the head's projection under `hd`, is complete. -/
 abbrev picCut (hd : HeadDaughter) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
-    (t : PlanarSyntacticObject) : Cut :=
+    (t : PlanarSyntacticObject TokenLeaf) : Cut :=
   sealed (occurrencesWith t Φ).toFinset complementDomain (.atCompletion hd t)
 
 /-- The PIC on a derivation: it derives an object none of whose chain links leaves the cut. -/
@@ -180,7 +180,7 @@ instance [DecidablePred Φ] (d : Derivation) : Decidable (Converges Φ d) :=
 /-- The determiner of *who*. -/
 def whoD := tok 200 .D "who" (features := .single .wh true) (sel := [.n])
 /-- *who*. -/
-def who : PlanarSyntacticObject := nominal whoD (tok 201 .n (sel := [.N])) (tok 202 .N)
+def who : PlanarSyntacticObject TokenLeaf := nominal whoD (tok 201 .n (sel := [.N])) (tok 202 .N)
 def ofP := tok 203 .P "of" (sel := [.D])
 def friends := tok 204 .N "friends" (sel := [.P])
 def friendsN := tok 205 .n (sel := [.N])
@@ -188,17 +188,17 @@ def subjD := tok 206 .D (sel := [.n])
 def hireV := tok 207 .v (sel := [.V])
 def hired := tok 208 .V "hired" (sel := [.D])
 /-- *Mary*. -/
-def mary : PlanarSyntacticObject :=
+def mary : PlanarSyntacticObject TokenLeaf :=
   nominal (tok 209 .D (sel := [.n])) (tok 210 .n (sel := [.N])) (tok 211 .N "Mary")
 def tI := tok 212 .T (sel := [.v])
 def cQ := tok 213 .C (features := .single .wh true) (sel := [.T])
 
 /-- The subject *friends of* `x`. -/
-def subject (x : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def subject (x : PlanarSyntacticObject TokenLeaf) : PlanarSyntacticObject TokenLeaf :=
   subjD * (friendsN * (friends * (ofP * x)))
 
 /-- *hired Mary*, built in its own workspace. -/
-def hiredMary : PlanarSyntacticObject := hireV * (hired * mary)
+def hiredMary : PlanarSyntacticObject TokenLeaf := hireV * (hired * mary)
 
 /-- The two ways *who* can leave the subject (16): by the subject's edge while the subject is in
 situ, the cycle requiring the step before the subject moves, or directly from the moved subject. -/
@@ -215,7 +215,7 @@ def subjectInSitu (r : Route) : Derivation :=
     [.em .right hiredMary, .em .left tI]⟩
 
 /-- What raises to Spec,IP along a route: the subject with *who* at its edge, or inside it. -/
-def raisedSubject : Route → PlanarSyntacticObject
+def raisedSubject : Route → PlanarSyntacticObject TokenLeaf
   | .edge => who * subject who.toSyntacticObject.tracePlanar
   | .direct => subject who
 
@@ -256,7 +256,7 @@ theorem not_obeysFreezing_subextraction (r : Route) : ¬ (subextraction r).Obeys
 -- extracts only labeled terms
 theorem mergeOpUnit_subject_eq_zero (cuts : _) :
     Merge.mergeOpUnitOfCuts (R := ℤ) (Merge.restrictCutsOf (fun _ x ↦ IsLabeled x) cuts)
-      (raisedSubject .edge : SyntacticObject).toUnorderedTree
+      (raisedSubject .edge : SyntacticObject TokenLeaf).toUnorderedTree
       (ConnesKreimer.of' {(subjectInSitu .edge).final.toUnorderedTree}) = 0 :=
   Merge.mergeOpUnitOfCuts_restrictCutsOf_eq_zero (by decide +kernel) not_isLabeled_raisedSubject
 
@@ -270,7 +270,7 @@ theorem inaccessible_who_iff (r : Route) :
 -- so the unit stage of the Internal Merge of *who* vanishes at the phase coproduct
 theorem mergeOpUnit_who_eq_zero (cuts : _) :
     Merge.mergeOpUnitOfCuts (R := ℤ) (Merge.phaseCuts SyntacticObject.raisingHead IsPhaseHead cuts)
-      (who : SyntacticObject).toUnorderedTree
+      (who : SyntacticObject TokenLeaf).toUnorderedTree
       (ConnesKreimer.of' {(beforeExtraction .direct).final.toUnorderedTree}) = 0 :=
   Merge.mergeOpUnitOfCuts_phaseCuts_eq_zero (by decide +kernel)
     ((inaccessible_who_iff .direct).2 rfl)
@@ -298,7 +298,7 @@ theorem ex17 :
 
 def janeD := tok 220 .D (sel := [.n])
 /-- *Jane*. -/
-def jane : PlanarSyntacticObject :=
+def jane : PlanarSyntacticObject TokenLeaf :=
   nominal janeD (tok 221 .n (sel := [.N])) (tok 222 .N "Jane")
 def kiss := tok 223 .V "kiss" (sel := [.D])
 def kissV := tok 224 .v (sel := [.V])
@@ -308,7 +308,8 @@ def did := tok 225 .T "did" (sel := [.v])
 def remnantFronting : Derivation :=
   ⟨tok 211 .N "Mary", [.em .left (tok 210 .n (sel := [.N])), .em .left (tok 209 .D (sel := [.n])),
     .em .left kiss, .em .left kissV, .em .left jane, .em .left did, .im jane,
-    .im (jane.toSyntacticObject.tracePlanar * (kissV * (kiss * mary)) : PlanarSyntacticObject)]⟩
+    .im (jane.toSyntacticObject.tracePlanar * (kissV * (kiss * mary)) :
+        (PlanarSyntacticObject TokenLeaf))]⟩
 
 -- (20), (21)
 theorem ex20 : remnantFronting.surfacePhon = ["kiss", "Mary", "Jane", "did"] ∧
@@ -321,16 +322,16 @@ theorem ex20 : remnantFronting.surfacePhon = ["kiss", "Mary", "Jane", "did"] ∧
 
 def peterD := tok 230 .D "den" (sel := [.n])
 /-- *den Peter*. -/
-def peter : PlanarSyntacticObject :=
+def peter : PlanarSyntacticObject TokenLeaf :=
   nominal peterD (tok 231 .n (sel := [.N])) (tok 232 .N "Peter")
 def mag := tok 233 .V "mag" (sel := [.D])
 /-- *niemand*. -/
-def niemand : PlanarSyntacticObject :=
+def niemand : PlanarSyntacticObject TokenLeaf :=
   nominal (tok 234 .D "niemand" (sel := [.n])) (tok 235 .n (sel := [.N])) (tok 236 .N)
 def cV2 := tok 237 .C (sel := [.V])
 
 /-- The verb-second clause *den Peter mag niemand*, the object raised to its specifier. -/
-def v2Clause : PlanarSyntacticObject :=
+def v2Clause : PlanarSyntacticObject TokenLeaf :=
   peter * (cV2 * (niemand * (mag * peter.toSyntacticObject.tracePlanar)))
 
 /-- The steps that build the verb-second clause. -/
@@ -373,11 +374,11 @@ theorem v2InSitu_label_raising :
 
 def ovA := tok 250 .a "Jovanovu" (sel := [.N])
 /-- The possessive adjective *Jovanovu* 'John's'. -/
-def possessor : PlanarSyntacticObject := ovA * tok 251 .N
+def possessor : PlanarSyntacticObject TokenLeaf := ovA * tok 251 .N
 def slikaN := tok 252 .n (sel := [.N])
 def slika := tok 253 .N "sliku"
 /-- The object *Jovanovu sliku* 'John's picture', the possessor at its edge. -/
-def object : PlanarSyntacticObject := possessor * (slikaN * slika)
+def object : PlanarSyntacticObject TokenLeaf := possessor * (slikaN * slika)
 def vidio := tok 254 .V "vidio" (sel := [.n])
 def je := tok 255 .T "je" (sel := [.V])
 
@@ -405,11 +406,11 @@ theorem ex25a : possessorInSitu.ObeysFreezing ∧ ¬ possessorExtraction.ObeysFr
 /-! ### R-pronouns (37)–(42) -/
 
 /-- *waar*. -/
-def waar : PlanarSyntacticObject := nominal waarD (tok 261 .n (sel := [.N])) (tok 262 .N)
+def waar : PlanarSyntacticObject TokenLeaf := nominal waarD (tok 261 .n (sel := [.N])) (tok 262 .N)
 /-- *waar mee*, the r-pronoun in Spec,PP. -/
-def pp : PlanarSyntacticObject := waar * (mee * waar.toSyntacticObject.tracePlanar)
+def pp : PlanarSyntacticObject TokenLeaf := waar * (mee * waar.toSyntacticObject.tracePlanar)
 /-- *de vis snijden*. -/
-def snijden : PlanarSyntacticObject :=
+def snijden : PlanarSyntacticObject TokenLeaf :=
   tok 264 .V "snijden" (sel := [.D]) *
     nominal (tok 265 .D "de" (sel := [.n])) (tok 266 .n (sel := [.N])) (tok 267 .N "vis")
 def zou := tok 268 .T "zou" (sel := [.V])

@@ -8,6 +8,7 @@ module
 public import Linglib.Syntax.Minimalist.Label.Head
 public import Linglib.Syntax.Minimalist.Label.SelectionRule
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # Selection by a stack of categories
@@ -201,14 +202,14 @@ def traceState : Option LexicalItem.Token → SelectionRule.stack.State
 
 /-! ### The selection head on `SyntacticObject` -/
 
-variable (s : SyntacticObject) (tok : LexicalItem.Token)
+variable (s : SyntacticObject TokenLeaf) (tok : LexicalItem.Token)
 
 namespace SyntacticObject
 
 /-- The selection state of a syntactic object, the extension of the selection states of its
 leaves as a morphism of magmas: Merge multiplies constituents and selection multiplies their
 states. It is the selection instance of [marcolli-chomsky-berwick-2025]'s head functions. -/
-def selectionState : SyntacticObject →ₙ* SelectionRule.stack.State :=
+def selectionState : SyntacticObject TokenLeaf →ₙ* SelectionRule.stack.State :=
   FreeCommMagma.lift (Leaf.elim (fun tok ↦ .of tok tok.item.sel) traceState)
 
 /-- The projecting head's lexical item, by c-selection. -/
@@ -223,25 +224,25 @@ def cat? : Option Cat := s.selectionHead.map (·.item.cat)
   rfl
 
 @[simp] theorem selectionState_trace :
-    selectionState (trace : SyntacticObject) = .of .bareTrace [] := rfl
+    selectionState (trace : SyntacticObject TokenLeaf) = .of .bareTrace [] := rfl
 
 @[simp] theorem selectionState_traceOf : selectionState (traceOf tok) = .of tok [] := rfl
 
 @[simp] theorem selectionHead_leaf : (SyntacticObject.leaf tok).selectionHead = some tok := rfl
 
-@[simp] theorem selectionHead_merge_self (x : SyntacticObject) :
+@[simp] theorem selectionHead_merge_self (x : SyntacticObject TokenLeaf) :
     (merge x x).selectionHead = none := by
   simp [selectionHead, map_mul]
 
 /-- The selection head of a merge is the selection head of a daughter. -/
-theorem selectionHead_merge {l r : SyntacticObject} {t : LexicalItem.Token}
+theorem selectionHead_merge {l r : SyntacticObject TokenLeaf} {t : LexicalItem.Token}
     (h : (merge l r).selectionHead = some t) :
     l.selectionHead = some t ∨ r.selectionHead = some t :=
   SelectionRule.State.head_mul (map_mul selectionState l r ▸ h)
 
 /-- The selection head is a head function. -/
 theorem isHeadFunction_selectionHead :
-    IsHeadFunction (selectionHead : SyntacticObject → Option LexicalItem.Token) where
+    IsHeadFunction (selectionHead : SyntacticObject TokenLeaf → Option LexicalItem.Token) where
   eq_of_mem_leaf h := by simpa [eq_comm] using h
   mem_or_mem := selectionHead_merge
 
@@ -267,10 +268,10 @@ end SyntacticObject
 
 /-- The selection state of a tree, that of the syntactic object it is the tree of, and `0` on a
 tree that is not well formed. -/
-def treeSelectionState (t : UnorderedTree Vertex) : SelectionRule.stack.State :=
+def treeSelectionState (t : UnorderedTree (Vertex LexicalItem.Token)) : SelectionRule.stack.State :=
   if h : IsSyntacticObject t then SyntacticObject.selectionState (.ofUnorderedTree t h) else 0
 
-@[simp] theorem treeSelectionState_toUnorderedTree (s : SyntacticObject) :
+@[simp] theorem treeSelectionState_toUnorderedTree (s : SyntacticObject TokenLeaf) :
     treeSelectionState s.toUnorderedTree = SyntacticObject.selectionState s := by
   rw [treeSelectionState, dite_eq_left s.isSyntacticObject_toUnorderedTree,
     SyntacticObject.ofUnorderedTree_toUnorderedTree]

@@ -54,8 +54,8 @@ def tok (id : ℕ) (cat : Cat) (phon : String := "") (features : FeatureBundle :
   ⟨LexicalItem.of cat sel phon features, id⟩
 
 /-- A nominal: a determiner over a nominalizer and a root. -/
-def nominal (d n r : LexicalItem.Token) : PlanarSyntacticObject :=
-  (d : PlanarSyntacticObject) * ((n : PlanarSyntacticObject) * r)
+def nominal (d n r : LexicalItem.Token) : PlanarSyntacticObject TokenLeaf :=
+  (d : PlanarSyntacticObject TokenLeaf) * ((n : PlanarSyntacticObject TokenLeaf) * r)
 
 /-! ### Roots and the labeling readout -/
 
@@ -74,16 +74,17 @@ instance : DecidablePred IsCategorizer := fun _ ↦ inferInstanceAs (Decidable (
 search finds, if it qualifies; by a categorizer merged with a root; or by a feature the heads found
 agree in. -/
 def IsLabeledWith {F : Type*} (Weak : LexicalItem.Token → Prop)
-    (Agreed : F → LexicalItem.Token → LexicalItem.Token → Prop) (t : PlanarSyntacticObject)
-    (x : SyntacticObject) : Prop :=
+    (Agreed : F → LexicalItem.Token → LexicalItem.Token → Prop)
+        (t : PlanarSyntacticObject TokenLeaf)
+    (x : SyntacticObject TokenLeaf) : Prop :=
   (∃ a ∈ t.labels x, t.labels x = {a} ∧ ¬ Weak a) ∨
     (∃ k ∈ t.labels x, ∃ r ∈ t.labels x, IsCategorizer k ∧ IsRoot r ∧
-      x = ((k : PlanarSyntacticObject) * r : PlanarSyntacticObject)) ∨
+      x = ((k : PlanarSyntacticObject TokenLeaf) * r : PlanarSyntacticObject TokenLeaf)) ∨
     ∃ f, t.IsLabeledByFeature Agreed x f
 
 instance {F : Type*} [Fintype F] (Weak : LexicalItem.Token → Prop) [DecidablePred Weak]
     (Agreed : F → LexicalItem.Token → LexicalItem.Token → Prop) [∀ f, DecidableRel (Agreed f)]
-    (t : PlanarSyntacticObject) (x : SyntacticObject) :
+    (t : PlanarSyntacticObject TokenLeaf) (x : SyntacticObject TokenLeaf) :
     Decidable (IsLabeledWith Weak Agreed t x) :=
   inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
@@ -96,7 +97,7 @@ inductive Feature
 
 /-- The probe for a feature on the positions of `t`: for the interrogative feature, [wh] heads; for
 φ-features, determiner phrases. -/
-def probe (t : PlanarSyntacticObject) : Feature → Probe t.toRoseTree.Positions
+def probe (t : PlanarSyntacticObject TokenLeaf) : Feature → Probe t.toRoseTree.Positions
   | .Q => .relativized fun q ↦ ∃ a ∈ (t.termAt q).token?, a.item.IsWh
   | .phi => t.phraseProbe .D
 
@@ -111,21 +112,21 @@ instance : ∀ f, DecidablePred (Probes f)
 
 /-- Two heads agree in a feature, given the heads bearing probes, when one bears the probe and it
 finds a goal the other heads. -/
-def AgreedVia (P : Feature → LexicalItem.Token → Prop) (t : PlanarSyntacticObject)
+def AgreedVia (P : Feature → LexicalItem.Token → Prop) (t : PlanarSyntacticObject TokenLeaf)
     (f : Feature) : LexicalItem.Token → LexicalItem.Token → Prop :=
   Relation.SymmGen fun a b ↦ P f a ∧ ∃ g ∈ t.goals (probe t f) ↑a, b ∈ t.labels g
 
 instance (P : Feature → LexicalItem.Token → Prop) [∀ f, DecidablePred (P f)]
-    (t : PlanarSyntacticObject) (f : Feature) : DecidableRel (AgreedVia P t f) :=
+    (t : PlanarSyntacticObject TokenLeaf) (f : Feature) : DecidableRel (AgreedVia P t f) :=
   fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Agreement in this paper, with interrogative C and T as the probing heads. -/
-abbrev Agreed (t : PlanarSyntacticObject) : Feature → LexicalItem.Token →
+abbrev Agreed (t : PlanarSyntacticObject TokenLeaf) : Feature → LexicalItem.Token →
     LexicalItem.Token → Prop :=
   AgreedVia Probes t
 
 /-- Labeling in this paper: roots do not qualify as labels. -/
-abbrev IsLabeled (t : PlanarSyntacticObject) (x : SyntacticObject) : Prop :=
+abbrev IsLabeled (t : PlanarSyntacticObject TokenLeaf) (x : SyntacticObject TokenLeaf) : Prop :=
   IsLabeledWith IsRoot (Agreed t) t x
 
 /-! ### Copular small clauses (18) -/
@@ -135,22 +136,22 @@ def d₁ := tok 1 .D
 def n₁ := tok 2 .n
 def lightningRoot := tok 3 .N "lightning"
 /-- *lightning*. -/
-def lightning : PlanarSyntacticObject := nominal d₁ n₁ lightningRoot
+def lightning : PlanarSyntacticObject TokenLeaf := nominal d₁ n₁ lightningRoot
 def the := tok 4 .D "the"
 /-- *the cause* (of the fire). -/
-def theCause : PlanarSyntacticObject := nominal the (tok 5 .n) (tok 6 .N "cause")
+def theCause : PlanarSyntacticObject TokenLeaf := nominal the (tok 5 .n) (tok 6 .N "cause")
 
 /-- The small clause *[lightning, the cause of the fire]*. -/
-def smallClause : PlanarSyntacticObject := lightning * theCause
+def smallClause : PlanarSyntacticObject TokenLeaf := lightning * theCause
 
 /-- The copula over the small clause, before either term raises. -/
-def copular : PlanarSyntacticObject := be * smallClause
+def copular : PlanarSyntacticObject TokenLeaf := be * smallClause
 
 /-- (18): *lightning* raised over the copula, leaving its lower copy in the small clause. -/
-def copularRaised : PlanarSyntacticObject := lightning * (be * smallClause)
+def copularRaised : PlanarSyntacticObject TokenLeaf := lightning * (be * smallClause)
 
 theorem nominalizer_root_isLabeled :
-    IsLabeled copular (n₁ * lightningRoot : PlanarSyntacticObject) := by
+    IsLabeled copular (n₁ * lightningRoot : PlanarSyntacticObject TokenLeaf) := by
   decide +kernel
 
 theorem smallClause_not_isLabeled :
@@ -161,7 +162,7 @@ theorem smallClause_not_isLabeled :
 -- (18)
 theorem smallClause_isLabeledBy_of_raising :
     copularRaised.IsLabeledBy smallClause the ∧
-      copularRaised.IsLabeledBy (be * smallClause : PlanarSyntacticObject) be := by
+      copularRaised.IsLabeledBy (be * smallClause : PlanarSyntacticObject TokenLeaf) be := by
   decide +kernel
 
 /-! ### The external argument and the EPP (17), the subject (16) -/
@@ -171,24 +172,24 @@ def v := tok 8 .v
 def see := tok 9 .V "see"
 def dEA := tok 10 .D
 /-- The external argument *John*. -/
-def ea : PlanarSyntacticObject := nominal dEA (tok 11 .n) (tok 12 .N "John")
+def ea : PlanarSyntacticObject TokenLeaf := nominal dEA (tok 11 .n) (tok 12 .N "John")
 /-- The internal argument *Bill*. -/
-def ia : PlanarSyntacticObject := nominal (tok 13 .D) (tok 14 .n) (tok 15 .N "Bill")
+def ia : PlanarSyntacticObject TokenLeaf := nominal (tok 13 .D) (tok 14 .n) (tok 15 .N "Bill")
 
 /-- The verb phrase *v [see Bill]*. -/
-def vP : PlanarSyntacticObject := v * (see * ia)
+def vP : PlanarSyntacticObject TokenLeaf := v * (see * ia)
 
 /-- `β = {EA, vP}`. -/
-def beta : PlanarSyntacticObject := ea * vP
+def beta : PlanarSyntacticObject TokenLeaf := ea * vP
 
 /-- T merged with `β`, before the external argument raises. -/
-def tP : PlanarSyntacticObject := t * beta
+def tP : PlanarSyntacticObject TokenLeaf := t * beta
 
 /-- The clause with the external argument raised over T. -/
-def clause : PlanarSyntacticObject := ea * (t * beta)
+def clause : PlanarSyntacticObject TokenLeaf := ea * (t * beta)
 
 /-- The clause with the internal argument raised over T instead, the external argument in situ. -/
-def objectRaised : PlanarSyntacticObject := ia * (t * beta)
+def objectRaised : PlanarSyntacticObject TokenLeaf := ia * (t * beta)
 
 -- (17)
 theorem beta_not_isLabeled : ¬ IsLabeled tP beta ∧ tP.IsLabeledBy tP t := by
@@ -213,29 +214,29 @@ def cQ := tok 19 .C (features := .single .wh true)
 def was := tok 20 .T "was"
 def assassinated := tok 21 .V "assassinated"
 /-- *JFK*. -/
-def jfk : PlanarSyntacticObject := nominal (tok 22 .D) (tok 23 .n) (tok 24 .N "JFK")
+def jfk : PlanarSyntacticObject TokenLeaf := nominal (tok 22 .D) (tok 23 .n) (tok 24 .N "JFK")
 def inP := tok 25 .P "in" (features := .single .wh true)
 /-- *in which Texas city*. -/
-def whichCity : PlanarSyntacticObject :=
+def whichCity : PlanarSyntacticObject TokenLeaf :=
   inP * nominal (tok 26 .D "which" (features := .single .wh true)) (tok 27 .n) (tok 28 .N "city")
 
 /-- *JFK was assassinated in which Texas city*, the wh-phrase in its base position. -/
-def tP' : PlanarSyntacticObject := was * ((assassinated * jfk) * whichCity)
+def tP' : PlanarSyntacticObject TokenLeaf := was * ((assassinated * jfk) * whichCity)
 
 /-- The embedded declarative CP. -/
-def cP : PlanarSyntacticObject := c * tP'
+def cP : PlanarSyntacticObject TokenLeaf := c * tP'
 
 /-- (20): *they thought JFK was assassinated in which Texas city?*, the wh-phrase in situ. -/
-def thoughtInSitu : PlanarSyntacticObject := thought * cP
+def thoughtInSitu : PlanarSyntacticObject TokenLeaf := thought * cP
 
 /-- `α`: the wh-phrase at the edge of the embedded declarative CP. -/
-def alpha : PlanarSyntacticObject := whichCity * cP
+def alpha : PlanarSyntacticObject TokenLeaf := whichCity * cP
 
 /-- (21): *they thought [α in which Texas city [C [JFK was assassinated]]]*. -/
-def thoughtAlpha : PlanarSyntacticObject := thought * alpha
+def thoughtAlpha : PlanarSyntacticObject TokenLeaf := thought * alpha
 
 /-- The wh-phrase moved on from `α`. -/
-def movedOn : PlanarSyntacticObject := whichCity * (thought * alpha)
+def movedOn : PlanarSyntacticObject TokenLeaf := whichCity * (thought * alpha)
 
 -- (20), (21)
 theorem ex20_ex21 :
@@ -247,10 +248,10 @@ theorem alpha_isLabeledBy_of_raising : movedOn.IsLabeledBy alpha c := by
   decide +kernel
 
 /-- The embedded interrogative of (22). -/
-def alphaQ : PlanarSyntacticObject := whichCity * (cQ * tP')
+def alphaQ : PlanarSyntacticObject TokenLeaf := whichCity * (cQ * tP')
 
 /-- (22): *they wondered [α in which Texas city [β C [JFK was assassinated]]]*. -/
-def wonderedAlpha : PlanarSyntacticObject := wondered * alphaQ
+def wonderedAlpha : PlanarSyntacticObject TokenLeaf := wondered * alphaQ
 
 -- (22)
 theorem ex22 :

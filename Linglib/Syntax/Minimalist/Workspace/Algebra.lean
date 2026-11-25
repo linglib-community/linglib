@@ -89,8 +89,11 @@ open RoseTree UnorderedTree ConnesKreimer SyntacticObject
 
 /-- A trace cut of a syntactic object leaves a syntactic object. -/
 theorem IsSyntacticObject.of_mem_markerCuts
-    (τ : UnorderedTree Vertex → Option LexicalItem.Token) {T : UnorderedTree Vertex}
-    (hT : IsSyntacticObject T) {p : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
+    (τ : UnorderedTree (Vertex LexicalItem.Token) → Option LexicalItem.Token)
+        {T : UnorderedTree (Vertex LexicalItem.Token)}
+    (hT : IsSyntacticObject T)
+        {p : Forest (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+        (Vertex LexicalItem.Token)}
     (hp : p ∈ markerCuts τ T) : IsSyntacticObject p.2 :=
   UnorderedTree.Licensed.of_mem_markerCuts (R := Vertex.Licenses)
     (fun _ _ _ h ↦ (Vertex.licenses_iff_of_card_eq h).1)
@@ -100,14 +103,15 @@ namespace SyntacticObject
 
 /-- The trace cuts of a syntactic object, as pairs of the workspace of extracted terms and the
 object that remains, with the trace of the head of each extracted term in its place. -/
-noncomputable def cuts (S : SyntacticObject) : Multiset (Workspace × SyntacticObject) :=
+noncomputable def cuts (S : SyntacticObject TokenLeaf) : Multiset
+    (Workspace × SyntacticObject TokenLeaf) :=
   (markerCuts traceEncoder S.toUnorderedTree).attach.map fun p ↦
     (p.1.1.attach.map fun t ↦ ofUnorderedTree t.1 (isSyntacticObject_of_mem_subtrees S t.1
         (markerCuts_mem_subtrees_of_mem_crown traceEncoder p.2 t.2)),
       ofUnorderedTree p.1.2
         (.of_mem_markerCuts traceEncoder S.isSyntacticObject_toUnorderedTree p.2))
 
-theorem map_cuts (S : SyntacticObject) :
+theorem map_cuts (S : SyntacticObject TokenLeaf) :
     S.cuts.map (Prod.map (Multiset.map toUnorderedTree) toUnorderedTree) =
       markerCuts traceEncoder S.toUnorderedTree := by
   rw [cuts, Multiset.map_map]
@@ -118,20 +122,21 @@ theorem map_cuts (S : SyntacticObject) :
 
 /-- The deletion cuts of a syntactic object, as pairs of the workspace of extracted terms and the
 remainder of the deletion, absent when the cut leaves nothing. -/
-noncomputable def deletionCuts (S : SyntacticObject) :
-    Multiset (Workspace × Option SyntacticObject) :=
+noncomputable def deletionCuts (S : SyntacticObject TokenLeaf) :
+    Multiset (Workspace × Option (SyntacticObject TokenLeaf)) :=
   (admissibleCuts S.toUnorderedTree).attach.map fun p ↦
     (p.1.1.attach.map fun t ↦ ofUnorderedTree t.1 (isSyntacticObject_of_mem_subtrees S t.1
         (exists_mem_crown_admissibleCuts_iff.mp ⟨_, p.2, t.2⟩).1),
       (deletionQuotient Vertex.bare p.1.2).pmap ofUnorderedTree
         fun _ hr ↦ isSyntacticObject_of_deletionQuotient p.2 hr)
 
-theorem map_deletionCuts (S : SyntacticObject) :
+theorem map_deletionCuts (S : SyntacticObject TokenLeaf) :
     S.deletionCuts.map (Prod.map (Multiset.map toUnorderedTree) (Option.map toUnorderedTree)) =
       ConnesKreimer.deletionCuts Vertex.bare S.toUnorderedTree := by
   rw [deletionCuts, Multiset.map_map, ConnesKreimer.deletionCuts]
   refine (Multiset.map_congr rfl fun p _ ↦ ?_).trans
-    (Multiset.attach_map_val' _ fun q : Multiset (UnorderedTree Vertex) × UnorderedTree Vertex ↦
+    (Multiset.attach_map_val' _ fun q : Multiset (UnorderedTree (Vertex LexicalItem.Token)) ×
+        UnorderedTree (Vertex LexicalItem.Token) ↦
       (q.1, deletionQuotient Vertex.bare q.2))
   refine Prod.ext ?_ ?_
   · simp only [Function.comp_apply, Prod.map_fst, Multiset.map_map,
@@ -150,31 +155,33 @@ variable {R : Type*} [CommSemiring R]
 /-- The algebra of workspaces in the algebra of forests of labelled unordered trees, each
 syntactic object going to its tree. -/
 noncomputable def toTrees :
-    ConnesKreimer R SyntacticObject →ₐ[R] ConnesKreimer R (UnorderedTree Vertex) :=
+    ConnesKreimer R (SyntacticObject TokenLeaf) →ₐ[R] ConnesKreimer R
+        (UnorderedTree (Vertex LexicalItem.Token)) :=
   rename toUnorderedTree
 
 @[simp] theorem toTrees_of' (W : Workspace) :
     toTrees (R := R) (of' W) = of' (W.map toUnorderedTree) :=
   rename_of' _ _
 
-@[simp] theorem toTrees_ofTree (S : SyntacticObject) :
+@[simp] theorem toTrees_ofTree (S : SyntacticObject TokenLeaf) :
     toTrees (R := R) (ofTree S) = ofTree S.toUnorderedTree :=
   rename_ofTree _ _
 
 theorem toTrees_injective :
-    Function.Injective (toTrees : ConnesKreimer R SyntacticObject → _) :=
+    Function.Injective (toTrees : ConnesKreimer R (SyntacticObject TokenLeaf) → _) :=
   rename_injective toUnorderedTree_injective
 
 open scoped TensorProduct in
 /-- `toTrees` carries the contraction of a coproduct on workspaces with a workspace to the
 contraction of a coproduct on trees with its trees, when it intertwines the two coproducts. -/
 private theorem toTrees_comp_contractAlong
-    {Δ : ConnesKreimer R SyntacticObject →ₐ[R]
-      ConnesKreimer R SyntacticObject ⊗[R] ConnesKreimer R SyntacticObject}
-    {Δ' : ConnesKreimer R (UnorderedTree Vertex) →ₐ[R]
-      ConnesKreimer R (UnorderedTree Vertex) ⊗[R] ConnesKreimer R (UnorderedTree Vertex)}
+    {Δ : ConnesKreimer R (SyntacticObject TokenLeaf) →ₐ[R]
+      ConnesKreimer R (SyntacticObject TokenLeaf) ⊗[R] ConnesKreimer R (SyntacticObject TokenLeaf)}
+    {Δ' : ConnesKreimer R (UnorderedTree (Vertex LexicalItem.Token)) →ₐ[R]
+      ConnesKreimer R (UnorderedTree (Vertex LexicalItem.Token)) ⊗[R] ConnesKreimer R
+          (UnorderedTree (Vertex LexicalItem.Token))}
     (h : (Algebra.TensorProduct.map toTrees toTrees).comp Δ = Δ'.comp toTrees) (W : Workspace)
-    (x : ConnesKreimer R SyntacticObject) :
+    (x : ConnesKreimer R (SyntacticObject TokenLeaf)) :
     toTrees (contractAlong Δ.toLinearMap (lcoeff R W) x) =
       contractAlong Δ'.toLinearMap (lcoeff R (W.map toUnorderedTree)) (toTrees x) := by
   have h' : TensorProduct.map (toTrees (R := R)).toLinearMap toTrees.toLinearMap ∘ₗ
@@ -195,8 +202,8 @@ private theorem toTrees_comp_contractAlong
 open scoped TensorProduct in
 /-- The trace coproduct `Δ^c` on the algebra of workspaces, each cut leaving the trace of the head
 of each extracted term in its place. -/
-noncomputable def traceComul : ConnesKreimer R SyntacticObject →ₐ[R]
-    ConnesKreimer R SyntacticObject ⊗[R] ConnesKreimer R SyntacticObject :=
+noncomputable def traceComul : ConnesKreimer R (SyntacticObject TokenLeaf) →ₐ[R]
+    ConnesKreimer R (SyntacticObject TokenLeaf) ⊗[R] ConnesKreimer R (SyntacticObject TokenLeaf) :=
   aeval fun S ↦ ofTree S ⊗ₜ[R] 1 + (S.cuts.map fun p ↦ of' (R := R) p.1 ⊗ₜ[R] ofTree p.2).sum
 
 /-- `toTrees` intertwines the trace coproduct on workspaces with the trace coproduct on trees. -/
@@ -214,20 +221,21 @@ theorem map_toTrees_comp_traceComul :
 contraction of the trace coproduct with the workspace of `S` and `S'`. On a workspace `W` it is
 the sum, over the cuts of `W` that extract `S` and `S'`, of the workspace with `{S, S'}` beside
 what the cut leaves, a trace in place of each extracted term. -/
-noncomputable def traceMergeOp (S S' : SyntacticObject) :
-    ConnesKreimer R SyntacticObject →ₗ[R] ConnesKreimer R SyntacticObject :=
+noncomputable def traceMergeOp (S S' : SyntacticObject TokenLeaf) :
+    ConnesKreimer R (SyntacticObject TokenLeaf) →ₗ[R] ConnesKreimer R (SyntacticObject TokenLeaf) :=
   LinearMap.mulLeft R (ofTree (SyntacticObject.merge S S')) ∘ₗ
     contractAlong (traceComul (R := R)).toLinearMap (lcoeff R ({S, S'} : Workspace))
 
 /-- The unit stage at the trace cuts on the algebra of workspaces: on a workspace `W`, the sum
 over the cuts of `W` that extract `S` of the workspace with `S` beside what the cut leaves. -/
-noncomputable def traceMergeOpUnit (S : SyntacticObject) :
-    ConnesKreimer R SyntacticObject →ₗ[R] ConnesKreimer R SyntacticObject :=
+noncomputable def traceMergeOpUnit (S : SyntacticObject TokenLeaf) :
+    ConnesKreimer R (SyntacticObject TokenLeaf) →ₗ[R] ConnesKreimer R (SyntacticObject TokenLeaf) :=
   LinearMap.mulLeft R (ofTree S) ∘ₗ
     contractAlong (traceComul (R := R)).toLinearMap (lcoeff R ({S} : Workspace))
 
 /-- `toTrees` intertwines Merge on workspaces with Merge at the trace cuts. -/
-theorem toTrees_traceMergeOp (S S' : SyntacticObject) (x : ConnesKreimer R SyntacticObject) :
+theorem toTrees_traceMergeOp (S S' : SyntacticObject TokenLeaf)
+    (x : ConnesKreimer R (SyntacticObject TokenLeaf)) :
     toTrees (traceMergeOp S S' x) =
       Merge.traceMergeOp traceEncoder Vertex.bare S.toUnorderedTree S'.toUnorderedTree
         (toTrees x) := by
@@ -237,20 +245,21 @@ theorem toTrees_traceMergeOp (S S' : SyntacticObject) (x : ConnesKreimer R Synta
   rfl
 
 /-- `toTrees` intertwines the unit stage on workspaces with the unit stage at the trace cuts. -/
-theorem toTrees_traceMergeOpUnit (S : SyntacticObject) (x : ConnesKreimer R SyntacticObject) :
+theorem toTrees_traceMergeOpUnit (S : SyntacticObject TokenLeaf)
+    (x : ConnesKreimer R (SyntacticObject TokenLeaf)) :
     toTrees (traceMergeOpUnit S x) =
       Merge.traceMergeOpUnit traceEncoder S.toUnorderedTree (toTrees x) := by
   rw [traceMergeOpUnit, LinearMap.comp_apply, LinearMap.mulLeft_apply, map_mul, toTrees_ofTree,
     toTrees_comp_contractAlong map_toTrees_comp_traceComul]
   rfl
 
-theorem toTrees_traceMergeOp_of' (S S' : SyntacticObject) (W : Workspace) :
+theorem toTrees_traceMergeOp_of' (S S' : SyntacticObject TokenLeaf) (W : Workspace) :
     toTrees (traceMergeOp (R := R) S S' (of' W)) =
       Merge.traceMergeOp traceEncoder Vertex.bare S.toUnorderedTree S'.toUnorderedTree
         (of' (W.map toUnorderedTree)) := by
   rw [toTrees_traceMergeOp, toTrees_of']
 
-theorem toTrees_traceMergeOpUnit_of' (S : SyntacticObject) (W : Workspace) :
+theorem toTrees_traceMergeOpUnit_of' (S : SyntacticObject TokenLeaf) (W : Workspace) :
     toTrees (traceMergeOpUnit (R := R) S (of' W)) =
       Merge.traceMergeOpUnit traceEncoder S.toUnorderedTree (of' (W.map toUnorderedTree)) := by
   rw [toTrees_traceMergeOpUnit, toTrees_of']
@@ -263,8 +272,8 @@ The remainder of a deletion of a syntactic object is a syntactic object, so the 
 
 open scoped TensorProduct in
 /-- The deletion coproduct `Δ^d` on the algebra of workspaces. -/
-noncomputable def deletionComul : ConnesKreimer R SyntacticObject →ₐ[R]
-    ConnesKreimer R SyntacticObject ⊗[R] ConnesKreimer R SyntacticObject :=
+noncomputable def deletionComul : ConnesKreimer R (SyntacticObject TokenLeaf) →ₐ[R]
+    ConnesKreimer R (SyntacticObject TokenLeaf) ⊗[R] ConnesKreimer R (SyntacticObject TokenLeaf) :=
   aeval fun S ↦ ofTree S ⊗ₜ[R] 1 +
     (S.deletionCuts.map fun p ↦ of' (R := R) p.1 ⊗ₜ[R] p.2.elim 1 ofTree).sum
 
@@ -283,19 +292,20 @@ theorem map_toTrees_comp_deletionComul :
 /-- The Merge operator `M_{S,S'}` of [marcolli-chomsky-berwick-2025] Definition 1.3.4 on the
 algebra of workspaces: multiplication by `{S, S'}` after contraction of the deletion coproduct
 with the workspace of `S` and `S'`. -/
-noncomputable def mergeOp (S S' : SyntacticObject) :
-    ConnesKreimer R SyntacticObject →ₗ[R] ConnesKreimer R SyntacticObject :=
+noncomputable def mergeOp (S S' : SyntacticObject TokenLeaf) :
+    ConnesKreimer R (SyntacticObject TokenLeaf) →ₗ[R] ConnesKreimer R (SyntacticObject TokenLeaf) :=
   LinearMap.mulLeft R (ofTree (SyntacticObject.merge S S')) ∘ₗ
     contractAlong (deletionComul (R := R)).toLinearMap (lcoeff R ({S, S'} : Workspace))
 
 /-- The unit stage `M_{S,1}` at the deletion coproduct on the algebra of workspaces. -/
-noncomputable def mergeOpUnit (S : SyntacticObject) :
-    ConnesKreimer R SyntacticObject →ₗ[R] ConnesKreimer R SyntacticObject :=
+noncomputable def mergeOpUnit (S : SyntacticObject TokenLeaf) :
+    ConnesKreimer R (SyntacticObject TokenLeaf) →ₗ[R] ConnesKreimer R (SyntacticObject TokenLeaf) :=
   LinearMap.mulLeft R (ofTree S) ∘ₗ
     contractAlong (deletionComul (R := R)).toLinearMap (lcoeff R ({S} : Workspace))
 
 /-- `toTrees` intertwines Merge on workspaces with Merge at the deletion coproduct on trees. -/
-theorem toTrees_mergeOp (S S' : SyntacticObject) (x : ConnesKreimer R SyntacticObject) :
+theorem toTrees_mergeOp (S S' : SyntacticObject TokenLeaf)
+    (x : ConnesKreimer R (SyntacticObject TokenLeaf)) :
     toTrees (mergeOp S S' x) =
       Merge.mergeOp Vertex.bare S.toUnorderedTree S'.toUnorderedTree (toTrees x) := by
   rw [mergeOp, LinearMap.comp_apply, LinearMap.mulLeft_apply, map_mul, toTrees_ofTree,
@@ -305,7 +315,8 @@ theorem toTrees_mergeOp (S S' : SyntacticObject) (x : ConnesKreimer R SyntacticO
 
 /-- `toTrees` intertwines the unit stage on workspaces with the unit stage at the deletion
 coproduct on trees. -/
-theorem toTrees_mergeOpUnit (S : SyntacticObject) (x : ConnesKreimer R SyntacticObject) :
+theorem toTrees_mergeOpUnit (S : SyntacticObject TokenLeaf)
+    (x : ConnesKreimer R (SyntacticObject TokenLeaf)) :
     toTrees (mergeOpUnit S x) = Merge.mergeOpUnit Vertex.bare S.toUnorderedTree (toTrees x) := by
   rw [mergeOpUnit, LinearMap.comp_apply, LinearMap.mulLeft_apply, map_mul, toTrees_ofTree,
     toTrees_comp_contractAlong map_toTrees_comp_deletionComul]
@@ -313,7 +324,7 @@ theorem toTrees_mergeOpUnit (S : SyntacticObject) (x : ConnesKreimer R Syntactic
 
 /-- External Merge at the deletion coproduct: Merge of the two members of a workspace is their
 merge. -/
-theorem mergeOp_of'_pair (S S' : SyntacticObject) :
+theorem mergeOp_of'_pair (S S' : SyntacticObject TokenLeaf) :
     mergeOp (R := ℤ) S S' (of' {S, S'}) = of' {SyntacticObject.merge S S'} :=
   toTrees_injective <| by
     rw [toTrees_mergeOp, toTrees_of', toTrees_of']
@@ -321,12 +332,13 @@ theorem mergeOp_of'_pair (S S' : SyntacticObject) :
 
 /-- Internal Merge at the deletion coproduct: when one deletion extracts the mover, the unit
 stage followed by Merge with the remainder `Q` yields the one object `{Q, mover}`. -/
-theorem mergeOp_mergeOpUnit_of'_singleton {current mover : SyntacticObject}
-    {p0 : Multiset (UnorderedTree Vertex) × UnorderedTree Vertex}
+theorem mergeOp_mergeOpUnit_of'_singleton {current mover : SyntacticObject TokenLeaf}
+    {p0 : Multiset (UnorderedTree (Vertex LexicalItem.Token)) × UnorderedTree
+        (Vertex LexicalItem.Token)}
     (h : (admissibleCuts current.toUnorderedTree).filter
         (fun p ↦ p.1 = {mover.toUnorderedTree}) = {p0})
     (hne : current ≠ mover) :
-    ∃ Q : SyntacticObject, Q.toUnorderedTree = p0.2.contractUnary ∧
+    ∃ Q : SyntacticObject TokenLeaf, Q.toUnorderedTree = p0.2.contractUnary ∧
       mergeOp (R := ℤ) Q mover (mergeOpUnit mover (of' {current})) =
         of' {SyntacticObject.merge Q mover} := by
   obtain ⟨Q, hQ, hm⟩ := mergeOp_im h hne
@@ -336,7 +348,7 @@ theorem mergeOp_mergeOpUnit_of'_singleton {current mover : SyntacticObject}
 
 /-! ### The forms of Merge -/
 
-variable {S S' T T' mover current : SyntacticObject} {W : Workspace}
+variable {S S' T T' mover current : SyntacticObject TokenLeaf} {W : Workspace}
 
 /-- External Merge: Merge of two members of a workspace that no other member contains is MERGE. -/
 theorem traceMergeOp_of' (hle : {S, S'} ≤ W) (hW : ∀ U ∈ W - {S, S'}, S ∉ U.terms ∧ S' ∉ U.terms) :

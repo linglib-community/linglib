@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 public import Linglib.Syntax.Tree.Basic
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # Planar syntactic objects as constituency trees

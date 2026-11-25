@@ -50,7 +50,7 @@ instance (d : Derivation ι) (n : Nat)
       rw [CCommandsAt, ← d.externalize?_take_faithful n h])
   | none => inferInstanceAs (Decidable (CCommands (d.stageAt n τ) x y))
 
-variable {d : Derivation} {steps : List Step} {n : Nat} {x y : SyntacticObject}
+variable {d : Derivation} {steps : List Step} {n : Nat} {x y : SyntacticObject TokenLeaf}
 
 theorem CCommandsAt.cCommands_stageAt (h : d.CCommandsAt n x y) :
     CCommands (d.stageAt n) x y := h

@@ -202,12 +202,6 @@ end PlanarSyntacticObject
 
 namespace SyntacticObject
 
-/-! ### Lexical leaves from features -/
-
-/-- A lexical leaf with a phonological form. -/
-def mkLeafPhon (cat : Cat) (sel : List Cat) (phon : String) (id : Nat) : SyntacticObject :=
-  SyntacticObject.leaf ⟨.of cat sel (phonForm := phon), id⟩
-
 /-! ### Accessors -/
 
 /-- The lexical token at the root, if the root is a lexical leaf. -/
@@ -224,18 +218,6 @@ def token? (s : SyntacticObject (SyntacticObject.Leaf L ι)) : Option L :=
 
 @[simp] theorem token?_labelledTrace (i : ι) :
     (labelledTrace i : SyntacticObject (SyntacticObject.Leaf L ι)).token? = none := rfl
-
-/-- `s` is a lexical leaf whose item's category is `c`. -/
-def isLeafOf (c : Cat) (s : SyntacticObject) : Prop :=
-  s.token?.map (·.item.cat) = some c
-
-instance (c : Cat) : DecidablePred (isLeafOf c) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
-
-@[simp] theorem isLeafOf_leaf (c : Cat) (tok : LexicalItem.Token) :
-    isLeafOf c (SyntacticObject.leaf tok) ↔ tok.item.cat = c := by
-  simp [isLeafOf]
-
-@[simp] theorem not_isLeafOf_trace (c : Cat) : ¬ isLeafOf c trace := by simp [isLeafOf]
 
 theorem traceOf_ne_trace (tok : L) : traceOf tok ≠ trace := by
   intro h
@@ -256,11 +238,6 @@ theorem token?_eq_some_iff {s : SyntacticObject (SyntacticObject.Leaf L ι)} {to
 theorem token?_map {L' : Type} (f : L → L') (s : SyntacticObject (SyntacticObject.Leaf L L)) :
     (s.map f).token? = s.token?.map f := by
   rcases s.exists_form with ⟨a, rfl⟩ | rfl | ⟨a, rfl⟩ | ⟨l, r, rfl⟩ <;> simp
-
-theorem isLeafOf_map {f : LexicalItem.Token → LexicalItem.Token}
-    (hcat : ∀ t, (f t).item.cat = t.item.cat) (c : Cat) (s : SyntacticObject) :
-    isLeafOf c (s.map f) ↔ isLeafOf c s := by
-  simp [isLeafOf, token?_map, Option.map_map, Function.comp_def, hcat]
 
 /-- A shape summary; the full tree is a quotient with no faithful readout. -/
 instance [Repr L] : Repr (SyntacticObject (SyntacticObject.Leaf L ι)) where

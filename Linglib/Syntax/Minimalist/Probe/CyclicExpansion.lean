@@ -28,7 +28,7 @@ list.
 namespace Minimalist
 
 
-variable (hd : HeadDaughter) (t : PlanarSyntacticObject)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject TokenLeaf)
 
 /-- The projections of the position `a`, from `a` up to its maximal projection. -/
 def projectionsOf (a : GornAddress) : List GornAddress :=

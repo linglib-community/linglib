@@ -303,28 +303,30 @@ def phaseHeads (sp : Spine Head) : List LexicalItem.Token :=
   (sp.heads.zipIdx.filter (·.1.phase)).map fun x ↦ tokOf sp x.2 x.1
 
 /-- The copy of the subject at height `j`, when it is pronounced at height `k`. -/
-def copyAt (k j : ℕ) : PlanarSyntacticObject := if j = k then .leaf subj else .traceOf subj
+def copyAt (k j : ℕ) : PlanarSyntacticObject TokenLeaf := if j = k then .leaf subj else .traceOf
+    subj
 
 /-- Once the first `n` heads are merged, the tree has the subject pronounced at its height then,
 with deleted copies at its base and in every specifier it passed through. -/
-def treeAt (sp : Spine Head) (n : ℕ) : PlanarSyntacticObject :=
+def treeAt (sp : Spine Head) (n : ℕ) : PlanarSyntacticObject TokenLeaf :=
   let k := (stateAt sp n).height
-  (copyAt k 0 * (v * (V * obj)) : PlanarSyntacticObject).extend .v 10
+  (copyAt k 0 * (v * (V * obj)) : PlanarSyntacticObject TokenLeaf).extend .v 10
     (fun i ↦ sp.heads[i]?.bind fun h ↦ if h.epp ∧ i + 1 ≤ k then some (copyAt k (i + 1)) else none)
     ((sp.map Head.cat).take n).heads
 
 /-- The tree in which the head `hd` at index `i` has just merged. -/
-def probeTree (sp : Spine Head) (i : ℕ) (hd : Head) : PlanarSyntacticObject :=
+def probeTree (sp : Spine Head) (i : ℕ) (hd : Head) : PlanarSyntacticObject TokenLeaf :=
   .leaf (tokOf sp i hd) * treeAt sp i
 
 /-- The pronounced subject is accessible to the head at index `i`, merged on the tree built so
 far, when it lies in no complement of a phase head transferred by then under the schedule `pic`. -/
-def TreeAccessible (pic : PlanarSyntacticObject → Schedule) (sp : Spine Head) (i : ℕ) : Prop :=
+def TreeAccessible (pic : PlanarSyntacticObject TokenLeaf → Schedule) (sp : Spine Head) (i : ℕ) :
+    Prop :=
   ∀ hd ∈ sp.heads[i]?, ∀ q ∈ occurrences (probeTree sp i hd) subj,
     q ∉ sealed (occurrencesWith (probeTree sp i hd) (· ∈ phaseHeads sp)).toFinset
       complementDomain (pic (probeTree sp i hd)) ⊥
 
-instance (pic : PlanarSyntacticObject → Schedule) [∀ t Φ h s, Decidable (pic t Φ h s)]
+instance (pic : PlanarSyntacticObject TokenLeaf → Schedule) [∀ t Φ h s, Decidable (pic t Φ h s)]
     (sp : Spine Head) (i : ℕ) : Decidable (TreeAccessible pic sp i) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, ∀ _ ∈ _, ¬ _))
 

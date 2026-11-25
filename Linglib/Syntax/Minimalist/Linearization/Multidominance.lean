@@ -67,22 +67,24 @@ namespace Minimalist
 
 open RoseTree SyntacticObject
 
-variable (pick : List GornAddress → Option GornAddress) (t : PlanarSyntacticObject)
+variable (pick : List GornAddress → Option GornAddress) (t : PlanarSyntacticObject TokenLeaf)
 
 /-- The mothers of `s` in `t`: the terms of `t` with `s` as a daughter. -/
-def mothers (s : RoseTree Vertex) : List (RoseTree Vertex) :=
+def mothers (s : RoseTree (Vertex LexicalItem.Token)) : List (RoseTree (Vertex LexicalItem.Token))
+    :=
   (t.toRoseTree.subtrees.filter (s ∈ ·.children)).dedup
 
 /-- `m` is a highest mother of `s`: a mother of `s` that no other mother of `s` dominates. -/
-def IsHighestMother (s m : RoseTree Vertex) : Prop :=
+def IsHighestMother (s m : RoseTree (Vertex LexicalItem.Token)) : Prop :=
   s ∈ m.children ∧ ∀ g ∈ mothers t s, ¬ (IsSubtree m g ∧ m ≠ g)
 
-instance (s m : RoseTree Vertex) : Decidable (IsHighestMother t s m) :=
+instance (s m : RoseTree (Vertex LexicalItem.Token)) : Decidable (IsHighestMother t s m) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The positions at which `s` may be pronounced once `pos` places its mothers: its occurrences,
 left to right, under a highest mother pronounced there. -/
-def candidates (pos : RoseTree Vertex → Option GornAddress) (s : RoseTree Vertex) : List
+def candidates (pos : RoseTree (Vertex LexicalItem.Token) → Option GornAddress)
+    (s : RoseTree (Vertex LexicalItem.Token)) : List
     GornAddress :=
   (t.toRoseTree.positionedSubtrees.filter fun x ↦ x.2 = s ∧
     t.toRoseTree[x.1.parent.toList]?.any fun m ↦
@@ -90,12 +92,12 @@ def candidates (pos : RoseTree Vertex → Option GornAddress) (s : RoseTree Vert
 
 /-- Where `s` is pronounced, within `n` steps of the root: the root at the root, and any other term
 at the candidate `pick` chooses. -/
-def spellOutPositionAux : ℕ → RoseTree Vertex → Option GornAddress
+def spellOutPositionAux : ℕ → RoseTree (Vertex LexicalItem.Token) → Option GornAddress
   | 0, _ => none
   | n + 1, s => if s = t.toRoseTree then some ⊥ else pick (candidates t (spellOutPositionAux n) s)
 
 /-- The position at which `s` is pronounced, `none` when `s` is not a term of `t`. -/
-def spellOutPosition (s : RoseTree Vertex) : Option GornAddress :=
+def spellOutPosition (s : RoseTree (Vertex LexicalItem.Token)) : Option GornAddress :=
   spellOutPositionAux pick t (t.toRoseTree.numNodes + 1) s
 
 /-- The pronounced tokens, left to right: each at the position where its leaf is pronounced. -/
@@ -113,7 +115,8 @@ theorem nodup_remergedYield : (remergedYield pick t).Nodup := by
 
 /-! ### Candidates -/
 
-variable {pick t} {pos pos' : RoseTree Vertex → Option GornAddress} {s : RoseTree Vertex}
+variable {pick t} {pos pos' : RoseTree (Vertex LexicalItem.Token) → Option GornAddress}
+    {s : RoseTree (Vertex LexicalItem.Token)}
 
 theorem mem_candidates {p : GornAddress} :
     p ∈ candidates t pos s ↔ t.toRoseTree[p.toList]? = some s ∧
@@ -169,7 +172,8 @@ theorem candidates_ne_nil (hs : IsSubtree s t.toRoseTree) (hroot : s ≠ t.toRos
 the root and `pick` chooses among the positions it is given. -/
 theorem exists_spellOutPositionAux
     (hpick : ∀ l : List GornAddress, l ≠ [] → ∃ p ∈ l, pick l = some p) :
-    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes +
+    ∀ (n : ℕ) (s : RoseTree (Vertex LexicalItem.Token)), IsSubtree s t.toRoseTree →
+        t.toRoseTree.numNodes < s.numNodes +
         n →
       ∃ p, spellOutPositionAux pick t n s = some p ∧ t.toRoseTree[p.toList]? = some s
   | 0, s, hs, hn => absurd hs.numNodes_le (by omega)
@@ -182,7 +186,8 @@ theorem exists_spellOutPositionAux
     exact ⟨p, hpick', (mem_candidates.1 hp).1⟩
 
 /-- The term at a position holding a token is that token's leaf. -/
-theorem eq_leaf_of_getElem? {p : List ℕ} {s : RoseTree Vertex} {tok : LexicalItem.Token}
+theorem eq_leaf_of_getElem? {p : List ℕ} {s : RoseTree (Vertex LexicalItem.Token)}
+    {tok : LexicalItem.Token}
     (hs : t.toRoseTree[p]? = some s) (hv : s.value = .lex tok) : s = .node (.lex tok) [] := by
   obtain ⟨a, cs⟩ := s
   obtain rfl : a = .lex tok := hv
@@ -217,7 +222,7 @@ theorem remergedYield_perm_tokens
 
 /-! ### Movement -/
 
-theorem mem_mothers {g : RoseTree Vertex} :
+theorem mem_mothers {g : RoseTree (Vertex LexicalItem.Token)} :
     g ∈ mothers t s ↔ IsSubtree g t.toRoseTree ∧ s ∈ g.children := by
   simp [mothers, mem_subtrees]
 
@@ -229,7 +234,7 @@ theorem eq_of_mem_candidates
     {p q : GornAddress} (hp : p ∈ candidates t pos s) (hq : q ∈ candidates t pos s) : p = q := by
   obtain ⟨hps, m, hm, hhm, hposp⟩ := mem_candidates.1 hp
   obtain ⟨hqs, m', hm', hhm', hposq⟩ := mem_candidates.1 hq
-  have hmem : ∀ {g : RoseTree Vertex} {r : List ℕ}, t.toRoseTree[r]? = some g →
+  have hmem : ∀ {g : RoseTree (Vertex LexicalItem.Token)} {r : List ℕ}, t.toRoseTree[r]? = some g →
       s ∈ g.children → g ∈ mothers t s :=
     fun h hs ↦ mem_mothers.2 ⟨isSubtree_iff_exists_getElem?.2 ⟨_, h⟩, hs⟩
   obtain rfl : m = m' := by
@@ -267,7 +272,8 @@ theorem spellOutPositionAux_eq_of_chain {pick' : List GornAddress → Option Gor
     (hchain : ∀ s ∈ t.toRoseTree.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
       IsSubtree g g' ∨ IsSubtree g' g)
     (hself : ∀ g ∈ t.toRoseTree.subtrees, g.children.Nodup) :
-    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes +
+    ∀ (n : ℕ) (s : RoseTree (Vertex LexicalItem.Token)), IsSubtree s t.toRoseTree →
+        t.toRoseTree.numNodes < s.numNodes +
         n →
       spellOutPositionAux pick t n s = spellOutPositionAux pick' t n s
   | 0, _, _, _ => rfl
@@ -303,7 +309,7 @@ theorem remergedYield_eq_of_chain {pick' : List GornAddress → Option GornAddre
 
 variable (t) in
 /-- The positions of `s` in `t`, left to right. -/
-def positionsOf (s : RoseTree Vertex) : List GornAddress :=
+def positionsOf (s : RoseTree (Vertex LexicalItem.Token)) : List GornAddress :=
   (t.toRoseTree.positionedSubtrees.filter (·.2 = s)).map Prod.fst
 
 theorem mem_positionsOf {p : GornAddress} :
@@ -382,7 +388,8 @@ pronounced last is pronounced at its last position. -/
 theorem spellOutPositionAux_getLast?
     (hshare : ∀ s ∈ t.toRoseTree.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
       IsSubtree g g' → g = g') :
-    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes +
+    ∀ (n : ℕ) (s : RoseTree (Vertex LexicalItem.Token)), IsSubtree s t.toRoseTree →
+        t.toRoseTree.numNodes < s.numNodes +
         n →
       spellOutPositionAux List.getLast? t n s = (positionsOf t s).getLast?
   | 0, s, hs, hn => absurd hs.numNodes_le (by omega)

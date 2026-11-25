@@ -45,35 +45,43 @@ open RoseTree SyntacticObject
 
 /-- The term of the copy object a tree is a copy of, its marks forgotten. Marking leaves it
 unchanged, so it names a chain at every stage of a derivation. -/
-def termOf (r : RoseTree (CopyMark × Vertex)) : UnorderedTree Vertex :=
+def termOf (r : RoseTree (CopyMark × Vertex LexicalItem.Token)) : UnorderedTree
+    (Vertex LexicalItem.Token) :=
   UnorderedTree.mk (r.map Prod.snd)
 
 /-- The mark of a lower copy of `x` in `y`: a marked subtree of `y` with the term of `x`. -/
-def lowerCopy? (x y : RoseTree (CopyMark × Vertex)) : Option (Option LexicalItem.Token) :=
+def lowerCopy? (x y : RoseTree (CopyMark × Vertex LexicalItem.Token)) : Option
+    (Option LexicalItem.Token) :=
   y.subtrees.findSome? fun r ↦ r.value.1.bind fun l ↦ if termOf r = termOf x then some l else none
 
 /-- The chain of the copy `r` is read low in the reading `low`. -/
-def ReadLow (low : Finset SyntacticObject) (r : RoseTree (CopyMark × Vertex)) : Prop :=
+def ReadLow (low : Finset (SyntacticObject TokenLeaf))
+    (r : RoseTree (CopyMark × Vertex LexicalItem.Token)) : Prop :=
   ∃ m ∈ low, m.toUnorderedTree = termOf r
 
-instance (low : Finset SyntacticObject) : DecidablePred (ReadLow low) :=
+instance (low : Finset (SyntacticObject TokenLeaf)) : DecidablePred (ReadLow low) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ low, _))
 
-@[simp] theorem not_readLow_empty (r : RoseTree (CopyMark × Vertex)) : ¬ ReadLow ∅ r := by
+@[simp] theorem not_readLow_empty (r : RoseTree (CopyMark × Vertex LexicalItem.Token)) : ¬ ReadLow
+    ∅ r := by
   simp [ReadLow]
 
 section Reading
 
-variable {β : Type*} (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low]
-  (tr : RoseTree (CopyMark × Vertex) → Option LexicalItem.Token → β) (nd : Vertex → List β → β)
-  (wrap : Option LexicalItem.Token → β → β) (del : RoseTree (CopyMark × Vertex) → Vertex → β → β)
+variable {β : Type*} (low : RoseTree (CopyMark × Vertex LexicalItem.Token) → Prop)
+    [DecidablePred low]
+  (tr : RoseTree (CopyMark × Vertex LexicalItem.Token) → Option LexicalItem.Token → β)
+      (nd : Vertex LexicalItem.Token → List β → β)
+  (wrap : Option LexicalItem.Token → β → β)
+      (del : RoseTree (CopyMark × Vertex LexicalItem.Token) → Vertex LexicalItem.Token → β → β)
 
 /-- A node with its daughters, each paired with what it reads as. A copy of a chain read low is
 deleted at its movement node by `del`, which receives that copy and what the other daughter reads
 as, and `wrap` goes around the other daughter of a copy of a chain read high. A marked copy reads as
 `tr` of itself and its mark if its chain is read high. -/
-def readStep (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex) × β)) :
-    RoseTree (CopyMark × Vertex) × β :=
+def readStep (v : CopyMark × Vertex LexicalItem.Token)
+    (cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token) × β)) :
+    RoseTree (CopyMark × Vertex LexicalItem.Token) × β :=
   let raw := RoseTree.node v (cs.map Prod.fst)
   let plain : β :=
     match cs with
@@ -88,10 +96,10 @@ def readStep (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex) 
     | none => plain)
 
 /-- What a marked tree reads as, under `readStep`. -/
-def reading (t : RoseTree (CopyMark × Vertex)) : β :=
+def reading (t : RoseTree (CopyMark × Vertex LexicalItem.Token)) : β :=
   (fold (readStep low tr nd wrap del) t).2
 
-theorem fold_readStep (t : RoseTree (CopyMark × Vertex)) :
+theorem fold_readStep (t : RoseTree (CopyMark × Vertex LexicalItem.Token)) :
     fold (readStep low tr nd wrap del) t = (t, reading low tr nd wrap del t) := by
   refine Prod.ext ?_ rfl
   induction t with
@@ -100,7 +108,8 @@ theorem fold_readStep (t : RoseTree (CopyMark × Vertex)) :
     congr 1
     exact (List.map_congr_left ih).trans (List.map_id' _)
 
-theorem reading_node (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
+theorem reading_node (v : CopyMark × Vertex LexicalItem.Token)
+    (cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))) :
     reading low tr nd wrap del (.node v cs) =
       (readStep low tr nd wrap del v (cs.map fun c ↦ (c, reading low tr nd wrap del c))).2 := by
   rw [reading, fold_node]
@@ -108,15 +117,16 @@ theorem reading_node (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × 
   exact List.map_congr_left fun c _ ↦ fold_readStep low tr nd wrap del c
 
 /-- A lower copy reads as `tr` if its chain is read high, and otherwise as if it were not one. -/
-theorem reading_some (l : Option LexicalItem.Token) (a : Vertex)
-    (cs : List (RoseTree (CopyMark × Vertex))) :
+theorem reading_some (l : Option LexicalItem.Token) (a : Vertex LexicalItem.Token)
+    (cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))) :
     reading low tr nd wrap del (.node (some l, a) cs) =
       if low (.node (some l, a) cs) then reading low tr nd wrap del (.node (none, a) cs)
       else tr (.node (some l, a) cs) l := by
   rw [reading_node, reading_node]
   simp [readStep, List.map_map, Function.comp_def]
 
-theorem reading_of_length_ne (a : Vertex) {cs : List (RoseTree (CopyMark × Vertex))}
+theorem reading_of_length_ne (a : Vertex LexicalItem.Token)
+    {cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))}
     (hc : cs.length ≠ 2) :
     reading low tr nd wrap del (.node (none, a) cs) =
       nd a (cs.map (reading low tr nd wrap del)) := by
@@ -129,7 +139,8 @@ theorem reading_of_length_ne (a : Vertex) {cs : List (RoseTree (CopyMark × Vert
 
 /-- A binary node, when `wrap` does nothing: a daughter that has a lower copy in the other is
 deleted if its chain is read low. -/
-theorem reading_pair (hw : ∀ l b, wrap l b = b) (a : Vertex) (u v : RoseTree (CopyMark × Vertex)) :
+theorem reading_pair (hw : ∀ l b, wrap l b = b) (a : Vertex LexicalItem.Token)
+    (u v : RoseTree (CopyMark × Vertex LexicalItem.Token)) :
     reading low tr nd wrap del (.node (none, a) [u, v]) =
       if (lowerCopy? u v).isSome then
         if low u then del u a (reading low tr nd wrap del v)
@@ -144,36 +155,39 @@ theorem reading_pair (hw : ∀ l b, wrap l b = b) (a : Vertex) (u v : RoseTree (
 
 end Reading
 
-theorem isSome_lowerCopy?_iff {u v : RoseTree (CopyMark × Vertex)} :
+theorem isSome_lowerCopy?_iff {u v : RoseTree (CopyMark × Vertex LexicalItem.Token)} :
     (lowerCopy? u v).isSome ↔ ∃ r ∈ v.subtrees, r.value.1.isSome ∧ termOf r = termOf u := by
   rw [lowerCopy?, List.findSome?_isSome_iff]
   refine exists_congr fun r ↦ and_congr_right fun _ ↦ ?_
   rcases r.value.1 with _ | l <;> by_cases h : termOf r = termOf u <;> simp [h]
 
 /-- The object a test of copies gives, as a tree of vertices. -/
-def lfBy (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low] :
-    RoseTree (CopyMark × Vertex) → RoseTree Vertex :=
+def lfBy (low : RoseTree (CopyMark × Vertex LexicalItem.Token) → Prop) [DecidablePred low] :
+    RoseTree (CopyMark × Vertex LexicalItem.Token) → RoseTree (Vertex LexicalItem.Token) :=
   reading low (fun _ l ↦ .node (.inr l) []) .node (fun _ y ↦ y) fun _ _ y ↦ y
 
 /-- The object a reading gives, as a tree of vertices. -/
-abbrev lfTree (low : Finset SyntacticObject) : RoseTree (CopyMark × Vertex) → RoseTree Vertex :=
+abbrev lfTree (low : Finset (SyntacticObject TokenLeaf)) : RoseTree
+    (CopyMark × Vertex LexicalItem.Token) → RoseTree (Vertex LexicalItem.Token) :=
   lfBy (ReadLow low)
 
 section Equations
 
-variable (P : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred P]
+variable (P : RoseTree (CopyMark × Vertex LexicalItem.Token) → Prop) [DecidablePred P]
 
-theorem lfBy_some (l : Option LexicalItem.Token) (a : Vertex)
-    (cs : List (RoseTree (CopyMark × Vertex))) :
+theorem lfBy_some (l : Option LexicalItem.Token) (a : Vertex LexicalItem.Token)
+    (cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))) :
     lfBy P (.node (some l, a) cs) =
       if P (.node (some l, a) cs) then lfBy P (.node (none, a) cs) else .node (.inr l) [] :=
   reading_some ..
 
-theorem lfBy_of_length_ne (a : Vertex) {cs : List (RoseTree (CopyMark × Vertex))}
+theorem lfBy_of_length_ne (a : Vertex LexicalItem.Token)
+    {cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))}
     (hc : cs.length ≠ 2) : lfBy P (.node (none, a) cs) = .node a (cs.map (lfBy P)) :=
   reading_of_length_ne _ _ _ _ _ a hc
 
-theorem lfBy_pair (a : Vertex) (u v : RoseTree (CopyMark × Vertex)) :
+theorem lfBy_pair (a : Vertex LexicalItem.Token)
+    (u v : RoseTree (CopyMark × Vertex LexicalItem.Token)) :
     lfBy P (.node (none, a) [u, v]) =
       if (lowerCopy? u v).isSome then
         if P u then lfBy P v else .node a [lfBy P u, lfBy P v]
@@ -182,16 +196,18 @@ theorem lfBy_pair (a : Vertex) (u v : RoseTree (CopyMark × Vertex)) :
       else .node a [lfBy P u, lfBy P v] :=
   reading_pair _ _ _ _ _ (fun _ _ ↦ rfl) a u v
 
-@[simp] theorem lfBy_leaf (a : Vertex) : lfBy P (.node (none, a) []) = .node a [] :=
+@[simp] theorem lfBy_leaf (a : Vertex LexicalItem.Token) : lfBy P (.node (none, a) []) = .node a []
+    :=
   lfBy_of_length_ne P a (by simp)
 
 end Equations
 
 /-- The object a test gives at a node is a trace, the node with its daughters' objects, or a
 daughter's object. -/
-theorem lfBy_node_cases (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low] (k :
+theorem lfBy_node_cases (low : RoseTree (CopyMark × Vertex LexicalItem.Token) → Prop)
+    [DecidablePred low] (k :
     CopyMark)
-    (a : Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
+    (a : Vertex LexicalItem.Token) (cs : List (RoseTree (CopyMark × Vertex LexicalItem.Token))) :
     (∃ l, lfBy low (.node (k, a) cs) = .node (.inr l) []) ∨
       lfBy low (.node (k, a) cs) = .node a (cs.map (lfBy low)) ∨
       ∃ c ∈ cs, lfBy low (.node (k, a) cs) = lfBy low c := by
@@ -201,8 +217,10 @@ theorem lfBy_node_cases (low : RoseTree (CopyMark × Vertex) → Prop) [Decidabl
   rcases cs with _ | ⟨x, _ | ⟨y, _ | ⟨z, zs⟩⟩⟩ <;> cases k <;> simp only [List.map] <;>
     (try split) <;> (try split) <;> (try split_ifs) <;> simp_all
 
-theorem isSyntacticObject_lfBy (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low]
-    {t : RoseTree (CopyMark × Vertex)} (h : IsSyntacticObject (UnorderedTree.mk (t.map Prod.snd))) :
+theorem isSyntacticObject_lfBy (low : RoseTree (CopyMark × Vertex LexicalItem.Token) → Prop)
+    [DecidablePred low]
+    {t : RoseTree (CopyMark × Vertex LexicalItem.Token)}
+        (h : IsSyntacticObject (UnorderedTree.mk (t.map Prod.snd))) :
     IsSyntacticObject (UnorderedTree.mk (lfBy low t)) := by
   induction t with
   | node v cs ih =>
@@ -220,15 +238,15 @@ theorem isSyntacticObject_lfBy (low : RoseTree (CopyMark × Vertex) → Prop) [D
 
 /-- The object a reading gives: each chain in `low` keeps its lowest copy, and every other its
 highest, its lower copies contracted. -/
-def lf (t : Marked) (low : Finset SyntacticObject) : PlanarSyntacticObject :=
+def lf (t : Marked) (low : Finset (SyntacticObject TokenLeaf)) : PlanarSyntacticObject TokenLeaf :=
   PlanarSyntacticObject.ofRoseTree (lfTree low t.val) (isSyntacticObject_lfBy _ t.2)
 
-@[simp] theorem toRoseTree_lf (t : Marked) (low : Finset SyntacticObject) :
+@[simp] theorem toRoseTree_lf (t : Marked) (low : Finset (SyntacticObject TokenLeaf)) :
     (t.lf low).toRoseTree = lfTree low t.val :=
   PlanarSyntacticObject.toRoseTree_ofRoseTree _ _
 
 /-- The chains with a lower copy holding `y`. -/
-def carrying (t : Marked) (y : LexicalItem.Token) : Finset SyntacticObject :=
+def carrying (t : Marked) (y : LexicalItem.Token) : Finset (SyntacticObject TokenLeaf) :=
   ((t.val.subtrees.filter fun r ↦
       r.value.1.isSome ∧ Sum.inl (some y) ∈ (r.map Prod.snd).leaves).filterMap fun r ↦
     if h : IsSyntacticObject (termOf r) then some (SyntacticObject.ofUnorderedTree (termOf r) h)
@@ -236,7 +254,8 @@ def carrying (t : Marked) (y : LexicalItem.Token) : Finset SyntacticObject :=
 
 /-! ### The contraction -/
 
-theorem lfTree_empty (t : RoseTree (CopyMark × Vertex)) : lfTree ∅ t = contractTree t := by
+theorem lfTree_empty (t : RoseTree (CopyMark × Vertex LexicalItem.Token)) : lfTree ∅ t =
+    contractTree t := by
   induction t with
   | node v cs ih =>
     obtain ⟨k, a⟩ := v
@@ -253,16 +272,22 @@ theorem lfTree_empty (t : RoseTree (CopyMark × Vertex)) : lfTree ∅ t = contra
 
 /-! ### Objects with no lower copy -/
 
-theorem lowerCopy?_map_none (x : RoseTree (CopyMark × Vertex)) (s : RoseTree Vertex) :
-    lowerCopy? x (s.map ((none, ·) : Vertex → CopyMark × Vertex)) = none := by
+theorem lowerCopy?_map_none (x : RoseTree (CopyMark × Vertex LexicalItem.Token))
+    (s : RoseTree (Vertex LexicalItem.Token)) :
+    lowerCopy? x
+        (s.map ((none, ·) : Vertex LexicalItem.Token → CopyMark × Vertex LexicalItem.Token)) = none
+        := by
   refine List.findSome?_eq_none_iff.2 fun r hr ↦ ?_
   rw [subtrees_map] at hr
   obtain ⟨q, -, rfl⟩ := List.mem_map.1 hr
   cases q
   simp
 
-theorem lfBy_map_none (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low]
-    (s : RoseTree Vertex) : lfBy low (s.map ((none, ·) : Vertex → CopyMark × Vertex)) = s := by
+theorem lfBy_map_none (low : RoseTree (CopyMark × Vertex LexicalItem.Token) → Prop)
+    [DecidablePred low]
+    (s : RoseTree (Vertex LexicalItem.Token)) : lfBy low
+        (s.map ((none, ·) : Vertex LexicalItem.Token → CopyMark × Vertex LexicalItem.Token)) = s :=
+        by
   induction s with
   | node a cs ih =>
     simp only [lfBy] at ih ⊢
@@ -273,7 +298,8 @@ theorem lfBy_map_none (low : RoseTree (CopyMark × Vertex) → Prop) [DecidableP
     exact (List.map_congr_left ih.2.2.2).trans (List.map_id' _)
 
 /-- An object with no lower copy gives itself under every reading. -/
-@[simp] theorem lf_ofPlanar (p : PlanarSyntacticObject) (low : Finset SyntacticObject) :
+@[simp] theorem lf_ofPlanar (p : PlanarSyntacticObject TokenLeaf)
+    (low : Finset (SyntacticObject TokenLeaf)) :
     (ofPlanar p).lf low = p :=
   PlanarSyntacticObject.toRoseTree_injective ((toRoseTree_lf _ low).trans (lfBy_map_none _
       p.toRoseTree))
@@ -282,8 +308,8 @@ theorem lfBy_map_none (low : RoseTree (CopyMark × Vertex) → Prop) [DecidableP
 
 section Binding
 
-variable {P : RoseTree (CopyMark × Vertex) → Prop} [DecidablePred P]
-  {x y w : LexicalItem.Token} {s : RoseTree (CopyMark × Vertex)}
+variable {P : RoseTree (CopyMark × Vertex LexicalItem.Token) → Prop} [DecidablePred P]
+  {x y w : LexicalItem.Token} {s : RoseTree (CopyMark × Vertex LexicalItem.Token)}
 
 /-- A reading holds only what the copy object does. -/
 theorem holds_of_holds_lfBy (h : Holds w (lfBy P s)) : Holds w (s.map Prod.snd) := by
@@ -316,7 +342,7 @@ theorem map_snd_eq_leaf_of_lfBy_eq
       have hch : ∀ c ∈ cs, lfBy P c = .node (.inl (some w)) [] →
           c.map Prod.snd = .node (.inl (some w)) [] := fun c hc ↦
         ih c hc fun r hr ↦ hP r (mem_subtrees.2 ((mem_subtrees.1 hr).trans (.of_mem_children hc)))
-      have hdel : ∀ {u z : RoseTree (CopyMark × Vertex)}, u ∈ cs → z ∈ cs → P u →
+      have hdel : ∀ {u z : RoseTree (CopyMark × Vertex LexicalItem.Token)}, u ∈ cs → z ∈ cs → P u →
           termOf u ≠ termOf z → (lowerCopy? u z).isSome → lfBy P z = .node (.inl (some w)) [] →
           False := by
         intro u z _ hz _ hne hl hle
@@ -396,7 +422,8 @@ theorem tokenCCommands_of_tokenCCommands_lfBy
 
 /-- Binding at a reading is binding at the copy object, when no copy the reading deletes has a
 sister that is a copy of it. -/
-theorem cCommands_unmark_of_cCommands_lf {t : Marked} {low : Finset SyntacticObject} (hxy : x ≠ y)
+theorem cCommands_unmark_of_cCommands_lf {t : Marked} {low : Finset (SyntacticObject TokenLeaf)}
+    (hxy : x ≠ y)
     (hlow : ∀ r ∈ t.val.subtrees, ∀ k a u v, r = .node (k, a) [u, v] →
       ReadLow low u ∨ ReadLow low v → termOf u ≠ termOf v)
     (h : (t.lf low).toSyntacticObject.CCommands ↑x ↑y) :

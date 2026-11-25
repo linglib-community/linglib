@@ -53,7 +53,7 @@ namespace Minimalist
 
 open Case
 
-variable (hd : HeadDaughter) (t : PlanarSyntacticObject) (Φ : Finset GornAddress)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject TokenLeaf) (Φ : Finset GornAddress)
   (D : GornAddress → Set GornAddress) [∀ h, DecidablePred (· ∈ D h)] (h : GornAddress)
 
 /-- The copies of an NP standing in what the phase head at `h` transfers on its own, each at the

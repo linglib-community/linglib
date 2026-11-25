@@ -43,31 +43,36 @@ open Minimalist RoseTree SyntacticObject
 
 section Algorithm
 
-variable (t : PlanarSyntacticObject)
+variable (t : PlanarSyntacticObject TokenLeaf)
 
 /-- The index of `g` after the visits `log`: the position of its last visit, counting from one, and
 zero when it has not been visited. -/
-def index (log : List (RoseTree Vertex)) (g : RoseTree Vertex) : ℕ :=
+def index (log : List (RoseTree (Vertex LexicalItem.Token)))
+    (g : RoseTree (Vertex LexicalItem.Token))
+    : ℕ :=
   log.length - log.reverse.idxOf g
 
 /-- Lines 9–13 of (71): the node `s`, just indexed, is linearized when it has at most one parent,
 or when no parent dominates the current parent, the parent with the highest index, and either
 every parent has an index or the current parent dominates every parent without one. -/
-def Linearizes (s : RoseTree Vertex) (log : List (RoseTree Vertex)) : Prop :=
+def Linearizes (s : RoseTree (Vertex LexicalItem.Token))
+    (log : List (RoseTree (Vertex LexicalItem.Token))) : Prop :=
   (mothers t s).length ≤ 1 ∨
     ∃ c ∈ (mothers t s).find? (fun c ↦ ∀ g ∈ mothers t s, index log g ≤ index log c),
       (∀ g ∈ mothers t s, ¬ (IsSubtree c g ∧ c ≠ g)) ∧
         ((∀ g ∈ mothers t s, 0 < index log g) ∨
           ∀ g ∈ mothers t s, index log g = 0 → IsSubtree g c ∧ g ≠ c)
 
-instance (s : RoseTree Vertex) (log : List (RoseTree Vertex)) : Decidable (Linearizes t s log) :=
+instance (s : RoseTree (Vertex LexicalItem.Token))
+    (log : List (RoseTree (Vertex LexicalItem.Token))) :
+    Decidable (Linearizes t s log) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 mutual
 /-- The procedure `scangraph` of (71): index the node, and when it is linearized traverse its
 daughters in order, or add it to the string when it is a terminal. -/
-def scan : RoseTree Vertex → List (RoseTree Vertex) →
-    List (RoseTree Vertex) × List LexicalItem.Token
+def scan : RoseTree (Vertex LexicalItem.Token) → List (RoseTree (Vertex LexicalItem.Token)) →
+    List (RoseTree (Vertex LexicalItem.Token)) × List LexicalItem.Token
   | s@(.node a cs), log =>
     if Linearizes t s (log ++ [s]) then
       match cs with
@@ -76,8 +81,9 @@ def scan : RoseTree Vertex → List (RoseTree Vertex) →
     else (log ++ [s], [])
 
 /-- `scangraph` on the daughters of a node, left to right. -/
-def scanList : List (RoseTree Vertex) → List (RoseTree Vertex) →
-    List (RoseTree Vertex) × List LexicalItem.Token
+def scanList : List (RoseTree (Vertex LexicalItem.Token)) → List
+    (RoseTree (Vertex LexicalItem.Token)) →
+    List (RoseTree (Vertex LexicalItem.Token)) × List LexicalItem.Token
   | [], log => (log, [])
   | c :: cs, log =>
     let x := scan c log
@@ -129,53 +135,53 @@ def e₄ := node 34 "…4"
 def e₅ := node 35 "…5"
 
 /-- (41): B is remerged from C into the root R; /B D A/. -/
-def ex41 : PlanarSyntacticObject := B * (D * (A * B))
+def ex41 : PlanarSyntacticObject TokenLeaf := B * (D * (A * B))
 
 /-- (42): B is shared by C in the first conjunct and E in the second; /F A Co H D B/. -/
-def ex42 : PlanarSyntacticObject := (F * (A * B)) * (Co * (H * (D * B)))
+def ex42 : PlanarSyntacticObject TokenLeaf := (F * (A * B)) * (Co * (H * (D * B)))
 
 /-- (47): the phrase α = [x y] is remerged from γ₁ into γ₂; /x y δ β1/. -/
-def ex47 : PlanarSyntacticObject :=
-  let a : PlanarSyntacticObject := x * y
+def ex47 : PlanarSyntacticObject TokenLeaf :=
+  let a : PlanarSyntacticObject TokenLeaf := x * y
   a * (δ * (a * β₁))
 
 /-- (48): α is shared by γ₁ and γ₂; /δ1 β1 δ2 β2 α/. -/
-def ex48 : PlanarSyntacticObject := (δ₁ * (β₁ * α)) * (δ₂ * (β₂ * α))
+def ex48 : PlanarSyntacticObject TokenLeaf := (δ₁ * (β₁ * α)) * (δ₂ * (β₂ * α))
 
 /-- (44), (51): α is internally remerged twice and pronounced at its highest position. -/
-def ex51 : PlanarSyntacticObject := α * (e₃ * (α * (e₂ * (α * β₁))))
+def ex51 : PlanarSyntacticObject TokenLeaf := α * (e₃ * (α * (e₂ * (α * β₁))))
 
 /-- (52): α is externally remerged twice and pronounced under the last parent. -/
-def ex52 : PlanarSyntacticObject := (e₁ * α) * ((e₂ * α) * (e₃ * α))
+def ex52 : PlanarSyntacticObject TokenLeaf := (e₁ * α) * ((e₂ * α) * (e₃ * α))
 
 /-- (53): a shared α moves across the board and is pronounced at the position it moved to. -/
-def ex53 : PlanarSyntacticObject := α * ((e₂ * α) * (e₃ * α))
+def ex53 : PlanarSyntacticObject TokenLeaf := α * ((e₂ * α) * (e₃ * α))
 
 /-- (54): α moves within each conjunct and is pronounced at the higher position of the second. -/
-def ex54 : PlanarSyntacticObject := (α * (y₁ * (z₁ * α))) * (α * (y₂ * (z₂ * α)))
+def ex54 : PlanarSyntacticObject TokenLeaf := (α * (y₁ * (z₁ * α))) * (α * (y₂ * (z₂ * α)))
 
 /-- (59): α moves within β, which moves in turn; β and, inside it, α are pronounced high. -/
-def ex59 : PlanarSyntacticObject :=
-  let β : PlanarSyntacticObject := e₁ * (α * (e₂ * (e₃ * α)))
+def ex59 : PlanarSyntacticObject TokenLeaf :=
+  let β : PlanarSyntacticObject TokenLeaf := e₁ * (α * (e₂ * (e₃ * α)))
   β * (e₄ * (e₅ * β))
 
 /-- (60): roll-up movement pronounces the heads in the mirror order of first Merge, X Y Z. -/
-def ex60 : PlanarSyntacticObject :=
-  let YP : PlanarSyntacticObject := X * (Y * X)
+def ex60 : PlanarSyntacticObject TokenLeaf :=
+  let YP : PlanarSyntacticObject TokenLeaf := X * (Y * X)
   YP * (Z * YP)
 
 /-- (64): remnant movement of β, out of which α has moved; α is pronounced only at its second
 occurrence. -/
-def ex64 : PlanarSyntacticObject :=
-  let β : PlanarSyntacticObject := e₁ * (e₂ * α)
+def ex64 : PlanarSyntacticObject TokenLeaf :=
+  let β : PlanarSyntacticObject TokenLeaf := e₁ * (e₂ * α)
   β * (e₃ * (α * (e₄ * β)))
 
 /-- (66): c is shared by Y and Z; /a b c/. -/
-def ex66 : PlanarSyntacticObject := (a * c) * (b * c)
+def ex66 : PlanarSyntacticObject TokenLeaf := (a * c) * (b * c)
 
 /-- The examples with their strings: printed in the paper for (41), (42), (47) and (48), and
 otherwise those its choice of the pronounced occurrence gives. -/
-def examples : List (PlanarSyntacticObject × List LexicalItem.Token) :=
+def examples : List (PlanarSyntacticObject TokenLeaf × List LexicalItem.Token) :=
   [(ex41, [B, D, A]), (ex42, [F, A, Co, H, D, B]), (ex47, [x, y, δ, β₁]),
     (ex48, [δ₁, β₁, δ₂, β₂, α]), (ex51, [α, e₃, e₂, β₁]), (ex52, [e₁, e₂, e₃, α]),
     (ex53, [α, e₂, e₃]), (ex54, [y₁, z₁, α, y₂, z₂]), (ex59, [e₁, α, e₂, e₃, e₄, e₅]),
@@ -193,8 +199,8 @@ theorem remergedYield_examples : ∀ e ∈ examples, remergedYield List.getLast?
 
 /-- α is shared by γ₁ = [g α] and γ₂ = [w α], and γ₂ by δ₁ = [δ1 γ₂] and δ₂ = [δ2 γ₂], with δ₁
 before γ₁ before δ₂. -/
-def double : PlanarSyntacticObject :=
-  let γ₂ : PlanarSyntacticObject := w * α
+def double : PlanarSyntacticObject TokenLeaf :=
+  let γ₂ : PlanarSyntacticObject TokenLeaf := w * α
   (δ₁ * γ₂) * ((g * α) * (δ₂ * γ₂))
 
 /-- (71) pronounces α twice. -/

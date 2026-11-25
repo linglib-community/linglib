@@ -33,24 +33,24 @@ open SyntacticObject
 /-- An object and a proper term of it that moves. -/
 structure Movement where
   /-- The object the mover moves in. -/
-  source : SyntacticObject
+  source : SyntacticObject TokenLeaf
   /-- The term that moves. -/
-  mover : SyntacticObject
+  mover : SyntacticObject TokenLeaf
   /-- The mover is a proper term of the source. -/
   contains : Contains source mover
 
 namespace Movement
 
-variable (μ : Movement) (τ : SyntacticObject → Option LexicalItem.Token)
+variable (μ : Movement) (τ : SyntacticObject TokenLeaf → Option LexicalItem.Token)
 
 /-- The source with the mover's occurrences replaced by the trace of its head. -/
-def remainder (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) :
-    SyntacticObject :=
+def remainder (τ : SyntacticObject TokenLeaf → Option LexicalItem.Token := TraceLabel.encoder) :
+    SyntacticObject TokenLeaf :=
   deleteAccessible μ.mover μ.source τ
 
 /-- The remainder merged with the mover. -/
-def result (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) :
-    SyntacticObject :=
+def result (τ : SyntacticObject TokenLeaf → Option LexicalItem.Token := TraceLabel.encoder) :
+    SyntacticObject TokenLeaf :=
   merge (μ.remainder τ) μ.mover
 
 theorem mover_mem_terms : μ.mover ∈ μ.source.terms := mem_terms.2 μ.contains.to_reflTransGen

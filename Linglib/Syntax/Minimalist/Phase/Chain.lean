@@ -38,16 +38,16 @@ namespace Minimalist
 
 open RoseTree SyntacticObject PhraseStructure
 
-variable (hd : HeadDaughter) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject TokenLeaf) (tok : LexicalItem.Token)
 
 /-- The positions a phase head occurring only at `a` c-commands carry the terms within its
 complement. -/
-theorem withinComplement_iff_exists_cCommands {t : PlanarSyntacticObject}
-    {h : SyntacticObject → Option LexicalItem.Token} {ℓ : LexicalItem.Token}
-    {a : t.toRoseTree.Positions} {x : SyntacticObject}
+theorem withinComplement_iff_exists_cCommands {t : PlanarSyntacticObject TokenLeaf}
+    {h : SyntacticObject TokenLeaf → Option LexicalItem.Token} {ℓ : LexicalItem.Token}
+    {a : t.toRoseTree.Positions} {x : SyntacticObject TokenLeaf}
     (hu : ∀ q, t.termAt q = SyntacticObject.leaf ℓ ↔ q = a)
-    (hph : (t : SyntacticObject).IsPhaseHead h ℓ) :
-    (t : SyntacticObject).WithinComplement h ℓ x ↔
+    (hph : (t : SyntacticObject TokenLeaf).IsPhaseHead h ℓ) :
+    (t : SyntacticObject TokenLeaf).WithinComplement h ℓ x ↔
       ∃ q : t.toRoseTree.Positions, t.toRoseTree.CCommands a q ∧ t.termAt q = x := by
   have ha : t.termAt a = SyntacticObject.leaf ℓ := (hu a).2 rfl
   have hu' : ∀ q, t.termAt q = t.termAt a → q = a := fun q hq ↦ (hu q).1 (hq.trans ha)

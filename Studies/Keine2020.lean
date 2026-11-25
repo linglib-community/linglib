@@ -302,16 +302,16 @@ theorem improper_movement {h : Cat} (hh : h ∈ Spine.cP) :
 A matrix clause over a clause with a subject, the subject raising to the matrix Spec,TP. A
 derivation obeys the horizons when its object respects the cut of its probes. -/
 
-def obj : PlanarSyntacticObject := .leaf ⟨.of .D [], 1⟩
-def subj : PlanarSyntacticObject := .leaf ⟨.of .D [], 2⟩
-def embV : PlanarSyntacticObject := .leaf ⟨.of .V [.D], 3⟩
-def embv : PlanarSyntacticObject := .leaf ⟨.of .v [.V], 4⟩
-def embT : PlanarSyntacticObject := .leaf ⟨.of .T [.v], 5⟩
+def obj : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .D [], 1⟩
+def subj : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .D [], 2⟩
+def embV : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .V [.D], 3⟩
+def embv : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .v [.V], 4⟩
+def embT : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .T [.v], 5⟩
 def embCTok : LexicalItem.Token := ⟨.of .C [.T], 6⟩
-def embC : PlanarSyntacticObject := .leaf embCTok
-def matV (c : Cat) : PlanarSyntacticObject := .leaf ⟨.of .V [c], 7⟩
+def embC : PlanarSyntacticObject TokenLeaf := .leaf embCTok
+def matV (c : Cat) : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of .V [c], 7⟩
 def matTTok : LexicalItem.Token := ⟨.of .T [.V], 8⟩
-def matT : PlanarSyntacticObject := .leaf matTTok
+def matT : PlanarSyntacticObject TokenLeaf := .leaf matTTok
 
 /-- The embedded clause up to T⁰, `[TP T [vP DP [v [VP V DP]]]]`. -/
 def embeddedTP : List Step := [.em .left embV, .em .left embv, .em .left subj, .em .left embT]
@@ -333,12 +333,12 @@ def probes (p : HorizonSetting) (tok : LexicalItem.Token) : Option HorizonSettin
   if tok = matTTok then some p else if tok = embCTok then some ⟨.C, none⟩ else none
 
 /-- The cut of the horizons, with `p` the probe on the matrix T⁰. -/
-abbrev horizons (p : HorizonSetting) (t : PlanarSyntacticObject) : Cut :=
+abbrev horizons (p : HorizonSetting) (t : PlanarSyntacticObject TokenLeaf) : Cut :=
   horizonCut headIndex? t .raising (probes p)
 
 /-- The cut of the Phase Impenetrability Condition, the complement of the embedded C⁰ sealed
 when its phase is complete. -/
-abbrev phases (t : PlanarSyntacticObject) : Cut :=
+abbrev phases (t : PlanarSyntacticObject TokenLeaf) : Cut :=
   sealed (occurrencesWith t (· = embCTok)).toFinset complementDomain (.atCompletion .raising t)
 
 -- (242b), (245), (300)

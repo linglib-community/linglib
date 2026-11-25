@@ -10,6 +10,7 @@ public import Studies.CoonMateoPedroPreminger2014
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # Erlewine (2016): Anti-locality and Optimality in Kaqchikel Agent Focus
@@ -59,7 +60,8 @@ when both arguments are first or second person. Rerankings give Popti', Akatek a
 namespace Erlewine2016
 
 open OptimalityTheory Erlewine2016.Examples
-open Minimalist (Cat LexicalItem PlanarSyntacticObject chainTop links projectionAt SpecToSpec)
+open Minimalist
+    (Cat LexicalItem PlanarSyntacticObject chainTop links projectionAt SpecToSpec TokenLeaf)
 
 /-- The arguments of a verb. -/
 inductive Arg
@@ -145,10 +147,11 @@ instance (c : Candidate) (a : Arg) : Decidable (CrossRef c a) := by unfold Cross
 /-- The clause a derivation builds (§4.1), with a copy of each argument at each position it
 occupies: the subject in Spec,vP and, when the Set A probe attracts it, in Spec,TP; the object as
 the complement of V; and an extracted argument in the specifier of the layer it lands in. -/
-def Input.clause (i : Input) (c : Candidate) : PlanarSyntacticObject :=
-  let vP : PlanarSyntacticObject := Arg.subj.token * (littleV *
-    (if i.transitive then (verb true * Arg.obj.token : PlanarSyntacticObject) else verb false))
-  let tP : PlanarSyntacticObject :=
+def Input.clause (i : Input) (c : Candidate) : PlanarSyntacticObject TokenLeaf :=
+  let vP : PlanarSyntacticObject TokenLeaf := Arg.subj.token * (littleV *
+    (if i.transitive then (verb true * Arg.obj.token : PlanarSyntacticObject TokenLeaf) else verb
+        false))
+  let tP : PlanarSyntacticObject TokenLeaf :=
     if c.aProbe then Arg.subj.token * (tense * vP) else tense * vP
   tP.extend .T 10
     (fun j ↦ i.extracted.bind fun x ↦ if x.2 = j then some (.leaf x.1.token) else none)
@@ -156,11 +159,11 @@ def Input.clause (i : Input) (c : Candidate) : PlanarSyntacticObject :=
 
 /-- The step that extracts `a` is too close: the link landing at the top of its chain moves a
 specifier across no maximal projection but its own, Spec-to-Spec Anti-Locality (42). -/
-def ExtractionTooClose (t : PlanarSyntacticObject) (a : Arg) : Prop :=
+def ExtractionTooClose (t : PlanarSyntacticObject TokenLeaf) (a : Arg) : Prop :=
   ∃ p ∈ chainTop .raising t a.token, ∃ x ∈ links .raising t a.token,
     x.1 = projectionAt .raising t p ∧ SpecToSpec .raising t x
 
-instance (t : PlanarSyntacticObject) (a : Arg) : Decidable (ExtractionTooClose t a) := by
+instance (t : PlanarSyntacticObject TokenLeaf) (a : Arg) : Decidable (ExtractionTooClose t a) := by
   unfold ExtractionTooClose; infer_instance
 
 /-- Spec-to-Spec Anti-Locality as a violable constraint: one violation for an extraction that is

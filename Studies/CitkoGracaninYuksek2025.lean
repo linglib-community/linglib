@@ -90,23 +90,23 @@ def saw := tok 20 .V [.D] "saw"
 /-- `clause` builds `[CP wh [C′ c [TP subj [T′ T [vP wh [v′ v VP]]]]]]`, the wh-phrase moved through
 the edge of vP. -/
 def clause (wh c subj T v : LexicalItem.Token)
-    (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
+    (VP : PlanarSyntacticObject TokenLeaf) : PlanarSyntacticObject TokenLeaf :=
   wh * (c * (subj * (T * (traceOf wh * (v * VP)))))
 
 /-- In non-bulk sharing under the complementizers `c₁` and `c₂`, each wh-phrase stays in its own
 conjunct and the subject, T, v and verb are shared ((10b), (14), (16b), (38d), (45c), (46b)). -/
-def nonBulk (c₁ c₂ : LexicalItem.Token) : PlanarSyntacticObject :=
+def nonBulk (c₁ c₂ : LexicalItem.Token) : PlanarSyntacticObject TokenLeaf :=
   (clause what c₁ you T v (teach * traceOf what)) * (clause when c₂ you T v (teach * traceOf when))
 
 /-- In bulk sharing one C′ sits under both wh-phrases, both of which moved through its vP edge
 ((12b), (20b)). -/
-def bulk (c : LexicalItem.Token) : PlanarSyntacticObject :=
+def bulk (c : LexicalItem.Token) : PlanarSyntacticObject TokenLeaf :=
   let c' := c * (you * (T * (traceOf what * (traceOf when * (v * ((teach * traceOf what) *
     traceOf when))))))
   (what * c') * (when * c')
 
 /-- Footnote 21's alternative to `bulk` shares a TP under two complementizers. -/
-def bulkTP (c₁ c₂ : LexicalItem.Token) : PlanarSyntacticObject :=
+def bulkTP (c₁ c₂ : LexicalItem.Token) : PlanarSyntacticObject TokenLeaf :=
   let tp := you * (T * (traceOf what * (traceOf when * (v * ((teach * traceOf what) *
     traceOf when)))))
   (what * (c₁ * tp)) * (when * (c₂ * tp))
@@ -114,25 +114,25 @@ def bulkTP (c₁ c₂ : LexicalItem.Token) : PlanarSyntacticObject :=
 /-- The ellipsis analysis of the coordinated wh-question (11b) builds two clauses from separate
 tokens and elides the first under its [E] complementizer, with its auxiliary in T as the
 Sluicing-COMP generalization requires of a sluice. -/
-def cwhEllipsis : PlanarSyntacticObject :=
+def cwhEllipsis : PlanarSyntacticObject TokenLeaf :=
   (what * (cE * (you * (shouldT * (traceOf what * (v * (teach * traceOf what))))))) *
     (clause when should you' T' v' (teach' * traceOf when))
 
 /-- The double-ellipsis analysis of the coordinated sluice (19b), the authors' earlier one, builds
 two clauses from separate tokens and elides both; the second clause's object is a deleted copy of
 *what*, which vehicle change reads as *it*. -/
-def csEllipsis : PlanarSyntacticObject :=
+def csEllipsis : PlanarSyntacticObject TokenLeaf :=
   (clause what cE you T v (teach * traceOf what)) *
     (clause when cE' you' T' v' ((teach' * traceOf what) * traceOf when))
 
 /-- Its nonpaired counterpart (45b) leaves the second clause's verb without an object. -/
-def csnrEllipsis : PlanarSyntacticObject :=
+def csnrEllipsis : PlanarSyntacticObject TokenLeaf :=
   (clause what cE you T v (teach * traceOf what)) *
     (clause when cE' you' T' v' (teach' * traceOf when))
 
 /-- In a multiple question both wh-phrases are fronted through the vP edge, as in (28b) and, under
 an [E] complementizer, the multiple sluice (29b). -/
-def multipleQuestion (c : LexicalItem.Token) : PlanarSyntacticObject :=
+def multipleQuestion (c : LexicalItem.Token) : PlanarSyntacticObject TokenLeaf :=
   who * (what * (c * (traceOf who * (T * (traceOf who * (traceOf what * (v * (saw *
     traceOf what))))))))
 
@@ -188,7 +188,7 @@ instance : DecidableLT DerivationCost := decidableLTOfDecidableLE
 /-- The cost of an object counts its tokens as the lexical items drawn, its internal terms as the
 Merges, a shared constituent being built once, and its elided domains as the applications of
 ellipsis. The terms are [marcolli-chomsky-berwick-2025]'s subtrees, each taken once. -/
-def cost (t : PlanarSyntacticObject) : DerivationCost
+def cost (t : PlanarSyntacticObject TokenLeaf) : DerivationCost
   | .lexicalItems => (tokens t).length
   | .mergeOps => (t.toRoseTree.subtrees.filter (·.arity ≠ 0)).dedup.length
   | .ellipsisOps => (elidedDomains t).length
@@ -200,7 +200,8 @@ the right spine, the specifiers are the left daughters above the head, which is 
 selecting item met; the result is `none` when the spine ends first. This is the drawing
 convention `headIndex?` falls back on where the raising head is undefined, as it is wherever a
 phrase stands in a specifier. -/
-def projection : RoseTree Vertex → Option (List (RoseTree Vertex) × LexicalItem.Token)
+def projection : RoseTree (Vertex LexicalItem.Token) → Option
+    (List (RoseTree (Vertex LexicalItem.Token)) × LexicalItem.Token)
   | .node (.inl none) [.node (.inl (some tok)) [], r] =>
       if tok.item.sel = [] then
         (projection r).map fun x ↦ (.node (.inl (some tok)) [] :: x.1, x.2)
@@ -210,37 +211,38 @@ def projection : RoseTree Vertex → Option (List (RoseTree Vertex) × LexicalIt
 
 /-- The token heading a constituent is its raising head, and for a deleted copy the token whose
 phrase it copies. -/
-def headToken? (s : RoseTree Vertex) : Option LexicalItem.Token :=
+def headToken? (s : RoseTree (Vertex LexicalItem.Token)) : Option LexicalItem.Token :=
   match s.value with
   | .inr (some tok) => some tok
   | _ => treeRaisingHead s
 
 /-- A constituent is a wh-specifier when its head is a wh-token or its trace. -/
-def IsWhSpecifier (s : RoseTree Vertex) : Prop :=
+def IsWhSpecifier (s : RoseTree (Vertex LexicalItem.Token)) : Prop :=
   ∃ tok ∈ (headToken? s).toList, tok.item.IsWh
 
-instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
+instance (s : RoseTree (Vertex LexicalItem.Token)) : Decidable (IsWhSpecifier s) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The heads of the projections whose edges host several wh-specifiers, each of which receives
 an asterisk. -/
-def asterisked (t : PlanarSyntacticObject) : List LexicalItem.Token :=
+def asterisked (t : PlanarSyntacticObject TokenLeaf) : List LexicalItem.Token :=
   t.toRoseTree.positionedSubtrees.filterMap fun x ↦ (projection x.2).bind fun y ↦
     if 1 < y.1.countP (decide <| IsWhSpecifier ·) then some y.2 else none
 
 /-- The categories of the asterisked projections whose heads reach PF unsilenced. -/
-def pfAsterisks (t : PlanarSyntacticObject) : Finset Cat :=
+def pfAsterisks (t : PlanarSyntacticObject TokenLeaf) : Finset Cat :=
   (((asterisked t).filter (¬ IsSilenced t ·)).map (·.item.cat)).toFinset
 
 /-- `t` converges at PF in a language whose multiple-wh-fronting parameter is `mwf`, the categories
 whose asterisks PF cannot interpret, when no asterisk of those categories reaches PF. -/
-def ConvergesIn (mwf : Finset Cat) (t : PlanarSyntacticObject) : Prop :=
+def ConvergesIn (mwf : Finset Cat) (t : PlanarSyntacticObject TokenLeaf) : Prop :=
   Disjoint mwf (pfAsterisks t)
 
-instance (mwf : Finset Cat) (t : PlanarSyntacticObject) : Decidable (ConvergesIn mwf t) :=
+instance (mwf : Finset Cat) (t : PlanarSyntacticObject TokenLeaf) : Decidable (ConvergesIn mwf t) :=
   inferInstanceAs (Decidable (Disjoint _ _))
 
-theorem convergesIn_of_pfAsterisks_eq_empty {t : PlanarSyntacticObject} (h : pfAsterisks t = ∅)
+theorem convergesIn_of_pfAsterisks_eq_empty {t : PlanarSyntacticObject TokenLeaf}
+    (h : pfAsterisks t = ∅)
     (mwf : Finset Cat) : ConvergesIn mwf t := by
   rw [ConvergesIn, h]
   exact Finset.disjoint_empty_right _
@@ -261,29 +263,29 @@ def romanian : Finset Cat := ∅
 
 /-- A derivation is admissible in a language when none of its ellipses is vacuous, Pronunciation
 Economy (39), and it converges at PF. -/
-def Admissible (mwf : Finset Cat) (t : PlanarSyntacticObject) : Prop :=
+def Admissible (mwf : Finset Cat) (t : PlanarSyntacticObject TokenLeaf) : Prop :=
   PronunciationEconomy t ∧ ConvergesIn mwf t
 
-instance (mwf : Finset Cat) (t : PlanarSyntacticObject) : Decidable (Admissible mwf t) :=
+instance (mwf : Finset Cat) (t : PlanarSyntacticObject TokenLeaf) : Decidable (Admissible mwf t) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `s` competes with `t` when it yields the same string with the same reading. -/
-def Competes (s t : PlanarSyntacticObject) : Prop :=
+def Competes (s t : PlanarSyntacticObject TokenLeaf) : Prop :=
   pfPhon s = pfPhon t ∧ (ItReading s ↔ ItReading t)
 
-instance (s t : PlanarSyntacticObject) : Decidable (Competes s t) :=
+instance (s t : PlanarSyntacticObject TokenLeaf) : Decidable (Competes s t) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Economy makes `t` optimal among the candidates `l` in a language when it is admissible and no
 admissible competitor among them costs less. -/
-def Optimal (mwf : Finset Cat) (l : List PlanarSyntacticObject)
-    (t : PlanarSyntacticObject) : Prop :=
+def Optimal (mwf : Finset Cat) (l : List (PlanarSyntacticObject TokenLeaf))
+    (t : PlanarSyntacticObject TokenLeaf) : Prop :=
   MinimalFor (fun s ↦ s ∈ l ∧ Competes s t ∧ Admissible mwf s) cost t
 
 section Optimal
 
-variable {mwf mwf' : Finset Cat} {l : List PlanarSyntacticObject}
-  {t : PlanarSyntacticObject}
+variable {mwf mwf' : Finset Cat} {l : List (PlanarSyntacticObject TokenLeaf)}
+  {t : PlanarSyntacticObject TokenLeaf}
 
 theorem optimal_iff : Optimal mwf l t ↔ (t ∈ l ∧ Admissible mwf t) ∧
     ∀ s ∈ l, Competes s t → Admissible mwf s → cost s ≤ cost t →
@@ -304,7 +306,7 @@ end Optimal
 /-! ### Coordinated wh-questions (§3.1, §4.1) -/
 
 /-- The derivations of *What and when should you teach?* the paper compares. -/
-def cwhCandidates : List PlanarSyntacticObject := [cwh, cwhEllipsis, cwhBulk, cwhNullC]
+def cwhCandidates : List (PlanarSyntacticObject TokenLeaf) := [cwh, cwhEllipsis, cwhBulk, cwhNullC]
 
 theorem cwh_pf : pfPhon cwh = ["what", "when", "should", "you", "teach"] := by decide
 theorem pfPhon_cwhCandidates : ∀ t ∈ cwhCandidates, pfPhon t = pfPhon cwh := by decide
@@ -347,7 +349,7 @@ theorem cwhEmbedded_lt_twoC :
 /-! ### Coordinated sluices (§3.2, §4.2, §6.1) -/
 
 /-- The derivations of *what and when* the paper compares, paired and nonpaired. -/
-def csCandidates : List PlanarSyntacticObject :=
+def csCandidates : List (PlanarSyntacticObject TokenLeaf) :=
   [cs, csEllipsis, csTwoC, csSharedC, csnr, csnrEllipsis, csnrTwoE]
 
 theorem cs_pf : pfPhon cs = ["what", "when"] := by decide
@@ -439,10 +441,11 @@ def different' := tok 33 .A (phon := "different")
 def topics' := tok 34 .N (phon := "topics")
 
 /-- The pivot, `on different topics`. -/
-def pivot : PlanarSyntacticObject := on * (different * topics)
+def pivot : PlanarSyntacticObject TokenLeaf := on * (different * topics)
 
 /-- `[TP subj [T′ T VP]]`. -/
-def tp (subj T : LexicalItem.Token) (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def tp (subj T : LexicalItem.Token) (VP : PlanarSyntacticObject TokenLeaf) :
+    (PlanarSyntacticObject TokenLeaf) :=
   subj * (T * VP)
 
 /-- In example (53b), Belk, Neeleman and Philip's analysis of Larson's mixed pivot, the pivot is

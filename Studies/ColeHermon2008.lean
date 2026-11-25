@@ -175,13 +175,13 @@ def evacuate : List Step :=
 
 /-- A core argument as the remnant holds it: the trace of the pivot, which has left, or the
 argument itself, which has stayed. -/
-def stranded (t : LexicalItem.Token) : PlanarSyntacticObject :=
+def stranded (t : LexicalItem.Token) : PlanarSyntacticObject TokenLeaf :=
   if t = c.pivot then .traceOf t else .leaf t
 
 /-- The remnant VoiceP that raises, (55), (61), has Voice and the verb over their traces, and
 the pivot and the goal replaced by theirs. -/
-def remnant : PlanarSyntacticObject :=
-  let vp : PlanarSyntacticObject := match c.goal with
+def remnant : PlanarSyntacticObject TokenLeaf :=
+  let vp : PlanarSyntacticObject TokenLeaf := match c.goal with
     | some pp => {c.stranded c.patient, {.traceOf c.verb, .traceOf pp}}
     | none => {.traceOf c.verb, c.stranded c.patient}
   {.leaf c.voiceHead, {.leaf c.verb, {.traceOf c.voiceHead, {c.stranded c.agent, {.leaf v₀, vp}}}}}
@@ -737,7 +737,7 @@ example : ∀ c ∈ clauses, ∀ x y : LexicalItem.Token, x ≠ y →
 theorem svo_take_vos (c : Clause) (σ : Sides) : (c.svo σ).take (c.vos σ).length = c.vos σ :=
   Derivation.take_length_append _ _
 
-theorem frozen_svo_iff (c : Clause) (σ : Sides) (x : SyntacticObject) :
+theorem frozen_svo_iff (c : Clause) (σ : Sides) (x : SyntacticObject TokenLeaf) :
     (c.svo σ).Frozen x ↔ (c.vos σ).Frozen x := by
   simp [Clause.svo, Derivation.frozen_append_iff]
 
@@ -754,7 +754,7 @@ theorem stageAt_sides (c : Clause) (σ σ' : Sides) (n : ℕ) :
     (c.vos σ).stageAt n = (c.vos σ').stageAt n := by
   rw [← Derivation.stageAt_leftward, vos_leftward c σ σ', Derivation.stageAt_leftward]
 
-theorem frozen_sides (c : Clause) (σ σ' : Sides) (x : SyntacticObject) :
+theorem frozen_sides (c : Clause) (σ σ' : Sides) (x : SyntacticObject TokenLeaf) :
     (c.vos σ).Frozen x ↔ (c.vos σ').Frozen x := by
   rw [← Derivation.frozen_leftward_iff, vos_leftward c σ σ', Derivation.frozen_leftward_iff]
 

@@ -244,7 +244,7 @@ theorem immediatelyContains_iff_mem_children :
 theorem numNodes_lt_of_immediatelyContains (h : ImmediatelyContains x y) :
     y.toUnorderedTree.numNodes < x.toUnorderedTree.numNodes := by
   obtain ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ := exists_form x <;> simp at h
-  obtain rfl | rfl := h <;> simp
+  obtain rfl | rfl := h <;> simp <;> omega
 
 theorem numNodes_lt_of_contains (h : Contains x y) :
     y.toUnorderedTree.numNodes < x.toUnorderedTree.numNodes :=

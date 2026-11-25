@@ -148,9 +148,9 @@ def evacuee? (evacuate : Bool) : Option LexicalItem.Token :=
 
 /-- The PartP at the point it fronts, over the VP, with the trace of the evacuee if there is
 one. -/
-def partP (evacuate : Bool) : PlanarSyntacticObject :=
+def partP (evacuate : Bool) : PlanarSyntacticObject TokenLeaf :=
   let leaf := PlanarSyntacticObject.leaf
-  let vp : PlanarSyntacticObject := match p.complement with
+  let vp : PlanarSyntacticObject TokenLeaf := match p.complement with
     | some c =>
         {leaf p.patient, {leaf p.verb,
           if (p.evacuee? evacuate).isSome then .traceOf c.val else leaf c.val}}
@@ -245,7 +245,7 @@ theorem active_shares_vP (p : Clause) (a : Analysis) :
     p.active.take (p.vP false).length = (p.passive a false).take (p.vP false).length := by
   simp [Clause.active, Clause.passive, Clause.preRaising, Clause.fronted, Clause.voiceP]
 
-theorem cCommandsAt_vP_iff (p : Clause) (a : Analysis) {x y : SyntacticObject} :
+theorem cCommandsAt_vP_iff (p : Clause) (a : Analysis) {x y : SyntacticObject TokenLeaf} :
     p.active.CCommandsAt (p.vP false).length x y ↔
       (p.passive a false).CCommandsAt (p.vP false).length x y := by
   rw [Derivation.CCommandsAt, Derivation.CCommandsAt, Derivation.stageAt, Derivation.stageAt,
@@ -471,7 +471,7 @@ theorem ex45_surfacePhon (a : Analysis) :
 theorem by_selects_vP :
     (Examples.ex29.judgment = .acceptable ↔
       (({PlanarSyntacticObject.leaf ex9.voice, PlanarSyntacticObject.leaf ex9.patient} :
-        PlanarSyntacticObject).toSyntacticObject.selectionHead).isSome) ∧
+        PlanarSyntacticObject TokenLeaf).toSyntacticObject.selectionHead).isSome) ∧
     ∃ q ∈ (ex9.voiceP false).externalize?, q.toSyntacticObject.selectionHead = some ex9.voice := by
   decide
 
@@ -528,7 +528,8 @@ inductive Level
   deriving DecidableEq, Fintype, Repr
 
 /-- C-command at a level of `d`, at its last stage or at some stage. -/
-def Level.CCommands : Level → Derivation → SyntacticObject → SyntacticObject → Prop
+def Level.CCommands : Level → Derivation → SyntacticObject TokenLeaf → SyntacticObject TokenLeaf →
+    Prop
   | .surface, d => d.BindsAtSurface
   | .anyStage, d => d.BindsAtSomeStage
 
@@ -554,7 +555,7 @@ instance (ℓ : Level) (p : Clause) (d : Derivation) (x y : Position) (c : Bindi
 
 theorem Level.cCommands_map_iff {f : LexicalItem.Token → LexicalItem.Token}
     (hf : Function.Injective f) (hsel : LexicalItem.Token.PreservesSelection f) (ℓ : Level)
-    (d : Derivation) (x y : SyntacticObject) :
+    (d : Derivation) (x y : SyntacticObject TokenLeaf) :
     ℓ.CCommands (d.map f) (x.map f) (y.map f) ↔ ℓ.CCommands d x y := by
   cases ℓ
   · exact Derivation.bindsAtSurface_map_iff hf hsel

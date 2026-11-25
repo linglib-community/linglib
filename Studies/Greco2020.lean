@@ -230,17 +230,17 @@ def v : LexicalItem.Token := ⟨.of .v [.D], 6⟩
 def arg : LexicalItem.Token := ⟨.of .D [], 7⟩
 
 /-- The v*P. -/
-def vP : PlanarSyntacticObject := v * arg
+def vP : PlanarSyntacticObject TokenLeaf := v * arg
 
 /-- The spine (68) with *non* in place: Force° over Neg° over Foc° over Top° over Fin° over TP. -/
-def spine : PlanarSyntacticObject := force * (non * (foc * (top * (fin * (t * vP)))))
+def spine : PlanarSyntacticObject TokenLeaf := force * (non * (foc * (top * (fin * (t * vP)))))
 
 /-- The v*P is closed to *non* under the CP-phase head `p`: the v*P lies in the interior of the
 phase `p` heads and *non* does not, so `p` merged first and transferred the v*P before *non*
 could bind into it ([chomsky-2001]'s Phase Impenetrability Condition). -/
 def Closed (p : LexicalItem.Token) : Prop :=
-  (spine : SyntacticObject).WithinComplement SyntacticObject.raisingHead p vP ∧
-    ¬ (spine : SyntacticObject).WithinComplement SyntacticObject.raisingHead p non
+  (spine : SyntacticObject TokenLeaf).WithinComplement SyntacticObject.raisingHead p vP ∧
+    ¬ (spine : SyntacticObject TokenLeaf).WithinComplement SyntacticObject.raisingHead p non
 
 instance (p : LexicalItem.Token) : Decidable (Closed p) := inferInstanceAs (Decidable (_ ∧ _))
 
@@ -249,25 +249,26 @@ Force°, merged after *non*, it is not. -/
 theorem phase_heads : Closed fin ∧ Closed top ∧ Closed foc ∧ ¬ Closed force := by decide
 
 /-- The raised TP of (73). -/
-def tp : PlanarSyntacticObject := t * vP
+def tp : PlanarSyntacticObject TokenLeaf := t * vP
 
 /-- Foc° over the trace of the raised TP. -/
-def focBar : PlanarSyntacticObject := foc * PlanarSyntacticObject.traceOf t
+def focBar : PlanarSyntacticObject TokenLeaf := foc * PlanarSyntacticObject.traceOf t
 
 /-- The representation (73): *non* selects the focus phrase whose specifier hosts the TP. -/
-def sneg : PlanarSyntacticObject := non * (tp * focBar)
+def sneg : PlanarSyntacticObject TokenLeaf := non * (tp * focBar)
 
 /-- Some constituent occupies the specifier of the unique focus phrase ([rizzi-1997]). -/
 def FocOccupied : Prop :=
-  ∃ x ∈ (sneg : SyntacticObject).accessibleTerms, (sneg : SyntacticObject).Sisters x focBar
+  ∃ x ∈ (sneg : SyntacticObject TokenLeaf).accessibleTerms,
+      (sneg : SyntacticObject TokenLeaf).Sisters x focBar
 
 instance : Decidable FocOccupied := Multiset.decidableExistsMultiset
 
 /-- The whole TP is focalized. -/
-def WholeTPFocused : Prop := (sneg : SyntacticObject).Sisters tp focBar
+def WholeTPFocused : Prop := (sneg : SyntacticObject TokenLeaf).Sisters tp focBar
 
 instance : Decidable WholeTPFocused :=
-  inferInstanceAs (Decidable ((sneg : SyntacticObject).Sisters _ _))
+  inferInstanceAs (Decidable ((sneg : SyntacticObject TokenLeaf).Sisters _ _))
 
 /-- Whether the representation meets a requirement, under CP-phase head `p`. A phrasal negator
 is excluded because the negator of (59) selects the focus phrase, which only a head does. -/

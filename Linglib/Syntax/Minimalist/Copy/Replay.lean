@@ -67,7 +67,8 @@ open PlanarSyntacticObject (Marked)
 copy of the leftmost outermost occurrence of the mover and marks the occurrences it leaves as
 lower copies, each with the trace of the mover's head under `τ`; an extraction stacks the copy. -/
 def Step.replayWithCopies? (step : Step) (c : Cfg Marked)
-    (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) : Option (Cfg Marked) :=
+    (τ : SyntacticObject TokenLeaf → Option LexicalItem.Token := TraceLabel.encoder) : Option
+        (Cfg Marked) :=
   match step, c with
   | .em side item, ⟨p, st⟩ => some ⟨p.attach side (.ofPlanar item), st⟩
   | .im mover side, ⟨p, st⟩ =>
@@ -79,11 +80,12 @@ def Step.replayWithCopies? (step : Step) (c : Cfg Marked)
 /-- The derivation's marked configuration under the trace encoder `τ`, `none` exactly when
 `Derivation.replay?` is. -/
 def Derivation.replayWithCopies? (d : Derivation)
-    (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) : Option (Cfg Marked) :=
+    (τ : SyntacticObject TokenLeaf → Option LexicalItem.Token := TraceLabel.encoder) : Option
+        (Cfg Marked) :=
   d.initial.toPlanarLeaf?.bind fun p ↦
     d.steps.foldlM (fun c step ↦ step.replayWithCopies? c τ) ⟨.ofPlanar p, []⟩
 
-variable {τ : SyntacticObject → Option LexicalItem.Token}
+variable {τ : SyntacticObject TokenLeaf → Option LexicalItem.Token}
 
 /-- Contracting the copies of a step with copies gives the step with traces. -/
 theorem Step.map_contract_replayWithCopies? (step : Step) (c : Cfg Marked) :
@@ -128,7 +130,7 @@ theorem Derivation.isSome_replayWithCopies? (d : Derivation) :
 
 /-- Internal Merge with copies merges a copy of a subtree of the copy object onto the object
 unchanged: Extension and No Tampering. -/
-theorem Step.unmark_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
+theorem Step.unmark_replayWithCopies?_im {mover : SyntacticObject TokenLeaf} {side : Edge}
     {c c' : Cfg Marked} (h : (Step.im mover side).replayWithCopies? c τ = some c') :
     ∃ s : Marked, IsSubtree s.unmark.toRoseTree c.current.unmark.toRoseTree ∧
       c'.current.unmark = c.current.unmark.attach side s.unmark := by
@@ -141,7 +143,7 @@ theorem Step.unmark_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
 
 /-- Internal Merge with copies is MERGE leaving copies of a copy of the mover on the copy object,
 and MERGE leaving traces of the mover on the contraction. -/
-theorem Step.replayWithCopies?_im_eq_merge {mover : SyntacticObject} {side : Edge}
+theorem Step.replayWithCopies?_im_eq_merge {mover : SyntacticObject TokenLeaf} {side : Edge}
     {c c' : Cfg Marked} (h : (Step.im mover side).replayWithCopies? c τ = some c')
     (hne : c.current.contract.toSyntacticObject ≠ mover) :
     ∃ s : Marked, s.contract.toSyntacticObject = mover ∧
@@ -169,8 +171,8 @@ theorem Step.replayWithCopies?_im_eq_merge {mover : SyntacticObject} {side : Edg
 /-- The derivation's copy object, the syntactic object with every copy in place and neither order
 nor marks: the form the semantic interface receives. -/
 def Derivation.copyObject? (d : Derivation)
-    (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) :
-    Option SyntacticObject :=
+    (τ : SyntacticObject TokenLeaf → Option LexicalItem.Token := TraceLabel.encoder) :
+    Option (SyntacticObject TokenLeaf) :=
   (d.replayWithCopies? τ).map (·.current.unmark.toSyntacticObject)
 
 theorem Derivation.replayWithCopies?_append (d : Derivation) (steps : List Step) :
@@ -188,14 +190,15 @@ theorem Derivation.replayWithCopies?_append_singleton (d : Derivation) (step : S
   cases step.replayWithCopies? c <;> rfl
 
 theorem Step.toSyntacticObject_replayWithCopies?_em {side : Edge}
-    {item : PlanarSyntacticObject} {c c' : Cfg Marked}
+    {item : PlanarSyntacticObject TokenLeaf} {c c' : Cfg Marked}
     (h : (Step.em side item).replayWithCopies? c τ = some c') :
     c'.current.unmark.toSyntacticObject = merge item c.current.unmark.toSyntacticObject := by
   obtain ⟨p, st⟩ := c
   obtain rfl := Option.some.inj h
   simp
 
-theorem Step.toSyntacticObject_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
+theorem Step.toSyntacticObject_replayWithCopies?_im {mover : SyntacticObject TokenLeaf}
+    {side : Edge}
     {c c' : Cfg Marked} (h : (Step.im mover side).replayWithCopies? c τ = some c') :
     ∃ u ∈ c.current.unmark.toSyntacticObject.terms,
       c'.current.unmark.toSyntacticObject = merge u c.current.unmark.toSyntacticObject := by
@@ -207,7 +210,7 @@ theorem Step.toSyntacticObject_replayWithCopies?_im {mover : SyntacticObject} {s
 
 /-- Internal Merge with copies adds a position to the chain of the copy it merges
 (`PlanarSyntacticObject.card_chainRel`). -/
-theorem Step.count_terms_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
+theorem Step.count_terms_replayWithCopies?_im {mover : SyntacticObject TokenLeaf} {side : Edge}
     {c c' : Cfg Marked} (h : (Step.im mover side).replayWithCopies? c τ = some c') :
     ∃ u ∈ c.current.unmark.toSyntacticObject.terms,
       c'.current.unmark.toSyntacticObject.terms.count u =
@@ -251,7 +254,7 @@ private theorem mem_terms_foldlM_replayWithCopies? :
 /-- Preservation of terms: the terms of the copy object at a stage are terms of the copy object at
 every later stage. -/
 theorem Derivation.terms_subset_copyObject?_append {d : Derivation} {steps : List Step}
-    {C' : SyntacticObject} (h : (d.append steps).copyObject? τ = some C') :
+    {C' : SyntacticObject TokenLeaf} (h : (d.append steps).copyObject? τ = some C') :
     ∃ C ∈ d.copyObject? τ, C.terms ⊆ C'.terms := by
   obtain ⟨c', hc', rfl⟩ := Option.map_eq_some_iff.1 h
   rw [replayWithCopies?_append] at hc'
@@ -261,15 +264,16 @@ theorem Derivation.terms_subset_copyObject?_append {d : Derivation} {steps : Lis
 
 /-- External Merge merges the copy object with the item, built outside. -/
 theorem Derivation.copyObject?_append_em (d : Derivation) (side : Edge)
-    (item : PlanarSyntacticObject) :
+    (item : PlanarSyntacticObject TokenLeaf) :
     (d.append [.em side item]).copyObject? τ = (d.copyObject? τ).map (merge item) := by
   simp only [copyObject?, replayWithCopies?_append]
   cases d.replayWithCopies? τ <;> simp [Step.replayWithCopies?]
 
 /-- Internal Merge merges the copy object with one of its own terms, so Internal and External
 Merge are one operation, differing in where its object comes from. -/
-theorem Derivation.copyObject?_append_im {d : Derivation} {mover : SyntacticObject} {side : Edge}
-    {C' : SyntacticObject} (h : (d.append [.im mover side]).copyObject? τ = some C') :
+theorem Derivation.copyObject?_append_im {d : Derivation} {mover : SyntacticObject TokenLeaf}
+    {side : Edge}
+    {C' : SyntacticObject TokenLeaf} (h : (d.append [.im mover side]).copyObject? τ = some C') :
     ∃ C ∈ d.copyObject? τ, ∃ u ∈ C.terms, C' = merge u C := by
   obtain ⟨c', hc', rfl⟩ := Option.map_eq_some_iff.1 h
   rw [replayWithCopies?_append] at hc'
@@ -279,8 +283,10 @@ theorem Derivation.copyObject?_append_im {d : Derivation} {mover : SyntacticObje
 
 /-- The occurrence Internal Merge leaves is a copy of the one it merges, in the sense of Form Copy,
 unless the whole object moves. -/
-theorem Derivation.copyRel_copyObject?_append_im {d : Derivation} {mover : SyntacticObject}
-    {side : Edge} {C' : SyntacticObject} (h : (d.append [.im mover side]).copyObject? τ = some C') :
+theorem Derivation.copyRel_copyObject?_append_im {d : Derivation}
+    {mover : SyntacticObject TokenLeaf}
+    {side : Edge} {C' : SyntacticObject TokenLeaf}
+        (h : (d.append [.im mover side]).copyObject? τ = some C') :
     ∃ C ∈ d.copyObject? τ, ∃ u ∈ C.terms, C' = merge u C ∧ ((u, u) ∈ C'.copyRel ↔ u ≠ C) := by
   obtain ⟨C, hC, u, hu, rfl⟩ := copyObject?_append_im h
   exact ⟨C, hC, u, hu, rfl, self_mem_copyRel_merge_iff hu⟩
@@ -342,7 +348,8 @@ private theorem mem_yield_map_foldlM_replayWithCopies? : ∀ {steps : List Step}
     · exact .inr (.inr ht)
 
 /-- Inclusiveness: the copy object pronounces only tokens the derivation merges. -/
-theorem Derivation.mem_lexTokens_of_mem_yield_copyObject? {d : Derivation} {C : SyntacticObject}
+theorem Derivation.mem_lexTokens_of_mem_yield_copyObject? {d : Derivation}
+    {C : SyntacticObject TokenLeaf}
     {tok : LexicalItem.Token} (h : d.copyObject? τ = some C) (ht : tok ∈ C.yield) :
     tok ∈ d.lexTokens := by
   obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 h

@@ -149,7 +149,8 @@ def vpSteps : List Step :=
   | some c => [.em .right c.token, .em .left p.themeTok]
 
 /-- The VP. -/
-def vp : Option PlanarSyntacticObject := (⟨p.verbTok, p.vpSteps⟩ : Derivation).externalize?
+def vp : Option (PlanarSyntacticObject TokenLeaf) :=
+    (⟨p.verbTok, p.vpSteps⟩ : Derivation).externalize?
 
 /-- The vP: the VP, v, the agent on the left and any VP-external element on the right. -/
 def vP : Derivation :=
@@ -189,11 +190,12 @@ instance (p : Clause) (a : Analysis) : Decidable (p.Licensed a) := by
 
 /-- A derivation smuggles `x` past `w` via VoiceP when a step smuggles it into the specifier of a
 Voice head, voice in the sense of (121), after [storment-2025]. -/
-def SmugglesViaVoice (d : Derivation) (x w : SyntacticObject) : Prop :=
+def SmugglesViaVoice (d : Derivation) (x w : SyntacticObject TokenLeaf) : Prop :=
   ∃ i < d.length, d.IsSmugglingStep i x w ∧
     ∃ q ∈ (d.take i).externalize?, ∃ v ∈ q.toSyntacticObject.selectionHead, v.item.cat = .Voice
 
-instance (d : Derivation) (x w : SyntacticObject) : Decidable (SmugglesViaVoice d x w) := by
+instance (d : Derivation) (x w : SyntacticObject TokenLeaf) : Decidable (SmugglesViaVoice d x w) :=
+    by
   unfold SmugglesViaVoice; infer_instance
 
 /-- (122): *"Hey," said John*. -/
@@ -339,7 +341,7 @@ def phi (x : LexicalItem.Token) : Bundle :=
   if x = p.themeTok then themePhi else if x = p.agentTok then p.agentPhi else ⊥
 
 /-- The φ-features at a position of `t`, those of the token there. -/
-def phiAt (t : PlanarSyntacticObject) (q : t.toRoseTree.Positions) : Bundle :=
+def phiAt (t : PlanarSyntacticObject TokenLeaf) (q : t.toRoseTree.Positions) : Bundle :=
   (t.termAt q).token?.elim ⊥ p.phi
 
 /-- The stage at which T probes. -/

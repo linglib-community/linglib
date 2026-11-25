@@ -45,17 +45,17 @@ namespace Minimalist.Derivation
 open SyntacticObject
 open PlanarSyntacticObject (Marked)
 
-variable {d : Derivation} {steps : List Step} {n : Nat} {x y : SyntacticObject}
+variable {d : Derivation} {steps : List Step} {n : Nat} {x y : SyntacticObject TokenLeaf}
 
 /-- Surface binding: c-command at the last stage. -/
-abbrev BindsAtSurface (d : Derivation) (x y : SyntacticObject) : Prop :=
+abbrev BindsAtSurface (d : Derivation) (x y : SyntacticObject TokenLeaf) : Prop :=
   d.CCommandsAt d.length x y
 
 /-- Derivational binding: c-command at some stage. -/
-def BindsAtSomeStage (d : Derivation) (x y : SyntacticObject) : Prop :=
+def BindsAtSomeStage (d : Derivation) (x y : SyntacticObject TokenLeaf) : Prop :=
   ∃ n ≤ d.length, d.CCommandsAt n x y
 
-instance (d : Derivation) (x y : SyntacticObject) : Decidable (d.BindsAtSomeStage x y) :=
+instance (d : Derivation) (x y : SyntacticObject TokenLeaf) : Decidable (d.BindsAtSomeStage x y) :=
   inferInstanceAs (Decidable (∃ n ≤ d.length, _))
 
 /-- Binding at the surface is binding at some stage. -/
@@ -92,10 +92,10 @@ end Map
 /-- Binding at the copy object, binding at LF under the copy theory of movement
 ([chomsky-1995]): some copy of `x` c-commands some copy of `y` in the object with every copy in
 place. -/
-def BindsAtLF (d : Derivation) (x y : SyntacticObject) : Prop :=
+def BindsAtLF (d : Derivation) (x y : SyntacticObject TokenLeaf) : Prop :=
   ∃ C ∈ d.copyObject?, CCommands C x y
 
-instance (d : Derivation) (x y : SyntacticObject) : Decidable (d.BindsAtLF x y) :=
+instance (d : Derivation) (x y : SyntacticObject TokenLeaf) : Decidable (d.BindsAtLF x y) :=
   inferInstanceAs (Decidable (∃ C ∈ d.copyObject?, _))
 
 /-- Binding at some stage is binding at the copy object, where every stage survives. -/
@@ -167,7 +167,8 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
         rw [CCommandsAt, ← externalize?_take_faithful _ _ (p := cT'.current)
           (by rw [take_length, externalize?, h1]; rfl)]
         exact h2⟩
-    have hne : ∀ T : SyntacticObject, leaf y ∈ T.terms → (↑x : SyntacticObject) ≠ T :=
+    have hne : ∀ T : SyntacticObject TokenLeaf, leaf y ∈ T.terms → (↑x : SyntacticObject TokenLeaf)
+        ≠ T :=
       fun T hy he ↦ by
         rw [← he, terms_leaf, Multiset.mem_singleton, leaf_inj] at hy
         exact hxy hy.symm

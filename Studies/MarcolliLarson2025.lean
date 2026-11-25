@@ -79,7 +79,7 @@ theorem giveComb_satisfiesCriterion : SatisfiesCriterion (giveComb mary gave boo
 theorem realize_giveComb :
     realize (giveComb mary gave book toJohn) =
       ↑(merge (.leaf mary) (merge (.leaf book) (merge (.leaf toJohn) (.leaf gave))) :
-        SyntacticObject) :=
+        SyntacticObject TokenLeaf) :=
   rfl
 
 /-! ### Movement to a non-theta position -/

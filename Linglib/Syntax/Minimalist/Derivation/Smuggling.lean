@@ -44,12 +44,13 @@ namespace Minimalist.Movement
 
 open SyntacticObject
 
-variable {μ : Movement} {τ : SyntacticObject → Option LexicalItem.Token} {xp w : SyntacticObject}
+variable {μ : Movement} {τ : SyntacticObject TokenLeaf → Option LexicalItem.Token}
+    {xp w : SyntacticObject TokenLeaf}
 
 /-- The movement smuggles `xp` past `w`. -/
 @[mk_iff]
-structure Smuggles (μ : Movement) (xp w : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) : Prop where
+structure Smuggles (μ : Movement) (xp w : SyntacticObject TokenLeaf)
+    (τ : SyntacticObject TokenLeaf → Option LexicalItem.Token := TraceLabel.encoder) : Prop where
   /-- The smuggler contains the smugglee. -/
   contains : Contains μ.mover xp
   /-- The blocker c-commands the smugglee before the movement. -/
@@ -65,14 +66,14 @@ theorem Smuggles.not_cCommands (h : μ.Smuggles xp w τ) (hs : μ.source.yield.N
     (hxp : xp.yield ≠ 0) (hw : w.yield ≠ 0) : ¬ CCommands (μ.result τ) w xp := by
   have hd := disjoint_yield τ hs
   show ¬ CCommands (merge (μ.remainder τ) μ.mover) w xp
-  have key {u : SyntacticObject} (hu : u.yield ≠ 0) (hR : u ∈ (μ.remainder τ).terms)
+  have key {u : SyntacticObject TokenLeaf} (hu : u.yield ≠ 0) (hR : u ∈ (μ.remainder τ).terms)
       (hm : u ∈ μ.mover.terms) : False :=
     let ⟨a, ha⟩ := Multiset.exists_mem_of_ne_zero hu
     Multiset.disjoint_left.1 hd (Multiset.mem_of_le (yield_le_of_mem_terms hR) ha)
       (Multiset.mem_of_le (yield_le_of_mem_terms hm) ha)
   have hxm : xp ∈ μ.mover.terms := mem_terms.2 h.contains.to_reflTransGen
   have hm0 : μ.mover.yield ≠ 0 := fun h ↦ hxp (Multiset.le_zero.1 (h ▸ yield_le_of_mem_terms hxm))
-  have hparent {root x z : SyntacticObject} (h : Sisters root x z) : Contains root x :=
+  have hparent {root x z : SyntacticObject TokenLeaf} (h : Sisters root x z) : Contains root x :=
     let ⟨_, hy, hyx, _, _⟩ := h
     Relation.TransGen.tail' (mem_terms.1 hy) hyx
   have hwR : w ∈ (μ.remainder τ).terms := by
@@ -102,10 +103,10 @@ namespace Minimalist.Derivation
 
 open SyntacticObject
 
-variable {d : Derivation} {steps : List Step} {i j : Nat} {xp w : SyntacticObject}
+variable {d : Derivation} {steps : List Step} {i j : Nat} {xp w : SyntacticObject TokenLeaf}
 
 /-- Step `i` of `d` smuggles `xp` past `w`: its movement does. -/
-def IsSmugglingStep (d : Derivation) (i : Nat) (xp w : SyntacticObject) : Prop :=
+def IsSmugglingStep (d : Derivation) (i : Nat) (xp w : SyntacticObject TokenLeaf) : Prop :=
   ∃ μ ∈ d.movement? i, μ.Smuggles xp w
 
 /-- A smuggling step in terms of its mover and its stage. -/
@@ -120,7 +121,7 @@ theorem isSmugglingStep_iff :
   · rintro ⟨m, hm, hc, hmx, hwx, hmw⟩
     exact ⟨⟨d.stageAt i, m, hc⟩, mem_movement?_iff.2 ⟨hm, rfl⟩, hmx, hwx, hmw⟩
 
-instance (d : Derivation) (i : Nat) (xp w : SyntacticObject) :
+instance (d : Derivation) (i : Nat) (xp w : SyntacticObject TokenLeaf) :
     Decidable (d.IsSmugglingStep i xp w) :=
   decidable_of_iff _ isSmugglingStep_iff.symm
 
@@ -139,7 +140,7 @@ theorem IsSmugglingStep.append (h : d.IsSmugglingStep i xp w) :
 theorem isSmugglingStep_map_iff {f : LexicalItem.Token → LexicalItem.Token}
     (hf : Function.Injective f) (hsel : LexicalItem.Token.PreservesSelection f) :
     (d.map f).IsSmugglingStep i (xp.map f) (w.map f) ↔ d.IsSmugglingStep i xp w := by
-  have hτ : ∀ s : SyntacticObject,
+  have hτ : ∀ s : SyntacticObject TokenLeaf,
       TraceLabel.encoder (s.map f) = (TraceLabel.encoder s).map f :=
     fun s ↦ s.selectionHead_map hsel
   rw [isSmugglingStep_iff, isSmugglingStep_iff]

@@ -69,7 +69,7 @@ open RoseTree SyntacticObject PhraseStructure
 
 namespace PlanarSyntacticObject
 
-variable {t : PlanarSyntacticObject}
+variable {t : PlanarSyntacticObject TokenLeaf}
 
 variable (t) in
 /-- Two positions are in one chain when they hold one term. -/
@@ -87,7 +87,7 @@ theorem card_chainRel (p : t.toRoseTree.Positions) :
   rw [count_terms]
   simp only [chainRel_iff, eq_comm]
 
-theorem exists_chainRel_of_self_mem_copyRel {x : SyntacticObject}
+theorem exists_chainRel_of_self_mem_copyRel {x : SyntacticObject TokenLeaf}
     (h : (x, x) ∈ t.toSyntacticObject.copyRel) :
     ∃ p q, t.chainRel p q ∧ t.toRoseTree.CCommands p q ∧ t.termAt p = x := by
   obtain ⟨p, q, hpq, hp, hq⟩ := exists_cCommands_termAt_of_cCommands h.1
@@ -95,7 +95,7 @@ theorem exists_chainRel_of_self_mem_copyRel {x : SyntacticObject}
 
 /-- Form Copy relates an object to itself exactly when two positions of its chain are in
 c-command, in an object no term of which is merged with itself. -/
-theorem self_mem_copyRel_iff {x : SyntacticObject}
+theorem self_mem_copyRel_iff {x : SyntacticObject TokenLeaf}
     (hs : ∀ p d : t.toRoseTree.Positions, Order.pred p ⋖ d → d ≠ p → t.termAt d ≠ t.termAt p) :
     (x, x) ∈ t.toSyntacticObject.copyRel ↔
       ∃ p q, t.chainRel p q ∧ t.toRoseTree.CCommands p q ∧ t.termAt p = x := by
@@ -109,10 +109,12 @@ end PlanarSyntacticObject
 /-! ### Copies -/
 
 /-- The positions of `t` whose label `f` accepts, with the values, in preorder. -/
-def positions {β : Type*} (f : Vertex → Option β) (t : RoseTree Vertex) : List (GornAddress × β) :=
+def positions {β : Type*} (f : Vertex LexicalItem.Token → Option β)
+    (t : RoseTree (Vertex LexicalItem.Token)) : List (GornAddress × β) :=
   t.positionedSubtrees.filterMap fun x ↦ (f x.2.value).map (x.1, ·)
 
-theorem mem_positions_iff {β : Type*} {f : Vertex → Option β} {t : RoseTree Vertex}
+theorem mem_positions_iff {β : Type*} {f : Vertex LexicalItem.Token → Option β}
+    {t : RoseTree (Vertex LexicalItem.Token)}
     {p : GornAddress} {b : β} :
     (p, b) ∈ positions f t ↔ ∃ s, t[p]? = some s ∧ f s.value = some b := by
   simp only [positions, List.mem_filterMap, Option.map_eq_some_iff, Prod.mk.injEq, Prod.exists,
@@ -120,7 +122,8 @@ theorem mem_positions_iff {β : Type*} {f : Vertex → Option β} {t : RoseTree 
   exact ⟨fun ⟨_, s, hs, _, hb, rfl, rfl⟩ ↦ ⟨s, hs, hb⟩,
     fun ⟨s, hs, hb⟩ ↦ ⟨p, s, hs, b, hb, rfl, rfl⟩⟩
 
-theorem nodup_map_fst_positions {β : Type*} (f : Vertex → Option β) (t : RoseTree Vertex) :
+theorem nodup_map_fst_positions {β : Type*} (f : Vertex LexicalItem.Token → Option β)
+    (t : RoseTree (Vertex LexicalItem.Token)) :
     ((positions f t).map Prod.fst).Nodup := by
   rw [positions, List.map_filterMap]
   refine (List.pairwise_map.1 t.nodup_map_fst_positionedSubtrees).filterMap _
@@ -131,14 +134,14 @@ theorem nodup_map_fst_positions {β : Type*} (f : Vertex → Option β) (t : Ros
   exact hne
 
 /-- The pronounced copies, left to right. -/
-def tokenList : RoseTree Vertex → List (GornAddress × LexicalItem.Token) :=
+def tokenList : RoseTree (Vertex LexicalItem.Token) → List (GornAddress × LexicalItem.Token) :=
   positions (Sum.elim id fun _ ↦ none)
 
 /-- The deleted copies, left to right. -/
-def traceList : RoseTree Vertex → List (GornAddress × LexicalItem.Token) :=
+def traceList : RoseTree (Vertex LexicalItem.Token) → List (GornAddress × LexicalItem.Token) :=
   positions (Sum.elim (fun _ ↦ none) id)
 
-variable (hd : HeadDaughter) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
+variable (hd : HeadDaughter) (t : PlanarSyntacticObject TokenLeaf) (tok : LexicalItem.Token)
 
 /-- The positions of the pronounced copies of `tok`. -/
 def occurrences : List GornAddress :=

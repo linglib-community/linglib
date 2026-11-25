@@ -286,8 +286,10 @@ theorem inSitu_rows :
 -- Section 5.3.2: the labeling algorithm labels a verb merged with any phrasal object, whatever
 -- case the object's head bears, so a failure to label, the alternative account of forced
 -- displacement the section examines, cannot displace a direct object with ICA.
-example {t : Minimalist.PlanarSyntacticObject} {v : Minimalist.LexicalItem.Token}
-    {x : Minimalist.SyntacticObject} (hex : ∃ n, t.termAt n = .merge (.leaf v) x)
+example {t : Minimalist.PlanarSyntacticObject Minimalist.TokenLeaf}
+    {v : Minimalist.LexicalItem.Token}
+    {x : Minimalist.SyntacticObject Minimalist.TokenLeaf}
+        (hex : ∃ n, t.termAt n = .merge (.leaf v) x)
     (hx : x.token? = none) (hv : t.InDomain (.leaf v) (.merge (.leaf v) x)) :
     t.IsLabeledBy (.merge (.leaf v) x) v :=
   Minimalist.PlanarSyntacticObject.isLabeledBy_merge_head hex hx hv

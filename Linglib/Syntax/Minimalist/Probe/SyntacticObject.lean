@@ -9,6 +9,7 @@ public import Linglib.Syntax.Minimalist.Probe.Minimal
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # Minimal search over syntactic objects
@@ -54,7 +55,7 @@ the key, the Minimal Link Condition of [chomsky-1995]. -/
 
 namespace PlanarSyntacticObject
 
-variable {t : PlanarSyntacticObject} {p : Probe t.toRoseTree.Positions} {s : Set
+variable {t : PlanarSyntacticObject TokenLeaf} {p : Probe t.toRoseTree.Positions} {s : Set
     t.toRoseTree.Positions}
   {q g : t.toRoseTree.Positions}
 
@@ -79,13 +80,14 @@ variable {β : Type*} [Preorder β] [DecidableRel ((· < ·) : β → β → Pro
 variable (t) in
 /-- The terms a probe on the head `h` finds when its search orders positions by `key`: those at
 the first satisfying positions that an occurrence of `h` c-commands. -/
-def goalsBy (p : Probe t.toRoseTree.Positions) (h : SyntacticObject) (key : t.toRoseTree.Positions →
+def goalsBy (p : Probe t.toRoseTree.Positions) (h : SyntacticObject TokenLeaf)
+    (key : t.toRoseTree.Positions →
     β) :
-    Finset SyntacticObject :=
+    Finset (SyntacticObject TokenLeaf) :=
   (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
     p.Finds {q | t.toRoseTree.CCommands a q} key g).image t.termAt
 
-theorem mem_goalsBy {h x : SyntacticObject} {key : t.toRoseTree.Positions → β} :
+theorem mem_goalsBy {h x : SyntacticObject TokenLeaf} {key : t.toRoseTree.Positions → β} :
     x ∈ t.goalsBy p h key ↔
       ∃ a, t.termAt a = h ∧ ∃ g, p.Finds {q | t.toRoseTree.CCommands a q} key g ∧ t.termAt g = x :=
           by
@@ -98,10 +100,11 @@ end Search
 variable (t) in
 /-- The terms a probe on the head `h` finds: those at the closest satisfying positions that an
 occurrence of `h` c-commands. -/
-def goals (p : Probe t.toRoseTree.Positions) (h : SyntacticObject) : Finset SyntacticObject :=
+def goals (p : Probe t.toRoseTree.Positions) (h : SyntacticObject TokenLeaf) : Finset
+    (SyntacticObject TokenLeaf) :=
   t.goalsBy p h (t.above t.toRoseTree.branching)
 
-theorem mem_goals {h x : SyntacticObject} : x ∈ t.goals p h ↔
+theorem mem_goals {h x : SyntacticObject TokenLeaf} : x ∈ t.goals p h ↔
     ∃ a, t.termAt a = h ∧ ∃ g,
       p.Finds {q | t.toRoseTree.CCommands a q} (t.above t.toRoseTree.branching) g ∧
         t.termAt g = x :=
@@ -110,18 +113,18 @@ theorem mem_goals {h x : SyntacticObject} : x ∈ t.goals p h ↔
 variable (t) in
 /-- The terms a probe on the head `h` finds when, at each occurrence `a` of `h`, the positions
 `cut a` are closed to its search, by the PIC or by a horizon. -/
-def goalsUnder (p : Probe t.toRoseTree.Positions) (h : SyntacticObject)
+def goalsUnder (p : Probe t.toRoseTree.Positions) (h : SyntacticObject TokenLeaf)
     (cut : GornAddress → Set GornAddress) [∀ a, DecidablePred (· ∈ cut a)] :
-    Finset SyntacticObject :=
+    Finset (SyntacticObject TokenLeaf) :=
   (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
     p.Finds {q | t.toRoseTree.CCommands a q ∧ q.val ∉ cut a.val} (t.above
         t.toRoseTree.branching) g).image t.termAt
 
-@[simp] theorem goalsUnder_empty {h : SyntacticObject} :
+@[simp] theorem goalsUnder_empty {h : SyntacticObject TokenLeaf} :
     t.goalsUnder p h (fun _ ↦ ∅) = t.goals p h := by
   simp only [goalsUnder, goals, goalsBy, Set.mem_empty_iff_false, not_false_eq_true, and_true]
 
-theorem mem_goalsUnder_of_finds {h : SyntacticObject}
+theorem mem_goalsUnder_of_finds {h : SyntacticObject TokenLeaf}
     {cut : GornAddress → Set GornAddress}
     [∀ a, DecidablePred (· ∈ cut a)] {a : t.toRoseTree.Positions} (ha : t.termAt a = h)
     (hg : p.Finds {q | t.toRoseTree.CCommands a q} (t.above t.toRoseTree.branching) g)
@@ -147,7 +150,7 @@ def phraseProbe (c : Cat) : Probe t.toRoseTree.Positions :=
 an injective relabelling that keeps categories. -/
 theorem mem_goals_leafProbe_map_iff {f : LexicalItem.Token → LexicalItem.Token}
     (hf : Function.Injective f) (hcat : ∀ t, (f t).item.cat = t.item.cat) {c : Cat}
-    {h x : SyntacticObject} :
+    {h x : SyntacticObject TokenLeaf} :
     x.map f ∈ (t.map f).goals ((t.map f).leafProbe c) (h.map f) ↔
       x ∈ t.goals (t.leafProbe c) h := by
   let e : t.toRoseTree.Positions ≃ (t.map f).toRoseTree.Positions :=

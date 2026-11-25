@@ -226,7 +226,7 @@ end HorizonSetting
 
 /-! ### Horizons on trees -/
 
-variable (η : RoseTree Vertex → Option ℕ) (t : PlanarSyntacticObject)
+variable (η : RoseTree (Vertex LexicalItem.Token) → Option ℕ) (t : PlanarSyntacticObject TokenLeaf)
 
 /-- The positions behind the horizon `c` of the probe at `a`, those dominated by a node the probe
 c-commands whose spine contains `c` ([keine-2019]'s Horizons). -/
@@ -244,7 +244,8 @@ def HorizonSetting.cut (p : HorizonSetting) (a : GornAddress) : Set GornAddress 
 instance (p : HorizonSetting) (a : GornAddress) : DecidablePred (· ∈ p.cut η t a) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-variable {η t} {a q : GornAddress} {c c' : Cat} {p : HorizonSetting} {l r : RoseTree Vertex}
+variable {η t} {a q : GornAddress} {c c' : Cat} {p : HorizonSetting}
+    {l r : RoseTree (Vertex LexicalItem.Token)}
   {tok : LexicalItem.Token}
 
 theorem isUpperSet_horizon : IsUpperSet (horizon η t a c) :=
