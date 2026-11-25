@@ -85,11 +85,19 @@ def strength : AffectednessDegree → ℕ
   | .nonquantized => 2
   | .quantized => 3
 
-instance : LinearOrder AffectednessDegree :=
-  .lift' strength fun a b ↦ by cases a <;> cases b <;> simp [strength]
+theorem strength_injective : Function.Injective strength :=
+  fun a b ↦ by cases a <;> cases b <;> simp [strength]
+
+instance : LinearOrder AffectednessDegree := .lift' strength strength_injective
 
 theorem le_iff_strength_le {a b : AffectednessDegree} : a ≤ b ↔ a.strength ≤ b.strength :=
   Iff.rfl
+
+/-- The strength of a degree, as an order embedding into the natural numbers. -/
+def strengthOrderEmbedding : AffectednessDegree ↪o ℕ :=
+  ⟨⟨strength, strength_injective⟩, le_iff_strength_le.symm⟩
+
+@[simp] theorem coe_strengthOrderEmbedding : ⇑strengthOrderEmbedding = strength := rfl
 
 instance : OrderBot AffectednessDegree where
   bot := .unspecified
