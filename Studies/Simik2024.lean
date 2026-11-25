@@ -207,9 +207,9 @@ theorem felicity_ne_distribution_interNPQ (b : BiasProfile) :
   exact absurd (h ▸ h₃) (by decide)
 
 -- a positive question is barred by evidence against the prejacent, as in [buring-gunlogson-2000]
-theorem felicitous_none_of_mem_distribution {v : VerbPosition} {ev ob : SignType}
+theorem mem_evidential_none_of_mem_distribution {v : VerbPosition} {ev ob : SignType}
     (h : (ev, ob) ∈ distribution czechForms ⟨v, .positive⟩) :
-    BuringGunlogson2000.Felicitous none ev := by
+    ev ∈ BuringGunlogson2000.evidential none := by
   decide +revert
 
 /-! ### The scenarios (11)–(18) and the quiz (24) -/
@@ -563,5 +563,11 @@ theorem nahodou_example (x : Examples.Example)
       (x.datum.judgment = .acceptable ↔ ∃ r, NahodouLicensed s.toPolarity r ∧
         (i.entry.IsPPI → r = .positive) ∧ (i.entry.IsNPI → r = .negative)) := by
   revert hx; cases x <;> decide
+
+-- `nahodou_example` reads the three rows of (43d) and (43e)
+theorem nahodou_example_count :
+    (Examples.Example.all.filter fun x ↦
+      x.datum.feature? "particle" = some Czech.Particles.nahodou.form).length = 3 := by
+  decide
 
 end Simik2024

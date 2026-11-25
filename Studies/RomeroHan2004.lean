@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.RomeroHan2004
 public import Linglib.Discourse.CommonGround
 public import Linglib.Languages.English.PolarityItems
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.PolarityItem.Licenser
+public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Syntax.Negation
 public import Linglib.Data.Examples.Readers
@@ -218,7 +218,7 @@ variable (W : Type) (l : LF)
 
 /-- The licenser of a polarity item in the clause under VERUM is the polarity of that clause,
 VERUM standing between the item and whatever is over it. -/
-def LF.licenser : Licenser := .ofOperator fun q : Set W ↦ l.inner • q
+def LF.licenser : Licenser := .ofPolarity W l.inner
 
 variable {W}
 
@@ -226,27 +226,8 @@ variable {W}
 polarity items when it is negative. -/
 theorem LF.admits_iff [Nonempty W] {e : PolarityItem} (hf : ¬e.IsFCI) :
     (l.licenser W).Admits e ↔
-      (e.IsPPI → l.inner = .positive) ∧ (e.IsNPI → l.inner = .negative) := by
-  have hne : (Set.univ : Set W) ≠ ∅ := Set.univ_nonempty.ne_empty
-  obtain ⟨o, _ | _⟩ := l
-  · have hH : ¬(LF.licenser W ⟨o, .positive⟩).Holds .anti := fun h ↦
-      hne (Set.subset_empty_iff.1
-        (ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨⟩) (Set.empty_subset Set.univ)))
-    have hL : ¬(LF.licenser W ⟨o, .positive⟩).Licenses e := by
-      rintro (⟨r, -, hr⟩ | ⟨h, -⟩ | ⟨h, -⟩)
-      exacts [(Licenser.carries_ofOperator_iff.1 hr).2 fun _ _ h ↦ h, h, h]
-    simp [Licenser.Admits, Licenser.AntiLicenses, hL, hf,
-      Licenser.not_holds_toProjectivitySignature hH]
-  · have hH : (LF.licenser W ⟨o, .negative⟩).Holds .antiAddMult := fun _ ↦
-      ProjectivitySignature.holdsFor_antiAddMult_compl
-    have hL : e.IsNPI → (LF.licenser W ⟨o, .negative⟩).Licenses e := fun h ↦ by
-      obtain ⟨r, hr⟩ := Option.isSome_iff_exists.1 h
-      exact .inl ⟨r, hr, Licenser.carries_ofOperator_iff.2
-        ⟨ProjectivitySignature.holdsFor_antiAddMult_compl.of_le
-          (Negation.Strength.toProjectivitySignature_antitone le_top),
-        fun hm ↦ hne (Set.subset_empty_iff.1 (by simpa using hm (Set.empty_subset Set.univ)))⟩⟩
-    rw [Licenser.Admits, Licenser.antiLicenses_iff_isPPI hH]
-    simpa [hf] using fun _ ↦ hL
+      (e.IsPPI → l.inner = .positive) ∧ (e.IsNPI → l.inner = .negative) :=
+  Licenser.admits_ofPolarity_iff hf
 
 end Licensing
 

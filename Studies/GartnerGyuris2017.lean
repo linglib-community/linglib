@@ -5,6 +5,7 @@ public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Questions.Bias
+public import Studies.BuringGunlogson2000
 public import Linglib.Data.Examples.GartnerGyuris2017
 public import Linglib.Data.Examples.Readers
 
@@ -365,6 +366,11 @@ def sample : List Profile :=
   [englishV1, japaneseNull, japaneseNo, japaneseDesho, hungarianFallRise]
 
 theorem hungarianFallRise_eq_englishV1 : hungarianFallRise = englishV1 := rfl
+
+-- the evidential cells of the English profile are the conditions of [buring-gunlogson-2000]
+theorem evidential_biasProfile_englishV1 (q : Option Polarity) :
+    (biasProfile englishV1 q).evidential = BuringGunlogson2000.evidential q := by
+  rcases q with _ | _ | _ <;> decide
 
 private theorem mem_sample {p : Profile} (h : p ∈ sample) :
     p = englishV1 ∨ p = japaneseNull ∨ p = japaneseNo ∨ p = japaneseDesho ∨

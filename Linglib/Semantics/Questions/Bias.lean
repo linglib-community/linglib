@@ -15,6 +15,13 @@ Following [sudo-2013], a bias value is a set of such signs, the ones that a ques
 compatible with. A `BiasProfile` gives one bias value for the evidence and one for the prior belief.
 Its `felicity` is the set of situations in which the form can be used.
 
+## Main definitions
+
+* `Question.BiasValue.plus`, `Question.BiasValue.minus`, `Question.BiasValue.neutral`: the values
+  [+s], [−s] and [neutral].
+* `Question.BiasProfile`: an evidential and an epistemic bias value.
+* `Question.BiasProfile.felicity`: the situations a profile admits.
+
 ## References
 
 * [buring-gunlogson-2000]
@@ -44,6 +51,16 @@ def minus (s : Polarity) : BiasValue := (plus s)ᶜ
 
 /-- The value [neutral] admits only a body of information supporting neither. -/
 def neutral : BiasValue := {0}
+
+variable {s : Polarity} {x : SignType}
+
+@[simp] theorem mem_plus : x ∈ plus s ↔ x = s := Finset.mem_singleton
+
+@[simp] theorem mem_minus : x ∈ minus s ↔ x ≠ s := by simp [minus]
+
+@[simp] theorem mem_neutral : x ∈ neutral ↔ x = 0 := Finset.mem_singleton
+
+@[simp] theorem compl_minus (s : Polarity) : (minus s)ᶜ = plus s := compl_compl _
 
 end BiasValue
 

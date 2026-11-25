@@ -514,12 +514,12 @@ theorem table1 (e : SignType) :
     HighNegationLicensed, evidence, raining_ne_empty, raining_ne_univ]
 
 open BuringGunlogson2000 in
-theorem licensed_iff_felicitous (r : Option Polarity) (e : SignType) :
-    Licensed (evidence raining e) raining r ↔ BuringGunlogson2000.Felicitous r e := by
+theorem licensed_iff_mem_evidential (r : Option Polarity) (e : SignType) :
+    Licensed (evidence raining e) raining r ↔ e ∈ BuringGunlogson2000.evidential r := by
   rcases r with _ | _ | _
-  exacts [(table1 e).1.trans (felicitous_none_iff_ne e).symm,
-    (table1 e).2.2.trans (felicitous_some_positive_iff_ne e).symm,
-    (table1 e).2.1.trans (felicitous_some_negative_iff_eq e).symm]
+  exacts [(table1 e).1.trans mem_evidential_none.symm,
+    (table1 e).2.2.trans mem_evidential_outer.symm,
+    (table1 e).2.1.trans mem_evidential_inner.symm]
 
 instance : MeasurableSpace Weather := ⊤
 
