@@ -28,8 +28,8 @@ are formed differ in which bracketings and positions they allow, so the type all
 
 ## Main results
 
-* `DistributedMorphology.MorphosyntacticWord.hmc_hosts`: words with distinct sites obey the Head
-  Movement Constraint.
+* `DistributedMorphology.MorphosyntacticWord.hmc_hosts`: words that divide a spine without
+  repeated heads, each pronounced at one of its own heads, obey the Head Movement Constraint.
 
 ## Implementation notes
 
@@ -77,16 +77,13 @@ theorem length_hosts (ws : List (MorphosyntacticWord H)) :
     (hosts ws).length = (ws.flatMap heads).length := by
   simp [hosts, List.length_flatMap]
 
-theorem hosts_eq_flatMap_replicate (ws : List (MorphosyntacticWord H)) :
-    hosts ws = (ws.map fun w ↦ (w.heads.length, w.site)).flatMap fun p ↦
-      List.replicate p.1 p.2 := by
-  simp [hosts, List.flatMap_map]
-
-/-- Words on a spine with distinct sites obey the Head Movement Constraint. -/
-theorem hmc_hosts {ws : List (MorphosyntacticWord H)}
-    (h : (ws.map (·.site)).Nodup) : HMC.Holds (hosts ws) := by
-  rw [hosts_eq_flatMap_replicate]
-  exact HMC.holds_flatMap_replicate (by simpa [List.map_map, Function.comp_def] using h)
+/-- Words that divide a spine without repeated heads, each pronounced at one of its own heads,
+obey the Head Movement Constraint. -/
+theorem hmc_hosts {ws : List (MorphosyntacticWord H)} (hsite : ∀ w ∈ ws, w.site ∈ w.heads)
+    (hnd : (ws.flatMap heads).Nodup) : HMC.Holds (hosts ws) := by
+  simpa [hosts, List.flatMap_map] using
+    HMC.holds_flatMap_replicate_of_mem (ws := ws.map fun w ↦ (w.heads, w.site))
+      (by simpa using hsite) (by simpa [List.flatMap_map] using hnd)
 
 end MorphosyntacticWord
 

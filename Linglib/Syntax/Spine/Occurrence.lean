@@ -38,11 +38,16 @@ when the map is `IsContiguous`.
 * `Spine.highest_eq_occurrences`, `Spine.lowest_eq_occurrences`: there the two resolutions agree
   with each other and with every resolution that pronounces each head somewhere.
 
+## Implementation notes
+
+A word belongs to a head and not to one of its occurrences: in [harizanov-gribanova-2019] word
+formation acts on the syntactic object and Chain Reduction on the positions it occupies. The
+hosting is therefore valued in heads, and a word formed at one occurrence of a head is pronounced
+wherever the resolution pronounces the head.
+
 ## TODO
 
 * The resolutions that pronounce a head at several of its occurrences, as in predicate doubling.
-* Whether a word belongs to a head or to one of its occurrences. The hosting above is valued in
-  heads, so a word formed at one occurrence of a head is pronounced wherever the head is.
 
 ## References
 

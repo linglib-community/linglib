@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.DistributedMorphology.MorphosyntacticWord
+public import Linglib.Syntax.Spine.Occurrence
 public import Linglib.Core.Data.List.Sublist
 public import Mathlib.Data.List.Pairwise
 
@@ -27,7 +28,9 @@ All in the namespace `DistributedMorphology`.
 * `amalgamate`: the words amalgamation forms on a spine.
 * `Amalgamation.moveToRoot`: a second occurrence of a head at the top of the spine, left by
   syntactic movement before amalgamation.
-* `Amalgamation.PronouncedFrom`: the word containing a head is pronounced at a position or above.
+* `Amalgamation.spine`: the spine of a list of terminals.
+* `Amalgamation.PronouncedFrom`: after Chain Reduction, the word containing a head is pronounced at
+  the lowest occurrence of another head or above it.
 
 ## Main results
 
@@ -271,35 +274,31 @@ theorem site_mem_heads_of_mem_amalgamate {spine : List (Terminal H)}
   obtain ⟨out', h', rfl⟩ := Option.map_eq_some_iff.mp h
   exact site_mem_heads_of_amalgamateAux h' (by simp) a (List.mem_reverse.mp ha)
 
-/-- On a spine without repeated heads, the words of amalgamation have distinct sites. -/
-theorem nodup_map_site_of_amalgamate {spine : List (Terminal H)}
-    {out : List (MWd H)} (h : amalgamate spine = some out)
-    (hnd : (spine.map (·.head)).Nodup) : (out.map (·.site)).Nodup := by
-  rw [← flatMap_heads_amalgamate h, List.nodup_flatMap] at hnd
-  rw [List.Nodup, List.pairwise_map]
-  exact hnd.2.imp_of_mem fun ha hb hd he ↦ hd (site_mem_heads_of_mem_amalgamate h ha)
-    (he ▸ site_mem_heads_of_mem_amalgamate h hb)
-
 /-- On a spine without repeated heads, amalgamation obeys the Head Movement Constraint. -/
 theorem hmc_hosts_of_amalgamate {spine : List (Terminal H)}
     {out : List (MWd H)} (h : amalgamate spine = some out)
     (hnd : (spine.map (·.head)).Nodup) : HMC.Holds (MorphosyntacticWord.hosts out) :=
-  MorphosyntacticWord.hmc_hosts (nodup_map_site_of_amalgamate h hnd)
+  MorphosyntacticWord.hmc_hosts (fun _ ha ↦ site_mem_heads_of_mem_amalgamate h ha)
+    (flatMap_heads_amalgamate h ▸ hnd)
 
 theorem length_hosts_of_amalgamate {spine : List (Terminal H)}
     {out : List (MWd H)} (h : amalgamate spine = some out) :
     (MorphosyntacticWord.hosts out).length = spine.length := by
   rw [MorphosyntacticWord.length_hosts, flatMap_heads_amalgamate h, List.length_map]
 
-/-- Chain Reduction pronounces the highest occurrence of a head, and a complex head formed at
-one occurrence of a moved head belongs to all of them. `PronouncedFrom spine h x` says that the
-complex head containing `h` is thereby pronounced in the position of `x` or above it. -/
-def Amalgamation.PronouncedFrom [DecidableEq H] (spine : List (Terminal H)) (h x : H) : Prop :=
-  ∃ out ∈ amalgamate spine, ∃ a ∈ out,
-    h ∈ a.heads ∧ a.site ∈ (spine.map (·.head)).dropWhile (· ≠ x)
+/-- The spine of a list of terminals, their heads without the [M] features. -/
+def Amalgamation.spine (ts : List (Terminal H)) : Spine H := ⟨ts.map (·.head)⟩
 
-instance [DecidableEq H] (spine : List (Terminal H)) (h x : H) :
-    Decidable (PronouncedFrom spine h x) :=
-  inferInstanceAs (Decidable (∃ out ∈ amalgamate spine, _))
+/-- A complex head belongs to the head it is formed at, in all of that head's occurrences, and
+Chain Reduction pronounces the highest of them, `Spine.highest`. `PronouncedFrom ts h x` says
+that the complex head containing `h` is thereby pronounced at the lowest occurrence of `x` or
+above it. -/
+def Amalgamation.PronouncedFrom [DecidableEq H] (ts : List (Terminal H)) (h x : H) : Prop :=
+  ∃ out ∈ amalgamate ts, ∃ a ∈ out, h ∈ a.heads ∧
+    ∃ p ∈ (Amalgamation.spine ts).highest a.site, ∃ q ∈ (Amalgamation.spine ts).lowest x, q ≤ p
+
+instance [DecidableEq H] (ts : List (Terminal H)) (h x : H) :
+    Decidable (PronouncedFrom ts h x) :=
+  inferInstanceAs (Decidable (∃ out ∈ amalgamate ts, _))
 
 end DistributedMorphology

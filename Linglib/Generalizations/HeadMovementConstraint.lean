@@ -32,6 +32,8 @@ and a hosting that returns to a head after leaving it does not.
 * `HMC.holds_iff_exists_monotone`: the constraint holds exactly when a monotone numbering of the
   positions has the hosting's kernel.
 * `HMC.holds_flatMap_replicate`: blocks pronounced at distinct heads obey the constraint.
+* `HMC.holds_flatMap_replicate_of_mem`: words dividing a spine without repeated heads, each
+  pronounced at one of its own heads, obey it.
 * `HMC.not_holds_of_ne`: a hosting that returns to a head does not.
 
 ## Implementation notes
@@ -69,6 +71,19 @@ theorem holds_nil : Holds ([] : List H) := fun i ↦ i.elim0
 theorem holds_flatMap_replicate {l : List (ℕ × H)} (hl : (l.map Prod.snd).Nodup) :
     Holds (l.flatMap fun p ↦ List.replicate p.1 p.2) :=
   List.isContiguous_get_flatMap_replicate hl
+
+/-- Words that divide a spine without repeated heads, each pronounced at one of its own heads,
+obey the constraint: the words are disjoint, so their sites are distinct. -/
+theorem holds_flatMap_replicate_of_mem {ws : List (List H × H)} (hsite : ∀ w ∈ ws, w.2 ∈ w.1)
+    (hnd : (ws.flatMap Prod.fst).Nodup) :
+    Holds (ws.flatMap fun w ↦ List.replicate w.1.length w.2) := by
+  have hs : (ws.map Prod.snd).Nodup := by
+    rw [List.nodup_flatMap] at hnd
+    rw [List.Nodup, List.pairwise_map]
+    exact hnd.2.imp_of_mem fun ha hb hd he ↦ hd (hsite _ ha) (he ▸ hsite _ hb)
+  simpa [List.flatMap_map] using
+    holds_flatMap_replicate (l := ws.map fun w ↦ (w.1.length, w.2))
+      (by simpa [List.map_map, Function.comp_def] using hs)
 
 theorem not_holds_of_ne {a b : H} (hab : a ≠ b) : ¬ Holds [a, b, a] := fun h ↦
   hab (@h (0 : Fin 3) (1 : Fin 3) (2 : Fin 3) (Fin.zero_le _) (Fin.le_of_lt (by simp)) rfl)
