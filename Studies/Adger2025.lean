@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Mereological.Derivation
+public import Linglib.Syntax.Mereological.Spine
 public import Linglib.Data.Examples.Adger2025
 public import Linglib.Data.Examples.Readers
 
@@ -15,7 +15,9 @@ through a single angle: it must be an n-part of some 1-part of the target (`CanS
 derivation is a sequence of subjunctions licensed by Dimensionality, Angular Locality and
 Mereological Extension (`Derives`). The structure of *you jumped* is derived in this way from
 objects without parts, so it has no cycle of parts. An unattached object subjoins neither to an
-object that has both parts nor to a part of another object.
+object that has both parts nor to a part of another object. The spine of an object is its chain
+of 1-parts: the clause of *you jumped* has the spine V, v, T, and a clausal complement, being a
+2-part, has a spine apart from the clause that embeds it.
 
 The book's list of consequences is verified on its own structures. The complement of a head
 cannot resubjoin to it (`antilocality`), and subjunction to an unattached object, to a specifier,
@@ -193,6 +195,11 @@ theorem derives_youJumped : (⊥ : Parthood Node).Derives youJumped :=
 theorem youJumped_wellFormed : youJumped.Acyclic ∧ youJumped.Dimensional :=
   ⟨derives_youJumped.acyclic acyclic_bot, derives_youJumped.dimensional dimensional_bot⟩
 
+-- the subject, a 2-part of `v` and of `T`, is on no spine but its own
+theorem spine_youJumped :
+    youJumped.spine .T = ⟨[.V, .v, .T]⟩ ∧ youJumped.spine .you = ⟨[.you]⟩ := by
+  decide +kernel
+
 /-- In *We asked who Anson wrote the book*, (34), `who` is the 2-part of `Appl`, whose 1-part
 `O` has the embedded `C` as its 2-part. -/
 def asked : Parthood Node where
@@ -208,6 +215,11 @@ def said : Parthood Node where
       | .C => some .T | .T => some .v | .v => some .O | .O => some .V
       | .C' => some .T' | .T' => some .v' | .v' => some .O' | .O' => some .V' | _ => none
     | .two => fun | .v => some .you | .O => some .C' | .O' => some .who | _ => none
+
+-- the embedded clause, a 2-part of `O`, has a spine of its own
+theorem spine_said :
+    said.spine .C = ⟨[.V, .O, .v, .T, .C]⟩ ∧ said.spine .C' = ⟨[.V', .O', .v', .T', .C']⟩ := by
+  decide +kernel
 
 /-- `said` after `who` subjoins to the embedded `C'`. -/
 def said' : Parthood Node := said.addPart .two .who .C'

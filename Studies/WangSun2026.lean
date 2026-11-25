@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Mereological.Derivation
+public import Linglib.Syntax.Mereological.Spine
 
 /-!
 # Wang and Sun (2026): Detaching Mandarin Classifiers from Nouns
@@ -12,7 +12,7 @@ noun, if present, is the classifier's 1-part, (7b), (26). Dimensionality then le
 Q, so a degree-modified adjective cannot sit between the numeral and the classifier, (29a)
 (`subjoin_modifier_q`), although it subjoins to the classifier as its 2-part, (28a)
 (`subjoin_modifier_cl`), or to D, (28b) (`subjoin_modifier_d`). The classifier spells out with
-Q along Q's complementation line, (26b) (`nPart_one_q`), so the classifier and the noun cannot be
+Q along Q's complementation line, (26b) (`spine_q`), so the classifier and the noun cannot be
 dislocated without the numeral. The particle *de* realises Mod, (7c): with *de* after the
 classifier the quantity phrase is the 1-part of a Mod that is D's 2-part, and the classifier is
 reached from D only across dimensions, (34)–(35) (`not_clVisible_numClDeN`). Visibility from D
@@ -20,7 +20,7 @@ is the paper's structural correlate of the sortal reading, glasses as entities, 
 mensural reading, glassfuls, (33) (`reading`). Nothing more, such as a second *de*-modifier, can
 subjoin to the filled D, (37a) (`subjoin_numClDeN`). In the measure use the classifier has no
 noun and Q is the 2-part of Deg, off the complementation line of the predicate, (45)
-(`nPart_one_pred`).
+(`spine_pred`).
 
 Extraction runs by Angular Locality, (40), on the clausal structure of (41): the object D is
 the 2-part of O, and O, v and Asp are the 1-part chain of C. A wh-numeral first subjoins to D
@@ -109,13 +109,12 @@ theorem subjoin_numClDeN (x : Node) : numClDeN.subjoin x .D = none :=
 
 /-! ### Spell-out lines, (26b), (45b) -/
 
-/-- The 1-parts of Q are the classifier and the noun, so the classifier spells out with Q (26b). -/
-theorem nPart_one_q : ∀ x, numClN.NPart .one x .Q ↔ x = .Cl ∨ x = .N := by decide +kernel
+/-- The spine of Q is the noun, the classifier and Q, so the classifier spells out with Q (26b). -/
+theorem spine_q : numClN.spine .Q = ⟨[.N, .Cl, .Q]⟩ := by decide +kernel
 
 /-- Pred, Deg and A spell out together, (45b); the quantity phrase, Deg's 2-part, is off the
 line. -/
-theorem nPart_one_pred : ∀ x, numClPred.NPart .one x .Pred ↔ x = .Deg ∨ x = .A := by
-  decide +kernel
+theorem spine_pred : numClPred.spine .Pred = ⟨[.A, .Deg, .Pred]⟩ := by decide +kernel
 
 /-! ### Visibility and the reading of a classifier, (33)–(36) -/
 
