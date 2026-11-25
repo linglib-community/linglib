@@ -7,19 +7,30 @@ public import Mathlib.Order.UpperLower.Closure
 /-!
 # Individuals
 
-The individual of an entity, `Quantifier.individual a`, is the quantifier of the sets it belongs
-to, Montague's lift. The individuals [generate the quantifiers](##Quantifier.completeLatticeHom_ext)
-under complete Boolean operations and are [those commuting with negation and arbitrary
-conjunction](##Quantifier.exists_eq_individual_iff), Keenan and Faltz's proper-noun denotations.
-An existential is an individual [exactly when its restrictor is a
-singleton](##Quantifier.some_eq_individual_iff). On entities ordered by part-of, the individual of
-an entity lies between *every* and *some* of its parts,
-`every (Set.Iic d) ≤ individual d ≤ Det.some (Set.Iic d)`, with equality exactly at the minimal
-entities (`Quantifier.some_Iic_eq_individual_iff`): a predicate holds of all the parts, of the
-entity, or of some part. Partee's `lower` is the partial inverse of the
-lift, so *the king* [lowers to `iota` of its noun](##Quantifier.lower_the), and *a man* and
-*every man* do only where there is one man. Predicative content is in
-`Quantifier/Predicative.lean`.
+The individual of an entity `a` is the quantifier of the sets that `a` belongs to,
+`individual a B ↔ a ∈ B`, Montague's lift of the entity. This file shows that the individuals
+generate the quantifiers under the complete Boolean operations, and characterizes them among the
+quantifiers. On entities ordered by parthood it compares the individual of an entity with the
+universal and the existential quantifier over its parts. It also defines Partee's `lower`, the
+partial inverse of the lift.
+
+## Main definitions
+
+* `Quantifier.lower`: `lower Q` is the entity whose individual is `Q`, defined when there is one.
+
+## Main results
+
+* `Quantifier.completeLatticeHom_ext`: complete lattice homomorphisms out of the quantifiers that
+  agree on the individuals are equal.
+* `Quantifier.exists_eq_individual_iff`: a quantifier is an individual if and only if it commutes
+  with complement and with arbitrary intersections.
+* `Quantifier.some_eq_individual_iff`: `Det.some N = individual a` if and only if `N = {a}`.
+* `Quantifier.every_Iic_le_individual`, `Quantifier.individual_le_some_Iic`:
+  `every (Set.Iic d) ≤ individual d ≤ Det.some (Set.Iic d)`.
+* `Quantifier.some_Iic_eq_individual_iff`, `Quantifier.every_Iic_eq_individual_iff`: each inequality
+  is an equality if and only if `d` is minimal.
+* `Quantifier.lower_the`, `Quantifier.lower_some`, `Quantifier.lower_every`: `lower` takes *the*
+  `A`, *some* `A` and *every* `A` to `iota A`.
 
 ## References
 
@@ -70,8 +81,7 @@ theorem eq_iSup_every_inf_no (Q : Quantifier E) : Q = ⨆ (A) (_ : Q A), every A
   funext fun _ ↦ by
     simp only [iSup_apply, iSup_Prop_eq, every_inf_no_compl_apply, exists_prop, exists_eq_right']
 
-/-- Complete homomorphisms out of `Quantifier E` that agree on the individuals are equal, the
-individuals being complete generators. -/
+/-- Complete lattice homomorphisms out of `Quantifier E` that agree on the individuals are equal. -/
 theorem completeLatticeHom_ext {β : Type*} [CompleteBooleanAlgebra β]
     {f g : CompleteLatticeHom (Quantifier E) β} (h : ∀ x, f (individual x) = g (individual x)) :
     f = g := by
@@ -181,8 +191,8 @@ atoms; the Joins Condition follows from the other two. Read as scope, the Comple
 says that the quantifier commutes with negation and the Meets Condition that it commutes with
 universal quantification, so the scopeless quantifiers are the Montagovian individuals. -/
 
-/-- The quantifiers that commute with negation and with arbitrary intersection are the
-Montagovian individuals, [keenan-faltz-1985]'s Theorem 9 for the algebra `Set E`. -/
+/-- A quantifier is an individual if and only if it commutes with complement and with arbitrary
+intersections ([keenan-faltz-1985], Theorem 9). -/
 theorem exists_eq_individual_iff {Q : Quantifier E} :
     (∃ a, Q = individual a) ↔
       (∀ B, Q Bᶜ ↔ ¬ Q B) ∧ ∀ S : Set (Set E), Q (⋂₀ S) ↔ ∀ B ∈ S, Q B := by

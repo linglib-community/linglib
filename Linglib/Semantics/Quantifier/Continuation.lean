@@ -15,10 +15,10 @@ another:
   set of `a` such that `m a` holds of `B`;
 * `Q₁.curry Q₂` is the quantifier over pairs in which `Q₁` takes scope over `Q₂`.
 
-With `Quantifier.individual` as the unit these are the operations of a monad. It is the
+With the individual of an entity as the unit, these are the operations of a monad. It is the
 continuation monad at `Prop`: a quantifier, read as a function of the characteristic function of
-its scope, is a computation `Cont Prop α`, and the equivalence `Quantifier.toCont` takes
-`individual` to `pure`, `bind` to `>>=` and `map` to `<$>`.
+its scope, is a computation `Cont Prop α`, and under this equivalence the individual of an entity
+is `pure`, `bind` is `>>=` and `map` is `<$>`.
 
 ## Main definitions
 

@@ -15,15 +15,32 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Numeral roundness
 
-A number is round by the roundness properties it has, such as Jansen and Pollmann's $k$-ness,
-being $m k 10^b$ for a digit $m$, or lying on one of the scales of multiples salient in a context.
-Numbers and properties form a formal context, ordered by Haslinger's relation
-[*at least as round*](##AtLeastAsRound): the numbers at least as round as $d$ are
-[the extent closure of $d$](##atLeastAsRound_iff_mem_extentClosure), and the relation is [the
-ordering that the family of properties induces](##atLeastAsRound_iff_ofLowerSets_le). On scales
-of multiples that closure is [the multiples of the lcm of the widths through
-$d$](##extentClosure_onScale), so it is closed under addition, and on aligned scales that lcm is
-[the coarsest width through $d$](##isGreatest_scaleLcm).
+A number is round according to the roundness properties it has. Examples are lying on a scale of
+multiples that is salient in a context, and the $k$-ness of Jansen and Pollmann, being $m k 10^b$
+for a digit $m$. Given a relation `r` between numbers and properties, `e` is at least as round as
+`d` when `e` has every property that `d` has. This file defines that relation, which is due to
+Haslinger, and computes it on scales of multiples.
+
+## Main definitions
+
+* `Numerals.Roundness.AtLeastAsRound r d e`: `e` has every roundness property that `d` has.
+* `Numerals.Roundness.profile`, `Numerals.Roundness.score`: the set of the properties of a number,
+  and its size.
+* `Numerals.Roundness.OnScale W`: the relation between an integer and a width in `W` whose multiples
+  include it.
+* `Numerals.Roundness.scaleLcm W d`: the least common multiple of the widths in `W` that divide `d`.
+* `Numerals.Roundness.HasKness k n`: `n = m * k * 10 ^ b` for some `b` and some `m` from `1` to `9`.
+
+## Main results
+
+* `Numerals.Roundness.atLeastAsRound_iff_mem_extentClosure`: the numbers at least as round as `d`
+  are the extent closure of `{d}`.
+* `Numerals.Roundness.atLeastAsRound_iff_ofLowerSets_le`: the relation is the ordering that the
+  family of roundness properties induces.
+* `Numerals.Roundness.extentClosure_onScale`: on scales of multiples, the numbers at least as round
+  as `d` are the multiples of `scaleLcm W d`.
+* `Numerals.Roundness.isGreatest_scaleLcm`: when the widths form a chain under divisibility,
+  `scaleLcm W d` is the coarsest width through `d`.
 
 ## Implementation notes
 

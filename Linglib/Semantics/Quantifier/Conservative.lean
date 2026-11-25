@@ -59,7 +59,6 @@ theorem Conservative.congr_scope (h : d.Conservative) {B' : Set α}
     (hB : ∀ x ∈ A, x ∈ B ↔ x ∈ B') : d A B ↔ d A B' :=
   h.iff_of_inter_eq <| Set.ext fun x ↦ and_congr_right (hB x)
 
-/-- An intersective determiner denotation is symmetric. -/
 theorem Intersective.symm (h : d.Intersective) : Std.Symm d :=
   ⟨fun A B ↦ (h A B B A (Set.inter_comm A B)).1⟩
 
@@ -70,8 +69,7 @@ theorem Conservative.iff_inter_inter (h : d.Conservative) [Std.Symm d] :
     _ ↔ d (A ∩ B) (A ∩ B ∩ A) := h _ _
     _ ↔ d (A ∩ B) (A ∩ B) := by rw [Set.inter_eq_left.2 Set.inter_subset_left]
 
-/-- Under conservativity a determiner denotation is symmetric exactly when it is intersective,
-which is why the symmetric determiners are the ones that occur in *there*-sentences. -/
+/-- A conservative determiner denotation is symmetric if and only if it is intersective. -/
 theorem Conservative.symm_iff_intersective (h : d.Conservative) : Std.Symm d ↔ d.Intersective :=
   ⟨fun _ A B A' B' hAB ↦ by rw [h.iff_inter_inter, h.iff_inter_inter (A := A'), hAB],
     Intersective.symm⟩
@@ -100,8 +98,7 @@ theorem Intersective.downNEMon (h : d.Intersective) : d.DownNEMon :=
   fun A B _ h₁ h₂ ↦ (h A B _ B (Set.Subset.antisymm
     (fun _ hx ↦ ⟨h₂ hx, hx.2⟩) (fun _ hx ↦ ⟨h₁ hx.1, hx.2⟩))).1
 
-/-- Under conservativity a determiner denotation is symmetric exactly when it is ↑SW and ↓NE
-monotone. -/
+/-- A conservative determiner denotation is symmetric if and only if it is ↑SW and ↓NE monotone. -/
 theorem Conservative.symm_iff_upSW_and_downNE (h : d.Conservative) :
     Std.Symm d ↔ d.UpSWMon ∧ d.DownNEMon := by
   refine ⟨fun hS ↦ ⟨(h.symm_iff_intersective.1 hS).upSWMon,
@@ -138,8 +135,8 @@ theorem CoIntersective.sdiff_iff (h : d.CoIntersective) {C : Set α} (hC : Disjo
     d (A \ C) B ↔ d A B :=
   h _ _ _ _ (by rw [sdiff_right_comm, hC.sdiff_eq_left])
 
-/-- A determiner denotation is co-intersective exactly when `d A B ↔ d univ (A → B)`, so that it
-reduces to its value on the universe at the Boolean conditional. -/
+/-- A determiner denotation is co-intersective if and only if `d A B ↔ d univ (Aᶜ ∪ B)` for all `A`
+and `B`. -/
 theorem coIntersective_iff : d.CoIntersective ↔ ∀ A B, d A B ↔ d Set.univ (Aᶜ ∪ B) := by
   have e (A B : Set α) : Set.univ \ (Aᶜ ∪ B) = A \ B := by ext; simp
   exact ⟨fun h A B ↦ h A B _ _ (e A B).symm,
@@ -155,8 +152,7 @@ theorem Intersective.conservative (h : d.Intersective) : d.Conservative :=
 theorem CoIntersective.conservative (h : d.CoIntersective) : d.Conservative :=
   fun A B ↦ h A B _ _ (by simp)
 
-/-- Under conservativity the intersection condition is intersectivity: the functions conservative
-on both arguments are the intersective ones. -/
+/-- For a conservative determiner denotation, the intersection condition is intersectivity. -/
 theorem Conservative.intersectionCondition_iff (h : d.Conservative) :
     d.IntersectionCondition ↔ d.Intersective := by
   refine ⟨fun h' A B A' B' e ↦ ?_, fun h' A B ↦
@@ -204,9 +200,8 @@ theorem ScopeAntitone.quasiUniversal (h : d.ScopeAntitone) (hC : d.Conservative)
     d.QuasiUniversal :=
   fun A B hd ↦ (hC A B).2 (h A Set.inter_subset_left hd)
 
-/-- Barwise and Cooper's monotonicity constraint is right continuity: a quantifier is a
-conjunction of monotone quantifiers exactly when it holds at every scope between two at which it
-holds, Thijsse's observation reported by [van-benthem-1984]. -/
+/-- A determiner denotation satisfies Barwise and Cooper's universals if and only if it is
+conservative and right continuous, an observation of Thijsse reported in [van-benthem-1984]. -/
 theorem satisfiesUniversals_iff : d.SatisfiesUniversals ↔ d.Conservative ∧ d.RightContinuous :=
   ⟨fun h ↦ ⟨h.conservative, fun A ↦ ordConnected_setOf_iff_exists_eq_inf.2 (h.exists_eq_inf A)⟩,
     fun h ↦ ⟨h.1, fun A ↦ ordConnected_setOf_iff_exists_eq_inf.1 (h.2 A)⟩⟩

@@ -122,9 +122,7 @@ def CoIntersective (d : Det α) : Prop :=
   ∀ A B A' B' : Set α, A \ B = A' \ B' → (d A B ↔ d A' B')
 
 /-- A determiner denotation satisfies the intersection condition of [barwise-cooper-1981] when
-`d A B ↔ d (A ∩ B) B`, which [zuber-keenan-2019] call conservativity on the first argument. It is
-not intersectivity, on which `d A B` depends on `A ∩ B` alone; for a conservative determiner
-denotation the two coincide. -/
+`d A B ↔ d (A ∩ B) B`. For a conservative determiner denotation this is intersectivity. -/
 def IntersectionCondition (d : Det α) : Prop := ∀ A B, d A B ↔ d (A ∩ B) B
 
 /-! ### Strength -/

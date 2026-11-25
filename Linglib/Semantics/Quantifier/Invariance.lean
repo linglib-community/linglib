@@ -68,10 +68,8 @@ namespace Det
 variable {d d' : Det α} {A B : Set α}
 
 /-- A determiner denotation is quantity invariant when no permutation of the universe changes it,
-`d (σ ⁻¹' A) (σ ⁻¹' B) ↔ d A B`. This is [mostowski-1957]'s requirement that a quantifier not
-distinguish the elements of the universe, permutation closure on a single universe; on a finite
-universe it makes `d A B` depend only on the sizes of the four cells of the Venn diagram of `A`
-and `B`. -/
+`d (σ ⁻¹' A) (σ ⁻¹' B) ↔ d A B`, the requirement of [mostowski-1957] that a quantifier not
+distinguish the elements of the universe. -/
 def QuantityInvariant (d : Det α) : Prop :=
   ∀ (σ : Equiv.Perm α) (A B : Set α), d (σ ⁻¹' A) (σ ⁻¹' B) ↔ d A B
 

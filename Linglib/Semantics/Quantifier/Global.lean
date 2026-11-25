@@ -52,6 +52,11 @@ define the global denotations of the determiners of `Quantifier/Basic.lean` and
 
 ## Implementation notes
 
+The eight determiner symbols are a choice made here. The logical determiner symbols of
+[barwise-cooper-1981] are *some*, *every*, *no*, *both*, *neither*, the numerals and *the n*, their
+non-logical ones include *most* and *few*, and they have no *half*. Here every symbol has one
+denotation, the global determiner denotation of its tree.
+
 A type is not a subset of another type, so extension is stated for a subset `M` of a universe
 `β` and the universe `↥M`. Extension therefore relates a universe only to its subtypes; it is
 isomorphism closure that relates universes presented by unrelated types. The two together are
@@ -107,18 +112,17 @@ def Isom : Prop :=
     Q α (e ⁻¹' A) (e ⁻¹' B) ↔ Q β A B
 
 /-- A global determiner denotation satisfies extension (EXT) when enlarging the universe does not
-change it: for `A` and `B` inside `M ⊆ β`, it holds on the universe `M` exactly when it holds on
-`β`. That determiner denotations satisfy it is [van-benthem-1986]'s observation. -/
+change it: for `A` and `B` inside `M ⊆ β`, it holds on the universe `M` exactly when it holds on `β`
+([van-benthem-1986]). -/
 def Ext : Prop :=
   ∀ ⦃β : Type u⦄ [Finite β] (M A B : Set β), A ⊆ M → B ⊆ M →
     (Q M (Subtype.val ⁻¹' A) (Subtype.val ⁻¹' B) ↔ Q β A B)
 
 /-- A global determiner denotation is constant when it is invariant along every embedding of
 universes: for `A` and `B` inside the range of `f : α ↪ β`, it holds of their preimages on `α`
-exactly when it holds of them on `β`. Constancy is extension together with isomorphism closure,
-an embedding being an isomorphism onto its range followed by an inclusion: the closure under
-injections of [peters-westerstahl-2006], which [westerstahl-2017] proposes as the explication of
-a quantifier being the same on every universe. -/
+exactly when it holds of them on `β`. This is the closure under injections of
+[peters-westerstahl-2006], which [westerstahl-2017] proposes as the definition of being the same
+quantifier on every universe. -/
 def Constant : Prop :=
   ∀ ⦃α β : Type u⦄ [Finite α] [Finite β] (f : α ↪ β) (A B : Set β),
     A ⊆ Set.range f → B ⊆ Set.range f → (Q α (f ⁻¹' A) (f ⁻¹' B) ↔ Q β A B)
@@ -223,8 +227,7 @@ private theorem ncard_image_inter {α β : Type*} {f : α → β} (hf : f.Inject
   rw [← Set.image_inter hf, Set.ncard_image_of_injective _ hf]
 
 /-- A conservative constant global determiner denotation holds of `A` and `B` on one universe
-exactly when it holds of `A'` and `B'` on another with the same `|A \ B|` and `|A ∩ B|`. Both
-universes embed in their sum, where permutation invariance applies. -/
+exactly when it holds of `A'` and `B'` on another with the same `|A \ B|` and `|A ∩ B|`. -/
 theorem _root_.Quantifier.Det.Family.iff_of_ncard_eq (hC : Q.Conservative) (hK : Q.Constant)
     {α β : Type u} [Finite α] [Finite β] {A B : Set α} {A' B' : Set β}
     (hd : (A \ B).ncard = (A' \ B').ncard) (hi : (A ∩ B).ncard = (A' ∩ B').ncard) :
@@ -259,8 +262,7 @@ def toFamily (q : NumberTree) : Det.Family.{u} := fun _ _ ↦ q.toDet
 theorem conservative_toFamily (q : NumberTree) : (q.toFamily : Det.Family.{u}).Conservative :=
   fun _ _ ↦ conservative_toDet q
 
-/-- The global determiner denotation of a tree is constant; only the restrictor need lie inside
-the range of the embedding. -/
+/-- The global determiner denotation of a tree is constant. -/
 theorem constant_toFamily (q : NumberTree) : (q.toFamily : Det.Family.{u}).Constant :=
   fun _ _ _ _ f _ B hA _ ↦ toDet_preimage f.injective B hA q
 
@@ -326,9 +328,8 @@ theorem asymmetric_ofFamily (hC : Q.Conservative) (hK : Q.Constant)
   have hYX := (ofFamily_iff hC hK γ Y X).1 (by rwa [hc, Set.inter_comm, hb])
   exact Std.Asymm.asymm X Y hXY hYX
 
-/-- No conservative constant global determiner denotation is asymmetric on every universe unless
-it is empty ([van-benthem-1984], Theorem 3.2.1). On a single universe
-an asymmetric conservative permutation-invariant denotation can be nonempty. -/
+/-- No conservative constant global determiner denotation is asymmetric on every universe unless it
+is empty ([van-benthem-1984], Theorem 3.2.1). -/
 theorem _root_.Quantifier.Det.Family.not_apply_of_asymm (hC : Q.Conservative)
     (hK : Q.Constant) (h : ∀ (α : Type u) [Finite α], Std.Asymm (Q α)) (α : Type u) [Finite α]
     (A B : Set α) : ¬ Q α A B := by
@@ -350,8 +351,7 @@ open Det
 
 variable {Q : Quantifier.Family.{u}} {D : Det.Family.{u}}
 
-/-- A relativized quantifier is conservative, since it sees only the part of the scope inside the
-restrictor. -/
+/-- A relativized quantifier is conservative. -/
 theorem _root_.Quantifier.Family.conservative_rel (Q : Quantifier.Family.{u}) :
     Q.rel.Conservative := fun _ _ A B ↦ by
   show Q A (Subtype.val ⁻¹' B) ↔ Q A (Subtype.val ⁻¹' (A ∩ B))
@@ -405,9 +405,8 @@ noncomputable def relOrderIso :
     rw [← Q.2.atUniv_rel] at hB
     exact h α Set.univ B hB
 
-/-- An isomorphism-closed global quantifier holds of `B` according to `|Bᶜ|` and `|B|` alone, by
-the tree of its relativization, so a quantifier and its relativization have the same numerical
-relation. -/
+/-- An isomorphism-closed global quantifier holds of `B` exactly when the tree of its relativization
+holds of `|Bᶜ|` and `|B|`. -/
 theorem _root_.Quantifier.Family.Isom.apply_iff (h : Q.Isom) (α : Type u) [Finite α]
     (B : Set α) : Q α B ↔ ofFamily Q.rel Bᶜ.ncard B.ncard := by
   have key := ofFamily_iff Q.conservative_rel h.constant_rel α Set.univ B
@@ -569,11 +568,8 @@ end Family
 
 /-! ### Determiner symbols -/
 
-/-- A determiner symbol names one of the canonical denotations, after the basic determiner
-symbols from which [barwise-cooper-1981]'s logic L(GQ) builds its quantifiers. The eight symbols
-are ours: Barwise and Cooper's logical determiner symbols are *some*, *every*, *no*, *both*,
-*neither*, the numerals and *the n*, their non-logical ones include *most* and *few*, and they
-have no *half*; here every symbol has one denotation, the global denotation of its tree. -/
+/-- A determiner symbol names one of the canonical global determiner denotations, after the basic
+determiner symbols of the logic L(GQ) of [barwise-cooper-1981]. -/
 inductive Symbol where
   | every | some | no | most | few | half | both | neither
   deriving DecidableEq, Repr, Fintype

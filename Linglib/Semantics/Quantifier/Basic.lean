@@ -222,15 +222,12 @@ def noOrderEmbedding : (Set α)ᵒᵈ ↪o Quantifier α :=
 
 @[simp] theorem noOrderEmbedding_apply (A : (Set α)ᵒᵈ) : noOrderEmbedding A = no A.ofDual := rfl
 
-/-- `Det.some` sends a union of restrictors to a join. -/
 theorem some_union (A A' : Set α) : Det.some (A ∪ A') = Det.some A ⊔ Det.some A' := by
   funext B; simp [Det.some, Set.union_inter_distrib_right, Set.union_nonempty]
 
-/-- `every` sends a union of restrictors to a meet. -/
 theorem every_union (A A' : Set α) : every (A ∪ A') = every A ⊓ every A' := by
   funext B; simp [every, Set.union_subset_iff]
 
-/-- `no` sends a union of restrictors to a meet. -/
 theorem no_union (A A' : Set α) : no (A ∪ A') = no A ⊓ no A' := by
   funext B; simp [no, Set.union_subset_iff]
 
@@ -243,7 +240,6 @@ theorem every_iUnion {ι : Sort*} (A : ι → Set α) : every (⋃ i, A i) = ⨅
 theorem no_iUnion {ι : Sort*} (A : ι → Set α) : no (⋃ i, A i) = ⨅ i, no (A i) := by
   funext B; simp [no, Set.iUnion_subset_iff]
 
-/-- The quantifier of the individual `a` is `every {a}`. -/
 theorem _root_.Quantifier.individual_eq_every (a : α) : individual a = every {a} := by
   funext B; simp [individual, every]
 

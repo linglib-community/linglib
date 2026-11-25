@@ -7,15 +7,30 @@ public import Mathlib.Order.GaloisConnection.Defs
 /-!
 # Predicative content
 
-`BE`, Montague's translation of *be* recast by Partee as a type shift, takes a quantifier to the
-individuals whose singleton it contains. It is a complete homomorphism, [the only one taking each
-individual to its singleton](##Quantifier.BE_unique), and the existential determiner `Det.some`,
-Partee's `A`, is a section of it, [the only conservative, symmetric, monotone
-one](##Quantifier.eq_some_of_leftInverse); on the monotone quantifiers the two form a Galois
-coinsertion. On an intersective determiner `BE` [asks of an individual only about the
-restrictor there](##Quantifier.Det.Intersective.mem_BE). *Be the `A`* [holds of the only
-`A`](##Quantifier.mem_BE_the), as *be every `A`* does once there is an `A`, and read at each index
-it is [a role that no set represents](##Quantifier.BE_the_not_mem_range_const).
+`BE` is Montague's translation of *be*, which Partee recast as a type shift. It takes a quantifier
+`Q` to its predicative content, the set of the entities whose singleton `Q` holds of:
+`BE Q = {x | Q {x}}`. This file defines `BE` as a complete lattice homomorphism and relates it to
+the existential determiner denotation `Det.some`, Partee's `A`, which is a section of it.
+
+## Main definitions
+
+* `Quantifier.BE`: the complete lattice homomorphism taking `Q` to `{x | Q {x}}`.
+* `Quantifier.gciSomeBE`: the Galois coinsertion that `Det.some` and `BE` form on the monotone
+  quantifiers.
+* `Quantifier.mapHom`: the image of a quantifier under a function, as a complete lattice
+  homomorphism.
+
+## Main results
+
+* `Quantifier.BE_unique`: `BE` is the only complete lattice homomorphism that takes each individual
+  to its singleton.
+* `Quantifier.eq_some_of_leftInverse`: `Det.some` is the only conservative, symmetric, monotone
+  determiner denotation that is a section of `BE`.
+* `Quantifier.Det.Intersective.mem_BE`: for an intersective `D`, `x ∈ BE (D A)` if and only if
+  `D (A ∩ {x}) (A ∩ {x})`.
+* `Quantifier.mem_BE_the`: `x ∈ BE (the A)` if and only if `A = {x}`.
+* `Quantifier.BE_the_not_mem_range_const`: if `P` has different single members at two indices, then
+  `BE (the (P w))` is not constant in `w`.
 
 ## Implementation notes
 
@@ -66,9 +81,8 @@ theorem BE_unique {f : CompleteLatticeHom (Quantifier E) (Set E)}
     (h : ∀ a, f (individual a) = {a}) : f = BE :=
   completeLatticeHom_ext fun a ↦ (h a).trans (BE_individual a).symm
 
-/-- `A` is the natural inverse of `BE` ([partee-1987], §3.3): among conservative determiners it is
-the only symmetric, upward monotone one that `BE` undoes. *Exactly one* is a symmetric section of
-`BE` that is not monotone. -/
+/-- Among the conservative determiner denotations, `Det.some` is the only symmetric, monotone
+section of `BE` ([partee-1987], §3.3). -/
 theorem eq_some_of_leftInverse [Nonempty E] {D : Det E} (hc : D.Conservative) [Std.Symm D]
     (hm : D.ScopeMonotone) (h : Function.LeftInverse BE D) : D = Det.some := by
   ext A B
@@ -80,9 +94,8 @@ theorem eq_some_of_leftInverse [Nonempty E] {D : Det E} (hc : D.Conservative) [S
     rwa [h ∅] at this
   · exact hm _ (Set.singleton_subset_iff.2 hx) ((h (A ∩ B)).symm ▸ hx : x ∈ BE (D (A ∩ B)))
 
-/-- `BE` of an intersective determiner, which looks only at `A ∩ B`, asks of an entity `x` only
-about `A ∩ {x}`. For one that is also quantity invariant, as the weak determiners are, the
-predicative reading is the noun, its complement or a constant. -/
+/-- For an intersective determiner denotation `D`, an entity `x` is in `BE (D A)` if and only if `D`
+holds of `A ∩ {x}` and `A ∩ {x}`. -/
 theorem Det.Intersective.mem_BE {D : Det E} (hD : D.Intersective) {A : Set E} {x : E} :
     x ∈ BE (D A) ↔ D (A ∩ {x}) (A ∩ {x}) :=
   hD _ _ _ _ (Set.inter_self _).symm
@@ -97,8 +110,7 @@ theorem mem_BE_the {A : Set E} {x : E} : x ∈ BE (the A) ↔ A = {x} :=
   ⟨fun ⟨_, hz, hzx⟩ ↦ Set.ext fun z ↦ (hz z).trans (by rw [hzx]; rfl),
     fun h ↦ ⟨x, fun z ↦ h ▸ Iff.rfl, rfl⟩⟩
 
-/-- On a restrictor with at most one member, *be the `A`* is `A`, as in *John is (the)
-president* ([partee-1987], §3.2). -/
+/-- On a restrictor with at most one member, *be the `A`* is `A` ([partee-1987], §3.2). -/
 theorem BE_the_of_subsingleton {A : Set E} (hA : A.Subsingleton) : BE (the A) = A :=
   Set.ext fun _ ↦ mem_BE_the.trans ⟨fun h ↦ h ▸ rfl, hA.eq_singleton_of_mem⟩
 
@@ -106,9 +118,8 @@ theorem BE_the_of_subsingleton {A : Set E} (hA : A.Subsingleton) : BE (the A) = 
 theorem BE_every_of_nonempty {A : Set E} (hA : A.Nonempty) : BE (every A) = BE (the A) :=
   Set.ext fun _ ↦ hA.subset_singleton_iff.trans mem_BE_the.symm
 
-/-- The predicative definite read at each index is the role of being the only `P` there, which
-no set read at every index represents once the referent changes: *the owner of this land* as a
-predicate depends on who owns it where ([partee-1987], fn. 16). -/
+/-- If `P` has different single members at two indices, then the predicative definite
+`BE (the (P w))` is not constant in `w` ([partee-1987], fn. 16). -/
 theorem BE_the_not_mem_range_const {W : Type*} {P : W → Set E} {w₀ w₁ : W} {a b : E}
     (h₀ : P w₀ = {a}) (h₁ : P w₁ = {b}) (hab : a ≠ b) :
     (fun w ↦ BE (the (P w))) ∉ Set.range (Function.const W) := by
@@ -149,17 +160,14 @@ def mapHom : CompleteLatticeHom (Quantifier E) (Quantifier F) where
 
 @[simp] theorem mapHom_apply (Q : Quantifier E) : mapHom f Q = Q.map f := rfl
 
-/-- The image of *some `A`* under a function is *some* of the image of `A`. -/
 theorem map_some (A : Set E) : (Det.some A).map f = Det.some (f '' A) :=
   funext fun B ↦ propext <| by
     change (A ∩ f ⁻¹' B).Nonempty ↔ (f '' A ∩ B).Nonempty
     rw [← Set.image_inter_preimage, Set.image_nonempty]
 
-/-- The image of *every `A`* under a function is *every* of the image of `A`. -/
 theorem map_every (A : Set E) : (every A).map f = every (f '' A) :=
   funext fun _ ↦ propext Set.image_subset_iff.symm
 
-/-- The image of *no `A`* under a function is *no* of the image of `A`. -/
 theorem map_no (A : Set E) : (no A).map f = no (f '' A) :=
   funext fun B ↦ propext <| by
     change A ⊆ f ⁻¹' Bᶜ ↔ f '' A ⊆ Bᶜ

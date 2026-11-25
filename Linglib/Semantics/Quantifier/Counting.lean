@@ -349,7 +349,6 @@ def Proportional (d : Det α) : Prop :=
   ∀ A B A' B' : Set α, 0 < (A \ B).ncard + (A ∩ B).ncard → 0 < (A' \ B').ncard + (A' ∩ B').ncard →
     (A ∩ B).ncard * (A' \ B').ncard = (A' ∩ B').ncard * (A \ B).ncard → (d A B ↔ d A' B')
 
-/-- The determiner denotation of a proportional tree is proportional. -/
 theorem _root_.Quantifier.NumberTree.Proportional.toDet {q : NumberTree} (h : q.Proportional) :
     (q.toDet : Det α).Proportional := fun _ _ _ _ ↦ h _ _ _ _
 
@@ -368,7 +367,7 @@ already fails it on one individual, *most* and *half* on two. This is not the we
 lists *few* as weak and does not classify *half*, and they allow a weak *many* or *few* to fail
 the intersection condition. -/
 
-/-- *Most* fails `Intersective`, by `A = univ` and `B = {0}` on two individuals. -/
+/-- *Most* is not intersective. -/
 theorem not_intersective_most : ¬ (most : Det (Fin 2)).Intersective := fun h ↦ by
   have := h.iff_inter_univ (A := Set.univ) (B := {x | x = 0})
   revert this; decide
@@ -407,7 +406,7 @@ theorem not_scopeAntitone_half : ¬ (half : Det (Fin 3)).ScopeAntitone := fun h 
       half {x : Fin 3 | x = 0 ∨ x = 1} ∅ := h _ (Set.empty_subset _)
   revert this; decide
 
-/-- *Half* is non-monotone in its scope, neither monotone nor antitone. -/
+/-- *Half* is neither monotone nor antitone in its scope. -/
 theorem not_monotone_half :
     ¬ (half : Det (Fin 3)).ScopeMonotone ∧ ¬ (half : Det (Fin 3)).ScopeAntitone :=
   ⟨not_scopeMonotone_half, not_scopeAntitone_half⟩
@@ -426,16 +425,15 @@ theorem not_antitone_exactly [Fintype α] {n : ℕ} (hn : n ≠ 0) (h : n ≤ Fi
   simp [exactly_apply] at this
   omega
 
-/-- *Exactly n* meets Barwise and Cooper's monotonicity constraint as the conjunction of *at least
-n* and *at most n*, though it is neither monotone nor antitone (`not_monotone_exactly`,
-`not_antitone_exactly`). -/
+/-- *Exactly n* satisfies Barwise and Cooper's universals, as the conjunction of *at least n* and
+*at most n*. -/
 theorem satisfiesUniversals_exactly [Finite α] (n : ℕ) :
     (exactly n : Det α).SatisfiesUniversals :=
   ⟨conservative_exactly n, fun A ↦ ⟨atLeast n A, atMost n A, .inl (monotone_atLeast n A),
     .inr (antitone_atMost n A), by rw [exactly_eq_atLeast_inf_atMost]; rfl⟩⟩
 
-/-- *All but n* meets Barwise and Cooper's monotonicity constraint as the conjunction of *all but
-at most n*, which is monotone, and *at least n are not*, which is antitone. -/
+/-- *All but n* satisfies Barwise and Cooper's universals, as the conjunction of *all but at most n*
+and *at least n are not*. -/
 theorem satisfiesUniversals_allBut [Finite α] (n : ℕ) : (allBut n : Det α).SatisfiesUniversals :=
   ⟨NumberTree.conservative_toDet _, fun A ↦ ⟨fun B ↦ (A \ B).ncard ≤ n, fun B ↦ n ≤ (A \ B).ncard,
     .inl fun _ _ h hB ↦ (Set.ncard_le_ncard (Set.sdiff_subset_sdiff_right h)).trans hB,

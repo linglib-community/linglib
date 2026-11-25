@@ -11,14 +11,16 @@ public import Linglib.Semantics.Denotation
 /-!
 # The readings of a quantificational determiner
 
-A quantificational determiner denotes the readings its entry records, each the global
-denotation of a determiner symbol, so it has [as many readings as symbols it
-records](##QuantificationalDeterminer.ncard_denote), and none when its standard is left to
-context, as with *many*. Each symbol denotes the global
-denotation of a tree of numbers, so every reading of every quantificational determiner is
-[conservative, satisfies extension and is closed under
-isomorphism](##QuantificationalDeterminer.conservative_ext_isom_of_mem_denote): what a lexical
-entry can mean meets the conditions that determiner denotations are claimed to meet.
+A quantificational determiner records a finite set of determiner symbols, its readings. This file
+makes it denote the global determiner denotations of those symbols. A determiner whose standard is
+left to context, such as *many*, records no symbol and denotes the empty set.
+
+## Main results
+
+* `QuantificationalDeterminer.ncard_denote`: a quantificational determiner has as many denotations
+  as it records symbols.
+* `QuantificationalDeterminer.conservative_ext_isom_of_mem_denote`: every denotation of a
+  quantificational determiner is conservative, satisfies extension and is closed under isomorphism.
 
 ## References
 

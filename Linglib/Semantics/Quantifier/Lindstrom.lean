@@ -11,19 +11,33 @@ public import Mathlib.Data.Nat.Cast.Order.Basic
 /-!
 # Realizing Lindström quantifiers as determiner denotations
 
-A determiner, a Lindström quantifier of type `⟨1,1⟩`, is an isomorphism-invariant class of
-structures for the monadic language with two predicate symbols, the restrictor `pred 0` and the
-scope `pred 1`. `Det.toDet` realizes it as a determiner denotation: a pair of sets `(A, B)` becomes
-the structure `(α, A, B)`, and the quantifier holds of `(A, B)` when that structure is in the class.
-A determiner [depends only on the sizes of the four Venn
-regions](##Quantifier.Lindstrom.Det.toDet_iff_of_mk_eq) on universes of any size, and on finite
-universes the realized determiners are [exactly the global denotations closed under
-isomorphism](##Quantifier.Lindstrom.isom_iff_exists_toFamily).
+A Lindström quantifier of type `⟨1,1⟩` is a class, closed under isomorphism, of structures for the
+monadic language with two predicate symbols, one for the restrictor and one for the scope. This file
+realizes such a class `Q` as a determiner denotation on every universe: `Q.toDet α A B` holds if the
+structure `(α, A, B)` is in `Q`. It characterizes the denotations that are realized, and among them
+the ones that a first-order sentence defines.
 
-Those defined by a sentence are the first-order definable ones, [characterized by invariance up to
-a threshold](##Quantifier.Det.Family.foDefinable_iff_exists_alikeUpTo). On the tree of numbers this
-is a [maturity level](##Quantifier.NumberTree.foDefinable_toFamily_iff), a line of the tree below
-which truth values settle.
+## Main definitions
+
+* `Quantifier.Lindstrom.Det`: the Lindström quantifiers of type `⟨1,1⟩`.
+* `Quantifier.Lindstrom.Det.toDet`, `Quantifier.Lindstrom.Det.toFamily`: the determiner denotation
+  of a Lindström quantifier on a universe, and its global determiner denotation.
+* `Quantifier.Lindstrom.AlikeUpTo n`: two pairs of sets are alike up to `n` when each of the four
+  Venn regions has the same size on the two sides or at least `n` members on both.
+* `Quantifier.Det.Family.FODefinable`: a global determiner denotation is first-order definable when
+  it is the realization of the class of the models of a sentence.
+
+## Main results
+
+* `Quantifier.Lindstrom.Det.toDet_iff_of_mk_eq`: a realized determiner denotation depends only on
+  the sizes of the four Venn regions.
+* `Quantifier.Lindstrom.isom_iff_exists_toFamily`: a global determiner denotation is closed under
+  isomorphism if and only if it is the realization of a Lindström quantifier.
+* `Quantifier.Det.Family.foDefinable_iff_exists_alikeUpTo`: a global determiner denotation is
+  first-order definable if and only if, for some `n`, it does not distinguish pairs of sets that are
+  alike up to `n`.
+* `Quantifier.NumberTree.foDefinable_toFamily_iff`: the global determiner denotation of a tree of
+  numbers is first-order definable if and only if the tree reaches a maturity level.
 
 ## References
 
@@ -58,8 +72,7 @@ def toDet (Q : Det.{u}) (α : Type u) : Quantifier.Det α :=
   fun A B ↦ ⟦(⟨α, monadic.structure ![(· ∈ A), (· ∈ B)]⟩ :
     Bundled.{u} (Language.monadic (Fin 2)).Structure)⟧ ∈ Q
 
-/-- Every realized Lindström quantifier is permutation invariant, derived from its isomorphism
-closure rather than stipulated on the denotation. -/
+/-- Every realized Lindström quantifier is permutation invariant. -/
 theorem realize_quantityInvariant (Q : Det.{u}) {α : Type u} :
     (Q.toDet α).QuantityInvariant := fun σ _ _ ↦
   Q.is_equiv_invariant
@@ -69,8 +82,7 @@ theorem realize_quantityInvariant (Q : Det.{u}) {α : Type u} :
 universe. -/
 def toFamily (Q : Det.{u}) : Quantifier.Det.Family.{u} := fun α _ ↦ Q.toDet α
 
-/-- A Lindström quantifier is closed under isomorphism across universes, since isomorphic
-structures are equally in its class: isomorphism closure is Lindström's own condition. -/
+/-- The global determiner denotation of a Lindström quantifier is closed under isomorphism. -/
 theorem isom_toFamily (Q : Det.{u}) : Q.toFamily.Isom := fun _ _ _ _ e _ _ ↦
   Q.is_equiv_invariant
     ⟨monadic.structureEquiv e (Fin.forall_fin_two.2 ⟨fun _ ↦ .rfl, fun _ ↦ .rfl⟩)⟩
@@ -110,8 +122,7 @@ theorem noDet_toDet (α : Type u) : noDet.toDet α = (no : Quantifier.Det α) :=
   simp [Det.toDet, noDet, Sentence.Realize, Formula.Realize, Fin.snoc, no]
   exact Iff.rfl
 
-/-- As isomorphism-closed classes, *some* is the complement of *no*, since `∃x. Ux ∧ Vx` is the
-negation of `∀x. Ux → ¬Vx`. -/
+/-- As classes of structures, *some* is the complement of *no*. -/
 theorem someDet_eq_compl_noDet : someDet.{u} = noDetᶜ := by
   ext q
   induction q using Quotient.inductionOn with

@@ -9,24 +9,29 @@ public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 /-!
 # Minimal-world exhaustification
 
-This file defines Spector's minimal-world exhaustifier `exhMW ALT φ`, the worlds of the prejacent
-`φ` whose set of true alternatives, `{a ∈ ALT | w ∈ a}` at a world `w`, is minimal among the
-prejacent's worlds. These are Kratzer's best worlds, with the prejacent as modal base and the
-negated alternatives as ordering source. Over finitely many alternatives every world of the
-prejacent lies above a minimal one, so a satisfiable prejacent has minimal worlds. An
-`IsMinimalCover` is a set of prejacent worlds representing the minimal worlds up to sharing their
-true alternatives; the exhaustifiers of `InnocentExclusion` and `InnocentInclusion` are computed
-from one.
+This file defines Spector's minimal-world exhaustifier `exhMW ALT φ`: the worlds `w` of the
+prejacent `φ` whose set of true alternatives `{a ∈ ALT | w ∈ a}` is minimal among the worlds of the
+prejacent. These are Kratzer's best worlds, with the prejacent as modal base and the negated
+alternatives as ordering source. Over finitely many alternatives every world of the prejacent lies
+above a minimal one, so a satisfiable prejacent has minimal worlds. A minimal cover is a set of
+worlds of the prejacent that represents the minimal worlds up to having the same true alternatives;
+the exhaustifiers by innocent exclusion and innocent inclusion are computed from one.
 
-## Main statements
+## Main definitions
 
-* `Exhaustification.exhMW_eq_minimals`: minimal worlds are the best worlds of the prejacent under
-  the premise set of negated alternatives.
+* `Exhaustification.exhMW ALT φ`: the worlds of `φ` whose set of true alternatives is minimal.
+* `Exhaustification.IsMinimalCover ALT φ M`: `M` is a set of worlds of `φ` such that every world of
+  `φ` lies above one of them and no two of them are strictly ordered.
+
+## Main results
+
+* `Exhaustification.exhMW_eq_minimals`: the minimal worlds are the best worlds of the prejacent
+  under the premise set of the negated alternatives.
 * `Exhaustification.exists_mem_exhMW_le`: over finitely many alternatives, every world of the
   prejacent lies above a minimal world.
-* `Exhaustification.ofLowerSets_image_union_le_iff`: the premises that some individuals lack a
-  property and others have it rank a world lower when fewer of the first and more of the second
-  have the property.
+* `Exhaustification.ofLowerSets_image_union_le_iff`: under the premises that some individuals lack a
+  property and others have it, a world is at least as good as another when fewer of the first and
+  more of the second have the property in it.
 
 ## References
 

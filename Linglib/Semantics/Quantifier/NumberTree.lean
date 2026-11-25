@@ -328,8 +328,7 @@ theorem Asymmetric.eq_bot (h : q.Asymmetric) : q = ⊥ :=
 theorem StronglyConnected.eq_top (h : q.StronglyConnected) : q = ⊤ :=
   funext₂ fun a c ↦ eq_true ((h a a c).elim id id)
 
-/-- An irreflexive quantifier for which `Q A B` and `Q B A` give `Q A A`, as transitivity
-requires, is asymmetric. So there is no strict partial order among the nonempty quantifiers. -/
+/-- An irreflexive quantifier for which `Q A B` and `Q B A` give `Q A A` is asymmetric. -/
 theorem Irreflexive.asymmetric (hI : q.Irreflexive)
     (hT : ∀ a b c, q a c → q b c → q 0 (a + c)) : q.Asymmetric :=
   fun a b c h₁ h₂ ↦ hI _ (hT a b c h₁ h₂)
@@ -487,7 +486,7 @@ theorem variety_cont_plus_uniform_iff :
     · exact hno
     · exact ⟨variety_all.compl, cont_all.compl, plus_all.compl, uniform_all.compl⟩
 
-/-- *At least two* is not uniform, since it is false at `(0, 0)` and true at `(0, 1)`. -/
+/-- *At least two* is not uniform. -/
 theorem not_uniform_two_le : ¬ Uniform fun _ b ↦ 2 ≤ b := fun h ↦ by
   have := (h.2 (a₁ := 0) (b₁ := 0) (a₂ := 0) (b₂ := 1) (by simp [compl_apply])
     (by simp [compl_apply])).2
@@ -634,9 +633,8 @@ theorem _root_.Quantifier.QuantityInvariant.iff_of_ncard_eq [Finite α] {Q : Qua
   rw [← Set.compl_eq_univ_sdiff, ← Set.compl_eq_univ_sdiff]
   omega
 
-/-- A conservative permutation-invariant determiner denotation that is asymmetric fails of `A`
-and `B` when `A \ B` and `B \ A` have the same size, since swapping them carries `(A, B)` to
-`(B, A)`. -/
+/-- A conservative permutation-invariant determiner denotation that is asymmetric fails of `A` and
+`B` when `A \ B` and `B \ A` have the same size. -/
 theorem _root_.Quantifier.Det.not_apply_of_asymm [Finite α] (hC : d.Conservative)
     (hQ : d.QuantityInvariant) [Std.Asymm d] (h : (A \ B).ncard = (B \ A).ncard) : ¬ d A B :=
   fun hd ↦ Std.Asymm.asymm A B hd ((Det.iff_of_ncard_eq hC hQ h (by rw [Set.inter_comm])).1 hd)
@@ -662,9 +660,8 @@ theorem toDet_apply (q : NumberTree) (A B : Set α) :
 theorem ofDet_le_iff_le_toDet {q : NumberTree} : ofDet d ≤ q ↔ d ≤ q.toDet :=
   ⟨fun h A B hd ↦ h _ _ ⟨A, B, rfl, rfl, hd⟩, fun h _ _ ⟨A, B, ha, hb, hd⟩ ↦ ha ▸ hb ▸ h A B hd⟩
 
-/-- Reading the tree of a determiner denotation off and reading a tree back as a determiner
-denotation form a Galois connection, as the image and the preimage of a set under a function
-do. -/
+/-- Reading the tree off a determiner denotation and reading a tree back as a determiner denotation
+form a Galois connection. -/
 theorem gc_ofDet_toDet : GaloisConnection (ofDet (α := α)) toDet :=
   fun _ _ ↦ ofDet_le_iff_le_toDet
 
@@ -705,15 +702,13 @@ instance toDet.decidable [Fintype α] (q : NumberTree) [DecidableRel q] (A B : S
   decidable_of_iff (q (A \ B).toFinset.card (A ∩ B).toFinset.card) <| by
     rw [toDet_apply, Set.ncard_eq_toFinset_card' (A \ B), Set.ncard_eq_toFinset_card' (A ∩ B)]
 
-/-- The determiner denotation of a tree is conservative, since `A \ B` and `A ∩ B` see only
-`A ∩ B`. -/
+/-- The determiner denotation of a tree is conservative. -/
 theorem conservative_toDet (q : NumberTree) : (q.toDet : Det α).Conservative := fun A B ↦ by
   rw [toDet_apply, toDet_apply, Set.sdiff_self_inter, Set.inter_eq_right.2 Set.inter_subset_left]
 
 theorem quantity_toDet (q : NumberTree) : (q.toDet : Det α).Quantity :=
   fun _ _ _ _ hi hd _ _ ↦ by rw [toDet_apply, toDet_apply, hi, hd]
 
-/-- The determiner denotation of a tree is permutation invariant. -/
 theorem quantityInvariant_toDet (q : NumberTree) : (q.toDet : Det α).QuantityInvariant :=
   (quantity_toDet q).quantityInvariant
 
@@ -739,7 +734,6 @@ theorem _root_.Quantifier.Det.Cardinal.quantityInvariant (h : d.Cardinal) :
     d.QuantityInvariant :=
   fun σ A B ↦ h _ _ _ _ (by rw [← Set.preimage_inter]; exact ncard_preimage_perm σ (A ∩ B))
 
-/-- The determiner denotation of a cardinal quantifier is cardinal. -/
 theorem cardinal_toDet_cardinal (s : Set ℕ) : ((cardinal s).toDet : Det α).Cardinal :=
   fun _ _ _ _ h ↦ by rw [toDet_apply, toDet_apply, cardinal_apply, cardinal_apply, h]
 
@@ -770,9 +764,8 @@ theorem range_toDet :
   exact ⟨fun ⟨q, hq⟩ ↦ ⟨fun p ↦ q p.1 p.2, fun A B ↦ hq ▸ Iff.rfl⟩,
     fun ⟨p, hp⟩ ↦ ⟨fun a b ↦ p (a, b), funext₂ fun A B ↦ propext (hp A B).symm⟩⟩
 
-/-- Enlarging the scope from `B` to `B'` moves the `k` members of `A` that are in `B'` and not in
-`B` from outside the scope to inside it: a step of length `k` to the right along a row of the
-tree. -/
+/-- Enlarging the scope from `B` to `B'` moves the `k` members of `A` in `B' \ B` from outside the
+scope to inside it. -/
 theorem exists_ncard_eq_add_of_subset [Finite α] (A : Set α) {B B' : Set α} (hB : B ⊆ B') :
     ∃ k, (A \ B).ncard = (A \ B').ncard + k ∧ (A ∩ B').ncard = (A ∩ B).ncard + k := by
   refine ⟨((A \ B) ∩ B').ncard, ?_, ?_⟩
@@ -786,7 +779,6 @@ theorem exists_ncard_eq_add_of_subset [Finite α] (A : Set α) {B B' : Set α} (
     rw [e₁, e₂] at h
     omega
 
-/-- The determiner denotation of a scope-monotone tree is scope monotone. -/
 theorem ScopeMonotone.toDet [Finite α] {q : NumberTree} (h : q.ScopeMonotone) :
     (q.toDet : Det α).ScopeMonotone := by
   intro A B B' hB hq
@@ -795,7 +787,6 @@ theorem ScopeMonotone.toDet [Finite α] {q : NumberTree} (h : q.ScopeMonotone) :
   rw [toDet_apply, h₂]
   exact h.shift k hq
 
-/-- The determiner denotation of a scope-antitone tree is scope antitone. -/
 theorem ScopeAntitone.toDet [Finite α] {q : NumberTree} (h : q.ScopeAntitone) :
     (q.toDet : Det α).ScopeAntitone :=
   fun A _ _ hB hq ↦ Classical.byContradiction fun hn ↦ h.compl.toDet A hB hn hq
@@ -815,10 +806,7 @@ theorem card_points (n : ℕ) : (points n).card = (n + 1) * (n + 2) / 2 := by
   rw [points, Finset.card_sigma, Finset.sum_congr rfl fun k _ ↦ Finset.Nat.card_antidiagonal k,
     ← h n, Nat.mul_div_cancel _ two_pos]
 
-/-- There are `2 ^ ((n + 1) * (n + 2) / 2)` sets of points in rows `0` to `n`. That these sets
-are the conservative, permutation-invariant quantifiers on `n` individuals, van Benthem's count,
-is not proved here; `KeenanStavi1986.card_logical` counts those quantifiers directly, in the
-coordinates `(|A|, |A ∩ B|)`. -/
+/-- There are `2 ^ ((n + 1) * (n + 2) / 2)` sets of points in rows `0` to `n`. -/
 theorem card_powerset_points (n : ℕ) :
     (points n).powerset.card = 2 ^ ((n + 1) * (n + 2) / 2) := by
   rw [Finset.card_powerset, card_points]

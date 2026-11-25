@@ -11,14 +11,14 @@ public import Linglib.Syntax.Category.Determiner.IndeterminateQuantifier
 
 An indeterminate quantifier applies its particle's coordination to the values its scope takes on
 the restrictor, as Kratzer and Shimoyama propose for Japanese. A disjunctive particle takes the
-supremum, so the quantifier is `Quantifier.Det.some`; a conjunctive particle takes the infimum,
+supremum, so the quantifier is `Det.some`; a conjunctive particle takes the infimum,
 `every`; and a negative particle the complement of the supremum, `no`.
 
 ## Main definitions
 
 * `IndeterminateQuantifier.reading`: the particle's coordination over the restrictor.
 
-## Main statements
+## Main results
 
 * `IndeterminateQuantifier.reading_of_disjunctive`,
   `IndeterminateQuantifier.reading_of_conjunctive`,
