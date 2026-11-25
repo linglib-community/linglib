@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.Viewpoint.Defs
-public import Linglib.Semantics.Aspect.IntervalProperty
+public import Linglib.Semantics.Aspect.Perfect
 public import Linglib.Semantics.Events.RunTimes
 
 /-!
@@ -52,7 +52,7 @@ superintervals and the non-strict imperfective under subintervals.
 
 namespace Aspect
 
-open ModalLogic IntervalAlgebra Allen
+open ModalLogic IntervalAlgebra Allen Temporal
 open scoped SetRel
 
 /-! ### The cell of a viewpoint -/

@@ -46,6 +46,8 @@ that applies at no trace is atomically distributive.
 
 namespace Aspect
 
+open Temporal
+
 /-! ### Quantifiers over events -/
 
 section Quantifier

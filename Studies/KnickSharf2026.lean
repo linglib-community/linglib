@@ -70,7 +70,7 @@ namespace KnickSharf2026
 
 open Examples (Reading)
 
-open Aspect Function Set
+open Aspect Temporal Function Set
 open Chierchia2006 (evenEnrich)
 open Event (τ)
 

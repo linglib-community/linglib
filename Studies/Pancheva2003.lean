@@ -53,7 +53,7 @@ three perfects of the older account by Iatridou, Anagnostopoulou and Izvorski.
 
 namespace Pancheva2003
 
-open Aspect ModalLogic IntervalAlgebra Allen
+open Aspect Temporal ModalLogic IntervalAlgebra Allen
 
 open Event (τ)
 

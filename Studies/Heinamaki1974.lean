@@ -24,8 +24,8 @@ the main clause begins. The formulas [fit the paper's judgments of *while*, *as 
 ## Implementation notes
 
 * A clause carries the intervals it specifies, its `Clause.intervals`, "and no shorter or longer
-  stretch of time", so these are the maximal intervals and not the run times of
-  `Semantics/Tense/RunTimes.lean`, which a state closes under subintervals.
+  stretch of time", so these are the maximal intervals and not an interval property closed under
+  subintervals, as the run times of a state are (`Logic/Temporal/IntervalProperty.lean`).
 * The thesis's "non-durative" (p. 25) is the achievement, with the "fast accomplishment" counted
   among achievements here. Its "durative" is `Durative`, a state or an activity, narrower than
   `AspectualClass.duration`, which an accomplishment shares.

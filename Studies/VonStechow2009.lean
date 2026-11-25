@@ -406,19 +406,20 @@ theorem not_exists_earliest_will [DenselyOrdered T] :
 /-- When the clause has an earliest time, *before* the earliest time is the *before ever* of
 [anscombe-1964], the universal *before* that von Stechow attributes to her. -/
 theorem before_earliest_iff_beforeEver {A B : Set T} {m : T} (hm : IsLeast B m) :
-    (∃ t ∈ A, t < m) ↔ Tense.beforeEver (NonemptyInterval.pure '' A)
-      (NonemptyInterval.pure '' B) := by
+    (∃ t ∈ A, t < m) ↔ Tense.beforeEver (· ∈ NonemptyInterval.pure '' A)
+      (· ∈ NonemptyInterval.pure '' B) := by
   rw [Tense.beforeEver_iff_of_isLeast (m := m)]
-  · simp [Tense.timeTrace_image]
-  · simpa [Tense.timeTrace_image] using hm
+  · simp [Temporal.timeTrace_exists_mem]
+  · simpa [Temporal.timeTrace_exists_mem] using hm
 
 /-- And *after* the earliest time is the existential *after* of [anscombe-1964]. -/
 theorem after_earliest_iff_after {A B : Set T} {m : T} (hm : IsLeast B m) :
     (∃ t ∈ A, m < t) ↔
-      Anscombe1964.Anscombe.after (NonemptyInterval.pure '' A) (NonemptyInterval.pure '' B) := by
+      Anscombe1964.Anscombe.after (· ∈ NonemptyInterval.pure '' A)
+        (· ∈ NonemptyInterval.pure '' B) := by
   rw [Anscombe1964.after_iff_least_lt (lb := m)]
-  · simp [Tense.timeTrace_image]
-  · simpa [Tense.timeTrace_image] using hm
+  · simp [Temporal.timeTrace_exists_mem]
+  · simpa [Temporal.timeTrace_exists_mem] using hm
 
 end Before
 

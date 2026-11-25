@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.JinKoenig2021
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Tense.RunTimes
+public import Linglib.Semantics.Tense.Before
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Languages.English.Negation
@@ -150,9 +150,9 @@ end ENConcept
 
 /-! ### Negative inferences of the operators (Sections 6.2 to 6.4) -/
 
-open Tense in
+open Tense Temporal in
 -- BEFORE: at a time of the main clause the *before*-clause does not hold, (13b).
-example {T : Type*} [LinearOrder T] {A B : Set (NonemptyInterval T)} (h : beforeEver A B) :
+example {T : Type*} [LinearOrder T] {A B : NonemptyInterval T → Prop} (h : beforeEver A B) :
     ∃ t ∈ timeTrace A, t ∉ timeTrace B :=
   h.exists_notMem
 

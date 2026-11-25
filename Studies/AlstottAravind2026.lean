@@ -50,7 +50,7 @@ to pragmatic as against semantic coercion.
 
 namespace AlstottAravind2026
 
-open Tense Rett2020a
+open Tense Rett2020a Temporal
 /-! ### The two theories (§2.1) -/
 
 variable {T : Type*} [LinearOrder T]
@@ -58,30 +58,30 @@ variable {T : Type*} [LinearOrder T]
 /-- The under-specification entry for *before*, (7a), holds when some run-time of the main clause is
 partly preceded by every run-time of the embedded clause. It is Anscombe's entry with *some*
 subinterval following in place of *every*, the weakening accomplishments require. -/
-def weakBefore (A B : Set (NonemptyInterval T)) : Prop := ∃ i ∈ A, ∀ j ∈ B, i.snd < j.snd
+def weakBefore (A B : NonemptyInterval T → Prop) : Prop := ∃ i, A i ∧ ∀ j, B j → i.snd < j.snd
 
 /-- The under-specification entry for *after*, (7b), holds when some run-time of the main clause
 fully follows some run-time of the embedded clause. -/
-def weakAfter (A B : Set (NonemptyInterval T)) : Prop := ∃ i ∈ A, ∃ j ∈ B, j.snd < i.fst
+def weakAfter (A B : NonemptyInterval T → Prop) : Prop := ∃ i, A i ∧ ∃ j, B j ∧ j.snd < i.fst
 
 theorem weakBefore_stative_accomplishment_iff (a b : NonemptyInterval T) :
-    weakBefore (Set.Iic a) {b} ↔ a.fst < b.snd := by
+    weakBefore (· ≤ a) (· = b) ↔ a.fst < b.snd := by
   constructor
   · rintro ⟨i, hi, h⟩
-    exact lt_of_le_of_lt ((Set.mem_Iic.mp hi).1.trans i.fst_le_snd) (h b rfl)
+    exact lt_of_le_of_lt ((NonemptyInterval.le_def.1 hi).1.trans i.fst_le_snd) (h b rfl)
   · intro h
-    exact ⟨NonemptyInterval.pure a.fst, Set.mem_Iic.mpr ⟨le_rfl, a.fst_le_snd⟩,
+    exact ⟨NonemptyInterval.pure a.fst, NonemptyInterval.le_def.2 ⟨le_rfl, a.fst_le_snd⟩,
       fun j hj => hj ▸ h⟩
 
 theorem weakAfter_stative_stative_iff (a b : NonemptyInterval T) :
-    weakAfter (Set.Iic a) (Set.Iic b) ↔ b.fst < a.snd := by
+    weakAfter (· ≤ a) (· ≤ b) ↔ b.fst < a.snd := by
   constructor
   · rintro ⟨i, hi, j, hj, h⟩
-    exact lt_of_le_of_lt ((Set.mem_Iic.mp hj).1.trans j.fst_le_snd)
-      (h.trans_le (i.fst_le_snd.trans (Set.mem_Iic.mp hi).2))
+    exact lt_of_le_of_lt ((NonemptyInterval.le_def.1 hj).1.trans j.fst_le_snd)
+      (h.trans_le (i.fst_le_snd.trans (NonemptyInterval.le_def.1 hi).2))
   · intro h
-    exact ⟨NonemptyInterval.pure a.snd, Set.mem_Iic.mpr ⟨a.fst_le_snd, le_rfl⟩,
-      NonemptyInterval.pure b.fst, Set.mem_Iic.mpr ⟨le_rfl, b.fst_le_snd⟩, h⟩
+    exact ⟨NonemptyInterval.pure a.snd, NonemptyInterval.le_def.2 ⟨a.fst_le_snd, le_rfl⟩,
+      NonemptyInterval.pure b.fst, NonemptyInterval.le_def.2 ⟨le_rfl, b.fst_le_snd⟩, h⟩
 
 /-! ### The experimental contexts (29) and (31)
 
@@ -101,12 +101,12 @@ def daveRegretfulA : NonemptyInterval ℕ := ⟨⟨605, 615⟩, by omega⟩
 /-- Dave is regretful from 10:05am for many days in the after-finish context, (31b). -/
 def daveRegretfulB : NonemptyInterval ℕ := ⟨⟨605, 4935⟩, by omega⟩
 
-abbrev tent : Set (NonemptyInterval ℕ) := {hectorBuilds}
-abbrev irritableA := Set.Iic emmaIrritableA
-abbrev irritableB := Set.Iic emmaIrritableB
-abbrev fear := Set.Iic laraFears
-abbrev regretfulA := Set.Iic daveRegretfulA
-abbrev regretfulB := Set.Iic daveRegretfulB
+abbrev tent : NonemptyInterval ℕ → Prop := (· = hectorBuilds)
+abbrev irritableA : NonemptyInterval ℕ → Prop := (· ≤ emmaIrritableA)
+abbrev irritableB : NonemptyInterval ℕ → Prop := (· ≤ emmaIrritableB)
+abbrev fear : NonemptyInterval ℕ → Prop := (· ≤ laraFears)
+abbrev regretfulA : NonemptyInterval ℕ → Prop := (· ≤ daveRegretfulA)
+abbrev regretfulB : NonemptyInterval ℕ → Prop := (· ≤ daveRegretfulB)
 
 /-- In Exp. 2, Rett's before-start reading needs `completive` coercion in (29b) only. -/
 theorem exp2_rett_asymmetric :
@@ -135,34 +135,30 @@ theorem exp4_underspecification_symmetric :
   simp only [weakAfter_stative_stative_iff]
   decide
 
-private theorem mem_stative {i j : NonemptyInterval ℕ} :
-    j ∈ Set.Iic i ↔ i.fst ≤ j.fst ∧ j.snd ≤ i.snd := by
-  simp [Set.Iic, NonemptyInterval.le_def]
-
 /-! ### A non-coercive account of *within*-modifiers (§8.2) -/
 
 /-- *Within d* at the reference time `t`, (33b), holds when the clause holds throughout some
 subinterval of `[t, t + d]`. -/
-def within (t d : ℕ) (p : Set (NonemptyInterval ℕ)) : Prop := ∃ i ∈ p, t ≤ i.fst ∧ i.snd ≤ t + d
+def within (t d : ℕ) (p : NonemptyInterval ℕ → Prop) : Prop := ∃ i, p i ∧ t ≤ i.fst ∧ i.snd ≤ t + d
 
 /-- For a state holding throughout `[s, f]`, *within d* with the negated shorter alternative (35)
 puts the onset in `(t + d', t + d]`. -/
 theorem within_implicature_onset {s f t d d' : ℕ} (hsf : s ≤ f)
-    (h : within t d (Set.Iic ⟨⟨s, f⟩, hsf⟩))
-    (h' : ¬ within t d' (Set.Iic ⟨⟨s, f⟩, hsf⟩)) : t + d' < s ∧ s ≤ t + d := by
+    (h : within t d (· ≤ ⟨⟨s, f⟩, hsf⟩))
+    (h' : ¬ within t d' (· ≤ ⟨⟨s, f⟩, hsf⟩)) : t + d' < s ∧ s ≤ t + d := by
   obtain ⟨i, hi, hti, hit⟩ := h
-  rw [mem_stative] at hi
+  rw [NonemptyInterval.le_def] at hi
   simp only [] at hi
   have hi' := i.fst_le_snd
   refine ⟨?_, by omega⟩
   by_contra hle
-  exact h' ⟨⟨⟨max s t, max s t⟩, le_rfl⟩, mem_stative.mpr ⟨by simp, by simp; omega⟩,
+  exact h' ⟨⟨⟨max s t, max s t⟩, le_rfl⟩, NonemptyInterval.le_def.2 ⟨by simp, by simp; omega⟩,
     by simp, by simp; omega⟩
 
 /-- For an accomplishment with run-time `i`, *within d* says the whole run-time lies in the span
 (36). -/
 theorem within_accomplishment_iff (t d : ℕ) (i : NonemptyInterval ℕ) :
-    within t d {i} ↔ t ≤ i.fst ∧ i.snd ≤ t + d := by
+    within t d (· = i) ↔ t ≤ i.fst ∧ i.snd ≤ t + d := by
   simp [within]
 
 /-! ### Predictions against the four experiments -/

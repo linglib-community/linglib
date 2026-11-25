@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.Interval.Set.OrdConnected
-public import Linglib.Semantics.Tense.RunTimes
+public import Linglib.Semantics.Tense.Before
 
 /-!
 # Anscombe 1964: before and after
@@ -28,26 +28,26 @@ repetition is `Set.OrdConnected` and an instantaneous event has a singleton trac
 
 namespace Anscombe1964
 
-open Tense NonemptyInterval
+open Tense NonemptyInterval Temporal
 
-variable {T : Type*} [LinearOrder T] {A B C : Set (NonemptyInterval T)}
+variable {T : Type*} [LinearOrder T] {A B C : NonemptyInterval T → Prop}
 
 /-! ### Definitions -/
 
 /-- *p before q* holds when *p and not q, and then q* (§II). -/
-def Anscombe.before (A B : Set (NonemptyInterval T)) : Prop :=
+def Anscombe.before (A B : NonemptyInterval T → Prop) : Prop :=
   ∃ t ∈ timeTrace A \ timeTrace B, ∃ t' ∈ timeTrace B, t < t'
 
 /-- *p after q* holds when *q, and then p*, a time of *p* after a time of *q* (§II, §IV). -/
-def Anscombe.after (A B : Set (NonemptyInterval T)) : Prop :=
+def Anscombe.after (A B : NonemptyInterval T → Prop) : Prop :=
   ∃ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' < t
 
 /-- A clause repeats when *p, and then not p, and then p* (§II). -/
-def Repetition (A : Set (NonemptyInterval T)) : Prop :=
+def Repetition (A : NonemptyInterval T → Prop) : Prop :=
   ∃ t₁ ∈ timeTrace A, ∃ t₂ ∉ timeTrace A, ∃ t₃ ∈ timeTrace A, t₁ < t₂ ∧ t₂ < t₃
 
 /-- A clause reports an instantaneous event when it holds at a single time (§VIII). -/
-def Instantaneous (A : Set (NonemptyInterval T)) : Prop := ∃ t, timeTrace A = {t}
+def Instantaneous (A : NonemptyInterval T → Prop) : Prop := ∃ t, timeTrace A = {t}
 
 /-! ### The logical properties (§II) -/
 
@@ -69,20 +69,20 @@ theorem before_trans (hB : (timeTrace B).OrdConnected) (hC : (timeTrace C).OrdCo
   exact ⟨a, ⟨ha, fun haC => hb'C (hC.out haC hc ⟨hab'.le, hb'c.le⟩)⟩, c, hc, hab'.trans hb'c⟩
 
 theorem before_not_asymm :
-    ∃ A B : Set (NonemptyInterval ℤ), Anscombe.before A B ∧ Anscombe.before B A :=
-  ⟨{pure 0, pure 2}, {pure 1, pure 3},
+    ∃ A B : NonemptyInterval ℤ → Prop, Anscombe.before A B ∧ Anscombe.before B A :=
+  ⟨((· = pure 0) ⊔ (· = pure 2)), ((· = pure 1) ⊔ (· = pure 3)),
     ⟨0, by simp, 1, by simp, by decide⟩, ⟨1, by simp, 2, by simp, by decide⟩⟩
 
 theorem after_of_before : Anscombe.before A B → Anscombe.after B A :=
   fun ⟨a, ⟨ha, _⟩, b, hb, hab⟩ => ⟨b, hb, a, ha, hab⟩
 
 theorem after_not_asymm :
-    ∃ A B : Set (NonemptyInterval ℤ), Anscombe.after A B ∧ Anscombe.after B A :=
-  ⟨Set.Iic ⟨(0, 10), by decide⟩, Set.Iic ⟨(5, 15), by decide⟩,
-    ⟨10, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩,
-      5, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, by decide⟩,
-    ⟨15, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩,
-      0, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, by decide⟩⟩
+    ∃ A B : NonemptyInterval ℤ → Prop, Anscombe.after A B ∧ Anscombe.after B A :=
+  ⟨(· ≤ ⟨(0, 10), by decide⟩), (· ≤ ⟨(5, 15), by decide⟩),
+    ⟨10, by simp,
+      5, by simp, by decide⟩,
+    ⟨15, by simp,
+      0, by simp, by decide⟩⟩
 
 theorem after_self_iff : Anscombe.after A A ↔ (timeTrace A).Nontrivial :=
   ⟨fun ⟨t, ht, t', ht', h⟩ => ⟨t', ht', t, ht, h.ne⟩, fun h =>
@@ -93,11 +93,11 @@ theorem not_after_self_of_instantaneous (hA : Instantaneous A) : ¬ Anscombe.aft
     Set.not_nontrivial_iff.2 (ht ▸ Set.subsingleton_singleton) (after_self_iff.1 h)
 
 theorem after_not_trans :
-    ∃ A B : Set (NonemptyInterval ℤ),
+    ∃ A B : NonemptyInterval ℤ → Prop,
       Anscombe.after A B ∧ Anscombe.after B A ∧ ¬ Anscombe.after A A :=
-  ⟨{pure 5}, Set.Iic ⟨(0, 10), by decide⟩,
-    ⟨5, by simp, 0, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, by decide⟩,
-    ⟨10, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, 5, by simp, by decide⟩,
+  ⟨(· = pure 5), (· ≤ ⟨(0, 10), by decide⟩),
+    ⟨5, by simp, 0, by simp, by decide⟩,
+    ⟨10, by simp, 5, by simp, by decide⟩,
     not_after_self_of_instantaneous ⟨5, by simp⟩⟩
 
 /-! ### Quantification over times (§IV–§V) -/
@@ -114,8 +114,8 @@ theorem before_iff_beforeEver (hB : (timeTrace B).OrdConnected) :
     fun ⟨h, hne⟩ => before_of_beforeEver hne h⟩
 
 theorem before_not_beforeEver :
-    ∃ A B : Set (NonemptyInterval ℤ), Anscombe.before A B ∧ ¬ Tense.beforeEver A B :=
-  ⟨{pure 5}, {pure 1, pure 9}, ⟨5, by simp, 9, by simp, by decide⟩,
+    ∃ A B : NonemptyInterval ℤ → Prop, Anscombe.before A B ∧ ¬ Tense.beforeEver A B :=
+  ⟨(· = pure 5), ((· = pure 1) ⊔ (· = pure 9)), ⟨5, by simp, 9, by simp, by decide⟩,
     fun ⟨t, ht, h⟩ => absurd (h 1 (by simp)) (by simp at ht; subst ht; decide)⟩
 
 /-! ### Instantaneous events (§VI–§VIII) -/
@@ -137,11 +137,11 @@ theorem not_after_of_before_of_instantaneous (hA : Instantaneous A)
   exact ha'B (hB.out hb hb' ⟨hbt.le, ha'b'.le⟩)
 
 theorem after_and_before_of_extended :
-    ∃ A B : Set (NonemptyInterval ℤ), Instantaneous B ∧ Anscombe.before A B ∧ Anscombe.after A B :=
-  ⟨Set.Iic ⟨(1, 7), by decide⟩, {pure 4}, ⟨4, by simp⟩,
-    ⟨1, ⟨mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, by simp⟩,
+    ∃ A B : NonemptyInterval ℤ → Prop, Instantaneous B ∧ Anscombe.before A B ∧ Anscombe.after A B :=
+  ⟨(· ≤ ⟨(1, 7), by decide⟩), (· = pure 4), ⟨4, by simp⟩,
+    ⟨1, ⟨by simp, by simp⟩,
       4, by simp, by decide⟩,
-    ⟨7, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, 4, by simp, by decide⟩⟩
+    ⟨7, by simp, 4, by simp, by decide⟩⟩
 
 /-! ### Beginnings and endings (§IX–§X) -/
 

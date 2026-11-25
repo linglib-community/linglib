@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Tense.RunTimes
+public import Linglib.Semantics.Tense.Before
 
 /-!
 # Life spans
@@ -33,10 +33,10 @@ Individual-level predicates such as *tall* are taken to be permanent.
 ## Implementation notes
 
 Life spans are given by a function `τ` into `NonemptyInterval`, as an event's run time is
-(`Event.τ`), so a description denotes the run times `τ '' {x | Q x}`, as an event predicate does
-in `Semantics/Tense/RunTimes.lean`. `Permanent` takes life spans of any type with a membership
-relation, such as intervals or sets of times, and `Permanent.precedes_pure` takes them as intervals,
-since it needs them convex.
+(`Event.τ`), so a description denotes the property of being the life span of one of its
+individuals, an interval property (`Logic/Temporal/IntervalProperty.lean`). `Permanent` takes
+life spans of any type with a membership relation, such as intervals or sets of times, and
+`Permanent.precedes_pure` takes them as intervals, since it needs them convex.
 
 ## References
 
@@ -62,12 +62,12 @@ variable [Preorder T]
 /-- The description `Q` pre-exists the interval `t` when the life spans of its individuals are
 before ever `t`. -/
 def PreExists (τ : X → NonemptyInterval T) (Q : X → Prop) (t : NonemptyInterval T) : Prop :=
-  Tense.beforeEver (τ '' {x | Q x}) {t}
+  Tense.beforeEver (fun i ↦ ∃ x, Q x ∧ τ x = i) (· = t)
 
 variable {τ : X → NonemptyInterval T} {Q Q' : X → Prop} {t t' : NonemptyInterval T}
 
 theorem preExists_iff : PreExists τ Q t ↔ ∃ x, Q x ∧ (τ x).fst < t.fst := by
-  simp [PreExists, Tense.beforeEver_singleton_right]
+  simp [PreExists, Tense.beforeEver_eq_right]
 
 namespace PreExists
 

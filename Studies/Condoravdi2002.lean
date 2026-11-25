@@ -26,7 +26,7 @@ stated over closed intervals of times that may run to the end of time.
   a reference interval. Reference intervals are `Interval (WithTop T)`, so that an interval may
   run to the end of time, as `Interval.Ici ↑t` does, and the intersection of two intervals may be
   the null interval `⊥`. On a bounded interval, instantiation of a property of events is
-  `Aspect.perfective` and of a property of states `Aspect.inclusive` of `Aspect.unbounded`.
+  `Aspect.perfective` and of a property of states `Temporal.inclusive` of `Aspect.unbounded`.
 * The run time of an eventuality is `Event.τ e`, the same in every world; the paper's temporal
   trace takes the world as a second argument.
 * The paper's *now* is an interval, albeit a short one, taken here as a point, and a modal base

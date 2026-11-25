@@ -21,7 +21,7 @@ has no universal perfect, except where an activity fills the span exactly.
 
 * The features [unbounded] and [bounded] of the paper's footnote 5 are `Aspect.unbounded`, the
   span inside the run time of an event, and `Aspect.perfective`, the run time inside the span. The
-  readings of the adverbial are `Aspect.durative` and `Aspect.inclusive`, quantification over
+  readings of the adverbial are `Temporal.durative` and `Temporal.inclusive`, quantification over
   the subintervals of the span, which the paper phrases both as every subinterval and as the
   points of the span. Over subintervals the durative unbounded reading is one event containing
   the span, the last paraphrase in (18b).
@@ -66,7 +66,7 @@ namespace IatridouEtAl2001
 
 open Event (τ)
 
-open Aspect
+open Aspect Temporal
 
 variable {T E : Type*} [LinearOrder T] [TemporalTrace E T]
   {p : NonemptyInterval T → Prop} {P : E → Prop} {i : NonemptyInterval T} {t t₀ : T}

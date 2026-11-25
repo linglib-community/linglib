@@ -6,7 +6,7 @@ public import Linglib.Semantics.Composition.Interpret
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Quantificational
-public import Linglib.Semantics.Tense.RunTimes
+public import Linglib.Semantics.Tense.Before
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 
@@ -63,7 +63,7 @@ which gives a past under *mae* and a present under *ato* no denotation.
 
 namespace ArreguiKusumoto1998
 
-open Interpreter PhraseStructure.Tree PhraseStructure ModalLogic Tense
+open Interpreter PhraseStructure.Tree PhraseStructure ModalLogic Tense Temporal
 open scoped Denotes
 open Japanese.TemporalConnectives (mae ato toki)
 open scoped SetRel
@@ -204,17 +204,17 @@ theorem before_of_forall_not (h : ∀ t', ¬ X t') (t : NonemptyInterval T) : be
 
 /-- A time of one clause before another clause puts the first before ever the second, the
 universal *before* of Anscombe. -/
-theorem beforeEver_of_before {A B : Set (NonemptyInterval T)} (ht : t ∈ A)
-    (h : before (· ∈ B) t) : beforeEver A B :=
+theorem beforeEver_of_before {A B : NonemptyInterval T → Prop} (ht : A t)
+    (h : before B t) : beforeEver A B :=
   ⟨t.snd, ⟨t, ht, t.fst_le_snd, le_rfl⟩, fun _ ⟨t', ht', h'⟩ ↦ (h t' ht').trans_le h'.1⟩
 
 /-- Anscombe's *before ever* does not imply the interval *before* of (19). -/
 theorem not_forall_before_of_beforeEver :
-    ¬ ∀ A B : Set (NonemptyInterval ℤ), beforeEver A B → ∃ t ∈ A, before (· ∈ B) t := by
+    ¬ ∀ A B : NonemptyInterval ℤ → Prop, beforeEver A B → ∃ t, A t ∧ before B t := by
   intro h
-  obtain ⟨_, rfl, ht⟩ := h {⟨(1, 5), by decide⟩} {⟨(3, 8), by decide⟩}
+  obtain ⟨_, rfl, ht⟩ := h (· = ⟨(1, 5), by decide⟩) (· = ⟨(3, 8), by decide⟩)
     ⟨1, by simp [NonemptyInterval.mem_def], fun _ ht' ↦ by
-      simp only [timeTrace_singleton, SetLike.mem_coe, NonemptyInterval.mem_def] at ht'
+      simp only [timeTrace_eq, SetLike.mem_coe, NonemptyInterval.mem_def] at ht'
       omega⟩
   exact absurd (ht _ rfl) (by decide)
 
