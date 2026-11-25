@@ -23,6 +23,7 @@ are formed differ in which bracketings and positions they allow, so the type all
 * `DistributedMorphology.MorphosyntacticWord`: a morphosyntactic word, its site and the
   bracketing of its terminals.
 * `DistributedMorphology.MorphosyntacticWord.heads`: its terminals, lowest first.
+* `DistributedMorphology.MorphosyntacticWord.sited`: the words with their sites.
 * `DistributedMorphology.MorphosyntacticWord.hosts`: for the words on a spine, the head at which
   each position of the spine is pronounced.
 
@@ -68,22 +69,23 @@ def MorphosyntacticWord.heads (w : MorphosyntacticWord H) : List H :=
 
 namespace MorphosyntacticWord
 
+/-- The words with their sites, forgetting how their heads are grouped. -/
+def sited (ws : List (MorphosyntacticWord H)) : List (List H × H) :=
+  ws.map fun w ↦ (w.heads, w.site)
+
 /-- The hosts of the words on a spine, lowest first: each position of the spine with the head at
 which its word is pronounced. -/
-def hosts (ws : List (MorphosyntacticWord H)) : List H :=
-  ws.flatMap fun w ↦ List.replicate w.heads.length w.site
+def hosts (ws : List (MorphosyntacticWord H)) : List H := HMC.hosting (sited ws)
 
 theorem length_hosts (ws : List (MorphosyntacticWord H)) :
     (hosts ws).length = (ws.flatMap heads).length := by
-  simp [hosts, List.length_flatMap]
+  simp [hosts, sited, HMC.length_hosting, List.flatMap_map]
 
 /-- Words that divide a spine without repeated heads, each pronounced at one of its own heads,
 obey the Head Movement Constraint. -/
 theorem hmc_hosts {ws : List (MorphosyntacticWord H)} (hsite : ∀ w ∈ ws, w.site ∈ w.heads)
-    (hnd : (ws.flatMap heads).Nodup) : HMC.Holds (hosts ws) := by
-  simpa [hosts, List.flatMap_map] using
-    HMC.holds_flatMap_replicate_of_mem (ws := ws.map fun w ↦ (w.heads, w.site))
-      (by simpa using hsite) (by simpa [List.flatMap_map] using hnd)
+    (hnd : (ws.flatMap heads).Nodup) : HMC.Holds (hosts ws) :=
+  HMC.holds_hosting (by simpa [sited] using hsite) (by simpa [sited, List.flatMap_map] using hnd)
 
 end MorphosyntacticWord
 

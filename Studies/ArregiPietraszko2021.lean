@@ -716,6 +716,12 @@ private theorem isLeftComb_iff_mem_range_comb {x : FreeMagma H} :
     | nil => trivial
     | append_singleton l a ih => simpa [comb] using ih
 
+-- On the French clause the two constructions give the same word with the same site.
+theorem amalgamation_sited_french :
+    (amalgamate HarizanovGribanova2019.french).map MorphosyntacticWord.sited =
+      some (Minimalist.HeadChain.sited (· ≠ Cat.V) (· = Cat.T) [.V, .v, .Neg, .T]) := by
+  decide
+
 -- On the French clause the two constructions give one hosting: every position is pronounced at T.
 theorem amalgamation_hosts_french :
     (amalgamate HarizanovGribanova2019.french).map MorphosyntacticWord.hosts =

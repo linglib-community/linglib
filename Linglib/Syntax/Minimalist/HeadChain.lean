@@ -23,11 +23,13 @@ pronounced.
 
 * `Minimalist.HeadChain.chains`: the head chains of a spine.
 * `Minimalist.HeadChain.site`: the head at which a chain is pronounced.
+* `Minimalist.HeadChain.sited`: the head chains with their sites.
 * `Minimalist.HeadChain.hosts`: the head at which each position of a spine is pronounced.
 
 ## Main results
 
 * `Minimalist.HeadChain.flatten_chains`: the chains partition the spine in order.
+* `Minimalist.HeadChain.infix_of_mem_chains`: each chain is a stretch of the spine.
 * `Minimalist.HeadChain.hmc_hosts`: on a spine without repeated heads, head chains obey the Head
   Movement Constraint.
 
@@ -62,10 +64,12 @@ def chains (s : List H) : List (List H) := s.splitBy fun _ b ↦ decide (shares 
 highest position when none is strong. -/
 def site (c : List H) : Option H := (c.filter (strong ·)).getLast?.or c.getLast?
 
+/-- The head chains of a spine with their sites, lowest first. -/
+def sited (s : List H) : List (List H × H) :=
+  (chains shares s).filterMap fun c ↦ (site strong c).map (c, ·)
+
 /-- The host of each position of a spine: the head at which its chain is pronounced. -/
-def hosts (s : List H) : List H :=
-  ((chains shares s).filterMap fun c ↦ (site strong c).map (c.length, ·)).flatMap
-    fun p ↦ List.replicate p.1 p.2
+def hosts (s : List H) : List H := HMC.hosting (sited shares strong s)
 
 variable {shares strong}
 
@@ -76,15 +80,27 @@ theorem mem_of_site {c : List H} {x : H} (h : site strong c = some x) : x ∈ c 
   · exact (List.mem_filter.mp (List.mem_of_getLast? h)).1
   · exact List.mem_of_getLast? h
 
+/-- Each head chain is a stretch of the spine. -/
+theorem infix_of_mem_chains {s c : List H} (h : c ∈ chains shares s) : c <:+: s :=
+  flatten_chains (shares := shares) s ▸ List.infix_of_mem_flatten h
+
+theorem map_fst_sited_sublist (s : List H) :
+    ((sited shares strong s).map Prod.fst).Sublist (chains shares s) := by
+  have : (fun c : List H ↦ ((site strong c).map (c, ·)).map Prod.fst) =
+      Option.guard fun c ↦ (site strong c).isSome := by
+    funext c
+    cases h : site strong c <;> simp [Option.guard, h]
+  rw [sited, List.map_filterMap, this, List.filterMap_eq_filter]
+  exact List.filter_sublist
+
 /-- On a spine without repeated heads, head chains obey the Head Movement Constraint. -/
 theorem hmc_hosts {s : List H} (hs : s.Nodup) : HMC.Holds (hosts shares strong s) := by
-  refine List.isContiguous_get_flatMap_replicate ?_
-  rw [← flatten_chains (shares := shares) s, List.nodup_flatten] at hs
-  rw [List.Nodup, List.pairwise_map]
-  refine hs.2.filterMap _ fun c c' hd p hp p' hp' he ↦ ?_
-  obtain ⟨x, hx, rfl⟩ := Option.map_eq_some_iff.mp hp
-  obtain ⟨x', hx', rfl⟩ := Option.map_eq_some_iff.mp hp'
-  obtain rfl : x = x' := he
-  exact hd (mem_of_site hx) (mem_of_site hx')
+  refine HMC.holds_hosting (fun w hw ↦ ?_) ?_
+  · obtain ⟨c, -, hc⟩ := List.mem_filterMap.1 hw
+    obtain ⟨x, hx, rfl⟩ := Option.map_eq_some_iff.1 hc
+    exact mem_of_site hx
+  · rw [← flatten_chains (shares := shares) s] at hs
+    rw [List.flatMap_def]
+    exact hs.sublist (map_fst_sited_sublist s).flatten
 
 end Minimalist.HeadChain

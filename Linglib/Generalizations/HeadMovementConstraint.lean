@@ -26,14 +26,15 @@ and a hosting that returns to a head after leaving it does not.
 ## Main definitions
 
 * `HMC.Holds`: the positions pronounced at one head form a stretch of the spine.
+* `HMC.hosting`: the hosting that words with their sites give a spine.
 
 ## Main results
 
 * `HMC.holds_iff_exists_monotone`: the constraint holds exactly when a monotone numbering of the
   positions has the hosting's kernel.
 * `HMC.holds_flatMap_replicate`: blocks pronounced at distinct heads obey the constraint.
-* `HMC.holds_flatMap_replicate_of_mem`: words dividing a spine without repeated heads, each
-  pronounced at one of its own heads, obey it.
+* `HMC.holds_hosting`: words dividing a spine without repeated heads, each pronounced at one of
+  its own heads, obey it.
 * `HMC.not_holds_of_ne`: a hosting that returns to a head does not.
 
 ## Implementation notes
@@ -72,16 +73,24 @@ theorem holds_flatMap_replicate {l : List (ℕ × H)} (hl : (l.map Prod.snd).Nod
     Holds (l.flatMap fun p ↦ List.replicate p.1 p.2) :=
   List.isContiguous_get_flatMap_replicate hl
 
+/-- The hosting that words give a spine. A word is its heads, lowest first, with the head at
+which it is pronounced, and every position of a word is pronounced there. -/
+def hosting (ws : List (List H × H)) : List H :=
+  ws.flatMap fun w ↦ List.replicate w.1.length w.2
+
+theorem length_hosting (ws : List (List H × H)) :
+    (hosting ws).length = (ws.flatMap Prod.fst).length := by
+  simp [hosting, List.length_flatMap]
+
 /-- Words that divide a spine without repeated heads, each pronounced at one of its own heads,
 obey the constraint: the words are disjoint, so their sites are distinct. -/
-theorem holds_flatMap_replicate_of_mem {ws : List (List H × H)} (hsite : ∀ w ∈ ws, w.2 ∈ w.1)
-    (hnd : (ws.flatMap Prod.fst).Nodup) :
-    Holds (ws.flatMap fun w ↦ List.replicate w.1.length w.2) := by
+theorem holds_hosting {ws : List (List H × H)} (hsite : ∀ w ∈ ws, w.2 ∈ w.1)
+    (hnd : (ws.flatMap Prod.fst).Nodup) : Holds (hosting ws) := by
   have hs : (ws.map Prod.snd).Nodup := by
     rw [List.nodup_flatMap] at hnd
     rw [List.Nodup, List.pairwise_map]
     exact hnd.2.imp_of_mem fun ha hb hd he ↦ hd (hsite _ ha) (he ▸ hsite _ hb)
-  simpa [List.flatMap_map] using
+  simpa [hosting, List.flatMap_map] using
     holds_flatMap_replicate (l := ws.map fun w ↦ (w.1.length, w.2))
       (by simpa [List.map_map, Function.comp_def] using hs)
 
