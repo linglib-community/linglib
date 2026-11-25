@@ -220,15 +220,14 @@ def fuerchten : Verb :=
 /-- *befürchten* 'be afraid of' is formed on *fürchten* with the inseparable *be-*. -/
 def befuerchten : Verb :=
   { Verb.ofStem (fuerchten.stem.inseparable "be") with
-    -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-    valency := .ofFrame ArgumentFrame.finiteClause, noPassive := [ArgumentFrame.finiteClause]
+    valency := .ofFrame ArgumentFrame.finiteClause
     opaqueContext := true
     attitude := some (.preferential .negative) }
 
 /-- *sorgen* 'worry' is used reflexively, *sich sorgen*, and is based on uncertainty. -/
 def sorgen : Verb :=
   { Verb.ofStem (weak "sorgen") with
-    -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+    -- a reflexive verb, which forms no passive ([durrell-2011] §15.2)
     valency := .ofFrame ArgumentFrame.finiteClause, noPassive := [ArgumentFrame.finiteClause]
     opaqueContext := true
     attitude := some (.preferential .negative) }

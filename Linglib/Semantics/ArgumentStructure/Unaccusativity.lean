@@ -52,7 +52,8 @@ has no passive, and neither has a frame without a complement.
 * `Verb.Passivizes` is the passive that promotes a direct object. It says nothing of a frame
   whose first complement is an infinitive or an adpositional phrase, where languages and verbs
   differ, nor of the impersonal passive of an intransitive verb; on such a frame it does not
-  hold.
+  hold. Where a language also forms a passive with a reflexive marker, as Italian does with
+  *si* and Romanian with *se*, the predicate is about the passive with the auxiliary.
 * The test does not separate the causative alternation from the causative pairs of verbs of
   emission, *The postman buzzed the doorbell* beside *The doorbell buzzed*, which Levin and
   Rappaport Hovav take to pair two unrelated meanings (§3.2.5).
