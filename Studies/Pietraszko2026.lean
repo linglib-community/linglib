@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Extend
+public import Linglib.Syntax.Spine.Basic
 public import Linglib.Syntax.Minimalist.Phase.Transfer
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
@@ -21,7 +22,7 @@ unattested partial patterns are derived (`optional_T_overgenerates`).
 
 ## Implementation notes
 
-A clause is the list of heads above the subject's base position, bottom-up, each with its
+A clause is the `Spine` of the heads above the subject's base position, each with its
 category and whether it bears EPP, a φ-probe, and heads a phase; one bottom-up pass computes
 the subject's landing site and the heads it is accessible to: an EPP head attracts an
 accessible subject to its specifier and a phase head without EPP freezes it in its complement
@@ -63,9 +64,6 @@ structure Head where
   phase : Bool
   deriving DecidableEq, Repr
 
-/-- A clause is the list of heads above the subject's base position, bottom-up. -/
-abbrev Spine := List Head
-
 /-- The derivational state of the subject records its height, 0 in situ and `i + 1` in the
 specifier of the head at index `i`, and whether it is frozen in a phase's complement. -/
 structure State where
@@ -81,31 +79,32 @@ def step (i : ℕ) (h : Head) (s : State) : State :=
   else s
 
 /-- The state after merging the first `n` heads. -/
-def stateAt (sp : Spine) : ℕ → State
+def stateAt (sp : Spine Head) : ℕ → State
   | 0 => ⟨0, false⟩
   | n + 1 =>
-    match sp[n]? with
+    match sp.heads[n]? with
     | some h => step n h (stateAt sp n)
     | none => stateAt sp n
 
 /-- The subject's landing site is its height once the clause is built. -/
-def landing (sp : Spine) : ℕ := (stateAt sp sp.length).height
+def landing (sp : Spine Head) : ℕ := (stateAt sp sp.heads.length).height
 
 /-- The subject is accessible to the head at index `i` when it is not frozen as that head is
 merged. -/
-def Accessible (sp : Spine) (i : ℕ) : Prop := (stateAt sp i).frozen = false
+def Accessible (sp : Spine Head) (i : ℕ) : Prop := (stateAt sp i).frozen = false
 
-instance (sp : Spine) (i : ℕ) : Decidable (Accessible sp i) := inferInstanceAs (Decidable (_ = _))
+instance (sp : Spine Head) (i : ℕ) :
+    Decidable (Accessible sp i) := inferInstanceAs (Decidable (_ = _))
 
 /-- The head at index `i` agrees with the subject when it bears a φ-probe and the subject is
 accessible to it. -/
-def Agrees (sp : Spine) (i : ℕ) : Prop :=
-  match sp[i]? with
+def Agrees (sp : Spine Head) (i : ℕ) : Prop :=
+  match sp.heads[i]? with
   | some h => h.phi = true ∧ Accessible sp i
   | none => False
 
-instance (sp : Spine) (i : ℕ) : Decidable (Agrees sp i) := by
-  unfold Agrees; cases sp[i]? <;> infer_instance
+instance (sp : Spine Head) (i : ℕ) : Decidable (Agrees sp i) := by
+  unfold Agrees; cases sp.heads[i]? <;> infer_instance
 
 /-! ### The heads of Ndebele -/
 
@@ -125,17 +124,17 @@ def C (e : Bool) : Head := ⟨.C, e, false, true⟩
 def raisingV : Head := ⟨.V, true, false, false⟩
 
 /-- A simple clause (9), (10). -/
-def simple (e : Bool) : Spine := [Voice e, T]
+def simple (e : Bool) : Spine Head := ⟨[Voice e, T]⟩
 
 /-- An auxiliary construction (17), (19): Asp and T above Voice. -/
-def auxV (e : Bool) : Spine := [Voice e, Asp, T]
+def auxV (e : Bool) : Spine Head := ⟨[Voice e, Asp, T]⟩
 
 /-- A reduced clause (40): Asp is the highest head. -/
-def reduced (e : Bool) : Spine := [Voice e, Asp]
+def reduced (e : Bool) : Spine Head := ⟨[Voice e, Asp]⟩
 
 /-- Hyperraising (77): the embedded Voice and T, C, the matrix raising verb, and the matrix
 Voice and T. -/
-def hyperraising (e₁ e₂ e₃ : Bool) : Spine := [Voice e₃, T, C e₂, raisingV, Voice e₁, T]
+def hyperraising (e₁ e₂ e₃ : Bool) : Spine Head := ⟨[Voice e₃, T, C e₂, raisingV, Voice e₁, T]⟩
 
 /-! ### Predictions (§2.3, §2.4, §3.1.3, §4) -/
 
@@ -170,16 +169,16 @@ theorem hyperraising_sites (e₁ e₂ e₃ : Bool) :
 
 /-! ### Phase-delimited movement (79) -/
 
-theorem stateAt_succ_of_getElem? {sp : Spine} {n : ℕ} {h : Head} (hn : sp[n]? = some h) :
+theorem stateAt_succ_of_getElem? {sp : Spine Head} {n : ℕ} {h : Head} (hn : sp.heads[n]? = some h) :
     stateAt sp (n + 1) = step n h (stateAt sp n) := by
   simp [stateAt, hn]
 
-theorem frozen_stateAt_succ {sp : Spine} {n : ℕ} (hf : (stateAt sp n).frozen = true) :
+theorem frozen_stateAt_succ {sp : Spine Head} {n : ℕ} (hf : (stateAt sp n).frozen = true) :
     stateAt sp (n + 1) = stateAt sp n := by
   simp only [stateAt]
-  cases sp[n]? <;> simp [step, hf]
+  cases sp.heads[n]? <;> simp [step, hf]
 
-theorem frozen_stateAt_of_le {sp : Spine} {m n : ℕ} (hmn : m ≤ n)
+theorem frozen_stateAt_of_le {sp : Spine Head} {m n : ℕ} (hmn : m ≤ n)
     (hf : (stateAt sp m).frozen = true) : stateAt sp n = stateAt sp m := by
   induction n with
   | zero => rw [Nat.le_zero.1 hmn]
@@ -200,16 +199,16 @@ theorem height_le_height_step {i : ℕ} {h : Head} {s : State} (hs : s.height �
   by_cases hf : s.frozen = true <;> by_cases he : h.epp = true <;>
     by_cases hp : h.phase = true <;> simp [hf, he, hp] <;> omega
 
-theorem height_stateAt_le (sp : Spine) (n : ℕ) : (stateAt sp n).height ≤ n := by
+theorem height_stateAt_le (sp : Spine Head) (n : ℕ) : (stateAt sp n).height ≤ n := by
   induction n with
   | zero => exact le_rfl
   | succ n ih =>
     simp only [stateAt]
-    cases sp[n]? with
+    cases sp.heads[n]? with
     | none => exact ih.trans (Nat.le_succ n)
     | some h => exact height_step_le ih
 
-theorem height_stateAt_mono (sp : Spine) {m n : ℕ} (hmn : m ≤ n) :
+theorem height_stateAt_mono (sp : Spine Head) {m n : ℕ} (hmn : m ≤ n) :
     (stateAt sp m).height ≤ (stateAt sp n).height := by
   induction n with
   | zero => rw [Nat.le_zero.1 hmn]
@@ -217,14 +216,14 @@ theorem height_stateAt_mono (sp : Spine) {m n : ℕ} (hmn : m ≤ n) :
     rcases Nat.le_succ_iff.1 hmn with hmn | rfl
     · refine Nat.le_trans (ih hmn) ?_
       simp only [stateAt]
-      cases sp[n]? with
+      cases sp.heads[n]? with
       | none => exact le_rfl
       | some h => exact height_le_height_step (height_stateAt_le sp n)
     · exact le_rfl
 
 /-- Phase-internal movement is obligatory (79i): a head bearing EPP attracts the subject
 whenever it is accessible, so the subject lands at least in its specifier. -/
-theorem phase_internal_obligatory {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]? = some h)
+theorem phase_internal_obligatory {sp : Spine Head} {i : ℕ} {h : Head} (hi : sp.heads[i]? = some h)
     (he : h.epp = true) (ha : Accessible sp i) : i + 1 ≤ landing sp := by
   obtain ⟨hlen, -⟩ := List.getElem?_eq_some_iff.1 hi
   have hstep : stateAt sp (i + 1) = ⟨i + 1, false⟩ := by
@@ -233,7 +232,7 @@ theorem phase_internal_obligatory {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]?
   calc i + 1 = (stateAt sp (i + 1)).height := by rw [hstep]
     _ ≤ landing sp := height_stateAt_mono sp hlen
 
-theorem cross_phasal_frozen {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]? = some h)
+theorem cross_phasal_frozen {sp : Spine Head} {i : ℕ} {h : Head} (hi : sp.heads[i]? = some h)
     (hp : h.phase = true) (he : h.epp = false) (ha : Accessible sp i) :
     landing sp ≤ i ∧ ∀ j, i < j → ¬ Accessible sp j := by
   have hstep : stateAt sp (i + 1) = ⟨(stateAt sp i).height, true⟩ := by
@@ -248,7 +247,7 @@ theorem cross_phasal_frozen {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]? = som
 
 /-- Movement past a φ-bearing head requires agreement with it (25)–(28): a subject that
 lands above a head was accessible to it. -/
-theorem agrees_of_lt_landing {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]? = some h)
+theorem agrees_of_lt_landing {sp : Spine Head} {i : ℕ} {h : Head} (hi : sp.heads[i]? = some h)
     (hphi : h.phi = true) (hlt : i < landing sp) : Agrees sp i := by
   have ha : Accessible sp i := by
     by_contra hna
@@ -263,13 +262,13 @@ theorem agrees_of_lt_landing {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]? = so
 
 /-- The account of [carstens-mletshe-2015]: Voice is not a phase and each inflectional head
 bears [EPP, φ] optionally, Asp with `a` and T with `t`. -/
-def optionalT (a t : Bool) : Spine :=
-  [⟨.Voice, false, false, false⟩, ⟨.Asp, a, a, false⟩, ⟨.T, t, t, false⟩]
+def optionalT (a t : Bool) : Spine Head :=
+  ⟨[⟨.Voice, false, false, false⟩, ⟨.Asp, a, a, false⟩, ⟨.T, t, t, false⟩]⟩
 
 /-- On that account an embedded T may lack [EPP, φ] below C and a raising verb, the configuration
 of raising to object. -/
-def optionalTRaising (t : Bool) : Spine :=
-  [⟨.Voice, false, false, false⟩, ⟨.T, t, t, false⟩, ⟨.C, true, false, true⟩, raisingV]
+def optionalTRaising (t : Bool) : Spine Head :=
+  ⟨[⟨.Voice, false, false, false⟩, ⟨.T, t, t, false⟩, ⟨.C, true, false, true⟩, raisingV]⟩
 
 /-- The optional-probe account overgenerates attraction and agreement by Asp alone (30) or T alone
 (31), and raising to object across a non-agreeing T (25). -/
@@ -296,37 +295,37 @@ def V : LexicalItem.Token := ⟨.of .V [.D] "V", 2⟩
 def v : LexicalItem.Token := ⟨.of .v [.V, .D] "v", 3⟩
 
 /-- The head at index `i` of a spine, selecting the category of the head below it. -/
-def tokOf (sp : Spine) (i : ℕ) (hd : Head) : LexicalItem.Token :=
-  ⟨.of hd.cat [if i = 0 then .v else ((sp[i - 1]?).map Head.cat).getD .v], 10 + i⟩
+def tokOf (sp : Spine Head) (i : ℕ) (hd : Head) : LexicalItem.Token :=
+  ⟨.of hd.cat [if i = 0 then .v else ((sp.heads[i - 1]?).map Head.cat).getD .v], 10 + i⟩
 
 /-- The phase heads of a spine. -/
-def phaseHeads (sp : Spine) : List LexicalItem.Token :=
-  (sp.zipIdx.filter (·.1.phase)).map fun x ↦ tokOf sp x.2 x.1
+def phaseHeads (sp : Spine Head) : List LexicalItem.Token :=
+  (sp.heads.zipIdx.filter (·.1.phase)).map fun x ↦ tokOf sp x.2 x.1
 
 /-- The copy of the subject at height `j`, when it is pronounced at height `k`. -/
 def copyAt (k j : ℕ) : PlanarSyntacticObject := if j = k then .leaf subj else .traceOf subj
 
 /-- Once the first `n` heads are merged, the tree has the subject pronounced at its height then,
 with deleted copies at its base and in every specifier it passed through. -/
-def treeAt (sp : Spine) (n : ℕ) : PlanarSyntacticObject :=
+def treeAt (sp : Spine Head) (n : ℕ) : PlanarSyntacticObject :=
   let k := (stateAt sp n).height
   (copyAt k 0 * (v * (V * obj)) : PlanarSyntacticObject).extend .v 10
-    (fun i ↦ sp[i]?.bind fun h ↦ if h.epp ∧ i + 1 ≤ k then some (copyAt k (i + 1)) else none)
-    ((sp.take n).map Head.cat)
+    (fun i ↦ sp.heads[i]?.bind fun h ↦ if h.epp ∧ i + 1 ≤ k then some (copyAt k (i + 1)) else none)
+    ((sp.take n).heads.map Head.cat)
 
 /-- The tree in which the head `hd` at index `i` has just merged. -/
-def probeTree (sp : Spine) (i : ℕ) (hd : Head) : PlanarSyntacticObject :=
+def probeTree (sp : Spine Head) (i : ℕ) (hd : Head) : PlanarSyntacticObject :=
   .leaf (tokOf sp i hd) * treeAt sp i
 
 /-- The pronounced subject is accessible to the head at index `i`, merged on the tree built so
 far, when it lies in no complement of a phase head transferred by then under the schedule `pic`. -/
-def TreeAccessible (pic : PlanarSyntacticObject → Schedule) (sp : Spine) (i : ℕ) : Prop :=
-  ∀ hd ∈ sp[i]?, ∀ q ∈ occurrences (probeTree sp i hd) subj,
+def TreeAccessible (pic : PlanarSyntacticObject → Schedule) (sp : Spine Head) (i : ℕ) : Prop :=
+  ∀ hd ∈ sp.heads[i]?, ∀ q ∈ occurrences (probeTree sp i hd) subj,
     q ∉ sealed (occurrencesWith (probeTree sp i hd) (· ∈ phaseHeads sp)).toFinset
       complementDomain (pic (probeTree sp i hd)) ⊥
 
 instance (pic : PlanarSyntacticObject → Schedule) [∀ t Φ h s, Decidable (pic t Φ h s)]
-    (sp : Spine) (i : ℕ) : Decidable (TreeAccessible pic sp i) :=
+    (sp : Spine Head) (i : ℕ) : Decidable (TreeAccessible pic sp i) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, ∀ _ ∈ _, ¬ _))
 
 /-- In simple clauses (9)–(14) the subject is accessible to a head exactly when it is under
