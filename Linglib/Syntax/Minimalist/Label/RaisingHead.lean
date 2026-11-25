@@ -25,9 +25,11 @@ takes the daughter carrying the raising head, and the embedding's head where the
 * `Minimalist.CopyState`: a selection state or a lower copy, a commutative magma with zero.
 * `Minimalist.RaisingState`, `Minimalist.SyntacticObject.raisingHead`: the raising state and the
   raising head of a syntactic object.
-* `Minimalist.RaisingState.Projects`: which of two merged constituents projects under raising.
+* `Minimalist.RaisingState.Projects`, `Minimalist.SyntacticObject.RaisingProjects`: which of two
+  merged constituents projects under raising, on raising states and on objects.
 * `Minimalist.headIndex?`, `Minimalist.HeadDaughter.raising`: the head daughter of a planar
-  object, and the head daughters it gives at the positions of an object.
+  object, the daughter that projects, and the head daughters it gives at the positions of an
+  object.
 
 ## Main results
 
@@ -311,11 +313,20 @@ theorem raisingHead_merge {l r : SyntacticObject TokenLeaf} {h : LexicalItem.Tok
     (hlr : (merge l r).raisingHead = some h) : l.raisingHead = some h ∨ r.raisingHead = some h :=
   RaisingState.head_mul (raisingCheck_merge l r ▸ hlr)
 
+/-- `x` projects over `y` under raising: the raising state of `x` projects over that of `y`. -/
+def RaisingProjects (x y : SyntacticObject TokenLeaf) : Prop :=
+  x.raisingCheck.Projects y.raisingCheck
+
+instance : DecidableRel RaisingProjects := fun x y ↦
+  inferInstanceAs (Decidable (x.raisingCheck.Projects y.raisingCheck))
+
+instance : Std.Asymm RaisingProjects := ⟨fun _ _ h ↦ RaisingState.Projects.asymm h⟩
+
 /-- The raising head of a merge is the raising head of the daughter that projects. -/
 theorem raisingHead_merge_eq (l r : SyntacticObject TokenLeaf) :
     (merge l r).raisingHead =
-      if l.raisingCheck.Projects r.raisingCheck then l.raisingHead
-      else if r.raisingCheck.Projects l.raisingCheck then r.raisingHead else none := by
+      if RaisingProjects l r then l.raisingHead
+      else if RaisingProjects r l then r.raisingHead else none := by
   rw [raisingHead, raisingCheck_merge]
   exact RaisingState.head_mul_eq _ _
 
@@ -349,17 +360,15 @@ def conventionHeadPos? : PlanarSyntacticObject TokenLeaf → Option (List ℕ)
       if tok.item.sel = [] then (conventionHeadPos? r).map (1 :: ·) else some [0]
   | .mul _ r => (conventionHeadPos? r).map (1 :: ·)
 
-/-- The head daughter of a planar object is the first daughter carrying its raising head, and
-where it has none, the first step of the drawing convention's head path. -/
+/-- The head daughter of a planar object is the daughter that projects under raising, and where
+neither does, the first step of the drawing convention's head path. -/
 def headIndex? (s : PlanarSyntacticObject TokenLeaf) : Option ℕ :=
-  (s.toSyntacticObject.raisingHead.bind fun h ↦
-      s.daughters.findIdx? (·.toSyntacticObject.raisingHead = some h)) <|>
-    (conventionHeadPos? s).bind List.head?
+  headDaughter SyntacticObject.RaisingProjects s <|> (conventionHeadPos? s).bind List.head?
 
 /-- The head daughters under [marcolli-chomsky-berwick-2025]'s raising head, extended by the
 drawing convention where an object has no raising head: the head daughter of the planar object at
 each address, `none` off the object. -/
-def HeadDaughter.raising : HeadDaughter := fun t q ↦ (t.subAt? q.toList).bind headIndex?
+def HeadDaughter.raising : HeadDaughter TokenLeaf := fun t q ↦ (t.subAt? q.toList).bind headIndex?
 
 /-- Where a Merge has a raising head, its head daughter carries it. -/
 theorem exists_headIndex?_of_raisingHead {l r : PlanarSyntacticObject TokenLeaf}
@@ -367,9 +376,9 @@ theorem exists_headIndex?_of_raisingHead {l r : PlanarSyntacticObject TokenLeaf}
     ∃ i c, headIndex? (l * r) = some i ∧ (l * r).daughters[i]? = some c ∧
       c.toSyntacticObject.raisingHead = some ℓ := by
   have hm : (merge l.toSyntacticObject r.toSyntacticObject).raisingHead = some ℓ := h
-  by_cases hl' : l.toSyntacticObject.raisingHead = some ℓ
-  · exact ⟨0, l, by simp [headIndex?, hm, hl', List.findIdx?_cons], rfl, hl'⟩
-  · have hr' : r.toSyntacticObject.raisingHead = some ℓ := (raisingHead_merge hm).resolve_left hl'
-    exact ⟨1, r, by simp [headIndex?, hm, hl', hr', List.findIdx?_cons], rfl, hr'⟩
+  rw [raisingHead_merge_eq] at hm
+  split_ifs at hm with h1 h2
+  · exact ⟨0, l, by simp [headIndex?, headDaughter_mul, h1], rfl, hm⟩
+  · exact ⟨1, r, by simp [headIndex?, headDaughter_mul, h1, h2], rfl, hm⟩
 
 end Minimalist
