@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Languages.Ga.Clause
+public import Linglib.Syntax.Category.Verb.Takes
 
 /-!
 # Gã complement-taking verbs

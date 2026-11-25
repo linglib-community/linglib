@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.English.Verbs.Attitude
-public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+public import Linglib.Syntax.Category.Verb.Takes
 
 /-!
 # English complementizers

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Languages.Adyghe.Case
 public import Linglib.Syntax.Category.Verb.Basic
-public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+public import Linglib.Syntax.Category.Verb.Takes
 
 /-!
 # Adyghe clausal embedding
