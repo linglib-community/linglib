@@ -779,10 +779,11 @@ private theorem forall_isLeftComb_amalgamate {below : List (MorphosyntacticWord 
 /-- GenHM builds only complex heads in which each head is adjoined outside the heads below it,
 the bracketing of the Mirror Principle. Amalgamation builds only such complex heads exactly when
 no head Lowers right after a head has Raised into it. -/
-theorem forall_mem_range_comb_iff {hs : List (Terminal H)} {out : List (MorphosyntacticWord H)}
-    (h : amalgamate ⟨hs⟩ = some out) :
+theorem forall_mem_range_comb_iff {s : Spine (Terminal H)} {out : List (MorphosyntacticWord H)}
+    (h : amalgamate s = some out) :
     (∀ a ∈ out, a.bracketing ∈ Set.range comb) ↔
-      (hs.map (·.m)).IsChain fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
+      (s.map Terminal.m).heads.IsChain fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
+  obtain ⟨hs⟩ := s
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   have := forall_isLeftComb_amalgamate hr
   simp only [← isLeftComb_iff_mem_range_comb]
