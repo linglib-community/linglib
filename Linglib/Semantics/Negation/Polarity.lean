@@ -15,14 +15,27 @@ public import Linglib.Logic.Trivalent.Connectives
 /-!
 # Polarity
 
-This file defines the polarity of an expression, positive or negative. The two polarities form the
-group of order two, [the units of `ℤ`](##Polarity.unitsEquiv), and a homomorphism out of it is
-[fixed by an element whose square is one](##Polarity.lift), so that the polarities act through any
-involution. The polarity of a sentence acts on propositions by complement, and
-[the orbit of a proposition](##Polarity.orbit_eq_pair_compl) is the pair of its polarity
-alternatives, the focus value of a focused polarity and the answers of a polar question. The
-polarity of an antonym acts on degrees by negation. A polarity
-[directs a function](##Polarity.StrictMonoBy), and directions compose as polarities multiply.
+This file defines the polarity of an expression, positive or negative. The two polarities form a
+group of order two with the positive polarity as its identity, so a homomorphism out of them is
+given by an element whose square is one. In this way the polarities act on the sets of a type and on
+propositions by complement, on an additive group by negation, and on signs and three-valued truth
+values by their negations. The orbit of a proposition is the pair of its polarity alternatives. A
+polarity also gives a function between preorders a direction: the positive polarity directs the
+monotone functions and the negative polarity the antitone ones.
+
+## Main definitions
+
+* `Polarity.lift`: the equivalence between the elements of a monoid whose square is one and the
+  homomorphisms out of the polarities.
+* `Polarity.MonoBy`: a function is directed by the positive polarity when it is monotone and by the
+  negative polarity when it is antitone.
+
+## Main results
+
+* `Polarity.orbit_eq_pair_compl`: the orbit of a set under the polarities is the set and its
+  complement.
+* `Polarity.MonoBy.comp`: the composition of a function directed by `s` with one directed by `t` is
+  directed by `s * t`.
 
 ## Implementation notes
 
@@ -174,6 +187,11 @@ instance decidableMemSMul (p : Polarity) (s : Set α) [DecidablePred (· ∈ s)]
   | .positive => fun a ↦ inferInstanceAs (Decidable (a ∈ s))
   | .negative => fun a ↦ inferInstanceAs (Decidable (a ∉ s))
 
+/-- The polarity of a sentence acts on truth values, the negative polarity negating. -/
+instance : MulAction Polarity Prop := .ofEndHom complHom
+
+@[simp] theorem negative_smul_prop (p : Prop) : negative • p = ¬ p := rfl
+
 /-- Over a nonempty type the action on propositions is free, since no proposition is its own
 complement. -/
 instance [Nonempty α] : IsCancelSMul Polarity (Set α) :=
@@ -227,6 +245,22 @@ theorem StrictMonoBy.comp {s t : Polarity} {g : β → γ} {f : α → β} (hg :
   cases s <;> cases t
   exacts [StrictMono.comp hg hf, StrictMono.comp_strictAnti hg hf,
     StrictAnti.comp_strictMono hg hf, StrictAnti.comp hg hf]
+
+/-- A function directed by a polarity is monotone under the positive polarity and antitone under
+the negative one. -/
+def MonoBy : Polarity → (α → β) → Prop
+  | positive, f => Monotone f
+  | negative, f => Antitone f
+
+@[simp] theorem monoBy_positive {f : α → β} : positive.MonoBy f ↔ Monotone f := .rfl
+
+@[simp] theorem monoBy_negative {f : α → β} : negative.MonoBy f ↔ Antitone f := .rfl
+
+theorem MonoBy.comp {s t : Polarity} {g : β → γ} {f : α → β} (hg : s.MonoBy g)
+    (hf : t.MonoBy f) : (s * t).MonoBy (g ∘ f) := by
+  cases s <;> cases t
+  exacts [Monotone.comp (g := g) hg hf, Monotone.comp_antitone (g := g) hg hf,
+    Antitone.comp_monotone (g := g) hg hf, Antitone.comp (g := g) hg hf]
 
 end Directed
 

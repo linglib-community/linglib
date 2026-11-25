@@ -6,8 +6,8 @@ Authors: Patrick Elliott, Robert Hawkins
 module
 
 public import Linglib.Logic.Trivalent.UniversalInference
-public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.NumberTree
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
 public import Mathlib.Combinatorics.SimpleGraph.Hasse

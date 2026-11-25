@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Core.Data.List.Forall2

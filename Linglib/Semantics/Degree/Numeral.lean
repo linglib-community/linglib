@@ -9,26 +9,44 @@ public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Denotation
 public import Linglib.Core.Order.Cover
 public import Linglib.Semantics.Exhaustification.Basic
-public import Linglib.Semantics.Quantification.Predicative
+public import Linglib.Semantics.Quantifier.Predicative
 
 /-!
 # Numeral meanings
 
-A bare numeral and its modifications *more than*, *fewer than*, *at least* and *at most* are the
-five comparisons of `Comparison`. On Kennedy's de-Fregean semantics the form with comparison
-`c` and number `m` is the degree quantifier `Quantifier.MaxIn (c.interval m)`, so the bare numeral
-`MaxIn {m}` is two-sided; in the tradition of Horn it is the lower-bounded
-`Quantifier.individual m`. Each reading derives the other: [Partee's `BE` lowers a de-Fregean form
-to its interval](##BE_maxIn) and [existential closure then gives the lower-bounded
-numeral](##some_BE_maxIn_singleton), which the two-sided one [asymmetrically
-entails](##maxIn_singleton_lt_individual), while the two-sided one holds of a degree property
-[whose greatest degree is the number](##Quantifier.maxIn_singleton), the lower-bounded one
-exhaustified against the higher numerals, on counts [the exact reading](##isGreatest_ge_iff).
-Exhaustified against its forms at the other numbers, a form that keeps its number is
-[exact](##mem_exh_range_interval_iff_of_not_isStrict) and *more than* [holds only of an amount
-covering the number](##mem_exh_range_interval_gt_iff), which a dense scale lacks. A numeral
-modifier is a lexical item whose readings are modifiers of sets of amounts, and Nouwen's two
-classes of modifier are read off the construction it is built on.
+A bare numeral and its modified forms *more than*, *fewer than*, *at least* and *at most* are the
+five comparisons of `Comparison`. On the de-Fregean semantics of [kennedy-2015], the form with
+comparison `c` and number `m` is the degree quantifier `MaxIn (c.interval m)`, so the bare numeral
+`MaxIn {m}` is two-sided. In the tradition of [horn-1972] the bare numeral is the lower-bounded
+`individual m`. This file derives each reading from the other, by type shifting and by
+exhaustification, and defines the numeral modifiers as lexical items.
+
+## Main results
+
+* `Numerals.BE_maxIn`: `BE (MaxIn U) = U`.
+* `Numerals.maxIn_singleton_lt_individual`: on a scale with no greatest degree, the two-sided
+  numeral strictly entails the lower-bounded one.
+* `Numerals.isGreatest_ge_iff`: exhaustified against the higher numerals, *at least `m`* holds of
+  `a` if and only if `a = m`.
+* `Numerals.mem_exh_range_interval_gt_iff`: exhaustified against its forms at the other numbers,
+  *more than `m`* holds of `a` if and only if `a` covers `m`.
+
+## Implementation notes
+
+A Class A modifier relates the numeral to a definite amount, so *a hexagon has fewer than 11 sides*
+is a weak truth. A Class B modifier places a bound on a range of amounts, so *a hexagon has at most
+10 sides* is odd, and the modifier conveys that the speaker does not know the amount. [kennedy-2015]
+and [rett-2015a] reduce the two classes to the ordering the modifier expresses, exclusive for Class
+A and inclusive for Class B, and derive the ignorance as an implicature.
+[schwarz-buccola-hamilton-2012] show that *at most* and *up to* dissociate,
+[cremers-coppock-dotlacil-roelofsen-2022] find the ignorance contrast graded and dependent on the
+question under discussion, and [enguehard-2018] derives the inferences of comparative numerals from
+granularity.
+
+The class of each kind follows the classification of the English modifiers in [nouwen-2010]. The
+comparatives are Class A, and the superlatives and the adverbs are Class B. A prepositional modifier
+follows its spatial use: a locative preposition gives a Class A modifier and a directional one a
+Class B modifier. *Over* is Class A although its usual spatial sense is directional.
 
 ## References
 
@@ -38,6 +56,7 @@ classes of modifier are read off the construction it is built on.
 * [spector-2013]
 * [chierchia-fox-spector-2012]
 * [nouwen-2010]
+* [rett-2015a]
 * [schwarz-buccola-hamilton-2012]
 * [cremers-coppock-dotlacil-roelofsen-2022]
 * [enguehard-2018]
@@ -55,8 +74,8 @@ section Readings
 
 variable {D : Type*}
 
-/-- Partee's `BE` lowers the de-Fregean form with interval `U` to the property of lying in `U`, as
-`BE(three)` is the property of being three ([kennedy-2015], (39)). -/
+/-- `BE` takes the de-Fregean form with interval `U` to the property of lying in `U`
+([kennedy-2015], (39)). -/
 theorem BE_maxIn [Preorder D] (U : Set D) : Quantifier.BE (MaxIn U) = U :=
   Set.ext fun x ↦
     ⟨fun ⟨_, hm, h⟩ ↦ (h.1 : _ = x) ▸ hm, fun hx ↦ ⟨x, hx, isGreatest_singleton⟩⟩
@@ -76,12 +95,8 @@ theorem maxIn_singleton_lt_individual [Preorder D] [NoMaxOrder D] (m : D) :
     let ⟨a, ha⟩ := exists_gt m
     ha.not_ge ((maxIn_singleton.1 (h (Set.Iic a) ha.le)).2 le_rfl)
 
-/-- Exhaustified against the higher numerals, *at least `m`* is true of `a` exactly when `a` is
-`m`, the two-sided reading of the bare numeral, on any partially ordered scale. The exhaustified
-lower-bounded numeral holds of a degree property whose greatest degree is `m`, which is the
-de-Fregean `MaxIn {m}` (`Quantifier.maxIn_singleton`): exhaustification is the meaning-changing
-operation that [kennedy-2015] (p. 10:20) says the two-sided reading needs if the singular term is
-basic. -/
+/-- Exhaustified against the higher numerals, *at least `m`* is true of `a` if and only if `a` is
+`m`. -/
 theorem isGreatest_ge_iff [PartialOrder D] {a m : D} :
     IsGreatest {j | a ∈ Comparison.ge.interval j} m ↔ a ∈ Comparison.eq.interval m :=
   ⟨fun h ↦ le_antisymm (h.2 (le_refl a)) h.1, by rintro rfl; exact ⟨le_rfl, fun _ h ↦ h⟩⟩
@@ -136,17 +151,8 @@ end Scale
 
 /-! ### Numeral modifiers -/
 
-/-- The two classes of numeral modifiers of [nouwen-2010]. A Class A modifier relates the
-numeral to a definite amount, so *a hexagon has fewer than 11 sides* is a weak truth. A Class B
-modifier places a bound on a range of amounts, so *a hexagon has at most 10 sides* is odd and
-the modifier conveys that the speaker does not know the amount.
-
-[kennedy-2015] and [rett-2015a] reduce the split to the ordering the modifier expresses, exclusive
-for Class A and inclusive for Class B (`Comparison.self_mem_interval_iff`), and derive the
-ignorance as an implicature. The categorical pattern is contested, since [schwarz-buccola-hamilton-2012] show
-that *at most* and *up to* dissociate, [cremers-coppock-dotlacil-roelofsen-2022] find the ignorance
-contrast graded and dependent on the question under discussion, and [enguehard-2018] derives
-the inferences of comparative numerals from granularity. -/
+/-- The two classes of numeral modifiers of [nouwen-2010]: a Class A modifier relates the numeral to
+a definite amount, and a Class B modifier places a bound on a range of amounts. -/
 inductive ModifierClass where
   | classA
   | classB
@@ -170,12 +176,7 @@ inductive ModifierKind where
   | equative
   deriving Repr, DecidableEq
 
-/-- The class of each kind, after [nouwen-2010]'s tentative classification of the English
-modifiers. The comparatives are his model of Class A and the superlatives and the adverbs of
-Class B, and the prepositional modifiers follow their spatial use, a locative preposition giving a
-Class A modifier and a directional one a Class B modifier. *Over* is Class A although its usual
-spatial sense is directional, which Nouwen puts down to numeral modifiers using only vertical
-senses. -/
+/-- The class of each kind, after the classification of the English modifiers in [nouwen-2010]. -/
 def ModifierKind.modifierClass : ModifierKind → ModifierClass
   | .comparative | .locative => .classA
   | .superlative | .directional | .adverbial | .equative => .classB

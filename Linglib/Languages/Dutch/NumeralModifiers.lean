@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Numerals.Basic
+public import Linglib.Semantics.Degree.Numeral
 
 /-!
 # Dutch numeral modifiers

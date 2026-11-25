@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantification.Lattice
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Invariants
+public import Linglib.Semantics.Quantifier.Counting
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Mathlib.Order.Atoms
 public import Mathlib.Data.Sym.Card
@@ -45,9 +45,9 @@ circle: on a finite universe the cardinal functions are exactly the existential 
 `BooleanSubalgebra.closure` is finitary, so `closure_generators` carries `[Finite α]`; the paper
 closes under arbitrary meets and joins, which is `generateCompleteBoolean_generators_iff`, and on
 an infinite universe the finitary closure is strictly smaller than the conservative algebra.
-`Cardinal` is stated with `Nat.card`, which is by definition the `Set.ncard` the counting
-quantifiers count with. Canonical witnesses of each size are initial segments of a fixed
-enumeration (`segment`), which nest, unlike arbitrarily chosen subsets.
+`Quantifier.Det.Cardinal` counts with `Set.ncard`, which is by definition the `Nat.card` of the
+subtype that the counts below are written with. Canonical witnesses of each size are initial
+segments of a fixed enumeration (`segment`), which nest, unlike arbitrarily chosen subsets.
 
 ## TODO
 
@@ -290,16 +290,6 @@ theorem card_existential [Fintype α] :
 
 /-! ### Cardinal determiners (Section 3.4) -/
 
-/-- A cardinal function decides by the number of individuals in restrictor and scope ((102)). -/
-def Cardinal (f : Det α) : Prop :=
-  ∀ R T R' T' : Set α, Nat.card ↥(R ∩ T) = Nat.card ↥(R' ∩ T') → (f R T ↔ f R' T')
-
-theorem Cardinal.intersective {f : Det α} (hf : Cardinal f) : Intersective f :=
-  fun _ _ _ _ h ↦ hf _ _ _ _ (by rw [h])
-
-theorem Cardinal.quantityInvariant {f : Det α} (hf : Cardinal f) : QuantityInvariant f :=
-  fun σ _ _ ↦ hf _ _ _ _ (Nat.card_congr (σ.subtypeEquiv fun _ ↦ Iff.rfl))
-
 /-- A cardinal function decides by the number of individuals in restrictor and scope, and so is
 closed under the Boolean operations (PROP 14(a)). -/
 noncomputable def cardInter [Fintype α] (p : Set α × Set α) : Fin (Fintype.card α + 1) :=
@@ -310,28 +300,28 @@ noncomputable abbrev cardinalSubalgebra [Fintype α] : BooleanSubalgebra (Det α
   invariants cardInter
 
 @[simp] theorem mem_cardinalSubalgebra [Fintype α] {f : Det α} :
-    f ∈ cardinalSubalgebra ↔ Cardinal f :=
+    f ∈ cardinalSubalgebra ↔ Det.Cardinal f :=
   ⟨fun h _ _ _ _ e ↦ h _ _ _ _ (Fin.ext e), fun h _ _ _ _ e ↦ h _ _ _ _ (Fin.val_eq_of_eq e)⟩
 
 theorem cardinalSubalgebra_le [Fintype α] :
     cardinalSubalgebra ≤ (existentialSubalgebra : BooleanSubalgebra (Det α)) :=
   fun _ hf ↦ (mem_cardinalSubalgebra.1 hf).intersective
 
-theorem cardinal_atLeast (n : ℕ) : Cardinal (atLeast (α := α) n) :=
-  fun _ _ _ _ h ↦ Iff.of_eq (congrArg (n ≤ ·) h)
+theorem cardinal_atLeast (n : ℕ) : Det.Cardinal (atLeast (α := α) n) :=
+  NumberTree.cardinal_toDet_cardinal _
 
-theorem cardinal_exactly (n : ℕ) : Cardinal (exactly (α := α) n) :=
-  fun _ _ _ _ h ↦ Iff.of_eq (congrArg (· = n) h)
+theorem cardinal_exactly (n : ℕ) : Det.Cardinal (exactly (α := α) n) :=
+  NumberTree.cardinal_toDet_cardinal _
 
 private theorem card_singleton_inter (c : α) : Nat.card ↥({c} ∩ {c} : Set α) = 1 := by
   rw [Set.inter_self]
   exact Nat.card_unique
 
-theorem cardinal_some [Fintype α] : Cardinal (Det.some : Det α) := by
+theorem cardinal_some [Fintype α] : Det.Cardinal (Det.some : Det α) := by
   rw [some_eq_atLeast_one]
   exact cardinal_atLeast 1
 
-theorem not_cardinal_noBut {a b : α} (hab : a ≠ b) : ¬ Cardinal (noBut a) := fun h ↦ by
+theorem not_cardinal_noBut {a b : α} (hab : a ≠ b) : ¬ Det.Cardinal (noBut a) := fun h ↦ by
   have key : ({b} : Set α) = {a} := by
     have h1 : ({b} : Set α) ∩ {b} = {a} :=
       (h {a} {a} {b} {b} ((card_singleton_inter a).trans (card_singleton_inter b).symm)).mp
@@ -339,7 +329,7 @@ theorem not_cardinal_noBut {a b : α} (hab : a ≠ b) : ¬ Cardinal (noBut a) :=
     rwa [Set.inter_self] at h1
   exact hab (Set.singleton_injective key).symm
 
-theorem not_cardinal_someOf {a b : α} (hab : a ≠ b) : ¬ Cardinal (someOf a) := fun h ↦ by
+theorem not_cardinal_someOf {a b : α} (hab : a ≠ b) : ¬ Det.Cardinal (someOf a) := fun h ↦ by
   have key := (h {a} {a} {b} {b}
     ((card_singleton_inter a).trans (card_singleton_inter b).symm)).mp
     (someOf_apply a _ _ |>.mpr ⟨rfl, rfl⟩)
@@ -442,7 +432,7 @@ theorem logical_congr [Fintype α] {f : Det α} (hc : Conservative f) (hq : Quan
 theorem logical_every [Fintype α] : (every : Det α) ∈ logicalSubalgebra :=
   mem_logicalSubalgebra.2 ⟨conservative_every, quantityInvariant_every⟩
 
-theorem not_cardinal_every [Nonempty α] : ¬ Cardinal (every : Det α) :=
+theorem not_cardinal_every [Nonempty α] : ¬ Det.Cardinal (every : Det α) :=
   fun h ↦ not_intersective_every h.intersective
 
 theorem cardinalSubalgebra_le_logical [Fintype α] :

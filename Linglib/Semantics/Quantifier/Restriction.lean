@@ -2,7 +2,8 @@ module
 
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Data.Set.Lattice.Bounded
-public import Linglib.Semantics.Quantification.Defs
+public import Mathlib.Order.SymmDiff
+public import Linglib.Semantics.Quantifier.Defs
 
 /-!
 # The restriction of a quantifier
@@ -14,12 +15,18 @@ that the sets it lives on are exactly the supersets of the restriction. The rest
 into a positive restriction, the individuals whose addition can make the quantifier apply, and a
 negative restriction, those whose removal can. On a finite universe a quantifier is monotone
 exactly when its negative restriction is empty, and antitone exactly when its positive one is.
+The complement and the inner negation of a quantifier have its restriction, with the positive and
+the negative restriction exchanged. Flipping the scope within a set `N`, which takes `Q` to
+`fun B ↦ Q (N ∆ B)`, keeps the restriction and exchanges the other two on `N`; inner negation
+is the flip by the whole universe.
 
-## Main definitions
+## Main results
 
-* `Quantifier.restriction`: the intersection of the sets a quantifier lives on.
-* `Quantifier.positiveRestriction`, `Quantifier.negativeRestriction`: the individuals whose
-  addition, or removal, turns a set the quantifier does not apply to into one it applies to.
+* `Quantifier.livesOn_restriction`: on a finite universe a quantifier lives on its restriction.
+* `Quantifier.negativeRestriction_eq_empty_iff`: on a finite universe a quantifier is monotone if
+  and only if its negative restriction is empty.
+* `Quantifier.positiveRestriction_symmDiff`: the positive restriction of `fun B ↦ Q (N ∆ B)` is
+  `Q.positiveRestriction \ N ∪ Q.negativeRestriction ∩ N`.
 
 ## References
 
@@ -127,6 +134,121 @@ theorem positiveRestriction_subset_restriction : Q.positiveRestriction ⊆ Q.res
 
 theorem negativeRestriction_subset_restriction : Q.negativeRestriction ⊆ Q.restriction :=
   Q.positiveRestriction_union_negativeRestriction ▸ subset_union_right
+
+/-! ### Negation
+
+A quantifier and its complement live on the same sets, and so do a quantifier and its inner
+negation. Each negation exchanges the positive and the negative restriction, so the dual has the
+same two restrictions as the quantifier. -/
+
+theorem livesOn_compl_iff : Qᶜ.LivesOn A ↔ Q.LivesOn A :=
+  forall_congr' fun _ ↦ not_iff_not
+
+@[simp] theorem restriction_compl : Qᶜ.restriction = Q.restriction := by
+  simp only [restriction, livesOn_compl_iff]
+
+@[simp] theorem positiveRestriction_compl : Qᶜ.positiveRestriction = Q.negativeRestriction := by
+  ext x
+  constructor
+  · rintro ⟨S, hS, hx⟩
+    have hQS : Q S := not_not.1 hS
+    have hxS : x ∉ S := fun h ↦ hx (by rw [insert_eq_of_mem h]; exact hQS)
+    have e : insert x S \ {x} = S := by ext y; by_cases hy : y = x <;> simp [hy, hxS]
+    exact ⟨insert x S, hx, by rw [e]; exact hQS⟩
+  · rintro ⟨S, hS, hx⟩
+    refine ⟨S \ {x}, not_not.2 hx, fun h ↦ hS ?_⟩
+    by_cases hxS : x ∈ S
+    · have e : insert x (S \ {x}) = S := by ext y; by_cases hy : y = x <;> simp [hy, hxS]
+      rwa [e] at h
+    · have e : S \ {x} = S := by ext y; by_cases hy : y = x <;> simp [hy, hxS]
+      rw [e] at hx
+      exact (hS hx).elim
+
+@[simp] theorem negativeRestriction_compl : Qᶜ.negativeRestriction = Q.positiveRestriction := by
+  rw [← positiveRestriction_compl, compl_compl]
+
+/-! ### Flips
+
+Flipping the scope of a quantifier within a set `N` gives the quantifier `fun B ↦ Q (N ∆ B)`. It
+lives on the same sets as `Q`, and its positive and negative restrictions are those of `Q` with
+the two exchanged on `N`. Inner negation is the flip by the whole universe. -/
+
+section Flip
+
+open symmDiff
+
+variable (N : Set α)
+
+private theorem symmDiff_insert_of_notMem (hx : x ∉ N) (S : Set α) :
+    N ∆ insert x S = insert x (N ∆ S) := by
+  ext y
+  simp only [mem_symmDiff, mem_insert_iff]
+  by_cases hy : y = x
+  · subst hy; tauto
+  · tauto
+
+private theorem symmDiff_insert_of_mem (hx : x ∈ N) (S : Set α) :
+    N ∆ insert x S = (N ∆ S) \ {x} := by
+  ext y
+  simp only [mem_symmDiff, mem_insert_iff, mem_sdiff, mem_singleton_iff]
+  by_cases hy : y = x
+  · subst hy; tauto
+  · tauto
+
+theorem livesOn_symmDiff_iff : LivesOn (fun B ↦ Q (N ∆ B)) A ↔ Q.LivesOn A := by
+  have key (Q : Quantifier α) (h : Q.LivesOn A) : LivesOn (fun B ↦ Q (N ∆ B)) A := fun B ↦ by
+    change Q (N ∆ B) ↔ Q (N ∆ (A ∩ B))
+    rw [h (N ∆ B), h (N ∆ (A ∩ B))]
+    congr! 1
+    ext y; simp only [mem_inter_iff, mem_symmDiff]; tauto
+  refine ⟨fun h ↦ ?_, key Q⟩
+  have := key _ h
+  simpa only [symmDiff_symmDiff_cancel_left] using this
+
+@[simp] theorem restriction_symmDiff : restriction (fun B ↦ Q (N ∆ B)) = Q.restriction := by
+  simp only [restriction, livesOn_symmDiff_iff]
+
+/-- Flipping the scope within `N` exchanges the positive and the negative restriction on `N`. -/
+theorem positiveRestriction_symmDiff :
+    positiveRestriction (fun B ↦ Q (N ∆ B)) =
+      Q.positiveRestriction \ N ∪ Q.negativeRestriction ∩ N := by
+  ext x
+  by_cases hx : x ∈ N
+  · simp only [positiveRestriction, negativeRestriction, mem_union, mem_sdiff, mem_inter_iff,
+      mem_ofPred_eq, hx, not_true_eq_false, and_false, and_true, false_or,
+      symmDiff_insert_of_mem N hx]
+    exact ⟨fun ⟨S, h⟩ ↦ ⟨N ∆ S, h⟩, fun ⟨S, h⟩ ↦ ⟨N ∆ S, by rwa [symmDiff_symmDiff_cancel_left]⟩⟩
+  · simp only [positiveRestriction, negativeRestriction, mem_union, mem_sdiff, mem_inter_iff,
+      mem_ofPred_eq, hx, not_false_eq_true, and_true, and_false, or_false,
+      symmDiff_insert_of_notMem N hx]
+    exact ⟨fun ⟨S, h⟩ ↦ ⟨N ∆ S, h⟩, fun ⟨S, h⟩ ↦ ⟨N ∆ S, by rwa [symmDiff_symmDiff_cancel_left]⟩⟩
+
+theorem negativeRestriction_symmDiff :
+    negativeRestriction (fun B ↦ Q (N ∆ B)) =
+      Q.negativeRestriction \ N ∪ Q.positiveRestriction ∩ N := by
+  have h := positiveRestriction_symmDiff (Q := Qᶜ) N
+  rw [positiveRestriction_compl, negativeRestriction_compl] at h
+  rw [← h, ← positiveRestriction_compl]; rfl
+
+theorem innerNeg_eq_symmDiff_univ : Q.innerNeg = fun B ↦ Q (univ ∆ B) := funext fun B ↦ by
+  rw [innerNeg_apply, ← top_eq_univ, top_symmDiff, hnot_eq_compl]
+
+end Flip
+
+@[simp] theorem positiveRestriction_innerNeg :
+    Q.innerNeg.positiveRestriction = Q.negativeRestriction := by
+  rw [innerNeg_eq_symmDiff_univ, positiveRestriction_symmDiff, sdiff_univ, empty_union,
+    inter_univ]
+
+@[simp] theorem negativeRestriction_innerNeg :
+    Q.innerNeg.negativeRestriction = Q.positiveRestriction := by
+  rw [← positiveRestriction_innerNeg, innerNeg_innerNeg]
+
+theorem positiveRestriction_dual : Q.dual.positiveRestriction = Q.positiveRestriction := by
+  rw [dual, positiveRestriction_compl, negativeRestriction_innerNeg]
+
+theorem negativeRestriction_dual : Q.dual.negativeRestriction = Q.negativeRestriction := by
+  rw [dual, negativeRestriction_compl, positiveRestriction_innerNeg]
 
 theorem positiveRestriction_subset_sUnion : Q.positiveRestriction ⊆ ⋃₀ {S | Q S} := fun x hx ↦
   let ⟨S, hS, hSx⟩ := mem_positiveRestriction_iff.1 hx

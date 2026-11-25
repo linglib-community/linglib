@@ -2,7 +2,8 @@ module
 
 public import Linglib.Semantics.Coordinator
 public import Linglib.Semantics.Denotation
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Global
 public import Linglib.Syntax.Category.Determiner.IndeterminateQuantifier
 
 /-!
@@ -10,18 +11,8 @@ public import Linglib.Syntax.Category.Determiner.IndeterminateQuantifier
 
 An indeterminate quantifier applies its particle's coordination to the values its scope takes on
 the restrictor, as Kratzer and Shimoyama propose for Japanese. A disjunctive particle takes the
-supremum, so the quantifier is `Quantifier.Det.some`; a conjunctive particle takes the infimum,
+supremum, so the quantifier is `Det.some`; a conjunctive particle takes the infimum,
 `every`; and a negative particle the complement of the supremum, `no`.
-
-## Main definitions
-
-* `IndeterminateQuantifier.reading`: the particle's coordination over the restrictor.
-
-## Main statements
-
-* `IndeterminateQuantifier.reading_of_disjunctive`,
-  `IndeterminateQuantifier.reading_of_conjunctive`,
-  `IndeterminateQuantifier.reading_of_negative`: the readings are `some`, `every` and `no`.
 
 ## References
 

@@ -6,7 +6,7 @@ public import Mathlib.Tactic.FinCases
 public import Linglib.Data.Examples.Mandelkern2022
 public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Quantifier.NumberTree
 
 /-!
 # Mandelkern (2022): Witnesses

@@ -8,8 +8,9 @@ public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Core.Data.RoseTree.Licensed
 public import Linglib.Semantics.Presupposition.Strengthening
-public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Quantification.Continuation
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.Square
+public import Linglib.Semantics.Quantifier.Continuation
 public import Studies.Fox2007
 public import Studies.Katzir2007
 public import Studies.TrinhHaida2015
@@ -446,7 +447,7 @@ def sqAt : Square (Set W) where
 variable {A X}
 
 theorem squareRelations_sqAt (hA : A.Nonempty) : SquareRelations (sqAt A X) :=
-  (Det.squareRelations_square hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
+  (Det.squareRelations_square.2 hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
     { toFun Q := {w | Q (X w)}
       map_sup' _ _ := rfl
       map_inf' _ _ := rfl

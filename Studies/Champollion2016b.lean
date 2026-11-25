@@ -1,10 +1,10 @@
 module
 
 public import Linglib.Core.Order.UpperLower.Closure
-public import Linglib.Semantics.Quantification.Continuation
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Individual
-public import Linglib.Semantics.Quantification.Witness
+public import Linglib.Semantics.Quantifier.Continuation
+public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Individual
+public import Linglib.Semantics.Quantifier.Witness
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Coordination

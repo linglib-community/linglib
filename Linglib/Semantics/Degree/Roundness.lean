@@ -15,14 +15,25 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Numeral roundness
 
-A number is round by the roundness properties it has, such as Jansen and Pollmann's $k$-ness,
-being $m k 10^b$ for a digit $m$, or lying on one of the scales of multiples salient in a context.
-Numbers and properties form a formal context, ordered by Haslinger's relation
-[*at least as round*](##AtLeastAsRound): the numbers at least as round as $d$ are
-[the extent closure of $d$](##atLeastAsRound_iff_mem_extentClosure). On scales of multiples that
-closure is [the multiples of the lcm of the widths through $d$](##extentClosure_onScale), so it is
-closed under addition, and on aligned scales that lcm is
-[the coarsest width through $d$](##isGreatest_scaleLcm).
+A number is round according to the roundness properties it has. Examples are lying on a scale of
+multiples that is salient in a context, and the $k$-ness of Jansen and Pollmann, being $m k 10^b$
+for a digit $m$. Given a relation `r` between numbers and properties, `e` is at least as round as
+`d` when `e` has every property that `d` has. This file defines that relation, which is due to
+Haslinger, and computes it on scales of multiples.
+
+## Main definitions
+
+* `Numerals.Roundness.AtLeastAsRound r d e`: `e` has every roundness property that `d` has.
+* `Numerals.Roundness.scaleLcm W d`: the least common multiple of the widths in `W` that divide `d`.
+
+## Main results
+
+* `Numerals.Roundness.atLeastAsRound_iff_mem_extentClosure`: the numbers at least as round as `d`
+  are the extent closure of `{d}`.
+* `Numerals.Roundness.extentClosure_onScale`: on scales of multiples, the numbers at least as round
+  as `d` are the multiples of `scaleLcm W d`.
+* `Numerals.Roundness.isGreatest_scaleLcm`: when the widths form a chain under divisibility,
+  `scaleLcm W d` is the coarsest width through `d`.
 
 ## Implementation notes
 
@@ -66,6 +77,14 @@ theorem atLeastAsRound_iff_upperPolar_subset :
 theorem atLeastAsRound_iff_mem_extentClosure : AtLeastAsRound r d e ↔ e ∈ extentClosure r {d} := by
   simp only [extentClosure_apply, mem_lowerPolar_iff, mem_upperPolar_singleton]
   exact Iff.rfl
+
+open scoped PremiseOrdering in
+/-- `e` is at least as round as `d` if and only if `e` lies below `d` in the ordering that the
+family of roundness properties induces. -/
+theorem atLeastAsRound_iff_ofLowerSets_le :
+    AtLeastAsRound r d e ↔ e ≤[Set.range fun i ↦ {x | r x i}] d := by
+  rw [← Set.image_univ, Preorder.ofLowerSets_image_le_iff]
+  simp [AtLeastAsRound]
 
 variable [Fintype ι] [∀ d, DecidablePred (r d)]
 

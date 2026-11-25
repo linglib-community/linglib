@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Data.Examples.Gasparri2025
 public import Linglib.Data.Examples.Readers
 

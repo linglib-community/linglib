@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Mathlib.Order.Hom.Basic
 public import Linglib.Data.Examples.RitchieSchiller2024
 public import Linglib.Data.Examples.Readers

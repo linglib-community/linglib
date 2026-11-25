@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.NumberTree
 public import Linglib.Core.Data.Set.Card
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.Linarith
@@ -16,29 +16,16 @@ Defined that way they are conservative and permutation invariant by construction
 monotonicity, smoothness and proportionality are read off the tree. Sizes are `Set.ncard`,
 which asks for no decidability and is `0` on an infinite set, so on an infinite restrictor the
 counting quantifiers take junk values; the theorems that state what they mean assume a finite
-universe or finite arguments, and global quantifiers are evaluated on finite universes only. On
+universe or finite arguments. The numerals are cardinal quantifiers of intervals of numbers. On
 a finite type with decidable arguments each quantifier is decidable through the `Finset` count
 of each size, so a concrete case closes by `decide`. A quantifier restricted to a finite set `s`
 of individuals is the quantifier with restrictor `s ∩ A`.
 
-## Main definitions
-
-* `Quantifier.NumberTree.most`, `Quantifier.NumberTree.atLeast`, …: the trees of the counting
-  quantifiers, with `Quantifier.NumberTree.threshold` for a proportion of the restrictor.
-* `Quantifier.Det.most`, `Quantifier.Det.atLeast`, …: their quantifiers.
-* `Quantifier.Det.Proportional`: dependence on the ratio of `|A ∩ B|` to `|A \ B|`.
-* `Quantifier.Det.Symbol`: the determiner symbols, each denoting the global denotation of a tree.
-
 ## Main results
 
-* `Quantifier.Det.smooth_most`, `Quantifier.Det.proportional_most`: *most* is smooth and
-  proportional.
 * `Quantifier.NumberTree.thresholdGt_one_two`: *more than half* is *most*.
-* `Quantifier.Det.not_intersective_most`, `Quantifier.Det.not_monotone_half`: *most* is not
-  intersective, and *half* is monotone in its scope in neither direction.
-* `Quantifier.Det.Symbol.conservative_denote`, `Quantifier.Det.Symbol.constant_denote`: what a
-  determiner symbol denotes is conservative and constant, so it satisfies extension and is
-  closed under isomorphism.
+* `Quantifier.Det.proportional_most`: *most* is proportional.
+* `Quantifier.Det.not_intersective_most`: *most* is not intersective.
 
 ## References
 
@@ -72,19 +59,25 @@ protected def both : NumberTree := fun a b ↦ a = 0 ∧ b = 2
 protected def neither : NumberTree := fun a b ↦ a = 2 ∧ b = 0
 
 /-- *At least `n`* holds when at least `n` members of `A` lie in `B`. -/
-protected def atLeast (n : ℕ) : NumberTree := fun _ b ↦ n ≤ b
+protected def atLeast (n : ℕ) : NumberTree := cardinal (Set.Ici n)
 
 /-- *At most `n`* holds when at most `n` members of `A` lie in `B`. -/
-protected def atMost (n : ℕ) : NumberTree := fun _ b ↦ b ≤ n
+protected def atMost (n : ℕ) : NumberTree := cardinal (Set.Iic n)
 
 /-- *Exactly `n`* holds when exactly `n` members of `A` lie in `B`. -/
-protected def exactly (n : ℕ) : NumberTree := fun _ b ↦ b = n
+protected def exactly (n : ℕ) : NumberTree := cardinal {n}
+
+/-- *More than `n`* holds when more than `n` members of `A` lie in `B`. -/
+protected def moreThan (n : ℕ) : NumberTree := cardinal (Set.Ioi n)
+
+/-- *Fewer than `n`* holds when fewer than `n` members of `A` lie in `B`. -/
+protected def fewerThan (n : ℕ) : NumberTree := cardinal (Set.Iio n)
 
 /-- *All but `n`* holds when exactly `n` members of `A` lie outside `B`. -/
 protected def allBut (n : ℕ) : NumberTree := fun a _ ↦ a = n
 
 /-- *Between `n` and `k`* holds when between `n` and `k` members of `A` lie in `B`. -/
-protected def between (n k : ℕ) : NumberTree := fun _ b ↦ n ≤ b ∧ b ≤ k
+protected def between (n k : ℕ) : NumberTree := cardinal (Set.Icc n k)
 
 /-- The threshold `n / d` holds when at least that proportion of `A` lies in `B`. -/
 def threshold (n d : ℕ) : NumberTree := ofSizes fun x p ↦ n * p ≤ d * x
@@ -97,12 +90,19 @@ instance : DecidableRel NumberTree.few := fun a b ↦ Nat.decLt b a
 instance : DecidableRel NumberTree.half := fun a b ↦ Nat.decEq a b
 instance : DecidableRel NumberTree.both := fun a b ↦ inferInstanceAs (Decidable (a = 0 ∧ b = 2))
 instance : DecidableRel NumberTree.neither := fun a b ↦ inferInstanceAs (Decidable (a = 2 ∧ b = 0))
-instance (n : ℕ) : DecidableRel (NumberTree.atLeast n) := fun _ b ↦ Nat.decLe n b
-instance (n : ℕ) : DecidableRel (NumberTree.atMost n) := fun _ b ↦ Nat.decLe b n
-instance (n : ℕ) : DecidableRel (NumberTree.exactly n) := fun _ b ↦ Nat.decEq b n
+instance (n : ℕ) : DecidableRel (NumberTree.atLeast n) :=
+  inferInstanceAs (DecidableRel (cardinal (Set.Ici n)))
+instance (n : ℕ) : DecidableRel (NumberTree.atMost n) :=
+  inferInstanceAs (DecidableRel (cardinal (Set.Iic n)))
+instance (n : ℕ) : DecidableRel (NumberTree.exactly n) :=
+  inferInstanceAs (DecidableRel (cardinal {n}))
+instance (n : ℕ) : DecidableRel (NumberTree.moreThan n) :=
+  inferInstanceAs (DecidableRel (cardinal (Set.Ioi n)))
+instance (n : ℕ) : DecidableRel (NumberTree.fewerThan n) :=
+  inferInstanceAs (DecidableRel (cardinal (Set.Iio n)))
 instance (n : ℕ) : DecidableRel (NumberTree.allBut n) := fun a _ ↦ Nat.decEq a n
-instance (n k : ℕ) : DecidableRel (NumberTree.between n k) := fun _ b ↦
-  inferInstanceAs (Decidable (n ≤ b ∧ b ≤ k))
+instance (n k : ℕ) : DecidableRel (NumberTree.between n k) :=
+  inferInstanceAs (DecidableRel (cardinal (Set.Icc n k)))
 instance (n d : ℕ) : DecidableRel (threshold n d) := fun a b ↦
   inferInstanceAs (Decidable (n * (a + b) ≤ d * b))
 instance (n d : ℕ) : DecidableRel (thresholdGt n d) := fun a b ↦
@@ -129,11 +129,11 @@ theorem scopeMonotone_most : NumberTree.most.ScopeMonotone := fun _ _ h ↦ by
 
 theorem scopeAntitone_few : NumberTree.few.ScopeAntitone := scopeMonotone_most.innerNeg
 
-theorem scopeMonotone_atLeast (n : ℕ) : (NumberTree.atLeast n).ScopeMonotone := fun _ _ h ↦ by
-  grind [NumberTree.atLeast]
+theorem scopeMonotone_atLeast (n : ℕ) : (NumberTree.atLeast n).ScopeMonotone :=
+  scopeMonotone_cardinal_iff.2 (.Ici n)
 
-theorem scopeAntitone_atMost (n : ℕ) : (NumberTree.atMost n).ScopeAntitone := fun _ _ h ↦ by
-  grind [NumberTree.atMost]
+theorem scopeAntitone_atMost (n : ℕ) : (NumberTree.atMost n).ScopeAntitone :=
+  scopeAntitone_cardinal_iff.2 (.Iic n)
 
 theorem scopeMonotone_threshold (n d : ℕ) : (threshold n d).ScopeMonotone := fun _ _ h ↦ by
   simp only [threshold, ofSizes] at *; nlinarith
@@ -312,14 +312,13 @@ theorem restrictorAntitone_atMost [Finite α] (n : ℕ) : (atMost n : Det α).Re
 theorem downNE_most [Finite α] : (most : Det α).DownNEMon := by
   intro A B A' h₁ h₂ hq
   rw [most_apply] at *
-  rw [Set.Subset.antisymm (Set.inter_subset_inter_left B h₁) fun x hx ↦ ⟨h₂ hx, hx.2⟩]
+  rw [(Set.inter_subset_inter_left B h₁).antisymm (Set.subset_inter h₂ Set.inter_subset_right)]
   exact (Set.ncard_le_ncard (Set.sdiff_subset_sdiff_left h₁)).trans_lt hq
 
 theorem upSE_most [Finite α] : (most : Det α).UpSEMon := by
   intro A B A' h₁ h₂ hq
   rw [most_apply] at *
-  rw [Set.Subset.antisymm (a := A' \ B) (b := A \ B) (fun x hx ↦ ⟨h₂ hx, hx.2⟩)
-    (Set.sdiff_subset_sdiff_left h₁)]
+  rw [(Set.subset_sdiff.2 ⟨h₂, Set.disjoint_sdiff_left⟩).antisymm (Set.sdiff_subset_sdiff_left h₁)]
   exact hq.trans_le (Set.ncard_le_ncard (Set.inter_subset_inter_left B h₁))
 
 theorem smooth_most [Finite α] : (most : Det α).Smooth := ⟨downNE_most, upSE_most⟩
@@ -327,7 +326,7 @@ theorem smooth_most [Finite α] : (most : Det α).Smooth := ⟨downNE_most, upSE
 theorem smooth_atLeast [Finite α] (n : ℕ) : (atLeast n : Det α).Smooth := by
   refine ⟨fun A B A' h₁ h₂ hq ↦ ?_, (restrictorMonotone_atLeast n).upSE⟩
   rwa [atLeast_apply,
-    Set.Subset.antisymm (Set.inter_subset_inter_left B h₁) fun x hx ↦ ⟨h₂ hx, hx.2⟩]
+    (Set.inter_subset_inter_left B h₁).antisymm (Set.subset_inter h₂ Set.inter_subset_right)]
 
 theorem coSmooth_atMost [Finite α] (n : ℕ) : (atMost n : Det α).CoSmooth := by
   rw [atMost_eq_compl_atLeast_succ]; exact smooth_iff_coSmooth_compl.mp (smooth_atLeast _)
@@ -340,7 +339,6 @@ def Proportional (d : Det α) : Prop :=
   ∀ A B A' B' : Set α, 0 < (A \ B).ncard + (A ∩ B).ncard → 0 < (A' \ B').ncard + (A' ∩ B').ncard →
     (A ∩ B).ncard * (A' \ B').ncard = (A' ∩ B').ncard * (A \ B).ncard → (d A B ↔ d A' B')
 
-/-- The determiner denotation of a proportional tree is proportional. -/
 theorem _root_.Quantifier.NumberTree.Proportional.toDet {q : NumberTree} (h : q.Proportional) :
     (q.toDet : Det α).Proportional := fun _ _ _ _ ↦ h _ _ _ _
 
@@ -359,7 +357,7 @@ already fails it on one individual, *most* and *half* on two. This is not the we
 lists *few* as weak and does not classify *half*, and they allow a weak *many* or *few* to fail
 the intersection condition. -/
 
-/-- *Most* fails `Intersective`, by `A = univ` and `B = {0}` on two individuals. -/
+/-- *Most* is not intersective. -/
 theorem not_intersective_most : ¬ (most : Det (Fin 2)).Intersective := fun h ↦ by
   have := h.iff_inter_univ (A := Set.univ) (B := {x | x = 0})
   revert this; decide
@@ -398,7 +396,7 @@ theorem not_scopeAntitone_half : ¬ (half : Det (Fin 3)).ScopeAntitone := fun h 
       half {x : Fin 3 | x = 0 ∨ x = 1} ∅ := h _ (Set.empty_subset _)
   revert this; decide
 
-/-- *Half* is non-monotone in its scope, neither monotone nor antitone. -/
+/-- *Half* is neither monotone nor antitone in its scope. -/
 theorem not_monotone_half :
     ¬ (half : Det (Fin 3)).ScopeMonotone ∧ ¬ (half : Det (Fin 3)).ScopeAntitone :=
   ⟨not_scopeMonotone_half, not_scopeAntitone_half⟩
@@ -417,16 +415,15 @@ theorem not_antitone_exactly [Fintype α] {n : ℕ} (hn : n ≠ 0) (h : n ≤ Fi
   simp [exactly_apply] at this
   omega
 
-/-- *Exactly n* meets Barwise and Cooper's monotonicity constraint as the conjunction of *at least
-n* and *at most n*, though it is neither monotone nor antitone (`not_monotone_exactly`,
-`not_antitone_exactly`). -/
+/-- *Exactly n* satisfies Barwise and Cooper's universals, as the conjunction of *at least n* and
+*at most n*. -/
 theorem satisfiesUniversals_exactly [Finite α] (n : ℕ) :
     (exactly n : Det α).SatisfiesUniversals :=
   ⟨conservative_exactly n, fun A ↦ ⟨atLeast n A, atMost n A, .inl (monotone_atLeast n A),
     .inr (antitone_atMost n A), by rw [exactly_eq_atLeast_inf_atMost]; rfl⟩⟩
 
-/-- *All but n* meets Barwise and Cooper's monotonicity constraint as the conjunction of *all but
-at most n*, which is monotone, and *at least n are not*, which is antitone. -/
+/-- *All but n* satisfies Barwise and Cooper's universals, as the conjunction of *all but at most n*
+and *at least n are not*. -/
 theorem satisfiesUniversals_allBut [Finite α] (n : ℕ) : (allBut n : Det α).SatisfiesUniversals :=
   ⟨NumberTree.conservative_toDet _, fun A ↦ ⟨fun B ↦ (A \ B).ncard ≤ n, fun B ↦ n ≤ (A \ B).ncard,
     .inl fun _ _ h hB ↦ (Set.ncard_le_ncard (Set.sdiff_subset_sdiff_right h)).trans hB,
@@ -444,160 +441,6 @@ theorem most_singleton_iff (j : α) (B : Set α) : most {j} B ↔ j ∈ B := by
     simpa using h
   · rw [most_apply, Set.singleton_inter_of_notMem h]
     simpa using h
-
-/-! ### The families of the canonical denotations
-
-Each canonical denotation given on every finite universe, the readings a lexicon entry draws
-on. Each is the global denotation of its tree, so each is conservative, extensional and closed
-under isomorphism, as Peters and Westerståhl's universal for determiners requires. -/
-
-universe u
-
-namespace Family
-
-/-- `Family.every` is `every` on every finite universe. -/
-def every : Family.{u} := fun _ _ ↦ Det.every
-/-- `Family.some` is `Det.some` on every finite universe. -/
-def some : Family.{u} := fun _ _ ↦ Det.some
-/-- `Family.no` is `no` on every finite universe. -/
-def no : Family.{u} := fun _ _ ↦ Det.no
-/-- `Family.most` is `most` on every finite universe. -/
-def most : Family.{u} := fun _ _ ↦ Det.most
-/-- `Family.few` is `few` on every finite universe. -/
-def few : Family.{u} := fun _ _ ↦ Det.few
-/-- `Family.half` is `half` on every finite universe. -/
-def half : Family.{u} := fun _ _ ↦ Det.half
-/-- `Family.both` is `both` on every finite universe. -/
-def both : Family.{u} := fun _ _ ↦ Det.both
-/-- `Family.neither` is `neither` on every finite universe. -/
-def neither : Family.{u} := fun _ _ ↦ Det.neither
-/-- `Family.atLeast n` is `atLeast n` on every finite universe. -/
-def atLeast (n : ℕ) : Family.{u} := fun _ _ ↦ Det.atLeast n
-/-- `Family.exactly n` is `exactly n` on every finite universe. -/
-def exactly (n : ℕ) : Family.{u} := fun _ _ ↦ Det.exactly n
-
-theorem every_eq_toFamily : every.{u} = NumberTree.all.toFamily := by
-  funext _ _; exact every_eq_toDet_all
-
-theorem some_eq_toFamily : some.{u} = NumberTree.some.toFamily := by
-  funext _ _; exact some_eq_toDet_some
-
-theorem no_eq_toFamily : no.{u} = NumberTree.no.toFamily := by
-  funext _ _; exact no_eq_toDet_no
-
-theorem most_eq_toFamily : most.{u} = NumberTree.most.toFamily := rfl
-
-theorem few_eq_toFamily : few.{u} = NumberTree.few.toFamily := rfl
-
-theorem half_eq_toFamily : half.{u} = NumberTree.half.toFamily := rfl
-
-theorem both_eq_toFamily : both.{u} = NumberTree.both.toFamily := rfl
-
-theorem neither_eq_toFamily : neither.{u} = NumberTree.neither.toFamily := rfl
-
-theorem atLeast_eq_toFamily (n : ℕ) : atLeast.{u} n = (NumberTree.atLeast n).toFamily := rfl
-
-theorem exactly_eq_toFamily (n : ℕ) : exactly.{u} n = (NumberTree.exactly n).toFamily := rfl
-
-theorem some_ne_every : some.{u} ≠ every.{u} := fun h ↦ by
-  have := congrArg (fun d : Family.{u} ↦ d PUnit ∅ ∅) h
-  simp [some, every, Det.some, Det.every] at this
-
-theorem some_ne_no : some.{u} ≠ no.{u} := fun h ↦ by
-  have := congrArg (fun d : Family.{u} ↦ d PUnit Set.univ Set.univ) h
-  simp [some, no, Det.some, Det.no] at this
-
-theorem no_ne_every : no.{u} ≠ every.{u} := fun h ↦ by
-  have := congrArg (fun d : Family.{u} ↦ d PUnit Set.univ Set.univ) h
-  simp [no, every, Det.no, Det.every] at this
-
-theorem most_ne_every : most.{u} ≠ every.{u} := fun h ↦ by
-  have := congrArg (fun d : Family.{u} ↦ d PUnit ∅ ∅) h
-  simp [most, every, Det.every, most_apply] at this
-
-theorem few_ne_every : few.{u} ≠ every.{u} := fun h ↦ by
-  have := congrArg (fun d : Family.{u} ↦ d PUnit ∅ ∅) h
-  simp [few, every, Det.every, few_apply] at this
-
-@[simp]
-theorem compl_some : some.{u}ᶜ = no.{u} := by
-  funext _ _; exact Det.compl_some
-
-@[simp]
-theorem compl_no : no.{u}ᶜ = some.{u} := by
-  rw [← compl_some, compl_compl]
-
-end Family
-
-/-! ### Determiner symbols -/
-
-/-- A determiner symbol names one of the canonical denotations, after the basic determiner
-symbols from which [barwise-cooper-1981]'s logic L(GQ) builds its quantifiers. The eight symbols
-are ours: Barwise and Cooper's logical determiner symbols are *some*, *every*, *no*, *both*,
-*neither*, the numerals and *the n*, their non-logical ones include *most* and *few*, and they
-have no *half*; here every symbol has one denotation, the global denotation of its tree. -/
-inductive Symbol where
-  | every | some | no | most | few | half | both | neither
-  deriving DecidableEq, Repr, Fintype
-
-namespace Symbol
-
-/-- The tree of numbers a symbol denotes. -/
-def numberTree : Symbol → NumberTree
-  | .every => NumberTree.all
-  | .some => NumberTree.some
-  | .no => NumberTree.no
-  | .most => NumberTree.most
-  | .few => NumberTree.few
-  | .half => NumberTree.half
-  | .both => NumberTree.both
-  | .neither => NumberTree.neither
-
-/-- A symbol denotes its canonical denotation, the global denotation of its tree
-(`denote_eq_toFamily`). -/
-@[simp] def denote : Symbol → Family.{u}
-  | .every => Family.every
-  | .some => Family.some
-  | .no => Family.no
-  | .most => Family.most
-  | .few => Family.few
-  | .half => Family.half
-  | .both => Family.both
-  | .neither => Family.neither
-
-theorem denote_eq_toFamily (s : Symbol) : (s.denote : Family.{u}) = s.numberTree.toFamily := by
-  cases s
-  exacts [Family.every_eq_toFamily, Family.some_eq_toFamily, Family.no_eq_toFamily, rfl, rfl,
-    rfl, rfl, rfl]
-
-theorem numberTree_injective : Function.Injective numberTree := by
-  intro s t h
-  have h₀₀ := congrFun (congrFun h 0) 0
-  have h₁₀ := congrFun (congrFun h 1) 0
-  have h₀₁ := congrFun (congrFun h 0) 1
-  have h₁₁ := congrFun (congrFun h 1) 1
-  have h₀₂ := congrFun (congrFun h 0) 2
-  have h₂₀ := congrFun (congrFun h 2) 0
-  cases s <;> cases t <;> simp_all [numberTree, NumberTree.all, NumberTree.some, NumberTree.no,
-    NumberTree.most, NumberTree.few, NumberTree.half, NumberTree.both, NumberTree.neither]
-
-/-- Distinct symbols denote distinct quantifiers. -/
-theorem denote_injective : Function.Injective (denote : Symbol → Family.{u}) := fun s t h ↦
-  numberTree_injective <| by
-    rw [← NumberTree.ofFamily_toFamily.{u} s.numberTree, ← NumberTree.ofFamily_toFamily.{u}
-      t.numberTree, ← denote_eq_toFamily, ← denote_eq_toFamily, h]
-
-theorem conservative_denote (s : Symbol) : (s.denote : Family.{u}).Conservative :=
-  s.denote_eq_toFamily ▸ NumberTree.conservative_toFamily _
-
-theorem constant_denote (s : Symbol) : (s.denote : Family.{u}).Constant :=
-  s.denote_eq_toFamily ▸ NumberTree.constant_toFamily _
-
-theorem ext_denote (s : Symbol) : (s.denote : Family.{u}).Ext := s.constant_denote.ext
-
-theorem isom_denote (s : Symbol) : (s.denote : Family.{u}).Isom := s.constant_denote.isom
-
-end Symbol
 
 end Det
 

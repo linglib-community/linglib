@@ -5,7 +5,7 @@ public import Linglib.Data.Examples.Readers
 public import Linglib.Languages.Dutch.NumeralModifiers
 public import Linglib.Languages.Dutch.PolarityItems
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Studies.CoppockBrochhagen2013
 public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Data.Examples.Languages

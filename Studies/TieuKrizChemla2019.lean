@@ -4,7 +4,7 @@ public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sigma
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Semantics.Negation.Polarity
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Studies.Magri2014
 public import Linglib.Data.Examples.TieuKrizChemla2019
 

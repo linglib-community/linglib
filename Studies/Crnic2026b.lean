@@ -4,7 +4,7 @@ public import Linglib.Semantics.Exhaustification.Relevance
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Presupposition.Context
-public import Linglib.Semantics.Quantification.Exceptive
+public import Linglib.Semantics.Quantifier.Exceptive
 public import Linglib.Data.Examples.Crnic2026b
 
 /-!

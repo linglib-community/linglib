@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Aristotelian.Triangle
-public import Linglib.Semantics.Quantification.Numerals.Basic
+public import Linglib.Semantics.Degree.Numeral
 
 /-!
 # Huang, Spelke and Snedeker (2013): What exactly do numbers mean?

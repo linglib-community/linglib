@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.Tense.Lifespan
 public import Linglib.Data.Examples.Magri2009
 public import Linglib.Data.Examples.Readers

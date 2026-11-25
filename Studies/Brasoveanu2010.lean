@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Brasoveanu2010
 public import Linglib.Semantics.Dynamic.PCDRT
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 import Mathlib.Tactic.Set
 import Mathlib.Tactic.FinCases
 

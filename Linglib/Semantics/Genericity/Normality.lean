@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 
 /-!
 # Normality and the generic operator

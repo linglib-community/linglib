@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 
 /-!
 # Cohen (1999): Think Generic!

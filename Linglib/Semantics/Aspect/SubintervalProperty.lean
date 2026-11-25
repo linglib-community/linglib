@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.Viewpoint.Basic
-public import Linglib.Semantics.Quantification.Predicative
+public import Linglib.Semantics.Quantifier.Predicative
 
 /-!
 # The subinterval property

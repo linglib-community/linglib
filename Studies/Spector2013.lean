@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Spector2013
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Numerals.Basic
+public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Degree.Numeral
 public import Mathlib.Order.SuccPred.Nat
 
 /-!

@@ -6,7 +6,7 @@ public import Mathlib.Algebra.BigOperators.Group.Multiset.Defs
 public import Mathlib.Tactic.Ring
 public import Mathlib.Logic.Equiv.Defs
 public import Linglib.Data.Examples.Asudeh2022
-public import Linglib.Semantics.Quantification.Polyadic
+public import Linglib.Semantics.Quantifier.Polyadic
 public import Studies.HeimKratzer1998
 public import Linglib.Semantics.Composition.Sorts
 public import Studies.BresnanEtAl1982

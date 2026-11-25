@@ -9,7 +9,7 @@ public import Linglib.Logic.Trivalent.Part
 public import Linglib.Logic.Trivalent.Powerset
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Mathlib.Order.Interval.Basic
-public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Quantifier.Defs
 
 /-!
 # Peters-Kleene deployment

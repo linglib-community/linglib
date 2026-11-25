@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Languages.English.PolarityItems
 public import Linglib.Data.Examples.Ladusaw1979
 public import Linglib.Data.Examples.Readers

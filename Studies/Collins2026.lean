@@ -10,7 +10,7 @@ public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Composition.PredicateAbstraction
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Syntax.Minimalist.Copy.Cut
 public import Linglib.Syntax.Minimalist.Workspace.Basic
 public import Linglib.Core.Combinatorics.RootedTree.MarkerCutConservation

@@ -1,22 +1,29 @@
 module
 
 public import Linglib.Core.Order.GenerateCompleteBoolean
-public import Linglib.Semantics.Quantification.Properties
+public import Linglib.Semantics.Quantifier.Conservative
 public import Mathlib.Order.Atoms
 public import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # Invariance classes of determiner denotations
 
-Most classes of determiner denotations are defined by an invariance condition: the value of `d` at
-a restrictor and a scope depends only on some function `f` of the two, on `A ∩ B` for the
-intersective ones, on `A \ B` for the co-intersective ones, on the restrictor and `A ∩ B` for the
-conservative ones. Such a class is [a Boolean subalgebra](##Quantifier.Det.invariants) of `Det α`,
-and when `f` has a section it is [the power set of the codomain of
-`f`](##Quantifier.Det.invariantsOrderIso), its atoms the fibres of `f`, so that the structure and
-size of each class are read off that codomain. The closure of two classes under complements and
-arbitrary joins is [the class of the pair of their
-functions](##Quantifier.Det.generateCompleteBoolean_union_iff).
+Many classes of determiner denotations are defined by an invariance condition: the value of `d` at a
+restrictor `A` and a scope `B` depends only on a function `f` of the pair. For the intersective
+denotations the function is `A ∩ B`, for the co-intersective ones `A \ B`, and for the conservative
+ones the pair of `A` and `A ∩ B`. This file defines the class of a function `f` as a Boolean
+subalgebra of `Det α`, and shows that it is the power set of the codomain of `f` when `f` has a
+section.
+
+## Main results
+
+* `Quantifier.Det.card_invariants`: the class of a surjective function onto a finite type `β` has
+  `2 ^ Nat.card β` members.
+* `Quantifier.Det.isAtom_invariants_iff`: the atoms of a class are the fibres of its function.
+* `Quantifier.Det.generateCompleteBoolean_union_iff`: the closure of the classes of `f` and `g`
+  under complements and arbitrary joins is the class of the pair of `f` and `g`.
+* `Quantifier.Det.mem_invariants_inter_sdiff_iff`: a determiner denotation depends only on `A ∩ B`
+  and `A \ B` if and only if it is conservative.
 
 ## References
 
@@ -44,6 +51,14 @@ def invariants (f : Set α × Set α → β) : BooleanSubalgebra (Det α) where
 
 theorem mem_invariants :
     d ∈ invariants f ↔ ∀ A B A' B', f (A, B) = f (A', B') → (d A B ↔ d A' B') := .rfl
+
+/-- A determiner denotation depends only on `f` of its arguments if and only if it is a predicate
+on the values of `f`, read back along `f`. -/
+theorem mem_invariants_iff_exists :
+    d ∈ invariants f ↔ ∃ p : β → Prop, ∀ A B, d A B ↔ p (f (A, B)) :=
+  ⟨fun h ↦ ⟨fun b ↦ ∃ A B, f (A, B) = b ∧ d A B, fun A B ↦
+      ⟨fun hd ↦ ⟨A, B, rfl, hd⟩, fun ⟨A', B', he, hd⟩ ↦ (h A' B' A B he).1 hd⟩⟩,
+    fun ⟨p, hp⟩ A B A' B' h ↦ by rw [hp, hp, h]⟩
 
 /-- When `f` has a section `s`, its class is the power set of its codomain, by evaluation along
 `s`. -/
@@ -78,7 +93,7 @@ theorem isAtom_invariants_iff (hf : Surjective f) {d : invariants f} :
 
 /-- A determiner denotation as the set of restrictors and scopes it relates. -/
 private def pairsOrderIso : Det α ≃o Set (Set α × Set α) where
-  toFun d := {p | d p.1 p.2}
+  toFun d := {(A, B) | d A B}
   invFun S A B := (A, B) ∈ S
   left_inv _ := rfl
   right_inv _ := rfl
@@ -96,7 +111,7 @@ theorem generateCompleteBoolean_iff_forall {X : Set (Det α)} :
   · exact iff_of_eq (congrFun e ⟨x, hx⟩)
 
 /-- The closure of the classes of `f` and `g` under complements and arbitrary joins is the class of
-the pair of them, since each fibre of the pair is the meet of a fibre of `f` and a fibre of `g`. -/
+the pair of `f` and `g`. -/
 theorem generateCompleteBoolean_union_iff :
     GenerateCompleteBoolean (↑(invariants f) ∪ ↑(invariants g)) d ↔
       d ∈ invariants fun p ↦ (f p, g p) := by
@@ -117,7 +132,8 @@ theorem generateCompleteBoolean_union_iff :
 abbrev Nested (α : Type*) := {p : Set α × Set α // p.2 ⊆ p.1}
 
 /-- A restrictor with the part of a scope inside it. -/
-def nestedOf (p : Set α × Set α) : Nested α := ⟨(p.1, p.1 ∩ p.2), Set.inter_subset_left⟩
+def nestedOf : Set α × Set α → Nested α
+  | (A, B) => ⟨(A, A ∩ B), Set.inter_subset_left⟩
 
 /-- The conservative determiner denotations are those whose value depends only on the restrictor
 and the part of the scope inside it. -/
@@ -139,10 +155,10 @@ atoms being their singletons. -/
 def conservativeOrderIso : ConsDet α ≃o Set (Nested α) :=
   invariantsOrderIso rightInverse_nestedOf
 
-/-- Conservativity is intersectivity together with co-intersectivity: the pair of `A ∩ B` and
-`A \ B` determines and is determined by `A` and `A ∩ B`. -/
+/-- A determiner denotation depends only on `A ∩ B` and `A \ B` if and only if it is conservative.
+-/
 theorem mem_invariants_inter_sdiff_iff :
-    d ∈ invariants (fun p ↦ (p.1 ∩ p.2, p.1 \ p.2)) ↔ d.Conservative := by
+    d ∈ invariants (fun (A, B) ↦ (A ∩ B, A \ B)) ↔ d.Conservative := by
   rw [← mem_conservativeSubalgebra]
   refine forall₄_congr fun A B A' B' ↦ imp_congr_left ?_
   simp only [nestedOf, Subtype.mk.injEq, Prod.mk.injEq]

@@ -13,9 +13,9 @@ public import Linglib.Semantics.Conditionals.Horizon
 public import Linglib.Semantics.Degree.Superlative
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Tense.Since
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Defs
-public import Linglib.Semantics.Quantification.Projectivity
+public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Defs
+public import Linglib.Semantics.Quantifier.Projectivity
 public import Linglib.Semantics.Reference.Indefinite
 public import Linglib.Semantics.Tense.RunTimes
 public import Mathlib.Basic.Rel

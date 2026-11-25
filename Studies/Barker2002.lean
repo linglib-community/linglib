@@ -1,8 +1,8 @@
 module
 
 public import Mathlib.Control.Monad.Cont
-public import Linglib.Semantics.Quantification.Continuation
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Continuation
+public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Data.Examples.Barker2002
 public import Mathlib.Data.Fin.VecNotation

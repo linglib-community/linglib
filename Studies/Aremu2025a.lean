@@ -6,7 +6,7 @@ public import Linglib.Languages.Yoruba.Focus
 public import Linglib.Languages.Yoruba.Pronouns
 public import Linglib.Languages.Yoruba.Relativization
 public import Linglib.Semantics.Focus.Particles
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 public import Linglib.Syntax.Reflex

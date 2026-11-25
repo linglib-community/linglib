@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Zimmermann2008
 public import Linglib.Languages.Hausa.Determiners
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Mathlib.Data.Finset.Card
 public import Linglib.Data.Examples.Readers
 

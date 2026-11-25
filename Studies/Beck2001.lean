@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Beck2001
 public import Linglib.Data.Examples.Readers
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Quantifier.Defs
 public import Linglib.Semantics.Reference.Iota
 public import Mathlib.Order.SuccPred.Fin
 public import Mathlib.Order.SuccPred.Relation

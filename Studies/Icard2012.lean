@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Natural.Completeness
 public import Linglib.Semantics.Negation.Strength
-public import Linglib.Semantics.Quantification.Projectivity
+public import Linglib.Semantics.Quantifier.Projectivity
 public import Linglib.Data.Examples.Icard2012
 
 /-!

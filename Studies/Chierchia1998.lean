@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Reference.NominalMapping
 public import Linglib.Semantics.Genericity.Normality
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.Reference.Kind
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Languages.Mandarin.Nouns

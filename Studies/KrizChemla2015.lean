@@ -5,7 +5,7 @@ public import Linglib.Data.Statistics.KrizChemla2015
 public import Linglib.Logic.Trivalent.Knowledge
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Semantics.Homogeneity.Plural
-public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Quantifier.NumberTree
 public import Studies.Magri2014
 public import Mathlib.Data.List.Sections
 

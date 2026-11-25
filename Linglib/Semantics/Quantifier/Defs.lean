@@ -20,49 +20,28 @@ algebra of the Pi type, whose `ᶜ`, `⊓` and `⊔` are outer negation, conjunc
 
 The properties are stated in the lattice of sets: conservativity `d A B ↔ d A (A ∩ B)`, the
 monotonicities as `Monotone` and `Antitone` of the sections and the anti-additivities as
-`IsAntiAdditive` of the sections, Peters and Westerståhl's left monotonicities, van Benthem's relational properties, and invariance under the permutations of
-the universe. A determiner, though, denotes a global quantifier, a `Det.Family` with a value on
-every finite universe. Two conditions tie the values together:
-[isomorphism closure](##Quantifier.Det.Family.Isom), that equivalent universes carry the same
-quantifier, and [extension](##Quantifier.Det.Family.Ext), that enlarging the universe changes
-nothing.
-
-## Main definitions
-
-* `Quantifier`, `Quantifier.Det`, `Quantifier.Det.Family`: quantifiers, determiner
-  denotations, and determiner denotations on every finite universe.
-* `Det.Conservative`, `Det.ScopeMonotone`, `Det.RestrictorMonotone`, `Det.Intersective`,
-  `Det.CoIntersective`, `Det.PositiveStrong`: the properties of determiner denotations.
-* `Det.UpSEMon`, `Det.Smooth`, `Det.LeftAntiAdditive`: the left monotonicities.
-* `Det.QuasiReflexive`, `Det.Filtrating`, `Det.QuantityInvariant`: relational properties and
-  permutation invariance.
-* `Det.innerNeg`, `Det.dual`, `Det.adjRestrict`: inner negation, the dual and restriction.
-* `Det.Family.Isom`, `Det.Family.Ext`, `Det.Family.Constant`: isomorphism closure, extension,
-  and constancy, the two together.
-* `Quantifier.LivesOn`, `Quantifier.QuantityInvariant`, `Quantifier.individual`: the live-on
-  property, invariance under the permutations of the universe, and the Montague lift.
-* `Quantifier.Family`, `Quantifier.Family.Isom`, `Quantifier.Family.rel`: global quantifiers,
-  their isomorphism closure, and relativization, which turns one into a global determiner
-  denotation.
+`IsAntiAdditive` of the sections, Peters and Westerståhl's left monotonicities, van Benthem's
+relational properties. Invariance under the permutations of the universe is in
+`Quantifier/Invariance.lean`, and quantifiers with a value on every finite universe are in
+`Quantifier/Global.lean`.
 
 ## Implementation notes
 
-A type is not a subset of another type, so extension is stated for a subset `M` of a universe
-`β` and the universe `↥M`. Extension therefore relates a universe only to its subtypes; it is
-isomorphism closure that relates universes presented by unrelated types. The two together are
-invariance along every embedding of universes, `Det.Family.Constant`, which is the condition the
-theorems about global quantifiers assume.
+A quantifier is a function `Set α → Prop`, not a set of sets, and a determiner denotation is the
+curried function `Set α → Set α → Prop`, not a set of pairs. A quantifier is applied to its scope
+and a determiner denotation to its restrictor and then its scope, as the types of Montague grammar
+have it, and the monotonicities are `Monotone` and `Antitone` of these functions directly. As
+sets of sets the same properties would be `IsUpperSet` and `IsLowerSet` of the family, and
+application would be membership; the set of scopes `{B | Q B}` is written where that view is
+wanted, as for right continuity.
 
-Relativization evaluates a quantifier on the universe `↥A`, so relativizing on a subset of a
-subset reaches a subtype of a subtype rather than the subset itself. Peters and Westerståhl's
-identification of the relativizations with the conservative extensional determiner denotations
-therefore holds here for isomorphism-closed quantifiers. Elements of one type are not elements of
-another, so the global quantifiers that set theory allows to single out an element across
-universes, such as the Montague lift of a fixed individual, have no counterpart among these.
+`Quantifier` and `Det` are abbreviations, so the Boolean algebra is that of the function type and
+needs no instance of its own, and an instance stated on `Quantifier α` is an instance on a
+function type. The actions of the polarities in `Quantifier/Negation.lean` are of this kind: they
+are mathlib's actions on a function type through its values and through its domain.
 
 ## References
 
-* [barker-2002]
 * [barwise-cooper-1981]
 * [keenan-1987]
 * [keenan-stavi-1986]
@@ -71,8 +50,6 @@ universes, such as the Montague lift of a fixed individual, have no counterpart 
 * [partee-1987]
 * [peters-westerstahl-2006]
 * [van-benthem-1984]
-* [van-benthem-1986]
-* [westerstahl-2024]
 * [zuber-keenan-2019]
 * [zwarts-1998]
 -/
@@ -91,15 +68,6 @@ namespace Quantifier
 restrictor it is the quantifier of the noun phrase the determiner heads. It is a quantifier of
 type ⟨1,1⟩. -/
 abbrev Det (α : Type*) := Set α → Quantifier α
-
-/-- A global determiner denotation gives a determiner denotation on every finite universe. The
-readings of a lexicon entry are drawn from these. -/
-abbrev Det.Family : Type (u + 1) := ∀ (α : Type u) [Finite α], Det α
-
-/-- The global determiner denotations form a Boolean algebra, pointwise on universes. -/
-instance : BooleanAlgebra Det.Family.{u} :=
-  Equiv.booleanAlgebra <|
-    Equiv.piCongrRight fun α ↦ Equiv.arrowCongr Equiv.plift.symm (.refl (Det α))
 
 variable {α : Type*}
 
@@ -142,9 +110,7 @@ def CoIntersective (d : Det α) : Prop :=
   ∀ A B A' B' : Set α, A \ B = A' \ B' → (d A B ↔ d A' B')
 
 /-- A determiner denotation satisfies the intersection condition of [barwise-cooper-1981] when
-`d A B ↔ d (A ∩ B) B`, which [zuber-keenan-2019] call conservativity on the first argument. It is
-not intersectivity, on which `d A B` depends on `A ∩ B` alone; for a conservative determiner
-denotation the two coincide. -/
+`d A B ↔ d (A ∩ B) B`. For a conservative determiner denotation this is intersectivity. -/
 def IntersectionCondition (d : Det α) : Prop := ∀ A B, d A B ↔ d (A ∩ B) B
 
 /-! ### Strength -/
@@ -180,13 +146,19 @@ def DownNWMon (d : Det α) : Prop := ∀ A B A', A' ⊆ A → A \ B ⊆ A' → d
 scope preserves it: `A' ⊆ A`, `A' ∩ B = A ∩ B` and `d A B` give `d A' B`. -/
 def DownNEMon (d : Det α) : Prop := ∀ A B A', A' ⊆ A → A ∩ B ⊆ A' → d A B → d A' B
 
-/-- A determiner denotation is smooth when it is ↓NE and ↑SE monotone; smooth determiner
-denotations are scope monotone. -/
-def Smooth (d : Det α) : Prop := DownNEMon d ∧ UpSEMon d
+/-- A determiner denotation is smooth when it is ↓NE and ↑SE monotone. -/
+structure Smooth (d : Det α) : Prop where
+  /-- A smooth determiner denotation is ↓NE monotone. -/
+  downNEMon : d.DownNEMon
+  /-- A smooth determiner denotation is ↑SE monotone. -/
+  upSEMon : d.UpSEMon
 
-/-- A determiner denotation is co-smooth when its inner negation is smooth, that is, when it is
-↓NW and ↑SW monotone. -/
-def CoSmooth (d : Det α) : Prop := DownNWMon d ∧ UpSWMon d
+/-- A determiner denotation is co-smooth when it is ↓NW and ↑SW monotone. -/
+structure CoSmooth (d : Det α) : Prop where
+  /-- A co-smooth determiner denotation is ↓NW monotone. -/
+  downNWMon : d.DownNWMon
+  /-- A co-smooth determiner denotation is ↑SW monotone. -/
+  upSWMon : d.UpSWMon
 
 /-- A determiner denotation is left anti-additive when every section `d · B` is anti-additive,
 `d (A ∪ A') B ↔ d A B ∧ d A' B` ([peters-westerstahl-2006] §5.9). -/
@@ -222,22 +194,27 @@ def Circular (d : Det α) : Prop := ∀ A B C, d A B → d B C → d C A
 order-connected, so that `d A B₁`, `d A B₂` and `B₁ ⊆ B ⊆ B₂` give `d A B`. -/
 def RightContinuous (d : Det α) : Prop := ∀ A, {B | d A B}.OrdConnected
 
+/-- A determiner denotation satisfies Barwise and Cooper's determiner universal and monotonicity
+constraint (U3 and U6 of [barwise-cooper-1981]) when it is conservative and each of its noun
+phrases `d A` is a monotone quantifier or a conjunction of monotone quantifiers. A monotone `d A`
+is its own conjunction with the trivial quantifier `⊤`. -/
+structure SatisfiesUniversals (d : Det α) : Prop where
+  /-- The determiner denotation is conservative, so that each `d A` lives on `A`. -/
+  conservative : d.Conservative
+  /-- Each `d A` is the meet of two quantifiers, each monotone or antitone. -/
+  exists_eq_inf : ∀ A, ∃ Q₁ Q₂ : Quantifier α, (Monotone Q₁ ∨ Antitone Q₁) ∧
+    (Monotone Q₂ ∨ Antitone Q₂) ∧ d A = Q₁ ⊓ Q₂
+
 /-- A determiner denotation is scope-intersective when `d A B` and `d A C` give `d A (B ∩ C)`. -/
 def ScopeIntersective (d : Det α) : Prop := ∀ A B C, d A B → d A C → d A (B ∩ C)
 
 /-- A determiner denotation is filtrating when it is scope monotone and scope-intersective, so
 that its scopes at a fixed restrictor form a filter. -/
-def Filtrating (d : Det α) : Prop := ScopeMonotone d ∧ ScopeIntersective d
-
-/-! ### Invariance -/
-
-/-- A determiner denotation is quantity invariant when no permutation of the universe changes it,
-`d (σ ⁻¹' A) (σ ⁻¹' B) ↔ d A B`. This is [mostowski-1957]'s requirement that a quantifier not
-distinguish the elements of the universe, permutation closure on a single universe; on a finite
-universe it makes `d A B` depend only on the sizes of the four cells of the Venn diagram of `A`
-and `B`. -/
-def QuantityInvariant (d : Det α) : Prop :=
-  ∀ (σ : Equiv.Perm α) (A B : Set α), d (σ ⁻¹' A) (σ ⁻¹' B) ↔ d A B
+structure Filtrating (d : Det α) : Prop where
+  /-- A filtrating determiner denotation is scope monotone. -/
+  scopeMonotone : d.ScopeMonotone
+  /-- A filtrating determiner denotation is scope-intersective. -/
+  scopeIntersective : d.ScopeIntersective
 
 /-! ### The Boolean algebra, the negations and the dual
 
@@ -261,58 +238,6 @@ def dual (d : Det α) : Det α := (innerNeg d)ᶜ
 restrictor, so that *tall student* is *student* and *tall*. -/
 def adjRestrict (d : Det α) (C : Set α) : Det α := fun A B ↦ d (A ∩ C) B
 
-/-! ### Global quantifiers -/
-
-namespace Family
-
-variable (Q : Det.Family.{u})
-
-/-- A global determiner denotation is conservative when it is conservative on every universe. -/
-def Conservative : Prop := ∀ (α : Type u) [Finite α], (Q α).Conservative
-
-/-- A global determiner denotation is closed under isomorphism (ISOM) when an equivalence of
-universes `e : α ≃ β` carries its quantifier on `β` to its quantifier on `α`. -/
-def Isom : Prop :=
-  ∀ ⦃α β : Type u⦄ [Finite α] [Finite β] (e : α ≃ β) (A B : Set β),
-    Q α (e ⁻¹' A) (e ⁻¹' B) ↔ Q β A B
-
-/-- A global determiner denotation satisfies extension (EXT) when enlarging the universe does not
-change it: for `A` and `B` inside `M ⊆ β`, it holds on the universe `M` exactly when it holds on
-`β`. That determiner denotations satisfy it is [van-benthem-1986]'s observation. -/
-def Ext : Prop :=
-  ∀ ⦃β : Type u⦄ [Finite β] (M A B : Set β), A ⊆ M → B ⊆ M →
-    (Q M (Subtype.val ⁻¹' A) (Subtype.val ⁻¹' B) ↔ Q β A B)
-
-/-- A global determiner denotation is constant when it is invariant along every embedding of
-universes: for `A` and `B` inside the range of `f : α ↪ β`, it holds of their preimages on `α`
-exactly when it holds of them on `β`. Constancy is extension together with isomorphism closure,
-an embedding being an isomorphism onto its range followed by an inclusion, and it is
-[westerstahl-2024]'s explication of a quantifier meaning the same on every universe. -/
-def Constant : Prop :=
-  ∀ ⦃α β : Type u⦄ [Finite α] [Finite β] (f : α ↪ β) (A B : Set β),
-    A ⊆ Set.range f → B ⊆ Set.range f → (Q α (f ⁻¹' A) (f ⁻¹' B) ↔ Q β A B)
-
-variable {Q}
-
-@[simp] theorem compl_apply (α : Type u) [Finite α] : Qᶜ α = (Q α)ᶜ := rfl
-
-@[simp] theorem inf_apply (Q' : Det.Family.{u}) (α : Type u) [Finite α] :
-    (Q ⊓ Q') α = Q α ⊓ Q' α := rfl
-
-@[simp] theorem sup_apply (Q' : Det.Family.{u}) (α : Type u) [Finite α] :
-    (Q ⊔ Q') α = Q α ⊔ Q' α := rfl
-
-theorem le_def {Q' : Det.Family.{u}} :
-    Q ≤ Q' ↔ ∀ (α : Type u) [Finite α] (A B : Set α), Q α A B → Q' α A B :=
-  ⟨fun h α _ A B ↦ h α ⟨inferInstance⟩ A B, fun h α p A B ↦ @h α p.down A B⟩
-
-/-- On a single universe, isomorphism closure is permutation invariance. -/
-theorem Isom.quantityInvariant (h : Q.Isom) (α : Type u) [Finite α] :
-    (Q α).QuantityInvariant :=
-  fun σ ↦ h σ
-
-end Family
-
 end Det
 
 /-! ### Type ⟨1⟩ quantifiers -/
@@ -332,12 +257,6 @@ theorem LivesOn.inter {Q : Quantifier α} {A A' : Set α} (h : Q.LivesOn A) (h' 
 theorem _root_.Quantifier.Det.Conservative.livesOn {d : Det α} (h : d.Conservative)
     (A : Set α) : (d A).LivesOn A :=
   h A
-
-/-- A quantifier is quantity invariant when no permutation of the universe changes it,
-`Q (σ ⁻¹' B) ↔ Q B`: [mostowski-1957]'s invariance condition on a quantifier limited to a universe,
-of which `Det.QuantityInvariant` is the counterpart for determiner denotations. -/
-def QuantityInvariant (Q : Quantifier α) : Prop :=
-  ∀ (σ : Equiv.Perm α) (B : Set α), Q (σ ⁻¹' B) ↔ Q B
 
 /-! ### The negations and the dual of a quantifier
 
@@ -389,96 +308,5 @@ theorem individual_injective : Function.Injective (individual (α := α)) :=
 
 theorem individual_livesOn {A : Set α} {a : α} (ha : a ∈ A) : (individual a).LivesOn A :=
   fun _ ↦ ⟨fun h ↦ ⟨ha, h⟩, And.right⟩
-
-/-! ### Taking scope
-
-A quantifier applies to its scope, the set abstracted from the rest of the sentence, so
-quantifiers compose as computations in the continuation monad at `Prop` ([barker-2002]): `bind`
-puts one quantifier in the scope of another, and `individual` is the unit. The operations follow
-`Filter.map`, `Filter.bind` and `Filter.curry`. -/
-
-section Scope
-
-variable {β : Type*} {γ : Type*}
-
-/-- The image of a quantifier under a function, which holds of the sets whose preimage it holds
-of. -/
-def map (f : α → β) (Q : Quantifier α) : Quantifier β := fun B ↦ Q (f ⁻¹' B)
-
-/-- `Q.bind m` takes scope over `m`: it holds of `B` when `Q` holds of the `a` whose quantifier
-`m a` holds of `B`. -/
-def bind (Q : Quantifier α) (m : α → Quantifier β) : Quantifier β := fun B ↦ Q {a | m a B}
-
-/-- The quantifier over pairs on which `Q₁` takes scope over `Q₂`, the iteration `Q₁x Q₂y`. -/
-def curry (Q₁ : Quantifier α) (Q₂ : Quantifier β) : Quantifier (α × β) :=
-  Q₁.bind fun a ↦ Q₂.map (a, ·)
-
-theorem map_apply (f : α → β) (Q : Quantifier α) (B : Set β) : Q.map f B ↔ Q (f ⁻¹' B) := .rfl
-
-theorem bind_apply (Q : Quantifier α) (m : α → Quantifier β) (B : Set β) :
-    Q.bind m B ↔ Q {a | m a B} := .rfl
-
-theorem curry_apply (Q₁ : Quantifier α) (Q₂ : Quantifier β) (R : Set (α × β)) :
-    Q₁.curry Q₂ R ↔ Q₁ {a | Q₂ {b | (a, b) ∈ R}} := .rfl
-
-@[simp] theorem map_id (Q : Quantifier α) : Q.map id = Q := rfl
-
-theorem map_map (f : α → β) (g : β → γ) (Q : Quantifier α) : (Q.map f).map g = Q.map (g ∘ f) :=
-  rfl
-
-@[simp] theorem map_individual (f : α → β) (a : α) : (individual a).map f = individual (f a) :=
-  rfl
-
-@[simp] theorem individual_bind (a : α) (m : α → Quantifier β) : (individual a).bind m = m a :=
-  rfl
-
-@[simp] theorem bind_individual (Q : Quantifier α) : Q.bind individual = Q := rfl
-
-theorem bind_assoc (Q : Quantifier α) (m : α → Quantifier β) (n : β → Quantifier γ) :
-    (Q.bind m).bind n = Q.bind fun a ↦ (m a).bind n := rfl
-
-theorem bind_individual_comp (Q : Quantifier α) (f : α → β) :
-    (Q.bind fun a ↦ individual (f a)) = Q.map f := rfl
-
-/-- An individual takes no scope: its two orders with any quantifier agree. -/
-theorem map_swap_individual_curry (a : α) (Q : Quantifier β) :
-    ((individual a).curry Q).map Prod.swap = Q.curry (individual a) := rfl
-
-theorem bind_mono {Q : Quantifier α} (hQ : Monotone Q) {m m' : α → Quantifier β}
-    (h : ∀ a, m a ≤ m' a) : Q.bind m ≤ Q.bind m' :=
-  fun B ↦ hQ fun a ↦ h a B
-
-end Scope
-
-/-! ### Global quantifiers and relativization -/
-
-/-- A global quantifier gives a quantifier on every finite universe. -/
-abbrev Family : Type (u + 1) := ∀ (α : Type u) [Finite α], Quantifier α
-
-/-- The global quantifiers form a Boolean algebra, pointwise on universes. -/
-instance : BooleanAlgebra Family.{u} :=
-  Equiv.booleanAlgebra <|
-    Equiv.piCongrRight fun α ↦ Equiv.arrowCongr Equiv.plift.symm (.refl (Quantifier α))
-
-namespace Family
-
-variable (Q : Family.{u})
-
-/-- A global quantifier is closed under isomorphism when an equivalence of universes
-`e : α ≃ β` carries its value on `β` to its value on `α`. -/
-def Isom : Prop :=
-  ∀ ⦃α β : Type u⦄ [Finite α] [Finite β] (e : α ≃ β) (B : Set β), Q α (e ⁻¹' B) ↔ Q β B
-
-/-- The relativization of a global quantifier evaluates it on the restrictor as the universe:
-`Q.rel A B` holds when `Q` holds, on the universe `A`, of the part of `B` inside `A`. -/
-def rel : Det.Family.{u} := fun _ _ A B ↦ Q A (Subtype.val ⁻¹' B)
-
-variable {Q}
-
-theorem le_def {Q' : Family.{u}} :
-    Q ≤ Q' ↔ ∀ (α : Type u) [Finite α] (B : Set α), Q α B → Q' α B :=
-  ⟨fun h α _ B ↦ h α ⟨inferInstance⟩ B, fun h α p B ↦ @h α p.down B⟩
-
-end Family
 
 end Quantifier

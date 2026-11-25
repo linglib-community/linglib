@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Possession.Quantifier
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Data.Examples.Barker1995
 public import Mathlib.Data.Fintype.Prod
 

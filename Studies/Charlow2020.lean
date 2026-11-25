@@ -6,7 +6,7 @@ public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Semantics.Composition.Readings
 public import Linglib.Semantics.Composition.Rules
-public import Linglib.Semantics.Quantification.Predicative
+public import Linglib.Semantics.Quantifier.Predicative
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Studies.Charlow2014
 public import Linglib.Data.Examples.Charlow2020
