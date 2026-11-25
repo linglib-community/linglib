@@ -25,6 +25,10 @@ inner negation of the answer under the default order for the complement of the q
 The hybrid order contains the strict part of the ordering whose premises are that the individuals
 of the positive restriction lack the property and those of the negative restriction have it, so
 it excludes at least the worlds that ordering excludes, and for some answers it excludes more.
+The premises of that ordering are unchanged when the answer and the question-property are flipped
+together within a set of individuals, exchanging having the property and lacking it there, so
+its minimal worlds are unchanged as well. Exhaustive interpretation under the hybrid order is not
+unchanged by such a flip.
 
 An answer takes the default order when it is positively skewed, its restriction being its positive
 restriction, which is Spector's quasi-positivity, and the hybrid order otherwise. The two
@@ -53,6 +57,9 @@ minimal sets cover it.
   relation (31d), with arbitrary sets of five individuals in place of the two restrictions, can have
   cycles, so the finiteness argument that gives minimal worlds for a premise ordering does not
   apply to it.
+* That the minimal worlds of the ordering by the two restrictions depend on exactly the individuals
+  the answer depends on. This holds by enumeration for every answer on up to four individuals and
+  is not proved.
 
 ## References
 
@@ -551,50 +558,100 @@ theorem not_transitive_ltHybrid :
     negativeRestriction_someButNotAll hLC hL, ← Finset.coe_inter, Finset.coe_ssubset]
   decide
 
+/-- The answer over three individuals that holds of nobody, of exactly `0` and `1`, and of exactly
+`2`. -/
+def nonePairThird : Quantifier (Fin 3) := fun S ↦ S = ∅ ∨ S = {0, 1} ∨ S = {2}
+
+theorem nonePairThird_coe (s : Finset (Fin 3)) :
+    nonePairThird s ↔ s = ∅ ∨ s = {0, 1} ∨ s = {2} := by
+  simp only [nonePairThird, ← Finset.coe_empty, ← Finset.coe_singleton, ← Finset.coe_insert,
+    Finset.coe_inj]
+
+theorem positiveRestriction_nonePairThird :
+    nonePairThird.positiveRestriction = ↑({0, 1} : Finset (Fin 3)) := by
+  ext x
+  refine ⟨fun ⟨S, hS, hxS⟩ ↦ by_contra fun hx ↦ hS ?_, fun hx ↦ ?_⟩
+  · obtain ⟨rfl⟩ : x = 2 := by revert hx; fin_cases x <;> simp
+    rcases hxS with h | h | h
+    · exact absurd h (Set.insert_nonempty 2 S).ne_empty
+    · exact absurd (h ▸ Set.mem_insert 2 S) (by simp)
+    · rcases Set.subset_singleton_iff_eq.1 (h ▸ Set.subset_insert 2 S) with h' | h'
+      exacts [.inl h', .inr (.inr h')]
+  · obtain rfl | rfl : x = 0 ∨ x = 1 := by simpa using hx
+    · exact ⟨↑({1} : Finset (Fin 3)), by rw [nonePairThird_coe]; decide,
+        by rw [← Finset.coe_insert, nonePairThird_coe]; decide⟩
+    · exact ⟨↑({0} : Finset (Fin 3)), by rw [nonePairThird_coe]; decide,
+        by rw [← Finset.coe_insert, nonePairThird_coe]; decide⟩
+
+theorem negativeRestriction_nonePairThird : nonePairThird.negativeRestriction = Set.univ := by
+  have h (x : Fin 3) (s : Finset (Fin 3)) (hs : ¬ nonePairThird s)
+      (hsx : nonePairThird ↑(s \ {x})) : x ∈ nonePairThird.negativeRestriction :=
+    ⟨s, hs, by rwa [← Finset.coe_singleton, ← Finset.coe_sdiff]⟩
+  refine Set.eq_univ_of_forall fun x ↦ ?_
+  fin_cases x
+  · exact h 0 {0, 2} (by rw [nonePairThird_coe]; decide) (by rw [nonePairThird_coe]; decide)
+  · exact h 1 {1, 2} (by rw [nonePairThird_coe]; decide) (by rw [nonePairThird_coe]; decide)
+  · exact h 2 {0, 1, 2} (by rw [nonePairThird_coe]; decide) (by rw [nonePairThird_coe]; decide)
+
+-- the hybrid order puts the world where `2` has the property below the one where `0` and `1` do
+theorem ltHybrid_nonePairThird :
+    ltHybrid (fun w : Finset (Fin 3) ↦ (w : Set (Fin 3))) nonePairThird {2} {0, 1} := by
+  simp only [ltHybrid, leHybrid, ltPos, ltNeg, positiveRestriction_nonePairThird,
+    negativeRestriction_nonePairThird, Set.inter_univ, ← Finset.coe_inter, Finset.coe_ssubset]
+  decide
+
 open scoped PremiseOrdering in
--- the inclusion `exh_ltHybrid_subset` is strict: for the answer that holds of nobody, of exactly
--- `0` and `1`, and of exactly `2`, the world where `0` and `1` have the property is minimal in the
--- ordering by the two restrictions, and the hybrid order puts the world where `2` has it below
+-- the inclusion `exh_ltHybrid_subset` is strict: for `nonePairThird` the world where `0` and `1`
+-- have the property is minimal in the ordering by the two restrictions
 theorem exh_ltHybrid_ssubset :
     let P : Finset (Fin 3) → Set (Fin 3) := (↑)
-    let T : Quantifier (Fin 3) := fun S ↦ S = ∅ ∨ S = {0, 1} ∨ S = {2}
-    exh P T (ltHybrid P T) ⊂
-      (≤[(fun x ↦ {u | x ∉ P u}) '' T.positiveRestriction ∪
-        (fun x ↦ {u | x ∈ P u}) '' T.negativeRestriction]).minimals {w | T (P w)} := by
-  intro P T
-  have hT (s : Finset (Fin 3)) : T s ↔ s = ∅ ∨ s = {0, 1} ∨ s = {2} := by
-    simp only [T, ← Finset.coe_empty, ← Finset.coe_singleton, ← Finset.coe_insert, Finset.coe_inj]
-  have hpos : T.positiveRestriction = ↑({0, 1} : Finset (Fin 3)) := by
-    ext x
-    refine ⟨fun ⟨S, hS, hxS⟩ ↦ by_contra fun hx ↦ hS ?_, fun hx ↦ ?_⟩
-    · obtain ⟨rfl⟩ : x = 2 := by revert hx; fin_cases x <;> simp
-      rcases hxS with h | h | h
-      · exact absurd h (Set.insert_nonempty 2 S).ne_empty
-      · exact absurd (h ▸ Set.mem_insert 2 S) (by simp)
-      · rcases Set.subset_singleton_iff_eq.1 (h ▸ Set.subset_insert 2 S) with h' | h'
-        exacts [.inl h', .inr (.inr h')]
-    · obtain rfl | rfl : x = 0 ∨ x = 1 := by simpa using hx
-      · exact ⟨↑({1} : Finset (Fin 3)), by rw [hT]; decide,
-          by rw [← Finset.coe_insert, hT]; decide⟩
-      · exact ⟨↑({0} : Finset (Fin 3)), by rw [hT]; decide,
-          by rw [← Finset.coe_insert, hT]; decide⟩
-  have hneg : T.negativeRestriction = Set.univ := by
-    have h (x : Fin 3) (s : Finset (Fin 3)) (hs : ¬ T s) (hsx : T ↑(s \ {x})) :
-        x ∈ T.negativeRestriction :=
-      ⟨s, hs, by rwa [← Finset.coe_singleton, ← Finset.coe_sdiff]⟩
-    refine Set.eq_univ_of_forall fun x ↦ ?_
-    fin_cases x
-    · exact h 0 {0, 2} (by rw [hT]; decide) (by rw [hT]; decide)
-    · exact h 1 {1, 2} (by rw [hT]; decide) (by rw [hT]; decide)
-    · exact h 2 {0, 1, 2} (by rw [hT]; decide) (by rw [hT]; decide)
+    exh P nonePairThird (ltHybrid P nonePairThird) ⊂
+      (≤[(fun x ↦ {u | x ∉ P u}) '' nonePairThird.positiveRestriction ∪
+        (fun x ↦ {u | x ∈ P u}) '' nonePairThird.negativeRestriction]).minimals
+        {w | nonePairThird (P w)} := by
+  intro P
   refine (Set.ssubset_iff_of_subset exh_ltHybrid_subset).2
-    ⟨{0, 1}, ⟨(hT _).2 (by decide), fun v hv hvw ↦ ?_⟩, fun h ↦ h.2 ⟨{2}, (hT _).2 (by decide), ?_⟩⟩
-  · rw [Exhaustification.ofLowerSets_image_union_le_iff, hpos, hneg] at hvw ⊢
-    simp only [P, Set.inter_univ, ← Finset.coe_inter, Finset.coe_subset] at hvw ⊢
-    rcases (hT v).1 hv with rfl | rfl | rfl <;> revert hvw <;> decide
-  · simp only [ltHybrid, leHybrid, ltPos, ltNeg, hpos, hneg, P, Set.inter_univ,
-      ← Finset.coe_inter, Finset.coe_ssubset]
-    decide
+    ⟨{0, 1}, ⟨(nonePairThird_coe _).2 (by decide), fun v hv hvw ↦ ?_⟩,
+      fun h ↦ h.2 ⟨{2}, (nonePairThird_coe _).2 (by decide), ltHybrid_nonePairThird⟩⟩
+  rw [Exhaustification.ofLowerSets_image_union_le_iff, positiveRestriction_nonePairThird,
+    negativeRestriction_nonePairThird] at hvw ⊢
+  simp only [P, Set.inter_univ, ← Finset.coe_inter, Finset.coe_subset] at hvw ⊢
+  rcases (nonePairThird_coe v).1 hv with rfl | rfl | rfl <;> revert hvw <;> decide
+
+/-! ### Flipping the answer and the question together -/
+
+open symmDiff in
+-- the premises given by an answer's two restrictions are unchanged when the answer and the
+-- question-property are flipped within a set of individuals, so the ordering and its minimal
+-- worlds are unchanged too
+theorem image_restriction_symmDiff {W E : Type*} (P : W → Set E) (T : Quantifier E) (N : Set E) :
+    (fun x ↦ {u | x ∉ N ∆ P u}) '' positiveRestriction (fun B ↦ T (N ∆ B)) ∪
+        (fun x ↦ {u | x ∈ N ∆ P u}) '' negativeRestriction (fun B ↦ T (N ∆ B)) =
+      (fun x ↦ {u | x ∉ P u}) '' T.positiveRestriction ∪
+        (fun x ↦ {u | x ∈ P u}) '' T.negativeRestriction := by
+  rw [positiveRestriction_symmDiff, negativeRestriction_symmDiff,
+    Exhaustification.image_notMem_union_image_mem_symmDiff]
+
+open symmDiff in
+-- exhaustive interpretation under the hybrid order is not unchanged: flipping individual `2` in
+-- `nonePairThird` and in the question-property keeps the world where `0` and `1` have the property
+theorem exh_ltHybrid_symmDiff_ne :
+    let P : Finset (Fin 3) → Set (Fin 3) := (↑)
+    let P' : Finset (Fin 3) → Set (Fin 3) := fun w ↦ {2} ∆ (w : Set (Fin 3))
+    let T' : Quantifier (Fin 3) := fun B ↦ nonePairThird ({2} ∆ B)
+    exh P' T' (ltHybrid P' T') ≠ exh P nonePairThird (ltHybrid P nonePairThird) := by
+  intro P P' T' h
+  have hmem : ({0, 1} : Finset (Fin 3)) ∈ exh P' T' (ltHybrid P' T') := by
+    refine ⟨?_, ?_⟩
+    · simp only [T', P', symmDiff_symmDiff_cancel_left]
+      exact (nonePairThird_coe _).2 (by decide)
+    · simp only [T', P', symmDiff_symmDiff_cancel_left, nonePairThird_coe, ltHybrid, leHybrid,
+        ltPos, ltNeg, positiveRestriction_symmDiff, negativeRestriction_symmDiff,
+        positiveRestriction_nonePairThird, negativeRestriction_nonePairThird,
+        ← Finset.coe_singleton, ← Finset.coe_univ, ← Finset.coe_sdiff, ← Finset.coe_inter,
+        ← Finset.coe_union, ← Finset.coe_symmDiff, Finset.coe_ssubset]
+      decide
+  exact (h ▸ hmem).2 ⟨{2}, (nonePairThird_coe _).2 (by decide), ltHybrid_nonePairThird⟩
 
 end Examples
 
