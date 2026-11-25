@@ -71,7 +71,7 @@ theorem containment_of_two_exponents {F : Type} [DecidableEq F]
     rcases hw : Nanosyntax.spellout L (phrase f₂ (bare f₁)) with - | y
     · rcases hs : Nanosyntax.spellout L (bare f₂) with - | z
       · simp [hw, hs] at h₂
-      · rcases ha : Nanosyntax.spellout L ((bare f₁).merge (bare f₂)) with - | w <;>
+      · rcases ha : Nanosyntax.spellout L (bare f₁ * bare f₂) with - | w <;>
           simp [hw, hs, ha] at h₂
         · exact ⟨z, h₂.symm⟩
         · exact absurd (by simp [← h₂]) hr

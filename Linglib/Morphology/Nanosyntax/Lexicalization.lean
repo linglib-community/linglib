@@ -62,54 +62,58 @@ matching by sets of features derives no inverse marking.
 
 namespace Morphology.Nanosyntax
 
-open Minimalist SyntacticObject
+open Minimalist.Next SyntacticObject
 
 variable {F : Type}
 
 /-! ### The algorithm -/
 
-variable {α : Type*} (σ : SyntacticObject F → Option α)
+variable {α : Type*} (σ : SyntacticObject (Option F) → Option α)
 
 /-- The ways of evacuating from an object, smallest evacuee first, each with what is left of the
 object, if anything. An unlabelled node that loses a daughter is not kept. -/
-def evacuations : PlanarSyntacticObject F →
-    List (PlanarSyntacticObject F × Option (PlanarSyntacticObject F))
+def evacuations : PlanarSyntacticObject (Option F) →
+    List (PlanarSyntacticObject (Option F) × Option (PlanarSyntacticObject (Option F)))
   | .mul (.mul a b) r =>
     (evacuations (.mul a b)).map (fun p ↦ (p.1, some (p.2.elim r (· * r)))) ++
       [(.mul (.mul a b) r, none)]
   | t => [(t, none)]
 
 /-- The remnant phrase of `f` over what an evacuation leaves. -/
-abbrev remnant (f : F) (m : Option (PlanarSyntacticObject F)) : PlanarSyntacticObject F :=
+abbrev remnant (f : F) (m : Option (PlanarSyntacticObject (Option F))) :
+    PlanarSyntacticObject (Option F) :=
   m.elim (pbare f) (pphrase f)
 
 /-- The ways of lexicalizing the merger of `f` with `t`, in order of preference: the new phrase
 whole, then each evacuation with the remnant phrase lexicalized. -/
-def mergeOptions (t : PlanarSyntacticObject F) (f : F) : List (PlanarSyntacticObject F) :=
+def mergeOptions (t : PlanarSyntacticObject (Option F)) (f : F) :
+    List (PlanarSyntacticObject (Option F)) :=
   ((σ (pphrase f t).toSyntacticObject).map fun _ ↦ pphrase f t).toList ++
     (evacuations t).filterMap fun p ↦
       (σ (remnant f p.2).toSyntacticObject).map fun _ ↦ p.1 * remnant f p.2
 
 /-- The derivations of a sequence from an object, in order of preference. -/
-def derivations (t : PlanarSyntacticObject F) (fs : List F) : List (PlanarSyntacticObject F) :=
+def derivations (t : PlanarSyntacticObject (Option F)) (fs : List F) :
+    List (PlanarSyntacticObject (Option F)) :=
   fs.foldlM (mergeOptions σ) t
 
-@[simp] theorem derivations_nil (t : PlanarSyntacticObject F) : derivations σ t [] = [t] := rfl
+@[simp] theorem derivations_nil (t : PlanarSyntacticObject (Option F)) :
+    derivations σ t [] = [t] := rfl
 
-theorem derivations_singleton (t : PlanarSyntacticObject F) (f : F) :
+theorem derivations_singleton (t : PlanarSyntacticObject (Option F)) (f : F) :
     derivations σ t [f] = mergeOptions σ t f := by simp [derivations]
 
-theorem derivations_append (t : PlanarSyntacticObject F) (fs gs : List F) :
+theorem derivations_append (t : PlanarSyntacticObject (Option F)) (fs gs : List F) :
     derivations σ t (fs ++ gs) = (derivations σ t fs).flatMap (derivations σ · gs) :=
   List.foldlM_append
 
 /-- The first derivation of a sequence, where the bare phrase of its bottom is spellable. -/
-def lexicalize : List F → Option (PlanarSyntacticObject F)
+def lexicalize : List F → Option (PlanarSyntacticObject (Option F))
   | [] => none
   | f₀ :: fs => (σ (pbare f₀).toSyntacticObject).bind fun _ ↦ (derivations σ (pbare f₀) fs).head?
 
 /-- A lexicalized object is pronounced whole; otherwise its daughters are pronounced in order. -/
-def spell : PlanarSyntacticObject F → Option (List α)
+def spell : PlanarSyntacticObject (Option F) → Option (List α)
   | .mul l r => ((σ (PlanarSyntacticObject.toSyntacticObject (.mul l r))).map fun x ↦ [x]) <|>
       (spell l).bind fun xs ↦ (spell r).map (xs ++ ·)
   | .of a => (σ (PlanarSyntacticObject.toSyntacticObject (.of a))).map fun x ↦ [x]
@@ -121,7 +125,8 @@ def exponents (fs : List F) : Option (List α) := (lexicalize σ fs).bind (spell
 
 variable {σ}
 
-theorem exists_mul_of_mem_evacuations {t : PlanarSyntacticObject F} (ht : ∃ a b, t = a * b) :
+theorem exists_mul_of_mem_evacuations {t : PlanarSyntacticObject (Option F)}
+    (ht : ∃ a b, t = a * b) :
     ∀ p ∈ evacuations t, ∃ a b, p.1 = a * b := by
   fun_induction evacuations t with
   | case1 a b r ih =>
@@ -136,11 +141,11 @@ theorem exists_mul_of_mem_evacuations {t : PlanarSyntacticObject F} (ht : ∃ a 
     rw [List.mem_singleton.1 hp]
     exact ht
 
-theorem exists_remnant_eq_mul (f : F) (m : Option (PlanarSyntacticObject F)) :
+theorem exists_remnant_eq_mul (f : F) (m : Option (PlanarSyntacticObject (Option F))) :
     ∃ c d, remnant f m = c * d := by
   cases m <;> exact ⟨_, _, rfl⟩
 
-theorem mem_mergeOptions {t t' : PlanarSyntacticObject F} {f : F} :
+theorem mem_mergeOptions {t t' : PlanarSyntacticObject (Option F)} {f : F} :
     t' ∈ mergeOptions σ t f ↔
       (σ (pphrase f t).toSyntacticObject).isSome ∧ t' = pphrase f t ∨
         ∃ p ∈ evacuations t, (σ (remnant f p.2).toSyntacticObject).isSome ∧
@@ -155,13 +160,13 @@ theorem mem_mergeOptions {t t' : PlanarSyntacticObject F} {f : F} :
     · exact .inl ⟨x, hx, rfl⟩
     · exact .inr ⟨p, hp, x, hx, rfl⟩
 
-theorem hasUnlabelled_phrase {f : F} {s : SyntacticObject F} (h : HasUnlabelled s) :
+theorem hasUnlabelled_phrase {f : F} {s : SyntacticObject (Option F)} (h : HasUnlabelled s) :
     HasUnlabelled (phrase f s) := by
   obtain ⟨u, hu, hu'⟩ := h
-  exact ⟨u, containsOrEq_merge.2 (.inr (.inr hu)), hu'⟩
+  exact ⟨u, containsOrEq_mul.2 (.inr (.inr hu)), hu'⟩
 
 /-- A derivation of a sequence is its spine or has an unlabelled node, and it is a product. -/
-theorem eq_pspine_or_hasUnlabelled {f₀ : F} {fs : List F} {t : PlanarSyntacticObject F}
+theorem eq_pspine_or_hasUnlabelled {f₀ : F} {fs : List F} {t : PlanarSyntacticObject (Option F)}
     (h : t ∈ derivations σ (pbare f₀) fs) :
     (t = pspine f₀ fs ∨ HasUnlabelled t.toSyntacticObject) ∧ ∃ a b, t = a * b := by
   induction fs using List.reverseRecOn generalizing t with
@@ -178,14 +183,14 @@ theorem eq_pspine_or_hasUnlabelled {f₀ : F} {fs : List F} {t : PlanarSyntactic
       rcases ht₁ with rfl | ht₁
       · exact .inl (pspine_concat ..).symm
       · refine .inr ?_
-        rw [PlanarSyntacticObject.toSyntacticObject_merge]
+        rw [PlanarSyntacticObject.toSyntacticObject_mul]
         exact hasUnlabelled_phrase ht₁
     · obtain ⟨a, b, hab⟩ := exists_mul_of_mem_evacuations hmul p hp
       obtain ⟨c, d, hcd⟩ := exists_remnant_eq_mul f p.2
       refine ⟨.inr ⟨_, Relation.ReflTransGen.refl, ?_⟩, _, _, rfl⟩
       rw [hab, hcd]
       exact ⟨a.toSyntacticObject, b.toSyntacticObject, c.toSyntacticObject, d.toSyntacticObject,
-        by simp only [PlanarSyntacticObject.toSyntacticObject_merge]⟩
+        by simp only [PlanarSyntacticObject.toSyntacticObject_mul]⟩
 
 theorem evacuations_pspine (f₀ : F) (fs : List F) :
     evacuations (pspine f₀ fs) = [(pspine f₀ fs, none)] := by
@@ -194,7 +199,7 @@ theorem evacuations_pspine (f₀ : F) (fs : List F) :
   | append_singleton fs f => rw [pspine_concat]; rfl
 
 /-- The evacuees of an evacuee of an object are evacuees of the object. -/
-theorem exists_mem_evacuations_of_mem {t : PlanarSyntacticObject F} :
+theorem exists_mem_evacuations_of_mem {t : PlanarSyntacticObject (Option F)} :
     ∀ p ∈ evacuations t, ∀ q ∈ evacuations p.1, ∃ q' ∈ evacuations t, q'.1 = q.1 := by
   fun_induction evacuations t with
   | case1 a b r ih =>
@@ -217,20 +222,20 @@ theorem exists_mem_evacuations_of_mem {t : PlanarSyntacticObject F} :
 
 /-! ### Pronunciation -/
 
-theorem spell_mul (l r : PlanarSyntacticObject F) :
+theorem spell_mul (l r : PlanarSyntacticObject (Option F)) :
     spell σ (l * r) = (((σ (l * r).toSyntacticObject).map fun x ↦ [x]) <|>
       (spell σ l).bind fun xs ↦ (spell σ r).map (xs ++ ·)) := rfl
 
-theorem spell_of_eq_some {t : PlanarSyntacticObject F} {x : α}
+theorem spell_of_eq_some {t : PlanarSyntacticObject (Option F)} {x : α}
     (h : σ t.toSyntacticObject = some x) : spell σ t = some [x] := by
   cases t with
-  | of a => simp [spell, h]
+  | of a => simpa [spell] using h
   | mul l r =>
     rw [show FreeMagma.mul l r = l * r from rfl] at h ⊢
     rw [spell_mul, h]
     rfl
 
-theorem spell_ne_nil (t : PlanarSyntacticObject F) : spell σ t ≠ some [] := by
+theorem spell_ne_nil (t : PlanarSyntacticObject (Option F)) : spell σ t ≠ some [] := by
   induction t with
   | of a => cases h : σ (PlanarSyntacticObject.toSyntacticObject (.of a)) <;> simp [spell, h]
   | mul l r ihl ihr =>
@@ -246,7 +251,7 @@ theorem spell_ne_nil (t : PlanarSyntacticObject F) : spell σ t ≠ some [] := b
       exact ihl (hc.1 ▸ hl)
     · simp at hc
 
-private theorem eq_some_of_spell_eq_singleton {l r : PlanarSyntacticObject F} {x : α}
+private theorem eq_some_of_spell_eq_singleton {l r : PlanarSyntacticObject (Option F)} {x : α}
     (h : spell σ (l * r) = some [x]) : σ (l * r).toSyntacticObject = some x := by
   rw [spell_mul] at h
   generalize σ (l * r).toSyntacticObject = o at h ⊢
@@ -264,7 +269,7 @@ private theorem eq_some_of_spell_eq_singleton {l r : PlanarSyntacticObject F} {x
   · simpa using h
 
 /-- An object is pronounced with one exponent exactly when it is lexicalized whole. -/
-theorem spell_eq_some_singleton_iff {t : PlanarSyntacticObject F} {x : α} :
+theorem spell_eq_some_singleton_iff {t : PlanarSyntacticObject (Option F)} {x : α} :
     spell σ t = some [x] ↔ σ t.toSyntacticObject = some x := by
   refine ⟨fun h ↦ ?_, spell_of_eq_some⟩
   cases t with
@@ -273,13 +278,15 @@ theorem spell_eq_some_singleton_iff {t : PlanarSyntacticObject F} {x : α} :
     rw [hy, List.singleton_inj.1 hxy]
   | mul l r => exact eq_some_of_spell_eq_singleton h
 
-theorem mem_evacuations_self (t : PlanarSyntacticObject F) : (t, none) ∈ evacuations t := by
+theorem mem_evacuations_self (t : PlanarSyntacticObject (Option F)) :
+    (t, none) ∈ evacuations t := by
   fun_induction evacuations t <;> simp
 
 /-! ### Soundness -/
 
 /-- Every evacuee of a derivation is pronounced, the derivation itself among them. -/
-theorem isSome_spell_of_mem_derivations {f₀ : F} {fs : List F} {t : PlanarSyntacticObject F}
+theorem isSome_spell_of_mem_derivations {f₀ : F} {fs : List F}
+    {t : PlanarSyntacticObject (Option F)}
     (hb : (σ (bare f₀)).isSome) (h : t ∈ derivations σ (pbare f₀) fs) :
     (∀ p ∈ evacuations t, (spell σ p.1).isSome) ∧ ∃ a b, t = a * b := by
   induction fs using List.reverseRecOn generalizing t with
@@ -347,11 +354,11 @@ theorem exponents_pair (f₁ f₂ : F) :
     exponents σ [f₁, f₂] = (σ (bare f₁)).bind fun x ↦
       ((σ (phrase f₂ (bare f₁))).map fun y ↦ [y]) <|>
         (σ (bare f₂)).bind fun y ↦
-          ((σ (merge (bare f₁) (bare f₂))).map fun z ↦ [z]) <|> some [x, y] := by
+          ((σ (bare f₁ * bare f₂)).map fun z ↦ [z]) <|> some [x, y] := by
   have e₁ : (pbare f₁).toSyntacticObject = bare f₁ := rfl
   have e₂ : (pbare f₂).toSyntacticObject = bare f₂ := rfl
   have e₃ : (pphrase f₂ (pbare f₁)).toSyntacticObject = phrase f₂ (bare f₁) := rfl
-  have e₄ : (pbare f₁ * pbare f₂).toSyntacticObject = merge (bare f₁) (bare f₂) := rfl
+  have e₄ : (pbare f₁ * pbare f₂).toSyntacticObject = bare f₁ * bare f₂ := rfl
   rw [exponents, lexicalize, derivations_singleton, mergeOptions,
     show evacuations (pbare f₁) = [(pbare f₁, none)] from rfl, e₁, e₃]
   rcases h₁ : σ (bare f₁) with - | x
@@ -359,7 +366,7 @@ theorem exponents_pair (f₁ f₂ : F) :
   rcases hw : σ (phrase f₂ (bare f₁)) with - | y
   · rcases hs : σ (bare f₂) with - | z
     · simp [remnant, e₂, hs]
-    · rcases ha : σ (merge (bare f₁) (bare f₂)) with - | w
+    · rcases ha : σ (bare f₁ * bare f₂) with - | w
       · simp [remnant, e₂, hs, spell_mul, e₄, ha, spell_of_eq_some (t := pbare f₁) h₁,
           spell_of_eq_some (t := pbare f₂) hs]
       · simp [remnant, e₂, hs, spell_mul, e₄, ha]
@@ -370,7 +377,7 @@ theorem exponents_pair (f₁ f₂ : F) :
 variable (σ) in
 /-- Spellable objects are closed under constituents, as under any matching by containment. -/
 def IsLowerSpellout : Prop :=
-  ∀ s t : SyntacticObject F, t.ContainsOrEq s → (σ t).isSome → (σ s).isSome
+  ∀ s t : SyntacticObject (Option F), t.ContainsOrEq s → (σ t).isSome → (σ s).isSome
 
 /-- A sequence whose spine is spellable is lexicalized without movement. -/
 theorem lexicalize_cons_of_isSome (hσ : IsLowerSpellout σ) (f₀ : F) {fs : List F}
@@ -466,12 +473,13 @@ variable (σ) in
 /-- A spellout that reads only the features of an object: an object whose features are among
 those of a spellable object is spellable. -/
 def IsFeatureSpellout : Prop :=
-  ∀ s t : SyntacticObject F, s.yield ⊆ t.yield → (σ t).isSome → (σ s).isSome
+  ∀ s t : SyntacticObject (Option F), features s ⊆ features t → (σ t).isSome → (σ s).isSome
 
 theorem IsFeatureSpellout.isLowerSpellout (hσ : IsFeatureSpellout σ) : IsLowerSpellout σ :=
-  fun s t hst ↦ hσ s t (Multiset.subset_of_le (yield_le_of_mem_terms (mem_terms.2 hst)))
+  fun s t hst ↦ hσ s t (Multiset.subset_of_le (features_le_of_mem_terms (mem_terms.2 hst)))
 
-theorem mem_yield_spine {f₀ g : F} {fs : List F} : g ∈ (spine f₀ fs).yield ↔ g = f₀ ∨ g ∈ fs := by
+theorem mem_features_spine {f₀ g : F} {fs : List F} :
+    g ∈ features (spine f₀ fs) ↔ g = f₀ ∨ g ∈ fs := by
   induction fs using List.reverseRecOn with
   | nil => simp
   | append_singleton fs f ih =>
@@ -479,9 +487,9 @@ theorem mem_yield_spine {f₀ g : F} {fs : List F} : g ∈ (spine f₀ fs).yield
     tauto
 
 /-- An evacuation divides the features of an object between the evacuee and what is left. -/
-theorem yield_add_of_mem_evacuations {t : PlanarSyntacticObject F} :
-    ∀ p ∈ evacuations t, p.1.toSyntacticObject.yield +
-      p.2.elim 0 (·.toSyntacticObject.yield) = t.toSyntacticObject.yield := by
+theorem features_add_of_mem_evacuations {t : PlanarSyntacticObject (Option F)} :
+    ∀ p ∈ evacuations t, features p.1.toSyntacticObject +
+      p.2.elim 0 (fun x ↦ features x.toSyntacticObject) = features t.toSyntacticObject := by
   fun_induction evacuations t with
   | case1 a b r ih =>
     intro p hp
@@ -489,10 +497,10 @@ theorem yield_add_of_mem_evacuations {t : PlanarSyntacticObject F} :
     · obtain ⟨q, hq, rfl⟩ := List.mem_map.1 hp
       have h := ih q hq
       rw [show FreeMagma.mul (FreeMagma.mul a b) r = FreeMagma.mul a b * r from rfl,
-        PlanarSyntacticObject.toSyntacticObject_merge, yield_merge, ← h]
+        PlanarSyntacticObject.toSyntacticObject_mul, features_mul, ← h]
       rcases q with ⟨e, - | m⟩
       · simp
-      · simp [PlanarSyntacticObject.toSyntacticObject_merge, add_assoc]
+      · simp [PlanarSyntacticObject.toSyntacticObject_mul, add_assoc]
     · rw [List.mem_singleton.1 hp]
       simp
   | case2 t _ =>
@@ -501,9 +509,10 @@ theorem yield_add_of_mem_evacuations {t : PlanarSyntacticObject F} :
     simp
 
 /-- A derivation has the features of its sequence. -/
-theorem mem_yield_of_mem_derivations {f₀ : F} {fs : List F} {t : PlanarSyntacticObject F}
+theorem mem_features_of_mem_derivations {f₀ : F} {fs : List F}
+    {t : PlanarSyntacticObject (Option F)}
     (h : t ∈ derivations σ (pbare f₀) fs) {g : F} :
-    g ∈ t.toSyntacticObject.yield ↔ g = f₀ ∨ g ∈ fs := by
+    g ∈ features t.toSyntacticObject ↔ g = f₀ ∨ g ∈ fs := by
   induction fs using List.reverseRecOn generalizing t with
   | nil =>
     obtain rfl : t = pbare f₀ := by simpa using h
@@ -516,20 +525,20 @@ theorem mem_yield_of_mem_derivations {f₀ : F} {fs : List F} {t : PlanarSyntact
     rcases List.mem_append.1 h with h | h
     · obtain ⟨x, -, rfl⟩ : ∃ x, σ (pphrase f t₁).toSyntacticObject = some x ∧
           pphrase f t₁ = t := by simpa using h
-      rw [PlanarSyntacticObject.toSyntacticObject_merge, yield_merge]
+      rw [PlanarSyntacticObject.toSyntacticObject_mul, features_mul]
       simp [ih]
       tauto
     · obtain ⟨p, hp, h⟩ := List.mem_filterMap.1 h
       obtain ⟨x, -, rfl⟩ := Option.map_eq_some_iff.1 h
-      have hy := yield_add_of_mem_evacuations p hp
+      have hy := features_add_of_mem_evacuations p hp
       rw [← hy] at ih
-      rw [PlanarSyntacticObject.toSyntacticObject_merge, yield_merge]
+      rw [PlanarSyntacticObject.toSyntacticObject_mul, features_mul]
       rcases p with ⟨e, - | m⟩
       · simp only [Option.elim_none, add_zero] at ih
         simp [remnant, ih]
         tauto
       · simp only [Option.elim_some, Multiset.mem_add] at ih
-        simp [remnant, PlanarSyntacticObject.toSyntacticObject_merge]
+        simp [remnant, PlanarSyntacticObject.toSyntacticObject_mul]
         tauto
 
 /-- Under a spellout that reads only features, a sequence pronounced with one exponent has every
@@ -542,9 +551,9 @@ theorem exists_exponents_eq_singleton_of_subset_of_isFeatureSpellout (hσ : IsFe
   obtain ⟨b, -, ht⟩ := Option.bind_eq_some_iff.1 ht
   have hmem := List.mem_of_mem_head? ht
   have hx := spell_eq_some_singleton_iff.1 hs
-  have hsub : (spine g₀ gs).yield ⊆ t.toSyntacticObject.yield := fun g hg ↦
-    (mem_yield_of_mem_derivations hmem).2
-      (List.mem_cons.1 (hgs (List.mem_cons.2 (mem_yield_spine.1 hg))))
+  have hsub : features (spine g₀ gs) ⊆ features t.toSyntacticObject := fun g hg ↦
+    (mem_features_of_mem_derivations hmem).2
+      (List.mem_cons.1 (hgs (List.mem_cons.2 (mem_features_spine.1 hg))))
   obtain ⟨y, hy⟩ := Option.isSome_iff_exists.1 (hσ _ _ hsub (Option.isSome_iff_exists.2 ⟨x, hx⟩))
   exact ⟨y, exponents_cons_of_eq_some hσ.isLowerSpellout g₀ hy⟩
 

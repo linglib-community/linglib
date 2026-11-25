@@ -37,7 +37,7 @@ not formalized.
 namespace TaraldsenEtAl2018
 
 open Morphology.Nanosyntax Morphology
-open Minimalist (SyntacticObject)
+open Minimalist.Next (SyntacticObject)
 
 /-! ### Features and entries -/
 
@@ -48,10 +48,10 @@ inductive NCFeature where
   deriving DecidableEq, Repr
 
 /-- The structure a singular prefix lexicalizes, the bare classifier `[Nₙ]` (48a). -/
-def sgTree (n : ℕ) : SyntacticObject NCFeature := spine (.cls n) []
+def sgTree (n : ℕ) : SyntacticObject (Option NCFeature) := spine (.cls n) []
 
 /-- The structure a plural prefix lexicalizes, the Specifier `[# Nₙ]` (41), (48b). -/
-def plTree (n : ℕ) : SyntacticObject NCFeature := spine (.cls n) [.num]
+def plTree (n : ℕ) : SyntacticObject (Option NCFeature) := spine (.cls n) [.num]
 
 /-- `SharesClassifierN sg pl` holds when a singular and a plural entry contain the same classifier
 N, the plural's stored object containing the singular's, which is the conjoined-subject

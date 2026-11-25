@@ -42,14 +42,14 @@ lexicalization algorithm gives each grade the one exponent the rules spell out t
 
 namespace Morphology.Nanosyntax
 
-open Morphology Minimalist SyntacticObject
+open Morphology Minimalist.Next SyntacticObject
 
 variable {F : Type} {α : Type*}
 
 /-! ### Spellout over containment hierarchies -/
 
 /-- The spine of the first `k + 1` features of a sequence. -/
-def spineUpTo (feat : ℕ → F) (k : ℕ) : SyntacticObject F :=
+def spineUpTo (feat : ℕ → F) (k : ℕ) : SyntacticObject (Option F) :=
   spine (feat 0) ((List.range k).map (feat ∘ Nat.succ))
 
 theorem spineUpTo_containsOrEq_iff (feat : ℕ → F) (r k : ℕ) :
