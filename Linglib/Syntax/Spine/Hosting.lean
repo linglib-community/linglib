@@ -36,8 +36,9 @@ predicate that says of a paradigm that no form recurs across another.
 
 The Head Movement Constraint of [travis-1984] is a condition on a step of upward movement, that
 a head moves only into the head that governs it. Contiguity is a condition on the outcome.
-[brody-2000] and [arregi-pietraszko-2021] obtain it from that constraint together with the ban on
-excorporation, and [harizanov-gribanova-2019] state it of displacement in either direction. A
+[brody-2000] sets out the two assumptions usually made of head chains, that constraint and the
+ban on excorporation, under which a head moves on only together with its host; the two together
+give contiguity. [harizanov-gribanova-2019] state it of displacement in either direction. A
 hosting in which a head leaves the word it has joined, pronounced as `[z, y, z]`, is not
 contiguous, though each of its steps is local.
 
