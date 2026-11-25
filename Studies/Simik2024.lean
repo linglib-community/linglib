@@ -4,6 +4,7 @@ public import Studies.BuringGunlogson2000
 public import Studies.GartnerGyuris2017
 public import Studies.RomeroHan2004
 public import Linglib.Syntax.Negation
+public import Mathlib.Algebra.Group.Action.Prod
 public import Linglib.Semantics.Questions.Hamblin.Modal
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Discourse.CommonGround
@@ -33,7 +34,9 @@ The Czech forms cross the position of the finite verb, clause-initial in an inte
 and in situ in a declarative one, with polarity. The chapter's table of Czech lists the forms that
 are natural in each situation, and we define the *distribution* of a form as the set of situations
 that list it. A declarative question of either polarity occurs exactly where the evidence
-supports the proposition it expresses and the speaker did not already believe that proposition.
+supports the proposition it expresses and the speaker did not already believe that proposition,
+so the declarative question about `¬p` occurs where the one about `p` does once the situation is
+read for `¬p`; the interrogative questions do not share this symmetry.
 An interrogative positive question occurs exactly where there is no evidence and no prior belief
 against `p`. An interrogative negative question occurs with a prior belief in `p` and no evidence
 for it, or with evidence for `p` and no prior belief. This last distribution is not the set of
@@ -60,8 +63,9 @@ logical forms ask for the same evidence and implicate the same belief.
 The chapter's Czech FALSUM is defined at a world where its bearer considers the prejacent
 possible, and it is true there when the prejacent is not in the common ground. It is undefined
 exactly where the bearer believes the prejacent false, so belief in the prejacent suffices for it
-when the bearer's beliefs are consistent, and the prior beliefs with which an interrogative
-negative question occurs in the table are exactly those that do not support `¬p`. Where
+when the bearer's beliefs are consistent. It is defined exactly when the bias of the bearer's
+beliefs on the prejacent is one with which the table lists an interrogative negative question.
+Where
 [repp-2013]'s FALSUM holds along a reflexive relation, the Czech operator is true if defined. The
 particle *náhodou* requires this operator, that is a negated verb on its outer reading.
 
@@ -192,6 +196,18 @@ theorem distribution_interNPQ :
     distribution czechForms .interNPQ =
       (⟨.minus .positive, .plus .positive⟩ : BiasProfile).felicity ∪
         (⟨.plus .positive, .neutral⟩ : BiasProfile).felicity := by
+  decide
+
+-- a declarative question about `¬p` occurs where the one about `p` does, the situation being read
+-- for `¬p`, and an interrogative negative question does not
+theorem distribution_declarative_mul (s t : Polarity) :
+    distribution czechForms ⟨.nonV1, s * t⟩ =
+      (distribution czechForms ⟨.nonV1, t⟩).image (s • ·) := by
+  cases s <;> cases t <;> decide
+
+theorem distribution_interNPQ_ne_image_smul :
+    distribution czechForms .interNPQ ≠
+      (distribution czechForms .interPPQ).image (Polarity.negative • ·) := by
   decide
 
 /-- The interrogative negative question does not have the distribution of any pair of an
@@ -535,11 +551,23 @@ theorem falsumCz_eq_true_of_falsum [(epi ○ conv).IsRefl]
 
 end Falsum
 
-/-- The prior beliefs with which the interrogative negative question occurs in Table 2 are those
-that do not support `¬p`, the stances at which the Czech FALSUM is defined. -/
+-- the prior beliefs with which the interrogative negative question occurs in Table 2
 theorem image_snd_distribution_interNPQ :
     (distribution czechForms .interNPQ).image Prod.snd = BiasValue.minus .negative := by
   decide
+
+open scoped SetRel in
+/-- The Czech FALSUM is defined at a world exactly when the bias of its bearer's beliefs there is
+one with which Table 2 lists the interrogative negative question. -/
+theorem falsumCz_ne_undefined_iff_bias_mem {W : Type*} {epi : SetRel W W}
+    [ModalLogic.IsSerial epi] {cg : W → Filter W} {p : Set W} {w : W} :
+    falsumCz epi cg p w ≠ .undefined ↔
+      bias (Filter.principal {v | w ~[epi] v}) p ∈
+        (distribution czechForms .interNPQ).image Prod.snd := by
+  have : (Filter.principal {v | w ~[epi] v}).NeBot :=
+    Filter.principal_neBot_iff.2 (ModalLogic.IsSerial.serial (R := epi) w)
+  rw [image_snd_distribution_interNPQ, bias_mem_minus_iff, Ne, falsumCz_eq_undefined_iff]
+  rfl
 
 /-- *Náhodou* is licensed by outer negation and by nothing else (43): the verb is negated, and
 the question double-checks the prejacent itself. -/

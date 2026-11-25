@@ -74,6 +74,12 @@ theorem mem_evidential_outer : ev ∈ evidential (some .positive) ↔ ev ≠ 1 :
 theorem mem_evidential_inner : ev ∈ evidential (some .negative) ↔ ev = -1 := by
   simp [evidential, E]
 
+-- the proto-condition holds of a consistent body of evidence that does not support the opposite
+-- proposition, which is what it is for the evidence not to be compelling against it
+theorem bias_mem_E_iff {W : Type*} {F : Filter W} [F.NeBot] {p : Set W} (s : Polarity) :
+    bias F p ∈ E s ↔ (s • p)ᶜ ∉ F := by
+  rw [E, bias_mem_minus_iff, mul_smul, Polarity.negative_smul_set]
+
 /-- No two question types admit the same evidence, so the predicted synonymies of a Hamblin
 denotation ([hamblin-1973b]) are not real. -/
 theorem evidential_injective : Function.Injective evidential := by decide
