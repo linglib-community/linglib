@@ -89,6 +89,9 @@ def extract(args, table_dir):
         if not hit:
             if r.returncode: sys.exit(r.stdout + r.stderr)
             break
+        if hit.group(1) not in keep:
+            # a compiled module whose source is gone: some stale compiled file still imports it
+            sys.exit(f'{hit.group(1)} is compiled but has no source; rebuild its importers or pass --modules')
         drop, work = {hit.group(1)}, [hit.group(1)]
         while work:
             for y in importers[work.pop()]:
