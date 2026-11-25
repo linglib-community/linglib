@@ -336,6 +336,24 @@ theorem speaker_literalListener_dirac_lt_of_ssubset (hα : 0 < α)
     (Measure.ae_dirac_mem_iff.2 hu) (Measure.ae_dirac_mem_iff.2 hu')
     fun h ↦ hnu' (show w ∈ sem u' from Measure.ae_dirac_mem_iff.1 h)
 
+/-- Pulling the denotations back along a map of states gives the speaker of the original
+denotations at the image state, against the prior carried forward. -/
+theorem speaker_literalListener_dirac_preimage {W' : Type*} [MeasurableSpace W']
+    [MeasurableSingletonClass W'] [Fintype W'] (hα : 0 < α) (C : U → ℝ) (μ : Measure W)
+    [IsFiniteMeasure μ] (g : W → W') (sem : U → Set W') (hw : μ {w} ≠ 0) :
+    speaker α C (literalListener μ fun u ↦ g ⁻¹' sem u) Measure.dirac w =
+      speaker α C (literalListener (μ.map g) sem) Measure.dirac (g w) := by
+  have hg : Measurable g := .of_discrete
+  have hw' : μ.map g {g w} ≠ 0 := by
+    rw [Measure.map_apply hg (measurableSet_singleton _)]
+    exact fun h ↦ hw (measure_mono_null
+      (show {w} ⊆ g ⁻¹' {g w} from Set.singleton_subset_iff.2 rfl) h)
+  refine Measure.ext_of_singleton fun u ↦ ?_
+  rw [speaker_literalListener_apply_singleton hα (Measure.dirac_absolutelyContinuous hw),
+    speaker_literalListener_apply_singleton hα (Measure.dirac_absolutelyContinuous hw')]
+  simp only [Measure.ae_dirac_mem_iff, Measure.map_apply hg .of_discrete]
+  rfl
+
 theorem speaker_literalListener_dirac_zero_real_singleton_of_pair (hα : 0 < α)
     (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
     {u u' : U} (huu' : u ≠ u') (hu : w ∈ sem u) (hu' : w ∈ sem u')
