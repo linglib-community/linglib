@@ -433,7 +433,8 @@ theorem Selects.length_filter_subset_any_le_one (h : Selects s l) :
       (hb.trans (Finset.singleton_subset_iff.2 (any_mem_checks a))))
 
 /-- The object a head `h` builds by merging the items `l` in order. -/
-def spine (h : LexicalItem.Token) (l : List LexicalItem.Token) : SyntacticObject (ι := ℕ) :=
+def spine (h : LexicalItem.Token) (l : List LexicalItem.Token) : SyntacticObject
+    (SyntacticObject.Leaf LexicalItem.Token ℕ) :=
   l.foldl (fun t b ↦ t * .leaf b) (.leaf h)
 
 private theorem map_foldl_mul {M N : Type*} [Mul M] [Mul N] (φ : M →ₙ* N) {α : Type*}

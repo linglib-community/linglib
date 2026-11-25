@@ -75,7 +75,8 @@ variable {s t x y l r l' r' : SyntacticObject}
 
 /-- The syntactic object over lexical items that an object inscribes, forgetting which token fills
 each leaf. -/
-def erase (s : SyntacticObject) : SyntacticObject LexicalItem := s.map LexicalItem.Token.item
+def erase (s : SyntacticObject) : SyntacticObject (SyntacticObject.Leaf LexicalItem LexicalItem) :=
+    s.map LexicalItem.Token.item
 
 /-- Two inscriptions are structurally identical when they coincide once token identity is
 forgotten. -/

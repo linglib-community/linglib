@@ -33,14 +33,18 @@ namespace Derivation
 variable {ι : Type} [DecidableEq ι] [TraceLabel LexicalItem.Token ι]
 
 /-- `x` c-commands `y` at stage `n` of `d`, under the trace encoder `τ`. -/
-def CCommandsAt (d : Derivation ι) (n : Nat) (x y : SyntacticObject (ι := ι))
-    (τ : SyntacticObject (ι := ι) → Option ι := TraceLabel.encoder) : Prop :=
+def CCommandsAt (d : Derivation ι) (n : Nat)
+    (x y : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))
+    (τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι :=
+        TraceLabel.encoder) : Prop :=
   CCommands (d.stageAt n τ) x y
 
 /-- Decided on the replayed object when the replay succeeds, which is cheaper to evaluate than the
 stage itself. -/
-instance (d : Derivation ι) (n : Nat) (x y : SyntacticObject (ι := ι))
-    (τ : SyntacticObject (ι := ι) → Option ι) : Decidable (d.CCommandsAt n x y τ) :=
+instance (d : Derivation ι) (n : Nat)
+    (x y : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))
+    (τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι) : Decidable
+        (d.CCommandsAt n x y τ) :=
   match h : (d.take n).externalize? τ with
   | some p => decidable_of_iff (CCommands p.toSyntacticObject x y) (by
       rw [CCommandsAt, ← d.externalize?_take_faithful n h])

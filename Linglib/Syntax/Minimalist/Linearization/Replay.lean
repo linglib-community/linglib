@@ -72,8 +72,8 @@ section Harmonic
 open LinearizationState
 
 variable {ι : Type} [DecidableEq ι] [TraceLabel LexicalItem.Token ι]
-  {φ : SyntacticObject (ι := ι) →ₙ* LinearizationState side ι}
-  {τ : SyntacticObject (ι := ι) → Option ι}
+  {φ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) →ₙ* LinearizationState side ι}
+  {τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι}
 
 namespace LinearizationState.Linearizes
 
@@ -81,8 +81,10 @@ variable (hφ : Linearizes φ)
 include hφ
 
 omit [TraceLabel LexicalItem.Token ι] in
-private theorem map_replace_self {cur t : SyntacticObject (ι := ι)} {σ}
-    {pc pt : PlanarSyntacticObject (ι := ι)} (hc : φ cur = ⟨some (σ, pc)⟩)
+private theorem map_replace_self
+    {cur t : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)} {σ}
+    {pc pt : PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
+        (hc : φ cur = ⟨some (σ, pc)⟩)
     (ht : (φ t).linearized? = some pt) (hsel : sel (φ t) = sel (φ cur)) :
     φ (cur.replace cur t) = ⟨some (σ, pc.replace cur pt)⟩ := by
   have hpc : (φ cur).linearized? = some pc := by rw [hc]; rfl
@@ -94,8 +96,10 @@ private theorem map_replace_self {cur t : SyntacticObject (ι := ι)} {σ}
   exact hst
 
 omit [TraceLabel LexicalItem.Token ι] in
-private theorem map_replace_leaf {cur m t : SyntacticObject (ι := ι)}
-    {a : Vertex LexicalItem.Token ι} {σ} {pc pt : PlanarSyntacticObject (ι := ι)}
+private theorem map_replace_leaf
+    {cur m t : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
+    {a : Vertex LexicalItem.Token ι} {σ}
+        {pc pt : PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
     (hs : cur.toUnorderedTree = UnorderedTree.leaf a) (hpv : pc.toRoseTree = .node a [])
     (hc : φ cur = ⟨some (σ, pc)⟩) (ht : (φ t).linearized? = some pt)
     (hsel : sel (φ t) = sel (φ m)) :
@@ -108,8 +112,10 @@ private theorem map_replace_leaf {cur m t : SyntacticObject (ι := ι)}
       (by rwa [hφ.toSyntacticObject_eq hpc]), hc]
 
 omit [TraceLabel LexicalItem.Token ι] in
-private theorem map_replace_of {ℓ : Leaf LexicalItem.Token ι} {m t : SyntacticObject (ι := ι)} {σ}
-    {pc pt : PlanarSyntacticObject (ι := ι)} (hc : φ (FreeCommMagma.of ℓ) = ⟨some (σ, pc)⟩)
+private theorem map_replace_of {ℓ : Leaf LexicalItem.Token ι}
+    {m t : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)} {σ}
+    {pc pt : PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
+        (hc : φ (FreeCommMagma.of ℓ) = ⟨some (σ, pc)⟩)
     (ht : (φ t).linearized? = some pt) (hsel : sel (φ t) = sel (φ m)) :
     φ (SyntacticObject.replace (FreeCommMagma.of ℓ) m t) = ⟨some (σ, pc.replace m pt)⟩ := by
   obtain rfl := hφ ℓ pc (by rw [hc]; rfl)
@@ -117,8 +123,9 @@ private theorem map_replace_of {ℓ : Leaf LexicalItem.Token ι} {m t : Syntacti
 
 omit [TraceLabel LexicalItem.Token ι] in
 /-- A linearization commutes with replacing a term by an object in the same selection state. -/
-theorem map_replace {cur m t : SyntacticObject (ι := ι)} {σ}
-    {pc pt : PlanarSyntacticObject (ι := ι)} (hc : φ cur = ⟨some (σ, pc)⟩)
+theorem map_replace {cur m t : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)} {σ}
+    {pc pt : PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
+        (hc : φ cur = ⟨some (σ, pc)⟩)
     (ht : (φ t).linearized? = some pt) (hsel : sel (φ t) = sel (φ m)) :
     φ (cur.replace m t) = ⟨some (σ, pc.replace m pt)⟩ := by
   induction cur using ind generalizing σ pc with
@@ -147,8 +154,9 @@ theorem map_replace {cur m t : SyntacticObject (ι := ι)} {σ}
       · cases hc
 
 omit [TraceLabel LexicalItem.Token ι] in
-theorem linearized?_of_find? {cur m : SyntacticObject (ι := ι)}
-    {pc s : PlanarSyntacticObject (ι := ι)} (hc : (φ cur).linearized? = some pc)
+theorem linearized?_of_find? {cur m : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
+    {pc s : PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
+        (hc : (φ cur).linearized? = some pc)
     (hf : pc.find? m = some s) : (φ m).linearized? = some s := by
   rw [← PlanarSyntacticObject.toSyntacticObject_find? hf]
   have h := hφ.linearized?_of_mem_subtrees hc (PlanarSyntacticObject.mem_subtrees_of_find? hf)
@@ -167,15 +175,17 @@ theorem linearized?_of {ℓ : Leaf LexicalItem.Token ι} (h : sel (φ (FreeCommM
 
 omit [DecidableEq ι] in
 /-- The trace of a mover linearizes to its planar trace where the linearization is defined. -/
-theorem linearized?_headTrace {m : SyntacticObject (ι := ι)}
+theorem linearized?_headTrace {m : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
     (h : sel (φ (m.headTrace τ)) ≠ 0) :
     (φ (m.headTrace τ)).linearized? = some (m.tracePlanar τ) := by
   unfold headTrace tracePlanar at *
   revert h
   cases τ m <;> exact fun h ↦ hφ.linearized?_of h
 
-private theorem linearized?_deleteAccessible {cur mover : SyntacticObject (ι := ι)}
-    {pc s : PlanarSyntacticObject (ι := ι)} (hc : (φ cur).linearized? = some pc)
+private theorem linearized?_deleteAccessible
+    {cur mover : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
+    {pc s : PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
+        (hc : (φ cur).linearized? = some pc)
     (hs : pc.find? mover = some s) (hsel : sel (φ (mover.headTrace τ)) = sel (φ mover)) :
     (φ (deleteAccessible mover cur τ)).linearized? =
       some (pc.replace mover (mover.tracePlanar τ)) := by
@@ -190,8 +200,10 @@ end LinearizationState.Linearizes
 /-- A step is harmonic for a linearization at a configuration when each daughter it merges
     projects exactly if it takes the head side, an externally merged item is built in its harmonic
     order, and a mover is a term of the object whose trace keeps its selection state. -/
-def Step.Harmonic (φ : SyntacticObject (ι := ι) →ₙ* LinearizationState side ι)
-    (τ : SyntacticObject (ι := ι) → Option ι) (c : Cfg (SyntacticObject (ι := ι))) :
+def Step.Harmonic
+    (φ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) →ₙ* LinearizationState side ι)
+    (τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι)
+        (c : Cfg (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))) :
     Step ι → Prop
   | .em e item => (φ item.toSyntacticObject).linearized? = some item ∧
       SelectionRule.State.side (sel (φ item.toSyntacticObject)) (sel (φ c.current)) =
@@ -204,16 +216,19 @@ def Step.Harmonic (φ : SyntacticObject (ι := ι) →ₙ* LinearizationState si
       SelectionRule.State.side (sel (φ m)) (sel (φ c.current)) = some (decide (e = side))
 
 /-- Each step of a list is harmonic at the configuration it applies to. -/
-def Step.HarmonicList (φ : SyntacticObject (ι := ι) →ₙ* LinearizationState side ι)
-    (τ : SyntacticObject (ι := ι) → Option ι) :
-    List (Step ι) → Cfg (SyntacticObject (ι := ι)) → Prop
+def Step.HarmonicList
+    (φ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) →ₙ* LinearizationState side ι)
+    (τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι) :
+    List (Step ι) → Cfg (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)) → Prop
   | [], _ => True
   | step :: steps, c => step.Harmonic φ τ c ∧ HarmonicList φ τ steps (step.run c τ)
 
-instance (c : Cfg (SyntacticObject (ι := ι))) : DecidablePred (Step.Harmonic φ τ c) :=
+instance (c : Cfg (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))) : DecidablePred
+    (Step.Harmonic φ τ c) :=
   fun step ↦ by cases step <;> unfold Step.Harmonic <;> infer_instance
 
-instance : ∀ (steps : List (Step ι)) (c : Cfg (SyntacticObject (ι := ι))),
+instance : ∀ (steps : List (Step ι))
+    (c : Cfg (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))),
     Decidable (Step.HarmonicList φ τ steps c)
   | [], _ => isTrue trivial
   | step :: steps, c =>
@@ -221,7 +236,8 @@ instance : ∀ (steps : List (Step ι)) (c : Cfg (SyntacticObject (ι := ι))),
     inferInstanceAs (Decidable (_ ∧ _))
 
 theorem Step.replay?_of_harmonic (hφ : Linearizes φ) {step : Step ι}
-    {c : Cfg (SyntacticObject (ι := ι))} {q : Cfg (PlanarSyntacticObject (ι := ι))}
+    {c : Cfg (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))}
+        {q : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))}
     (h : step.Harmonic φ τ c) (hq : c.map (fun x ↦ (φ x).linearized?) = q.map some) :
     ∃ q', step.replay? q τ = some q' ∧
       (step.run c τ).map (fun x ↦ (φ x).linearized?) = q'.map some := by
@@ -272,8 +288,9 @@ theorem Step.replay?_of_harmonic (hφ : Linearizes φ) {step : Step ι}
     exact Linearizes.linearized?_merge hqm hc hside
 
 theorem foldlM_replay?_of_harmonicList (hφ : Linearizes φ) :
-    ∀ {steps : List (Step ι)} {c : Cfg (SyntacticObject (ι := ι))}
-      {q : Cfg (PlanarSyntacticObject (ι := ι))}, Step.HarmonicList φ τ steps c →
+    ∀ {steps : List (Step ι)} {c : Cfg (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))}
+      {q : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))},
+          Step.HarmonicList φ τ steps c →
       c.map (fun x ↦ (φ x).linearized?) = q.map some →
       ∃ q', steps.foldlM (fun q (step : Step ι) ↦ step.replay? q τ) q = some q' ∧
         (steps.foldl (fun c (step : Step ι) ↦ step.run c τ) c).map
@@ -288,7 +305,8 @@ theorem foldlM_replay?_of_harmonicList (hφ : Linearizes φ) :
     linearization of its object: the order the derivation records is the one the head function
     determines. -/
 theorem Derivation.externalize?_eq_linearized? (hφ : Linearizes φ) {d : Derivation ι}
-    {p : PlanarSyntacticObject (ι := ι)} (hi : d.initial.toPlanarLeaf? = some p)
+    {p : PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
+        (hi : d.initial.toPlanarLeaf? = some p)
     (h0 : (φ d.initial).linearized? = some p)
     (hd : Step.HarmonicList φ τ d.steps ⟨d.initial, []⟩) :
     d.externalize? τ = (φ (d.final τ)).linearized? := by

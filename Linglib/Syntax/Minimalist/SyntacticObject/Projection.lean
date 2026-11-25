@@ -65,8 +65,10 @@ def lexicalHeadAt (p : GornAddress) : GornAddress :=
 
 /-- The head daughter of the subtree at an address of a planar object, where `P x y` says that the
 object `x` projects over `y`: of the two daughters there, the one that projects. -/
-def headDaughterAt {L ι : Type} (P : SyntacticObject L ι → SyntacticObject L ι → Prop)
-    [DecidableRel P] : PlanarSyntacticObject L ι → List ℕ → Option ℕ
+def headDaughterAt {L ι : Type}
+    (P : SyntacticObject (SyntacticObject.Leaf L ι) → SyntacticObject (SyntacticObject.Leaf L ι) →
+    Prop)
+    [DecidableRel P] : PlanarSyntacticObject (SyntacticObject.Leaf L ι) → List ℕ → Option ℕ
   | .mul l r, [] => if P l r then some 0 else if P r l then some 1 else none
   | .mul l _, 0 :: q => headDaughterAt P l q
   | .mul _ r, 1 :: q => headDaughterAt P r q

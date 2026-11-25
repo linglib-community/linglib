@@ -48,16 +48,18 @@ namespace Minimalist
 
 open SyntacticObject
 
-variable {L ι : Type} {h : SyntacticObject L ι → Option L} {s : SyntacticObject L ι} {a ℓ : L}
+variable {L ι : Type} {h : SyntacticObject (SyntacticObject.Leaf L ι) → Option L}
+    {s : SyntacticObject (SyntacticObject.Leaf L ι)} {a ℓ : L}
 
 /-- A head function on syntactic objects: a lexical item is the only head of its leaf, and the
 head of a Merge is the head of a daughter, the characterization of heads in
 [marcolli-chomsky-berwick-2025], Lemma 1.13.7. -/
-structure IsHeadFunction (h : SyntacticObject L ι → Option L) : Prop where
+structure IsHeadFunction (h : SyntacticObject (SyntacticObject.Leaf L ι) → Option L) : Prop where
   /-- A lexical item is the only head its leaf can have. -/
   eq_of_mem_leaf : ∀ {a b : L}, b ∈ h (leaf a) → b = a
   /-- The head of a Merge is the head of a daughter. -/
-  mem_or_mem : ∀ {x y : SyntacticObject L ι} {a : L}, a ∈ h (merge x y) → a ∈ h x ∨ a ∈ h y
+  mem_or_mem : ∀ {x y : SyntacticObject (SyntacticObject.Leaf L ι)} {a : L}, a ∈ h (merge x y) → a
+      ∈ h x ∨ a ∈ h y
 
 namespace IsHeadFunction
 

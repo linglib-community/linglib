@@ -47,21 +47,23 @@ namespace Licensing
 variable (L : Licensing β) (L' : Licensing γ)
 
 /-- The morphism a licensing gives once its numbered traces have states. -/
-def eval (states : List β) : SyntacticObject (ι := ℕ) →ₙ* β :=
+def eval (states : List β) : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ℕ) →ₙ* β :=
   FreeCommMagma.lift (Leaf.elim L.lex fun u ↦ (u.bind (states[·]?)).getD 0)
 
 /-- The states of the traces of the objects moved, in order: each the trace of its object, read
 with the traces of the objects moved before it. -/
-def traceStates (movers : List (SyntacticObject (ι := ℕ))) : List β :=
+def traceStates (movers : List (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ℕ))) : List
+    β :=
   movers.foldl (fun states m ↦ states ++ [L.trace states.length (L.eval states m)]) []
 
 /-- A licensing over a derivation: the morphism of magmas reading each lexical item by its state
 and each numbered trace as the trace of the mover it numbers. -/
-def hom (d : Derivation ℕ) : SyntacticObject (ι := ℕ) →ₙ* β :=
+def hom (d : Derivation ℕ) : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ℕ) →ₙ* β :=
   L.eval (L.traceStates d.movedItems)
 
 /-- The state of the trace numbered `i` is the licensing's trace `i` of some state. -/
-theorem exists_eq_trace_of_getElem? {movers : List (SyntacticObject (ι := ℕ))} {i : ℕ} {x : β}
+theorem exists_eq_trace_of_getElem?
+    {movers : List (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ℕ))} {i : ℕ} {x : β}
     (h : (L.traceStates movers)[i]? = some x) : ∃ y, x = L.trace i y := by
   suffices key : ∀ states : List β, (∀ i x, states[i]? = some x → ∃ y, x = L.trace i y) →
       ∀ i x, (movers.foldl (fun states m ↦ states ++ [L.trace states.length (L.eval states m)])
@@ -93,7 +95,7 @@ theorem comp_eval (h0 : π 0 = 0) (hlex : ∀ a, π (L.lex a) = L'.lex a) (state
 
 theorem traceStates_map (h0 : π 0 = 0) (hlex : ∀ a, π (L.lex a) = L'.lex a)
     (htrace : ∀ i x, π (L.trace i x) = L'.trace i (π x))
-    (movers : List (SyntacticObject (ι := ℕ))) :
+    (movers : List (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ℕ))) :
     L'.traceStates movers = (L.traceStates movers).map π := by
   suffices h : ∀ states : List β,
       movers.foldl (fun states m ↦ states ++ [L'.trace states.length (L'.eval states m)])

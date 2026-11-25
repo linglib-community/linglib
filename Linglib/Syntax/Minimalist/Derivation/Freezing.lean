@@ -41,13 +41,15 @@ namespace Minimalist.Derivation
 open SyntacticObject
 
 variable {ι : Type} {d : Derivation ι} {steps : List (Step ι)}
-  {x : SyntacticObject (ι := ι)}
+  {x : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
 
 /-- `x` sits inside a constituent `d` has moved. -/
-def Frozen (d : Derivation ι) (x : SyntacticObject (ι := ι)) : Prop :=
+def Frozen (d : Derivation ι) (x : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)) :
+    Prop :=
   ∃ m ∈ d.movedItems, Contains m x
 
-instance [DecidableEq ι] (d : Derivation ι) (x : SyntacticObject (ι := ι)) :
+instance [DecidableEq ι] (d : Derivation ι)
+    (x : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)) :
     Decidable (d.Frozen x) :=
   inferInstanceAs (Decidable (∃ m ∈ d.movedItems, Contains m x))
 
@@ -96,11 +98,13 @@ theorem obeysFreezing_append_iff :
   grind
 
 /-- A further movement obeys Freezing exactly when its mover is not frozen. -/
-@[simp] theorem obeysFreezing_append_im_iff {m : SyntacticObject (ι := ι)} {side : Edge} :
+@[simp] theorem obeysFreezing_append_im_iff
+    {m : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)} {side : Edge} :
     (d.append [.im m side]).ObeysFreezing ↔ d.ObeysFreezing ∧ ¬ d.Frozen m := by
   simp [obeysFreezing_append_iff]
 
-@[simp] theorem obeysFreezing_append_em_iff {item : PlanarSyntacticObject (ι := ι)} {side : Edge} :
+@[simp] theorem obeysFreezing_append_em_iff
+    {item : PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)} {side : Edge} :
     (d.append [.em side item]).ObeysFreezing ↔ d.ObeysFreezing := by
   simp [obeysFreezing_append_iff]
 

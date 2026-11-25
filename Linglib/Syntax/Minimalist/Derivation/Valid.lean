@@ -30,23 +30,25 @@ open SyntacticObject
 open Derivation (Cfg)
 
 variable {ι : Type} [DecidableEq ι] [TraceLabel LexicalItem.Token ι]
-  {τ : SyntacticObject (ι := ι) → Option ι}
+  {τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι}
 
 /-- The step applies to the configuration: an Internal Merge or an extraction moves a term of the
 object, and `remerge` finds a copy on the stack. -/
-def Step.AppliesTo (c : Cfg (SyntacticObject (ι := ι))) : Step ι → Prop
+def Step.AppliesTo (c : Cfg (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))) : Step ι
+    → Prop
   | .em _ _ => True
   | .im mover _ | .extract mover => mover ∈ c.current.terms
   | .remerge _ => c.stack ≠ []
 
 /-- Each step of the list applies to the configuration the earlier ones reach. -/
-def Step.ApplyFrom (τ : SyntacticObject (ι := ι) → Option ι) :
-    List (Step ι) → Cfg (SyntacticObject (ι := ι)) → Prop
+def Step.ApplyFrom (τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι) :
+    List (Step ι) → Cfg (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)) → Prop
   | [], _ => True
   | step :: steps, c => step.AppliesTo c ∧ Step.ApplyFrom τ steps (step.run c τ)
 
 theorem Step.ApplyFrom.take :
-    ∀ {steps : List (Step ι)} {c : Cfg (SyntacticObject (ι := ι))} (n : Nat),
+    ∀ {steps : List (Step ι)}
+        {c : Cfg (SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))} (n : Nat),
       Step.ApplyFrom τ steps c → Step.ApplyFrom τ (steps.take n) c
   | _, _, 0, _ => by simp [Step.ApplyFrom]
   | [], _, _ + 1, _ => by simp [Step.ApplyFrom]
@@ -57,7 +59,8 @@ namespace Derivation
 /-- A derivation is valid when it starts from a lexical item or a trace, each step applies to the
 configuration it meets, and no token is merged twice. -/
 structure IsValid (d : Derivation ι)
-    (τ : SyntacticObject (ι := ι) → Option ι := TraceLabel.encoder) :
+    (τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι :=
+        TraceLabel.encoder) :
     Prop where
   /-- The initial object is a leaf. -/
   initial : d.initial.toPlanarLeaf?.isSome

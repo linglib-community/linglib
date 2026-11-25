@@ -67,11 +67,12 @@ variable {L : Type} (τ : Option L → ℕ)
 
 /-- The constituency tree of a planar object, its ordered tree relabelled, a trace having the
 index `τ` gives it. -/
-def toTree (t : PlanarSyntacticObject L) : Tree Unit L :=
+def toTree (t : PlanarSyntacticObject (SyntacticObject.Leaf L L)) : Tree Unit L :=
   t.toRoseTree.map (SyntacticObject.Vertex.toLabel τ)
 
 /-- The tree pronounces the object's tokens, in order. -/
-theorem yield_toTree (t : PlanarSyntacticObject L) : (t.toTree τ).yield = t.yield := by
+theorem yield_toTree (t : PlanarSyntacticObject (SyntacticObject.Leaf L L)) : (t.toTree τ).yield =
+    t.yield := by
   simp only [toTree, Tree.yield, Tree.terminals, RoseTree.leafList_map, yield,
     List.filterMap_map, List.map_filterMap]
   congr 1

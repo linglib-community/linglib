@@ -421,7 +421,8 @@ theorem toSelectionStateHom_comp_hom (d : Minimalist.Derivation ℕ) :
 
 /-- Triggered Merge licenses exactly the objects that selection before saturation licenses with
 nothing pending. -/
-theorem hom_licensing_ne_zero_iff (d : Minimalist.Derivation ℕ) (s : SyntacticObject (ι := ℕ)) :
+theorem hom_licensing_ne_zero_iff (d : Minimalist.Derivation ℕ)
+    (s : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ℕ)) :
     SelectionRule.State.licensing.hom d s ≠ 0 ↔ ∃ a ra, pendingLicensing.hom d s = .of a ra 0 := by
   rw [← toSelectionStateHom_comp_hom, MulHom.comp_apply, PendingState.toSelectionStateHom_apply,
     PendingState.toSelectionState_ne_zero_iff]
@@ -461,7 +462,7 @@ def externalD : LexicalItem.Token := ⟨.of .D [.N], 6⟩
 
 /-- *Kona*'s phrase once the noun is copied out of it: the noun is the first object the
 derivation moves, and its trace bears that number. -/
-def konaRemnant : SyntacticObject (ι := ℕ) :=
+def konaRemnant : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ℕ) :=
   (PlanarSyntacticObject.merge (.leaf kona) (.labelledTrace 0)).toSyntacticObject
 
 /-- The raising relative of section 5.2.2. The noun merges with *kona* while it still selects the
@@ -494,7 +495,7 @@ theorem triggeredMerge_rejects_raisingRelative :
   decide
 
 /-- *Kona*'s phrase, *kona* selecting the noun. -/
-def konaPhrase : SyntacticObject (ι := ℕ) :=
+def konaPhrase : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ℕ) :=
   (PlanarSyntacticObject.merge (.leaf kona) (.leaf headNoun)).toSyntacticObject
 
 /-- The alternative footnote 14 of the article reports: *kona*'s phrase moves to the edge of the

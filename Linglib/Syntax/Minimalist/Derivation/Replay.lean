@@ -45,9 +45,11 @@ variable {ι : Type} [DecidableEq ι] [TraceLabel LexicalItem.Token ι]
 /-- A step on a planar configuration, `Step.run` with each new daughter on its side. Internal
     Merge raises the leftmost occurrence of the mover, leaving the trace of its head under `τ`,
     and an extraction stacks it; `none` when the mover is absent or the stack is empty. -/
-def Step.replay? (step : Step ι) (c : Cfg (PlanarSyntacticObject (ι := ι)))
-    (τ : SyntacticObject (ι := ι) → Option ι := TraceLabel.encoder) :
-    Option (Cfg (PlanarSyntacticObject (ι := ι))) :=
+def Step.replay? (step : Step ι)
+    (c : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)))
+    (τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι :=
+        TraceLabel.encoder) :
+    Option (Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))) :=
   match step, c with
   | .em side item, ⟨p, st⟩ => some ⟨p.attach side item, st⟩
   | .im mover side, ⟨p, st⟩ =>
@@ -61,22 +63,25 @@ namespace Derivation
 
 /-- The derivation's planar configuration under the trace encoder `τ`, or `none` if the initial
     object is not a leaf, a mover is absent, or `remerge` finds the stack empty. -/
-def replay? (d : Derivation ι) (τ : SyntacticObject (ι := ι) → Option ι := TraceLabel.encoder) :
-    Option (Cfg (PlanarSyntacticObject (ι := ι))) :=
+def replay? (d : Derivation ι)
+    (τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι :=
+    TraceLabel.encoder) :
+    Option (Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))) :=
   d.initial.toPlanarLeaf?.bind fun p ↦ d.steps.foldlM (fun c step ↦ step.replay? c τ) ⟨p, []⟩
 
 /-- The derivation's planar object under the trace encoder `τ`; copies still on the stack are
     not part of it. -/
 def externalize? (d : Derivation ι)
-    (τ : SyntacticObject (ι := ι) → Option ι := TraceLabel.encoder) :
-    Option (PlanarSyntacticObject (ι := ι)) :=
+    (τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι :=
+        TraceLabel.encoder) :
+    Option (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)) :=
   (d.replay? τ).map (·.current)
 
 end Derivation
 
 /-! ### Faithfulness -/
 
-variable {τ : SyntacticObject (ι := ι) → Option ι}
+variable {τ : SyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι) → Option ι}
 
 namespace Derivation
 
@@ -90,10 +95,12 @@ theorem replay?_append_singleton (d : Derivation ι) (step : Step ι) :
   funext c
   cases step.replay? c τ <;> rfl
 
-theorem stack_eq_nil_of_replay? {d : Derivation ι} {c : Cfg (PlanarSyntacticObject (ι := ι))}
+theorem stack_eq_nil_of_replay? {d : Derivation ι}
+    {c : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))}
     (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c) : c.stack = [] := by
   obtain ⟨p, -, h⟩ := Option.bind_eq_some_iff.1 h
-  have key : ∀ (steps : List (Step ι)) (c₀ c : Cfg (PlanarSyntacticObject (ι := ι))),
+  have key : ∀ (steps : List (Step ι))
+      (c₀ c : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))),
       (∀ step ∈ steps, step.IsMerge) → c₀.stack = [] →
         steps.foldlM (fun c step ↦ step.replay? c τ) c₀ = some c → c.stack = [] := by
     intro steps
@@ -155,7 +162,8 @@ end Derivation
 
 end Map
 
-private theorem Step.map_of_replay? {c c' : Cfg (PlanarSyntacticObject (ι := ι))} {step : Step ι}
+private theorem Step.map_of_replay?
+    {c c' : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))} {step : Step ι}
     (h : step.replay? c τ = some c') :
     c'.map PlanarSyntacticObject.toSyntacticObject
       = step.run (c.map PlanarSyntacticObject.toSyntacticObject) τ := by
@@ -180,7 +188,8 @@ private theorem Step.map_of_replay? {c c' : Cfg (PlanarSyntacticObject (ι := ι
 
 /-- A successful replay forgets to the configuration of the derivation
 ([marcolli-chomsky-berwick-2025] Lemma 1.13.1). -/
-theorem Derivation.replay?_faithful (d : Derivation ι) {c : Cfg (PlanarSyntacticObject (ι := ι))}
+theorem Derivation.replay?_faithful (d : Derivation ι)
+    {c : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))}
     (h : d.replay? τ = some c) :
     c.map PlanarSyntacticObject.toSyntacticObject = d.run τ := by
   obtain ⟨p, hp, h⟩ := Option.bind_eq_some_iff.1 h
@@ -192,13 +201,15 @@ theorem Derivation.replay?_faithful (d : Derivation ι) {c : Cfg (PlanarSyntacti
 
 /-- A successful externalization forgets to the derived object, so the surface readouts are the
     word order of `final` itself. -/
-theorem Derivation.externalize?_faithful (d : Derivation ι) {p : PlanarSyntacticObject (ι := ι)}
+theorem Derivation.externalize?_faithful (d : Derivation ι)
+    {p : PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
     (h : d.externalize? τ = some p) : p.toSyntacticObject = d.final τ := by
   obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 h
   rw [Derivation.final, ← d.replay?_faithful hc, Cfg.map_current]
 
 theorem Derivation.externalize?_take_faithful (d : Derivation ι) (n : Nat)
-    {p : PlanarSyntacticObject (ι := ι)} (h : (d.take n).externalize? τ = some p) :
+    {p : PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι)}
+        (h : (d.take n).externalize? τ = some p) :
     p.toSyntacticObject = d.stageAt n τ :=
   externalize?_faithful (d.take n) h
 
@@ -207,7 +218,8 @@ theorem Derivation.externalize?_take_faithful (d : Derivation ι) (n : Nat)
 The replay succeeds exactly on the derivations whose steps apply, so validity is decided on it. -/
 
 /-- A step replays exactly when it applies to the configuration replayed so far. -/
-theorem Step.isSome_replay?_iff (step : Step ι) (c : Cfg (PlanarSyntacticObject (ι := ι))) :
+theorem Step.isSome_replay?_iff (step : Step ι)
+    (c : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))) :
     (step.replay? c τ).isSome ↔
       step.AppliesTo (c.map PlanarSyntacticObject.toSyntacticObject) := by
   obtain ⟨p, st⟩ := c
@@ -220,7 +232,8 @@ theorem Step.isSome_replay?_iff (step : Step ι) (c : Cfg (PlanarSyntacticObject
   | remerge side => cases st <;> simp [Step.replay?, Step.AppliesTo]
 
 theorem Step.isSome_foldlM_replay?_iff :
-    ∀ (steps : List (Step ι)) (c : Cfg (PlanarSyntacticObject (ι := ι))),
+    ∀ (steps : List (Step ι))
+        (c : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))),
       (steps.foldlM (fun c (step : Step ι) ↦ step.replay? c τ) c).isSome ↔
         Step.ApplyFrom τ steps (c.map PlanarSyntacticObject.toSyntacticObject)
   | [], _ => by simp [Step.ApplyFrom]
@@ -271,7 +284,8 @@ section Yield
 
 open PlanarSyntacticObject (toSyntacticObject)
 
-private theorem Step.yield_map_replay? {step : Step ι} {c c' : Cfg (PlanarSyntacticObject (ι := ι))}
+private theorem Step.yield_map_replay? {step : Step ι}
+    {c c' : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))}
     (hc : ((c.map toSyntacticObject).yield + (step.items.map SyntacticObject.yield).sum).Nodup)
     (h : step.replay? c τ = some c') :
     (c'.map toSyntacticObject).yield =
@@ -305,7 +319,8 @@ private theorem Step.yield_map_replay? {step : Step ι} {c c' : Cfg (PlanarSynta
       abel
 
 private theorem yield_map_foldlM_replay? :
-    ∀ {steps : List (Step ι)} {c c' : Cfg (PlanarSyntacticObject (ι := ι))},
+    ∀ {steps : List (Step ι)}
+        {c c' : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))},
       steps.foldlM (fun c step ↦ step.replay? c τ) c = some c' →
       ((c.map toSyntacticObject).yield +
         ((Step.itemsList steps).map SyntacticObject.yield).sum).Nodup →
@@ -321,7 +336,8 @@ private theorem yield_map_foldlM_replay? :
 
 /-- When no token is merged twice, a derivation pronounces each token it merges once, in its
 object or in a copy left on the stack, however many copies its movements leave. -/
-theorem Derivation.yield_replay? {d : Derivation ι} {c : Cfg (PlanarSyntacticObject (ι := ι))}
+theorem Derivation.yield_replay? {d : Derivation ι}
+    {c : Cfg (PlanarSyntacticObject (SyntacticObject.Leaf LexicalItem.Token ι))}
     (hd : d.lexTokens.Nodup) (h : d.replay? τ = some c) :
     (c.map toSyntacticObject).yield = d.lexTokens := by
   obtain ⟨p, hp, h⟩ := Option.bind_eq_some_iff.1 h

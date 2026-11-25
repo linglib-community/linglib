@@ -19,7 +19,8 @@ unit, so that a movement landing site realizes to its host unchanged.
 
 ## Main definitions
 
-* `realize`: the evaluation of a colored tree in `WithOne (SyntacticObject L)`.
+* `realize`: the evaluation of a colored tree in `WithOne (SyntacticObject (SyntacticObject.Leaf L
+L))`.
 
 ## Main statements
 
@@ -43,12 +44,15 @@ variable {L : Type}
 
 /-- What an input color contributes to the realization: an anchored leaf its syntactic object, a
 lexical item or a trace, and the empty-tree marker and bare grids the unit. -/
-def Color.object : Color (L ⊕ Option L) → WithOne (SyntacticObject L)
-  | .lex a _ => (FreeCommMagma.of (Leaf.sumEquiv.symm a) : SyntacticObject L)
+def Color.object : Color (L ⊕ Option L) → WithOne (SyntacticObject (SyntacticObject.Leaf L L))
+  | .lex a _ =>
+      (FreeCommMagma.of (Leaf.sumEquiv.symm a) : SyntacticObject (SyntacticObject.Leaf L L))
   | _ => 1
 
 @[simp] theorem Color.object_lex (a : L ⊕ Option L) (g : List PolarizedRole) :
-    (Color.lex a g).object = (FreeCommMagma.of (Leaf.sumEquiv.symm a) : SyntacticObject L) := rfl
+    (Color.lex a g).object =
+        (FreeCommMagma.of (Leaf.sumEquiv.symm a) : SyntacticObject (SyntacticObject.Leaf L L)) :=
+        rfl
 
 @[simp] theorem Color.object_free (g : List PolarizedRole) :
     (Color.free g : Color (L ⊕ Option L)).object = 1 := rfl
@@ -58,7 +62,8 @@ def Color.object : Color (L ⊕ Option L) → WithOne (SyntacticObject L)
 
 /-- The syntactic object a colored tree builds, or the unit: the pruned tree evaluated in the
 magma of syntactic objects with its unit adjoined. -/
-noncomputable def realize (x : Bud.Tree (Color (L ⊕ Option L))) : WithOne (SyntacticObject L) :=
+noncomputable def realize (x : Bud.Tree (Color (L ⊕ Option L))) : WithOne
+    (SyntacticObject (SyntacticObject.Leaf L L)) :=
   FreeMagma.lift Color.object x.prune
 
 @[simp] theorem realize_leaf (c : Color (L ⊕ Option L)) : realize (.leaf c) = c.object := rfl
