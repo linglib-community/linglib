@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Verb.Takes
 public import Linglib.Syntax.Voice.Basic
+public import Linglib.Syntax.Category.Verb.Deranking
 
 /-!
 # Romanian verbs and clause-typers
@@ -91,5 +92,10 @@ def a_face : Verb where
 theorem a_spera_takes_both :
     a_spera.Takes sa ∧ a_spera.Takes ca ∧ a_vrea.Takes sa ∧ ¬ a_vrea.Takes ca := by
   decide
+
+/-- The entry of *a vrea* has the value the map of [haspelmath-2013-want] gives Romanian. -/
+theorem lookup_wals_want :
+    Data.WALS.F124A.allData.lookup "rom" = a_vrea.wantComplementSubject := by
+  decide +kernel
 
 end Romanian.Verbs

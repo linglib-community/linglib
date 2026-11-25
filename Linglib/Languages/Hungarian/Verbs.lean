@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Verb.Deranking
 
 /-!
 # Hungarian verbs
@@ -127,5 +128,10 @@ def irigykedik : Verb where
 /-- The entries. -/
 def verbs : List Verb :=
   [lat, hall, almodik, gondol, hisz, aggaszt, mond, rikolt, morog, telefonal, irigykedik]
+
+/-- The entry of *mond* has the value the map of [cristofaro-2013] gives Hungarian. -/
+theorem lookup_wals_say :
+    Data.WALS.F128A.allData.lookup "hun" = mond.toVerb.utteranceComplement := by
+  decide +kernel
 
 end Hungarian.Verbs

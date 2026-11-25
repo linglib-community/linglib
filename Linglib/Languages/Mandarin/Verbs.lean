@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Verb.Deranking
 
 /-!
 # Mandarin verbs
@@ -169,5 +170,10 @@ def shefa : Verb := {
 def verbs : List Verb :=
   [qidai, danxin, xiwang, haipa, yiwei, renwei, zhidao, houhui, kaishi,
    xiang, rang, xiangxin, quan, bi, dasuan, shefa]
+
+/-- The entry of *xiǎng* has the value the map of [haspelmath-2013-want] gives Mandarin. -/
+theorem lookup_wals_want :
+    Data.WALS.F124A.allData.lookup "mnd" = xiang.wantComplementSubject := by
+  decide +kernel
 
 end Mandarin

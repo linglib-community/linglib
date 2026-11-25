@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Languages.English.Verbs.Implicative
+public import Linglib.Syntax.Category.Verb.Deranking
 
 /-!
 # English attitude verbs
@@ -374,5 +375,10 @@ def forget_rog : Verb where
   attitude := some (.doxastic .epistemic)
   factivity := some .full
   senseTag := .rogative
+
+/-- The entry of *want* has the value the map of [haspelmath-2013-want] gives English. -/
+theorem lookup_wals_want :
+    Data.WALS.F124A.allData.lookup "eng" = want.toVerb.wantComplementSubject := by
+  decide +kernel
 
 end English.Verbs

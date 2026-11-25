@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Verb.Deranking
 
 /-!
 # Cantonese complement-taking verbs
@@ -87,5 +88,10 @@ def geidak : Verb where
 
 /-- The verbs. -/
 def all : List Verb := [soeng, hyun, bik, giu, daasyun, seon, gong, geidak]
+
+/-- The entry of *soeng* has the value the map of [haspelmath-2013-want] gives Cantonese. -/
+theorem lookup_wals_want :
+    Data.WALS.F124A.allData.lookup "cnt" = soeng.wantComplementSubject := by
+  decide +kernel
 
 end Cantonese.Verbs

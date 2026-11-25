@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Languages.English.Verbs.Basic
+public import Linglib.Syntax.Category.Verb.Deranking
 
 /-!
 # English communication verbs
@@ -179,5 +180,10 @@ def talk : Verb where
   levin := some Levin1993.Index.talk
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.intransitive
+
+/-- The entry of *say* has the value the map of [cristofaro-2013] gives English. -/
+theorem lookup_wals_say :
+    Data.WALS.F128A.allData.lookup "eng" = say.toVerb.utteranceComplement := by
+  decide +kernel
 
 end English.Verbs

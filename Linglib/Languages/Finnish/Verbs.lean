@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Languages.Finnish.Morphotactics
+public import Linglib.Syntax.Category.Verb.Deranking
 
 /-!
 # Finnish verbs
@@ -392,6 +393,11 @@ theorem ofString?_form : ∀ v ∈ verbs, ofString? v.form = some (v.infinitive 
 /-- The endings of each entry's complement make a word. -/
 theorem wellFormed_complement : ∀ v ∈ verbs, ∀ ic ∈ v.complement,
     Nominal.WellFormed (ic.1.endings ic.2) := by
+  decide +kernel
+
+/-- The entry of *haluta* has the value the map of [haspelmath-2013-want] gives Finnish. -/
+theorem lookup_wals_want :
+    Data.WALS.F124A.allData.lookup "fin" = haluta.toVerb.wantComplementSubject := by
   decide +kernel
 
 end Finnish
