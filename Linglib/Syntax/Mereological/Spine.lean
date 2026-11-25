@@ -12,17 +12,26 @@ public import Mathlib.Data.List.ReduceOption
 /-!
 # The spine of an object in mereological syntax
 
-Parthood in the first dimension is the extended-projection complement relation, so the 1-parts of
-an object are the heads below it in its extended projection. The spine of an object `y` in a
-parthood structure `P` lists the 1-parts of `y` from the lowest upward, and then `y`. An object
-has at most one immediate 1-part, so these form a chain. The 2-parts of an object are not on its
-spine.
+In mereological syntax the first dimension of parthood is the extended-projection complement
+relation: in a finite clause `V` is the 1-part of `v`, `v` of `T`, and `T` of `C`. The spine of an
+object `y` in a parthood structure `P` lists the 1-parts of `y` from the lowest upward, and then
+`y`, so the spine of that `C` is `[V, v, T, C]`. An object has at most one immediate 1-part, so
+its 1-parts form a chain and the list is determined. A spine depends on parthood in the first
+dimension only: adding a 2-part, a specifier, changes no spine.
 
-The spine of `x` lies below the spine of `y` exactly when `x` is `y` or a 1-part of `y`, and a
-structure with more parts has larger spines. Licensed subjunction changes a spine in one case
-only: an object that is not yet a part, subjoined as the 1-part of `y`, puts `y` on top of its
-own spine. A part that subjoins changes no spine, and the spine of an object that is a part or has
-a 1-part is the same in every structure derived from there.
+The spine is how a parthood structure is read as a `Spine`, the list of heads a phrase projects.
+Conditions on projections are stated on that type, so a condition on spines of categories, such
+as being an extended projection, is stated of an object by taking the image of its spine under
+the map from objects to their categories. The spine of `x` lies below the spine of `y` exactly
+when `x` is `y` or a 1-part of `y`, so comparing spines in the extension order is comparing
+objects by parthood in the first dimension.
+
+Two facts say how Subjoin builds spines. An object that is not yet a part and subjoins as the
+1-part of `y` becomes the complement of `y`: the spine of `y` is then that object's spine with `y`
+on top. Every other licensed subjunction leaves every spine as it was. In particular a part that
+subjoins does so as a 2-part, so movement extends no projection. It follows that the spine of an
+object that is a part, or has a 1-part, is the same in every structure derived from there: a
+complement is complete before a head is built over it.
 
 ## Main definitions
 
@@ -37,6 +46,8 @@ a 1-part is the same in every structure derived from there.
 * `Parthood.Subjoins.spine_of_isPart`: a part that subjoins changes no spine.
 * `Parthood.Derives.spine_eq`: derivations do not change the spine of an object that is a part
   or has a 1-part.
+* `Parthood.spine_le_spine_iff`: the extension order on spines is parthood in the first
+  dimension.
 
 ## Implementation notes
 
@@ -160,14 +171,15 @@ def spineHom (y : α) : Parthood α →o Spine α := ⟨fun P ↦ P.spine y, spi
 
 /-! ### Subjoin -/
 
-/-- A 2-part is not on a spine. -/
+/-- Adding a 2-part, a specifier, changes no spine. -/
 theorem spine_addPart_two (P : Parthood α) (x y z : α) :
     (P.addPart .two x y).spine z = P.spine z :=
   spine_congr fun w _ ↦ by simp [part_addPart]
 
 namespace Subjoins
 
-/-- A part that subjoins changes no spine. -/
+/-- A part that subjoins changes no spine: it subjoins as a 2-part, so movement extends no
+projection. -/
 theorem spine_of_isPart (h : P.Subjoins x y Q) (hx : P.IsPart x) (z : α) :
     Q.spine z = P.spine z := by
   obtain ⟨n, hn, rfl⟩ := subjoin_eq_some_iff.1 h.subjoin_eq
@@ -192,7 +204,8 @@ theorem spine_of_ne (h : P.Subjoins x y Q) (hz : z ≠ y) : Q.spine z = P.spine 
     · exact h.extension hx (descendant_of_nPart hwz).isPart
   simp [part_addPart, hwy]
 
-/-- Subjoining `x` as the 1-part of `y` appends `y` to the spine of `x`. -/
+/-- Subjoining `x` as the 1-part of `y` appends `y` to the spine of `x`: `y` takes `x` as its
+complement. -/
 theorem spine_of_nextDim_one (h : P.Subjoins x y Q) (hP : P.Acyclic)
     (hn : P.nextDim y = some .one) : Q.spine y = (P.spine x).append [y] := by
   obtain ⟨n, hn', hQ⟩ := h.imm_iff
