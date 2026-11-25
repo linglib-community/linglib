@@ -191,7 +191,39 @@ def ex_29b_pl : Datum :=
     readings := []
     paperFeatures := [("construction", "biclausal"), ("agreement", "number")] }
 
-def all : List Datum := [ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_5c, ex_5d, ex_29a_pl, ex_29a_sg, ex_29b_sg, ex_29b_pl]
+def ex_35 : Datum :=
+  { id := "amato2025_35"
+    source := ⟨"rudin-1988", "(5a)"⟩
+    reportedIn := some ⟨"amato-2025", "(35)"⟩
+    language := "bulg1262"
+    primaryText := "Koj kogo vižda?"
+    glossedTokens := [("Koj", "who"), ("kogo", "whom"), ("vižda?", "sees")]
+    glossedWords := [⟨['K', 'o', 'j'], ['w', 'h', 'o'], [⟨['K', 'o', 'j'], ['w', 'h', 'o'], none⟩]⟩, ⟨['k', 'o', 'g', 'o'], ['w', 'h', 'o', 'm'], [⟨['k', 'o', 'g', 'o'], ['w', 'h', 'o', 'm'], none⟩]⟩, ⟨['v', 'i', 'ž', 'd', 'a', '?'], ['s', 'e', 'e', 's'], [⟨['v', 'i', 'ž', 'd', 'a'], ['s', 'e', 'e', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    spans := [⟨0, 1, "wh", some "koj"⟩, ⟨1, 1, "wh", some "kogo"⟩]
+    paperFeatures := [] }
+
+def ex_35_reverse : Datum :=
+  { id := "amato2025_35_reverse"
+    source := ⟨"rudin-1988", "(54b)"⟩
+    reportedIn := none
+    language := "bulg1262"
+    primaryText := "Kogo koj vižda?"
+    glossedTokens := [("Kogo", "whom"), ("koj", "who"), ("vižda?", "sees")]
+    glossedWords := [⟨['K', 'o', 'g', 'o'], ['w', 'h', 'o', 'm'], [⟨['K', 'o', 'g', 'o'], ['w', 'h', 'o', 'm'], none⟩]⟩, ⟨['k', 'o', 'j'], ['w', 'h', 'o'], [⟨['k', 'o', 'j'], ['w', 'h', 'o'], none⟩]⟩, ⟨['v', 'i', 'ž', 'd', 'a', '?'], ['s', 'e', 'e', 's'], [⟨['v', 'i', 'ž', 'd', 'a'], ['s', 'e', 'e', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    spans := [⟨0, 1, "wh", some "kogo"⟩, ⟨1, 1, "wh", some "koj"⟩]
+    paperFeatures := [] }
+
+def all : List Datum := [ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_5c, ex_5d, ex_29a_pl, ex_29a_sg, ex_29b_sg, ex_29b_pl, ex_35, ex_35_reverse]
 
 /-- The clause types whose perfect auxiliary the paper compares (§3.1). -/
 inductive Clause where
@@ -243,23 +275,29 @@ def agreement (e : Datum) : Option Agreement :=
 inductive SpanLabel where
   /-- auxiliary: the word holding the perfect auxiliary -/
   | auxiliary
+  /-- wh: a fronted wh-phrase -/
+  | wh
   deriving DecidableEq, Repr, Fintype
 
 /-- The label of a span, where it is a declared one. -/
 def label? (p : Datum.Span) : Option SpanLabel :=
-  List.lookup p.label [("auxiliary", .auxiliary)]
+  List.lookup p.label [("auxiliary", .auxiliary), ("wh", .wh)]
 
-/-- The perfect auxiliaries. -/
+/-- The perfect auxiliaries and the wh-words. -/
 inductive Lexeme where
   /-- avere: avere 'have' -/
   | avere
   /-- essere: essere 'be' -/
   | essere
+  /-- koj: Bulgarian koj 'who', nominative -/
+  | koj
+  /-- kogo: Bulgarian kogo 'whom', accusative -/
+  | kogo
   deriving DecidableEq, Repr, Fintype
 
 /-- The lexeme a span is a form of, where it names a declared one. -/
 def lexeme? (p : Datum.Span) : Option Lexeme :=
-  p.lexeme.bind (List.lookup · [("avere", .avere), ("essere", .essere)])
+  p.lexeme.bind (List.lookup · [("avere", .avere), ("essere", .essere), ("koj", .koj), ("kogo", .kogo)])
 
 /-- The examples of the file. -/
 inductive Example where
@@ -274,12 +312,14 @@ inductive Example where
   | ex_29a_sg
   | ex_29b_sg
   | ex_29b_pl
+  | ex_35
+  | ex_35_reverse
   deriving DecidableEq, Repr, Fintype
 
 /-- Every example of the file, in its order. -/
 def Example.all : List Example :=
   [.ex_4a, .ex_4b, .ex_4c, .ex_5a, .ex_5b, .ex_5c, .ex_5d, .ex_29a_pl, .ex_29a_sg, .ex_29b_sg,
-    .ex_29b_pl]
+    .ex_29b_pl, .ex_35, .ex_35_reverse]
 
 /-- The row of an example. -/
 def Example.datum : Example → Datum
@@ -294,6 +334,8 @@ def Example.datum : Example → Datum
   | .ex_29a_sg => _root_.Amato2025.Examples.ex_29a_sg
   | .ex_29b_sg => _root_.Amato2025.Examples.ex_29b_sg
   | .ex_29b_pl => _root_.Amato2025.Examples.ex_29b_pl
+  | .ex_35 => _root_.Amato2025.Examples.ex_35
+  | .ex_35_reverse => _root_.Amato2025.Examples.ex_35_reverse
 
 theorem Example.map_datum_all :
     Example.all.map Example.datum = _root_.Amato2025.Examples.all := rfl
@@ -311,6 +353,8 @@ def Example.clause : Example → Option Clause
   | .ex_29a_sg => none
   | .ex_29b_sg => none
   | .ex_29b_pl => none
+  | .ex_35 => none
+  | .ex_35_reverse => none
 
 theorem Example.clause_datum :
     ∀ x : Example, _root_.Amato2025.Examples.clause x.datum = x.clause := by
@@ -329,6 +373,8 @@ def Example.construction : Example → Option Construction
   | .ex_29a_sg => some .monoclausal
   | .ex_29b_sg => some .biclausal
   | .ex_29b_pl => some .biclausal
+  | .ex_35 => none
+  | .ex_35_reverse => none
 
 theorem Example.construction_datum :
     ∀ x : Example, _root_.Amato2025.Examples.construction x.datum = x.construction := by
@@ -347,6 +393,8 @@ def Example.agreement : Example → Option Agreement
   | .ex_29a_sg => some .default
   | .ex_29b_sg => some .default
   | .ex_29b_pl => some .number
+  | .ex_35 => none
+  | .ex_35_reverse => none
 
 theorem Example.agreement_datum :
     ∀ x : Example, _root_.Amato2025.Examples.agreement x.datum = x.agreement := by
@@ -365,6 +413,8 @@ def Example.labelledLexemes : Example → List (SpanLabel × Lexeme)
   | .ex_29a_sg => []
   | .ex_29b_sg => []
   | .ex_29b_pl => []
+  | .ex_35 => [(.wh, .koj), (.wh, .kogo)]
+  | .ex_35_reverse => [(.wh, .kogo), (.wh, .koj)]
 
 /-- The lexemes the spans of the example labelled `l` name, in order. -/
 def Example.lexemes (x : Example) (l : SpanLabel) : List Lexeme :=

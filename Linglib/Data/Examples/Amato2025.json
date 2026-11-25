@@ -84,12 +84,17 @@
           "name": "auxiliary",
           "label": "auxiliary",
           "doc": "the word holding the perfect auxiliary"
+        },
+        {
+          "name": "wh",
+          "label": "wh",
+          "doc": "a fronted wh-phrase"
         }
       ]
     },
     "lexemes": {
       "type": "Lexeme",
-      "doc": "The perfect auxiliaries.",
+      "doc": "The perfect auxiliaries and the wh-words.",
       "levels": [
         {
           "name": "avere",
@@ -100,6 +105,16 @@
           "name": "essere",
           "label": "essere",
           "doc": "essere 'be'"
+        },
+        {
+          "name": "koj",
+          "label": "koj",
+          "doc": "Bulgarian koj 'who', nominative"
+        },
+        {
+          "name": "kogo",
+          "label": "kogo",
+          "doc": "Bulgarian kogo 'whom', accusative"
         }
       ]
     }
@@ -372,6 +387,51 @@
         ["agreement", "number"]
       ],
       "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_35",
+      "source": {"bibkey": "rudin-1988", "paperLabel": "(5a)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(35)"},
+      "language": "bulg1262",
+      "primaryText": "Koj kogo vižda?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Koj", "who"], ["kogo", "whom"], ["vižda?", "sees"]
+      ],
+      "translation": "Who sees whom?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "wh", "lexeme": "koj"},
+        {"start": 1, "label": "wh", "lexeme": "kogo"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_35_reverse",
+      "source": {"bibkey": "rudin-1988", "paperLabel": "(54b)"},
+      "language": "bulg1262",
+      "primaryText": "Kogo koj vižda?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Kogo", "whom"], ["koj", "who"], ["vižda?", "sees"]
+      ],
+      "translation": "Who sees whom?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "wh", "lexeme": "kogo"},
+        {"start": 1, "label": "wh", "lexeme": "koj"}
+      ],
+      "paperFeatures": [],
+      "comment": "The source prints the words without a gloss line; the glosses are those of its (5a).",
       "verified": "page-image"
     }
   ]

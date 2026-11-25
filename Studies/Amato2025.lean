@@ -44,9 +44,10 @@ alignment with a secundative agreement alignment, [barany-2024]'s gap. Across an
 dative, number agreement with the nominative is derived under one of the two orders of T's probes
 within a clause and under neither across two, whatever the number of the dative, and the forms
 of the verb in the examples of [ussery-2009] and [holmberg-hroarsdottir-2003] are acceptable
-exactly when some order derives them. The remaining derivations are person agreement with the
-object in the Lak perfective and with the subject in the present, subject agreement in Spanish
-VOS clauses, the order of Bulgarian multiple wh-fronting, and Hindi-Urdu agreement, where in a
+exactly when some order derives them. In Bulgarian multiple wh-fronting the order of the
+wh-words that fronting derives is the acceptable one of [rudin-1988]'s two. The remaining
+derivations are person agreement with the object in the Lak perfective and with the subject in
+the present, subject agreement in Spanish VOS clauses, and Hindi-Urdu agreement, where in a
 clause with an argument unmarked for case T has the person of the controller that
 [bobaljik-2008]'s accessibility of unmarked case picks.
 
@@ -74,8 +75,8 @@ with principles of maximized matching are not formalized.
 * [holmberg-hroarsdottir-2003] report that in the construction of (29b) the agreeing form is
   possible beside the default one when the dative is plural. The derivation gives the default
   form for either number of the dative.
-* The Ariellese paradigm of [dalessandro-roberts-2010] and the Lak, Spanish, Bulgarian and
-  Hindi-Urdu examples are not yet rows of the data.
+* The Ariellese paradigm of [dalessandro-roberts-2010] and the Lak, Spanish and Hindi-Urdu
+  examples are not yet rows of the data.
 
 ## References
 
@@ -84,6 +85,7 @@ with principles of maximized matching are not formalized.
 * [bobaljik-2008]
 * [dalessandro-roberts-2010]
 * [holmberg-hroarsdottir-2003]
+* [rudin-1988]
 * [ussery-2009]
 -/
 
@@ -447,15 +449,16 @@ def ofExample : Examples.Clause → Clause
   | .indirectReflexive => ⟨.reflexive, none, true⟩
   | .impersonal => ⟨.transitive, some .impersonal, false⟩
 
-/-- The auxiliary a lexeme of the examples is. -/
-def Examples.Lexeme.auxiliary : Examples.Lexeme → PerfectAuxiliary
-  | .avere => .have
-  | .essere => .be
+/-- The auxiliary a lexeme of the examples is, if it is one. -/
+def Examples.Lexeme.auxiliary? : Examples.Lexeme → Option PerfectAuxiliary
+  | .avere => some .have
+  | .essere => some .be
+  | _ => none
 
 /-- Each of the examples (4) and (5), all with a third person subject, has the auxiliary the
 derivation of its clause type inserts. -/
 theorem auxiliary_example (x : Examples.Example) :
-    (x.lexemes .auxiliary).map (·.auxiliary) =
+    (x.lexemes .auxiliary).filterMap (·.auxiliary?) =
       (x.clause.map fun c ↦
         standardItalianAux (derive standardItalian (ofExample c) .third)).toList := by
   revert x; decide
@@ -685,6 +688,20 @@ def bulgarianDomain : List Head := accessible IsPhase [.whSbj, .t, .whObj, .v, .
 -- (35)
 theorem bulgarian_order : whFronting bulgarianInitial .c bulgarianDomain = [.whObj, .whSbj] := by
   decide
+
+/-- The wh-phrase of (36) a lexeme of the examples is, if it is one. -/
+def Examples.Lexeme.head? : Examples.Lexeme → Option Head
+  | .koj => some .whSbj
+  | .kogo => some .whObj
+  | _ => none
+
+-- (35): an order of the wh-words is acceptable exactly when it is the order fronting derives,
+-- each mover landing above the ones before it
+theorem bulgarian_example (x : Examples.Example) (hx : x.lexemes .wh ≠ []) :
+    (x.lexemes .wh).filterMap (·.head?) =
+        (whFronting bulgarianInitial .c bulgarianDomain).reverse ↔
+      x.datum.judgment = .acceptable := by
+  revert x; decide
 
 /-- Without Multiple Agree the wh-probe's first goal is the subject, the order minimality
 alone predicts. -/
