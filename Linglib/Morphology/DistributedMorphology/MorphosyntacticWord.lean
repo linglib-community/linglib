@@ -77,21 +77,16 @@ theorem length_hosts (ws : List (MorphosyntacticWord H)) :
     (hosts ws).length = (ws.flatMap heads).length := by
   simp [hosts, List.length_flatMap]
 
-theorem mem_map_site_of_mem_hosts {ws : List (MorphosyntacticWord H)} {h : H}
-    (hh : h ∈ hosts ws) : h ∈ ws.map (·.site) := by
-  simp only [hosts, List.mem_flatMap, List.mem_replicate] at hh
-  obtain ⟨w, hw, -, rfl⟩ := hh
-  exact List.mem_map_of_mem hw
+theorem hosts_eq_flatMap_replicate (ws : List (MorphosyntacticWord H)) :
+    hosts ws = (ws.map fun w ↦ (w.heads.length, w.site)).flatMap fun p ↦
+      List.replicate p.1 p.2 := by
+  simp [hosts, List.flatMap_map]
 
 /-- Words on a spine with distinct sites obey the Head Movement Constraint. -/
 theorem hmc_hosts {ws : List (MorphosyntacticWord H)}
     (h : (ws.map (·.site)).Nodup) : HMC.Holds (hosts ws) := by
-  induction ws with
-  | nil => exact fun i ↦ i.elim0
-  | cons w ws ih =>
-    rw [List.map_cons, List.nodup_cons] at h
-    exact List.isContiguous_get_replicate_append _ (ih h.2) fun hm ↦
-      h.1 (mem_map_site_of_mem_hosts hm)
+  rw [hosts_eq_flatMap_replicate]
+  exact HMC.holds_flatMap_replicate (by simpa [List.map_map, Function.comp_def] using h)
 
 end MorphosyntacticWord
 
