@@ -5,6 +5,7 @@ public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Data.Set.Finite.Powerset
 public import Linglib.Core.Order.Minimals
 public import Linglib.Logic.Nonmonotonic.PremiseOrdering
+public import Mathlib.Order.SymmDiff
 
 /-!
 # Minimal-world exhaustification
@@ -26,6 +27,8 @@ the exhaustifiers by innocent exclusion and innocent inclusion are computed from
 * `Exhaustification.ofLowerSets_image_union_le_iff`: under the premises that some individuals lack a
   property and others have it, a world is at least as good as another when fewer of the first and
   more of the second have the property in it.
+* `Exhaustification.image_notMem_union_image_mem_symmDiff`: those premises are unchanged when the
+  property is flipped within a set `N` and the two sets of individuals are exchanged on `N`.
 
 ## References
 
@@ -165,6 +168,33 @@ theorem ofLowerSets_image_union_le_iff :
   simp only [Preorder.ofLowerSets_le_iff, Set.mem_union]
   exact ⟨fun h ↦ ⟨fun s hs ↦ h s (.inl hs), fun s hs ↦ h s (.inr hs)⟩,
     fun h s hs ↦ hs.elim (h.1 s) (h.2 s)⟩
+
+open Set symmDiff in
+/-- The premises that the individuals of `pos` lack a property and those of `neg` have it are
+unchanged when the property is flipped within `N` and `pos` and `neg` are exchanged on `N`. -/
+theorem image_notMem_union_image_mem_symmDiff (N : Set E) :
+    (fun x ↦ {u | x ∉ N ∆ P u}) '' (pos \ N ∪ neg ∩ N) ∪
+        (fun x ↦ {u | x ∈ N ∆ P u}) '' (neg \ N ∪ pos ∩ N) =
+      (fun x ↦ {u | x ∉ P u}) '' pos ∪ (fun x ↦ {u | x ∈ P u}) '' neg := by
+  have hin {x : E} (hx : x ∈ N) (u : W) : x ∈ N ∆ P u ↔ x ∉ P u := by
+    simp only [mem_symmDiff]; tauto
+  have hout {x : E} (hx : x ∉ N) (u : W) : x ∈ N ∆ P u ↔ x ∈ P u := by
+    simp only [mem_symmDiff]; tauto
+  ext s
+  simp only [mem_union, mem_image, mem_sdiff, mem_inter_iff]
+  constructor
+  · rintro (⟨x, ⟨hp, hx⟩ | ⟨hn, hx⟩, rfl⟩ | ⟨x, ⟨hn, hx⟩ | ⟨hp, hx⟩, rfl⟩)
+    · exact .inl ⟨x, hp, by simp only [hout hx]⟩
+    · exact .inr ⟨x, hn, by simp only [hin hx, not_not]⟩
+    · exact .inr ⟨x, hn, by simp only [hout hx]⟩
+    · exact .inl ⟨x, hp, by simp only [hin hx]⟩
+  · rintro (⟨x, hp, rfl⟩ | ⟨x, hn, rfl⟩)
+    · by_cases hx : x ∈ N
+      · exact .inr ⟨x, .inr ⟨hp, hx⟩, by simp only [hin hx]⟩
+      · exact .inl ⟨x, .inl ⟨hp, hx⟩, by simp only [hout hx]⟩
+    · by_cases hx : x ∈ N
+      · exact .inl ⟨x, .inr ⟨hn, hx⟩, by simp only [hin hx, not_not]⟩
+      · exact .inr ⟨x, .inl ⟨hn, hx⟩, by simp only [hout hx]⟩
 
 end Property
 
