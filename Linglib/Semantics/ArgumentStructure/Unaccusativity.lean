@@ -14,6 +14,11 @@ of the eventuality
 [is external unless it also undergoes one](##Verb.isUnergative_iff_of_voiceType_eq_none). The two
 classifications are [disjoint](##Verb.IsUnergative.not_isUnaccusative).
 
+The passive makes an object the subject and demotes the external argument, so it applies to a
+verb on a frame whose first complement is a noun phrase or a finite clause when the verb is not
+unaccusative, unless the verb's grammar lists the frame as an exception. An unaccusative verb
+has no passive, and neither has a frame without a complement.
+
 ## Main definitions
 
 * `Verb.Valency.HasCausativeAlternation`: some participant is the object of a plain transitive
@@ -22,6 +27,7 @@ classifications are [disjoint](##Verb.IsUnergative.not_isUnaccusative).
 * `Verb.UndergoesDirectedChange`, `Verb.HasImmediateCause`: the conditions of the Directed
   Change and the Immediate Cause Linking Rules, read off an entry.
 * `Verb.IsUnaccusative`, `Verb.IsUnergative`: the two classifications.
+* `Verb.Passivizes`: the passive applies to a verb on a frame.
 
 ## Implementation notes
 
@@ -43,6 +49,11 @@ classifications are [disjoint](##Verb.IsUnergative.not_isUnaccusative).
   is not unaccusative, and French *rougir* 'redden' alternates and takes *avoir*. A grammar
   that relates the two states its rule against the auxiliaries an entry records
   (`Verb.perfectAuxiliaries`).
+* `Verb.Passivizes` is the passive that promotes a direct object. It says nothing of a frame
+  whose first complement is an infinitive or an adpositional phrase, where languages and verbs
+  differ, nor of the impersonal passive of an intransitive verb; on such a frame it does not
+  hold. Where a language also forms a passive with a reflexive marker, as Italian does with
+  *si* and Romanian with *se*, the predicate is about the passive with the auxiliary.
 * The test does not separate the causative alternation from the causative pairs of verbs of
   emission, *The postman buzzed the doorbell* beside *The doorbell buzzed*, which Levin and
   Rappaport Hovav take to pair two unrelated meanings (§3.2.5).
@@ -163,5 +174,35 @@ theorem IsUnergative.not_isUnaccusative (h : v.IsUnergative) : ¬ v.IsUnaccusati
   | none =>
     exact fun hu ↦ ((isUnergative_iff_of_voiceType_eq_none hv).1 h).2.1
       ((isUnaccusative_iff_of_voiceType_eq_none hv).1 hu)
+
+/-! ### The passive -/
+
+/-- The passive applies to `v` on its frame `fr`: the first complement of the frame is a noun
+phrase or a finite clause, which the passive makes the subject, the verb is not unaccusative, so
+that it has an external argument to demote, and the verb's grammar does not list the frame as an
+exception. -/
+def Passivizes (v : Verb) (fr : ArgumentFrame) : Prop :=
+  fr ∈ v.valency.frames ∧ (∃ p ∈ fr.complements.head?, p.IsNominal ∨ p.IsFinite) ∧
+    ¬ v.IsUnaccusative ∧ fr ∉ v.noPassive
+
+instance (v : Verb) : DecidablePred v.Passivizes := fun _ ↦
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
+
+variable {fr : ArgumentFrame}
+
+theorem Passivizes.mem_frames (h : v.Passivizes fr) : fr ∈ v.valency.frames := h.1
+
+theorem Passivizes.not_isUnaccusative (h : v.Passivizes fr) : ¬ v.IsUnaccusative := h.2.2.1
+
+theorem Passivizes.notMem_noPassive (h : v.Passivizes fr) : fr ∉ v.noPassive := h.2.2.2
+
+/-- An unaccusative verb has no passive. -/
+theorem IsUnaccusative.not_passivizes (h : v.IsUnaccusative) : ¬ v.Passivizes fr :=
+  fun hp ↦ hp.not_isUnaccusative h
+
+/-- A frame without a complement has no passive. -/
+theorem not_passivizes_of_complements_eq_nil (h : fr.complements = []) : ¬ v.Passivizes fr := by
+  rintro ⟨-, ⟨p, hp, -⟩, -⟩
+  simp [h] at hp
 
 end Verb

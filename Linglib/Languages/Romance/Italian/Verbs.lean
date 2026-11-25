@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
@@ -22,6 +23,12 @@ the coding of each complement. Fusco and Sgrizzi's analysis of the *di* and *a* 
 read reciprocally without *si* are ordinary entries here, and Palmieri's list of them is
 `Studies/Palmieri2024.lean`.
 
+The perfect is formed with the auxiliary *avere* 'have' or *essere* 'be' and the past participle
+(`Italian.Verbs.auxiliary`). *Avere* is the auxiliary of every transitive verb. A verb formed with
+a clitic reflexive pronoun takes *essere*, in its reflexive, reciprocal, indefinite personal and
+passive uses alike (`Italian.Verbs.reflexiveAuxiliary`): *Si è tagliata* 'she cut herself', but
+*Ha disprezzato se stessa* 'she despised herself' with the stressed pronoun.
+
 An intransitive verb forms its perfect with *essere* when it expresses a change of location,
 state or condition, the continuation of a state or existence in a state, and with *avere* when an
 activity is in the foreground, whether or not its subject controls it
@@ -33,13 +40,27 @@ endpoint, *È corso al campo sportivo in un'ora* 'he ran to the sports ground in
 ## Implementation notes
 
 The mood and complementizer facts of the attitude and causative entries are Grano's and Fusco
-and Sgrizzi's; the attitude classifications and the non-passivizability of *volere*, *sperare*
-and *intendere* are carried over from the earlier entries and are not in those sources.
+and Sgrizzi's. Grano treats *volere* 'want', *sperare* 'hope' and *intendere* 'intend' as desire
+predicates, the last with a causative component the other two lack; the entries give all three
+the preferential attitude of [anand-hacquard-2013]'s classification and do not record that
+difference.
+
+The passive is possible with every transitive verb but a few that denote a relation, *avere*
+among them, and with a finite complement clause as object it is nearly always possible
+([renzi-1988] ch. I §4.2). A sentence with a restructuring infinitive passivizes the infinitive
+and not the governing verb, *Questa parete deve essere ridipinta* and not **è dovuta
+ridipingere*, and the modals *volere*, *potere*, *dovere* and *sapere* are restructuring verbs.
+`Verb.Passivizes` states the rule on a verb and a frame, and the one exception these entries
+record is *avere* on its transitive frame (`Verb.noPassive`). The rule is silent on a frame whose
+complement is an infinitive, so it gives *volere* a passive on its finite clause and none on its
+infinitive, and *intendere*, which takes only an infinitive, none.
 
 ## References
 
 * [fusco-sgrizzi-2026]
 * [grano-2024]
+* [anand-hacquard-2013]
+* [renzi-1988]
 * [palmieri-2024]
 * [maiden-robustelli-2007]
 * [sorace-2000]
@@ -108,12 +129,12 @@ def pensare : Verb where
   clauseTypers := [di, a]
 
 /-- *volere* 'want' takes a *che* clause in the subjunctive, the indicative being marginal for
-some speakers, and a bare infinitive under subject control. -/
+some speakers, and a bare infinitive under subject control, with which it is a modal verb and
+does not itself take the passive form ([renzi-1988] ch. I §4.2.3). -/
 def volere : Verb where
   morphs := [.root "volere"]
   valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
   clauseTypers := [che]
@@ -123,7 +144,6 @@ some speakers. -/
 def sperare : Verb where
   morphs := [.root "sperare"]
   valency := .ofFrame ArgumentFrame.subjunctiveClause
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
   clauseTypers := [che]
@@ -133,7 +153,6 @@ in either mood; the periphrasis *avere intenzione di* takes the infinitive with 
 def intendere : Verb where
   morphs := [.root "intendere"]
   valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -207,6 +226,54 @@ def trovare : Verb where
 def vedere : Verb where
   morphs := [.root "vedere"]
   valency := .ofFrame ArgumentFrame.np
+
+/-! ### The auxiliaries of the perfect -/
+
+/-- *avere* 'have', the auxiliary of the perfect of transitive verbs and of intransitive verbs
+of activity. As a transitive verb it denotes a relation and has no passive ([renzi-1988] ch. I
+§4.2.1). -/
+def avere : Verb where
+  morphs := [.root "avere"]
+  valency := .ofFrame ArgumentFrame.np
+  perfectAuxiliaries := {.have}
+  noPassive := [.np]
+
+/-- *essere* 'be', the auxiliary of the perfect of verbs of change and of state and of verbs
+with a clitic reflexive pronoun. -/
+def essere : Verb where
+  morphs := [.root "essere"]
+  valency := .ofFrame ArgumentFrame.intransitive [some {.independentExistence}]
+  perfectAuxiliaries := {.be}
+
+/-- The verb that forms the perfect with each auxiliary. -/
+def auxiliary : PerfectAuxiliary → Verb
+  | .have => avere
+  | .be => essere
+
+/-- A verb formed with a clitic reflexive pronoun takes *essere*, in its reflexive, reciprocal,
+indefinite personal and passive uses ([maiden-robustelli-2007] §14.20). -/
+def reflexiveAuxiliary : PerfectAuxiliary := .be
+
+/-! ### Transitive verbs and verbs with a prepositional object -/
+
+/-- *lavare* 'wash' is transitive. -/
+def lavare : Verb where
+  morphs := [.root "lavare"]
+  valency := .ofFrame ArgumentFrame.np
+  perfectAuxiliaries := {.have}
+
+/-- *mangiare* 'eat' is transitive. -/
+def mangiare : Verb where
+  morphs := [.root "mangiare"]
+  valency := .ofFrame ArgumentFrame.np
+  perfectAuxiliaries := {.have}
+
+/-- *rispondere* 'answer', an activity whose subject controls it, with the person answered in
+a phrase with *a*. -/
+def rispondere : Verb where
+  morphs := [.root "rispondere"]
+  valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
+  perfectAuxiliaries := {.have}
 
 /-! ### Monadic verbs
 
@@ -342,13 +409,15 @@ def allVerbs : List Verb :=
   [convincere, pensare, volere, sperare, intendere, fare,
    abbracciare, baciare, coccolare, conoscere, consultare, frequentare, incontrare, incrociare,
    lasciare, sposare, trovare, vedere,
+   avere, essere, lavare, mangiare, rispondere,
    venire, arrivare, cadere, salire, marcire, fiorire, rimanere, durare, esistere, bastare,
    sembrare, appartenere, lavorare, chiacchierare, correre, saltare, nuotare, tossire, squillare]
 
 /-! ### The perfect auxiliary -/
 
-/-- The auxiliary of the perfect of `v` on the frame `fr`, with a path phrase `p` if there is one
-([maiden-robustelli-2007] §14.20), is *avere* for a transitive verb. For an intransitive one it is
+/-- The auxiliary of the perfect of `v` on the frame `fr` without a clitic reflexive pronoun, with
+a path phrase `p` if there is one ([maiden-robustelli-2007] §14.20), is *avere* for a transitive
+verb. For an intransitive one it is
 *essere* when the verb expresses a change of location, the continuation of a state or a change
 along a scale, when the entry records a subject that neither acts volitionally nor causes, as the
 subject of a change of state or of a state is, and when a phrase the verb selects brings it to an
@@ -373,5 +442,18 @@ example :
     perfectAuxiliary correre .intransitive (some { mode := .directional .approximative }) = .have ∧
     perfectAuxiliary nuotare .intransitive (some (.ofCase .ill)) = .have := by
   decide
+
+/-- The passive is possible with a transitive verb, with the causative *fare*, and with a finite
+clause as object, and not with *avere*, with an unaccusative verb, or on the infinitive of
+*volere* ([renzi-1988] ch. I §4.2). -/
+example :
+    lavare.toVerb.Passivizes .np ∧
+      fare.toVerb.Passivizes ArgumentFrame.infinitival.withObject ∧
+      sperare.toVerb.Passivizes ArgumentFrame.subjunctiveClause ∧
+      volere.toVerb.Passivizes ArgumentFrame.subjunctiveClause ∧
+      ¬ avere.toVerb.Passivizes .np ∧ ¬ volere.toVerb.Passivizes ArgumentFrame.infinitival ∧
+      ∀ fr, ¬ venire.toVerb.Passivizes fr :=
+  ⟨by decide, by decide, by decide, by decide, by decide, by decide,
+    fun _ ↦ (by decide : venire.toVerb.IsUnaccusative).not_passivizes⟩
 
 end Italian.Verbs

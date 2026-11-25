@@ -31,7 +31,6 @@ def stop : Verb where
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
     (controllers := [some 0])
-  passivizable := false
   phasal := some .cessation
 
 /-- "quit" — phasal cessation -/
@@ -44,7 +43,6 @@ def quit : Verb where
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
     (controllers := [some 0])
-  passivizable := false
   phasal := some .cessation
 
 /-- "start" — phasal inception, presupposes activity wasn't happening -/
@@ -56,7 +54,6 @@ def start : Verb where
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
     (controllers := [some 0])
-  passivizable := false
   phasal := some .inception
 
 /-- "begin" — phasal inception, raising into its subject before an infinitive (*the bridge began to
@@ -73,7 +70,6 @@ def begin_ : Verb where
      (ArgumentFrame.intransitive, [some 1]),
      (toInfinitive, [none, some 1])]
     (controls := [some .external, none, none, some .external])
-  passivizable := false
   phasal := some .inception
 
 /-- "continue" — phasal continuation, presupposes activity was happening -/
@@ -85,7 +81,6 @@ def continue_ : Verb where
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
     (controllers := [some 0])
-  passivizable := false
   phasal := some .continuation
 
 /-- "keep" — phasal continuation -/
@@ -98,7 +93,6 @@ def keep : Verb where
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
     (controllers := [some 0])
-  passivizable := false
   phasal := some .continuation
 
 end English.Verbs

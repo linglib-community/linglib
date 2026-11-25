@@ -1,53 +1,83 @@
 module
 
 public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Data.Examples.Bobaljik2008
 public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Syntax.Case.Dependent
+public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Languages.HindiUrdu.Case
+public import Studies.Marantz1991
 
 /-!
 # Bobaljik (2008): Where's Phi? Agreement as a Postsyntactic Operation
 
-This file formalizes the claim that the finite verb agrees with the highest accessible noun
-phrase in its domain, where accessibility is a matter of morphological case. The categories of
-morphological case are those of Marantz's realization hierarchy, and they are ordered for
-agreement the other way round: unmarked case is more accessible than dependent case, and
-dependent case more accessible than lexical case. A language chooses how far down this order
-its verb can see. Since morphological case is assigned after the syntax, agreement, which
+[bobaljik-2008] proposes that the controller of agreement on the finite verb is the highest
+accessible noun phrase in the domain of the verb, and that a noun phrase is accessible by its
+morphological case. The categories of morphological case are those of [marantz-1991]'s
+realization hierarchy, ordered for agreement the other way round: unmarked case is more
+accessible than dependent case, and dependent case more accessible than lexical case. A language
+whose verb agrees fixes a category `t`, and a noun phrase is accessible when the category of its
+case is at least `t`. Since morphological case is assigned after the syntax, agreement, which
 feeds on it, is postsyntactic as well.
 
-Stated over case categories, Moravcsik's hierarchy of agreement controllers holds of
-ergative and accusative languages alike. It also explains a gap among the splits between
-case and agreement. An ergative case system gives absolutive agreement when only unmarked case
-is accessible and subject agreement when dependent case is accessible too, as in Nepali, while
-an accusative case system gives subject agreement at every setting. Ergative agreement over
-accusative case cannot be derived.
+For noun phrases `xs`, listed from the highest down, with their cases `s`, we define
+`controller t xs s` as the search of the probe relativized to accessibility. A noun phrase is
+the controller exactly when it is accessible and no noun phrase above it is, so an inaccessible
+noun phrase is invisible to the search and does not intervene; and a language that makes more
+categories accessible keeps a controller wherever it had one. The sets of categories a language
+can make accessible are the nonempty sets closed upward in the order. The agreement of
+[marantz-1991], which goes to the subject unless a lexical head has marked it and then to the
+object, is the controller where dependent case is accessible as well as unmarked case, for every
+clause and all rules with an unmarked case; where only unmarked case is accessible the two part,
+as on the ergative subject of a transitive clause.
 
-## Main declarations
-
-* `CaseCategory`: the categories of morphological case, in their order of accessibility.
-* `controller`: the highest accessible noun phrase of a domain.
-* `controls`: whether an argument of a clause with the given alignment controls agreement.
+With case assigned by the dependent case rules, an accusative case system gives subject
+agreement whatever is accessible, and an ergative one gives absolutive agreement when only
+unmarked case is accessible and subject agreement when dependent case is accessible too, so
+ergative agreement over accusative case is not derived. Below a subject with lexical case the
+object controls agreement unless lexical case is itself accessible, as with the dative subjects
+of Icelandic: the verb agrees with the nominative object in
+[zaenen-maling-thrainsson-1985]'s passive, and [harley-1995]'s form agreeing with the dative is
+ungrammatical. In Hindi-Urdu, where only
+unmarked case is accessible, the object controls agreement under an ergative or a dative
+subject, the subject where it is unmarked, and no argument where the subject is ergative and the
+object bears *ko*, and each of [woolford-1999]'s examples shows the agreement of its pattern. In
+Nepali, where dependent case is accessible too, the subject controls agreement whether it is
+nominative or ergative, and the object under a dative subject; the forms of the verb in
+[bickel-yadava-2000]'s examples are acceptable exactly when they agree with that controller.
 
 ## Implementation notes
 
-Case is assigned by the dependent case rules of `Syntax/Case/Dependent.lean`. Case valued by
-agreement with a functional head, which those rules also provide for, counts as unmarked.
+The domain of the verb is the list of noun phrases given; the conditions on domains that
+long-distance agreement shows are not formalized. Case is assigned by the rules of
+`Syntax/Case/Dependent.lean`, and case valued by agreement with a functional head, which those
+rules also provide for, counts as unmarked.
+
+The rules of a Hindi-Urdu clause are read off the markers of `HindiUrdu.coreMarker`: the high
+dependent case where the subject takes *ne*, and the low one where the object takes *ko*. With
+*ko* a lexical case the rules would leave the subject of a perfective clause without a competitor
+and so without its ergative. In a language where only unmarked case is accessible the choice
+between the two categories for *ko* does not otherwise affect the controller. The examples are
+recorded with [woolford-1999]'s glosses, which give the object's *ko* as a dative.
 
 ## References
 
 * [bobaljik-2008]
 * [marantz-1991]
+* [woolford-1999]
+* [bickel-yadava-2000]
+* [zaenen-maling-thrainsson-1985]
+* [harley-1995]
 -/
 
 @[expose] public section
 
 namespace Bobaljik2008
 
-open Case DependentCase
+open Case DependentCase Minimalist
 
-/-- The categories of morphological case, in their order of accessibility for agreement, with
-lexical case the least accessible and unmarked case the most. -/
+/-- (13): The categories of morphological case, in their order of accessibility for agreement,
+with lexical case the least accessible and unmarked case the most. -/
 inductive CaseCategory where
   | lexical
   | dependent
@@ -66,46 +96,87 @@ def ofMechanism : Mechanism → CaseCategory
 
 end CaseCategory
 
-variable {α : Type*}
+/-- The sets of categories that a language can make accessible, the categories at or above one
+of them, are the nonempty sets closed upward. -/
+theorem exists_eq_Ici_iff {s : Set CaseCategory} :
+    (∃ t, s = Set.Ici t) ↔ IsUpperSet s ∧ s.Nonempty := by
+  refine ⟨?_, fun ⟨hs, hne⟩ ↦ ?_⟩
+  · rintro ⟨t, rfl⟩
+    exact ⟨IsUpperSet.Ici t, t, Set.self_mem_Ici⟩
+  · obtain ⟨t, ht, hmin⟩ := wellFounded_lt.has_min s hne
+    exact ⟨t, Set.Subset.antisymm (fun x hx ↦ not_lt.1 (hmin x hx)) (hs.Ici_subset ht)⟩
 
-/-- In a language whose least accessible category is `t`, the categories at or above `t` are
-accessible, so the accessible categories are closed upward. -/
-theorem isUpperSet_accessible (t : CaseCategory) : IsUpperSet {c | t ≤ c} := IsUpperSet.Ici t
+-- (17): no language agrees with ergatives and not with absolutives
+example : ¬ ∃ t, ({.dependent} : Set CaseCategory) = Set.Ici t := fun h ↦ by
+  have := (exists_eq_Ici_iff.1 h).1 (show CaseCategory.dependent ≤ .unmarked by decide)
+    (Set.mem_singleton _)
+  simp at this
 
-/-- The controller of agreement is the highest noun phrase of the domain whose case is
-accessible. Noun phrases whose case is not accessible are invisible and do not intervene. -/
-def controller (t : CaseCategory) (xs : List α) (s : α → FeatureSlot (Flat (Case × Mechanism))) :
-    Option α :=
-  xs.find? fun x ↦ (s x).value?.any fun v ↦ t ≤ .ofMechanism v.2
+/-! ### The controller of agreement -/
 
-/-- The controller of agreement in a clause of the given alignment on the arguments `xs`, listed
-from the highest down, `lex` giving their lexical cases. -/
-def clauseController (a : Alignment.AlignmentType) (t : CaseCategory)
-    (lex : ArgumentRole → Option Case) (xs : List ArgumentRole) : Option ArgumentRole :=
-  controller t xs ((Rules.ofAlignment a).assign lex xs)
+variable {α : Type*} (t : CaseCategory) (s : α → FeatureSlot (Flat (Case × Mechanism)))
+
+/-- A noun phrase is accessible, in a language whose least accessible category is `t`, when the
+category of its case is at least `t`. -/
+def Accessible (x : α) : Prop := ∃ v ∈ (s x).value?, t ≤ .ofMechanism v.2
+
+instance : DecidablePred (Accessible t s) := fun _ ↦ inferInstanceAs (Decidable (∃ v ∈ _, _))
+
+variable {t s} in
+theorem Accessible.mono {t' : CaseCategory} (h : t' ≤ t) {x : α} (hx : Accessible t s x) :
+    Accessible t' s x :=
+  let ⟨v, hv, hle⟩ := hx
+  ⟨v, hv, h.trans hle⟩
+
+/-- (3): The controller of agreement is the highest accessible noun phrase of the domain `xs`,
+which lists its noun phrases from the highest down. -/
+def controller (xs : List α) : Option α := (Probe.relativized (Accessible t s)).search xs
+
+variable {t s} {xs : List α} {x : α}
+
+/-- A noun phrase controls agreement exactly when it is accessible and no noun phrase above it
+is: inaccessible noun phrases are invisible and do not intervene. -/
+theorem controller_eq_some_iff :
+    controller t s xs = some x ↔
+      Accessible t s x ∧ ∃ l₁ l₂, xs = l₁ ++ x :: l₂ ∧ ∀ y ∈ l₁, ¬ Accessible t s y :=
+  Probe.search_eq_some_iff_closest
+
+-- agreement is default exactly when no noun phrase is accessible
+theorem controller_eq_none_iff : controller t s xs = none ↔ ∀ x ∈ xs, ¬ Accessible t s x :=
+  Probe.search_eq_none_iff
+
+-- a language that makes more categories accessible keeps a controller where it had one
+theorem controller_isSome_mono {t' : CaseCategory} (h : t' ≤ t)
+    (hx : (controller t s xs).isSome) : (controller t' s xs).isSome :=
+  Probe.search_isSome_mono (fun _ _ ha ↦ Accessible.mono h ha) hx
+
+/-- The controller of agreement in a clause on the arguments `xs`, listed from the highest down
+and assigned case by the rules `r`, `lex` giving their lexical cases. -/
+def clauseController (r : Rules) (t : CaseCategory) (lex : ArgumentRole → Option Case)
+    (xs : List ArgumentRole) : Option ArgumentRole :=
+  controller t (r.assign lex xs) xs
 
 /-- Whether the argument bearing role `r` controls agreement in some clause of the given
 alignment, in a language whose least accessible category is `t`, the arguments of a clause
 listed from the external one down. -/
 def controls (a : Alignment.AlignmentType) (t : CaseCategory) (r : ArgumentRole) : Bool :=
   decide (∃ v : ArgumentStructure.Valency,
-    clauseController a t (fun _ ↦ none) ([.external, .internal].filterMap v.role) = some r)
+    clauseController (.ofAlignment a) t (fun _ ↦ none)
+      ([.external, .internal].filterMap v.role) = some r)
 
 /-! ### The predicted agreement alignments -/
 
-/-- An accusative case system gives subject agreement at every setting. -/
+-- (27): an accusative case system gives subject agreement at every setting
 theorem isAccusative_controls_accusative (t : CaseCategory) :
     Alignment.IsAccusative (controls .accusative t) := by
   cases t <;> decide
 
-/-- An ergative case system gives absolutive agreement when only unmarked case is accessible,
-as in Hindi. -/
+-- (27): an ergative case system gives absolutive agreement when only unmarked case is accessible
 theorem isErgative_controls_ergative_unmarked :
     Alignment.IsErgative (controls .ergative .unmarked) := by
   decide
 
-/-- An ergative case system gives subject agreement when dependent case is accessible, as in
-Nepali. -/
+-- (27): an ergative case system gives subject agreement when dependent case is accessible
 theorem isAccusative_controls_ergative_dependent :
     Alignment.IsAccusative (controls .ergative .dependent) := by
   decide
@@ -117,17 +188,140 @@ theorem not_isErgative_controls_accusative (t : CaseCategory) :
 
 /-! ### Case against grammatical function -/
 
-/-- Below a subject with lexical case, as the dative subjects of Icelandic, the verb agrees
-with the nominative object unless lexical case is itself accessible. -/
-theorem controller_quirky (c : Case) (t : CaseCategory) (ht : t ≠ .lexical) :
-    clauseController .accusative t (fun r ↦ if r = .A then some c else none) [.A, .P] =
+-- below a subject with lexical case, as the dative subjects of Icelandic, the object controls
+-- agreement unless lexical case is itself accessible
+theorem clauseController_lexical_subject (a : Alignment.AlignmentType) (c : Case)
+    (t : CaseCategory) (ht : t ≠ .lexical) :
+    clauseController (.ofAlignment a) t (fun r ↦ if r = .A then some c else none) [.A, .P] =
       some .P := by
-  cases t <;> first | exact absurd rfl ht | rfl
+  cases a <;> cases t <;> first | exact absurd rfl ht | rfl
 
-theorem hindi_controller :
-    clauseController (HindiUrdu.alignment .perfective) .unmarked (fun _ ↦ none) [.A, .P] = some .P ∧
-    clauseController (HindiUrdu.alignment .imperfective) .unmarked (fun _ ↦ none) [.A, .P] =
-      some .A := by
+/-- The role of the argument whose features a form of the verb shows, if there is one. -/
+def Examples.Controller.role? : Examples.Controller → Option ArgumentRole
+  | .subject => some .A
+  | .object => some .P
+  | .default => none
+
+-- (4d), (15): with a dative subject over a nominative object, a form of the Icelandic verb is
+-- acceptable exactly when it agrees with the object
+theorem icelandic_example : ∀ x ∈ [Examples.Example.ex_4d, .ex_15], ∀ r ∈ x.controller,
+    clauseController (.ofAlignment .accusative) .unmarked
+        (fun r ↦ if r = .A then some .dat else none) [.A, .P] = r.role? ↔
+      x.datum.judgment = .acceptable := by
   decide
+
+/-! ### The agreement of Marantz (1991) -/
+
+/-- The agreement of [marantz-1991], to the subject unless a lexical head has marked it and then
+to the object, is the controller among the chains of a clause where dependent case is accessible
+as well as unmarked case. -/
+theorem _root_.Marantz1991.Clause.agr_eq_controller (c : Marantz1991.Clause) (r : Rules)
+    (v : Bool) (hr : r.unmarked.isSome) :
+    c.agr = controller .dependent (r.assign c.lexicalCase (c.chains v)) (c.chains false) := by
+  obtain ⟨th, sc, ob⟩ := c
+  obtain ⟨hi, lo, un⟩ := r
+  obtain ⟨u, rfl⟩ := Option.isSome_iff_exists.1 hr
+  have hp := fun lex ↦ Rules.assign_pair ⟨hi, lo, some u⟩ lex (x := Marantz1991.Position.subject)
+    (y := .object) (by decide)
+  have h₁ : CaseCategory.dependent ≤ .unmarked := by decide
+  have h₂ : ¬ CaseCategory.dependent ≤ .lexical := by decide
+  rcases ob with (_ | l) | _ | _ <;> cases sc <;> cases v <;> cases hi <;> cases lo <;>
+    simp [Marantz1991.Clause.agr, Marantz1991.Clause.chains, controller, Probe.search, Accessible,
+      Marantz1991.Clause.lexicalCase, Rules.assign_singleton, Rules.alone, (hp _).1, (hp _).2,
+      CaseCategory.ofMechanism, h₁, h₂]
+
+-- where only unmarked case is accessible, the controller of a transitive clause with an ergative
+-- subject is the object, and the agreement of [marantz-1991] goes to the subject
+example :
+    controller .unmarked
+        ((Rules.ofAlignment .ergative).assign Marantz1991.Clause.transitive.lexicalCase
+          (Marantz1991.Clause.transitive.chains false))
+        (Marantz1991.Clause.transitive.chains false) = some .object ∧
+      Marantz1991.Clause.transitive.agr = some .subject := by
+  decide
+
+/-! ### Hindi-Urdu -/
+
+/-- The dependent case rules of a Hindi-Urdu clause, read off its markers: the ergative on the
+higher noun phrase where the subject takes *ne*, and the accusative on the lower one where the
+object takes *ko*. -/
+def hindiRules (a : Aspect.Perfectivity) (markedObject : Bool) : Rules where
+  high := (HindiUrdu.coreMarker a markedObject .A).map fun _ ↦ .erg
+  low := (HindiUrdu.coreMarker a markedObject .P).map fun _ ↦ .acc
+  unmarked := some .nom
+
+-- over an unmarked object in the perfective, the rules are those of [marantz-1991]'s Hindi under
+-- the names it gives the cases
+theorem hindiRules_perfective :
+    hindiRules .perfective false =
+      { Marantz1991.hindi.rules with
+        unmarked := Marantz1991.hindi.rules.unmarked.map Marantz1991.hindi.spellOut } := by
+  decide
+
+/-- The controller of agreement in a Hindi-Urdu clause with a subject and an object, where only
+unmarked case is accessible. -/
+def hindiController (a : Aspect.Perfectivity) (markedObject : Bool)
+    (lex : ArgumentRole → Option Case := fun _ ↦ none) : Option ArgumentRole :=
+  clauseController (hindiRules a markedObject) .unmarked lex [.A, .P]
+
+/-- (21): In the perfective the unmarked object controls agreement under the ergative subject,
+and no argument does where the object bears *ko*; in the imperfective the unmarked subject does,
+whether or not the object is unmarked too. -/
+theorem hindiController_eq (a : Aspect.Perfectivity) (markedObject : Bool) :
+    hindiController a markedObject =
+      match a, markedObject with
+      | .perfective, false => some .P
+      | .perfective, true => none
+      | .imperfective, _ => some .A := by
+  cases a <;> cases markedObject <;> rfl
+
+-- (21e): under a dative subject the unmarked object controls agreement
+theorem hindiController_dative_subject (a : Aspect.Perfectivity) :
+    hindiController a false (fun r ↦ if r = .A then some .dat else none) = some .P := by
+  cases a <;> rfl
+
+/-- The controller of agreement in each pattern of (21). -/
+def Examples.Pattern.controller : Examples.Pattern → Option ArgumentRole
+  | .ergativeSubject => hindiController .perfective false
+  | .ergativeSubjectMarkedObject => hindiController .perfective true
+  | .unmarkedArguments => hindiController .imperfective false
+  | .markedObject => hindiController .imperfective true
+  | .dativeSubject =>
+    hindiController .imperfective false fun r ↦ if r = .A then some .dat else none
+
+-- (22): each example shows agreement with the controller of its pattern, or the default form
+theorem hindi_example (x : Examples.Example) :
+    ∀ p ∈ x.pattern, ∀ r ∈ x.controller, p.controller = r.role? := by
+  revert x; decide
+
+/-! ### Nepali -/
+
+/-- The case rules of each Nepali clause of the examples: the ergative on the higher noun phrase
+in the past, and no dependent case in the nonpast. -/
+def Examples.Clause.rules : Examples.Clause → Rules
+  | .ergativeSubject => .ofAlignment .ergative
+  | _ => .ofAlignment .neutral
+
+/-- The lexical cases of each clause: the dative of a dative subject. -/
+def Examples.Clause.lexicalCase : Examples.Clause → ArgumentRole → Option Case
+  | .dativeSubject, .A => some .dat
+  | _, _ => none
+
+/-- (25): The controller of agreement in a Nepali clause, where dependent case is accessible as
+well as unmarked case. -/
+def nepaliController (c : Examples.Clause) : Option ArgumentRole :=
+  clauseController c.rules .dependent c.lexicalCase [.A, .P]
+
+-- (24), (26): a form of the verb is acceptable exactly when it agrees with the controller
+theorem nepali_example (x : Examples.Example) :
+    ∀ c ∈ x.clause, ∀ r ∈ x.controller,
+      nepaliController c = r.role? ↔ x.datum.judgment = .acceptable := by
+  revert x; decide
+
+-- (25): with only unmarked case accessible, as in Hindi-Urdu, the object would control agreement
+-- under the ergative subject
+example :
+    clauseController (Examples.Clause.rules .ergativeSubject) .unmarked (fun _ ↦ none) [.A, .P] =
+      some .P := by decide
 
 end Bobaljik2008

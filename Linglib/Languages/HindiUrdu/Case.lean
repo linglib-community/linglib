@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Semantics.Aspect.Viewpoint.Defs
+public import Linglib.Languages.HindiUrdu.Adpositions
 
 /-!
 # Hindi-Urdu case
@@ -23,7 +24,9 @@ as `HindiUrdu.Case`.
 
 The alignment is split by aspect, as Blake describes it: in the perfective the transitive subject
 takes *ne* and the object the direct form, while elsewhere the subject is direct and the object
-takes *ko* when it is marked at all.
+takes *ko* when it is marked at all. The two markings are independent: a primary object bears
+*ko* or is uninflected in either aspect, by its animacy and definiteness, so a perfective clause
+may have *ne* on its subject and *ko* on its object (Mohanan §4.3).
 
 ## Main definitions
 
@@ -32,6 +35,8 @@ takes *ko* when it is marked at all.
 * `HindiUrdu.Noun`, `HindiUrdu.nouns`: Spencer's two nouns with a vocative, by the form of each
   case in each number.
 * `HindiUrdu.alignment`: the alignment of case marking by aspect.
+* `HindiUrdu.coreMarker`: the postposition on each core argument, by aspect and by whether the
+  object is one that takes *ko*.
 
 ## Main results
 
@@ -128,10 +133,32 @@ theorem singular_larkii_eq (c : Case) : larkii.singular c = "laRkii" := by
 
 /-! ### Alignment -/
 
-/-- The alignment is ergative in the perfective, where the transitive subject takes *ne*, and
-accusative otherwise. -/
+/-- The split by aspect as it is usually stated: ergative in the perfective, where the transitive
+subject takes *ne*, and accusative otherwise. `classifies_coreMarker` gives the alignment of the
+markers in each clause type. -/
 def alignment : Aspect.Perfectivity → Alignment.AlignmentType
   | .perfective => .ergative
   | .imperfective => .accusative
+
+/-- The postposition on a core argument, by the aspect of the clause and by whether its object is
+one that takes *ko*: the transitive subject takes *ne* in the perfective and a marked object *ko*
+in either aspect, and the other arguments are in the direct form ([mohanan-1994] §4.3). -/
+def coreMarker (a : Aspect.Perfectivity) (markedObject : Bool) : ArgumentRole → Option Adposition
+  | .A =>
+    match a with
+    | .perfective => some Adpositions.ne
+    | .imperfective => none
+  | .P => if markedObject then some Adpositions.ko else none
+  | _ => none
+
+/-- The markers are ergative in the perfective and neutral in the imperfective over an unmarked
+object, and tripartite in the perfective and accusative in the imperfective over a marked one.
+The split of `alignment` is the first and the last of the four. -/
+theorem classifies_coreMarker :
+    (alignment .perfective).Classifies (coreMarker .perfective false) ∧
+      Alignment.AlignmentType.tripartite.Classifies (coreMarker .perfective true) ∧
+      Alignment.AlignmentType.neutral.Classifies (coreMarker .imperfective false) ∧
+      (alignment .imperfective).Classifies (coreMarker .imperfective true) := by
+  decide
 
 end HindiUrdu

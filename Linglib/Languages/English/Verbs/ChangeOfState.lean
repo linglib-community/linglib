@@ -382,7 +382,6 @@ def rust : Verb where
   morphs := [.root "rust"]
   levin := some Levin1993.Index.rust
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
   scaleDimension := some .corrosion
 
 /-- *increase* is a degree achievement on an open scale, with no maximum quantity. Levin lists it

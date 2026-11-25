@@ -19,6 +19,7 @@ records only the coding of the clause it introduces.
 ## References
 
 * [grano-2024]
+* [pana-dindelegan-2013]
 -/
 
 @[expose] public section
@@ -52,7 +53,9 @@ def saClause : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .sub
 def a_vrea : Verb where
   morphs := [.free "a", .root "vrea"]
   valency := .ofFrame saClause
-  passivizable := false
+  -- with a clause it takes the passive with *se* and not the one with *fi* 'be'
+  -- ([pana-dindelegan-2013] §3.4.1.1)
+  noPassive := [saClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -60,7 +63,8 @@ def a_vrea : Verb where
 def a_spera : Verb where
   morphs := [.free "a", .root "spera"]
   valency := .ofFrames [saClause, ArgumentFrame.finiteClause]
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [saClause, ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -68,7 +72,8 @@ def a_spera : Verb where
 def a_intentiona : Verb where
   morphs := [.free "a", .root "intenționa"]
   valency := .ofFrame saClause
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [saClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 

@@ -369,7 +369,6 @@ def bark : Verb where
   morphs := [.root "bark"]
   levin := some Levin1993.Index.bark
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-! ### Body (§ 40–41) -/
 
@@ -378,14 +377,12 @@ def breathe : Verb where
   morphs := [.root "breathe"]
   levin := some Levin1993.Index.breathe
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "laugh" — Levin 40.2 Nonverbal Expression verbs. -/
 def laugh : Verb where
   morphs := [.root "laugh"]
   levin := some Levin1993.Index.laugh
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "cough" — Levin 40.1 Body Process verbs.
     Semelfactive: single involuntary event, no result state ([smith-1997] §2.4.3). -/
@@ -393,7 +390,6 @@ def cough : Verb where
   morphs := [.root "cough"]
   levin := some Levin1993.Index.cough
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "hiccup" — Levin 40.1 Body Process verbs.
     Semelfactive: single involuntary body event ([smith-1997] §2.4.3). -/
@@ -401,7 +397,6 @@ def hiccup : Verb where
   morphs := [.root "hiccup"]
   levin := some Levin1993.Index.hiccup
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "blink" — a semelfactive, a single instantaneous eye movement by [smith-1997]'s
     characterization of the class. Levin lists *blink (eye)* among the wink verbs (§40.3.1)
@@ -412,7 +407,8 @@ def blink : Verb where
   levin := some Levin1993.Index.blink
   valency := .ofFrames
     [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.objectDrop (some .bodyPart)]
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.np]
   levinExcluded := {LevinClass.lightEmission}
 
 /-- "knock" — Levin 18.1 Hit verbs (intransitive use).
@@ -428,7 +424,11 @@ def knock : Verb where
      (ArgumentFrame.np_pp (some Adpositions.on)
          (some (.spatial (some .surface) .place)), [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive :=
+    [ArgumentFrame.np,
+     ArgumentFrame.np_pp (some Adpositions.on) (some (.spatial (some .surface) .place)),
+     ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental)]
 
 /-- "tap" — Levin 18.1 Hit verbs (intransitive use).
     Semelfactive: single light percussive contact event ([smith-1997] §2.4.3). -/
@@ -442,7 +442,11 @@ def tap : Verb where
      (ArgumentFrame.np_pp (some Adpositions.on)
          (some (.spatial (some .surface) .place)), [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive :=
+    [ArgumentFrame.np,
+     ArgumentFrame.np_pp (some Adpositions.on) (some (.spatial (some .surface) .place)),
+     ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental)]
 
 /-- "flash" — Levin 43.1 Light Emission verbs.
     Semelfactive: single instantaneous light event, by [smith-1997]'s
@@ -455,14 +459,12 @@ def flash : Verb where
      (ArgumentFrame.np, [1, 0]),
      (ArgumentFrame.spatialPP, [0, 2]),
      (ArgumentFrame.pp (some Adpositions.with_), [2, 0])]
-  passivizable := false
 
 /-- "flinch" — Levin 40.5 Flinch verbs. Involuntary reaction. -/
 def flinch : Verb where
   morphs := [.root "flinch"]
   levin := some Levin1993.Index.flinch
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "dress" — Levin 41.1 Dress verbs. -/
 def dress : Verb where
@@ -492,7 +494,6 @@ def glow : Verb where
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.spatialPP, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.with_), [1, 0])]
-  passivizable := false
 
 /-- "buzz" — Levin 43.2 Sound Emission verbs. -/
 def buzz : Verb where
@@ -503,7 +504,6 @@ def buzz : Verb where
      (ArgumentFrame.np, [1, 0]),
      (ArgumentFrame.spatialPP, [0, 2]),
      (ArgumentFrame.pp (some Adpositions.with_), [2, 0])]
-  passivizable := false
 
 /-- "rumble" — Levin 43.2 Sound Emission verbs. -/
 def rumble : Verb where
@@ -514,7 +514,6 @@ def rumble : Verb where
      (ArgumentFrame.np, [1, 0]),
      (ArgumentFrame.spatialPP, [0, 2]),
      (ArgumentFrame.pp (some Adpositions.with_), [2, 0])]
-  passivizable := false
 
 /-- "bleed" — Levin 43.4 Substance Emission verbs. -/
 def bleed : Verb where
@@ -525,7 +524,6 @@ def bleed : Verb where
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
      (ArgumentFrame.pp (some Adpositions.from_) (some (.spatial (some .exterior) .source)), [0, 1])]
-  passivizable := false
 
 /-! ### Existence, Appearance, Position (§ 47–50) -/
 
@@ -535,7 +533,6 @@ def exist : Verb where
   levin := some Levin1993.Index.exist
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
-  passivizable := false
 
 /-- *appear*, an unaccusative verb of appearance (48.1.1). -/
 def appear : Verb where
@@ -543,7 +540,6 @@ def appear : Verb where
   levin := some Levin1993.Index.appear
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
-  passivizable := false
 
 /-- *die*, an unaccusative verb of disappearance (48.2), the change that *kill* causes. -/
 def die : Verb where
@@ -551,14 +547,12 @@ def die : Verb where
   levin := some Levin1993.Index.die
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
-  passivizable := false
 
 /-- "fidget" — Levin 49 Body-Internal Motion verbs. -/
 def fidget : Verb where
   morphs := [.root "fidget"]
   levin := some Levin1993.Index.fidget
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "wiggle" — Levin 47.3 Modes of Being Involving Motion and 49 Body-Internal Motion verbs;
     transitive with a body part or small object ("wiggle a tooth"). -/
@@ -572,7 +566,6 @@ def wriggle : Verb where
   morphs := [.root "wriggle"]
   levin := some Levin1993.Index.wriggle
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "sit" — Levin 50 Assume Position verbs. Stative. -/
 def sit : Verb where
@@ -580,7 +573,6 @@ def sit : Verb where
   levin := some Levin1993.Index.sit
   past := "sat"
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "stand" — Levin 50 Assume Position verbs. Stative. -/
 def stand : Verb where
@@ -588,7 +580,6 @@ def stand : Verb where
   levin := some Levin1993.Index.stand
   past := "stood"
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-! ### Motion (§ 51) -/
 
@@ -601,7 +592,6 @@ def walk : Verb where
      (ArgumentFrame.np, [1, 0]),
      (ArgumentFrame.spatialPP, [0, 2])]
     [some activitySubjectProfile, none, none]
-  passivizable := false
   direction := some .place
 
 /-- *swim*, an agentive verb of manner of motion, whose causative takes a directional phrase as
@@ -616,7 +606,8 @@ def swim : Verb where
      (ArgumentFrame.np_spatialPP, [1, 0, 2]),
      (ArgumentFrame.spatialPP, [0, 2])]
     [some activitySubjectProfile, none, none]
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.np_spatialPP]
   direction := some .place
 
 /-- "fly" — Levin 51.4 Vehicle Motion verbs. -/
@@ -626,7 +617,6 @@ def fly : Verb where
   past := "flew"
   pastPart := "flown"
   valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.np, [1, 0])]
-  passivizable := false
 
 /-- "roll" — Levin 51.3.1 Roll verbs (manner of motion). -/
 def roll : Verb where
@@ -636,7 +626,6 @@ def roll : Verb where
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
      (ArgumentFrame.spatialPP, [0, 2])]
-  passivizable := false
   direction := some .place
 
 /-- "float" — Levin 51.3.1 Roll verbs (manner of motion). -/
@@ -646,7 +635,6 @@ def float : Verb where
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0])]
-  passivizable := false
 
 /-! ### Avoid, Linger, Rush (§ 52–53) -/
 
@@ -661,7 +649,6 @@ def linger : Verb where
   morphs := [.root "linger"]
   levin := some Levin1993.Index.linger
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "rush" — Levin 53.2 Rush verbs. -/
 def rush : Verb where
@@ -670,7 +657,6 @@ def rush : Verb where
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0])]
-  passivizable := false
 
 /-! ### Weather (§ 57) -/
 
@@ -679,6 +665,5 @@ def rain : Verb where
   morphs := [.root "rain"]
   levin := some Levin1993.Index.rain
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 end English.Verbs

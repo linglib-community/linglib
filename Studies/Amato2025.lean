@@ -1,43 +1,112 @@
 module
 
+public import Mathlib.Data.List.Permutation
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Amato2025
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Syntax.Minimalist.Feature.Valuation
-public import Linglib.Syntax.Minimalist.Probe.Agree
-public import Linglib.Syntax.Minimalist.Verbal.Voice
-public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+public import Linglib.Languages.Romance.Italian.Verbs
+public import Studies.Bobaljik2008
 
 /-!
-# Amato (2025): Nested Agree and apparent minimality violations
+# Amato (2025): Nested Agree
 
-Amato derives apparent minimality violations from *Nested Agree*
-(Definition (1)): the probes on a head are extrinsically ordered, and a later
-probe must exploit the dependency an earlier one established, so its search
-starts from the earlier probe's goal — everything the head c-commands above
-that goal lies outside its domain, and a structurally closer matching goal is
-skipped with minimality respected at every step. `run` is that engine on the
-substrate's `FeatureState.probe` and `FeatureState.value`: a probe's domain is the
-c-command-ordered list of accessible heads (the paper's own notation in (6),
-(8), (32), (34)), read off a projection spine by `domain`, which stops at a
-phase head's complement (PIC); a valued probe (a case assigner, `[∗Infl:perf∗]`)
-matches only an unvalued slot and values its goal, an unvalued probe matches
-any specified slot and is valued by an active goal (fn. 23, defective
-intervention). Since valuation only adds features, [a run extends the state](##le_run).
+The probes on a head are discharged one at a time, in an order fixed for the head. In
+[amato-2025]'s *Nested Agree* a probe exploits the dependency its predecessor on the same head
+established: when the predecessor targeted the goal `β`, the search of the next probe starts at
+`β`, and what the head c-commands above `β` is outside its domain.
 
-The paper's derivations then run as stated: Standard Italian auxiliary
-selection ((9)–(20), over the substrate's `TransitivityClass` and impersonal/passive
-`Voice.Flavor`) under the Vocabulary Items (14), the Ariellese and Tufillese orderings and entries
-(22)–(24), the ditransitive case/agreement alignments (25)–(28) with
-Bárány's typological gap, Icelandic DAT-NOM (29a/b), Lak perfective
-agreement (32), Spanish VOS (34), Bulgarian multiple wh-fronting (36), and
-Hindi-Urdu (38)–(40). Out of scope: Merge and binding inside v's cycle (the SCC
-ordering of (16)–(17) enters as v's input), participle agreement (§4.3.2), and
-the Appendix's comparison with MME, Multitasking and ECoMPS.
+We take the domain of a head to be the list of the heads it c-commands, in c-command order. Two
+operations bound a search within it. The Phase Impenetrability Condition bounds it from below:
+`accessible phase dom` is the prefix of `dom` down to and including the first phase head. Nested
+Agree bounds it from above: `nestedDomain dom (some β) = dom.dropWhile (· ≠ β)` is the suffix of
+`dom` at `β`, and `nestedDomain dom none = dom`. One operation of a head `α`,
+`nestedAgree act α dom prev t s`, is Agree of the probe of `α` for the feature `t` over the domain
+nested under the goal `prev` of the previous operation, and `run act α dom ts s` discharges the
+probes `ts` in order, each nested under the goal of the one before. The run is stated for any
+assignment `D` of a domain to the goal of the previous operation, `runWith act α D`, so that the
+accounts Nested Agree is set against are runs of the same engine: under minimality alone every
+probe searches the whole domain, `D = fun _ ↦ dom`, and a probe that starts again after finding
+no goal searches `backtrackingDomain dom prev = nestedDomain dom prev ++ dom`.
+
+Every operation targets the closest matching goal of its own domain. A probe whose predecessor
+targeted a goal that matches it targets that goal, whatever matches higher up, and never a goal
+above it; when the predecessor's goal does not match, the search goes on below it; and a probe
+whose predecessor found no goal searches the whole domain. In a domain without repetitions the
+domains of successive operations are nested suffixes. Valuation only adds features, so a run
+extends the state.
+
+The derivations of the paper are runs of this engine over its trees. In Standard Italian the person
+probe of Perf, nested under its Infl probe, targets v across the subject. The auxiliary is the
+exponent the Subset Principle inserts at Perf from a Vocabulary of two items, *avere* for a Perf
+whose person probe has a value and *essere* elsewhere, and it is the one the transitivity class of
+the clause selects: *avere* where v has copied a person value from a full object, *essere* with a
+defective v, a reflexive object, direct or indirect, the impersonal *si* and the passive. The
+examples of the paper have the auxiliary their derivations insert, and it is the one the reference
+grammar's rules give the verb of each (`Italian.Verbs.perfectAuxiliary`,
+`Italian.Verbs.reflexiveAuxiliary`). Under minimality alone the same Vocabulary inserts *avere* in
+every clause, and with a search that starts again it inserts *avere* with unaccusatives. With the
+two probes of Perf in the other order the auxiliary follows the person of the subject, as in
+Ariellese; and a Vocabulary that derives the auxiliaries of Tufillese under the order of Standard
+Italian has an item with a context, whatever its items.
+
+In ditransitive clauses, for either order of the case probe and the ϕ-probe of v and whether or not
+Appl assigns dative, an indirective agreement alignment comes with an indirective case alignment and
+a secundative case alignment with a secundative agreement alignment, [barany-2024]'s gap.
+
+Across an Icelandic dative, number agreement with the nominative is derived under one of the two
+orders of T's probes within a clause and under neither across two, whatever the number of the
+dative, and the forms of the verb in the examples of [ussery-2009] and [holmberg-hroarsdottir-2003]
+are acceptable exactly when some order derives them; with the dative left out of T's domain, as it
+is where datives are invisible to agreement ([bobaljik-2008]), both orders derive agreement.
+
+In Bulgarian multiple wh-fronting the order of the wh-words that fronting derives is the acceptable
+one of [rudin-1988]'s two. The remaining derivations are person agreement with the object in the Lak
+perfective and with the subject in the present, subject agreement in Spanish VOS clauses, and
+Hindi-Urdu agreement, where T has the person of the controller that [bobaljik-2008]'s accessibility
+of unmarked case picks, and no value where both arguments are marked, as the verb shows in
+[mahajan-1990]'s examples.
+
+## Implementation notes
+
+A probe's domain is a list, the notation of the paper's linear diagrams, and the lists of the
+trees are written out; they are not computed from syntactic objects. A probe whose predecessor
+found no goal searches the whole domain, also when a probe before that one found a goal: the
+paper's definition relates consecutive operations only. A valued probe, such as a case assigner,
+matches a goal that bears the feature unvalued, and an unvalued probe matches any goal that bears
+it, so a goal that matches without a value ends the search without valuing the probe, the paper's
+defective intervention.
+
+Where v assigns accusative to the recipient the theme is left without case, so the ditransitive
+derivations give indirective and secundative case alignments and no neutral one, with both
+objects accusative, which [barany-2024]'s generalization also covers.
+
+Merge and binding inside v's cycle are not modelled: the reflexive enters v's cycle unvalued, as
+it is when v probes it. The paper's person feature π and its ϕ are both the person dimension, and
+the Icelandic number agreement is the number dimension. The Vocabulary Items read two features of
+a terminal, that its person probe has a value and that the value is the third person, with T the
+terminal before Perf. Participle agreement, cyclic expansion after Merge has built a specifier,
+and the principles of maximized matching that compare whole derivations are not formalized.
+
+## TODO
+
+* [holmberg-hroarsdottir-2003] report that in the construction of (29b) the agreeing form is
+  possible beside the default one when the dative is plural. The derivation gives the default
+  form for either number of the dative.
+* The Ariellese paradigm of [dalessandro-roberts-2010] and the Lak and Spanish examples are not
+  yet rows of the data.
 
 ## References
 
 * [amato-2025]
 * [barany-2024]
+* [bobaljik-2008]
+* [dalessandro-roberts-2010]
+* [holmberg-hroarsdottir-2003]
+* [mahajan-1990]
+* [rudin-1988]
+* [ussery-2009]
 -/
 
 @[expose] public section
@@ -50,64 +119,164 @@ open ArgumentStructure (TransitivityClass)
 open Verb (PerfectAuxiliary)
 open Alignment (IsIndirective IsSecundative)
 
-variable {H : Type*} [DecidableEq H]
+variable {H : Type*}
 
-/-! ### The engine -/
+/-! ### Search domains -/
 
-/-- A projection has its specifiers, highest first, over its head. -/
-structure Layer (H : Type*) where
-  specs : List H
-  head : H
-
-/-- The heads a probe above these projections can reach, in c-command order — each
-projection's specifiers then its head, down to and including the first phase head,
-whose complement the PIC freezes. -/
-def domain (phase : H → Bool) : List (Layer H) → List H
+/-- The part of a domain open to search under the PIC: down to and including the first phase
+head, whose complement is closed. -/
+def accessible (phase : H → Prop) [DecidablePred phase] : List H → List H
   | [] => []
-  | l :: ls => l.specs ++ l.head :: (if phase l.head then [] else domain phase ls)
+  | h :: hs => h :: if phase h then [] else accessible phase hs
+
+theorem accessible_prefix (phase : H → Prop) [DecidablePred phase] (dom : List H) :
+    accessible phase dom <+: dom := by
+  induction dom with
+  | nil => exact List.prefix_rfl
+  | cons h hs ih =>
+    rw [accessible]
+    split_ifs
+    exacts [(List.prefix_cons_inj _).2 List.nil_prefix, (List.prefix_cons_inj _).2 ih]
+
+variable [DecidableEq H]
+
+/-- The domain of a probe whose predecessor on the same head targeted `prev`: the part of `dom`
+from that goal down, and all of `dom` when the predecessor found no goal. -/
+def nestedDomain (dom : List H) : Option H → List H
+  | none => dom
+  | some β => dom.dropWhile (· ≠ β)
+
+variable {dom pre post : List H} {β γ δ : H}
+
+@[simp] theorem nestedDomain_none : nestedDomain dom none = dom := rfl
+
+theorem nestedDomain_suffix (dom : List H) (prev : Option H) : nestedDomain dom prev <:+ dom := by
+  cases prev with
+  | none => exact List.suffix_rfl
+  | some β => exact List.dropWhile_suffix _
+
+theorem nestedDomain_append_of_notMem (hβ : β ∉ pre) :
+    nestedDomain (pre ++ post) (some β) = nestedDomain post (some β) :=
+  List.dropWhile_append_of_pos fun a ha ↦ by simpa using fun (h : a = β) ↦ hβ (h ▸ ha)
+
+theorem nestedDomain_append_cons (hβ : β ∉ pre) :
+    nestedDomain (pre ++ β :: post) (some β) = β :: post := by
+  rw [nestedDomain_append_of_notMem hβ]; simp [nestedDomain]
+
+-- the domains of successive operations are nested
+theorem nestedDomain_suffix_cons (hnd : (pre ++ β :: post).Nodup) (hγ : γ ∈ β :: post) :
+    nestedDomain (pre ++ β :: post) (some γ) <:+ β :: post := by
+  rw [nestedDomain_append_of_notMem fun h ↦ (List.nodup_append.1 hnd).2.2 γ h γ hγ rfl]
+  exact nestedDomain_suffix _ _
+
+/-! ### Nested Agree -/
 
 variable (act : H → FeatureType → Prop) [∀ h t, Decidable (act h t)]
 
-/-- Discharge the probes on `α` in their extrinsic order over `dom` (Definition (1)).
-Each probe searches for its closest matching goal from the previous probe's goal on —
-reusing that "Agree-channel", so what `α` c-commands above it is outside the search —
-and from the top of `dom` when the previous probe found no goal (§4.1.2). A goal that `act`
-marks inactive at a dimension is matched without valuing (fn. 23). Returns each probe's goal and
-the resulting state. -/
-def run (α : H) (dom : List H) (ts : List FeatureType) (s : FeatureState H) :
-    List (Option H) × FeatureState H :=
-  go none ts s
-where
-  go : Option H → List FeatureType → FeatureState H → List (Option H) × FeatureState H
+/-- Agree of the probe of the head `α` for `t` over `goals`. A goal that `act` marks inactive at
+`t` is matched without valuing. -/
+def agreeOver (α : H) (goals : List H) (t : FeatureType) (s : FeatureState H) :
+    Probe.Result H (FeatureState H) :=
+  (s.probe α t (act · t)).agree (fun g s ↦ s.value α t g) s goals
+
+/-- (1): One operation of the head `α`, Agree of its probe for `t` over the domain nested under
+the goal `prev` of its previous operation. -/
+def nestedAgree (α : H) (dom : List H) (prev : Option H) (t : FeatureType) (s : FeatureState H) :
+    Probe.Result H (FeatureState H) :=
+  agreeOver act α (nestedDomain dom prev) t s
+
+/-- The probes `ts` of `α` discharged in order, each over the domain `D` gives it for the goal
+of the one before, and the first for `prev`. Returns the goal of each probe and the resulting
+state. -/
+def runWith (α : H) (D : Option H → List H) :
+    Option H → List FeatureType → FeatureState H → List (Option H) × FeatureState H
   | _, [], s => ([], s)
   | prev, t :: ts, s =>
-    let r := (s.probe α t (act · t)).agree (fun g s ↦ s.value α t g) s
-      (prev.elim dom fun β ↦ dom.dropWhile fun x ↦ decide (x ≠ β))
-    let rest := go r.satisfier ts r.state
+    let r := agreeOver act α (D prev) t s
+    let rest := runWith α D r.satisfier ts r.state
     (r.satisfier :: rest.1, rest.2)
 
-theorem le_run (α : H) (dom : List H) (ts : List FeatureType) (s : FeatureState H) :
-    s ≤ (run act α dom ts s).2 := by
-  suffices ∀ prev s, s ≤ (run.go act α dom prev ts s).2 from this none s
-  induction ts with
-  | nil => exact fun _ _ ↦ le_rfl
-  | cons t ts ih => exact fun _ s ↦ (s.le_agree_state α t _ _).trans (ih _ _)
+/-- The probes `ts` of `α` discharged in order over `dom` under Nested Agree, each nested under
+the goal of the one before. -/
+def run (α : H) (dom : List H) (ts : List FeatureType) (s : FeatureState H) :
+    List (Option H) × FeatureState H :=
+  runWith act α (nestedDomain dom) none ts s
 
-theorem nestedDomain {pre post : List H} {β : H} (hβ : β ∉ pre) :
-    (pre ++ β :: post).dropWhile (fun x ↦ decide (x ≠ β)) = β :: post := by
-  induction pre with
-  | nil => simp
-  | cons a pre ih =>
-    have ha : a ≠ β := fun h ↦ hβ (h ▸ List.mem_cons.2 (Or.inl rfl))
-    simpa [ha] using ih fun h ↦ hβ (List.mem_cons_of_mem _ h)
+/-- The domain of a probe that, having found no goal from its predecessor's goal down, searches
+`dom` again from the top. -/
+def backtrackingDomain (dom : List H) (prev : Option H) : List H := nestedDomain dom prev ++ dom
 
--- (2), (3)
-theorem notMem_nestedDomain {pre post : List H} {β δ : H}
-    (hnd : (pre ++ β :: post).Nodup) (hδ : δ ∈ pre) :
-    δ ∉ (pre ++ β :: post).dropWhile (fun x ↦ decide (x ≠ β)) := by
+variable {act} {α : H} {prev : Option H} {t : FeatureType} {ts : List FeatureType}
+  {s : FeatureState H}
+
+variable {D : Option H → List H} {goals : List H}
+
+@[simp] theorem runWith_nil : runWith act α D prev [] s = ([], s) := rfl
+
+theorem runWith_cons :
+    runWith act α D prev (t :: ts) s =
+      ((agreeOver act α (D prev) t s).satisfier ::
+          (runWith act α D (agreeOver act α (D prev) t s).satisfier ts
+            (agreeOver act α (D prev) t s).state).1,
+        (runWith act α D (agreeOver act α (D prev) t s).satisfier ts
+          (agreeOver act α (D prev) t s).state).2) :=
+  rfl
+
+-- every operation targets the closest matching goal of its domain
+theorem agreeOver_satisfier :
+    (agreeOver act α goals t s).satisfier = goals.find? (s.Matches α t ·) :=
+  Probe.agree_satisfier
+
+theorem le_agreeOver_state : s ≤ (agreeOver act α goals t s).state :=
+  s.le_agree_state α t _ _
+
+theorem le_runWith : s ≤ (runWith act α D prev ts s).2 := by
+  induction ts generalizing prev s with
+  | nil => exact le_rfl
+  | cons t ts ih => exact (le_agreeOver_state (act := act)).trans ih
+
+theorem le_run : s ≤ (run act α dom ts s).2 := le_runWith
+
+-- fn. 2, fn. 13: a search that starts again finds what Nested Agree finds, and otherwise the
+-- closest matching goal of the whole domain
+theorem agreeOver_backtrackingDomain_satisfier :
+    (agreeOver act α (backtrackingDomain dom prev) t s).satisfier =
+      ((nestedAgree act α dom prev t s).satisfier).or (dom.find? (s.Matches α t ·)) := by
+  rw [agreeOver_satisfier, backtrackingDomain, List.find?_append, nestedAgree, agreeOver_satisfier]
+
+theorem nestedAgree_satisfier :
+    (nestedAgree act α dom prev t s).satisfier =
+      (nestedDomain dom prev).find? (s.Matches α t ·) :=
+  agreeOver_satisfier
+
+/-- A probe whose predecessor targeted a goal that matches it targets that goal. -/
+theorem nestedAgree_satisfier_of_matches (hβ : β ∈ dom) (h : s.Matches α t β) :
+    (nestedAgree act α dom (some β) t s).satisfier = some β := by
+  obtain ⟨pre, post, rfl, hpre⟩ := List.eq_append_cons_of_mem hβ
+  rw [nestedAgree_satisfier, nestedDomain_append_cons hpre,
+    List.find?_cons_of_pos (by simpa using h)]
+
+-- §2, downward expansion
+theorem nestedAgree_satisfier_of_not_matches (hβ : β ∉ pre) (h : ¬ s.Matches α t β) :
+    (nestedAgree act α (pre ++ β :: post) (some β) t s).satisfier =
+      post.find? (s.Matches α t ·) := by
+  rw [nestedAgree_satisfier, nestedDomain_append_cons hβ,
+    List.find?_cons_of_neg (by simpa using h)]
+
+theorem mem_nestedDomain_of_satisfier
+    (h : (nestedAgree act α dom prev t s).satisfier = some γ) : γ ∈ nestedDomain dom prev :=
+  List.mem_of_find?_eq_some (nestedAgree_satisfier (act := act) ▸ h)
+
+/-- A probe never targets a goal above the goal of its predecessor, whether or not it matches. -/
+theorem nestedAgree_satisfier_ne (hnd : (pre ++ β :: post).Nodup) (hδ : δ ∈ pre) :
+    (nestedAgree act α (pre ++ β :: post) (some β) t s).satisfier ≠ some δ := by
   obtain ⟨-, -, hdisj⟩ := List.nodup_append.1 hnd
-  rw [nestedDomain fun h ↦ hdisj β h β (List.mem_cons.2 (Or.inl rfl)) rfl]
-  exact fun h ↦ hdisj δ hδ δ h rfl
+  intro h
+  have hmem := mem_nestedDomain_of_satisfier h
+  rw [nestedDomain_append_cons fun hm ↦ hdisj β hm β (by simp) rfl] at hmem
+  exact hdisj δ hδ δ hmem rfl
+
+/-! ### Multiple Agree and movement -/
 
 /-- Under Multiple Agree `[∗wh∗]` reaches every matching goal in c-command order (§4.2.3). -/
 def multipleAgree (s : FeatureState H) (α : H) (t : FeatureType) (dom : List H) : List H :=
@@ -120,8 +289,7 @@ def whFronting (s : FeatureState H) (α : H) (dom : List H) : List H :=
   let p := Probe.relativized (s.Matches α .wh)
   match (multipleAgree s α .wh dom).getLast? with
   | none => []
-  | some β =>
-    (p.search (dom.dropWhile fun x ↦ decide (x ≠ β))).toList ++ rest p dom.length (dom.erase β)
+  | some β => (p.search (nestedDomain dom (some β))).toList ++ rest p dom.length (dom.erase β)
 where
   rest (p : Probe H) : Nat → List H → List H
   | 0, _ => []
@@ -139,14 +307,15 @@ inductive Head
   deriving DecidableEq, Repr, Fintype
 
 /-- v and Voice are phase heads (§3.4.2, fn. 18). -/
-def isPhase : Head → Bool
-  | .v | .voice => true
-  | _ => false
+def IsPhase (h : Head) : Prop := h = .v ∨ h = .voice
+
+instance : DecidablePred IsPhase := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Every goal values its probe. -/
 def AllActive : Head → FeatureType → Prop := fun _ _ ↦ True
 
-instance (h : Head) (t : FeatureType) : Decidable (AllActive h t) := inferInstanceAs (Decidable True)
+instance (h : Head) (t : FeatureType) : Decidable (AllActive h t) :=
+  inferInstanceAs (Decidable True)
 
 /-- `[ϕ:p]`. -/
 def person (p : Person) : Σ t : FeatureType, FeatureSlot t.Slot :=
@@ -155,36 +324,40 @@ def person (p : Person) : Σ t : FeatureType, FeatureSlot t.Slot :=
 /-! ### Standard Italian auxiliary selection (§3)
 
 Perf bears `[∗Infl:perf∗]` and `[∗π:_∗]`, ordered as in (7) or (22). v first runs its own
-cycle over the object ((9), (16)); Perf then probes the vP, T the PerfP (11). -/
+cycle over its complement ((9), (16), (19)); Perf then probes the vP, and T the PerfP (11). -/
 
 /-- The paper has two Voice heads, Voice_imp of the impersonal *si* (§3.4.4) and Voice_pass (fn.
-18), both `Minimalist.Voice.passive`'s cell, an implicit external argument. -/
+18). -/
 inductive VoiceHead where
   | impersonal
   | passive
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- A clause of §3.4 has v's class (`TransitivityClass`; an unergative verb is transitive with a
 covert cognate object bearing default features, fn. 10) under no Voice head, or under Voice_imp
-(§3.4.4) or Voice_pass (fn. 18). -/
+(§3.4.4) or Voice_pass (fn. 18). A v that is not defective may be the quirky v of (19), which
+selects an ApplP with the indirect object in its specifier and assigns it dative; in a reflexive
+clause the indirect object is then the reflexive. -/
 structure Clause where
   verb : TransitivityClass
   voice : Option VoiceHead := none
+  quirky : Bool := false
   deriving DecidableEq, Repr
 
 /-- Before Agree, with subject person `p`, Perf bears `[∗Infl:perf∗], [∗π:_∗]`; T `[∗case:nom∗],
-[∗ϕ:_∗]`; a transitive v `[Infl:_], [∗case:acc∗], [∗π:_∗]` or, in (15), a defective v `[Infl:_]`;
-Voice_imp `[Infl:_], [π:_]` (20), Voice_pass `[Infl:_]`; the subject `[ϕ:p], [case:_]`; a full
-object `[ϕ:3], [case:_]` (the unaccusative theme, `[ϕ:p]`), a reflexive object `[ϕ:_], [case:_]`
-(16); and *si* `[π:_], [case:_]`. -/
+[∗ϕ:_∗]`; a transitive v `[Infl:_], [∗case:acc∗], [∗π:_∗]`, a quirky v `[∗case:dat∗]` in place of
+accusative (19), and a defective v `[Infl:_]` (15); Voice_imp `[Infl:_], [π:_]` (20), Voice_pass
+`[Infl:_]`; the subject `[ϕ:p], [case:_]`; a full object `[ϕ:3], [case:_]`, accusative from Appl
+under a quirky v (the unaccusative theme, `[ϕ:p]`), a reflexive object, direct (16) or indirect
+(19), `[ϕ:_], [case:_]`; a full indirect object `[ϕ:3], [case:_]`; and *si* `[π:_], [case:_]`. -/
 def initial (cl : Clause) (p : Person) : Head → FeatureBundle
   | .perf => ofList [⟨.infl, .valued .perf⟩, ⟨.person, .unvalued⟩]
   | .t => ofList [⟨.case, .valued .nom⟩, ⟨.person, .unvalued⟩]
   | .v =>
     match cl.verb with
     | .unaccusative => ofList [⟨.infl, .unvalued⟩]
-    | _ => ofList [⟨.infl, .unvalued⟩, ⟨.case, .valued .acc⟩,
-        ⟨.person, .unvalued⟩]
+    | _ => ofList [⟨.infl, .unvalued⟩,
+        if cl.quirky then ⟨.case, .valued .dat⟩ else ⟨.case, .valued .acc⟩, ⟨.person, .unvalued⟩]
   | .voice =>
     match cl.voice with
     | some .impersonal =>
@@ -193,39 +366,57 @@ def initial (cl : Clause) (p : Person) : Head → FeatureBundle
     | _ => ⊥
   | .si => ofList [⟨.person, .unvalued⟩, ⟨.case, .unvalued⟩]
   | .dpSbj => ofList [person p, ⟨.case, .unvalued⟩]
-  | .dpObj =>
+  | .dpR =>
     match cl.verb with
     | .reflexive => ofList [⟨.person, .unvalued⟩, ⟨.case, .unvalued⟩]
-    | .unaccusative => ofList [person p, ⟨.case, .unvalued⟩]
     | _ => ofList [person .third, ⟨.case, .unvalued⟩]
+  | .dpObj =>
+    match cl.verb with
+    | .unaccusative => ofList [person p, ⟨.case, .unvalued⟩]
+    | .reflexive =>
+      if cl.quirky then ofList [person .third, ⟨.case, .valued .acc⟩]
+      else ofList [⟨.person, .unvalued⟩, ⟨.case, .unvalued⟩]
+    | _ => ofList [person .third,
+        if cl.quirky then ⟨.case, .valued .acc⟩ else ⟨.case, .unvalued⟩]
   | _ => ⊥
 
-/-- The projections below Perf are (10)/(18) for a transitive v and (15) for a defective one, under
-the Voice layer of (20) when there is one. -/
-def perfSpine (cl : Clause) : List (Layer Head) :=
+/-- The heads v c-commands: its complement in (9) and (16), and the ApplP of (19) under a quirky
+v. -/
+def vDomain (cl : Clause) : List Head :=
+  if cl.quirky then [.dpR, .appl, .verb, .dpObj] else [.verb, .dpObj]
+
+/-- The heads Perf c-commands, in order: (10) and (18) for a transitive v and (15) for a defective
+one, under the Voice layer of (20) when there is one. -/
+def belowPerf (cl : Clause) : List Head :=
   (match cl.voice with
-    | some .impersonal => [⟨[.si], .voice⟩]
-    | some _ => [⟨[], .voice⟩]
+    | some .impersonal => [.si, .voice]
+    | some .passive => [.voice]
     | none => []) ++
   match cl.verb with
-  | .unaccusative => [⟨[.dpObj], .v⟩, ⟨[], .verb⟩]
-  | _ => [⟨[.dpSbj], .v⟩, ⟨[], .verb⟩, ⟨[], .dpObj⟩]
+  | .unaccusative => [.dpObj, .v, .verb]
+  | _ => .dpSbj :: .v :: vDomain cl
 
-/-- In v's cycle ((9), (16)) v assigns accusative and then π-agrees with the object; a defective v
-does neither. -/
-def afterV (cl : Clause) (p : Person) : FeatureState Head :=
-  (run AllActive .v [.verb, .dpObj] (if cl.verb = .unaccusative then [] else [.case, .person])
-    (initial cl p)).2
+/-- In v's cycle ((9), (16), (19)) v assigns its case and then π-agrees; a defective v does
+neither. -/
+def vCycle (cl : Clause) (p : Person) : List (Option Head) × FeatureState Head :=
+  run AllActive .v (vDomain cl) (if cl.verb = .unaccusative then [] else [.case, .person])
+    (initial cl p)
 
-/-- Perf's cycle under the feature ordering `ord`. -/
+/-- Perf's cycle under the feature ordering `ord`, each probe searching the domain `D` gives it
+for the goal of the one before. -/
+def perfCycleWith (D : List Head → Option Head → List Head) (ord : List FeatureType)
+    (cl : Clause) (p : Person) : List (Option Head) × FeatureState Head :=
+  runWith AllActive .perf (D (accessible IsPhase (belowPerf cl))) none ord (vCycle cl p).2
+
+/-- Perf's cycle under Nested Agree. -/
 def perfCycle (ord : List FeatureType) (cl : Clause) (p : Person) :
     List (Option Head) × FeatureState Head :=
-  run AllActive .perf (domain isPhase (perfSpine cl)) ord (afterV cl p)
+  perfCycleWith nestedDomain ord cl p
 
 /-- In T's cycle (11) T assigns nominative and then ϕ-agrees. -/
 def tCycle (ord : List FeatureType) (cl : Clause) (p : Person) :
     List (Option Head) × FeatureState Head :=
-  run AllActive .t (domain isPhase (⟨[], .perf⟩ :: perfSpine cl)) [.case, .person]
+  run AllActive .t (accessible IsPhase (.perf :: belowPerf cl)) [.case, .person]
     (perfCycle ord cl p).2
 
 /-- The state after v, Perf and T have probed. -/
@@ -239,75 +430,188 @@ def standardItalian : List FeatureType := [.infl, .person]
 def ariellese : List FeatureType := [.person, .infl]
 
 /-- In Perf's domain in (10) the subject is c-commanded first, then v. -/
-example : domain isPhase (perfSpine ⟨.transitive, none⟩) = [.dpSbj, .v] := rfl
+example : accessible IsPhase (belowPerf ⟨.transitive, none, false⟩) = [.dpSbj, .v] := by decide
+
+/-- In (10) the subject matches the person probe of Perf, which targets v below it. -/
+example (p : Person) :
+    (perfCycle [.infl] ⟨.transitive, none, false⟩ p).2.Matches .perf .person .dpSbj := by
+  revert p; decide
 
 -- (10), (18)
-theorem perf_targets_v (c : TransitivityClass) (hc : c ≠ .unaccusative) (p : Person) :
-    (perfCycle standardItalian ⟨c, none⟩ p).1 = [some .v, some .v] := by
-  revert c p; decide
+theorem perf_targets_v (c : TransitivityClass) (hc : c ≠ .unaccusative) (q : Bool) (p : Person) :
+    (perfCycle standardItalian ⟨c, none, q⟩ p).1 = [some .v, some .v] := by
+  revert c q p; decide
 
 -- (15)
-theorem perf_unaccusative (p : Person) :
-    (perfCycle standardItalian ⟨.unaccusative, none⟩ p).1 = [some .v, none] := by
+theorem perf_unaccusative (q : Bool) (p : Person) :
+    (perfCycle standardItalian ⟨.unaccusative, none, q⟩ p).1 = [some .v, none] := by
+  revert q p; decide
+
+-- (19)
+theorem v_targets_reflexive (p : Person) :
+    (vCycle ⟨.reflexive, none, true⟩ p).1 = [some .dpR, some .dpR] := by
   revert p; decide
 
 -- (20)
-theorem perf_impersonal (c : TransitivityClass) (p : Person) :
-    (perfCycle standardItalian ⟨c, some .impersonal⟩ p).1 = [some .voice, some .voice] := by
-  revert c p; decide
+theorem perf_impersonal (c : TransitivityClass) (q : Bool) (p : Person) :
+    (perfCycle standardItalian ⟨c, some .impersonal, q⟩ p).1 = [some .voice, some .voice] := by
+  revert c q p; decide
 
 -- (11)
-theorem t_targets_subject (p : Person) :
-    (tCycle standardItalian ⟨.transitive, none⟩ p).1 = [some .dpSbj, some .dpSbj] := by
-  revert p; decide
+theorem t_targets_subject (c : TransitivityClass) (hc : c ≠ .unaccusative) (q : Bool)
+    (p : Person) : (tCycle standardItalian ⟨c, none, q⟩ p).1 = [some .dpSbj, some .dpSbj] := by
+  revert c q p; decide
 
-/-- The Vocabulary Items (14) insert `/AVERE/ ↔ Perf[π:α]`, and `/ESSERE/` elsewhere. -/
-def standardItalianAux (s : FeatureState Head) : PerfectAuxiliary :=
-  if (s .perf .person).unbotD ⊥ ≠ ⊥ then .have else .be
-
--- (4), (5)
-theorem standardItalian_aux (c : TransitivityClass) (p : Person) :
-    standardItalianAux (derive standardItalian ⟨c, none⟩ p) = c.canonicalSelection := by
-  revert c p; decide
-
--- (5d), fn. 18
-theorem standardItalian_voice (c : TransitivityClass) (f : VoiceHead)
-    (hf : f = .impersonal ∨ f = .passive) (p : Person) :
-    standardItalianAux (derive standardItalian ⟨c, some f⟩ p) = .be := by
-  rcases hf with rfl | rfl <;> (revert c p; decide)
-
-/-- Ariellese (23) inserts `/AVERE/ ↔ Perf[π:-participant]`. -/
-def arielleseAux (s : FeatureState Head) : PerfectAuxiliary :=
-  if s .perf .person = ↑(FeatureType.Slot.ofValue .person .third) then .have else .be
-
--- (22), (21), §3.5
-theorem ariellese_aux (c : TransitivityClass) (p : Person) :
-    arielleseAux (derive ariellese ⟨c, none⟩ p) = if p = .third then .have else .be := by
-  revert c p; decide
-
-/-- Tufillese (24) inserts `/AVERE/ ↔ Perf[π:α] / T[ϕ:3sg]`. -/
-def tufilleseAux (s : FeatureState Head) : PerfectAuxiliary :=
-  if (s .perf .person).unbotD ⊥ ≠ ⊥ ∧ s .t .person = ↑(FeatureType.Slot.ofValue .person .third) then
-    .have
-  else .be
-
--- §3.5
-theorem tufillese_aux (c : TransitivityClass) (p : Person) :
-    tufilleseAux (derive standardItalian ⟨c, none⟩ p) =
-      if c.canonicalSelection = .have ∧ p = .third then .have else .be := by
-  revert c p; decide
-
-/-! ### Case and agreement in ditransitive clauses (§4.1.1) -/
-
-/-- The two orderings of `[∗case∗]` and `[∗ϕ:_∗]` on a head. -/
-inductive ProbeOrder
-  | caseFirst | phiFirst
+/-- The features of a terminal that the Vocabulary Items of the perfect auxiliary mention. -/
+inductive AuxFeature
+  /-- `[π:α]`, a person probe that has a value. -/
+  | valued
+  /-- `[π:-participant]`, the third person. -/
+  | third
   deriving DecidableEq, Repr, Fintype
 
-/-- The probes on v, in order. -/
-def ProbeOrder.probes : ProbeOrder → List FeatureType
-  | .caseFirst => [.case, .person]
-  | .phiFirst => [.person, .case]
+open DistributedMorphology
+
+/-- The features of the head `h` that the Vocabulary Items read, in the state `s`. -/
+def terminal (s : FeatureState Head) (h : Head) : Finset AuxFeature :=
+  (if (s h .person).unbotD ⊥ ≠ ⊥ then {.valued} else ∅) ∪
+    if s h .person = ↑(FeatureType.Slot.ofValue .person .third) then {.third} else ∅
+
+/-- The neighborhood of insertion at Perf: Perf with T before it. -/
+def perfNeighborhood (s : FeatureState Head) : Neighborhood (Finset AuxFeature) :=
+  ⟨terminal s .perf, [terminal s .t], []⟩
+
+/-- The auxiliary the Vocabulary `v` inserts at Perf in the state `s`, by the Subset Principle. -/
+def auxiliary (v : Morphology.RuleSet (VocabularyItem AuxFeature PerfectAuxiliary))
+    (s : FeatureState Head) : Option PerfectAuxiliary :=
+  subsetPrinciple v (perfNeighborhood s)
+
+/-- (14): `/AVERE/ ↔ Perf[π:α]`, and `/ESSERE/ ↔ Perf` elsewhere. -/
+def standardItalianVocabulary : Morphology.RuleSet (VocabularyItem AuxFeature PerfectAuxiliary) :=
+  [{.valued} ⟷ .have, ∅ ⟷ .be]
+
+/-- In Standard Italian the derivation inserts the auxiliary the transitivity class of the clause
+selects. -/
+theorem standardItalian_aux (c : TransitivityClass) (q : Bool) (p : Person) :
+    auxiliary standardItalianVocabulary (derive standardItalian ⟨c, none, q⟩ p) =
+      some (c.selection Italian.Verbs.reflexiveAuxiliary) := by
+  revert c q p; decide
+
+-- (5d), fn. 18
+theorem standardItalian_voice (c : TransitivityClass) (f : VoiceHead) (q : Bool) (p : Person) :
+    auxiliary standardItalianVocabulary (derive standardItalian ⟨c, some f, q⟩ p) = some .be := by
+  revert c f q p; decide
+
+-- Appendix: by minimality alone the person probe of Perf targets the subject, and AVERE is
+-- inserted in every clause
+theorem aux_have_of_minimality (c : TransitivityClass) (q : Bool) (p : Person) :
+    auxiliary standardItalianVocabulary
+      (perfCycleWith (fun dom _ ↦ dom) standardItalian ⟨c, none, q⟩ p).2 = some .have := by
+  revert c q p; decide
+
+-- fn. 13: were the person probe of Perf to search again after finding no goal below v, it would
+-- agree with the subject of an unaccusative, and AVERE would be inserted
+theorem aux_have_of_backtracking (q : Bool) (p : Person) :
+    auxiliary standardItalianVocabulary
+      (perfCycleWith backtrackingDomain standardItalian ⟨.unaccusative, none, q⟩ p).2 =
+        some .have := by
+  revert q p; decide
+
+/-- The clause of the derivations for each clause type of the examples: (5b) and (5c) have the
+reflexive as the indirect object of a quirky v, and (5d) the impersonal over a transitive vP. -/
+def ofExample : Examples.Clause → Clause
+  | .transitive => ⟨.transitive, none, false⟩
+  | .unergative => ⟨.unergative, none, false⟩
+  | .unaccusative => ⟨.unaccusative, none, false⟩
+  | .directReflexive => ⟨.reflexive, none, false⟩
+  | .indirectReflexive => ⟨.reflexive, none, true⟩
+  | .impersonal => ⟨.transitive, some .impersonal, false⟩
+
+/-- The auxiliary a lexeme of the examples is, if it is one. -/
+def Examples.Lexeme.auxiliary? : Examples.Lexeme → Option PerfectAuxiliary
+  | .avere => some .have
+  | .essere => some .be
+  | _ => none
+
+/-- Each of the examples (4) and (5), all with a third person subject, has the auxiliary the
+derivation of its clause type inserts. -/
+theorem auxiliary_example (x : Examples.Example) :
+    (x.lexemes .auxiliary).filterMap (·.auxiliary?) =
+      (x.clause.bind fun c ↦
+        auxiliary standardItalianVocabulary
+          (derive standardItalian (ofExample c) .third)).toList := by
+  revert x; decide
+
+/-- The entry of the verb a lexeme of the examples names, if it names one. -/
+def Examples.Lexeme.verb? : Examples.Lexeme → Option Italian.Verb
+  | .lavare => some Italian.Verbs.lavare
+  | .rispondere => some Italian.Verbs.rispondere
+  | .venire => some Italian.Verbs.venire
+  | .mangiare => some Italian.Verbs.mangiare
+  | _ => none
+
+-- each lexeme of an Italian example is written as its entry in the language file
+theorem lexeme_eq_form (x : Examples.Example) :
+    ∀ s ∈ x.datum.spans, ∀ l ∈ Examples.lexeme? s,
+      (∀ a ∈ l.auxiliary?, s.lexeme = some (Italian.Verbs.auxiliary a).form) ∧
+        ∀ v ∈ l.verb?, s.lexeme = some v.form := by
+  revert x; decide +kernel
+
+/-- The auxiliary the reference grammar gives the verb `v` in a clause of each type: *essere*
+with a clitic reflexive pronoun, in its reflexive and its indefinite personal use, and otherwise
+the auxiliary of the verb on its frame. -/
+def grammarAuxiliary (v : Italian.Verb) : Examples.Clause → PerfectAuxiliary
+  | .transitive | .unergative | .unaccusative =>
+    Italian.Verbs.perfectAuxiliary v (v.valency.frames.headD .intransitive)
+  | .directReflexive | .indirectReflexive | .impersonal => Italian.Verbs.reflexiveAuxiliary
+
+-- (4), (5): the derivation of each example inserts the auxiliary the reference grammar gives
+-- its verb
+theorem auxiliary_eq_grammarAuxiliary (x : Examples.Example) :
+    ∀ c ∈ x.clause, ∀ v ∈ (x.lexemes .participle).head?.bind (·.verb?),
+      auxiliary standardItalianVocabulary (derive standardItalian (ofExample c) .third) =
+        some (grammarAuxiliary v c) := by
+  revert x; decide
+
+/-- (23): Ariellese has `/AVERE/ ↔ Perf[π:-participant]`, and `/ESSERE/` elsewhere. -/
+def arielleseVocabulary : Morphology.RuleSet (VocabularyItem AuxFeature PerfectAuxiliary) :=
+  [{.third} ⟷ .have, ∅ ⟷ .be]
+
+-- (22), (21), §3.5
+theorem ariellese_aux (c : TransitivityClass) (q : Bool) (p : Person) :
+    auxiliary arielleseVocabulary (derive ariellese ⟨c, none, q⟩ p) =
+      some (if p = .third then .have else .be) := by
+  revert c q p; decide
+
+/-- (24): Tufillese has `/AVERE/ ↔ Perf[π:α] / T[ϕ:3sg]`, an item whose context is T, and
+`/ESSERE/` elsewhere. -/
+def tufilleseVocabulary : Morphology.RuleSet (VocabularyItem AuxFeature PerfectAuxiliary) :=
+  [⟨{(0, .valued), (-1, .third)}, .have⟩, ∅ ⟷ .be]
+
+-- §3.5
+theorem tufillese_aux (c : TransitivityClass) (q : Bool) (p : Person) :
+    auxiliary tufilleseVocabulary (derive standardItalian ⟨c, none, q⟩ p) =
+      some (if c.canonicalSelection = .have ∧ p = .third then .have else .be) := by
+  revert c q p; decide
+
+-- §3.5: whatever its items, a Vocabulary that derives the Tufillese auxiliaries under the order
+-- of Standard Italian has an item with a context, since Perf is the same under a first person
+-- subject and a third person one
+theorem exists_not_isContextFree_of_tufillese
+    {v : Morphology.RuleSet (VocabularyItem AuxFeature PerfectAuxiliary)}
+    (hv : ∀ p, auxiliary v (derive standardItalian ⟨.transitive, none, false⟩ p) =
+      some (if p = .third then .have else .be)) : ∃ i ∈ v, ¬ i.IsContextFree :=
+  exists_not_isContextFree_of_subsetPrinciple_ne
+    (n := perfNeighborhood (derive standardItalian ⟨.transitive, none, false⟩ .first))
+    (n' := perfNeighborhood (derive standardItalian ⟨.transitive, none, false⟩ .third))
+    (by decide) (by
+      have h₁ := hv .first
+      have h₃ := hv .third
+      simp only [auxiliary] at h₁ h₃
+      rw [h₁, h₃]
+      decide)
+
+/-! ### Case and agreement in ditransitive clauses (§4.1.1) -/
 
 /-- In (25)–(28) v bears `[∗case:acc∗], [∗ϕ:_∗]` over `DP_R … Appl … V … DP_T`, the recipient
 already dative from Appl or not. -/
@@ -318,73 +622,82 @@ def ditransitiveInitial (applDat : Bool) : Head → FeatureBundle
   | .dpT => ofList [person .third, ⟨.case, .unvalued⟩]
   | _ => ⊥
 
-/-- The derivation of (25)–(28), in which v's probes, in order `o`, search the recipient, Appl, the
-verb and the theme. -/
-def ditransitive (o : ProbeOrder) (applDat : Bool) : List (Option Head) × FeatureState Head :=
-  run AllActive .v [.dpR, .appl, .verb, .dpT] o.probes (ditransitiveInitial applDat)
+/-- The derivation of (25)–(28), in which v's probes, in the order `ts`, search the recipient,
+Appl, the verb and the theme. -/
+def ditransitive (ts : List FeatureType) (applDat : Bool) :
+    List (Option Head) × FeatureState Head :=
+  run AllActive .v [.dpR, .appl, .verb, .dpT] ts (ditransitiveInitial applDat)
 
 /-- The goal of v's ϕ-probe. -/
-def phiGoal (o : ProbeOrder) (applDat : Bool) : Option Head :=
-  match o, (ditransitive o applDat).1 with
-  | .caseFirst, [_, a] | .phiFirst, [a, _] => a
-  | _, _ => none
+def phiGoal (ts : List FeatureType) (applDat : Bool) : Option Head :=
+  ((ts.zip (ditransitive ts applDat).1).lookup .person).join
 
 /-- The case of each object, the recipient and the theme as the derivation leaves them and P
 with the accusative v assigns a transitive object; S and A are not read. -/
-def caseMarking (o : ProbeOrder) (applDat : Bool) : ArgumentRole → FeatureSlot (Flat Case)
-  | .R => (ditransitive o applDat).2 .dpR .case
-  | .T => (ditransitive o applDat).2 .dpT .case
+def caseMarking (ts : List FeatureType) (applDat : Bool) : ArgumentRole → FeatureSlot (Flat Case)
+  | .R => (ditransitive ts applDat).2 .dpR .case
+  | .T => (ditransitive ts applDat).2 .dpT .case
   | _ => .valued .acc
 
 /-- Whether v ϕ-agrees with each object. It agrees with a transitive object P and with whichever
 of the recipient and the theme its ϕ-probe finds; S and A are not read. -/
-def agreement (o : ProbeOrder) (applDat : Bool) : ArgumentRole → Bool
-  | .R => phiGoal o applDat = some .dpR
-  | .T => phiGoal o applDat = some .dpT
+def agreement (ts : List FeatureType) (applDat : Bool) : ArgumentRole → Bool
+  | .R => phiGoal ts applDat = some .dpR
+  | .T => phiGoal ts applDat = some .dpT
   | _ => true
 
 -- (25)
 theorem ditransitive_caseFirst_dat :
-    IsIndirective (caseMarking .caseFirst true) ∧ IsIndirective (agreement .caseFirst true) ∧
-      phiGoal .caseFirst true = some .dpT := by
+    IsIndirective (caseMarking [.case, .person] true) ∧
+      IsIndirective (agreement [.case, .person] true) ∧
+      phiGoal [.case, .person] true = some .dpT := by
   decide
 
 -- (26)
 theorem ditransitive_caseFirst_noDat :
-    IsSecundative (caseMarking .caseFirst false) ∧ IsSecundative (agreement .caseFirst false) := by
+    IsSecundative (caseMarking [.case, .person] false) ∧
+      IsSecundative (agreement [.case, .person] false) := by
   decide
 
 -- (27)
 theorem ditransitive_phiFirst_dat :
-    IsIndirective (caseMarking .phiFirst true) ∧ IsSecundative (agreement .phiFirst true) := by
+    IsIndirective (caseMarking [.person, .case] true) ∧
+      IsSecundative (agreement [.person, .case] true) := by
   decide
 
 -- (28)
 theorem ditransitive_phiFirst_noDat :
-    IsSecundative (caseMarking .phiFirst false) ∧ IsSecundative (agreement .phiFirst false) := by
+    IsSecundative (caseMarking [.person, .case] false) ∧
+      IsSecundative (agreement [.person, .case] false) := by
   decide
 
--- Table 1 [barany-2024]
-theorem isIndirective_caseMarking_of_agreement (o : ProbeOrder) (d : Bool) :
-    IsIndirective (agreement o d) → IsIndirective (caseMarking o d) := by
-  revert o d; decide
+/-- Table 1 of [barany-2024]: however v orders its case probe and its ϕ-probe, and whether or not
+Appl assigns dative, an indirective agreement alignment comes with an indirective case
+alignment. -/
+theorem isIndirective_caseMarking_of_agreement {ts : List FeatureType}
+    (hts : ts.Perm [.case, .person]) (d : Bool) :
+    IsIndirective (agreement ts d) → IsIndirective (caseMarking ts d) := by
+  rcases List.perm_pair.1 hts with rfl | rfl <;> (revert d; decide)
+
+-- (26), (28): a secundative case alignment comes with a secundative agreement alignment
+theorem isSecundative_agreement_of_caseMarking {ts : List FeatureType}
+    (hts : ts.Perm [.case, .person]) (d : Bool) :
+    IsSecundative (caseMarking ts d) → IsSecundative (agreement ts d) := by
+  rcases List.perm_pair.1 hts with rfl | rfl <;> (revert d; decide)
 
 /-! ### Icelandic DAT-NOM constructions (§4.1.2) -/
 
-/-- (29a) versus (29b). -/
-inductive Clausal
-  | monoclausal | biclausal
-  deriving DecidableEq, Repr, Fintype
-
-/-- T `[∗case:nom∗], [∗ϕ:_∗]` over `DP_dat … DP_nom`; in (29b) the lower T has already
-assigned nominative. -/
-def icelandicInitial : Clausal → Head → FeatureBundle
-  | _, .t => ofList [⟨.case, .valued .nom⟩, ⟨.number, .unvalued⟩]
-  | _, .dpDat => ofList [⟨.number, .valued .plural⟩, ⟨.case, .valued .dat⟩]
-  | .monoclausal, .dpNom =>
-    ofList [⟨.number, .valued .plural⟩, ⟨.case, .unvalued⟩]
-  | .biclausal, .dpNom => ofList [⟨.number, .valued .plural⟩, ⟨.case, .valued .nom⟩]
-  | _, _ => ⊥
+/-- T `[∗case:nom∗], [∗ϕ:_∗]` over `DP_dat … DP_nom`, the dative of number `n` and the nominative
+plural; in (29b) the lower T has already assigned nominative. -/
+def icelandicInitial (k : Examples.Construction) (n : FeatureType.number.Value) :
+    Head → FeatureBundle
+  | .t => ofList [⟨.case, .valued .nom⟩, ⟨.number, .unvalued⟩]
+  | .dpDat => ofList [⟨.number, .valued n⟩, ⟨.case, .valued .dat⟩]
+  | .dpNom =>
+    match k with
+    | .monoclausal => ofList [⟨.number, .valued .plural⟩, ⟨.case, .unvalued⟩]
+    | .biclausal => ofList [⟨.number, .valued .plural⟩, ⟨.case, .valued .nom⟩]
+  | _ => ⊥
 
 /-- Datives are defective goals for ϕ-Agree, matched but never valuing. -/
 def IcelandicActive (h : Head) (t : FeatureType) : Prop := ¬ (h = .dpDat ∧ t = .number)
@@ -392,47 +705,83 @@ def IcelandicActive (h : Head) (t : FeatureType) : Prop := ¬ (h = .dpDat ∧ t 
 instance (h : Head) (t : FeatureType) : Decidable (IcelandicActive h t) :=
   inferInstanceAs (Decidable (¬ _))
 
-/-- The two orderings that coexist on Icelandic T. -/
-def icelandicOrder : ProbeOrder → List FeatureType
-  | .caseFirst => [.case, .number]
-  | .phiFirst => [.number, .case]
-
-/-- T's number slot after probing. -/
-def icelandic (k : Clausal) (o : ProbeOrder) : FeatureSlot FeatureType.number.Slot :=
-  (run IcelandicActive .t [.dpDat, .dpNom] (icelandicOrder o) (icelandicInitial k)).2 .t .number
+/-- T's number slot after its probes, in the order `ts`, have searched a dative of number `n`
+and the nominative. -/
+def icelandic (k : Examples.Construction) (n : FeatureType.number.Value) (ts : List FeatureType) :
+    FeatureSlot FeatureType.number.Slot :=
+  (run IcelandicActive .t [.dpDat, .dpNom] ts (icelandicInitial k n)).2 .t .number
 
 -- (29a)
-theorem icelandic_monoclausal_caseFirst :
-    icelandic .monoclausal .caseFirst = .valued .plural := by decide
+theorem icelandic_monoclausal_caseFirst (n : FeatureType.number.Value) :
+    icelandic .monoclausal n [.case, .number] = .valued .plural := by
+  revert n; decide
 
 -- (29a)
-theorem icelandic_monoclausal_phiFirst : icelandic .monoclausal .phiFirst = .unvalued := by
-  decide
+theorem icelandic_monoclausal_phiFirst (n : FeatureType.number.Value) :
+    icelandic .monoclausal n [.number, .case] = .unvalued := by
+  revert n; decide
 
 -- (29b)
-theorem icelandic_biclausal (o : ProbeOrder) : icelandic .biclausal o = .unvalued := by
-  revert o; decide
+theorem icelandic_biclausal (n : FeatureType.number.Value) {ts : List FeatureType}
+    (hts : ts.Perm [.case, .number]) : icelandic .biclausal n ts = .unvalued := by
+  rcases List.perm_pair.1 hts with rfl | rfl <;> (revert n; decide)
 
-/-! ### Person agreement in the Lak perfective (§4.2.1) -/
+-- §4.1.2: with the dative outside T's domain, both orders derive agreement within a clause
+theorem icelandic_monoclausal_of_invisible (n : FeatureType.number.Value) {ts : List FeatureType}
+    (hts : ts.Perm [.case, .number]) :
+    (run IcelandicActive .t [.dpNom] ts (icelandicInitial .monoclausal n)).2 .t .number =
+      .valued .plural := by
+  rcases List.perm_pair.1 hts with rfl | rfl <;> (revert n; decide)
 
-/-- In (32) Asp bears `[∗Infl:perf∗], [∗π:_∗]` and v `[Infl:_], [∗π:_∗]`, with subject person `ps`
-and object person `po`. -/
+/-- T's number slot under each form of the verb: plural for the agreeing form, and no value for
+the default one. -/
+def Examples.Agreement.slot : Examples.Agreement → FeatureSlot FeatureType.number.Slot
+  | .number => .valued .plural
+  | .default => .unvalued
+
+-- (29): a form of the verb is acceptable exactly when one of the two orders of T's probes
+-- derives it
+theorem icelandic_example (x : Examples.Example) (n : FeatureType.number.Value) :
+    ∀ k ∈ x.construction, ∀ f ∈ x.agreement,
+      (icelandic k n [.case, .number] = f.slot ∨
+          icelandic k n [.number, .case] = f.slot) ↔
+        x.datum.judgment = .acceptable := by
+  revert x n; decide
+
+/-! ### Person agreement in Lak (§4.2.1) -/
+
+/-- In (32) Asp bears `[∗Infl:perf∗], [∗π:_∗]`, v `[Infl:_], [∗π:_∗]` and T `[∗π:_∗]`, with
+subject person `ps` and object person `po`. -/
 def lakInitial (ps po : Person) : Head → FeatureBundle
   | .asp => ofList [⟨.infl, .valued .perf⟩, ⟨.person, .unvalued⟩]
+  | .t => ofList [⟨.person, .unvalued⟩]
   | .v => ofList [⟨.infl, .unvalued⟩, ⟨.person, .unvalued⟩]
   | .dpSbj => ofList [person ps]
   | .dpObj => ofList [person po]
   | _ => ⊥
 
-/-- Asp's person slot after v has agreed with the object and Asp with v. -/
+/-- The state after v has agreed with the object. -/
+def lakAfterV (ps po : Person) : FeatureState Head :=
+  (run AllActive .v [.dpObj] [.person] (lakInitial ps po)).2
+
+/-- Asp's person slot in the perfective, after Asp has agreed with v. -/
 def lak (ps po : Person) : FeatureSlot FeatureType.person.Slot :=
-  let s := (run AllActive .v [.dpObj] [.person] (lakInitial ps po)).2
-  (run AllActive .asp (domain isPhase [⟨[.dpSbj], .v⟩, ⟨[], .dpObj⟩]) [.infl, .person] s).2
-    .asp .person
+  (run AllActive .asp (accessible IsPhase [.dpSbj, .v, .dpObj]) [.infl, .person]
+    (lakAfterV ps po)).2 .asp .person
+
+/-- T's person slot in the present, where there is no Asp and no Infl-Agree. -/
+def lakPresent (ps po : Person) : FeatureSlot FeatureType.person.Slot :=
+  (run AllActive .t (accessible IsPhase [.dpSbj, .v, .dpObj]) [.person] (lakAfterV ps po)).2
+    .t .person
 
 -- (31c), (31d)
 theorem lak_agrees_with_object (ps po : Person) :
     lak ps po = ↑(FeatureType.Slot.ofValue .person po) := by
+  revert ps po; decide
+
+-- (31a)
+theorem lakPresent_agrees_with_subject (ps po : Person) :
+    lakPresent ps po = ↑(FeatureType.Slot.ofValue .person ps) := by
   revert ps po; decide
 
 /-! ### Subject agreement in Spanish VOS (§4.2.2) -/
@@ -459,50 +808,72 @@ def bulgarianInitial : Head → FeatureBundle
   | _ => ⊥
 
 /-- C's domain in (36). -/
-def bulgarianDomain : List Head :=
-  domain isPhase [⟨[.whSbj], .t⟩, ⟨[.whObj], .v⟩, ⟨[], .verb⟩]
+def bulgarianDomain : List Head := accessible IsPhase [.whSbj, .t, .whObj, .v, .verb]
 
 -- (35)
 theorem bulgarian_order : whFronting bulgarianInitial .c bulgarianDomain = [.whObj, .whSbj] := by
   decide
 
+/-- The wh-phrase of (36) a lexeme of the examples is, if it is one. -/
+def Examples.Lexeme.head? : Examples.Lexeme → Option Head
+  | .koj => some .whSbj
+  | .kogo => some .whObj
+  | _ => none
+
+-- (35): an order of the wh-words is acceptable exactly when it is the order fronting derives,
+-- each mover landing above the ones before it
+theorem bulgarian_example (x : Examples.Example) (hx : x.lexemes .wh ≠ []) :
+    (x.lexemes .wh).filterMap (·.head?) =
+        (whFronting bulgarianInitial .c bulgarianDomain).reverse ↔
+      x.datum.judgment = .acceptable := by
+  revert x; decide
+
 /-- Without Multiple Agree the wh-probe's first goal is the subject, the order minimality
 alone predicts. -/
-example : (Probe.relativized (FeatureState.Matches bulgarianInitial .c .wh)).search bulgarianDomain =
-    some .whSbj := by decide
+example :
+    (Probe.relativized (FeatureState.Matches bulgarianInitial .c .wh)).search bulgarianDomain =
+      some .whSbj := by decide
 
 /-! ### Agreement with unmarked DPs in Hindi-Urdu (§4.3.1) -/
 
-/-- The ergative subject is in Spec,Asp in (37)/(39), both arguments are case-marked in Spec,Asp in
-(38a)/(40), and the unmarked subject is in Spec,v under imperfective Asp in (38b). -/
-inductive HindiClause
-  | ergSubject | bothMarked | unmarkedSubject
-  deriving DecidableEq, Repr, Fintype
+/-! The ergative subject is in Spec,Asp in (37)/(39), both arguments are case-marked in Spec,Asp
+in (38a)/(40), and the unmarked subject is in Spec,v under imperfective Asp in (38b). -/
 
-/-- T `[∗Infl:_∗], [∗ϕ:_∗]`; Asp `[Infl:perf]` or `[Infl:impf]`; v `[∗ϕ:_∗]`; the DPs
-with the case Asp assigned them. -/
-def hindiInitial (k : HindiClause) (ps po : Person) : Head → FeatureBundle
+/-- The aspect of each clause: Asp is imperfective where the subject is unmarked. -/
+def Examples.Marking.aspect : Examples.Marking → Aspect.Perfectivity
+  | .unmarkedSubject => .imperfective
+  | _ => .perfective
+
+/-- T `[∗Infl:_∗], [∗ϕ:_∗]`; Asp `[Infl:perf]` or `[Infl:impf]`; v `[∗ϕ:_∗]`; and the DPs with
+the case Asp assigned them, ergative on a subject that takes *ne* and accusative on an object that
+takes *ko* (`HindiUrdu.coreMarker`). -/
+def hindiInitial (k : Examples.Marking) (ps po : Person) : Head → FeatureBundle
   | .t => ofList [⟨.infl, .unvalued⟩, ⟨.person, .unvalued⟩]
-  | .asp => ofList [⟨.infl, .valued (if k = .unmarkedSubject then .impf else .perf)⟩]
+  | .asp =>
+    match k.aspect with
+    | .perfective => ofList [⟨.infl, .valued .perf⟩]
+    | .imperfective => ofList [⟨.infl, .valued .impf⟩]
   | .v => ofList [⟨.person, .unvalued⟩]
-  | .dpSbj => ofList
-      [person ps, if k = .unmarkedSubject then ⟨.case, .unvalued⟩ else ⟨.case, .valued .erg⟩]
-  | .dpObj => ofList
-      [person po, if k = .bothMarked then ⟨.case, .valued .acc⟩ else ⟨.case, .unvalued⟩]
+  | .dpSbj => ofList [person ps,
+      if (HindiUrdu.coreMarker k.aspect (k = .bothMarked) .A).isSome then ⟨.case, .valued .erg⟩
+      else ⟨.case, .unvalued⟩]
+  | .dpObj => ofList [person po,
+      if (HindiUrdu.coreMarker k.aspect (k = .bothMarked) .P).isSome then ⟨.case, .valued .acc⟩
+      else ⟨.case, .unvalued⟩]
   | _ => ⊥
 
-/-- The projections below T in (39), (40) and (38b). -/
-def hindiSpine : HindiClause → List (Layer Head)
-  | .ergSubject => [⟨[.dpSbj], .asp⟩, ⟨[], .v⟩, ⟨[], .verb⟩, ⟨[], .dpObj⟩]
-  | .bothMarked => [⟨[.dpSbj, .dpObj], .asp⟩, ⟨[], .v⟩, ⟨[], .verb⟩]
-  | .unmarkedSubject => [⟨[], .asp⟩, ⟨[.dpSbj], .v⟩, ⟨[], .verb⟩, ⟨[], .dpObj⟩]
+/-- The heads T c-commands in (39), (40) and (38b), in order. -/
+def hindiDomain : Examples.Marking → List Head
+  | .ergSubject => [.dpSbj, .asp, .v, .verb, .dpObj]
+  | .bothMarked => [.dpSbj, .dpObj, .asp, .v, .verb]
+  | .unmarkedSubject => [.asp, .dpSbj, .v, .verb, .dpObj]
 
 /-- T's person slot after v has probed its complement (empty in (40), the object having
 moved, fn. 33) and T has Infl-agreed with Asp and, nested under it, probed for ϕ. -/
-def hindi (k : HindiClause) (ps po : Person) : FeatureSlot FeatureType.person.Slot :=
+def hindi (k : Examples.Marking) (ps po : Person) : FeatureSlot FeatureType.person.Slot :=
   let s := (run AllActive .v (if k = .bothMarked then [] else [.verb, .dpObj]) [.person]
     (hindiInitial k ps po)).2
-  (run AllActive .t (domain isPhase (hindiSpine k)) [.infl, .person] s).2 .t .person
+  (run AllActive .t (accessible IsPhase (hindiDomain k)) [.infl, .person] s).2 .t .person
 
 -- (37)
 theorem hindi_object_agreement (ps po : Person) :
@@ -517,5 +888,25 @@ theorem hindi_default_agreement (ps po : Person) : hindi .bothMarked ps po = .un
 theorem hindi_subject_agreement (ps po : Person) :
     hindi .unmarkedSubject ps po = ↑(FeatureType.Slot.ofValue .person ps) := by
   revert ps po; decide
+
+-- §4.3.1: in (37), (38a) and (38b) T has the person of the highest argument with unmarked case,
+-- the controller of [bobaljik-2008], and no value where there is none
+theorem hindi_eq_controller (k : Examples.Marking) (ps po : Person) :
+    hindi k ps po =
+      (Bobaljik2008.hindiController k.aspect (k = .bothMarked)).elim .unvalued fun r ↦
+        ↑(FeatureType.Slot.ofValue .person (if r = .A then ps else po)) := by
+  revert k ps po; decide
+
+/-- T's person slot when the verb shows the features of the subject, of the object, or neither. -/
+def Examples.Controller.slot (ps po : Person) :
+    Examples.Controller → FeatureSlot FeatureType.person.Slot
+  | .subject => ↑(FeatureType.Slot.ofValue .person ps)
+  | .object => ↑(FeatureType.Slot.ofValue .person po)
+  | .default => .unvalued
+
+-- (37), (38): in each example the verb shows the features of the argument T agrees with
+theorem hindi_example (x : Examples.Example) (ps po : Person) :
+    ∀ m ∈ x.marking, ∀ c ∈ x.controller, hindi m ps po = c.slot ps po := by
+  revert x ps po; decide
 
 end Amato2025

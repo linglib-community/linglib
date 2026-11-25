@@ -129,11 +129,12 @@ structure ArgStructure where
   valency : Verb.Valency := .of []
   /-- The voice type, which fixes whether an external argument is introduced. -/
   voiceType : Option VoiceType := none
-  /-- Can the verb passivize? -/
-  passivizable : Bool := true
   /-- The auxiliaries the verb forms its perfect with, as its grammar gives them, both where it
       gives both; empty where the language has no choice or the entry records none. -/
   perfectAuxiliaries : Finset Verb.PerfectAuxiliary := ∅
+  /-- The frames on which the verb has no passive although the frame has an object and the verb
+      an external argument, as its grammar lists them. -/
+  noPassive : List ArgumentFrame := []
   deriving BEq
 
 /-- The aspect of a verb is its lexical viewpoint, scale, direction of motion, incrementality

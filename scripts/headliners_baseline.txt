@@ -20,7 +20,6 @@ AlonsoOvalle2009
 AlonsoOvalleMenendezBenito2010
 AlonsoOvalleMoghiseh2025a
 AlstottAravind2026
-Amato2025
 AnandNevins2004
 Anscombe1964
 Anttila1997
@@ -62,7 +61,6 @@ Bhadra2024
 BhattDayal2020
 BhattTakahashi2011
 BirdKlein1990
-Bobaljik2008
 Bobaljik2012
 BonamiStump2016
 BonehDoron2013
