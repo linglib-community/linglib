@@ -524,16 +524,16 @@ theorem licensed_iff_mem_evidential (r : Option Polarity) (e : SignType) :
 -- for every consistent evidence state, not only the three of Table 1
 theorem licensed_iff_bias_mem_evidential {E φ : Set Weather} (hE : E.Nonempty)
     (r : Option Polarity) :
-    Licensed E φ r ↔ Question.bias (Filter.principal E) φ ∈ BuringGunlogson2000.evidential r := by
+    Licensed E φ r ↔ (Filter.principal E).bias φ ∈ BuringGunlogson2000.evidential r := by
   have : (Filter.principal E).NeBot := Filter.principal_neBot_iff.2 hE
   rcases r with _ | _ | _
   · have h : E ⊆ φ → ¬ E ⊆ φᶜ := fun h h' ↦ let ⟨x, hx⟩ := hE; h' hx (h hx)
-    rw [BuringGunlogson2000.mem_evidential_none, Ne, Question.bias_eq_neg_one_iff]
+    rw [BuringGunlogson2000.mem_evidential_none, Ne, Filter.bias_eq_neg_one_iff]
     simp only [Licensed, MonopolarLicensed, BipolarLicensed, Filter.mem_principal]
     tauto
-  · rw [BuringGunlogson2000.mem_evidential_outer, Ne, Question.bias_eq_one_iff]
+  · rw [BuringGunlogson2000.mem_evidential_outer, Ne, Filter.bias_eq_one_iff]
     simp [Licensed, HighNegationLicensed]
-  · rw [BuringGunlogson2000.mem_evidential_inner, Question.bias_eq_neg_one_iff]
+  · rw [BuringGunlogson2000.mem_evidential_inner, Filter.bias_eq_neg_one_iff]
     simp [Licensed, MonopolarLicensed]
 
 instance : MeasurableSpace Weather := ⊤

@@ -5,7 +5,7 @@ public import Linglib.Discourse.CommonGround
 public import Linglib.Languages.English.PolarityItems
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.PolarityItem.Polarity
-public import Linglib.Semantics.Questions.Bias
+public import Linglib.Discourse.Bias
 public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Syntax.Negation
 public import Linglib.Data.Examples.Readers
@@ -136,8 +136,8 @@ def Must (ev : Set (Set W)) (q : Set W) : Prop := q ∈ ev ∧ qᶜ ∉ ev
 
 -- on a consistent body of evidence closed under entailment, (91b) is positive bias
 theorem must_sets_iff_bias {F : Filter W} [F.NeBot] {q : Set W} :
-    Must F.sets q ↔ Question.bias F q = 1 :=
-  Question.bias_eq_one_iff.trans ⟨fun h ↦ ⟨h, Filter.compl_notMem h⟩, fun h ↦ h.1⟩ |>.symm
+    Must F.sets q ↔ F.bias q = 1 :=
+  Filter.bias_eq_one_iff.trans ⟨fun h ↦ ⟨h, Filter.compl_notMem h⟩, fun h ↦ h.1⟩ |>.symm
 
 /-- The contexts in which a question over a proposition is asked. -/
 inductive Scenario where

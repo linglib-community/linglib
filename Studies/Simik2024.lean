@@ -562,7 +562,7 @@ one with which Table 2 lists the interrogative negative question. -/
 theorem falsumCz_ne_undefined_iff_bias_mem {W : Type*} {epi : SetRel W W}
     [ModalLogic.IsSerial epi] {cg : W → Filter W} {p : Set W} {w : W} :
     falsumCz epi cg p w ≠ .undefined ↔
-      bias (Filter.principal {v | w ~[epi] v}) p ∈
+      (Filter.principal {v | w ~[epi] v}).bias p ∈
         (distribution czechForms .interNPQ).image Prod.snd := by
   have : (Filter.principal {v | w ~[epi] v}).NeBot :=
     Filter.principal_neBot_iff.2 (ModalLogic.IsSerial.serial (R := epi) w)
