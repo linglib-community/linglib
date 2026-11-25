@@ -14,16 +14,6 @@ the restrictor, as Kratzer and Shimoyama propose for Japanese. A disjunctive par
 supremum, so the quantifier is `Det.some`; a conjunctive particle takes the infimum,
 `every`; and a negative particle the complement of the supremum, `no`.
 
-## Main definitions
-
-* `IndeterminateQuantifier.reading`: the particle's coordination over the restrictor.
-
-## Main results
-
-* `IndeterminateQuantifier.reading_of_disjunctive`,
-  `IndeterminateQuantifier.reading_of_conjunctive`,
-  `IndeterminateQuantifier.reading_of_negative`: the readings are `some`, `every` and `no`.
-
 ## References
 
 * [kratzer-shimoyama-2002]

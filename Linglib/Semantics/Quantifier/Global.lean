@@ -21,34 +21,17 @@ where the relativization of a quantifier evaluates it on the restrictor as the u
 define the global denotations of the determiners of `Quantifier/Basic.lean` and
 `Quantifier/Counting.lean`, and the determiner symbols that name them.
 
-## Main definitions
-
-* `Quantifier.Det.Family`, `Quantifier.Family`: global determiner denotations and global
-  quantifiers.
-* `Quantifier.Det.Family.Isom`, `Quantifier.Det.Family.Ext`, `Quantifier.Det.Family.Constant`:
-  isomorphism closure, extension and constancy.
-* `Quantifier.Family.rel`: relativization, which turns a global quantifier into a global
-  determiner denotation.
-* `Quantifier.NumberTree.ofFamily`, `Quantifier.NumberTree.toFamily`: the tree of a global
-  determiner denotation, and the global determiner denotation of a tree.
-* `Quantifier.Det.Symbol`: the determiner symbols, each denoting the global denotation of a tree.
-
 ## Main results
 
-* `Quantifier.NumberTree.familyOrderIso`: the conservative constant global determiner
-  denotations are the trees, as Boolean algebras.
-* `Quantifier.Det.Family.not_apply_of_asymm`: such a denotation that is asymmetric on every
-  universe is empty. On a single universe this fails.
+* `Quantifier.NumberTree.familyOrderIso`: the conservative constant global determiner denotations
+  are the trees of numbers, as Boolean algebras.
 * `Quantifier.NumberTree.relOrderIso`: relativization is an order isomorphism from the
   isomorphism-closed global quantifiers onto the conservative constant global determiner
   denotations.
-* `Quantifier.Family.Isom.apply_iff`: an isomorphism-closed global quantifier holds of `B`
-  according to `|Bᶜ|` and `|B|`, by the tree of its relativization.
-* `Quantifier.Family.Isom.ext_iff`, `Quantifier.Family.Isom.monotone_iff`: such a quantifier
-  satisfies extension if and only if that tree is cardinal, and is monotone on every universe if
-  and only if that tree is scope monotone.
-* `Quantifier.Det.Symbol.conservative_denote`, `Quantifier.Det.Symbol.constant_denote`: what a
-  determiner symbol denotes is conservative and constant.
+* `Quantifier.Family.Isom.ext_iff`: an isomorphism-closed global quantifier satisfies extension if
+  and only if the tree of its relativization is cardinal.
+* `Quantifier.Det.Family.not_apply_of_asymm`: a conservative constant global determiner denotation
+  that is asymmetric on every universe is empty.
 
 ## Implementation notes
 

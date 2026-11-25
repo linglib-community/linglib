@@ -14,22 +14,14 @@ if and only if `X ∩ A` is contained in a witness set. The minimal witness sets
 living on `A` are its minimal sets: those of *some* `A` are the singletons of the members of `A`,
 and that of *every* `A` is `A`.
 
-## Main definitions
-
-* `Quantifier.Witness Q A w`: `w ⊆ A` and `Q w`.
-
 ## Main results
 
 * `Quantifier.LivesOn.apply_iff_witness`: a quantifier living on `A` holds of `X` if and only if
   `A ∩ X` is a witness set.
 * `Quantifier.LivesOn.monotone_apply_iff`: an increasing quantifier living on `A` holds of `X` if
   and only if `X` contains a witness set.
-* `Quantifier.LivesOn.antitone_apply_iff`: a decreasing quantifier living on `A` holds of `X` if and
-  only if `X ∩ A` is contained in a witness set.
 * `Quantifier.LivesOn.minimal_witness_iff`: the minimal witness sets of a quantifier living on `A`
   are its minimal sets.
-* `Quantifier.Det.minimal_some_iff`, `Quantifier.Det.minimal_every_iff`: the minimal sets of *some*
-  `A` are the singletons of the members of `A`, and the minimal set of *every* `A` is `A`.
 
 ## References
 

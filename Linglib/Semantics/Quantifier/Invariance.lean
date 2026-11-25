@@ -14,15 +14,14 @@ by the dual, and that *every*, *some* and *no* are quantity invariant. Among the
 quantity-invariant determiner denotations, van Benthem characterizes *some* and *no* by their
 properties as relations between sets.
 
-## Main definitions
-
-* `Quantifier.QuantityInvariant`, `Quantifier.Det.QuantityInvariant`: invariance of a quantifier,
-  and of a determiner denotation, under the permutations of the universe.
-
 ## Main results
 
-* `Quantifier.Det.Conservative.iff_inter_nonempty`, `Quantifier.Det.Conservative.iff_disjoint`:
-  van Benthem's characterizations of *some* and *no*.
+* `Quantifier.Det.Conservative.iff_inter_nonempty`: *some* is the only conservative,
+  quantity-invariant determiner denotation that is symmetric and quasi-reflexive and holds of a
+  singleton but not everywhere.
+* `Quantifier.Det.Conservative.iff_disjoint`: *no* is the only conservative, quantity-invariant
+  determiner denotation that is symmetric and quasi-universal and fails of a singleton but holds
+  somewhere.
 * `Quantifier.exists_det_apply_eq_iff_livesOn`: the quantifiers `d A` of the conservative,
   quantity-invariant determiner denotations are the quantifiers that live on a set and that the
   permutations fixing that set leave unchanged.

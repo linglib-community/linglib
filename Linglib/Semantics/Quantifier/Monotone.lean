@@ -20,16 +20,12 @@ scopes is order-connected.
 
 ## Main results
 
-* `Quantifier.Det.ScopeMonotone.compl`, `Quantifier.Det.ScopeMonotone.innerNeg`: the complement
-  and the inner negation of a scope-monotone determiner denotation are scope antitone.
 * `Quantifier.Det.scopeMonotone_iff_isUpperSet`: a determiner denotation is scope monotone if and
   only if each of its sets of scopes is an upper set.
-* `Quantifier.Det.restrictorMonotone_iff_upSW_and_upSE`: restrictor monotonicity is ↑SW together
-  with ↑SE monotonicity.
-* `Quantifier.Det.smooth_iff_coSmooth_innerNeg`: a determiner denotation is smooth if and only
-  if its inner negation is co-smooth.
-* `Quantifier.ordConnected_setOf_iff_exists_eq_inf`: a quantifier is a meet of two quantifiers,
-  each monotone or antitone, if and only if its set of scopes is order-connected.
+* `Quantifier.Det.restrictorMonotone_iff_upSW_and_upSE`: a determiner denotation is restrictor
+  monotone if and only if it is ↑SW and ↑SE monotone.
+* `Quantifier.ordConnected_setOf_iff_exists_eq_inf`: a quantifier is a meet of two quantifiers, each
+  monotone or antitone, if and only if its set of scopes is order-connected.
 
 ## References
 

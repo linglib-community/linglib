@@ -36,52 +36,21 @@ in `Quantifier/Global.lean`.
 ## Main definitions
 
 * `Quantifier.NumberTree`: a quantifier as a relation between `|A \ B|` and `|A ∩ B|`.
-* `Quantifier.NumberTree.innerNeg`: inner negation, the swap of the two coordinates.
-* `Quantifier.NumberTree.all`, `Quantifier.NumberTree.some`, `Quantifier.NumberTree.no`,
-  `Quantifier.NumberTree.notAll`: the corners of the square of opposition.
-* `Quantifier.NumberTree.cardinal`: the quantifiers that depend on `|A ∩ B|` alone.
-* `Quantifier.NumberTree.row`: the points of a row at which a quantifier holds.
-* `Quantifier.NumberTree.ScopeMonotone`, `Quantifier.NumberTree.ScopeAntitone`: monotonicity in
-  the scope, a step along a row of the tree.
-* `Quantifier.NumberTree.Asymmetric`, `Quantifier.NumberTree.StronglyConnected`,
-  `Quantifier.NumberTree.Euclidean`: relational conditions on a quantifier, read off the tree.
-* `Quantifier.NumberTree.Variety`, `Quantifier.NumberTree.Cont`, `Quantifier.NumberTree.Plus`,
-  `Quantifier.NumberTree.Uniform`: the postulates VAR, CONT, PLUS and UNIF.
-* `Quantifier.NumberTree.MaturityLevel`: a line of the tree below which truth values settle.
-* `Quantifier.NumberTree.ofSizes`: the tree of a relation between `|A ∩ B|` and `|A|`.
-* `Quantifier.NumberTree.ofDet`, `Quantifier.NumberTree.toDet`: the tree of a determiner
-  denotation on a finite universe, and the determiner denotation of a tree, counting with
-  `Set.ncard`.
-* `Quantifier.Det.Cardinal`: the determiner denotations that depend on `|A ∩ B|` alone.
-* `Quantifier.NumberTree.ConstantOnRow`, `Quantifier.NumberTree.ConstantBelow`: a quantifier that
-  does not depend on its scope for a restrictor of a given size, or on either argument on a
-  universe of a given size.
+* `Quantifier.NumberTree.toDet`: the determiner denotation of a tree on a universe.
+* `Quantifier.NumberTree.ofDet`: the tree of a determiner denotation on a finite universe.
+* `Quantifier.NumberTree.cardinal`: the tree of a set of numbers, which holds according to `|A ∩ B|`
+  alone.
 
 ## Main results
 
-* `Quantifier.NumberTree.Asymmetric.eq_bot`, `Quantifier.NumberTree.StronglyConnected.eq_top`,
-  `Quantifier.NumberTree.Euclidean.eq_top`: the only asymmetric quantifier is the empty one, the
-  only strongly connected one is the universal one, and a nonempty Euclidean quantifier is
-  universal.
-* `Quantifier.NumberTree.variety_cont_plus_uniform_iff`: the quantifiers satisfying the four
-  postulates are exactly the four corners of the square of opposition.
+* `Quantifier.NumberTree.variety_cont_plus_uniform_iff`: the quantifiers that satisfy the four
+  postulates are the four corners of the square of opposition.
 * `Quantifier.NumberTree.ofDet_iff`: a conservative, permutation-invariant determiner denotation
   holds of `A` and `B` exactly when its tree holds of `|A \ B|` and `|A ∩ B|`.
-* `Quantifier.NumberTree.gc_ofDet_toDet`: reading a tree off and reading it back form a Galois
-  connection.
-* `Quantifier.NumberTree.scopeMonotone_cardinal_iff`: a cardinal quantifier is scope monotone if
-  and only if its set of numbers is an upper set.
-* `Quantifier.Det.cardinal_iff_exists_toDet`: a determiner denotation is cardinal if and only if
-  it is the determiner denotation of the cardinal quantifier of a set of numbers.
-* `Quantifier.NumberTree.conservative_toDet`, `Quantifier.NumberTree.quantityInvariant_toDet`: the
-  quantifier of a tree is conservative and permutation invariant.
-* `Quantifier.NumberTree.ScopeMonotone.toDet`, `Quantifier.NumberTree.ScopeAntitone.toDet`: the
-  quantifier of a scope-monotone tree is scope monotone, and likewise antitone.
-* `Quantifier.NumberTree.dependsOn_toDet_compl_singleton_iff`: the quantifier of a tree depends on
-  whether an individual is in its scope iff the individual is in its restrictor and the tree is not
-  constant on the restrictor's row.
-* `Quantifier.NumberTree.card_powerset_points`: there are `2 ^ ((n + 1) * (n + 2) / 2)` sets of
-  points in rows `0` to `n`.
+* `Quantifier.NumberTree.gc_ofDet_toDet`: reading a tree off a determiner denotation and reading it
+  back form a Galois connection.
+* `Quantifier.NumberTree.scopeMonotone_cardinal_iff`: a cardinal quantifier is scope monotone if and
+  only if its set of numbers is an upper set.
 
 ## Implementation notes
 

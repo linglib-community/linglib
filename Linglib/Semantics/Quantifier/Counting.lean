@@ -21,20 +21,11 @@ a finite type with decidable arguments each quantifier is decidable through the 
 of each size, so a concrete case closes by `decide`. A quantifier restricted to a finite set `s`
 of individuals is the quantifier with restrictor `s ∩ A`.
 
-## Main definitions
-
-* `Quantifier.NumberTree.most`, `Quantifier.NumberTree.atLeast`, …: the trees of the counting
-  quantifiers, with `Quantifier.NumberTree.threshold` for a proportion of the restrictor.
-* `Quantifier.Det.most`, `Quantifier.Det.atLeast`, …: their quantifiers.
-* `Quantifier.Det.Proportional`: dependence on the ratio of `|A ∩ B|` to `|A \ B|`.
-
 ## Main results
 
-* `Quantifier.Det.smooth_most`, `Quantifier.Det.proportional_most`: *most* is smooth and
-  proportional.
 * `Quantifier.NumberTree.thresholdGt_one_two`: *more than half* is *most*.
-* `Quantifier.Det.not_intersective_most`, `Quantifier.Det.not_monotone_half`: *most* is not
-  intersective, and *half* is monotone in its scope in neither direction.
+* `Quantifier.Det.proportional_most`: *most* is proportional.
+* `Quantifier.Det.not_intersective_most`: *most* is not intersective.
 
 ## References
 

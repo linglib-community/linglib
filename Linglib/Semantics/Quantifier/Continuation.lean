@@ -20,13 +20,6 @@ continuation monad at `Prop`: a quantifier, read as a function of the characteri
 its scope, is a computation `Cont Prop α`, and under this equivalence the individual of an entity
 is `pure`, `bind` is `>>=` and `map` is `<$>`.
 
-## Main definitions
-
-* `Quantifier.map`, `Quantifier.bind`, `Quantifier.curry`: the image of a quantifier, a
-  quantifier taking scope over a family of quantifiers, and the iteration of two quantifiers.
-* `Quantifier.toCont`: the equivalence between quantifiers and computations in the continuation
-  monad at `Prop`.
-
 ## Implementation notes
 
 `map`, `bind` and `curry` follow `Filter.map`, `Filter.bind` and `Filter.curry`.

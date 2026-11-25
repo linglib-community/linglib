@@ -13,19 +13,10 @@ restrictive when `Q (A \ C) B` holds and `Q A B` does not. The set `C` is the ex
 is the least set `S` such that `Q (A \ S) B` holds. These are the semantics of the free exceptive
 and of the *but*-phrase in [von-fintel-1993].
 
-## Main definitions
-
-* `Quantifier.Exceptive.Restrictive Q A C B`: `Q (A \ C) B` holds and `Q A B` does not.
-* `Quantifier.Exceptive.IsExceptionSet Q A C B`: `C` is the least set whose subtraction from `A`
-  makes the quantification true.
-* `Quantifier.Exceptive.subtraction Q A B C`: the set of the worlds `w` such that
-  `Q (A w \ C) (B w)` holds.
-
 ## Main results
 
-* `Quantifier.Exceptive.IsExceptionSet.unique`: a quantification has at most one exception set.
-* `Quantifier.Exceptive.isExceptionSet_every_iff`, `Quantifier.Exceptive.isExceptionSet_no_iff`: the
-  exception set of *every* `A` at the scope `B` is `A \ B`, and that of *no* `A` is `A ∩ B`.
+* `Quantifier.Exceptive.isExceptionSet_every_iff`: the exception set of *every* `A` at the scope `B`
+  is `A \ B`.
 * `Quantifier.Exceptive.restrictive_singleton_iff_minimal`: subtracting a singleton is restrictive
   if and only if the singleton is a minimal set whose subtraction makes the quantification true.
 * `Quantifier.Exceptive.mem_exh_range_subtraction_iff`: the exhaustification of the subtraction of

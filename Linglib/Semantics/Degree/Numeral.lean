@@ -21,24 +21,15 @@ comparison `c` and number `m` is the degree quantifier `MaxIn (c.interval m)`, s
 `individual m`. This file derives each reading from the other, by type shifting and by
 exhaustification, and defines the numeral modifiers as lexical items.
 
-## Main definitions
-
-* `Numerals.NumeralModifier`: a lexical item whose readings are modifiers of sets of amounts.
-* `Numerals.ModifierClass`: the two classes of numeral modifiers of [nouwen-2010].
-* `Numerals.ModifierKind`: the constructions that a numeral modifier is built on.
-
 ## Main results
 
 * `Numerals.BE_maxIn`: `BE (MaxIn U) = U`.
-* `Numerals.some_BE_maxIn_singleton`: `Det.some (BE (MaxIn {m})) = individual m`.
 * `Numerals.maxIn_singleton_lt_individual`: on a scale with no greatest degree, the two-sided
   numeral strictly entails the lower-bounded one.
 * `Numerals.isGreatest_ge_iff`: exhaustified against the higher numerals, *at least `m`* holds of
   `a` if and only if `a = m`.
-* `Numerals.mem_exh_range_interval_iff_of_not_isStrict`: exhaustified against its forms at the other
-  numbers, a form whose comparison is not strict holds only of its number.
-* `Numerals.mem_exh_range_interval_gt_iff`: exhaustified in the same way, *more than `m`* holds of
-  `a` if and only if `a` covers `m`.
+* `Numerals.mem_exh_range_interval_gt_iff`: exhaustified against its forms at the other numbers,
+  *more than `m`* holds of `a` if and only if `a` covers `m`.
 
 ## Implementation notes
 

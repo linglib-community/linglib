@@ -19,9 +19,6 @@ the ones that a first-order sentence defines.
 
 ## Main definitions
 
-* `Quantifier.Lindstrom.Det`: the Lindström quantifiers of type `⟨1,1⟩`.
-* `Quantifier.Lindstrom.Det.toDet`, `Quantifier.Lindstrom.Det.toFamily`: the determiner denotation
-  of a Lindström quantifier on a universe, and its global determiner denotation.
 * `Quantifier.Lindstrom.AlikeUpTo n`: two pairs of sets are alike up to `n` when each of the four
   Venn regions has the same size on the two sides or at least `n` members on both.
 * `Quantifier.Det.Family.FODefinable`: a global determiner denotation is first-order definable when
@@ -29,8 +26,6 @@ the ones that a first-order sentence defines.
 
 ## Main results
 
-* `Quantifier.Lindstrom.Det.toDet_iff_of_mk_eq`: a realized determiner denotation depends only on
-  the sizes of the four Venn regions.
 * `Quantifier.Lindstrom.isom_iff_exists_toFamily`: a global determiner denotation is closed under
   isomorphism if and only if it is the realization of a Lindström quantifier.
 * `Quantifier.Det.Family.foDefinable_iff_exists_alikeUpTo`: a global determiner denotation is

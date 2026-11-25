@@ -28,23 +28,16 @@ pairs of an outer and an inner polarity, and the orbit of a quantifier is its sq
 antitone quantifier stays monotone or antitone under each action, and the direction changes once for
 each negative polarity.
 
-## Main definitions
-
-* `Quantifier.square`: the square of opposition of a quantifier `Q`, with corners `Q`,
-  `Q.innerNeg`, `Q.dual` and `Qᶜ`.
-
 ## Main results
 
 * `Quantifier.squareRelations_square_iff`: the square of `Q` has the relations of the classical
   square of opposition if and only if `Q ≤ Q.dual`.
-* `Quantifier.negative_smul`, `Quantifier.mk_negative_smul`: the negative polarity acts on a
-  quantifier through the value as the complement and through the scope as inner negation.
-* `Quantifier.orbit_eq`: the orbit of `Q` under the two actions is `Q`, `Q.innerNeg`, `Q.dual`
-  and `Qᶜ`.
-* `Polarity.MonoBy.smul`, `Polarity.MonoBy.mk_smul`: a polarity acting on a quantifier through
-  either place multiplies its direction by that polarity.
-* `Quantifier.mk_toBoolRing_univ_vadd`: a set acts on a quantifier by complementing the scope
-  within that set, and inner negation is the action of the whole universe.
+* `Quantifier.negative_smul`: `Polarity.negative • Q = Qᶜ`.
+* `Quantifier.mk_negative_smul`: `DomMulAct.mk Polarity.negative • Q = Q.innerNeg`.
+* `Quantifier.orbit_eq`: the orbit of `Q` under the two actions is `Q`, `Q.innerNeg`, `Q.dual` and
+  `Qᶜ`.
+* `Quantifier.mk_toBoolRing_univ_vadd`: inner negation is the action of the whole universe on the
+  scope by symmetric difference.
 
 ## Implementation notes
 

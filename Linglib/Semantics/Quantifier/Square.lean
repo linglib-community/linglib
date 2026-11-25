@@ -14,11 +14,6 @@ If `A` is empty then `every A` and `no A` both hold of every scope. So the relat
 classical square of opposition hold if and only if `A` is nonempty, and `every A` and `no A` are
 contrary if and only if `A` has at least two members.
 
-## Main definitions
-
-* `Quantifier.Det.square`: the square of opposition with corners `every A`, `no A`, `Det.some A`
-  and `everyᶜ A`.
-
 ## Main results
 
 * `Quantifier.Det.squareRelations_square`: the square at a restrictor `A` has the relations of

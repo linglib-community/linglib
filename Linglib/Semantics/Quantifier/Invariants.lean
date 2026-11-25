@@ -15,15 +15,6 @@ ones the pair of `A` and `A ∩ B`. This file defines the class of a function `f
 subalgebra of `Det α`, and shows that it is the power set of the codomain of `f` when `f` has a
 section.
 
-## Main definitions
-
-* `Quantifier.Det.invariants f`: the Boolean subalgebra of the determiner denotations `d` such that
-  `d A B` depends only on `f (A, B)`.
-* `Quantifier.Det.invariantsOrderIso`: the order isomorphism `invariants f ≃o Set β` for a function
-  `f` into `β` that has a section.
-* `Quantifier.Det.conservativeSubalgebra`: the conservative determiner denotations, the class of the
-  function taking `(A, B)` to `(A, A ∩ B)`.
-
 ## Main results
 
 * `Quantifier.Det.card_invariants`: the class of a surjective function onto a finite type `β` has

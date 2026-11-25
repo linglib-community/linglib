@@ -14,23 +14,15 @@ quantifiers. On entities ordered by parthood it compares the individual of an en
 universal and the existential quantifier over its parts. It also defines Partee's `lower`, the
 partial inverse of the lift.
 
-## Main definitions
-
-* `Quantifier.lower`: `lower Q` is the entity whose individual is `Q`, defined when there is one.
-
 ## Main results
 
 * `Quantifier.completeLatticeHom_ext`: complete lattice homomorphisms out of the quantifiers that
   agree on the individuals are equal.
 * `Quantifier.exists_eq_individual_iff`: a quantifier is an individual if and only if it commutes
   with complement and with arbitrary intersections.
-* `Quantifier.some_eq_individual_iff`: `Det.some N = individual a` if and only if `N = {a}`.
-* `Quantifier.every_Iic_le_individual`, `Quantifier.individual_le_some_Iic`:
-  `every (Set.Iic d) ≤ individual d ≤ Det.some (Set.Iic d)`.
-* `Quantifier.some_Iic_eq_individual_iff`, `Quantifier.every_Iic_eq_individual_iff`: each inequality
-  is an equality if and only if `d` is minimal.
-* `Quantifier.lower_the`, `Quantifier.lower_some`, `Quantifier.lower_every`: `lower` takes *the*
-  `A`, *some* `A` and *every* `A` to `iota A`.
+* `Quantifier.some_Iic_eq_individual_iff`: `Det.some (Set.Iic d) = individual d` if and only if `d`
+  is minimal.
+* `Quantifier.lower_the`: `lower (the A) = iota A`.
 
 ## References
 

@@ -25,20 +25,17 @@ monotone functions and the negative polarity the antitone ones.
 
 ## Main definitions
 
-* `Polarity`: the two polarities, with their group structure.
-* `Polarity.unitsEquiv`: the isomorphism `Polarity ≃* ℤˣ`.
 * `Polarity.lift`: the equivalence between the elements of a monoid whose square is one and the
   homomorphisms out of the polarities.
-* `Polarity.complHom`: the action of the polarities on a Boolean algebra by complement.
-* `Polarity.MonoBy`, `Polarity.StrictMonoBy`: a function is directed by the positive polarity when
-  it is monotone and by the negative polarity when it is antitone, and likewise strictly.
+* `Polarity.MonoBy`: a function is directed by the positive polarity when it is monotone and by the
+  negative polarity when it is antitone.
 
 ## Main results
 
 * `Polarity.orbit_eq_pair_compl`: the orbit of a set under the polarities is the set and its
   complement.
-* `Polarity.MonoBy.comp`, `Polarity.StrictMonoBy.comp`: the composition of a function directed by
-  `s` with one directed by `t` is directed by `s * t`.
+* `Polarity.MonoBy.comp`: the composition of a function directed by `s` with one directed by `t` is
+  directed by `s * t`.
 
 ## Implementation notes
 

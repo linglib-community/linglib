@@ -28,27 +28,20 @@ the sense of Keenan's Frege boundary, when it is such a composition.
 ## Main definitions
 
 * `Quantifier.Polyadic.iterate`: the iteration `Q₁x Q₂y R(x, y)` of two quantifiers.
-* `Quantifier.Polyadic.acc`, `Quantifier.Polyadic.Reducible`: the accusative extension of a
-  quantifier, and the functions from relations to truth values that are compositions of quantifiers.
 * `Quantifier.Polyadic.resume`: the binary resumption `Q⟨x, y⟩ R(x, y)` of a quantifier.
 * `Quantifier.Polyadic.branch`: the branching of two quantifiers, witnessed by choice functions.
+* `Quantifier.Polyadic.Reducible`: a function from relations to truth values is reducible when it is
+  a quantifier composed with the accusative extension of another.
 
 ## Main results
 
-* `Quantifier.Polyadic.iterate_every_some_of_some_every`: `∃∀` entails `∀∃`, so the two linear
-  readings of an *every*/*some* pair are nested.
-* `Quantifier.Polyadic.resume_no_iff`, `Quantifier.Polyadic.resume_no_iff_iterate_every_no`: the
-  resumption of *no* is the iteration of *no* and *some*, and of *every* and *no*.
-* `Quantifier.Polyadic.iterate_mono`, `Quantifier.Polyadic.resume_mono`: iteration and resumption
-  of scope-upward-monotone quantifiers are monotone in the relation.
-* `Quantifier.Polyadic.iterate_iff_curry`: the iteration of two quantifiers is the first taking
-  scope over the second.
-* `Quantifier.Polyadic.reducible_iff_exists_factorsThrough`: a function is reducible if and only
-  if the accusative extension of some quantifier refines it.
+* `Quantifier.Polyadic.iterate_every_some_of_some_every`: an existential taking scope over a
+  universal entails the universal taking scope over the existential.
+* `Quantifier.Polyadic.resume_no_iff`: the resumption of *no* is the iteration of *no* and *some*.
+* `Quantifier.Polyadic.reducible_iff_exists_factorsThrough`: a function is reducible if and only if
+  the accusative extension of some quantifier refines it.
 * `Quantifier.Polyadic.Reducible.eq_of_forall_prod`: reducible functions that agree on the cross
   products are equal.
-* `Quantifier.Polyadic.Reducible.exists_interchangeable`: of any three rows, a reducible function
-  treats two as interchangeable.
 
 ## TODO
 

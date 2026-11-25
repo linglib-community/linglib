@@ -24,24 +24,14 @@ each one has.
 The counting determiners, such as *most* and *few*, are in `Quantifier/Counting.lean`. The square
 of opposition of `every`, `no`, `some` and *not every* is in `Quantifier/Square.lean`.
 
-## Main definitions
-
-* `Quantifier.Det.every`, `Quantifier.Det.some`, `Quantifier.Det.no`, `Quantifier.Det.the`: the
-  four determiner denotations.
-* `Quantifier.Det.someOrderEmbedding`, `Quantifier.Det.everyOrderEmbedding`,
-  `Quantifier.Det.noOrderEmbedding`: each determiner as an order embedding of the restrictors
-  into the quantifiers; `every` and `no` reverse the order.
-
 ## Main results
 
-* `Quantifier.Det.no_iff_not_some`, `Quantifier.Det.dual_every`: `no` is the complement of
-  `Det.some`, and `Det.some` is the dual of `every`.
 * `Quantifier.Det.exists_eq_every_iff`: a quantifier is `every A` for some `A` if and only if it
   commutes with arbitrary intersections of scopes.
-* `Quantifier.Det.exists_eq_some_iff`: a quantifier is `Det.some A` for some `A` if and only if
-  it commutes with arbitrary unions of scopes.
-* `Quantifier.Det.exists_eq_no_iff`: a quantifier is `no A` for some `A` if and only if it holds
-  of a union of scopes exactly when it holds of each of them.
+* `Quantifier.Det.exists_eq_some_iff`: a quantifier is `Det.some A` for some `A` if and only if it
+  commutes with arbitrary unions of scopes.
+* `Quantifier.Det.exists_eq_no_iff`: a quantifier is `no A` for some `A` if and only if it holds of
+  a union of scopes exactly when it holds of each of them.
 * `Quantifier.Det.disjoint_every_no_iff`: `every A` and `no A` are disjoint if and only if `A` is
   nonempty.
 

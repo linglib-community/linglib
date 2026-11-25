@@ -25,18 +25,6 @@ relational properties. Invariance under the permutations of the universe is in
 `Quantifier/Invariance.lean`, and quantifiers with a value on every finite universe are in
 `Quantifier/Global.lean`.
 
-## Main definitions
-
-* `Quantifier`, `Quantifier.Det`: quantifiers and determiner denotations.
-* `Det.Conservative`, `Det.ScopeMonotone`, `Det.RestrictorMonotone`, `Det.Intersective`,
-  `Det.CoIntersective`, `Det.PositiveStrong`: the properties of determiner denotations.
-* `Det.UpSEMon`, `Det.Smooth`, `Det.LeftAntiAdditive`: the left monotonicities.
-* `Det.QuasiReflexive`, `Det.Filtrating`: relational properties.
-* `Det.SatisfiesUniversals`: Barwise and Cooper's determiner universal and monotonicity
-  constraint.
-* `Det.innerNeg`, `Det.dual`, `Det.adjRestrict`: inner negation, the dual and restriction.
-* `Quantifier.LivesOn`, `Quantifier.individual`: the live-on property and the Montague lift.
-
 ## Implementation notes
 
 A quantifier is a function `Set α → Prop`, not a set of sets, and a determiner denotation is the

@@ -24,19 +24,12 @@ Haslinger, and computes it on scales of multiples.
 ## Main definitions
 
 * `Numerals.Roundness.AtLeastAsRound r d e`: `e` has every roundness property that `d` has.
-* `Numerals.Roundness.profile`, `Numerals.Roundness.score`: the set of the properties of a number,
-  and its size.
-* `Numerals.Roundness.OnScale W`: the relation between an integer and a width in `W` whose multiples
-  include it.
 * `Numerals.Roundness.scaleLcm W d`: the least common multiple of the widths in `W` that divide `d`.
-* `Numerals.Roundness.HasKness k n`: `n = m * k * 10 ^ b` for some `b` and some `m` from `1` to `9`.
 
 ## Main results
 
 * `Numerals.Roundness.atLeastAsRound_iff_mem_extentClosure`: the numbers at least as round as `d`
   are the extent closure of `{d}`.
-* `Numerals.Roundness.atLeastAsRound_iff_ofLowerSets_le`: the relation is the ordering that the
-  family of roundness properties induces.
 * `Numerals.Roundness.extentClosure_onScale`: on scales of multiples, the numbers at least as round
   as `d` are the multiples of `scaleLcm W d`.
 * `Numerals.Roundness.isGreatest_scaleLcm`: when the widths form a chain under divisibility,

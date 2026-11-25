@@ -12,25 +12,15 @@ public import Mathlib.Order.GaloisConnection.Defs
 `BE Q = {x | Q {x}}`. This file defines `BE` as a complete lattice homomorphism and relates it to
 the existential determiner denotation `Det.some`, Partee's `A`, which is a section of it.
 
-## Main definitions
-
-* `Quantifier.BE`: the complete lattice homomorphism taking `Q` to `{x | Q {x}}`.
-* `Quantifier.gciSomeBE`: the Galois coinsertion that `Det.some` and `BE` form on the monotone
-  quantifiers.
-* `Quantifier.mapHom`: the image of a quantifier under a function, as a complete lattice
-  homomorphism.
-
 ## Main results
 
 * `Quantifier.BE_unique`: `BE` is the only complete lattice homomorphism that takes each individual
   to its singleton.
 * `Quantifier.eq_some_of_leftInverse`: `Det.some` is the only conservative, symmetric, monotone
   determiner denotation that is a section of `BE`.
-* `Quantifier.Det.Intersective.mem_BE`: for an intersective `D`, `x ∈ BE (D A)` if and only if
-  `D (A ∩ {x}) (A ∩ {x})`.
+* `Quantifier.gciSomeBE`: on the monotone quantifiers, `Det.some` and `BE` form a Galois
+  coinsertion.
 * `Quantifier.mem_BE_the`: `x ∈ BE (the A)` if and only if `A = {x}`.
-* `Quantifier.BE_the_not_mem_range_const`: if `P` has different single members at two indices, then
-  `BE (the (P w))` is not constant in `w`.
 
 ## Implementation notes
 

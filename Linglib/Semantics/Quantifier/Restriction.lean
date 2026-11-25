@@ -17,20 +17,13 @@ exactly when its negative restriction is empty, and antitone exactly when its po
 The complement and the inner negation of a quantifier have its restriction, with the positive and
 the negative restriction exchanged.
 
-## Main definitions
-
-* `Quantifier.restriction`: the intersection of the sets a quantifier lives on.
-* `Quantifier.positiveRestriction`, `Quantifier.negativeRestriction`: the individuals whose
-  addition, or removal, turns a set the quantifier does not apply to into one it applies to.
-
 ## Main results
 
 * `Quantifier.livesOn_restriction`: on a finite universe a quantifier lives on its restriction.
-* `Quantifier.negativeRestriction_eq_empty_iff`, `Quantifier.positiveRestriction_eq_empty_iff`: on
-  a finite universe a quantifier is monotone if and only if its negative restriction is empty,
-  and antitone if and only if its positive restriction is.
-* `Quantifier.positiveRestriction_compl`, `Quantifier.positiveRestriction_innerNeg`: the positive
-  restriction of the complement, and of the inner negation, is the negative restriction.
+* `Quantifier.negativeRestriction_eq_empty_iff`: on a finite universe a quantifier is monotone if
+  and only if its negative restriction is empty.
+* `Quantifier.positiveRestriction_innerNeg`: the positive restriction of the inner negation of a
+  quantifier is its negative restriction.
 
 ## References
 

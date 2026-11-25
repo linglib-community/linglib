@@ -17,12 +17,6 @@ above a minimal one, so a satisfiable prejacent has minimal worlds. A minimal co
 worlds of the prejacent that represents the minimal worlds up to having the same true alternatives;
 the exhaustifiers by innocent exclusion and innocent inclusion are computed from one.
 
-## Main definitions
-
-* `Exhaustification.exhMW ALT φ`: the worlds of `φ` whose set of true alternatives is minimal.
-* `Exhaustification.IsMinimalCover ALT φ M`: `M` is a set of worlds of `φ` such that every world of
-  `φ` lies above one of them and no two of them are strictly ordered.
-
 ## Main results
 
 * `Exhaustification.exhMW_eq_minimals`: the minimal worlds are the best worlds of the prejacent
