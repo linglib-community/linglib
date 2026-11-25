@@ -33,7 +33,6 @@ low like inner negation but non-propositional like FALSUM.
 namespace Stankova2026
 
 open Question Inquisitive Inquisitive.Proposition Simik2024
-open StankovaSimik2025 (LicensedAt)
 
 /-! ### The three positions -/
 
@@ -121,14 +120,15 @@ theorem licenses_fakt_iff : Licenses pos .fakt ↔ pos ≠ .outer := by
 /-- On the two readings of [simik-2024], the concord column of Table 1 is
 [stankova-simik-2025]'s licensing of *žádný*. -/
 theorem licenses_nciLicensed_iff_licensedAt (n : Polarity) :
-    Licenses (.ofReading n) .nciLicensed ↔ LicensedAt StankovaSimik2025.Indefinite.nci.entry n := by
+    Licenses (.ofReading n) .nciLicensed ↔
+      n.Admits StankovaSimik2025.Examples.Indefinite.nci.entry := by
   cases n <;> decide
 
 /-- On the two readings of [simik-2024], the polarity column of Table 1 is
 [stankova-simik-2025]'s licensing of *nějaký*. -/
 theorem licenses_ppiOutscoping_iff_licensedAt (n : Polarity) :
     Licenses (.ofReading n) .ppiOutscoping ↔
-      LicensedAt StankovaSimik2025.Indefinite.ppi.entry n := by
+      n.Admits StankovaSimik2025.Examples.Indefinite.ppi.entry := by
   cases n <;> decide
 
 /-! ### The diagnostic particles ([stankova-2026] §2.2, Table 1)
@@ -275,7 +275,7 @@ def biasCheckedExamples :
 
 theorem bias_examples_match_profile :
     ∀ x ∈ biasCheckedExamples,
-      x.1.judgment = .acceptable ↔ x.2.2.2 ∈ czechBiasProfile x.2.1 x.2.2.1 := by
+      x.1.judgment = .acceptable ↔ x.2.2.2 ∈ czechForms (x.2.1, x.2.2.1) := by
   decide
 
 end Stankova2026

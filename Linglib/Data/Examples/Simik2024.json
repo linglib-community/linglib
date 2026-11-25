@@ -1,1571 +1,1776 @@
-[
-  {
-    "id": "simik2024_ex11a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 11a"},
-    "language": "czec1258",
-    "primaryText": "Uklidil Marek třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Uklidil", "cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Has Marek cleaned the third floor?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "interPPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "neutral"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex11b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 11b"},
-    "language": "czec1258",
-    "primaryText": "Neuklidil Marek třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Neuklidil", "NEG.cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Hasn't Marek cleaned the third floor?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "interNPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "neutral"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex11c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 11c"},
-    "language": "czec1258",
-    "primaryText": "Marek uklidil třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Marek", "Marek"], ["uklidil", "cleaned"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Marek has cleaned the third floor?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "declPPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "neutral"]
-    ],
-    "comment": "The paper's (11c) 'Marek (ne-) uklidil třetí patro?' covers both polarities; split into two rows.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex11c_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 11c_neg"},
-    "language": "czec1258",
-    "primaryText": "Marek neuklidil třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Marek", "Marek"], ["neuklidil", "NEG.cleaned"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Marek hasn't cleaned the third floor?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "declNPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "neutral"]
-    ],
-    "comment": "Negative variant of (11c).",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex12a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 12a"},
-    "language": "czec1258",
-    "primaryText": "Uklízel Marek i třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Uklízel", "cleaned"], ["Marek", "Marek"], ["i", "also"], ["třetí", "third"],
-      ["patro", "floor"]
-    ],
-    "translation": "Has Marek cleaned the third floor too?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "interPPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "forP"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex12b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 12b"},
-    "language": "czec1258",
-    "primaryText": "Neuklízel Marek i třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Neuklízel", "NEG.cleaned"], ["Marek", "Marek"], ["i", "also"], ["třetí", "third"],
-      ["patro", "floor"]
-    ],
-    "translation": "Hasn't Marek cleaned the third floor too?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "interNPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "forP"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex12c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 12c"},
-    "language": "czec1258",
-    "primaryText": "Marek uklízel i třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Marek", "Marek"], ["uklízel", "cleaned"], ["i", "also"], ["třetí", "third"],
-      ["patro", "floor"]
-    ],
-    "translation": "Marek has cleaned the third floor too?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "declPPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "forP"]
-    ],
-    "comment": "The paper's (12c) covers both polarities; split into two rows.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex12c_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 12c_neg"},
-    "language": "czec1258",
-    "primaryText": "Marek neuklízel i třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Marek", "Marek"], ["neuklízel", "NEG.cleaned"], ["i", "also"], ["třetí", "third"],
-      ["patro", "floor"]
-    ],
-    "translation": "Marek hasn't cleaned the third floor too?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "declNPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "forP"]
-    ],
-    "comment": "Negative variant of (12c).",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex16a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 16a"},
-    "language": "czec1258",
-    "primaryText": "Uklízel Marek třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Uklízel", "cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Has Marek cleaned the third floor?",
-    "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "interPPQ"],
-      ["evidence", "againstP"],
-      ["epistemic", "forP"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex16b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 16b"},
-    "language": "czec1258",
-    "primaryText": "Neuklízel Marek třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Neuklízel", "NEG.cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Hasn't Marek cleaned the third floor?",
-    "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "interNPQ"],
-      ["evidence", "againstP"],
-      ["epistemic", "forP"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex16c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 16c"},
-    "language": "czec1258",
-    "primaryText": "Marek uklízel třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Marek", "Marek"], ["uklízel", "cleaned"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Marek has cleaned the third floor?",
-    "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "declPPQ"],
-      ["evidence", "againstP"],
-      ["epistemic", "forP"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex16d",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 16d"},
-    "language": "czec1258",
-    "primaryText": "Marek neuklízel třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Marek", "Marek"], ["neuklízel", "NEG.cleaned"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Marek hasn't cleaned the third floor?",
-    "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "declNPQ"],
-      ["evidence", "againstP"],
-      ["epistemic", "forP"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex17a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 17a"},
-    "language": "czec1258",
-    "primaryText": "Uklízel Marek třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Uklízel", "cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Has Marek cleaned the third floor?",
-    "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "interPPQ"],
-      ["evidence", "forP"],
-      ["epistemic", "neutral"]
-    ],
-    "comment": "The paper gives the translation as intended.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex17b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 17b"},
-    "language": "czec1258",
-    "primaryText": "Neuklízel Marek třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Neuklízel", "NEG.cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Has Marek cleaned the third floor?",
-    "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "interNPQ"],
-      ["evidence", "forP"],
-      ["epistemic", "neutral"]
-    ],
-    "comment": "Explanation-seeking; English uses no negation here (translation due to Daniel Goodhue, p.c.).",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex17c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 17c"},
-    "language": "czec1258",
-    "primaryText": "Marek uklízel třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Marek", "Marek"], ["uklízel", "cleaned"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Marek has cleaned the third floor?",
-    "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "declPPQ"],
-      ["evidence", "forP"],
-      ["epistemic", "neutral"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex17d",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 17d"},
-    "language": "czec1258",
-    "primaryText": "Marek neuklízel třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Marek", "Marek"], ["neuklízel", "NEG.cleaned"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Marek hasn't cleaned the third floor?",
-    "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "declNPQ"],
-      ["evidence", "forP"],
-      ["epistemic", "neutral"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex18a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 18a"},
-    "language": "czec1258",
-    "primaryText": "Uklidil Marek třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Uklidil", "cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Has Marek cleaned the third floor?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
-    "judgment": "marginal",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "interPPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "neutral"],
-      ["contrastiveTopic", "true"]
-    ],
-    "comment": "The paper marks the example ?.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex18b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 18b"},
-    "language": "czec1258",
-    "primaryText": "Neuklidil Marek třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Neuklidil", "NEG.cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Hasn't Marek cleaned the third floor?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "interNPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "neutral"],
-      ["contrastiveTopic", "true"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex18c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 18c"},
-    "language": "czec1258",
-    "primaryText": "Marek uklidil třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Marek", "Marek"], ["uklidil", "cleaned"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Marek has cleaned the third floor?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "declPPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "neutral"],
-      ["contrastiveTopic", "true"]
-    ],
-    "comment": "Contrastive topic Marek (vs Lucie) placed utterance-initially outweighs verb movement: an unbiased declarative PQ.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex18d",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 18d"},
-    "language": "czec1258",
-    "primaryText": "Marek neuklidil třetí patro?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Marek", "Marek"], ["neuklidil", "NEG.cleaned"], ["třetí", "third"], ["patro", "floor"]
-    ],
-    "translation": "Marek hasn't cleaned the third floor?",
-    "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "declNPQ"],
-      ["evidence", "neutral"],
-      ["epistemic", "neutral"],
-      ["contrastiveTopic", "true"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex25a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 25a"},
-    "language": "czec1258",
-    "primaryText": "Dožil se císař Justinián I. 80 let?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Dožil", "lived.to"], ["se", "REFL"], ["císař", "emperor"], ["Justinián", "Justinian"],
-      ["I.", "I"], ["80", "80"], ["let", "years"]
-    ],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "positive"],
-      ["label", "InterPPQ"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex25b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 25b"},
-    "language": "czec1258",
-    "primaryText": "Nedožil se císař Justinián I. 80 let?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "negative"],
-      ["label", "InterNPQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex25c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 25c"},
-    "language": "czec1258",
-    "primaryText": "Císař Justinián I. se dožil 80 let?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "positive"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper's (25c) 'Císař Justinián I. se (ne)dožil 80 let?' covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex25c_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 25c_neg"},
-    "language": "czec1258",
-    "primaryText": "Císař Justinián I. se nedožil 80 let?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "negative"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex26a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 26a"},
-    "language": "slov1269",
-    "primaryText": "Dožil sa cisár Justinián 80 rokov?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Dožil", "live.to"], ["sa", "REFL"], ["cisár", "emperor"], ["Justinián", "Justinian"],
-      ["80", "80"], ["rokov", "years"]
-    ],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "positive"],
-      ["label", "InterPPQ"]
-    ],
-    "comment": "Ivana Dragonová, p.c.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex26b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 26b"},
-    "language": "slov1269",
-    "primaryText": "Nedožil sa cisár Justinián 80 rokov?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "negative"],
-      ["label", "InterNPQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex26c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 26c"},
-    "language": "slov1269",
-    "primaryText": "Cisár Justinián sa dožil 80 rokov?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "positive"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper's (26c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex26c_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 26c_neg"},
-    "language": "slov1269",
-    "primaryText": "Cisár Justinián sa nedožil 80 rokov?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "negative"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex27a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 27a"},
-    "language": "uppe1395",
-    "primaryText": "Je kejžor Justinian Wulki 80 lět wordował?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Je", "is.AUX"], ["kejžor", "emperor"], ["Justinian", "Justinian"], ["Wulki", "Great"],
-      ["80", "80"], ["lět", "years"], ["wordował", "become"]
-    ],
-    "translation": "Did Emperor Justinian I live up to eighty years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "positive"],
-      ["label", "InterPPQ"]
-    ],
-    "comment": "Auxiliary rather than lexical verb fronts. Katja Brankačkec, p.c.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex27b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 27b"},
-    "language": "uppe1395",
-    "primaryText": "Njeje kejžor Justinian Wulki 80 lět wordował?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "negative"],
-      ["label", "InterNPQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex27c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 27c"},
-    "language": "uppe1395",
-    "primaryText": "Kejžor Justinian Wulki je 80 lět wordował?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "positive"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper's (27c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex27c_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 27c_neg"},
-    "language": "uppe1395",
-    "primaryText": "Kejžor Justinian Wulki njeje 80 lět wordował?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "negative"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex28a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 28a"},
-    "language": "slov1268",
-    "primaryText": "(Ali) Je cesar Justinijan doživel 80 let?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["(Ali)", "ALI"], ["Je", "is.AUX"], ["cesar", "emperor"], ["Justinijan", "Justinian"],
-      ["doživel", "lived.to"], ["80", "80"], ["let", "years"]
-    ],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "positive"],
-      ["label", "InterPPQ"],
-      ["particle", "ali"]
-    ],
-    "comment": "Clause-initial ali is optional. Adrian Stegovec, p.c.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex28b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 28b"},
-    "language": "slov1268",
-    "primaryText": "(Ali) Ni cesar Justinijan doživel 80 let?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["(Ali)", "ALI"], ["Ni", "NEG.is.AUX"], ["cesar", "emperor"], ["Justinijan", "Justinian"],
-      ["doživel", "lived.to"], ["80", "80"], ["let", "years"]
-    ],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "negative"],
-      ["label", "InterNPQ"],
-      ["particle", "ali"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex28c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 28c"},
-    "language": "slov1268",
-    "primaryText": "Cesar Justinijan je doživel 80 let?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "positive"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "Ali is excluded from the declarative (*Ali). The paper's (28c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex28c_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 28c_neg"},
-    "language": "slov1268",
-    "primaryText": "Cesar Justinijan ni doživel 80 let?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "negative"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex29a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29a"},
-    "language": "ukra1253",
-    "primaryText": "Čy dožyv imperator Justynian Velykyj do 80 rokiv?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Čy", "CY"], ["dožyv", "lived"], ["imperator", "emperor"], ["Justynian", "Justinian"],
-      ["Velykyj", "Great"], ["do", "to"], ["80", "80"], ["rokiv", "years"]
-    ],
-    "translation": "Did Emperor Justinian I live up to eighty years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "clauseInitialParticle"],
-      ["polarity", "positive"],
-      ["label", "cyPPQ"],
-      ["particle", "čy"]
-    ],
-    "comment": "Anastasiia Vyshnevska, p.c.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex29b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29b"},
-    "language": "ukra1253",
-    "primaryText": "Čy imperator Justynian Velykyj dožyv do 80 rokiv?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "clauseInitialParticle"],
-      ["polarity", "positive"],
-      ["label", "cyPPQ"],
-      ["particle", "čy"]
-    ],
-    "comment": "Verb–subject order is immaterial. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex29c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29c"},
-    "language": "ukra1253",
-    "primaryText": "Čy ne dožyv imperator Justynian Velykyj do 80 rokiv?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "clauseInitialParticle"],
-      ["polarity", "negative"],
-      ["label", "cyNPQ"],
-      ["particle", "čy"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex29d",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29d"},
-    "language": "ukra1253",
-    "primaryText": "Čy imperator Justynian Velykyj ne dožyv do 80 rokiv?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "clauseInitialParticle"],
-      ["polarity", "negative"],
-      ["label", "cyNPQ"],
-      ["particle", "čy"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex29e",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29e"},
-    "language": "ukra1253",
-    "primaryText": "Imperator Justynian Velykyj dožyv do 80 rokiv?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "positive"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper's (29e) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex29e_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29e_neg"},
-    "language": "ukra1253",
-    "primaryText": "Imperator Justynian Velykyj ne dožyv do 80 rokiv?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "negative"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex30a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30a"},
-    "language": "poli1260",
-    "primaryText": "Czy Justynian I Wielki dożył wieku 80 lat?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Czy", "CZY"], ["Justynian", "Justinian"], ["I", "I"], ["Wielki", "Great"],
-      ["dożył", "live.to"], ["wieku", "age"], ["80", "80"], ["lat", "years"]
-    ],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "clauseInitialParticle"],
-      ["polarity", "positive"],
-      ["label", "czyPPQ"],
-      ["particle", "czy"]
-    ],
-    "comment": "Dorota Klimek-Jankowska, p.c.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex30b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30b"},
-    "language": "poli1260",
-    "primaryText": "Czy Justynian I Wielki nie dożył wieku 80 lat?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Czy", "CZY"], ["Justynian", "Justinian"], ["I", "I"], ["Wielki", "Great"], ["nie", "NEG"],
-      ["dożył", "live.to"], ["wieku", "age"], ["80", "80"], ["lat", "years"]
-    ],
-    "translation": "Did Emperor Justinian I not live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "clauseInitialParticle"],
-      ["polarity", "negative"],
-      ["label", "czyNPQ"],
-      ["particle", "czy"]
-    ],
-    "comment": "A negative PQ is quiz-felicitous as long as czy introduces it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex30c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30c"},
-    "language": "poli1260",
-    "primaryText": "Justynian I Wielki dożył wieku 80 lat?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "positive"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "Grammatical but infelicitous in the quiz due to evidential bias. The paper's (30c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex30c_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30c_neg"},
-    "language": "poli1260",
-    "primaryText": "Justynian I Wielki nie dożył wieku 80 lat?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "negative"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex30d",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30d"},
-    "language": "poli1260",
-    "primaryText": "Dożył Justynian I Wielki wieku 80 lat?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "positive"],
-      ["label", "V1PQ"]
-    ],
-    "comment": "The verb cannot move across an overt subject. The paper's (30d) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex30d_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30d_neg"},
-    "language": "poli1260",
-    "primaryText": "Nie dożył Justynian I Wielki wieku 80 lat?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "negative"],
-      ["label", "V1PQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex31a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31a"},
-    "language": "serb1264",
-    "primaryText": "Da li je Justinijan I/Veliki doživeo 80 godinu?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Da", "DA"], ["li", "LI"], ["je", "is.AUX"], ["Justinijan", "Justinian"],
-      ["I/Veliki", "I/Great"], ["doživeo", "lived.to"], ["80", "80"], ["godinu", "years"]
-    ],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "clauseInitialParticle"],
-      ["polarity", "positive"],
-      ["label", "da+liPPQ"],
-      ["particle", "da li"]
-    ],
-    "comment": "The only strategy fully natural in the quiz. Neda Todorović, p.c.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex31b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31b"},
-    "language": "serb1264",
-    "primaryText": "Je l' (je) Justinijan I/Veliki doživeo 80 godinu?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Je", "JE"], ["l'", "LI"], ["(je)", "is.AUX"], ["Justinijan", "Justinian"],
-      ["I/Veliki", "I/Great"], ["doživeo", "lived.to"], ["80", "80"], ["godinu", "years"]
-    ],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "clauseInitialParticle"],
-      ["polarity", "positive"],
-      ["label", "je+liPPQ"],
-      ["particle", "je li"]
-    ],
-    "comment": "Considered neutral by Todorović 2023, but colloquial and probably only information-seeking.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex31c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31c"},
-    "language": "serb1264",
-    "primaryText": "Nije li Justinijan I/Veliki doživeo 80 godinu?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Nije", "NEG.is.AUX"], ["li", "LI"], ["Justinijan", "Justinian"], ["I/Veliki", "I/Great"],
-      ["doživeo", "lived.to"], ["80", "80"], ["godinu", "years"]
-    ],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbAttachedParticle"],
-      ["polarity", "negative"],
-      ["label", "HighNPQ"],
-      ["particle", "li"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex31d",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31d"},
-    "language": "serb1264",
-    "primaryText": "Je l' Justinijan I/Veliki nije doživeo 80 godinu?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "clauseInitialParticle"],
-      ["polarity", "negative"],
-      ["label", "LowNPQ"],
-      ["particle", "je li"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex31e",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31e"},
-    "language": "serb1264",
-    "primaryText": "Justinijan I/Veliki je doživeo 80 godinu?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "positive"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper's (31e) 'Justinijan I/Veliki (ni)je doživeo 80 godinu?' covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex31e_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31e_neg"},
-    "language": "serb1264",
-    "primaryText": "Justinijan I/Veliki nije doživeo 80 godinu?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "negative"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex32a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32a"},
-    "language": "mace1250",
-    "primaryText": "Dali Justinijan Veliki doživeal 80-godišna vozrast?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Dali", "DALI"], ["Justinijan", "Justinian"], ["Veliki", "Great"], ["doživeal", "lived.to"],
-      ["80-godišna", "80-yearly"], ["vozrast", "age"]
-    ],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "clauseInitialParticle"],
-      ["polarity", "positive"],
-      ["label", "daliPQ"],
-      ["particle", "dali"]
-    ],
-    "comment": "The paper's (32a) 'Dali Justinijan Veliki (ne) doživeal ...' covers both polarities; split into two rows. Liljana Mitkovska and Eleni Bužarovska, p.c.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex32a_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32a_neg"},
-    "language": "mace1250",
-    "primaryText": "Dali Justinijan Veliki ne doživeal 80-godišna vozrast?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Dali", "DALI"], ["Justinijan", "Justinian"], ["Veliki", "Great"], ["ne", "NEG"],
-      ["doživeal", "lived.to"], ["80-godišna", "80-yearly"], ["vozrast", "age"]
-    ],
-    "translation": "Did Emperor Justinian I not live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "clauseInitialParticle"],
-      ["polarity", "negative"],
-      ["label", "daliPQ"],
-      ["particle", "dali"]
-    ],
-    "comment": "Negation under dali gives rise to no bias.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex32b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32b"},
-    "language": "mace1250",
-    "primaryText": "Doživeal li Justinijan Veliki 80-godišna vozrast?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Doživeal", "lived.to"], ["li", "LI"], ["Justinijan", "Justinian"], ["Veliki", "Great"],
-      ["80-godišna", "80-yearly"], ["vozrast", "age"]
-    ],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbAttachedParticle"],
-      ["polarity", "positive"],
-      ["label", "liPQ"],
-      ["particle", "li"]
-    ],
-    "comment": "Less formal than dali but possible in the quiz. The paper's (32b) '(#Ne) Doživeal li ...' covers both polarities; split into two rows.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex32b_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32b_neg"},
-    "language": "mace1250",
-    "primaryText": "Ne doživeal li Justinijan Veliki 80-godišna vozrast?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbAttachedParticle"],
-      ["polarity", "negative"],
-      ["label", "liPQ"],
-      ["particle", "li"]
-    ],
-    "comment": "Negating the verb under li yields positive epistemic bias. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex32c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32c"},
-    "language": "mace1250",
-    "primaryText": "Doživeal Justinijan Veliki 80-godišna vozrast?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "positive"],
-      ["label", "v1PQ"]
-    ],
-    "comment": "Verb-first PQs without li are too colloquial for the quiz. The paper's (32c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex32c_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32c_neg"},
-    "language": "mace1250",
-    "primaryText": "Ne doživeal Justinijan Veliki 80-godišna vozrast?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbMovement"],
-      ["polarity", "negative"],
-      ["label", "v1PQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex33a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 33a"},
-    "language": "bulg1262",
-    "primaryText": "Justinian doživjava li do 80-godišna vŭzrast?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Justinian", "Justinian"], ["doživjava", "lives"], ["li", "LI"], ["do", "to"],
-      ["80-godišna", "80-yearly"], ["vŭzrast", "age"]
-    ],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbAttachedParticle"],
-      ["polarity", "positive"],
-      ["label", "liPPQ"],
-      ["particle", "li"]
-    ],
-    "comment": "Vesela Simeonova, p.c.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex33b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 33b"},
-    "language": "bulg1262",
-    "primaryText": "Justinian ne doživjava li do 80-godišna vŭzrast?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbAttachedParticle"],
-      ["polarity", "negative"],
-      ["label", "liNPQ"],
-      ["particle", "li"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex33c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 33c"},
-    "language": "bulg1262",
-    "primaryText": "Justinian doživjava do 80-godišna vŭzrast?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "positive"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper's (33c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex33c_neg",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 33c_neg"},
-    "language": "bulg1262",
-    "primaryText": "Justinian ne doživjava do 80-godišna vŭzrast?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "declarative"],
-      ["polarity", "negative"],
-      ["label", "DeclPQ"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex34a",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 34a"},
-    "language": "russ1263",
-    "primaryText": "Dožil li Justinian Velikij do 80 let?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Dožil", "lived.to"], ["li", "LI"], ["Justinian", "Justinian"], ["Velikij", "Great"],
-      ["do", "to"], ["80", "80"], ["let", "years"]
-    ],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbAttachedParticle"],
-      ["polarity", "positive"],
-      ["label", "liPPQ"],
-      ["particle", "li"]
-    ],
-    "comment": "Maria Onoeva and Maria Razguliaeva, p.c.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex34b",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 34b"},
-    "language": "russ1263",
-    "primaryText": "Ne dožil li Justinian Velikij do 80 let?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "verbAttachedParticle"],
-      ["polarity", "negative"],
-      ["label", "liNPQ"],
-      ["particle", "li"]
-    ],
-    "comment": "The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex34c",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 34c"},
-    "language": "russ1263",
-    "primaryText": "Justinian Velikij dožil do 80 let?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "intonation"],
-      ["polarity", "positive"],
-      ["label", "IntonPQ"]
-    ],
-    "comment": "Question force by pitch accent alone; arguably unbiased but inherently information-seeking. The paper translates only the glossed variant of the example.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex43c_ppi",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 43c"},
-    "language": "czec1258",
-    "primaryText": "Nemá Max nějaké námitky?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Nemá", "NEG.has"], ["Max", "Max"], ["nějaké", "DET.PPI"], ["námitky", "objections"]
-    ],
-    "translation": "Doesn't Max have some objections?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["nahodou", "false"],
-      ["indefinite", "ppi"]
-    ],
-    "comment": "InterNPQ with the PPI: outer negation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex43c_nci",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 43c"},
-    "language": "czec1258",
-    "primaryText": "Nemá Max žádné námitky?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Nemá", "NEG.has"], ["Max", "Max"], ["žádné", "NEG.NCI"], ["námitky", "objections"]
-    ],
-    "translation": "Doesn't Max have any objections?",
-    "context": "",
-    "judgment": "marginal",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["nahodou", "false"],
-      ["indefinite", "nci"]
-    ],
-    "comment": "InterNPQs only marginally involve inner negation. The paper prints Nemá Max {nějaké / ?žádné} námitky? 'Doesn't Max have some/any objections?' and glosses žádné 'NEG.NCI' here, 'DET.NCI' in (43a).",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex43d_ppi",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 43d"},
-    "language": "czec1258",
-    "primaryText": "Nemá Max náhodou nějaké námitky?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Nemá", "NEG.has"], ["Max", "Max"], ["náhodou", "by.chance"], ["nějaké", "DET.PPI"],
-      ["námitky", "objections"]
-    ],
-    "translation": "Does Max have some objections, by any chance?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["nahodou", "true"],
-      ["indefinite", "ppi"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex43d_nci",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 43d"},
-    "language": "czec1258",
-    "primaryText": "Nemá Max náhodou žádné námitky?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Nemá", "NEG.has"], ["Max", "Max"], ["náhodou", "by.chance"], ["žádné", "NEG.NCI"],
-      ["námitky", "objections"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["nahodou", "true"],
-      ["indefinite", "nci"]
-    ],
-    "comment": "Náhodou requires outer negation, which cannot license the NCI. The paper's translation goes with the unstarred nějaké.",
-    "verified": "page-image"
-  },
-  {
-    "id": "simik2024_ex43e",
-    "source": {"bibkey": "simik-2024", "paperLabel": "ex. 43e"},
-    "language": "czec1258",
-    "primaryText": "Má Max náhodou nějaké námitky?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Má", "has"], ["Max", "Max"], ["náhodou", "by.chance"], ["nějaké", "DET.PPI"],
-      ["námitky", "objections"]
-    ],
-    "translation": "Does Max have some objections, by any chance?",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["nahodou", "true"],
-      ["indefinite", "ppi"]
-    ],
-    "comment": "The particle náhodou is not licensed in positive PQs. The paper gives the translation as intended.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "scenario",
+      "lean": "scenario",
+      "type": "Scenario",
+      "doc": "The scenario a question is judged in.",
+      "levels": [
+        {
+          "name": "plan",
+          "label": "11",
+          "doc": "(11): A ticks off the floor Marek was responsible for"
+        },
+        {
+          "name": "request",
+          "label": "12",
+          "doc": "(12): A had privately asked Marek to clean the third floor as well"
+        },
+        {
+          "name": "report",
+          "label": "16",
+          "doc": "(16): B reports that Marek cleaned the second floor, and A believed he was responsible for the third"
+        },
+        {
+          "name": "earbud",
+          "label": "17",
+          "doc": "(17): A, who does not know the cleaning plan, finds an earbud like Marek's on the third floor"
+        },
+        {
+          "name": "newCleaners",
+          "label": "18",
+          "doc": "(18): after a chat about Lucie and Marek, A asks who cleaned which floor, with Marek a contrastive topic"
+        },
+        {
+          "name": "quiz",
+          "label": "24",
+          "doc": "(24): a television quiz moderator asks the question, expecting 'yes' or 'no'"
+        }
+      ]
+    },
+    {
+      "key": "strategy",
+      "lean": "strategy",
+      "type": "Strategy",
+      "multiple": true,
+      "doc": "The formal means that mark a polar question.",
+      "levels": [
+        {
+          "name": "verbMovement",
+          "label": "verbMovement",
+          "doc": "the finite verb or auxiliary precedes the subject"
+        },
+        {
+          "name": "clauseInitialParticle",
+          "label": "clauseInitialParticle",
+          "doc": "an utterance-initial question particle"
+        },
+        {
+          "name": "verbAttachedParticle",
+          "label": "verbAttachedParticle",
+          "doc": "the particle *li* after the verb or the focused constituent"
+        },
+        {
+          "name": "declarative",
+          "label": "declarative",
+          "doc": "declarative word order with no particle"
+        },
+        {
+          "name": "intonation",
+          "label": "intonation",
+          "doc": "declarative word order with the pitch accent of a Russian polar question"
+        }
+      ]
+    },
+    {
+      "key": "polarity",
+      "lean": "polarity",
+      "type": "QuestionPolarity",
+      "doc": "Whether the finite verb of the question is negated.",
+      "levels": [
+        {
+          "name": "positive",
+          "label": "positive",
+          "doc": "an affirmative finite verb"
+        },
+        {
+          "name": "negative",
+          "label": "negative",
+          "doc": "a finite verb with the negative prefix or proclitic"
+        }
+      ]
+    },
+    {
+      "key": "indefinite",
+      "lean": "indefinite",
+      "type": "Indefinite",
+      "doc": "The indefinite determiner of the object in (43).",
+      "levels": [
+        {
+          "name": "ppi",
+          "label": "ppi",
+          "doc": "the positive polarity item *nějaký* 'some'"
+        },
+        {
+          "name": "nci",
+          "label": "nci",
+          "doc": "the negative concord item *žádný* 'no'"
+        }
+      ]
+    }
+  ],
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the file."
+  },
+  "examples": [
+    {
+      "id": "simik2024_ex11a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 11a"},
+      "language": "czec1258",
+      "primaryText": "Uklidil Marek třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Uklidil", "cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Has Marek cleaned the third floor?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "11"],
+        ["strategy", "verbMovement"],
+        ["polarity", "positive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex11b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 11b"},
+      "language": "czec1258",
+      "primaryText": "Neuklidil Marek třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Neuklidil", "NEG.cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Hasn't Marek cleaned the third floor?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "11"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex11c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 11c"},
+      "language": "czec1258",
+      "primaryText": "Marek uklidil třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Marek", "Marek"], ["uklidil", "cleaned"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Marek has cleaned the third floor?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "11"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"]
+      ],
+      "comment": "The paper's (11c) 'Marek (ne-) uklidil třetí patro?' covers both polarities; split into two rows.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex11c_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 11c_neg"},
+      "language": "czec1258",
+      "primaryText": "Marek neuklidil třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Marek", "Marek"], ["neuklidil", "NEG.cleaned"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Marek hasn't cleaned the third floor?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor, which Marek was responsible for. B is informed about the progress. A asks:",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "11"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"]
+      ],
+      "comment": "Negative variant of (11c).",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex12a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 12a"},
+      "language": "czec1258",
+      "primaryText": "Uklízel Marek i třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Uklízel", "cleaned"], ["Marek", "Marek"], ["i", "also"], ["třetí", "third"],
+        ["patro", "floor"]
+      ],
+      "translation": "Has Marek cleaned the third floor too?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "12"],
+        ["strategy", "verbMovement"],
+        ["polarity", "positive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex12b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 12b"},
+      "language": "czec1258",
+      "primaryText": "Neuklízel Marek i třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Neuklízel", "NEG.cleaned"], ["Marek", "Marek"], ["i", "also"], ["třetí", "third"],
+        ["patro", "floor"]
+      ],
+      "translation": "Hasn't Marek cleaned the third floor too?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "12"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex12c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 12c"},
+      "language": "czec1258",
+      "primaryText": "Marek uklízel i třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Marek", "Marek"], ["uklízel", "cleaned"], ["i", "also"], ["třetí", "third"],
+        ["patro", "floor"]
+      ],
+      "translation": "Marek has cleaned the third floor too?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "12"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"]
+      ],
+      "comment": "The paper's (12c) covers both polarities; split into two rows.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex12c_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 12c_neg"},
+      "language": "czec1258",
+      "primaryText": "Marek neuklízel i třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Marek", "Marek"], ["neuklízel", "NEG.cleaned"], ["i", "also"], ["třetí", "third"],
+        ["patro", "floor"]
+      ],
+      "translation": "Marek hasn't cleaned the third floor too?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. A is about to make a tick for the whole third floor. Marek was responsible for the second floor (and he cleaned that), but earlier that day A asked Marek if he could also exceptionally take care of the third floor. B was not informed about A's request to Marek. B is informed about the progress. A asks:",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "12"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"]
+      ],
+      "comment": "Negative variant of (12c).",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex16a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 16a"},
+      "language": "czec1258",
+      "primaryText": "Uklízel Marek třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Uklízel", "cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Has Marek cleaned the third floor?",
+      "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "16"],
+        ["strategy", "verbMovement"],
+        ["polarity", "positive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex16b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 16b"},
+      "language": "czec1258",
+      "primaryText": "Neuklízel Marek třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Neuklízel", "NEG.cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Hasn't Marek cleaned the third floor?",
+      "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "16"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex16c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 16c"},
+      "language": "czec1258",
+      "primaryText": "Marek uklízel třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Marek", "Marek"], ["uklízel", "cleaned"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Marek has cleaned the third floor?",
+      "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "16"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex16d",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 16d"},
+      "language": "czec1258",
+      "primaryText": "Marek neuklízel třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Marek", "Marek"], ["neuklízel", "NEG.cleaned"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Marek hasn't cleaned the third floor?",
+      "context": "On a busy day two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made. B informs A that Marek has finished cleaning the second floor. A is slightly surprised as he believed that Marek was responsible for the third floor and it's common for one person to take care of a single floor. A asks:",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "16"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex17a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 17a"},
+      "language": "czec1258",
+      "primaryText": "Uklízel Marek třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Uklízel", "cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Has Marek cleaned the third floor?",
+      "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "17"],
+        ["strategy", "verbMovement"],
+        ["polarity", "positive"]
+      ],
+      "comment": "The paper gives the translation as intended.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex17b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 17b"},
+      "language": "czec1258",
+      "primaryText": "Neuklízel Marek třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Neuklízel", "NEG.cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Has Marek cleaned the third floor?",
+      "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "17"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"]
+      ],
+      "comment": "Explanation-seeking; English uses no negation here (translation due to Daniel Goodhue, p.c.).",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex17c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 17c"},
+      "language": "czec1258",
+      "primaryText": "Marek uklízel třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Marek", "Marek"], ["uklízel", "cleaned"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Marek has cleaned the third floor?",
+      "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "17"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex17d",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 17d"},
+      "language": "czec1258",
+      "primaryText": "Marek neuklízel třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Marek", "Marek"], ["neuklízel", "NEG.cleaned"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Marek hasn't cleaned the third floor?",
+      "context": "Two hotel cleaning service coordinators (A and B) are walking around the hotel and inspecting the progress made. A has no idea about the cleaning plan for today (esp. who is responsible for what), only B does. When on the third floor, A and B find an earbud that A suspects belongs to Marek, one of the cleaners. A asks:",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "17"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex18a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 18a"},
+      "language": "czec1258",
+      "primaryText": "Uklidil Marek třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Uklidil", "cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Has Marek cleaned the third floor?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
+      "judgment": "marginal",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "18"],
+        ["strategy", "verbMovement"],
+        ["polarity", "positive"]
+      ],
+      "comment": "The paper marks the example ?.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex18b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 18b"},
+      "language": "czec1258",
+      "primaryText": "Neuklidil Marek třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Neuklidil", "NEG.cleaned"], ["Marek", "Marek"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Hasn't Marek cleaned the third floor?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "18"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex18c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 18c"},
+      "language": "czec1258",
+      "primaryText": "Marek uklidil třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Marek", "Marek"], ["uklidil", "cleaned"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Marek has cleaned the third floor?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "18"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"]
+      ],
+      "comment": "Contrastive topic Marek (vs Lucie) placed utterance-initially outweighs verb movement: an unbiased declarative PQ.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex18d",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 18d"},
+      "language": "czec1258",
+      "primaryText": "Marek neuklidil třetí patro?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Marek", "Marek"], ["neuklidil", "NEG.cleaned"], ["třetí", "third"], ["patro", "floor"]
+      ],
+      "translation": "Marek hasn't cleaned the third floor?",
+      "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "18"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex25a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 25a"},
+      "language": "czec1258",
+      "primaryText": "Dožil se císař Justinián I. 80 let?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dožil", "lived.to"], ["se", "REFL"], ["císař", "emperor"], ["Justinián", "Justinian"],
+        ["I.", "I"], ["80", "80"], ["let", "years"]
+      ],
+      "translation": "Did Emperor Justinian I live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["polarity", "positive"],
+        ["label", "InterPPQ"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex25b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 25b"},
+      "language": "czec1258",
+      "primaryText": "Nedožil se císař Justinián I. 80 let?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"],
+        ["label", "InterNPQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex25c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 25c"},
+      "language": "czec1258",
+      "primaryText": "Císař Justinián I. se dožil 80 let?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper's (25c) 'Císař Justinián I. se (ne)dožil 80 let?' covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex25c_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 25c_neg"},
+      "language": "czec1258",
+      "primaryText": "Císař Justinián I. se nedožil 80 let?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex26a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 26a"},
+      "method": "elicitation",
+      "language": "slov1269",
+      "primaryText": "Dožil sa cisár Justinián 80 rokov?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dožil", "live.to"], ["sa", "REFL"], ["cisár", "emperor"], ["Justinián", "Justinian"],
+        ["80", "80"], ["rokov", "years"]
+      ],
+      "translation": "Did Emperor Justinian I live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["polarity", "positive"],
+        ["label", "InterPPQ"]
+      ],
+      "comment": "Ivana Dragonová, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex26b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 26b"},
+      "method": "elicitation",
+      "language": "slov1269",
+      "primaryText": "Nedožil sa cisár Justinián 80 rokov?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"],
+        ["label", "InterNPQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex26c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 26c"},
+      "method": "elicitation",
+      "language": "slov1269",
+      "primaryText": "Cisár Justinián sa dožil 80 rokov?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper's (26c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex26c_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 26c_neg"},
+      "method": "elicitation",
+      "language": "slov1269",
+      "primaryText": "Cisár Justinián sa nedožil 80 rokov?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex27a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 27a"},
+      "method": "elicitation",
+      "language": "uppe1395",
+      "primaryText": "Je kejžor Justinian Wulki 80 lět wordował?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Je", "is.AUX"], ["kejžor", "emperor"], ["Justinian", "Justinian"], ["Wulki", "Great"],
+        ["80", "80"], ["lět", "years"], ["wordował", "become"]
+      ],
+      "translation": "Did Emperor Justinian I live up to eighty years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["polarity", "positive"],
+        ["label", "InterPPQ"]
+      ],
+      "comment": "Auxiliary rather than lexical verb fronts. Katja Brankačkec, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex27b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 27b"},
+      "method": "elicitation",
+      "language": "uppe1395",
+      "primaryText": "Njeje kejžor Justinian Wulki 80 lět wordował?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"],
+        ["label", "InterNPQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex27c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 27c"},
+      "method": "elicitation",
+      "language": "uppe1395",
+      "primaryText": "Kejžor Justinian Wulki je 80 lět wordował?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper's (27c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex27c_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 27c_neg"},
+      "method": "elicitation",
+      "language": "uppe1395",
+      "primaryText": "Kejžor Justinian Wulki njeje 80 lět wordował?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex28a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 28a"},
+      "method": "elicitation",
+      "language": "slov1268",
+      "primaryText": "(Ali) Je cesar Justinijan doživel 80 let?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["(Ali)", "ALI"], ["Je", "is.AUX"], ["cesar", "emperor"], ["Justinijan", "Justinian"],
+        ["doživel", "lived.to"], ["80", "80"], ["let", "years"]
+      ],
+      "translation": "Did Emperor Justinian I live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "positive"],
+        ["label", "InterPPQ"],
+        ["particle", "ali"]
+      ],
+      "comment": "Clause-initial ali is optional. Adrian Stegovec, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex28b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 28b"},
+      "method": "elicitation",
+      "language": "slov1268",
+      "primaryText": "(Ali) Ni cesar Justinijan doživel 80 let?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["(Ali)", "ALI"], ["Ni", "NEG.is.AUX"], ["cesar", "emperor"], ["Justinijan", "Justinian"],
+        ["doživel", "lived.to"], ["80", "80"], ["let", "years"]
+      ],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "negative"],
+        ["label", "InterNPQ"],
+        ["particle", "ali"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex28c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 28c"},
+      "method": "elicitation",
+      "language": "slov1268",
+      "primaryText": "Cesar Justinijan je doživel 80 let?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "Ali is excluded from the declarative (*Ali). The paper's (28c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex28c_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 28c_neg"},
+      "method": "elicitation",
+      "language": "slov1268",
+      "primaryText": "Cesar Justinijan ni doživel 80 let?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex29a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29a"},
+      "method": "elicitation",
+      "language": "ukra1253",
+      "primaryText": "Čy dožyv imperator Justynian Velykyj do 80 rokiv?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Čy", "CY"], ["dožyv", "lived"], ["imperator", "emperor"], ["Justynian", "Justinian"],
+        ["Velykyj", "Great"], ["do", "to"], ["80", "80"], ["rokiv", "years"]
+      ],
+      "translation": "Did Emperor Justinian I live up to eighty years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "positive"],
+        ["label", "cyPPQ"],
+        ["particle", "čy"]
+      ],
+      "comment": "Anastasiia Vyshnevska, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex29b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29b"},
+      "method": "elicitation",
+      "language": "ukra1253",
+      "primaryText": "Čy imperator Justynian Velykyj dožyv do 80 rokiv?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "positive"],
+        ["label", "cyPPQ"],
+        ["particle", "čy"]
+      ],
+      "comment": "Verb–subject order is immaterial. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex29c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29c"},
+      "method": "elicitation",
+      "language": "ukra1253",
+      "primaryText": "Čy ne dožyv imperator Justynian Velykyj do 80 rokiv?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "negative"],
+        ["label", "cyNPQ"],
+        ["particle", "čy"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex29d",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29d"},
+      "method": "elicitation",
+      "language": "ukra1253",
+      "primaryText": "Čy imperator Justynian Velykyj ne dožyv do 80 rokiv?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "negative"],
+        ["label", "cyNPQ"],
+        ["particle", "čy"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex29e",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29e"},
+      "method": "elicitation",
+      "language": "ukra1253",
+      "primaryText": "Imperator Justynian Velykyj dožyv do 80 rokiv?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper's (29e) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex29e_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 29e_neg"},
+      "method": "elicitation",
+      "language": "ukra1253",
+      "primaryText": "Imperator Justynian Velykyj ne dožyv do 80 rokiv?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex30a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30a"},
+      "method": "elicitation",
+      "language": "poli1260",
+      "primaryText": "Czy Justynian I Wielki dożył wieku 80 lat?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Czy", "CZY"], ["Justynian", "Justinian"], ["I", "I"], ["Wielki", "Great"],
+        ["dożył", "live.to"], ["wieku", "age"], ["80", "80"], ["lat", "years"]
+      ],
+      "translation": "Did Emperor Justinian I live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "positive"],
+        ["label", "czyPPQ"],
+        ["particle", "czy"]
+      ],
+      "comment": "Dorota Klimek-Jankowska, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex30b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30b"},
+      "method": "elicitation",
+      "language": "poli1260",
+      "primaryText": "Czy Justynian I Wielki nie dożył wieku 80 lat?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Czy", "CZY"], ["Justynian", "Justinian"], ["I", "I"], ["Wielki", "Great"], ["nie", "NEG"],
+        ["dożył", "live.to"], ["wieku", "age"], ["80", "80"], ["lat", "years"]
+      ],
+      "translation": "Did Emperor Justinian I not live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "negative"],
+        ["label", "czyNPQ"],
+        ["particle", "czy"]
+      ],
+      "comment": "A negative PQ is quiz-felicitous as long as czy introduces it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex30c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30c"},
+      "method": "elicitation",
+      "language": "poli1260",
+      "primaryText": "Justynian I Wielki dożył wieku 80 lat?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "Grammatical but infelicitous in the quiz due to evidential bias. The paper's (30c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex30c_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30c_neg"},
+      "method": "elicitation",
+      "language": "poli1260",
+      "primaryText": "Justynian I Wielki nie dożył wieku 80 lat?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex30d",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30d"},
+      "method": "elicitation",
+      "language": "poli1260",
+      "primaryText": "Dożył Justynian I Wielki wieku 80 lat?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["polarity", "positive"],
+        ["label", "V1PQ"]
+      ],
+      "comment": "The verb cannot move across an overt subject. The paper's (30d) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex30d_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 30d_neg"},
+      "method": "elicitation",
+      "language": "poli1260",
+      "primaryText": "Nie dożył Justynian I Wielki wieku 80 lat?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"],
+        ["label", "V1PQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex31a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31a"},
+      "method": "elicitation",
+      "language": "serb1264",
+      "primaryText": "Da li je Justinijan I/Veliki doživeo 80 godinu?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Da", "DA"], ["li", "LI"], ["je", "is.AUX"], ["Justinijan", "Justinian"],
+        ["I/Veliki", "I/Great"], ["doživeo", "lived.to"], ["80", "80"], ["godinu", "years"]
+      ],
+      "translation": "Did Emperor Justinian I live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "positive"],
+        ["label", "da+liPPQ"],
+        ["particle", "da li"]
+      ],
+      "comment": "The only strategy fully natural in the quiz. Neda Todorović, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex31b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31b"},
+      "method": "elicitation",
+      "language": "serb1264",
+      "primaryText": "Je l' (je) Justinijan I/Veliki doživeo 80 godinu?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Je", "JE"], ["l'", "LI"], ["(je)", "is.AUX"], ["Justinijan", "Justinian"],
+        ["I/Veliki", "I/Great"], ["doživeo", "lived.to"], ["80", "80"], ["godinu", "years"]
+      ],
+      "translation": "Did Emperor Justinian I live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "positive"],
+        ["label", "je+liPPQ"],
+        ["particle", "je li"]
+      ],
+      "comment": "Considered neutral by Todorović 2023, but colloquial and probably only information-seeking.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex31c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31c"},
+      "method": "elicitation",
+      "language": "serb1264",
+      "primaryText": "Nije li Justinijan I/Veliki doživeo 80 godinu?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nije", "NEG.is.AUX"], ["li", "LI"], ["Justinijan", "Justinian"], ["I/Veliki", "I/Great"],
+        ["doživeo", "lived.to"], ["80", "80"], ["godinu", "years"]
+      ],
+      "translation": "Didn't Emperor Justinian I live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbAttachedParticle"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"],
+        ["label", "HighNPQ"],
+        ["particle", "li"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex31d",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31d"},
+      "method": "elicitation",
+      "language": "serb1264",
+      "primaryText": "Je l' Justinijan I/Veliki nije doživeo 80 godinu?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "negative"],
+        ["label", "LowNPQ"],
+        ["particle", "je li"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex31e",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31e"},
+      "method": "elicitation",
+      "language": "serb1264",
+      "primaryText": "Justinijan I/Veliki je doživeo 80 godinu?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper's (31e) 'Justinijan I/Veliki (ni)je doživeo 80 godinu?' covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex31e_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 31e_neg"},
+      "method": "elicitation",
+      "language": "serb1264",
+      "primaryText": "Justinijan I/Veliki nije doživeo 80 godinu?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex32a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32a"},
+      "method": "elicitation",
+      "language": "mace1250",
+      "primaryText": "Dali Justinijan Veliki doživeal 80-godišna vozrast?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dali", "DALI"], ["Justinijan", "Justinian"], ["Veliki", "Great"], ["doživeal", "lived.to"],
+        ["80-godišna", "80-yearly"], ["vozrast", "age"]
+      ],
+      "translation": "Did Emperor Justinian I live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "positive"],
+        ["label", "daliPQ"],
+        ["particle", "dali"]
+      ],
+      "comment": "The paper's (32a) 'Dali Justinijan Veliki (ne) doživeal ...' covers both polarities; split into two rows. Liljana Mitkovska and Eleni Bužarovska, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex32a_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32a_neg"},
+      "method": "elicitation",
+      "language": "mace1250",
+      "primaryText": "Dali Justinijan Veliki ne doživeal 80-godišna vozrast?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dali", "DALI"], ["Justinijan", "Justinian"], ["Veliki", "Great"], ["ne", "NEG"],
+        ["doživeal", "lived.to"], ["80-godišna", "80-yearly"], ["vozrast", "age"]
+      ],
+      "translation": "Did Emperor Justinian I not live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "clauseInitialParticle"],
+        ["polarity", "negative"],
+        ["label", "daliPQ"],
+        ["particle", "dali"]
+      ],
+      "comment": "Negation under dali gives rise to no bias.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex32b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32b"},
+      "method": "elicitation",
+      "language": "mace1250",
+      "primaryText": "Doživeal li Justinijan Veliki 80-godišna vozrast?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Doživeal", "lived.to"], ["li", "LI"], ["Justinijan", "Justinian"], ["Veliki", "Great"],
+        ["80-godišna", "80-yearly"], ["vozrast", "age"]
+      ],
+      "translation": "Did Emperor Justinian I live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbAttachedParticle"],
+        ["strategy", "verbMovement"],
+        ["polarity", "positive"],
+        ["label", "liPQ"],
+        ["particle", "li"]
+      ],
+      "comment": "Less formal than dali but possible in the quiz. The paper's (32b) '(#Ne) Doživeal li ...' covers both polarities; split into two rows.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex32b_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32b_neg"},
+      "method": "elicitation",
+      "language": "mace1250",
+      "primaryText": "Ne doživeal li Justinijan Veliki 80-godišna vozrast?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbAttachedParticle"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"],
+        ["label", "liPQ"],
+        ["particle", "li"]
+      ],
+      "comment": "Negating the verb under li yields positive epistemic bias. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex32c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32c"},
+      "method": "elicitation",
+      "language": "mace1250",
+      "primaryText": "Doživeal Justinijan Veliki 80-godišna vozrast?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["polarity", "positive"],
+        ["label", "v1PQ"]
+      ],
+      "comment": "Verb-first PQs without li are too colloquial for the quiz. The paper's (32c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex32c_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 32c_neg"},
+      "method": "elicitation",
+      "language": "mace1250",
+      "primaryText": "Ne doživeal Justinijan Veliki 80-godišna vozrast?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbMovement"],
+        ["polarity", "negative"],
+        ["label", "v1PQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex33a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 33a"},
+      "method": "elicitation",
+      "language": "bulg1262",
+      "primaryText": "Justinian doživjava li do 80-godišna vŭzrast?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Justinian", "Justinian"], ["doživjava", "lives"], ["li", "LI"], ["do", "to"],
+        ["80-godišna", "80-yearly"], ["vŭzrast", "age"]
+      ],
+      "translation": "Did Emperor Justinian I live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbAttachedParticle"],
+        ["polarity", "positive"],
+        ["label", "liPPQ"],
+        ["particle", "li"]
+      ],
+      "comment": "Vesela Simeonova, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex33b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 33b"},
+      "method": "elicitation",
+      "language": "bulg1262",
+      "primaryText": "Justinian ne doživjava li do 80-godišna vŭzrast?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbAttachedParticle"],
+        ["polarity", "negative"],
+        ["label", "liNPQ"],
+        ["particle", "li"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex33c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 33c"},
+      "method": "elicitation",
+      "language": "bulg1262",
+      "primaryText": "Justinian doživjava do 80-godišna vŭzrast?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "positive"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper's (33c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex33c_neg",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 33c_neg"},
+      "method": "elicitation",
+      "language": "bulg1262",
+      "primaryText": "Justinian ne doživjava do 80-godišna vŭzrast?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "declarative"],
+        ["polarity", "negative"],
+        ["label", "DeclPQ"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex34a",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 34a"},
+      "method": "elicitation",
+      "language": "russ1263",
+      "primaryText": "Dožil li Justinian Velikij do 80 let?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dožil", "lived.to"], ["li", "LI"], ["Justinian", "Justinian"], ["Velikij", "Great"],
+        ["do", "to"], ["80", "80"], ["let", "years"]
+      ],
+      "translation": "Did Emperor Justinian I live up to 80 years?",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbAttachedParticle"],
+        ["polarity", "positive"],
+        ["label", "liPPQ"],
+        ["particle", "li"]
+      ],
+      "comment": "Maria Onoeva and Maria Razguliaeva, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex34b",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 34b"},
+      "method": "elicitation",
+      "language": "russ1263",
+      "primaryText": "Ne dožil li Justinian Velikij do 80 let?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "verbAttachedParticle"],
+        ["polarity", "negative"],
+        ["label", "liNPQ"],
+        ["particle", "li"]
+      ],
+      "comment": "The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex34c",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 34c"},
+      "method": "elicitation",
+      "language": "russ1263",
+      "primaryText": "Justinian Velikij dožil do 80 let?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["scenario", "24"],
+        ["strategy", "intonation"],
+        ["polarity", "positive"],
+        ["label", "IntonPQ"]
+      ],
+      "comment": "Question force by pitch accent alone; arguably unbiased but inherently information-seeking. The paper translates only the glossed variant of the example.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex43c_ppi",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 43c"},
+      "language": "czec1258",
+      "primaryText": "Nemá Max nějaké námitky?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nemá", "NEG.has"], ["Max", "Max"], ["nějaké", "DET.PPI"], ["námitky", "objections"]
+      ],
+      "translation": "Doesn't Max have some objections?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["polarity", "negative"],
+        ["indefinite", "ppi"]
+      ],
+      "comment": "InterNPQ with the PPI: outer negation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex43c_nci",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 43c"},
+      "language": "czec1258",
+      "primaryText": "Nemá Max žádné námitky?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nemá", "NEG.has"], ["Max", "Max"], ["žádné", "NEG.NCI"], ["námitky", "objections"]
+      ],
+      "translation": "Doesn't Max have any objections?",
+      "context": "",
+      "judgment": "marginal",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["polarity", "negative"],
+        ["indefinite", "nci"]
+      ],
+      "comment": "InterNPQs only marginally involve inner negation. The paper prints Nemá Max {nějaké / ?žádné} námitky? 'Doesn't Max have some/any objections?' and glosses žádné 'NEG.NCI' here, 'DET.NCI' in (43a).",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex43d_ppi",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 43d"},
+      "language": "czec1258",
+      "primaryText": "Nemá Max náhodou nějaké námitky?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nemá", "NEG.has"], ["Max", "Max"], ["náhodou", "by.chance"], ["nějaké", "DET.PPI"],
+        ["námitky", "objections"]
+      ],
+      "translation": "Does Max have some objections, by any chance?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["polarity", "negative"],
+        ["particle", "náhodou"],
+        ["indefinite", "ppi"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex43d_nci",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 43d"},
+      "language": "czec1258",
+      "primaryText": "Nemá Max náhodou žádné námitky?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nemá", "NEG.has"], ["Max", "Max"], ["náhodou", "by.chance"], ["žádné", "NEG.NCI"],
+        ["námitky", "objections"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["polarity", "negative"],
+        ["particle", "náhodou"],
+        ["indefinite", "nci"]
+      ],
+      "comment": "Náhodou requires outer negation, which cannot license the NCI. The paper's translation goes with the unstarred nějaké.",
+      "verified": "page-image"
+    },
+    {
+      "id": "simik2024_ex43e",
+      "source": {"bibkey": "simik-2024", "paperLabel": "ex. 43e"},
+      "language": "czec1258",
+      "primaryText": "Má Max náhodou nějaké námitky?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Má", "has"], ["Max", "Max"], ["náhodou", "by.chance"], ["nějaké", "DET.PPI"],
+        ["námitky", "objections"]
+      ],
+      "translation": "Does Max have some objections, by any chance?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["polarity", "positive"],
+        ["particle", "náhodou"],
+        ["indefinite", "ppi"]
+      ],
+      "comment": "The particle náhodou is not licensed in positive PQs. The paper gives the translation as intended.",
+      "verified": "page-image"
+    }
+  ]
+}

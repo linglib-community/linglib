@@ -514,12 +514,27 @@ theorem table1 (e : SignType) :
     HighNegationLicensed, evidence, raining_ne_empty, raining_ne_univ]
 
 open BuringGunlogson2000 in
-theorem licensed_iff_felicitous (r : Option Polarity) (e : SignType) :
-    Licensed (evidence raining e) raining r ↔ BuringGunlogson2000.Felicitous r e := by
+theorem licensed_iff_mem_evidential (r : Option Polarity) (e : SignType) :
+    Licensed (evidence raining e) raining r ↔ e ∈ BuringGunlogson2000.evidential r := by
   rcases r with _ | _ | _
-  exacts [(table1 e).1.trans (felicitous_none_iff_ne e).symm,
-    (table1 e).2.2.trans (felicitous_some_positive_iff_ne e).symm,
-    (table1 e).2.1.trans (felicitous_some_negative_iff_eq e).symm]
+  exacts [(table1 e).1.trans mem_evidential_none.symm,
+    (table1 e).2.2.trans mem_evidential_outer.symm,
+    (table1 e).2.1.trans mem_evidential_inner.symm]
+
+-- for every consistent evidence state, not only the three of Table 1
+theorem licensed_iff_bias_mem_evidential {E φ : Set Weather} (hE : E.Nonempty)
+    (r : Option Polarity) :
+    Licensed E φ r ↔ (Filter.principal E).bias φ ∈ BuringGunlogson2000.evidential r := by
+  have : (Filter.principal E).NeBot := Filter.principal_neBot_iff.2 hE
+  rcases r with _ | _ | _
+  · have h : E ⊆ φ → ¬ E ⊆ φᶜ := fun h h' ↦ let ⟨x, hx⟩ := hE; h' hx (h hx)
+    rw [BuringGunlogson2000.mem_evidential_none, Ne, Filter.bias_eq_neg_one_iff]
+    simp only [Licensed, MonopolarLicensed, BipolarLicensed, Filter.mem_principal]
+    tauto
+  · rw [BuringGunlogson2000.mem_evidential_outer, Ne, Filter.bias_eq_one_iff]
+    simp [Licensed, HighNegationLicensed]
+  · rw [BuringGunlogson2000.mem_evidential_inner, Filter.bias_eq_neg_one_iff]
+    simp [Licensed, MonopolarLicensed]
 
 instance : MeasurableSpace Weather := ⊤
 

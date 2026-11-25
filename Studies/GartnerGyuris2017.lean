@@ -5,6 +5,7 @@ public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Questions.Bias
+public import Studies.BuringGunlogson2000
 public import Linglib.Data.Examples.GartnerGyuris2017
 public import Linglib.Data.Examples.Readers
 
@@ -142,6 +143,10 @@ def byDim (p : Profile) (d : Dimension) : Option Polarity → Choice := λ q => 
 /-- A reading's evidential and epistemic choices. -/
 def pair (p : Profile) (q : Option Polarity) : Choice × Choice :=
   (p (.of q .evidential), p (.of q .epistemic))
+
+/-- The bias profile of a reading: its evidential and its epistemic choice as bias values. -/
+def biasProfile (p : Profile) (q : Option Polarity) : BiasProfile :=
+  ⟨(p (.of q .evidential)).toFinset, (p (.of q .epistemic)).toFinset⟩
 
 /-- A principle relating the positive question's value to each negative question's value factors
 through the positive question's value. -/
@@ -361,6 +366,11 @@ def sample : List Profile :=
   [englishV1, japaneseNull, japaneseNo, japaneseDesho, hungarianFallRise]
 
 theorem hungarianFallRise_eq_englishV1 : hungarianFallRise = englishV1 := rfl
+
+-- the evidential cells of the English profile are the conditions of [buring-gunlogson-2000]
+theorem evidential_biasProfile_englishV1 (q : Option Polarity) :
+    (biasProfile englishV1 q).evidential = BuringGunlogson2000.evidential q := by
+  rcases q with _ | _ | _ <;> decide
 
 private theorem mem_sample {p : Profile} (h : p ∈ sample) :
     p = englishV1 ∨ p = japaneseNull ∨ p = japaneseNo ∨ p = japaneseDesho ∨

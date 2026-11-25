@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Bias
+public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Languages.English.PolarityItems
 public import Linglib.Languages.German.PolarityItems
 
@@ -20,12 +21,12 @@ those judgements.
 The three question types are readings, `Option Polarity`: `none` is the paper's PPQ, and a
 negative question is an inner-negation NPQ, `some .negative`, when the negation sits inside the
 questioned proposition, and an outer-negation NPQ, `some .positive`, when it sits outside. The
-contextual evidence of a situation is the sign of `p` it supports, and reading it relative to `¬p`
-negates it.
+contextual evidence a question type admits is a bias value, a set of signs of the `p` the
+evidence supports.
 
 ## Main definitions
 
-* `E`, `Felicitous` — the proto-condition and the felicity condition of each question type
+* `E`, `evidential` — the proto-condition and the evidence each question type admits
 * `Determiner`, `Question` — the morphosyntactic probes and a probed question; the polarity items
   are the language files' `either`, `too` and `brauchen`
 
@@ -44,82 +45,44 @@ open Question
 open English.PolarityItems (either too)
 open German.PolarityItems (brauchen)
 
-/-! ### Compelling contextual evidence -/
-
-/-- Evidence is **compelling** for `p` when it would on its own justify the inference that `p`. -/
-def CompellingFor (ev : SignType) : Prop := ev = 1
-
-/-- Evidence is compelling against `p` when it is compelling for `¬p`, the evidence read relative
-to `¬p`. -/
-def CompellingAgainst (ev : SignType) : Prop := CompellingFor (-ev)
-
-instance (ev : SignType) : Decidable (CompellingFor ev) :=
-  inferInstanceAs (Decidable (_ = _))
-
-instance (ev : SignType) : Decidable (CompellingAgainst ev) :=
-  inferInstanceAs (Decidable (CompellingFor _))
-
 /-! ### The evidence conditions -/
 
-/-- The proto-condition: there is no compelling contextual evidence against `p`. -/
-def E (ev : SignType) : Prop := ¬ CompellingAgainst ev
+/-- The proto-condition on the proposition of polarity `s`: there is no compelling contextual
+evidence against it. Evidence is compelling for a proposition when it would on its own justify
+inferring it, and compelling against it when it is compelling for the opposite one. -/
+def E (s : Polarity) : BiasValue := .minus (.negative * s)
 
-instance (ev : SignType) : Decidable (E ev) := inferInstanceAs (Decidable ¬ _)
+/-- The evidence each question type admits, as one proto-condition applied three ways: a positive
+question imposes it on its own proposition, an outer-negation question on the negation, and an
+inner-negation question imposes its negation. -/
+def evidential : Option Polarity → BiasValue
+  | none => E .positive
+  | some .negative => (E .positive)ᶜ
+  | some .positive => E .negative
 
-/-- The felicity condition of each question type, as one proto-condition applied three ways: a
-positive question imposes it on its own proposition, an outer-negation question on the negation,
-and an inner-negation question imposes its negation. -/
-def Felicitous : Option Polarity → SignType → Prop
-  | none, ev => E ev
-  | some .negative, ev => ¬ E ev
-  | some .positive, ev => E (-ev)
-
-instance : ∀ (r : Option Polarity) (ev : SignType), Decidable (Felicitous r ev)
-  | none, ev => inferInstanceAs (Decidable (E ev))
-  | some .negative, ev => inferInstanceAs (Decidable ¬ E ev)
-  | some .positive, ev => inferInstanceAs (Decidable (E (-ev)))
+variable {ev : SignType}
 
 /-- A positive question requires no compelling evidence against `p`. -/
-theorem felicitous_none_iff (ev : SignType) :
-    Felicitous none ev ↔ ¬ CompellingAgainst ev := Iff.rfl
+theorem mem_evidential_none : ev ∈ evidential none ↔ ev ≠ -1 := by
+  simp [evidential, E]
 
-/-- An outer-negation question requires no compelling evidence *for* `p`. -/
-theorem felicitous_some_positive_iff (ev : SignType) :
-    Felicitous (some .positive) ev ↔ ¬ CompellingFor ev := by
-  decide +revert
+/-- An outer-negation question requires no compelling evidence for `p`. -/
+theorem mem_evidential_outer : ev ∈ evidential (some .positive) ↔ ev ≠ 1 := by
+  simp [evidential, E]
 
 /-- An inner-negation question requires compelling evidence against `p`. -/
-theorem felicitous_some_negative_iff (ev : SignType) :
-    Felicitous (some .negative) ev ↔ CompellingAgainst ev := by
-  decide +revert
+theorem mem_evidential_inner : ev ∈ evidential (some .negative) ↔ ev = -1 := by
+  simp [evidential, E]
 
-theorem not_felicitous_none_neg_one : ¬ Felicitous none (-1) := by decide
+-- the proto-condition holds of a consistent body of evidence that does not support the opposite
+-- proposition, which is what it is for the evidence not to be compelling against it
+theorem bias_mem_E_iff {W : Type*} {F : Filter W} [F.NeBot] {p : Set W} (s : Polarity) :
+    F.bias p ∈ E s ↔ (s • p)ᶜ ∉ F := by
+  rw [E, bias_mem_minus_iff, mul_smul, Polarity.negative_smul_set]
 
-theorem felicitous_some_negative_iff_eq (ev : SignType) :
-    Felicitous (some .negative) ev ↔ ev = -1 := by
-  decide +revert
-
-theorem felicitous_none_iff_ne (ev : SignType) : Felicitous none ev ↔ ev ≠ -1 := by
-  decide +revert
-
-theorem felicitous_some_positive_iff_ne (ev : SignType) :
-    Felicitous (some .positive) ev ↔ ev ≠ 1 := by
-  decide +revert
-
-theorem felicitous_some_positive_zero_not_negative :
-    Felicitous (some .positive) 0 ∧ ¬ Felicitous (some .negative) 0 := by
-  decide
-
-/-- No two question types share a felicity profile, so the predicted synonymies of a Hamblin
+/-- No two question types admit the same evidence, so the predicted synonymies of a Hamblin
 denotation ([hamblin-1973b]) are not real. -/
-theorem felicity_separates_readings (r s : Option Polarity)
-    (h : ∀ ev, Felicitous r ev ↔ Felicitous s ev) :
-    r = s := by
-  rcases r with _ | _ | _ <;> rcases s with _ | _ | _ <;>
-    first
-      | rfl
-      | exact absurd (h 0) (by decide)
-      | exact absurd (h 1) (by decide)
+theorem evidential_injective : Function.Injective evidential := by decide
 
 /-! ### The morphosyntactic probes -/
 
@@ -160,14 +123,10 @@ structure Question where
 so it requires the inner construal, and a positive polarity item must escape it, so it requires
 the outer one. -/
 def Question.WellFormed (q : Question) : Prop :=
-  ∀ e ∈ q.item,
-    (e.IsNPI → q.determiner.polarity = .negative) ∧ (e.IsPPI → q.determiner.polarity = .positive)
+  ∀ e ∈ q.item, q.determiner.polarity.Admits e
 
-instance : ∀ q : Question, Decidable q.WellFormed
-  | ⟨_, none⟩ => isTrue (by simp [Question.WellFormed])
-  | ⟨d, some e⟩ =>
-    decidable_of_iff ((e.IsNPI → d.polarity = .negative) ∧ (e.IsPPI → d.polarity = .positive))
-      (by simp [Question.WellFormed])
+instance (q : Question) : Decidable q.WellFormed :=
+  inferInstanceAs (Decidable (∀ e ∈ q.item, _))
 
 -- (14a)
 theorem no_takes_either_not_too :
@@ -187,11 +146,11 @@ theorem brauchen_takes_kein_not_nichtEin :
 /-- A negative polarity item forces the inner-negation reading (13a). -/
 theorem polarity_eq_negative_of_isNPI {d : Determiner} {e : PolarityItem} (he : e.IsNPI)
     (h : (Question.mk d (some e)).WellFormed) : d.polarity = .negative :=
-  (h e rfl).1 he
+  (h e rfl).2 he
 
 /-- A positive polarity item forces the outer-negation reading (13b). -/
 theorem polarity_eq_positive_of_isPPI {d : Determiner} {e : PolarityItem} (he : e.IsPPI)
     (h : (Question.mk d (some e)).WellFormed) : d.polarity = .positive :=
-  (h e rfl).2 he
+  (h e rfl).1 he
 
 end BuringGunlogson2000
