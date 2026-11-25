@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Syntax.Category.Complementizer.Basic
-public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+public import Linglib.Syntax.Category.Verb.Takes
 
 /-!
 # Ndebele clausal embedding

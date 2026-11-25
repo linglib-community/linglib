@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.Washo.Clause
-public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+public import Linglib.Syntax.Category.Verb.Takes
 public import Studies.Hanink2021
 public import Linglib.Syntax.Minimalist.Spine
 

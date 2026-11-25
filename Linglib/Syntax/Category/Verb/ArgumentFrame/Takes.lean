@@ -5,37 +5,34 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Category.Verb.Defs
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 public import Linglib.Syntax.Category.Complementizer.Basic
-public import Mathlib.Order.PropInstances
 
 /-!
-# Verb–complementizer selection
+# Frames and complementizers
 
-The selection relation between the `Verb` and `Complementizer` entry APIs: which complementizers
-a predicate takes. A clausal position and a complementizer each have a selection, the complement
-types, sentence types and subject realizations of a clause, and a position takes a complementizer
-when its selection takes the complementizer's (`Clause.Selection.Takes`): some clause is admitted
-by both, and both restrict a common respect. The relation is lifted twice: a frame takes a
-complementizer when some complement does, and a verb when some frame does. A complement whose
-subject is unpronounced takes no complementizer requiring a pronounced one, as *for* requires an
-overt accusative subject.
+Which complementizers a clausal position takes. A clausal position and a complementizer each have
+a selection, the complement types, sentence types and subject realizations of a clause, and a
+position takes a complementizer when its selection takes the complementizer's
+(`Clause.Selection.Takes`): some clause is admitted by both, and both restrict a common respect.
+A frame takes a complementizer when some complement does. A complement whose subject is
+unpronounced takes no complementizer requiring a pronounced one, as *for* requires an overt
+accusative subject. The lift to verbs is in `Syntax/Category/Verb/Takes.lean`.
 
 Selection is by these three respects alone, so two complementizers with the same selection are
-taken by the same predicates; a lexical restriction beyond them, as of Bulgarian *deto* to some
+taken by the same positions; a lexical restriction beyond them, as of Bulgarian *deto* to some
 emotive factives, is a list the language file records.
 
 ## Main definitions
 
-* `ArgumentFrame.Position.Takes`, `ArgumentFrame.Takes`, `Verb.Takes`: the relation and its lifts.
+* `ArgumentFrame.Position.Takes`: a position takes a complementizer.
+* `ArgumentFrame.Takes`: a frame takes a complementizer.
 * `ArgumentFrame.typedBy`: the frame whose one complement is the clause a complementizer types.
-* `Verb.typers`: the complementizers a verb takes within an inventory.
 
 ## Main results
 
 * `ArgumentFrame.Position.exists_takes_iff`: some position takes a complementizer exactly when its
   selection admits a clause and restricts some respect.
-* `Verb.not_takes_of_eq_top`: no verb takes a complementizer restricting nothing.
 
 ## References
 
@@ -129,30 +126,3 @@ def typedBy (z : Complementizer) (s : Finset Clause.EmbeddedSubject := Finset.un
 @[simp] theorem complements_typedBy : (typedBy z s).complements = [.typedBy z s] := rfl
 
 end ArgumentFrame
-
-namespace Verb
-
-variable {v : Verb} {z : Complementizer} {inv : List Complementizer}
-
-/-- The verb takes `z` when some frame does. -/
-def Takes (v : Verb) (z : Complementizer) : Prop :=
-  ∃ fr ∈ v.valency.frames, fr.Takes z
-
-instance : Decidable (v.Takes z) := inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
-
-/-- A verb taking a complementizer takes a clausal complement. -/
-theorem Takes.takesClausal (h : v.Takes z) : v.TakesClausal :=
-  h.imp fun _ ⟨hf, ht⟩ ↦ ⟨hf, ht.hasClausal⟩
-
-/-- No verb takes a complementizer restricting nothing, as a converb suffix restricts nothing. -/
-theorem not_takes_of_eq_top (hz : z.toSelection = ⊤) : ¬ v.Takes z :=
-  fun ⟨_, _, h⟩ ↦ ArgumentFrame.not_takes_of_eq_top hz h
-
-/-- The complementizers `v` takes within a language's inventory. -/
-def typers (v : Verb) (inv : List Complementizer) : List Complementizer :=
-  inv.filter (v.Takes ·)
-
-@[simp] theorem mem_typers : z ∈ v.typers inv ↔ z ∈ inv ∧ v.Takes z := by
-  simp [typers]
-
-end Verb

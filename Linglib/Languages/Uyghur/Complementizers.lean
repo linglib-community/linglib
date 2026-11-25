@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
-public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+public import Linglib.Syntax.Category.Verb.Takes
 
 /-!
 # Uyghur clausal embedding

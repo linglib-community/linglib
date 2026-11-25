@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+public import Linglib.Syntax.Category.Verb.Takes
 public import Linglib.Syntax.Voice.Basic
 
 /-!
