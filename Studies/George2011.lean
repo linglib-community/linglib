@@ -47,6 +47,8 @@ and Rupert's state is Maggie's: the scenarios differ in their questions.
 
 namespace George2011
 
+open Examples (Sentence)
+
 open Question Inquisitive Inquisitive.Proposition
 
 variable {W τ E : Type*}
@@ -659,12 +661,6 @@ end Forgot
 
 /-! ### The dissertation's judgments -/
 
-/-- The sentences whose truth in their scenarios the file settles. -/
-inductive Sentence
-  | admittedKnown | notAdmittedKnown | admittedButNot | fourStudents | jannaNewspaper
-  | redNewspaper
-  deriving DecidableEq, Repr
-
 open Admissions Newspaper in
 /-- What each sentence claims in its scenario, on the readings the dissertation assigns. -/
 def Verdict : Sentence → Prop
@@ -685,10 +681,7 @@ structure Row where
 
 /-- The sentence and truth judgment recorded in a datum. -/
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let sentence ← ex.parse? "sentence" [("admittedKnown", Sentence.admittedKnown),
-    ("notAdmittedKnown", .notAdmittedKnown), ("admittedButNot", .admittedButNot),
-    ("fourStudents", .fourStudents), ("jannaNewspaper", .jannaNewspaper),
-    ("redNewspaper", .redNewspaper)]
+  let sentence ← (Examples.sentence ex)
   let holds ← ex.parse? "holds" [("yes", true), ("no", false)]
   pure ⟨sentence, holds⟩
 

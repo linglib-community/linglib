@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "strength",
+      "lean": "strength",
+      "type": "Strength",
+      "doc": "Weak items are *any* and *ever*, strong ones *in weeks*, *either* and *until*.",
+      "levels": [
+        {
+          "name": "weak",
+          "label": "weak",
+          "doc": "weak"
+        },
+        {
+          "name": "strong",
+          "label": "strong",
+          "doc": "strong"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "gajewski2011_ex14a",
     "source": {
@@ -576,3 +597,4 @@
     "verified": "page-image"
   }
 ]
+}

@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "gappingDirection",
+      "lean": "gappingDirection",
+      "type": "GappingDirection",
+      "doc": "The two directions of gapping. Forward gapping keeps the verb in the first conjunct and backward gapping in the last.",
+      "levels": [
+        {
+          "name": "forward",
+          "label": "forward",
+          "doc": "forward"
+        },
+        {
+          "name": "backward",
+          "label": "backward",
+          "doc": "backward"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "steedman2000_96",
     "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 6 (96)"},
@@ -371,3 +392,4 @@
     "verified": "page-image"
   }
 ]
+}

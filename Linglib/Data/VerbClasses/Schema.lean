@@ -1,5 +1,7 @@
 module
 
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Judgment
 
 /-!

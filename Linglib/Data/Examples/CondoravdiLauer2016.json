@@ -1,4 +1,53 @@
-[
+{
+  "features": [
+    {
+      "key": "want",
+      "lean": "want",
+      "type": "WantReading",
+      "doc": "The reading of the desire predicate.",
+      "levels": [
+        {
+          "name": "effective",
+          "label": "effective",
+          "doc": "effective"
+        },
+        {
+          "name": "mere",
+          "label": "mere",
+          "doc": "mere"
+        },
+        {
+          "name": "weak",
+          "label": "weak",
+          "doc": "weak"
+        }
+      ]
+    },
+    {
+      "key": "interpretation",
+      "lean": "interpretation",
+      "type": "Interpretation",
+      "doc": "The interpretation the paper assigns.",
+      "levels": [
+        {
+          "name": "anankastic",
+          "label": "anankastic",
+          "doc": "anankastic"
+        },
+        {
+          "name": "nearAnankastic",
+          "label": "nearAnankastic",
+          "doc": "nearAnankastic"
+        },
+        {
+          "name": "nonAnankastic",
+          "label": "nonAnankastic",
+          "doc": "nonAnankastic"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "cl2016_ex1",
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(1)"},
@@ -1631,3 +1680,4 @@
     "verified": "page-image"
   }
 ]
+}

@@ -1,4 +1,58 @@
-[
+{
+  "features": [
+    {
+      "key": "case",
+      "lean": "case",
+      "type": "Case",
+      "doc": "The examples, by what the language lexicalizes beyond the assertion.",
+      "levels": [
+        {
+          "name": "bare",
+          "label": "bare",
+          "doc": "(1) *Some players responded*: the A corner"
+        },
+        {
+          "name": "negated",
+          "label": "negated",
+          "doc": "(33) *Some players have not responded*: the A corner, the assertion holding a negation"
+        },
+        {
+          "name": "antonym",
+          "label": "antonym",
+          "doc": "(42) *Some players were inside*: the A corner and an antonym, (46)"
+        },
+        {
+          "name": "lexicalized",
+          "label": "lexicalized",
+          "doc": "(52) *Going to confession is permitted*: the A and O corners, *required* and *optional*"
+        },
+        {
+          "name": "minimal",
+          "label": "minimal",
+          "doc": "(76) *John-wa ki-te yoi*: no other corner; necessity is complex, (77)"
+        }
+      ]
+    },
+    {
+      "key": "excluded",
+      "lean": "excluded",
+      "type": "Excluded",
+      "doc": "Which alternative an exclusion negates: the scalar alternative `A` or the symmetric one `O`, the pair of the paper's (10) and (68).",
+      "levels": [
+        {
+          "name": "scalar",
+          "label": "scalar",
+          "doc": "scalar"
+        },
+        {
+          "name": "symmetric",
+          "label": "symmetric",
+          "doc": "symmetric"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {"id": "schwarzwagner2026_1a", "source": {"bibkey": "schwarz-wagner-2026", "paperLabel": "(1), (3)"}, "language": "stan1293", "primaryText": "Some players responded.", "discourseSegments": [], "glossedTokens": [], "translation": "", "context": "", "judgment": "acceptable", "contrasts": [], "readings": [{"name": "strengthened: some but not all players responded", "judgment": "acceptable"}], "paperFeatures": [["case", "bare"], ["excluded", "scalar"], ["available", "yes"]], "comment": "Denying all players responded.", "verified": "page-image"},
   {"id": "schwarzwagner2026_1b", "source": {"bibkey": "schwarz-wagner-2026", "paperLabel": "(1), (8)"}, "language": "stan1293", "primaryText": "Some players responded.", "discourseSegments": [], "glossedTokens": [], "translation": "", "context": "", "judgment": "acceptable", "contrasts": [], "readings": [{"name": "strengthened: all players responded", "judgment": "unacceptable"}], "paperFeatures": [["case", "bare"], ["excluded", "symmetric"], ["available", "no"]], "comment": "Denying not all players responded, (7).", "verified": "page-image"},
   {"id": "schwarzwagner2026_33a", "source": {"bibkey": "schwarz-wagner-2026", "paperLabel": "(33), (35a)"}, "language": "stan1293", "primaryText": "Some players have not responded.", "discourseSegments": [], "glossedTokens": [], "translation": "", "context": "", "judgment": "acceptable", "contrasts": [], "readings": [{"name": "strengthened: some but not all players responded", "judgment": "acceptable"}], "paperFeatures": [["case", "negated"], ["excluded", "scalar"], ["available", "yes"]], "comment": "Denying (36a), all players have not responded, on its surface scope.", "verified": "page-image"},
@@ -14,3 +68,4 @@
   {"id": "schwarzwagner2026_76a", "source": {"bibkey": "schwarz-wagner-2026", "paperLabel": "(76)"}, "reportedIn": {"bibkey": "breheny-et-al-2018", "paperLabel": "(41)"}, "language": "nucl1643", "primaryText": "John-wa ki-te yoi.", "discourseSegments": [], "glossedTokens": [["John-wa", "John-TOP"], ["ki-te", "come-GERUND"], ["yoi", "good"]], "translation": "John is allowed to come.", "context": "", "judgment": "acceptable", "contrasts": [], "readings": [{"name": "strengthened: John is allowed but not required to come", "judgment": "acceptable"}], "paperFeatures": [["case", "minimal"], ["excluded", "scalar"], ["available", "yes"]], "comment": "All expressions of deontic necessity, (77), are more complex; the paper takes this to contradict the complexity filter.", "verified": "page-image"},
   {"id": "schwarzwagner2026_76b", "source": {"bibkey": "schwarz-wagner-2026", "paperLabel": "(76)"}, "reportedIn": {"bibkey": "breheny-et-al-2018", "paperLabel": "(41)"}, "language": "nucl1643", "primaryText": "John-wa ki-te yoi.", "discourseSegments": [], "glossedTokens": [["John-wa", "John-TOP"], ["ki-te", "come-GERUND"], ["yoi", "good"]], "translation": "John is allowed to come.", "context": "", "judgment": "acceptable", "contrasts": [], "readings": [{"name": "strengthened: John must come", "judgment": "unacceptable"}], "paperFeatures": [["case", "minimal"], ["excluded", "symmetric"], ["available", "no"]], "comment": "The paper's one admitted problem for blocking among these examples: no simplex necessity is there to block it.", "verified": "page-image"}
 ]
+}

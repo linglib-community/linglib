@@ -1,4 +1,76 @@
-[
+{
+  "features": [
+    {
+      "key": "position",
+      "lean": "position",
+      "type": "PALPosition",
+      "doc": "The word-class slot a PAL fills.",
+      "levels": [
+        {
+          "name": "prenominalModifier",
+          "label": "prenominal modifier",
+          "doc": "prenominal modifier"
+        },
+        {
+          "name": "headNoun",
+          "label": "head noun",
+          "doc": "head noun"
+        },
+        {
+          "name": "predicativeAdjective",
+          "label": "predicative adjective",
+          "doc": "predicative adjective"
+        },
+        {
+          "name": "verb",
+          "label": "verb",
+          "doc": "verb"
+        }
+      ]
+    },
+    {
+      "key": "inflection",
+      "lean": "inflection",
+      "type": "Inflection",
+      "doc": "Word-level inflection attested on a PAL.",
+      "levels": [
+        {
+          "name": "plural",
+          "label": "plural",
+          "doc": "plural"
+        },
+        {
+          "name": "agentivePlural",
+          "label": "agentive -er + plural",
+          "doc": "agentive -er + plural"
+        },
+        {
+          "name": "gerund",
+          "label": "gerund",
+          "doc": "gerund"
+        }
+      ]
+    },
+    {
+      "key": "hostFrame",
+      "lean": "hostFrame",
+      "type": "PALHostFrame",
+      "doc": "A comparable construction is hosted by a compound(-like) frame in West Germanic and Turkish, where the compound marker sits on the head noun, or the complement of a preposition in Hebrew and Brazilian Portuguese.",
+      "levels": [
+        {
+          "name": "compound",
+          "label": "compound",
+          "doc": "compound"
+        },
+        {
+          "name": "prepositionComplement",
+          "label": "preposition complement",
+          "doc": "preposition complement"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "gs2025_1a",
     "source": {
@@ -671,3 +743,4 @@
     "verified": "page-image"
   }
 ]
+}

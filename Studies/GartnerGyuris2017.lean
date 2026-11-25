@@ -54,6 +54,8 @@ studies.
 
 namespace GartnerGyuris2017
 
+open Examples (Construction Dimension)
+
 open Question
 
 /-- A bias choice: one of the seven nonempty sets of states of evidence or expectation, for p
@@ -85,12 +87,6 @@ theorem Choice.toFinset_sudo :
   decide
 
 theorem card_choice : Fintype.card Choice = 7 := by decide
-
-/-- The dimension a bias is drawn from. -/
-inductive Dimension where
-  | evidential
-  | epistemic
-  deriving DecidableEq, Fintype
 
 /-- The six cells of a profile: a reading of a polar question in a bias dimension. -/
 inductive Cell where
@@ -406,14 +402,8 @@ theorem sample_staticComplementarity :
 
 /-! ### Examples (1), (2), (8), (9): infelicity from the profiles -/
 
-/-- The clause types whose examples the paper judges. -/
-inductive Construction where
-  | englishV1
-  | hungarianE
-  deriving DecidableEq
-
 /-- A clause type's choice for a cell. -/
-def Construction.cell : Construction → Cell → Option Choice
+def Examples.Construction.cell : Construction → Cell → Option Choice
   | .englishV1, c => some (GartnerGyuris2017.englishV1 c)
   | .hungarianE, c => GartnerGyuris2017.hungarianE c
 
@@ -428,11 +418,10 @@ structure Row where
   deriving DecidableEq
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let construction ← ex.parse? "construction"
-    [("English V1", .englishV1), ("Hungarian e", .hungarianE)]
+  let construction ← (Examples.construction ex)
   let reading ← ex.parse? "form"
     [("PPQ", none), ("IN-NPQ", (some .negative)), ("ON-NPQ", (some .positive))]
-  let dimension ← ex.parse? "dimension" [("evidential", .evidential), ("epistemic", .epistemic)]
+  let dimension ← (Examples.dimension ex)
   let value ← ex.parse? "value" [("+", (1 : SignType)), ("-", -1), ("%", 0)]
   pure ⟨construction, reading, dimension, value, ex.judgment⟩
 

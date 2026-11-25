@@ -68,6 +68,8 @@ anymore*](##form_predicts).
 
 namespace KnickSharf2026
 
+open Examples (Reading)
+
 open Aspect Function Set
 open Chierchia2006 (evenEnrich)
 open Event (τ)
@@ -311,27 +313,21 @@ theorem not_mem_of_evenEnrich [NoMaxOrder T] [Nonempty W] {𝒟 : Set (Set T)} {
   exact hV (by rw [universalPerfect_eq_simplePresent ht,
     universalPerfect_eq_simplePresent (le_antisymm hyt hty ▸ hy)])
 
-/-- The universal and the experiential reading of the perfect. -/
-inductive Reading
-  | universal
-  | experiential
-  deriving DecidableEq
-
 /-- The aspect beneath the perfect, the imperfective (25) for the universal reading and the
 perfective (28) for the experiential (§4.2). -/
-def Reading.aspect : Reading → (E → Prop) → NonemptyInterval T → Prop
+def Examples.Reading.aspect : Reading → (E → Prop) → NonemptyInterval T → Prop
   | .universal => ViewpointType.imperfective.denote
   | .experiential => perfective
 
 /-- The perfect under a reading. -/
-def Reading.perfect : Reading → (W → E → Prop) → Set T → T → Set W
+def Examples.Reading.perfect : Reading → (W → E → Prop) → Set T → T → Set W
   | .universal => universalPerfect
   | .experiential => experientialPerfect
 
 /-- The perfect under the durative adverbial *ever since t₀* (4b), (5), (8b): the spans starting
 at `t₀`, the aspect holding throughout them, as [iatridou-anagnostopoulou-izvorski-2001] read
 durative adverbials. -/
-def Reading.everSince (r : Reading) (V : W → E → Prop) (t₀ t : T) : Set W :=
+def Examples.Reading.everSince (r : Reading) (V : W → E → Prop) (t₀ t : T) : Set W :=
   {w | Aspect.perfect ((fun pts ↦ pts.fst = t₀) ⊓ durative (r.aspect (V w))) (.pure t)}
 
 theorem everSince_universal (V : W → E → Prop) (t₀ t : T) :
@@ -424,10 +420,10 @@ theorem focused_experiential_available [Nonempty W] :
 
 /-- A reading entails the simple present when in every model, over every domain, the
 eventuality holds at the speech time wherever the perfect does. -/
-def Reading.EntailsPresent (W T : Type*) [LinearOrder T] (r : Reading) : Prop :=
+def Examples.Reading.EntailsPresent (W T : Type*) [LinearOrder T] (r : Reading) : Prop :=
   ∀ (V : W → NonemptyInterval T → Prop) D t, r.perfect V D t ⊆ simplePresent V t
 
-theorem Reading.entailsPresent_iff [Nonempty W] [Nontrivial T] {r : Reading} :
+theorem Examples.Reading.entailsPresent_iff [Nonempty W] [Nontrivial T] {r : Reading} :
     r.EntailsPresent W T ↔ r = .universal := by
   cases r
   · exact iff_of_true (fun V D t ↦ universalPerfect_subset_simplePresent V D t) rfl
@@ -493,16 +489,12 @@ def leftBoundary (e : Datum) : Option LeftBoundary :=
   | none, none => some .unspecified
   | none, some _ => none
 
-/-- The reading the paper assigns a row. -/
-def reading (e : Datum) : Option Reading :=
-  e.parse? "reading" [("universal", .universal), ("experiential", .experiential)]
-
 /-- The form of each perfect predicts its reading, the one parse available to it, and whether it
 admits *but she's not anymore*: the experiential perfects (6), (8a) and (12) do, the universal
 perfects (5) and (8b) under *ever since* and (10) under focus do not. -/
 theorem form_predicts :
     (∀ e ∈ Examples.all, (leftBoundary e).map (fun b ↦ b.parses.filter (b.Available Bool ℤ ·)) =
-      (reading e).map ([·])) ∧
+      (Examples.reading e).map ([·])) ∧
     Datum.Checks leftBoundary (fun b ↦ .ofProp b.AdmitsCompletion) Examples.all 6 := by
   decide
 

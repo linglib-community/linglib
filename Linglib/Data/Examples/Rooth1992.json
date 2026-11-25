@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "question",
+      "lean": "question",
+      "type": "Q",
+      "doc": "The questions of (23).",
+      "levels": [
+        {
+          "name": "whoCutBill",
+          "label": "whoCutBill",
+          "doc": "whoCutBill"
+        },
+        {
+          "name": "whoDidMaryCut",
+          "label": "whoDidMaryCut",
+          "doc": "whoDidMaryCut"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "rooth1992_3a",
     "source": {"bibkey": "rooth-1992", "paperLabel": "(3a)"},
@@ -294,3 +315,4 @@
     "verified": "page-image"
   }
 ]
+}

@@ -858,6 +858,7 @@
     "translation": "Zorig's grandmother, I am thinking that he had been helping.",
     "context": "",
     "judgment": "questionable",
+    "alsoJudged": ["ungrammatical"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -876,10 +877,6 @@
       [
         "mover",
         "DP-lexical"
-      ],
-      [
-        "alsoJudged",
-        "ungrammatical"
       ]
     ],
     "comment": "Long-distance scrambling of a lexically dative object: rejected by the speakers who accept (88) and (89). The paper marks it ??/*.",

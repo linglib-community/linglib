@@ -23,12 +23,14 @@ import sys, json, re, textwrap
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_module_frontier import as_module_if_possible  # noqa: E402
+from judgments import MARK  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "Linglib" / "Data" / "VerbClasses"
 ALTERNATIONS = ROOT / "Linglib" / "Semantics" / "ArgumentStructure" / "LevinClass" / "Alternation.lean"
 
-JUDGMENTS = {"acceptable", "ungrammatical", "marginal"}
+JUDGMENTS = {"acceptable", "ungrammatical", "marginal"}  # the marks the book prints
+assert JUDGMENTS <= set(MARK)
 SCOPES = {"all", "most", "many", "some", "few"}
 PLAIN = {"zeroRelatedNominal", "erNominal", "ingNominal", "processNominal", "resultNominal",
          "ableAdjective", "zeroRelatedAdjective", "extraposition", "directSpeech",

@@ -66,6 +66,8 @@ open scoped PremiseOrdering
 
 namespace AghaJeretic2026
 
+open Examples (Environment)
+
 open Modality Modality.Directive Exhaustification
 open Ferreira2023 (Conjunct Pattern)
 
@@ -152,16 +154,6 @@ theorem haveTo_always_narrow :
 
 /-! ### Polarity-sensitive variable force (§3) -/
 
-/-- The environments the typology distinguishes. -/
-inductive Environment
-  /-- An unembedded clause. -/
-  | unembedded
-  /-- Under a clausemate negation. -/
-  | clausemateNegation
-  /-- Another downward-entailing context. -/
-  | otherDE
-  deriving DecidableEq, Repr
-
 /-- What a possibility modal projects ([jeretic-2021a], [jeretic-2021b], [newkirk-2022a]). -/
 structure Projection where
   /-- Subdomain alternatives. -/
@@ -217,11 +209,6 @@ def anga : Projection := ⟨true, true, false, true⟩
 def projection? (e : Datum) : Option Projection :=
   e.parse? "modal" [("o'qa", oqa), ("ba'iji", baiji), ("får", får), ("anga", anga)]
 
-/-- The environment a row concerns. -/
-def environment? (e : Datum) : Option Environment :=
-  e.parse? "environment" [("unembedded", Environment.unembedded),
-    ("clausemate negation", .clausemateNegation), ("other DE", .otherDE)]
-
 /-- The reading of a row that a force is. -/
 def forceReading : ModalForce → Examples.Reading
   | .possibility => .possibility
@@ -231,14 +218,14 @@ def forceReading : ModalForce → Examples.Reading
 /-- The projections license exactly the readings the chapter's table records. -/
 theorem projection_matches_table :
     ∀ e ∈ Examples.all, e.feature? "table" = some "true" →
-      ∀ π ∈ projection? e, ∀ env ∈ environment? e, ∀ r,
+      ∀ π ∈ projection? e, ∀ env ∈ Examples.environment e, ∀ r,
         (Examples.reading e (forceReading r) = some .acceptable ↔ Available π env r) := by
   decide
 
 /-- Every reading the chapter's examples record is licensed, and every reading they exclude is
 not. -/
 theorem readings_licensed :
-    ∀ e ∈ Examples.all, ∀ π ∈ projection? e, ∀ env ∈ environment? e, ∀ r,
+    ∀ e ∈ Examples.all, ∀ π ∈ projection? e, ∀ env ∈ Examples.environment e, ∀ r,
       (Examples.reading e (forceReading r) = some .acceptable → Available π env r) ∧
         (Examples.reading e (forceReading r) = some .unacceptable → ¬ Available π env r) := by
   decide

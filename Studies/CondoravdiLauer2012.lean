@@ -69,6 +69,8 @@ open scoped PremiseOrdering
 
 namespace CondoravdiLauer2012
 
+open Examples (Second Continuation Form)
+
 open Commitment Desire.Preferential Modality
 open PreferenceStructure (mem_maximals_discrete)
 
@@ -351,16 +353,6 @@ example : (SpeechAct.Force.update .directive
 The uses of (6) to (9), after Schmerling's inventory, and the exclusions of (10) are
 data; the sequences, follow-ups and challenges instantiate the theorems above. -/
 
-/-- The second utterance of a sequence. -/
-inductive Second
-  | imperative | assertion
-  deriving DecidableEq
-
-/-- Whether the context lets the second utterance revise the first. -/
-inductive Continuation
-  | revising | conflicting
-  deriving DecidableEq
-
 /-- A sequence row of two utterances with incompatible contents. -/
 structure Sequence where
   /-- The second utterance. -/
@@ -371,9 +363,8 @@ structure Sequence where
 /-- The configuration a sequence row records. -/
 def Sequence.ofRow (row : Datum) : Option Sequence := do
   guard (row.feature? "construction" = some "sequence")
-  return ⟨← row.parse? "second" [("imperative", Second.imperative), ("assertion", .assertion)],
-    ← row.parse? "continuation"
-      [("revising", Continuation.revising), ("conflicting", .conflicting)]⟩
+  return ⟨← (Examples.second row),
+    ← (Examples.continuation row)⟩
 
 -- (11), (16)
 theorem sequence_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "sequence" →
@@ -402,16 +393,10 @@ theorem followUp_rows : ∀ row ∈ Examples.all, row.feature? "construction" = 
   simp only [coherent_iff]
   decide
 
-/-- The form of an utterance challenged as a lie or disbelieved. -/
-inductive Form
-  | imperative | performative | assertion
-  deriving DecidableEq
-
 /-- The form a challenge row records. -/
-def Form.ofRow (row : Datum) : Option Form := do
+def Examples.Form.ofRow (row : Datum) : Option Form := do
   guard (row.feature? "construction" = some "challenge")
-  return ← row.parse? "form"
-    [("imperative", Form.imperative), ("performative", .performative), ("assertion", .assertion)]
+  return ← (Examples.form row)
 
 -- (23), (25)
 theorem challenge_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "challenge" →

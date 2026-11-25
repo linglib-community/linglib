@@ -394,9 +394,9 @@ def predicted (e : Datum) : Option (Finset Meaning) := do
 the dissertation reports is among those licensed; where it reports an unintentional
 responsibility reading, it is the experiencer reading of the high applicative. -/
 theorem rows : ∀ e ∈ Examples.all, ∃ ms ∈ predicted e,
-    (.marginal ≤ e.judgment ↔ ms.Nonempty) ∧ (∀ m ∈ meaning? e, m ∈ ms) ∧
+    (e.judgment = .acceptable ↔ ms.Nonempty) ∧ (∀ m ∈ meaning? e, m ∈ ms) ∧
       ∀ j ∈ e.readings.lookup "unintentional responsibility",
-        (.marginal ≤ j ↔ .experiencer ∈ ms) := by
+        (j = .acceptable ↔ .experiencer ∈ ms) := by
   decide +kernel
 
 end Cuervo2003

@@ -57,6 +57,8 @@ open scoped PremiseOrdering
 
 namespace Rubinstein2014
 
+open Examples (Strategy)
+
 open Modality
 
 variable {W : Type*}
@@ -301,33 +303,17 @@ theorem carix_negRaises :
       e.readings.lookup "lowerNeg" = some .acceptable ∧ ¬ InComparativeClass e := by
   decide
 
-/-- The routes to weak necessity are a dedicated item, a strong modal with weakening morphology,
-and evaluative comparative language. -/
-inductive Strategy
-  /-- A dedicated weak necessity modal, English *ought*. -/
-  | lexical
-  /-- A strong necessity modal with counterfactual morphology, Spanish *debería*. -/
-  | compositional
-  /-- An evaluative comparative, Hebrew *yoter tov*. -/
-  | evaluativeComparative
-  deriving DecidableEq, Repr
-
-/-- The strategy a row exemplifies. -/
-def strategy? (e : Datum) : Option Strategy :=
-  e.parse? "strategy" [("lexical", Strategy.lexical), ("compositional", .compositional),
-    ("evaluativeComparative", .evaluativeComparative)]
-
 /-- The strength tests of (8), (16), (19) and (21) are felicitous exactly for the items reaching
 weak necessity by some strategy. -/
 theorem strength_tests :
     ∀ e ∈ Examples.all, e.feature? "diagnostic" ∈ [some "test1", some "test2"] →
-      (e.judgment = .acceptable ↔ (strategy? e).isSome) := by
+      (e.judgment = .acceptable ↔ (Examples.strategy e).isSome) := by
   decide
 
 -- §2.1
 theorem hebrew_comparative_only :
     ∀ e ∈ Examples.all, e.language = .modernHebrew →
-      ∀ s ∈ strategy? e, s = .evaluativeComparative := by
+      ∀ s ∈ Examples.strategy e, s = .evaluativeComparative := by
   decide
 
 end Rubinstein2014

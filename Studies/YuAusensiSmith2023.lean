@@ -78,6 +78,8 @@ the deck* it is the deck that breaks (`Monks.sentence`).
 
 namespace YuAusensiSmith2023
 
+open Examples (RootClass)
+
 open ArgumentStructure ArgumentStructure.EventStructure ModalLogic Presupposition
 open scoped SetRel
 
@@ -86,15 +88,6 @@ the states among them (footnote 6). -/
 structure OneSortedModel (Ev : Type*) extends Model Ev Ev where
   /-- The eventuality is a state. -/
   IsState : Ev → Prop
-
-/-- The two classes of result roots (footnotes 1 and 4). -/
-inductive RootClass
-  /-- Roots that do not entail change, such as that of *open*. -/
-  | propertyConcept
-  /-- Roots that entail change, Beavers and Koontz-Garboden's result roots, such as that of
-  *break*. -/
-  | changeOfState
-  deriving DecidableEq
 
 /-- The two analyses of change-of-state roots. -/
 inductive Analysis
@@ -514,11 +507,6 @@ end Monks
 
 /-! ### The examples -/
 
-/-- The class of a row's root. -/
-def rootClass? (d : Datum) : Option RootClass :=
-  d.parse? "root class"
-    [("property concept", .propertyConcept), ("change of state", .changeOfState)]
-
 /-- The readings a row tests, with their judgments: a resultative tests the modifier, judged as
 the sentence, and the other rows the readings they name. -/
 def tests (d : Datum) : List (Reading × Judgment) :=
@@ -527,14 +515,14 @@ def tests (d : Datum) : List (Reading × Judgment) :=
     ([("restitutive", Reading.restitutive), ("repetitive", .repetitive),
       ("durative", .durative), ("internal", .internal)].lookup r.1).map (·, r.2)
 
-theorem rows_unavailable : ∀ d ∈ Examples.all, ∀ c ∈ rootClass? d, ∀ t ∈ tests d,
+theorem rows_unavailable : ∀ d ∈ Examples.all, ∀ c ∈ Examples.rootClass d, ∀ t ∈ tests d,
     ¬ Available .yuAusensiSmith c t.1 → t.2 ≠ .acceptable := by
   simp only [available_iff]
   decide
 
 /-- Every derivable reading the examples reject is a resultative on a change-of-state root, judged
 so by a source the paper cites or, for (44), questionable. -/
-theorem rows_available : ∀ d ∈ Examples.all, ∀ c ∈ rootClass? d, ∀ t ∈ tests d,
+theorem rows_available : ∀ d ∈ Examples.all, ∀ c ∈ Examples.rootClass d, ∀ t ∈ tests d,
     Available .yuAusensiSmith c t.1 → t.2 ≠ .acceptable →
       t.1 = .modifier ∧ c = .changeOfState ∧
         (d.feature? "judgedBy" ≠ none ∨ t.2 = .questionable) := by
@@ -543,7 +531,7 @@ theorem rows_available : ∀ d ∈ Examples.all, ∀ c ∈ rootClass? d, ∀ t �
 
 /-- On Beavers and Koontz-Garboden's analysis, a non-modifier reading is accepted exactly when
 available, except the internal reading of a change-of-state root (§4.1). -/
-theorem rows_beaversKoontzGarboden : ∀ d ∈ Examples.all, ∀ c ∈ rootClass? d, ∀ t ∈ tests d,
+theorem rows_beaversKoontzGarboden : ∀ d ∈ Examples.all, ∀ c ∈ Examples.rootClass d, ∀ t ∈ tests d,
     t.1 ≠ .modifier → ((t.2 = .acceptable ↔ Available .beaversKoontzGarboden c t.1) ↔
       ¬ (c = .changeOfState ∧ t.1 = .internal)) := by
   simp only [available_iff]

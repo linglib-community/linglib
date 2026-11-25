@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Heine1997` — typed example data
@@ -270,5 +272,55 @@ def ex_87b : Datum :=
     paperFeatures := [("schema", "location"), ("possessee", "definite"), ("notion", "physical")] }
 
 def all : List Datum := [ex_2_pt, ex_73a, ex_73b, ex_73c, ex_73d, ex_84a, ex_84b, ex_84c, ex_84d, ex_85a, ex_85b, ex_85c, ex_85d, ex_85e, ex_86a, ex_86b, ex_87a, ex_87b]
+
+/-- The eight event schemas from which predicative possession derives. -/
+inductive Schema where
+  /-- action: action -/
+  | action
+  /-- location: location -/
+  | location
+  /-- companion: companion -/
+  | companion
+  /-- genitive: genitive -/
+  | genitive
+  /-- goal: goal -/
+  | goal
+  /-- source: source -/
+  | source
+  /-- topic: topic -/
+  | topic
+  /-- equation: equation -/
+  | equation
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `schema`. -/
+def schema (e : Datum) : Option Schema :=
+  e.parse? "schema" [("action", .action), ("location", .location), ("companion", .companion),
+    ("genitive", .genitive), ("goal", .goal), ("source", .source), ("topic", .topic),
+    ("equation", .equation)]
+
+/-- The possessive notions of §1.3 (pp. 34–35). -/
+inductive Notion where
+  /-- physical: possessor and possessee are physically associated at reference time (29) -/
+  | physical
+  /-- temporary: the possessor disposes of the possessee for a limited time without owning it (30) -/
+  | temporary
+  /-- permanent: the possessee is the possessor's property (31) -/
+  | permanent
+  /-- inalienable: the possessee is inseparable from the possessor, as a body part or a relative (32) -/
+  | inalienable
+  /-- abstract: the possessee is not tangible, as a disease or a feeling (33) -/
+  | abstract
+  /-- inanimateInalienable: an inanimate possessor with an inseparable possessee (34) -/
+  | inanimateInalienable
+  /-- inanimateAlienable: an inanimate possessor with a separable possessee (35) -/
+  | inanimateAlienable
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `notion`. -/
+def notion (e : Datum) : Option Notion :=
+  e.parse? "notion" [("physical", .physical), ("temporary", .temporary), ("permanent", .permanent),
+    ("inalienable", .inalienable), ("abstract", .abstract),
+    ("inanimateInalienable", .inanimateInalienable), ("inanimateAlienable", .inanimateAlienable)]
 
 end Heine1997.Examples

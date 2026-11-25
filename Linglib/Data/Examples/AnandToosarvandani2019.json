@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "position",
+      "lean": "position",
+      "type": "Position",
+      "doc": "The position of a demonstrative in its sentence.",
+      "levels": [
+        {
+          "name": "initial",
+          "label": "initial",
+          "doc": "initial"
+        },
+        {
+          "name": "final",
+          "label": "final",
+          "doc": "final"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "anandtoosarvandani2019_5",
     "source": {
@@ -560,3 +581,4 @@
     "verified": "page-image"
   }
 ]
+}

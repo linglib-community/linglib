@@ -14,15 +14,15 @@ propositions the interlocutors accept, which grows as the discourse goes on. Und
 *they*, attested since Middle English, asks for a common ground that has not grown past a
 threshold varying across speakers and situations, an upper set in the order of filters; personal
 *they*, mainstream since about 2018, asks for a common ground that accepts the referent's
-pronouns as *they/them*, a principal lower set (`Kind.condition`). The two kinds share their form
-and their lack of a gender feature, so Konnelly and Cowper's grammar, which reads only the
-antecedent, does not separate them, and where it admits *they* for a specific referent whose
+pronouns as *they/them*, a principal lower set (`Examples.Kind.condition`). The two kinds share
+their form and their lack of a gender feature, so Konnelly and Cowper's grammar, which reads only
+the antecedent, does not separate them, and where it admits *they* for a specific referent whose
 pronouns are not *they/them*, the two accounts part ways.
 
 ## Main definitions
 
-* `Arnold2026.Kind`, `Arnold2026.Kind.condition`: the two kinds and the common grounds each
-  kind is used in.
+* `Arnold2026.Examples.Kind`, `Arnold2026.Examples.Kind.condition`: the two kinds and the common
+  grounds each kind is used in.
 
 ## Implementation notes
 
@@ -45,13 +45,9 @@ the properties the row states (`Agrees`), and the examples are tested on every a
 
 namespace Arnold2026
 
-open KonnellyCowper2020 Filter
+open Examples (Kind)
 
-/-- The two kinds of singular *they*. -/
-inductive Kind
-  | underspecified
-  | personal
-  deriving DecidableEq, Repr
+open KonnellyCowper2020 Filter
 
 variable {W : Type*} (U : UpperSet (Filter W)) (P : Set W)
 
@@ -59,7 +55,7 @@ variable {W : Type*} (U : UpperSet (Filter W)) (P : Set W)
 that count as underspecified and the proposition `P` that the referent's pronouns are
 *they/them*. Underspecified *they* asks for a common ground in `U`, personal *they* for one that
 accepts `P`. -/
-def Kind.condition : Kind → Set (Filter W)
+def Examples.Kind.condition : Kind → Set (Filter W)
   | .underspecified => U
   | .personal => Set.Iic (𝓟 P)
 
@@ -174,8 +170,8 @@ theorem stage3_they_counterexample (hU : c ∉ U) (hP : P ∉ c) :
 /-! ### The examples -/
 
 /-- The kind of *they* a row records. -/
-def Kind.ofRow? (e : Datum) : Option Kind :=
-  e.parse? "kind" [("underspecified", .underspecified), ("personal", .personal)]
+def Examples.Kind.ofRow? (e : Datum) : Option Kind :=
+  Examples.kind e
 
 variable (U P) in
 /-- A common ground agrees with a row when, if the row describes the representation, it counts

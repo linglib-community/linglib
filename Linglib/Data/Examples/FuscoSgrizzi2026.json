@@ -1,4 +1,60 @@
-[
+{
+  "features": [
+    {
+      "key": "diagnostic",
+      "lean": "diagnostic",
+      "type": "Diagnostic",
+      "doc": "A property of an infinitival complement the paper tests.",
+      "levels": [
+        {
+          "name": "belief",
+          "label": "belief",
+          "doc": "belief"
+        },
+        {
+          "name": "intention",
+          "label": "intention",
+          "doc": "intention"
+        },
+        {
+          "name": "truthAssessable",
+          "label": "truthAssessable",
+          "doc": "truthAssessable"
+        },
+        {
+          "name": "subjectControl",
+          "label": "subjectControl",
+          "doc": "subjectControl"
+        },
+        {
+          "name": "passive",
+          "label": "passive",
+          "doc": "passive"
+        },
+        {
+          "name": "aspectual",
+          "label": "aspectual",
+          "doc": "aspectual"
+        },
+        {
+          "name": "negation",
+          "label": "negation",
+          "doc": "negation"
+        },
+        {
+          "name": "independentTime",
+          "label": "independentTime",
+          "doc": "independentTime"
+        },
+        {
+          "name": "cliticClimbing",
+          "label": "cliticClimbing",
+          "doc": "cliticClimbing"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "fuscosgrizzi2026_ex4a",
     "source": {
@@ -832,3 +888,4 @@
     "verified": "page-image"
   }
 ]
+}

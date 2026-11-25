@@ -1,4 +1,66 @@
-[
+{
+  "features": [
+    {
+      "key": "second",
+      "lean": "second",
+      "type": "Second",
+      "doc": "The second utterance of a sequence.",
+      "levels": [
+        {
+          "name": "imperative",
+          "label": "imperative",
+          "doc": "imperative"
+        },
+        {
+          "name": "assertion",
+          "label": "assertion",
+          "doc": "assertion"
+        }
+      ]
+    },
+    {
+      "key": "continuation",
+      "lean": "continuation",
+      "type": "Continuation",
+      "doc": "Whether the context lets the second utterance revise the first.",
+      "levels": [
+        {
+          "name": "revising",
+          "label": "revising",
+          "doc": "revising"
+        },
+        {
+          "name": "conflicting",
+          "label": "conflicting",
+          "doc": "conflicting"
+        }
+      ]
+    },
+    {
+      "key": "form",
+      "lean": "form",
+      "type": "Form",
+      "doc": "The form of an utterance challenged as a lie or disbelieved.",
+      "levels": [
+        {
+          "name": "imperative",
+          "label": "imperative",
+          "doc": "imperative"
+        },
+        {
+          "name": "performative",
+          "label": "performative",
+          "doc": "performative"
+        },
+        {
+          "name": "assertion",
+          "label": "assertion",
+          "doc": "assertion"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "condoravdilauer2012_ex6a",
     "source": {"bibkey": "condoravdi-lauer-2012", "paperLabel": "(6a)"},
@@ -839,3 +901,4 @@
     "verified": "page-image"
   }
 ]
+}

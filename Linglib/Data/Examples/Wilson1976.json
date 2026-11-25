@@ -1,4 +1,55 @@
-[
+{
+  "features": [
+    {
+      "key": "relationship",
+      "lean": "group",
+      "type": "Group",
+      "doc": "The groups under which the paper lists its examples (pp. 43–45).",
+      "levels": [
+        {
+          "name": "inanimate",
+          "label": "inanimate",
+          "doc": "inanimate"
+        },
+        {
+          "name": "body",
+          "label": "body",
+          "doc": "body"
+        },
+        {
+          "name": "kin",
+          "label": "kin",
+          "doc": "kin"
+        },
+        {
+          "name": "agency",
+          "label": "agency",
+          "doc": "agency"
+        },
+        {
+          "name": "instigated",
+          "label": "instigated",
+          "doc": "instigated"
+        },
+        {
+          "name": "offspring",
+          "label": "offspring",
+          "doc": "offspring"
+        },
+        {
+          "name": "ownership",
+          "label": "ownership",
+          "doc": "ownership"
+        },
+        {
+          "name": "location",
+          "label": "location",
+          "doc": "location"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "wilson1976_41_kii_o",
     "source": {"bibkey": "wilson-1976", "paperLabel": "p. 41"},
@@ -1386,3 +1437,4 @@
     "verified": "page-image"
   }
 ]
+}

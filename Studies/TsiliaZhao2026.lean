@@ -171,7 +171,7 @@ def adverb (row : Datum) : Option DeicticAdverb :=
 satisfies the presuppositions of its tense and of the adverb restricting it. -/
 theorem accepted_iff_exists_restricted [Nontrivial T] :
     ∀ row ∈ Examples.all, ∀ C ∈ tenseCell row, ∀ a ∈ adverb row,
-      (.variable ≤ row.judgment ↔ ∃ π r th : NonemptyInterval T,
+      (row.judgment = .acceptable ∨ row.judgment = .variable ↔ ∃ π r th : NonemptyInterval T,
         Restricted (IntervalAlgebra.ofPosition C) (IntervalAlgebra.ofPosition a.cell) π r th) := by
   simp only [exists_restricted_ofPosition_iff]
   decide +kernel

@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `George2011` — typed example data
@@ -94,5 +96,27 @@ def ex34 : Datum :=
     paperFeatures := [("sentence", "redNewspaper"), ("holds", "no")] }
 
 def all : List Datum := [ex12, ex13, ex4, ex17, ex33, ex34]
+
+/-- The sentences whose truth in their scenarios the file settles. -/
+inductive Sentence where
+  /-- admittedKnown: admittedKnown -/
+  | admittedKnown
+  /-- notAdmittedKnown: notAdmittedKnown -/
+  | notAdmittedKnown
+  /-- admittedButNot: admittedButNot -/
+  | admittedButNot
+  /-- fourStudents: fourStudents -/
+  | fourStudents
+  /-- jannaNewspaper: jannaNewspaper -/
+  | jannaNewspaper
+  /-- redNewspaper: redNewspaper -/
+  | redNewspaper
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `sentence`. -/
+def sentence (e : Datum) : Option Sentence :=
+  e.parse? "sentence" [("admittedKnown", .admittedKnown), ("notAdmittedKnown", .notAdmittedKnown),
+    ("admittedButNot", .admittedButNot), ("fourStudents", .fourStudents),
+    ("jannaNewspaper", .jannaNewspaper), ("redNewspaper", .redNewspaper)]
 
 end George2011.Examples

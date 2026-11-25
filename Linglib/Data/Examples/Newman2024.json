@@ -605,12 +605,12 @@
       "translation": "John introduced Hanako and Mary to each other.",
       "context": "",
       "judgment": "acceptable",
+      "alsoJudged": ["marginal"],
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
         ["order", "directFirst"],
-        ["binder", "direct"],
-        ["alsoJudged", "marginal"]
+        ["binder", "direct"]
       ],
       "comment": "The source brackets the conjoined phrase and coindexes it with the reciprocal. It prints the mark `(?)` and, in parentheses, the adverbial paatii-de 'at the party' after the accusative phrase.",
       "verified": "page-image"

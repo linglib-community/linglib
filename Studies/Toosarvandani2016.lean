@@ -35,6 +35,8 @@ truth conditions compare endpoints, so they hold there as on any dense copy. Nar
 
 namespace Toosarvandani2016
 
+open Examples (Suffix)
+
 open Event (τ)
 open Aspect (Perfectivity)
 open scoped SetRel
@@ -48,20 +50,14 @@ def cell : Perfectivity → IntervalAlgebra
   | .imperfective => IntervalAlgebra.nonfinalSubinterval⁻¹
   | .perfective => Aspect.ViewpointType.perfective.cell
 
-/-- The suffixes of a marked clause, the simultaneous *-na* and the sequential *-si*. -/
-inductive Suffix where
-  | sim
-  | seq
-  deriving DecidableEq, Repr, Fintype
-
 /-- The relative tense of a suffix, the reference time of the marked clause first: around its
 evaluation time (38) or before it (46). -/
-def Suffix.timing : Suffix → IntervalAlgebra
+def Examples.Suffix.timing : Suffix → IntervalAlgebra
   | .sim => IntervalAlgebra.le⁻¹
   | .seq => IntervalAlgebra.precedes
 
 /-- The simultaneous suffix selects the imperfective, the sequential suffix either aspect (40). -/
-def Suffix.Selects : Suffix → Perfectivity → Prop
+def Examples.Suffix.Selects : Suffix → Perfectivity → Prop
   | .sim, p => p = .imperfective
   | .seq, _ => True
 
@@ -323,7 +319,7 @@ def events : List (String × Ev) :=
 
 /-- The configuration of a row, read from its stimulus columns. -/
 def config (e : Datum) : Option Config := do
-  let s ← e.parse? "suffix" [("sim", .sim), ("seq", .seq)]
+  let s ← (Examples.suffix e)
   let a ← e.parse? "aspect" aspects
   let b ← e.parse? "unmarkedAspect" aspects
   let u ← e.parse? "unmarkedEvent" events

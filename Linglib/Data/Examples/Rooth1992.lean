@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Rooth1992` — typed example data
@@ -200,5 +202,17 @@ def ex_72a : Datum :=
     paperFeatures := [("construction", "contrast")] }
 
 def all : List Datum := [ex_3a, ex_3b, ex_7, ex_11, ex_16, ex_17, ex_23Aa_Qa, ex_23Ab_Qa, ex_23Ab_Qb, ex_23Aa_Qb, ex_59a, ex_59b, ex_70, ex_72a]
+
+/-- The questions of (23). -/
+inductive Q where
+  /-- whoCutBill: whoCutBill -/
+  | whoCutBill
+  /-- whoDidMaryCut: whoDidMaryCut -/
+  | whoDidMaryCut
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `question`. -/
+def question (e : Datum) : Option Q :=
+  e.parse? "question" [("whoCutBill", .whoCutBill), ("whoDidMaryCut", .whoDidMaryCut)]
 
 end Rooth1992.Examples

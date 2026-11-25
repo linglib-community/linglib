@@ -83,14 +83,26 @@ jobs:
             echo '</details>'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # The table `scripts/gen_tendrils.py --from-table` builds the dependency map from. It never
-      # fails the job.
+      # The dependency map is built from the table extracted here, with the tooling of
+      # linglib-community/taproot. These steps never fail the job.
+      - name: Check out the dependency map tooling
+        continue-on-error: true
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: linglib-community/taproot
+          path: .taproot
+          persist-credentials: false
+
       - name: Extract declaration dependencies
         continue-on-error: true
         timeout-minutes: 20
         run: |
-          python3 scripts/gen_tendrils.py --times build.log
-          python3 scripts/gen_tendrils.py --extract-only .lake/build/declaration-dependencies
+          python3 .taproot/taproot.py --times build.log
+          python3 .taproot/taproot.py --extract-only .lake/build/declaration-dependencies
+
+      - name: Remove the dependency map tooling
+        if: always()
+        run: rm -rf .taproot
 
       - name: Upload declaration dependencies
         continue-on-error: true

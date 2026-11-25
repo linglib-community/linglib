@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `GartnerGyuris2017` — typed example data
@@ -113,5 +115,29 @@ def gg2017_9b : Datum :=
     paperFeatures := [("construction", "Hungarian e"), ("form", "ON-NPQ"), ("dimension", "evidential"), ("value", "+")] }
 
 def all : List Datum := [gg2017_1, gg2017_2a, gg2017_2b, gg2017_8_neg, gg2017_8_pos, gg2017_9a, gg2017_9b]
+
+/-- The clause types whose examples the paper judges. -/
+inductive Construction where
+  /-- English V1: English V1 -/
+  | englishV1
+  /-- Hungarian e: Hungarian e -/
+  | hungarianE
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `construction`. -/
+def construction (e : Datum) : Option Construction :=
+  e.parse? "construction" [("English V1", .englishV1), ("Hungarian e", .hungarianE)]
+
+/-- The dimension a bias is drawn from. -/
+inductive Dimension where
+  /-- evidential: evidential -/
+  | evidential
+  /-- epistemic: epistemic -/
+  | epistemic
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `dimension`. -/
+def dimension (e : Datum) : Option Dimension :=
+  e.parse? "dimension" [("evidential", .evidential), ("epistemic", .epistemic)]
 
 end GartnerGyuris2017.Examples

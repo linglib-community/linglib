@@ -55,7 +55,8 @@ that reads rows imports it beside its data module. Quick key reference:
 | `glossedWords`, `lgrConformance` | derived, not written | the generator pairs each word of `glossedTokens` with its morphemes and their glosses, and records the example's CLDF `LGR_Conformance` (`scripts/lgr.py`, shared with the CLDF export) |
 | `translation` | string | English translation; empty for an English example |
 | `context` | string | scenario/discourse context where the judgment holds |
-| `judgment` | one of `acceptable, marginal, questionable, unacceptable, ungrammatical, variable` | sentence-level felicity; `variable` is the mark `%`, speakers differing |
+| `judgment` | one of `acceptable, marginal, questionable, unacceptable, nearlyUngrammatical, ungrammatical, variable` | the mark the source prints: none, `?`, `??`, `#`, `?*` (also printed `*?`), `*`, and `%` for speakers differing |
+| `alsoJudged` | array of judgments, optional | the further marks of a split mark such as `??/*`, in printed order |
 | `contrasts` | array of `{form, judgment}` | within-example contrast pairs (e.g., Schwarz's `vom` vs `von dem`) |
 | `readings` | array of `{name, judgment}` | multiple LFs / scope readings (e.g., donkey strong vs weak) |
 | `spans` | array of `{start, length, label, lexeme}`, optional | runs of `glossedTokens` the row marks, each naming the lexeme it is a form of where it is one (see Spans) |
@@ -271,9 +272,8 @@ indefinite series in one clause) is two entries under the same key, not a slash-
 The mark `%` says that speakers differ without saying how, and is the judgment `variable`; a row
 records who accepts the example, a variety or a stage, as a paper feature where the source says.
 A mark a source prints split between speakers (`*/??`, `?/√`) gives one sentence several marks.
-The row's `judgment` is the first mark printed, and each further mark is a `paperFeatures` entry
-`["alsoJudged", <judgment>]`, in printed order; the generator rejects a value that is not a
-judgment.
+The row's `judgment` is the first mark printed, and the further marks are the row's `alsoJudged`
+list, in printed order; a study reads them all with `Datum.judgments`.
 A judgment that holds only in a scenario records the scenario in `context`.
 A discourse is one row: `discourseSegments` lists its utterances, `primaryText`
 joins them with single spaces, and the judgment is of the last utterance in

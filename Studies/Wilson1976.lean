@@ -30,6 +30,8 @@ pairs on p. 41 it is read off the gloss by the criteria of pp. 43–45.
 
 namespace Wilson1976
 
+open Examples (Group)
+
 /-! ### Relationships and particles -/
 
 /-- The vowel of a Hawaiian possessive particle. -/
@@ -82,31 +84,13 @@ def controlOnly : Relationship → Marker
 
 end Relationship
 
-/-- The groups under which the paper lists its examples (pp. 43–45). -/
-inductive Group where
-  | inanimate
-  | body
-  | kin
-  | agency
-  | instigated
-  | offspring
-  | ownership
-  | location
-  deriving DecidableEq, Repr
-
 /-- The relationship of a group (pp. 43–45). -/
-def Group.relationship : Group → Relationship
+def Examples.Group.relationship : Group → Relationship
   | .inanimate | .body | .kin | .agency => .notControlled
   | .instigated | .offspring | .ownership => .controlled none
   | .location => .controlled (some .location)
 
 /-! ### The examples -/
-
-/-- The group under which an example is listed. -/
-def group (d : Datum) : Option Group :=
-  d.parse? "relationship" [("inanimate", .inanimate), ("body", .body), ("kin", .kin),
-    ("agency", .agency), ("instigated", .instigated), ("offspring", .offspring),
-    ("ownership", .ownership), ("location", .location)]
 
 /-- The particle of a Hawaiian example. -/
 def marker (d : Datum) : Option Marker :=
@@ -132,7 +116,8 @@ def fijianData : List Datum :=
 
 /-- Rules (1)–(3) predict the particle of every Hawaiian example. -/
 theorem hawaiian_marker_eq :
-    ∀ d ∈ hawaiianData, (group d).isSome ∧ marker d = (group d).map (·.relationship.hawaiian) := by
+    ∀ d ∈ hawaiianData, (Examples.group d).isSome ∧
+      marker d = (Examples.group d).map (·.relationship.hawaiian) := by
   decide +kernel
 
 theorem exists_minimal_pair :
@@ -148,7 +133,7 @@ theorem not_exists_nounClass :
 
 /-- An account by control alone mispredicts (p. 43). -/
 theorem exists_ne_controlOnly :
-    ∃ d ∈ hawaiianData, marker d ≠ (group d).map (·.relationship.controlOnly) := by
+    ∃ d ∈ hawaiianData, marker d ≠ (Examples.group d).map (·.relationship.controlOnly) := by
   decide +kernel
 
 /-! ### The feature-based noun class theory -/
@@ -184,7 +169,8 @@ theorem spear_predicts_both :
 /-- The Fijian examples, and Hawaiian *o* with Fijian *no-* for locations (p. 47). -/
 theorem fijian_marker_eq :
     ∀ d ∈ fijianData,
-      (group d).isSome ∧ fijianMarker d = (group d).map (·.relationship.fijian) := by
+      (Examples.group d).isSome ∧
+        fijianMarker d = (Examples.group d).map (·.relationship.fijian) := by
   decide +kernel
 
 theorem not_forall_o_iff_ke : ¬ ∀ r : Relationship, r.hawaiian = .o ↔ r.fijian = .ke :=

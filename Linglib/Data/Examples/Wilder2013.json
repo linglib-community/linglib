@@ -1,4 +1,83 @@
-[
+{
+  "features": [
+    {
+      "key": "environment",
+      "lean": "heading",
+      "type": "Heading",
+      "doc": "The clause type under which the paper gives a row: its headings for (27)–(33) and its descriptions of the others.",
+      "levels": [
+        {
+          "name": "root",
+          "label": "root",
+          "doc": "root"
+        },
+        {
+          "name": "believeComplement",
+          "label": "believeComplement",
+          "doc": "believeComplement"
+        },
+        {
+          "name": "interrogativeComplement",
+          "label": "interrogativeComplement",
+          "doc": "interrogativeComplement"
+        },
+        {
+          "name": "factiveComplement",
+          "label": "factiveComplement",
+          "doc": "factiveComplement"
+        },
+        {
+          "name": "itCleft",
+          "label": "itCleft",
+          "doc": "itCleft"
+        },
+        {
+          "name": "restrictiveRelative",
+          "label": "restrictiveRelative",
+          "doc": "restrictiveRelative"
+        },
+        {
+          "name": "adverbialClause",
+          "label": "adverbialClause",
+          "doc": "adverbialClause"
+        },
+        {
+          "name": "whSubjectQuestion",
+          "label": "whSubjectQuestion",
+          "doc": "whSubjectQuestion"
+        },
+        {
+          "name": "objectPreposing",
+          "label": "objectPreposing",
+          "doc": "objectPreposing"
+        }
+      ]
+    },
+    {
+      "key": "ctConstituent",
+      "lean": "ctConstituent",
+      "type": "Constituent",
+      "doc": "The constituent bearing the contrastive-topic accent.",
+      "levels": [
+        {
+          "name": "subject",
+          "label": "subject",
+          "doc": "subject"
+        },
+        {
+          "name": "vp",
+          "label": "vp",
+          "doc": "vp"
+        },
+        {
+          "name": "object",
+          "label": "object",
+          "doc": "object"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "wilder2013_ex10b",
     "source": {"bibkey": "wilder-2013", "paperLabel": "(10b)"},
@@ -924,3 +1003,4 @@
     "verified": "page-image"
   }
 ]
+}

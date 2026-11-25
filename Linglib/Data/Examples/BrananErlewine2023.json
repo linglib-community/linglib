@@ -1,4 +1,48 @@
-[
+{
+  "features": [
+    {
+      "key": "process",
+      "lean": "process",
+      "type": "Process",
+      "doc": "A focus is marked by a particle on a phrase or by movement of the phrase.",
+      "levels": [
+        {
+          "name": "particle",
+          "label": "particle",
+          "doc": "particle"
+        },
+        {
+          "name": "movement",
+          "label": "movement",
+          "doc": "movement"
+        }
+      ]
+    },
+    {
+      "key": "leftmost",
+      "lean": "leftmost",
+      "type": "LeftmostRequirement",
+      "doc": "When a phase is spelled out, a particle adjoins to a phrase left-aligned with the focus, preferably to such a phrase, or to any phrase overlapping the focus, in the strong, the weak and the free variant of the rule ((117)).",
+      "levels": [
+        {
+          "name": "strong",
+          "label": "strong",
+          "doc": "strong"
+        },
+        {
+          "name": "weak",
+          "label": "weak",
+          "doc": "weak"
+        },
+        {
+          "name": "free",
+          "label": "free",
+          "doc": "free"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "brananerlewine2023_1",
     "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(1)"},
@@ -932,3 +976,4 @@
     "verified": "page-image"
   }
 ]
+}

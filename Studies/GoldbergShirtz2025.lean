@@ -60,6 +60,8 @@ left a parameter.
 
 namespace GoldbergShirtz2025
 
+open Examples (PALPosition Inflection PALHostFrame)
+
 open ConstructionGrammar
 
 /-! ### The Figure 5 constructicon -/
@@ -423,24 +425,9 @@ theorem pal_form_phrase_in_word_slot :
 PALs prototypically modify nouns but occur as head nouns, predicative adjectives, and verbs
 (Table 2), and take the word-level inflection of the slot they fill (Table 3). -/
 
-/-- The word-class slot a PAL fills. -/
-inductive PALPosition where
-  | prenominalModifier
-  | headNoun
-  | predicativeAdjective
-  | verb
-  deriving DecidableEq, Fintype
-
-/-- Word-level inflection attested on a PAL. -/
-inductive Inflection where
-  | plural
-  | agentivePlural
-  | gerund
-  deriving DecidableEq
-
 /-- An affix is the inflection of a slot, nominal for the plural and agentive *-er* and verbal
 for *-ing*. -/
-def Inflection.position : Inflection → PALPosition
+def Examples.Inflection.position : Inflection → PALPosition
   | .plural | .agentivePlural => .headNoun
   | .gerund => .verb
 
@@ -451,11 +438,8 @@ structure Row where
   deriving DecidableEq
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let position ← ex.parse? "position"
-    [("prenominal modifier", .prenominalModifier), ("head noun", .headNoun),
-     ("predicative adjective", .predicativeAdjective), ("verb", .verb)]
-  pure ⟨position, ex.parse? "inflection"
-    [("plural", .plural), ("agentive -er + plural", .agentivePlural), ("gerund", .gerund)]⟩
+  let position ← (Examples.position ex)
+  pure ⟨position, (Examples.inflection ex)⟩
 
 /-- The English tokens of (1a)–(1c), Table 2, and Table 3. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
@@ -468,19 +452,10 @@ theorem rows_inflection : ∀ r ∈ rows, ∀ i ∈ r.inflection, i.position = r
 
 /-! ### Comparable constructions in other languages (section 7) -/
 
-/-- A comparable construction is hosted by a compound(-like) frame in West Germanic and
-Turkish, where the compound marker sits on the head noun, or the complement of a preposition in
-Hebrew and Brazilian Portuguese. -/
-inductive PALHostFrame where
-  | compound
-  | prepositionComplement
-  deriving DecidableEq, Fintype
-
 /-- The host frames of the German, Dutch, Afrikaans, Turkish, Hebrew, and Brazilian Portuguese
 PALs of (8) and (15)–(18). -/
 def hostFrames : List PALHostFrame :=
-  Examples.all.filterMap fun ex ↦ ex.parse? "hostFrame"
-    [("compound", .compound), ("preposition complement", .prepositionComplement)]
+  Examples.all.filterMap fun ex ↦ (Examples.hostFrame ex)
 
 example : rows.length + hostFrames.length = Examples.all.length := by decide
 

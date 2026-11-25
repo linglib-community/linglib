@@ -1,4 +1,30 @@
-[
+{
+  "features": [
+    {
+      "key": "agreement",
+      "lean": "agreement",
+      "type": "Position",
+      "doc": "Where an argument sits at LF: the specifier of Agr-S, the specifier of Agr-O, or inside VP.",
+      "levels": [
+        {
+          "name": "specAgrS",
+          "label": "subject",
+          "doc": "subject"
+        },
+        {
+          "name": "specAgrO",
+          "label": "object",
+          "doc": "object"
+        },
+        {
+          "name": "inVP",
+          "label": "none",
+          "doc": "none"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "woolford1997_3",
     "source": {"bibkey": "woolford-1997", "paperLabel": "(3)"},
@@ -1442,3 +1468,4 @@
     "verified": "page-image"
   }
 ]
+}

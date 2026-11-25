@@ -43,7 +43,7 @@ negation `~Q` lexicalize iff `Q` is compatible and an inner negation `Q~` iff it
 * The example rows are read by `Datum.Fits` theorems, each with its `Datum.ReadCount`: the
   quantifiers on a domain of four individuals, the cardinal tests through `CardinalTest.claim`
   at the row's base numeral, and the connective lexicalizations through
-  `NegationRoute.licensed`.
+  `Examples.NegationRoute.licensed`.
 
 ## References
 
@@ -411,15 +411,9 @@ instance (c : RowConnective) : Decidable (CompatibleConn c.pred) :=
   | .and => inferInstanceAs (Decidable (CompatibleConn andConn))
   | .or => inferInstanceAs (Decidable (CompatibleConn orConn))
 
-/-- Whether a lexicalization negates inside, on the disjuncts, or outside, on the whole. -/
-inductive NegationRoute where
-  | inner
-  | outer
-  deriving DecidableEq, Repr
-
 /-- (4.59) and (4.62) for the connectives: an outer negation lexicalizes iff the connective is
 compatible with a lower negation, an inner one iff it is not. -/
-def NegationRoute.licensed : NegationRoute → RowConnective → Prop
+def Examples.NegationRoute.licensed : NegationRoute → RowConnective → Prop
   | .outer, c => CompatibleConn c.pred
   | .inner, c => ¬ CompatibleConn c.pred
 
@@ -432,7 +426,7 @@ instance (r : NegationRoute) (c : RowConnective) : Decidable (r.licensed c) :=
 def lexicalization? (e : Datum) : Option (RowConnective × NegationRoute) := do
   pure (← e.parse? "connective"
       [("and", .and), ("both", .and), ("or", .or), ("either", .or), ("either...or", .or)],
-    ← e.parse? "route" [("inner", .inner), ("outer", .outer)])
+    ← (Examples.route e))
 
 -- (4.49), (4.50), (4.60f)
 theorem lexicalization_rows :

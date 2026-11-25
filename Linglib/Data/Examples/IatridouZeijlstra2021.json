@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "continuation",
+      "lean": "continuation",
+      "type": "Continuation",
+      "doc": "The canceling continuations of Section 1: professing ignorance of earlier events, or denying any.",
+      "levels": [
+        {
+          "name": "ignorance",
+          "label": "ignorance",
+          "doc": "ignorance"
+        },
+        {
+          "name": "denial",
+          "label": "denial",
+          "doc": "denial"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "iz2021_s10a",
     "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(10a)"},
@@ -1456,3 +1477,4 @@
     "verified": "page-image"
   }
 ]
+}
