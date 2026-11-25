@@ -80,7 +80,7 @@ read some book* is `iterate every student some book read`. -/
 def iterate (Q₁ Q₂ : Det α) (A B : Set α) (R : α → α → Prop) : Prop := Q₁ A (acc (Q₂ B) R)
 
 /-- Iteration is the first quantifier taking scope over the second. -/
-theorem iterate_iff_curry : iterate Q₁ Q₂ A B R ↔ (Q₁ A).curry (Q₂ B) {p | R p.1 p.2} := .rfl
+theorem iterate_iff_curry : iterate Q₁ Q₂ A B R ↔ (Q₁ A).curry (Q₂ B) {(x, y) | R x y} := .rfl
 
 /-- The branching of `Q₁` and `Q₂` evaluates them independently, neither in the scope of the
 other. There are choice functions `f` and `g` such that `Q₁` holds of the `x` related to their
@@ -101,27 +101,27 @@ variable [Finite α] {Q : Det.Family.{u}}
 pairs in `A ×ˢ B` as its restrictor and `R` as its scope. This is the resumption of Peters and
 Westerståhl with a product restrictor, de Swart and Sag's type `⟨1, 1, 2⟩`. -/
 def resume (Q : Det.Family.{u}) (A B : Set α) (R : α → α → Prop) : Prop :=
-  Q (α × α) (A ×ˢ B) {p | R p.1 p.2}
+  Q (α × α) (A ×ˢ B) {(x, y) | R x y}
 
 theorem resume_some_iff : resume Det.Family.some A B R ↔ iterate Det.some Det.some A B R :=
-  ⟨fun ⟨p, hp, hr⟩ ↦ ⟨p.1, hp.1, p.2, hp.2, hr⟩, fun ⟨x, hx, y, hy, hr⟩ ↦ ⟨(x, y), ⟨hx, hy⟩, hr⟩⟩
+  ⟨fun ⟨(x, y), ⟨hx, hy⟩, hr⟩ ↦ ⟨x, hx, y, hy, hr⟩, fun ⟨x, hx, y, hy, hr⟩ ↦ ⟨(x, y), ⟨hx, hy⟩, hr⟩⟩
 
 theorem resume_every_iff : resume Det.Family.every A B R ↔ iterate every every A B R :=
-  ⟨fun h _ hx _ hy ↦ h (Set.mk_mem_prod hx hy), fun h _ hp ↦ h hp.1 hp.2⟩
+  ⟨fun h _ hx _ hy ↦ h (Set.mk_mem_prod hx hy), fun h _ ⟨hx, hy⟩ ↦ h hx hy⟩
 
 /-- The resumption of *no* is the iteration of *no* and *some*. -/
 theorem resume_no_iff : resume Det.Family.no A B R ↔ iterate no Det.some A B R :=
-  ⟨fun h _ hx ⟨_, hy, hr⟩ ↦ h (Set.mk_mem_prod hx hy) hr, fun h _ hp hr ↦ h hp.1 ⟨_, hp.2, hr⟩⟩
+  ⟨fun h _ hx ⟨_, hy, hr⟩ ↦ h (Set.mk_mem_prod hx hy) hr, fun h _ ⟨hx, hy⟩ hr ↦ h hx ⟨_, hy, hr⟩⟩
 
 /-- The resumption of *no* is also the iteration of *every* and *no*. -/
 theorem resume_no_iff_iterate_every_no : resume Det.Family.no A B R ↔ iterate every no A B R :=
-  ⟨fun h _ hx _ hy ↦ h (Set.mk_mem_prod hx hy), fun h _ hp ↦ h hp.1 hp.2⟩
+  ⟨fun h _ hx _ hy ↦ h (Set.mk_mem_prod hx hy), fun h _ ⟨hx, hy⟩ ↦ h hx hy⟩
 
 /-- The resumption of a quantifier that is scope-upward-monotone on pairs is monotone in the
 relation. -/
 theorem resume_mono (h : (Q (α × α)).ScopeMonotone) (hR : ∀ x y, R x y → R' x y) :
     resume Q A B R → resume Q A B R' :=
-  h _ fun p ↦ hR p.1 p.2
+  h _ fun (x, y) ↦ hR x y
 
 end Resumption
 
@@ -130,7 +130,7 @@ end Resumption
 /-- The two scope orders of a two-quantifier sentence are the two orders of iteration, the second
 with the relation's arguments exchanged. -/
 theorem iterate_flip_iff_map_swap_curry :
-    iterate Q₂ Q₁ B A (flip R) ↔ ((Q₂ B).curry (Q₁ A)).map Prod.swap {p | R p.1 p.2} := .rfl
+    iterate Q₂ Q₁ B A (flip R) ↔ ((Q₂ B).curry (Q₁ A)).map Prod.swap {(x, y) | R x y} := .rfl
 
 /-- An existential taking scope over a universal entails the universal taking scope over the
 existential. -/

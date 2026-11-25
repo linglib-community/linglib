@@ -93,7 +93,7 @@ theorem isAtom_invariants_iff (hf : Surjective f) {d : invariants f} :
 
 /-- A determiner denotation as the set of restrictors and scopes it relates. -/
 private def pairsOrderIso : Det α ≃o Set (Set α × Set α) where
-  toFun d := {p | d p.1 p.2}
+  toFun d := {(A, B) | d A B}
   invFun S A B := (A, B) ∈ S
   left_inv _ := rfl
   right_inv _ := rfl
@@ -132,7 +132,8 @@ theorem generateCompleteBoolean_union_iff :
 abbrev Nested (α : Type*) := {p : Set α × Set α // p.2 ⊆ p.1}
 
 /-- A restrictor with the part of a scope inside it. -/
-def nestedOf (p : Set α × Set α) : Nested α := ⟨(p.1, p.1 ∩ p.2), Set.inter_subset_left⟩
+def nestedOf : Set α × Set α → Nested α
+  | (A, B) => ⟨(A, A ∩ B), Set.inter_subset_left⟩
 
 /-- The conservative determiner denotations are those whose value depends only on the restrictor
 and the part of the scope inside it. -/
@@ -157,7 +158,7 @@ def conservativeOrderIso : ConsDet α ≃o Set (Nested α) :=
 /-- A determiner denotation depends only on `A ∩ B` and `A \ B` if and only if it is conservative.
 -/
 theorem mem_invariants_inter_sdiff_iff :
-    d ∈ invariants (fun p ↦ (p.1 ∩ p.2, p.1 \ p.2)) ↔ d.Conservative := by
+    d ∈ invariants (fun (A, B) ↦ (A ∩ B, A \ B)) ↔ d.Conservative := by
   rw [← mem_conservativeSubalgebra]
   refine forall₄_congr fun A B A' B' ↦ imp_congr_left ?_
   simp only [nestedOf, Subtype.mk.injEq, Prod.mk.injEq]

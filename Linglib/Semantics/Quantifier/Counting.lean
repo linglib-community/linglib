@@ -312,14 +312,13 @@ theorem restrictorAntitone_atMost [Finite α] (n : ℕ) : (atMost n : Det α).Re
 theorem downNE_most [Finite α] : (most : Det α).DownNEMon := by
   intro A B A' h₁ h₂ hq
   rw [most_apply] at *
-  rw [Set.Subset.antisymm (Set.inter_subset_inter_left B h₁) fun x hx ↦ ⟨h₂ hx, hx.2⟩]
+  rw [(Set.inter_subset_inter_left B h₁).antisymm (Set.subset_inter h₂ Set.inter_subset_right)]
   exact (Set.ncard_le_ncard (Set.sdiff_subset_sdiff_left h₁)).trans_lt hq
 
 theorem upSE_most [Finite α] : (most : Det α).UpSEMon := by
   intro A B A' h₁ h₂ hq
   rw [most_apply] at *
-  rw [Set.Subset.antisymm (a := A' \ B) (b := A \ B) (fun x hx ↦ ⟨h₂ hx, hx.2⟩)
-    (Set.sdiff_subset_sdiff_left h₁)]
+  rw [(Set.subset_sdiff.2 ⟨h₂, Set.disjoint_sdiff_left⟩).antisymm (Set.sdiff_subset_sdiff_left h₁)]
   exact hq.trans_le (Set.ncard_le_ncard (Set.inter_subset_inter_left B h₁))
 
 theorem smooth_most [Finite α] : (most : Det α).Smooth := ⟨downNE_most, upSE_most⟩
@@ -327,7 +326,7 @@ theorem smooth_most [Finite α] : (most : Det α).Smooth := ⟨downNE_most, upSE
 theorem smooth_atLeast [Finite α] (n : ℕ) : (atLeast n : Det α).Smooth := by
   refine ⟨fun A B A' h₁ h₂ hq ↦ ?_, (restrictorMonotone_atLeast n).upSE⟩
   rwa [atLeast_apply,
-    Set.Subset.antisymm (Set.inter_subset_inter_left B h₁) fun x hx ↦ ⟨h₂ hx, hx.2⟩]
+    (Set.inter_subset_inter_left B h₁).antisymm (Set.subset_inter h₂ Set.inter_subset_right)]
 
 theorem coSmooth_atMost [Finite α] (n : ℕ) : (atMost n : Det α).CoSmooth := by
   rw [atMost_eq_compl_atLeast_succ]; exact smooth_iff_coSmooth_compl.mp (smooth_atLeast _)
