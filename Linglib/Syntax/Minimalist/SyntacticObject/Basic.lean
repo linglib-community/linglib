@@ -95,13 +95,6 @@ def elim {M : Sort*} (ℓ : L → M) (τ : Option ι → M) : Leaf L ι → M
 @[simp] theorem elim_traceOf {M : Sort*} (ℓ : L → M) (τ : Option ι → M) (i : ι) :
     elim ℓ τ (traceOf i) = τ (some i) := rfl
 
-/-- A leaf is a lexical item or a trace, which is index-free or labelled. -/
-def sumEquiv : Leaf L ι ≃ L ⊕ Option ι where
-  toFun := elim .inl .inr
-  invFun := Sum.elim lex fun o ↦ o.elim trace traceOf
-  left_inv x := by cases x <;> rfl
-  right_inv x := by rcases x with _ | _ | _ <;> rfl
-
 end Leaf
 
 end SyntacticObject
@@ -313,50 +306,6 @@ open SyntacticObject (Leaf)
 
 variable {L L' L'' : Type}
 
-/-- The planar object with its labels relabelled by `f`. -/
-def map (f : L → L') (p : PlanarSyntacticObject (SyntacticObject.Leaf L L)) : PlanarSyntacticObject
-    (SyntacticObject.Leaf L' L') :=
-  FreeMagma.map (Leaf.map f f) p
-
-@[simp] theorem map_leaf (f : L → L') (a : L) : (leaf a).map f = leaf (f a) := rfl
-
-@[simp] theorem map_trace (f : L → L') :
-    (trace : PlanarSyntacticObject (SyntacticObject.Leaf L L)).map f = trace := rfl
-
-@[simp] theorem map_traceOf (f : L → L') (a : L) : (traceOf a).map f = traceOf (f a) := rfl
-
-@[simp] theorem map_merge (f : L → L') (l r : PlanarSyntacticObject (SyntacticObject.Leaf L L)) :
-    (merge l r).map f = merge (l.map f) (r.map f) := rfl
-
-@[simp] theorem map_id (p : PlanarSyntacticObject (SyntacticObject.Leaf L L)) : p.map id = p := by
-  induction p using FreeMagma.recOnMul with
-  | ih1 x => cases x <;> rfl
-  | ih2 l r hl hr => exact congrArg₂ (· * ·) hl hr
-
-@[simp] theorem map_map (f : L → L') (g : L' → L'')
-    (p : PlanarSyntacticObject (SyntacticObject.Leaf L L)) :
-    (p.map f).map g = p.map (g ∘ f) := by
-  induction p using FreeMagma.recOnMul with
-  | ih1 x => cases x <;> rfl
-  | ih2 l r hl hr => exact congrArg₂ (· * ·) hl hr
-
-theorem map_injective {f : L → L'} (hf : Function.Injective f) :
-    Function.Injective
-        (map f : PlanarSyntacticObject (SyntacticObject.Leaf L L) → PlanarSyntacticObject
-        (SyntacticObject.Leaf L' L')) := by
-  intro p
-  induction p using FreeMagma.recOnMul with
-  | ih1 x =>
-    intro q h
-    cases q with
-    | of y => exact congrArg FreeMagma.of (Leaf.map_injective hf hf (by injection h))
-    | mul _ _ => cases h
-  | ih2 l r hl hr =>
-    intro q h
-    cases q with
-    | of y => cases h
-    | mul l' r' => injection h with h₁ h₂; rw [hl h₁, hr h₂]; rfl
-
 end PlanarSyntacticObject
 
 namespace SyntacticObject
@@ -368,17 +317,6 @@ magmas that a map of lexical alphabets induces. -/
 def map (f : L → L') (s : SyntacticObject (SyntacticObject.Leaf L L)) : SyntacticObject
     (SyntacticObject.Leaf L' L') :=
   FreeCommMagma.map (Leaf.map f f) s
-
-@[simp] theorem _root_.Minimalist.PlanarSyntacticObject.toSyntacticObject_map (f : L → L')
-    (p : PlanarSyntacticObject (SyntacticObject.Leaf L L)) :
-    (p.map f).toSyntacticObject = p.toSyntacticObject.map f := by
-  induction p using FreeMagma.recOnMul with
-  | ih1 x => rfl
-  | ih2 l r hl hr =>
-    show FreeMagma.toFreeCommMagma (FreeMagma.map (Leaf.map f f) (l * r))
-      = FreeCommMagma.map (Leaf.map f f) (FreeMagma.toFreeCommMagma (l * r))
-    rw [map_mul, map_mul, map_mul, map_mul]
-    exact congrArg₂ (· * ·) hl hr
 
 @[simp] theorem map_leaf (f : L → L') (a : L) : (leaf a).map f = leaf (f a) := rfl
 

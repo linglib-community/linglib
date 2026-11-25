@@ -212,10 +212,6 @@ def Head.params (v : Head) : Params := (v.hasD, v.thematic.isSome)
 /-- Thematic active Voice introducing an agent, the transitive and unergative head v*. -/
 def agentive : Head := { thematic := some .agent, hasD := true }
 
-/-- Thematic active Voice introducing a holder, the experiencer subject of a psych
-causative. -/
-def experiencer : Head := { thematic := some .holder, hasD := true }
-
 /-- Expletive active Voice, with no variable and a specifier for a marker such as Romance *se*,
 the marked anticausative ([munoz-perez-2026]). -/
 def anticausative : Head := { thematic := none, hasD := true }

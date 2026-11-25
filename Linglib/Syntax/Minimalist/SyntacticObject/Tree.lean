@@ -17,10 +17,9 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 A planar syntactic object has an ordered tree and a syntactic object an unordered one, with a
 lexical item or a trace at each leaf and no label at the other vertices. An object is [determined
 by its tree](##Minimalist.SyntacticObject.toUnorderedTree_injective), and the trees that arise are
-[the well-formed ones](##Minimalist.SyntacticObject.unorderedTreeEquiv), in which a leaf has no
-daughters and an unlabelled vertex has two, so an object can be [read back off a well-formed
-tree](##Minimalist.SyntacticObject.ofUnorderedTree). Positions, the coproducts on forests and marked
-copies work on these trees.
+the well-formed ones, in which a leaf has no daughters and an unlabelled vertex has two, so an
+object can be [read back off a well-formed tree](##Minimalist.SyntacticObject.ofUnorderedTree).
+Positions are addresses in these trees.
 
 ## Implementation notes
 
@@ -416,44 +415,6 @@ def ofUnorderedTree (t : UnorderedTree (Vertex L ι)) (_h : IsSyntacticObject t)
       ofUnorderedTree (UnorderedTree.mk t) h :=
   toUnorderedTree_injective (by simp)
 
-/-- Syntactic objects are the well-formed unordered trees. -/
-def unorderedTreeEquiv :
-    SyntacticObject (SyntacticObject.Leaf L ι) ≃
-        {t : UnorderedTree (Vertex L ι) // IsSyntacticObject t} where
-  toFun s := ⟨s.toUnorderedTree, s.isSyntacticObject_toUnorderedTree⟩
-  invFun t := ofUnorderedTree t.1 t.2
-  left_inv := ofUnorderedTree_toUnorderedTree
-  right_inv t := Subtype.ext (toUnorderedTree_ofUnorderedTree t.1 t.2)
-
-/-- The vertex with its label relabelled by `f`. -/
-def Vertex.map (f : L → L') : Vertex L → Vertex L' := Sum.map (Option.map f) (Option.map f)
-
-@[simp] theorem Vertex.map_lex (f : L → L') (a : L) :
-    (Vertex.lex a).map f = Vertex.lex (f a) := rfl
-
-@[simp] theorem Vertex.map_bare (f : L → L') : (Vertex.bare : Vertex L).map f = Vertex.bare := rfl
-
-@[simp] theorem Vertex.map_trace (f : L → L') :
-    (Vertex.trace : Vertex L).map f = Vertex.trace := rfl
-
-@[simp] theorem Vertex.map_traceOf (f : L → L') (a : L) :
-    (Vertex.traceOf a).map f = Vertex.traceOf (f a) := rfl
-
-@[simp] theorem Vertex.map_id : Vertex.map (id : L → L) = id := by
-  funext v; rcases v with (_ | _) | (_ | _) <;> rfl
-
-theorem Vertex.map_comp (f : L → L') (g : L' → L'') :
-    Vertex.map g ∘ Vertex.map f = Vertex.map (g ∘ f) := by
-  funext v; rcases v with (_ | _) | (_ | _) <;> rfl
-
-theorem Vertex.map_injective {f : L → L'} (hf : Function.Injective f) :
-    Function.Injective (Vertex.map f) :=
-  Sum.map_injective.2 ⟨Option.map_injective hf, Option.map_injective hf⟩
-
-theorem Leaf.toVertex_map (f : L → L') (x : Leaf L) :
-    (x.map f f).toVertex = Vertex.map f x.toVertex := by
-  cases x <;> rfl
-
 end SyntacticObject
 
 namespace PlanarSyntacticObject
@@ -463,29 +424,11 @@ open SyntacticObject (Vertex Leaf isSyntacticObject_mk_leaf isSyntacticObject_mk
 
 variable {L L' L'' : Type}
 
-@[simp] theorem toRoseTree_map (f : L → L') (p : PlanarSyntacticObject (SyntacticObject.Leaf L L)) :
-    (p.map f).toRoseTree = p.toRoseTree.map (Vertex.map f) := by
-  induction p using FreeMagma.recOnMul with
-  | ih1 x => simp [map, toRoseTree, Leaf.toVertex_map]
-  | ih2 l r hl hr =>
-    have hl' : toRoseTree (FreeMagma.map (Leaf.map f f) l) =
-        RoseTree.map (Vertex.map f) (toRoseTree l) := hl
-    have hr' : toRoseTree (FreeMagma.map (Leaf.map f f) r) =
-        RoseTree.map (Vertex.map f) (toRoseTree r) := hr
-    simp [map, toRoseTree, hl', hr']
-
 end PlanarSyntacticObject
 
 namespace SyntacticObject
 
 variable {L L' L'' : Type}
-
-@[simp] theorem toUnorderedTree_map (f : L → L') (s : SyntacticObject (SyntacticObject.Leaf L L)) :
-    (s.map f).toUnorderedTree = s.toUnorderedTree.map (Vertex.map f) := by
-  obtain ⟨p, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective s
-  rw [← PlanarSyntacticObject.toSyntacticObject_map,
-    PlanarSyntacticObject.toUnorderedTree_toSyntacticObject, PlanarSyntacticObject.toRoseTree_map,
-    PlanarSyntacticObject.toUnorderedTree_toSyntacticObject, UnorderedTree.map_mk]
 
 end SyntacticObject
 

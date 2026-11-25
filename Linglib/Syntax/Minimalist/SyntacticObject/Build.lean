@@ -17,17 +17,13 @@ with the remainder in Internal Merge. The objects form a commutative magma and t
 objects a noncommutative one. Concrete objects are built ordered, as `PlanarSyntacticObject
 (SyntacticObject.Leaf L ι)`s,
 and forgotten to the carrier by `toSyntacticObject`, a homomorphism of magmas with none going
-back. The accessors read the root token, the leaf and node counts, and the trace predicate,
-which recognizes the trace leaves, bare or indexed.
+back. The accessors read the pronounced tokens and the token at the root.
 
 ## Main definitions
 
-* `Minimalist.PlanarSyntacticObject.toSyntacticObjectHom`: forgetting the order.
-* `Minimalist.SyntacticObject.yield`: the pronounced tokens.
-* `Minimalist.PlanarSyntacticObject.attach`, `yield`: Merge on a given edge, and the pronounced
-  tokens in order.
-* `Minimalist.SyntacticObject.mkLeaf`, `mkLeafPhon`: lexical leaves from features.
-* `Minimalist.SyntacticObject.token?`, `isTrace`, `leafCount`, `nodeCount`, `IsLeaf`.
+* `Minimalist.SyntacticObject.yield`, `Minimalist.PlanarSyntacticObject.yield`: the pronounced
+  tokens, and the same in order.
+* `Minimalist.SyntacticObject.token?`: the token of a lexical leaf.
 
 ## Main results
 
@@ -127,34 +123,6 @@ theorem isEmpty_mulHom : IsEmpty
   simp only [map_mul, mul_def, merge_inj] at h
   exact merge_ne_left _ _ h.1.symm
 
-/-- `p.attach e d` merges `d` into `p` as the daughter on edge `e`. -/
-def attach (p : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) (e : Edge)
-    (d : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) :
-    PlanarSyntacticObject (SyntacticObject.Leaf L ι) :=
-  match e with
-  | .left => merge d p
-  | .right => merge p d
-
-@[simp] theorem attach_left (p d : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) :
-    p.attach .left d = merge d p := rfl
-
-@[simp] theorem attach_right (p d : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) : p.attach
-    .right d = merge p d :=
-  rfl
-
-
-@[simp] theorem toSyntacticObject_attach (p d : PlanarSyntacticObject (SyntacticObject.Leaf L ι))
-    (e : Edge) :
-    (p.attach e d).toSyntacticObject = SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject
-    := by
-  cases e
-  · exact toSyntacticObject_merge d p
-  · exact (toSyntacticObject_merge p d).trans (SyntacticObject.merge_comm _ _)
-
-@[simp] theorem attach_map {L' : Type} (f : L → L')
-    (p d : PlanarSyntacticObject (SyntacticObject.Leaf L L)) (e : Edge) :
-    (p.attach e d).map f = (p.map f).attach e (d.map f) := by
-  cases e <;> simp
 
 /-- The pronounced tokens of a planar object, left to right; traces are unpronounced. -/
 def yield (p : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) : List L :=
@@ -169,15 +137,6 @@ theorem yield_toSyntacticObject (p : PlanarSyntacticObject (SyntacticObject.Leaf
 theorem coe_yield (p : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) :
     (p.yield : Multiset L) = p.toSyntacticObject.yield := by
   rw [yield, ← Multiset.filterMap_coe, RoseTree.coe_leafList, yield_toSyntacticObject]
-
-theorem yield_attach (p : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) (e : Edge)
-    (d : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) :
-    (p.attach e d).toSyntacticObject.yield =
-      d.toSyntacticObject.yield + p.toSyntacticObject.yield := by
-  cases e <;>
-    simp only [yield_toSyntacticObject, attach, toRoseTree_merge, RoseTree.leaves_node_cons,
-      List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, Multiset.filterMap_add]
-  exact add_comm _ _
 
 /-! ### Merge in braces
 

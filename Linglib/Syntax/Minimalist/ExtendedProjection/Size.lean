@@ -25,8 +25,7 @@ standard sizes are those of the standard spines.
 * `Minimalist.ComplementSize`: a clausal complement measured by its highest head.
 * `Spine.size`: the size of a spine, its highest head.
 * `Minimalist.ComplementSize.vP`, `Minimalist.ComplementSize.tP`,
-  `Minimalist.ComplementSize.modP`, `Minimalist.ComplementSize.finP`,
-  `Minimalist.ComplementSize.cP`: the standard sizes.
+  `Minimalist.ComplementSize.finP`, `Minimalist.ComplementSize.cP`: the standard sizes.
 
 ## Main results
 
@@ -72,8 +71,6 @@ instance : DecidableLT ComplementSize := fun a b ↦
 theorem le_def : a ≤ b ↔ a.highestHead.ExtendsTo b.highestHead := Iff.rfl
 
 end ComplementSize
-
-/-! ### The size of a spine -/
 
 end Minimalist
 
@@ -124,9 +121,6 @@ def vP : ComplementSize := Spine.vP.size
 
 /-- The TP-sized complement of a propositional infinitive, the size of the TP spine. -/
 def tP : ComplementSize := Spine.tP.size
-
-/-- The modal complement of a future infinitive. -/
-def modP : ComplementSize := ⟨.Mod⟩
 
 /-- The FinP-sized complement, the lowest layer of the left periphery. -/
 def finP : ComplementSize := ⟨.Fin⟩

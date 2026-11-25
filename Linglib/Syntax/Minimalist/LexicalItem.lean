@@ -14,15 +14,12 @@ public import Linglib.Syntax.Minimalist.Feature.Basic
 
 The leaves of syntactic objects are drawn from `SO₀`, the lexical items and syntactic features. A
 lexical item is a category with its selectional stack, its phonological form and its feature
-bundle, and a token of it is the item with the index that tells its tokens apart. An item is [+wh]
-when its bundle values [wh] as `true`, and it has [E] when its bundle bears the privative [E]. The
-carrier built over tokens is `SyntacticObject/Basic.lean`.
+bundle, and a token of it is the item with the index that tells its tokens apart. The objects
+built over tokens are in `SyntacticObject/Token.lean`.
 
 ## Main definitions
 
 * `Minimalist.LexicalItem`, `Minimalist.LexicalItem.Token`
-* `Minimalist.LexicalItem.IsWh`: the item is [+wh].
-* `Minimalist.LexicalItem.HasE`: the item has [E].
 * `Minimalist.LexicalItem.Token.PreservesSelection`: relabellings of tokens that selection does
   not see.
 
@@ -54,20 +51,6 @@ optional arguments say otherwise. -/
 def LexicalItem.of (cat : Cat) (sel : List Cat) (phonForm : String := "")
     (features : FeatureBundle := ⊥) : LexicalItem :=
   ⟨cat, sel, phonForm, features⟩
-
-/-- The item is [+wh]: its bundle values [wh] as `true`. -/
-def LexicalItem.IsWh (li : LexicalItem) : Prop := li.features .wh = .valued true
-
-instance (li : LexicalItem) : Decidable li.IsWh := inferInstanceAs (Decidable (_ = _))
-
-/-- The item has [E], which leaves its complement unpronounced ([merchant-2001]). -/
-def LexicalItem.HasE (li : LexicalItem) : Prop := li.features .ellipsis = .valued ()
-
-instance (li : LexicalItem) : Decidable li.HasE := inferInstanceAs (Decidable (_ = _))
-
-/-- The phonological form of a pronounced item, `none` for a silent one. -/
-def LexicalItem.phonForm? (li : LexicalItem) : Option String :=
-  if li.phonForm.isEmpty then none else some li.phonForm
 
 /-- A token of a lexical item. Syntactic objects are compared as values, so two occurrences of
 one item, the two *the*s of a transitive clause, are different leaves only through their tokens;

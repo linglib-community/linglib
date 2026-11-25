@@ -30,11 +30,11 @@ every interacting goal satisfies the probe; and Multiple Agree is the case of an
 
 This is the one Agree of the library. A theory of Agree supplies a probe, which fixes what the
 search finds, and a copying operation, which fixes what Agree does to the state: valuation of
-feature bundles (`Minimalist.FeatureState.value`), the value of a case
-(`Minimalist.agree_eq_search`), or the features a probe accumulates
-(`Probe.Spec.agree`). When the state is the list of goals itself, Agree replaces each entry it interacts with (`Probe.agreeList`).
-When copying joins the state with what each goal contributes, the order of the goals does not
-matter: [Agree joins the initial state with the contributions of the goals it flags](##Minimalist.Probe.agree_sup_state).
+feature bundles (`Minimalist.FeatureState.value`) or the features a probe accumulates
+(`Probe.Spec.agree`). When the state is the list of goals itself, Agree replaces each entry it
+interacts with (`Probe.agreeList`). When copying joins the state with what each goal contributes,
+the order of the goals does not matter: [Agree joins the initial state with the contributions of
+the goals it flags](##Minimalist.Probe.agree_sup_state).
 
 ## Main definitions
 
@@ -50,8 +50,6 @@ matter: [Agree joins the initial state with the contributions of the goals it fl
 * `Minimalist.Probe.Spec`: interaction and satisfaction conditions, each a finite set of feature
   bundles presenting the upper set of bundles containing one of them.
 * `Minimalist.Probe.Spec.ofFeatures`: the conditions met by bearing any one of some features.
-* `Minimalist.Probe.Spec.intCond`, `Minimalist.Probe.Spec.satCond`: the upper sets of bundles a
-  specification's two conditions present.
 * `Minimalist.Probe.Spec.ofGeometry`, `Minimalist.Probe.Spec.relativized`: `[INT:f, SAT:g]` over a
   feature geometry, interaction copying `f` and the features it dominates.
 * `Minimalist.Probe.Spec.agree`: Agree over goals exposing feature sets, with dynamic interaction.
@@ -76,8 +74,6 @@ matter: [Agree joins the initial state with the contributions of the goals it fl
   `[INT:f]` is bearing `f`.
 * `Minimalist.Probe.Spec.relativized_toProbe_anti`: over a privative geometry, relativization
   reverses dominance.
-* `Minimalist.Probe.Spec.toProbe_congr`: specifications presenting the same conditions denote
-  the same probe.
 * `Minimalist.Probe.Spec.subset_Ici_of_mem_dynamicUpdate`: dynamic interaction narrows the
   interaction condition to the features a dynamic feature dominates.
 * `Minimalist.Probe.Spec.foldl_dynamicUpdate`, `Minimalist.Probe.Spec.mem_agree_interacted_iff`:
@@ -87,10 +83,8 @@ matter: [Agree joins the initial state with the contributions of the goals it fl
 ## Implementation notes
 
 A specification is a presentation: its order and join are those of the lists of bundles, and two
-specifications listing different bundles may present the same conditions. `Spec.intCond` and
-`Spec.satCond` are the conditions, and `Spec.toProbe` depends on a specification through them
-alone. The meet of two presentations presents no meet of conditions, so specifications are a
-join-semilattice only.
+specifications listing different bundles may present the same conditions. The meet of two
+presentations presents no meet of conditions, so specifications are a join-semilattice only.
 
 Movement, the M subfeatures of lines 5–6 and 9–10 of (30), is not modelled; `Probe.attract` gives
 movement a search of its own instead. Line 13 installs the closure of one feature marked for
@@ -414,9 +408,6 @@ variable [DecidableEq F] (sp : Spec F) (feats : α → Finset F)
 /-- The features of the interaction condition a goal bears, which Agree copies from it. -/
 def intFeatures (a : α) : Finset F := feats a ∩ sp.int.sup id
 
-/-- The features of the satisfaction condition a goal bears. -/
-def satFeatures (a : α) : Finset F := feats a ∩ sp.sat.sup id
-
 /-- The probe a specification denotes over goals exposing feature sets, interacting with a goal
 whose features lie in the upper set the interaction condition presents, and satisfied by one
 whose features lie in the upper set the satisfaction condition presents. -/
@@ -446,33 +437,6 @@ theorem sup_toProbe_sat {sp' : Spec F} {a : α} :
     ((sp ⊔ sp').toProbe feats).sat a ↔ (sp.toProbe feats).sat a ∨ (sp'.toProbe feats).sat a := by
   simp [or_and_right, exists_or]
 
-variable (sp) in
-/-- The interaction condition a specification presents, the bundles containing one it lists.
-`UpperSet` is ordered by reverse inclusion, so a weaker condition is a smaller upper set. -/
-def intCond : UpperSet (Finset F) := upperClosure (sp.int : Set (Finset F))
-
-variable (sp) in
-/-- The satisfaction condition a specification presents. -/
-def satCond : UpperSet (Finset F) := upperClosure (sp.sat : Set (Finset F))
-
-theorem toProbe_int_iff_mem_intCond {a : α} : (sp.toProbe feats).int a ↔ feats a ∈ sp.intCond :=
-  .rfl
-
-theorem toProbe_sat_iff_mem_satCond {a : α} : (sp.toProbe feats).sat a ↔ feats a ∈ sp.satCond :=
-  .rfl
-
-@[simp] theorem intCond_sup (sp sp' : Spec F) : (sp ⊔ sp').intCond = sp.intCond ⊓ sp'.intCond := by
-  simp [intCond, upperClosure_union]
-
-@[simp] theorem satCond_sup (sp sp' : Spec F) : (sp ⊔ sp').satCond = sp.satCond ⊓ sp'.satCond := by
-  simp [satCond, upperClosure_union]
-
-/-- Specifications that present the same conditions denote the same probe. -/
-theorem toProbe_congr {sp' : Spec F} (hi : sp.intCond = sp'.intCond)
-    (hs : sp.satCond = sp'.satCond) : sp.toProbe feats = sp'.toProbe feats :=
-  Probe.ext (fun _ ↦ by rw [toProbe_int_iff_mem_intCond, hi, toProbe_int_iff_mem_intCond])
-    fun _ ↦ by rw [toProbe_sat_iff_mem_satCond, hs, toProbe_sat_iff_mem_satCond]
-
 variable (feats) in
 /-- The probe a specification denotes over goals exposing feature sets, as a join-preserving
 map: the join of two specifications denotes the join of their probes. -/
@@ -495,10 +459,6 @@ variable {int sat : Finset F} {a : α}
 @[simp] theorem ofFeatures_intFeatures :
     (ofFeatures int sat).intFeatures feats a = feats a ∩ int := by
   simp [intFeatures, ofFeatures, Finset.powersetCard_one, Finset.sup_map]
-
-@[simp] theorem ofFeatures_satFeatures :
-    (ofFeatures int sat).satFeatures feats a = feats a ∩ sat := by
-  simp [satFeatures, ofFeatures, Finset.powersetCard_one, Finset.sup_map]
 
 section Geometry
 
@@ -594,7 +554,7 @@ theorem agree_empty (goals : List α) :
   | nil => rfl
   | cons a as ih =>
     rw [Dynamic.agree_cons, Probe.agree_cons]
-    dsimp only [toProbe, intFeatures, satFeatures] at ih ⊢
+    dsimp only [toProbe, intFeatures] at ih ⊢
     split_ifs <;> dsimp only <;> rw [ih]
 
 /-- Without dynamic interaction, the features a specification copies are those of the interacting
