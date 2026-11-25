@@ -1,0 +1,244 @@
+{
+  "features": [
+    {
+      "key": "clause",
+      "lean": "clause",
+      "type": "Clause",
+      "doc": "The clause types whose perfect auxiliary the paper compares (§3.1).",
+      "levels": [
+        {
+          "name": "transitive",
+          "label": "transitive",
+          "doc": "a transitive verb with canonical arguments"
+        },
+        {
+          "name": "unergative",
+          "label": "unergative",
+          "doc": "an unergative verb"
+        },
+        {
+          "name": "unaccusative",
+          "label": "unaccusative",
+          "doc": "an unaccusative verb"
+        },
+        {
+          "name": "directReflexive",
+          "label": "directReflexive",
+          "doc": "a reflexive clitic as the direct object"
+        },
+        {
+          "name": "indirectReflexive",
+          "label": "indirectReflexive",
+          "doc": "a reflexive clitic as the indirect object"
+        },
+        {
+          "name": "impersonal",
+          "label": "impersonal",
+          "doc": "the impersonal pronoun si"
+        }
+      ]
+    }
+  ],
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "auxiliary",
+          "label": "auxiliary",
+          "doc": "the word holding the perfect auxiliary"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The perfect auxiliaries.",
+      "levels": [
+        {
+          "name": "avere",
+          "label": "avere",
+          "doc": "avere 'have'"
+        },
+        {
+          "name": "essere",
+          "label": "essere",
+          "doc": "essere 'be'"
+        }
+      ]
+    }
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the file."
+  },
+  "examples": [
+    {
+      "id": "amato2025_4a",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(4a)"},
+      "language": "ital1282",
+      "primaryText": "Teresa ha lavato le camicie.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["ha", "have.PRS.3SG"], ["lavato", "wash.PRTC"], ["le", "the"],
+        ["camicie.", "shirts"]
+      ],
+      "translation": "Teresa has washed the shirts.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "avere"}
+      ],
+      "paperFeatures": [
+        ["clause", "transitive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_4b",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(4b)"},
+      "language": "ital1282",
+      "primaryText": "Teresa ha risposto a sua madre.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["ha", "have.PRS.3SG"], ["risposto", "answer.PRTC"], ["a", "at"],
+        ["sua", "her"], ["madre.", "mother"]
+      ],
+      "translation": "Teresa answered her mother.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "avere"}
+      ],
+      "paperFeatures": [
+        ["clause", "unergative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_4c",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(4c)"},
+      "language": "ital1282",
+      "primaryText": "Teresa è venut-a alla festa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["è", "be.PRS.3SG"], ["venut-a", "come.PRTC-SG.F"], ["alla", "to.the"],
+        ["festa.", "party"]
+      ],
+      "translation": "Teresa has come to the party.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"}
+      ],
+      "paperFeatures": [
+        ["clause", "unaccusative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_5a",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(5a)"},
+      "language": "ital1282",
+      "primaryText": "Teresa si=è lavat-a.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["si=è", "REFL.ACC.3SG=be.PRS.3SG"], ["lavat-a.", "wash.PRTC-SG.F"]
+      ],
+      "translation": "Teresa washed herself.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"}
+      ],
+      "paperFeatures": [
+        ["clause", "directReflexive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_5b",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(5b)"},
+      "language": "ital1282",
+      "primaryText": "Teresa si=è lavat-a il vestito.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["si=è", "REFL.DAT.3SG=be.PRS.3SG"], ["lavat-a", "wash.PRTC-SG.F"],
+        ["il", "the"], ["vestito.", "dress"]
+      ],
+      "translation": "Teresa washed her dress (for herself).",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"}
+      ],
+      "paperFeatures": [
+        ["clause", "indirectReflexive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_5c",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(5c)"},
+      "language": "ital1282",
+      "primaryText": "Teresa si=è rispost-a.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["si=è", "REFL.DAT.3SG=be.PRS.3SG"],
+        ["rispost-a.", "answer.PRTC-SG.F"]
+      ],
+      "translation": "Teresa has answered herself.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"}
+      ],
+      "paperFeatures": [
+        ["clause", "indirectReflexive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_5d",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(5d)"},
+      "language": "ital1282",
+      "primaryText": "Ieri si=è mangiato il gelato.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ieri", "yesterday"], ["si=è", "IMPERS=be.PRS.3SG"], ["mangiato", "eat.PRTC"],
+        ["il", "the"], ["gelato.", "ice_cream"]
+      ],
+      "translation": "Yesterday one has eaten the ice cream.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"}
+      ],
+      "paperFeatures": [
+        ["clause", "impersonal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}
