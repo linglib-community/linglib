@@ -23,6 +23,9 @@ labels. A head divides a spine into its complement, the heads below it, and the 
 ## Main definitions
 
 * `Spine`: the list of heads a phrase projects, bottom-up.
+* `Spine.Position`, `Spine.headAt`: the positions of a spine and the head at each.
+* `Spine.take`: the lowest `n` heads.
+* `Spine.height`: the position of a head.
 * `Spine.label`: the finset of heads a spine projects, and `Spine.labelHom`, the same as an order
   homomorphism.
 * `Spine.append`: the spine with a shell over it.
@@ -32,6 +35,9 @@ labels. A head divides a spine into its complement, the heads below it, and the 
 ## Main results
 
 * `Spine.le_def`: the extension order is inclusion of labels.
+* `Spine.mem_take_iff`: a head is among the lowest `n` exactly when it is projected below height
+  `n`.
+* `Spine.below_eq_take_height`: the complement of a head is the truncation at its height.
 * `Spine.below_le_below`: the complement of a head lies inside the complement of every head
   above it.
 * `Spine.notMem_iff_le_below`: a truncation of a spine lacks a head exactly when it lies inside
@@ -71,11 +77,26 @@ instance : Membership H (Spine H) := ⟨fun s c ↦ c ∈ s.heads⟩
 instance [DecidableEq H] (c : H) (s : Spine H) : Decidable (c ∈ s) :=
   inferInstanceAs (Decidable (c ∈ s.heads))
 
-instance (P : H → Prop) [DecidablePred P] (s : Spine H) : Decidable (∀ c ∈ s, P c) :=
+instance (priority := low) (P : H → Prop) [DecidablePred P] (s : Spine H) :
+    Decidable (∀ c ∈ s, P c) :=
   inferInstanceAs (Decidable (∀ c ∈ s.heads, P c))
 
-instance (P : H → Prop) [DecidablePred P] (s : Spine H) : Decidable (∃ c ∈ s, P c) :=
+instance (priority := low) (P : H → Prop) [DecidablePred P] (s : Spine H) :
+    Decidable (∃ c ∈ s, P c) :=
   inferInstanceAs (Decidable (∃ c ∈ s.heads, P c))
+
+/-! ### Positions and truncations -/
+
+/-- The positions of a spine, from the bottom up. -/
+abbrev Position (s : Spine H) : Type := Fin s.heads.length
+
+/-- The head at a position. -/
+def headAt (s : Spine H) (p : s.Position) : H := s.heads.get p
+
+/-- The lowest `n` heads of a spine. -/
+def take (s : Spine H) (n : ℕ) : Spine H := ⟨s.heads.take n⟩
+
+@[simp] theorem heads_take (s : Spine H) (n : ℕ) : (s.take n).heads = s.heads.take n := rfl
 
 /-! ### Shells -/
 
@@ -123,6 +144,29 @@ theorem le_of_prefix (h : t.heads <+: s.heads) : t ≤ s :=
 theorem le_append (s : Spine H) (l : List H) : s ≤ s.append l :=
   le_iff_forall_mem.2 fun _ hc ↦ mem_append.2 (Or.inl hc)
 
+/-! ### The height of a head -/
+
+/-- The height of a head, the position of its first occurrence, and the length of the spine for
+a head it does not project. -/
+def height (s : Spine H) (c : H) : ℕ := s.heads.idxOf c
+
+theorem height_lt_length_iff : s.height c < s.heads.length ↔ c ∈ s := List.idxOf_lt_length_iff
+
+/-- A head is among the lowest `n` exactly when the spine projects it below height `n`. -/
+theorem mem_take_iff {n : ℕ} : c ∈ s.take n ↔ c ∈ s ∧ s.height c < n :=
+  ⟨fun h ↦ have hc := List.mem_of_mem_take h; ⟨hc, (List.mem_take_iff_idxOf_lt hc).1 h⟩,
+    fun ⟨h, h'⟩ ↦ (List.mem_take_iff_idxOf_lt h).2 h'⟩
+
+/-- A truncation projects every head lower than one it projects. -/
+theorem mem_take_of_height_lt {n : ℕ} (hc : c ∈ s.take n) (hd : d ∈ s)
+    (h : s.height d < s.height c) : d ∈ s.take n :=
+  mem_take_iff.2 ⟨hd, h.trans (mem_take_iff.1 hc).2⟩
+
+/-- A longer truncation lies above a shorter one. -/
+theorem take_mono (s : Spine H) : Monotone s.take := fun _ _ h ↦
+  le_iff_forall_mem.2 fun _ hc ↦
+    mem_take_iff.2 ⟨(mem_take_iff.1 hc).1, (mem_take_iff.1 hc).2.trans_le h⟩
+
 /-! ### Complements of a head -/
 
 /-- The complement of the first occurrence of `c`, the spine of the heads strictly below it, so
@@ -133,6 +177,11 @@ def below (s : Spine H) (c : H) : Spine H := ⟨s.heads.takeWhile (· != c)⟩
 @[simp] theorem heads_below (s : Spine H) (c : H) :
     (s.below c).heads = s.heads.takeWhile (· != c) :=
   rfl
+
+/-- The complement of a head is the truncation of the spine at its height. -/
+theorem below_eq_take_height (s : Spine H) (c : H) : s.below c = s.take (s.height c) := by
+  have h : (fun a : H ↦ !(a != c)) = (· == c) := funext fun a ↦ by simp [bne]
+  simp [below, take, height, List.takeWhile_eq_take_findIdx_not, List.idxOf, h]
 
 /-- The heads strictly above the last occurrence of `c`, so that `s.above .C` is the shell over the
 CP of `s` and `[]` for a bare CP. -/

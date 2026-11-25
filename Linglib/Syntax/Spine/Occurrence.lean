@@ -26,7 +26,6 @@ when the map is `IsContiguous`.
 
 ## Main definitions
 
-* `Spine.Position`, `Spine.headAt`: the positions of a spine and the head at each.
 * `Spine.occurrences`: the positions a head occupies.
 * `Spine.highest`, `Spine.lowest`: the resolutions that pronounce a head at its highest or its
   lowest occurrence.
@@ -60,12 +59,6 @@ wherever the resolution pronounces the head.
 namespace Spine
 
 variable {H : Type*} (s : Spine H)
-
-/-- The positions of a spine, from the bottom up. -/
-abbrev Position : Type := Fin s.heads.length
-
-/-- The head at a position. -/
-def headAt (p : s.Position) : H := s.heads.get p
 
 variable [DecidableEq H] {s} {h : H} {p : s.Position}
 

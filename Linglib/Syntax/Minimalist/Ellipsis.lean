@@ -104,8 +104,8 @@ variable {s : Spine Cat} {p q : Cat} {x y : Site}
 /-- The rank of a site in the order of a spine's sites: the head of index `i` at `2 * i`, the
 adjunction site of the phrase it projects at `2 * i + 1`. -/
 def rank (s : Spine Cat) : Site → ℕ
-  | .head c => 2 * s.heads.idxOf c
-  | .adjunct c => 2 * s.heads.idxOf c + 1
+  | .head c => 2 * s.height c
+  | .adjunct c => 2 * s.height c + 1
 
 /-- [E] on `p` deletes the sites below the adjunction site of its complement: the heads below `p`
 and the adjunction sites of the phrases inside its complement. -/
@@ -124,9 +124,9 @@ def sites (s : Spine Cat) : List Site := s.heads.flatMap fun c ↦ [.head c, .ad
 
 /-- A deletion domain lies among the sites of the spine. -/
 theorem Deletes.mem_sites (h : s.Deletes p x) : x ∈ s.sites := by
-  have hp : s.heads.idxOf p ≤ s.heads.length := List.idxOf_le_length
+  have hp : s.height p ≤ s.heads.length := List.idxOf_le_length
   rcases x with c | c <;> simp only [Deletes, rank] at h <;>
-    exact List.mem_flatMap.2 ⟨c, List.idxOf_lt_length_iff.1 (by omega), by simp⟩
+    exact List.mem_flatMap.2 ⟨c, height_lt_length_iff.1 (by omega), by simp⟩
 
 /-- A deletion domain is closed downward. -/
 theorem Deletes.of_rank_le (h : s.Deletes p x) (hy : s.rank y ≤ s.rank x) : s.Deletes p y := by
@@ -160,7 +160,7 @@ open Spine
 variable {s : Spine Cat} {e e' : Ellipsis s} {x : Site}
 
 /-- The index on the spine of the head carrying [E]. -/
-def height (e : Ellipsis s) : ℕ := s.heads.idxOf e.ePosition
+def height (e : Ellipsis s) : ℕ := s.height e.ePosition
 
 theorem height_injective : Function.Injective (height : Ellipsis s → ℕ) := fun e _ h ↦
   Ellipsis.ext ((List.idxOf_inj e.mem).1 h)
@@ -393,8 +393,8 @@ theorem eq_vpEllipsis_iff :
   rw [eq_iff_height_eq]
   simp only [Spares, deletes_iff, AgainReading.site, Spine.rank]
   have : vpEllipsis.height = 2 := rfl
-  have : clausalSpine.heads.idxOf Cat.v = 1 := rfl
-  have : clausalSpine.heads.idxOf Cat.V = 0 := rfl
+  have : clausalSpine.height Cat.v = 1 := rfl
+  have : clausalSpine.height Cat.V = 0 := rfl
   omega
 
 /-- The voice test. An ellipsis sparing Voice and deleting v, as English VP-ellipsis does in
@@ -404,8 +404,8 @@ theorem eq_vpEllipsis_iff_spares_voice :
   rw [eq_iff_height_eq]
   simp only [Spares, deletes_iff, Spine.rank]
   have : vpEllipsis.height = 2 := rfl
-  have : clausalSpine.heads.idxOf Cat.Voice = 2 := rfl
-  have : clausalSpine.heads.idxOf Cat.v = 1 := rfl
+  have : clausalSpine.height Cat.Voice = 2 := rfl
+  have : clausalSpine.height Cat.v = 1 := rfl
   omega
 
 /-- The *again* test. An ellipsis deleting V and sparing restitutive *again* has [E] on v. -/
@@ -414,7 +414,7 @@ theorem eq_vStrandingVPE_iff :
   rw [eq_iff_height_eq]
   simp only [Spares, deletes_iff, AgainReading.site, Spine.rank]
   have : vStrandingVPE.height = 1 := rfl
-  have : clausalSpine.heads.idxOf Cat.V = 0 := rfl
+  have : clausalSpine.height Cat.V = 0 := rfl
   omega
 
 end Ellipsis
