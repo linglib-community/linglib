@@ -155,6 +155,13 @@ theorem NonQuantizedChange.potentialChange (h : NonQuantizedChange θ R φ) :
     PotentialChange θ φ :=
   fun x e hx ↦ let ⟨s, hs, _⟩ := h x e hx; ⟨s, hs⟩
 
+/-- Under a quantized change to `g`, a quantity of the theme and the event that each result fixes
+at its goal has the value `g` at every event of the predicate. -/
+theorem QuantizedChange.eq_of_result {f : α → β → G} {g : G} (h : QuantizedChange θ R φ g)
+    (hR : ∀ x s e, θ x s e → R x s g e → f x e = g) {x : α} {e : β} (hx : φ x e) : f x e = g :=
+  let ⟨s, hs, hg⟩ := h x e hx
+  hR x s e hs hg
+
 variable (θ R φ)
 
 /-- The condition an affectedness degree names is a quantized change to some goal, a non-quantized

@@ -24,8 +24,12 @@ threshold, and it is true when moreover `P x e`.
 *Un-* is undefined of a root with at most one outcome. *Re-* makes no demand on the number of
 outcomes, and is undefined of a root none of whose outcomes is a threshold. *Re-* is repetitive
 *again* along a smaller relation of an event to the earlier ones, so *again* is defined wherever
-*re-* is and has its value there. A root that effects a quantized change in Beavers's sense has one
-result, so *un-* is undefined of it.
+*re-* is and has its value there.
+
+A root that effects a quantized change in Beavers's sense has one result, so *un-* is undefined of
+it. Where the states are ordered and the object's state never decreases, *un-* is true of an event
+only if an earlier event of the root left the object as it found it, so *un-* is never true of a
+root whose events each raise the object on one of Beavers's scales.
 
 ## Implementation notes
 
@@ -149,23 +153,21 @@ theorem re_eq_again_of_ne_undefined (h : re k P T x e ≠ .undefined) :
   rw [re, again_ne_undefined_iff] at h
   simp [re, again, Trivalent.condEvent_apply, h, h']
 
-/-! ### Quantized change -/
+/-! ### Scalar change -/
 
-section QuantizedChange
+section ScalarChange
 
 variable {S : Type*} {θ : Entity → S → E → Prop} {R : Entity → S → State → E → Prop} {g : State}
 
 /-- A root that effects a quantized change in Beavers's sense has one result, so *un-* is
 undefined of it when each of its outcomes is the result of one of its events. -/
-theorem un_eq_undefined_of_quantizedChange (hR : ∀ x s g e, R x s g e → res k x e = g)
-    (h : QuantizedChange θ R P g) (hO : ∀ s ∈ O, ∃ e, P x e ∧ res k x e = s) :
-    un k P O x e = .undefined := by
+theorem un_eq_undefined_of_quantizedChange
+    (hR : ∀ x s e, θ x s e → R x s g e → res k x e = g) (h : QuantizedChange θ R P g)
+    (hO : ∀ s ∈ O, ∃ e, P x e ∧ res k x e = s) : un k P O x e = .undefined := by
   refine un_eq_undefined_of_subsingleton fun s₁ h₁ s₂ h₂ ↦ ?_
   obtain ⟨e₁, hP₁, rfl⟩ := hO s₁ h₁
   obtain ⟨e₂, hP₂, rfl⟩ := hO s₂ h₂
-  obtain ⟨_, -, hg₁⟩ := h x e₁ hP₁
-  obtain ⟨_, -, hg₂⟩ := h x e₂ hP₂
-  rw [hR _ _ _ _ hg₁, hR _ _ _ _ hg₂]
+  rw [h.eq_of_result hR hP₁, h.eq_of_result hR hP₂]
 
 -- [beavers-2011] (48)
 theorem un_eq_undefined_of_quantizedChange_result [LinearOrder State] {b : State}
@@ -173,7 +175,23 @@ theorem un_eq_undefined_of_quantizedChange_result [LinearOrder State] {b : State
     (hO : ∀ s ∈ O, ∃ e, P x e ∧ res k x e = s) : un k P O x e = .undefined :=
   un_eq_undefined_of_quantizedChange (fun _ _ _ _ h ↦ h.2.2) h hO
 
-end QuantizedChange
+/-- Along a trajectory that never decreases, *un-* is true of an event only if an earlier event of
+the root left the object in the state it found it in. -/
+theorem exists_pre_eq_res_of_un_eq_true [PartialOrder State] (hk : Monotone (k x))
+    (h : un k P O x e = .true) : ∃ e', P x e' ∧ Precedes e' e ∧ pre k x e' = res k x e' :=
+  let ⟨_, e', hP, hp, h₁, h₂⟩ := un_eq_true_iff.1 h
+  ⟨e', hP, hp,
+    (hk (τ e').fst_le_snd).antisymm <| h₁.trans_le <| (hk (τ e).fst_le_snd).trans h₂.le⟩
+
+-- [beavers-2011] (59)
+theorem un_ne_true_of_nonQuantizedChange [LinearOrder State] {b : State} (hk : Monotone (k x))
+    (h : NonQuantizedChange θ (Beavers2011.Result (fun _ ↦ k) b) P) : un k P O x e ≠ .true :=
+  fun hu ↦
+    let ⟨_, hP, _, heq⟩ := exists_pre_eq_res_of_un_eq_true hk hu
+    let ⟨_, _, hlt⟩ := Beavers2011.exists_lt_of_nonQuantizedChange h hP
+    hlt.ne heq
+
+end ScalarChange
 
 /-! ### A base event and a prefixed event -/
 
@@ -206,8 +224,7 @@ def andBack (a b : State) : Unit → ℤ → State :=
 /-- The object goes from `a` to `b` at the base event and is in `b` after the prefixed event. -/
 def andStays (a b : State) : Unit → ℤ → State := fun _ t ↦ if t ≤ 0 then a else b
 
-/-- Where the prefixed event undoes the base event, *un-* is true of it for a root with several
-outcomes, and undefined otherwise. -/
+-- (67): where the prefixed event undoes the base event, the number of outcomes decides
 theorem un_andBack_eq_true_iff :
     un (andBack a b) once O () ev₂ = .true ↔ 1 < O.encard :=
   un_eq_true_iff.trans <| and_iff_left ⟨ev₁, rfl, precedes_ev₁_ev₂, rfl, rfl⟩
