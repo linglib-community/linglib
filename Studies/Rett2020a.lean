@@ -64,7 +64,7 @@ default readings.
 
 namespace Rett2020a
 
-open Tense Anscombe1964
+open Tense Anscombe1964 Temporal
 open Comparison (maxOnScale mem_maxOnScale_gt mem_maxOnScale_lt)
 
 variable {T : Type*} [LinearOrder T]
@@ -73,23 +73,23 @@ variable {T : Type*} [LinearOrder T]
 
 /-- *A before B* (22a) holds when some time of `A` precedes the most informative time of `B` on the
 *before* scale, its least. -/
-def before (A B : Set (NonemptyInterval T)) : Prop :=
+def before (A B : NonemptyInterval T → Prop) : Prop :=
   ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .lt (timeTrace B), t < m
 
 /-- *A after B* (22b) holds when some time of `A` follows the most informative time of `B` on the
 *after* scale, its greatest. -/
-def after (A B : Set (NonemptyInterval T)) : Prop :=
+def after (A B : NonemptyInterval T → Prop) : Prop :=
   ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt (timeTrace B), m < t
 
 /-- Under inchoative coercion (19) a process may denote the onset of its duration, the greatest
 lower bound of its times. -/
-def inchoative (p : Set (NonemptyInterval T)) : Set (NonemptyInterval T) :=
-  {i | ∃ g, IsLeast (timeTrace p) g ∧ i = NonemptyInterval.pure g}
+def inchoative (p : NonemptyInterval T → Prop) : NonemptyInterval T → Prop :=
+  fun i ↦ ∃ g, IsLeast (timeTrace p) g ∧ i = NonemptyInterval.pure g
 
 /-- Under completive coercion (21) a culmination may denote its telos, the least upper bound of its
 times. -/
-def completive (p : Set (NonemptyInterval T)) : Set (NonemptyInterval T) :=
-  {i | ∃ l, IsGreatest (timeTrace p) l ∧ i = NonemptyInterval.pure l}
+def completive (p : NonemptyInterval T → Prop) : NonemptyInterval T → Prop :=
+  fun i ↦ ∃ l, IsGreatest (timeTrace p) l ∧ i = NonemptyInterval.pure l
 
 /-- The paper groups the aspectual classes of Moens and Steedman into processes, states and
 activities, and culminations, accomplishments and achievements. -/
@@ -99,11 +99,11 @@ inductive Class where
 
 /-- An embedded eventuality of a class with run times `p` may denote the run times themselves or the
 coercion its class allows. -/
-def readings : Class → Set (NonemptyInterval T) → Set (Set (NonemptyInterval T))
+def readings : Class → (NonemptyInterval T → Prop) → Set (NonemptyInterval T → Prop)
   | .process, p => {p, inchoative p}
   | .culmination, p => {p, completive p}
 
-theorem timeTrace_inchoative (p : Set (NonemptyInterval T)) :
+theorem timeTrace_inchoative (p : NonemptyInterval T → Prop) :
     timeTrace (inchoative p) = {g | IsLeast (timeTrace p) g} := by
   ext t
   simp only [mem_timeTrace, inchoative, Set.mem_ofPred_eq]
@@ -112,7 +112,7 @@ theorem timeTrace_inchoative (p : Set (NonemptyInterval T)) :
     exact (NonemptyInterval.mem_pure.mp ht) ▸ hg
   · exact fun h ↦ ⟨_, ⟨t, h, rfl⟩, NonemptyInterval.mem_pure.mpr rfl⟩
 
-theorem timeTrace_completive (p : Set (NonemptyInterval T)) :
+theorem timeTrace_completive (p : NonemptyInterval T → Prop) :
     timeTrace (completive p) = {l | IsGreatest (timeTrace p) l} := by
   ext t
   simp only [mem_timeTrace, completive, Set.mem_ofPred_eq]
@@ -121,7 +121,7 @@ theorem timeTrace_completive (p : Set (NonemptyInterval T)) :
     exact (NonemptyInterval.mem_pure.mp ht) ▸ hl
   · exact fun h ↦ ⟨_, ⟨t, h, rfl⟩, NonemptyInterval.mem_pure.mpr rfl⟩
 
-variable {A B : Set (NonemptyInterval T)} {m : T}
+variable {A B : NonemptyInterval T → Prop} {m : T}
 
 theorem before_iff_of_isLeast (h : IsLeast (timeTrace B) m) :
     before A B ↔ ∃ t ∈ timeTrace A, t < m := by
@@ -170,88 +170,88 @@ variable (A) (i : NonemptyInterval T)
 /-- Against a process, *before* has one reading, precedence of its onset ((4a)), since inchoative
 coercion changes nothing and completive coercion is unavailable. -/
 theorem before_process :
-    ∀ B ∈ readings .process (Set.Iic i), (before A B ↔ ∃ t ∈ timeTrace A, t < i.fst) := by
+    ∀ B ∈ readings .process (· ≤ i), (before A B ↔ ∃ t ∈ timeTrace A, t < i.fst) := by
   simp only [readings, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
-  exact ⟨before_iff_of_isLeast (isLeast_timeTrace_Iic i),
-    (before_inchoative_iff (isLeast_timeTrace_Iic i)).trans
-      (before_iff_of_isLeast (isLeast_timeTrace_Iic i))⟩
+  exact ⟨before_iff_of_isLeast (isLeast_timeTrace_subintervals i),
+    (before_inchoative_iff (isLeast_timeTrace_subintervals i)).trans
+      (before_iff_of_isLeast (isLeast_timeTrace_subintervals i))⟩
 
 -- (5a), (23a)
 theorem before_culmination_start :
-    before A {i} ↔ ∃ t ∈ timeTrace A, t < i.fst :=
-  before_iff_of_isLeast (isLeast_timeTrace_singleton i)
+    before A (· = i) ↔ ∃ t ∈ timeTrace A, t < i.fst :=
+  before_iff_of_isLeast (isLeast_timeTrace_eq i)
 
 /-- ... or, under completive coercion, of its telos ((23b)). -/
 theorem before_culmination_telos :
-    before A (completive {i}) ↔ ∃ t ∈ timeTrace A, t < i.snd :=
-  before_completive_iff (isGreatest_timeTrace_singleton i)
+    before A (completive (· = i)) ↔ ∃ t ∈ timeTrace A, t < i.snd :=
+  before_completive_iff (isGreatest_timeTrace_eq i)
 
 -- (5b), (24a)
 theorem after_process_end :
-    after A (Set.Iic i) ↔ ∃ t ∈ timeTrace A, i.snd < t :=
-  after_iff_of_isGreatest (isGreatest_timeTrace_Iic i)
+    after A (· ≤ i) ↔ ∃ t ∈ timeTrace A, i.snd < t :=
+  after_iff_of_isGreatest (isGreatest_timeTrace_subintervals i)
 
 /-- ... or, under inchoative coercion, of its onset ((24b)). -/
 theorem after_process_onset :
-    after A (inchoative (Set.Iic i)) ↔ ∃ t ∈ timeTrace A, i.fst < t :=
-  after_inchoative_iff (isLeast_timeTrace_Iic i)
+    after A (inchoative (· ≤ i)) ↔ ∃ t ∈ timeTrace A, i.fst < t :=
+  after_inchoative_iff (isLeast_timeTrace_subintervals i)
 
 /-- Against a culmination, *after* has one reading, succession of its telos ((4b)), since completive
 coercion changes nothing and inchoative coercion is unavailable. -/
 theorem after_culmination :
-    ∀ B ∈ readings .culmination {i},
+    ∀ B ∈ readings .culmination (· = i),
       (after A B ↔ ∃ t ∈ timeTrace A, i.snd < t) := by
   simp only [readings, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
-  exact ⟨after_iff_of_isGreatest (isGreatest_timeTrace_singleton i),
-    (after_completive_iff (isGreatest_timeTrace_singleton i)).trans
-      (after_iff_of_isGreatest (isGreatest_timeTrace_singleton i))⟩
+  exact ⟨after_iff_of_isGreatest (isGreatest_timeTrace_eq i),
+    (after_completive_iff (isGreatest_timeTrace_eq i)).trans
+      (after_iff_of_isGreatest (isGreatest_timeTrace_eq i))⟩
 
 theorem before_stative_iff (h : IsLeast (timeTrace B) m) :
-    before (Set.Iic i) B ↔ i.fst < m := by
+    before (· ≤ i) B ↔ i.fst < m := by
   rw [before_iff_of_isLeast h]
-  exact ⟨fun ⟨_, ht, htm⟩ ↦ (mem_timeTrace_Iic.mp ht).1.trans_lt htm,
-    fun h ↦ ⟨i.fst, (isLeast_timeTrace_Iic i).1, h⟩⟩
+  exact ⟨fun ⟨_, ht, htm⟩ ↦ (mem_timeTrace_subintervals.mp ht).1.trans_lt htm,
+    fun h ↦ ⟨i.fst, (isLeast_timeTrace_subintervals i).1, h⟩⟩
 
 theorem after_stative_iff (h : IsGreatest (timeTrace B) m) :
-    after (Set.Iic i) B ↔ m < i.snd := by
+    after (· ≤ i) B ↔ m < i.snd := by
   rw [after_iff_of_isGreatest h]
-  exact ⟨fun ⟨_, ht, htm⟩ ↦ htm.trans_le (mem_timeTrace_Iic.mp ht).2,
-    fun h ↦ ⟨i.snd, (isGreatest_timeTrace_Iic i).1, h⟩⟩
+  exact ⟨fun ⟨_, ht, htm⟩ ↦ htm.trans_le (mem_timeTrace_subintervals.mp ht).2,
+    fun h ↦ ⟨i.snd, (isGreatest_timeTrace_subintervals i).1, h⟩⟩
 
 variable (j : NonemptyInterval T)
 
 theorem before_stative_accomplishment_iff :
-    before (Set.Iic i) {j} ↔ i.fst < j.fst :=
-  before_stative_iff i (isLeast_timeTrace_singleton j)
+    before (· ≤ i) (· = j) ↔ i.fst < j.fst :=
+  before_stative_iff i (isLeast_timeTrace_eq j)
 
 theorem before_stative_completive_iff :
-    before (Set.Iic i) (completive {j}) ↔ i.fst < j.snd :=
+    before (· ≤ i) (completive (· = j)) ↔ i.fst < j.snd :=
   before_stative_iff i (by
-    rw [timeTrace_completive_of_isGreatest (isGreatest_timeTrace_singleton j)]
+    rw [timeTrace_completive_of_isGreatest (isGreatest_timeTrace_eq j)]
     exact isLeast_singleton)
 
 theorem after_stative_stative_iff :
-    after (Set.Iic i) (Set.Iic j) ↔ j.snd < i.snd :=
-  after_stative_iff i (isGreatest_timeTrace_Iic j)
+    after (· ≤ i) (· ≤ j) ↔ j.snd < i.snd :=
+  after_stative_iff i (isGreatest_timeTrace_subintervals j)
 
 theorem after_stative_inchoative_iff :
-    after (Set.Iic i) (inchoative (Set.Iic j)) ↔ j.fst < i.snd :=
+    after (· ≤ i) (inchoative (· ≤ j)) ↔ j.fst < i.snd :=
   after_stative_iff i (by
-    rw [timeTrace_inchoative_of_isLeast (isLeast_timeTrace_Iic j)]
+    rw [timeTrace_inchoative_of_isLeast (isLeast_timeTrace_subintervals j)]
     exact isGreatest_singleton)
 
 -- (23)
 theorem example23 :
-    ¬ before {NonemptyInterval.pure 15} {⟨⟨13, 16⟩, by omega⟩} ∧
-      before {NonemptyInterval.pure 15}
-        (completive {⟨⟨13, 16⟩, by omega⟩}) := by
+    ¬ before (· = NonemptyInterval.pure 15) (· = ⟨⟨13, 16⟩, by omega⟩) ∧
+      before (· = NonemptyInterval.pure 15)
+        (completive (· = ⟨⟨13, 16⟩, by omega⟩)) := by
   simp [before_culmination_start, before_culmination_telos]
 
 -- (24)
 theorem example24 :
-    ¬ after {NonemptyInterval.pure 2022} (Set.Iic ⟨⟨2021, 2028⟩, by omega⟩) ∧
-      after {NonemptyInterval.pure 2022}
-        (inchoative (Set.Iic ⟨⟨2021, 2028⟩, by omega⟩)) := by
+    ¬ after (· = NonemptyInterval.pure 2022) (· ≤ ⟨⟨2021, 2028⟩, by omega⟩) ∧
+      after (· = NonemptyInterval.pure 2022)
+        (inchoative (· ≤ ⟨⟨2021, 2028⟩, by omega⟩)) := by
   simp [after_process_end, after_process_onset]
 
 /-! ### Antonymy as order duality
@@ -265,16 +265,16 @@ section Duality
 
 variable {A}
 
-private theorem timeTrace_image_dual (A : Set (NonemptyInterval T)) :
-    timeTrace (NonemptyInterval.dual '' A) = OrderDual.ofDual ⁻¹' timeTrace A := by
+private theorem timeTrace_image_dual (A : NonemptyInterval T → Prop) :
+    timeTrace (fun i ↦ ∃ j, A j ∧ j.dual = i) = OrderDual.ofDual ⁻¹' timeTrace A := by
   ext t
-  simp only [mem_timeTrace, Set.mem_image, exists_exists_and_eq_and, Set.mem_preimage,
+  simp only [mem_timeTrace, exists_exists_and_eq_and, Set.mem_preimage,
     NonemptyInterval.mem_def, NonemptyInterval.fst_dual, NonemptyInterval.snd_dual,
     OrderDual.toDual_le, OrderDual.le_toDual]
   exact exists_congr fun _ ↦ and_congr_right fun _ ↦ and_comm
 
 theorem after_iff_before_dual :
-    after A B ↔ before (NonemptyInterval.dual '' A) (NonemptyInterval.dual '' B) := by
+    after A B ↔ before (fun i ↦ ∃ j, A j ∧ j.dual = i) (fun i ↦ ∃ j, B j ∧ j.dual = i) := by
   simp only [after, before, timeTrace_image_dual, mem_maxOnScale_lt, mem_maxOnScale_gt]
   exact Iff.rfl
 
@@ -291,13 +291,13 @@ end Duality
 
 /-! ### Monotonicity -/
 
-theorem before_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ timeTrace B)
+theorem before_antitone {B' : NonemptyInterval T → Prop} (h : timeTrace B' ⊆ timeTrace B)
     (hB' : ∃ m', IsLeast (timeTrace B') m') : before A B → before A B' := by
   rintro ⟨t, ht, m, hm, htm⟩
   obtain ⟨m', hm'⟩ := hB'
   exact ⟨t, ht, m', mem_maxOnScale_lt.2 hm', htm.trans_le ((mem_maxOnScale_lt.1 hm).2 (h hm'.1))⟩
 
-theorem after_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ timeTrace B)
+theorem after_antitone {B' : NonemptyInterval T → Prop} (h : timeTrace B' ⊆ timeTrace B)
     (hB' : ∃ m', IsGreatest (timeTrace B') m') : after A B → after A B' := by
   obtain ⟨m', hm'⟩ := hB'
   simp only [after_iff_before_dual]
@@ -307,22 +307,22 @@ theorem after_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ tim
 /-- The coerced reading of *before* is not downward entailing, so a *before* clause licenses NPIs
 only on its default reading (25). -/
 theorem not_before_completive_antitone (h₃ : ∃ a b c : T, a < b ∧ b < c) :
-    ¬ ∀ A B B' : Set (NonemptyInterval T), timeTrace B' ⊆ timeTrace B →
+    ¬ ∀ A B B' : NonemptyInterval T → Prop, timeTrace B' ⊆ timeTrace B →
       (∃ l', IsGreatest (timeTrace B') l') →
         before A (completive B) → before A (completive B') := by
   obtain ⟨a, b, c, hab, hbc⟩ := h₃
   intro h
-  have := h {NonemptyInterval.pure b} {⟨⟨a, c⟩, hab.le.trans hbc.le⟩}
-    {NonemptyInterval.pure a}
+  have := h (· = NonemptyInterval.pure b) (· = ⟨⟨a, c⟩, hab.le.trans hbc.le⟩)
+    (· = NonemptyInterval.pure a)
     (by
-      rw [timeTrace_singleton, timeTrace_singleton]
+      rw [timeTrace_eq, timeTrace_eq]
       rintro t ht
       obtain rfl := NonemptyInterval.mem_pure.mp ht
       exact NonemptyInterval.mem_def.mpr ⟨le_rfl, hab.le.trans hbc.le⟩)
-    ⟨a, isGreatest_timeTrace_singleton _⟩
-    ((before_culmination_telos _ _).mpr ⟨b, mem_timeTrace_pure.mpr rfl, hbc⟩)
+    ⟨a, isGreatest_timeTrace_eq _⟩
+    ((before_culmination_telos _ _).mpr ⟨b, mem_timeTrace_eq_pure.mpr rfl, hbc⟩)
   obtain ⟨t, ht, htm⟩ := (before_culmination_telos _ _).mp this
-  obtain rfl := mem_timeTrace_pure.mp ht
+  obtain rfl := mem_timeTrace_eq_pure.mp ht
   exact absurd (htm.trans hab) (lt_irrefl _)
 
 /-! ### Anscombe -/
@@ -343,9 +343,9 @@ theorem forall_after_iff_after (hB : IsGreatest (timeTrace B) m) :
     (∀ A, after A B ↔ Anscombe.after A B) ↔ Instantaneous B := by
   refine ⟨fun h ↦ ⟨m, Set.eq_singleton_iff_unique_mem.2 ⟨hB.1, fun t ht ↦ ?_⟩⟩, fun ⟨t, ht⟩ A ↦ ?_⟩
   · refine (hB.2 ht).eq_of_not_lt fun hlt ↦ ?_
-    obtain ⟨_, hs, m', hm', hlt'⟩ := (h {NonemptyInterval.pure m}).2 ⟨m, by simp, t, ht, hlt⟩
+    obtain ⟨_, hs, m', hm', hlt'⟩ := (h (· = NonemptyInterval.pure m)).2 ⟨m, by simp, t, ht, hlt⟩
     rw [mem_maxOnScale_gt] at hm'
-    rw [mem_timeTrace_pure.1 hs, hm'.unique hB] at hlt'
+    rw [mem_timeTrace_eq_pure.1 hs, hm'.unique hB] at hlt'
     exact lt_irrefl m hlt'
   · rw [after_iff_of_isGreatest (by rw [ht]; exact isGreatest_singleton),
       after_iff_least_lt (by rw [ht]; exact isLeast_singleton)]
@@ -377,11 +377,11 @@ inductive Marking
   deriving DecidableEq
 
 /-- A marking selects a culmination's run times, or under a culminating marking their telos. -/
-def Marking.select : Marking → Set (NonemptyInterval T) → Set (NonemptyInterval T)
+def Marking.select : Marking → (NonemptyInterval T → Prop) → (NonemptyInterval T → Prop)
   | .nonCulminating, p => p
   | .culminating, p => completive p
 
-theorem Marking.select_mem_readings (m : Marking) (p : Set (NonemptyInterval T)) :
+theorem Marking.select_mem_readings (m : Marking) (p : NonemptyInterval T → Prop) :
     m.select p ∈ readings .culmination p := by
   cases m <;> simp [Marking.select, readings]
 
@@ -403,7 +403,7 @@ def Marking.bound : Marking → Bound
   | .culminating => .final
 
 theorem before_select (m : Marking) :
-    before A (m.select {i}) ↔ ∃ t ∈ timeTrace A, t < m.bound.time i := by
+    before A (m.select (· = i)) ↔ ∃ t ∈ timeTrace A, t < m.bound.time i := by
   cases m
   · exact before_culmination_start A i
   · exact before_culmination_telos A i

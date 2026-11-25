@@ -61,7 +61,8 @@ time, and *would* is Gen with a restriction and an interval from the context.
 namespace BonehDoron2013
 
 open Event (τ)
-open Aspect (unbounded perfect durative)
+open Aspect (unbounded perfect)
+open Temporal (durative)
 open ModalLogic
 open Modality (Background simpleNecessity)
 open scoped Denotes
@@ -170,7 +171,7 @@ theorem usedTo_of_universal
     (h : perfect ((fun i ↦ i.fst < t) ⊓ durative (unbounded P)) (.pure t)) :
     usedTo P (.pure t) :=
   let ⟨_, _, hlt, hd⟩ := Aspect.perfect_pure_iff.1 h
-  let ⟨e, hle, hP⟩ := Aspect.unbounded_iff.1 (Aspect.durative_le _ _ hd)
+  let ⟨e, hle, hP⟩ := Aspect.unbounded_iff.1 (Temporal.durative_le _ _ hd)
   usedTo_iff.2 ⟨e, hP, (NonemptyInterval.le_def.1 hle).1.trans_lt hlt⟩
 
 /-- `P` characterizes the interval `i` at `w`, the assumption of §6.3.2, when `i` is extended and

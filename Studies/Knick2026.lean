@@ -70,7 +70,7 @@ prospective, [an eventuality to come](##mem_present_future_iff); the modal selec
 
 namespace Knick2026
 
-open Aspect Conditional ModalLogic Set
+open Aspect Temporal Conditional ModalLogic Set
 open Event (τ)
 open scoped SetRel
 

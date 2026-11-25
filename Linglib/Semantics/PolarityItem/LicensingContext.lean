@@ -17,7 +17,7 @@ public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Semantics.Quantifier.Defs
 public import Linglib.Semantics.Quantifier.Projectivity
 public import Linglib.Semantics.Reference.Indefinite
-public import Linglib.Semantics.Tense.RunTimes
+public import Linglib.Semantics.Tense.Before
 public import Mathlib.Basic.Rel
 
 /-!
@@ -256,7 +256,7 @@ structure MainClause where
   /-- The times are linearly ordered. -/
   [ord : LinearOrder T]
   /-- The run times of the main clause. -/
-  A : Set (NonemptyInterval T)
+  A : NonemptyInterval T → Prop
 
 attribute [instance] MainClause.ord
 
@@ -390,7 +390,7 @@ noncomputable def licenser : LicensingContext → Licenser
   | withoutClause => .classical
       ⟨Predicate, fun p ↦ Set p.ι, fun p ↦ Set p.ι, fun p V ↦ p.A \ V⟩
   | beforeClause => .classical
-      ⟨MainClause, fun p ↦ Set (NonemptyInterval p.T), fun _ ↦ Prop, fun p ↦ beforeEver p.A⟩
+      ⟨MainClause, fun p ↦ NonemptyInterval p.T → Prop, fun _ ↦ Prop, fun p ↦ beforeEver p.A⟩
   | clausalComparative | tooTo => .classical exceedsFamily
   | doubtVerb => .classical
       ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∉ p.R.core P⟩
@@ -519,11 +519,11 @@ theorem holds_withoutClause_iff {s : Negation.Strength} :
 theorem holds_beforeClause_iff {s : Negation.Strength} :
     beforeClause.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive := by
   refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.mpr
-    ⟨isAntiAdditive_beforeEver p.A, eq_bot_iff.2 not_beforeEver_univ⟩)
+    ⟨isAntiAdditive_beforeEver p.A, eq_bot_iff.2 not_beforeEver_top⟩)
     fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-  have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ∅⟩)).2.2
-  simp [beforeEver, timeTrace] at this
+  have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ⊥⟩)).2.2
+  simp [beforeEver] at this
 
 /-- The operator placing the compared individual above the degrees of a clause is the scope of a
 universal over the degrees from the degree of the individual upward, applied after negation. -/
@@ -604,7 +604,7 @@ theorem not_isStrawsonUE_withoutClause : ¬ withoutClause.licenser.IsStrawsonUE 
     (h (bot_le (a := ⊤)) (Set.mem_sdiff_of_mem (Set.mem_univ ()) (Set.notMem_empty ()))).2 trivial⟩
 
 theorem not_isStrawsonUE_beforeClause : ¬ beforeClause.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨ℕ, {NonemptyInterval.pure 0}⟩, fun h ↦
+  not_forall.2 ⟨⟨ℕ, (· = NonemptyInterval.pure 0)⟩, fun h ↦
     let ⟨t, _, ht⟩ := h (bot_le (a := ⊤))
       ⟨0, ⟨_, rfl, by simp⟩, fun _ ⟨_, hi, _⟩ ↦ hi.elim⟩
     lt_irrefl t (ht t ⟨NonemptyInterval.pure t, trivial, by simp⟩)⟩

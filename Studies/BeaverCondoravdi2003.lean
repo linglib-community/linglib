@@ -53,7 +53,7 @@ context sorts (48).
 
 namespace BeaverCondoravdi2003
 
-open Tense Anscombe1964 Presupposition
+open Tense Anscombe1964 Presupposition Temporal
 
 /-! ### Heinämäki's connectives (§4)
 
@@ -68,26 +68,26 @@ variable {T : Type*} [LinearOrder T] {A B : Clause T} {k : NonemptyInterval T}
 
 -- Off accomplishments, the correct form of the rewriting (36)–(37).
 theorem some_before_iff_exists_beforeEver (hA : A.vendler ≠ .accomplishment) :
-    A.AtSome B (Before A.vendler) ↔ ∃ K ∈ B.intervals, beforeEver A.intervals {K} := by
-  simp only [beforeEver_singleton_right, Clause.AtSome, Before, tr_of_ne hA]
+    A.AtSome B (Before A.vendler) ↔ ∃ K ∈ B.intervals, beforeEver (· ∈ A.intervals) (· = K) := by
+  simp only [beforeEver_eq_right, Clause.AtSome, Before, tr_of_ne hA]
   exact ⟨fun ⟨J, hJ, K, hK, h⟩ ↦ ⟨K, hK, J, hJ, h⟩, fun ⟨K, hK, J, hJ, h⟩ ↦ ⟨J, hJ, K, hK, h⟩⟩
 
 /-- Proposition 1 for *before*, on a temporal clause with a single interval. -/
 theorem some_before_iff_beforeEver (hA : A.vendler ≠ .accomplishment) (hB : B.intervals = {k}) :
-    A.AtSome B (Before A.vendler) ↔ beforeEver A.intervals B.intervals := by
+    A.AtSome B (Before A.vendler) ↔ beforeEver (· ∈ A.intervals) (· ∈ B.intervals) := by
   rw [some_before_iff_exists_beforeEver hA, hB]
   simp
 
 -- Anscombe's *before* entails Heinämäki's on an instantiated clause, whatever the clause.
 theorem some_before_of_beforeEver (hA : A.vendler ≠ .accomplishment) (hB : B.intervals.Nonempty)
-    (h : beforeEver A.intervals B.intervals) : A.AtSome B (Before A.vendler) :=
+    (h : beforeEver (· ∈ A.intervals) (· ∈ B.intervals)) : A.AtSome B (Before A.vendler) :=
   let ⟨K, hK⟩ := hB
   let ⟨_, ⟨J, hJ, htJ⟩, ht⟩ := h
   ⟨J, hJ, K, hK, (tr_of_ne hA).trans_lt (htJ.1.trans_lt (ht K.fst ⟨K, hK, le_rfl, K.fst_le_snd⟩))⟩
 
 /-- Proposition 1 for *after*, off accomplishments, needs no assumption on the temporal clause. -/
 theorem some_after_iff_after (hB : B.vendler ≠ .accomplishment) :
-    A.AtSome B (After B.vendler) ↔ Anscombe.after A.intervals B.intervals := by
+    A.AtSome B (After B.vendler) ↔ Anscombe.after (· ∈ A.intervals) (· ∈ B.intervals) := by
   simp only [Clause.AtSome, after_iff, tr_of_ne hB, Anscombe.after]
   refine ⟨fun ⟨J, hJ, K, hK, h⟩ ↦ ⟨J.snd, ⟨J, hJ, J.fst_le_snd, le_rfl⟩, K.fst,
     ⟨K, hK, le_rfl, K.fst_le_snd⟩, h⟩, fun ⟨t, ⟨J, hJ, htJ⟩, t', ⟨K, hK, htK⟩, h⟩ ↦
@@ -106,7 +106,7 @@ left-bounded, and a time between them is before it for Heinämäki and not for A
 theorem not_forall_some_before_iff_beforeEver :
     ¬ ∀ A B : Clause ℤ, A.vendler ≠ .accomplishment → B.vendler ≠ .accomplishment →
       B.intervals.Nonempty →
-      (A.AtSome B (Before A.vendler) ↔ beforeEver A.intervals B.intervals) := by
+      (A.AtSome B (Before A.vendler) ↔ beforeEver (· ∈ A.intervals) (· ∈ B.intervals)) := by
   intro h
   have hmem : ∀ {S : Set ℤ} {t : ℤ}, t ∈ S → NonemptyInterval.pure t ∈ (achievement S).intervals :=
     fun ht ↦ ⟨_, ht, rfl⟩
@@ -124,20 +124,21 @@ theorem not_forall_some_before_iff_beforeEver :
   exact absurd h1 (by decide)
 
 /-- The culminations of the intervals of a clause, as moments. -/
-def culminations (S : Set (NonemptyInterval T)) : Set (NonemptyInterval T) :=
-  (fun i ↦ NonemptyInterval.pure i.snd) '' S
+def culminations (S : NonemptyInterval T → Prop) : NonemptyInterval T → Prop :=
+  fun j ↦ ∃ i, S i ∧ NonemptyInterval.pure i.snd = j
 
 -- The extension of Proposition 1 to accomplishments, whose times are their culminations (p. 45).
 theorem some_before_accomplishment_iff (hA : A.vendler = .accomplishment) :
     A.AtSome B (Before A.vendler) ↔
-      ∃ K ∈ B.intervals, beforeEver (culminations A.intervals) {K} := by
-  simp only [beforeEver_singleton_right, Clause.AtSome, Before, hA, tr_accomplishment, culminations,
-    Set.exists_mem_image]
-  exact ⟨fun ⟨J, hJ, K, hK, h⟩ ↦ ⟨K, hK, J, hJ, h⟩, fun ⟨K, hK, J, hJ, h⟩ ↦ ⟨J, hJ, K, hK, h⟩⟩
+      ∃ K ∈ B.intervals, beforeEver (culminations (· ∈ A.intervals)) (· = K) := by
+  simp only [beforeEver_eq_right, Clause.AtSome, Before, hA, tr_accomplishment, culminations]
+  exact ⟨fun ⟨J, hJ, K, hK, h⟩ ↦ ⟨K, hK, _, ⟨J, hJ, rfl⟩, h⟩,
+    fun ⟨K, hK, _, ⟨J, hJ, rfl⟩, h⟩ ↦ ⟨J, hJ, K, hK, h⟩⟩
 
 -- The same for *after*, with an accomplishment temporal clause (p. 45).
 theorem some_after_accomplishment_iff (hB : B.vendler = .accomplishment) :
-    A.AtSome B (After B.vendler) ↔ Anscombe.after A.intervals (culminations B.intervals) := by
+    A.AtSome B (After B.vendler) ↔
+      Anscombe.after (· ∈ A.intervals) (culminations (· ∈ B.intervals)) := by
   simp only [Clause.AtSome, after_iff, hB, tr_accomplishment, Anscombe.after]
   refine ⟨fun ⟨J, hJ, K, hK, h⟩ ↦ ⟨J.snd, ⟨J, hJ, J.fst_le_snd, le_rfl⟩, K.snd,
     ⟨_, ⟨K, hK, rfl⟩, NonemptyInterval.mem_pure_self _⟩, h⟩, ?_⟩
@@ -161,7 +162,7 @@ variable {T : Type*} [LinearOrder T]
 of `B`. -/
 def uniform (cmp : T → T → Prop) (A B : Set T) : Prop := ∃ t ∈ A, ∃ e, IsLeast B e ∧ cmp t e
 
-variable {A B B' : Set (NonemptyInterval T)}
+variable {A B B' : NonemptyInterval T → Prop}
 
 /-- On a temporal clause with a first time, the uniform *before* is Anscombe's universal
 *before*, Proposition 2 for *before*. -/
@@ -204,7 +205,7 @@ theorem forall_uniform_lt_iff_beforeEver :
       (∃ e, IsLeast (timeTrace B) e) ∨ strictLowerBounds (timeTrace B) = ∅ := by
   refine ⟨fun h ↦ or_iff_not_imp_left.2 fun hB ↦ Set.eq_empty_of_forall_notMem fun t ht ↦ hB ?_,
     fun hB A ↦ hB.elim uniform_lt_iff_beforeEver fun hB ↦ iff_of_false ?_ ?_⟩
-  · obtain ⟨_, _, e, he, _⟩ := (h {NonemptyInterval.pure t}).2 ⟨t, by simp, ht⟩
+  · obtain ⟨_, _, e, he, _⟩ := (h (· = NonemptyInterval.pure t)).2 ⟨t, by simp, ht⟩
     exact ⟨e, he⟩
   · rintro ⟨t, -, e, he, hte⟩
     exact Set.eq_empty_iff_forall_notMem.1 (he.strictLowerBounds_eq ▸ hB) t hte

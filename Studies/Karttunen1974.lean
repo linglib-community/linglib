@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Tense.RunTimes
+public import Linglib.Semantics.Tense.Before
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Languages.English.TemporalConnectives
@@ -77,7 +77,7 @@ those and eight starred sentences.
 
 namespace Karttunen1974
 
-open Tense Trivalent
+open Tense Trivalent Temporal
 
 variable {T : Type*} [LinearOrder T]
 
@@ -85,46 +85,47 @@ variable {T : Type*} [LinearOrder T]
 
 section Durative
 
-variable {A A' B : Set (NonemptyInterval T)}
+variable {A A' B : NonemptyInterval T → Prop}
 
 /-- Durative *A until T* holds when a run time of `A` begins before a time of `T` and reaches
 it. -/
-def until_ (A B : Set (NonemptyInterval T)) : Prop :=
-  ∃ J ∈ A, ∃ t ∈ timeTrace B, J.fst < t ∧ t ≤ J.snd
+def until_ (A B : NonemptyInterval T → Prop) : Prop :=
+  ∃ J, A J ∧ ∃ t ∈ timeTrace B, J.fst < t ∧ t ≤ J.snd
 
-theorem until_.mono (h : until_ A B) (hA : A ⊆ A') : until_ A' B :=
-  let ⟨J, hJ, h⟩ := h; ⟨J, hA hJ, h⟩
+theorem until_.mono (h : until_ A B) (hA : A ≤ A') : until_ A' B :=
+  let ⟨J, hJ, h⟩ := h; ⟨J, hA J hJ, h⟩
 
 -- (12a)–(14a): the phrase gives the least the interval lasts, which may go on beyond it.
-theorem until_Iic_pure {i : NonemptyInterval T} {t : T} :
-    until_ (Set.Iic i) {NonemptyInterval.pure t} ↔ i.fst < t ∧ t ≤ i.snd := by
-  refine ⟨?_, fun h ↦ ⟨i, Set.mem_Iic.2 le_rfl, t, mem_timeTrace_pure.2 rfl, h⟩⟩
+theorem until_subintervals_pure {i : NonemptyInterval T} {t : T} :
+    until_ (· ≤ i) (· = NonemptyInterval.pure t) ↔ i.fst < t ∧ t ≤ i.snd := by
+  refine ⟨?_, fun h ↦ ⟨i, le_rfl, t, mem_timeTrace_eq_pure.2 rfl, h⟩⟩
   rintro ⟨J, hJ, s, hs, hlt, hle⟩
-  obtain rfl := mem_timeTrace_pure.1 hs
+  obtain rfl := mem_timeTrace_eq_pure.1 hs
   obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hJ
   exact ⟨h₁.trans_lt hlt, hle.trans h₂⟩
 
 /-- The negated clause of the one-*until* analysis, on which negation is a durative predicate,
 holds at the intervals in which `A` at no time holds. -/
-def negated (A : Set (NonemptyInterval T)) : Set (NonemptyInterval T) :=
-  {i | Disjoint (i : Set T) (timeTrace A)}
+def negated (A : NonemptyInterval T → Prop) : NonemptyInterval T → Prop :=
+  fun i ↦ Disjoint (i : Set T) (timeTrace A)
 
-theorem mem_negated {i : NonemptyInterval T} :
-    i ∈ negated A ↔ Disjoint (i : Set T) (timeTrace A) := .rfl
+theorem negated_iff {i : NonemptyInterval T} :
+    negated A i ↔ Disjoint (i : Set T) (timeTrace A) := .rfl
 
-theorem isLowerSet_negated (A : Set (NonemptyInterval T)) : IsLowerSet (negated A) :=
+-- The negated clause is closed under subintervals, as a durative clause is.
+theorem antitone_negated (A : NonemptyInterval T → Prop) : Antitone (negated A) :=
   fun _ _ hji h ↦ h.mono_left (NonemptyInterval.coe_subset_coe.2 hji)
 
-theorem negated_anti : Antitone (negated : Set (NonemptyInterval T) → _) :=
-  fun _ _ hAB _ h ↦ h.mono_right fun _ ht ↦ ht.imp fun _ hi ↦ ⟨hAB hi.1, hi.2⟩
+theorem negated_anti : Antitone (negated : (NonemptyInterval T → Prop) → _) :=
+  fun _ _ hAB _ h ↦ h.mono_right (timeTrace_mono hAB)
 
-@[simp] theorem negated_empty : negated (∅ : Set (NonemptyInterval T)) = Set.univ := by
-  simp [negated]
+@[simp] theorem negated_bot : negated (⊥ : NonemptyInterval T → Prop) = ⊤ := by
+  ext; simp [negated]
 
 /-- The narrow-scope reading of *A not until T*, (3a), durative *until* of the negated clause,
 holds of an event that never happens. -/
-theorem until_negated_empty {s t : T} (hst : s < t) (ht : t ∈ timeTrace B) :
-    until_ (negated ∅) B :=
+theorem until_negated_bot {s t : T} (hst : s < t) (ht : t ∈ timeTrace B) :
+    until_ (negated ⊥) B :=
   ⟨⟨(s, t), hst.le⟩, by simp, t, ht, hst, le_rfl⟩
 
 end Durative
@@ -133,13 +134,13 @@ end Durative
 
 section Punctual
 
-variable {A B : Set (NonemptyInterval T)}
+variable {A B : NonemptyInterval T → Prop}
 
 /-- *A when T* holds when `A` holds at a time of `T`. -/
-def when_ (A B : Set (NonemptyInterval T)) : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
+def when_ (A B : NonemptyInterval T → Prop) : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
 
 /-- (34): the presupposition of lateness, *A before T or A when T*. -/
-def presupposition (A B : Set (NonemptyInterval T)) : Prop := beforeEver A B ∨ when_ A B
+def presupposition (A B : NonemptyInterval T → Prop) : Prop := beforeEver A B ∨ when_ A B
 
 theorem when_iff : when_ A B ↔ (timeTrace A ∩ timeTrace B).Nonempty := .rfl
 
@@ -149,7 +150,7 @@ theorem not_beforeEver_of_when (hA : (timeTrace A).Subsingleton) (h : when_ A B)
   let ⟨t, htA, htB⟩ := h
   lt_irrefl t (hA hs htA ▸ hlt t htB)
 
-variable {W : Type*} (A B : W → Set (NonemptyInterval T))
+variable {W : Type*} (A B : W → NonemptyInterval T → Prop)
 
 open scoped Classical in
 /-- (36): punctual *A not until T* asserts (33), *not (A before T)*, and presupposes (34). -/
@@ -184,7 +185,7 @@ open scoped Classical Bilattice in
 theorem notUntil_kLE : notUntil A B w ≤ₖ ofProp (¬ beforeEver (A w) (B w)) := condEvent_kLE
 
 -- (23), (25a): the sentence is true only of an event that happens, unlike *A not before T*.
-theorem nonempty_of_notUntil_eq_true (h : notUntil A B w = .true) : (A w).Nonempty :=
+theorem exists_of_notUntil_eq_true (h : notUntil A B w = .true) : ∃ i, A w i :=
   let ⟨_, _, ⟨i, hi, _⟩, _⟩ := notUntil_eq_true_iff.1 h
   ⟨i, hi⟩
 
@@ -209,15 +210,10 @@ theorem notUntil_eq_onlyThen (hA : ∀ w, (timeTrace (A w)).Subsingleton) :
     exact ⟨And.right, fun h ↦ ⟨not_beforeEver_of_when (hA w) h, h⟩⟩
 
 -- An event that recurs, before `T` and at `T`, separates the two sentences.
-theorem notUntil_ne_onlyThen :
-    notUntil (fun _ : Unit ↦ {.pure (0 : ℤ), .pure 1}) (fun _ ↦ {.pure 1}) ≠
-      onlyThen (fun _ : Unit ↦ {.pure (0 : ℤ), .pure 1}) fun _ ↦ {.pure 1} := fun h ↦ by
-  have h₁ : notUntil (fun _ : Unit ↦ {.pure (0 : ℤ), .pure 1}) (fun _ ↦ {.pure 1}) () = .false :=
-    notUntil_eq_false_iff.2 ⟨0, by simp, by simp⟩
-  have h₂ : onlyThen (fun _ : Unit ↦ {.pure (0 : ℤ), .pure 1}) (fun _ ↦ {.pure 1}) () = .true :=
-    onlyThen_eq_true_iff.2 ⟨1, by simp, by simp⟩
-  rw [h, h₂] at h₁
-  cases h₁
+theorem exists_notUntil_eq_false_onlyThen_eq_true :
+    ∃ A B : Unit → NonemptyInterval ℤ → Prop, notUntil A B () = .false ∧ onlyThen A B () = .true :=
+  ⟨fun _ ↦ (· = .pure 0) ⊔ (· = .pure 1), fun _ ↦ (· = .pure 1),
+    notUntil_eq_false_iff.2 ⟨0, by simp, by simp⟩, onlyThen_eq_true_iff.2 ⟨1, by simp, by simp⟩⟩
 
 end Punctual
 
