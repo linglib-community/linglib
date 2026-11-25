@@ -46,6 +46,12 @@ theorem exists_measure_singleton_ne_zero [Countable α] (μ : Measure α) [NeZer
     ∃ a, μ {a} ≠ 0 := by
   simpa [ext_iff_singleton] using NeZero.ne μ
 
+/-- A Dirac measure is absolutely continuous with respect to a measure that charges its point. -/
+theorem dirac_absolutelyContinuous {μ : Measure α} {a : α} (h : μ {a} ≠ 0) : dirac a ≪ μ :=
+  .mk fun s hs hμ ↦ by
+    rw [dirac_apply' _ hs, Set.indicator_of_notMem fun ha ↦
+      h (measure_mono_null (Set.singleton_subset_iff.2 ha) hμ)]
+
 variable [MeasurableSingletonClass α] {μ : Measure α} {a : α}
 
 /-- A measure is concentrated at a point iff it is a multiple of the Dirac measure there. -/
@@ -63,6 +69,10 @@ alias ⟨eq_dirac_of_ae_eq, _⟩ := ae_eq_iff_eq_dirac
 theorem eq_of_dirac_apply_singleton_ne_zero {a b : α} (h : dirac a {b} ≠ 0) : b = a := by
   rw [dirac_apply' a (measurableSet_singleton b)] at h
   exact (Set.mem_singleton_iff.1 (Set.mem_of_indicator_ne_zero h)).symm
+
+/-- A set has full Dirac measure exactly when it contains the point. -/
+theorem ae_dirac_mem_iff {s : Set α} : (∀ᵐ x ∂dirac a, x ∈ s) ↔ a ∈ s := by
+  rw [ae_dirac_eq, Filter.eventually_pure]
 
 end Dirac
 

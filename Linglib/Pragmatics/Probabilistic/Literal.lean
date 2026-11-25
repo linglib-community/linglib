@@ -225,15 +225,7 @@ section Dirac
 
 variable [MeasurableSingletonClass W]
 
-private theorem ae_dirac_mem_iff {w : W} {t : Set W} : (∀ᵐ x ∂Measure.dirac w, x ∈ t) ↔ w ∈ t := by
-  rw [ae_dirac_eq, Filter.eventually_pure]
-
 variable [Fintype W] [Fintype U] {α : ℝ} {C : U → ℝ} {L : Kernel U W} {w : W} {u : U}
-
-private theorem dirac_absolutelyContinuous {μ : Measure W} (h : μ {w} ≠ 0) :
-    Measure.dirac w ≪ μ :=
-  Measure.absolutelyContinuous_of_forall_singleton fun _ hw' ↦ of_not_not fun hd ↦
-    h (Measure.eq_of_dirac_apply_singleton_ne_zero hd ▸ hw')
 
 variable [MeasurableSingletonClass U]
 
@@ -310,9 +302,9 @@ theorem speaker_literalListener_dirac_congr (hα : 0 < α)
     {w w' : W} (hw : μ {w} ≠ 0) (hw' : μ {w'} ≠ 0) (h : ∀ u, w ∈ sem u ↔ w' ∈ sem u) :
     speaker α C (literalListener μ sem) Measure.dirac w'
       = speaker α C (literalListener μ sem) Measure.dirac w :=
-  (speaker_literalListener_apply_eq_iff hα (dirac_absolutelyContinuous hw)
-    (dirac_absolutelyContinuous hw')).2 fun u ↦ by
-      rw [ae_dirac_mem_iff, ae_dirac_mem_iff, h u]
+  (speaker_literalListener_apply_eq_iff hα (Measure.dirac_absolutelyContinuous hw)
+    (Measure.dirac_absolutelyContinuous hw')).2 fun u ↦ by
+      rw [Measure.ae_dirac_mem_iff, Measure.ae_dirac_mem_iff, h u]
 
 theorem speaker_literalListener_dirac_le_of_subset (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) {w w' : W}
@@ -323,9 +315,10 @@ theorem speaker_literalListener_dirac_le_of_subset (hα : 0 < α)
   · rw [speaker_dirac_apply_singleton_eq_zero hα (not_not.mp fun h ↦
       ((literalListener_apply_singleton_ne_zero_iff μ sem u w').mp h).2 hw')]
     exact zero_le
-  · exact speaker_literalListener_apply_singleton_le hα (dirac_absolutelyContinuous hw)
-      (dirac_absolutelyContinuous hw')
-      (fun v hv ↦ ae_dirac_mem_iff.2 (hsub v (ae_dirac_mem_iff.1 hv))) (ae_dirac_mem_iff.2 hu)
+  · exact speaker_literalListener_apply_singleton_le hα (Measure.dirac_absolutelyContinuous hw)
+      (Measure.dirac_absolutelyContinuous hw')
+      (fun v hv ↦ Measure.ae_dirac_mem_iff.2 (hsub v (Measure.ae_dirac_mem_iff.1 hv)))
+      (Measure.ae_dirac_mem_iff.2 hu)
 
 /-- A state that makes strictly fewer utterances true is a strictly better state for each of
 them: the speaker who knows it has less to choose from. -/
@@ -336,11 +329,12 @@ theorem speaker_literalListener_dirac_lt_of_ssubset (hα : 0 < α)
     speaker α C (literalListener μ sem) Measure.dirac w' {u}
       < speaker α C (literalListener μ sem) Measure.dirac w {u} := by
   obtain ⟨u', hu', hnu'⟩ := Set.exists_of_ssubset hsub
-  exact speaker_literalListener_apply_singleton_lt hα (dirac_absolutelyContinuous hw)
-    (dirac_absolutelyContinuous hw')
-    (fun v hv ↦ ae_dirac_mem_iff.2 (hsub.1 (show w ∈ sem v from ae_dirac_mem_iff.1 hv)))
-    (ae_dirac_mem_iff.2 hu) (ae_dirac_mem_iff.2 hu')
-    fun h ↦ hnu' (show w ∈ sem u' from ae_dirac_mem_iff.1 h)
+  exact speaker_literalListener_apply_singleton_lt hα (Measure.dirac_absolutelyContinuous hw)
+    (Measure.dirac_absolutelyContinuous hw')
+    (fun v hv ↦ Measure.ae_dirac_mem_iff.2
+      (hsub.1 (show w ∈ sem v from Measure.ae_dirac_mem_iff.1 hv)))
+    (Measure.ae_dirac_mem_iff.2 hu) (Measure.ae_dirac_mem_iff.2 hu')
+    fun h ↦ hnu' (show w ∈ sem u' from Measure.ae_dirac_mem_iff.1 h)
 
 theorem speaker_literalListener_dirac_zero_real_singleton_of_pair (hα : 0 < α)
     (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
