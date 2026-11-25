@@ -15,9 +15,9 @@ two places: with narrow scope, requiring that not-p be Common Ground (`EntailsNo
 scope, requiring only that the Common Ground be compatible with not-p (`CompatibleNot`). The
 stronger requirement is unattested; the weaker is the postsupposition Glass gives Mandarin yǐwéi
 in earlier work (`yiweiDefined`). Table 1, the states of the Common Ground each profile admits,
-is derived from the requirements (`Profile.condition_iff`). The profiles of *know* and *think*
-come from the factivity of their language file entries, and the presupposition of a factive sentence
-is the requirement of the factive profile (`subset_compl_gapExt_factive_iff`, `rows_admits`).
+is derived from the requirements (`Profile.condition_iff`). The profile of *know* comes from
+the factivity class of its language file entry, and the presupposition of a factive sentence is
+the requirement of the factive profile (`subset_compl_gapExt_factive_iff`, `rows_admits`).
 
 ## Implementation notes
 
@@ -26,8 +26,9 @@ is the requirement of the factive profile (`subset_compl_gapExt_factive_iff`, `r
   report's at-issue content, as their argument.
 * The attestation facts, no strong contrafactive and yǐwéi a weak one, are the empirical premise
   of the reframed question (`Profile.Attested`), which Roberts and Özyıldız derive causally.
-* Verbs' profiles come from their language file entries' factivity except yǐwéi's, the paper's own
-  analysis, since the language file records only that it is non-factive.
+* The profile of *know* comes from its language file entry's factivity class. Those of *think*,
+  rènwéi and yǐwéi are the paper's: an entry records a class for a factive only, so an entry
+  without one does not say that its verb is non-factive.
 
 ## References
 
@@ -161,11 +162,10 @@ instance : DecidablePred Profile.Attested
 
 /-! ### The verbs -/
 
-/-- A factivity class determines a profile, requiring the complement of a factive and nothing of
-a non-factive; postsuppositions are invisible to it. -/
-def Profile.ofFactivity : Option Factivity → Profile
-  | some _ => .factive
-  | none => .nonfactive
+/-- A recorded factivity class gives the factive profile, which requires the complement. An
+entry with no recorded class gives none: the record does not say that a verb is non-factive, and
+postsuppositions are invisible to it. -/
+def Profile.ofFactivity : Option Factivity → Option Profile := Option.map fun _ ↦ .factive
 
 /-- A factive predicate's presupposition is admitted iff its complement is Common Ground (10),
 the requirement of the factive profile, whatever attitude it asserts. -/
@@ -173,16 +173,17 @@ theorem subset_compl_gapExt_factive_iff (att : (W → Prop) → W → Prop) :
     c ⊆ (Trivalent.gapExt (factive att p))ᶜ ↔ Profile.factive.condition c p := by
   simp [Set.subset_def, Profile.condition, EntailsP]
 
-/-- yǐwéi's profile on the paper's analysis, beyond the non-factivity its language file entry
-records. -/
+/-- yǐwéi's profile on the paper's analysis. -/
 def yiweiProfile : Profile := .weakContrafactive
 
-theorem know_profile : Profile.ofFactivity know.factivity = .factive := rfl
+theorem know_profile : Profile.ofFactivity know.factivity = some .factive := rfl
 
-theorem think_profile : Profile.ofFactivity think.factivity = .nonfactive := rfl
-
-theorem yiwei_profile_ofFactivity : Profile.ofFactivity Mandarin.yiwei.factivity = .nonfactive :=
-  rfl
+-- The entries of *think*, rènwéi and yǐwéi record no factivity class.
+theorem ofFactivity_eq_none :
+    Profile.ofFactivity think.factivity = none ∧
+      Profile.ofFactivity Mandarin.renwei.factivity = none ∧
+      Profile.ofFactivity Mandarin.yiwei.factivity = none :=
+  ⟨rfl, rfl, rfl⟩
 
 /-- A belief report of the paper records the verb's profile, the state of the Common Ground in
 the context described, and the reported judgment. -/
@@ -192,11 +193,12 @@ structure Row where
   judgment : Judgment
   deriving DecidableEq
 
-/-- The rows' verbs *know*, *think* and rènwéi take their profiles from their language file entries'
-factivity, and yǐwéi from the paper's analysis. -/
+/-- The rows' verb *know* takes its profile from the factivity class its language file entry
+records. *Think*, rènwéi and yǐwéi take theirs from the paper, since their entries record no
+class and so do not say that they are non-factive. -/
 def verbProfiles : List (String × Profile) :=
-  [("know", .ofFactivity know.factivity), ("think", .ofFactivity think.factivity),
-   ("renwei", .ofFactivity Mandarin.renwei.factivity), ("yiwei", yiweiProfile)]
+  [("know", (Profile.ofFactivity know.factivity).get rfl), ("think", .nonfactive),
+   ("renwei", .nonfactive), ("yiwei", yiweiProfile)]
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let profile ← ex.parse? "verb" verbProfiles
