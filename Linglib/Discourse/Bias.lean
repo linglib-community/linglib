@@ -30,11 +30,18 @@ is included in `p` or in its complement.
   An information state `σ` is the principal filter `𝓟 σ`, and the worlds an agent considers
   possible at `w` are the state `{v | w ~[R] v}`. The inconsistent body `⊥` supports everything;
   the definition gives it the bias `1`, and the lemmas about `-1` assume `F.NeBot`.
+* The bias is a sign and not a three-valued truth value, although on an information state it is
+  the supervaluation of `p` over the state (`Trivalent.supervaluation`). The tables of the
+  literature are written in signs, and an account on which evidence shifts the probability of a
+  proposition gives the sign of a number.
 * The bias is a fact about the context and a proposition. A polar question over `p` enters
   through `Inquisitive.Proposition.mem_polar`, whose right-hand side is that of
   `bias_principal_ne_zero_iff`: a state is biased exactly when it resolves the question.
 * An account on which evidence raises the probability of a proposition without entailing it maps
   its own contexts to signs, as `Studies/Zheng2025.lean` does.
+* The file is in `Discourse/` because the bias is of a body of information in the context. What a
+  question form requires of a context, the bias values and profiles of [sudo-2013], is in
+  `Semantics/Questions/Bias.lean`.
 
 ## References
 
