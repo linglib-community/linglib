@@ -129,7 +129,69 @@ def ex_5d : Datum :=
     spans := [⟨1, 1, "auxiliary", some "essere"⟩]
     paperFeatures := [("clause", "impersonal")] }
 
-def all : List Datum := [ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_5c, ex_5d]
+def ex_29a_pl : Datum :=
+  { id := "amato2025_29a_pl"
+    source := ⟨"ussery-2009", "(4)"⟩
+    reportedIn := some ⟨"amato-2025", "(29a)"⟩
+    language := "icel1247"
+    primaryText := "Það líka sumum stelpunum peningarnir."
+    glossedTokens := [("Það", "expl"), ("líka", "like.3pl"), ("sumum", "some"), ("stelpunum", "girls.Dat"), ("peningarnir.", "money-the.Nom.pl")]
+    glossedWords := [⟨['Þ', 'a', 'ð'], ['e', 'x', 'p', 'l'], [⟨['Þ', 'a', 'ð'], ['e', 'x', 'p', 'l'], none⟩]⟩, ⟨['l', 'í', 'k', 'a'], ['l', 'i', 'k', 'e', '.', '3', 'p', 'l'], [⟨['l', 'í', 'k', 'a'], ['l', 'i', 'k', 'e', '.', '3', 'p', 'l'], none⟩]⟩, ⟨['s', 'u', 'm', 'u', 'm'], ['s', 'o', 'm', 'e'], [⟨['s', 'u', 'm', 'u', 'm'], ['s', 'o', 'm', 'e'], none⟩]⟩, ⟨['s', 't', 'e', 'l', 'p', 'u', 'n', 'u', 'm'], ['g', 'i', 'r', 'l', 's', '.', 'D', 'a', 't'], [⟨['s', 't', 'e', 'l', 'p', 'u', 'n', 'u', 'm'], ['g', 'i', 'r', 'l', 's', '.', 'D', 'a', 't'], none⟩]⟩, ⟨['p', 'e', 'n', 'i', 'n', 'g', 'a', 'r', 'n', 'i', 'r', '.'], ['m', 'o', 'n', 'e', 'y', '-', 't', 'h', 'e', '.', 'N', 'o', 'm', '.', 'p', 'l'], []⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("construction", "monoclausal"), ("agreement", "number")] }
+
+def ex_29a_sg : Datum :=
+  { id := "amato2025_29a_sg"
+    source := ⟨"ussery-2009", "(4)"⟩
+    reportedIn := some ⟨"amato-2025", "(29a)"⟩
+    language := "icel1247"
+    primaryText := "Það líkar sumum stelpunum peningarnir."
+    glossedTokens := [("Það", "expl"), ("líkar", "like.3sg"), ("sumum", "some"), ("stelpunum", "girls.Dat"), ("peningarnir.", "money-the.Nom.pl")]
+    glossedWords := [⟨['Þ', 'a', 'ð'], ['e', 'x', 'p', 'l'], [⟨['Þ', 'a', 'ð'], ['e', 'x', 'p', 'l'], none⟩]⟩, ⟨['l', 'í', 'k', 'a', 'r'], ['l', 'i', 'k', 'e', '.', '3', 's', 'g'], [⟨['l', 'í', 'k', 'a', 'r'], ['l', 'i', 'k', 'e', '.', '3', 's', 'g'], none⟩]⟩, ⟨['s', 'u', 'm', 'u', 'm'], ['s', 'o', 'm', 'e'], [⟨['s', 'u', 'm', 'u', 'm'], ['s', 'o', 'm', 'e'], none⟩]⟩, ⟨['s', 't', 'e', 'l', 'p', 'u', 'n', 'u', 'm'], ['g', 'i', 'r', 'l', 's', '.', 'D', 'a', 't'], [⟨['s', 't', 'e', 'l', 'p', 'u', 'n', 'u', 'm'], ['g', 'i', 'r', 'l', 's', '.', 'D', 'a', 't'], none⟩]⟩, ⟨['p', 'e', 'n', 'i', 'n', 'g', 'a', 'r', 'n', 'i', 'r', '.'], ['m', 'o', 'n', 'e', 'y', '-', 't', 'h', 'e', '.', 'N', 'o', 'm', '.', 'p', 'l'], []⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("construction", "monoclausal"), ("agreement", "default")] }
+
+def ex_29b_sg : Datum :=
+  { id := "amato2025_29b_sg"
+    source := ⟨"holmberg-hroarsdottir-2003", "(12a)"⟩
+    reportedIn := some ⟨"amato-2025", "(29b)"⟩
+    method := some .elicitation
+    language := "icel1247"
+    primaryText := "Það virðist einhverjum manni hestarnir vera seinir"
+    glossedTokens := [("Það", "EXPL"), ("virðist", "seemSG"), ("einhverjum", "some"), ("manni", "manDAT"), ("hestarnir", "the_horsesNOM"), ("vera", "be"), ("seinir", "slowNOM")]
+    glossedWords := [⟨['Þ', 'a', 'ð'], ['E', 'X', 'P', 'L'], [⟨['Þ', 'a', 'ð'], ['E', 'X', 'P', 'L'], none⟩]⟩, ⟨['v', 'i', 'r', 'ð', 'i', 's', 't'], ['s', 'e', 'e', 'm', 'S', 'G'], [⟨['v', 'i', 'r', 'ð', 'i', 's', 't'], ['s', 'e', 'e', 'm', 'S', 'G'], none⟩]⟩, ⟨['e', 'i', 'n', 'h', 'v', 'e', 'r', 'j', 'u', 'm'], ['s', 'o', 'm', 'e'], [⟨['e', 'i', 'n', 'h', 'v', 'e', 'r', 'j', 'u', 'm'], ['s', 'o', 'm', 'e'], none⟩]⟩, ⟨['m', 'a', 'n', 'n', 'i'], ['m', 'a', 'n', 'D', 'A', 'T'], [⟨['m', 'a', 'n', 'n', 'i'], ['m', 'a', 'n', 'D', 'A', 'T'], none⟩]⟩, ⟨['h', 'e', 's', 't', 'a', 'r', 'n', 'i', 'r'], ['t', 'h', 'e', '_', 'h', 'o', 'r', 's', 'e', 's', 'N', 'O', 'M'], [⟨['h', 'e', 's', 't', 'a', 'r', 'n', 'i', 'r'], ['t', 'h', 'e', '_', 'h', 'o', 'r', 's', 'e', 's', 'N', 'O', 'M'], none⟩]⟩, ⟨['v', 'e', 'r', 'a'], ['b', 'e'], [⟨['v', 'e', 'r', 'a'], ['b', 'e'], none⟩]⟩, ⟨['s', 'e', 'i', 'n', 'i', 'r'], ['s', 'l', 'o', 'w', 'N', 'O', 'M'], [⟨['s', 'e', 'i', 'n', 'i', 'r'], ['s', 'l', 'o', 'w', 'N', 'O', 'M'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("construction", "biclausal"), ("agreement", "default")] }
+
+def ex_29b_pl : Datum :=
+  { id := "amato2025_29b_pl"
+    source := ⟨"holmberg-hroarsdottir-2003", "(12b)"⟩
+    reportedIn := some ⟨"amato-2025", "(29b)"⟩
+    method := some .elicitation
+    language := "icel1247"
+    primaryText := "Það virðast einhverjum manni hestarnir vera seinir"
+    glossedTokens := [("Það", "EXPL"), ("virðast", "seemPL"), ("einhverjum", "some"), ("manni", "manDAT"), ("hestarnir", "the_horsesNOM"), ("vera", "be"), ("seinir", "slowNOM")]
+    glossedWords := [⟨['Þ', 'a', 'ð'], ['E', 'X', 'P', 'L'], [⟨['Þ', 'a', 'ð'], ['E', 'X', 'P', 'L'], none⟩]⟩, ⟨['v', 'i', 'r', 'ð', 'a', 's', 't'], ['s', 'e', 'e', 'm', 'P', 'L'], [⟨['v', 'i', 'r', 'ð', 'a', 's', 't'], ['s', 'e', 'e', 'm', 'P', 'L'], none⟩]⟩, ⟨['e', 'i', 'n', 'h', 'v', 'e', 'r', 'j', 'u', 'm'], ['s', 'o', 'm', 'e'], [⟨['e', 'i', 'n', 'h', 'v', 'e', 'r', 'j', 'u', 'm'], ['s', 'o', 'm', 'e'], none⟩]⟩, ⟨['m', 'a', 'n', 'n', 'i'], ['m', 'a', 'n', 'D', 'A', 'T'], [⟨['m', 'a', 'n', 'n', 'i'], ['m', 'a', 'n', 'D', 'A', 'T'], none⟩]⟩, ⟨['h', 'e', 's', 't', 'a', 'r', 'n', 'i', 'r'], ['t', 'h', 'e', '_', 'h', 'o', 'r', 's', 'e', 's', 'N', 'O', 'M'], [⟨['h', 'e', 's', 't', 'a', 'r', 'n', 'i', 'r'], ['t', 'h', 'e', '_', 'h', 'o', 'r', 's', 'e', 's', 'N', 'O', 'M'], none⟩]⟩, ⟨['v', 'e', 'r', 'a'], ['b', 'e'], [⟨['v', 'e', 'r', 'a'], ['b', 'e'], none⟩]⟩, ⟨['s', 'e', 'i', 'n', 'i', 'r'], ['s', 'l', 'o', 'w', 'N', 'O', 'M'], [⟨['s', 'e', 'i', 'n', 'i', 'r'], ['s', 'l', 'o', 'w', 'N', 'O', 'M'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("construction", "biclausal"), ("agreement", "number")] }
+
+def all : List Datum := [ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_5c, ex_5d, ex_29a_pl, ex_29a_sg, ex_29b_sg, ex_29b_pl]
 
 /-- The clause types whose perfect auxiliary the paper compares (§3.1). -/
 inductive Clause where
@@ -152,6 +214,30 @@ def clause (e : Datum) : Option Clause :=
   e.parse? "clause" [("transitive", .transitive), ("unergative", .unergative), ("unaccusative", .unaccusative),
     ("directReflexive", .directReflexive), ("indirectReflexive", .indirectReflexive),
     ("impersonal", .impersonal)]
+
+/-- The Icelandic DAT-NOM constructions the paper compares (§4.1.2). -/
+inductive Construction where
+  /-- monoclausal: the dative and the nominative are arguments of one clause -/
+  | monoclausal
+  /-- biclausal: the nominative is the subject of an embedded non-finite clause -/
+  | biclausal
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `construction`. -/
+def construction (e : Datum) : Option Construction :=
+  e.parse? "construction" [("monoclausal", .monoclausal), ("biclausal", .biclausal)]
+
+/-- The form of the finite verb. -/
+inductive Agreement where
+  /-- number: the verb agrees in number with the plural nominative -/
+  | number
+  /-- default: the verb is in the default third person singular -/
+  | default
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `agreement`. -/
+def agreement (e : Datum) : Option Agreement :=
+  e.parse? "agreement" [("number", .number), ("default", .default)]
 
 /-- The labels of the spans the rows mark. -/
 inductive SpanLabel where
@@ -184,11 +270,16 @@ inductive Example where
   | ex_5b
   | ex_5c
   | ex_5d
+  | ex_29a_pl
+  | ex_29a_sg
+  | ex_29b_sg
+  | ex_29b_pl
   deriving DecidableEq, Repr, Fintype
 
 /-- Every example of the file, in its order. -/
 def Example.all : List Example :=
-  [.ex_4a, .ex_4b, .ex_4c, .ex_5a, .ex_5b, .ex_5c, .ex_5d]
+  [.ex_4a, .ex_4b, .ex_4c, .ex_5a, .ex_5b, .ex_5c, .ex_5d, .ex_29a_pl, .ex_29a_sg, .ex_29b_sg,
+    .ex_29b_pl]
 
 /-- The row of an example. -/
 def Example.datum : Example → Datum
@@ -199,6 +290,10 @@ def Example.datum : Example → Datum
   | .ex_5b => _root_.Amato2025.Examples.ex_5b
   | .ex_5c => _root_.Amato2025.Examples.ex_5c
   | .ex_5d => _root_.Amato2025.Examples.ex_5d
+  | .ex_29a_pl => _root_.Amato2025.Examples.ex_29a_pl
+  | .ex_29a_sg => _root_.Amato2025.Examples.ex_29a_sg
+  | .ex_29b_sg => _root_.Amato2025.Examples.ex_29b_sg
+  | .ex_29b_pl => _root_.Amato2025.Examples.ex_29b_pl
 
 theorem Example.map_datum_all :
     Example.all.map Example.datum = _root_.Amato2025.Examples.all := rfl
@@ -212,9 +307,49 @@ def Example.clause : Example → Option Clause
   | .ex_5b => some .indirectReflexive
   | .ex_5c => some .indirectReflexive
   | .ex_5d => some .impersonal
+  | .ex_29a_pl => none
+  | .ex_29a_sg => none
+  | .ex_29b_sg => none
+  | .ex_29b_pl => none
 
 theorem Example.clause_datum :
     ∀ x : Example, _root_.Amato2025.Examples.clause x.datum = x.clause := by
+  decide +kernel
+
+/-- The value the example records under `construction`. -/
+def Example.construction : Example → Option Construction
+  | .ex_4a => none
+  | .ex_4b => none
+  | .ex_4c => none
+  | .ex_5a => none
+  | .ex_5b => none
+  | .ex_5c => none
+  | .ex_5d => none
+  | .ex_29a_pl => some .monoclausal
+  | .ex_29a_sg => some .monoclausal
+  | .ex_29b_sg => some .biclausal
+  | .ex_29b_pl => some .biclausal
+
+theorem Example.construction_datum :
+    ∀ x : Example, _root_.Amato2025.Examples.construction x.datum = x.construction := by
+  decide +kernel
+
+/-- The value the example records under `agreement`. -/
+def Example.agreement : Example → Option Agreement
+  | .ex_4a => none
+  | .ex_4b => none
+  | .ex_4c => none
+  | .ex_5a => none
+  | .ex_5b => none
+  | .ex_5c => none
+  | .ex_5d => none
+  | .ex_29a_pl => some .number
+  | .ex_29a_sg => some .default
+  | .ex_29b_sg => some .default
+  | .ex_29b_pl => some .number
+
+theorem Example.agreement_datum :
+    ∀ x : Example, _root_.Amato2025.Examples.agreement x.datum = x.agreement := by
   decide +kernel
 
 /-- The lexemes the spans of the example name, each with the span's label, in order. -/
@@ -226,6 +361,10 @@ def Example.labelledLexemes : Example → List (SpanLabel × Lexeme)
   | .ex_5b => [(.auxiliary, .essere)]
   | .ex_5c => [(.auxiliary, .essere)]
   | .ex_5d => [(.auxiliary, .essere)]
+  | .ex_29a_pl => []
+  | .ex_29a_sg => []
+  | .ex_29b_sg => []
+  | .ex_29b_pl => []
 
 /-- The lexemes the spans of the example labelled `l` name, in order. -/
 def Example.lexemes (x : Example) (l : SpanLabel) : List Lexeme :=

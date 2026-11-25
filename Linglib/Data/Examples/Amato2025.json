@@ -37,6 +37,42 @@
           "doc": "the impersonal pronoun si"
         }
       ]
+    },
+    {
+      "key": "construction",
+      "lean": "construction",
+      "type": "Construction",
+      "doc": "The Icelandic DAT-NOM constructions the paper compares (§4.1.2).",
+      "levels": [
+        {
+          "name": "monoclausal",
+          "label": "monoclausal",
+          "doc": "the dative and the nominative are arguments of one clause"
+        },
+        {
+          "name": "biclausal",
+          "label": "biclausal",
+          "doc": "the nominative is the subject of an embedded non-finite clause"
+        }
+      ]
+    },
+    {
+      "key": "agreement",
+      "lean": "agreement",
+      "type": "Agreement",
+      "doc": "The form of the finite verb.",
+      "levels": [
+        {
+          "name": "number",
+          "label": "number",
+          "doc": "the verb agrees in number with the plural nominative"
+        },
+        {
+          "name": "default",
+          "label": "default",
+          "doc": "the verb is in the default third person singular"
+        }
+      ]
     }
   ],
   "spans": {
@@ -236,6 +272,104 @@
       ],
       "paperFeatures": [
         ["clause", "impersonal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_29a_pl",
+      "source": {"bibkey": "ussery-2009", "paperLabel": "(4)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(29a)"},
+      "language": "icel1247",
+      "primaryText": "Það líka sumum stelpunum peningarnir.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "expl"], ["líka", "like.3pl"], ["sumum", "some"], ["stelpunum", "girls.Dat"],
+        ["peningarnir.", "money-the.Nom.pl"]
+      ],
+      "translation": "There like some girls the money.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["construction", "monoclausal"],
+        ["agreement", "number"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_29a_sg",
+      "source": {"bibkey": "ussery-2009", "paperLabel": "(4)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(29a)"},
+      "language": "icel1247",
+      "primaryText": "Það líkar sumum stelpunum peningarnir.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "expl"], ["líkar", "like.3sg"], ["sumum", "some"], ["stelpunum", "girls.Dat"],
+        ["peningarnir.", "money-the.Nom.pl"]
+      ],
+      "translation": "There like some girls the money.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["construction", "monoclausal"],
+        ["agreement", "default"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_29b_sg",
+      "source": {"bibkey": "holmberg-hroarsdottir-2003", "paperLabel": "(12a)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(29b)"},
+      "method": "elicitation",
+      "language": "icel1247",
+      "primaryText": "Það virðist einhverjum manni hestarnir vera seinir",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "EXPL"], ["virðist", "seemSG"], ["einhverjum", "some"], ["manni", "manDAT"],
+        ["hestarnir", "the_horsesNOM"], ["vera", "be"], ["seinir", "slowNOM"]
+      ],
+      "translation": "A man finds the horses slow",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["construction", "biclausal"],
+        ["agreement", "default"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_29b_pl",
+      "source": {"bibkey": "holmberg-hroarsdottir-2003", "paperLabel": "(12b)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(29b)"},
+      "method": "elicitation",
+      "language": "icel1247",
+      "primaryText": "Það virðast einhverjum manni hestarnir vera seinir",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "EXPL"], ["virðast", "seemPL"], ["einhverjum", "some"], ["manni", "manDAT"],
+        ["hestarnir", "the_horsesNOM"], ["vera", "be"], ["seinir", "slowNOM"]
+      ],
+      "translation": "A man finds the horses slow",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["construction", "biclausal"],
+        ["agreement", "number"]
       ],
       "comment": "",
       "verified": "page-image"

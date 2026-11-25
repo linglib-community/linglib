@@ -5,6 +5,7 @@ public import Linglib.Data.Examples.Amato2025
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Syntax.Minimalist.Feature.Valuation
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+public import Studies.Bobaljik2008
 
 /-!
 # Amato (2025): Nested Agree
@@ -38,11 +39,16 @@ reflexive object, direct or indirect, the impersonal *si* and the passive. The e
 paper have the auxiliary their derivations insert. With the two probes of Perf in the other order
 the auxiliary follows the person of the subject, as in Ariellese. In ditransitive clauses, for
 either order of the case probe and the ϕ-probe of v and whether or not Appl assigns dative, an
-indirective agreement alignment comes with an indirective case alignment, [barany-2024]'s gap.
-The remaining derivations are agreement across a dative in Icelandic, optional in one clause and
-excluded across two, person agreement with the object in the Lak perfective and with the subject
-in the present, subject agreement in Spanish VOS clauses, the order of Bulgarian multiple
-wh-fronting, and Hindi-Urdu agreement with the highest argument unmarked for case.
+indirective agreement alignment comes with an indirective case alignment and a secundative case
+alignment with a secundative agreement alignment, [barany-2024]'s gap. Across an Icelandic
+dative, number agreement with the nominative is derived under one of the two orders of T's probes
+within a clause and under neither across two, whatever the number of the dative, and the forms
+of the verb in the examples of [ussery-2009] and [holmberg-hroarsdottir-2003] are acceptable
+exactly when some order derives them. The remaining derivations are person agreement with the
+object in the Lak perfective and with the subject in the present, subject agreement in Spanish
+VOS clauses, the order of Bulgarian multiple wh-fronting, and Hindi-Urdu agreement, where in a
+clause with an argument unmarked for case T has the person of the controller that
+[bobaljik-2008]'s accessibility of unmarked case picks.
 
 ## Implementation notes
 
@@ -54,15 +60,31 @@ matches a goal that bears the feature unvalued, and an unvalued probe matches an
 it, so a goal that matches without a value ends the search without valuing the probe, the paper's
 defective intervention.
 
+Where v assigns accusative to the recipient the theme is left without case, so the ditransitive
+derivations give indirective and secundative case alignments and no neutral one, with both
+objects accusative, which [barany-2024]'s generalization also covers.
+
 Merge and binding inside v's cycle are not modelled: the reflexive enters v's cycle unvalued, as
 it is when v probes it. The paper's person feature π and its ϕ are both the person dimension, and
 the Icelandic number agreement is the number dimension. Participle agreement and the comparison
 with principles of maximized matching are not formalized.
 
+## TODO
+
+* [holmberg-hroarsdottir-2003] report that in the construction of (29b) the agreeing form is
+  possible beside the default one when the dative is plural. The derivation gives the default
+  form for either number of the dative.
+* The Ariellese paradigm of [dalessandro-roberts-2010] and the Lak, Spanish, Bulgarian and
+  Hindi-Urdu examples are not yet rows of the data.
+
 ## References
 
 * [amato-2025]
 * [barany-2024]
+* [bobaljik-2008]
+* [dalessandro-roberts-2010]
+* [holmberg-hroarsdottir-2003]
+* [ussery-2009]
 -/
 
 @[expose] public section
@@ -527,6 +549,12 @@ theorem isIndirective_caseMarking_of_agreement {ts : List FeatureType}
     IsIndirective (agreement ts d) → IsIndirective (caseMarking ts d) := by
   rcases eq_or_eq_of_perm_pair hts with rfl | rfl <;> (revert d; decide)
 
+-- (26), (28): a secundative case alignment comes with a secundative agreement alignment
+theorem isSecundative_agreement_of_caseMarking {ts : List FeatureType}
+    (hts : ts.Perm [.case, .person]) (d : Bool) :
+    IsSecundative (caseMarking ts d) → IsSecundative (agreement ts d) := by
+  rcases eq_or_eq_of_perm_pair hts with rfl | rfl <;> (revert d; decide)
+
 /-! ### Icelandic DAT-NOM constructions (§4.1.2) -/
 
 /-- (29a) versus (29b). -/
@@ -534,16 +562,16 @@ inductive Clausal
   | monoclausal | biclausal
   deriving DecidableEq, Repr, Fintype
 
-/-- T `[∗case:nom∗], [∗ϕ:_∗]` over `DP_dat … DP_nom`, the dative plural in (29a) and singular in
-(29b), where the lower T has already assigned nominative. -/
-def icelandicInitial : Clausal → Head → FeatureBundle
-  | _, .t => ofList [⟨.case, .valued .nom⟩, ⟨.number, .unvalued⟩]
-  | .monoclausal, .dpDat => ofList [⟨.number, .valued .plural⟩, ⟨.case, .valued .dat⟩]
-  | .biclausal, .dpDat => ofList [⟨.number, .valued .singular⟩, ⟨.case, .valued .dat⟩]
-  | .monoclausal, .dpNom =>
-    ofList [⟨.number, .valued .plural⟩, ⟨.case, .unvalued⟩]
-  | .biclausal, .dpNom => ofList [⟨.number, .valued .plural⟩, ⟨.case, .valued .nom⟩]
-  | _, _ => ⊥
+/-- T `[∗case:nom∗], [∗ϕ:_∗]` over `DP_dat … DP_nom`, the dative of number `n` and the nominative
+plural; in (29b) the lower T has already assigned nominative. -/
+def icelandicInitial (k : Clausal) (n : FeatureType.number.Value) : Head → FeatureBundle
+  | .t => ofList [⟨.case, .valued .nom⟩, ⟨.number, .unvalued⟩]
+  | .dpDat => ofList [⟨.number, .valued n⟩, ⟨.case, .valued .dat⟩]
+  | .dpNom =>
+    match k with
+    | .monoclausal => ofList [⟨.number, .valued .plural⟩, ⟨.case, .unvalued⟩]
+    | .biclausal => ofList [⟨.number, .valued .plural⟩, ⟨.case, .valued .nom⟩]
+  | _ => ⊥
 
 /-- Datives are defective goals for ϕ-Agree, matched but never valuing. -/
 def IcelandicActive (h : Head) (t : FeatureType) : Prop := ¬ (h = .dpDat ∧ t = .number)
@@ -551,23 +579,46 @@ def IcelandicActive (h : Head) (t : FeatureType) : Prop := ¬ (h = .dpDat ∧ t 
 instance (h : Head) (t : FeatureType) : Decidable (IcelandicActive h t) :=
   inferInstanceAs (Decidable (¬ _))
 
-/-- T's number slot after its probes, in the order `ts`, have searched the dative and the
-nominative. -/
-def icelandic (k : Clausal) (ts : List FeatureType) : FeatureSlot FeatureType.number.Slot :=
-  (run IcelandicActive .t [.dpDat, .dpNom] ts (icelandicInitial k)).2 .t .number
+/-- T's number slot after its probes, in the order `ts`, have searched a dative of number `n`
+and the nominative. -/
+def icelandic (k : Clausal) (n : FeatureType.number.Value) (ts : List FeatureType) :
+    FeatureSlot FeatureType.number.Slot :=
+  (run IcelandicActive .t [.dpDat, .dpNom] ts (icelandicInitial k n)).2 .t .number
 
 -- (29a)
-theorem icelandic_monoclausal_caseFirst :
-    icelandic .monoclausal [.case, .number] = .valued .plural := by decide
+theorem icelandic_monoclausal_caseFirst (n : FeatureType.number.Value) :
+    icelandic .monoclausal n [.case, .number] = .valued .plural := by
+  revert n; decide
 
 -- (29a)
-theorem icelandic_monoclausal_phiFirst : icelandic .monoclausal [.number, .case] = .unvalued := by
-  decide
+theorem icelandic_monoclausal_phiFirst (n : FeatureType.number.Value) :
+    icelandic .monoclausal n [.number, .case] = .unvalued := by
+  revert n; decide
 
 -- (29b)
-theorem icelandic_biclausal {ts : List FeatureType} (hts : ts.Perm [.case, .number]) :
-    icelandic .biclausal ts = .unvalued := by
-  rcases eq_or_eq_of_perm_pair hts with rfl | rfl <;> decide
+theorem icelandic_biclausal (n : FeatureType.number.Value) {ts : List FeatureType}
+    (hts : ts.Perm [.case, .number]) : icelandic .biclausal n ts = .unvalued := by
+  rcases eq_or_eq_of_perm_pair hts with rfl | rfl <;> (revert n; decide)
+
+/-- The construction of the derivations for each construction of the examples. -/
+def Examples.Construction.clausal : Examples.Construction → Clausal
+  | .monoclausal => .monoclausal
+  | .biclausal => .biclausal
+
+/-- T's number slot under each form of the verb: plural for the agreeing form, and no value for
+the default one. -/
+def Examples.Agreement.slot : Examples.Agreement → FeatureSlot FeatureType.number.Slot
+  | .number => .valued .plural
+  | .default => .unvalued
+
+-- (29): a form of the verb is acceptable exactly when one of the two orders of T's probes
+-- derives it
+theorem icelandic_example (x : Examples.Example) (n : FeatureType.number.Value) :
+    ∀ k ∈ x.construction, ∀ f ∈ x.agreement,
+      (icelandic k.clausal n [.case, .number] = f.slot ∨
+          icelandic k.clausal n [.number, .case] = f.slot) ↔
+        x.datum.judgment = .acceptable := by
+  revert x n; decide
 
 /-! ### Person agreement in Lak (§4.2.1) -/
 
@@ -687,5 +738,14 @@ theorem hindi_default_agreement (ps po : Person) : hindi .bothMarked ps po = .un
 theorem hindi_subject_agreement (ps po : Person) :
     hindi .unmarkedSubject ps po = ↑(FeatureType.Slot.ofValue .person ps) := by
   revert ps po; decide
+
+-- §4.3.1: in (37) and (38b) T has the person of the highest argument with unmarked case
+theorem hindi_eq_controller (asp : Aspect.Perfectivity) (ps po : Person) :
+    hindi (match asp with | .perfective => .ergSubject | .imperfective => .unmarkedSubject)
+        ps po =
+      (Bobaljik2008.clauseController (HindiUrdu.alignment asp) .unmarked (fun _ ↦ none)
+        [.A, .P]).elim .unvalued fun r ↦
+          ↑(FeatureType.Slot.ofValue .person (if r = .A then ps else po)) := by
+  cases asp <;> (revert ps po; decide)
 
 end Amato2025
