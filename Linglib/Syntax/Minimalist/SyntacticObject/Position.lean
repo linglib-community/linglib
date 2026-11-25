@@ -423,32 +423,6 @@ theorem pronounced_eq_of_injective (h : Function.Injective t.termAt) :
 
 end Copies
 
-/-! ### Heads -/
-
-variable {L ι : Type} {t : PlanarSyntacticObject (SyntacticObject.Leaf L ι)}
-  {a q : t.toRoseTree.Positions}
-
-variable (t) in
-/-- The term at a position is a lexical item, a head. -/
-def IsHeadAt (q : t.toRoseTree.Positions) : Prop := (t.termAt q).token?.isSome
-
-instance : DecidablePred t.IsHeadAt := fun _ ↦ inferInstanceAs (Decidable (_ = _))
-
-theorem isHeadAt_iff : t.IsHeadAt q ↔ ∃ tok : L, t.termAt q = SyntacticObject.leaf tok := by
-  unfold IsHeadAt
-  rw [Option.isSome_iff_exists]
-  exact exists_congr fun _ ↦ token?_eq_some_iff
-
-theorem IsHeadAt.isMax (h : t.IsHeadAt q) : IsMax q := by
-  obtain ⟨tok, htok⟩ := isHeadAt_iff.1 h
-  refine fun r hqr ↦ hqr.lt_or_eq.elim (fun hlt ↦ ?_) (·.ge)
-  obtain ⟨e, he, -⟩ := exists_covBy_le_of_lt hlt
-  exact (immediatelyContains_leaf tok _ (htok ▸ immediatelyContains_termAt.2 ⟨e, he, rfl⟩)).elim
-
-theorem IsHeadAt.exists_covBy_le (h : t.IsHeadAt q) (ha : ¬ IsMax a) (haq : a ≤ q) :
-    ∃ e, a ⋖ e ∧ e ≤ q :=
-  exists_covBy_le_of_lt (lt_of_le_of_ne haq fun he ↦ ha (he ▸ h.isMax))
-
 end PlanarSyntacticObject
 
 /-! ### Closeness at positions -/
@@ -484,32 +458,5 @@ theorem above_branching_lt_of_cCommands (hqg : t.toRoseTree.CCommands q g)
   (above_branching_lt_iff hqg.2).2 ⟨hqg, hgq⟩
 
 end PlanarSyntacticObject
-
-/-! ### Complements -/
-
-section Complement
-
-variable (t : PlanarSyntacticObject α)
-
-variable {t} in
--- A position other than the root is one of the two daughters of its parent.
-private theorem exists_eq_parent_mul_of {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
-    (h0 : h ≠ ⊥) : ∃ s i, t.toRoseTree[h.parent]? = some s ∧ s.arity = 2 ∧ i < 2 ∧
-      h = h.parent * .of i := by
-  set hp : t.toRoseTree.Positions := ⟨h, hh⟩
-  have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
-  have hm : Order.pred hp ⋖ hp :=
-    Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
-  have hlen := PlanarSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
-  obtain ⟨i, hi⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 hm)
-  have hlt : i < 2 := by
-    have hv := hp.2
-    rw [hi] at hv
-    obtain ⟨s, hs, his⟩ := mem_validPaths_append_singleton_iff.1 hv
-    rw [(Order.pred hp).getElem?_eq, Option.some.injEq] at hs
-    exact hlen ▸ hs ▸ his
-  exact ⟨_, i, (Order.pred hp).getElem?_eq, hlen, hlt, hi⟩
-
-end Complement
 
 end Minimalist

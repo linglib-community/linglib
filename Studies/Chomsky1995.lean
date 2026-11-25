@@ -23,7 +23,12 @@ unless traces are exempt, and then one of any two sister terminals is a trace. A
 precedes its head and the head the inside of a branching complement, and a branching specifier is
 ordered consistently only because the X′ does not c-command. The LCA is stated for any tree order
 and instantiated on the positions of a planar syntactic object, where the book's (11), *the man
-saw it*, violates it and comes out as *the saw* once *man* and *it* have raised.
+saw it*, violates it.
+
+Under the copy theory of movement a raised term occurs twice in the object, its two occurrences
+told apart by their sisters, and the trace the LCA exempts is the lower one. The verb and object of
+(11) form the book's (14), a head and its complement, which violates the LCA, and (15), the
+complement merged again with that phrase, which satisfies it.
 
 ## Main definitions
 
@@ -36,6 +41,11 @@ saw it*, violates it and comes out as *the saw* once *man* and *it* have raised.
 
 * Positions individuate occurrences, so the LCA is read on the positions of a planar object,
   whose order it ignores by `linearizes_bareCCommand_image_iff`.
+* The trace of a raised term is its lower copy, `PlanarSyntacticObject.IsLowerCopy`, and the
+  terminals the LCA orders are `PlanarSyntacticObject.pronounced`, the leaves outside every lower
+  copy.
+* Raising is the Merge of (15). A clitic attaching to a higher head and a noun incorporating, the
+  raisings the book gives for a single-terminal complement, adjoin to a head.
 * Dominance in Kayne's image is reflexive, so that a terminal specifier, the `j` of (154),
   precedes the head.
 * Example and note numbers are those of the book's chapter 4.
@@ -278,12 +288,6 @@ instance (x : t.toRoseTree.Positions) : Decidable (IsVisible (HeadDaughterAt t) 
 instance : DecidablePred (· ∈ bareCCommand (HeadDaughterAt t)) := fun _ ↦
   decidable_of_iff' _ mem_bareCCommand
 
-/-- The pronounced terminals of `t`, the positions of its heads; traces are exempt from the
-LCA. -/
-def pronounced : Set t.toRoseTree.Positions := {p | t.IsHeadAt p}
-
-instance : DecidablePred (· ∈ pronounced t) := fun p ↦ inferInstanceAs (Decidable (t.IsHeadAt p))
-
 theorem not_linearizes (ht : ¬ IsMax (⊥ : t.toRoseTree.Positions)) :
     ¬ Linearizes (bareCCommand (HeadDaughterAt t)) {p | IsMax p} :=
   not_linearizes_of_not_isMax (fun _ _ ↦ headDaughterAt_covBy t)
@@ -318,9 +322,11 @@ def it : LexicalItem.Token := ⟨.of .D [] English.Pronouns.it.form, 0⟩
 /-- *The man saw it*, (11). -/
 def theManSawIt : PlanarSyntacticObject Minimalist.TokenLeaf := {{↑the, ↑man}, {↑saw, ↑it}}
 
-/-- (11) with *man* and *it* raised, leaving their traces. -/
-def theManSawItRaised : PlanarSyntacticObject Minimalist.TokenLeaf :=
-  {{↑the, .traceOf man}, {↑saw, .traceOf it}}
+/-- (14), a head and its complement, with the verb and object of (11): *saw it*. -/
+def sawIt : PlanarSyntacticObject Minimalist.TokenLeaf := {↑saw, ↑it}
+
+/-- (15), the complement of (14) raised: *it* merged again with *saw it*. -/
+def sawItRaised : PlanarSyntacticObject Minimalist.TokenLeaf := {↑it, sawIt}
 
 /-- The position at an address. -/
 def position (l : List ℕ) (h : (⟨l⟩ : GornAddress) ∈ t.toRoseTree.validPaths := by exact rfl) :
@@ -349,19 +355,40 @@ theorem levels_theManSawIt :
       ¬ IsVisible (HeadDaughterAt theManSawIt) (position theManSawIt [1]) := by
   decide
 
-/-- (11) violates the LCA even with traces exempt, since *the* and *man* are unordered, and so
-are *saw* and *it*. -/
+/-- (11) violates the LCA, since *the* and *man* are unordered, and so are *saw* and *it*. -/
 theorem not_linearizes_theManSawIt :
-    ¬ Linearizes (bareCCommand (HeadDaughterAt theManSawIt)) (pronounced theManSawIt) := by
+    ¬ Linearizes (bareCCommand (HeadDaughterAt theManSawIt)) theManSawIt.pronounced := by
   decide
 
-/-- With *man* and *it* raised the LCA holds, and the string is *the saw*. -/
-theorem linearizes_theManSawItRaised :
-    Linearizes (bareCCommand (HeadDaughterAt theManSawItRaised)) (pronounced theManSawItRaised) ∧
-      (∀ p, p ∈ pronounced theManSawItRaised ↔
-        p = position theManSawItRaised [0, 0] ∨ p = position theManSawItRaised [1, 0]) ∧
-      Precedes (bareCCommand (HeadDaughterAt theManSawItRaised))
-        (position theManSawItRaised [0, 0]) (position theManSawItRaised [1, 0]) := by
+/-! ### The copy theory of movement, (14) and (15) -/
+
+/-- (14) violates the LCA: its two terminals are sisters. -/
+theorem not_linearizes_sawIt :
+    ¬ Linearizes (bareCCommand (HeadDaughterAt sawIt)) sawIt.pronounced := by
+  decide
+
+/-- In (15) the raised term occurs twice, and the two occurrences have different sisters. -/
+theorem chain_sawItRaised :
+    sawItRaised.chain (position sawItRaised [0]) (position sawItRaised [1, 1]) ∧
+      sawItRaised.termAt (position sawItRaised [1]) ≠
+        sawItRaised.termAt (position sawItRaised [1, 0]) := by
+  decide
+
+-- (15): the phrase projects, and the occurrence in the complement position is the lower copy
+theorem isLowerCopy_sawItRaised :
+    HeadDaughter.raising sawItRaised ⊥ = some 1 ∧
+      sawItRaised.IsLowerCopy (position sawItRaised [1, 1]) ∧
+      ¬ sawItRaised.IsLowerCopy (position sawItRaised [0]) := by
+  decide
+
+/-- With its complement raised the phrase satisfies the LCA: the lower copy is silent, and the
+raised term precedes the head. -/
+theorem linearizes_sawItRaised :
+    Linearizes (bareCCommand (HeadDaughterAt sawItRaised)) sawItRaised.pronounced ∧
+      (∀ p, p ∈ sawItRaised.pronounced ↔
+        p = position sawItRaised [0] ∨ p = position sawItRaised [1, 0]) ∧
+      Precedes (bareCCommand (HeadDaughterAt sawItRaised))
+        (position sawItRaised [0]) (position sawItRaised [1, 0]) := by
   decide
 
 end Chomsky1995
