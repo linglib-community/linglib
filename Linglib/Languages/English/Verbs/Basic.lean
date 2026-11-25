@@ -119,14 +119,12 @@ def sleep : Verb where
   levin := some Levin1993.Index.sleep
   past := "slept"
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "sneeze" — intransitive -/
 def sneeze : Verb where
   morphs := [.root "sneeze"]
   levin := some Levin1993.Index.sneeze
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- *run*, an agentive verb of manner of motion, whose causative takes a directional phrase, *We
 ran the mouse through the maze* but not *We ran the mouse* ([levin-hovav-1995] p. 111). -/
@@ -140,7 +138,8 @@ def run : Verb where
      (ArgumentFrame.np_spatialPP, [1, 0, 2]),
      (ArgumentFrame.spatialPP, [0, 2])]
     [some activitySubjectProfile, none, none]
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.np_spatialPP]
   direction := some .place
 
 /-- "dance" — intransitive activity -/
@@ -148,7 +147,6 @@ def dance : Verb where
   morphs := [.root "dance"]
   levin := some Levin1993.Index.dance
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "arrive" — unaccusative intransitive -/
 def arrive : Verb where
@@ -156,7 +154,6 @@ def arrive : Verb where
   levin := some Levin1993.Index.arrive
   valency := .ofFrame ArgumentFrame.intransitive [some achievementSubjectProfile]
   voiceType := some .nonThematic
-  passivizable := false
   direction := some .goal
 
 /-- *come*, an unaccusative verb of inherently directed motion like *arrive* (51.1). -/
@@ -167,7 +164,6 @@ def come : Verb where
   pastPart := "come"
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
-  passivizable := false
   direction := some .goal
 
 /-- "go" — Levin 51.1 inherently directed motion, suppletive in the past. -/
@@ -177,7 +173,6 @@ def go : Verb where
   past := "went"
   pastPart := "gone"
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
   levinExcluded := {LevinClass.meander}
 
 /-- In *run into the room* the spatial function *into* marks, the goal in the interior, makes a
@@ -259,6 +254,8 @@ def weigh : Verb where
   morphs := [.root "weigh"]
   levin := some Levin1993.Index.weigh
   valency := .ofFrame ArgumentFrame.np
+  -- as a measure verb it has no passive ([huddleston-pullum-2002] ch. 16 §10.1.2)
+  noPassive := [.np]
 
 /-- "cover" — motion/extent predicate selecting for distance. -/
 def cover : Verb where
@@ -432,7 +429,6 @@ def sweep : Verb where
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
     [some wipeManner.subjectProfile, none, none]
-  passivizable := true
 
 /-- "sweep" instrument sense — obligatorily agentive, broom lexicalized. -/
 def sweep_instr : Verb where
@@ -446,7 +442,6 @@ def sweep_instr : Verb where
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
     [some wipeInstrument.subjectProfile, none, none]
-  passivizable := true
   senseTag := .instrumental
 
 /-! ### Words -/

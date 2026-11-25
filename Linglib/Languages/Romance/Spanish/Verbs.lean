@@ -341,7 +341,8 @@ def querer : Verb where
   morphs := [.root "querer"]
   valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.subjunctiveClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -352,7 +353,8 @@ def esperar : Verb where
   morphs := [.root "esperar"]
   valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.subjunctiveClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 

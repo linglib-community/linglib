@@ -33,7 +33,6 @@ def manage : Verb where
   morphs := [.root "manage"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
 /-- "fail" — a negative implicative; "failed to VP" entails "not VP". -/
@@ -41,7 +40,6 @@ def fail : Verb where
   morphs := [.root "fail"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   implicative := ⟨.some .negative, .some .positive⟩
 
 /-- "try" — subject control, no entailment -/
@@ -49,7 +47,6 @@ def try_ : Verb where
   morphs := [.root "try"]
   levin := some Levin1993.Index.«try»
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
 
 /-- "persuade" — object control, "persuade X to VP" with X the agent of VP. A psychological
     attitude verb whose object comes to form an intention; it projects the AUTHOR coordinate,
@@ -83,7 +80,6 @@ def remember : Verb where
   morphs := [.root "remember"]
   levin := some Levin1993.Index.remember
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
 /-- *forget* with an infinitive is one of [karttunen-1971]'s negative implicatives, so *forgot
@@ -97,7 +93,6 @@ def forget : Verb where
   pastPart := "forgotten"
   doubling := true
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   implicative := ⟨.some .negative, .some .positive⟩
 
 /-- *neglect* is listed with *forget* and *fail* among [karttunen-1971]'s negative
@@ -106,7 +101,6 @@ def neglect : Verb where
   morphs := [.root "neglect"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   implicative := ⟨.some .negative, .some .positive⟩
 
 /-! ### Raising -/
@@ -125,7 +119,6 @@ def seem : Verb where
   levin := none
   valency := .ofLinks [(toInfinitive, [none, some 0]), (experiencerFrame, [none, some 1, some 0])]
     (controls := [some .external, some .external])
-  passivizable := false
   readings := [{ frame := experiencerFrame, attitude := some (.doxastic .doxastic) }]
 
 /-! ### Prerequisite implicatives -/
@@ -143,7 +136,6 @@ def dare : Verb where
   morphs := [.root "dare"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
 /-- "bother" — a positive implicative whose prerequisite presupposition is engagement. "He
@@ -153,7 +145,6 @@ def bother : Verb where
   morphs := [.root "bother"]
   levin := some Levin1993.Index.bother
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
 /-- "hesitate" — polarity-reversing one-way implicative.
@@ -166,7 +157,6 @@ def hesitate : Verb where
   morphs := [.root "hesitate"]
   levin := some Levin1993.Index.hesitate
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   implicative := ⟨⊥, .some .positive⟩
 
 /-- *venture* is a positive implicative among [karttunen-1971]'s implicative predicates, so
@@ -175,7 +165,6 @@ def venture : Verb where
   morphs := [.root "venture"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
 /-- *condescend* is a positive implicative among [karttunen-1971]'s implicative predicates, so
@@ -184,7 +173,6 @@ def condescend : Verb where
   morphs := [.root "condescend"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
 /-- *happen* is a raising verb and a positive implicative among [karttunen-1971]'s implicative
@@ -194,7 +182,6 @@ def happen : Verb where
   morphs := [.root "happen"]
   levin := some Levin1993.Index.happen
   valency := .ofLinks [(toInfinitive, [none, some 0])] (controls := [some .external])
-  passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
 end English.Verbs

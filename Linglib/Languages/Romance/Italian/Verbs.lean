@@ -51,10 +51,9 @@ among them, and with a finite complement clause as object it is nearly always po
 and not the governing verb, *Questa parete deve essere ridipinta* and not **è dovuta
 ridipingere*, and the modals *volere*, *potere*, *dovere* and *sapere* are restructuring verbs.
 `Verb.Passivizes` states the rule on a verb and a frame, and the one exception these entries
-record is *avere* on its transitive frame (`Verb.noPassive`). `passivizable` is one value for a
-verb: *avere* and *volere* are marked as not passivizing on that account, and *sperare*, which
-takes a finite clause, is not. The value of *intendere* is carried over from an earlier entry
-and is not in these sources.
+record is *avere* on its transitive frame (`Verb.noPassive`). The rule is silent on a frame whose
+complement is an infinitive, so it gives *volere* a passive on its finite clause and none on its
+infinitive, and *intendere*, which takes only an infinitive, none.
 
 ## References
 
@@ -136,7 +135,6 @@ def volere : Verb where
   morphs := [.root "volere"]
   valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
   clauseTypers := [che]
@@ -155,7 +153,6 @@ in either mood; the periphrasis *avere intenzione di* takes the infinitive with 
 def intendere : Verb where
   morphs := [.root "intendere"]
   valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -238,7 +235,6 @@ of activity. As a transitive verb it denotes a relation and has no passive ([ren
 def avere : Verb where
   morphs := [.root "avere"]
   valency := .ofFrame ArgumentFrame.np
-  passivizable := false
   perfectAuxiliaries := {.have}
   noPassive := [.np]
 

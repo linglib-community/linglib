@@ -65,7 +65,6 @@ def kork : Verb where
   morphs := [.root "kork"]
   rootSegments := [k, o, r, k]
   valency := .ofFrames [ArgumentFrame.gerund, nominalizedQuestion]
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative)
 
@@ -74,7 +73,6 @@ def um : Verb where
   morphs := [.root "um"]
   rootSegments := [u, m]
   valency := .ofFrame ArgumentFrame.gerund
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -83,7 +81,6 @@ def endişelen : Verb where
   morphs := [.root "endişelen"]
   rootSegments := [e, n, d, i, ş, e, l, e, n]
   valency := .ofFrames [ArgumentFrame.gerund, nominalizedQuestion]
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative)
 
@@ -94,7 +91,6 @@ def dolan : Verb where
   morphs := [.root "dolan"]
   rootSegments := [d, o, l, a, n]
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-! ### Causatives -/
 

@@ -18,6 +18,7 @@ question-embedding *wonder*, *ask*, *investigate* and *depend on* with the rogat
 * [degen-tonhauser-2022]
 * [fusco-sgrizzi-2026]
 * [grano-2024]
+* [huddleston-pullum-2002]
 * [klecha-2016]
 * [hawthorne-rothschild-spectre-2016]
 * [koev-2026]
@@ -39,7 +40,8 @@ def know : Verb where
   past := "knew"
   pastPart := "known"
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.finiteClause]
   complementSig := some .mono
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
@@ -50,7 +52,8 @@ def regret : Verb where
   levin := some Levin1993.Index.regret
   doubling := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.finiteClause]
   attitude := some (.preferential .negative)
   factivity := some .full
 
@@ -67,7 +70,6 @@ def realize : Verb where
   morphs := [.root "realize"]
   levin := none
   valency := .ofFrame ArgumentFrame.finiteClause
-  passivizable := false
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
@@ -76,7 +78,6 @@ def discover : Verb where
   morphs := [.root "discover"]
   levin := some Levin1993.Index.discover
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  passivizable := false
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
@@ -85,7 +86,6 @@ def notice : Verb where
   morphs := [.root "notice"]
   levin := some Levin1993.Index.notice
   valency := .ofFrame ArgumentFrame.finiteClause
-  passivizable := false
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
@@ -115,7 +115,6 @@ def think : Verb where
   levin := some Levin1993.Index.think
   past := "thought"
   valency := .ofFrame ArgumentFrame.finiteClause
-  passivizable := false
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
   complementSig := some .mono
@@ -140,7 +139,6 @@ def want : Verb where
   morphs := [.root "want"]
   levin := some Levin1993.Index.want
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -153,7 +151,6 @@ def intend : Verb where
   morphs := [.root "intend"]
   levin := some Levin1993.Index.intend
   valency := .ofFrame toInfinitive (controller := some 0)
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -177,7 +174,6 @@ def hope : Verb where
   levin := some Levin1993.Index.hope
   valency := .ofFrames [ArgumentFrame.finiteClause, toInfinitive]
     (controllers := [none, some 0])
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -190,7 +186,8 @@ def pray : Verb where
   levin := some Levin1993.Index.pray
   valency := .ofFrames [ArgumentFrame.finiteClause, toInfinitive]
     (controllers := [none, some 0])
-  passivizable := false
+  -- the passive with a content clause is questionable ([huddleston-pullum-2002] ch. 11 §4.2)
+  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -212,7 +209,8 @@ def wish : Verb where
   morphs := [.root "wish"]
   levin := some Levin1993.Index.wish
   valency := .ofFrame ArgumentFrame.finiteClause
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -221,7 +219,6 @@ def fear : Verb where
   morphs := [.root "fear"]
   levin := some Levin1993.Index.fear
   valency := .ofFrame ArgumentFrame.finiteClause
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative)
 
@@ -230,7 +227,8 @@ def dread : Verb where
   morphs := [.root "dread"]
   levin := some Levin1993.Index.dread
   valency := .ofFrame ArgumentFrame.finiteClause
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .negative)
 
@@ -239,7 +237,8 @@ def worry : Verb where
   morphs := [.root "worry"]
   levin := some Levin1993.Index.worry
   valency := .ofFrame ArgumentFrame.finiteClause
-  passivizable := false
+  -- no passive with a content clause, extraposed or not ([huddleston-pullum-2002] ch. 11 §4.2)
+  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .negative)
 
@@ -369,7 +368,8 @@ def remember_rog : Verb where
   morphs := [.root "remember"]
   levin := some Levin1993.Index.remember
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.finiteClause]
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
   senseTag := .rogative
@@ -383,7 +383,6 @@ def forget_rog : Verb where
   pastPart := "forgotten"
   doubling := true
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.gerund, ArgumentFrame.question]
-  passivizable := false
   attitude := some (.doxastic .epistemic)
   factivity := some .full
   senseTag := .rogative

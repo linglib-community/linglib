@@ -172,7 +172,6 @@ def speak : Verb where
   pastPart := "spoken"
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 /-- "talk" — Levin 37.5 Talk verbs. -/
 def talk : Verb where
@@ -180,6 +179,5 @@ def talk : Verb where
   levin := some Levin1993.Index.talk
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.intransitive
-  passivizable := false
 
 end English.Verbs

@@ -34,7 +34,6 @@ def soeng : Verb where
   morphs := [.root "soeng2"]
   script := some "想"
   valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -61,7 +60,6 @@ def daasyun : Verb where
   morphs := [.root "daa2syun3"]
   script := some "打算"
   valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
-  passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -70,7 +68,8 @@ def seon : Verb where
   morphs := [.root "seon3"]
   script := some "信"
   valency := .ofFrame ArgumentFrame.finiteClause
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
 
@@ -86,7 +85,8 @@ def geidak : Verb where
   morphs := [.root "gei3dak1"]
   script := some "記得"
   valency := .ofFrame ArgumentFrame.finiteClause
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [ArgumentFrame.finiteClause]
   factivity := some .semi
 
 /-- The verbs. -/

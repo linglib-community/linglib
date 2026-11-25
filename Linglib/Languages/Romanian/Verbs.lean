@@ -52,7 +52,8 @@ def saClause : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .sub
 def a_vrea : Verb where
   morphs := [.free "a", .root "vrea"]
   valency := .ofFrame saClause
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [saClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -60,7 +61,8 @@ def a_vrea : Verb where
 def a_spera : Verb where
   morphs := [.free "a", .root "spera"]
   valency := .ofFrames [saClause, ArgumentFrame.finiteClause]
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [saClause, ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -68,7 +70,8 @@ def a_spera : Verb where
 def a_intentiona : Verb where
   morphs := [.free "a", .root "intenționa"]
   valency := .ofFrame saClause
-  passivizable := false
+  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
+  noPassive := [saClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
