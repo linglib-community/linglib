@@ -56,8 +56,12 @@ variable {α : Type*} {Q : Det α} {A C B : Set α}
 /-- Subtracting `C` from the restrictor is restrictive when the quantification holds with the
 subtraction and fails without it, (17) of [von-fintel-1993] and his semantics of the free
 exceptive (38). -/
-def Restrictive (Q : Det α) (A C B : Set α) : Prop :=
-  Q (A \ C) B ∧ ¬ Q A B
+@[mk_iff]
+structure Restrictive (Q : Det α) (A C B : Set α) : Prop where
+  /-- The quantification holds with `C` subtracted from the restrictor. -/
+  apply_sdiff : Q (A \ C) B
+  /-- The quantification fails without the subtraction. -/
+  not_apply : ¬ Q A B
 
 /-- `C` is the exception set of the quantification when it is the least set whose subtraction
 from the restrictor makes the quantification true, (20) and (21) of [von-fintel-1993] and his
@@ -69,22 +73,24 @@ namespace Restrictive
 
 /-- A left-upward-monotone determiner falsifies every restrictive exceptive. -/
 theorem not_of_restrictorMonotone (hQ : RestrictorMonotone Q) : ¬ Restrictive Q A C B :=
-  fun h ↦ h.2 (hQ B sdiff_le h.1)
+  fun h ↦ h.not_apply (hQ B sdiff_le h.apply_sdiff)
 
 /-- Under a left-downward-monotone determiner, a restrictive subtraction stays restrictive when the
 subtracted set is enlarged. -/
 theorem mono (hQ : RestrictorAntitone Q) (h : Restrictive Q A C B) {C' : Set α}
     (hC : C ≤ C') : Restrictive Q A C' B :=
-  ⟨hQ B (sdiff_le_sdiff_left hC) h.1, h.2⟩
+  ⟨hQ B (sdiff_le_sdiff_left hC) h.apply_sdiff, h.not_apply⟩
 
 /-- Under an intersective determiner, the set of a restrictive subtraction meets `A ∩ B`. -/
 theorem inter_nonempty (hQ : Q.Intersective) (h : Restrictive Q A C B) : (A ∩ B ∩ C).Nonempty :=
-  Set.not_disjoint_iff_nonempty_inter.1 fun hd ↦ h.2 ((hQ.sdiff_iff hd).1 h.1)
+  Set.not_disjoint_iff_nonempty_inter.1 fun hd ↦
+    h.not_apply ((hQ.sdiff_iff hd).mp h.apply_sdiff)
 
 /-- Under a co-intersective determiner, the set of a restrictive subtraction meets `A \ B`. -/
 theorem sdiff_nonempty (hQ : Q.CoIntersective) (h : Restrictive Q A C B) :
     ((A \ B) ∩ C).Nonempty :=
-  Set.not_disjoint_iff_nonempty_inter.1 fun hd ↦ h.2 ((hQ.sdiff_iff hd).1 h.1)
+  Set.not_disjoint_iff_nonempty_inter.1 fun hd ↦
+    h.not_apply ((hQ.sdiff_iff hd).mp h.apply_sdiff)
 
 end Restrictive
 
@@ -148,12 +154,10 @@ theorem isExceptionSet_no_iff : IsExceptionSet no A C B ↔ A ⊓ B = C :=
   IsLeast.isLeast_iff_eq (isExceptionSet_no A B)
 
 theorem restrictive_every_iff : Restrictive every A C B ↔ A \ B ≤ C ∧ ¬ A ≤ B := by
-  unfold Restrictive
-  rw [every_iff_le, sdiff_le_comm, every_iff_le]
+  rw [restrictive_iff, every_iff_le, sdiff_le_comm, every_iff_le]
 
 theorem restrictive_no_iff : Restrictive no A C B ↔ A ⊓ B ≤ C ∧ ¬ Disjoint A B := by
-  unfold Restrictive
-  rw [no_iff_le_compl, sdiff_le_comm, sdiff_compl, no_iff_disjoint]
+  rw [restrictive_iff, no_iff_le_compl, sdiff_le_comm, sdiff_compl, no_iff_disjoint]
 
 /-! ### Minimal and least verifying subtractions -/
 
@@ -161,7 +165,7 @@ theorem restrictive_no_iff : Restrictive no A C B ↔ A ⊓ B ≤ C ∧ ¬ Disjo
 verifies the quantification. -/
 theorem restrictive_singleton_iff_minimal {a : α} :
     Restrictive Q A {a} B ↔ Minimal (fun S ↦ Q (A \ S) B) {a} := by
-  rw [minimal_iff_forall_lt]
+  rw [restrictive_iff, minimal_iff_forall_lt]
   refine and_congr_right fun _ ↦ ⟨fun h S hS hQ ↦ h ?_, fun h hQ ↦
     h (Set.ssubset_singleton_iff.2 rfl) (by rwa [Set.sdiff_empty])⟩
   rwa [Set.ssubset_singleton_iff.1 hS, Set.sdiff_empty] at hQ

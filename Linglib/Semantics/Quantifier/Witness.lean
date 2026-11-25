@@ -36,33 +36,38 @@ variable {α : Type*} {Q : Quantifier α} {A X w : Set α}
 
 /-- A witness set for a quantifier living on `A` is a subset of `A` in the quantifier
 ([barwise-cooper-1981] §4.9). -/
-def Witness (Q : Quantifier α) (A w : Set α) : Prop := w ⊆ A ∧ Q w
+@[mk_iff]
+structure Witness (Q : Quantifier α) (A w : Set α) : Prop where
+  /-- A witness set is a subset of the set the quantifier lives on. -/
+  subset : w ⊆ A
+  /-- The quantifier holds of a witness set. -/
+  apply : Q w
 
 /-- A quantifier living on `A` holds of `X` if and only if `A ∩ X` is a witness set. -/
 theorem LivesOn.apply_iff_witness (h : Q.LivesOn A) : Q X ↔ Q.Witness A (A ∩ X) :=
-  ⟨fun hX ↦ ⟨Set.inter_subset_left, (h X).1 hX⟩, fun hw ↦ (h X).2 hw.2⟩
+  ⟨fun hX ↦ ⟨Set.inter_subset_left, (h X).mp hX⟩, fun hw ↦ (h X).mpr hw.apply⟩
 
 /-- An increasing quantifier living on `A` holds of `X` if and only if `X` contains a witness set
 ([barwise-cooper-1981], C11). -/
 theorem LivesOn.monotone_apply_iff (h : Q.LivesOn A) (hm : Monotone Q) :
     Q X ↔ ∃ w, Q.Witness A w ∧ w ⊆ X :=
   ⟨fun hX ↦ ⟨_, h.apply_iff_witness.1 hX, Set.inter_subset_right⟩,
-    fun ⟨_, hw, hwX⟩ ↦ hm hwX hw.2⟩
+    fun ⟨_, hw, hwX⟩ ↦ hm hwX hw.apply⟩
 
 /-- A decreasing quantifier living on `A` holds of `X` if and only if `X ∩ A` is contained in a
 witness set ([barwise-cooper-1981], C11). -/
 theorem LivesOn.antitone_apply_iff (h : Q.LivesOn A) (hm : Antitone Q) :
     Q X ↔ ∃ w, Q.Witness A w ∧ X ∩ A ⊆ w :=
   ⟨fun hX ↦ ⟨_, h.apply_iff_witness.1 hX, (Set.inter_comm X A).le⟩,
-    fun ⟨_, hw, hXw⟩ ↦ (h X).2 (hm ((Set.inter_comm A X).le.trans hXw) hw.2)⟩
+    fun ⟨_, hw, hXw⟩ ↦ (h X).mpr (hm ((Set.inter_comm A X).le.trans hXw) hw.apply)⟩
 
 /-- The minimal witness sets of a quantifier living on `A` are its minimal sets. -/
 theorem LivesOn.minimal_witness_iff (h : Q.LivesOn A) :
     Minimal (Q.Witness A) w ↔ Minimal Q w :=
-  ⟨fun hm ↦ ⟨hm.1.2, fun _ hy hyw ↦ hm.2 ⟨hyw.trans hm.1.1, hy⟩ hyw⟩,
+  ⟨fun hm ↦ ⟨hm.prop.apply, fun _ hy hyw ↦ hm.le_of_le ⟨hyw.trans hm.prop.subset, hy⟩ hyw⟩,
     fun hm ↦
-      have hle : w ⊆ A ∩ w := hm.2 ((h w).1 hm.1) Set.inter_subset_right
-      ⟨⟨hle.trans Set.inter_subset_left, hm.1⟩, fun _ hy hyw ↦ hm.2 hy.2 hyw⟩⟩
+      have hle : w ⊆ A ∩ w := hm.le_of_le ((h w).mp hm.prop) Set.inter_subset_right
+      ⟨⟨hle.trans Set.inter_subset_left, hm.prop⟩, fun _ hy hyw ↦ hm.le_of_le hy.apply hyw⟩⟩
 
 /-! ### *Some* and *every* -/
 

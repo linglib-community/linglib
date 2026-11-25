@@ -709,6 +709,7 @@ variable {P}
 theorem witnessType_iff_witness :
     WitnessType P c X ↔ Witness ((NumberTree.ofSizes c).toDet P) P (X : Set E) := by
   have hsub : X ⊆ ({x | x ∈ P} : Finset E) ↔ ∀ x, x ∈ X → x ∈ P := by simp [Finset.subset_iff]
+  rw [witness_iff]
   refine (and_congr_right fun h ↦ ?_).trans (and_congr_left' hsub)
   have hX : {x | x ∈ P} ∩ (X : Set E) = X := Set.inter_eq_right.2 fun x hx ↦ hsub.1 h x hx
   have hP := Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | x ∈ P} (X : Set E)
@@ -725,7 +726,7 @@ theorem noW_iff_witness : WitnessType P .no X ↔ Witness (no P) P (X : Set E) :
 -- (21)
 theorem existW_iff_minimal_witness [DecidableEq E] :
     WitnessType P .exist X ↔ Minimal (fun Y : Finset E ↦ Witness (Det.some P) P (Y : Set E)) X := by
-  simp only [WitnessType, CardRel.exist, Witness, Det.some, minimal_iff_forall_lt,
+  simp only [WitnessType, CardRel.exist, witness_iff, Det.some, minimal_iff_forall_lt,
     Finset.card_eq_one]
   constructor
   · rintro ⟨hs, a, rfl⟩

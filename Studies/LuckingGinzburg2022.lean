@@ -186,7 +186,7 @@ theorem livesOn_toDet : LivesOn (q.toDet S) (S : Set α) :=
 quantifier on the head noun. -/
 theorem mem_sieve_iff_witness :
     R ∈ sieve q S ↔ Witness (q.toDet S) (S : Set α) R := by
-  simp only [mem_sieve, Witness, toDet_apply, coe_subset]
+  simp only [mem_sieve, witness_iff, toDet_apply, coe_subset]
   refine and_congr_right fun hR ↦ ?_
   rw [← coe_sdiff, ← coe_inter, Set.ncard_coe_finset, Set.ncard_coe_finset,
     inter_eq_right.2 hR]

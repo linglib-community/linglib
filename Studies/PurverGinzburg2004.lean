@@ -229,7 +229,7 @@ theorem pair_apply_iff (h : LivesOn Q A) :
   refine h.apply_iff_witness.trans
     ⟨fun hw ↦ ⟨_, hw, Set.inter_subset_right, fun _ ⟨hA, hR⟩ hX ↦ hR ⟨hA, hX⟩⟩, ?_⟩
   rintro ⟨R, hR, hRX, hC⟩
-  obtain rfl : R = A ∩ X := Set.Subset.antisymm (Set.subset_inter hR.1 hRX)
+  obtain rfl : R = A ∩ X := Set.Subset.antisymm (Set.subset_inter hR.subset hRX)
     fun _ ⟨hA, hX⟩ ↦ by_contra fun hR' ↦ hC ⟨hA, hR'⟩ hX
   exact hR
 
