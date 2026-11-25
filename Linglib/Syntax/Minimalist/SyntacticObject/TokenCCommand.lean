@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Core.Data.UnorderedTree.Leaves
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # C-command between tokens on ordered trees
@@ -29,7 +30,7 @@ namespace Minimalist.PlanarSyntacticObject
 open RoseTree SyntacticObject
 
 /-- The tree holds the token `y`. -/
-def Holds (y : LexicalItem.Token) (p : RoseTree Vertex) : Prop :=
+def Holds (y : LexicalItem.Token) (p : RoseTree (Vertex LexicalItem.Token)) : Prop :=
   Sum.inl (some y) ∈ p.leaves
 
 instance (y : LexicalItem.Token) : DecidablePred (Holds y) :=
@@ -37,26 +38,28 @@ instance (y : LexicalItem.Token) : DecidablePred (Holds y) :=
 
 variable {x y : LexicalItem.Token}
 
-@[simp] theorem holds_leaf (a : Vertex) :
+@[simp] theorem holds_leaf (a : Vertex LexicalItem.Token) :
     Holds y (.node a []) ↔ a = Sum.inl (some y) := by
   simp [Holds, eq_comm]
 
-theorem holds_pair (a : Vertex) (l r : RoseTree Vertex) :
+theorem holds_pair (a : Vertex LexicalItem.Token) (l r : RoseTree (Vertex LexicalItem.Token)) :
     Holds y (.node a [l, r]) ↔ Holds y l ∨ Holds y r := by
   simp [Holds]
 
-theorem holds_node_of_mem {a : Vertex} {cs : List (RoseTree Vertex)} {c : RoseTree Vertex}
+theorem holds_node_of_mem {a : Vertex LexicalItem.Token}
+    {cs : List (RoseTree (Vertex LexicalItem.Token))} {c : RoseTree (Vertex LexicalItem.Token)}
     (hc : c ∈ cs) (h : Holds y c) : Holds y (.node a cs) :=
   Multiset.mem_of_le (leaves_le_of_mem_children hc) h
 
-theorem exists_mem_of_holds_map {α : Type*} {a : Vertex} {cs : List α}
-    {f : α → RoseTree Vertex} (hne : cs ≠ []) (h : Holds y (.node a (cs.map f))) :
+theorem exists_mem_of_holds_map {α : Type*} {a : Vertex LexicalItem.Token} {cs : List α}
+    {f : α → RoseTree (Vertex LexicalItem.Token)} (hne : cs ≠ [])
+        (h : Holds y (.node a (cs.map f))) :
     ∃ c ∈ cs, Holds y (f c) := by
   obtain ⟨_, ht, hy⟩ := (mem_leaves_node_of_ne_nil a (mt List.map_eq_nil_iff.1 hne)).1 h
   obtain ⟨c, hc, rfl⟩ := List.mem_map.1 ht
   exact ⟨c, hc, hy⟩
 
-theorem holds_of_mem_subtrees {r z : RoseTree Vertex} (hr : r ∈ z.subtrees)
+theorem holds_of_mem_subtrees {r z : RoseTree (Vertex LexicalItem.Token)} (hr : r ∈ z.subtrees)
     (h : Holds y r) : Holds y z := by
   induction z with
   | node a cs ih =>
@@ -65,18 +68,20 @@ theorem holds_of_mem_subtrees {r z : RoseTree Vertex} (hr : r ∈ z.subtrees)
     · exact h
     · exact holds_node_of_mem hc (ih c hc hrc)
 
-theorem holds_congr {p q : RoseTree Vertex} (h : UnorderedTree.mk p = UnorderedTree.mk q) :
+theorem holds_congr {p q : RoseTree (Vertex LexicalItem.Token)}
+    (h : UnorderedTree.mk p = UnorderedTree.mk q) :
     Holds y p ↔ Holds y q := by
   rw [Holds, Holds, ← UnorderedTree.leaves_mk, ← UnorderedTree.leaves_mk q, h]
 
 /-- `x` c-commands `y` in an ordered tree: `x` is a daughter whose sister holds `y`. -/
-inductive TokenCCommands (x y : LexicalItem.Token) : RoseTree Vertex → Prop
+inductive TokenCCommands (x y : LexicalItem.Token) : RoseTree (Vertex LexicalItem.Token) → Prop
   | inl {a l r} : TokenCCommands x y l → TokenCCommands x y (.node a [l, r])
   | inr {a l r} : TokenCCommands x y r → TokenCCommands x y (.node a [l, r])
   | left {a r} : Holds y r → TokenCCommands x y (.node a [.node (.inl (some x)) [], r])
   | right {a l} : Holds y l → TokenCCommands x y (.node a [l, .node (.inl (some x)) []])
 
-theorem tokenCCommands_pair_iff {a : Vertex} {l r : RoseTree Vertex} :
+theorem tokenCCommands_pair_iff {a : Vertex LexicalItem.Token}
+    {l r : RoseTree (Vertex LexicalItem.Token)} :
     TokenCCommands x y (.node a [l, r]) ↔ TokenCCommands x y l ∨ TokenCCommands x y r ∨
       (l = .node (.inl (some x)) [] ∧ Holds y r) ∨ (r = .node (.inl (some x)) [] ∧ Holds y l) := by
   constructor
@@ -93,25 +98,29 @@ theorem tokenCCommands_pair_iff {a : Vertex} {l r : RoseTree Vertex} :
     · exact .left h
     · exact .right h
 
-theorem not_tokenCCommands_of_length_ne {a : Vertex} {cs : List (RoseTree Vertex)}
+theorem not_tokenCCommands_of_length_ne {a : Vertex LexicalItem.Token}
+    {cs : List (RoseTree (Vertex LexicalItem.Token))}
     (h : cs.length ≠ 2) : ¬ TokenCCommands x y (.node a cs) := by
   generalize he : RoseTree.node a cs = p
   intro hc
   cases hc <;> simp_all
 
-theorem TokenCCommands.swap {a : Vertex} {l r : RoseTree Vertex}
+theorem TokenCCommands.swap {a : Vertex LexicalItem.Token}
+    {l r : RoseTree (Vertex LexicalItem.Token)}
     (h : TokenCCommands x y (.node a [l, r])) : TokenCCommands x y (.node a [r, l]) := by
   rw [tokenCCommands_pair_iff] at h ⊢
   tauto
 
-theorem TokenCCommands.holds {p : RoseTree Vertex} (h : TokenCCommands x y p) : Holds y p := by
+theorem TokenCCommands.holds {p : RoseTree (Vertex LexicalItem.Token)} (h : TokenCCommands x y p) :
+    Holds y p := by
   induction h with
   | inl _ ih => exact (holds_pair _ _ _).2 (.inl ih)
   | inr _ ih => exact (holds_pair _ _ _).2 (.inr ih)
   | left hy => exact (holds_pair _ _ _).2 (.inr hy)
   | right hy => exact (holds_pair _ _ _).2 (.inl hy)
 
-theorem TokenCCommands.of_mem_subtrees {r z : RoseTree Vertex} (hr : r ∈ z.subtrees)
+theorem TokenCCommands.of_mem_subtrees {r z : RoseTree (Vertex LexicalItem.Token)}
+    (hr : r ∈ z.subtrees)
     (h : TokenCCommands x y r) (hz : IsSyntacticObject (UnorderedTree.mk z)) :
     TokenCCommands x y z := by
   induction z with
@@ -129,7 +138,7 @@ theorem TokenCCommands.of_mem_subtrees {r z : RoseTree Vertex} (hr : r ∈ z.sub
         · exact .inl (ih _ hc hrc (hl _ (by simp)))
         · exact .inr (ih _ hc hrc (hl _ (by simp)))
 
-private theorem eq_node_of_coe_eq {v : RoseTree Vertex}
+private theorem eq_node_of_coe_eq {v : RoseTree (Vertex LexicalItem.Token)}
     (h : UnorderedTree.mk (.node (Sum.inl (some x)) []) = UnorderedTree.mk v) :
     v = .node (Sum.inl (some x)) [] := by
   obtain ⟨b, ds⟩ := v
@@ -139,7 +148,7 @@ private theorem eq_node_of_coe_eq {v : RoseTree Vertex}
   · have := congrArg Multiset.card hd
     simp at this
 
-private theorem terms_of_nil {a : Vertex}
+private theorem terms_of_nil {a : Vertex LexicalItem.Token}
     (h : IsSyntacticObject (UnorderedTree.mk (.node a []))) :
     (PlanarSyntacticObject.ofRoseTree (.node a []) h).toSyntacticObject.terms =
       {(PlanarSyntacticObject.ofRoseTree (.node a []) h).toSyntacticObject} := by
@@ -150,8 +159,8 @@ private theorem terms_of_nil {a : Vertex}
   | mul l r => simp [PlanarSyntacticObject.toRoseTree] at hv
 
 /-- The token is a term of the object just when the tree holds it. -/
-theorem coe_mem_terms_iff (p : PlanarSyntacticObject) :
-    (↑y : SyntacticObject) ∈ p.toSyntacticObject.terms ↔ Holds y p.toRoseTree := by
+theorem coe_mem_terms_iff (p : PlanarSyntacticObject TokenLeaf) :
+    (↑y : SyntacticObject TokenLeaf) ∈ p.toSyntacticObject.terms ↔ Holds y p.toRoseTree := by
   obtain ⟨p, h, rfl⟩ := p.exists_eq_ofRoseTree
   rw [toRoseTree_ofRoseTree]
   induction p with
@@ -174,7 +183,7 @@ theorem coe_mem_terms_iff (p : PlanarSyntacticObject) :
       exact or_iff_right (leaf_ne_merge _ _ _)
 
 /-- On a syntactic object c-command between distinct tokens is `TokenCCommands`. -/
-theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : PlanarSyntacticObject) :
+theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : PlanarSyntacticObject TokenLeaf) :
     CCommands p.toSyntacticObject ↑x ↑y ↔ TokenCCommands x y p.toRoseTree := by
   obtain ⟨p, h, rfl⟩ := p.exists_eq_ofRoseTree
   rw [toRoseTree_ofRoseTree]
@@ -187,19 +196,21 @@ theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : PlanarSyntacticObject)
       rintro ⟨z, -, ⟨w, hw, hwx, -, -⟩, -⟩
       rw [terms_of_nil, Multiset.mem_singleton] at hw
       subst hw
-      simp [ImmediatelyContains] at hwx
+      simp [immediatelyContains_iff_mem_children] at hwx
     · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
       obtain rfl := eq_bare_of_ne_nil h (by simp)
       obtain ⟨hu, hv⟩ := (isSyntacticObject_mk_merge _ _).1 h
-      let U : PlanarSyntacticObject := ofRoseTree u hu
-      let V : PlanarSyntacticObject := ofRoseTree v hv
+      let U : PlanarSyntacticObject TokenLeaf := ofRoseTree u hu
+      let V : PlanarSyntacticObject TokenLeaf := ofRoseTree v hv
       have hUv : U.toRoseTree = u := toRoseTree_ofRoseTree u hu
       have hVv : V.toRoseTree = v := toRoseTree_ofRoseTree v hv
-      have hval (W : PlanarSyntacticObject) {w : RoseTree Vertex} (hW : W.toRoseTree = w)
-          (he : (↑x : SyntacticObject) = W.toSyntacticObject) :
-          UnorderedTree.mk (.node (Sum.inl (some x)) []) = UnorderedTree.mk w :=
-        (congrArg SyntacticObject.toUnorderedTree he).trans
+      have hval (W : PlanarSyntacticObject TokenLeaf) {w : RoseTree (Vertex LexicalItem.Token)}
+          (hW : W.toRoseTree = w)
+          (he : (↑x : SyntacticObject TokenLeaf) = W.toSyntacticObject) :
+          UnorderedTree.mk (.node (Sum.inl (some x)) []) = UnorderedTree.mk w := by
+        have h := (congrArg SyntacticObject.toUnorderedTree he).trans
           ((toUnorderedTree_toSyntacticObject W).trans (congrArg UnorderedTree.mk hW))
+        exact h
       rw [ofRoseTree_node_bare]
       change CCommands (PlanarSyntacticObject.toSyntacticObject
         (PlanarSyntacticObject.merge U V)) _ _ ↔ _
@@ -239,12 +250,13 @@ theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : PlanarSyntacticObject)
           rw [hu', holds_leaf] at hy
           exact hxy (Option.some.inj (Sum.inl.inj hy))
 
-theorem holds_iff_mem_yield {w : LexicalItem.Token} (p : PlanarSyntacticObject) :
+theorem holds_iff_mem_yield {w : LexicalItem.Token} (p : PlanarSyntacticObject TokenLeaf) :
     Holds w p.toRoseTree ↔ w ∈ p.toSyntacticObject.yield :=
   (coe_mem_terms_iff p).symm.trans mem_yield_iff.symm
 
 /-- A trace-free object holds a token. -/
-theorem exists_holds {p : RoseTree Vertex} (h : IsSyntacticObject (UnorderedTree.mk p))
+theorem exists_holds {p : RoseTree (Vertex LexicalItem.Token)}
+    (h : IsSyntacticObject (UnorderedTree.mk p))
     (hTF : ∀ r ∈ p.subtrees, r.value.isLeft) : ∃ w, Holds w p := by
   induction p with
   | node a cs ih =>

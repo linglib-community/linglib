@@ -106,18 +106,20 @@ lexicon tokens from 100 where
 
 /-- The possessee with spine `s`: the noun extended by the heads above it, with `spec`, when there
 is one, in the specifier of Poss. -/
-def nominal (s : Spine Cat) (spec : Option PlanarSyntacticObject) : PlanarSyntacticObject :=
+def nominal (s : Spine Cat) (spec : Option (PlanarSyntacticObject TokenLeaf)) :
+    (PlanarSyntacticObject TokenLeaf) :=
   (PlanarSyntacticObject.leaf noun).extend .n 1
     (fun i ↦ if (s.above .n)[i]? = some .Poss then spec else none) (s.above .n)
 
 /-- (38): the existential structure, in which v takes the possessee and the possessor is in the
 specifier of its Poss head; with *there* in that specifier it is the existential of (40). -/
-def existential (s : Spine Cat) (x : LexicalItem.Token := specifier) : PlanarSyntacticObject :=
+def existential (s : Spine Cat) (x : LexicalItem.Token := specifier) :
+    (PlanarSyntacticObject TokenLeaf) :=
   so% [v₀ (nominal s (some (so% x)))]
 
 /-- (44): the locative structure, in which v takes the phrase of an applicative head, with the
 possessor in its specifier and the possessee as its complement. -/
-def locative (s : Spine Cat) : PlanarSyntacticObject :=
+def locative (s : Spine Cat) : PlanarSyntacticObject TokenLeaf :=
   so% [v₀ [specifier [appl₀ (nominal s none)]]]
 
 -- (38) as drawn, with *a* in Num.
@@ -127,9 +129,10 @@ theorem existential_numP :
   decide
 
 /-- The φ-probe of v finds the possessor. -/
-def Finds (t : PlanarSyntacticObject) : Prop := ↑specifier ∈ t.goals (t.leafProbe .D) ↑v₀
+def Finds (t : PlanarSyntacticObject TokenLeaf) : Prop := ↑specifier ∈ t.goals (t.leafProbe .D) ↑v₀
 
-instance (t : PlanarSyntacticObject) : Decidable (Finds t) := by unfold Finds; infer_instance
+instance (t : PlanarSyntacticObject TokenLeaf) : Decidable (Finds t) := by
+  unfold Finds; infer_instance
 
 @[simp] theorem finds_existential_numP : Finds (existential numP) := by decide
 
@@ -151,7 +154,7 @@ instance : DecidablePred Extractable := fun _ ↦ decidable_of_iff _ extractable
 /-! ### Spans and varieties -/
 
 /-- The span of HAVE in a structure: its verbal heads from the lowest, and T. -/
-def span (t : PlanarSyntacticObject) : Spine Cat :=
+def span (t : PlanarSyntacticObject TokenLeaf) : Spine Cat :=
   ⟨(t.yield.map (·.item.cat)).reverse.filter (fun c ↦ decide (c.family = .verbal)) ++ [.T]⟩
 
 /-- The span of (53), v and T. -/
@@ -201,7 +204,8 @@ instance : DecidablePred Examples.Frame.Raised := fun f ↦ by
 /-- The structures a possessee with the determiner in the relation can be built into: the
 existential structure at each of its sizes, and the locative structure over a full DP when the
 relation is alienable, the applicative head relating a possessor to what it has with it. -/
-def analyses (d : Examples.Determiner) (r : Examples.Relation) : List PlanarSyntacticObject :=
+def analyses (d : Examples.Determiner) (r : Examples.Relation) : List
+    (PlanarSyntacticObject TokenLeaf) :=
   (sizes d).map existential ++ if r = .alienable then [locative dP] else []
 
 /-- A variety generates a HAVE clause when, in one of the structures of its possessee, v finds the
@@ -268,7 +272,7 @@ def features (tok : LexicalItem.Token) : Finset Myler2016.Feature :=
 def phiProbe : Probe.Spec Myler2016.Feature := ⟨{{.phi}}, {{.d}}⟩
 
 /-- The features v has copied in a structure, from the closest D it c-commands. -/
-def copied (t : PlanarSyntacticObject) : Finset Myler2016.Feature :=
+def copied (t : PlanarSyntacticObject TokenLeaf) : Finset Myler2016.Feature :=
   (Finset.univ.filter fun a ↦ t.termAt a = ↑v₀).biUnion fun a ↦
     phiProbe.copied (fun q ↦ (t.termAt q).token?.elim ∅ features)
       {q | t.toRoseTree.CCommands a q} (t.above t.toRoseTree.branching)
@@ -278,7 +282,7 @@ def englishItems : List (DistributedMorphology.VocabularyItem Myler2016.Feature 
   open DistributedMorphology in [{.phi} ⟷ English.Auxiliaries.has, ∅ ⟷ English.Auxiliaries.is_]
 
 /-- The form of v in a structure, by the Subset Principle over what v has copied. -/
-def copula (t : PlanarSyntacticObject) : Option Auxiliary :=
+def copula (t : PlanarSyntacticObject TokenLeaf) : Option Auxiliary :=
   DistributedMorphology.subsetPrinciple englishItems (copied t)
 
 /-- v is realized as HAVE over a possessor, in either structure, and as BE over *there*, which

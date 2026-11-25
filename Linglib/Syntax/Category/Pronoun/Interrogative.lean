@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Category.Pronoun.ProForm
+public import Linglib.Syntax.Binding.Word
 
 /-!
 # Interrogative pronouns

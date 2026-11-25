@@ -65,13 +65,14 @@ namespace Minimalist.PlanarSyntacticObject
 
 open RoseTree SyntacticObject
 
-variable (t : PlanarSyntacticObject)
+variable (t : PlanarSyntacticObject TokenLeaf)
 
 /-- `y` is in the domain of `x` in `t`: every occurrence of `y` is a term of an occurrence of `x`,
 [chomsky-2013]'s condition under which the labeling algorithm searching `x` sees `y`. -/
-def InDomain (y x : SyntacticObject) : Prop := ∀ q, t.termAt q = y → ∃ n ≤ q, t.termAt n = x
+def InDomain (y x : SyntacticObject TokenLeaf) : Prop := ∀ q, t.termAt q = y → ∃ n ≤ q, t.termAt n
+    = x
 
-instance (y x : SyntacticObject) : Decidable (t.InDomain y x) :=
+instance (y x : SyntacticObject TokenLeaf) : Decidable (t.InDomain y x) :=
   inferInstanceAs (Decidable (∀ _, _))
 
 /-- Minimal search from the occurrence at `n` finds the head at `q`: a head in the domain of the
@@ -94,13 +95,13 @@ def labelsAt (n : t.toRoseTree.Positions) : Finset LexicalItem.Token :=
   (Finset.univ.filter (t.FindsHead n)).biUnion fun q ↦ (t.termAt q).token?.toFinset
 
 /-- The labels of `x`: the heads minimal search from an occurrence of `x` finds. -/
-def labels (x : SyntacticObject) : Finset LexicalItem.Token :=
+def labels (x : SyntacticObject TokenLeaf) : Finset LexicalItem.Token :=
   (Finset.univ.filter fun n ↦ t.termAt n = x).biUnion t.labelsAt
 
 /-- `x` is labeled by the head `a`: minimal search finds `a` alone. -/
-def IsLabeledBy (x : SyntacticObject) (a : LexicalItem.Token) : Prop := t.labels x = {a}
+def IsLabeledBy (x : SyntacticObject TokenLeaf) (a : LexicalItem.Token) : Prop := t.labels x = {a}
 
-instance (x : SyntacticObject) (a : LexicalItem.Token) : Decidable (t.IsLabeledBy x a) :=
+instance (x : SyntacticObject TokenLeaf) (a : LexicalItem.Token) : Decidable (t.IsLabeledBy x a) :=
   inferInstanceAs (Decidable (_ = _))
 
 variable {F : Type*} (Agreed : F → LexicalItem.Token → LexicalItem.Token → Prop)
@@ -110,21 +111,21 @@ variable {F : Type*} (Agreed : F → LexicalItem.Token → LexicalItem.Token →
 each two of which agree in `f`. Two phrases are labeled by a most prominent feature they share,
 such as Q or the φ-features, in [chomsky-2013], and the label is written ⟨F, F⟩ in
 [chomsky-2015]. -/
-def IsLabeledByFeature (x : SyntacticObject) (f : F) : Prop :=
+def IsLabeledByFeature (x : SyntacticObject TokenLeaf) (f : F) : Prop :=
   (t.labels x).Nontrivial ∧ (∀ a ∈ t.labels x, ¬ ImmediatelyContains x ↑a) ∧
     (t.labels x : Set LexicalItem.Token).Pairwise (Agreed f)
 
-instance [∀ f, DecidableRel (Agreed f)] (x : SyntacticObject) (f : F) :
+instance [∀ f, DecidableRel (Agreed f)] (x : SyntacticObject TokenLeaf) (f : F) :
     Decidable (t.IsLabeledByFeature Agreed x f) :=
   haveI : Decidable (t.labels x).Nontrivial :=
     decidable_of_iff _ Finset.one_lt_card_iff_nontrivial
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- `x` is labeled, by a head or by a feature its heads agree in. -/
-def IsLabeled (x : SyntacticObject) : Prop :=
+def IsLabeled (x : SyntacticObject TokenLeaf) : Prop :=
   (∃ a, t.IsLabeledBy x a) ∨ ∃ f, t.IsLabeledByFeature Agreed x f
 
-variable {t Agreed} {n c d q : t.toRoseTree.Positions} {x y z : SyntacticObject}
+variable {t Agreed} {n c d q : t.toRoseTree.Positions} {x y z : SyntacticObject TokenLeaf}
   {a b : LexicalItem.Token}
 
 theorem card_labels_eq_one_iff : (t.labels x).card = 1 ↔ ∃ a, t.IsLabeledBy x a :=
@@ -254,7 +255,8 @@ theorem labels_merge_heads (hex : ∃ n, t.termAt n = SyntacticObject.merge ↑a
 
 /-! ### Search below a daughter -/
 
-theorem inDomain_iff_of_immediatelyContains {w : SyntacticObject} {tok : LexicalItem.Token}
+theorem inDomain_iff_of_immediatelyContains {w : SyntacticObject TokenLeaf}
+    {tok : LexicalItem.Token}
     (hx : ∀ y, ImmediatelyContains x y → y = z ∨ y = w) (hxt : x.token? = none)
     (hw : t.InDomain w x) (hz : ¬ ContainsOrEq z ↑tok) :
     t.InDomain ↑tok x ↔ t.InDomain ↑tok w := by
@@ -388,7 +390,7 @@ def label : HeadDaughter := fun t x ↦
   else none
 
 /-- The head daughters under labeling are label daughters. -/
-theorem labelDaughter_of_headDaughterRel_label {t : PlanarSyntacticObject}
+theorem labelDaughter_of_headDaughterRel_label {t : PlanarSyntacticObject TokenLeaf}
     {n c : t.toRoseTree.Positions} (h : headDaughterRel (label t) n.val c.val) :
         t.LabelDaughter n c := by
   obtain ⟨i, hi, hc⟩ := h

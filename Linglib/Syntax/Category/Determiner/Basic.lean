@@ -9,7 +9,6 @@ public import Mathlib.Data.Finset.Image
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Syntax.Feature.Number.Basic
-public import Linglib.Morphology.Word.Basic
 public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Semantics.Quantifier.Global
 
@@ -30,7 +29,7 @@ with its own account of when a presupposition is marked.
 
 ## Main declarations
 
-* `Determiner` is the base record, and `Determiner.toWord` realizes it as a word.
+* `Determiner` is the base record.
 * `Article` records the degrees of definiteness it can mark, the exponent, the definite uses it
   obligatorily expones and the number it selects; `DemonstrativeDeterminer`,
   `QuantificationalDeterminer` and `PossessiveDeterminer` are the other specializations.
@@ -76,9 +75,6 @@ structure Determiner where
   deriving DecidableEq, Repr
 
 namespace Determiner
-
-/-- A determiner is realized as a bare word of category `DET`. -/
-def toWord (d : Determiner) : Morphology.Word := { form := d.form, cat := .DET }
 
 /-- An article is exponed by a dedicated morpheme, a classifier construction, a demonstrative
 form or a bare noun. Whether the form marks definiteness is a matter of the uses it expones,

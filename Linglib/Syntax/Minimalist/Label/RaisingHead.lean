@@ -278,7 +278,7 @@ def raisingTraceState : Option LexicalItem.Token → RaisingState
 
 namespace SyntacticObject
 
-variable (s : SyntacticObject)
+variable (s : SyntacticObject TokenLeaf)
 
 /-- The raising state of a syntactic object. -/
 def raisingCheck : RaisingState :=
@@ -292,27 +292,28 @@ def raisingHead : Option LexicalItem.Token := s.raisingCheck.state.head
 @[simp] theorem raisingHead_leaf (tok : LexicalItem.Token) :
     (leaf tok).raisingHead = some tok := rfl
 
-@[simp] theorem raisingHead_trace : (trace : SyntacticObject).raisingHead = some .bareTrace := rfl
+@[simp] theorem raisingHead_trace : (trace : SyntacticObject TokenLeaf).raisingHead = some
+    .bareTrace := rfl
 
 @[simp] theorem raisingHead_traceOf (tok : LexicalItem.Token) :
     (traceOf tok).raisingHead = none := rfl
 
-@[simp] theorem raisingCheck_merge (l r : SyntacticObject) :
+@[simp] theorem raisingCheck_merge (l r : SyntacticObject TokenLeaf) :
     (merge l r).raisingCheck = l.raisingCheck * r.raisingCheck :=
   map_mul (FreeCommMagma.lift _) l r
 
 /-- `raisingCheck` as a morphism of magmas. -/
-def raisingCheckHom : SyntacticObject →ₙ* RaisingState :=
+def raisingCheckHom : SyntacticObject TokenLeaf →ₙ* RaisingState :=
   FreeCommMagma.lift (Leaf.elim (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState)
 
 /-- The raising head of a merge is a daughter's raising head
 ([marcolli-chomsky-berwick-2025] Lemma 1.13.7). -/
-theorem raisingHead_merge {l r : SyntacticObject} {h : LexicalItem.Token}
+theorem raisingHead_merge {l r : SyntacticObject TokenLeaf} {h : LexicalItem.Token}
     (hlr : (merge l r).raisingHead = some h) : l.raisingHead = some h ∨ r.raisingHead = some h :=
   RaisingState.head_mul (raisingCheck_merge l r ▸ hlr)
 
 /-- The raising head of a merge is the raising head of the daughter that projects. -/
-theorem raisingHead_merge_eq (l r : SyntacticObject) :
+theorem raisingHead_merge_eq (l r : SyntacticObject TokenLeaf) :
     (merge l r).raisingHead =
       if l.raisingCheck.Projects r.raisingCheck then l.raisingHead
       else if r.raisingCheck.Projects l.raisingCheck then r.raisingHead else none := by
@@ -321,11 +322,12 @@ theorem raisingHead_merge_eq (l r : SyntacticObject) :
 
 /-- The raising head is a head function. -/
 theorem isHeadFunction_raisingHead :
-    IsHeadFunction (raisingHead : SyntacticObject → Option LexicalItem.Token) where
+    IsHeadFunction (raisingHead : SyntacticObject TokenLeaf → Option LexicalItem.Token) where
   eq_of_mem_leaf h := by simpa [eq_comm] using h
   mem_or_mem := raisingHead_merge
 
-@[simp] theorem raisingHead_merge_self (x : SyntacticObject) : (merge x x).raisingHead = none := by
+@[simp] theorem raisingHead_merge_self (x : SyntacticObject TokenLeaf) : (merge x x).raisingHead =
+    none := by
   rw [raisingHead, raisingCheck_merge, RaisingState.mul_def]
   simp only [RaisingState.raise, CopyState.mul_self, ne_eq, not_true_eq_false, ↓reduceIte]
   rcases x.raisingCheck.state.head with _ | a
@@ -338,16 +340,17 @@ end SyntacticObject
 /-! ### Head daughters -/
 
 /-- The raising head of a planar tree, that of its unordered image. -/
-def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
+def treeRaisingHead (s : RoseTree (Vertex LexicalItem.Token)) : Option LexicalItem.Token :=
   if h : IsSyntacticObject (UnorderedTree.mk s) then (ofUnorderedTree _ h).raisingHead else none
 
-theorem raisingHead_eq_treeRaisingHead {x : SyntacticObject} {s : RoseTree Vertex}
+theorem raisingHead_eq_treeRaisingHead {x : SyntacticObject TokenLeaf}
+    {s : RoseTree (Vertex LexicalItem.Token)}
     (h : x.toUnorderedTree = UnorderedTree.mk s) : x.raisingHead = treeRaisingHead s := by
   rw [treeRaisingHead, dite_eq_left (h ▸ x.isSyntacticObject_toUnorderedTree)]
   exact congrArg raisingHead
     (toUnorderedTree_injective (by rw [toUnorderedTree_ofUnorderedTree, h]))
 
-theorem treeRaisingHead_subtree {t : PlanarSyntacticObject} (p : t.toRoseTree.Positions) :
+theorem treeRaisingHead_subtree {t : PlanarSyntacticObject TokenLeaf} (p : t.toRoseTree.Positions) :
     treeRaisingHead p.subtree = (t.termAt p).raisingHead :=
   (raisingHead_eq_treeRaisingHead PlanarSyntacticObject.toUnorderedTree_termAt).symm
 
@@ -355,7 +358,7 @@ theorem treeRaisingHead_subtree {t : PlanarSyntacticObject} (p : t.toRoseTree.Po
 left leaf that selects nothing for a specifier and looks for the head in the right daughter, takes
 a left leaf that selects for the head, and otherwise looks in the right daughter. This is the
 head path it assigns. -/
-def conventionHeadPos? : RoseTree Vertex → Option (List ℕ)
+def conventionHeadPos? : RoseTree (Vertex LexicalItem.Token) → Option (List ℕ)
   | .node (.inl (some _)) _ | .node (.inr (some _)) _ => some []
   | .node (.inl none) [.node (.inl (some tok)) [], r] =>
       if tok.item.sel = [] then (conventionHeadPos? r).map (1 :: ·) else some [0]
@@ -365,7 +368,7 @@ def conventionHeadPos? : RoseTree Vertex → Option (List ℕ)
 
 /-- The head daughter of a planar tree is the first daughter carrying its raising head, and where
 it has none, the first step of the drawing convention's head path. -/
-def headIndex? (s : RoseTree Vertex) : Option ℕ :=
+def headIndex? (s : RoseTree (Vertex LexicalItem.Token)) : Option ℕ :=
   ((treeRaisingHead s).bind fun h ↦ s.children.findIdx? (treeRaisingHead · = some h)) <|>
     (conventionHeadPos? s).bind List.head?
 
@@ -376,7 +379,8 @@ def HeadDaughter.raising : HeadDaughter := fun t q ↦ t.toRoseTree[q]?.bind hea
 
 /-- Where a planar syntactic object with daughters has a raising head, its head daughter carries
 it. -/
-theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : LexicalItem.Token}
+theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree (Vertex LexicalItem.Token)}
+    {ℓ : LexicalItem.Token}
     (hs : IsSyntacticObject (UnorderedTree.mk s)) (hc : s.children ≠ [])
     (h : treeRaisingHead s = some ℓ) :
     ∃ i c, headIndex? s = some i ∧ s.children[i]? = some c ∧ treeRaisingHead c = some ℓ := by

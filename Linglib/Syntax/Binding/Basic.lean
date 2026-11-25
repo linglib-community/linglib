@@ -8,7 +8,6 @@ module
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.UD.UPOS
-public import Linglib.Morphology.Word.Basic
 
 /-!
 # Binding theory
@@ -35,8 +34,7 @@ looks exempt when that position is left out of account.
 
 ## Main definitions
 
-* `Binding.BindingClass`, `Binding.bindingClassOf`: anaphor, pronominal or R-expression, read
-  off a word's morphology.
+* `Binding.BindingClass`: anaphor, pronominal or R-expression.
 * `Binding.Configuration`: a command relation, a binding domain and a pronominal domain, ordered
   pointwise; `Configuration.comap` pulls one back along a map of positions,
   `Configuration.monoclausal` is the configuration of a single binding domain, and
@@ -106,26 +104,6 @@ end BindingClass
 def IsNominal (cat : UD.UPOS) : Prop := cat = .PROPN ∨ cat = .NOUN ∨ cat = .PRON
 
 instance : DecidablePred IsNominal := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-
-/-- A pronoun type is an operator's when it is interrogative, relative, indefinite, negative or
-total: the types of the wh-phrases and quantifier expressions, which [chomsky-1981] takes to be
-R-expressions. -/
-def IsOperator (t : UD.PronType) : Prop := t = .Int ∨ t = .Rel ∨ t = .Ind ∨ t = .Neg ∨ t = .Tot
-
-instance : DecidablePred IsOperator :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _ ∨ _))
-
-/-- `bindingClassOf w` reads the binding class of `w` off its morphology and category.
-Reflexive marking makes a reflexive, the reciprocal pronoun type a reciprocal, any other pronoun
-that is not an operator a pronominal, and an operator or a noun an R-expression. -/
-def bindingClassOf (w : Morphology.Word) : Option BindingClass :=
-  if (w.features .reflex).isSome then some .reflexive
-  else match w.features .pronType with
-    | some .Rcp => some .reciprocal
-    | t =>
-      if w.cat = .PRON ∧ ∀ x, t = some x → ¬ IsOperator x then some .pronoun
-      else if IsNominal w.cat then some .rExpression
-      else none
 
 /-! ### Configurations -/
 

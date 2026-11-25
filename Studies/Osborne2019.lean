@@ -9,6 +9,9 @@ public import Linglib.Syntax.DependencyGrammar.Valency
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Syntax.DependencyGrammar.Catena
 public import Linglib.Syntax.DependencyGrammar.Stemma
+public import Linglib.Syntax.Category.Adposition.Word
+public import Linglib.Syntax.Category.Determiner.Word
+public import Linglib.Syntax.Category.Noun.Word
 
 /-!
 # Osborne (2019): A Dependency Grammar of English

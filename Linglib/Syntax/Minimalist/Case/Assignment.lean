@@ -19,8 +19,7 @@ case under [Agree](##Minimalist.agree) on the closest caseless NP they reach, wh
 dative valued in the verb phrase survives the clause. A language's case assigners are the rules of
 each phase head's domain and the case each head values under Agree, so configurational, Agree-based
 and hybrid systems are points in one space. Assignment is [a fold](##Minimalist.assignBy) over
-[domains](##Minimalist.CaseDomain); `CaseAssigners.assign` builds them from NPs placed by hand, and
-`Case/SyntacticObject.lean` reads them off an object.
+[domains](##Minimalist.CaseDomain); `CaseAssigners.assign` builds them from NPs placed by hand.
 
 ## Implementation notes
 

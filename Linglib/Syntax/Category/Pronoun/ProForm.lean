@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Category.Pronoun.Basic
+public import Linglib.Syntax.Binding.Word
 
 /-!
 # Proforms

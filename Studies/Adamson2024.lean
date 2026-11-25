@@ -14,6 +14,7 @@ public import Linglib.Semantics.Possession.Relationalizer
 public import Linglib.Data.Examples.Adamson2024
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
+public import Linglib.Syntax.Feature.Number.Basic
 
 /-!
 # Gender assignment is local

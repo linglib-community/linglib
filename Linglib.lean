@@ -450,8 +450,6 @@ import Linglib.Syntax.Mereological.AngularLocality
 import Linglib.Syntax.Mereological.Parthood
 import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.LateMerger
-import Linglib.Syntax.Minimalist.Linearization.Externalization
-import Linglib.Syntax.Minimalist.Linearization.Replay
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
@@ -461,8 +459,6 @@ import Linglib.Syntax.Minimalist.Theta.Basic
 import Linglib.Syntax.Minimalist.Theta.Realize
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Minimalist.Workspace.Basic
-import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 import Linglib.Syntax.Negation
 import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.Tree.Basic

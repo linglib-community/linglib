@@ -2,6 +2,7 @@ module
 
 public import Linglib.Languages.Dutch.Gender
 public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Syntax.Feature.Person.Basic
 
 /-!
 # Dutch determiners

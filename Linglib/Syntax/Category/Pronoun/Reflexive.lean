@@ -7,6 +7,7 @@ module
 
 public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Linglib.Syntax.Category.Pronoun.Basic
+public import Linglib.Syntax.Binding.Word
 
 /-!
 # Reflexive pronouns

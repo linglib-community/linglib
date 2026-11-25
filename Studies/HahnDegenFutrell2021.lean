@@ -10,6 +10,7 @@ public import Studies.Bybee1985
 public import Linglib.Data.Examples.HahnDegenFutrell2021
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # Hahn, Degen, and Futrell (2021): Modeling Word and Morpheme Order in Natural Language as an Efficient Trade-Off of Memory and Surprisal

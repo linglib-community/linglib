@@ -32,8 +32,7 @@ other.
 * Which heads are cyclic is a parameter; a study whose heads have categories takes the
   categorizers, `Minimalist.Cat.IsCategorizer`.
 * Activity is the word-internal case of the Phase Impenetrability Condition: what is inactive when
-  a cyclic head is spelled out is the interior of the phase below it. Transfer on trees is in
-  `Syntax/Minimalist/Phase/Transfer.lean`, and the two are not derived from one definition.
+  a cyclic head is spelled out is the interior of the phase below it.
 * The last cycle is the highest stretch of the heads split before the cyclic heads,
   `Spine.splitBefore`, the construction that also gives the head chains of
   `Syntax/Minimalist/HeadChain.lean`, there at the heads that do not share.

@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Category.Pronoun.Basic
 public import Linglib.Syntax.Reciprocal
+public import Linglib.Syntax.Binding.Word
 
 /-!
 # Reciprocal pronouns

@@ -46,12 +46,14 @@ namespace Minimalist
 
 open SyntacticObject
 
-variable {L ι : Type} (P : SyntacticObject L ι → SyntacticObject L ι → Prop) [DecidableRel P]
+variable {L ι : Type}
+    (P : SyntacticObject (SyntacticObject.Leaf L ι) → SyntacticObject (SyntacticObject.Leaf L ι) →
+    Prop) [DecidableRel P]
   [Std.Asymm P]
 
 /-- The leaf that heads an object, where `P x y` says that `x` projects over `y`: a leaf heads
 itself, and a Merge is headed by the head of the daughter that projects. -/
-def headLeaf : SyntacticObject L ι → Option (Leaf L ι) :=
+def headLeaf : SyntacticObject (SyntacticObject.Leaf L ι) → Option (Leaf L ι) :=
   FreeCommMagma.elim some (fun l r a b ↦ if P l r then a else if P r l then b else none)
     fun l r a b ↦ by
       by_cases h : P l r
@@ -60,22 +62,24 @@ def headLeaf : SyntacticObject L ι → Option (Leaf L ι) :=
 
 @[simp] theorem headLeaf_of (x : Leaf L ι) : headLeaf P (FreeCommMagma.of x) = some x := rfl
 
-theorem headLeaf_merge (l r : SyntacticObject L ι) :
+theorem headLeaf_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
     headLeaf P (merge l r) = if P l r then headLeaf P l else if P r l then headLeaf P r else none :=
   FreeCommMagma.elim_mul _ _ _ l r
 
 /-- No object merged with itself has a head. -/
-@[simp] theorem headLeaf_merge_self (x : SyntacticObject L ι) : headLeaf P (merge x x) = none := by
+@[simp] theorem headLeaf_merge_self (x : SyntacticObject (SyntacticObject.Leaf L ι)) : headLeaf P
+    (merge x x) = none := by
   have hx : ¬ P x x := fun h ↦ Std.Asymm.asymm x x h h
   simp [headLeaf_merge, hx]
 
 /-- The lexical item that heads an object: its head leaf, where that is a lexical item. -/
-def headItem (s : SyntacticObject L ι) : Option L :=
+def headItem (s : SyntacticObject (SyntacticObject.Leaf L ι)) : Option L :=
   (headLeaf P s).bind (Leaf.elim some fun _ ↦ none)
 
-@[simp] theorem headItem_leaf (a : L) : headItem P (leaf a : SyntacticObject L ι) = some a := rfl
+@[simp] theorem headItem_leaf (a : L) : headItem P
+    (leaf a : SyntacticObject (SyntacticObject.Leaf L ι)) = some a := rfl
 
-theorem headItem_merge (l r : SyntacticObject L ι) :
+theorem headItem_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
     headItem P (merge l r) =
       if P l r then headItem P l else if P r l then headItem P r else none := by
   rw [headItem, headLeaf_merge]

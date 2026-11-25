@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # Extending a phrase by a sequence of heads
@@ -52,16 +53,17 @@ theorem headTokens_append (cs : List Cat) :
 
 namespace PlanarSyntacticObject
 
-variable {t : PlanarSyntacticObject} {spec : ℕ → Option PlanarSyntacticObject}
+variable {t : PlanarSyntacticObject TokenLeaf} {spec : ℕ → Option (PlanarSyntacticObject TokenLeaf)}
 
 /-- The phrase `t`, of category `below`, extended by heads of the categories `cs` from the lowest:
 each head merges over what is built so far, and `spec i`, when present, merges as the specifier of
 the `i`th head. -/
-def extend (t : PlanarSyntacticObject) (below : Cat) (id : ℕ)
-    (spec : ℕ → Option PlanarSyntacticObject) : List Cat → PlanarSyntacticObject
+def extend (t : PlanarSyntacticObject TokenLeaf) (below : Cat) (id : ℕ)
+    (spec : ℕ → Option (PlanarSyntacticObject TokenLeaf)) : List Cat → PlanarSyntacticObject
+        TokenLeaf
   | [] => t
   | c :: cs =>
-    let hp : PlanarSyntacticObject := .leaf ⟨.of c [below], id⟩ * t
+    let hp : PlanarSyntacticObject TokenLeaf := .leaf ⟨.of c [below], id⟩ * t
     extend ((spec 0).elim hp (· * hp)) c (id + 1) (fun i ↦ spec (i + 1)) cs
 
 @[simp] theorem extend_nil : t.extend below id spec [] = t := rfl
@@ -85,7 +87,7 @@ theorem extend_append (cs : List Cat) :
 the heads below it. -/
 theorem extend_concat (cs : List Cat) (c : Cat) :
     t.extend below id spec (cs ++ [c]) =
-      let hp : PlanarSyntacticObject :=
+      let hp : PlanarSyntacticObject TokenLeaf :=
         .leaf ⟨.of c [cs.getLast?.getD below], id + cs.length⟩ * t.extend below id spec cs
       (spec cs.length).elim hp (· * hp) := by
   rw [extend_append]; simp

@@ -55,7 +55,7 @@ tables in `DeClercqEtAl2025.Wordlist`.
 namespace DeClercqEtAl2025
 
 open Morphology.Nanosyntax Morphology
-open Minimalist.Next (PlanarSyntacticObject SyntacticObject)
+open Minimalist (PlanarSyntacticObject SyntacticObject)
 
 variable {F : Type} [DecidableEq F]
 

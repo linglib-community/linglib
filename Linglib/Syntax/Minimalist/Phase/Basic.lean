@@ -15,16 +15,14 @@ parameter `h`. The terms a lexical item heads run from its leaf up to its maxima
 it heads a phase when it heads more than its leaf. Its complement is the sister it projects over.
 The phase is what lies within the terms it heads, the interior what lies within the complement,
 and the edge the rest: the head and what is merged above it, a phrase raised there included. A
-term is `Inaccessible` when it lies in the interior of a phase other than the highest. The Phase
-Impenetrability Condition, which seals the interior, is stated on positions in
-`Phase/Transfer.lean`, and as a restriction of the coproduct in `Workspace/Merge/Phase.lean`.
+term is `Inaccessible` when it lies in the interior of a phase other than the highest.
 
 ## Implementation notes
 
 * Terms are values, not occurrences, so all copies of a head share one phase, and the lower
-  copies of a moved phrase are one term; positions tell copies apart in `Copy/Chain.lean`.
-* Every head that projects heads a phase, as in the book; the heads a study counts as phase heads
-  (C alone, or also v, D, or Voice) are the positions `sealed` takes in `Phase/Transfer.lean`.
+  copies of a moved phrase are one term.
+* Every head that projects heads a phase, as in the book; which heads a study counts as phase
+  heads (C alone, or also v, D, or Voice) is a parameter.
 * Which phrases lie in the phase of a head depends on the head function. Under the raising head
   a phrase raised to the edge of a head lies in its phase, and a phrase merged there in place
   lies in it only when the head selects it.
@@ -52,8 +50,9 @@ namespace SyntacticObject
 
 open Relation
 
-variable {L ι : Type} (h : SyntacticObject L ι → Option L) (T : SyntacticObject L ι) (ℓ : L)
-  (x z : SyntacticObject L ι)
+variable {L ι : Type} (h : SyntacticObject (SyntacticObject.Leaf L ι) → Option L)
+    (T : SyntacticObject (SyntacticObject.Leaf L ι)) (ℓ : L)
+  (x z : SyntacticObject (SyntacticObject.Leaf L ι))
 
 /-- `ℓ` heads a phase of `T` when it projects, heading a mother of its leaf. -/
 def IsPhaseHead : Prop := ∃ m ∈ T.terms, h m = some ℓ ∧ ImmediatelyContains m (leaf ℓ)
@@ -83,15 +82,16 @@ instance [DecidableEq L] [DecidableEq ι] : Decidable (WithinComplement h T ℓ 
 
 /-- `x` is inaccessible in `T`, with `Φ` the phase heads: it lies within the complement of a
 phase head other than the head of `T`, the interior of a lower phase. -/
-def Inaccessible (h : SyntacticObject L ι → Option L) (T : SyntacticObject L ι) (Φ : L → Prop)
-    (x : SyntacticObject L ι) : Prop :=
+def Inaccessible (h : SyntacticObject (SyntacticObject.Leaf L ι) → Option L)
+    (T : SyntacticObject (SyntacticObject.Leaf L ι)) (Φ : L → Prop)
+    (x : SyntacticObject (SyntacticObject.Leaf L ι)) : Prop :=
   ∃ m ∈ T.terms, ∃ ℓ ∈ h m, Φ ℓ ∧ h T ≠ some ℓ ∧ WithinComplement h T ℓ x
 
 instance [DecidableEq L] [DecidableEq ι] (Φ : L → Prop) [DecidablePred Φ] :
     Decidable (Inaccessible h T Φ x) :=
   Multiset.decidableExistsMultiset
 
-variable {h T ℓ x z} {y T' : SyntacticObject L ι}
+variable {h T ℓ x z} {y T' : SyntacticObject (SyntacticObject.Leaf L ι)}
 
 theorem IsComplementOf.mem_terms (hz : IsComplementOf h T ℓ z) : z ∈ T.terms :=
   let ⟨_, hm, _, _, hmz, _⟩ := hz
@@ -199,16 +199,18 @@ variable [DecidableEq L] [DecidableEq ι]
 
 variable (h T ℓ) in
 /-- The phase of `ℓ` in `T` is the multiset of terms within its projection. -/
-def phase : Multiset (SyntacticObject L ι) := T.terms.filter (WithinProjection h T ℓ)
+def phase : Multiset (SyntacticObject (SyntacticObject.Leaf L ι)) := T.terms.filter
+    (WithinProjection h T ℓ)
 
 variable (h T ℓ) in
 /-- The interior of the phase of `ℓ` in `T` is the multiset of terms within its complement. -/
-def phaseInterior : Multiset (SyntacticObject L ι) := T.terms.filter (WithinComplement h T ℓ)
+def phaseInterior : Multiset (SyntacticObject (SyntacticObject.Leaf L ι)) := T.terms.filter
+    (WithinComplement h T ℓ)
 
 variable (h T ℓ) in
 /-- The edge of the phase of `ℓ` in `T` is the multiset of terms of the phase outside its
 interior. -/
-def phaseEdge : Multiset (SyntacticObject L ι) :=
+def phaseEdge : Multiset (SyntacticObject (SyntacticObject.Leaf L ι)) :=
   (T.phase h ℓ).filter (· ∉ T.phaseInterior h ℓ)
 
 @[simp] theorem mem_phase : x ∈ T.phase h ℓ ↔ WithinProjection h T ℓ x :=

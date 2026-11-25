@@ -8,7 +8,6 @@ public import Linglib.Syntax.Feature.Case.Function
 Mongolian (Khalkha and Chakhar) has seven cases: nominative, accusative, genitive, dative,
 ablative, instrumental and comitative. The inventory has no dedicated locative: the dative
 expresses location, as in *Gowi-d* 'in the Gobi' ([gong-2026]), and so do postpositions.
-[gong-2022]'s account of how the structural cases are assigned is in `Studies/Gong2022.lean`.
 
 ## References
 
