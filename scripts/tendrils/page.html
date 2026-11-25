@@ -141,7 +141,7 @@ td.r, th.r { text-align: right; }
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const short = n => n.replace(/^Linglib\./, '').replace(/^Studies\./, '');
-const AREAS = [], MODS = [], NODES = [], CLAIMS = {}, MISSING = [];
+const AREAS = [], MODS = [], NODES = [], CLAIMS = {}, MISSING = [], SOURCE = [];
 const LEVELS = ['reaches the library', 'reaches three shared declarations or fewer', 'reaches language data or another study only',
   'stops in the file, on mathlib', 'stops in the file, on Lean core only'];
 const FLAG = { d: 'default argument that pulls in other declarations', b: 'numeric literal of 1000 or more in the body', s: 'contains sorry' };
@@ -156,6 +156,7 @@ const bin = v => v <= 0 ? 0 : v <= .2 ? 1 : v <= .4 ? 2 : v <= .6 ? 3 : v <= .8 
 fetch('graph.json').then(r => r.json()).then(rows => {
   for (const r of rows) {
     if (r[0] === 'A') AREAS.push(...r[1]);
+    else if (r[0] === 'I') SOURCE.push(...r[1]);
     else if (r[0] === 'M') MODS.push({ i: MODS.length, name: r[1], layer: r[2], group: r[3], lines: r[4], compiled: r[5], nimp: r[6],
       nuse: r[7], nmean: r[8], ndflt: r[9], traffic: r[10], ndecl: r[11], imp: r[14], need: r[15], dead: r[16], flags: r[17] });
     else if (r[0] === 'N') NODES.push({ name: r[1], mod: r[2], kind: r[3], fl: r[4], deps: r[5], areas: r[6], traffic: r[7] });
@@ -174,7 +175,8 @@ function init() {
   const nClaims = studies.reduce((s, m) => s + CLAIMS[m.i].length, 0);
   const lib = MODS.filter(m => m.layer !== 'study');
   $('cover').textContent = `Measured: ${studies.length.toLocaleString()} studies with ${nClaims.toLocaleString()} theorems, and ${lib.filter(m => m.compiled).length.toLocaleString()} library files. ` +
-    `${MISSING.length.toLocaleString()} files had no current compiled copy on this machine and are hatched.`;
+    (MISSING.length ? `${MISSING.length.toLocaleString()} files were not compiled where this was measured and are hatched. ` : '') +
+    (SOURCE.length ? `Commit ${SOURCE[0]}, ${SOURCE[1]}.` : '');
   $('slist').innerHTML = studies.map(m => `<option value="${esc(short(m.name))}">`).join('');
   $('sleg').innerHTML = rampLegend(['none', '1–20%', '21–40%', '41–60%', '61–80%', '81–100%'], 'Share of the study\'s theorems') +
     '<span class="key"><span class="sw none"></span>not measured</span>';

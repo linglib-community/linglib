@@ -286,7 +286,9 @@ hot.sort(reverse=True)
 # ---------------------------------------------------------------- page data
 knodes = sorted(keep)
 kid = {x: i for i, x in enumerate(knodes)}
-recs = [["A", AREAS]]
+src_file = os.path.join(os.path.dirname(os.path.abspath(TSV)), 'source.txt')
+source = open(src_file).read().split() if os.path.exists(src_file) else []
+recs = [["A", AREAS], ["I", source]]
 for d in M:
     recs.append(["M", d['name'], d['layer'], d['group'], d['lines'], int(d['compiled']), d['nimp'], d['nuse'],
                  d['nmean'], d['ndflt'], d['traffic'], d['ndecl'], d.get('cls'), d.get('hcls'), d['imp'], d['need'],
