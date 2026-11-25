@@ -41,10 +41,10 @@ def tell : Verb where
   valency := .of
     [(ArgumentFrame.finiteClause, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 2, 1]),
+     (ArgumentFrame.np_np.leaveImplicit 1 {.def}, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      ((ArgumentFrame.np_pp (some Adpositions.to_)
-         (some (.argument .R))).leaveImplicit 1 (some .indef),
+         (some (.argument .R))).leaveImplicit 1 {.indef},
        [0, 1, 2])]
 
 /-- "claim" — communication verb, speaker doesn't endorse. It takes a finite clause or an

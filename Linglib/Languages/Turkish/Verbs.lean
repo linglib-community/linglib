@@ -56,7 +56,8 @@ end Verb
 
 /-- The frame of a verb that takes a nominalized clause as a question. -/
 def nominalizedQuestion : ArgumentFrame :=
-  ⟨some .nominal, [.clausal (coding := some .nominalized) (types := .interrogatives)]⟩
+  ⟨some .nominal,
+    [.clausal { coding := {.nominalized}, types := Clause.SentenceType.interrogatives }]⟩
 
 /-! ### Preferential attitudes -/
 

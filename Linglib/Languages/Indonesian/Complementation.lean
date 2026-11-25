@@ -32,7 +32,7 @@ open Morphology
 
 /-- A bare complement whose subject is controlled by a matrix argument. -/
 def controlled : ArgumentFrame.Position :=
-  .clausal (coding := some .infinitive) (subject := some .null)
+  .clausal { coding := {.infinitive}, subject := {.null} }
 
 /-- The frame of a controlled complement alone. -/
 def controlledFrame : ArgumentFrame := { complements := [controlled] }
@@ -68,8 +68,8 @@ def tahu : Verb := { morphs := [.root "tahu"], valency := .ofFrame ArgumentFrame
 /-- *bahwa* 'that' is the declarative complementizer of a full clause. -/
 def bahwa : Complementizer where
   morphs := [.free "bahwa"]
-  coding := some .indicative
-  types := .only .declarative
+  coding := {.indicative}
+  types := {.declarative}
 
 /-- *agar* 'so that' introduces a purpose clause, which may have a subject of its own. -/
 def agar : Complementizer where
@@ -79,6 +79,6 @@ def agar : Complementizer where
 have the same subject, and that of the second is not expressed ([sneddon-1996] p. 338). -/
 def sambil : Complementizer where
   morphs := [.free "sambil"]
-  subject := some .null
+  subject := {.null}
 
 end Indonesian.Complementation

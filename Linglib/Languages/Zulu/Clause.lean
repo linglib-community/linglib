@@ -24,13 +24,13 @@ namespace Zulu
 complements. -/
 def ukuthi : Complementizer where
   morphs := [.pref "u", .root "kuthi"]
-  types := .only .declarative
+  types := {.declarative}
   verbForm := some .Fin
 
 /-- *sengathi* 'as if' bears no augment. -/
 def sengathi : Complementizer where
   morphs := [.root "sengathi"]
-  types := .only .declarative
+  types := {.declarative}
   verbForm := some .Fin
 
 end Zulu

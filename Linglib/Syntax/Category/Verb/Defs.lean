@@ -234,9 +234,9 @@ def Verb.HasController (v : Verb) : Prop := ∃ d ∈ v.valency.diatheses, d.con
 instance (v : Verb) : Decidable v.HasController :=
   inferInstanceAs (Decidable (∃ d ∈ v.valency.diatheses, _))
 
-/-- All [noonan-2007] codings across the verb's frames. -/
-def Verb.codings (v : Verb) : List Clause.ComplementType :=
-  v.valency.frames.flatMap ArgumentFrame.codings
+/-- The [noonan-2007] complement types the verb's frames restrict a complement to. -/
+def Verb.codings (v : Verb) : Finset Clause.ComplementType :=
+  Finset.univ.filter fun c ↦ ∃ fr ∈ v.valency.frames, c ∈ fr.codings
 
 /-- Some frame of the verb selects the sentence type `t`. -/
 def Verb.TakesType (v : Verb) (t : Clause.SentenceType) : Prop :=
@@ -261,7 +261,7 @@ instance (v : Verb) : Decidable v.TakesClausal :=
 /-- Some frame of the verb has a spatial adpositional position, so the verb selects a locative or
     directional phrase as a complement. -/
 def Verb.TakesSpatial (v : Verb) : Prop :=
-  ∃ fr ∈ v.valency.frames, ∃ p ∈ fr.complements, p.relation? = some .spatial
+  ∃ fr ∈ v.valency.frames, ∃ p ∈ fr.complements, p.relation = {.spatial}
 
 instance (v : Verb) : Decidable v.TakesSpatial :=
   inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))

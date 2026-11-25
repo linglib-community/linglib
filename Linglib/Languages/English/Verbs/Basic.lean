@@ -200,7 +200,7 @@ def eat : Verb where
   pastPart := "eaten"
   valency := .ofFrames
     [ArgumentFrame.np,
-     ArgumentFrame.objectDrop (some .indef),
+     ArgumentFrame.objectDrop {.indef},
      ArgumentFrame.pp (some Adpositions.at_)]
     [some accomplishmentSubjectProfile, some consumptionObject]
   incrementality := some .strict
@@ -242,9 +242,9 @@ def give : Verb where
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1]),
      ((ArgumentFrame.np_pp (some Adpositions.to_)
-         (some (.argument .R))).leaveImplicit 0 (some .indef),
+         (some (.argument .R))).leaveImplicit 0 {.indef},
        [0, 2, 1]),
-     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
+     ((ArgumentFrame.np_pp).leaveImplicit 1 {.def}, [0, 2, 1])]
 
 /-- "put" — locative -/
 def put : Verb where
@@ -290,7 +290,7 @@ def meet : Verb where
   morphs := [.root "meet"]
   levin := some Levin1993.Index.meet
   past := "met"
-  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop (some .reciprocal)]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop {.reciprocal}]
 
 /-- "set" — irregular; the base, past and past participle forms coincide. -/
 def set_ : Verb where
@@ -316,9 +316,9 @@ def sell : Verb where
      (ArgumentFrame.np_pp, [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      ((ArgumentFrame.np_pp (some Adpositions.to_)
-         (some (.argument .R))).leaveImplicit 0 (some .def),
+         (some (.argument .R))).leaveImplicit 0 {.def},
        [0, 1, 2]),
-     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .indef), [0, 1, 2]),
+     ((ArgumentFrame.np_pp).leaveImplicit 1 {.indef}, [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
     [some possessionTransfer.subjectProfile, none, none]
 
@@ -346,7 +346,7 @@ def smoke : Verb where
   morphs := [.root "smoke"]
   levin := some Levin1993.Index.smoke
   levinExcluded := {LevinClass.entitySpecificModeOfBeing}
-  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop {.indef}]
 
 /-! ### Other -/
 
@@ -365,7 +365,7 @@ def drink : Verb where
   pastPart := "drunk"
   valency := .ofFrames
     [ArgumentFrame.np,
-     ArgumentFrame.objectDrop (some .indef),
+     ArgumentFrame.objectDrop {.indef},
      ArgumentFrame.pp (some Adpositions.at_)]
   incrementality := some .strict
 
@@ -386,7 +386,7 @@ def build : Verb where
   past := "built"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (ArgumentFrame.objectDrop {.indef}, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.for_) (some .beneficiary), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.out), [0, 1, 3]),
@@ -407,9 +407,9 @@ def write : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp, [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 2, 1]),
-     ((ArgumentFrame.np_pp).leaveImplicit 0 (some .indef), [0, 1, 2]),
-     (ArgumentFrame.objectDrop (some .indef), [0, 1])]
+     (ArgumentFrame.np_np.leaveImplicit 1 {.indef}, [0, 2, 1]),
+     ((ArgumentFrame.np_pp).leaveImplicit 0 {.indef}, [0, 1, 2]),
+     (ArgumentFrame.objectDrop {.indef}, [0, 1])]
   incrementality := some .strict
 
 /-- "do", the lexical verb of *She does her best*, a lexeme apart from the auxiliary *do*
@@ -429,7 +429,7 @@ def sweep : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (ArgumentFrame.objectDrop {.indef}, [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
     [some wipeManner.subjectProfile, none, none]
@@ -442,7 +442,7 @@ def sweep_instr : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (ArgumentFrame.objectDrop {.indef}, [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
     [some wipeInstrument.subjectProfile, none, none]

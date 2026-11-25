@@ -5,13 +5,11 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.BoundedComplete
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Syntax.Obligatoriness
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Order.Basic
-public import Mathlib.Order.WithBot
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -20,9 +18,9 @@ public import Mathlib.Tactic.DeriveFintype
 A sentence type is the grammatical kind of a clause, such as the declarative or the polar
 interrogative, and an embedding context is where a clause token occurs, as a root or under
 subordination. A distribution records, for each sentence type in each embedding context, whether
-some element or process is obligatory, optional or excluded there. A selection is the set of
-sentence types a complementizer types or a clausal argument position selects. The other properties
-of a complement clause are in `Syntax/Clause/Complementation.lean`.
+some element or process is obligatory, optional or excluded there. What a predicate selects of a
+complement clause, its sentence types among other properties, is in
+`Syntax/Clause/Complementation.lean`.
 
 ## Main definitions
 
@@ -32,11 +30,10 @@ of a complement clause are in `Syntax/Clause/Complementation.lean`.
 * `Clause.Distribution`: the `Obligatoriness` recorded in each cell.
 * `Clause.Distribution.recorded`, `possible`, `required`: the relations a distribution
   determines.
-* `Clause.Distribution.types`, `contexts`, `selection`: the sentence types and the embedding
-  contexts in which the element may occur, and those types as a selection.
+* `Clause.Distribution.types`, `contexts`: the sentence types and the embedding contexts in which
+  the element may occur.
 * `Clause.LeftEdge`, `Clause.LeftEdge.Table`: whether a complementizer introduces a clause and
   whether its finite verb is fronted, and the left edges a language admits in each cell.
-* `Clause.Selection`: the sentence types a clause-typer types or a clausal position selects.
 
 ## References
 
@@ -81,6 +78,16 @@ def SentenceType.IsInterrogative (t : SentenceType) : Prop :=
 
 instance : DecidablePred SentenceType.IsInterrogative :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
+instance : Repr (Finset SentenceType) :=
+  ⟨fun s _ ↦ repr (SentenceType.enumList.filter (· ∈ s))⟩
+
+/-- The three interrogative sentence types. -/
+def SentenceType.interrogatives : Finset SentenceType := {.polar, .alternative, .constituent}
+
+@[simp] theorem SentenceType.mem_interrogatives {t : SentenceType} :
+    t ∈ interrogatives ↔ t.IsInterrogative := by
+  simp [interrogatives, IsInterrogative]
 
 /-! ### Embedding contexts and cells
 
@@ -238,74 +245,5 @@ def restrict (b : Bool) : LeftEdge.Table := fun c ↦
     some (s.filter (·.complementizer = b)) else none
 
 end LeftEdge.Table
-
-/-! ### Selections
-
-*Whether* selects polar and alternative questions and *wonder* any question. Selections are
-ordered by information, the smaller set of types the more specific, and two selections unify to
-their intersection when it is nonempty (`Finset.isLUB_pair_iff_eq_inter`). -/
-
-/-- A nonempty set of sentence types, the more specific selection being the smaller set. -/
-abbrev Selection.Types := {s : Finset SentenceType // s.Nonempty}ᵒᵈ
-
-/-- The sentence types a clause-typer types or a clausal position selects, `⊥` where nothing is
-recorded. -/
-abbrev Selection := WithBot Selection.Types
-
-namespace Selection
-
-/-- The selection of a nonempty set of types. -/
-def of (s : Finset SentenceType) (h : s.Nonempty := by decide) : Selection :=
-  ((OrderDual.toDual ⟨s, h⟩ : Types) : Selection)
-
-/-- The selection of one type. -/
-def only (t : SentenceType) : Selection := of {t} (Finset.singleton_nonempty t)
-
-/-- The selection of the three interrogative types. -/
-def interrogatives : Selection := of {.polar, .alternative, .constituent}
-
-/-- The types a selection records; none when nothing is recorded. -/
-def types : Selection → Finset SentenceType
-  | ⊥ => ∅
-  | (s : Types) => (OrderDual.ofDual s).1
-
-instance : Membership SentenceType Selection := ⟨fun sel t ↦ t ∈ sel.types⟩
-
-instance : Repr Selection :=
-  ⟨fun sel _ ↦ repr (SentenceType.enumList.filter fun t ↦ decide (t ∈ sel.types))⟩
-
-theorem mem_iff {sel : Selection} {t : SentenceType} : t ∈ sel ↔ t ∈ sel.types := Iff.rfl
-
-instance (sel : Selection) (t : SentenceType) : Decidable (t ∈ sel) :=
-  inferInstanceAs (Decidable (t ∈ sel.types))
-
-@[simp] theorem types_bot : (⊥ : Selection).types = ∅ := rfl
-
-@[simp] theorem types_of (s : Finset SentenceType) (h : s.Nonempty) : (of s h).types = s := rfl
-
-@[simp] theorem types_only (t : SentenceType) : (only t).types = {t} := rfl
-
-/-- A selection records some interrogative type. -/
-def IsInterrogative (sel : Selection) : Prop := ∃ t ∈ sel, t.IsInterrogative
-
-instance (sel : Selection) : Decidable sel.IsInterrogative :=
-  inferInstanceAs (Decidable (∃ t ∈ sel.types, _))
-
-end Selection
-
-/-- The selection of a distribution is the sentence types in which the element may occur, `⊥`
-when it may occur in none. -/
-def Distribution.selection (d : Distribution) : Selection :=
-  if h : d.types.Nonempty then .of d.types h else ⊥
-
-@[simp] theorem Distribution.types_selection (d : Distribution) : d.selection.types = d.types := by
-  unfold Distribution.selection
-  split_ifs with h
-  · rfl
-  · simpa using (Finset.not_nonempty_iff_eq_empty.1 h).symm
-
-theorem Distribution.mem_selection {d : Distribution} {t : SentenceType} :
-    t ∈ d.selection ↔ ∃ e, (t, e) ∈ d.possible := by
-  rw [Selection.mem_iff, types_selection, mem_types]
 
 end Clause

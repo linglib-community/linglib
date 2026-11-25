@@ -117,7 +117,7 @@ theorem se_ambiguous :
 /-- The *se* form's voices are those expletive Voice and agentive Voice over an object understood
 as the subject derive. -/
 example : Form.se.voiceOptions = [Minimalist.Voice.anticausative.diathesis none,
-    Minimalist.Voice.agentive.diathesis (some (.implicit (some .reflexive)))] := by
+    Minimalist.Voice.agentive.diathesis (some (.implicit {.reflexive}))] := by
   rw [Minimalist.Voice.Head.diathesis_of_not_isThematic _ (by decide),
     Minimalist.Voice.Head.diathesis_reflexive (by decide)]; rfl
 

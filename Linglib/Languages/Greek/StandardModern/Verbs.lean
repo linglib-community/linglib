@@ -196,7 +196,7 @@ def anarotjeme : Verb where
 /-- *thélo* (θέλω) 'want' — volitional, taking only a *na*-clause ([roussou-2010]). -/
 def thelo : Verb where
   morphs := [.root "thélo"]
-  valency := .ofFrame ({ complements := [.clausal (coding := some .subjunctive)] })
+  valency := .ofFrame ({ complements := [.clausal { coding := {.subjunctive} }] })
   attitude := some (.preferential .positive)
 
 /-- *elpízo* (ελπίζω) 'hope' — takes a *na*-clause or an *oti*-clause ([grano-2024],
@@ -204,7 +204,7 @@ def thelo : Verb where
 def elpizo : Verb where
   morphs := [.root "elpízo"]
   valency := .ofFrames
-    [{ complements := [.clausal (coding := some .subjunctive)] }, ArgumentFrame.finiteClause]
+    [{ complements := [.clausal { coding := {.subjunctive} }] }, ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -212,7 +212,7 @@ def elpizo : Verb where
     [giannakidou-mari-2021], in the third singular *protíthete*). -/
 def protitheme : Verb where
   morphs := [.root "protítheme"]
-  valency := .ofFrame ({ complements := [.clausal (coding := some .subjunctive)] })
+  valency := .ofFrame ({ complements := [.clausal { coding := {.subjunctive} }] })
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -220,7 +220,7 @@ def protitheme : Verb where
     ([grano-2024]). -/
 def vazo : Verb where
   morphs := [.root "vázo"]
-  valency := .ofFrame ({ complements := [.nominal, .clausal (coding := some .subjunctive)] })
+  valency := .ofFrame ({ complements := [.nominal, .clausal { coding := {.subjunctive} }] })
 
 /-! ### Occurrence verbs -/
 
@@ -231,6 +231,6 @@ def vazo : Verb where
 def simveni : Verb where
   morphs := [.root "simvéni"]
   valency := .ofFrame
-    { external := none, complements := [.clausal (coding := some .subjunctive)] }
+    { external := none, complements := [.clausal { coding := {.subjunctive} }] }
 
 end Greek.StandardModern.Verbs

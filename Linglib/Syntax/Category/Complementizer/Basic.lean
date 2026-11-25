@@ -42,10 +42,11 @@ conventions:
   surface order: a free word (*that*), a bound root that never surfaces bare
   (Buryat *gɘ*), or the affixes of a prefix or suffix complex (Tigrinya
   *kɛm-zɨ-*). Attachment is read off the morphs' kinds rather than stored.
-- `types`: the sentence types of the clauses the morpheme types, a
-  selection; a complementizer of polar questions records `.only .polar`.
-  An entry that records a distribution has the types that distribution
-  admits, `Clause.Distribution.selection`, unless it gives others.
+- A complementizer is also a `Clause.Selection`: the complement types, sentence
+  types and subject realizations of the clauses it types. A complementizer of
+  polar questions has `types := {.polar}`. An entry that records a distribution
+  has the sentence types that distribution admits, unless it gives others, and
+  every sentence type where the distribution admits none.
 - `licenser` names the licensing projection, not the morphological
   host stem (which for a suffixal clause-typer is the verb it
   attaches to).
@@ -65,16 +66,11 @@ inductive Complementizer.Licenser where
   | verbal
   deriving DecidableEq, Fintype, Repr
 
-/-- A complementizer is a clause marker together with the consensus clause-typing axes. -/
-structure Complementizer extends Clause.Marker where
-  /-- [noonan-2007] coding of the clause this morpheme types. -/
-  coding : Option Clause.ComplementType := none
-  /-- The sentence types of the clauses this morpheme types, by default those in which its
-  distribution lets it occur. -/
-  types : Clause.Selection := distribution.selection
-  /-- The realization the subject of the clause it types must have, as *for* requires an overt
-  accusative one ([huddleston-pullum-2002] ch. 14 §1.4.1). -/
-  subject : Option Clause.EmbeddedSubject := none
+/-- A complementizer is a clause marker together with the selection of the clauses it types and the
+consensus clause-typing axes. The subject it requires of its clause is its selection's, as *for*
+requires an overt accusative one ([huddleston-pullum-2002] ch. 14 §1.4.1). -/
+structure Complementizer extends Clause.Marker, Clause.Selection where
+  types := if distribution.types.Nonempty then distribution.types else Finset.univ
   /-- Verb form derived on the host (UD). -/
   verbForm : Option UD.VerbForm := none
   /-- Category of the adjacent licensing projection. -/
@@ -88,10 +84,11 @@ namespace Complementizer
 /-- The surface form is the morphs' forms with their boundary notation. -/
 def form (c : Complementizer) : String := Morph.surface c.morphs
 
-/-- A complementizer is finite when its verb form or its coding is finite. -/
-def IsFinite (c : Complementizer) : Prop := c.verbForm = some .Fin ∨ ∃ k ∈ c.coding, k.IsFinite
+/-- A complementizer is finite when its verb form is finite or every complement type it types
+is. -/
+def IsFinite (c : Complementizer) : Prop := c.verbForm = some .Fin ∨ ∀ k ∈ c.coding, k.IsFinite
 
 instance : DecidablePred IsFinite := fun c ↦
-  inferInstanceAs (Decidable (_ ∨ ∃ k ∈ c.coding, _))
+  inferInstanceAs (Decidable (_ ∨ ∀ k ∈ c.coding, _))
 
 end Complementizer

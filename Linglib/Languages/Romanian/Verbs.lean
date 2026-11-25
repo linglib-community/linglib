@@ -43,13 +43,13 @@ def sePassive (fr : ArgumentFrame := .np) : Voice :=
 /-- *să* introduces a subjunctive clause. -/
 def sa : Complementizer where
   morphs := [.free "să"]
-  coding := some .subjunctive
+  coding := {.subjunctive}
 
 /-- *că* introduces an indicative declarative clause. -/
 def ca : Complementizer where
   morphs := [.free "că"]
-  coding := some .indicative
-  types := .only .declarative
+  coding := {.indicative}
+  types := {.declarative}
 
 /-- The clause-typers of finite complements. -/
 def complementizers : List Complementizer := [sa, ca]
@@ -57,7 +57,7 @@ def complementizers : List Complementizer := [sa, ca]
 /-! ### Attitude and causative verbs -/
 
 /-- A finite subjunctive complement, the clause *să* introduces. -/
-def saClause : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .subjunctive)]⟩
+def saClause : ArgumentFrame := ⟨some .nominal, [.clausal { coding := {.subjunctive} }]⟩
 
 /-- *a vrea* 'want' takes a *să* clause. -/
 def a_vrea : Verb where
@@ -86,7 +86,7 @@ def a_intentiona : Verb where
 /-- The causative *a face* 'make' takes an object and a *să* clause. -/
 def a_face : Verb where
   morphs := [.free "a", .root "face"]
-  valency := .ofFrame (⟨some .nominal, [.nominal, .clausal (coding := some .subjunctive)]⟩)
+  valency := .ofFrame (⟨some .nominal, [.nominal, .clausal { coding := {.subjunctive} }]⟩)
 
 theorem a_spera_takes_both :
     a_spera.Takes sa ∧ a_spera.Takes ca ∧ a_vrea.Takes sa ∧ ¬ a_vrea.Takes ca := by

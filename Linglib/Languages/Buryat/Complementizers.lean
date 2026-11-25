@@ -53,7 +53,7 @@ def ge : Complementizer where
 participle — two axes, two fields. -/
 def aasha : Complementizer where
   morphs := [.suff "Aːša"]
-  coding := some .nominalized
+  coding := {.nominalized}
   verbForm := some .Part
   licenser := some .nominal
 
@@ -61,7 +61,7 @@ def aasha : Complementizer where
 verbs, also in analytical verb forms and sentential adjuncts (ex. 30). -/
 def zha : Complementizer where
   morphs := [.suff "žA"]
-  coding := some .indicative
+  coding := {.indicative}
   verbForm := some .Conv
   licenser := some .verbal
 
@@ -75,8 +75,7 @@ def complementizers : List Complementizer := [ge, aasha, zha]
 (§4.3.1). Richer than the bare `ArgumentFrame.gerund` cell: it records the
 embedded-subject case. -/
 def nominalizedFrame : ArgumentFrame :=
-  { complements := [.clausal (coding := some .nominalized)
-      (subject := some (.overt (some .gen)))] }
+  { complements := [.clausal { coding := {.nominalized}, subject := {.overt (some .gen)} }] }
 
 /-- *hanaxa* 'think', translated 'remember' with a nominalized complement (§4.4.3): one verb,
 whose nominalized complement carries a presupposition that the event it describes started

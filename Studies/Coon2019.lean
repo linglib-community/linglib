@@ -209,7 +209,7 @@ nominal, a bare NP incorporated, and an implicit argument implicit. -/
 def Internal.position? : Internal → Option ArgumentFrame.Position
   | .dp => some .nominal
   | .np => some .incorporated
-  | .implicit => some (.implicit none)
+  | .implicit => some .implicit
   | .absent => none
 
 /-- A root class forms a stem with a head when the head is well-formed on it under some

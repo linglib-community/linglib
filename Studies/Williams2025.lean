@@ -275,8 +275,8 @@ implicative entry and the gerund of its factive one alike, but only the plain in
 modal. -/
 theorem mca_overgenerates [DenselyOrdered T] [Nonempty W]
     (hE : ∃ e f : E, (τ e).Precedes (τ f)) :
-    (∃ fr ∈ English.Verbs.forget.valency.frames, frame [] ≤ fr) ∧
-      (∃ fr ∈ English.Verbs.forget_rog.valency.frames, frame [.past] ≤ fr) ∧
+    (∃ fr ∈ English.Verbs.forget.valency.frames, fr ≤ frame []) ∧
+      (∃ fr ∈ English.Verbs.forget_rog.valency.frames, fr ≤ frame [.past]) ∧
       (∀ hs, White2014.Modalized (frame hs)) ∧
       ∀ hs, (∀ P : W → E → Prop, NeedsMod (den hs P)) ↔ hs = [] :=
   ⟨by decide, by decide, fun _ ↦ by unfold frame; split <;> decide,

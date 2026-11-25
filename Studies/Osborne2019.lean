@@ -209,11 +209,13 @@ open ArgumentFrame (Position)
 def category (w : Word) : Option Position :=
   if w.cat = .NOUN ∨ w.cat = .PROPN ∨ w.cat = .PRON then some .nominal
   else if w.cat = .ADP then
-    (English.Adpositions.inventory.find? (·.toWord = w)).map fun a ↦ .adpositional none (some a)
+    (English.Adpositions.inventory.find? (·.toWord = w)).map fun a ↦
+      .adpositional (adposition := some a)
   else if w.cat = .VERB ∨ w.cat = .AUX then
-    if w.features .verbForm = ↑UD.VerbForm.Inf then some (.clausal (some .infinitive))
-    else if w.features .verbForm = ↑UD.VerbForm.Part then some (.clausal (some .participle))
-    else some (.clausal (some .indicative))
+    if w.features .verbForm = ↑UD.VerbForm.Inf then some (.clausal { coding := {.infinitive} })
+    else if w.features .verbForm = ↑UD.VerbForm.Part then
+      some (.clausal { coding := {.participle} })
+    else some (.clausal { coding := {.indicative} })
   else none
 
 /-- A word is a finite verb form. -/
@@ -246,7 +248,7 @@ instance {L : Type*} {n : ℕ} (words : Fin n → Word) (g : DependencyGraph L (
   inferInstanceAs (Decidable (∃ fr ∈ frs, _))
 
 /-- The *by*-phrase of the passive. -/
-abbrev byPhrase : Position := .adpositional none (some English.Adpositions.by_)
+abbrev byPhrase : Position := .adpositional (adposition := some English.Adpositions.by_)
 
 /-- The frames of the passive participle of a verb with the active frame `fr`, without and with
 the *by*-phrase. -/
@@ -255,7 +257,7 @@ def passiveFrames (fr : ArgumentFrame) : List ArgumentFrame :=
 
 /-- (39), (41): an auxiliary takes a subject and a verb in the form it governs. -/
 def auxiliaryFrame (c : Clause.ComplementType) : ArgumentFrame :=
-  ⟨some .nominal, [.clausal (some c)]⟩
+  ⟨some .nominal, [.clausal { coding := {c} }]⟩
 
 -- (8a): the active object is the passive subject, the active subject the object of *by*.
 theorem passive_image : (Voice.passive .np byPhrase).image (.complement 0) = some .external ∧

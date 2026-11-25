@@ -51,8 +51,8 @@ namespace Clause.Embedding
 *thimame*) overrides the lexeme-level attitude, factivity and opacity for its frame (`none`
 inherits the lexeme's) and records the sort of the frame's complement. -/
 structure Reading where
-  /-- The reading applies to every frame of the predicate refining this one, in the refinement
-  order on `ArgumentFrame`. -/
+  /-- The reading applies to every frame of the predicate at most this one, in the order on
+  `ArgumentFrame`. -/
   frame : ArgumentFrame
   /-- Frame-conditioned attitude override. -/
   attitude : Option Attitude := none
@@ -105,9 +105,9 @@ def IsTrigger (e : Embedding) : Prop := e.IsFactive ∨ e.implicative ≠ ⊥
 
 instance : DecidablePred IsTrigger := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The reading keyed to frame `fr` is the first whose frame `fr` refines. -/
+/-- The reading keyed to frame `fr` is the first whose frame `fr` is at most. -/
 def reading? (e : Embedding) (fr : ArgumentFrame) : Option Reading :=
-  e.readings.find? fun r ↦ decide (r.frame ≤ fr)
+  e.readings.find? fun r ↦ decide (fr ≤ r.frame)
 
 /-- The effective attitude on frame `fr` is the reading's override, else the lexeme's default. -/
 def attitudeOn (e : Embedding) (fr : ArgumentFrame) : Option Attitude :=

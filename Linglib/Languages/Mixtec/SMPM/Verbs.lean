@@ -35,7 +35,8 @@ namespace Mixtec.SMPM
 /-- The irrealis complement is a declarative clause in the subjunctive coding with an overt
 subject. -/
 def subjunctiveFrame : ArgumentFrame :=
-  ⟨some .nominal, [.clausal (some .subjunctive) (.only .declarative) (some (.overt none))]⟩
+  ⟨some .nominal,
+    [.clausal { coding := {.subjunctive}, types := {.declarative}, subject := {.overt none} }]⟩
 
 /-! ### Verbs taking a finite complement ((27a)) -/
 

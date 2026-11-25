@@ -345,7 +345,7 @@ def investigate : Verb where
   morphs := [.root "investigate"]
   levin := some Levin1993.Index.investigate
   valency := .ofFrames
-    [ArgumentFrame.question, ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
+    [ArgumentFrame.question, ArgumentFrame.np, ArgumentFrame.objectDrop {.indef}]
 
 /-- *depend on* is a rogative predicate, embedding only interrogatives ([dayal-2025]). -/
 def depend_on : Verb where
