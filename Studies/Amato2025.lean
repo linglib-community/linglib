@@ -47,9 +47,9 @@ of the verb in the examples of [ussery-2009] and [holmberg-hroarsdottir-2003] ar
 exactly when some order derives them. In Bulgarian multiple wh-fronting the order of the
 wh-words that fronting derives is the acceptable one of [rudin-1988]'s two. The remaining
 derivations are person agreement with the object in the Lak perfective and with the subject in
-the present, subject agreement in Spanish VOS clauses, and Hindi-Urdu agreement, where in a
-clause with an argument unmarked for case T has the person of the controller that
-[bobaljik-2008]'s accessibility of unmarked case picks.
+the present, subject agreement in Spanish VOS clauses, and Hindi-Urdu agreement, where T has
+the person of the controller that [bobaljik-2008]'s accessibility of unmarked case picks, and no
+value where both arguments are marked.
 
 ## Implementation notes
 
@@ -756,13 +756,17 @@ theorem hindi_subject_agreement (ps po : Person) :
     hindi .unmarkedSubject ps po = ↑(FeatureType.Slot.ofValue .person ps) := by
   revert ps po; decide
 
--- §4.3.1: in (37) and (38b) T has the person of the highest argument with unmarked case
-theorem hindi_eq_controller (asp : Aspect.Perfectivity) (ps po : Person) :
-    hindi (match asp with | .perfective => .ergSubject | .imperfective => .unmarkedSubject)
-        ps po =
-      (Bobaljik2008.clauseController (HindiUrdu.alignment asp) .unmarked (fun _ ↦ none)
-        [.A, .P]).elim .unvalued fun r ↦
-          ↑(FeatureType.Slot.ofValue .person (if r = .A then ps else po)) := by
-  cases asp <;> (revert ps po; decide)
+/-- The aspect of each clause: Asp is imperfective where the subject is unmarked. -/
+def HindiClause.aspect : HindiClause → Aspect.Perfectivity
+  | .unmarkedSubject => .imperfective
+  | _ => .perfective
+
+-- §4.3.1: in (37), (38a) and (38b) T has the person of the highest argument with unmarked case,
+-- the controller of [bobaljik-2008], and no value where there is none
+theorem hindi_eq_controller (k : HindiClause) (ps po : Person) :
+    hindi k ps po =
+      (Bobaljik2008.hindiController k.aspect (k = .bothMarked)).elim .unvalued fun r ↦
+        ↑(FeatureType.Slot.ofValue .person (if r = .A then ps else po)) := by
+  revert k ps po; decide
 
 end Amato2025
