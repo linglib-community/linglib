@@ -6,7 +6,6 @@ Ahn2015
 AhnKocabDavidson2026
 Aikhenvald2004
 Aissen2003
-Akkus2026
 AksenovaEtAl2024
 AlbrightHayes2003
 Alderete2001
@@ -33,7 +32,6 @@ AugurzkyEtAl2023
 BadeEtAl2022
 BakayEtAl2026
 Baker1985
-BakerVinokurova2010
 BaleSchwarz2022
 BaleSchwarz2026
 BarAsherSiegal2026
@@ -49,8 +47,6 @@ Beavers2011
 BeaversUdayana2022
 BeaversZubair2013
 BeckOdaSugisaki2004
-BejarRezac2009
-BelkNeelemanPhilip2023
 Belnap1970
 Beltrama2025
 BeltramaSoltBurnett2023
@@ -66,14 +62,11 @@ BonamiStump2016
 BonehDoron2013
 Booij2010
 Boylan2023
-BrananErlewine2024
-BrananErlewine2026
 Brasoveanu2010
 BrehenyEtAl2018
 BreissKatsudaKawahara2026
 Bresnan1973
 Brodkin2026
-Bruening2001
 Bruening2025
 Bubnov2026
 BumfordCharlow2026
@@ -92,7 +85,6 @@ CarianiSantorio2018
 Carstens2026
 CaviraniVandenWyngaerd2026
 ChampollionAlsopGrosu2019
-ChanShen2026
 Charlow2019
 Charlow2020
 Charlow2021
@@ -107,12 +99,9 @@ ChemlaSpector2011
 ChenVanDeemter2023
 Chierchia2013
 Chomsky1995
-Chomsky2013
-Chomsky2015
 ChungMascarenhas2023
 CiardelliGuerrini2026
 CiardelliZhangChampollion2018
-Cinque2020
 Clements1985
 CohenKrifka2014
 Condoravdi2002
@@ -132,9 +121,7 @@ DalrympleHaug2024
 Dayal2004
 DeMarneffeNivre2019
 DeSwartSag2002
-DeVries2009
 Deal2020
-Deal2024
 Deal2026
 DechaineWiltschko2002
 DeganoAloni2025
@@ -156,7 +143,6 @@ EgreEtAl2023
 EgreRossiSprenger2026a
 EgreRossiSprenger2026b
 EgreRossiSprenger2026c
-Egressy2026
 Elbourne2013
 Elliott2020
 Elliott2025
@@ -174,7 +160,6 @@ Fitting2021
 Flemming2021
 Fox2007
 FoxKatzir2011
-FoxPesetsky2005
 Francescotti1995
 FrancikClark1985
 FrankGoodman2012
@@ -202,7 +187,6 @@ Hale2001
 HalleVauxWolfe2000
 Halpert2012
 Halpert2019
-HammerlyMathieu2026
 Hanink2021
 Harbour2014
 HartshorneEtAl2016
@@ -232,9 +216,7 @@ ItoMester2019
 Itzhaki2021
 Jablonska2004
 Jardine2019
-Just2024
 KadmonLandman1993
-Kalin2018
 Kalomoiros2023
 Kamp1975
 Karttunen1971a
@@ -278,7 +260,6 @@ LuPanDegen2025
 Luce1959
 Magri2009
 Magri2014
-Major2024
 Mandelkern2022
 Marantz1991
 MartinezVera2026
@@ -313,7 +294,6 @@ Pancheva2003
 Partee1973
 Partee2010
 PhillipsBrown2025
-Pietraszko2026
 PoesioEtAl2004
 PottsEtAl2016
 PrasertsomSmithCulbertson2026
@@ -405,7 +385,6 @@ YuAusensiSmith2023
 ZaslavskyEtAl2019
 ZaslavskyKempRegierTishby2018
 Zeijlstra2004
-Zeijlstra2012
 Zheng2025
 Zimmermann2008
 ZwickyPullum1983

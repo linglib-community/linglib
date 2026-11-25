@@ -15,16 +15,14 @@ parameter `h`. The terms a lexical item heads run from its leaf up to its maxima
 it heads a phase when it heads more than its leaf. Its complement is the sister it projects over.
 The phase is what lies within the terms it heads, the interior what lies within the complement,
 and the edge the rest: the head and what is merged above it, a phrase raised there included. A
-term is `Inaccessible` when it lies in the interior of a phase other than the highest. The Phase
-Impenetrability Condition, which seals the interior, is stated on positions in
-`Phase/Transfer.lean`, and as a restriction of the coproduct in `Workspace/Merge/Phase.lean`.
+term is `Inaccessible` when it lies in the interior of a phase other than the highest.
 
 ## Implementation notes
 
 * Terms are values, not occurrences, so all copies of a head share one phase, and the lower
-  copies of a moved phrase are one term; positions tell copies apart in `Copy/Chain.lean`.
-* Every head that projects heads a phase, as in the book; the heads a study counts as phase heads
-  (C alone, or also v, D, or Voice) are the positions `sealed` takes in `Phase/Transfer.lean`.
+  copies of a moved phrase are one term.
+* Every head that projects heads a phase, as in the book; which heads a study counts as phase
+  heads (C alone, or also v, D, or Voice) is a parameter.
 * Which phrases lie in the phase of a head depends on the head function. Under the raising head
   a phrase raised to the edge of a head lies in its phase, and a phrase merged there in place
   lies in it only when the head selects it.
