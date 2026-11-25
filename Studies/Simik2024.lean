@@ -560,8 +560,8 @@ def Examples.Indefinite.entry : Examples.Indefinite → PolarityItem
 theorem nahodou_example (x : Examples.Example)
     (hx : x.datum.feature? "particle" = some Czech.Particles.nahodou.form) :
     ∀ s ∈ x.polarity, ∀ i ∈ x.indefinite,
-      (x.datum.judgment = .acceptable ↔ ∃ r, NahodouLicensed s.toPolarity r ∧
-        (i.entry.IsPPI → r = .positive) ∧ (i.entry.IsNPI → r = .negative)) := by
+      (x.datum.judgment = .acceptable ↔
+        ∃ r, NahodouLicensed s.toPolarity r ∧ r.Admits i.entry) := by
   revert hx; cases x <;> decide
 
 -- `nahodou_example` reads the three rows of (43d) and (43e)
