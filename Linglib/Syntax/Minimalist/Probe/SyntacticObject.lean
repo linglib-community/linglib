@@ -18,8 +18,7 @@ This file instantiates probe search at the tree: a probe on the head at a positi
 planar object searches the positions the head c-commands in some order, a key on positions.
 Closest by the branching positions above them, it finds a goal that no other satisfier
 asymmetrically c-commands: the Minimal Link Condition, with mutually c-commanding candidates
-equidistant. Procedural search orders are in `Probe/Search.lean`. Positions closed to the search,
-by the PIC or by a horizon, cut its domain. Agree and labeling are both this search; what Agree
+equidistant. Positions closed to the search, by the PIC or by a horizon, cut its domain. Agree and labeling are both this search; what Agree
 then does to the features of the probe and the goal is `Minimalist.FeatureState.value`.
 
 ## Main definitions

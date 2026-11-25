@@ -49,7 +49,7 @@ saturated with the token's category (`traceState`), and a head that selected the
 still selects its trace; the bare trace remembers no token and gets the saturated dummy
 `.of .bareTrace []`. `selectionState` reads only the token's category and `sel`. Two saturated
 sisters have no head, as in [marcolli-chomsky-berwick-2025]'s partial head functions: a specifier
-and its sister are labeled, if at all, by the labeling algorithm (`Label/MinimalSearch.lean`).
+and its sister are labeled, if at all, by the labeling algorithm.
 
 ## References
 
