@@ -37,7 +37,7 @@ affricates are not compared. The Navajo sibilants are the chart's without [distr
 the chart's alveolar and postalveolar series also differ, so that anteriority is the whole of
 the contrast the harmony changes. The book's correspondence-theoretic analysis (chapters 4 and 5),
 its typological survey (chapter 2), and its speech-error account (chapter 6) are not formalized;
-Rose and Walker's Agreement by Correspondence is in `Studies/RoseWalker2004.lean`.
+Agreement by Correspondence is [rose-walker-2004]'s.
 
 ## References
 

@@ -45,6 +45,7 @@ the probe searches rather than relativizing the probe.
 * `Minimalist.Probe.search_isSome`: a search succeeds iff some goal satisfies the probe.
 * `Minimalist.Probe.not_rel_of_search_eq_some`: the found goal is minimal for any precedence
   the sequence respects.
+
 ## References
 
 * [deal-2025a], [deal-2024]

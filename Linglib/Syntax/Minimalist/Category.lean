@@ -18,8 +18,7 @@ right. Each category belongs to one of four families, verbal, nominal, adjectiva
 adpositional, each with its lexical head, V, N, A and P, and a functional head belongs to the
 family of the lexical head it extends. There are two categorial features, `N` and `V`, and a family
 is specified by the set of them it is positive for: `{V}` for the verbal family, `{N}` for the
-nominal, both for the adjectival and neither for the adpositional. The four sets are the four
-families, so two categories share their features exactly when they share their family.
+nominal, both for the adjectival and neither for the adpositional.
 
 ## Main definitions
 
@@ -28,15 +27,7 @@ families, so two categories share their features exactly when they share their f
 * `Minimalist.CatFamily`, `Minimalist.Cat.family`: the four families.
 * `Minimalist.CatFamily.lexical`: the lexical head of a family.
 * `Minimalist.CategorialFeature`: the categorial features `N` and `V`.
-* `Minimalist.CatFamily.features`, `Minimalist.Cat.features`: the features a family, and a
-  category of it, is positive for.
-* `Minimalist.CatFamily.featuresEquiv`: the families as the sets of categorial features.
-
-## Main results
-
-* `Minimalist.CatFamily.features_bijective`: the features cross-classify the families.
-* `Minimalist.Cat.features_eq_iff`: two categories share their features exactly when they share
-  their family.
+* `Minimalist.CatFamily.features`: the features a family is positive for.
 
 ## Implementation notes
 
@@ -194,30 +185,5 @@ def CatFamily.features : CatFamily → Finset CategorialFeature
   | .nominal => {.N}
   | .adjectival => {.N, .V}
   | .adpositional => ∅
-
-/-- The families are the sets of categorial features. -/
-def CatFamily.featuresEquiv : CatFamily ≃ Finset CategorialFeature where
-  toFun := features
-  invFun s :=
-    if .N ∈ s then (if .V ∈ s then .adjectival else .nominal)
-    else if .V ∈ s then .verbal else .adpositional
-  left_inv f := by cases f <;> simp [features]
-  right_inv s := by
-    ext x
-    by_cases hN : CategorialFeature.N ∈ s <;> by_cases hV : CategorialFeature.V ∈ s <;>
-      cases x <;> simp [features, hN, hV]
-
-@[simp] theorem CatFamily.coe_featuresEquiv : ⇑CatFamily.featuresEquiv = CatFamily.features := rfl
-
-/-- Each set of categorial features is the features of exactly one family. -/
-theorem CatFamily.features_bijective : Function.Bijective CatFamily.features :=
-  CatFamily.featuresEquiv.bijective
-
-/-- The features of a category are those of its family, so that every functional head inherits
-the features of its lexical head. -/
-def Cat.features (c : Cat) : Finset CategorialFeature := c.family.features
-
-theorem Cat.features_eq_iff {c d : Cat} : c.features = d.features ↔ c.family = d.family :=
-  CatFamily.features_bijective.injective.eq_iff
 
 end Minimalist

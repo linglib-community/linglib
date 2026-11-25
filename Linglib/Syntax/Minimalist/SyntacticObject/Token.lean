@@ -18,7 +18,6 @@ lexical item.
 ## Main definitions
 
 * `Minimalist.TokenLeaf`: a token of a lexical item, a bare trace, or the trace of a token.
-* `Minimalist.SyntacticObject.mkLeafPhon`: a lexical leaf from a category, a selection and a form.
 * `Minimalist.SyntacticObject.isLeafOf`: a lexical leaf whose item has a given category.
 
 ## References
@@ -40,10 +39,6 @@ end Minimalist
 namespace Minimalist.SyntacticObject
 
 /-! ### Lexical leaves from features -/
-
-/-- A lexical leaf with a phonological form. -/
-def mkLeafPhon (cat : Cat) (sel : List Cat) (phon : String) (id : Nat) : SyntacticObject TokenLeaf :=
-  SyntacticObject.leaf ⟨.of cat sel (phonForm := phon), id⟩
 
 /-- `s` is a lexical leaf whose item's category is `c`. -/
 def isLeafOf (c : Cat) (s : SyntacticObject TokenLeaf) : Prop :=

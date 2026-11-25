@@ -17,8 +17,8 @@ attached" ([corbett-2000] §5.5, p. 159). Inverse is not a number value alongsid
 inverse systems "are a matter of morphological arrangement and not of semantic values"
 (p. 161), so `Category` lists agreement categories rather than values of `Number`. What the
 inverse marks is a question for the analyses: Harbour's, in which a D head's number features
-receive conflicting values from the noun's class and its natural number, is in
-`Studies/Middleton2026.lean`.
+receive conflicting values from the noun's class and its natural number, is taken up by
+[middleton-2026].
 
 ## References
 

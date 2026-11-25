@@ -33,9 +33,7 @@ as *gol*, so every other consonant keeps each chart value but [back], as in the 
 is back. `K` is `k` without a value for [continuant] and not a meet, since the meet of `k` and
 `ğ` would lack [voice] and so be a target of voicing. The raised vowel harmonizes for rounding
 as well as backness, as in *okşuyor*, so raising replaces the stem vowel by `I`. The letters
-*f*, *ğ* and *j* write segments outside the inventory and have no value under `ofChar`. That
-the search-and-copy rules of the three systems compute the harmonized form is proved in
-`Studies/GokselKerslake2005.lean`.
+*f*, *ğ* and *j* write segments outside the inventory and have no value under `ofChar`.
 
 ## References
 

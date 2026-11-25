@@ -42,8 +42,6 @@ head function (`SyntacticObject/Projection.lean`).
 * `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
 * `PlanarSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
   asymmetric c-command.
-* `Minimalist.cCommands_iff_complement_le`: a head c-commands exactly the positions below
-  its complement.
 
 ## References
 
@@ -86,18 +84,6 @@ def termAt (p : t.toRoseTree.Positions) : SyntacticObject (SyntacticObject.Leaf 
   SyntacticObject.toUnorderedTree_injective
     (by rw [toUnorderedTree_termAt, toUnorderedTree_toSyntacticObject]; rfl)
 
-variable (t) in
-/-- The term of `t` at a position, with the order of daughters it has in `t`. -/
-def planarTermAt (p : t.toRoseTree.Positions) : PlanarSyntacticObject (SyntacticObject.Leaf L ι) :=
-  PlanarSyntacticObject.ofRoseTree _ (isSyntacticObject_subtree p)
-
-@[simp] theorem toRoseTree_planarTermAt : (t.planarTermAt p).toRoseTree = p.subtree :=
-  PlanarSyntacticObject.toRoseTree_ofRoseTree _ _
-
-@[simp] theorem toSyntacticObject_planarTermAt :
-    (t.planarTermAt p).toSyntacticObject = t.termAt p :=
-  toSyntacticObject_ofRoseTree _ _
-
 theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 2 := by
   have hs := isSyntacticObject_subtree p
   rw [Positions.isMax_iff] at hp
@@ -112,8 +98,8 @@ theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p :=
 /-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
     ImmediatelyContains (t.termAt p) y ↔ ∃ q, p ⋖ q ∧ t.termAt q = y := by
-  rw [immediatelyContains_iff_mem_children, toUnorderedTree_termAt, UnorderedTree.children_mk, Multiset.mem_coe,
-      List.mem_map]
+  rw [immediatelyContains_iff_mem_children, toUnorderedTree_termAt, UnorderedTree.children_mk,
+    Multiset.mem_coe, List.mem_map]
   constructor
   · rintro ⟨c, hc, hcy⟩
     obtain ⟨q, hpq, rfl⟩ := Positions.mem_children_subtree.1 hc
@@ -343,9 +329,6 @@ section Complement
 
 variable (t : PlanarSyntacticObject (SyntacticObject.Leaf L ι))
 
-/-- The complement of the head at `p` is its sister. -/
-abbrev complement (p : GornAddress) : GornAddress := p.sister
-
 variable {t} in
 -- A position other than the root is one of the two daughters of its parent.
 private theorem exists_eq_parent_mul_of {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
@@ -364,23 +347,6 @@ private theorem exists_eq_parent_mul_of {h : GornAddress} (hh : h ∈ t.toRoseTr
     rw [(Order.pred hp).getElem?_eq, Option.some.injEq] at hs
     exact hlen ▸ hs ▸ his
   exact ⟨_, i, (Order.pred hp).getElem?_eq, hlen, hlt, hi⟩
-
-variable {t} in
-theorem complement_complement {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths) (h0 : h ≠ ⊥) :
-    complement (complement h) = h := by
-  obtain ⟨-, i, -, -, hi, he⟩ := exists_eq_parent_mul_of hh h0
-  rw [he]
-  exact GornAddress.sister_sister_mul_of _ hi
-
-variable {t} in
-/-- In a syntactic object, a head other than the root c-commands exactly the positions below its
-complement. -/
-theorem cCommands_iff_complement_le {h q : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
-    (h0 : h ≠ ⊥) (hq : q ∈ t.toRoseTree.validPaths) :
-    t.toRoseTree.CCommands h q ↔ complement h ≤ q := by
-  obtain ⟨s, i, hs, hs2, hi, he⟩ := exists_eq_parent_mul_of hh h0
-  rw [he]
-  exact cCommands_iff_sister_le hs hs2 hi hq
 
 end Complement
 

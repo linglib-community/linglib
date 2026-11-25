@@ -27,8 +27,7 @@ than and agrees with those of them that interact. Keyed by position, these are `
   and the goal also interacts.
 * `Minimalist.Probe.AllLicensed`: the probe agrees with every position holding a goal that
   needs licensing.
-* `Minimalist.Probe.Spec.bestMatch`, `Minimalist.Probe.Spec.copied`: Best Match as a refinement of
-  a closeness key, and the features Agree copies.
+* `Minimalist.Probe.Spec.copied`: the features Agree copies.
 
 ## Main results
 
@@ -36,8 +35,7 @@ than and agrees with those of them that interact. Keyed by position, these are `
 * `Minimalist.Probe.exists_finds`: under a well-founded key a probe with a satisfier finds a goal.
 * `Minimalist.Probe.Inspects.of_subset`: a goal inspected in a domain is inspected in any part of
   it containing the goal, as a horizon cuts the domain.
-* `Minimalist.Probe.Finds.of_refines`, `Minimalist.Probe.Finds.of_bestMatch`: a goal found under a
-  key is found under any key it refines, such as the closeness Best Match refines.
+* `Minimalist.Probe.Finds.of_refines`: a goal found under a key is found under any key it refines.
 * `Minimalist.Probe.agreesWith_iff_finds`: when the interacting goals satisfy the probe, it agrees
   with what it finds.
 * `Minimalist.Probe.search_eq_some_iff_finds`, `Minimalist.Probe.mem_inspected_iff_inspects`,
@@ -58,7 +56,6 @@ than and agrees with those of them that interact. Keyed by position, these are `
 * [rizzi-1990]
 * [deal-2025a]
 * [hiraiwa-2001]
-* [hammerly-mathieu-2026]
 * [bejar-rezac-2003]
 * [halpert-2012]
 * [preminger-2014]
@@ -159,21 +156,11 @@ instance : DecidablePred (p.AgreesWith s key) := fun _ ↦ inferInstanceAs (Deci
 
 end Fintype
 
-/-! ### Feature specifications: Best Match and copying -/
+/-! ### Feature specifications: copying -/
 
 namespace Spec
 
 variable {F : Type*} [DecidableEq F] (sp : Spec F) (feats : α → Finset F)
-
-/-- Best Match refines a closeness key: of equally close goals, the one bearing more satisfaction
-features is closer ([hammerly-mathieu-2026]). -/
-def bestMatch (key : α → β) (a : α) : β ×ₗ ℕᵒᵈ :=
-  toLex (key a, OrderDual.toDual (sp.satFeatures feats a).card)
-
-/-- Comparing goals under Best Match is decidable when comparing their closeness is. -/
-instance [DecidableEq β] [DecidableRel ((· < ·) : β → β → Prop)] :
-    DecidableRel ((· < ·) : β ×ₗ ℕᵒᵈ → β ×ₗ ℕᵒᵈ → Prop) :=
-  Prod.Lex.decidable _ _
 
 /-- The features Agree copies, the interaction features of the goals the probe agrees with. -/
 def copied [Fintype α] (s : Set α) [DecidablePred (· ∈ s)] (key : α → β)
@@ -189,12 +176,6 @@ theorem mem_copied_iff [Fintype α] {s : Set α} [DecidablePred (· ∈ s)] {key
   simp [copied]
 
 end Spec
-
-/-- A goal found under Best Match is found under the closeness it refines. -/
-theorem Finds.of_bestMatch {F : Type*} [DecidableEq F] {sp : Spec F} {feats : α → Finset F}
-    (h : (sp.toProbe feats).Finds s (sp.bestMatch feats key) a) :
-    (sp.toProbe feats).Finds s key a :=
-  h.of_refines fun _ _ hlt ↦ Prod.Lex.toLex_lt_toLex.2 (.inl hlt)
 
 /-! ### Closeness in phrase structure -/
 

@@ -66,7 +66,6 @@ Brasoveanu2010
 BrehenyEtAl2018
 BreissKatsudaKawahara2026
 Bresnan1973
-Brodkin2026
 Bruening2025
 Bubnov2026
 BumfordCharlow2026
@@ -253,7 +252,6 @@ LevinRappaportHovav1995
 LevshinaEtAl2023
 LittleMoroneyRoyer2022
 LiuRotter2025
-LiuYip2026
 Longobardi2001
 Longobardi2005
 LuPanDegen2025
@@ -289,7 +287,6 @@ Ostrove2026
 Oswalt1986
 Owusu2022
 PaapeVasishth2026
-Padgett2002
 Pancheva2003
 Partee1973
 Partee2010
@@ -311,7 +308,6 @@ Roberts2012
 RobertsOzyildiz2025
 RomoliEtAl2026
 Rooth1992
-RoseWalker2004
 RotterLiu2025
 Rouillard2026
 Rubinstein2014

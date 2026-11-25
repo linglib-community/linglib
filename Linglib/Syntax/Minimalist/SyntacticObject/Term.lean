@@ -15,8 +15,8 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 # Terms, containment, and c-command
 
 This file develops the theory of terms of syntactic objects: containment as a closure of the
-daughter relation, the multisets of terms and accessible terms that enumerate it, and
-sisterhood and c-command relative to a root. Containment lowers the vertex count, which makes it
+daughter relation, the multiset of terms that enumerates it, and sisterhood and c-command
+relative to a root. Containment lowers the vertex count, which makes it
 a well-founded strict order and decides it.
 
 ## Main definitions
@@ -27,22 +27,16 @@ a well-founded strict order and decides it.
 * `SyntacticObject.ContainsOrEq`: the reflexive transitive closure of immediate
   containment.
 * `SyntacticObject.terms`: the terms of an object, itself included, one per vertex.
-* `SyntacticObject.accessibleTerms`: the terms at the non-root vertices, the
-  accessible terms of Marcolli, Chomsky and Berwick.
 * `SyntacticObject.Sisters`: `x` and `y` are sisters in `root` when they are
   distinct daughters of one term of `root`.
 * `SyntacticObject.CCommands`: `x` c-commands `y` in `root` when a sister of `x`
   reflexively contains `y`, after Reinhart.
-* `SyntacticObject.cCommandDomain`: the c-command domain of `x` in `root`, the terms it
-  c-commands.
 
 ## Main results
 
-* `SyntacticObject.mem_terms`, `mem_accessibleTerms`: the terms of `x` are the
-  objects it reflexively contains, and the accessible terms those it strictly contains.
+* `SyntacticObject.mem_terms`: the terms of `x` are the objects it reflexively contains.
 * `SyntacticObject.wellFounded_flip_contains`: the proper term relation is
   well-founded.
-* `SyntacticObject.card_accessibleTerms`: one accessible term per edge.
 * `SyntacticObject.cCommands_map_iff`: an injective relabelling preserves and reflects
   c-command.
 
@@ -225,6 +219,9 @@ theorem contains_iff_containsOrEq_and_ne : Contains x y ↔ ContainsOrEq x y ∧
   ⟨fun h ↦ ⟨h.to_reflTransGen, fun hyx ↦ contains_irrefl x (hyx ▸ h)⟩,
     fun ⟨h, hne⟩ ↦ (containsOrEq_iff_eq_or_contains.1 h).resolve_left hne⟩
 
+instance [DecidableEq α] (x y : SyntacticObject α) : Decidable (Contains x y) :=
+  decidable_of_iff _ contains_iff_containsOrEq_and_ne.symm
+
 end Leaves
 
 variable {x y z l r : SyntacticObject (SyntacticObject.Leaf L ι)}
@@ -301,10 +298,6 @@ theorem immediatelyContains_iff_mem_children :
 @[simp] theorem terms_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
     (merge l r).terms = merge l r ::ₘ (l.terms + r.terms) :=
   terms_mul l r
-
-/-! ### Immediate containment -/
-
-/-! ### Containment -/
 
 /-! ### The vertex count grades containment -/
 
@@ -426,59 +419,6 @@ theorem card_terms (s : SyntacticObject (SyntacticObject.Leaf L ι)) : s.terms.c
   rw [← UnorderedTree.card_subtrees, ← map_toUnorderedTree_terms, Multiset.card_map]
 
 
-/-! ### Accessible terms -/
-
-section AccessibleTerms
-
-variable [DecidableEq L] [DecidableEq ι]
-
-/-- The accessible terms, the terms at the non-root vertices. -/
-def accessibleTerms (s : SyntacticObject (SyntacticObject.Leaf L ι)) : Multiset
-    (SyntacticObject (SyntacticObject.Leaf L ι)) := s.terms.erase s
-
-theorem cons_accessibleTerms (s : SyntacticObject (SyntacticObject.Leaf L ι)) : s ::ₘ
-    s.accessibleTerms = s.terms :=
-  Multiset.cons_erase (self_mem_terms s)
-
-@[simp] theorem accessibleTerms_leaf (tok : L) :
-    (leaf tok : SyntacticObject (SyntacticObject.Leaf L ι)).accessibleTerms = 0 := by
-  simp [accessibleTerms]
-
-@[simp] theorem accessibleTerms_trace :
-    (trace : SyntacticObject (SyntacticObject.Leaf L ι)).accessibleTerms = 0 := by
-  simp [accessibleTerms]
-
-/-- The number of accessible terms of a syntactic object that are not traces. -/
-def accessibleCount [DecidableEq L] [DecidableEq ι]
-    (s : SyntacticObject (SyntacticObject.Leaf L ι)) : ℕ :=
-  s.accessibleTerms.countP (¬ ·.IsTrace)
-
-@[simp] theorem accessibleTerms_labelledTrace (i : ι) :
-    (labelledTrace i : SyntacticObject (SyntacticObject.Leaf L ι)).accessibleTerms = 0 := by
-  simp [accessibleTerms]
-
-@[simp] theorem accessibleTerms_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    (merge l r).accessibleTerms = l.terms + r.terms := by
-  simp [accessibleTerms]
-
-/-- The accessible terms of `x` are the objects it contains. -/
-@[simp] theorem mem_accessibleTerms : y ∈ x.accessibleTerms ↔ Contains x y := by
-  induction x using ind with
-  | leaf tok => simp
-  | trace => simp
-  | traceOf tok => simp
-  | merge l r _ _ => simp
-
-/-- One accessible term per edge. -/
-theorem card_accessibleTerms (s : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    s.accessibleTerms.card = s.toUnorderedTree.numEdges := by
-  rw [accessibleTerms, Multiset.card_erase_of_mem (self_mem_terms s), card_terms]; rfl
-
-instance (x y : SyntacticObject (SyntacticObject.Leaf L ι)) : Decidable (Contains x y) :=
-  decidable_of_iff _ mem_accessibleTerms
-
-end AccessibleTerms
-
 /-! ### C-command -/
 
 variable {root : SyntacticObject (SyntacticObject.Leaf L ι)}
@@ -557,16 +497,6 @@ theorem not_cCommands_merge_of_notMem_terms {β R x y : SyntacticObject (Syntact
   · exact hy (terms_subset_terms (mem_terms.1 h.mem_right) (mem_terms.2 hzy))
   · exact hx (self_mem_terms _)
   · exact hR rfl
-
-/-- The c-command domain of `x` in `root`, the search space of a probe sitting at `x`. -/
-def cCommandDomain [DecidableEq L] [DecidableEq ι]
-    (root x : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    Multiset (SyntacticObject (SyntacticObject.Leaf L ι)) :=
-  root.terms.filter (CCommands root x)
-
-@[simp] theorem mem_cCommandDomain [DecidableEq L] [DecidableEq ι] :
-    y ∈ cCommandDomain root x ↔ CCommands root x y :=
-  Multiset.mem_filter.trans (and_iff_right_of_imp CCommands.mem_terms)
 
 /-! ### Pronounced tokens of terms -/
 
