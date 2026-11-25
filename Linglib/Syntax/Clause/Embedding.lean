@@ -70,7 +70,8 @@ namespace Clause
 
 /-- What a predicate does with a clausal complement. -/
 structure Embedding where
-  /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a non-factive. -/
+  /-- The [karttunen-1971b] factivity class a source gives a factive predicate. `none` records no
+  class: an entry that says nothing is not thereby non-factive. -/
   factivity : Option Presupposition.Factivity := none
   /-- The [nairn-condoravdi-karttunen-2006] implication signature of the predicate, the polarity
   of the complement it implies in a positive and in a negative context; `⊥` for a predicate that
@@ -94,7 +95,8 @@ structure Embedding where
 
 namespace Embedding
 
-/-- The predicate is factive when it carries a [karttunen-1971b] factivity class. -/
+/-- The predicate is recorded as factive: it carries a [karttunen-1971b] factivity class. Its
+negation says only that no class is recorded. -/
 def IsFactive (e : Embedding) : Prop := e.factivity ≠ none
 
 instance : DecidablePred IsFactive := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))

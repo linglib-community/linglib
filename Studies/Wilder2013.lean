@@ -41,7 +41,8 @@ grounds the account [fits every judgment](##checks_predicted) of the two sentenc
 * Each row is linked to the language file entries its sentence stands under: the embedding verb, the
   complementizer or interrogative word typing its clause, its context's interrogative word, and
   *yes*. Its clause type is derived from their fields, the sentence types a typer allows and the
-  verb's factivity, and checked against [the paper's heading](##heading_derived); the linked
+  verb's recorded factivity class, with the paper's own grouping of *believe*, *appear* and
+  *seem*, and checked against [the paper's heading](##heading_derived); the linked
   forms are [checked against its words](##links_attested). Clefts, relatives, adverbial clauses
   and preposing are structural and name no entry.
 * The account excludes a contrastive topic from interrogative clauses, with Büring, so it rejects
@@ -57,9 +58,10 @@ grounds the account [fits every judgment](##checks_predicted) of the two sentenc
 * The example schema records no prosody, so the two patterns and the contrastive-topic
   constituent, which the paper defines by the printed contour, are still read off row labels.
 * The contrast of *believe*-type with factive complements is Hooper and Thompson's assertive versus
-  non-assertive embedding, read here off the language file's factivity; the general clause API has
-  no
-  assertive embedding, its embedding contexts being those of interrogative embedding.
+  non-assertive embedding. A factive complement is read off the language file's factivity class.
+  The *believe* type is the paper's list, since an entry records a class for a factive only and
+  the general clause API has no assertive embedding, its embedding contexts being those of
+  interrogative embedding.
 
 ## References
 
@@ -347,8 +349,8 @@ inductive Host
   | cleft | relative | adverbial
 
 /-- The clause types of sections 3.5 and 3.6 as the account reads them: a root clause or an
-interrogative complement with the sentence types of its clause, a declarative complement of a verb
-that is not a full factive or of one that is, a cleft, a restrictive relative, an adverbial
+interrogative complement with the sentence types of its clause, a declarative complement of a
+*believe*-type verb or of a full factive, a cleft, a restrictive relative, an adverbial
 clause, and a root declarative with a preposed object. -/
 inductive Environment
   | root (s : Finset Clause.SentenceType)
@@ -357,19 +359,29 @@ inductive Environment
   | itCleft | restrictiveRelative | adverbialClause | objectPreposing
   deriving DecidableEq
 
+/-- The verbs whose declarative complements the paper heads as *believe* complements, (27).
+Their entries record no factivity class, which does not say that they are non-factive, so the
+grouping is the paper's. -/
+def believeType : List English.Verbs.Verb :=
+  [English.Verbs.believe, English.Verbs.appear, English.Verbs.seem]
+
 /-- The environment of a host: an interrogative word types a root clause as a constituent
 question, a typer types a complement as interrogative or declarative, and a declarative
-complement is factive when its verb is a full factive. -/
-def Host.environment : Host → Environment
-  | .root none => .root {.declarative}
-  | .root (some _) => .root {.constituent}
-  | .preposed => .objectPreposing
+complement is factive when its verb is recorded as a full factive and a *believe* complement
+when its verb is one the paper heads so. A declarative complement of any other verb has no
+environment. -/
+def Host.environment : Host → Option Environment
+  | .root none => some (.root {.declarative})
+  | .root (some _) => some (.root {.constituent})
+  | .preposed => some .objectPreposing
   | .complement v t =>
-    if Interrogative t.types then .interrogativeComplement t.types
-    else if v.factivity = some .full then .factiveComplement else .believeComplement
-  | .cleft => .itCleft
-  | .relative => .restrictiveRelative
-  | .adverbial => .adverbialClause
+    if Interrogative t.types then some (.interrogativeComplement t.types)
+    else if v.factivity = some .full then some .factiveComplement
+    else if v.morphs ∈ believeType.map (·.morphs) then some .believeComplement
+    else none
+  | .cleft => some .itCleft
+  | .relative => some .restrictiveRelative
+  | .adverbial => some .adverbialClause
 
 /-- The clause a sentence stands in is interrogative. -/
 def Environment.IsInterrogative : Environment → Prop
@@ -484,7 +496,7 @@ theorem links_attested : ∀ p ∈ links, p.2.Attested p.1 := by decide +kernel
 
 -- The clause type derived from a row's items is the paper's heading for it.
 theorem heading_derived :
-    ∀ p ∈ links, Examples.heading p.1 = some p.2.host.environment.heading := by
+    ∀ p ∈ links, Examples.heading p.1 = p.2.host.environment.map (·.heading) := by
   decide
 
 /-- The sentence and environment of an emphatic *do* row: its pattern and contrastive-topic
@@ -498,13 +510,14 @@ def sentence? (ex : Datum) : Option (Kind × Environment) := do
     | some "VF" => some .vf
     | some "CT" => (Kind.ct · a) <$> k
     | _ => none
-  return (kind, l.host.environment)
+  let e ← l.host.environment
+  return (kind, e)
 
 /-- The environment of a row that opens with *yes*, a Yes-answer to a polar question. -/
 def yesAnswer? (ex : Datum) : Option Environment := do
   let l ← link? ex
   guard (l.particle = some English.PolarityParticles.yes)
-  return l.host.environment
+  l.host.environment
 
 /-- The paper rejects a Yes-answer to a polar question in the environment, (127). -/
 def RejectsYesAnswer (e : Environment) : Prop :=

@@ -129,13 +129,13 @@ def SelectionClass.layer : SelectionClass → Option PeripheryLayer
   | .rogativeSAP => some .sap
   | .responsive => some .perspP
 
-/-- The selection class of a lexical entry. Question-taking factives are responsive,
-non-veridical doxastic attitudes uninterrogative, question-taking speech-act verbs select SAP,
+/-- The selection class of a lexical entry. Question-taking factives are responsive, attitudes
+recorded with doxastic alternatives uninterrogative, question-taking speech-act verbs select SAP,
 opaque question-taking verbs PerspP, and other question-taking verbs CP. -/
 def deriveSelectionClass (v : _root_.Verb) : SelectionClass :=
   if ¬ v.TakesQuestion then .uninterrogative
   else if v.IsFactive then .responsive
-  else if ∃ a ∈ v.attitude, ¬ a.IsPreferential ∧ ¬ a.IsVeridical v.factivity then .uninterrogative
+  else if v.attitude = some (.doxastic .doxastic) then .uninterrogative
   else if v.speechActVerb && citationQuestion v then .rogativeSAP
   else if v.opaqueContext && citationQuestion v then .rogativePerspP
   else if citationQuestion v then .rogativeCP

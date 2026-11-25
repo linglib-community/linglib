@@ -29,9 +29,10 @@ operators of the classes are `Presupposition.again`, `Aspect.Phasal.denote`, `Fo
 
 ## Implementation notes
 
-The entry of a clause-embedding predicate records its factivity, and whether it is a trigger is
-derived, not recorded. What a predicate does with the presuppositions of its
-complement is not recorded on its entry. It follows from the predicate's semantics: a factive, an
+The entry of a clause-embedding predicate records its factivity class where a source gives one,
+and nothing otherwise: there is no class for a non-factive, so an entry without a class is not
+counted as one. Whether a predicate is a trigger is derived, not recorded. What a predicate does
+with the presuppositions of its complement is not recorded on its entry. It follows from the predicate's semantics: a factive, an
 aspectual or an implicative passes them on unchanged, and an attitude verb makes its report
 presuppose that the holder believes them, as Karttunen and Heim argue.
 

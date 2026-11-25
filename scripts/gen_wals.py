@@ -259,6 +259,10 @@ AUTO_FEATURES = {
     "122A": {"enum": "SubjectRelativization", "author": "comrie-kuteva-2013a"},
     "123A": {"enum": "ObliqueRelativization", "author": "comrie-kuteva-2013b"},
 
+    # ── Complementation (Ch 124, 128) ──────────────────────────────────
+    "124A": {"enum": "WantComplementSubject", "author": "haspelmath-2013-want"},
+    "128A": {"enum": "UtteranceComplement", "author": "cristofaro-2013"},
+
     # ── Morphology (Ch 20–22, 26–27) ──────────────────────────────────
     "20A": {"enum": "FusionType",          "author": "bickel-nichols-2013a"},
     "21A": {"enum": "ExponenceType",       "author": "bickel-nichols-2013b"},

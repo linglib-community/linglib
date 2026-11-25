@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Verb.Deranking
 
 /-!
 # Modern Greek verbs
@@ -232,5 +233,15 @@ def simveni : Verb where
   morphs := [.root "simvéni"]
   valency := .ofFrame
     { external := none, complements := [.clausal { coding := {.subjunctive} }] }
+
+/-- The entry of *thélo* has the value the map of [haspelmath-2013-want] gives Modern Greek. -/
+theorem lookup_wals_want :
+    Data.WALS.F124A.allData.lookup "grk" = thelo.wantComplementSubject := by
+  decide +kernel
+
+/-- The entry of *léo* has the value the map of [cristofaro-2013] gives Modern Greek. -/
+theorem lookup_wals_say :
+    Data.WALS.F128A.allData.lookup "grk" = leo.utteranceComplement := by
+  decide +kernel
 
 end Greek.StandardModern.Verbs

@@ -40,9 +40,11 @@ a reduced complement and *wish* an indicative (`want_wish_codings`), as the chap
   uses
   as separate verbs (*remember* and *forget* with an infinitive are implicatives, with a
   *that*-clause veridical doxastics), so a verb's class is read off its entry. An entry is in a
-  class when it records the property the chapter identifies the class by: commentatives are the
-  emotive factives (§3.2.4), predicates of knowledge the veridical doxastics, which the chapter
-  calls semifactives (§3.2.5), manipulatives have an affectee controlling the complement
+  class when it records the property the chapter identifies the class by: propositional attitude
+  predicates have doxastic alternatives and no factivity class, commentatives are the emotive
+  factives (§3.2.4), predicates of knowledge the veridical doxastics, which the chapter calls
+  semifactives (§3.2.5), predicates of fearing and desideratives have a valence and an opaque
+  complement, manipulatives have an affectee controlling the complement
   (§3.2.8), and achievement predicates are Karttunen's implicatives (§3.2.10). The language file's
   implicative signature also covers the manipulatives *force* and *make*, so an implicative with
   an affectee is manipulative only. Nothing in an entry picks out pretence, modal, immediate
@@ -151,13 +153,13 @@ namespace PredicateClass
 /-- A language file entry is in a class when it records the property the class is identified by. -/
 protected def Mem : PredicateClass → Verb → Prop
   | utterance, v => v.speechActVerb
-  | propositionalAttitude, v => ∃ a ∈ v.attitude, ¬ a.IsPreferential ∧ ¬ a.IsVeridical v.factivity
-  | commentative, v => v.attitude.bind Attitude.valence ≠ none ∧ v.factivity ≠ none
+  | propositionalAttitude, v => v.attitude = some (.doxastic .doxastic) ∧ ¬ v.IsFactive
+  | commentative, v => v.attitude.bind Attitude.valence ≠ none ∧ v.IsFactive
   | knowledge, v => ∃ a ∈ v.attitude, a.IsVeridical v.factivity
   | fearing, v =>
-    v.attitude.bind Attitude.valence = some .negative ∧ v.factivity = none ∧ ¬ HasAffectee v
+    v.attitude.bind Attitude.valence = some .negative ∧ v.opaqueContext ∧ ¬ HasAffectee v
   | desiderative, v =>
-    v.attitude.bind Attitude.valence = some .positive ∧ v.factivity = none ∧ ¬ HasAffectee v
+    v.attitude.bind Attitude.valence = some .positive ∧ v.opaqueContext ∧ ¬ HasAffectee v
   | manipulative, v => HasAffectee v
   | achievement, v => v.implicative ≠ ⊥ ∧ ¬ HasAffectee v
   | phasal, v => v.phasal ≠ none
