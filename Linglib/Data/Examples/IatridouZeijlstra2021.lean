@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `IatridouZeijlstra2021` — typed example data
@@ -1003,5 +1005,17 @@ def iz2021_s186a : Datum :=
     paperFeatures := [("section", "11"), ("presupposition", "there is a UTS [t, 2010]")] }
 
 def all : List Datum := [iz2021_s10a, iz2021_s10b, iz2021_s11b, iz2021_s12, iz2021_s22a, iz2021_s22b, iz2021_s23, iz2021_s24a, iz2021_s24c, iz2021_s25, iz2021_s26, iz2021_s27a, iz2021_s31a, iz2021_s31b, iz2021_s32b, iz2021_s32c, iz2021_s33b, iz2021_s36b, iz2021_s37, iz2021_s40b, iz2021_s40c, iz2021_s41a, iz2021_s42, iz2021_s52, iz2021_s54, iz2021_s56, iz2021_s58, iz2021_s59, iz2021_s60b, iz2021_s61b, iz2021_s62, iz2021_s64, iz2021_s70, iz2021_s74, iz2021_s75a, iz2021_s77, iz2021_s78, iz2021_s79, iz2021_s81, iz2021_s82, iz2021_s83, iz2021_s85, iz2021_s89, iz2021_s91, iz2021_s92, iz2021_s98b, iz2021_s102, iz2021_s110, iz2021_s114a, iz2021_s119a, iz2021_s119b, iz2021_s121b, iz2021_s123, iz2021_s124, iz2021_s128, iz2021_s133a, iz2021_s133b, iz2021_s134, iz2021_s147b, iz2021_s149, iz2021_s152b, iz2021_s153, iz2021_s156, iz2021_s160, iz2021_s161, iz2021_s162, iz2021_s165, iz2021_s170, iz2021_s172, iz2021_s176, iz2021_s178b, iz2021_s180, iz2021_s182a, iz2021_s186a]
+
+/-- The canceling continuations of Section 1: professing ignorance of earlier events, or denying any. -/
+inductive Continuation where
+  /-- ignorance: ignorance -/
+  | ignorance
+  /-- denial: denial -/
+  | denial
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `continuation`. -/
+def continuation (e : Datum) : Option Continuation :=
+  e.parse? "continuation" [("ignorance", .ignorance), ("denial", .denial)]
 
 end IatridouZeijlstra2021.Examples

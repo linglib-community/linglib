@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `CondoravdiLauer2016` — typed example data
@@ -1064,5 +1066,34 @@ def cl2016_ex112e : Datum :=
     paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
 def all : List Datum := [cl2016_ex1, cl2016_ex2, cl2016_ex3, cl2016_ex4, cl2016_ex5, cl2016_ex14, cl2016_ex15, cl2016_ex19a, cl2016_ex19b, cl2016_ex20a, cl2016_ex20b, cl2016_ex21, cl2016_ex28, cl2016_ex29a, cl2016_ex29b, cl2016_ex30, cl2016_ex31, cl2016_ex35a, cl2016_ex37, cl2016_ex38, cl2016_ex39a, cl2016_ex39b, cl2016_ex40a, cl2016_ex40b, cl2016_ex42, cl2016_ex43, cl2016_ex44, cl2016_ex46, cl2016_ex47, cl2016_ex48, cl2016_ex49a, cl2016_ex49b, cl2016_ex52, cl2016_ex53, cl2016_ex54, cl2016_ex55, cl2016_ex56a, cl2016_ex56b, cl2016_ex58, cl2016_ex61, cl2016_ex62a, cl2016_ex62b, cl2016_ex63, cl2016_ex64, cl2016_ex74, cl2016_ex81a, cl2016_ex81b, cl2016_ex82a, cl2016_ex82b, cl2016_ex83a, cl2016_ex83b, cl2016_ex84, cl2016_ex85, cl2016_ex86, cl2016_ex91a, cl2016_ex91b, cl2016_ex92, cl2016_ex96, cl2016_ex97, cl2016_ex98a, cl2016_ex98b, cl2016_ex99, cl2016_ex100a, cl2016_ex100b, cl2016_ex101, cl2016_ex103, cl2016_ex106a, cl2016_ex106b, cl2016_ex106c, cl2016_ex107, cl2016_ex108, cl2016_ex109, cl2016_ex110a, cl2016_ex110b, cl2016_ex111, cl2016_ex112a, cl2016_ex112b, cl2016_ex112c, cl2016_ex112d, cl2016_ex112e]
+
+/-- The reading of the desire predicate. -/
+inductive WantReading where
+  /-- effective: effective -/
+  | effective
+  /-- mere: mere -/
+  | mere
+  /-- weak: weak -/
+  | weak
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `want`. -/
+def want (e : Datum) : Option WantReading :=
+  e.parse? "want" [("effective", .effective), ("mere", .mere), ("weak", .weak)]
+
+/-- The interpretation the paper assigns. -/
+inductive Interpretation where
+  /-- anankastic: anankastic -/
+  | anankastic
+  /-- nearAnankastic: nearAnankastic -/
+  | nearAnankastic
+  /-- nonAnankastic: nonAnankastic -/
+  | nonAnankastic
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `interpretation`. -/
+def interpretation (e : Datum) : Option Interpretation :=
+  e.parse? "interpretation" [("anankastic", .anankastic), ("nearAnankastic", .nearAnankastic),
+    ("nonAnankastic", .nonAnankastic)]
 
 end CondoravdiLauer2016.Examples

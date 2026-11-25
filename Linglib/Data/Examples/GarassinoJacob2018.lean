@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `GarassinoJacob2018` — typed example data
@@ -499,5 +501,100 @@ def ex35 : Datum :=
     paperFeatures := [("strategy", "siQue"), ("antecedent", "positive"), ("dislocated", "subject"), ("relation", "unstated"), ("subquestion", "no")] }
 
 def all : List Datum := [ex1, ex3, ex4, ex5a, ex5b, ex6, ex7a, ex7b, ex7c, ex8, ex9, ex10, ex11, ex12, ex13, ex14, ex15, ex16, ex17, ex18, ex19, fn11, ex21, ex22, ex23a, ex23b, ex23c, ex24, ex25, ex26, ex27, ex28, ex29, ex30, ex32, ex33, ex35]
+
+/-- The lexical and syntactic means of polarity focus the chapter surveys. -/
+inductive Means where
+  /-- emphaticDo: emphaticDo -/
+  | emphaticDo
+  /-- verumAccent: verumAccent -/
+  | verumAccent
+  /-- embedding: embedding -/
+  | embedding
+  /-- juxtaposed: juxtaposed -/
+  | juxtaposed
+  /-- ellipticEmbedding: ellipticEmbedding -/
+  | ellipticEmbedding
+  /-- fronting: fronting -/
+  | fronting
+  /-- faireCleft: faireCleft -/
+  | faireCleft
+  /-- leftDislocation: leftDislocation -/
+  | leftDislocation
+  /-- rightDislocation: rightDislocation -/
+  | rightDislocation
+  /-- siChe: siChe -/
+  | siChe
+  /-- siQue: siQue -/
+  | siQue
+  /-- siOnly: siOnly -/
+  | siOnly
+  /-- siParticle: siParticle -/
+  | siParticle
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `strategy`. -/
+def strategy (e : Datum) : Option Means :=
+  e.parse? "strategy" [("emphaticDo", .emphaticDo), ("verumAccent", .verumAccent), ("embedding", .embedding),
+    ("juxtaposed", .juxtaposed), ("ellipticEmbedding", .ellipticEmbedding),
+    ("fronting", .fronting), ("faireCleft", .faireCleft), ("leftDislocation", .leftDislocation),
+    ("rightDislocation", .rightDislocation), ("siChe", .siChe), ("siQue", .siQue),
+    ("siOnly", .siOnly), ("siParticle", .siParticle)]
+
+/-- What the polarity-focus utterance reacts to. -/
+inductive Antecedent where
+  /-- explicitNegation: explicitNegation -/
+  | explicitNegation
+  /-- explicitQuestion: explicitQuestion -/
+  | explicitQuestion
+  /-- inferredNegation: inferredNegation -/
+  | inferredNegation
+  /-- openQuestion: openQuestion -/
+  | openQuestion
+  /-- modal: modal -/
+  | modal
+  /-- positive: positive -/
+  | positive
+  /-- none: none -/
+  | absent
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `antecedent`. -/
+def antecedent (e : Datum) : Option Antecedent :=
+  e.parse? "antecedent" [("explicitNegation", .explicitNegation), ("explicitQuestion", .explicitQuestion),
+    ("inferredNegation", .inferredNegation), ("openQuestion", .openQuestion), ("modal", .modal),
+    ("positive", .positive), ("none", .absent)]
+
+/-- The dislocated constituent, if any. -/
+inductive Dislocated where
+  /-- none: none -/
+  | absent
+  /-- subject: subject -/
+  | subject
+  /-- object: object -/
+  | object
+  /-- adverbial: adverbial -/
+  | adverbial
+  /-- both: both -/
+  | both
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `dislocated`. -/
+def dislocated (e : Datum) : Option Dislocated :=
+  e.parse? "dislocated" [("none", .absent), ("subject", .subject), ("object", .object), ("adverbial", .adverbial),
+    ("both", .both)]
+
+/-- Whether the utterance's situation is the antecedent's or an analogous one. -/
+inductive Relation where
+  /-- identity: identity -/
+  | identity
+  /-- analogy: analogy -/
+  | analogy
+  /-- unstated: unstated -/
+  | unstated
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `relation`. -/
+def relation (e : Datum) : Option Relation :=
+  e.parse? "relation" [("identity", .identity), ("analogy", .analogy), ("unstated", .unstated)]
 
 end GarassinoJacob2018.Examples

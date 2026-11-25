@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `GinzburgCooper2004` — typed example data
@@ -263,5 +265,17 @@ def ex_13a : Datum :=
     paperFeatures := [("antecedent", "I"), ("antecedentCat", "NP[nom]"), ("fragment", "I"), ("fragmentCat", "NP[nom]"), ("access", "distinct")] }
 
 def all : List Datum := [ex_4a_bo, ex_4a_finagle, ex_6a, ex_8a, ex_8b, ex_8c, ex_9a, ex_10a_him, ex_10a_he, ex_10b_he, ex_10b_him, ex_10c_adore, ex_10c_adored, ex_10d_cycling, ex_10d_biking, ex_10d_biked, ex_11, ex_12, ex_13a]
+
+/-- Whether the participants share (a belief about) the content of the sub-utterance. -/
+inductive Access where
+  /-- shared: shared -/
+  | shared
+  /-- distinct: distinct -/
+  | distinct
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `access`. -/
+def access (e : Datum) : Option Access :=
+  e.parse? "access" [("shared", .shared), ("distinct", .distinct)]
 
 end GinzburgCooper2004.Examples

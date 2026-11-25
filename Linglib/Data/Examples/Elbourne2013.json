@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "description",
+      "lean": "description",
+      "type": "DescriptionType",
+      "doc": "The repeated description of a ch. 9 sloppy-identity row, bare or carrying a bound relation.",
+      "levels": [
+        {
+          "name": "bare",
+          "label": "the donkey",
+          "doc": "the donkey"
+        },
+        {
+          "name": "relational",
+          "label": "the donkey he owns",
+          "doc": "the donkey he owns"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "elbourne2013_ch3_5",
     "source": {"bibkey": "elbourne-2013", "paperLabel": "ch. 3, (5)"},
@@ -488,3 +509,4 @@
     "verified": "page-image"
   }
 ]
+}

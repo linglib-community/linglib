@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Song1996` — typed example data
@@ -372,5 +374,31 @@ def ch4_11_dat : Datum :=
     paperFeatures := [("construction", "PURP causative"), ("clauses", "two"), ("link", "PURP"), ("order", "effect-cause"), ("effect", "negated"), ("causee", "DAT")] }
 
 def all : List Datum := [ex_1b, ex_6, ex_2b, ex_3b, ex_4a, ex_5, ex_7, ex_24, ex_104, ch4_1a, ch4_1b, ch4_2a, ch4_2b, ch4_3, ch4_4, ch4_5, ch4_6, ch4_7, ch4_8, ch4_9_acc, ch4_9_dat, ch4_10, ch4_11_acc, ch4_11_dat]
+
+/-- How [Vcause] is realized in a one-clause causative (§2.3): fused with [Veffect] beyond morphological analysis (English *kill*), bound to it (Turkish *-dür*), or a free verb beside it (French *faire*). -/
+inductive Vcause where
+  /-- fused: fused -/
+  | fused
+  /-- bound: bound -/
+  | bound
+  /-- free: free -/
+  | free
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `vcause`. -/
+def vcause (e : Datum) : Option Vcause :=
+  e.parse? "vcause" [("fused", .fused), ("bound", .bound), ("free", .free)]
+
+/-- The order of the clause of cause and the clause of effect. -/
+inductive ClauseOrder where
+  /-- cause-effect: cause-effect -/
+  | causeEffect
+  /-- effect-cause: effect-cause -/
+  | effectCause
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `order`. -/
+def order (e : Datum) : Option ClauseOrder :=
+  e.parse? "order" [("cause-effect", .causeEffect), ("effect-cause", .effectCause)]
 
 end Song1996.Examples

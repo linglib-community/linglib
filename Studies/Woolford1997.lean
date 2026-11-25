@@ -55,6 +55,8 @@ patterns](##ruleValues_of_mem_derivations) where objects can be nominative.
 
 namespace Woolford1997
 
+open Examples (Position)
+
 open Morphology DependentCase Alignment
 
 /-! ### The inventory of Cases -/
@@ -118,13 +120,6 @@ theorem IsFunctional.lexical_ne (h : c.IsFunctional) (l : LexicalCase) : lexical
   rcases h with rfl | rfl <;> exact nofun
 
 end AbstractCase
-
-/-- Where an argument sits at LF: the specifier of Agr-S, the specifier of Agr-O, or inside VP. -/
-inductive Position where
-  | specAgrS
-  | specAgrO
-  | inVP
-  deriving DecidableEq, Repr
 
 /-- The position of an argument with a Case of Nez Perce, as the tree (9) gives it. -/
 def AbstractCase.position : AbstractCase → Position
@@ -721,7 +716,7 @@ def exponent (l : Glottocode) (c : AbstractCase) : Option String :=
 /-- A cell of the table (58): its Case, and the position its agreement column reports. -/
 def tableRow? (e : Datum) : Option (AbstractCase × Position) :=
   (e.parse? "cell" caseTable).bind fun c ↦
-    (e.parse? "agreement" [("subject", .specAgrS), ("object", .specAgrO), ("none", .inVP)]).map
+    ((Examples.agreement e)).map
       (c, ·)
 
 -- (58): the agreement of a Case is its position

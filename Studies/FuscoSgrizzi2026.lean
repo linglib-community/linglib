@@ -66,6 +66,8 @@ open scoped PremiseOrdering
 
 namespace FuscoSgrizzi2026
 
+open Examples (Diagnostic)
+
 open Modality Minimalist Italian.Verbs Event
 open scoped SetRel ModalLogic
 
@@ -177,25 +179,12 @@ theorem convincere_pensare_readings :
 
 /-! ### The diagnostics of sections 3 and 3.1 -/
 
-/-- A property of an infinitival complement the paper tests. -/
-inductive Diagnostic
-  | belief
-  | intention
-  | truthAssessable
-  | subjectControl
-  | passive
-  | aspectual
-  | negation
-  | independentTime
-  | cliticClimbing
-  deriving DecidableEq, Repr
-
 /-- What complement size predicts for a diagnostic, the readings by the phase threshold; truth
 assessment by propositionality; subject control by the finiteness head that hosts the logophoric
 centre ([rizzi-1997]); passive, low aspectual verbs and negation by the Voice, v and negation
 heads; a temporal domain of its own by structure above vP; clitic climbing by a complement no
 larger than vP. -/
-def Diagnostic.Predicted : Diagnostic → ComplementSize → Prop
+def Examples.Diagnostic.Predicted : Diagnostic → ComplementSize → Prop
   | .belief, cs => readingFromSize cs = .belief
   | .intention, cs => readingFromSize cs = .intention
   | .truthAssessable, cs => .cP ≤ cs
@@ -219,10 +208,7 @@ structure Row where
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let s ← ex.parse? "size" [("cP", diSize), ("aP", aSize), ("vP", ComplementSize.vP)]
-  let d ← ex.parse? "diagnostic" [("belief", Diagnostic.belief), ("intention", .intention),
-    ("truthAssessable", .truthAssessable), ("subjectControl", .subjectControl),
-    ("passive", .passive), ("aspectual", .aspectual), ("negation", .negation),
-    ("independentTime", .independentTime), ("cliticClimbing", .cliticClimbing)]
+  let d ← (Examples.diagnostic ex)
   let g ← ex.parse? "grammatical" [("yes", true), ("no", false)]
   pure ⟨s, d, g⟩
 

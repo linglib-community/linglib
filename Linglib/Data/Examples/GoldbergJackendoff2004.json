@@ -1,4 +1,30 @@
-[
+{
+  "features": [
+    {
+      "key": "selection",
+      "lean": "selection",
+      "type": "ObjectSelection",
+      "doc": "How the object of a transitive resultative is selected (§2). By §5 the fake reflexive is not grammatically special: another object is excluded because it is implausible to make someone else fall asleep by crying.",
+      "levels": [
+        {
+          "name": "selected",
+          "label": "selected",
+          "doc": "the verb selects the object: *The gardener watered the flowers flat*, (7a)"
+        },
+        {
+          "name": "unselected",
+          "label": "unselected",
+          "doc": "only the construction licenses the object: *They drank the pub dry*, (8a)"
+        },
+        {
+          "name": "fakeReflexive",
+          "label": "fake reflexive",
+          "doc": "an unselected reflexive that alternates with no other object, as in *We yelled ourselves hoarse*, (9a)"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "gj2004_5a",
     "source": {
@@ -1063,3 +1089,4 @@
     "verified": "page-image"
   }
 ]
+}

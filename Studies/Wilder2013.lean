@@ -77,6 +77,8 @@ open Inquisitive
 
 namespace Wilder2013
 
+open Examples (Heading Constituent)
+
 open Focus
 
 /-! ### The auxiliary system -/
@@ -281,11 +283,6 @@ theorem not_good_of_not_diagnose {good patients diagnose polite : Set W}
 
 /-! ### The two sentence types across clause types -/
 
-/-- The constituent bearing the contrastive-topic accent. -/
-inductive Constituent
-  | subject | vp | object
-  deriving DecidableEq, Repr
-
 /-- The form of the question a contrastive-topic sentence directly answers. -/
 inductive Answers
   | polar | constituent
@@ -382,13 +379,6 @@ def Environment.IsInterrogative : Environment → Prop
 instance : DecidablePred Environment.IsInterrogative := fun e ↦ by
   cases e <;> unfold Environment.IsInterrogative <;> infer_instance
 
-/-- The clause type under which the paper gives a row: its headings for (27)–(33) and its
-descriptions of the others. -/
-inductive Heading
-  | root | believeComplement | interrogativeComplement | factiveComplement | itCleft
-  | restrictiveRelative | adverbialClause | whSubjectQuestion | objectPreposing
-  deriving DecidableEq, Repr
-
 /-- The paper's heading of an environment. -/
 def Environment.heading : Environment → Heading
   | .root s => if Interrogative s then .whSubjectQuestion else .root
@@ -399,14 +389,6 @@ def Environment.heading : Environment → Heading
   | .restrictiveRelative => .restrictiveRelative
   | .adverbialClause => .adverbialClause
   | .objectPreposing => .objectPreposing
-
-/-- The heading a row records. -/
-def heading? (ex : Datum) : Option Heading :=
-  ex.parse? "environment" [("root", .root), ("believeComplement", .believeComplement),
-    ("interrogativeComplement", .interrogativeComplement),
-    ("factiveComplement", .factiveComplement), ("itCleft", .itCleft),
-    ("restrictiveRelative", .restrictiveRelative), ("adverbialClause", .adverbialClause),
-    ("whSubjectQuestion", .whSubjectQuestion), ("objectPreposing", .objectPreposing)]
 
 /-- A row's link to the language file: what its sentence stands in, the interrogative word of the
 constituent question its context asks, and the answer particle it opens with. -/
@@ -501,7 +483,8 @@ instance (l : Link) (ex : Datum) : Decidable (l.Attested ex) :=
 theorem links_attested : ∀ p ∈ links, p.2.Attested p.1 := by decide +kernel
 
 -- The clause type derived from a row's items is the paper's heading for it.
-theorem heading_derived : ∀ p ∈ links, heading? p.1 = some p.2.host.environment.heading := by
+theorem heading_derived :
+    ∀ p ∈ links, Examples.heading p.1 = some p.2.host.environment.heading := by
   decide
 
 /-- The sentence and environment of an emphatic *do* row: its pattern and contrastive-topic
@@ -510,7 +493,7 @@ the environment its items derive. -/
 def sentence? (ex : Datum) : Option (Kind × Environment) := do
   let l ← link? ex
   let a : Answers := if l.contextWh.isSome then .constituent else .polar
-  let k := ex.parse? "ctConstituent" [("subject", .subject), ("vp", .vp), ("object", .object)]
+  let k := (Examples.ctConstituent ex)
   let kind ← match ex.feature? "pattern" with
     | some "VF" => some .vf
     | some "CT" => (Kind.ct · a) <$> k

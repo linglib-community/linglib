@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Horn1972` — typed example data
@@ -770,5 +772,17 @@ def ex4_75 : Datum :=
     paperFeatures := [("section", "4.3"), ("predicate", "true"), ("compatibility", "incompatible"), ("lexicalization", "true~ = false; ~true = untrue")] }
 
 def all : List Datum := [ex1_58b_more, ex1_58b_fewer, ex1_59a, ex1_59b, ex1_60a, ex1_60b, ex1_63b, ex1_63c, ex1_72a_fact, ex1_72a_susp, ex1_72b_cold, ex1_72b_warm, ex1_73c_hot_warm, ex1_82a, ex1_82b, ex1_85a, ex1_85b, ex1_93_ok, ex1_93_bad, ex2_1a_some_all, ex2_1a_all_some, ex2_1a_many_most, ex2_1b, ex2_1e_few, ex2_3c, ex2_3a, ex2_24a_somebody, ex2_24b_some_not_all, ex2_25a, ex2_28a, ex2_28b, ex2_40a, ex2_43a, ex2_46, ex2_47, ex2_49b, ex2_51a, ex2_51d, ex2_52a, ex2_55c, ex2_58a, ex2_58c, ex4_49a, ex4_49a_prime, ex4_50a, ex4_50a_prime, ex4_56a, ex4_56b, ex4_56c, ex4_56e, ex4_57a, ex4_57a_prime, ex4_60a, ex4_60b, ex4_60f, ex4_66a, ex4_66b, ex4_75]
+
+/-- Whether a lexicalization negates inside, on the disjuncts, or outside, on the whole. -/
+inductive NegationRoute where
+  /-- inner: inner -/
+  | inner
+  /-- outer: outer -/
+  | outer
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `route`. -/
+def route (e : Datum) : Option NegationRoute :=
+  e.parse? "route" [("inner", .inner), ("outer", .outer)]
 
 end Horn1972.Examples

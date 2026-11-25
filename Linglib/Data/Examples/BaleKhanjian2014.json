@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "number",
+      "lean": "number",
+      "type": "NumberHead",
+      "doc": "The head of the number phrase: the null singular *-∅* or the plural *-ner*.",
+      "levels": [
+        {
+          "name": "sg",
+          "label": "SG",
+          "doc": "SG"
+        },
+        {
+          "name": "pl",
+          "label": "PL",
+          "doc": "PL"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "balekhanjian2014_3",
     "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(3)"},
@@ -532,3 +553,4 @@
     "verified": "page-image"
   }
 ]
+}

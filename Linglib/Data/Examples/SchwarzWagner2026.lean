@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `SchwarzWagner2026` — typed example data
@@ -202,5 +204,36 @@ def ex_76b : Datum :=
     paperFeatures := [("case", "minimal"), ("excluded", "symmetric"), ("available", "no")] }
 
 def all : List Datum := [ex_1a, ex_1b, ex_33a, ex_33b, ex_42a, ex_42b, ex_52a, ex_52b, ex_54a, ex_54b, ex_55a, ex_55b, ex_76a, ex_76b]
+
+/-- The examples, by what the language lexicalizes beyond the assertion. -/
+inductive Case where
+  /-- bare: (1) *Some players responded*: the A corner -/
+  | bare
+  /-- negated: (33) *Some players have not responded*: the A corner, the assertion holding a negation -/
+  | negated
+  /-- antonym: (42) *Some players were inside*: the A corner and an antonym, (46) -/
+  | antonym
+  /-- lexicalized: (52) *Going to confession is permitted*: the A and O corners, *required* and *optional* -/
+  | lexicalized
+  /-- minimal: (76) *John-wa ki-te yoi*: no other corner; necessity is complex, (77) -/
+  | minimal
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `case`. -/
+def case (e : Datum) : Option Case :=
+  e.parse? "case" [("bare", .bare), ("negated", .negated), ("antonym", .antonym),
+    ("lexicalized", .lexicalized), ("minimal", .minimal)]
+
+/-- Which alternative an exclusion negates: the scalar alternative `A` or the symmetric one `O`, the pair of the paper's (10) and (68). -/
+inductive Excluded where
+  /-- scalar: scalar -/
+  | scalar
+  /-- symmetric: symmetric -/
+  | symmetric
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `excluded`. -/
+def excluded (e : Datum) : Option Excluded :=
+  e.parse? "excluded" [("scalar", .scalar), ("symmetric", .symmetric)]
 
 end SchwarzWagner2026.Examples

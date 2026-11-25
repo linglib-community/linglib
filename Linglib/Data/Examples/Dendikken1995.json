@@ -1,4 +1,35 @@
-[
+{
+  "features": [
+    {
+      "key": "placement",
+      "lean": "placement",
+      "type": "Placement",
+      "doc": "The surface position of the particle relative to the noun phrase and to the predicate of the inner small clause.",
+      "levels": [
+        {
+          "name": "inner",
+          "label": "inner",
+          "doc": "V-Prt-NP(-Pred), the \"inner particle\" order"
+        },
+        {
+          "name": "outer",
+          "label": "outer",
+          "doc": "V-NP-Prt(-Pred), the \"outer particle\" order"
+        },
+        {
+          "name": "final",
+          "label": "final",
+          "doc": "V-NP-Pred-Prt"
+        },
+        {
+          "name": "prefixed",
+          "label": "prefixed",
+          "doc": "prt-V, the particle a prefix on the verb"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "dendikken1995_1a",
     "source": {"bibkey": "dendikken-1995", "paperLabel": "(1a)"},
@@ -2235,3 +2266,4 @@
     "verified": "page-image"
   }
 ]
+}

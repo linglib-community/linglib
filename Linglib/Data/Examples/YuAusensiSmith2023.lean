@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `YuAusensiSmith2023` — typed example data
@@ -445,5 +447,17 @@ def ex_45 : Datum :=
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 
 def all : List Datum := [ex_16a, ex_16b, ex_17a, ex_17b, ex_18a, ex_18b, ex_23, ex_24a, ex_24b, ex_24c, ex_25a, ex_25b, ex_25c, ex_26, ex_27, ex_28, ex_29, fn11i, ex_30, ex_31a, ex_31b, ex_31c, ex_31d, ex_31e, ex_31f, ex_35a, ex_35b, ex_35c, ex_36, ex_37a, ex_37b, ex_44, ex_45]
+
+/-- The two classes of result roots (footnotes 1 and 4). -/
+inductive RootClass where
+  /-- property concept: roots that do not entail change, such as that of *open* -/
+  | propertyConcept
+  /-- change of state: roots that entail change, Beavers and Koontz-Garboden's result roots, such as that of *break* -/
+  | changeOfState
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `root class`. -/
+def rootClass (e : Datum) : Option RootClass :=
+  e.parse? "root class" [("property concept", .propertyConcept), ("change of state", .changeOfState)]
 
 end YuAusensiSmith2023.Examples

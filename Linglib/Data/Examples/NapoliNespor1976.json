@@ -1,4 +1,89 @@
-[
+{
+  "features": [
+    {
+      "key": "holder",
+      "lean": "holder",
+      "type": "Holder",
+      "doc": "Whose belief the comparison bears on.",
+      "levels": [
+        {
+          "name": "addressee",
+          "label": "addressee",
+          "doc": "the listener, now"
+        },
+        {
+          "name": "formerAddressee",
+          "label": "formerAddressee",
+          "doc": "the listener at an earlier time, *di quanto tu credevi* (13)"
+        },
+        {
+          "name": "thirdParty",
+          "label": "thirdParty",
+          "doc": "someone else, *di quanto lui crede* (14)"
+        }
+      ]
+    },
+    {
+      "key": "complementizer",
+      "lean": "complementizer",
+      "type": "Complementizer",
+      "doc": "The complementizer of the embedded clause.",
+      "levels": [
+        {
+          "name": "quanto",
+          "label": "quanto",
+          "doc": "*(di) quanto*, the comparative quantifier in complementizer position"
+        },
+        {
+          "name": "che",
+          "label": "che",
+          "doc": "che"
+        },
+        {
+          "name": "se",
+          "label": "se",
+          "doc": "*se* 'if', of an indirect question"
+        }
+      ]
+    },
+    {
+      "key": "standard",
+      "lean": "standard",
+      "type": "Standard",
+      "doc": "The standard of a comparison is a clause, *di quanto è Carlo* (4), or a belief, *di quanto tu credi* (5).",
+      "levels": [
+        {
+          "name": "clausal",
+          "label": "clausal",
+          "doc": "clausal"
+        },
+        {
+          "name": "belief",
+          "label": "belief",
+          "doc": "belief"
+        }
+      ]
+    },
+    {
+      "key": "predicate",
+      "lean": "predicate",
+      "type": "Predicate",
+      "doc": "The predicate of a comparative clause, when it is not deleted.",
+      "levels": [
+        {
+          "name": "adjective",
+          "label": "adjective",
+          "doc": "A predicate adjective, repeated (75) or another one (82)"
+        },
+        {
+          "name": "lo",
+          "label": "lo",
+          "doc": "the clitic *lo* for the predicate adjective (79)"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "napolinespor1976_ex6a",
     "source": {"bibkey": "napoli-nespor-1976", "paperLabel": "(6)"},
@@ -2498,3 +2583,4 @@
     "verified": "page-image"
   }
 ]
+}

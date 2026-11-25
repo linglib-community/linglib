@@ -57,6 +57,8 @@ The second, `?` on (9a) and `??` on (63) and (64), is not among the judgments th
 
 namespace NapoliNespor1976
 
+open Examples (Holder Complementizer Standard Predicate)
+
 open SpeechAct (Force)
 
 /-! ### What a row records -/
@@ -71,16 +73,6 @@ inductive Evidence where
   | explicit
   deriving DecidableEq, Repr, Fintype
 
-/-- Whose belief the comparison bears on. -/
-inductive Holder where
-  /-- The listener, now. -/
-  | addressee
-  /-- The listener at an earlier time, *di quanto tu credevi* (13). -/
-  | formerAddressee
-  /-- Someone else, *di quanto lui crede* (14). -/
-  | thirdParty
-  deriving DecidableEq, Repr
-
 /-- The constructions of the rows. -/
 inductive Construction where
   /-- A comparative of inequality, *più* or *meno* … *di quanto*. -/
@@ -91,36 +83,12 @@ inductive Construction where
   | indirectQuestion
   deriving DecidableEq, Repr
 
-/-- The standard of a comparison is a clause, *di quanto è Carlo* (4), or a belief, *di quanto tu
-credi* (5). -/
-inductive Standard where
-  | clausal
-  | belief
-  deriving DecidableEq, Repr
-
 /-- A printed *non* in the embedded clause is either ordinary negation, *non₁* (16), or *non₂*
 (17). -/
 inductive Negation where
   | none
   | non₁
   | non₂
-  deriving DecidableEq, Repr
-
-/-- The complementizer of the embedded clause. -/
-inductive Complementizer where
-  /-- *(di) quanto*, the comparative quantifier in complementizer position. -/
-  | quanto
-  | che
-  /-- *se* 'if', of an indirect question. -/
-  | se
-  deriving DecidableEq, Repr
-
-/-- The predicate of a comparative clause, when it is not deleted. -/
-inductive Predicate where
-  /-- A predicate adjective, repeated (75) or another one (82). -/
-  | adjective
-  /-- The clitic *lo* for the predicate adjective (79). -/
-  | lo
   deriving DecidableEq, Repr
 
 /-- The words of a sentence the analysis is sensitive to. -/
@@ -362,20 +330,18 @@ def sentence? (d : Datum) : Option Sentence := do
   let matrix ← d.parse? "matrix" [("positive", Polarity.positive), ("negative", .negative)]
   let construction ← d.parse? "construction" [("piu", Construction.inequality),
     ("meno", .inequality), ("tanto", .equality), ("indirectQuestion", .indirectQuestion)]
-  let holder ← d.parse? "holder" [("addressee", Holder.addressee),
-    ("formerAddressee", .formerAddressee), ("thirdParty", .thirdParty)]
+  let holder ← (Examples.holder d)
   let negation ← d.parse? "negation" [("none", Negation.none), ("non1", .non₁), ("non2", .non₂)]
   let mood ← d.parse? "mood" moods
-  let complementizer ← d.parse? "complementizer"
-    [("quanto", Complementizer.quanto), ("che", .che), ("se", .se)]
+  let complementizer ← (Examples.complementizer d)
   let elements ← (d.features "element").mapM fun v ↦ List.lookup v
     [("pur", Element.pur), ("neanche", .neanche), ("affatto", .affatto),
       ("degreeModifier", .degreeModifier), ("certainty", .certainty),
       ("speakerGerund", .speakerGerund)]
   return { force, matrix, construction, holder, negation, mood, complementizer, elements
-           standard := d.parse? "standard" [("clausal", Standard.clausal), ("belief", .belief)]
+           standard := (Examples.standard d)
            plainMood := (d.parse? "plainMood" moods).getD .indicative
-           predicate := d.parse? "predicate" [("adjective", Predicate.adjective), ("lo", .lo)] }
+           predicate := (Examples.predicate d) }
 
 /-- The evidence a row records, for an example judged in a context. -/
 def evidence? (d : Datum) : Option Evidence :=

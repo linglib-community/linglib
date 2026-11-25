@@ -66,33 +66,15 @@ only.
 
 namespace Landau2024a
 
+open Examples (ClauseType Position)
+
 open Landau2015 Interpreter
 
 /-! ### The trichotomy (41) -/
 
-/-- The clause types of the Spanish paradigm (41). -/
-inductive ClauseType where
-  | infinitive
-  | finite
-  deriving DecidableEq, Repr
-
-/-- The positions of the Spanish paradigm (41). -/
-inductive Position where
-  | complement
-  | subject
-  deriving DecidableEq, Repr, Fintype
-
-/-- The clause type of a row. -/
-def clauseTypeOf (row : Datum) : Option ClauseType :=
-  row.parse? "clause" [("infinitive", .infinitive), ("finite", .finite)]
-
-/-- The position of a row's clause. -/
-def positionOf (row : Datum) : Option Position :=
-  row.parse? "position" [("complement", .complement), ("subject", .subject)]
-
 /-- The diagnostics the rows attest for a clause type in a position. -/
 def attested (c : ClauseType) (p : Position) : Set Landau2013.Diagnostic :=
-  {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ positionOf row = some p ∧
+  {d | ∃ row ∈ Examples.all, Examples.clause row = some c ∧ Examples.position row = some p ∧
     Landau2013.attests row d}
 
 instance (c : ClauseType) (p : Position) : DecidablePred (· ∈ attested c p) := fun d ↦ by

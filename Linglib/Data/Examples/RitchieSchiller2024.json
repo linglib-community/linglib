@@ -1,4 +1,88 @@
-[
+{
+  "features": [
+    {
+      "key": "restriction",
+      "lean": "restriction",
+      "type": "Restriction",
+      "doc": "What an implicit restriction restricts by.",
+      "levels": [
+        {
+          "name": "location",
+          "label": "location",
+          "doc": "location"
+        },
+        {
+          "name": "time",
+          "label": "time",
+          "doc": "time"
+        },
+        {
+          "name": "availability",
+          "label": "availability",
+          "doc": "availability"
+        },
+        {
+          "name": "salience",
+          "label": "salience",
+          "doc": "salience"
+        },
+        {
+          "name": "manipulability",
+          "label": "manipulability",
+          "doc": "manipulability"
+        },
+        {
+          "name": "color",
+          "label": "color",
+          "doc": "color"
+        },
+        {
+          "name": "aesthetic",
+          "label": "aesthetic",
+          "doc": "aesthetic"
+        },
+        {
+          "name": "history",
+          "label": "history",
+          "doc": "history"
+        },
+        {
+          "name": "subkind",
+          "label": "subkind",
+          "doc": "subkind"
+        },
+        {
+          "name": "shape",
+          "label": "shape",
+          "doc": "shape"
+        },
+        {
+          "name": "plan",
+          "label": "plan",
+          "doc": "plan"
+        }
+      ]
+    },
+    {
+      "key": "anchor",
+      "lean": "anchor",
+      "type": "Anchor",
+      "doc": "Whether a locational or temporal restriction is to the speaker's here and now.",
+      "levels": [
+        {
+          "name": "hereNow",
+          "label": "hereNow",
+          "doc": "hereNow"
+        },
+        {
+          "name": "elsewhere",
+          "label": "elsewhere",
+          "doc": "elsewhere"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "ritchieschiller2024_1",
     "source": {"bibkey": "ritchie-schiller-2024", "paperLabel": "(1)"},
@@ -655,3 +739,4 @@
     "verified": "page-image"
   }
 ]
+}

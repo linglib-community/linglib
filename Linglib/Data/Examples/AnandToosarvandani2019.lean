@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `AnandToosarvandani2019` — typed example data
@@ -185,5 +187,17 @@ def ex_47b : Datum :=
     paperFeatures := [("position", "final"), ("demonstrative", "now")] }
 
 def all : List Datum := [ex_5, ex_7, ex_8, ex_29_initial, ex_29_final, ex_36a, ex_36b, ex_37, ex_38, ex_40a, ex_40b, ex_47a, ex_47b]
+
+/-- The position of a demonstrative in its sentence. -/
+inductive Position where
+  /-- initial: initial -/
+  | initial
+  /-- final: final -/
+  | final
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `position`. -/
+def position (e : Datum) : Option Position :=
+  e.parse? "position" [("initial", .initial), ("final", .final)]
 
 end AnandToosarvandani2019.Examples

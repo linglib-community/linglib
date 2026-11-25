@@ -78,6 +78,8 @@ cases.
 
 namespace CondoravdiLauer2016
 
+open Examples (WantReading Interpretation)
+
 open Desire.Preferential Modality Conditional.Restrictor
 open PreferenceStructure (mem_maximals_discrete)
 
@@ -680,19 +682,9 @@ end AirportScenario
 The construal rows classify the paper's conditionals by the reading of *want* and the construal
 of the modal; the other rows instantiate the theorems above. -/
 
-/-- The reading of the desire predicate. -/
-inductive WantReading
-  | effective | mere | weak
-  deriving DecidableEq
-
 /-- The construal of the modal in the consequent. -/
 inductive ModalConstrual
   | teleological | deontic | speakerTeleological
-  deriving DecidableEq
-
-/-- The interpretation the paper assigns. -/
-inductive Interpretation
-  | anankastic | nearAnankastic | nonAnankastic
   deriving DecidableEq
 
 /-- The relation the prejacent bears to the goal, §7.1.2, is a means to it, a precondition for it,
@@ -720,12 +712,10 @@ structure Construal where
 /-- The configuration a construal row records. -/
 def Construal.ofRow (row : Datum) : Option Construal := do
   guard (row.feature? "construction" = some "construal")
-  return ⟨← row.parse? "want"
-      [("effective", WantReading.effective), ("mere", .mere), ("weak", .weak)],
+  return ⟨← (Examples.want row),
     ← row.parse? "modal" [("teleological", ModalConstrual.teleological), ("deontic", .deontic),
       ("speakerTeleological", .speakerTeleological)],
-    ← row.parse? "interpretation" [("anankastic", Interpretation.anankastic),
-      ("nearAnankastic", .nearAnankastic), ("nonAnankastic", .nonAnankastic)],
+    ← (Examples.interpretation row),
     ← row.parse? "implication" implications⟩
 
 -- (88), §7.2.1
@@ -742,7 +732,7 @@ theorem implication_rows : ∀ row ∈ Examples.all, row.feature? "construction"
   decide
 
 /-- The reading of *want* an incompatible-wants row records. -/
-def WantReading.ofRow (row : Datum) : Option WantReading := do
+def Examples.WantReading.ofRow (row : Datum) : Option WantReading := do
   guard (row.feature? "construction" = some "incompatibleWants")
   row.parse? "construal" [("mere", WantReading.mere), ("effective", .effective)]
 

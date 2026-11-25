@@ -1,4 +1,179 @@
-[
+{
+  "features": [
+    {
+      "key": "strategy",
+      "lean": "strategy",
+      "type": "Means",
+      "doc": "The lexical and syntactic means of polarity focus the chapter surveys.",
+      "levels": [
+        {
+          "name": "emphaticDo",
+          "label": "emphaticDo",
+          "doc": "emphaticDo"
+        },
+        {
+          "name": "verumAccent",
+          "label": "verumAccent",
+          "doc": "verumAccent"
+        },
+        {
+          "name": "embedding",
+          "label": "embedding",
+          "doc": "embedding"
+        },
+        {
+          "name": "juxtaposed",
+          "label": "juxtaposed",
+          "doc": "juxtaposed"
+        },
+        {
+          "name": "ellipticEmbedding",
+          "label": "ellipticEmbedding",
+          "doc": "ellipticEmbedding"
+        },
+        {
+          "name": "fronting",
+          "label": "fronting",
+          "doc": "fronting"
+        },
+        {
+          "name": "faireCleft",
+          "label": "faireCleft",
+          "doc": "faireCleft"
+        },
+        {
+          "name": "leftDislocation",
+          "label": "leftDislocation",
+          "doc": "leftDislocation"
+        },
+        {
+          "name": "rightDislocation",
+          "label": "rightDislocation",
+          "doc": "rightDislocation"
+        },
+        {
+          "name": "siChe",
+          "label": "siChe",
+          "doc": "siChe"
+        },
+        {
+          "name": "siQue",
+          "label": "siQue",
+          "doc": "siQue"
+        },
+        {
+          "name": "siOnly",
+          "label": "siOnly",
+          "doc": "siOnly"
+        },
+        {
+          "name": "siParticle",
+          "label": "siParticle",
+          "doc": "siParticle"
+        }
+      ]
+    },
+    {
+      "key": "antecedent",
+      "lean": "antecedent",
+      "type": "Antecedent",
+      "doc": "What the polarity-focus utterance reacts to.",
+      "levels": [
+        {
+          "name": "explicitNegation",
+          "label": "explicitNegation",
+          "doc": "explicitNegation"
+        },
+        {
+          "name": "explicitQuestion",
+          "label": "explicitQuestion",
+          "doc": "explicitQuestion"
+        },
+        {
+          "name": "inferredNegation",
+          "label": "inferredNegation",
+          "doc": "inferredNegation"
+        },
+        {
+          "name": "openQuestion",
+          "label": "openQuestion",
+          "doc": "openQuestion"
+        },
+        {
+          "name": "modal",
+          "label": "modal",
+          "doc": "modal"
+        },
+        {
+          "name": "positive",
+          "label": "positive",
+          "doc": "positive"
+        },
+        {
+          "name": "absent",
+          "label": "none",
+          "doc": "none"
+        }
+      ]
+    },
+    {
+      "key": "dislocated",
+      "lean": "dislocated",
+      "type": "Dislocated",
+      "doc": "The dislocated constituent, if any.",
+      "levels": [
+        {
+          "name": "absent",
+          "label": "none",
+          "doc": "none"
+        },
+        {
+          "name": "subject",
+          "label": "subject",
+          "doc": "subject"
+        },
+        {
+          "name": "object",
+          "label": "object",
+          "doc": "object"
+        },
+        {
+          "name": "adverbial",
+          "label": "adverbial",
+          "doc": "adverbial"
+        },
+        {
+          "name": "both",
+          "label": "both",
+          "doc": "both"
+        }
+      ]
+    },
+    {
+      "key": "relation",
+      "lean": "relation",
+      "type": "Relation",
+      "doc": "Whether the utterance's situation is the antecedent's or an analogous one.",
+      "levels": [
+        {
+          "name": "identity",
+          "label": "identity",
+          "doc": "identity"
+        },
+        {
+          "name": "analogy",
+          "label": "analogy",
+          "doc": "analogy"
+        },
+        {
+          "name": "unstated",
+          "label": "unstated",
+          "doc": "unstated"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "garassinojacob2018_ex1",
     "source": {
@@ -1509,3 +1684,4 @@
     "verified": "page-image"
   }
 ]
+}

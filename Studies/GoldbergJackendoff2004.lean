@@ -66,6 +66,8 @@ the moving host a theme, the roles here are the paper's.
 
 namespace GoldbergJackendoff2004
 
+open Examples (ObjectSelection)
+
 open ArgumentStructure
 open English
 open English.Verbs hiding Verb
@@ -86,19 +88,6 @@ structure Subconstruction where
   causative : Bool
   /-- What the result phrase names. -/
   rp : RPType
-  deriving DecidableEq, Repr
-
-/-- How the object of a transitive resultative is selected (§2). By §5 the fake reflexive is not
-grammatically special: another object is excluded because it is implausible to make someone
-else fall asleep by crying. -/
-inductive ObjectSelection where
-  /-- The verb selects the object: *The gardener watered the flowers flat*, (7a). -/
-  | selected
-  /-- Only the construction licenses the object: *They drank the pub dry*, (8a). -/
-  | unselected
-  /-- An unselected reflexive that alternates with no other object, as in *We yelled ourselves
-  hoarse*, (9a). -/
-  | fakeReflexive
   deriving DecidableEq, Repr
 
 /-! ### Semantic coherence
@@ -204,9 +193,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
      ("noncausative property", ⟨false, .property⟩), ("noncausative path", ⟨false, .path⟩)]
   pure { verb, subconstruction
          relation := (ex.parse? "subeventRelation" [("result", .result)]).getD .means
-         selection := ex.parse? "selection"
-           [("selected", .selected), ("unselected", .unselected),
-            ("fake reflexive", .fakeReflexive)]
+         selection := (Examples.selection ex)
          endBounded := ex.parse? "endBounded" [("true", true), ("false", false)]
          subjectRole := ex.parse? "subjectRole" construals
          objectRole := ex.parse? "objectRole" construals

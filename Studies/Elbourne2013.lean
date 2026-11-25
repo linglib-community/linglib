@@ -505,25 +505,14 @@ section Data
 
 open Examples
 
-/-- The repeated description of a ch. 9 sloppy-identity row, bare or carrying a bound
-relation. -/
-inductive DescriptionType where
-  | bare
-  | relational
-  deriving DecidableEq, Repr
-
-/-- The description a row's `description` feature names. -/
-def descriptionType? (e : Datum) : Option DescriptionType :=
-  e.parse? "description" [("the donkey", .bare), ("the donkey he owns", .relational)]
-
 -- (17)
-theorem sloppy_rows : ∀ e ∈ Examples.all, ∀ d ∈ descriptionType? e,
+theorem sloppy_rows : ∀ e ∈ Examples.all, ∀ d ∈ Examples.description e,
     (∀ j ∈ e.readings.lookup "strict", j.band = .accepted) ∧
       ∀ j ∈ e.readings.lookup "sloppy",
         j.band = match d with | .bare => .rejected | .relational => .accepted := by
   decide
 
-theorem sloppy_read : Datum.ReadCount descriptionType? Examples.all 2 := by decide
+theorem sloppy_read : Datum.ReadCount Examples.description Examples.all 2 := by decide
 
 -- (22), (31), (33)
 theorem contrast_rows : ∀ e ∈ Examples.all, (e.feature? "contrast").isSome →

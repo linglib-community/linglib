@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `GoldbergJackendoff2004` — typed example data
@@ -393,5 +395,19 @@ def gj2004_97c : Datum :=
     paperFeatures := [("verb", "rumble"), ("subconstruction", "noncausative path"), ("rpCat", "PP"), ("subeventRelation", "result")] }
 
 def all : List Datum := [gj2004_5a, gj2004_5b, gj2004_6a, gj2004_6b, gj2004_7a, gj2004_7b, gj2004_8a, gj2004_8b, gj2004_9a, gj2004_23a, gj2004_23b, gj2004_23c, gj2004_24a, gj2004_24b, gj2004_24c, gj2004_24d, gj2004_45a, gj2004_45b, gj2004_45c, gj2004_46a, gj2004_47a, gj2004_48a, gj2004_48b, gj2004_49a, gj2004_49b, gj2004_49c, gj2004_49e, gj2004_wipe, gj2004_97c]
+
+/-- How the object of a transitive resultative is selected (§2). By §5 the fake reflexive is not grammatically special: another object is excluded because it is implausible to make someone else fall asleep by crying. -/
+inductive ObjectSelection where
+  /-- selected: the verb selects the object: *The gardener watered the flowers flat*, (7a) -/
+  | selected
+  /-- unselected: only the construction licenses the object: *They drank the pub dry*, (8a) -/
+  | unselected
+  /-- fake reflexive: an unselected reflexive that alternates with no other object, as in *We yelled ourselves hoarse*, (9a) -/
+  | fakeReflexive
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `selection`. -/
+def selection (e : Datum) : Option ObjectSelection :=
+  e.parse? "selection" [("selected", .selected), ("unselected", .unselected), ("fake reflexive", .fakeReflexive)]
 
 end GoldbergJackendoff2004.Examples
