@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Data.Examples.Bobaljik2008
 public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Minimalist.Probe.Basic
@@ -32,8 +33,10 @@ ergative agreement over accusative case is not derived. Below a subject with lex
 object controls agreement unless lexical case is itself accessible. In Hindi-Urdu, where only
 unmarked case is accessible, the object controls agreement under an ergative or a dative
 subject, the subject where it is unmarked, and no argument where the subject is ergative and the
-object bears *ko*. In Nepali, where dependent case is accessible too, the subject controls
-agreement whether it is nominative or ergative, and the object under a dative subject.
+object bears *ko*, and each of [woolford-1999]'s examples shows the agreement of its pattern. In
+Nepali, where dependent case is accessible too, the subject controls agreement whether it is
+nominative or ergative, and the object under a dative subject; the forms of the verb in
+[bickel-yadava-2000]'s examples are acceptable exactly when they agree with that controller.
 
 ## Implementation notes
 
@@ -46,12 +49,15 @@ The rules of a Hindi-Urdu clause are read off the markers of `HindiUrdu.coreMark
 dependent case where the subject takes *ne*, and the low one where the object takes *ko*. With
 *ko* a lexical case the rules would leave the subject of a perfective clause without a competitor
 and so without its ergative. In a language where only unmarked case is accessible the choice
-between the two categories for *ko* does not otherwise affect the controller.
+between the two categories for *ko* does not otherwise affect the controller. The examples are
+recorded with [woolford-1999]'s glosses, which give the object's *ko* as a dative.
 
 ## References
 
 * [bobaljik-2008]
 * [marantz-1991]
+* [woolford-1999]
+* [bickel-yadava-2000]
 -/
 
 @[expose] public section
@@ -212,18 +218,54 @@ theorem hindiController_dative_subject (a : Aspect.Perfectivity) :
     hindiController a false (fun r ↦ if r = .A then some .dat else none) = some .P := by
   cases a <;> rfl
 
+/-- The role of the argument whose features a form of the verb shows, if there is one. -/
+def Examples.Controller.role? : Examples.Controller → Option ArgumentRole
+  | .subject => some .A
+  | .object => some .P
+  | .default => none
+
+/-- The controller of agreement in each pattern of (21). -/
+def Examples.Pattern.controller : Examples.Pattern → Option ArgumentRole
+  | .ergativeSubject => hindiController .perfective false
+  | .ergativeSubjectMarkedObject => hindiController .perfective true
+  | .unmarkedArguments => hindiController .imperfective false
+  | .markedObject => hindiController .imperfective true
+  | .dativeSubject =>
+    hindiController .imperfective false fun r ↦ if r = .A then some .dat else none
+
+-- (22): each example shows agreement with the controller of its pattern, or the default form
+theorem hindi_example (x : Examples.Example) :
+    ∀ p ∈ x.pattern, ∀ r ∈ x.controller, p.controller = r.role? := by
+  revert x; decide
+
 /-! ### Nepali -/
 
--- (24): where dependent case is accessible the subject controls agreement, nominative or ergative
-theorem nepali_subject :
-    clauseController (.ofAlignment .neutral) .dependent (fun _ ↦ none) [.A, .P] = some .A ∧
-      clauseController (.ofAlignment .ergative) .dependent (fun _ ↦ none) [.A, .P] = some .A := by
-  decide
+/-- The case rules of each Nepali clause of the examples: the ergative on the higher noun phrase
+in the past, and no dependent case in the nonpast. -/
+def Examples.Clause.rules : Examples.Clause → Rules
+  | .ergativeSubject => .ofAlignment .ergative
+  | _ => .ofAlignment .neutral
 
--- (26): under a dative subject the nominative object controls agreement
-theorem nepali_dative_subject :
-    clauseController (.ofAlignment .neutral) .dependent (fun r ↦ if r = .A then some .dat else none)
-      [.A, .P] = some .P :=
-  clauseController_lexical_subject .neutral .dat .dependent (by decide)
+/-- The lexical cases of each clause: the dative of a dative subject. -/
+def Examples.Clause.lexicalCase : Examples.Clause → ArgumentRole → Option Case
+  | .dativeSubject, .A => some .dat
+  | _, _ => none
+
+/-- (25): The controller of agreement in a Nepali clause, where dependent case is accessible as
+well as unmarked case. -/
+def nepaliController (c : Examples.Clause) : Option ArgumentRole :=
+  clauseController c.rules .dependent c.lexicalCase [.A, .P]
+
+-- (24), (26): a form of the verb is acceptable exactly when it agrees with the controller
+theorem nepali_example (x : Examples.Example) :
+    ∀ c ∈ x.clause, ∀ r ∈ x.controller,
+      nepaliController c = r.role? ↔ x.datum.judgment = .acceptable := by
+  revert x; decide
+
+-- (25): with only unmarked case accessible, as in Hindi-Urdu, the object would control agreement
+-- under the ergative subject
+example :
+    clauseController (Examples.Clause.rules .ergativeSubject) .unmarked (fun _ ↦ none) [.A, .P] =
+      some .P := by decide
 
 end Bobaljik2008

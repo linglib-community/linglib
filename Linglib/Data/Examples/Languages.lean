@@ -796,6 +796,9 @@ def navajo : Glottocode := "nava1243"
 /-- Continental Southern Italian, `neap1235` (ISO 639-3 `nap`). -/
 def continentalSouthernItalian : Glottocode := "neap1235"
 
+/-- Nepali, `nepa1254` (ISO 639-3 `npi`). -/
+def nepali : Glottocode := "nepa1254"
+
 /-- Kathmandu Valley Newari, `newa1246` (ISO 639-3 `new`). -/
 def kathmanduValleyNewari : Glottocode := "newa1246"
 

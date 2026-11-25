@@ -248,9 +248,10 @@ def georgian (s : Georgian.Series) : Setting where
     | .abs => .nom
     | c => c
 
-/-- Hindi sees an unfilled position optionally, and its unmarked case is the nominative. -/
-def hindi (a : Aspect.Perfectivity) : Setting where
-  rules := .ofAlignment (HindiUrdu.alignment a)
+/-- Hindi in the perfect, the only inflection the paper treats, sees an unfilled position
+optionally, and its unmarked case is the nominative. -/
+def hindi : Setting where
+  rules := .ofAlignment (HindiUrdu.alignment .perfective)
   unfilled := .optionally
   spellOut
     | .abs => .nom
@@ -264,7 +265,7 @@ def inuktitut : Setting := ⟨.ofAlignment .ergative, .never, id⟩
 
 theorem unergative_subjectCases :
     basque.subjectCases .unergative = {some .erg} ∧
-    (hindi .perfective).subjectCases .unergative = {some .erg, some .nom} ∧
+    hindi.subjectCases .unergative = {some .erg, some .nom} ∧
     inuktitut.subjectCases .unergative = {some .abs} := by
   decide
 
@@ -273,7 +274,7 @@ theorem unergative_subjectCases :
 /-- The setting of an example, by its language and the inflection the paper notes. -/
 def setting? (e : Datum) : Option Setting :=
   [((.georgian, some "I"), georgian .present), ((.georgian, some "II"), georgian .aorist),
-    ((.hindi, some "perfect"), hindi .perfective), ((.basque, none), basque)].lookup
+    ((.hindi, some "perfect"), hindi), ((.basque, none), basque)].lookup
     (e.language, e.feature? "inflection")
 
 /-- The clause of an example. -/

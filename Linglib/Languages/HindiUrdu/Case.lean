@@ -133,8 +133,9 @@ theorem singular_larkii_eq (c : Case) : larkii.singular c = "laRkii" := by
 
 /-! ### Alignment -/
 
-/-- The alignment is ergative in the perfective, where the transitive subject takes *ne*, and
-accusative otherwise. -/
+/-- The split by aspect as it is usually stated: ergative in the perfective, where the transitive
+subject takes *ne*, and accusative otherwise. `classifies_coreMarker` gives the alignment of the
+markers in each clause type. -/
 def alignment : Aspect.Perfectivity → Alignment.AlignmentType
   | .perfective => .ergative
   | .imperfective => .accusative
@@ -150,10 +151,13 @@ def coreMarker (a : Aspect.Perfectivity) (markedObject : Bool) : ArgumentRole �
   | .P => if markedObject then some Adpositions.ko else none
   | _ => none
 
-/-- The alignment of the perfective is that of its markers over an unmarked object, and the
-alignment of the imperfective that of its markers over a marked one. -/
+/-- The markers are ergative in the perfective and neutral in the imperfective over an unmarked
+object, and tripartite in the perfective and accusative in the imperfective over a marked one.
+The split of `alignment` is the first and the last of the four. -/
 theorem classifies_coreMarker :
     (alignment .perfective).Classifies (coreMarker .perfective false) ∧
+      Alignment.AlignmentType.tripartite.Classifies (coreMarker .perfective true) ∧
+      Alignment.AlignmentType.neutral.Classifies (coreMarker .imperfective false) ∧
       (alignment .imperfective).Classifies (coreMarker .imperfective true) := by
   decide
 
