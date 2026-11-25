@@ -197,7 +197,7 @@ theorem nahodou_ppi (wp : VerbPosition) :
 
 /-- *Copak* is felicitous exactly when the context's evidence matches the question's
 polarity. -/
-def CopakLicensed (pol : Polarity) (ctx : SignType) : Prop := ctx = evidence pol
+def CopakLicensed (pol : Polarity) (ctx : SignType) : Prop := ctx = pol
 
 instance (pol : Polarity) (ctx : SignType) : Decidable (CopakLicensed pol ctx) := by
   unfold CopakLicensed; infer_instance
@@ -205,10 +205,9 @@ instance (pol : Polarity) (ctx : SignType) : Decidable (CopakLicensed pol ctx) :
 theorem copak_requires_bias (pol : Polarity) : ¬ CopakLicensed pol 0 := by
   cases pol <;> decide
 
-theorem copak_prior_ne_evidence (pol : Polarity) :
-    (prior pol = 1 ↔ evidence pol = -1) ∧
-      (prior pol = -1 ↔ evidence pol = 1) := by
-  cases pol <;> decide
+theorem copak_prior_ne_evidence (pol : Polarity) (ev : SignType) (h : CopakLicensed pol ev) :
+    (-ev = 1 ↔ pol = .negative) ∧ (-ev = -1 ↔ pol = .positive) := by
+  revert h; cases pol <;> decide +revert
 
 theorem nahodou_copak_opposite (ctx : SignType) :
     NahodouLicensed .negative .positive ∧ (CopakLicensed .negative ctx → ctx ≠ 0) := by

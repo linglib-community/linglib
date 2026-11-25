@@ -143,6 +143,10 @@ def byDim (p : Profile) (d : Dimension) : Option Polarity → Choice := λ q => 
 def pair (p : Profile) (q : Option Polarity) : Choice × Choice :=
   (p (.of q .evidential), p (.of q .epistemic))
 
+/-- The bias profile of a reading: its evidential and its epistemic choice as bias values. -/
+def biasProfile (p : Profile) (q : Option Polarity) : BiasProfile :=
+  ⟨(p (.of q .evidential)).toFinset, (p (.of q .epistemic)).toFinset⟩
+
 /-- A principle relating the positive question's value to each negative question's value factors
 through the positive question's value. -/
 def readingEquiv {X : Type*} (R : X → X → Prop) :

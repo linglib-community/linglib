@@ -275,7 +275,7 @@ def biasCheckedExamples :
 
 theorem bias_examples_match_profile :
     ∀ x ∈ biasCheckedExamples,
-      x.1.judgment = .acceptable ↔ x.2.2.2 ∈ czechBiasProfile x.2.1 x.2.2.1 := by
+      x.1.judgment = .acceptable ↔ x.2.2.2 ∈ czechForms (x.2.1, x.2.2.1) := by
   decide
 
 end Stankova2026

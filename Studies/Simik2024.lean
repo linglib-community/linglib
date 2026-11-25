@@ -1,12 +1,10 @@
 module
 
 public import Studies.BuringGunlogson2000
+public import Studies.GartnerGyuris2017
+public import Studies.RomeroHan2004
 public import Linglib.Syntax.Negation
-public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Semantics.Questions.Hamblin.Modal
-public import Linglib.Semantics.Questions.Hamblin.Exhaustification
-public import Linglib.Semantics.Questions.Inquisitive.Hamblin
-public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Discourse.CommonGround
 public import Linglib.Logic.Modal.Defs
@@ -18,55 +16,86 @@ public import Linglib.Languages.Slavic.Slovenian.QuestionParticles
 public import Linglib.Languages.Slavic.Serbian.QuestionParticles
 public import Linglib.Languages.Slavic.Macedonian.QuestionParticles
 public import Linglib.Languages.Slavic.Czech.Particles
+public import Linglib.Languages.Slavic.Czech.PolarityItems
 public import Linglib.Data.Examples.Simik2024
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
-public import Linglib.Data.WALS.Features.F116A
 
 /-!
 # Šimík (2024): Polar question semantics and bias: Lessons from Slavic/Czech
 
-This file formalizes Šimík's survey of polar-question bias in Slavic. A question
-form's bias profile is the set of cells, contextual evidence by prior epistemic bias
-(after Sudo), in which it is felicitous: Table 2 gives the profile of the four Czech forms,
-interrogative and declarative crossed with polarity (`czechBiasProfile`), and Table 1 the
-profile of the Serbian strategies reported from Todorović (`serbianBiasProfile`).
-The Czech cleaning-service scenarios (11)–(18) are typed rows, and the table predicts each
-judgment (`cleaning_examples_match_table2`); declaratives need evidence
-(`declarative_requires_evidence`) and Czech InterNPQ, unlike English high negation, is
-felicitous under positive evidence (`interNPQ_broader_than_english_outer`), while Serbian
-high negation is narrower than English (`serbian_hnpq_narrower_than_english`). The quiz
-scenario (24) diagnoses each of ten languages' default strategy: its positive form is the
-quiz-felicitous one (`default_quiz_felicitous`), declaratives never are
-(`declarative_quiz_infelicitous`), and negation triggers bias except under Polish *czy*
-and Macedonian *dali* (`negationTriggersBias_iff`). Serbian *je li* is neutral in Table 1 yet
-quiz-infelicitous (`jeLi_neutral_yet_quiz_infelicitous`), the contrast the chapter
-attributes to a covert 'wonder' selecting the question (`wonderLF`), which denotes the
-unique true answer (`karttunen_polar_existsUnique`). Russian *razve* resolves a conflict
-between evidence for the prejacent and a prior against it (`razveProfile`), invariantly
-across inner and outer negation (`razveProfile_negation_invariant`), and is a root
-phenomenon while *li* embeds (`razve_root_li_embedded`). The chapter's Czech FALSUM
-(`falsumCz`) presupposes only epistemic possibility of the prejacent, weaker than
-Repp's operator, the necessity `□[epi ○ conv] (p ∉ cg ·)` along the
-knowledge and conversational goals of its bearer (`falsumCz_eq_one_of_falsum`), and licenses
-the particle *náhodou* under outer negation alone (`NahodouLicensed`, `nahodou_examples`).
+A polar question over a prejacent `p` is asked in a *situation*: the contextual evidence supports
+`p`, supports `¬p` or supports neither, and so does what the speaker believed beforehand
+([sudo-2013]). This file formalizes Šimík's survey of how the forms of a polar question in the
+Slavic languages are distributed over these nine situations.
+
+The Czech forms cross the position of the finite verb, clause-initial in an interrogative question
+and in situ in a declarative one, with polarity. The chapter's table of Czech lists the forms that
+are natural in each situation, and we define the *distribution* of a form as the set of situations
+that list it. A declarative question of either polarity occurs exactly where the evidence
+supports the proposition it expresses and the speaker did not already believe that proposition.
+An interrogative positive question occurs exactly where there is no evidence and no prior belief
+against `p`. An interrogative negative question occurs with a prior belief in `p` and no evidence
+for it, or with evidence for `p` and no prior belief. This last distribution is not the set of
+situations of any pair of an evidential and an epistemic bias value. It strictly contains the
+distribution of English high negation in the sample of [gartner-gyuris-2017], which strictly
+contains that of Serbian high negation in the table the chapter reports from [todorovic-2023].
+The judgments of the cleaning-service scenarios and of the Czech quiz questions are those the
+table predicts.
+
+In the quiz scenario a moderator who knows the answer asks for it. The positive questions that are
+felicitous there are marked by verb movement, by an utterance-initial particle or by a
+verb-attached particle, in the languages that the chapter's summary lists for each strategy. A
+declarative question is never felicitous there, and a negated one only with Polish *czy* and
+Macedonian *dali*. Of the two Serbian forms natural in the neutral situation, *je li* is
+infelicitous in the quiz. The chapter hypothesizes that such a form embeds the question under a
+covert 'wonder', read as 'want to know' applied to the true answer; on that reading it is false of
+a speaker who knows the answer, provided that nobody wants to know what they know.
+
+A question with Russian *razve* resolves a conflict between evidence for the proposition it
+expresses and a prior belief against it. With a negated verb the particle sits under VERUM over
+the negation or under FALSUM, and in the calculus of polarities of [romero-han-2004] the two
+logical forms ask for the same evidence and implicate the same belief.
+
+The chapter's Czech FALSUM is defined at a world where its bearer considers the prejacent
+possible, and it is true there when the prejacent is not in the common ground. It is undefined
+exactly where the bearer believes the prejacent false, so belief in the prejacent suffices for it
+when the bearer's beliefs are consistent, and the prior beliefs with which an interrogative
+negative question occurs in the table are exactly those that do not support `¬p`. Where
+[repp-2013]'s FALSUM holds along a reflexive relation, the Czech operator is true if defined. The
+particle *náhodou* requires this operator, that is a negated verb on its outer reading.
 
 ## Implementation notes
 
-Table 2's starred DeclPPQ of the neutral cell, conditioned on a contrastive topic, is
-admitted by `czechFelicitous` and read off the row feature `contrastiveTopic`. The
-language rows carry the paper's own strategy labels; the derived predicates read the
-normalized `strategy` and `polarity` features. The kin of *razve* across Slavic are listed
-(`razveKin`) without a profile, as the chapter leaves their semantics open. Bulgarian *dali*,
-which footnote 40 reports quiz-infelicitous for its 'wondering' component, has no example
-sentence and so no quiz row.
+* The table of Czech stars the declarative positive question of the neutral situation as
+  conditioned by information structure. It is admitted in scenario (18) alone, where a contrastive
+  topic claims the initial position.
+* The evidence and the prior belief of a scenario are the chapter's description of the scenario,
+  so they are a function of the scenario and no row records them.
+* A row records two strategies where the question uses both: Slovenian (28a) fronts the auxiliary
+  after an optional *ali*, and Macedonian (32b) fronts the verb before *li*.
+* The two readings of negation are polarities of the proposition the question double-checks,
+  as in [buring-gunlogson-2000]: inner negation checks `¬p`, the negative polarity, and outer
+  negation checks `p`, the positive one.
+* In the logical form of a *razve* question, FALSUM is the negative polarity over VERUM of
+  [romero-han-2004]. The two operators differ in strength, and the bias depends on the polarities
+  alone.
+* `wonder` takes 'want to know' as a parameter, and the only property used of it is that it
+  excludes knowing.
+
+## TODO
+
+* The condition of [korotkova-2023] that the prejacent of a *razve* question be an abductive
+  inference from the evidence is not formalized.
+* The chapter's hypothesis that *náhodou* widens the ordering source of the modal in FALSUM, and
+  its corpus examples of interrogative negative questions, are not formalized.
 
 ## References
 
 * [simik-2024]
 * [sudo-2013], [buring-gunlogson-2000], [romero-han-2004], [gartner-gyuris-2017]
 * [romero-2024], [repp-2013], [repp-geist-2022], [korotkova-2023]
-* [todorovic-2023], [stankova-2023], [esipova-romero-2023]
+* [todorovic-2023], [stankova-2023], [ladd-1981]
 * [hamblin-1973b], [karttunen-1977], [dayal-1996]
 -/
 
@@ -74,26 +103,10 @@ sentence and so no quiz row.
 
 namespace Simik2024
 
-open Question Inquisitive Inquisitive.Proposition
+open Question
 open scoped ModalLogic
 
-/-! ### Bias and the polarity of the prejacent (§3.1) -/
-
-/-- The contextual evidence a conflict-resolving question of the given polarity rests on,
-which is evidence for the prejacent as asked. -/
-def evidence (s : Polarity) : SignType := s
-
-/-- The prior epistemic bias a conflict-resolving question of the given polarity
-double-checks, which is against the prejacent as asked. -/
-def prior (s : Polarity) : SignType := -(s : SignType)
-
-/-- The polarity of a question with the given reading of negation, which is positive without
-negation and negative with either reading of it. -/
-def polarityOf : Option Polarity → Polarity
-  | none => .positive
-  | some _ => .negative
-
-/-! ### The Czech forms and their bias profile (§3.2, Table 2) -/
+/-! ### The Czech forms (§3.2) -/
 
 /-- The finite verb of a Czech polar question is clause-initial, in interrogative word order,
 or in situ, in declarative word order. The negative prefix is inseparable from the finite verb,
@@ -138,231 +151,196 @@ def negation (f : CzechPQForm) : Option Negation.Position :=
 
 end CzechPQForm
 
-/-- The forms natural in each cell of contextual evidence by prior epistemic bias (Table 2),
-with the starred DeclPPQ of the neutral cell left to `czechFelicitous`. -/
-def czechBiasProfile : SignType → SignType → Finset CzechPQForm
-  | .pos, .pos => ∅
-  | .pos, .zero => {.declPPQ, .interNPQ}
-  | .pos, .neg => {.declPPQ}
-  | .zero, .pos => {.interPPQ, .interNPQ}
-  | .zero, .zero => {.interPPQ}
-  | .zero, .neg => ∅
-  | .neg, .pos => {.declNPQ, .interNPQ}
-  | .neg, .zero => {.declNPQ}
-  | .neg, .neg => ∅
+/-! ### The distribution of a form (Table 2) -/
 
-/-- The forms felicitous in a cell, admitting the unbiased declarative of (18) when a
-contrastive topic claims the initial position. -/
-def czechFelicitous (ev ob : SignType) (ct : Bool) :
-    Finset CzechPQForm :=
-  if ct ∧ ev = 0 ∧ ob = 0 then insert .declPPQ (czechBiasProfile ev ob)
-  else czechBiasProfile ev ob
+/-- Table 2: the Czech forms natural in each situation of contextual evidence and prior belief,
+without the starred declarative of the neutral situation. -/
+def czechForms : Situation → Finset CzechPQForm
+  | (.pos, .pos) => ∅
+  | (.pos, .zero) => {.declPPQ, .interNPQ}
+  | (.pos, .neg) => {.declPPQ}
+  | (.zero, .pos) => {.interPPQ, .interNPQ}
+  | (.zero, .zero) => {.interPPQ}
+  | (.zero, .neg) => ∅
+  | (.neg, .pos) => {.declNPQ, .interNPQ}
+  | (.neg, .zero) => {.declNPQ}
+  | (.neg, .neg) => ∅
 
-variable (ev ob : SignType)
+section Distribution
 
-theorem interPPQ_mem_iff :
-    .interPPQ ∈ czechBiasProfile ev ob ↔ ev = 0 ∧ ob ≠ -1 := by
-  decide +revert
+variable {F : Type*} [DecidableEq F] {T : Situation → Finset F} {f : F} {s : Situation}
 
-theorem declPPQ_mem_iff :
-    .declPPQ ∈ czechBiasProfile ev ob ↔ ev = 1 ∧ ob ≠ 1 := by
-  decide +revert
+/-- The distribution of a form in a table: the situations whose cell lists it. -/
+def distribution (T : Situation → Finset F) (f : F) : Finset Situation := {s | f ∈ T s}
 
-theorem declNPQ_mem_iff :
-    .declNPQ ∈ czechBiasProfile ev ob ↔ ev = -1 ∧ ob ≠ -1 := by
-  decide +revert
+@[simp] theorem mem_distribution : s ∈ distribution T f ↔ f ∈ T s := by simp [distribution]
 
--- (17)
-theorem interNPQ_mem_iff :
-    .interNPQ ∈ czechBiasProfile ev ob ↔
-      ob = 1 ∧ ev ≠ 1 ∨ ev = 1 ∧ ob = 0 := by
-  decide +revert
+end Distribution
 
-theorem declarative_requires_evidence (f : CzechPQForm) (hf : f.verb = .nonV1)
-    (h : f ∈ czechBiasProfile ev ob) : ev ≠ 0 := by
-  revert hf h; decide +revert
+-- a declarative question needs evidence for the proposition it expresses and no prior belief in it
+theorem distribution_declarative (s : Polarity) :
+    distribution czechForms ⟨.nonV1, s⟩ = (⟨.plus s, .minus s⟩ : BiasProfile).felicity := by
+  cases s <;> decide
 
-theorem interNPQ_broader_than_english_outer :
-    .interNPQ ∈ czechBiasProfile 1 0 ∧
-      ¬ BuringGunlogson2000.Felicitous (some .positive) 1 := by
+-- (11), (12)
+theorem distribution_interPPQ :
+    distribution czechForms .interPPQ = (⟨.neutral, .minus .negative⟩ : BiasProfile).felicity := by
   decide
 
-/-! ### The cleaning scenarios (11)–(18) -/
+-- (12), (16), (17)
+theorem distribution_interNPQ :
+    distribution czechForms .interNPQ =
+      (⟨.minus .positive, .plus .positive⟩ : BiasProfile).felicity ∪
+        (⟨.plus .positive, .neutral⟩ : BiasProfile).felicity := by
+  decide
 
-/-- The grid form a row instantiates. -/
-def form? (e : Datum) : Option CzechPQForm :=
-  e.parse? "form"
-    [("interPPQ", .interPPQ), ("interNPQ", .interNPQ), ("declPPQ", .declPPQ),
-     ("declNPQ", .declNPQ)]
+/-- The interrogative negative question does not have the distribution of any pair of an
+evidential and an epistemic bias value. It occurs with evidence for `p` and with a prior belief
+in `p`, but not with both. -/
+theorem felicity_ne_distribution_interNPQ (b : BiasProfile) :
+    b.felicity ≠ distribution czechForms .interNPQ := fun h ↦ by
+  have h₁ : ((1, 0) : Situation) ∈ b.felicity := h ▸ by decide
+  have h₂ : ((0, 1) : Situation) ∈ b.felicity := h ▸ by decide
+  have h₃ : ((1, 1) : Situation) ∈ b.felicity := by
+    simp only [BiasProfile.mem_felicity] at h₁ h₂ ⊢
+    exact ⟨h₁.1, h₂.2⟩
+  exact absurd (h ▸ h₃) (by decide)
 
-/-- The contextual evidence of a row's scenario. -/
-def evidence? (e : Datum) : Option SignType :=
-  e.parse? "evidence" [("forP", (1 : SignType)), ("neutral", 0), ("againstP", -1)]
+-- a positive question is barred by evidence against the prejacent, as in [buring-gunlogson-2000]
+theorem felicitous_none_of_mem_distribution {v : VerbPosition} {ev ob : SignType}
+    (h : (ev, ob) ∈ distribution czechForms ⟨v, .positive⟩) :
+    BuringGunlogson2000.Felicitous none ev := by
+  decide +revert
 
-/-- The speaker's prior epistemic bias in a row's scenario. -/
-def epistemic? (e : Datum) : Option SignType :=
-  e.parse? "epistemic" [("forP", (1 : SignType)), ("neutral", 0), ("againstP", -1)]
+/-! ### The scenarios (11)–(18) and the quiz (24) -/
 
-/-- Whether a row's scenario places a contrastive topic clause-initially. -/
-def contrastiveTopic (e : Datum) : Bool :=
-  e.feature? "contrastiveTopic" == some "true"
+/-- The situation a scenario sets up: its contextual evidence and the speaker's prior belief. -/
+def Examples.Scenario.situation : Examples.Scenario → Situation
+  | .plan | .newCleaners | .quiz => (0, 0)
+  | .request => (0, 1)
+  | .report => (-1, 1)
+  | .earbud => (1, 0)
 
-/-- Table 2 predicts the scenarios. A form is judged infelicitous exactly when its cell
-excludes it, the degraded InterPPQ of (18) counting as admitted. -/
-theorem cleaning_examples_match_table2 :
-    ∀ e ∈ Examples.all, ∀ f ∈ form? e, ∀ ev ∈ evidence? e, ∀ ob ∈ epistemic? e,
-      e.judgment = .unacceptable ↔ f ∉ czechFelicitous ev ob (contrastiveTopic e) := by
+/-- The Czech forms natural in a scenario: those of Table 2 at its situation, and in (18) also
+the declarative positive question, which Table 2 stars as conditioned by information
+structure. -/
+def Examples.Scenario.forms (c : Examples.Scenario) : Finset CzechPQForm :=
+  if c = .newCleaners then insert .declPPQ (czechForms c.situation) else czechForms c.situation
+
+/-- The polarity of an example's finite verb. -/
+def Examples.QuestionPolarity.toPolarity : Examples.QuestionPolarity → Polarity
+  | .positive => .positive
+  | .negative => .negative
+
+/-- The form of an example marked by verb movement alone or by declarative word order alone. -/
+def Examples.Example.form? (x : Examples.Example) : Option CzechPQForm :=
+  match x.strategy, x.polarity with
+  | [.verbMovement], some s => some ⟨.v1, s.toPolarity⟩
+  | [.declarative], some s => some ⟨.nonV1, s.toPolarity⟩
+  | _, _ => none
+
+/-- Table 2 predicts the Czech judgments. In the scenarios (11)–(18) and in the quiz, a form is
+rejected exactly when the cell of the scenario's situation does not list it. -/
+theorem czech_example (x : Examples.Example) (hx : x.datum.language = .czech) :
+    ∀ c ∈ x.scenario, ∀ f ∈ x.form?, (x.datum.judgment.band = .rejected ↔ f ∉ c.forms) := by
+  revert hx; cases x <;> decide
+
+-- `czech_example` reads the twenty rows of (11)–(18) and the four of (25)
+theorem czech_example_count :
+    (Examples.Example.all.filter fun x ↦
+      x.datum.language = .czech ∧ x.scenario.isSome ∧ x.form?.isSome).length = 24 := by
   decide
 
 /-! ### Default strategies under the quiz scenario (§4.1) -/
 
-/-- The ten surveyed languages. -/
-inductive Language
-  | czech
-  | slovak
-  | upperSorbian
-  | slovenian
-  | ukrainian
-  | polish
-  | serbian
-  | macedonian
-  | bulgarian
-  | russian
-  deriving DecidableEq, Repr, Fintype
+/-- The ten surveyed languages, in the chapter's order. -/
+def sample : List Glottocode :=
+  [.czech, .slovak, .upperSorbian, .slovenian, .ukrainian, .polish, .serbianStandard, .macedonian,
+    .bulgarian, .russian]
 
-/-- Glottocode, the key of the example rows. -/
-def Language.glottocode : Language → Glottocode
-  | .czech => .czech
-  | .slovak => .slovak
-  | .upperSorbian => .upperSorbian
-  | .slovenian => .slovenian
-  | .ukrainian => .ukrainian
-  | .polish => .polish
-  | .serbian => .serbianStandard
-  | .macedonian => .macedonian
-  | .bulgarian => .bulgarian
-  | .russian => .russian
+/-- The quiz questions (25)–(34) of a language. -/
+def quiz (g : Glottocode) : List Examples.Example :=
+  Examples.Example.all.filter fun x ↦ x.scenario = some .quiz ∧ x.datum.language = g
 
-/-- The formal means of marking a polar question. -/
-inductive Strategy
-  | verbMovement
-  | clauseInitialParticle
-  | verbAttachedParticle
-  | declarative
-  | intonation
-  deriving DecidableEq, Repr, Fintype
+/-- A strategy is a default of a language when a positive question marked by it is felicitous in
+the quiz. -/
+def IsDefault (g : Glottocode) (s : Examples.Strategy) : Prop :=
+  ∃ x ∈ quiz g, s ∈ x.strategy ∧ x.polarity = some .positive ∧ x.datum.judgment = .acceptable
 
-/-- The chapter's summary classification of each language's default strategy as verb or
-auxiliary movement, an utterance-initial particle, or a verb-attached particle. -/
-def Language.defaultStrategy : Language → Strategy
-  | .czech | .slovak | .upperSorbian | .slovenian => .verbMovement
-  | .ukrainian | .polish | .serbian | .macedonian => .clauseInitialParticle
-  | .bulgarian | .russian => .verbAttachedParticle
+instance (g : Glottocode) (s : Examples.Strategy) : Decidable (IsDefault g s) :=
+  inferInstanceAs (Decidable (∃ x ∈ quiz g, _))
 
-/-- The question particles of each language's language file. -/
-def Language.particles : Language → List Clause.Marker
-  | .czech | .slovak | .upperSorbian => []
-  | .slovenian =>
-    [Slovenian.QuestionParticles.ali, Slovenian.QuestionParticles.a,
-     Slovenian.QuestionParticles.kaj]
-  | .ukrainian => [Ukrainian.QuestionParticles.cy, Ukrainian.QuestionParticles.xiba]
-  | .polish => [Polish.QuestionParticles.czy, Polish.QuestionParticles.czyzby]
-  | .serbian =>
-    [Serbian.QuestionParticles.li, Serbian.QuestionParticles.daLi,
-     Serbian.QuestionParticles.jeLi, Serbian.QuestionParticles.zar]
-  | .macedonian =>
-    [Macedonian.QuestionParticles.dali, Macedonian.QuestionParticles.li,
-     Macedonian.QuestionParticles.zar]
-  | .bulgarian =>
-    [Bulgarian.QuestionParticles.li, Bulgarian.QuestionParticles.dali,
-     Bulgarian.QuestionParticles.nima]
-  | .russian =>
-    [Russian.QuestionParticles.li, Russian.QuestionParticles.razve,
-     Russian.QuestionParticles.neuzeli]
-
-/-- The strategy a quiz row instantiates. -/
-def strategy? (e : Datum) : Option Strategy :=
-  e.parse? "strategy"
-    [("verbMovement", .verbMovement), ("clauseInitialParticle", .clauseInitialParticle),
-     ("verbAttachedParticle", .verbAttachedParticle), ("declarative", .declarative),
-     ("intonation", .intonation)]
-
-/-- The polarity of a quiz row. -/
-def polarity? (e : Datum) : Option Polarity :=
-  e.parse? "polarity" [("positive", .positive), ("negative", .negative)]
-
-/-- The quiz rows (25)–(34) of a language. -/
-def quizRows (l : Language) : List Datum :=
-  Examples.all.filter fun e ↦ e.language == l.glottocode && (e.feature? "strategy").isSome
-
-variable (l : Language)
-
-theorem default_quiz_felicitous :
-    ∃ e ∈ quizRows l, strategy? e = some l.defaultStrategy ∧ polarity? e = some .positive ∧
-      e.judgment = .acceptable := by
-  cases l <;> decide
-
-theorem declarative_quiz_infelicitous :
-    ∀ e ∈ Examples.all, strategy? e = some .declarative → e.judgment = .unacceptable := by
+-- the summary of §4.1
+theorem isDefault_verbMovement :
+    sample.filter (IsDefault · .verbMovement) =
+      [.czech, .slovak, .upperSorbian, .slovenian, .macedonian] := by
   decide
 
-/-- Negation triggers bias in a language when no negated interrogative form is
-quiz-felicitous. -/
-def NegationTriggersBias : Prop :=
-  ∀ e ∈ quizRows l, polarity? e = some .negative → strategy? e ≠ some .declarative →
-    e.judgment ≠ .acceptable
+theorem isDefault_clauseInitialParticle :
+    sample.filter (IsDefault · .clauseInitialParticle) =
+      [.slovenian, .ukrainian, .polish, .serbianStandard, .macedonian] := by
+  decide
 
-instance : Decidable (NegationTriggersBias l) :=
-  inferInstanceAs (Decidable (∀ e ∈ quizRows l, _))
+theorem isDefault_verbAttachedParticle :
+    sample.filter (IsDefault · .verbAttachedParticle) = [.macedonian, .bulgarian, .russian] := by
+  decide
 
-theorem negated_interrogative_attested :
-    ∃ e ∈ quizRows l, polarity? e = some .negative ∧ strategy? e ≠ some .declarative := by
-  cases l <;> decide
+-- declarative and intonation questions are never felicitous in the quiz
+theorem rejected_of_declarative (x : Examples.Example) (hx : x.scenario = some .quiz)
+    (h : .declarative ∈ x.strategy ∨ .intonation ∈ x.strategy) :
+    x.datum.judgment.band = .rejected := by
+  revert hx h; cases x <;> decide
 
-/-- Negation triggers bias everywhere except under Polish *czy* (30b) and Macedonian
-*dali* (32a). -/
-theorem negationTriggersBias_iff :
-    NegationTriggersBias l ↔ l ≠ .polish ∧ l ≠ .macedonian := by
-  cases l <;> decide
+/-- Negation triggers bias in a language when no negated interrogative question is felicitous in
+the quiz. -/
+def NegationTriggersBias (g : Glottocode) : Prop :=
+  ∀ x ∈ quiz g, x.polarity = some .negative → .declarative ∉ x.strategy →
+    x.datum.judgment ≠ .acceptable
 
-theorem quiz_particles_in_fragment :
-    ∀ e ∈ quizRows l, ∀ f ∈ e.feature? "particle", f ∈ l.particles.map (·.form) := by
-  cases l <;> decide
+instance (g : Glottocode) : Decidable (NegationTriggersBias g) :=
+  inferInstanceAs (Decidable (∀ x ∈ quiz g, _))
 
-/-- The atlas's type of a strategy; a declarative clause used as a question has none. -/
-def Strategy.type : Strategy → Option Data.WALS.F116A.PolarQuestionType
-  | .verbMovement => some .interrogativeWordOrder
-  | .clauseInitialParticle | .verbAttachedParticle => some .questionParticle
-  | .intonation => some .interrogativeIntonationOnly
-  | .declarative => none
+-- (30b), (32a)
+theorem not_negationTriggersBias :
+    sample.filter (¬ NegationTriggersBias ·) = [.polish, .macedonian] := by
+  decide
 
-/-- The atlas's code for each language. -/
-def Language.walsCode : Language → String
-  | .czech => "cze" | .slovak => "svk" | .upperSorbian => "sou" | .slovenian => "slo"
-  | .ukrainian => "ukr" | .polish => "pol" | .serbian => "scr" | .macedonian => "mcd"
-  | .bulgarian => "bul" | .russian => "rus"
+theorem exists_negative_interrogative :
+    ∀ g ∈ sample, ∃ x ∈ quiz g, x.polarity = some .negative ∧ .declarative ∉ x.strategy := by
+  decide
 
-theorem defaultStrategy_type :
-    ∀ v ∈ Data.WALS.F116A.allData.lookup l.walsCode,
-      (l.defaultStrategy.type = some v ↔ l ≠ .slovenian) := by
-  cases l <;> decide +kernel
+/-- The question particles of each language's file. -/
+def particles : List (Glottocode × List Clause.Marker) :=
+  [(.slovenian,
+      [Slovenian.QuestionParticles.ali, Slovenian.QuestionParticles.a,
+        Slovenian.QuestionParticles.kaj]),
+    (.ukrainian, [Ukrainian.QuestionParticles.cy, Ukrainian.QuestionParticles.xiba]),
+    (.polish, [Polish.QuestionParticles.czy, Polish.QuestionParticles.czyzby]),
+    (.serbianStandard,
+      [Serbian.QuestionParticles.li, Serbian.QuestionParticles.daLi,
+        Serbian.QuestionParticles.jeLi, Serbian.QuestionParticles.zar]),
+    (.macedonian,
+      [Macedonian.QuestionParticles.dali, Macedonian.QuestionParticles.li,
+        Macedonian.QuestionParticles.zar]),
+    (.bulgarian,
+      [Bulgarian.QuestionParticles.li, Bulgarian.QuestionParticles.dali,
+        Bulgarian.QuestionParticles.nima]),
+    (.russian,
+      [Russian.QuestionParticles.li, Russian.QuestionParticles.razve,
+        Russian.QuestionParticles.neuzeli])]
 
-theorem bulgarian_li_anchor :
-    Bulgarian.QuestionParticles.li.anchor = .focus .after ∧
-      Data.WALS.F92A.allData.lookup "bul" = some .secondPosition := by
-  decide +kernel
+-- the particle of a quiz question is an entry of its language's file, and the entry is placed
+-- clause-initially exactly when the question is marked by an utterance-initial particle
+theorem particle_example (x : Examples.Example) (hx : x.scenario = some .quiz) :
+    ∀ w ∈ x.datum.feature? "particle", ∃ p ∈ (x.datum.byLanguage particles).getD [],
+      p.form = w ∧ (.initial ∈ p.placements ↔ .clauseInitialParticle ∈ x.strategy) := by
+  revert hx; cases x <;> decide
 
-theorem particles_licensed_polar :
-    ∀ p ∈ l.particles, Clause.root .polar ∈ p.distribution.possible := by
-  cases l <;> decide
+theorem root_polar_mem_possible :
+    ∀ p ∈ (particles.map Prod.snd).flatten, Clause.root .polar ∈ p.distribution.possible := by
+  decide
 
-theorem clauseInitialParticle_iff_position :
-    ∀ e ∈ quizRows l, ∀ p ∈ l.particles, e.feature? "particle" = some p.form →
-      strategy? e ≠ some .verbMovement →
-        (strategy? e = some .clauseInitialParticle ↔ .initial ∈ p.placements) := by
-  cases l <;> decide
-
-/-! ### The Serbian strategies and Todorović's bias profile (§4.2.2, Table 1) -/
+/-! ### The Serbian strategies (§4.2.2, Table 1) -/
 
 /-- The Serbian strategies of (31) and Table 1, which are the two positive particle
 strategies, high negation (*nije li*), and low negation (*je l' … nije*). -/
@@ -373,127 +351,145 @@ inductive SerbianPQForm
   | lnpq
   deriving DecidableEq, Repr, Fintype
 
+namespace SerbianPQForm
+
 /-- The language file marker of each strategy. -/
-def SerbianPQForm.particle : SerbianPQForm → Clause.Marker
+def particle : SerbianPQForm → Clause.Marker
   | .daLiPPQ => Serbian.QuestionParticles.daLi
   | .jeLiPPQ | .lnpq => Serbian.QuestionParticles.jeLi
   | .hnpq => Serbian.QuestionParticles.li
 
 /-- The [romero-2024] form of each strategy. -/
-def SerbianPQForm.negation : SerbianPQForm → Option Negation.Position
+def negation : SerbianPQForm → Option Negation.Position
   | .daLiPPQ | .jeLiPPQ => none
   | .hnpq => some .preposed
   | .lnpq => some .nonPreposed
 
-/-- The Serbian strategies natural in each cell (Table 1), after [todorovic-2023]. -/
-def serbianBiasProfile : SignType → SignType → Finset SerbianPQForm
-  | .pos, .pos => ∅
-  | .pos, .zero => {.jeLiPPQ}
-  | .pos, .neg => ∅
-  | .zero, .pos => {.jeLiPPQ}
-  | .zero, .zero => {.daLiPPQ, .jeLiPPQ}
-  | .zero, .neg => {.lnpq}
-  | .neg, .pos => {.lnpq, .hnpq}
-  | .neg, .zero => {.lnpq}
-  | .neg, .neg => ∅
+/-- The quiz question of (31) that exemplifies each strategy. -/
+def quizExample : SerbianPQForm → Examples.Example
+  | .daLiPPQ => .ex31a
+  | .jeLiPPQ => .ex31b
+  | .hnpq => .ex31c
+  | .lnpq => .ex31d
 
-theorem daLiPPQ_mem_iff :
-    .daLiPPQ ∈ serbianBiasProfile ev ob ↔ ev = 0 ∧ ob = 0 := by
-  decide +revert
+end SerbianPQForm
 
-theorem jeLiPPQ_of_daLiPPQ (h : .daLiPPQ ∈ serbianBiasProfile ev ob) :
-    .jeLiPPQ ∈ serbianBiasProfile ev ob := by
-  revert h; decide +revert
+/-- Table 1: the Serbian strategies natural in each situation, after [todorovic-2023]. -/
+def serbianForms : Situation → Finset SerbianPQForm
+  | (.pos, .pos) => ∅
+  | (.pos, .zero) => {.jeLiPPQ}
+  | (.pos, .neg) => ∅
+  | (.zero, .pos) => {.jeLiPPQ}
+  | (.zero, .zero) => {.daLiPPQ, .jeLiPPQ}
+  | (.zero, .neg) => {.lnpq}
+  | (.neg, .pos) => {.lnpq, .hnpq}
+  | (.neg, .zero) => {.lnpq}
+  | (.neg, .neg) => ∅
 
-theorem ppq_no_negative_bias (f : SerbianPQForm) (hf : f.negation = none)
-    (h : f ∈ serbianBiasProfile ev ob) : ev ≠ -1 ∧ ob ≠ -1 := by
-  revert hf h; decide +revert
+-- *da li* questions are limited to the neutral situation
+theorem distribution_daLiPPQ :
+    distribution serbianForms .daLiPPQ = (⟨.neutral, .neutral⟩ : BiasProfile).felicity := by
+  decide
 
-theorem hnpq_mem_iff :
-    .hnpq ∈ serbianBiasProfile ev ob ↔ ev = -1 ∧ ob = 1 := by
-  decide +revert
+-- *je li* questions also occur with a positive bias of either kind
+theorem distribution_daLiPPQ_ssubset_jeLiPPQ :
+    distribution serbianForms .daLiPPQ ⊂ distribution serbianForms .jeLiPPQ := by
+  decide
 
-theorem lnpq_of_hnpq (h : .hnpq ∈ serbianBiasProfile ev ob) :
-    .lnpq ∈ serbianBiasProfile ev ob := by
-  revert h; decide +revert
+-- positive questions are incompatible with negative biases
+theorem distribution_subset_of_negation_eq_none {f : SerbianPQForm} (hf : f.negation = none) :
+    distribution serbianForms f ⊆
+      (⟨.minus .negative, .minus .negative⟩ : BiasProfile).felicity := by
+  revert hf; cases f <;> decide
 
-theorem serbian_hnpq_narrower_than_english :
-    BuringGunlogson2000.Felicitous (some .positive) 0 ∧ ∀ ob, .hnpq ∉ serbianBiasProfile 0 ob := by
+-- high negation resolves a conflict of a prior belief in `p` with evidence against it
+theorem distribution_hnpq : distribution serbianForms .hnpq = {(-1, 1)} := by decide
+
+theorem distribution_hnpq_ssubset_lnpq :
+    distribution serbianForms .hnpq ⊂ distribution serbianForms .lnpq := by
+  decide
+
+/-- Serbian high negation is narrower than English high negation, which is narrower than the
+Czech interrogative negative question. English adds the neutral evidence of a suggestion to the
+Serbian conflict, and Czech adds evidence for `p` without a prior belief. -/
+theorem distribution_hnpq_ssubset_english_ssubset_interNPQ :
+    distribution serbianForms .hnpq ⊂
+        (GartnerGyuris2017.biasProfile GartnerGyuris2017.englishV1 (some .positive)).felicity ∧
+      (GartnerGyuris2017.biasProfile GartnerGyuris2017.englishV1 (some .positive)).felicity ⊂
+        distribution czechForms .interNPQ := by
   decide
 
 -- (31), Table 1
-theorem ex31_markers :
-    Examples.ex31a.feature? "particle" = some SerbianPQForm.daLiPPQ.particle.form ∧
-    Examples.ex31b.feature? "particle" = some SerbianPQForm.jeLiPPQ.particle.form ∧
-    Examples.ex31c.feature? "particle" = some SerbianPQForm.hnpq.particle.form ∧
-    Examples.ex31d.feature? "particle" = some SerbianPQForm.lnpq.particle.form := by
-  decide
+theorem feature?_particle_quizExample (f : SerbianPQForm) :
+    f.quizExample.datum.feature? "particle" = some f.particle.form := by
+  cases f <;> decide
 
-/-- *Je li* is natural in the neutral cell of Table 1 yet infelicitous in the quiz (31b), where *da
-li* is felicitous (31a). -/
-theorem jeLi_neutral_yet_quiz_infelicitous :
-    .jeLiPPQ ∈ serbianBiasProfile 0 0 ∧
-      Examples.ex31b.judgment = .unacceptable ∧ Examples.ex31a.judgment = .acceptable := by
-  decide
+-- of the two strategies natural in the neutral situation, only *da li* is felicitous in the quiz
+theorem quizExample_acceptable_iff {f : SerbianPQForm} (hf : f ∈ serbianForms (0, 0)) :
+    f.quizExample.datum.judgment = .acceptable ↔ f = .daLiPPQ := by
+  revert hf; cases f <;> decide
 
-/-! ### Information-seeking questions (§2, §4.2.1)
-
-The chapter hypothesizes that the strategies that are neutral yet quiz-infelicitous
-(Serbian *je li*, Slovenian *a*, possibly Russian intonation questions) embed the Hamblin
-question under a covert 'wonder', modelled as 'want to know' applied to the true answer
-([karttunen-1977], [dayal-1996]); a quiz master knows the answer and so cannot want to
-know it. -/
+/-! ### Information-seeking questions (§2, §4.2.1) -/
 
 section Wonder
 
 variable {W : Type*} (p : Set W) (w : W)
 
+-- (10): exactly one of the two answers is true, so the description of the true answer is defined
 theorem karttunen_polar_existsUnique : ∃! q, q ∈ karttunen {p, pᶜ} w := by
   by_cases hw : w ∈ p
   · exact ⟨p, ⟨by simp, hw⟩, by rintro q ⟨rfl | rfl, hwq⟩ <;> simp_all⟩
   · exact ⟨pᶜ, ⟨by simp, hw⟩, by rintro q ⟨rfl | rfl, hwq⟩ <;> simp_all⟩
 
-/-- The speaker wants to know the true answer to the polar question over `p` (the chapter's
-(36)); the embedded (10b) is the same form with the attitude holder in place of the
-speaker. -/
-def wonderLF {E : Type*} (wantToKnow : E → Set W → Set W) (x : E) : Set W :=
-  {w | ∃ q ∈ karttunen {p, pᶜ} w, w ∈ wantToKnow x q}
+/-- (36): the speaker wants to know the true answer to the polar question over `p`, where
+`wantToKnow q` holds at the worlds in which the speaker wants to know `q`. -/
+def wonder (wantToKnow : Set W → Set W) : Set W :=
+  {w | ∃ q ∈ karttunen {p, pᶜ} w, w ∈ wantToKnow q}
+
+variable {p w}
+
+/-- A speaker who knows the answer does not wonder, if nobody wants to know what they know. This
+is why the chapter takes a form with a covert 'wonder' to be infelicitous from a quiz master. -/
+theorem notMem_wonder_of_knowsAnswer {wantToKnow : Set W → Set W} {Dox : SetRel W W}
+    (h : ∀ q, Disjoint (wantToKnow q) (Dox.core q)) (hk : KnowsAnswer {p, pᶜ} w Dox) :
+    w ∉ wonder p wantToKnow := by
+  rintro ⟨q, hq, hw⟩
+  exact Set.disjoint_left.1 (h q) hw
+    (SetRel.core_subset_core (weakAnswer_subset _ w hq.1 hq.2) hk)
 
 end Wonder
 
-/-! ### Russian *razve* and its kin (§4.2.4) -/
+/-! ### Russian *razve* (§4.2.4) -/
 
-/-- The bias profile of a *razve* question on each reading, which pairs evidence for the
-prejacent as asked with a prior for its negation (the conflict-resolving profile of §3.1). -/
-def razveProfile (r : Option Polarity) : SignType × SignType :=
-  (evidence (polarityOf r), prior (polarityOf r))
+open RomeroHan2004 (LF)
 
-theorem razveProfile_negation_invariant :
-    razveProfile (some .negative) = razveProfile (some .positive) ∧
-      razveProfile (some .positive) = (-1, 1) :=
-  ⟨rfl, rfl⟩
+/-- The situation a *razve* question with the logical form `l` is asked in: the evidence
+supports the proposition for which the question asks evidence, and the speaker believed the
+opposite one (the conflict-resolving question of §3.1). -/
+def razveSituation (l : LF) : Situation :=
+  (((l.outer * l.inner : Polarity) : SignType), ((l.implicature : Polarity) : SignType))
 
-/-- *Razve* is compatible with both negations ([repp-geist-2022]'s LFs (40), diagnosed
-by the polarity items in (41)), *neuželi* with inner negation only. The two readings
-double-check the negation of the prejacent, `some .negative`, and the prejacent itself,
-`some .positive`. -/
-def razveNegations : Finset (Option Polarity) := {some .negative, some .positive}
+-- (39b), (40a), (40b): a negated *razve* question has one bias under FALSUM and under VERUM
+theorem razveSituation_of_outer_mul_inner {l : LF} (h : l.outer * l.inner = .negative) :
+    razveSituation l = (-1, 1) := by
+  rw [razveSituation, l.implicature_of_outer_mul_inner h, h]; rfl
 
-/-- *Neuželi* lexicalizes VERUM and so tolerates inner negation only. -/
-def neuzeliNegations : Finset (Option Polarity) := {some .negative}
+-- (39a), (40c)
+theorem razveSituation_really : razveSituation .really = (1, -1) := rfl
 
-theorem neuzeliNegations_ssubset : neuzeliNegations ⊂ razveNegations := by decide
+-- *neuželi* lexicalizes VERUM, which leaves a negated question the inner reading alone
+theorem eq_ni_of_outer_eq_positive {l : LF} (ho : l.outer = .positive)
+    (h : l.outer * l.inner = .negative) : l = .ni := by
+  obtain ⟨o, i⟩ := l
+  obtain rfl : o = .positive := ho
+  obtain rfl : i = .negative := by simpa using h
+  rfl
 
+-- *razve* is confined to root questions, and embedded polar interrogatives take *li*
 theorem razve_root_li_embedded :
     .subordinated ∉ Russian.QuestionParticles.razve.distribution.contexts ∧
       Clause.embedded .polar ∈ Russian.QuestionParticles.li.distribution.possible := by
   decide
-
-/-- The kin of *razve* the chapter lists across Slavic, whose semantics it leaves open. -/
-def razveKin : List Clause.Marker :=
-  [Ukrainian.QuestionParticles.xiba, Polish.QuestionParticles.czyzby,
-   Bulgarian.QuestionParticles.nima, Macedonian.QuestionParticles.zar,
-   Serbian.QuestionParticles.zar, Czech.Particles.copak]
 
 /-! ### FALSUM and the Czech outer negation (§3.3.2, §5) -/
 
@@ -504,51 +500,68 @@ open scoped SetRel
 variable {W : Type*} (epi conv : SetRel W W) (cg : W → Filter W) (p : Set W)
 
 open Classical in
-/-- The chapter's Czech FALSUM (44) is defined when the attitude holder considers the
-prejacent possible, and true when it is not in the common ground. -/
+/-- (44): the Czech FALSUM is defined where its bearer considers the prejacent possible, and it
+is true there when the prejacent is not in the common ground. -/
 noncomputable def falsumCz : W → Trivalent := fun w ↦
-  Trivalent.transplication (.ofProp (ModalLogic.Diamond epi (· ∈ p) w)) (.ofProp (p ∉ cg w))
+  Trivalent.transplication (.ofProp (◇[epi] (· ∈ p) w)) (.ofProp (p ∉ cg w))
 
-/-- The question (45) over the Czech FALSUM asks whether the prejacent is outside the common
-ground. -/
-def falsumCzQuestion : Proposition (Set W) := polar {w | p ∉ cg w}
+variable {epi conv cg p} {w : W}
 
-theorem falsumCz_eq_undefined_iff (w : W) :
-    falsumCz epi cg p w = .undefined ↔ ModalLogic.Box epi (· ∉ p) w := by
+-- the Czech FALSUM is undefined exactly where its bearer believes the prejacent false
+theorem falsumCz_eq_undefined_iff :
+    falsumCz epi cg p w = .undefined ↔ □[epi] (· ∉ p) w := by
   simp [falsumCz, ModalLogic.Box, ModalLogic.Diamond]
 
-/-- [repp-2013]'s FALSUM (22b) makes the Czech operator true wherever defined when the
-knowledge-then-goals relation is reflexive. -/
-theorem falsumCz_eq_true_of_falsum [(epi ○ conv).IsRefl] {w : W}
+-- (45): where defined, the question asks whether the prejacent is outside the common ground
+theorem falsumCz_eq_true_iff :
+    falsumCz epi cg p w = .true ↔ ◇[epi] (· ∈ p) w ∧ p ∉ cg w := by
+  simp [falsumCz]
+
+theorem falsumCz_eq_false_iff :
+    falsumCz epi cg p w = .false ↔ ◇[epi] (· ∈ p) w ∧ p ∈ cg w := by
+  simp [falsumCz]
+
+-- belief in the prejacent suffices for the presupposition of epistemic possibility
+theorem falsumCz_ne_undefined_of_box [ModalLogic.IsSerial epi] (h : □[epi] (· ∈ p) w) :
+    falsumCz epi cg p w ≠ .undefined := by
+  have ⟨v, hv, hp⟩ := ModalLogic.box_D h
+  exact fun hu ↦ falsumCz_eq_undefined_iff.1 hu v hv hp
+
+-- (22b): where [repp-2013]'s FALSUM holds, the Czech operator is true if defined
+theorem falsumCz_eq_true_of_falsum [(epi ○ conv).IsRefl]
     (h : □[epi ○ conv] (p ∉ cg ·) w) (hw : falsumCz epi cg p w ≠ .undefined) :
     falsumCz epi cg p w = .true := by
   simp_all [falsumCz, ModalLogic.box_T h]
 
 end Falsum
 
-/-- *Náhodou* is licensed by outer negation and by nothing else (43). The two readings of negation
-in a polar question (the chapter's (14), after [ladd-1981] and [repp-2013]) are polarities of the
-proposition the question double-checks. Inner negation, the classical propositional operator
-diagnosed by negative polarity items, double-checks the negation of the prejacent, `.negative`;
-outer negation, the non-propositional FALSUM diagnosed by positive polarity items, the prejacent
-itself, `.positive`. -/
+/-- The prior beliefs with which the interrogative negative question occurs in Table 2 are those
+that do not support `¬p`, the stances at which the Czech FALSUM is defined. -/
+theorem image_snd_distribution_interNPQ :
+    (distribution czechForms .interNPQ).image Prod.snd = BiasValue.minus .negative := by
+  decide
+
+/-- *Náhodou* is licensed by outer negation and by nothing else (43): the verb is negated, and
+the question double-checks the prejacent itself. -/
 def NahodouLicensed (pol r : Polarity) : Prop :=
   pol = .negative ∧ r = .positive
 
 instance (pol r : Polarity) : Decidable (NahodouLicensed pol r) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The reading of negation an indefinite diagnoses, the polarity item diagnosing the outer
-one and the concord item the inner one. -/
-def indefiniteReading? (e : Datum) : Option Polarity :=
-  e.parse? "indefinite" [("ppi", .positive), ("nci", .negative)]
+/-- The language file entry of the indefinite of an example. -/
+def Examples.Indefinite.entry : Examples.Indefinite → PolarityItem
+  | .ppi => Czech.PolarityItems.nejaky
+  | .nci => Czech.PolarityItems.zadny
 
-/-- The (43) rows with *náhodou* are acceptable exactly when the particle is licensed by
-the polarity and the reading the indefinite diagnoses. -/
-theorem nahodou_examples :
-    ∀ e ∈ Examples.all, e.feature? "nahodou" = some "true" →
-      ∀ pol ∈ polarity? e, ∀ r ∈ indefiniteReading? e,
-        (e.judgment = .acceptable ↔ NahodouLicensed pol r) := by
-  decide
+-- (43d), (43e): a question with *náhodou* is acceptable exactly when some reading of its negation
+-- licenses the particle and suits the indefinite, a positive polarity item escaping the negation
+-- and a negative one falling under it
+theorem nahodou_example (x : Examples.Example)
+    (hx : x.datum.feature? "particle" = some Czech.Particles.nahodou.form) :
+    ∀ s ∈ x.polarity, ∀ i ∈ x.indefinite,
+      (x.datum.judgment = .acceptable ↔ ∃ r, NahodouLicensed s.toPolarity r ∧
+        (i.entry.IsPPI → r = .positive) ∧ (i.entry.IsNPI → r = .negative)) := by
+  revert hx; cases x <;> decide
 
 end Simik2024
