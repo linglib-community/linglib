@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Algebra.Ring.BooleanRing
-public import Linglib.Semantics.Quantifier.Defs
+public import Linglib.Semantics.Quantifier.Restriction
 public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.Algebra.Group.Action.Pi
 public import Mathlib.Algebra.Group.Action.Prod
@@ -24,6 +24,10 @@ its inner negation, its dual and its complement, the corners of its square of op
 `Quantifier/Square.lean`. A monotone or antitone quantifier stays monotone or antitone under each
 action, and the direction changes once for each negative polarity.
 
+A set `N` of individuals also acts on a quantifier, by complementing the scope within `N`. All
+three actions leave the restriction of a quantifier unchanged, and the action of `N` exchanges its
+positive and negative restrictions on `N`.
+
 ## Main results
 
 * `Quantifier.negative_smul`: `Polarity.negative • Q = Qᶜ`.
@@ -32,6 +36,8 @@ action, and the direction changes once for each negative polarity.
   `Qᶜ`.
 * `Quantifier.mk_toBoolRing_univ_vadd`: inner negation is the action of the whole universe on the
   scope by symmetric difference.
+* `Quantifier.mk_toBoolRing_singleton_vadd_eq_iff_notMem`: on a finite universe, flipping one
+  individual fixes a quantifier if and only if the individual is outside its restriction.
 
 ## Implementation notes
 
@@ -97,7 +103,77 @@ theorem mk_toBoolRing_vadd_apply (N B : Set α) (Q : Quantifier α) :
 /-- Inner negation is the flip of the whole scope. -/
 theorem mk_toBoolRing_univ_vadd (Q : Quantifier α) :
     DomAddAct.mk (toBoolRing (Set.univ : Set α)) +ᵥ Q = Q.innerNeg :=
-  funext fun B ↦ congrArg Q (AsBoolRing.toBoolRing_top_vadd B)
+  innerNeg_eq_symmDiff_univ.symm
+
+/-! ### The restrictions under the actions
+
+Each of the three actions leaves the restriction of a quantifier unchanged. A flip within `N`
+exchanges the positive and the negative restriction on `N`. Flipping a single individual fixes a
+quantifier exactly when the quantifier does not depend on that individual. -/
+
+section Restriction
+
+open Set
+
+variable (Q : Quantifier α) (N : Set α) {x : α}
+
+@[simp] theorem restriction_smul (p : Polarity) : (p • Q).restriction = Q.restriction := by
+  cases p
+  exacts [rfl, restriction_compl]
+
+@[simp] theorem restriction_mk_smul (p : Polarity) :
+    (DomMulAct.mk p • Q).restriction = Q.restriction := by
+  cases p
+  · rfl
+  · exact (congrArg restriction (mk_negative_smul Q)).trans <| by
+      rw [innerNeg_eq_symmDiff_univ]; exact restriction_symmDiff univ
+
+@[simp] theorem restriction_vadd :
+    (DomAddAct.mk (toBoolRing N) +ᵥ Q).restriction = Q.restriction :=
+  restriction_symmDiff N
+
+theorem positiveRestriction_vadd :
+    (DomAddAct.mk (toBoolRing N) +ᵥ Q).positiveRestriction =
+      Q.positiveRestriction \ N ∪ Q.negativeRestriction ∩ N :=
+  positiveRestriction_symmDiff N
+
+theorem negativeRestriction_vadd :
+    (DomAddAct.mk (toBoolRing N) +ᵥ Q).negativeRestriction =
+      Q.negativeRestriction \ N ∪ Q.positiveRestriction ∩ N :=
+  negativeRestriction_symmDiff N
+
+/-- Flipping one individual fixes a quantifier if and only if the quantifier lives on the other
+individuals. -/
+theorem mk_toBoolRing_singleton_vadd_eq_iff :
+    DomAddAct.mk (toBoolRing ({x} : Set α)) +ᵥ Q = Q ↔ Q.LivesOn {x}ᶜ := by
+  have e (B : Set α) : {x}ᶜ ∩ symmDiff {x} B = {x}ᶜ ∩ B := by
+    ext y; simp only [mem_inter_iff, mem_compl_iff, mem_singleton_iff, mem_symmDiff]; tauto
+  constructor
+  · intro h B
+    by_cases hx : x ∈ B
+    · have := congrFun h ({x}ᶜ ∩ B)
+      have e' : symmDiff {x} ({x}ᶜ ∩ B) = B := by
+        ext y; simp only [mem_symmDiff, mem_inter_iff, mem_compl_iff, mem_singleton_iff]
+        by_cases hy : y = x
+        · subst hy; tauto
+        · tauto
+      rw [mk_toBoolRing_vadd_apply, e'] at this
+      exact iff_of_eq this
+    · rw [show {x}ᶜ ∩ B = B from inter_eq_right.2 fun y hy hyx ↦ hx (hyx ▸ hy)]
+  · intro h
+    funext B
+    rw [mk_toBoolRing_vadd_apply]
+    exact propext ((h _).trans ((congrArg Q (e B)).to_iff.trans (h B).symm))
+
+/-- On a finite universe, flipping one individual fixes a quantifier if and only if the
+individual is outside the restriction of the quantifier. -/
+theorem mk_toBoolRing_singleton_vadd_eq_iff_notMem [Finite α] :
+    DomAddAct.mk (toBoolRing ({x} : Set α)) +ᵥ Q = Q ↔ x ∉ Q.restriction :=
+  (mk_toBoolRing_singleton_vadd_eq_iff Q).trans
+    ⟨fun h hx ↦ h.restriction_subset hx rfl,
+      fun hx ↦ (livesOn_restriction (Q := Q)).mono (subset_compl_singleton_iff.2 hx)⟩
+
+end Restriction
 
 end Quantifier
 
