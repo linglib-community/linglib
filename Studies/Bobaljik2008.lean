@@ -6,6 +6,7 @@ public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Languages.HindiUrdu.Case
+public import Studies.Marantz1991
 
 /-!
 # Bobaljik (2008): Where's Phi? Agreement as a Postsyntactic Operation
@@ -24,7 +25,11 @@ For noun phrases `xs`, listed from the highest down, with their cases `s`, we de
 the controller exactly when it is accessible and no noun phrase above it is, so an inaccessible
 noun phrase is invisible to the search and does not intervene; and a language that makes more
 categories accessible keeps a controller wherever it had one. The sets of categories a language
-can make accessible are the nonempty sets closed upward in the order.
+can make accessible are the nonempty sets closed upward in the order. The agreement of
+[marantz-1991], which goes to the subject unless a lexical head has marked it and then to the
+object, is the controller where dependent case is accessible as well as unmarked case, for every
+clause and all rules with an unmarked case; where only unmarked case is accessible the two part,
+as on the ergative subject of a transitive clause.
 
 With case assigned by the dependent case rules, an accusative case system gives subject
 agreement whatever is accessible, and an ergative one gives absolutive agreement when only
@@ -183,8 +188,8 @@ theorem not_isErgative_controls_accusative (t : CaseCategory) :
 
 /-! ### Case against grammatical function -/
 
-/-- Below a subject with lexical case, as the dative subjects of Icelandic, the object controls
-agreement unless lexical case is itself accessible. -/
+-- below a subject with lexical case, as the dative subjects of Icelandic, the object controls
+-- agreement unless lexical case is itself accessible
 theorem clauseController_lexical_subject (a : Alignment.AlignmentType) (c : Case)
     (t : CaseCategory) (ht : t ≠ .lexical) :
     clauseController (.ofAlignment a) t (fun r ↦ if r = .A then some c else none) [.A, .P] =
@@ -205,6 +210,36 @@ theorem icelandic_example : ∀ x ∈ [Examples.Example.ex_4d, .ex_15], ∀ r �
       x.datum.judgment = .acceptable := by
   decide
 
+/-! ### The agreement of Marantz (1991) -/
+
+/-- The agreement of [marantz-1991], to the subject unless a lexical head has marked it and then
+to the object, is the controller among the chains of a clause where dependent case is accessible
+as well as unmarked case. -/
+theorem _root_.Marantz1991.Clause.agr_eq_controller (c : Marantz1991.Clause) (r : Rules)
+    (v : Bool) (hr : r.unmarked.isSome) :
+    c.agr = controller .dependent (r.assign c.lexicalCase (c.chains v)) (c.chains false) := by
+  obtain ⟨th, sc, ob⟩ := c
+  obtain ⟨hi, lo, un⟩ := r
+  obtain ⟨u, rfl⟩ := Option.isSome_iff_exists.1 hr
+  have hp := fun lex ↦ Rules.assign_pair ⟨hi, lo, some u⟩ lex (x := Marantz1991.Position.subject)
+    (y := .object) (by decide)
+  have h₁ : CaseCategory.dependent ≤ .unmarked := by decide
+  have h₂ : ¬ CaseCategory.dependent ≤ .lexical := by decide
+  rcases ob with (_ | l) | _ | _ <;> cases sc <;> cases v <;> cases hi <;> cases lo <;>
+    simp [Marantz1991.Clause.agr, Marantz1991.Clause.chains, controller, Probe.search, Accessible,
+      Marantz1991.Clause.lexicalCase, Rules.assign_singleton, Rules.alone, (hp _).1, (hp _).2,
+      CaseCategory.ofMechanism, h₁, h₂]
+
+-- where only unmarked case is accessible, the controller of a transitive clause with an ergative
+-- subject is the object, and the agreement of [marantz-1991] goes to the subject
+example :
+    controller .unmarked
+        ((Rules.ofAlignment .ergative).assign Marantz1991.Clause.transitive.lexicalCase
+          (Marantz1991.Clause.transitive.chains false))
+        (Marantz1991.Clause.transitive.chains false) = some .object ∧
+      Marantz1991.Clause.transitive.agr = some .subject := by
+  decide
+
 /-! ### Hindi-Urdu -/
 
 /-- The dependent case rules of a Hindi-Urdu clause, read off its markers: the ergative on the
@@ -214,6 +249,14 @@ def hindiRules (a : Aspect.Perfectivity) (markedObject : Bool) : Rules where
   high := (HindiUrdu.coreMarker a markedObject .A).map fun _ ↦ .erg
   low := (HindiUrdu.coreMarker a markedObject .P).map fun _ ↦ .acc
   unmarked := some .nom
+
+-- over an unmarked object in the perfective, the rules are those of [marantz-1991]'s Hindi under
+-- the names it gives the cases
+theorem hindiRules_perfective :
+    hindiRules .perfective false =
+      { Marantz1991.hindi.rules with
+        unmarked := Marantz1991.hindi.rules.unmarked.map Marantz1991.hindi.spellOut } := by
+  decide
 
 /-- The controller of agreement in a Hindi-Urdu clause with a subject and an object, where only
 unmarked case is accessible. -/

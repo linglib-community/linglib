@@ -654,14 +654,10 @@ theorem isSecundative_agreement_of_caseMarking {ts : List FeatureType}
 
 /-! ### Icelandic DAT-NOM constructions (§4.1.2) -/
 
-/-- (29a) versus (29b). -/
-inductive Clausal
-  | monoclausal | biclausal
-  deriving DecidableEq, Repr, Fintype
-
 /-- T `[∗case:nom∗], [∗ϕ:_∗]` over `DP_dat … DP_nom`, the dative of number `n` and the nominative
 plural; in (29b) the lower T has already assigned nominative. -/
-def icelandicInitial (k : Clausal) (n : FeatureType.number.Value) : Head → FeatureBundle
+def icelandicInitial (k : Examples.Construction) (n : FeatureType.number.Value) :
+    Head → FeatureBundle
   | .t => ofList [⟨.case, .valued .nom⟩, ⟨.number, .unvalued⟩]
   | .dpDat => ofList [⟨.number, .valued n⟩, ⟨.case, .valued .dat⟩]
   | .dpNom =>
@@ -678,7 +674,7 @@ instance (h : Head) (t : FeatureType) : Decidable (IcelandicActive h t) :=
 
 /-- T's number slot after its probes, in the order `ts`, have searched a dative of number `n`
 and the nominative. -/
-def icelandic (k : Clausal) (n : FeatureType.number.Value) (ts : List FeatureType) :
+def icelandic (k : Examples.Construction) (n : FeatureType.number.Value) (ts : List FeatureType) :
     FeatureSlot FeatureType.number.Slot :=
   (run IcelandicActive .t [.dpDat, .dpNom] ts (icelandicInitial k n)).2 .t .number
 
@@ -704,11 +700,6 @@ theorem icelandic_monoclausal_of_invisible (n : FeatureType.number.Value) {ts : 
       .valued .plural := by
   rcases List.perm_pair.1 hts with rfl | rfl <;> (revert n; decide)
 
-/-- The construction of the derivations for each construction of the examples. -/
-def Examples.Construction.clausal : Examples.Construction → Clausal
-  | .monoclausal => .monoclausal
-  | .biclausal => .biclausal
-
 /-- T's number slot under each form of the verb: plural for the agreeing form, and no value for
 the default one. -/
 def Examples.Agreement.slot : Examples.Agreement → FeatureSlot FeatureType.number.Slot
@@ -719,8 +710,8 @@ def Examples.Agreement.slot : Examples.Agreement → FeatureSlot FeatureType.num
 -- derives it
 theorem icelandic_example (x : Examples.Example) (n : FeatureType.number.Value) :
     ∀ k ∈ x.construction, ∀ f ∈ x.agreement,
-      (icelandic k.clausal n [.case, .number] = f.slot ∨
-          icelandic k.clausal n [.number, .case] = f.slot) ↔
+      (icelandic k n [.case, .number] = f.slot ∨
+          icelandic k n [.number, .case] = f.slot) ↔
         x.datum.judgment = .acceptable := by
   revert x n; decide
 
@@ -812,21 +803,18 @@ example :
 
 /-! ### Agreement with unmarked DPs in Hindi-Urdu (§4.3.1) -/
 
-/-- The ergative subject is in Spec,Asp in (37)/(39), both arguments are case-marked in Spec,Asp in
-(38a)/(40), and the unmarked subject is in Spec,v under imperfective Asp in (38b). -/
-inductive HindiClause
-  | ergSubject | bothMarked | unmarkedSubject
-  deriving DecidableEq, Repr, Fintype
+/-! The ergative subject is in Spec,Asp in (37)/(39), both arguments are case-marked in Spec,Asp
+in (38a)/(40), and the unmarked subject is in Spec,v under imperfective Asp in (38b). -/
 
 /-- The aspect of each clause: Asp is imperfective where the subject is unmarked. -/
-def HindiClause.aspect : HindiClause → Aspect.Perfectivity
+def Examples.Marking.aspect : Examples.Marking → Aspect.Perfectivity
   | .unmarkedSubject => .imperfective
   | _ => .perfective
 
 /-- T `[∗Infl:_∗], [∗ϕ:_∗]`; Asp `[Infl:perf]` or `[Infl:impf]`; v `[∗ϕ:_∗]`; and the DPs with
 the case Asp assigned them, ergative on a subject that takes *ne* and accusative on an object that
 takes *ko* (`HindiUrdu.coreMarker`). -/
-def hindiInitial (k : HindiClause) (ps po : Person) : Head → FeatureBundle
+def hindiInitial (k : Examples.Marking) (ps po : Person) : Head → FeatureBundle
   | .t => ofList [⟨.infl, .unvalued⟩, ⟨.person, .unvalued⟩]
   | .asp =>
     match k.aspect with
@@ -842,14 +830,14 @@ def hindiInitial (k : HindiClause) (ps po : Person) : Head → FeatureBundle
   | _ => ⊥
 
 /-- The heads T c-commands in (39), (40) and (38b), in order. -/
-def hindiDomain : HindiClause → List Head
+def hindiDomain : Examples.Marking → List Head
   | .ergSubject => [.dpSbj, .asp, .v, .verb, .dpObj]
   | .bothMarked => [.dpSbj, .dpObj, .asp, .v, .verb]
   | .unmarkedSubject => [.asp, .dpSbj, .v, .verb, .dpObj]
 
 /-- T's person slot after v has probed its complement (empty in (40), the object having
 moved, fn. 33) and T has Infl-agreed with Asp and, nested under it, probed for ϕ. -/
-def hindi (k : HindiClause) (ps po : Person) : FeatureSlot FeatureType.person.Slot :=
+def hindi (k : Examples.Marking) (ps po : Person) : FeatureSlot FeatureType.person.Slot :=
   let s := (run AllActive .v (if k = .bothMarked then [] else [.verb, .dpObj]) [.person]
     (hindiInitial k ps po)).2
   (run AllActive .t (accessible IsPhase (hindiDomain k)) [.infl, .person] s).2 .t .person
@@ -870,17 +858,11 @@ theorem hindi_subject_agreement (ps po : Person) :
 
 -- §4.3.1: in (37), (38a) and (38b) T has the person of the highest argument with unmarked case,
 -- the controller of [bobaljik-2008], and no value where there is none
-theorem hindi_eq_controller (k : HindiClause) (ps po : Person) :
+theorem hindi_eq_controller (k : Examples.Marking) (ps po : Person) :
     hindi k ps po =
       (Bobaljik2008.hindiController k.aspect (k = .bothMarked)).elim .unvalued fun r ↦
         ↑(FeatureType.Slot.ofValue .person (if r = .A then ps else po)) := by
   revert k ps po; decide
-
-/-- The clause of the derivations for each marking of the examples. -/
-def Examples.Marking.clause : Examples.Marking → HindiClause
-  | .ergSubject => .ergSubject
-  | .bothMarked => .bothMarked
-  | .unmarkedSubject => .unmarkedSubject
 
 /-- T's person slot when the verb shows the features of the subject, of the object, or neither. -/
 def Examples.Controller.slot (ps po : Person) :
@@ -891,7 +873,7 @@ def Examples.Controller.slot (ps po : Person) :
 
 -- (37), (38): in each example the verb shows the features of the argument T agrees with
 theorem hindi_example (x : Examples.Example) (ps po : Person) :
-    ∀ m ∈ x.marking, ∀ c ∈ x.controller, hindi m.clause ps po = c.slot ps po := by
+    ∀ m ∈ x.marking, ∀ c ∈ x.controller, hindi m ps po = c.slot ps po := by
   revert x ps po; decide
 
 end Amato2025
