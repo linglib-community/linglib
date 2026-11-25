@@ -266,16 +266,6 @@ theorem selectionHead_map (hf : LexicalItem.Token.PreservesSelection f) :
 
 end SyntacticObject
 
-/-- The selection state of a tree, that of the syntactic object it is the tree of, and `0` on a
-tree that is not well formed. -/
-def treeSelectionState (t : UnorderedTree (Vertex LexicalItem.Token)) : SelectionRule.stack.State :=
-  if h : IsSyntacticObject t then SyntacticObject.selectionState (.ofUnorderedTree t h) else 0
-
-@[simp] theorem treeSelectionState_toUnorderedTree (s : SyntacticObject TokenLeaf) :
-    treeSelectionState s.toUnorderedTree = SyntacticObject.selectionState s := by
-  rw [treeSelectionState, dite_eq_left s.isSyntacticObject_toUnorderedTree,
-    SyntacticObject.ofUnorderedTree_toUnorderedTree]
-
 
 theorem LexicalItem.Token.PreservesSelection.swap {a b : LexicalItem.Token}
     (hc : a.item.cat = b.item.cat) (hs : a.item.sel = b.item.sel) (ha : a ≠ .bareTrace)

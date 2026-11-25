@@ -26,13 +26,13 @@ takes the daughter carrying the raising head, and the embedding's head where the
 * `Minimalist.RaisingState`, `Minimalist.SyntacticObject.raisingHead`: the raising state and the
   raising head of a syntactic object.
 * `Minimalist.RaisingState.Projects`: which of two merged constituents projects under raising.
-* `Minimalist.headIndex?`, `Minimalist.HeadDaughter.raising`: the head daughter of a planar tree,
-  and the head daughters it gives at the positions of an object.
+* `Minimalist.headIndex?`, `Minimalist.HeadDaughter.raising`: the head daughter of a planar
+  object, and the head daughters it gives at the positions of an object.
 
 ## Main results
 
 * `Minimalist.SyntacticObject.raisingHead_merge`: the raising head of a merge is a daughter's.
-* `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
+* `Minimalist.exists_headIndex?_of_raisingHead`: the head daughter carries the raising head
   wherever there is one.
 
 ## Implementation notes
@@ -338,69 +338,38 @@ end SyntacticObject
 
 /-! ### Head daughters -/
 
-/-- The raising head of a planar tree, that of its unordered image. -/
-def treeRaisingHead (s : RoseTree (Vertex LexicalItem.Token)) : Option LexicalItem.Token :=
-  if h : IsSyntacticObject (UnorderedTree.mk s) then (ofUnorderedTree _ h).raisingHead else none
-
-theorem raisingHead_eq_treeRaisingHead {x : SyntacticObject TokenLeaf}
-    {s : RoseTree (Vertex LexicalItem.Token)}
-    (h : x.toUnorderedTree = UnorderedTree.mk s) : x.raisingHead = treeRaisingHead s := by
-  rw [treeRaisingHead, dite_eq_left (h ▸ x.isSyntacticObject_toUnorderedTree)]
-  exact congrArg raisingHead
-    (toUnorderedTree_injective (by rw [toUnorderedTree_ofUnorderedTree, h]))
-
-theorem treeRaisingHead_subtree {t : PlanarSyntacticObject TokenLeaf} (p : t.toRoseTree.Positions) :
-    treeRaisingHead p.subtree = (t.termAt p).raisingHead :=
-  (raisingHead_eq_treeRaisingHead PlanarSyntacticObject.toUnorderedTree_termAt).symm
-
-/-- The drawing convention makes a token or trace leaf its own head; at a binary node it takes a
+/-- The drawing convention makes a token or trace leaf its own head; at a Merge it takes a
 left leaf that selects nothing for a specifier and looks for the head in the right daughter, takes
 a left leaf that selects for the head, and otherwise looks in the right daughter. This is the
 head path it assigns. -/
-def conventionHeadPos? : RoseTree (Vertex LexicalItem.Token) → Option (List ℕ)
-  | .node (.inl (some _)) _ | .node (.inr (some _)) _ => some []
-  | .node (.inl none) [.node (.inl (some tok)) [], r] =>
+def conventionHeadPos? : PlanarSyntacticObject TokenLeaf → Option (List ℕ)
+  | .of (.lex _) | .of (.traceOf _) => some []
+  | .of .trace => none
+  | .mul (.of (.lex tok)) r =>
       if tok.item.sel = [] then (conventionHeadPos? r).map (1 :: ·) else some [0]
-  | .node (.inl none) [_, r] => (conventionHeadPos? r).map (1 :: ·)
-  | .node (.inl none) _ => none
-  | .node (.inr none) _ => none
+  | .mul _ r => (conventionHeadPos? r).map (1 :: ·)
 
-/-- The head daughter of a planar tree is the first daughter carrying its raising head, and where
-it has none, the first step of the drawing convention's head path. -/
-def headIndex? (s : RoseTree (Vertex LexicalItem.Token)) : Option ℕ :=
-  ((treeRaisingHead s).bind fun h ↦ s.children.findIdx? (treeRaisingHead · = some h)) <|>
+/-- The head daughter of a planar object is the first daughter carrying its raising head, and
+where it has none, the first step of the drawing convention's head path. -/
+def headIndex? (s : PlanarSyntacticObject TokenLeaf) : Option ℕ :=
+  (s.toSyntacticObject.raisingHead.bind fun h ↦
+      s.daughters.findIdx? (·.toSyntacticObject.raisingHead = some h)) <|>
     (conventionHeadPos? s).bind List.head?
 
 /-- The head daughters under [marcolli-chomsky-berwick-2025]'s raising head, extended by the
-drawing convention where an object has no raising head: the head daughter of the subtree at each
-position, `none` off the object. -/
-def HeadDaughter.raising : HeadDaughter := fun t q ↦ t.toRoseTree[q]?.bind headIndex?
+drawing convention where an object has no raising head: the head daughter of the planar object at
+each address, `none` off the object. -/
+def HeadDaughter.raising : HeadDaughter := fun t q ↦ (t.subAt? q.toList).bind headIndex?
 
-/-- Where a planar syntactic object with daughters has a raising head, its head daughter carries
-it. -/
-theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree (Vertex LexicalItem.Token)}
-    {ℓ : LexicalItem.Token}
-    (hs : IsSyntacticObject (UnorderedTree.mk s)) (hc : s.children ≠ [])
-    (h : treeRaisingHead s = some ℓ) :
-    ∃ i c, headIndex? s = some i ∧ s.children[i]? = some c ∧ treeRaisingHead c = some ℓ := by
-  obtain ⟨v, cs⟩ := s
-  obtain rfl := eq_bare_of_ne_nil hs hc
-  obtain ⟨l, r, rfl⟩ : ∃ l r, cs = [l, r] :=
-    List.length_eq_two.1 ((length_eq_zero_or_two hs).resolve_left fun h0 ↦
-      hc (List.length_eq_zero_iff.1 h0))
-  obtain ⟨hl, hr⟩ := (isSyntacticObject_mk_merge l r).1 hs
-  have hm : (merge (ofUnorderedTree _ hl) (ofUnorderedTree _ hr)).raisingHead
-      = treeRaisingHead (.node Vertex.bare [l, r]) :=
-    raisingHead_eq_treeRaisingHead (by
-      rw [toUnorderedTree_merge, toUnorderedTree_ofUnorderedTree, toUnorderedTree_ofUnorderedTree,
-          UnorderedTree.node_pair_mk])
-  by_cases hl' : treeRaisingHead l = some ℓ
-  · exact ⟨0, l, by simp [headIndex?, h, hl', List.findIdx?_cons], rfl, hl'⟩
-  · have hr' : treeRaisingHead r = some ℓ :=
-      (raisingHead_eq_treeRaisingHead (toUnorderedTree_ofUnorderedTree _ hr)).symm.trans
-        ((raisingHead_merge (hm.trans h)).resolve_left fun h' ↦
-          hl' ((raisingHead_eq_treeRaisingHead (toUnorderedTree_ofUnorderedTree _ hl)).symm.trans
-              h'))
-    exact ⟨1, r, by simp [headIndex?, h, hl', hr', List.findIdx?_cons], rfl, hr'⟩
+/-- Where a Merge has a raising head, its head daughter carries it. -/
+theorem exists_headIndex?_of_raisingHead {l r : PlanarSyntacticObject TokenLeaf}
+    {ℓ : LexicalItem.Token} (h : (l * r).toSyntacticObject.raisingHead = some ℓ) :
+    ∃ i c, headIndex? (l * r) = some i ∧ (l * r).daughters[i]? = some c ∧
+      c.toSyntacticObject.raisingHead = some ℓ := by
+  have hm : (merge l.toSyntacticObject r.toSyntacticObject).raisingHead = some ℓ := h
+  by_cases hl' : l.toSyntacticObject.raisingHead = some ℓ
+  · exact ⟨0, l, by simp [headIndex?, hm, hl', List.findIdx?_cons], rfl, hl'⟩
+  · have hr' : r.toSyntacticObject.raisingHead = some ℓ := (raisingHead_merge hm).resolve_left hl'
+    exact ⟨1, r, by simp [headIndex?, hm, hl', hr', List.findIdx?_cons], rfl, hr'⟩
 
 end Minimalist

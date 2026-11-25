@@ -246,13 +246,12 @@ variable {x y z l r : SyntacticObject (SyntacticObject.Leaf L ι)}
   immediatelyContains_mul
 
 /-- Immediate containment is membership among the children of the object's tree. -/
-theorem immediatelyContains_iff_mem_children :
+theorem immediatelyContains_iff_mem_children {α : Type} {x y : SyntacticObject α} :
     ImmediatelyContains x y ↔ y.toUnorderedTree ∈ children x.toUnorderedTree := by
-  obtain ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ := exists_form x
-  · simp
-  · simp
-  · simp
-  · simp only [immediatelyContains_merge, toUnorderedTree_merge, children_node,
+  induction x using FreeCommMagma.inductionOn with
+  | of a => simp
+  | mul l r _ _ =>
+    simp only [immediatelyContains_mul, toUnorderedTree_mul, children_node,
       Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton]
     exact (or_congr toUnorderedTree_inj toUnorderedTree_inj).symm
 
@@ -317,44 +316,19 @@ end SyntacticObject
 
 /-! ### Terms -/
 
-theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    ∀ m ∈ UnorderedTree.subtrees s.toUnorderedTree, IsSyntacticObject m := by
-  induction s using SyntacticObject.ind with
-  | leaf tok =>
-    simp only [SyntacticObject.toUnorderedTree_leaf, mem_subtrees_leaf, forall_eq]
-    exact (SyntacticObject.leaf tok).isSyntacticObject_toUnorderedTree
-  | trace =>
-    simp only [SyntacticObject.toUnorderedTree_trace, mem_subtrees_leaf, forall_eq]
-    exact SyntacticObject.trace.isSyntacticObject_toUnorderedTree
-  | traceOf tok =>
-    simp only [SyntacticObject.toUnorderedTree_labelledTrace, mem_subtrees_leaf, forall_eq]
-    exact (SyntacticObject.labelledTrace tok).isSyntacticObject_toUnorderedTree
-  | merge l r ihl ihr =>
-    simp only [SyntacticObject.toUnorderedTree_merge, mem_subtrees_node_pair]
-    rintro m (rfl | h | h)
-    exacts [SyntacticObject.toUnorderedTree_merge l r ▸ (SyntacticObject.merge l
-        r).isSyntacticObject_toUnorderedTree,
-      ihl m h, ihr m h]
-
 namespace SyntacticObject
 
 variable {x y l r : SyntacticObject (SyntacticObject.Leaf L ι)}
 
-@[simp] theorem map_toUnorderedTree_terms (s : SyntacticObject (SyntacticObject.Leaf L ι)) :
+@[simp] theorem map_toUnorderedTree_terms {α : Type} (s : SyntacticObject α) :
     s.terms.map toUnorderedTree = UnorderedTree.subtrees s.toUnorderedTree := by
-  induction s using ind with
-  | leaf tok => rw [terms_leaf, Multiset.map_singleton, toUnorderedTree_leaf,
-      UnorderedTree.subtrees_leaf]
-  | trace => rw [terms_trace, Multiset.map_singleton, toUnorderedTree_trace,
-      UnorderedTree.subtrees_leaf]
-  | traceOf tok =>
-    rw [terms_labelledTrace, Multiset.map_singleton, toUnorderedTree_labelledTrace,
-      UnorderedTree.subtrees_leaf]
-  | merge l r ihl ihr =>
-    rw [terms_merge, Multiset.map_cons, Multiset.map_add, ihl, ihr, toUnorderedTree_merge,
+  induction s using FreeCommMagma.inductionOn with
+  | of a => rw [terms_of, Multiset.map_singleton, toUnorderedTree_of, UnorderedTree.subtrees_leaf]
+  | mul l r ihl ihr =>
+    rw [terms_mul, Multiset.map_cons, Multiset.map_add, ihl, ihr, toUnorderedTree_mul,
       UnorderedTree.subtrees_node_pair]
 
-theorem toUnorderedTree_mem_subtrees {S U : SyntacticObject (SyntacticObject.Leaf L ι)} :
+theorem toUnorderedTree_mem_subtrees {α : Type} {S U : SyntacticObject α} :
     S.toUnorderedTree ∈ U.toUnorderedTree.subtrees ↔ S ∈ U.terms := by
   rw [← map_toUnorderedTree_terms, Multiset.mem_map_of_injective toUnorderedTree_injective]
 
@@ -421,14 +395,16 @@ theorem card_terms (s : SyntacticObject (SyntacticObject.Leaf L ι)) : s.terms.c
 
 /-! ### C-command -/
 
-variable {root : SyntacticObject (SyntacticObject.Leaf L ι)}
+section CCommand
+
+variable {α : Type} {root x y l r : SyntacticObject α}
 
 /-- `x` and `y` are sisters in `root` when they are distinct daughters of some term of
 `root`. -/
-def Sisters (root x y : SyntacticObject (SyntacticObject.Leaf L ι)) : Prop :=
+def Sisters (root x y : SyntacticObject α) : Prop :=
   ∃ z ∈ root.terms, ImmediatelyContains z x ∧ ImmediatelyContains z y ∧ x ≠ y
 
-instance [DecidableEq L] [DecidableEq ι] (root x y : SyntacticObject (SyntacticObject.Leaf L ι)) :
+instance [DecidableEq α] (root x y : SyntacticObject α) :
     Decidable (Sisters root x y) :=
   Multiset.decidableExistsMultiset
 
@@ -442,10 +418,10 @@ theorem Sisters.mem_right (h : Sisters root x y) : y ∈ root.terms :=
   h.symm.mem_left
 
 /-- `x` c-commands `y` in `root` when a sister of `x` contains or equals `y`. -/
-def CCommands (root x y : SyntacticObject (SyntacticObject.Leaf L ι)) : Prop :=
+def CCommands (root x y : SyntacticObject α) : Prop :=
   ∃ z ∈ root.terms, Sisters root x z ∧ ContainsOrEq z y
 
-instance [DecidableEq L] [DecidableEq ι] (root x y : SyntacticObject (SyntacticObject.Leaf L ι)) :
+instance [DecidableEq α] (root x y : SyntacticObject α) :
     Decidable (CCommands root x y) :=
   Multiset.decidableExistsMultiset
 
@@ -461,23 +437,23 @@ theorem CCommands.left_mem_terms (h : CCommands root x y) : x ∈ root.terms :=
   let ⟨_, _, hs, _⟩ := h
   hs.mem_left
 
-theorem CCommands.mono {root' : SyntacticObject (SyntacticObject.Leaf L ι)} (h : CCommands root x y)
+theorem CCommands.mono {root' : SyntacticObject α} (h : CCommands root x y)
     (hsub : root.terms ⊆ root'.terms) : CCommands root' x y :=
   let ⟨z, hz, ⟨w, hw, hwx, hwz, hxz⟩, hzy⟩ := h
   ⟨z, hsub hz, ⟨w, hsub hw, hwx, hwz, hxz⟩, hzy⟩
 
-theorem cCommands_merge_left (hlr : l ≠ r) (hy : y ∈ r.terms) : CCommands (merge l r) l y :=
-  ⟨r, mem_terms.2 (.single ((immediatelyContains_merge _ _ _).2 (.inr rfl))),
-    ⟨merge l r, self_mem_terms _, (immediatelyContains_merge _ _ _).2 (.inl rfl),
-      (immediatelyContains_merge _ _ _).2 (.inr rfl), hlr⟩, mem_terms.1 hy⟩
+theorem cCommands_merge_left (hlr : l ≠ r) (hy : y ∈ r.terms) : CCommands (l * r) l y :=
+  ⟨r, mem_terms.2 (.single (immediatelyContains_mul.2 (.inr rfl))),
+    ⟨l * r, self_mem_terms _, immediatelyContains_mul.2 (.inl rfl),
+      immediatelyContains_mul.2 (.inr rfl), hlr⟩, mem_terms.1 hy⟩
 
-theorem Sisters.of_merge {x z : SyntacticObject (SyntacticObject.Leaf L ι)}
-    (h : Sisters (merge l r) x z) :
+theorem Sisters.of_merge {x z : SyntacticObject α}
+    (h : Sisters (l * r) x z) :
     Sisters l x z ∨ Sisters r x z ∨ x = l ∧ z = r ∨ x = r ∧ z = l := by
   obtain ⟨w, hw, hwx, hwz, hxz⟩ := h
-  rw [terms_merge, Multiset.mem_cons, Multiset.mem_add] at hw
+  rw [terms_mul, Multiset.mem_cons, Multiset.mem_add] at hw
   rcases hw with rfl | hw | hw
-  · rw [immediatelyContains_merge] at hwx hwz
+  · rw [immediatelyContains_mul] at hwx hwz
     rcases hwx with rfl | rfl <;> rcases hwz with rfl | rfl
     · exact absurd rfl hxz
     · exact .inr (.inr (.inl ⟨rfl, rfl⟩))
@@ -488,15 +464,17 @@ theorem Sisters.of_merge {x z : SyntacticObject (SyntacticObject.Leaf L ι)}
 
 /-- Once `β` has moved, leaving the remnant `R`, nothing but `R` and the terms of `β` c-commands a
 term found only in `β`: the sister of anything else lies inside `R`. -/
-theorem not_cCommands_merge_of_notMem_terms {β R x y : SyntacticObject (SyntacticObject.Leaf L ι)}
+theorem not_cCommands_merge_of_notMem_terms {β R x y : SyntacticObject α}
     (hx : x ∉ β.terms)
-    (hR : x ≠ R) (hy : y ∉ R.terms) : ¬ CCommands (merge β R) x y := by
+    (hR : x ≠ R) (hy : y ∉ R.terms) : ¬ CCommands (β * R) x y := by
   rintro ⟨z, -, hs, hzy⟩
   rcases Sisters.of_merge hs with h | h | ⟨rfl, -⟩ | ⟨rfl, -⟩
   · exact hx h.mem_left
   · exact hy (terms_subset_terms (mem_terms.1 h.mem_right) (mem_terms.2 hzy))
   · exact hx (self_mem_terms _)
   · exact hR rfl
+
+end CCommand
 
 /-! ### Pronounced tokens of terms -/
 

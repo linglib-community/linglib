@@ -16,7 +16,7 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 # Positions of planar syntactic objects
 
 The positions of a planar syntactic object, the paths to its vertices, form a rooted tree
-(`RoseTree.Positions`). Each carries a term, the subtree there read as a syntactic object: the
+(`RoseTree.Positions`). Each carries a term, the object at that address: the
 terms at the covers of a position are the terms its term immediately contains, and the terms at
 the positions below it are the terms its term contains, so c-command by a term occurring once is
 c-command from its position. Which daughter heads a position is not part of the object but of a
@@ -24,10 +24,10 @@ head function (`SyntacticObject/Projection.lean`).
 
 ## Main definitions
 
-* `PlanarSyntacticObject.termAt`: the term at a position.
+* `PlanarSyntacticObject.planarTermAt`, `PlanarSyntacticObject.termAt`: the planar object and the
+  term at a position.
 * `PlanarSyntacticObject.above`: the branching positions
   of a planar object, and the generators above a position, its closeness key.
-* `Minimalist.complement`: the sister of a head.
 
 ## Main statements
 
@@ -54,7 +54,7 @@ namespace Minimalist
 
 open RoseTree SyntacticObject PhraseStructure
 
-variable {L ι : Type}
+variable {α : Type}
 
 /-! ### Terms at positions -/
 
@@ -62,34 +62,48 @@ namespace PlanarSyntacticObject
 
 open RoseTree SyntacticObject
 
-variable {t : PlanarSyntacticObject (SyntacticObject.Leaf L ι)} {p : t.toRoseTree.Positions}
-    {y : SyntacticObject (SyntacticObject.Leaf L ι)}
+variable {t : PlanarSyntacticObject α} {p : t.toRoseTree.Positions}
+    {y : SyntacticObject α}
 
-theorem isSyntacticObject_subtree (p : t.toRoseTree.Positions) :
-    IsSyntacticObject (UnorderedTree.mk p.subtree) :=
-  isSyntacticObject_of_mem_subtrees t.toSyntacticObject _ <| by
-    rw [toUnorderedTree_toSyntacticObject]
-    exact mem_unorderedSubtrees.2 ⟨_, _, p.getElem?_eq, rfl⟩
+theorem isSome_subAt? (p : t.toRoseTree.Positions) : (t.subAt? p.val.toList).isSome := by
+  have h := p.getElem?_eq
+  rw [getElem?_toRoseTree] at h
+  cases hs : t.subAt? p.val.toList with
+  | none => rw [hs] at h; cases h
+  | some x => rfl
+
+variable (t) in
+/-- The planar object at a position, with the order of daughters it has in `t`. -/
+def planarTermAt (p : t.toRoseTree.Positions) : PlanarSyntacticObject α :=
+  (t.subAt? p.val.toList).get (isSome_subAt? p)
+
+/-- The subtree at a position is the tree of the planar object there. -/
+@[simp] theorem toRoseTree_planarTermAt : (t.planarTermAt p).toRoseTree = p.subtree := by
+  have h := p.getElem?_eq
+  rw [getElem?_toRoseTree, ← Option.some_get (isSome_subAt? p), Option.map_some] at h
+  exact Option.some.inj h
 
 variable (t) in
 /-- The term of `t` at a position. -/
-def termAt (p : t.toRoseTree.Positions) : SyntacticObject (SyntacticObject.Leaf L ι) :=
-  SyntacticObject.ofUnorderedTree _ (isSyntacticObject_subtree p)
+def termAt (p : t.toRoseTree.Positions) : SyntacticObject α :=
+  (t.planarTermAt p).toSyntacticObject
+
+@[simp] theorem toSyntacticObject_planarTermAt :
+    (t.planarTermAt p).toSyntacticObject = t.termAt p := rfl
 
 @[simp] theorem toUnorderedTree_termAt : (t.termAt p).toUnorderedTree =
-    UnorderedTree.mk p.subtree :=
-  SyntacticObject.toUnorderedTree_ofUnorderedTree _ _
+    UnorderedTree.mk p.subtree := by
+  rw [termAt, toUnorderedTree_toSyntacticObject, toRoseTree_planarTermAt]
 
 @[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject :=
   SyntacticObject.toUnorderedTree_injective
     (by rw [toUnorderedTree_termAt, toUnorderedTree_toSyntacticObject]; rfl)
 
 theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 2 := by
-  have hs := isSyntacticObject_subtree p
   rw [Positions.isMax_iff] at hp
-  rcases hsub : p.subtree with ⟨v, cs⟩
-  rw [hsub] at hp hs
-  exact (SyntacticObject.length_eq_zero_or_two hs).resolve_left (by simpa using hp)
+  have h := length_children_toRoseTree (t.planarTermAt p)
+  rw [toRoseTree_planarTermAt] at h
+  exact h.resolve_left (by simpa using hp)
 
 /-- A position that is not a leaf branches. -/
 theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p :=
@@ -136,24 +150,25 @@ theorem terms_eq_map_termAt :
     unorderedSubtrees_eq_map, Multiset.map_coe]
 
 variable (t) in
-theorem count_terms [DecidableEq L] [DecidableEq ι]
-    (u : SyntacticObject (SyntacticObject.Leaf L ι)) :
+theorem count_terms [DecidableEq α]
+    (u : SyntacticObject α) :
     t.toSyntacticObject.terms.count u = (Finset.univ.filter (t.termAt · = u)).card := by
   rw [terms_eq_map_termAt, Multiset.count_map, Finset.card_def, Finset.filter_val]
   simp only [eq_comm]
 
 
-variable {a : t.toRoseTree.Positions} {x : SyntacticObject (SyntacticObject.Leaf L ι)}
+variable {a : t.toRoseTree.Positions} {x : SyntacticObject α}
 
 theorem parent_mem_branching (ha : a ≠ ⊥) : a.val.parent ∈ t.toRoseTree.branching := by
   have hc : a.subtree ∈ (Order.pred a).subtree.children :=
     Positions.mem_children_subtree.2
       ⟨a, Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha), rfl⟩
-  have hso := isSyntacticObject_subtree (Order.pred a)
+  have hso := length_children_toRoseTree (t.planarTermAt (Order.pred a))
+  rw [toRoseTree_planarTermAt] at hso
   refine mem_positionsWhere.2 ⟨_, (Order.pred a).getElem?_eq, ?_⟩
   generalize (Order.pred a).subtree = s at hc hso
   obtain ⟨v, cs⟩ := s
-  rcases length_eq_zero_or_two hso with h0 | h2 <;>
+  rcases hso with h0 | h2 <;>
     grind [arity, List.length_eq_zero_iff, children_node]
 
 /-- C-command between terms is witnessed by c-command between occurrences of them, with no
@@ -198,7 +213,7 @@ theorem cCommands_termAt_iff (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
   exact ⟨q, hu p hpa ▸ hpq, rfl⟩
 
 theorem eq_termAt_pred_of_immediatelyContains (hu : ∀ q, t.termAt q = t.termAt a → q = a)
-    {m : SyntacticObject (SyntacticObject.Leaf L ι)} (hm : m ∈ t.toSyntacticObject.terms)
+    {m : SyntacticObject α} (hm : m ∈ t.toSyntacticObject.terms)
     (h : ImmediatelyContains m (t.termAt a)) : m = t.termAt (Order.pred a) := by
   obtain ⟨m, rfl⟩ := mem_terms_iff.1 hm
   obtain ⟨c, hmc, hca⟩ := immediatelyContains_termAt.1 h
@@ -250,21 +265,24 @@ theorem not_cCommands_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (hc
     (fun h ↦ hcd (IsForestOrder.eq_of_covBy_of_le hc hd le_rfl (Subtype.coe_le_coe.1 h)))
     (Subtype.coe_lt_coe.2 hcq) (Subtype.coe_le_coe.2 hdq')
 
-theorem termAt_eq_or_eq_of_covBy {y : SyntacticObject (SyntacticObject.Leaf L ι)}
-    (hn : t.termAt a = SyntacticObject.merge x y) (he : a ⋖ e) : t.termAt e = x ∨ t.termAt e = y :=
-  (immediatelyContains_merge _ _ _).1 (hn ▸ immediatelyContains_termAt.2 ⟨e, he, rfl⟩)
+theorem termAt_eq_or_eq_of_covBy {y : SyntacticObject α}
+    (hn : t.termAt a = x * y) (he : a ⋖ e) : t.termAt e = x ∨ t.termAt e = y :=
+  immediatelyContains_mul.1 (hn ▸ immediatelyContains_termAt.2 ⟨e, he, rfl⟩)
 
-theorem exists_covBy_termAt_eq_left {y : SyntacticObject (SyntacticObject.Leaf L ι)}
-    (hn : t.termAt a = SyntacticObject.merge x y) :
+theorem exists_covBy_termAt_eq_left {y : SyntacticObject α}
+    (hn : t.termAt a = x * y) :
     ∃ c, a ⋖ c ∧ t.termAt c = x :=
-  immediatelyContains_termAt.1 (hn ▸ (immediatelyContains_merge _ _ _).2 (.inl rfl))
+  immediatelyContains_termAt.1 (hn ▸ immediatelyContains_mul.2 (.inl rfl))
 
-theorem exists_covBy_termAt_eq_right {y : SyntacticObject (SyntacticObject.Leaf L ι)}
-    (hn : t.termAt a = SyntacticObject.merge x y) :
+theorem exists_covBy_termAt_eq_right {y : SyntacticObject α}
+    (hn : t.termAt a = x * y) :
     ∃ d, a ⋖ d ∧ t.termAt d = y :=
-  immediatelyContains_termAt.1 (hn ▸ (immediatelyContains_merge _ _ _).2 (.inr rfl))
+  immediatelyContains_termAt.1 (hn ▸ immediatelyContains_mul.2 (.inr rfl))
 
 /-! ### Heads -/
+
+variable {L ι : Type} {t : PlanarSyntacticObject (SyntacticObject.Leaf L ι)}
+  {a q : t.toRoseTree.Positions}
 
 variable (t) in
 /-- The term at a position is a lexical item, a head. -/
@@ -293,7 +311,7 @@ end PlanarSyntacticObject
 
 namespace PlanarSyntacticObject
 
-variable (t : PlanarSyntacticObject (SyntacticObject.Leaf L ι))
+variable (t : PlanarSyntacticObject α)
 
 /-- The generators in `P` properly dominating a position, the key under which a probe searching the
 object compares goals (`PhraseStructure.ancestors`). -/
@@ -327,7 +345,7 @@ end PlanarSyntacticObject
 
 section Complement
 
-variable (t : PlanarSyntacticObject (SyntacticObject.Leaf L ι))
+variable (t : PlanarSyntacticObject α)
 
 variable {t} in
 -- A position other than the root is one of the two daughters of its parent.
