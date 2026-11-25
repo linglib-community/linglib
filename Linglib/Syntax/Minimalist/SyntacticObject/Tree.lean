@@ -157,36 +157,6 @@ theorem toUnorderedTree_injective :
 @[simp] theorem toUnorderedTree_inj {s t : SyntacticObject α} :
     s.toUnorderedTree = t.toUnorderedTree ↔ s = t := toUnorderedTree_injective.eq_iff
 
-/-! ### Leaves of lexical items and traces -/
-
-variable {L ι : Type}
-
-@[simp] theorem toUnorderedTree_leaf (a : L) :
-    (leaf a : SyntacticObject (SyntacticObject.Leaf L ι)).toUnorderedTree =
-      UnorderedTree.leaf (some (.lex a)) := rfl
-
-@[simp] theorem toUnorderedTree_trace :
-    (trace : SyntacticObject (SyntacticObject.Leaf L ι)).toUnorderedTree =
-      UnorderedTree.leaf (some .trace) := rfl
-
-@[simp] theorem toUnorderedTree_labelledTrace (i : ι) :
-    (labelledTrace i : SyntacticObject (SyntacticObject.Leaf L ι)).toUnorderedTree =
-      UnorderedTree.leaf (some (.traceOf i)) := rfl
-
-@[simp] theorem toUnorderedTree_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    (merge l r).toUnorderedTree =
-      UnorderedTree.node none {l.toUnorderedTree, r.toUnorderedTree} :=
-  toUnorderedTree_mul l r
-
 end SyntacticObject
-
-namespace PlanarSyntacticObject
-
-variable {L ι : Type}
-
-@[simp] theorem toRoseTree_merge (l r : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) :
-    (merge l r).toRoseTree = .node none [l.toRoseTree, r.toRoseTree] := rfl
-
-end PlanarSyntacticObject
 
 end Minimalist

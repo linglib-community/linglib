@@ -13,7 +13,7 @@ public import Linglib.Syntax.Tree.Basic
 
 `so%` writes a planar syntactic object in brackets, in the syntax of `tree%`: `[x y]` is the
 Merge of `x` and `y`, a bare identifier `w` the leaf of the lexical token `w`, `⟨e⟩` the leaf of
-the token `e`, and `(t)` the object `t`, such as a trace or a phrase built elsewhere. Brackets
+the token `e`, and `(t)` the object `t`, such as a phrase built elsewhere. Brackets
 carry no labels, since the label of a syntactic object is computed from its head.
 -/
 
