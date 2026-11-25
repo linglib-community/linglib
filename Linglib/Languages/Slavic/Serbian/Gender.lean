@@ -12,9 +12,9 @@ conjuncts of their examples of resolved agreement, *muškarac i žena* 'the man 
 and the nouns of their Table 1, *žena*, *čovek*, *mleko*, *knjiga* and *pesak*; and the
 inanimates of Corbett's examples of resolution with neuter and feminine conjuncts, *mesto* 'place'
 and *značenje* 'importance', and the feminines *opreznost*, *suptilnost*, *pedanterija*,
-*nebriga*, *lakomislenost*, *štula* and *štaka*. Their analysis of the neuter as a mass gender is
-in `Studies/AdamsonAnagnostopoulou2025.lean`, and the stages of resolution Corbett reads off these
-nouns in `Studies/Corbett1991.lean`.
+*nebriga*, *lakomislenost*, *štula* and *štaka*. The analysis of the neuter as a mass gender is
+[adamson-anagnostopoulou-2025]'s, and the stages of resolution Corbett reads off these nouns are
+in `Studies/Corbett1991.lean`.
 
 ## References
 

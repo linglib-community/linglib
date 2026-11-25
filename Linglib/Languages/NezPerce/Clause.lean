@@ -19,8 +19,7 @@ first class and of *cuukwe* under negation, in questions and in conditional ante
 the complement of *neki*. The relative pronoun inflects for case and number.
 
 Forms follow Deal's orthography. The data are Deal's: the judgments on each shape are the rows
-of `Data/Examples/Deal2026.json`, and the relative-embedding analysis is
-`Studies/Deal2026.lean`.
+of `Data/Examples/Deal2026.json`, and the relative-embedding analysis is [deal-2026]'s.
 
 ## References
 

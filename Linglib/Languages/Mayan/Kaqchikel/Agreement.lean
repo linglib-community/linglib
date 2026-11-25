@@ -23,8 +23,8 @@ Preminger's monograph is the source of the paradigms.
 
 ## Implementation notes
 
-The Agent Focus paradigm and the rule that predicts it are in `Studies/Preminger2014.lean`, and
-the derivation of the progressive pattern in `Studies/Imanishi2014.lean`. Parenthesized segments
+The Agent Focus paradigm and the rule that predicts it are [preminger-2014]'s, and the derivation
+of the progressive pattern is in `Studies/Imanishi2014.lean`. Parenthesized segments
 of the exponents drop in certain phonological contexts.
 
 ## References

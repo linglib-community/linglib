@@ -11,7 +11,6 @@ AlbrightHayes2003
 Alderete2001
 AlexandropoulouGotzner2024b
 Almog2014
-AlokBhalla2026
 Aloni2001
 Aloni2022
 AloniAnttilaYang2024
@@ -50,8 +49,6 @@ BeckOdaSugisaki2004
 Belnap1970
 Beltrama2025
 BeltramaSoltBurnett2023
-Benz2025
-BenzSalzmann2025
 BerentEtAl2016
 Bhadra2024
 BhattDayal2020
@@ -67,7 +64,6 @@ BrehenyEtAl2018
 BreissKatsudaKawahara2026
 Bresnan1973
 Bruening2025
-Bubnov2026
 BumfordCharlow2026
 BumfordRett2021
 Buring2012
@@ -105,7 +101,6 @@ Clements1985
 CohenKrifka2014
 Condoravdi2002
 CondoravdiLauer2016
-Coon2019
 Cooper2023
 Coppock2018
 CoppockBeaver2015
@@ -121,7 +116,6 @@ Dayal2004
 DeMarneffeNivre2019
 DeSwartSag2002
 Deal2020
-Deal2026
 DechaineWiltschko2002
 DeganoAloni2025
 Dekier2021
@@ -146,8 +140,6 @@ Elbourne2013
 Elliott2020
 Elliott2025
 Embick2010
-Embick2015
-Embick2021
 ErkHerbelot2024
 EvcenBaleBarner2026
 Faller2019
@@ -173,7 +165,6 @@ GilesEtAl2026
 Goldberg1995
 GoldszmidtPearl1996
 GoldwaterJohnson2003
-GonzalezPootMcGinnis2006
 GoodmanStuhlmuller2013
 Graf2019
 Grano2026
@@ -184,7 +175,6 @@ GrubicRenansDuah2019
 Hacquard2006
 Hale2001
 HalleVauxWolfe2000
-Halpert2012
 Halpert2019
 Hanink2021
 Harbour2014
@@ -231,7 +221,6 @@ Kiparsky2002
 Kiss1998
 KonnellyCowper2020
 KonukEtAl2026
-Kramer2020
 Kratzer2012
 KratzerSelkirk2020
 Krifka2015
@@ -274,7 +263,6 @@ MitrovicSauerland2016
 MocnikAbramovitz2019
 Montague1973
 Morzycki2009
-MunozPerez2026
 Muskens1996
 Nadathur2023
 Ney2026
@@ -313,7 +301,6 @@ Rouillard2026
 Rubinstein2014
 RumbergLauer2023
 RuytenbeekEtAl2017
-Saab2026
 SableMeyerMascarenhas2022
 SadakaneKoizumi1995
 SagWasowBender2003
@@ -349,7 +336,6 @@ Sternefeld1998
 Stump2012
 Stump2020
 SuttonFilip2021
-Svenonius2026
 Szabolcsi2004
 Tay2024
 Theiler2021
