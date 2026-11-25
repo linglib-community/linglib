@@ -15,8 +15,9 @@ noun phrase.
 
 ## Implementation notes
 
-* Heads are parts of a partition of the `Harley2017.Feature`s. The paper's causative v is
-  Harley's lower Caus, which Harley takes to be productive; the paper's (28) calls it lexical.
+* A pattern lists its heads bottom-up, each with the `Harley2017.Projection`s it bears. The
+  paper's causative v is Harley's lower Caus, which Harley takes to be productive; the paper's
+  (28) calls it lexical.
 * One linking hypothesis connects the tests to structure: a form separating *dǎ* from what
   follows it is acceptable iff the two do not share a complex head.
 * `Combination.ShareHead` compares complex heads as trees, which suffices because the heads
@@ -45,8 +46,8 @@ noun phrase.
 namespace ChengCheng2026
 
 open DistributedMorphology DistributedMorphology.RootCategorization
-open Morphology hiding Feature
-open Harley2017 (Feature)
+open Morphology
+open Harley2017 (Projection)
 open PhraseStructure
 
 /-! ### Three heads -/
@@ -66,17 +67,17 @@ def exponentTable : List (String × Exponent) := [("dǎ", .da), ("gěi", .gei), 
 
 /-- The context-free items *dǎ* for v, *gěi* for the lower Caus and *bǎ* for Voice; the last two
 follow [sybesma-2021]. -/
-def vocabulary : RuleSet (VocabularyItem Feature Exponent) :=
+def vocabulary : RuleSet (VocabularyItem Projection Exponent) :=
   [{.v} ⟷ .da, {.caus₁} ⟷ .gei, {.voice} ⟷ .ba]
 
-theorem subsetPrinciple_v (l r : List (Finset Feature)) :
+theorem subsetPrinciple_v (l r : List (Finset Projection)) :
     subsetPrinciple vocabulary ⟨{.v}, l, r⟩ = some .da := by
   rw [subsetPrinciple_eq_head?_applicable (by decide)]
   simp [RuleSet.applicable, vocabulary]
 
-/-- The exponents of the heads bearing Voice, the lower Caus and v, in that order. -/
-def topDown {s : Finset Feature} (P : Finpartition s) : List (Option Exponent) :=
-  [.voice, .caus₁, .v].map fun f ↦ subsetPrinciple vocabulary (P.part f)
+/-- The exponents of the heads of a pattern, from the highest down. -/
+def topDown (bs : List (List Projection)) : List (Option Exponent) :=
+  (bs.map fun b ↦ subsetPrinciple vocabulary (Neighborhood.ofBundle b.toFinset)).reverse
 
 /-- The exponents a datum lists, in surface order. -/
 def exponents (d : Datum) : List Exponent :=
@@ -86,26 +87,42 @@ theorem exponents_ex_30 :
     ∀ d ∈ [Examples.ex_30a, Examples.ex_30b], exponents d = [.ba, .gei, .da] := by
   decide +kernel
 
-/-- A partition of v, the lower Caus and Voice realizes the exponents of (30) iff it is discrete. -/
-theorem topDown_eq_iff {P : Finpartition Harley2017.vCausVoice}
-    {d : Datum} (hd : d ∈ [Examples.ex_30a, Examples.ex_30b]) :
-    topDown P = (exponents d).map some ↔ P = ⊥ := by
+/-- A pattern of v, the lower Caus and Voice realizes the exponents of (30) iff it has a head for
+each, Harley's Turkish pattern. -/
+theorem topDown_eq_iff {bs : List (List Projection)}
+    (hbs : bs.flatten = [.v, .caus₁, .voice]) {d : Datum}
+    (hd : d ∈ [Examples.ex_30a, Examples.ex_30b]) :
+    topDown bs = (exponents d).map some ↔ bs = Harley2017.turkish := by
   rw [exponents_ex_30 d hd]
-  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-  · simp only [topDown, List.map_cons, List.map_nil, List.cons.injEq, and_true] at h
-    have hinj : Set.InjOn P.part Harley2017.vCausVoice := by
-      intro x hx y hy hxy
-      simp at hx hy
-      grind
-    refine le_bot_iff.1 fun b hb ↦ ?_
-    obtain ⟨x, hx⟩ := P.nonempty_of_mem_parts hb
-    refine ⟨{x}, Finpartition.mem_bot_iff.2 ⟨x, P.le hb hx, rfl⟩, fun y hy ↦ ?_⟩
-    rw [Finset.mem_singleton]
-    exact hinj (P.le hb hy) (P.le hb hx)
-      ((P.part_eq_of_mem hb hy).trans (P.part_eq_of_mem hb hx).symm)
-  · subst h
-    simp [topDown]
-    decide
+  refine ⟨fun h ↦ ?_, fun h ↦ by subst h; decide⟩
+  have hnil : subsetPrinciple vocabulary (Neighborhood.ofBundle ([] : List Projection).toFinset) =
+      none := by decide
+  obtain ⟨b₀, b₁, b₂, rfl, h₀, h₁, h₂⟩ : ∃ b₀ b₁ b₂, bs = [b₀, b₁, b₂] ∧
+      subsetPrinciple vocabulary (Neighborhood.ofBundle b₀.toFinset) = some .da ∧
+      subsetPrinciple vocabulary (Neighborhood.ofBundle b₁.toFinset) = some .gei ∧
+      subsetPrinciple vocabulary (Neighborhood.ofBundle b₂.toFinset) = some .ba := by
+    have h' := congrArg List.reverse h
+    simp only [topDown, List.reverse_reverse, List.map_cons, List.map_nil, List.reverse_cons,
+      List.reverse_nil, List.nil_append, List.cons_append, List.map_eq_cons_iff,
+      List.map_eq_nil_iff] at h'
+    obtain ⟨b₀, _, rfl, h₀, b₁, _, rfl, h₁, b₂, _, rfl, h₂, rfl⟩ := h'
+    exact ⟨b₀, b₁, b₂, rfl, h₀, h₁, h₂⟩
+  rcases b₀ with _ | ⟨x₀, t₀⟩
+  · exact absurd (hnil.symm.trans h₀) (by simp)
+  rcases b₁ with _ | ⟨x₁, t₁⟩
+  · exact absurd (hnil.symm.trans h₁) (by simp)
+  rcases b₂ with _ | ⟨x₂, t₂⟩
+  · exact absurd (hnil.symm.trans h₂) (by simp)
+  have hlen := congrArg List.length hbs
+  simp only [List.flatten_cons, List.flatten_nil, List.append_nil, List.length_append,
+    List.length_cons, List.length_nil] at hlen
+  obtain rfl : t₀ = [] := List.length_eq_zero_iff.1 (by omega)
+  obtain rfl : t₁ = [] := List.length_eq_zero_iff.1 (by omega)
+  obtain rfl : t₂ = [] := List.length_eq_zero_iff.1 (by omega)
+  simp only [List.flatten_cons, List.flatten_nil, List.append_nil, List.cons_append,
+    List.nil_append, List.cons.injEq, and_true] at hbs
+  obtain ⟨rfl, rfl, rfl⟩ := hbs
+  rfl
 
 /-! ### Separability -/
 

@@ -26,7 +26,6 @@ when the map is `IsContiguous`.
 
 ## Main definitions
 
-* `Spine.Position`, `Spine.headAt`: the positions of a spine and the head at each.
 * `Spine.occurrences`: the positions a head occupies.
 * `Spine.highest`, `Spine.lowest`: the resolutions that pronounce a head at its highest or its
   lowest occurrence.
@@ -38,11 +37,20 @@ when the map is `IsContiguous`.
 * `Spine.highest_eq_occurrences`, `Spine.lowest_eq_occurrences`: there the two resolutions agree
   with each other and with every resolution that pronounces each head somewhere.
 
+## Implementation notes
+
+A word belongs to a head and not to one of its occurrences: in [harizanov-gribanova-2019] word
+formation acts on the syntactic object and Chain Reduction on the positions it occupies. The
+hosting is therefore valued in heads, and a word formed at one occurrence of a head is pronounced
+wherever the resolution pronounces the head.
+
+A value of the type of heads names one head here: two positions with the same value are
+occurrences of that head. A spine on which a category recurs without any head occupying two
+positions is the image under `Spine.map` of a spine of this kind.
+
 ## TODO
 
 * The resolutions that pronounce a head at several of its occurrences, as in predicate doubling.
-* Whether a word belongs to a head or to one of its occurrences. The hosting above is valued in
-  heads, so a word formed at one occurrence of a head is pronounced wherever the head is.
 
 ## References
 
@@ -55,12 +63,6 @@ when the map is `IsContiguous`.
 namespace Spine
 
 variable {H : Type*} (s : Spine H)
-
-/-- The positions of a spine, from the bottom up. -/
-abbrev Position : Type := Fin s.heads.length
-
-/-- The head at a position. -/
-def headAt (p : s.Position) : H := s.heads.get p
 
 variable [DecidableEq H] {s} {h : H} {p : s.Position}
 

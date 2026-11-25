@@ -208,6 +208,13 @@ theorem nth_around [Inhabited Bundle] {k : ℕ} (hi : i ≤ d.length) (hk : k �
     simp only [around, List.getD_eq_getElem?_getD, List.getElem?_drop]
     rw [show i + 1 + m = i + m + 1 by omega]
 
+/-- The terminal next to position `k + 1` on its left is terminal `k` of the string. -/
+theorem nth_neg_one_around [Inhabited Bundle] {k : ℕ} (hk : k < d.length) :
+    (around d (k + 1) b).nth (-1) = d[k] := by
+  rw [show (-1 : ℤ) = (k : ℤ) - ((k + 1 : ℕ) : ℤ) by omega,
+    nth_around d (k + 1) b hk (by omega), List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hk,
+    Option.getD_some]
+
 @[simp] theorem length_along : (along d).length = d.length := List.length_mapIdx
 
 @[simp] theorem getElem_along (h : i < (along d).length) :

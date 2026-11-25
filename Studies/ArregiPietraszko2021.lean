@@ -716,24 +716,30 @@ private theorem isLeftComb_iff_mem_range_comb {x : FreeMagma H} :
     | nil => trivial
     | append_singleton l a ih => simpa [comb] using ih
 
+-- On the French clause the two constructions give the same word with the same site.
+theorem amalgamation_sited_french :
+    (amalgamate HarizanovGribanova2019.french).map MorphosyntacticWord.sited =
+      some (Minimalist.HeadChain.sited (· ≠ Cat.V) (· = Cat.T) ⟨[.V, .v, .Neg, .T]⟩) := by
+  decide
+
 -- On the French clause the two constructions give one hosting: every position is pronounced at T.
 theorem amalgamation_hosts_french :
     (amalgamate HarizanovGribanova2019.french).map MorphosyntacticWord.hosts =
-      some (Minimalist.HeadChain.hosts (· ≠ Cat.V) (· = Cat.T) [.V, .v, .Neg, .T]) := by
+      some (Minimalist.HeadChain.hosts (· ≠ Cat.V) (· = Cat.T) ⟨[.V, .v, .Neg, .T]⟩) := by
   decide
 
 theorem amalgamation_bracketing (x y z : Cat) :
-    amalgamate [⟨z, none⟩, ⟨y, some .lowering⟩, ⟨x, some .lowering⟩] =
+    amalgamate ⟨[⟨z, none⟩, ⟨y, some .lowering⟩, ⟨x, some .lowering⟩]⟩ =
         some [⟨z, comb (HeadChain.ofHeads z [y, x]).mvalue⟩] ∧
-      amalgamate [⟨z, none⟩, ⟨y, some .raising⟩, ⟨x, some .lowering⟩] =
+      amalgamate ⟨[⟨z, none⟩, ⟨y, some .raising⟩, ⟨x, some .lowering⟩]⟩ =
         some [⟨z, of z * (of y * of x)⟩] :=
   ⟨rfl, rfl⟩
 
 theorem amalgamation_class9 :
-    amalgamate [⟨.T, none⟩, ⟨.C, some .lowering⟩, ⟨.D, some .lowering⟩,
-        ⟨.Lnk, some .lowering⟩] = some [⟨.T, comb relative.mvalue⟩] ∧
-      ∃ a, amalgamate [⟨.T, none⟩, ⟨.C, some .lowering⟩, ⟨.D, some .raising⟩,
-          ⟨.Lnk, some .lowering⟩] = some [a] ∧
+    amalgamate ⟨[⟨.T, none⟩, ⟨.C, some .lowering⟩, ⟨.D, some .lowering⟩,
+        ⟨.Lnk, some .lowering⟩]⟩ = some [⟨.T, comb relative.mvalue⟩] ∧
+      ∃ a, amalgamate ⟨[⟨.T, none⟩, ⟨.C, some .lowering⟩, ⟨.D, some .raising⟩,
+          ⟨.Lnk, some .lowering⟩]⟩ = some [a] ∧
         a.heads = relative.terminals ∧ a.bracketing ≠ comb relative.mvalue ∧
         ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis, (lift e a.bracketing).segments = [Ndebele.i] :=
   ⟨rfl, _, rfl, rfl, by decide, by decide +kernel⟩
@@ -741,8 +747,8 @@ theorem amalgamation_class9 :
 theorem amalgamation_at_pronounced {lo hi rest : List Cat} {s b : Cat}
     (h : lo ++ s :: hi = b :: rest) (hnd : (b :: rest).Nodup) :
     (HeadChain.ofHeads b rest).pronounced {s} = some s ∧
-      amalgamate (lo.map (Terminal.mk · (some .raising)) ++ ⟨s, none⟩ ::
-          hi.map (Terminal.mk · (some .lowering))) =
+      amalgamate ⟨lo.map (Terminal.mk · (some .raising)) ++ ⟨s, none⟩ ::
+          hi.map (Terminal.mk · (some .lowering))⟩ =
         some [⟨s, comb (HeadChain.ofHeads b rest).mvalue⟩] := by
   refine ⟨?_, amalgamate_raising_lowering h⟩
   have hs : s ∉ lo ++ hi := (List.nodup_cons.mp (List.nodup_middle.mp (h ▸ hnd))).1
@@ -773,10 +779,11 @@ private theorem forall_isLeftComb_amalgamate {below : List (MorphosyntacticWord 
 /-- GenHM builds only complex heads in which each head is adjoined outside the heads below it,
 the bracketing of the Mirror Principle. Amalgamation builds only such complex heads exactly when
 no head Lowers right after a head has Raised into it. -/
-theorem forall_mem_range_comb_iff {hs : List (Terminal H)} {out : List (MorphosyntacticWord H)}
-    (h : amalgamate hs = some out) :
+theorem forall_mem_range_comb_iff {s : Spine (Terminal H)} {out : List (MorphosyntacticWord H)}
+    (h : amalgamate s = some out) :
     (∀ a ∈ out, a.bracketing ∈ Set.range comb) ↔
-      (hs.map (·.m)).IsChain fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
+      (s.map Terminal.m).heads.IsChain fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
+  obtain ⟨hs⟩ := s
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   have := forall_isLeftComb_amalgamate hr
   simp only [← isLeftComb_iff_mem_range_comb]
@@ -784,8 +791,8 @@ theorem forall_mem_range_comb_iff {hs : List (Terminal H)} {out : List (Morphosy
 
 theorem amalgamation_keeps_verb_site (m : Cat → Option Direction)
     {out out' : List (MorphosyntacticWord Cat)} {a a' : MorphosyntacticWord Cat}
-    (h : amalgamate ([Cat.V, .T].map fun x ↦ ⟨x, m x⟩) = some out)
-    (h' : amalgamate ([Cat.V, .T, .C].map fun x ↦ ⟨x, m x⟩) = some out')
+    (h : amalgamate ⟨[Cat.V, .T].map fun x ↦ ⟨x, m x⟩⟩ = some out)
+    (h' : amalgamate ⟨[Cat.V, .T, .C].map fun x ↦ ⟨x, m x⟩⟩ = some out')
     (ha : a ∈ out) (ha' : a' ∈ out') (hV : .V ∈ a.heads) (hV' : .V ∈ a'.heads) :
     a'.site = a.site :=
   site_eq_of_amalgamate_append (extra := [⟨Cat.C, m .C⟩]) h h' (by simp) ha ha' hV hV'

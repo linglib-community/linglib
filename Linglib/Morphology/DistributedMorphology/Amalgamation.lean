@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.DistributedMorphology.MorphosyntacticWord
+public import Linglib.Syntax.Spine.Occurrence
 public import Linglib.Core.Data.List.Sublist
 public import Mathlib.Data.List.Pairwise
 
@@ -27,15 +28,16 @@ All in the namespace `DistributedMorphology`.
 * `amalgamate`: the words amalgamation forms on a spine.
 * `Amalgamation.moveToRoot`: a second occurrence of a head at the top of the spine, left by
   syntactic movement before amalgamation.
-* `Amalgamation.PronouncedFrom`: the word containing a head is pronounced at a position or above.
+* `Amalgamation.PronouncedFrom`: after Chain Reduction, the word containing a head is pronounced at
+  the lowest occurrence of another head or above it.
 
 ## Main results
 
 * `flatMap_heads_amalgamate`: the words partition the spine in order.
 * `heads_infix_of_mem_amalgamate`: every word is a contiguous stretch of the spine.
 * `site_mem_heads_of_mem_amalgamate`: every word is pronounced at one of its own heads.
-* `hmc_hosts_of_amalgamate`: on a spine without repeated heads, amalgamation obeys the Head
-  Movement Constraint.
+* `isContiguous_hosts_of_amalgamate`: on a spine without repeated heads, the hosting of
+  amalgamation is contiguous.
 * `site_eq_of_amalgamate_append`: heads added above a spine do not change where the words formed
   below are pronounced.
 * `amalgamate_raising_lowering`: with the heads below a position Raising and the heads above it
@@ -104,13 +106,13 @@ def amalgamateAux : List (MWd H) → Option (FreeMagma H) → List (Terminal H) 
 
 /-- The complex heads that amalgamation forms on a spine, lowest first, or `none` when the
 postsyntactic derivation does not converge. -/
-def amalgamate (spine : List (Terminal H)) : Option (List (MWd H)) :=
-  (amalgamateAux [] none spine).map List.reverse
+def amalgamate (spine : Spine (Terminal H)) : Option (List (MWd H)) :=
+  (amalgamateAux [] none spine.heads).map List.reverse
 
 /-- Syntactic movement of the head `y` to the root, which precedes amalgamation, gives `y` a
 second occurrence at the top of the spine. -/
-def Amalgamation.moveToRoot (spine : List (Terminal H)) (y : H) : List (Terminal H) :=
-  spine ++ [⟨y, none⟩]
+def Amalgamation.moveToRoot (spine : Spine (Terminal H)) (y : H) : Spine (Terminal H) :=
+  spine.append [⟨y, none⟩]
 
 private theorem flatMap_heads_amalgamateAux {below : List (MWd H)}
     {pending : Option (FreeMagma H)} {above : List (Terminal H)} {out : List (MWd H)}
@@ -128,23 +130,23 @@ private theorem flatMap_heads_amalgamateAux {below : List (MWd H)}
 
 /-- The complex heads partition the spine in the order of syntactic composition: the affixes of
 a complex head mirror that order, and no head gains or loses an occurrence. -/
-theorem flatMap_heads_amalgamate {spine : List (Terminal H)} {out : List (MWd H)}
+theorem flatMap_heads_amalgamate {spine : Spine (Terminal H)} {out : List (MWd H)}
     (h : amalgamate spine = some out) :
-    out.flatMap MorphosyntacticWord.heads = spine.map (·.head) := by
+    out.flatMap MorphosyntacticWord.heads = (spine.map (·.head)).heads := by
   obtain ⟨out', h', rfl⟩ := Option.map_eq_some_iff.mp h
   simpa using flatMap_heads_amalgamateAux h'
 
-theorem heads_infix_of_mem_amalgamate {spine : List (Terminal H)} {out : List (MWd H)}
+theorem heads_infix_of_mem_amalgamate {spine : Spine (Terminal H)} {out : List (MWd H)}
     (h : amalgamate spine = some out) {a : MWd H} (ha : a ∈ out) :
-    a.heads <:+: spine.map (·.head) :=
+    a.heads <:+: (spine.map (·.head)).heads :=
   flatMap_heads_amalgamate h ▸ List.infix_of_mem_flatten (List.mem_map_of_mem ha)
 
-theorem mem_of_mem_amalgamate_of_nodup [DecidableEq H] {spine : List (Terminal H)}
+theorem mem_of_mem_amalgamate_of_nodup [DecidableEq H] {spine : Spine (Terminal H)}
     {out : List (MWd H)} (h : amalgamate spine = some out)
-    (hnd : (spine.map (·.head)).Nodup) {a : MWd H} (ha : a ∈ out) {x y z : H}
-    (hx : x ∈ a.heads) (hy : y ∈ a.heads) (hz : z ∈ spine.map (·.head))
-    (hxz : (spine.map (·.head)).idxOf x ≤ (spine.map (·.head)).idxOf z)
-    (hzy : (spine.map (·.head)).idxOf z ≤ (spine.map (·.head)).idxOf y) :
+    (hnd : (spine.map (·.head)).heads.Nodup) {a : MWd H} (ha : a ∈ out) {x y z : H}
+    (hx : x ∈ a.heads) (hy : y ∈ a.heads) (hz : z ∈ (spine.map (·.head)).heads)
+    (hxz : (spine.map (·.head)).heads.idxOf x ≤ (spine.map (·.head)).heads.idxOf z)
+    (hzy : (spine.map (·.head)).heads.idxOf z ≤ (spine.map (·.head)).heads.idxOf y) :
     z ∈ a.heads :=
   (heads_infix_of_mem_amalgamate h ha).mem_of_idxOf_le_of_le hnd hx hy hz hxz hzy
 
@@ -158,11 +160,11 @@ theorem amalgamateAux_append {below : List (MWd H)} {pending : Option (FreeMagma
     rcases ha : a.m with _ | _ | _ <;> cases below <;>
       simp only [List.cons_append, amalgamateAux, ha] at h ⊢ <;> first | exact ih h | simp at h
 
-theorem amalgamate_moveToRoot {spine : List (Terminal H)} {out : List (MWd H)} (y : H)
+theorem amalgamate_moveToRoot {spine : Spine (Terminal H)} {out : List (MWd H)} (y : H)
     (h : amalgamate spine = some out) :
     amalgamate (moveToRoot spine y) = some (out ++ [⟨y, of y⟩]) := by
   obtain ⟨out', h', rfl⟩ := Option.map_eq_some_iff.mp h
-  rw [amalgamate, moveToRoot, amalgamateAux_append _ h']
+  rw [amalgamate, moveToRoot, Spine.heads_append, amalgamateAux_append _ h']
   cases out' <;> simp [amalgamateAux]
 
 private theorem exists_site_eq_of_amalgamateAux {below : List (MWd H)}
@@ -188,18 +190,19 @@ private theorem exists_site_eq_of_amalgamateAux {below : List (MWd H)}
           (by simpa [MorphosyntacticWord.heads] using hm)⟩
       · exact ih h (List.mem_cons_of_mem _ hb)
 
-theorem exists_site_eq_of_amalgamate_append {spine extra : List (Terminal H)}
+theorem exists_site_eq_of_amalgamate_append {spine : Spine (Terminal H)} {extra : List (Terminal H)}
     {out out' : List (MWd H)}
-    (h : amalgamate spine = some out) (h' : amalgamate (spine ++ extra) = some out')
+    (h : amalgamate spine = some out) (h' : amalgamate (spine.append extra) = some out')
     {a : MWd H} (ha : a ∈ out) : ∃ a' ∈ out', a'.site = a.site ∧ a.heads <+: a'.heads := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   obtain ⟨r', hr', rfl⟩ := Option.map_eq_some_iff.mp h'
-  rw [amalgamateAux_append extra hr] at hr'
+  rw [Spine.heads_append, amalgamateAux_append extra hr] at hr'
   simpa using exists_site_eq_of_amalgamateAux hr' (List.mem_reverse.mp ha)
 
-theorem site_eq_of_amalgamate_append {spine extra : List (Terminal H)} {out out' : List (MWd H)}
-    (h : amalgamate spine = some out) (h' : amalgamate (spine ++ extra) = some out')
-    (hnd : ((spine ++ extra).map (·.head)).Nodup) {a a' : MWd H} (ha : a ∈ out)
+theorem site_eq_of_amalgamate_append {spine : Spine (Terminal H)} {extra : List (Terminal H)}
+    {out out' : List (MWd H)}
+    (h : amalgamate spine = some out) (h' : amalgamate (spine.append extra) = some out')
+    (hnd : ((spine.append extra).map (·.head)).heads.Nodup) {a a' : MWd H} (ha : a ∈ out)
     (ha' : a' ∈ out') {x : H} (hx : x ∈ a.heads) (hx' : x ∈ a'.heads) : a'.site = a.site := by
   obtain ⟨b, hb, hs, hm⟩ := exists_site_eq_of_amalgamate_append h h' ha
   rw [← flatMap_heads_amalgamate h', List.nodup_flatMap] at hnd
@@ -241,8 +244,8 @@ the heads above Lowering, all the heads form one complex head there, each added 
 head of the heads below it. -/
 theorem amalgamate_raising_lowering {lo hi rest : List H} {s b : H}
     (h : lo ++ s :: hi = b :: rest) :
-    amalgamate (lo.map (Terminal.mk · (some .raising)) ++ ⟨s, none⟩ ::
-        hi.map (Terminal.mk · (some .lowering))) =
+    amalgamate ⟨lo.map (Terminal.mk · (some .raising)) ++ ⟨s, none⟩ ::
+        hi.map (Terminal.mk · (some .lowering))⟩ =
       some [⟨s, rest.foldl (· * of ·) (of b)⟩] := by
   rw [amalgamate, amalgamateAux_raising, amalgamateAux_none, amalgamateAux_lowering]
   cases lo with
@@ -265,41 +268,35 @@ private theorem site_mem_heads_of_amalgamateAux {below : List (MWd H)}
       first | exact ih h (by simp_all [MorphosyntacticWord.heads]) | simp at h
 
 /-- Every word of amalgamation is pronounced at one of its own heads. -/
-theorem site_mem_heads_of_mem_amalgamate {spine : List (Terminal H)}
+theorem site_mem_heads_of_mem_amalgamate {spine : Spine (Terminal H)}
     {out : List (MWd H)} (h : amalgamate spine = some out)
     {a : MWd H} (ha : a ∈ out) : a.site ∈ a.heads := by
   obtain ⟨out', h', rfl⟩ := Option.map_eq_some_iff.mp h
   exact site_mem_heads_of_amalgamateAux h' (by simp) a (List.mem_reverse.mp ha)
 
-/-- On a spine without repeated heads, the words of amalgamation have distinct sites. -/
-theorem nodup_map_site_of_amalgamate {spine : List (Terminal H)}
+/-- On a spine without repeated heads, the hosting of amalgamation is contiguous. -/
+theorem isContiguous_hosts_of_amalgamate {spine : Spine (Terminal H)}
     {out : List (MWd H)} (h : amalgamate spine = some out)
-    (hnd : (spine.map (·.head)).Nodup) : (out.map (·.site)).Nodup := by
-  rw [← flatMap_heads_amalgamate h, List.nodup_flatMap] at hnd
-  rw [List.Nodup, List.pairwise_map]
-  exact hnd.2.imp_of_mem fun ha hb hd he ↦ hd (site_mem_heads_of_mem_amalgamate h ha)
-    (he ▸ site_mem_heads_of_mem_amalgamate h hb)
+    (hnd : (spine.map (·.head)).heads.Nodup) : IsContiguous (MorphosyntacticWord.hosts out).get :=
+  MorphosyntacticWord.isContiguous_hosts (fun _ ha ↦ site_mem_heads_of_mem_amalgamate h ha)
+    (flatMap_heads_amalgamate h ▸ hnd)
 
-/-- On a spine without repeated heads, amalgamation obeys the Head Movement Constraint. -/
-theorem hmc_hosts_of_amalgamate {spine : List (Terminal H)}
-    {out : List (MWd H)} (h : amalgamate spine = some out)
-    (hnd : (spine.map (·.head)).Nodup) : HMC.Holds (MorphosyntacticWord.hosts out) :=
-  MorphosyntacticWord.hmc_hosts (nodup_map_site_of_amalgamate h hnd)
-
-theorem length_hosts_of_amalgamate {spine : List (Terminal H)}
+theorem length_hosts_of_amalgamate {spine : Spine (Terminal H)}
     {out : List (MWd H)} (h : amalgamate spine = some out) :
-    (MorphosyntacticWord.hosts out).length = spine.length := by
-  rw [MorphosyntacticWord.length_hosts, flatMap_heads_amalgamate h, List.length_map]
+    (MorphosyntacticWord.hosts out).length = spine.heads.length := by
+  rw [MorphosyntacticWord.length_hosts, flatMap_heads_amalgamate h, Spine.heads_map,
+    List.length_map]
 
-/-- Chain Reduction pronounces the highest occurrence of a head, and a complex head formed at
-one occurrence of a moved head belongs to all of them. `PronouncedFrom spine h x` says that the
-complex head containing `h` is thereby pronounced in the position of `x` or above it. -/
-def Amalgamation.PronouncedFrom [DecidableEq H] (spine : List (Terminal H)) (h x : H) : Prop :=
-  ∃ out ∈ amalgamate spine, ∃ a ∈ out,
-    h ∈ a.heads ∧ a.site ∈ (spine.map (·.head)).dropWhile (· ≠ x)
+/-- A complex head belongs to the head it is formed at, in all of that head's occurrences, and
+Chain Reduction pronounces the highest of them, `Spine.highest`. `PronouncedFrom ts h x` says
+that the complex head containing `h` is thereby pronounced at the lowest occurrence of `x` or
+above it. -/
+def Amalgamation.PronouncedFrom [DecidableEq H] (ts : Spine (Terminal H)) (h x : H) : Prop :=
+  ∃ out ∈ amalgamate ts, ∃ a ∈ out, h ∈ a.heads ∧
+    ∃ p ∈ (ts.map Terminal.head).highest a.site, ∃ q ∈ (ts.map Terminal.head).lowest x, q ≤ p
 
-instance [DecidableEq H] (spine : List (Terminal H)) (h x : H) :
-    Decidable (PronouncedFrom spine h x) :=
-  inferInstanceAs (Decidable (∃ out ∈ amalgamate spine, _))
+instance [DecidableEq H] (ts : Spine (Terminal H)) (h x : H) :
+    Decidable (PronouncedFrom ts h x) :=
+  inferInstanceAs (Decidable (∃ out ∈ amalgamate ts, _))
 
 end DistributedMorphology

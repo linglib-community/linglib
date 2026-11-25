@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.ExtendedProjection
-public import Linglib.Syntax.Spine.Basic
+public import Linglib.Syntax.Spine.Label
 
 /-!
 # Spines of extended projections

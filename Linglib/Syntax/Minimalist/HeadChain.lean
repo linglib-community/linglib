@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Generalizations.HeadMovementConstraint
-public import Mathlib.Data.List.SplitBy
+public import Linglib.Syntax.Spine.Hosting
+public import Linglib.Syntax.Spine.SplitBefore
 
 /-!
 # Head chains
@@ -23,13 +23,15 @@ pronounced.
 
 * `Minimalist.HeadChain.chains`: the head chains of a spine.
 * `Minimalist.HeadChain.site`: the head at which a chain is pronounced.
+* `Minimalist.HeadChain.sited`: the head chains with their sites.
 * `Minimalist.HeadChain.hosts`: the head at which each position of a spine is pronounced.
 
 ## Main results
 
 * `Minimalist.HeadChain.flatten_chains`: the chains partition the spine in order.
-* `Minimalist.HeadChain.hmc_hosts`: on a spine without repeated heads, head chains obey the Head
-  Movement Constraint.
+* `Minimalist.HeadChain.infix_of_mem_chains`: each chain is a stretch of the spine.
+* `Minimalist.HeadChain.isContiguous_hosts`: on a spine without repeated heads, the hosting of
+  head chains is contiguous.
 
 ## Implementation notes
 
@@ -56,35 +58,52 @@ variable {H : Type*} (shares strong : H → Prop) [DecidablePred shares] [Decida
 
 /-- The head chains of a spine, lowest first: a head that shares its M-value with the head of its
 complement joins the chain of the head below it. -/
-def chains (s : List H) : List (List H) := s.splitBy fun _ b ↦ decide (shares b)
+def chains (s : Spine H) : List (List H) := s.splitBefore (¬ shares ·)
 
 /-- Head Chain Pronunciation: a chain is pronounced at its highest strong position, or at its
 highest position when none is strong. -/
 def site (c : List H) : Option H := (c.filter (strong ·)).getLast?.or c.getLast?
 
+/-- The head chains of a spine with their sites, lowest first. -/
+def sited (s : Spine H) : List (List H × H) :=
+  (chains shares s).filterMap fun c ↦ (site strong c).map (c, ·)
+
 /-- The host of each position of a spine: the head at which its chain is pronounced. -/
-def hosts (s : List H) : List H :=
-  ((chains shares s).filterMap fun c ↦ (site strong c).map (c.length, ·)).flatMap
-    fun p ↦ List.replicate p.1 p.2
+def hosts (s : Spine H) : List H := Spine.hosting (sited shares strong s)
 
 variable {shares strong}
 
-theorem flatten_chains (s : List H) : (chains shares s).flatten = s := List.flatten_splitBy _ _
+theorem flatten_chains (s : Spine H) : (chains shares s).flatten = s.heads :=
+  s.flatten_splitBefore _
 
 theorem mem_of_site {c : List H} {x : H} (h : site strong c = some x) : x ∈ c := by
   rcases Option.or_eq_some_iff.mp h with h | ⟨-, h⟩
   · exact (List.mem_filter.mp (List.mem_of_getLast? h)).1
   · exact List.mem_of_getLast? h
 
-/-- On a spine without repeated heads, head chains obey the Head Movement Constraint. -/
-theorem hmc_hosts {s : List H} (hs : s.Nodup) : HMC.Holds (hosts shares strong s) := by
-  refine List.isContiguous_get_flatMap_replicate ?_
-  rw [← flatten_chains (shares := shares) s, List.nodup_flatten] at hs
-  rw [List.Nodup, List.pairwise_map]
-  refine hs.2.filterMap _ fun c c' hd p hp p' hp' he ↦ ?_
-  obtain ⟨x, hx, rfl⟩ := Option.map_eq_some_iff.mp hp
-  obtain ⟨x', hx', rfl⟩ := Option.map_eq_some_iff.mp hp'
-  obtain rfl : x = x' := he
-  exact hd (mem_of_site hx) (mem_of_site hx')
+/-- Each head chain is a stretch of the spine. -/
+theorem infix_of_mem_chains {s : Spine H} {c : List H} (h : c ∈ chains shares s) :
+    c <:+: s.heads :=
+  Spine.infix_of_mem_splitBefore h
+
+theorem map_fst_sited_sublist (s : Spine H) :
+    ((sited shares strong s).map Prod.fst).Sublist (chains shares s) := by
+  have : (fun c : List H ↦ ((site strong c).map (c, ·)).map Prod.fst) =
+      Option.guard fun c ↦ (site strong c).isSome := by
+    funext c
+    cases h : site strong c <;> simp [Option.guard, h]
+  rw [sited, List.map_filterMap, this, List.filterMap_eq_filter]
+  exact List.filter_sublist
+
+/-- On a spine without repeated heads, the hosting of head chains is contiguous. -/
+theorem isContiguous_hosts {s : Spine H} (hs : s.heads.Nodup) :
+    IsContiguous (hosts shares strong s).get := by
+  refine Spine.isContiguous_hosting (fun w hw ↦ ?_) ?_
+  · obtain ⟨c, -, hc⟩ := List.mem_filterMap.1 hw
+    obtain ⟨x, hx, rfl⟩ := Option.map_eq_some_iff.1 hc
+    exact mem_of_site hx
+  · rw [← flatten_chains (shares := shares) s] at hs
+    rw [List.flatMap_def]
+    exact hs.sublist (map_fst_sited_sublist s).flatten
 
 end Minimalist.HeadChain
