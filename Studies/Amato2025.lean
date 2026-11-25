@@ -49,7 +49,7 @@ wh-words that fronting derives is the acceptable one of [rudin-1988]'s two. The 
 derivations are person agreement with the object in the Lak perfective and with the subject in
 the present, subject agreement in Spanish VOS clauses, and Hindi-Urdu agreement, where T has
 the person of the controller that [bobaljik-2008]'s accessibility of unmarked case picks, and no
-value where both arguments are marked.
+value where both arguments are marked, as the verb shows in [mahajan-1990]'s examples.
 
 ## Implementation notes
 
@@ -75,8 +75,8 @@ with principles of maximized matching are not formalized.
 * [holmberg-hroarsdottir-2003] report that in the construction of (29b) the agreeing form is
   possible beside the default one when the dative is plural. The derivation gives the default
   form for either number of the dative.
-* The Ariellese paradigm of [dalessandro-roberts-2010] and the Lak, Spanish and Hindi-Urdu
-  examples are not yet rows of the data.
+* The Ariellese paradigm of [dalessandro-roberts-2010] and the Lak and Spanish examples are not
+  yet rows of the data.
 
 ## References
 
@@ -85,6 +85,7 @@ with principles of maximized matching are not formalized.
 * [bobaljik-2008]
 * [dalessandro-roberts-2010]
 * [holmberg-hroarsdottir-2003]
+* [mahajan-1990]
 * [rudin-1988]
 * [ussery-2009]
 -/
@@ -768,5 +769,23 @@ theorem hindi_eq_controller (k : HindiClause) (ps po : Person) :
       (Bobaljik2008.hindiController k.aspect (k = .bothMarked)).elim .unvalued fun r ↦
         ↑(FeatureType.Slot.ofValue .person (if r = .A then ps else po)) := by
   revert k ps po; decide
+
+/-- The clause of the derivations for each marking of the examples. -/
+def Examples.Marking.clause : Examples.Marking → HindiClause
+  | .ergSubject => .ergSubject
+  | .bothMarked => .bothMarked
+  | .unmarkedSubject => .unmarkedSubject
+
+/-- T's person slot when the verb shows the features of the subject, of the object, or neither. -/
+def Examples.Controller.slot (ps po : Person) :
+    Examples.Controller → FeatureSlot FeatureType.person.Slot
+  | .subject => ↑(FeatureType.Slot.ofValue .person ps)
+  | .object => ↑(FeatureType.Slot.ofValue .person po)
+  | .default => .unvalued
+
+-- (37), (38): in each example the verb shows the features of the argument T agrees with
+theorem hindi_example (x : Examples.Example) (ps po : Person) :
+    ∀ m ∈ x.marking, ∀ c ∈ x.controller, hindi m.clause ps po = c.slot ps po := by
+  revert x ps po; decide
 
 end Amato2025

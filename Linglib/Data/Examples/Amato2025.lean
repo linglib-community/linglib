@@ -223,7 +223,52 @@ def ex_35_reverse : Datum :=
     spans := [⟨0, 1, "wh", some "kogo"⟩, ⟨1, 1, "wh", some "koj"⟩]
     paperFeatures := [] }
 
-def all : List Datum := [ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_5c, ex_5d, ex_29a_pl, ex_29a_sg, ex_29b_sg, ex_29b_pl, ex_35, ex_35_reverse]
+def ex_37 : Datum :=
+  { id := "amato2025_37"
+    source := ⟨"mahajan-1990", "(5)"⟩
+    reportedIn := some ⟨"amato-2025", "(37)"⟩
+    language := "hind1269"
+    primaryText := "raam-ne roTii khaayii thii"
+    glossedTokens := [("raam-ne", "Ram(m.)-erg."), ("roTii", "bread(f.)"), ("khaayii", "eat(perf.f.)"), ("thii", "be(pst.f.)")]
+    glossedWords := [⟨['r', 'a', 'a', 'm', '-', 'n', 'e'], ['R', 'a', 'm', '(', 'm', '.', ')', '-', 'e', 'r', 'g', '.'], [⟨['r', 'a', 'a', 'm'], ['R', 'a', 'm', '(', 'm', '.', ')'], none⟩, ⟨['n', 'e'], ['e', 'r', 'g', '.'], some '-'⟩]⟩, ⟨['r', 'o', 'T', 'i', 'i'], ['b', 'r', 'e', 'a', 'd', '(', 'f', '.', ')'], [⟨['r', 'o', 'T', 'i', 'i'], ['b', 'r', 'e', 'a', 'd', '(', 'f', '.', ')'], none⟩]⟩, ⟨['k', 'h', 'a', 'a', 'y', 'i', 'i'], ['e', 'a', 't', '(', 'p', 'e', 'r', 'f', '.', 'f', '.', ')'], [⟨['k', 'h', 'a', 'a', 'y', 'i', 'i'], ['e', 'a', 't', '(', 'p', 'e', 'r', 'f', '.', 'f', '.', ')'], none⟩]⟩, ⟨['t', 'h', 'i', 'i'], ['b', 'e', '(', 'p', 's', 't', '.', 'f', '.', ')'], [⟨['t', 'h', 'i', 'i'], ['b', 'e', '(', 'p', 's', 't', '.', 'f', '.', ')'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("marking", "ergSubject"), ("controller", "object")] }
+
+def ex_38a : Datum :=
+  { id := "amato2025_38a"
+    source := ⟨"mahajan-1990", "(6)"⟩
+    reportedIn := some ⟨"amato-2025", "(38a)"⟩
+    language := "hind1269"
+    primaryText := "baccoN-ne siitaa-ko dekhaa thaa"
+    glossedTokens := [("baccoN-ne", "children(m.)-erg."), ("siitaa-ko", "Sita(f.)-dat."), ("dekhaa", "see(perf.m.sg.)"), ("thaa", "be(pst.m.sg.)")]
+    glossedWords := [⟨['b', 'a', 'c', 'c', 'o', 'N', '-', 'n', 'e'], ['c', 'h', 'i', 'l', 'd', 'r', 'e', 'n', '(', 'm', '.', ')', '-', 'e', 'r', 'g', '.'], [⟨['b', 'a', 'c', 'c', 'o', 'N'], ['c', 'h', 'i', 'l', 'd', 'r', 'e', 'n', '(', 'm', '.', ')'], none⟩, ⟨['n', 'e'], ['e', 'r', 'g', '.'], some '-'⟩]⟩, ⟨['s', 'i', 'i', 't', 'a', 'a', '-', 'k', 'o'], ['S', 'i', 't', 'a', '(', 'f', '.', ')', '-', 'd', 'a', 't', '.'], [⟨['s', 'i', 'i', 't', 'a', 'a'], ['S', 'i', 't', 'a', '(', 'f', '.', ')'], none⟩, ⟨['k', 'o'], ['d', 'a', 't', '.'], some '-'⟩]⟩, ⟨['d', 'e', 'k', 'h', 'a', 'a'], ['s', 'e', 'e', '(', 'p', 'e', 'r', 'f', '.', 'm', '.', 's', 'g', '.', ')'], [⟨['d', 'e', 'k', 'h', 'a', 'a'], ['s', 'e', 'e', '(', 'p', 'e', 'r', 'f', '.', 'm', '.', 's', 'g', '.', ')'], none⟩]⟩, ⟨['t', 'h', 'a', 'a'], ['b', 'e', '(', 'p', 's', 't', '.', 'm', '.', 's', 'g', '.', ')'], [⟨['t', 'h', 'a', 'a'], ['b', 'e', '(', 'p', 's', 't', '.', 'm', '.', 's', 'g', '.', ')'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("marking", "bothMarked"), ("controller", "default")] }
+
+def ex_38b : Datum :=
+  { id := "amato2025_38b"
+    source := ⟨"mahajan-1990", "(4)"⟩
+    reportedIn := some ⟨"amato-2025", "(38b)"⟩
+    language := "hind1269"
+    primaryText := "siitaa kelaa khaatii thii"
+    glossedTokens := [("siitaa", "Sita(f.)"), ("kelaa", "banana(m.)"), ("khaatii", "eat(imp.f.)"), ("thii", "be(pst.f.)")]
+    glossedWords := [⟨['s', 'i', 'i', 't', 'a', 'a'], ['S', 'i', 't', 'a', '(', 'f', '.', ')'], [⟨['s', 'i', 'i', 't', 'a', 'a'], ['S', 'i', 't', 'a', '(', 'f', '.', ')'], none⟩]⟩, ⟨['k', 'e', 'l', 'a', 'a'], ['b', 'a', 'n', 'a', 'n', 'a', '(', 'm', '.', ')'], [⟨['k', 'e', 'l', 'a', 'a'], ['b', 'a', 'n', 'a', 'n', 'a', '(', 'm', '.', ')'], none⟩]⟩, ⟨['k', 'h', 'a', 'a', 't', 'i', 'i'], ['e', 'a', 't', '(', 'i', 'm', 'p', '.', 'f', '.', ')'], [⟨['k', 'h', 'a', 'a', 't', 'i', 'i'], ['e', 'a', 't', '(', 'i', 'm', 'p', '.', 'f', '.', ')'], none⟩]⟩, ⟨['t', 'h', 'i', 'i'], ['b', 'e', '(', 'p', 's', 't', '.', 'f', '.', ')'], [⟨['t', 'h', 'i', 'i'], ['b', 'e', '(', 'p', 's', 't', '.', 'f', '.', ')'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("marking", "unmarkedSubject"), ("controller", "subject")] }
+
+def all : List Datum := [ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_5c, ex_5d, ex_29a_pl, ex_29a_sg, ex_29b_sg, ex_29b_pl, ex_35, ex_35_reverse, ex_37, ex_38a, ex_38b]
 
 /-- The clause types whose perfect auxiliary the paper compares (§3.1). -/
 inductive Clause where
@@ -271,6 +316,35 @@ inductive Agreement where
 def agreement (e : Datum) : Option Agreement :=
   e.parse? "agreement" [("number", .number), ("default", .default)]
 
+/-- The case marking of the arguments of the Hindi-Urdu clauses (§4.3.1). -/
+inductive Marking where
+  /-- ergSubject: the subject is ergative and the object unmarked -/
+  | ergSubject
+  /-- bothMarked: the subject is ergative and the object bears ko -/
+  | bothMarked
+  /-- unmarkedSubject: the subject is unmarked -/
+  | unmarkedSubject
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `marking`. -/
+def marking (e : Datum) : Option Marking :=
+  e.parse? "marking" [("ergSubject", .ergSubject), ("bothMarked", .bothMarked),
+    ("unmarkedSubject", .unmarkedSubject)]
+
+/-- The argument whose features the form of the verb shows. -/
+inductive Controller where
+  /-- subject: the subject -/
+  | subject
+  /-- object: the object -/
+  | object
+  /-- default: neither: the verb is in its default form -/
+  | default
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `controller`. -/
+def controller (e : Datum) : Option Controller :=
+  e.parse? "controller" [("subject", .subject), ("object", .object), ("default", .default)]
+
 /-- The labels of the spans the rows mark. -/
 inductive SpanLabel where
   /-- auxiliary: the word holding the perfect auxiliary -/
@@ -314,12 +388,15 @@ inductive Example where
   | ex_29b_pl
   | ex_35
   | ex_35_reverse
+  | ex_37
+  | ex_38a
+  | ex_38b
   deriving DecidableEq, Repr, Fintype
 
 /-- Every example of the file, in its order. -/
 def Example.all : List Example :=
   [.ex_4a, .ex_4b, .ex_4c, .ex_5a, .ex_5b, .ex_5c, .ex_5d, .ex_29a_pl, .ex_29a_sg, .ex_29b_sg,
-    .ex_29b_pl, .ex_35, .ex_35_reverse]
+    .ex_29b_pl, .ex_35, .ex_35_reverse, .ex_37, .ex_38a, .ex_38b]
 
 /-- The row of an example. -/
 def Example.datum : Example → Datum
@@ -336,6 +413,9 @@ def Example.datum : Example → Datum
   | .ex_29b_pl => _root_.Amato2025.Examples.ex_29b_pl
   | .ex_35 => _root_.Amato2025.Examples.ex_35
   | .ex_35_reverse => _root_.Amato2025.Examples.ex_35_reverse
+  | .ex_37 => _root_.Amato2025.Examples.ex_37
+  | .ex_38a => _root_.Amato2025.Examples.ex_38a
+  | .ex_38b => _root_.Amato2025.Examples.ex_38b
 
 theorem Example.map_datum_all :
     Example.all.map Example.datum = _root_.Amato2025.Examples.all := rfl
@@ -355,6 +435,9 @@ def Example.clause : Example → Option Clause
   | .ex_29b_pl => none
   | .ex_35 => none
   | .ex_35_reverse => none
+  | .ex_37 => none
+  | .ex_38a => none
+  | .ex_38b => none
 
 theorem Example.clause_datum :
     ∀ x : Example, _root_.Amato2025.Examples.clause x.datum = x.clause := by
@@ -375,6 +458,9 @@ def Example.construction : Example → Option Construction
   | .ex_29b_pl => some .biclausal
   | .ex_35 => none
   | .ex_35_reverse => none
+  | .ex_37 => none
+  | .ex_38a => none
+  | .ex_38b => none
 
 theorem Example.construction_datum :
     ∀ x : Example, _root_.Amato2025.Examples.construction x.datum = x.construction := by
@@ -395,9 +481,58 @@ def Example.agreement : Example → Option Agreement
   | .ex_29b_pl => some .number
   | .ex_35 => none
   | .ex_35_reverse => none
+  | .ex_37 => none
+  | .ex_38a => none
+  | .ex_38b => none
 
 theorem Example.agreement_datum :
     ∀ x : Example, _root_.Amato2025.Examples.agreement x.datum = x.agreement := by
+  decide +kernel
+
+/-- The value the example records under `marking`. -/
+def Example.marking : Example → Option Marking
+  | .ex_4a => none
+  | .ex_4b => none
+  | .ex_4c => none
+  | .ex_5a => none
+  | .ex_5b => none
+  | .ex_5c => none
+  | .ex_5d => none
+  | .ex_29a_pl => none
+  | .ex_29a_sg => none
+  | .ex_29b_sg => none
+  | .ex_29b_pl => none
+  | .ex_35 => none
+  | .ex_35_reverse => none
+  | .ex_37 => some .ergSubject
+  | .ex_38a => some .bothMarked
+  | .ex_38b => some .unmarkedSubject
+
+theorem Example.marking_datum :
+    ∀ x : Example, _root_.Amato2025.Examples.marking x.datum = x.marking := by
+  decide +kernel
+
+/-- The value the example records under `controller`. -/
+def Example.controller : Example → Option Controller
+  | .ex_4a => none
+  | .ex_4b => none
+  | .ex_4c => none
+  | .ex_5a => none
+  | .ex_5b => none
+  | .ex_5c => none
+  | .ex_5d => none
+  | .ex_29a_pl => none
+  | .ex_29a_sg => none
+  | .ex_29b_sg => none
+  | .ex_29b_pl => none
+  | .ex_35 => none
+  | .ex_35_reverse => none
+  | .ex_37 => some .object
+  | .ex_38a => some .default
+  | .ex_38b => some .subject
+
+theorem Example.controller_datum :
+    ∀ x : Example, _root_.Amato2025.Examples.controller x.datum = x.controller := by
   decide +kernel
 
 /-- The lexemes the spans of the example name, each with the span's label, in order. -/
@@ -415,6 +550,9 @@ def Example.labelledLexemes : Example → List (SpanLabel × Lexeme)
   | .ex_29b_pl => []
   | .ex_35 => [(.wh, .koj), (.wh, .kogo)]
   | .ex_35_reverse => [(.wh, .kogo), (.wh, .koj)]
+  | .ex_37 => []
+  | .ex_38a => []
+  | .ex_38b => []
 
 /-- The lexemes the spans of the example labelled `l` name, in order. -/
 def Example.lexemes (x : Example) (l : SpanLabel) : List Lexeme :=

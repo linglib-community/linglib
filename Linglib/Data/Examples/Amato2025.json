@@ -73,6 +73,52 @@
           "doc": "the verb is in the default third person singular"
         }
       ]
+    },
+    {
+      "key": "marking",
+      "lean": "marking",
+      "type": "Marking",
+      "doc": "The case marking of the arguments of the Hindi-Urdu clauses (§4.3.1).",
+      "levels": [
+        {
+          "name": "ergSubject",
+          "label": "ergSubject",
+          "doc": "the subject is ergative and the object unmarked"
+        },
+        {
+          "name": "bothMarked",
+          "label": "bothMarked",
+          "doc": "the subject is ergative and the object bears ko"
+        },
+        {
+          "name": "unmarkedSubject",
+          "label": "unmarkedSubject",
+          "doc": "the subject is unmarked"
+        }
+      ]
+    },
+    {
+      "key": "controller",
+      "lean": "controller",
+      "type": "Controller",
+      "doc": "The argument whose features the form of the verb shows.",
+      "levels": [
+        {
+          "name": "subject",
+          "label": "subject",
+          "doc": "the subject"
+        },
+        {
+          "name": "object",
+          "label": "object",
+          "doc": "the object"
+        },
+        {
+          "name": "default",
+          "label": "default",
+          "doc": "neither: the verb is in its default form"
+        }
+      ]
     }
   ],
   "spans": {
@@ -432,6 +478,78 @@
       ],
       "paperFeatures": [],
       "comment": "The source prints the words without a gloss line; the glosses are those of its (5a).",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_37",
+      "source": {"bibkey": "mahajan-1990", "paperLabel": "(5)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(37)"},
+      "language": "hind1269",
+      "primaryText": "raam-ne roTii khaayii thii",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["raam-ne", "Ram(m.)-erg."], ["roTii", "bread(f.)"], ["khaayii", "eat(perf.f.)"],
+        ["thii", "be(pst.f.)"]
+      ],
+      "translation": "Ram had eaten bread.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["marking", "ergSubject"],
+        ["controller", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_38a",
+      "source": {"bibkey": "mahajan-1990", "paperLabel": "(6)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(38a)"},
+      "language": "hind1269",
+      "primaryText": "baccoN-ne siitaa-ko dekhaa thaa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["baccoN-ne", "children(m.)-erg."], ["siitaa-ko", "Sita(f.)-dat."],
+        ["dekhaa", "see(perf.m.sg.)"], ["thaa", "be(pst.m.sg.)"]
+      ],
+      "translation": "The children had seen Sita.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["marking", "bothMarked"],
+        ["controller", "default"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_38b",
+      "source": {"bibkey": "mahajan-1990", "paperLabel": "(4)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(38b)"},
+      "language": "hind1269",
+      "primaryText": "siitaa kelaa khaatii thii",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["siitaa", "Sita(f.)"], ["kelaa", "banana(m.)"], ["khaatii", "eat(imp.f.)"],
+        ["thii", "be(pst.f.)"]
+      ],
+      "translation": "Sita (habitually) ate bread.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["marking", "unmarkedSubject"],
+        ["controller", "subject"]
+      ],
+      "comment": "The translation is the source's; its gloss line has 'banana'.",
       "verified": "page-image"
     }
   ]

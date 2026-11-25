@@ -30,7 +30,10 @@ With case assigned by the dependent case rules, an accusative case system gives 
 agreement whatever is accessible, and an ergative one gives absolutive agreement when only
 unmarked case is accessible and subject agreement when dependent case is accessible too, so
 ergative agreement over accusative case is not derived. Below a subject with lexical case the
-object controls agreement unless lexical case is itself accessible. In Hindi-Urdu, where only
+object controls agreement unless lexical case is itself accessible, as with the dative subjects
+of Icelandic: the verb agrees with the nominative object in
+[zaenen-maling-thrainsson-1985]'s passive, and [harley-1995]'s form agreeing with the dative is
+ungrammatical. In Hindi-Urdu, where only
 unmarked case is accessible, the object controls agreement under an ergative or a dative
 subject, the subject where it is unmarked, and no argument where the subject is ergative and the
 object bears *ko*, and each of [woolford-1999]'s examples shows the agreement of its pattern. In
@@ -58,6 +61,8 @@ recorded with [woolford-1999]'s glosses, which give the object's *ko* as a dativ
 * [marantz-1991]
 * [woolford-1999]
 * [bickel-yadava-2000]
+* [zaenen-maling-thrainsson-1985]
+* [harley-1995]
 -/
 
 @[expose] public section
@@ -186,6 +191,20 @@ theorem clauseController_lexical_subject (a : Alignment.AlignmentType) (c : Case
       some .P := by
   cases a <;> cases t <;> first | exact absurd rfl ht | rfl
 
+/-- The role of the argument whose features a form of the verb shows, if there is one. -/
+def Examples.Controller.role? : Examples.Controller → Option ArgumentRole
+  | .subject => some .A
+  | .object => some .P
+  | .default => none
+
+-- (4d), (15): with a dative subject over a nominative object, a form of the Icelandic verb is
+-- acceptable exactly when it agrees with the object
+theorem icelandic_example : ∀ x ∈ [Examples.Example.ex_4d, .ex_15], ∀ r ∈ x.controller,
+    clauseController (.ofAlignment .accusative) .unmarked
+        (fun r ↦ if r = .A then some .dat else none) [.A, .P] = r.role? ↔
+      x.datum.judgment = .acceptable := by
+  decide
+
 /-! ### Hindi-Urdu -/
 
 /-- The dependent case rules of a Hindi-Urdu clause, read off its markers: the ergative on the
@@ -217,12 +236,6 @@ theorem hindiController_eq (a : Aspect.Perfectivity) (markedObject : Bool) :
 theorem hindiController_dative_subject (a : Aspect.Perfectivity) :
     hindiController a false (fun r ↦ if r = .A then some .dat else none) = some .P := by
   cases a <;> rfl
-
-/-- The role of the argument whose features a form of the verb shows, if there is one. -/
-def Examples.Controller.role? : Examples.Controller → Option ArgumentRole
-  | .subject => some .A
-  | .object => some .P
-  | .default => none
 
 /-- The controller of agreement in each pattern of (21). -/
 def Examples.Pattern.controller : Examples.Pattern → Option ArgumentRole

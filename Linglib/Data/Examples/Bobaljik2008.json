@@ -320,6 +320,52 @@
       ],
       "comment": "The source attributes the example to Mahajan (1991, (7)).",
       "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_4d",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(47a)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(4d)"},
+      "language": "icel1247",
+      "primaryText": "Um veturinn voru konunginum gefnar ambáttir.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Um", "in"], ["veturinn", "the-winter"], ["voru", "were"], ["konunginum", "the-king(D)"],
+        ["gefnar", "given"], ["ambáttir.", "slaves(N)"]
+      ],
+      "translation": "In the winter, the king was given (female) slaves.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["controller", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_15",
+      "source": {"bibkey": "harley-1995", "paperLabel": "(2)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(15)"},
+      "language": "icel1247",
+      "primaryText": "Morgum studentum líka verkið",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Morgum", "many"], ["studentum", "students-D"], ["líka", "like-3.pl"],
+        ["verkið", "the_job-N"]
+      ],
+      "translation": "Many students like the job",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["controller", "subject"]
+      ],
+      "comment": "",
+      "verified": "page-image"
     }
   ]
 }

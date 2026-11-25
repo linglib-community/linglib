@@ -167,7 +167,37 @@ def ex_22e : Datum :=
     readings := []
     paperFeatures := [("pattern", "dativeSubject"), ("controller", "object")] }
 
-def all : List Datum := [ex_24a, ex_24b, ex_24b_object, ex_26, ex_26_subject, ex_22a, ex_22b, ex_22c, ex_22d, ex_22e]
+def ex_4d : Datum :=
+  { id := "bobaljik2008_4d"
+    source := ⟨"zaenen-maling-thrainsson-1985", "(47a)"⟩
+    reportedIn := some ⟨"bobaljik-2008", "(4d)"⟩
+    language := "icel1247"
+    primaryText := "Um veturinn voru konunginum gefnar ambáttir."
+    glossedTokens := [("Um", "in"), ("veturinn", "the-winter"), ("voru", "were"), ("konunginum", "the-king(D)"), ("gefnar", "given"), ("ambáttir.", "slaves(N)")]
+    glossedWords := [⟨['U', 'm'], ['i', 'n'], [⟨['U', 'm'], ['i', 'n'], none⟩]⟩, ⟨['v', 'e', 't', 'u', 'r', 'i', 'n', 'n'], ['t', 'h', 'e', '-', 'w', 'i', 'n', 't', 'e', 'r'], []⟩, ⟨['v', 'o', 'r', 'u'], ['w', 'e', 'r', 'e'], [⟨['v', 'o', 'r', 'u'], ['w', 'e', 'r', 'e'], none⟩]⟩, ⟨['k', 'o', 'n', 'u', 'n', 'g', 'i', 'n', 'u', 'm'], ['t', 'h', 'e', '-', 'k', 'i', 'n', 'g', '(', 'D', ')'], []⟩, ⟨['g', 'e', 'f', 'n', 'a', 'r'], ['g', 'i', 'v', 'e', 'n'], [⟨['g', 'e', 'f', 'n', 'a', 'r'], ['g', 'i', 'v', 'e', 'n'], none⟩]⟩, ⟨['a', 'm', 'b', 'á', 't', 't', 'i', 'r', '.'], ['s', 'l', 'a', 'v', 'e', 's', '(', 'N', ')'], [⟨['a', 'm', 'b', 'á', 't', 't', 'i', 'r'], ['s', 'l', 'a', 'v', 'e', 's', '(', 'N', ')'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("controller", "object")] }
+
+def ex_15 : Datum :=
+  { id := "bobaljik2008_15"
+    source := ⟨"harley-1995", "(2)"⟩
+    reportedIn := some ⟨"bobaljik-2008", "(15)"⟩
+    language := "icel1247"
+    primaryText := "Morgum studentum líka verkið"
+    glossedTokens := [("Morgum", "many"), ("studentum", "students-D"), ("líka", "like-3.pl"), ("verkið", "the_job-N")]
+    glossedWords := [⟨['M', 'o', 'r', 'g', 'u', 'm'], ['m', 'a', 'n', 'y'], [⟨['M', 'o', 'r', 'g', 'u', 'm'], ['m', 'a', 'n', 'y'], none⟩]⟩, ⟨['s', 't', 'u', 'd', 'e', 'n', 't', 'u', 'm'], ['s', 't', 'u', 'd', 'e', 'n', 't', 's', '-', 'D'], []⟩, ⟨['l', 'í', 'k', 'a'], ['l', 'i', 'k', 'e', '-', '3', '.', 'p', 'l'], []⟩, ⟨['v', 'e', 'r', 'k', 'i', 'ð'], ['t', 'h', 'e', '_', 'j', 'o', 'b', '-', 'N'], []⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("controller", "subject")] }
+
+def all : List Datum := [ex_24a, ex_24b, ex_24b_object, ex_26, ex_26_subject, ex_22a, ex_22b, ex_22c, ex_22d, ex_22e, ex_4d, ex_15]
 
 /-- The Nepali clauses, by the case of the subject. -/
 inductive Clause where
@@ -231,12 +261,14 @@ inductive Example where
   | ex_22c
   | ex_22d
   | ex_22e
+  | ex_4d
+  | ex_15
   deriving DecidableEq, Repr, Fintype
 
 /-- Every example of the file, in its order. -/
 def Example.all : List Example :=
   [.ex_24a, .ex_24b, .ex_24b_object, .ex_26, .ex_26_subject, .ex_22a, .ex_22b, .ex_22c, .ex_22d,
-    .ex_22e]
+    .ex_22e, .ex_4d, .ex_15]
 
 /-- The row of an example. -/
 def Example.datum : Example → Datum
@@ -250,6 +282,8 @@ def Example.datum : Example → Datum
   | .ex_22c => _root_.Bobaljik2008.Examples.ex_22c
   | .ex_22d => _root_.Bobaljik2008.Examples.ex_22d
   | .ex_22e => _root_.Bobaljik2008.Examples.ex_22e
+  | .ex_4d => _root_.Bobaljik2008.Examples.ex_4d
+  | .ex_15 => _root_.Bobaljik2008.Examples.ex_15
 
 theorem Example.map_datum_all :
     Example.all.map Example.datum = _root_.Bobaljik2008.Examples.all := rfl
@@ -266,6 +300,8 @@ def Example.clause : Example → Option Clause
   | .ex_22c => none
   | .ex_22d => none
   | .ex_22e => none
+  | .ex_4d => none
+  | .ex_15 => none
 
 theorem Example.clause_datum :
     ∀ x : Example, _root_.Bobaljik2008.Examples.clause x.datum = x.clause := by
@@ -283,6 +319,8 @@ def Example.controller : Example → Option Controller
   | .ex_22c => some .subject
   | .ex_22d => some .subject
   | .ex_22e => some .object
+  | .ex_4d => some .object
+  | .ex_15 => some .subject
 
 theorem Example.controller_datum :
     ∀ x : Example, _root_.Bobaljik2008.Examples.controller x.datum = x.controller := by
@@ -300,6 +338,8 @@ def Example.pattern : Example → Option Pattern
   | .ex_22c => some .unmarkedArguments
   | .ex_22d => some .markedObject
   | .ex_22e => some .dativeSubject
+  | .ex_4d => none
+  | .ex_15 => none
 
 theorem Example.pattern_datum :
     ∀ x : Example, _root_.Bobaljik2008.Examples.pattern x.datum = x.pattern := by
