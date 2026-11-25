@@ -85,11 +85,19 @@ def strength : AffectednessDegree → ℕ
   | .nonquantized => 2
   | .quantized => 3
 
-instance : LinearOrder AffectednessDegree :=
-  .lift' strength fun a b ↦ by cases a <;> cases b <;> simp [strength]
+theorem strength_injective : Function.Injective strength :=
+  fun a b ↦ by cases a <;> cases b <;> simp [strength]
+
+instance : LinearOrder AffectednessDegree := .lift' strength strength_injective
 
 theorem le_iff_strength_le {a b : AffectednessDegree} : a ≤ b ↔ a.strength ≤ b.strength :=
   Iff.rfl
+
+/-- The strength of a degree, as an order embedding into the natural numbers. -/
+def strengthOrderEmbedding : AffectednessDegree ↪o ℕ :=
+  ⟨⟨strength, strength_injective⟩, le_iff_strength_le.symm⟩
+
+@[simp] theorem coe_strengthOrderEmbedding : ⇑strengthOrderEmbedding = strength := rfl
 
 instance : OrderBot AffectednessDegree where
   bot := .unspecified
@@ -146,6 +154,13 @@ theorem QuantizedChange.nonQuantizedChange {g : G} (h : QuantizedChange θ R φ 
 theorem NonQuantizedChange.potentialChange (h : NonQuantizedChange θ R φ) :
     PotentialChange θ φ :=
   fun x e hx ↦ let ⟨s, hs, _⟩ := h x e hx; ⟨s, hs⟩
+
+/-- Under a quantized change to `g`, a quantity of the theme and the event that each result fixes
+at its goal has the value `g` at every event of the predicate. -/
+theorem QuantizedChange.eq_of_result {f : α → β → G} {g : G} (h : QuantizedChange θ R φ g)
+    (hR : ∀ x s e, θ x s e → R x s g e → f x e = g) {x : α} {e : β} (hx : φ x e) : f x e = g :=
+  let ⟨s, hs, hg⟩ := h x e hx
+  hR x s e hs hg
 
 variable (θ R φ)
 

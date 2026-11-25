@@ -1,0 +1,478 @@
+{
+  "features": [
+    {
+      "key": "affix",
+      "lean": "affix",
+      "type": "Affix",
+      "doc": "The prefix on the verb of a row that judges a prefixed form.",
+      "levels": [
+        {
+          "name": "un",
+          "label": "un",
+          "doc": "reversative *un-*"
+        },
+        {
+          "name": "re",
+          "label": "re",
+          "doc": "restitutive *re-*"
+        }
+      ]
+    },
+    {
+      "key": "outcome",
+      "lean": "outcome",
+      "type": "Outcome",
+      "doc": "The state of the object that a row of the lexical causation test names as brought about by the action.",
+      "levels": [
+        {
+          "name": "knottedUp",
+          "label": "knotted up",
+          "doc": "the rope is knotted up"
+        },
+        {
+          "name": "torn",
+          "label": "torn",
+          "doc": "the rope is torn"
+        },
+        {
+          "name": "broken",
+          "label": "broken",
+          "doc": "the rope is broken"
+        },
+        {
+          "name": "disintegrated",
+          "label": "disintegrated",
+          "doc": "the rope has disintegrated"
+        },
+        {
+          "name": "loose",
+          "label": "loose",
+          "doc": "the rope has come loose"
+        },
+        {
+          "name": "tightened",
+          "label": "tightened",
+          "doc": "the rope has tightened"
+        },
+        {
+          "name": "undamaged",
+          "label": "undamaged",
+          "doc": "the rope remains undamaged"
+        },
+        {
+          "name": "comeIntoBeing",
+          "label": "come into being",
+          "doc": "the bridge has come into being"
+        },
+        {
+          "name": "intact",
+          "label": "intact",
+          "doc": "the bridge remains intact"
+        },
+        {
+          "name": "damaged",
+          "label": "damaged",
+          "doc": "the bridge has suffered damage"
+        },
+        {
+          "name": "partiallyComeIntoBeing",
+          "label": "partially come into being",
+          "doc": "the bridge has partially come into being"
+        },
+        {
+          "name": "unstable",
+          "label": "unstable",
+          "doc": "the bridge has become unstable"
+        }
+      ]
+    }
+  ],
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "verb",
+          "label": "verb",
+          "doc": "the verb under test, or the base of the prefixed verb"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The verbs under test.",
+      "levels": [
+        {
+          "name": "coil",
+          "label": "coil",
+          "doc": "the English verb *coil*"
+        },
+        {
+          "name": "build",
+          "label": "build",
+          "doc": "the English verb *build*"
+        }
+      ]
+    }
+  },
+  "examples": [
+    {
+      "id": "bhadra2024_12e",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(12e)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "unbuild",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["unbuild", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "verb", "lexeme": "build"}
+      ],
+      "paperFeatures": [
+        ["affix", "un"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_23a",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(23a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John coiled the rope and that caused the rope to be knotted up.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["coiled", ""], ["the", ""], ["rope", ""], ["and", ""], ["that", ""],
+        ["caused", ""], ["the", ""], ["rope", ""], ["to", ""], ["be", ""], ["knotted", ""],
+        ["up", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "verb", "lexeme": "coil"}
+      ],
+      "paperFeatures": [
+        ["outcome", "knotted up"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_23b",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(23b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John coiled the rope and that caused the rope to tear.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["coiled", ""], ["the", ""], ["rope", ""], ["and", ""], ["that", ""],
+        ["caused", ""], ["the", ""], ["rope", ""], ["to", ""], ["tear", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "verb", "lexeme": "coil"}
+      ],
+      "paperFeatures": [
+        ["outcome", "torn"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_23c",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(23c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John coiled the rope and that caused the rope to break.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["coiled", ""], ["the", ""], ["rope", ""], ["and", ""], ["that", ""],
+        ["caused", ""], ["the", ""], ["rope", ""], ["to", ""], ["break", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "verb", "lexeme": "coil"}
+      ],
+      "paperFeatures": [
+        ["outcome", "broken"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_23d",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(23d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John coiled the rope and that caused the rope to disintegrate.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["coiled", ""], ["the", ""], ["rope", ""], ["and", ""], ["that", ""],
+        ["caused", ""], ["the", ""], ["rope", ""], ["to", ""], ["disintegrate", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "verb", "lexeme": "coil"}
+      ],
+      "paperFeatures": [
+        ["outcome", "disintegrated"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_23e",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(23e)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John coiled the rope and that caused the rope to come loose.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["coiled", ""], ["the", ""], ["rope", ""], ["and", ""], ["that", ""],
+        ["caused", ""], ["the", ""], ["rope", ""], ["to", ""], ["come", ""], ["loose", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "verb", "lexeme": "coil"}
+      ],
+      "paperFeatures": [
+        ["outcome", "loose"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_23f",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(23f)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John coiled the rope and that caused the rope to tighten.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["coiled", ""], ["the", ""], ["rope", ""], ["and", ""], ["that", ""],
+        ["caused", ""], ["the", ""], ["rope", ""], ["to", ""], ["tighten", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "verb", "lexeme": "coil"}
+      ],
+      "paperFeatures": [
+        ["outcome", "tightened"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_23g",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(23g)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John coiled the rope and that allowed the rope to remain undamaged.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["coiled", ""], ["the", ""], ["rope", ""], ["and", ""], ["that", ""],
+        ["allowed", ""], ["the", ""], ["rope", ""], ["to", ""], ["remain", ""], ["undamaged", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "verb", "lexeme": "coil"}
+      ],
+      "paperFeatures": [
+        ["outcome", "undamaged"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_37a",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(37a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John rebuilt the house.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["rebuilt", ""], ["the", ""], ["house", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "verb", "lexeme": "build"}
+      ],
+      "paperFeatures": [
+        ["affix", "re"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "bhadra2024_63a",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(63a)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "stan1293",
+      "primaryText": "The engineers built the bridge and that caused it to come into being.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["engineers", ""], ["built", ""], ["the", ""], ["bridge", ""], ["and", ""],
+        ["that", ""], ["caused", ""], ["it", ""], ["to", ""], ["come", ""], ["into", ""],
+        ["being", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "build"}
+      ],
+      "paperFeatures": [
+        ["outcome", "come into being"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_63b",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(63b)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "stan1293",
+      "primaryText": "The engineers built the bridge and that allowed it to remain intact.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["engineers", ""], ["built", ""], ["the", ""], ["bridge", ""], ["and", ""],
+        ["that", ""], ["allowed", ""], ["it", ""], ["to", ""], ["remain", ""], ["intact", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "build"}
+      ],
+      "paperFeatures": [
+        ["outcome", "intact"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_63c",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(63c)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "stan1293",
+      "primaryText": "The engineers built the bridge and that caused it to suffer damage.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["engineers", ""], ["built", ""], ["the", ""], ["bridge", ""], ["and", ""],
+        ["that", ""], ["caused", ""], ["it", ""], ["to", ""], ["suffer", ""], ["damage", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "build"}
+      ],
+      "paperFeatures": [
+        ["outcome", "damaged"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_63d",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(63d)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "stan1293",
+      "primaryText": "The engineers built the bridge and that caused it to partially come into being.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["engineers", ""], ["built", ""], ["the", ""], ["bridge", ""], ["and", ""],
+        ["that", ""], ["caused", ""], ["it", ""], ["to", ""], ["partially", ""], ["come", ""],
+        ["into", ""], ["being", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "build"}
+      ],
+      "paperFeatures": [
+        ["outcome", "partially come into being"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bhadra2024_63e",
+      "source": {"bibkey": "bhadra-2024", "paperLabel": "(63e)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "stan1293",
+      "primaryText": "The engineers built the bridge and that caused it to become unstable.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["engineers", ""], ["built", ""], ["the", ""], ["bridge", ""], ["and", ""],
+        ["that", ""], ["caused", ""], ["it", ""], ["to", ""], ["become", ""], ["unstable", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "build"}
+      ],
+      "paperFeatures": [
+        ["outcome", "unstable"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}
