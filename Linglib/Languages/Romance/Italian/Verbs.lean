@@ -22,6 +22,12 @@ the coding of each complement. Fusco and Sgrizzi's analysis of the *di* and *a* 
 read reciprocally without *si* are ordinary entries here, and Palmieri's list of them is
 `Studies/Palmieri2024.lean`.
 
+The perfect is formed with the auxiliary *avere* 'have' or *essere* 'be' and the past participle
+(`Italian.Verbs.auxiliary`). *Avere* is the auxiliary of every transitive verb. A verb formed with
+a clitic reflexive pronoun takes *essere*, in its reflexive, reciprocal, indefinite personal and
+passive uses alike (`Italian.Verbs.reflexiveAuxiliary`): *Si è tagliata* 'she cut herself', but
+*Ha disprezzato se stessa* 'she despised herself' with the stressed pronoun.
+
 An intransitive verb forms its perfect with *essere* when it expresses a change of location,
 state or condition, the continuation of a state or existence in a state, and with *avere* when an
 activity is in the foreground, whether or not its subject controls it
@@ -208,6 +214,52 @@ def vedere : Verb where
   morphs := [.root "vedere"]
   valency := .ofFrame ArgumentFrame.np
 
+/-! ### The auxiliaries of the perfect -/
+
+/-- *avere* 'have', the auxiliary of the perfect of transitive verbs and of intransitive verbs
+of activity. -/
+def avere : Verb where
+  morphs := [.root "avere"]
+  valency := .ofFrame ArgumentFrame.np
+  perfectAuxiliaries := {.have}
+
+/-- *essere* 'be', the auxiliary of the perfect of verbs of change and of state and of verbs
+with a clitic reflexive pronoun. -/
+def essere : Verb where
+  morphs := [.root "essere"]
+  valency := .ofFrame ArgumentFrame.intransitive [some {.independentExistence}]
+  perfectAuxiliaries := {.be}
+
+/-- The verb that forms the perfect with each auxiliary. -/
+def auxiliary : PerfectAuxiliary → Verb
+  | .have => avere
+  | .be => essere
+
+/-- A verb formed with a clitic reflexive pronoun takes *essere*, in its reflexive, reciprocal,
+indefinite personal and passive uses ([maiden-robustelli-2007] §14.20). -/
+def reflexiveAuxiliary : PerfectAuxiliary := .be
+
+/-! ### Transitive verbs and verbs with a prepositional object -/
+
+/-- *lavare* 'wash' is transitive. -/
+def lavare : Verb where
+  morphs := [.root "lavare"]
+  valency := .ofFrame ArgumentFrame.np
+  perfectAuxiliaries := {.have}
+
+/-- *mangiare* 'eat' is transitive. -/
+def mangiare : Verb where
+  morphs := [.root "mangiare"]
+  valency := .ofFrame ArgumentFrame.np
+  perfectAuxiliaries := {.have}
+
+/-- *rispondere* 'answer', an activity whose subject controls it, with the person answered in
+a phrase with *a*. -/
+def rispondere : Verb where
+  morphs := [.root "rispondere"]
+  valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
+  perfectAuxiliaries := {.have}
+
 /-! ### Monadic verbs
 
 The monadic verbs of [sorace-2000]'s Italian examples, with the auxiliaries of their perfect,
@@ -342,13 +394,15 @@ def allVerbs : List Verb :=
   [convincere, pensare, volere, sperare, intendere, fare,
    abbracciare, baciare, coccolare, conoscere, consultare, frequentare, incontrare, incrociare,
    lasciare, sposare, trovare, vedere,
+   avere, essere, lavare, mangiare, rispondere,
    venire, arrivare, cadere, salire, marcire, fiorire, rimanere, durare, esistere, bastare,
    sembrare, appartenere, lavorare, chiacchierare, correre, saltare, nuotare, tossire, squillare]
 
 /-! ### The perfect auxiliary -/
 
-/-- The auxiliary of the perfect of `v` on the frame `fr`, with a path phrase `p` if there is one
-([maiden-robustelli-2007] §14.20), is *avere* for a transitive verb. For an intransitive one it is
+/-- The auxiliary of the perfect of `v` on the frame `fr` without a clitic reflexive pronoun, with
+a path phrase `p` if there is one ([maiden-robustelli-2007] §14.20), is *avere* for a transitive
+verb. For an intransitive one it is
 *essere* when the verb expresses a change of location, the continuation of a state or a change
 along a scale, when the entry records a subject that neither acts volitionally nor causes, as the
 subject of a change of state or of a state is, and when a phrase the verb selects brings it to an

@@ -30,7 +30,7 @@ def ex_4a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "auxiliary", some "avere"⟩]
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "lavare"⟩]
     paperFeatures := [("clause", "transitive")] }
 
 def ex_4b : Datum :=
@@ -46,7 +46,7 @@ def ex_4b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "auxiliary", some "avere"⟩]
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "rispondere"⟩]
     paperFeatures := [("clause", "unergative")] }
 
 def ex_4c : Datum :=
@@ -62,7 +62,7 @@ def ex_4c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "auxiliary", some "essere"⟩]
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "venire"⟩]
     paperFeatures := [("clause", "unaccusative")] }
 
 def ex_5a : Datum :=
@@ -78,7 +78,7 @@ def ex_5a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "auxiliary", some "essere"⟩]
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "lavare"⟩]
     paperFeatures := [("clause", "directReflexive")] }
 
 def ex_5b : Datum :=
@@ -94,7 +94,7 @@ def ex_5b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "auxiliary", some "essere"⟩]
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "lavare"⟩]
     paperFeatures := [("clause", "indirectReflexive")] }
 
 def ex_5c : Datum :=
@@ -110,7 +110,7 @@ def ex_5c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "auxiliary", some "essere"⟩]
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "rispondere"⟩]
     paperFeatures := [("clause", "indirectReflexive")] }
 
 def ex_5d : Datum :=
@@ -126,7 +126,7 @@ def ex_5d : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "auxiliary", some "essere"⟩]
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "mangiare"⟩]
     paperFeatures := [("clause", "impersonal")] }
 
 def ex_29a_pl : Datum :=
@@ -351,13 +351,15 @@ inductive SpanLabel where
   | auxiliary
   /-- wh: a fronted wh-phrase -/
   | wh
+  /-- participle: the past participle of the verb -/
+  | participle
   deriving DecidableEq, Repr, Fintype
 
 /-- The label of a span, where it is a declared one. -/
 def label? (p : Datum.Span) : Option SpanLabel :=
-  List.lookup p.label [("auxiliary", .auxiliary), ("wh", .wh)]
+  List.lookup p.label [("auxiliary", .auxiliary), ("wh", .wh), ("participle", .participle)]
 
-/-- The perfect auxiliaries and the wh-words. -/
+/-- The perfect auxiliaries, the verbs of the Italian examples and the wh-words. -/
 inductive Lexeme where
   /-- avere: avere 'have' -/
   | avere
@@ -367,11 +369,19 @@ inductive Lexeme where
   | koj
   /-- kogo: Bulgarian kogo 'whom', accusative -/
   | kogo
+  /-- lavare: lavare 'wash' -/
+  | lavare
+  /-- rispondere: rispondere 'answer' -/
+  | rispondere
+  /-- venire: venire 'come' -/
+  | venire
+  /-- mangiare: mangiare 'eat' -/
+  | mangiare
   deriving DecidableEq, Repr, Fintype
 
 /-- The lexeme a span is a form of, where it names a declared one. -/
 def lexeme? (p : Datum.Span) : Option Lexeme :=
-  p.lexeme.bind (List.lookup · [("avere", .avere), ("essere", .essere), ("koj", .koj), ("kogo", .kogo)])
+  p.lexeme.bind (List.lookup · [("avere", .avere), ("essere", .essere), ("koj", .koj), ("kogo", .kogo), ("lavare", .lavare), ("rispondere", .rispondere), ("venire", .venire), ("mangiare", .mangiare)])
 
 /-- The examples of the file. -/
 inductive Example where
@@ -537,13 +547,13 @@ theorem Example.controller_datum :
 
 /-- The lexemes the spans of the example name, each with the span's label, in order. -/
 def Example.labelledLexemes : Example → List (SpanLabel × Lexeme)
-  | .ex_4a => [(.auxiliary, .avere)]
-  | .ex_4b => [(.auxiliary, .avere)]
-  | .ex_4c => [(.auxiliary, .essere)]
-  | .ex_5a => [(.auxiliary, .essere)]
-  | .ex_5b => [(.auxiliary, .essere)]
-  | .ex_5c => [(.auxiliary, .essere)]
-  | .ex_5d => [(.auxiliary, .essere)]
+  | .ex_4a => [(.auxiliary, .avere), (.participle, .lavare)]
+  | .ex_4b => [(.auxiliary, .avere), (.participle, .rispondere)]
+  | .ex_4c => [(.auxiliary, .essere), (.participle, .venire)]
+  | .ex_5a => [(.auxiliary, .essere), (.participle, .lavare)]
+  | .ex_5b => [(.auxiliary, .essere), (.participle, .lavare)]
+  | .ex_5c => [(.auxiliary, .essere), (.participle, .rispondere)]
+  | .ex_5d => [(.auxiliary, .essere), (.participle, .mangiare)]
   | .ex_29a_pl => []
   | .ex_29a_sg => []
   | .ex_29b_sg => []

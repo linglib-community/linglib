@@ -135,12 +135,17 @@
           "name": "wh",
           "label": "wh",
           "doc": "a fronted wh-phrase"
+        },
+        {
+          "name": "participle",
+          "label": "participle",
+          "doc": "the past participle of the verb"
         }
       ]
     },
     "lexemes": {
       "type": "Lexeme",
-      "doc": "The perfect auxiliaries and the wh-words.",
+      "doc": "The perfect auxiliaries, the verbs of the Italian examples and the wh-words.",
       "levels": [
         {
           "name": "avere",
@@ -161,6 +166,26 @@
           "name": "kogo",
           "label": "kogo",
           "doc": "Bulgarian kogo 'whom', accusative"
+        },
+        {
+          "name": "lavare",
+          "label": "lavare",
+          "doc": "lavare 'wash'"
+        },
+        {
+          "name": "rispondere",
+          "label": "rispondere",
+          "doc": "rispondere 'answer'"
+        },
+        {
+          "name": "venire",
+          "label": "venire",
+          "doc": "venire 'come'"
+        },
+        {
+          "name": "mangiare",
+          "label": "mangiare",
+          "doc": "mangiare 'eat'"
         }
       ]
     }
@@ -186,7 +211,8 @@
       "contrasts": [],
       "readings": [],
       "spans": [
-        {"start": 1, "label": "auxiliary", "lexeme": "avere"}
+        {"start": 1, "label": "auxiliary", "lexeme": "avere"},
+        {"start": 2, "label": "participle", "lexeme": "lavare"}
       ],
       "paperFeatures": [
         ["clause", "transitive"]
@@ -210,7 +236,8 @@
       "contrasts": [],
       "readings": [],
       "spans": [
-        {"start": 1, "label": "auxiliary", "lexeme": "avere"}
+        {"start": 1, "label": "auxiliary", "lexeme": "avere"},
+        {"start": 2, "label": "participle", "lexeme": "rispondere"}
       ],
       "paperFeatures": [
         ["clause", "unergative"]
@@ -234,7 +261,8 @@
       "contrasts": [],
       "readings": [],
       "spans": [
-        {"start": 1, "label": "auxiliary", "lexeme": "essere"}
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"},
+        {"start": 2, "label": "participle", "lexeme": "venire"}
       ],
       "paperFeatures": [
         ["clause", "unaccusative"]
@@ -257,7 +285,8 @@
       "contrasts": [],
       "readings": [],
       "spans": [
-        {"start": 1, "label": "auxiliary", "lexeme": "essere"}
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"},
+        {"start": 2, "label": "participle", "lexeme": "lavare"}
       ],
       "paperFeatures": [
         ["clause", "directReflexive"]
@@ -281,7 +310,8 @@
       "contrasts": [],
       "readings": [],
       "spans": [
-        {"start": 1, "label": "auxiliary", "lexeme": "essere"}
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"},
+        {"start": 2, "label": "participle", "lexeme": "lavare"}
       ],
       "paperFeatures": [
         ["clause", "indirectReflexive"]
@@ -305,7 +335,8 @@
       "contrasts": [],
       "readings": [],
       "spans": [
-        {"start": 1, "label": "auxiliary", "lexeme": "essere"}
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"},
+        {"start": 2, "label": "participle", "lexeme": "rispondere"}
       ],
       "paperFeatures": [
         ["clause", "indirectReflexive"]
@@ -329,7 +360,8 @@
       "contrasts": [],
       "readings": [],
       "spans": [
-        {"start": 1, "label": "auxiliary", "lexeme": "essere"}
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"},
+        {"start": 2, "label": "participle", "lexeme": "mangiare"}
       ],
       "paperFeatures": [
         ["clause", "impersonal"]

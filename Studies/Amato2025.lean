@@ -6,7 +6,7 @@ public import Linglib.Data.Examples.Amato2025
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Syntax.Minimalist.Feature.Valuation
-public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+public import Linglib.Languages.Romance.Italian.Verbs
 public import Studies.Bobaljik2008
 
 /-!
@@ -43,11 +43,13 @@ exponent the Subset Principle inserts at Perf from a Vocabulary of two items, *a
 whose person probe has a value and *essere* elsewhere, and it is the one the transitivity class of
 the clause selects: *avere* where v has copied a person value from a full object, *essere* with a
 defective v, a reflexive object, direct or indirect, the impersonal *si* and the passive. The
-examples of the paper have the auxiliary their derivations insert. Under minimality alone the same
-Vocabulary inserts *avere* in every clause, and with a search that starts again it inserts *avere*
-with unaccusatives. With the two probes of Perf in the other order the auxiliary follows the person
-of the subject, as in Ariellese; and a Vocabulary that derives the auxiliaries of Tufillese under
-the order of Standard Italian has an item with a context, whatever its items.
+examples of the paper have the auxiliary their derivations insert, and it is the one the reference
+grammar's rules give the verb of each (`Italian.Verbs.perfectAuxiliary`,
+`Italian.Verbs.reflexiveAuxiliary`). Under minimality alone the same Vocabulary inserts *avere* in
+every clause, and with a search that starts again it inserts *avere* with unaccusatives. With the
+two probes of Perf in the other order the auxiliary follows the person of the subject, as in
+Ariellese; and a Vocabulary that derives the auxiliaries of Tufillese under the order of Standard
+Italian has an item with a context, whatever its items.
 
 In ditransitive clauses, for either order of the case probe and the ϕ-probe of v and whether or not
 Appl assigns dative, an indirective agreement alignment comes with an indirective case alignment and
@@ -492,7 +494,7 @@ def standardItalianVocabulary : Morphology.RuleSet (VocabularyItem AuxFeature Pe
 selects. -/
 theorem standardItalian_aux (c : TransitivityClass) (q : Bool) (p : Person) :
     auxiliary standardItalianVocabulary (derive standardItalian ⟨c, none, q⟩ p) =
-      some c.canonicalSelection := by
+      some (c.selection Italian.Verbs.reflexiveAuxiliary) := by
   revert c q p; decide
 
 -- (5d), fn. 18
@@ -538,6 +540,37 @@ theorem auxiliary_example (x : Examples.Example) :
       (x.clause.bind fun c ↦
         auxiliary standardItalianVocabulary
           (derive standardItalian (ofExample c) .third)).toList := by
+  revert x; decide
+
+/-- The entry of the verb a lexeme of the examples names, if it names one. -/
+def Examples.Lexeme.verb? : Examples.Lexeme → Option Italian.Verb
+  | .lavare => some Italian.Verbs.lavare
+  | .rispondere => some Italian.Verbs.rispondere
+  | .venire => some Italian.Verbs.venire
+  | .mangiare => some Italian.Verbs.mangiare
+  | _ => none
+
+-- each lexeme of an Italian example is written as its entry in the language file
+theorem lexeme_eq_form (x : Examples.Example) :
+    ∀ s ∈ x.datum.spans, ∀ l ∈ Examples.lexeme? s,
+      (∀ a ∈ l.auxiliary?, s.lexeme = some (Italian.Verbs.auxiliary a).form) ∧
+        ∀ v ∈ l.verb?, s.lexeme = some v.form := by
+  revert x; decide +kernel
+
+/-- The auxiliary the reference grammar gives the verb `v` in a clause of each type: *essere*
+with a clitic reflexive pronoun, in its reflexive and its indefinite personal use, and otherwise
+the auxiliary of the verb on its frame. -/
+def grammarAuxiliary (v : Italian.Verb) : Examples.Clause → PerfectAuxiliary
+  | .transitive | .unergative | .unaccusative =>
+    Italian.Verbs.perfectAuxiliary v (v.valency.frames.headD .intransitive)
+  | .directReflexive | .indirectReflexive | .impersonal => Italian.Verbs.reflexiveAuxiliary
+
+-- (4), (5): the derivation of each example inserts the auxiliary the reference grammar gives
+-- its verb
+theorem auxiliary_eq_grammarAuxiliary (x : Examples.Example) :
+    ∀ c ∈ x.clause, ∀ v ∈ (x.lexemes .participle).head?.bind (·.verb?),
+      auxiliary standardItalianVocabulary (derive standardItalian (ofExample c) .third) =
+        some (grammarAuxiliary v c) := by
   revert x; decide
 
 /-- (23): Ariellese has `/AVERE/ ↔ Perf[π:-participant]`, and `/ESSERE/` elsewhere. -/
