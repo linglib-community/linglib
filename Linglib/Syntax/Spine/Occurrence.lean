@@ -44,6 +44,10 @@ formation acts on the syntactic object and Chain Reduction on the positions it o
 hosting is therefore valued in heads, and a word formed at one occurrence of a head is pronounced
 wherever the resolution pronounces the head.
 
+A value of the type of heads names one head here: two positions with the same value are
+occurrences of that head. A spine on which a category recurs without any head occupying two
+positions is the image under `Spine.map` of a spine of this kind.
+
 ## TODO
 
 * The resolutions that pronounce a head at several of its occurrences, as in predicate doubling.

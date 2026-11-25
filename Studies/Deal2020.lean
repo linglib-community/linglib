@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Context.Overwrite
-public import Linglib.Syntax.Spine.Basic
+public import Linglib.Syntax.Spine.Label
 public import Linglib.Data.Examples.Deal2020
 public import Mathlib.Data.Finset.Powerset
 public import Linglib.Data.Examples.Readers
