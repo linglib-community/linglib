@@ -37,7 +37,8 @@ record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
                                              // word the source segments without glossing
     "translation": "...",
     "context": "",
-    "judgment": "acceptable",                // one of the 6 cases
+    "judgment": "acceptable",                // one of the 7 marks
+    "alsoJudged": ["marginal"],              // optional: the further marks of a split mark
     "verdict": true,                         // optional: a truth-value judgment in the context
     "contrasts": [{"form": "...", "judgment": "unacceptable"}],
     "readings":     [{"name": "strong", "judgment": "acceptable"},
@@ -64,8 +65,8 @@ Behavior:
   export). They are lists of characters, so that no theorem splits a string in the kernel.
 - Errors out on schema violations (a key that is not a field, an id outside
   the CLDF identifier characters `[A-Za-z0-9_-]`, a language that is neither
-  empty nor a Glottocode of `languages.csv`, unknown judgment value (also as
-  the value of an `alsoJudged` paper feature),
+  empty nor a Glottocode of `languages.csv`, unknown judgment value (also in
+  `alsoJudged`),
   malformed gloss pair, missing id or source.bibkey).
 - Idempotent: re-running on unchanged JSON produces no diff.
 - `--check` regenerates in-memory and exits 1 on any drift (CI guard);
@@ -154,6 +155,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_module_frontier import as_module_if_possible  # noqa: E402
+from judgments import MARK  # noqa: E402
 from lgr import glossed_morphemes, leipzig_pairs, lgr_conformance  # noqa: E402
 
 ROOT       = Path(__file__).resolve().parent.parent
@@ -186,9 +188,7 @@ def contribution_methods() -> dict[str, str]:
 
 CONTRIBUTION_METHODS = contribution_methods()
 
-VALID_JUDGMENTS = {
-    "acceptable", "marginal", "questionable", "unacceptable", "ungrammatical", "variable",
-}
+VALID_JUDGMENTS = set(MARK)
 
 
 def lean_string(s: str) -> str:
@@ -214,7 +214,7 @@ def lean_identifier(example_id: str, author_year_lower: str) -> str:
 
 
 def parse_judgment(raw: str, where: str) -> str:
-    j = (raw or "").strip().lower()
+    j = (raw or "").strip()
     if j not in VALID_JUDGMENTS:
         raise ValueError(
             f"{where}: invalid judgment {raw!r}; expected one of "
@@ -386,6 +386,13 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str,
             gloss_lines += f"\n    lgrConformance := some {CONFORMANCE[level]}"
     context     = ex.get("context") or ""
     judgment    = parse_judgment(ex.get("judgment", ""), where + ".judgment")
+    also        = ex.get("alsoJudged", [])
+    if not isinstance(also, list) or (not also and "alsoJudged" in ex):
+        raise ValueError(f"{where}.alsoJudged: expected a nonempty list of judgments")
+    also_line   = ""
+    if also:
+        marks = [parse_judgment(j, f"{where}.alsoJudged[{i}]") for i, j in enumerate(also)]
+        also_line = f"\n    alsoJudged := [{', '.join(marks)}]"
     verdict     = ex.get("verdict")
     if verdict is not None and not isinstance(verdict, bool):
         raise ValueError(f"{where}.verdict: expected a JSON boolean")
@@ -414,7 +421,7 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str,
         (e[0], e[1]) if isinstance(e, list) else (e["key"], e["value"]) for e in raw]
     for k, v in pairs:
         if k == "alsoJudged":
-            parse_judgment(v, where + ".paperFeatures.alsoJudged")
+            raise ValueError(f"{where}.paperFeatures: `alsoJudged` is a key of the row")
 
     method_line = "" if method == "unclassified" else f"\n    method := some .{method}"
     verdict_line = ""
@@ -428,7 +435,7 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str,
     primaryText := {lean_string(primary)}
     glossedTokens := {glossed}{gloss_lines}
     context := {lean_string(context)}
-    judgment := {judgment}{verdict_line}
+    judgment := {judgment}{also_line}{verdict_line}
     contrasts := {contrasts}
     readings := {readings}{spans_line}
     paperFeatures := {features} }}"""
@@ -989,7 +996,8 @@ def process_languages(check: bool) -> bool:
 KEY_ORDER = [
     "id", "source", "reportedIn", "method", "language", "primaryText",
     "discourseSegments", "glossedTokens", "translation", "context",
-    "judgment", "verdict", "contrasts", "readings", "spans", "paperFeatures", "comment",
+    "judgment", "alsoJudged", "verdict", "contrasts", "readings", "spans", "paperFeatures",
+    "comment",
     "verified",
 ]
 

@@ -27,13 +27,13 @@
     "glossedTokens": [],
     "translation": "Taroo bought a longer umbrella than Hanako did",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "degree_comparative"]
     ],
-    "comment": "Degree yori-comparative; printed with Ishii's (1991) compound mark ?*, recorded as its severe part; the authors' consultants range from ? to ??. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] long umbrella-Acc bought.",
+    "comment": "Degree yori-comparative; printed with Ishii's (1991) compound mark ?*; the authors' consultants range from ? to ??. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] long umbrella-Acc bought.",
     "verified": "page-image"
   },
   {

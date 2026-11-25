@@ -107,7 +107,7 @@ c-commands the associate and whether the coreferential reading the row states is
 def bindingOf (e : Datum) : Option BindingDatum :=
   (e.feature? "pron_c_commands_associate").bind fun s ↦
     let cc : Option Bool := match s with | "yes" => some true | "no" => some false | _ => none
-    cc.map fun b ↦ ⟨e.id, b, decide (.marginal ≤ e.judgment)⟩
+    cc.map fun b ↦ ⟨e.id, b, decide (e.judgment = .acceptable ∨ e.judgment = .marginal)⟩
 
 /-- `rowsOf g` lists the rows of the language with Glottocode `g`. -/
 def rowsOf (glottocode : Glottocode) : List Datum :=

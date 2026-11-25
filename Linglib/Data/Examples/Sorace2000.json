@@ -664,7 +664,7 @@
       "context": "",
       "judgment": "acceptable",
       "contrasts": [
-        {"form": "La temperatura ha salito improvvisamente", "judgment": "unacceptable"}
+        {"form": "La temperatura ha salito improvvisamente", "judgment": "nearlyUngrammatical"}
       ],
       "readings": [],
       "spans": [
@@ -1081,7 +1081,7 @@
       "context": "",
       "judgment": "acceptable",
       "contrasts": [
-        {"form": "Die Äpfel sind den ganzen Winter gehalten", "judgment": "unacceptable"}
+        {"form": "Die Äpfel sind den ganzen Winter gehalten", "judgment": "nearlyUngrammatical"}
       ],
       "readings": [],
       "spans": [
@@ -1404,7 +1404,7 @@
       "context": "",
       "judgment": "acceptable",
       "contrasts": [
-        {"form": "Les dinosaures sont existé il y a 65 millions d'ans.", "judgment": "unacceptable"}
+        {"form": "Les dinosaures sont existé il y a 65 millions d'ans.", "judgment": "nearlyUngrammatical"}
       ],
       "readings": [],
       "spans": [

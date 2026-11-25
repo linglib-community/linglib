@@ -328,7 +328,7 @@
       ],
       "translation": "",
       "context": "",
-      "judgment": "unacceptable",
+      "judgment": "nearlyUngrammatical",
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
@@ -399,7 +399,7 @@
       ],
       "translation": "For every boy x, x's mother wanted to talk to x.",
       "context": "us-kii is bound by the moved phrase",
-      "judgment": "unacceptable",
+      "judgment": "nearlyUngrammatical",
       "contrasts": [],
       "readings": [],
       "paperFeatures": [

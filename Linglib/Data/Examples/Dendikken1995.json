@@ -290,7 +290,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -353,7 +353,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -694,7 +694,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -782,7 +782,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -2197,7 +2197,7 @@
     ],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [
       {"form": "Av hvilket hus sparket han (ut) hunden (ut)?", "judgment": "questionable"}
     ],
@@ -2224,7 +2224,7 @@
     "context": "",
     "judgment": "ungrammatical",
     "contrasts": [
-      {"form": "Hvilken dør sparket han hunden ut?", "judgment": "unacceptable"}
+      {"form": "Hvilken dør sparket han hunden ut?", "judgment": "nearlyUngrammatical"}
     ],
     "readings": [],
     "paperFeatures": [

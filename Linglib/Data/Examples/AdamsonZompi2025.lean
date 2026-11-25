@@ -571,9 +571,10 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
+    alsoJudged := [.ungrammatical]
     contrasts := []
     readings := []
-    paperFeatures := [("dative", "3"), ("accusative", "SIE"), ("cell", "3>SIE"), ("alsoJudged", "ungrammatical")] }
+    paperFeatures := [("dative", "3"), ("accusative", "SIE"), ("cell", "3>SIE")] }
 
 def ex_49a : Datum :=
   { id := "adamsonzompi2025_49a"

@@ -622,7 +622,7 @@
     "glossedTokens": [],
     "translation": "What has Fritz read the book about?",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -631,7 +631,7 @@
         "definite"
       ]
     ],
-    "comment": "Marked ?*; a compound mark without a slash, recorded as its severe part.",
+    "comment": "Marked ?*.",
     "verified": "page-image"
   },
   {

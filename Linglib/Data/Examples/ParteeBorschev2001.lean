@@ -255,7 +255,7 @@ def ex27 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("Diese Bücher sind mein.", .ungrammatical)]
+    contrasts := [("Diese Bücher sind mein.", .nearlyUngrammatical)]
     readings := []
     paperFeatures := [("agreement", "agreeing")] }
 

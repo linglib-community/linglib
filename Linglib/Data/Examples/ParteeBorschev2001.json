@@ -442,7 +442,7 @@
       "context": "",
       "judgment": "acceptable",
       "contrasts": [
-        {"form": "Diese Bücher sind mein.", "judgment": "ungrammatical"}
+        {"form": "Diese Bücher sind mein.", "judgment": "nearlyUngrammatical"}
       ],
       "readings": [],
       "paperFeatures": [

@@ -290,9 +290,10 @@ def ex_150a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
+    alsoJudged := [.marginal]
     contrasts := []
     readings := []
-    paperFeatures := [("order", "directFirst"), ("binder", "direct"), ("alsoJudged", "marginal")] }
+    paperFeatures := [("order", "directFirst"), ("binder", "direct")] }
 
 def ex_150b : Datum :=
   { id := "newman2024_150b"

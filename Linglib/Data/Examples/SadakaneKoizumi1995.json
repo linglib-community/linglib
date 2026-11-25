@@ -302,11 +302,11 @@
     "translation": "It's (from) Mary that John received a letter.",
     "context": "",
     "judgment": "ungrammatical",
+    "alsoJudged": ["questionable"],
     "paperFeatures": [
       ["particle", "postposition"],
       ["form", "kara"],
-      ["test", "cleftWithoutParticle"],
-      ["alsoJudged", "questionable"]
+      ["test", "cleftWithoutParticle"]
     ],
     "comment": "(9a) without the focus's particle kara, printed */??. Note 7: acceptable in an appropriate context.",
     "verified": "page-image"
@@ -323,11 +323,11 @@
     "translation": "It's (with) this knife that John cut the cake.",
     "context": "",
     "judgment": "marginal",
+    "alsoJudged": ["acceptable"],
     "paperFeatures": [
       ["particle", "postposition"],
       ["form", "de"],
-      ["test", "cleftWithoutParticle"],
-      ["alsoJudged", "acceptable"]
+      ["test", "cleftWithoutParticle"]
     ],
     "comment": "(9b) without the focus's particle de, printed ?/√; easier than (12a) because the instrumental ranks above the ablative on the accessibility hierarchy (13). Note 7: acceptable in an appropriate context.",
     "verified": "page-image"
@@ -533,12 +533,12 @@
     "translation": "It's the GB theory that Kanta's paper is based on.",
     "context": "",
     "judgment": "marginal",
+    "alsoJudged": ["acceptable"],
     "paperFeatures": [
       ["category", "F"],
       ["particle", "postposition"],
       ["form", "ni"],
-      ["test", "cleftWithoutParticle"],
-      ["alsoJudged", "acceptable"]
+      ["test", "cleftWithoutParticle"]
     ],
     "comment": "Printed ?/√. The gloss line prints paper-Top under ronbun-ga.",
     "verified": "page-image"

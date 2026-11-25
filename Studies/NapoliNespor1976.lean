@@ -32,7 +32,7 @@ its best derivation in its context.
 
 * The analysis allows a set of judgments rather than one, since an optional rule and a variety of
   speakers the paper has not found grade the examples it prints with `(?)`, `?(?)` and `?*`. A row
-  records the first mark printed; the paper's `?*` and `*?` are recorded as `??`.
+  records the first mark printed.
 * In (10) the paper reads the belief of a clausal comparative, *di quanto è Carlo*, as the
   listener's, and its rows record the listener as the holder.
 * An indirect question raises its proposition without asserting it, so a negated matrix, *Non sono
@@ -48,6 +48,9 @@ its best derivation in its context.
 
 The reduced comparatives (83)–(85), the positions of gerunds (40)–(43), the indirect questions
 (88) and (90), and *pur* and *neanche* outside comparatives (46)–(51) are not rows.
+
+The rows (9a), (63) and (64) print a split mark, of which `rows_judgment` reads the first mark.
+The second, `?` on (9a) and `??` on (63) and (64), is not among the judgments their grade allows.
 -/
 
 @[expose] public section
@@ -204,12 +207,12 @@ inductive Grade where
 instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 
 /-- The judgments a grade allows. Speakers differ on the optional deletion, unmarked or `?` (60d),
-(63); the indicative after *non₂* is `?` or `??` (27), (60b); a sentence infelicitous in its
-context is `??` (6) or worse (31). -/
+(63); the indicative after *non₂* ranges from `?` (27) to `?*` (60b); a sentence infelicitous in
+its context is `??` (6) or worse (31). -/
 def Grade.judgments : Grade → List Judgment
   | .out => [.ungrammatical]
   | .contextual => [.questionable, .ungrammatical]
-  | .indicative => [.marginal, .questionable]
+  | .indicative => [.marginal, .questionable, .nearlyUngrammatical]
   | .deletion => [.acceptable, .marginal]
   | .regular => [.acceptable]
 

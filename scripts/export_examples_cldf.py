@@ -16,7 +16,8 @@ specification 1.3):
   `WORD_ALIGNED` for a glossed example, `MORPHEME_ALIGNED` when every word and its gloss also
   have the same number of `-` and of `=` boundaries (Leipzig Glossing Rules, Rules 2 and 2A) and
   at least one word is segmented. `Grammaticality_Judgement` is the mark the paper prints
-  (empty, `?`, `??`, `#`, `*`). `Source` is `bibkey[locator]` for `source` and `reportedIn`.
+  (empty, `?`, `??`, `#`, `?*`, `*`, `%`), a split mark as its marks joined by `/` with `√` for the
+  unmarked one. `Source` is `bibkey[locator]` for `source` and `reportedIn`.
   The linglib-specific fields are custom columns: `Context`, and JSON-valued
   `Discourse_Segments`, `Contrasts`, `Readings`, `Paper_Features`.
 - `languages.csv` (LanguageTable): the rows of `Linglib/Data/Examples/languages.csv`, plus one
@@ -62,6 +63,7 @@ import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from judgments import MARK  # noqa: E402
 from lgr import leipzig_pairs, lgr_conformance  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -76,15 +78,6 @@ LANGUAGE_COLUMNS = ["ID", "Name", "Glottocode", "ISO639P3code", "Level", "Macroa
                     "Latitude", "Longitude"]
 NO_LANGUAGE = {"ID": "no-language", "Name": "No language (a constructed string)"}
 TERMS = "http://cldf.clld.org/v1.0/terms.rdf#"
-
-MARK = {
-    "acceptable": "",
-    "marginal": "?",
-    "questionable": "??",
-    "unacceptable": "#",
-    "ungrammatical": "*",
-    "variable": "%",
-}
 
 CUSTOM_COLUMNS = [
     {"name": "Context", "dc:description": "The scenario the paper gives for the judgment."},
@@ -150,6 +143,14 @@ def source_ref(ref):
     return f"{ref['bibkey']}[{label}]" if label else ref["bibkey"]
 
 
+def mark(row):
+    """The mark of a row, a split mark as its marks joined by `/`."""
+    also = row.get("alsoJudged", [])
+    if not also:
+        return MARK[row["judgment"]]
+    return "/".join(MARK[j] or "√" for j in [row["judgment"], *also])
+
+
 def judged_id(code):
     """The LanguageTable item, with no Glottocode, that the judged examples of `code` link to."""
     return f"{code}-judged"
@@ -165,7 +166,7 @@ def example_row(paper, row):
     return {
         "ID": row["id"],
         "Language_ID": (NO_LANGUAGE["ID"] if not code
-                        else judged_id(code) if MARK[row["judgment"]] else code),
+                        else judged_id(code) if mark(row) else code),
         "Primary_Text": row.get("primaryText", ""),
         "Analyzed_Word": [w for w, _ in pairs],
         "Gloss": [g for _, g in pairs] if any(g for _, g in pairs) else [],
@@ -174,7 +175,7 @@ def example_row(paper, row):
         "LGR_Conformance": lgr_conformance(pairs),
         "Comment": row.get("comment") or None,
         "Source": refs,
-        "Grammaticality_Judgement": MARK[row["judgment"]] or None,
+        "Grammaticality_Judgement": mark(row) or None,
         "Contribution_ID": paper,
         "Context": row.get("context") or None,
         "Verdict": row.get("verdict"),

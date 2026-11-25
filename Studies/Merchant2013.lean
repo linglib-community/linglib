@@ -159,9 +159,14 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
+/-- The paper accepts an example it leaves unmarked or marks `?`. -/
+def Accepted (j : Judgment) : Prop := j = .acceptable ∨ j = .marginal
+
+instance (j : Judgment) : Decidable (Accepted j) := inferInstanceAs (Decidable (_ ∨ _))
+
 theorem length_rows : rows.length = Examples.all.length := by decide
 
-theorem rows_predicted : ∀ r ∈ rows, (.marginal ≤ r.judgment ↔ Licit analysis r.clause) := by
+theorem rows_predicted : ∀ r ∈ rows, (Accepted r.judgment ↔ Licit analysis r.clause) := by
   decide
 
 /-! ### The analyses the judgments admit -/
@@ -197,19 +202,19 @@ theorem licit_iff_spares {f : Kind → Ellipsis clausalSpine} {c : Clause} {k : 
 other ellipsis deletes Voice: VP-ellipsis tolerates a voice mismatch (1), (2) but not a mismatch
 in v (30), and every other ellipsis rejects a voice mismatch ((3), (5)–(11), (25)). -/
 theorem rows_predicted_iff (f : Kind → Ellipsis clausalSpine) :
-    (∀ r ∈ rows, (.marginal ≤ r.judgment ↔ Licit f r.clause)) ↔ VoiceSplit f := by
+    (∀ r ∈ rows, (Accepted r.judgment ↔ Licit f r.clause)) ↔ VoiceSplit f := by
   refine ⟨fun h ↦ ⟨eq_vpEllipsis_iff_spares_voice.2 ⟨?_, ?_⟩, fun k hk ↦ ?_⟩, fun hf r hr ↦
     (rows_predicted r hr).trans (licit_iff_of_voiceSplit analysis_voiceSplit hf r.clause)⟩
   · obtain ⟨r, hr, hk, hx, hj⟩ : ∃ r ∈ rows, r.clause.ellipsis = some .vpEllipsis ∧
-        r.clause.sites = [.head .Voice] ∧ .marginal ≤ r.judgment := by
+        r.clause.sites = [.head .Voice] ∧ Accepted r.judgment := by
       decide
     exact (licit_iff_spares hk hx).1 ((h r hr).1 hj)
   · obtain ⟨r, hr, hk, hx, hj⟩ : ∃ r ∈ rows, r.clause.ellipsis = some .vpEllipsis ∧
-        r.clause.sites = [.head .v] ∧ ¬ .marginal ≤ r.judgment := by
+        r.clause.sites = [.head .v] ∧ ¬ Accepted r.judgment := by
       decide
     exact not_not.1 fun hs ↦ hj ((h r hr).2 ((licit_iff_spares hk hx).2 hs))
   · obtain ⟨r, hr, hk, hx, hj⟩ : ∃ r ∈ rows, r.clause.ellipsis = some k ∧
-        r.clause.sites = [.head .Voice] ∧ ¬ .marginal ≤ r.judgment := by
+        r.clause.sites = [.head .Voice] ∧ ¬ Accepted r.judgment := by
       revert k; decide
     exact not_not.1 fun hs ↦ hj ((h r hr).2 ((licit_iff_spares hk hx).2 hs))
 

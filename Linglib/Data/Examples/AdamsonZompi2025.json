@@ -1317,6 +1317,7 @@
     "translation": "Intended: Whoever loves you (polite) is also afraid that someone could take you away from him.",
     "context": "",
     "judgment": "questionable",
+    "alsoJudged": ["ungrammatical"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1331,10 +1332,6 @@
       [
         "cell",
         "3>SIE"
-      ],
-      [
-        "alsoJudged",
-        "ungrammatical"
       ]
     ],
     "comment": "Marked ??/*; the authors flag the need for experimental confirmation.",

@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Data.Nat.Notation
 public import Mathlib.Tactic.TypeStar
 public import Linglib.Data.Examples.Judgment
 
@@ -12,17 +13,17 @@ public import Linglib.Data.Examples.Judgment
 # Data from examples
 
 This file defines the data a study reads off a paper's examples; the lookups a study makes on
-them are in `Data/Examples/Readers.lean`. An example is what the paper prints under a number; a `Datum` is one piece of data the paper
-reports with it in the sense of Tonhauser and Matthewson: an expression (the example, or one
-alternant of it), the context it is judged in, and the judgment, less the information about the
-speakers that papers seldom give. A datum is a row of the Examples component of the
-Cross-Linguistic Data Formats of Forkel et al., in version 1.3, and the
+them are in `Data/Examples/Readers.lean`. An example is what the paper prints under a number; a
+`Datum` is one piece of data the paper reports with it in the sense of Tonhauser and Matthewson: an
+expression (the example, or one alternant of it), the context it is judged in, and the judgment,
+less the information about the speakers that papers seldom give. A datum is a row of the
+Examples component of the Cross-Linguistic Data Formats of Forkel et al., in version 1.3, and the
 sentence-level counterpart of `Data/Wordlist/`.
 
 ## Main definitions
 
 * `Datum`: a piece of data about an example, with the judgment layer (`judgment`,
-  `contrasts`, `readings`) and the paper's own columns (`paperFeatures`).
+  `alsoJudged`, `contrasts`, `readings`) and the paper's own columns (`paperFeatures`).
 * `SourceRef`: a reference to a paper, a bibkey with a locator.
 * `GlossedWord`, `GlossedMorpheme`, `LGRConformance`: a word of the gloss line with its
   morphemes and their glosses, as `pyigt` models them, and the conformance of an example with the
@@ -180,6 +181,8 @@ structure Datum where
   context : String
   /-- The judgment the source reports for the expression in the context. -/
   judgment : Judgment
+  /-- The further marks of a split mark such as `??/*`, in printed order. -/
+  alsoJudged : List Judgment := []
   /-- The truth-value judgment the source reports, where the task is truth in the context rather
   than the acceptability that `judgment` records; `none` where the source reports none. -/
   verdict : Option Bool := none

@@ -544,9 +544,10 @@ def ex_62c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
+    alsoJudged := [.ungrammatical]
     contrasts := []
     readings := []
-    paperFeatures := [("operator", "question"), ("modal", "existential"), ("property", "upward"), ("alsoJudged", "ungrammatical")] }
+    paperFeatures := [("operator", "question"), ("modal", "existential"), ("property", "upward")] }
 
 def ex_63a : Datum :=
   { id := "foxhackl2006_63a"

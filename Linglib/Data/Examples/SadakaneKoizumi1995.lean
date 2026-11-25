@@ -251,9 +251,10 @@ def ex_12a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
+    alsoJudged := [.questionable]
     contrasts := []
     readings := []
-    paperFeatures := [("particle", "postposition"), ("form", "kara"), ("test", "cleftWithoutParticle"), ("alsoJudged", "questionable")] }
+    paperFeatures := [("particle", "postposition"), ("form", "kara"), ("test", "cleftWithoutParticle")] }
 
 def ex_12b : Datum :=
   { id := "sadakanekoizumi1995_12b"
@@ -266,9 +267,10 @@ def ex_12b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
+    alsoJudged := [.acceptable]
     contrasts := []
     readings := []
-    paperFeatures := [("particle", "postposition"), ("form", "de"), ("test", "cleftWithoutParticle"), ("alsoJudged", "acceptable")] }
+    paperFeatures := [("particle", "postposition"), ("form", "de"), ("test", "cleftWithoutParticle")] }
 
 def ex_16a : Datum :=
   { id := "sadakanekoizumi1995_16a"
@@ -416,9 +418,10 @@ def ex_22b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .marginal
+    alsoJudged := [.acceptable]
     contrasts := []
     readings := []
-    paperFeatures := [("category", "F"), ("particle", "postposition"), ("form", "ni"), ("test", "cleftWithoutParticle"), ("alsoJudged", "acceptable")] }
+    paperFeatures := [("category", "F"), ("particle", "postposition"), ("form", "ni"), ("test", "cleftWithoutParticle")] }
 
 def ex_24a : Datum :=
   { id := "sadakanekoizumi1995_24a"
