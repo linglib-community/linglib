@@ -6,17 +6,17 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Algebra.GroupWithZero.Defs
-public import Linglib.Syntax.Minimalist.LexicalItem
+import Mathlib.Tactic.SplitIfs
 
 /-!
 # Selection rules and their states
 
-A head merges with the constituents it selects. A *selection rule* `S` on a type `R` of residues
-says when a head with residue `r` selects a sister whose head is `b` and whose residue is `u`,
-`S.Selects r b u`, and what it has left to select afterwards, `S.rest r b u`. A constituent under
-the rule is its projecting head with the residue of that head. Of two sisters the one that selects
-the other projects; where each selects the other the rule says which head outranks the other, and
-where neither selects, or neither outranks, the node has no head.
+A head merges with the constituents it selects. A *selection rule* `S` on a type `α` of items and a
+type `R` of residues says when a head with residue `r` selects a sister whose head is `b` and whose
+residue is `u`, `S.Selects r b u`, and what it has left to select afterwards, `S.rest r b u`. A
+constituent under the rule is its projecting head with the residue of that head. Of two sisters the
+one that selects the other projects; where each selects the other the rule says which head outranks
+the other, and where neither selects, or neither outranks, the node has no head.
 
 The states of a rule are its constituents together with `0`, the failure of Merge. Their
 product is the constituent that projects, after it has selected its sister. It makes them a
@@ -25,7 +25,7 @@ as a morphism of magmas (`Minimalist.Licensing`), and the head of a product is t
 
 ## Main definitions
 
-* `Minimalist.SelectionRule`: a selection rule on residues.
+* `Minimalist.SelectionRule`: a selection rule on items and residues.
 * `Minimalist.SelectionRule.Constituent`: a projecting head with its residue.
 * `Minimalist.SelectionRule.Constituent.Projects`: one constituent projects over a sister.
 * `Minimalist.SelectionRule.State`: a constituent or `0`, a `CommMagma` and `MulZeroClass`.
@@ -43,6 +43,9 @@ as a morphism of magmas (`Minimalist.Licensing`), and the head of a product is t
 * `Minimalist.SelectionRule.State.foldl_mul_of`: along a spine the product is iterated selection.
 
 ## Implementation notes
+
+The items are a parameter. A rule reads nothing off an item except through `Selects`, `rest` and
+`Outranks`, so the states are defined before any lexicon is.
 
 A rule is a term, and its constituents and states are types indexed by it, as the quotient by a
 congruence is indexed by the congruence. Two rules on the same residues then have different
@@ -64,18 +67,18 @@ states are a `CommMagma` and `MulZeroClass` only.
 
 namespace Minimalist
 
-/-- A selection rule on residues `R`: when a head selects a sister, what it has left to select
-afterwards, and which of two heads projects when each selects the other. -/
-structure SelectionRule (R : Type*) where
+/-- A selection rule on items `α` and residues `R`: when a head selects a sister, what it has left
+to select afterwards, and which of two heads projects when each selects the other. -/
+structure SelectionRule (α : Type*) (R : Type*) where
   /-- A head with residue `r` selects a sister whose head is `b` and whose residue is `u`. -/
-  Selects : R → LexicalItem.Token → R → Prop
+  Selects : R → α → R → Prop
   /-- Selection is decidable, so that the product computes. -/
   [decidableSelects : ∀ r b u, Decidable (Selects r b u)]
   /-- The residue left to a head with residue `r` once it has selected such a sister. -/
-  rest : R → LexicalItem.Token → R → R
+  rest : R → α → R → R
   /-- `Outranks a b` holds when, of two sisters that each select the other, the one headed by `a`
   projects over the one headed by `b`. -/
-  Outranks : LexicalItem.Token → LexicalItem.Token → Prop := fun _ _ ↦ False
+  Outranks : α → α → Prop := fun _ _ ↦ False
   /-- Outranking is decidable, so that the product computes. -/
   [decidableOutranks : DecidableRel Outranks]
   /-- No two heads outrank each other. -/
@@ -83,39 +86,39 @@ structure SelectionRule (R : Type*) where
 
 namespace SelectionRule
 
-variable {R : Type*}
+variable {α R : Type*}
 
-instance (S : SelectionRule R) (r : R) (b : LexicalItem.Token) (u : R) :
+instance (S : SelectionRule α R) (r : R) (b : α) (u : R) :
     Decidable (S.Selects r b u) :=
   S.decidableSelects r b u
 
-instance (S : SelectionRule R) : DecidableRel S.Outranks := S.decidableOutranks
+instance (S : SelectionRule α R) : DecidableRel S.Outranks := S.decidableOutranks
 
 /-- The residue left to a head with residue `r` once it selects a sister whose head is `b` and
 whose residue is `u`, and `none` when it does not select it. -/
-def select (S : SelectionRule R) (r : R) (b : LexicalItem.Token) (u : R) : Option R :=
+def select (S : SelectionRule α R) (r : R) (b : α) (u : R) : Option R :=
   if S.Selects r b u then some (S.rest r b u) else none
 
-theorem select_eq_some_iff {S : SelectionRule R} {r u r' : R} {b : LexicalItem.Token} :
+theorem select_eq_some_iff {S : SelectionRule α R} {r u r' : R} {b : α} :
     S.select r b u = some r' ↔ S.Selects r b u ∧ S.rest r b u = r' := by
   simp [select]
 
-theorem select_eq_none_iff {S : SelectionRule R} {r u : R} {b : LexicalItem.Token} :
+theorem select_eq_none_iff {S : SelectionRule α R} {r u : R} {b : α} :
     S.select r b u = none ↔ ¬ S.Selects r b u := by
   simp [select]
 
 /-- A constituent under the rule `S`: its projecting head with what that head has yet to
 select. -/
-structure Constituent (S : SelectionRule R) where
+structure Constituent (S : SelectionRule α R) where
   /-- The projecting head. -/
-  head : LexicalItem.Token
+  head : α
   /-- What the head has yet to select. -/
   residue : R
   deriving DecidableEq
 
 namespace Constituent
 
-variable {S : SelectionRule R} {x y : S.Constituent}
+variable {S : SelectionRule α R} {x y : S.Constituent}
 
 /-- `x` projects over its sister `y`: it selects `y`, and where `y` selects it too, its head
 outranks the head of `y`. -/
@@ -137,23 +140,23 @@ def select (x y : S.Constituent) : S.Constituent := ⟨x.head, S.rest x.residue 
 @[simp] theorem head_select (x y : S.Constituent) : (x.select y).head = x.head := rfl
 
 /-- The constituent with its head relabelled by `f`. -/
-def map (f : LexicalItem.Token → LexicalItem.Token) (x : S.Constituent) : S.Constituent :=
+def map (f : α → α) (x : S.Constituent) : S.Constituent :=
   ⟨f x.head, x.residue⟩
 
 end Constituent
 
 /-- A state of the rule `S`: a constituent, or `0` where Merge has failed. -/
-structure State (S : SelectionRule R) where
+structure State (S : SelectionRule α R) where
   /-- The constituent, `none` for `0`. -/
   toOption : Option S.Constituent
   deriving DecidableEq
 
 namespace State
 
-variable {S : SelectionRule R}
+variable {S : SelectionRule α R}
 
 /-- The state with projecting head `tok` and residue `r`. -/
-def of (tok : LexicalItem.Token) (r : R) : S.State := ⟨some ⟨tok, r⟩⟩
+def of (tok : α) (r : R) : S.State := ⟨some ⟨tok, r⟩⟩
 
 instance : Zero S.State := ⟨⟨none⟩⟩
 
@@ -165,12 +168,12 @@ def recZeroOf {motive : S.State → Sort*} (zero : motive 0)
   | ⟨some ⟨tok, r⟩⟩ => of tok r
 
 /-- The projecting head, and `none` for `0`. -/
-def head (x : S.State) : Option LexicalItem.Token := x.toOption.map (·.head)
+def head (x : S.State) : Option α := x.toOption.map (·.head)
 
 /-- The residue of the projecting head, and `none` for `0`. -/
 def residual (x : S.State) : Option R := x.toOption.map (·.residue)
 
-@[simp] theorem head_of (tok : LexicalItem.Token) (r : R) : (of tok r : S.State).head = some tok :=
+@[simp] theorem head_of (tok : α) (r : R) : (of tok r : S.State).head = some tok :=
   rfl
 
 @[simp] theorem head_zero : (0 : S.State).head = none := rfl
@@ -181,27 +184,27 @@ theorem exists_head_of_ne_zero {x : S.State} (h : x ≠ 0) : ∃ t, x.head = som
   · exact absurd rfl h
   · exact ⟨c.head, rfl⟩
 
-@[simp] theorem residual_of (tok : LexicalItem.Token) (r : R) :
+@[simp] theorem residual_of (tok : α) (r : R) :
     (of tok r : S.State).residual = some r :=
   rfl
 
 @[simp] theorem residual_zero : (0 : S.State).residual = none := rfl
 
-@[simp] theorem of_ne_zero (tok : LexicalItem.Token) (r : R) : (of tok r : S.State) ≠ 0 :=
+@[simp] theorem of_ne_zero (tok : α) (r : R) : (of tok r : S.State) ≠ 0 :=
   mt (congrArg toOption) (Option.some_ne_none _)
 
 /-- The state with its head relabelled by `f`. -/
-def map (f : LexicalItem.Token → LexicalItem.Token) (x : S.State) : S.State :=
+def map (f : α → α) (x : S.State) : S.State :=
   ⟨x.toOption.map (Constituent.map f)⟩
 
-@[simp] theorem map_zero (f : LexicalItem.Token → LexicalItem.Token) : (0 : S.State).map f = 0 :=
+@[simp] theorem map_zero (f : α → α) : (0 : S.State).map f = 0 :=
   rfl
 
-@[simp] theorem map_of (f : LexicalItem.Token → LexicalItem.Token) (tok : LexicalItem.Token)
+@[simp] theorem map_of (f : α → α) (tok : α)
     (r : R) : (of tok r : S.State).map f = of (f tok) r :=
   rfl
 
-@[simp] theorem head_map (f : LexicalItem.Token → LexicalItem.Token) (x : S.State) :
+@[simp] theorem head_map (f : α → α) (x : S.State) :
     (x.map f).head = x.head.map f := by
   cases x <;> rfl
 
@@ -236,7 +239,7 @@ instance : MulZeroClass S.State where
   zero_mul _ := rfl
   mul_zero x := by rcases x with ⟨_ | _⟩ <;> rfl
 
-theorem of_mul_of (a b : LexicalItem.Token) (r u : R) :
+theorem of_mul_of (a b : α) (r u : R) :
     (of a r * of b u : S.State) = merge ⟨a, r⟩ ⟨b, u⟩ :=
   rfl
 
@@ -251,7 +254,7 @@ instance : CommMagma S.State where
   · exact merge_eq_zero x.not_projects_self x.not_projects_self
 
 /-- The head of a merger is the head of one of the two constituents. -/
-theorem head_merge (x y : S.Constituent) {t : LexicalItem.Token} (h : t ∈ (merge x y).head) :
+theorem head_merge (x y : S.Constituent) {t : α} (h : t ∈ (merge x y).head) :
     t = x.head ∨ t = y.head := by
   unfold merge at h
   split_ifs at h
@@ -260,7 +263,7 @@ theorem head_merge (x y : S.Constituent) {t : LexicalItem.Token} (h : t ∈ (mer
   · cases h
 
 /-- The head of a product of selection states is one of its factors' heads. -/
-theorem head_mul {x y : S.State} {t : LexicalItem.Token} (h : t ∈ (x * y).head) :
+theorem head_mul {x y : S.State} {t : α} (h : t ∈ (x * y).head) :
     t ∈ x.head ∨ t ∈ y.head := by
   rcases x with ⟨_ | x⟩ <;> rcases y with ⟨_ | y⟩ <;> try cases h
   rcases head_merge x y h with rfl | rfl
@@ -273,7 +276,7 @@ def side : S.State → S.State → Option Bool
     if x.Projects y then some true else if y.Projects x then some false else none
   | _, _ => none
 
-theorem side_of_of (a b : LexicalItem.Token) (r u : R) :
+theorem side_of_of (a b : α) (r u : R) :
     side (of a r : S.State) (of b u) =
       if (⟨a, r⟩ : S.Constituent).Projects ⟨b, u⟩ then some true
       else if (⟨b, u⟩ : S.Constituent).Projects ⟨a, r⟩ then some false else none :=
@@ -330,7 +333,7 @@ theorem mul_eq_zero_iff (x y : S.State) : x * y = 0 ↔ ¬ x.Projects y ∧ ¬ y
     · simp [h, h']
 
 /-- A relabelling of heads that selection does not see commutes with the product. -/
-theorem map_mul {f : LexicalItem.Token → LexicalItem.Token}
+theorem map_mul {f : α → α}
     (hsel : ∀ (r : R) b u, S.Selects r (f b) u ↔ S.Selects r b u)
     (hrest : ∀ (r : R) b u, S.rest r (f b) u = S.rest r b u)
     (hout : ∀ a b, S.Outranks (f a) (f b) ↔ S.Outranks a b)
@@ -357,8 +360,8 @@ private theorem foldl_mul_zero {α : Type*} (f : α → S.State) (l : List α) :
 /-- Along a spine, the product is iterated selection: when no sister selects the head `h`,
 merging them in turn leaves `h` projecting with the residue of selecting each, and fails where
 `h` does not select one. -/
-theorem foldl_mul_of (h : LexicalItem.Token) (r : R)
-    (args : List (LexicalItem.Token × R))
+theorem foldl_mul_of (h : α) (r : R)
+    (args : List (α × R))
     (hargs : ∀ a ∈ args, ∀ r', ¬ S.Selects a.2 h r') :
     args.foldl (fun x a ↦ x * of a.1 a.2) (of h r : S.State) =
       (args.foldlM (fun r a ↦ S.select r a.1 a.2) r).elim 0 (of h) := by

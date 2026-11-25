@@ -68,7 +68,7 @@ open RoseTree UnorderedTree SyntacticObject
 
 /-- The stack rule: a head whose stack has the category of a saturated sister on top selects it,
 and is left with the rest of the stack. -/
-def SelectionRule.stack : SelectionRule (List Cat) where
+def SelectionRule.stack : SelectionRule LexicalItem.Token (List Cat) where
   Selects r b u := r.head? = some b.item.cat ∧ u = []
   rest r _ _ := r.tail
 

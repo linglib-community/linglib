@@ -208,7 +208,7 @@ theorem checks_subset_checks {a b : LexicalItem.Token} (hc : b.item.cat = a.item
 constituent's head checks a Merge feature of `s`, and every feature it checks is then checked.
 The constituent's own features may be left unchecked. Of two heads that can each select the
 other, the higher in its extended projection projects. -/
-def featureMaximality : SelectionRule (Finset Selector) where
+def featureMaximality : SelectionRule LexicalItem.Token (Finset Selector) where
   Selects s b _ := ∃ f ∈ s ∩ checks b, f.IsMerge
   rest s b _ := s \ checks b
   Outranks a b := b.item.cat.ExtendsTo a.item.cat ∧ ¬ a.item.cat.ExtendsTo b.item.cat
