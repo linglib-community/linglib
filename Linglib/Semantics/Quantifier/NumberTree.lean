@@ -317,7 +317,11 @@ theorem Euclidean.eq_top (h : q.Euclidean) (hq : ∃ a b, q a b) : q = ⊤ := by
 /-! ### The postulates -/
 
 /-- A quantifier has variety when it holds somewhere and fails somewhere. -/
-def Variety (q : NumberTree) : Prop := (∃ a b, q a b) ∧ ∃ a b, ¬ q a b
+structure Variety (q : NumberTree) : Prop where
+  /-- A quantifier with variety holds somewhere. -/
+  exists_apply : ∃ a b, q a b
+  /-- A quantifier with variety fails somewhere. -/
+  exists_not_apply : ∃ a b, ¬ q a b
 
 /-- A quantifier is row-convex when it meets each row of the tree in an uninterrupted stretch. -/
 def RowConvex (q : NumberTree) : Prop :=
@@ -326,14 +330,22 @@ def RowConvex (q : NumberTree) : Prop :=
 
 /-- The postulate CONT asks that both the presence and the absence of the quantifier be
 uninterrupted along each row. -/
-def Cont (q : NumberTree) : Prop := q.RowConvex ∧ qᶜ.RowConvex
+structure Cont (q : NumberTree) : Prop where
+  /-- The quantifier is row-convex. -/
+  rowConvex : q.RowConvex
+  /-- The complement of the quantifier is row-convex. -/
+  rowConvex_compl : qᶜ.RowConvex
 
 /-- A quantifier has no deadlock when adding an individual to `A` can always keep it true. -/
 def NoDeadlock (q : NumberTree) : Prop := ∀ ⦃a b : ℕ⦄, q a b → q (a + 1) b ∨ q a (b + 1)
 
 /-- The postulate PLUS asks that neither the truth nor the falsity of the quantifier reach a
 deadlock. -/
-def Plus (q : NumberTree) : Prop := q.NoDeadlock ∧ qᶜ.NoDeadlock
+structure Plus (q : NumberTree) : Prop where
+  /-- The quantifier has no deadlock. -/
+  noDeadlock : q.NoDeadlock
+  /-- The complement of the quantifier has no deadlock. -/
+  noDeadlock_compl : qᶜ.NoDeadlock
 
 /-- A quantifier is homogeneous when adding an individual to `A` has the same two outcomes
 wherever the quantifier holds. -/
@@ -343,19 +355,26 @@ def Homogeneous (q : NumberTree) : Prop :=
 
 /-- The postulate UNIF asks that adding an individual have the same outcomes wherever the
 quantifier holds, and the same outcomes wherever it fails. -/
-def Uniform (q : NumberTree) : Prop := q.Homogeneous ∧ qᶜ.Homogeneous
+structure Uniform (q : NumberTree) : Prop where
+  /-- The quantifier is homogeneous. -/
+  homogeneous : q.Homogeneous
+  /-- The complement of the quantifier is homogeneous. -/
+  homogeneous_compl : qᶜ.Homogeneous
 
 theorem Variety.compl (h : q.Variety) : qᶜ.Variety :=
-  ⟨h.2, h.1.imp fun _ ↦ Exists.imp fun _ ↦ not_not_intro⟩
+  ⟨h.exists_not_apply, h.exists_apply.imp fun _ ↦ Exists.imp fun _ ↦ not_not_intro⟩
 
-theorem Cont.compl (h : q.Cont) : qᶜ.Cont := ⟨h.2, by rw [compl_compl]; exact h.1⟩
+theorem Cont.compl (h : q.Cont) : qᶜ.Cont :=
+  ⟨h.rowConvex_compl, by rw [compl_compl]; exact h.rowConvex⟩
 
-theorem Plus.compl (h : q.Plus) : qᶜ.Plus := ⟨h.2, by rw [compl_compl]; exact h.1⟩
+theorem Plus.compl (h : q.Plus) : qᶜ.Plus :=
+  ⟨h.noDeadlock_compl, by rw [compl_compl]; exact h.noDeadlock⟩
 
-theorem Uniform.compl (h : q.Uniform) : qᶜ.Uniform := ⟨h.2, by rw [compl_compl]; exact h.1⟩
+theorem Uniform.compl (h : q.Uniform) : qᶜ.Uniform :=
+  ⟨h.homogeneous_compl, by rw [compl_compl]; exact h.homogeneous⟩
 
 theorem Variety.innerNeg (h : q.Variety) : q.innerNeg.Variety :=
-  ⟨let ⟨a, b, hq⟩ := h.1; ⟨b, a, hq⟩, let ⟨a, b, hq⟩ := h.2; ⟨b, a, hq⟩⟩
+  ⟨let ⟨a, b, hq⟩ := h.exists_apply; ⟨b, a, hq⟩, let ⟨a, b, hq⟩ := h.exists_not_apply; ⟨b, a, hq⟩⟩
 
 theorem RowConvex.innerNeg (h : q.RowConvex) : q.innerNeg.RowConvex :=
   fun _ _ _ _ _ _ h₁ h₂ _ _ p₁ p₂ ↦ h (by omega) (by omega) (by omega) (by omega) p₂ p₁
@@ -366,11 +385,14 @@ theorem NoDeadlock.innerNeg (h : q.NoDeadlock) : q.innerNeg.NoDeadlock :=
 theorem Homogeneous.innerNeg (h : q.Homogeneous) : q.innerNeg.Homogeneous :=
   fun _ _ _ _ h₁ h₂ ↦ (h h₁ h₂).symm
 
-theorem Cont.innerNeg (h : q.Cont) : q.innerNeg.Cont := ⟨h.1.innerNeg, h.2.innerNeg⟩
+theorem Cont.innerNeg (h : q.Cont) : q.innerNeg.Cont :=
+  ⟨h.rowConvex.innerNeg, h.rowConvex_compl.innerNeg⟩
 
-theorem Plus.innerNeg (h : q.Plus) : q.innerNeg.Plus := ⟨h.1.innerNeg, h.2.innerNeg⟩
+theorem Plus.innerNeg (h : q.Plus) : q.innerNeg.Plus :=
+  ⟨h.noDeadlock.innerNeg, h.noDeadlock_compl.innerNeg⟩
 
-theorem Uniform.innerNeg (h : q.Uniform) : q.innerNeg.Uniform := ⟨h.1.innerNeg, h.2.innerNeg⟩
+theorem Uniform.innerNeg (h : q.Uniform) : q.innerNeg.Uniform :=
+  ⟨h.homogeneous.innerNeg, h.homogeneous_compl.innerNeg⟩
 
 /-! ### The square of opposition
 
@@ -393,7 +415,7 @@ theorem uniform_all : NumberTree.all.Uniform := by
 private theorem eq_all (hC : q.RowConvex) (hU : q.Uniform) (h00 : q 0 0) (h10 : ¬ q 1 0)
     (h01 : q 0 1) : q = NumberTree.all := by
   have hT : ∀ {a b}, q a b → ¬ q (a + 1) b ∧ q a (b + 1) := fun h ↦
-    let ⟨hl, hr⟩ := hU.1 h h00; ⟨fun h' ↦ h10 (hl.mp h'), hr.mpr h01⟩
+    let ⟨hl, hr⟩ := hU.homogeneous h h00; ⟨fun h' ↦ h10 (hl.mp h'), hr.mpr h01⟩
   have hcol : ∀ b, q 0 b := fun b ↦ by
     induction b with
     | zero => exact h00
@@ -402,7 +424,7 @@ private theorem eq_all (hC : q.RowConvex) (hU : q.Uniform) (h00 : q 0 0) (h10 : 
     (hT (hcol 1)).1 (hC (a₁ := 0) (b₁ := 2) (a := 1) (b := 1) (b₂ := 0) rfl rfl zero_le_one
       one_le_two (hcol 2) h)
   have hF : ∀ {a b}, ¬ q a b → ¬ q (a + 1) b ∧ ¬ q a (b + 1) := fun h ↦
-    let ⟨hl, hr⟩ := hU.2 h h10; ⟨hl.mpr h20, hr.mpr (hT (hcol 1)).1⟩
+    let ⟨hl, hr⟩ := hU.homogeneous_compl h h10; ⟨hl.mpr h20, hr.mpr (hT (hcol 1)).1⟩
   have hrow : ∀ a b, ¬ q (a + 1) b := fun a ↦ by
     induction a with
     | zero => exact fun b ↦ (hT (hcol b)).1
@@ -417,7 +439,7 @@ private theorem eq_all_or_eq_no (hV : q.Variety) (hC : q.Cont) (hP : q.Plus) (hU
     (h00 : q 0 0) : q = NumberTree.all ∨ q = NumberTree.no := by
   by_cases h10 : q 1 0 <;> by_cases h01 : q 0 1
   · have hT : ∀ {a b}, q a b → q (a + 1) b ∧ q a (b + 1) := fun h ↦
-      let ⟨hl, hr⟩ := hU.1 h h00; ⟨hl.mpr h10, hr.mpr h01⟩
+      let ⟨hl, hr⟩ := hU.homogeneous h h00; ⟨hl.mpr h10, hr.mpr h01⟩
     have hcol : ∀ b, q 0 b := fun b ↦ by
       induction b with
       | zero => exact h00
@@ -426,13 +448,13 @@ private theorem eq_all_or_eq_no (hV : q.Variety) (hC : q.Cont) (hP : q.Plus) (hU
       induction a with
       | zero => exact hcol
       | succ a ih => exact fun b ↦ (hT (ih b)).1
-    obtain ⟨a, b, hq⟩ := hV.2
+    obtain ⟨a, b, hq⟩ := hV.exists_not_apply
     exact (hq (hall a b)).elim
   · right
-    have := eq_all (q := q.innerNeg) hC.1.innerNeg hU.innerNeg h00 h01 h10
+    have := eq_all (q := q.innerNeg) hC.rowConvex.innerNeg hU.innerNeg h00 h01 h10
     rw [← innerNeg_innerNeg q, this, innerNeg_all]
-  · exact .inl (eq_all hC.1 hU h00 h10 h01)
-  · exact ((hP.1 h00).elim h10 h01).elim
+  · exact .inl (eq_all hC.rowConvex hU h00 h10 h01)
+  · exact ((hP.noDeadlock h00).elim h10 h01).elim
 
 /-- The quantifiers with variety that satisfy CONT, PLUS and UNIF are exactly *all*, *some*,
 *no* and *not all*. -/
@@ -446,18 +468,19 @@ theorem variety_cont_plus_uniform_iff :
     · rcases eq_all_or_eq_no hV.compl hC.compl hP.compl hU.compl h00 with h | h
       · exact .inr (.inr (.inr (by rw [← compl_compl q, h, compl_all])))
       · exact .inr (.inl (by rw [← compl_compl q, h, compl_no]))
-  · have hno : NumberTree.no.Variety ∧ NumberTree.no.Cont ∧ NumberTree.no.Plus ∧
-        NumberTree.no.Uniform :=
-      ⟨variety_all.innerNeg, cont_all.innerNeg, plus_all.innerNeg, uniform_all.innerNeg⟩
+  · have hV : NumberTree.no.Variety := variety_all.innerNeg
+    have hC : NumberTree.no.Cont := cont_all.innerNeg
+    have hP : NumberTree.no.Plus := plus_all.innerNeg
+    have hU : NumberTree.no.Uniform := uniform_all.innerNeg
     rintro (rfl | rfl | rfl | rfl)
     · exact ⟨variety_all, cont_all, plus_all, uniform_all⟩
-    · exact ⟨hno.1.compl, hno.2.1.compl, hno.2.2.1.compl, hno.2.2.2.compl⟩
-    · exact hno
+    · exact ⟨hV.compl, hC.compl, hP.compl, hU.compl⟩
+    · exact ⟨hV, hC, hP, hU⟩
     · exact ⟨variety_all.compl, cont_all.compl, plus_all.compl, uniform_all.compl⟩
 
 /-- *At least two* is not uniform. -/
 theorem not_uniform_two_le : ¬ Uniform fun _ b ↦ 2 ≤ b := fun h ↦ by
-  have := (h.2 (a₁ := 0) (b₁ := 0) (a₂ := 0) (b₂ := 1) (by simp [compl_apply])
+  have := (h.homogeneous_compl (a₁ := 0) (b₁ := 0) (a₂ := 0) (b₂ := 1) (by simp [compl_apply])
     (by simp [compl_apply])).2
   simp [compl_apply] at this
 
