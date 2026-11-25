@@ -31,7 +31,8 @@ as a morphism of magmas (`Minimalist.Licensing`), and the head of a product is t
 * `Minimalist.SelectionRule.State`: a constituent or `0`, a `CommMagma` and `MulZeroClass`.
 * `Minimalist.SelectionRule.State.head`, `Minimalist.SelectionRule.State.residual`: the
   projecting head of a state and its residue.
-* `Minimalist.SelectionRule.State.side`: which of two sisters projects.
+* `Minimalist.SelectionRule.State.side`, `Minimalist.SelectionRule.State.Projects`: which of two
+  sisters projects.
 * `Minimalist.SelectionRule.State.map`: the state with its head relabelled.
 
 ## Main results
@@ -174,6 +175,12 @@ def residual (x : S.State) : Option R := x.toOption.map (·.residue)
 
 @[simp] theorem head_zero : (0 : S.State).head = none := rfl
 
+/-- A state other than `0` has a head. -/
+theorem exists_head_of_ne_zero {x : S.State} (h : x ≠ 0) : ∃ t, x.head = some t := by
+  rcases x with ⟨_ | c⟩
+  · exact absurd rfl h
+  · exact ⟨c.head, rfl⟩
+
 @[simp] theorem residual_of (tok : LexicalItem.Token) (r : R) :
     (of tok r : S.State).residual = some r :=
   rfl
@@ -280,6 +287,47 @@ theorem side_comm (x y : S.State) : side x y = (side y x).map Bool.not := by
   by_cases h : x.Projects y
   · simp [h, h.asymm]
   · by_cases h' : y.Projects x <;> simp [h, h']
+
+/-- `x` projects over `y`: both are constituents, and the constituent of `x` projects over that of
+`y`. -/
+def Projects (x y : S.State) : Prop := side x y = some true
+
+instance : DecidableRel (Projects (S := S)) := fun _ _ ↦ inferInstanceAs (Decidable (_ = _))
+
+/-- Of two states at most one projects. -/
+theorem Projects.asymm {x y : S.State} (h : x.Projects y) : ¬ y.Projects x := fun h' ↦ by
+  rw [Projects, side_comm, h] at h'
+  cases h'
+
+instance : Std.Asymm (Projects (S := S)) := ⟨fun _ _ ↦ Projects.asymm⟩
+
+/-- The head of a product is the head of the factor that projects. -/
+theorem head_mul_eq (x y : S.State) :
+    (x * y).head = if x.Projects y then x.head else if y.Projects x then y.head else none := by
+  rcases x with ⟨_ | x⟩ <;> rcases y with ⟨_ | y⟩ <;> try rfl
+  show (merge x y).head = if side ⟨some x⟩ ⟨some y⟩ = some true then _ else
+    if side ⟨some y⟩ ⟨some x⟩ = some true then _ else none
+  unfold merge side
+  by_cases h : x.Projects y
+  · simp [h, head]
+  · by_cases h' : y.Projects x
+    · simp [h, h', head]
+    · simp [h, h', head]
+      rfl
+
+/-- A product fails exactly when neither factor projects. -/
+theorem mul_eq_zero_iff (x y : S.State) : x * y = 0 ↔ ¬ x.Projects y ∧ ¬ y.Projects x := by
+  rcases x with ⟨_ | x⟩ <;> rcases y with ⟨_ | y⟩ <;>
+    try exact iff_of_true rfl ⟨by simp [Projects, side], by simp [Projects, side]⟩
+  show merge x y = 0 ↔ ¬ side ⟨some x⟩ ⟨some y⟩ = some true ∧ ¬ side ⟨some y⟩ ⟨some x⟩ = some true
+  unfold merge side
+  by_cases h : x.Projects y
+  · simp [h, h.asymm]
+    exact fun h0 ↦ by cases h0
+  · by_cases h' : y.Projects x
+    · simp [h, h']
+      exact fun h0 ↦ by cases h0
+    · simp [h, h']
 
 /-- A relabelling of heads that selection does not see commutes with the product. -/
 theorem map_mul {f : LexicalItem.Token → LexicalItem.Token}

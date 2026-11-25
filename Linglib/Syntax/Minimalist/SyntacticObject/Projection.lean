@@ -19,6 +19,7 @@ takes the head daughters its analysis assumes.
 ## Main definitions
 
 * `Minimalist.HeadDaughter`: the head daughter at each position of each planar object.
+* `Minimalist.HeadDaughter.ofProjects`: the head daughters a projection relation on objects gives.
 * `Minimalist.maximalProjections`, `Minimalist.projectionAt`, `Minimalist.lexicalHeadAt`.
 
 ## References
@@ -59,5 +60,22 @@ theorem projectionAt_le (p : GornAddress) : projectionAt hd t p ≤ p := maximal
 /-- The lexical head of the phrase at `p`, reached by descending through head daughters. -/
 def lexicalHeadAt (p : GornAddress) : GornAddress :=
   (fun q ↦ (hd t q).elim q (q * .of ·))^[t.toRoseTree.subtrees.length] p
+
+/-! ### The head daughters of a projection relation -/
+
+/-- The head daughter of the subtree at an address of a planar object, where `P x y` says that the
+object `x` projects over `y`: of the two daughters there, the one that projects. -/
+def headDaughterAt {L ι : Type} (P : SyntacticObject L ι → SyntacticObject L ι → Prop)
+    [DecidableRel P] : PlanarSyntacticObject L ι → List ℕ → Option ℕ
+  | .mul l r, [] => if P l r then some 0 else if P r l then some 1 else none
+  | .mul l _, 0 :: q => headDaughterAt P l q
+  | .mul _ r, 1 :: q => headDaughterAt P r q
+  | _, _ => none
+
+/-- The head daughters a projection relation on objects gives: at each position, the daughter
+that projects over its sister. -/
+def HeadDaughter.ofProjects (P : SyntacticObject → SyntacticObject → Prop) [DecidableRel P] :
+    HeadDaughter :=
+  fun t q ↦ headDaughterAt P t q.toList
 
 end Minimalist

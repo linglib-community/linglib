@@ -138,6 +138,12 @@ theorem head_of_mul_of {a t : LexicalItem.Token} {y : stack.State}
     · exact h
     · cases h
 
+/-- Where a constituent merges with a saturated one, its own head is the head of the result. -/
+theorem head_mul_of_nil {x : stack.State} {a : LexicalItem.Token} (h : x * of a [] ≠ 0) :
+    (x * of a []).head = x.head := by
+  obtain ⟨t, ht⟩ := exists_head_of_ne_zero h
+  rw [ht, head_of_mul_of (mul_comm x _ ▸ ht)]
+
 /-! ### Triggered Merge -/
 
 /-- A selection state is saturated when its head selects nothing further. -/

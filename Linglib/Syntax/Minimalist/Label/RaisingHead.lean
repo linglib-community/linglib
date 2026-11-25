@@ -25,6 +25,7 @@ takes the daughter carrying the raising head, and the embedding's head where the
 * `Minimalist.CopyState`: a selection state or a lower copy, a commutative magma with zero.
 * `Minimalist.RaisingState`, `Minimalist.SyntacticObject.raisingHead`: the raising state and the
   raising head of a syntactic object.
+* `Minimalist.RaisingState.Projects`: which of two merged constituents projects under raising.
 * `Minimalist.headIndex?`, `Minimalist.HeadDaughter.raising`: the head daughter of a planar tree,
   and the head daughters it gives at the positions of an object.
 
@@ -198,6 +199,75 @@ theorem head_mul {x y : RaisingState} {t : LexicalItem.Token} (h : t ∈ (x * y)
       · left; simp_all
       · exact absurd (show (none : Option LexicalItem.Token) = some t from h) (by simp)
 
+/-- `x` projects over `y` under raising: it projects by selection; or selection fails between
+two visible constituents and `y` has raised out of `x`, the head of `y` having a lower copy in `x`
+and not conversely; or `x` is a visible constituent and `y` a lower copy. -/
+def Projects (x y : RaisingState) : Prop :=
+  match x.state, y.state with
+  | .sel sx, .sel sy =>
+    sx.Projects sy ∨ (sx * sy = 0 ∧ ∃ a ∈ sx.head, ∃ b ∈ sy.head, b ∈ x.copies ∧ a ∉ y.copies)
+  | .sel sx, .copy _ => sx ≠ 0
+  | .copy _, _ => False
+
+instance (x y : RaisingState) : Decidable (x.Projects y) := by
+  unfold Projects
+  split <;> infer_instance
+
+private theorem sel_eq_zero_iff (s : SelectionRule.stack.State) : CopyState.sel s = 0 ↔ s = 0 :=
+  ⟨fun h ↦ CopyState.sel.inj h, fun h ↦ congrArg _ h⟩
+
+/-- The raising head of a product is the raising head of the factor that projects. -/
+theorem head_mul_eq (x y : RaisingState) :
+    (x * y).state.head =
+      if x.Projects y then x.state.head else if y.Projects x then y.state.head else none := by
+  obtain ⟨sx | a, cx⟩ := x <;> obtain ⟨sy | b, cy⟩ := y
+  · simp only [mul_def, raise, Projects, CopyState.sel_mul_sel, ne_eq, sel_eq_zero_iff,
+      mul_comm sy sx]
+    by_cases h1 : sx.Projects sy
+    · have h0 : sx * sy ≠ 0 := fun h ↦ ((SelectionRule.State.mul_eq_zero_iff _ _).1 h).1 h1
+      simp [h0, h1, CopyState.head, SelectionRule.State.head_mul_eq]
+    · by_cases h2 : sy.Projects sx
+      · have h0 : sx * sy ≠ 0 := fun h ↦ ((SelectionRule.State.mul_eq_zero_iff _ _).1 h).2 h2
+        simp [h0, h1, h2, CopyState.head, SelectionRule.State.head_mul_eq]
+      · have h0 : sx * sy = 0 := (SelectionRule.State.mul_eq_zero_iff _ _).2 ⟨h1, h2⟩
+        rcases hx : sx.head with _ | a <;> rcases hy : sy.head with _ | b <;>
+          simp [h0, h1, h2, CopyState.head, hx, hy]
+        by_cases h3 : a ∈ cy ∧ b ∉ cx <;> by_cases h4 : b ∈ cx ∧ a ∉ cy <;>
+          simp [h3, h4, hx, hy] <;> tauto
+  · simp only [mul_def, raise, Projects, CopyState.sel_mul_copy]
+    by_cases hx : sx = 0
+    · subst hx
+      simp [CopyState.head, show (CopyState.sel 0 : CopyState) = 0 from rfl]
+    · by_cases hp : sx * SelectionRule.State.of b [] = 0
+      · simp [hp, sel_eq_zero_iff, hx, CopyState.head]
+      · simp [hp, sel_eq_zero_iff, hx, CopyState.head, SelectionRule.State.head_mul_of_nil hp]
+  · simp only [mul_def, raise, Projects, CopyState.copy_mul_sel]
+    by_cases hy : sy = 0
+    · subst hy
+      simp [CopyState.head, show (CopyState.sel 0 : CopyState) = 0 from rfl]
+    · by_cases hp : SelectionRule.State.of a [] * sy = 0
+      · simp [hp, sel_eq_zero_iff, hy, CopyState.head]
+      · have hp' : sy * SelectionRule.State.of a [] ≠ 0 := mul_comm sy _ ▸ hp
+        simp [hp', sel_eq_zero_iff, hy, CopyState.head, mul_comm (SelectionRule.State.of a []) sy,
+          SelectionRule.State.head_mul_of_nil hp']
+  · have h0 : CopyState.copy a * CopyState.copy b = 0 := rfl
+    simp [Projects, mul_def, raise, h0, CopyState.head]
+
+/-- Of two raising states at most one projects. -/
+theorem Projects.asymm {x y : RaisingState} (h : x.Projects y) : ¬ y.Projects x := by
+  obtain ⟨sx | a, cx⟩ := x <;> obtain ⟨sy | b, cy⟩ := y <;> simp only [Projects] at h ⊢
+  · rintro (h' | ⟨h0', a', ha', b', hb', hmem', hnot'⟩)
+    · rcases h with h | ⟨h0, -⟩
+      · exact h.asymm h'
+      · exact ((SelectionRule.State.mul_eq_zero_iff _ _).1 h0).2 h'
+    · rcases h with h | ⟨-, a, ha, b, hb, hmem, hnot⟩
+      · exact ((SelectionRule.State.mul_eq_zero_iff _ _).1 h0').2 h
+      · obtain rfl := Option.mem_unique ha hb'
+        exact hnot hmem'
+  · exact not_false
+
+instance : Std.Asymm Projects := ⟨fun _ _ ↦ Projects.asymm⟩
+
 end RaisingState
 
 /-- A trace's raising state is the lower copy of the phrase its token heads, with the token recorded
@@ -240,6 +310,14 @@ def raisingCheckHom : SyntacticObject →ₙ* RaisingState :=
 theorem raisingHead_merge {l r : SyntacticObject} {h : LexicalItem.Token}
     (hlr : (merge l r).raisingHead = some h) : l.raisingHead = some h ∨ r.raisingHead = some h :=
   RaisingState.head_mul (raisingCheck_merge l r ▸ hlr)
+
+/-- The raising head of a merge is the raising head of the daughter that projects. -/
+theorem raisingHead_merge_eq (l r : SyntacticObject) :
+    (merge l r).raisingHead =
+      if l.raisingCheck.Projects r.raisingCheck then l.raisingHead
+      else if r.raisingCheck.Projects l.raisingCheck then r.raisingHead else none := by
+  rw [raisingHead, raisingCheck_merge]
+  exact RaisingState.head_mul_eq _ _
 
 /-- The raising head is a head function. -/
 theorem isHeadFunction_raisingHead :

@@ -731,22 +731,13 @@ private theorem mem_arrangements_length {α : Type*} [DecidableEq α] {l es : Li
   mem_arrangements hnd hsub (hnd.subperm hsub).length_le
 /-! ### The dative alternation -/
 
-/-- The categorial selection state of a planar syntactic object without traces. -/
-def state : PlanarSyntacticObject → featureMaximality.State
-  | .of (.lex a) => categorial.lex a
-  | .of _ => 0
-  | .mul l r => state l * state r
-
-/-- The head daughter of the subtree at an address: the sister that selects the other. -/
-def headIndex : PlanarSyntacticObject → List ℕ → Option ℕ
-  | .mul l r, [] => (SelectionRule.State.side (state l) (state r)).map fun b ↦ bif b then 0 else 1
-  | .mul l _, 0 :: q => headIndex l q
-  | .mul _ r, 1 :: q => headIndex r q
-  | _, _ => none
+/-- The categorial selection state of a syntactic object without traces. -/
+def state : SyntacticObject →ₙ* featureMaximality.State :=
+  FreeCommMagma.lift (SyntacticObject.Leaf.elim categorial.lex fun _ ↦ 0)
 
 /-- The head daughters of Merge as selection: at each position the daughter whose head selects
 its sister projects. -/
-def selectionHead : HeadDaughter := fun t q ↦ headIndex t q.toList
+def selectionHead : HeadDaughter := .ofProjects fun x y ↦ (state x).Projects (state y)
 
 /-- `bar R h comp specs` is the stack of intermediate projections of the phrase headed by `h`,
 with complement `comp` and specifiers `specs`, those satisfying `R` linearized on the right. -/
