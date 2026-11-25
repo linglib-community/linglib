@@ -146,13 +146,19 @@ def DownNWMon (d : Det α) : Prop := ∀ A B A', A' ⊆ A → A \ B ⊆ A' → d
 scope preserves it: `A' ⊆ A`, `A' ∩ B = A ∩ B` and `d A B` give `d A' B`. -/
 def DownNEMon (d : Det α) : Prop := ∀ A B A', A' ⊆ A → A ∩ B ⊆ A' → d A B → d A' B
 
-/-- A determiner denotation is smooth when it is ↓NE and ↑SE monotone; smooth determiner
-denotations are scope monotone. -/
-def Smooth (d : Det α) : Prop := DownNEMon d ∧ UpSEMon d
+/-- A determiner denotation is smooth when it is ↓NE and ↑SE monotone. -/
+structure Smooth (d : Det α) : Prop where
+  /-- A smooth determiner denotation is ↓NE monotone. -/
+  downNEMon : d.DownNEMon
+  /-- A smooth determiner denotation is ↑SE monotone. -/
+  upSEMon : d.UpSEMon
 
-/-- A determiner denotation is co-smooth when its inner negation is smooth, that is, when it is
-↓NW and ↑SW monotone. -/
-def CoSmooth (d : Det α) : Prop := DownNWMon d ∧ UpSWMon d
+/-- A determiner denotation is co-smooth when it is ↓NW and ↑SW monotone. -/
+structure CoSmooth (d : Det α) : Prop where
+  /-- A co-smooth determiner denotation is ↓NW monotone. -/
+  downNWMon : d.DownNWMon
+  /-- A co-smooth determiner denotation is ↑SW monotone. -/
+  upSWMon : d.UpSWMon
 
 /-- A determiner denotation is left anti-additive when every section `d · B` is anti-additive,
 `d (A ∪ A') B ↔ d A B ∧ d A' B` ([peters-westerstahl-2006] §5.9). -/
@@ -204,7 +210,11 @@ def ScopeIntersective (d : Det α) : Prop := ∀ A B C, d A B → d A C → d A 
 
 /-- A determiner denotation is filtrating when it is scope monotone and scope-intersective, so
 that its scopes at a fixed restrictor form a filter. -/
-def Filtrating (d : Det α) : Prop := ScopeMonotone d ∧ ScopeIntersective d
+structure Filtrating (d : Det α) : Prop where
+  /-- A filtrating determiner denotation is scope monotone. -/
+  scopeMonotone : d.ScopeMonotone
+  /-- A filtrating determiner denotation is scope-intersective. -/
+  scopeIntersective : d.ScopeIntersective
 
 /-! ### The Boolean algebra, the negations and the dual
 

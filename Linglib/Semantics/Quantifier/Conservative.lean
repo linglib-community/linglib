@@ -84,19 +84,22 @@ theorem Conservative.not_positiveStrong (h : d.Conservative) [Std.Symm d]
 /-- A smooth conservative determiner denotation is scope monotone. -/
 theorem Smooth.scopeMonotone (h : d.Smooth) (hC : d.Conservative) : d.ScopeMonotone := by
   intro A B B' hB hd
-  have h₁ : d (A ∩ (B ∪ B'ᶜ)) B :=
-    h.1 A B _ Set.inter_subset_left (fun x hx ↦ ⟨hx.1, .inl hx.2⟩) hd
-  have h₂ : d (A ∩ (B ∪ B'ᶜ)) B' := (hC.iff_of_inter_eq <| Set.ext fun x ↦
-    ⟨fun ⟨hx, h⟩ ↦ ⟨hx, hB h⟩, fun ⟨hx, h⟩ ↦ ⟨hx, hx.2.resolve_right fun hn ↦ hn h⟩⟩).1 h₁
-  exact h.2 (A ∩ (B ∪ B'ᶜ)) B' A Set.inter_subset_left (fun x hx ↦ ⟨hx.1, .inr hx.2⟩) h₂
+  have h₁ : d (A ∩ (B ∪ B'ᶜ)) B := h.downNEMon A B _ Set.inter_subset_left
+    (Set.inter_subset_inter_right A Set.subset_union_left) hd
+  have h₂ : d (A ∩ (B ∪ B'ᶜ)) B' := (hC.iff_of_inter_eq <| by
+    rw [Set.inter_assoc, Set.inter_assoc, Set.union_inter_cancel_left,
+      Set.union_inter_distrib_right, Set.compl_inter_self, Set.union_empty,
+      Set.inter_eq_left.2 hB]).mp h₁
+  exact h.upSEMon _ B' A Set.inter_subset_left
+    (by rw [Set.sdiff_eq]; exact Set.inter_subset_inter_right A Set.subset_union_right) h₂
 
 theorem Intersective.upSWMon (h : d.Intersective) : d.UpSWMon :=
-  fun A B _ h₁ h₂ ↦ (h A B _ B (Set.Subset.antisymm
-    (fun _ hx ↦ ⟨h₁ hx.1, hx.2⟩) (fun _ hx ↦ ⟨h₂ hx, hx.2⟩))).1
+  fun A B _ h₁ h₂ ↦ (h A B _ B <| (Set.inter_subset_inter_left B h₁).antisymm
+    (Set.subset_inter h₂ Set.inter_subset_right)).mp
 
 theorem Intersective.downNEMon (h : d.Intersective) : d.DownNEMon :=
-  fun A B _ h₁ h₂ ↦ (h A B _ B (Set.Subset.antisymm
-    (fun _ hx ↦ ⟨h₂ hx, hx.2⟩) (fun _ hx ↦ ⟨h₁ hx.1, hx.2⟩))).1
+  fun A B _ h₁ h₂ ↦ (h A B _ B <| (Set.subset_inter h₂ Set.inter_subset_right).antisymm
+    (Set.inter_subset_inter_left B h₁)).mp
 
 /-- A conservative determiner denotation is symmetric if and only if it is ↑SW and ↓NE monotone. -/
 theorem Conservative.symm_iff_upSW_and_downNE (h : d.Conservative) :

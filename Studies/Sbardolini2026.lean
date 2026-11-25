@@ -167,11 +167,11 @@ noncomputable def definite (F B : Set E) : W → Trivalent :=
 
 theorem isSUM_scope_of_filtrating {d : Det E} (hd : d.Filtrating) (A : Set E) :
     IsSUM (scope (W := W) d A) :=
-  isSUM_ofProp_iff.2 ⟨fun _ _ h _ ↦ hd.1 A h, fun _ _ _ ↦ hd.2 A _ _⟩
+  isSUM_ofProp_iff.2 ⟨fun _ _ h _ ↦ hd.scopeMonotone A h, fun _ _ _ ↦ hd.scopeIntersective A _ _⟩
 
 theorem isSUM_modal_of_filtrating {d : Det W} (hd : d.Filtrating) (R : SetRel W W) :
     IsSUM (modal d R) :=
-  isSUM_ofProp_iff.2 ⟨fun _ _ h _ ↦ hd.1 _ h, fun _ _ _ ↦ hd.2 _ _ _⟩
+  isSUM_ofProp_iff.2 ⟨fun _ _ h _ ↦ hd.scopeMonotone _ h, fun _ _ _ ↦ hd.scopeIntersective _ _ _⟩
 
 end Environments
 
