@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Algebra.Free
 public import Mathlib.Algebra.FreeMonoid.FreeSemigroup
-public import Linglib.Generalizations.HeadMovementConstraint
+public import Linglib.Syntax.Spine.Hosting
 
 /-!
 # Morphosyntactic words
@@ -29,8 +29,8 @@ are formed differ in which bracketings and positions they allow, so the type all
 
 ## Main results
 
-* `DistributedMorphology.MorphosyntacticWord.hmc_hosts`: words that divide a spine without
-  repeated heads, each pronounced at one of its own heads, obey the Head Movement Constraint.
+* `DistributedMorphology.MorphosyntacticWord.isContiguous_hosts`: words that divide a spine
+  without repeated heads, each pronounced at one of its own heads, give a contiguous hosting.
 
 ## Implementation notes
 
@@ -75,17 +75,19 @@ def sited (ws : List (MorphosyntacticWord H)) : List (List H × H) :=
 
 /-- The hosts of the words on a spine, lowest first: each position of the spine with the head at
 which its word is pronounced. -/
-def hosts (ws : List (MorphosyntacticWord H)) : List H := HMC.hosting (sited ws)
+def hosts (ws : List (MorphosyntacticWord H)) : List H := Spine.hosting (sited ws)
 
 theorem length_hosts (ws : List (MorphosyntacticWord H)) :
     (hosts ws).length = (ws.flatMap heads).length := by
-  simp [hosts, sited, HMC.length_hosting, List.flatMap_map]
+  simp [hosts, sited, Spine.length_hosting, List.flatMap_map]
 
 /-- Words that divide a spine without repeated heads, each pronounced at one of its own heads,
-obey the Head Movement Constraint. -/
-theorem hmc_hosts {ws : List (MorphosyntacticWord H)} (hsite : ∀ w ∈ ws, w.site ∈ w.heads)
-    (hnd : (ws.flatMap heads).Nodup) : HMC.Holds (hosts ws) :=
-  HMC.holds_hosting (by simpa [sited] using hsite) (by simpa [sited, List.flatMap_map] using hnd)
+give a contiguous hosting. -/
+theorem isContiguous_hosts {ws : List (MorphosyntacticWord H)}
+    (hsite : ∀ w ∈ ws, w.site ∈ w.heads) (hnd : (ws.flatMap heads).Nodup) :
+    IsContiguous (hosts ws).get :=
+  Spine.isContiguous_hosting (by simpa [sited] using hsite)
+    (by simpa [sited, List.flatMap_map] using hnd)
 
 end MorphosyntacticWord
 

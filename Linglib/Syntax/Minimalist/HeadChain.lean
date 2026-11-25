@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Generalizations.HeadMovementConstraint
+public import Linglib.Syntax.Spine.Hosting
 public import Mathlib.Data.List.SplitBy
 
 /-!
@@ -30,8 +30,8 @@ pronounced.
 
 * `Minimalist.HeadChain.flatten_chains`: the chains partition the spine in order.
 * `Minimalist.HeadChain.infix_of_mem_chains`: each chain is a stretch of the spine.
-* `Minimalist.HeadChain.hmc_hosts`: on a spine without repeated heads, head chains obey the Head
-  Movement Constraint.
+* `Minimalist.HeadChain.isContiguous_hosts`: on a spine without repeated heads, the hosting of
+  head chains is contiguous.
 
 ## Implementation notes
 
@@ -69,7 +69,7 @@ def sited (s : List H) : List (List H × H) :=
   (chains shares s).filterMap fun c ↦ (site strong c).map (c, ·)
 
 /-- The host of each position of a spine: the head at which its chain is pronounced. -/
-def hosts (s : List H) : List H := HMC.hosting (sited shares strong s)
+def hosts (s : List H) : List H := Spine.hosting (sited shares strong s)
 
 variable {shares strong}
 
@@ -93,9 +93,10 @@ theorem map_fst_sited_sublist (s : List H) :
   rw [sited, List.map_filterMap, this, List.filterMap_eq_filter]
   exact List.filter_sublist
 
-/-- On a spine without repeated heads, head chains obey the Head Movement Constraint. -/
-theorem hmc_hosts {s : List H} (hs : s.Nodup) : HMC.Holds (hosts shares strong s) := by
-  refine HMC.holds_hosting (fun w hw ↦ ?_) ?_
+/-- On a spine without repeated heads, the hosting of head chains is contiguous. -/
+theorem isContiguous_hosts {s : List H} (hs : s.Nodup) :
+    IsContiguous (hosts shares strong s).get := by
+  refine Spine.isContiguous_hosting (fun w hw ↦ ?_) ?_
   · obtain ⟨c, -, hc⟩ := List.mem_filterMap.1 hw
     obtain ⟨x, hx, rfl⟩ := Option.map_eq_some_iff.1 hc
     exact mem_of_site hx

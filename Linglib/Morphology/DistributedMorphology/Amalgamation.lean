@@ -37,8 +37,8 @@ All in the namespace `DistributedMorphology`.
 * `flatMap_heads_amalgamate`: the words partition the spine in order.
 * `heads_infix_of_mem_amalgamate`: every word is a contiguous stretch of the spine.
 * `site_mem_heads_of_mem_amalgamate`: every word is pronounced at one of its own heads.
-* `hmc_hosts_of_amalgamate`: on a spine without repeated heads, amalgamation obeys the Head
-  Movement Constraint.
+* `isContiguous_hosts_of_amalgamate`: on a spine without repeated heads, the hosting of
+  amalgamation is contiguous.
 * `site_eq_of_amalgamate_append`: heads added above a spine do not change where the words formed
   below are pronounced.
 * `amalgamate_raising_lowering`: with the heads below a position Raising and the heads above it
@@ -274,11 +274,11 @@ theorem site_mem_heads_of_mem_amalgamate {spine : List (Terminal H)}
   obtain ⟨out', h', rfl⟩ := Option.map_eq_some_iff.mp h
   exact site_mem_heads_of_amalgamateAux h' (by simp) a (List.mem_reverse.mp ha)
 
-/-- On a spine without repeated heads, amalgamation obeys the Head Movement Constraint. -/
-theorem hmc_hosts_of_amalgamate {spine : List (Terminal H)}
+/-- On a spine without repeated heads, the hosting of amalgamation is contiguous. -/
+theorem isContiguous_hosts_of_amalgamate {spine : List (Terminal H)}
     {out : List (MWd H)} (h : amalgamate spine = some out)
-    (hnd : (spine.map (·.head)).Nodup) : HMC.Holds (MorphosyntacticWord.hosts out) :=
-  MorphosyntacticWord.hmc_hosts (fun _ ha ↦ site_mem_heads_of_mem_amalgamate h ha)
+    (hnd : (spine.map (·.head)).Nodup) : IsContiguous (MorphosyntacticWord.hosts out).get :=
+  MorphosyntacticWord.isContiguous_hosts (fun _ ha ↦ site_mem_heads_of_mem_amalgamate h ha)
     (flatMap_heads_amalgamate h ▸ hnd)
 
 theorem length_hosts_of_amalgamate {spine : List (Terminal H)}
