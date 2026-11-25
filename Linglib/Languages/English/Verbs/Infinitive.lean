@@ -21,6 +21,6 @@ namespace English.Verbs
 /-- The English *to*-infinitive. Its subject is unpronounced, since an infinitive has a subject
 of its own only when *for* introduces one ([huddleston-pullum-2002] p. 1178). -/
 def toInfinitive : ArgumentFrame :=
-  ⟨some .nominal, [.clausal (coding := some .infinitive) (subject := some .null)]⟩
+  ⟨some .nominal, [.clausal { coding := {.infinitive}, subject := {.null} }]⟩
 
 end English.Verbs

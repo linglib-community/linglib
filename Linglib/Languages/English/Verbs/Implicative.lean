@@ -70,7 +70,7 @@ def promise : Verb where
      (toInfinitive.withObject, [0, 2, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 2, 1])]
+     (ArgumentFrame.np_np.leaveImplicit 1 {.def}, [0, 2, 1])]
     (controllers := [some 0, some 0])
   opaqueContext := true
   attitude := some (.preferential .positive)

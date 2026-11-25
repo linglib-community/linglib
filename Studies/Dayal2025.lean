@@ -223,8 +223,8 @@ theorem layerOf_eq : ∀ x ∈ particleTypes, layerOf x.1 = some x.2.layer := by
 /-- The complementizers type the clauses their distributions admit: *koto* declaratives, and
 *ki* declaratives and questions of every kind. -/
 theorem types_subordinators :
-    Japanese.Particles.koto.types.types = {.declarative} ∧
-      HindiUrdu.Particles.ki.types.types = {.declarative, .polar, .alternative, .constituent} := by
+    Japanese.Particles.koto.types = {.declarative} ∧
+      HindiUrdu.Particles.ki.types = {.declarative, .polar, .alternative, .constituent} := by
   decide
 
 /-! ### Centering (25)–(26), (42)–(43) -/

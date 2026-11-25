@@ -88,13 +88,13 @@ theorem diathesis_antipassive (hh : h.AssignsTheta) (q : Position) :
 /-- A θ-assigning head derives the reflexive with an implicit object understood as its
 subject. -/
 theorem diathesis_reflexive (hh : h.AssignsTheta) :
-    h.diathesis (some (.implicit (some .reflexive))) = _root_.Voice.reflexive := by
+    h.diathesis (some (.implicit {.reflexive})) = _root_.Voice.reflexive := by
   rw [diathesis_of_assignsTheta _ hh]; decide
 
 /-- A θ-assigning head derives the reciprocal with an implicit object understood as its
 subject's members. -/
 theorem diathesis_reciprocal (hh : h.AssignsTheta) :
-    h.diathesis (some (.implicit (some .reciprocal))) = _root_.Voice.reciprocal := by
+    h.diathesis (some (.implicit {.reciprocal})) = _root_.Voice.reciprocal := by
   rw [diathesis_of_assignsTheta _ hh]; decide
 
 end Minimalist.Voice.Head

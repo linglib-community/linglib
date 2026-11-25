@@ -30,8 +30,8 @@ def charge : Verb where
   levin := some Levin1993.Index.charge
   valency := .ofFrames
     [ArgumentFrame.np_np,
-     ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
-     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
+     ArgumentFrame.np_np.leaveImplicit 1 {.indef},
+     ArgumentFrame.np_np.leaveImplicit 0 {.def}]
 
 /-- "cost" — either object may be implicit, the second as an indefinite and the first as a
 definite. -/
@@ -41,15 +41,15 @@ def cost : Verb where
   past := "cost"
   valency := .ofFrames
     [ArgumentFrame.np_np,
-     ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
-     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
+     ArgumentFrame.np_np.leaveImplicit 1 {.indef},
+     ArgumentFrame.np_np.leaveImplicit 0 {.def}]
 
 /-- "fine" — the second object may be implicit, an indefinite; the first may not
 (*They fined an astronomical amount*). -/
 def fine : Verb where
   morphs := [.root "fine"]
   levin := some Levin1993.Index.fine
-  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 1 (some .indef)]
+  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 1 {.indef}]
 
 /-- "tip" — either object may be implicit, the second as an indefinite and the first as a
 definite. -/
@@ -58,8 +58,8 @@ def tip : Verb where
   levin := some Levin1993.Index.tip
   valency := .ofFrames
     [ArgumentFrame.np_np,
-     ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
-     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
+     ArgumentFrame.np_np.leaveImplicit 1 {.indef},
+     ArgumentFrame.np_np.leaveImplicit 0 {.def}]
 
 /-- "strike" — either object may be implicit, the second as an indefinite and the first as a
 definite. -/
@@ -69,8 +69,8 @@ def strike_ : Verb where
   past := "struck"
   valency := .ofFrames
     [ArgumentFrame.np_np,
-     ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
-     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
+     ArgumentFrame.np_np.leaveImplicit 1 {.indef},
+     ArgumentFrame.np_np.leaveImplicit 0 {.def}]
   senseTag := .default
 
 /-- "forgive" — either object may be implicit, each a definite. -/
@@ -81,27 +81,27 @@ def forgive : Verb where
   pastPart := "forgiven"
   valency := .ofFrames
     [ArgumentFrame.np_np,
-     ArgumentFrame.np_np.leaveImplicit 1 (some .def),
-     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
+     ArgumentFrame.np_np.leaveImplicit 1 {.def},
+     ArgumentFrame.np_np.leaveImplicit 0 {.def}]
 
 /-- "spare" — the second object may be implicit, a definite; the first may not. -/
 def spare : Verb where
   morphs := [.root "spare"]
   levin := some Levin1993.Index.spare
-  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 1 (some .def)]
+  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 1 {.def}]
 
 /-- "deny" — the first object may be implicit, a definite; the second may not. -/
 def deny : Verb where
   morphs := [.root "deny"]
   levin := some Levin1993.Index.deny
-  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
+  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 0 {.def}]
 
 /-- "permit" — the first object may be implicit, a definite; the second may not. -/
 def permit : Verb where
   morphs := [.root "permit"]
   levin := none
   doubling := true
-  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
+  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 0 {.def}]
 
 /-- "begrudge" — neither object may be implicit. -/
 def begrudge : Verb where
@@ -126,8 +126,8 @@ def pay : Verb where
   past := "paid"
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2]),
+     (ArgumentFrame.np_np.leaveImplicit 1 {.indef}, [0, 1, 2]),
+     (ArgumentFrame.np_np.leaveImplicit 0 {.def}, [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1])]
 
 /-- "assign" — the goal may be implicit, a definite, as a first object or as a PP; the theme may
@@ -139,8 +139,8 @@ def assign : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1]),
-     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2]),
-     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
+     (ArgumentFrame.np_np.leaveImplicit 0 {.def}, [0, 1, 2]),
+     ((ArgumentFrame.np_pp).leaveImplicit 1 {.def}, [0, 2, 1])]
 
 /-- "serve" — the direct object may be implicit in the double object frame only, an indefinite;
 the PP may be implicit, a definite. -/
@@ -150,8 +150,8 @@ def serve : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
-     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
+     (ArgumentFrame.np_np.leaveImplicit 1 {.indef}, [0, 1, 2]),
+     ((ArgumentFrame.np_pp).leaveImplicit 1 {.def}, [0, 2, 1])]
 
 /-- "teach" — the direct object may be implicit in the double object frame only, and the PP may
 be implicit, each an indefinite. -/
@@ -162,8 +162,8 @@ def teach : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
-     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .indef), [0, 2, 1])]
+     (ArgumentFrame.np_np.leaveImplicit 1 {.indef}, [0, 1, 2]),
+     ((ArgumentFrame.np_pp).leaveImplicit 1 {.indef}, [0, 2, 1])]
 
 /-- "feed" — the direct object may be implicit in the double object frame only, an
 indefinite; the goal may not. -/
@@ -174,7 +174,7 @@ def feed : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 {.indef}, [0, 1, 2])]
 
 /-- "show" — the direct object may be implicit in the double object frame only, a definite
 (*Show me*); the goal may not. -/
@@ -185,7 +185,7 @@ def show_ : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 {.def}, [0, 1, 2])]
 
 /-- "award" — the PP may be implicit, a definite; the theme may not. -/
 def award : Verb where
@@ -195,7 +195,7 @@ def award : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1]),
-     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
+     ((ArgumentFrame.np_pp).leaveImplicit 1 {.def}, [0, 2, 1])]
 
 /-- "forward" — the PP may be implicit, a definite; the theme may not. -/
 def forward_ : Verb where
@@ -205,7 +205,7 @@ def forward_ : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1]),
-     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
+     ((ArgumentFrame.np_pp).leaveImplicit 1 {.def}, [0, 2, 1])]
 
 /-- "grant" — the PP may be implicit, a definite; the theme may not. -/
 def grant : Verb where
@@ -214,7 +214,7 @@ def grant : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
+     ((ArgumentFrame.np_pp).leaveImplicit 1 {.def}, [0, 2, 1])]
 
 /-- "offer" — the PP may be implicit, a definite; the theme may not. -/
 def offer : Verb where
@@ -223,7 +223,7 @@ def offer : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
+     ((ArgumentFrame.np_pp).leaveImplicit 1 {.def}, [0, 2, 1])]
 
 /-- "reserve" — the PP may be implicit, a definite; the theme may not. -/
 def reserve : Verb where
@@ -233,7 +233,7 @@ def reserve : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.for_) (some .beneficiary), [0, 2, 1]),
-     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
+     ((ArgumentFrame.np_pp).leaveImplicit 1 {.def}, [0, 2, 1])]
 
 /-- "pass" — the direct object may be implicit in the prepositional frame only, a definite
 (*She wouldn't pass to me*); the PP may be implicit, an indefinite. Its theme is participant 1
@@ -246,9 +246,9 @@ def pass : Verb where
      (ArgumentFrame.np_pp, [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      ((ArgumentFrame.np_pp (some Adpositions.to_)
-         (some (.argument .R))).leaveImplicit 0 (some .def),
+         (some (.argument .R))).leaveImplicit 0 {.def},
        [0, 1, 2]),
-     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .indef), [0, 1, 2]),
+     ((ArgumentFrame.np_pp).leaveImplicit 1 {.indef}, [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
 
 /-- "hand" — Levin 11.1 Send verbs; neither argument may be implicit. -/

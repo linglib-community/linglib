@@ -56,14 +56,14 @@ def highApplicative : Morph := .pref "re"
 declarative or a polar question ((98), (99), (101)). -/
 def zeRe : Complementizer where
   morphs := [relativizer, highApplicative]
-  coding := some .indicative
-  types := .of {.declarative, .polar}
+  coding := {.indicative}
+  types := {.declarative, .polar}
   licenser := some .nominal
 
 /-- The infinitive suffix *-new* ((54)). -/
 def new : Complementizer where
   morphs := [.suff "new"]
-  coding := some .infinitive
+  coding := {.infinitive}
   licenser := some .verbal
 
 /-- The clause-typers. -/

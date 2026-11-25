@@ -43,10 +43,10 @@ def ip : Complementizer where
 agreement. -/
 def lik : Complementizer where
   morphs := [.suff "lik"]
-  coding := some .nominalized
+  coding := {.nominalized}
 
 /-- A verb that takes a participial clause has this frame, the subject of the clause genitive. -/
-def participialFrame : ArgumentFrame := .typedBy lik (some (.overt (some .gen)))
+def participialFrame : ArgumentFrame := .typedBy lik {.overt (some .gen)}
 
 /-! ### Verbs -/
 

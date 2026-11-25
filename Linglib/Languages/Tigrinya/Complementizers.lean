@@ -42,7 +42,7 @@ comparatives and superlatives, subject noun-complement clauses,
 *sɨlɛ* 'because'. Doubles on verb and auxiliary in periphrastic tenses. -/
 def zi : Complementizer where
   morphs := [zi.morph]
-  coding := some .indicative
+  coding := {.indicative}
   verbForm := some .Fin
 
 /-- The prefix *kɛm-*, the similative preposition 'like' grammaticalized
@@ -56,7 +56,7 @@ embedded questions. Factivity tracks the matrix verb, so no lexical
 `factive` value is recorded. -/
 def kemzi : Complementizer where
   morphs := [kem, zi.morph]
-  coding := some .indicative
+  coding := {.indicative}
   verbForm := some .Fin
 
 /-- The prefix *kɨ-* as a morph. -/
@@ -67,7 +67,7 @@ directive, desire, modal, emotive-factive, control and ECM verbs;
 purpose clauses, the future construction, sentential subjects. -/
 def ki : Complementizer where
   morphs := [ki.morph]
-  coding := some .subjunctive
+  coding := {.subjunctive}
   verbForm := some .Fin
 
 /-- *ʔɨlu* — the clause-final complementizer, an inflected form of 'say'
@@ -75,8 +75,8 @@ agreeing with the matrix subject (*ʔɨl-ɛ* 'COMP-1SG'). Limited to
 cognitive non-factive, fiction and utterance verbs. -/
 def ilu : Complementizer where
   morphs := [.free "ʔɨlu"]
-  coding := some .indicative
-  types := .only .declarative
+  coding := {.indicative}
+  types := {.declarative}
 
 /-- The complementizer inventory. -/
 def complementizers : List Complementizer := [zi, kemzi, ki, ilu]

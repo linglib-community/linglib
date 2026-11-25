@@ -28,8 +28,8 @@ selected by verbs of saying, belief and knowledge. The factivity of an *oti*-cla
 matrix verb (*kséro* against *léo*), so the entry is not lexically factive. -/
 def oti : Complementizer where
   morphs := [.free "oti"]
-  coding := some .indicative
-  types := .only .declarative
+  coding := {.indicative}
+  types := {.declarative}
 
 /-- *pu*, the factive complementizer ([christidis-1982], [roussou-2019]), is selected by
 emotive factives and, on direct-perception readings, by perception and memory verbs
@@ -37,8 +37,8 @@ emotive factives and, on direct-perception readings, by perception and memory ve
 [angelopoulos-2026] unifies through a PLACE noun; the entry records the complement use. -/
 def pu : Complementizer where
   morphs := [.free "pu"]
-  coding := some .indicative
-  types := .only .declarative
+  coding := {.indicative}
+  types := {.declarative}
   factive := true
 
 /-- *an* 'if', the interrogative complementizer ([roussou-2010]), types embedded polar
@@ -46,15 +46,15 @@ questions over indicative clauses, selected (*anarotjéme* 'wonder') or, under m
 or a question, unselected (*dhen kséro an* 'I don't know if'). -/
 def an : Complementizer where
   morphs := [.free "an"]
-  coding := some .indicative
-  types := .only .polar
+  coding := {.indicative}
+  types := {.polar}
 
 /-- *na*, the subjunctive marker ([grano-2024]), is selected by volitional, intention and
 causative verbs. Whether it heads C or a Mood projection is debated; the entry is
 head-agnostic, and [angelopoulos-2026] sets *na* aside. -/
 def na : Complementizer where
   morphs := [.free "na"]
-  coding := some .subjunctive
+  coding := {.subjunctive}
 
 /-- The complementizer inventory. -/
 def complementizers : List Complementizer := [oti, pu, an, na]

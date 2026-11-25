@@ -37,7 +37,7 @@ namespace NezPerce
 /-- The complementizer *ke*, which heads relative clauses and the relative embeddings. -/
 def ke : Complementizer where
   morphs := [.free "ke"]
-  coding := some .indicative
+  coding := {.indicative}
 
 /-! ### Predicates -/
 
@@ -100,7 +100,7 @@ def hi : Verb where
   morphs := [.root "hi"]
   valency := .ofFrame
     { complements :=
-        [.nominal, .clausal (coding := some .indicative) (types := .only .declarative)] }
+        [.nominal, .clausal { coding := {.indicative}, types := {.declarative} }] }
   speechActVerb := true
 
 /-- *cuukwe* 'know', whose complement projects from a conditional antecedent ((66), (68)). -/

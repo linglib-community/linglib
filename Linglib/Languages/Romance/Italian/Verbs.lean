@@ -104,17 +104,17 @@ def passive (fr : ArgumentFrame := .np) : Voice := (Voice.passive fr).marked [.f
 /-- *che* introduces a finite complement clause, indicative or subjunctive. -/
 def che : Complementizer where
   morphs := [.free "che"]
-  types := .only .declarative
+  types := {.declarative}
 
 /-- *di* introduces an infinitival complement. -/
 def di : Complementizer where
   morphs := [.free "di"]
-  coding := some .infinitive
+  coding := {.infinitive}
 
 /-- *a* introduces an infinitival complement. -/
 def a : Complementizer where
   morphs := [.free "a"]
-  coding := some .infinitive
+  coding := {.infinitive}
 
 /-! ### Attitude and causative verbs -/
 

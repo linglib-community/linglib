@@ -340,12 +340,12 @@ a verb cluster. -/
 /-- The frame with a bare infinitival whose subject is controlled, as in *Jan wil een boek
 kopen*. -/
 def controlInfinitival : ArgumentFrame :=
-  ⟨some .nominal, [.clausal (coding := some .infinitive) (subject := some .null)]⟩
+  ⟨some .nominal, [.clausal { coding := {.infinitive}, subject := {.null} }]⟩
 
 /-- The frame with a bare infinitival whose subject is an accusative noun phrase, as in *Jan zag
 haar op de hei lopen*. -/
 def accusativeInfinitival : ArgumentFrame :=
-  ⟨some .nominal, [.clausal (coding := some .infinitive) (subject := some (.overt (some .acc)))]⟩
+  ⟨some .nominal, [.clausal { coding := {.infinitive}, subject := {.overt (some .acc)} }]⟩
 
 /-- *schrijven* 'write', a transitive verb, as in *Jan heeft de brief geschreven*. -/
 def schrijven : Verb := simplex "schrijven" "geschreven"

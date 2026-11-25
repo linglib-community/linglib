@@ -45,15 +45,15 @@ namespace Bulgarian
 /-- The default complementizer *če* 'that', available in every complement clause (fn. 46). -/
 def che : Complementizer where
   morphs := [.free "če"]
-  coding := some .indicative
-  types := .only .declarative
+  coding := {.indicative}
+  types := {.declarative}
 
 /-- The invariant relativizer *deto*, which also introduces the complements of the emotive
 factives that take a *za* phrase, alternating with *če* (§5). -/
 def deto : Complementizer where
   morphs := [.free "deto"]
-  coding := some .indicative
-  types := .only .declarative
+  coding := {.indicative}
+  types := {.declarative}
 
 /-- The form *zadeto* of the same complementizer (fn. 45). -/
 def zadeto : Complementizer := { deto with morphs := [.free "zadeto"] }

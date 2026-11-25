@@ -63,9 +63,9 @@ structure Verb extends _root_.Verb where
 
 /-! ### Verbs in a voice -/
 
-/-- A voice applies to a verb with a frame refining the voice's initial frame. -/
+/-- A voice applies to a verb with a frame at most the voice's initial frame. -/
 def Applies (w : Voice) (v : Verb) : Prop :=
-  ∃ fr ∈ v.valency.frames, w.initial.toArgumentFrame ≤ fr
+  ∃ fr ∈ v.valency.frames, fr ≤ w.initial.toArgumentFrame
 
 instance (w : Voice) (v : Verb) : Decidable (Applies w v) :=
   inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))

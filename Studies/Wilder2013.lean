@@ -329,9 +329,16 @@ inductive Typer
 
 /-- The sentence types a typer allows: those its complementizer types, or the constituent
 interrogative. -/
-def Typer.types : Typer → Clause.Selection
+def Typer.types : Typer → Finset Clause.SentenceType
   | .complementizer c => c.types
-  | .wh _ => .only .constituent
+  | .wh _ => {.constituent}
+
+/-- A set of sentence types is interrogative when it does not admit every type and admits an
+interrogative one. -/
+def Interrogative (s : Finset Clause.SentenceType) : Prop :=
+  s ≠ Finset.univ ∧ ∃ t ∈ s, t.IsInterrogative
+
+instance : DecidablePred Interrogative := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- What a sentence stands in: a root clause with its interrogative word where it has one, a root
 declarative with a preposed object, the complement of a verb with what types it, a cleft, a
@@ -347,9 +354,9 @@ interrogative complement with the sentence types of its clause, a declarative co
 that is not a full factive or of one that is, a cleft, a restrictive relative, an adverbial
 clause, and a root declarative with a preposed object. -/
 inductive Environment
-  | root (s : Clause.Selection)
+  | root (s : Finset Clause.SentenceType)
   | believeComplement | factiveComplement
-  | interrogativeComplement (s : Clause.Selection)
+  | interrogativeComplement (s : Finset Clause.SentenceType)
   | itCleft | restrictiveRelative | adverbialClause | objectPreposing
   deriving DecidableEq
 
@@ -357,11 +364,11 @@ inductive Environment
 question, a typer types a complement as interrogative or declarative, and a declarative
 complement is factive when its verb is a full factive. -/
 def Host.environment : Host → Environment
-  | .root none => .root (.only .declarative)
-  | .root (some _) => .root (.only .constituent)
+  | .root none => .root {.declarative}
+  | .root (some _) => .root {.constituent}
   | .preposed => .objectPreposing
   | .complement v t =>
-    if t.types.IsInterrogative then .interrogativeComplement t.types
+    if Interrogative t.types then .interrogativeComplement t.types
     else if v.factivity = some .full then .factiveComplement else .believeComplement
   | .cleft => .itCleft
   | .relative => .restrictiveRelative
@@ -369,7 +376,7 @@ def Host.environment : Host → Environment
 
 /-- The clause a sentence stands in is interrogative. -/
 def Environment.IsInterrogative : Environment → Prop
-  | .root s | .interrogativeComplement s => s.IsInterrogative
+  | .root s | .interrogativeComplement s => Interrogative s
   | _ => False
 
 instance : DecidablePred Environment.IsInterrogative := fun e ↦ by
@@ -384,7 +391,7 @@ inductive Heading
 
 /-- The paper's heading of an environment. -/
 def Environment.heading : Environment → Heading
-  | .root s => if s.IsInterrogative then .whSubjectQuestion else .root
+  | .root s => if Interrogative s then .whSubjectQuestion else .root
   | .believeComplement => .believeComplement
   | .factiveComplement => .factiveComplement
   | .interrogativeComplement _ => .interrogativeComplement

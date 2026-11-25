@@ -67,8 +67,8 @@ def envy : Verb where
   valency := .ofFrames
     [ArgumentFrame.np,
      ArgumentFrame.np_np,
-     ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
-     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
+     ArgumentFrame.np_np.leaveImplicit 1 {.indef},
+     ArgumentFrame.np_np.leaveImplicit 0 {.def}]
 
 /-- "respect" — AgExp verb (experiencer-subject) -/
 def respect : Verb where
@@ -417,7 +417,7 @@ def scrape : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (ArgumentFrame.objectDrop {.indef}, [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
 
@@ -428,7 +428,7 @@ def wipe : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (ArgumentFrame.objectDrop {.indef}, [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
 

@@ -37,29 +37,29 @@ indicative or, under a mandative predicate, subjunctive ([huddleston-pullum-2002
 §3.2, §7.1.1), so no coding is recorded. -/
 def that : Complementizer where
   morphs := [.free "that"]
-  types := .only .declarative
+  types := {.declarative}
   verbForm := some .Fin
 
 /-- *if*, the variant of *whether* confined to finite clauses ([huddleston-pullum-2002]
 ch. 11 §5.2). -/
 def if_ : Complementizer where
   morphs := [.free "if"]
-  coding := some .indicative
-  types := .of {.polar, .alternative}
+  coding := {.indicative}
+  types := {.polar, .alternative}
   verbForm := some .Fin
 
 /-- *whether*, the subordinator of closed interrogatives, finite or infinitival. -/
 def whether : Complementizer where
   morphs := [.free "whether"]
-  types := .of {.polar, .alternative}
+  types := {.polar, .alternative}
 
 /-- *for*, the subordinator of infinitival declaratives with a subject
 ([huddleston-pullum-2002] ch. 14 §1.4.1). -/
 def for_ : Complementizer where
   morphs := [.free "for"]
-  coding := some .infinitive
-  types := .only .declarative
-  subject := some (.overt (some .acc))
+  coding := {.infinitive}
+  types := {.declarative}
+  subject := {.overt (some .acc)}
   verbForm := some .Inf
 
 /-- The complementizers. -/
@@ -67,7 +67,8 @@ def complementizers : List Complementizer := [that, if_, whether, for_]
 
 /-- The infinitival interrogative complement, *make up one's mind whether to accept*. -/
 def infinitivalQuestion : ArgumentFrame :=
-  ⟨some .nominal, [.clausal (coding := some .infinitive) (types := .interrogatives)]⟩
+  ⟨some .nominal,
+    [.clausal { coding := {.infinitive}, types := Clause.SentenceType.interrogatives }]⟩
 
 /-! ### Selection -/
 

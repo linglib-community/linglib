@@ -90,7 +90,7 @@ theorem believe_raises_force_controls :
 -- *hope* takes an indicative complement nobody controls and an infinitive its subject controls,
 -- equi-deleted as in *Zeke wants to plant the corn* (106)
 theorem hope_diatheses : hope.valency.diatheses.map (fun d ↦ (d.controller.isSome, d.codings)) =
-    [(false, [.indicative]), (true, [.infinitive])] := by
+    [(false, {.indicative}), (true, {.infinitive})] := by
   decide
 
 /-! ### Classes of complement-taking predicates -/
@@ -216,7 +216,7 @@ theorem not_isSentenceLike_of_dependent : ∀ k : PredicateClass, k.timeReferenc
 /-- Indicatives go with itr ([noonan-2007] §3.1.2). Every English verb of an itr class whose
 complement the language file codes takes an indicative. -/
 theorem indicative_mem_codings_of_independent : ∀ k : PredicateClass,
-    k.timeReference = some .independent → ∀ v ∈ verbs, v.toVerb ∈ k → v.codings ≠ [] →
+    k.timeReference = some .independent → ∀ v ∈ verbs, v.toVerb ∈ k → v.codings ≠ ∅ →
       .indicative ∈ v.codings := by
   decide +kernel
 

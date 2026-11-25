@@ -65,7 +65,7 @@ def causative (sfx : causativeSuffixes) : Voice := Voice.causative.marked [.suff
 a dative before the initial P; the dative may also be accusative, as in other ditransitive
 clauses ([sohn-1999] p. 375). -/
 def causativeOfTransitive (sfx : causativeSuffixes) : Voice :=
-  (Voice.of .np ⟨some .nominal, [.adpositional (some .grammatical), .nominal]⟩
+  (Voice.of .np ⟨some .nominal, [.adpositional {.grammatical}, .nominal]⟩
     [some (complement 0), some (complement 1), some external]).marked [.suff sfx]
 
 section

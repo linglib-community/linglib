@@ -9,7 +9,6 @@ public import Linglib.Syntax.Clause.Basic
 public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Category.Adposition.Basic
-public import Linglib.Core.Order.Flat
 public import Linglib.Core.Data.List.Forall2
 
 /-! # Argument frames
@@ -20,23 +19,24 @@ complement and a spatial adpositional complement. The subject is the complement 
 verb phrase and the others are internal to it, in the terms of the Cambridge Grammar, whatever
 participant fills it: the sole argument of an unaccusative verb is the subject of its frame.
 
-A *position* is nominal, adpositional, clausal, implicit, incorporated or expletive, and records
-what the predicate selects there: the type of case marked, in Blake's sense, and the adposition of
-an adpositional position; Noonan's complement type, the sentence types and the subject of a
-clausal one; the interpretation of an implicit one. Each record is optional. A position `q`
-refines `p`, written `p ≤ q`, when the two are of one kind and `q` records everything `p` does,
-and a frame refines another when the two have the same slots and it refines the other at each. A
-schematic frame therefore lies below every frame instantiating it: the frame with an infinitival
-complement lies below the frame whose infinitival complement has an unpronounced subject.
+A *position* is nominal, adpositional, clausal, implicit, incorporated or expletive, and says what
+may fill it: the types of case, in Blake's sense, that an adpositional position admits, and the
+adposition it selects, if it selects one; the selection of a clausal position, the complement
+types, sentence types and subject realizations of its clause; the interpretations an implicit
+position admits. A set left out admits everything. A position is at most another, `p ≤ q`, when
+the two are of one kind and `p` admits at most what `q` does, and a frame is at most another when
+the two have the same slots and it is at most the other at each. The more specific frame is the
+smaller: the frame whose infinitival complement has an unpronounced subject lies below the frame
+with an infinitival complement, and a frame instantiates a schematic one by lying below it.
 
 The core slots of a frame are those realized as nominals, and the comparative roles S, A, P, R
 and T of its core slots are computed from their number and order.
 
 ## Main definitions
 
-* `ArgumentFrame.Position`: an argument position, with what the predicate selects there.
-* `ArgumentFrame.Position.axes`: what a position records, as a family of partial values.
-* `ArgumentFrame`: a subject and complements, ordered by refinement.
+* `ArgumentFrame.Position`: an argument position, with what may fill it.
+* `ArgumentFrame.Position.selection`: the selection of a clausal position.
+* `ArgumentFrame`: a subject and complements, ordered slot by slot.
 * `ArgumentFrame.argumentRole`: the comparative role of a core slot.
 * `ArgumentFrame.Site`: a slot of a frame or the subject of one of its complements.
 
@@ -47,12 +47,15 @@ and T of its core slots are computed from their number and order.
   participants fills. Whether a verb's sole argument is an external or an internal argument in
   the thematic sense is a property of the verb's diatheses and voice, which the frame leaves
   open.
+* What a position admits is a set of values, not an optional value, so a verb taking the
+  indicative or the subjunctive has one position admitting both, and the order is inclusion. A
+  frame that records nothing of an axis admits everything on it; `ArgumentFrame.hasType` and
+  `ArgumentFrame.codings` read only the positions that restrict the axis.
+* The adposition is a lexical item of a type that is not finite, so the position records the item
+  selected, and a position selecting none admits every adposition.
 * The type of case of an adpositional position is that of the value its use marks, not of every
   value the adposition marks, since a grammaticised preposition has no meaning independent of its
   construction.
-* The order compares what two positions record as flat partial values, through `Position.axes`,
-  so that a position and a clause-typer are bundles of one type and selection between them is
-  consistency of bundles.
 * The roles S, A, P, R and T are computed from the frame, never stored.
 * `ArgumentFrame` is not under `Verb` because complement-taking is cross-categorial: Noonan's
   complement-taking predicates include adjectives and nouns.
@@ -97,21 +100,23 @@ inductive Slot where
   | complement (i : ℕ)
   deriving DecidableEq, Repr
 
-/-- An argument position of a frame is nominal; adpositional, with the type of case marked and the
-adposition selected; clausal, with the coding, the sentence types and the realization of its
-subject selected;
-implicit, an unexpressed argument with its interpretation; incorporated, a bare noun incorporated
-or pseudo-incorporated into the verb, expressing the argument without projecting a noun phrase
-([creissels-2024] §17.1); or expletive. Every axis is optional, and `none` or `⊥`
-selects nothing. -/
+instance : Repr (Finset ImplicitInterp) :=
+  ⟨fun s _ ↦ repr (ImplicitInterp.enumList.filter (· ∈ s))⟩
+
+instance : Repr (Finset Case.Kind) :=
+  ⟨fun s _ ↦ repr (Case.Kind.enumList.filter (· ∈ s))⟩
+
+/-- An argument position of a frame is nominal; adpositional, with the types of case admitted and
+the adposition selected, if one is; clausal, with the selection of its clause; implicit, an
+unexpressed argument with the interpretations admitted; incorporated, a bare noun incorporated or
+pseudo-incorporated into the verb, expressing the argument without projecting a noun phrase
+([creissels-2024] §17.1); or expletive. A set left out admits everything. -/
 inductive Position where
   | nominal
-  | adpositional (relation : Option Case.Kind := none)
+  | adpositional (relation : Finset Case.Kind := Finset.univ)
       (adposition : Option Adposition := none)
-  | clausal (coding : Option Clause.ComplementType := none)
-      (types : Clause.Selection := ⊥)
-      (subject : Option Clause.EmbeddedSubject := none)
-  | implicit (interp : Option ImplicitInterp := none)
+  | clausal (selection : Clause.Selection := ⊤)
+  | implicit (interp : Finset ImplicitInterp := Finset.univ)
   | incorporated
   | expletive
   deriving DecidableEq, Repr
@@ -123,37 +128,28 @@ function, as for the grammatically selected *at* of *laugh at* ([huddleston-pull
 its type of case is that of `c`. -/
 def adposition (p : Option Adposition := none) (c : Option Case.Function := none)
     (_h : ∀ a ∈ p, ∀ x ∈ c, x ∈ a.functions := by decide) : Position :=
-  .adpositional (c.map Case.Function.kind) p
+  .adpositional (c.elim Finset.univ fun x ↦ {x.kind}) p
 
-/-- The position's recorded coding, if clausal. -/
-def coding? : Position → Option Clause.ComplementType
-  | clausal c _ _ => c
-  | _ => none
+/-- The selection of the position's clause, if clausal; the selection admitting everything
+otherwise. -/
+def selection : Position → Clause.Selection
+  | clausal k => k
+  | _ => ⊤
 
-/-- The sentence types the position selects, if clausal; nothing otherwise. -/
-def types : Position → Clause.Selection
-  | clausal _ t _ => t
-  | _ => ⊥
-
-/-- The position's recorded subject realization, if clausal. -/
-def subject? : Position → Option Clause.EmbeddedSubject
-  | clausal _ _ e => e
-  | _ => none
-
-/-- The position's recorded relation, if adpositional. -/
-def relation? : Position → Option Case.Kind
+/-- The types of case the position admits, if adpositional; every type otherwise. -/
+def relation : Position → Finset Case.Kind
   | adpositional r _ => r
-  | _ => none
+  | _ => Finset.univ
 
-/-- The position's recorded adposition, if adpositional. -/
+/-- The adposition the position selects, if adpositional and selecting one. -/
 def adposition? : Position → Option Adposition
   | adpositional _ p => p
   | _ => none
 
-/-- The position's recorded interpretation, if implicit. -/
-def interp? : Position → Option ImplicitInterp
+/-- The interpretations the position admits, if implicit; every interpretation otherwise. -/
+def interp : Position → Finset ImplicitInterp
   | implicit i => i
-  | _ => none
+  | _ => Finset.univ
 
 /-! ### Kind -/
 
@@ -188,117 +184,51 @@ abbrev IsClausal (p : Position) : Prop := p.kind = .clausal
 /-- The position is expressed when it is nominal, adpositional or clausal. -/
 abbrev IsExpressed (p : Position) : Prop := p.IsNominal ∨ p.IsAdpositional ∨ p.IsClausal
 
-/-- The position is a finite clause when its coding is finite. -/
-def IsFinite (p : Position) : Prop := ∃ c ∈ p.coding?, c.IsFinite
+/-- The position is a finite clause when every complement type it admits is finite. -/
+def IsFinite (p : Position) : Prop := ∀ c ∈ p.selection.coding, c.IsFinite
 
-instance : DecidablePred IsFinite := fun p ↦ inferInstanceAs (Decidable (∃ c ∈ p.coding?, _))
+instance : DecidablePred IsFinite :=
+  fun p ↦ inferInstanceAs (Decidable (∀ c ∈ p.selection.coding, _))
 
-/-! ### Axes and the refinement order -/
+/-! ### The order -/
 
-/-- The selectional axes a position records. A clausal position and a clause-typer share
-`coding`, `types` and `subject`. -/
-inductive Axis where
-  | coding
-  | types
-  | subject
-  | relation
-  | adposition
-  | interp
-  deriving DecidableEq, Fintype, Repr
+variable {p q : Position}
 
-/-- An enumerated axis takes an optional value in the flat order, and the `types` axis takes a
-selection of sentence types. -/
-def Axis.Carrier : Axis → Type
-  | coding => Flat Clause.ComplementType
-  | types => Clause.Selection
-  | subject => Flat Clause.EmbeddedSubject
-  | relation => Flat Case.Kind
-  | adposition => Flat Adposition
-  | interp => Flat ImplicitInterp
+/-- A position is determined by its kind and what it admits. -/
+theorem eq_of_kind_eq (hk : p.kind = q.kind) (hs : p.selection = q.selection)
+    (hr : p.relation = q.relation) (ha : p.adposition? = q.adposition?)
+    (hi : p.interp = q.interp) : p = q := by
+  cases p <;> cases q <;> simp_all [kind, selection, relation, adposition?, interp]
 
-instance : ∀ a : Axis, PartialOrder a.Carrier
-  | .coding => inferInstanceAs (PartialOrder (Flat Clause.ComplementType))
-  | .types => inferInstanceAs (PartialOrder Clause.Selection)
-  | .subject => inferInstanceAs (PartialOrder (Flat Clause.EmbeddedSubject))
-  | .relation => inferInstanceAs (PartialOrder (Flat Case.Kind))
-  | .adposition => inferInstanceAs (PartialOrder (Flat Adposition))
-  | .interp => inferInstanceAs (PartialOrder (Flat ImplicitInterp))
-
-instance : ∀ a : Axis, OrderBot a.Carrier
-  | .coding => inferInstanceAs (OrderBot (Flat Clause.ComplementType))
-  | .types => inferInstanceAs (OrderBot Clause.Selection)
-  | .subject => inferInstanceAs (OrderBot (Flat Clause.EmbeddedSubject))
-  | .relation => inferInstanceAs (OrderBot (Flat Case.Kind))
-  | .adposition => inferInstanceAs (OrderBot (Flat Adposition))
-  | .interp => inferInstanceAs (OrderBot (Flat ImplicitInterp))
-
-instance : ∀ a : Axis, DecidableEq a.Carrier
-  | .coding => inferInstanceAs (DecidableEq (Flat Clause.ComplementType))
-  | .types => inferInstanceAs (DecidableEq Clause.Selection)
-  | .subject => inferInstanceAs (DecidableEq (Flat Clause.EmbeddedSubject))
-  | .relation => inferInstanceAs (DecidableEq (Flat Case.Kind))
-  | .adposition => inferInstanceAs (DecidableEq (Flat Adposition))
-  | .interp => inferInstanceAs (DecidableEq (Flat ImplicitInterp))
-
-instance : ∀ (a : Axis) (x y : a.Carrier), Decidable (Compat x y)
-  | .coding => inferInstanceAs (∀ x y : Flat Clause.ComplementType, Decidable (Compat x y))
-  | .types => inferInstanceAs (∀ x y : Clause.Selection, Decidable (Compat x y))
-  | .subject => inferInstanceAs (∀ x y : Flat Clause.EmbeddedSubject, Decidable (Compat x y))
-  | .relation => inferInstanceAs (∀ x y : Flat Case.Kind, Decidable (Compat x y))
-  | .adposition => inferInstanceAs (∀ x y : Flat Adposition, Decidable (Compat x y))
-  | .interp => inferInstanceAs (∀ x y : Flat ImplicitInterp, Decidable (Compat x y))
-
-instance : ∀ a : Axis, DecidableLE a.Carrier
-  | .coding => inferInstanceAs (DecidableLE (Flat Clause.ComplementType))
-  | .types => inferInstanceAs (DecidableLE Clause.Selection)
-  | .subject => inferInstanceAs (DecidableLE (Flat Clause.EmbeddedSubject))
-  | .relation => inferInstanceAs (DecidableLE (Flat Case.Kind))
-  | .adposition => inferInstanceAs (DecidableLE (Flat Adposition))
-  | .interp => inferInstanceAs (DecidableLE (Flat ImplicitInterp))
-
-/-- A family of partial axis values, ordered pointwise by extension. Unification is the join of
-a pair and consistency is `Compat`. -/
-abbrev Axes := ∀ a : Axis, a.Carrier
-
-/-- The axes the position records. -/
-def axes (p : Position) : Axes
-  | .coding => p.coding?
-  | .types => p.types
-  | .subject => p.subject?
-  | .relation => p.relation?
-  | .adposition => p.adposition?
-  | .interp => p.interp?
-
-theorem eq_of_kind_eq_of_axes_eq {p q : Position} (hk : p.kind = q.kind)
-    (ha : p.axes = q.axes) : p = q := by
-  have h := fun a ↦ congrFun ha a
-  have hc := h .coding
-  have hf := h .types
-  have he := h .subject
-  have hr := h .relation
-  have hp := h .adposition
-  have hi := h .interp
-  cases p <;> cases q <;>
-    simp_all [kind, axes, coding?, types, subject?, relation?, adposition?, interp?]
-
-/-- A position `q` refines `p`, `p ≤ q`, when the two are of one kind and every axis `p`
-records, `q` records with the same value. -/
+/-- A position is at most another, `p ≤ q`, when the two are of one kind and `p` admits at most
+what `q` does: its clause's selection, its types of case and its interpretations are at most
+those of `q`, and it selects the adposition `q` selects, if `q` selects one. -/
 instance : PartialOrder Position where
-  le p q := p.kind = q.kind ∧ p.axes ≤ q.axes
-  le_refl _ := ⟨rfl, le_rfl⟩
-  le_trans _ _ _ h₁ h₂ := ⟨h₁.1.trans h₂.1, h₁.2.trans h₂.2⟩
-  le_antisymm _ _ h₁ h₂ := eq_of_kind_eq_of_axes_eq h₁.1 (h₁.2.antisymm h₂.2)
+  le p q := p.kind = q.kind ∧ p.selection ≤ q.selection ∧ p.relation ⊆ q.relation ∧
+    (∀ a ∈ q.adposition?, a ∈ p.adposition?) ∧ p.interp ⊆ q.interp
+  le_refl _ := ⟨rfl, le_rfl, subset_rfl, fun _ h ↦ h, subset_rfl⟩
+  le_trans _ _ _ := fun ⟨hk, hs, hr, ha, hi⟩ ⟨hk', hs', hr', ha', hi'⟩ ↦
+    ⟨hk.trans hk', hs.trans hs', hr.trans hr', fun a h ↦ ha a (ha' a h), hi.trans hi'⟩
+  le_antisymm _ _ := fun ⟨hk, hs, hr, ha, hi⟩ ⟨_, hs', hr', ha', hi'⟩ ↦
+    eq_of_kind_eq hk (hs.antisymm hs') (hr.antisymm hr')
+      (Option.ext fun a ↦ ⟨ha' a, ha a⟩) (hi.antisymm hi')
 
-theorem le_def {p q : Position} : p ≤ q ↔ p.kind = q.kind ∧ p.axes ≤ q.axes := Iff.rfl
-
-theorem axes_mono : Monotone axes := fun _ _ h ↦ h.2
-
-/-- `Position.axes` as a monotone map. -/
-@[simps]
-def axesHom : Position →o Axes := ⟨axes, axes_mono⟩
+theorem le_def : p ≤ q ↔ p.kind = q.kind ∧ p.selection ≤ q.selection ∧
+    p.relation ⊆ q.relation ∧ (∀ a ∈ q.adposition?, a ∈ p.adposition?) ∧
+      p.interp ⊆ q.interp := Iff.rfl
 
 instance : DecidableLE Position := fun p q ↦
-  inferInstanceAs (Decidable (p.kind = q.kind ∧ ∀ a, p.axes a ≤ q.axes a))
+  inferInstanceAs (Decidable (p.kind = q.kind ∧ p.selection ≤ q.selection ∧
+    p.relation ⊆ q.relation ∧ (∀ a ∈ q.adposition?, a ∈ p.adposition?) ∧
+      p.interp ⊆ q.interp))
+
+theorem kind_eq_of_le (h : p ≤ q) : p.kind = q.kind := h.1
+
+theorem selection_mono : Monotone selection := fun _ _ h ↦ h.2.1
+
+/-- `Position.selection` as a monotone map. -/
+@[simps]
+def selectionHom : Position →o Clause.Selection := ⟨selection, selection_mono⟩
 
 end Position
 
@@ -317,8 +247,8 @@ structure ArgumentFrame where
 
 namespace ArgumentFrame
 
-/-- A frame `g` refines `f`, `f ≤ g`, when both or neither has a subject and the subject and the
-complements of `g` refine those of `f` one for one. -/
+/-- A frame is at most another, `f ≤ g`, when both or neither has a subject and the subject and
+the complements of `f` are at most those of `g` one for one. -/
 instance : PartialOrder ArgumentFrame where
   le f g := List.Forall₂ (· ≤ ·) f.external.toList g.external.toList ∧
     List.Forall₂ (· ≤ ·) f.complements g.complements
@@ -410,8 +340,8 @@ def HasFinite : Prop := ∃ p ∈ fr.complements, p.IsFinite
 
 instance : Decidable fr.HasFinite := inferInstanceAs (Decidable (∃ p ∈ _, _))
 
-/-- The frame with its `i`-th complement left unexpressed, interpreted as `a`. -/
-def leaveImplicit (i : ℕ) (a : Option ImplicitInterp := none) : ArgumentFrame :=
+/-- The frame with its `i`-th complement left unexpressed, with the interpretations `a`. -/
+def leaveImplicit (i : ℕ) (a : Finset ImplicitInterp := Finset.univ) : ArgumentFrame :=
   { fr with complements := fr.complements.set i (.implicit a) }
 
 /-- Add a nominal object before the complements of a frame, as for an object-control or causative
@@ -430,14 +360,18 @@ def clausalIndices : List ℕ :=
   (List.range fr.complements.length).filter fun i ↦
     (fr.complements[i]?.map (·.kind)) = some .clausal
 
-/-- The [noonan-2007] codings recorded across the frame's complements. -/
-def codings : List Clause.ComplementType := fr.complements.filterMap (·.coding?)
+/-- The [noonan-2007] complement types the frame's complements are restricted to: those admitted
+by a complement that does not admit them all. -/
+def codings : Finset Clause.ComplementType :=
+  Finset.univ.filter fun c ↦
+    ∃ p ∈ fr.complements, p.selection.coding ≠ Finset.univ ∧ c ∈ p.selection.coding
 
-/-- Some complement of the frame selects the sentence type `t`. -/
-def hasType (t : Clause.SentenceType) : Prop := ∃ p ∈ fr.complements, t ∈ p.types
+/-- Some complement of the frame restricts the sentence types of its clause and admits `t`. -/
+def hasType (t : Clause.SentenceType) : Prop :=
+  ∃ p ∈ fr.complements, p.selection.types ≠ Finset.univ ∧ t ∈ p.selection.types
 
 instance (t : Clause.SentenceType) : Decidable (fr.hasType t) :=
-  inferInstanceAs (Decidable (∃ p ∈ _, _))
+  inferInstanceAs (Decidable (∃ p ∈ _, _ ∧ _))
 
 /-! ### Smart constructors -/
 
@@ -450,9 +384,9 @@ def impersonal : ArgumentFrame := ⟨some .expletive, []⟩
 /-- The transitive frame has one nominal complement. -/
 def np : ArgumentFrame := ⟨some .nominal, [.nominal]⟩
 
-/-- The object-drop frame is the transitive frame with its object left unexpressed, with
-interpretation `a`. -/
-def objectDrop (a : Option ImplicitInterp := none) : ArgumentFrame := np.leaveImplicit 0 a
+/-- The object-drop frame is the transitive frame with its object left unexpressed, with the
+interpretations `a`. -/
+def objectDrop (a : Finset ImplicitInterp := Finset.univ) : ArgumentFrame := np.leaveImplicit 0 a
 
 /-- The double-object frame has two nominal complements. -/
 def np_np : ArgumentFrame := ⟨some .nominal, [.nominal, .nominal]⟩
@@ -464,7 +398,7 @@ def pp (p : Option Adposition := none) (c : Option Case.Function := none)
 
 /-- The spatial PP frame has one spatial adpositional complement, whatever its adposition, as the
 locative or directional phrase a verb of motion selects. -/
-def spatialPP : ArgumentFrame := ⟨some .nominal, [.adpositional (some .spatial)]⟩
+def spatialPP : ArgumentFrame := ⟨some .nominal, [.adpositional {.spatial}]⟩
 
 /-- The NP + PP frame has a nominal plus an adpositional complement, selecting `p` in a use marking
 `c` when given. -/
@@ -474,45 +408,48 @@ def np_pp (p : Option Adposition := none) (c : Option Case.Function := none)
 
 /-- The NP + spatial PP frame has a nominal and a spatial adpositional complement, whatever its
 adposition, as the destination of a verb of putting or the path of an induced action. -/
-def np_spatialPP : ArgumentFrame := ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩
+def np_spatialPP : ArgumentFrame := ⟨some .nominal, [.nominal, .adpositional {.spatial}]⟩
 
 /-- Finite declarative clause. -/
 def finiteClause : ArgumentFrame :=
-  ⟨some .nominal, [.clausal (coding := some .indicative) (types := .only .declarative)]⟩
+  ⟨some .nominal, [.clausal { coding := {.indicative}, types := {.declarative} }]⟩
 
 /-- Finite declarative clause in the subjunctive. -/
 def subjunctiveClause : ArgumentFrame :=
-  ⟨some .nominal, [.clausal (coding := some .subjunctive) (types := .only .declarative)]⟩
+  ⟨some .nominal, [.clausal { coding := {.subjunctive}, types := {.declarative} }]⟩
 
 /-- The clausal-subject frame has a finite declarative clause as its subject and a nominal
 complement, as an object-experiencer psychological verb (*It worried Peti that ...*). -/
 def clausalSubject : ArgumentFrame :=
-  ⟨some (.clausal (coding := some .indicative) (types := .only .declarative)), [.nominal]⟩
+  ⟨some (.clausal { coding := {.indicative}, types := {.declarative} }), [.nominal]⟩
 
-/-- Infinitival clause, its subject unrecorded. Its subject is equi-deleted, raised, or marked by an
-adposition ([noonan-2007] §1.3.4), depending on a slot of the frame under equi and raising. -/
-def infinitival : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .infinitive)]⟩
+/-- Infinitival clause, its subject unrestricted. Its subject is equi-deleted, raised, or marked by
+an adposition ([noonan-2007] §1.3.4), depending on a slot of the frame under equi and raising. -/
+def infinitival : ArgumentFrame := ⟨some .nominal, [.clausal { coding := {.infinitive} }]⟩
 
 /-- Gerund / nominalized clause. -/
-def gerund : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .nominalized)]⟩
+def gerund : ArgumentFrame := ⟨some .nominal, [.clausal { coding := {.nominalized} }]⟩
 
 /-- Small clause (*consider X happy*; causative *make X leave*). It falls outside [noonan-2007]'s
-inventory of complement types, so the position records nothing. -/
+inventory of complement types, so the position restricts nothing. -/
 def smallClause : ArgumentFrame := ⟨some .nominal, [.clausal]⟩
 
 /-- The frame of an embedded question. The sentence type is orthogonal to the [noonan-2007]
-complement type, so `coding` stays `none`. -/
-def question : ArgumentFrame := ⟨some .nominal, [.clausal (types := .interrogatives)]⟩
+complement type, so every complement type is admitted. -/
+def question : ArgumentFrame :=
+  ⟨some .nominal, [.clausal { types := Clause.SentenceType.interrogatives }]⟩
 
-/-! ### The refinement order on frames -/
+/-! ### The order on frames -/
 
-example : infinitival ≤ ⟨some .nominal, [.clausal (some .infinitive) ⊥ (some .null)]⟩ := by
-  decide
+example : (⟨some .nominal, [.clausal { coding := {.infinitive}, subject := {.null} }]⟩ :
+    ArgumentFrame) ≤ infinitival := by decide
 
-example : (⟨some .clausal, [.nominal]⟩ : ArgumentFrame) ≤ clausalSubject := by decide
+example : clausalSubject ≤ ⟨some .clausal, [.nominal]⟩ := by decide
 
-example : ¬ intransitive ≤ np := by decide
+example : ¬ infinitival ≤ question := by decide
 
-example : ¬ (⟨none, []⟩ : ArgumentFrame) ≤ intransitive := by decide
+example : ¬ np ≤ intransitive := by decide
+
+example : ¬ intransitive ≤ ⟨none, []⟩ := by decide
 
 end ArgumentFrame

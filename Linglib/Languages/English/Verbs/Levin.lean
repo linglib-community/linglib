@@ -112,7 +112,7 @@ def send : Verb where
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      ((ArgumentFrame.np_pp (some Adpositions.to_)
-         (some (.argument .R))).leaveImplicit 1 (some .def),
+         (some (.argument .R))).leaveImplicit 1 {.def},
        [0, 1, 2])]
 
 /-- "drive" — Levin 11.5 Drive verbs (vehicle-mediated motion). -/
@@ -183,10 +183,10 @@ def throw : Verb where
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      ((ArgumentFrame.np_pp (some Adpositions.to_)
-         (some (.argument .R))).leaveImplicit 0 (some .def),
+         (some (.argument .R))).leaveImplicit 0 {.def},
        [0, 1, 2]),
      ((ArgumentFrame.np_pp (some Adpositions.to_)
-         (some (.argument .R))).leaveImplicit 1 (some .indef),
+         (some (.argument .R))).leaveImplicit 1 {.indef},
        [0, 1, 2])]
 
 /-! ### Contact (§ 19–20) -/
@@ -269,7 +269,7 @@ def draw : Verb where
   levin := some Levin1993.Index.draw
   past := "drew"
   pastPart := "drawn"
-  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop {.indef}]
   incrementality := some .strict
 
 /-! ### Creation and Transformation (§ 26) -/
@@ -288,7 +288,7 @@ def weave : Verb where
   pastPart := "woven"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (ArgumentFrame.objectDrop {.indef}, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.for_) (some .beneficiary), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.out), [0, 1, 3]),
@@ -313,7 +313,7 @@ def perform : Verb where
   levin := some Levin1993.Index.perform
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (ArgumentFrame.objectDrop {.indef}, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.for_) (some .beneficiary), [0, 1, 2])]
@@ -360,7 +360,7 @@ def evaluate : Verb where
 def marry : Verb where
   morphs := [.root "marry"]
   levin := some Levin1993.Index.marry
-  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop (some .reciprocal)]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop {.reciprocal}]
 
 /-! ### Animal Sounds (§ 38) -/
 
@@ -406,7 +406,7 @@ def blink : Verb where
   morphs := [.root "blink"]
   levin := some Levin1993.Index.blink
   valency := .ofFrames
-    [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.objectDrop (some .bodyPart)]
+    [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.objectDrop {.bodyPart}]
   levinExcluded := {LevinClass.lightEmission}
 
 /-- "knock" — Levin 18.1 Hit verbs (intransitive use).
@@ -461,7 +461,7 @@ def dress : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.objectDrop (some .reflexive), [0, 1])]
+     (ArgumentFrame.objectDrop {.reflexive}, [0, 1])]
 
 /-! ### Killing (§ 42) -/
 

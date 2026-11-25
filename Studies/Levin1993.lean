@@ -219,8 +219,8 @@ def schema? : DiathesisAlternation → Option Voice
   | .substanceSource =>
     some (of (.pp (some from_) (some (.spatial (some .exterior) .source))) .np
       [some (complement 0), some external])
-  | .unspecifiedObject => some (leaveImplicit .np 0 (some .indef))
-  | .understoodBodyPartObject => some (leaveImplicit .np 0 (some .bodyPart))
+  | .unspecifiedObject => some (leaveImplicit .np 0 {.indef})
+  | .understoodBodyPartObject => some (leaveImplicit .np 0 {.bodyPart})
   | .understoodReflexiveObject => some reflexive
   | .understoodReciprocalObject => some reciprocal
   | .dative => some (toDoubleObject (.np_pp (some to_) (some (.argument .R))))

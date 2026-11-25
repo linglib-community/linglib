@@ -42,7 +42,7 @@ bear (fn. 6). The clause it closes keeps subject agreement, tense, the independe
 switch-reference marking, so it is coded as a finite indicative clause in a nominal shell. -/
 def ge : Complementizer where
   morphs := [.suff "ge"]
-  coding := some .indicative
+  coding := {.indicative}
   verbForm := some .Fin
   licenser := some .nominal
 

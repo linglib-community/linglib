@@ -74,13 +74,13 @@ whether it is finite or under the converb suffix: *de-* needs its complement in 
 theorem subcategorization :
     ∀ r ∈ Examples.all, ∀ fr ∈ r.parse? "complement"
         [("none", ArgumentFrame.intransitive), ("dp", .np), ("participial", .typedBy lik)],
-      ∃ v ∈ verb? "verb" r, (r.judgment = .acceptable ↔ ∃ g ∈ v.valency.frames, fr ≤ g) := by
+      ∃ v ∈ verb? "verb" r, (r.judgment = .acceptable ↔ ∃ g ∈ v.valency.frames, g ≤ fr) := by
   decide
 
 /-! ### No argument -/
 
 /-- No verb takes a converb clause. -/
-theorem not_takes_ip (v : Verb) : ¬ v.Takes ip := Verb.not_takes_of_blank rfl rfl rfl
+theorem not_takes_ip (v : Verb) : ¬ v.Takes ip := Verb.not_takes_of_eq_top (by decide)
 
 theorem dep_unselected :
     ∃ r ∈ Examples.all, r.judgment = .acceptable ∧ r.feature? "clause" = some "dep" ∧
@@ -110,7 +110,7 @@ theorem washo_parallel :
     (∀ v : Verb, ¬ v.Takes Washo.aq) ∧
       (∃ p : ArgumentFrame.Position, p.Takes Washo.ge) ∧
       ∃ p : ArgumentFrame.Position, p.Takes lik := by
-  refine ⟨fun _ ↦ Verb.not_takes_of_blank rfl rfl rfl, ?_, ?_⟩ <;>
+  refine ⟨fun _ ↦ Verb.not_takes_of_eq_top (by decide), ?_, ?_⟩ <;>
     exact ArgumentFrame.Position.exists_takes_iff.2 (by decide)
 
 /-! ### Two heights -/

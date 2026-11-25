@@ -367,8 +367,9 @@ the subjunctive and a belief in the indicative. -/
 def convencer : Verb where
   morphs := [.root "convencer"]
   valency := .ofFrames
-    [⟨some .nominal, [.nominal, .clausal (some .subjunctive) (.only .declarative)]⟩,
-     ⟨some .nominal, [.nominal, .clausal (some .indicative) (.only .declarative)]⟩]
+    [⟨some .nominal,
+        [.nominal, .clausal { coding := {.subjunctive}, types := {.declarative} }]⟩,
+     ⟨some .nominal, [.nominal, .clausal { coding := {.indicative}, types := {.declarative} }]⟩]
   opaqueContext := true
 
 end Spanish.Verbs

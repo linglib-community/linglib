@@ -47,8 +47,8 @@ namespace Ga
     utterance and attitude verbs (exx 47–49, 89a). -/
 def ake : Complementizer where
   morphs := [.free "akɛ"]
-  coding := some .indicative
-  types := .only .declarative
+  coding := {.indicative}
+  types := {.declarative}
   verbForm := some .Fin
 
 /-- *kɛji* — the finite complementizer of conditional clauses (ex 97a) and,
@@ -57,8 +57,8 @@ def ake : Complementizer where
     throughout the paper. -/
 def keji : Complementizer where
   morphs := [.free "kɛji"]
-  coding := some .indicative
-  types := .of {.polar, .alternative}
+  coding := {.indicative}
+  types := {.polar, .alternative}
   verbForm := some .Fin
 
 /-- *ni* — the irrealis complementizer of controlled clauses, glossed C with the
@@ -68,7 +68,7 @@ def keji : Complementizer where
     homophonous with the focus marker (ex 27). -/
 def ni : Complementizer where
   morphs := [.free "ni"]
-  coding := some .infinitive
+  coding := {.infinitive}
   verbForm := some .Inf
 
 /-- The three clause introducers that can head an embedded C (§5.5.1). -/
@@ -86,7 +86,7 @@ def kejiFrame : ArgumentFrame := .typedBy keji
 /-- The controlled irrealis frame `ni` types is [noonan-2007]-infinitival, the paper's own
     term, with a subject that is an overt pronoun in the subjective (nominative) form of
     Table 3, never null and never a lexical DP (exx 40–42). -/
-def niFrame : ArgumentFrame := .typedBy ni (some (.overt (some .nom)))
+def niFrame : ArgumentFrame := .typedBy ni {.overt (some .nom)}
 
 /-- The three embedded clause types of [allotey-2021], named by the
     complementizer heading them (§5.5.1). The `ni` type is the controlled

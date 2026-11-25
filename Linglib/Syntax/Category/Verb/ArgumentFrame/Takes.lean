@@ -12,247 +12,88 @@ public import Mathlib.Order.PropInstances
 /-!
 # Verb–complementizer selection
 
-The selection relation between the `Verb` and `Complementizer` entry
-APIs: which clause-typers a predicate takes. A complement position and a
-clause-typer each record a bundle of partial axis values
-(`ArgumentFrame.Position.Axes`) in the flat order, and a position takes a
-typer when the two bundles are consistent (`Compat`) and overlap
-(`Overlap`): some axis both record. One relation, lifted twice: a frame or
-verb takes a typer when some complement or frame does. All decidable. A
-typer records the [noonan-2007] coding and the sentence types it types, and
-the realization its clause's own subject must have, so the relation lives on
-those three axes (`takes_iff_typer_axes`): matching needs positive evidence
-on one of them, and a non-clausal position takes nothing. A complement whose
-subject is unpronounced takes no typer requiring a pronounced one, as *for*
-requires an overt accusative subject.
-Selection is by these features alone, so two typers recording the same
-coding, sentence types and subject are taken by the same predicates; a
-lexical restriction beyond them, as of Bulgarian *deto* to some emotive
-factives, is a list the language file records.
+The selection relation between the `Verb` and `Complementizer` entry APIs: which complementizers
+a predicate takes. A clausal position and a complementizer each have a selection, the complement
+types, sentence types and subject realizations of a clause, and a position takes a complementizer
+when its selection takes the complementizer's (`Clause.Selection.Takes`): some clause is admitted
+by both, and both restrict a common respect. The relation is lifted twice: a frame takes a
+complementizer when some complement does, and a verb when some frame does. A complement whose
+subject is unpronounced takes no complementizer requiring a pronounced one, as *for* requires an
+overt accusative subject.
+
+Selection is by these three respects alone, so two complementizers with the same selection are
+taken by the same predicates; a lexical restriction beyond them, as of Bulgarian *deto* to some
+emotive factives, is a list the language file records.
 
 ## Main definitions
 
-- `Complementizer.axes` — the typer's bundle
-- `ArgumentFrame.Position.typedBy`, `ArgumentFrame.typedBy` — the clausal position
-  and the frame a typer types, given the subject requirement the predicate adds
-- `ArgumentFrame.Position.Takes`, `ArgumentFrame.Takes`, `Verb.Takes` — the
-  relation and its lifts
-- `Verb.typers` — the typers of a verb within an inventory
+* `ArgumentFrame.Position.Takes`, `ArgumentFrame.Takes`, `Verb.Takes`: the relation and its lifts.
+* `ArgumentFrame.typedBy`: the frame whose one complement is the clause a complementizer types.
+* `Verb.typers`: the complementizers a verb takes within an inventory.
 
 ## Main results
 
-- `ArgumentFrame.Position.takes_iff` — the relation axis by axis
-- `ArgumentFrame.Position.takes_iff_typer_axes` — the relation on the three
-  axes a typer records
-- `Complementizer.compat_axes_iff`, `Complementizer.overlap_axes_iff` — a bundle
-  meets a typer's on the coding, types and subject axes alone
-- `ArgumentFrame.Position.typedBy_takes_iff`, `ArgumentFrame.typedBy_takes_iff` —
-  the position or frame one typer types takes another exactly when the two
-  bundles are consistent and overlap; `typedBy_takes_self_iff` for the typer
-  itself
-- `ArgumentFrame.Position.not_takes_of_blank_left`,
-  `ArgumentFrame.Position.not_takes_of_blank_right`,
-  `ArgumentFrame.Position.not_takes_of_not_isClausal` — matching needs
-  positive evidence on both sides
-- `ArgumentFrame.Position.exists_takes_iff`, `Verb.not_takes_of_blank` — a typer
-  some position takes records a coding, a sentence type or a subject, and no verb
-  takes one that records none
-- `ArgumentFrame.Position.takes_of_le` — the positive witness in general
-- `ArgumentFrame.Position.Takes.mono_of_compat`,
-  `ArgumentFrame.Position.Takes.of_le_of_overlap` — guarded monotonicity
-  under refinement, in both directions
-- `ArgumentFrame.Position.Takes.isClausal`, `ArgumentFrame.Takes.hasClausal`,
-  `Verb.Takes.takesClausal` — taking a typer entails the clausal shape predicates
-- `ArgumentFrame.not_takes_smallClause` — small clauses take no typer
-- `ArgumentFrame.finiteClause_takes` — the positive witness
-- `ArgumentFrame.Takes.mono` — monotone under complement extension
-- `Verb.mem_typers` — membership in the typer list
-
-Consistency checks against language file data live in Studies
-(e.g. `Bondarenko2022.hanaxa_typers`).
+* `ArgumentFrame.Position.exists_takes_iff`: some position takes a complementizer exactly when its
+  selection admits a clause and restricts some respect.
+* `Verb.not_takes_of_eq_top`: no verb takes a complementizer restricting nothing.
 
 ## References
 
-- [noonan-2007]
+* [noonan-2007]
 -/
 
 @[expose] public section
 
 namespace ArgumentFrame.Position
 
-/-- Two bundles overlap when some axis is recorded on both. -/
-def Overlap (f g : Axes) : Prop := ∃ a, f a ≠ ⊥ ∧ g a ≠ ⊥
+variable {p q : Position} {z : Complementizer} {s : Finset Clause.EmbeddedSubject}
 
-instance (f g : Axes) : Decidable (Overlap f g) := inferInstanceAs (Decidable (∃ _a, _ ∧ _))
-
-theorem overlap_self_iff {f : Axes} : Overlap f f ↔ f ≠ ⊥ := by
-  simp [Overlap, Function.ne_iff]
-
-end ArgumentFrame.Position
-
-/-- The axes a clause-typer records: its coding, the sentence types it types, and the subject of
-    its own the clause must have; the other axes are a complement position's alone. -/
-def Complementizer.axes (z : Complementizer) : ArgumentFrame.Position.Axes
-  | .coding => z.coding
-  | .types => z.types
-  | .subject => z.subject
-  | .relation | .adposition | .interp => ⊥
-
-namespace Complementizer
-
-open ArgumentFrame.Position (Overlap)
-
-variable {z : Complementizer} {f : ArgumentFrame.Position.Axes}
-
-/-- A bundle is consistent with a typer's exactly on the coding, types and subject axes. -/
-theorem compat_axes_iff (f : ArgumentFrame.Position.Axes) :
-    Compat f z.axes ↔ Compat (f .coding) z.coding ∧ Compat (f .types) z.types ∧
-      Compat (f .subject) z.subject := by
-  rw [compat_pi_iff]
-  exact ⟨fun h ↦ ⟨h _, h _, h _⟩, fun ⟨hc, hf, hs⟩ a ↦ by
-    cases a <;> first | exact hc | exact hf | exact hs | exact compat_bot _⟩
-
-theorem axes_subject_eq_bot_iff : z.axes .subject = ⊥ ↔ z.subject = none := Iff.rfl
-
-/-- A bundle overlaps a typer's exactly on the coding, types and subject axes. -/
-theorem overlap_axes_iff (f : ArgumentFrame.Position.Axes) :
-    Overlap f z.axes ↔ (f .coding ≠ ⊥ ∧ z.coding ≠ none) ∨ (f .types ≠ ⊥ ∧ z.types ≠ ⊥) ∨
-      (f .subject ≠ ⊥ ∧ z.subject ≠ none) := by
-  constructor
-  · rintro ⟨a, hf, hz⟩
-    cases a
-    · exact Or.inl ⟨hf, hz⟩
-    · exact Or.inr (Or.inl ⟨hf, hz⟩)
-    · exact Or.inr (Or.inr ⟨hf, fun h ↦ hz (axes_subject_eq_bot_iff.2 h)⟩)
-    all_goals exact absurd rfl hz
-  · rintro (⟨hf, hz⟩ | ⟨hf, hz⟩ | ⟨hf, hz⟩)
-    · exact ⟨.coding, hf, hz⟩
-    · exact ⟨.types, hf, hz⟩
-    · exact ⟨.subject, hf, fun h ↦ hz (axes_subject_eq_bot_iff.1 h)⟩
-
-end Complementizer
-
-namespace ArgumentFrame.Position
-
-variable {p q : Position} {z z' : Complementizer} {s : Option Clause.EmbeddedSubject}
-
-/-- The clausal position `z` types, with `z`'s coding and sentence types and the subject
-    realization `s` the selecting predicate requires, else that `z` requires. -/
-def typedBy (z : Complementizer) (s : Option Clause.EmbeddedSubject := none) : Position :=
-  .clausal z.coding z.types (s.orElse fun _ ↦ z.subject)
+/-- The clausal position `z` types, with `z`'s selection and the subject realizations narrowed
+to those the selecting predicate admits. -/
+def typedBy (z : Complementizer) (s : Finset Clause.EmbeddedSubject := Finset.univ) : Position :=
+  .clausal { z.toSelection with subject := z.subject ∩ s }
 
 @[simp] theorem kind_typedBy : (typedBy z s).kind = .clausal := rfl
 
-@[simp] theorem coding?_typedBy : (typedBy z s).coding? = z.coding := rfl
+@[simp] theorem selection_typedBy :
+    (typedBy z s).selection = { z.toSelection with subject := z.subject ∩ s } := rfl
 
-@[simp] theorem types_typedBy : (typedBy z s).types = z.types := rfl
+theorem selection_typedBy_univ : (typedBy z).selection = z.toSelection := by
+  simp [typedBy, selection]
 
-@[simp] theorem subject?_typedBy : (typedBy z s).subject? = s.orElse fun _ ↦ z.subject := rfl
+/-- The position takes the complementizer `z` when its selection takes `z`'s. A position that is
+not clausal restricts no respect of a clause and takes nothing. -/
+def Takes (p : Position) (z : Complementizer) : Prop := p.selection.Takes z.toSelection
 
-@[simp] theorem relation?_typedBy : (typedBy z s).relation? = none := rfl
+instance : Decidable (p.Takes z) := inferInstanceAs (Decidable (Clause.Selection.Takes _ _))
 
-@[simp] theorem adposition?_typedBy : (typedBy z s).adposition? = none := rfl
+/-- A position taking a complementizer is clausal. -/
+theorem Takes.isClausal (h : p.Takes z) : p.IsClausal := by
+  cases p <;> first | rfl | exact absurd h Clause.Selection.not_top_takes
 
-@[simp] theorem interp?_typedBy : (typedBy z s).interp? = none := rfl
+/-- No position takes a complementizer restricting nothing. -/
+theorem not_takes_of_eq_top (hz : z.toSelection = ⊤) : ¬ p.Takes z := by
+  rw [Takes, hz]
+  exact Clause.Selection.not_takes_top
 
-/-- The position takes clause-typer `z`: the two bundles are consistent and
-    overlap, some axis recorded on both sides. Matching needs positive
-    evidence, so a typer or position recording nothing — in particular any
-    non-clausal position — takes nothing. -/
-def Takes (p : Position) (z : Complementizer) : Prop :=
-  Compat p.axes z.axes ∧ Overlap p.axes z.axes
-
-instance : Decidable (p.Takes z) := inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Axis by axis, every axis is consistent and some axis is recorded on both sides. -/
-theorem takes_iff :
-    p.Takes z ↔
-      (∀ a, Compat (p.axes a) (z.axes a)) ∧ ∃ a, p.axes a ≠ ⊥ ∧ z.axes a ≠ ⊥ := by
-  simp only [Takes, compat_pi_iff, Overlap]
-
-/-- On the three axes a typer records, coding, types and subject are consistent and one of them
-    is recorded on both sides. -/
-theorem takes_iff_typer_axes :
-    p.Takes z ↔
-      (Compat (p.axes .coding) z.coding ∧ Compat (p.axes .types) z.types ∧
-          Compat (p.axes .subject) z.subject) ∧
-        ((p.axes .coding ≠ ⊥ ∧ z.coding ≠ none) ∨ (p.axes .types ≠ ⊥ ∧ z.types ≠ ⊥) ∨
-          (p.axes .subject ≠ ⊥ ∧ z.subject ≠ none)) :=
-  and_congr (Complementizer.compat_axes_iff _) (Complementizer.overlap_axes_iff _)
-
-/-- The position a typer types records the typer's own bundle. -/
-@[simp] theorem axes_typedBy : (typedBy z).axes = z.axes := by
-  funext a
-  cases a <;> rfl
-
-/-- The position `z` types takes `z'` exactly when the two typers' bundles are
-    consistent and overlap. -/
-theorem typedBy_takes_iff :
-    (typedBy z).Takes z' ↔ Compat z.axes z'.axes ∧ Overlap z.axes z'.axes := by
-  rw [Takes, axes_typedBy]
-
-/-- The position `z` types takes `z` itself exactly when `z` records something;
-    the `←` direction is `takes_of_le`. -/
-theorem typedBy_takes_self_iff : (typedBy z).Takes z ↔ z.axes ≠ ⊥ :=
-  typedBy_takes_iff.trans ((and_iff_right (compat_self _)).trans overlap_self_iff)
-
-/-- A position recording none of a typer's axes takes nothing. -/
-theorem not_takes_of_blank_left (hc : p.coding? = none) (ht : p.types = ⊥)
-    (hs : p.subject? = none) : ¬ p.Takes z := by
-  simp [takes_iff_typer_axes, axes, hc, ht, hs, Flat.none_eq_bot]
-
-/-- A typer recording none of its axes takes nothing. -/
-theorem not_takes_of_blank_right (hc : z.coding = none) (ht : z.types = ⊥)
-    (hs : z.subject = none) : ¬ p.Takes z := by
-  simp [takes_iff_typer_axes, hc, ht, hs]
-
-/-- A non-clausal position takes nothing: it records no axis a typer does. -/
-theorem not_takes_of_not_isClausal (h : ¬ p.IsClausal) : ¬ p.Takes z := by
-  cases p <;> first | exact absurd rfl h | exact not_takes_of_blank_left rfl rfl rfl
-
-/-- A position taking a typer is clausal. -/
-theorem Takes.isClausal (h : p.Takes z) : p.IsClausal :=
-  of_not_not fun hn ↦ not_takes_of_not_isClausal hn h
-
-/-- Some position takes a typer exactly when the typer records a coding, a sentence type or a
-    subject. -/
+/-- Some position takes a complementizer exactly when its selection admits a clause and restricts
+some respect. -/
 theorem exists_takes_iff :
-    (∃ p : Position, p.Takes z) ↔ z.coding ≠ none ∨ z.types ≠ ⊥ ∨ z.subject ≠ none := by
-  refine ⟨fun ⟨_, h⟩ ↦ ?_, fun h ↦ ⟨typedBy z, typedBy_takes_self_iff.2 fun hz ↦ ?_⟩⟩
-  · by_contra hn
-    simp only [not_or, not_not] at hn
-    exact not_takes_of_blank_right hn.1 hn.2.1 hn.2.2 h
-  · rcases h with h | h | h
-    · exact h (congrFun hz .coding)
-    · exact h (congrFun hz .types)
-    · exact h (Complementizer.axes_subject_eq_bot_iff.1 (congrFun hz .subject))
-
-/-- A typer whose bundle lies below the position's, and records something,
-    is taken: the positive witness in general. -/
-theorem takes_of_le (h : z.axes ≤ p.axes) (hz : z.axes ≠ ⊥) : p.Takes z :=
-  ⟨Compat.of_le le_rfl h, by
-    obtain ⟨a, ha⟩ := Function.ne_iff.mp hz
-    rw [Pi.bot_apply] at ha
-    exact ⟨a, fun hp ↦ ha (le_bot_iff.mp (hp ▸ h a)), ha⟩⟩
-
-/-- Refining a position keeps a typer it takes, as long as the refinement
-    stays consistent with the typer. -/
-theorem Takes.mono_of_compat (hpq : p ≤ q) (hc : Compat q.axes z.axes) (h : p.Takes z) :
-    q.Takes z :=
-  ⟨hc, h.2.imp fun a ⟨hp, hz⟩ ↦
-    ⟨fun hq ↦ hp (le_bot_iff.mp (hq ▸ axes_mono hpq a)), hz⟩⟩
-
-/-- Coarsening a position keeps a typer it takes, as long as the coarsening
-    still overlaps the typer. -/
-theorem Takes.of_le_of_overlap (hpq : p ≤ q) (ho : Overlap p.axes z.axes) (h : q.Takes z) :
-    p.Takes z :=
-  ⟨h.1.mono (axes_mono hpq) le_rfl, ho⟩
+    (∃ p : Position, p.Takes z) ↔ z.toSelection.admits.Nonempty ∧ z.toSelection ≠ ⊤ :=
+  ⟨fun ⟨_, h⟩ ↦ ⟨by
+      have h' := h.1
+      rw [Finset.not_disjoint_iff] at h'
+      exact h'.imp fun _ ha ↦ ha.2,
+    fun hz ↦ not_takes_of_eq_top hz h⟩,
+   fun h ↦ ⟨typedBy z, by
+      rw [Takes, selection_typedBy_univ]
+      exact Clause.Selection.takes_self_iff.2 h⟩⟩
 
 end ArgumentFrame.Position
 
 namespace ArgumentFrame
 
-variable {fr fr' : ArgumentFrame} {z z' : Complementizer} {s : Option Clause.EmbeddedSubject}
+variable {fr fr' : ArgumentFrame} {z : Complementizer} {s : Finset Clause.EmbeddedSubject}
 
 /-- The frame takes `z` when some complement does. -/
 def Takes (fr : ArgumentFrame) (z : Complementizer) : Prop :=
@@ -264,52 +105,28 @@ instance : Decidable (fr.Takes z) := inferInstanceAs (Decidable (∃ p ∈ fr.co
 theorem Takes.mono (hsub : fr.complements ⊆ fr'.complements) (h : fr.Takes z) : fr'.Takes z :=
   h.imp fun _ ⟨hp, ht⟩ ↦ ⟨hsub hp, ht⟩
 
-/-- A frame taking a typer has a clausal complement. -/
+/-- A frame taking a complementizer has a clausal complement. -/
 theorem Takes.hasClausal (h : fr.Takes z) : fr.HasClausal :=
   h.imp fun _ ⟨hp, ht⟩ ↦ ⟨hp, ht.isClausal⟩
 
-/-- No frame takes a typer recording none of its axes. -/
-theorem not_takes_of_blank (hc : z.coding = none) (ht : z.types = ⊥) (hs : z.subject = none) :
-    ¬ fr.Takes z :=
-  fun ⟨_, _, h⟩ ↦ Position.not_takes_of_blank_right hc ht hs h
+/-- No frame takes a complementizer restricting nothing. -/
+theorem not_takes_of_eq_top (hz : z.toSelection = ⊤) : ¬ fr.Takes z :=
+  fun ⟨_, _, h⟩ ↦ Position.not_takes_of_eq_top hz h
 
-/-- Small clauses take no clause-typer. -/
+/-- Small clauses take no complementizer. -/
 theorem not_takes_smallClause (z : Complementizer) : ¬ smallClause.Takes z := by
   rintro ⟨p, hp, ht⟩
   rw [List.mem_singleton.1 hp] at ht
-  exact Position.not_takes_of_blank_left rfl rfl rfl ht
+  exact Clause.Selection.not_top_takes ht
 
-/-- An indicative typer typing declaratives or nothing recorded takes the finite-clause
-    frame. -/
-theorem finiteClause_takes (hc : z.coding = some .indicative)
-    (ht : z.types = ⊥ ∨ z.types = .only .declarative) : finiteClause.Takes z := by
-  refine ⟨_, List.mem_singleton_self _, ?_⟩
-  rcases ht with ht | ht <;>
-    simp [Position.takes_iff_typer_axes, Position.axes, Position.coding?, Position.types,
-      Position.subject?, hc, ht, Flat.none_eq_bot, Flat.some_eq_coe, compat_bot, compat_self,
-      bot_compat] <;>
-    first | exact Flat.coe_ne_bot | exact Or.inl Flat.coe_ne_bot
-
-/-! ### The frame a typer types -/
-
-/-- The frame whose one complement is the clause `z` types, with the subject
-    requirement `s`: the frame a language file derives from its complementizer
-    entry rather than retyping the typer's axes. -/
-def typedBy (z : Complementizer) (s : Option Clause.EmbeddedSubject := none) : ArgumentFrame :=
+/-- The frame whose one complement is the clause `z` types, with the subject realizations
+narrowed to `s`: the frame a language file derives from its complementizer entry, where it would
+otherwise retype the complementizer's selection. -/
+def typedBy (z : Complementizer) (s : Finset Clause.EmbeddedSubject := Finset.univ) :
+    ArgumentFrame :=
   ⟨some .nominal, [.typedBy z s]⟩
 
 @[simp] theorem complements_typedBy : (typedBy z s).complements = [.typedBy z s] := rfl
-
-/-- The frame `z` types takes `z'` exactly when the two typers' bundles are
-    consistent and overlap. -/
-theorem typedBy_takes_iff :
-    (typedBy z).Takes z' ↔ Compat z.axes z'.axes ∧ Position.Overlap z.axes z'.axes := by
-  simp only [Takes, complements_typedBy, List.mem_singleton, exists_eq_left,
-    Position.typedBy_takes_iff]
-
-/-- The frame `z` types takes `z` exactly when `z` records something. -/
-theorem typedBy_takes_self_iff : (typedBy z).Takes z ↔ z.axes ≠ ⊥ :=
-  typedBy_takes_iff.trans ((and_iff_right (compat_self _)).trans Position.overlap_self_iff)
 
 end ArgumentFrame
 
@@ -323,16 +140,15 @@ def Takes (v : Verb) (z : Complementizer) : Prop :=
 
 instance : Decidable (v.Takes z) := inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
 
-/-- A verb taking a typer takes a clausal complement. -/
+/-- A verb taking a complementizer takes a clausal complement. -/
 theorem Takes.takesClausal (h : v.Takes z) : v.TakesClausal :=
   h.imp fun _ ⟨hf, ht⟩ ↦ ⟨hf, ht.hasClausal⟩
 
-/-- No verb takes a typer recording none of its axes, as a converb suffix records none. -/
-theorem not_takes_of_blank (hc : z.coding = none) (ht : z.types = ⊥) (hs : z.subject = none) :
-    ¬ v.Takes z :=
-  fun ⟨_, _, h⟩ ↦ ArgumentFrame.not_takes_of_blank hc ht hs h
+/-- No verb takes a complementizer restricting nothing, as a converb suffix restricts nothing. -/
+theorem not_takes_of_eq_top (hz : z.toSelection = ⊤) : ¬ v.Takes z :=
+  fun ⟨_, _, h⟩ ↦ ArgumentFrame.not_takes_of_eq_top hz h
 
-/-- The typers of `v` within a language's complementizer inventory. -/
+/-- The complementizers `v` takes within a language's inventory. -/
 def typers (v : Verb) (inv : List Complementizer) : List Complementizer :=
   inv.filter (v.Takes ·)
 

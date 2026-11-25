@@ -45,7 +45,7 @@ positions after it. -/
 def indirectPassive (fr : ArgumentFrame := .np) : Voice :=
   (Voice.of fr
     ⟨some .nominal,
-      (fr.external.map fun _ ↦ ArgumentFrame.Position.adpositional (some .grammatical)).toList ++
+      (fr.external.map fun _ ↦ ArgumentFrame.Position.adpositional {.grammatical}).toList ++
         fr.complements⟩
     ((fr.external.map fun _ ↦ some (complement 0)).toList ++
       (List.range fr.complements.length).map (fun i ↦

@@ -169,8 +169,8 @@ namespace Site
 
 /-- The subject of the clause is not expressed and is controlled from outside it. -/
 def IsControlled : Site → Prop
-  | complement v => ∃ fr ∈ v.valency.frames, ∃ pos ∈ fr.complements, pos.subject? = some .null
-  | subordinate c => c.subject = some .null
+  | complement v => ∃ fr ∈ v.valency.frames, ∃ pos ∈ fr.complements, pos.selection.subject = {.null}
+  | subordinate c => c.subject = {.null}
   | _ => False
 
 instance : DecidablePred IsControlled := fun s ↦ by

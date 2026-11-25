@@ -69,10 +69,10 @@ namespace Argument
 
 /-- The voice leaving the argument unexpressed in its construction, interpreted as `a`. -/
 def leaveImplicit : Argument → ImplicitInterp → Voice
-  | firstObject, a => .leaveImplicit .np_np 0 (some a)
-  | secondObject, a => .leaveImplicit .np_np 1 (some a)
-  | directObject, a => .leaveImplicit .np_pp 0 (some a)
-  | pp, a => .leaveImplicit .np_pp 1 (some a)
+  | firstObject, a => .leaveImplicit .np_np 0 {a}
+  | secondObject, a => .leaveImplicit .np_np 1 {a}
+  | directObject, a => .leaveImplicit .np_pp 0 {a}
+  | pp, a => .leaveImplicit .np_pp 1 {a}
 
 /-- The argument a feature of the examples names. -/
 def ofString? : String → Option Argument
@@ -174,12 +174,12 @@ theorem sluiced_rows : ∀ v ∈ verbs, .np_np ∈ v.valency.frames → ∀ row 
 except *write* (fn. 7). -/
 theorem objectDrop_secondObject :
     (verbs.filter fun v ↦ (∃ a, v.Alternates (Argument.secondObject.leaveImplicit a)) ∧
-      ∃ a, v.Alternates (.leaveImplicit .np 0 (some a))).map (·.form) = ["write"] := by
+      ∃ a, v.Alternates (.leaveImplicit .np 0 {a})).map (·.form) = ["write"] := by
   decide +kernel
 
 -- (7), (8)
 theorem melt_build : ∀ v ∈ [melt, build],
-    (∃ a, v.Alternates (.leaveImplicit .np 0 (some a))) ∧ .np_np ∈ v.valency.frames := by
+    (∃ a, v.Alternates (.leaveImplicit .np 0 {a})) ∧ .np_np ∈ v.valency.frames := by
   decide +kernel
 
 /-- The type of Appl (79) over a verb of type `f`: it takes the verb and then the two

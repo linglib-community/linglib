@@ -49,7 +49,7 @@ def transitive : Voice := Voice.active
 def incorporationAntipassive : Voice := (Voice.antipassive .incorporated).marked [.suff "w"]
 
 /-- *-waj*: the absolutive antipassive, the patient implicit or an oblique. -/
-def absolutiveAntipassive : Voice := (Voice.antipassive (.implicit none)).marked [.suff "waj"]
+def absolutiveAntipassive : Voice := (Voice.antipassive .implicit).marked [.suff "waj"]
 
 /-- *-j*: the agentless passive, with no agent in participant structure. -/
 def agentlessPassive : Voice := Voice.anticausative.marked [.suff "j"]
