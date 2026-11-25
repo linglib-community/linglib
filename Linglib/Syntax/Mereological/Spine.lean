@@ -12,6 +12,15 @@ public import Mathlib.Data.List.ReduceOption
 /-!
 # The spine of an object in mereological syntax
 
+This file defines the map from a parthood structure and one of its objects to a `Spine`, the list
+of heads a phrase projects. `Spine` is a type shared by the frameworks. For any type of heads it
+carries the label of a projection, the extension order in which clause sizes are compared, the
+complement and the shell of a head, and the pronunciation of its heads as words; and conditions
+on projections, such as being an extended projection, are stated on spines of categories. The map
+makes all of this apply to the objects of a parthood structure: a statement about spines is a
+statement about an object through its spine, and about its categories through the image of that
+spine under the map from objects to categories.
+
 In mereological syntax the first dimension of parthood is the extended-projection complement
 relation: in a finite clause `V` is the 1-part of `v`, `v` of `T`, and `T` of `C`. The spine of an
 object `y` in a parthood structure `P` lists the 1-parts of `y` from the lowest upward, and then
@@ -19,19 +28,15 @@ object `y` in a parthood structure `P` lists the 1-parts of `y` from the lowest 
 its 1-parts form a chain and the list is determined. A spine depends on parthood in the first
 dimension only: adding a 2-part, a specifier, changes no spine.
 
-The spine is how a parthood structure is read as a `Spine`, the list of heads a phrase projects.
-Conditions on projections are stated on that type, so a condition on spines of categories, such
-as being an extended projection, is stated of an object by taking the image of its spine under
-the map from objects to their categories. The spine of `x` lies below the spine of `y` exactly
-when `x` is `y` or a 1-part of `y`, so comparing spines in the extension order is comparing
-objects by parthood in the first dimension.
-
-Two facts say how Subjoin builds spines. An object that is not yet a part and subjoins as the
-1-part of `y` becomes the complement of `y`: the spine of `y` is then that object's spine with `y`
-on top. Every other licensed subjunction leaves every spine as it was. In particular a part that
-subjoins does so as a 2-part, so movement extends no projection. It follows that the spine of an
-object that is a part, or has a 1-part, is the same in every structure derived from there: a
-complement is complete before a head is built over it.
+The map carries the structure of parthood to the structure of spines. The spine of `x` lies below
+the spine of `y` exactly when `x` is `y` or a 1-part of `y`, so the extension order on spines is
+parthood in the first dimension, and a structure with more parts has larger spines. Subjoin acts
+on spines in one way. An object that is not yet a part and subjoins as the 1-part of `y` becomes
+the complement of `y`: the spine of `y` is then that object's spine with `y` on top. Every other
+licensed subjunction leaves every spine as it was. In particular a part that subjoins does so as
+a 2-part, so movement extends no projection. It follows that the spine of an object that is a
+part, or has a 1-part, is the same in every structure derived from there: a complement is
+complete before a head is built over it.
 
 ## Main definitions
 

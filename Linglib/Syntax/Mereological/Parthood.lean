@@ -15,20 +15,31 @@ public import Mathlib.Tactic.DeriveFintype
 # Dimensioned parthood
 
 Mereological syntax builds structure by Subjoin, which makes one syntactic object a proper part
-of another. An object has parts in two dimensions: its 1-part is its extended-projection
-complement and its 2-part is its specifier. A parthood structure on `α` is a function
-`part : Dim → α → Option α` giving the immediate `n`-part of each object, if it has one. An object
-may be a part of several others, which is how one object occupies several positions.
+of another. No new object is formed: after `x` subjoins to `y`, the object `y` has `x` as a part.
+An object has parts in two dimensions. Its 1-part is its extended-projection complement and its
+2-part is its specifier. In *you jumped*, `V` is the 1-part of `v` and `v` the 1-part of `T`, and
+the subject is the 2-part of `v` and also of `T`. An object may be a part of several others in
+this way, which is how one object occupies several positions.
 
-`x` is an `n`-part of `y` when it is reached from `y` through immediate `n`-parts: `P.NPart n` is
-the transitive closure of `P.Imm n`, so parthood is transitive within a dimension. `P.Descendant`
-is the closure through both dimensions. A structure is acyclic when no object is its own
-descendant. In an acyclic structure each `P.NPart n` is a strict partial order and no two objects
-are parts of each other, in the same dimension or in different ones.
+A parthood structure on `α` is a function `part : Dim → α → Option α` giving the immediate
+`n`-part of each object, if it has one. `x` is an `n`-part of `y` when it is reached from `y`
+through immediate `n`-parts: `P.NPart n` is the transitive closure of `P.Imm n`. So the 1-parts of
+an object are the heads below it in its extended projection, and its 2-parts are its specifier,
+the specifier of that, and so on. Parthood is transitive within a dimension only. A 1-part of a
+specifier of `y` is inside `y`, in the sense of `P.Descendant`, the closure through both
+dimensions, but that does not make it a 1-part or a 2-part of `y`. The locality principle of
+mereological syntax is stated with this difference.
 
-Structures are ordered by inclusion of immediate parthood. Subjoining `x` to `y` makes `x` the
-immediate part of `y` in the first dimension in which `y` has no part. It is defined unless `y`
-has a part in both dimensions, and it adds one immediate part and removes none.
+A structure is acyclic when no object is inside itself. In an acyclic structure each `P.NPart n`
+is a strict partial order, as proper parthood is required to be, and no two objects are parts of
+each other, in the same dimension or in different ones.
+
+Structures are ordered by inclusion of immediate parthood, and the least structure is the one in
+which nothing has a part. Subjoining `x` to `y` makes `x` the immediate part of `y` in the first
+dimension in which `y` has no part: the first subjunction to an object gives it a complement and
+the second a specifier. There is no third, so Subjoin is undefined on an object with both parts,
+and structures branch at most twice. Where it is defined, Subjoin adds one immediate part and
+removes none, so it moves up in the order.
 
 ## Main definitions
 
@@ -92,19 +103,19 @@ instance [Fintype α] [DecidableEq α] : DecidableEq (Parthood α) := fun _ _ �
 
 /-! ### Parthood relations -/
 
-/-- `x` is the immediate `n`-part of `y`. -/
+/-- `x` is the immediate `n`-part of `y`: its complement for `n = 1`, its specifier for `n = 2`. -/
 def Imm (n : Dim) (x y : α) : Prop := P.part n y = some x
 
 /-- `x` is an `n`-part of `y`, through a chain of immediate `n`-parts. -/
 def NPart (n : Dim) : α → α → Prop := TransGen (P.Imm n)
 
-/-- `x` is reachable from `y` through parts of either dimension. -/
+/-- `x` is inside `y`: it is reached from `y` through parts of either dimension. -/
 def Descendant : α → α → Prop := TransGen fun x y ↦ ∃ n, P.Imm n x y
 
-/-- `x` is a part of something. -/
+/-- `x` is a part of something, and so not a root. -/
 def IsPart (x : α) : Prop := ∃ n y, P.Imm n x y
 
-/-- No object is reachable from itself through parts of either dimension. -/
+/-- No object is inside itself, through parts of either dimension. -/
 def Acyclic : Prop := ∀ x, ¬ P.Descendant x x
 
 /-- Only an object with a 1-part has a 2-part, since Subjoin fills the first dimension first. -/
@@ -197,7 +208,7 @@ def immOrderEmbedding : Parthood α ↪o (Dim → α → α → Prop) := ⟨⟨I
 
 @[simp] theorem coe_immOrderEmbedding : ⇑(immOrderEmbedding (α := α)) = Imm := rfl
 
-/-- The structure in which nothing has a part. -/
+/-- The structure in which nothing has a part, from which a derivation starts. -/
 instance : OrderBot (Parthood α) where
   bot := ⟨fun _ _ ↦ none⟩
   bot_le _ _ _ _ h := nomatch h
@@ -268,7 +279,8 @@ def addPart (n : Dim) (x y : α) : Parthood α :=
   ⟨Function.update P.part n (Function.update (P.part n) y (some x))⟩
 
 variable (P) in
-/-- Subjoin `x` to `y`, adding it in the next free dimension of `y`. -/
+/-- Subjoin `x` to `y`, adding it in the next free dimension of `y`: as its complement if it has
+none, and otherwise as its specifier. -/
 def subjoin (x y : α) : Option (Parthood α) := (P.nextDim y).map (P.addPart · x y)
 
 theorem part_addPart (m : Dim) (b : α) :
