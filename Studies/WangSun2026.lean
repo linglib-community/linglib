@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Mereological.Spine
+public import Linglib.Data.Examples.WangSun2026
 
 /-!
 # Wang and Sun (2026): Detaching Mandarin Classifiers from Nouns
@@ -11,10 +12,10 @@ an object of its own, (7a): it subjoins to Q as Q's 1-part, the numeral is Q's 2
 noun, if present, is the classifier's 1-part, (7b), (26). Dimensionality then leaves no room at
 Q, so a degree-modified adjective cannot sit between the numeral and the classifier, (29a)
 (`subjoin_modifier_q`), although it subjoins to the classifier as its 2-part, (28a)
-(`subjoin_modifier_cl`), or to D, (28b) (`subjoin_modifier_d`). The classifier spells out with
-Q along Q's complementation line, (26b) (`spine_q`), so the classifier and the noun cannot be
-dislocated without the numeral. The particle *de* realises Mod, (7c): with *de* after the
-classifier the quantity phrase is the 1-part of a Mod that is D's 2-part, and the classifier is
+(`subjoin_modifier_cl`), or to D, (28b) (`subjoin_modifier_d`). The classifier is on Q's
+complementation line, (26b) (`spine_q`), where the paper has it spell out together with Q. The
+particle *de* realises Mod, (7c): with *de* after the classifier the quantity phrase is the
+1-part of a Mod that is D's 2-part, and the classifier is
 reached from D only across dimensions, (34)–(35) (`not_clVisible_numClDeN`). Visibility from D
 is the paper's structural correlate of the sortal reading, glasses as entities, against the
 mensural reading, glassfuls, (33) (`reading`). Nothing more, such as a second *de*-modifier, can
@@ -31,6 +32,10 @@ first, stranding the numeral and classifier, (43d) (`topic_n`), which a modifier
 classifier's 2-part permits, (44a) (`topic_n_modifier_cl`), and a modifier as D's 2-part blocks
 for good, (44b) (`topic_n_modifier_d`).
 
+These predictions match the judgments of the paper's rows on the position of a modifier and on
+extraction: a modifier subjoins exactly where the row is acceptable, and the fronted object or
+the wh-numeral becomes a part of C exactly in the acceptable rows.
+
 ## Implementation notes
 
 * The nominal structures and the clause of (41) are `Parthood` values on one type of objects, so
@@ -41,6 +46,17 @@ for good, (44b) (`topic_n_modifier_d`).
   adjacency of the numeral and the classifier is stated as Dimensionality at Q, which is what
   the paper derives it from, and the ban on modifiers between D and Num, (31), is not derived.
 * The topicalisation of the whole D in (43c) is proved for the structure without a modifier.
+
+## TODO
+
+* The collective spell-out of Q and the classifier at Q, (26b), is not formalized, so the rows
+  that rest on it are not derived: a bare adjective before the classifier, (29b), the classifier
+  fronted with the noun, (5c), and the numeral and classifier fronted without the noun, (14a).
+  By parthood alone the classifier becomes a part of C (`cl_reaches`).
+* The rows on a modifier between the demonstrative and the numeral, (31), and on a modifier
+  nested inside the modifier of D, (37b), are not derived.
+* The readings of (33) are paired with `reading` by name only; the rows carry them as untyped
+  features.
 
 ## References
 
@@ -220,5 +236,42 @@ theorem topic_n_modifier_d :
   ⟨subjoin_eq_none_iff.2 ⟨rfl, rfl⟩,
     IsDomain.not_reaches (S := inD) (b := .D) (c := .Mod) (by decide +kernel) rfl (by decide)
       (by decide) (by decide) (by decide +kernel) (by decide)⟩
+
+/-! ### The data -/
+
+/-- A modifier subjoins to the classifier and not to Q, and nothing more subjoins to a filled D:
+the rows on the position of a modifier, (4c), (8a), (28a), (29a), and on a second *de*-modifier,
+(37a). -/
+theorem modification_rows :
+    ((numClN.subjoin .Mod .Q).isSome ↔ Examples.ex_1.judgment = .acceptable) ∧
+      ((numClN.subjoin .Mod .Q).isSome ↔ Examples.ex_3.judgment = .acceptable) ∧
+      ((numClN.subjoin .Mod .Cl).isSome ↔ Examples.ex_2.judgment = .acceptable) ∧
+      ((numClN.subjoin .Mod .Cl).isSome ↔ Examples.ex_5.judgment = .acceptable) ∧
+      ((∃ x, (numClDeN.subjoin x .D).isSome) ↔ Examples.ex_14.judgment = .acceptable) := by
+  decide +kernel
+
+/-- The fronted object, or the wh-numeral, becomes a part of C exactly in the acceptable rows on
+topicalisation and on wh-numerals, (13b), (39), (43a), (44). -/
+theorem extraction_rows :
+    (clause.Reaches .N .C ↔ Examples.ex_7.judgment = .acceptable) ∧
+      (clauseModCl.Reaches .Num .C ↔ Examples.ex_9.judgment = .acceptable) ∧
+      (clauseModD.Reaches .Num .C ↔ Examples.ex_10.judgment = .acceptable) ∧
+      (clause.Reaches .D .C ↔ Examples.ex_16.judgment = .acceptable) ∧
+      (clauseModCl.Reaches .N .C ↔ Examples.ex_17.judgment = .acceptable) ∧
+      (clauseModD.Reaches .N .C ↔ Examples.ex_18.judgment = .acceptable) :=
+  ⟨iff_of_true (Reaches.of_derives topic_n.2.1.derives topic_n.2.2.reaches) rfl,
+    iff_of_true (Reaches.of_derives wh_numeral.2.1.derives wh_numeral.2.2.reaches) rfl,
+    iff_of_false wh_numeral_modifier.2.2 (by decide),
+    iff_of_true (Subjoins.reaches (Q := clause.addPart .two .D .C) (by decide +kernel)) rfl,
+    iff_of_true
+      (Reaches.of_derives topic_n_modifier_cl.1.derives topic_n_modifier_cl.2.reaches) rfl,
+    iff_of_false topic_n_modifier_d.2 (by decide)⟩
+
+-- the classifier subjoins to D and from there to C, as the noun does
+theorem cl_reaches : clause.Reaches .Cl .C :=
+  have h : clause.Subjoins .Cl .D (clause.addPart .two .Cl .D) ∧
+      (clause.addPart .two .Cl .D).Subjoins .Cl .C
+        ((clause.addPart .two .Cl .D).addPart .two .Cl .C) := by decide +kernel
+  Reaches.of_derives h.1.derives h.2.reaches
 
 end WangSun2026
