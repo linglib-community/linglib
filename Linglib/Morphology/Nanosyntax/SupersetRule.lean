@@ -42,7 +42,7 @@ lexicalization algorithm gives each grade the one exponent the rules spell out t
 
 namespace Morphology.Nanosyntax
 
-open Morphology Minimalist.Next SyntacticObject
+open Morphology Minimalist SyntacticObject
 
 variable {F : Type} {α : Type*}
 
@@ -59,9 +59,9 @@ theorem spineUpTo_containsOrEq_iff (feat : ℕ → F) (r k : ℕ) :
   rw [show List.range r = (List.range k).take r by simp [List.take_range, h]]
   exact List.take_prefix _ _
 
-theorem numNodes_spineUpTo_strictMono (feat : ℕ → F) :
-    StrictMono fun k ↦ (spineUpTo feat k).toUnorderedTree.numNodes := fun r k h ↦
-  numNodes_lt_of_contains (contains_iff_containsOrEq_and_ne.2
+theorem card_leaves_spineUpTo_strictMono (feat : ℕ → F) :
+    StrictMono fun k ↦ (spineUpTo feat k).leaves.card := fun r k h ↦
+  Contains.card_leaves_lt (contains_iff_containsOrEq_and_ne.2
     ⟨(spineUpTo_containsOrEq_iff feat r k).2 h.le, fun heq ↦
       h.not_ge ((spineUpTo_containsOrEq_iff feat k r).1 (heq ▸ Relation.ReflTransGen.refl))⟩)
 
@@ -81,7 +81,7 @@ theorem spellout_ofSupersetRule [DecidableEq F] {n : ℕ} (feat : ℕ → F)
     (fun _ _ ↦ (spineUpTo_containsOrEq_iff feat _ _).trans Fin.val_fin_le)
     fun r _ s _ ↦ by
       simp only [LexicalEntry.ofSupersetRule, OrderDual.toDual_le_toDual]
-      exact ((numNodes_spineUpTo_strictMono feat).le_iff_le).trans Fin.val_fin_le,
+      exact ((card_leaves_spineUpTo_strictMono feat).le_iff_le).trans Fin.val_fin_le,
     Option.map_map]
   rfl
 

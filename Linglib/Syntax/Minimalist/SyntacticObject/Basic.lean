@@ -139,9 +139,15 @@ abbrev merge (l r : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) : PlanarS
     (SyntacticObject.Leaf L ι) := l * r
 
 /-- Forgetting the order is the quotient map to the syntactic object. -/
-@[coe] def toSyntacticObject (p : PlanarSyntacticObject (SyntacticObject.Leaf L ι)) :
-    SyntacticObject (SyntacticObject.Leaf L ι) :=
+@[coe] def toSyntacticObject {α : Type} (p : PlanarSyntacticObject α) : SyntacticObject α :=
   FreeMagma.toFreeCommMagma p
+
+@[simp] theorem toSyntacticObject_of {α : Type} (a : α) :
+    toSyntacticObject (FreeMagma.of a : PlanarSyntacticObject α) = FreeCommMagma.of a := rfl
+
+@[simp] theorem toSyntacticObject_mul {α : Type} (l r : PlanarSyntacticObject α) :
+    toSyntacticObject (l * r) = toSyntacticObject l * toSyntacticObject r :=
+  map_mul FreeMagma.toFreeCommMagma l r
 
 theorem toSyntacticObject_surjective :
     Function.Surjective

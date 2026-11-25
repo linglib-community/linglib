@@ -37,7 +37,7 @@ not formalized.
 namespace TaraldsenEtAl2018
 
 open Morphology.Nanosyntax Morphology
-open Minimalist.Next (SyntacticObject)
+open Minimalist (SyntacticObject)
 
 /-! ### Features and entries -/
 

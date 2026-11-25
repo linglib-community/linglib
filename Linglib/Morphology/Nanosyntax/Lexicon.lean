@@ -8,7 +8,7 @@ public import Linglib.Morphology.Exponence.Select
 
 A lexical entry of nanosyntax pairs an exponent with a stored syntactic object. An entry spells
 out an object its stored object contains, the Superset Principle, which is
-`Minimalist.Next.SyntacticObject.ContainsOrEq`. When several entries match, the Elsewhere Condition
+`Minimalist.SyntacticObject.ContainsOrEq`. When several entries match, the Elsewhere Condition
 prefers the one that matches in fewer environments. One entry is at least as specific as another
 exactly when the other's stored object contains its own (`LexicalEntry.applySet_subset_iff`), so
 `spellout` takes the matching entry with the smallest stored object, an Elsewhere winner
@@ -50,7 +50,7 @@ spellout, which reads only features (`isFeatureSpellout_featureSpellout`).
 
 namespace Morphology.Nanosyntax
 
-open Morphology Minimalist.Next SyntacticObject
+open Morphology Minimalist SyntacticObject
 
 variable {F : Type} {α : Type*}
 
@@ -93,11 +93,11 @@ theorem LexicalEntry.applySet_subset_iff {a b : LexicalEntry F α} :
   ⟨fun h ↦ h (Relation.ReflTransGen.refl : a.tree.ContainsOrEq a.tree),
     fun h _ hc ↦ h.trans hc⟩
 
-private theorem numNodes_lt_of_applySet_ssubset {s r : LexicalEntry F α}
+private theorem card_leaves_lt_of_applySet_ssubset {s r : LexicalEntry F α}
     (hlt : applySet s ⊂ applySet r) :
-    s.tree.toUnorderedTree.numNodes < r.tree.toUnorderedTree.numNodes := by
+    s.tree.leaves.card < r.tree.leaves.card := by
   have hcon := LexicalEntry.applySet_subset_iff.mp hlt.le
-  refine numNodes_lt_of_contains (contains_iff_containsOrEq_and_ne.2 ⟨hcon, fun heq ↦ ?_⟩)
+  refine Contains.card_leaves_lt (contains_iff_containsOrEq_and_ne.2 ⟨hcon, fun heq ↦ ?_⟩)
   exact hlt.not_ge (LexicalEntry.applySet_subset_iff.mpr (heq ▸ Relation.ReflTransGen.refl))
 
 /-! ### Spellout -/
@@ -109,13 +109,13 @@ variable [DecidableEq F] {L : RuleSet (LexicalEntry F α)} {s t : SyntacticObjec
 /-- `spellout L t` is the exponent of the matching entry with the smallest stored object, the
 first listed on ties, and `none` where no entry matches. -/
 def spellout (L : RuleSet (LexicalEntry F α)) (t : SyntacticObject (Option F)) : Option α :=
-  L.realize (fun e : LexicalEntry F α ↦ OrderDual.toDual e.tree.toUnorderedTree.numNodes) t
+  L.realize (fun e : LexicalEntry F α ↦ OrderDual.toDual e.tree.leaves.card) t
 
 /-- Smallest-object selection realizes the exponent of an Elsewhere winner. -/
 theorem spellout_realizes {x : α} (h : spellout L t = some x) : L.Realizes applySet t x :=
   RuleSet.realize_realizes
-    (f := fun e : LexicalEntry F α ↦ OrderDual.toDual e.tree.toUnorderedTree.numNodes)
-    (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.2 (numNodes_lt_of_applySet_ssubset h)) h
+    (f := fun e : LexicalEntry F α ↦ OrderDual.toDual e.tree.leaves.card)
+    (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.2 (card_leaves_lt_of_applySet_ssubset h)) h
 
 theorem spellout_eq_none_iff : spellout L t = none ↔ ∀ e ∈ L, ¬ e.Matches t := by
   simp [spellout, RuleSet.realize_eq_none_iff, RuleSet.applicable, List.filter_eq_nil_iff]

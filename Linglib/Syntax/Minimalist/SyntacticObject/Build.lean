@@ -103,8 +103,7 @@ namespace PlanarSyntacticObject
 instance : Coe L (PlanarSyntacticObject (SyntacticObject.Leaf L L)) := ⟨leaf⟩
 
 /-- An ordered object is an object. -/
-instance : Coe (PlanarSyntacticObject (SyntacticObject.Leaf L ι))
-    (SyntacticObject (SyntacticObject.Leaf L ι)) := ⟨toSyntacticObject⟩
+instance {α : Type} : Coe (PlanarSyntacticObject α) (SyntacticObject α) := ⟨toSyntacticObject⟩
 
 theorem merge_inj {l r l' r' : PlanarSyntacticObject (SyntacticObject.Leaf L ι)} :
     merge l r = merge l' r' ↔ l = l' ∧ r = r' :=

@@ -48,8 +48,8 @@ matching by sets of features derives no inverse marking.
 ## TODO
 
 * The algorithm's last resort, a specifier built in a workspace of its own, which is where
-  prefixes come from. A prefix stores a feature merged with a bare head, `phrase f (leaf g)`,
-  which is not `phrase f (bare g)`.
+  prefixes come from. A prefix stores a feature merged with a bare head,
+  `phrase f (FreeCommMagma.of g)`, which is not `phrase f (bare g)`.
 
 ## References
 
@@ -62,7 +62,7 @@ matching by sets of features derives no inverse marking.
 
 namespace Morphology.Nanosyntax
 
-open Minimalist.Next SyntacticObject
+open Minimalist SyntacticObject
 
 variable {F : Type}
 

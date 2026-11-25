@@ -1,13 +1,13 @@
 module
 
-public import Linglib.Syntax.Minimalist.Next.SyntacticObject
+public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
 # Nanosyntax: syntactic objects
 
 A syntactic object of nanosyntax is a Minimalist syntactic object whose leaves are single
 features or the mark of an absent complement, an element of the free commutative magma
-`Minimalist.Next.SyntacticObject (Option F)`. A feature `f` merged with a complement `t` is
+`Minimalist.SyntacticObject (Option F)`. A feature `f` merged with a complement `t` is
 `phrase f t`, the set $\{f, t\}$. A phrase whose complement is absent, at the bottom of a
 sequence or after its complement has evacuated, is the singleton $\{f\}$ of [blix-2022], written
 `bare f`. The phrase a feature sequence builds without movement
@@ -23,8 +23,8 @@ size and no larger one (`merge_spine_containsOrEq_spine_iff`).
 
 * The free commutative magma has no singletons, so the leaves are `Option F` and `bare f` is the
   Merge of `f` with the leaf `none`, which stands for the absent complement. It is what tells the
-  feature of a phrase from its complement at the bottom of a sequence. The bottom of a sequence and
-  a phrase whose complement has evacuated are the same object.
+  feature of a phrase from its complement at the bottom of a sequence. The bottom of a sequence
+  and a phrase whose complement has evacuated are the same object.
 * A derivation is built on planar objects, an evacuated constituent to the left of its remnant,
   since the pronunciation reads that order. `pphrase`, `pbare` and `pspine` are the planar
   counterparts, and stored objects and matching are unordered.
@@ -41,16 +41,16 @@ size and no larger one (`merge_spine_containsOrEq_spine_iff`).
 
 namespace Morphology.Nanosyntax
 
-open Minimalist.Next SyntacticObject
+open Minimalist SyntacticObject
 
-variable {F : Type*}
+variable {F : Type}
 
 /-- The phrase of the feature `f` over the complement `t`, the set `{f, t}`. -/
 abbrev phrase (f : F) (t : SyntacticObject (Option F)) : SyntacticObject (Option F) :=
-  leaf (some f) * t
+  FreeCommMagma.of (some f) * t
 
 /-- The phrase of `f` with no complement, the set `{f}`. -/
-abbrev bare (f : F) : SyntacticObject (Option F) := phrase f (leaf none)
+abbrev bare (f : F) : SyntacticObject (Option F) := phrase f (FreeCommMagma.of none)
 
 /-- The phrase a feature sequence builds without evacuation, its first feature at the bottom. -/
 def spine (f₀ : F) (fs : List F) : SyntacticObject (Option F) :=
@@ -63,18 +63,19 @@ def spine (f₀ : F) (fs : List F) : SyntacticObject (Option F) :=
 
 theorem exists_spine_eq_phrase (f₀ : F) (fs : List F) : ∃ f t, spine f₀ fs = phrase f t := by
   cases fs using List.reverseRecOn with
-  | nil => exact ⟨f₀, leaf none, rfl⟩
+  | nil => exact ⟨f₀, FreeCommMagma.of none, rfl⟩
   | append_singleton fs f => exact ⟨f, spine f₀ fs, spine_concat ..⟩
 
-theorem spine_ne_leaf (f₀ : F) (fs : List F) (a : Option F) : spine f₀ fs ≠ leaf a := by
+theorem spine_ne_leaf (f₀ : F) (fs : List F) (a : Option F) : spine f₀ fs ≠ FreeCommMagma.of a := by
   obtain ⟨f, t, h⟩ := exists_spine_eq_phrase f₀ fs
   exact h ▸ Ne.symm (FreeCommMagma.of_ne_mul _ _ _)
 
-theorem leaf_none_ne_leaf_some (f : F) : (leaf none : SyntacticObject (Option F)) ≠ leaf (some f) :=
+theorem leaf_none_ne_leaf_some (f : F) :
+    (FreeCommMagma.of none : SyntacticObject (Option F)) ≠ FreeCommMagma.of (some f) :=
   fun h ↦ by cases FreeCommMagma.of_injective h
 
 theorem phrase_eq_phrase_iff {f g : F} {t s : SyntacticObject (Option F)}
-    (hs : s ≠ leaf (some f)) : phrase f t = phrase g s ↔ f = g ∧ t = s := by
+    (hs : s ≠ FreeCommMagma.of (some f)) : phrase f t = phrase g s ↔ f = g ∧ t = s := by
   rw [FreeCommMagma.mul_eq_mul_iff]
   constructor
   · rintro (⟨h, rfl⟩ | ⟨h, -⟩)
@@ -104,11 +105,11 @@ theorem spine_inj {f₀ g₀ : F} {fs gs : List F} :
       exact ⟨rfl, by rw [h.1]⟩
 
 theorem spine_eq_bare_iff {f₀ g₀ : F} {gs : List F} :
-    spine f₀ gs = leaf (some g₀) * leaf none ↔ f₀ = g₀ ∧ gs = [] :=
+    spine f₀ gs = FreeCommMagma.of (some g₀) * FreeCommMagma.of none ↔ f₀ = g₀ ∧ gs = [] :=
   spine_inj (g₀ := g₀) (gs := [])
 
 theorem spine_eq_phrase_spine_iff {f₀ g₀ f : F} {fs gs : List F} :
-    spine f₀ gs = leaf (some f) * spine g₀ fs ↔ f₀ = g₀ ∧ gs = fs ++ [f] := by
+    spine f₀ gs = FreeCommMagma.of (some f) * spine g₀ fs ↔ f₀ = g₀ ∧ gs = fs ++ [f] := by
   have := spine_inj (f₀ := f₀) (fs := gs) (g₀ := g₀) (gs := fs ++ [f])
   rwa [spine_concat] at this
 
@@ -121,21 +122,21 @@ theorem spine_containsOrEq_spine_iff {f₀ : F} {fs gs : List F} :
     (spine f₀ fs).ContainsOrEq (spine f₀ gs) ↔ gs <+: fs := by
   induction fs using List.reverseRecOn with
   | nil =>
-    simp only [spine_nil, containsOrEq_mul, containsOrEq_leaf, spine_ne_leaf, or_false,
+    simp only [spine_nil, containsOrEq_mul, containsOrEq_of, spine_ne_leaf, or_false,
       List.prefix_nil, spine_eq_bare_iff, true_and]
   | append_singleton fs f ih =>
-    simp only [spine_concat, containsOrEq_mul, containsOrEq_leaf, spine_ne_leaf, false_or, ih,
+    simp only [spine_concat, containsOrEq_mul, containsOrEq_of, spine_ne_leaf, false_or, ih,
       List.prefix_concat_iff, spine_eq_phrase_spine_iff, true_and]
 
 theorem eq_of_spine_containsOrEq_spine {f₀ g₀ : F} {fs gs : List F}
     (h : (spine g₀ fs).ContainsOrEq (spine f₀ gs)) : f₀ = g₀ := by
   induction fs using List.reverseRecOn with
   | nil =>
-    simp only [spine_nil, containsOrEq_mul, containsOrEq_leaf, spine_ne_leaf, or_false,
+    simp only [spine_nil, containsOrEq_mul, containsOrEq_of, spine_ne_leaf, or_false,
       spine_eq_bare_iff] at h
     exact h.1
   | append_singleton fs f ih =>
-    simp only [spine_concat, containsOrEq_mul, containsOrEq_leaf, spine_ne_leaf, false_or] at h
+    simp only [spine_concat, containsOrEq_mul, containsOrEq_of, spine_ne_leaf, false_or] at h
     rcases h with h | h
     · exact (spine_eq_phrase_spine_iff.1 h).1
     · exact ih h
@@ -158,19 +159,19 @@ theorem merge_spine_containsOrEq_spine_iff {f₀ g₀ : F} (h : f₀ ≠ g₀) {
 /-! ### Features -/
 
 /-- The features of an object, the marks of absent complements left out. -/
-def features (s : SyntacticObject (Option F)) : Multiset F := s.yield.filterMap id
+def features (s : SyntacticObject (Option F)) : Multiset F := s.leaves.filterMap id
 
 @[simp] theorem features_mul (l r : SyntacticObject (Option F)) :
     features (l * r) = features l + features r := by
   simp [features, Multiset.filterMap_add]
 
-@[simp] theorem features_leaf_some (f : F) : features (leaf (some f)) = {f} := rfl
+@[simp] theorem features_leaf_some (f : F) : features (FreeCommMagma.of (some f)) = {f} := rfl
 
-@[simp] theorem features_leaf_none : features (leaf (none : Option F)) = 0 := rfl
+@[simp] theorem features_leaf_none : features (FreeCommMagma.of (none : Option F)) = 0 := rfl
 
 theorem features_le_of_mem_terms {x y : SyntacticObject (Option F)} (h : y ∈ x.terms) :
     features y ≤ features x :=
-  Multiset.filterMap_le_filterMap _ (yield_le_of_mem_terms h)
+  Multiset.filterMap_le_filterMap _ (leaves_le_of_mem_terms h)
 
 /-! ### Planar objects -/
 

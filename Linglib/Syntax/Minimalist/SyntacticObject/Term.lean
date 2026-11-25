@@ -158,6 +158,73 @@ instance [DecidableEq α] (x y : SyntacticObject α) : Decidable (ImmediatelyCon
       ⟨z, mem_terms.2 (h ▸ containsOrEq_mul.2 (.inr (.inr ReflTransGen.refl))), h⟩⟩
     Multiset.decidableExistsMultiset
 
+instance [DecidableEq α] (x y : SyntacticObject α) : Decidable (ContainsOrEq x y) :=
+  decidable_of_iff _ mem_terms
+
+theorem containsOrEq_refl (x : SyntacticObject α) : ContainsOrEq x x := ReflTransGen.refl
+
+theorem ContainsOrEq.trans (hxy : ContainsOrEq x y) (hyz : ContainsOrEq y z) : ContainsOrEq x z :=
+  ReflTransGen.trans hxy hyz
+
+/-! ### Leaves -/
+
+/-- The leaves of an object, with multiplicity. -/
+def leaves : SyntacticObject α → Multiset α :=
+  FreeCommMagma.elim (fun a ↦ {a}) (fun _ _ a b ↦ a + b) fun _ _ a b ↦ add_comm a b
+
+@[simp] theorem leaves_of (a : α) : leaves (FreeCommMagma.of a : SyntacticObject α) = {a} := rfl
+
+@[simp] theorem leaves_mul (l r : SyntacticObject α) : (l * r).leaves = l.leaves + r.leaves :=
+  FreeCommMagma.elim_mul _ _ _ l r
+
+theorem card_leaves_pos (x : SyntacticObject α) : 0 < x.leaves.card := by
+  induction x using FreeCommMagma.inductionOn with
+  | of a => simp
+  | mul l r ihl _ => rw [leaves_mul, Multiset.card_add]; omega
+
+theorem ImmediatelyContains.card_leaves_lt (h : ImmediatelyContains x y) :
+    y.leaves.card < x.leaves.card := by
+  obtain ⟨z, rfl⟩ := h
+  rw [leaves_mul, Multiset.card_add]
+  have := card_leaves_pos z
+  omega
+
+/-- A proper term of an object has fewer leaves. -/
+theorem Contains.card_leaves_lt (h : Contains x y) : y.leaves.card < x.leaves.card := by
+  induction h with
+  | single h => exact h.card_leaves_lt
+  | tail _ h ih => exact h.card_leaves_lt.trans ih
+
+/-- The leaves of a term are among the leaves of the object. -/
+theorem leaves_le_of_mem_terms (h : y ∈ x.terms) : y.leaves ≤ x.leaves := by
+  induction x using FreeCommMagma.inductionOn with
+  | of a =>
+    rw [terms_of, Multiset.mem_singleton] at h
+    rw [h]
+  | mul l r ihl ihr =>
+    rw [terms_mul, Multiset.mem_cons, Multiset.mem_add] at h
+    rw [leaves_mul]
+    rcases h with rfl | h | h
+    · rw [leaves_mul]
+    · exact (ihl h).trans (Multiset.le_add_right _ _)
+    · exact (ihr h).trans (Multiset.le_add_left _ _)
+
+theorem contains_irrefl (x : SyntacticObject α) : ¬ Contains x x :=
+  fun h ↦ lt_irrefl _ h.card_leaves_lt
+
+/-- Being a proper term is well-founded: an object has finitely many terms. -/
+theorem wellFounded_flip_contains : WellFounded (flip (Contains (α := α))) :=
+  Subrelation.wf (fun h ↦ Contains.card_leaves_lt h)
+    (InvImage.wf (fun s : SyntacticObject α ↦ s.leaves.card) wellFounded_lt)
+
+instance : IsStrictOrder (SyntacticObject α) Contains where
+  irrefl := contains_irrefl
+  trans _ _ _ := TransGen.trans
+
+theorem contains_iff_containsOrEq_and_ne : Contains x y ↔ ContainsOrEq x y ∧ y ≠ x :=
+  ⟨fun h ↦ ⟨h.to_reflTransGen, fun hyx ↦ contains_irrefl x (hyx ▸ h)⟩,
+    fun ⟨h, hne⟩ ↦ (containsOrEq_iff_eq_or_contains.1 h).resolve_left hne⟩
+
 end Leaves
 
 variable {x y z l r : SyntacticObject (SyntacticObject.Leaf L ι)}
@@ -252,23 +319,6 @@ theorem numNodes_lt_of_contains (h : Contains x y) :
       (r' := InvImage (· > ·) fun s : SyntacticObject (SyntacticObject.Leaf L ι) ↦
       s.toUnorderedTree.numNodes)
     (fun _ _ ↦ numNodes_lt_of_immediatelyContains) x y h
-
-/-- Being a proper term is well-founded: an object has finitely many terms. -/
-theorem wellFounded_flip_contains : WellFounded (flip (Contains (α := SyntacticObject.Leaf L ι))) :=
-  Subrelation.wf (fun h ↦ numNodes_lt_of_contains h)
-    (InvImage.wf (fun s : SyntacticObject (SyntacticObject.Leaf L ι) ↦ s.toUnorderedTree.numNodes)
-        wellFounded_lt)
-
-instance : IsStrictOrder (SyntacticObject (SyntacticObject.Leaf L ι)) Contains where
-  irrefl _ h := lt_irrefl _ (numNodes_lt_of_contains h)
-  trans _ _ _ := TransGen.trans
-
-theorem contains_irrefl (x : SyntacticObject (SyntacticObject.Leaf L ι)) : ¬ Contains x x := irrefl
-    x
-
-theorem contains_iff_containsOrEq_and_ne : Contains x y ↔ ContainsOrEq x y ∧ y ≠ x :=
-  ⟨fun h ↦ ⟨h.to_reflTransGen, fun hyx ↦ contains_irrefl x (hyx ▸ h)⟩,
-    fun ⟨h, hne⟩ ↦ (containsOrEq_iff_eq_or_contains.1 h).resolve_left hne⟩
 
 end SyntacticObject
 
@@ -375,9 +425,6 @@ theorem card_terms (s : SyntacticObject (SyntacticObject.Leaf L ι)) : s.terms.c
     s.toUnorderedTree.numNodes := by
   rw [← UnorderedTree.card_subtrees, ← map_toUnorderedTree_terms, Multiset.card_map]
 
-instance [DecidableEq L] [DecidableEq ι] (x y : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    Decidable (ContainsOrEq x y) :=
-  decidable_of_iff _ mem_terms
 
 /-! ### Accessible terms -/
 
