@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.Basic
+public import Linglib.Syntax.Spine.SplitBefore
 public import Mathlib.Data.Fintype.Card
 
 /-!
@@ -33,6 +34,9 @@ other.
 * Activity is the word-internal case of the Phase Impenetrability Condition: what is inactive when
   a cyclic head is spelled out is the interior of the phase below it. Transfer on trees is in
   `Syntax/Minimalist/Phase/Transfer.lean`, and the two are not derived from one definition.
+* The last cycle is the highest stretch of the heads split before the cyclic heads,
+  `Spine.splitBefore`, the construction that also gives the head chains of
+  `Syntax/Minimalist/HeadChain.lean`, there at the heads that do not share.
 
 ## References
 
@@ -192,35 +196,42 @@ variable (s cyclic) in
 /-- The heads of the last cycle, outermost first, which are the noncyclic heads above the highest
 cyclic head and that head. -/
 def lastCycle : List H :=
-  s.heads.reverse.takeWhile (fun h ↦ !decide (cyclic h)) ++
-    (s.heads.reverse.dropWhile (fun h ↦ !decide (cyclic h))).take 1
+  (((⟨s.heads⟩ : Spine H).splitBefore cyclic).getLast?.getD []).reverse
 
 variable (s cyclic) in
 /-- The last cycle is an initial stretch of the heads read from the top. -/
 theorem lastCycle_prefix : s.lastCycle cyclic <+: s.heads.reverse := by
-  conv_rhs => rw [← List.takeWhile_append_dropWhile (p := fun h ↦ !decide (cyclic h))
-    (l := s.heads.reverse)]
-  exact (List.prefix_append_right_inj _).2 (List.take_prefix 1 _)
+  rw [lastCycle, List.reverse_prefix]
+  rcases h : ((⟨s.heads⟩ : Spine H).splitBefore cyclic).getLast? with _ | b
+  · exact List.nil_suffix
+  · obtain ⟨d, hd⟩ := List.getLast?_eq_some_iff.1 h
+    have := Spine.flatten_splitBefore ⟨s.heads⟩ cyclic
+    rw [hd, List.flatten_append] at this
+    exact ⟨d.flatten, by simpa using this⟩
 
 /-- Merging a cyclic head closes the cycles below it and starts a new one. -/
 @[simp]
 theorem lastCycle_concat_of_cyclic {r : R} {hs : List H} {h : H} (hc : cyclic h) :
     (⟨r, hs ++ [h]⟩ : ComplexHead R H).lastCycle cyclic = [h] := by
-  simp [lastCycle, hc]
+  rw [lastCycle, show (⟨hs ++ [h]⟩ : Spine H) = (⟨hs⟩ : Spine H).append [h] from rfl,
+    Spine.splitBefore_append_singleton_of_pos _ hc]
+  simp
 
 /-- A noncyclic head joins the cycle of the word it merges with. -/
 @[simp]
 theorem lastCycle_concat_of_not_cyclic {r : R} {hs : List H} {h : H} (hc : ¬ cyclic h) :
     (⟨r, hs ++ [h]⟩ : ComplexHead R H).lastCycle cyclic =
       h :: (⟨r, hs⟩ : ComplexHead R H).lastCycle cyclic := by
-  simp [lastCycle, hc]
+  rw [lastCycle, show (⟨hs ++ [h]⟩ : Spine H) = (⟨hs⟩ : Spine H).append [h] from rfl,
+    Spine.splitBefore_append_singleton_of_neg _ hc]
+  simp [lastCycle]
 
 private theorem lastCycle_mk_eq_filter_zipIdx (r : R) (hs : List H) :
     (⟨r, hs⟩ : ComplexHead R H).lastCycle cyclic =
       ((hs.zipIdx.filter fun x ↦
         (hs.take (x.2 + 1)).countP (cyclic ·) = hs.countP (cyclic ·)).map Prod.fst).reverse := by
   induction hs using List.reverseRecOn with
-  | nil => simp [lastCycle]
+  | nil => simp [lastCycle, Spine.splitBefore]
   | append_singleton hs h ih =>
     have hold : ∀ x ∈ hs.zipIdx, (hs ++ [h]).take (x.2 + 1) = hs.take (x.2 + 1) := fun x hx ↦
       List.take_append_of_le_length (by have := List.snd_lt_of_mem_zipIdx hx; omega)
