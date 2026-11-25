@@ -42,12 +42,6 @@ the reader reads, so that the fit cannot go silently vacuous.
 * `Datum.Checks`, `Datum.ChecksVerdict`: the statement a study makes, a fit over the rows
   bundled with its coverage count.
 
-## Main statements
-
-* `mem_features`, `features_eq_nil`, `head?_features`, `feature?_eq_none`: the lookups in terms of
-  membership in `paperFeatures`, in the shape of `List.mem_lookupAll`, `List.lookupAll_eq_nil`,
-  `List.head?_lookupAll` and `List.dlookup_eq_none`.
-
 ## Implementation notes
 
 * A feature is either a stimulus column, naming in the paper's own taxonomy the items,
@@ -245,22 +239,5 @@ def ChecksVerdict {α : Type*} (f : Datum → Option α) (P : α → Bool) (rows
 instance {α : Type*} (f : Datum → Option α) (P : α → Bool) (rows : List Datum) (n : ℕ) :
     Decidable (ChecksVerdict f P rows n) :=
   inferInstanceAs (Decidable (_ ∧ _))
-
-variable {e key} {v : String}
-
-@[simp]
-theorem mem_features : v ∈ e.features key ↔ (key, v) ∈ e.paperFeatures := by
-  simp [features, and_comm, eq_comm]
-
-theorem features_eq_nil : e.features key = [] ↔ ∀ v, (key, v) ∉ e.paperFeatures := by
-  simp [List.eq_nil_iff_forall_not_mem]
-
-@[simp]
-theorem head?_features : (e.features key).head? = e.feature? key := by
-  simp only [features, feature?, List.head?_filterMap, List.lookup_eq_findSome?, beq_iff_eq]
-  congr 1; funext kv; simp only [eq_comm]
-
-theorem feature?_eq_none : e.feature? key = none ↔ ∀ v, (key, v) ∉ e.paperFeatures := by
-  rw [← head?_features, List.head?_eq_none_iff, features_eq_nil]
 
 end Datum
