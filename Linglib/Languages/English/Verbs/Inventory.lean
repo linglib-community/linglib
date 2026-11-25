@@ -83,10 +83,6 @@ example :
 
 /-! ### Voice -/
 
-/-- The passive, marked by the auxiliary *be* with the past participle,
-`Verb.passiveParticiple`. -/
-def passive : Voice := Voice.passive.marked [.free "be"]
-
 /-- The active and the passive. -/
 def voices : Finset Voice := {.active, passive}
 

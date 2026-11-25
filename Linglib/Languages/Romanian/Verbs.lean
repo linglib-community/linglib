@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+public import Linglib.Syntax.Voice.Basic
 
 /-!
 # Romanian verbs and clause-typers
@@ -27,6 +28,15 @@ records only the coding of the clause it introduces.
 namespace Romanian.Verbs
 
 open ArgumentStructure Morphology
+
+/-! ### Voice -/
+
+/-- The passive of a frame with the auxiliary *fi* 'be' and the participle. -/
+def fiPassive (fr : ArgumentFrame := .np) : Voice := (Voice.passive fr).marked [.free "fi"]
+
+/-- The passive of a frame with the reflexive clitic *se*. -/
+def sePassive (fr : ArgumentFrame := .np) : Voice :=
+  (Voice.passive fr).marked [.procl "se"]
 
 /-! ### Clause-typers -/
 
@@ -55,7 +65,7 @@ def a_vrea : Verb where
   valency := .ofFrame saClause
   -- with a clause it takes the passive with *se* and not the one with *fi* 'be'
   -- ([pana-dindelegan-2013] §3.4.1.1)
-  noPassive := [saClause]
+  voices := [(fiPassive saClause, .excluded), (sePassive saClause, .optional)]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -63,8 +73,6 @@ def a_vrea : Verb where
 def a_spera : Verb where
   morphs := [.free "a", .root "spera"]
   valency := .ofFrames [saClause, ArgumentFrame.finiteClause]
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [saClause, ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -72,8 +80,6 @@ def a_spera : Verb where
 def a_intentiona : Verb where
   morphs := [.free "a", .root "intenționa"]
   valency := .ofFrame saClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [saClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 

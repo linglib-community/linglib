@@ -37,8 +37,6 @@ def qidai : Verb := {
   morphs := [.root "qīdài"]
   script := some "期待"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive) }
 
@@ -47,8 +45,6 @@ def danxin : Verb := {
   morphs := [.root "dānxīn"]
   script := some "担心"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .negative) }
 
@@ -57,8 +53,6 @@ def xiwang : Verb := {
   morphs := [.root "xīwàng"]
   script := some "希望"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive) }
 
@@ -67,8 +61,6 @@ def haipa : Verb := {
   morphs := [.root "hàipà"]
   script := some "害怕"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .negative) }
 
@@ -77,8 +69,6 @@ def yiwei : Verb := {
   morphs := [.root "yǐwéi"]
   script := some "以为"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.doxastic .doxastic) }
 
@@ -87,8 +77,6 @@ def renwei : Verb := {
   morphs := [.root "rènwéi"]
   script := some "认为"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.doxastic .doxastic) }
 
@@ -98,8 +86,6 @@ def zhidao : Verb := {
   morphs := [.root "zhīdào"]
   script := some "知道"
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.doxastic .epistemic)
   factivity := some .semi }
@@ -109,8 +95,6 @@ def houhui : Verb := {
   morphs := [.root "hòuhuǐ"]
   script := some "后悔"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .negative)
   factivity := some .full }
@@ -142,8 +126,6 @@ def rang : Verb := {
   morphs := [.root "ràng"]
   script := some "让"
   valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.infinitival.withObject]
   opaqueContext := false }
 
 /-- 相信 *xiāngxìn* 'believe' is a nonveridical doxastic attitude with a finite complement. -/
@@ -151,8 +133,6 @@ def xiangxin : Verb := {
   morphs := [.root "xiāngxìn"]
   script := some "相信"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.doxastic .doxastic) }
 

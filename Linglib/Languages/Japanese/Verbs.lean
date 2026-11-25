@@ -35,8 +35,6 @@ def tanoshimi : Verb where
   morphs := [.root "tanoshimi"]
   script := some "楽しみ"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -45,8 +43,6 @@ def osore : Verb where
   morphs := [.root "osore"]
   script := some "恐れ"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .negative)
 
@@ -55,8 +51,6 @@ def kitai : Verb where
   morphs := [.root "kitai"]
   script := some "期待"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -65,8 +59,6 @@ def nozomu : Verb where
   morphs := [.root "nozomu"]
   script := some "望む"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -75,8 +67,6 @@ def shinpai : Verb where
   morphs := [.root "shinpai"]
   script := some "心配"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .negative)
 

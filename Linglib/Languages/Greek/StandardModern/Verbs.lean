@@ -205,9 +205,6 @@ def elpizo : Verb where
   morphs := [.root "elpízo"]
   valency := .ofFrames
     [{ complements := [.clausal (coding := some .subjunctive)] }, ArgumentFrame.finiteClause]
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive :=
-    [{ complements := [.clausal (coding := some .subjunctive)] }, ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -216,8 +213,6 @@ def elpizo : Verb where
 def protitheme : Verb where
   morphs := [.root "protítheme"]
   valency := .ofFrame ({ complements := [.clausal (coding := some .subjunctive)] })
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [({ complements := [.clausal (coding := some .subjunctive)] })]
   opaqueContext := true
   attitude := some (.preferential .positive)
 

@@ -407,8 +407,6 @@ def blink : Verb where
   levin := some Levin1993.Index.blink
   valency := .ofFrames
     [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.objectDrop (some .bodyPart)]
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.np]
   levinExcluded := {LevinClass.lightEmission}
 
 /-- "knock" — Levin 18.1 Hit verbs (intransitive use).
@@ -424,11 +422,6 @@ def knock : Verb where
      (ArgumentFrame.np_pp (some Adpositions.on)
          (some (.spatial (some .surface) .place)), [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive :=
-    [ArgumentFrame.np,
-     ArgumentFrame.np_pp (some Adpositions.on) (some (.spatial (some .surface) .place)),
-     ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental)]
 
 /-- "tap" — Levin 18.1 Hit verbs (intransitive use).
     Semelfactive: single light percussive contact event ([smith-1997] §2.4.3). -/
@@ -442,11 +435,6 @@ def tap : Verb where
      (ArgumentFrame.np_pp (some Adpositions.on)
          (some (.spatial (some .surface) .place)), [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive :=
-    [ArgumentFrame.np,
-     ArgumentFrame.np_pp (some Adpositions.on) (some (.spatial (some .surface) .place)),
-     ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental)]
 
 /-- "flash" — Levin 43.1 Light Emission verbs.
     Semelfactive: single instantaneous light event, by [smith-1997]'s
@@ -606,8 +594,6 @@ def swim : Verb where
      (ArgumentFrame.np_spatialPP, [1, 0, 2]),
      (ArgumentFrame.spatialPP, [0, 2])]
     [some activitySubjectProfile, none, none]
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.np_spatialPP]
   direction := some .place
 
 /-- "fly" — Levin 51.4 Vehicle Motion verbs. -/
