@@ -2,40 +2,56 @@ module
 
 public import Linglib.Languages.Slavic.Czech.Particles
 public import Linglib.Languages.Slavic.Czech.PolarityItems
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.PolarityItem.Polarity
+public import Linglib.Data.Examples.StankovaSimik2025
+public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Statistics.StankovaSimik2025
 public import Studies.Simik2024
 
 /-!
 # Staňková and Šimík (2025): Negation in Czech Polar Questions
 
 Staňková and Šimík analyse negation in Czech polar questions. The negative prefix moves with the
-finite verb, so verb position fixes the position of negation: a clause-initial verb sits above
-the canonical negation operator and is licensed only by Repp's commitment operator FALSUM
-(`Simik2024.falsumCz_eq_true_of_falsum`), while a verb in situ is licensed by either
-(`mem_availableReadings_iff`). Following Zeijlstra, the concord item *žádný* and the prefix carry
-an uninterpretable negative feature and contribute no negation of their own, so of the readings
-the determiner language file lists for *žádný* only the indefinite one yields 'no' under the
-canonical
-operator (`compl_eq_no_iff`). The canonical operator licenses concord items and needs negative
-contextual evidence; FALSUM licenses positive polarity items and is indifferent to evidence; and
-declarative word order needs evidence. Felicity in a context follows from these three sources
-(`Felicitous`), which yields the predictions the paper's naturalness study tests: in
-interrogative questions the polarity item is felicitous in every context and the concord item in
-none (`v1_ppi_any_context`, `v1_nci_never`), and declarative questions need evidence, the concord
-item negative evidence (`nonV1_nci_iff`, `nonV1_ppi_iff`). The particle *náhodou* is licensed by
-FALSUM alone, so it excludes concord items whatever the word order (`nahodou_excludes_nci`), and
-*copak* needs evidence matching the question's polarity, against the speaker's prior belief
-(`copak_requires_bias`, `copak_prior_ne_evidence`).
+finite verb, so the position of the verb fixes the position of the negation. A clause-initial
+verb sits above the canonical negation operator and is licensed by the commitment operator FALSUM
+alone, the outer reading of the negation, while a verb in situ is licensed by FALSUM or by the
+canonical operator, the inner reading. The clause under FALSUM is positive and the clause under
+the canonical operator negative, so the first admits the positive polarity item *nějaký* and the
+second the concord item *žádný*.
+
+Two sources fix the contextual evidence a negative question is felicitous under. The canonical
+operator needs evidence against the prejacent and FALSUM is indifferent to evidence, and
+declarative word order needs evidence for the proposition the question expresses while
+interrogative order needs none. We define the evidence a question admits as that of some
+available reading that admits its indefinite, within what its word order admits. An
+interrogative question with the polarity item then admits every evidence, which is more than
+English high negation admits; one with the concord item admits none; and a declarative question
+admits evidence against the prejacent alone, whichever its indefinite.
+
+The paper tests these predictions in a naturalness study and reports nine tests of fixed effects.
+The model predicts an effect exactly where the test is significant in six of them. It predicts
+no effect of the indefinite in declarative questions, where concord items were rated higher, and
+no dependence on context of the polarity item in interrogative questions, where the neutral
+context was rated higher.
+
+The particle *náhodou* is licensed by FALSUM alone, so it excludes the concord item at either
+verb position. A question with *copak* needs evidence for the proposition it expresses and a
+prior belief against it, the situation of a Russian *razve* question.
 
 ## Implementation notes
 
-The readings of negation are Šimík's inner and outer negation. The main experiment (seventy-five
-speakers, a fully crossed design of verb position, indefinite and context, cumulative link mixed
-models) found a main effect of the indefinite in interrogative questions, no effect of context
-there, a preference for negative contexts and for concord items in declarative questions, high
-naturalness of interrogative questions under positive evidence, a main effect of the indefinite
-for *náhodou* questions, and a main effect of context for *copak* questions; these results are
-stated in prose only.
+* The readings of negation are polarities of the proposition the question double-checks, as in
+  `Studies/Simik2024.lean`: `.positive` for FALSUM and `.negative` for the canonical operator.
+* The evidence of declarative order is stated for the negative questions the paper studies. It is
+  the evidence with which Šimík's table of Czech lists a negative question of each word order.
+* An effect of a factor is predicted when two of its tested levels differ in felicity. The main
+  experiment tests the negative and the neutral context, and the *copak* experiment a context
+  that matches the polarity of the question and a neutral one.
+
+## TODO
+
+* The paper attributes the lower rating of interrogative questions with a polarity item in
+  negative contexts to competition with declarative questions. The competition is not modelled.
 
 ## References
 
@@ -44,8 +60,8 @@ stated in prose only.
 * [zeijlstra-2004]
 * [gunlogson-2002]
 * [sudo-2013]
+* [gartner-gyuris-2017]
 * [buring-gunlogson-2000]
-* [nekula-1996]
 * [simik-2024]
 -/
 
@@ -53,9 +69,8 @@ stated in prose only.
 
 namespace StankovaSimik2025
 
-open Czech.Particles (nahodou copak)
-open Question Inquisitive Inquisitive.Proposition Quantifier
-open Simik2024
+open Question Quantifier PolarityItem
+open Simik2024 (VerbPosition NahodouLicensed razveSituation distribution czechForms)
 open scoped Denotes
 
 /-! ### Verb position and the readings of negation -/
@@ -65,9 +80,9 @@ proposition the question double-checks, `.positive` for FALSUM, the outer readin
 `.negative` for the canonical operator, the inner reading. The clause-initial verb raises above
 the canonical operator and is licensed by FALSUM alone, the verb in situ by FALSUM or by the
 canonical operator (the paper's (11) and (12)). -/
-def _root_.Simik2024.VerbPosition.availableReadings : VerbPosition → List Polarity
-  | .v1 => [.positive]
-  | .nonV1 => [.negative, .positive]
+def _root_.Simik2024.VerbPosition.availableReadings : VerbPosition → Finset Polarity
+  | .v1 => {.positive}
+  | .nonV1 => {.negative, .positive}
 
 theorem mem_availableReadings_iff (wp : VerbPosition) (n : Polarity) :
     n ∈ wp.availableReadings ↔ n = .positive ∨ wp = .nonV1 := by
@@ -83,134 +98,163 @@ theorem defaultReading_mem (wp : VerbPosition) : wp.defaultReading ∈ wp.availa
 
 /-! ### Indefinites as proxies for the readings -/
 
-/-- The experiment manipulates the indefinite, the negative concord item *žádný* as a proxy for
-inner negation or the positive polarity item *nějaký* as a proxy for FALSUM. -/
-inductive Indefinite
-  | nci
-  | ppi
-  deriving DecidableEq, Repr, Fintype
-
 /-- The determiner realizing each indefinite. -/
-def Indefinite.word : Indefinite → QuantificationalDeterminer
+def Examples.Indefinite.word : Examples.Indefinite → QuantificationalDeterminer
   | .nci => Czech.Determiners.zadny
   | .ppi => Czech.Determiners.nejaky
 
 /-- The polarity entry of each indefinite. -/
-def Indefinite.entry : Indefinite → PolarityItem
+def Examples.Indefinite.entry : Examples.Indefinite → PolarityItem
   | .nci => Czech.PolarityItems.zadny
   | .ppi => Czech.PolarityItems.nejaky
 
 /-- Of the readings of *žádný*, exactly the indefinite one yields *no* under the one negation of the
 clause (p. 5). -/
-theorem compl_eq_no_iff {d : Det.Family} (hd : d ∈ ⟦Indefinite.nci.word⟧) :
+theorem compl_eq_no_iff {d : Det.Family} (hd : d ∈ ⟦Examples.Indefinite.nci.word⟧) :
     dᶜ = Det.Family.no ↔ d = Det.Family.some := by
   obtain rfl | rfl : d = Det.Family.no ∨ d = Det.Family.some := by
-    simpa [Indefinite.word, Czech.Determiners.zadny, eq_comm] using hd
+    simpa [Examples.Indefinite.word, Czech.Determiners.zadny, eq_comm] using hd
   all_goals simp [Det.Family.some_ne_no, Det.Family.some_ne_no.symm]
 
-/-- A polarity item is licensed at a reading of negation when a positive polarity item
-falls under FALSUM and a negative one under the canonical operator (the paper's (11) and
-(12)). -/
-def LicensedAt (e : PolarityItem) (n : Polarity) : Prop :=
-  (e.IsPPI → n = .positive) ∧ (e.IsNPI → n = .negative)
+-- the clause under each operator, as a licenser, admits an indefinite exactly when the reading does
+theorem admits_ofPolarity_entry_iff (W : Type) [Nonempty W] (i : Examples.Indefinite)
+    (n : Polarity) : (Licenser.ofPolarity W n).Admits i.entry ↔ n.Admits i.entry :=
+  Licenser.admits_ofPolarity_iff (by cases i <;> decide)
 
-instance (e : PolarityItem) (n : Polarity) : Decidable (LicensedAt e n) := by
-  unfold LicensedAt; infer_instance
-
-theorem licensedAt_ppi_iff_not_nci (n : Polarity) :
-    LicensedAt Indefinite.ppi.entry n ↔ ¬ LicensedAt Indefinite.nci.entry n := by
+theorem admits_ppi_iff_not_admits_nci (n : Polarity) :
+    n.Admits Examples.Indefinite.ppi.entry ↔ ¬ n.Admits Examples.Indefinite.nci.entry := by
   cases n <;> decide
 
-/-! ### Bias and felicity -/
+/-! ### Evidence and felicity -/
 
-/-- The canonical operator requires negative contextual evidence, as in the evidentially biased
-contexts of [gunlogson-2002] and [sudo-2013], while FALSUM, conveying epistemic rather than
-evidential bias, requires none. -/
-def ReadingAdmits : Polarity → SignType → Prop
-  | .negative, ctx => ctx = -1
-  | .positive, _ => True
+/-- The contextual evidence each operator admits. The canonical operator needs evidence against
+the prejacent, and FALSUM, which conveys epistemic bias, admits any evidence. -/
+def readingEvidence : Polarity → BiasValue
+  | .negative => .plus .negative
+  | .positive => Finset.univ
 
-instance (n : Polarity) (ctx : SignType) : Decidable (ReadingAdmits n ctx) := by
-  cases n <;> unfold ReadingAdmits <;> infer_instance
+/-- The contextual evidence the word order of a negative question admits. Declarative order
+needs evidence for the proposition the question expresses, here the negative one
+([gunlogson-2002]), and interrogative order admits any evidence. -/
+def orderEvidence : VerbPosition → BiasValue
+  | .v1 => Finset.univ
+  | .nonV1 => .plus .negative
 
-/-- Declarative word order requires contextual evidence ([gunlogson-2002]); interrogative
-word order requires none. -/
-def WordOrderAdmits : VerbPosition → SignType → Prop
-  | .v1, _ => True
-  | .nonV1, ctx => ctx ≠ 0
+-- the evidence with which [simik-2024]'s table lists a negative question of each word order
+theorem orderEvidence_eq_image_distribution (wp : VerbPosition) :
+    orderEvidence wp = (distribution czechForms ⟨wp, .negative⟩).image Prod.fst := by
+  cases wp <;> decide
 
-instance (wp : VerbPosition) (ctx : SignType) :
-    Decidable (WordOrderAdmits wp ctx) := by
-  cases wp <;> unfold WordOrderAdmits <;> infer_instance
+/-- The contextual evidence under which a negative question with the given verb position and
+indefinite is felicitous: the evidence of some available reading that admits the indefinite,
+within what the word order admits. -/
+def evidence (wp : VerbPosition) (i : Examples.Indefinite) : BiasValue :=
+  {n ∈ wp.availableReadings | n.Admits i.entry}.biUnion readingEvidence ∩ orderEvidence wp
 
-/-- A negative polar question with an indefinite is felicitous in a context when some reading
-available at its verb position licenses the indefinite and admits the context's evidence, and
-the word order admits the evidence. -/
-def Felicitous (wp : VerbPosition) (ind : Indefinite) (ctx : SignType) : Prop :=
-  (∃ n ∈ wp.availableReadings, LicensedAt ind.entry n ∧ ReadingAdmits n ctx) ∧
-    WordOrderAdmits wp ctx
+-- (14): FALSUM on a clause-initial verb is compatible with every evidence
+theorem evidence_v1_ppi : evidence .v1 .ppi = Finset.univ := by decide
 
-instance (wp : VerbPosition) (ind : Indefinite) (ctx : SignType) :
-    Decidable (Felicitous wp ind ctx) := by
-  unfold Felicitous; infer_instance
+theorem evidence_v1_nci : evidence .v1 .nci = ∅ := by decide
 
-theorem v1_ppi_any_context (ctx : SignType) : Felicitous .v1 .ppi ctx := by
-  decide +revert
+-- a declarative question needs evidence against the prejacent on either reading
+theorem evidence_nonV1 (i : Examples.Indefinite) : evidence .nonV1 i = .plus .negative := by
+  cases i <;> decide
 
-theorem v1_nci_never (ctx : SignType) : ¬ Felicitous .v1 .nci ctx := by
-  decide +revert
-
-theorem v1_context_invariant (ind : Indefinite) (ctx ctx' : SignType) :
-    Felicitous .v1 ind ctx ↔ Felicitous .v1 ind ctx' := by
-  decide +revert
-
-theorem nonV1_nci_iff (ctx : SignType) :
-    Felicitous .nonV1 .nci ctx ↔ ctx = -1 := by
-  decide +revert
-
-theorem nonV1_ppi_iff (ctx : SignType) :
-    Felicitous .nonV1 .ppi ctx ↔ ctx ≠ 0 := by
-  decide +revert
-
-theorem nonV1_neutral_infelicitous (ind : Indefinite) : ¬ Felicitous .nonV1 ind 0 := by
-  cases ind <;> decide
-
--- (14) [buring-gunlogson-2000]
-theorem falsum_broader_than_english_outer :
-    ¬ BuringGunlogson2000.Felicitous (some .positive) 1 ∧
-      Felicitous .v1 .ppi 1 :=
-  ⟨by decide, v1_ppi_any_context _⟩
+/-- Czech outer negation on a clause-initial verb admits more evidence than English outer
+negation does in the sample of [gartner-gyuris-2017], which bars evidence for the prejacent. -/
+theorem evidential_englishV1_ssubset_evidence_v1_ppi :
+    (GartnerGyuris2017.biasProfile GartnerGyuris2017.englishV1 (some .positive)).evidential ⊂
+      evidence .v1 .ppi := by
+  decide
 
 /-! ### The particles -/
 
-/-- *Náhodou* excludes the concord item at either verb position, since the item needs inner
-negation and the particle needs FALSUM (the paper's (17) and (18)). -/
-theorem nahodou_excludes_nci (wp : VerbPosition) :
-    ¬ ∃ n ∈ wp.availableReadings,
-      LicensedAt Indefinite.nci.entry n ∧ NahodouLicensed .negative n := by
-  cases wp <;> decide
+/-- A question with *náhodou* is well formed when some reading available at its verb position
+licenses the particle and admits the indefinite, if there is one. -/
+def NahodouFelicitous (wp : VerbPosition) (pol : Polarity) (i : Option Examples.Indefinite) :
+    Prop :=
+  ∃ n ∈ wp.availableReadings, NahodouLicensed pol n ∧ ∀ j ∈ i, n.Admits j.entry
 
-theorem nahodou_ppi (wp : VerbPosition) :
-    ∃ n ∈ wp.availableReadings,
-      LicensedAt Indefinite.ppi.entry n ∧ NahodouLicensed .negative n := by
-  cases wp <;> decide
+instance (wp : VerbPosition) (pol : Polarity) (i : Option Examples.Indefinite) :
+    Decidable (NahodouFelicitous wp pol i) :=
+  inferInstanceAs (Decidable (∃ n ∈ wp.availableReadings, _))
 
-/-- *Copak* is felicitous exactly when the context's evidence matches the question's
-polarity. -/
-def CopakLicensed (pol : Polarity) (ctx : SignType) : Prop := ctx = pol
+-- (17), (18): the particle needs FALSUM and the concord item the canonical operator
+theorem nahodouFelicitous_negative_iff (wp : VerbPosition) (i : Examples.Indefinite) :
+    NahodouFelicitous wp .negative (some i) ↔ i = .ppi := by
+  cases wp <;> cases i <;> decide
 
-instance (pol : Polarity) (ctx : SignType) : Decidable (CopakLicensed pol ctx) := by
-  unfold CopakLicensed; infer_instance
+/-- The verb position of an example. -/
+def Examples.WordOrder.toVerbPosition : Examples.WordOrder → VerbPosition
+  | .v1 => .v1
+  | .nonV1 => .nonV1
 
-theorem copak_requires_bias (pol : Polarity) : ¬ CopakLicensed pol 0 := by
-  cases pol <;> decide
+/-- The polarity of an example's finite verb. -/
+def Examples.QuestionPolarity.toPolarity : Examples.QuestionPolarity → Polarity
+  | .positive => .positive
+  | .negative => .negative
 
-theorem copak_prior_ne_evidence (pol : Polarity) (ev : SignType) (h : CopakLicensed pol ev) :
-    (-ev = 1 ↔ pol = .negative) ∧ (-ev = -1 ↔ pol = .positive) := by
-  revert h; cases pol <;> decide +revert
+/-- The judged examples with *náhodou*, (16) and (18), are acceptable exactly when some reading
+available at the verb position licenses the particle and admits the indefinite. -/
+theorem nahodou_example (x : Examples.Example) (hm : x.datum.method = none)
+    (hx : x.datum.feature? "particle" = some Czech.Particles.nahodou.form) :
+    ∀ o ∈ x.order, ∀ s ∈ x.polarity,
+      (x.datum.judgment = .acceptable ↔
+        NahodouFelicitous o.toVerbPosition s.toPolarity x.indefinite) := by
+  revert hm hx; cases x <;> decide
 
-theorem nahodou_copak_opposite (ctx : SignType) :
-    NahodouLicensed .negative .positive ∧ (CopakLicensed .negative ctx → ctx ≠ 0) := by
-  decide +revert
+-- `nahodou_example` reads the four rows of (16) and (18)
+theorem nahodou_example_count :
+    (Examples.Example.all.filter fun x ↦ x.datum.method = none ∧
+      x.datum.feature? "particle" = some Czech.Particles.nahodou.form).length = 4 := by
+  decide
+
+/-- The bias profile of a *copak* question of polarity `s`: evidence for the proposition it
+expresses and a prior belief in the opposite one (the paper's (19)). -/
+def copakProfile (s : Polarity) : BiasProfile := ⟨.plus s, .plus (.negative * s)⟩
+
+-- the situation of a Russian *razve* question with VERUM over a clause of the same polarity
+theorem felicity_copakProfile (s : Polarity) :
+    (copakProfile s).felicity = {razveSituation ⟨.positive, s⟩} := by
+  cases s <;> decide
+
+/-! ### The tests of the naturalness study -/
+
+/-- Whether the model predicts the effect a test is of. Two levels of a factor differ when one
+is felicitous and the other is not: the two indefinites in a tested context, the negative and
+the neutral context for an indefinite, or, for *copak*, the context that matches the polarity of
+the question and the neutral one. -/
+def Predicts : Model → Effect → Prop
+  | .nahodou, .indefinite =>
+    ¬ (NahodouFelicitous .v1 .negative (some .ppi) ↔ NahodouFelicitous .v1 .negative (some .nci))
+  | .copak, .context =>
+    ∃ s : Polarity, ¬ ((s : SignType) ∈ (copakProfile s).evidential ↔
+      (0 : SignType) ∈ (copakProfile s).evidential)
+  | .nahodou, _ | .copak, _ => False
+  | m, e =>
+    let wp : VerbPosition := if m = .v1 then .v1 else .nonV1
+    let ctx (i : Examples.Indefinite) : Prop :=
+      ¬ ((-1 : SignType) ∈ evidence wp i ↔ (0 : SignType) ∈ evidence wp i)
+    match e with
+    | .indefinite =>
+      ∃ ev ∈ ({-1, 0} : Finset SignType), ¬ (ev ∈ evidence wp .ppi ↔ ev ∈ evidence wp .nci)
+    | .context => ∃ i, ctx i
+    | .interaction => ¬ (ctx .ppi ↔ ctx .nci)
+    | .contextWithinPPI => ctx .ppi
+    | .contextWithinNCI => ctx .nci
+
+instance : ∀ m e, Decidable (Predicts m e) := by
+  intro m e
+  cases m <;> cases e <;> unfold Predicts <;> infer_instance
+
+/-- The model predicts an effect exactly where the reported test is significant, for six of the
+nine tests. The three it misses are significant effects it does not predict: the indefinite in
+declarative questions, and the interaction with context and the effect of context on the polarity
+item in interrogative questions. -/
+theorem predicts_iff_significant :
+    ∀ t ∈ tests, (Predicts t.model t.effect ↔ t.p.Significant (1 / 20)) ↔
+      (t.model, t.effect) ∉
+        [(Model.nonV1, Effect.indefinite), (.v1, .interaction), (.v1, .contextWithinPPI)] := by
+  decide +kernel
 
 end StankovaSimik2025
