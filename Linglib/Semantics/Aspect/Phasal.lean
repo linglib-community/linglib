@@ -35,6 +35,8 @@ exclude one another exactly where the prior index is unique
 
 * `Aspect.Phasal.denote_eq_true_iff`: a phasal verb is true where some earlier index and the
   index of evaluation stand in its transition.
+* `Aspect.Phasal.denote_kLE`: in the knowledge order a phasal verb lies below the result state it
+  asserts.
 * `Aspect.Phasal.result_iff_not_prior`: the classes other than continuation are changes, the
   result state having the opposite polarity to the prior state.
 * `Aspect.Phasal.forall_denote_cessation_eq_undefined_or_inception_eq_undefined_iff`: no state can
@@ -144,6 +146,11 @@ theorem denote_eq_true_iff :
     t.denote R P i = .true ↔ ∃ i', i ~[R] i' ∧ t.Transition (P i') (P i) := by
   simp only [denote, Trivalent.condEvent_eq_true_iff]
   exact ⟨fun ⟨⟨i', hr, hp⟩, hq⟩ ↦ ⟨i', hr, hp, hq⟩, fun ⟨i', hr, hp, hq⟩ ↦ ⟨⟨i', hr, hp⟩, hq⟩⟩
+
+open Classical Bilattice in
+/-- A phasal verb has at most the information of the result state it asserts. -/
+theorem denote_kLE : t.denote R P i ≤ₖ Trivalent.ofProp (t.Result (P i)) :=
+  Trivalent.condEvent_kLE
 
 theorem denote_inception_eq_true_iff : inception.denote R P i = .true ↔ Become R P i := by
   simp [denote, Become]

@@ -26,7 +26,9 @@ where `A` holds and `undefined` elsewhere. The restriction of a two-valued propo
 conditional event `condEvent A B` in de Finetti's sense. Every trivalent proposition is the
 conditional event of its truth on its definedness (`condEvent_ne_undefined_eq_true`), and two
 conditional events coincide exactly when they have the same condition and agree on it
-(`condEvent_eq_condEvent_iff`).
+(`condEvent_eq_condEvent_iff`). In the knowledge order a restriction lies below the proposition it
+restricts, and the propositions below a two-valued one are the conditional events that assert it
+(`forall_kLE_ofProp_iff`).
 
 ## References
 
@@ -271,6 +273,9 @@ theorem restrict_restrict :
   funext fun _ ↦ eq_of_eq_undefined_iff_of_eq_true_iff
     (by simp only [restrict_eq_undefined_iff]; tauto) (by simp [and_assoc])
 
+/-- A restriction has at most the information of the proposition it restricts. -/
+theorem restrict_kLE : Trivalent.restrict A p w ≤ₖ p w := transplication_kLE _ _
+
 end Restrict
 
 /-! ### Conditional events
@@ -322,6 +327,18 @@ theorem compl_condEvent : (condEvent A B)ᶜ = condEvent A (fun w ↦ ¬ B w) :=
 
 theorem isBivalent_condEvent_iff : IsBivalent (condEvent A B) ↔ ∀ w, A w := by
   simp [isBivalent_iff_forall_ne_undefined]
+
+/-- A conditional event has at most the information of what it asserts. -/
+theorem condEvent_kLE : condEvent A B w ≤ₖ ofProp (B w) := transplication_kLE _ _
+
+/-- The propositions with at most the information of a two-valued one are the conditional events
+that assert it. -/
+theorem forall_kLE_ofProp_iff {p : W → Trivalent} :
+    (∀ w, p w ≤ₖ ofProp (B w)) ↔ p = condEvent (p · ≠ .undefined) B := by
+  refine ⟨fun h ↦ funext fun w ↦ ?_, fun h w ↦ ?_⟩
+  · have := kLE_ofProp_iff.1 (h w)
+    cases hp : p w <;> simp_all [condEvent]
+  · rw [h]; exact condEvent_kLE
 
 end
 

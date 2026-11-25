@@ -108,6 +108,11 @@ theorem compl_gapExt_only : (Trivalent.gapExt (only S C P i))ᶜ = atLeast S C P
     only S C P i w = .false ↔ w ∈ atLeast S C P i ∧ w ∉ atMost S C P i := by
   simp [only]
 
+open Classical Bilattice in
+/-- *Only* has at most the information of what it asserts. -/
+theorem only_kLE : only S C P i w ≤ₖ Trivalent.ofProp (w ∈ atMost S C P i) :=
+  Trivalent.condEvent_kLE
+
 theorem notMem_atMost (hj : j ∈ C) (hw : w ∈ P j) (h : ¬ S i j) : w ∉ atMost S C P i :=
   fun hm ↦ h (hm j hj hw)
 
@@ -464,13 +469,15 @@ section Propositions
 
 variable {S : Set W → Set W → Prop} (C : Set (Set W))
 
+open Classical in
 /-- On a scale refining entailment, *only* is Strawson downward entailing in its prejacent with
 the alternatives held fixed ([von-fintel-1999], §3.4; [coppock-beaver-2014], fn. 22). -/
 theorem isStrawsonDE_only (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p r) :
     IsStrawsonDE (only S C id) :=
   .of_antitone (a := fun p w ↦ w ∈ atMost S C id p) (fun _ _ hpq ↦ antitone_atMost hS hpq)
-    fun _ _ h ↦ by simp_all
+    fun _ _ ↦ only_kLE
 
+open Classical in
 /-- On the entailment scale *only* is Strawson anti-additive in its prejacent. -/
 theorem isStrawsonAntiAdditive_only_subset : IsStrawsonAntiAdditive (only (· ⊆ ·) C id) :=
   .of_isAntiAdditive (a := fun p w ↦ w ∈ atMost (· ⊆ ·) C id p)
@@ -479,17 +486,18 @@ theorem isStrawsonAntiAdditive_only_subset : IsStrawsonAntiAdditive (only (· �
         w ∈ Exhaustification.excludes C p ∧ w ∈ Exhaustification.excludes C q
       rw [Exhaustification.excludes_union]
       exact Iff.rfl)
-    fun _ _ h ↦ by simp_all
+    fun _ _ ↦ only_kLE
 
 theorem isStrawsonDE_only_subset : IsStrawsonDE (only (· ⊆ ·) C id) :=
   (isStrawsonAntiAdditive_only_subset C).isStrawsonDE
 
+open Classical in
 /-- *Only* applied to the predication of an individual is Strawson downward entailing in the
 predicate, so it licenses NPIs in the verb phrase ([coppock-beaver-2014]'s (93)). -/
 theorem isStrawsonDE_only_apply (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p r) (x : ι) :
     IsStrawsonDE fun P : ι → Set W ↦ only S C id (P x) :=
   .of_antitone (a := fun P w ↦ w ∈ atMost S C id (P x))
-    (fun _ _ hPQ ↦ antitone_atMost hS (hPQ x)) fun _ _ h ↦ by simp_all
+    (fun _ _ hPQ ↦ antitone_atMost hS (hPQ x)) fun _ _ ↦ only_kLE
 
 /-- *There only was precipitation in Medford* does not classically entail *there only was rain in
 Medford*, whose presupposition, the premise [von-fintel-1999]'s (67) adds, may fail. -/
@@ -519,6 +527,7 @@ open Set
 
 variable (x : ι)
 
+open Classical in
 /-- Over individuals on the identity scale, *only x* is Strawson anti-additive in its predicate. -/
 theorem isStrawsonAntiAdditive_only_eq :
     IsStrawsonAntiAdditive fun P : ι → Set W ↦ only (· = ·) univ P x :=
@@ -526,7 +535,7 @@ theorem isStrawsonAntiAdditive_only_eq :
     (fun _ _ ↦ funext fun _ ↦ propext <| by
       simp only [Pi.sup_apply, Pi.inf_apply, inf_Prop_eq, Set.mem_union,
         not_or, imp_and, forall_and])
-    fun P w h ↦ by
+    fun P w ↦ kLE_ofProp_iff.2 fun h ↦ by
       have hx : w ∈ P x := by simpa using h
       show only (· = ·) univ P x w = .true ↔ _
       rw [only_eq_eq_true_iff (mem_univ x)]

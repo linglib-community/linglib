@@ -181,14 +181,16 @@ open Modality Presupposition Trivalent
 
 variable {W : Type*} (dox base : W → Set W) (g : W → Set (Set W))
 
+open Classical in
 /-- *Want* is Strawson upward entailing in its complement ([von-fintel-1999], §3.2). -/
 theorem isStrawsonUE_want : IsStrawsonUE (want base g) :=
   .of_monotone (a := fun p w ↦ Want (g w) (base w) p) (fun _ _ h _ hw ↦ hw.trans h)
-    fun _ _ h ↦ by simp_all
+    fun _ _ ↦ condEvent_kLE
 
+open Classical in
 theorem isStrawsonUE_glad : IsStrawsonUE (glad dox base g) :=
   .of_monotone (a := fun p w ↦ Want (g w) (base w) p) (fun _ _ h _ hw ↦ hw.trans h)
-    fun _ _ h ↦ by simp_all [glad]
+    fun _ _ ↦ Bilattice.kLE_trans (transplication_kLE _ _) condEvent_kLE
 
 /-- *Glad* is not Strawson downward entailing ([von-fintel-1999], §3.3). -/
 theorem not_isStrawsonDE_glad :
@@ -202,6 +204,7 @@ theorem not_isStrawsonDE_glad :
   simp [glad, Want, IsContingent, hb] at this
   exact this ⟨2, by simp⟩ ⟨1, by simp⟩
 
+open Classical in
 /-- *Sorry* is Strawson anti-additive in its complement, since wanting a disjunction false is
 wanting each disjunct false. -/
 theorem isStrawsonAntiAdditive_regret : IsStrawsonAntiAdditive (regret dox base g) :=
@@ -210,7 +213,7 @@ theorem isStrawsonAntiAdditive_regret : IsStrawsonAntiAdditive (regret dox base 
       show Want (g w) (base w) (p ∪ q)ᶜ ↔ Want (g w) (base w) pᶜ ∧ Want (g w) (base w) qᶜ
       rw [Set.compl_union]
       exact want_inter_iff)
-    fun _ _ h ↦ by simp_all [regret]
+    fun _ _ ↦ Bilattice.kLE_trans (transplication_kLE _ _) condEvent_kLE
 
 theorem isStrawsonDE_regret : IsStrawsonDE (regret dox base g) :=
   (isStrawsonAntiAdditive_regret dox base g).isStrawsonDE

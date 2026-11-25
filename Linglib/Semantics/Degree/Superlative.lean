@@ -116,10 +116,11 @@ open Presupposition Trivalent
 
 variable [Preorder D] (μ : α → D) (x : α)
 
+open Classical in
 /-- The superlative is Strawson anti-additive in its comparison class. -/
 theorem isStrawsonAntiAdditive_trivalentSuperlative :
     IsStrawsonAntiAdditive (trivalentSuperlative (W := W) μ · x) :=
-  .of_isAntiAdditive (isAntiAdditive_trivalentSuperlative_assertion μ x) fun _ _ h ↦ by simp_all
+  .of_isAntiAdditive (isAntiAdditive_trivalentSuperlative_assertion μ x) fun _ _ ↦ condEvent_kLE
 
 theorem isStrawsonDE_trivalentSuperlative : IsStrawsonDE (trivalentSuperlative (W := W) μ · x) :=
   (isStrawsonAntiAdditive_trivalentSuperlative μ x).isStrawsonDE

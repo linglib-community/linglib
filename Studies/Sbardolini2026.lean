@@ -191,7 +191,7 @@ open Classical in
 theorem not_isSUM_negation [Nonempty W] (x : E) :
     ¬ IsSUM fun F : Set E ↦ fun _ : W ↦ Trivalent.ofProp (x ∉ F) :=
   not_isSUM_of_isStrawsonDE (.of_antitone (a := fun F _ ↦ x ∉ F)
-    (fun _ _ h _ hG hF ↦ hG (Set.mem_of_mem_of_subset hF h)) fun _ _ _ ↦ by simp)
+    (fun _ _ h _ hG hF ↦ hG (Set.mem_of_mem_of_subset hF h)) fun _ _ ↦ Bilattice.kLE_refl _)
     (Set.empty_subset {x}) (w := Classical.arbitrary W) (by simp) (by simp) (by simp)
 
 -- *\*Everyone who left ate any pizza* and *\*Mary must drink anything*: the scope of *every*

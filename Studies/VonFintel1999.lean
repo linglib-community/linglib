@@ -72,11 +72,12 @@ noncomputable def gladBetter : W → Trivalent :=
   Trivalent.condEvent (· ∈ (Trivalent.gapExt (glad dox rel g p))ᶜ)
     (fun w ↦ Better (g w) (dox w) (rel w \ p))
 
+open Classical in
 /-- The set-comparison *glad* is still Strawson upward entailing in its complement (§3.3). -/
 theorem isStrawsonUE_gladBetter : IsStrawsonUE (gladBetter dox rel g) :=
   .of_monotone (a := fun p w ↦ Better (g w) (dox w) (rel w \ p))
     (fun _ _ h _ hw a ha b hb ↦ hw a ha b ⟨hb.1, fun hp ↦ hb.2 (h hp)⟩)
-    fun _ _ h ↦ by simp_all [gladBetter]
+    fun _ _ ↦ Trivalent.condEvent_kLE
 
 /-- On the best-worlds *glad*, *a wants p and believes p* entails *a is glad that p*, the
 inference [kadmon-landman-1993] draw, when the modal base contains the belief worlds. -/
@@ -109,11 +110,12 @@ noncomputable def regretBetter : W → Trivalent :=
   Trivalent.condEvent (· ∈ (Trivalent.gapExt (glad dox rel g p))ᶜ)
     (fun w ↦ Better (g w) (rel w \ p) (dox w))
 
+open Classical in
 /-- The set-comparison *sorry* is Strawson upward entailing in its complement. -/
 theorem isStrawsonUE_regretBetter : IsStrawsonUE (regretBetter dox rel g) :=
   .of_monotone (a := fun p w ↦ Better (g w) (rel w \ p) (dox w))
     (fun _ _ h _ hw b hb a ha ↦ hw b ⟨hb.1, fun hp ↦ hb.2 (h hp)⟩ a ha)
-    fun _ _ h ↦ by simp_all [regretBetter]
+    fun _ _ ↦ Trivalent.condEvent_kLE
 
 /-- The set-comparison *sorry* is not Strawson downward entailing, so it would not license; the
 paper keeps the best-worlds `regret`. World `2` is the preferred one; the subject believes `0`
