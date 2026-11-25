@@ -177,7 +177,8 @@ theorem antitone_denote_imperfective (P : E → Prop) :
 its durative reading. -/
 theorem unbounded_le_iff : unbounded P ≤ q ↔ runTimes P ≤ durative q := by
   have h := diamond_box_gc (toSetRel (T := T) .le).inv (runTimes P) q
-  rwa [SetRel.inv_inv] at h
+  rw [SetRel.inv_inv] at h
+  rwa [durative, ← toSetRel_le]
 
 /-- The perfective entails an interval property closed under superintervals exactly when the run
 times do. -/

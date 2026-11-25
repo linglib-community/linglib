@@ -172,7 +172,9 @@ theorem denote_imperfective (P : E → Prop) :
   rfl
 
 theorem denote_perfective (P : E → Prop) :
-    AspectHead.perfective.denote (T := T) P = Aspect.perfective P := rfl
+    AspectHead.perfective.denote (T := T) P = Aspect.perfective P := by
+  rw [AspectHead.denote, AspectHead.cell, IntervalAlgebra.toSetRel_le]
+  rfl
 
 theorem perfect_viewpointType {P : E → Prop} {r : NonemptyInterval T} :
     AspectHead.perfect.denote P r → ViewpointType.perfect.denote P r :=
