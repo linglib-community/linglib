@@ -28,7 +28,9 @@ saw it*, violates it.
 Under the copy theory of movement a raised term occurs twice in the object, its two occurrences
 told apart by their sisters, and the trace the LCA exempts is the lower one. The verb and object of
 (11) form the book's (14), a head and its complement, which violates the LCA, and (15), the
-complement merged again with that phrase, which satisfies it.
+complement merged again with that phrase, which satisfies it. Raising targets a category, which
+projects: the subject of (11), merged again with the phrase of the inflectional head, is the
+specifier of that head, and it is the target that projects although neither selects the other.
 
 ## Main definitions
 
@@ -46,6 +48,7 @@ complement merged again with that phrase, which satisfies it.
   copy.
 * Raising is the Merge of (15). A clitic attaching to a higher head and a noun incorporating, the
   raisings the book gives for a single-terminal complement, adjoin to a head.
+* The inflectional head I is a `T` that selects a verb phrase.
 * Dominance in Kayne's image is reflexive, so that a terminal specifier, the `j` of (154),
   precedes the head.
 * Example and note numbers are those of the book's chapter 4.
@@ -389,6 +392,53 @@ theorem linearizes_sawItRaised :
         p = position sawItRaised [0] ∨ p = position sawItRaised [1, 0]) ∧
       Precedes (bareCCommand (HeadDaughterAt sawItRaised))
         (position sawItRaised [0]) (position sawItRaised [1, 0]) := by
+  decide
+
+/-! ### Raising the subject of (11) -/
+
+/-- An inflectional head selecting a verb phrase, the book's I. -/
+def infl : LexicalItem.Token := ⟨.of .T [.V], 0⟩
+
+/-- I merged with (11). -/
+def inflP : PlanarSyntacticObject Minimalist.TokenLeaf := {↑infl, theManSawIt}
+
+/-- The inflectional phrase derived from (11): the subject raised to the root, merged again with
+the phrase of I. -/
+def subjectRaised : PlanarSyntacticObject Minimalist.TokenLeaf :=
+  {({↑the, ↑man} : PlanarSyntacticObject Minimalist.TokenLeaf), inflP}
+
+/-- The target of the raising projects, and selection does not decide it: the raised subject is a
+term of the target. -/
+theorem raisingProjects_subjectRaised :
+    SyntacticObject.RaisingProjects inflP.toSyntacticObject
+        (PlanarSyntacticObject.toSyntacticObject {↑the, ↑man}) ∧
+      ¬ (SyntacticObject.raisingState inflP.toSyntacticObject).Projects
+        (SyntacticObject.raisingState (PlanarSyntacticObject.toSyntacticObject {↑the, ↑man})) := by
+  decide
+
+/-- The phrase is headed by I, and the raised subject is a maximal projection beside the
+projection of I, its specifier. -/
+theorem isMaximalProjection_subjectRaised :
+    subjectRaised.toSyntacticObject.raisingHead = some infl ∧
+      HeadDaughter.raising subjectRaised ⊥ = some 1 ∧
+      IsMaximalProjection (HeadDaughterAt subjectRaised) (position subjectRaised [0]) := by
+  decide
+
+-- the subject occurs twice, and its occurrence inside the verb phrase is the lower copy
+theorem isLowerCopy_subjectRaised :
+    subjectRaised.chain (position subjectRaised [0]) (position subjectRaised [1, 1, 0]) ∧
+      subjectRaised.IsLowerCopy (position subjectRaised [1, 1, 0]) ∧
+      ¬ subjectRaised.IsLowerCopy (position subjectRaised [0]) := by
+  decide
+
+/-- The raised subject is pronounced and its lower copy is silent: the pronounced terminals are
+*the*, *man*, I, *saw* and *it*. -/
+theorem pronounced_subjectRaised (p : subjectRaised.toRoseTree.Positions) :
+    p ∈ subjectRaised.pronounced ↔
+      p = position subjectRaised [0, 0] ∨ p = position subjectRaised [0, 1] ∨
+        p = position subjectRaised [1, 0] ∨ p = position subjectRaised [1, 1, 1, 0] ∨
+        p = position subjectRaised [1, 1, 1, 1] := by
+  revert p
   decide
 
 end Chomsky1995
