@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Mereological.Spine
 public import Linglib.Data.Examples.WangSun2026
+public import Linglib.Syntax.Spine.Hosting
 
 /-!
 # Wang and Sun (2026): Detaching Mandarin Classifiers from Nouns
@@ -13,10 +14,11 @@ noun, if present, is the classifier's 1-part, (7b), (26). Dimensionality then le
 Q, so a degree-modified adjective cannot sit between the numeral and the classifier, (29a)
 (`subjoin_modifier_q`), although it subjoins to the classifier as its 2-part, (28a)
 (`subjoin_modifier_cl`), or to D, (28b) (`subjoin_modifier_d`). The classifier is on Q's
-complementation line, (26b) (`spine_q`), where the paper has it spell out together with Q. The
-particle *de* realises Mod, (7c): with *de* after the classifier the quantity phrase is the
-1-part of a Mod that is D's 2-part, and the classifier is
-reached from D only across dimensions, (34)–(35) (`not_clVisible_numClDeN`). Visibility from D
+complementation line, (26b) (`spine_q`), and spells out together with Q, at Q (`words`), so
+every object in which the classifier is pronounced has the numeral and the noun pronounced in it
+too (`pronouncedIn_of_cl`). The particle *de* realises Mod, (7c): with *de* after the classifier
+the quantity phrase is the 1-part of a Mod that is D's 2-part, and the classifier is reached
+from D only across dimensions, (34)–(35) (`not_clVisible_numClDeN`). Visibility from D
 is the paper's structural correlate of the sortal reading, glasses as entities, against the
 mensural reading, glassfuls, (33) (`reading`). Nothing more, such as a second *de*-modifier, can
 subjoin to the filled D, (37a) (`subjoin_numClDeN`). In the measure use the classifier has no
@@ -32,9 +34,11 @@ first, stranding the numeral and classifier, (43d) (`topic_n`), which a modifier
 classifier's 2-part permits, (44a) (`topic_n_modifier_cl`), and a modifier as D's 2-part blocks
 for good, (44b) (`topic_n_modifier_d`).
 
-These predictions match the judgments of the paper's rows on the position of a modifier and on
-extraction: a modifier subjoins exactly where the row is acceptable, and the fronted object or
-the wh-numeral becomes a part of C exactly in the acceptable rows.
+These predictions match the judgments of the paper's rows. A modifier subjoins exactly where
+the row is acceptable. A string of the nominal is fronted alone exactly when some object in which
+just that string is pronounced becomes a part of C: the noun and the whole nominal front, and
+neither the classifier with the noun nor the numeral with the classifier does, there being no
+such object. The wh-numeral becomes a part of C exactly in the acceptable rows.
 
 ## Implementation notes
 
@@ -42,17 +46,18 @@ the wh-numeral becomes a part of C exactly in the acceptable rows.
   visibility from D, Dimensionality at Q and D, and extraction are read off the same parthood
   relations, and each claim is checked by `decide`. In the clause, Mod stands for the whole
   modifier, whose internal structure, (27), is given only in the nominal structures.
-* Linearisation, (7e), and the collective spell-out of Q with Cl are not represented; the
-  adjacency of the numeral and the classifier is stated as Dimensionality at Q, which is what
-  the paper derives it from, and the ban on modifiers between D and Num, (31), is not derived.
+* The collective spell-out of Q with Cl is a division of D's spine into words, each with the
+  object at which it is pronounced, as `Spine.hosting` takes them. An object is pronounced in
+  `X` when its site is `X` or inside `X`, and fronting moves an object with everything
+  pronounced in it. The order of the words, (7e), is not represented; the adjacency of the
+  numeral and the classifier is stated as Dimensionality at Q, which is what the paper derives
+  it from.
 * The topicalisation of the whole D in (43c) is proved for the structure without a modifier.
 
 ## TODO
 
-* The collective spell-out of Q and the classifier at Q, (26b), is not formalized, so the rows
-  that rest on it are not derived: a bare adjective before the classifier, (29b), the classifier
-  fronted with the noun, (5c), and the numeral and classifier fronted without the noun, (14a).
-  By parthood alone the classifier becomes a part of C (`cl_reaches`).
+* A bare adjective before the classifier, (29b), is in the paper part of what is pronounced at Q
+  and not an object, so the row has no structure of its own here.
 * The rows on a modifier between the demonstrative and the numeral, (31), and on a modifier
   nested inside the modifier of D, (37b), are not derived.
 * The readings of (33) are paired with `reading` by name only; the rows carry them as untyped
@@ -237,6 +242,51 @@ theorem topic_n_modifier_d :
     IsDomain.not_reaches (S := inD) (b := .D) (c := .Mod) (by decide +kernel) rfl (by decide)
       (by decide) (by decide) (by decide +kernel) (by decide)⟩
 
+/-! ### Spell-out at Q, (26b) -/
+
+/-- The words of D's spine, each with the object at which it is pronounced, (26b): the classifier
+and Q spell out together at Q. -/
+def words : List (List Node × Node) := [([.N], .N), ([.Cl, .Q], .Q), ([.D], .D)]
+
+-- the words divide D's spine, and the classifier is hosted at Q
+theorem hosting_words :
+    words.flatMap Prod.fst = (numClN.spine .D).heads ∧
+      Spine.hosting words = [.N, .Q, .Q, .D] := by
+  decide +kernel
+
+-- a stretch of the spine spells out at one of its own objects
+theorem isContiguous_hosting_words : IsContiguous (Spine.hosting words).get :=
+  Spine.isContiguous_hosting (by decide) (by decide)
+
+/-- The object at which `x` is pronounced: the site of its word on D's spine, and `x` itself off
+the spine. -/
+def site (x : Node) : Node := (words.find? fun w ↦ decide (x ∈ w.1)).elim x (·.2)
+
+/-- `x` is pronounced in `X`: the site of `x` is `X` or inside it. -/
+def PronouncedIn (P : Parthood Node) (x X : Node) : Prop := site x = X ∨ P.Descendant (site x) X
+
+instance (P : Parthood Node) (x X : Node) : Decidable (PronouncedIn P x X) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The string `W` of the nominal is fronted alone: some object in which exactly the objects of
+`W`, among the numeral, the classifier, the noun and the modifier, are pronounced becomes a part
+of C. -/
+def Fronts (P : Parthood Node) (W : List Node) : Prop :=
+  ∃ X, (∀ w ∈ [Node.Num, .Cl, .N, .Mod], PronouncedIn P w X ↔ w ∈ W) ∧ P.Reaches X .C
+
+/-- Every object in which the classifier is pronounced has the numeral and the noun pronounced in
+it too, so fronting the classifier strands neither, (5c), (14). -/
+theorem pronouncedIn_of_cl :
+    ∀ X, PronouncedIn clause .Cl X → PronouncedIn clause .Num X ∧ PronouncedIn clause .N X := by
+  decide +kernel
+
+-- as an object the classifier subjoins to D and from there to C, as the noun does
+theorem cl_reaches : clause.Reaches .Cl .C :=
+  have h : clause.Subjoins .Cl .D (clause.addPart .two .Cl .D) ∧
+      (clause.addPart .two .Cl .D).Subjoins .Cl .C
+        ((clause.addPart .two .Cl .D).addPart .two .Cl .C) := by decide +kernel
+  Reaches.of_derives h.1.derives h.2.reaches
+
 /-! ### The data -/
 
 /-- A modifier subjoins to the classifier and not to Q, and nothing more subjoins to a filled D:
@@ -250,28 +300,42 @@ theorem modification_rows :
       ((∃ x, (numClDeN.subjoin x .D).isSome) ↔ Examples.ex_14.judgment = .acceptable) := by
   decide +kernel
 
-/-- The fronted object, or the wh-numeral, becomes a part of C exactly in the acceptable rows on
-topicalisation and on wh-numerals, (13b), (39), (43a), (44). -/
-theorem extraction_rows :
-    (clause.Reaches .N .C ↔ Examples.ex_7.judgment = .acceptable) ∧
-      (clauseModCl.Reaches .Num .C ↔ Examples.ex_9.judgment = .acceptable) ∧
-      (clauseModD.Reaches .Num .C ↔ Examples.ex_10.judgment = .acceptable) ∧
-      (clause.Reaches .D .C ↔ Examples.ex_16.judgment = .acceptable) ∧
-      (clauseModCl.Reaches .N .C ↔ Examples.ex_17.judgment = .acceptable) ∧
-      (clauseModD.Reaches .N .C ↔ Examples.ex_18.judgment = .acceptable) :=
-  ⟨iff_of_true (Reaches.of_derives topic_n.2.1.derives topic_n.2.2.reaches) rfl,
-    iff_of_true (Reaches.of_derives wh_numeral.2.1.derives wh_numeral.2.2.reaches) rfl,
-    iff_of_false wh_numeral_modifier.2.2 (by decide),
-    iff_of_true (Subjoins.reaches (Q := clause.addPart .two .D .C) (by decide +kernel)) rfl,
-    iff_of_true
-      (Reaches.of_derives topic_n_modifier_cl.1.derives topic_n_modifier_cl.2.reaches) rfl,
-    iff_of_false topic_n_modifier_d.2 (by decide)⟩
+/-- A string of the nominal is fronted alone exactly in the acceptable rows on topicalisation:
+the classifier with the noun, (5c), the noun, (13b), the numeral with the classifier, (14a), the
+whole nominal, (43a), and the noun past a modifier, (44). -/
+theorem fronting_rows :
+    (Fronts clause [.Cl, .N] ↔ Examples.ex_6.judgment = .acceptable) ∧
+      (Fronts clause [.N] ↔ Examples.ex_7.judgment = .acceptable) ∧
+      (Fronts clause [.Num, .Cl] ↔ Examples.ex_8.judgment = .acceptable) ∧
+      (Fronts clause [.Num, .Cl, .N] ↔ Examples.ex_16.judgment = .acceptable) ∧
+      (Fronts clauseModCl [.N] ↔ Examples.ex_17.judgment = .acceptable) ∧
+      (Fronts clauseModD [.N] ↔ Examples.ex_18.judgment = .acceptable) := by
+  have h₆ : ∀ X, ¬ ∀ w ∈ [Node.Num, .Cl, .N, .Mod],
+      PronouncedIn clause w X ↔ w ∈ [Node.Cl, .N] := by decide +kernel
+  have h₈ : ∀ X, ¬ ∀ w ∈ [Node.Num, .Cl, .N, .Mod],
+      PronouncedIn clause w X ↔ w ∈ [Node.Num, .Cl] := by decide +kernel
+  have h₁₈ : ∀ X, (∀ w ∈ [Node.Num, .Cl, .N, .Mod],
+      PronouncedIn clauseModD w X ↔ w ∈ [Node.N]) → X = .N ∨ X = .Cl := by decide +kernel
+  refine ⟨iff_of_false (fun ⟨X, hX, _⟩ ↦ h₆ X hX) (by decide),
+    iff_of_true ⟨.N, by decide +kernel,
+      Reaches.of_derives topic_n.2.1.derives topic_n.2.2.reaches⟩ rfl,
+    iff_of_false (fun ⟨X, hX, _⟩ ↦ h₈ X hX) (by decide),
+    iff_of_true ⟨.D, by decide +kernel,
+      Subjoins.reaches (Q := clause.addPart .two .D .C) (by decide +kernel)⟩ rfl,
+    iff_of_true ⟨.N, by decide +kernel,
+      Reaches.of_derives topic_n_modifier_cl.1.derives topic_n_modifier_cl.2.reaches⟩ rfl,
+    iff_of_false ?_ (by decide)⟩
+  rintro ⟨X, hX, hC⟩
+  rcases h₁₈ X hX with rfl | rfl
+  · exact topic_n_modifier_d.2 hC
+  · exact IsDomain.not_reaches (P := clauseModD) (S := inD) (b := .D) (c := .Mod)
+      (by decide +kernel) rfl (by decide) (by decide) (by decide) (by decide +kernel) (by decide) hC
 
--- the classifier subjoins to D and from there to C, as the noun does
-theorem cl_reaches : clause.Reaches .Cl .C :=
-  have h : clause.Subjoins .Cl .D (clause.addPart .two .Cl .D) ∧
-      (clause.addPart .two .Cl .D).Subjoins .Cl .C
-        ((clause.addPart .two .Cl .D).addPart .two .Cl .C) := by decide +kernel
-  Reaches.of_derives h.1.derives h.2.reaches
+/-- The wh-numeral becomes a part of C exactly in the acceptable rows, (39). -/
+theorem wh_rows :
+    (clauseModCl.Reaches .Num .C ↔ Examples.ex_9.judgment = .acceptable) ∧
+      (clauseModD.Reaches .Num .C ↔ Examples.ex_10.judgment = .acceptable) :=
+  ⟨iff_of_true (Reaches.of_derives wh_numeral.2.1.derives wh_numeral.2.2.reaches) rfl,
+    iff_of_false wh_numeral_modifier.2.2 (by decide)⟩
 
 end WangSun2026
