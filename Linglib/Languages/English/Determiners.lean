@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Languages.English.Phonology
+public import Linglib.Syntax.Feature.Person.Basic
 
 /-!
 # English determiners

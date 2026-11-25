@@ -7,6 +7,7 @@ module
 
 public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Linglib.Syntax.Category.Pronoun.Interrogative
+public import Linglib.Syntax.Binding.Word
 
 /-!
 # Indefinite pronouns

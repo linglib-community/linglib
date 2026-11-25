@@ -7,7 +7,6 @@ module
 
 public import Linglib.Syntax.Feature.Gender.Assignment
 public import Linglib.Semantics.Reference.Gender
-public import Linglib.Morphology.Word.Basic
 public import Mathlib.Data.Finset.Option
 
 /-!
@@ -76,13 +75,6 @@ structure Noun where
 /-- A proper name is a noun that names its referent. -/
 structure ProperName extends Noun
   deriving DecidableEq, Repr
-
-/-- The word token of a name is a third-person `PROPN`, masculine or feminine by the gender it
-restricts its referent to. -/
-def ProperName.toWord (n : ProperName) : Morphology.Word :=
-  { form := n.form, cat := .PROPN
-    features := Morphology.Features.of (person := some .third)
-      (gender := n.referentGender.map ReferentGender.toUD) }
 
 /-- A noun with its controller gender over the carrier `G`. -/
 structure GenderedNoun (G : Type*) extends Noun where

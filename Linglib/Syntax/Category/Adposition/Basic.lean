@@ -7,7 +7,6 @@ module
 
 public import Linglib.Syntax.Feature.Case.Function
 public import Linglib.Morphology.Morph
-public import Linglib.Morphology.Word.Basic
 public import Mathlib.Data.Finset.Image
 
 /-!
@@ -31,7 +30,7 @@ p. 54).
 * `Adposition.IsPreposition`, `IsPostposition`, `IsCircumposition`, `IsAmbiposition`: the
   position classes.
 * `Adposition.Takes`, `IsIntransitive`, `IsTransitive`, `IsParticle`: valence.
-* `Adposition.IsSimple`, `form`, `toWord`: the exponent.
+* `Adposition.IsSimple`, `form`: the exponent.
 * `Adposition.IsSpatial`: an adposition marking a spatial value.
 
 ## Main results
@@ -70,7 +69,7 @@ p. 54).
 
 @[expose] public section
 
-open Morphology (Morph Word)
+open Morphology (Morph)
 
 namespace Adposition
 
@@ -135,12 +134,6 @@ af* is not simple. -/
 def IsSimple : Prop := a.morphs.length = 1
 
 instance : Decidable a.IsSimple := inferInstanceAs (Decidable (_ = _))
-
-/-- The adposition as a word, UD category `ADP`. A circumposition's pieces are separate words, and
-its form joins them. -/
-def toWord : Word := { form := a.form, cat := .ADP }
-
-@[simp] theorem cat_toWord : a.toWord.cat = .ADP := rfl
 
 /-! ### Position -/
 

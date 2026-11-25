@@ -11,6 +11,10 @@ public import Linglib.Languages.English.Determiners
 public import Linglib.Languages.English.Nouns
 public import Linglib.Languages.English.Pronouns
 public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Syntax.Binding.Word
+public import Linglib.Syntax.Category.Adposition.Word
+public import Linglib.Syntax.Category.Determiner.Word
+public import Linglib.Syntax.Category.Noun.Word
 
 /-!
 # Chomsky (1981): the binding theory
