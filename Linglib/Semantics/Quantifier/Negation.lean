@@ -2,7 +2,6 @@ module
 
 public import Linglib.Core.Algebra.Ring.BooleanRing
 public import Linglib.Semantics.Quantifier.Defs
-public import Linglib.Logic.Aristotelian.Square
 public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.Algebra.Group.Action.Pi
 public import Mathlib.Algebra.Group.Action.Prod
@@ -16,22 +15,17 @@ A quantifier `Q` can be negated in two places. Outer negation negates the value:
 complement `Qᶜ`. Inner negation negates the scope: `Q.innerNeg B = Q Bᶜ`. Doing both gives the
 dual, `Q.dual B = ¬ Q Bᶜ`.
 
-A quantifier with its inner negation, its dual and its complement forms a square of opposition.
-The diagonals of the square are contradictory for every quantifier, and its other classical
-relations hold if and only if `Q ≤ Q.dual`.
-
 The two negations are the two ways a group acting on truth values and on sets acts on the functions
 from sets to truth values. The polarities act on truth values by negation, and so on a quantifier
 through its value; they act on sets by complement, and so on a quantifier through its scope, which
 is the action of `DomMulAct Polarity`. The two actions commute. Together they are an action of the
-pairs of an outer and an inner polarity, and the orbit of a quantifier is its square. A monotone or
-antitone quantifier stays monotone or antitone under each action, and the direction changes once for
-each negative polarity.
+pairs of an outer and an inner polarity, and the orbit of a quantifier consists of the quantifier,
+its inner negation, its dual and its complement, the corners of its square of opposition in
+`Quantifier/Square.lean`. A monotone or antitone quantifier stays monotone or antitone under each
+action, and the direction changes once for each negative polarity.
 
 ## Main results
 
-* `Quantifier.squareRelations_square_iff`: the square of `Q` has the relations of the classical
-  square of opposition if and only if `Q ≤ Q.dual`.
 * `Quantifier.negative_smul`: `Polarity.negative • Q = Qᶜ`.
 * `Quantifier.mk_negative_smul`: `DomMulAct.mk Polarity.negative • Q = Q.innerNeg`.
 * `Quantifier.orbit_eq`: the orbit of `Q` under the two actions is `Q`, `Q.innerNeg`, `Q.dual` and
@@ -59,40 +53,6 @@ namespace Quantifier
 
 variable {α : Type*} {Q : Quantifier α}
 
-/-! ### The square of opposition of a quantifier
-
-The square of opposition of a quantifier `Q` has the corners `Q`, `Q.innerNeg`, `Q.dual` and
-`Qᶜ`. In every such square the diagonals are contradictory. The other relations of the classical
-square say that the two universal corners `Q` and `Q.innerNeg` cannot both hold; this is the
-case if and only if `Q ≤ Q.dual`. -/
-
-/-- The square of opposition of a quantifier `Q`, with corners `Q`, `Q.innerNeg`, `Q.dual` and
-`Qᶜ` ([peters-westerstahl-2006]). -/
-@[simps]
-def square (Q : Quantifier α) : Aristotelian.Square (Quantifier α) := ⟨Q, Q.innerNeg, Q.dual, Qᶜ⟩
-
-theorem square_eq_ofUniversals (Q : Quantifier α) : Q.square = .ofUniversals Q Q.innerNeg := rfl
-
-/-- The square of `Q.innerNeg` is the square of `Q` with the two universal corners exchanged
-and the two particular corners exchanged. -/
-theorem square_innerNeg (Q : Quantifier α) : Q.innerNeg.square = Q.square.inner :=
-  Aristotelian.Square.ext rfl (innerNeg_innerNeg Q) (congrArg (·ᶜ) (innerNeg_innerNeg Q)) rfl
-
-theorem disjoint_innerNeg_iff : Disjoint Q Q.innerNeg ↔ Q ≤ Q.dual :=
-  le_compl_iff_disjoint_right.symm
-
-/-- The square of `Q` has the relations of the classical square of opposition if and only if
-`Q ≤ Q.dual`. -/
-theorem squareRelations_square_iff : Aristotelian.SquareRelations Q.square ↔ Q ≤ Q.dual :=
-  Aristotelian.squareRelations_ofUniversals.trans disjoint_innerNeg_iff
-
-/-- If `Q` is monotone and closed under intersections of scopes, then `Q ≤ Q.dual` if and only
-if `Q` does not hold of the empty set. -/
-theorem le_dual_iff_not_apply_empty (hm : Monotone Q) (hi : ∀ B C, Q B → Q C → Q (B ∩ C)) :
-    Q ≤ Q.dual ↔ ¬ Q ∅ :=
-  ⟨fun h h₀ ↦ h ∅ h₀ (hm (Set.empty_subset _) h₀),
-    fun h B hB hB' ↦ h (Set.inter_compl_self B ▸ hi _ _ hB hB')⟩
-
 /-! ### The action of the polarities -/
 
 open DomMulAct
@@ -109,8 +69,8 @@ value and the inner one through the scope. -/
 instance : MulAction (Polarity × DomMulAct Polarity) (Quantifier α) :=
   MulAction.prodOfSMulCommClass _ _ _
 
-/-- The orbit of a quantifier under the two actions of the polarities is its square of
-opposition. -/
+/-- The orbit of a quantifier under the two actions of the polarities is the quantifier, its inner
+negation, its dual and its complement. -/
 theorem orbit_eq (Q : Quantifier α) :
     MulAction.orbit (Polarity × DomMulAct Polarity) Q = {Q, Q.innerNeg, Q.dual, Qᶜ} := by
   ext Q'
