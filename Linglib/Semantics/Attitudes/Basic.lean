@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.EvaluativeValence
+public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Semantics.Presupposition.Trigger
 
 /-!
@@ -13,9 +13,10 @@ belief (`Doxastic.Alternatives`); Karttunen's split of the factives into full an
 `Factivity`, on the presupposition facet. The classical cut between *know* and *believe* is
 derived from the two: a doxastic predicate is veridical when it is factive or its alternatives are
 epistemic (`Attitude.IsVeridical`), exactly when every denotation of that kind is
-(`Doxastic.isVeridical_forall_iff`). A preferential predicate has the evaluative valence of
-a gradable predicate, positive for *hope* and negative for *fear*. `Attitude` composes the two
-dimensions, and verb entries record one.
+(`Doxastic.isVeridical_forall_iff`). A preferential predicate has an evaluative valence, the
+polarity of the preference it expresses: *hope* expresses preference for its complement and is
+positive, *fear* expresses dispreference and is negative. `Attitude` composes the two dimensions,
+and verb entries record one.
 
 ## Implementation notes
 
@@ -35,6 +36,7 @@ classification.
 * [anand-hacquard-2013]
 * [giannakidou-1998]
 * [hintikka-1962]
+* [qing-uegaki-2025]
 -/
 
 @[expose] public section
@@ -48,10 +50,11 @@ inductive Doxastic.Alternatives
   deriving DecidableEq, Repr
 
 /-- An attitude predicate is doxastic, with an accessibility semantics over its alternatives
-([hintikka-1962]), or preferential, with an evaluative valence. -/
+([hintikka-1962]), or preferential, with an evaluative valence: whether it is evaluatively
+positive, expressing preference, or negative, expressing dispreference ([qing-uegaki-2025]). -/
 inductive Attitude
   | doxastic (alternatives : Doxastic.Alternatives)
-  | preferential (valence : EvaluativeValence)
+  | preferential (valence : Polarity)
   deriving DecidableEq, Repr
 
 namespace Attitude
@@ -77,7 +80,7 @@ instance : DecidablePred IsPreferential
   | .preferential _ => isTrue trivial
 
 /-- The valence of a preferential predicate. -/
-def valence : Attitude → Option EvaluativeValence
+def valence : Attitude → Option Polarity
   | .doxastic _ => none
   | .preferential v => some v
 

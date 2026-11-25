@@ -79,7 +79,7 @@ attitude predicate "x is happy that p" is in `Studies/UegakiSudo2019.lean`. -/
 def happiness : AntonymPair :=
   { dimension := .happiness, posForm := "happy", negForm := "unhappy"
   , posComparison := inflectional "happy"
-  , negComparison := inflectional "unhappy", evaluativeValence := some .positive }
+  , negComparison := inflectional "unhappy" }
 
 abbrev happy := happiness.pos
 
@@ -88,8 +88,7 @@ abbrev unhappy := happiness.neg
 def sad : Adjective :=
   { form := "sad", polarity := .negative, dimension := some .happiness
   , comparison := inflectional "sad"
-  , antonymForm := some "happy"
-  , evaluativeValence := some .negative }
+  , antonymForm := some "happy" }
 
 /-- *full* and *empty* measure on a closed scale, as *100% full* and *100% empty* show
 ([kennedy-mcnally-2005] (28a)), and both poles take the maximum standard ([kennedy-2007], p. 38),
@@ -542,16 +541,15 @@ def gorgeous : Adjective :=
 /-! ### Mirative bases: H-degree intensifiers, not evaluative -/
 
 def expectation : AntonymPair :=
-  { dimension := .expectation, posForm := "usual", negForm := "unusual"
-  , evaluativeValence := some .neutral }
+  { dimension := .expectation, posForm := "usual", negForm := "unusual" }
 
 abbrev usual := expectation.pos
 
 abbrev unusual := expectation.neg
 
-/-- "surprising" — open scale, neutral (mirative). Base for H-degree *surprisingly*. -/
+/-- "surprising" — open scale, mirative. Base for H-degree *surprisingly*. -/
 def surprising : Adjective :=
-  { form := "surprising", dimension := some .expectation, evaluativeValence := some .neutral }
+  { form := "surprising", dimension := some .expectation }
 
 /-- "remarkable" — open scale, positive evaluative (§2.4.1). Extreme positive
     evaluation: H-degree *remarkably* despite positive valence (Goldilocks exception). -/
@@ -565,17 +563,16 @@ def stunning : Adjective :=
 
 /-! ### Modal bases: Zwicky's generalization -/
 
-/-- "expected" — open scale, neutral (modal). Unattested as intensifier (*expectedly). -/
+/-- "expected" — open scale, modal. Unattested as intensifier (*expectedly). -/
 def expected : Adjective :=
-  { form := "expected", dimension := some .expectation, evaluativeValence := some .neutral }
+  { form := "expected", dimension := some .expectation }
 
 /-- *possible* and *impossible* are contradictories, since *possible* takes the minimum standard of
 the lower-closed possibility scale and *impossible* the maximum of its dual, as *wet* and *dry* do.
 Whether *possible* is gradable at all is disputed ([lassiter-2017] §5.2.2); the entry records its
 gradable use, which *impossibly long* needs ([nouwen-2024] (27b)). -/
 def possibility : AntonymPair :=
-  { dimension := .possibility, posForm := "possible"
-  , negForm := "impossible", evaluativeValence := some .neutral }
+  { dimension := .possibility, posForm := "possible", negForm := "impossible" }
 
 abbrev possible := possibility.pos
 
