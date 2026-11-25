@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Syntax.Category.Complementizer.Basic
+public import Linglib.Syntax.Voice.Basic
 
 /-!
 # Italian verbs
@@ -50,10 +51,11 @@ among them, and with a finite complement clause as object it is nearly always po
 ([renzi-1988] ch. I §4.2). A sentence with a restructuring infinitive passivizes the infinitive
 and not the governing verb, *Questa parete deve essere ridipinta* and not **è dovuta
 ridipingere*, and the modals *volere*, *potere*, *dovere* and *sapere* are restructuring verbs.
-`Verb.Passivizes` states the rule on a verb and a frame, and the one exception these entries
-record is *avere* on its transitive frame (`Verb.noPassive`). The rule is silent on a frame whose
-complement is an infinitive, so it gives *volere* a passive on its finite clause and none on its
-infinitive, and *intendere*, which takes only an infinitive, none.
+`Italian.Verbs.HasPassive` is the rule on a frame, and an entry records what the grammar says of
+the verb itself (`Verb.voices`): the passive is excluded for *avere* on its transitive frame and
+for *volere* on its infinitive, and possible for the causative *fare*. An entry the grammar does
+not name records nothing, and the grammar's marginal cases, as *sapere* 'know' with a finite
+clause, are not recorded.
 
 ## References
 
@@ -91,6 +93,11 @@ open Verb (PerfectAuxiliary)
 namespace Italian.Verbs
 
 open ArgumentStructure
+
+/-! ### Voice -/
+
+/-- The passive of a frame with the auxiliary *essere* and the past participle. -/
+def passive (fr : ArgumentFrame := .np) : Voice := (Voice.passive fr).marked [.free "essere"]
 
 /-! ### Clause-typers -/
 
@@ -135,6 +142,7 @@ def volere : Verb where
   morphs := [.root "volere"]
   valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
+  voices := [(passive ArgumentFrame.infinitival, .excluded)]
   opaqueContext := true
   attitude := some (.preferential .positive)
   clauseTypers := [che]
@@ -157,12 +165,15 @@ def intendere : Verb where
   attitude := some (.preferential .positive)
 
 /-- The causative *fare* 'make' takes a bare infinitive under object control, and a finite clause
-only as *fare sì che* with the subjunctive, never the indicative. -/
+only as *fare sì che* with the subjunctive, never the indicative. The passive of the causative
+construction is always possible, *Questi libri erano fatti leggere a tutti* ([renzi-1988] ch. I
+§4.2.3). -/
 def fare : Verb where
   morphs := [.root "fare"]
   valency := .of
     [(ArgumentFrame.infinitival.withObject, [0, 2, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
     (controllers := [some 2])
+  voices := [(passive ArgumentFrame.infinitival.withObject, .optional)]
   clauseTypers := [che]
 
 /-! ### Transitive verbs with a lexical reciprocal use -/
@@ -236,7 +247,7 @@ def avere : Verb where
   morphs := [.root "avere"]
   valency := .ofFrame ArgumentFrame.np
   perfectAuxiliaries := {.have}
-  noPassive := [.np]
+  voices := [(passive, .excluded)]
 
 /-- *essere* 'be', the auxiliary of the perfect of verbs of change and of state and of verbs
 with a clitic reflexive pronoun. -/
@@ -443,17 +454,31 @@ example :
     perfectAuxiliary nuotare .intransitive (some (.ofCase .ill)) = .have := by
   decide
 
-/-- The passive is possible with a transitive verb, with the causative *fare*, and with a finite
-clause as object, and not with *avere*, with an unaccusative verb, or on the infinitive of
-*volere* ([renzi-1988] ch. I §4.2). -/
+/-- The passive is possible on a frame whose object is a noun phrase or a finite clause
+([renzi-1988] ch. I §4.2). -/
+def HasPassive (fr : ArgumentFrame) : Prop :=
+  ∃ p ∈ fr.complements.head?, p.IsNominal ∨ p.IsFinite
+
+instance : DecidablePred HasPassive := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+theorem hasPassive_of_voices : ∀ v ∈ allVerbs, ∀ fr ∈ v.valency.frames,
+    v.voices.lookup (passive fr) = some .optional → HasPassive fr := by
+  decide
+
+/-- The verbs with no passive on a frame the rule covers are the verbs of relation, of which
+the entries have *avere* (§4.2.1). -/
+theorem filter_excluded_eq :
+    (allVerbs.filter fun v ↦ ∃ fr ∈ v.valency.frames,
+      HasPassive fr ∧ v.voices.lookup (passive fr) = some .excluded).map (·.morphs) =
+        [avere.morphs] := by
+  decide
+
+/-- *Fare* has the passive on its causative frame, *volere* has none on its infinitive, which
+the rule does not cover, and of *lavare* the grammar says nothing. -/
 example :
-    lavare.toVerb.Passivizes .np ∧
-      fare.toVerb.Passivizes ArgumentFrame.infinitival.withObject ∧
-      sperare.toVerb.Passivizes ArgumentFrame.subjunctiveClause ∧
-      volere.toVerb.Passivizes ArgumentFrame.subjunctiveClause ∧
-      ¬ avere.toVerb.Passivizes .np ∧ ¬ volere.toVerb.Passivizes ArgumentFrame.infinitival ∧
-      ∀ fr, ¬ venire.toVerb.Passivizes fr :=
-  ⟨by decide, by decide, by decide, by decide, by decide, by decide,
-    fun _ ↦ (by decide : venire.toVerb.IsUnaccusative).not_passivizes⟩
+    fare.voices.lookup (passive ArgumentFrame.infinitival.withObject) = some .optional ∧
+      volere.voices.lookup (passive ArgumentFrame.infinitival) = some .excluded ∧
+      ¬ HasPassive ArgumentFrame.infinitival ∧ lavare.voices.lookup passive = none := by
+  decide
 
 end Italian.Verbs

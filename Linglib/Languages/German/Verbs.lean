@@ -4,6 +4,7 @@ public import Linglib.Languages.German.Case
 public import Linglib.Languages.German.Conjugation
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Syntax.Category.Verb.CaseFrame
+public import Linglib.Syntax.Voice.Basic
 
 /-!
 # German verbs
@@ -70,6 +71,12 @@ def Verb.withPath (v : Verb) (p : Locative) : Verb :=
 namespace Verbs
 
 open ArgumentStructure Conjugation
+
+/-! ### Voice -/
+
+/-- The passive of a frame with the auxiliary *werden* and the past participle. -/
+def werdenPassive (fr : ArgumentFrame := .np) : Voice :=
+  (Voice.passive fr).marked [.free "werden"]
 
 /-! ### Causative verbs -/
 
@@ -196,24 +203,21 @@ def verbinden : Verb :=
 /-- *hoffen* 'hope' is a positive preferential attitude verb. -/
 def hoffen : Verb :=
   { Verb.ofStem (weak "hoffen") with
-    -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-    valency := .ofFrame ArgumentFrame.finiteClause, noPassive := [ArgumentFrame.finiteClause]
+    valency := .ofFrame ArgumentFrame.finiteClause
     opaqueContext := true
     attitude := some (.preferential .positive) }
 
 /-- *wünschen* 'wish' is a positive preferential attitude verb. -/
 def wuenschen : Verb :=
   { Verb.ofStem (weak "wünschen") with
-    -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-    valency := .ofFrame ArgumentFrame.finiteClause, noPassive := [ArgumentFrame.finiteClause]
+    valency := .ofFrame ArgumentFrame.finiteClause
     opaqueContext := true
     attitude := some (.preferential .positive) }
 
 /-- *fürchten* 'fear' is a negative preferential attitude verb. -/
 def fuerchten : Verb :=
   { Verb.ofStem (weak "fürchten") with
-    -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-    valency := .ofFrame ArgumentFrame.finiteClause, noPassive := [ArgumentFrame.finiteClause]
+    valency := .ofFrame ArgumentFrame.finiteClause
     opaqueContext := true
     attitude := some (.preferential .negative) }
 
@@ -228,7 +232,8 @@ def befuerchten : Verb :=
 def sorgen : Verb :=
   { Verb.ofStem (weak "sorgen") with
     -- a reflexive verb, which forms no passive ([durrell-2011] §15.2)
-    valency := .ofFrame ArgumentFrame.finiteClause, noPassive := [ArgumentFrame.finiteClause]
+    valency := .ofFrame ArgumentFrame.finiteClause
+    voices := [(werdenPassive ArgumentFrame.finiteClause, .excluded)]
     opaqueContext := true
     attitude := some (.preferential .negative) }
 

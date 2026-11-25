@@ -396,8 +396,6 @@ def vouloir : Verb where
   morphs := [.root "vouloir"]
   valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.subjunctiveClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -408,8 +406,6 @@ def esperer : Verb where
   morphs := [.root "espérer"]
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.preferential .positive)
 

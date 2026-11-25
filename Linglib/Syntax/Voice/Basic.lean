@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Voice.Construction
+public import Linglib.Syntax.Voice.Defs
 public import Linglib.Morphology.Morph
 
 /-!
@@ -19,7 +20,7 @@ here realize the types they are named for.
 
 ## Main definitions
 
-* `Voice`, `Voice.of`: an initial and a derived diathesis, with a pivot and a marker.
+* `Voice.of`: the voice with given frames and links.
 * `Voice.IsPassivization`, `IsAntipassivization`, `IsDecausativization`, …: a voice realizing a
   type of voice alternation.
 * `Voice.Relates`, `Verb.Alternates`: a voice relating two diatheses of a verb.
@@ -72,29 +73,6 @@ def Coding.ofMarker (ms : List Morphology.Morph) : Coding :=
   if ms = [] then .uncoded
   else if ms.all fun m ↦ m.kind.position?.isSome then .synthetic
   else .analytic
-
-end Voice
-
-/-- A voice relates an initial and a derived diathesis of its participants, privileges a slot of
-the derived diathesis as its pivot, and is coded by a marker on the verb; its classification is
-computed from the two diatheses. -/
-structure Voice where
-  /-- The number of participants. -/
-  arity : ℕ
-  /-- The initial diathesis. -/
-  initial : Diathesis arity
-  /-- The derived diathesis, which leaves out the participants the voice suppresses. -/
-  derived : Diathesis arity
-  /-- The syntactically privileged term of the derived construction is by default its first core
-  slot (S or A), unless a symmetrical voice selects another, and is `none` for an impersonal
-  construction ([creissels-2024] §8.1.7). -/
-  pivot : Option ArgumentFrame.Slot := derived.coreSlots.head?
-  /-- The morphs (affixes or an auxiliary) coding the voice on the verb, in surface order; empty
-      for a zero-marked or an unmarked voice. -/
-  marker : List Morphology.Morph := []
-  deriving DecidableEq, Repr
-
-namespace Voice
 
 open ArgumentFrame (Slot)
 

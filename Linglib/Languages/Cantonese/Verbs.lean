@@ -68,8 +68,6 @@ def seon : Verb where
   morphs := [.root "seon3"]
   script := some "信"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
 
@@ -85,8 +83,6 @@ def geidak : Verb where
   morphs := [.root "gei3dak1"]
   script := some "記得"
   valency := .ofFrame ArgumentFrame.finiteClause
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.finiteClause]
   factivity := some .semi
 
 /-- The verbs. -/

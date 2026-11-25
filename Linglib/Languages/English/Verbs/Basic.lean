@@ -43,6 +43,12 @@ namespace English.Verbs
 
 open ArgumentStructure Aspect Data.VerbClasses
 
+/-! ### Voice -/
+
+/-- The passive of a frame, marked by the auxiliary *be* with the past participle,
+`Verb.passiveParticiple`. -/
+def passive (fr : ArgumentFrame := .np) : Voice := (Voice.passive fr).marked [.free "be"]
+
 /-! ### The entry type -/
 
 /-- An English verb is the cross-linguistic `Verb` with the forms that the regular suffixes do not
@@ -138,8 +144,6 @@ def run : Verb where
      (ArgumentFrame.np_spatialPP, [1, 0, 2]),
      (ArgumentFrame.spatialPP, [0, 2])]
     [some activitySubjectProfile, none, none]
-  -- UNVERIFIED: carried over from an unsourced flag that the verb has no passive
-  noPassive := [ArgumentFrame.np_spatialPP]
   direction := some .place
 
 /-- "dance" — intransitive activity -/
@@ -255,7 +259,7 @@ def weigh : Verb where
   levin := some Levin1993.Index.weigh
   valency := .ofFrame ArgumentFrame.np
   -- as a measure verb it has no passive ([huddleston-pullum-2002] ch. 16 §10.1.2)
-  noPassive := [.np]
+  voices := [(passive, .excluded)]
 
 /-- "cover" — motion/extent predicate selecting for distance. -/
 def cover : Verb where

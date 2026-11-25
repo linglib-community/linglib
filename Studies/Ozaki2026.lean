@@ -77,10 +77,8 @@ theorem diagnostics_both_markings :
 
 theorem alternation_verbs_unaccusative :
     ∀ v ∈ [Japanese.hanareru, Japanese.deru],
-      v.voiceType = some .nonThematic ∧ v.IsUnaccusative ∧ ∀ fr, ¬ v.Passivizes fr := by
-  have h : ∀ v ∈ [Japanese.hanareru, Japanese.deru],
-      v.voiceType = some .nonThematic ∧ v.IsUnaccusative := by decide
-  exact fun v hv ↦ ⟨(h v hv).1, (h v hv).2, fun _ ↦ (h v hv).2.not_passivizes⟩
+      v.voiceType = some .nonThematic ∧ v.IsUnaccusative := by
+  decide
 
 -- (20)
 theorem not_directPassivizable :

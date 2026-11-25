@@ -9,6 +9,8 @@ public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Syntax.Clause.Embedding
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 public import Linglib.Syntax.Category.Verb.Diathesis
+public import Linglib.Syntax.Voice.Defs
+public import Linglib.Syntax.Obligatoriness
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Aspect.AspectualClass
@@ -132,9 +134,10 @@ structure ArgStructure where
   /-- The auxiliaries the verb forms its perfect with, as its grammar gives them, both where it
       gives both; empty where the language has no choice or the entry records none. -/
   perfectAuxiliaries : Finset Verb.PerfectAuxiliary := ∅
-  /-- The frames on which the verb has no passive although the frame has an object and the verb
-      an external argument, as its grammar lists them. -/
-  noPassive : List ArgumentFrame := []
+  /-- What the verb's grammar says of single voices for this verb: excluded, possible beside the
+      basic construction, or the verb's only construction. A voice the grammar does not mention
+      for the verb is absent. -/
+  voices : List (Voice × Obligatoriness) := []
   deriving BEq
 
 /-- The aspect of a verb is its lexical viewpoint, scale, direction of motion, incrementality
