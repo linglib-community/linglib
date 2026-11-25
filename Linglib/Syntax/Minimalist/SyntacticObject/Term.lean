@@ -68,48 +68,33 @@ open Relation UnorderedTree
 
 namespace SyntacticObject
 
-variable {x y z l r : SyntacticObject (SyntacticObject.Leaf L ι)}
+/-! ### Containment and terms, on any leaves -/
 
-/-! ### Immediate containment -/
+section Leaves
+
+variable {α : Type} {x y z l r : SyntacticObject α}
 
 /-- `y` is one of `x`'s root daughters. -/
-def ImmediatelyContains (x y : SyntacticObject (SyntacticObject.Leaf L ι)) : Prop :=
-    y.toUnorderedTree ∈ children x.toUnorderedTree
+def ImmediatelyContains (x y : SyntacticObject α) : Prop := ∃ z, x = y * z
 
-instance [DecidableEq L] [DecidableEq ι] (x y : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    Decidable (ImmediatelyContains x y) :=
-  inferInstanceAs (Decidable (_ ∈ _))
+@[simp] theorem immediatelyContains_of (a : α) (y : SyntacticObject α) :
+    ¬ ImmediatelyContains (FreeCommMagma.of a) y :=
+  fun ⟨z, h⟩ ↦ FreeCommMagma.of_ne_mul a y z h
 
-@[simp] theorem immediatelyContains_leaf (tok : L) (y : SyntacticObject (SyntacticObject.Leaf L ι))
-    :
-    ¬ ImmediatelyContains (leaf tok) y := by
-  simp [ImmediatelyContains]
-
-@[simp] theorem immediatelyContains_trace (y : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    ¬ ImmediatelyContains trace y := by
-  simp [ImmediatelyContains]
-
-@[simp] theorem immediatelyContains_labelledTrace (i : ι)
-    (y : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    ¬ ImmediatelyContains (labelledTrace i) y := by
-  simp [ImmediatelyContains]
-
-@[simp] theorem immediatelyContains_merge (l r y : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    ImmediatelyContains (merge l r) y ↔ y = l ∨ y = r := by
-  simp only [ImmediatelyContains, toUnorderedTree_merge, children_node, Multiset.insert_eq_cons,
-    Multiset.mem_cons, Multiset.mem_singleton]
-  exact or_congr toUnorderedTree_inj toUnorderedTree_inj
-
-/-! ### Containment -/
+@[simp] theorem immediatelyContains_mul : ImmediatelyContains (l * r) y ↔ y = l ∨ y = r := by
+  refine ⟨fun ⟨z, h⟩ ↦ ?_, ?_⟩
+  · rcases FreeCommMagma.mul_eq_mul_iff.1 h with ⟨h, -⟩ | ⟨-, h⟩
+    · exact .inl h.symm
+    · exact .inr h.symm
+  · rintro (rfl | rfl)
+    · exact ⟨r, rfl⟩
+    · exact ⟨l, mul_comm l y⟩
 
 /-- Containment, the transitive closure of immediate containment. -/
-def Contains : SyntacticObject (SyntacticObject.Leaf L ι) → SyntacticObject
-    (SyntacticObject.Leaf L ι) → Prop := TransGen ImmediatelyContains
+def Contains : SyntacticObject α → SyntacticObject α → Prop := TransGen ImmediatelyContains
 
 /-- Reflexive containment, the reflexive transitive closure of immediate containment. -/
-def ContainsOrEq : SyntacticObject (SyntacticObject.Leaf L ι) → SyntacticObject
-    (SyntacticObject.Leaf L ι) → Prop :=
-  ReflTransGen ImmediatelyContains
+def ContainsOrEq : SyntacticObject α → SyntacticObject α → Prop := ReflTransGen ImmediatelyContains
 
 theorem ImmediatelyContains.Contains (h : ImmediatelyContains x y) : Contains x y :=
   TransGen.single h
@@ -117,7 +102,7 @@ theorem ImmediatelyContains.Contains (h : ImmediatelyContains x y) : Contains x 
 theorem Contains.trans (hxy : Contains x y) (hyz : Contains y z) : Contains x z :=
   TransGen.trans hxy hyz
 
-instance : IsPreorder (SyntacticObject (SyntacticObject.Leaf L ι)) ContainsOrEq :=
+instance : IsPreorder (SyntacticObject α) ContainsOrEq :=
   inferInstanceAs (IsPreorder _ (ReflTransGen _))
 
 theorem containsOrEq_iff_eq_or_contains : ContainsOrEq x y ↔ y = x ∨ Contains x y :=
@@ -127,36 +112,132 @@ theorem contains_iff_exists_immediatelyContains :
     Contains x y ↔ ∃ z, ImmediatelyContains x z ∧ ContainsOrEq z y :=
   TransGen.head'_iff
 
-@[simp] theorem contains_leaf (tok : L) (y : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    ¬ Contains (leaf tok) y := by
+@[simp] theorem contains_of (a : α) (y : SyntacticObject α) :
+    ¬ Contains (FreeCommMagma.of a) y := by
   simp [contains_iff_exists_immediatelyContains]
 
-@[simp] theorem contains_trace (y : SyntacticObject (SyntacticObject.Leaf L ι)) : ¬ Contains trace
-    y := by
-  simp [contains_iff_exists_immediatelyContains]
-
-@[simp] theorem contains_labelledTrace (i : ι) (y : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    ¬ Contains (labelledTrace i) y := by
-  simp [contains_iff_exists_immediatelyContains]
-
-@[simp] theorem contains_merge :
-    Contains (merge l r) y ↔ ContainsOrEq l y ∨ ContainsOrEq r y := by
+@[simp] theorem contains_mul : Contains (l * r) y ↔ ContainsOrEq l y ∨ ContainsOrEq r y := by
   simp [contains_iff_exists_immediatelyContains, or_and_right, exists_or]
 
-@[simp] theorem containsOrEq_leaf (tok : L) :
-    ContainsOrEq (leaf tok) y ↔ y = leaf tok :=
-  reflTransGen_iff_eq (immediatelyContains_leaf tok)
+@[simp] theorem containsOrEq_of (a : α) :
+    ContainsOrEq (FreeCommMagma.of a) y ↔ y = FreeCommMagma.of a :=
+  reflTransGen_iff_eq (immediatelyContains_of a)
+
+@[simp] theorem containsOrEq_mul :
+    ContainsOrEq (l * r) y ↔ y = l * r ∨ ContainsOrEq l y ∨ ContainsOrEq r y := by
+  rw [containsOrEq_iff_eq_or_contains, contains_mul]
+
+/-- The terms of an object, one per vertex of its tree: the object itself and the terms of its
+daughters. -/
+def terms : SyntacticObject α → Multiset (SyntacticObject α) :=
+  FreeCommMagma.elim (fun x ↦ {FreeCommMagma.of x}) (fun l r a b ↦ (l * r) ::ₘ (a + b))
+    fun l r a b ↦ by rw [mul_comm, add_comm]
+
+@[simp] theorem terms_of (a : α) :
+    terms (FreeCommMagma.of a : SyntacticObject α) = {FreeCommMagma.of a} := rfl
+
+@[simp] theorem terms_mul (l r : SyntacticObject α) :
+    (l * r).terms = (l * r) ::ₘ (l.terms + r.terms) :=
+  FreeCommMagma.elim_mul _ _ _ l r
+
+/-- The terms of `x` are the objects it reflexively contains. -/
+@[simp] theorem mem_terms : y ∈ x.terms ↔ ContainsOrEq x y := by
+  induction x using FreeCommMagma.inductionOn with
+  | of a => simp
+  | mul l r ihl ihr => simp [ihl, ihr]
+
+theorem self_mem_terms (s : SyntacticObject α) : s ∈ s.terms :=
+  mem_terms.2 ReflTransGen.refl
+
+theorem terms_subset_terms (h : ContainsOrEq x y) : y.terms ⊆ x.terms :=
+  fun _ hz ↦ mem_terms.2 (ReflTransGen.trans h (mem_terms.1 hz))
+
+instance [DecidableEq α] (x y : SyntacticObject α) : Decidable (ImmediatelyContains x y) :=
+  @decidable_of_iff _ (∃ z ∈ x.terms, x = y * z)
+    ⟨fun ⟨z, _, h⟩ ↦ ⟨z, h⟩, fun ⟨z, h⟩ ↦
+      ⟨z, mem_terms.2 (h ▸ containsOrEq_mul.2 (.inr (.inr ReflTransGen.refl))), h⟩⟩
+    Multiset.decidableExistsMultiset
+
+end Leaves
+
+variable {x y z l r : SyntacticObject (SyntacticObject.Leaf L ι)}
+
+/-! ### At leaves with traces -/
+
+@[simp] theorem immediatelyContains_leaf (tok : L)
+    (y : SyntacticObject (SyntacticObject.Leaf L ι)) : ¬ ImmediatelyContains (leaf tok) y :=
+  immediatelyContains_of _ y
+
+@[simp] theorem immediatelyContains_trace (y : SyntacticObject (SyntacticObject.Leaf L ι)) :
+    ¬ ImmediatelyContains trace y :=
+  immediatelyContains_of _ y
+
+@[simp] theorem immediatelyContains_labelledTrace (i : ι)
+    (y : SyntacticObject (SyntacticObject.Leaf L ι)) :
+    ¬ ImmediatelyContains (labelledTrace i) y :=
+  immediatelyContains_of _ y
+
+@[simp] theorem immediatelyContains_merge (l r y : SyntacticObject (SyntacticObject.Leaf L ι)) :
+    ImmediatelyContains (merge l r) y ↔ y = l ∨ y = r :=
+  immediatelyContains_mul
+
+/-- Immediate containment is membership among the children of the object's tree. -/
+theorem immediatelyContains_iff_mem_children :
+    ImmediatelyContains x y ↔ y.toUnorderedTree ∈ children x.toUnorderedTree := by
+  obtain ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ := exists_form x
+  · simp
+  · simp
+  · simp
+  · simp only [immediatelyContains_merge, toUnorderedTree_merge, children_node,
+      Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton]
+    exact (or_congr toUnorderedTree_inj toUnorderedTree_inj).symm
+
+@[simp] theorem contains_leaf (tok : L) (y : SyntacticObject (SyntacticObject.Leaf L ι)) :
+    ¬ Contains (leaf tok) y :=
+  contains_of _ y
+
+@[simp] theorem contains_trace (y : SyntacticObject (SyntacticObject.Leaf L ι)) :
+    ¬ Contains trace y :=
+  contains_of _ y
+
+@[simp] theorem contains_labelledTrace (i : ι) (y : SyntacticObject (SyntacticObject.Leaf L ι)) :
+    ¬ Contains (labelledTrace i) y :=
+  contains_of _ y
+
+@[simp] theorem contains_merge :
+    Contains (merge l r) y ↔ ContainsOrEq l y ∨ ContainsOrEq r y :=
+  contains_mul
+
+@[simp] theorem containsOrEq_leaf (tok : L) : ContainsOrEq (leaf tok) y ↔ y = leaf tok :=
+  containsOrEq_of _
 
 @[simp] theorem containsOrEq_trace : ContainsOrEq trace y ↔ y = trace :=
-  reflTransGen_iff_eq immediatelyContains_trace
+  containsOrEq_of _
 
 @[simp] theorem containsOrEq_labelledTrace (i : ι) :
     ContainsOrEq (labelledTrace i) y ↔ y = labelledTrace i :=
-  reflTransGen_iff_eq (immediatelyContains_labelledTrace i)
+  containsOrEq_of _
 
 @[simp] theorem containsOrEq_merge :
-    ContainsOrEq (merge l r) y ↔ y = merge l r ∨ ContainsOrEq l y ∨ ContainsOrEq r y := by
-  rw [containsOrEq_iff_eq_or_contains, contains_merge]
+    ContainsOrEq (merge l r) y ↔ y = merge l r ∨ ContainsOrEq l y ∨ ContainsOrEq r y :=
+  containsOrEq_mul
+
+@[simp] theorem terms_leaf (tok : L) :
+    (leaf tok : SyntacticObject (SyntacticObject.Leaf L ι)).terms = {leaf tok} := rfl
+
+@[simp] theorem terms_trace :
+    (trace : SyntacticObject (SyntacticObject.Leaf L ι)).terms = {trace} := rfl
+
+@[simp] theorem terms_labelledTrace (i : ι) :
+    (labelledTrace i : SyntacticObject (SyntacticObject.Leaf L ι)).terms = {labelledTrace i} := rfl
+
+@[simp] theorem terms_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
+    (merge l r).terms = merge l r ::ₘ (l.terms + r.terms) :=
+  terms_mul l r
+
+/-! ### Immediate containment -/
+
+/-! ### Containment -/
 
 /-! ### The vertex count grades containment -/
 
@@ -173,7 +254,7 @@ theorem numNodes_lt_of_contains (h : Contains x y) :
     (fun _ _ ↦ numNodes_lt_of_immediatelyContains) x y h
 
 /-- Being a proper term is well-founded: an object has finitely many terms. -/
-theorem wellFounded_flip_contains : WellFounded (flip (Contains (L := L) (ι := ι))) :=
+theorem wellFounded_flip_contains : WellFounded (flip (Contains (α := SyntacticObject.Leaf L ι))) :=
   Subrelation.wf (fun h ↦ numNodes_lt_of_contains h)
     (InvImage.wf (fun s : SyntacticObject (SyntacticObject.Leaf L ι) ↦ s.toUnorderedTree.numNodes)
         wellFounded_lt)
@@ -216,25 +297,6 @@ namespace SyntacticObject
 
 variable {x y l r : SyntacticObject (SyntacticObject.Leaf L ι)}
 
-/-- The terms of a syntactic object, itself included. -/
-def terms : SyntacticObject (SyntacticObject.Leaf L ι) → Multiset
-    (SyntacticObject (SyntacticObject.Leaf L ι)) :=
-  FreeCommMagma.elim (fun x ↦ {FreeCommMagma.of x}) (fun l r a b ↦ (l * r) ::ₘ (a + b))
-    fun l r a b ↦ by rw [mul_comm, add_comm]
-
-@[simp] theorem terms_leaf (tok : L) :
-    (leaf tok : SyntacticObject (SyntacticObject.Leaf L ι)).terms = {leaf tok} := rfl
-
-@[simp] theorem terms_trace : (trace : SyntacticObject (SyntacticObject.Leaf L ι)).terms = {trace}
-    := rfl
-
-@[simp] theorem terms_labelledTrace (i : ι) :
-    (labelledTrace i : SyntacticObject (SyntacticObject.Leaf L ι)).terms = {labelledTrace i} := rfl
-
-@[simp] theorem terms_merge (l r : SyntacticObject (SyntacticObject.Leaf L ι)) :
-    (merge l r).terms = merge l r ::ₘ (l.terms + r.terms) :=
-  FreeCommMagma.elim_mul _ _ _ l r
-
 @[simp] theorem map_toUnorderedTree_terms (s : SyntacticObject (SyntacticObject.Leaf L ι)) :
     s.terms.map toUnorderedTree = UnorderedTree.subtrees s.toUnorderedTree := by
   induction s using ind with
@@ -249,17 +311,6 @@ def terms : SyntacticObject (SyntacticObject.Leaf L ι) → Multiset
     rw [terms_merge, Multiset.map_cons, Multiset.map_add, ihl, ihr, toUnorderedTree_merge,
       UnorderedTree.subtrees_node_pair]
 
-/-- The terms of `x` are the objects it reflexively contains. -/
-@[simp] theorem mem_terms : y ∈ x.terms ↔ ContainsOrEq x y := by
-  induction x using ind with
-  | leaf tok => simp
-  | trace => simp
-  | traceOf tok => simp
-  | merge l r ihl ihr => simp [ihl, ihr]
-
-theorem self_mem_terms (s : SyntacticObject (SyntacticObject.Leaf L ι)) : s ∈ s.terms :=
-  mem_terms.2 ReflTransGen.refl
-
 theorem toUnorderedTree_mem_subtrees {S U : SyntacticObject (SyntacticObject.Leaf L ι)} :
     S.toUnorderedTree ∈ U.toUnorderedTree.subtrees ↔ S ∈ U.terms := by
   rw [← map_toUnorderedTree_terms, Multiset.mem_map_of_injective toUnorderedTree_injective]
@@ -268,9 +319,6 @@ theorem mem_terms_merge_right (u C : SyntacticObject (SyntacticObject.Leaf L ι)
     (merge u C).terms := by
   rw [terms_merge]
   exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inr (self_mem_terms C)))
-
-theorem terms_subset_terms (h : ContainsOrEq x y) : y.terms ⊆ x.terms :=
-  fun _ hz ↦ mem_terms.2 (ReflTransGen.trans h (mem_terms.1 hz))
 
 /-- The terms of a term, one per vertex, are among the terms of the object. -/
 theorem terms_le_terms (h : y ∈ x.terms) : y.terms ≤ x.terms := by

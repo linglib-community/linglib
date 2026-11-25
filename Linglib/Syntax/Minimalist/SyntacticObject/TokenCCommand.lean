@@ -187,7 +187,7 @@ theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : PlanarSyntacticObject)
       rintro ⟨z, -, ⟨w, hw, hwx, -, -⟩, -⟩
       rw [terms_of_nil, Multiset.mem_singleton] at hw
       subst hw
-      simp [ImmediatelyContains] at hwx
+      simp [immediatelyContains_iff_mem_children] at hwx
     · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
       obtain rfl := eq_bare_of_ne_nil h (by simp)
       obtain ⟨hu, hv⟩ := (isSyntacticObject_mk_merge _ _).1 h

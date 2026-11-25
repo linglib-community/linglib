@@ -511,13 +511,13 @@ theorem SyntacticObject.not_sisters_of_toPlanarLeaf?
   rcases s.exists_form with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩
   · rw [terms_leaf, Multiset.mem_singleton] at hw
     subst hw
-    simp [ImmediatelyContains, toUnorderedTree_leaf] at hwx
+    simp [immediatelyContains_iff_mem_children, toUnorderedTree_leaf] at hwx
   · rw [terms_trace, Multiset.mem_singleton] at hw
     subst hw
-    simp [ImmediatelyContains, toUnorderedTree_trace] at hwx
+    simp [immediatelyContains_iff_mem_children, toUnorderedTree_trace] at hwx
   · rw [terms_labelledTrace, Multiset.mem_singleton] at hw
     subst hw
-    simp [ImmediatelyContains, toUnorderedTree_labelledTrace] at hwx
+    simp [immediatelyContains_iff_mem_children, toUnorderedTree_labelledTrace] at hwx
   · simp [toPlanarLeaf?, toUnorderedTree_merge] at hs
 
 /-! ### Relabelling -/

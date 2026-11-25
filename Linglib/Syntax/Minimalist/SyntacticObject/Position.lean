@@ -112,7 +112,7 @@ theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p :=
 /-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
     ImmediatelyContains (t.termAt p) y ↔ ∃ q, p ⋖ q ∧ t.termAt q = y := by
-  rw [ImmediatelyContains, toUnorderedTree_termAt, UnorderedTree.children_mk, Multiset.mem_coe,
+  rw [immediatelyContains_iff_mem_children, toUnorderedTree_termAt, UnorderedTree.children_mk, Multiset.mem_coe,
       List.mem_map]
   constructor
   · rintro ⟨c, hc, hcy⟩
