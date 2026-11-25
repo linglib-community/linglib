@@ -18,10 +18,9 @@ subject, hyper-raising, when it genuinely Agreed with the clause (section 4.3), 
 defective intervention when it did not, the English `that`-clause of section 5.3. The attested
 profiles follow from the engine: English, `english_profile`; Zulu, `zulu_profile`; Uyghur,
 `uyghur_profile` (section 4.5); and Makhuwa and Matengo, which lack the EPP, `makhuwa_no_raising`
-(section 5.1). Phasehood is thereby relativized to φ-probes rather than a fixed condition
-(`Syntax/Minimalist/Phase.lean`): finite CPs and nonfinite TPs of the same size get opposite
-raising outcomes across languages, `finite_cp_outcome_not_size_driven` and
-`nonfinite_tp_outcome_not_size_driven`.
+(section 5.1). Phasehood is thereby relativized to φ-probes rather than a fixed condition: finite
+CPs and nonfinite TPs of the same size get opposite raising outcomes across languages,
+`finite_cp_outcome_not_size_driven` and `nonfinite_tp_outcome_not_size_driven`.
 
 ## Implementation notes
 

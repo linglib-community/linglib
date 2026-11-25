@@ -7,6 +7,9 @@ public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Insid
 public import Linglib.Languages.Icelandic.Nouns
 public import Linglib.Data.Examples.Wood2023
 public import Linglib.Data.Examples.Readers
+public import Linglib.Morphology.Morph
+public import Linglib.Morphology.Word.Features
+public import Linglib.Morphology.Exponence.Basic
 
 /-!
 # Wood (2023): Icelandic Nominalizations and Allosemy

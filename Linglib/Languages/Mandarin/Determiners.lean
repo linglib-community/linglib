@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Semantics.Quantifier.Global
+public import Linglib.Syntax.Feature.Person.Basic
 
 /-!
 # Mandarin determiners

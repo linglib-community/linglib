@@ -254,7 +254,7 @@ open RoseTree PhraseStructure Minimalist
 
 /-! ### The positions of a syntactic object -/
 
-variable (t : PlanarSyntacticObject)
+variable (t : PlanarSyntacticObject Minimalist.TokenLeaf)
 
 /-- The head relation on the positions of `t`, from the head daughter of each subtree. -/
 def HeadDaughterAt (m d : t.toRoseTree.Positions) : Prop := headDaughterRel (HeadDaughter.raising
@@ -316,10 +316,10 @@ def saw : LexicalItem.Token :=
 def it : LexicalItem.Token := ⟨.of .D [] English.Pronouns.it.form, 0⟩
 
 /-- *The man saw it*, (11). -/
-def theManSawIt : PlanarSyntacticObject := {{↑the, ↑man}, {↑saw, ↑it}}
+def theManSawIt : PlanarSyntacticObject Minimalist.TokenLeaf := {{↑the, ↑man}, {↑saw, ↑it}}
 
 /-- (11) with *man* and *it* raised, leaving their traces. -/
-def theManSawItRaised : PlanarSyntacticObject :=
+def theManSawItRaised : PlanarSyntacticObject Minimalist.TokenLeaf :=
   {{↑the, .traceOf man}, {↑saw, .traceOf it}}
 
 /-- The position at an address. -/

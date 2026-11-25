@@ -15,7 +15,7 @@ with no linker, a noun phrase or a participial clause, and cannot go without a c
 transitive and an unaccusative predicate with the same noun or adjective.
 
 The verbs are recorded with the complements they take as main verbs. *dep* has no entry: whether
-it is a complementizer or the converb of the verb is the question of `Studies/Major2024.lean`.
+it is a complementizer or the converb of the verb is the question of [major-2024].
 Forms are in the standard Latin orthography, a verb's form is its stem, and `I` is the
 harmonizing high vowel of the converb suffix.
 

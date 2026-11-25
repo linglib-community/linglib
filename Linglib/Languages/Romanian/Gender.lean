@@ -3,6 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Category.Noun.Basic
 public import Linglib.Semantics.Reference.Animacy
+public import Linglib.Syntax.Feature.Number.Basic
 
 /-!
 # Romanian noun gender

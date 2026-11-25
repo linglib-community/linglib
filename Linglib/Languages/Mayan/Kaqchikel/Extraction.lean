@@ -33,8 +33,7 @@ and temporals never license it, and manners and purposes are unattested with it.
 ## Implementation notes
 
 `realize` records the Patzún judgments: extraction to the position immediately above the clause,
-nothing intervening. The obviation by intervening material is the competition of
-`Studies/Erlewine2016.lean`.
+nothing intervening. The obviation by intervening material is the subject of [erlewine-2016].
 
 ## References
 

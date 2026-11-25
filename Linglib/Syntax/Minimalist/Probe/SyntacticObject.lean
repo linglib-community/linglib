@@ -9,6 +9,7 @@ public import Linglib.Syntax.Minimalist.Probe.Minimal
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
+public import Linglib.Syntax.Minimalist.SyntacticObject.Token
 
 /-!
 # Minimal search over syntactic objects
@@ -17,16 +18,14 @@ This file instantiates probe search at the tree: a probe on the head at a positi
 planar object searches the positions the head c-commands in some order, a key on positions.
 Closest by the branching positions above them, it finds a goal that no other satisfier
 asymmetrically c-commands: the Minimal Link Condition, with mutually c-commanding candidates
-equidistant. Procedural search orders are in `Probe/Search.lean`. Positions closed to the search,
-by the PIC or by a horizon, cut its domain. Agree and labeling are both this search; what Agree
-then does to the features of the probe and the goal is `Minimalist.FeatureState.value`.
+equidistant. What Agree then does to the features of the probe and the goal is
+`Minimalist.FeatureState.value`.
 
 ## Main definitions
 
-* `Minimalist.PlanarSyntacticObject.goalsBy`, `goals`, `goalsUnder`: the terms a probe on a
-  head finds under a search order, under closeness, and with some positions closed to it.
-* `Minimalist.PlanarSyntacticObject.leafProbe`, `phraseProbe`: the probes satisfied by the
-  leaves of a category, and by the phrases its heads form.
+* `Minimalist.PlanarSyntacticObject.goalsBy`, `goals`: the terms a probe on a head finds under a
+  search order, and under closeness.
+* `Minimalist.PlanarSyntacticObject.leafProbe`: the probe satisfied by the leaves of a category.
 
 ## Main results
 
@@ -34,8 +33,6 @@ then does to the features of the probe and the goal is `Minimalist.FeatureState.
   c-commands a position blocks the goal there.
 * `Minimalist.PlanarSyntacticObject.finds_above_branching_iff`: among satisfiers none of which
   dominates another, a probe finds those that no satisfier asymmetrically c-commands.
-* `Minimalist.PlanarSyntacticObject.mem_goals_leafProbe_map_iff`: a probe for the leaves of
-  a category finds the same goals under an injective relabelling that keeps categories.
 
 ## References
 
@@ -54,7 +51,7 @@ the key, the Minimal Link Condition of [chomsky-1995]. -/
 
 namespace PlanarSyntacticObject
 
-variable {t : PlanarSyntacticObject} {p : Probe t.toRoseTree.Positions} {s : Set
+variable {t : PlanarSyntacticObject TokenLeaf} {p : Probe t.toRoseTree.Positions} {s : Set
     t.toRoseTree.Positions}
   {q g : t.toRoseTree.Positions}
 
@@ -79,13 +76,14 @@ variable {β : Type*} [Preorder β] [DecidableRel ((· < ·) : β → β → Pro
 variable (t) in
 /-- The terms a probe on the head `h` finds when its search orders positions by `key`: those at
 the first satisfying positions that an occurrence of `h` c-commands. -/
-def goalsBy (p : Probe t.toRoseTree.Positions) (h : SyntacticObject) (key : t.toRoseTree.Positions →
+def goalsBy (p : Probe t.toRoseTree.Positions) (h : SyntacticObject TokenLeaf)
+    (key : t.toRoseTree.Positions →
     β) :
-    Finset SyntacticObject :=
+    Finset (SyntacticObject TokenLeaf) :=
   (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
     p.Finds {q | t.toRoseTree.CCommands a q} key g).image t.termAt
 
-theorem mem_goalsBy {h x : SyntacticObject} {key : t.toRoseTree.Positions → β} :
+theorem mem_goalsBy {h x : SyntacticObject TokenLeaf} {key : t.toRoseTree.Positions → β} :
     x ∈ t.goalsBy p h key ↔
       ∃ a, t.termAt a = h ∧ ∃ g, p.Finds {q | t.toRoseTree.CCommands a q} key g ∧ t.termAt g = x :=
           by
@@ -98,88 +96,20 @@ end Search
 variable (t) in
 /-- The terms a probe on the head `h` finds: those at the closest satisfying positions that an
 occurrence of `h` c-commands. -/
-def goals (p : Probe t.toRoseTree.Positions) (h : SyntacticObject) : Finset SyntacticObject :=
+def goals (p : Probe t.toRoseTree.Positions) (h : SyntacticObject TokenLeaf) : Finset
+    (SyntacticObject TokenLeaf) :=
   t.goalsBy p h (t.above t.toRoseTree.branching)
 
-theorem mem_goals {h x : SyntacticObject} : x ∈ t.goals p h ↔
+theorem mem_goals {h x : SyntacticObject TokenLeaf} : x ∈ t.goals p h ↔
     ∃ a, t.termAt a = h ∧ ∃ g,
       p.Finds {q | t.toRoseTree.CCommands a q} (t.above t.toRoseTree.branching) g ∧
         t.termAt g = x :=
   mem_goalsBy
 
 variable (t) in
-/-- The terms a probe on the head `h` finds when, at each occurrence `a` of `h`, the positions
-`cut a` are closed to its search, by the PIC or by a horizon. -/
-def goalsUnder (p : Probe t.toRoseTree.Positions) (h : SyntacticObject)
-    (cut : GornAddress → Set GornAddress) [∀ a, DecidablePred (· ∈ cut a)] :
-    Finset SyntacticObject :=
-  (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
-    p.Finds {q | t.toRoseTree.CCommands a q ∧ q.val ∉ cut a.val} (t.above
-        t.toRoseTree.branching) g).image t.termAt
-
-@[simp] theorem goalsUnder_empty {h : SyntacticObject} :
-    t.goalsUnder p h (fun _ ↦ ∅) = t.goals p h := by
-  simp only [goalsUnder, goals, goalsBy, Set.mem_empty_iff_false, not_false_eq_true, and_true]
-
-theorem mem_goalsUnder_of_finds {h : SyntacticObject}
-    {cut : GornAddress → Set GornAddress}
-    [∀ a, DecidablePred (· ∈ cut a)] {a : t.toRoseTree.Positions} (ha : t.termAt a = h)
-    (hg : p.Finds {q | t.toRoseTree.CCommands a q} (t.above t.toRoseTree.branching) g)
-    (hgc : g.val ∉ cut a.val) :
-    t.termAt g ∈ t.goalsUnder p h cut := by
-  simp only [goalsUnder, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
-  exact ⟨g, ⟨a, ha, hg.of_subset (fun _ hq ↦ hq.1) ⟨hg.mem, hgc⟩⟩, rfl⟩
-
-variable (t) in
 /-- The probe satisfied by the leaves of category `c`. -/
 def leafProbe (c : Cat) : Probe t.toRoseTree.Positions :=
   .relativized fun q ↦ decide (SyntacticObject.isLeafOf c (t.termAt q))
-
-variable (t) in
-/-- The probe satisfied by the phrases a head of category `c` forms with its sister, so that a
-phrase in a specifier is closer than whatever its sister contains. -/
-def phraseProbe (c : Cat) : Probe t.toRoseTree.Positions :=
-  .relativized fun q ↦
-    decide (∃ e : t.toRoseTree.Positions, e ≠ ⊥ ∧ e.val.parent = q.val ∧
-      SyntacticObject.isLeafOf c (t.termAt e))
-
-/-- A probe for the leaves of a category finds the relabelled goals in a relabelled object, under
-an injective relabelling that keeps categories. -/
-theorem mem_goals_leafProbe_map_iff {f : LexicalItem.Token → LexicalItem.Token}
-    (hf : Function.Injective f) (hcat : ∀ t, (f t).item.cat = t.item.cat) {c : Cat}
-    {h x : SyntacticObject} :
-    x.map f ∈ (t.map f).goals ((t.map f).leafProbe c) (h.map f) ↔
-      x ∈ t.goals (t.leafProbe c) h := by
-  let e : t.toRoseTree.Positions ≃ (t.map f).toRoseTree.Positions :=
-    Equiv.subtypeEquivRight fun p ↦ by simp only [toRoseTree_map, RoseTree.validPaths_map]
-  have hsub (q : t.toRoseTree.Positions) :
-      (e q).subtree = RoseTree.map (SyntacticObject.Vertex.map f) q.subtree :=
-    Option.some.inj <| (e q).getElem?_eq.symm.trans <|
-      (congrArg (fun r : RoseTree _ ↦ r[q.val.toList]?) (toRoseTree_map f t)).trans <|
-      (RoseTree.getElem?_map _ t.toRoseTree q.val.toList).trans (by rw [q.getElem?_eq,
-          Option.map_some])
-  have hterm (q : t.toRoseTree.Positions) : (t.map f).termAt (e q) = (t.termAt q).map f :=
-    SyntacticObject.toUnorderedTree_injective <| by
-      rw [toUnorderedTree_termAt, hsub, SyntacticObject.toUnorderedTree_map, toUnorderedTree_termAt,
-          UnorderedTree.map_mk]
-  have hcc (a q : t.toRoseTree.Positions) : (t.map f).toRoseTree.CCommands (e a) (e q) ↔
-      t.toRoseTree.CCommands a q :=
-    (iff_of_eq (congrArg (fun r : RoseTree _ ↦ r.CCommands a.val q.val) (toRoseTree_map f t))).trans
-      (RoseTree.cCommands_map _ _ _ _)
-  have hkey (q : t.toRoseTree.Positions) :
-      (t.map f).above (t.map f).toRoseTree.branching (e q) = t.above t.toRoseTree.branching q :=
-    Finset.filter_congr fun x _ ↦
-      (iff_of_eq (congrArg (fun r : RoseTree _ ↦ x ∈ r.branching) (toRoseTree_map f t))).trans
-        (by rw [RoseTree.branching_map])
-  have hfinds (a g : t.toRoseTree.Positions) :
-      ((t.map f).leafProbe c).Finds {q | (t.map f).toRoseTree.CCommands (e a) q}
-          ((t.map f).above (t.map f).toRoseTree.branching) (e g) ↔
-        (t.leafProbe c).Finds {q | t.toRoseTree.CCommands a q}
-          (t.above t.toRoseTree.branching) g := by
-    simp only [Probe.Finds, MinimalFor, e.surjective.forall, Set.mem_ofPred_eq, hcc, hkey,
-      leafProbe, Probe.relativized_sat, hterm, SyntacticObject.isLeafOf_map hcat]
-  rw [mem_goals, mem_goals, e.surjective.exists]
-  simp only [hterm, (SyntacticObject.map_injective hf).eq_iff, e.surjective.exists, hfinds]
 
 end PlanarSyntacticObject
 

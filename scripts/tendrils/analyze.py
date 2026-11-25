@@ -216,6 +216,40 @@ for m in mods:
                   imp=[mid[i] for i in imports[m]], need=bits(needF & ic),
                   ndecl=sum(1 for x in xs if is_written[x])))
 
+# ---------------------------------------------------------------- threads worth cutting
+# For a file B and a direct import m: X = the files B reaches only through m. If few declarations of B
+# need anything in X, moving them out frees every file above B that uses none of them from X.
+rev = {x: set() for x in nodes}
+for x in nodes:
+    for y in full_e[x]: rev[y].add(x)
+Ru = closure_masks(rev, bit)             # the modules whose declarations depend on a declaration
+importers = [0] * len(mods)
+for m in mods:
+    ic = iclo(m); i = mid[m]
+    for j in bits(ic): importers[j] |= 1 << i
+cuts = []
+for m in mods:
+    if layer(m) == 'study' or m not in mod_nodes: continue
+    B = mid[m]; xs = [x for x in mod_nodes[m] if is_written[x]]
+    if len(xs) < 4 or not importers[B]: continue
+    reach = {i: (1 << mid[i]) | iclo(i) for i in imports[m]}
+    for i in imports[m]:
+        others = 0
+        for k, v in reach.items():
+            if k != i: others |= v
+        X = reach[i] & ~others
+        if not X: continue
+        D = [x for x in xs if Mf[x] & X]
+        if not D or len(D) * 4 > len(xs): continue
+        users = 0
+        for x in D: users |= Ru[x]
+        free = importers[B] & ~users
+        nfree, nx = bin(free).count('1'), bin(X).count('1')
+        if nfree and nx:
+            cuts.append((nfree * nx, m, i, nx, len(D), len(xs), nfree, bin(importers[B]).count('1'),
+                         sorted(rows[x]['name'] for x in D)[:6]))
+cuts.sort(reverse=True)
+
 # ---------------------------------------------------------------- claims
 CLASS = ['rooted', 'data', 'study', 'local', 'lean']   # how far a statement reaches
 
@@ -286,19 +320,34 @@ hot.sort(reverse=True)
 # ---------------------------------------------------------------- page data
 knodes = sorted(keep)
 kid = {x: i for i, x in enumerate(knodes)}
+times_file = os.path.join(os.path.dirname(os.path.abspath(TSV)), 'times.tsv')
+secs = {}
+if os.path.exists(times_file):
+    for line in open(times_file):
+        m, _, t = line.strip().partition('\t')
+        if t: secs[m] = float(t)
+above = [0.0] * len(mods)                # seconds to rebuild a file and every file above it
+if secs:
+    for m in mods:
+        t = secs.get(m, 0.0); above[mid[m]] += t
+        for j in bits(iclo(m)): above[j] += t
 src_file = os.path.join(os.path.dirname(os.path.abspath(TSV)), 'source.txt')
 source = open(src_file).read().split() if os.path.exists(src_file) else []
 recs = [["A", AREAS], ["I", source]]
 for d in M:
     recs.append(["M", d['name'], d['layer'], d['group'], d['lines'], int(d['compiled']), d['nimp'], d['nuse'],
                  d['nmean'], d['ndflt'], d['traffic'], d['ndecl'], d.get('cls'), d.get('hcls'), d['imp'], d['need'],
-                 d['dead'], d.get('flags', [])])
+                 d['dead'], d.get('flags', []),
+                 round(secs[d['name']], 1) if d['name'] in secs else None,
+                 round(above[mid[d['name']]]) if secs else None])
 for x in knodes:
     recs.append(["N", rows[x]['name'], mid[rows[x]['mod']], rows[x]['kind'] if is_written[x] else 'gen', flags(x),
                  [kid[y] for y in sorted(mean_e[x]) if y in kid], [aid[a] for a in sorted(mean_a[x])],
                  traffic.get(x, 0)])
 for m, cl in study_claims.items():
     recs.append(["C", mid[m], [[kid[x], classify(x), int(has_doc[x]), nshared[x]] for x in cl]])
+for c in cuts[:60]:
+    recs.append(["S", mid[c[1]], mid[c[2]], c[3], c[4], c[5], c[6], c[7], c[8]])
 recs.append(["X", sorted({l.strip() for l in open(MISSING_FILE) if l.strip()})])
 with open(OUT + '/graph.json', 'w', encoding='utf-8') as fh:
     fh.write('[\n' + ',\n'.join(json.dumps(r, separators=(',', ':'), ensure_ascii=False) for r in recs) + '\n]\n')
@@ -320,3 +369,6 @@ for d in sorted(th, key=lambda d: -(d['nimp'] - d['nuse']) * (1 + d['traffic']))
     print(f"  {d['name'][8:]:52} {d['nimp']:4d} {d['nuse']:4d} {d['lines']:5d} {d['traffic']:4d}")
 print('\nflagged declarations by studies resting on them (d default argument, b literal of 1000 or more, s sorry):')
 for t, n, m, fl in hot[:25]: print(f'  {t:4d} {fl:3} {n}  [{m[8:]}]')
+print('\nthreads worth cutting: file, import, files only that import brings, declarations needing them / all, files freed / files above')
+for c in cuts[:22]:
+    print(f"  {c[1][8:]:46} -> {c[2][8:]:44} {c[3]:3d}  {c[4]:3d}/{c[5]:<4d} {c[6]:4d}/{c[7]:<4d} {', '.join(c[8][:3])[:70]}")

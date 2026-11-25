@@ -264,10 +264,6 @@ theorem gc_ofAgreement_agreement : GaloisConnection ofAgreement agreement := fun
 @[simp] theorem agreement_ofAgreement (c : Agreement.Bundle) : (ofAgreement c).agreement = c :=
   funext fun d ↦ FeatureSlot.unbotD_ofSlot (c d)
 
-/-- `ofAgreement` and `agreement` form a Galois coinsertion. -/
-def gciOfAgreement : GaloisCoinsertion ofAgreement agreement :=
-  gc_ofAgreement_agreement.toGaloisCoinsertion fun c ↦ (agreement_ofAgreement c).le
-
 theorem monotone_agreement : Monotone agreement := gc_ofAgreement_agreement.monotone_u
 
 theorem monotone_ofAgreement : Monotone ofAgreement := gc_ofAgreement_agreement.monotone_l

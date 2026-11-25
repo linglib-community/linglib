@@ -15,6 +15,7 @@ public import Linglib.Morphology.Word.Agree
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Feature.Person.Configuration
+public import Linglib.Syntax.Binding.Word
 
 /-!
 # Pronouns

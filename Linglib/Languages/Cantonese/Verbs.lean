@@ -12,7 +12,7 @@ The Cantonese verbs of Liu and Yip's two lists of complement-taking predicates. 
 whose form is the jyutping and whose script is the characters. The desideratives' subject
 controls the complement's subject, and the manipulatives' object does, as in *hyun Aaming
 [bou PhD]* 'urge Ming to apply for a PhD'. The size of each complement, and the scope of an
-*again*-element across it, are the paper's analysis and live in `Studies/LiuYip2026.lean`.
+*again*-element across it, are the analysis of [liu-yip-2026].
 
 ## Main definitions
 

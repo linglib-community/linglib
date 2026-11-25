@@ -11,6 +11,9 @@ public import Linglib.Syntax.Tree.Cat
 public import Linglib.Languages.English.Nouns
 public import Linglib.Languages.English.Determiners
 public import Linglib.Languages.English.Verbs.Levin
+public import Linglib.Syntax.Category.Adposition.Word
+public import Linglib.Syntax.Category.Determiner.Word
+public import Linglib.Syntax.Category.Noun.Word
 
 /-!
 # Larson (1988): On the Double Object Construction

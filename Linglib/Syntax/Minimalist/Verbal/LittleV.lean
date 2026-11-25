@@ -12,10 +12,8 @@ public import Mathlib.Data.List.Chain
 
 [cuervo-2003]'s event introducers: the three flavors of little v that verbalize a root and fix
 its event type. `vDO` builds activities, `vGO` events of change, movement and happening, `vBE`
-states. A sentence's event structure is the list of its verbal heads from the highest down; a
-complex structure embeds one vP under another, and the possible combinations of the
-dissertation's table (17) and its footnote are the chains of `LittleV.Embeds`: `vDO` embeds any
-event, `vGO` only a state, `vBE` nothing.
+states. A sentence's event structure is the list of its verbal heads from the highest down, and a
+complex structure embeds one vP under another.
 
 Causatives and inchoatives are the two complex structures: an event or state embedded under
 `vDO`, and a state embedded under `vGO`. There is no CAUSE head: "being causative is the
@@ -25,13 +23,11 @@ Only a `vDO`-headed structure combines with Voice and so licenses an external ar
 
 ## Main definitions
 
-* `LittleV`, `LittleV.Embeds`, `LittleV.IsWellFormed`
-* `LittleV.Activity`, `LittleV.Change`, `LittleV.State`, `LittleV.Causative`,
-  `LittleV.Inchoative`, `LittleV.LicensesVoice`
+* `LittleV`
+* `LittleV.Causative`, `LittleV.Inchoative`, `LittleV.LicensesVoice`
 
 ## Main results
 
-* `LittleV.Inchoative.eq_of_isWellFormed`: a well-formed inchoative is exactly `[vGO, vBE]`
 * `LittleV.Causative.not_inchoative`: causatives do not include inchoatives
 * `LittleV.causative_cons`, `LittleV.inchoative_cons`: the alternation over a shared lower event
 
@@ -74,44 +70,7 @@ def Dynamic (v : LittleV) : Prop := v ≠ .vBE
 
 instance : DecidablePred Dynamic := fun _ => inferInstanceAs (Decidable (_ ≠ _))
 
-/-- Which event a head may embed, [cuervo-2003]'s table (17) with its footnote: `vDO` embeds any
-    event, `vGO` only a state, and `vBE` nothing, since events have to "become" states before they
-    combine with `vBE`. -/
-def Embeds (v w : LittleV) : Prop := v = .vDO ∨ (v = .vGO ∧ w = .vBE)
-
-instance : DecidableRel Embeds := fun _ _ => inferInstanceAs (Decidable (_ ∨ _))
-
-theorem Embeds.dynamic (h : Embeds v w) : v.Dynamic := by
-  rcases h with rfl | ⟨rfl, -⟩ <;> decide
-
-@[simp] theorem not_vBE_embeds (w : LittleV) : ¬ Embeds .vBE w := by simp [Embeds]
-
-@[simp] theorem vGO_embeds_iff : Embeds .vGO w ↔ w = .vBE := by simp [Embeds]
-
-@[simp] theorem vDO_embeds (w : LittleV) : Embeds .vDO w := .inl rfl
-
-/-- A well-formed event structure: a nonempty top-down chain of heads, each embedding the next. -/
-def IsWellFormed (l : List LittleV) : Prop := l ≠ [] ∧ l.IsChain Embeds
-
-instance : DecidablePred IsWellFormed := fun _ => inferInstanceAs (Decidable (_ ∧ _))
-
-theorem IsWellFormed.not_infix_vBE (hw : IsWellFormed l) (w : LittleV) : ¬ [.vBE, w] <:+: l :=
-  fun h => not_vBE_embeds w (List.isChain_pair.1 (hw.2.infix h))
-
-theorem IsWellFormed.eq_vBE_of_infix_vGO (hw : IsWellFormed l) (h : [.vGO, w] <:+: l) :
-    w = .vBE :=
-  vGO_embeds_iff.1 (List.isChain_pair.1 (hw.2.infix h))
-
 /-! ### Event types ([cuervo-2003] §1.3) -/
-
-/-- A simple activity: a root verbalized by `vDO` alone. -/
-def Activity (l : List LittleV) : Prop := l = [.vDO]
-
-/-- A simple predicate of change, movement or happening: `vGO` alone. -/
-def Change (l : List LittleV) : Prop := l = [.vGO]
-
-/-- A simple state, existential or predicational: `vBE` alone. -/
-def State (l : List LittleV) : Prop := l = [.vBE]
 
 /-- A complex, bi-eventive event: at least two sub-events. -/
 def BiEventive (l : List LittleV) : Prop := 2 ≤ l.length
@@ -127,9 +86,6 @@ def Inchoative (l : List LittleV) : Prop := l.head? = some .vGO ∧ BiEventive l
     predicates of change and states being unaccusative. -/
 def LicensesVoice (l : List LittleV) : Prop := l.head? = some .vDO
 
-instance : DecidablePred Activity := fun _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred Change := fun _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred State := fun _ => inferInstanceAs (Decidable (_ = _))
 instance : DecidablePred BiEventive := fun _ => inferInstanceAs (Decidable (_ ≤ _))
 instance : DecidablePred Causative := fun _ => inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred Inchoative := fun _ => inferInstanceAs (Decidable (_ ∧ _))
@@ -148,28 +104,6 @@ theorem Inchoative.not_licensesVoice (h : Inchoative l) : ¬ LicensesVoice l :=
 theorem Causative.not_inchoative (h : Causative l) : ¬ Inchoative l :=
   fun h' => by simp [Inchoative, h.1] at h'
 
-theorem Change.not_licensesVoice (h : Change l) : ¬ LicensesVoice l := by
-  subst h; decide
-
-theorem State.not_licensesVoice (h : State l) : ¬ LicensesVoice l := by
-  subst h; decide
-
-/-- A well-formed inchoative is exactly `[vGO, vBE]`: `vGO` embeds only a state, under which
-    nothing is embedded. -/
-theorem Inchoative.eq_of_isWellFormed (hi : Inchoative l) (hw : IsWellFormed l) :
-    l = [.vGO, .vBE] := by
-  obtain ⟨hd, hl⟩ := hi
-  rcases l with _ | ⟨v, _ | ⟨w, _ | ⟨u, t⟩⟩⟩
-  · simp at hd
-  · simp [BiEventive] at hl
-  · obtain rfl := Option.some.inj hd
-    obtain rfl := vGO_embeds_iff.1 (List.isChain_pair.1 hw.2)
-    rfl
-  · obtain rfl := Option.some.inj hd
-    obtain ⟨hvw, hc⟩ := List.isChain_cons_cons.1 hw.2
-    obtain rfl := vGO_embeds_iff.1 hvw
-    exact absurd (List.isChain_cons_cons.1 hc).1 (not_vBE_embeds u)
-
 /-! ### The causative alternation ([cuervo-2003] §§1.3.4–1.3.5)
 
 Over a shared lower event, `vDO` gives the causative and `vGO` the inchoative: *Vicki cerró la
@@ -181,22 +115,6 @@ theorem causative_cons (h : lower ≠ []) : Causative (.vDO :: lower) :=
 
 theorem inchoative_cons (h : lower ≠ []) : Inchoative (.vGO :: lower) :=
   ⟨rfl, Nat.succ_le_succ (List.length_pos_iff.2 h)⟩
-
-/-- The four possible combinations of table (17) are well formed, the three under `vDO`
-    causative and the one under `vGO` inchoative. -/
-theorem possible_combinations :
-    IsWellFormed [.vDO, .vDO] ∧ IsWellFormed [.vDO, .vGO] ∧ IsWellFormed [.vDO, .vBE] ∧
-      IsWellFormed [.vGO, .vBE] ∧
-    Causative [.vDO, .vDO] ∧ Causative [.vDO, .vGO] ∧ Causative [.vDO, .vBE] ∧
-      Inchoative [.vGO, .vBE] := by
-  decide
-
-/-- The combinations the footnote to (17) excludes: nothing under `vBE`, nothing dynamic under
-    `vGO`. -/
-theorem impossible_combinations :
-    ¬ IsWellFormed [.vBE, .vDO] ∧ ¬ IsWellFormed [.vBE, .vGO] ∧
-      ¬ IsWellFormed [.vGO, .vGO] ∧ ¬ IsWellFormed [.vGO, .vDO] := by
-  decide
 
 end LittleV
 
