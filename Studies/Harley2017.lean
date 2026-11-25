@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Harley2017
 public import Linglib.Morphology.DistributedMorphology.Basic
+public import Linglib.Syntax.Spine.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Studies.Pylkkanen2008
 
@@ -368,21 +369,22 @@ def vFeatures : Layer → Finset Feature
 
 /-- The projections a causative structure realizes, from the root up: v, Voice and the position
 of Cause. -/
-def spine : Layer → List Projection
-  | .root => [.v, .voice]
-  | .verb => [.v, .caus₁, .voice]
-  | .phase => [.v, .voice, .caus₂]
+def spine : Layer → Spine Projection
+  | .root => ⟨[.v, .voice]⟩
+  | .verb => ⟨[.v, .caus₁, .voice]⟩
+  | .phase => ⟨[.v, .voice, .caus₂]⟩
 
 /-- The pattern of a causative head: the position of Cause and Voice are on one head when the two
 are bundled, and every other projection is on a head of its own. -/
 def pattern (c : CauseHead) : List (List Projection) :=
-  (spine c.selects).splitBy fun x y ↦
+  (spine c.selects).heads.splitBy fun x y ↦
     c.bundled && decide ((x = .voice ∨ y = .voice) ∧
       (x = causPosition c.selects ∨ y = causPosition c.selects))
 
 variable (c : CauseHead)
 
-theorem flatten_pattern : (pattern c).flatten = spine c.selects := List.flatten_splitBy _ _
+theorem flatten_pattern : (pattern c).flatten = (spine c.selects).heads :=
+  List.flatten_splitBy _ _
 
 -- the projections of a causative structure rise along the hierarchy
 theorem pairwise_flatten_pattern : (pattern c).flatten.Pairwise (· < ·) := by

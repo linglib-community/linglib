@@ -56,17 +56,17 @@ variable {H : Type*}
 /-! ### The paper's derivations -/
 
 theorem raising_and_lowering (x y z : H) :
-    amalgamate [⟨z, some .raising⟩, ⟨y, none⟩, ⟨x, some .lowering⟩] =
+    amalgamate ⟨[⟨z, some .raising⟩, ⟨y, none⟩, ⟨x, some .lowering⟩]⟩ =
       some [⟨y, of z * of y * of x⟩] :=
   rfl
 
 theorem lowering_twice (x y z : H) :
-    amalgamate [⟨z, none⟩, ⟨y, some .lowering⟩, ⟨x, some .lowering⟩] =
+    amalgamate ⟨[⟨z, none⟩, ⟨y, some .lowering⟩, ⟨x, some .lowering⟩]⟩ =
       some [⟨z, of z * of y * of x⟩] :=
   rfl
 
 theorem lowering_without_target (x y z : H) :
-    amalgamate [⟨z, some .raising⟩, ⟨y, some .lowering⟩, ⟨x, none⟩] = none :=
+    amalgamate ⟨[⟨z, some .raising⟩, ⟨y, some .lowering⟩, ⟨x, none⟩]⟩ = none :=
   rfl
 
 /-! ### The clausal spine -/
@@ -74,23 +74,24 @@ theorem lowering_without_target (x y z : H) :
 open Minimalist.Cat
 
 /-- The Russian clause, in which V, v and Asp Raise and T Lowers. -/
-def russian : List (Terminal Minimalist.Cat) :=
-  [⟨V, some .raising⟩, ⟨v, some .raising⟩, ⟨Asp, some .raising⟩, ⟨.Neg, none⟩, ⟨T, some .lowering⟩]
+def russian : Spine (Terminal Minimalist.Cat) :=
+  ⟨[⟨V, some .raising⟩, ⟨v, some .raising⟩, ⟨Asp, some .raising⟩, ⟨.Neg, none⟩,
+    ⟨T, some .lowering⟩]⟩
 
 /-- The Danish clause, in which v and T Lower. -/
-def danish : List (Terminal Minimalist.Cat) :=
-  [⟨V, none⟩, ⟨v, some .lowering⟩, ⟨T, some .lowering⟩]
+def danish : Spine (Terminal Minimalist.Cat) :=
+  ⟨[⟨V, none⟩, ⟨v, some .lowering⟩, ⟨T, some .lowering⟩]⟩
 
 /-- The French finite clause, in which V, v and Neg Raise. The negator *pas* is a specifier and
 not on the spine. -/
-def french : List (Terminal Minimalist.Cat) :=
-  [⟨V, some .raising⟩, ⟨v, some .raising⟩, ⟨.Neg, some .raising⟩, ⟨T, none⟩]
+def french : Spine (Terminal Minimalist.Cat) :=
+  ⟨[⟨V, some .raising⟩, ⟨v, some .raising⟩, ⟨.Neg, some .raising⟩, ⟨T, none⟩]⟩
 
 /-- The German clause, in which V Raises into T. -/
-def german : List (Terminal Minimalist.Cat) := [⟨V, some .raising⟩, ⟨T, none⟩]
+def german : Spine (Terminal Minimalist.Cat) := ⟨[⟨V, some .raising⟩, ⟨T, none⟩]⟩
 
 /-- The Hebrew clause with a topic, in which V Raises into T. -/
-def hebrew : List (Terminal Minimalist.Cat) := [⟨V, some .raising⟩, ⟨T, none⟩, ⟨Top, none⟩]
+def hebrew : Spine (Terminal Minimalist.Cat) := ⟨[⟨V, some .raising⟩, ⟨T, none⟩, ⟨Top, none⟩]⟩
 
 theorem russian_amalgamate :
     amalgamate russian = some [⟨.Neg, of V * of v * of Asp * of .Neg * of T⟩] :=
@@ -123,8 +124,8 @@ theorem hebrew_fronting :
   rfl
 
 theorem skipping :
-    amalgamate [⟨(0 : Fin 6), none⟩, ⟨5, some .lowering⟩, ⟨4, none⟩, ⟨3, none⟩,
-        ⟨2, some .raising⟩, ⟨1, some .raising⟩, ⟨0, none⟩] =
+    amalgamate ⟨[⟨(0 : Fin 6), none⟩, ⟨5, some .lowering⟩, ⟨4, none⟩, ⟨3, none⟩,
+        ⟨2, some .raising⟩, ⟨1, some .raising⟩, ⟨0, none⟩]⟩ =
       some [⟨0, of 0 * of 5⟩, ⟨4, of 4⟩, ⟨3, of 3⟩, ⟨0, of 2 * of 1 * of 0⟩] :=
   rfl
 
@@ -135,8 +136,8 @@ theorem french_hosts :
 
 -- With a head occurring twice, the positions pronounced at it need not be a stretch of the spine.
 theorem skipping_hosts :
-    ∀ out ∈ amalgamate [⟨(0 : Fin 6), none⟩, ⟨5, some .lowering⟩, ⟨4, none⟩, ⟨3, none⟩,
-        ⟨2, some .raising⟩, ⟨1, some .raising⟩, ⟨0, none⟩],
+    ∀ out ∈ amalgamate ⟨[⟨(0 : Fin 6), none⟩, ⟨5, some .lowering⟩, ⟨4, none⟩, ⟨3, none⟩,
+        ⟨2, some .raising⟩, ⟨1, some .raising⟩, ⟨0, none⟩]⟩,
       ¬ IsContiguous (MorphosyntacticWord.hosts out).get := by
   decide
 
@@ -144,7 +145,7 @@ theorem skipping_hosts :
 
 /-- `spine? r` is the spine of the clause of `r`, a French or Russian finite clause, a Danish
 embedded clause, or a Danish root clause, in which V has moved. -/
-def spine? (r : Datum) : Option (List (Terminal Minimalist.Cat)) :=
+def spine? (r : Datum) : Option (Spine (Terminal Minimalist.Cat)) :=
   List.lookup (r.language, r.feature? "clause")
     [((.french, none), french), ((.russian, none), russian),
       ((.danish, some "embedded"), danish), ((.danish, some "root"), moveToRoot danish V)]

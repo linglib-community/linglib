@@ -311,7 +311,7 @@ def treeAt (sp : Spine Head) (n : ℕ) : PlanarSyntacticObject :=
   let k := (stateAt sp n).height
   (copyAt k 0 * (v * (V * obj)) : PlanarSyntacticObject).extend .v 10
     (fun i ↦ sp.heads[i]?.bind fun h ↦ if h.epp ∧ i + 1 ≤ k then some (copyAt k (i + 1)) else none)
-    ((sp.take n).heads.map Head.cat)
+    ((sp.map Head.cat).take n).heads
 
 /-- The tree in which the head `hd` at index `i` has just merged. -/
 def probeTree (sp : Spine Head) (i : ℕ) (hd : Head) : PlanarSyntacticObject :=

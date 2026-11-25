@@ -25,6 +25,8 @@ labels. A head divides a spine into its complement, the heads below it, and the 
 * `Spine`: the list of heads a phrase projects, bottom-up.
 * `Spine.Position`, `Spine.headAt`: the positions of a spine and the head at each.
 * `Spine.take`: the lowest `n` heads.
+* `Spine.map`: the spine of the images of the heads, and `Spine.mapHom`, the same as an order
+  homomorphism.
 * `Spine.height`: the position of a head.
 * `Spine.label`: the finset of heads a spine projects, and `Spine.labelHom`, the same as an order
   homomorphism.
@@ -109,6 +111,34 @@ def append (s : Spine H) (l : List H) : Spine H := ⟨s.heads ++ l⟩
 
 @[simp] theorem mem_append : c ∈ s.append l ↔ c ∈ s ∨ c ∈ l := List.mem_append
 
+/-! ### The image of a spine -/
+
+section Map
+
+variable {K L : Type*} {f : H → K}
+
+/-- The spine of the images of the heads, as when a head's features are forgotten for its
+category. -/
+def map (f : H → K) (s : Spine H) : Spine K := ⟨s.heads.map f⟩
+
+@[simp] theorem heads_map (f : H → K) (s : Spine H) : (s.map f).heads = s.heads.map f := rfl
+
+@[simp] theorem map_id (s : Spine H) : s.map id = s := by cases s; simp [map]
+
+theorem map_map (g : K → L) (f : H → K) (s : Spine H) : (s.map f).map g = s.map (g ∘ f) := by
+  simp [map]
+
+@[simp] theorem mem_map {k : K} : k ∈ s.map f ↔ ∃ c ∈ s, f c = k := List.mem_map
+
+theorem map_take (f : H → K) (s : Spine H) (n : ℕ) : (s.take n).map f = (s.map f).take n := by
+  simp [map, take, List.map_take]
+
+theorem map_append (f : H → K) (s : Spine H) (l : List H) :
+    (s.append l).map f = (s.map f).append (l.map f) := by
+  simp [map, append]
+
+end Map
+
 /-! ### Labels, the extension order and complements -/
 
 section DecidableEq
@@ -136,6 +166,16 @@ instance : DecidableLT (Spine H) := fun s t ↦ inferInstanceAs (Decidable (s.la
 def labelHom : Spine H →o Finset H := ⟨label, fun _ _ h ↦ h⟩
 
 @[simp] theorem coe_labelHom : ⇑(labelHom (H := H)) = label := rfl
+
+theorem map_mono {K : Type*} [DecidableEq K] (f : H → K) : Monotone (map f) := fun _ _ h ↦
+  le_iff_forall_mem.2 fun _ hk ↦ by
+    obtain ⟨c, hc, rfl⟩ := mem_map.1 hk
+    exact mem_map.2 ⟨c, le_iff_forall_mem.1 h c hc, rfl⟩
+
+/-- `Spine.map` as an order homomorphism. -/
+def mapHom {K : Type*} [DecidableEq K] (f : H → K) : Spine H →o Spine K := ⟨map f, map_mono f⟩
+
+@[simp] theorem coe_mapHom {K : Type*} [DecidableEq K] (f : H → K) : ⇑(mapHom f) = map f := rfl
 
 /-- A truncation of a spine lies below it. -/
 theorem le_of_prefix (h : t.heads <+: s.heads) : t ≤ s :=
