@@ -62,6 +62,19 @@ theorem cond_prod_preimage_fst [SFinite μ] (ν : Measure Ω') [IsProbabilityMea
   rw [cond, cond, Measure.prod_smul_left, Measure.restrict_prod_eq_prod_univ, ← Set.prod_univ,
     Measure.prod_prod, measure_univ, mul_one]
 
+variable (μ) in
+/-- Conditioning a product measure on a rectangle conditions each factor on its side. -/
+theorem cond_prod [SFinite μ] (ν : Measure Ω') [SFinite ν] (s : Set Ω) (t : Set Ω') :
+    (μ.prod ν)[|s ×ˢ t] = μ[|s].prod ν[|t] := by
+  rcases eq_or_ne (μ s) 0 with hs | hs
+  · rw [cond_eq_zero_of_meas_eq_zero hs, Measure.zero_prod,
+      cond_eq_zero_of_meas_eq_zero (by rw [Measure.prod_prod, hs, zero_mul])]
+  rcases eq_or_ne (ν t) 0 with ht | ht
+  · rw [cond_eq_zero_of_meas_eq_zero ht, Measure.prod_zero,
+      cond_eq_zero_of_meas_eq_zero (by rw [Measure.prod_prod, ht, mul_zero])]
+  rw [cond, cond, cond, Measure.prod_prod, ← Measure.prod_restrict, Measure.prod_smul_left,
+    Measure.prod_smul_right, smul_smul, ENNReal.mul_inv (.inl hs) (.inr ht)]
+
 end ProbabilityTheory
 
 /-! ### Sequential conditioning
