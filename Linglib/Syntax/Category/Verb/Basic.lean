@@ -12,7 +12,7 @@ public import Linglib.Syntax.Category.Verb.Defs
 The readers of a verb entry beyond its fields: the entailment profile of the participant in a
 slot, lookup by citation form and sense, and the predicate a verb forms with a path phrase. The
 semantic classifications of an entry live with their theories: factivity and trigger status on
-`Clause.Embedding` and unaccusativity in `Semantics/ArgumentStructure/Unaccusativity.lean`.
+`Clause.Embedding`, and unaccusativity in the study of each account that assigns it.
 
 ## Main definitions
 

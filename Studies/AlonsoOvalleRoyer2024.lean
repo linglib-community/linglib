@@ -9,7 +9,7 @@ public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Languages.Mayan.Chuj.Verbs
 public import Linglib.Languages.Mayan.Chuj.Voice
 public import Linglib.Languages.Mayan.Chuj.Extraction
-public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.AlonsoOvalleRoyer2024
 public import Linglib.Morphology.Word.Leipzig
@@ -451,18 +451,17 @@ def extractedFrom (w : GlossedWord) : Option ArgumentRole :=
 
 /-- The site of the item's DP: an adjunct when its *wh*-word means 'where'; otherwise an argument
 of the clause's verb, internal as the subject of a passive (`Chuj.passive`), external or internal
-as `extractedFrom` finds the subject or the object of a transitive verb, and as the subject of an
-intransitive verb internal if the verb is unaccusative and external if it is unergative. The site
-of a DP whose clause has no verb of `Chuj.Verbs.all`, or whose intransitive verb is classified as
-neither, is not read off. -/
+as `extractedFrom` finds the subject or the object of a transitive verb, and external as the
+subject of intransitive *chanhalw* 'dance', which the paper presents as an external argument
+((22)). The site of a DP whose clause has no verb of `Chuj.Verbs.all`, or whose verb is another
+intransitive, is not read off. -/
 def siteOf (row : Datum) : Option Site :=
   if ((clauseOf row).drop 1).head?.any (·.lexicalGloss? = some "where".toList) then some .adjunct
   else (verbOf row).bind fun (v, w) ↦
     if Bears w (.morpheme .verb Chuj.passive.marker) then some .internal
     else if ArgumentFrame.np ∈ v.valency.frames then
       (extractedFrom w).map fun r ↦ if r = .A then .external else .internal
-    else if v.IsUnaccusative then some .internal
-    else if v.IsUnergative then some .external
+    else if v = Chuj.Verbs.chanhalw then some .external
     else none
 
 /-- The sites a row leaves open: the one read off, or any. -/

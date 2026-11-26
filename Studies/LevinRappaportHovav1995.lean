@@ -5,7 +5,8 @@ public import Linglib.Data.Examples.LevinRappaportHovav1995
 public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Languages.Romance.Italian.Verbs
 public import Linglib.Languages.Dutch.Verbs
-public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Voice.Basic
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Readers
@@ -28,6 +29,7 @@ monadic verb is unaccusative when its sole argument is a direct internal argumen
   Cause rule.
 * `Unaccusative`: the verb's sole argument is a direct internal argument.
 * `components`: the component sets of the classes in Appendix A, one per construal.
+* `established`: the components of its sole argument that a verb entry establishes.
 
 ## Implementation notes
 
@@ -293,6 +295,51 @@ theorem locativeInversion_not_diagnostic :
 
 /-! ### The English language file -/
 
+/-! ### Reading the rules off a verb entry -/
+
+/-- The components of its sole argument's meaning that a verb entry establishes. The argument is
+the immediate cause when the subject of the basic diathesis is entailed to act volitionally or to
+cause (§4.1.1), and undergoes a directed change when the verb alternates with an anticausative,
+the causative alternation, or has an intransitive frame and lexicalizes a direction of motion or
+measures change along a scale (§4.1.2). No field of an entry establishes that the existence of the
+argument is asserted. -/
+def established (v : Verb) : Finset Component :=
+  (if ∃ p ∈ v.slotProfile? .external,
+      .volition ∈ p ∨ .causation ∈ p
+    then {.immediateCause} else ∅) ∪
+  (if v.Alternates .anticausative ∨ (∃ fr ∈ v.valency.frames, fr.IsIntransitive) ∧
+      ((∃ d ∈ v.direction, d ≠ .place) ∨ v.changeScale.isSome)
+    then {.directedChange} else ∅)
+
+/-- The entry establishes a directed change, so the verb is unaccusative. -/
+def IsUnaccusative (v : Verb) : Prop := .directedChange ∈ established v
+
+instance : DecidablePred IsUnaccusative := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+
+/-- The verb has an intransitive frame and its entry establishes an immediate cause and nothing
+else, so the verb is unergative if the entry leaves no component out. -/
+def IsUnergative (v : Verb) : Prop :=
+  (∃ fr ∈ v.valency.frames, fr.IsIntransitive) ∧ established v = {.immediateCause}
+
+instance : DecidablePred IsUnergative := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- A verb whose entry establishes a directed change is unaccusative whatever else holds of its
+argument. -/
+theorem IsUnaccusative.unaccusative {v : Verb} (h : IsUnaccusative v) {s : Finset Component}
+    (hs : established v ⊆ s) : Unaccusative s :=
+  unaccusative_of_directedChange_mem (hs h)
+
+theorem IsUnergative.not_unaccusative {v : Verb} (h : IsUnergative v) :
+    ¬ Unaccusative (established v) := fun hu ↦ unaccusative_iff.1 hu h.2
+
+theorem IsUnergative.not_isUnaccusative {v : Verb} (h : IsUnergative v) : ¬ IsUnaccusative v := by
+  simp [IsUnaccusative, h.2]
+
+-- an immediate cause whose existence is asserted is a direct internal argument, so the verdict
+-- of unergativity is not stable under a component the entry leaves out
+theorem unaccusative_immediateCause_existence :
+    Unaccusative {.immediateCause, .existence} := by decide
+
 /-- The English entry of a row's verb, in its default sense. -/
 def entryOf (ex : Datum) : Option Verb :=
   (ex.feature? "verb").bind (Verb.find? (English.Verbs.verbs.map (·.toVerb)))
@@ -309,8 +356,8 @@ linking rules classify it: *break*, *burn*, *freeze* and *arrive* are unaccusati
 no field of an entry feeds. -/
 theorem isUnaccusative_agrees :
     ∀ ex ∈ Examples.all, ∀ v ∈ entryOf ex, v ≠ English.Verbs.appear.toVerb → ∀ c ∈ classOf ex,
-      ((∀ s ∈ components c, Unaccusative s) → v.IsUnaccusative) ∧
-        ((∀ s ∈ components c, ¬ Unaccusative s) → v.IsUnergative) := by
+      ((∀ s ∈ components c, Unaccusative s) → IsUnaccusative v) ∧
+        ((∀ s ∈ components c, ¬ Unaccusative s) → IsUnergative v) := by
   decide +kernel
 
 -- (47): *exist*, *appear* and *die* are unaccusative by their classes, and their entries are
@@ -318,44 +365,44 @@ theorem isUnaccusative_agrees :
 theorem existence_entries_unclassified :
     ∀ v ∈ [English.Verbs.exist, English.Verbs.appear, English.Verbs.die],
       (∀ c ∈ v.levinClasses, ∀ s ∈ components c, Unaccusative s) ∧
-        ¬ v.IsUnaccusative ∧ ¬ v.IsUnergative := by
+        ¬ IsUnaccusative v.toVerb ∧ ¬ IsUnergative v.toVerb := by
   decide +kernel
 
 -- ch. 1 (13)–(15), §4.1.2 (29)
 theorem italian_directedMotion_isUnaccusative :
-    ∀ v ∈ [Italian.Verbs.venire, Italian.Verbs.arrivare], v.toVerb.IsUnaccusative := by
+    ∀ v ∈ [Italian.Verbs.venire, Italian.Verbs.arrivare], IsUnaccusative v.toVerb := by
   decide
 
 -- (2): *chiacchierare* 'chat', an agentive verb, is unergative, as is *lavorare* 'work'
 theorem italian_agentive_isUnergative :
-    ∀ v ∈ [Italian.Verbs.chiacchierare, Italian.Verbs.lavorare], v.toVerb.IsUnergative := by
+    ∀ v ∈ [Italian.Verbs.chiacchierare, Italian.Verbs.lavorare], IsUnergative v.toVerb := by
   decide
 
-theorem werken_isUnergative : Dutch.Verbs.werken.toVerb.IsUnergative := by decide
+theorem werken_isUnergative : IsUnergative Dutch.Verbs.werken.toVerb := by decide
 
 -- Of the verbs the Dutch grammar classes as unaccusative, the Directed Change rule reaches
 -- *komen*, *groeien* and *stijgen*, and no rule makes any of them unergative
 theorem dutch_unaccusatives :
     (∀ v ∈ [Dutch.Verbs.komen, Dutch.Verbs.groeien, Dutch.Verbs.stijgen],
-        v.toVerb.IsUnaccusative) ∧
-      ∀ v ∈ Dutch.Verbs.unaccusatives, ¬ v.toVerb.IsUnergative := by
+        IsUnaccusative v.toVerb) ∧
+      ∀ v ∈ Dutch.Verbs.unaccusatives, ¬ IsUnergative v.toVerb := by
   decide
 
 -- (78), §4.2.2: *salire* 'go up' is unaccusative, here by its change along a scale of height
-theorem salire_isUnaccusative : Italian.Verbs.salire.toVerb.IsUnaccusative := by decide
+theorem salire_isUnaccusative : IsUnaccusative Italian.Verbs.salire.toVerb := by decide
 
 -- (14), §5.1.1: a directional phrase makes *correre* 'run' unaccusative, while *nuotare* 'swim',
 -- which selects none, stays as it is
 theorem correre_withPath_isUnaccusative :
-    (Italian.Verbs.correre.withPath (.ofCase .ill)).toVerb.IsUnaccusative ∧
-      ¬ Italian.Verbs.correre.toVerb.IsUnaccusative ∧
-      ¬ (Italian.Verbs.nuotare.withPath (.ofCase .ill)).toVerb.IsUnaccusative := by
+    IsUnaccusative (Italian.Verbs.correre.withPath (.ofCase .ill)).toVerb ∧
+      ¬ IsUnaccusative Italian.Verbs.correre.toVerb ∧
+      ¬ IsUnaccusative (Italian.Verbs.nuotare.withPath (.ofCase .ill)).toVerb := by
   decide
 
-/-- `Verb.IsUnaccusative` counts *buzz*, *flash* and *bleed* unaccusative by their causative pairs
+/-- `IsUnaccusative` counts *buzz*, *flash* and *bleed* unaccusative by their causative pairs
 ((82), (92), (86)), though as emission verbs they are unergative (§3.2.5). -/
 theorem causativePairs_diverge :
-    ∀ v ∈ [English.Verbs.buzz, English.Verbs.flash, English.Verbs.bleed], v.IsUnaccusative ∧
+    ∀ v ∈ [English.Verbs.buzz, English.Verbs.flash, English.Verbs.bleed], IsUnaccusative v.toVerb ∧
       ∀ c ∈ v.levinClasses, ∀ s ∈ components c, ¬ Unaccusative s := by
   decide +kernel
 

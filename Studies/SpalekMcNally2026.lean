@@ -3,7 +3,8 @@ module
 public import Linglib.Data.Examples.SpalekMcNally2026
 public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Languages.Romance.Spanish.Verbs
-public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Voice.Basic
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Tactic.DeriveFintype
 
@@ -46,9 +47,9 @@ open Examples
 /-! ### Event structure -/
 
 /-- Both verbs have an intransitive use describing a change and a simple transitive use (§3.1). -/
-theorem hasCausativeAlternation_tear_rasgar :
-    English.Verbs.tear_.valency.HasCausativeAlternation ∧
-      Spanish.Verbs.rasgar.valency.HasCausativeAlternation := by
+theorem alternates_anticausative_tear_rasgar :
+    English.Verbs.tear_.toVerb.Alternates .anticausative ∧
+      Spanish.Verbs.rasgar.Alternates .anticausative := by
   decide
 
 /-! ### Described events -/

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Dutch verbs

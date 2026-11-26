@@ -3,7 +3,7 @@ module
 public import Linglib.Languages.German.Verbs
 public import Linglib.Syntax.Category.Verb.Tense
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Pragmatics.SocialMeaning.Register
 
 /-!
