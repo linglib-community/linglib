@@ -88,16 +88,14 @@ def hundir : Verb :=
 def caer : Verb :=
   { morphs := [.root "caer"],
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.intransitive]
-      (forms := [none, some [.root "caer", .encl "se"]]),
-    voiceType := some .nonThematic }
+      (forms := [none, some [.root "caer", .encl "se"]]) }
 
 /-- *morir* 'die', an unaccusative that occurs with and without the clitic, *murió* and
 *se murió* ([munoz-perez-2026]). -/
 def morir : Verb :=
   { morphs := [.root "morir"],
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.intransitive]
-      (forms := [none, some [.root "morir", .encl "se"]]),
-    voiceType := some .nonThematic }
+      (forms := [none, some [.root "morir", .encl "se"]]) }
 
 /-- *cerrar* 'close', with a marked intransitive *cerrarse*. -/
 def cerrar : Verb :=
@@ -242,31 +240,26 @@ def admirar : Verb where
 def llegar : Verb where
   morphs := [.root "llegar"]
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .nonThematic
 
 /-- *salir* 'come out' — unaccusative verb of movement. -/
 def salir : Verb where
   morphs := [.root "salir"]
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .nonThematic
 
 /-- *suceder* 'happen' — unaccusative verb of happening. -/
 def suceder : Verb where
   morphs := [.root "suceder"]
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .nonThematic
 
 /-- *sobrar* 'be left over, be extra' — unaccusative existential. -/
 def sobrar : Verb where
   morphs := [.root "sobrar"]
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .nonThematic
 
 /-- *gustar* 'appeal to, be liked by' — unaccusative psych verb whose experiencer is dative. -/
 def gustar : Verb where
   morphs := [.root "gustar"]
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .nonThematic
 
 /-- *caminar* 'walk' — unergative. -/
 def caminar : Verb where

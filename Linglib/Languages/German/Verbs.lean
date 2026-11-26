@@ -173,7 +173,7 @@ def zerbrechen : Verb :=
 a frost in the night' ([durrell-2011] §12.3.2c). -/
 def frieren : Verb :=
   { Verb.ofStem (strong "frieren" "friert" "fror" "gefroren") with
-    voiceType := some .nonThematic, perfectAuxiliaries := {.be, .have},
+    perfectAuxiliaries := {.be, .have},
     valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.impersonal, [])]
       [some {.changeOfState, .causallyAffected}] }
 

@@ -116,8 +116,9 @@ namespace Predicate
 variable (p : Predicate)
 
 /-- The root licenses an object when the use has a nominal object, or when it is intransitive and
-the verb unaccusative, its sole argument the theme. -/
-def RootLicensesObject : Prop := p.frame.HasNominal ∨ p.frame.IsIntransitive ∧ p.verb.IsUnaccusative
+unaccusative, its sole argument the theme: its event structure has no `vDO`, the one head Voice
+combines with. -/
+def RootLicensesObject : Prop := p.frame.HasNominal ∨ p.frame.IsIntransitive ∧ .vDO ∉ p.heads
 
 instance : Decidable p.RootLicensesObject := inferInstanceAs (Decidable (_ ∨ _ ∧ _))
 

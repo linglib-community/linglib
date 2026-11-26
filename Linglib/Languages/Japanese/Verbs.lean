@@ -78,15 +78,12 @@ def hanareru : Verb where
   morphs := [.root "hanareru"]
   script := some "離れる"
   valency := .ofFrame ArgumentFrame.np
-  voiceType := some .nonThematic
 
-/-- 出る *deru* 'exit' takes the leaver as its theme and the source in the accusative or ablative,
-with no thematic Voice. -/
+/-- 出る *deru* 'exit' takes the leaver as its theme and the source in the accusative or ablative. -/
 def deru : Verb where
   morphs := [.root "deru"]
   script := some "出る"
   valency := .ofFrame ArgumentFrame.np
-  voiceType := some .nonThematic
 
 /-- The inventory. -/
 def verbs : List Verb :=

@@ -50,8 +50,9 @@ they are predicates the theories define on these fields.
   and a standard beside it, so an entry without a scale records no pole.
 * The citation form is the list `morphs`, and `Verb.form` is its surface string, so a language
   file builds a derived form, a converb or a causative, by attaching morphs to `v.morphs`.
-* `Verb.voiceType` records whether the verb has an external argument where the linking rules of
-  `Semantics/ArgumentStructure/Unaccusativity.lean` do not decide it from the other fields.
+* An entry stores no classification of the verb, unaccusative, factive or otherwise. A class that
+  a reference grammar prints is a list in that language's file (`Dutch.Verbs.unaccusatives`), and
+  a class that a theory assigns is a predicate on the entry.
 
 ## References
 
@@ -63,7 +64,6 @@ they are predicates the theories define on these fields.
 * [pantcheva-2011]
 * [roberts-simons-2024]
 * [schwarzer-2026]
-* [wood-2015]
 -/
 
 @[expose] public section
@@ -72,21 +72,6 @@ open Aspect ArgumentStructure
 open Morphology (Morph)
 
 /-! ### Selectional and inflectional enums -/
-
-/-- What an entry records of the external argument of a verb. -/
-inductive VoiceType where
-  /-- An external argument is introduced, as in transitives and unergatives. -/
-  | agentive
-  /-- No external argument is introduced, as in unaccusatives and anticausatives. -/
-  | nonThematic
-  /-- An agent that binds the internal argument ([wood-2015]). -/
-  | reflexive
-  deriving DecidableEq, Repr
-
-/-- The voice type introduces an external argument. -/
-def VoiceType.AssignsTheta (vt : VoiceType) : Prop := vt = .agentive ∨ vt = .reflexive
-
-instance : DecidablePred VoiceType.AssignsTheta := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The auxiliary of the perfect in a language that forms it with *be* or *have*, as Romance and
 Germanic languages do. -/
@@ -135,8 +120,6 @@ structure Verb extends Clause.Embedding where
   first; the default records no participant. An implicit argument is a frame position
   (`ArgumentFrame.objectDrop`). -/
   valency : Verb.Valency := .of []
-  /-- Whether an external argument is introduced, where the entry records it. -/
-  voiceType : Option VoiceType := none
   /-- The auxiliaries the verb forms its perfect with, as its grammar gives them, both where it
   gives both; empty where the language has no choice or the entry records none. -/
   perfectAuxiliaries : Finset Verb.PerfectAuxiliary := ∅

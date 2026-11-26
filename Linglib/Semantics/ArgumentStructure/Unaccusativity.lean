@@ -6,22 +6,24 @@ public import Linglib.Syntax.Category.Verb.Basic
 # Unaccusativity
 
 An intransitive verb is unaccusative when its sole argument is an underlying object, as with
-*arrive*, and unergative when it is an external argument, as with *work*. A recorded voice
-[decides](##Verb.isUnaccusative_iff_of_voiceType_eq_some). Without one, Levin and Rappaport Hovav's
-linking rules decide: an argument that undergoes a directed change
-[is internal](##Verb.isUnaccusative_iff_of_voiceType_eq_none), and one that is the immediate cause
-of the eventuality
-[is external unless it also undergoes one](##Verb.isUnergative_iff_of_voiceType_eq_none). The two
-classifications are [disjoint](##Verb.IsUnergative.not_isUnaccusative).
+*arrive*, and unergative when it is an external argument, as with *work*. This file reads two of
+Levin and Rappaport Hovav's linking rules off a verb entry. By the Directed Change Linking Rule
+an argument that undergoes a directed change is internal, so the verb is unaccusative. By the
+Immediate Cause Linking Rule an argument that is the immediate cause of the eventuality is
+external, so the verb is unergative, unless the argument also undergoes a directed change. The two
+classifications are disjoint, and an entry that records neither condition has neither.
 
 ## Main definitions
 
 * `Verb.Valency.HasCausativeAlternation`: some participant is the object of a plain transitive
   diathesis and the subject of an intransitive one that leaves out the transitive's subject.
-* `Verb.HasExternalArgument`: the recorded voice introduces an external argument.
-* `Verb.UndergoesDirectedChange`, `Verb.HasImmediateCause`: the conditions of the Directed
-  Change and the Immediate Cause Linking Rules, read off an entry.
-* `Verb.IsUnaccusative`, `Verb.IsUnergative`: the two classifications.
+* `Verb.HasImmediateCause`: the condition of the Immediate Cause Linking Rule, read off an entry.
+* `Verb.IsUnaccusative`: the condition of the Directed Change Linking Rule, read off an entry.
+* `Verb.IsUnergative`: an intransitive verb with an immediate cause and no directed change.
+
+## Main results
+
+* `Verb.IsUnergative.not_isUnaccusative`: the two classifications are disjoint.
 
 ## Implementation notes
 
@@ -35,10 +37,13 @@ classifications are [disjoint](##Verb.IsUnergative.not_isUnaccusative).
   not a verb of attitude measures change (`Verb.changeScale`). The Directed Change rule takes precedence, as
   the book argues (§4.2), so *run* with a directional phrase is unaccusative though its runner
   acts.
-* The classifications are not exhaustive: an entry without a voice, a directed change or a
-  profile for its sole argument is classified as neither. Unaccusativity asks for no intransitive
-  frame, since Japanese *deru* 'exit' is an unaccusative with an *o*-marked path
-  ([ozaki-2026]); unergativity does.
+* The classifications are not exhaustive: an entry without a directed change or a profile for its
+  sole argument is classified as neither, and no entry stores a classification. A class that a
+  reference grammar prints is a list in the language's file, as `Dutch.Verbs.unaccusatives` is.
+* The Existence and Default Linking Rules are not read, since no field of an entry says that the
+  existence of an argument is asserted or that an argument is not an immediate cause. A verb of
+  existence or appearance is therefore classified as neither; `Studies/LevinRappaportHovav1995`
+  applies all four rules to Levin's classes.
 * Unaccusativity is not read off the perfect auxiliary: German *rennen* 'run' takes *sein* and
   is not unaccusative, and French *rougir* 'redden' alternates and takes *avoir*. A grammar
   that relates the two states its rule against the auxiliaries an entry records
@@ -50,7 +55,6 @@ classifications are [disjoint](##Verb.IsUnergative.not_isUnaccusative).
 ## References
 
 * [burzio-1986]
-* [kratzer-1996]
 * [levin-1993]
 * [levin-hovav-1995]
 * [dowty-1991]
@@ -81,21 +85,7 @@ namespace Verb
 
 open ArgumentStructure
 
-/-- The verb's recorded voice introduces an external argument. -/
-def HasExternalArgument (v : Verb) : Prop := ∃ vt ∈ v.voiceType, vt.AssignsTheta
-
-instance : DecidablePred HasExternalArgument := fun _ ↦
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- The sole argument of the verb undergoes a directed change, the condition of the Directed
-Change Linking Rule: the verb takes part in the causative alternation, or it has an intransitive
-frame and lexicalizes a direction of motion or measures change along a scale. -/
-def UndergoesDirectedChange (v : Verb) : Prop :=
-  v.valency.HasCausativeAlternation ∨ (∃ fr ∈ v.valency.frames, fr.IsIntransitive) ∧
-    ((∃ d ∈ v.direction, d ≠ .place) ∨ v.changeScale.isSome)
-
-instance : DecidablePred UndergoesDirectedChange := fun v ↦ by
-  unfold UndergoesDirectedChange; infer_instance
+variable {v : Verb}
 
 /-- The subject of the verb's basic diathesis is the immediate cause of the eventuality, the
 condition of the Immediate Cause Linking Rule: it is entailed to act volitionally or to cause. -/
@@ -105,63 +95,28 @@ def HasImmediateCause (v : Verb) : Prop :=
 instance : DecidablePred HasImmediateCause := fun v ↦ by
   unfold HasImmediateCause; infer_instance
 
-/-- The verb is unaccusative when its voice, if recorded, introduces no external argument, and
-otherwise when its sole argument undergoes a directed change. -/
+/-- The verb is unaccusative when its sole argument undergoes a directed change, the condition of
+the Directed Change Linking Rule: the verb takes part in the causative alternation, or it has an
+intransitive frame and lexicalizes a direction of motion or measures change along a scale. -/
 def IsUnaccusative (v : Verb) : Prop :=
-  match v.voiceType with
-  | some vt => ¬ vt.AssignsTheta
-  | none => v.UndergoesDirectedChange
+  v.valency.HasCausativeAlternation ∨ (∃ fr ∈ v.valency.frames, fr.IsIntransitive) ∧
+    ((∃ d ∈ v.direction, d ≠ .place) ∨ v.changeScale.isSome)
 
 instance : DecidablePred IsUnaccusative := fun v ↦ by
-  unfold IsUnaccusative; split <;> infer_instance
+  unfold IsUnaccusative; infer_instance
 
-/-- The verb is unergative when it has an intransitive frame and its voice, if recorded,
-introduces an external argument, and otherwise when its sole argument is the immediate cause of
-the eventuality and undergoes no directed change. -/
+/-- The verb is unergative when it has an intransitive frame and its sole argument is the
+immediate cause of the eventuality and undergoes no directed change. -/
 def IsUnergative (v : Verb) : Prop :=
-  (∃ fr ∈ v.valency.frames, fr.IsIntransitive) ∧
-    match v.voiceType with
-    | some vt => vt.AssignsTheta
-    | none => ¬ v.UndergoesDirectedChange ∧ v.HasImmediateCause
+  (∃ fr ∈ v.valency.frames, fr.IsIntransitive) ∧ ¬ v.IsUnaccusative ∧ v.HasImmediateCause
 
-instance : DecidablePred IsUnergative := fun v ↦ by
-  unfold IsUnergative; split <;> infer_instance
+instance : DecidablePred IsUnergative := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-variable {v : Verb} {vt : VoiceType}
+theorem IsUnergative.not_isUnaccusative (h : v.IsUnergative) : ¬ v.IsUnaccusative := h.2.1
 
-theorem isUnaccusative_iff_of_voiceType_eq_some (h : v.voiceType = some vt) :
-    v.IsUnaccusative ↔ ¬ vt.AssignsTheta := by
-  simp only [IsUnaccusative, h]
+theorem IsUnergative.hasImmediateCause (h : v.IsUnergative) : v.HasImmediateCause := h.2.2
 
-theorem isUnaccusative_iff_of_voiceType_eq_none (h : v.voiceType = none) :
-    v.IsUnaccusative ↔ v.UndergoesDirectedChange := by
-  simp only [IsUnaccusative, h]
-
-theorem isUnergative_iff_of_voiceType_eq_some (h : v.voiceType = some vt) :
-    v.IsUnergative ↔ (∃ fr ∈ v.valency.frames, fr.IsIntransitive) ∧ vt.AssignsTheta := by
-  simp only [IsUnergative, h]
-
-theorem isUnergative_iff_of_voiceType_eq_none (h : v.voiceType = none) :
-    v.IsUnergative ↔ (∃ fr ∈ v.valency.frames, fr.IsIntransitive) ∧
-      ¬ v.UndergoesDirectedChange ∧ v.HasImmediateCause := by
-  simp only [IsUnergative, h]
-
-theorem IsUnergative.hasImmediateCause_of_voiceType_eq_none (h : v.IsUnergative)
-    (hv : v.voiceType = none) : v.HasImmediateCause :=
-  ((isUnergative_iff_of_voiceType_eq_none hv).1 h).2.2
-
-theorem HasExternalArgument.not_isUnaccusative (h : v.HasExternalArgument) :
-    ¬ v.IsUnaccusative := by
-  obtain ⟨vt, hvt, ht⟩ := h
-  exact fun hu ↦ (isUnaccusative_iff_of_voiceType_eq_some (Option.mem_def.1 hvt)).1 hu ht
-
-theorem IsUnergative.not_isUnaccusative (h : v.IsUnergative) : ¬ v.IsUnaccusative := by
-  cases hv : v.voiceType with
-  | some vt =>
-    exact fun hu ↦ (isUnaccusative_iff_of_voiceType_eq_some hv).1 hu
-      ((isUnergative_iff_of_voiceType_eq_some hv).1 h).2
-  | none =>
-    exact fun hu ↦ ((isUnergative_iff_of_voiceType_eq_none hv).1 h).2.1
-      ((isUnaccusative_iff_of_voiceType_eq_none hv).1 hu)
+theorem IsUnaccusative.not_isUnergative (h : v.IsUnaccusative) : ¬ v.IsUnergative :=
+  fun hu ↦ hu.not_isUnaccusative h
 
 end Verb

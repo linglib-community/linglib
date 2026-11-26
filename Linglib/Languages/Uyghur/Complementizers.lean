@@ -80,40 +80,34 @@ def unut : Verb where
 def eyt : Verb where
   morphs := [.root "éyt"]
   valency := .ofFrames [ArgumentFrame.np, participialFrame]
-  voiceType := some .agentive
   speechActVerb := true
 
 /-- *warqira-* 'scream', unergative. -/
 def warqira : Verb where
   morphs := [.root "warqira"]
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .agentive
 
 /-- *ket-* 'leave', unaccusative. -/
 def ket : Verb where
   morphs := [.root "ket"]
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .nonThematic
 
 /-- *ye-* 'eat'. -/
 def ye : Verb where
   morphs := [.root "ye"]
   valency := .ofFrame ArgumentFrame.np
-  voiceType := some .agentive
 
 /-- The light verb *qil-* 'do, make', transitive: *söz qil-* 'speak', *éniq qil-* 'make
 clear'. -/
 def qil : Verb where
   morphs := [.root "qil"]
   valency := .ofFrame ArgumentFrame.np
-  voiceType := some .agentive
 
 /-- The light verb *bol-* 'become', unaccusative: *söz bol-* 'there be speaking', *éniq bol-*
 'become clear'. -/
 def bol : Verb where
   morphs := [.root "bol"]
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .nonThematic
 
 /-- `verbs` lists the verbs recorded here. -/
 def verbs : List Verb := [de, oyla, bil, unut, eyt, warqira, ket, ye, qil, bol]

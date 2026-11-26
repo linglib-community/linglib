@@ -303,14 +303,22 @@ theorem entryOf_isSome :
       (entryOf ex).isSome := by
   decide
 
-/-- Where a row's class gives one verdict, the English language file classifies the entry for its
-verb
-as the linking rules do: *break*, *burn*, *freeze*, *arrive* and *appear* are unaccusative, and
-*run* and *swim* unergative. -/
+/-- Where a row's class gives one verdict, the English entry for its verb is classified as the
+linking rules classify it: *break*, *burn*, *freeze* and *arrive* are unaccusative, and *run* and
+*swim* unergative. The exception is *appear*, unaccusative by the Existence Linking Rule, which
+no field of an entry feeds. -/
 theorem isUnaccusative_agrees :
-    ∀ ex ∈ Examples.all, ∀ v ∈ entryOf ex, ∀ c ∈ classOf ex,
+    ∀ ex ∈ Examples.all, ∀ v ∈ entryOf ex, v ≠ English.Verbs.appear.toVerb → ∀ c ∈ classOf ex,
       ((∀ s ∈ components c, Unaccusative s) → v.IsUnaccusative) ∧
         ((∀ s ∈ components c, ¬ Unaccusative s) → v.IsUnergative) := by
+  decide +kernel
+
+-- (47): *exist*, *appear* and *die* are unaccusative by their classes, and their entries are
+-- classified as neither
+theorem existence_entries_unclassified :
+    ∀ v ∈ [English.Verbs.exist, English.Verbs.appear, English.Verbs.die],
+      (∀ c ∈ v.levinClasses, ∀ s ∈ components c, Unaccusative s) ∧
+        ¬ v.IsUnaccusative ∧ ¬ v.IsUnergative := by
   decide +kernel
 
 -- ch. 1 (13)–(15), §4.1.2 (29)
@@ -324,6 +332,14 @@ theorem italian_agentive_isUnergative :
   decide
 
 theorem werken_isUnergative : Dutch.Verbs.werken.toVerb.IsUnergative := by decide
+
+-- Of the verbs the Dutch grammar classes as unaccusative, the Directed Change rule reaches
+-- *komen*, *groeien* and *stijgen*, and no rule makes any of them unergative
+theorem dutch_unaccusatives :
+    (∀ v ∈ [Dutch.Verbs.komen, Dutch.Verbs.groeien, Dutch.Verbs.stijgen],
+        v.toVerb.IsUnaccusative) ∧
+      ∀ v ∈ Dutch.Verbs.unaccusatives, ¬ v.toVerb.IsUnergative := by
+  decide
 
 -- (78), §4.2.2: *salire* 'go up' is unaccusative, here by its change along a scale of height
 theorem salire_isUnaccusative : Italian.Verbs.salire.toVerb.IsUnaccusative := by decide
