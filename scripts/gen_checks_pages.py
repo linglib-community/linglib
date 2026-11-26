@@ -178,7 +178,7 @@ class Site:
 
     def decl_path(self, name):
         """Where a declaration is shown: its place in a text, an item of the source its study
-        states it for, else the API docs."""
+        states it for, or else the page of its file, so that no link leaves these pages."""
         if name in self.home:
             return self.text_path(self.home[name]) + "#" + name
         node = self.nodes.get(name)
@@ -187,7 +187,7 @@ class Site:
         for item in self.stated.get(name, ()):
             if item["source"] == self.source.get(node["module"]):
                 return f'checks/{item["source"]}/#{item["id"]}'
-        return self.docs_path(node["module"], name)
+        return self.unit_path(self.unit(node["module"]))
 
     @functools.lru_cache(None)
     def reach(self, module):

@@ -498,13 +498,18 @@ def status_json(sources, status, info, data):
                                "date": last["date"].date().isoformat()},
             "blocking": [f"{k}/{c}" for k, c in info[(key, cid)].get("blocking", [])]})
     # The modules the items' statements reach are shown as texts, so every declaration of theirs
-    # is described too, with what its own statement reaches.
-    modules = sorted({n["module"] for n in data["nodes"].values()})
-    texts = module_texts(modules) if modules else {}
-    written = [d["name"] for t in texts.values() for d in t["decls"]]
-    every = dict(data["nodes"])
-    if written:
-        every.update(check_closure(modules, written, load_renames())["nodes"])
+    # is described too, with what its own statement reaches; and a module those reach is shown
+    # in turn, until the texts lead to nothing that is not one of them.
+    every, texts, renames = dict(data["nodes"]), {}, load_renames()
+    while True:
+        modules = sorted({n["module"] for n in every.values()})
+        new = [m for m in modules if m not in texts]
+        if not new:
+            break
+        texts.update(module_texts(new))
+        written = [d["name"] for m in new for d in texts[m]["decls"]]
+        if written:
+            every.update(check_closure(modules, written, renames)["nodes"])
     def path(module):
         return ROOT / (module.replace(".", "/") + ".lean")
 
