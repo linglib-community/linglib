@@ -54,7 +54,6 @@ tested against them.
 * [H. Broekhuis and N. Corver, *Syntax of Dutch, Volume I: Verbs and Verb Phrases 1:
   Characterization, Classification and Lexical Projection* (2026)][broekhuis-corver-2026e]
 * [broekhuis-corver-2026f]
-* [levin-hovav-1995]
 * [sorace-2000]
 -/
 
@@ -230,9 +229,8 @@ def stijgen : Verb :=
     valency := .ofFrame ArgumentFrame.intransitive,
     gradability := some { dimension := .height } }
 
-/-- *blijven* 'stay' is an unaccusative verb expressing that a state continues to exist (§1.2),
-with the auxiliary *zijn*, as in *Was dan ook wat langer gebleven!* 'You should have stayed a bit
-longer!'. -/
+/-- *blijven* 'stay' expresses that a state continues to exist (§1.2), with the auxiliary
+*zijn*, as in *Was dan ook wat langer gebleven!* 'You should have stayed a bit longer!'. -/
 def blijven : Verb :=
   { simplex "blijven" "gebleven" with
     perfectAuxiliaries := {.be},
@@ -248,8 +246,8 @@ def duren : Verb :=
     perfectAuxiliaries := {.have},
     valency := .ofFrame ArgumentFrame.intransitive }
 
-/-- *staan* 'stand' is a stative verb of location, an atelic unaccusative verb with *hebben*, as
-in *Jan heeft lang op het perron gestaan*. -/
+/-- *staan* 'stand' is a stative verb of location with *hebben*, as in *Jan heeft lang op het
+perron gestaan*. -/
 def staan : Verb :=
   { simplex "staan" "gestaan" with
     perfectAuxiliaries := {.have},
@@ -270,8 +268,7 @@ def werken : Verb :=
     perfectAuxiliaries := {.have},
     valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile] }
 
-/-- *lopen* 'walk, run', *loop - liep - gelopen*, an agentive verb of manner of motion, intransitive
-([levin-hovav-1995] p. 148). -/
+/-- *lopen* 'walk, run', *loop - liep - gelopen*, an intransitive verb of manner of motion. -/
 def lopen : Verb :=
   { simplex "lopen" "gelopen" with
     perfectAuxiliaries := {.be, .have},
@@ -286,8 +283,7 @@ def wandelen : Verb :=
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
     direction := some .place }
 
-/-- *rollen* 'roll', a nonagentive verb of manner of motion, unaccusative ([levin-hovav-1995]
-pp. 147–148) and atelic. -/
+/-- *rollen* 'roll', an intransitive verb of manner of motion. -/
 def rollen : Verb :=
   { simplex "rollen" "gerold" with
     perfectAuxiliaries := {.be, .have},
@@ -303,10 +299,11 @@ def Verb.withPath (v : Verb) (p : Locative) : Verb :=
 @[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Locative) :
     (v.withPath p).toVerb = v.toVerb.withPath p := rfl
 
-/-- The verbs of the inventory that the grammar classes as unaccusative: *groeien* and *sterven*
-in its sample of unaccusative verbs, *stijgen*, the location verb *staan*, and *komen*
-([broekhuis-corver-2026e] §2.1.2). An unaccusative verb has a theme as its subject and no
-impersonal passive, and its participle is used attributively when it is telic. -/
+/-- The verbs of the inventory that [broekhuis-corver-2026e] class as unaccusative: *groeien* and
+*sterven* in the sample of unaccusative verbs (29), *stijgen* in the discussion of nominalization
+in *-er*, *komen* in that of particle verbs with a prepositional object, and *staan* with the
+location verbs. By Table 3 an unaccusative verb has a theme as its subject and no impersonal
+passive, and its participle is used attributively when it is telic. -/
 def unaccusatives : List Verb := [komen, sterven, groeien, stijgen, staan]
 
 /-- The auxiliary of the perfect of `v` on the frame `fr` ([broekhuis-corver-2026e] §§2.1–2.2) is

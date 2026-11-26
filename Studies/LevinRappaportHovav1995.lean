@@ -42,6 +42,20 @@ monadic verb is unaccusative when its sole argument is a direct internal argumen
   per construal. A data row records its verb's agentivity where the construals differ by it.
 * The rules link every argument of a verb, the cause and the patient of transitive *break*
   alike (§4.1.2); the study classifies monadic verbs only.
+* `established` reads two of the three components off a verb entry, so `IsUnaccusative` and
+  `IsUnergative` classify fewer verbs than the rules do. A verdict of unaccusativity holds
+  whatever else is true of the argument, and one of unergativity only if the entry leaves no
+  component out.
+
+## TODO
+
+* No field of a verb entry says that the existence of an argument is asserted or denied, so the
+  Existence Linking Rule is not read off entries and *exist*, *appear* and *die* are classified
+  by their classes only.
+* The immediate cause is read off an entry as a subject entailed to act volitionally or to cause.
+  The internally caused verbs include the verbs of emission, whose argument is neither, so an
+  entry for one is classified as neither, and the Default Linking Rule cannot be read off
+  entries without a record that an argument is not an immediate cause.
 
 ## References
 
