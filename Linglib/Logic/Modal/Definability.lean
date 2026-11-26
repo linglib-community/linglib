@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Logic.Modal.Basic
+public import Mathlib.Logic.Relator
 
 /-!
 # Modal axioms and the frame conditions they define
@@ -29,16 +30,20 @@ along converse relations ([goranko-2023]).
 
 ## Main results
 
+* `SetRel.isEquiv_iff`: the equivalence relations are the reflexive Euclidean relations.
 * `ModalLogic.box_T_iff`, `ModalLogic.box_D_iff`, `ModalLogic.box_B_iff`,
   `ModalLogic.box_four_iff`, `ModalLogic.box_five_iff`: the five classical correspondences.
 * `ModalLogic.box_compl_eq_iff`: Negation Swap defines the graphs of functions.
 * `ModalLogic.id_le_box_comp_diamond_iff`: `p → □[R] ◇[S] p` is valid iff `R.inv ⊆ S`.
-* `ModalLogic.gc_diamond_box_iff`: `◇[S]` is left adjoint to `□[R]` iff `R.inv = S`.
+* `ModalLogic.diamond_box_gc_iff`: `◇[S]` is left adjoint to `□[R]` iff `R.inv = S`.
 
 ## Implementation notes
 
 Reflexivity, symmetry and transitivity are mathlib's `SetRel.IsRefl`, `SetRel.IsSymm` and
-`SetRel.IsTrans`.
+`SetRel.IsTrans`. Mathlib has seriality as `Relator.LeftTotal` and as `R.dom = Set.univ`, neither
+a class, so `IsSerial` is one with both as characterizations. That a reflexive Euclidean relation
+is symmetric and transitive is a theorem and not an instance, since instances from several
+properties to one would run on every search for it.
 
 ## References
 
@@ -53,15 +58,23 @@ namespace ModalLogic
 
 open SetRel
 
-section Frame
-
-variable {W : Type*} (R : SetRel W W)
-
 /-! ### Frame conditions -/
 
 /-- `R` is *serial* when every world accesses some world. -/
-class IsSerial : Prop where
+class IsSerial {W' W : Type*} (R : SetRel W' W) : Prop where
   serial : ∀ w, ∃ v, w ~[R] v
+
+theorem isSerial_iff_dom_eq_univ {W' W : Type*} {R : SetRel W' W} :
+    IsSerial R ↔ R.dom = Set.univ :=
+  ⟨fun h ↦ Set.eq_univ_of_forall h.serial, fun h ↦ ⟨fun w ↦ h.ge (Set.mem_univ w)⟩⟩
+
+theorem isSerial_iff_leftTotal {W' W : Type*} {R : SetRel W' W} :
+    IsSerial R ↔ Relator.LeftTotal (· ~[R] ·) :=
+  ⟨fun h ↦ h.serial, fun h ↦ ⟨h⟩⟩
+
+section Frame
+
+variable {W : Type*} (R : SetRel W W)
 
 /-- `R` is *Euclidean* when any two worlds accessed from one world access each other. -/
 class IsEuclidean : Prop where
@@ -71,25 +84,31 @@ variable {R}
 
 instance : IsEuclidean (.univ : SetRel W W) := ⟨fun _ _ _ _ _ ↦ trivial⟩
 
+theorem isEuclidean_iff_inv_comp_subset_self : IsEuclidean R ↔ R.inv ○ R ⊆ R :=
+  ⟨fun h ⟨v, u⟩ ⟨w, hwv, hwu⟩ ↦ h.eucl w v u hwv hwu, fun h ↦ ⟨fun w _ _ hv hu ↦ h ⟨w, hv, hu⟩⟩⟩
+
 /-- Reflexive relations are serial. -/
-instance [R.IsRefl] : IsSerial R := ⟨fun w ↦ ⟨w, R.rfl⟩⟩
+instance (priority := 100) [R.IsRefl] : IsSerial R := ⟨fun w ↦ ⟨w, R.rfl⟩⟩
 
 /-- A composite of serial relations is serial. -/
 instance {S : SetRel W W} [IsSerial R] [IsSerial S] : IsSerial (R ○ S) where
   serial w := let ⟨v, hv⟩ := IsSerial.serial (R := R) w; let ⟨u, hu⟩ := IsSerial.serial (R := S) v
     ⟨u, v, hv, hu⟩
 
-/-- Reflexive and Euclidean implies symmetric. -/
-instance [R.IsRefl] [IsEuclidean R] : R.IsSymm where
-  symm w v h := IsEuclidean.eucl w v w h R.rfl
+/-- Symmetric and transitive implies Euclidean. -/
+instance (priority := 100) [R.IsSymm] [R.IsTrans] : IsEuclidean R where
+  eucl _ _ _ hwv hwu := R.trans (R.symm hwv) hwu
 
-/-- Reflexive and Euclidean implies transitive. -/
-instance [R.IsRefl] [IsEuclidean R] : R.IsTrans where
+variable (R) in
+/-- A reflexive Euclidean relation is an equivalence relation, the frames of S5 in the
+presentation by T and 5. -/
+theorem _root_.SetRel.IsEquiv.of_isRefl_of_isEuclidean [R.IsRefl] [IsEuclidean R] : R.IsEquiv where
+  symm w v h := IsEuclidean.eucl w v w h R.rfl
   trans w v u hwv hvu := IsEuclidean.eucl v w u (IsEuclidean.eucl w v w hwv R.rfl) hvu
 
-/-- Symmetric and transitive implies Euclidean. -/
-instance [R.IsSymm] [R.IsTrans] : IsEuclidean R where
-  eucl _ _ _ hwv hwu := R.trans (R.symm hwv) hwu
+/-- The equivalence relations are the reflexive Euclidean relations. -/
+theorem _root_.SetRel.isEquiv_iff : R.IsEquiv ↔ R.IsRefl ∧ IsEuclidean R :=
+  ⟨fun _ ↦ ⟨inferInstance, inferInstance⟩, fun ⟨_, _⟩ ↦ .of_isRefl_of_isEuclidean R⟩
 
 /-! ### Axiom correspondence -/
 
@@ -102,6 +121,11 @@ theorem box_T [R.IsRefl] (h : □[R] p w) : p w := h w R.rfl
 
 theorem box_D [IsSerial R] (h : □[R] p w) : ◇[R] p w :=
   let ⟨v, hwv⟩ := IsSerial.serial (R := R) w; ⟨v, hwv, h v hwv⟩
+
+/-- Along a serial relation a proposition and its negation are not both necessary. -/
+theorem box_disjoint_compl [IsSerial R] : Disjoint (□[R] p) (□[R] pᶜ) :=
+  Pi.disjoint_iff.mpr fun _ ↦ Prop.disjoint_iff.mpr fun ⟨hp, hnp⟩ ↦
+    let ⟨v, hwv, hv⟩ := box_D hp; hnp v hwv hv
 
 /-- If `w` accesses some world along both `R` and `S`, then necessity along `R` at `w` entails
 possibility along `S`; `box_D` is the case `S = R`. -/
@@ -284,7 +308,7 @@ theorem id_le_box_comp_diamond_and_iff :
   exact ⟨fun ⟨h₁, h₂⟩ ↦ h₁.antisymm fun _ hx ↦ h₂ hx, by rintro rfl; exact ⟨subset_rfl, subset_rfl⟩⟩
 
 /-- A possibility is left adjoint to a necessity exactly when their relations are converse. -/
-theorem gc_diamond_box_iff : GaloisConnection (Diamond S) (Box R) ↔ R.inv = S := by
+theorem diamond_box_gc_iff : GaloisConnection (Diamond S) (Box R) ↔ R.inv = S := by
   refine ⟨fun h ↦ ?_, by rintro rfl; exact diamond_box_gc _⟩
   have key (p : W → Prop) : Diamond R.inv p = Diamond S p :=
     le_antisymm ((diamond_box_gc R.inv).l_le (h.le_u_l p))

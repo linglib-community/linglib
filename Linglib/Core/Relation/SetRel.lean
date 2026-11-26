@@ -14,7 +14,8 @@ antitone in the relation (`SetRel.core_subset_core_left`). The transitive closur
 (`SetRel.transGen`) has as core the intersection of the iterated cores
 (`SetRel.core_transGen`). The asymmetric part of a relation (`SetRel.asymmetrize`) complements
 mathlib's symmetric part `SetRel.symmetrize`, and a set-valued function is a relation
-(`SetRel.ofSuccessors`).
+(`SetRel.ofSuccessors`). Preorders and equivalence relations as sets of pairs are
+`SetRel.IsPreorder` and `SetRel.IsEquiv`, and the relation of a setoid is `Setoid.toSetRel`.
 -/
 
 @[expose] public section
@@ -42,6 +43,17 @@ theorem core_subset_core_left (h : R₁ ⊆ R₂) : R₂.core t ⊆ R₁.core t 
   fun _ ha _ hb ↦ ha (h hb)
 
 instance isRefl_id : (SetRel.id : SetRel α α).IsRefl := ⟨fun _ ↦ rfl⟩
+
+/-! ### Preorders and equivalence relations -/
+
+/-- `R` is a preorder: reflexive and transitive. -/
+protected abbrev IsPreorder (R : SetRel α α) : Prop := _root_.IsPreorder α (· ~[R] ·)
+
+/-- `R` is an equivalence relation: reflexive, symmetric and transitive. -/
+protected abbrev IsEquiv (R : SetRel α α) : Prop := _root_.IsEquiv α (· ~[R] ·)
+
+theorem isEquiv_iff_equivalence {R : SetRel α α} : R.IsEquiv ↔ Equivalence (· ~[R] ·) :=
+  (equivalence_iff_isEquiv _).symm
 
 /-! ### The image as an order embedding -/
 
@@ -164,3 +176,22 @@ theorem core_transGen : R.transGen.core s = ⋂ n, R.core^[n + 1] s := by
         (by rwa [Function.iterate_succ_apply] at ht) hbc⟩
 
 end SetRel
+
+/-! ### The relation of a setoid -/
+
+section Setoid
+
+open scoped SetRel
+
+/-- The relation of a setoid, as a set of pairs. -/
+def Setoid.toSetRel {α : Type*} (s : Setoid α) : SetRel α α := {(a, b) | s.r a b}
+
+@[simp] theorem Setoid.mem_toSetRel {α : Type*} {s : Setoid α} {a b : α} :
+    a ~[s.toSetRel] b ↔ s.r a b := .rfl
+
+instance {α : Type*} (s : Setoid α) : s.toSetRel.IsEquiv where
+  refl := s.iseqv.refl
+  symm _ _ := s.iseqv.symm
+  trans _ _ _ := s.iseqv.trans
+
+end Setoid

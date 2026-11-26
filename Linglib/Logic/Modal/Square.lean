@@ -34,14 +34,6 @@ open SetRel
 
 variable {W : Type*} {R : SetRel W W} {p : W → Prop}
 
-theorem box_disjoint_compl [IsSerial R] : Disjoint (□[R] p) (□[R] pᶜ) :=
-  Pi.disjoint_iff.mpr fun _ ↦ Prop.disjoint_iff.mpr fun ⟨hp, hnp⟩ ↦
-    let ⟨v, hwv, hv⟩ := box_D hp; hnp v hwv hv
-
-theorem compl_box_compl (R : SetRel W W) (p : W → Prop) : (□[R] pᶜ)ᶜ = ◇[R] p := by
-  funext w
-  simp [not_box]
-
 /-- The modal square of opposition along `R`, with corners $\Box p$, $\Box \neg p$, $\Diamond p$
 and $\neg \Box p$. -/
 def modalSquare (R : SetRel W W) (p : W → Prop) : Aristotelian.Square (W → Prop) where

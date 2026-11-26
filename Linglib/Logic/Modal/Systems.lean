@@ -6,19 +6,26 @@ public import Linglib.Logic.Modal.Definability
 # Frames of the standard modal systems
 
 A normal modal system is named for the axioms it adds to K, and its frames are the relations
-with the properties those axioms define: S5 frames are reflexive and Euclidean, KD45 frames
-serial, transitive and Euclidean, K45 frames transitive and Euclidean, and KTB frames reflexive
-and symmetric. S5 is the logic of Montague's necessity operators and of knowledge, and KD45 the
-usual logic of belief.
+with the properties those axioms define. The frames of S4 are the preorders, `R.IsPreorder`, and
+the frames of S5 the equivalence relations, `R.IsEquiv`, both stated with mathlib's classes. This
+file names the frames of the two systems of belief: K45 frames are transitive and Euclidean, and
+KD45 frames are K45 frames that are serial. Every equivalence relation is a KD45 frame, so what
+holds of belief holds of knowledge.
 
 ## Main definitions
 
-* `ModalLogic.IsS5Frame`, `ModalLogic.IsKD45Frame`, `ModalLogic.IsK45Frame`,
-  `ModalLogic.IsKTBFrame`: the frames of the four systems.
+* `ModalLogic.IsK45Frame`, `ModalLogic.IsKD45Frame`: the frames of K45 and KD45.
 
 ## Main results
 
+* `ModalLogic.IsKD45Frame.of_isEquiv`: an equivalence relation is a KD45 frame.
 * `ModalLogic.diamond_box_iff`: on a KD45 frame, possibly necessary is necessary.
+
+## Implementation notes
+
+A system gets a class when instances of it are declared, as for the belief and commitment
+relations of `Discourse/Commitment/`. S5 has none of its own: `SetRel.isEquiv_iff` gives its
+presentation by T and 5.
 
 ## References
 
@@ -34,17 +41,14 @@ open SetRel
 
 variable {W : Type*} (R : SetRel W W)
 
-/-- `R` is an *S5 frame* when it is reflexive and Euclidean. -/
-class IsS5Frame : Prop extends R.IsRefl, IsEuclidean R
-
-/-- `R` is a *KD45 frame* when it is serial, transitive and Euclidean. -/
-class IsKD45Frame : Prop extends IsSerial R, R.IsTrans, IsEuclidean R
-
 /-- `R` is a *K45 frame* when it is transitive and Euclidean. -/
 class IsK45Frame : Prop extends R.IsTrans, IsEuclidean R
 
-/-- `R` is a *KTB frame* when it is reflexive and symmetric. -/
-class IsKTBFrame : Prop extends R.IsRefl, R.IsSymm
+/-- `R` is a *KD45 frame* when it is serial, transitive and Euclidean. -/
+class IsKD45Frame : Prop extends IsK45Frame R, IsSerial R
+
+/-- An equivalence relation is a KD45 frame. -/
+instance (priority := 100) IsKD45Frame.of_isEquiv [R.IsEquiv] : IsKD45Frame R where
 
 theorem diamond_box_iff [IsKD45Frame R] {p : W → Prop} {w : W} :
     ◇[R] (□[R] p) w ↔ □[R] p w :=

@@ -58,6 +58,9 @@ open scoped SetRel Propositional.Formula
 
 /-! ### T-models -/
 
+/-- `R` is a *KTB frame* when it is reflexive and symmetric, as an indifference relation is. -/
+class IsKTBFrame {D : Type*} (R : SetRel D D) : Prop extends R.IsRefl, R.IsSymm
+
 /-- A T-model (Definition 4) is a classical model of the constants `C` and predicates `Pred` over
 the domain `D`, with for each predicate a reflexive and symmetric, possibly non-transitive,
 indifference relation `∼_P`. -/

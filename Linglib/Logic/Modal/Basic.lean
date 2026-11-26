@@ -29,7 +29,8 @@ preserves meets and possibility joins, and both compose as relations do.
 * `ModalLogic.diamond_le_diamond_iff`: possibility is monotone in the relation, and reflects
   inclusion.
 * `ModalLogic.dependsOn_box_iff`: necessity at a world depends on exactly the worlds it accesses.
-* `ModalLogic.box_restrict`: necessity is antitone in the relation.
+* `ModalLogic.box_le_box_left`: necessity is antitone in the relation.
+* `ModalLogic.box_transGen_iff`: necessity along the transitive closure is iterated necessity.
 
 ## Implementation notes
 
@@ -110,6 +111,12 @@ theorem diamond_mem_iff {s : Set W} : ◇[R] (· ∈ s) w ↔ w ∈ R.preimage s
 @[simp] theorem not_diamond : ¬ ◇[R] p w ↔ □[R] (fun v ↦ ¬ p v) w := by
   simp [Box, Diamond, not_and]
 
+variable (R p) in
+/-- Possibility is the dual of necessity. -/
+theorem compl_box_compl : (□[R] pᶜ)ᶜ = ◇[R] p := by
+  funext w
+  simp [not_box]
+
 variable (R) in
 /-- Necessity distributes over conjunction. For belief this is [hintikka-1962]'s principle that
 *a* believes *A and B* exactly when *a* believes *A* and *a* believes *B*. -/
@@ -159,8 +166,8 @@ theorem dependsOn_box_iff {s : Set W} : DependsOn (□[R] · w) s ↔ {v | w ~[R
 /-- Necessity is antitone in the accessibility relation: a relation that rules out more worlds
 gives a stronger necessity. For a modal this is strengthening by a more restrictive conversational
 background ([kratzer-1981]). -/
-theorem box_restrict {W : Type*} (p : W → Prop) : Antitone fun R : SetRel W W ↦ □[R] p :=
-  fun _ _ h _ hb v hwv ↦ hb v (h hwv)
+theorem box_le_box_left {S : SetRel W' W} (h : R ⊆ S) (p : W → Prop) : □[S] p ≤ □[R] p :=
+  fun _ hb v hv ↦ hb v (h hv)
 
 /-! ### Decidability over finite worlds -/
 
@@ -223,6 +230,21 @@ theorem box_comp (S : SetRel W W) (p : W → Prop) : □[R ○ S] p = □[R] (�
 
 theorem diamond_comp (S : SetRel W W) (p : W → Prop) : ◇[R ○ S] p = ◇[R] (◇[S] p) := by
   simp only [diamond_eq_preimage, Function.comp_apply, OrderIso.symm_apply_apply, preimage_comp]
+
+/-- Iterated necessity is the iterated core. -/
+theorem setOf_box_iterate (n : ℕ) (p : W → Prop) :
+    {w | (□[R])^[n] p w} = R.core^[n] {v | p v} := by
+  induction n generalizing p with
+  | zero => rfl
+  | succ n ih => rw [Function.iterate_succ_apply, Function.iterate_succ_apply, ← ih]; rfl
+
+/-- Necessity along the transitive closure of `R` is the infinite conjunction of iterated
+necessity along `R`, $\Box p \land \Box \Box p \land \cdots$, the shape of common knowledge. -/
+theorem box_transGen_iff {p : W → Prop} {w : W} :
+    □[R.transGen] p w ↔ ∀ n, (□[R])^[n + 1] p w := by
+  have h := Set.ext_iff.1 (core_transGen (R := R) (s := {v | p v})) w
+  rw [Set.mem_iInter] at h
+  exact h.trans (forall_congr' fun n ↦ by rw [← setOf_box_iterate]; rfl)
 
 /-- If every `A`-predecessor of a world that `C`-accesses a second world `B`-accesses a world
 the second one `D`-accesses, then what is possibly necessary is necessarily possible. -/

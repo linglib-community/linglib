@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Logic.Modal.Iterate
 public import Linglib.Logic.Modal.Definability
 public import Mathlib.Data.Set.Lattice.Bounded
 
@@ -41,7 +40,7 @@ by a chain of worlds each accessible to some member from the one before. -/
 def CommonKnowledge (p : W → Prop) (w : W) : Prop := □[transGen (⋃ i ∈ G, Rs i)] p w
 
 theorem box_of_commonKnowledge (hi : i ∈ G) (h : CommonKnowledge Rs G p w) : □[Rs i] p w :=
-  box_restrict p ((Set.subset_biUnion_of_mem (u := Rs) hi).trans subset_transGen) w h
+  box_le_box_left ((Set.subset_biUnion_of_mem (u := Rs) hi).trans subset_transGen) p w h
 
 theorem commonKnowledge_iff_forall_iterate :
     CommonKnowledge Rs G p w ↔ ∀ n, (□[⋃ i ∈ G, Rs i])^[n + 1] p w :=

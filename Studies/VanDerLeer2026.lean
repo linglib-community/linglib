@@ -66,7 +66,7 @@ cooperative continuations, and of the thesis's three levels of discourse expecta
 namespace VanDerLeer2026
 
 open Commitment
-open ModalLogic (IsSerial IsEuclidean box_D box_four box_five box_restrict not_box box_iUnion)
+open ModalLogic (IsSerial IsEuclidean box_D box_four box_five box_le_box_left not_box box_iUnion)
 open scoped ModalLogic
 open SetRel
 
@@ -397,7 +397,7 @@ theorem apply_root_update (hπ : ∀ x y, IsFree x y π) : π (update α C).root
 theorem commits_update (hπ : ∀ x y, IsFree x y π) (h : w ∈ commits a b π C.root) :
     w ∈ commits a b π (update α C).root := by
   simp only [commits, Set.mem_ofPred_eq, apply_root_update C α hπ] at h ⊢
-  exact box_restrict _ (root_update_commitment_le C α (a, b)) w h
+  exact box_le_box_left (root_update_commitment_le C α (a, b)) _ w h
 
 -- Theorem 30 for a `C_{a,b}`-free proposition that mentions another commitment: at the state
 -- where every world is accessible, `a` is committed to `¬C_{b,b} {true}` until `b` asserts `{true}`

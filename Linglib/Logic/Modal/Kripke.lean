@@ -16,7 +16,8 @@ A relation between the worlds of two models is a bisimulation, `KripkeModel.IsBi
 when related worlds make the same atoms true and each successor of one is related to a
 successor of the other. The converse of a bisimulation is one (`IsBisimulation.symm`), and a
 world reached from one of two related worlds is related to a world reached from the other
-(`IsBisimulation.exists_reflTransGen`).
+(`IsBisimulation.exists_reflTransGen`), and related worlds agree on the necessity of any two
+propositions the bisimulation respects (`IsBisimulation.box_iff`).
 
 ## Implementation notes
 
@@ -83,6 +84,12 @@ open SetRel in
 instance [DecidableEq W] (M : KripkeModel W Atom) (w v : W) : Decidable (w ~[M.accessible] v) :=
   inferInstanceAs (Decidable (v ∈ M.access w))
 
+theorem KripkeModel.box_accessible (M : KripkeModel W Atom) (p : W → Prop) (w : W) :
+    □[M.accessible] p w ↔ ∀ v ∈ M.access w, p v := .rfl
+
+theorem KripkeModel.diamond_accessible (M : KripkeModel W Atom) (p : W → Prop) (w : W) :
+    ◇[M.accessible] p w ↔ ∃ v ∈ M.access w, p v := .rfl
+
 /-! ### Bisimulation -/
 
 /-- A relation between the worlds of two Kripke models is a **bisimulation** when related worlds
@@ -115,6 +122,14 @@ theorem exists_reflTransGen (h : M.IsBisimulation M' r) (hr : r w w') {u : W}
     obtain ⟨hforth, -⟩ := h.liftRel_access hrb
     obtain ⟨c', hc', hrc⟩ := hforth _ hbc
     exact ⟨c', hb'.tail hc', hrc⟩
+
+/-- Bisimilar worlds agree on the necessity of propositions the bisimulation respects. -/
+theorem box_iff (h : M.IsBisimulation M' r) {w : W} {w' : W'} (hr : r w w') {p : W → Prop}
+    {p' : W' → Prop} (hp : ∀ ⦃v v'⦄, r v v' → (p v ↔ p' v')) :
+    □[M.accessible] p w ↔ □[M'.accessible] p' w' := by
+  obtain ⟨forth, back⟩ := h.liftRel_access hr
+  exact ⟨fun hb v' hv' ↦ let ⟨v, hv, hvv'⟩ := back v' hv'; (hp hvv').1 (hb v hv),
+    fun hb v hv ↦ let ⟨v', hv', hvv'⟩ := forth v hv; (hp hvv').2 (hb v' hv')⟩
 
 end KripkeModel.IsBisimulation
 
