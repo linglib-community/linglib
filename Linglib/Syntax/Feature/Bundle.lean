@@ -15,17 +15,28 @@ public import Linglib.Morphology.Word.Features
 
 A feature bundle gives a slot to each of the five dimensions in which the form of one element
 may covary with another: person, number, gender, case and definiteness, the first three the
-φ-features (`Agreement.Dimension.phi`). The index of a bundle and its concord
-(`Agreement.Bundle.index`, `Agreement.Bundle.concord`) are its projections onto the φ-features
-and onto case, number and gender, and two elements agree in one of them when the projections of
-their bundles are compatible. Bundles are compatible exactly when they unify
-(`Agreement.Bundle.coe_sup_coe_eq_top_iff`). A slot is a value or nothing, in the flat order of
-`Core/Order/Flat.lean`, and the person slot is a pair of them, a person and a clusivity, so that
-a first person form with no clusivity is less specific than an inclusive or an exclusive one.
-The partial order of bundles, their bottom, the wholly unspecified bundle, and their unification
-are the pointwise ones. Each dimension is a token feature with that feature's values, and
-[a token's bundle](##Agreement.Bundle.ofFeatures) is its features read along that inclusion, the
-person slot from the token's person and clusivity together.
+φ-features. A slot is a value or nothing, in the flat order, and the person slot is a pair of
+them, a person and a clusivity, so that a first person form with no clusivity is less specific
+than an inclusive or an exclusive one. Bundles are ordered pointwise, the wholly unspecified
+bundle least, and they unify pointwise. The index of a bundle is its projection onto the
+φ-features and its concord its projection onto case, number and gender, and two elements agree
+in one of them when the projections of their bundles are compatible. A token's bundle is its
+features read along the inclusion of the dimensions in the token features, the person slot from
+the token's person and clusivity together.
+
+## Main definitions
+
+* `Dimension`: person, number, gender, case or definiteness.
+* `Bundle`: a slot for each dimension.
+* `Bundle.index x`: the projection of `x` onto the φ-features.
+* `Bundle.concord x`: the projection of `x` onto case, number and gender.
+* `Bundle.ofFeatures f`: the bundle of the token features `f`.
+* `Bundle.personNumber p n`: the bundle valued `p` in person and `n` in number alone.
+
+## Main results
+
+* `Bundle.coe_sup_coe_eq_top_iff`: two bundles fail to unify exactly when they are incompatible.
+* `Bundle.ofFeatures_mono`: more specific features give a more specific bundle.
 
 ## Implementation notes
 
@@ -40,8 +51,8 @@ exclusive are values of person in the classification the dimensions follow, and 
 distinguishes values in each dimension with no clusivity among them.
 
 Bundles are borne by pronouns and nominals as well as by agreement targets, and are spelled out
-by morphology, so the file stands with the feature inventories below `Syntax/Agreement` and
-`Morphology`. Its declarations keep the namespace `Agreement`.
+by morphology, so the file stands with the feature inventories, below the agreement and the
+morphology directories. Its declarations keep the namespace `Agreement`.
 
 The slots hold the cross-linguistic values of the token features, so that bundles of different
 languages compare. A language-particular system, such as a set of noun classes, is not a

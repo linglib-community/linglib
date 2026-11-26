@@ -74,9 +74,9 @@ has in common, and with all three features no two participant sets have the same
 The second person with the inclusive covers what the second person covers, and the second person
 with the exclusive and the third with the inclusive cover nothing.
 
-The order on `Person` is given here and not with the values, since it is the order of their
-referents. It is computed from the position of a value, and `Person.le_iff_exists_subset` states
-it of the participant sets.
+The order on the person values is given here and not with the values, since it is the order of
+their referents. It is computed from the position of a value, and a theorem states it of the
+participant sets.
 
 ## References
 

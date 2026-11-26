@@ -11,7 +11,7 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Grammatical person and clusivity
 
-`Person` is the person value a form bears: first, second or third. *Clusivity* is the
+Grammatical person is the value a form bears: first, second or third. *Clusivity* is the
 distinction between an *inclusive* and an *exclusive* form, which languages that have it mark
 where English has *we*.
 

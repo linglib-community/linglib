@@ -28,17 +28,14 @@ and its referential categories the person-case constraint and resolved agreement
 
 ## Main definitions
 
-* `Agreement.Bundle.categories`: the referential categories a cell covers.
-* `Pronoun.categories`: the referential categories a pronoun's own person, clusivity and number
+* `Bundle.categories b`: the referential categories the cell `b` covers.
+* `Pronoun.categories p`: the referential categories the person, clusivity and number of `p`
   cover.
-* `PersonalPronoun.referential`: the referential categories a personal pronoun can denote.
-* `PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber`: the person and
-  number the pronoun contributes to interpretation.
-* `PersonalPronoun.IsOrdinary`: the pronoun denotes what the labels it agrees as cover.
-* `PersonalPronoun.paradigm`: the forms an inventory offers for each referential category,
-  whose kernel `Setoid.ker` is the inventory's person-number syncretism.
-* `ReflexivePronoun.paradigm`: the forms an inventory of reflexives offers for each category
-  its person and number cover.
+* `PersonalPronoun.referential p`: the referential categories of the cells `p` is used for.
+* `PersonalPronoun.referentialPerson p`: the person the categories `p` denotes share.
+* `PersonalPronoun.IsOrdinary p`: `p` denotes what the labels it agrees as cover.
+* `PersonalPronoun.paradigm I k`: the forms of the pronouns of `I` that denote the category
+  `k`.
 
 ## References
 

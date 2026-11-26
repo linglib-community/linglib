@@ -26,17 +26,16 @@ pro-form taking its antecedents from a fixed form-class.
 
 ## Main definitions
 
-* `Pronoun.CandidateAntecedent`: a nominal token that agrees with the pronoun, so one of the
-  pronoun's number (`Pronoun.CandidateAntecedent.number_eq`).
+* `Pronoun.CandidateAntecedent p w`: `w` is a nominal token that agrees with `p` in φ-features.
 
 ## Main results
 
-* `Pronoun.bindingClassOf_toWord_reflex`, `Pronoun.bindingClassOf_toWord_rcp`,
-  `Pronoun.bindingClassOf_toWord`, `Pronoun.bindingClassOf_toWord_of_isOperator`: the binding
-  class the engine reads off a pronoun's token is fixed by the marking its kind supplies.
-* `PersonalPronoun.bindingClassOf_toWord`, `ReflexivePronoun.bindingClassOf_toWord`,
-  `ReciprocalPronoun.bindingClassOf_toWord`, `InterrogativePronoun.bindingClassOf_toWord`,
-  `IndefinitePronoun.bindingClassOf_toWord`: the class of each kind.
+* `PersonalPronoun.bindingClassOf_toWord`: the token of a personal pronoun is a pronominal.
+* `ReflexivePronoun.bindingClassOf_toWord`: the token of a reflexive is a reflexive anaphor.
+* `ReciprocalPronoun.bindingClassOf_toWord`: the token of a reciprocal is a reciprocal anaphor.
+* `Pronoun.bindingClassOf_toWord_of_isOperator`: the token of a wh-phrase or a quantifier
+  expression is an R-expression where its word class is nominal.
+* `Pronoun.CandidateAntecedent.number_eq`: a candidate antecedent has the pronoun's number.
 
 ## References
 

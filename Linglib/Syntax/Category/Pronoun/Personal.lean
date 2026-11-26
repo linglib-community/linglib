@@ -31,13 +31,13 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
 
 ## Main definitions
 
-* `PersonalPronoun` — a pronoun with its register, the labels it agrees as and the cells it is
-  used for
-* `PersonalPronoun.forms` — the forms an inventory offers for each cell, those of the pronouns
-  used for a cell at least as specific
-* `PersonalPronoun.ofCells`, `PersonalPronoun.ofTable`, `PersonalPronoun.ofTableAt` — the
-  pronoun of a form in a table of cells, with the cases and the person and number cells of the
-  cells it fills
+* `PersonalPronoun`: a pronoun with its register, the labels it agrees as and the cells it is
+  used for.
+* `PersonalPronoun.forms I c`: the forms of the pronouns of `I` used for a cell at least as
+  specific as `c`.
+* `PersonalPronoun.ofTable table f`: the pronoun of the form `f`, with the cases and the cells
+  of every cell the table gives it.
+* `PersonalPronoun.toWord p`: the token of `p`, bearing the labels it agrees as.
 
 ## References
 

@@ -19,14 +19,14 @@ public import Linglib.Syntax.Feature.Person.Defs
 /-!
 # Pronouns
 
-This file defines the pronoun as a lexical object: a surface form with the agreement features
-every pronoun kind shares. The kinds extend it, each in its own file: `PersonalPronoun`,
-`LogophoricPronoun`, `ReflexivePronoun`, `ReciprocalPronoun`, `DemonstrativePronoun`, and
-`ProForm` with its kinds `InterrogativePronoun` and `IndefinitePronoun`. A `Pronoun` has no
-denotation or pronoun type of its own; the kind supplies them, and `Pronoun.toWord` takes the
-pronoun type and the reflexive marking as arguments. The binding class of the token is in
-`Syntax/Binding/Pronoun.lean`. Its person, clusivity and number are labels:
-the referential categories they cover are in `Syntax/Category/Pronoun/Categories.lean`.
+This file defines the pronoun as a lexical object: a surface form with the person, number,
+gender and cases every pronoun kind shares. The kinds extend it, each in its own file: the
+personal, logophoric, reflexive, reciprocal and demonstrative pronouns, and the proforms with
+their interrogative and indefinite kinds. A pronoun has no denotation or pronoun type of its
+own; the kind supplies them, and the token of a pronoun takes the pronoun type and the reflexive
+marking as arguments. Its person, clusivity and number are labels: the referential categories
+they cover are in `Syntax/Category/Pronoun/Categories.lean`, and the binding class of the token
+in `Syntax/Binding/Pronoun.lean`.
 
 ## Main definitions
 
@@ -37,9 +37,11 @@ the referential categories they cover are in `Syntax/Category/Pronoun/Categories
 * `Pronoun.case`: the flat case of a pronoun, the meet of the cases it fills.
 * `Pronoun.cell`: the paradigm cell that a pronoun's person, clusivity, number and gender
   name.
-* `Pronoun.ofCells`, `Pronoun.ofTable`: the pronoun of a form in a table of cells.
-* `Pronoun.toWord`: the pronoun as a token, with the pronoun type and reflexive marking of
-  its kind; `Pronoun.agreement_toWord` says the token bears the pronoun's agreement bundle.
+* `Pronoun.ofTable table f`: the pronoun of the form `f`, filling every cell the table gives it.
+* `Pronoun.toWord p`: the pronoun as a token, with the pronoun type and reflexive marking of
+  its kind.
+* `Pronoun.agreement p`: the agreement bundle of the token.
+
 ## References
 
 * [A. Cardinaletti and M. Starke, *The Typology of Structural Deficiency: A Case Study of the
