@@ -14,6 +14,7 @@ project that the statement mentions, followed through the bodies of definitions 
 proofs. Mathlib and Lean are trusted and not followed.
 
     lake exe checkClosure [--renames FILE] Mod₁ Mod₂ … -- name₁ name₂ …
+    lake exe checkClosure --text Mod₁ Mod₂ …
 
 imports the modules, and prints as JSON, for each name, whether it resolves, its module, its
 docstring, its closure and the axioms it rests on, together with the text and the term of every
@@ -33,6 +34,9 @@ Each declaration of a closure also comes with the project declarations its state
 directly (`uses`), with its signature as Lean prints it in the declaration's own namespace, with
 notation (`display`), and with the lines of its source (`lines`), absent for a declaration Lean
 generated. A page shows these to a reader; none enters a hash.
+
+With `--text` it prints instead, for each module, its module docstrings and its declarations
+with their docstrings and lines (`moduleText`), from which a page shows the module as a text.
 
 A Lean or Mathlib upgrade often renames a constant, keeping the old name for a while as a
 deprecated alias of the new one. So that such a rename does not change a term, every name of a
@@ -254,6 +258,21 @@ def run (renames : NameMap Name) (names : List Name) : MetaM Json := do
   return Json.mkObj [("roots", Json.mkObj roots.toList), ("nodes", Json.mkObj nodes.toList),
     ("aliases", toJson (aliases env st.mentioned))]
 
+/-- The module docstrings of a module and its declarations that have a place in the source, each
+with its docstring and its lines: what a page that shows the module as a text is made from. -/
+def moduleText (m : Name) : MetaM Json := do
+  let env ← getEnv
+  let some idx := env.getModuleIdx? m | throwError "{m} is not imported"
+  let docs := (getModuleDoc? env m).getD #[] |>.map fun d ↦
+    Json.mkObj [("line", toJson d.declarationRange.pos.line), ("doc", d.doc)]
+  let mut decls : Array Json := #[]
+  for c in env.header.moduleData[idx]!.constNames do
+    let some r ← findDeclarationRanges? c | continue
+    decls := decls.push <| Json.mkObj [("name", c.toString),
+      ("line", toJson r.range.pos.line), ("end", toJson r.range.endPos.line),
+      ("doc", match ← findDocString? env c with | some d => Json.str d | none => Json.null)]
+  return Json.mkObj [("docs", Json.arr docs), ("decls", Json.arr decls)]
+
 /-- The map from names to names in the JSON object of the file at `path`. -/
 def readRenames (path : String) : IO (NameMap Name) := do
   let json ← IO.ofExcept (Json.parse (← IO.FS.readFile path))
@@ -265,6 +284,9 @@ def readRenames (path : String) : IO (NameMap Name) := do
 unsafe def main (args : List String) : IO UInt32 := do
   -- Notation is kept in environment extensions, which an import loads only on request.
   enableInitializersExecution
+  let (text, args) := match args with
+    | "--text" :: rest => (true, rest)
+    | _ => (false, args)
   let ((renames : NameMap Name), args) ← match args with
     | "--renames" :: path :: rest => do pure (← readRenames path, rest)
     | _ => pure ({}, args)
@@ -274,6 +296,9 @@ unsafe def main (args : List String) : IO UInt32 := do
   let env ← importModules (mods.map fun m ↦ { module := m.toName }).toArray {}
     (trustLevel := 1024) (loadExts := true)
   let ctx : Core.Context := { fileName := "<checks>", fileMap := default, maxHeartbeats := 0 }
-  let (json, _) ← ((run renames (names.map String.toName)).run' {} {}).toIO ctx { env }
+  let act : MetaM Json :=
+    if text then return Json.mkObj (← mods.mapM fun m ↦ return (m, ← moduleText m.toName))
+    else run renames (names.map String.toName)
+  let (json, _) ← (act.run' {} {}).toIO ctx { env }
   IO.println json.compress
   return 0

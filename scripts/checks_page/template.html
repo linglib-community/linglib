@@ -4,11 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><!--TITLE--> | Linglib</title>
-<meta name="description" content="The definitions, results and data of this source, with the Lean that states each and who has checked the two against each other.">
+<meta name="description" content="Definitions and results as a text to read, with the Lean that states each beside it.">
 <meta name="robots" content="noindex">
 <!--SITE_HEAD-->
 <style>
-/* A source, read as a text: its items in a column, the Lean of the chosen one beside it */
+/* A source or a file, read as a text: its items in a column, and beside it the Lean of the
+   chosen one, or else a chart of what the page rests on */
 :root {
   --checked: #16a34a;
   --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
@@ -41,6 +42,12 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
 .item .mark { margin-left: 4px; font: 13px/1 var(--mono); color: var(--checked); }
 .item .mark.stale { color: var(--secondary); }
 .text code { font-size: 0.78em; }
+.prose p { margin: 0 0 0.9em; }
+.prose ul, .refs ul { margin: 0 0 1em; padding-left: 1.2em; }
+.prose pre { margin: 0 0 1em; padding: 10px 12px; font: 13px/1.5 var(--mono); background: var(--code-bg); border-radius: 6px; overflow-x: auto; }
+.refs { font-size: 16px; color: var(--secondary); }
+.text a.pick, .text a.ref { border-bottom: 1px solid var(--tertiary); }
+.text a.pick:hover, .text a.ref:hover { border-bottom-color: currentColor; }
 .links { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 56px 0 0; font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 .links a { color: var(--secondary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
 .links a:hover { color: var(--primary); }
@@ -49,11 +56,22 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
 /* The text keeps the header's left edge; the Lean may run past its right one on a wide screen. */
 .lean { font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; margin-right: calc(-1 * clamp(0px, (100vw - 1120px) / 2, 220px)); }
 .lean .pane { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; padding-top: 14px; }
-.lean .hint { margin: 96px 0 0; color: var(--secondary); }
-.lean h3 { margin: 0 0 10px; font-size: 13px; font-weight: 600; letter-spacing: 0; color: var(--secondary); }
-.lean .how p { margin: 0 0 8px; color: var(--content); }
-.lean .how p + p { color: var(--secondary); font-size: 14px; }
-.decl { margin: 16px 0 0; }
+.lean .how { margin-bottom: 16px; }
+.lean .how p { margin: 0 0 8px; color: var(--secondary); font-size: 14px; }
+.lean .how .rel { color: var(--content); font-size: 15px; }
+.decl { margin: 0 0 16px; }
+
+/* What the page rests on: files as squares, a source as a circle, mathlib as the bar */
+.chart { display: block; width: 100%; height: auto; margin-top: 30px; }
+.chart .ge { fill: none; stroke: var(--secondary); stroke-opacity: 0.45; stroke-width: 1.2; }
+.chart .gbase { stroke: var(--secondary); stroke-opacity: 0.5; stroke-width: 3; stroke-linecap: round; }
+.chart .gn.theory { fill: #4f6bd8; }
+.chart .gn.study { fill: var(--checked); }
+.chart .gn.here { fill: var(--primary); }
+.chart .gl { font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; fill: var(--secondary); }
+.chart .gl.here { fill: var(--primary); font-weight: 600; }
+.chart .gl.base { font-size: 11px; }
+.chart a:hover .gl { fill: var(--primary); text-decoration: underline; }
 .decl .name { margin: 0 0 4px; font: 13px/1.5 var(--mono); overflow-wrap: anywhere; }
 .decl .name .kw { color: var(--secondary); }
 .decl .name a { border-bottom: 1px solid var(--tertiary); }
@@ -76,7 +94,7 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
 .cov { margin-left: 8px; font-size: 13px; color: var(--secondary); white-space: nowrap; }
 .cov:hover { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
 .node .body { margin: 4px 0 6px 1.1em; }
-.state { margin: 18px 0 0; font-size: 14px; color: var(--secondary); }
+.state { margin: 0; font-size: 14px; color: var(--secondary); }
 .state a { color: var(--secondary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 2px; }
 .state a:hover { color: var(--primary); }
 
@@ -85,7 +103,7 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
   .item { margin-left: -12px; padding-left: 10px; }
   .lean { margin-right: 0; }
   .lean .pane { position: static; max-height: none; padding: 0; }
-  .lean .hint { display: none; }
+  .chart { margin: 8px 0 24px; }
   .lean.inline { margin: 4px 0 28px; padding: 14px 0 16px; border-block: 1px solid var(--border); }
 }
 @media (max-width: 600px) {
@@ -99,14 +117,14 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
 <!--SITE_HEADER-->
 <main class="book">
   <div class="text">
-    <p class="crumbs"><a href="../">Checks</a> / <!--LABEL--></p>
+    <p class="crumbs"><!--CRUMBS--></p>
     <h1><!--H1--></h1>
-    <p class="by"><!--CITE--></p>
+    <p class="by"><!--BY--></p>
 <!--ITEMS-->
     <p class="links"><!--LINKS--></p>
   </div>
   <aside class="lean" id="lean" aria-live="polite">
-    <div class="pane" id="pane"><p class="hint">Choose an item to see the Lean that states it.</p></div>
+    <div class="pane" id="pane"><!--ASIDE--></div>
   </aside>
 </main>
 <!--SITE_FOOTER-->
@@ -163,7 +181,8 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
     if (!it || !art) return;
     document.querySelectorAll(".item.sel").forEach((a) => a.classList.remove("sel"));
     art.classList.add("sel");
-    pane.replaceChildren(el("h3", null, it.title), html("div", "how", it.how));
+    pane.replaceChildren();
+    if (it.how) pane.append(html("div", "how", it.how));
     for (const name of it.decls) {
       const n = N[name], d = el("div", "decl"), p = el("p", "name");
       if (!n) { p.append(el("code", null, name)); d.append(p); pane.append(d); continue; }
@@ -196,7 +215,7 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
       body.hidden = !open;
       return;
     }
-    const cov = e.target.closest("a.cov");
+    const cov = e.target.closest("a.cov, a.pick");
     if (cov) { e.preventDefault(); choose(cov.getAttribute("href").slice(1), true); return; }
     if (e.target.closest("a")) return;
     const art = e.target.closest(".item");

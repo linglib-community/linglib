@@ -200,10 +200,11 @@ jobs:
           # /docs-new/, where the study pages were previewed, forwards to them.
           python3 scripts/gen_docs_pages.py --out .lake/build/doc-site/docs --check \
             --redirect .lake/build/doc-site/docs-new --checks .lake/build/checks.json
-          # A source's items as a text to read, at /checks/<bib-key>/, each with the Lean that
-          # states it. No page links there and the pages ask not to be indexed.
+          # A source's items as a text to read, at /checks/<bib-key>/, and the files they rest
+          # on at /text/<path>/, each item with the Lean that states it. No page links there and
+          # the pages ask not to be indexed.
           python3 scripts/gen_checks_pages.py --checks .lake/build/checks.json \
-            --out .lake/build/doc-site/checks
+            --out .lake/build/doc-site
 
       - name: Setup Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0

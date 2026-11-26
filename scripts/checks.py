@@ -353,6 +353,29 @@ def evaluate(sources, renames=None):
     return status, info, data
 
 
+def module_texts(modules):
+    """For each module, its module docstrings and its declarations as written, outermost first:
+    one per place in the source, under the shortest name declared there, with its docstring and
+    lines. What Lean generated inside another declaration, such as a projection, is left out."""
+    out = subprocess.run(["lake", "exe", "checkClosure", "--text", *modules], cwd=ROOT,
+                         check=True, capture_output=True, text=True).stdout
+    texts = {}
+    for module, raw in json.loads(out).items():
+        places = {}
+        for d in raw["decls"]:
+            if "«" in d["name"] or "._" in d["name"]:
+                continue
+            at = (d["line"], d["end"])
+            if at not in places or len(d["name"]) < len(places[at]["name"]):
+                places[at] = dict(d, doc=d["doc"] or places.get(at, {}).get("doc"))
+        decls = []
+        for at in sorted(places, key=lambda at: (at[0], -at[1])):
+            if not (decls and at[0] >= decls[-1]["line"] and at[1] <= decls[-1]["end"]):
+                decls.append(places[at])
+        texts[module] = {"docs": raw["docs"], "decls": decls}
+    return texts
+
+
 def source_text(node):
     """A definition or inductive type as its file writes it, without its docstring; `None` for a
     theorem, whose statement a page shows without its proof, and for what Lean generated."""
@@ -371,7 +394,8 @@ def status_json(sources, status, info, data):
     """Every item with its status and newest sign-off, as `gen_docs_pages.py --checks` reads it,
     and what `gen_checks_pages.py` shows of it besides: its claim, the items covering a definition
     its statement uses (`relies`), and each declaration of a closure as a reader sees it, with the
-    declarations its statement mentions directly (`nodes`)."""
+    declarations its statement mentions directly (`nodes`), and the modules those statements
+    reach as texts, their docstrings in the order of the source (`texts`)."""
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, check=True,
                             capture_output=True, text=True).stdout.strip()
     items = []
@@ -389,10 +413,18 @@ def status_json(sources, status, info, data):
             "check": last and {"by": last["by"], "via": last["via"],
                                "date": last["date"].date().isoformat()},
             "blocking": [f"{k}/{c}" for k, c in info[(key, cid)].get("blocking", [])]})
+    # The modules the items' statements reach are shown as texts, so every declaration of theirs
+    # is described too, with what its own statement reaches.
+    modules = sorted({n["module"] for n in data["nodes"].values()})
+    texts = module_texts(modules) if modules else {}
+    written = [d["name"] for t in texts.values() for d in t["decls"]]
+    every = dict(data["nodes"])
+    if written:
+        every.update(check_closure(modules, written, load_renames())["nodes"])
     nodes = {name: {"module": n["module"], "kind": n["kind"], "display": n["display"],
                     "source": source_text(n), "uses": n["uses"]}
-             for name, n in sorted(data["nodes"].items())}
-    return {"commit": commit, "items": items, "nodes": nodes}
+             for name, n in sorted(every.items())}
+    return {"commit": commit, "items": items, "nodes": nodes, "texts": texts}
 
 
 def cmd_status(args):

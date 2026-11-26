@@ -23,20 +23,30 @@ wide, in light and dark mode, before opening a PR.
 
 ## The checks pages
 
-`gen_checks_pages.py` writes `/checks/<bib-key>/` for each source with a record in `checks/`, and
-`/checks/`, which lists them. No menu item and no other page links to them, and they carry
-`noindex`, so they are reached by address only.
+`gen_checks_pages.py` writes `/checks/<bib-key>/` for each source with a record in `checks/`,
+`/checks/`, which lists them, and `/text/<path>/` for each file the items of those sources rest
+on. No menu item and no other page links to them, and they carry `noindex`, so they are reached
+by address only.
 
-A source's page is read as a text, and departs from the rules above to that end:
+Each page is read as a text, and departs from the rules above to that end:
 
-- The text is in the system serif, in a 600px column under the header's left edge. It is the
-  source's sections, and under each its items: the kind and the source's own number in bold, then
-  the claim. A term a definition defines is bold. Nothing else is in the column.
+- The text is in the system serif, in a 600px column under the header's left edge. A source's is
+  its sections, and under each its items: the kind and the source's own number in bold, then the
+  claim. A file's is its module docstring, its section headings and its documented declarations
+  in the order of the source: the kind and a number in bold, then the docstring; its
+  implementation notes and references close it. A term written `**so**` is bold. Nothing else is
+  in the column, and a declaration with no docstring is not in a text.
 - Choosing an item shows its Lean beside it, in a column that may run past the header's right
-  edge: how the Lean departs from the item, the declarations that state it, and the sign-off. A
-  definition is shown as its file writes it and a theorem as its statement without the proof.
-  What a statement uses is behind one toggle, and opens in place. On a narrow screen the Lean
-  opens under the item.
+  edge: for a source's item how the Lean departs from it, then the declarations, then the
+  sign-off or the items of sources a declaration states. A definition is shown as its file writes
+  it and a theorem as its statement without the proof. What a statement uses is behind one
+  toggle, and opens in place; what Lean generated is left out. On a narrow screen the Lean opens
+  under the item.
+- Until an item is chosen the side holds a chart of what the page rests on, drawn from what its
+  statements reach and not from imports: files as squares under their titles, a source as a
+  circle, mathlib as the bar at the top, the page at the bottom, and under a file what rests on
+  it. A link is drawn where a statement of the lower file mentions a declaration of the upper and
+  no longer path says so. Top to bottom is an order to read in.
 - An item a person has checked carries a mark after its number. An unchecked item says nothing
   in the text.
 
