@@ -236,7 +236,7 @@ def positiveFeatures (p : Person) : Finset ProminenceThreshold :=
 /-- The Person Hierarchy is derived, the prominence order coinciding with the order by count of
 positive features (§2.1). -/
 theorem personHierarchy_from_features (p q : Person) :
-    p.prominence ≤ q.prominence ↔ (positiveFeatures p).card ≤ (positiveFeatures q).card := by
+    p ≤ q ↔ (positiveFeatures p).card ≤ (positiveFeatures q).card := by
   cases p <;> cases q <;> decide
 
 /-! ### The varieties (§4) -/

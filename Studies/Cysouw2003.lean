@@ -252,7 +252,7 @@ abbrev Structure := Setoid Category
 homophony reaches them, the third person first and the first person last. -/
 abbrev Singular := {c : Category // c.IsSingular}
 
-instance : LinearOrder Singular := LinearOrder.lift' (fun a ↦ a.1.person.prominence) (by decide)
+instance : LinearOrder Singular := LinearOrder.lift' (fun a ↦ a.1.person) (by decide)
 
 /-- The marking of 'we', the columns of the book's Table 4.2, opposes minimal to augmented
 inclusive, or inclusive to exclusive, or has one form. -/

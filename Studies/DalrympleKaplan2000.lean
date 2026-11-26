@@ -283,7 +283,7 @@ theorem jose_y_tu :
 -- fn. 12
 theorem markers_subset_iff_prominence : ∀ s t : PersonSet,
     markers ↑(Person.ofParticipants t) ⊆ markers ↑(Person.ofParticipants s) ↔
-      (Person.ofParticipants t).prominence ≤ (Person.ofParticipants s).prominence := by
+      Person.ofParticipants t ≤ Person.ofParticipants s := by
   decide
 
 /-- The dual assignment, each marker set's complement, its markers read as absences ((102)). -/
