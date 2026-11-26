@@ -517,9 +517,23 @@ def source_page(site, key, sha, lines):
         for d in i["decls"]:
             page.cover.setdefault(d, []).append((i["id"], i["label"]))
 
-    # The study file's header opens the page and its notes and references close it.
+    # The study file's header opens the page and its notes and references close it. A line then
+    # says that what follows is the source's own items, restated in the record, and who has
+    # checked them.
     header = site.texts.get(study, {}).get("docs", [])[:1]
     body, tail = module_doc(page, header[0]["doc"]) if header else ([], [])
+    checked = [i for i in its if i["status"] in ("checked", "relies")]
+    signers = list(dict.fromkeys(who(i["check"]) for i in checked))
+    count = f'{len(its)} item{"" if len(its) == 1 else "s"}'
+    if not checked:
+        tally = f"None of the {count} has been checked against the paper yet."
+    elif len(checked) == len(its):
+        tally = f'All {count} have been checked against the paper, by {" and ".join(signers)}.'
+    else:
+        tally = (f'{len(checked)} of the {count} have been checked against the paper, by '
+                 f'{" and ".join(signers)}; they carry a mark.')
+    body.append(f'<p class="prov">What follows restates the paper item by item, from its '
+                f'<a href="{record}">check record</a>. {tally}</p>')
     panel = {}
     for i in its:
         iid = esc(i["id"], quote=True)
