@@ -91,7 +91,7 @@ structure Embedding where
   classification is textbook consensus (believe, think, know); preferential attitudes (want, hope)
   are contested ([heim-1992]) and stay `none`. -/
   complementSig : Option ProjectivitySignature := none
-  deriving Repr, BEq
+  deriving DecidableEq, Repr
 
 namespace Embedding
 

@@ -317,7 +317,7 @@ def salire : Verb where
   morphs := [.root "salire"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  scaleDimension := some .height
+  gradability := some { dimension := .height }
 
 /-- *marcire* 'go off, rot', a verb of change of state. -/
 def marcire : Verb where
@@ -437,7 +437,7 @@ def perfectAuxiliary (v : Verb) (fr : ArgumentFrame)
     (p : Option Locative := none) : PerfectAuxiliary :=
   if fr.HasNominal then .have
   else if (∃ d ∈ v.direction, d ≠ .place) ∨ v.phasal = some .continuation ∨
-      v.scaleDimension.isSome ∨
+      v.gradability.isSome ∨
       (∃ θ ∈ v.slotProfile? .external, .volition ∉ θ ∧ .causation ∉ θ) ∨
       v.TakesSpatial ∧ ∃ r ∈ p, r.mode.IsBounded then .be
   else .have

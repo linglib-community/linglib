@@ -205,7 +205,7 @@ grammar's unaccusativity tests assign it (§2.1), which introduces no external a
 /-- *komen* 'come', *kom - kwam - gekomen*, an unaccusative verb of motion to a goal. -/
 def komen : Verb :=
   { simplex "komen" "gekomen" with
-    voiceType := some .nonThematic, perfectAuxiliaries := {.be},
+    perfectAuxiliaries := {.be},
     valency := .ofFrame ArgumentFrame.intransitive,
     direction := some .goal }
 
@@ -219,16 +219,16 @@ def sterven : Verb :=
 /-- *groeien* 'grow', an unaccusative verb of change along a scale of size. -/
 def groeien : Verb :=
   { simplex "groeien" "gegroeid" with
-    voiceType := some .nonThematic, perfectAuxiliaries := {.be},
+    perfectAuxiliaries := {.be},
     valency := .ofFrame ArgumentFrame.intransitive,
-    scaleDimension := some .generalSize }
+    gradability := some { dimension := .generalSize } }
 
 /-- *stijgen* 'rise', an unaccusative verb of change along a scale of height. -/
 def stijgen : Verb :=
   { simplex "stijgen" "gestegen" with
-    voiceType := some .nonThematic, perfectAuxiliaries := {.be},
+    perfectAuxiliaries := {.be},
     valency := .ofFrame ArgumentFrame.intransitive,
-    scaleDimension := some .height }
+    gradability := some { dimension := .height } }
 
 /-- *blijven* 'stay' is an unaccusative verb expressing that a state continues to exist (§1.2),
 with the auxiliary *zijn*, as in *Was dan ook wat langer gebleven!* 'You should have stayed a bit
@@ -312,7 +312,7 @@ transition, and *zijn* for *blijven*, whose state continues. -/
 def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
   if v.phasal = some .continuation then .be
   else if fr.IsIntransitive ∧ ((∃ d ∈ v.direction, d ≠ .place) ∨ v.IsUnaccusative ∧
-      ((∃ θ ∈ v.slotProfile? .external, .changeOfState ∈ θ) ∨ v.scaleDimension.isSome)) then .be
+      ((∃ θ ∈ v.slotProfile? .external, .changeOfState ∈ θ) ∨ v.gradability.isSome)) then .be
   else .have
 
 /-- A directional phrase gives an intransitive verb that selects it *zijn*, as in *De jongen is

@@ -101,7 +101,7 @@ def believe : Verb where
   valency := .ofLinks
     [(.finiteClause, [some 0, some 1]), (toInfinitive.withObject, [some 0, none, some 1])]
     (controls := [none, some (.complement 0)])
-  scaleDimension := some .confidence
+  gradability := some { dimension := .confidence }
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
   complementSig := some .mono
@@ -123,8 +123,7 @@ def doubt : Verb where
   morphs := [.root "doubt"]
   levin := none
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  scaleDimension := some .confidence
-  scalePolarity := .negative
+  gradability := some { dimension := .confidence, polarity := .negative }
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
   complementSig := some .anti

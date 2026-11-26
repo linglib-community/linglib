@@ -45,4 +45,10 @@ def toVerb (a : ClauseEmbeddingAdjective) (copula : String) : Verb :=
     morphs := [.free copula, .root a.form]
     valency := a.valency }
 
+@[simp] theorem toEmbedding_toVerb (a : ClauseEmbeddingAdjective) (copula : String) :
+    (a.toVerb copula).toEmbedding = a.toEmbedding := rfl
+
+@[simp] theorem valency_toVerb (a : ClauseEmbeddingAdjective) (copula : String) :
+    (a.toVerb copula).valency = a.valency := rfl
+
 end ClauseEmbeddingAdjective

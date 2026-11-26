@@ -39,7 +39,7 @@ def crack : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  scaleDimension := some .cracking
+  gradability := some { dimension := .cracking }
 
 /-- "dent" — Levin 21.2 Carve verbs. Physical disturbance CoS verb.
     [tham-2025]: closed scale, compatible with *more dented*, *completely
@@ -51,7 +51,7 @@ def dent : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  scaleDimension := some .denting
+  gradability := some { dimension := .denting }
 
 /-- "scratch" — Levin 21.1 Cut verbs, a physical disturbance CoS verb for
     [tham-2025]: closed scale, compatible with *more scratched*, *completely
@@ -66,7 +66,7 @@ def scratch : Verb where
      (ArgumentFrame.np_pp (some Adpositions.on)
          (some (.spatial (some .surface) .place)), [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
-  scaleDimension := some .scratching
+  gradability := some { dimension := .scratching }
 
 /-- "shatter" — Levin 45.1 Break verbs. NOT a physical disturbance verb.
     Punctual, non-gradable: *shatter in two minutes* (after, not duration),
@@ -89,7 +89,6 @@ def burn : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  incrementality := some .strict
 
 /-- "destroy" — Levin 44 destroy verbs. -/
 def destroy : Verb where
@@ -112,7 +111,6 @@ def melt : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 3, 1])]
-  incrementality := some .strict
 
 /-! ### Further change-of-state verbs
 
@@ -279,8 +277,7 @@ def dry : Verb where
   morphs := [.root "dry"]
   levin := some Levin1993.Index.dry
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  scaleDimension := some .wetness
-  scalePolarity := .negative
+  gradability := some { dimension := .wetness, polarity := .negative }
 
 /-- "enhance" — improvement in quality; not listed by Levin. -/
 def enhance : Verb where
@@ -306,7 +303,7 @@ def slow : Verb where
   morphs := [.root "slow"]
   levin := some Levin1993.Index.slow
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  scaleDimension := some .speed
+  gradability := some { dimension := .speed }
 
 /-- "turn" — Levin 26.6 turn verbs (*turn the prince into a frog*). -/
 def turn : Verb where
@@ -361,8 +358,7 @@ def bend : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  scaleDimension := some .straightness
-  scalePolarity := .negative
+  gradability := some { dimension := .straightness, polarity := .negative }
 
 /-- "boil" — Levin 45.3 Cooking verbs. Causative/inchoative alternation.
     Degree achievement: closed scale (reaches boiling point). -/
@@ -374,7 +370,7 @@ def boil : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  scaleDimension := some .boiling
+  gradability := some { dimension := .boiling }
 
 /-- "rust" — Levin 45.5 Entity-Specific CoS verbs. Inchoative only.
     Degree achievement: open scale (no maximum rustedness). -/
@@ -382,7 +378,7 @@ def rust : Verb where
   morphs := [.root "rust"]
   levin := some Levin1993.Index.rust
   valency := .ofFrame ArgumentFrame.intransitive
-  scaleDimension := some .corrosion
+  gradability := some { dimension := .corrosion }
 
 /-- *increase* is a degree achievement on an open scale, with no maximum quantity. Levin lists it
 with her other alternating verbs of change of state (45.4), whose transitive takes an agent or an
@@ -396,7 +392,7 @@ def increase : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  scaleDimension := some .quantity
+  gradability := some { dimension := .quantity }
 
 /-! ### Degree achievement verb pairs ([kennedy-2007]) -/
 
@@ -410,7 +406,7 @@ def straighten : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  scaleDimension := some .straightness
+  gradability := some { dimension := .straightness }
 
 /-- "flatten" — Closed-scale degree achievement (base adj: flat).
     Accomplishment: "flattened the dough in 2 minutes." -/
@@ -422,7 +418,7 @@ def flatten : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  scaleDimension := some .flatness
+  gradability := some { dimension := .flatness }
 
 /-- "open" — Closed-scale degree achievement (base adj: open, closed scale).
     Accomplishment: "opened the door in 3 seconds." -/
@@ -433,7 +429,7 @@ def open_ : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  scaleDimension := some .openness
+  gradability := some { dimension := .openness }
 
 /-- "lengthen" — Open-scale degree achievement (base adj: long, open scale).
     Activity: "lengthened the rope for hours." -/
@@ -445,7 +441,7 @@ def lengthen : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  scaleDimension := some .length
+  gradability := some { dimension := .length }
 
 /-- "widen" — Open-scale degree achievement (base adj: wide, open scale).
     Activity: "widened the road for months." -/
@@ -457,7 +453,7 @@ def widen : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  scaleDimension := some .width
+  gradability := some { dimension := .width }
 
 /-- "cool" — Open-scale degree achievement (base adj: cool, open scale).
     Activity: "cooled for an hour." -/
@@ -469,7 +465,7 @@ def cool : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  scaleDimension := some .temperature
+  gradability := some { dimension := .temperature }
 
 /-- "warm" — Open-scale degree achievement (base adj: warm, open scale).
     Activity: "warmed for an hour." -/
@@ -481,6 +477,6 @@ def warm : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  scaleDimension := some .temperature
+  gradability := some { dimension := .temperature }
 
 end English.Verbs

@@ -119,6 +119,5 @@ def tear_ : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  incrementality := some .strict
 
 end English.Verbs

@@ -157,7 +157,6 @@ def arrive : Verb where
   morphs := [.root "arrive"]
   levin := some Levin1993.Index.arrive
   valency := .ofFrame ArgumentFrame.intransitive [some achievementSubjectProfile]
-  voiceType := some .nonThematic
   direction := some .goal
 
 /-- *come*, an unaccusative verb of inherently directed motion like *arrive* (51.1). -/
@@ -167,7 +166,6 @@ def come : Verb where
   past := "came"
   pastPart := "come"
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .nonThematic
   direction := some .goal
 
 /-- "go" — Levin 51.1 inherently directed motion, suppletive in the past. -/
@@ -203,7 +201,6 @@ def eat : Verb where
      ArgumentFrame.objectDrop {.indef},
      ArgumentFrame.pp (some Adpositions.at_)]
     [some accomplishmentSubjectProfile, some consumptionObject]
-  incrementality := some .strict
 
 /-- "kick" — transitive -/
 def kick : Verb where
@@ -266,7 +263,6 @@ def cover : Verb where
   morphs := [.root "cover"]
   levin := some Levin1993.Index.cover
   valency := .ofFrame ArgumentFrame.np
-  incrementality := some .strict
 
 /-- "measure" — general measurement predicate. -/
 def measure : Verb where
@@ -355,7 +351,6 @@ def devour : Verb where
   morphs := [.root "devour"]
   levin := some Levin1993.Index.devour
   valency := .ofFrame ArgumentFrame.np
-  incrementality := some .strict
 
 /-- "drink" — Levin 39.1 Eat verbs. -/
 def drink : Verb where
@@ -367,7 +362,6 @@ def drink : Verb where
     [ArgumentFrame.np,
      ArgumentFrame.objectDrop {.indef},
      ArgumentFrame.pp (some Adpositions.at_)]
-  incrementality := some .strict
 
 /-- "read" — Levin 14 Learn verbs, with learn and study; also listed among the verbs of
     transfer of a message (37.1) and the register verbs (54.1). -/
@@ -376,7 +370,6 @@ def read : Verb where
   levin := some Levin1993.Index.read
   past := "read"
   valency := .ofFrame ArgumentFrame.np
-  incrementality := some .incremental
 
 /-- "build" — creation verb, strictly incremental theme.
     Base transitive that productively takes DOC ("build us a house"). -/
@@ -392,7 +385,6 @@ def build : Verb where
      (ArgumentFrame.np_pp (some Adpositions.out), [0, 1, 3]),
      (ArgumentFrame.np_pp (some Adpositions.into) (some .translative), [0, 3, 1])]
     [some accomplishmentSubjectProfile, some creationObject, none, none]
-  incrementality := some .strict
 
 /-- "write" — Levin 25.2 Scribble verbs, cross-listed with the build verbs;
     creation verb, strictly incremental theme.
@@ -410,7 +402,6 @@ def write : Verb where
      (ArgumentFrame.np_np.leaveImplicit 1 {.indef}, [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 0 {.indef}, [0, 1, 2]),
      (ArgumentFrame.objectDrop {.indef}, [0, 1])]
-  incrementality := some .strict
 
 /-- "do", the lexical verb of *She does her best*, a lexeme apart from the auxiliary *do*
 ([huddleston-pullum-2002] ch. 3 §2). -/

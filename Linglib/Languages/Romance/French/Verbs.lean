@@ -340,7 +340,7 @@ def grandir : Verb where
   morphs := [.root "grandir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
-  scaleDimension := some .generalSize
+  gradability := some { dimension := .generalSize }
 
 /-- *survivre* 'survive', stative. -/
 def survivre : Verb where

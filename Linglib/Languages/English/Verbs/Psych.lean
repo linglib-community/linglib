@@ -262,7 +262,6 @@ def chase : Verb where
   morphs := [.root "chase"]
   levin := some Levin1993.Index.chase
   valency := .ofFrame ArgumentFrame.np
-  incrementality := some .cumulative
 
 /-- "hit" — AgPat verb (Levin 18.1) -/
 def hit : Verb where
@@ -281,14 +280,12 @@ def push : Verb where
   morphs := [.root "push"]
   levin := some Levin1993.Index.push
   valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_)]
-  incrementality := some .cumulative
 
 /-- "pull" — AgPat verb (Levin 12) -/
 def pull : Verb where
   morphs := [.root "pull"]
   levin := some Levin1993.Index.pull
   valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_)]
-  incrementality := some .cumulative
 
 /-- "shove" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def shove : Verb where
@@ -440,7 +437,6 @@ def carry : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
-  incrementality := some .cumulative
 
 /-- "drag" — AgPat verb (Levin 11.4/12) -/
 def drag : Verb where
@@ -450,7 +446,6 @@ def drag : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
-  incrementality := some .cumulative
 
 /-- "call" — AgPat verb (communication + agent-patient frame) -/
 def call : Verb where
