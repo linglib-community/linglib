@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Relation.Composition
+public import Linglib.Logic.Temporal.PartitionScheme
 public import Linglib.Logic.Temporal.Allen
 public import Linglib.Logic.Temporal.PointAlgebra
 public import Mathlib.Algebra.Group.Hom.Defs
@@ -19,7 +20,10 @@ which the `IdemSemiring` instance records. Each element is a
 relations [order as the elements do](##IntervalAlgebra.toSetRel_subset_toSetRel_iff), and on a
 dense order without endpoints the relation of a product
 [is the composite of the relations](##IntervalAlgebra.toSetRel_mul), so the laws of composition
-are those of relations on the rationals. The relation of an element is its preimage under the
+are those of relations on the rationals. In the terms of [ligozat-renz-2004] the Allen relations
+are the basic relations of the partition scheme of intervals (`IntervalAlgebra.scheme`), and the
+product is weak composition among the intervals of six points
+(`IntervalAlgebra.mul_eq_weakComp`). The relation of an element is its preimage under the
 map sending two intervals to their Allen relation, so reading elements as relations preserves the
 Boolean operations (`IntervalAlgebra.toSetRelHom`) and is faithful where that map is surjective,
 and on dense time without endpoints it is a homomorphism of semirings
@@ -38,6 +42,7 @@ built by `IntervalAlgebra.ofPred` from a predicate on relations.
 
 * [allen-1983]
 * [vilain-kautz-1986]
+* [ligozat-renz-2004]
 -/
 
 @[expose] public section
@@ -167,6 +172,19 @@ theorem toSetRel_injective (f : Fin 4 ↪o T) :
 
 end LinearOrder
 
+/-! ### The partition scheme of intervals -/
+
+/-- The partition scheme of the intervals of a linear order: two intervals stand in one of the
+relations of Allen. -/
+def scheme (T : Type*) [LinearOrder T] : PartitionScheme (NonemptyInterval T) Relation where
+  index p := relation p.2 p.1
+  inv := Relation.inv
+  index_swap _ := (inv_relation _ _).symm
+
+/-- The relation of an element is the relation of its Allen relations in the scheme. -/
+theorem toSetRel_eq_rel {T : Type*} [LinearOrder T] (C : IntervalAlgebra) :
+    (toSetRel C : SetRel (NonemptyInterval T) _) = (scheme T).rel {r | r ∈ C} := rfl
+
 /-! ### Converse -/
 
 /-- The converse reads each relation from the second interval to the first. -/
@@ -229,6 +247,15 @@ theorem mem_mul : r ∈ C * D ↔ ∃ i j k : NonemptyInterval (Fin 6),
     Finset.mem_univ, true_and, Prod.exists]
   exact ⟨fun ⟨i, j, hC, k, hD, h⟩ ↦ ⟨i, j, k, hC, hD, h⟩,
     fun ⟨i, j, k, hC, hD, h⟩ ↦ ⟨i, j, hC, k, hD, h⟩⟩
+
+/-- The product of two elements is their weak composition among the intervals of six points, in
+the partition scheme of [ligozat-renz-2004]. -/
+theorem mul_eq_weakComp (C D : IntervalAlgebra) :
+    {r | r ∈ C * D} = (scheme (Fin 6)).weakComp {r | r ∈ C} {r | r ∈ D} := by
+  ext r
+  rw [Set.mem_ofPred_eq, mem_mul, PartitionScheme.mem_weakComp]
+  exact ⟨fun ⟨i, j, k, hD, hC, h⟩ ↦ ⟨k, j, i, hC, hD, h⟩,
+    fun ⟨k, j, i, hC, hD, h⟩ ↦ ⟨i, j, k, hD, hC, h⟩⟩
 
 section LinearOrder
 
