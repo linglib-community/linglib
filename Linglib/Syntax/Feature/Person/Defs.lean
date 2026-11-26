@@ -11,11 +11,12 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Grammatical person, clusivity and the person features
 
-Pronouns and the verb forms that agree with them come in three persons: English *I am* is first
-person, *you are* second and *she is* third. In the traditional description the first person is
-that of the speaker, the second that of the addressee and the third that of anyone else. Some
-languages have two forms where English has *we*, an *inclusive* one for a group that has the
-addressee in it and an *exclusive* one for a group that does not, as Tagalog *tayo* and *kami*.
+Languages distinguish three persons, first, second and third, as English *I*, *you* and *she*.
+In the traditional description the first person is that of the speaker, the second that of the
+addressee and the third that of anyone else. Person is marked on pronouns and on the words that
+agree with them, as the verb forms *am*, *are* and *is* are. Some languages have two forms where
+English has *we*, an *inclusive* one for a group that has the addressee in it and an *exclusive*
+one for a group that does not, as Tagalog *tayo* and *kami*.
 
 Theories that decompose the persons use features: [participant], [speaker], which other
 inventories call [author], and [addressee]. Béjar and Rezac, citing Halle, use the first two, and
