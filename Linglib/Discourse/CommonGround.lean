@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Modal.Epistemic
+public import Linglib.Logic.Epistemic.CommonKnowledge
 public import Mathlib.Order.Filter.Ker
 
 /-!
@@ -41,7 +41,8 @@ knowledge.
 The filter axioms are the body-of-information view of the common ground that Geurts surveys,
 and they carry no epistemology. Whether what grounds them is Stalnaker's iterated common belief,
 his later common acceptance as a primitive, or Lederman's non-iterated minimal theory is stated
-separately, as `Filter.GroundedIn` in `Logic/Modal/Epistemic.lean`; closure of acceptance under
+separately, as `Filter.GroundedIn`, over the common knowledge of
+`Logic/Epistemic/CommonKnowledge.lean`; closure of acceptance under
 conjunction, the filter's `inter_sets`, is the axiom Lederman contests.
 
 ## References

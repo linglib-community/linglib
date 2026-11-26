@@ -1,36 +1,52 @@
 module
 
-public import Linglib.Logic.Modal.Definability
-public import Linglib.Logic.Aristotelian.Square
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Order.Lattice
+public import Linglib.Core.Relation.SetRel
+public import Mathlib.Order.GaloisConnection.Basic
+public import Mathlib.Order.Hom.Set
+public import Mathlib.Logic.Function.DependsOn
 
 /-!
-# Accessibility and the strength of modals
+# Necessity and possibility along a relation
 
-[Necessity is antitone in the accessibility relation](##box_restrict), so a conversational
-background that rules out more worlds yields a stronger modal, and necessity along the transitive
-closure of a relation [is the infinite conjunction](##box_transGen_iff)
-$\Box p \land \Box \Box p \land \cdots$, the shape of common knowledge. Along a serial relation
-$\Box p$, $\Box \neg p$, $\Diamond p$ and $\neg \Box p$
-[form a square of opposition](##squareRelations_modalSquare).
+In Kripke semantics a proposition is *necessary* at a world when it is true at every world
+accessible from it, and *possible* when it is true at some; the accessibility relation fixes the
+kind of modality. This file defines the two operators along a relation `R`, on propositions
+`W → Prop`: `□[R] p w` says that `p` holds at every `v` with `w ~[R] v`, and `◇[R] p w` that it
+holds at some. Possibility is left adjoint to necessity along the converse relation, so necessity
+preserves meets and possibility joins, and both compose as relations do.
 
 ## Main definitions
 
-* `ModalLogic.modalSquare`: the modal square of opposition along a relation.
-* `ModalLogic.IsS5Frame`, `ModalLogic.IsKD45Frame`, `ModalLogic.IsK45Frame`,
-  `ModalLogic.IsKTBFrame`: the frames of the standard systems.
+* `ModalLogic.Box`, `ModalLogic.Diamond`: necessity and possibility along a relation, with
+  notation `□[R]` and `◇[R]`.
+
+## Main results
+
+* `ModalLogic.box_eq_core`, `ModalLogic.diamond_eq_preimage`: the operators are mathlib's core
+  and preimage of a relation.
+* `ModalLogic.setOf_box`, `ModalLogic.setOf_diamond`: the same for propositions held as sets.
+* `ModalLogic.diamond_box_gc`: possibility is left adjoint to necessity along the converse.
+* `ModalLogic.diamond_le_diamond_iff`: possibility is monotone in the relation, and reflects
+  inclusion.
+* `ModalLogic.dependsOn_box_iff`: necessity at a world depends on exactly the worlds it accesses.
+* `ModalLogic.box_restrict`: necessity is antitone in the relation.
 
 ## Implementation notes
 
-On propositions as sets, necessity along the transitive closure is mathlib's
-`SetRel.core_transGen`.
+Necessity and possibility are operators on propositions `W → Prop` along a relation
+`R : SetRel W' W`, which may relate two types. They are mathlib's `SetRel.core` and
+`SetRel.preimage` conjugated by `Set.memOrderIso`, the isomorphism between sets and predicates.
+The adjunction is `SetRel.image_core_gc` carried across it, and the composition, identity and
+conjunction lemmas are `SetRel.core_comp`, `SetRel.preimage_comp`, `SetRel.core_id` and
+`SetRel.core_inter`; propositions stated as sets use mathlib's lemmas directly. The axioms of
+modal logic and the frame conditions they define are in `Logic/Modal/Definability.lean`.
 
 ## References
 
-* [kratzer-1981] — necessity strengthened by restricting accessibility
-* [carnielli-pizzi-2008] — the modal square of opposition
-* [dowty-wall-peters-1981] — Montague's S5 operators
+* [kripke-1963]
+* [kratzer-1981]
+* [hintikka-1962]
+* [prior-1967]
 -/
 
 @[expose] public section
@@ -39,91 +55,181 @@ namespace ModalLogic
 
 open SetRel
 
-variable {W : Type*}
+/-! ### Box and diamond -/
 
-/-! ### Modal square of opposition -/
+section Operators
 
-variable {R : SetRel W W} {p : W → Prop}
+variable {W W' : Type*} (R : SetRel W' W) (p : W → Prop) (w : W')
 
-theorem box_disjoint_compl [IsSerial R] : Disjoint (□[R] p) (□[R] pᶜ) :=
-  Pi.disjoint_iff.mpr fun _ ↦ Prop.disjoint_iff.mpr fun ⟨hp, hnp⟩ ↦
-    let ⟨v, hwv, hv⟩ := box_D hp; hnp v hwv hv
+/-- `p` is necessary at `w` along `R` when it holds at every world `w` accesses. -/
+def Box : Prop := ∀ v, w ~[R] v → p v
 
-theorem compl_box_compl (R : SetRel W W) (p : W → Prop) : (□[R] pᶜ)ᶜ = ◇[R] p := by
-  funext w
-  simp [not_box]
+/-- `p` is possible at `w` along `R` when it holds at some world `w` accesses. -/
+def Diamond : Prop := ∃ v, w ~[R] v ∧ p v
 
-/-- The modal square of opposition along `R`, with corners $\Box p$, $\Box \neg p$, $\Diamond p$
-and $\neg \Box p$. -/
-def modalSquare (R : SetRel W W) (p : W → Prop) : Aristotelian.Square (W → Prop) where
-  A := □[R] p
-  E := □[R] pᶜ
-  I := ◇[R] p
-  O := (□[R] p)ᶜ
+@[inherit_doc] scoped notation:max "□[" R "]" => Box R
+@[inherit_doc] scoped notation:max "◇[" R "]" => Diamond R
 
-theorem squareRelations_modalSquare (R : SetRel W W) [IsSerial R] (p : W → Prop) :
-    Aristotelian.SquareRelations (modalSquare R p) :=
-  .of_disjoint (compl_box_compl R p).symm rfl box_disjoint_compl
+variable {R p w}
 
-variable (R) {q : W → Prop}
+theorem box_iff : □[R] p w ↔ ∀ v, w ~[R] v → p v := .rfl
 
-/-! ### Accessibility restriction -/
+theorem diamond_iff : ◇[R] p w ↔ ∃ v, w ~[R] v ∧ p v := .rfl
 
-theorem box_restrict (p : W → Prop) : Antitone fun R : SetRel W W ↦ □[R] p :=
+theorem box_iff_mem_core : □[R] p w ↔ w ∈ R.core {v | p v} := .rfl
+
+theorem diamond_iff_mem_preimage : ◇[R] p w ↔ w ∈ R.preimage {v | p v} :=
+  exists_congr fun _ ↦ and_comm
+
+variable (R) in
+/-- Necessity along `R` is the core of `R`, read on predicates. -/
+theorem box_eq_core : □[R] = Set.memOrderIso ∘ R.core ∘ Set.memOrderIso.symm := rfl
+
+variable (R) in
+/-- Possibility along `R` is the preimage of `R`, read on predicates. -/
+theorem diamond_eq_preimage : ◇[R] = Set.memOrderIso ∘ R.preimage ∘ Set.memOrderIso.symm :=
+  funext fun _ ↦ funext fun _ ↦ propext diamond_iff_mem_preimage
+
+variable (R p) in
+/-- The worlds where `p` is necessary are the core of the worlds where `p` holds. -/
+theorem setOf_box : {w | □[R] p w} = R.core {v | p v} := rfl
+
+variable (R p) in
+/-- The worlds where `p` is possible are the preimage of the worlds where `p` holds. -/
+theorem setOf_diamond : {w | ◇[R] p w} = R.preimage {v | p v} :=
+  Set.ext fun _ ↦ diamond_iff_mem_preimage
+
+theorem box_mem_iff {s : Set W} : □[R] (· ∈ s) w ↔ w ∈ R.core s := .rfl
+
+theorem diamond_mem_iff {s : Set W} : ◇[R] (· ∈ s) w ↔ w ∈ R.preimage s :=
+  diamond_iff_mem_preimage
+
+@[simp] theorem not_box : ¬ □[R] p w ↔ ◇[R] (fun v ↦ ¬ p v) w := by
+  simp [Box, Diamond, not_forall]
+
+@[simp] theorem not_diamond : ¬ ◇[R] p w ↔ □[R] (fun v ↦ ¬ p v) w := by
+  simp [Box, Diamond, not_and]
+
+variable (R) in
+/-- Necessity distributes over conjunction. For belief this is [hintikka-1962]'s principle that
+*a* believes *A and B* exactly when *a* believes *A* and *a* believes *B*. -/
+theorem box_and (q : W → Prop) : □[R] (fun v ↦ p v ∧ q v) w ↔ □[R] p w ∧ □[R] q w :=
+  Set.ext_iff.1 (core_inter R {v | p v} {v | q v}) w
+
+variable (R) in
+theorem box_iUnion {ι : Sort*} (R : ι → SetRel W' W) : □[⋃ i, R i] p w ↔ ∀ i, □[R i] p w := by
+  simp only [Box, Set.mem_iUnion, forall_exists_index]
+  exact forall_comm
+
+theorem box_union (S : SetRel W' W) : □[R ∪ S] p w ↔ □[R] p w ∧ □[S] p w := by
+  simp only [Box, Set.mem_union, or_imp, forall_and]
+
+theorem box_id {u : W} : □[SetRel.id] p u ↔ p u :=
+  Set.ext_iff.1 (core_id {v | p v}) u
+
+/-- Necessity along a union of relations is the meet of necessity along each. -/
+theorem box_sup (R S : SetRel W' W) : □[R ⊔ S] = □[R] ⊓ □[S] :=
+  funext fun _ ↦ funext fun _ ↦ propext (box_union S)
+
+/-- Necessity along the identity relation is the identity. -/
+theorem box_id_eq_id : □[(SetRel.id : SetRel W W)] = id :=
+  funext fun _ ↦ funext fun _ ↦ propext box_id
+
+theorem box_congr_left {w'' : W'} (h : ∀ v, w ~[R] v ↔ w'' ~[R] v) : □[R] p w ↔ □[R] p w'' :=
+  forall_congr' fun v ↦ imp_congr_left (h v)
+
+/-- A proposition that does not vary with the world is necessary at `w` when it is true or `w`
+accesses no world. -/
+theorem box_const {c : Prop} : □[R] (fun _ ↦ c) w ↔ (w ∈ R.dom → c) :=
+  ⟨fun h ⟨v, hv⟩ ↦ h v hv, fun h v hv ↦ h ⟨v, hv⟩⟩
+
+/-- A proposition that does not vary with the world is possible at `w` when it is true and `w`
+accesses some world. -/
+theorem diamond_const {c : Prop} : ◇[R] (fun _ ↦ c) w ↔ w ∈ R.dom ∧ c :=
+  ⟨fun ⟨v, hv, hc⟩ ↦ ⟨⟨v, hv⟩, hc⟩, fun ⟨⟨v, hv⟩, hc⟩ ↦ ⟨v, hv, hc⟩⟩
+
+/-- Necessity at `w` depends on its argument at a set of worlds exactly when the set contains every
+world `w` accesses. -/
+theorem dependsOn_box_iff {s : Set W} : DependsOn (□[R] · w) s ↔ {v | w ~[R] v} ⊆ s := by
+  refine ⟨fun h v hv ↦ by_contra fun hvs ↦ ?_, fun h p q hpq ↦
+    propext <| forall₂_congr fun v hv ↦ iff_of_eq (hpq v (h hv))⟩
+  have := @h (· ≠ v) (fun _ ↦ True) fun u hu ↦ eq_true (ne_of_mem_of_not_mem hu hvs)
+  exact this.mpr (fun _ _ ↦ trivial) v hv rfl
+
+/-- Necessity is antitone in the accessibility relation: a relation that rules out more worlds
+gives a stronger necessity. For a modal this is strengthening by a more restrictive conversational
+background ([kratzer-1981]). -/
+theorem box_restrict {W : Type*} (p : W → Prop) : Antitone fun R : SetRel W W ↦ □[R] p :=
   fun _ _ h _ hb v hwv ↦ hb v (h hwv)
-
-/-! ### Transitive closure
-
-Necessity along the transitive closure of `R` is the infinite conjunction of iterated
-necessity along `R`: `□[R⁺] p = □[R] p ∧ □[R] (□[R] p) ∧ ⋯`. -/
-
-theorem box_iterate_succ_of_box_transGen :
-    ∀ (n : ℕ) {p : W → Prop} {w : W}, □[R.transGen] p w → (□[R])^[n + 1] p w
-  | 0, _, _, h => fun v hv ↦ h v (.single hv)
-  | n + 1, _, _, h => by
-    rw [Function.iterate_succ_apply']
-    exact fun v hv ↦
-      box_iterate_succ_of_box_transGen n fun u hu ↦ h u (Relation.TransGen.head hv hu)
-
-theorem exists_box_iterate_imp_of_transGen {w v : W} (h : Relation.TransGen (· ~[R] ·) w v) :
-    ∃ n, ∀ q : W → Prop, (□[R])^[n + 1] q w → q v := by
-  induction h with
-  | single hwv => exact ⟨0, fun _ hq ↦ hq _ hwv⟩
-  | tail _ huv ih =>
-    obtain ⟨n, hn⟩ := ih
-    exact ⟨n + 1, fun q hq ↦ hn (□[R] q) (by rwa [Function.iterate_succ_apply] at hq) _ huv⟩
-
-theorem box_transGen_iff {p : W → Prop} {w : W} :
-    □[R.transGen] p w ↔ ∀ n, (□[R])^[n + 1] p w :=
-  ⟨fun h n ↦ box_iterate_succ_of_box_transGen R n h,
-   fun h _ hv ↦ let ⟨n, hn⟩ := exists_box_iterate_imp_of_transGen R (mem_transGen.1 hv); hn p (h n)⟩
-
-/-! ### Bundled frame classes -/
-
-/-- `R` is an *S5 frame* when it is reflexive and Euclidean. -/
-class IsS5Frame : Prop extends R.IsRefl, IsEuclidean R
-
-/-- `R` is a *KD45 frame* when it is serial, transitive and Euclidean. -/
-class IsKD45Frame : Prop extends IsSerial R, R.IsTrans, IsEuclidean R
-
-/-- `R` is a *K45 frame* when it is transitive and Euclidean. -/
-class IsK45Frame : Prop extends R.IsTrans, IsEuclidean R
-
-/-- `R` is a *KTB frame* when it is reflexive and symmetric. -/
-class IsKTBFrame : Prop extends R.IsRefl, R.IsSymm
-
-theorem diamond_box_iff [IsKD45Frame R] {p : W → Prop} {w : W} :
-    ◇[R] (□[R] p) w ↔ □[R] p w :=
-  ⟨box_of_diamond_box, diamond_box_of_box⟩
 
 /-! ### Decidability over finite worlds -/
 
-instance {W' : Type*} [Fintype W] (R : SetRel W' W) (p : W → Prop) (w : W')
+instance {W W' : Type*} [Fintype W] (R : SetRel W' W) (p : W → Prop) (w : W')
     [∀ v, Decidable (w ~[R] v)] [DecidablePred p] : Decidable (□[R] p w) :=
   inferInstanceAs (Decidable (∀ v, w ~[R] v → p v))
 
-instance {W' : Type*} [Fintype W] (R : SetRel W' W) (p : W → Prop) (w : W')
+instance {W W' : Type*} [Fintype W] (R : SetRel W' W) (p : W → Prop) (w : W')
     [∀ v, Decidable (w ~[R] v)] [DecidablePred p] : Decidable (◇[R] p w) :=
   inferInstanceAs (Decidable (∃ v, w ~[R] v ∧ p v))
+
+end Operators
+
+/-! ### The Galois connection and normality -/
+
+section Galois
+
+variable {W W' : Type*} (R : SetRel W' W) {p q : W → Prop}
+
+/-- `◇` along `R` is left adjoint to `□` along the converse relation. -/
+theorem diamond_box_gc : GaloisConnection ◇[R] □[R.inv] := by
+  rw [diamond_eq_preimage, box_eq_core]
+  exact (Set.memOrderIso.symm.to_galoisConnection.compose (image_core_gc (R := R.inv))).compose
+    Set.memOrderIso.to_galoisConnection
+
+theorem box_mono : Monotone □[R] := by
+  simpa using (diamond_box_gc R.inv).monotone_u
+
+theorem diamond_mono : Monotone ◇[R] :=
+  (diamond_box_gc R).monotone_l
+
+theorem box_inf : □[R] (p ⊓ q) = □[R] p ⊓ □[R] q := by
+  simpa using (diamond_box_gc R.inv).u_inf
+
+theorem diamond_sup : ◇[R] (p ⊔ q) = ◇[R] p ⊔ ◇[R] q :=
+  (diamond_box_gc R).l_sup
+
+theorem box_top : □[R] ⊤ = ⊤ := by
+  simpa using (diamond_box_gc R.inv).u_top
+
+variable {R} in
+/-- Possibility along `R` entails possibility along `S` exactly when `S` contains `R`, so a law
+between possibilities defines an inclusion of relations. -/
+theorem diamond_le_diamond_iff {S : SetRel W' W} : Diamond R ≤ Diamond S ↔ R ⊆ S where
+  mp h := fun ⟨w, v⟩ hwv ↦ match h (· = v) w ⟨v, hwv, rfl⟩ with | ⟨_, hS, rfl⟩ => hS
+  mpr h _ _ := fun ⟨v, hwv, hv⟩ ↦ ⟨v, h hwv, hv⟩
+
+/-- Along any relation $p$ entails $\Box_{R^{-1}} \Diamond_R p$, the unit of the adjunction. For
+tense this is the mixing principle $A \supset GPA$ that [prior-1967] takes from Ockham: what is the
+case will always have been the case. -/
+theorem le_box_inv_diamond (p : W → Prop) : p ≤ □[R.inv] (◇[R] p) :=
+  (diamond_box_gc R).le_u_l p
+
+end Galois
+
+variable {W : Type*} (R : SetRel W W)
+
+theorem box_comp (S : SetRel W W) (p : W → Prop) : □[R ○ S] p = □[R] (□[S] p) :=
+  congrArg Set.memOrderIso (core_comp R S _)
+
+theorem diamond_comp (S : SetRel W W) (p : W → Prop) : ◇[R ○ S] p = ◇[R] (◇[S] p) := by
+  simp only [diamond_eq_preimage, Function.comp_apply, OrderIso.symm_apply_apply, preimage_comp]
+
+/-- If every `A`-predecessor of a world that `C`-accesses a second world `B`-accesses a world
+the second one `D`-accesses, then what is possibly necessary is necessarily possible. -/
+theorem diamond_box_le_box_diamond {A B C D : SetRel W W} (h : A.inv ○ C ⊆ B ○ D.inv)
+    (p : W → Prop) : ◇[A] (□[B] p) ≤ □[C] (◇[D] p) :=
+  fun i ⟨k, hik, hk⟩ j hij ↦
+    let ⟨m, hkm, hjm⟩ := h (show (k, j) ∈ A.inv ○ C from ⟨i, hik, hij⟩)
+    ⟨m, hjm, hk m hkm⟩
 
 end ModalLogic

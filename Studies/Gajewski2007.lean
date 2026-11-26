@@ -3,7 +3,7 @@ module
 public import Linglib.Languages.English.PolarityItems
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.Presupposition.TwoDimensional
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.Gajewski2007
 public import Linglib.Data.Examples.Readers
 public import Linglib.Logic.Trivalent.Quantifier

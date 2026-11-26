@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Team.Kripke
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Atoms

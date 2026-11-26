@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Attitudes.Preference.Conditional
 public import Linglib.Semantics.Dynamic.Partial
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Mathlib.Data.Set.Lattice.Bounded
 
 /-!

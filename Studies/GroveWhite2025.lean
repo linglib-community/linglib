@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Probability.Distributions.Bernoulli
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.GroveWhite2025
 public import Mathlib.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Independence.Basic

@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Iterate
+public import Linglib.Logic.Modal.Definability
 public import Mathlib.Data.Set.Lattice.Bounded
 
 /-!

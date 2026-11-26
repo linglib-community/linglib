@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Order.Monotone.Defs
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Logic.Modal.Index
 
 /-!

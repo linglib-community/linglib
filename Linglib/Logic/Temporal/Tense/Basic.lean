@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.ForestOrder
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 import Mathlib.Order.Nat
 
 /-!

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.ChoiceFunction
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!

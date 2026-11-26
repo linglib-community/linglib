@@ -3,14 +3,14 @@ module
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Logic.Relation
 public import Linglib.Core.Data.Set.Functor
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Kripke models
 
 A Kripke model gives each world the finite set of worlds it accesses and each atom the worlds
 at which it is true. `KripkeModel.accessible` reads the successor sets as the relation that `□`
-and `◇` of `Logic/Modal/Defs.lean` take.
+and `◇` of `Logic/Modal/Basic.lean` take.
 
 A relation between the worlds of two models is a bisimulation, `KripkeModel.IsBisimulation`,
 when related worlds make the same atoms true and each successor of one is related to a
@@ -71,7 +71,7 @@ end Sum
 
 open SetRel in
 /-- In the accessibility relation of `M`, `v` is accessible from `w` when `v ∈ M.access w`.
-This is the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take. -/
+This is the relation that `□` and `◇` of `Logic/Modal/Basic.lean` take. -/
 def KripkeModel.accessible (M : KripkeModel W Atom) : SetRel W W :=
   .ofSuccessors fun w ↦ ↑(M.access w)
 

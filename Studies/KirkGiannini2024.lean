@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ConventionalImplicature
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Mathlib.Logic.Function.Basic
 

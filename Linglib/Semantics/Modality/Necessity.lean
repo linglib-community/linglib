@@ -5,7 +5,7 @@ public import Linglib.Semantics.Modality.Basic
 public import Linglib.Core.Order.Filter.AtBotOn
 public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Linglib.Semantics.Modality.ComparativePossibility
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Definability
 
 /-!
 # Necessity and possibility over conversational backgrounds

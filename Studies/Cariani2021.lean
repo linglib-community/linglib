@@ -9,7 +9,7 @@ public import Studies.CarianiSantorio2018
 public import Studies.Condoravdi2002
 public import Linglib.Semantics.Modality.BranchingTime
 public import Linglib.Semantics.Tense.Quantificational
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Systems
 
 /-!
 # Cariani (2021): *The Modal Future*

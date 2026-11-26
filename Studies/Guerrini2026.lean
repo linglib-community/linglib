@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Guerrini2026
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Reference.NominalMapping
 public import Linglib.Core.Data.Set.Functor
 

@@ -3,7 +3,7 @@ module
 public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Semantics.Presupposition.FamilyVariant
 public import Linglib.Logic.Trivalent.Connectives
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Definability
 public import Linglib.Data.Examples.Karttunen1971b
 public import Linglib.Data.Examples.Readers
 

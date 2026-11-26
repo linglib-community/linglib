@@ -2,6 +2,7 @@ module
 
 public import Linglib.Discourse.CommonGround
 public import Linglib.Discourse.SpeechAct.Role
+public import Linglib.Logic.Modal.Systems
 public import Mathlib.Order.Concept
 
 /-!

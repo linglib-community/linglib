@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Modal axioms and the frame conditions they define

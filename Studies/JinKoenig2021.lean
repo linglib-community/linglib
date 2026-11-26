@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.JinKoenig2021
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Tense.Before
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Languages.English.Verbs.Inventory

@@ -5,7 +5,7 @@ public import Mathlib.Order.Atoms
 public import Mathlib.Data.Set.Lattice.Order
 public import Linglib.Data.Examples.Dayal2016
 public import Linglib.Data.Examples.Readers
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Presupposition.Trigger
 public import Linglib.Semantics.Questions.Hamblin.Number
 public import Linglib.Semantics.Questions.Hamblin.Exhaustification

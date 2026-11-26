@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.MinimalCovering
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Studies.Simons2005
 
 /-!

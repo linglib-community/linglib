@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Composition.Interpret
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts

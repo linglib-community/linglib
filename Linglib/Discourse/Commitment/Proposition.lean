@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Relation.SetRel
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Systems
 public import Linglib.Discourse.Commitment.Basic
 
 /-!

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Index.Defs
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Modal and temporal relations on indices

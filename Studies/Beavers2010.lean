@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.Affectedness
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Core.Order.UpperLower.Cover
 public import Linglib.Data.Examples.Beavers2010
 public import Linglib.Data.Examples.Readers

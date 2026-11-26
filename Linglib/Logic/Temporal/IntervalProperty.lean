@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Interval.Basic
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Mathlib.Order.Hom.BoundedLattice
 
 /-!
