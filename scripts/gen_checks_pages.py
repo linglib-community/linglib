@@ -50,7 +50,7 @@ KW = {"def": "def", "theorem": "theorem", "inductive": "inductive", "constructor
 # The heading of a declaration in a file's text, by the keyword it is written with.
 HEAD = {"def": "Definition", "abbrev": "Definition", "structure": "Definition",
         "class": "Definition", "inductive": "Definition", "opaque": "Definition",
-        "theorem": "Theorem", "instance": "Instance"}
+        "theorem": "Theorem"}
 # Sections of a module docstring that close a file's text, and those the text itself replaces.
 CLOSING = {"Implementation notes": "Notes on the formalization", "References": "References",
            "TODO": "To do", "Notation": "Notation"}
@@ -590,6 +590,8 @@ def module_page(site, module, sha):
         count += 1
         name = x["name"]
         kw = keyword(site.nodes[name])
+        if kw == "instance":   # an instance of a property is a fact, of a structure a definition
+            kw = site.nodes[name]["kind"]
         heading = (f'<span class="head">{HEAD.get(kw, kw.capitalize())} '
                    f'<span class="no">{count}.</span></span>')
         doc = page.prose(x["doc"])
