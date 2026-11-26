@@ -384,8 +384,13 @@ def blame(path):
     to the last commit."""
     shallow = subprocess.run(["git", "rev-parse", "--is-shallow-repository"], cwd=ROOT,
                              capture_output=True, text=True).stdout.strip()
-    out = subprocess.run(["git", "blame", "-w", "-M", "--line-porcelain", "--", str(path)],
-                         cwd=ROOT, capture_output=True, text=True)
+    # On a branch, a line changed and then changed back is credited to whoever changed it back.
+    # A file that is as the main branch has it is therefore read from the main branch's history.
+    base = next((ref for ref in ("origin/main", "main") if subprocess.run(
+        ["git", "diff", "--quiet", ref, "--", str(path)], cwd=ROOT,
+        capture_output=True).returncode == 0), None)
+    out = subprocess.run(["git", "blame", "-w", "-M", "--line-porcelain", *([base] if base else []),
+                          "--", str(path)], cwd=ROOT, capture_output=True, text=True)
     if shallow != "false" or out.returncode:
         return {}
     lines, author, day = {}, None, None
