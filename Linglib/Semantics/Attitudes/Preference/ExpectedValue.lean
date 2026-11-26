@@ -22,6 +22,13 @@ them when they differ and both propositions have positive probability, so expect
 intermediate measure of propositions. A positive affine change of the value function changes every
 expected value by the same map, so comparisons of expected value are invariant under such changes.
 
+[jeffrey-1965] changes the prior and the value function together. For reals `a`, `b`, `c`, `d`
+with `c * V + d` positive, the prior with density `c * V + d` and the value function
+`(a * V + b) / (c * V + d)` give every proposition of positive probability the expected value
+`(a * x + b) / (c * x + d)`, where `x` is its expected value under the original pair, and multiply
+its probability by `c * x + d`. With `c = 0` and `d = 1` the prior is unchanged and the value
+function is `a * V + b`.
+
 ## Main definitions
 
 * `Desire.expectedValue`: the average of a value function over a proposition.
@@ -37,6 +44,10 @@ expected value by the same map, so comparisons of expected value are invariant u
   positive probability lies strictly between unequal expected values.
 * `Desire.invariant_positiveAffine_expectedValue_le`: comparisons of expected value are invariant
   under positive affine changes of the value function.
+* `Desire.expectedValue_withDensity_fractionalLinear`: reweighting the prior by `c * V + d` and
+  dividing the value function by it changes expected values by a fractional linear map.
+* `Desire.withDensity_real_apply_eq_mul_expectedValue`: the reweighted probability of a
+  proposition.
 
 ## Implementation notes
 
@@ -166,5 +177,54 @@ theorem invariant_positiveAffine_expectedValue_le [Finite W] [MeasurableSingleto
   fun g hg V ↦ by
     beta_reduce
     rw [expectedValue_smul hψ .of_finite hg, expectedValue_smul hφ .of_finite hg, g.le_iff_le]
+
+/-! ### Fractional linear changes -/
+
+section FractionalLinear
+
+variable {c d : ℝ}
+
+/-- Reweighting the prior by `c * V + d` multiplies the probability of a proposition by the value
+of `c * x + d` at its expected value. -/
+-- [jeffrey-1965] (6-1)
+theorem withDensity_real_apply_eq_mul_expectedValue (hV : Integrable V μ)
+    (hnn : 0 ≤ᵐ[μ] fun w ↦ c * V w + d) :
+    (μ.withDensity fun w ↦ ENNReal.ofReal (c * V w + d)).real φ =
+      μ.real φ * (c * expectedValue μ V φ + d) := by
+  have hint : IntegrableOn (fun w ↦ c * V w + d) φ μ :=
+    ((hV.const_mul c).add (integrable_const d)).integrableOn
+  rw [measureReal_def, withDensity_apply' _ φ,
+    ← ofReal_integral_eq_lintegral_ofReal hint (ae_restrict_of_ae hnn),
+    ENNReal.toReal_ofReal (integral_nonneg_of_ae (ae_restrict_of_ae hnn)),
+    integral_add (hV.const_mul c).integrableOn (integrable_const d).integrableOn,
+    integral_const_mul, integral_const, ← measure_smul_setAverage V (measure_ne_top μ φ),
+    measureReal_restrict_apply_univ, expectedValue]
+  simp only [smul_eq_mul]
+  ring
+
+/-- Reweighting the prior by `c * V + d` and dividing the value function `a * V + b` by the same
+weight sends the expected value of every proposition of positive probability through the
+fractional linear map `x ↦ (a * x + b) / (c * x + d)`. -/
+-- [jeffrey-1965] (6-2)
+theorem expectedValue_withDensity_fractionalLinear (hφ : μ φ ≠ 0) (hV : Integrable V μ)
+    (hpos : ∀ᵐ w ∂μ, 0 < c * V w + d) (a b : ℝ) :
+    expectedValue (μ.withDensity fun w ↦ ENNReal.ofReal (c * V w + d))
+        (fun w ↦ (a * V w + b) / (c * V w + d)) φ =
+      (a * expectedValue μ V φ + b) / (c * expectedValue μ V φ + d) := by
+  have hw : (fun w ↦ (ENNReal.ofReal (c * V w + d)).toReal • ((a * V w + b) / (c * V w + d)))
+      =ᵐ[μ.restrict φ] fun w ↦ a * V w + b := (ae_restrict_of_ae hpos).mono fun w hw ↦ by
+    simp only [ENNReal.toReal_ofReal hw.le, smul_eq_mul, mul_div_cancel₀ _ hw.ne']
+  rw [expectedValue, setAverage_eq,
+    withDensity_real_apply_eq_mul_expectedValue hV (hpos.mono fun _ h ↦ h.le),
+    setIntegral_withDensity_eq_setIntegral_toReal_smul₀' φ
+      ((hV.aemeasurable.const_mul c).add_const d).ennreal_ofReal.restrict
+      (.of_forall fun _ ↦ ENNReal.ofReal_lt_top), integral_congr_ae hw,
+    integral_add (hV.const_mul a).integrableOn (integrable_const b).integrableOn,
+    integral_const_mul, integral_const, ← measure_smul_setAverage V (measure_ne_top μ φ),
+    measureReal_restrict_apply_univ, ← expectedValue, smul_eq_mul, smul_eq_mul, smul_eq_mul,
+    mul_left_comm, ← mul_add, inv_mul_eq_div,
+    mul_div_mul_left _ _ ((measureReal_ne_zero_iff (measure_ne_top μ φ)).2 hφ)]
+
+end FractionalLinear
 
 end Desire
