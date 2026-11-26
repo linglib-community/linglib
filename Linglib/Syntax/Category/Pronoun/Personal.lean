@@ -8,7 +8,6 @@ module
 public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Linglib.Pragmatics.SocialMeaning.Register
 public import Linglib.Syntax.Category.Pronoun.Basic
-public import Linglib.Syntax.Binding.Word
 
 /-!
 # Personal pronouns
@@ -36,10 +35,6 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
 * `PersonalPronoun.ofCells`, `PersonalPronoun.ofTable`, `PersonalPronoun.ofTableAt` — the
   pronoun of a form in a table of cells, with the cases and the person and number cells of the
   cells it fills
-
-## Main results
-
-* `PersonalPronoun.bindingClassOf_toWord` — a personal pronoun is a pronominal
 
 ## References
 
@@ -116,10 +111,5 @@ end Table
 /-- A personal pronoun's token is of UD pronoun type `Prs`. -/
 def toWord (p : PersonalPronoun) : Morphology.Word := p.toPronoun.toWord (some .Prs)
 
-/-- A personal pronoun is a pronominal. -/
-@[simp]
-theorem bindingClassOf_toWord (p : PersonalPronoun) :
-    Binding.bindingClassOf p.toWord = some .pronoun :=
-  p.toPronoun.bindingClassOf_toWord (by decide) (by decide)
 
 end PersonalPronoun

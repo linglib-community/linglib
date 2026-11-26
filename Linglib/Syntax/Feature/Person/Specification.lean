@@ -7,7 +7,6 @@ module
 
 public import Linglib.Core.Order.BoundedComplete
 public import Linglib.Core.Order.Flat
-public import Linglib.Syntax.Feature.Person.Defs
 public import Linglib.Syntax.Feature.Person.Participants
 public import Mathlib.Data.Fintype.Powerset
 

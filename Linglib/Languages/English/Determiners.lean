@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Languages.English.Phonology
-public import Linglib.Syntax.Feature.Person.Defs
 public import Linglib.Syntax.Feature.Person.Participants
 
 /-!

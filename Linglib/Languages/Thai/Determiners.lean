@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Syntax.Feature.Person.Defs
 public import Linglib.Syntax.Feature.Person.Participants
 
 /-!

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Languages.Turkish.Case
 public import Linglib.Syntax.Category.Pronoun.Reciprocal
+public import Linglib.Syntax.Binding.Pronoun
 
 /-!
 # Turkish reciprocal pronouns

@@ -8,6 +8,7 @@ public import Studies.KehlerRohde2013
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.Linarith
 public import Linglib.Data.Examples.Readers
+public import Linglib.Syntax.Binding.Pronoun
 
 /-!
 # Rosa and Arnold (2017): Predictability affects production

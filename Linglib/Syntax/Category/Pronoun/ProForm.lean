@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Category.Pronoun.Basic
-public import Linglib.Syntax.Binding.Word
 
 /-!
 # Proforms
@@ -20,9 +19,7 @@ This file defines the proform by its general term; the function is that of its k
 `InterrogativePronoun` or `IndefinitePronoun`, and a `ProForm` of neither kind is an
 indeterminate, whose function its particle or its clause supplies, as for Japanese *dare*. The
 proforms cut across the word classes, and the category [fixes the class by
-default](##ProForm.OntologicalCategory.upos). Chomsky takes wh-phrases and quantifier expressions
-to be R-expressions, so the token of a proform of those types [is one where it is nominal and
-never a pronominal](##ProForm.bindingClassOf_toWord).
+default](##ProForm.OntologicalCategory.upos).
 
 ## TODO
 
@@ -36,7 +33,6 @@ never a pronominal](##ProForm.bindingClassOf_toWord).
 * [bhat-2004]
 * [haspelmath-1997]
 * [diessel-2003]
-* [chomsky-1981]
 -/
 
 @[expose] public section
@@ -98,12 +94,5 @@ variable (p : ProForm)
 /-- The token of a proform has its word class and the pronoun type `t` of its function. -/
 def toWord (t : UD.PronType) : Morphology.Word := p.toPronoun.toWord (some t) (cat := p.cat)
 
-/-- The token of an operator, a wh-phrase or a quantifier expression, is an R-expression where
-its word class is nominal, as *who* and *someone* are and *where* is not, and is not a
-pronominal. -/
-theorem bindingClassOf_toWord {t : UD.PronType} (ht : Binding.IsOperator t) :
-    Binding.bindingClassOf (p.toWord t) =
-      if Binding.IsNominal p.cat then some .rExpression else none :=
-  p.toPronoun.bindingClassOf_toWord_of_isOperator ht _
 
 end ProForm

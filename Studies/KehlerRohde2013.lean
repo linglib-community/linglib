@@ -8,6 +8,7 @@ public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Discourse.Coherence
 public import Linglib.Languages.English.Pronouns
 public import Linglib.Syntax.Voice.Basic
+public import Linglib.Syntax.Binding.Pronoun
 
 /-!
 # Kehler and Rohde (2013): A Probabilistic Reconciliation of Coherence-Driven and Centering-Driven Theories of Pronoun Interpretation
