@@ -14,7 +14,9 @@ The pragmatic listener is the listener of this speaker.
 A belief that entails strictly fewer utterances puts strictly more mass on each of them, so a
 state that makes strictly fewer utterances true is a better state for each of them, whatever the
 prior and the costs. Pulling the denotations back along a map of states gives the speaker of the
-original denotations at the image state, against the prior carried forward along the map.
+original denotations at the image state, against the prior carried forward along the map. With
+independent parts of the state, product denotations and additive costs, she chooses the parts of
+her utterance independently.
 
 ## References
 
@@ -105,6 +107,29 @@ private theorem geomMean_literalListener (β : Measure W) [IsProbabilityMeasure 
 
 variable [IsFiniteMeasure μ]
 
+omit [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U] in
+private theorem weight_ne_zero_and_ne_top (hα : 0 < α) (C : U → ℝ) {β : Measure W}
+    [IsProbabilityMeasure β] (hβ : β ≪ μ) {v : U} (hv : ∀ᵐ w ∂β, w ∈ sem v) :
+    (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v))) ≠ 0 ∧
+      (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v))) ≠ ∞ := by
+  have h0 : μ (sem v) ≠ 0 := fun h0 ↦
+    one_ne_zero (((prob_compl_eq_zero_iff .of_discrete).1 (ae_iff.1 hv)).symm.trans (hβ h0))
+  exact ⟨mul_ne_zero (ENNReal.rpow_ne_zero_of_ne_zero hα.le
+      (ENNReal.inv_ne_zero.2 (measure_ne_top _ _))) (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne',
+    ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα.le (ENNReal.inv_ne_top.2 h0))
+      ENNReal.ofReal_ne_top⟩
+
+omit [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U] in
+private theorem indicator_weight_ne_top (hα : 0 < α) (C : U → ℝ) {β : Measure W}
+    [IsProbabilityMeasure β] (hβ : β ≪ μ) (v : U) :
+    {v | ∀ᵐ w ∂β, w ∈ sem v}.indicator
+      (fun v ↦ (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v)))) v ≠ ∞ := by
+  by_cases hv : ∀ᵐ w ∂β, w ∈ sem v
+  · rw [Set.indicator_of_mem (show v ∈ {v | ∀ᵐ w ∂β, w ∈ sem v} from hv)]
+    exact (weight_ne_zero_and_ne_top hα C hβ hv).2
+  · rw [Set.indicator_of_notMem (show v ∉ {v | ∀ᵐ w ∂β, w ∈ sem v} from hv)]
+    exact ENNReal.zero_ne_top
+
 theorem speaker_literalListener_apply_singleton_eq_zero_iff (hα : 0 < α) [IsFiniteMeasure (b o)]
     (hb : b o ≪ μ) :
     speaker α C (literalListener μ sem) b o {u} = 0 ↔ ¬ ∀ᵐ w ∂b o, w ∈ sem u := by
@@ -178,33 +203,20 @@ theorem speaker_literalListener_apply_singleton_lt (hα : 0 < α) [IsProbability
     speaker α C (literalListener μ sem) b' o' {u} <
       speaker α C (literalListener μ sem) b o {u} := by
   classical
-  have hwt {β : Measure W} [IsProbabilityMeasure β] (hβ : β ≪ μ) {v : U}
-      (hv : ∀ᵐ w ∂β, w ∈ sem v) :
-      (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v))) ≠ 0 ∧
-        (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v))) ≠ ∞ := by
-    have h0 : μ (sem v) ≠ 0 := fun h0 ↦
-      one_ne_zero (((prob_compl_eq_zero_iff .of_discrete).1 (ae_iff.1 hv)).symm.trans (hβ h0))
-    exact ⟨mul_ne_zero (ENNReal.rpow_ne_zero_of_ne_zero hα.le
-        (ENNReal.inv_ne_zero.2 (measure_ne_top _ _))) (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne',
-      ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα.le (ENNReal.inv_ne_top.2 h0))
-        ENNReal.ofReal_ne_top⟩
+  have hwt := weight_ne_zero_and_ne_top hα C hb hu
   rw [speaker_literalListener_apply_singleton hα hb,
     speaker_literalListener_apply_singleton hα hb',
     Set.indicator_of_mem (show u ∈ {v | ∀ᵐ w ∂b o, w ∈ sem v} from hu),
     Set.indicator_of_mem (show u ∈ {v | ∀ᵐ w ∂b' o', w ∈ sem v} from h u hu)]
-  refine ENNReal.div_lt_div_left (hwt hb hu).1 (hwt hb hu).2 ?_
+  refine ENNReal.div_lt_div_left hwt.1 hwt.2 ?_
   rw [← Finset.add_sum_erase _ _ (Finset.mem_univ u'),
     ← Finset.add_sum_erase _ _ (Finset.mem_univ u'),
     Set.indicator_of_notMem (show u' ∉ {v | ∀ᵐ w ∂b o, w ∈ sem v} from hnu'),
     Set.indicator_of_mem (show u' ∈ {v | ∀ᵐ w ∂b' o', w ∈ sem v} from hu'), zero_add, add_comm]
-  refine (Finset.sum_le_sum fun v _ ↦ Set.indicator_le_indicator_of_subset (fun v hv ↦ h v hv)
-    (fun _ ↦ zero_le) v).trans_lt
-    (ENNReal.lt_add_right (ENNReal.sum_ne_top.2 fun v _ ↦ ?_) (hwt hb' hu').1)
-  by_cases hv : ∀ᵐ w ∂b' o', w ∈ sem v
-  · rw [Set.indicator_of_mem (show v ∈ {v | ∀ᵐ w ∂b' o', w ∈ sem v} from hv)]
-    exact (hwt hb' hv).2
-  · rw [Set.indicator_of_notMem (show v ∉ {v | ∀ᵐ w ∂b' o', w ∈ sem v} from hv)]
-    exact ENNReal.zero_ne_top
+  exact (Finset.sum_le_sum fun v _ ↦ Set.indicator_le_indicator_of_subset (fun v hv ↦ h v hv)
+    (fun _ ↦ zero_le) v).trans_lt (ENNReal.lt_add_right
+      (ENNReal.sum_ne_top.2 fun v _ ↦ indicator_weight_ne_top hα C hb' v)
+      (weight_ne_zero_and_ne_top hα C hb' hu').1)
 
 /-- Among the utterances her belief entails, the speaker at no cost prefers the one of smaller
 prior mass. -/
@@ -358,6 +370,54 @@ theorem speaker_literalListener_dirac_preimage {W' : Type*} [MeasurableSpace W']
     speaker_literalListener_apply_singleton hα (Measure.dirac_absolutelyContinuous hw')]
   simp only [Measure.ae_dirac_mem_iff, Measure.map_apply hg .of_discrete]
   rfl
+
+omit [MeasurableSpace U] [MeasurableSingletonClass U] in
+private theorem sum_indicator_weight_dirac_ne_top (hα : 0 < α) (C : U → ℝ) (μ : Measure W)
+    [IsFiniteMeasure μ] (sem : U → Set W) (hw : μ {w} ≠ 0) :
+    ∑ v, {v | w ∈ sem v}.indicator
+      (fun v ↦ (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v)))) v ≠ ∞ := by
+  simpa only [Measure.ae_dirac_mem_iff] using ENNReal.sum_ne_top.2 fun v (_ : v ∈ Finset.univ) ↦
+    indicator_weight_ne_top hα C (Measure.dirac_absolutelyContinuous hw) (sem := sem) v
+
+/-- With independent parts of the state, product denotations and additive costs, the speaker who
+knows the state chooses the two parts of her utterance independently. -/
+theorem speaker_literalListener_dirac_prod {W₁ W₂ U₁ U₂ : Type*}
+    [MeasurableSpace W₁] [MeasurableSingletonClass W₁] [Fintype W₁]
+    [MeasurableSpace W₂] [MeasurableSingletonClass W₂] [Fintype W₂]
+    [MeasurableSpace U₁] [MeasurableSingletonClass U₁] [Fintype U₁]
+    [MeasurableSpace U₂] [MeasurableSingletonClass U₂] [Fintype U₂]
+    (hα : 0 < α) (C₁ : U₁ → ℝ) (C₂ : U₂ → ℝ) (μ₁ : Measure W₁) (μ₂ : Measure W₂)
+    [IsFiniteMeasure μ₁] [IsFiniteMeasure μ₂] (sem₁ : U₁ → Set W₁) (sem₂ : U₂ → Set W₂)
+    {w₁ : W₁} {w₂ : W₂} (hw₁ : μ₁ {w₁} ≠ 0) (hw₂ : μ₂ {w₂} ≠ 0) :
+    speaker α (fun u : U₁ × U₂ ↦ C₁ u.1 + C₂ u.2)
+        (literalListener (μ₁.prod μ₂) fun u ↦ sem₁ u.1 ×ˢ sem₂ u.2) Measure.dirac (w₁, w₂) =
+      (speaker α C₁ (literalListener μ₁ sem₁) Measure.dirac w₁).prod
+        (speaker α C₂ (literalListener μ₂ sem₂) Measure.dirac w₂) := by
+  have hw : (μ₁.prod μ₂) {(w₁, w₂)} ≠ 0 := by
+    rw [← Set.singleton_prod_singleton, Measure.prod_prod]
+    exact mul_ne_zero hw₁ hw₂
+  refine Measure.ext_of_singleton fun ⟨u₁, u₂⟩ ↦ ?_
+  conv_rhs => rw [← Set.singleton_prod_singleton, Measure.prod_prod]
+  rw [speaker_literalListener_apply_singleton hα (Measure.dirac_absolutelyContinuous hw),
+    speaker_literalListener_apply_singleton hα (Measure.dirac_absolutelyContinuous hw₁),
+    speaker_literalListener_apply_singleton hα (Measure.dirac_absolutelyContinuous hw₂)]
+  simp only [ae_dirac_eq, Filter.eventually_pure, Set.mem_prod, Measure.prod_prod]
+  have key (v : U₁ × U₂) :
+      {v : U₁ × U₂ | w₁ ∈ sem₁ v.1 ∧ w₂ ∈ sem₂ v.2}.indicator
+        (fun v ↦ (μ₁ (sem₁ v.1) * μ₂ (sem₂ v.2))⁻¹ ^ α *
+          ENNReal.ofReal (Real.exp (-(α * (C₁ v.1 + C₂ v.2))))) v =
+        {v | w₁ ∈ sem₁ v}.indicator
+            (fun v ↦ (μ₁ (sem₁ v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C₁ v)))) v.1 *
+          {v | w₂ ∈ sem₂ v}.indicator
+            (fun v ↦ (μ₂ (sem₂ v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C₂ v)))) v.2 := by
+    by_cases hv₁ : w₁ ∈ sem₁ v.1 <;> by_cases hv₂ : w₂ ∈ sem₂ v.2 <;>
+      simp [hv₁, hv₂, ENNReal.mul_inv (.inr (measure_ne_top _ _)) (.inl (measure_ne_top _ _)),
+        ENNReal.mul_rpow_of_nonneg _ _ hα.le, mul_add, Real.exp_add,
+        ENNReal.ofReal_mul (Real.exp_pos _).le]
+    ring
+  simp only [key, Fintype.sum_prod_type, ← Finset.mul_sum, ← Finset.sum_mul]
+  exact ENNReal.mul_div_mul_comm (.inr (sum_indicator_weight_dirac_ne_top hα C₂ μ₂ sem₂ hw₂))
+    (.inl (sum_indicator_weight_dirac_ne_top hα C₁ μ₁ sem₁ hw₁))
 
 theorem speaker_literalListener_dirac_zero_real_singleton_of_pair (hα : 0 < α)
     (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
