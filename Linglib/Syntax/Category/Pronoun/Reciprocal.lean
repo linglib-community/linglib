@@ -7,14 +7,12 @@ module
 
 public import Linglib.Syntax.Category.Pronoun.Basic
 public import Linglib.Syntax.Reciprocal
-public import Linglib.Syntax.Binding.Word
 
 /-!
 # Reciprocal pronouns
 
 A reciprocal pronoun is a pronoun that is the nominal exponent of reciprocity: it carries the
-marker data of `Syntax/Reciprocal.lean` and the nominal strategy it realizes, and its kind fixes
-the reciprocal binding class. A language file writes the pronoun once and
+marker data of `Syntax/Reciprocal.lean` and the nominal strategy it realizes. A language file writes the pronoun once and
 derives its `Reciprocal.Marker` with `toMarker`; Hungarian *egymás*, Japanese *otagai* and Wan
 *ɔ̄ŋ̄* are such objects. Verbal and clitic reciprocal strategies are not pronouns and stay bare
 markers.
@@ -23,10 +21,6 @@ markers.
 
 * `ReciprocalPronoun`: a pronoun with its reciprocal strategy.
 * `ReciprocalPronoun.toMarker`: its entry in a marker inventory.
-
-## Main statements
-
-* `ReciprocalPronoun.bindingClassOf_toWord`: its token classifies as a reciprocal anaphor.
 
 ## References
 
@@ -54,9 +48,4 @@ def ReciprocalPronoun.toMarker (p : ReciprocalPronoun) : Reciprocal.Marker :=
 def ReciprocalPronoun.toWord (p : ReciprocalPronoun) : Morphology.Word :=
   p.toPronoun.toWord (some .Rcp)
 
-/-- A reciprocal pronoun is a reciprocal anaphor. -/
-@[simp]
-theorem ReciprocalPronoun.bindingClassOf_toWord (p : ReciprocalPronoun) :
-    Binding.bindingClassOf p.toWord = some .reciprocal :=
-  Pronoun.bindingClassOf_toWord_rcp _
 

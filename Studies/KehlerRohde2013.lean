@@ -8,6 +8,7 @@ public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Discourse.Coherence
 public import Linglib.Languages.English.Pronouns
 public import Linglib.Syntax.Voice.Basic
+public import Linglib.Syntax.Binding.Pronoun
 
 /-!
 # Kehler and Rohde (2013): A Probabilistic Reconciliation of Coherence-Driven and Centering-Driven Theories of Pronoun Interpretation
@@ -564,8 +565,8 @@ def brittany : Word :=
     Features.of (person := some .third) (number := some .singular) (gender := some .Fem)⟩
 
 theorem she_ambiguous_over_stimuli :
-    English.Pronouns.she.toPronoun.CandidateAntecedent amanda ∧
-      English.Pronouns.she.toPronoun.CandidateAntecedent brittany := by
+    Binding.CandidateAntecedent English.Pronouns.she.toWord amanda ∧
+      Binding.CandidateAntecedent English.Pronouns.she.toWord brittany := by
   decide
 
 /-- The voice of a context sentence of (20): the active, and the long passive, which keeps Amanda

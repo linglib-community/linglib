@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Pronoun.Logophoric
+public import Linglib.Syntax.Category.Pronoun.Reference
 
 /-!
 # Ewe pronouns

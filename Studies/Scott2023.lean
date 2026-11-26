@@ -109,8 +109,8 @@ def PronCell.number : PronCell → Number
 /-- The cell of the language file's pronoun paradigms, with clusivity on the person. -/
 def PronCell.bundle : PronCell → Agreement.Bundle
   | .firstSg => .personNumber .first .singular
-  | .firstPlExcl => .personNumber .firstExclusive .plural
-  | .firstPlIncl => .personNumber .firstInclusive .plural
+  | .firstPlExcl => .setClusivity .exclusive (.personNumber .first .plural)
+  | .firstPlIncl => .setClusivity .inclusive (.personNumber .first .plural)
   | .secondSg => .personNumber .second .singular
   | .secondPl => .personNumber .second .plural
   | .thirdSg => .personNumber .third .singular

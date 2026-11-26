@@ -8,7 +8,6 @@ public import Linglib.Morphology.Exponence.SubsetRule
 public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Semantics.Plurality.Configuration
 public import Linglib.Syntax.Feature.Person.Configuration
-public import Linglib.Syntax.Feature.Person.Referent
 public import Linglib.Syntax.Feature.Person.Specification
 public import Studies.Cysouw2003
 public import Studies.Harbour2016

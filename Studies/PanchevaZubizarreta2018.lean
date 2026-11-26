@@ -2,7 +2,7 @@ module
 
 public import Linglib.Generalizations.PersonCaseConstraint
 public import Linglib.Discourse.LogophoricRole
-public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Person.Decomposition
 public import Linglib.Languages.Romance.Italian.Pronouns
 public import Linglib.Languages.Romance.Spanish.Clitics
 
@@ -111,7 +111,7 @@ theorem ProminenceThreshold.inherentlyMetBy_antitone (p : Person) :
 
 -- (11): speech-act participants are [+proximate] and [+participant], the speaker [+author].
 theorem ProminenceThreshold.inherentlyMetBy_iff {t : ProminenceThreshold} {p : Person} :
-    t.InherentlyMetBy p ↔ if t = .author then p.IncludesSpeaker else p.IsSAP := by
+    t.InherentlyMetBy p ↔ if t = .author then p.IncludesSpeaker else p ≠ .third := by
   cases t <;> cases p <;> decide
 
 /-! ### The grammars -/
@@ -236,7 +236,7 @@ def positiveFeatures (p : Person) : Finset ProminenceThreshold :=
 /-- The Person Hierarchy is derived, the prominence order coinciding with the order by count of
 positive features (§2.1). -/
 theorem personHierarchy_from_features (p q : Person) :
-    p.prominence ≤ q.prominence ↔ (positiveFeatures p).card ≤ (positiveFeatures q).card := by
+    p ≤ q ↔ (positiveFeatures p).card ≤ (positiveFeatures q).card := by
   cases p <;> cases q <;> decide
 
 /-! ### The varieties (§4) -/

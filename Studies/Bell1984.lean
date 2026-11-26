@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Statistics.Bell1984
-public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 public import Mathlib.Analysis.Normed.Module.Ball.Pointwise
 public import Mathlib.Analysis.Normed.Module.Convex
 public import Mathlib.Order.UpperLower.Basic

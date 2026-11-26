@@ -5,8 +5,9 @@ public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Finset.Lattice.Fold
-public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Person.Decomposition
 public import Linglib.Syntax.Feature.Person.Partition
+public import Linglib.Syntax.Feature.Person.Specification
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Studies.Harbour2014
 public import Studies.Cysouw2003

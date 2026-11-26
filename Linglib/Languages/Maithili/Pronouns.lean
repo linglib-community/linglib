@@ -15,8 +15,8 @@ which the verb tells apart, while the high honorific *əpne* takes the agreement
 
 A pronoun is made plural by a following *səb* 'all', *həm səb* 'we', or for an honorific referent
 *lokəin* 'people', and the verb inflects for it as for the singular, as Yadav describes. With
-these plurals every referential category is denoted
-(`Maithili.Pronouns.exists_referential_or_plural`).
+these plurals every person and number has a pronoun
+(`Maithili.Pronouns.exists_mem_cells_or_plural`).
 
 ## Main results
 
@@ -103,10 +103,10 @@ def plural (p : PersonalPronoun) : PersonalPronoun :=
   { toPronoun := { p.toPronoun with form := p.form ++ " səb", number := some .plural },
     register := p.register }
 
-/-- Every category is denoted by a nominative pronoun or by its plural. -/
-theorem exists_referential_or_plural :
-    ∀ c, ∃ p ∈ ({ham, toN, ahaN, o} : Finset PersonalPronoun),
-      c ∈ p.referential ∨ c ∈ (plural p).referential := by
+/-- Every person and number is that of a nominative pronoun or of its plural. -/
+theorem exists_mem_cells_or_plural :
+    ∀ c ∈ Agreement.Bundle.personNumberCells, ∃ p ∈ ({ham, toN, ahaN, o} : Finset PersonalPronoun),
+      c ∈ p.cells ∨ c ∈ (plural p).cells := by
   decide +kernel
 
 /-- The second person by case and grade, [kumari-chandra-2026]'s Table 3 with the nominative

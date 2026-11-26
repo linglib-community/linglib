@@ -12,20 +12,21 @@ public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
 public import Linglib.Morphology.Inflection.Paradigm.Morphome
 public import Linglib.Morphology.Word.Agree
-public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Feature.Case.Basic
-public import Linglib.Syntax.Feature.Person.Configuration
-public import Linglib.Syntax.Binding.Word
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 
 /-!
 # Pronouns
 
-This file defines the pronoun as a lexical object: a surface form with the agreement features
-every pronoun kind shares. The kinds extend it, each in its own file: `PersonalPronoun`,
-`LogophoricPronoun`, `ReflexivePronoun`, `ReciprocalPronoun`, `DemonstrativePronoun`, and
-`ProForm` with its kinds `InterrogativePronoun` and `IndefinitePronoun`. A `Pronoun` has no
-denotation, pronoun type or binding class of its own; the kind supplies them, and
-`Pronoun.toWord` takes the last two as arguments.
+This file defines the pronoun as a lexical object: a surface form with the person, number,
+gender and cases every pronoun kind shares. The kinds extend it, each in its own file: the
+personal, logophoric, reflexive, reciprocal and demonstrative pronouns, and the proforms with
+their interrogative and indefinite kinds. A pronoun has no denotation or pronoun type of its
+own; the kind supplies them, and the token of a pronoun takes the pronoun type and the reflexive
+marking as arguments. Its person, clusivity and number are labels: the referential categories
+they cover are in `Syntax/Category/Pronoun/Reference.lean`, and the binding class of the token
+in `Syntax/Binding/Pronoun.lean`.
 
 ## Main definitions
 
@@ -34,27 +35,16 @@ denotation, pronoun type or binding class of its own; the kind supplies them, an
 * `Pronoun`: the form, person, number, cases and gender of a pronoun, with its script form
   and the strength class of its series.
 * `Pronoun.case`: the flat case of a pronoun, the meet of the cases it fills.
-* `Pronoun.ofCells`, `Pronoun.ofTable`: the pronoun of a form in a table of cells.
-* `Pronoun.categories`: the referential categories of Cysouw that the person and number
-  realize.
-* `Pronoun.toWord`: the pronoun as a token, with the pronoun type and reflexive marking of
-  its kind; `Pronoun.agreement_toWord` says the token bears the pronoun's agreement bundle.
-* `Pronoun.CandidateAntecedent`: a nominal token that agrees with the pronoun, so one of the
-  pronoun's number (`Pronoun.CandidateAntecedent.number_eq`).
-
-## Main results
-
-* `Pronoun.bindingClassOf_toWord_reflex`, `Pronoun.bindingClassOf_toWord_rcp`,
-  `Pronoun.bindingClassOf_toWord`, `Pronoun.bindingClassOf_toWord_of_isOperator`: the binding
-  class the engine reads off a pronoun's token is fixed by the marking its kind supplies.
+* `Pronoun.cell`: the paradigm cell that a pronoun's person, clusivity, number and gender
+  name.
+* `Pronoun.ofTable table f`: the pronoun of the form `f`, filling every cell the table gives it.
+* `Pronoun.toWord p`: the pronoun as a token, with the pronoun type and reflexive marking of
+  its kind.
 
 ## References
 
-* [L. Bloomfield, *Language* (1933)][bloomfield-1933]
 * [A. Cardinaletti and M. Starke, *The Typology of Structural Deficiency: A Case Study of the
   Three Classes of Pronouns* (1999)][cardinaletti-starke-1999]
-* [N. Chomsky, *Lectures on Government and Binding* (1981)][chomsky-1981]
-* [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 * [H. Jung and K. Migdalski, *Toward a four-way pronoun hierarchy: A view from Slavic*
   (2022)][jung-migdalski-2022]
 -/
@@ -108,7 +98,7 @@ structure Pronoun where
   /-- The grammatical person. -/
   person : Option Person := none
   /-- The clusivity of a form that marks it: Tagalog *tayo* is inclusive and *kami* exclusive,
-  English *we* neither ([cysouw-2003]). -/
+  English *we* neither. -/
   clusivity : Option Clusivity := none
   /-- The grammatical number. -/
   number : Option Number := none
@@ -133,10 +123,11 @@ variable (p : Pronoun)
 one whose cases are unrecorded. -/
 def case : Flat Case := Flat.finsetInf p.cases (↑)
 
-/-- The referential categories of [cysouw-2003] that the person and number realize: none when
-either is unspecified, several for a syncretism such as clusivity-unmarked English *we*. -/
-def categories : Finset Person.Category :=
-  (Option.map₂ (Person.Category.ofPersonNumber · p.clusivity ·) p.person p.number).getD ∅
+/-- The paradigm cell that the pronoun's person, clusivity, number and gender name: the
+agreement bundle bearing them and nothing else. -/
+def cell : Agreement.Bundle :=
+  .ofFeatures (.of (person := p.person) (clusivity := p.clusivity) (number := p.number)
+    (gender := p.gender))
 
 /-! ### The pronouns of a table -/
 
@@ -145,21 +136,19 @@ section Table
 variable {C : Type*} (person : C → Person) (clusivity : C → Option Clusivity)
   (number : C → Option Number) (gender : C → Option UD.Gender) (case : C → Option Case)
 
-/-- The categories of the cells `s`, those each cell's person, clusivity and number realize. -/
-def cellCategories (s : Finset C) : Finset Person.Category :=
-  s.biUnion fun c ↦
-    ((number c).map (Person.Category.ofPersonNumber (person c) (clusivity c))).getD ∅
+/-- The numbers of the cells `s`, a cell with no number contributing none. -/
+def cellNumbers (s : Finset C) : Finset Number := s.biUnion fun c ↦ (number c).toFinset
 
 /-- The pronoun `f` filling the cells `s`, where a cell has a person and may have a clusivity, a
 number, a gender and a case: the cases of the cells, the flat value of their person, clusivity
-and gender, and the number of the cells where they have one number, otherwise the number their
-categories share, `general` for cells of both numbers. -/
+and gender, and the number of the cells where they have one, `general` where they have several,
+the form then being noncommittal between them. -/
 def ofCells (s : Finset C) (f : String) : Pronoun :=
   { form := f,
     person := Flat.finsetInf s fun c ↦ (person c : Flat Person),
     clusivity := Flat.finsetInf s fun c ↦ (clusivity c : Flat Clusivity),
-    number := (Flat.finsetInf s fun c ↦ (number c : Flat Number) : Option Number).or
-      (Person.Category.sharedNumber (cellCategories person clusivity number s)),
+    number := (Flat.finsetInf (cellNumbers number s) (↑) : Option Number).or
+      (if (cellNumbers number s).Nonempty then some .general else none),
     cases := s.biUnion fun c ↦ (case c).toFinset,
     gender := Flat.finsetInf s fun c ↦ (gender c : Flat UD.Gender) }
 
@@ -180,58 +169,5 @@ def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none
     features := .of (person := p.person) (clusivity := p.clusivity) (number := p.number)
       (gender := p.gender)
       (case := p.case) (reflex := reflex) (pronType := pronType) }
-
-/-- The agreement bundle of a pronoun, that of its token: its person and clusivity, number,
-gender and case. -/
-def agreement : Agreement.Bundle := p.toWord.agreement
-
-/-- The token of a pronoun bears the pronoun's agreement bundle, whatever its pronoun type,
-reflexive marking and word class. -/
-@[simp] theorem agreement_toWord (pronType : Option UD.PronType) (reflex : Option Unit)
-    (cat : UD.UPOS) : (p.toWord pronType reflex cat).agreement = p.agreement :=
-  rfl
-
-/-- A token marked reflexive classifies as a reflexive anaphor. -/
-@[simp]
-theorem bindingClassOf_toWord_reflex (t : Option UD.PronType) :
-    Binding.bindingClassOf (p.toWord t (some ())) = some .reflexive := by
-  simp [Binding.bindingClassOf, toWord, Morphology.Features.of]
-
-/-- A token of reciprocal pronoun type classifies as a reciprocal anaphor. -/
-@[simp]
-theorem bindingClassOf_toWord_rcp :
-    Binding.bindingClassOf (p.toWord (some .Rcp)) = some .reciprocal := by
-  simp [Binding.bindingClassOf, toWord, Morphology.Features.of]
-
-/-- Any other pronoun token that is not an operator's classifies as a pronominal. -/
-theorem bindingClassOf_toWord {t : Option UD.PronType} (ht : t ≠ some .Rcp)
-    (hop : ∀ x, t = some x → ¬ Binding.IsOperator x) :
-    Binding.bindingClassOf (p.toWord t) = some .pronoun := by
-  rcases t with _ | t <;> (try cases t) <;>
-    simp_all +decide [Binding.bindingClassOf, toWord, Morphology.Features.of]
-
-/-- The token of an operator, a wh-phrase or a quantifier expression, classifies as an
-R-expression where its word class is nominal, and falls outside the binding theory where it is
-not, as a pro-adverb does ([chomsky-1981]). -/
-theorem bindingClassOf_toWord_of_isOperator {t : UD.PronType} (ht : Binding.IsOperator t)
-    (c : UD.UPOS) :
-    Binding.bindingClassOf (p.toWord (some t) none c) =
-      if Binding.IsNominal c then some .rExpression else none := by
-  rcases ht with rfl | rfl | rfl | rfl | rfl <;>
-    simp +decide [Binding.bindingClassOf, toWord, Morphology.Features.of]
-
-/-- A candidate antecedent of a pronoun is a nominal token that agrees with it in φ-features:
-a pro-form takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
-def CandidateAntecedent (w : Morphology.Word) : Prop :=
-  Binding.IsNominal w.cat ∧ Compat p.agreement.index w.agreement.index
-
-instance (w : Morphology.Word) : Decidable (p.CandidateAntecedent w) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-variable {p} in
-/-- A candidate antecedent has the pronoun's number, where both mark one. -/
-theorem CandidateAntecedent.number_eq {w : Morphology.Word} (h : p.CandidateAntecedent w)
-    {n m : Number} (hp : p.number = some n) (hw : w.features .number = some m) : n = m :=
-  Flat.compat_iff.mp (h.2.apply ⟨.number, by decide⟩) n hp m hw
 
 end Pronoun

@@ -84,8 +84,18 @@ def dat (c : Bundle) : Nominal := ⟨.nominal c (.valued .dat), true⟩
 def valueCase (c : Case) (n : Nominal) : Nominal :=
   { n with features := (FeatureBundle.valueAt n.features .case c).untopD n.features }
 
+/-- A bundle bears a 1st/2nd person feature. -/
+def HasFirstOrSecond (b : Bundle) : Prop := ∃ p : Person, b.person = ↑p ∧ p ≠ .third
+
+instance : DecidablePred HasFirstOrSecond := fun b ↦
+  inferInstanceAs (Decidable (∃ p : Person, b.person = ↑p ∧ p ≠ .third))
+
+@[simp] theorem hasFirstOrSecond_update_case {c : Bundle} {x : Flat Case} :
+    HasFirstOrSecond (Function.update c .case x) ↔ HasFirstOrSecond c := by
+  simp [HasFirstOrSecond, Agreement.Bundle.person]
+
 /-- A nominal needs licensing when it bears an unlicensed 1st/2nd person feature (§3). -/
-def Needs (n : Nominal) : Prop := n.features.agreement.IsSAP ∧ n.licensed = false
+def Needs (n : Nominal) : Prop := HasFirstOrSecond n.features.agreement ∧ n.licensed = false
 
 instance : DecidablePred Needs := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -196,18 +206,20 @@ def Head.derive (F : Head) (ns : List Nominal) : List Nominal :=
 
 /-- The Person Licensing Condition holds of a domain when every nominal with an interpretable
 1st/2nd person feature has had it licensed (§3). -/
-def PLC (ns : List Nominal) : Prop := ∀ n ∈ ns, n.features.agreement.IsSAP → n.licensed = true
+def PLC (ns : List Nominal) : Prop :=
+  ∀ n ∈ ns, HasFirstOrSecond n.features.agreement → n.licensed = true
 
 instance : DecidablePred PLC := fun ns ↦
-  inferInstanceAs (Decidable (∀ n ∈ ns, n.features.agreement.IsSAP → n.licensed = true))
+  inferInstanceAs (Decidable (∀ n ∈ ns, HasFirstOrSecond n.features.agreement → n.licensed = true))
 
-private theorem isSAP_valueCase (k : Case) (n : Nominal) :
-    (valueCase k n).features.agreement.IsSAP ↔ n.features.agreement.IsSAP := by
+private theorem hasFirstOrSecond_valueCase (k : Case) (n : Nominal) :
+    HasFirstOrSecond (valueCase k n).features.agreement ↔
+      HasFirstOrSecond n.features.agreement := by
   rw [valueCase, FeatureBundle.valueAt, FeatureBundle.unifyAt]
   cases (n.features FeatureType.case).unifyWith _ _ <;> simp [FeatureBundle.agreement_update_agr]
 
 private theorem plc_cons {n : Nominal} {ns : List Nominal} :
-    PLC (n :: ns) ↔ (n.features.agreement.IsSAP → n.licensed = true) ∧ PLC ns :=
+    PLC (n :: ns) ↔ (HasFirstOrSecond n.features.agreement → n.licensed = true) ∧ PLC ns :=
   List.forall_mem_cons
 
 private theorem plc_agreeWith_valueCase (k : Case) (ns : List Nominal) :
@@ -217,7 +229,7 @@ private theorem plc_agreeWith_valueCase (k : Case) (ns : List Nominal) :
   | cons n ns =>
     rw [agreeWith_cons, plc_cons, plc_cons]
     split_ifs
-    · exact and_congr_left' (imp_congr_left (isSAP_valueCase k n))
+    · exact and_congr_left' (imp_congr_left (hasFirstOrSecond_valueCase k n))
     · rfl
 
 private theorem plc_numAgree (k : Case) (ns : List Nominal) :
@@ -292,7 +304,7 @@ theorem v_derive_doc (cd ca : Bundle) :
 /-- The double object construction obeys the condition iff its theme is 3rd person, whatever the
 dative ((1), (7)). -/
 theorem doc_plc_iff (cd ca : Bundle) :
-    PLC (v.derive [dat cd, caseless ca]) ↔ ¬ ca.IsSAP := by
+    PLC (v.derive [dat cd, caseless ca]) ↔ ¬ HasFirstOrSecond ca := by
   rw [v_derive_doc]
   simp [PLC]
 
@@ -344,7 +356,7 @@ theorem spanishT_derive (cd cn : Bundle) :
 theorem dnc_plc_iff (can : Nominal → Bool) (hcan : ∀ c, can (caseless c) = true) (x0 : Bool)
     (cd cn : Bundle) :
     PLC (({ case := .nom, epp := some can, agrX0 := x0 } : Head).derive [dat cd, caseless cn]) ↔
-      (can (dat cd) = true ∧ x0 = false → ¬ cn.IsSAP) := by
+      (can (dat cd) = true ∧ x0 = false → ¬ HasFirstOrSecond cn) := by
   cases h : can (dat cd) <;> cases x0 <;>
     simp [Head.derive, Head.reproject, raise, piAgree, numAgree, Probe.search, Probe.relativized, h,
       hcan, PLC]

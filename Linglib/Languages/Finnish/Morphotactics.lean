@@ -235,7 +235,7 @@ instance (c : Case) : Decidable (EndsInVowel c) := inferInstanceAs (Decidable (�
 ending is of the case `c`: after a case ending in a short vowel the third person is -Vn or
 -nsA, except after a partitive -A that follows a stem-final A. -/
 def possessiveForms (p : Bundle) (c : Option Case) (w : List Segment) : List (List Segment) :=
-  if p .person = .third ∧ (∃ c' ∈ c, EndsInVowel c') ∧
+  if p.person = ↑Person.third ∧ (∃ c' ∈ c, EndsInVowel c') ∧
       ¬ (c = some .part ∧ (w.rtake 2 = [a, A] ∨ w.rtake 2 = [ä, A])) then
     [[V, n], [n, s, A]]
   else (Possession.endings.realize p).toList

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Cantonese determiner inventory

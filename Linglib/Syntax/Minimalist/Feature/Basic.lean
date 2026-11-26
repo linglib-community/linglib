@@ -8,7 +8,7 @@ module
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Syntax.Feature.Slot
-public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Person.Decomposition
 
 /-!
 # Features for Minimalist Agree
@@ -26,10 +26,8 @@ The agreement bundle of a checking bundle (`Agreement.Bundle`) keeps the slot at
 dimension and drops the other dimensions; an agreement bundle is in turn a checking bundle that is
 absent where it is unspecified. A checking bundle extends the checking bundle of an agreement
 bundle exactly when its own agreement bundle extends that one
-(`Minimalist.FeatureBundle.gc_ofAgreement_agreement`). The person slot holds a person
-specification (`Syntax/Feature/Person/Specification.lean`), the participant sets the features
-copied to the slot leave open, as a probe that has copied [participant] alone is specified for
-a speech-act participant and no further ([deal-2024]).
+(`Minimalist.FeatureBundle.gc_ofAgreement_agreement`). The person slot holds a person and a
+clusivity, as that of the agreement bundle does.
 
 A bundle records whether each feature is valued, not whether it is interpretable. Interpretability
 depends on the host as well as on the dimension: agreement features are interpretable on nouns and
@@ -52,7 +50,6 @@ the Valuation/Interpretability Biconditional of [chomsky-2001] as a hypothesis
 
 * [chomsky-2000]
 * [chomsky-2001]
-* [deal-2024]
 * [adger-2003]
 * [bjorkman-2011]
 * [harbour-2014]
@@ -131,7 +128,7 @@ instance (t : FeatureType) : Repr t.Value := by
   | _ => exact inferInstance
 
 /-- The slot order of a dimension: that of the agreement bundle at an agreement dimension, so a
-person specification for person, and the flat slot of the dimension's values elsewhere. -/
+person with a clusivity for person, and the flat slot of the dimension's values elsewhere. -/
 abbrev Slot : FeatureType → Type
   | agr d => d.Slot
   | t => Flat t.Value
@@ -156,7 +153,7 @@ instance (t : FeatureType) (x y : t.Slot) : Decidable (Compat x y) := by
   | agr d => exact inferInstanceAs (Decidable (Compat (α := d.Slot) x y))
   | _ => exact inferInstanceAs (Decidable (Compat (α := Flat _) x y))
 
-/-- A value of a dimension as a slot, a person value as the specification of what it covers. -/
+/-- A value of a dimension as a slot, a person value with no clusivity. -/
 def Slot.ofValue : (t : FeatureType) → t.Value → t.Slot
   | agr d, v => Agreement.Dimension.Slot.ofFlat d (v : Flat d.Value)
   | personFeature _, v | numberFeature _, v => (v : Flat Bool)
@@ -164,9 +161,9 @@ def Slot.ofValue : (t : FeatureType) → t.Value → t.Slot
   | wh, v | tense, v | oblique, v => (v : Flat Bool)
   | ellipsis, v => (v : Flat Unit)
 
-/-- The value a slot holds, if it holds one: the person a specification is that of. -/
+/-- The value a slot holds, if it holds one: the person of a person slot. -/
 def Slot.value? : (t : FeatureType) → t.Slot → Option t.Value
-  | agr .person, x => Person.Specification.toPerson? x
+  | agr .person, x => x.1
   | agr .number, x => x
   | agr .gender, x => x
   | agr .case, x => x

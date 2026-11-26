@@ -18,7 +18,7 @@ subject, which in the Agent Focus languages must front.
 * `Kaqchikel.focusRealize`: the reflexes of focusing an argument, those of its extraction with
   the fronting and *ja*.
 * `Kaqchikel.agentFocus_mem_focusRealize_iff`: Agent Focus marks the focus of a transitive
-  subject unless both arguments are speech-act participants.
+  subject unless both arguments are first or second person.
 
 ## Implementation notes
 
@@ -47,11 +47,11 @@ def focusRealize (c : Mayan.VerbClass) (agent patient : Person) (r : ArgumentRol
     {.displacement .phrase, .morpheme .phrase [ja]}
 
 /-- Agent Focus marks the focus of a transitive subject, not of an intransitive one, unless both
-arguments are speech-act participants. -/
+arguments are first or second person. -/
 theorem agentFocus_mem_focusRealize_iff (c : Mayan.VerbClass) (agent patient : Person)
     (r : ArgumentRole) :
     Reflex.morpheme .verb (agentFocus c).marker ∈ focusRealize c agent patient r ↔
-      r = .A ∧ ¬ (agent.IsSAP ∧ patient.IsSAP) := by
+      r = .A ∧ ¬ (agent ≠ .third ∧ patient ≠ .third) := by
   simp [focusRealize, Extraction.agentFocus_mem_realize_iff]
 
 end Kaqchikel

@@ -9,7 +9,7 @@ public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Finset.BooleanAlgebra
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Accessibility marking

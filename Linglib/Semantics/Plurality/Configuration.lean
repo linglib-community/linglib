@@ -23,7 +23,7 @@ singular](##Person.Configuration.not_atom_of_participants_eq_univ), and [the dua
 its referents of two members](##Person.Configuration.dual_ofParticipants_iff).
 
 These statements hold of the sets of individuals themselves, minimality passing between a set
-and its configuration (`Syntax/Feature/Person/Referent.lean`).
+and its configuration (`Syntax/Feature/Person/Configuration.lean`).
 
 ## Main definitions
 

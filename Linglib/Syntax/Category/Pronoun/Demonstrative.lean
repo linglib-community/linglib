@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Syntax.Category.Pronoun.Basic
 
 /-!

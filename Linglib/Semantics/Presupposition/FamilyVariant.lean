@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Data.Examples.Schema
-public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 public import Linglib.Data.Examples.Readers
 
 /-!

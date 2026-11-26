@@ -418,7 +418,8 @@ Principle A requires the two to share an index, and an index has one person, num
 gender. -/
 theorem licenses_iff_compat :
     ∀ a ∈ English.Pronouns.personal, ∀ r ∈ English.Pronouns.reflexives,
-      (Licenses a.agreement r.agreement ↔ Compat a.agreement.index r.agreement.index) := by
+      (Licenses a.toWord.agreement r.toWord.agreement ↔
+        Compat a.toWord.agreement.index r.toWord.agreement.index) := by
   decide +kernel
 
 -- (17a)–(17c)
@@ -426,7 +427,7 @@ theorem agreement_rows :
     ∀ e ∈ probing .pronominalAgreement,
       ∀ a ∈ English.Pronouns.personal, e.feature? "antecedent" = some a.form →
         ∀ r ∈ English.Pronouns.reflexives, e.feature? "reflexive" = some r.form →
-          (e.judgment = .acceptable ↔ Licenses a.agreement r.agreement) := by
+          (e.judgment = .acceptable ↔ Licenses a.toWord.agreement r.toWord.agreement) := by
   decide +kernel
 
 /-- Nominal objects with the same agreement bundle need not be coindexed: in *Susan likes her*

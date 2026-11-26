@@ -7,7 +7,7 @@ public import Linglib.Syntax.Agreement.ResolutionRule
 public import Linglib.Syntax.Feature.Gender.AgreementClasses
 public import Linglib.Syntax.Feature.Gender.Assignment
 public import Linglib.Semantics.Plurality.Cardinality
-public import Linglib.Syntax.Feature.Person.Lattice
+public import Linglib.Syntax.Feature.Person.Participants
 public import Linglib.Languages.Tamil.Gender
 public import Linglib.Languages.Swahili.Nouns
 public import Linglib.Languages.Afar.Gender
