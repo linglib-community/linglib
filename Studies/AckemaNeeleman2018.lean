@@ -915,12 +915,11 @@ def impoverishDist : Pronoun → Pronoun
   | ⟨[.prox, .dist], [.aug]⟩ => ⟨[.prox], [.aug]⟩
   | p => p
 
-/-- The system a realization of the plural pronouns induces on participant sets: two are related
-when pronouns with those participants are realized alike. -/
-def pluralGraph [DecidableEq E] (f : Pronoun → Option E) : Finset (Finset Role × Finset Role) :=
-  Finset.univ.filter fun P ↦ ∃ p ∈ inventory .absolute augNodes,
-    ∃ q ∈ inventory .absolute augNodes, p.number = [.aug] ∧ q.number = [.aug] ∧
-      participants p.person = some P.1 ∧ participants q.person = some P.2 ∧ f p = f q
+/-- The person partition a realization of the plural pronouns induces: two participant sets
+share a part when the plural pronouns with those participants are realized alike. -/
+def pluralPartition [DecidableEq E] (f : Pronoun → Option E) : Person.Partition :=
+  .ofFun fun P ↦ ((inventory .absolute augNodes).filter fun p ↦
+    p.number = [.aug] ∧ participants p.person = some P).map f
 
 /-- Plural rules for two `PROX`, one `PROX`, `PROX` with `DIST`, and `DIST`. -/
 def pluralRules : RuleSet (SubsetRule (Multiset Feature × Multiset NumberFeature) (Fin 4)) :=
@@ -928,27 +927,27 @@ def pluralRules : RuleSet (SubsetRule (Multiset Feature × Multiset NumberFeatur
     ⟨({.dist}, {.aug}), 3⟩]
 
 -- without impoverishment the plural paradigm is the quadripartition
-theorem pluralGraph_pluralRules :
-    pluralGraph (pluralRules.realize SubsetRule.card ∘ Pronoun.bundle) =
-      Harbour2016.graph {.speaker, .addressee} := by
+theorem pluralPartition_pluralRules :
+    pluralPartition (pluralRules.realize SubsetRule.card ∘ Pronoun.bundle) =
+      .ofFeatures {.speaker, .addressee} := by
   decide
 
 -- with it, the inclusive goes with the second person and the exclusive stands apart
-theorem pluralGraph_pluralRules_impoverishDist :
-    pluralGraph (pluralRules.realize SubsetRule.card ∘ Pronoun.bundle ∘ impoverishDist) =
-      Harbour2016.graph {.addressee, .participant} := by
+theorem pluralPartition_pluralRules_impoverishDist :
+    pluralPartition (pluralRules.realize SubsetRule.card ∘ Pronoun.bundle ∘ impoverishDist) =
+      .ofFeatures {.addressee, .participant} := by
   decide
 
 /-- Impoverishing `DIST` under `PROX` in the plural turns a plural paradigm that Harbour's
 parameters generate into one they never generate, the tripartition of Zwicky's
 generalization. -/
-theorem impoverishDist_not_mem_image_graph :
-    pluralGraph (pluralRules.realize SubsetRule.card ∘ Pronoun.bundle) ∈
-        Finset.univ.image Harbour2016.Setting.graph ∧
-      pluralGraph (pluralRules.realize SubsetRule.card ∘ Pronoun.bundle ∘ impoverishDist) ∉
-        Finset.univ.image Harbour2016.Setting.graph := by
-  rw [pluralGraph_pluralRules, pluralGraph_pluralRules_impoverishDist,
-    Harbour2016.graph_mem_image_iff, Harbour2016.graph_mem_image_iff]
+theorem impoverishDist_not_mem_image_partition :
+    pluralPartition (pluralRules.realize SubsetRule.card ∘ Pronoun.bundle) ∈
+        Finset.univ.image Harbour2016.Setting.partition ∧
+      pluralPartition (pluralRules.realize SubsetRule.card ∘ Pronoun.bundle ∘ impoverishDist) ∉
+        Finset.univ.image Harbour2016.Setting.partition := by
+  rw [pluralPartition_pluralRules, pluralPartition_pluralRules_impoverishDist,
+    Harbour2016.ofFeatures_mem_image_iff, Harbour2016.ofFeatures_mem_image_iff]
   decide
 
 end AckemaNeeleman2018

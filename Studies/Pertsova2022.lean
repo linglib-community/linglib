@@ -47,17 +47,19 @@ def Active (F : Person.Features) : Prop :=
 instance : DecidablePred Active := fun _ ↦ by unfold Active; infer_instance
 
 /-- The active feature sets generate four person systems (p. 402). -/
-theorem image_graph_active :
-    (univ.filter Active).image graph =
-      {graph ∅, graph {.participant}, graph {.participant, .speaker},
-        graph {.participant, .speaker, .addressee}} := by
+theorem image_ofFeatures_active :
+    (univ.filter Active).image Person.Partition.ofFeatures =
+      {.ofFeatures ∅, .ofFeatures {.participant}, .ofFeatures {.participant, .speaker},
+        .ofFeatures {.participant, .speaker, .addressee}} := by
   decide
 
-theorem card_image_graph_active : ((univ.filter Active).image graph).card = 4 := by decide
+theorem card_image_ofFeatures_active :
+    ((univ.filter Active).image Person.Partition.ofFeatures).card = 4 := by
+  decide
 
 /-- Harbour's author bipartition, which [±author] alone generates, is not among them. -/
-theorem graph_active_ne_authorBipartition (F : Person.Features) (hF : Active F) :
-    graph F ≠ graph {.speaker} := by
+theorem ofFeatures_active_ne_authorBipartition (F : Person.Features) (hF : Active F) :
+    Person.Partition.ofFeatures F ≠ .ofFeatures {.speaker} := by
   revert F; decide
 
 /-- Under active features, inclusive conflates with second person only if exclusive does, and
