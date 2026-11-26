@@ -28,8 +28,7 @@ namespace Temporal.TWFrame
 
 variable {T World Atom : Type*} [Preorder T] (F : TWFrame World T) (V : Atom → T → World → Prop)
 
-open PointAlgebra
-open scoped ModalLogic Denotes SetRel
+open scoped ModalLogic SetRel
 
 instance (t : T) : (F.alt t).IsRefl := ⟨(F.sim t).refl'⟩
 
@@ -44,7 +43,7 @@ historical alternative followed by a step into the future. -/
 theorem future_comp_historical_subset :
     Index.future ○ F.historical ⊆ F.historical ○ Index.future :=
   Index.temporal_comp_modal_subset fun _ _ h _ hp ↦
-    F.antitone_sim (Tense.mem_toSetRel_future.1 h).le hp
+    F.antitone_sim (le_of_lt h) hp
 
 /-! ### Satisfaction -/
 
@@ -60,10 +59,10 @@ variable (a b : Formula Atom) (t : T) (w : World) {i : Index World T}
   Iff.rfl
 
 @[simp] theorem sat_G : F.sat V (.G a) ⟨w, t⟩ ↔ ∀ t', t < t' → F.sat V a ⟨w, t'⟩ :=
-  Index.box_temporal.trans (forall_congr' fun _ ↦ imp_congr_left Tense.mem_toSetRel_future)
+  Index.box_temporal
 
 @[simp] theorem sat_H : F.sat V (.H a) ⟨w, t⟩ ↔ ∀ t', t' < t → F.sat V a ⟨w, t'⟩ :=
-  Index.box_temporal.trans (forall_congr' fun _ ↦ imp_congr_left Tense.mem_toSetRel_past)
+  Index.box_temporal
 
 @[simp] theorem sat_N : F.sat V (.N a) ⟨w, t⟩ ↔ ∀ w', F.sim t w w' → F.sat V a ⟨w', t⟩ :=
   Index.box_modal

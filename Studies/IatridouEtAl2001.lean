@@ -78,7 +78,7 @@ The perfect asserts a span in or throughout which there is a bounded or unbounde
 
 -- (44a)
 theorem durative_unbounded : durative (unbounded P) = unbounded P :=
-  durative_eq_of_antitone (antitone_unbounded P)
+  durative_diamond_le _
 
 -- (44b)
 theorem inclusive_unbounded_iff :

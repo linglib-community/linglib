@@ -427,6 +427,12 @@ theorem toSetRel_le :
     (toSetRel le : SetRel (NonemptyInterval T) _) = {x | x.2 ≤ x.1} :=
   Set.ext fun _ ↦ mem_toSetRel_le
 
+/-- The relation of the converse of containment is the converse order of intervals. -/
+theorem toSetRel_inv_le :
+    (toSetRel le⁻¹ : SetRel (NonemptyInterval T) _) = {x | x.1 ≤ x.2} := by
+  rw [toSetRel_inv, toSetRel_le]
+  rfl
+
 theorem mem_toSetRel_ofPosition {C : PointAlgebra} :
     (j, i) ∈ toSetRel (ofPosition C) ↔ i.position j ∈ C :=
   relation_mem_ofPosition

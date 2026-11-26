@@ -168,8 +168,8 @@ theorem AspectHead.denote_iff {a : AspectHead} {P : E → Prop} {r : NonemptyInt
 
 theorem denote_imperfective (P : E → Prop) :
     AspectHead.imperfective.denote (T := T) P = unbounded P := by
-  rw [AspectHead.denote, AspectHead.cell, IntervalAlgebra.toSetRel_inv]
-  rfl
+  rw [AspectHead.denote, AspectHead.cell]
+  exact Aspect.unbounded_eq_diamond_toSetRel.symm
 
 theorem denote_perfective (P : E → Prop) :
     AspectHead.perfective.denote (T := T) P = Aspect.perfective P := by

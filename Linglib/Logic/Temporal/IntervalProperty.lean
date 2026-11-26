@@ -18,7 +18,8 @@ relations between intervals. Along inclusion, `{x | x.2 ≤ x.1}`, `inclusive p`
 subinterval of `t`, and `durative p` when `p` holds at every subinterval of `t`. A monotone
 interval property is one closed under superintervals, and an antitone one is closed under
 subintervals: `inclusive p` is monotone and equals `p` when `p` is monotone, and `durative p` is
-antitone and equals `p` when `p` is antitone.
+antitone and equals `p` when `p` is antitone. Possibility over superintervals,
+`◇[{x | x.1 ≤ x.2}] p`, is left adjoint to `durative`, and what it yields is antitone.
 
 The time trace `timeTrace p` of an interval property is the set of moments its intervals cover,
 which are the moments `a` at which `p` is possible along containment,
@@ -118,6 +119,29 @@ theorem durative_iff_of_monotone (hp : Monotone p) : durative p t ↔ ∀ a ∈ 
   obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hs
   exact hp (NonemptyInterval.pure_le_iff.2 ⟨le_rfl, s.fst_le_snd⟩)
     (h s.fst ⟨h₁, s.fst_le_snd.trans h₂⟩)
+
+/-! ### Superintervals
+
+Possibility along containment, `◇[{x | x.1 ≤ x.2}] p`, holds at an interval when `p` holds at
+some interval that contains it. -/
+
+/-- Possibility over superintervals is left adjoint to necessity over subintervals. -/
+theorem gc_diamond_le_durative :
+    GaloisConnection
+      (fun p : NonemptyInterval T → Prop ↦
+        ◇[{x : NonemptyInterval T × NonemptyInterval T | x.1 ≤ x.2}] p)
+      durative :=
+  diamond_box_gc _
+
+/-- A property that holds at some superinterval is closed under subintervals. -/
+theorem antitone_diamond_le (p : NonemptyInterval T → Prop) :
+    Antitone (◇[{x : NonemptyInterval T × NonemptyInterval T | x.1 ≤ x.2}] p) :=
+  fun _ _ hst ⟨u, hu, hp⟩ ↦ ⟨u, le_trans hst hu, hp⟩
+
+theorem durative_diamond_le (p : NonemptyInterval T → Prop) :
+    durative (◇[{x : NonemptyInterval T × NonemptyInterval T | x.1 ≤ x.2}] p) =
+      ◇[{x : NonemptyInterval T × NonemptyInterval T | x.1 ≤ x.2}] p :=
+  durative_eq_of_antitone (antitone_diamond_le p)
 
 /-! ### The time trace -/
 

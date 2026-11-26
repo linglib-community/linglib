@@ -8,7 +8,6 @@ module
 public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Order.Monotone.Defs
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Tense.Defs
 public import Linglib.Semantics.Index.Rel
 
 /-!
@@ -91,29 +90,29 @@ abbrev historical (F : TWFrame World T) : SetRel (Index World T) (Index World T)
 
 end TWFrame
 
-open scoped Denotes in
 /-- `Index.future` relates an index `⟨w, t⟩` to the indices `⟨w, u⟩` with `t < u`. -/
 abbrev _root_.Index.future {World T : Type*} [LT T] : SetRel (Index World T) (Index World T) :=
-  Index.temporal (PointAlgebra.toSetRel ⟦Tense.future⟧)
+  Index.temporal {x : T × T | x.1 < x.2}
 
-open scoped Denotes in
 /-- `Index.past` relates an index `⟨w, t⟩` to the indices `⟨w, u⟩` with `u < t`. -/
 abbrev _root_.Index.past {World T : Type*} [LT T] : SetRel (Index World T) (Index World T) :=
-  Index.temporal (PointAlgebra.toSetRel ⟦Tense.past⟧)
+  Index.temporal {x : T × T | x.2 < x.1}
 
 @[simp] theorem _root_.Index.inv_past {World T : Type*} [LT T] :
     (Index.past : SetRel (Index World T) (Index World T)).inv = Index.future := by
-  rw [Index.inv_temporal, Tense.inv_toSetRel_past]
+  rw [Index.inv_temporal]
+  rfl
 
 @[simp] theorem _root_.Index.inv_future {World T : Type*} [LT T] :
     (Index.future : SetRel (Index World T) (Index World T)).inv = Index.past := by
-  rw [Index.inv_temporal, Tense.inv_toSetRel_future]
+  rw [Index.inv_temporal]
+  rfl
 
 namespace TWFrame
 
 variable {T World Atom : Type*} [Preorder T]
 
-open scoped ModalLogic Denotes in
+open scoped ModalLogic in
 /-- `F.sat V a i` is the truth of the formula `a` at the index `i` under the valuation `V`. The
 operators `G`, `H`, `N` and `box` are necessity along `Index.future`, `Index.past`,
 `F.historical` and the relation between all indices at one time. -/

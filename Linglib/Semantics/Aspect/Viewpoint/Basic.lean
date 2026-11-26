@@ -121,7 +121,8 @@ def perfective (P : E → Prop) : NonemptyInterval T → Prop := inclusive (runT
 
 /-- The non-strict imperfective, (7b) of [pancheva-2003], holds where the reference time lies
 within the run time of an event of the predicate. -/
-def unbounded (P : E → Prop) : NonemptyInterval T → Prop := ◇[(toSetRel .le).inv] (runTimes P)
+def unbounded (P : E → Prop) : NonemptyInterval T → Prop :=
+  ◇[{x : NonemptyInterval T × NonemptyInterval T | x.1 ≤ x.2}] (runTimes P)
 
 /-- The imperfective holds at a reference interval `t` in `w` when, in every world accessible
 from `w` along `acc t`, `t` lies within the run time of an event of the predicate. The event need
@@ -166,7 +167,7 @@ theorem monotone_perfective (P : E → Prop) : Monotone (perfective P) := monoto
 
 /-- The non-strict imperfective is closed under subintervals. -/
 theorem antitone_unbounded (P : E → Prop) : Antitone (unbounded P) :=
-  fun _ _ hle h ↦ let ⟨e, he, hP⟩ := unbounded_iff.1 h; unbounded_iff.2 ⟨e, hle.trans he, hP⟩
+  antitone_diamond_le _
 
 theorem antitone_denote_imperfective (P : E → Prop) :
     Antitone (ViewpointType.imperfective.denote P) :=
@@ -175,10 +176,13 @@ theorem antitone_denote_imperfective (P : E → Prop) :
 
 /-- The non-strict imperfective entails an interval property exactly when the run times entail
 its durative reading. -/
-theorem unbounded_le_iff : unbounded P ≤ q ↔ runTimes P ≤ durative q := by
-  have h := diamond_box_gc (toSetRel (T := T) .le).inv (runTimes P) q
-  rw [SetRel.inv_inv] at h
-  rwa [durative, ← toSetRel_le]
+theorem unbounded_le_iff : unbounded P ≤ q ↔ runTimes P ≤ durative q :=
+  gc_diamond_le_durative _ _
+
+-- The non-strict imperfective is possibility along the converse of the cell of containment.
+theorem unbounded_eq_diamond_toSetRel :
+    unbounded P = ◇[toSetRel (T := T) IntervalAlgebra.le⁻¹] (runTimes P) := by
+  rw [toSetRel_inv_le, unbounded]
 
 /-- The perfective entails an interval property closed under superintervals exactly when the run
 times do. -/

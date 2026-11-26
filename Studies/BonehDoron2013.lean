@@ -127,7 +127,7 @@ def usedTo (P : E → Prop) : NonemptyInterval T → Prop :=
 
 theorem usedTo_eq_diamond : usedTo P = ◇[IntervalAlgebra.toSetRel IntervalAlgebra.precedes]
     (◇[IntervalAlgebra.toSetRel IntervalAlgebra.le⁻¹] (Event.runTimes P)) := by
-  rw [IntervalAlgebra.toSetRel_inv]
+  rw [← Aspect.unbounded_eq_diamond_toSetRel]
   rfl
 
 /-- The composite of the retrospective and the imperfective: the state began before the
