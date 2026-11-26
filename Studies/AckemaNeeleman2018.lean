@@ -29,10 +29,13 @@ Number says how many members the output of person has and leaves the set as it i
 is defined on a set $S$ when $|S| \in C$ and $S \neq S_{i+u+o}$, where its features generate the
 cardinalities $C$ from the natural numbers: `AUG` keeps the numbers above a reference number
 $n_R$, and `MIN` the least number of its input when that is positive, so that `MIN` has no output
-unless `AUG` has applied. In a relative number system number sees the output of person and
-$n_R$ is the number of the speaker and the addressee in it, where that is positive; in an absolute
-system, and with neither in the set, $n_R = 1$. Under Maximal Encoding a number node is used
-only for the cardinalities that no node of the language with more features allows. An absolute
+unless `AUG` has applied. Number sees the output of person where its head is conflated with the
+person head in one node, and $n_R$ is then the number of the speaker and the addressee in that
+output, where it is positive; where the number head is a node of its own, and with neither in the
+set, $n_R = 1$. A language whose pronouns have a separate number head has an absolute number
+system, and one whose pronouns conflate the two heads a relative one. Under Maximal Encoding a
+number node is used only for the cardinalities that no node of the language with more features
+allows. An absolute
 system then has no inclusive without number, its two obligatory members exceeding $n_R = 1$,
 which leaves three pronouns without number and four with `AUG`; a relative system has the
 inclusive of exactly two. The sets a number node is used for are those of the number value it
@@ -480,37 +483,42 @@ def augMinNodes : List (List NumberFeature) := [[], [.aug], [.aug, .min]]
 
 end Cardinalities
 
-/-- A number system is relative when number sees the output of person, the two sharing a node,
-and absolute when it does not. -/
-inductive NumberSystem
-  | absolute
-  | relative
+/-- (13): the number head of a pronoun is a node of its own above the person head, or is
+conflated with the person head in one node. -/
+inductive NumberHead
+  | separate
+  | conflated
   deriving DecidableEq
 
 /-- The reference number of `AUG`: the number of the speaker and the addressee in the output of
-person where number sees it and it is positive, and otherwise 1. -/
-def NumberSystem.referenceNumber : NumberSystem → ℕ → ℕ
-  | .absolute, _ => 1
-  | .relative, n => if 0 < n then n else 1
+person where the number head shares a node with the person head, and so sees that output, and
+the number is positive; otherwise 1. -/
+def NumberHead.referenceNumber : NumberHead → ℕ → ℕ
+  | .separate, _ => 1
+  | .conflated, n => if 0 < n then n else 1
 
-/-- A pronoun is a person feature structure under a number node. -/
+/-- A pronoun is a person feature structure under a number head. A language whose pronouns have
+a separate number head has an absolute number system, and one whose pronouns conflate the two
+heads a relative one. -/
 structure Pronoun where
   /-- The person feature structure. -/
   person : List Feature
-  /-- The features of the number node. -/
+  /-- The features of the number head. -/
   number : List NumberFeature
+  /-- Where the number head sits. -/
+  head : NumberHead
   deriving DecidableEq
 
 section Denotes
 
-variable [DecidableEq α] {σ : NumberSystem} {N : List (List NumberFeature)} {p : Pronoun}
+variable [DecidableEq α] {N : List (List NumberFeature)} {p : Pronoun}
   {S : PersonSpace α} {L : Layered (Finset α)}
 
 /-- A pronoun of a language with the number nodes `N` denotes a set in a person space when its
 person features deliver the set, the set is not their input, and its number node expresses the
 cardinality of the set. -/
 @[mk_iff]
-structure Pronoun.Denotes (σ : NumberSystem) (N : List (List NumberFeature)) (p : Pronoun)
+structure Pronoun.Denotes (N : List (List NumberFeature)) (p : Pronoun)
     (S : PersonSpace α) (L : Layered (Finset α)) : Prop where
   /-- The person features deliver the set. -/
   eval : S.layered.eval p.person = some L
@@ -518,18 +526,15 @@ structure Pronoun.Denotes (σ : NumberSystem) (N : List (List NumberFeature)) (p
   ne_layered : L ≠ S.layered
   /-- The number node expresses the cardinality of the set. -/
   expresses :
-    Expresses N (σ.referenceNumber (S.config L.set).participants.card) L.set.card p.number
+    Expresses N (p.head.referenceNumber (S.config L.set).participants.card) L.set.card p.number
 
-instance : Decidable (p.Denotes σ N S L) := decidable_of_iff' _ (Pronoun.denotes_iff ..)
+instance : Decidable (p.Denotes N S L) := decidable_of_iff' _ (Pronoun.denotes_iff ..)
 
-/-- The pronouns of a language, each person under each of its number nodes. -/
-def pronouns (N : List (List NumberFeature)) : List Pronoun :=
-  persons.flatMap fun fs ↦ N.map (⟨fs, ·⟩)
-
-/-- The pronouns of a language with a denotation: all but the inclusive without number in an
-absolute number system. -/
-def inventory (σ : NumberSystem) (N : List (List NumberFeature)) : List Pronoun :=
-  (pronouns N).filter fun p ↦ ¬(σ = .absolute ∧ p = ⟨inclusive, []⟩)
+/-- The pronouns with a denotation among those with the number head `k` and a number node of
+`N`: every person under every node, but for the inclusive without number under a separate
+head. -/
+def inventory (k : NumberHead) (N : List (List NumberFeature)) : List Pronoun :=
+  (persons.flatMap fun fs ↦ N.map (⟨fs, ·, k⟩)).filter (· ≠ ⟨inclusive, [], .separate⟩)
 
 /-- A person space with `a` associates of the speaker, `b` of the addressee and `c` others. -/
 private def space (a b c : ℕ) : PersonSpace ℕ where
@@ -544,41 +549,45 @@ private def space (a b c : ℕ) : PersonSpace ℕ where
   Si_subset := Finset.range_mono (by omega)
   Siu_subset := Finset.range_mono (by omega)
 
+private theorem exists_denotes_of_mem (hN : N = augNodes ∨ N = augMinNodes) (k : NumberHead)
+    (h : p ∈ inventory k N) :
+    ∃ (S : PersonSpace ℕ) (L : Layered (Finset ℕ)), p.Denotes N S L := by
+  rcases hN with rfl | rfl <;> cases k <;> fin_cases h
+  all_goals first
+    | exact ⟨space 0 0 0, _, rfl, by decide, by decide⟩
+    | exact ⟨space 2 2 3, _, rfl, by decide, by decide⟩
+    | exact ⟨space 1 1 2, _, rfl, by decide, by decide⟩
+    | exact ⟨space 1 0 0, _, rfl, by decide, by decide⟩
+
 /-- In a language with `AUG`, with or without `MIN`, the pronouns with a denotation in some
-person space are every person under every number node, except that an absolute number system
-has no inclusive without number: its set has two obligatory members, more than the reference
-number, which `AUG` encodes. -/
+person space are every person under every number node, except that there is no inclusive
+without number under a separate number head: its set has two obligatory members, more than the
+reference number, which `AUG` encodes. -/
 theorem mem_inventory_iff (hN : N = augNodes ∨ N = augMinNodes) :
-    p ∈ inventory σ N ↔ ∃ (S : PersonSpace ℕ) (L : Layered (Finset ℕ)), p.Denotes σ N S L := by
-  refine ⟨fun h ↦ ?_, fun ⟨S, L, h⟩ ↦ ?_⟩
-  · rcases hN with rfl | rfl <;> cases σ <;> fin_cases h
-    all_goals first
-      | exact ⟨space 0 0 0, _, rfl, by decide, by decide⟩
-      | exact ⟨space 2 2 3, _, rfl, by decide, by decide⟩
-      | exact ⟨space 1 1 2, _, rfl, by decide, by decide⟩
-      | exact ⟨space 1 0 0, _, rfl, by decide, by decide⟩
-  · obtain ⟨fs, ns⟩ := p
-    have hfs : fs ∈ persons := by
-      have := eq_nil_or_of_eval h.eval
-      simpa [persons, (ne_layered_iff h.eval).1 h.ne_layered] using this
-    refine List.mem_filter.2 ⟨List.mem_flatMap.2 ⟨fs, hfs, List.mem_map.2 ⟨ns, h.expresses.mem,
-      rfl⟩⟩, decide_eq_true ?_⟩
-    rintro ⟨rfl, hp⟩
-    obtain ⟨rfl, rfl⟩ := Pronoun.mk.inj hp
-    obtain rfl := Option.some.inj h.eval
-    exact h.expresses.maximal [.aug] (by rcases hN with rfl | rfl <;> decide) Nat.zero_lt_one
-      (cardinalities_aug ▸ S.one_lt_card_Siu)
+    p ∈ inventory p.head N ↔
+      ∃ (S : PersonSpace ℕ) (L : Layered (Finset ℕ)), p.Denotes N S L := by
+  refine ⟨exists_denotes_of_mem hN _, fun ⟨S, L, h⟩ ↦ ?_⟩
+  obtain ⟨fs, ns, k⟩ := p
+  have hfs : fs ∈ persons := by
+    have := eq_nil_or_of_eval h.eval
+    simpa [persons, (ne_layered_iff h.eval).1 h.ne_layered] using this
+  refine List.mem_filter.2 ⟨List.mem_flatMap.2 ⟨fs, hfs, List.mem_map.2 ⟨ns, h.expresses.mem,
+    rfl⟩⟩, decide_eq_true fun hp ↦ ?_⟩
+  obtain ⟨rfl, rfl, rfl⟩ := Pronoun.mk.inj hp
+  obtain rfl := Option.some.inj h.eval
+  exact h.expresses.maximal [.aug] (by rcases hN with rfl | rfl <;> decide) Nat.zero_lt_one
+    (cardinalities_aug ▸ S.one_lt_card_Siu)
 
 /-- A pronoun covers a configuration when its person features deliver the configuration's
 participants and its number node expresses the configuration's number of members. -/
-def Pronoun.Covers (σ : NumberSystem) (N : List (List NumberFeature)) (p : Pronoun)
+def Pronoun.Covers (N : List (List NumberFeature)) (p : Pronoun)
     (x : Person.Configuration) : Prop :=
   participants p.person = some x.participants ∧
-    Expresses N (σ.referenceNumber x.participants.card) x.card p.number
+    Expresses N (p.head.referenceNumber x.participants.card) x.card p.number
 
-instance : DecidablePred (p.Covers σ N) := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred (p.Covers N) := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-theorem Pronoun.Denotes.covers (h : p.Denotes σ N S L) : p.Covers σ N (S.config L.set) :=
+theorem Pronoun.Denotes.covers (h : p.Denotes N S L) : p.Covers N (S.config L.set) :=
   ⟨participants_eq_of_eval h.eval, (S.card_config L.set).symm ▸ h.expresses⟩
 
 private theorem exists_config_eq {fs : List Feature} {x : Person.Configuration} (hfs : fs ≠ [])
@@ -619,16 +628,16 @@ private theorem exists_config_eq {fs : List Feature} {x : Person.Configuration} 
 
 -- the configurations a pronoun covers are those of the sets it denotes
 theorem covers_iff {x : Person.Configuration} (hp : p.person ≠ []) :
-    p.Covers σ N x ↔
-      ∃ (S : PersonSpace ℕ) (L : Layered (Finset ℕ)), p.Denotes σ N S L ∧ S.config L.set = x := by
+    p.Covers N x ↔
+      ∃ (S : PersonSpace ℕ) (L : Layered (Finset ℕ)), p.Denotes N S L ∧ S.config L.set = x := by
   refine ⟨fun h ↦ ?_, fun ⟨S, L, h, hx⟩ ↦ hx ▸ h.covers⟩
   obtain ⟨S, L, hL, rfl⟩ := exists_config_eq hp h.1
   exact ⟨S, L, ⟨hL, (ne_layered_iff hL).2 hp, S.card_config L.set ▸ h.2⟩, rfl⟩
 
 /-- The referential categories of the configurations a pronoun covers. -/
-def Pronoun.categories (σ : NumberSystem) (N : List (List NumberFeature)) (p : Pronoun) :
+def Pronoun.categories (N : List (List NumberFeature)) (p : Pronoun) :
     Finset Person.Category :=
-  ((Person.Configuration.bounded .univ).filter (p.Covers σ N)).biUnion (·.category.toFinset)
+  ((Person.Configuration.bounded .univ).filter (p.Covers N)).biUnion (·.category.toFinset)
 
 end Denotes
 
@@ -642,19 +651,19 @@ section Values
 
 open Person.Configuration
 
-theorem covers_absolute : ∀ fs ∈ persons, ∀ P ∈ participants fs,
-    (bounded {P}).filter (Pronoun.Covers .absolute augMinNodes ⟨fs, []⟩) = covered {P} .singular ∧
-      (bounded {P}).filter (Pronoun.Covers .absolute augMinNodes ⟨fs, [.aug, .min]⟩) =
+theorem covers_separate : ∀ fs ∈ persons, ∀ P ∈ participants fs,
+    (bounded {P}).filter (Pronoun.Covers augMinNodes ⟨fs, [], .separate⟩) = covered {P} .singular ∧
+      (bounded {P}).filter (Pronoun.Covers augMinNodes ⟨fs, [.aug, .min], .separate⟩) =
         covered {P} .dual ∧
-      (bounded {P}).filter (Pronoun.Covers .absolute augNodes ⟨fs, [.aug]⟩) =
+      (bounded {P}).filter (Pronoun.Covers augNodes ⟨fs, [.aug], .separate⟩) =
         covered {P} .plural := by
   decide
 
-theorem covers_relative : ∀ fs ∈ persons, ∀ P ∈ participants fs,
-    (bounded {P}).filter (Pronoun.Covers .relative augMinNodes ⟨fs, []⟩) = covered {P} .minimal ∧
-      (bounded {P}).filter (Pronoun.Covers .relative augMinNodes ⟨fs, [.aug, .min]⟩) =
+theorem covers_conflated : ∀ fs ∈ persons, ∀ P ∈ participants fs,
+    (bounded {P}).filter (Pronoun.Covers augMinNodes ⟨fs, [], .conflated⟩) = covered {P} .minimal ∧
+      (bounded {P}).filter (Pronoun.Covers augMinNodes ⟨fs, [.aug, .min], .conflated⟩) =
         covered {P} .unitAugmented ∧
-      (bounded {P}).filter (Pronoun.Covers .relative augNodes ⟨fs, [.aug]⟩) =
+      (bounded {P}).filter (Pronoun.Covers augNodes ⟨fs, [.aug], .conflated⟩) =
         covered {P} .augmented := by
   decide
 
@@ -666,26 +675,26 @@ open Person.Configuration Mereology
 
 variable {fs : List Feature} {P : Finset Role} {x : Person.Configuration}
 
-theorem referenceNumber_relative (P : Finset Role) :
-    NumberSystem.relative.referenceNumber P.card = P.card + minimum P := by
+theorem referenceNumber_conflated (P : Finset Role) :
+    NumberHead.conflated.referenceNumber P.card = P.card + minimum P := by
   rcases P.eq_empty_or_nonempty with rfl | h
   · rfl
-  · simp [NumberSystem.referenceNumber, minimum_of_nonempty h, Finset.card_pos.2 h]
+  · simp [NumberHead.referenceNumber, minimum_of_nonempty h, Finset.card_pos.2 h]
 
--- an absolute system selects among the referents of a person by Harbour's `[±atomic]`: no
+-- a separate number head selects among the referents of a person by Harbour's `[±atomic]`: no
 -- feature the atoms, `AUG` the rest, and `AUG` with `MIN` the dual
-theorem covers_absolute_iff (hP : participants fs = some P) (hx : x ≠ ⊥) :
-    (Pronoun.Covers .absolute augMinNodes ⟨fs, []⟩ x ↔
+theorem covers_separate_iff (hP : participants fs = some P) (hx : x ≠ ⊥) :
+    (Pronoun.Covers augMinNodes ⟨fs, [], .separate⟩ x ↔
         x ∈ Number.Feature.restrict .atomic true (OfParticipants P)) ∧
-      (Pronoun.Covers .absolute augNodes ⟨fs, [.aug]⟩ x ↔
+      (Pronoun.Covers augNodes ⟨fs, [.aug], .separate⟩ x ↔
         x ∈ Number.Feature.restrict .atomic false (OfParticipants P)) ∧
-      (Pronoun.Covers .absolute augMinNodes ⟨fs, [.aug, .min]⟩ x ↔
+      (Pronoun.Covers augMinNodes ⟨fs, [.aug, .min], .separate⟩ x ↔
         x ∈ Number.Feature.restrict .minimal true
           (Number.Feature.restrict .atomic false (OfParticipants P))) := by
   have h1 := ne_bot_iff_one_le_card.1 hx
   have hm := ne_bot_iff_minimum_le.1 hx
   simp only [Pronoun.Covers, hP, Option.some.injEq, expresses_augMinNodes_nil,
-    expresses_augNodes_aug, expresses_augMinNodes_aug_min, NumberSystem.referenceNumber,
+    expresses_augNodes_aug, expresses_augMinNodes_aug_min, NumberHead.referenceNumber,
     Number.Feature.mem_restrict_atomic_true, Number.Feature.mem_restrict_atomic_false,
     isAtom_iff_card_eq_one, ofParticipants_iff, dual_ofParticipants_iff]
   refine ⟨?_, ?_, ?_⟩ <;> constructor <;>
@@ -693,18 +702,18 @@ theorem covers_absolute_iff (hP : participants fs = some P) (hx : x ≠ ⊥) :
       | (rintro ⟨⟨rfl, -⟩, h⟩; exact ⟨rfl, by omega⟩)
       | (rintro ⟨rfl, h⟩; exact ⟨⟨rfl, hm⟩, by omega⟩)
 
--- a relative system selects by `[±minimal]`: no feature the `[+minimal]` referent, `AUG` the
+-- a conflated head selects by `[±minimal]`: no feature the `[+minimal]` referent, `AUG` the
 -- `[−minimal]` ones, and `AUG` with `MIN` the `[+minimal]` of those
-theorem covers_relative_iff (hP : participants fs = some P) (hx : x ≠ ⊥) :
-    (Pronoun.Covers .relative augMinNodes ⟨fs, []⟩ x ↔ x ∈ atomize (OfParticipants P)) ∧
-      (Pronoun.Covers .relative augNodes ⟨fs, [.aug]⟩ x ↔
+theorem covers_conflated_iff (hP : participants fs = some P) (hx : x ≠ ⊥) :
+    (Pronoun.Covers augMinNodes ⟨fs, [], .conflated⟩ x ↔ x ∈ atomize (OfParticipants P)) ∧
+      (Pronoun.Covers augNodes ⟨fs, [.aug], .conflated⟩ x ↔
         x ∈ Number.Feature.restrict .minimal false (OfParticipants P)) ∧
-      (Pronoun.Covers .relative augMinNodes ⟨fs, [.aug, .min]⟩ x ↔
+      (Pronoun.Covers augMinNodes ⟨fs, [.aug, .min], .conflated⟩ x ↔
         x ∈ atomize (Number.Feature.restrict .minimal false (OfParticipants P))) := by
   obtain ⟨Q, k⟩ := x
   have hm : minimum Q ≤ k := ne_bot_iff_minimum_le.1 hx
   simp only [Pronoun.Covers, hP, Option.some.injEq, expresses_augMinNodes_nil,
-    expresses_augNodes_aug, expresses_augMinNodes_aug_min, referenceNumber_relative, card,
+    expresses_augNodes_aug, expresses_augMinNodes_aug_min, referenceNumber_conflated, card,
     atomize_ofParticipants_iff, restrict_minimal_false_ofParticipants_iff,
     atomize_restrict_minimal_false_ofParticipants_iff, Person.Configuration.mk.injEq]
   refine ⟨?_, ?_, ?_⟩ <;> constructor <;> rintro ⟨rfl, h⟩ <;> exact ⟨rfl, by omega⟩
@@ -712,10 +721,10 @@ theorem covers_relative_iff (hP : participants fs = some P) (hx : x ≠ ⊥) :
 end Harbour
 
 theorem map_categories_inventory :
-    (inventory .absolute augNodes).map (·.categories .absolute augNodes) =
+    (inventory .separate augNodes).map (·.categories augNodes) =
         [{.speakerAddressee, .speakerAddresseeOthers}, {.speaker}, {.speakerOthers}, {.addressee},
           {.addresseeOthers}, {.other}, {.others}] ∧
-      (inventory .relative augNodes).map (·.categories .relative augNodes) =
+      (inventory .conflated augNodes).map (·.categories augNodes) =
         [{.speakerAddressee}, {.speakerAddresseeOthers}, {.speaker}, {.speakerOthers},
           {.addressee}, {.addresseeOthers}, {.other}, {.others}] := by
   decide
@@ -724,17 +733,17 @@ theorem map_categories_inventory :
 exactly when Cysouw's Mandara type gives them one form, and under one pronoun of a relative
 system exactly when his Maranao type does. -/
 theorem pattern_iff (c d : Person.Category) :
-    (Cysouw2003.Kind.mandara.pattern c d ↔ ∃ p ∈ inventory .absolute augNodes,
-        c ∈ p.categories .absolute augNodes ∧ d ∈ p.categories .absolute augNodes) ∧
-      (Cysouw2003.Kind.maranao.pattern c d ↔ ∃ p ∈ inventory .relative augNodes,
-        c ∈ p.categories .relative augNodes ∧ d ∈ p.categories .relative augNodes) := by
+    (Cysouw2003.Kind.mandara.pattern c d ↔ ∃ p ∈ inventory .separate augNodes,
+        c ∈ p.categories augNodes ∧ d ∈ p.categories augNodes) ∧
+      (Cysouw2003.Kind.maranao.pattern c d ↔ ∃ p ∈ inventory .conflated augNodes,
+        c ∈ p.categories augNodes ∧ d ∈ p.categories augNodes) := by
   revert c d; decide
 
 /-! ### Expletives -/
 
 section Expletives
 
-variable {σ : NumberSystem} {N : List (List NumberFeature)} {p : Pronoun} {fs : List Feature}
+variable {N : List (List NumberFeature)} {p : Pronoun} {fs : List Feature}
 
 /-- A person feature structure can be empty when it delivers the empty set in some person
 space. -/
@@ -748,25 +757,27 @@ theorem canBeEmpty_iff : CanBeEmpty fs ↔ fs = third :=
 instance : DecidablePred CanBeEmpty := fun _ ↦ decidable_of_iff _ canBeEmpty_iff.symm
 
 /-- A pronoun can be an expletive when it denotes the empty set in some person space. -/
-def Pronoun.CanBeExpletive (σ : NumberSystem) (N : List (List NumberFeature)) (p : Pronoun) :
+def Pronoun.CanBeExpletive (N : List (List NumberFeature)) (p : Pronoun) :
     Prop :=
-  ∃ (S : PersonSpace ℕ) (L : Layered (Finset ℕ)), p.Denotes σ N S L ∧ L.set = ∅
+  ∃ (S : PersonSpace ℕ) (L : Layered (Finset ℕ)), p.Denotes N S L ∧ L.set = ∅
 
-/-- In either number system, only the third person without number can be an expletive: `DIST`
-alone can deliver the empty set, and every number feature requires a positive cardinality. -/
-theorem canBeExpletive_iff : p.CanBeExpletive σ N ↔ p = ⟨third, []⟩ ∧ [] ∈ N := by
+/-- Wherever its number head sits, only the third person without number can be an expletive:
+`DIST` alone can deliver the empty set, and every number feature requires a positive
+cardinality. -/
+theorem canBeExpletive_iff :
+    p.CanBeExpletive N ↔ p.person = third ∧ p.number = [] ∧ [] ∈ N := by
+  obtain ⟨fs, ns, k⟩ := p
   refine ⟨fun ⟨S, L, h, he⟩ ↦ ?_, ?_⟩
-  · obtain ⟨fs, ns⟩ := p
-    obtain rfl : fs = third := canBeEmpty_iff.1 ⟨S, L, h.eval, he⟩
+  · obtain rfl : fs = third := canBeEmpty_iff.1 ⟨S, L, h.eval, he⟩
     have h0 := h.expresses.mem_cardinalities
     rw [he, Finset.card_empty, zero_mem_cardinalities_iff] at h0
-    exact ⟨by rw [show ns = [] from h0], h0 ▸ h.expresses.mem⟩
-  · rintro ⟨rfl, hN⟩
+    exact ⟨rfl, h0, h0 ▸ h.expresses.mem⟩
+  · rintro ⟨rfl, rfl, hN⟩
     refine ⟨space 0 0 0, _, ⟨rfl, by decide, hN, trivial, fun ns _ hlt h0 ↦ ?_⟩, by decide⟩
     rw [show (_ : Finset ℕ).card = 0 by decide, zero_mem_cardinalities_iff] at h0
     simp [h0] at hlt
 
-instance : Decidable (p.CanBeExpletive σ N) := decidable_of_iff _ canBeExpletive_iff.symm
+instance : Decidable (p.CanBeExpletive N) := decidable_of_iff _ canBeExpletive_iff.symm
 
 end Expletives
 
@@ -790,13 +801,13 @@ def Examples.Lexeme.language : Lexeme → Glottocode
   | .men => .dutch
   | _ => .english
 
-/-- The pronouns of an absolute system with `AUG` that an agreement person and number are
+/-- The pronouns with a separate number head and `AUG` that an agreement person and number are
 compatible with: those whose participants the person covers, every participant set where no
 person is given, and whose number node covers the configurations of the number. -/
 def structures (person : Option Person) (number : Option Number) : List Pronoun :=
-  (inventory .absolute augNodes).filter fun p ↦ ∃ P ∈ participants p.person,
+  (inventory .separate augNodes).filter fun p ↦ ∃ P ∈ participants p.person,
     P ∈ (Person.Specification.ofPersonClusivity person none).sets ∧ ∀ n ∈ number,
-      (Person.Configuration.bounded {P}).filter (p.Covers .absolute augNodes) =
+      (Person.Configuration.bounded {P}).filter (p.Covers augNodes) =
         Person.Configuration.covered {P} n
 
 /-- The pronouns analysed as bare `N_Π`, with no person feature and no number node. -/
@@ -806,7 +817,7 @@ def featureless : List Lexeme := [.men]
 featureless pronoun when the structure with no feature can be empty. -/
 def Examples.Lexeme.CanBeExpletive (l : Lexeme) : Prop :=
   if l ∈ featureless then CanBeEmpty []
-  else ∃ p ∈ structures l.entry.person l.entry.number, p.CanBeExpletive .absolute augNodes
+  else ∃ p ∈ structures l.entry.person l.entry.number, p.CanBeExpletive augNodes
 
 instance : DecidablePred Lexeme.CanBeExpletive := fun l ↦ by
   unfold Lexeme.CanBeExpletive; infer_instance
@@ -819,7 +830,7 @@ theorem acceptable_iff_canBeExpletive :
     ∀ x : Example, x.phenomenon = some .defaultAgreement →
       ∃ s ∈ x.datum.spans, Examples.label? s = some .agreement ∧ ∃ w ∈ (s.words x.datum).head?,
         (x.datum.judgment = .acceptable ↔ ∃ p ∈ structures (w.features .person)
-          (w.features .number), p.CanBeExpletive .absolute augNodes) := by
+          (w.features .number), p.CanBeExpletive augNodes) := by
   decide +kernel
 
 theorem lexeme_language :
@@ -843,29 +854,32 @@ def Pronoun.bundle (p : Pronoun) : Multiset Feature × Multiset NumberFeature :=
 section NaturalClasses
 
 variable {r : SubsetRule (Multiset Feature × Multiset NumberFeature) E}
-  {ns : List NumberFeature}
+  {ns : List NumberFeature} {k : NumberHead}
 
 theorem shared_features :
     (first : Multiset Feature) ∩ second = {.prox} ∧ (second : Multiset Feature) ∩ third = {.dist} ∧
       (first : Multiset Feature) ∩ third = 0 := by
   decide
 
-theorem applies_second_of_first_of_third (h₁ : Applies r (⟨first, ns⟩ : Pronoun).bundle)
-    (h₃ : Applies r (⟨third, ns⟩ : Pronoun).bundle) : Applies r (⟨second, ns⟩ : Pronoun).bundle :=
+theorem applies_second_of_first_of_third (h₁ : Applies r (⟨first, ns, k⟩ : Pronoun).bundle)
+    (h₃ : Applies r (⟨third, ns, k⟩ : Pronoun).bundle) :
+    Applies r (⟨second, ns, k⟩ : Pronoun).bundle :=
   SubsetRule.applies_of_inf_le h₁ h₃
     ⟨(by decide : (first : Multiset Feature) ⊓ third ≤ second), inf_le_left⟩
 
-theorem applies_first_of_inclusive_of_second (h₁ : Applies r (⟨inclusive, ns⟩ : Pronoun).bundle)
-    (h₂ : Applies r (⟨second, ns⟩ : Pronoun).bundle) : Applies r (⟨first, ns⟩ : Pronoun).bundle :=
+theorem applies_first_of_inclusive_of_second
+    (h₁ : Applies r (⟨inclusive, ns, k⟩ : Pronoun).bundle)
+    (h₂ : Applies r (⟨second, ns, k⟩ : Pronoun).bundle) :
+    Applies r (⟨first, ns, k⟩ : Pronoun).bundle :=
   SubsetRule.applies_of_inf_le h₁ h₂
     ⟨(by decide : (inclusive : Multiset Feature) ⊓ second ≤ first), inf_le_left⟩
 
 -- a rule that mentions no number feature cannot tell the exclusive from the first singular
 theorem applies_exclusive_iff_first (m : Multiset Feature) (e : E) :
     Applies (⟨(m, 0), e⟩ : SubsetRule (Multiset Feature × Multiset NumberFeature) E)
-        (⟨first, [.aug]⟩ : Pronoun).bundle ↔
+        (⟨first, [.aug], k⟩ : Pronoun).bundle ↔
       Applies (⟨(m, 0), e⟩ : SubsetRule (Multiset Feature × Multiset NumberFeature) E)
-        (⟨first, []⟩ : Pronoun).bundle := by
+        (⟨first, [], k⟩ : Pronoun).bundle := by
   simp [Pronoun.bundle]
 
 end NaturalClasses
@@ -880,15 +894,15 @@ def dutch : RuleSet (SubsetRule (Multiset Feature × Multiset NumberFeature) Per
 open Dutch.Pronouns in
 -- under Maximal Encoding the Dutch rules give the inclusive and the exclusive one form
 theorem dutch_paradigm :
-    (inventory .absolute augNodes).map (dutch.realize SubsetRule.card ∘ Pronoun.bundle) =
+    (inventory .separate augNodes).map (dutch.realize SubsetRule.card ∘ Pronoun.bundle) =
       [some wij, some ik, some wij, some jij, some jullie, some hij, some zij_pl] := by
   decide
 
 -- each Dutch pronoun denotes the referential categories that the pronouns it realizes cover
 theorem dutch_referential : ∀ r ∈ dutch, ∀ c,
     c ∈ r.exponent.referential ↔
-      ∃ p ∈ inventory .absolute augNodes, dutch.realize SubsetRule.card p.bundle = some r.exponent ∧
-        c ∈ p.categories .absolute augNodes := by
+      ∃ p ∈ inventory .separate augNodes, dutch.realize SubsetRule.card p.bundle = some r.exponent ∧
+        c ∈ p.categories augNodes := by
   decide
 
 /-- (34): a rule set with a rule mentioning two `PROX` and a rule mentioning one, both with
@@ -896,9 +910,9 @@ theorem dutch_referential : ∀ r ∈ dutch, ∀ c,
 def clusive (a b : E) : RuleSet (SubsetRule (Multiset Feature × Multiset NumberFeature) E) :=
   [⟨({.prox, .prox}, {.aug}), a⟩, ⟨({.prox}, {.aug}), b⟩]
 
-theorem clusive_split (a b : E) :
-    (clusive a b).realize SubsetRule.card (⟨first, [.aug]⟩ : Pronoun).bundle = some a ∧
-      (clusive a b).realize SubsetRule.card (⟨inclusive, [.aug]⟩ : Pronoun).bundle = some b :=
+theorem clusive_split (a b : E) (k : NumberHead) :
+    (clusive a b).realize SubsetRule.card (⟨first, [.aug], k⟩ : Pronoun).bundle = some a ∧
+      (clusive a b).realize SubsetRule.card (⟨inclusive, [.aug], k⟩ : Pronoun).bundle = some b :=
   ⟨rfl, rfl⟩
 
 /-! ### Zwicky's generalization
@@ -912,13 +926,13 @@ then marked apart from the inclusive and the second person. -/
 /-- Impoverishment of `DIST` under `PROX` in the plural: the second person plural loses its
 `DIST`. -/
 def impoverishDist : Pronoun → Pronoun
-  | ⟨[.prox, .dist], [.aug]⟩ => ⟨[.prox], [.aug]⟩
+  | ⟨[.prox, .dist], [.aug], k⟩ => ⟨[.prox], [.aug], k⟩
   | p => p
 
 /-- The person partition a realization of the plural pronouns induces: two participant sets
 share a part when the plural pronouns with those participants are realized alike. -/
 def pluralPartition [DecidableEq E] (f : Pronoun → Option E) : Person.Partition :=
-  .ofFun fun P ↦ ((inventory .absolute augNodes).filter fun p ↦
+  .ofFun fun P ↦ ((inventory .separate augNodes).filter fun p ↦
     p.number = [.aug] ∧ participants p.person = some P).map f
 
 /-- Plural rules for two `PROX`, one `PROX`, `PROX` with `DIST`, and `DIST`. -/
