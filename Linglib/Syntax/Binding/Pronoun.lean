@@ -21,12 +21,13 @@ anaphor and a personal pronoun a pronominal. Chomsky takes wh-phrases and quanti
 to be R-expressions, so the token of an interrogative or an indefinite is one where its word
 class is nominal, as *who* and *someone* are and *where* is not, and is never a pronominal.
 
-A candidate antecedent of a pronoun is a nominal token that agrees with it in φ-features, a
-pro-form taking its antecedents from a fixed form-class.
+A candidate antecedent of a pronoun's token is a nominal token that agrees with it in
+φ-features, a pro-form taking its antecedents from a fixed form-class.
 
 ## Main definitions
 
-* `Pronoun.CandidateAntecedent p w`: `w` is a nominal token that agrees with `p` in φ-features.
+* `Binding.CandidateAntecedent v w`: `w` is a nominal token that agrees with the token `v` in
+  φ-features.
 
 ## Main results
 
@@ -35,7 +36,7 @@ pro-form taking its antecedents from a fixed form-class.
 * `ReciprocalPronoun.bindingClassOf_toWord`: the token of a reciprocal is a reciprocal anaphor.
 * `Pronoun.bindingClassOf_toWord_of_isOperator`: the token of a wh-phrase or a quantifier
   expression is an R-expression where its word class is nominal.
-* `Pronoun.CandidateAntecedent.number_eq`: a candidate antecedent has the pronoun's number.
+* `Binding.CandidateAntecedent.number_eq`: a candidate antecedent has the token's number.
 
 ## References
 
@@ -78,21 +79,25 @@ theorem bindingClassOf_toWord_of_isOperator {t : UD.PronType} (ht : Binding.IsOp
   rcases ht with rfl | rfl | rfl | rfl | rfl <;>
     simp +decide [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
-/-- A candidate antecedent of a pronoun is a nominal token that agrees with it in φ-features:
-a pro-form takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
-def CandidateAntecedent (w : Morphology.Word) : Prop :=
-  Binding.IsNominal w.cat ∧ Compat p.agreement.index w.agreement.index
+end Pronoun
 
-instance (w : Morphology.Word) : Decidable (p.CandidateAntecedent w) :=
+namespace Binding
+
+/-- A candidate antecedent of a token is a nominal token that agrees with it in φ-features: a
+pro-form takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
+def CandidateAntecedent (v w : Morphology.Word) : Prop :=
+  IsNominal w.cat ∧ Compat v.agreement.index w.agreement.index
+
+instance (v w : Morphology.Word) : Decidable (CandidateAntecedent v w) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-variable {p} in
-/-- A candidate antecedent has the pronoun's number, where both mark one. -/
-theorem CandidateAntecedent.number_eq {w : Morphology.Word} (h : p.CandidateAntecedent w)
-    {n m : Number} (hp : p.number = some n) (hw : w.features .number = some m) : n = m :=
-  Flat.compat_iff.mp (h.2.apply ⟨.number, by decide⟩) n hp m hw
+/-- A candidate antecedent has the token's number, where both mark one. -/
+theorem CandidateAntecedent.number_eq {v w : Morphology.Word} (h : CandidateAntecedent v w)
+    {n m : Number} (hv : v.features .number = some n) (hw : w.features .number = some m) :
+    n = m :=
+  Flat.compat_iff.mp (h.2.apply ⟨.number, by decide⟩) n hv m hw
 
-end Pronoun
+end Binding
 
 namespace ProForm
 

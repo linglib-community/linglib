@@ -12,14 +12,17 @@ public import Linglib.Syntax.Category.Pronoun.Basic
 # Personal pronouns
 
 A personal pronoun is a pronoun with a register, the labels it agrees as and the cells of the
-pronoun paradigm it is used for. Its own person, number and gender say what the form is, as a
-grammar's table lists it, and by default it agrees as that and is used for that one cell. A
-polite pronoun departs from the default: Italian *Lei* is a second person singular and agrees as
-a third person feminine singular, and German *Sie* is a second person, used for the singular and
-the plural, and agrees as a third person plural. The labels a form agrees as are its formal
-features, which verbs and clitics track; its own labels and its cells are what it is used for.
+pronoun paradigm it is used for. Its own person, number and gender name the cell it fills, where
+a grammar's table lists it, and by default it agrees as that and is used for that one cell. A
+polite pronoun departs from the default: Italian *Lei* fills the second person singular and
+agrees as a third person feminine singular, and German *Sie* fills the second person, singular
+and plural, and agrees as a third person plural. The labels a form agrees as are those it has
+formally, the ones a verb, a clitic or a reflexive takes from it when it stands alone. Not every
+kind of agreement follows them: the person of a coordination is resolved from what its
+conjuncts are used for, so *Lei* with a third person conjunct takes a second person plural
+verb.
 The entry states all of them as labels, as a grammar does; the referents a cell covers are in
-`Syntax/Category/Pronoun/Categories.lean`.
+`Syntax/Category/Pronoun/Reference.lean`.
 
 A pronoun records only features whose values are shared across languages. Honorific grades are
 not: each language has its own, ordered by the deference they present, and a form may serve
@@ -55,9 +58,10 @@ structure PersonalPronoun extends Pronoun where
   /-- The register. Japanese *boku* is an informal first person, and Korean *geu* a third person
   of written narrative. -/
   register : SocialMeaning.Register := .neutral
-  /-- The person, number and gender the form agrees as, by default its own. Italian *Lei*, a
-  second person singular, agrees as a third person feminine singular, and K'iche' *alaq*, a
-  second person plural, as a third person singular ([adamson-zompi-2025]). -/
+  /-- The person, number and gender the form has formally, those a verb, a clitic or a
+  reflexive takes from it, by default its own. Italian *Lei*, used for the second person
+  singular, is formally a third person feminine singular, and K'iche' *alaq*, used for the
+  second person plural, a third person singular ([adamson-zompi-2025]). -/
   agreement : Agreement.Bundle := toPronoun.cell
   /-- The cells of the pronoun paradigm the form is used for, by default the cell of its own
   person, clusivity, number and gender. German *Sie* is used for the second person singular

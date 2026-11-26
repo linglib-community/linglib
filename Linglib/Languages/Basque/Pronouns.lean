@@ -4,7 +4,7 @@ public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Pronoun.Demonstrative
 public import Linglib.Syntax.Feature.Person.Participants
 public import Linglib.Syntax.Category.Pronoun.Personal
-public import Linglib.Syntax.Category.Pronoun.Categories
+public import Linglib.Syntax.Category.Pronoun.Reference
 public import Linglib.Semantics.Reference.Gender
 
 /-!

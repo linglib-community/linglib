@@ -11,13 +11,20 @@ public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Syntax.Feature.Person.Decomposition
 
 /-!
-# The binary person scale
+# Person scales
 
-The *binary person scale* ranks the first and second persons, the participants in the speech
-act, above the third. It is Haspelmath's person scale, locuphoric above aliophoric, and the cut
-that Bonet's strong person-case constraint draws. A more prominent person is never lower on the
-scale, and a scenario is downstream on it exactly when its higher-ranked argument alone is a
-participant.
+A *person scale* ranks the persons along one line. The three-way scale, often called the person
+hierarchy, ranks the first person over the second and the second over the third. It is the order
+in which a coordination takes the person of its highest conjunct, as Zwicky's hierarchy of
+reference and Corbett's resolution rules state, and it is given with the participant sets, a
+referent's person lying below that of any referent it is part of. It is not the only ranking of
+the persons: Zwicky's morphosyntactic hierarchies can order the participants otherwise, as
+Algonquian ranks the second person above the first.
+
+The *binary* scale ranks the first and second persons together above the third. It is
+Haspelmath's person scale, locuphoric above aliophoric, and the cut that Bonet's strong
+person-case constraint draws. A higher person is never lower on it, and a scenario is downstream
+on it exactly when its higher-ranked argument alone is first or second person.
 
 ## Main definitions
 
@@ -28,14 +35,16 @@ participant.
 
 ## Main results
 
-* `Person.toScale_mono`: a more prominent person is never lower on the scale.
+* `Person.toScale_mono`: a higher person is never lower on the binary scale.
 * `kind_map_toScale_eq_downstream_iff`: a scenario is downstream on the scale exactly when its
   higher-ranked argument alone is a participant.
 
 ## References
 
-* [haspelmath-2021]
 * [bonet-1991]
+* [corbett-2006]
+* [haspelmath-2021]
+* [zwicky-1977b]
 -/
 
 @[expose] public section
@@ -70,8 +79,8 @@ instance : IsSimpleOrder Scale where
 
 end Scale
 
-/-- The binary person scale as a person system: both roles have the top value, so a participant
-set is `locuphoric` exactly when it includes a speech-act participant. -/
+/-- The binary scale as a classification of participant sets: both roles have the top value, so
+a participant set is `locuphoric` exactly when it includes a speech-act participant. -/
 def Scale.ofParticipants : SupBotHom (Finset SpeechAct.Role) Scale := Finset.supBotLift fun _ ↦ ⊤
 
 theorem Scale.ofParticipants_eq_top_iff {s : Finset SpeechAct.Role} :
@@ -94,10 +103,9 @@ theorem toScale_ofParticipants (s : Finset SpeechAct.Role) :
     p.toScale = .aliophoric ↔ p = .third := by
   revert p; decide
 
-/-- A more prominent person is never lower on the scale. -/
-theorem toScale_mono {p q : Person} (h : p.prominence ≤ q.prominence) :
-    p.toScale ≤ q.toScale := by
-  revert h; cases p <;> cases q <;> decide
+/-- A higher person is never lower on the binary scale. -/
+theorem toScale_mono : Monotone toScale := by
+  intro p q h; revert h; cases p <;> cases q <;> decide
 
 /-- A scenario is downstream on the binary person scale exactly when its higher-ranked argument
 alone is a speech-act participant. -/

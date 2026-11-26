@@ -86,8 +86,8 @@ def brendan : Word :=
 
 theorem lisa_brendan :
     Gender.ofPair lisa brendan = .different ∧
-      English.Pronouns.she.toPronoun.CandidateAntecedent lisa ∧
-      ¬ English.Pronouns.she.toPronoun.CandidateAntecedent brendan := by
+      Binding.CandidateAntecedent English.Pronouns.she.toWord lisa ∧
+      ¬ Binding.CandidateAntecedent English.Pronouns.she.toWord brendan := by
   decide
 
 /-! ### The production model

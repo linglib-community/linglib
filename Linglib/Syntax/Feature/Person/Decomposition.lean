@@ -13,9 +13,8 @@ public import Linglib.Syntax.Feature.Person.Partition
 
 A person value bears a feature when every participant set it covers does. On [participant] and
 [speaker], the first person bears both, the second bears [participant] alone and the third bears
-neither. The number of the two that a value bears is the person hierarchy, first over second
-over third, and it is the order of resolution. These two features do not tell the inclusive
-from the exclusive, and the persons are the classes of the standard tripartition.
+neither, so the person hierarchy, first over second over third, is inclusion of these bundles.
+These two features do not tell the inclusive from the exclusive.
 
 A referential category bears the features its participants bear. Without [addressee] the three
 groups that contain the speaker share a bundle.
@@ -24,16 +23,14 @@ groups that contain the speaker share a bundle.
 
 * `Person.toFeatures F p`: the features of the inventory `F` that every participant set of `p`
   bears.
-* `Person.prominence p`: the number of [participant] and [speaker] that `p` bears.
 * `Category.toFeatures F c`: the features of `F` that the participants of `c` bear.
 
 ## Main results
 
-* `Person.prominence_le_iff`: prominence is the order of resolution.
+* `Person.toFeatures_subset_toFeatures_iff`: the order of the persons is inclusion of their
+  bundles on [participant] and [speaker].
 * `Person.toFeatures_ofParticipants`: without [addressee], the person of a participant set
   bears what the set bears.
-* `Person.mem_participantSets_ofParticipants`: each class of the standard tripartition is the
-  family of participant sets its person covers.
 
 ## References
 
@@ -107,64 +104,10 @@ theorem mem_participantSets_iff {p : Person} (s : Finset Role) :
       bundle {.participant, .speaker} s = p.toFeatures {.participant, .speaker} := by
   revert p s; decide
 
-/-! ### Prominence
-
-On the features [participant] and [speaker] a bundle is a lower set of a chain, so it is
-determined by how many of them it has, and ordering values by that number is the person hierarchy
-1 > 2 > 3. It is the order coordination induces up to clusivity: a coordination takes the person
-of its most prominent conjunct, as Zwicky's hierarchy of reference and Corbett's resolution rules
-state. It is not the only person scale: Zwicky's morphosyntactic hierarchies can order the
-participants otherwise, as Algonquian ranks the second person above the first, and the person
-scale of Haspelmath's argument coding splits is the binary cut between the first and second
-persons and the third. -/
-
-/-- The prominence of a value is the number of the features [participant] and [speaker] it bears:
-two for the first person, one for the second, none for the third. -/
-def prominence (p : Person) : ℕ := (p.toFeatures {.participant, .speaker}).card
-
-@[simp] theorem prominence_first : prominence .first = 2 := by decide
-@[simp] theorem prominence_second : prominence .second = 1 := by decide
-@[simp] theorem prominence_third : prominence .third = 0 := by decide
-
-/-- Prominence orders values by inclusion of their bundles. -/
-theorem prominence_le_iff_subset {p q : Person} :
-    p.prominence ≤ q.prominence ↔
-      p.toFeatures {.participant, .speaker} ⊆ q.toFeatures {.participant, .speaker} := by
+/-- The order of the persons is inclusion of their bundles on [participant] and [speaker]. -/
+theorem toFeatures_subset_toFeatures_iff {p q : Person} :
+    p.toFeatures {.participant, .speaker} ⊆ q.toFeatures {.participant, .speaker} ↔ p ≤ q := by
   revert p q; decide
-
-/-- Prominence is the order of resolution: `p` is at most as prominent as `q` iff coordinating
-them gives `q`. -/
-theorem prominence_le_iff {p q : Person} : p.prominence ≤ q.prominence ↔ p ≤ q := by
-  revert p q; decide
-
-theorem prominence_mono : Monotone prominence := fun _ _ h ↦ prominence_le_iff.2 h
-
-/-! ### The persons as the standard tripartition -/
-
-section
-
-variable {s t : Finset Role}
-
-/-- The prominence of a participant set's person is its value in the standard tripartition. -/
-theorem prominence_ofParticipants (s : Finset Role) :
-    (ofParticipants s).prominence = standardTripartition s := by
-  revert s; decide
-
-/-- Each class of the standard tripartition is the family of participant sets its person
-covers. -/
-theorem mem_participantSets_ofParticipants :
-    t ∈ (ofParticipants s).participantSets ↔
-      standardTripartition s = standardTripartition t := by
-  revert s t; decide
-
-/-- Resolution selects the more prominent conjunct. -/
-theorem ofParticipants_union_eq (s t : Finset Role) :
-    ofParticipants (s ∪ t) =
-      if (ofParticipants t).prominence ≤ (ofParticipants s).prominence
-      then ofParticipants s else ofParticipants t := by
-  revert s t; decide
-
-end
 
 /-! ### The features of a referential category -/
 

@@ -75,7 +75,7 @@ theorem number_reciprocals : ∀ r ∈ reciprocals, r.number = some .plural := b
 /-- A singular nominal is no candidate antecedent of a reciprocal. -/
 theorem not_candidateAntecedent_of_singular {r : ReciprocalPronoun} (hr : r ∈ reciprocals)
     {w : Morphology.Word} (hw : w.features .number = some .singular) :
-    ¬ r.toPronoun.CandidateAntecedent w :=
+    ¬ Binding.CandidateAntecedent r.toWord w :=
   fun h ↦ nomatch h.number_eq (number_reciprocals r hr) hw
 
 end Turkish.Anaphors

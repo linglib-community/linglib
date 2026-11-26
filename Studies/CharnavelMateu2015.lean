@@ -4,7 +4,7 @@ public import Mathlib.Order.Cover
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Statistics.CharnavelMateu2015
 public import Linglib.Languages.Romance.Spanish.Clitics
-public import Linglib.Syntax.Category.Pronoun.Categories
+public import Linglib.Syntax.Category.Pronoun.Reference
 
 /-!
 # Charnavel and Mateu (2015): the clitic logophoric restriction

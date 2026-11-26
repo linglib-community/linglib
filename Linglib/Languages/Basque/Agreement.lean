@@ -130,7 +130,7 @@ theorem hasPersonPrefix_agreement : ∀ p ∈ Pronouns.personal, HasPersonPrefix
 
 /-- The demonstratives, which serve as the third person pronouns, control none. -/
 theorem not_hasPersonPrefix_agreement :
-    ∀ d ∈ Pronouns.demonstratives, ¬ HasPersonPrefix d.agreement := by
+    ∀ d ∈ Pronouns.demonstratives, ¬ HasPersonPrefix d.toWord.agreement := by
   decide
 
 /-- The absolutive prefix of *hi* is that of the second person singular, whatever the gender of

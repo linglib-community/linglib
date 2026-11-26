@@ -7,7 +7,7 @@ module
 
 public import Linglib.Languages.Ga.Case
 public import Linglib.Syntax.Category.Pronoun.Personal
-public import Linglib.Syntax.Category.Pronoun.Categories
+public import Linglib.Syntax.Category.Pronoun.Reference
 
 /-!
 # Gã personal pronouns

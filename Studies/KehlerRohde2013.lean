@@ -565,8 +565,8 @@ def brittany : Word :=
     Features.of (person := some .third) (number := some .singular) (gender := some .Fem)⟩
 
 theorem she_ambiguous_over_stimuli :
-    English.Pronouns.she.toPronoun.CandidateAntecedent amanda ∧
-      English.Pronouns.she.toPronoun.CandidateAntecedent brittany := by
+    Binding.CandidateAntecedent English.Pronouns.she.toWord amanda ∧
+      Binding.CandidateAntecedent English.Pronouns.she.toWord brittany := by
   decide
 
 /-- The voice of a context sentence of (20): the active, and the long passive, which keeps Amanda

@@ -9,6 +9,7 @@ public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Syntax.Feature.Person.Defs
 public import Mathlib.Data.Finset.Sups
 public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Order.Hom.BoundedLattice
 
 /-!
 # Participant sets
@@ -142,6 +143,11 @@ theorem participantSets_sups_subset (p q : Person) :
 theorem ofParticipants_union (s t : Finset Role) :
     ofParticipants (s ∪ t) = ofParticipants s ⊔ ofParticipants t := by
   revert s t; decide
+
+/-- `ofParticipants` as a map preserving the empty set and unions. -/
+@[simps!]
+def ofParticipantsHom : SupBotHom (Finset Role) Person :=
+  ⟨⟨ofParticipants, ofParticipants_union⟩, ofParticipants_empty⟩
 
 /-! ### Predicates -/
 

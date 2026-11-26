@@ -25,7 +25,7 @@ personal, logophoric, reflexive, reciprocal and demonstrative pronouns, and the 
 their interrogative and indefinite kinds. A pronoun has no denotation or pronoun type of its
 own; the kind supplies them, and the token of a pronoun takes the pronoun type and the reflexive
 marking as arguments. Its person, clusivity and number are labels: the referential categories
-they cover are in `Syntax/Category/Pronoun/Categories.lean`, and the binding class of the token
+they cover are in `Syntax/Category/Pronoun/Reference.lean`, and the binding class of the token
 in `Syntax/Binding/Pronoun.lean`.
 
 ## Main definitions
@@ -40,7 +40,6 @@ in `Syntax/Binding/Pronoun.lean`.
 * `Pronoun.ofTable table f`: the pronoun of the form `f`, filling every cell the table gives it.
 * `Pronoun.toWord p`: the pronoun as a token, with the pronoun type and reflexive marking of
   its kind.
-* `Pronoun.agreement p`: the agreement bundle of the token.
 
 ## References
 
@@ -170,16 +169,5 @@ def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none
     features := .of (person := p.person) (clusivity := p.clusivity) (number := p.number)
       (gender := p.gender)
       (case := p.case) (reflex := reflex) (pronType := pronType) }
-
-/-- The agreement bundle of a pronoun, that of its token: its person and clusivity, number,
-gender and case. -/
-def agreement : Agreement.Bundle := p.toWord.agreement
-
-/-- The token of a pronoun bears the pronoun's agreement bundle, whatever its pronoun type,
-reflexive marking and word class. -/
-@[simp] theorem agreement_toWord (pronType : Option UD.PronType) (reflex : Option Unit)
-    (cat : UD.UPOS) : (p.toWord pronType reflex cat).agreement = p.agreement :=
-  rfl
-
 
 end Pronoun

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
-public import Linglib.Syntax.Category.Pronoun.Categories
+public import Linglib.Syntax.Category.Pronoun.Reference
 
 /-!
 # Dutch pronouns

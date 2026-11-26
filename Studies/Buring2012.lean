@@ -2,7 +2,7 @@ module
 
 public import Linglib.Languages.English.Pronouns
 public import Linglib.Semantics.Reference.Pronoun
-public import Linglib.Syntax.Category.Pronoun.Categories
+public import Linglib.Syntax.Category.Pronoun.Reference
 
 /-!
 # Büring (2012): Pronouns

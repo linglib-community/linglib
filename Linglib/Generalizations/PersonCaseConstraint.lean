@@ -51,7 +51,7 @@ def Strong (s : Scenario Person) : Prop := s.low = .third
 /-- The Ultrastrong constraint: the direct object is third person, or the indirect object
 outranks it on 1 > 2 > 3. -/
 def Ultrastrong (s : Scenario Person) : Prop :=
-  s.low = .third ∨ s.low.prominence < s.high.prominence
+  s.low = .third ∨ s.low < s.high
 
 /-- The Weak constraint: under a third person indirect object the direct object is third
 person. -/
@@ -71,7 +71,7 @@ theorem strong_mono : Monotone Strong := fun _ _ h hs ↦ eq_bot_iff.2 (h.2.tran
 
 theorem ultrastrong_mono : Monotone Ultrastrong := fun _ _ h hs ↦
   hs.imp (fun hs ↦ eq_bot_iff.2 (h.2.trans_eq hs)) fun hs ↦
-    (Person.prominence_mono h.2).trans_lt (hs.trans_le (Person.prominence_mono h.1))
+    h.2.trans_lt (hs.trans_le h.1)
 
 theorem weak_mono : Monotone Weak := fun _ _ h hs hh ↦
   eq_bot_iff.2 (h.2.trans_eq (hs (eq_bot_iff.2 (h.1.trans_eq hh))))
