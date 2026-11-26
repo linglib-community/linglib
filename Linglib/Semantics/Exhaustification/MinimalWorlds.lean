@@ -56,6 +56,17 @@ theorem mem_exhMW : u ∈ exhMW ALT φ ↔ MinimalFor (· ∈ φ) (fun w ↦ {a 
 
 theorem exhMW_subset : exhMW ALT φ ⊆ φ := fun _ h ↦ h.1
 
+/-- Against an indexed family of alternatives, a prejacent world is minimal when no prejacent
+world verifies strictly fewer members of the family. -/
+theorem mem_exhMW_range {ι : Type*} {f : ι → Set W} :
+    u ∈ exhMW (Set.range f) φ ↔
+      u ∈ φ ∧ ∀ v ∈ φ, {i | v ∈ f i} ⊆ {i | u ∈ f i} → {i | u ∈ f i} ⊆ {i | v ∈ f i} := by
+  have key {x y : W} : {a ∈ Set.range f | x ∈ a} ⊆ {a ∈ Set.range f | y ∈ a} ↔
+      {i | x ∈ f i} ⊆ {i | y ∈ f i} :=
+    ⟨fun h i hi ↦ (h ⟨⟨i, rfl⟩, hi⟩).2, by rintro h _ ⟨⟨i, rfl⟩, hi⟩; exact ⟨⟨i, rfl⟩, h hi⟩⟩
+  exact ⟨fun ⟨hu, h⟩ ↦ ⟨hu, fun _ hv hvu ↦ key.1 (h hv (key.2 hvu))⟩,
+    fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv hvu ↦ key.2 (h v hv (key.1 hvu))⟩⟩
+
 theorem mem_exhMW_iff_minimal : u ∈ exhMW ALT φ ↔ u ∈ φ ∧
     Minimal (· ∈ (fun w ↦ {a ∈ ALT | w ∈ a}) '' φ) ({a ∈ ALT | u ∈ a}) := by
   refine ⟨fun h ↦ ⟨h.1, ⟨u, h.1, rfl⟩, ?_⟩, fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv hvu ↦ h.2 ⟨v, hv, rfl⟩ hvu⟩⟩

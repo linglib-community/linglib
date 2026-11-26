@@ -8,17 +8,18 @@ public import Linglib.Semantics.Exhaustification.MinimalWorlds
 
 Against the literal listener, the speaker who knows the state is likelier to produce an utterance
 at a state that makes fewer utterances true, since she has less to choose from there. That
-comparison holds under every prior of full support, and it is the only comparison between two
-states that does. The states at which some prior makes the speaker likeliest to produce an
-utterance are therefore the minimal worlds of its denotation against the denotations of all the
-utterances.
+comparison holds under every prior of full support. Between two states at which an utterance is
+true it is the only strict comparison that does. The states at which some prior of full support
+makes the speaker likeliest to produce an utterance are therefore the minimal worlds of its
+denotation against the denotations of all the utterances.
 
 ## Main results
 
-* `RSA.forall_speaker_literalListener_dirac_lt_iff`: one state is a better state for an utterance
-  than another under every prior exactly when it makes strictly fewer utterances true.
-* `RSA.exhMW_range_eq_setOf_exists_forall_speaker_le`: minimal-world exhaustification as the
-  states some prior puts on top.
+* `RSA.forall_speaker_literalListener_dirac_lt_iff`: for an utterance true at two states, one is
+  a better state for it under every prior of full support exactly when it makes strictly fewer
+  utterances true.
+* `RSA.mem_exhMW_range_iff_exists_forall_speaker_le`: the minimal worlds of an utterance are the
+  states some prior of full support puts on top.
 
 ## References
 
@@ -36,12 +37,12 @@ namespace RSA
 variable {W U : Type*} [MeasurableSpace W] [MeasurableSpace U] [MeasurableSingletonClass W]
   [Fintype W] [Fintype U] [MeasurableSingletonClass U] {α : ℝ}
 
-/-- For every state `t` there is a prior of full support under which no state that makes true an
-utterance false at `t` is a better state than `t` for any utterance. -/
+/-- For every state `t` there is a prior of full support under which, for each utterance true at
+`t`, no state is a better state than `t` unless it makes strictly fewer utterances true. -/
 theorem exists_forall_speaker_literalListener_dirac_le (hα : 0 < α) (C : U → ℝ)
     (sem : U → Set W) (t : W) :
     ∃ μ : Measure W, IsProbabilityMeasure μ ∧ (∀ x, μ {x} ≠ 0) ∧
-      ∀ s u, t ∈ sem u → (∃ u', s ∈ sem u' ∧ t ∉ sem u') →
+      ∀ s u, t ∈ sem u → ¬ {a | s ∈ sem a} ⊂ {a | t ∈ sem a} →
         speaker α C (literalListener μ sem) Measure.dirac s {u} ≤
           speaker α C (literalListener μ sem) Measure.dirac t {u} := by
   set K := ∑ v, Real.exp (-(α * C v))
@@ -102,14 +103,19 @@ theorem exists_forall_speaker_literalListener_dirac_le (hα : 0 < α) (C : U →
       exact ENNReal.inv_le_iff_inv_le.2 (ht.trans (measure_mono (Set.singleton_subset_iff.2 hv)))
     · rw [Set.indicator_of_notMem (show v ∉ {v | t ∈ sem v} from hv)]
       exact zero_le
-  refine ⟨μ, hprob, hfull, fun s u htu ⟨u', hsu', htu'⟩ ↦ ?_⟩
+  refine ⟨μ, hprob, hfull, fun s u htu hst ↦ ?_⟩
+  by_cases hsub : {a | s ∈ sem a} ⊆ {a | t ∈ sem a}
+  · have hts : {a | t ∈ sem a} ⊆ {a | s ∈ sem a} := by_contra fun h ↦ hst ⟨hsub, h⟩
+    rw [speaker_literalListener_dirac_congr hα C μ sem (hfull s) (hfull t)
+      fun v ↦ ⟨fun h ↦ hsub h, fun h ↦ hts h⟩]
+  obtain ⟨u', hsu', htu'⟩ := Set.not_subset.1 hsub
   by_cases hsu : s ∈ sem u
   swap
   · rw [speaker_literalListener_dirac_apply_singleton_eq_zero hα C μ sem hsu]
     exact zero_le
   rw [speaker_literalListener_apply_singleton hα (Measure.dirac_absolutelyContinuous (hfull s)),
     speaker_literalListener_apply_singleton hα (Measure.dirac_absolutelyContinuous (hfull t))]
-  simp only [Measure.ae_dirac_mem_iff]
+  simp only [ae_dirac_eq, Filter.eventually_pure]
   rw [Set.indicator_of_mem (show u ∈ {v | s ∈ sem v} from hsu),
     Set.indicator_of_mem (show u ∈ {v | t ∈ sem v} from htu)]
   refine ENNReal.div_le_div_left ((key u' htu').trans ?_) _
@@ -117,8 +123,8 @@ theorem exists_forall_speaker_literalListener_dirac_le (hα : 0 < α) (C : U →
     (fun v ↦ (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v))))]
   exact Finset.single_le_sum (fun v _ ↦ zero_le) (Finset.mem_univ u')
 
-/-- One state is a better state for an utterance than another under every prior of full support
-exactly when it makes strictly fewer utterances true. -/
+/-- For an utterance true at two states, one is a better state for it than the other under every
+prior of full support exactly when it makes strictly fewer utterances true. -/
 theorem forall_speaker_literalListener_dirac_lt_iff (hα : 0 < α) (C : U → ℝ) (sem : U → Set W)
     {s t : W} {u : U} (hs : s ∈ sem u) (ht : t ∈ sem u) :
     (∀ μ : Measure W, IsProbabilityMeasure μ → (∀ x, μ {x} ≠ 0) →
@@ -126,37 +132,27 @@ theorem forall_speaker_literalListener_dirac_lt_iff (hα : 0 < α) (C : U → �
         speaker α C (literalListener μ sem) Measure.dirac s {u}) ↔
       {a | s ∈ sem a} ⊂ {a | t ∈ sem a} := by
   refine ⟨fun h ↦ ?_, fun hsub μ _ hμ ↦
-    speaker_literalListener_dirac_lt_of_ssubset hα C μ sem (hμ s) (hμ t) hsub hs⟩
+    speaker_literalListener_dirac_lt_of_ssubset hα C μ sem (hμ s) hsub hs⟩
   obtain ⟨μ, hprob, hμ, hle⟩ := exists_forall_speaker_literalListener_dirac_le hα C sem t
-  have hlt := h μ hprob hμ
-  refine Set.ssubset_iff_subset_ne.2 ⟨fun v hv ↦ by_contra fun hv' ↦
-    (hle s u ht ⟨v, hv, hv'⟩).not_gt hlt, fun heq ↦ ?_⟩
-  rw [speaker_literalListener_dirac_congr hα C μ sem (hμ s) (hμ t) (Set.ext_iff.1 heq)] at hlt
-  exact lt_irrefl _ hlt
+  exact by_contra fun hst ↦ (hle s u ht hst).not_gt (h μ hprob hμ)
 
 /-- The minimal worlds of an utterance, against the denotations of all the utterances, are the
 states at which some prior of full support makes the speaker likeliest to produce it. -/
-theorem exhMW_range_eq_setOf_exists_forall_speaker_le (hα : 0 < α) (C : U → ℝ)
-    (sem : U → Set W) (u : U) :
-    Exhaustification.exhMW (Set.range sem) (sem u) =
-      {t | t ∈ sem u ∧ ∃ μ : Measure W, IsProbabilityMeasure μ ∧ (∀ x, μ {x} ≠ 0) ∧
-        ∀ s ∈ sem u, speaker α C (literalListener μ sem) Measure.dirac s {u} ≤
-          speaker α C (literalListener μ sem) Measure.dirac t {u}} := by
-  have key {x y : W} : {a ∈ Set.range sem | x ∈ a} ⊆ {a ∈ Set.range sem | y ∈ a} ↔
-      {v | x ∈ sem v} ⊆ {v | y ∈ sem v} :=
-    ⟨fun h v hv ↦ (h ⟨⟨v, rfl⟩, hv⟩).2, by rintro h _ ⟨⟨v, rfl⟩, hv⟩; exact ⟨⟨v, rfl⟩, h hv⟩⟩
-  ext t
-  refine ⟨fun ⟨htu, hmin⟩ ↦ ⟨htu, ?_⟩, fun ⟨htu, μ, _, hμ, hle⟩ ↦ ⟨htu, fun s hs hst ↦ ?_⟩⟩
+theorem mem_exhMW_range_iff_exists_forall_speaker_le (hα : 0 < α) (C : U → ℝ)
+    (sem : U → Set W) {u : U} {t : W} :
+    t ∈ Exhaustification.exhMW (Set.range sem) (sem u) ↔
+      t ∈ sem u ∧ ∃ μ : Measure W, IsProbabilityMeasure μ ∧ (∀ x, μ {x} ≠ 0) ∧
+        ∀ s, speaker α C (literalListener μ sem) Measure.dirac s {u} ≤
+          speaker α C (literalListener μ sem) Measure.dirac t {u} := by
+  rw [Exhaustification.mem_exhMW_range]
+  refine and_congr_right fun htu ↦ ⟨fun hmin ↦ ?_, fun ⟨μ, _, hμ, hle⟩ s hs hst ↦ ?_⟩
   · obtain ⟨μ, hprob, hμ, hle⟩ := exists_forall_speaker_literalListener_dirac_le hα C sem t
-    refine ⟨μ, hprob, hμ, fun s hs ↦ ?_⟩
-    by_cases h : ∃ u', s ∈ sem u' ∧ t ∉ sem u'
-    · exact hle s u htu h
-    push Not at h
-    have hts := key.1 (hmin hs (key.2 h))
-    rw [speaker_literalListener_dirac_congr hα C μ sem (hμ t) (hμ s)
-      fun v ↦ ⟨fun hv ↦ hts hv, h v⟩]
-  · rw [key] at hst ⊢
-    exact by_contra fun hts ↦ (hle s hs).not_gt
-      (speaker_literalListener_dirac_lt_of_ssubset hα C μ sem (hμ s) (hμ t) ⟨hst, hts⟩ hs)
+    refine ⟨μ, hprob, hμ, fun s ↦ ?_⟩
+    by_cases hs : s ∈ sem u
+    · exact hle s u htu fun hst ↦ hst.2 (hmin s hs hst.1)
+    · rw [speaker_literalListener_dirac_apply_singleton_eq_zero hα C μ sem hs]
+      exact zero_le
+  · exact by_contra fun hts ↦ (hle s).not_gt
+      (speaker_literalListener_dirac_lt_of_ssubset hα C μ sem (hμ s) ⟨hst, hts⟩ hs)
 
 end RSA

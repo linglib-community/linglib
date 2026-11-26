@@ -70,10 +70,6 @@ theorem eq_of_dirac_apply_singleton_ne_zero {a b : α} (h : dirac a {b} ≠ 0) :
   rw [dirac_apply' a (measurableSet_singleton b)] at h
   exact (Set.mem_singleton_iff.1 (Set.mem_of_indicator_ne_zero h)).symm
 
-/-- A set has full Dirac measure exactly when it contains the point. -/
-theorem ae_dirac_mem_iff {s : Set α} : (∀ᵐ x ∂dirac a, x ∈ s) ↔ a ∈ s := by
-  rw [ae_dirac_eq, Filter.eventually_pure]
-
 end Dirac
 
 section FinsetSum

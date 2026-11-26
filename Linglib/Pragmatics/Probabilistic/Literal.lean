@@ -13,10 +13,10 @@ The pragmatic listener is the listener of this speaker.
 
 A belief that entails strictly fewer utterances puts strictly more mass on each of them, so a
 state that makes strictly fewer utterances true is a better state for each of them, whatever the
-prior and the costs. Pulling the denotations back along a map of states gives the speaker of the
-original denotations at the image state, against the prior carried forward along the map. With
-independent parts of the state, product denotations and additive costs, she chooses the parts of
-her utterance independently.
+costs and under every prior that charges it. Pulling the denotations back along a map of states
+gives the speaker of the original denotations at the image state, against the prior carried
+forward along the map. With independent parts of the state, product denotations and additive
+costs, she chooses the parts of her utterance independently.
 
 ## References
 
@@ -114,10 +114,8 @@ private theorem weight_ne_zero_and_ne_top (hα : 0 < α) (C : U → ℝ) {β : M
       (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v))) ≠ ∞ := by
   have h0 : μ (sem v) ≠ 0 := fun h0 ↦
     one_ne_zero (((prob_compl_eq_zero_iff .of_discrete).1 (ae_iff.1 hv)).symm.trans (hβ h0))
-  exact ⟨mul_ne_zero (ENNReal.rpow_ne_zero_of_ne_zero hα.le
-      (ENNReal.inv_ne_zero.2 (measure_ne_top _ _))) (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne',
-    ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα.le (ENNReal.inv_ne_top.2 h0))
-      ENNReal.ofReal_ne_top⟩
+  exact ⟨ENNReal.rpow_mul_ofReal_exp_ne_zero hα.le (ENNReal.inv_ne_zero.2 (measure_ne_top _ _)) _,
+    ENNReal.rpow_mul_ofReal_exp_ne_top hα.le (ENNReal.inv_ne_top.2 h0) _⟩
 
 omit [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U] in
 private theorem indicator_weight_ne_top (hα : 0 < α) (C : U → ℝ) {β : Measure W}
@@ -242,6 +240,9 @@ section Dirac
 
 variable [MeasurableSingletonClass W]
 
+private theorem ae_dirac_mem_iff {w : W} {t : Set W} : (∀ᵐ x ∂Measure.dirac w, x ∈ t) ↔ w ∈ t := by
+  rw [ae_dirac_eq, Filter.eventually_pure]
+
 variable [Fintype W] [Fintype U] {α : ℝ} {C : U → ℝ} {L : Kernel U W} {w : W} {u : U}
 
 variable [MeasurableSingletonClass U]
@@ -321,7 +322,7 @@ theorem speaker_literalListener_dirac_congr (hα : 0 < α)
       = speaker α C (literalListener μ sem) Measure.dirac w :=
   (speaker_literalListener_apply_eq_iff hα (Measure.dirac_absolutelyContinuous hw)
     (Measure.dirac_absolutelyContinuous hw')).2 fun u ↦ by
-      rw [Measure.ae_dirac_mem_iff, Measure.ae_dirac_mem_iff, h u]
+      rw [ae_dirac_mem_iff, ae_dirac_mem_iff, h u]
 
 theorem speaker_literalListener_dirac_le_of_subset (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) {w w' : W}
@@ -334,24 +335,28 @@ theorem speaker_literalListener_dirac_le_of_subset (hα : 0 < α)
     exact zero_le
   · exact speaker_literalListener_apply_singleton_le hα (Measure.dirac_absolutelyContinuous hw)
       (Measure.dirac_absolutelyContinuous hw')
-      (fun v hv ↦ Measure.ae_dirac_mem_iff.2 (hsub v (Measure.ae_dirac_mem_iff.1 hv)))
-      (Measure.ae_dirac_mem_iff.2 hu)
+      (fun v hv ↦ ae_dirac_mem_iff.2 (hsub v (ae_dirac_mem_iff.1 hv)))
+      (ae_dirac_mem_iff.2 hu)
 
 /-- A state that makes strictly fewer utterances true is a strictly better state for each of
 them: the speaker who knows it has less to choose from. -/
 theorem speaker_literalListener_dirac_lt_of_ssubset (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) {w w' : W}
-    (hw : μ {w} ≠ 0) (hw' : μ {w'} ≠ 0) (hsub : {u | w ∈ sem u} ⊂ {u | w' ∈ sem u}) {u : U}
-    (hu : w ∈ sem u) :
+    (hw : μ {w} ≠ 0) (hsub : {u | w ∈ sem u} ⊂ {u | w' ∈ sem u}) {u : U} (hu : w ∈ sem u) :
     speaker α C (literalListener μ sem) Measure.dirac w' {u}
       < speaker α C (literalListener μ sem) Measure.dirac w {u} := by
+  have hpos := pos_iff_ne_zero.2
+    ((speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα C μ sem u w).2 ⟨hu, hw⟩)
+  by_cases hw' : μ {w'} = 0
+  · rwa [not_ne_iff.1 fun h ↦
+      ((speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα C μ sem u w').1 h).2 hw']
   obtain ⟨u', hu', hnu'⟩ := Set.exists_of_ssubset hsub
   exact speaker_literalListener_apply_singleton_lt hα (Measure.dirac_absolutelyContinuous hw)
     (Measure.dirac_absolutelyContinuous hw')
-    (fun v hv ↦ Measure.ae_dirac_mem_iff.2
-      (hsub.1 (show w ∈ sem v from Measure.ae_dirac_mem_iff.1 hv)))
-    (Measure.ae_dirac_mem_iff.2 hu) (Measure.ae_dirac_mem_iff.2 hu')
-    fun h ↦ hnu' (show w ∈ sem u' from Measure.ae_dirac_mem_iff.1 h)
+    (fun v hv ↦ ae_dirac_mem_iff.2
+      (hsub.1 (show w ∈ sem v from ae_dirac_mem_iff.1 hv)))
+    (ae_dirac_mem_iff.2 hu) (ae_dirac_mem_iff.2 hu')
+    fun h ↦ hnu' (show w ∈ sem u' from ae_dirac_mem_iff.1 h)
 
 /-- Pulling the denotations back along a map of states gives the speaker of the original
 denotations at the image state, against the prior carried forward. -/
@@ -368,15 +373,25 @@ theorem speaker_literalListener_dirac_preimage {W' : Type*} [MeasurableSpace W']
   refine Measure.ext_of_singleton fun u ↦ ?_
   rw [speaker_literalListener_apply_singleton hα (Measure.dirac_absolutelyContinuous hw),
     speaker_literalListener_apply_singleton hα (Measure.dirac_absolutelyContinuous hw')]
-  simp only [Measure.ae_dirac_mem_iff, Measure.map_apply hg .of_discrete]
+  simp only [ae_dirac_mem_iff, Measure.map_apply hg .of_discrete]
   rfl
+
+/-- Almost everywhere in the prior, the speaker of the denotations pulled back along a map of
+states is the speaker of the original denotations after the map. -/
+theorem speaker_literalListener_dirac_preimage_ae_eq {W' : Type*} [MeasurableSpace W']
+    [MeasurableSingletonClass W'] [Fintype W'] (hα : 0 < α) (C : U → ℝ) (μ : Measure W)
+    [IsFiniteMeasure μ] (g : W → W') (sem : U → Set W') :
+    ⇑(speaker α C (literalListener μ fun u ↦ g ⁻¹' sem u) Measure.dirac) =ᵐ[μ]
+      (speaker α C (literalListener (μ.map g) sem) Measure.dirac).comap g .of_discrete :=
+  ae_iff_of_countable.2 fun _ hw ↦
+    (speaker_literalListener_dirac_preimage hα C μ g sem hw).trans (Kernel.comap_apply ..).symm
 
 omit [MeasurableSpace U] [MeasurableSingletonClass U] in
 private theorem sum_indicator_weight_dirac_ne_top (hα : 0 < α) (C : U → ℝ) (μ : Measure W)
     [IsFiniteMeasure μ] (sem : U → Set W) (hw : μ {w} ≠ 0) :
     ∑ v, {v | w ∈ sem v}.indicator
       (fun v ↦ (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v)))) v ≠ ∞ := by
-  simpa only [Measure.ae_dirac_mem_iff] using ENNReal.sum_ne_top.2 fun v (_ : v ∈ Finset.univ) ↦
+  simpa only [ae_dirac_mem_iff] using ENNReal.sum_ne_top.2 fun v (_ : v ∈ Finset.univ) ↦
     indicator_weight_ne_top hα C (Measure.dirac_absolutelyContinuous hw) (sem := sem) v
 
 /-- With independent parts of the state, product denotations and additive costs, the speaker who
