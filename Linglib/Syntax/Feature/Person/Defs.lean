@@ -9,7 +9,7 @@ public import Mathlib.Data.Fintype.Card
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Grammatical person and clusivity
+# Grammatical person, clusivity and the person features
 
 Pronouns and the verb forms that agree with them come in three persons: English *I am* is first
 person, *you are* second and *she is* third. In the traditional description the first person is
@@ -17,19 +17,26 @@ that of the speaker, the second that of the addressee and the third that of anyo
 languages have two forms where English has *we*, an *inclusive* one for a group that has the
 addressee in it and an *exclusive* one for a group that does not, as Tagalog *tayo* and *kami*.
 
-This file defines the two sets of labels and nothing more.
+Theories that decompose the persons use features: [participant], [speaker], which other
+inventories call [author], and [addressee]. Béjar and Rezac, citing Halle, use the first two, and
+Harley and Ritter add the third.
+
+This file defines the three sets of labels and nothing more.
 
 ## Main definitions
 
 * `Person`: first, second or third.
 * `Clusivity`: inclusive or exclusive.
+* `Person.Feature`: [participant], [speaker] or [addressee].
+* `Person.Features`: a set of features, an inventory or a bundle.
 
 ## Implementation notes
 
-The traditional description is not part of these definitions. What a label refers to, and the
-order of the persons under coordination, in which a first person conjunct makes the whole first
-person, are stated in `Syntax/Feature/Person/Participants.lean`, so that a file which uses the
-labels alone takes on no claim about referents.
+The traditional description is not part of these definitions. What a label refers to, the order
+of the persons under coordination, in which a first person conjunct makes the whole first
+person, and the dependency of [speaker] and [addressee] on [participant] are stated in
+`Syntax/Feature/Person/Participants.lean`, so that a file which uses the labels alone takes on
+no claim about referents.
 
 A clusivity is recorded beside a person, as Universal Dependencies records it, and is left
 unspecified where a form marks none.
@@ -39,7 +46,10 @@ The impersonal is not a value: it is `none : Option Person`, as the Universal De
 
 ## References
 
+* [bejar-rezac-2009]
 * [cysouw-2003]
+* [halle-1997]
+* [harley-ritter-2002]
 * [siewierska-2004]
 * [zwicky-1977b]
 * [corbett-2006]
@@ -64,3 +74,20 @@ inductive Clusivity where
   /-- The exclusive. -/
   | exclusive
   deriving DecidableEq, Repr, Fintype
+
+namespace Person
+
+/-- The person features. -/
+inductive Feature where
+  /-- [participant]. -/
+  | participant
+  /-- [speaker], [author] in other inventories. -/
+  | speaker
+  /-- [addressee], [hearer] in other inventories. -/
+  | addressee
+  deriving DecidableEq, Repr, Fintype
+
+/-- A set of person features, an inventory or a bundle. -/
+abbrev Features := Finset Feature
+
+end Person

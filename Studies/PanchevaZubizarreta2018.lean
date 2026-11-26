@@ -2,7 +2,7 @@ module
 
 public import Linglib.Generalizations.PersonCaseConstraint
 public import Linglib.Discourse.LogophoricRole
-public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Person.Decomposition
 public import Linglib.Languages.Romance.Italian.Pronouns
 public import Linglib.Languages.Romance.Spanish.Clitics
 

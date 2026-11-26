@@ -6,9 +6,9 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.Finset.Lattice.Fold
+public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Syntax.Feature.Person.Defs
-public import Linglib.Syntax.Feature.Person.Feature
 public import Mathlib.Data.Finset.Sups
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.Concept
@@ -50,6 +50,7 @@ has in common, and with all three features no two participant sets have the same
   and the exclusive when it does not.
 * `Clusivity.restrict`: the participant sets of a family that satisfy a clusivity, or all of
   them when no clusivity is given.
+* The dependency order on `Person.Feature`, [participant] below [speaker] and [addressee].
 * `Person.Feature.roles`: the roles a feature is about.
 * `Person.Bears`: a participant set bears a feature.
 * `Person.bundle`: the features of an inventory that a participant set bears, as a map
@@ -65,6 +66,7 @@ has in common, and with all three features no two participant sets have the same
 * `Person.ne_third_iff_forall_nonempty`: the first and the second person are those of the
   speech-act participants, the values whose participant sets are all nonempty.
 * `Person.Feature.le_iff_forall_bears`: dependency is entailment.
+* `Person.card_wellFormed`: there are five well-formed bundles.
 * `Person.Feature.exists_roles_eq_iff`: the features are about the nonempty sets of roles.
 * `Person.wellFormed_iff_isIntent`: the well-formed bundles are the closed sets of features.
 * `Person.bundle_univ_injective`: the three features tell the participant sets apart.
@@ -78,6 +80,9 @@ The order on the person values is given here and not with the values, since it i
 their referents. It is computed from the position of a value, and a theorem states it of the
 participant sets.
 
+The dependency among the features is given here for the same reason: that [speaker] and
+[addressee] depend on [participant], and not the reverse, supposes what the features are about.
+It is given by cases, and a theorem states it as entailment between features.
 ## References
 
 * [zwicky-1977b]
@@ -267,6 +272,24 @@ namespace Person
 
 namespace Feature
 
+/-- [speaker] and [addressee] depend on [participant]: `f ≤ g` when `g` depends on `f`. A
+participant set that bears a feature bears every feature it depends on. -/
+instance : PartialOrder Feature where
+  le f g := f = participant ∨ f = g
+  le_refl _ := .inr rfl
+  le_trans := by rintro _ _ _ (rfl | rfl) h <;> [exact .inl rfl; exact h]
+  le_antisymm := by rintro _ _ (rfl | rfl) (h | h) <;> first | rfl | exact h.symm
+
+theorem le_iff {f g : Feature} : f ≤ g ↔ f = participant ∨ f = g := Iff.rfl
+
+instance : DecidableLE Feature := fun f g ↦ inferInstanceAs (Decidable (f = participant ∨ f = g))
+
+instance : OrderBot Feature where
+  bot := participant
+  bot_le _ := .inl rfl
+
+@[simp] theorem bot_eq_participant : (⊥ : Feature) = participant := rfl
+
 /-- The roles a feature is about. -/
 def roles : Feature → Finset Role
   | participant => univ
@@ -290,6 +313,14 @@ theorem le_iff_roles_subset {f g : Feature} : f ≤ g ↔ g.roles ⊆ f.roles :=
   revert f g; decide
 
 end Feature
+
+theorem not_wellFormed_singleton_speaker :
+    ¬ IsLowerSet (↑({.speaker} : Features) : Set Feature) := by
+  decide
+
+-- (25), (26) [harley-ritter-2002]
+theorem card_wellFormed : Fintype.card {t : Features // IsLowerSet (↑t : Set Feature)} = 5 := by
+  decide
 
 /-! ### The context of participant sets and features -/
 

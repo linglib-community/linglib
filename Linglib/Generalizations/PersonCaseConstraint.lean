@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Syntax.Clause.Scenario
-public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Person.Decomposition
 
 /-!
 # The Person Case Constraint

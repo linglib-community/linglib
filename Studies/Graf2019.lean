@@ -3,7 +3,7 @@ module
 public import Studies.Bobaljik2012
 public import Linglib.Morphology.Exponence.SupersetRule
 public import Linglib.Morphology.Inflection.Paradigm.Contiguity
-public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Person.Decomposition
 public import Linglib.Generalizations.PersonCaseConstraint
 public import Mathlib.Tactic.TFAE
 
