@@ -22,7 +22,7 @@ For two unrelated relations, the schema `p → □[R] ◇[S] p` is valid exactly
 `R` lies in `S`, and `◇[S]` is left adjoint to `□[R]` exactly when `S` is the converse of `R`.
 With `R` the relation of the future operators and `S` that of the past operators, these are the
 two interaction axioms of the minimal tense logic, which together say that past and future run
-along converse relations ([goranko-2023]).
+along converse relations.
 
 ## Main definitions
 

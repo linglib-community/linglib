@@ -70,6 +70,8 @@ where the Limit Assumption holds.
 
 namespace Conditional
 
+open scoped Filter
+
 variable {I W : Type*} {access : I → Set W} {p p' q q' : Set W} {i : I} {w : W}
 
 /-! ### Material conditional -/
@@ -333,11 +335,11 @@ variable {ord : I → Preorder W}
 /-- The variably strict conditional, true at `i` when the consequent holds toward the bottom of
 the preorder `ord i` on the accessible antecedent-worlds. -/
 def variablyStrictImp (access : I → Set W) (ord : I → Preorder W) (p q : Set W) : Set I :=
-  {i | q ∈ @Filter.atBotOn W W (ord i) id (access i ∩ p)}
+  {i | q ∈ atBotOn[ord i] (access i ∩ p)}
 
 @[simp]
 theorem mem_variablyStrictImp :
-    i ∈ variablyStrictImp access ord p q ↔ q ∈ @Filter.atBotOn W W (ord i) id (access i ∩ p) :=
+    i ∈ variablyStrictImp access ord p q ↔ q ∈ atBotOn[ord i] (access i ∩ p) :=
   Iff.rfl
 
 /-- On a total preorder the variably strict conditional holds when no antecedent-world is
@@ -371,7 +373,7 @@ theorem closestImp_eq_orderingImp {ord : W → Preorder W} :
 
 theorem variablyStrictImp_subset_orderingImp :
     variablyStrictImp access ord p q ⊆ orderingImp access ord p q :=
-  fun i hi ↦ letI := ord i; Filter.setOf_minimalFor_subset_of_mem_atBotOn hi
+  fun i hi ↦ Filter.setOf_minimalFor_subset_of_mem_atBotOn hi
 
 /-- Under the Limit Assumption at `i`, the variably strict conditional is truth at the best
 accessible antecedent-worlds ([lewis-1973b] §1.4). -/
@@ -465,9 +467,9 @@ section Logic
 
 theorem isPreferential_variablyStrictImp {ord : I → Preorder W} :
     Nonmonotonic.IsPreferential fun p q ↦ i ∈ variablyStrictImp access ord p q where
-  refl _ := letI := ord i; Filter.mem_of_superset Filter.self_mem_atBotOn Set.inter_subset_right
-  rightWeakening h hψχ := Filter.mem_of_superset (f := @Filter.atBotOn W W (ord i) id _) h hψχ
-  and h h' := Filter.inter_mem (f := @Filter.atBotOn W W (ord i) id _) h h'
+  refl _ := Filter.mem_of_superset Filter.self_mem_atBotOn Set.inter_subset_right
+  rightWeakening h hψχ := Filter.mem_of_superset (f := atBotOn[ord i] _) h hψχ
+  and h h' := Filter.inter_mem (f := atBotOn[ord i] _) h h'
   or h h' := by
     let := ord i
     rw [mem_variablyStrictImp, Set.inter_union_distrib_left]

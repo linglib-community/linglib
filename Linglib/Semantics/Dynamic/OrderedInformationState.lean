@@ -238,7 +238,7 @@ def ofBackground : OrderedInformationState W :=
 
 @[simp] theorem ofBackground_order : (ofBackground f g w).order = ≤[g w] := rfl
 
-@[simp] theorem optimal_ofBackground : (ofBackground f g w).optimal = bestWorlds f g w := rfl
+@[simp] theorem optimal_ofBackground : (ofBackground f g w).optimal = f.bestWorlds g w := rfl
 
 end Background
 

@@ -100,7 +100,7 @@ theorem canInView_of_mustInView [Nonempty W] (h : MustInView f φ i) : CanInView
   rw [mustInView_iff_mem_necessity] at h
   rw [canInView_iff_not_mustInView_compl, mustInView_iff_mem_necessity]
   have : (Background.necessity ⊥ f i).NeBot :=
-    letI := ≤[f i]; Filter.atBotOn_neBot_iff.2 (by simp)
+    Filter.atBotOn_neBot_iff.2 (by simp)
   exact Filter.compl_notMem h
 
 -- On a consistent premise set Definition 7 is Definition 5, consequence from the premises
@@ -137,7 +137,8 @@ theorem mustInView_of_forall_exists_le (hφ : φ ∈ f i) (h : ∀ u, ∃ v, (v 
     ⟨v, by simp, hvu, fun _ _ hzv ↦ hzv φ hφ hv⟩
 
 -- A best world where `φ` fails refutes *must φ*
-theorem not_mustInView_of_mem_bestWorlds {u : W} (hu : u ∈ bestWorlds ⊥ f i) (hφ : u ∉ φ) :
+theorem not_mustInView_of_mem_bestWorlds {u : W} (hu : u ∈ Background.bestWorlds ⊥ f i)
+    (hφ : u ∉ φ) :
     ¬ MustInView f φ i :=
   fun h ↦ hφ (Background.principal_bestWorlds_le_necessity (mustInView_iff_mem_necessity.1 h) hu)
 

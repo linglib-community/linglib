@@ -249,14 +249,15 @@ def onlyBest (w₀ : W) : Set (Set W) := {{w₀}}
 theorem onlyBest_le (w₀ v u : W) : (v ≤[onlyBest w₀] u) ↔ (u = w₀ → v = w₀) := by
   simp [onlyBest, Preorder.ofLowerSets_le_iff]
 
-theorem bestWorlds_onlyBest (w₀ w : W) : bestWorlds ⊥ (fun _ ↦ onlyBest w₀) w = {w₀} := by
+theorem bestWorlds_onlyBest (w₀ w : W) :
+    Background.bestWorlds ⊥ (fun _ ↦ onlyBest w₀) w = {w₀} := by
   ext x
-  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
+  simp only [Background.mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
     forall_const, onlyBest_le, Set.mem_singleton_iff]
   exact ⟨fun h ↦ h w₀ (fun _ ↦ rfl) rfl, fun hx _ _ _ ↦ hx⟩
 
 theorem must_bestWorlds [Finite W] (O : Set (Set W)) (w : W) :
-    Yalcin2010.must O (bestWorlds ⊥ (fun _ ↦ O) w) w := by
+    Yalcin2010.must O (Background.bestWorlds ⊥ (fun _ ↦ O) w) w := by
   rw [Yalcin2010.must, Background.necessity_eq_principal_of_finite]
   exact Filter.mem_principal_self _
 
@@ -320,7 +321,8 @@ theorem not_exists_lift :
 /-- Under Kratzer's *must* the m-lifting refutes (35) in every finite model in which fewer than
 half the worlds are best (p. 664). -/
 theorem not_mustToProbably_of_ncard_lt [Finite W] (O : Set (Set W)) (w : W)
-    (h : (bestWorlds ⊥ (fun _ ↦ O) w).ncard < (bestWorlds ⊥ (fun _ ↦ O) w)ᶜ.ncard) :
+    (h : (Background.bestWorlds ⊥ (fun _ ↦ O) w).ncard <
+        (Background.bestWorlds ⊥ (fun _ ↦ O) w)ᶜ.ncard) :
     ¬MustToProbably (MatchingLift (≤[O]).le) (Yalcin2010.must O · w) :=
   fun hV6 ↦ absurd (hV6 _ (must_bestWorlds O w)).1.ncard_le (not_le.2 h)
 
@@ -537,16 +539,16 @@ theorem crossed_le (v u : Fin 4) : (v ≤[crossed] u) ↔
       ((u = 0 ∨ u = 1) → (v = 0 ∨ v = 1)) := by
   simp [crossed, Preorder.ofLowerSets_le_iff]
 
-theorem bestWorlds_crossed : bestWorlds ⊥ (fun _ ↦ crossed) 0 = {0, 1} := by
+theorem bestWorlds_crossed : Background.bestWorlds ⊥ (fun _ ↦ crossed) 0 = {0, 1} := by
   ext x
-  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
+  simp only [Background.mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
     forall_const, crossed_le, Set.mem_insert_iff, Set.mem_singleton_iff]
   revert x
   decide
 
 theorem not_asymmRel_kratzer_bestWorlds :
-    ¬AsymmRel (Kratzer (≤[crossed]).le) (bestWorlds ⊥ (fun _ ↦ crossed) 0)
-      (bestWorlds ⊥ (fun _ ↦ crossed) 0)ᶜ := by
+    ¬AsymmRel (Kratzer (≤[crossed]).le) (Background.bestWorlds ⊥ (fun _ ↦ crossed) 0)
+      (Background.bestWorlds ⊥ (fun _ ↦ crossed) 0)ᶜ := by
   rw [bestWorlds_crossed]
   refine fun ⟨_, h⟩ ↦ h ?_
   rw [kratzer_iff]

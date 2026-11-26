@@ -176,7 +176,7 @@ theorem not_antitone_necessity_restrict :
   fun h ↦ by
     have := @h {1} .univ (Set.subset_univ _) 0
     simp only [Background.necessity_eq_principal_of_finite, Filter.mem_principal, Set.subset_def,
-      bestWorlds, Preorder.mem_minimals_iff,
+      Background.bestWorlds, Preorder.mem_minimals_iff,
       Background.mem_accessibleWorlds, Background.restrict, Preorder.ofLowerSets_le_iff,
       Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
       Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,

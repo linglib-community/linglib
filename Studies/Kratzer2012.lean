@@ -22,7 +22,7 @@ Roger zum Häuptling gewählt worden sein* is true whatever the rumor's provenan
 The informational background is therefore not realistic, since the actual world need not be
 among the worlds the rumor describes.
 
-The chapter's definition of necessity (§2.4) does not suppose that there are closest worlds. Over
+The chapter's definition of necessity does not suppose that there are closest worlds. Over
 the natural numbers, with an ordering source whose premises are "at least `n`" for each `n`, a
 larger number is always a better world and none is best; the necessities are then the propositions
 true from some number on, where truth at the best worlds would make every proposition necessary.
@@ -132,13 +132,13 @@ def atLeast : Background ℕ := fun _ ↦ Set.range Set.Ici
 private theorem le_atLeast_iff (w a b : ℕ) : (a ≤[atLeast w] b) ↔ b ≤ a :=
   ⟨fun h ↦ h (Set.Ici b) ⟨b, rfl⟩ Set.self_mem_Ici, by rintro h _ ⟨n, rfl⟩ hn; exact le_trans hn h⟩
 
-theorem bestWorlds_atLeast (w : ℕ) : bestWorlds ⊥ atLeast w = ∅ := by
+theorem bestWorlds_atLeast (w : ℕ) : Background.bestWorlds ⊥ atLeast w = ∅ := by
   ext u
-  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
+  simp only [Background.mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
     forall_true_left, le_atLeast_iff, Set.mem_empty_iff_false, iff_false, not_forall]
   exact ⟨u + 1, Nat.le_succ u, Nat.not_succ_le_self u⟩
 
-theorem not_limitAssumption_atLeast (w : ℕ) : ¬ LimitAssumption ⊥ atLeast w := fun h ↦ by
+theorem not_limitAssumption_atLeast (w : ℕ) : ¬ Background.LimitAssumption ⊥ atLeast w := fun h ↦ by
   obtain ⟨v, hv, -⟩ := h 0 (by simp)
   rwa [bestWorlds_atLeast] at hv
 
@@ -153,7 +153,7 @@ theorem necessity_atLeast (w : ℕ) : Background.necessity ⊥ atLeast w = atTop
 
 -- p. 40: necessity is not truth at the closest worlds when there are none.
 theorem necessity_atLeast_ne_principal_bestWorlds (w : ℕ) :
-    Background.necessity ⊥ atLeast w ≠ 𝓟 (bestWorlds ⊥ atLeast w) := by
+    Background.necessity ⊥ atLeast w ≠ 𝓟 (Background.bestWorlds ⊥ atLeast w) := by
   rw [necessity_atLeast, bestWorlds_atLeast, principal_empty]; exact atTop_neBot.ne
 
 end NoClosestWorlds
@@ -234,14 +234,14 @@ end Measures
 
 -- §2.5
 theorem mem_necessity_iff_possibility {W : Type*} {f g : Background W}
-    {w : W} (s : Set W) (hlim : LimitAssumption f g w) (hne : (f.accessibleWorlds w).Nonempty)
+    {w : W} (s : Set W) (hlim : f.LimitAssumption g w) (hne : (f.accessibleWorlds w).Nonempty)
     (htot : ∀ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, (u ≤[g w] v) ∨ (v ≤[g w] u))
     (hanti : ∀ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w,
       (u ≤[g w] v) → (v ≤[g w] u) → u = v) :
     s ∈ f.necessity g w ↔ f.possibility g w s := by
   obtain ⟨u, hu⟩ := hne
   obtain ⟨v, hv, -⟩ := hlim u hu
-  have hbest : ∀ x ∈ bestWorlds f g w, x = v := fun x hx ↦
+  have hbest : ∀ x ∈ f.bestWorlds g w, x = v := fun x hx ↦
     (htot x hx.1 v hv.1).elim (fun h ↦ hanti x hx.1 v hv.1 h (hv.2 hx.1 h))
       (fun h ↦ hanti x hx.1 v hv.1 (hx.2 hv.1 h) h)
   rw [Background.necessity_eq_principal hlim, Filter.mem_principal,
@@ -303,25 +303,25 @@ def swapped : Background World := fun _ ↦ {{2}, Set.Ici 2, Set.Ici 1}
 `w₂, w₃ < w₁ < w₀`, with a tie. -/
 def tied : Background World := fun _ ↦ {Set.Ici 2, Set.Ici 1}
 
-theorem bestWorlds_ideal : bestWorlds ⊥ ideal 0 = {3} := by
+theorem bestWorlds_ideal : Background.bestWorlds ⊥ ideal 0 = {3} := by
   ext x
-  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
+  simp only [Background.mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
     forall_const, atLeastAsGoodAs_ideal_iff, Set.mem_singleton_iff]
   revert x
   decide
 
-theorem bestWorlds_swapped : bestWorlds ⊥ swapped 0 = {2} := by
+theorem bestWorlds_swapped : Background.bestWorlds ⊥ swapped 0 = {2} := by
   ext x
-  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
+  simp only [Background.mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
     forall_const, Preorder.ofLowerSets_le_iff, swapped, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp,
     forall_eq]
   revert x
   decide
 
-theorem bestWorlds_tied : bestWorlds ⊥ tied 0 = {2, 3} := by
+theorem bestWorlds_tied : Background.bestWorlds ⊥ tied 0 = {2, 3} := by
   ext x
-  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
+  simp only [Background.mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
     forall_const, Preorder.ofLowerSets_le_iff, tied, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp,
     forall_eq]
@@ -329,11 +329,11 @@ theorem bestWorlds_tied : bestWorlds ⊥ tied 0 = {2, 3} := by
   decide
 
 private theorem mem_necessity_iff_forall {g : Background World} (s : Set World) :
-    s ∈ Background.necessity ⊥ g 0 ↔ ∀ v ∈ bestWorlds ⊥ g 0, v ∈ s := by
+    s ∈ Background.necessity ⊥ g 0 ↔ ∀ v ∈ Background.bestWorlds ⊥ g 0, v ∈ s := by
   rw [Background.necessity_eq_principal_of_finite, Filter.mem_principal, Set.subset_def]
 
 private theorem possibility_iff_exists {g : Background World} (s : Set World) :
-    Background.possibility ⊥ g 0 s ↔ ∃ v ∈ bestWorlds ⊥ g 0, v ∈ s :=
+    Background.possibility ⊥ g 0 s ↔ ∃ v ∈ Background.bestWorlds ⊥ g 0, v ∈ s :=
   Background.possibility_iff_exists_bestWorlds (.of_finite _ _ _)
 
 -- §2.5

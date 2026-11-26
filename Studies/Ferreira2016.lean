@@ -96,14 +96,14 @@ interval lies within the run time of an event of type `N (P v)`. -/
 def IMP (N : Set E → Set E)
     (circ ord : (W → E → Prop) → NonemptyInterval T → Background W) (P : W → E → Prop) :
     W → NonemptyInterval T → Prop :=
-  Aspect.imperfective (fun t ↦ {p | p.2 ∈ bestWorlds (circ P t) (ord P t) p.1})
+  Aspect.imperfective (fun t ↦ {p | p.2 ∈ (circ P t).bestWorlds (ord P t) p.1})
     fun v ↦ (· ∈ N {e | P v e})
 
 variable {N : Set E → Set E} {circ ord : (W → E → Prop) → NonemptyInterval T → Background W}
   {P : W → E → Prop} {w : W} {t : NonemptyInterval T}
 
 theorem IMP_iff : IMP N circ ord P w t ↔
-    ∀ v ∈ bestWorlds (circ P t) (ord P t) w, ∃ e, t ≤ τ e ∧ e ∈ N {e | P v e} :=
+    ∀ v ∈ (circ P t).bestWorlds (ord P t) w, ∃ e, t ≤ τ e ∧ e ∈ N {e | P v e} :=
   Aspect.imperfective_iff
 
 /-- Over a modal base that admits only the world of evaluation, the imperfective is Kratzer's
@@ -117,7 +117,7 @@ theorem IMP_eq_unbounded_of_isTotallyRealistic (h : ∀ P t, (circ P t).IsTotall
 /-- A non-atomic description, every event of which has a proper part of the same description, as
 statives are (94), has no progressive imperfective wherever the modal base has a best world. -/
 theorem not_IMP_atomize_of_nonatomic [PartialOrder E] (hP : ∀ v e, P v e → ∃ e' < e, P v e')
-    (hne : (bestWorlds (circ P t) (ord P t) w).Nonempty) : ¬ IMP atomize circ ord P w t := by
+    (hne : ((circ P t).bestWorlds (ord P t) w).Nonempty) : ¬ IMP atomize circ ord P w t := by
   intro h
   obtain ⟨v, hv⟩ := hne
   obtain ⟨e, -, hmin⟩ := IMP_iff.1 h v hv
@@ -174,7 +174,7 @@ theorem IMP_street : IMP atomize streetBase notInterrupted cross .stopped now :=
   intro v hv
   have hacc : v ∈ Background.accessibleWorlds
       (streetBase cross now ⊔ notInterrupted cross now) .stopped := by
-    rw [← bestWorlds_eq_accessibleWorlds_sup ⟨.crosses, by
+    rw [← Background.bestWorlds_eq_accessibleWorlds_sup ⟨.crosses, by
       simp [Background.accessibleWorlds_sup, streetBase, notInterrupted]⟩]
     exact hv
   obtain rfl : v = .crosses := by
@@ -186,9 +186,9 @@ theorem IMP_street : IMP atomize streetBase notInterrupted cross .stopped now :=
 theorem not_IMP_atlantic : ¬ IMP atomize atlanticBase notInterrupted cross .stopped now := by
   rw [IMP_iff]
   intro h
-  have hbest : Crossing.stopped ∈ bestWorlds (atlanticBase cross now) (notInterrupted cross now)
+  have hbest : Crossing.stopped ∈ (atlanticBase cross now).bestWorlds (notInterrupted cross now)
       .stopped := by
-    refine mem_bestWorlds.2 ⟨by simp [atlanticBase], fun v hv _ ↦ ?_⟩
+    refine Background.mem_bestWorlds.2 ⟨by simp [atlanticBase], fun v hv _ ↦ ?_⟩
     have : v = .stopped := by cases v <;> simp_all [atlanticBase]
     exact this ▸ (≤[_]).le_refl _
   obtain ⟨e, -, he⟩ := h _ hbest
@@ -274,7 +274,7 @@ theorem IMP_soccer : IMP PL soccerBase keepsPlaying playSoccer .plays utterance 
   intro v hv
   have hacc : v ∈ Background.accessibleWorlds
       (soccerBase playSoccer utterance ⊔ keepsPlaying playSoccer utterance) .plays := by
-    rw [← bestWorlds_eq_accessibleWorlds_sup ⟨.plays, by
+    rw [← Background.bestWorlds_eq_accessibleWorlds_sup ⟨.plays, by
       simp [Background.accessibleWorlds_sup, soccerBase, keepsPlaying]⟩]
     exact hv
   obtain rfl : v = .plays := by
@@ -287,9 +287,9 @@ theorem not_IMP_accident :
     ¬ IMP PL accidentBase keepsPlaying playSoccer .plays utterance := by
   rw [IMP_iff]
   intro h
-  have hbest : Soccer.accident ∈ bestWorlds (accidentBase playSoccer utterance)
+  have hbest : Soccer.accident ∈ (accidentBase playSoccer utterance).bestWorlds
       (keepsPlaying playSoccer utterance) .plays := by
-    refine mem_bestWorlds.2 ⟨by simp [accidentBase], fun v hv _ ↦ ?_⟩
+    refine Background.mem_bestWorlds.2 ⟨by simp [accidentBase], fun v hv _ ↦ ?_⟩
     have : v = .accident := by simpa [accidentBase] using hv
     exact this ▸ (≤[_]).le_refl _
   obtain ⟨e, he, hpl⟩ := h _ hbest

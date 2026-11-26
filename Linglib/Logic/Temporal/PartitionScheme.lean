@@ -7,7 +7,7 @@ public import Mathlib.Order.Hom.CompleteLattice
 # Partition schemes and weak composition
 
 A partition scheme on a set `U` divides the pairs of `U` into *basic relations*, closed under
-converse ([ligozat-renz-2004]): the three ways two points of a line can stand, or the relations
+converse: the three ways two points of a line can stand, or the relations
 of Allen between two intervals. We give a scheme by the map `index` sending a pair to its basic
 relation. A set `C` of basic relations is read as their union `S.rel C`, the pairs whose index
 lies in `C`. Reading is a homomorphism of complete Boolean algebras, takes converses to
@@ -17,7 +17,7 @@ The *weak composition* `S.weakComp C D` of two sets of basic relations is the se
 relations that the composite `S.rel C ○ S.rel D` meets, the best approximation to the composite
 within the scheme. The composite lies in the reading of the weak composition, and the two are
 equal exactly when the composite is a union of basic relations. In the terms of
-[ligozat-renz-2004], reading is a weak representation of the algebra of sets of basic relations
+Ligozat and Renz, reading is a weak representation of the algebra of sets of basic relations
 under weak composition, and a representation where it is injective and every weak composition is
 a composite.
 
@@ -42,7 +42,7 @@ a composite.
 * A scheme is its index map and not a family of relations, so that the basic relations partition
   the pairs by construction and reading is a preimage, to which mathlib's
   `CompleteLatticeHom.setPreimage` and `Function.Surjective.preimage_subset_preimage_iff` apply.
-* [ligozat-renz-2004] ask that the basic relations be nonempty and that the diagonal be one of
+* Ligozat and Renz ask that the basic relations be nonempty and that the diagonal be one of
   them. Here nonemptiness is the hypothesis `Function.Surjective S.index` where it is used, since
   a time with one point realizes only equality, and the diagonal may be a union of basic
   relations, as when point intervals are told apart from proper ones.

@@ -13,7 +13,7 @@ public import Mathlib.Algebra.Order.Kleene
 /-!
 # The interval algebra
 
-An element of the interval algebra is a set of the relations of [allen-1983] in which one interval
+An element of the interval algebra is a set of Allen's relations, in which one interval
 of a linear order may stand to another, read as their disjunction. Elements form a Boolean algebra
 with a converse and a composition whose unit is equality; composition distributes over joins,
 which the `IdemSemiring` instance records. Each element is a
@@ -21,7 +21,7 @@ which the `IdemSemiring` instance records. Each element is a
 relations [order as the elements do](##IntervalAlgebra.toSetRel_subset_toSetRel_iff), and on a
 dense order without endpoints the relation of a product
 [is the composite of the relations](##IntervalAlgebra.toSetRel_mul), so the laws of composition
-are those of relations on the rationals. In the terms of [ligozat-renz-2004] the Allen relations
+are those of relations on the rationals. In the terms of Ligozat and Renz the Allen relations
 are the basic relations of the partition scheme of intervals (`IntervalAlgebra.scheme`), and the
 product is weak composition among the intervals of six points
 (`IntervalAlgebra.mul_eq_weakComp`). The relation of an element is its preimage under the

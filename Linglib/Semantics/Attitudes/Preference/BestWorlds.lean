@@ -104,7 +104,7 @@ theorem Want.not_compl [Finite W] (h : dom.Nonempty) (hp : Want A dom p) : ¬ Wa
 
 /-- Wanting over the accessible worlds of a modal base is truth at Kratzer's best worlds. -/
 theorem want_accessibleWorlds_iff {f g : Background W} {w : W} :
-    Want (g w) (f.accessibleWorlds w) p ↔ bestWorlds f g w ⊆ p :=
+    Want (g w) (f.accessibleWorlds w) p ↔ f.bestWorlds g w ⊆ p :=
   Iff.rfl
 
 end Want

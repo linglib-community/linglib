@@ -85,7 +85,7 @@ abbrev goals : Background Hoboken := fun _ ↦ {goHoboken}
 -- (11)
 theorem not_obvious : takeA ∉ (Background.restrict ⊥ wantHarlem).necessity goals wantA := by
   simp only [Background.necessity_eq_principal_of_finite,
-    Filter.mem_principal, Set.subset_def, bestWorlds, Preorder.mem_minimals_iff,
+    Filter.mem_principal, Set.subset_def, Background.bestWorlds, Preorder.mem_minimals_iff,
     Background.mem_accessibleWorlds, Background.restrict, Preorder.ofLowerSets_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true]
@@ -114,7 +114,7 @@ abbrev saebo : Background Conflict := fun _ ↦ {goHoboken, goHarlem}
 
 theorem not_saebo : takeA ∉ Background.necessity ⊥ saebo aTrain := by
   simp only [Background.necessity_eq_principal_of_finite, Filter.mem_principal, Set.subset_def,
-    bestWorlds, Preorder.mem_minimals_iff,
+    Background.bestWorlds, Preorder.mem_minimals_iff,
     Background.mem_accessibleWorlds,
     Preorder.ofLowerSets_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp, forall_eq,
@@ -159,7 +159,7 @@ theorem not_nested :
     {w' | takeA ∈ Background.necessity ⊥ goals w'} ∉
       (Background.restrict ⊥ wantHarlem).necessity closeness actual := by
   simp only [Background.necessity_eq_principal_of_finite,
-    Filter.mem_principal, Set.subset_def, bestWorlds, Preorder.mem_minimals_iff,
+    Filter.mem_principal, Set.subset_def, Background.bestWorlds, Preorder.mem_minimals_iff,
     Background.mem_accessibleWorlds, Background.restrict, Preorder.ofLowerSets_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true]
@@ -184,7 +184,7 @@ def haveTo (f : Background W) (p q : Set W) (w : W) : Prop :=
 /-- *To p, ought to q* (24a) holds when every accessible world achieving the designated goal `p`
 that is best by the ancillary considerations `g` is a `q`-world. -/
 def oughtTo (f g : Background W) (p q : Set W) (w : W) : Prop :=
-  bestWorlds (f.restrict p) g w ⊆ q
+  (f.restrict p).bestWorlds g w ⊆ q
 
 theorem haveTo_iff : haveTo f p q w ↔ ∀ v ∈ f.accessibleWorlds w, v ∈ p → v ∈ q := by
   rw [haveTo, Background.mem_simpleNecessity, Background.accessibleWorlds_restrict]
@@ -203,7 +203,7 @@ end DesignatedGoals
 theorem exists_oughtTo_not_haveTo :
     oughtTo (⊥ : Background Bool) (fun _ ↦ {{true}}) .univ {true} true ∧
       ¬ haveTo (⊥ : Background Bool) .univ {true} true := by
-  simp only [oughtTo, haveTo_iff, Set.subset_def, bestWorlds,
+  simp only [oughtTo, haveTo_iff, Set.subset_def, Background.bestWorlds,
     Preorder.mem_minimals_iff, Background.mem_accessibleWorlds, Background.restrict,
     Preorder.ofLowerSets_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp, forall_eq,
@@ -230,7 +230,7 @@ abbrev meetRuud : Set Ruud := takeA
 
 theorem not_haveTo_and_oughtTo :
     ¬ haveTo ⊥ .univ takeA aTrain ∧ oughtTo ⊥ (fun _ ↦ {meetRuud}) .univ takeA aTrain := by
-  simp only [oughtTo, haveTo_iff, Set.subset_def, bestWorlds,
+  simp only [oughtTo, haveTo_iff, Set.subset_def, Background.bestWorlds,
     Preorder.mem_minimals_iff, Background.mem_accessibleWorlds, Background.restrict,
     Preorder.ofLowerSets_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp, forall_eq,
@@ -257,7 +257,7 @@ abbrev goHarlem : Set Pedro := {aTrain, cTrainKiss}
 abbrev kissPedro : Set Pedro := {cTrainKiss}
 
 theorem oughtTo_kissPedro : oughtTo ⊥ (fun _ ↦ {kissPedro}) goHarlem kissPedro aTrain := by
-  simp only [oughtTo, Set.subset_def, bestWorlds, Preorder.mem_minimals_iff,
+  simp only [oughtTo, Set.subset_def, Background.bestWorlds, Preorder.mem_minimals_iff,
     Background.mem_accessibleWorlds, Background.restrict, Preorder.ofLowerSets_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true]

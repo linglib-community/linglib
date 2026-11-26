@@ -47,24 +47,24 @@ open Filter
 /-- The weak necessities at `w`, *ought φ*, are the propositions true at the best of the best
 accessible worlds under a secondary ordering source `g'`. -/
 def weakNecessity (f g g' : Background W) (w : W) : Filter W :=
-  𝓟 (bestWorlds (.ofRel (bestAccessible f g)) g' w)
+  𝓟 ((≤[g' w]).minimals (f.bestWorlds g w))
 
 theorem mem_weakNecessity :
-    s ∈ weakNecessity f g g' w ↔ (≤[g' w]).minimals (bestWorlds f g w) ⊆ s := by
-  simp [weakNecessity, bestWorlds]
+    s ∈ weakNecessity f g g' w ↔ (≤[g' w]).minimals (f.bestWorlds g w) ⊆ s :=
+  .rfl
 
 /-- Every strong necessity, true at the best worlds, is a weak necessity. -/
-theorem weakNecessity_le_principal : weakNecessity f g g' w ≤ 𝓟 (bestWorlds f g w) := fun _ h ↦
+theorem weakNecessity_le_principal : weakNecessity f g g' w ≤ 𝓟 (f.bestWorlds g w) := fun _ h ↦
   mem_weakNecessity.2 ((Preorder.minimals_subset _ _).trans h)
 
 /-- With no secondary ordering source, weak necessity is strong necessity. -/
 @[simp] theorem weakNecessity_bot (f g : Background W) (w : W) :
-    weakNecessity f g ⊥ w = 𝓟 (bestWorlds f g w) := by
+    weakNecessity f g ⊥ w = 𝓟 (f.bestWorlds g w) := by
   simp [weakNecessity]
 
 theorem exists_mem_weakNecessity_not_bestWorlds_subset :
     ∃ (f g g' : Background Bool) (s : Set Bool) (w : Bool),
-      s ∈ weakNecessity f g g' w ∧ ¬ bestWorlds f g w ⊆ s := by
+      s ∈ weakNecessity f g g' w ∧ ¬ f.bestWorlds g w ⊆ s := by
   refine ⟨⊥, ⊥, fun _ ↦ {{true}}, {true}, true, ?_,
     fun h ↦ absurd (h (a := false) (by simp)) (by simp)⟩
   simp [mem_weakNecessity, Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff]

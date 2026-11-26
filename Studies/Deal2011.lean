@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Modality.Necessity
+public import Linglib.Semantics.Modality.QuantificationalForce
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Languages.NezPerce.Modals
 public import Linglib.Data.Examples.Deal2011

@@ -134,18 +134,18 @@ section Relational
 
 theorem possibility_of_isRealistic {f g : Background W} {p : Set W}
     {w : W} (hf : f.IsRealistic) (hw : ∀ q ∈ g w, w ∈ q) (hp : w ∈ p) :
-    ∃ v ∈ bestWorlds f g w, v ∈ p :=
+    ∃ v ∈ f.bestWorlds g w, v ∈ p :=
   ⟨w, ⟨hf w, fun _ _ _ q hq _ ↦ hw q hq⟩, hp⟩
 
 /-- Realism of the base alone does not make best-worlds possibility veridical, so (14) needs
 more than (14b): the actual world must be among the best-ranked. -/
 theorem exists_not_possibility :
     ∃ (f g : Background Bool) (p : Set Bool) (w : Bool),
-      f.IsRealistic ∧ w ∈ p ∧ ¬ ∃ v ∈ bestWorlds f g w, v ∈ p :=
+      f.IsRealistic ∧ w ∈ p ∧ ¬ ∃ v ∈ f.bestWorlds g w, v ∈ p :=
   ⟨⊥, fun _ ↦ {{true}}, {false}, false, fun _ ↦ by simp, rfl,
     fun ⟨v, hvb, hv⟩ ↦ by
-      obtain ⟨_, hbest⟩ := mem_bestWorlds.1 hvb
-      have h := hbest true (accessible_bot _ _)
+      obtain ⟨_, hbest⟩ := Background.mem_bestWorlds.1 hvb
+      have h := hbest true (Background.accessible_bot _ _)
       simp_all [Preorder.ofLowerSets_le_iff]⟩
 
 end Relational

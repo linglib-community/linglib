@@ -158,9 +158,9 @@ theorem no_dominant_world :
   decide_worlds
 
 theorem mem_bestWorlds_iff (w : World) :
-    w ∈ bestWorlds circumstances desires w₀ ↔ w = (true, true) ∨ w = (false, false) := by
+    w ∈ circumstances.bestWorlds desires w₀ ↔ w = (true, true) ∨ w = (false, false) := by
   revert w
-  simp only [mem_bestWorlds]
+  simp only [Background.mem_bestWorlds]
   decide_worlds
 
 /-- Decide a verdict of the limit-free operators through the best worlds. -/
@@ -268,7 +268,7 @@ theorem ordering_differs {W : Type*} {r s : Set W} {u v : W} (hr : u ∈ r) (hs 
 /-- Decide a claim about a conditional over a finite set of worlds. -/
 scoped macro "decide_conditional" : tactic =>
   `(tactic| (simp only [Background.necessity_eq_principal_of_finite, Filter.mem_principal,
-      Set.subset_def, mem_bestWorlds, Background.mem_accessibleWorlds_restrict,
+      Set.subset_def, Background.mem_bestWorlds, Background.mem_accessibleWorlds_restrict,
       Background.accessibleWorlds_bot, Set.mem_univ, true_and, Preorder.ofLowerSets_le_iff,
       factsSeverally, factsJointly, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
       Set.mem_ofPred_eq, forall_eq, Prod.forall, Bool.forall_bool]; simp))
@@ -324,7 +324,7 @@ def morallyCommanded : Background Situation :=
 /-- Decide a claim about the backgrounds and the ordering over the four situations. -/
 scoped macro "decide_situations" : tactic =>
   `(tactic| (simp only [Background.necessity_eq_principal_of_finite, Filter.mem_principal,
-      Background.mem_simpleNecessity, Set.subset_def, mem_bestWorlds,
+      Background.mem_simpleNecessity, Set.subset_def, Background.mem_bestWorlds,
       Background.mem_accessibleWorlds,
       Background.mem_accessibleWorlds_restrict, Background.accessibleWorlds_bot, Set.mem_univ,
       true_and, Preorder.ofLowerSets_le_iff, morallyCommanded, Function.const_apply,

@@ -13,7 +13,7 @@ logic (`Logic/Temporal/Tense/Basic.lean`): the relation of `{.gt}` is `<`, so `�
 is `𝐅`, that of `{.lt}` is its converse, so `◇[toSetRel {.lt}]` is `𝐏`, and `◇[toSetRel ⊤]` is
 `𝐄`. The correspondences of tense logic are restated for these elements. Two results are about
 the algebra itself. Reversing time exchanges the operator of each element with the operator of
-its converse, the mirror image of [prior-1967]. One operator under another entails the operator
+its converse, Prior's mirror image. One operator under another entails the operator
 of the product, and is that operator for all elements exactly when time is dense without
 endpoints.
 

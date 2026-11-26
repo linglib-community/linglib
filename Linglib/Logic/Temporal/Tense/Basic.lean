@@ -14,7 +14,7 @@ them; `𝐄 p` is `𝐏 p ⊔ p ⊔ 𝐅 p` and `𝐀 p` is `𝐇 p ⊓ p ⊓ �
 converse, `𝐏` is left adjoint to `𝐆` and `𝐅` to `𝐇`, which is the minimal tense logic.
 
 A schema *defines* a property of time when it holds of every proposition exactly on the models
-with that property. This file proves the first-order correspondences of [goranko-2023], each for
+with that property. This file proves the first-order correspondences of Goranko's textbook, each for
 the weakest structure that states it: no end, no beginning, density and transitivity for a bare
 `<`, a beginning and an end for a preorder, and the linearity schemas for a bare `<`, with their
 form on a partial order.
@@ -263,7 +263,8 @@ example : ∀ p : ℕ → Prop, 𝐆 p ≤ 𝐅 p := noEnd_iff.2 inferInstance
 example : ¬ ∀ p : ℕ → Prop, 𝐇 p ≤ 𝐏 p := fun h ↦
   let ⟨_, hs⟩ := (noBeg_iff.1 h).exists_lt 0; Nat.not_lt_zero _ hs
 
-example : (⊤ : ℕ → Prop) ≤ 𝐇 ⊥ ⊔ 𝐏 (𝐇 ⊥) := beg_iff.2 fun t ↦ ⟨0, fun _ _ ↦ Nat.zero_le _, t.zero_le⟩
+example : (⊤ : ℕ → Prop) ≤ 𝐇 ⊥ ⊔ 𝐏 (𝐇 ⊥) :=
+  beg_iff.2 fun t ↦ ⟨0, fun _ _ ↦ Nat.zero_le _, t.zero_le⟩
 
 example : ¬ ∀ p : ℕ → Prop, 𝐅 p ≤ 𝐅 (𝐅 p) := fun h ↦
   let ⟨_, h₁, h₂⟩ := (F_dense_iff.1 h).dense 0 1 Nat.zero_lt_one; by omega

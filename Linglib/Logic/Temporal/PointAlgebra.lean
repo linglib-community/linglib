@@ -9,7 +9,7 @@ public import Mathlib.Data.Fintype.Powerset
 /-!
 # The point algebra
 
-An element of the point algebra of [vilain-kautz-1986] is a set of the orderings in which one
+An element of the point algebra of Vilain and Kautz is a set of the orderings in which one
 point of a linear order may stand to another, read as the disjunction of the relations `<`, `=`
 and `>` that it contains. Elements form a Boolean algebra with a converse and a composition whose
 unit is `{eq}`; composition distributes over joins, which the `IdemSemiring` instance records.
@@ -18,7 +18,7 @@ two points the relations [order as the elements do](##PointAlgebra.toSetRel_subs
 and passing to the relation preserves joins, complements and converses. The relation of a product
 contains the composite of the relations, and is the composite for all elements [exactly when the
 order is dense and has no least or greatest point](##PointAlgebra.toSetRel_mul_iff), where the
-algebra is that of the relations definable from `<`. In the terms of [ligozat-renz-2004] the
+algebra is that of the relations definable from `<`. In the terms of Ligozat and Renz the
 orderings are the basic relations of the partition scheme of a linear order
 (`PointAlgebra.scheme`), reading an element as a relation is a weak representation, and the
 product is weak composition on dense time without endpoints (`PointAlgebra.weakComp_eq_mul`).

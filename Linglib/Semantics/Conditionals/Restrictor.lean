@@ -54,9 +54,10 @@ theorem might_variablyStrictImp_eq_setOf_possibility :
 /-- Over the best worlds, *if α, must β* is truth at the best accessible α-worlds. -/
 theorem orderingImp_eq_setOf_bestWorlds_subset :
     orderingImp f.accessibleWorlds (fun w ↦ ≤[g w]) α β =
-      {w | bestWorlds (f.restrict α) g w ⊆ β} :=
+      {w | (f.restrict α).bestWorlds g w ⊆ β} :=
   Set.ext fun w ↦ by
-    rw [mem_orderingImp, Set.mem_ofPred_eq, bestWorlds, Background.accessibleWorlds_restrict]
+    rw [mem_orderingImp, Set.mem_ofPred_eq, Background.bestWorlds,
+      Background.accessibleWorlds_restrict]
 
 /-- With an empty ordering source, *if α, must β* is the strict conditional over the accessible
 worlds. -/

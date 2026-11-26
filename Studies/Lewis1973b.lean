@@ -293,9 +293,9 @@ theorem not_mem_variablyStrictImp_line_two (ha : a ≤ 1) :
 -- §3.4: conditional excluded middle at an antecedent
 theorem forall_mem_variablyStrictImp_or_compl_iff :
     (∀ q, i ∈ variablyStrictImp access ord p q ∨ i ∈ variablyStrictImp access ord p qᶜ) ↔
-      @atBotOn W W (ord i) id (access i ∩ p) = ⊥ ∨
-        IsAtom (@atBotOn W W (ord i) id (access i ∩ p)) :=
-  show (∀ q, q ∈ @atBotOn W W (ord i) id _ ∨ qᶜ ∈ @atBotOn W W (ord i) id _) ↔ _ from
+      atBotOn[ord i] (access i ∩ p) = ⊥ ∨
+        IsAtom (atBotOn[ord i] (access i ∩ p)) :=
+  show (∀ q, q ∈ atBotOn[ord i] _ ∨ qᶜ ∈ atBotOn[ord i] _) ↔ _ from
     Filter.forall_mem_or_compl_mem_iff
 
 -- Conditional excluded middle fails for the line although lengths over an inch are never tied.
@@ -397,7 +397,7 @@ def eval (access : W → Set W) (ord : W → Preorder W) (V : α → Set W) : Fo
 
 theorem mem_eval_corner {A B : Formula α} :
     w ∈ eval access ord V (A.corner B) ↔
-      eval access ord V B ∈ @atBotOn W W (ord w) id (access w ∩ eval access ord V A) :=
+      eval access ord V B ∈ atBotOn[ord w] (access w ∩ eval access ord V A) :=
   Iff.rfl
 
 @[simp] theorem eval_and {A B : Formula α} :

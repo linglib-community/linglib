@@ -50,7 +50,7 @@ circumstantial base `circ e P` under the ordering source `ni e`, the proposition
 interrupted, some event of type `P` includes `e` as a nonfinal part. -/
 def InProgress (circ : E → (W → E → Prop) → Background W) (ni : E → Background W) (e : E)
     (P : W → E → Prop) (w : W) : Prop :=
-  ∀ v ∈ bestWorlds (circ e P) (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e'
+  ∀ v ∈ (circ e P).bestWorlds (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e'
 
 /-- The progressive of `P` holds at the run times of the events in progress toward `P`. -/
 def progressive (circ : E → (W → E → Prop) → Background W) (ni : E → Background W)
@@ -62,7 +62,7 @@ variable {circ : E → (W → E → Prop) → Background W} {ni : E → Backgrou
 
 theorem inProgress_iff :
     InProgress circ ni e P w ↔
-      ∀ v ∈ bestWorlds (circ e P) (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e' :=
+      ∀ v ∈ (circ e P).bestWorlds (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e' :=
   .rfl
 
 theorem progressive_iff :

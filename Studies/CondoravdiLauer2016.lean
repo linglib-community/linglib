@@ -140,10 +140,10 @@ theorem threeWay_pairwise_not_consistent :
 -- (26), §3.2.2, (88), footnote 46 [von-fintel-iatridou-2005]
 theorem bestWorlds_designatedGoal_iff_haveTo {f : Background W} {r : Set W}
     (h : ((f.restrict p).accessibleWorlds w).Nonempty) :
-    bestWorlds f (fun _ ↦ {p}) w ⊆ r ↔ VonFintelIatridou2005.haveTo f p r w := by
+    f.bestWorlds (fun _ ↦ {p}) w ⊆ r ↔ VonFintelIatridou2005.haveTo f p r w := by
   have hf : f ⊔ (fun _ ↦ {p}) = f.restrict p := funext fun _ ↦ Set.union_singleton
   rw [VonFintelIatridou2005.haveTo, Background.mem_simpleNecessity,
-    bestWorlds_eq_accessibleWorlds_sup (hf ▸ h), hf]
+    Background.bestWorlds_eq_accessibleWorlds_sup (hf ▸ h), hf]
 
 /-! ### Double-modal structure -/
 
@@ -151,10 +151,10 @@ theorem bestWorlds_designatedGoal_iff_haveTo {f : Background W} {r : Set W}
 theorem single_modal_strengthening {f g : Background W} {α β γ : Set W}
     (h₁ : γ ∈ (f.restrict α).necessity g w)
     (h₂ : γᶜ ∈ (f.restrict (α ∩ β)).necessity g w) :
-    ∀ u ∈ bestWorlds (f.restrict α) g w, u ∉ β := by
+    ∀ u ∈ (f.restrict α).bestWorlds g w, u ∉ β := by
   intro u hu hβ
   have hu' := Background.mem_accessibleWorlds_restrict.1 hu.1
-  exact Background.principal_bestWorlds_le_necessity h₂ (mem_bestWorlds_of_subset
+  exact Background.principal_bestWorlds_le_necessity h₂ (Background.mem_bestWorlds_of_subset
     (fun v hv ↦ Background.accessibleWorlds_restrict_mono Set.inter_subset_left hv)
     hu (Background.mem_accessibleWorlds_restrict.2 ⟨hu'.1, hu'.2, hβ⟩))
     (Background.principal_bestWorlds_le_necessity h₁ hu)
@@ -169,17 +169,17 @@ def orderingSource (P : A → W → PreferenceStructure W) (a : A) : Background 
 -- §2.3
 theorem bestWorlds_orderingSource {f : Background W} {v : W}
     (hC : (P a v).Consistent (f.accessibleWorlds v)) :
-    bestWorlds f (orderingSource P a) v = f.accessibleWorlds v ∩ ⋂₀ (P a v).maximals := by
+    f.bestWorlds (orderingSource P a) v = f.accessibleWorlds v ∩ ⋂₀ (P a v).maximals := by
   have h : (f ⊔ orderingSource P a).accessibleWorlds v =
       f.accessibleWorlds v ∩ ⋂₀ (P a v).maximals := by
     rw [Background.accessibleWorlds_sup]
     exact congrArg (f.accessibleWorlds v ∩ ·)
       (Set.ext fun _ ↦ Background.mem_accessibleWorlds.trans Set.mem_sInter.symm)
-  rw [bestWorlds_eq_accessibleWorlds_sup (h ▸ hC.inter_sInter_maximals_nonempty), h]
+  rw [Background.bestWorlds_eq_accessibleWorlds_sup (h ▸ hC.inter_sInter_maximals_nonempty), h]
 
 private theorem mem_bestWorlds_bot_restrict {α : Set W} {v : W} (hα : v ∈ α) :
-    v ∈ bestWorlds ((⊥ : Background W).restrict α) ⊥ w := by
-  rw [bestWorlds_bot, Background.mem_accessibleWorlds_restrict]
+    v ∈ ((⊥ : Background W).restrict α).bestWorlds ⊥ w := by
+  rw [Background.bestWorlds_bot, Background.mem_accessibleWorlds_restrict]
   exact ⟨by simp, hα⟩
 
 -- (90)
@@ -197,10 +197,10 @@ theorem not_want_of_mem_restricted {f : Background W} (hC : ∀ w, (P a w).Consi
 /-- Under consistency (66), the conditional (88) holds iff its paraphrase (89) does, and compatible
 goals such as comfort in (92) remain. -/
 theorem mem_necessity_orderingSource_iff {f₁ g₁ f₂ : Background W} {α : Set W}
-    (hC : ∀ v ∈ bestWorlds (f₁.restrict α) g₁ w, (P a v).Consistent (f₂.accessibleWorlds v))
-    (hlim : LimitAssumption (f₁.restrict α) g₁ w) :
-    {v | bestWorlds f₂ (orderingSource P a) v ⊆ q} ∈ (f₁.restrict α).necessity g₁ w ↔
-      ∀ v ∈ bestWorlds (f₁.restrict α) g₁ w, f₂.accessibleWorlds v ∩ ⋂₀ (P a v).maximals ⊆ q := by
+    (hC : ∀ v ∈ (f₁.restrict α).bestWorlds g₁ w, (P a v).Consistent (f₂.accessibleWorlds v))
+    (hlim : (f₁.restrict α).LimitAssumption g₁ w) :
+    {v | f₂.bestWorlds (orderingSource P a) v ⊆ q} ∈ (f₁.restrict α).necessity g₁ w ↔
+      ∀ v ∈ (f₁.restrict α).bestWorlds g₁ w, f₂.accessibleWorlds v ∩ ⋂₀ (P a v).maximals ⊆ q := by
   rw [Background.necessity_eq_principal hlim, Filter.mem_principal, Set.subset_def]
   refine forall₂_congr fun v hv ↦ ?_
   rw [Set.mem_ofPred_eq, bestWorlds_orderingSource (hC v hv)]
@@ -290,7 +290,7 @@ theorem consistent_ep (v : World) : (ep () v).Consistent (fHist.accessibleWorlds
     ⟨⟨.hoboken, .aTrain, .path⟩, mem_fHist.2 ⟨rfl, rfl⟩, nofun⟩]
 
 theorem bestWorlds_fHist (v : World) :
-    bestWorlds fHist (orderingSource ep ()) v = fHist.accessibleWorlds v ∩ v.goal.dest := by
+    fHist.bestWorlds (orderingSource ep ()) v = fHist.accessibleWorlds v ∩ v.goal.dest := by
   rw [bestWorlds_orderingSource (consistent_ep v)]
   simp [ep]
 
@@ -306,13 +306,13 @@ theorem w₀_excluded :
     (fun _ ↦ by rw [harlem_inter_hoboken, Set.inter_empty]) h (mem_maximals_discrete rfl)⟩
 
 private theorem mem_bestWorlds_fBelS {α : Set World} {v : World}
-    (hv : v.harlemTrain = .aTrain) (hα : v ∈ α) : v ∈ bestWorlds (fBelS.restrict α) ⊥ w := by
-  rw [bestWorlds_bot, Background.mem_accessibleWorlds_restrict]
+    (hv : v.harlemTrain = .aTrain) (hα : v ∈ α) : v ∈ (fBelS.restrict α).bestWorlds ⊥ w := by
+  rw [Background.bestWorlds_bot, Background.mem_accessibleWorlds_restrict]
   exact ⟨mem_fBelS.2 hv, hα⟩
 
 private theorem anankastic_dest {d t : Set World}
     (hd : ∀ u : World, u.harlemTrain = .aTrain → (u ∈ d ↔ u ∈ t)) :
-    {v | bestWorlds fHist (orderingSource ep ()) v ⊆ t} ∈
+    {v | fHist.bestWorlds (orderingSource ep ()) v ⊆ t} ∈
       (fBelS.restrict {v | Want ep () d v}).necessity ⊥ w := by
   refine (mem_necessity_orderingSource_iff (fun v _ ↦ consistent_ep v) (.bot _ _)).2
     fun v hv u ⟨hu, hdu⟩ ↦ ?_
@@ -321,20 +321,20 @@ private theorem anankastic_dest {d t : Set World}
 
 /-- The Harlem sentence (1) is true at every world, the Hoboken world included, §7.1.1. -/
 theorem anankastic_harlem :
-    {v | bestWorlds fHist (orderingSource ep ()) v ⊆ aTrain} ∈
+    {v | fHist.bestWorlds (orderingSource ep ()) v ⊆ aTrain} ∈
       (fBelS.restrict {v | Want ep () harlem v}).necessity ⊥ w :=
   anankastic_dest fun u hu ↦ by simp [harlem, aTrain, hu]
 
 -- (15)
 theorem anankastic_hoboken :
-    {v | bestWorlds fHist (orderingSource ep ()) v ⊆ path} ∈
+    {v | fHist.bestWorlds (orderingSource ep ()) v ⊆ path} ∈
       (fBelS.restrict {v | Want ep () hoboken v}).necessity ⊥ w :=
   anankastic_dest fun ⟨_, t, _⟩ hu ↦ by cases t <;> simp_all [hoboken, path]
 
 /-- The conditional (14), *if you want to go to Harlem, you can take the PATH train*, is false at
 every world (§2.3). -/
 theorem not_possibility_path :
-    {v | ∃ u ∈ bestWorlds fHist (orderingSource ep ()) v, u ∈ path} ∉
+    {v | ∃ u ∈ fHist.bestWorlds (orderingSource ep ()) v, u ∈ path} ∉
       (fBelS.restrict {v | Want ep () harlem v}).necessity ⊥ w := fun h ↦ by
   obtain ⟨u, hu, hpath⟩ := Background.principal_bestWorlds_le_necessity h
     (mem_bestWorlds_fBelS rfl (mem_maximals_discrete rfl) (w := w)
@@ -345,28 +345,28 @@ theorem not_possibility_path :
 
 -- (105), §7.2.1
 theorem not_anankastic_desire :
-    {v | bestWorlds fHist (orderingSource ep ()) v ⊆ aTrain} ∉
+    {v | fHist.bestWorlds (orderingSource ep ()) v ⊆ aTrain} ∉
       (fBelS.restrict {v | Want desire () harlem v}).necessity ⊥ w₀ := fun h ↦
   nomatch Background.principal_bestWorlds_le_necessity h
     (mem_bestWorlds_fBelS (v := w₀) rfl (mem_maximals_discrete (Or.inl rfl)))
-    (show w₀ ∈ bestWorlds fHist (orderingSource ep ()) w₀ by
+    (show w₀ ∈ fHist.bestWorlds (orderingSource ep ()) w₀ by
       rw [bestWorlds_fHist]; exact ⟨mem_fHist.2 ⟨rfl, rfl⟩, nofun⟩)
 
-private theorem w₀_mem_bestWorlds : w₀ ∈ bestWorlds fBelS (orderingSource ep ()) w₀ := by
+private theorem w₀_mem_bestWorlds : w₀ ∈ fBelS.bestWorlds (orderingSource ep ()) w₀ := by
   rw [bestWorlds_orderingSource
     ((consistent_ep w₀).mono fun _ hu ↦ mem_fBelS.2 (mem_fHist.1 hu).2)]
   exact ⟨mem_fBelS.2 rfl, by simp [ep, w₀]; exact nofun⟩
 
 -- §2.3
 theorem saebo_harlem :
-    ¬ bestWorlds fBelS ((orderingSource ep ()).restrict harlem) w₀ ⊆ aTrain := fun h ↦
-  nomatch h (mem_bestWorlds_insert (q := hoboken) (mem_maximals_discrete rfl)
+    ¬ fBelS.bestWorlds ((orderingSource ep ()).restrict harlem) w₀ ⊆ aTrain := fun h ↦
+  nomatch h (Background.mem_bestWorlds_insert (q := hoboken) (mem_maximals_discrete rfl)
     (fun _ h h' ↦ h h') w₀_mem_bestWorlds nofun)
 
 -- (14)
 theorem saebo_path :
-    ∃ u ∈ bestWorlds fBelS ((orderingSource ep ()).restrict harlem) w₀, u ∈ path :=
-  ⟨w₀, mem_bestWorlds_insert (q := hoboken) (mem_maximals_discrete rfl)
+    ∃ u ∈ fBelS.bestWorlds ((orderingSource ep ()).restrict harlem) w₀, u ∈ path :=
+  ⟨w₀, Background.mem_bestWorlds_insert (q := hoboken) (mem_maximals_discrete rfl)
     (fun _ h h' ↦ h h') w₀_mem_bestWorlds nofun, rfl⟩
 
 end HobokenScenario
@@ -459,7 +459,7 @@ private theorem consistent_costFirst (v : World) :
 /-- With comfort ranked over cost, (92) is true: the only comfortable way to Vladivostok is the
 Chinese train. -/
 theorem haveTo_chinese_comfortFirst :
-    {v | bestWorlds ⊥ (orderingSource comfortFirst ()) v ⊆ takeChinese} ∈
+    {v | Background.bestWorlds ⊥ (orderingSource comfortFirst ()) v ⊆ takeChinese} ∈
       (Background.restrict ⊥ {v | Want comfortFirst () vladivostok v}).necessity ⊥ w := by
   refine (mem_necessity_orderingSource_iff (fun v _ ↦ consistent_comfortFirst v)
     (.bot _ _)).2
@@ -470,7 +470,7 @@ theorem haveTo_chinese_comfortFirst :
   cases u <;> simp_all [vladivostok, comfort, takeChinese]
 
 theorem haveTo_russian_costFirst :
-    {v | bestWorlds ⊥ (orderingSource costFirst ()) v ⊆ takeRussian} ∈
+    {v | Background.bestWorlds ⊥ (orderingSource costFirst ()) v ⊆ takeRussian} ∈
       (Background.restrict ⊥ {v | Want costFirst () vladivostok v}).necessity ⊥ w := by
   refine (mem_necessity_orderingSource_iff (fun v _ ↦ consistent_costFirst v) (.bot _ _)).2
     fun _ _ u ⟨_, hu⟩ ↦ ?_
@@ -481,7 +481,7 @@ theorem haveTo_russian_costFirst :
 
 -- (92), §7.1.1
 theorem not_haveTo_chinese_costFirst :
-    {v | bestWorlds ⊥ (orderingSource costFirst ()) v ⊆ takeChinese} ∉
+    {v | Background.bestWorlds ⊥ (orderingSource costFirst ()) v ⊆ takeChinese} ∉
       (Background.restrict ⊥ {v | Want costFirst () vladivostok v}).necessity ⊥ w :=
   fun h ↦ by
   have hw : Want costFirst () vladivostok w := by
@@ -540,7 +540,7 @@ def strong (_ : Unit) (_ : World) : PreferenceStructure World := .single travel
 
 /-- (29b) is true: every continuation realizing both preferences is vaccinated. -/
 theorem should_vaccine :
-    {v | bestWorlds ⊥ (orderingSource ep ()) v ⊆ vaccinated} ∈
+    {v | Background.bestWorlds ⊥ (orderingSource ep ()) v ⊆ vaccinated} ∈
       (Background.restrict ⊥ {v | Want ep () travel v}).necessity ⊥ w := by
   refine (mem_necessity_orderingSource_iff (fun _ _ ↦
     PreferenceStructure.consistent_discrete_iff.2 ⟨⟨.go, .vaccine⟩, by simp, ?_⟩) (.bot _ _)).2
@@ -552,12 +552,12 @@ theorem should_vaccine :
 
 -- (29b)
 theorem not_should_vaccine_strong :
-    {v | bestWorlds ⊥ (orderingSource strong ()) v ⊆ vaccinated} ∉
+    {v | Background.bestWorlds ⊥ (orderingSource strong ()) v ⊆ vaccinated} ∉
       (Background.restrict ⊥ {v | Want strong () travel v}).necessity ⊥ w := fun h ↦
   nomatch Background.principal_bestWorlds_le_necessity h
     (mem_bestWorlds_bot_restrict (α := {v | Want strong () travel v}) (v := w)
       (mem_maximals_discrete rfl))
-    (show (⟨.go, .none⟩ : World) ∈ bestWorlds ⊥ (orderingSource strong ()) w by
+    (show (⟨.go, .none⟩ : World) ∈ Background.bestWorlds ⊥ (orderingSource strong ()) w by
       rw [bestWorlds_orderingSource
         ((PreferenceStructure.consistent_single_iff (p := travel)
           (B := (⊥ : Background World).accessibleWorlds w)).2 ⟨⟨.go, .none⟩, by simp, rfl⟩)]
@@ -632,7 +632,7 @@ private theorem consistent_ep (v : World) : (ep () v).Consistent (fHist.accessib
 /-- The conditional (83a) is true, since in the typical worlds the train is the only way to be there
 by noon. -/
 theorem should_train :
-    {v | bestWorlds fHist (orderingSource ep ()) v ⊆ byTrain} ∈
+    {v | fHist.bestWorlds (orderingSource ep ()) v ⊆ byTrain} ∈
       (Background.restrict ⊥ {v | Want ep () noon v}).necessity gNorm w := by
   refine (mem_necessity_orderingSource_iff (fun v _ ↦ consistent_ep v) (.of_finite _ _ _)).2
     fun v hv u ⟨hu, hn⟩ ↦ ?_
@@ -642,7 +642,7 @@ theorem should_train :
     rw [Background.accessibleWorlds_sup]
     exact ⟨Background.mem_accessibleWorlds_restrict.2 ⟨by simp, mem_maximals_discrete rfl⟩,
       Background.mem_accessibleWorlds.2 fun _ hp ↦ by rw [Set.mem_singleton_iff.1 hp]; rfl⟩
-  rw [bestWorlds_eq_accessibleWorlds_sup hc, Background.accessibleWorlds_sup] at hv
+  rw [Background.bestWorlds_eq_accessibleWorlds_sup hc, Background.accessibleWorlds_sup] at hv
   obtain ⟨ht, hr⟩ := mem_fHist.1 hu
   rcases hn noon (mem_maximals_discrete rfl) with h | ⟨h, -⟩
   · exact absurd h (hr (ht.trans (Background.mem_accessibleWorlds.1 hv.2 _ rfl)))
@@ -650,7 +650,7 @@ theorem should_train :
 
 /-- (83b) is true: with repairs on the tracks only a ride gets the addressee there by noon. -/
 theorem should_ride :
-    {v | bestWorlds fHist (orderingSource ep ()) v ⊆ byRide} ∈
+    {v | fHist.bestWorlds (orderingSource ep ()) v ⊆ byRide} ∈
       (Background.restrict ⊥ ({v | Want ep () noon v} ∩ repairs)).necessity gNorm w := by
   refine (mem_necessity_orderingSource_iff (fun v _ ↦ consistent_ep v) (.of_finite _ _ _)).2
     fun v hv u ⟨hu, hn⟩ ↦ ?_

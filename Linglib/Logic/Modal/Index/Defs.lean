@@ -10,7 +10,7 @@ public import Mathlib.Tactic.TypeStar
 /-!
 # Indices of evaluation
 
-An index of evaluation is a world and a time, the circumstance of evaluation of [kaplan-1989] with
+An index of evaluation is a world and a time, Kaplan's circumstance of evaluation with
 world and temporal coordinates only. It is not the Kratzer situation, a preordered type with
 parthood, nor the Pearl–Halpern partial valuation (`Causation.Situation`). The relations between
 indices that act on one coordinate are in `Logic/Modal/Index.lean`.

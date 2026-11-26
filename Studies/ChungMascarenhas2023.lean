@@ -450,15 +450,15 @@ open Modality in
 are unsatisfiable on [kratzer-1991]'s account (16). -/
 theorem kratzer_miners_unsatisfiable {V : Type*} (f g : Background V)
     (w : V) (inA inB bA bB bN : Set V)
-    (hbest : (bestWorlds f g w).Nonempty)
+    (hbest : (f.bestWorlds g w).Nonempty)
     (hcover : ∀ v ∈ f.accessibleWorlds w, v ∈ inA ∨ v ∈ inB)
     (hA : ∀ v ∈ bA, v ∉ bN) (hB : ∀ v ∈ bB, v ∉ bN) :
-    ¬ (bestWorlds f g w ⊆ bN ∧ bestWorlds (f.restrict inA) g w ⊆ bA ∧
-        bestWorlds (f.restrict inB) g w ⊆ bB) := by
+    ¬ (f.bestWorlds g w ⊆ bN ∧ (f.restrict inA).bestWorlds g w ⊆ bA ∧
+        (f.restrict inB).bestWorlds g w ⊆ bB) := by
   rintro ⟨hN, hAB, hBB⟩
   obtain ⟨v, hv⟩ := hbest
   have hacc : v ∈ f.accessibleWorlds w := Preorder.minimals_subset _ _ hv
-  have key : ∀ α : Set V, v ∈ α → v ∈ bestWorlds (f.restrict α) g w := fun α hα ↦
+  have key : ∀ α : Set V, v ∈ α → v ∈ (f.restrict α).bestWorlds g w := fun α hα ↦
     Preorder.mem_minimals_of_subset (fun _ hu ↦ (Background.mem_accessibleWorlds_restrict.1 hu).1)
       hv
       (Background.mem_accessibleWorlds_restrict.2 ⟨hacc, hα⟩)

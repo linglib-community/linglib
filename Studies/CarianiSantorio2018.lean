@@ -164,30 +164,30 @@ theorem measure_will [MeasurableSpace W] (μ : Measure W) (h : μ fᶜ = 0) :
 /-! ### Universal *will*
 
 The modal analyses the paper argues against make *will* necessity over the best open worlds,
-`□[bestAccessible f g]` over [kratzer-1981]'s backgrounds with the open worlds as modal base,
+`□[f.bestAccessible g]` over [kratzer-1981]'s backgrounds with the open worlds as modal base,
 such as the most likely open worlds of [kaufmann-2005-truth]. They differ in the ordering source
 `g` (§2.4). -/
 
 /-- A universal analysis commutes with negation for every prejacent iff it is truth at a selected
 world (§2.2, §2.4). -/
 theorem necessity_compl_eq_iff {f g : Background W} :
-    (∀ p : W → Prop, □[bestAccessible f g] pᶜ = (□[bestAccessible f g] p)ᶜ) ↔
-      ∃ σ : W → W, ∀ p : W → Prop, □[bestAccessible f g] p = p ∘ σ := by
+    (∀ p : W → Prop, □[f.bestAccessible g] pᶜ = (□[f.bestAccessible g] p)ᶜ) ↔
+      ∃ σ : W → W, ∀ p : W → Prop, □[f.bestAccessible g] p = p ∘ σ := by
   refine ⟨fun h ↦ ?_, fun ⟨σ, hσ⟩ p ↦ by rw [hσ, hσ]; rfl⟩
   obtain ⟨σ, hσ⟩ := ModalLogic.box_compl_eq_iff.1 h
   exact ⟨σ, fun p ↦ by rw [← ModalLogic.box_graph σ p, hσ]⟩
 
 -- §2.4
 theorem not_necessity_or_necessity_compl {f g : Background W} {v v' : W}
-    (hv : v ∈ bestWorlds f g w) (hv' : v' ∈ bestWorlds f g w) (hA : v ∈ A) (hA' : v' ∉ A) :
-    ¬ (bestWorlds f g w ⊆ A ∨ bestWorlds f g w ⊆ Aᶜ) := by
+    (hv : v ∈ f.bestWorlds g w) (hv' : v' ∈ f.bestWorlds g w) (hA : v ∈ A) (hA' : v' ∉ A) :
+    ¬ (f.bestWorlds g w ⊆ A ∨ f.bestWorlds g w ⊆ Aᶜ) := by
   rintro (h | h)
   exacts [hA' (h hv'), h hv hA]
 
 /-- A credence certain that the best worlds hold a non-`A`-world gives universal *will A*
 credence 0, whatever the ordering source (§2.4). -/
 theorem measure_necessity_eq_zero [MeasurableSpace W] (μ : Measure W) {f g : Background W}
-    (h : ∀ᵐ w ∂μ, ¬ bestWorlds f g w ⊆ A) : μ {w | bestWorlds f g w ⊆ A} = 0 :=
+    (h : ∀ᵐ w ∂μ, ¬ f.bestWorlds g w ⊆ A) : μ {w | f.bestWorlds g w ⊆ A} = 0 :=
   measure_eq_zero_iff_ae_notMem.2 <| h.mono fun _ hw hn ↦ hw hn
 
 /-! ### Two-dimensional content
@@ -270,13 +270,13 @@ def histBase : Background W := .ofRel (.cgraph fun w ↦ frame.alternatives ⟨w
 
 -- §2.3
 theorem credence_necessity_warriorsCap :
-    cynthiaCredence {w | bestWorlds histBase ⊥ w ⊆ warriorsCap} = 0 :=
+    cynthiaCredence {w | histBase.bestWorlds ⊥ w ⊆ warriorsCap} = 0 :=
   measure_necessity_eq_zero _ <| .of_forall fun _ h ↦ by
-    simpa [warriorsCap] using h (show W.cg ∈ bestWorlds histBase ⊥ _ by simp)
+    simpa [warriorsCap] using h (show W.cg ∈ histBase.bestWorlds ⊥ _ by simp)
 
 -- §2.4
 theorem not_necessity_warriorsCap_or_compl (w : W) :
-    ¬ (bestWorlds histBase ⊥ w ⊆ warriorsCap ∨ bestWorlds histBase ⊥ w ⊆ warriorsCapᶜ) :=
+    ¬ (histBase.bestWorlds ⊥ w ⊆ warriorsCap ∨ histBase.bestWorlds ⊥ w ⊆ warriorsCapᶜ) :=
   not_necessity_or_necessity_compl (v := .cw) (v' := .cg) (by simp) (by simp)
     (by simp [warriorsCap]) (by simp [warriorsCap])
 
@@ -284,7 +284,7 @@ theorem not_mem_necessity_wearsCap_or_compl (w : W) :
     ¬ (warriorsCap ∈ (histBase.restrict wearsCap).necessity ⊥ w ∨
       warriorsCapᶜ ∈ (histBase.restrict wearsCap).necessity ⊥ w) := by
   rw [Background.necessity_bot, Background.mem_simpleNecessity, Background.mem_simpleNecessity,
-    ← bestWorlds_bot (histBase.restrict wearsCap) w]
+    ← Background.bestWorlds_bot (histBase.restrict wearsCap) w]
   exact not_necessity_or_necessity_compl (v := .cw) (v' := .cg)
     (by simp [-Background.mem_accessibleWorlds, wearsCap])
     (by simp [-Background.mem_accessibleWorlds, wearsCap]) (by simp [warriorsCap])
