@@ -3,36 +3,32 @@ module
 public import Linglib.Core.Order.ForestOrder
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Logic.Temporal.PointAlgebra
+public import Linglib.Logic.Temporal.Tense.Basic
 
 /-!
-# Tense logic
+# The point algebra's elements as tense operators
 
-The operators of tense logic are possibility and necessity along the relations of the point
-algebra: `◇[toSetRel {.lt}] P t` says that `P` held at some time before `t`, `◇[toSetRel {.gt}]`
-that it will hold at some later time, and `□` that it held or will hold at all of them. Sometime
-in the past is left adjoint to always in the future, the mixing principles of minimal tense
-logic. The schemas beyond the minimal logic correspond to the structure of time: $FFp \to Fp$ is
-axiom 4, its converse holds exactly when time is dense, $Gp \to Fp$ exactly when time has no last
-moment, and $PFp \to Mp$ exactly when time does not branch forward. One operator under another
-entails the operator of the product, and is that operator for all elements of the point algebra
-exactly when time is dense without endpoints. Reversing time exchanges each operator with the
-operator of the converse element, the mirror image of [prior-1967].
+Possibility and necessity along the relations of the point algebra are the operators of tense
+logic (`Logic/Temporal/Tense/Basic.lean`): the relation of `{.gt}` is `<`, so `◇[toSetRel {.gt}]`
+is `𝐅`, that of `{.lt}` is its converse, so `◇[toSetRel {.lt}]` is `𝐏`, and `◇[toSetRel ⊤]` is
+`𝐄`. The correspondences of tense logic are restated for these elements. Two results are about
+the algebra itself. Reversing time exchanges the operator of each element with the operator of
+its converse, the mirror image of [prior-1967]. One operator under another entails the operator
+of the product, and is that operator for all elements exactly when time is dense without
+endpoints.
 
 ## Main results
 
-* `PointAlgebra.diamond_lt_box_gt_gc`, `PointAlgebra.diamond_gt_box_lt_gc`: the adjunctions.
+* `PointAlgebra.toSetRel_gt_eq`, `PointAlgebra.toSetRel_lt_eq`, `PointAlgebra.toSetRel_top_eq`:
+  the relations of the tense operators.
 * `PointAlgebra.diamond_toSetRel_toDual`: the mirror image.
-* `PointAlgebra.isSerial_toSetRel_gt_iff`, `PointAlgebra.diamond_gt_den_iff`: time without a
-  last moment and dense time.
-* `PointAlgebra.diamond_lt_diamond_gt_le_iff`: time that does not branch forward.
 * `PointAlgebra.diamond_toSetRel_mul_iff`: operators compose as the algebra's elements do
   exactly on dense time without endpoints.
 
 ## Implementation notes
 
-The operators are indexed by the elements of the point algebra, which name the eight relations
-definable from the order of times; the minimal logic of one relation and its converse is
-`ModalLogic.diamond_box_gc`. Which element a grammatical tense denotes is said in
+The three equations are not `simp` lemmas: the decidability instance of `x ~[toSetRel C] y` is
+found from the form `toSetRel C`. Which element a grammatical tense denotes is said in
 `Semantics/Tense/Defs.lean`.
 
 ## References
@@ -61,6 +57,19 @@ theorem inv_toSetRel_lt : (toSetRel {.lt} : SetRel T T).inv = toSetRel {.gt} := 
 
 theorem inv_toSetRel_gt : (toSetRel {.gt} : SetRel T T).inv = toSetRel {.lt} := by
   ext ⟨x, y⟩; simp
+
+/-- The relation of `{.gt}` is precedence, the relation of `𝐅` and `𝐆`. -/
+theorem toSetRel_gt_eq : (toSetRel {.gt} : SetRel T T) = {x | x.1 < x.2} := by
+  ext ⟨x, y⟩; simp
+
+/-- The relation of `{.lt}` is the converse of precedence, the relation of `𝐏` and `𝐇`. -/
+theorem toSetRel_lt_eq : (toSetRel {.lt} : SetRel T T) = {x | x.2 < x.1} := by
+  ext ⟨x, y⟩; simp
+
+/-- The relation of the top element is the relation of `𝐄` and `𝐀`. -/
+theorem toSetRel_top_eq :
+    (toSetRel ⊤ : SetRel T T) = {x | x.2 < x.1 ∨ x.1 = x.2 ∨ x.1 < x.2} := by
+  ext ⟨x, y⟩; simp [mem_toSetRel_top, eq_comm]
 
 /-- The mirror image: possibility along an element on reversed time is possibility along its
 converse, so a law of tense logic stays a law with past and future exchanged wherever the times
@@ -125,16 +134,18 @@ theorem isSerial_toSetRel_gt_iff : IsSerial (toSetRel {.gt} : SetRel T T) ↔ No
 the mirror image of the axiom A4 of [prior-1967]. -/
 theorem diamond_lt_den_iff :
     (◇[toSetRel {.lt}] : (T → Prop) → T → Prop) ≤ ◇[toSetRel {.lt}] ∘ ◇[toSetRel {.lt}] ↔
-      DenselyOrdered T :=
-  diamond_den_iff.trans toSetRel_lt_subset_comp_self_iff
+      DenselyOrdered T := by
+  rw [toSetRel_lt_eq]
+  exact TenseLogic.P_dense_iff
 
 /-- Den for the future: a future is a future of a future, $Fp \to FFp$, exactly when time is
 dense. This is the axiom A4 of [prior-1967] (pp. 38-39); the modal axiom 4 is his A3. -/
 theorem diamond_gt_den_iff :
     (◇[toSetRel {.gt}] : (T → Prop) → T → Prop) ≤
         ◇[toSetRel {.gt}] ∘ ◇[toSetRel {.gt}] ↔
-      DenselyOrdered T :=
-  diamond_den_iff.trans toSetRel_gt_subset_comp_self_iff
+      DenselyOrdered T := by
+  rw [toSetRel_gt_eq]
+  exact TenseLogic.F_dense_iff
 
 /-- The quantificational tense of the top element is `M` of [prior-1967], true when `P`
 holds, will hold or held (p. 38). -/
@@ -155,16 +166,8 @@ the *trees* of [burgess-1984], with no branching to the left. -/
 theorem diamond_gt_diamond_lt_le_iff :
     (◇[toSetRel {.gt}] ∘ ◇[toSetRel {.lt}] : (T → Prop) → T → Prop) ≤ ◇[toSetRel ⊤] ↔
       IsForestOrder T := by
-  rw [show (◇[toSetRel {.gt}] ∘ ◇[toSetRel {.lt}] : (T → Prop) → T → Prop) = _ from
-    (funext (diamond_comp _ _)).symm, diamond_le_diamond_iff]
-  refine ⟨fun h ↦ ⟨fun a b c ha hb ↦ ?_⟩, fun h ⟨a, b⟩ ⟨c, h₁, h₂⟩ ↦ ?_⟩
-  · obtain rfl | hac := ha.eq_or_lt
-    · exact .inr hb
-    obtain rfl | hbc := hb.eq_or_lt
-    · exact .inl ha
-    exact mem_toSetRel_top_iff_le.1 (h ⟨c, mem_toSetRel_gt.2 hac, mem_toSetRel_lt.2 hbc⟩)
-  · exact mem_toSetRel_top_iff_le.2 (h.le_total_of_le_of_le (mem_toSetRel_gt.1 h₁).le
-      (mem_toSetRel_lt.1 h₂).le)
+  rw [toSetRel_gt_eq, toSetRel_lt_eq, toSetRel_top_eq]
+  exact TenseLogic.linP_iff_isForestOrder
 
 /-- $PFp \to Mp$, the form `CPFpAApPpFp` of [prior-1967] (p. 52) and an axiom that
 [thomason-1984] reports from Kamp, holds exactly when the successors of any time are comparable,
@@ -172,15 +175,8 @@ with no branching to the right. -/
 theorem diamond_lt_diamond_gt_le_iff :
     (◇[toSetRel {.lt}] ∘ ◇[toSetRel {.gt}] : (T → Prop) → T → Prop) ≤ ◇[toSetRel ⊤] ↔
       IsForestOrder Tᵒᵈ := by
-  rw [show (◇[toSetRel {.lt}] ∘ ◇[toSetRel {.gt}] : (T → Prop) → T → Prop) = _ from
-    (funext (diamond_comp _ _)).symm, diamond_le_diamond_iff, isForestOrder_orderDual_iff]
-  refine ⟨fun h a b c ha hb ↦ ?_, fun h ⟨a, b⟩ ⟨c, h₁, h₂⟩ ↦ ?_⟩
-  · obtain rfl | hac := ha.eq_or_lt
-    · exact .inl hb
-    obtain rfl | hbc := hb.eq_or_lt
-    · exact .inr ha
-    exact mem_toSetRel_top_iff_le.1 (h ⟨c, mem_toSetRel_lt.2 hac, mem_toSetRel_gt.2 hbc⟩)
-  · exact mem_toSetRel_top_iff_le.2 (h (mem_toSetRel_lt.1 h₁).le (mem_toSetRel_gt.1 h₂).le)
+  rw [toSetRel_gt_eq, toSetRel_lt_eq, toSetRel_top_eq]
+  exact TenseLogic.linF_iff_isForestOrder
 
 /-- Axiom 5 along the top element, the law `CMNMpNMp` of [prior-1967] read through
 `ModalLogic.box_five_iff`, holds exactly when time branches neither way. -/
