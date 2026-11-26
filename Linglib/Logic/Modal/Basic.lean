@@ -24,7 +24,6 @@ preserves meets and possibility joins, and both compose as relations do.
 
 * `ModalLogic.box_eq_core`, `ModalLogic.diamond_eq_preimage`: the operators are mathlib's core
   and preimage of a relation.
-* `ModalLogic.setOf_box`, `ModalLogic.setOf_diamond`: the same for propositions held as sets.
 * `ModalLogic.diamond_box_gc`: possibility is left adjoint to necessity along the converse.
 * `ModalLogic.diamond_le_diamond_iff`: possibility is monotone in the relation, and reflects
   inclusion.
@@ -37,12 +36,13 @@ preserves meets and possibility joins, and both compose as relations do.
 Necessity and possibility are operators on propositions `W → Prop` along a relation
 `R : SetRel W' W`, which may relate two types. They are mathlib's `SetRel.core` and
 `SetRel.preimage` conjugated by `Set.memOrderIso`, the isomorphism between sets and predicates.
-The adjunction is `SetRel.image_core_gc` carried across it, and the composition, identity and
-conjunction lemmas are `SetRel.core_comp`, `SetRel.preimage_comp`, `SetRel.core_id` and
-`SetRel.core_inter`, and the negation duals, antitonicity in the relation and the order embedding
+The adjunction is `SetRel.image_core_gc` carried across it, and the composition and
+identity lemmas are `SetRel.core_comp`, `SetRel.preimage_comp` and `SetRel.core_id`, and the
+negation duals, antitonicity in the relation and the order embedding
 are `SetRel.preimage_compl`, `SetRel.core_subset_core_left` and `SetRel.preimage_le_preimage_iff`;
 propositions stated as sets use mathlib's lemmas directly. The axioms of
-modal logic and the frame conditions they define are in `Logic/Modal/Definability.lean`.
+modal logic and the frame conditions they define are in `Logic/Modal/Definability.lean`, and the
+operators as bundled morphisms in `Logic/Modal/Hom.lean`.
 
 ## References
 
@@ -93,20 +93,6 @@ variable (R) in
 theorem diamond_eq_preimage : ◇[R] = Set.memOrderIso ∘ R.preimage ∘ Set.memOrderIso.symm :=
   funext fun _ ↦ funext fun _ ↦ propext diamond_iff_mem_preimage
 
-variable (R p) in
-/-- The worlds where `p` is necessary are the core of the worlds where `p` holds. -/
-theorem setOf_box : {w | □[R] p w} = R.core {v | p v} := rfl
-
-variable (R p) in
-/-- The worlds where `p` is possible are the preimage of the worlds where `p` holds. -/
-theorem setOf_diamond : {w | ◇[R] p w} = R.preimage {v | p v} :=
-  Set.ext fun _ ↦ diamond_iff_mem_preimage
-
-theorem box_mem_iff {s : Set W} : □[R] (· ∈ s) w ↔ w ∈ R.core s := .rfl
-
-theorem diamond_mem_iff {s : Set W} : ◇[R] (· ∈ s) w ↔ w ∈ R.preimage s :=
-  diamond_iff_mem_preimage
-
 @[simp] theorem not_box : ¬ □[R] p w ↔ ◇[R] (fun v ↦ ¬ p v) w :=
   (diamond_iff_mem_preimage.trans (Set.ext_iff.1 (preimage_compl R {v | p v}) w)).symm
 
@@ -120,25 +106,18 @@ theorem compl_box_compl : (□[R] pᶜ)ᶜ = ◇[R] p := by
   simp [not_box]
 
 variable (R) in
-/-- Necessity distributes over conjunction. For belief this is [hintikka-1962]'s principle that
-*a* believes *A and B* exactly when *a* believes *A* and *a* believes *B*. -/
-theorem box_and (q : W → Prop) : □[R] (fun v ↦ p v ∧ q v) w ↔ □[R] p w ∧ □[R] q w :=
-  Set.ext_iff.1 (core_inter R {v | p v} {v | q v}) w
-
-variable (R) in
 theorem box_iUnion {ι : Sort*} (R : ι → SetRel W' W) : □[⋃ i, R i] p w ↔ ∀ i, □[R i] p w := by
   simp only [Box, Set.mem_iUnion, forall_exists_index]
   exact forall_comm
-
-theorem box_union (S : SetRel W' W) : □[R ∪ S] p w ↔ □[R] p w ∧ □[S] p w := by
-  simp only [Box, Set.mem_union, or_imp, forall_and]
 
 theorem box_id {u : W} : □[SetRel.id] p u ↔ p u :=
   Set.ext_iff.1 (core_id {v | p v}) u
 
 /-- Necessity along a union of relations is the meet of necessity along each. -/
 theorem box_sup (R S : SetRel W' W) : □[R ⊔ S] = □[R] ⊓ □[S] :=
-  funext fun _ ↦ funext fun _ ↦ propext (box_union S)
+  funext fun _ ↦ funext fun _ ↦ propext
+    ⟨fun h ↦ ⟨fun v hv ↦ h v (.inl hv), fun v hv ↦ h v (.inr hv)⟩,
+      fun h v hv ↦ hv.elim (h.1 v) (h.2 v)⟩
 
 /-- Necessity along the identity relation is the identity. -/
 theorem box_id_eq_id : □[(SetRel.id : SetRel W W)] = id :=
@@ -168,6 +147,7 @@ theorem dependsOn_box_iff {s : Set W} : DependsOn (□[R] · w) s ↔ {v | w ~[R
 /-- Necessity is antitone in the accessibility relation: a relation that rules out more worlds
 gives a stronger necessity. For a modal this is strengthening by a more restrictive conversational
 background ([kratzer-1981]). -/
+@[gcongr]
 theorem box_le_box_left {S : SetRel W' W} (h : R ⊆ S) (p : W → Prop) : □[S] p ≤ □[R] p :=
   fun _ hb ↦ core_subset_core_left h hb
 
@@ -183,7 +163,7 @@ instance {W W' : Type*} [Fintype W] (R : SetRel W' W) (p : W → Prop) (w : W')
 
 end Operators
 
-/-! ### The Galois connection and normality -/
+/-! ### The adjunction and normality -/
 
 section Galois
 
@@ -201,8 +181,23 @@ theorem box_mono : Monotone □[R] := by
 theorem diamond_mono : Monotone ◇[R] :=
   (diamond_box_gc R).monotone_l
 
+variable {R} in
+@[gcongr]
+theorem box_le_box (h : p ≤ q) : □[R] p ≤ □[R] q := box_mono R h
+
+variable {R} in
+@[gcongr]
+theorem diamond_le_diamond (h : p ≤ q) : ◇[R] p ≤ ◇[R] q := diamond_mono R h
+
+/-- Necessity distributes over conjunction. For belief this is [hintikka-1962]'s principle that
+*a* believes *A and B* exactly when *a* believes *A* and *a* believes *B*. -/
 theorem box_inf : □[R] (p ⊓ q) = □[R] p ⊓ □[R] q := by
   simpa using (diamond_box_gc R.inv).u_inf
+
+/-- `box_inf` at a world. -/
+theorem box_and {p : W → Prop} (q : W → Prop) {w : W'} :
+    □[R] (fun v ↦ p v ∧ q v) w ↔ □[R] p w ∧ □[R] q w :=
+  iff_of_eq (congrFun (box_inf R (p := p) (q := q)) w)
 
 theorem diamond_sup : ◇[R] (p ⊔ q) = ◇[R] p ⊔ ◇[R] q :=
   (diamond_box_gc R).l_sup
@@ -225,6 +220,8 @@ theorem le_box_inv_diamond (p : W → Prop) : p ≤ □[R.inv] (◇[R] p) :=
   (diamond_box_gc R).le_u_l p
 
 end Galois
+
+/-! ### Composition and iteration -/
 
 variable {W : Type*} (R : SetRel W W)
 

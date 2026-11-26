@@ -132,7 +132,8 @@ theorem setOf_claim (S : Finset E) : {u | claim Q S u} = ⋃ x ∈ S, {u | Q u x
 possibility is a preimage and preimages preserve unions. -/
 theorem setOf_diamond_claim (S : Finset E) :
     {v | ◇[R] (claim Q S) v} = ⋃ x ∈ S, {v | ◇[R] (Q · x) v} := by
-  simp only [setOf_diamond, setOf_claim, preimage_iUnion]
+  ext v
+  simp only [diamond_iff_mem_preimage, setOf_claim, preimage_iUnion, Set.mem_iUnion, Set.mem_ofPred_eq]
 
 theorem diamond_claim_iff {S : Finset E} {v : W'} :
     ◇[R] (claim Q S) v ↔ ∃ x ∈ S, ◇[R] (Q · x) v := by
