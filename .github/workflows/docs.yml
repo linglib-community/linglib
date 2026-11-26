@@ -20,7 +20,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 300
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -46,14 +46,14 @@ jobs:
           elan override set $(cat lean-toolchain)
           lake --version
 
-      - name: Cache .lake
+      # Linglib and Studies are built from scratch every night: a clean build is the check that the
+      # project builds without a cache, and the only build that times every module. The dependencies
+      # stay cached, mathlib and its compiled files included, so none of them is ever rebuilt here.
+      - name: Cache dependencies
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: .lake
-          key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-${{ hashFiles('Linglib/**/*.lean', 'Studies/**/*.lean', 'Linglib.lean') }}
-          restore-keys: |
-            lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-
-            lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-
+          path: .lake/packages
+          key: lake-packages-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
 
       - name: Get Mathlib cache
         run: lake exe cache get
