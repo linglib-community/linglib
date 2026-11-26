@@ -20,7 +20,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 300
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -46,14 +46,14 @@ jobs:
           elan override set $(cat lean-toolchain)
           lake --version
 
-      - name: Cache .lake
+      # Linglib and Studies are built from scratch every night: a clean build is the check that the
+      # project builds without a cache, and the only build that times every module. The dependencies
+      # stay cached, mathlib and its compiled files included, so none of them is ever rebuilt here.
+      - name: Cache dependencies
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: .lake
-          key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-${{ hashFiles('Linglib/**/*.lean', 'Studies/**/*.lean', 'Linglib.lean') }}
-          restore-keys: |
-            lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-
-            lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-
+          path: .lake/packages
+          key: lake-packages-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
 
       - name: Get Mathlib cache
         run: lake exe cache get
@@ -99,6 +99,12 @@ jobs:
         run: |
           python3 .taproot/taproot.py --times build.log
           python3 .taproot/taproot.py --extract-only .lake/build/declaration-dependencies
+
+      # The map published, unlinked, at /taproot/. Everything about it lives in the tooling.
+      - name: Build the dependency map
+        continue-on-error: true
+        timeout-minutes: 10
+        run: bash .taproot/lib/ci_map.sh .lake/build/taproot-map/index.html
 
       - name: Remove the dependency map tooling
         if: always()
@@ -200,6 +206,12 @@ jobs:
           # /docs-new/, where the study pages were previewed, forwards to them.
           python3 scripts/gen_docs_pages.py --out .lake/build/doc-site/docs --check \
             --redirect .lake/build/doc-site/docs-new --checks .lake/build/checks.json
+          # The dependency map at /taproot/, a development page that nothing links to and that asks
+          # not to be indexed. It is absent when the steps that build it did not run.
+          if [ -f .lake/build/taproot-map/index.html ]; then
+            mkdir -p .lake/build/doc-site/taproot
+            cp .lake/build/taproot-map/index.html .lake/build/doc-site/taproot/index.html
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
