@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Order.WellFoundedSet
 public import Linglib.Logic.Nonmonotonic.Preferential
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Definability
 
 /-!
 # Conditional operators

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Definability
 public import Linglib.Logic.Aristotelian.Square
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Lattice

@@ -4,6 +4,7 @@ public import Studies.GeurtsPouscoulous2009
 public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Data.Examples.Geurts2010
+public import Linglib.Logic.Modal.Definability
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.Bounds.Defs
 public import Mathlib.Order.UpperLower.Basic

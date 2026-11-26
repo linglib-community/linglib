@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.ForestOrder
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Definability
 public import Linglib.Logic.Temporal.PointAlgebra
 public import Linglib.Logic.Temporal.Tense.Basic
 

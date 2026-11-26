@@ -8,7 +8,7 @@ public import Mathlib.Algebra.Group.Action.Prod
 public import Linglib.Semantics.Questions.Hamblin.Modal
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Discourse.CommonGround
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Definability
 public import Linglib.Languages.Slavic.Russian.QuestionParticles
 public import Linglib.Languages.Slavic.Bulgarian.QuestionParticles
 public import Linglib.Languages.Slavic.Ukrainian.QuestionParticles
