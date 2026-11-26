@@ -28,7 +28,7 @@ decls    = ["DynamicSemantics.Possibility", "DynamicSemantics.State",
             "DynamicSemantics.BilateralUpdate"]
 relation = "exact"
 notes    = """
-With the prose before it: a file is a set of world–assignment pairs (`Possibility`, `State`), and
+Together with the paper's prose before (13): a file is a set of world–assignment pairs (`Possibility`, `State`), and
 assignments are total maps into `Part E`, whose `⊥` (`Part.none`) is the undefined individual `#e`.
 A sentence denotes a positive and a negative update, each a map from states to states (`CCP`).
 """
@@ -118,13 +118,13 @@ label    = "(21)"
 claim    = """
 **Subsistence**: i≺s (i subsists in s) iff there is an i′∈s that is a **descendant** of i, where
 (w′,g′) is a descendant of (w,g) iff w′=w and g′ is defined on every variable that g is defined
-for. In the prose: i′ is just like i except for possibly providing values for more variables.
+for. In the paper's prose: i′ is just like i except for possibly providing values for more variables.
 """
 decls    = ["DynamicSemantics.Possibility.le_def"]
 relation = "variant"
 notes    = """
 Subsistence `i ≺ s` is `i ∈ lowerClosure s`, for the order of `le_def`: a descendant has the same
-world and extends the assignment, agreeing wherever it is defined, as the prose before (21) puts
+world and extends the assignment, agreeing wherever it is defined, as the paper's prose before (21) puts
 it. (21) itself asks only that the descendant be defined on at least the same variables, which
 would let it reassign them: on that reading `(w, [x→a])` subsists in `{(w, [x→b])}` (study
 erratum).
@@ -149,14 +149,14 @@ kind     = "definition"
 label    = "(26)"
 claim    = """
 **Assertion** of φ against a file context c is defined if c[φ]? ≠ ∅, as printed in (26a), though
-the prose and footnote 6 require the failure update to be empty. If defined, it results in the
+the paper's prose and footnote 6 require the failure update to be empty. If defined, it results in the
 new file context c[φ]+.
 """
 decls    = ["DynamicSemantics.BilateralUpdate.Assertable"]
 relation = "variant"
 notes    = """
 Only the definedness condition (26a) is a definition; the output (26b) is the positive update.
-(26a) says assertion is defined when `c[φ]? ≠ ∅`, but the prose (and footnote 6) require the
+(26a) says assertion is defined when `c[φ]? ≠ ∅`, but the paper's prose (and footnote 6) require the
 unknown update to be empty, and `Assertable` follows the prose (study erratum).
 """
 
@@ -474,7 +474,7 @@ Egli's theorem holds of positive updates in BUS: s[∃xφ∧ψ]+ = s[∃x(φ∧�
 """
 decls    = ["DynamicSemantics.BilateralUpdate.egli"]
 relation = "exact"
-notes    = "The prose before (41) cites the positive case as \"(41b)\", a typo for (41a)."
+notes    = "The paper's prose before (41) cites the positive case as \"(41b)\", a typo for (41a)."
 
 [[item]]
 id       = "ex-41b"
