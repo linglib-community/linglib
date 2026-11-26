@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.Finset.Lattice.Fold
-public import Linglib.Syntax.Feature.Person.Feature
+public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Person systems
