@@ -100,22 +100,11 @@ jobs:
           python3 .taproot/taproot.py --times build.log
           python3 .taproot/taproot.py --extract-only .lake/build/declaration-dependencies
 
-      # The map published, unlinked, at /taproot/. It is compared against the tree of a day ago,
-      # by import lines, so the page can say what changed.
+      # The map published, unlinked, at /taproot/. Everything about it lives in the tooling.
       - name: Build the dependency map
         continue-on-error: true
         timeout-minutes: 10
-        run: |
-          python3 scripts/taproot_groups.py --out .lake/build/taproot-groups.json
-          args=(--out .lake/build/taproot-map/index.html --groups .lake/build/taproot-groups.json)
-          git fetch --quiet --shallow-since="3 days ago" origin "$GITHUB_REF_NAME" || true
-          base=$(git rev-list -1 --before="20 hours ago" HEAD 2>/dev/null || true)
-          if [ -n "$base" ] && [ "$base" != "$(git rev-parse HEAD)" ]; then
-            mkdir -p .lake/build/taproot-base
-            git archive "$base" Linglib Studies | tar -x -C .lake/build/taproot-base
-            args+=(--base .lake/build/taproot-base --base-label "main ${base:0:10}")
-          fi
-          python3 .taproot/lib/map.py "${args[@]}"
+        run: bash .taproot/lib/ci_map.sh .lake/build/taproot-map/index.html
 
       - name: Remove the dependency map tooling
         if: always()
