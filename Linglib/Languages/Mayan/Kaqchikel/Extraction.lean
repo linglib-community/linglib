@@ -28,7 +28,7 @@ and temporals never license it, and manners and purposes are unattested with it.
 * `Kaqchikel.Extraction.realize`: the reflexes extraction from each `Mayan.ExtractionSite`
   licenses on a verb of each class whose arguments have the given persons.
 * `Kaqchikel.Extraction.agentFocus_mem_realize_iff`: Agent Focus marks transitive-subject
-  extraction unless both arguments are speech-act participants.
+  extraction unless both arguments are first or second person.
 
 ## Implementation notes
 
@@ -60,7 +60,7 @@ namespace Extraction
 def wi : Morphology.Morph := .free "wi"
 
 /-- Extraction of a transitive subject switches the verb to Agent Focus unless both arguments are
-speech-act participants ([erlewine-2016]); extraction of a recipient or of a locative,
+first or second person ([erlewine-2016]); extraction of a recipient or of a locative,
 instrument or benefactive phrase licenses *wi* on the verbal complex ([mendes-ranero-2021]);
 nothing else is marked. -/
 def realize (c : Mayan.VerbClass) (agent patient : Person) :
