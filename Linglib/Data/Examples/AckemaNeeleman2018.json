@@ -1,196 +1,366 @@
-[
-  {
-    "id": "ackemaneeleman2018_2a",
-    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (2a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "It seems that Mary has left for Paris.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "expletive"],
-      ["person", "third"]
-    ],
-    "comment": "Expletive pronouns are third person: only DIST can deliver an empty output set.",
-    "verified": "page-image"
+{
+  "features": [
+    {
+      "key": "phenomenon",
+      "lean": "phenomenon",
+      "type": "Phenomenon",
+      "doc": "What the example is given to show.",
+      "levels": [
+        {
+          "name": "expletive",
+          "label": "expletive",
+          "doc": "a subject pronoun with no referent"
+        },
+        {
+          "name": "selfTalk",
+          "label": "self-talk",
+          "doc": "a speaker addressing themself"
+        },
+        {
+          "name": "defaultAgreement",
+          "label": "default agreement",
+          "doc": "finite agreement with no agreeing argument"
+        }
+      ]
+    }
+  ],
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "subject",
+          "label": "subject",
+          "doc": "the subject pronoun under test"
+        },
+        {
+          "name": "agreement",
+          "label": "agreement",
+          "doc": "the finite verb whose agreement is under test"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The subject pronouns under test.",
+      "levels": [
+        {
+          "name": "it",
+          "label": "it",
+          "doc": "English *it*"
+        },
+        {
+          "name": "i",
+          "label": "i",
+          "doc": "English *I*"
+        },
+        {
+          "name": "you",
+          "label": "you",
+          "doc": "English *you*"
+        },
+        {
+          "name": "men",
+          "label": "men",
+          "doc": "Dutch impersonal *men* 'one'"
+        }
+      ]
+    }
   },
-  {
-    "id": "ackemaneeleman2018_2b",
-    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (2b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "It is raining again in Edinburgh.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "expletive"],
-      ["person", "third"]
-    ],
-    "comment": "",
-    "verified": "page-image"
+  "index": {
+    "type": "Example",
+    "doc": "The examples of chapter 2 on expletives, default agreement and self-talk."
   },
-  {
-    "id": "ackemaneeleman2018_20a",
-    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (20a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I can't believe your luck!",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "John discovers he has a winning lottery ticket and talks to himself.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "self-talk"],
-      ["roles", "i and u co-incide"]
-    ],
-    "comment": "The same individual bears the speaker and addressee roles; possible because the features carry no negative values.",
-    "verified": "page-image"
-  },
-  {
-    "id": "ackemaneeleman2018_21a",
-    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (21a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I can't believe your luck! If we hurry, we can still collect the money today.",
-    "discourseSegments": [
-      "I can't believe your luck!",
-      "If we hurry, we can still collect the money today."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "John discovers he has a winning lottery ticket and talks to himself.",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "self-talk"],
-      ["person", "first plural"]
-    ],
-    "comment": "A first person plural cannot refer to the speaker and the addressee-guise of the same individual.",
-    "verified": "page-image"
-  },
-  {
-    "id": "ackemaneeleman2018_24a",
-    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (24a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "It seems that Vitesse won.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "It seem that Vitesse won.", "judgment": "ungrammatical"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "expletive"],
-      ["person", "third"]
-    ],
-    "comment": "Expletives are third person singular: plural is undefined on the empty set.",
-    "verified": "page-image"
-  },
-  {
-    "id": "ackemaneeleman2018_24b_i",
-    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (24b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I seem that Vitesse won.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "expletive"],
-      ["person", "first"]
-    ],
-    "comment": "A first person pronoun cannot be an expletive: PROX never delivers the empty set.",
-    "verified": "page-image"
-  },
-  {
-    "id": "ackemaneeleman2018_24b_you",
-    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (24b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You seem that Vitesse won.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "expletive"],
-      ["person", "second"]
-    ],
-    "comment": "A second person pronoun cannot be an expletive: its set has an obligatory addressee.",
-    "verified": "page-image"
-  },
-  {
-    "id": "ackemaneeleman2018_25",
-    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (25)"},
-    "reportedIn": null,
-    "language": "dutc1256",
-    "primaryText": "Nog jaren is naar een oplossing gezocht.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Nog", "still"], ["jaren", "years"], ["is", "be.3SG"], ["naar", "for"], ["een", "a"],
-      ["oplossing", "solution"], ["gezocht", "searched"]
-    ],
-    "translation": "People searched for a solution for many years.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Nog jaren ben naar een oplossing gezocht.", "judgment": "ungrammatical"},
-      {"form": "Nog jaren bent naar een oplossing gezocht.", "judgment": "ungrammatical"},
-      {"form": "Nog jaren zijn naar een oplossing gezocht.", "judgment": "ungrammatical"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "default agreement"],
-      ["construction", "impersonal passive"]
-    ],
-    "comment": "Default agreement in the absence of an agreeing argument is third person singular. The gloss line prints be-3SG for is (be.1SG, be.2SG, be.PL for the starred forms).",
-    "verified": "page-image"
-  },
-  {
-    "id": "ackemaneeleman2018_30",
-    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (30)"},
-    "reportedIn": null,
-    "language": "dutc1256",
-    "primaryText": "Men schijnt dat men regent.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Men", "one"], ["schijnt", "seems"], ["dat", "that"], ["men", "one"], ["regent", "rains"]
-    ],
-    "translation": "It seems that it rains.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "expletive"],
-      ["person", "featureless"]
-    ],
-    "comment": "The featureless pronoun refers to the whole input set, which has two obligatory members, so it cannot be a dummy.",
-    "verified": "page-image"
-  }
-]
+  "examples": [
+    {
+      "id": "ackemaneeleman2018_2a",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (2a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "It seems that Mary has left for Paris.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["It", ""], ["seems", ""], ["that", ""], ["Mary", ""], ["has", ""], ["left", ""],
+        ["for", ""], ["Paris", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "subject", "lexeme": "it"}
+      ],
+      "paperFeatures": [
+        ["phenomenon", "expletive"]
+      ],
+      "comment": "Expletive pronouns are third person: only DIST can deliver an empty output set.",
+      "verified": "page-image"
+    },
+    {
+      "id": "ackemaneeleman2018_2b",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (2b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "It is raining again in Edinburgh.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["It", ""], ["is", ""], ["raining", ""], ["again", ""], ["in", ""], ["Edinburgh", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "subject", "lexeme": "it"}
+      ],
+      "paperFeatures": [
+        ["phenomenon", "expletive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "ackemaneeleman2018_20a",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (20a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I can't believe your luck!",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "John discovers he has a winning lottery ticket.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["phenomenon", "self-talk"]
+      ],
+      "comment": "The pronouns are printed with the subscript John: the same individual bears the speaker and the addressee role.",
+      "verified": "page-image"
+    },
+    {
+      "id": "ackemaneeleman2018_21a",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (21a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I can't believe your luck! If we hurry, we can still collect the money today.",
+      "discourseSegments": [
+        "I can't believe your luck!",
+        "If we hurry, we can still collect the money today."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "John discovers he has a winning lottery ticket.",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["phenomenon", "self-talk"]
+      ],
+      "comment": "The star is on the second sentence: a first person plural cannot refer to the speaker and the addressee where one individual bears both roles. Some speakers accept it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "ackemaneeleman2018_24a",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (24a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "It seems that Vitesse won.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["It", ""], ["seems", ""], ["that", ""], ["Vitesse", ""], ["won", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "It seem that Vitesse won.", "judgment": "ungrammatical"}
+      ],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "subject", "lexeme": "it"}
+      ],
+      "paperFeatures": [
+        ["phenomenon", "expletive"]
+      ],
+      "comment": "Expletives are third person singular: plural is undefined on the empty set.",
+      "verified": "page-image"
+    },
+    {
+      "id": "ackemaneeleman2018_24b_i",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (24b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I seem that Vitesse won.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["I", ""], ["seem", ""], ["that", ""], ["Vitesse", ""], ["won", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "subject", "lexeme": "i"}
+      ],
+      "paperFeatures": [
+        ["phenomenon", "expletive"]
+      ],
+      "comment": "A first person pronoun cannot be an expletive: PROX never delivers the empty set.",
+      "verified": "page-image"
+    },
+    {
+      "id": "ackemaneeleman2018_24b_you",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (24b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You seem that Vitesse won.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["You", ""], ["seem", ""], ["that", ""], ["Vitesse", ""], ["won", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "subject", "lexeme": "you"}
+      ],
+      "paperFeatures": [
+        ["phenomenon", "expletive"]
+      ],
+      "comment": "A second person pronoun cannot be an expletive: its set has an obligatory addressee.",
+      "verified": "page-image"
+    },
+    {
+      "id": "ackemaneeleman2018_25_is",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (25)"},
+      "reportedIn": null,
+      "language": "dutc1256",
+      "primaryText": "Nog jaren is naar een oplossing gezocht.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nog", "still"], ["jaren", "years"], ["is", "be.3SG"], ["naar", "for"], ["een", "a"],
+        ["oplossing", "solution"], ["gezocht", "searched"]
+      ],
+      "translation": "People searched for a solution for many years.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "agreement"}
+      ],
+      "paperFeatures": [
+        ["phenomenon", "default agreement"]
+      ],
+      "comment": "The example prints the four forms of the finite verb as alternatives, is unstarred and the others starred, over the glosses be.3SG, be.1SG, be.2SG and be.PL; each is a row here.",
+      "verified": "page-image"
+    },
+    {
+      "id": "ackemaneeleman2018_25_ben",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (25)"},
+      "reportedIn": null,
+      "language": "dutc1256",
+      "primaryText": "Nog jaren ben naar een oplossing gezocht.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nog", "still"], ["jaren", "years"], ["ben", "be.1SG"], ["naar", "for"], ["een", "a"],
+        ["oplossing", "solution"], ["gezocht", "searched"]
+      ],
+      "translation": "People searched for a solution for many years.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "agreement"}
+      ],
+      "paperFeatures": [
+        ["phenomenon", "default agreement"]
+      ],
+      "comment": "The example prints the four forms of the finite verb as alternatives, is unstarred and the others starred, over the glosses be.3SG, be.1SG, be.2SG and be.PL; each is a row here.",
+      "verified": "page-image"
+    },
+    {
+      "id": "ackemaneeleman2018_25_bent",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (25)"},
+      "reportedIn": null,
+      "language": "dutc1256",
+      "primaryText": "Nog jaren bent naar een oplossing gezocht.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nog", "still"], ["jaren", "years"], ["bent", "be.2SG"], ["naar", "for"], ["een", "a"],
+        ["oplossing", "solution"], ["gezocht", "searched"]
+      ],
+      "translation": "People searched for a solution for many years.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "agreement"}
+      ],
+      "paperFeatures": [
+        ["phenomenon", "default agreement"]
+      ],
+      "comment": "The example prints the four forms of the finite verb as alternatives, is unstarred and the others starred, over the glosses be.3SG, be.1SG, be.2SG and be.PL; each is a row here.",
+      "verified": "page-image"
+    },
+    {
+      "id": "ackemaneeleman2018_25_zijn",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (25)"},
+      "reportedIn": null,
+      "language": "dutc1256",
+      "primaryText": "Nog jaren zijn naar een oplossing gezocht.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Nog", "still"], ["jaren", "years"], ["zijn", "be.PL"], ["naar", "for"], ["een", "a"],
+        ["oplossing", "solution"], ["gezocht", "searched"]
+      ],
+      "translation": "People searched for a solution for many years.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "agreement"}
+      ],
+      "paperFeatures": [
+        ["phenomenon", "default agreement"]
+      ],
+      "comment": "The example prints the four forms of the finite verb as alternatives, is unstarred and the others starred, over the glosses be.3SG, be.1SG, be.2SG and be.PL; each is a row here.",
+      "verified": "page-image"
+    },
+    {
+      "id": "ackemaneeleman2018_30",
+      "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (30)"},
+      "reportedIn": null,
+      "language": "dutc1256",
+      "primaryText": "Men schijnt dat men regent.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Men", "one"], ["schijnt", "seems"], ["dat", "that"], ["men", "one"], ["regent", "rains"]
+      ],
+      "translation": "It seems that it rains.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "subject", "lexeme": "men"},
+        {"start": 3, "label": "subject", "lexeme": "men"}
+      ],
+      "paperFeatures": [
+        ["phenomenon", "expletive"]
+      ],
+      "comment": "The featureless pronoun refers to the whole input set, which has two obligatory members, so it cannot be a dummy.",
+      "verified": "page-image"
+    }
+  ]
+}
