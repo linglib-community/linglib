@@ -14,19 +14,36 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # Referential person categories
 
-Cysouw's eight referential person categories configure the speech-act participants a referent
-contains with the others it contains, none, one or several: the three singular participants and the
-five attested groups. [They are exactly the well-formed
-configurations](##Person.Category.toConfig_bijective), the two groups this excludes being several
-speakers and an audience with no one else. A category has a person and, when it is a group
-with the speaker, a clusivity (`Person.Category.person`, `Person.Category.clusivity`).
+A referent contains some of the speech-act participants and, beside them, no others, one other
+or several. Cysouw's eight *referential categories* are the combinations that occur: three
+singular ones, the speaker, the addressee and a single other, and five groups, the speaker with
+the addressee, either or both of them with others, and several others. They are exactly the
+well-formed configurations, the two groups this excludes being several speakers and an audience
+with no one else.
 
-Person and clusivity together lie strictly between two partitions of the categories,
-[coarser](##Person.Category.person_eq_of_participants_eq_of_isGroup_iff) than participants
-together with being a group and [finer](##Person.Category.participants_eq_of_person_eq) than
-participants alone. The speaker alone and the speaker with others share their participants, so
-they are one person where a person is a set of participants, as for Harbour and for Dalrymple
-and Kaplan, and differ in clusivity where the exclusive is a group, as here.
+A category has a person and, when it is a group with the speaker, a clusivity. Person and
+clusivity together lie strictly between two partitions of the categories, coarser than
+participants together with being a group and finer than participants alone. The speaker alone
+and the speaker with others share their participants, so they are one person where a person is
+a set of participants, as for Harbour and for Dalrymple and Kaplan, and differ in clusivity
+where the exclusive is a group, as here.
+
+A form that can denote several categories, as English *we* can any group containing the
+speaker, has a person and a number only as far as its categories share one.
+
+## Main definitions
+
+* `Category`: the eight referential categories.
+* `Category.person c`: first with the speaker, otherwise second with the addressee, otherwise
+  third.
+* `Category.clusivity c`: inclusive or exclusive for a group with the speaker, and none
+  otherwise.
+
+## Main results
+
+* `Category.toConfig_bijective`: the categories are exactly the well-formed configurations.
+* `Category.participants_eq_of_person_eq`: categories of one person and one clusivity have the
+  same participants.
 
 ## References
 

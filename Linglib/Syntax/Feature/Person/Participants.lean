@@ -16,60 +16,52 @@ public import Mathlib.Order.Concept
 /-!
 # Participant sets
 
-The *participant set* of a referent is the set of speech-act roles it includes: the speaker, the
-addressee, both or neither. This file relates the person values, clusivity and the person
-features to participant sets.
+Every act of speech has a speaker and an addressee. The *participant set* of a referent is the
+set of these two roles it includes: the speaker, the addressee, both or neither. *I* refers to
+someone whose participant set is the speaker alone, and an inclusive *we* to a group whose
+participant set has both. This file says what the person values, the clusivities and the person
+features refer to, in terms of participant sets.
 
-Each person value covers some participant sets: the third person covers the set with neither
-role, the second the addressee alone, and the first the speaker with or without the addressee.
-A participant set is covered by exactly one value, its person, and the person of a union is the
-larger of the two persons, so the order of resolution is that of coordinated referents, as Zwicky
-proposes and as Dalrymple and Kaplan resolve their marker sets. An inclusive form's referents
-include the addressee and an exclusive form's do not, so a clusivity narrows the participant
-sets of a person: with the first person it gives the inclusive or the exclusive first person.
+Each person covers some participant sets: the third person the set with neither role, the
+second the addressee alone, and the first the speaker with or without the addressee. A
+participant set is covered by exactly one person. The person of a group is the larger of the
+persons of its parts, with the first person largest and the third least, so the order of the
+persons is the order of person resolution in coordination: *you and I* is first person. Zwicky
+proposes this order, and Dalrymple and Kaplan resolve their marker sets by it.
+
+An inclusive form's referents include the addressee and an exclusive form's do not, so a
+clusivity narrows the participant sets of a person: with the first person it gives the
+inclusive or the exclusive first person.
 
 [participant] is about both roles, [speaker] about the speaker and [addressee] about the
-addressee, and a participant set bears a feature when it includes a role the feature is about. A
-group includes a role as soon as one of its members does, so a union bears a feature exactly when
-one of its parts does.
-
-The dependency among the features is then entailment: one feature depends on
-another exactly when every participant set that bears the first bears the second. Harley and
-Ritter note that in a geometry not every entailment is a dependence; among the person features
-the two coincide. The well-formed bundles are exactly those that some family of participant sets
-has in common, and with all three features no two participant sets have the same bundle.
+addressee, and a participant set bears a feature when it includes a role the feature is about.
+A group includes a role as soon as one of its members does, so a union bears a feature exactly
+when one of its parts does. [speaker] and [addressee] each depend on [participant]: a
+participant set that bears either bears [participant]. The dependency is entailment, one
+feature depending on another exactly when every participant set that bears the first bears the
+second. Harley and Ritter note that in a geometry not every entailment is a dependence; among
+the person features the two coincide. A bundle of features is well formed when it contains
+[participant] whenever it contains either of the others. There are five well-formed bundles,
+they are exactly the bundles that some family of participant sets has in common, and with all
+three features no two participant sets have the same bundle.
 
 ## Main definitions
 
-* `Person.participantSets`: the participant sets a person covers.
-* `Person.ofParticipants`: the person of a participant set, first with the speaker, otherwise
-  second with the addressee, otherwise third.
-* The order of person resolution on `Person`, third below second below first.
-* `Person.IncludesSpeaker`: each participant set the person covers contains the speaker.
-* `Clusivity.Holds`: a participant set satisfies the inclusive when it contains the addressee,
-  and the exclusive when it does not.
-* `Clusivity.restrict`: the participant sets of a family that satisfy a clusivity, or all of
-  them when no clusivity is given.
-* The dependency order on `Person.Feature`, [participant] below [speaker] and [addressee].
-* `Person.Feature.roles`: the roles a feature is about.
-* `Person.Bears`: a participant set bears a feature.
-* `Person.bundle`: the features of an inventory that a participant set bears, as a map
-  preserving unions.
+* `Person.participantSets p`: the participant sets the person `p` covers.
+* `Person.ofParticipants s`: the person of the participant set `s`.
+* `Clusivity.Holds c s`: `s` contains the addressee for the inclusive, and does not for the
+  exclusive.
+* `Bears s f`: the participant set `s` includes a role that the feature `f` is about.
+* `bundle F s`: the features of the inventory `F` that `s` bears.
 
 ## Main results
 
-* `Person.mem_participantSets_iff_eq_ofParticipants`: a participant set is covered by its
-  person and by no other.
 * `Person.le_iff_exists_subset`: one person lies below another exactly when a referent of the
   first is part of a referent of the second.
 * `Person.ofParticipants_union`: the person of a union is the larger of the persons.
-* `Person.ne_third_iff_forall_nonempty`: the first and the second person are those of the
-  speech-act participants, the values whose participant sets are all nonempty.
-* `Person.Feature.le_iff_forall_bears`: dependency is entailment.
-* `Person.card_wellFormed`: there are five well-formed bundles.
-* `Person.Feature.exists_roles_eq_iff`: the features are about the nonempty sets of roles.
-* `Person.wellFormed_iff_isIntent`: the well-formed bundles are the closed sets of features.
-* `Person.bundle_univ_injective`: the three features tell the participant sets apart.
+* `Feature.le_iff_forall_bears`: dependency is entailment.
+* `wellFormed_iff_isIntent`: the well-formed bundles are those some family of participant sets
+  has in common.
 
 ## Implementation notes
 
@@ -83,6 +75,7 @@ participant sets.
 The dependency among the features is given here for the same reason: that [speaker] and
 [addressee] depend on [participant], and not the reverse, supposes what the features are about.
 It is given by cases, and a theorem states it as entailment between features.
+
 ## References
 
 * [zwicky-1977b]

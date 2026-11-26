@@ -15,17 +15,22 @@ public import Linglib.Syntax.Feature.Person.Decomposition
 
 The *binary person scale* ranks the first and second persons, the participants in the speech
 act, above the third. It is Haspelmath's person scale, locuphoric above aliophoric, and the cut
-that Bonet's strong person-case constraint draws.
-
-[A more prominent person is never lower on the scale](##Person.toClass_mono), and
-[a scenario is downstream on it](##Person.kind_map_toClass_eq_downstream_iff) exactly when its
-higher-ranked argument alone is a participant.
+that Bonet's strong person-case constraint draws. A more prominent person is never lower on the
+scale, and a scenario is downstream on it exactly when its higher-ranked argument alone is a
+participant.
 
 ## Main definitions
 
-* `Person.Class`: participant or non-participant, the participant higher.
-* `Person.Class.ofParticipants`: the scale as a person system, with both roles at the top.
-* `Person.toClass`: the class of a person value.
+* `Class`: participant or non-participant, the participant higher.
+* `Class.ofParticipants s`: the class of the participant set `s`, participant when it includes
+  a role.
+* `Person.toClass p`: the class of the person `p`.
+
+## Main results
+
+* `Person.toClass_mono`: a more prominent person is never lower on the scale.
+* `kind_map_toClass_eq_downstream_iff`: a scenario is downstream on the scale exactly when its
+  higher-ranked argument alone is a participant.
 
 ## References
 
@@ -78,7 +83,8 @@ theorem toClass_ofParticipants (s : Finset SpeechAct.Role) :
     (ofParticipants s).toClass = Class.ofParticipants s := by
   revert s; decide
 
-@[simp] theorem toClass_eq_participant_iff {p : Person} : p.toClass = .participant ↔ p ≠ .third := by
+@[simp] theorem toClass_eq_participant_iff {p : Person} :
+    p.toClass = .participant ↔ p ≠ .third := by
   revert p; decide
 
 @[simp] theorem toClass_eq_nonParticipant_iff {p : Person} :

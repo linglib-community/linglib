@@ -13,30 +13,29 @@ public import Mathlib.Data.Fintype.Powerset
 /-!
 # Person specifications
 
-A *person specification* is the set of participant sets a form can be used for. A referent has
-one participant set, but a form may cover several: English *we* covers the speaker alone and
-the speaker with the addressee, while an inclusive pronoun covers only the second.
+A referent has one participant set, but a form may be used for several: English *we* covers the
+speaker alone and the speaker with the addressee, while an inclusive pronoun covers only the
+second. A *person specification* is the set of participant sets a form can be used for. A
+specification that covers fewer participant sets is more specific, so the first person is less
+specific than the inclusive. Two specifications are compatible when some participant set is
+covered by both, as the first and the second person are not.
 
-A specification that covers fewer participant sets is more specific, so
-[the first person is less specific than the
-inclusive](##Person.Specification.ofPerson_first_le_inclusive). Two specifications are
-compatible when some participant set is covered by both;
-[the first and the second person are not](##Person.Specification.not_compat_first_second).
-
-The person and the clusivity a form bears are labels, and this file reads them as a
+The person and the clusivity a form bears are labels, and this file reads a pair of them as a
 specification: the participant sets of the person that satisfy the clusivity. The reading is
-monotone where some participant set satisfies both, and a pair that none satisfies, as the second
-person with the exclusive, is read as unspecified.
+monotone where some participant set satisfies both, and a pair that none satisfies, as the
+second person with the exclusive, is read as unspecified.
 
 ## Main definitions
 
-* `Person.Specification`: a nonempty set of participant sets, more specific when smaller.
-* `Person.Specification.sets`: the participant sets a specification covers.
-* `Person.Specification.ofPerson`: the specification of a person value.
-* `Person.Specification.ofParticipants`: the specification of a single referent.
-* `Person.Specification.ofPersonClusivity`: the specification of a person and a clusivity.
-* `Person.Specification.Coherent`: some participant set satisfies the person and the clusivity.
-* `Person.Specification.IsSAP`: every participant set it covers includes a participant.
+* `Specification`: a nonempty set of participant sets, more specific when smaller.
+* `Specification.ofPerson p`: the participant sets the person `p` covers.
+* `Specification.ofPersonClusivity p c`: the participant sets of `p` that satisfy `c`.
+
+## Main results
+
+* `Specification.ofPerson_first_le_inclusive`: the first person is less specific than the
+  inclusive.
+* `Specification.not_compat_first_second`: the first and the second person are incompatible.
 
 ## Implementation notes
 

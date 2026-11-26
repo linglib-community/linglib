@@ -11,24 +11,31 @@ public import Linglib.Syntax.Feature.Person.Participants
 /-!
 # Person systems
 
-A *person system* sorts the four participant sets into persons. English has three persons: the
-speaker alone and the speaker with the addressee are both first person. A language with an
-inclusive has four.
+A *person system* sorts the four participant sets into persons. English has three: the speaker
+alone and the speaker with the addressee are both first person. A language with an inclusive
+has four.
 
-A system gives each role a value, and the person of a participant set is the join of the values
-of its roles (`Finset.supBotLift`). The person of a coordination is then the join of the persons
-of its conjuncts. Two assignments of values [give the same
-system](##Person.forall_sup_eq_iff) exactly when they agree on which values are least and on how
-the two values compare, so there are seven systems, and
-[each is the system of some inventory of person features](##Person.exists_bundle_eq_iff). A
-linearly ordered system [gives the inclusive the person of the exclusive or of the second
-person](##Person.not_injective_sup_of_linearOrder).
+A system gives each of the two roles a value, and the person of a participant set is the join
+of the values of its roles. The person of a coordination is then the join of the persons of its
+conjuncts. Two assignments of values give the same system exactly when they agree on which
+values are least and on how the two values compare, so there are seven systems, and each is the
+system of some inventory of person features. A system whose values are linearly ordered cannot
+keep the inclusive apart: it gives the inclusive the person of the exclusive or of the second
+person.
 
 ## Main definitions
 
-* `Person.speakerRank`: the ranking of the speaker above the addressee.
-* `Person.standardTripartition`: Harbour's three-person system, first person with the speaker,
+* `speakerRank`: the values that rank the speaker above the addressee.
+* `standardTripartition s`: Harbour's three-person system, first person with the speaker,
   otherwise second with the addressee, otherwise third.
+
+## Main results
+
+* `forall_sup_eq_iff`: two assignments give the same system exactly when they agree on which
+  values are least and on how the two values compare.
+* `exists_bundle_eq_iff`: every system is that of an inventory of person features.
+* `not_injective_sup_of_linearOrder`: a linearly ordered system does not tell the four
+  participant sets apart.
 
 ## References
 

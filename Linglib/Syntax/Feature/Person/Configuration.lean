@@ -11,24 +11,32 @@ public import Linglib.Syntax.Feature.Person.Category
 # Configurations of a referent
 
 The *configuration* of a referent is the set of speech-act participants it contains together
-with the number of its other members. One configuration lies below another when it has a subset
-of the participants and no more others, as the configuration of a part lies below that of the
-whole. Cysouw's referential categories are the configurations with several others counted
-alike: [every configuration but the empty one has exactly one
-category](##Person.Configuration.category_eq_some_iff).
+with the number of its other members: the speaker with one other has the speaker and one. One
+configuration lies below another when it has a subset of the participants and no more others,
+as the configuration of a part lies below that of the whole. Cysouw's referential categories
+are the configurations with several others counted alike: every configuration but the empty one
+has exactly one category.
 
-A referent with a participant has no others at the least, and one with none has one, so the
-smallest configuration with given participants has `Person.Configuration.minimum` others. This
-is the logical minimum of Corbett's account of Rembarrnga, two members for the speaker with the
+A referent with a participant has no others at the least, and one with none has one. This is
+the logical minimum of Corbett's account of Rembarrnga, two members for the speaker with the
 addressee and one otherwise.
+
+A number label covers the configurations of a person's region by their size: the singular those
+of one member, the minimal the smallest of the region and the augmented the rest. A person, a
+clusivity and a number together thus cover some of the referential categories.
 
 ## Main definitions
 
-* `Person.Configuration`: the participants of a referent and the number of its others.
-* `Person.Configuration.card`: the number of members.
-* `Person.Configuration.minimum`: the fewest others beside given participants.
-* `Person.Configuration.category`: the referential category of a configuration.
-* `Person.Category.ofNumber`: the categories a number label covers in a person's region.
+* `Configuration`: the participants of a referent and the number of its others.
+* `Configuration.category x`: the referential category of `x`.
+* `Category.ofPersonNumber p cl n`: the categories that the person `p`, the optional clusivity
+  `cl` and the number `n` cover.
+
+## Main results
+
+* `Configuration.category_eq_some_iff`: every configuration but the empty one has exactly one
+  category.
+* `Category.ofPersonNumber_inclusive_singular`: the inclusive has no singular.
 
 ## Implementation notes
 

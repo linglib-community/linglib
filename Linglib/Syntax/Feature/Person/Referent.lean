@@ -22,14 +22,15 @@ augmented number, then hold of the referents themselves.
 
 ## Main definitions
 
-* `Person.Configuration.ofFinset`: the configuration of a finite set of individuals.
-* `Person.Configuration.ofFinsetHom`: `ofFinset` as an order homomorphism.
+* `Configuration.ofFinset h u`: the configuration of the set `u` of individuals, `h` giving
+  the holder of each role.
+* `Configuration.ofFinsetHom`: `ofFinset` as an order homomorphism.
 
 ## Main results
 
-* `Person.Configuration.ofFinset_strictMono`: a proper part has a strictly smaller configuration.
-* `Person.Configuration.card_ofFinset`: the configuration has as many members as the set.
-* `Person.Configuration.minimal_ofFinset_iff`: minimality of a set and of its configuration.
+* `Configuration.ofFinset_strictMono`: a proper part has a strictly smaller configuration.
+* `Configuration.card_ofFinset`: the configuration has as many members as the set.
+* `Configuration.minimal_ofFinset_iff`: minimality of a set and of its configuration.
 
 ## Implementation notes
 

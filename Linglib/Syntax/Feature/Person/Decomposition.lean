@@ -11,21 +11,29 @@ public import Linglib.Syntax.Feature.Person.System
 /-!
 # The features of the person values
 
-This file relates the values of `Person` to the person features. A value bears a feature when
-every participant set it covers does.
+A person value bears a feature when every participant set it covers does. On [participant] and
+[speaker], the first person bears both, the second bears [participant] alone and the third bears
+neither. The number of the two that a value bears is the person hierarchy, first over second
+over third, and it is the order of resolution. These two features do not tell the inclusive
+from the exclusive, and the persons are the classes of the standard tripartition.
 
-On [participant] and [speaker], the second person bears one feature and the first person two.
-[The number of them a value bears](##Person.prominence_le_iff) is the person hierarchy, first
-over second over third, and it is the order of resolution. These two features
-[do not tell the inclusive from the exclusive](##Person.toFeatures_ofParticipants), and the
-persons are [the classes of the standard
-tripartition](##Person.mem_participantSets_ofParticipants).
+A referential category bears the features its participants bear. Without [addressee] the three
+groups that contain the speaker share a bundle.
 
 ## Main definitions
 
-* `Person.toFeatures`: the features of an inventory that a value bears.
-* `Person.prominence`: the number of [participant] and [speaker] a value bears.
-* `Person.Category.toFeatures`: the features a person-number category bears.
+* `Person.toFeatures F p`: the features of the inventory `F` that every participant set of `p`
+  bears.
+* `Person.prominence p`: the number of [participant] and [speaker] that `p` bears.
+* `Category.toFeatures F c`: the features of `F` that the participants of `c` bear.
+
+## Main results
+
+* `Person.prominence_le_iff`: prominence is the order of resolution.
+* `Person.toFeatures_ofParticipants`: without [addressee], the person of a participant set
+  bears what the set bears.
+* `Person.mem_participantSets_ofParticipants`: each class of the standard tripartition is the
+  family of participant sets its person covers.
 
 ## References
 
@@ -84,7 +92,8 @@ theorem toFeatures_wellFormed {F : Features} (hF : IsLowerSet (↑F : Set Featur
     IsLowerSet (↑(p.toFeatures F) : Set Feature) := by
   revert F p; decide
 
-theorem ne_third_iff_participant_mem {p : Person} : p ≠ .third ↔ .participant ∈ p.toFeatures univ := by
+theorem ne_third_iff_participant_mem {p : Person} :
+    p ≠ .third ↔ .participant ∈ p.toFeatures univ := by
   revert p; decide
 
 theorem includesSpeaker_iff_speaker {p : Person} :
