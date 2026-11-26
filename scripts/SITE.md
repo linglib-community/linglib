@@ -36,6 +36,9 @@ Each page is read as a text, and departs from the rules above to that end:
   in the order of the source: the kind and a number in bold, then the docstring; its
   implementation notes and references close it. A term written `**so**` is bold. Nothing else is
   in the column, and a declaration with no docstring is not in a text.
+- A source and the study file that formalizes it are one page, the source's: the study's header
+  opens it, the study's notes and references close it, and the two are one mark in a chart. A
+  study file has a text of its own only when its source has no record.
 - Choosing an item shows its Lean beside it, in a column that may run past the header's right
   edge: for a source's item how the Lean departs from it, then the declarations, then the
   sign-off or the items of sources a declaration states. A definition is shown as its file writes

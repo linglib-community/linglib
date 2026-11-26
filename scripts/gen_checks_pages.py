@@ -3,7 +3,8 @@
 those items rest on at `/text/<path>/`.
 
 `checks/<bib-key>.toml` lists the items of a source (`checks/README.md`). A source's page shows
-the claims under the source's sections, each headed by its kind and the source's name for it. A
+the claims under the source's sections, each headed by its kind and the source's name for it,
+after the header of the study file that formalizes the source, which has no page of its own. A
 file's page shows its module docstring, its section headings and its documented declarations in
 the order of the source, each headed by its kind and a number. On either, choosing an item shows
 beside it the Lean: the statements of the declarations, what they use, opening in place, and for
@@ -92,16 +93,20 @@ class Site:
     """What a page needs of the rest: the bibliography, the declarations, and where each
     module and each documented declaration is shown."""
 
-    def __init__(self, data):
+    def __init__(self, data, studies):
         self.items, self.nodes, self.texts = data["items"], data["nodes"], data.get("texts", {})
         self.bib = {key: (kind, f)
                     for kind, key, f in gb.parse_bib(gb.BIB.read_text(encoding="utf-8"))}
         self.sources = {}
         for item in self.items:
             self.sources.setdefault(item["source"], []).append(item)
+        # A source and the study file that formalizes it are one page, the source's.
+        self.study = {key: "Studies." + match_study(key, studies) for key in self.sources
+                      if match_study(key, studies)}
+        self.source = {module: key for key, module in self.study.items()}
         # A file's text has its documented declarations that a statement closure describes.
         self.shown = {m: [d for d in t["decls"] if d["doc"] and d["name"] in self.nodes]
-                      for m, t in self.texts.items()}
+                      for m, t in self.texts.items() if m not in self.source}
         self.home = {d["name"]: m for m, ds in self.shown.items() for d in ds}
         self.titles = {m: self.title(m) for m in {n["module"] for n in self.nodes.values()}}
         # The items of the sources that a declaration states.
@@ -146,16 +151,31 @@ class Site:
     def docs_path(module, name=None):
         return f'docs/{module.replace(".", "/")}.html' + (f"#{name}" if name else "")
 
-    def module_path(self, module):
-        """The page of a module: its text if it has one, else the API docs."""
-        return self.text_path(module) if module in self.texts else self.docs_path(module)
+    def unit(self, module):
+        """What a chart draws for a module: the source it formalizes, or itself."""
+        return self.source.get(module, module)
+
+    def unit_title(self, unit):
+        return self.label(unit) if unit in self.sources else self.titles[unit]
+
+    def unit_path(self, unit):
+        """The page of a source or of a module: its text if it has one, else the API docs."""
+        if unit in self.sources:
+            return f"checks/{unit}/"
+        return self.text_path(unit) if unit in self.shown else self.docs_path(unit)
 
     def decl_path(self, name):
-        """Where a declaration is shown: its place in a text, else the API docs."""
+        """Where a declaration is shown: its place in a text, an item of the source its study
+        states it for, else the API docs."""
         if name in self.home:
             return self.text_path(self.home[name]) + "#" + name
         node = self.nodes.get(name)
-        return self.docs_path(node["module"], name) if node else None
+        if not node:
+            return None
+        for item in self.stated.get(name, ()):
+            if item["source"] == self.source.get(node["module"]):
+                return f'checks/{item["source"]}/#{item["id"]}'
+        return self.docs_path(node["module"], name)
 
     @functools.lru_cache(None)
     def reach(self, module):
@@ -189,8 +209,9 @@ class Page:
                 out.append(f"<code>{esc(code)}</code>")
             elif label and decl:
                 inner, to = self.inline(label), self.site.decl_path(target)
-                if target in self.here:
-                    out.append(f'<a class="pick" href="#{esc(target, quote=True)}">{inner}</a>')
+                if target in self.here or target in self.cover:
+                    item = target if target in self.here else self.cover[target][0][0]
+                    out.append(f'<a class="pick" href="#{esc(item, quote=True)}">{inner}</a>')
                 else:
                     out.append(f'<a class="ref" href="{self.href(to)}">{inner}</a>' if to
                                else inner)
@@ -276,8 +297,8 @@ class Page:
         """What the page rests on. The declarations `roots` and all their statements reach are
         sorted into their files, with a link where a statement in the lower file mentions a
         declaration of the upper and no longer path says so; mathlib is at the top and the page
-        at the bottom, the file `focus` or else a source that the files of `roots` hold up.
-        `below` it is what rests on it, as `(label, path, shape, why)`."""
+        at the bottom. A source and its study file are one mark. `below` the page is what
+        rests on it, as `(source or module, why)`."""
         nodes = self.site.nodes
         reached, todo = set(), [r for r in roots if r in nodes]
         while todo:
@@ -285,15 +306,17 @@ class Page:
             if d not in reached:
                 reached.add(d)
                 todo += [u for u in nodes[d]["uses"] if u in nodes]
-        uses, named = {nodes[d]["module"]: set() for d in reached}, {}
+        site = self.site
+        unit = {d: site.unit(nodes[d]["module"]) for d in reached}
+        uses, named = {u: set() for u in unit.values()}, {}
         for d in reached:
             for u in nodes[d]["uses"]:
-                if u in reached and nodes[u]["module"] != nodes[d]["module"]:
-                    uses[nodes[d]["module"]].add(nodes[u]["module"])
+                if u in reached and unit[u] != unit[d]:
+                    uses[unit[d]].add(unit[u])
                     if not generated(u):
-                        named.setdefault(nodes[u]["module"], set()).add(u.split(".")[-1])
-        if focus not in uses:
-            uses[focus] = {nodes[r]["module"] for r in roots if r in nodes}
+                        named.setdefault(unit[u], set()).add(u.split(".")[-1])
+        uses.setdefault(focus, set())
+        uses[focus] |= {unit[r] for r in roots if r in nodes} - {focus}
 
         @functools.lru_cache(None)
         def reach(m):
@@ -316,7 +339,7 @@ class Page:
             def over(m):
                 up = [x[b] for b in uses[m] if b in x]
                 return sum(up) / len(up) if up else 0
-            rows[lv].sort(key=lambda m: (over(m), self.site.titles.get(m, "")))
+            rows[lv].sort(key=lambda m: (over(m), site.unit_title(m)))
             for k, m in enumerate(rows[lv]):
                 x[m], y[m] = width * (k + 1) / (len(rows[lv]) + 1), top + 28 + lv * row
 
@@ -338,20 +361,25 @@ class Page:
             return (f'<path class="ge" d="M{x1:.0f},{y1:.0f} C{x1:.0f},{mid:.0f} {x2:.0f},'
                     f'{mid:.0f} {x2:.0f},{y2 - 7:.0f}"/>')
 
+        def shape(m, cx, cy, cls=""):
+            """A source is a circle, a file a square."""
+            if m in site.sources:
+                return f'<circle class="gn {cls or "study"}" cx="{cx:.0f}" cy="{cy:.0f}" r="5.5"/>'
+            return (f'<rect class="gn {cls or "theory"}" x="{cx - 5:.0f}" y="{cy - 5:.0f}" '
+                    'width="10" height="10" rx="1.5"/>')
+
         marks, foot = [], {}
         for m in level:
             mine = m == focus
-            n, text = label(focus_label if mine else self.site.titles[m], x[m], y[m],
+            n, text = label(focus_label if mine else site.unit_title(m), x[m], y[m],
                             "here" if mine else "")
             foot[m] = y[m] + 12 + 14 * n
-            kind = "here" if mine else "study" if m.startswith("Studies.") else "theory"
-            mark = (f'<rect class="gn {kind}" x="{x[m] - 5:.0f}" y="{y[m] - 5:.0f}" width="10" '
-                    f'height="10" rx="1.5"/>{text}')
+            mark = shape(m, x[m], y[m], "here" if mine else "") + text
             if mine:
                 marks.append(mark)
             else:
                 why = ", ".join(sorted(named.get(m, ())))
-                marks.append(f'<a href="{self.href(self.site.module_path(m))}">'
+                marks.append(f'<a href="{self.href(site.unit_path(m))}">'
                              f'<title>{esc(why)}</title>{mark}</a>')
         lines = [f'<line class="gbase" x1="16" y1="{top}" x2="{width - 16}" y2="{top}"/>'
                  f'<text class="gl base" x="{width / 2:.0f}" y="{top - 9}" text-anchor="middle">'
@@ -360,15 +388,12 @@ class Page:
                   for m in rows.get(0, ())]
         lines += [curve(x[b], foot[b], x[a], y[a]) for a, b in links]
         height = max(foot.values()) + 14
-        for k, (text, path, shape, why) in enumerate(below):
+        for k, (m, why) in enumerate(below):
             bx, by = width * (k + 1) / (len(below) + 1), y[focus] + row
             lines.append(curve(x[focus], foot[focus], bx, by))
-            n, text = label(text, bx, by)
-            mark = (f'<circle class="gn study" cx="{bx:.0f}" cy="{by:.0f}" r="5.5"/>'
-                    if shape == "source" else
-                    f'<rect class="gn {shape}" x="{bx - 5:.0f}" y="{by - 5:.0f}" width="10" '
-                    'height="10" rx="1.5"/>')
-            marks.append(f'<a href="{self.href(path)}"><title>{esc(why)}</title>{mark}{text}</a>')
+            n, text = label(site.unit_title(m), bx, by)
+            marks.append(f'<a href="{self.href(site.unit_path(m))}"><title>{esc(why)}</title>'
+                         f'{shape(m, bx, by)}{text}</a>')
             height = max(height, by + 26 + 14 * n)
         return (f'<svg class="chart" viewBox="0 0 {width} {height:.0f}" '
                 f'style="max-width:{width}px" role="img" aria-label="What this page rests on">'
@@ -452,7 +477,29 @@ def head(i):
     return f'<span class="head">{name}</span>{mark}'
 
 
-def source_page(site, key, studies, sha, lines):
+def module_doc(page, doc):
+    """A module docstring as the parts of a text: what belongs to its body, and the sections that
+    close it. The title is left out, and so are the lists of main declarations, which the text
+    itself replaces."""
+    body, tail, section = [], [], None
+    for kind, content in page.blocks(doc):
+        if kind == "h1":
+            continue
+        if kind[0] == "h":
+            section = content
+            if content in CLOSING:
+                tail.append(f'<h2 class="sec">{esc(CLOSING[content])}</h2>')
+            elif not LISTS.match(content):
+                body.append(f'<h2 class="sec">{page.inline(content)}</h2>')
+        elif section in CLOSING:
+            cls = "refs" if section == "References" else "prose"
+            tail.append(f'<div class="{cls}">{content}</div>')
+        elif not (section and LISTS.match(section)):
+            body.append(f'<div class="prose">{content}</div>')
+    return body, tail
+
+
+def source_page(site, key, sha, lines):
     page = Page(site, f"checks/{key}/")
     its = site.sources[key]
     kind, f = site.bib[key]
@@ -461,15 +508,19 @@ def source_page(site, key, studies, sha, lines):
     cite = ". ".join(p for p in (f"{esc(gb.authors(f))} ({esc(year)})", gb.venue(kind, f)) if p)
     record = f"{site_shell.REPO}/blob/main/checks/{key}.toml"
     links = [f'<a href="{page.href("bibliography/#" + key)}">Bibliography</a>']
-    study = match_study(key, studies)
+    study = site.study.get(key)
     if study:
-        links.append(f'<a href="{page.href(site.module_path("Studies." + study))}">Study</a>')
+        links += [f'<a href="{site_shell.REPO}/blob/main/{study.replace(".", "/")}.lean">'
+                  'Lean file</a>', f'<a href="{page.href(site.docs_path(study))}">API docs</a>']
     links.append(f'<a href="{record}">Record</a>')
     for i in its:
         for d in i["decls"]:
             page.cover.setdefault(d, []).append((i["id"], i["label"]))
 
-    body, panel = [], {}
+    # The study file's header opens the page and its notes and references close it.
+    header = site.texts.get(study, {}).get("docs", [])[:1]
+    body, tail = module_doc(page, header[0]["doc"]) if header else ([], [])
+    panel = {}
     for i in its:
         iid = esc(i["id"], quote=True)
         if i["section"]:
@@ -492,7 +543,7 @@ def source_page(site, key, studies, sha, lines):
     label = site.label(key)
     return page.path, page.render(
         gb.tex_text(f.get("title", key)), f'<a href="../">Checks</a> / {esc(label)}',
-        gb.tex_html(f.get("title", key)), cite, body, links,
+        gb.tex_html(f.get("title", key)), cite, body + tail, links,
         page.chart(key, label, [d for i in its for d in i["decls"]]), panel, sha)
 
 
@@ -505,21 +556,9 @@ def module_page(site, module, sha):
     body, tail, panel, count, title = [], [], {}, 0, site.titles[module]
     for _, what, x in stream:
         if what == "doc":
-            section = None
-            for kind, content in page.blocks(x["doc"]):
-                if kind == "h1":
-                    continue
-                if kind[0] == "h":
-                    section = content
-                    if content in CLOSING:
-                        tail.append(f'<h2 class="sec">{esc(CLOSING[content])}</h2>')
-                    elif not LISTS.match(content):
-                        body.append(f'<h2 class="sec">{page.inline(content)}</h2>')
-                elif section in CLOSING:
-                    cls = "refs" if section == "References" else "prose"
-                    tail.append(f'<div class="{cls}">{content}</div>')
-                elif not (section and LISTS.match(section)):
-                    body.append(f'<div class="prose">{content}</div>')
+            more, closing = module_doc(page, x["doc"])
+            body += more
+            tail += closing
             continue
         count += 1
         name = x["name"]
@@ -536,20 +575,17 @@ def module_page(site, module, sha):
                   for i in site.stated.get(name, ())]
         panel[name] = {"how": "", "decls": [name], "state": " ".join(states)}
 
-    # Under the file: the texts that use it and no longer path says so, and the sources it states.
-    below = []
+    # Under the file: the sources whose items it states, and the files that use it where no
+    # longer path says so.
+    below = {}
+    for d in text["decls"]:
+        for i in site.stated.get(d["name"], ()):
+            below.setdefault(i["source"], []).append(i["label"])
+    below = {key: ", ".join(dict.fromkeys(labels)) for key, labels in below.items()}
     for m in sorted(site.texts, key=lambda m: site.titles[m]):
         if module in site.uses[m] and not any(module in site.reach(c)
                                               for c in site.uses[m] if c != module):
-            why = ", ".join(sorted(site.named.get((m, module), ())))
-            shape = "study" if m.startswith("Studies.") else "theory"
-            below.append((site.titles[m], site.module_path(m), shape, why))
-    stating = {}
-    for d in text["decls"]:
-        for i in site.stated.get(d["name"], ()):
-            stating.setdefault(i["source"], []).append(i["label"])
-    below += [(site.label(key), f"checks/{key}/", "source", ", ".join(dict.fromkeys(labels)))
-              for key, labels in stating.items()]
+            below.setdefault(site.unit(m), ", ".join(sorted(site.named.get((m, module), ()))))
 
     parts = module.split(".")
     crumbs = esc(" / ".join(parts[1:-1] if parts[0] == "Linglib" else parts[:-1]))
@@ -557,7 +593,8 @@ def module_page(site, module, sha):
              f'<a href="{site_shell.REPO}/blob/main/{module.replace(".", "/")}.lean">Source</a>']
     return page.path, page.render(
         title, crumbs, page.inline(title), f"<code>{esc(module)}</code>", body + tail, links,
-        page.chart(module, title, [d["name"] for d in text["decls"]], below), panel, sha)
+        page.chart(module, title, [d["name"] for d in text["decls"]], list(below.items())),
+        panel, sha)
 
 
 def index_page(site, sha):
@@ -597,16 +634,16 @@ def main():
     ap.add_argument("--out", type=Path, required=True, help="the site's root directory")
     args = ap.parse_args()
 
-    site = Site(json.loads(args.checks.read_text(encoding="utf-8")))
     studies = {p.stem for p in (ROOT / "Studies").glob("*.lean")}
+    site = Site(json.loads(args.checks.read_text(encoding="utf-8")), studies)
     sha = site_shell.git_commit()
     missing = sorted(set(site.sources) - set(site.bib))
     if missing:
         sys.exit("not in references.bib: " + ", ".join(missing))
 
     pages = {"checks/": index_page(site, sha)}
-    pages.update(source_page(site, key, studies, sha, item_lines(key)) for key in site.sources)
-    pages.update(module_page(site, module, sha) for module in site.texts)
+    pages.update(source_page(site, key, sha, item_lines(key)) for key in site.sources)
+    pages.update(module_page(site, module, sha) for module in site.shown)
     for path, page in pages.items():
         (args.out / path).mkdir(parents=True, exist_ok=True)
         (args.out / path / "index.html").write_text(page, encoding="utf-8")
@@ -617,7 +654,7 @@ def main():
     for p, t in dead:
         print(f"{p}: no page at {t}", file=sys.stderr)
     print(f"wrote {args.out}: {len(site.sources)} source{'' if len(site.sources) == 1 else 's'}, "
-          f"{len(site.items)} items, {len(site.texts)} files as texts")
+          f"{len(site.items)} items, {len(site.shown)} files as texts")
     sys.exit(1 if dead else 0)
 
 
