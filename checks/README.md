@@ -39,6 +39,11 @@ source, is the section's number and title, such as `"§2.3 Existential statement
 of what a sign-off covers. A term that an item defines is written `**term**` in its claim and is
 set in bold.
 
+The page credits each item, each declaration, the record and each file to the people who
+committed their lines, as git has them (a Lean file's `Authors:` header, where it has one, names
+the file's). The person who commits a line answers for it, whatever drafted it, so a credit never
+names a tool; who has checked an item against the source is a separate matter, the sign-off's.
+
 `kind` says what the item is in the source:
 
 * `definition`: it defines something, which the declarations define or characterize.

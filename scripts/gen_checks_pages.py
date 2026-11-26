@@ -95,6 +95,7 @@ class Site:
 
     def __init__(self, data, studies):
         self.items, self.nodes, self.texts = data["items"], data["nodes"], data.get("texts", {})
+        self.records = data.get("records", {})
         self.bib = {key: (kind, f)
                     for kind, key, f in gb.parse_bib(gb.BIB.read_text(encoding="utf-8"))}
         self.sources = {}
@@ -289,7 +290,8 @@ class Page:
             used[n] = {"k": keyword(nodes[n]), "t": display(nodes[n], n),
                        "u": [u for u in nodes[n]["uses"]
                              if u in nodes and u != n and not generated(u)],
-                       "h": self.root + self.site.decl_path(n), "c": self.cover.get(n, [])}
+                       "h": self.root + self.site.decl_path(n), "c": self.cover.get(n, []),
+                       "a": people(nodes[n].get("credit"))}
             todo += used[n]["u"]
         return used
 
@@ -414,6 +416,12 @@ class Page:
         return page
 
 
+def people(credit):
+    """`A`, `A and B` or `A, B and C`: the people who answer for something, or nothing."""
+    by = [esc(a) for a in (credit or {}).get("by", ())]
+    return ", ".join(by[:-1]) + (" and " if by[:-1] else "") + by[-1] if by else ""
+
+
 def who(ck):
     by = esc(ck["by"])
     return by if ck["via"] else f'<a href="https://github.com/{by}">{by}</a>'
@@ -532,8 +540,11 @@ def source_page(site, key, sha, lines):
     else:
         tally = (f'{len(checked)} of the {count} have been checked against the paper, by '
                  f'{" and ".join(signers)}; they carry a mark.')
-    body.append(f'<p class="prov">What follows restates the paper item by item, from its '
-                f'<a href="{record}">check record</a>. {tally}</p>')
+    formal = people(site.texts.get(study, {}).get("credit"))
+    wrote = people(site.records.get(key))
+    body.append('<p class="prov">' + (f"Formalized by {formal}. " if formal else "")
+                + f'What follows restates the paper item by item, from its <a href="{record}">'
+                f'check record</a>{" by " + wrote if wrote else ""}. {tally}</p>')
     panel = {}
     for i in its:
         iid = esc(i["id"], quote=True)
@@ -548,6 +559,8 @@ def source_page(site, key, sha, lines):
             verb = "defines" if len(i["relies"]) == 1 else "define"
             uses = f"Its statement uses what {refs(i['relies'], items, key)} {verb}."
             line = f"{line} {uses}" if line else uses
+        if people(i.get("credit")):
+            line = f'Claim by {people(i["credit"])}. {line}'.strip()
         if i["id"] in lines:
             line += (" " if line else "") + f'<a href="{record}#L{lines[i["id"]]}">Record</a>.'
         how = f'<p class="rel">{RELATION[i["relation"]]}</p>' if i["relation"] in RELATION else ""
@@ -606,7 +619,9 @@ def module_page(site, module, sha):
     links = [f'<a href="{page.href(site.docs_path(module))}">API docs</a>',
              f'<a href="{site_shell.REPO}/blob/main/{module.replace(".", "/")}.lean">Source</a>']
     return page.path, page.render(
-        title, crumbs, page.inline(title), f"<code>{esc(module)}</code>", body + tail, links,
+        title, crumbs, page.inline(title),
+        (f"{people(text.get('credit'))} · " if people(text.get("credit")) else "")
+        + f"<code>{esc(module)}</code>", body + tail, links,
         page.chart(module, title, [d["name"] for d in text["decls"]], list(below.items())),
         panel, sha)
 

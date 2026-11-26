@@ -26,6 +26,8 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: true
+          # The whole history, from which the pages credit each item to who committed it.
+          fetch-depth: 0
 
       - name: Free disk space
         run: |

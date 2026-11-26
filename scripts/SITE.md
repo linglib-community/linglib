@@ -52,6 +52,11 @@ Each page is read as a text, and departs from the rules above to that end:
   no longer path says so. Top to bottom is an order to read in.
 - An item a person has checked carries a mark after its number. An unchecked item says nothing
   in the text.
+- Credit is to people, and at the grain of the item. A file's authors stand under its title; a
+  source's page names who formalized it and who wrote its record on the line where the restated
+  items begin; and beside a chosen item stand who wrote its claim and, after each declaration's
+  name, who wrote that. The names are those of who committed the lines (`checks.py`), never a
+  tool's.
 
 ## The docs pages
 

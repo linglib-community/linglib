@@ -83,6 +83,7 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
 .decl .name .kw { color: var(--secondary); }
 .decl .name a { border-bottom: 1px solid var(--tertiary); }
 .decl .name a:hover { border-bottom-color: currentColor; }
+.decl .name .who { float: right; margin-left: 12px; font: 12px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--secondary); }
 .lean pre {
   margin: 0; padding: 10px 12px; font: 12.5px/1.55 var(--mono); background: var(--code-bg);
   border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere;
@@ -196,6 +197,7 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
       const a = el("a", null, name);
       a.href = n.h; a.title = "In the API docs";
       p.append(el("span", "kw", n.k + " "), a);
+      if (n.a) p.append(el("span", "who", n.a));
       d.append(p, el("pre", null, n.t));
       if (n.u.length) d.append(mentions(name));
       pane.append(d);

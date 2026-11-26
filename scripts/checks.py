@@ -57,6 +57,7 @@ import concurrent.futures
 import copy
 import datetime
 import difflib
+import functools
 import hashlib
 import json
 import os
@@ -376,6 +377,69 @@ def module_texts(modules):
     return texts
 
 
+@functools.lru_cache(None)
+def blame(path):
+    """Who last wrote each line of a tracked file, and on what day, by line number. Empty where
+    git's history is cut short, as in a shallow checkout, since every line would then be credited
+    to the last commit."""
+    shallow = subprocess.run(["git", "rev-parse", "--is-shallow-repository"], cwd=ROOT,
+                             capture_output=True, text=True).stdout.strip()
+    out = subprocess.run(["git", "blame", "-w", "-M", "--line-porcelain", "--", str(path)],
+                         cwd=ROOT, capture_output=True, text=True)
+    if shallow != "false" or out.returncode:
+        return {}
+    lines, author, day = {}, None, None
+    for line in out.stdout.splitlines():
+        if line.startswith("author "):
+            author = line[7:]
+        elif line.startswith("author-time "):
+            day = datetime.datetime.fromtimestamp(int(line[12:]), datetime.timezone.utc).date()
+        elif line.startswith("\t"):
+            lines[len(lines) + 1] = (author, day)
+    return lines
+
+
+def credit(path, first=1, last=None):
+    """The people who answer for the lines `first` to `last` of a file: those who committed
+    them, most lines first, with the day of the latest change; `None` where git does not say.
+    Whatever drafted a line, the person who committed it answers for it, so a name that is not a
+    person's is never given, and lines not yet committed do not count. For a whole Lean file with
+    an `Authors:` header, the authors are the header's."""
+    lines = blame(path)
+    span = [lines[n] for n in range(first, (last or len(lines)) + 1)
+            if n in lines and lines[n][0] != "Not Committed Yet"
+            and not AGENT_NAME.search(lines[n][0])]
+    if not span:
+        return None
+    count = {}
+    for author, _ in span:
+        count[author] = count.get(author, 0) + 1
+    by = sorted(count, key=lambda a: (-count[a], a))
+    if first == 1 and last is None and path.suffix == ".lean":
+        header = re.search(r"(?m)^Authors: (.+)$", path.read_text(encoding="utf-8")[:1500])
+        if header:
+            by = [a.strip() for a in header.group(1).split(",")
+                  if a.strip() and not AGENT_NAME.search(a)]
+    return {"by": by, "date": max(day for _, day in span).isoformat()}
+
+
+def item_spans(path):
+    """The lines of each item of a check file, by its id."""
+    text = path.read_text(encoding="utf-8").splitlines()
+    starts = [n for n, line in enumerate(text, 1) if line.strip() == "[[item]]"]
+    spans = {}
+    for first, after in zip(starts, starts[1:] + [len(text) + 1]):
+        last = after - 1
+        while last > first and (not text[last - 1].strip() or text[last - 1].startswith("#")):
+            last -= 1
+        for line in text[first - 1:last]:
+            m = re.match(r'\s*id\s*=\s*"([^"]+)"', line)
+            if m:
+                spans[m.group(1)] = (first, last)
+                break
+    return spans
+
+
 def source_text(node):
     """A definition or inductive type as its file writes it, without its docstring; `None` for a
     theorem, whose statement a page shows without its proof, and for what Lean generated."""
@@ -395,10 +459,12 @@ def status_json(sources, status, info, data):
     and what `gen_checks_pages.py` shows of it besides: its claim, the items covering a definition
     its statement uses (`relies`), and each declaration of a closure as a reader sees it, with the
     declarations its statement mentions directly (`nodes`), and the modules those statements
-    reach as texts, their docstrings in the order of the source (`texts`)."""
+    reach as texts, their docstrings in the order of the source (`texts`). Each item,
+    declaration, file and record comes with who wrote its lines, as git has it (`credit`)."""
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, check=True,
                             capture_output=True, text=True).stdout.strip()
     items = []
+    spans = {key: item_spans(src["path"]) for key, src in sources.items()}
     for (key, cid), st in status.items():
         item = info[(key, cid)]["item"]
         last = (item.get("check") or [None])[-1]
@@ -406,6 +472,7 @@ def status_json(sources, status, info, data):
             "source": key, "id": cid, "kind": item.get("kind"), "label": item.get("label", cid),
             "relation": item.get("relation"), "notes": item.get("notes", "").strip(),
             "claim": item.get("claim", "").strip(), "section": item.get("section", ""),
+            "credit": credit(sources[key]["path"], *spans[key][cid]) if cid in spans[key] else None,
             "decls": item.get("decls", []), "status": st,
             "relies": sorted(f"{k}/{c}" for k, c in info[(key, cid)]["deps"]),
             "axioms": info[(key, cid)].get("axioms", []),
@@ -421,10 +488,18 @@ def status_json(sources, status, info, data):
     every = dict(data["nodes"])
     if written:
         every.update(check_closure(modules, written, load_renames())["nodes"])
+    def path(module):
+        return ROOT / (module.replace(".", "/") + ".lean")
+
     nodes = {name: {"module": n["module"], "kind": n["kind"], "display": n["display"],
-                    "source": source_text(n), "uses": n["uses"]}
+                    "source": source_text(n), "uses": n["uses"],
+                    "credit": credit(path(n["module"]), *n["lines"]) if n["lines"] else None}
              for name, n in sorted(every.items())}
-    return {"commit": commit, "items": items, "nodes": nodes, "texts": texts}
+    for module, text in texts.items():
+        text["credit"] = credit(path(module))
+    records = {key: credit(src["path"]) for key, src in sources.items()}
+    return {"commit": commit, "items": items, "nodes": nodes, "texts": texts,
+            "records": records}
 
 
 def cmd_status(args):
