@@ -366,7 +366,7 @@ theorem exh_unaware_too_weak (hF : FreeChoiceWitnesses R a b) :
     ∃ R' : SetRel W W, □[R'] (· ∈ R.preimage a) w ∧
       ¬ □[R'] (· ∈ exhIEII (fcAlts R a b) (R.preimage (a ∪ b))) w := by
   obtain ⟨w₁, hw₁a, hw₁b⟩ := hF.only_left
-  refine ⟨.ofSuccessors fun _ ↦ {w₁}, fun v (hv : v = w₁) ↦ hv ▸ hw₁a, fun hbox ↦ ?_⟩
+  refine ⟨.cgraph fun _ ↦ {w₁}, fun v (hv : v = w₁) ↦ hv ▸ hw₁a, fun hbox ↦ ?_⟩
   have := hbox w₁ (Set.mem_singleton w₁)
   rw [freeChoice hF] at this
   exact hw₁b this.1.2

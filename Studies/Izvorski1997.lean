@@ -62,13 +62,13 @@ propositions the speaker counts as indirect evidence, and `g` assigns the speake
 that evidence. The presupposition is that there is such evidence and that it does not establish `p`,
 and the assertion is that `p` holds in every accessible world closest to the beliefs. -/
 noncomputable def Ev (f g : Background W) (p : Set W) : W → Trivalent :=
-  Trivalent.condEvent (fun w ↦ (f w).Nonempty ∧ ¬ Known f w p) (fun w ↦ bestWorlds f g w ⊆ p)
+  Trivalent.condEvent (fun w ↦ (f w).Nonempty ∧ ¬ Known f w p) (fun w ↦ f.bestWorlds g w ⊆ p)
 
 open Classical in
 /-- Epistemic *must* is the same necessity over what is known, with no presupposition about the kind
 of evidence. -/
 noncomputable def must (f g : Background W) (p : Set W) : W → Trivalent :=
-  fun w ↦ Trivalent.ofProp (bestWorlds f g w ⊆ p)
+  fun w ↦ Trivalent.ofProp (f.bestWorlds g w ⊆ p)
 
 variable {f f' g : Background W} {p : Set W} {w : W}
 
@@ -96,14 +96,14 @@ theorem gapExt_compl_ev : Trivalent.gapExt (Ev f g p)ᶜ = Trivalent.gapExt (Ev 
   ext w; simp
 
 theorem bestWorlds_subset_of_beliefs (hex : ∃ u ∈ f.accessibleWorlds w, ∀ q ∈ g w, u ∈ q)
-    (h : ∀ u ∈ f.accessibleWorlds w, (∀ q ∈ g w, u ∈ q) → u ∈ p) : bestWorlds f g w ⊆ p := by
+    (h : ∀ u ∈ f.accessibleWorlds w, (∀ q ∈ g w, u ∈ q) → u ∈ p) : f.bestWorlds g w ⊆ p := by
   intro u hu
-  rw [bestWorlds, Preorder.minimals_ofLowerSets_eq hex] at hu
+  rw [Background.bestWorlds, Preorder.minimals_ofLowerSets_eq hex] at hu
   exact h u hu.1 hu.2
 
 /-- The best worlds lie within the epistemically accessible worlds, so the evidential meaning is
 asserted and is no implicature (Section 5.3). -/
-theorem bestWorlds_subset_accessible : bestWorlds f g w ⊆ f.accessibleWorlds w :=
+theorem bestWorlds_subset_accessible : f.bestWorlds g w ⊆ f.accessibleWorlds w :=
   Preorder.minimals_subset _ _
 
 /-- The evidential is defined when the speaker knows some proposition and does not know `p`, as the

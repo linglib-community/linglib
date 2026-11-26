@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Set.Functor
 public import Mathlib.Data.Set.Lattice.Bounded
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Languages.Japanese.Determiners
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Languages.German.PolarityItems

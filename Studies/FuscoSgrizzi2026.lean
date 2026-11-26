@@ -76,8 +76,8 @@ section Semantics
 variable {I V W : Type*}
 
 /-- The inertia worlds of a state, `INERTIA(s)` of (25), are the best worlds of the state's
-circumstances under an inertial ordering of its own ([dowty-1979], [kratzer-2013]): `bestWorlds`
-with the state in place of a world. -/
+circumstances under an inertial ordering of its own ([dowty-1979], [kratzer-2013]):
+`Background.bestWorlds` with the state in place of a world. -/
 def inertiaWorlds (circumstances : V → Set (W → Prop)) (inertia : V → Set (Set W)) (s : V) :
     Set W :=
   (≤[inertia s]).minimals {w | sInf (circumstances s) w}
@@ -86,7 +86,7 @@ def inertiaWorlds (circumstances : V → Set (W → Prop)) (inertia : V → Set 
 worlds, with the eventuality argument of its complement closed over what the state causes. -/
 def aP (circumstances : V → Set (W → Prop)) (inertia : V → Set (Set W))
     (causeStar : W → SetRel V V) (P : W → V → Prop) (s : V) : Prop :=
-  □[.ofSuccessors (inertiaWorlds circumstances inertia)] (causedClosure causeStar s P) s
+  □[.cgraph (inertiaWorlds circumstances inertia)] (causedClosure causeStar s P) s
 
 -- (134) [grano-2024]
 theorem aP_empty (circumstances : V → Set (W → Prop)) (causeStar : W → SetRel V V)

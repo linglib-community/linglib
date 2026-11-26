@@ -1,13 +1,13 @@
 module
 
-public import Linglib.Semantics.Index
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Index.Defs
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Modal and temporal relations on indices
 
 A relation between world–time indices is *modal* when it relates indices at one time and
-*temporal* when it relates indices in one world ([kaufmann-condoravdi-harizanov-2006]). This file
+*temporal* when it relates indices in one world. This file
 defines the modal relation `Index.modal R` of a family `R` of relations between worlds indexed by
 times, and the temporal relation `Index.temporal S` of a relation `S` between times. Necessity
 along either is necessity along the underlying relation ([modal](##Index.box_modal),

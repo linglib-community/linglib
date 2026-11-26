@@ -303,7 +303,7 @@ end Atoms
 section Must
 
 /-- The accessibility of *must*, from a deontic state to the worlds it permits. -/
-def permits : SetRel (Set E) E := .ofSuccessors id
+def permits : SetRel (Set E) E := .cgraph id
 
 theorem permits_singleton (v : E) : ∃ A : Set E, ∀ u, A ~[permits] u ↔ u = v :=
   ⟨{v}, fun _ ↦ Iff.rfl⟩

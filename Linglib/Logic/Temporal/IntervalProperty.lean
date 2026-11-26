@@ -1,8 +1,7 @@
 module
 
 public import Linglib.Core.Order.Interval.Basic
-public import Linglib.Logic.Modal.Defs
-public import Linglib.Logic.Temporal.IntervalAlgebra
+public import Linglib.Logic.Modal.Basic
 public import Mathlib.Order.Hom.BoundedLattice
 
 /-!
@@ -14,15 +13,17 @@ of a kind, or of the spans an adverbial names. The property `(· = i)` holds of 
 `i`, and `(· ≤ i)` of `i` and its subintervals, as a state that lasts throughout `i` does.
 
 Operators on interval properties are possibility and necessity, `◇[R]` and `□[R]`, along
-relations between intervals. Along inclusion, `inclusive p` holds at `t` when `p` holds at some
+relations between intervals. Along inclusion, `{x | x.2 ≤ x.1}`, `inclusive p` holds at `t` when
+`p` holds at some
 subinterval of `t`, and `durative p` when `p` holds at every subinterval of `t`. A monotone
 interval property is one closed under superintervals, and an antitone one is closed under
 subintervals: `inclusive p` is monotone and equals `p` when `p` is monotone, and `durative p` is
-antitone and equals `p` when `p` is antitone.
+antitone and equals `p` when `p` is antitone. Possibility over superintervals,
+`◇[{x | x.1 ≤ x.2}] p`, is left adjoint to `durative`, and what it yields is antitone.
 
 The time trace `timeTrace p` of an interval property is the set of moments its intervals cover,
 which are the moments `a` at which `p` is possible along containment,
-`◇[(toSetRel .le).inv] p (.pure a)`. The trace of `(· = i)` and of `(· ≤ i)` is `i`.
+`◇[{x | x.1 ≤ x.2}] p (.pure a)`. The trace of `(· = i)` and of `(· ≤ i)` is `i`.
 
 ## Main definitions
 
@@ -35,9 +36,10 @@ which are the moments `a` at which `p` is possible along containment,
 * An interval property is a predicate, as the propositions of `Logic/Modal` are, so that `◇[R]`
   and `□[R]` apply to it and entailment is `≤`. Its time trace is a set of moments, to which the
   bounds and closures of a set in an order apply.
-* The file makes no assumption about what an interval property is the property of. Viewpoint
-  aspect (`Semantics/Aspect`) applies operators to the run times of events, and a temporal
-  connective (`Semantics/Tense`) relates the time traces of its two clauses.
+* The file makes no assumption about what an interval property is the property of, and needs
+  only the order of intervals. Viewpoint aspect (`Semantics/Aspect`) applies operators along the
+  elements of the interval algebra to the run times of events, and a temporal connective
+  (`Semantics/Tense`) relates the time traces of its two clauses.
 
 ## References
 
@@ -49,20 +51,22 @@ which are the moments `a` at which `p` is possible along containment,
 
 namespace Temporal
 
-open ModalLogic IntervalAlgebra Allen
+open ModalLogic
 open scoped SetRel
 
-variable {T : Type*} [LinearOrder T] {p q : NonemptyInterval T → Prop} {s t : NonemptyInterval T}
+variable {T : Type*} [Preorder T] {p q : NonemptyInterval T → Prop} {s t : NonemptyInterval T}
 
 /-! ### Subintervals and superintervals -/
 
 /-- `inclusive p` holds at an interval when `p` holds at some subinterval of it, the inclusive
 reading of an interval adverbial, *in*. -/
-def inclusive (p : NonemptyInterval T → Prop) : NonemptyInterval T → Prop := ◇[toSetRel .le] p
+def inclusive (p : NonemptyInterval T → Prop) : NonemptyInterval T → Prop :=
+  ◇[{x : NonemptyInterval T × NonemptyInterval T | x.2 ≤ x.1}] p
 
 /-- `durative p` holds at an interval when `p` holds at every subinterval of it, the durative
 reading of an interval adverbial, *throughout*. -/
-def durative (p : NonemptyInterval T → Prop) : NonemptyInterval T → Prop := □[toSetRel .le] p
+def durative (p : NonemptyInterval T → Prop) : NonemptyInterval T → Prop :=
+  □[{x : NonemptyInterval T × NonemptyInterval T | x.2 ≤ x.1}] p
 
 theorem inclusive_iff : inclusive p t ↔ ∃ s ≤ t, p s := by
   simp [inclusive, diamond_iff]
@@ -115,6 +119,29 @@ theorem durative_iff_of_monotone (hp : Monotone p) : durative p t ↔ ∀ a ∈ 
   obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hs
   exact hp (NonemptyInterval.pure_le_iff.2 ⟨le_rfl, s.fst_le_snd⟩)
     (h s.fst ⟨h₁, s.fst_le_snd.trans h₂⟩)
+
+/-! ### Superintervals
+
+Possibility along containment, `◇[{x | x.1 ≤ x.2}] p`, holds at an interval when `p` holds at
+some interval that contains it. -/
+
+/-- Possibility over superintervals is left adjoint to necessity over subintervals. -/
+theorem gc_diamond_le_durative :
+    GaloisConnection
+      (fun p : NonemptyInterval T → Prop ↦
+        ◇[{x : NonemptyInterval T × NonemptyInterval T | x.1 ≤ x.2}] p)
+      durative :=
+  diamond_box_gc _
+
+/-- A property that holds at some superinterval is closed under subintervals. -/
+theorem antitone_diamond_le (p : NonemptyInterval T → Prop) :
+    Antitone (◇[{x : NonemptyInterval T × NonemptyInterval T | x.1 ≤ x.2}] p) :=
+  fun _ _ hst ⟨u, hu, hp⟩ ↦ ⟨u, le_trans hst hu, hp⟩
+
+theorem durative_diamond_le (p : NonemptyInterval T → Prop) :
+    durative (◇[{x : NonemptyInterval T × NonemptyInterval T | x.1 ≤ x.2}] p) =
+      ◇[{x : NonemptyInterval T × NonemptyInterval T | x.1 ≤ x.2}] p :=
+  durative_eq_of_antitone (antitone_diamond_le p)
 
 /-! ### The time trace -/
 
@@ -198,12 +225,13 @@ theorem isGreatest_timeTrace_subintervals (i : NonemptyInterval T) :
 
 end PartialOrder
 
-open ModalLogic IntervalAlgebra in
+open ModalLogic in
 /-- The time trace holds the moments at which the property is possible along containment. -/
-theorem mem_timeTrace_iff_diamond {T : Type*} [LinearOrder T] {p : NonemptyInterval T → Prop}
-    {a : T} : a ∈ timeTrace p ↔ ◇[(toSetRel .le).inv] p (.pure a) := by
+theorem mem_timeTrace_iff_diamond {T : Type*} [PartialOrder T] {p : NonemptyInterval T → Prop}
+    {a : T} :
+    a ∈ timeTrace p ↔ ◇[{x : NonemptyInterval T × NonemptyInterval T | x.1 ≤ x.2}] p (.pure a) := by
   simp only [mem_timeTrace, diamond_iff]
   exact exists_congr fun i ↦ and_comm.trans (and_congr_left fun _ ↦
-    NonemptyInterval.mem_def.trans (by simp [NonemptyInterval.le_def]))
+    NonemptyInterval.pure_le_iff.symm)
 
 end Temporal

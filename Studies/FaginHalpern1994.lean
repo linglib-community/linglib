@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Modal.Epistemic
+public import Linglib.Logic.Epistemic.CommonKnowledge
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Order.FixedPoints
@@ -10,7 +10,7 @@ public import Mathlib.Order.FixedPoints
 
 This file formalizes the Kripke structures for knowledge and probability of
 [fagin-halpern-1994] and the probabilistic common knowledge of its Section 5. A `KripkeProb`
-adds to the accessibility relations of multi-agent epistemic logic (`Logic/Modal/Epistemic`) a
+adds to the accessibility relations of multi-agent epistemic logic (`Logic/Epistemic/CommonKnowledge`) a
 probability space for each agent at each state: a sample space `S_{i,s}` of states and a
 probability measure `μ_{i,s}` carried by it. The probability formula `w_i(φ) ≥ b`, "according
 to agent `i`, `φ` holds with probability at least `b`", is the set of states `AtLeast b i φ`.

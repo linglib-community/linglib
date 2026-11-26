@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Relation.SetRel
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Systems
 public import Linglib.Discourse.Commitment.Basic
 
 /-!
@@ -126,7 +126,7 @@ variable (P : κ → Set W)
 
 /-- From every world, the accessibility of the public commitment sets `P` reaches exactly the
 worlds compatible with `k`'s commitments. -/
-def ofSets : κ → SetRel W W := fun k ↦ SetRel.ofSuccessors fun _ ↦ P k
+def ofSets : κ → SetRel W W := fun k ↦ SetRel.cgraph fun _ ↦ P k
 
 instance : IsK45Frame (ofSets P k) where
   trans _ _ _ _ h := h

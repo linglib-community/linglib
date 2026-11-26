@@ -53,6 +53,8 @@ namespace Lewis1973a
 
 open CausalModel Conditional Relation
 
+open scoped Filter
+
 /-! ### Counterfactual and causal dependence -/
 
 section Dependence
@@ -209,7 +211,7 @@ theorem mem_variablyStrictImp_iff_solve_intervene {ord : U → Preorder (∀ v, 
   have hlt (x : ∀ v, α v) (hx : x c = b) (hne : x ≠ M[c ← b].solve u) :
       M[c ← b].solve u < x :=
     hord _ _ (score_solve_intervene_lt hx hne)
-  have h : @Filter.atBotOn _ _ (ord u) id {x | x c = b} = pure (M[c ← b].solve u) :=
+  have h : atBotOn[ord u] {x | x c = b} = pure (M[c ← b].solve u) :=
     Filter.atBotOn_eq_pure (solve_intervene_singleton_self c b)
       (fun x hx ↦ by
         rcases eq_or_ne x (M[c ← b].solve u) with rfl | hne

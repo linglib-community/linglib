@@ -3,20 +3,21 @@ module
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Logic.Relation
 public import Linglib.Core.Data.Set.Functor
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Kripke models
 
 A Kripke model gives each world the finite set of worlds it accesses and each atom the worlds
 at which it is true. `KripkeModel.accessible` reads the successor sets as the relation that `□`
-and `◇` of `Logic/Modal/Defs.lean` take.
+and `◇` of `Logic/Modal/Basic.lean` take.
 
 A relation between the worlds of two models is a bisimulation, `KripkeModel.IsBisimulation`,
 when related worlds make the same atoms true and each successor of one is related to a
 successor of the other. The converse of a bisimulation is one (`IsBisimulation.symm`), and a
 world reached from one of two related worlds is related to a world reached from the other
-(`IsBisimulation.exists_reflTransGen`).
+(`IsBisimulation.exists_reflTransGen`), and related worlds agree on the necessity of any two
+propositions the bisimulation respects (`IsBisimulation.box_iff`).
 
 ## Implementation notes
 
@@ -71,9 +72,9 @@ end Sum
 
 open SetRel in
 /-- In the accessibility relation of `M`, `v` is accessible from `w` when `v ∈ M.access w`.
-This is the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take. -/
+This is the relation that `□` and `◇` of `Logic/Modal/Basic.lean` take. -/
 def KripkeModel.accessible (M : KripkeModel W Atom) : SetRel W W :=
-  .ofSuccessors fun w ↦ ↑(M.access w)
+  .cgraph fun w ↦ ↑(M.access w)
 
 open SetRel in
 @[simp] theorem KripkeModel.mem_accessible {M : KripkeModel W Atom} {w v : W} :
@@ -82,6 +83,12 @@ open SetRel in
 open SetRel in
 instance [DecidableEq W] (M : KripkeModel W Atom) (w v : W) : Decidable (w ~[M.accessible] v) :=
   inferInstanceAs (Decidable (v ∈ M.access w))
+
+theorem KripkeModel.box_accessible (M : KripkeModel W Atom) (p : W → Prop) (w : W) :
+    □[M.accessible] p w ↔ ∀ v ∈ M.access w, p v := .rfl
+
+theorem KripkeModel.diamond_accessible (M : KripkeModel W Atom) (p : W → Prop) (w : W) :
+    ◇[M.accessible] p w ↔ ∃ v ∈ M.access w, p v := .rfl
 
 /-! ### Bisimulation -/
 
@@ -115,6 +122,14 @@ theorem exists_reflTransGen (h : M.IsBisimulation M' r) (hr : r w w') {u : W}
     obtain ⟨hforth, -⟩ := h.liftRel_access hrb
     obtain ⟨c', hc', hrc⟩ := hforth _ hbc
     exact ⟨c', hb'.tail hc', hrc⟩
+
+/-- Bisimilar worlds agree on the necessity of propositions the bisimulation respects. -/
+theorem box_iff (h : M.IsBisimulation M' r) {w : W} {w' : W'} (hr : r w w') {p : W → Prop}
+    {p' : W' → Prop} (hp : ∀ ⦃v v'⦄, r v v' → (p v ↔ p' v')) :
+    □[M.accessible] p w ↔ □[M'.accessible] p' w' := by
+  obtain ⟨forth, back⟩ := h.liftRel_access hr
+  exact ⟨fun hb v' hv' ↦ let ⟨v, hv, hvv'⟩ := back v' hv'; (hp hvv').1 (hb v hv),
+    fun hb v hv ↦ let ⟨v', hv', hvv'⟩ := forth v hv; (hp hvv').2 (hb v' hv')⟩
 
 end KripkeModel.IsBisimulation
 

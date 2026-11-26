@@ -127,19 +127,19 @@ and disjoint from each singleton when it is strict. -/
 
 /-- The modifier of degree sets that a comparison is, the image of the relation of each threshold
 to its interval. -/
-def modifier (c : Comparison) : Modifier (Set α) := (SetRel.ofSuccessors c.interval).image
+def modifier (c : Comparison) : Modifier (Set α) := (SetRel.cgraph c.interval).image
 
 @[simp] theorem modifier_singleton (c : Comparison) (n : α) : c.modifier {n} = c.interval n :=
-  SetRel.image_ofSuccessors_singleton _ n
+  SetRel.image_cgraph_singleton _ n
 
 theorem modifier_ge (s : Set α) : Comparison.ge.modifier s = upperClosure s :=
-  (SetRel.image_ofSuccessors _ s).trans (coe_upperClosure s).symm
+  (SetRel.image_cgraph _ s).trans (coe_upperClosure s).symm
 
 theorem modifier_le (s : Set α) : Comparison.le.modifier s = lowerClosure s :=
-  (SetRel.image_ofSuccessors _ s).trans (coe_lowerClosure s).symm
+  (SetRel.image_cgraph _ s).trans (coe_lowerClosure s).symm
 
 theorem modifier_eq : (Comparison.eq.modifier : Modifier (Set α)) = id :=
-  funext fun s ↦ (SetRel.image_ofSuccessors _ s).trans (Set.biUnion_of_singleton s)
+  funext fun s ↦ (SetRel.image_cgraph _ s).trans (Set.biUnion_of_singleton s)
 
 theorem isExtensive_modifier_iff [Nonempty α] (c : Comparison) :
     Modifier.IsExtensive (c.modifier : Modifier (Set α)) ↔ ¬ c.IsStrict := by

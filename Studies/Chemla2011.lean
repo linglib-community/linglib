@@ -68,6 +68,8 @@ are false.
 
 open scoped PremiseOrdering
 
+open scoped Filter
+
 namespace Chemla2011
 
 variable {W : Type*} {L : Set (Set W)} {w z : W}
@@ -148,7 +150,7 @@ theorem ofLowerSets_eq_of_forall_exists_sInter {O O' : Set (Set W)} (h₁ : O �
 
 /-- Definition (5): *if `P`, `Q`* is true in an order when every `P`-world has a `P`-world at
 least as close, all of whose `P`-worlds at least as close are `Q`-worlds. -/
-def IsTrue (p : Preorder W) (P Q : Set W) : Prop := Q ∈ @Filter.atBotOn W W p id P
+def IsTrue (p : Preorder W) (P Q : Set W) : Prop := Q ∈ atBotOn[p] P
 
 theorem isTrue_iff {p : Preorder W} {P Q : Set W} :
     IsTrue p P Q ↔ ∀ u ∈ P, ∃ v ∈ P, p.le v u ∧ ∀ w ∈ P, p.le w v → w ∈ Q :=

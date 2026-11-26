@@ -3,10 +3,10 @@ module
 public import Mathlib.Data.Set.Prod
 public import Mathlib.Order.Interval.Set.Disjoint
 public import Mathlib.Order.Interval.Set.LinearOrder
-public import Linglib.Semantics.Index
+public import Linglib.Logic.Modal.Index.Defs
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Logic.Temporal.Basic
-public import Linglib.Semantics.Index.Rel
+public import Linglib.Logic.Modal.Index
 
 /-!
 # Historical alternatives

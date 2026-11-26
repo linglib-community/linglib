@@ -116,7 +116,7 @@ theorem mem_language_iff_window {k : ℕ} {G : StrictlyLocalGrammar α} {w : Lis
 /-- The language at width `k` is the core of the relation taking a word to its `k`-factors. -/
 theorem language_eq_core (k : ℕ) (G : StrictlyLocalGrammar α) :
     G.language k =
-      (SetRel.ofSuccessors fun w : List α ↦ {f | f <:+: boundary k w ∧ f.length = k}).core G :=
+      (SetRel.cgraph fun w : List α ↦ {f | f <:+: boundary k w ∧ f.length = k}).core G :=
   Set.ext fun _ ↦ ⟨fun h _ hf ↦ h _ hf.2 hf.1, fun h _ hl hf ↦ h ⟨hf, hl⟩⟩
 
 theorem language_inter (k : ℕ) (G₁ G₂ : StrictlyLocalGrammar α) :

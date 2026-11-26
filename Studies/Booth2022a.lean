@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.MinimalCovering
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Studies.Simons2005
 
 /-!
@@ -115,13 +115,13 @@ theorem truth_diamond_conj_neg_subset (p q : At) :
 -- §6, fn. 13 [kratzer-1991]
 theorem truth_necessity_bang (φ : Kalman (Proposition (Set W))) :
     truth (necessity R (bang φ)) =
-      {w | (R w).Nonempty ∧ ModalLogic.Box (.ofSuccessors R) (· ∈ truth φ) w} :=
+      {w | (R w).Nonempty ∧ ModalLogic.Box (.cgraph R) (· ∈ truth φ) w} :=
   truth_necessity_of_alt_eq_singleton R _ (alt_bang_pro φ)
 
 -- §6
 theorem truth_possibility_bang (φ : Kalman (Proposition (Set W))) :
     truth (possibility R (bang φ)) =
-      {w | ModalLogic.Diamond (.ofSuccessors R) (· ∈ truth φ) w} := by
+      {w | ModalLogic.Diamond (.cgraph R) (· ∈ truth φ) w} := by
   rw [truth_possibility_of_alt_eq_singleton R _ (alt_bang_pro φ)]
   rfl
 

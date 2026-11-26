@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Logic.Function.DependsOn
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Extensional operators

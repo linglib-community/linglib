@@ -5,32 +5,33 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.PreorderLattice
-public import Mathlib.Order.Concept
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Minimal
+public import Mathlib.Util.DelabNonCanonical
 
 /-!
-# The bottom of a ranking within a domain
+# The bottom of a ranking within a set
 
-`Filter.atBotOn f s` is the filter of sets that hold toward the bottom of the ranking `f` within
-the domain `s`: `t` belongs to it when every point of `s` has a point of `s` ranked at or below
-it, all of whose points of `s` ranked at or below are in `t`. Equivalently, `t` contains a lower
-set of `s` that is coinitial in `s`. On a codirected order, over the whole type and ranked by the
-identity, it is [`atBot`](##Filter.atBotOn_id_univ), but it needs neither directedness nor minimal
-points: when every point lies above a minimal one it is [the principal filter of the minimal
-points](##Filter.atBotOn_eq_principal), and in general its sets obey [the rules of preferential
-consequence](##Filter.atBotOn_inter_of_mem) under changes of domain.
+For a ranking `f : W → β` into a preorder and a set `s`, a set `t` holds toward the bottom of `f`
+within `s` if every point of `s` has a point of `s` ranked at or below it, all of whose points of
+`s` ranked at or below are in `t`. In this file we define
 
-This is Lewis's truth condition for counterfactuals and Kratzer's for necessity with an ordering
-source, both over a ranking of worlds.
+* `Filter.atBotOn f s`: the filter of sets that hold toward the bottom of `f` within `s`;
+* `atBotOn[p] s`: the same for the identity ranking and a preorder `p` given as a term.
+
+## Main statements
+
+* `Filter.atBotOn_neBot_iff`: the filter is nontrivial if and only if `s` is nonempty.
+* `Filter.atBotOn_id_univ`: on a nonempty codirected order, `atBotOn id univ = atBot`.
+* `Filter.atBotOn_eq_principal`: if every point of `s` lies above a minimal point of `s`, the
+  filter is the principal filter of the minimal points of `s`.
 
 ## Implementation notes
 
-The ranking is a map into a preordered type, as for `MinimalFor`, so that a family of orders on
-one type, such as an ordering of worlds that varies with the world of evaluation, needs no order
-instance on the type. An order given as data enters through its principal down-sets
-([`atBotOn_downSet`](##Filter.atBotOn_downSet)).
+The definition takes the preorder as an instance and the lemmas take it as an implicit argument, as
+mathlib does for measurable sets, so that the lemmas apply to a preorder that is not the instance
+of its type. Mathlib has no predicate for a minimal or a least point along a map, so the hypotheses
+of the lemmas on minimal and least points are written out.
 
 ## References
 
@@ -44,11 +45,11 @@ open Set
 
 namespace Filter
 
-variable {W β : Type*} [Preorder β] {f : W → β} {s s' t t' : Set W} {v : W}
+variable {W β : Type*}
 
 /-- The sets that hold toward the bottom of the ranking `f` within `s`: every point of `s` has a
 point of `s` ranked at or below it, all of whose points of `s` ranked at or below are in the set. -/
-def atBotOn (f : W → β) (s : Set W) : Filter W where
+def atBotOn [Preorder β] (f : W → β) (s : Set W) : Filter W where
   sets := {t | ∀ u ∈ s, ∃ v ∈ s, f v ≤ f u ∧ ∀ w ∈ s, f w ≤ f v → w ∈ t}
   univ_sets u hu := ⟨u, hu, le_rfl, fun _ _ _ ↦ trivial⟩
   sets_of_superset h htt' u hu :=
@@ -58,6 +59,18 @@ def atBotOn (f : W → β) (s : Set W) : Filter W where
     let ⟨v, hv, hvu, hvt⟩ := h u hu
     let ⟨v', hv', hv'v, hv't'⟩ := h' v hv
     ⟨v', hv', hv'v.trans hvu, fun w hw hwv' ↦ ⟨hvt w hw (hwv'.trans hv'v), hv't' w hw hwv'⟩⟩
+
+/-- Notation for `atBotOn` of the identity ranking with respect to a preorder given as a term. -/
+scoped notation (name := atBotOn_of) "atBotOn[" p "]" => @atBotOn _ _ p id
+
+open Lean.PrettyPrinter.Delaborator Delab.Noncanonical in
+/-- Delaborator for `atBotOn[_]`. -/
+@[scoped app_delab atBotOn] meta def delabAtBotOn : Delab := do
+  let e ← SubExpr.getExpr
+  guard <| e.getAppNumArgs ≥ 4 && (e.getArg! 3).isAppOfArity ``id 1
+  delabUnary 4 2 fun x ↦ `(atBotOn[$x])
+
+variable {_ : Preorder β} {f : W → β} {s s' t : Set W} {v : W}
 
 theorem mem_atBotOn :
     t ∈ atBotOn f s ↔ ∀ u ∈ s, ∃ v ∈ s, f v ≤ f u ∧ ∀ w ∈ s, f w ≤ f v → w ∈ t :=
@@ -85,16 +98,8 @@ theorem atBotOn_id_univ [IsCodirectedOrder β] [Nonempty β] : atBotOn (id : β 
 
 /-- The order pulled back along a ranking is that ranking. -/
 @[simp] theorem atBotOn_lift (g : W → β) (s : Set W) :
-    @atBotOn W W (Preorder.lift g) id s = atBotOn g s :=
+    atBotOn[Preorder.lift g] s = atBotOn g s :=
   rfl
-
-/-- An order given as data is the ranking by its principal down-sets. -/
-theorem atBotOn_downSet (p : Preorder W) (s : Set W) :
-    atBotOn (fun w ↦ {v | p.le v w}) s = @atBotOn W W p id s := by
-  have key (a b : W) : {v | p.le v a} ⊆ {v | p.le v b} ↔ p.le a b :=
-    ⟨fun h ↦ h (p.le_refl a), fun h _ hv ↦ p.le_trans _ _ _ hv h⟩
-  ext t
-  simp only [mem_atBotOn, key, id]
 
 /-! ### A single point below which the set holds -/
 

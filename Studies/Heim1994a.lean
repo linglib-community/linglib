@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Interval.Basic
-public import Linglib.Semantics.Index
+public import Linglib.Logic.Modal.Index.Defs
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Perspective
 

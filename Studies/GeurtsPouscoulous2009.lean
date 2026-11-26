@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Semantics.Quantifier.Conservative

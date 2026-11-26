@@ -16,7 +16,7 @@ Sloman (1970), the priorities of Kratzer's ordering source are split by negotiab
 with the circumstances, delimit the favored worlds through Frank's compatibility-restricted
 union ((39)–(40)), while the negotiable priorities an opinionated assessor promotes remain an
 ordering source. Strong necessity is simple necessity over the favored worlds (41), weak
-necessity is human necessity over them under the negotiable ordering (42), and the ordering
+necessity is necessity over them under the negotiable ordering (42), and the ordering
 source of a weak necessity presupposes negotiability (50). The tax-report dialogue is the shift
 from *should* to *have to* as an ideal stops being negotiable ((46), (51)), and neg-raising
 follows from the choice between a negotiable ideal and its negation (§3.4.2). Weak necessity
@@ -100,7 +100,7 @@ theorem atLeastAsGoodAs_iff_verified_subset {u v : W} :
   Preorder.ofLowerSets_le_iff_subset _ v u
 
 /-- The priorities a best world verifies form a maximal consistent extension. -/
-theorem verified_mem_extensions {u : W} (hu : u ∈ bestWorlds b.circumstances b.nonNegotiable w) :
+theorem verified_mem_extensions {u : W} (hu : u ∈ b.circumstances.bestWorlds b.nonNegotiable w) :
     verified b w u ∈ extensions b w :=
   ⟨⟨fun _ hq ↦ hq.1, u, hu.1, fun _ hq ↦ hq.2⟩, fun _ ⟨hYh, _, hv, hvY⟩ hXY q hq ↦
     atLeastAsGoodAs_iff_verified_subset.1 (hu.2 hv (atLeastAsGoodAs_iff_verified_subset.2
@@ -109,7 +109,7 @@ theorem verified_mem_extensions {u : W} (hu : u ∈ bestWorlds b.circumstances b
 /-- A world verifying a maximal consistent extension is best. -/
 theorem mem_bestWorlds_of_extension {X : Set (Set W)} {u : W} (hX : X ∈ extensions b w)
     (hu : u ∈ b.circumstances.accessibleWorlds w) (huX : ∀ q ∈ X, u ∈ q) :
-    u ∈ bestWorlds b.circumstances b.nonNegotiable w := by
+    u ∈ b.circumstances.bestWorlds b.nonNegotiable w := by
   have hX' : Maximal (fun Y ↦ Y ⊆ {q | q ∈ b.nonNegotiable w} ∧ ConsistentWith b w Y) X := hX
   refine ⟨hu, fun v hv hvu ↦ atLeastAsGoodAs_iff_verified_subset.2 fun q hq ↦ ⟨hq.1, huX q ?_⟩⟩
   exact hX'.le_of_ge (y := verified b w v) ⟨fun _ hq' ↦ hq'.1, v, hv, fun _ hq' ↦ hq'.2⟩
@@ -117,7 +117,7 @@ theorem mem_bestWorlds_of_extension {X : Set (Set W)} {u : W} (hX : X ∈ extens
 
 /-- Frank's union is Kratzer's best worlds under the promoted priorities. -/
 theorem favoredWorlds_eq_bestWorlds (b : Backgrounds W) (w : W) :
-    favoredWorlds b w = bestWorlds b.circumstances b.nonNegotiable w := by
+    favoredWorlds b w = b.circumstances.bestWorlds b.nonNegotiable w := by
   ext u
   simp only [favoredWorlds, Set.mem_iUnion, Set.mem_sep_iff, exists_prop]
   exact ⟨fun ⟨X, hX, hu, huX⟩ ↦ mem_bestWorlds_of_extension hX hu huX,
@@ -129,7 +129,7 @@ theorem favoredWorlds_eq_bestWorlds (b : Backgrounds W) (w : W) :
 def strongNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
   favoredWorlds b w ⊆ p
 
-/-- Weak necessity (42) is human necessity over the favored worlds under the negotiable
+/-- Weak necessity (42) is necessity over the favored worlds under the negotiable
 ordering source. -/
 def weakNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
   (≤[b.negotiable w]).minimals (favoredWorlds b w) ⊆ p
@@ -138,7 +138,7 @@ def weakNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
 ordering source. -/
 theorem strongNecessity_iff :
     strongNecessity b p w ↔
-      bestWorlds b.circumstances b.nonNegotiable w ⊆ p := by
+      b.circumstances.bestWorlds b.nonNegotiable w ⊆ p := by
   rw [strongNecessity, favoredWorlds_eq_bestWorlds]
 
 /-- Weak necessity is [von-fintel-iatridou-2008]'s with promoted priorities as primary and
@@ -243,7 +243,7 @@ private theorem favoredWorlds_ofIdeals (h g : List Ideal) (w : Revenue) :
     show (true, true) ∈ Background.accessibleWorlds ⊥ w
     rw [Background.accessibleWorlds_bot]; exact Set.mem_univ _
   rw [favoredWorlds_eq_bestWorlds,
-    bestWorlds, Preorder.minimals_ofLowerSets_eq ⟨(true, true), hall, ?_⟩]
+    Background.bestWorlds, Preorder.minimals_ofLowerSets_eq ⟨(true, true), hall, ?_⟩]
   · ext v
     simp only [ofIdeals, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
       Set.forall_mem_image, Set.mem_ofPred_eq]

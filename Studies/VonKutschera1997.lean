@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Basic.Countable.Defs
 public import Studies.Thomason1984
+public import Linglib.Logic.Modal.Definability
 
 /-!
 # Von Kutschera (1997): T × W Completeness

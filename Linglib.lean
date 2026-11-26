@@ -98,7 +98,6 @@ import Linglib.Logic.Team.BSML.NaturalDeduction
 import Linglib.Logic.Team.BSML.Properties
 import Linglib.Logic.Modal.Basic
 import Linglib.Logic.Team.Bisimulation
-import Linglib.Logic.Modal.Defs
 import Linglib.Logic.Team.Inquisitive
 import Linglib.Logic.Team.Kripke
 import Linglib.Logic.Team.QBSML.Compactness
@@ -382,7 +381,6 @@ import Linglib.Semantics.Homogeneity.Plural
 import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Modality.BranchingTime
 import Linglib.Semantics.Modality.Directive
-import Linglib.Logic.Modal.Epistemic
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Modality.Kernel

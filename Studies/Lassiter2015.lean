@@ -26,7 +26,7 @@ likely to win as not; the lottery's probability measure makes the first true and
 
 ## Implementation notes
 
-* Kratzer's *must* is human necessity over the empty modal base, as in `Yalcin2010.must`.
+* Kratzer's *must* is necessity over the empty modal base, as in `Yalcin2010.must`.
 * The lottery has a million tickets, the holder `n` holding tickets `2n` and `2n + 1`: Sam is `0`,
   Mary `1`, Sue `2`, and Tom, Alice, Bob, Hank and Murray `3` to `7`.
 * The injection of the m-lifting, (34) and (60), has `φ ∩ ⋂f(w)` as codomain, not as image.
@@ -249,15 +249,16 @@ def onlyBest (w₀ : W) : Set (Set W) := {{w₀}}
 theorem onlyBest_le (w₀ v u : W) : (v ≤[onlyBest w₀] u) ↔ (u = w₀ → v = w₀) := by
   simp [onlyBest, Preorder.ofLowerSets_le_iff]
 
-theorem bestWorlds_onlyBest (w₀ w : W) : bestWorlds ⊥ (fun _ ↦ onlyBest w₀) w = {w₀} := by
+theorem bestWorlds_onlyBest (w₀ w : W) :
+    Background.bestWorlds ⊥ (fun _ ↦ onlyBest w₀) w = {w₀} := by
   ext x
-  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
+  simp only [Background.mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
     forall_const, onlyBest_le, Set.mem_singleton_iff]
   exact ⟨fun h ↦ h w₀ (fun _ ↦ rfl) rfl, fun hx _ _ _ ↦ hx⟩
 
 theorem must_bestWorlds [Finite W] (O : Set (Set W)) (w : W) :
-    Yalcin2010.must O (bestWorlds ⊥ (fun _ ↦ O) w) w := by
-  rw [Yalcin2010.must, humanNecessity_eq_principal_of_finite]
+    Yalcin2010.must O (Background.bestWorlds ⊥ (fun _ ↦ O) w) w := by
+  rw [Yalcin2010.must, Background.necessity_eq_principal_of_finite]
   exact Filter.mem_principal_self _
 
 theorem must_onlyBest [Finite W] (w₀ w : W) : Yalcin2010.must (onlyBest w₀) {w₀} w :=
@@ -320,7 +321,8 @@ theorem not_exists_lift :
 /-- Under Kratzer's *must* the m-lifting refutes (35) in every finite model in which fewer than
 half the worlds are best (p. 664). -/
 theorem not_mustToProbably_of_ncard_lt [Finite W] (O : Set (Set W)) (w : W)
-    (h : (bestWorlds ⊥ (fun _ ↦ O) w).ncard < (bestWorlds ⊥ (fun _ ↦ O) w)ᶜ.ncard) :
+    (h : (Background.bestWorlds ⊥ (fun _ ↦ O) w).ncard <
+        (Background.bestWorlds ⊥ (fun _ ↦ O) w)ᶜ.ncard) :
     ¬MustToProbably (MatchingLift (≤[O]).le) (Yalcin2010.must O · w) :=
   fun hV6 ↦ absurd (hV6 _ (must_bestWorlds O w)).1.ncard_le (not_le.2 h)
 
@@ -537,16 +539,16 @@ theorem crossed_le (v u : Fin 4) : (v ≤[crossed] u) ↔
       ((u = 0 ∨ u = 1) → (v = 0 ∨ v = 1)) := by
   simp [crossed, Preorder.ofLowerSets_le_iff]
 
-theorem bestWorlds_crossed : bestWorlds ⊥ (fun _ ↦ crossed) 0 = {0, 1} := by
+theorem bestWorlds_crossed : Background.bestWorlds ⊥ (fun _ ↦ crossed) 0 = {0, 1} := by
   ext x
-  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
+  simp only [Background.mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
     forall_const, crossed_le, Set.mem_insert_iff, Set.mem_singleton_iff]
   revert x
   decide
 
 theorem not_asymmRel_kratzer_bestWorlds :
-    ¬AsymmRel (Kratzer (≤[crossed]).le) (bestWorlds ⊥ (fun _ ↦ crossed) 0)
-      (bestWorlds ⊥ (fun _ ↦ crossed) 0)ᶜ := by
+    ¬AsymmRel (Kratzer (≤[crossed]).le) (Background.bestWorlds ⊥ (fun _ ↦ crossed) 0)
+      (Background.bestWorlds ⊥ (fun _ ↦ crossed) 0)ᶜ := by
   rw [bestWorlds_crossed]
   refine fun ⟨_, h⟩ ↦ h ?_
   rw [kratzer_iff]
@@ -567,29 +569,29 @@ def probMust (θ : ℝ) (A : Set W) : Prop := A ∈ P.real ⁻¹' Set.Ici θ
 /-- The dual *might* holds when `Pr(A) > 1 - θ`. -/
 def probMight (θ : ℝ) (A : Set W) : Prop := A ∈ P.real ⁻¹' Set.Ioi (1 - θ)
 
-theorem quant_must (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) (h : A ∈ humanNecessity f ⊥ w) :
+theorem quant_must (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) (h : A ∈ f.necessity ⊥ w) :
     ∀ᵐ v ∂P, v ∈ A :=
-  hP.mono fun _ hv ↦ (humanNecessity_bot f w ▸ h : A ∈ simpleNecessity f w) hv
+  hP.mono fun _ hv ↦ (Background.necessity_bot f w ▸ h : A ∈ f.simpleNecessity w) hv
 
 theorem quant_might (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) (h : P A ≠ 0) :
-    humanPossibility f ⊥ w A := fun hn ↦
+    f.possibility ⊥ w A := fun hn ↦
   h (measure_eq_zero_iff_ae_notMem.2 (quant_must P (A := Aᶜ) hP hn))
 
 theorem quant_moreLikely_might (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w)
-    (h : AsymmRel (inducedGe P) A B) : humanPossibility f ⊥ w A :=
+    (h : AsymmRel (inducedGe P) A B) : f.possibility ⊥ w A :=
   quant_might P hP fun h0 ↦ h.2 (by simp [inducedGe, h0])
 
 variable [IsProbabilityMeasure P]
 
 theorem quant_mustToProbably [DiscreteMeasurableSpace W]
     (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) :
-    MustToProbably (inducedGe P) (fun A ↦ A ∈ humanNecessity f ⊥ w) := fun A h ↦ by
+    MustToProbably (inducedGe P) (fun A ↦ A ∈ f.necessity ⊥ w) := fun A h ↦ by
   have h0 : P Aᶜ = 0 := quant_must P hP h
   have h1 := (prob_compl_eq_zero_iff (.of_discrete : MeasurableSet A)).1 h0
   refine ⟨?_, ?_⟩ <;> simp [inducedGe, h0, h1]
 
 theorem rows_35 [DiscreteMeasurableSpace W] (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) :
-    (MustToProbably (inducedGe P) (fun A ↦ A ∈ humanNecessity f ⊥ w) ↔
+    (MustToProbably (inducedGe P) (fun A ↦ A ∈ f.necessity ⊥ w) ↔
         Examples.ex35.judgment = .acceptable) ∧
       ¬(MustToProbably (MatchingLift (≤[onlyBest 0]).le)
           (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) ↔
@@ -606,10 +608,11 @@ theorem probMust_one_iff_ae [DiscreteMeasurableSpace W] : probMust P 1 A ↔ ∀
 
 /-- At threshold one the probabilistic *must* is the quantificational one when the epistemic space
 is the set of worlds of positive probability (p. 676). -/
-theorem probMust_one_iff_humanNecessity [DiscreteMeasurableSpace W] [Countable W]
+theorem probMust_one_iff_necessity [DiscreteMeasurableSpace W] [Countable W]
     (hf : f.accessibleWorlds w = {v | P {v} ≠ 0}) :
-    probMust P 1 A ↔ A ∈ humanNecessity f ⊥ w := by
-  rw [probMust_one_iff_ae, ae_iff_of_countable, humanNecessity_bot, mem_simpleNecessity, hf]
+    probMust P 1 A ↔ A ∈ f.necessity ⊥ w := by
+  rw [probMust_one_iff_ae, ae_iff_of_countable, Background.necessity_bot,
+    Background.mem_simpleNecessity, hf]
   rfl
 
 theorem probMight_iff_not_probMust_compl [DiscreteMeasurableSpace W] (θ : ℝ) (A : Set W) :

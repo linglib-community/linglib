@@ -51,6 +51,8 @@ of its revision, and Spohn's conditionalisation of rankings meets the postulates
 
 namespace BeliefRevision
 
+open scoped Filter
+
 variable {S W : Type*}
 
 /-- A revision operator on epistemic states over the worlds `W` assigns each state the worlds
@@ -326,7 +328,7 @@ theorem isAGM_iff : r.IsAGM ↔ ∃ ord, r.Faithful ord :=
 /-- The preorder of a state encodes its conditional beliefs, since `β` is accepted given `α`
 exactly when the least `α`-worlds are `β`-worlds, that is, when `β` is a necessity over `α`. -/
 theorem Faithful.accepts_iff (h : r.Faithful ord) :
-    r.Accepts Ψ α β ↔ β ∈ @Filter.atBotOn W W (ord Ψ) id α := by
+    r.Accepts Ψ α β ↔ β ∈ atBotOn[ord Ψ] α := by
   rw [Accepts, h.bel_revise,
     @Filter.atBotOn_eq_principal_of_wellFoundedLT W W (ord Ψ) id α (h.wellFounded Ψ),
     Filter.mem_principal]

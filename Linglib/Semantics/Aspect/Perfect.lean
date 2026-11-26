@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Logic.Temporal.IntervalAlgebra
 public import Linglib.Logic.Temporal.IntervalProperty
 
 /-!

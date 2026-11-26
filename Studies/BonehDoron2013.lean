@@ -6,6 +6,7 @@ public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Tense.Perspective
 public import Linglib.Semantics.Tense.Quantificational
+public import Linglib.Logic.Temporal.IntervalModality
 public import Studies.IatridouEtAl2001
 public import Linglib.Data.Examples.Readers
 
@@ -64,7 +65,7 @@ open Event (τ)
 open Aspect (unbounded perfect)
 open Temporal (durative)
 open ModalLogic
-open Modality (Background simpleNecessity)
+open Modality (Background Background.simpleNecessity)
 open scoped Denotes
 
 variable {W E T : Type*} [LinearOrder T] [TemporalTrace E T]
@@ -98,11 +99,11 @@ modality in the matrix. -/
 def Gen {Z : Type*} (ext : Z → NonemptyInterval T) (mb : NonemptyInterval T → Background W)
     (P Q : W → Z → Prop) (i : NonemptyInterval T) (w : W) : Prop :=
   (⊤ : Genericity.Normality Z).gen {z | ext z ≤ i ∧ Q w z}
-    {z | ∀ᶠ v in simpleNecessity (mb i) w, P v z}
+    {z | ∀ᶠ v in (mb i).simpleNecessity w, P v z}
 
 theorem gen_iff {Z : Type*} {ext : Z → NonemptyInterval T} {mb : NonemptyInterval T → Background W}
     {P Q : W → Z → Prop} {i : NonemptyInterval T} {w : W} :
-    Gen ext mb P Q i w ↔ ∀ z, ext z ≤ i → Q w z → ∀ᶠ v in simpleNecessity (mb i) w, P v z :=
+    Gen ext mb P Q i w ↔ ∀ z, ext z ≤ i → Q w z → ∀ᶠ v in (mb i).simpleNecessity w, P v z :=
   ⟨fun h _ hi hQ ↦ h ⟨hi, hQ⟩, fun h z hz ↦ h z hz.1 hz.2⟩
 
 -- The second disjunct of (22b) holds of every restriction, through the empty restrictor.
@@ -127,7 +128,7 @@ def usedTo (P : E → Prop) : NonemptyInterval T → Prop :=
 
 theorem usedTo_eq_diamond : usedTo P = ◇[IntervalAlgebra.toSetRel IntervalAlgebra.precedes]
     (◇[IntervalAlgebra.toSetRel IntervalAlgebra.le⁻¹] (Event.runTimes P)) := by
-  rw [IntervalAlgebra.toSetRel_inv]
+  rw [← Aspect.unbounded_eq_diamond_toSetRel]
   rfl
 
 /-- The composite of the retrospective and the imperfective: the state began before the

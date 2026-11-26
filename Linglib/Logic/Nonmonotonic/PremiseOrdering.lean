@@ -300,7 +300,8 @@ points, and inclusion among them for the order. -/
 
 /-- The ordering of a family of sets is the ranking by the members containing a point. -/
 theorem atBotOn_ofLowerSets (A : Set (Set W)) (s : Set W) :
-    @atBotOn W W (≤[A]) id s = atBotOn (OrderDual.toDual ∘ (fun w ↦ {p ∈ A | w ∈ p})) s := by
+    atBotOn[Preorder.ofLowerSets A] s =
+      atBotOn (OrderDual.toDual ∘ (fun w ↦ {p ∈ A | w ∈ p})) s := by
   ext t
   simp only [mem_atBotOn, Function.comp_apply, OrderDual.toDual_le_toDual,
     ← Preorder.ofLowerSets_le_iff_subset A, id]

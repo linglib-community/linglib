@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Model
 public import Linglib.Semantics.ArgumentStructure.Root.Basic
+public import Linglib.Logic.Modal.Definability
 
 /-!
 # Meaning postulates of roots

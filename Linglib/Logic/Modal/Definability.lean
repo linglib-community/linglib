@@ -1,43 +1,55 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Linglib.Core.Relation.SetRel
-public import Mathlib.Order.GaloisConnection.Basic
-public import Mathlib.Logic.Function.DependsOn
+public import Linglib.Logic.Modal.Basic
+public import Mathlib.Logic.Relator
 
 /-!
-# Necessity and possibility in Kripke frames
+# Modal axioms and the frame conditions they define
 
-In Kripke semantics a proposition is *necessary* at a world when it is true at every world
-accessible from it, and *possible* when it is true at some; the accessibility relation fixes the
-kind of modality. Each of the axioms T, D, B, 4 and 5 holds along a relation
-[exactly when the relation is reflexive](##box_T_iff), serial, symmetric, transitive or Euclidean
-respectively, and possibility along one relation entails possibility along another
-[exactly when the second contains the first](##diamond_le_diamond_iff). Possibility is [left
-adjoint to necessity along the converse relation](##diamond_box_gc), necessity at a world
-[depends on exactly the worlds it accesses](##dependsOn_box_iff), and Negation Swap,
-$\Box \neg p \leftrightarrow \neg \Box p$, holds everywhere
-[exactly when the relation is the graph of a function](##box_compl_eq_iff).
+An axiom of modal logic, read as an inequality between operators on propositions, holds along a
+relation exactly when the relation has a certain property: T when it is reflexive, D when it is
+serial, B when it is symmetric, 4 when it is transitive and 5 when it is Euclidean. Required at
+one world, excluded middle `□p ∨ □¬p` holds exactly when the world accesses at most one world,
+and Negation Swap `□¬p ↔ ¬□p` exactly when it accesses one, so that Negation Swap holds
+everywhere exactly when the relation is the graph of a function.
+
+For two unrelated relations, the schema `p → □[R] ◇[S] p` is valid exactly when the converse of
+`R` lies in `S`, and `◇[S]` is left adjoint to `□[R]` exactly when `S` is the converse of `R`.
+With `R` the relation of the future operators and `S` that of the past operators, these are the
+two interaction axioms of the minimal tense logic, which together say that past and future run
+along converse relations.
 
 ## Main definitions
 
-* `ModalLogic.Box`, `ModalLogic.Diamond`: necessity and possibility along a relation, with
-  notation `□[R]` and `◇[R]`.
 * `ModalLogic.IsSerial`, `ModalLogic.IsEuclidean`: the frame conditions of D and 5.
+
+## Main results
+
+* `SetRel.isEquiv_iff`: the equivalence relations are the reflexive Euclidean relations.
+* `ModalLogic.box_T_iff`, `ModalLogic.box_D_iff`, `ModalLogic.box_B_iff`,
+  `ModalLogic.box_four_iff`, `ModalLogic.box_five_iff`: the five classical correspondences.
+* `ModalLogic.box_compl_eq_iff`: Negation Swap defines the graphs of functions.
+* `ModalLogic.id_le_box_comp_diamond_iff`: `p → □[R] ◇[S] p` is valid iff `R.inv ⊆ S`.
+* `ModalLogic.diamond_box_gc_iff`: `◇[S]` is left adjoint to `□[R]` iff `R.inv = S`.
 
 ## Implementation notes
 
-Necessity and possibility are operators on propositions `W → Prop` along a relation
-`R : SetRel W' W`, which may relate two types. They are mathlib's `SetRel.core` and
-`SetRel.preimage` read on predicates (`box_iff_mem_core`, `diamond_iff_mem_preimage`), so
-propositions stated as sets use mathlib's `SetRel.image_core_gc`, `SetRel.core_mono`,
-`SetRel.core_inter`, `SetRel.core_univ` and `SetRel.preimage_union`. Reflexivity, symmetry and
-transitivity are mathlib's.
+Reflexivity, symmetry and transitivity are mathlib's `SetRel.IsRefl`, `SetRel.IsSymm` and
+`SetRel.IsTrans`. Mathlib has seriality as `Relator.LeftTotal` and as `R.dom = Set.univ`, neither
+a class, so `IsSerial` is one with both as characterizations. That a reflexive Euclidean relation
+is symmetric and transitive is a theorem and not an instance, since instances from several
+properties to one would run on every search for it.
 
 ## References
 
-* [kripke-1963] — relational semantics
-* [blackburn-derijke-venema-2001] — Chapter 3, frame definability
-* [prior-1967] — the mixing principles, density on a reflexive relation, and time's end
+* [blackburn-derijke-venema-2001]
+* [prior-1967]
+* [goranko-2023]
 -/
 
 @[expose] public section
@@ -46,148 +58,28 @@ namespace ModalLogic
 
 open SetRel
 
-/-! ### Box and diamond -/
-
-section Operators
-
-variable {W W' : Type*} (R : SetRel W' W) (p : W → Prop) (w : W')
-
-/-- `p` is necessary at `w` along `R` when it holds at every world `w` accesses. -/
-def Box : Prop := ∀ v, w ~[R] v → p v
-
-/-- `p` is possible at `w` along `R` when it holds at some world `w` accesses. -/
-def Diamond : Prop := ∃ v, w ~[R] v ∧ p v
-
-@[inherit_doc] scoped notation:max "□[" R "]" => Box R
-@[inherit_doc] scoped notation:max "◇[" R "]" => Diamond R
-
-variable {R p w}
-
-theorem box_iff : □[R] p w ↔ ∀ v, w ~[R] v → p v := .rfl
-
-theorem diamond_iff : ◇[R] p w ↔ ∃ v, w ~[R] v ∧ p v := .rfl
-
-theorem box_iff_mem_core : □[R] p w ↔ w ∈ R.core {v | p v} := .rfl
-
-theorem diamond_iff_mem_preimage : ◇[R] p w ↔ w ∈ R.preimage {v | p v} :=
-  exists_congr fun _ ↦ and_comm
-
-@[simp] theorem not_box : ¬ □[R] p w ↔ ◇[R] (fun v ↦ ¬ p v) w := by
-  simp [Box, Diamond, not_forall]
-
-@[simp] theorem not_diamond : ¬ ◇[R] p w ↔ □[R] (fun v ↦ ¬ p v) w := by
-  simp [Box, Diamond, not_and]
-
-variable (R) in
-/-- Necessity distributes over conjunction. For belief this is [hintikka-1962]'s principle that
-*a* believes *A and B* exactly when *a* believes *A* and *a* believes *B*. -/
-theorem box_and (q : W → Prop) : □[R] (fun v ↦ p v ∧ q v) w ↔ □[R] p w ∧ □[R] q w := by
-  simp only [Box, imp_and, forall_and]
-
-variable (R) in
-theorem box_iUnion {ι : Sort*} (R : ι → SetRel W' W) : □[⋃ i, R i] p w ↔ ∀ i, □[R i] p w := by
-  simp only [Box, Set.mem_iUnion, forall_exists_index]
-  exact forall_comm
-
-theorem box_union (S : SetRel W' W) : □[R ∪ S] p w ↔ □[R] p w ∧ □[S] p w := by
-  simp only [Box, Set.mem_union, or_imp, forall_and]
-
-theorem box_id {u : W} : □[SetRel.id] p u ↔ p u :=
-  ⟨fun h ↦ h u (SetRel.mem_id.2 rfl), fun h _ hv ↦ SetRel.mem_id.1 hv ▸ h⟩
-
-/-- Necessity along a union of relations is the meet of necessity along each. -/
-theorem box_sup (R S : SetRel W' W) : □[R ⊔ S] = □[R] ⊓ □[S] :=
-  funext fun _ ↦ funext fun _ ↦ propext (box_union S)
-
-/-- Necessity along the identity relation is the identity. -/
-theorem box_id_eq_id : □[(SetRel.id : SetRel W W)] = id :=
-  funext fun _ ↦ funext fun _ ↦ propext box_id
-
-theorem box_congr_left {w'' : W'} (h : ∀ v, w ~[R] v ↔ w'' ~[R] v) : □[R] p w ↔ □[R] p w'' :=
-  forall_congr' fun v ↦ imp_congr_left (h v)
-
-/-- A proposition that does not vary with the world is necessary at `w` when it is true or `w`
-accesses no world. -/
-theorem box_const {c : Prop} : □[R] (fun _ ↦ c) w ↔ (w ∈ R.dom → c) :=
-  ⟨fun h ⟨v, hv⟩ ↦ h v hv, fun h v hv ↦ h ⟨v, hv⟩⟩
-
-/-- A proposition that does not vary with the world is possible at `w` when it is true and `w`
-accesses some world. -/
-theorem diamond_const {c : Prop} : ◇[R] (fun _ ↦ c) w ↔ w ∈ R.dom ∧ c :=
-  ⟨fun ⟨v, hv, hc⟩ ↦ ⟨⟨v, hv⟩, hc⟩, fun ⟨⟨v, hv⟩, hc⟩ ↦ ⟨v, hv, hc⟩⟩
-
-/-- Necessity at `w` depends on its argument at a set of worlds exactly when the set contains every
-world `w` accesses. -/
-theorem dependsOn_box_iff {s : Set W} : DependsOn (□[R] · w) s ↔ {v | w ~[R] v} ⊆ s := by
-  refine ⟨fun h v hv ↦ by_contra fun hvs ↦ ?_, fun h p q hpq ↦
-    propext <| forall₂_congr fun v hv ↦ iff_of_eq (hpq v (h hv))⟩
-  have := @h (· ≠ v) (fun _ ↦ True) fun u hu ↦ eq_true (ne_of_mem_of_not_mem hu hvs)
-  exact this.mpr (fun _ _ ↦ trivial) v hv rfl
-
-end Operators
-
-/-! ### The Galois connection and normality -/
-
-section Galois
-
-variable {W W' : Type*} (R : SetRel W' W) {p q : W → Prop}
-
-/-- `◇` along `R` is left adjoint to `□` along the converse relation. -/
-theorem diamond_box_gc : GaloisConnection ◇[R] □[R.inv] :=
-  fun _ _ ↦ ⟨fun h v hp w hwv ↦ h w ⟨v, hwv, hp⟩, fun h w ⟨v, hwv, hp⟩ ↦ h v hp w hwv⟩
-
-theorem box_mono : Monotone □[R] := by
-  simpa using (diamond_box_gc R.inv).monotone_u
-
-theorem diamond_mono : Monotone ◇[R] :=
-  (diamond_box_gc R).monotone_l
-
-theorem box_inf : □[R] (p ⊓ q) = □[R] p ⊓ □[R] q := by
-  simpa using (diamond_box_gc R.inv).u_inf
-
-theorem diamond_sup : ◇[R] (p ⊔ q) = ◇[R] p ⊔ ◇[R] q :=
-  (diamond_box_gc R).l_sup
-
-theorem box_top : □[R] ⊤ = ⊤ := by
-  simpa using (diamond_box_gc R.inv).u_top
-
-variable {R} in
-/-- Possibility along `R` entails possibility along `S` exactly when `S` contains `R`, so a law
-between possibilities defines an inclusion of relations. -/
-theorem diamond_le_diamond_iff {S : SetRel W' W} : Diamond R ≤ Diamond S ↔ R ⊆ S where
-  mp h := fun ⟨w, v⟩ hwv ↦ match h (· = v) w ⟨v, hwv, rfl⟩ with | ⟨_, hS, rfl⟩ => hS
-  mpr h _ _ := fun ⟨v, hwv, hv⟩ ↦ ⟨v, h hwv, hv⟩
-
-/-- Along any relation $p$ entails $\Box_{R^{-1}} \Diamond_R p$, the unit of the adjunction. For
-tense this is the mixing principle $A \supset GPA$ that [prior-1967] takes from Ockham: what is the
-case will always have been the case. -/
-theorem le_box_inv_diamond (p : W → Prop) : p ≤ □[R.inv] (◇[R] p) :=
-  (diamond_box_gc R).le_u_l p
-
-end Galois
-
-variable {W : Type*} (R : SetRel W W)
-
-theorem box_comp (S : SetRel W W) (p : W → Prop) : □[R ○ S] p = □[R] (□[S] p) :=
-  funext fun _ ↦ propext ⟨fun h _ hv _ hu ↦ h _ ⟨_, hv, hu⟩, fun h _ ⟨_, hv, hu⟩ ↦ h _ hv _ hu⟩
-
-theorem diamond_comp (S : SetRel W W) (p : W → Prop) : ◇[R ○ S] p = ◇[R] (◇[S] p) :=
-  funext fun _ ↦ propext ⟨fun ⟨u, ⟨v, hv, hu⟩, hp⟩ ↦ ⟨v, hv, u, hu, hp⟩,
-    fun ⟨v, hv, u, hu, hp⟩ ↦ ⟨u, ⟨v, hv, hu⟩, hp⟩⟩
-
-/-- If every `A`-predecessor of a world that `C`-accesses a second world `B`-accesses a world
-the second one `D`-accesses, then what is possibly necessary is necessarily possible. -/
-theorem diamond_box_le_box_diamond {A B C D : SetRel W W} (h : A.inv ○ C ⊆ B ○ D.inv)
-    (p : W → Prop) : ◇[A] (□[B] p) ≤ □[C] (◇[D] p) :=
-  fun i ⟨k, hik, hk⟩ j hij ↦
-    let ⟨m, hkm, hjm⟩ := h (show (k, j) ∈ A.inv ○ C from ⟨i, hik, hij⟩)
-    ⟨m, hjm, hk m hkm⟩
-
 /-! ### Frame conditions -/
 
 /-- `R` is *serial* when every world accesses some world. -/
-class IsSerial : Prop where
+class IsSerial {W' W : Type*} (R : SetRel W' W) : Prop where
   serial : ∀ w, ∃ v, w ~[R] v
+
+theorem isSerial_iff_dom_eq_univ {W' W : Type*} {R : SetRel W' W} :
+    IsSerial R ↔ R.dom = Set.univ :=
+  ⟨fun h ↦ Set.eq_univ_of_forall h.serial, fun h ↦ ⟨fun w ↦ h.ge (Set.mem_univ w)⟩⟩
+
+theorem isSerial_iff_leftTotal {W' W : Type*} {R : SetRel W' W} :
+    IsSerial R ↔ Relator.LeftTotal (· ~[R] ·) :=
+  ⟨fun h ↦ h.serial, fun h ↦ ⟨h⟩⟩
+
+/-- The graph of a correspondence is serial exactly when every successor set is nonempty. -/
+theorem isSerial_cgraph_iff {W' W : Type*} {f : W' → Set W} :
+    IsSerial (cgraph f) ↔ ∀ a, (f a).Nonempty :=
+  ⟨fun h ↦ h.serial, fun h ↦ ⟨h⟩⟩
+
+section Frame
+
+variable {W : Type*} (R : SetRel W W)
 
 /-- `R` is *Euclidean* when any two worlds accessed from one world access each other. -/
 class IsEuclidean : Prop where
@@ -197,25 +89,37 @@ variable {R}
 
 instance : IsEuclidean (.univ : SetRel W W) := ⟨fun _ _ _ _ _ ↦ trivial⟩
 
+/-- The graph of a correspondence is Euclidean exactly when each successor of a point has all
+of the point's successors among its own. -/
+theorem isEuclidean_cgraph_iff {f : W → Set W} :
+    IsEuclidean (cgraph f) ↔ ∀ a, ∀ b ∈ f a, f a ⊆ f b :=
+  ⟨fun h a b hb c hc ↦ h.eucl a b c hb hc, fun h ↦ ⟨fun a b _ hb hc ↦ h a b hb hc⟩⟩
+
+theorem isEuclidean_iff_inv_comp_subset_self : IsEuclidean R ↔ R.inv ○ R ⊆ R :=
+  ⟨fun h ⟨v, u⟩ ⟨w, hwv, hwu⟩ ↦ h.eucl w v u hwv hwu, fun h ↦ ⟨fun w _ _ hv hu ↦ h ⟨w, hv, hu⟩⟩⟩
+
 /-- Reflexive relations are serial. -/
-instance [R.IsRefl] : IsSerial R := ⟨fun w ↦ ⟨w, R.rfl⟩⟩
+instance (priority := 100) [R.IsRefl] : IsSerial R := ⟨fun w ↦ ⟨w, R.rfl⟩⟩
 
 /-- A composite of serial relations is serial. -/
 instance {S : SetRel W W} [IsSerial R] [IsSerial S] : IsSerial (R ○ S) where
   serial w := let ⟨v, hv⟩ := IsSerial.serial (R := R) w; let ⟨u, hu⟩ := IsSerial.serial (R := S) v
     ⟨u, v, hv, hu⟩
 
-/-- Reflexive and Euclidean implies symmetric. -/
-instance [R.IsRefl] [IsEuclidean R] : R.IsSymm where
-  symm w v h := IsEuclidean.eucl w v w h R.rfl
+/-- Symmetric and transitive implies Euclidean. -/
+instance (priority := 100) [R.IsSymm] [R.IsTrans] : IsEuclidean R where
+  eucl _ _ _ hwv hwu := R.trans (R.symm hwv) hwu
 
-/-- Reflexive and Euclidean implies transitive. -/
-instance [R.IsRefl] [IsEuclidean R] : R.IsTrans where
+variable (R) in
+/-- A reflexive Euclidean relation is an equivalence relation, the frames of S5 in the
+presentation by T and 5. -/
+theorem _root_.SetRel.IsEquiv.of_isRefl_of_isEuclidean [R.IsRefl] [IsEuclidean R] : R.IsEquiv where
+  symm w v h := IsEuclidean.eucl w v w h R.rfl
   trans w v u hwv hvu := IsEuclidean.eucl v w u (IsEuclidean.eucl w v w hwv R.rfl) hvu
 
-/-- Symmetric and transitive implies Euclidean. -/
-instance [R.IsSymm] [R.IsTrans] : IsEuclidean R where
-  eucl _ _ _ hwv hwu := R.trans (R.symm hwv) hwu
+/-- The equivalence relations are the reflexive Euclidean relations. -/
+theorem _root_.SetRel.isEquiv_iff : R.IsEquiv ↔ R.IsRefl ∧ IsEuclidean R :=
+  ⟨fun _ ↦ ⟨inferInstance, inferInstance⟩, fun ⟨_, _⟩ ↦ .of_isRefl_of_isEuclidean R⟩
 
 /-! ### Axiom correspondence -/
 
@@ -228,6 +132,11 @@ theorem box_T [R.IsRefl] (h : □[R] p w) : p w := h w R.rfl
 
 theorem box_D [IsSerial R] (h : □[R] p w) : ◇[R] p w :=
   let ⟨v, hwv⟩ := IsSerial.serial (R := R) w; ⟨v, hwv, h v hwv⟩
+
+/-- Along a serial relation a proposition and its negation are not both necessary. -/
+theorem box_disjoint_compl [IsSerial R] : Disjoint (□[R] p) (□[R] pᶜ) :=
+  Pi.disjoint_iff.mpr fun _ ↦ Prop.disjoint_iff.mpr fun ⟨hp, hnp⟩ ↦
+    let ⟨v, hwv, hv⟩ := box_D hp; hnp v hwv hv
 
 /-- If `w` accesses some world along both `R` and `S`, then necessity along `R` at `w` entails
 possibility along `S`; `box_D` is the case `S = R`. -/
@@ -310,6 +219,8 @@ non-contradiction `¬(□p ∧ □¬p)` iff it sees at least one (D), and Negati
 sees exactly one. For possibility the two conditions trade places. Negation Swap holds at every
 world iff the relation is the graph of a function, along which necessity is precomposition. -/
 
+end Frame
+
 section Functional
 
 variable {W W' : Type*} {R : SetRel W' W} {w : W'}
@@ -388,5 +299,34 @@ theorem box_compl_eq_iff :
     fun ⟨f, hf⟩ ↦ ⟨f, hf, fun _ hg ↦ Function.graph_injective (hg.trans hf.symm)⟩⟩
 
 end Functional
+
+/-! ### A pair of relations -/
+
+section Pair
+
+variable {W W' : Type*} {R : SetRel W W'} {S : SetRel W' W}
+
+/-- The schema `p → □[R] ◇[S] p` defines inclusion of the converse of `R` in `S`. Axiom B is the
+case of one relation. -/
+theorem id_le_box_comp_diamond_iff : id ≤ Box R ∘ Diamond S ↔ R.inv ⊆ S where
+  mp h := fun ⟨v, w⟩ hvw ↦ match h (· = w) w rfl v hvw with | ⟨_, hu, rfl⟩ => hu
+  mpr h _ w hp _ hv := ⟨w, h hv, hp⟩
+
+/-- Both interaction schemas are valid exactly when the two relations are converse. -/
+theorem id_le_box_comp_diamond_and_iff :
+    id ≤ Box R ∘ Diamond S ∧ id ≤ Box S ∘ Diamond R ↔ R.inv = S := by
+  rw [id_le_box_comp_diamond_iff, id_le_box_comp_diamond_iff]
+  exact ⟨fun ⟨h₁, h₂⟩ ↦ h₁.antisymm fun _ hx ↦ h₂ hx, by rintro rfl; exact ⟨subset_rfl, subset_rfl⟩⟩
+
+/-- A possibility is left adjoint to a necessity exactly when their relations are converse. -/
+theorem diamond_box_gc_iff : GaloisConnection (Diamond S) (Box R) ↔ R.inv = S := by
+  refine ⟨fun h ↦ ?_, by rintro rfl; exact diamond_box_gc _⟩
+  have key (p : W → Prop) : Diamond R.inv p = Diamond S p :=
+    le_antisymm ((diamond_box_gc R.inv).l_le (h.le_u_l p))
+      (h.l_le ((diamond_box_gc R.inv).le_u_l p))
+  exact (diamond_le_diamond_iff.1 fun p ↦ (key p).le).antisymm
+    (diamond_le_diamond_iff.1 fun p ↦ (key p).ge)
+
+end Pair
 
 end ModalLogic

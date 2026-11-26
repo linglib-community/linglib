@@ -7,7 +7,7 @@ public import Linglib.Semantics.Questions.Hamblin.Exhaustification
 public import Linglib.Semantics.Questions.Inquisitive.Hamblin
 public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Semantics.Degree.Comparison
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Fox and Hackl (2006): The Universal Density of Measurement

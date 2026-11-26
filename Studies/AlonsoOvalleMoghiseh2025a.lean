@@ -342,7 +342,7 @@ def buys₅ (v : Buy₅) (i : Fin 5) : Prop := i ∈ v
 instance (v : Buy₅) : DecidablePred (buys₅ v) := fun i => inferInstanceAs (Decidable (i ∈ v))
 
 /-- Accessibility from any world to the scenario's possibilities. -/
-def scenarioAcc (A : Finset Buy₅) : SetRel Buy₅ Buy₅ := .ofSuccessors fun _ ↦ ↑A
+def scenarioAcc (A : Finset Buy₅) : SetRel Buy₅ Buy₅ := .cgraph fun _ ↦ ↑A
 
 instance (A : Finset Buy₅) (u v : Buy₅) : Decidable (u ~[scenarioAcc A] v) :=
   inferInstanceAs (Decidable (v ∈ A))

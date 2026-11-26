@@ -4,6 +4,7 @@ public import Studies.GeurtsPouscoulous2009
 public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Data.Examples.Geurts2010
+public import Linglib.Logic.Modal.Definability
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.Bounds.Defs
 public import Mathlib.Order.UpperLower.Basic
@@ -451,10 +452,10 @@ variable {D : Type*} {sailor some all : W → Set D} {t : SetRel W D}
 -- (32)–(35), pp. 179–180: the state of (32) is a relation between worlds and values of the
 -- discourse referent, which the hearer's question is about, and the Standard Recipe runs as usual:
 -- (34) with Competence about the referent gives the model (35)
-theorem subset_inter_compl_ofSuccessors
-    (h32 : t ⊆ SetRel.ofSuccessors sailor ∩ SetRel.ofSuccessors some)
-    (h34 : ¬ t ⊆ SetRel.ofSuccessors all) (hc : t ∈ polar (SetRel.ofSuccessors all)) :
-    t ⊆ SetRel.ofSuccessors sailor ∩ SetRel.ofSuccessors some ∩ (SetRel.ofSuccessors all)ᶜ :=
+theorem subset_inter_compl_cgraph
+    (h32 : t ⊆ SetRel.cgraph sailor ∩ SetRel.cgraph some)
+    (h34 : ¬ t ⊆ SetRel.cgraph all) (hc : t ∈ polar (SetRel.cgraph all)) :
+    t ⊆ SetRel.cgraph sailor ∩ SetRel.cgraph some ∩ (SetRel.cgraph all)ᶜ :=
   subset_inter h32 ((Proposition.mem_polar.1 hc).resolve_left h34)
 
 end Indefinites
@@ -514,11 +515,11 @@ def Examples.Item.Derived : Item → Prop
   | .mango => ∀ {W : Type} (M F A : Set W), A ⊆ F → (M \ F).Nonempty → (F \ (M ∪ A)).Nonempty →
       IsSecondaryImplicature {M, F, A, M ∪ A} (M ∪ F) M
   | .referent => ∀ {W D : Type} (sailor some all : W → Set D) (t : SetRel W D),
-      t ⊆ SetRel.ofSuccessors sailor ∩ SetRel.ofSuccessors some → ¬ t ⊆ SetRel.ofSuccessors all →
-        t ∈ polar (SetRel.ofSuccessors all) → t ⊆ (SetRel.ofSuccessors all)ᶜ
+      t ⊆ SetRel.cgraph sailor ∩ SetRel.cgraph some → ¬ t ⊆ SetRel.cgraph all →
+        t ∈ polar (SetRel.cgraph all) → t ⊆ (SetRel.cgraph all)ᶜ
   | .everySailor => ∀ {W D : Type} (sailor all : W → Set D) (t : SetRel W D),
-      t ⊆ SetRel.ofSuccessors sailor → t ⊆ (SetRel.ofSuccessors all)ᶜ →
-        t ⊆ Prod.fst ⁻¹' (SetRel.ofSuccessors (sailor ⊓ all)).dom ᶜ
+      t ⊆ SetRel.cgraph sailor → t ⊆ (SetRel.cgraph all)ᶜ →
+        t ⊆ Prod.fst ⁻¹' (SetRel.cgraph (sailor ⊓ all)).dom ᶜ
 
 theorem Examples.Item.derived_iff : ∀ i : Item, i.Derived ↔ i ∉ [Item.longer, .mango, .everySailor]
   | .sameLength => iff_of_true (fun _ _ h ↦ (mem_survivors_scalar_iff.1 h).2.2 le_rfl) (by decide)
@@ -536,11 +537,11 @@ theorem Examples.Item.derived_iff : ∀ i : Item, i.Derived ↔ i ∉ [Item.long
         (@h (Fin 3) {0} {1, 2} {2} hA hM hF)
       exact absurd (mem_singleton_iff.1 (this ▸ mem_singleton (0 : Fin 3))) (by decide)) (by decide)
   | .referent => iff_of_true (fun _ _ _ _ h32 h34 hc ↦
-      (subset_inter_compl_ofSuccessors h32 h34 hc).trans inter_subset_right) (by decide)
+      (subset_inter_compl_cgraph h32 h34 hc).trans inter_subset_right) (by decide)
   -- pp. 139, 180: (35) does not entail that (14) is false: the story need not be about every sailor
   | .everySailor => iff_of_false (fun h ↦ by
       have := @h Unit Bool (fun _ ↦ univ) (fun _ ↦ {true}) {((), false)}
-        (fun _ _ ↦ mem_univ _) (by rintro _ rfl hb; simp [SetRel.ofSuccessors] at hb)
+        (fun _ _ ↦ mem_univ _) (by rintro _ rfl hb; simp [SetRel.cgraph] at hb)
       exact this rfl ⟨true, mem_univ _, rfl⟩) (by decide)
 
 /-- Reads the item of a row and whether the text says the inference is conveyed. -/

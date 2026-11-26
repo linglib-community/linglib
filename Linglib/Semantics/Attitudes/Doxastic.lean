@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Presupposition.Trigger
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Definability
 public import Linglib.Semantics.Attitudes.Basic
 
 /-!

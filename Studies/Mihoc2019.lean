@@ -8,6 +8,7 @@ module
 public import Linglib.Semantics.Degree.Numeral
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Semantics.Exhaustification.Basic
+public import Linglib.Logic.Modal.Definability
 public import Mathlib.Data.Set.Card
 
 /-!

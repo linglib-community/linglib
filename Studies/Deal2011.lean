@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Modality.Necessity
+public import Linglib.Semantics.Modality.QuantificationalForce
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Languages.NezPerce.Modals
 public import Linglib.Data.Examples.Deal2011
@@ -24,7 +25,7 @@ flexible](##flexible_iff) in upward-entailing contexts only, as [*o'qa* is](##oq
 
 * The necessities at a world are a filter of propositions, as in
   `Semantics/Modality/Necessity.lean`, consistent when it is `NeBot`: [kratzer-1981]'s simple
-  necessity over a consistent modal base and her human necessity over an ordering source are
+  necessity over a consistent modal base and her necessity over an ordering source are
   both instances. Negation acts on a claim by complement, the negative `Polarity`.
 * The scalar implicature is [chierchia-2006]'s exhaustification, the grammatical view of the two
   the paper leaves open. The alternatives to a modal's use are the claims of its scalemates in

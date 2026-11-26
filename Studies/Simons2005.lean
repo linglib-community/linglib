@@ -33,7 +33,7 @@ from the modal's domain (§6.2).
 
 * Propositions are sets of worlds and the accessible worlds are `R w`. The propositions of
   [kratzer-shimoyama-2002] are predicates on worlds and their accessibility a relation, reached
-  through `SetRel.ofSuccessors R`. The appendix adapts the truth conditions to Kratzer's semantics
+  through `SetRel.cgraph R`. The appendix adapts the truth conditions to Kratzer's semantics
   by replacing the accessible worlds with the g-closest worlds, which is a choice of `R`.
 * The No Total Overlap constraint (107) is mathlib's `IsAntichain (· ⊆ ·)` on the disjuncts.
 * The unification of fn. 10 applied to a single proposition makes `MUST[φ]` require the accessible
@@ -95,10 +95,10 @@ theorem must_subset_may : must R C ⊆ may R C :=
 requirement, that each alternative be possible (p. 278). -/
 theorem mem_may_iff_kann_and_distribution :
     w ∈ may R C ↔ C.Nonempty ∧
-      (∀ q ∈ KratzerShimoyama2002.kann (.ofSuccessors R) {p | {w | p w} ∈ C}, q w) ∧
-      KratzerShimoyama2002.distribution (.ofSuccessors R) {p | {w | p w} ∈ C} w := by
+      (∀ q ∈ KratzerShimoyama2002.kann (.cgraph R) {p | {w | p w} ∈ C}, q w) ∧
+      KratzerShimoyama2002.distribution (.cgraph R) {p | {w | p w} ∈ C} w := by
   simp only [mem_may_iff, KratzerShimoyama2002.kann, KratzerShimoyama2002.distribution,
-    Set.mem_singleton_iff, forall_eq, Diamond, SetRel.mem_ofSuccessors]
+    Set.mem_singleton_iff, forall_eq, Diamond, SetRel.mem_cgraph]
   refine ⟨fun ⟨⟨c, hc⟩, h⟩ ↦ ⟨⟨c, hc⟩, ?_, fun c hc ↦ ?_⟩,
     fun ⟨hC, _, h⟩ ↦ ⟨hC, fun c hc ↦ ?_⟩⟩
   · obtain ⟨v, hvc, hvR⟩ := h c hc
@@ -111,11 +111,11 @@ theorem mem_may_iff_kann_and_distribution :
 -- p. 278
 theorem mem_must_iff_muss_and_distribution :
     w ∈ must R C ↔ C.Nonempty ∧
-      (∀ q ∈ KratzerShimoyama2002.muss (.ofSuccessors R) {p | {w | p w} ∈ C}, q w) ∧
-      KratzerShimoyama2002.distribution (.ofSuccessors R) {p | {w | p w} ∈ C} w := by
+      (∀ q ∈ KratzerShimoyama2002.muss (.cgraph R) {p | {w | p w} ∈ C}, q w) ∧
+      KratzerShimoyama2002.distribution (.cgraph R) {p | {w | p w} ∈ C} w := by
   simp only [must, IsSuperCover, Set.mem_ofPred_eq, KratzerShimoyama2002.muss,
     KratzerShimoyama2002.distribution, Set.mem_singleton_iff, forall_eq, Box, Diamond,
-    SetRel.mem_ofSuccessors]
+    SetRel.mem_cgraph]
   refine and_congr_right fun _ ↦ and_comm.trans (and_congr (forall_congr' fun v ↦ ?_)
     (Set.ofPred_bijective.surjective.forall.trans (forall₂_congr fun c _ ↦ ?_)))
   · exact ⟨fun h hv ↦ let ⟨c, hc, hvc⟩ := h hv; ⟨(· ∈ c), hc, hvc⟩,

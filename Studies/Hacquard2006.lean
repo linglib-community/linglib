@@ -87,11 +87,11 @@ def perfective (occurs : E → W → Prop) (τ : E → Set T) (w : W) (t : Set T
 /-- A root modal below aspect (75) takes the event aspect quantifies over as its event variable
 and binds the world in which that event is described. -/
 def rootPossibility (f : E → Set W) (Q : E → W → Prop) (e : E) : Prop :=
-  ◇[.ofSuccessors f] (Q e) e
+  ◇[.cgraph f] (Q e) e
 
 /-- The necessity modal below aspect (87). -/
 def rootNecessity (f : E → Set W) (Q : E → W → Prop) (e : E) : Prop :=
-  □[.ofSuccessors f] (Q e) e
+  □[.cgraph f] (Q e) e
 
 /-- Event Identification across Worlds (76) says that an event that occurs in two worlds and is
 a `Q`-event in one is a `Q`-event in the other. -/

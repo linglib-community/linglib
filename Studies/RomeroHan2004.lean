@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.RomeroHan2004
 public import Linglib.Discourse.CommonGround
 public import Linglib.Languages.English.PolarityItems
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Definability
 public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Discourse.Bias
 public import Linglib.Semantics.Questions.Inquisitive.Polar

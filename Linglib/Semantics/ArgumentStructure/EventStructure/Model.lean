@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Models of the event-structure primitives

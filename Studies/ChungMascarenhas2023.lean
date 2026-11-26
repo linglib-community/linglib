@@ -38,7 +38,7 @@ footnote 17's observation that blocking neither stays above the expected utility
 indifference. The modal conjunction fallacy (34) and modal base-rate neglect (41) are theorems
 about `must` over every measure realizing the paper's printed conditional probabilities, each
 with a finite witness model; the Kratzer row of Table 2 is `Filter.inter_mem_iff` for
-`Modality.humanNecessity`, conjunction elimination, which the expected-value `must` escapes.
+`Modality.Background.necessity`, conjunction elimination, which the expected-value `must` escapes.
 
 ## Implementation notes
 
@@ -450,15 +450,15 @@ open Modality in
 are unsatisfiable on [kratzer-1991]'s account (16). -/
 theorem kratzer_miners_unsatisfiable {V : Type*} (f g : Background V)
     (w : V) (inA inB bA bB bN : Set V)
-    (hbest : (bestWorlds f g w).Nonempty)
+    (hbest : (f.bestWorlds g w).Nonempty)
     (hcover : ∀ v ∈ f.accessibleWorlds w, v ∈ inA ∨ v ∈ inB)
     (hA : ∀ v ∈ bA, v ∉ bN) (hB : ∀ v ∈ bB, v ∉ bN) :
-    ¬ (bestWorlds f g w ⊆ bN ∧ bestWorlds (f.restrict inA) g w ⊆ bA ∧
-        bestWorlds (f.restrict inB) g w ⊆ bB) := by
+    ¬ (f.bestWorlds g w ⊆ bN ∧ (f.restrict inA).bestWorlds g w ⊆ bA ∧
+        (f.restrict inB).bestWorlds g w ⊆ bB) := by
   rintro ⟨hN, hAB, hBB⟩
   obtain ⟨v, hv⟩ := hbest
   have hacc : v ∈ f.accessibleWorlds w := Preorder.minimals_subset _ _ hv
-  have key : ∀ α : Set V, v ∈ α → v ∈ bestWorlds (f.restrict α) g w := fun α hα ↦
+  have key : ∀ α : Set V, v ∈ α → v ∈ (f.restrict α).bestWorlds g w := fun α hα ↦
     Preorder.mem_minimals_of_subset (fun _ hu ↦ (Background.mem_accessibleWorlds_restrict.1 hu).1)
       hv
       (Background.mem_accessibleWorlds_restrict.2 ⟨hacc, hα⟩)

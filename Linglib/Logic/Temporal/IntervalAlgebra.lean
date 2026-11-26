@@ -1,5 +1,8 @@
 module
 
+public import Linglib.Core.Relation.SetRel
+public import Mathlib.Algebra.Order.Kleene
+public import Linglib.Logic.Temporal.PartitionScheme
 public import Linglib.Logic.Temporal.Allen
 public import Linglib.Logic.Temporal.PointAlgebra
 public import Mathlib.Algebra.Group.Hom.Defs
@@ -10,7 +13,7 @@ public import Mathlib.Algebra.Order.Kleene
 /-!
 # The interval algebra
 
-An element of the interval algebra is a set of the relations of [allen-1983] in which one interval
+An element of the interval algebra is a set of Allen's relations, in which one interval
 of a linear order may stand to another, read as their disjunction. Elements form a Boolean algebra
 with a converse and a composition whose unit is equality; composition distributes over joins,
 which the `IdemSemiring` instance records. Each element is a
@@ -18,7 +21,14 @@ which the `IdemSemiring` instance records. Each element is a
 relations [order as the elements do](##IntervalAlgebra.toSetRel_subset_toSetRel_iff), and on a
 dense order without endpoints the relation of a product
 [is the composite of the relations](##IntervalAlgebra.toSetRel_mul), so the laws of composition
-are those of relations on the rationals. The point algebra
+are those of relations on the rationals. In the terms of Ligozat and Renz the Allen relations
+are the basic relations of the partition scheme of intervals (`IntervalAlgebra.scheme`), and the
+product is weak composition among the intervals of six points
+(`IntervalAlgebra.mul_eq_weakComp`). The relation of an element is its preimage under the
+map sending two intervals to their Allen relation, so reading elements as relations preserves the
+Boolean operations (`IntervalAlgebra.toSetRelHom`) and is faithful where that map is surjective,
+and on dense time without endpoints it carries the product to composition
+(`IntervalAlgebra.toSetRel_mul`). The point algebra
 [embeds](##IntervalAlgebra.pure) as the relations between point intervals.
 
 ## Implementation notes
@@ -33,6 +43,7 @@ built by `IntervalAlgebra.ofPred` from a predicate on relations.
 
 * [allen-1983]
 * [vilain-kautz-1986]
+* [ligozat-renz-2004]
 -/
 
 @[expose] public section
@@ -101,14 +112,51 @@ theorem toSetRel_sup (C D : IntervalAlgebra) :
     (toSetRel C : SetRel (NonemptyInterval T) _) ⊆ toSetRel D :=
   fun _ hp ↦ h hp
 
+/-- The relation of an element is its preimage under the classification of a pair of intervals
+by their relation. -/
+theorem toSetRel_eq_preimage (C : IntervalAlgebra) :
+    (toSetRel C : SetRel (NonemptyInterval T) _) =
+      (fun p : NonemptyInterval T × NonemptyInterval T ↦ relation p.2 p.1) ⁻¹' {r | r ∈ C} :=
+  rfl
+
+@[simp] theorem toSetRel_top : (toSetRel ⊤ : SetRel (NonemptyInterval T) _) = Set.univ :=
+  Set.eq_univ_of_forall fun p ↦ Finset.mem_univ (relation p.2 p.1)
+
+theorem toSetRel_inf (C D : IntervalAlgebra) :
+    (toSetRel (C ⊓ D) : SetRel (NonemptyInterval T) _) = toSetRel C ∩ toSetRel D := by
+  ext ⟨j, i⟩
+  simp
+
+theorem toSetRel_compl (C : IntervalAlgebra) :
+    (toSetRel Cᶜ : SetRel (NonemptyInterval T) _) = (toSetRel C)ᶜ := by
+  ext ⟨j, i⟩
+  exact Finset.mem_compl
+
+/-- Reading an element as a relation preserves joins, meets, top and bottom. -/
+def toSetRelHom :
+    BoundedLatticeHom IntervalAlgebra (SetRel (NonemptyInterval T) (NonemptyInterval T)) where
+  toFun := toSetRel
+  map_sup' := toSetRel_sup
+  map_inf' := toSetRel_inf
+  map_top' := toSetRel_top
+  map_bot' := toSetRel_bot
+
+@[simp] theorem coe_toSetRelHom :
+    ⇑(toSetRelHom (T := T)) = toSetRel := rfl
+
+/-- On an order with four points every relation is that of some two intervals. -/
+theorem surjective_relation (f : Fin 4 ↪o T) :
+    Function.Surjective fun p : NonemptyInterval T × NonemptyInterval T ↦ relation p.2 p.1 :=
+  fun r ↦ let ⟨i, j, h⟩ := exists_relation_eq r
+    ⟨(j.map f.toOrderHom, i.map f.toOrderHom), (relation_map f i j).trans h⟩
+
 /-- On an order with four points the relations of two elements are ordered as the elements
 are. -/
 theorem toSetRel_subset_toSetRel_iff (f : Fin 4 ↪o T) :
     (toSetRel C : SetRel (NonemptyInterval T) _) ⊆ toSetRel D ↔ C ≤ D := by
-  refine ⟨fun h r hr ↦ ?_, toSetRel_mono⟩
-  obtain ⟨i, j, rfl⟩ := exists_relation_eq r
-  rw [← relation_map f] at hr ⊢
-  exact h (a := (_, _)) hr
+  rw [toSetRel_eq_preimage, toSetRel_eq_preimage,
+    (surjective_relation f).preimage_subset_preimage_iff]
+  exact Iff.rfl
 
 /-- One element's relation lies in another's on every linear order exactly when the element lies
 in the other. -/
@@ -124,6 +172,19 @@ theorem toSetRel_injective (f : Fin 4 ↪o T) :
     ((toSetRel_subset_toSetRel_iff f).1 h.superset)
 
 end LinearOrder
+
+/-! ### The partition scheme of intervals -/
+
+/-- The partition scheme of the intervals of a linear order: two intervals stand in one of the
+relations of Allen. -/
+def scheme (T : Type*) [LinearOrder T] : PartitionScheme (NonemptyInterval T) Relation where
+  index p := relation p.2 p.1
+  inv := Relation.inv
+  index_swap _ := (inv_relation _ _).symm
+
+/-- The relation of an element is the relation of its Allen relations in the scheme. -/
+theorem toSetRel_eq_rel {T : Type*} [LinearOrder T] (C : IntervalAlgebra) :
+    (toSetRel C : SetRel (NonemptyInterval T) _) = (scheme T).rel {r | r ∈ C} := rfl
 
 /-! ### Converse -/
 
@@ -187,6 +248,15 @@ theorem mem_mul : r ∈ C * D ↔ ∃ i j k : NonemptyInterval (Fin 6),
     Finset.mem_univ, true_and, Prod.exists]
   exact ⟨fun ⟨i, j, hC, k, hD, h⟩ ↦ ⟨i, j, k, hC, hD, h⟩,
     fun ⟨i, j, k, hC, hD, h⟩ ↦ ⟨i, j, hC, k, hD, h⟩⟩
+
+/-- The product of two elements is their weak composition among the intervals of six points, in
+the partition scheme of [ligozat-renz-2004]. -/
+theorem mul_eq_weakComp (C D : IntervalAlgebra) :
+    {r | r ∈ C * D} = (scheme (Fin 6)).weakComp {r | r ∈ C} {r | r ∈ D} := by
+  ext r
+  rw [Set.mem_ofPred_eq, mem_mul, PartitionScheme.mem_weakComp]
+  exact ⟨fun ⟨i, j, k, hD, hC, h⟩ ↦ ⟨k, j, i, hC, hD, h⟩,
+    fun ⟨k, j, i, hC, hD, h⟩ ↦ ⟨i, j, k, hD, hC, h⟩⟩
 
 section LinearOrder
 
@@ -380,6 +450,17 @@ theorem mem_toSetRel_overlaps : (j, i) ∈ toSetRel overlaps ↔ i.Overlaps j :=
 
 theorem mem_toSetRel_le : (j, i) ∈ toSetRel le ↔ i ≤ j := relation_mem_le
 
+/-- The relation of containment is the order of intervals. -/
+theorem toSetRel_le :
+    (toSetRel le : SetRel (NonemptyInterval T) _) = {x | x.2 ≤ x.1} :=
+  Set.ext fun _ ↦ mem_toSetRel_le
+
+/-- The relation of the converse of containment is the converse order of intervals. -/
+theorem toSetRel_inv_le :
+    (toSetRel le⁻¹ : SetRel (NonemptyInterval T) _) = {x | x.1 ≤ x.2} := by
+  rw [toSetRel_inv, toSetRel_le]
+  rfl
+
 theorem mem_toSetRel_ofPosition {C : PointAlgebra} :
     (j, i) ∈ toSetRel (ofPosition C) ↔ i.position j ∈ C :=
   relation_mem_ofPosition
@@ -479,16 +560,6 @@ is the law of relations it names. -/
 theorem eq_of_toSetRel_rat
     (h : (toSetRel C : SetRel (NonemptyInterval ℚ) _) = toSetRel D) : C = D :=
   toSetRel_injective ((Fin.valOrderEmb 4).trans Nat.castOrderEmbedding) h
-
-private theorem comp_union {α : Type*} (R S S' : SetRel α α) :
-    R ○ (S ∪ S') = (R ○ S) ∪ (R ○ S') := by
-  ext ⟨a, c⟩
-  simp only [SetRel.mem_comp, Set.mem_union, and_or_left, exists_or]
-
-private theorem union_comp {α : Type*} (R R' S : SetRel α α) :
-    (R ∪ R') ○ S = (R ○ S) ∪ (R' ○ S) := by
-  ext ⟨a, c⟩
-  simp only [SetRel.mem_comp, Set.mem_union, or_and_right, exists_or]
 
 instance : Add IntervalAlgebra := ⟨(· ⊔ ·)⟩
 

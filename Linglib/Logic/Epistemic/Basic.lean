@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Definability
 public import Mathlib.Data.Fintype.Option
 
 /-!

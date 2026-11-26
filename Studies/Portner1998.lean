@@ -98,10 +98,11 @@ theorem crossing_ne_walkIntoBus : crossing ≠ walkIntoBus := fun h ↦ by
   simp [crossing, walkIntoBus] at this
 
 theorem prog_crossing : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) crossing .hit := by
-  have hbest : bestWorlds ⊥ notInterrupted Bus.hit = {.crosses} := by
+  have hbest : Background.bestWorlds ⊥ notInterrupted Bus.hit = {.crosses} := by
     have hacc : ((⊥ : Background Bus) ⊔ notInterrupted).accessibleWorlds .hit = {.crosses} := by
       ext v; cases v <;> simp [notInterrupted]
-    rw [bestWorlds_eq_accessibleWorlds_sup (by rw [hacc]; exact Set.singleton_nonempty _), hacc]
+    rw [Background.bestWorlds_eq_accessibleWorlds_sup
+      (by rw [hacc]; exact Set.singleton_nonempty _), hacc]
   rw [InProgress, circ, ite_eq_right crossing_ne_walkIntoBus, hbest]
   rintro v rfl
   exact ⟨iv 0 3, nonfinalPart_iv _ _ (by decide), rfl, rfl⟩
@@ -110,13 +111,13 @@ theorem prog_walkIntoBus : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) w
   rw [InProgress, circ, ite_eq_left rfl]
   intro v hv
   have hacc : withBus.accessibleWorlds Bus.hit = {.hit} := by ext u; cases u <;> simp [withBus]
-  obtain rfl : v = .hit := by simpa [hacc] using (mem_bestWorlds.1 hv).1
+  obtain rfl : v = .hit := by simpa [hacc] using (Background.mem_bestWorlds.1 hv).1
   exact ⟨iv 0 2, nonfinalPart_iv _ _ (by decide), rfl, rfl⟩
 
 /-- A modal base fixed by the event alone cannot make both (11) and (39) true, so the base must
 depend on the description (p. 779). -/
 theorem not_prog_crossing_and_walkIntoBus (f : Background Bus)
-    (hne : (bestWorlds f notInterrupted .hit).Nonempty) :
+    (hne : (f.bestWorlds notInterrupted .hit).Nonempty) :
     ¬ (InProgress (fun _ _ ↦ f) (fun _ ↦ notInterrupted) (iv 0 1) crossing .hit ∧
       InProgress (fun _ _ ↦ f) (fun _ ↦ notInterrupted) (iv 0 1) walkIntoBus .hit) := by
   rintro ⟨h₁, h₂⟩
@@ -162,8 +163,8 @@ theorem not_prog_ordinary (w : Army) :
     ¬ InProgress (fun _ _ ↦ ordinary) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut w := by
   rw [InProgress]
   intro h
-  have hbest : Army.killsDozens ∈ bestWorlds ordinary defeatsSoldiers w := by
-    refine mem_bestWorlds.2 ⟨by simp [ordinary], fun v hv hle ↦ ?_⟩
+  have hbest : Army.killsDozens ∈ ordinary.bestWorlds defeatsSoldiers w := by
+    refine Background.mem_bestWorlds.2 ⟨by simp [ordinary], fun v hv hle ↦ ?_⟩
     have hv' : v ≠ .wipesOut := by simpa [ordinary] using hv
     cases v
     · exact absurd rfl hv'
@@ -177,7 +178,7 @@ theorem prog_hero :
   have hacc : ((⊥ : Background Army) ⊔ defeatsSoldiers).accessibleWorlds .wipesOut =
       {.wipesOut} := by
     ext v; cases v <;> simp [defeatsSoldiers]
-  rw [InProgress, bestWorlds_eq_accessibleWorlds_sup
+  rw [InProgress, Background.bestWorlds_eq_accessibleWorlds_sup
     (by rw [hacc]; exact Set.singleton_nonempty _), hacc]
   rintro v rfl
   exact ⟨iv 0 10, nonfinalPart_iv _ _ (by decide), rfl, rfl⟩
