@@ -41,6 +41,8 @@ enrichment of the possibility of the claim.
   contradictory.
 * `freeChoice_iff_forall_antiExhaustivity` — where the claim is possible, Free Choice is
   anti-exhaustivity for every proper subdomain.
+* `mem_exhIE_biUnion_subdomain_iff` — for any separated family of sets, innocently exhaustifying
+  the union of a subfamily against the unions of the proper subfamilies denies the rest.
 * `exhIEII_singletons_eq_freeChoice` — innocent exclusion and inclusion yields free choice.
 
 ## References
@@ -123,14 +125,19 @@ section Witnessing
 
 variable {R D Q}
 
-theorem diamond_claim_iff {S : Finset E} {v : W'} :
-    ◇[R] (claim Q S) v ↔ ∃ x ∈ S, ◇[R] (Q · x) v :=
-  ⟨fun ⟨u, hu, x, hx, hq⟩ ↦ ⟨x, hx, u, hu, hq⟩, fun ⟨x, hx, u, hu, hq⟩ ↦ ⟨u, hu, x, hx, hq⟩⟩
+theorem setOf_claim (S : Finset E) : {u | claim Q S u} = ⋃ x ∈ S, {u | Q u x} := by
+  ext; simp [claim]
 
+/-- The possibility of the claim is the union of the possibilities of the members, since
+possibility is a preimage and preimages preserve unions. -/
 theorem setOf_diamond_claim (S : Finset E) :
     {v | ◇[R] (claim Q S) v} = ⋃ x ∈ S, {v | ◇[R] (Q · x) v} := by
-  ext v
-  simp [diamond_claim_iff]
+  simp only [setOf_diamond, setOf_claim, preimage_iUnion]
+
+theorem diamond_claim_iff {S : Finset E} {v : W'} :
+    ◇[R] (claim Q S) v ↔ ∃ x ∈ S, ◇[R] (Q · x) v := by
+  simpa only [Set.mem_iUnion₂, Set.mem_ofPred_eq, exists_prop] using
+    Set.ext_iff.1 (setOf_diamond_claim S) v
 
 theorem exhIE_singletons_eq (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v}) :
     exhIE ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) {v | ◇[R] (claim Q D) v} =
@@ -229,7 +236,9 @@ theorem modalVariation_of_box [∀ v, DecidablePred (Q v)] (hw : ∃ v, w ~[R] v
 Innocently pre-exhaustifying the possibility of a subdomain against every subdomain alternative
 denies the rest of the domain, so negating it is anti-exhaustivity (`notMem_exhIE_subdomain_iff`)
 and negating them all yields free choice (`freeChoice_of_forall_notMem_exhIE`). Without innocent
-exclusion the pre-exhaustification is contradictory (`exh_subdomain_eq_empty`). -/
+exclusion the pre-exhaustification is contradictory (`exh_subdomain_eq_empty`). Both hold of any
+separated family of sets and the unions of its subfamilies; the possibilities of the members are
+one such family, since the possibility of the claim is their union (`setOf_diamond_claim`). -/
 
 section Rich
 
@@ -248,62 +257,102 @@ theorem singleton_mem_subdomainAlternatives_proper (hS₀ : S₀ ∈ subdomainAl
   exact hne (Finset.Subset.antisymm hsub (Finset.singleton_subset_iff.2
     ((Finset.mem_singleton.1 (hsub hx)) ▸ hx)))
 
-theorem mem_exhIE_subdomain_iff (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
+section Family
+
+variable {p : E → Set W'}
+
+/-- Innocently exhaustifying the union of a subfamily against the union of every proper subfamily
+denies the rest of the family, when the family is separated. -/
+theorem mem_exhIE_biUnion_subdomain_iff (h : Separating D p)
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) :
-    w ∈ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
-        {v | ◇[R] (claim Q S₀) v} ↔
-      ◇[R] (claim Q S₀) w ∧ ¬ ◇[R] (claim Q (D \ S₀)) w := by
-  set A : Finset E → Set W' := fun S ↦ {v | ◇[R] (claim Q S) v}
+    w ∈ exhIE ((fun S : Finset E ↦ ⋃ x ∈ S, p x) '' ↑(subdomainAlternatives .proper D))
+        (⋃ x ∈ S₀, p x) ↔
+      w ∈ ⋃ x ∈ S₀, p x ∧ w ∉ ⋃ x ∈ D \ S₀, p x := by
+  set A : Finset E → Set W' := fun S : Finset E ↦ ⋃ x ∈ S, p x
   set P : Set (Finset E) := ↑(subdomainAlternatives .proper D)
   have hP : ∀ {S}, S ∈ P → S ⊆ D := fun h ↦ (mem_subdomainAlternatives_proper.1 h).1
   have hS₀D := hP hS₀
-  have hAsing : ∀ {y v}, y ∈ D → ◇[R] (Q · y) v →
+  have hAsing : ∀ {y v}, y ∈ D → v ∈ p y →
       A {y} ∈ {a ∈ (A '' P) | v ∈ a} := fun {y} {_} hy hyv ↦
     ⟨⟨{y}, singleton_mem_subdomainAlternatives_proper hS₀ hy, rfl⟩,
-      diamond_claim_iff.2 ⟨_, Finset.mem_singleton_self _, hyv⟩⟩
+      Set.mem_iUnion₂.2 ⟨_, Finset.mem_singleton_self _, hyv⟩⟩
   have key : ∀ S ∈ P, A S ∈ ⋃₀ {M | Minimal (· ∈ (fun w ↦ {a ∈ (A '' P) | w ∈ a}) '' A S₀) M} ↔
       ∃ x ∈ S, x ∈ S₀ := by
     intro S hS
     constructor
     · rintro ⟨_, ⟨⟨v, hvφ, rfl⟩, hmin⟩, -, hvS⟩
-      obtain ⟨y, hyS₀, hyv⟩ := diamond_claim_iff.1 hvφ
+      obtain ⟨y, hyS₀, hyv⟩ := Set.mem_iUnion₂.1 hvφ
       obtain ⟨u, hu⟩ := h.single _ (hS₀D hyS₀)
-      have huφ : u ∈ A S₀ := diamond_claim_iff.2 ⟨y, hyS₀, (hu y (hS₀D hyS₀)).2 rfl⟩
+      have huφ : u ∈ A S₀ := Set.mem_iUnion₂.2 ⟨y, hyS₀, (hu y (hS₀D hyS₀)).2 rfl⟩
       have hle := hmin ⟨u, huφ, rfl⟩ fun a ⟨⟨T, hT, hTa⟩, hua⟩ ↦ by
         subst hTa
-        obtain ⟨z, hzT, hzu⟩ := diamond_claim_iff.1 hua
+        obtain ⟨z, hzT, hzu⟩ := Set.mem_iUnion₂.1 hua
         obtain rfl := (hu z (hP hT hzT)).1 hzu
-        exact ⟨⟨T, hT, rfl⟩, diamond_claim_iff.2 ⟨z, hzT, hyv⟩⟩
-      obtain ⟨z, hzS, hzu⟩ := diamond_claim_iff.1 (hle ⟨⟨S, hS, rfl⟩, hvS⟩).2
+        exact ⟨⟨T, hT, rfl⟩, Set.mem_iUnion₂.2 ⟨z, hzT, hyv⟩⟩
+      obtain ⟨z, hzS, hzu⟩ := Set.mem_iUnion₂.1 (hle ⟨⟨S, hS, rfl⟩, hvS⟩).2
       obtain rfl := (hu z (hP hS hzS)).1 hzu
       exact ⟨z, hzS, hyS₀⟩
     · rintro ⟨x, hxS, hxS₀⟩
       obtain ⟨v, hv⟩ := h.single _ (hS₀D hxS₀)
-      have hvx : ◇[R] (Q · x) v := (hv x (hS₀D hxS₀)).2 rfl
-      refine ⟨_, ⟨⟨v, diamond_claim_iff.2 ⟨x, hxS₀, hvx⟩, rfl⟩, ?_⟩,
-        ⟨⟨S, hS, rfl⟩, diamond_claim_iff.2 ⟨x, hxS, hvx⟩⟩⟩
+      have hvx : v ∈ p x := (hv x (hS₀D hxS₀)).2 rfl
+      refine ⟨_, ⟨⟨v, Set.mem_iUnion₂.2 ⟨x, hxS₀, hvx⟩, rfl⟩, ?_⟩,
+        ⟨⟨S, hS, rfl⟩, Set.mem_iUnion₂.2 ⟨x, hxS, hvx⟩⟩⟩
       rintro _ ⟨u, hu, rfl⟩ hle a ⟨⟨T, hT, hTa⟩, hva⟩
       subst hTa
-      obtain ⟨y, hyS₀, hyu⟩ := diamond_claim_iff.1 hu
-      obtain ⟨z, hz, hzv⟩ := diamond_claim_iff.1 (hle (hAsing (hS₀D hyS₀) hyu)).2
+      obtain ⟨y, hyS₀, hyu⟩ := Set.mem_iUnion₂.1 hu
+      obtain ⟨z, hz, hzv⟩ := Set.mem_iUnion₂.1 (hle (hAsing (hS₀D hyS₀) hyu)).2
       rw [Finset.mem_singleton] at hz
       subst hz
       obtain rfl := (hv z (hS₀D hyS₀)).1 hzv
-      obtain ⟨t, htT, htv⟩ := diamond_claim_iff.1 hva
+      obtain ⟨t, htT, htv⟩ := Set.mem_iUnion₂.1 hva
       obtain rfl := (hv t (hP hT htT)).1 htv
-      exact ⟨⟨T, hT, rfl⟩, diamond_claim_iff.2 ⟨t, htT, hyu⟩⟩
+      exact ⟨⟨T, hT, rfl⟩, Set.mem_iUnion₂.2 ⟨t, htT, hyu⟩⟩
   rw [mem_exhIE_iff_subset_sUnion]
   refine and_congr Iff.rfl ⟨fun hw hd ↦ ?_, fun hw ↦ ?_⟩
-  · obtain ⟨z, hz, hzw⟩ := diamond_claim_iff.1 hd
+  · obtain ⟨z, hz, hzw⟩ := Set.mem_iUnion₂.1 hd
     obtain ⟨hzD, hzS₀⟩ := Finset.mem_sdiff.1 hz
     obtain ⟨x, hx, hxS₀⟩ := (key {z} (singleton_mem_subdomainAlternatives_proper hS₀ hzD)).1
       (hw (hAsing hzD hzw))
     exact hzS₀ (Finset.mem_singleton.1 hx ▸ hxS₀)
   · rintro _ ⟨⟨T, hT, rfl⟩, hwT⟩
     refine (key T hT).2 ?_
-    obtain ⟨z, hzT, hzw⟩ := diamond_claim_iff.1 hwT
+    obtain ⟨z, hzT, hzw⟩ := Set.mem_iUnion₂.1 hwT
     exact ⟨z, hzT, not_not.1 fun hz ↦
-      hw (diamond_claim_iff.2 ⟨z, Finset.mem_sdiff.2 ⟨hP hT hzT, hz⟩, hzw⟩)⟩
+      hw (Set.mem_iUnion₂.2 ⟨z, Finset.mem_sdiff.2 ⟨hP hT hzT, hz⟩, hzw⟩)⟩
+
+/-- Exhaustifying the union of a subfamily with two members against the union of every proper
+subfamily, without innocent exclusion, is contradictory when the family is separated. -/
+theorem exh_biUnion_subdomain_eq_empty (h : Separating D p)
+    (hS₀ : S₀ ∈ subdomainAlternatives .proper D) (h2 : 1 < S₀.card) :
+    exh ((fun S : Finset E ↦ ⋃ x ∈ S, p x) '' ↑(subdomainAlternatives .proper D))
+      (⋃ x ∈ S₀, p x) = ∅ := by
+  set A : Finset E → Set W' := fun S : Finset E ↦ ⋃ x ∈ S, p x
+  have hS₀D := (mem_subdomainAlternatives_proper.1 hS₀).1
+  refine Set.not_nonempty_iff_eq_empty.1 fun hne ↦ ?_
+  obtain ⟨_, ⟨v, hvφ, rfl⟩, hleast⟩ := exh_nonempty_iff.1 hne
+  obtain ⟨x, hx, y, hy, hxy⟩ := Finset.one_lt_card.1 h2
+  obtain ⟨z, hzS₀, hzv⟩ := Set.mem_iUnion₂.1 hvφ
+  have hz : A {z} ∈ {a ∈ A '' ↑(subdomainAlternatives .proper D) | v ∈ a} :=
+    ⟨⟨{z}, singleton_mem_subdomainAlternatives_proper hS₀ (hS₀D hzS₀), rfl⟩,
+      Set.mem_iUnion₂.2 ⟨z, Finset.mem_singleton_self z, hzv⟩⟩
+  have only : ∀ t ∈ S₀, z = t := fun t ht ↦ by
+    obtain ⟨u, hu⟩ := h.single _ (hS₀D ht)
+    obtain ⟨z', hz', hz'u⟩ := Set.mem_iUnion₂.1
+      (hleast ⟨u, Set.mem_iUnion₂.2 ⟨t, ht, (hu t (hS₀D ht)).2 rfl⟩, rfl⟩ hz).2
+    rw [Finset.mem_singleton] at hz'
+    exact hz' ▸ (hu z' (hz' ▸ hS₀D hzS₀)).1 hz'u
+  exact hxy ((only x hx).symm.trans (only y hy))
+
+end Family
+
+theorem mem_exhIE_subdomain_iff (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
+    (hS₀ : S₀ ∈ subdomainAlternatives .proper D) :
+    w ∈ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
+        {v | ◇[R] (claim Q S₀) v} ↔
+      ◇[R] (claim Q S₀) w ∧ ¬ ◇[R] (claim Q (D \ S₀)) w := by
+  have key := mem_exhIE_biUnion_subdomain_iff (w := w) h hS₀
+  simp only [← setOf_diamond_claim] at key
+  exact key
 
 /-- Where the claim is possible, Free Choice is anti-exhaustivity for every proper subdomain, since
 both are the antiexhaustive enrichment of the possibility of the claim. -/
@@ -342,22 +391,9 @@ theorem exh_subdomain_eq_empty (h : Separating D fun x ↦ {v | ◇[R] (Q · x) 
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) (h2 : 1 < S₀.card) :
     exh ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
       {v | ◇[R] (claim Q S₀) v} = ∅ := by
-  set A : Finset E → Set W' := fun S ↦ {v | ◇[R] (claim Q S) v}
-  have hS₀D := (mem_subdomainAlternatives_proper.1 hS₀).1
-  refine Set.not_nonempty_iff_eq_empty.1 fun hne ↦ ?_
-  obtain ⟨_, ⟨v, hvφ, rfl⟩, hleast⟩ := exh_nonempty_iff.1 hne
-  obtain ⟨x, hx, y, hy, hxy⟩ := Finset.one_lt_card.1 h2
-  obtain ⟨z, hzS₀, hzv⟩ := diamond_claim_iff.1 hvφ
-  have hz : A {z} ∈ {a ∈ A '' ↑(subdomainAlternatives .proper D) | v ∈ a} :=
-    ⟨⟨{z}, singleton_mem_subdomainAlternatives_proper hS₀ (hS₀D hzS₀), rfl⟩,
-      diamond_claim_iff.2 ⟨z, Finset.mem_singleton_self z, hzv⟩⟩
-  have only : ∀ t ∈ S₀, z = t := fun t ht ↦ by
-    obtain ⟨u, hu⟩ := h.single _ (hS₀D ht)
-    obtain ⟨z', hz', hz'u⟩ := diamond_claim_iff.1
-      (hleast ⟨u, diamond_claim_iff.2 ⟨t, ht, (hu t (hS₀D ht)).2 rfl⟩, rfl⟩ hz).2
-    rw [Finset.mem_singleton] at hz'
-    exact hz' ▸ (hu z' (hz' ▸ hS₀D hzS₀)).1 hz'u
-  exact hxy ((only x hx).symm.trans (only y hy))
+  have key := exh_biUnion_subdomain_eq_empty h hS₀ h2
+  simp only [← setOf_diamond_claim] at key
+  exact key
 
 end Rich
 
