@@ -532,13 +532,100 @@ If pairwise choice depends only on differences of a scale `u` that takes every r
 scale is exponential in `u` and pairwise choice is logistic. The proof, which [luce-1959] takes from
 Adams and Messick, reduces the claim to Cauchy's functional equation. -/
 
-private theorem exists_eq_mul_of_strictMono (h : ℝ →+ ℝ) (hh : StrictMono h) :
-    ∃ k : ℝ, 0 < k ∧ ∀ s, h s = k * s := by
+/-- A monotone additive map of the reals is multiplication by its value at `1`. -/
+theorem _root_.AddMonoidHom.apply_eq_mul_of_monotone (h : ℝ →+ ℝ) (hh : Monotone h) (s : ℝ) :
+    h s = h 1 * s := by
   have hcont : Continuous h :=
     h.continuous_of_isBounded_nhds_zero (Icc_mem_nhds (by norm_num : (-1 : ℝ) < 0) one_pos)
-      ((Metric.isBounded_Icc (h (-1)) (h 1)).subset hh.monotone.image_Icc_subset)
-  refine ⟨h 1, by simpa using hh one_pos, fun s ↦ ?_⟩
+      ((Metric.isBounded_Icc (h (-1)) (h 1)).subset hh.image_Icc_subset)
   simpa [mul_comm] using map_real_smul h hcont s 1
+
+private theorem exists_eq_mul_of_strictMono (h : ℝ →+ ℝ) (hh : StrictMono h) :
+    ∃ k : ℝ, 0 < k ∧ ∀ s, h s = k * s :=
+  ⟨h 1, by simpa using hh one_pos, h.apply_eq_mul_of_monotone hh.monotone⟩
+
+private theorem eq_mul_of_add_of_monotoneOn {φ : ℝ → ℝ}
+    (hadd : ∀ s, 0 ≤ s → ∀ t, 0 ≤ t → φ (s + t) = φ s + φ t) (hmono : MonotoneOn φ (Set.Ici 0))
+    {t : ℝ} (ht : 0 ≤ t) : φ t = φ 1 * t := by
+  have h0 : φ 0 = 0 := by simpa using hadd 0 le_rfl 0 le_rfl
+  have key (t p q : ℝ) (hp : 0 ≤ p) (hq : 0 ≤ q) (h : p - q = t) :
+      φ t⁺ - φ t⁻ = φ p - φ q := by
+    have e : t⁺ + q = t⁻ + p := by linarith [posPart_sub_negPart t]
+    have := congrArg φ e
+    rw [hadd _ (posPart_nonneg t) _ hq, hadd _ (negPart_nonneg t) _ hp] at this
+    linarith
+  have hψ (t : ℝ) (ht : 0 ≤ t) : φ t⁺ - φ t⁻ = φ t := by
+    rw [key t t 0 ht le_rfl (sub_zero t), h0, sub_zero]
+  let ψ : ℝ →+ ℝ :=
+    { toFun := fun t ↦ φ t⁺ - φ t⁻
+      map_zero' := by simp [h0]
+      map_add' := fun s t ↦ by
+        rw [key (s + t) (s⁺ + t⁺) (s⁻ + t⁻) (add_nonneg (posPart_nonneg s) (posPart_nonneg t))
+          (add_nonneg (negPart_nonneg s) (negPart_nonneg t))
+          (by linarith [posPart_sub_negPart s, posPart_sub_negPart t]),
+          hadd _ (posPart_nonneg s) _ (posPart_nonneg t),
+          hadd _ (negPart_nonneg s) _ (negPart_nonneg t)]
+        ring }
+  have hmono' : Monotone ψ := fun s t hst ↦ by
+    have h1 : ψ t = ψ s + ψ (t - s) := by rw [← map_add, add_sub_cancel]
+    have h2 : ψ (t - s) = φ (t - s) := hψ _ (sub_nonneg.2 hst)
+    have h3 : φ 0 ≤ φ (t - s) :=
+      hmono (Set.mem_Ici.2 le_rfl) (Set.mem_Ici.2 (sub_nonneg.2 hst)) (sub_nonneg.2 hst)
+    linarith
+  rw [← hψ t ht, ← hψ 1 zero_le_one]
+  exact ψ.apply_eq_mul_of_monotone hmono' t
+
+/-- A strictly decreasing multiplicative function on `(0, 1]` is a negative power. -/
+theorem _root_.Real.exists_eq_rpow_neg_of_strictAntiOn {g : ℝ → ℝ}
+    (hmul : ∀ x ∈ Set.Ioc (0 : ℝ) 1, ∀ y ∈ Set.Ioc (0 : ℝ) 1, g (x * y) = g x * g y)
+    (hanti : StrictAntiOn g (Set.Ioc 0 1)) :
+    ∃ a : ℝ, 0 < a ∧ ∀ x ∈ Set.Ioc (0 : ℝ) 1, g x = x ^ (-a) := by
+  have h1 : (1 : ℝ) ∈ Set.Ioc (0 : ℝ) 1 := ⟨one_pos, le_rfl⟩
+  have hg1 : g 1 = 1 := by
+    have hh : (1 / 2 : ℝ) ∈ Set.Ioc (0 : ℝ) 1 := by norm_num
+    have e1 := hmul 1 h1 1 h1
+    have e2 := hmul _ hh 1 h1
+    have hlt := hanti hh h1 (by norm_num)
+    rw [mul_one] at e1 e2
+    have : (g (1 / 2) - g 1) * (1 - g 1) = 0 := by linear_combination e2 - e1
+    rcases mul_eq_zero.1 this with h | h <;> linarith
+  have hpos (x : ℝ) (hx : x ∈ Set.Ioc (0 : ℝ) 1) : 0 < g x :=
+    one_pos.trans_le (hg1 ▸ hanti.antitoneOn hx h1 hx.2)
+  have hexp (t : ℝ) (ht : 0 ≤ t) : exp (-t) ∈ Set.Ioc (0 : ℝ) 1 :=
+    ⟨exp_pos _, exp_le_one_iff.2 (neg_nonpos.2 ht)⟩
+  have hφ (t : ℝ) (ht : 0 ≤ t) := eq_mul_of_add_of_monotoneOn
+    (φ := fun t ↦ log (g (exp (-t))))
+    (fun s hs t ht ↦ by
+      rw [neg_add, exp_add, hmul _ (hexp s hs) _ (hexp t ht),
+        log_mul (hpos _ (hexp s hs)).ne' (hpos _ (hexp t ht)).ne'])
+    (fun s hs t ht hst ↦ log_le_log (hpos _ (hexp s hs))
+      (hanti.antitoneOn (hexp t ht) (hexp s hs) (exp_le_exp.2 (neg_le_neg hst)))) ht
+  refine ⟨log (g (exp (-1))), log_pos ?_, fun x hx ↦ ?_⟩
+  · exact hg1.symm.trans_lt (hanti (hexp 1 zero_le_one) h1 (exp_lt_one_iff.2 (by norm_num)))
+  have := hφ _ (neg_nonneg.2 (log_nonpos hx.1.le hx.2))
+  simp only [neg_neg, exp_log hx.1] at this
+  rw [rpow_def_of_pos hx.1, ← exp_log (hpos x hx), this]
+  ring_nf
+
+/-- A decreasing function that turns sums into products and does not vanish is a decaying
+exponential. -/
+theorem _root_.Real.exists_eq_exp_neg_mul_of_antitone {h : ℝ → ℝ} (h0 : h 0 ≠ 0)
+    (hadd : ∀ c d, h (c + d) = h c * h d) (hanti : Antitone h) :
+    ∃ b : ℝ, 0 ≤ b ∧ ∀ c, h c = exp (-(b * c)) := by
+  have h01 : h 0 = 1 := mul_left_cancel₀ h0 (by rw [mul_one, ← hadd, add_zero])
+  have hpos (c : ℝ) : 0 < h c := by
+    have hne : h (c / 2) ≠ 0 := fun hc ↦ h0 <| by
+      simpa [hc] using hadd (c / 2) (-(c / 2))
+    rw [← add_halves c, hadd]
+    exact mul_self_pos.2 hne
+  let φ : ℝ →+ ℝ :=
+    { toFun := fun c ↦ -log (h c)
+      map_zero' := by simp [h01]
+      map_add' := fun c d ↦ by rw [hadd, log_mul (hpos c).ne' (hpos d).ne', neg_add] }
+  have hmono : Monotone φ := fun c d hcd ↦ neg_le_neg (log_le_log (hpos d) (hanti hcd))
+  refine ⟨φ 1, by simpa using hmono zero_le_one, fun c ↦ ?_⟩
+  rw [← φ.apply_eq_mul_of_monotone hmono c]
+  simp [φ, exp_log (hpos c)]
 
 /-- A ratio scale `v = g ∘ u`, for `g` positive and strictly increasing and `u` onto the reals,
 under which pairwise choice depends only on the difference in `u`, is exponential in `u`, and
