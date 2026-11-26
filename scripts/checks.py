@@ -353,8 +353,25 @@ def evaluate(sources, renames=None):
     return status, info, data
 
 
-def status_json(sources, status, info):
-    """Every item with its status and newest sign-off, as `gen_docs_pages.py --checks` reads it."""
+def source_text(node):
+    """A definition or inductive type as its file writes it, without its docstring; `None` for a
+    theorem, whose statement a page shows without its proof, and for what Lean generated."""
+    if node["kind"] not in ("def", "inductive") or not node["lines"]:
+        return None
+    path = ROOT / (node["module"].replace(".", "/") + ".lean")
+    if not path.exists():
+        return None
+    first, last = node["lines"]
+    text = "\n".join(path.read_text(encoding="utf-8").splitlines()[first - 1:last])
+    text = re.sub(r"\A\s*/--.*?-/\s*\n", "", text, flags=re.S)
+    return textwrap.dedent(text).strip("\n")
+
+
+def status_json(sources, status, info, data):
+    """Every item with its status and newest sign-off, as `gen_docs_pages.py --checks` reads it,
+    and what `gen_checks_pages.py` shows of it besides: its claim, the items covering a definition
+    its statement uses (`relies`), and each declaration of a closure as a reader sees it, with the
+    declarations its statement mentions directly (`nodes`)."""
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, check=True,
                             capture_output=True, text=True).stdout.strip()
     items = []
@@ -364,11 +381,18 @@ def status_json(sources, status, info):
         items.append({
             "source": key, "id": cid, "kind": item.get("kind"), "label": item.get("label", cid),
             "relation": item.get("relation"), "notes": item.get("notes", "").strip(),
+            "claim": item.get("claim", "").strip(), "section": item.get("section", ""),
             "decls": item.get("decls", []), "status": st,
+            "relies": sorted(f"{k}/{c}" for k, c in info[(key, cid)]["deps"]),
+            "axioms": info[(key, cid)].get("axioms", []),
+            "unresolved": info[(key, cid)].get("unresolved", []),
             "check": last and {"by": last["by"], "via": last["via"],
                                "date": last["date"].date().isoformat()},
             "blocking": [f"{k}/{c}" for k, c in info[(key, cid)].get("blocking", [])]})
-    return {"commit": commit, "items": items}
+    nodes = {name: {"module": n["module"], "kind": n["kind"], "display": n["display"],
+                    "source": source_text(n), "uses": n["uses"]}
+             for name, n in sorted(data["nodes"].items())}
+    return {"commit": commit, "items": items, "nodes": nodes}
 
 
 def cmd_status(args):
@@ -377,8 +401,8 @@ def cmd_status(args):
     if args.json:
         if problems:
             sys.exit("invalid check files:\n" + "\n".join(problems))
-        status, info, _ = evaluate(sources)
-        print(json.dumps(status_json(sources, status, info), indent=2))
+        status, info, data = evaluate(sources)
+        print(json.dumps(status_json(sources, status, info, data), indent=2, ensure_ascii=False))
         return 0
     for p in problems:
         print(f"invalid: {p}")

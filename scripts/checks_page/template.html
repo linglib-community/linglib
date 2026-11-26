@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><!--TITLE--> | Linglib</title>
+<meta name="description" content="The definitions, results and data of this source, with the Lean that states each and who has checked the two against each other.">
+<meta name="robots" content="noindex">
+<!--SITE_HEAD-->
+<style>
+/* A source, read as a text: its items in a column, the Lean of the chosen one beside it */
+:root {
+  --checked: #16a34a;
+  --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.book {
+  display: grid; grid-template-columns: minmax(0, 600px) minmax(0, 1fr); gap: 56px;
+  max-width: calc(1024px + var(--gap) * 2); margin: 0 auto; padding: var(--gap);
+  min-height: calc(100vh - 120px);
+}
+.text { font-family: var(--serif); font-size: 19px; line-height: 1.62; }
+.crumbs { margin: 14px 0 0; font: 13px/1.5 var(--mono); color: var(--secondary); }
+.crumbs a { color: var(--secondary); }
+.crumbs a:hover { color: var(--primary); }
+h1 { font-family: var(--serif); font-size: 36px; font-weight: 600; margin: 8px 0 10px; }
+.by { margin: 0 0 8px; font-size: 16px; color: var(--secondary); }
+h2.sec { font-family: var(--serif); font-size: 23px; font-weight: 600; margin: 52px 0 18px; }
+h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
+
+.item {
+  margin: 0 0 1.1em -18px; padding-left: 16px; border-left: 2px solid transparent;
+  cursor: pointer; scroll-margin-top: 24px; outline: none;
+}
+.item:hover { border-left-color: var(--tertiary); }
+.item:focus-visible { border-left-color: var(--secondary); }
+.item.sel { border-left-color: var(--primary); }
+.item p { margin: 0 0 0.55em; }
+.item .head { font-weight: 700; color: var(--primary); }
+.item .head .no { font-weight: 400; }
+.item .mark { margin-left: 4px; font: 13px/1 var(--mono); color: var(--checked); }
+.item .mark.stale { color: var(--secondary); }
+.text code { font-size: 0.78em; }
+.links { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 56px 0 0; font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.links a { color: var(--secondary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
+.links a:hover { color: var(--primary); }
+
+/* The Lean of the chosen item */
+/* The text keeps the header's left edge; the Lean may run past its right one on a wide screen. */
+.lean { font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; margin-right: calc(-1 * clamp(0px, (100vw - 1120px) / 2, 220px)); }
+.lean .pane { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; padding-top: 14px; }
+.lean .hint { margin: 96px 0 0; color: var(--secondary); }
+.lean h3 { margin: 0 0 10px; font-size: 13px; font-weight: 600; letter-spacing: 0; color: var(--secondary); }
+.lean .how p { margin: 0 0 8px; color: var(--content); }
+.lean .how p + p { color: var(--secondary); font-size: 14px; }
+.decl { margin: 16px 0 0; }
+.decl .name { margin: 0 0 4px; font: 13px/1.5 var(--mono); overflow-wrap: anywhere; }
+.decl .name .kw { color: var(--secondary); }
+.decl .name a { border-bottom: 1px solid var(--tertiary); }
+.decl .name a:hover { border-bottom-color: currentColor; }
+.lean pre {
+  margin: 0; padding: 10px 12px; font: 12.5px/1.55 var(--mono); background: var(--code-bg);
+  border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.more { margin: 5px 0 0; font-size: 13px; color: var(--secondary); }
+.more::before { content: "+"; display: inline-block; width: 1.1em; font-family: var(--mono); }
+.more[aria-expanded="true"]::before { content: "\2212"; }
+.more:hover { color: var(--primary); }
+.uses { list-style: none; margin: 4px 0 0 1.1em; padding: 0; }
+.uses .node { padding: 3px 0; }
+.opener { font: 13px/1.5 var(--mono); text-align: left; color: var(--secondary); overflow-wrap: anywhere; }
+.opener:hover { color: var(--primary); }
+.opener::before { content: "+"; display: inline-block; width: 1.1em; }
+.opener[aria-expanded="true"]::before { content: "\2212"; }
+.opener[aria-expanded="true"] { color: var(--primary); }
+.cov { margin-left: 8px; font-size: 13px; color: var(--secondary); white-space: nowrap; }
+.cov:hover { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+.node .body { margin: 4px 0 6px 1.1em; }
+.state { margin: 18px 0 0; font-size: 14px; color: var(--secondary); }
+.state a { color: var(--secondary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 2px; }
+.state a:hover { color: var(--primary); }
+
+@media (max-width: 1040px) {
+  .book { display: block; max-width: calc(660px + var(--gap) * 2); }
+  .item { margin-left: -12px; padding-left: 10px; }
+  .lean { margin-right: 0; }
+  .lean .pane { position: static; max-height: none; padding: 0; }
+  .lean .hint { display: none; }
+  .lean.inline { margin: 4px 0 28px; padding: 14px 0 16px; border-block: 1px solid var(--border); }
+}
+@media (max-width: 600px) {
+  .text { font-size: 17px; }
+  h1 { font-size: 28px; }
+  h2.sec { font-size: 20px; margin-top: 40px; }
+}
+</style>
+</head>
+<body id="top">
+<!--SITE_HEADER-->
+<main class="book">
+  <div class="text">
+    <p class="crumbs"><a href="../">Checks</a> / <!--LABEL--></p>
+    <h1><!--H1--></h1>
+    <p class="by"><!--CITE--></p>
+<!--ITEMS-->
+    <p class="links"><!--LINKS--></p>
+  </div>
+  <aside class="lean" id="lean" aria-live="polite">
+    <div class="pane" id="pane"><p class="hint">Choose an item to see the Lean that states it.</p></div>
+  </aside>
+</main>
+<!--SITE_FOOTER-->
+<script type="application/json" id="data">/*DATA*/{}</script>
+<script>
+(function () {
+  "use strict";
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const N = D.nodes, I = D.items;
+  const lean = document.getElementById("lean"), pane = document.getElementById("pane");
+  const narrow = matchMedia("(max-width: 1040px)");
+  const el = (tag, cls, text) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  };
+  const html = (tag, cls, markup) => { const e = el(tag, cls); e.innerHTML = markup; return e; };
+
+  // A declaration the chosen statement mentions, as a row that opens to its own statement.
+  function row(name) {
+    const n = N[name], li = el("li", "node");
+    if (!n) { li.append(el("code", null, name)); return li; }
+    const b = el("button", "opener", n.k + " " + name);
+    b.type = "button"; b.dataset.decl = name; b.setAttribute("aria-expanded", "false");
+    li.append(b);
+    for (const [id, label] of n.c) {
+      const a = el("a", "cov", label);
+      a.href = "#" + id; a.title = "An item of this source covers it";
+      li.append(a);
+    }
+    const body = el("div", "body");
+    body.hidden = true;
+    li.append(body);
+    return li;
+  }
+  // What a statement mentions, behind one toggle.
+  function mentions(name) {
+    const n = N[name].u.length, box = el("div", "mentions");
+    const b = el("button", "more", "uses " + n + (n === 1 ? " definition" : " definitions"));
+    b.type = "button"; b.setAttribute("aria-expanded", "false");
+    const ul = el("ul", "uses");
+    ul.hidden = true;
+    b.addEventListener("click", () => {
+      if (!ul.firstChild) N[name].u.forEach((u) => ul.append(row(u)));
+      ul.hidden = !ul.hidden;
+      b.setAttribute("aria-expanded", String(!ul.hidden));
+    });
+    box.append(b, ul);
+    return box;
+  }
+  function show(id) {
+    const it = I[id], art = document.getElementById(id);
+    if (!it || !art) return;
+    document.querySelectorAll(".item.sel").forEach((a) => a.classList.remove("sel"));
+    art.classList.add("sel");
+    pane.replaceChildren(el("h3", null, it.title), html("div", "how", it.how));
+    for (const name of it.decls) {
+      const n = N[name], d = el("div", "decl"), p = el("p", "name");
+      if (!n) { p.append(el("code", null, name)); d.append(p); pane.append(d); continue; }
+      const a = el("a", null, name);
+      a.href = n.h; a.title = "In the API docs";
+      p.append(el("span", "kw", n.k + " "), a);
+      d.append(p, el("pre", null, n.t));
+      if (n.u.length) d.append(mentions(name));
+      pane.append(d);
+    }
+    if (it.state) pane.append(html("p", "state", it.state));
+    if (narrow.matches) { lean.classList.add("inline"); art.after(lean); }
+    else { lean.classList.remove("inline"); document.querySelector(".book").append(lean); pane.scrollTop = 0; }
+  }
+  function choose(id, scroll) {
+    show(id);
+    history.replaceState(null, "", "#" + id);
+    if (scroll) document.getElementById(id).scrollIntoView({ block: "start" });
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button.opener");
+    if (b) {
+      const body = b.parentElement.querySelector(":scope > .body");
+      const open = b.getAttribute("aria-expanded") !== "true";
+      if (open && !body.firstChild) {
+        body.append(el("pre", null, N[b.dataset.decl].t));
+        if (N[b.dataset.decl].u.length) body.append(mentions(b.dataset.decl));
+      }
+      b.setAttribute("aria-expanded", String(open));
+      body.hidden = !open;
+      return;
+    }
+    const cov = e.target.closest("a.cov");
+    if (cov) { e.preventDefault(); choose(cov.getAttribute("href").slice(1), true); return; }
+    if (e.target.closest("a")) return;
+    const art = e.target.closest(".item");
+    if (art && !getSelection().toString()) choose(art.id, false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if ((e.key === "Enter" || e.key === " ") && e.target.classList.contains("item")) {
+      e.preventDefault(); choose(e.target.id, false);
+    }
+  });
+  addEventListener("hashchange", () => show(location.hash.slice(1)));
+  if (I[location.hash.slice(1)]) show(location.hash.slice(1));
+})();
+</script>
+<!--SITE_SCRIPT-->
+</body>
+</html>

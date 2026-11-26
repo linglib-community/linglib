@@ -33,6 +33,12 @@ file is named by the key.
 
 Sign-offs are not kept in this file, but in the ledger, `checks/ledger/` (see below).
 
+A page of the site shows a source's claims as a text to read (`scripts/gen_checks_pages.py`), and
+two things in a record are for it alone. `section`, on the item that opens a section of the
+source, is the section's number and title, such as `"§2.3 Existential statements"`; it is no part
+of what a sign-off covers. A term that an item defines is written `**term**` in its claim and is
+set in bold.
+
 `kind` says what the item is in the source:
 
 * `definition`: it defines something, which the declarations define or characterize.
@@ -281,7 +287,9 @@ the Mathlib that the project pins.
 
 The docs pages show, under each declaration stating a `checked`, `relies` or `stale` item, who
 checked it and when, which item it relies on, or that it has changed since; the docs workflow
-reads `checks.py status --json`.
+reads `checks.py status --json`. The same output makes a page for each source at
+`/checks/<bib-key>/`: its claims in the source's order, and beside the chosen one the Lean that
+states it, what that statement uses, and the sign-off.
 
 Who checks which source is arranged in GitHub issues, not here. The files record only what has been
 checked.

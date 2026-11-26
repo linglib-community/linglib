@@ -29,6 +29,11 @@ annotations, which do not change what a statement says, do not. The closure is f
 the erased terms, so a declaration used only in a proof is not in it. The text of a declaration is
 its pretty-printed type and value, with full names, for people to read.
 
+Each declaration of a closure also comes with the project declarations its statement mentions
+directly (`uses`), with its signature as Lean prints it in the declaration's own namespace, with
+notation (`display`), and with the lines of its source (`lines`), absent for a declaration Lean
+generated. A page shows these to a reader; none enters a hash.
+
 A Lean or Mathlib upgrade often renames a constant, keeping the old name for a while as a
 deprecated alias of the new one. So that such a rename does not change a term, every name of a
 recorded rename (`checks/renames.toml`) is replaced in a term by a single one of them, as the JSON
@@ -65,6 +70,20 @@ def ppOptions : Options :=
 
 def ppText (e : Expr) : MetaM String :=
   withOptions (fun _ ↦ ppOptions) do return toString (← ppExpr e)
+
+/-- The signature of a declaration as a page shows it, printed with notation in the
+declaration's namespace, and for an inductive type those of its constructors. It is for reading
+and is not hashed. -/
+def ppDisplay (c : ConstantInfo) : MetaM String :=
+  withTheReader Core.Context (fun ctx ↦ { ctx with currNamespace := c.name.getPrefix }) <|
+  withOptions (fun o ↦ o.set `pp.proofs false) do
+    let sig (n : Name) : MetaM String := do
+      try pure ((← PrettyPrinter.ppSignature n).fmt.pretty 64)
+      catch _ => pure s!"{n} : {(← ppExpr (← getConstInfo n).type).pretty 64}"
+    match c with
+    | .inductInfo i =>
+      return "\n".intercalate ((← sig c.name) :: (← i.ctors.mapM sig).map ("  | " ++ ·))
+    | _ => sig c.name
 
 /-- The placeholder that replaces a proof in a term. -/
 def proofPlaceholder : Expr := .const `checks.proof []
@@ -154,6 +173,8 @@ structure Node where
   kind : String
   text : String
   term : String
+  display : String
+  lines : Option (Nat × Nat)
 
 structure ClosureState where
   nodes : Std.HashMap Name Node := {}
@@ -168,8 +189,11 @@ partial def visit (renames : NameMap Name) (n : Name) : StateT ClosureState Meta
   let some c := env.find? n | return
   let (kind, text, term, used) ← describe renames c
   let deps := used.filter (isProject env) |>.toList.eraseDups.toArray
+  let display ← ppDisplay c
+  let lines := (← findDeclarationRanges? n).map fun r ↦ (r.range.pos.line, r.range.endPos.line)
   modify fun s ↦ { s with
-    nodes := s.nodes.insert n ⟨(moduleOf? env n).getD .anonymous, kind, text, term⟩
+    nodes := s.nodes.insert n
+      ⟨(moduleOf? env n).getD .anonymous, kind, text, term, display, lines⟩
     edges := s.edges.insert n deps
     mentioned := used.foldl (fun acc m ↦ if isProject env m then acc else acc.insert m)
       s.mentioned }
@@ -224,7 +248,9 @@ def run (renames : NameMap Name) (names : List Name) : MetaM Json := do
   let nodes : Array (String × Json) := st.nodes.toArray.map fun (n, node) ↦
     (n.toString, Json.mkObj [
       ("module", node.module.toString), ("kind", node.kind), ("text", node.text),
-      ("term", node.term)])
+      ("term", node.term), ("display", node.display),
+      ("lines", match node.lines with | some (a, b) => toJson #[a, b] | none => Json.null),
+      ("uses", toJson ((st.edges.getD n #[]).map Name.toString))])
   return Json.mkObj [("roots", Json.mkObj roots.toList), ("nodes", Json.mkObj nodes.toList),
     ("aliases", toJson (aliases env st.mentioned))]
 
@@ -236,7 +262,9 @@ def readRenames (path : String) : IO (NameMap Name) := do
     let v ← IO.ofExcept v.getStr?
     return acc.insert k.toName v.toName
 
-def main (args : List String) : IO UInt32 := do
+unsafe def main (args : List String) : IO UInt32 := do
+  -- Notation is kept in environment extensions, which an import loads only on request.
+  enableInitializersExecution
   let ((renames : NameMap Name), args) ← match args with
     | "--renames" :: path :: rest => do pure (← readRenames path, rest)
     | _ => pure ({}, args)
@@ -244,7 +272,7 @@ def main (args : List String) : IO UInt32 := do
   let names := names.drop 1
   initSearchPath (← findSysroot)
   let env ← importModules (mods.map fun m ↦ { module := m.toName }).toArray {}
-    (trustLevel := 1024)
+    (trustLevel := 1024) (loadExts := true)
   let ctx : Core.Context := { fileName := "<checks>", fileMap := default, maxHeartbeats := 0 }
   let (json, _) ← ((run renames (names.map String.toName)).run' {} {}).toIO ctx { env }
   IO.println json.compress

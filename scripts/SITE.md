@@ -21,6 +21,25 @@ The look is that of Hugo's PaperMod theme, which the site began on:
 Mockups are read for structure and copy, not for type or color. Check a page at 1440px and 390px
 wide, in light and dark mode, before opening a PR.
 
+## The checks pages
+
+`gen_checks_pages.py` writes `/checks/<bib-key>/` for each source with a record in `checks/`, and
+`/checks/`, which lists them. No menu item and no other page links to them, and they carry
+`noindex`, so they are reached by address only.
+
+A source's page is read as a text, and departs from the rules above to that end:
+
+- The text is in the system serif, in a 600px column under the header's left edge. It is the
+  source's sections, and under each its items: the kind and the source's own number in bold, then
+  the claim. A term a definition defines is bold. Nothing else is in the column.
+- Choosing an item shows its Lean beside it, in a column that may run past the header's right
+  edge: how the Lean departs from the item, the declarations that state it, and the sign-off. A
+  definition is shown as its file writes it and a theorem as its statement without the proof.
+  What a statement uses is behind one toggle, and opens in place. On a narrow screen the Lean
+  opens under the item.
+- An item a person has checked carries a mark after its number. An unchecked item says nothing
+  in the text.
+
 ## The docs pages
 
 `gen_docs_pages.py` rebuilds doc-gen4's study and theory pages from its output (read by
