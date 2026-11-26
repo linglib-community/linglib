@@ -29,8 +29,9 @@ proposes, an absent or unmarked feature restricts nothing.
 ## Implementation notes
 
 The φ-domain reads the entry's referential person and number
-(`PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber`), not its agreement
-features, so a polite pronoun that agrees as third plural presupposes its addressee
+(`PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber`) and its own gender,
+not the labels it agrees as, so a polite pronoun that agrees as a third person feminine
+presupposes its addressee and nothing of the addressee's gender
 (`PersonalPronoun.phiDom_congr`). The speaker and the addressee are the agent and the addressee
 of the context of utterance (`SpeechAct.Context`), and the female and the inanimate referents
 are the gender of referents the entity domain comes equipped with (`Gendered`).
@@ -77,6 +78,19 @@ theorem coe_mem_dom_singular {x : E} :
 theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂.referential)
     (hg : e₁.gender = e₂.gender) : e₁.phiDom c = e₂.phiDom c := by
   simp only [phiDom, referentialPerson, referentialClusivity, referentialNumber, hr, hg]
+
+/-- A pronoun with no gender of its own presupposes nothing of its referent's gender, whatever
+gender it agrees as. -/
+theorem mem_phiDom_of_gender_eq_none (h : e.gender = none) (x : E) :
+    x ∈ e.phiDom c ↔
+      x ∈ Person.dom c e.referentialPerson e.referentialClusivity ∧
+        (x : WithBot E) ∈ Number.dom e.referentialNumber := by
+  simp [mem_phiDom, h]
+
+/-- A feminine pronoun is defined of no referent gendered masculine. -/
+theorem notMem_masculine_of_mem_phiDom (h : e.gender = some .Fem) {x : E} (hx : x ∈ e.phiDom c) :
+    x ∉ Gendered.masculine := by
+  simpa [h] using ((e.mem_phiDom c x).1 hx).2.2
 
 /-- A pronoun denotes the value `g i` of its index where that value lies in the φ-domain, and
 nothing elsewhere. -/

@@ -83,7 +83,8 @@ theorem forms_nonempty :
 /-- *tum* and *aap* denote one addressee, which their plural agreement does not realize. -/
 theorem addressee_mem_referential :
     ∀ p ∈ ({tum, aap} : Finset PersonalPronoun),
-      Person.Category.addressee ∈ p.referential ∧ Person.Category.addressee ∉ p.categories := by
+      Person.Category.addressee ∈ p.referential ∧
+        Person.Category.addressee ∉ p.agreement.categories := by
   decide +kernel
 
 end Pronouns

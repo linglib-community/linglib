@@ -16,7 +16,7 @@ which also head free relatives.
 The second person distinguishes the familiar *du* and *ihr* from the polite level, with the
 single form *Sie*. *Sie* takes the third person plural series for agreement and reflexive
 binding (*sich*, not *dich* or *euch*) while denoting the addressee alone or with others, so its
-`person` is third and its `cells` are those of *du* and *ihr* together. *wer*
+`agreement` is third person plural and its `cells` are those of *du* and *ihr* together. *wer*
 declines for the four German cases; *was* has one form for the nominative and the accusative and
 no dative.
 
@@ -71,12 +71,12 @@ def ich : PersonalPronoun := { form := "ich", person := some .first, number := s
 /-- The familiar second person singular *du*. -/
 def du : PersonalPronoun := { form := "du", person := some .second, number := some .singular }
 
-/-- The polite second person *Sie*, for one or several addressees. Its agreement person and
-number are those of the third person plural; it denotes the addressee alone or with others
-([adamson-zompi-2025]). -/
+/-- The polite second person *Sie*, for one or several addressees. It agrees as a third person
+plural and denotes the addressee alone or with others ([adamson-zompi-2025]). -/
 def sie_formal : PersonalPronoun :=
-  { form := "Sie", person := some .third, number := some .plural,
-    cells := {.personNumber .second .singular, .personNumber .second .plural} }
+  { form := "Sie", person := some .second,
+    cells := {.personNumber .second .singular, .personNumber .second .plural},
+    agreement := .personNumber .third .plural }
 
 /-- The third person singular masculine *er*. -/
 def er : PersonalPronoun :=

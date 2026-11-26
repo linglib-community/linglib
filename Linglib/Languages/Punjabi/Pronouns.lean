@@ -74,7 +74,7 @@ theorem forms_nonempty :
 /-- *tusii* denotes one addressee, which its plural agreement does not realize. -/
 theorem addressee_mem_referential :
     Person.Category.addressee ∈ tusii.referential ∧
-      Person.Category.addressee ∉ tusii.categories := by
+      Person.Category.addressee ∉ tusii.agreement.categories := by
   decide +kernel
 
 end Pronouns

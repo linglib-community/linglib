@@ -88,8 +88,8 @@ singular, patterns with the feminine singular clitics and binds the third-person
 but it denotes the addressee, so it triggers PCC and Fancy Constraint effects and second person
 plural resolved agreement in coordination ([adamson-zompi-2025]). -/
 def lei_formal : PersonalPronoun :=
-  { form := "Lei", person := some .third, number := some .singular, gender := some .Fem,
-    cells := {.personNumber .second .singular}, strength := some .strong }
+  { form := "Lei", person := some .second, number := some .singular, strength := some .strong,
+    agreement := (Agreement.Bundle.personNumber .third .singular).set .gender .Fem }
 
 /-- *lui* — 3sg masculine. -/
 def lui : PersonalPronoun :=
@@ -114,12 +114,19 @@ def voi : PersonalPronoun :=
 is identical in form to the third person pronoun and takes third person plural verb forms
 ([maiden-robustelli-2007]), and it denotes the addressees. -/
 def loro_formal : PersonalPronoun :=
-  { form := "Loro", person := some .third, number := some .plural,
-    cells := voi.cells, strength := some .strong }
+  { form := "Loro", person := some .second, number := some .plural, strength := some .strong,
+    agreement := .personNumber .third .plural }
 
 /-- *loro* — 3pl. -/
 def loro : PersonalPronoun :=
   { form := "loro", person := some .third, number := some .plural, strength := some .strong }
+
+/-- Polite *Lei* has no gender of its own and agrees as a feminine, as third person *lei*, which
+is feminine, does. -/
+theorem gender_lei_formal :
+    lei_formal.gender = none ∧ lei.gender = some .Fem ∧
+      lei_formal.agreement .gender = lei.agreement .gender := by
+  decide
 
 /-- The second person singular at each grade. -/
 def addresseeSg : Grade → PersonalPronoun

@@ -5,19 +5,21 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Linglib.Pragmatics.SocialMeaning.Register
 public import Linglib.Syntax.Category.Pronoun.Basic
 
 /-!
 # Personal pronouns
 
-A personal pronoun is a pronoun with a register and the cells of the person and number paradigm
-it is used for. The cells are by default the one its own person, clusivity and number name. A
-polite pronoun overrides the default: Italian *Lei* agrees as a third person singular and is used
-for the second person singular, and German *Sie* agrees as a third person plural and is used for
-the second person of either number. The entry states both as labels, as a grammar does; the
-referents a cell covers are in `Syntax/Category/Pronoun/Categories.lean`.
+A personal pronoun is a pronoun with a register, the labels it agrees as and the cells of the
+pronoun paradigm it is used for. Its own person, number and gender say what the form is, as a
+grammar's table lists it, and by default it agrees as that and is used for that one cell. A
+polite pronoun departs from the default: Italian *Lei* is a second person singular and agrees as
+a third person feminine singular, and German *Sie* is a second person, used for the singular and
+the plural, and agrees as a third person plural. The labels a form agrees as are its formal
+features, which verbs and clitics track; its own labels and its cells are what it is used for.
+The entry states all of them as labels, as a grammar does; the referents a cell covers are in
+`Syntax/Category/Pronoun/Categories.lean`.
 
 A pronoun records only features whose values are shared across languages. Honorific grades are
 not: each language has its own, ordered by the deference they present, and a form may serve
@@ -29,9 +31,10 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
 
 ## Main definitions
 
-* `PersonalPronoun` — a pronoun with its register and the cells it is used for
-* `PersonalPronoun.forms` — the forms an inventory offers for each cell, whose kernel
-  `Setoid.ker` is the inventory's syncretism
+* `PersonalPronoun` — a pronoun with its register, the labels it agrees as and the cells it is
+  used for
+* `PersonalPronoun.forms` — the forms an inventory offers for each cell, those of the pronouns
+  used for a cell at least as specific
 * `PersonalPronoun.ofCells`, `PersonalPronoun.ofTable`, `PersonalPronoun.ofTableAt` — the
   pronoun of a form in a table of cells, with the cases and the person and number cells of the
   cells it fills
@@ -45,16 +48,20 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
 
 @[expose] public section
 
-/-- A personal pronoun is a `Pronoun` with its register and the cells of the person and number
-paradigm it is used for. -/
+/-- A personal pronoun is a `Pronoun` with its register, the labels it agrees as and the cells of
+the pronoun paradigm it is used for. -/
 @[ext]
 structure PersonalPronoun extends Pronoun where
   /-- The register. Japanese *boku* is an informal first person, and Korean *geu* a third person
   of written narrative. -/
   register : SocialMeaning.Register := .neutral
-  /-- The cells of the person and number paradigm the form is used for, by default the cell of
-  its own person, clusivity and number. Italian *Lei* is used for the second person singular
-  and German *Sie* for the second person singular and plural ([adamson-zompi-2025]). -/
+  /-- The person, number and gender the form agrees as, by default its own. Italian *Lei*, a
+  second person singular, agrees as a third person feminine singular, and K'iche' *alaq*, a
+  second person plural, as a third person singular ([adamson-zompi-2025]). -/
+  agreement : Agreement.Bundle := toPronoun.cell
+  /-- The cells of the pronoun paradigm the form is used for, by default the cell of its own
+  person, clusivity, number and gender. German *Sie* is used for the second person singular
+  and plural. -/
   cells : Finset Agreement.Bundle := {toPronoun.cell}
 
 instance : DecidableEq PersonalPronoun := fun _ _ ↦ decidable_of_iff _ PersonalPronoun.ext_iff.symm
@@ -67,14 +74,14 @@ section Forms
 
 variable {I : Finset PersonalPronoun} {c : Agreement.Bundle} {f : String}
 
-/-- The forms an inventory offers for each cell of the person and number paradigm. A cell no
-pronoun is used for gets `∅`, and two cells receive the same forms exactly when the inventory
-does not distinguish them. -/
-def forms : Finset PersonalPronoun → Agreement.Bundle → Finset String :=
-  Morphology.formsAt (·.cells) (·.form)
+/-- The forms an inventory offers for a cell: those of the pronouns used for a cell at least as
+specific, so that a third person singular masculine form is a form for the third person
+singular. A cell no pronoun is used for gets `∅`. -/
+def forms (I : Finset PersonalPronoun) (c : Agreement.Bundle) : Finset String :=
+  (I.filter fun p ↦ ∃ b ∈ p.cells, c ≤ b).image (·.form)
 
-theorem mem_forms : f ∈ forms I c ↔ ∃ p ∈ I, c ∈ p.cells ∧ p.form = f :=
-  Morphology.mem_formsAt
+theorem mem_forms : f ∈ forms I c ↔ ∃ p ∈ I, (∃ b ∈ p.cells, c ≤ b) ∧ p.form = f := by
+  simp [forms, and_assoc]
 
 end Forms
 
@@ -86,11 +93,11 @@ variable {C : Type*} (person : C → Person) (clusivity : C → Option Clusivity
   (number : C → Option Number) (gender : C → Option UD.Gender) (case : C → Option Case)
 
 /-- The personal pronoun `f` filling the cells `s` (`Pronoun.ofCells`), used for the person,
-clusivity and number of each. -/
+clusivity, number and gender of each. -/
 def ofCells (s : Finset C) (f : String) : PersonalPronoun :=
   { toPronoun := .ofCells person clusivity number gender case s f,
-    cells := s.image fun c ↦ .ofFeatures
-      (.of (person := some (person c)) (clusivity := clusivity c) (number := number c)) }
+    cells := s.image fun c ↦ .ofFeatures (.of (person := some (person c))
+      (clusivity := clusivity c) (number := number c) (gender := gender c)) }
 
 /-- The personal pronoun `f` of a table, filling every cell the table gives it. -/
 def ofTable [Fintype C] (table : C → Finset String) (f : String) : PersonalPronoun :=
@@ -108,8 +115,13 @@ end Table
 
 /-! ### The pronoun as a token -/
 
-/-- A personal pronoun's token is of UD pronoun type `Prs`. -/
-def toWord (p : PersonalPronoun) : Morphology.Word := p.toPronoun.toWord (some .Prs)
+/-- A personal pronoun's token bears the labels the pronoun agrees as, with its case, and is of
+UD pronoun type `Prs`. -/
+def toWord (p : PersonalPronoun) : Morphology.Word :=
+  { form := p.form, cat := .PRON,
+    features := .of (person := p.agreement.person) (clusivity := p.agreement.clusivity)
+      (number := p.agreement .number) (gender := p.agreement .gender) (case := p.case)
+      (pronType := some .Prs) }
 
 
 end PersonalPronoun

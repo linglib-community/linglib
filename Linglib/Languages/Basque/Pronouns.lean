@@ -54,10 +54,11 @@ def gu : PersonalPronoun := { form := "gu", person := some .first, number := som
 /-- *hi* — 2sg familiar. -/
 def hi : PersonalPronoun := { form := "hi", person := some .second, number := some .singular }
 
-/-- *Zu* addresses one person and agrees as a second person plural. -/
+/-- *Zu* is a second person singular, addressing one person, and agrees as a second person
+plural. -/
 def zu : PersonalPronoun :=
-  { form := "zu", person := some .second, number := some .plural,
-    cells := {.personNumber .second .singular} }
+  { form := "zu", person := some .second, number := some .singular,
+    agreement := .personNumber .second .plural }
 
 /-- *zuek* — 2pl. -/
 def zuek : PersonalPronoun := { form := "zuek", person := some .second, number := some .plural }

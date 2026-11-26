@@ -94,7 +94,8 @@ theorem not_exists_forall_deferenceEntitled_iff :
 /-- A pronoun tropes on the second person singular when it denotes the single addressee and its
 agreement person and number do not. -/
 def Tropes (p : PersonalPronoun) : Prop :=
-  Person.Category.addressee ∈ p.referential ∧ Person.Category.addressee ∉ p.categories
+  Person.Category.addressee ∈ p.referential ∧
+    Person.Category.addressee ∉ p.agreement.categories
 
 instance (p : PersonalPronoun) : Decidable (Tropes p) := inferInstanceAs (Decidable (_ ∧ _))
 

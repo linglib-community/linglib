@@ -58,8 +58,9 @@ def jij : PersonalPronoun :=
 
 /-- The polite second person *u*, for one or several addressees, with singular agreement. -/
 def u : PersonalPronoun :=
-  { form := "u", person := some .second, number := some .singular, strength := some .strong,
-    cells := {.personNumber .second .singular, .personNumber .second .plural} }
+  { form := "u", person := some .second, strength := some .strong,
+    cells := {.personNumber .second .singular, .personNumber .second .plural},
+    agreement := .personNumber .second .singular }
 
 /-- The third person singular masculine *hij*. -/
 def hij : PersonalPronoun :=

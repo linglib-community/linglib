@@ -22,9 +22,9 @@ person inclusive plural, the speaker and the addressee with others. A cell with 
 number has no category.
 
 The referential categories of a personal pronoun are those of the cells it is used for. Italian
-*Lei* agrees as a third person singular and is used for the second person singular, so it
-denotes the addressee: its labels govern agreement, clitic allomorphy and reflexive binding, and
-its referential categories the person-case constraint and resolved agreement.
+*Lei* is a second person singular and agrees as a third person feminine singular, so it denotes
+the addressee: the labels it agrees as govern agreement, clitic allomorphy and reflexive binding,
+and its referential categories the person-case constraint and resolved agreement.
 
 ## Main definitions
 
@@ -34,20 +34,11 @@ its referential categories the person-case constraint and resolved agreement.
 * `PersonalPronoun.referential`: the referential categories a personal pronoun can denote.
 * `PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber`: the person and
   number the pronoun contributes to interpretation.
-* `PersonalPronoun.IsOrdinary`: the pronoun denotes what its own labels cover.
+* `PersonalPronoun.IsOrdinary`: the pronoun denotes what the labels it agrees as cover.
 * `PersonalPronoun.paradigm`: the forms an inventory offers for each referential category,
   whose kernel `Setoid.ker` is the inventory's person-number syncretism.
 * `ReflexivePronoun.paradigm`: the forms an inventory of reflexives offers for each category
   its person and number cover.
-
-## Main results
-
-* `PersonalPronoun.referentialPerson_eq_person`: an ordinary pronoun's referential person is
-  its own person.
-* `PersonalPronoun.mem_paradigm_iff_exists_mem_forms`: the forms for a referential category are
-  those for the cells that cover it.
-* `PersonalPronoun.paradigm_nonempty_of_forall_forms_nonempty`: an inventory with a form for
-  each person and number has one for each referential category.
 
 ## References
 
@@ -96,18 +87,10 @@ share, `general` for a number-neutral form such as polite *Sie*. -/
 def referentialNumber (p : PersonalPronoun) : Option Number :=
   Person.Category.sharedNumber p.referential
 
-/-- An ordinary pronoun denotes exactly the categories its own labels cover. -/
-def IsOrdinary (p : PersonalPronoun) : Prop := p.referential = p.categories
+/-- An ordinary pronoun denotes exactly the categories that the labels it agrees as cover. -/
+def IsOrdinary (p : PersonalPronoun) : Prop := p.referential = p.agreement.categories
 
 instance : Decidable p.IsOrdinary := inferInstanceAs (Decidable (_ = _))
-
-/-- An ordinary pronoun's referential person is its own person. -/
-theorem referentialPerson_eq_person (h : p.IsOrdinary) (hne : p.referential.Nonempty) :
-    p.referentialPerson = p.person := by
-  unfold referentialPerson
-  rw [h, Pronoun.categories] at hne ⊢
-  rcases hp : p.person with _ | per <;> rcases hn : p.number with _ | num <;>
-    simp_all [Person.Category.sharedPerson_ofPersonNumber]
 
 /-! ### The paradigm of an inventory -/
 
@@ -127,23 +110,6 @@ theorem mem_paradigm : f ∈ paradigm I c ↔ ∃ p ∈ I, c ∈ p.referential �
 @[gcongr]
 theorem paradigm_mono (h : I ⊆ J) (c : Person.Category) : paradigm I c ⊆ paradigm J c :=
   Morphology.formsAt_mono h c
-
-/-- The forms for a referential category are those for the cells that cover it. -/
-theorem mem_paradigm_iff_exists_mem_forms :
-    f ∈ paradigm I c ↔ ∃ b : Agreement.Bundle, c ∈ b.categories ∧ f ∈ forms I b := by
-  simp only [mem_paradigm, mem_forms, referential, Finset.mem_biUnion]
-  exact ⟨fun ⟨p, hp, ⟨b, hb, hc⟩, hf⟩ ↦ ⟨b, hc, p, hp, hb, hf⟩,
-    fun ⟨b, hc, p, hp, hb, hf⟩ ↦ ⟨p, hp, ⟨b, hb, hc⟩, hf⟩⟩
-
-/-- An inventory with a form for each person and number has one for each referential
-category, every category being covered by one of those cells. -/
-theorem paradigm_nonempty_of_forall_forms_nonempty
-    (h : ∀ b ∈ Agreement.Bundle.personNumberCells, (forms I b).Nonempty) (c : Person.Category) :
-    (paradigm I c).Nonempty := by
-  obtain ⟨b, hb, hc⟩ : ∃ b ∈ Agreement.Bundle.personNumberCells, c ∈ b.categories := by
-    revert c; decide +kernel
-  obtain ⟨f, hf⟩ := h b hb
-  exact ⟨f, mem_paradigm_iff_exists_mem_forms.2 ⟨b, hc, hf⟩⟩
 
 end Paradigm
 

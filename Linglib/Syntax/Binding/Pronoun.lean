@@ -114,8 +114,8 @@ namespace PersonalPronoun
 /-- A personal pronoun is a pronominal. -/
 @[simp]
 theorem bindingClassOf_toWord (p : PersonalPronoun) :
-    Binding.bindingClassOf p.toWord = some .pronoun :=
-  p.toPronoun.bindingClassOf_toWord (by decide) (by decide)
+    Binding.bindingClassOf p.toWord = some .pronoun := by
+  simp +decide [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
 end PersonalPronoun
 

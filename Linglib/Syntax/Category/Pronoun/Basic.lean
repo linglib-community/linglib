@@ -35,8 +35,8 @@ the referential categories they cover are in `Syntax/Category/Pronoun/Categories
 * `Pronoun`: the form, person, number, cases and gender of a pronoun, with its script form
   and the strength class of its series.
 * `Pronoun.case`: the flat case of a pronoun, the meet of the cases it fills.
-* `Pronoun.cell`: the cell of a person and number paradigm that a pronoun's person, clusivity
-  and number name.
+* `Pronoun.cell`: the paradigm cell that a pronoun's person, clusivity, number and gender
+  name.
 * `Pronoun.ofCells`, `Pronoun.ofTable`: the pronoun of a form in a table of cells.
 * `Pronoun.toWord`: the pronoun as a token, with the pronoun type and reflexive marking of
   its kind; `Pronoun.agreement_toWord` says the token bears the pronoun's agreement bundle.
@@ -122,10 +122,11 @@ variable (p : Pronoun)
 one whose cases are unrecorded. -/
 def case : Flat Case := Flat.finsetInf p.cases (↑)
 
-/-- The cell of a person and number paradigm that the pronoun's person, clusivity and number
-name: the agreement bundle bearing them and nothing else. -/
+/-- The paradigm cell that the pronoun's person, clusivity, number and gender name: the
+agreement bundle bearing them and nothing else. -/
 def cell : Agreement.Bundle :=
-  .ofFeatures (.of (person := p.person) (clusivity := p.clusivity) (number := p.number))
+  .ofFeatures (.of (person := p.person) (clusivity := p.clusivity) (number := p.number)
+    (gender := p.gender))
 
 /-! ### The pronouns of a table -/
 
