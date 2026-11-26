@@ -89,7 +89,7 @@ but it denotes the addressee, so it triggers PCC and Fancy Constraint effects an
 plural resolved agreement in coordination ([adamson-zompi-2025]). -/
 def lei_formal : PersonalPronoun :=
   { form := "Lei", person := some .third, number := some .singular, gender := some .Fem,
-    referential := {.addressee}, strength := some .strong }
+    cells := {.personNumber .second .singular}, strength := some .strong }
 
 /-- *lui* — 3sg masculine. -/
 def lui : PersonalPronoun :=
@@ -115,7 +115,7 @@ is identical in form to the third person pronoun and takes third person plural v
 ([maiden-robustelli-2007]), and it denotes the addressees. -/
 def loro_formal : PersonalPronoun :=
   { form := "Loro", person := some .third, number := some .plural,
-    referential := voi.referential, strength := some .strong }
+    cells := voi.cells, strength := some .strong }
 
 /-- *loro* — 3pl. -/
 def loro : PersonalPronoun :=

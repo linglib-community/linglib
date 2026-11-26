@@ -57,8 +57,4 @@ theorem update_case_nominal (k' : FeatureSlot (Flat Case)) :
 
 end FeatureBundle
 
-@[simp] theorem _root_.Agreement.Bundle.isSAP_update_case {c : Agreement.Bundle}
-    {x : Flat Case} : Agreement.Bundle.IsSAP (Function.update c .case x) ↔ c.IsSAP := by
-  simp [Agreement.Bundle.IsSAP]
-
 end Minimalist

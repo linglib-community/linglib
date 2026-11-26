@@ -4,7 +4,7 @@ public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Semantics.Quantifier.Global
 public import Linglib.Languages.Romance.Italian.Gender
 public import Linglib.Languages.Romance.Italian.Phonology
-public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 public import Linglib.Syntax.Feature.Person.Participants
 
 /-!

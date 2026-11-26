@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Categories
 public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Reference.Definite
 public import Linglib.Semantics.Presupposition.PhiFeatures

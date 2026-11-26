@@ -7,8 +7,7 @@ module
 
 public import Linglib.Core.Data.Finset.Lattice.Fold
 public import Linglib.Discourse.SpeechAct.Role
-public import Linglib.Syntax.Feature.Person.Basic
-public import Linglib.Syntax.Feature.Person.Clusivity
+public import Linglib.Syntax.Feature.Person.Defs
 public import Linglib.Syntax.Feature.Person.Feature
 public import Mathlib.Data.Finset.Sups
 public import Mathlib.Data.Fintype.Powerset
@@ -45,8 +44,8 @@ has in common, and with all three features no two participant sets have the same
 * `Person.participantSets`: the participant sets a person covers.
 * `Person.ofParticipants`: the person of a participant set, first with the speaker, otherwise
   second with the addressee, otherwise third.
-* `Person.IncludesSpeaker`, `Person.IsSAP`: properties of a person, read off the participant
-  sets it covers.
+* The order of person resolution on `Person`, third below second below first.
+* `Person.IncludesSpeaker`: each participant set the person covers contains the speaker.
 * `Clusivity.Holds`: a participant set satisfies the inclusive when it contains the addressee,
   and the exclusive when it does not.
 * `Clusivity.restrict`: the participant sets of a family that satisfy a clusivity, or all of
@@ -60,7 +59,11 @@ has in common, and with all three features no two participant sets have the same
 
 * `Person.mem_participantSets_iff_eq_ofParticipants`: a participant set is covered by its
   person and by no other.
+* `Person.le_iff_exists_subset`: one person lies below another exactly when a referent of the
+  first is part of a referent of the second.
 * `Person.ofParticipants_union`: the person of a union is the larger of the persons.
+* `Person.ne_third_iff_forall_nonempty`: the first and the second person are those of the
+  speech-act participants, the values whose participant sets are all nonempty.
 * `Person.Feature.le_iff_forall_bears`: dependency is entailment.
 * `Person.Feature.exists_roles_eq_iff`: the features are about the nonempty sets of roles.
 * `Person.wellFormed_iff_isIntent`: the well-formed bundles are the closed sets of features.
@@ -70,6 +73,10 @@ has in common, and with all three features no two participant sets have the same
 
 The second person with the inclusive covers what the second person covers, and the second person
 with the exclusive and the third with the inclusive cover nothing.
+
+The order on `Person` is given here and not with the values, since it is the order of their
+referents. It is computed from the position of a value, and `Person.le_iff_exists_subset` states
+it of the participant sets.
 
 ## References
 
@@ -130,6 +137,26 @@ theorem mem_participantSets_ofParticipants_self (s : Finset Role) :
 
 theorem ofParticipants_surjective : Function.Surjective ofParticipants := by decide
 
+/-! ### The order of resolution -/
+
+/-- Persons are ordered by resolution: a coordination of a first person with anything is first
+person, and of a second with a third is second. The order is that of the referents: one person
+lies below another when a referent of the first is part of a referent of the second. -/
+instance : LinearOrder Person :=
+  LinearOrder.lift' (fun p ↦ OrderDual.toDual p.ctorIdx) (by decide)
+
+instance : OrderBot Person where
+  bot := .third
+  bot_le := by decide
+
+@[simp] theorem bot_eq_third : (⊥ : Person) = .third := rfl
+
+/-- One person lies below another exactly when some referent the first covers is part of some
+referent the second covers. -/
+theorem le_iff_exists_subset {p q : Person} :
+    p ≤ q ↔ ∃ s ∈ p.participantSets, ∃ t ∈ q.participantSets, s ⊆ t := by
+  revert p q; decide
+
 /-- The unions of the participant sets of two conjuncts are among those of their
 coordination. -/
 theorem participantSets_sups_subset (p q : Person) :
@@ -151,21 +178,15 @@ def IncludesSpeaker (p : Person) : Prop := ∀ s ∈ p.participantSets, .speaker
 instance : DecidablePred IncludesSpeaker := fun p ↦
   inferInstanceAs (Decidable (∀ s ∈ p.participantSets, .speaker ∈ s))
 
-/-- A speech-act participant value has only nonempty participant sets. -/
-def IsSAP (p : Person) : Prop := ∀ s ∈ p.participantSets, s.Nonempty
-
-instance : DecidablePred IsSAP := fun p ↦
-  inferInstanceAs (Decidable (∀ s ∈ p.participantSets, s.Nonempty))
-
-/-- The speech-act participant values are the first and the second person. -/
-theorem isSAP_iff_ne_bot {p : Person} : p.IsSAP ↔ p ≠ ⊥ := by revert p; decide
+/-- The first and the second person are those of the speech-act participants: the values whose
+participant sets are all nonempty. -/
+theorem ne_third_iff_forall_nonempty {p : Person} :
+    p ≠ .third ↔ ∀ s ∈ p.participantSets, s.Nonempty := by
+  revert p; decide
 
 /-- The first person is the value that includes the speaker. -/
 theorem includesSpeaker_iff_eq_first {p : Person} : p.IncludesSpeaker ↔ p = .first := by
   revert p; decide
-
-theorem IsSAP.mono {p q : Person} (hp : p.IsSAP) (h : p ≤ q) : q.IsSAP := by
-  revert p q; decide
 
 theorem IncludesSpeaker.mono {p q : Person} (hp : p.IncludesSpeaker) (h : p ≤ q) :
     q.IncludesSpeaker := by

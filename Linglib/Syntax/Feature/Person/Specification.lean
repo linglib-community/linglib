@@ -7,8 +7,7 @@ module
 
 public import Linglib.Core.Order.BoundedComplete
 public import Linglib.Core.Order.Flat
-public import Linglib.Syntax.Feature.Person.Basic
-public import Linglib.Syntax.Feature.Person.Clusivity
+public import Linglib.Syntax.Feature.Person.Defs
 public import Linglib.Syntax.Feature.Person.Participants
 public import Mathlib.Data.Fintype.Powerset
 
@@ -23,8 +22,12 @@ A specification that covers fewer participant sets is more specific, so
 [the first person is less specific than the
 inclusive](##Person.Specification.ofPerson_first_le_inclusive). Two specifications are
 compatible when some participant set is covered by both;
-[the first and the second person are not](##Person.Specification.not_compat_first_second). The
-person slot of an agreement bundle is a specification (`Syntax/Feature/Bundle.lean`).
+[the first and the second person are not](##Person.Specification.not_compat_first_second).
+
+The person and the clusivity a form bears are labels, and this file reads them as a
+specification: the participant sets of the person that satisfy the clusivity. The reading is
+monotone where some participant set satisfies both, and a pair that none satisfies, as the second
+person with the exclusive, is read as unspecified.
 
 ## Main definitions
 
@@ -32,7 +35,8 @@ person slot of an agreement bundle is a specification (`Syntax/Feature/Bundle.le
 * `Person.Specification.sets`: the participant sets a specification covers.
 * `Person.Specification.ofPerson`: the specification of a person value.
 * `Person.Specification.ofParticipants`: the specification of a single referent.
-* `Person.Specification.toPerson?`: the person value a specification is that of, if any.
+* `Person.Specification.ofPersonClusivity`: the specification of a person and a clusivity.
+* `Person.Specification.Coherent`: some participant set satisfies the person and the clusivity.
 * `Person.Specification.IsSAP`: every participant set it covers includes a participant.
 
 ## Implementation notes
@@ -84,15 +88,6 @@ instance : Coe Person Specification := ⟨ofPerson⟩
 
 theorem ofPerson_injective : Function.Injective ofPerson := fun _ _ h ↦
   participantSets_injective (congrArg sets h)
-
-/-- The person value a specification is that of, if any. -/
-def toPerson? (x : Specification) : Option Person :=
-  [Person.first, .second, .third].find? fun p ↦ ofPerson p = x
-
-@[simp] theorem toPerson?_ofPerson (p : Person) : (ofPerson p).toPerson? = some p := by
-  revert p; decide
-
-theorem toPerson?_bot : (⊥ : Specification).toPerson? = none := by decide
 
 /-- The specification of a referent with the participants `s`. -/
 def ofParticipants (s : Finset Role) : Specification :=
@@ -186,7 +181,8 @@ def IsSAP (x : Specification) : Prop := ∀ s ∈ x.sets, s.Nonempty
 
 instance : DecidablePred IsSAP := fun x ↦ inferInstanceAs (Decidable (∀ s ∈ x.sets, s.Nonempty))
 
-theorem isSAP_ofPerson {p : Person} : IsSAP (ofPerson p) ↔ p.IsSAP := Iff.rfl
+theorem isSAP_ofPerson {p : Person} : IsSAP (ofPerson p) ↔ p ≠ .third :=
+  ne_third_iff_forall_nonempty.symm
 
 theorem not_isSAP_bot : ¬ IsSAP ⊥ := by decide
 

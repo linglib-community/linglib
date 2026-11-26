@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Feature.Gender.Basic
 public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Category.Pronoun.Reflexive
+public import Linglib.Syntax.Category.Pronoun.Categories
 
 /-!
 # San Martín Peras Mixtec pronouns

@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Linglib.Syntax.Category.Pronoun.Basic
 public import Linglib.Syntax.Binding.Word
 
@@ -20,8 +19,6 @@ is not recorded on the entry.
 ## Main definitions
 
 * `ReflexivePronoun`: a pronoun of the reflexive kind.
-* `ReflexivePronoun.paradigm`: the forms an inventory offers for each category its person and
-  number realize.
 * `ReflexivePronoun.toWord`: its token, marked reflexive.
 
 ## Main statements
@@ -44,15 +41,6 @@ instance : DecidableEq ReflexivePronoun :=
   fun _ _ ↦ decidable_of_iff _ ReflexivePronoun.ext_iff.symm
 
 namespace ReflexivePronoun
-
-/-- The paradigm of an inventory assigns each category the forms of the reflexives whose person
-and number realize it: the cells of a reflexive are those of its agreement features. -/
-def paradigm : Finset ReflexivePronoun → Person.Category → Finset String :=
-  Morphology.formsAt (·.categories) (·.form)
-
-theorem mem_paradigm {I : Finset ReflexivePronoun} {c : Person.Category} {f : String} :
-    f ∈ paradigm I c ↔ ∃ p ∈ I, c ∈ p.categories ∧ p.form = f :=
-  Morphology.mem_formsAt
 
 /-- A reflexive's token is of UD pronoun type `Prs` and marked reflexive. -/
 def toWord (p : ReflexivePronoun) : Morphology.Word := p.toPronoun.toWord (some .Prs) (some ())

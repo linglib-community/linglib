@@ -84,7 +84,7 @@ theorem toFeatures_wellFormed {F : Features} (hF : IsLowerSet (↑F : Set Featur
     IsLowerSet (↑(p.toFeatures F) : Set Feature) := by
   revert F p; decide
 
-theorem isSAP_iff_participant {p : Person} : p.IsSAP ↔ .participant ∈ p.toFeatures univ := by
+theorem ne_third_iff_participant_mem {p : Person} : p ≠ .third ↔ .participant ∈ p.toFeatures univ := by
   revert p; decide
 
 theorem includesSpeaker_iff_speaker {p : Person} :

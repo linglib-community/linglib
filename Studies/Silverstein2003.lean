@@ -8,6 +8,7 @@ public import Linglib.Languages.Romance.Italian.Pronouns
 public import Linglib.Languages.Romance.Spanish.Pronouns
 public import Linglib.Languages.Tamil.Pronouns
 public import Mathlib.Data.Fintype.Pi
+public import Linglib.Syntax.Category.Pronoun.Categories
 
 /-!
 # Silverstein (2003): Indexical order and the dialectics of sociolinguistic life

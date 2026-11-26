@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Categories
 public import Linglib.Syntax.Category.Pronoun.Reciprocal
 public import Linglib.Syntax.Category.Pronoun.Reflexive
 public import Linglib.Languages.German.Case
@@ -15,7 +16,7 @@ which also head free relatives.
 The second person distinguishes the familiar *du* and *ihr* from the polite level, with the
 single form *Sie*. *Sie* takes the third person plural series for agreement and reflexive
 binding (*sich*, not *dich* or *euch*) while denoting the addressee alone or with others, so its
-`person` is third and its `referential` categories are those of *du* and *ihr* together. *wer*
+`person` is third and its `cells` are those of *du* and *ihr* together. *wer*
 declines for the four German cases; *was* has one form for the nominative and the accusative and
 no dative.
 
@@ -75,7 +76,7 @@ number are those of the third person plural; it denotes the addressee alone or w
 ([adamson-zompi-2025]). -/
 def sie_formal : PersonalPronoun :=
   { form := "Sie", person := some .third, number := some .plural,
-    referential := {.addressee, .addresseeOthers} }
+    cells := {.personNumber .second .singular, .personNumber .second .plural} }
 
 /-- The third person singular masculine *er*. -/
 def er : PersonalPronoun :=

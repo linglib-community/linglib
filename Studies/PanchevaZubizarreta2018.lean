@@ -111,7 +111,7 @@ theorem ProminenceThreshold.inherentlyMetBy_antitone (p : Person) :
 
 -- (11): speech-act participants are [+proximate] and [+participant], the speaker [+author].
 theorem ProminenceThreshold.inherentlyMetBy_iff {t : ProminenceThreshold} {p : Person} :
-    t.InherentlyMetBy p ↔ if t = .author then p.IncludesSpeaker else p.IsSAP := by
+    t.InherentlyMetBy p ↔ if t = .author then p.IncludesSpeaker else p ≠ .third := by
   cases t <;> cases p <;> decide
 
 /-! ### The grammars -/

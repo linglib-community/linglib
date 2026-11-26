@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Categories
 
 /-!
 # Punjabi pronouns
@@ -49,7 +50,7 @@ def tuN : PersonalPronoun := { form := "tũ", person := some .second, number := 
 §2.1.2.1). -/
 def tusii : PersonalPronoun :=
   { form := "tusii", person := some .second, number := some .plural,
-    referential := {.addressee, .addresseeOthers} }
+    cells := {.personNumber .second .singular, .personNumber .second .plural} }
 
 /-- *uh* — 3sg, the distal demonstrative. -/
 def uhSg : PersonalPronoun := { form := "uh", person := some .third, number := some .singular }
@@ -65,8 +66,9 @@ def addressee : Grade → PersonalPronoun
 /-- The pronoun inventory. -/
 def personal : Finset PersonalPronoun := {maiN, asiiN, tuN, tusii, uhSg, uhPl}
 
-/-- Every category has a pronoun. -/
-theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+/-- Every person and number has a pronoun. -/
+theorem forms_nonempty :
+    ∀ c ∈ Agreement.Bundle.personNumberCells, (PersonalPronoun.forms personal c).Nonempty := by
   decide +kernel
 
 /-- *tusii* denotes one addressee, which its plural agreement does not realize. -/

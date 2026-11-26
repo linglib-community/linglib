@@ -67,7 +67,7 @@ def nii : PersonalPronoun := { form := "nii", person := some .second, number := 
 /-- The second person plural *nii-ŋgæ*, which is also the polite singular. -/
 def niiŋgæ : PersonalPronoun :=
   { form := "nii-ŋgæ", person := some .second, number := some .plural,
-    referential := {.addressee, .addresseeOthers} }
+    cells := {.personNumber .second .singular, .personNumber .second .plural} }
 
 /-- The third person singular masculine *avan*. -/
 def avan : PersonalPronoun :=

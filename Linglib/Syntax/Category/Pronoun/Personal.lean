@@ -13,11 +13,12 @@ public import Linglib.Syntax.Binding.Word
 /-!
 # Personal pronouns
 
-A personal pronoun is a pronoun with a register and the referential categories it denotes. The
-categories are by default those its agreement person and number realize. A polite pronoun
-overrides the default: Italian *Lei* and German *Sie* agree as third person and denote the
-addressee, so their formal features govern agreement, clitic allomorphy and reflexive binding while
-their referential categories govern the person-case constraint and resolved agreement.
+A personal pronoun is a pronoun with a register and the cells of the person and number paradigm
+it is used for. The cells are by default the one its own person, clusivity and number name. A
+polite pronoun overrides the default: Italian *Lei* agrees as a third person singular and is used
+for the second person singular, and German *Sie* agrees as a third person plural and is used for
+the second person of either number. The entry states both as labels, as a grammar does; the
+referents a cell covers are in `Syntax/Category/Pronoun/Categories.lean`.
 
 A pronoun records only features whose values are shared across languages. Honorific grades are
 not: each language has its own, ordered by the deference they present, and a form may serve
@@ -29,98 +30,58 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
 
 ## Main definitions
 
-* `PersonalPronoun` — a pronoun with its register and referential categories
-* `PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber` — the person and
-  number the pronoun contributes to interpretation
-* `PersonalPronoun.IsOrdinary` — the pronoun denotes what its agreement features realize
+* `PersonalPronoun` — a pronoun with its register and the cells it is used for
+* `PersonalPronoun.forms` — the forms an inventory offers for each cell, whose kernel
+  `Setoid.ker` is the inventory's syncretism
 * `PersonalPronoun.ofCells`, `PersonalPronoun.ofTable`, `PersonalPronoun.ofTableAt` — the
-  pronoun of a form in a table of
-  cells, with the cases and referential categories of the cells it fills
-* `PersonalPronoun.paradigm` — the forms an inventory offers for each referential category,
-  whose kernel `Setoid.ker` is the inventory's person-number syncretism
+  pronoun of a form in a table of cells, with the cases and the person and number cells of the
+  cells it fills
 
 ## Main results
 
-* `PersonalPronoun.referentialPerson_eq_person` — an ordinary pronoun's referential person is
-  its agreement person
 * `PersonalPronoun.bindingClassOf_toWord` — a personal pronoun is a pronominal
 
 ## References
 
 * [L. J. Adamson and S. Zompì, *Polite Pronouns and the PCC* (2025)][adamson-zompi-2025]
-* [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 * [P. Kumari and P. Chandra, *Honorificity Feature as an Enabler: Bridging the Person Gap*
   (2026)][kumari-chandra-2026]
 -/
 
 @[expose] public section
 
-/-- A personal pronoun is a `Pronoun` with its register and the referential categories it
-denotes. -/
+/-- A personal pronoun is a `Pronoun` with its register and the cells of the person and number
+paradigm it is used for. -/
 @[ext]
 structure PersonalPronoun extends Pronoun where
   /-- The register. Japanese *boku* is an informal first person, and Korean *geu* a third person
   of written narrative. -/
   register : SocialMeaning.Register := .neutral
-  /-- The referential categories the pronoun can denote, by default those its agreement person
-  and number realize. Italian *Lei* denotes `{addressee}` and German *Sie*
-  `{addressee, addresseeOthers}` ([adamson-zompi-2025]). -/
-  referential : Finset Person.Category := toPronoun.categories
+  /-- The cells of the person and number paradigm the form is used for, by default the cell of
+  its own person, clusivity and number. Italian *Lei* is used for the second person singular
+  and German *Sie* for the second person singular and plural ([adamson-zompi-2025]). -/
+  cells : Finset Agreement.Bundle := {toPronoun.cell}
 
 instance : DecidableEq PersonalPronoun := fun _ _ ↦ decidable_of_iff _ PersonalPronoun.ext_iff.symm
 
 namespace PersonalPronoun
 
-variable {p : PersonalPronoun}
+/-! ### The forms of an inventory -/
 
-/-- The person a pronoun contributes to interpretation: the one its referential categories
-share. -/
-def referentialPerson (p : PersonalPronoun) : Option Person :=
-  Person.Category.sharedPerson p.referential
+section Forms
 
-/-- The clusivity a pronoun contributes to interpretation: the one its referential categories
-share. -/
-def referentialClusivity (p : PersonalPronoun) : Option Clusivity :=
-  Person.Category.sharedClusivity p.referential
+variable {I : Finset PersonalPronoun} {c : Agreement.Bundle} {f : String}
 
-/-- The number a pronoun contributes to interpretation: the one its referential categories
-share, `general` for a number-neutral form such as polite *Sie*. -/
-def referentialNumber (p : PersonalPronoun) : Option Number :=
-  Person.Category.sharedNumber p.referential
+/-- The forms an inventory offers for each cell of the person and number paradigm. A cell no
+pronoun is used for gets `∅`, and two cells receive the same forms exactly when the inventory
+does not distinguish them. -/
+def forms : Finset PersonalPronoun → Agreement.Bundle → Finset String :=
+  Morphology.formsAt (·.cells) (·.form)
 
-/-- An ordinary pronoun denotes exactly the categories its agreement features realize. -/
-def IsOrdinary (p : PersonalPronoun) : Prop := p.referential = p.categories
-
-instance : Decidable p.IsOrdinary := inferInstanceAs (Decidable (_ = _))
-
-/-- An ordinary pronoun's referential person is its agreement person. -/
-theorem referentialPerson_eq_person (h : p.IsOrdinary) (hne : p.referential.Nonempty) :
-    p.referentialPerson = p.person := by
-  unfold referentialPerson
-  rw [h, Pronoun.categories] at hne ⊢
-  rcases hp : p.person with _ | per <;> rcases hn : p.number with _ | num <;>
-    simp_all [Person.Category.sharedPerson_ofPersonNumber]
-
-/-! ### The paradigm of an inventory -/
-
-section Paradigm
-
-variable {I J : Finset PersonalPronoun} {c : Person.Category} {f : String}
-
-/-- The paradigm of an inventory assigns each referential category the forms the inventory offers
-for it. A category no pronoun denotes gets `∅`, and two categories receive the same forms
-exactly when the inventory does not distinguish them. -/
-def paradigm : Finset PersonalPronoun → Person.Category → Finset String :=
-  Morphology.formsAt (·.referential) (·.form)
-
-theorem mem_paradigm : f ∈ paradigm I c ↔ ∃ p ∈ I, c ∈ p.referential ∧ p.form = f :=
+theorem mem_forms : f ∈ forms I c ↔ ∃ p ∈ I, c ∈ p.cells ∧ p.form = f :=
   Morphology.mem_formsAt
 
-@[gcongr]
-theorem paradigm_mono (h : I ⊆ J) (c : Person.Category) : paradigm I c ⊆ paradigm J c :=
-  Morphology.formsAt_mono h c
-
-end Paradigm
+end Forms
 
 /-! ### The pronouns of a table -/
 
@@ -129,11 +90,12 @@ section Table
 variable {C : Type*} (person : C → Person) (clusivity : C → Option Clusivity)
   (number : C → Option Number) (gender : C → Option UD.Gender) (case : C → Option Case)
 
-/-- The personal pronoun `f` filling the cells `s` (`Pronoun.ofCells`), whose referential
-categories are the cells'. -/
+/-- The personal pronoun `f` filling the cells `s` (`Pronoun.ofCells`), used for the person,
+clusivity and number of each. -/
 def ofCells (s : Finset C) (f : String) : PersonalPronoun :=
   { toPronoun := .ofCells person clusivity number gender case s f,
-    referential := Pronoun.cellCategories person clusivity number s }
+    cells := s.image fun c ↦ .ofFeatures
+      (.of (person := some (person c)) (clusivity := clusivity c) (number := number c)) }
 
 /-- The personal pronoun `f` of a table, filling every cell the table gives it. -/
 def ofTable [Fintype C] (table : C → Finset String) (f : String) : PersonalPronoun :=

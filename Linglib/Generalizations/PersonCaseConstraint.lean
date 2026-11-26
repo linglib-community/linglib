@@ -46,35 +46,35 @@ variable {s t : Scenario Person}
 /-! ### The varieties -/
 
 /-- The Strong constraint: the direct object is third person. -/
-def Strong (s : Scenario Person) : Prop := ¬ s.low.IsSAP
+def Strong (s : Scenario Person) : Prop := s.low = .third
 
 /-- The Ultrastrong constraint: the direct object is third person, or the indirect object
 outranks it on 1 > 2 > 3. -/
 def Ultrastrong (s : Scenario Person) : Prop :=
-  ¬ s.low.IsSAP ∨ s.low.prominence < s.high.prominence
+  s.low = .third ∨ s.low.prominence < s.high.prominence
 
 /-- The Weak constraint: under a third person indirect object the direct object is third
 person. -/
-def Weak (s : Scenario Person) : Prop := ¬ s.high.IsSAP → ¬ s.low.IsSAP
+def Weak (s : Scenario Person) : Prop := s.high = .third → s.low = .third
 
 /-- The Me-first constraint: a first person direct object has a first person indirect object. -/
 def MeFirst (s : Scenario Person) : Prop := s.low.IncludesSpeaker → s.high.IncludesSpeaker
 
-instance : DecidablePred Strong := fun _ ↦ inferInstanceAs (Decidable (¬ _))
+instance : DecidablePred Strong := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 instance : DecidablePred Ultrastrong := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 instance : DecidablePred Weak := fun _ ↦ inferInstanceAs (Decidable (_ → _))
 instance : DecidablePred MeFirst := fun _ ↦ inferInstanceAs (Decidable (_ → _))
 
 /-! ### Upward closure -/
 
-theorem strong_mono : Monotone Strong := fun _ _ h hs ht ↦ hs (ht.mono h.2)
+theorem strong_mono : Monotone Strong := fun _ _ h hs ↦ eq_bot_iff.2 (h.2.trans_eq hs)
 
 theorem ultrastrong_mono : Monotone Ultrastrong := fun _ _ h hs ↦
-  hs.imp (fun hs ht ↦ hs (ht.mono h.2)) fun hs ↦
+  hs.imp (fun hs ↦ eq_bot_iff.2 (h.2.trans_eq hs)) fun hs ↦
     (Person.prominence_mono h.2).trans_lt (hs.trans_le (Person.prominence_mono h.1))
 
-theorem weak_mono : Monotone Weak := fun _ _ h hs hh hl ↦
-  hs (fun hsh ↦ hh (hsh.mono h.1)) (hl.mono h.2)
+theorem weak_mono : Monotone Weak := fun _ _ h hs hh ↦
+  eq_bot_iff.2 (h.2.trans_eq (hs (eq_bot_iff.2 (h.1.trans_eq hh))))
 
 theorem meFirst_mono : Monotone MeFirst := fun _ _ h hs hl ↦ (hs (hl.mono h.2)).mono h.1
 

@@ -51,7 +51,7 @@ arguments are speech-act participants. -/
 theorem agentFocus_mem_focusRealize_iff (c : Mayan.VerbClass) (agent patient : Person)
     (r : ArgumentRole) :
     Reflex.morpheme .verb (agentFocus c).marker ∈ focusRealize c agent patient r ↔
-      r = .A ∧ ¬ (agent.IsSAP ∧ patient.IsSAP) := by
+      r = .A ∧ ¬ (agent ≠ .third ∧ patient ≠ .third) := by
   simp [focusRealize, Extraction.agentFocus_mem_realize_iff]
 
 end Kaqchikel

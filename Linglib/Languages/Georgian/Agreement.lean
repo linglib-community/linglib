@@ -37,7 +37,7 @@ as *c'on* 'like', have the third in every series.
 
 ## Main results
 
-* `Georgian.hasObjectPrefix_iff_isSAP`: the direct objects with a Set B prefix are the first and
+* `Georgian.hasObjectPrefix_iff_person_ne_third`: the direct objects with a Set B prefix are the first and
   second persons.
 * `Georgian.subject_affixes_present_eq_aorist`: the subject keeps its set of affixes from the
   first series to the second, whatever becomes of its case.
@@ -95,8 +95,8 @@ def HasObjectPrefix (c : Bundle) : Prop := ∃ ms ∈ setB.realize c, ms ≠ []
 instance : DecidablePred HasObjectPrefix := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The direct objects with a Set B prefix are the first and second persons. -/
-theorem hasObjectPrefix_iff_isSAP :
-    ∀ c ∈ Bundle.personNumberCells, HasObjectPrefix c ↔ c.IsSAP := by
+theorem hasObjectPrefix_iff_person_ne_third :
+    ∀ c ∈ Bundle.personNumberCells, HasObjectPrefix c ↔ c.person ≠ ↑Person.third := by
   decide
 
 /-! ### Series and verb classes -/

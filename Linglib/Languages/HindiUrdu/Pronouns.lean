@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Categories
 
 /-!
 # Hindi-Urdu pronouns
@@ -51,13 +52,13 @@ def tuu : PersonalPronoun := { form := "tuu", person := some .second, number := 
 addressee or several ([kachru-2006] §4.3.1). -/
 def tum : PersonalPronoun :=
   { form := "tum", person := some .second, number := some .plural,
-    referential := {.addressee, .addresseeOthers} }
+    cells := {.personNumber .second .singular, .personNumber .second .plural} }
 
 /-- *aap*, the high honorific second person, with plural agreement, for one addressee or
 several. -/
 def aap : PersonalPronoun :=
   { form := "aap", person := some .second, number := some .plural,
-    referential := {.addressee, .addresseeOthers} }
+    cells := {.personNumber .second .singular, .personNumber .second .plural} }
 
 /-- *vah* — 3sg, the distal demonstrative. -/
 def vah : PersonalPronoun := { form := "vah", person := some .third, number := some .singular }
@@ -74,8 +75,9 @@ def addressee : Grade → PersonalPronoun
 /-- The pronoun inventory. -/
 def personal : Finset PersonalPronoun := {maiN, ham, tuu, tum, aap, vah, ve}
 
-/-- Every category has a pronoun. -/
-theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+/-- Every person and number has a pronoun. -/
+theorem forms_nonempty :
+    ∀ c ∈ Agreement.Bundle.personNumberCells, (PersonalPronoun.forms personal c).Nonempty := by
   decide +kernel
 
 /-- *tum* and *aap* denote one addressee, which their plural agreement does not realize. -/

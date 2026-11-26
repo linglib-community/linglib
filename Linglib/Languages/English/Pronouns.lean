@@ -5,6 +5,7 @@ public import Linglib.Syntax.Category.Pronoun.Demonstrative
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 public import Linglib.Syntax.Category.Pronoun.Reciprocal
 public import Linglib.Syntax.Category.Pronoun.Reflexive
+public import Linglib.Syntax.Category.Pronoun.Categories
 
 /-!
 # English pronouns

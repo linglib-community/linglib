@@ -2,8 +2,7 @@ module
 
 public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Syntax.Feature.Person.Basic
-public import Linglib.Syntax.Feature.Person.Participants
+public import Linglib.Syntax.Feature.Person.Defs
 public import Linglib.Languages.Mayan.Extraction
 public import Linglib.Languages.Mayan.Verb
 
@@ -67,7 +66,7 @@ nothing else is marked. -/
 def realize (c : Mayan.VerbClass) (agent patient : Person) :
     Mayan.ExtractionSite → Finset (Reflex Mayan.Host)
   | .argument .A =>
-      if agent.IsSAP ∧ patient.IsSAP then ∅ else {.morpheme .verb (agentFocus c).marker}
+      if agent ≠ .third ∧ patient ≠ .third then ∅ else {.morpheme .verb (agentFocus c).marker}
   | .argument .R | .adjunct .instrument | .adjunct .benefactive | .adjunct .locative =>
       {.morpheme .verbalComplex [wi]}
   | _ => ∅
@@ -77,9 +76,9 @@ participants, and nothing else. -/
 theorem agentFocus_mem_realize_iff (c : Mayan.VerbClass) (agent patient : Person)
     (s : Mayan.ExtractionSite) :
     Reflex.morpheme .verb (agentFocus c).marker ∈ realize c agent patient s ↔
-      s = .argument .A ∧ ¬ (agent.IsSAP ∧ patient.IsSAP) := by
+      s = .argument .A ∧ ¬ (agent ≠ .third ∧ patient ≠ .third) := by
   rcases s with (_ | _ | _ | _ | _) | (_ | _ | _ | _ | _ | _ | _) <;>
-    by_cases h : agent.IsSAP ∧ patient.IsSAP <;> cases c <;> simp [realize, agentFocus, h]
+    by_cases h : agent ≠ .third ∧ patient ≠ .third <;> cases c <;> simp [realize, agentFocus, h]
 
 end Extraction
 

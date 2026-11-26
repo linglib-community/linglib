@@ -156,7 +156,7 @@ def PersonSet.paradigm : PersonSet → Paradigm (List Morph)
 /-- In every set, a cell is unmarked exactly when it is not a speech-act participant's. -/
 theorem PersonSet.realize_eq_nil_iff :
     ∀ s : PersonSet, ∀ c ∈ Bundle.personNumberCells,
-      s.paradigm.realize c = some [] ↔ ¬ c.IsSAP := by
+      s.paradigm.realize c = some [] ↔ c.person = ↑Person.third := by
   decide
 
 /-- The past tense clitic bears no person. -/
@@ -168,7 +168,8 @@ theorem clitic_second_singular :
 /-- A paradigm has the Dargic configuration when two speech-act participant cells share a
 marker exactly when both or neither is the second person singular. -/
 def IsDargic (p : Paradigm (List Morph)) : Prop :=
-  ∀ c ∈ Bundle.personNumberCells, ∀ c' ∈ Bundle.personNumberCells, c.IsSAP → c'.IsSAP →
+  ∀ c ∈ Bundle.personNumberCells, ∀ c' ∈ Bundle.personNumberCells,
+    c.person ≠ ↑Person.third → c'.person ≠ ↑Person.third →
     (p.realize c = p.realize c' ↔
       (c = .personNumber .second .singular ↔ c' = .personNumber .second .singular))
 
@@ -188,7 +189,7 @@ theorem not_isDargic_irrealis : ¬ IsDargic PersonSet.irrealis.paradigm := by de
 absolutive > ergative. It is A when A alone is a speech-act participant and the absolutive P
 otherwise. -/
 def personController (s : Scenario Person) : ArgumentRole :=
-  if s.high.IsSAP ∧ ¬ s.low.IsSAP then .A else .P
+  if s.high ≠ .third ∧ s.low = .third then .A else .P
 
 /-- The thematic suffix of a transitive verb is *-i* when A is higher than P on the person
 hierarchy 1, 2 > 3, and *-u* when the two are equal or P is higher. -/
@@ -198,7 +199,7 @@ def thematic (s : Scenario Person) : Morph :=
 /-- An intransitive verb takes the thematic suffix *-u* with a speech-act participant, and *-ar*
 or *-an* otherwise. -/
 def intransitiveThematic (p : Person) : List Morph :=
-  if p.IsSAP then [.suff "u"] else [.suff "ar", .suff "an"]
+  if p ≠ .third then [.suff "u"] else [.suff "ar", .suff "an"]
 
 /-- The thematic suffix is *-i* exactly when A controls person agreement. -/
 theorem thematic_eq_i_iff (s : Scenario Person) :

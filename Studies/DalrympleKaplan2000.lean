@@ -4,6 +4,7 @@ public import Linglib.Core.Order.Flat.Finset
 public import Linglib.Data.Examples.DalrympleKaplan2000
 public import Linglib.Syntax.Agreement.ResolutionRule
 public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Person.Specification
 public import Linglib.Languages.Chichewa.Gender
 public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Languages.German.Pronouns

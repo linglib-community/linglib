@@ -14,7 +14,8 @@ public import Linglib.Morphology.Inflection.Paradigm.Morphome
 public import Linglib.Morphology.Word.Agree
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Feature.Case.Basic
-public import Linglib.Syntax.Feature.Person.Configuration
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 public import Linglib.Syntax.Binding.Word
 
 /-!
@@ -25,7 +26,8 @@ every pronoun kind shares. The kinds extend it, each in its own file: `PersonalP
 `LogophoricPronoun`, `ReflexivePronoun`, `ReciprocalPronoun`, `DemonstrativePronoun`, and
 `ProForm` with its kinds `InterrogativePronoun` and `IndefinitePronoun`. A `Pronoun` has no
 denotation, pronoun type or binding class of its own; the kind supplies them, and
-`Pronoun.toWord` takes the last two as arguments.
+`Pronoun.toWord` takes the last two as arguments. Its person, clusivity and number are labels:
+the referential categories they cover are in `Syntax/Category/Pronoun/Categories.lean`.
 
 ## Main definitions
 
@@ -34,9 +36,9 @@ denotation, pronoun type or binding class of its own; the kind supplies them, an
 * `Pronoun`: the form, person, number, cases and gender of a pronoun, with its script form
   and the strength class of its series.
 * `Pronoun.case`: the flat case of a pronoun, the meet of the cases it fills.
+* `Pronoun.cell`: the cell of a person and number paradigm that a pronoun's person, clusivity
+  and number name.
 * `Pronoun.ofCells`, `Pronoun.ofTable`: the pronoun of a form in a table of cells.
-* `Pronoun.categories`: the referential categories of Cysouw that the person and number
-  realize.
 * `Pronoun.toWord`: the pronoun as a token, with the pronoun type and reflexive marking of
   its kind; `Pronoun.agreement_toWord` says the token bears the pronoun's agreement bundle.
 * `Pronoun.CandidateAntecedent`: a nominal token that agrees with the pronoun, so one of the
@@ -54,7 +56,6 @@ denotation, pronoun type or binding class of its own; the kind supplies them, an
 * [A. Cardinaletti and M. Starke, *The Typology of Structural Deficiency: A Case Study of the
   Three Classes of Pronouns* (1999)][cardinaletti-starke-1999]
 * [N. Chomsky, *Lectures on Government and Binding* (1981)][chomsky-1981]
-* [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 * [H. Jung and K. Migdalski, *Toward a four-way pronoun hierarchy: A view from Slavic*
   (2022)][jung-migdalski-2022]
 -/
@@ -108,7 +109,7 @@ structure Pronoun where
   /-- The grammatical person. -/
   person : Option Person := none
   /-- The clusivity of a form that marks it: Tagalog *tayo* is inclusive and *kami* exclusive,
-  English *we* neither ([cysouw-2003]). -/
+  English *we* neither. -/
   clusivity : Option Clusivity := none
   /-- The grammatical number. -/
   number : Option Number := none
@@ -133,10 +134,10 @@ variable (p : Pronoun)
 one whose cases are unrecorded. -/
 def case : Flat Case := Flat.finsetInf p.cases (↑)
 
-/-- The referential categories of [cysouw-2003] that the person and number realize: none when
-either is unspecified, several for a syncretism such as clusivity-unmarked English *we*. -/
-def categories : Finset Person.Category :=
-  (Option.map₂ (Person.Category.ofPersonNumber · p.clusivity ·) p.person p.number).getD ∅
+/-- The cell of a person and number paradigm that the pronoun's person, clusivity and number
+name: the agreement bundle bearing them and nothing else. -/
+def cell : Agreement.Bundle :=
+  .ofFeatures (.of (person := p.person) (clusivity := p.clusivity) (number := p.number))
 
 /-! ### The pronouns of a table -/
 
@@ -145,21 +146,19 @@ section Table
 variable {C : Type*} (person : C → Person) (clusivity : C → Option Clusivity)
   (number : C → Option Number) (gender : C → Option UD.Gender) (case : C → Option Case)
 
-/-- The categories of the cells `s`, those each cell's person, clusivity and number realize. -/
-def cellCategories (s : Finset C) : Finset Person.Category :=
-  s.biUnion fun c ↦
-    ((number c).map (Person.Category.ofPersonNumber (person c) (clusivity c))).getD ∅
+/-- The numbers of the cells `s`, a cell with no number contributing none. -/
+def cellNumbers (s : Finset C) : Finset Number := s.biUnion fun c ↦ (number c).toFinset
 
 /-- The pronoun `f` filling the cells `s`, where a cell has a person and may have a clusivity, a
 number, a gender and a case: the cases of the cells, the flat value of their person, clusivity
-and gender, and the number of the cells where they have one number, otherwise the number their
-categories share, `general` for cells of both numbers. -/
+and gender, and the number of the cells where they have one, `general` where they have several,
+the form then being noncommittal between them. -/
 def ofCells (s : Finset C) (f : String) : Pronoun :=
   { form := f,
     person := Flat.finsetInf s fun c ↦ (person c : Flat Person),
     clusivity := Flat.finsetInf s fun c ↦ (clusivity c : Flat Clusivity),
-    number := (Flat.finsetInf s fun c ↦ (number c : Flat Number) : Option Number).or
-      (Person.Category.sharedNumber (cellCategories person clusivity number s)),
+    number := (Flat.finsetInf (cellNumbers number s) (↑) : Option Number).or
+      (if (cellNumbers number s).Nonempty then some .general else none),
     cases := s.biUnion fun c ↦ (case c).toFinset,
     gender := Flat.finsetInf s fun c ↦ (gender c : Flat UD.Gender) }
 

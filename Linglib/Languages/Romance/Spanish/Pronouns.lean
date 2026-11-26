@@ -54,7 +54,7 @@ def vos : PersonalPronoun := { form := "vos", person := some .second, number := 
 /-- *usted* 'you', polite, with third-person agreement. -/
 def usted : PersonalPronoun :=
   { form := "usted", person := some .third, number := some .singular,
-    referential := {.addressee} }
+    cells := {.personNumber .second .singular} }
 
 /-- *él* 'he, it'. -/
 def el : PersonalPronoun :=
@@ -88,7 +88,7 @@ def vosotras : PersonalPronoun :=
 address in Latin America. -/
 def ustedes : PersonalPronoun :=
   { form := "ustedes", person := some .third, number := some .plural,
-    referential := {.addresseeOthers} }
+    cells := {.personNumber .second .plural} }
 
 /-- *ellos* 'they', masculine or mixed. -/
 def ellos : PersonalPronoun :=

@@ -9,7 +9,6 @@ public import Mathlib.Data.Finset.Pi
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Order.BoundedComplete
 public import Linglib.Morphology.Word.Features
-public import Linglib.Syntax.Feature.Person.Specification
 
 /-!
 # Feature bundles
@@ -20,22 +19,25 @@ may covary with another: person, number, gender, case and definiteness, the firs
 (`Agreement.Bundle.index`, `Agreement.Bundle.concord`) are its projections onto the φ-features
 and onto case, number and gender, and two elements agree in one of them when the projections of
 their bundles are compatible. Bundles are compatible exactly when they unify
-(`Agreement.Bundle.coe_sup_coe_eq_top_iff`). The person slot is a person specification
-(`Syntax/Feature/Person/Specification.lean`), so that a form with no clusivity is less specific
-than an inclusive or an exclusive one, and the others are slots of the flat order
-of `Core/Order/Flat.lean`, a value or nothing. The partial order of bundles, their bottom, the
-wholly unspecified bundle, and their unification are the pointwise ones. Each dimension is a
-token feature with that feature's values, and [a token's bundle](##Agreement.Bundle.ofFeatures)
-is its features read along that inclusion, the person slot from the token's person and
-clusivity together.
+(`Agreement.Bundle.coe_sup_coe_eq_top_iff`). A slot is a value or nothing, in the flat order of
+`Core/Order/Flat.lean`, and the person slot is a pair of them, a person and a clusivity, so that
+a first person form with no clusivity is less specific than an inclusive or an exclusive one.
+The partial order of bundles, their bottom, the wholly unspecified bundle, and their unification
+are the pointwise ones. Each dimension is a token feature with that feature's values, and
+[a token's bundle](##Agreement.Bundle.ofFeatures) is its features read along that inclusion, the
+person slot from the token's person and clusivity together.
 
 ## Implementation notes
 
-A person and a clusivity that no participant set satisfies, as the second person and the
-exclusive, have no specification, and no monotone map could give them one: its value would
-extend both the second person and the exclusive, which are incompatible. The person slot of such
-a token is `⊥`, so `Agreement.Bundle.ofFeatures` is monotone on the coherent tokens
-(`Agreement.Bundle.monotoneOn_ofFeatures`) and not outright.
+The slots hold labels and nothing about what a label refers to. The person slot pairs any
+person with any clusivity, the second person with the exclusive among them: which pairs some
+referent satisfies is a fact about participant sets, stated where a person and a clusivity are
+read as the participant sets they cover (`Syntax/Feature/Person/Specification.lean`), and no
+rule of agreement consults it.
+
+Clusivity is a part of the person slot and not a sixth dimension, as the inclusive and the
+exclusive are values of person in the classification the dimensions follow, and a language
+distinguishes values in each dimension with no clusivity among them.
 
 Bundles are borne by pronouns and nominals as well as by agreement targets, and are spelled out
 by morphology, so the file stands with the feature inventories below `Syntax/Agreement` and
@@ -85,10 +87,10 @@ abbrev Dimension.Value (d : Dimension) : Type := d.toFeature.Value
 
 instance (d : Dimension) : DecidableEq d.Value := by cases d <;> exact inferInstance
 
-/-- The slot of a dimension: a person specification for person, and a value or `⊥` for the
-others. -/
+/-- The slot of a dimension: a person and a clusivity, each a value or `⊥`, for person, and a
+value or `⊥` for the others. -/
 abbrev Dimension.Slot : Dimension → Type
-  | .person => Person.Specification
+  | .person => Flat Person × Flat Clusivity
   | .number => Flat Number
   | .gender => Flat UD.Gender
   | .case => Flat Case
@@ -105,10 +107,9 @@ instance (d : Dimension) : DecidableLE d.Slot := by cases d <;> exact inferInsta
 instance (d : Dimension) (x y : d.Slot) : Decidable (Compat x y) := by
   cases d <;> exact inferInstance
 
-/-- A value of a dimension or `⊥` as a slot, a person value as the specification of what it
-covers. -/
+/-- A value of a dimension or `⊥` as a slot, a person with no clusivity. -/
 def Dimension.Slot.ofFlat : (d : Dimension) → Flat d.Value → d.Slot
-  | .person, x => x.recBotCoe ⊥ Person.Specification.ofPerson
+  | .person, x => (x, ⊥)
   | .number, x => x
   | .gender, x => x
   | .case, x => x
@@ -121,14 +122,14 @@ def Dimension.Slot.ofFlat : (d : Dimension) → Flat d.Value → d.Slot
     Dimension.Slot.ofFlat .person (⊥ : Flat Person) = ⊥ :=
   rfl
 
-@[simp] theorem Dimension.Slot.ofFlat_person (p : Person) :
-    Dimension.Slot.ofFlat .person (p : Flat Person) = Person.Specification.ofPerson p :=
+theorem Dimension.Slot.ofFlat_person (x : Flat Person) :
+    Dimension.Slot.ofFlat .person x = (x, ⊥) :=
   rfl
 
-/-- Unification of two slots, `⊤` when they are incompatible: person specifications unify to what
-both cover, and two values unify when they are equal. -/
+/-- Unification of two slots, `⊤` when they are incompatible: two values unify when they are
+equal, and two person slots when their persons and their clusivities do. -/
 def Dimension.Slot.unify : (d : Dimension) → d.Slot → d.Slot → WithTop d.Slot
-  | .person => Finset.unify
+  | .person => WithTop.prodUnify Flat.unify Flat.unify
   | .number => Flat.unify
   | .gender => Flat.unify
   | .case => Flat.unify
@@ -137,7 +138,7 @@ def Dimension.Slot.unify : (d : Dimension) → d.Slot → d.Slot → WithTop d.S
 theorem Dimension.Slot.isLUB_unify (d : Dimension) (a b : d.Slot) :
     IsLUB ({↑a, ↑b} : Set (WithTop d.Slot)) (Dimension.Slot.unify d a b) := by
   cases d
-  · exact Finset.isLUB_unify a b
+  · exact WithTop.isLUB_prodUnify Flat.isLUB_unify Flat.isLUB_unify a b
   all_goals exact Flat.isLUB_unify a b
 
 /-- A feature bundle assigns each dimension a slot. -/
@@ -173,46 +174,66 @@ def concord (x : Bundle) : (d : Dimension.concord) → Dimension.Slot d :=
 
 @[simp] theorem concord_apply (x : Bundle) (d : Dimension.concord) : x.concord d = x d := rfl
 
-/-- The bundle with the dimension `d` set to the value `v`. -/
+/-- The person of a bundle, a value or `⊥`. -/
+def person (x : Bundle) : Flat Person := (x .person).1
+
+/-- The clusivity of a bundle, a value or `⊥`. -/
+def clusivity (x : Bundle) : Flat Clusivity := (x .person).2
+
+/-- The bundle with the dimension `d` set to the value `v`, a person with no clusivity. -/
 def set (d : Dimension) (v : d.Value) (b : Bundle) : Bundle :=
   Function.update b d (Dimension.Slot.ofFlat d (v : Flat d.Value))
 
-/-- The bundle valued in person and number alone, the person a specification, as which a person
-value is read. -/
-def personNumber (x : Person.Specification) (n : Number) : Bundle :=
-  Function.update (set .number n ⊥) .person x
+/-- The bundle with its clusivity set to `c` and its person kept. -/
+def setClusivity (c : Clusivity) (b : Bundle) : Bundle :=
+  Function.update b .person (b.person, ↑c)
 
-@[simp] theorem personNumber_person (x : Person.Specification) (n : Number) :
-    personNumber x n .person = x :=
+@[simp] theorem person_setClusivity (c : Clusivity) (b : Bundle) :
+    (b.setClusivity c).person = b.person :=
   rfl
 
-@[simp] theorem personNumber_number (x : Person.Specification) (n : Number) :
-    personNumber x n .number = n :=
+@[simp] theorem clusivity_setClusivity (c : Clusivity) (b : Bundle) :
+    (b.setClusivity c).clusivity = c :=
   rfl
 
-@[simp] theorem personNumber_gender (x : Person.Specification) (n : Number) :
-    personNumber x n .gender = ⊥ :=
+/-- The bundle valued in person and number alone. -/
+def personNumber (p : Person) (n : Number) : Bundle := set .person p (set .number n ⊥)
+
+@[simp] theorem personNumber_person (p : Person) (n : Number) :
+    personNumber p n .person = (↑p, ⊥) :=
   rfl
 
-@[simp] theorem personNumber_case (x : Person.Specification) (n : Number) :
-    personNumber x n .case = ⊥ :=
+@[simp] theorem person_personNumber (p : Person) (n : Number) : (personNumber p n).person = p :=
   rfl
 
-@[simp] theorem personNumber_definiteness (x : Person.Specification) (n : Number) :
-    personNumber x n .definiteness = ⊥ :=
+@[simp] theorem clusivity_personNumber (p : Person) (n : Number) :
+    (personNumber p n).clusivity = ⊥ :=
+  rfl
+
+@[simp] theorem personNumber_number (p : Person) (n : Number) : personNumber p n .number = n :=
+  rfl
+
+@[simp] theorem personNumber_gender (p : Person) (n : Number) : personNumber p n .gender = ⊥ :=
+  rfl
+
+@[simp] theorem personNumber_case (p : Person) (n : Number) : personNumber p n .case = ⊥ :=
+  rfl
+
+@[simp] theorem personNumber_definiteness (p : Person) (n : Number) :
+    personNumber p n .definiteness = ⊥ :=
   rfl
 
 /-- The restriction of a token's features to the agreement dimensions reads them along
 `Dimension.toFeature`. -/
 def ofFeatures (f : Morphology.Features) : Bundle
-  | .person => .ofPersonClusivity (f .person) (f .clusivity)
+  | .person => (f .person, f .clusivity)
   | .number => f .number
   | .gender => f .gender
   | .case => f .case
   | .definiteness => f .definiteness
 
 @[simp] theorem ofFeatures_person (f : Morphology.Features) :
-    ofFeatures f .person = .ofPersonClusivity (f .person) (f .clusivity) :=
+    ofFeatures f .person = (f .person, f .clusivity) :=
   rfl
 
 @[simp] theorem ofFeatures_number (f : Morphology.Features) : ofFeatures f .number = f .number :=
@@ -227,45 +248,30 @@ def ofFeatures (f : Morphology.Features) : Bundle
     ofFeatures f .definiteness = f .definiteness :=
   rfl
 
-/-- More specific features give a more specific bundle, where the more specific person and
-clusivity are coherent. -/
-theorem ofFeatures_le_ofFeatures {f g : Morphology.Features} (h : f ≤ g)
-    (hg : Person.Specification.Coherent (g .person) (g .clusivity)) :
-    ofFeatures f ≤ ofFeatures g := by
-  intro d
+/-- More specific features give a more specific bundle. -/
+theorem ofFeatures_mono : Monotone ofFeatures := fun _ _ h d ↦ by
   cases d
-  · exact Person.Specification.ofPersonClusivity_le_ofPersonClusivity (h .person) (h .clusivity) hg
+  · exact ⟨h .person, h .clusivity⟩
   all_goals exact h _
 
-theorem monotoneOn_ofFeatures :
-    MonotoneOn ofFeatures {f | Person.Specification.Coherent (f .person) (f .clusivity)} :=
-  fun _ _ _ hg h ↦ ofFeatures_le_ofFeatures h hg
-
-/-- The bundle of features is not monotone outright: the second person with the exclusive is
-unspecified for person. -/
-theorem not_monotone_ofFeatures : ¬ Monotone ofFeatures := fun h ↦
-  absurd (h (a := .of (person := some .second))
-    (b := .of (person := some .second) (clusivity := some .exclusive)) (by decide)) (by decide)
+/-- `ofFeatures` as an order homomorphism. -/
+@[simps]
+def ofFeaturesHom : Morphology.Features →o Bundle := ⟨ofFeatures, ofFeatures_mono⟩
 
 instance : DecidableLE Bundle := fun x y ↦ inferInstanceAs (Decidable (∀ d, x d ≤ y d))
 
 instance : DecidableLT Bundle := decidableLTOfDecidableLE
 
-/-- A bundle extends the person–number bundle exactly when its person is covered by that person
-and it has that number. -/
-theorem personNumber_le_iff {p : Person.Specification} {n : Number} {x : Bundle} :
-    personNumber p n ≤ x ↔ p ≤ x .person ∧ x .number = n := by
-  refine ⟨fun h ↦ ⟨h .person, Flat.coe_le_iff.1 (h .number)⟩, ?_⟩
+/-- A bundle extends the person–number bundle exactly when it has that person and that
+number. -/
+theorem personNumber_le_iff {p : Person} {n : Number} {x : Bundle} :
+    personNumber p n ≤ x ↔ x.person = p ∧ x .number = n := by
+  refine ⟨fun h ↦ ⟨Flat.coe_le_iff.1 (h .person).1, Flat.coe_le_iff.1 (h .number)⟩, ?_⟩
   rintro ⟨hp, hn⟩ d
   cases d
-  · exact hp
+  · exact ⟨Flat.coe_le_iff.2 hp, bot_le⟩
   · exact Flat.coe_le_iff.2 hn
   all_goals exact bot_le
-
-/-- A bundle is a speech-act participant's when its person specification is. -/
-def IsSAP (b : Bundle) : Prop := (b .person).IsSAP
-
-instance (b : Bundle) : Decidable b.IsSAP := inferInstanceAs (Decidable (b .person).IsSAP)
 
 /-- A bundle is plural when its number is. -/
 def IsPlural (b : Bundle) : Prop := b .number = ↑Number.plural
@@ -276,11 +282,11 @@ instance (b : Bundle) : Decidable b.IsPlural := inferInstanceAs (Decidable (_ = 
 cells of a paradigm without clusivity or a dual. -/
 def personNumberCells : List Bundle :=
   [Number.singular, .plural].flatMap fun n ↦
-    [Person.Specification.first, .second, .third].map (personNumber · n)
+    [Person.first, .second, .third].map (personNumber · n)
 
 end Bundle
 
 instance : Repr Bundle where
-  reprPrec b _ := repr (b .person, b .number, b .gender, b .case, b .definiteness)
+  reprPrec b _ := repr (b.person, b.clusivity, b .number, b .gender, b .case, b .definiteness)
 
 end Agreement

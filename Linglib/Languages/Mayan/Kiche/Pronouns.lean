@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Categories
 
 /-!
 # K'iche' pronouns
@@ -42,7 +43,8 @@ def at_ : PersonalPronoun := { form := "at", person := some .second, number := s
 /-- The honorific second person singular *laal*. It agrees as a third person singular and
 denotes the addressee. -/
 def laal : PersonalPronoun :=
-  { form := "laal", person := some .third, number := some .singular, referential := {.addressee} }
+  { form := "laal", person := some .third, number := some .singular,
+    cells := {.personNumber .second .singular} }
 
 /-- The third person singular *are'*, usually with a determiner, *ri are'*. -/
 def are' : PersonalPronoun := { form := "are'", person := some .third, number := some .singular }
@@ -57,7 +59,7 @@ def ix : PersonalPronoun := { form := "ix", person := some .second, number := so
 denotes the addressee with others. -/
 def alaq : PersonalPronoun :=
   { form := "alaq", person := some .third, number := some .singular,
-    referential := {.addresseeOthers} }
+    cells := {.personNumber .second .plural} }
 
 /-- The third person plural *a're'*, usually with a determiner, *ri a're'*. -/
 def a're' : PersonalPronoun := { form := "a're'", person := some .third, number := some .plural }

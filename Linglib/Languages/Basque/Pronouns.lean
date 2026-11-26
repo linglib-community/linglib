@@ -2,7 +2,9 @@ module
 
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Pronoun.Demonstrative
+public import Linglib.Syntax.Feature.Person.Participants
 public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Categories
 public import Linglib.Semantics.Reference.Gender
 
 /-!
@@ -18,8 +20,8 @@ agreement with a second person subject.
 There is no distinct third person pronoun, and the demonstratives serve as one: *hau* 'this',
 close to the speaker, *hori* 'that', close to the addressee, and *hura* 'that', close to neither,
 with the plurals *hauek*, *horiek* and *haiek*. *Hura* alternates in this use with the intensive
-*bera*. The personal pronouns therefore leave the third person categories without a form
-(`Basque.Pronouns.paradigm_nonempty_iff`).
+*bera*. The personal pronouns therefore leave the third person without a form
+(`Basque.Pronouns.forms_nonempty_iff`).
 
 ## References
 
@@ -55,7 +57,7 @@ def hi : PersonalPronoun := { form := "hi", person := some .second, number := so
 /-- *Zu* addresses one person and agrees as a second person plural. -/
 def zu : PersonalPronoun :=
   { form := "zu", person := some .second, number := some .plural,
-    referential := {.addressee} }
+    cells := {.personNumber .second .singular} }
 
 /-- *zuek* — 2pl. -/
 def zuek : PersonalPronoun := { form := "zuek", person := some .second, number := some .plural }
@@ -71,9 +73,10 @@ def personal : Finset PersonalPronoun := {ni, gu, hi, zu, zuek}
 /-- No personal pronoun is third person. -/
 theorem person_ne_third : ∀ p ∈ personal, p.person ≠ some .third := by decide
 
-/-- A category has a personal pronoun exactly when it is not third person. -/
-theorem paradigm_nonempty_iff :
-    ∀ c, (PersonalPronoun.paradigm personal c).Nonempty ↔ c.person ≠ .third := by
+/-- A person and number has a personal pronoun exactly when the person is not the third. -/
+theorem forms_nonempty_iff :
+    ∀ c ∈ Agreement.Bundle.personNumberCells,
+      (PersonalPronoun.forms personal c).Nonempty ↔ c.person ≠ ↑Person.third := by
   decide +kernel
 
 /-- *hau* 'this', close to the speaker. -/

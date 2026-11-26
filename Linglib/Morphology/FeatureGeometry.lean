@@ -5,8 +5,7 @@ public import Linglib.Core.Order.SuccPred.Tree
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.SuccPred.Basic
 public import Linglib.Core.Order.UpperLower.Finset
-public import Linglib.Syntax.Feature.Person.Clusivity
-public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Order.Interval.Finset.Defs
 public import Mathlib.Tactic.DeriveFintype
