@@ -7,6 +7,7 @@ public import Linglib.Languages.English.Pronouns
 public import Linglib.Morphology.Exponence.SubsetRule
 public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Syntax.Feature.Person.Configuration
+public import Linglib.Syntax.Feature.Person.Specification
 public import Studies.Cysouw2003
 public import Studies.Harbour2016
 
@@ -353,9 +354,12 @@ theorem participants_eq_of_eval (h : S.layered.eval fs = some L) :
     participants fs = some (S.rolesIn L.set) := by
   simpa [h] using (rolesIn_eval S fs).symm
 
+-- the four persons deliver the participant sets of the four person specifications
 theorem participants_persons :
-    participants first = some {.speaker} ∧ participants inclusive = some {.speaker, .addressee} ∧
-      participants second = some {.addressee} ∧ participants third = some ∅ := by
+    (participants inclusive).toFinset = Person.Specification.firstInclusive.sets ∧
+      (participants first).toFinset = Person.Specification.firstExclusive.sets ∧
+      (participants second).toFinset = Person.second.participantSets ∧
+      (participants third).toFinset = Person.third.participantSets := by
   decide
 
 end Semantics
@@ -730,24 +734,14 @@ def Examples.Lexeme.language : Lexeme → Glottocode
   | .men => .dutch
   | _ => .english
 
-/-- (9), (10): the feature structures of a person, the first person being the exclusive or the
-inclusive. -/
-def ofPerson : Person → List (List Feature)
-  | .first => [first, inclusive]
-  | .second => [second]
-  | .third => [third]
-
-/-- The number node of the singular and the plural in an absolute system with `AUG`. -/
-def ofNumber : Number → Option (List NumberFeature)
-  | .singular => some []
-  | .plural => some [.aug]
-  | _ => none
-
 /-- The pronouns of an absolute system with `AUG` that an agreement person and number are
-compatible with. -/
+compatible with: those whose participants the person covers, every participant set where no
+person is given, and whose number node covers the configurations of the number. -/
 def structures (person : Option Person) (number : Option Number) : List Pronoun :=
-  (inventory .absolute augNodes).filter fun p ↦
-    (∀ π ∈ person, p.person ∈ ofPerson π) ∧ ∀ n ∈ number, ofNumber n = some p.number
+  (inventory .absolute augNodes).filter fun p ↦ ∃ P ∈ participants p.person,
+    P ∈ (Person.Specification.ofPersonClusivity person none).sets ∧ ∀ n ∈ number,
+      (Person.Configuration.bounded {P}).filter (p.Covers .absolute augNodes) =
+        Person.Configuration.covered {P} n
 
 /-- The pronouns analysed as bare `N_Π`, with no person feature and no number node. -/
 def featureless : List Lexeme := [.men]
