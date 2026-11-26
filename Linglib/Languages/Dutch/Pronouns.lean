@@ -8,11 +8,13 @@ public import Linglib.Syntax.Category.Pronoun.Personal
 This file defines the strong subject pronouns of Dutch. The third person singular distinguishes
 three genders and the plural none; *wij* makes no clusivity distinction. The second person
 distinguishes the familiar *jij* and *jullie* from the polite *u*, a single form for one
-addressee or several that takes singular agreement.
+addressee or several that takes singular agreement. The impersonal *men* 'one' is a subject form
+with third person singular agreement.
 
 ## Main definitions
 
 * `Dutch.Pronouns.personal`: the strong subject pronouns.
+* `Dutch.Pronouns.men`: the impersonal pronoun.
 * `Dutch.Pronouns.addresseeSg`, `Dutch.Pronouns.addresseePl`: the pronouns of address at each
   grade.
 
@@ -86,6 +88,10 @@ def jullie : PersonalPronoun :=
 def zij_pl : PersonalPronoun :=
   { form := "zij", person := some .third, number := some .plural, cases := {.nom},
     strength := some .strong }
+
+/-- The impersonal *men* 'one', a subject form with third person singular agreement. -/
+def men : Pronoun :=
+  { form := "men", person := some .third, number := some .singular, cases := {.nom} }
 
 /-- The pronoun for a single addressee at each grade. -/
 def addresseeSg : Grade → PersonalPronoun
