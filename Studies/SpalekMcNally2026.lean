@@ -13,7 +13,7 @@ public import Mathlib.Tactic.DeriveFintype
 
 English *tear* and Spanish *rasgar* are counterparts in lexical databases and share an event
 structure: both are result verbs that [take part in the causative
-alternation](##hasCausativeAlternation_tear_rasgar). They differ in root content, which the paper
+alternation](##alternates_anticausative_tear_rasgar). They differ in root content, which the paper
 describes by the patient, the motion that effects the change, its result, the force involved and
 the agent's control. Read as conditions on described events, the two contents [exclude each
 other](##disjoint_tearContent_rasgarContent), since *tear* implies separation in contrary
