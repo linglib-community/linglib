@@ -35,7 +35,8 @@ from gen_docs_pages import bib_label, match_study  # noqa: E402
 
 PAGE = ROOT / "scripts" / "checks_page"
 # How the Lean stands to an item, as the line under its claim says it.
-RELATION = {"generalizes": "The Lean states something more general.",
+RELATION = {"exact": "The Lean states this.",
+            "generalizes": "The Lean states something more general.",
             "specializes": "The Lean states a special case.",
             "variant": "The Lean states a variant.",
             "counterexample": "The Lean gives a counterexample.",
@@ -177,7 +178,9 @@ def source_page(key, its, nodes, bib, studies, sha, lines):
             line = f"{line} {uses}" if line else uses
         if i["id"] in lines:
             line += (" " if line else "") + f'<a href="{record}#L{lines[i["id"]]}">Record</a>.'
-        how = "" if i["relation"] == "exact" else f'<p>{RELATION[i["relation"]]}</p>'
+        # An exact item with no notes needs no sentence; notes read as its continuation.
+        bare = i["relation"] == "exact" and not i["notes"]
+        how = "" if bare else f'<p>{RELATION[i["relation"]]}</p>'
         panel[i["id"]] = {"title": f'{i["label"]} in Lean', "how": how + prose(i["notes"]),
                           "decls": i["decls"], "state": line}
 
