@@ -26,7 +26,8 @@ frames the survey uses.
 The attitude and causative verbs record the mood of the finite complement each selects in an
 affirmative declarative clause, the data of Grano's survey of mood choice and of Portner and
 Rubinstein's study of desire verbs; a subjunctive licensed by matrix negation or a question is
-not a frame of the verb.
+not a frame of the verb. *Temer* 'fear' and *preocupar* 'worry' record the interrogative frames
+Qing and colleagues give them.
 
 ## References
 
@@ -40,6 +41,7 @@ not a frame of the verb.
   (2024)][grano-2024]
 * [M. C. Cuervo, *Datives at Large* (2003)][cuervo-2003]
 * [portner-rubinstein-2020]
+* [qing-uegaki-2025]
 -/
 
 @[expose] public section
@@ -353,6 +355,25 @@ def esperar : Verb where
     (controllers := [none, some 0])
   opaqueContext := true
   attitude := some (.preferential .positive)
+
+/-- *temer* 'fear' takes a constituent question in the indicative; with a polar question it is
+degraded ([qing-uegaki-2025] (57), (58)). -/
+def temer : Verb where
+  morphs := [.root "temer"]
+  valency := .ofFrame
+    ⟨some .nominal, [.clausal { coding := {.indicative}, types := {.constituent} }]⟩
+  opaqueContext := true
+  attitude := some (.preferential .negative)
+
+/-- *preocupar* 'worry' has a dative experiencer and a clausal subject, a *que* clause in the
+subjunctive or a constituent question in the indicative ([qing-uegaki-2025] (33), (39)). -/
+def preocupar : Verb where
+  morphs := [.root "preocupar"]
+  valency := .ofFrames
+    [⟨some (.clausal { coding := {.subjunctive}, types := {.declarative} }), [.nominal]⟩,
+     ⟨some (.clausal { coding := {.indicative}, types := {.constituent} }), [.nominal]⟩]
+  opaqueContext := true
+  attitude := some (.preferential .negative)
 
 /-- The causative *hacer* 'make' takes an infinitive under object control and a *que* clause in
 the subjunctive. -/
