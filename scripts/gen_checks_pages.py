@@ -54,6 +54,10 @@ HEAD = {"def": "Definition", "abbrev": "Definition", "structure": "Definition",
 # Sections of a module docstring that close a file's text, and those the text itself replaces.
 CLOSING = {"Implementation notes": "Notes on the formalization", "References": "References",
            "TODO": "To do", "Notation": "Notation"}
+# The mark a paper puts before an example, by the judgment the example data records
+# (`Linglib/Data/Examples/Judgment.lean`).
+MARK = {"acceptable": "", "marginal": "?", "questionable": "??", "unacceptable": "#",
+        "nearlyUngrammatical": "?*", "ungrammatical": "*", "variable": "%"}
 LISTS = re.compile(r"Main (definitions|results|statements|theorems|declarations)\b")
 CITE = r"[a-z0-9][a-z0-9-]*-\d{4}[a-z]?"
 INLINE = re.compile(r"`([^`]+)`|\[([^\]]+)\]\((##)?([^)\s]+)\)|\[(" + CITE + r")\]"
@@ -105,6 +109,13 @@ class Site:
         self.study = {key: "Studies." + match_study(key, studies) for key in self.sources
                       if match_study(key, studies)}
         self.source = {module: key for key, module in self.study.items()}
+        # The examples of a source, by the source's own label, from its example data.
+        self.examples = {}
+        for key, module in self.study.items():
+            path = ROOT / "Linglib" / "Data" / "Examples" / (module.split(".")[-1] + ".json")
+            rows = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+            self.examples[key] = {row["source"]["paperLabel"]: row for row in rows
+                                  if isinstance(row, dict) and row.get("source")}
         # A file's text has its documented declarations that a statement closure describes.
         self.shown = {m: [d for d in t["decls"] if d["doc"] and d["name"] in self.nodes]
                       for m, t in self.texts.items() if m not in self.source}
@@ -507,6 +518,20 @@ def module_doc(page, doc):
     return body, tail
 
 
+def example(row):
+    """An example as a paper sets it: its number, the mark of its judgment, the sentence, and
+    under it a translation and the readings the paper reports."""
+    mark = MARK.get(row.get("judgment"), "")
+    under = ([f'<p class="exr">\u2018{esc(row["translation"])}\u2019</p>']
+             if row.get("translation") else [])
+    for reading in row.get("readings", ()):
+        under.append(f'<p class="exr">{esc(MARK.get(reading.get("judgment"), ""))}'
+                     f'{esc(reading["name"])}</p>')
+    return (f'<div class="ex"><span class="exno">{esc(row["source"]["paperLabel"])}</span><div>'
+            f'<p class="ext"><span class="exj">{esc(mark)}</span>{esc(row["primaryText"])}</p>'
+            + "".join(under) + "</div></div>")
+
+
 def source_page(site, key, sha, lines):
     page = Page(site, f"checks/{key}/")
     its = site.sources[key]
@@ -545,7 +570,7 @@ def source_page(site, key, sha, lines):
     body.append('<p class="prov">' + (f"Formalized by {formal}. " if formal else "")
                 + f'What follows restates the paper item by item, from its <a href="{record}">'
                 f'check record</a>{" by " + wrote if wrote else ""}. {tally}</p>')
-    panel = {}
+    panel, examples, shown = {}, site.examples.get(key, {}), set()
     for i in its:
         iid = esc(i["id"], quote=True)
         if i["section"]:
@@ -553,7 +578,11 @@ def source_page(site, key, sha, lines):
             body.append(f'<h2 class="sec"><span class="n">{esc(n)}</span>{esc(title)}</h2>'
                         if n.startswith("§") else f'<h2 class="sec">{esc(i["section"])}</h2>')
         claim = page.prose(i["claim"]).replace("<p>", f"<p>{head(i)} ", 1)
-        body.append(f'<article class="item" id="{iid}" tabindex="0">{claim}</article>')
+        # A datum is set as the paper's example, from the example data, above what is claimed.
+        row = examples.get(i["label"]) if i["kind"] == "datum" else None
+        shown.add(i["label"] if row else None)
+        body.append(f'<article class="item" id="{iid}" tabindex="0">'
+                    f'{example(row) if row else ""}{claim}</article>')
         line = state(i, items)
         if i["relies"] and i["status"] != "relies":
             verb = "defines" if len(i["relies"]) == 1 else "define"
@@ -567,6 +596,11 @@ def source_page(site, key, sha, lines):
         panel[i["id"]] = {"how": how + page.prose(i["notes"]), "decls": i["decls"],
                           "state": line}
 
+    rest = [row for label, row in examples.items() if label not in shown]
+    if rest:
+        body.append('<h2 class="sec">Other examples in the paper</h2>'
+                    + "".join(example(row) for row in rest)
+                    + '<p class="prov plain">No item of the record covers these yet.</p>')
     label = site.label(key)
     return page.path, page.render(
         gb.tex_text(f.get("title", key)), f'<a href="../">Checks</a> / {esc(label)}',

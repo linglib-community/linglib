@@ -14,13 +14,12 @@ source = "elliott-2023"
 
 [[item]]
 id       = "ex-13"
-section  = "§2 Bilateral Update Semantics"
 kind     = "definition"
 label    = "(13)"
 claim    = """
-An **information state** is a file, a set of world–assignment pairs. **Assignments** are partial
-functions from variables to individuals, implemented through a special value #e, the **undefined
-individual**: an assignment is undefined for x iff it maps x to #e, and a variable not mentioned in
+An information state is a file, a set of world–assignment pairs. Assignments are partial
+functions from variables to individuals, implemented through a special value #e, the undefined
+individual: an assignment is undefined for x iff it maps x to #e, and a variable not mentioned in
 a mapping is mapped to #e, so that [x→a] maps x to a and everything else to #e. A sentence has a
 positive and a negative update, each mapping a state to a state.
 """
@@ -28,7 +27,7 @@ decls    = ["DynamicSemantics.Possibility", "DynamicSemantics.State",
             "DynamicSemantics.BilateralUpdate"]
 relation = "exact"
 notes    = """
-Together with the paper's prose before (13): a file is a set of world–assignment pairs (`Possibility`, `State`), and
+With the prose before it: a file is a set of world–assignment pairs (`Possibility`, `State`), and
 assignments are total maps into `Part E`, whose `⊥` (`Part.none`) is the undefined individual `#e`.
 A sentence denotes a positive and a negative update, each a map from states to states (`CCP`).
 """
@@ -38,7 +37,7 @@ id       = "ex-14"
 kind     = "definition"
 label    = "(14)"
 claim    = """
-**Atomic sentences** introduce no anaphoric information. The positive update of P(x) is
+Atomic sentences introduce no anaphoric information. The positive update of P(x) is
 {(w,g)∈s | g(x)≠#e, g(x)∈I(P)(w)} and the negative update is {(w,g)∈s | g(x)≠#e,
 g(x)∉I(P)(w)}: the possibilities at which x is defined and P is true of it, respectively false of
 it. Possibilities at which x is undefined are in neither.
@@ -74,7 +73,7 @@ id       = "ex-17"
 kind     = "definition"
 label    = "(17)"
 claim    = """
-**Negation** flip-flops between the positive and negative updates: s[¬φ]+ = s[φ]− and
+Negation flip-flops between the positive and negative updates: s[¬φ]+ = s[φ]− and
 s[¬φ]− = s[φ]+. So Double Negation Elimination is valid: s[¬¬φ]+ = s[φ]+ and s[¬¬φ]− = s[φ]−.
 """
 decls    = ["DynamicSemantics.BilateralUpdate.neg", "DynamicSemantics.BilateralUpdate.neg_neg"]
@@ -86,7 +85,7 @@ id       = "ex-18"
 kind     = "definition"
 label    = "(18)"
 claim    = """
-**Random assignment**, an auxiliary operation on information states and not part of the logic:
+Random assignment, an auxiliary operation on information states and not part of the logic:
 s+x = {(w,h) | g[x]h, (w,g)∈s}. It opens up referential possibilities for x throughout the input
 state, whatever worldly information the state encodes; (19) illustrates it over the domain {a,b}.
 """
@@ -103,7 +102,7 @@ id       = "ex-20"
 kind     = "definition"
 label    = "(20)"
 claim    = """
-**Existential quantification**: s[∃xφ]+ = (s+x)[φ]+, and s[∃xφ]− = {i∈s | i⊀(s+x)[φ]+,
+Existential quantification: s[∃xφ]+ = (s+x)[φ]+, and s[∃xφ]− = {i∈s | i⊀(s+x)[φ]+,
 i≺(s+x)[φ]−}. The negative update keeps the possibilities that do not subsist in the positive
 update of the scope after random assignment but do subsist in its negative update. It introduces
 no anaphoric information.
@@ -116,15 +115,15 @@ id       = "ex-21"
 kind     = "definition"
 label    = "(21)"
 claim    = """
-**Subsistence**: i≺s (i subsists in s) iff there is an i′∈s that is a **descendant** of i, where
+Subsistence: i≺s (i subsists in s) iff there is an i′∈s that is a descendant of i, where
 (w′,g′) is a descendant of (w,g) iff w′=w and g′ is defined on every variable that g is defined
-for. In the paper's prose: i′ is just like i except for possibly providing values for more variables.
+for. In the prose: i′ is just like i except for possibly providing values for more variables.
 """
 decls    = ["DynamicSemantics.Possibility.le_def"]
 relation = "variant"
 notes    = """
 Subsistence `i ≺ s` is `i ∈ lowerClosure s`, for the order of `le_def`: a descendant has the same
-world and extends the assignment, agreeing wherever it is defined, as the paper's prose before (21) puts
+world and extends the assignment, agreeing wherever it is defined, as the prose before (21) puts
 it. (21) itself asks only that the descendant be defined on at least the same variables, which
 would let it reassign them: on that reading `(w, [x→a])` subsists in `{(w, [x→b])}` (study
 erratum).
@@ -135,7 +134,7 @@ id       = "ex-25"
 kind     = "definition"
 label    = "(25)"
 claim    = """
-**Presupposition failure** is defined as an update: s[φ]? = {i∈s | i⊀s[φ]+, i⊀s[φ]−}, the
+Presupposition failure is defined as an update: s[φ]? = {i∈s | i⊀s[φ]+, i⊀s[φ]−}, the
 possibilities that subsist in neither the positive nor the negative update of φ, those at which φ
 is undefined. It cannot introduce anaphoric information.
 """
@@ -148,15 +147,15 @@ id       = "ex-26"
 kind     = "definition"
 label    = "(26)"
 claim    = """
-**Assertion** of φ against a file context c is defined if c[φ]? ≠ ∅, as printed in (26a), though
-the paper's prose and footnote 6 require the failure update to be empty. If defined, it results in the
+Assertion of φ against a file context c is defined if c[φ]? ≠ ∅, as printed in (26a), though
+the prose and footnote 6 require the failure update to be empty. If defined, it results in the
 new file context c[φ]+.
 """
 decls    = ["DynamicSemantics.BilateralUpdate.Assertable"]
 relation = "variant"
 notes    = """
 Only the definedness condition (26a) is a definition; the output (26b) is the positive update.
-(26a) says assertion is defined when `c[φ]? ≠ ∅`, but the paper's prose (and footnote 6) require the
+(26a) says assertion is defined when `c[φ]? ≠ ∅`, but the prose (and footnote 6) require the
 unknown update to be empty, and `Assertable` follows the prose (study erratum).
 """
 
@@ -184,7 +183,7 @@ id       = "ex-27"
 kind     = "definition"
 label    = "(27)"
 claim    = """
-The positive update of a **conjunction** processes the positive updates of the conjuncts in
+The positive update of a conjunction processes the positive updates of the conjuncts in
 turn: s[φ∧ψ]+ = s[φ]+[ψ]+. Connectives are defined from the Strong Kleene truth tables (fig. 1,
 conjunction): the positive update of a complex sentence is the union of the ways of dynamically
 verifying it, the + cells, and the negative update the union of the ways of falsifying it.
@@ -202,7 +201,7 @@ id       = "ex-28"
 kind     = "definition"
 label    = "(28)"
 claim    = """
-The negative update of a **conjunction** is the union of the ways of falsifying it:
+The negative update of a conjunction is the union of the ways of falsifying it:
 s[φ∧ψ]− = s[φ]−[ψ]+ ∪ s[φ]−[ψ]− ∪ s[φ]−[ψ]? ∪ s[φ]+[ψ]− ∪ s[φ]?[ψ]−. One false conjunct
 suffices, even if the other is a presupposition failure.
 """
@@ -218,7 +217,7 @@ id       = "ex-29"
 kind     = "definition"
 label    = "(29)"
 claim    = """
-The positive update of a **disjunction** is the union of the ways of verifying it:
+The positive update of a disjunction is the union of the ways of verifying it:
 s[φ∨ψ]+ = s[φ]+[ψ]+ ∪ s[φ]+[ψ]− ∪ s[φ]+[ψ]? ∪ s[φ]−[ψ]+ ∪ s[φ]?[ψ]+ (the + cells of fig. 2).
 One true disjunct suffices; the unknown truth value of the other is tolerated.
 """
@@ -237,7 +236,7 @@ id       = "ex-34"
 kind     = "definition"
 label    = "(34)"
 claim    = """
-The negative update of a **disjunction**: s[φ∨ψ]− = s[φ]−[ψ]−. The only way to falsify a
+The negative update of a disjunction: s[φ∨ψ]− = s[φ]−[ψ]−. The only way to falsify a
 disjunction is for both disjuncts to be false.
 """
 decls    = ["DynamicSemantics.BilateralUpdate.negative_disj"]
@@ -247,7 +246,6 @@ relation = "exact"
 
 [[item]]
 id       = "ex-22"
-section  = "§2.3 Existential statements"
 kind     = "result"
 label    = "(22)"
 claim    = """
@@ -321,11 +319,10 @@ datum for (24), whose sentence and judgment the signer checks against the paper.
 
 [[item]]
 id       = "ex-30"
-section  = "§2.4.3 Donkey disjunctions"
 kind     = "definition"
 label    = "(30)"
 claim    = """
-The **donkey disjunction** "Either there's no bathroom_x, or it_x's upstairs" is translated
+The donkey disjunction "Either there's no bathroom_x, or it_x's upstairs" is translated
 as ¬∃xB(x) ∨ U(x), the pronoun being the variable of the existential in the first disjunct.
 """
 decls    = ["Elliott2023.donkey"]
@@ -474,7 +471,7 @@ Egli's theorem holds of positive updates in BUS: s[∃xφ∧ψ]+ = s[∃x(φ∧�
 """
 decls    = ["DynamicSemantics.BilateralUpdate.egli"]
 relation = "exact"
-notes    = "The paper's prose before (41) cites the positive case as \"(41b)\", a typo for (41a)."
+notes    = "The prose before (41) cites the positive case as \"(41b)\", a typo for (41a)."
 
 [[item]]
 id       = "ex-41b"
@@ -493,11 +490,10 @@ notes    = "The witness is `φ = P(x)`, `ψ = Q(x)` over one world and one indiv
 
 [[item]]
 id       = "ex-46"
-section  = "§3 Homogeneous readings"
 kind     = "definition"
 label    = "(45), (46)"
 claim    = """
-**Exhaustive assertion**, given a sentence φ, a file context c and a QuD Q partitioning the
+Exhaustive assertion, given a sentence φ, a file context c and a QuD Q partitioning the
 context set by the equivalence relation ∼Q. Version 1, (45): defined if c[φ]? ≠ ∅ (as printed);
 the result is {(w,g)∈c[φ]+ | (w,∗)∉c[φ]−}. Final, (46): the result is {(w,g)∈c[φ]+ | ∃w′, w′∼Qw,
 (w′,∗)∉c[φ]−}, which retains the possibilities of the positive update that have a cell-mate not in
@@ -574,7 +570,6 @@ positive update, provided some world of the context has every bathroom upstairs.
 
 [[item]]
 id       = "ex-47"
-section  = "§4 Conclusion"
 kind     = "result"
 label    = "(47)"
 claim    = """

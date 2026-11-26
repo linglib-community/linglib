@@ -34,10 +34,11 @@ file is named by the key.
 Sign-offs are not kept in this file, but in the ledger, `checks/ledger/` (see below).
 
 A page of the site shows a source's claims as a text to read (`scripts/gen_checks_pages.py`), and
-two things in a record are for it alone. `section`, on the item that opens a section of the
-source, is the section's number and title, such as `"§2.3 Existential statements"`; it is no part
-of what a sign-off covers. A term that an item defines is written `**term**` in its claim and is
-set in bold.
+two things in a record are for it alone. The item that opens a section of the source says so,
+with `section`, the section's number and title, such as `"§2.3 Existential statements"`, or with a
+banner comment above it, `# ── Existential statements (§2.3) ──`; neither is part of what a
+sign-off covers. A term that an item defines is written `**term**` in its claim and is set in
+bold.
 
 The page credits each item, each declaration, the record and each file to the people who
 committed their lines, as git has them (a Lean file's `Authors:` header, where it has one, names

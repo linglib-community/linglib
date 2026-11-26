@@ -423,6 +423,21 @@ def credit(path, first=1, last=None):
     return {"by": by, "date": max(day for _, day in span).isoformat()}
 
 
+def banner_sections(path):
+    """The section each item opens, by its id, where the record marks it with a banner comment
+    above the item, `# ── Title (§2.3) ──`: the section's number and title."""
+    sections, pending = {}, None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        banner = re.match(r"#\s*─+\s*(.*?)\s*\((§[^)]*)\)\s*─+\s*$", line)
+        if banner:
+            pending = f"{banner.group(2)} {banner.group(1)}"
+        m = re.match(r'\s*id\s*=\s*"([^"]+)"', line)
+        if m and pending:
+            sections[m.group(1)] = pending
+            pending = None
+    return sections
+
+
 def item_spans(path):
     """The lines of each item of a check file, by its id."""
     text = path.read_text(encoding="utf-8").splitlines()
@@ -465,13 +480,15 @@ def status_json(sources, status, info, data):
                             capture_output=True, text=True).stdout.strip()
     items = []
     spans = {key: item_spans(src["path"]) for key, src in sources.items()}
+    banners = {key: banner_sections(src["path"]) for key, src in sources.items()}
     for (key, cid), st in status.items():
         item = info[(key, cid)]["item"]
         last = (item.get("check") or [None])[-1]
         items.append({
             "source": key, "id": cid, "kind": item.get("kind"), "label": item.get("label", cid),
             "relation": item.get("relation"), "notes": item.get("notes", "").strip(),
-            "claim": item.get("claim", "").strip(), "section": item.get("section", ""),
+            "claim": item.get("claim", "").strip(),
+            "section": item.get("section") or banners[key].get(cid, ""),
             "credit": credit(sources[key]["path"], *spans[key][cid]) if cid in spans[key] else None,
             "decls": item.get("decls", []), "status": st,
             "relies": sorted(f"{k}/{c}" for k, c in info[(key, cid)]["deps"]),
