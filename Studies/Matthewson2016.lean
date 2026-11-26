@@ -118,14 +118,15 @@ def ProjectionMode.Admits : ProjectionMode → Background W → Prop
 /-- The evidence a modal base gives is veridical, no necessity being false where it holds,
 exactly when the base is realistic. -/
 theorem isVeridical_simpleNecessity_iff :
-    IsVeridical (fun p ↦ {w | p ∈ simpleNecessity f w}) ↔ f.IsRealistic :=
-  ⟨fun h w ↦ h (f.accessibleWorlds w) (Set.mem_ofPred.2 (mem_simpleNecessity.2 Set.Subset.rfl)),
+    IsVeridical (fun p ↦ {w | p ∈ f.simpleNecessity w}) ↔ f.IsRealistic :=
+  ⟨fun h w ↦ h (f.accessibleWorlds w)
+      (Set.mem_ofPred.2 (Background.mem_simpleNecessity.2 Set.Subset.rfl)),
     fun h _ w hw ↦ hw (h w)⟩
 
 /-- A mode is veridical over a space of worlds when every base it projects there gives
 veridical evidence, so that none allows *must p, but not p*. -/
 def ProjectionMode.Veridical (μ : ProjectionMode) (W : Type*) : Prop :=
-  ∀ f : Background W, μ.Admits f → IsVeridical fun p ↦ {w | p ∈ simpleNecessity f w}
+  ∀ f : Background W, μ.Admits f → IsVeridical fun p ↦ {w | p ∈ f.simpleNecessity w}
 
 theorem ProjectionMode.veridical_iff [Nonempty W] : μ.Veridical W ↔ μ = .factual := by
   cases μ
@@ -141,8 +142,8 @@ instance [Nonempty W] : Decidable (μ.Veridical W) :=
 -- (23), (24)
 theorem rumor :
     ProjectionMode.factual.Admits Kratzer2012.evidence ∧
-      IsVeridical (fun p ↦ {w | p ∈ simpleNecessity Kratzer2012.evidence w}) ∧
-      ¬ IsVeridical fun p ↦ {w | p ∈ simpleNecessity Kratzer2012.content w} :=
+      IsVeridical (fun p ↦ {w | p ∈ Kratzer2012.evidence.simpleNecessity w}) ∧
+      ¬ IsVeridical fun p ↦ {w | p ∈ Kratzer2012.content.simpleNecessity w} :=
   ⟨Kratzer2012.evidence_realistic,
     isVeridical_simpleNecessity_iff.2 Kratzer2012.evidence_realistic,
     fun h ↦ Kratzer2012.content_not_realistic (isVeridical_simpleNecessity_iff.1 h)⟩

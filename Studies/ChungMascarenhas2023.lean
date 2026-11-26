@@ -38,7 +38,7 @@ footnote 17's observation that blocking neither stays above the expected utility
 indifference. The modal conjunction fallacy (34) and modal base-rate neglect (41) are theorems
 about `must` over every measure realizing the paper's printed conditional probabilities, each
 with a finite witness model; the Kratzer row of Table 2 is `Filter.inter_mem_iff` for
-`Modality.humanNecessity`, conjunction elimination, which the expected-value `must` escapes.
+`Modality.Background.necessity`, conjunction elimination, which the expected-value `must` escapes.
 
 ## Implementation notes
 

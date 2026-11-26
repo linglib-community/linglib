@@ -22,7 +22,7 @@ The principle has three parameters.
 * A *force* `q` is necessity or possibility.
 * The *necessities* `N x w` form a filter of propositions, for each choice of arguments `x` and
   each world `w`. In the source these are the propositions that follow from a conversational
-  background of [kratzer-1981], `simpleNecessity (a x) w`. For *try* the background holds what
+  background of [kratzer-1981], `(a x).simpleNecessity w`. For *try* the background holds what
   the subject aims at. For *force* it holds what the subject imposes on the object.
 
 We define `ControlPrinciple α θ q N` as
@@ -70,7 +70,7 @@ a raising diathesis such as that of *begin* (`controller_eq_or_isRaising`).
   principle while its passive does not.
 * The source states the principle for simple necessity and simple possibility over one
   conversational background. We state it for any family of filters `N`. Simple necessity is the
-  case `N x = simpleNecessity (a x)`.
+  case `N x = (a x).simpleNecessity`.
 * When `θ x` is undefined, the right side of the principle is false. In the source it is
   undefined.
 * In the source a role is one partial function on all tuples of a relation and its arguments.
@@ -164,9 +164,9 @@ theorem subset_iff_pure_le (h : ControlPrinciple α θ .universal N) (he : e ∈
 /-- A relation that obeys the principle with necessity over a conversational background is
 factive exactly when the background is realistic. -/
 theorem subset_iff_isRealistic {a : X → Background W}
-    (h : ControlPrinciple α θ .universal fun x ↦ simpleNecessity (a x)) (he : e ∈ θ x) :
+    (h : ControlPrinciple α θ .universal fun x ↦ (a x).simpleNecessity) (he : e ∈ θ x) :
     (∀ P, α P x ⊆ P e) ↔ (a x).IsRealistic :=
-  (h.subset_iff_pure_le he).trans isRealistic_iff_pure_le_simpleNecessity.symm
+  (h.subset_iff_pure_le he).trans Background.isRealistic_iff_pure_le_simpleNecessity.symm
 
 /-! ### Transforms -/
 

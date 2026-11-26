@@ -17,8 +17,8 @@ secondary ordering source [the two coincide](##Modality.Directive.weakNecessity_
 ## Implementation notes
 
 Both forces are stated over best worlds, as von Fintel and Iatridou state them, and so presuppose
-the Limit Assumption; under it strong necessity is Kratzer's human necessity
-(`humanNecessity_eq_principal`).
+the Limit Assumption; under it strong necessity is Kratzer's necessity
+(`Background.necessity_eq_principal`).
 
 ## TODO
 

@@ -272,8 +272,8 @@ omit [DecidableEq W] in
 open Modality in
 -- (59)
 theorem classic_agglomerates {f g : Background W} {φ ψ : Set W} {w : W}
-    (hφ : φ ∈ humanNecessity f g w) (hψ : ψ ∈ humanNecessity f g w) :
-    φ ∩ ψ ∈ humanNecessity f g w :=
+    (hφ : φ ∈ f.necessity g w) (hψ : ψ ∈ f.necessity g w) :
+    φ ∩ ψ ∈ f.necessity g w :=
   Filter.inter_mem hφ hψ
 
 /-! ### The Office (§8.1) -/

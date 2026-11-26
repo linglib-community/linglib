@@ -31,7 +31,7 @@ the probability space account validates V1–V12 and none of I1–I3 or E1.
 
 * Each account is a likelihood relation on `Set W` with the comparative probability mixins, so
   most patterns come from `Logic/ComparativeProbability/Patterns` by instance resolution. V6
-  and V7 take Kratzer's human necessity and possibility for his account and the quantifiers
+  and V7 take Kratzer's necessity and possibility for his account and the quantifiers
   `A = Set.univ` and `A.Nonempty` over the epistemic space for the other two; V8–V10 take
   Kratzer's restricted necessity or, for probability, entailment.
 * The refutations are the paper's: footnote 8's two tied worlds against V11, the coin against
@@ -79,27 +79,27 @@ instance : IsPreorder W (≤[O]).le where
 an at least as high world of `A`. -/
 abbrev likelihood : Set W → Set W → Prop := Lewis (≤[O]).le
 
-/-- Epistemic *must* at `w` is Kratzer's human necessity over the whole space. -/
+/-- Epistemic *must* at `w` is Kratzer's necessity over the whole space. -/
 def must (A : Set W) (w : W) : Prop :=
-  A ∈ humanNecessity ⊥ (fun _ ↦ O) w
+  A ∈ Background.necessity ⊥ (fun _ ↦ O) w
 
-/-- Epistemic *might* at `w` is human possibility, the dual of `must`. -/
+/-- Epistemic *might* at `w` is possibility, the dual of `must`. -/
 def might (A : Set W) (w : W) : Prop :=
-  humanPossibility ⊥ (fun _ ↦ O) w A
+  Background.possibility ⊥ (fun _ ↦ O) w A
 
-/-- The indicative *if A, B*, with its tacit *must*, is human necessity over the base
+/-- The indicative *if A, B*, with its tacit *must*, is necessity over the base
 restricted by the antecedent, as in Kratzer's restrictor analysis. -/
 def ifThen (A B : Set W) (w : W) : Prop :=
-  B ∈ humanNecessity (Background.restrict ⊥ A) (fun _ ↦ O) w
+  B ∈ (Background.restrict ⊥ A).necessity (fun _ ↦ O) w
 
 theorem must_iff (A : Set W) (w : W) :
     must O A w ↔ ∀ u, ∃ v, (v ≤[O] u) ∧ ∀ z, (z ≤[O] v) → z ∈ A := by
-  simp [must, mem_humanNecessity, Background.accessibleWorlds_bot]
+  simp [must, Background.mem_necessity, Background.accessibleWorlds_bot]
 
 theorem ifThen_iff (A B : Set W) (w : W) :
     ifThen O A B w ↔
       ∀ u ∈ A, ∃ v ∈ A, (v ≤[O] u) ∧ ∀ z ∈ A, (z ≤[O] v) → z ∈ B := by
-  simp only [ifThen, mem_humanNecessity, Background.mem_accessibleWorlds_restrict,
+  simp only [ifThen, Background.mem_necessity, Background.mem_accessibleWorlds_restrict,
     Background.accessibleWorlds_bot, Set.mem_univ, true_and]
 
 theorem kratzer_V1 : ProbablyToNotProbablyNot (likelihood O) := probablyToNotProbablyNot

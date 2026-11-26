@@ -16,7 +16,7 @@ Sloman (1970), the priorities of Kratzer's ordering source are split by negotiab
 with the circumstances, delimit the favored worlds through Frank's compatibility-restricted
 union ((39)–(40)), while the negotiable priorities an opinionated assessor promotes remain an
 ordering source. Strong necessity is simple necessity over the favored worlds (41), weak
-necessity is human necessity over them under the negotiable ordering (42), and the ordering
+necessity is necessity over them under the negotiable ordering (42), and the ordering
 source of a weak necessity presupposes negotiability (50). The tax-report dialogue is the shift
 from *should* to *have to* as an ideal stops being negotiable ((46), (51)), and neg-raising
 follows from the choice between a negotiable ideal and its negation (§3.4.2). Weak necessity
@@ -129,7 +129,7 @@ theorem favoredWorlds_eq_bestWorlds (b : Backgrounds W) (w : W) :
 def strongNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
   favoredWorlds b w ⊆ p
 
-/-- Weak necessity (42) is human necessity over the favored worlds under the negotiable
+/-- Weak necessity (42) is necessity over the favored worlds under the negotiable
 ordering source. -/
 def weakNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
   (≤[b.negotiable w]).minimals (favoredWorlds b w) ⊆ p

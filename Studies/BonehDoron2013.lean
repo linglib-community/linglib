@@ -65,7 +65,7 @@ open Event (τ)
 open Aspect (unbounded perfect)
 open Temporal (durative)
 open ModalLogic
-open Modality (Background simpleNecessity)
+open Modality (Background Background.simpleNecessity)
 open scoped Denotes
 
 variable {W E T : Type*} [LinearOrder T] [TemporalTrace E T]
@@ -99,11 +99,11 @@ modality in the matrix. -/
 def Gen {Z : Type*} (ext : Z → NonemptyInterval T) (mb : NonemptyInterval T → Background W)
     (P Q : W → Z → Prop) (i : NonemptyInterval T) (w : W) : Prop :=
   (⊤ : Genericity.Normality Z).gen {z | ext z ≤ i ∧ Q w z}
-    {z | ∀ᶠ v in simpleNecessity (mb i) w, P v z}
+    {z | ∀ᶠ v in (mb i).simpleNecessity w, P v z}
 
 theorem gen_iff {Z : Type*} {ext : Z → NonemptyInterval T} {mb : NonemptyInterval T → Background W}
     {P Q : W → Z → Prop} {i : NonemptyInterval T} {w : W} :
-    Gen ext mb P Q i w ↔ ∀ z, ext z ≤ i → Q w z → ∀ᶠ v in simpleNecessity (mb i) w, P v z :=
+    Gen ext mb P Q i w ↔ ∀ z, ext z ≤ i → Q w z → ∀ᶠ v in (mb i).simpleNecessity w, P v z :=
   ⟨fun h _ hi hQ ↦ h ⟨hi, hQ⟩, fun h z hz ↦ h z hz.1 hz.2⟩
 
 -- The second disjunct of (22b) holds of every restriction, through the empty restrictor.

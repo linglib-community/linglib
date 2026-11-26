@@ -131,8 +131,8 @@ end Accessible
 source at `w`, the members that no other member strictly betters. The dominance form, at least as
 good as every member, is empty on an ordering that is not total, such as Kratzer's
 practical-inference example, so minimality is the faithful reading. Kratzer's official necessity
-is the limit-free `humanNecessity`, the principal filter of this set exactly under the Limit
-Assumption (`humanNecessity_eq_principal`). -/
+is the limit-free `Background.necessity`, the principal filter of this set exactly under the Limit
+Assumption (`Background.necessity_eq_principal`). -/
 def bestWorlds (f g : Background W) (w : W) : Set W :=
   (≤[g w]).minimals (f.accessibleWorlds w)
 

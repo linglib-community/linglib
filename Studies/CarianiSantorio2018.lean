@@ -280,10 +280,10 @@ theorem not_necessity_warriorsCap_or_compl (w : W) :
   not_necessity_or_necessity_compl (v := .cw) (v' := .cg) (by simp) (by simp)
     (by simp [warriorsCap]) (by simp [warriorsCap])
 
-theorem not_mem_humanNecessity_wearsCap_or_compl (w : W) :
-    ¬ (warriorsCap ∈ humanNecessity (histBase.restrict wearsCap) ⊥ w ∨
-      warriorsCapᶜ ∈ humanNecessity (histBase.restrict wearsCap) ⊥ w) := by
-  rw [humanNecessity_bot, mem_simpleNecessity, mem_simpleNecessity,
+theorem not_mem_necessity_wearsCap_or_compl (w : W) :
+    ¬ (warriorsCap ∈ (histBase.restrict wearsCap).necessity ⊥ w ∨
+      warriorsCapᶜ ∈ (histBase.restrict wearsCap).necessity ⊥ w) := by
+  rw [Background.necessity_bot, Background.mem_simpleNecessity, Background.mem_simpleNecessity,
     ← bestWorlds_bot (histBase.restrict wearsCap) w]
   exact not_necessity_or_necessity_compl (v := .cw) (v' := .cg)
     (by simp [-Background.mem_accessibleWorlds, wearsCap])

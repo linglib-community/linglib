@@ -40,7 +40,7 @@ of the illusion is read off the paper's verdict rows: *might* satisfies criteria
 and structure-insensitive — as the work of another mechanism, with the package deal of
 [merin-1992] and [van-rooy-2000] as the candidate ((16), a datum). The relational route (14)
 rests on realism of the modal base: a base is realistic exactly when necessity is veridical
-(`Modality.isRealistic_iff_pure_le_simpleNecessity`), equivalently when what is actual is
+(`Modality.Background.isRealistic_iff_pure_le_simpleNecessity`), equivalently when what is actual is
 possible, the assumption that is standard for epistemics and absurd for deontics; with an
 ordering source, reflexivity alone does not make best-worlds possibility veridical
 (`exists_not_possibility`).
