@@ -164,6 +164,14 @@ theorem toSetRel_inv (C : PointAlgebra) : (toSetRel C⁻¹ : SetRel T T) = (toSe
   exact ⟨fun ⟨o, ho, h⟩ ↦ ⟨o.swap, ho, Ordering.compares_swap.2 h⟩,
     fun ⟨o, ho, h⟩ ↦ ⟨o.swap, by rwa [Ordering.swap_swap], Ordering.compares_swap.2 h⟩⟩
 
+/-- Reversing the order takes the relation of an element to the relation of its converse. -/
+theorem mem_toSetRel_toDual (C : PointAlgebra) :
+    OrderDual.toDual x ~[toSetRel C] OrderDual.toDual y ↔ x ~[toSetRel C⁻¹] y := by
+  simp only [mem_toSetRel, mem_inv]
+  exact ⟨fun ⟨o, ho, h⟩ ↦ ⟨o.swap, by rwa [Ordering.swap_swap],
+      Ordering.compares_swap.2 (toDual_compares_toDual.1 h)⟩,
+    fun ⟨o, ho, h⟩ ↦ ⟨o.swap, ho, toDual_compares_toDual.2 (Ordering.compares_swap.2 h)⟩⟩
+
 /-- The relation `<` relates a point to a smaller one through a third exactly when the order is
 dense. -/
 theorem toSetRel_lt_subset_comp_self_iff :

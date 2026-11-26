@@ -15,11 +15,13 @@ logic. The schemas beyond the minimal logic correspond to the structure of time:
 axiom 4, its converse holds exactly when time is dense, $Gp \to Fp$ exactly when time has no last
 moment, and $PFp \to Mp$ exactly when time does not branch forward. One operator under another
 entails the operator of the product, and is that operator for all elements of the point algebra
-exactly when time is dense without endpoints.
+exactly when time is dense without endpoints. Reversing time exchanges each operator with the
+operator of the converse element, the mirror image of [prior-1967].
 
 ## Main results
 
 * `PointAlgebra.diamond_lt_box_gt_gc`, `PointAlgebra.diamond_gt_box_lt_gc`: the adjunctions.
+* `PointAlgebra.diamond_toSetRel_toDual`: the mirror image.
 * `PointAlgebra.isSerial_toSetRel_gt_iff`, `PointAlgebra.diamond_gt_den_iff`: time without a
   last moment and dense time.
 * `PointAlgebra.diamond_lt_diamond_gt_le_iff`: time that does not branch forward.
@@ -59,6 +61,22 @@ theorem inv_toSetRel_lt : (toSetRel {.lt} : SetRel T T).inv = toSetRel {.gt} := 
 
 theorem inv_toSetRel_gt : (toSetRel {.gt} : SetRel T T).inv = toSetRel {.lt} := by
   ext ⟨x, y⟩; simp
+
+/-- The mirror image: possibility along an element on reversed time is possibility along its
+converse, so a law of tense logic stays a law with past and future exchanged wherever the times
+it holds of are closed under reversal ([prior-1967]). -/
+theorem diamond_toSetRel_toDual (C : PointAlgebra) (P : T → Prop) (t : T) :
+    ◇[toSetRel C] (fun u : Tᵒᵈ ↦ P (OrderDual.ofDual u)) (OrderDual.toDual t) ↔
+      ◇[toSetRel C⁻¹] P t :=
+  ⟨fun ⟨v, h, hp⟩ ↦ ⟨OrderDual.ofDual v, (mem_toSetRel_toDual C).1 h, hp⟩,
+    fun ⟨v, h, hp⟩ ↦ ⟨OrderDual.toDual v, (mem_toSetRel_toDual C).2 h, hp⟩⟩
+
+/-- The mirror image for necessity. -/
+theorem box_toSetRel_toDual (C : PointAlgebra) (P : T → Prop) (t : T) :
+    □[toSetRel C] (fun u : Tᵒᵈ ↦ P (OrderDual.ofDual u)) (OrderDual.toDual t) ↔
+      □[toSetRel C⁻¹] P t :=
+  ⟨fun h v hv ↦ h (OrderDual.toDual v) ((mem_toSetRel_toDual C).2 hv),
+    fun h v hv ↦ h (OrderDual.ofDual v) ((mem_toSetRel_toDual C).1 hv)⟩
 
 -- The next five lemmas include the B-series definitions of `P`, `F`, `G` and `H` in [prior-1967]
 -- (p. 38).
