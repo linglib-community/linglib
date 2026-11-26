@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Index
+public import Linglib.Logic.Modal.Index.Defs
 public import Linglib.Logic.Modal.Defs
 
 /-!

@@ -8,7 +8,7 @@ module
 public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Order.Monotone.Defs
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Index.Rel
+public import Linglib.Logic.Modal.Index
 
 /-!
 # T × W tense-modal logic: frames, language and satisfaction

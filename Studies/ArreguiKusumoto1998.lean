@@ -6,6 +6,7 @@ public import Linglib.Semantics.Composition.Interpret
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Quantificational
+public import Linglib.Logic.Temporal.IntervalModality
 public import Linglib.Semantics.Tense.Before
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Data.Part
-public import Linglib.Semantics.Index
+public import Linglib.Logic.Modal.Index.Defs
 public import Linglib.Core.Order.BoundedComplete
 public import Mathlib.Basic.Rel
 public import Mathlib.Data.PFun
