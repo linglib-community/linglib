@@ -3,7 +3,8 @@ module
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Postulates
-public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Voice.Basic
 public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Data.Examples.MartinRoseNichols2025
 public import Linglib.Data.Examples.Readers
@@ -417,7 +418,7 @@ theorem survey_omission_iff : ∀ v, (survey v).omission ↔
   decide
 
 theorem survey_alternating_iff : ∀ v, v ≠ .cool →
-    ((survey v).alternating ↔ v.entry.valency.HasCausativeAlternation) := by
+    ((survey v).alternating ↔ v.entry.Alternates .anticausative) := by
   decide
 
 /-- The section of Levin's catalogue that a verb type of Table 3 names. -/

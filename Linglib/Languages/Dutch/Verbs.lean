@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Dutch verbs
@@ -29,6 +29,7 @@ tested against them.
 * `Dutch.Verbs.Verb`: the entry.
 * `Dutch.Verbs.Verb.pastParticiple`: the past participle, from the formation.
 * `Dutch.Verbs.Verb.withPath`: the entry with a path phrase.
+* `Dutch.Verbs.unaccusatives`: the entries the grammar classes as unaccusative.
 * `Dutch.Verbs.perfectAuxiliary`: the auxiliary of the perfect of a verb on a frame.
 * `Dutch.Verbs.inventory`: the entries.
 
@@ -53,7 +54,6 @@ tested against them.
 * [H. Broekhuis and N. Corver, *Syntax of Dutch, Volume I: Verbs and Verb Phrases 1:
   Characterization, Classification and Lexical Projection* (2026)][broekhuis-corver-2026e]
 * [broekhuis-corver-2026f]
-* [levin-hovav-1995]
 * [sorace-2000]
 -/
 
@@ -89,7 +89,7 @@ structure Verb extends _root_.Verb where
   formation : Formation := .simplex
   /-- The third person singular present, where the entry lists it, as *laat* of *laten*. -/
   present : Option String := none
-  deriving BEq
+  deriving DecidableEq
 
 namespace Verb
 
@@ -199,8 +199,7 @@ def herhalen : Verb := prefixVerb "her" halen
 /-! ### Monadic verbs
 
 The monadic verbs of [sorace-2000]'s Dutch examples and of the grammar's discussion of motion
-verbs, each with the auxiliaries of its perfect and, for an unaccusative verb, the voice the
-grammar's unaccusativity tests assign it (§2.1), which introduces no external argument. -/
+verbs, each with the auxiliaries of its perfect. -/
 
 /-- *komen* 'come', *kom - kwam - gekomen*, an unaccusative verb of motion to a goal. -/
 def komen : Verb :=
@@ -213,7 +212,7 @@ def komen : Verb :=
 gestorven*. -/
 def sterven : Verb :=
   { simplex "sterven" "gestorven" with
-    voiceType := some .nonThematic, perfectAuxiliaries := {.be},
+    perfectAuxiliaries := {.be},
     valency := .ofFrame ArgumentFrame.intransitive [some {.changeOfState, .causallyAffected}] }
 
 /-- *groeien* 'grow', an unaccusative verb of change along a scale of size. -/
@@ -230,12 +229,11 @@ def stijgen : Verb :=
     valency := .ofFrame ArgumentFrame.intransitive,
     gradability := some { dimension := .height } }
 
-/-- *blijven* 'stay' is an unaccusative verb expressing that a state continues to exist (§1.2),
-with the auxiliary *zijn*, as in *Was dan ook wat langer gebleven!* 'You should have stayed a bit
-longer!'. -/
+/-- *blijven* 'stay' expresses that a state continues to exist (§1.2), with the auxiliary
+*zijn*, as in *Was dan ook wat langer gebleven!* 'You should have stayed a bit longer!'. -/
 def blijven : Verb :=
   { simplex "blijven" "gebleven" with
-    voiceType := some .nonThematic, perfectAuxiliaries := {.be},
+    perfectAuxiliaries := {.be},
     valency := .ofFrame ArgumentFrame.intransitive,
     phasal := some .continuation }
 
@@ -248,11 +246,11 @@ def duren : Verb :=
     perfectAuxiliaries := {.have},
     valency := .ofFrame ArgumentFrame.intransitive }
 
-/-- *staan* 'stand' is a stative verb of location, an atelic unaccusative verb with *hebben*, as
-in *Jan heeft lang op het perron gestaan*. -/
+/-- *staan* 'stand' is a stative verb of location with *hebben*, as in *Jan heeft lang op het
+perron gestaan*. -/
 def staan : Verb :=
   { simplex "staan" "gestaan" with
-    voiceType := some .nonThematic, perfectAuxiliaries := {.have},
+    perfectAuxiliaries := {.have},
     valency := .ofFrame ArgumentFrame.intransitive }
 
 /-- *bestaan* 'exist', formed on *staan* with the prefix *be-*. -/
@@ -270,8 +268,7 @@ def werken : Verb :=
     perfectAuxiliaries := {.have},
     valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile] }
 
-/-- *lopen* 'walk, run', *loop - liep - gelopen*, an agentive verb of manner of motion, intransitive
-([levin-hovav-1995] p. 148). -/
+/-- *lopen* 'walk, run', *loop - liep - gelopen*, an intransitive verb of manner of motion. -/
 def lopen : Verb :=
   { simplex "lopen" "gelopen" with
     perfectAuxiliaries := {.be, .have},
@@ -286,11 +283,10 @@ def wandelen : Verb :=
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
     direction := some .place }
 
-/-- *rollen* 'roll', a nonagentive verb of manner of motion, unaccusative ([levin-hovav-1995]
-pp. 147–148) and atelic. -/
+/-- *rollen* 'roll', an intransitive verb of manner of motion. -/
 def rollen : Verb :=
   { simplex "rollen" "gerold" with
-    voiceType := some .nonThematic, perfectAuxiliaries := {.be, .have},
+    perfectAuxiliaries := {.be, .have},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
     direction := some .place }
 
@@ -303,6 +299,13 @@ def Verb.withPath (v : Verb) (p : Locative) : Verb :=
 @[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Locative) :
     (v.withPath p).toVerb = v.toVerb.withPath p := rfl
 
+/-- The verbs of the inventory that [broekhuis-corver-2026e] class as unaccusative: *groeien* and
+*sterven* in the sample of unaccusative verbs (29), *stijgen* in the discussion of nominalization
+in *-er*, *komen* in that of particle verbs with a prepositional object, and *staan* with the
+location verbs. By Table 3 an unaccusative verb has a theme as its subject and no impersonal
+passive, and its participle is used attributively when it is telic. -/
+def unaccusatives : List Verb := [komen, sterven, groeien, stijgen, staan]
+
 /-- The auxiliary of the perfect of `v` on the frame `fr` ([broekhuis-corver-2026e] §§2.1–2.2) is
 *zijn* on an intransitive frame for a verb of motion with a direction, as a directional phrase
 gives a verb of manner of motion one, and for an unaccusative verb that denotes a transition from
@@ -311,7 +314,7 @@ one state to another, to an endpoint or along a scale, the grammar's telic unacc
 transition, and *zijn* for *blijven*, whose state continues. -/
 def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
   if v.phasal = some .continuation then .be
-  else if fr.IsIntransitive ∧ ((∃ d ∈ v.direction, d ≠ .place) ∨ v.IsUnaccusative ∧
+  else if fr.IsIntransitive ∧ ((∃ d ∈ v.direction, d ≠ .place) ∨ v ∈ unaccusatives ∧
       ((∃ θ ∈ v.slotProfile? .external, .changeOfState ∈ θ) ∨ v.gradability.isSome)) then .be
   else .have
 

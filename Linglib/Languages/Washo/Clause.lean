@@ -127,7 +127,6 @@ def suus : Verb where
 def gumsuus : Verb :=
   { suus with
     morphs := gum :: suus.morphs
-    voiceType := some .reflexive
     valency := .ofFrame ArgumentFrame.intransitive
     typer := aq }
 

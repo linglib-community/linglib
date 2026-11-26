@@ -7,7 +7,7 @@ public import Linglib.Syntax.Voice.Basic
 
 Japanese has two passives in *-(r)are-*. The direct passive makes the object the subject and
 demotes the agent, which may be marked by *niyotte*; it needs a verb that introduces an
-external argument (`Verb.HasExternalArgument`), so an unaccusative has none. The indirect or
+external argument, so an unaccusative has none. The indirect or
 adversative passive adds an affected participant as subject to a verb of any frame,
 unaccusatives included, the initial subject taking *ni* only; the substitution of *niyotte* is
 Jo and Seo's test for the two.

@@ -507,21 +507,18 @@ def exist : Verb where
   morphs := [.root "exist"]
   levin := some Levin1993.Index.exist
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .nonThematic
 
 /-- *appear*, an unaccusative verb of appearance (48.1.1). -/
 def appear : Verb where
   morphs := [.root "appear"]
   levin := some Levin1993.Index.appear
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .nonThematic
 
 /-- *die*, an unaccusative verb of disappearance (48.2), the change that *kill* causes. -/
 def die : Verb where
   morphs := [.root "die"]
   levin := some Levin1993.Index.die
   valency := .ofFrame ArgumentFrame.intransitive
-  voiceType := some .nonThematic
 
 /-- "fidget" — Levin 49 Body-Internal Motion verbs. -/
 def fidget : Verb where
