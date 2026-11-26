@@ -6,7 +6,9 @@ public import Linglib.Languages.Dutch.Pronouns
 public import Linglib.Languages.English.Pronouns
 public import Linglib.Morphology.Exponence.SubsetRule
 public import Linglib.Morphology.Word.Leipzig
+public import Linglib.Semantics.Plurality.Configuration
 public import Linglib.Syntax.Feature.Person.Configuration
+public import Linglib.Syntax.Feature.Person.Referent
 public import Linglib.Syntax.Feature.Person.Specification
 public import Studies.Cysouw2003
 public import Studies.Harbour2016
@@ -35,9 +37,11 @@ system then has no inclusive without number, its two obligatory members exceedin
 which leaves three pronouns without number and four with `AUG`; a relative system has the
 inclusive of exactly two. The sets a number node is used for are those of the number value it
 is named after: the singular, the plural and the dual in an absolute system, and the minimal, the
-augmented and the unit augmented in a relative one. Without a dual, the pronouns of an absolute
-system divide the referential categories as Cysouw's Mandara type does and those of a relative
-system as his Maranao type.
+augmented and the unit augmented in a relative one. Among the referents of a person, the nodes of
+an absolute system select what Harbour's `[±atomic]` selects and those of a relative system what
+his `[±minimal]` selects. Without a dual, the pronouns of an absolute system divide the
+referential categories as Cysouw's Mandara type does and those of a relative system as his
+Maranao type.
 
 Only `[DIST]` can deliver the empty set, and no number node but the one with no feature allows a
 cardinality of zero, so an expletive is a third person pronoun without number. Spell-out rules
@@ -79,6 +83,7 @@ plural paradigm that Harbour's parameters generate into one they never generate.
 * [P. Ackema and A. Neeleman, *Features of Person: From the Inventory of Persons to Their
   Morphological Realization* (2018)][ackema-neeleman-2018]
 * [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
+* [D. Harbour, *Paucity, Abundance, and the Theory of Number* (2014)][harbour-2014]
 * [D. Harbour, *Impossible Persons* (2016)][harbour-2016]
 -/
 
@@ -218,15 +223,15 @@ variable (S : PersonSpace α)
 predecessor is `Sᵢ`. -/
 def layered : Layered (Finset α) := ⟨S.Siuo, [S.Siu, S.Si]⟩
 
-/-- The bearer of a discourse role. -/
-def atom : Role → α
+/-- The holder of a discourse role. -/
+def holder : Role → α
   | .speaker => S.speaker
   | .addressee => S.addressee
 
 theorem speaker_ne_addressee : S.speaker ≠ S.addressee := fun h ↦
   S.addressee_notMem (h ▸ S.speaker_mem)
 
-theorem atom_injective : Function.Injective S.atom := by
+theorem holder_injective : Function.Injective S.holder := by
   rintro (_ | _) (_ | _) h
   exacts [rfl, absurd h S.speaker_ne_addressee, absurd h.symm S.speaker_ne_addressee, rfl]
 
@@ -243,34 +248,23 @@ def roles : PersonSpace Role :=
 
 variable [DecidableEq α]
 
-/-- The discourse roles whose bearers are in a set. -/
-def rolesIn (s : Finset α) : Finset Role := Finset.univ.filter (S.atom · ∈ s)
+/-- The configuration of a set in the space: the discourse roles whose holders it contains and
+the number of its other members. -/
+abbrev config (s : Finset α) : Person.Configuration := .ofFinset S.holder s
 
-/-- The configuration of a set: the discourse roles whose bearers it contains and the number of
-its other members. -/
-def config (s : Finset α) : Person.Configuration := ⟨S.rolesIn s, s.card - (S.rolesIn s).card⟩
+theorem participants_config_Si : (S.config S.Si).participants = {.speaker} := by
+  ext r; cases r <;> simp [holder, S.speaker_mem, S.addressee_notMem]
 
-theorem rolesIn_Si : S.rolesIn S.Si = {.speaker} := by
-  ext r; cases r <;> simp [rolesIn, atom, S.speaker_mem, S.addressee_notMem]
+theorem participants_config_Siu : (S.config S.Siu).participants = .univ := by
+  ext r; cases r <;> simp [holder, S.Si_subset S.speaker_mem, S.addressee_mem]
 
-theorem rolesIn_Siu : S.rolesIn S.Siu = .univ := by
-  ext r; cases r <;> simp [rolesIn, atom, S.Si_subset S.speaker_mem, S.addressee_mem]
-
-theorem rolesIn_Siuo : S.rolesIn S.Siuo = .univ := by
+theorem participants_config_Siuo : (S.config S.Siuo).participants = .univ := by
   ext r
-  cases r <;> simp [rolesIn, atom, S.Siu_subset (S.Si_subset S.speaker_mem),
+  cases r <;> simp [holder, S.Siu_subset (S.Si_subset S.speaker_mem),
     S.Siu_subset S.addressee_mem]
 
-theorem rolesIn_sdiff (s t : Finset α) :
-    S.rolesIn (s \ t) = S.rolesIn s \ S.rolesIn t := by
-  ext; simp [rolesIn]
-
-theorem card_rolesIn_le (s : Finset α) : (S.rolesIn s).card ≤ s.card :=
-  Finset.card_le_card_of_injOn S.atom (fun _ hr ↦ (Finset.mem_filter.1 hr).2)
-    S.atom_injective.injOn
-
 theorem card_config (s : Finset α) : (S.config s).card = s.card :=
-  Nat.add_sub_cancel' (S.card_rolesIn_le s)
+  Person.Configuration.card_ofFinset S.holder_injective s
 
 end PersonSpace
 
@@ -341,18 +335,19 @@ the speaker and the addressee alone. -/
 def participants (fs : List Feature) : Option (Finset Role) :=
   (PersonSpace.roles.layered.eval fs).map (·.set)
 
-theorem rolesIn_eval (fs : List Feature) :
-    (S.layered.eval fs).map (S.rolesIn ·.set) = participants fs := by
-  have h := Layered.eval_map (g := S.rolesIn) S.rolesIn_sdiff S.layered fs
-  rw [show S.layered.map S.rolesIn = PersonSpace.roles.layered by
-    simp [PersonSpace.layered, Layered.map, S.rolesIn_Si, S.rolesIn_Siu, S.rolesIn_Siuo,
-      PersonSpace.roles]] at h
+theorem participants_config_eval (fs : List Feature) :
+    (S.layered.eval fs).map (fun L ↦ (S.config L.set).participants) = participants fs := by
+  have h := Layered.eval_map (g := fun s ↦ (S.config s).participants)
+    (Person.Configuration.participants_ofFinset_sdiff S.holder) S.layered fs
+  rw [show S.layered.map (fun s ↦ (S.config s).participants) = PersonSpace.roles.layered by
+    simp [PersonSpace.layered, Layered.map, S.participants_config_Si, S.participants_config_Siu,
+      S.participants_config_Siuo, PersonSpace.roles]] at h
   simp [participants, h, Function.comp_def, Layered.map]
 
 variable {S} in
 theorem participants_eq_of_eval (h : S.layered.eval fs = some L) :
-    participants fs = some (S.rolesIn L.set) := by
-  simpa [h] using (rolesIn_eval S fs).symm
+    participants fs = some (S.config L.set).participants := by
+  simpa [h] using (participants_config_eval S fs).symm
 
 -- the four persons deliver the participant sets of the four person specifications
 theorem participants_persons :
@@ -522,7 +517,8 @@ structure Pronoun.Denotes (σ : NumberSystem) (N : List (List NumberFeature)) (p
   /-- Number is not defined on the input of person. -/
   ne_layered : L ≠ S.layered
   /-- The number node expresses the cardinality of the set. -/
-  expresses : Expresses N (σ.referenceNumber (S.rolesIn L.set).card) L.set.card p.number
+  expresses :
+    Expresses N (σ.referenceNumber (S.config L.set).participants.card) L.set.card p.number
 
 instance : Decidable (p.Denotes σ N S L) := decidable_of_iff' _ (Pronoun.denotes_iff ..)
 
@@ -592,25 +588,34 @@ private theorem exists_config_eq {fs : List Feature} {x : Person.Configuration} 
   obtain ⟨P, k⟩ := x
   obtain ⟨L, hL, rfl⟩ := Option.map_eq_some_iff.1 h
   have h2 : (Finset.univ : Finset Role).card = 2 := rfl
+  have ho (S : PersonSpace ℕ) (s : Finset ℕ) :=
+    Person.Configuration.others_ofFinset S.holder_injective s
   rcases eq_nil_or_of_eval hL with rfl | rfl | rfl | rfl | rfl <;> obtain rfl := Option.some.inj hL
   · exact absurd rfl hfs
   · refine ⟨space k 0 0, _, eval_inclusive _,
-      Person.Configuration.ext (PersonSpace.rolesIn_Siu _) ?_⟩
-    simp only [PersonSpace.config, PersonSpace.rolesIn_Siu]
+      Person.Configuration.ext (PersonSpace.participants_config_Siu _) ?_⟩
+    rw [ho, PersonSpace.participants_config_Siu]
     simp [space, h2]
-  · refine ⟨space k 0 0, _, eval_first _, Person.Configuration.ext (PersonSpace.rolesIn_Si _) ?_⟩
-    simp only [PersonSpace.config, PersonSpace.rolesIn_Si]
+  · refine ⟨space k 0 0, _, eval_first _,
+      Person.Configuration.ext (PersonSpace.participants_config_Si _) ?_⟩
+    rw [ho, PersonSpace.participants_config_Si]
     simp [space]
-  · refine ⟨space 0 k 0, _, eval_second _, Person.Configuration.ext ?_ ?_⟩ <;>
-      simp only [PersonSpace.config, PersonSpace.rolesIn_sdiff, PersonSpace.rolesIn_Siu,
-        PersonSpace.rolesIn_Si, Finset.card_sdiff_of_subset (PersonSpace.Si_subset _)]
-    · decide
-    · simp [space, show (Finset.univ \ {Role.speaker} : Finset Role).card = 1 from rfl]
-  · refine ⟨space 0 0 k, _, eval_third _, Person.Configuration.ext ?_ ?_⟩ <;>
-      simp only [PersonSpace.config, PersonSpace.rolesIn_sdiff, PersonSpace.rolesIn_Siu,
-        PersonSpace.rolesIn_Siuo, Finset.card_sdiff_of_subset (PersonSpace.Siu_subset _)]
-    · decide
-    · simp [space]
+  · have hp : ((space 0 k 0).config ((space 0 k 0).Siu \ (space 0 k 0).Si)).participants =
+        {.addressee} := by
+      rw [Person.Configuration.participants_ofFinset_sdiff, PersonSpace.participants_config_Siu,
+        PersonSpace.participants_config_Si]
+      decide
+    refine ⟨space 0 k 0, _, eval_second _, Person.Configuration.ext hp ?_⟩
+    rw [ho, hp, Finset.card_sdiff_of_subset (PersonSpace.Si_subset _)]
+    simp [space]
+  · have hp : ((space 0 0 k).config ((space 0 0 k).Siuo \ (space 0 0 k).Siu)).participants =
+        ∅ := by
+      rw [Person.Configuration.participants_ofFinset_sdiff, PersonSpace.participants_config_Siuo,
+        PersonSpace.participants_config_Siu]
+      decide
+    refine ⟨space 0 0 k, _, eval_third _, Person.Configuration.ext hp ?_⟩
+    rw [ho, hp, Finset.card_sdiff_of_subset (PersonSpace.Siu_subset _)]
+    simp [space]
 
 -- the configurations a pronoun covers are those of the sets it denotes
 theorem covers_iff {x : Person.Configuration} (hp : p.person ≠ []) :
@@ -654,6 +659,57 @@ theorem covers_relative : ∀ fs ∈ persons, ∀ P ∈ participants fs,
   decide
 
 end Values
+
+section Harbour
+
+open Person.Configuration Mereology
+
+variable {fs : List Feature} {P : Finset Role} {x : Person.Configuration}
+
+theorem referenceNumber_relative (P : Finset Role) :
+    NumberSystem.relative.referenceNumber P.card = P.card + minimum P := by
+  rcases P.eq_empty_or_nonempty with rfl | h
+  · rfl
+  · simp [NumberSystem.referenceNumber, minimum_of_nonempty h, Finset.card_pos.2 h]
+
+-- an absolute system selects among the referents of a person by Harbour's `[±atomic]`: no
+-- feature the atoms, `AUG` the rest, and `AUG` with `MIN` the dual
+theorem covers_absolute_iff (hP : participants fs = some P) (hx : x ≠ ⊥) :
+    (Pronoun.Covers .absolute augMinNodes ⟨fs, []⟩ x ↔
+        x ∈ Number.Feature.restrict .atomic true (OfParticipants P)) ∧
+      (Pronoun.Covers .absolute augNodes ⟨fs, [.aug]⟩ x ↔
+        x ∈ Number.Feature.restrict .atomic false (OfParticipants P)) ∧
+      (Pronoun.Covers .absolute augMinNodes ⟨fs, [.aug, .min]⟩ x ↔
+        x ∈ Number.Feature.restrict .minimal true
+          (Number.Feature.restrict .atomic false (OfParticipants P))) := by
+  have h1 := ne_bot_iff_one_le_card.1 hx
+  have hm := ne_bot_iff_minimum_le.1 hx
+  simp only [Pronoun.Covers, hP, Option.some.injEq, expresses_augMinNodes_nil,
+    expresses_augNodes_aug, expresses_augMinNodes_aug_min, NumberSystem.referenceNumber,
+    Number.Feature.mem_restrict_atomic_true, Number.Feature.mem_restrict_atomic_false,
+    isAtom_iff_card_eq_one, ofParticipants_iff, dual_ofParticipants_iff]
+  refine ⟨?_, ?_, ?_⟩ <;> constructor <;>
+    first
+      | (rintro ⟨⟨rfl, -⟩, h⟩; exact ⟨rfl, by omega⟩)
+      | (rintro ⟨rfl, h⟩; exact ⟨⟨rfl, hm⟩, by omega⟩)
+
+-- a relative system selects by `[±minimal]`: no feature the `[+minimal]` referent, `AUG` the
+-- `[−minimal]` ones, and `AUG` with `MIN` the `[+minimal]` of those
+theorem covers_relative_iff (hP : participants fs = some P) (hx : x ≠ ⊥) :
+    (Pronoun.Covers .relative augMinNodes ⟨fs, []⟩ x ↔ x ∈ atomize (OfParticipants P)) ∧
+      (Pronoun.Covers .relative augNodes ⟨fs, [.aug]⟩ x ↔
+        x ∈ Number.Feature.restrict .minimal false (OfParticipants P)) ∧
+      (Pronoun.Covers .relative augMinNodes ⟨fs, [.aug, .min]⟩ x ↔
+        x ∈ atomize (Number.Feature.restrict .minimal false (OfParticipants P))) := by
+  obtain ⟨Q, k⟩ := x
+  have hm : minimum Q ≤ k := ne_bot_iff_minimum_le.1 hx
+  simp only [Pronoun.Covers, hP, Option.some.injEq, expresses_augMinNodes_nil,
+    expresses_augNodes_aug, expresses_augMinNodes_aug_min, referenceNumber_relative, card,
+    atomize_ofParticipants_iff, restrict_minimal_false_ofParticipants_iff,
+    atomize_restrict_minimal_false_ofParticipants_iff, Person.Configuration.mk.injEq]
+  refine ⟨?_, ?_, ?_⟩ <;> constructor <;> rintro ⟨rfl, h⟩ <;> exact ⟨rfl, by omega⟩
+
+end Harbour
 
 theorem map_categories_inventory :
     (inventory .absolute augNodes).map (·.categories .absolute augNodes) =

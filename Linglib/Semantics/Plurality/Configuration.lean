@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.Minimal
 public import Linglib.Semantics.Plurality.Cardinality
 public import Linglib.Semantics.Plurality.Number
 public import Linglib.Syntax.Feature.Person.Configuration
@@ -23,15 +22,12 @@ member](##Person.Configuration.isAtom_iff_card_eq_one), so [the speaker with the
 singular](##Person.Configuration.not_atom_of_participants_eq_univ), and [the dual of a region is
 its referents of two members](##Person.Configuration.dual_ofParticipants_iff).
 
-Among finite sets of individuals, two of them the speaker and the addressee, a set is minimal
-in a region defined by configuration [exactly when its configuration
-is](##Person.Configuration.minimal_ofFinset_iff), so these statements hold of the referents
-themselves.
+These statements hold of the sets of individuals themselves, minimality passing between a set
+and its configuration (`Syntax/Feature/Person/Referent.lean`).
 
 ## Main definitions
 
 * `Person.Configuration.OfParticipants`: the region of the referents with given participants.
-* `Person.Configuration.ofFinset`: the configuration of a finite set of individuals.
 
 ## References
 
@@ -171,96 +167,6 @@ theorem dual_ofParticipants_iff :
     have := hy.2
     simp only
     omega
-
-/-! ### The configuration of a set of individuals -/
-
-section Finset
-
-variable {ι : Type*} [DecidableEq ι] (a b : ι) {u : Finset ι} {r : Role} {z : ι}
-
-/-- The individual holding a role, `a` the speaker and `b` the addressee. -/
-def holder : Role → ι
-  | .speaker => a
-  | .addressee => b
-
-/-- The configuration of a set of individuals of whom `a` is the speaker and `b` the addressee:
-the roles whose holders it contains and the number of its other members. -/
-def ofFinset (u : Finset ι) : Configuration :=
-  ⟨Finset.univ.filter fun r ↦ holder a b r ∈ u, ((u.erase a).erase b).card⟩
-
-theorem mem_participants_ofFinset : r ∈ (ofFinset a b u).participants ↔ holder a b r ∈ u := by
-  simp [ofFinset]
-
-private theorem mem_erase_erase : z ∈ (u.erase a).erase b ↔ z ≠ b ∧ z ≠ a ∧ z ∈ u := by simp
-
-theorem ofFinset_mono : Monotone (ofFinset a b (ι := ι)) := fun _ _ hvu ↦
-  ⟨fun _ hr ↦ (mem_participants_ofFinset a b).2 (hvu ((mem_participants_ofFinset a b).1 hr)),
-    Finset.card_le_card (Finset.erase_subset_erase _ (Finset.erase_subset_erase _ hvu))⟩
-
-/-- A proper part of a set of individuals has a strictly smaller configuration. -/
-theorem ofFinset_strictMono : StrictMono (ofFinset a b (ι := ι)) := fun v u hlt ↦ by
-  refine lt_of_le_of_ne (ofFinset_mono a b hlt.le) fun h ↦
-    hlt.ne (le_antisymm hlt.le fun z hz ↦ ?_)
-  have hr : (ofFinset a b v).participants = (ofFinset a b u).participants :=
-    congrArg participants h
-  have ho : (v.erase a).erase b = (u.erase a).erase b :=
-    Finset.eq_of_subset_of_card_le
-      (Finset.erase_subset_erase _ (Finset.erase_subset_erase _ hlt.le))
-      (congrArg others h).ge
-  by_cases hza : z = a
-  · subst hza
-    exact (mem_participants_ofFinset z b (r := .speaker)).1
-      (hr ▸ (mem_participants_ofFinset z b (r := .speaker)).2 hz)
-  by_cases hzb : z = b
-  · subst hzb
-    exact (mem_participants_ofFinset a z (r := .addressee)).1
-      (hr ▸ (mem_participants_ofFinset a z (r := .addressee)).2 hz)
-  exact ((mem_erase_erase a b).1 (ho ▸ (mem_erase_erase a b).2 ⟨hzb, hza, hz⟩)).2.2
-
-/-- Every configuration below that of a set of individuals is the configuration of a part of
-it, the speaker and the addressee being distinct. -/
-theorem exists_le_ofFinset_eq (hab : a ≠ b) {y : Configuration} (h : y ≤ ofFinset a b u) :
-    ∃ v ≤ u, ofFinset a b v = y := by
-  obtain ⟨t, m⟩ := y
-  obtain ⟨ht, hm⟩ := h
-  obtain ⟨o, ho, rfl⟩ := Finset.exists_subset_card_eq (show m ≤ ((u.erase a).erase b).card from hm)
-  have hinj : Function.Injective (holder a b) := by
-    intro r r' h
-    cases r <;> cases r' <;> simp_all [holder]
-  have ho' : ∀ z ∈ o, z ≠ b ∧ z ≠ a ∧ z ∈ u := fun z hz ↦ (mem_erase_erase a b).1 (ho hz)
-  refine ⟨t.image (holder a b) ∪ o, fun z hz ↦ ?_, Configuration.ext ?_ ?_⟩
-  · rcases Finset.mem_union.1 hz with hz | hz
-    · obtain ⟨r, hr, rfl⟩ := Finset.mem_image.1 hz
-      exact (mem_participants_ofFinset a b).1 (ht hr)
-    · exact (ho' z hz).2.2
-  · ext r
-    simp only [mem_participants_ofFinset, Finset.mem_union, Finset.mem_image]
-    constructor
-    · rintro (⟨r', hr', h⟩ | h)
-      · exact hinj h ▸ hr'
-      · cases r
-        · exact absurd rfl (ho' _ h).2.1
-        · exact absurd rfl (ho' _ h).1
-    · exact fun hr ↦ Or.inl ⟨r, hr, rfl⟩
-  · change (((t.image (holder a b) ∪ o).erase a).erase b).card = o.card
-    congr 1
-    ext z
-    simp only [mem_erase_erase, Finset.mem_union, Finset.mem_image]
-    constructor
-    · rintro ⟨hb, ha, ⟨r, -, rfl⟩ | h⟩
-      · cases r
-        · exact absurd rfl ha
-        · exact absurd rfl hb
-      · exact h
-    · exact fun hz ↦ ⟨(ho' z hz).1, (ho' z hz).2.1, Or.inr hz⟩
-
-/-- A set of individuals is minimal among those whose configuration lies in a region exactly
-when its configuration is minimal in the region. -/
-theorem minimal_ofFinset_iff (hab : a ≠ b) {P : Configuration → Prop} :
-    Minimal (fun v ↦ P (ofFinset a b v)) u ↔ Minimal P (ofFinset a b u) :=
-  minimal_comp_iff_of_strictMono (ofFinset_strictMono a b) fun _ _ ↦ exists_le_ofFinset_eq a b hab
-
-end Finset
 
 end Person.Configuration
 
