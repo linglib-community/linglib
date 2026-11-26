@@ -5,13 +5,10 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.Finset.Lattice.Fold
-public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Syntax.Feature.Person.Defs
 public import Mathlib.Data.Finset.Sups
 public import Mathlib.Data.Fintype.Powerset
-public import Mathlib.Order.Concept
 
 /-!
 # Participant sets
@@ -19,8 +16,9 @@ public import Mathlib.Order.Concept
 Every act of speech has a speaker and an addressee. The *participant set* of a referent is the
 set of these two roles it includes: the speaker, the addressee, both or neither. *I* refers to
 someone whose participant set is the speaker alone, and an inclusive *we* to a group whose
-participant set has both. This file says what the person values, the clusivities and the person
-features refer to, in terms of participant sets.
+participant set has both. This file says what the person values and the clusivities refer to,
+in terms of participant sets. What the person features refer to is in
+`Syntax/Feature/Person/Geometry.lean`.
 
 Each person covers some participant sets: the third person the set with neither role, the
 second the addressee alone, and the first the speaker with or without the addressee. A
@@ -33,35 +31,20 @@ An inclusive form's referents include the addressee and an exclusive form's do n
 clusivity narrows the participant sets of a person: with the first person it gives the
 inclusive or the exclusive first person.
 
-[participant] is about both roles, [speaker] about the speaker and [addressee] about the
-addressee, and a participant set bears a feature when it includes a role the feature is about.
-A group includes a role as soon as one of its members does, so a union bears a feature exactly
-when one of its parts does. [speaker] and [addressee] each depend on [participant]: a
-participant set that bears either bears [participant]. The dependency is entailment, one
-feature depending on another exactly when every participant set that bears the first bears the
-second. Harley and Ritter note that in a geometry not every entailment is a dependence; among
-the person features the two coincide. A bundle of features is well formed when it contains
-[participant] whenever it contains either of the others. There are five well-formed bundles,
-they are exactly the bundles that some family of participant sets has in common, and with all
-three features no two participant sets have the same bundle.
-
 ## Main definitions
 
 * `Person.participantSets p`: the participant sets the person `p` covers.
 * `Person.ofParticipants s`: the person of the participant set `s`.
 * `Clusivity.Holds c s`: `s` contains the addressee for the inclusive, and does not for the
   exclusive.
-* `Bears s f`: the participant set `s` includes a role that the feature `f` is about.
-* `bundle F s`: the features of the inventory `F` that `s` bears.
 
 ## Main results
 
 * `Person.le_iff_exists_subset`: one person lies below another exactly when a referent of the
   first is part of a referent of the second.
 * `Person.ofParticipants_union`: the person of a union is the larger of the persons.
-* `Feature.le_iff_forall_bears`: dependency is entailment.
-* `wellFormed_iff_isIntent`: the well-formed bundles are those some family of participant sets
-  has in common.
+* `Person.ne_third_iff_forall_nonempty`: the first and the second person are those of the
+  speech-act participants.
 
 ## Implementation notes
 
@@ -72,20 +55,12 @@ The order on the person values is given here and not with the values, since it i
 their referents. It is computed from the position of a value, and a theorem states it of the
 participant sets.
 
-The dependency among the features is given here for the same reason: that [speaker] and
-[addressee] depend on [participant], and not the reverse, supposes what the features are about.
-It is given by cases, and a theorem states it as entailment between features.
-
 ## References
 
 * [zwicky-1977b]
 * [dalrymple-kaplan-2000]
 * [cysouw-2003]
 * [siewierska-2004]
-* [halle-1997]
-* [bejar-rezac-2009]
-* [harley-ritter-2002]
-* [harbour-2016]
 -/
 
 @[expose] public section
@@ -258,118 +233,3 @@ theorem restrict_inclusive_third :
   decide
 
 end Clusivity
-
-/-! ### The roles of a feature -/
-
-namespace Person
-
-namespace Feature
-
-/-- [speaker] and [addressee] depend on [participant]: `f ≤ g` when `g` depends on `f`. A
-participant set that bears a feature bears every feature it depends on. -/
-instance : PartialOrder Feature where
-  le f g := f = participant ∨ f = g
-  le_refl _ := .inr rfl
-  le_trans := by rintro _ _ _ (rfl | rfl) h <;> [exact .inl rfl; exact h]
-  le_antisymm := by rintro _ _ (rfl | rfl) (h | h) <;> first | rfl | exact h.symm
-
-theorem le_iff {f g : Feature} : f ≤ g ↔ f = participant ∨ f = g := Iff.rfl
-
-instance : DecidableLE Feature := fun f g ↦ inferInstanceAs (Decidable (f = participant ∨ f = g))
-
-instance : OrderBot Feature where
-  bot := participant
-  bot_le _ := .inl rfl
-
-@[simp] theorem bot_eq_participant : (⊥ : Feature) = participant := rfl
-
-/-- The roles a feature is about. -/
-def roles : Feature → Finset Role
-  | participant => univ
-  | speaker => {.speaker}
-  | addressee => {.addressee}
-
-@[simp] theorem roles_participant : participant.roles = univ := rfl
-@[simp] theorem roles_speaker : speaker.roles = {.speaker} := rfl
-@[simp] theorem roles_addressee : addressee.roles = {.addressee} := rfl
-
-theorem roles_injective : Function.Injective roles := by decide
-
-theorem roles_nonempty (f : Feature) : f.roles.Nonempty := by cases f <;> decide
-
-/-- The features are about the nonempty sets of roles, one feature for each. -/
-theorem exists_roles_eq_iff {A : Finset Role} : (∃ f : Feature, f.roles = A) ↔ A.Nonempty := by
-  revert A; decide
-
-/-- A feature depends on another exactly when it is about fewer roles. -/
-theorem le_iff_roles_subset {f g : Feature} : f ≤ g ↔ g.roles ⊆ f.roles := by
-  revert f g; decide
-
-end Feature
-
-theorem not_wellFormed_singleton_speaker :
-    ¬ IsLowerSet (↑({.speaker} : Features) : Set Feature) := by
-  decide
-
--- (25), (26) [harley-ritter-2002]
-theorem card_wellFormed : Fintype.card {t : Features // IsLowerSet (↑t : Set Feature)} = 5 := by
-  decide
-
-/-! ### The context of participant sets and features -/
-
-/-- A participant set bears a feature when it includes a role the feature is about:
-[participant] when it is nonempty, [speaker] when it contains the speaker and [addressee] when it
-contains the addressee. -/
-def Bears (s : Finset Role) (f : Feature) : Prop := ¬ Disjoint s f.roles
-
-instance (s : Finset Role) : DecidablePred (Bears s) := fun _ ↦ inferInstanceAs (Decidable (¬ _))
-
-@[simp] theorem bears_participant {s : Finset Role} : Bears s .participant ↔ s.Nonempty := by
-  revert s; decide
-
-@[simp] theorem bears_speaker {s : Finset Role} : Bears s .speaker ↔ .speaker ∈ s := by
-  simp [Bears]
-
-@[simp] theorem bears_addressee {s : Finset Role} : Bears s .addressee ↔ .addressee ∈ s := by
-  simp [Bears]
-
-/-- Bearing a feature is preserved by union, and the empty set bears none. -/
-theorem bears_union {s t : Finset Role} {f : Feature} :
-    Bears (s ∪ t) f ↔ Bears s f ∨ Bears t f := by
-  simp only [Bears, disjoint_union_left, not_and_or]
-
-theorem Bears.participant {s : Finset Role} {f : Feature} (h : Bears s f) :
-    Bears s .participant :=
-  fun hd ↦ h (hd.mono_right (subset_univ _))
-
-/-- A feature depends on another exactly when bearing it entails bearing the other. -/
-theorem Feature.le_iff_forall_bears {f g : Feature} : f ≤ g ↔ ∀ s, Bears s g → Bears s f := by
-  revert f g; decide
-
-/-- The features of the inventory `F` a participant set bears, the features about any of its
-roles. The bundle of a union is the union of the bundles. -/
-def bundle (F : Features) : SupBotHom (Finset Role) Features :=
-  supBotLift fun r ↦ F.filter (r ∈ ·.roles)
-
-@[simp] theorem mem_bundle {F : Features} {s : Finset Role} {f : Feature} :
-    f ∈ bundle F s ↔ f ∈ F ∧ Bears s f := by
-  simp only [bundle, supBotLift_apply, mem_sup, mem_filter, Bears, not_disjoint_iff]
-  exact ⟨fun ⟨r, hr, hf, hrf⟩ ↦ ⟨hf, r, hr, hrf⟩, fun ⟨hf, r, hr, hrf⟩ ↦ ⟨r, hr, hf, hrf⟩⟩
-
-/-- The three features tell every participant set from every other. -/
-theorem bundle_univ_injective : Function.Injective (bundle univ) := by decide
-
-private theorem mem_upperPolar_lowerPolar (t : Features) (f : Feature) :
-    f ∈ upperPolar Bears (lowerPolar Bears (t : Set Feature)) ↔
-      ∀ s : Finset Role, (∀ g ∈ t, Bears s g) → Bears s f := by
-  simp [mem_upperPolar_iff, mem_lowerPolar_iff]
-
-/-- The bundles closed under dependency are exactly the closed sets of features of the
-context. -/
-theorem wellFormed_iff_isIntent (t : Features) :
-    IsLowerSet (↑t : Set Feature) ↔ IsIntent Bears (t : Set Feature) := by
-  rw [isIntent_iff, Set.ext_iff]
-  simp only [mem_upperPolar_lowerPolar, Finset.mem_coe]
-  revert t; decide
-
-end Person

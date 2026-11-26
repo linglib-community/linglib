@@ -9,7 +9,7 @@ public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Languages.Turkish.ObjectMarking
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Definiteness
-public import Linglib.Syntax.Feature.Person.Class
+public import Linglib.Syntax.Feature.Person.Scale
 public import Linglib.Syntax.Voice.Causativization
 public import Linglib.Syntax.Clause.Relative
 public import Linglib.Data.Examples.Readers
@@ -124,7 +124,7 @@ def acceptable : List Datum := Examples.all.filter (·.judgment = .acceptable)
 
 /-- An argument's prominence is its person, animacy and degree of definiteness, ordered
 componentwise. -/
-abbrev Prominence := Person.Class × Animacy × Definiteness
+abbrev Prominence := Person.Scale × Animacy × Definiteness
 
 /-- One argument's marking in a row records its role, the parameters the book invokes for the
 language, and the marking its position takes. -/
@@ -132,7 +132,7 @@ structure Marking where
   /-- A or P; S, taking the unmarked case, has no row. -/
   role : ArgumentRole
   /-- Whether the argument is a speech-act participant, where the marking consults it. -/
-  person : Option Person.Class
+  person : Option Person.Scale
   /-- The argument's animacy, where the marking consults it. -/
   animacy : Option Animacy
   /-- The argument's degree of definiteness, where the marking consults it. -/
@@ -143,10 +143,10 @@ structure Marking where
 
 /-- The animacy labels of the rows, read as person and animacy apart, the speech-act
 participants being human and the nouns third person. -/
-def animacyNames : List (String × (Person.Class × Animacy)) :=
-  [("speaker", (.participant, .human)), ("addressee", (.participant, .human)),
-    ("human", (.nonParticipant, .human)), ("animal", (.nonParticipant, .animate)),
-    ("inanimate", (.nonParticipant, .inanimate))]
+def animacyNames : List (String × (Person.Scale × Animacy)) :=
+  [("speaker", (.locuphoric, .human)), ("addressee", (.locuphoric, .human)),
+    ("human", (.aliophoric, .human)), ("animal", (.aliophoric, .animate)),
+    ("inanimate", (.aliophoric, .inanimate))]
 
 /-- The markings a row records, one per argument whose marking it gives, under the key
 prefixes `A.` and `P.`; a row whose marking the book attributes to a parameter beside the

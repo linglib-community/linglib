@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Order.Minimal
 public import Linglib.Syntax.Feature.Person.Category
 
 /-!
@@ -25,23 +26,38 @@ A number label covers the configurations of a person's region by their size: the
 of one member, the minimal the smallest of the region and the augmented the rest. A person, a
 clusivity and a number together thus cover some of the referential categories.
 
+A finite set of individuals has a configuration once each role has a holder: the roles whose
+holders it contains, with the number of its members that hold no role. A part of a set has a
+configuration below that of the set, and where the two roles have different holders a set is
+minimal among those whose configuration lies in a region exactly when its configuration is
+minimal in the region. Statements about minimal configurations, such as the minimal and the unit
+augmented number, then hold of the referents themselves.
+
 ## Main definitions
 
 * `Configuration`: the participants of a referent and the number of its others.
 * `Configuration.category x`: the referential category of `x`.
 * `Category.ofPersonNumber p cl n`: the categories that the person `p`, the optional clusivity
   `cl` and the number `n` cover.
+* `Configuration.ofFinset h u`: the configuration of the set `u` of individuals, `h` giving the
+  holder of each role.
 
 ## Main results
 
 * `Configuration.category_eq_some_iff`: every configuration but the empty one has exactly one
   category.
 * `Category.ofPersonNumber_inclusive_singular`: the inclusive has no singular.
+* `Configuration.minimal_ofFinset_iff`: a set is minimal among those whose configuration lies in
+  a region exactly when its configuration is minimal in the region.
 
 ## Implementation notes
 
 The order is the product order on the two fields. No join is given: the configuration of a sum
 of two referents depends on the others they share, which a configuration does not record.
+
+The holders of the roles are a function and not an embedding: one individual may hold both
+roles, as a speaker addressing themself does, and the order lemmas hold of any such function. The
+lemmas that count members or build a part take the injectivity of the holders as a hypothesis.
 
 ## References
 
@@ -300,3 +316,99 @@ theorem sharedNumber_ofPersonNumber_eq_general (p : Person) (cl : Option Clusivi
 end Category
 
 end Person
+
+/-! ### The configuration of a set of individuals -/
+
+namespace Person.Configuration
+
+open SpeechAct
+
+variable {ι : Type*} [DecidableEq ι] (h : Role → ι) {u v : Finset ι} {r : Role}
+
+/-- The configuration of a set of individuals, `h r` being the holder of the role `r`: the roles
+whose holders it contains and the number of its members holding no role. -/
+def ofFinset (u : Finset ι) : Configuration :=
+  ⟨Finset.univ.filter (h · ∈ u), (u \ Finset.univ.image h).card⟩
+
+@[simp] theorem mem_participants_ofFinset : r ∈ (ofFinset h u).participants ↔ h r ∈ u := by
+  simp [ofFinset]
+
+theorem participants_ofFinset_sdiff (u v : Finset ι) :
+    (ofFinset h (u \ v)).participants =
+      (ofFinset h u).participants \ (ofFinset h v).participants := by
+  ext; simp
+
+theorem ofFinset_mono : Monotone (ofFinset h) := fun _ _ hvu ↦
+  ⟨fun _ hr ↦ (mem_participants_ofFinset h).2 (hvu ((mem_participants_ofFinset h).1 hr)),
+    Finset.card_le_card (Finset.sdiff_subset_sdiff hvu subset_rfl)⟩
+
+/-- `ofFinset` as an order homomorphism. -/
+@[simps]
+def ofFinsetHom : Finset ι →o Configuration := ⟨ofFinset h, ofFinset_mono h⟩
+
+/-- A proper part of a set of individuals has a strictly smaller configuration. -/
+theorem ofFinset_strictMono : StrictMono (ofFinset h) := fun v u hlt ↦ by
+  refine lt_of_le_of_ne (ofFinset_mono h hlt.le) fun he ↦ hlt.ne (le_antisymm hlt.le fun z hz ↦ ?_)
+  have ho : v \ Finset.univ.image h = u \ Finset.univ.image h :=
+    Finset.eq_of_subset_of_card_le (Finset.sdiff_subset_sdiff hlt.le subset_rfl)
+      (congrArg others he).ge
+  by_cases hzr : z ∈ Finset.univ.image h
+  · obtain ⟨r, -, rfl⟩ := Finset.mem_image.1 hzr
+    exact (mem_participants_ofFinset h).1
+      (congrArg participants he ▸ (mem_participants_ofFinset h).2 hz)
+  · exact (Finset.mem_sdiff.1 (ho ▸ Finset.mem_sdiff.2 ⟨hz, hzr⟩)).1
+
+section Injective
+
+variable {h} (hh : Function.Injective h)
+
+include hh
+
+/-- With different holders for the two roles, the configuration of a set has as many members as
+the set. -/
+theorem card_ofFinset (u : Finset ι) : (ofFinset h u).card = u.card := by
+  rw [card, ofFinset, ← Finset.card_image_of_injective _ hh,
+    ← Finset.card_inter_add_card_sdiff u (Finset.univ.image h)]
+  congr 2
+  ext z
+  simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_inter]
+  exact ⟨fun ⟨r, hr, e⟩ ↦ ⟨e ▸ hr, r, e⟩, fun ⟨hz, r, e⟩ ↦ ⟨r, e ▸ hz, e⟩⟩
+
+theorem others_ofFinset (u : Finset ι) :
+    (ofFinset h u).others = u.card - (ofFinset h u).participants.card :=
+  Nat.eq_sub_of_add_eq' (card_ofFinset hh u)
+
+/-- Every configuration below that of a set of individuals is the configuration of a part of
+it, the two roles having different holders. -/
+theorem exists_le_ofFinset_eq {y : Configuration} (hle : y ≤ ofFinset h u) :
+    ∃ v ≤ u, ofFinset h v = y := by
+  obtain ⟨t, m⟩ := y
+  obtain ⟨ht, hm⟩ := hle
+  obtain ⟨o, ho, rfl⟩ := Finset.exists_subset_card_eq hm
+  have ho' : ∀ z ∈ o, z ∈ u ∧ z ∉ Finset.univ.image h := fun z hz ↦ Finset.mem_sdiff.1 (ho hz)
+  refine ⟨t.image h ∪ o, fun z hz ↦ ?_, Configuration.ext ?_ ?_⟩
+  · rcases Finset.mem_union.1 hz with hz | hz
+    · obtain ⟨r, hr, rfl⟩ := Finset.mem_image.1 hz
+      exact (mem_participants_ofFinset h).1 (ht hr)
+    · exact (ho' z hz).1
+  · ext r
+    simp only [mem_participants_ofFinset, Finset.mem_union, Finset.mem_image]
+    exact ⟨fun hr ↦ hr.elim (fun ⟨r', hr', e⟩ ↦ hh e ▸ hr')
+      fun hr ↦ absurd (Finset.mem_image_of_mem h (Finset.mem_univ r)) (ho' _ hr).2,
+      fun hr ↦ Or.inl ⟨r, hr, rfl⟩⟩
+  · change ((t.image h ∪ o) \ Finset.univ.image h).card = o.card
+    congr 1
+    ext z
+    simp only [Finset.mem_sdiff, Finset.mem_union, Finset.mem_image, Finset.mem_univ, true_and]
+    exact ⟨fun ⟨hz, hzr⟩ ↦ hz.resolve_left fun ⟨r, _, e⟩ ↦ hzr ⟨r, e⟩,
+      fun hz ↦ ⟨Or.inr hz, by simpa using (ho' z hz).2⟩⟩
+
+/-- A set of individuals is minimal among those whose configuration lies in a region exactly
+when its configuration is minimal in the region. -/
+theorem minimal_ofFinset_iff {P : Configuration → Prop} :
+    Minimal (fun v ↦ P (ofFinset h v)) u ↔ Minimal P (ofFinset h u) :=
+  minimal_comp_iff_of_strictMono (ofFinset_strictMono h) fun _ _ ↦ exists_le_ofFinset_eq hh
+
+end Injective
+
+end Person.Configuration

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Feature.Person.Category
-public import Linglib.Syntax.Feature.Person.System
+public import Linglib.Syntax.Feature.Person.Partition
 
 /-!
 # The features of the person values
@@ -115,8 +115,8 @@ determined by how many of them it has, and ordering values by that number is the
 of its most prominent conjunct, as Zwicky's hierarchy of reference and Corbett's resolution rules
 state. It is not the only person scale: Zwicky's morphosyntactic hierarchies can order the
 participants otherwise, as Algonquian ranks the second person above the first, and the person
-scale of Haspelmath's argument coding splits is the binary cut between participants and the rest
-(`Person.Class`). -/
+scale of Haspelmath's argument coding splits is the binary cut between the first and second
+persons and the third. -/
 
 /-- The prominence of a value is the number of the features [participant] and [speaker] it bears:
 two for the first person, one for the second, none for the third. -/
