@@ -33,7 +33,7 @@ contraposition fail](##inference_patterns_fail).
 
 * The library's scan of the paper lacks pp. 48–49, which define human necessity and the graded
   notions, and repeats pp. 70–71. `Background.necessity` is the library's definition, checked here
-  against how pp. 66–67 reason with it (`possibility_of_goodPossibility`).
+  against how pp. 66–67 reason with it (`Background.possibility_of_goodPossibility`).
 * The worlds of each example are finite, so its claims are decided once the backgrounds are
   unfolded.
 * The ordering source of the deontic example, what is morally commanded, is left informal in the
@@ -70,13 +70,6 @@ namespace Kratzer1981
 open Modality
 
 /-! ### Grades of possibility -/
-
--- p. 67: a world below which `p` holds throughout makes `p` a human possibility.
-theorem possibility_of_goodPossibility {W : Type*} {f g : Background W} {p : Set W} {w : W}
-    (h : f.goodPossibility g w p) : f.possibility g w p := fun hN ↦ by
-  obtain ⟨u, hu, hp⟩ := Background.goodPossibility_iff.1 h
-  obtain ⟨v, hv, hvu, hz⟩ := Background.mem_necessity.1 hN u hu
-  exact hz v hv (@le_refl _ (≤[g w]) v) (hp v hv hvu)
 
 -- p. 50: over the empty ordering source human necessity is simple necessity.
 example {W : Type*} (f : Background W) (w : W) : f.necessity ⊥ w = f.simpleNecessity w :=
@@ -189,7 +182,7 @@ theorem practical_inference :
 
 -- p. 67: conclusion four by the paper's own route, from a world below which they go to the pub.
 theorem can_pub_of_branch : circumstances.possibility desires w₀ {w | w.2 = true} :=
-  possibility_of_goodPossibility <| Background.goodPossibility_iff.2
+  Background.possibility_of_goodPossibility <| Background.goodPossibility_iff.2
     ⟨(true, true), by decide_worlds, by decide_worlds⟩
 
 /-- Facts have priority over ideals: pooling the circumstances and the desires into one background,
@@ -200,7 +193,7 @@ theorem facts_have_priority :
     Kratzer1977.CanInView (circumstances ⊔ desires) {w | w.2 = false ∧ w.1 = true} w₀ ∧
       ¬ circumstances.possibility desires w₀ {w | w.2 = false ∧ w.1 = true} := by
   refine ⟨Kratzer1977.canInView_iff_possibility.2
-    (possibility_of_goodPossibility
+    (Background.possibility_of_goodPossibility
       (Background.goodPossibility_iff.2 ⟨(true, false), by simp, ?_⟩)),
     practical_inference.2.2.1⟩
   simp only [Background.accessibleWorlds_bot, Set.mem_univ, forall_true_left]

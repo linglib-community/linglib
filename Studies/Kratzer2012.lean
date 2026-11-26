@@ -22,6 +22,11 @@ Roger zum Häuptling gewählt worden sein* is true whatever the rumor's provenan
 The informational background is therefore not realistic, since the actual world need not be
 among the worlds the rumor describes.
 
+The chapter's definition of necessity (§2.4) does not suppose that there are closest worlds. Over
+the natural numbers, with an ordering source whose premises are "at least `n`" for each `n`, a
+larger number is always a better world and none is best; the necessities are then the propositions
+true from some number on, where truth at the best worlds would make every proposition necessary.
+
 The chapter's revised comparative possibility (§2.4) compares two propositions only on the worlds
 where they differ. Along a ranking of worlds without ties, the probability measures that preserve
 it are exactly those in which each world outweighs all worse worlds together, and Kratzer's toy
@@ -114,6 +119,44 @@ theorem must_of_reliable {W : Type*} (rumor chief reliable : Set W) (f : Backgro
     chief ∈ f.simpleNecessity w := fun v hv ↦
   have hv := Background.mem_accessibleWorlds.1 hv
   hrel v (hv reliable (hf w hw).2) (hv rumor (hf w hw).1)
+
+/-! ### Necessity without closest worlds (§2.4) -/
+
+section NoClosestWorlds
+
+open Filter
+
+/-- The ordering source whose premises, at every world, are the propositions "at least `n`". -/
+def atLeast : Background ℕ := fun _ ↦ Set.range Set.Ici
+
+private theorem le_atLeast_iff (w a b : ℕ) : (a ≤[atLeast w] b) ↔ b ≤ a :=
+  ⟨fun h ↦ h (Set.Ici b) ⟨b, rfl⟩ Set.self_mem_Ici, by rintro h _ ⟨n, rfl⟩ hn; exact le_trans hn h⟩
+
+theorem bestWorlds_atLeast (w : ℕ) : bestWorlds ⊥ atLeast w = ∅ := by
+  ext u
+  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
+    forall_true_left, le_atLeast_iff, Set.mem_empty_iff_false, iff_false, not_forall]
+  exact ⟨u + 1, Nat.le_succ u, Nat.not_succ_le_self u⟩
+
+theorem not_limitAssumption_atLeast (w : ℕ) : ¬ LimitAssumption ⊥ atLeast w := fun h ↦ by
+  obtain ⟨v, hv, -⟩ := h 0 (by simp)
+  rwa [bestWorlds_atLeast] at hv
+
+/-- With no closest worlds, a proposition is a necessity when it is true at every world from some
+world on. -/
+theorem necessity_atLeast (w : ℕ) : Background.necessity ⊥ atLeast w = atTop := by
+  ext s
+  simp only [Background.mem_necessity, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
+    forall_true_left, le_atLeast_iff, mem_atTop_sets]
+  exact ⟨fun h ↦ let ⟨v, _, hv⟩ := h 0; ⟨v, fun z hz ↦ hv z hz⟩,
+    fun ⟨a, ha⟩ u ↦ ⟨max u a, le_max_left _ _, fun z hz ↦ ha z (le_trans (le_max_right _ _) hz)⟩⟩
+
+-- p. 40: necessity is not truth at the closest worlds when there are none.
+theorem necessity_atLeast_ne_principal_bestWorlds (w : ℕ) :
+    Background.necessity ⊥ atLeast w ≠ 𝓟 (bestWorlds ⊥ atLeast w) := by
+  rw [necessity_atLeast, bestWorlds_atLeast, principal_empty]; exact atTop_neBot.ne
+
+end NoClosestWorlds
 
 /-! ### Grades of possibility (§2.4–§2.5)
 
