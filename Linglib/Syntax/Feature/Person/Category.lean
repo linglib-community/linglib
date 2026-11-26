@@ -7,7 +7,7 @@ module
 
 public import Linglib.Syntax.Feature.Person.Basic
 public import Linglib.Syntax.Feature.Person.Clusivity
-public import Linglib.Syntax.Feature.Person.Lattice
+public import Linglib.Syntax.Feature.Person.Participants
 public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Powerset

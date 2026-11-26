@@ -7,14 +7,28 @@ module
 
 public import Linglib.Core.Data.Finset.Lattice.Fold
 public import Linglib.Discourse.SpeechAct.Role
+public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Clusivity
 public import Linglib.Syntax.Feature.Person.Feature
+public import Mathlib.Data.Finset.Sups
+public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.Concept
 
 /-!
 # Participant sets
 
 The *participant set* of a referent is the set of speech-act roles it includes: the speaker, the
-addressee, both or neither. This file relates the person features to participant sets.
+addressee, both or neither. This file relates the person values, clusivity and the person
+features to participant sets.
+
+Each person value covers some participant sets: the third person covers the set with neither
+role, the second the addressee alone, and the first the speaker with or without the addressee.
+A participant set is covered by exactly one value, its person, and the person of a union is the
+larger of the two persons, so the order of resolution is that of coordinated referents, as Zwicky
+proposes and as Dalrymple and Kaplan resolve their marker sets. An inclusive form's referents
+include the addressee and an exclusive form's do not, so a clusivity narrows the participant
+sets of a person: with the first person it gives the inclusive or the exclusive first person.
+
 [participant] is about both roles, [speaker] about the speaker and [addressee] about the
 addressee, and a participant set bears a feature when it includes a role the feature is about. A
 group includes a role as soon as one of its members does, so a union bears a feature exactly when
@@ -28,6 +42,15 @@ has in common, and with all three features no two participant sets have the same
 
 ## Main definitions
 
+* `Person.participantSets`: the participant sets a person covers.
+* `Person.ofParticipants`: the person of a participant set, first with the speaker, otherwise
+  second with the addressee, otherwise third.
+* `Person.IncludesSpeaker`, `Person.IsSAP`: properties of a person, read off the participant
+  sets it covers.
+* `Clusivity.Holds`: a participant set satisfies the inclusive when it contains the addressee,
+  and the exclusive when it does not.
+* `Clusivity.restrict`: the participant sets of a family that satisfy a clusivity, or all of
+  them when no clusivity is given.
 * `Person.Feature.roles`: the roles a feature is about.
 * `Person.Bears`: a participant set bears a feature.
 * `Person.bundle`: the features of an inventory that a participant set bears, as a map
@@ -35,13 +58,25 @@ has in common, and with all three features no two participant sets have the same
 
 ## Main results
 
+* `Person.mem_participantSets_iff_eq_ofParticipants`: a participant set is covered by its
+  person and by no other.
+* `Person.ofParticipants_union`: the person of a union is the larger of the persons.
 * `Person.Feature.le_iff_forall_bears`: dependency is entailment.
 * `Person.Feature.exists_roles_eq_iff`: the features are about the nonempty sets of roles.
 * `Person.wellFormed_iff_isIntent`: the well-formed bundles are the closed sets of features.
 * `Person.bundle_univ_injective`: the three features tell the participant sets apart.
 
+## Implementation notes
+
+The second person with the inclusive covers what the second person covers, and the second person
+with the exclusive and the third with the inclusive cover nothing.
+
 ## References
 
+* [zwicky-1977b]
+* [dalrymple-kaplan-2000]
+* [cysouw-2003]
+* [siewierska-2004]
 * [halle-1997]
 * [bejar-rezac-2009]
 * [harley-ritter-2002]
@@ -51,6 +86,161 @@ has in common, and with all three features no two participant sets have the same
 @[expose] public section
 
 open Finset SpeechAct Order
+
+open scoped FinsetFamily
+
+namespace Person
+
+/-! ### The participant sets of a person -/
+
+/-- `p.participantSets` is the family of participant sets of the referents `p` covers. This is
+what the value means, not what every form bearing it refers to: a third person form may be used
+of the addressee. -/
+def participantSets : Person → Finset (Finset Role)
+  | .first => {{.speaker}, {.speaker, .addressee}}
+  | .second => {{.addressee}}
+  | .third => {∅}
+
+theorem participantSets_injective : Function.Injective participantSets := by decide
+
+@[simp] theorem participantSets_inj {p q : Person} :
+    p.participantSets = q.participantSets ↔ p = q :=
+  participantSets_injective.eq_iff
+
+theorem participantSets_nonempty (p : Person) : p.participantSets.Nonempty := by
+  cases p <;> decide
+
+/-- The person of a referent whose participants are `s`: first with the speaker, otherwise second
+with the addressee, otherwise third. -/
+def ofParticipants (s : Finset Role) : Person :=
+  if .speaker ∈ s then .first else if .addressee ∈ s then .second else .third
+
+theorem supClosed_participantSets (p : Person) :
+    SupClosed (p.participantSets : Set (Finset Role)) := by
+  rw [← sups_eq_self]; cases p <;> decide
+
+/-- A participant set is covered by its person, and by no other. -/
+theorem mem_participantSets_iff_eq_ofParticipants {p : Person} {s : Finset Role} :
+    s ∈ p.participantSets ↔ p = ofParticipants s := by
+  revert p s; decide
+
+theorem mem_participantSets_ofParticipants_self (s : Finset Role) :
+    s ∈ (ofParticipants s).participantSets :=
+  mem_participantSets_iff_eq_ofParticipants.2 rfl
+
+theorem ofParticipants_surjective : Function.Surjective ofParticipants := by decide
+
+/-- The unions of the participant sets of two conjuncts are among those of their
+coordination. -/
+theorem participantSets_sups_subset (p q : Person) :
+    p.participantSets ⊻ q.participantSets ⊆ (p ⊔ q).participantSets := by
+  revert p q; decide
+
+@[simp] theorem ofParticipants_empty : ofParticipants ∅ = ⊥ := rfl
+
+/-- The person of a union of participant sets is the larger of their persons. -/
+theorem ofParticipants_union (s t : Finset Role) :
+    ofParticipants (s ∪ t) = ofParticipants s ⊔ ofParticipants t := by
+  revert s t; decide
+
+/-! ### Predicates -/
+
+/-- The value includes the speaker when each of its participant sets contains the speaker. -/
+def IncludesSpeaker (p : Person) : Prop := ∀ s ∈ p.participantSets, .speaker ∈ s
+
+instance : DecidablePred IncludesSpeaker := fun p ↦
+  inferInstanceAs (Decidable (∀ s ∈ p.participantSets, .speaker ∈ s))
+
+/-- A speech-act participant value has only nonempty participant sets. -/
+def IsSAP (p : Person) : Prop := ∀ s ∈ p.participantSets, s.Nonempty
+
+instance : DecidablePred IsSAP := fun p ↦
+  inferInstanceAs (Decidable (∀ s ∈ p.participantSets, s.Nonempty))
+
+/-- The speech-act participant values are the first and the second person. -/
+theorem isSAP_iff_ne_bot {p : Person} : p.IsSAP ↔ p ≠ ⊥ := by revert p; decide
+
+/-- The first person is the value that includes the speaker. -/
+theorem includesSpeaker_iff_eq_first {p : Person} : p.IncludesSpeaker ↔ p = .first := by
+  revert p; decide
+
+theorem IsSAP.mono {p q : Person} (hp : p.IsSAP) (h : p ≤ q) : q.IsSAP := by
+  revert p q; decide
+
+theorem IncludesSpeaker.mono {p q : Person} (hp : p.IncludesSpeaker) (h : p ≤ q) :
+    q.IncludesSpeaker := by
+  revert p q; decide
+
+end Person
+
+/-! ### Clusivity -/
+
+namespace Clusivity
+
+variable {s t : Finset Role}
+
+/-- A participant set satisfies the inclusive when it contains the addressee and the exclusive
+when it does not. -/
+def Holds : Clusivity → Finset Role → Prop
+  | inclusive, s => .addressee ∈ s
+  | exclusive, s => .addressee ∉ s
+
+instance (c : Clusivity) : DecidablePred c.Holds := fun _ ↦ by
+  cases c <;> unfold Holds <;> infer_instance
+
+@[simp] theorem holds_inclusive : inclusive.Holds s ↔ .addressee ∈ s := Iff.rfl
+
+@[simp] theorem holds_exclusive : exclusive.Holds s ↔ .addressee ∉ s := Iff.rfl
+
+/-- A union includes the addressee exactly when one of its parts does. -/
+theorem holds_inclusive_union : inclusive.Holds (s ∪ t) ↔ inclusive.Holds s ∨ inclusive.Holds t :=
+  Finset.mem_union
+
+/-- A union excludes the addressee exactly when both of its parts do. -/
+theorem holds_exclusive_union : exclusive.Holds (s ∪ t) ↔ exclusive.Holds s ∧ exclusive.Holds t :=
+  Finset.notMem_union
+
+/-- The participant sets of a family that satisfy a clusivity, all of them where none is
+specified. -/
+def restrict (c : Option Clusivity) (S : Finset (Finset Role)) : Finset (Finset Role) :=
+  S.filter fun s ↦ ∀ c' ∈ c, c'.Holds s
+
+@[simp] theorem mem_restrict {c : Option Clusivity} {S : Finset (Finset Role)} :
+    s ∈ restrict c S ↔ s ∈ S ∧ ∀ c' ∈ c, c'.Holds s :=
+  Finset.mem_filter
+
+@[simp] theorem restrict_none (S : Finset (Finset Role)) : restrict none S = S := by
+  ext s; simp
+
+/-- The first person with the inclusive covers the speaker with the addressee. -/
+theorem restrict_inclusive_first :
+    restrict (some inclusive) Person.first.participantSets = {{.speaker, .addressee}} := by
+  decide
+
+/-- The first person with the exclusive covers the speaker alone. -/
+theorem restrict_exclusive_first :
+    restrict (some exclusive) Person.first.participantSets = {{.speaker}} := by
+  decide
+
+theorem restrict_inclusive_second :
+    restrict (some inclusive) Person.second.participantSets = Person.second.participantSets := by
+  decide
+
+theorem restrict_exclusive_third :
+    restrict (some exclusive) Person.third.participantSets = Person.third.participantSets := by
+  decide
+
+theorem restrict_exclusive_second :
+    restrict (some exclusive) Person.second.participantSets = ∅ := by
+  decide
+
+theorem restrict_inclusive_third :
+    restrict (some inclusive) Person.third.participantSets = ∅ := by
+  decide
+
+end Clusivity
+
+/-! ### The roles of a feature -/
 
 namespace Person
 

@@ -3,6 +3,7 @@ module
 public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Syntax.Feature.Person.Clusivity
+public import Linglib.Syntax.Feature.Person.Basic
 public import Mathlib.Data.Fin.VecNotation
 
 /-!

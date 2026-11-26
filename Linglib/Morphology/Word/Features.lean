@@ -11,6 +11,7 @@ public import Linglib.Data.UD.Features
 public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Syntax.Feature.Person.Clusivity
+public import Linglib.Syntax.Feature.Person.Basic
 
 /-!
 # Token features
