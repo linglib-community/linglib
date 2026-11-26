@@ -22,6 +22,8 @@ costs and under every prior that charges it. Pulling the denotations back along 
 gives the speaker of the original denotations at the image state, against the prior carried
 forward along the map. With independent parts of the state, product denotations and additive
 costs, she chooses the parts of her utterance independently.
+Negating every denotation gives a speaker who puts on an utterance at most what the original
+speaker leaves, with equality only when each is certain.
 
 ## References
 
@@ -487,6 +489,40 @@ theorem speaker_literalListener_dirac_prod {W₁ W₂ U₁ U₂ : Type*}
     speaker_literalListener_dirac_eq_cond hα C₁ μ₁ sem₁ hw₁,
     speaker_literalListener_dirac_eq_cond hα C₂ μ₂ sem₂ hw₂, ratioScale_prod, ← cond_prod]
   rfl
+
+/-- The speaker of the negated denotations puts on an utterance at most what the speaker of the
+denotations leaves. -/
+theorem speaker_literalListener_dirac_compl_apply_singleton_le (hα : 0 < α) (C : U → ℝ)
+    (μ : Measure W) (sem : U → Set W) (w : W) (u : U) :
+    speaker α C (literalListener μ fun v ↦ (sem v)ᶜ) Measure.dirac w {u} ≤
+      1 - speaker α C (literalListener μ sem) Measure.dirac w {u} := by
+  by_cases h : w ∈ sem u
+  · rw [speaker_literalListener_dirac_apply_singleton_eq_zero hα C μ _ (Set.notMem_compl_iff.2 h)]
+    exact zero_le
+  · rw [speaker_literalListener_dirac_apply_singleton_eq_zero hα C μ sem h, tsub_zero]
+    exact (measure_mono (Set.subset_univ _)).trans (speaker_apply_univ_le_one ..)
+
+/-- The speaker of the negated denotations is the complement of the speaker of the denotations on
+an utterance only when the utterance is certain wherever it is true and its negation is certain
+wherever it is false. -/
+theorem speaker_literalListener_dirac_compl_apply_singleton_eq_iff (hα : 0 < α) (C : U → ℝ)
+    (μ : Measure W) (sem : U → Set W) (u : U) :
+    (∀ w, speaker α C (literalListener μ fun v ↦ (sem v)ᶜ) Measure.dirac w {u} =
+        1 - speaker α C (literalListener μ sem) Measure.dirac w {u}) ↔
+      (∀ w ∈ sem u, speaker α C (literalListener μ sem) Measure.dirac w {u} = 1) ∧
+        ∀ w ∉ sem u, speaker α C (literalListener μ fun v ↦ (sem v)ᶜ) Measure.dirac w {u} = 1 := by
+  refine ⟨fun h ↦ ⟨fun w hw ↦ ?_, fun w hw ↦ ?_⟩, fun ⟨h₁, h₂⟩ w ↦ ?_⟩
+  · have hw' := h w
+    rw [speaker_literalListener_dirac_apply_singleton_eq_zero hα C μ _
+      (Set.notMem_compl_iff.2 hw)] at hw'
+    exact ((measure_mono (Set.subset_univ _)).trans (speaker_apply_univ_le_one ..)).antisymm
+      (tsub_eq_zero_iff_le.1 hw'.symm)
+  · have hw' := h w
+    rwa [speaker_literalListener_dirac_apply_singleton_eq_zero hα C μ sem hw, tsub_zero] at hw'
+  · by_cases hw : w ∈ sem u
+    · rw [speaker_literalListener_dirac_apply_singleton_eq_zero hα C μ _
+        (Set.notMem_compl_iff.2 hw), h₁ w hw, tsub_self]
+    · rw [h₂ w hw, speaker_literalListener_dirac_apply_singleton_eq_zero hα C μ sem hw, tsub_zero]
 
 theorem speaker_literalListener_dirac_zero_real_singleton_of_pair (hα : 0 < α)
     (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
