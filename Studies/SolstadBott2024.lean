@@ -272,9 +272,14 @@ theorem shared_bias_distinct_projectivity :
 
 /-! ### The occasion verbs -/
 
-theorem occasion_isTrigger :
-    ∀ v ∈ German.Verbs.allVerbs, v.senseTag = .occasion →
-      v.toVerb.IsTrigger ∧ ¬ v.toVerb.IsFactive ∧ v.phasal = none ∧ v.implicative = ⊥ := by
+/-- §2.2.2: the sixteen occasion verbs of Experiments 1 and 2. -/
+def occasionVerbs : List German.Verb :=
+  open German.Verbs in
+  [anzeigen, auszeichnen, bestrafen, belohnen, belangen, danken, ehren, entlassen, gratulieren,
+    kritisieren, loben, raechen, revanchieren, verklagen, zurVerantwortungZiehen, zurechtweisen]
+
+/-- No occasion verb is factive, implicative or phasal, so none is a trigger by its entry. -/
+theorem not_isTrigger_of_mem_occasionVerbs : ∀ v ∈ occasionVerbs, ¬ v.toVerb.IsTrigger := by
   decide
 
 end SolstadBott2024

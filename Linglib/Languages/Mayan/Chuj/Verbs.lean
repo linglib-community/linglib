@@ -48,13 +48,11 @@ def chi' : Verb where
 def chanhalw : Verb where
   morphs := [.root "chanhalw"]
   valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
-  voiceType := some .agentive
 
 /-- *wa'* 'eat', intransitive. -/
 def wa' : Verb where
   morphs := [.root "wa'"]
   valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
-  voiceType := some .agentive
 
 /-- *nib'* 'like', with an experiencer as its subject. -/
 def nib' : Verb where

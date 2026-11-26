@@ -43,7 +43,6 @@ def pour : Verb where
   morphs := [.root "pour"]
   levin := some Levin1993.Index.pour
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  incrementality := some .cumulative
 
 /-- "spray" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
 def spray : Verb where
@@ -55,7 +54,6 @@ def spray : Verb where
      (ArgumentFrame.pp (some Adpositions.at_), [0, 2]),
      (ArgumentFrame.np_spatialPP, [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 2, 1])]
-  incrementality := some .strict
 
 /-- "load" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
 def load : Verb where
@@ -67,7 +65,6 @@ def load : Verb where
      (ArgumentFrame.pp (some Adpositions.at_), [0, 2]),
      (ArgumentFrame.np_spatialPP, [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 2, 1])]
-  incrementality := some .strict
 
 /-! ### Removing (§ 10) -/
 
@@ -87,8 +84,7 @@ def clean : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
-  scaleDimension := some .cleanliness
-  incrementality := some .strict
+  gradability := some { dimension := .cleanliness }
 
 /-- "steal" — Levin 10.5 Steal verbs. -/
 def steal : Verb where
@@ -122,7 +118,6 @@ def drive : Verb where
   past := "drove"
   pastPart := "driven"
   valency := .ofFrame ArgumentFrame.np
-  incrementality := some .cumulative
 
 /-! ### Change of Possession (§ 13) -/
 
@@ -227,7 +222,6 @@ def cut : Verb where
      (ArgumentFrame.np_pp (some Adpositions.on)
          (some (.spatial (some .surface) .place)), [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
-  incrementality := some .strict
 
 /-- "chop" — Levin 21.2 Carve verbs. -/
 def chop : Verb where
@@ -237,7 +231,6 @@ def chop : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  incrementality := some .strict
 
 /-! ### Combining and Separating (§ 22–23) -/
 
@@ -246,7 +239,6 @@ def mix : Verb where
   morphs := [.root "mix"]
   levin := some Levin1993.Index.mix
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  incrementality := some .strict
 
 /-- "separate" — Levin 23.1 Separate verbs. -/
 def separate : Verb where
@@ -261,7 +253,6 @@ def paint : Verb where
   morphs := [.root "paint"]
   levin := some Levin1993.Index.paint
   valency := .ofFrame ArgumentFrame.np
-  incrementality := some .strict
 
 /-- "draw" — Levin 25 Image Creation verbs. Incremental by extent. -/
 def draw : Verb where
@@ -270,7 +261,6 @@ def draw : Verb where
   past := "drew"
   pastPart := "drawn"
   valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop {.indef}]
-  incrementality := some .strict
 
 /-! ### Creation and Transformation (§ 26) -/
 
@@ -305,7 +295,6 @@ def grow : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.out), [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.into) (some .translative), [0, 2, 1])]
-  incrementality := some .strict
 
 /-- "perform" — Levin 26.7 Performance verbs. -/
 def perform : Verb where
@@ -344,7 +333,6 @@ def blame : Verb where
   morphs := [.root "blame"]
   levin := none
   valency := .ofFrame ArgumentFrame.np
-  incrementality := some .cumulative
 
 
 /-- "evaluate" — Levin 34 Assessment verbs. -/
@@ -352,7 +340,6 @@ def evaluate : Verb where
   morphs := [.root "evaluate"]
   levin := some Levin1993.Index.evaluate
   valency := .ofFrame ArgumentFrame.np
-  incrementality := some .cumulative
 
 /-! ### Social Interaction (§ 36) -/
 

@@ -245,79 +245,79 @@ An occasion verb presupposes an earlier eventuality of its object's that occasio
 /-- *bestrafen* 'punish' is formed on *strafen* with the inseparable *be-*. -/
 def bestrafen : Verb :=
   { Verb.ofStem ((weak "strafen").inseparable "be") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *belohnen* 'reward' is formed on *lohnen* with the inseparable *be-*. -/
 def belohnen : Verb :=
   { Verb.ofStem ((weak "lohnen").inseparable "be") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *loben* 'praise' is a weak verb. -/
 def loben : Verb :=
   { Verb.ofStem (weak "loben") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *kritisieren* 'criticize' is a verb in *-ieren*. -/
 def kritisieren : Verb :=
   { Verb.ofStem (weak "kritisieren") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *danken* 'thank' takes its object in the dative. -/
 def danken : Verb :=
   { Verb.ofStem (weak "danken") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.dat] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.dat] }
 
 /-- *verklagen* 'sue' is formed on *klagen* with the inseparable *ver-*. -/
 def verklagen : Verb :=
   { Verb.ofStem ((weak "klagen").inseparable "ver") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *gratulieren* 'congratulate' takes its object in the dative. -/
 def gratulieren : Verb :=
   { Verb.ofStem (weak "gratulieren") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.dat] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.dat] }
 
 /-- *zurechtweisen* 'reprimand' is formed on *weisen* with the separable *zurecht-*. -/
 def zurechtweisen : Verb :=
   { Verb.ofStem ((strong "weisen" "weist" "wies" "gewiesen").separable "zurecht") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *anzeigen* 'report (to the authorities)' is formed on *zeigen* with the separable *an-*. -/
 def anzeigen : Verb :=
   { Verb.ofStem ((weak "zeigen").separable "an") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *auszeichnen* 'honour (with an award)' is formed on *zeichnen* with the separable *aus-*. -/
 def auszeichnen : Verb :=
   { Verb.ofStem ((weak "zeichnen").separable "aus") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *belangen* 'prosecute' is formed on *langen* with the inseparable *be-*. -/
 def belangen : Verb :=
   { Verb.ofStem ((weak "langen").inseparable "be") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *ehren* 'honour' is a weak verb. -/
 def ehren : Verb :=
   { Verb.ofStem (weak "ehren") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *entlassen* 'dismiss' is formed on *lassen* with the inseparable *ent-*. -/
 def entlassen : Verb :=
   { Verb.ofStem (lassen.stem.inseparable "ent") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *rächen* 'avenge' is used reflexively with *an*, *sich rächen an* 'take revenge on', the
 reflexive its accusative object. -/
 def raechen : Verb :=
   { Verb.ofStem (weak "rächen") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *revanchieren* 'return the favour' is used reflexively with *bei*, *sich revanchieren bei*,
 the reflexive its accusative object. -/
 def revanchieren : Verb :=
   { Verb.ofStem (weak "revanchieren") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *zur Verantwortung ziehen* 'hold accountable' is a phrase whose noun phrase stands where a
 separable particle would. -/
@@ -326,7 +326,7 @@ def zurVerantwortungZiehen : Verb :=
       { infinitive := "zur Verantwortung ziehen", present := "zieht zur Verantwortung",
         past := "zog zur Verantwortung", participle := "zur Verantwortung gezogen",
         prefixGe := false } with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-! ### Predicates of Schwarzer's experiments -/
 
