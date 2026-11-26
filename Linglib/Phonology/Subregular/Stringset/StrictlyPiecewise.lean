@@ -87,7 +87,7 @@ theorem isSublistClosed_language (k : ℕ) (G : StrictlyPiecewiseGrammar α) :
 /-- The language at width `k` is the core of the relation taking a word to its subsequences of
 length at most `k`. -/
 theorem language_eq_core (k : ℕ) (G : StrictlyPiecewiseGrammar α) :
-    G.language k = (SetRel.ofSuccessors (subseqSet k)).core G :=
+    G.language k = (SetRel.cgraph (subseqSet k)).core G :=
   Set.ext fun _ ↦ ⟨fun h _ hs ↦ h _ hs.2 hs.1, fun h _ hl hs ↦ h ⟨hs, hl⟩⟩
 
 theorem language_inter (k : ℕ) (G₁ G₂ : StrictlyPiecewiseGrammar α) :

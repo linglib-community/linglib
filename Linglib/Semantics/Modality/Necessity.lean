@@ -62,12 +62,12 @@ variable {W : Type*}
 /-- Under a modal base, `w'` is accessible from `w` when it satisfies every premise of `f w`,
 Kratzer's `w' ∈ ⋂f(w)`. -/
 def Background.accessible (f : Background W) : SetRel W W :=
-  .ofSuccessors f.accessibleWorlds
+  .cgraph f.accessibleWorlds
 
 /-- Under a modal base and an ordering source, `w'` is best-accessible from `w` when it is among
 the best worlds accessible from `w`. -/
 def bestAccessible (f g : Background W) : SetRel W W :=
-  .ofSuccessors (bestWorlds f g)
+  .cgraph (bestWorlds f g)
 
 @[simp] theorem Background.mem_accessible {f : Background W} {w w' : W} :
     w ~[f.accessible] w' ↔ w' ∈ f.accessibleWorlds w := .rfl
@@ -88,7 +88,7 @@ def Background.ofRel (R : SetRel W W) : Background W := fun w ↦ {{v | w ~[R] v
     w ~[bestAccessible f g] w' ↔ w' ∈ bestWorlds f g w := .rfl
 
 @[simp] theorem bestAccessible_bot (f : Background W) : bestAccessible f ⊥ = f.accessible :=
-  congrArg ofSuccessors (funext (bestWorlds_bot f))
+  congrArg cgraph (funext (bestWorlds_bot f))
 
 theorem accessible_bot (w w' : W) : w ~[(⊥ : Background W).accessible] w' := by simp
 

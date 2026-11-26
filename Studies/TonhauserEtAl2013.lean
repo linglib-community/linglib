@@ -193,10 +193,10 @@ theorem excludes_belief_iff :
     hd.not_subset hs <| SetRel.image_subset_iff.2 <| Set.singleton_subset_iff.2 (hB hk c hacc hw)⟩
   by_contra hks
   obtain ⟨d, m, hd⟩ := s.exists_holds
-  refine h Bool m .id (.ofSuccessors fun _ ↦ d) (fun _ ↦ False) (fun _ _ ↦ False)
-    (fun c ↦ k.ObligatoryLocalEffect → (SetRel.ofSuccessors fun _ ↦ d).image c ⊆ m)
+  refine h Bool m .id (.cgraph fun _ ↦ d) (fun _ ↦ False) (fun _ _ ↦ False)
+    (fun c ↦ k.ObligatoryLocalEffect → (SetRel.cgraph fun _ ↦ d).image c ⊆ m)
     (fun _ _ h ↦ h.elim) (fun _ _ h ↦ h.elim) (fun hk ↦ obligatoryLocalEffect_iff.2 fun _ h ↦ h hk)
-    ⟨.univ, true, trivial, by simpa [SetRel.image_ofSuccessors] using hd, fun hk ↦ ?_⟩
+    ⟨.univ, true, trivial, by simpa [SetRel.image_cgraph] using hd, fun hk ↦ ?_⟩
   obtain rfl : s = .positive := by_contra fun hs ↦ hks ⟨hk, hs⟩
   exact fun v ⟨_, _, hv⟩ ↦ hd hv
 

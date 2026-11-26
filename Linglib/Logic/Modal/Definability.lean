@@ -72,6 +72,11 @@ theorem isSerial_iff_leftTotal {W' W : Type*} {R : SetRel W' W} :
     IsSerial R ↔ Relator.LeftTotal (· ~[R] ·) :=
   ⟨fun h ↦ h.serial, fun h ↦ ⟨h⟩⟩
 
+/-- The graph of a correspondence is serial exactly when every successor set is nonempty. -/
+theorem isSerial_cgraph_iff {W' W : Type*} {f : W' → Set W} :
+    IsSerial (cgraph f) ↔ ∀ a, (f a).Nonempty :=
+  ⟨fun h ↦ h.serial, fun h ↦ ⟨h⟩⟩
+
 section Frame
 
 variable {W : Type*} (R : SetRel W W)
@@ -83,6 +88,12 @@ class IsEuclidean : Prop where
 variable {R}
 
 instance : IsEuclidean (.univ : SetRel W W) := ⟨fun _ _ _ _ _ ↦ trivial⟩
+
+/-- The graph of a correspondence is Euclidean exactly when each successor of a point has all
+of the point's successors among its own. -/
+theorem isEuclidean_cgraph_iff {f : W → Set W} :
+    IsEuclidean (cgraph f) ↔ ∀ a, ∀ b ∈ f a, f a ⊆ f b :=
+  ⟨fun h a b hb c hc ↦ h.eucl a b c hb hc, fun h ↦ ⟨fun a b _ hb hc ↦ h a b hb hc⟩⟩
 
 theorem isEuclidean_iff_inv_comp_subset_self : IsEuclidean R ↔ R.inv ○ R ⊆ R :=
   ⟨fun h ⟨v, u⟩ ⟨w, hwv, hwu⟩ ↦ h.eucl w v u hwv hwu, fun h ↦ ⟨fun w _ _ hv hu ↦ h ⟨w, hv, hu⟩⟩⟩

@@ -164,7 +164,7 @@ def Scenario.worlds (s : Scenario ι) : EventBinder → Finset (Finset ι)
 /-- The domain-fixing function `f` of (59), as the relation from each anchor to the worlds it
 projects. -/
 def Scenario.projection (s : Scenario ι) : SetRel EventBinder (Finset ι) :=
-  .ofSuccessors fun e ↦ ↑(s.worlds e)
+  .cgraph fun e ↦ ↑(s.worlds e)
 
 /-- `Claim D s e w` is the claim of a *yalnhej* DP whose noun has extension `D`, anchored to
 `e`. -/

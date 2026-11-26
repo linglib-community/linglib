@@ -60,7 +60,7 @@ variable (K : ModalStructure L W M)
 
 /-- The accessibility relation of a model, the relation that `□` and `◇` of
 `Logic/Modal/Basic.lean` take. -/
-def accessible : SetRel W W := .ofSuccessors fun w ↦ ↑(K.access w)
+def accessible : SetRel W W := .cgraph fun w ↦ ↑(K.access w)
 
 /-- The relation a relation symbol denotes at a world. -/
 def relInterp {n : ℕ} (R : L.Relations n) (w : W) : (Fin n → M) → Prop :=

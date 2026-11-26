@@ -61,10 +61,10 @@ variable {E W : Type*}
 
 /-- A necessity modal (29) quantifies over the worlds its event-relative modal base returns:
 necessity along the relation from each event to those worlds. -/
-def must (f : E → Set W) : (W → Prop) → E → Prop := □[SetRel.ofSuccessors f]
+def must (f : E → Set W) : (W → Prop) → E → Prop := □[SetRel.cgraph f]
 
 /-- A possibility modal (29) quantifies existentially over the same worlds. -/
-def can (f : E → Set W) : (W → Prop) → E → Prop := ◇[SetRel.ofSuccessors f]
+def can (f : E → Set W) : (W → Prop) → E → Prop := ◇[SetRel.cgraph f]
 
 /-- A contentful event, an attitude or the speech event, embeds a proposition under universal
 quantification over its content (41), (44); `holds e w` is the event's descriptive part. -/

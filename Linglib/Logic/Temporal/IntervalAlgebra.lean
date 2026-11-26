@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Core.Relation.Composition
+public import Linglib.Core.Relation.SetRel
+public import Mathlib.Algebra.Order.Kleene
 public import Linglib.Logic.Temporal.PartitionScheme
 public import Linglib.Logic.Temporal.Allen
 public import Linglib.Logic.Temporal.PointAlgebra
@@ -26,8 +27,8 @@ product is weak composition among the intervals of six points
 (`IntervalAlgebra.mul_eq_weakComp`). The relation of an element is its preimage under the
 map sending two intervals to their Allen relation, so reading elements as relations preserves the
 Boolean operations (`IntervalAlgebra.toSetRelHom`) and is faithful where that map is surjective,
-and on dense time without endpoints it is a homomorphism of semirings
-(`IntervalAlgebra.toSetRelRingHom`). The point algebra
+and on dense time without endpoints it carries the product to composition
+(`IntervalAlgebra.toSetRel_mul`). The point algebra
 [embeds](##IntervalAlgebra.pure) as the relations between point intervals.
 
 ## Implementation notes
@@ -599,17 +600,6 @@ instance : IdemSemiring IntervalAlgebra where
   mul_zero _ := by
     apply eq_of_toSetRel_rat
     rw [zero_eq_bot, toSetRel_mul, toSetRel_bot, SetRel.comp_empty]
-
-open scoped SetRel.Composition in
-/-- On dense time without endpoints, reading an element as a relation is a homomorphism of
-semirings into the relations between intervals under union and composition. -/
-def toSetRelRingHom {T : Type*} [LinearOrder T] [DenselyOrdered T] [NoMinOrder T]
-    [NoMaxOrder T] : IntervalAlgebra →+* SetRel (NonemptyInterval T) (NonemptyInterval T) where
-  toFun := toSetRel
-  map_one' := toSetRel_one
-  map_mul' := toSetRel_mul
-  map_zero' := toSetRel_bot
-  map_add' := toSetRel_sup
 
 theorem mul_inv_rev (C D : IntervalAlgebra) : (C * D)⁻¹ = D⁻¹ * C⁻¹ := by
   apply eq_of_toSetRel_rat

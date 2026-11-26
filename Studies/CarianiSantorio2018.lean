@@ -64,7 +64,7 @@ The clause for *will* is (15) of §5.2, and its collapse at the context is (17).
 /-- *Will* over the modal parameter `f` sends `A` to the worlds whose selection from `f` is an
 `A`-world, the selectional modal along the constant relation to `f`. -/
 def will (f : Set W) : CompleteLatticeHom (Set W) (Set W) :=
-  s.modal (.ofSuccessors fun _ ↦ f)
+  s.modal (.cgraph fun _ ↦ f)
 
 @[simp] theorem mem_will : w ∈ will s f A ↔ s.sel w f ∈ A := Iff.rfl
 
@@ -263,7 +263,7 @@ theorem credence_will_warriorsCap (s : SelectionFunction W) (w : W) :
 
 /-- The historical modal base, the background of the relation to today's historical
 alternatives. -/
-def histBase : Background W := .ofRel (.ofSuccessors fun w ↦ frame.alternatives ⟨w, 0⟩)
+def histBase : Background W := .ofRel (.cgraph fun w ↦ frame.alternatives ⟨w, 0⟩)
 
 @[simp] theorem accessibleWorlds_histBase (w : W) : histBase.accessibleWorlds w = Set.univ := by
   simp [histBase]

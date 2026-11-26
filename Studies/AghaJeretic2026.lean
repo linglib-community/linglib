@@ -127,7 +127,7 @@ theorem vfiWeak_negRaises_iff (f g g' : Background W) (w : W) :
       ((≤[g' w]).minimals (bestWorlds f g w)).Subsingleton := by
   simp only [mem_weakNecessity]
   have key := ModalLogic.box_not_of_not_box_at_iff
-    (R := .ofSuccessors fun _ ↦ (≤[g' w]).minimals (bestWorlds f g w)) (w := w)
+    (R := .cgraph fun _ ↦ (≤[g' w]).minimals (bestWorlds f g w)) (w := w)
   exact ⟨fun h ↦ key.1 fun q ↦ h {v | q v}, fun h r ↦ key.2 h (· ∈ r)⟩
 
 /-! ### Scope under negation ((18)–(20)) -/

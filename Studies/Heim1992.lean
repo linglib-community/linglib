@@ -58,14 +58,14 @@ def believes : CCP.Partial W :=
 
 theorem admits_believes_ofTrivalent :
     (believes Dox a (ofTrivalent p)).Admits c ↔
-      ∀ w ∈ c, ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ (Trivalent.gapExt p)ᶜ) w :=
+      ∀ w ∈ c, ModalLogic.Box (.cgraph (Dox a)) (· ∈ (Trivalent.gapExt p)ᶜ) w :=
   Iff.rfl
 
 -- (3)
 theorem admits_believes_iff :
     (believes Dox a (ofTrivalent p)).Admits c ↔
-      (SetRel.ofSuccessors (Dox a)).image c ⊆ (Trivalent.gapExt p)ᶜ :=
-  (SetRel.image_subset_iff (R := .ofSuccessors (Dox a))).symm
+      (SetRel.cgraph (Dox a)).image c ⊆ (Trivalent.gapExt p)ᶜ :=
+  (SetRel.image_subset_iff (R := .cgraph (Dox a))).symm
 
 open Classical in
 /-- On atomic complements (18) is static, presupposing that `a` believes `φ`'s presupposition and
@@ -73,13 +73,13 @@ asserting that `a` believes `φ` (24). -/
 theorem believes_ofTrivalent :
     believes Dox a (ofTrivalent p) =
       ofTrivalent (Trivalent.condEvent
-        (ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ (Trivalent.gapExt p)ᶜ))
-        (ModalLogic.Box (.ofSuccessors (Dox a)) (p · = .true))) := by
+        (ModalLogic.Box (.cgraph (Dox a)) (· ∈ (Trivalent.gapExt p)ᶜ))
+        (ModalLogic.Box (.cgraph (Dox a)) (p · = .true))) := by
   funext c
   refine Part.ext' ?_ fun h _ ↦ Set.ext fun w ↦ ?_
   · simp [believes, ofTrivalent, Set.subset_def, ModalLogic.Box, admits_ofTrivalent]
   · simp only [believes, mem_ofTrivalent_self, Set.mem_ofPred_eq, ModalLogic.Box,
-    SetRel.mem_ofSuccessors, Trivalent.mem_compl_gapExt, ne_eq, ofTrivalent_get,
+    SetRel.mem_cgraph, Trivalent.mem_compl_gapExt, ne_eq, ofTrivalent_get,
     Trivalent.condEvent_eq_true_iff, Set.sep_and, Set.mem_inter_iff, iff_and_self, and_imp]
     exact fun hw h1 ↦ ⟨hw, fun v hv ↦ by simp [h1 v hv]⟩
 

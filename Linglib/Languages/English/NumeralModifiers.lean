@@ -104,12 +104,12 @@ def precisely : NumeralModifier := .ofComparison "precisely" none .eq
 /-- An approximator places the amount within a tolerance of the number on either side, one
 reading for each tolerance `y` ([egre-etal-2023]). -/
 def approximator (form : String) : NumeralModifier :=
-  ⟨form, none, Set.range fun y ↦ (SetRel.ofSuccessors fun n ↦ Set.Icc (n - y) (n + y)).image⟩
+  ⟨form, none, Set.range fun y ↦ (SetRel.cgraph fun n ↦ Set.Icc (n - y) (n + y)).image⟩
 
 /-- A modifier like *almost* places the amount within a tolerance below the number and short of
 it, one reading for each tolerance `y` ([penka-2006]). -/
 def shortOf (form : String) : NumeralModifier :=
-  ⟨form, none, Set.range fun y ↦ (SetRel.ofSuccessors fun n ↦ Set.Ico (n - y) n).image⟩
+  ⟨form, none, Set.range fun y ↦ (SetRel.cgraph fun n ↦ Set.Ico (n - y) n).image⟩
 
 /-- *about*, an approximator. -/
 def about : NumeralModifier := approximator "about"

@@ -39,7 +39,9 @@ Necessity and possibility are operators on propositions `W → Prop` along a rel
 `SetRel.preimage` conjugated by `Set.memOrderIso`, the isomorphism between sets and predicates.
 The adjunction is `SetRel.image_core_gc` carried across it, and the composition, identity and
 conjunction lemmas are `SetRel.core_comp`, `SetRel.preimage_comp`, `SetRel.core_id` and
-`SetRel.core_inter`; propositions stated as sets use mathlib's lemmas directly. The axioms of
+`SetRel.core_inter`, and the negation duals, antitonicity in the relation and the order embedding
+are `SetRel.preimage_compl`, `SetRel.core_subset_core_left` and `SetRel.preimage_le_preimage_iff`;
+propositions stated as sets use mathlib's lemmas directly. The axioms of
 modal logic and the frame conditions they define are in `Logic/Modal/Definability.lean`.
 
 ## References
@@ -105,8 +107,8 @@ theorem box_mem_iff {s : Set W} : □[R] (· ∈ s) w ↔ w ∈ R.core s := .rfl
 theorem diamond_mem_iff {s : Set W} : ◇[R] (· ∈ s) w ↔ w ∈ R.preimage s :=
   diamond_iff_mem_preimage
 
-@[simp] theorem not_box : ¬ □[R] p w ↔ ◇[R] (fun v ↦ ¬ p v) w := by
-  simp [Box, Diamond, not_forall]
+@[simp] theorem not_box : ¬ □[R] p w ↔ ◇[R] (fun v ↦ ¬ p v) w :=
+  (diamond_iff_mem_preimage.trans (Set.ext_iff.1 (preimage_compl R {v | p v}) w)).symm
 
 @[simp] theorem not_diamond : ¬ ◇[R] p w ↔ □[R] (fun v ↦ ¬ p v) w := by
   simp [Box, Diamond, not_and]
@@ -167,7 +169,7 @@ theorem dependsOn_box_iff {s : Set W} : DependsOn (□[R] · w) s ↔ {v | w ~[R
 gives a stronger necessity. For a modal this is strengthening by a more restrictive conversational
 background ([kratzer-1981]). -/
 theorem box_le_box_left {S : SetRel W' W} (h : R ⊆ S) (p : W → Prop) : □[S] p ≤ □[R] p :=
-  fun _ hb v hv ↦ hb v (h hv)
+  fun _ hb ↦ core_subset_core_left h hb
 
 /-! ### Decidability over finite worlds -/
 
@@ -211,9 +213,10 @@ theorem box_top : □[R] ⊤ = ⊤ := by
 variable {R} in
 /-- Possibility along `R` entails possibility along `S` exactly when `S` contains `R`, so a law
 between possibilities defines an inclusion of relations. -/
-theorem diamond_le_diamond_iff {S : SetRel W' W} : Diamond R ≤ Diamond S ↔ R ⊆ S where
-  mp h := fun ⟨w, v⟩ hwv ↦ match h (· = v) w ⟨v, hwv, rfl⟩ with | ⟨_, hS, rfl⟩ => hS
-  mpr h _ _ := fun ⟨v, hwv, hv⟩ ↦ ⟨v, h hwv, hv⟩
+theorem diamond_le_diamond_iff {S : SetRel W' W} : Diamond R ≤ Diamond S ↔ R ⊆ S := by
+  rw [← preimage_le_preimage_iff, diamond_eq_preimage, diamond_eq_preimage]
+  exact ⟨fun h s ↦ by simpa using Set.memOrderIso.symm.monotone (h (Set.memOrderIso s)),
+    fun h p ↦ Set.memOrderIso.monotone (h _)⟩
 
 /-- Along any relation $p$ entails $\Box_{R^{-1}} \Diamond_R p$, the unit of the adjunction. For
 tense this is the mixing principle $A \supset GPA$ that [prior-1967] takes from Ockham: what is the
@@ -241,7 +244,7 @@ theorem setOf_box_iterate (n : ℕ) (p : W → Prop) :
 /-- Necessity along the transitive closure of `R` is the infinite conjunction of iterated
 necessity along `R`, $\Box p \land \Box \Box p \land \cdots$, the shape of common knowledge. -/
 theorem box_transGen_iff {p : W → Prop} {w : W} :
-    □[R.transGen] p w ↔ ∀ n, (□[R])^[n + 1] p w := by
+    □[transGen R] p w ↔ ∀ n, (□[R])^[n + 1] p w := by
   have h := Set.ext_iff.1 (core_transGen (R := R) (s := {v | p v})) w
   rw [Set.mem_iInter] at h
   exact h.trans (forall_congr' fun n ↦ by rw [← setOf_box_iterate]; rfl)

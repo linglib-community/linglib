@@ -111,8 +111,8 @@ def ofDomain (D : I → Set W → Set W) (p q : Set W) : Set I := {i | D i p ⊆
 theorem mem_ofDomain : i ∈ ofDomain D p q ↔ D i p ⊆ q := Iff.rfl
 
 /-- The conditional over a domain is necessity along the relation sending `i` to the worlds of
-its domain, `SetRel.core` of `SetRel.ofSuccessors`. -/
-theorem ofDomain_eq_core : ofDomain D p q = (SetRel.ofSuccessors (D · p)).core q := rfl
+its domain, `SetRel.core` of `SetRel.cgraph`. -/
+theorem ofDomain_eq_core : ofDomain D p q = (SetRel.cgraph (D · p)).core q := rfl
 
 theorem ofDomain_mono_right (hq : q ⊆ q') : ofDomain D p q ⊆ ofDomain D p q' :=
   fun _ h ↦ h.trans hq
@@ -148,7 +148,7 @@ theorem not_mem_ofDomain_and_compl {v v' : W} (hv : v ∈ D i p) (hv' : v' ∈ D
 
 theorem forall_mem_ofDomain_or_compl_iff :
     (∀ r : Set W, i ∈ ofDomain D p r ∨ i ∈ ofDomain D p rᶜ) ↔ (D i p).Subsingleton :=
-  have key := ModalLogic.box_or_box_not_at_iff (R := SetRel.ofSuccessors (D · p)) (w := i)
+  have key := ModalLogic.box_or_box_not_at_iff (R := SetRel.cgraph (D · p)) (w := i)
   ⟨fun h ↦ key.1 fun q ↦ h {v | q v}, fun h r ↦ key.2 h (· ∈ r)⟩
 
 theorem ofDomain_subset_materialImp {D : W → Set W → Set W} (hD : ∀ w ∈ p, w ∈ D w p) :

@@ -74,7 +74,7 @@ open SetRel in
 /-- In the accessibility relation of `M`, `v` is accessible from `w` when `v ∈ M.access w`.
 This is the relation that `□` and `◇` of `Logic/Modal/Basic.lean` take. -/
 def KripkeModel.accessible (M : KripkeModel W Atom) : SetRel W W :=
-  .ofSuccessors fun w ↦ ↑(M.access w)
+  .cgraph fun w ↦ ↑(M.access w)
 
 open SetRel in
 @[simp] theorem KripkeModel.mem_accessible {M : KripkeModel W Atom} {w v : W} :

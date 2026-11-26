@@ -230,7 +230,7 @@ theorem scope_idiosyncrasy : cantScope.scope ≠ mustntScope.scope := by decide
 /-- A four-world frame on which the actual world sees two worlds and every other world only
 itself. -/
 private def kripkeR : SetRel (Fin 4) (Fin 4) :=
-  .ofSuccessors fun w ↦
+  .cgraph fun w ↦
     match w with
     | 0 => {1, 2}
     | 1 => {1}

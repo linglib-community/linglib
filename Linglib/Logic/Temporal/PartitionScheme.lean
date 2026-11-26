@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Relation.Composition
+public import Linglib.Core.Relation.SetRel
 public import Mathlib.Order.Hom.CompleteLattice
 
 /-!
@@ -134,7 +134,7 @@ basic relations: a pair with the index of a pair of the composite is in the comp
 theorem rel_weakComp_subset_iff :
     S.rel (S.weakComp C D) ⊆ S.rel C ○ S.rel D ↔
       ∀ p ∈ S.rel C ○ S.rel D, ∀ q, S.index q = S.index p → q ∈ S.rel C ○ S.rel D :=
-  ⟨fun h p hp q hq ↦ h ⟨p, hp, hq.symm⟩, fun h q ⟨p, hp, hq⟩ ↦ h p hp q hq.symm⟩
+  ⟨fun h p hp _ hq ↦ h ⟨p, hp, hq.symm⟩, fun h q ⟨p, hp, hq⟩ ↦ h p hp q hq.symm⟩
 
 theorem rel_weakComp_eq_iff :
     S.rel (S.weakComp C D) = S.rel C ○ S.rel D ↔ S.rel (S.weakComp C D) ⊆ S.rel C ○ S.rel D :=
