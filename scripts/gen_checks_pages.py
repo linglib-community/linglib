@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Write the pages that read as a text: a source's items at `/checks/<bib-key>/`, and each file
-those items rest on at `/text/<path>/`.
+"""Write the pages of `/wiki/`, which read as a text: a source's items at
+`/wiki/papers/<bib-key>/`, and each file those items rest on at `/wiki/<path>/`.
 
 `checks/<bib-key>.toml` lists the items of a source (`checks/README.md`). A source's page shows
 the claims under the source's sections, each headed by its kind and the source's name for it,
@@ -157,7 +157,7 @@ class Site:
     @staticmethod
     def text_path(module):
         parts = module.split(".")
-        return "text/" + "/".join(parts[1:] if parts[0] == "Linglib" else parts) + "/"
+        return "wiki/" + "/".join(parts[1:] if parts[0] == "Linglib" else parts) + "/"
 
     @staticmethod
     def docs_path(module, name=None):
@@ -173,7 +173,7 @@ class Site:
     def unit_path(self, unit):
         """The page of a source or of a module: its text if it has one, else the API docs."""
         if unit in self.sources:
-            return f"checks/{unit}/"
+            return f"wiki/papers/{unit}/"
         return self.text_path(unit) if unit in self.shown else self.docs_path(unit)
 
     def decl_path(self, name):
@@ -186,7 +186,7 @@ class Site:
             return None
         for item in self.stated.get(name, ()):
             if item["source"] == self.source.get(node["module"]):
-                return f'checks/{item["source"]}/#{item["id"]}'
+                return f'wiki/papers/{item["source"]}/#{item["id"]}'
         return self.unit_path(self.unit(node["module"]))
 
     @functools.lru_cache(None)
@@ -311,7 +311,8 @@ class Page:
         sorted into their files, with a link where a statement in the lower file mentions a
         declaration of the upper and no longer path says so; mathlib is at the top and the page
         at the bottom. A source and its study file are one mark. `below` the page is what
-        rests on it, as `(source or module, why)`."""
+        rests on it, as `(source or module, why)`. Under the chart the same pages are listed in
+        an order to read them in."""
         nodes = self.site.nodes
         reached, todo = set(), [r for r in roots if r in nodes]
         while todo:
@@ -408,9 +409,15 @@ class Page:
             marks.append(f'<a href="{self.href(site.unit_path(m))}"><title>{esc(why)}</title>'
                          f'{shape(m, bx, by)}{text}</a>')
             height = max(height, by + 26 + 14 * n)
+        # The same as a list to read down: each page after the ones it rests on.
+        before = sorted((m for m in level if m != focus), key=lambda m: (level[m], x[m]))
+        plan = "".join(f'<li><a href="{self.href(site.unit_path(m))}">{esc(site.unit_title(m))}</a>'
+                       '</li>' for m in before)
+        if plan:
+            plan = f'<p class="planh">To read first, in order</p><ol class="plan">{plan}</ol>'
         return (f'<svg class="chart" viewBox="0 0 {width} {height:.0f}" '
                 f'style="max-width:{width}px" role="img" aria-label="What this page rests on">'
-                + "".join(lines + marks) + "</svg>")
+                + "".join(lines + marks) + "</svg>" + plan)
 
     def render(self, title, crumbs, h1, by, body, links, aside, panel, sha):
         template = (PAGE / "template.html").read_text(encoding="utf-8")
@@ -533,7 +540,7 @@ def example(row):
 
 
 def source_page(site, key, sha, lines):
-    page = Page(site, f"checks/{key}/")
+    page = Page(site, f"wiki/papers/{key}/")
     its = site.sources[key]
     kind, f = site.bib[key]
     items = {f'{i["source"]}/{i["id"]}': i for i in its}
@@ -603,7 +610,7 @@ def source_page(site, key, sha, lines):
                     + '<p class="prov plain">No item of the record covers these yet.</p>')
     label = site.label(key)
     return page.path, page.render(
-        gb.tex_text(f.get("title", key)), f'<a href="../">Checks</a> / {esc(label)}',
+        gb.tex_text(f.get("title", key)), f'<a href="../../">Wiki</a> / {esc(label)}',
         gb.tex_html(f.get("title", key)), cite, body + tail, links,
         page.chart(key, label, [d for i in its for d in i["decls"]]), panel, sha)
 
@@ -633,7 +640,7 @@ def module_page(site, module, sha):
                else f"<p>{heading}</p>{doc}")
         body.append(f'<article class="item" id="{esc(name, quote=True)}" tabindex="0">{doc}'
                     '</article>')
-        states = [f'States <a href="{page.href("checks/" + i["source"] + "/#" + i["id"])}">'
+        states = [f'States <a href="{page.href(site.unit_path(i["source"]) + "#" + i["id"])}">'
                   f'{esc(i["label"])} of {esc(site.label(i["source"]))}</a>.'
                   for i in site.stated.get(name, ())]
         panel[name] = {"how": "", "decls": [name], "state": " ".join(states)}
@@ -651,7 +658,8 @@ def module_page(site, module, sha):
             below.setdefault(site.unit(m), ", ".join(sorted(site.named.get((m, module), ()))))
 
     parts = module.split(".")
-    crumbs = esc(" / ".join(parts[1:-1] if parts[0] == "Linglib" else parts[:-1]))
+    crumbs = f'<a href="{page.href("wiki/")}">Wiki</a> / ' + esc(
+        " / ".join(parts[1:-1] if parts[0] == "Linglib" else parts[:-1]))
     links = [f'<a href="{page.href(site.docs_path(module))}">API docs</a>',
              f'<a href="{site_shell.REPO}/blob/main/{module.replace(".", "/")}.lean">Source</a>']
     return page.path, page.render(
@@ -671,7 +679,7 @@ def index_page(site, sha):
         count = f'{len(its)} item{"" if len(its) == 1 else "s"}'
         tally = f"{count}, {done} checked" if done else f"{count}, none checked yet"
         cls = "all" if done == len(its) else "some" if done else "none"
-        rows.append(f'<li class="source {cls}"><a href="{esc(key, quote=True)}/">'
+        rows.append(f'<li class="source {cls}"><a href="papers/{esc(key, quote=True)}/">'
                     f'<strong>{esc(site.label(key))}</strong> '
                     f'{gb.tex_html(f.get("title", ""))}</a>'
                     f'<span class="tally">{tally}</span></li>')
@@ -706,7 +714,7 @@ def main():
     if missing:
         sys.exit("not in references.bib: " + ", ".join(missing))
 
-    pages = {"checks/": index_page(site, sha)}
+    pages = {"wiki/": index_page(site, sha)}
     pages.update(source_page(site, key, sha, item_lines(key)) for key in site.sources)
     pages.update(module_page(site, module, sha) for module in site.shown)
     for path, page in pages.items():
@@ -714,7 +722,7 @@ def main():
         (args.out / path / "index.html").write_text(page, encoding="utf-8")
     # A link from one of these pages to another must land on a page written here.
     dead = [(p, t) for p, page in pages.items()
-            for t in re.findall(r'href="((?:\.\./)+(?:checks|text)/[^"#]*)', page)
+            for t in re.findall(r'href="((?:\.\./)+wiki/[^"#]*)', page)
             if posixpath.normpath(posixpath.join(p, t)) + "/" not in pages]
     for p, t in dead:
         print(f"{p}: no page at {t}", file=sys.stderr)

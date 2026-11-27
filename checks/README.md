@@ -294,9 +294,10 @@ the Mathlib that the project pins.
 The docs pages show, under each declaration stating a `checked`, `relies` or `stale` item, who
 checked it and when, which item it relies on, or that it has changed since; the docs workflow
 reads `checks.py status --json`. The same output makes a page for each source at
-`/checks/<bib-key>/`: its claims in the source's order, and beside the chosen one the Lean that
-states it, what that statement uses, and the sign-off. It also makes a page at `/text/<path>/` for
-each file those statements reach, which reads the file's docstrings as a text.
+`/wiki/papers/<bib-key>/`: its claims in the source's order, and beside the chosen one the Lean
+that states it, what that statement uses, and the sign-off. It also makes a page at
+`/wiki/<path>/` for each file those statements reach, which reads the file's docstrings as a
+text.
 
 Who checks which source is arranged in GitHub issues, not here. The files record only what has been
 checked.

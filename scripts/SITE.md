@@ -21,11 +21,11 @@ The look is that of Hugo's PaperMod theme, which the site began on:
 Mockups are read for structure and copy, not for type or color. Check a page at 1440px and 390px
 wide, in light and dark mode, before opening a PR.
 
-## The checks pages
+## The wiki pages
 
-`gen_checks_pages.py` writes `/checks/<bib-key>/` for each source with a record in `checks/`,
-`/checks/`, which lists them, and `/text/<path>/` for each file the items of those sources rest
-on. No menu item and no other page links to them, and they carry `noindex`, so they are reached
+`gen_checks_pages.py` writes `/wiki/papers/<bib-key>/` for each source with a record in `checks/`,
+`/wiki/`, which lists them, and `/wiki/<path>/` for each file the items of those sources rest on
+and each file those lead to in turn, so that no page links to a file without one. No menu item and no other page links to them, and they carry `noindex`, so they are reached
 by address only.
 
 Each page is read as a text, and departs from the rules above to that end:
@@ -49,7 +49,8 @@ Each page is read as a text, and departs from the rules above to that end:
   statements reach and not from imports: files as squares under their titles, a source as a
   circle, mathlib as the bar at the top, the page at the bottom, and under a file what rests on
   it. A link is drawn where a statement of the lower file mentions a declaration of the upper and
-  no longer path says so. Top to bottom is an order to read in.
+  no longer path says so. Top to bottom is an order to read in, and under the chart the same
+  pages are listed in that order.
 - An item a person has checked carries a mark after its number. An unchecked item says nothing
   in the text.
 - Credit is to people, and at the grain of the item. A file's authors stand under its title; a
