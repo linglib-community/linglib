@@ -7,17 +7,18 @@ public import Mathlib.Order.Setoid.Basic
 /-!
 # Elliott (2023): Donkey disjunctions and overlapping updates
 
-In a donkey disjunction, *either there's no bathroom in this house, or it's in a funny place*, a
-negated existential appears to bind a pronoun in the next disjunct. On Elliott's analysis, denying
-the negated existential introduces the pronoun's referent, so [the positive
-update](##Elliott2023.positive_donkey) keeps the points with no bathroom and extends the others to a
-bathroom in a funny place, a heterogeneous existential reading, and [the disjunction and its
-negation hold together](##Elliott2023.nonempty_lnc_iff) where there are bathrooms of both kinds.
-Asserted exhaustively relative to its negation, the disjunction [keeps the worlds where every
-bathroom is in a funny place](##Elliott2023.world_exhAssert_bot), unless [the question under
-discussion distinguishes no worlds](##Elliott2023.exhAssert_top). Since the negative update of an
-existential is defined by subsistence, [the anaphoric presupposition of a free variable in its scope
-projects](##Elliott2023.negative_exists_pred2).
+In a donkey disjunction, a negated existential appears to bind a pronoun in the next disjunct:
+
+(7)
+
+On Elliott's analysis, denying the negated existential introduces the pronoun's referent, so the
+positive update keeps the points with no bathroom and extends the others to a bathroom in a funny
+place, a heterogeneous existential reading, and the disjunction and its negation hold together where
+there are bathrooms of both kinds. Asserted exhaustively relative to its negation, the disjunction
+keeps the worlds where every bathroom is in a funny place, unless the question under discussion
+distinguishes no worlds. Since the negative update of an existential is defined by subsistence, the
+anaphoric presupposition of a free variable in its scope projects.
+
 ## Implementation notes
 
 * Assertion and exhaustive assertion are a definedness condition, `BilateralUpdate.Assertable`, and
