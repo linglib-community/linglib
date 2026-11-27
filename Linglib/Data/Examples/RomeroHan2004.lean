@@ -88,12 +88,14 @@ def isnt_jane_coming_too : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Isn't Jane coming too?"
-    glossedTokens := []
+    glossedTokens := [("Isn't", ""), ("Jane", ""), ("coming", ""), ("too?", "")]
+    glossedWords := [⟨['I', 's', 'n', '\'', 't'], [], [⟨['I', 's', 'n', '\'', 't'], [], none⟩]⟩, ⟨['J', 'a', 'n', 'e'], [], [⟨['J', 'a', 'n', 'e'], [], none⟩]⟩, ⟨['c', 'o', 'm', 'i', 'n', 'g'], [], [⟨['c', 'o', 'm', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['t', 'o', 'o', '?'], [], [⟨['t', 'o', 'o'], [], none⟩]⟩]
     context := "A: Ok, now that Stephan has come, we are all here. Let's go!"
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negation", "preposed"), ("form", "pi"), ("item", "too"), ("bias", "positive"), ("scenario", "contradictionP")] }
+    spans := [⟨3, 1, "polarityItem", some "too"⟩]
+    paperFeatures := [("negation", "preposed"), ("form", "pi"), ("bias", "positive"), ("scenario", "contradictionP")] }
 
 def isnt_jane_coming_either : Datum :=
   { id := "romerohan2004_isnt_jane_coming_either"
@@ -101,12 +103,14 @@ def isnt_jane_coming_either : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Isn't Jane coming either?"
-    glossedTokens := []
+    glossedTokens := [("Isn't", ""), ("Jane", ""), ("coming", ""), ("either?", "")]
+    glossedWords := [⟨['I', 's', 'n', '\'', 't'], [], [⟨['I', 's', 'n', '\'', 't'], [], none⟩]⟩, ⟨['J', 'a', 'n', 'e'], [], [⟨['J', 'a', 'n', 'e'], [], none⟩]⟩, ⟨['c', 'o', 'm', 'i', 'n', 'g'], [], [⟨['c', 'o', 'm', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['e', 'i', 't', 'h', 'e', 'r', '?'], [], [⟨['e', 'i', 't', 'h', 'e', 'r'], [], none⟩]⟩]
     context := "Pat and Jane are two phonologists who are supposed to be speaking in our workshop on optimality and acquisition. A: Pat is not coming. So we don't have any phonologists in the program."
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negation", "preposed"), ("form", "ni"), ("item", "either"), ("bias", "positive"), ("scenario", "contradictionP")] }
+    spans := [⟨3, 1, "polarityItem", some "either"⟩]
+    paperFeatures := [("negation", "preposed"), ("form", "ni"), ("bias", "positive"), ("scenario", "contradictionP")] }
 
 def is_jane_really_coming_too : Datum :=
   { id := "romerohan2004_is_jane_really_coming_too"
@@ -114,12 +118,14 @@ def is_jane_really_coming_too : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Is Jane really coming too?"
-    glossedTokens := []
+    glossedTokens := [("Is", ""), ("Jane", ""), ("really", ""), ("coming", ""), ("too?", "")]
+    glossedWords := [⟨['I', 's'], [], [⟨['I', 's'], [], none⟩]⟩, ⟨['J', 'a', 'n', 'e'], [], [⟨['J', 'a', 'n', 'e'], [], none⟩]⟩, ⟨['r', 'e', 'a', 'l', 'l', 'y'], [], [⟨['r', 'e', 'a', 'l', 'l', 'y'], [], none⟩]⟩, ⟨['c', 'o', 'm', 'i', 'n', 'g'], [], [⟨['c', 'o', 'm', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['t', 'o', 'o', '?'], [], [⟨['t', 'o', 'o'], [], none⟩]⟩]
     context := "A: Pat already came, but we still have to wait for Jane."
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("form", "really"), ("item", "too")] }
+    spans := [⟨4, 1, "polarityItem", some "too"⟩]
+    paperFeatures := [("form", "really")] }
 
 def is_jane_really_coming_either : Datum :=
   { id := "romerohan2004_is_jane_really_coming_either"
@@ -127,12 +133,14 @@ def is_jane_really_coming_either : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Is Jane really coming either?"
-    glossedTokens := []
+    glossedTokens := [("Is", ""), ("Jane", ""), ("really", ""), ("coming", ""), ("either?", "")]
+    glossedWords := [⟨['I', 's'], [], [⟨['I', 's'], [], none⟩]⟩, ⟨['J', 'a', 'n', 'e'], [], [⟨['J', 'a', 'n', 'e'], [], none⟩]⟩, ⟨['r', 'e', 'a', 'l', 'l', 'y'], [], [⟨['r', 'e', 'a', 'l', 'l', 'y'], [], none⟩]⟩, ⟨['c', 'o', 'm', 'i', 'n', 'g'], [], [⟨['c', 'o', 'm', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['e', 'i', 't', 'h', 'e', 'r', '?'], [], [⟨['e', 'i', 't', 'h', 'e', 'r'], [], none⟩]⟩]
     context := "A: Pat is not coming. And we don't need to wait for Jane either."
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("form", "really"), ("item", "either")] }
+    spans := [⟨4, 1, "polarityItem", some "either"⟩]
+    paperFeatures := [("form", "really")] }
 
 def is_jane_not_coming_too : Datum :=
   { id := "romerohan2004_is_jane_not_coming_too"
@@ -140,12 +148,14 @@ def is_jane_not_coming_too : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Is Jane NOT coming too?"
-    glossedTokens := []
+    glossedTokens := [("Is", ""), ("Jane", ""), ("NOT", ""), ("coming", ""), ("too?", "")]
+    glossedWords := [⟨['I', 's'], [], [⟨['I', 's'], [], none⟩]⟩, ⟨['J', 'a', 'n', 'e'], [], [⟨['J', 'a', 'n', 'e'], [], none⟩]⟩, ⟨['N', 'O', 'T'], [], [⟨['N', 'O', 'T'], [], none⟩]⟩, ⟨['c', 'o', 'm', 'i', 'n', 'g'], [], [⟨['c', 'o', 'm', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['t', 'o', 'o', '?'], [], [⟨['t', 'o', 'o'], [], none⟩]⟩]
     context := "A: Pat already came, but we still have to wait for Jane."
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("form", "notFocus"), ("item", "too")] }
+    spans := [⟨4, 1, "polarityItem", some "too"⟩]
+    paperFeatures := [("form", "notFocus")] }
 
 def is_jane_not_coming_either : Datum :=
   { id := "romerohan2004_is_jane_not_coming_either"
@@ -153,12 +163,14 @@ def is_jane_not_coming_either : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Is Jane NOT coming either?"
-    glossedTokens := []
+    glossedTokens := [("Is", ""), ("Jane", ""), ("NOT", ""), ("coming", ""), ("either?", "")]
+    glossedWords := [⟨['I', 's'], [], [⟨['I', 's'], [], none⟩]⟩, ⟨['J', 'a', 'n', 'e'], [], [⟨['J', 'a', 'n', 'e'], [], none⟩]⟩, ⟨['N', 'O', 'T'], [], [⟨['N', 'O', 'T'], [], none⟩]⟩, ⟨['c', 'o', 'm', 'i', 'n', 'g'], [], [⟨['c', 'o', 'm', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['e', 'i', 't', 'h', 'e', 'r', '?'], [], [⟨['e', 'i', 't', 'h', 'e', 'r'], [], none⟩]⟩]
     context := "A: Pat is not coming. And we don't need to wait for Jane ..."
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("form", "notFocus"), ("item", "either")] }
+    spans := [⟨4, 1, "polarityItem", some "either"⟩]
+    paperFeatures := [("form", "notFocus")] }
 
 def greek_preposed : Datum :=
   { id := "romerohan2004_greek_preposed"
@@ -331,11 +343,13 @@ def isnt_jane_coming_either_95 : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Isn't Jane coming either?"
-    glossedTokens := []
+    glossedTokens := [("Isn't", ""), ("Jane", ""), ("coming", ""), ("either?", "")]
+    glossedWords := [⟨['I', 's', 'n', '\'', 't'], [], [⟨['I', 's', 'n', '\'', 't'], [], none⟩]⟩, ⟨['J', 'a', 'n', 'e'], [], [⟨['J', 'a', 'n', 'e'], [], none⟩]⟩, ⟨['c', 'o', 'm', 'i', 'n', 'g'], [], [⟨['c', 'o', 'm', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['e', 'i', 't', 'h', 'e', 'r', '?'], [], [⟨['e', 'i', 't', 'h', 'e', 'r'], [], none⟩]⟩]
     context := "Pat and Jane are two phonologists who are supposed to be speaking in our workshop on optimality and acquisition. S originally believes that Jane is not coming. A: Pat is not coming. But fortunately for the phonologists we still have Jane..."
     judgment := .unacceptable
     contrasts := []
     readings := []
+    spans := [⟨3, 1, "polarityItem", some "either"⟩]
     paperFeatures := [("form", "ni"), ("scenario", "contradictionNotP")] }
 
 def isnt_jane_coming_too_100 : Datum :=
@@ -344,11 +358,13 @@ def isnt_jane_coming_too_100 : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Isn't Jane coming too?"
-    glossedTokens := []
+    glossedTokens := [("Isn't", ""), ("Jane", ""), ("coming", ""), ("too?", "")]
+    glossedWords := [⟨['I', 's', 'n', '\'', 't'], [], [⟨['I', 's', 'n', '\'', 't'], [], none⟩]⟩, ⟨['J', 'a', 'n', 'e'], [], [⟨['J', 'a', 'n', 'e'], [], none⟩]⟩, ⟨['c', 'o', 'm', 'i', 'n', 'g'], [], [⟨['c', 'o', 'm', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['t', 'o', 'o', '?'], [], [⟨['t', 'o', 'o'], [], none⟩]⟩]
     context := "S originally believes that Jane is not coming. A: Pat already came, but we still have to wait for Jane."
     judgment := .unacceptable
     contrasts := []
     readings := []
+    spans := [⟨3, 1, "polarityItem", some "too"⟩]
     paperFeatures := [("form", "pi"), ("scenario", "contradictionNotP")] }
 
 def hasnt_frege_already_reviewed : Datum :=
@@ -357,11 +373,13 @@ def hasnt_frege_already_reviewed : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Hasn't Frege already reviewed for us? He'd be a good one."
-    glossedTokens := []
+    glossedTokens := [("Hasn't", ""), ("Frege", ""), ("already", ""), ("reviewed", ""), ("for", ""), ("us?", ""), ("He'd", ""), ("be", ""), ("a", ""), ("good", ""), ("one.", "")]
+    glossedWords := [⟨['H', 'a', 's', 'n', '\'', 't'], [], [⟨['H', 'a', 's', 'n', '\'', 't'], [], none⟩]⟩, ⟨['F', 'r', 'e', 'g', 'e'], [], [⟨['F', 'r', 'e', 'g', 'e'], [], none⟩]⟩, ⟨['a', 'l', 'r', 'e', 'a', 'd', 'y'], [], [⟨['a', 'l', 'r', 'e', 'a', 'd', 'y'], [], none⟩]⟩, ⟨['r', 'e', 'v', 'i', 'e', 'w', 'e', 'd'], [], [⟨['r', 'e', 'v', 'i', 'e', 'w', 'e', 'd'], [], none⟩]⟩, ⟨['f', 'o', 'r'], [], [⟨['f', 'o', 'r'], [], none⟩]⟩, ⟨['u', 's', '?'], [], [⟨['u', 's'], [], none⟩]⟩, ⟨['H', 'e', '\'', 'd'], [], [⟨['H', 'e', '\'', 'd'], [], none⟩]⟩, ⟨['b', 'e'], [], [⟨['b', 'e'], [], none⟩]⟩, ⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['g', 'o', 'o', 'd'], [], [⟨['g', 'o', 'o', 'd'], [], none⟩]⟩, ⟨['o', 'n', 'e', '.'], [], [⟨['o', 'n', 'e'], [], none⟩]⟩]
     context := "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, but I'd prefer somebody who has experience with our regulations."
     judgment := .acceptable
     contrasts := []
     readings := []
+    spans := [⟨2, 1, "polarityItem", some "already"⟩]
     paperFeatures := [("form", "pi"), ("scenario", "suggestionP")] }
 
 def hasnt_frege_reviewed_yet : Datum :=
@@ -370,11 +388,13 @@ def hasnt_frege_reviewed_yet : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Hasn't Frege reviewed for us yet? He'd be a good one."
-    glossedTokens := []
+    glossedTokens := [("Hasn't", ""), ("Frege", ""), ("reviewed", ""), ("for", ""), ("us", ""), ("yet?", ""), ("He'd", ""), ("be", ""), ("a", ""), ("good", ""), ("one.", "")]
+    glossedWords := [⟨['H', 'a', 's', 'n', '\'', 't'], [], [⟨['H', 'a', 's', 'n', '\'', 't'], [], none⟩]⟩, ⟨['F', 'r', 'e', 'g', 'e'], [], [⟨['F', 'r', 'e', 'g', 'e'], [], none⟩]⟩, ⟨['r', 'e', 'v', 'i', 'e', 'w', 'e', 'd'], [], [⟨['r', 'e', 'v', 'i', 'e', 'w', 'e', 'd'], [], none⟩]⟩, ⟨['f', 'o', 'r'], [], [⟨['f', 'o', 'r'], [], none⟩]⟩, ⟨['u', 's'], [], [⟨['u', 's'], [], none⟩]⟩, ⟨['y', 'e', 't', '?'], [], [⟨['y', 'e', 't'], [], none⟩]⟩, ⟨['H', 'e', '\'', 'd'], [], [⟨['H', 'e', '\'', 'd'], [], none⟩]⟩, ⟨['b', 'e'], [], [⟨['b', 'e'], [], none⟩]⟩, ⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['g', 'o', 'o', 'd'], [], [⟨['g', 'o', 'o', 'd'], [], none⟩]⟩, ⟨['o', 'n', 'e', '.'], [], [⟨['o', 'n', 'e'], [], none⟩]⟩]
     context := "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, but I'd prefer somebody new."
     judgment := .unacceptable
     contrasts := []
     readings := []
+    spans := [⟨5, 1, "polarityItem", some "yet"⟩]
     paperFeatures := [("form", "ni"), ("scenario", "suggestionNotP")] }
 
 def is_jane_really_coming : Datum :=
@@ -396,11 +416,13 @@ def has_frege_really_reviewed : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Has Frege really reviewed for us already? He'd be a good one."
-    glossedTokens := []
+    glossedTokens := [("Has", ""), ("Frege", ""), ("really", ""), ("reviewed", ""), ("for", ""), ("us", ""), ("already?", ""), ("He'd", ""), ("be", ""), ("a", ""), ("good", ""), ("one.", "")]
+    glossedWords := [⟨['H', 'a', 's'], [], [⟨['H', 'a', 's'], [], none⟩]⟩, ⟨['F', 'r', 'e', 'g', 'e'], [], [⟨['F', 'r', 'e', 'g', 'e'], [], none⟩]⟩, ⟨['r', 'e', 'a', 'l', 'l', 'y'], [], [⟨['r', 'e', 'a', 'l', 'l', 'y'], [], none⟩]⟩, ⟨['r', 'e', 'v', 'i', 'e', 'w', 'e', 'd'], [], [⟨['r', 'e', 'v', 'i', 'e', 'w', 'e', 'd'], [], none⟩]⟩, ⟨['f', 'o', 'r'], [], [⟨['f', 'o', 'r'], [], none⟩]⟩, ⟨['u', 's'], [], [⟨['u', 's'], [], none⟩]⟩, ⟨['a', 'l', 'r', 'e', 'a', 'd', 'y', '?'], [], [⟨['a', 'l', 'r', 'e', 'a', 'd', 'y'], [], none⟩]⟩, ⟨['H', 'e', '\'', 'd'], [], [⟨['H', 'e', '\'', 'd'], [], none⟩]⟩, ⟨['b', 'e'], [], [⟨['b', 'e'], [], none⟩]⟩, ⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['g', 'o', 'o', 'd'], [], [⟨['g', 'o', 'o', 'd'], [], none⟩]⟩, ⟨['o', 'n', 'e', '.'], [], [⟨['o', 'n', 'e'], [], none⟩]⟩]
     context := "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, and I'd prefer somebody who has experience with our regulations."
     judgment := .unacceptable
     contrasts := []
     readings := []
+    spans := [⟨6, 1, "polarityItem", some "already"⟩]
     paperFeatures := [("form", "really"), ("scenario", "suggestionP")] }
 
 def is_jane_not_coming_117 : Datum :=
@@ -409,11 +431,13 @@ def is_jane_not_coming_117 : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Is Jane NOT coming (either)?"
-    glossedTokens := []
+    glossedTokens := [("Is", ""), ("Jane", ""), ("NOT", ""), ("coming", ""), ("(either)?", "")]
+    glossedWords := [⟨['I', 's'], [], [⟨['I', 's'], [], none⟩]⟩, ⟨['J', 'a', 'n', 'e'], [], [⟨['J', 'a', 'n', 'e'], [], none⟩]⟩, ⟨['N', 'O', 'T'], [], [⟨['N', 'O', 'T'], [], none⟩]⟩, ⟨['c', 'o', 'm', 'i', 'n', 'g'], [], [⟨['c', 'o', 'm', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['(', 'e', 'i', 't', 'h', 'e', 'r', ')', '?'], [], [⟨['e', 'i', 't', 'h', 'e', 'r'], [], none⟩]⟩]
     context := "A: Pat is not coming. And we don't need to wait for Jane..."
     judgment := .acceptable
     contrasts := []
     readings := []
+    spans := [⟨4, 1, "polarityItem", some "either"⟩]
     paperFeatures := [("form", "notFocus"), ("bias", "positive"), ("scenario", "contradictionP")] }
 
 def has_frege_not_reviewed_yet : Datum :=
@@ -422,11 +446,13 @@ def has_frege_not_reviewed_yet : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Has Frege NOT reviewed for us yet? He'd be a good one."
-    glossedTokens := []
+    glossedTokens := [("Has", ""), ("Frege", ""), ("NOT", ""), ("reviewed", ""), ("for", ""), ("us", ""), ("yet?", ""), ("He'd", ""), ("be", ""), ("a", ""), ("good", ""), ("one.", "")]
+    glossedWords := [⟨['H', 'a', 's'], [], [⟨['H', 'a', 's'], [], none⟩]⟩, ⟨['F', 'r', 'e', 'g', 'e'], [], [⟨['F', 'r', 'e', 'g', 'e'], [], none⟩]⟩, ⟨['N', 'O', 'T'], [], [⟨['N', 'O', 'T'], [], none⟩]⟩, ⟨['r', 'e', 'v', 'i', 'e', 'w', 'e', 'd'], [], [⟨['r', 'e', 'v', 'i', 'e', 'w', 'e', 'd'], [], none⟩]⟩, ⟨['f', 'o', 'r'], [], [⟨['f', 'o', 'r'], [], none⟩]⟩, ⟨['u', 's'], [], [⟨['u', 's'], [], none⟩]⟩, ⟨['y', 'e', 't', '?'], [], [⟨['y', 'e', 't'], [], none⟩]⟩, ⟨['H', 'e', '\'', 'd'], [], [⟨['H', 'e', '\'', 'd'], [], none⟩]⟩, ⟨['b', 'e'], [], [⟨['b', 'e'], [], none⟩]⟩, ⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['g', 'o', 'o', 'd'], [], [⟨['g', 'o', 'o', 'd'], [], none⟩]⟩, ⟨['o', 'n', 'e', '.'], [], [⟨['o', 'n', 'e'], [], none⟩]⟩]
     context := "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, but I'd prefer somebody new who has not yet reviewed for us."
     judgment := .unacceptable
     contrasts := []
     readings := []
+    spans := [⟨6, 1, "polarityItem", some "yet"⟩]
     paperFeatures := [("form", "notFocus"), ("scenario", "suggestionNotP")] }
 
 def all : List Datum := [doesnt_john_drink, does_john_not_drink, does_john_drink, does_john_really_drink, isnt_jane_coming, isnt_jane_coming_too, isnt_jane_coming_either, is_jane_really_coming_too, is_jane_really_coming_either, is_jane_not_coming_too, is_jane_not_coming_either, greek_preposed, greek_nonpreposed, spanish_preposed, spanish_nonpreposed, bulgarian_preposed, bulgarian_nonpreposed, german_preposed, german_nonpreposed, korean_preposed, korean_nonpreposed_short, korean_nonpreposed_long, isnt_jane_coming_either_95, isnt_jane_coming_too_100, hasnt_frege_already_reviewed, hasnt_frege_reviewed_yet, is_jane_really_coming, has_frege_really_reviewed, is_jane_not_coming_117, has_frege_not_reviewed_yet]
@@ -491,5 +517,31 @@ inductive Scenario where
 def scenario (e : Datum) : Option Scenario :=
   e.parse? "scenario" [("contradictionP", .contradictionP), ("contradictionNotP", .contradictionNotP),
     ("suggestionP", .suggestionP), ("suggestionNotP", .suggestionNotP)]
+
+/-- The labels of the spans the rows mark. -/
+inductive SpanLabel where
+  /-- polarityItem: a polarity item of the question -/
+  | polarityItem
+  deriving DecidableEq, Repr, Fintype
+
+/-- The label of a span, where it is a declared one. -/
+def label? (p : Datum.Span) : Option SpanLabel :=
+  List.lookup p.label [("polarityItem", .polarityItem)]
+
+/-- The polarity items of the questions. -/
+inductive Lexeme where
+  /-- too: English too, additive -/
+  | too
+  /-- either: English either, additive -/
+  | either
+  /-- already: English already -/
+  | already
+  /-- yet: English yet -/
+  | yet
+  deriving DecidableEq, Repr, Fintype
+
+/-- The lexeme a span is a form of, where it names a declared one. -/
+def lexeme? (p : Datum.Span) : Option Lexeme :=
+  p.lexeme.bind (List.lookup · [("too", .too), ("either", .either), ("already", .already), ("yet", .yet)])
 
 end RomeroHan2004.Examples

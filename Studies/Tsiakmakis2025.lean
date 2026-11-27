@@ -6,6 +6,7 @@ public import Linglib.Languages.Greek.StandardModern.Negation
 public import Linglib.Languages.Greek.StandardModern.PolarityItems
 public import Linglib.Data.Examples.Tsiakmakis2025
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Languages
 
 /-!
@@ -229,13 +230,36 @@ def predicted? (e : Datum) : Option (List Negator) :=
     some (h.negator :: c)
   else none
 
-/-- The negators among the words of a row's sentence, in order: the entries of the Greek language
-file,
-classed by the mood they negate. -/
-def negators (e : Datum) : List Negator :=
-  (Datum.wordsOf e.primaryText).filterMap fun w ↦
-    (Greek.StandardModern.Negation.negators.find? fun n ↦
-      n.marker.form.toList = w).bind (Negator.ofMood ·.mood)
+/-- The language file entry that a lexeme of the data is. -/
+def _root_.Tsiakmakis2025.Examples.Lexeme.entry :
+    Examples.Lexeme → Greek.StandardModern.Negation.Negator
+  | .dhen => Greek.StandardModern.Negation.dhen
+  | .min => Greek.StandardModern.Negation.min
+
+/-- The language file entries of the negators a row's spans name, in order. -/
+def entries (e : Datum) : List Greek.StandardModern.Negation.Negator :=
+  (e.spans.filterMap Examples.lexeme?).map (·.entry)
+
+/-- The negators of a row's sentence, in order, classed by the mood they negate. -/
+def negators (e : Datum) : List Negator := (entries e).filterMap (Negator.ofMood ·.mood)
+
+-- every lexeme a row names is a negator of the Greek language file
+theorem entry_mem_negators :
+    ∀ l : Examples.Lexeme, l.entry ∈ Greek.StandardModern.Negation.negators := by
+  decide
+
+-- every span that names a lexeme is one word, printed as its entry is written
+theorem span_printed :
+    ∀ e ∈ Examples.all, ∀ s ∈ e.spans, ∀ l ∈ Examples.lexeme? s,
+      (s.words e).map (·.wordform) = [l.entry.marker.form.toList] := by
+  decide
+
+-- a Greek sentence has as many words written as a negator as it has spans naming that negator
+theorem count_written_eq_count_entries :
+    ∀ e ∈ Examples.all, e.language = .modernGreek →
+      ∀ n ∈ Greek.StandardModern.Negation.negators,
+        (Datum.wordsOf e.primaryText).count n.marker.form.toList = (entries e).count n := by
+  decide
 
 /-- Each Greek host of expletive negation spells out the negator of its class, *dhen* in the
 apparent hosts and *min* in the hosts proper, (20), and canonical *dhen* follows expletive *min*

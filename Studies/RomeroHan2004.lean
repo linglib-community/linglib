@@ -9,6 +9,8 @@ public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Discourse.Bias
 public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Gloss
+public import Linglib.Data.Examples.Languages
 public import Mathlib.Data.Fintype.Sigma
 
 /-!
@@ -268,37 +270,71 @@ def _root_.RomeroHan2004.Examples.Bias.toSign : Examples.Bias → SignType
   | .negative => -1
   | .absent => 0
 
-/-- The polarity item a row tests. -/
-def item (e : Datum) : Option PolarityItem :=
-  e.parse? "item" [("too", English.PolarityItems.too), ("either", English.PolarityItems.either)]
+/-- The language file entry that a lexeme of the data is. -/
+def _root_.RomeroHan2004.Examples.Lexeme.entry : Examples.Lexeme → PolarityItem
+  | .too => English.PolarityItems.too
+  | .either => English.PolarityItems.either
+  | .already => English.PolarityItems.already
+  | .yet => English.PolarityItems.yet
 
-/-- The questions the paper judges in a contradiction or a suggestion context are acceptable
-exactly where their logical form is felicitous. -/
-theorem felicitous_iff_acceptable :
-    ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ σ ∈ (scenario e).toList, ∀ (W : Type) [Nonempty W]
-      (p : Set W), f.lf.Felicitous p σ.toScenario ↔ e.judgment = .acceptable := by
-  have h : ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ σ ∈ (scenario e).toList,
-      (∀ s, σ.toScenario = .contradiction s →
-        (s = f.lf.implicature ↔ e.judgment = .acceptable)) ∧
-      ∀ a, σ.toScenario = .suggestion a →
-        (¬(f.lf.outer = .positive ∧ f.lf.inner = a) ↔ e.judgment = .acceptable) := by decide
-  intro e he f hf σ hσ W _ p
-  obtain ⟨h₁, h₂⟩ := h e he f hf σ hσ
-  cases hτ : σ.toScenario with
-  | contradiction s => rw [← h₁ s hτ, LF.felicitous_contradiction_iff]
-  | suggestion a => rw [← h₂ a hτ, LF.felicitous_suggestion_iff]
+/-- The polarity items of a row's question, the entries its spans name. -/
+def items (e : Datum) : List PolarityItem :=
+  (e.spans.filterMap Examples.lexeme?).map (·.entry)
 
--- (6), (7), (77)–(80)
-theorem admits_iff_acceptable :
-    ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ i ∈ (item e).toList, ∀ (W : Type) [Nonempty W],
-      (f.lf.licenser W).Admits i ↔ e.judgment = .acceptable := by
-  have h : ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ i ∈ (item e).toList, ¬i.IsFCI ∧
-      (((i.IsPPI → f.lf.inner = .positive) ∧ (i.IsNPI → f.lf.inner = .negative)) ↔
-        e.judgment = .acceptable) := by decide
-  intro e he f hf i hi W _
-  rw [← (h e he f hf i hi).2, LF.admits_iff _ (h e he f hf i hi).1]
+/-- The polarity items of the English language file that the paper's questions test. -/
+def inventory : List PolarityItem :=
+  English.PolarityItems.allNPIs ++ English.PolarityItems.canonicalPPIs
 
-example : Datum.ReadCount item all 6 := by decide
+-- every lexeme a row names is a polarity item of the English language file
+theorem entry_mem_inventory (l : Examples.Lexeme) : l.entry ∈ inventory := by
+  cases l <;> simp [Examples.Lexeme.entry, inventory, English.PolarityItems.allNPIs,
+    English.PolarityItems.weakNPIs, English.PolarityItems.strongNPIs,
+    English.PolarityItems.canonicalPPIs]
+
+-- every span that names a lexeme is one word, printed as its entry is written
+theorem span_printed :
+    ∀ e ∈ all, ∀ s ∈ e.spans, ∀ l ∈ Examples.lexeme? s,
+      (s.words e).map (·.wordform) = [l.entry.form.toList] := by
+  decide
+
+-- no word of an English question that is written as a polarity item goes unmarked
+theorem exists_mem_items_of_written :
+    ∀ e ∈ all, e.language = .english → ∀ i ∈ inventory,
+      i.form.toList ∈ Datum.wordsOf e.primaryText → ∃ j ∈ items e, j.form = i.form := by
+  decide
+
+/-- What `LF.Felicitous` comes to in each scenario. -/
+private def LF.FelicitousIn (l : LF) : Scenario → Prop
+  | .contradiction s => s = l.implicature
+  | .suggestion a => ¬(l.outer = .positive ∧ l.inner = a)
+
+private instance (l : LF) : DecidablePred l.FelicitousIn
+  | .contradiction _ => inferInstanceAs (Decidable (_ = _))
+  | .suggestion _ => inferInstanceAs (Decidable (¬_))
+
+private theorem LF.felicitous_iff_felicitousIn {W : Type} [Nonempty W] (p : Set W) (l : LF)
+    (σ : Scenario) : l.Felicitous p σ ↔ l.FelicitousIn σ := by
+  cases σ with
+  | contradiction s => exact l.felicitous_contradiction_iff p s
+  | suggestion a => exact l.felicitous_suggestion_iff p a
+
+/-- A question the paper classes is acceptable exactly where the clause under VERUM admits its
+polarity items and, in a contradiction or a suggestion context, its logical form is felicitous. -/
+theorem acceptable_iff :
+    ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ (W : Type) [Nonempty W] (p : Set W),
+      e.judgment = .acceptable ↔ (∀ i ∈ items e, (f.lf.licenser W).Admits i) ∧
+        ∀ σ ∈ (scenario e).toList, f.lf.Felicitous p σ.toScenario := by
+  have h : ∀ e ∈ all, ∀ f ∈ (form e).toList, (∀ i ∈ items e, ¬i.IsFCI) ∧
+      (e.judgment = .acceptable ↔
+        (∀ i ∈ items e, (i.IsPPI → f.lf.inner = .positive) ∧ (i.IsNPI → f.lf.inner = .negative)) ∧
+          ∀ σ ∈ (scenario e).toList, f.lf.FelicitousIn σ.toScenario) := by decide
+  intro e he f hf W _ p
+  obtain ⟨hfc, h⟩ := h e he f hf
+  rw [h]
+  refine and_congr (forall₂_congr fun i hi ↦ (LF.admits_iff _ (hfc i hi)).symm)
+    (forall₂_congr fun σ _ ↦ (LF.felicitous_iff_felicitousIn p _ _).symm)
+
+example : (all.filter fun e ↦ (form e).isSome ∧ items e ≠ []).length = 13 := by decide
 
 -- (37), (110), (117)
 theorem bias_eq_implicature :

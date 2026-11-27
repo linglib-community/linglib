@@ -102,6 +102,35 @@
       ]
     }
   ],
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "negator",
+          "label": "negator",
+          "doc": "a sentential negator of the Greek sentence"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The Greek sentential negators.",
+      "levels": [
+        {
+          "name": "dhen",
+          "label": "dhen",
+          "doc": "Greek dhen, glossed NEG1"
+        },
+        {
+          "name": "min",
+          "label": "min",
+          "doc": "Greek min, glossed NEG2"
+        }
+      ]
+    }
+  },
   "examples": [
     {
       "id": "tsiakmakis2025_6",
@@ -110,14 +139,18 @@
       "language": "mode1248",
       "primaryText": "Dhen vrexi sti Lisavona.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Dhen", "NEG1"], ["vrexi", "rains"], ["sti", "at.the"], ["Lisavona.", "Lisbon"]
+      ],
       "translation": "It is not raining in Lisbon.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "label": "negator", "lexeme": "dhen"}
+      ],
       "paperFeatures": [
-        ["negator", "dhen"],
         ["use", "negative"],
         ["mood", "indicative"]
       ],
@@ -131,14 +164,18 @@
       "language": "mode1248",
       "primaryText": "Min pas sti Lisavona.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Min", "NEG2"], ["pas", "you.go"], ["sti", "at.the"], ["Lisavona.", "Lisbon"]
+      ],
       "translation": "Don't go to Lisbon.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "label": "negator", "lexeme": "min"}
+      ],
       "paperFeatures": [
-        ["negator", "min"],
         ["use", "negative"],
         ["host", "imperative"]
       ],
@@ -152,14 +189,19 @@
       "language": "mode1248",
       "primaryText": "Posus anthropus dhen kseyelase sta niata tu!",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Posus", "how.many"], ["anthropus", "men"], ["dhen", "NEG1"], ["kseyelase", "cheated"],
+        ["sta", "in.the"], ["niata", "youth"], ["tu!", "his"]
+      ],
       "translation": "How many people he cheated in his youth!",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 2, "label": "negator", "lexeme": "dhen"}
+      ],
       "paperFeatures": [
-        ["negator", "dhen"],
         ["use", "expletive"],
         ["host", "negative exclamative"],
         ["class", "apparent"]
@@ -174,14 +216,18 @@
       "language": "mode1248",
       "primaryText": "Dhen ipie o Yanis kafe?",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Dhen", "NEG1"], ["ipie", "drank"], ["o", "the"], ["Yanis", "Yanis"], ["kafe?", "coffee"]
+      ],
       "translation": "Didn't Yanis drink coffee?",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "label": "negator", "lexeme": "dhen"}
+      ],
       "paperFeatures": [
-        ["negator", "dhen"],
         ["use", "expletive"],
         ["host", "preposed negation question"],
         ["class", "apparent"]
@@ -196,14 +242,19 @@
       "language": "mode1248",
       "primaryText": "Sto kato kato, dhen ine xrisimi ke i vroxi?",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Sto", "at.the"], ["kato", "down"], ["kato,", "down"], ["dhen", "NEG1"], ["ine", "is"],
+        ["xrisimi", "useful"], ["ke", "and"], ["i", "the"], ["vroxi?", "rain"]
+      ],
       "translation": "After all, isn't rain useful?",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 3, "label": "negator", "lexeme": "dhen"}
+      ],
       "paperFeatures": [
-        ["negator", "dhen"],
         ["use", "expletive"],
         ["host", "rhetorical question"],
         ["class", "apparent"]
@@ -218,14 +269,21 @@
       "language": "mode1248",
       "primaryText": "Q: Pxios dhen efaye to fayito tu? A: Se pxion dhen aresun ta yuvarlakia?",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Pxios", "who"], ["dhen", "NEG1"], ["efaye", "ate"], ["to", "the"], ["fayito", "food"],
+        ["tu?", "his"], ["Se", "to"], ["pxion", "whom"], ["dhen", "NEG1"], ["aresun", "like"],
+        ["ta", "the"], ["yuvarlakia?", "meatball.soup"]
+      ],
       "translation": "Q: Who didn't eat their food? A: Who doesn't like meatball soup?",
       "context": "It is shared knowledge that dad does not like meatball soup.",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 1, "label": "negator", "lexeme": "dhen"},
+        {"start": 8, "label": "negator", "lexeme": "dhen"}
+      ],
       "paperFeatures": [
-        ["negator", "dhen"],
         ["use", "negative"],
         ["host", "rhetorical question"]
       ],
@@ -239,14 +297,19 @@
       "language": "mode1248",
       "primaryText": "Fovame min efaye ta yuvarlakia o babas.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Fovame", "I.fear"], ["min", "NEG2"], ["efaye", "ate"], ["ta", "the"],
+        ["yuvarlakia", "meatball.soup"], ["o", "the"], ["babas.", "dad"]
+      ],
       "translation": "I fear dad maybe ate the meatball soup.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 1, "label": "negator", "lexeme": "min"}
+      ],
       "paperFeatures": [
-        ["negator", "min"],
         ["use", "expletive"],
         ["host", "fear-predicate complement"],
         ["class", "proper"]
@@ -261,14 +324,20 @@
       "language": "mode1248",
       "primaryText": "Fovame min dhen efaye ta yuvarlakia o babas.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Fovame", "I.fear"], ["min", "NEG2"], ["dhen", "NEG1"], ["efaye", "ate"], ["ta", "the"],
+        ["yuvarlakia", "meatball.soup"], ["o", "the"], ["babas.", "dad"]
+      ],
       "translation": "I fear dad maybe didn't eat the meatball soup.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 1, "label": "negator", "lexeme": "min"},
+        {"start": 2, "label": "negator", "lexeme": "dhen"}
+      ],
       "paperFeatures": [
-        ["negator", "min dhen"],
         ["use", "expletive with canonical negation"],
         ["host", "fear-predicate complement"],
         ["class", "proper"]
@@ -283,14 +352,19 @@
       "language": "mode1248",
       "primaryText": "Fovame min efaye TIPOTA o babas.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Fovame", "I.fear"], ["min", "NEG2"], ["efaye", "ate"], ["TIPOTA", "nothing"], ["o", "the"],
+        ["babas.", "dad"]
+      ],
       "translation": "I fear dad maybe ate nothing.",
       "context": "",
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 1, "label": "negator", "lexeme": "min"}
+      ],
       "paperFeatures": [
-        ["negator", "min"],
         ["use", "expletive"],
         ["host", "fear-predicate complement"],
         ["diagnostic", "NCI licensing"]
@@ -305,14 +379,19 @@
       "language": "mode1248",
       "primaryText": "Fovame o babas min efaye yuvarlakia.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Fovame", "I.fear"], ["o", "the"], ["babas", "dad"], ["min", "NEG2"], ["efaye", "ate"],
+        ["yuvarlakia.", "meatball.soup"]
+      ],
       "translation": "I fear dad maybe ate meatball soup.",
       "context": "",
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 3, "label": "negator", "lexeme": "min"}
+      ],
       "paperFeatures": [
-        ["negator", "min"],
         ["use", "expletive"],
         ["host", "fear-predicate complement"],
         ["diagnostic", "left-periphery merge"]
@@ -327,14 +406,19 @@
       "language": "mode1248",
       "primaryText": "Min ksexaso kati, amesos na koroidepsis.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Min", "NEG2"], ["ksexaso", "I.forget"], ["kati,", "something"], ["amesos", "immediately"],
+        ["na", "SUBJ"], ["koroidepsis.", "you.mock"]
+      ],
       "translation": "If I forget something, you will immediately mock me.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "label": "negator", "lexeme": "min"}
+      ],
       "paperFeatures": [
-        ["negator", "min"],
         ["use", "expletive"],
         ["host", "conditional"],
         ["class", "proper"]
@@ -369,14 +453,19 @@
       "language": "mode1248",
       "primaryText": "Min efaye ta yuvarlakia o babas?",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Min", "NEG2"], ["efaye", "ate"], ["ta", "the"], ["yuvarlakia", "meatball.soup"],
+        ["o", "the"], ["babas?", "dad"]
+      ],
       "translation": "Did dad maybe eat the meatball soup?",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "label": "negator", "lexeme": "min"}
+      ],
       "paperFeatures": [
-        ["negator", "min"],
         ["use", "expletive"],
         ["host", "polar question"],
         ["class", "proper"]
@@ -391,14 +480,20 @@
       "language": "mode1248",
       "primaryText": "Min dhen efaye ta yuvarlakia o babas?",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["Min", "NEG2"], ["dhen", "NEG1"], ["efaye", "ate"], ["ta", "the"],
+        ["yuvarlakia", "meatball.soup"], ["o", "the"], ["babas?", "dad"]
+      ],
       "translation": "Did dad maybe not eat the meatball soup?",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {"start": 0, "label": "negator", "lexeme": "min"},
+        {"start": 1, "label": "negator", "lexeme": "dhen"}
+      ],
       "paperFeatures": [
-        ["negator", "min dhen"],
         ["use", "expletive with canonical negation"],
         ["host", "polar question"],
         ["class", "proper"]
