@@ -91,7 +91,7 @@ variable {W C V α β : Type*}
 /-- The dagger takes the diagonal proposition and projects it onto the horizontal: `†P` expresses
 the diagonal of `P` relative to every context. It evaluates `P` at the context given by the world
 of evaluation. -/
-def dagger : Character W W α → Character W W α := shiftBy fun _ w ↦ w
+def dagger : Character W W α → Character W W α := shiftBy fun w _ ↦ w
 
 @[simp] theorem dagger_apply (χ : Character W W α) (v w : W) : dagger χ v w = χ w w := rfl
 
@@ -123,7 +123,7 @@ theorem IsExtensional.isOneDimensional {O : Character C V α → Character C V �
 
 theorem IsOneDimensional.not_isMonster {O : Character C V α → Character C V β}
     (h : IsOneDimensional O) : ¬ IsMonster O :=
-  fun hO ↦ h.elim fun o ho ↦ hO ⟨fun _ ↦ o, ho⟩
+  h.elim fun _ ho ↦ Character.not_isMonster.2 (.of_apply ho)
 
 /-- Propositional necessity: `□P` expresses at a context the proposition true at a world iff what
 `P` expresses there is the necessary proposition. -/
@@ -137,7 +137,7 @@ theorem isOneDimensional_box : IsOneDimensional (box : Character C V Prop → _)
 theorem isMonster_dagger [Nontrivial W] [Nontrivial α] :
     IsMonster (dagger : Character W W α → Character W W α) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne W
-  exact (isMonster_shiftBy_iff _).2 ⟨a, b, hab.symm⟩
+  exact isMonster_shiftBy_of_ne (v := b) (c := a) hab.symm
 
 -- p. 320: the square-dagger is the a priori truth operator
 theorem box_dagger_iff (χ : Character W W Prop) (v w : W) :

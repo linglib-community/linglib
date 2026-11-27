@@ -84,11 +84,11 @@ theorem shiftyOp_opAll_eq (χ : Character (Context W E P T) (Context W E P T) α
 /-- An attitude verb leaves the context untouched, so it is no monster (§3.1): indexical shift
 comes from the operators, not the verbs. -/
 theorem not_isMonster_say : ¬ IsMonster (say acc x) :=
-  fun h ↦ h ⟨fun _ f i ↦ ∀ j ∈ acc x i, f j, fun _ _ ↦ rfl⟩
+  not_isMonster.2 (.of_apply (o := fun _ f i ↦ ∀ j ∈ acc x i, f j) fun _ _ ↦ rfl)
 
 theorem not_isMonster_shiftyOp_empty :
     ¬ IsMonster (shiftyOp ∅ : Character (Context W E P T) (Context W E P T) α → _) :=
-  fun h ↦ h ⟨fun _ f ↦ f, fun _ _ ↦ by ext; simp⟩
+  not_isMonster.2 (.of_apply (o := fun _ f ↦ f) fun _ _ ↦ by ext; simp)
 
 /-- An operator overwriting the author, as `OP∀` and `OP_AUTH` do, is a monster once there are
 two individuals. -/
@@ -97,7 +97,7 @@ theorem isMonster_shiftyOp_of_agent_mem [Nontrivial α] [Nontrivial E] [Nonempty
     IsMonster (shiftyOp S : Character (Context W E P T) (Context W E P T) α → _) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   obtain ⟨w⟩ := ‹Nonempty W›; obtain ⟨p⟩ := ‹Nonempty P›; obtain ⟨t⟩ := ‹Nonempty T›
-  refine (isMonster_shiftBy_iff _).2 ⟨⟨a, a, w, t, p⟩, ⟨b, a, w, t, p⟩, fun h ↦ hab ?_⟩
+  refine isMonster_shiftBy_of_ne (c := ⟨a, a, w, t, p⟩) (v := ⟨b, a, w, t, p⟩) fun h ↦ hab ?_
   simpa [hS] using (congrArg Context.agent h).symm
 
 /-! ### Indexicals, PRO and logophors -/

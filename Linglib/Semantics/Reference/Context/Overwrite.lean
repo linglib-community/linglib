@@ -28,7 +28,7 @@ after a sequence of overwrites it reads the context of the last overwrite that t
 * `Context.Coord.ofRole`: the coordinate holding a discourse role.
 * `Context.localDepth ss k`: the position of the last of the overwrites `ss` that takes `k`.
 * `shiftyOp s`: the shifty operator, evaluating its argument at the context overwritten from the
-  index, `Character.shiftBy (overwrite s)`.
+  index, the shift by `fun i c ↦ overwrite s c i`.
 
 ## Main results
 
@@ -223,7 +223,7 @@ variable {W E P T : Type u} {α : Type*}
 def shiftyOp (s : Finset Coord) :
     Character (Context W E P T) (Context W E P T) α →
       Character (Context W E P T) (Context W E P T) α :=
-  shiftBy (overwrite s)
+  shiftBy fun i c ↦ overwrite s c i
 
 variable (s t : Finset Coord) (χ : Character (Context W E P T) (Context W E P T) α)
 
