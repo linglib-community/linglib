@@ -16,7 +16,7 @@ It states definitions and results from the literature in a shared dependency str
 
 Linglib is under active development. Finding the right formalization is an iterative process that requires extensive discussion within the community. Most of the code in the library was written with AI assistance and needs further discussion. Please report errors or concerns on the [issue tracker](https://github.com/linglib-community/linglib/issues). Authors whose work appears here are welcome to ask for a correction or for its removal.
 
-## Design principles
+## Principles
 
 1. **This is an archival project.** Every definition or claim is grounded in the published or publicly circulated literature. This library does not contain unpublished linguistic theories or data.
 2. **The library defers to existing resources when available** such as WALS, CLDF, UD, PHOIBLE, and the Leipzig glossing rules, in the same way we defer to mathlib for formal foundations. The fewer layers that need to be made or maintained here, the better.
