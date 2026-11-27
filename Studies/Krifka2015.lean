@@ -23,11 +23,11 @@ an assertion leaves `s`'s commitment to `φ` beside `a`'s commitment to `φᶜ`,
 
 The last stage of a development corresponds to the Table of Farkas and Bruce. A Table presents a
 commitment space whose root is its common ground and whose continuations are the bodies of
-information that refine the common ground and decide every issue on the Table; besides the root,
-these are the bodies of information below a projected common ground. Placing an issue on the Table
-is then the question that proposes each complete answer of the issue, so the assertion of the
-Table is a monopolar question on its content with the speaker's commitment recorded apart, and in
-a stable context the operation that makes a joint commitment common ground is the update by its
+information that refine the common ground and entail an answer of every item on the Table; besides
+the root, these are the bodies of information below a projected common ground. Placing an item on
+the Table is then the question that proposes each complete answer of the item, so the assertion of
+the Table is a monopolar question on its content with the speaker's commitment recorded apart, and
+in a stable context the operation that makes a joint commitment common ground is the update by its
 content.
 
 ## Implementation notes
@@ -73,7 +73,6 @@ content.
 namespace Krifka2015
 
 open Commitment Commitment.Space ModalLogic Filter OrderDual
-open Inquisitive Inquisitive.Proposition
 open scoped SetRel
 
 /-- (8)–(9): A commitment space development records the spaces a conversation has led through,
@@ -194,54 +193,44 @@ end Development
 
 section Table
 
-variable {A W : Type*} (K : Table A W) (a : A) (p : Set W) (P : Proposition (Set W))
+variable {A W I : Type*} (K : Table A W I) (ans : I → Set (Set W)) (a : A) (p : Set W) (i : I)
   {d : (Filter W)ᵒᵈ}
 
 /-- The commitment space a Table presents has the common ground as its root and, as
-continuations, the bodies of information that refine the common ground and decide every issue on
-the Table. Its states are filters, ordered so that a state with more information is higher. -/
+continuations, the bodies of information that refine the common ground and entail an answer of
+every item on the Table. Its states are filters, ordered so that a state with more information is
+higher. -/
 def toSpace : Space (Filter W)ᵒᵈ :=
-  (Space.Ici (toDual K.commonGround)).restrict {g | ∀ P ∈ K.stack, P.DecidedBy (ofDual g)}
+  (Space.Ici (toDual K.commonGround)).restrict
+    {g | ∀ i ∈ K.stack, ∃ q ∈ ans i, q ∈ ofDual g}
 
-@[simp] theorem root_toSpace : (toSpace K).root = toDual K.commonGround := rfl
+@[simp] theorem root_toSpace : (toSpace K ans).root = toDual K.commonGround := rfl
 
-theorem mem_toSpace : d ∈ toSpace K ↔ d = toDual K.commonGround ∨
-    ofDual d ≤ K.commonGround ∧ ∀ P ∈ K.stack, P.DecidedBy (ofDual d) := Iff.rfl
+theorem mem_toSpace : d ∈ toSpace K ans ↔ d = toDual K.commonGround ∨
+    ofDual d ≤ K.commonGround ∧ ∀ i ∈ K.stack, ∃ q ∈ ans i, q ∈ ofDual d := Iff.rfl
 
-theorem exists_toDual_principal_le_iff :
-    (∃ k ∈ (fun q ↦ toDual (𝓟 q)) '' alt P, k ≤ d) ↔ P.DecidedBy (ofDual d) := by
-  simp only [Set.mem_image, exists_exists_and_eq_and, DecidedBy]
+theorem exists_toDual_principal_le_iff (H : Set (Set W)) :
+    (∃ k ∈ (fun q ↦ toDual (𝓟 q)) '' H, k ≤ d) ↔ ∃ q ∈ H, q ∈ ofDual d := by
+  simp only [Set.mem_image, exists_exists_and_eq_and]
   exact exists_congr fun q ↦ and_congr_right fun _ ↦ le_principal_iff
 
-/-- Placing an issue on the Table is the question that proposes each of its complete answers. -/
+/-- Placing an item on the Table is the question that proposes each of its complete answers. -/
 theorem toSpace_push :
-    toSpace (K.push P) = (toSpace K).question ((fun q ↦ toDual (𝓟 q)) '' alt P) := by
+    toSpace (K.push i) ans = (toSpace K ans).question ((fun q ↦ toDual (𝓟 q)) '' ans i) := by
   ext d
   rw [Space.mem_question, exists_toDual_principal_le_iff, mem_toSpace, mem_toSpace,
     Table.stack_push, List.forall_mem_cons, root_toSpace, Table.commonGround_push]
   tauto
 
-@[simp] theorem toSpace_commit : toSpace (K.commit a p) = toSpace K := rfl
+@[simp] theorem toSpace_commit : toSpace (K.commit a p) ans = toSpace K ans := rfl
 
--- the assertion of the Table is a monopolar question on its content, with the commitment apart
-theorem toSpace_assert : toSpace (K.assert a p) = (toSpace K).question {toDual (𝓟 p)} := by
-  rw [Table.assert, toSpace_push, alt_ofSet, Set.image_singleton, toSpace_commit]
-
--- a negative answer to a polar question leads where the assertion alone would
-theorem toSpace_assert_compl_polarQuestion (b : A) :
-    toSpace ((K.polarQuestion p).assert b pᶜ) = toSpace (K.assert b pᶜ) := by
-  ext d
-  simp only [mem_toSpace, Table.stack_assert, Table.stack_polarQuestion, List.forall_mem_cons,
-    decidedBy_ofSet, decidedBy_polar, Table.commonGround_assert, Table.commonGround_polarQuestion]
-  tauto
-
-variable {K} in
+variable {K ans} in
 -- making a joint commitment common ground is the update by its content
 theorem toSpace_settle_of_stack_eq_nil (hK : K.stack = []) :
-    toSpace (K.settle p) = (toSpace K).update (toDual (𝓟 p)) := by
-  have hs : (K.settle p).stack = [] := Table.stack_settle_of_stack_eq_nil p hK
-  have hmem : toDual (𝓟 p) ⊔ (toSpace K).root ∈ toSpace K :=
-    (mem_toSpace K).2 (.inr ⟨inf_le_right, by simp [hK]⟩)
+    toSpace (K.settle ans p) ans = (toSpace K ans).update (toDual (𝓟 p)) := by
+  have hs : (K.settle ans p).stack = [] := Table.stack_settle_of_stack_eq_nil ans p hK
+  have hmem : toDual (𝓟 p) ⊔ (toSpace K ans).root ∈ toSpace K ans :=
+    (mem_toSpace K ans).2 (.inr ⟨inf_le_right, by simp [hK]⟩)
   ext d
   rw [Space.mem_update, Space.root_update_of_mem _ hmem, mem_toSpace, mem_toSpace, hs, hK]
   simp only [List.not_mem_nil, false_imp_iff, implies_true, and_true, Table.commonGround_settle,
@@ -254,12 +243,28 @@ theorem toSpace_settle_of_stack_eq_nil (hK : K.stack = []) :
     · exact .inl (by rw [← toDual_inf, inf_comm])
     · exact .inr (le_inf (hd.elim (fun e ↦ e ▸ le_rfl) id) (toDual_le.1 h))
 
-variable {K} in
+variable {K ans} in
 -- the space is the root with everything below a projected common ground
 theorem toDual_mem_toSpace_iff {g : Filter W} (hg : g ≠ ⊥) :
-    toDual g ∈ toSpace K ↔ g = K.commonGround ∨ ∃ f ∈ K.projectedSet, g ≤ f := by
+    toDual g ∈ toSpace K ans ↔ g = K.commonGround ∨ ∃ f ∈ K.projectedSet ans, g ≤ f := by
   rw [mem_toSpace, Table.exists_le_mem_projectedSet_iff hg]
   rfl
+
+variable (K : Table A W (Set (Set W))) (b : A)
+
+-- the assertion of the Table is a monopolar question on its content, with the commitment apart
+theorem toSpace_assert :
+    toSpace (K.assert a p) id = (toSpace K id).question {toDual (𝓟 p)} := by
+  rw [Table.assert, toSpace_push, id, Set.image_singleton, toSpace_commit]
+
+-- a negative answer to a polar question leads where the assertion alone would
+theorem toSpace_assert_compl_polarQuestion :
+    toSpace ((K.polarQuestion p).assert b pᶜ) id = toSpace (K.assert b pᶜ) id := by
+  ext d
+  simp only [mem_toSpace, Table.stack_assert, Table.stack_polarQuestion, List.forall_mem_cons,
+    Table.commonGround_assert, Table.commonGround_polarQuestion, id, Set.mem_singleton_iff,
+    Set.mem_insert_iff, exists_eq_left, exists_eq_or_imp]
+  tauto
 
 end Table
 

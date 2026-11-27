@@ -6,6 +6,7 @@ public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Data.Examples.Rudin2025b
 public import Linglib.Data.Examples.Readers
 public import Linglib.Semantics.Questions.Inquisitive.Declarative
+public import Linglib.Semantics.Questions.Inquisitive.Polar
 
 /-!
 # Rudin (2025): Embedded Intonation and Quotative Complements to Verbs of Speech
@@ -118,35 +119,37 @@ instance : DecidablePred (Material.Linguistic (W := W)) := fun m ↦ by
 
 /-- Uttering a sentence that denotes `D` raises `D` as an issue and, unless the tune is rising,
 commits the speaker to the informative content of `D`. -/
-def utter (D : Proposition (Set W)) : Bool → Table SpeechAct.Role W → Table SpeechAct.Role W
+def utter (D : Proposition (Set W)) :
+    Bool → Table SpeechAct.Role W (Proposition (Set W)) →
+      Table SpeechAct.Role W (Proposition (Set W))
   | true, K => K.push D
   | false, K => (K.commit .speaker D.info).push D
 
 -- (83)
-theorem utter_ofSet_false (p : Set W) (K : Table SpeechAct.Role W) :
-    utter (ofSet p) false K = K.assert .speaker p := by
+theorem utter_ofSet_false (p : Set W) (K : Table SpeechAct.Role W (Proposition (Set W))) :
+    utter (ofSet p) false K = (K.commit .speaker p).push (ofSet p) := by
   rw [utter, info_ofSet]
-  rfl
 
 -- (85)
-theorem utter_polar_true (p : Set W) (K : Table SpeechAct.Role W) :
-    utter (polar p) true K = K.polarQuestion p := rfl
+theorem utter_polar_true (p : Set W) (K : Table SpeechAct.Role W (Proposition (Set W))) :
+    utter (polar p) true K = K.push (polar p) := rfl
 
 /-- The context update of a performance is that of the sentence it utters, if any. -/
-def Performance.update : Performance W → Table SpeechAct.Role W → Table SpeechAct.Role W
+def Performance.update : Performance W →
+    Table SpeechAct.Role W (Proposition (Set W)) → Table SpeechAct.Role W (Proposition (Set W))
   | ⟨.utterance D rising, _⟩ => utter D rising
   | _ => id
 
 /-- A performance is an asking when in every context it raises an issue without committing its
 speaker to anything that resolves it. -/
 def Performance.Asking (u : Performance W) : Prop :=
-  ∀ K : Table SpeechAct.Role W, ∃ i, (u.update K).stack = i :: K.stack ∧
+  ∀ K : Table SpeechAct.Role W (Proposition (Set W)), ∃ i, (u.update K).stack = i :: K.stack ∧
     ∀ q ∈ (u.update K).commitments.contents .speaker, q ∈ i → q ∈ K.commitments.contents .speaker
 
 /-- A performance is an assertion when in every context it raises an issue with a single
 alternative and commits its speaker to that alternative. -/
 def Performance.Assertion (u : Performance W) : Prop :=
-  ∀ K : Table SpeechAct.Role W, ∃ q, (u.update K).stack = ofSet q :: K.stack ∧
+  ∀ K : Table SpeechAct.Role W (Proposition (Set W)), ∃ q, (u.update K).stack = ofSet q :: K.stack ∧
     q ∈ (u.update K).commitments.contents .speaker
 
 namespace Performance
