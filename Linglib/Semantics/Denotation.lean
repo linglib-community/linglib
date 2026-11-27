@@ -6,30 +6,38 @@ public import Mathlib.Util.Superscript
 /-!
 # Denotation
 
-This file defines `Denotes`, the class of objects that have a denotation, and the
-bracket notation `⟦x⟧` for it, Heim and Kratzer's. A lexical item, a reading, or a whole
-sentence denotes in whatever domain its instance names, so the class gives the library one name
-for the map from a semantic object to its meaning, whether that map is compositional or
-stipulated per object.
-
-## Implementation notes
-
-The class has one field, like `FunLike`: the parameters an interpretation is relativized to,
-the model, context, index and assignment of Montague and of Kaplan, are not slots of
-the class but Reader arguments of the domain `D`, in that order, so a Kaplanian expression
-denotes a `Character`, an assignment-sensitive one an `(ℕ → E) → _`, and an
-intension a `W → _`. Instance resolution requires every type parameter of `D` to be fixed by
-`α`. An object interpreted relative to data its type does not mention denotes the family over
-that data, `D` quantifying over the model's types with the model's data as Reader arguments, as
-a lexical quantifier denotes a `Quantifier.Det.Family` and an article its readings on every model;
-a tree relative to a lexicon keeps an explicit interpretation function
-(`PhraseStructure.Tree.values`, mathlib's `Term.realize`) and gains an instance once its type is
-indexed by that data.
+This file defines the bracket notation `⟦x⟧` for the denotation of `x`, Heim and Kratzer's, and
+the class that gives a type of objects its denotations. A lexical entry, a reading or a sentence
+denotes in the domain its instance names: a tense denotes a relation between times, and a
+determiner the set of the quantifiers it may be.
 
 ## Main definitions
 
-* `Denotes α D`: every object of `α` denotes in `D`; `⟦x⟧` is `Denotes.denote x`.
+* `Denotes α D`: every object of `α` denotes in `D`.
+
+## Notation
+
+* `⟦x⟧`, in the scope `Denotes`: the denotation of `x`.
 * `⟦x⟧ᴹ`, in the scope `Denotes.Superscript`: the denotation of `x` at the parameter `M`.
+
+## Implementation notes
+
+The class is a notation class, with one field and no law. A class of functions with an injective
+coercion carries extensionality, and denotation is not injective, since two expressions may mean
+the same.
+
+The parameters an interpretation is relativized to, the model, context, index and assignment of
+Montague and of Kaplan, are not slots of the class. They are arguments of the domain, in that
+order, so an expression that depends on the context denotes a function of contexts, and one that
+depends on the assignment a function of assignments. Instance resolution requires every type
+parameter of the domain to be fixed by the type of objects, so an object interpreted relative to
+data its type does not mention denotes the family over that data.
+
+The class does not feed the composition of meanings in a tree. A tree is interpreted relative to
+a lexicon of typed items and a function that values them, both arguments of the interpretation,
+and lexica from separate files combine by their sum.
+
+In a file that opens the scope, the brackets are these and not those of a quotient.
 
 ## References
 
