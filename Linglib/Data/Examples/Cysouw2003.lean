@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Cysouw2003` — typed example data
@@ -1394,5 +1396,19 @@ def ex_4_105 : Datum :=
     paperFeatures := [("marking", "independent"), ("1", "i"), ("2", "ɨ"), ("3", "pɨ/u"), ("1+2", "ta"), ("1+2+3", "ti"), ("1+3", "ni"), ("2+3", "ɨmɨ"), ("3+3", "ɨmɨ"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.6")] }
 
 def all : List Datum := [fig3_6, ex_3_15, ex_3_16, ex_3_17, ex_3_18, ex_3_19, ex_3_20, ex_3_21, ex_3_22, ex_4_1, ex_4_2, ex_4_3, ex_4_4, ex_4_5, ex_4_6, ex_4_7, ex_4_8, ex_4_9, ex_4_12, ex_4_13, ex_4_15, ex_4_17, ex_4_19, ex_4_20, ex_4_21, ex_4_22, ex_4_23, ex_4_24, ex_4_25, ex_4_26, ex_4_27, ex_4_28, ex_4_29, ex_4_30, ex_4_31, ex_4_32, ex_4_33, ex_4_34, ex_4_35, ex_4_36, ex_4_37, ex_4_38, ex_4_39, ex_4_40, ex_4_41, ex_4_42, ex_4_43, ex_4_44, ex_4_45, ex_4_46, ex_4_47, ex_4_48, ex_4_49, ex_4_50, ex_4_51, ex_4_52, ex_4_53, ex_4_54, ex_4_55, ex_4_56, ex_4_57, ex_4_58, ex_4_59, ex_4_60, ex_4_61, ex_4_62, ex_4_63, ex_4_64, ex_4_65, ex_4_66, ex_4_67, ex_4_68, ex_4_69, ex_4_70, ex_4_71, ex_4_72, ex_4_73, ex_4_74, ex_4_75, ex_4_76, ex_4_77, ex_4_78, ex_4_79, ex_4_80, ex_4_81, ex_4_82, ex_4_85, ex_4_86, ex_4_87, ex_4_88, ex_4_89, ex_4_90, ex_4_91a, ex_4_91b, ex_4_92, ex_4_93, ex_4_94, ex_4_96, ex_4_97, ex_4_98, ex_4_99, ex_4_100, ex_4_101, ex_4_102, ex_4_104, ex_4_105]
+
+/-- How widespread a paradigmatic structure is in the sample. -/
+inductive Ubiquity where
+  /-- common: common -/
+  | common
+  /-- semi-common: semi-common -/
+  | semiCommon
+  /-- rare: rare -/
+  | rare
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `ubiquity`. -/
+def ubiquity (e : Datum) : Option Ubiquity :=
+  e.parse? "ubiquity" [("common", .common), ("semi-common", .semiCommon), ("rare", .rare)]
 
 end Cysouw2003.Examples

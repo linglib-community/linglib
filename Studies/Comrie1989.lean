@@ -297,10 +297,6 @@ def parameters : List (Glottocode × Parameters) :=
     (.japanese, { doubles := ∅, extended := true, passive := true }),
     (.kannada, { doubles := ∅, extended := true, passive := true })]
 
-/-- The causee positions the rows name. -/
-def causeeNames : List (String × CauseeSlot) :=
-  [("directObject", .directObject), ("indirectObject", .indirectObject), ("oblique", .oblique)]
-
 /-- A causative row's configuration is the base verb's valency, the causee's position, and the
 language's parameters. -/
 structure Causative where
@@ -314,7 +310,10 @@ structure Causative where
 /-- The configuration a causative or control row records. -/
 def Causative.ofRow (row : Datum) : Option Causative := do
   guard (row.feature? "construction" ∈ [some "causative", some "control"])
-  return ⟨← row.nat? "valency", ← row.parse? "causee" causeeNames, ← row.byLanguage parameters⟩
+  return ⟨← row.nat? "valency", ← (Examples.causee row).map fun
+    | .directObject => .directObject
+    | .indirectObject => .indirectObject
+    | .oblique => .oblique, ← row.byLanguage parameters⟩
 
 /-- The paradigm position is the highest the base verb's arguments leave free. -/
 def Causative.paradigm (c : Causative) : CauseeSlot := causeeDemotion c.valency
@@ -391,8 +390,9 @@ structure Controlled where
 /-- The configuration a control row records. -/
 def Controlled.ofRow (row : Datum) : Option Controlled := do
   guard (row.feature? "construction" = some "control")
-  return ⟨← row.parse? "control"
-      [("less", ({.sentience} : EntailmentProfile)), ("more", {.volition, .sentience})],
+  return ⟨← (Examples.control row).map fun
+    | .less => ({.sentience} : EntailmentProfile)
+    | .more => {.volition, .sentience},
     ← row.parse? "case" [("acc", Case.acc), ("dat", .dat), ("inst", .inst)]⟩
 
 /-- Within a language the causee with more proto-agent entailments takes the case higher on the
@@ -413,10 +413,13 @@ theorem control_rows :
 /-- The causative construction a row records, its formal complexity and its mediation. -/
 def construction? (row : Datum) : Option (CausativeComplexity × Mediation) := do
   guard (row.feature? "construction" = some "compactness")
-  return (← row.parse? "complexity"
-      [("lexical", CausativeComplexity.lexical), ("morphological", .morphological),
-      ("analytic", .periphrastic)],
-    ← row.parse? "mediation" [("direct", Mediation.direct), ("indirect", .indirect)])
+  return (← (Examples.complexity row).map fun
+    | .lexical => CausativeComplexity.lexical
+    | .morphological => .morphological
+    | .analytic => .periphrastic,
+    ← (Examples.mediation row).map fun
+      | .direct => Mediation.direct
+      | .indirect => .indirect)
 
 -- Nivkh (6)–(7) and English *Anton broke the stick* against *Anton brought it about that the
 -- stick broke*.

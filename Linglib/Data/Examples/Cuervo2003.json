@@ -1,524 +1,560 @@
-[
-  {
-    "id": "cuervo2003_29a",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(29a)"},
-    "language": "stan1288",
-    "primaryText": "Pablo le mandó un diccionario a Gabi.",
-    "glossedTokens": [
-      ["Pablo", "Pablo"], ["le", "CL.DAT"], ["mandó", "sent"], ["un", "a"],
-      ["diccionario", "dictionary"], ["a", "DAT"], ["Gabi", "Gabi"]
-    ],
-    "translation": "Pablo sent Gabi a dictionary.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "mandar"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "recipient"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_30",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(30)"},
-    "language": "stan1288",
-    "primaryText": "Pablo nos preparó sandwichitos de miga a todos.",
-    "glossedTokens": [
-      ["Pablo", "Pablo"], ["nos", "CL.1.PL.DAT"], ["preparó", "fixed"],
-      ["sandwichitos", "sandwiches"], ["de", "of"], ["miga", "crumb"], ["a", "DAT"],
-      ["todos", "all"]
-    ],
-    "translation": "Pablo fixed us all tea sandwiches.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "preparar"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "recipient"]
-    ],
-    "comment": "Headed 'Creation verbs ⇒ Benefactive'; table (40) files creation verbs under the recipient reading of the low applicative TO.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_31",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(31)"},
-    "language": "stan1288",
-    "primaryText": "Pablo le sacó la bicicleta a Andreína.",
-    "glossedTokens": [
-      ["Pablo", "Pablo"], ["le", "CL.DAT"], ["sacó", "took.away"], ["la", "the"],
-      ["bicicleta", "bicycle"], ["a", "DAT"], ["Andreína", "Andreína"]
-    ],
-    "translation": "Pablo took the bicycle from Andreína.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "sacar"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "source"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_32",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(32)"},
-    "language": "stan1288",
-    "primaryText": "Pablo le lavó el auto a Valeria.",
-    "glossedTokens": [
-      ["Pablo", "Pablo"], ["le", "CL.DAT"], ["lavó", "washed"], ["el", "the"], ["auto", "car"],
-      ["a", "DAT"], ["Valeria", "Valeria"]
-    ],
-    "translation": "Pablo washed Valeria's car.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "lavar"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "possessor"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_33",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(33)"},
-    "language": "stan1288",
-    "primaryText": "Pablo le admira la paciencia a Valeria.",
-    "glossedTokens": [
-      ["Pablo", "Pablo"], ["le", "CL.DAT"], ["admira", "admires"], ["la", "the"],
-      ["paciencia", "patience"], ["a", "DAT"], ["Valeria", "Valeria"]
-    ],
-    "translation": "Pablo admires Valeria's patience.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "admirar"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "possessor"]
-    ],
-    "comment": "The alternative object 'la campera' 'the jacket' is left out.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_34",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(34)"},
-    "language": "stan1288",
-    "primaryText": "A Gabi le llegaron dos cartas de Londres.",
-    "glossedTokens": [
-      ["A", "DAT"], ["Gabi", "Gabi"], ["le", "CL.DAT"], ["llegaron", "arrived.PL"], ["dos", "two"],
-      ["cartas", "letters"], ["de", "from"], ["Londres", "London"]
-    ],
-    "translation": "Gabi got two letters from London.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "llegar"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "recipient"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_35",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(35)"},
-    "language": "stan1288",
-    "primaryText": "Emilio le rompió la radio a Carolina.",
-    "glossedTokens": [
-      ["Emilio", "Emilio"], ["le", "CL.DAT"], ["rompió", "broke"], ["la", "the"],
-      ["radio", "radio"], ["a", "DAT"], ["Carolina", "Carolina"]
-    ],
-    "translation": "Emilio broke the radio on Carolina.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "romperCausative"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "affected"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_36",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(36)"},
-    "language": "stan1288",
-    "primaryText": "A Carolina se le rompió la radio.",
-    "glossedTokens": [
-      ["A", "DAT"], ["Carolina", "Carolina"], ["se", "SE"], ["le", "CL.DAT"], ["rompió", "broke"],
-      ["la", "the"], ["radio", "radio"]
-    ],
-    "translation": "The radio broke on Carolina.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "romperInchoative"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "affected"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_37",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(37)"},
-    "language": "stan1288",
-    "primaryText": "A Daniela no le gustan los gatos.",
-    "glossedTokens": [
-      ["A", "DAT"], ["Daniela", "Daniela"], ["no", "not"], ["le", "CL.DAT"], ["gustan", "like.PL"],
-      ["los", "the"], ["gatos", "cats"]
-    ],
-    "translation": "Daniela doesn't like cats.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "gustar"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "experiencer"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_38",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(38)"},
-    "language": "stan1288",
-    "primaryText": "A Laura le sobraron veinte pesos.",
-    "glossedTokens": [
-      ["A", "DAT"], ["Laura", "Laura"], ["le", "CL.DAT"], ["sobraron", "were.extra.PL"],
-      ["veinte", "twenty"], ["pesos", "pesos"]
-    ],
-    "translation": "Laura had twenty pesos left.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "sobrar"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "possessor"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_39a",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(39a)"},
-    "language": "stan1288",
-    "primaryText": "Juanita ya le camina.",
-    "glossedTokens": [
-      ["Juanita", "Juanita"], ["ya", "already"], ["le", "CL.DAT"], ["camina", "walks"]
-    ],
-    "translation": "Juanita can already walk on her.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "caminar"],
-      ["animate", "yes"],
-      ["dative", "clitic"],
-      ["meaning", "ethical"]
-    ],
-    "comment": "The full dative DP 'a Vicki' is starred in the source; see (78).",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_49",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(49)"},
-    "language": "stan1288",
-    "primaryText": "A Daniela le sucedió algo buenísimo.",
-    "glossedTokens": [
-      ["A", "DAT"], ["Daniela", "Daniela"], ["le", "CL.DAT"], ["sucedió", "happened"],
-      ["algo", "something.NOM"], ["buenísimo", "very.good"]
-    ],
-    "translation": "Something great happened to Daniela.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "suceder"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "experiencer"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_54a",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(54a)"},
-    "language": "stan1288",
-    "primaryText": "A las plantas les salieron flores.",
-    "glossedTokens": [
-      ["A", "DAT"], ["las", "the"], ["plantas", "plants"], ["les", "CL.DAT.PL"],
-      ["salieron", "came.out"], ["flores", "flowers.NOM"]
-    ],
-    "translation": "The plants got flowers.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "salir"],
-      ["animate", "no"],
-      ["dative", "dp"],
-      ["meaning", "possessor"]
-    ],
-    "comment": "The paper prints 'A la plantas'; the dative is the inalienable location of the flowers, a low applicative.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_55",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(55)"},
-    "language": "stan1288",
-    "primaryText": "Al tintorero se le quemaron los pantalones de Carolina.",
-    "glossedTokens": [
-      ["Al", "DAT.the"], ["tintorero", "dry.cleaner"], ["se", "SE"], ["le", "CL.DAT"],
-      ["quemaron", "burnt.PL"], ["los", "the"], ["pantalones", "trousers"], ["de", "of"],
-      ["Carolina", "Carolina"]
-    ],
-    "translation": "Carolina's trousers got burnt on the dry-cleaners; or, the dry-cleaner (accidentally) burnt Carolina's trousers.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {"name": "affected", "judgment": "acceptable"},
-      {"name": "unintentional responsibility", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["predicate", "quemarInchoative"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "affected"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_60",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(60)"},
-    "language": "stan1288",
-    "primaryText": "A la mesa se le rompieron dos patas.",
-    "glossedTokens": [
-      ["A", "DAT"], ["la", "the"], ["mesa", "table"], ["se", "SE"], ["le", "CL.DAT"],
-      ["rompieron", "broke"], ["dos", "two"], ["patas", "legs"]
-    ],
-    "translation": "Two legs of the table broke.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "affected",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "unintentional responsibility",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "paperFeatures": [
-      ["predicate", "romperInchoative"],
-      ["animate", "no"],
-      ["dative", "dp"],
-      ["meaning", "affected"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_66",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(66)"},
-    "language": "stan1288",
-    "primaryText": "Hugo le corrió a Vicki.",
-    "glossedTokens": [
-      ["Hugo", "Hugo"], ["le", "CL.DAT"], ["corrió", "ran"], ["a", "DAT"], ["Vicki", "Vicki"]
-    ],
-    "translation": "Intended: Hugo ran for Vicki.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "correr"],
-      ["animate", "yes"],
-      ["dative", "dp"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_67a",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(67a)"},
-    "language": "stan1288",
-    "primaryText": "Hugo le corrió una carrera a Vicki.",
-    "glossedTokens": [
-      ["Hugo", "Hugo"], ["le", "CL.DAT"], ["corrió", "ran"], ["una", "a"], ["carrera", "race"],
-      ["a", "DAT"], ["Vicki", "Vicki"]
-    ],
-    "translation": "Hugo ran a race against Vicki.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "correrTransitive"],
-      ["animate", "yes"],
-      ["dative", "dp"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_78",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(78)"},
-    "language": "stan1288",
-    "primaryText": "Juanita ya le camina a él.",
-    "glossedTokens": [
-      ["Juanita", "Juanita"], ["ya", "already"], ["le", "CL.DAT"], ["camina", "walks"],
-      ["a", "DAT"], ["él", "him"]
-    ],
-    "translation": "Intended: Juanita can already walk on him.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "caminar"],
-      ["animate", "yes"],
-      ["dative", "dp"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_90a",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(90a)"},
-    "language": "stan1288",
-    "primaryText": "Emilio le abrió las puertas a Carolina.",
-    "glossedTokens": [
-      ["Emilio", "Emilio"], ["le", "CL.DAT"], ["abrió", "opened"], ["las", "the"],
-      ["puertas", "doors"], ["a", "DAT"], ["Carolina", "Carolina"]
-    ],
-    "translation": "Emilio opened the doors for Carolina.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "abrirCausative"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "affected"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_90b",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(90b)"},
-    "language": "stan1288",
-    "primaryText": "A Carolina se le abrió la puerta.",
-    "glossedTokens": [
-      ["A", "DAT"], ["Carolina", "Carolina"], ["se", "CL.REF"], ["le", "CL.DAT"],
-      ["abrió", "opened"], ["la", "the"], ["puerta", "door"]
-    ],
-    "translation": "The door opened on Carolina.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "abrirInchoative"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "affected"]
-    ],
-    "comment": "The source glosses the verb 'opened.PL'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_85ap",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(85a')"},
-    "language": "stan1293",
-    "primaryText": "John passed Mary the ring.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "pass"],
-      ["animate", "yes"],
-      ["dative", "dp"],
-      ["meaning", "recipient"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_88",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(88)"},
-    "language": "stan1293",
-    "primaryText": "Daniel opened Stephanie the door.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "openCausative"],
-      ["animate", "yes"],
-      ["dative", "dp"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_89a",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(89a)"},
-    "language": "stan1293",
-    "primaryText": "The door opened Stephanie.",
-    "glossedTokens": [],
-    "translation": "Intended: the door opened on Stephanie.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "openInchoative"],
-      ["animate", "yes"],
-      ["dative", "dp"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "cuervo2003_92b",
-    "source": {"bibkey": "cuervo-2003", "paperLabel": "(92b)"},
-    "language": "stan1293",
-    "primaryText": "Two letters arrived Daniel.",
-    "glossedTokens": [],
-    "translation": "Intended: two letters arrived for Daniel.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "arrive"],
-      ["animate", "yes"],
-      ["dative", "dp"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "meaning",
+      "lean": "dativeMeaning",
+      "type": "DativeMeaning",
+      "doc": "The interpretation of the dative argument.",
+      "levels": [
+        {
+          "name": "recipient",
+          "label": "recipient",
+          "doc": "recipient"
+        },
+        {
+          "name": "source",
+          "label": "source",
+          "doc": "source"
+        },
+        {
+          "name": "possessor",
+          "label": "possessor",
+          "doc": "possessor"
+        },
+        {
+          "name": "affected",
+          "label": "affected",
+          "doc": "affected argument"
+        },
+        {
+          "name": "experiencer",
+          "label": "experiencer",
+          "doc": "experiencer"
+        },
+        {
+          "name": "ethical",
+          "label": "ethical",
+          "doc": "ethical dative"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "cuervo2003_29a",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(29a)"},
+      "language": "stan1288",
+      "primaryText": "Pablo le mandó un diccionario a Gabi.",
+      "glossedTokens": [
+        ["Pablo", "Pablo"], ["le", "CL.DAT"], ["mandó", "sent"], ["un", "a"],
+        ["diccionario", "dictionary"], ["a", "DAT"], ["Gabi", "Gabi"]
+      ],
+      "translation": "Pablo sent Gabi a dictionary.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "mandar"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "recipient"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_30",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(30)"},
+      "language": "stan1288",
+      "primaryText": "Pablo nos preparó sandwichitos de miga a todos.",
+      "glossedTokens": [
+        ["Pablo", "Pablo"], ["nos", "CL.1.PL.DAT"], ["preparó", "fixed"],
+        ["sandwichitos", "sandwiches"], ["de", "of"], ["miga", "crumb"], ["a", "DAT"],
+        ["todos", "all"]
+      ],
+      "translation": "Pablo fixed us all tea sandwiches.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "preparar"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "recipient"]
+      ],
+      "comment": "Headed 'Creation verbs ⇒ Benefactive'; table (40) files creation verbs under the recipient reading of the low applicative TO.",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_31",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(31)"},
+      "language": "stan1288",
+      "primaryText": "Pablo le sacó la bicicleta a Andreína.",
+      "glossedTokens": [
+        ["Pablo", "Pablo"], ["le", "CL.DAT"], ["sacó", "took.away"], ["la", "the"],
+        ["bicicleta", "bicycle"], ["a", "DAT"], ["Andreína", "Andreína"]
+      ],
+      "translation": "Pablo took the bicycle from Andreína.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "sacar"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "source"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_32",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(32)"},
+      "language": "stan1288",
+      "primaryText": "Pablo le lavó el auto a Valeria.",
+      "glossedTokens": [
+        ["Pablo", "Pablo"], ["le", "CL.DAT"], ["lavó", "washed"], ["el", "the"], ["auto", "car"],
+        ["a", "DAT"], ["Valeria", "Valeria"]
+      ],
+      "translation": "Pablo washed Valeria's car.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "lavar"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "possessor"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_33",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(33)"},
+      "language": "stan1288",
+      "primaryText": "Pablo le admira la paciencia a Valeria.",
+      "glossedTokens": [
+        ["Pablo", "Pablo"], ["le", "CL.DAT"], ["admira", "admires"], ["la", "the"],
+        ["paciencia", "patience"], ["a", "DAT"], ["Valeria", "Valeria"]
+      ],
+      "translation": "Pablo admires Valeria's patience.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "admirar"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "possessor"]
+      ],
+      "comment": "The alternative object 'la campera' 'the jacket' is left out.",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_34",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(34)"},
+      "language": "stan1288",
+      "primaryText": "A Gabi le llegaron dos cartas de Londres.",
+      "glossedTokens": [
+        ["A", "DAT"], ["Gabi", "Gabi"], ["le", "CL.DAT"], ["llegaron", "arrived.PL"], ["dos", "two"],
+        ["cartas", "letters"], ["de", "from"], ["Londres", "London"]
+      ],
+      "translation": "Gabi got two letters from London.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "llegar"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "recipient"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_35",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(35)"},
+      "language": "stan1288",
+      "primaryText": "Emilio le rompió la radio a Carolina.",
+      "glossedTokens": [
+        ["Emilio", "Emilio"], ["le", "CL.DAT"], ["rompió", "broke"], ["la", "the"],
+        ["radio", "radio"], ["a", "DAT"], ["Carolina", "Carolina"]
+      ],
+      "translation": "Emilio broke the radio on Carolina.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "romperCausative"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "affected"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_36",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(36)"},
+      "language": "stan1288",
+      "primaryText": "A Carolina se le rompió la radio.",
+      "glossedTokens": [
+        ["A", "DAT"], ["Carolina", "Carolina"], ["se", "SE"], ["le", "CL.DAT"], ["rompió", "broke"],
+        ["la", "the"], ["radio", "radio"]
+      ],
+      "translation": "The radio broke on Carolina.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "romperInchoative"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "affected"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_37",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(37)"},
+      "language": "stan1288",
+      "primaryText": "A Daniela no le gustan los gatos.",
+      "glossedTokens": [
+        ["A", "DAT"], ["Daniela", "Daniela"], ["no", "not"], ["le", "CL.DAT"], ["gustan", "like.PL"],
+        ["los", "the"], ["gatos", "cats"]
+      ],
+      "translation": "Daniela doesn't like cats.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "gustar"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "experiencer"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_38",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(38)"},
+      "language": "stan1288",
+      "primaryText": "A Laura le sobraron veinte pesos.",
+      "glossedTokens": [
+        ["A", "DAT"], ["Laura", "Laura"], ["le", "CL.DAT"], ["sobraron", "were.extra.PL"],
+        ["veinte", "twenty"], ["pesos", "pesos"]
+      ],
+      "translation": "Laura had twenty pesos left.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "sobrar"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "possessor"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_39a",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(39a)"},
+      "language": "stan1288",
+      "primaryText": "Juanita ya le camina.",
+      "glossedTokens": [
+        ["Juanita", "Juanita"], ["ya", "already"], ["le", "CL.DAT"], ["camina", "walks"]
+      ],
+      "translation": "Juanita can already walk on her.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "caminar"],
+        ["animate", "yes"],
+        ["dative", "clitic"],
+        ["meaning", "ethical"]
+      ],
+      "comment": "The full dative DP 'a Vicki' is starred in the source; see (78).",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_49",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(49)"},
+      "language": "stan1288",
+      "primaryText": "A Daniela le sucedió algo buenísimo.",
+      "glossedTokens": [
+        ["A", "DAT"], ["Daniela", "Daniela"], ["le", "CL.DAT"], ["sucedió", "happened"],
+        ["algo", "something.NOM"], ["buenísimo", "very.good"]
+      ],
+      "translation": "Something great happened to Daniela.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "suceder"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "experiencer"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_54a",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(54a)"},
+      "language": "stan1288",
+      "primaryText": "A las plantas les salieron flores.",
+      "glossedTokens": [
+        ["A", "DAT"], ["las", "the"], ["plantas", "plants"], ["les", "CL.DAT.PL"],
+        ["salieron", "came.out"], ["flores", "flowers.NOM"]
+      ],
+      "translation": "The plants got flowers.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "salir"],
+        ["animate", "no"],
+        ["dative", "dp"],
+        ["meaning", "possessor"]
+      ],
+      "comment": "The paper prints 'A la plantas'; the dative is the inalienable location of the flowers, a low applicative.",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_55",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(55)"},
+      "language": "stan1288",
+      "primaryText": "Al tintorero se le quemaron los pantalones de Carolina.",
+      "glossedTokens": [
+        ["Al", "DAT.the"], ["tintorero", "dry.cleaner"], ["se", "SE"], ["le", "CL.DAT"],
+        ["quemaron", "burnt.PL"], ["los", "the"], ["pantalones", "trousers"], ["de", "of"],
+        ["Carolina", "Carolina"]
+      ],
+      "translation": "Carolina's trousers got burnt on the dry-cleaners; or, the dry-cleaner (accidentally) burnt Carolina's trousers.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [
+        {"name": "affected", "judgment": "acceptable"},
+        {"name": "unintentional responsibility", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["predicate", "quemarInchoative"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "affected"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_60",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(60)"},
+      "language": "stan1288",
+      "primaryText": "A la mesa se le rompieron dos patas.",
+      "glossedTokens": [
+        ["A", "DAT"], ["la", "the"], ["mesa", "table"], ["se", "SE"], ["le", "CL.DAT"],
+        ["rompieron", "broke"], ["dos", "two"], ["patas", "legs"]
+      ],
+      "translation": "Two legs of the table broke.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [
+        {"name": "affected", "judgment": "acceptable"},
+        {"name": "unintentional responsibility", "judgment": "ungrammatical"}
+      ],
+      "paperFeatures": [
+        ["predicate", "romperInchoative"],
+        ["animate", "no"],
+        ["dative", "dp"],
+        ["meaning", "affected"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_66",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(66)"},
+      "language": "stan1288",
+      "primaryText": "Hugo le corrió a Vicki.",
+      "glossedTokens": [
+        ["Hugo", "Hugo"], ["le", "CL.DAT"], ["corrió", "ran"], ["a", "DAT"], ["Vicki", "Vicki"]
+      ],
+      "translation": "Intended: Hugo ran for Vicki.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "correr"],
+        ["animate", "yes"],
+        ["dative", "dp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_67a",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(67a)"},
+      "language": "stan1288",
+      "primaryText": "Hugo le corrió una carrera a Vicki.",
+      "glossedTokens": [
+        ["Hugo", "Hugo"], ["le", "CL.DAT"], ["corrió", "ran"], ["una", "a"], ["carrera", "race"],
+        ["a", "DAT"], ["Vicki", "Vicki"]
+      ],
+      "translation": "Hugo ran a race against Vicki.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "correrTransitive"],
+        ["animate", "yes"],
+        ["dative", "dp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_78",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(78)"},
+      "language": "stan1288",
+      "primaryText": "Juanita ya le camina a él.",
+      "glossedTokens": [
+        ["Juanita", "Juanita"], ["ya", "already"], ["le", "CL.DAT"], ["camina", "walks"],
+        ["a", "DAT"], ["él", "him"]
+      ],
+      "translation": "Intended: Juanita can already walk on him.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "caminar"],
+        ["animate", "yes"],
+        ["dative", "dp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_90a",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(90a)"},
+      "language": "stan1288",
+      "primaryText": "Emilio le abrió las puertas a Carolina.",
+      "glossedTokens": [
+        ["Emilio", "Emilio"], ["le", "CL.DAT"], ["abrió", "opened"], ["las", "the"],
+        ["puertas", "doors"], ["a", "DAT"], ["Carolina", "Carolina"]
+      ],
+      "translation": "Emilio opened the doors for Carolina.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "abrirCausative"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "affected"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_90b",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(90b)"},
+      "language": "stan1288",
+      "primaryText": "A Carolina se le abrió la puerta.",
+      "glossedTokens": [
+        ["A", "DAT"], ["Carolina", "Carolina"], ["se", "CL.REF"], ["le", "CL.DAT"],
+        ["abrió", "opened"], ["la", "the"], ["puerta", "door"]
+      ],
+      "translation": "The door opened on Carolina.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "abrirInchoative"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "affected"]
+      ],
+      "comment": "The source glosses the verb 'opened.PL'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_85ap",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(85a')"},
+      "language": "stan1293",
+      "primaryText": "John passed Mary the ring.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "pass"],
+        ["animate", "yes"],
+        ["dative", "dp"],
+        ["meaning", "recipient"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_88",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(88)"},
+      "language": "stan1293",
+      "primaryText": "Daniel opened Stephanie the door.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "openCausative"],
+        ["animate", "yes"],
+        ["dative", "dp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_89a",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(89a)"},
+      "language": "stan1293",
+      "primaryText": "The door opened Stephanie.",
+      "glossedTokens": [],
+      "translation": "Intended: the door opened on Stephanie.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "openInchoative"],
+        ["animate", "yes"],
+        ["dative", "dp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "cuervo2003_92b",
+      "source": {"bibkey": "cuervo-2003", "paperLabel": "(92b)"},
+      "language": "stan1293",
+      "primaryText": "Two letters arrived Daniel.",
+      "glossedTokens": [],
+      "translation": "Intended: two letters arrived for Daniel.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "readings": [],
+      "paperFeatures": [
+        ["predicate", "arrive"],
+        ["animate", "yes"],
+        ["dative", "dp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

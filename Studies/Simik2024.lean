@@ -7,7 +7,8 @@ public import Linglib.Syntax.Negation
 public import Mathlib.Algebra.Group.Action.Prod
 public import Linglib.Semantics.Questions.Hamblin.Modal
 public import Linglib.Logic.Trivalent.Proposition
-public import Linglib.Discourse.CommonGround
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Order.Filter.Ker
 public import Linglib.Logic.Modal.Definability
 public import Linglib.Languages.Slavic.Russian.QuestionParticles
 public import Linglib.Languages.Slavic.Bulgarian.QuestionParticles

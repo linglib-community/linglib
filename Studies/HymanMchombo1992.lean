@@ -443,12 +443,17 @@ def root? (r : Datum) : Option Verb :=
 
 /-- A row's applied role. -/
 def role? (r : Datum) : Option Role :=
-  r.parse? "role" [("benefactive", .benefactive), ("instrument", .instrument),
-    ("locative", .locative), ("circumstantial", .circumstantial)]
+  (Examples.role r).map fun
+    | .benefactive => .benefactive
+    | .instrument => .instrument
+    | .locative => .locative
+    | .circumstantial => .circumstantial
 
 /-- A row's passive subject, as a participant of [baker-1985]'s rules. -/
 def subject? (r : Datum) : Option Baker1985.Arg :=
-  r.parse? "subject" [("applied", .applied), ("patient", .patient)]
+  (Examples.passiveSubject r).map fun
+    | .applied => .applied
+    | .patient => .patient
 
 /-- The letters of a feature's morphs. -/
 def Feature.form (f : Feature) : String := f.morphs.foldr (fun m w ↦ m.form ++ w) ""

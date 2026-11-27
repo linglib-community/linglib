@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Discourse.Gameboard.Basic
-public import Linglib.Discourse.Gameboard.Utterance
+public import Linglib.Discourse.Gameboard.Defs
+public import Mathlib.Data.Finset.SDiff
 public import Mathlib.Logic.Relation
 
 /-!

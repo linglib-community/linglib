@@ -208,18 +208,24 @@ def Host.negator : Host → Negator := Sum.elim (fun _ ↦ .neg1) (fun _ ↦ .ne
 
 /-- The host of expletive negation a row names. -/
 def host? (e : Datum) : Option Host :=
-  e.parse? "host"
-    [("negative exclamative", .inl .exclamative), ("rhetorical question", .inl .rhetoricalQuestion),
-      ("preposed negation question", .inl .optionallyBiasedQuestion),
-      ("fear-predicate complement", .inr .emotiveDoxasticPredicate),
-      ("polar question", .inr .biasedQuestion), ("conditional", .inr .conditional)]
+  (Examples.host e).bind fun
+    | .negativeExclamative => some (.inl .exclamative)
+    | .rhetoricalQuestion => some (.inl .rhetoricalQuestion)
+    | .preposedNegationQuestion => some (.inl .optionallyBiasedQuestion)
+    | .fearPredicateComplement => some (.inr .emotiveDoxasticPredicate)
+    | .polarQuestion => some (.inr .biasedQuestion)
+    | .conditional => some (.inr .conditional)
+    | _ => none
 
 /-- The negators the account predicts in a Greek row: the negator of the host's class, followed
 by canonical *dhen* where the row has one. -/
 def predicted? (e : Datum) : Option (List Negator) :=
   if e.language = .modernGreek then do
     let h ← host? e
-    let c ← e.parse? "use" [("expletive", []), ("expletive with canonical negation", [.neg1])]
+    let c ← (Examples.use e).bind fun
+      | .expletive => some ([])
+      | .expletiveWithCanonical => some ([.neg1])
+      | _ => none
     some (h.negator :: c)
   else none
 

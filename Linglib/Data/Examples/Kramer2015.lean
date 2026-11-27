@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Kramer2015` — typed example data
@@ -490,5 +492,19 @@ def ex_10_35h : Datum :=
     paperFeatures := [("head", "plain"), ("head", "dim"), ("gender", "masculine")] }
 
 def all : List Datum := [ex_10_2, ex_10_3a, ex_10_3b, ex_10_5c, ex_10_8a, ex_10_8b, ex_10_10a, ex_10_10b, ex_10_14a, ex_10_21, ex_10_24, ex_10_25, ex_10_26, ex_10_27a, ex_10_27c, ex_10_29a, ex_10_29b, ex_10_29c, ex_10_29d, ex_10_29e, ex_10_29f, ex_10_30b, ex_10_35a, ex_10_35b, ex_10_35c, ex_10_35d, ex_10_35e, ex_10_35f, ex_10_35g, ex_10_35h]
+
+/-- The gender of the noun. -/
+inductive GenderValue where
+  /-- masculine: masculine -/
+  | masculine
+  /-- feminine: feminine -/
+  | feminine
+  /-- neuter: neuter -/
+  | neuter
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `gender`. -/
+def genderValue (e : Datum) : Option GenderValue :=
+  e.parse? "gender" [("masculine", .masculine), ("feminine", .feminine), ("neuter", .neuter)]
 
 end Kramer2015.Examples

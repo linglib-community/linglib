@@ -846,7 +846,9 @@ instance {k : ℕ} {X : Set (Finset Boy)} [DecidablePred (· ∈ X)] :
 predicate noun, and its numeral. -/
 def predicative? (r : Datum) : Option (Finset Boy × NumberHead × Option ℕ) :=
   if r.feature? "construction" = some "predicative" then
-    (r.parse? "subject" [("atom", {.john}), ("group", {.john, .brad})]).bind fun s ↦
+    ((Examples.subject r).map fun
+      | .atom => {.john}
+      | .group => {.john, .brad}).bind fun s ↦
       ((Examples.number r)).map fun n ↦
         (s, n, r.parse? "numeral" [("one", 1), ("two", 2)])
   else none

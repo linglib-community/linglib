@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Matthewson2006` — typed example data
@@ -112,5 +114,19 @@ def ex_6c : Datum :=
     paperFeatures := [("adverbial", "future")] }
 
 def all : List Datum := [ex_5a, ex_5b, ex_5c, ex_6a, ex_6b, ex_6c]
+
+/-- The time the temporal adverbial names, relative to the utterance. -/
+inductive Adverbial where
+  /-- past: a past time -/
+  | past
+  /-- present: the present -/
+  | present
+  /-- future: a future time -/
+  | future
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `adverbial`. -/
+def adverbial (e : Datum) : Option Adverbial :=
+  e.parse? "adverbial" [("past", .past), ("present", .present), ("future", .future)]
 
 end Matthewson2006.Examples

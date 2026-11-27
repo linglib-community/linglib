@@ -161,15 +161,24 @@ def object? (e : Datum) : Option GlossedWord :=
 /-- A row read through the grammar's terms, failing on a term it does not use. -/
 def Row.ofDatum (e : Datum) : Option Row := do
   let p ← e.parse? "negated" [("yes", Polarity.negative), ("no", .positive)]
-  let t ← e.parse? "aspect" [("resultative", Resultativity.resultative),
-    ("irresultative", .irresultative)]
-  let q ← e.parse? "quantity" [("definite", Quantity.definite), ("indefinite", .indefinite)]
-  let n ← e.parse? "nominal" [("personalPronoun", Nominal.personalPronoun),
-    ("numeral", .numeral), ("other", .other)]
+  let t ← (Examples.aspect e).map fun
+    | .resultative => Resultativity.resultative
+    | .irresultative => .irresultative
+  let q ← (Examples.quantity e).map fun
+    | .definite => Quantity.definite
+    | .indefinite => .indefinite
+  let n ← (Examples.nominal e).map fun
+    | .personalPronoun => Nominal.personalPronoun
+    | .numeral => .numeral
+    | .other => .other
   let num ← e.parse? "number" [("singular", ⟨.singular, by decide⟩),
     ("plural", ⟨.plural, by decide⟩)]
-  let cl ← e.parse? "clause" [("finite", Clause.finite), ("imperative", .imperative),
-    ("passive", .passive), ("obligation", .obligation), ("infinitival", .infinitival)]
+  let cl ← (Examples.clauseType e).map fun
+    | .finite => Clause.finite
+    | .imperative => .imperative
+    | .passive => .passive
+    | .obligation => .obligation
+    | .infinitival => .infinitival
   let w ← object? e
   some ⟨⟨p, t, q, n, num, cl⟩,
     ← spell ((w.glossedMorphemes.takeWhile

@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Tsiakmakis2025` — typed example data
@@ -367,5 +369,64 @@ def ex_92b : Datum :=
     paperFeatures := [("negator", "lo"), ("use", "expletive"), ("host", "free relative"), ("class", "proper, tentative")] }
 
 def all : List Datum := [ex_6, ex_8, ex_14, ex_15, ex_16, ex_28, ex_38, ex_39, ex_40, ex_44a, ex_45, ex_49b, ex_51a, ex_53a, ex_59, ex_61, ex_62, ex_65, ex_67, ex_69a, ex_71, ex_75, ex_77, ex_84, ex_87, ex_90, ex_92b]
+
+/-- The environment hosting the negation. -/
+inductive Host where
+  /-- imperative: an imperative -/
+  | imperative
+  /-- negative exclamative: a negative exclamative -/
+  | negativeExclamative
+  /-- preposed negation question: a question with preposed negation -/
+  | preposedNegationQuestion
+  /-- rhetorical question: a rhetorical question -/
+  | rhetoricalQuestion
+  /-- fear-predicate complement: the complement of a predicate of fearing -/
+  | fearPredicateComplement
+  /-- conditional: a conditional -/
+  | conditional
+  /-- polar question: a polar question -/
+  | polarQuestion
+  /-- negative predicate: the complement of a negative predicate -/
+  | negativePredicate
+  /-- dubitative predicate: the complement of a predicate of doubt -/
+  | dubitativePredicate
+  /-- temporal expression: a temporal clause -/
+  | temporalExpression
+  /-- negative adverbial: a negative adverbial clause -/
+  | negativeAdverbial
+  /-- unless-conditional: an *unless* conditional -/
+  | unlessConditional
+  /-- comparative: a comparative clause -/
+  | comparative
+  /-- free relative: a free relative -/
+  | freeRelative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `host`. -/
+def host (e : Datum) : Option Host :=
+  e.parse? "host" [("imperative", .imperative), ("negative exclamative", .negativeExclamative),
+    ("preposed negation question", .preposedNegationQuestion),
+    ("rhetorical question", .rhetoricalQuestion),
+    ("fear-predicate complement", .fearPredicateComplement), ("conditional", .conditional),
+    ("polar question", .polarQuestion), ("negative predicate", .negativePredicate),
+    ("dubitative predicate", .dubitativePredicate),
+    ("temporal expression", .temporalExpression), ("negative adverbial", .negativeAdverbial),
+    ("unless-conditional", .unlessConditional), ("comparative", .comparative),
+    ("free relative", .freeRelative)]
+
+/-- The use of the negation. -/
+inductive Use where
+  /-- negative: canonical negation -/
+  | negative
+  /-- expletive: expletive negation -/
+  | expletive
+  /-- expletive with canonical negation: expletive negation beside canonical negation -/
+  | expletiveWithCanonical
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `use`. -/
+def use (e : Datum) : Option Use :=
+  e.parse? "use" [("negative", .negative), ("expletive", .expletive),
+    ("expletive with canonical negation", .expletiveWithCanonical)]
 
 end Tsiakmakis2025.Examples

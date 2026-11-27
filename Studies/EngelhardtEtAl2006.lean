@@ -166,17 +166,14 @@ def InstructionType.target : InstructionType → Description
   | .bare => ⟨.apple, none⟩
   | .modified => ⟨.apple, some (.pp English.Adpositions.on .towel)⟩
 
-/-- The target descriptions as named in the rows. -/
-def targetTable : List (String × Description) :=
-  [("bare", InstructionType.bare.target), ("modified", InstructionType.modified.target)]
-
-/-- The destination descriptions as named in the rows. -/
-def destinationTable : List (String × Description) :=
-  [("towel", ⟨.towel, none⟩), ("otherTowel", ⟨.towel, some .other⟩), ("box", ⟨.box, none⟩)]
-
 /-- An instruction from an example row. -/
 def Instruction.ofDatum (ex : Datum) : Option Instruction := do
-  pure ⟨← ex.parse? "target" targetTable, ← ex.parse? "destination" destinationTable⟩
+  pure ⟨← (Examples.targetDescription ex).map fun
+    | .bare => InstructionType.bare.target
+    | .modified => InstructionType.modified.target, ← (Examples.destination ex).map fun
+      | .towel => ⟨.towel, none⟩
+      | .otherTowel => ⟨.towel, some .other⟩
+      | .box => ⟨.box, none⟩⟩
 
 -- every row with a target reads as an instruction
 example :

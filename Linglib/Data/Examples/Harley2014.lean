@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Harley2014` — typed example data
@@ -343,5 +345,17 @@ def exfn33_i : Datum :=
     paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveTransitive"), ("applicative", "suffixed")] }
 
 def all : List Datum := [ex3a, ex3b, ex3c, ex3d, ex3e, ex3f, ex3g, ex6a, ex6b, ex18a, ex18b, ex26a, ex26b, ex27a, ex27b, ex29a, ex29b, ex30a, ex30b, ex31, ex32a, ex32b, exfn33_i]
+
+/-- The dependent stranded by *one*-replacement. -/
+inductive Stranded where
+  /-- argument: an argument of the noun -/
+  | argument
+  /-- adjunct: an adjunct -/
+  | adjunct
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `stranded`. -/
+def stranded (e : Datum) : Option Stranded :=
+  e.parse? "stranded" [("argument", .argument), ("adjunct", .adjunct)]
 
 end Harley2014.Examples

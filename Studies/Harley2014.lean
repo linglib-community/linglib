@@ -272,13 +272,14 @@ def OneStrands (a : Attachment) (d : Dependent) : Prop :=
 instance (a : Attachment) (d : Dependent) : Decidable (OneStrands a d) :=
   inferInstanceAs (Decidable (Strands _ _ _ _))
 
-/-- The dependents as named in the rows. -/
-def dependentTable : List (String × Dependent) :=
-  [("argument", .argument), ("adjunct", .adjunct)]
+/-- The dependent a row strands. -/
+def dependent : Examples.Stranded → Dependent
+  | .argument => .argument
+  | .adjunct => .adjunct
 
 /-- The examples of (18), the dependent each strands with its judgment. -/
 def oneData : List (Dependent × Judgment) :=
-  Examples.all.filterMap fun d ↦ (d.parse? "stranded" dependentTable).map (·, d.judgment)
+  Examples.all.filterMap fun d ↦ ((Examples.stranded d).map dependent).map (·, d.judgment)
 
 theorem oneData_length : oneData.length = 2 := by decide +kernel
 

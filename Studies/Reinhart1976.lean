@@ -248,7 +248,11 @@ def Row.ofDatum (e : Datum) : Option Row := do
   let t ← e.parse? "structure" trees
   let a ← (e.feature? "np1").map path
   let b ← (e.feature? "np2").map path
-  let p ← e.parse? "pronouns" [("none", []), ("np1", [a]), ("np2", [b]), ("both", [a, b])]
+  let p ← (Examples.pronouns e).map fun
+    | .none => []
+    | .np1 => [a]
+    | .np2 => [b]
+    | .both => [a, b]
   pure ⟨t, a, b, p, (e.readings.lookup "coreference").getD e.judgment⟩
 
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide

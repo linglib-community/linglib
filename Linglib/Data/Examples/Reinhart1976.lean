@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Reinhart1976` — typed example data
@@ -263,5 +265,21 @@ def ex_51b : Datum :=
     paperFeatures := [("structure", "vos"), ("np1", "011"), ("np2", "1"), ("pronouns", "np2")] }
 
 def all : List Datum := [ex_11a, ex_11b, ex_11c, ex_11d, IIa, IIb, ex_12a, ex_12b, ex_12c, ex_43a, ex_43b, ex_45, ex_47, ex_44a, ex_44b, ex_46, ex_48a, ex_51a, ex_51b]
+
+/-- Which of the two noun phrases are pronouns. -/
+inductive Pronouns where
+  /-- none: neither -/
+  | none
+  /-- np1: the first -/
+  | np1
+  /-- np2: the second -/
+  | np2
+  /-- both: both -/
+  | both
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `pronouns`. -/
+def pronouns (e : Datum) : Option Pronouns :=
+  e.parse? "pronouns" [("none", .none), ("np1", .np1), ("np2", .np2), ("both", .both)]
 
 end Reinhart1976.Examples

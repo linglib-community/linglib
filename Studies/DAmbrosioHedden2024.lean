@@ -3,7 +3,11 @@ module
 public import Studies.Kamp1975
 public import Studies.Sassoon2013
 public import Linglib.Logic.Trivalent.Supervaluation
-public import Linglib.Semantics.Aggregation.Arrow
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Tactic.Linarith
+public import Linglib.Semantics.Aggregation.Basic
 public import Linglib.Semantics.Aggregation.Rules
 public import Linglib.Semantics.Quantifier.Basic
 public import Mathlib.Tactic.DeriveFintype

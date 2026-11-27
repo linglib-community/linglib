@@ -1,325 +1,362 @@
-[
-  {
-    "id": "m1991_1a",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(1a)"},
-    "language": "nucl1302",
-    "primaryText": "vano pikr-ob-s mariḳaze.",
-    "glossedTokens": [
-      ["vano", "Vano.NOM"], ["pikr-ob-s", "think-INFL.I"], ["mariḳaze", "Marika.on"]
-    ],
-    "translation": "Vano is thinking about Marika.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "unergative"],
-      ["inflection", "I"],
-      ["subject", "NOM"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_1b",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(1b)"},
-    "language": "nucl1302",
-    "primaryText": "vano-m i-pikr-a mariḳaze.",
-    "glossedTokens": [
-      ["vano-m", "Vano-ERG"], ["i-pikr-a", "think-INFL.II"], ["mariḳaze", "Marika.on"]
-    ],
-    "translation": "Vano thought about Marika.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "unergative"],
-      ["inflection", "II"],
-      ["subject", "ERG"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_1c",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(1c)"},
-    "language": "nucl1302",
-    "primaryText": "nino gia-s surateb-s a-čven-eb-s.",
-    "glossedTokens": [
-      ["nino", "Nino.NOM"], ["gia-s", "Gia-DAT"], ["surateb-s", "pictures-DAT"], ["a-čven-eb-s", "show-INFL.I"]
-    ],
-    "translation": "Nino is showing pictures to Gia.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "transitive"],
-      ["inflection", "I"],
-      ["subject", "NOM"],
-      ["object", "DAT"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_1d",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(1d)"},
-    "language": "nucl1302",
-    "primaryText": "nino-m gia-s surateb-i a-čven-a",
-    "glossedTokens": [
-      ["nino-m", "Nino-ERG"], ["gia-s", "Gia-DAT"], ["surateb-i", "pictures-NOM"], ["a-čven-a", "show-INFL.II"]
-    ],
-    "translation": "Nino showed the pictures to Gia.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "transitive"],
-      ["inflection", "II"],
-      ["subject", "ERG"],
-      ["object", "NOM"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_2a",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(2a)"},
-    "language": "nucl1302",
-    "primaryText": "es saxl-i ivane-s a=u-šendeb-a.",
-    "glossedTokens": [
-      ["es", "this"], ["saxl-i", "house-NOM"], ["ivane-s", "Ivan-DAT"], ["a=u-šendeb-a", "PreV=built-INFL.I.3SG"]
-    ],
-    "translation": "This house will be built for Ivan.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "unaccusative"],
-      ["inflection", "I"],
-      ["subject", "NOM"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_2b",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(2b)"},
-    "language": "nucl1302",
-    "primaryText": "es saxl-i ivane-s a=u-šend-a.",
-    "glossedTokens": [
-      ["es", "this"], ["saxl-i", "house-NOM"], ["ivane-s", "Ivan-DAT"], ["a=u-šend-a", "PreV=built-INFL.II.3SG"]
-    ],
-    "translation": "This house was built for Ivan.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "unaccusative"],
-      ["inflection", "II"],
-      ["subject", "NOM"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_3a",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(3a)"},
-    "language": "nucl1302",
-    "primaryText": "šen pelamuš-i g-i-qvar-s.",
-    "glossedTokens": [
-      ["šen", "you.DAT"], ["pelamuš-i", "pelamusi-NOM"], ["g-i-qvar-s", "AGR-like-INFL.I"]
-    ],
-    "translation": "You like pelamusi.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "psych"],
-      ["inflection", "I"],
-      ["subject", "DAT"],
-      ["object", "NOM"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_3b",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(3b)"},
-    "language": "nucl1302",
-    "primaryText": "šen pelamuš-i g-e-qvar-e.",
-    "glossedTokens": [
-      ["šen", "you.DAT"], ["pelamuš-i", "pelamusi-NOM"], ["g-e-qvar-e", "AGR-like-INFL.II"]
-    ],
-    "translation": "You liked pelamusi.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "psych"],
-      ["inflection", "II"],
-      ["subject", "DAT"],
-      ["object", "NOM"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_4a",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(4a)"},
-    "language": "hind1269",
-    "primaryText": "siita aayii.",
-    "glossedTokens": [
-      ["siita", "Sita.FEM"], ["aayii", "arrived/came-FEM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "unaccusative"],
-      ["inflection", "perfect"],
-      ["subject", "NOM"]
-    ],
-    "comment": "The paper gives no free translation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_4a_erg",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(4a)"},
-    "language": "hind1269",
-    "primaryText": "siita ne aayii.",
-    "glossedTokens": [
-      ["siita", "Sita.FEM"], ["ne", "ERG"], ["aayii", "arrived/came-FEM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "unaccusative"],
-      ["inflection", "perfect"],
-      ["subject", "ERG"]
-    ],
-    "comment": "The paper gives the ergative marker as excluded, *siita (*ne) aayii*. The paper gives no free translation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_4b",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(4b)"},
-    "language": "hind1269",
-    "primaryText": "kutte bhoNke.",
-    "glossedTokens": [
-      ["kutte", "dogs.MASC.PL"], ["bhoNke", "barked.MASC.PL"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "unergative"],
-      ["inflection", "perfect"],
-      ["subject", "NOM"]
-    ],
-    "comment": "The paper gives no free translation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_4c",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(4c)"},
-    "language": "hind1269",
-    "primaryText": "kuttoN ne bhoNkaa.",
-    "glossedTokens": [
-      ["kuttoN", "dogs.PL"], ["ne", "ERG"], ["bhoNkaa", "barked.MASC.SG"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "unergative"],
-      ["inflection", "perfect"],
-      ["subject", "ERG"]
-    ],
-    "comment": "The paper gives no free translation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_4d",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(4d)"},
-    "language": "hind1269",
-    "primaryText": "raam ne roTii khaayii thii.",
-    "glossedTokens": [
-      ["raam", "Ram.MASC"], ["ne", "ERG"], ["roTii", "bread.FEM"], ["khaayii", "eat.FEM"], ["thii", "be.PAST.FEM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "transitive"],
-      ["inflection", "perfect"],
-      ["subject", "ERG"],
-      ["object", "NOM"]
-    ],
-    "comment": "The paper gives no free translation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_5a",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(5a)"},
-    "language": "basq1248",
-    "primaryText": "Ni etorri naiz.",
-    "glossedTokens": [
-      ["Ni", "I.ABS"], ["etorri", "come"], ["naiz", "1SG.be"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "unaccusative"],
-      ["subject", "ABS"]
-    ],
-    "comment": "The paper gives no free translation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_5b",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(5b)"},
-    "language": "basq1248",
-    "primaryText": "Nik lan egin dut.",
-    "glossedTokens": [
-      ["Nik", "I.ERG"], ["lan", "work"], ["egin", "do"], ["dut", "have.1SG"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "unergative"],
-      ["subject", "ERG"]
-    ],
-    "comment": "The paper gives no free translation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "m1991_5c",
-    "source": {"bibkey": "marantz-1991", "paperLabel": "(5c)"},
-    "language": "basq1248",
-    "primaryText": "Nik libura ekarri dut.",
-    "glossedTokens": [
-      ["Nik", "I.ERG"], ["libura", "book.ABS"], ["ekarri", "bought"], ["dut", "have.1SG"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["clause", "transitive"],
-      ["subject", "ERG"],
-      ["object", "ABS"]
-    ],
-    "comment": "The paper gives no free translation and glosses *ekarri* as 'bought'.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "clause",
+      "lean": "clauseType",
+      "type": "ClauseType",
+      "doc": "The type of clause an example illustrates.",
+      "levels": [
+        {
+          "name": "transitive",
+          "label": "transitive",
+          "doc": "a transitive clause"
+        },
+        {
+          "name": "unergative",
+          "label": "unergative",
+          "doc": "an unergative clause"
+        },
+        {
+          "name": "unaccusative",
+          "label": "unaccusative",
+          "doc": "an unaccusative clause"
+        },
+        {
+          "name": "psych",
+          "label": "psych",
+          "doc": "a clause with a psychological predicate and a dative experiencer"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "m1991_1a",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(1a)"},
+      "language": "nucl1302",
+      "primaryText": "vano pikr-ob-s mariḳaze.",
+      "glossedTokens": [
+        ["vano", "Vano.NOM"], ["pikr-ob-s", "think-INFL.I"], ["mariḳaze", "Marika.on"]
+      ],
+      "translation": "Vano is thinking about Marika.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "unergative"],
+        ["inflection", "I"],
+        ["subject", "NOM"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_1b",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(1b)"},
+      "language": "nucl1302",
+      "primaryText": "vano-m i-pikr-a mariḳaze.",
+      "glossedTokens": [
+        ["vano-m", "Vano-ERG"], ["i-pikr-a", "think-INFL.II"], ["mariḳaze", "Marika.on"]
+      ],
+      "translation": "Vano thought about Marika.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "unergative"],
+        ["inflection", "II"],
+        ["subject", "ERG"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_1c",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(1c)"},
+      "language": "nucl1302",
+      "primaryText": "nino gia-s surateb-s a-čven-eb-s.",
+      "glossedTokens": [
+        ["nino", "Nino.NOM"], ["gia-s", "Gia-DAT"], ["surateb-s", "pictures-DAT"],
+        ["a-čven-eb-s", "show-INFL.I"]
+      ],
+      "translation": "Nino is showing pictures to Gia.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "transitive"],
+        ["inflection", "I"],
+        ["subject", "NOM"],
+        ["object", "DAT"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_1d",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(1d)"},
+      "language": "nucl1302",
+      "primaryText": "nino-m gia-s surateb-i a-čven-a",
+      "glossedTokens": [
+        ["nino-m", "Nino-ERG"], ["gia-s", "Gia-DAT"], ["surateb-i", "pictures-NOM"],
+        ["a-čven-a", "show-INFL.II"]
+      ],
+      "translation": "Nino showed the pictures to Gia.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "transitive"],
+        ["inflection", "II"],
+        ["subject", "ERG"],
+        ["object", "NOM"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_2a",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(2a)"},
+      "language": "nucl1302",
+      "primaryText": "es saxl-i ivane-s a=u-šendeb-a.",
+      "glossedTokens": [
+        ["es", "this"], ["saxl-i", "house-NOM"], ["ivane-s", "Ivan-DAT"],
+        ["a=u-šendeb-a", "PreV=built-INFL.I.3SG"]
+      ],
+      "translation": "This house will be built for Ivan.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "unaccusative"],
+        ["inflection", "I"],
+        ["subject", "NOM"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_2b",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(2b)"},
+      "language": "nucl1302",
+      "primaryText": "es saxl-i ivane-s a=u-šend-a.",
+      "glossedTokens": [
+        ["es", "this"], ["saxl-i", "house-NOM"], ["ivane-s", "Ivan-DAT"],
+        ["a=u-šend-a", "PreV=built-INFL.II.3SG"]
+      ],
+      "translation": "This house was built for Ivan.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "unaccusative"],
+        ["inflection", "II"],
+        ["subject", "NOM"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_3a",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(3a)"},
+      "language": "nucl1302",
+      "primaryText": "šen pelamuš-i g-i-qvar-s.",
+      "glossedTokens": [
+        ["šen", "you.DAT"], ["pelamuš-i", "pelamusi-NOM"], ["g-i-qvar-s", "AGR-like-INFL.I"]
+      ],
+      "translation": "You like pelamusi.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "psych"],
+        ["inflection", "I"],
+        ["subject", "DAT"],
+        ["object", "NOM"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_3b",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(3b)"},
+      "language": "nucl1302",
+      "primaryText": "šen pelamuš-i g-e-qvar-e.",
+      "glossedTokens": [
+        ["šen", "you.DAT"], ["pelamuš-i", "pelamusi-NOM"], ["g-e-qvar-e", "AGR-like-INFL.II"]
+      ],
+      "translation": "You liked pelamusi.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "psych"],
+        ["inflection", "II"],
+        ["subject", "DAT"],
+        ["object", "NOM"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_4a",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(4a)"},
+      "language": "hind1269",
+      "primaryText": "siita aayii.",
+      "glossedTokens": [
+        ["siita", "Sita.FEM"], ["aayii", "arrived/came-FEM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "unaccusative"],
+        ["inflection", "perfect"],
+        ["subject", "NOM"]
+      ],
+      "comment": "The paper gives no free translation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_4a_erg",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(4a)"},
+      "language": "hind1269",
+      "primaryText": "siita ne aayii.",
+      "glossedTokens": [
+        ["siita", "Sita.FEM"], ["ne", "ERG"], ["aayii", "arrived/came-FEM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "unaccusative"],
+        ["inflection", "perfect"],
+        ["subject", "ERG"]
+      ],
+      "comment": "The paper gives the ergative marker as excluded, *siita (*ne) aayii*. The paper gives no free translation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_4b",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(4b)"},
+      "language": "hind1269",
+      "primaryText": "kutte bhoNke.",
+      "glossedTokens": [
+        ["kutte", "dogs.MASC.PL"], ["bhoNke", "barked.MASC.PL"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "unergative"],
+        ["inflection", "perfect"],
+        ["subject", "NOM"]
+      ],
+      "comment": "The paper gives no free translation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_4c",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(4c)"},
+      "language": "hind1269",
+      "primaryText": "kuttoN ne bhoNkaa.",
+      "glossedTokens": [
+        ["kuttoN", "dogs.PL"], ["ne", "ERG"], ["bhoNkaa", "barked.MASC.SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "unergative"],
+        ["inflection", "perfect"],
+        ["subject", "ERG"]
+      ],
+      "comment": "The paper gives no free translation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_4d",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(4d)"},
+      "language": "hind1269",
+      "primaryText": "raam ne roTii khaayii thii.",
+      "glossedTokens": [
+        ["raam", "Ram.MASC"], ["ne", "ERG"], ["roTii", "bread.FEM"], ["khaayii", "eat.FEM"],
+        ["thii", "be.PAST.FEM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "transitive"],
+        ["inflection", "perfect"],
+        ["subject", "ERG"],
+        ["object", "NOM"]
+      ],
+      "comment": "The paper gives no free translation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_5a",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(5a)"},
+      "language": "basq1248",
+      "primaryText": "Ni etorri naiz.",
+      "glossedTokens": [
+        ["Ni", "I.ABS"], ["etorri", "come"], ["naiz", "1SG.be"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "unaccusative"],
+        ["subject", "ABS"]
+      ],
+      "comment": "The paper gives no free translation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_5b",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(5b)"},
+      "language": "basq1248",
+      "primaryText": "Nik lan egin dut.",
+      "glossedTokens": [
+        ["Nik", "I.ERG"], ["lan", "work"], ["egin", "do"], ["dut", "have.1SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "unergative"],
+        ["subject", "ERG"]
+      ],
+      "comment": "The paper gives no free translation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "m1991_5c",
+      "source": {"bibkey": "marantz-1991", "paperLabel": "(5c)"},
+      "language": "basq1248",
+      "primaryText": "Nik libura ekarri dut.",
+      "glossedTokens": [
+        ["Nik", "I.ERG"], ["libura", "book.ABS"], ["ekarri", "bought"], ["dut", "have.1SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "transitive"],
+        ["subject", "ERG"],
+        ["object", "ABS"]
+      ],
+      "comment": "The paper gives no free translation and glosses *ekarri* as 'bought'.",
+      "verified": "page-image"
+    }
+  ]
+}

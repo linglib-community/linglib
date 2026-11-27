@@ -16,6 +16,7 @@ public import Linglib.Languages.Teop.Nouns
 public import Studies.Corbett1991
 public import Linglib.Syntax.Clause.Basic
 public import Linglib.Data.Examples.Corbett2000
+public import Linglib.Data.Statistics.Corbett2000
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Data.Examples.Readers
@@ -77,8 +78,10 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   whose gloss marks no number being singular; the target's side is read off the order of the
   words.
 * Number resolution is the book's rule and is shown to be the substrate's resolution, the
-  value of the sum of the conjuncts' referents; the corpus tables are typed here, in percentages,
-  with the book's readings of them as theorems.
+  value of the sum of the conjuncts' referents; the counts of chapter 6 are the tables of
+  `Data/Statistics/Corbett2000.json`, with the book's readings of them as theorems. A cell of
+  Table 6.11 printed with a percentage is read as admitting the other number as the less frequent
+  variant, and the Slovene adjective, printed *pl(SG)*, is read as *pl/(SG)*.
 * Second systems and constructed numbers are represented by what their forms cover; the
   data of Kiowa, Hopi, Rembarrnga and the Slavonic honorifics live here for want of
   language files.
@@ -682,34 +685,16 @@ theorem committee_monotoneOn :
         {i | (americanCommittee i).isSome} := by
   simp only [MonotoneOn, Set.mem_ofPred_eq]; exact ⟨by decide, by decide⟩
 
-/-- Nixon's corpus gives the percentage of plural agreement with corporate nouns by target, the
-pronouns pooling the possessive with the personal. -/
-def nixon : Position → Option ℚ
-  | .attributive => some 0
-  | .predicate => some (122 / 10)
-  | .personalPronoun => some (274 / 10)
-  | _ => none
+theorem corporate_percentPlural_lt :
+    (corporate .predicate).percentPlural.toRat < (corporate .pronoun).percentPlural.toRat := by
+  norm_num [corporate, Data.Statistics.Decimal.toRat]
 
-theorem nixon_monotoneOn : MonotoneOn (fun i ↦ (nixon i).getD 0) {i | (nixon i).isSome} := by
-  simp only [MonotoneOn, Set.mem_ofPred_eq]; decide +kernel
-
-/-- The varieties of English. -/
-inductive Variety where
-  | british
-  | american
-  | newZealand
-  deriving DecidableEq, Repr, Fintype
-
-/-- Table 6.10 gives the percentage of respondents accepting *the audience were enjoying*. -/
-def acceptance : Variety → ℚ
-  | .british => 772 / 10
-  | .american => 54 / 10
-  | .newZealand => 725 / 10
-
-theorem acceptance_diverges :
-    acceptance .american < acceptance .newZealand ∧
-      acceptance .newZealand < acceptance .british := by
-  norm_num [acceptance]
+-- Table 6.10
+theorem judgement_noCorrection_lt :
+    (judgement .us .noCorrection).percent.toRat < (judgement .nz .noCorrection).percent.toRat ∧
+      (judgement .nz .noCorrection).percent.toRat <
+        (judgement .gb .noCorrection).percent.toRat := by
+  norm_num [judgement, Data.Statistics.Decimal.toRat]
 
 /-! ### The Predicate Hierarchy (§6.4) -/
 
@@ -728,49 +713,33 @@ instance : LinearOrder PredicateTarget := LinearOrder.lift' PredicateTarget.ctor
 
 end PredicateTarget
 
-/-- Agreement with the honorific plural *vy* in a Slavonic language (Table 6.11) records the
-availability of singular, semantic, agreement at each sub-position. -/
-structure Honorific where
-  /-- The language. -/
-  language : String
-  /-- The availability of semantic agreement at each sub-position. -/
-  profile : PredicateTarget → Availability
+/-- The availability of semantic, singular, agreement that a cell of Table 6.11 records. -/
+def Mark.availability : Mark → Availability
+  | .pl => .syntacticOnly
+  | .plRarelySg => .mostlySyntactic
+  | .either => .both
+  | .sgRarelyPl => .mostlySemantic
+  | .sg => .semanticOnly
 
-namespace Honorific
+/-- The availability at a cell printed with a percentage: every percentage in the table is below
+one hundred, so the other number occurs as the less frequent variant. -/
+def Mark.availabilityAt (m : Mark) (percent : Option Data.Statistics.Decimal) : Availability :=
+  match m, percent with
+  | .pl, some _ => .mostlySyntactic
+  | .sg, some _ => .mostlySemantic
+  | m, _ => m.availability
 
-/-- A row of the table gives the language and its four sub-positions. -/
-def ofRow (language : String) (v p a n : Availability) : Honorific :=
-  ⟨language, fun | .verb => v | .participle => p | .adjective => a | .noun => n⟩
-
-end Honorific
-
-/-- In Macedonian, (28) to (30), the verb and participle are plural, the adjective singular for
-preference and the noun singular. -/
-def macedonian : Honorific :=
-  .ofRow "Macedonian" .syntacticOnly .syntacticOnly .mostlySemantic .semanticOnly
-
-/-- The rows of Table 6.11, the Russian adjective split into its short and long forms; the
-table prints Slovene's adjective as *pl(SG)* for *pl/(SG)*. -/
-def slavonic : List Honorific :=
-  [.ofRow "Czech" .syntacticOnly .mostlySemantic .mostlySemantic .semanticOnly,
-    .ofRow "Slovak" .syntacticOnly .mostlySyntactic .semanticOnly .semanticOnly,
-    .ofRow "Lower Sorbian" .syntacticOnly .syntacticOnly .both .semanticOnly,
-    .ofRow "Upper Sorbian" .syntacticOnly .mostlySemantic .mostlySemantic .semanticOnly,
-    .ofRow "Polish dialects" .syntacticOnly .both .both .semanticOnly,
-    .ofRow "Bulgarian" .syntacticOnly .mostlySyntactic .mostlySemantic .semanticOnly,
-    macedonian,
-    .ofRow "Serbo-Croat" .syntacticOnly .syntacticOnly .mostlySyntactic .semanticOnly,
-    .ofRow "Slovene" .syntacticOnly .mostlySyntactic .mostlySyntactic .semanticOnly,
-    .ofRow "Ukrainian" .syntacticOnly .mostlySyntactic .mostlySemantic .semanticOnly,
-    .ofRow "Belarusian" .syntacticOnly .syntacticOnly .semanticOnly .semanticOnly,
-    .ofRow "Russian, short-form adjective"
-      .syntacticOnly .syntacticOnly .mostlySyntactic .semanticOnly,
-    .ofRow "Russian, long-form adjective"
-      .syntacticOnly .syntacticOnly .mostlySemantic .semanticOnly]
+/-- The availability of semantic agreement with honorific *vy* at each sub-position of the
+predicate. -/
+def Honorific.profile (h : Honorific) : PredicateTarget → Availability
+  | .verb => h.finiteVerb.availability
+  | .participle => h.participle.availabilityAt h.participlePercent
+  | .adjective => h.adjective.availabilityAt h.adjectivePercent
+  | .noun => h.noun.availability
 
 /-- By the Predicate Hierarchy, the likelihood of semantic agreement never decreases from the
-verb to the noun. -/
-theorem slavonic_monotone : ∀ h ∈ slavonic, Monotone h.profile := by decide
+verb to the noun, in every row of Table 6.11. -/
+theorem honorific_profile_monotone : ∀ l, Monotone (honorific l).profile := by decide
 
 /-! ### Conjoined noun phrases (§6.5) -/
 
@@ -829,59 +798,34 @@ instance : DecidablePred (FitsOnly r d cs t) :=
 
 end Fits
 
-/-- Table 6.12 gives the percentage of number resolution with Russian conjoined noun phrases by
-target. -/
-def russianConjoined : Position → ℚ
-  | .attributive => 12
-  | .predicate => 70
-  | .relativePronoun => 100
-  | .personalPronoun => 100
+/-- The position of the Agreement Hierarchy a target of Table 6.12 names. -/
+def Target.position : Target → Position
+  | .attributive => .attributive
+  | .predicate => .predicate
+  | .relativePronoun => .relativePronoun
+  | .personalPronoun => .personalPronoun
 
-theorem russianConjoined_monotone : Monotone russianConjoined := by
-  unfold Monotone; decide
+-- Table 6.12
+theorem russianConjoined_monotone : ∀ t u : Target, t.position ≤ u.position →
+    (russianConjoined t).percentPlural.toRat ≤ (russianConjoined u).percentPlural.toRat := by
+  decide +kernel
 
-/-- A row of Table 6.13 gives the percentage of plural predicates with conjoined subjects by the
-animacy of the conjuncts and their position relative to the predicate. -/
-structure Resolution where
-  /-- The language. -/
-  language : String
-  /-- Animate conjuncts before the predicate. -/
-  animateBefore : ℕ
-  /-- Inanimate conjuncts before the predicate. -/
-  inanimateBefore : ℕ
-  /-- Animate conjuncts after the predicate. -/
-  animateAfter : ℕ
-  /-- Inanimate conjuncts after the predicate. -/
-  inanimateAfter : ℕ
-  deriving DecidableEq, Repr
-
-/-- Medieval Spanish, Table 6.13. -/
-def spanishResolution : Resolution := ⟨"Medieval Spanish", 96, 31, 69, 6⟩
-
-/-- German, Table 6.13. -/
-def germanResolution : Resolution := ⟨"German", 96, 67, 93, 40⟩
-
-/-- Russian, Table 6.13. -/
-def russianResolution : Resolution := ⟨"Russian", 100, 85, 84, 28⟩
-
-/-- Serbo-Croat, Table 6.13. -/
-def serboCroatResolution : Resolution := ⟨"Serbo-Croat", 100, 91, 70, 26⟩
-
-/-- The rows of Table 6.13. -/
-def resolutionRates : List Resolution :=
-  [spanishResolution, germanResolution, russianResolution, serboCroatResolution]
-
-theorem factors_favour_resolution :
-    ∀ r ∈ resolutionRates,
-      r.inanimateBefore < r.animateBefore ∧ r.animateAfter < r.animateBefore ∧
-        r.inanimateAfter < r.animateAfter ∧ r.inanimateAfter < r.inanimateBefore := by
-  decide
+/-- In every language of Table 6.13 animate conjuncts and conjuncts before the predicate each
+favour resolution, whatever the other factor. -/
+theorem resolution_factors : ∀ l,
+    (∀ o, (resolution l o .inanimate).percentPlural.toRat <
+      (resolution l o .animate).percentPlural.toRat) ∧
+    ∀ a, (resolution l .predicateSubject a).percentPlural.toRat <
+      (resolution l .subjectPredicate a).percentPlural.toRat := by
+  decide +kernel
 
 theorem animacy_vs_precedence :
-    spanishResolution.inanimateBefore < spanishResolution.animateAfter ∧
-      germanResolution.inanimateBefore < germanResolution.animateAfter ∧
-        serboCroatResolution.animateAfter < serboCroatResolution.inanimateBefore := by
-  decide
+    (∀ l ∈ [ConjoinedLanguage.medievalSpanish, .german],
+      (resolution l .subjectPredicate .inanimate).percentPlural.toRat <
+        (resolution l .predicateSubject .animate).percentPlural.toRat) ∧
+    (resolution .serboCroat .predicateSubject .animate).percentPlural.toRat <
+      (resolution .serboCroat .subjectPredicate .inanimate).percentPlural.toRat := by
+  decide +kernel
 
 /-! ### The book's examples -/
 
@@ -981,7 +925,7 @@ theorem macedonian_rows : ∀ row ∈ Examples.all, row.language = .macedonian �
     ∀ t ∈ row.parse? "target" [("verb", PredicateTarget.verb), ("participle", .participle),
       ("adjective", .adjective), ("noun", .noun)],
     ∀ k ∈ row.parse? "agreement" [("plural", Kind.syntactic), ("singular", .semantic)],
-      (row.judgment = .acceptable ↔ (macedonian.profile t).Allows k) := by
+      (row.judgment = .acceptable ↔ ((honorific .macedonian).profile t).Allows k) := by
   decide +kernel
 
 -- (19), (22)

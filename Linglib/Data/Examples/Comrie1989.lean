@@ -948,4 +948,56 @@ def test (e : Datum) : Option Test :=
     ("indirectCommand", .indirectCommand), ("resultative", .resultative),
     ("infinitive", .infinitive)]
 
+/-- The grammatical relation of the causee. -/
+inductive Causee where
+  /-- directObject: direct object -/
+  | directObject
+  /-- indirectObject: indirect object -/
+  | indirectObject
+  /-- oblique: oblique -/
+  | oblique
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `causee`. -/
+def causee (e : Datum) : Option Causee :=
+  e.parse? "causee" [("directObject", .directObject), ("indirectObject", .indirectObject), ("oblique", .oblique)]
+
+/-- The degree of control the causee retains. -/
+inductive Control where
+  /-- less: less control -/
+  | less
+  /-- more: more control -/
+  | more
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `control`. -/
+def control (e : Datum) : Option Control :=
+  e.parse? "control" [("less", .less), ("more", .more)]
+
+/-- The formal type of the causative. -/
+inductive Complexity where
+  /-- lexical: a lexical causative -/
+  | lexical
+  /-- morphological: a morphological causative -/
+  | morphological
+  /-- analytic: an analytic causative -/
+  | analytic
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `complexity`. -/
+def complexity (e : Datum) : Option Complexity :=
+  e.parse? "complexity" [("lexical", .lexical), ("morphological", .morphological), ("analytic", .analytic)]
+
+/-- Whether the causation is direct or indirect. -/
+inductive Mediation where
+  /-- direct: direct causation -/
+  | direct
+  /-- indirect: indirect causation -/
+  | indirect
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `mediation`. -/
+def mediation (e : Datum) : Option Mediation :=
+  e.parse? "mediation" [("direct", .direct), ("indirect", .indirect)]
+
 end Comrie1989.Examples

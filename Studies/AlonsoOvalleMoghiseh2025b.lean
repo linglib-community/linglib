@@ -385,8 +385,13 @@ end Collective
 
 /-- The marking of a row's interrogative phrase, by its type in the paper's taxonomy. -/
 def marking? (e : Datum) : Option Marking :=
-  e.parse? "type" [("BI", .neutral), ("SBI", .neutral), ("SCI", .singular), ("PBI", .plural),
-    ("PCI", .plural)]
+  (Examples.phraseType e).bind fun
+    | .bare => some (.neutral)
+    | .singularBare => some (.neutral)
+    | .singularComplex => some (.singular)
+    | .pluralBare => some (.plural)
+    | .pluralComplex => some (.plural)
+    | _ => none
 
 /-- What a row's interrogative phrase ranges over: individuals in English and in Spanish complex
 phrases, otherwise quantifiers, or singletons with *-ro*. -/

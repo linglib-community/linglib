@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Zwarts2005` — typed example data
@@ -120,5 +122,17 @@ def ex_30a : Datum :=
     paperFeatures := [("preposition", "to")] }
 
 def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_12a, ex_23a, ex_23b, ex_23c, ex_30a]
+
+/-- The aspect the temporal adverbial diagnoses. -/
+inductive Aspect where
+  /-- telic: telic, with an *in*-adverbial -/
+  | telic
+  /-- atelic: atelic, with a *for*-adverbial -/
+  | atelic
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `aspect`. -/
+def aspect (e : Datum) : Option Aspect :=
+  e.parse? "aspect" [("telic", .telic), ("atelic", .atelic)]
 
 end Zwarts2005.Examples

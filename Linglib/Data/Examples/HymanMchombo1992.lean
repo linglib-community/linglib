@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `HymanMchombo1992` — typed example data
@@ -1134,5 +1136,34 @@ def fn16_c : Datum :=
     paperFeatures := [("root", "mang"), ("scope", "API"), ("suffixes", "IAP")] }
 
 def all : List Datum := [ex_1b_caus, ex_1b_appl, ex_1b_recip, ex_1b_pass, ex_1b_int, ex_3a_rc, ex_3a_cr, ex_3b_ap, ex_3b_pa, ex_3c_ar, ex_3c_ra, ex_3c_ra_doubled, ex_3d_ri, ex_3d_ir, ex_4a_rp, ex_4a_pr, ex_4b_ci, ex_4b_ic, ex_6a, ex_6b, ex_6c_ap, ex_6c_pa, ex_6d_aap, ex_6d_apa, ex_7a_ca, ex_7a_ac, ex_7b_cp, ex_7b_pc, ex_7c_ia, ex_7c_ai, ex_7d_ip, ex_7d_pi, ex_11a_ac, ex_11a_arc, ex_11b_ai, ex_11b_ari, ex_12a, ex_12b, ex_12c_rc, ex_12c_rcp, ex_12c_rcpa, ex_12d, ex_16_ac, ex_16_pc, ex_18, ex_21c, ex_23a_bad, ex_23a, ex_23b_bad, ex_23b, ex_25a_1, ex_25a_2, ex_25a_3, ex_25b, ex_27a_ap, ex_27a_pa, ex_27b_ap, ex_27b_pa, ex_28a_ap, ex_28a_pa, ex_28b_ap, ex_28b_pa, ex_29a_ap, ex_29a_pa, ex_29b_ap, ex_29b_pa, ex_30a_ap, ex_30a_pa, ex_30b_ap, ex_30b_pa, ex_32b, ex_32c, ex_32d, ex_34b, ex_34c, ex_34d, ex_34e_1, ex_34e_2, ex_34e_3, ex_35a_cr, ex_35a_rc, ex_35b_rc, ex_35b_cr, fn16_a, fn16_b, fn16_c]
+
+/-- The role of the applied argument. -/
+inductive Role where
+  /-- benefactive: benefactive -/
+  | benefactive
+  /-- instrument: instrument -/
+  | instrument
+  /-- locative: locative -/
+  | locative
+  /-- circumstantial: circumstantial -/
+  | circumstantial
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `role`. -/
+def role (e : Datum) : Option Role :=
+  e.parse? "role" [("benefactive", .benefactive), ("instrument", .instrument), ("locative", .locative),
+    ("circumstantial", .circumstantial)]
+
+/-- The argument that is the subject of the passive. -/
+inductive PassiveSubject where
+  /-- applied: the applied argument -/
+  | applied
+  /-- patient: the patient -/
+  | patient
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `subject`. -/
+def passiveSubject (e : Datum) : Option PassiveSubject :=
+  e.parse? "subject" [("applied", .applied), ("patient", .patient)]
 
 end HymanMchombo1992.Examples

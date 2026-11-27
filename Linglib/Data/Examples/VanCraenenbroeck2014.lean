@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `VanCraenenbroeck2014` — typed example data
@@ -353,5 +355,34 @@ def ex_22b : Datum :=
     paperFeatures := [("section", "3.3"), ("construction", "idiom"), ("idiom", "ijs"), ("form", "nominalization")] }
 
 def all : List Datum := [ex_10a, ex_10b, ex_11, ex_13, ex_15a, ex_15b, ex_16, ex_17a, ex_17b, ex_18a, ex_18b, ex_18c, ex_19a, ex_19b, ex_19c, ex_20a, ex_20b, ex_20c, ex_21a, ex_21b, ex_21c, ex_22a, ex_22b]
+
+/-- Whether the internal argument is stranded or included in the replaced constituent. -/
+inductive ArgumentUse where
+  /-- stranded: stranded outside it -/
+  | stranded
+  /-- included: included in it -/
+  | included
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `argument`. -/
+def argumentUse (e : Datum) : Option ArgumentUse :=
+  e.parse? "argument" [("stranded", .stranded), ("included", .included)]
+
+/-- The form of the verbal projection. -/
+inductive Form where
+  /-- active: an active clause -/
+  | active
+  /-- passive: a passive clause -/
+  | passive
+  /-- nominalizedInfinitive: a nominalized infinitive -/
+  | nominalizedInfinitive
+  /-- nominalization: a nominalization -/
+  | nominalization
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `form`. -/
+def form (e : Datum) : Option Form :=
+  e.parse? "form" [("active", .active), ("passive", .passive),
+    ("nominalizedInfinitive", .nominalizedInfinitive), ("nominalization", .nominalization)]
 
 end VanCraenenbroeck2014.Examples

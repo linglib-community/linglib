@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `AlonsoOvalleMoghiseh2025b` — typed example data
@@ -552,5 +554,26 @@ def fn2 : Datum :=
     paperFeatures := [("type", "SBI"), ("agreement", "singular")] }
 
 def all : List Datum := [ex_1, ex_2, ex_7, ex_20, ex_21, ex_16, ex_17, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_30, ex_31, ex_47, ex_56, ex_57, ex_60, ex_61, ex_62, ex_63, ex_64, ex_65, ex_66, ex_67, ex_69, ex_70a, ex_70b, ex_73, ex_74, ex_75, fn2]
+
+/-- The type of interrogative phrase. -/
+inductive PhraseType where
+  /-- BI: a bare interrogative unmarked for number -/
+  | bare
+  /-- SBI: a singular bare interrogative -/
+  | singularBare
+  /-- SCI: a singular complex interrogative -/
+  | singularComplex
+  /-- PBI: a plural bare interrogative -/
+  | pluralBare
+  /-- PCI: a plural complex interrogative -/
+  | pluralComplex
+  /-- which CI: a complex interrogative with *which* -/
+  | whichComplex
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `type`. -/
+def phraseType (e : Datum) : Option PhraseType :=
+  e.parse? "type" [("BI", .bare), ("SBI", .singularBare), ("SCI", .singularComplex), ("PBI", .pluralBare),
+    ("PCI", .pluralComplex), ("which CI", .whichComplex)]
 
 end AlonsoOvalleMoghiseh2025b.Examples

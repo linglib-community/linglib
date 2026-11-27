@@ -2,7 +2,9 @@ module
 
 public import Linglib.Semantics.Presupposition.Basic
 public import Mathlib.Basic.Rel
-public import Linglib.Discourse.CommonGround
+public import Linglib.Logic.Modal.Definability
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Order.Filter.Ker
 
 /-!
 # Presuppositions in context

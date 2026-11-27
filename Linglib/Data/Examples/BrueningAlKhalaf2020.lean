@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `BrueningAlKhalaf2020` — typed example data
@@ -1186,5 +1188,17 @@ def ex_101d : Datum :=
     paperFeatures := [("construction", "displaced modifier"), ("modifier", "-ly AdvP")] }
 
 def all : List Datum := [ex_2a, ex_2b, ex_3a, ex_3b, ex_20a, ex_20b, ex_20c, ex_20d, ex_21a, ex_21b, ex_21c, ex_21d, ex_22a, ex_22b, ex_24, ex_39a, ex_39b, ex_39c, ex_39d, ex_40a, ex_40b, ex_41a, ex_41b, ex_42a, ex_42b, ex_42c, ex_42d, ex_43a, ex_43b, ex_43c, ex_44a, ex_44b, ex_44c, ex_44d, p15, ex_49a, ex_49b, ex_49c, ex_50a, ex_50b, ex_50c, ex_51a, ex_51b, ex_54a, ex_55a, ex_56a, ex_56b, ex_56c, ex_57a, ex_57b, ex_57c, ex_58a, ex_58b, ex_59a, ex_59b, ex_59c, ex_60a, ex_60b, ex_60c, ex_61a, ex_61b, ex_62a, ex_62b, ex_63a, ex_63b, ex_64a, ex_64b, ex_64d, ex_64e, ex_64f, ex_64g, ex_64h, ex_64i, ex_68a, ex_68b, ex_69a, ex_69b, ex_71a, ex_71b, ex_72a, ex_72b, ex_73a, ex_73b, ex_74a, ex_74b, ex_76a, ex_76b, ex_77a, ex_77b, ex_101d]
+
+/-- Whether the selecting head precedes or follows what it selects. -/
+inductive Selector where
+  /-- precedes: the selector precedes what it selects -/
+  | precedes
+  /-- follows: the selector follows what it selects -/
+  | follows
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `selector`. -/
+def selector (e : Datum) : Option Selector :=
+  e.parse? "selector" [("precedes", .precedes), ("follows", .follows)]
 
 end BrueningAlKhalaf2020.Examples

@@ -202,7 +202,10 @@ def verbProfiles : List (String × Profile) :=
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let profile ← ex.parse? "verb" verbProfiles
-  let state ← ex.parse? "state" [("p", .p), ("unsettled", .unsettled), ("notP", .notP)]
+  let state ← (Examples.state ex).map fun
+    | .p => .p
+    | .unsettled => .unsettled
+    | .notP => .notP
   pure ⟨profile, state, ex.judgment⟩
 
 /-- The nine reports of (1), (2), (4), (5) and (7). -/

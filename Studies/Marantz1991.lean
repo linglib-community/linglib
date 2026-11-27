@@ -279,8 +279,11 @@ def setting? (e : Datum) : Option Setting :=
 
 /-- The clause of an example. -/
 def clause? (e : Datum) : Option Clause :=
-  e.parse? "clause" [("transitive", .transitive), ("unergative", .unergative),
-    ("unaccusative", .unaccusative), ("psych", .psych .dat)]
+  (Examples.clauseType e).map fun
+    | .transitive => .transitive
+    | .unergative => .unergative
+    | .unaccusative => .unaccusative
+    | .psych => .psych .dat
 
 /-- The case an example shows on its subject or object. -/
 def case? (e : Datum) (key : String) : Option Case :=

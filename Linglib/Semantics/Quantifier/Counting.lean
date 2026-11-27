@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.Quantifier.NumberTree
-public import Linglib.Core.Data.Set.Card
+public import Mathlib.Data.Set.Card
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.Linarith
 

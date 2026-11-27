@@ -380,14 +380,6 @@ def germanVerbs : List (String × List (Arg German.Case)) :=
     ("gefallen", Thematic.gefallen), ("übel sein", Thematic.uebelSein),
     ("abhören", Thematic.abhoeren)]
 
-/-- The voices as the rows name them. -/
-def voiceTable : List (String × Voice) := [("active", .active), ("passive", .passive)]
-
-/-- The roles as the rows name them. -/
-def roleTable : List (String × ThetaRole) :=
-  [("agent", .agent), ("theme", .theme), ("goal", .goal), ("source", .source),
-    ("experiencer", .experiencer)]
-
 /-- The Icelandic case frames as the rows write them. -/
 def icelandicCases : List (String × List Icelandic.Case) :=
   [("", []), ("dat", [.dat]), ("gen", [.gen]), ("nom dat", [.nom, .dat]),
@@ -405,7 +397,9 @@ and the cases named by the tables of its language. -/
 def ofCasesRow {C : Type} (verbs : List (String × List (Arg C)))
     (cases : List (String × List C)) (ex : Datum) : Option (List (Arg C) × Voice × List C) := do
   let t ← ex.parse? "verb" verbs
-  let v ← ex.parse? "voice" voiceTable
+  let v ← (Examples.voice ex).map fun
+    | .active => .active
+    | .passive => .passive
   let cs ← ex.parse? "cases" cases
   pure (t, v, cs)
 
@@ -414,8 +408,15 @@ and the role tested. -/
 def ofTestRow {C : Type} (verbs : List (String × List (Arg C))) (ex : Datum) :
     Option (List (Arg C) × Voice × ThetaRole) := do
   let t ← ex.parse? "verb" verbs
-  let v ← ex.parse? "voice" voiceTable
-  let ρ ← ex.parse? "tested" roleTable
+  let v ← (Examples.voice ex).map fun
+    | .active => .active
+    | .passive => .passive
+  let ρ ← (Examples.tested ex).map fun
+    | .agent => .agent
+    | .theme => .theme
+    | .goal => .goal
+    | .source => .source
+    | .experiencer => .experiencer
   pure (t, v, ρ)
 
 theorem ofRow_isSome : ∀ ex ∈ Examples.all,

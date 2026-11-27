@@ -379,9 +379,13 @@ def inventory? (e : Datum) : Option Inventory :=
 
 /-- The meaning an example reports for its dative. -/
 def meaning? (e : Datum) : Option Meaning :=
-  e.parse? "meaning"
-    [("recipient", .low .recipient), ("source", .low .source), ("possessor", .low .possessor),
-      ("affected", .affected), ("experiencer", .experiencer), ("ethical", .benefactive)]
+  (Examples.dativeMeaning e).map fun
+    | .recipient => .low .recipient
+    | .source => .low .source
+    | .possessor => .low .possessor
+    | .affected => .affected
+    | .experiencer => .experiencer
+    | .ethical => .benefactive
 
 /-- The meanings the model gives an example's dative. -/
 def predicted (e : Datum) : Option (Finset Meaning) := do

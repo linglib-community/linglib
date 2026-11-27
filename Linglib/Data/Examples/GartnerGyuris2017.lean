@@ -140,4 +140,32 @@ inductive Dimension where
 def dimension (e : Datum) : Option Dimension :=
   e.parse? "dimension" [("evidential", .evidential), ("epistemic", .epistemic)]
 
+/-- The form of the polar question. -/
+inductive Form where
+  /-- PPQ: a positive polar question -/
+  | positive
+  /-- IN-NPQ: a negative polar question with inner negation -/
+  | innerNegation
+  /-- ON-NPQ: a negative polar question with outer negation -/
+  | outerNegation
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `form`. -/
+def form (e : Datum) : Option Form :=
+  e.parse? "form" [("PPQ", .positive), ("IN-NPQ", .innerNegation), ("ON-NPQ", .outerNegation)]
+
+/-- The value printed for a dimension. -/
+inductive Value where
+  /-- +: printed + -/
+  | plus
+  /-- -: printed - -/
+  | minus
+  /-- %: printed % -/
+  | percent
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `value`. -/
+def value (e : Datum) : Option Value :=
+  e.parse? "value" [("+", .plus), ("-", .minus), ("%", .percent)]
+
 end GartnerGyuris2017.Examples
