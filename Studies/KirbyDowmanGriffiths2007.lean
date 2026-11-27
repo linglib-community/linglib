@@ -2,6 +2,8 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Gamma.Basic
 public import Linglib.Core.Probability.Combinatorics.PolyaUrn
+public import Linglib.Core.Probability.Distributions.Dirichlet
+public import Linglib.Core.Probability.Exchangeable.Basic
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Studies.GriffithsKalish2007
 
@@ -253,6 +255,18 @@ noncomputable def prior (α : ℝ) : Measure (Fin n → Fin k) :=
 theorem isProbabilityMeasure_prior [NeZero k] {α : ℝ} (hα : 0 < α) :
     IsProbabilityMeasure (prior (n := n) (k := k) α) :=
   isProbabilityMeasure_polyaUrn (fun _ ↦ hα) n
+
+-- the prior does not tell the meanings apart: the classes of the meanings are exchangeable
+theorem exchangeable_prior [NeZero k] {α : ℝ} (hα : 0 < α) :
+    Exchangeable (fun i (h : Fin n → Fin k) ↦ h i) (prior (n := n) (k := k) α) :=
+  exchangeable_eval_iff.2 (smulInvariantMeasure_polyaUrn (fun _ ↦ hα) n)
+
+-- under the prior a language draws the probabilities of the classes from a symmetric Dirichlet
+-- distribution and then gives each meaning its class independently
+theorem prior_eq_bind_dirichlet [NeZero k] {α : ℝ} (hα : 0 < α) :
+    prior (n := n) (k := k) α = (dirichlet fun _ : Fin k ↦ α).bind fun t ↦
+      Measure.pi fun _ : Fin n ↦ ∑ c, ENNReal.ofReal (t.weights c) • Measure.dirac c :=
+  polyaUrn_eq_bind_dirichlet (fun _ ↦ hα) n
 
 /-- Eqs. (3)–(4): the data produced by a language. -/
 noncomputable def produce (P : Measure (Fin n)) (ε : ℝ) :
