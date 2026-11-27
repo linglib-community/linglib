@@ -6,17 +6,20 @@ public import Mathlib.Order.BooleanAlgebra.Basic
 /-!
 # The Boolean algebra of tests of an antidomain monoid
 
-The tests of an antidomain monoid are its antidomain elements, the fixed points of the double
-antidomain. Under the product as meet, dynamic disjunction as join and the antidomain as
-complement they form [a Boolean algebra](##AntidomainMonoid.Test), as
-[desharnais-jipsen-struth-2009] show. Dynamic disjunction therefore
-[distributes over a product of tests](##AntidomainMonoid.dor_antidomain_antidomain_mul).
+A **test** checks a state and changes nothing. In relational dynamic semantics negations,
+implications and disjunctions are tests. In an antidomain monoid the tests are the antidomain
+elements, which are the elements that the double antidomain leaves unchanged. With the product as
+meet, dynamic disjunction as join and the antidomain as complement they form [a Boolean
+algebra](##AntidomainMonoid.Test), as Desharnais, Jipsen and Struth show. Tests thus combine by
+classical logic, although the double antidomain of an element is not in general that element.
+Dynamic disjunction therefore [distributes over a product of
+tests](##AntidomainMonoid.dor_antidomain_antidomain_mul).
 
 ## Implementation notes
 
 `Test M` is a type of its own and not a subtype of `M`, as `Heyting.Regular` is in mathlib: the
-order of the Boolean algebra is that of the product, and a subtype would also inherit whatever
-order `M` carries.
+order of the Boolean algebra is that of the product, and a subtype would also inherit whatever order
+`M` carries.
 
 ## References
 
@@ -39,13 +42,14 @@ theorem dor_mul_self : dor x (x * y) = ∼∼x := by
     zero_mul])]
 
 variable (M) in
-/-- The tests of an antidomain monoid are the fixed points of its double antidomain. -/
+/-- The **tests** of an antidomain monoid are the elements that its double antidomain leaves
+unchanged. -/
 def Test : Type _ :=
   { x : M // ∼∼x = x }
 
 namespace Test
 
-/-- The coercion `Test M → M`. -/
+/-- Every test is an element of the monoid, and this map sends a test to that element. -/
 @[coe] def val : Test M → M :=
   Subtype.val
 
@@ -89,7 +93,8 @@ instance : Bot (Test M) := ⟨⟨0, by simp⟩⟩
 
 @[simp, norm_cast] theorem coe_bot : ((⊥ : Test M) : M) = 0 := rfl
 
-/-- A test distributes over a dynamic disjunction. -/
+/-- The product of a test with a dynamic disjunction of two tests is the dynamic disjunction of its
+products with each of them. -/
 theorem coe_mul_dor : (p : M) * dor (q : M) r = dor ((p : M) * q) ((p : M) * r) := by
   rw [← antidomain_antidomain_mul_dor]
   exact (antidomain_antidomain_coe (p ⊓ (q ⊔ r))).symm
@@ -123,7 +128,7 @@ theorem le_iff_mul_eq : p ≤ q ↔ (p : M) * q = p :=
 
 end Test
 
-/-- The double antidomain, as a map onto the tests. -/
+/-- The double antidomain sends each element of the monoid to a test. -/
 def toTest (x : M) : Test M := ⟨∼∼x, antidomain_antidomain_antidomain _⟩
 
 @[simp, norm_cast] theorem coe_toTest : (toTest x : M) = ∼∼x := rfl
@@ -131,7 +136,8 @@ def toTest (x : M) : Test M := ⟨∼∼x, antidomain_antidomain_antidomain _⟩
 @[simp] theorem toTest_coe (p : Test M) : toTest (p : M) = p :=
   Test.coe_injective p.antidomain_antidomain_coe
 
-/-- Dynamic disjunction distributes over a product whose first factor is a test. -/
+/-- The dynamic disjunction of *x* with a product whose first factor is a test is the product of the
+disjunctions of *x* with each factor. -/
 theorem dor_antidomain_antidomain_mul : dor x (∼∼y * z) = dor x y * dor x z := by
   have h := congrArg Test.val (sup_inf_left (toTest x) (toTest y) (toTest z))
   simp only [Test.coe_sup, Test.coe_inf, coe_toTest, dor_antidomain_antidomain_left,

@@ -11,15 +11,15 @@ public import Mathlib.Order.Hom.Basic
 /-!
 # Involutive complements
 
-This file defines involutive complements. An involutive complement on an ordered type is a
-complement `ᶜ` that is involutive, `aᶜᶜ = a`, and reverses the order. It is Birkhoff's
-"involution", and a lattice with one is Kalman's "lattice with involution". The De Morgan laws
-follow from these two properties alone, without any complementation law such as `a ⊓ aᶜ = ⊥`.
+An **involutive complement** on an ordered set is an operation `ᶜ` that undoes itself, `aᶜᶜ = a`,
+and reverses the order. The complement of a Boolean algebra is one. So is negation on Kleene's three
+truth values, which leaves the middle value where it is, and that case shows what is not assumed: `a
+⊓ aᶜ` need not be the bottom element. The De Morgan laws hold all the same, since they follow from
+the two properties alone. Birkhoff calls the operation an involution, and Kalman calls a lattice
+that has one a lattice with involution.
 
-The involution is the common base of two branches between mathlib's lattices and
-`BooleanAlgebra`. Adding distributivity gives De Morgan and Kleene algebras
-(`Core/Order/DeMorganAlgebra/`); adding non-contradiction gives ortholattices
-(`Core/Order/Ortholattice.lean`). A Boolean algebra lies on both.
+With distributivity an involutive complement gives the De Morgan and Kleene algebras, and with
+non-contradiction the ortholattices. A Boolean algebra is both.
 
 ## Main definitions
 
@@ -36,12 +36,16 @@ The involution is the common base of two branches between mathlib's lattices and
 
 ## Implementation notes
 
-The lemmas are protected in the `InvolutiveCompl` namespace because the root names
-(`compl_compl`, `compl_sup`, ...) belong to mathlib's Boolean and Heyting API. Upstream, the
-Boolean ones would be generalized to `InvolutiveCompl`, and `complOrderIso` would generalize
-mathlib's `OrderIso.compl`. There is no `OrderDual` instance: its complement would have to agree
-with the one mathlib's `OrderDual.instBiheytingAlgebra` gives the dual of a Boolean algebra, the
-one place a genuine `Compl` diamond can arise.
+The De Morgan and Kleene algebras are in `Core/Order/DeMorganAlgebra/` and the ortholattices in
+`Core/Order/Ortholattice.lean`; the involutive complement is what the two branches share between
+mathlib's lattices and `BooleanAlgebra`.
+
+The lemmas are protected in the `InvolutiveCompl` namespace because the root names (`compl_compl`,
+`compl_sup`, ...) belong to mathlib's Boolean and Heyting API. Upstream, the Boolean ones would be
+generalized to `InvolutiveCompl`, and `complOrderIso` would generalize mathlib's `OrderIso.compl`.
+There is no `OrderDual` instance: its complement would have to agree with the one mathlib's
+`OrderDual.instBiheytingAlgebra` gives the dual of a Boolean algebra, the one place a genuine
+`Compl` diamond can arise.
 
 ## References
 
@@ -54,9 +58,10 @@ open OrderDual
 
 variable {α β : Type*}
 
-/-- An **involutive complement** on an ordered type is a complement with `aᶜᶜ = a` that reverses
-the order ([kalman-1958]'s involution, Birkhoff's dual automorphism of period two). `Compl` is
-notation, so no complementation law is implied: `a ⊓ aᶜ = ⊥` may fail. -/
+/-- An **involutive complement** on an ordered set is an operation that undoes itself, so that the
+complement of the complement of an element is that element, and that reverses the order. It need not
+satisfy non-contradiction: the meet of an element with its complement may lie above the least
+element. -/
 class InvolutiveCompl (α : Type*) [LE α] extends Compl α where
   /-- The complement is involutive, `aᶜᶜ = a`. -/
   protected compl_compl (a : α) : aᶜᶜ = a
@@ -88,14 +93,15 @@ protected theorem compl_eq_iff_eq_compl : aᶜ = b ↔ a = bᶜ :=
   ⟨fun h ↦ InvolutiveCompl.compl_compl b ▸ InvolutiveCompl.compl_compl a ▸
     InvolutiveCompl.compl_le_compl h, InvolutiveCompl.compl_le_compl⟩
 
-/-- Orthogonality is symmetric, `a ≤ bᶜ ↔ b ≤ aᶜ`. -/
+/-- An element lies below the complement of another exactly when the other lies below its
+complement. -/
 protected theorem le_compl_comm : a ≤ bᶜ ↔ b ≤ aᶜ :=
   ⟨fun h ↦ InvolutiveCompl.compl_compl b ▸ InvolutiveCompl.compl_le_compl h,
     fun h ↦ InvolutiveCompl.compl_compl a ▸ InvolutiveCompl.compl_le_compl h⟩
 
 variable (α) in
-/-- The involution bundled as an order isomorphism onto the order dual. Upstream this is mathlib's
-`OrderIso.compl`, generalized from `BooleanAlgebra` to `InvolutiveCompl`. -/
+/-- The complement is an order isomorphism from the order onto its reverse, the same elements with
+the order turned upside down. -/
 def complOrderIso : α ≃o αᵒᵈ where
   toFun a := toDual aᶜ
   invFun a := (ofDual a)ᶜ
@@ -108,8 +114,10 @@ end LE
 protected theorem compl_anti [Preorder α] [InvolutiveCompl α] : Antitone (compl : α → α) :=
   fun _ _ h ↦ InvolutiveCompl.compl_le_compl h
 
-/-! The De Morgan laws and the exchange of the bounds are `complOrderIso` preserving the lattice
-operations: they follow from involution and antitonicity alone. -/
+/-!
+An order isomorphism onto the dual order carries joins to meets and the top to the bottom: these are
+the De Morgan laws and the exchange of the bounds.
+-/
 
 section Lattice
 
@@ -135,13 +143,18 @@ end BoundedOrder
 
 end InvolutiveCompl
 
-/-- A Boolean algebra's complement is involutive and antitone. -/
+/-- The complement of a Boolean algebra is involutive and reverses the order. -/
 instance (priority := 100) BooleanAlgebra.toInvolutiveCompl [BooleanAlgebra α] :
     InvolutiveCompl α where
   compl_compl := compl_compl
   compl_le_compl h := compl_le_compl h
 
-/-! ### Products and functions -/
+/-!
+### Products and functions
+
+A pair is complemented in each coordinate and a function at each argument, so products and function
+spaces have an involutive complement when their factors do.
+-/
 
 instance [LE α] [LE β] [InvolutiveCompl α] [InvolutiveCompl β] : InvolutiveCompl (α × β) where
   compl_compl p := Prod.ext (InvolutiveCompl.compl_compl p.1) (InvolutiveCompl.compl_compl p.2)

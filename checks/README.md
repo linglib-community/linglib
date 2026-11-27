@@ -33,6 +33,18 @@ file is named by the key.
 
 Sign-offs are not kept in this file, but in the ledger, `checks/ledger/` (see below).
 
+A page of the site shows a source's claims as a text to read (`scripts/gen_checks_pages.py`), and
+two things in a record are for it alone. The item that opens a section of the source says so,
+with `section`, the section's number and title, such as `"§2.3 Existential statements"`, or with a
+banner comment above it, `# ── Existential statements (§2.3) ──`; neither is part of what a
+sign-off covers. A term that an item defines is written `**term**` in its claim and is set in
+bold.
+
+The page credits each item, each declaration, the record and each file to the people who
+committed their lines, as git has them (a Lean file's `Authors:` header, where it has one, names
+the file's). The person who commits a line answers for it, whatever drafted it, so a credit never
+names a tool; who has checked an item against the source is a separate matter, the sign-off's.
+
 `kind` says what the item is in the source:
 
 * `definition`: it defines something, which the declarations define or characterize.
@@ -281,7 +293,11 @@ the Mathlib that the project pins.
 
 The docs pages show, under each declaration stating a `checked`, `relies` or `stale` item, who
 checked it and when, which item it relies on, or that it has changed since; the docs workflow
-reads `checks.py status --json`.
+reads `checks.py status --json`. The same output makes a page for each source at its study's
+path, `/wiki/Studies/<Study>/`: its claims in the source's order, and beside the chosen one the Lean
+that states it, what that statement uses, and the sign-off. It also makes a page at
+`/wiki/<path>/` for each file those statements reach, which reads the file's docstrings as a
+text.
 
 Who checks which source is arranged in GitHub issues, not here. The files record only what has been
 checked.

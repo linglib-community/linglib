@@ -10,25 +10,31 @@ public import Linglib.Logic.Trivalent.Basic
 /-!
 # Three-valued connectives
 
-The three-valued conjunctions share one truth rule, false when either operand is and true
-otherwise, and differ only in when a compound is undefined. `meetWith D` and `joinWith D` are the
-conjunction and disjunction that are undefined exactly where the condition `D` fails, and each
-family is one of them at its definedness condition (`meetWeak_eq_meetWith` and its companions):
-the Weak Kleene connectives `meetWeak` and `joinWeak`, the Middle Kleene connectives `meetMiddle`
-and `joinMiddle`, and Belnap's `meetBelnap` and `joinBelnap`.
-
-The transplication `transplication a b` of Blamey is the value of `b` where `a` is true and
-`undefined` elsewhere. Beaver's presupposition operator is its diagonal (`transplication_self`),
-and it is definable from that operator (`transplication_eq`). Conditional assertion
-`condAssert d` at a designation standard is de Finetti's conditional at K3, where it is
-transplication (`condAssert_k3`), and Cooper's at LP; it commutes with negation
-(`compl_condAssert`) and satisfies Import-Export (`condAssert_condAssert`). The supervaluation
-`supervaluation s P` is the value of a predicate over a finite family of valuations, and
-`Connectives` is an interpretation of the binary connectives by truth tables.
+How should *and* treat an operand that has no truth value? The three-valued logics of the literature
+answer differently, and the answer decides when a compound sentence inherits the presupposition
+failure of a part. The conjunctions agree about truth: a conjunction is false when a conjunct is,
+and true otherwise. They differ in when it is undefined. Strong Kleene conjunction is undefined only
+when nothing settles its value, and Weak Kleene conjunction whenever a conjunct is undefined. Middle
+Kleene conjunction reads from left to right, and Belnap's skips an undefined conjunct. Blamey's
+**transplication** is the binary presupposition operator, *φ* presupposing *π*. **Conditional
+assertion** asserts its consequent where its antecedent holds, and a **supervaluation** gives the
+verdict of a family of classical valuations.
 
 ## Implementation notes
 
 Every connective keeps a pattern-matched definition, so that `rfl` and `decide` evaluate it.
+
+`meetWith D` and `joinWith D` are the conjunction and disjunction that are undefined exactly where
+the condition `D` fails, and each family is one of them at its definedness condition
+(`meetWeak_eq_meetWith` and its companions): the Weak Kleene connectives `meetWeak` and `joinWeak`,
+the Middle Kleene connectives `meetMiddle` and `joinMiddle`, and Belnap's `meetBelnap` and
+`joinBelnap`. Beaver's presupposition operator is the diagonal of `transplication`
+(`transplication_self`), and transplication is definable from it (`transplication_eq`). Conditional
+assertion `condAssert d` at a designation standard is de Finetti's conditional at K3, where it is
+transplication (`condAssert_k3`), and Cooper's at LP; it commutes with negation (`compl_condAssert`)
+and satisfies Import-Export (`condAssert_condAssert`). `supervaluation s P` is the value of a
+predicate over a finite family of valuations, and `Connectives` is an interpretation of the binary
+connectives by truth tables.
 
 ## References
 
@@ -49,19 +55,23 @@ Every connective keeps a pattern-matched definition, so that `rfl` and `decide` 
 
 namespace Trivalent
 
-/-! ### Definedness conditions
+/-!
+### Definedness conditions
 
-The binary conjunctions share one truth rule, false when either operand is and true otherwise,
-and differ only in where they are undefined. Strong Kleene conjunction is defined whenever the
-operands settle the value, Weak Kleene's demands both operands defined, Belnap's demands one, and
-Middle Kleene's is defined when the left operand is and either settles the value or the right
-operand is defined too. `meetWith` makes the conjunction a function of that condition. -/
+The conjunctions share one rule for truth: a conjunction is false when a conjunct is, and true
+otherwise. They differ only in when it is defined. Strong Kleene's is defined whenever its conjuncts
+settle its value, Weak Kleene's when both conjuncts are defined, Belnap's when one is, and Middle
+Kleene's when the first conjunct is defined and either settles the value or the second is defined
+too.
+-/
 
-/-- The conjunction undefined unless `D` holds, and otherwise false exactly when an operand is. -/
+/-- The **conjunction with definedness condition** *D* is undefined unless *D* holds, and otherwise
+false if a conjunct is false and true if neither is. -/
 def meetWith (D : Prop) [Decidable D] (a b : Trivalent) : Trivalent :=
   if D then if a = .false ∨ b = .false then .false else .true else .undefined
 
-/-- The disjunction undefined unless `D` holds, the dual of `meetWith`. -/
+/-- The **disjunction with definedness condition** *D* is undefined unless *D* holds, and otherwise
+true if a disjunct is true and false if neither is. -/
 def joinWith (D : Prop) [Decidable D] (a b : Trivalent) : Trivalent :=
   (meetWith D aᶜ bᶜ)ᶜ
 
@@ -98,25 +108,27 @@ theorem sup_eq_joinWith (a b : Trivalent) :
 
 end DefinednessConditions
 
-/-! ### Weak Kleene
+/-!
+### Weak Kleene
 
-In the Weak Kleene connectives `undefined` is absorbing, so a compound is undefined as soon as an
-operand is. This is [bochvar-1938]'s internal logic, which reads the third value as nonsense, and
-[kleene-1952]'s weak tables. -/
+In the Weak Kleene connectives an undefined operand makes the whole undefined. This is Bochvar's
+internal logic, which reads the third value as nonsense, and the weak tables of Kleene.
+-/
 
-/-- In Weak Kleene disjunction `undefined` is absorbing, so both operands must be defined. -/
+/-- **Weak Kleene disjunction** is undefined when either disjunct is, and classical otherwise. -/
 def joinWeak : Trivalent → Trivalent → Trivalent
   | .true, .true | .true, .false | .false, .true => .true
   | .false, .false => .false
   | _, _ => .undefined
 
-/-- In Weak Kleene conjunction `undefined` is absorbing. -/
+/-- **Weak Kleene conjunction** is undefined when either conjunct is, and classical otherwise. -/
 def meetWeak : Trivalent → Trivalent → Trivalent
   | .true, .true => .true
   | .true, .false | .false, .true | .false, .false => .false
   | _, _ => .undefined
 
-/-- Weak Kleene conjunction is `meetWith` demanding both operands defined. -/
+/-- Weak Kleene conjunction is the conjunction whose definedness condition is that both conjuncts
+are defined. -/
 theorem meetWeak_eq_meetWith (a b : Trivalent) :
     meetWeak a b = meetWith (a ≠ .undefined ∧ b ≠ .undefined) a b := by
   cases a <;> cases b <;> decide
@@ -171,14 +183,15 @@ theorem compl_meetWeak_of_ne_false {a : Trivalent} (h : a ≠ .false) (b : Triva
     (meetWeak a b)ᶜ = meetWeak a bᶜ := by
   revert h; cases a <;> cases b <;> decide
 
-/-! ### Assertion and presupposition
+/-!
+### Assertion and presupposition
 
-The assertion operator 𝒜 of [bochvar-1938] sends `undefined` to `false`, closing a value to a
-bivalent one, and is `ofProp (a = .true)`. The presupposition operator ∂ of [beaver-1992] sends
-`false` to `undefined`, keeping only truth, and is `a ⊔ .undefined`. The binary presupposition
-operator is the transplication `π / φ` of [blamey-1986] ([beaver-krahmer-2001] Definition 3), the
-value of `φ` where `π` is true and `undefined` elsewhere. [beaver-krahmer-2001] build
-presupposition projection from these. -/
+Bochvar's assertion operator turns undefined into false, so that its result is two-valued. Beaver's
+presupposition operator does the reverse and turns false into undefined, keeping only truth.
+Blamey's transplication is the binary presupposition operator, with the value of *φ* where *π* is
+true and undefined elsewhere ([beaver-krahmer-2001] Definition 3). Beaver and Krahmer build
+presupposition projection from these.
+-/
 
 theorem sup_undefined_eq_true_iff {a : Trivalent} : a ⊔ .undefined = .true ↔ a = .true := by
   cases a <;> decide
@@ -189,8 +202,8 @@ theorem sup_undefined_eq_undefined_iff {a : Trivalent} :
 
 theorem sup_undefined_ne_false (a : Trivalent) : a ⊔ .undefined ≠ .false := by cases a <;> decide
 
-/-- The transplication `π / φ` of [blamey-1986], `φ` presupposing `π`: the value of `φ` if `π` is
-true, `undefined` otherwise ([beaver-krahmer-2001] Definition 3). -/
+/-- The **transplication** *π / φ* of [blamey-1986], read as *φ* presupposing *π*, has the value of
+*φ* if *π* is true and is undefined otherwise ([beaver-krahmer-2001] Definition 3). -/
 def transplication : Trivalent → Trivalent → Trivalent
   | .true, b => b
   | _, _ => .undefined
@@ -219,34 +232,37 @@ theorem transplication_eq_ite (a b : Trivalent) :
     transplication a b = .undefined ↔ a ≠ .true ∨ b = .undefined := by
   cases a <;> cases b <;> decide
 
-/-- Beaver's presupposition operator is the diagonal of transplication. -/
+/-- A value presupposing itself is true if the value is true and undefined otherwise, which is
+Beaver's presupposition operator applied to it. -/
 theorem transplication_self (a : Trivalent) : transplication a a = a ⊔ .undefined := by
   cases a <;> rfl
 
-/-- Transplication is definable from Beaver's presupposition operator and the Strong Kleene
-connectives, `π / φ = (∂π ∧ φ) ∨ ¬∂π` ([beaver-krahmer-2001] p. 151). -/
+/-- Transplication is definable from Beaver's presupposition operator ∂ and the Strong Kleene
+connectives, as (∂*π* ∧ *φ*) ∨ ¬∂*π* ([beaver-krahmer-2001] p. 151). -/
 theorem transplication_eq (a b : Trivalent) :
     transplication a b = (a ⊔ .undefined) ⊓ b ⊔ (a ⊔ .undefined)ᶜ := by
   cases a <;> cases b <;> rfl
 
-/-! ### Middle Kleene
+/-!
+### Middle Kleene
 
-The Middle Kleene connectives of [peters-1979] read their operands from left to right. An
-undefined first operand absorbs, and a defined one proceeds by Strong Kleene, the three-valued
-counterpart of Karttunen's filtering ([beaver-krahmer-2001]). Peters stipulates the tables, and
-[george-2014] derives them as the Peters-Kleene deployments of the classical connectives
-(`Trivalent.deploy₂_and`, `Trivalent.deploy₂_or`, `Trivalent.deploy₂_imp` in
-`Linglib.Logic.Trivalent.Deployment`). -/
+The Middle Kleene connectives of Peters read their operands from left to right. An undefined first
+operand makes the whole undefined, and a defined one lets the Strong Kleene connective decide, the
+three-valued counterpart of Karttunen's filtering in Beaver and Krahmer's account. Peters stipulates
+the tables, and George derives them from the classical connectives (`Trivalent.deploy₂_and`,
+`Trivalent.deploy₂_or`, `Trivalent.deploy₂_imp` in `Linglib.Logic.Trivalent.Deployment`).
+-/
 
-/-- In Middle Kleene conjunction a left undefined operand absorbs and a defined one proceeds by
-Strong Kleene, so `meetMiddle .false .undefined = .false` but
-`meetMiddle .undefined .false = .undefined`. -/
+/-- **Middle Kleene conjunction** is undefined when its first conjunct is, and is otherwise the
+Strong Kleene conjunction. A false first conjunct therefore makes it false even if the second is
+undefined, but a false second conjunct does not rescue an undefined first. -/
 def meetMiddle : Trivalent → Trivalent → Trivalent
   | .undefined, _ => .undefined
   | a, b => a ⊓ b
 
-/-- In Middle Kleene disjunction a left undefined operand absorbs and a defined one proceeds by
-Strong Kleene, so a defined first disjunct can settle the result when the second is undefined. -/
+/-- **Middle Kleene disjunction** is undefined when its first disjunct is, and is otherwise the
+Strong Kleene disjunction. A true first disjunct therefore makes it true even if the second is
+undefined. -/
 def joinMiddle : Trivalent → Trivalent → Trivalent
   | .undefined, _ => .undefined
   | a, b => a ⊔ b
@@ -332,22 +348,24 @@ theorem joinMiddle_congr_right {a b b' : Trivalent} (h : a = .false → b = b') 
     joinMiddle a b = .false ↔ a = .false ∧ b = .false := by
   cases a <;> cases b <;> decide
 
-/-! ### Belnap's connectives
+/-!
+### Belnap's connectives
 
-The connectives of [belnap-1970]'s conditional assertion skip undefined operands: a compound is
-assertive iff at least one operand is, and asserts the combination of the assertive operands only,
-so `undefined` is the identity. Strong Kleene's let `undefined` through unless an operand settles
-the value, and Weak Kleene's always do. -/
-
-/-- Belnap conjunction skips undefined operands, with `undefined` as identity ([belnap-1970], (8)).
+The connectives of Belnap's conditional assertion skip an undefined operand. A compound asserts
+something as soon as one operand does, and what it asserts combines the operands that do. The Strong
+Kleene connectives let an undefined operand through unless the other settles the value, and the Weak
+Kleene ones always do.
 -/
+
+/-- **Belnap conjunction** skips an undefined conjunct and returns the other, and is the Strong
+Kleene conjunction when both are defined ([belnap-1970], (8)). -/
 def meetBelnap : Trivalent → Trivalent → Trivalent
   | .undefined, b => b
   | a, .undefined => a
   | a, b => a ⊓ b
 
-/-- Belnap disjunction skips undefined operands, with `undefined` as identity ([belnap-1970], (9)).
--/
+/-- **Belnap disjunction** skips an undefined disjunct and returns the other, and is the Strong
+Kleene disjunction when both are defined ([belnap-1970], (9)). -/
 def joinBelnap : Trivalent → Trivalent → Trivalent
   | .undefined, b => b
   | a, .undefined => a
@@ -413,21 +431,24 @@ theorem undefined_le_meetBelnap_iff {a b : Trivalent} :
     .undefined ≤ meetBelnap a b ↔ .undefined ≤ a ∧ .undefined ≤ b := by
   cases a <;> cases b <;> decide
 
-/-! ### Conditional assertion
+/-!
+### Conditional assertion
 
-A conditional assertion asserts its consequent where its antecedent holds and is void elsewhere
-([belnap-1970]). Over a trivalent antecedent a designation standard decides what a void antecedent
-does: at K3 only a true antecedent passes the consequent on, the conditional of [de-finetti-1936],
-and at LP a void antecedent does too, the conditional of [cooper-1968]. At either standard the
-conditional commutes with negation and imports and exports a conjunction. -/
+A conditional assertion asserts its consequent where its antecedent holds and asserts nothing
+elsewhere, in Belnap's phrase. When the antecedent may itself be undefined, a designation standard
+decides whether it holds. At K3 only a true antecedent passes the consequent on, which is de
+Finetti's conditional, and at LP an undefined antecedent does too, which is Cooper's. At either
+standard the conditional commutes with negation and satisfies Import-Export.
+-/
 
-/-- The conditional assertion of `b` on `a` at the standard `d` is `b` where `a` is designated and
-`undefined` elsewhere. -/
+/-- The **conditional assertion** of *b* on *a*, at a designation standard, has the value of *b* if
+*a* is designated at that standard and is undefined otherwise. -/
 def condAssert (d : Designation) (a b : Trivalent) : Trivalent :=
   if d.threshold ≤ a then b else .undefined
 
-/-- At K3 the conditional assertion is transplication: de Finetti's conditional and
-[blamey-1986]'s binary presupposition operator are one table. -/
+/-- At K3 the conditional assertion of *b* on *a* is the transplication of *b* by *a*, so de
+Finetti's conditional and the binary presupposition operator of [blamey-1986] have one truth
+table. -/
 theorem condAssert_k3 (a b : Trivalent) : condAssert .k3 a b = transplication a b := by
   cases a <;> rfl
 
@@ -474,12 +495,14 @@ theorem condAssert_congr_left (h : d.threshold ≤ a ↔ d.threshold ≤ a') (b 
     condAssert d a b = condAssert d a' b := by
   simp only [condAssert, h]
 
-/-- Negation commutes with the conditional. -/
+/-- The negation of a conditional assertion is the conditional assertion of the negated consequent
+on the same antecedent. -/
 @[simp] theorem compl_condAssert : (condAssert d a b)ᶜ = condAssert d a bᶜ := by
   unfold condAssert; split_ifs <;> simp
 
-/-- **Import-Export**: a conditional on `a` of a conditional on `b` is the conditional on the
-Strong Kleene conjunction `a ⊓ b`, which is designated exactly when both conjuncts are. -/
+/-- A conditional assertion on *a* of a conditional assertion on *b* is the conditional assertion on
+the Strong Kleene conjunction of *a* and *b*, which is designated exactly when both are. This is
+**Import-Export**. -/
 theorem condAssert_condAssert : condAssert d a (condAssert d b c) = condAssert d (a ⊓ b) c := by
   by_cases ha : d.threshold ≤ a <;> by_cases hb : d.threshold ≤ b <;>
     simp [condAssert, le_inf_iff, ha, hb]
@@ -494,18 +517,20 @@ theorem condAssert_joinBelnap :
 
 end CondAssert
 
-/-! ### Supervaluation
+/-!
+### Supervaluation
 
-The value of a predicate over a finite family of classical valuations ([van-fraassen-1966]). The
-empty family is vacuously both all-true and all-false, and `supervaluation` resolves it to
-`true`. -/
+A supervaluation, van Fraassen's notion, gives the verdict of a family of classical valuations: true
+if all make the sentence true, false if all make it false, and undefined if they disagree. An empty
+family does both vacuously, and here it counts as true.
+-/
 
 section Supervaluation
 
 variable {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P]
 
-/-- The supervaluation of `P` over the family `s` is `true` when `P` holds at every member,
-`false` when it fails at every member of a nonempty `s`, and `undefined` otherwise. -/
+/-- The **supervaluation** of a property over a finite family is true if every member has the
+property, false if the family is nonempty and no member has it, and undefined otherwise. -/
 def supervaluation : Trivalent :=
   if ∀ a ∈ s, P a then .true else if ∃ a ∈ s, P a then .undefined else .false
 
@@ -567,22 +592,25 @@ theorem supervaluation_not (hs : s.Nonempty) :
   · exact (supervaluation_eq_false_iff ..).2
       ⟨hs, fun a ha hn ↦ hn ((supervaluation_eq_true_iff ..).1 h a ha)⟩
 
-/-- Every value is the supervaluation of its designation at the two standards, `true` designated
-at both, `false` at neither, and `undefined` at LP alone. -/
+/-- Every truth value is the supervaluation, over the two designation standards, of whether it is
+designated. True is designated at both standards, false at neither, and undefined at LP alone. -/
 @[simp] theorem supervaluation_threshold_le (a : Trivalent) :
     supervaluation Finset.univ (fun d : Designation ↦ d.threshold ≤ a) = a := by
   cases a <;> decide
 
 end Supervaluation
 
-/-! ### Truth-table interpretations
+/-!
+### Truth-table interpretations
 
-The trivalent logics of the literature share Kleene's negation and differ in the truth tables of
-their binary connectives, which `Connectives` collects. With a designation standard they make a
-logical matrix. -/
+The three-valued logics of the literature share Kleene's negation and differ in the truth tables of
+their binary connectives. An interpretation collects those tables, and with a designation standard
+it makes a logical matrix.
+-/
 
-/-- An interpretation of the binary connectives by trivalent truth tables; negation is always
-Kleene's. -/
+/-- An **interpretation** of the binary connectives gives a three-valued truth table for
+conjunction, for disjunction and for the conditional. Negation is Kleene's in every
+interpretation. -/
 structure Connectives where
   /-- The conjunction. -/
   conj : Trivalent → Trivalent → Trivalent
@@ -593,25 +621,29 @@ structure Connectives where
 
 namespace Connectives
 
-/-- The strong tables of [kleene-1952], with the material conditional `¬a ∨ b`. -/
+/-- The **Strong Kleene interpretation** uses the strong tables of [kleene-1952], with the material
+conditional, the disjunction of the negated antecedent with the consequent. -/
 @[simps]
 def strongKleene : Connectives := ⟨(· ⊓ ·), (· ⊔ ·), fun a b ↦ aᶜ ⊔ b⟩
 
-/-- The weak tables of [kleene-1952], the internal logic of [bochvar-1938]. -/
+/-- The **Weak Kleene interpretation** uses the weak tables of [kleene-1952], the internal logic of
+[bochvar-1938], with the material conditional built from the weak disjunction. -/
 @[simps]
 def weakKleene : Connectives := ⟨meetWeak, joinWeak, fun a b ↦ joinWeak aᶜ b⟩
 
-/-- The Middle Kleene tables of [peters-1979], which read their operands from left to right. -/
+/-- The **Middle Kleene interpretation** uses the tables of [peters-1979], which read their operands
+from left to right. -/
 @[simps]
 def middleKleene : Connectives := ⟨meetMiddle, joinMiddle, fun a b ↦ joinMiddle aᶜ b⟩
 
-/-- The tables of [cooper-1968] take Belnap's conjunction and disjunction, which skip a void
-operand, and the conditional that asserts its consequent on a non-false antecedent. -/
+/-- The **Cooper interpretation**, after [cooper-1968], uses Belnap's conjunction and disjunction,
+which skip an undefined operand, and the conditional that asserts its consequent when its antecedent
+is not false. -/
 @[simps]
 def cooper : Connectives := ⟨meetBelnap, joinBelnap, condAssert .lp⟩
 
-/-- The conditional of [de-finetti-1936], which asserts its consequent on a true antecedent, with
-the strong Kleene conjunction and disjunction. -/
+/-- The **de Finetti interpretation** uses the Strong Kleene conjunction and disjunction and the
+conditional of [de-finetti-1936], which asserts its consequent when its antecedent is true. -/
 @[simps]
 def deFinetti : Connectives := ⟨(· ⊓ ·), (· ⊔ ·), condAssert .k3⟩
 

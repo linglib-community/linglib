@@ -14,11 +14,12 @@ public import Mathlib.Logic.Relator
 /-!
 # Relation lifting to sets
 
-Mirror of `Mathlib/Data/Set/Functor.lean`: the relation lifting of the powerset functor.
-`Set.LiftRel r s t` holds when every member of `s` is `r`-related to some member of `t` and every
-member of `t` is `r`-related from some member of `s`. This is the Egli–Milner lifting, the `Set`
-counterpart of `Computation.LiftRel`, and at a homogeneous relation the functor-level
-`Functor.Liftr`. [UPSTREAM]
+A relation between individuals lifts to a relation between sets of them. Two sets are related by the
+**lifting** of a relation when every member of the first is related to some member of the second,
+and every member of the second has some member of the first related to it. This is known as the
+Egli–Milner lifting. In dynamic semantics it takes an update of single states to an update of sets
+of states, the plural states: the lifted update relates two plural states when each input state has
+an output in the second and each of its members is the output of some input state.
 
 ## Main definitions
 
@@ -28,19 +29,23 @@ counterpart of `Computation.LiftRel`, and at a homogeneous relation the functor-
 
 * `Set.liftRel_iff_subset_preimage_image`, `Set.liftRel_iff_exists_dom_cod`,
   `Set.liftRel_iff_biTotal`, `Set.liftRel_iff_liftr`: the lifting as two `SetRel` image
-  inclusions, as a subrelation with the given domain and codomain, as bitotality of the
-  restriction, and as `Functor.Liftr`.
+  inclusions, as a subrelation with the given domain and codomain, as bitotality of the restriction,
+  and as `Functor.Liftr`.
 * `Set.liftRel_eq`, `Set.liftRel_comp`: the lifting sends equality to equality and relational
   composition to composition.
 * `Set.liftRel_iff_image_eq`: the lifting of equality along two maps is equality of their images.
-* `Set.LiftRel.union`, `Set.LiftRel.biUnion`: closure under unions, and under the indexed unions
-  of related families, the `bind` of `Computation.liftRel_bind`.
+* `Set.LiftRel.union`, `Set.LiftRel.biUnion`: closure under unions, and under the indexed unions of
+  related families, the `bind` of `Computation.liftRel_bind`.
 * `Set.LiftRel.image`, `Set.LiftRel.seq`, `Set.LiftRel.sUnion`: the lifting respects the functor's
   map, application and join.
 * The lifting of a reflexive, symmetric or transitive relation is reflexive, symmetric or
   transitive, and `Set.LiftRel.equiv` for equivalences.
 
 ## Implementation notes
+
+The file mirrors `Mathlib/Data/Set/Functor.lean` and is a candidate for mathlib. The lifting is the
+`Set` counterpart of `Computation.LiftRel`, and at a homogeneous relation the functor-level
+`Functor.Liftr`.
 
 By `liftRel_eq` and `liftRel_comp` the lifting is a functor from relations to relations; a lift of
 dynamic meanings to plural states is an instance, and inherits identity and sequencing from here.
@@ -52,8 +57,8 @@ namespace Set
 
 variable {α β γ δ : Type*} {r p : α → β → Prop} {s s₁ s₂ : Set α} {t t₁ t₂ : Set β}
 
-/-- The relation lifting of `r` to sets: every member of `s` is `r`-related to some member of `t`,
-and every member of `t` is `r`-related from some member of `s`. -/
+/-- The **lifting** of a relation to sets relates *s* to *t* when every member of *s* is related to
+some member of *t*, and every member of *t* has some member of *s* related to it. -/
 def LiftRel (r : α → β → Prop) (s : Set α) (t : Set β) : Prop :=
   (∀ a ∈ s, ∃ b ∈ t, r a b) ∧ ∀ b ∈ t, ∃ a ∈ s, r a b
 
@@ -61,7 +66,8 @@ theorem liftRel_iff_subset_preimage_image :
     LiftRel r s t ↔ s ⊆ SetRel.preimage {q | r q.1 q.2} t ∧ t ⊆ SetRel.image {q | r q.1 q.2} s :=
   Iff.rfl
 
-/-- The lifting holds exactly when some subrelation of `r` has domain `s` and codomain `t`. -/
+/-- The lifting relates *s* to *t* exactly when some part of the relation has domain *s* and
+codomain *t*. -/
 theorem liftRel_iff_exists_dom_cod :
     LiftRel r s t ↔ ∃ D : SetRel α β, D ⊆ {q | r q.1 q.2} ∧ D.dom = s ∧ D.cod = t := by
   refine ⟨fun ⟨hl, hr⟩ ↦ ⟨{q | q.1 ∈ s ∧ q.2 ∈ t ∧ r q.1 q.2}, fun _ h ↦ h.2.2,
@@ -77,7 +83,8 @@ theorem liftRel_iff_exists_dom_cod :
 theorem liftRel_iff_biTotal : LiftRel r s t ↔ Relator.BiTotal fun (a : s) (b : t) ↦ r a b := by
   simp [LiftRel, Relator.BiTotal, Relator.LeftTotal, Relator.RightTotal]
 
-/-- At a homogeneous relation, the lifting is the functor-level `Functor.Liftr` of `Set`. -/
+/-- For a relation on a single type, the lifting agrees with the general lifting of a relation
+through a functor, taken at sets (mathlib's `Functor.Liftr`). -/
 theorem liftRel_iff_liftr {r : α → α → Prop} {s t : Set α} :
     LiftRel r s t ↔ Functor.Liftr r s t := by
   rw [liftRel_iff_exists_dom_cod]
@@ -96,7 +103,8 @@ theorem liftRel_iff_liftr {r : α → α → Prop} {s t : Set α} :
 theorem liftRel_swap : LiftRel (Function.swap r) t s ↔ LiftRel r s t :=
   and_comm
 
-/-- The lifting of equality along two maps is equality of their images. -/
+/-- Take the relation that holds of *a* and *b* when *f*(*a*) = *g*(*b*). Its lifting relates two
+sets exactly when the image of the first under *f* is the image of the second under *g*. -/
 theorem liftRel_iff_image_eq {f : α → γ} {g : β → γ} :
     LiftRel (fun a b ↦ f a = g b) s t ↔ f '' s = g '' t := by
   rw [Subset.antisymm_iff, image_subset_iff, image_subset_iff]
@@ -120,7 +128,7 @@ theorem liftRel_eq {s t : Set α} : LiftRel (· = ·) s t ↔ s = t := by
   · rintro rfl
     exact liftRel_refl_of_refl_on fun _ _ ↦ rfl
 
-/-- The lifting of a composite relation is the composite of the liftings. -/
+/-- The lifting of a composite of two relations is the composite of their liftings. -/
 theorem liftRel_comp {p : β → γ → Prop} {u : Set γ} :
     LiftRel (Relation.Comp r p) s u ↔ ∃ t, LiftRel r s t ∧ LiftRel p t u := by
   constructor
@@ -182,8 +190,9 @@ theorem LiftRel.union (h₁ : LiftRel r s₁ t₁) (h₂ : LiftRel r s₂ t₂) 
     fun b hb ↦ hb.elim (fun hb ↦ (h₁.2 b hb).imp fun _ ⟨ha, hab⟩ ↦ ⟨.inl ha, hab⟩)
       fun hb ↦ (h₂.2 b hb).imp fun _ ⟨ha, hab⟩ ↦ ⟨.inr ha, hab⟩⟩
 
-/-- Lifted families over lifted index sets: if `s` and `t` are related and related indices carry
-related sets, the indexed unions are related. -/
+/-- Suppose *s* and *t* are related by a lifting, and related members of them index sets that are
+related by a second lifting. Then the union of the sets indexed by *s* and the union of those
+indexed by *t* are related by the second lifting. -/
 theorem LiftRel.biUnion {q : γ → δ → Prop} {f : α → Set γ} {g : β → Set δ}
     (h : LiftRel r s t) (H : ∀ a ∈ s, ∀ b ∈ t, r a b → LiftRel q (f a) (g b)) :
     LiftRel q (⋃ a ∈ s, f a) (⋃ b ∈ t, g b) := by

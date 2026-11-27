@@ -11,26 +11,31 @@ public import Mathlib.Order.SupClosed
 /-!
 # Distributive join-semilattices
 
-[UPSTREAM] candidate for a new `Mathlib/Order/DistribSemilattice.lean`.
-
-A join-semilattice is *distributive* when every element below a join `b ⊔ c` is the join of an
-element below `b` and an element below `c`. Every distributive lattice is distributive in this
-sense, and a lattice that is distributive in this sense obeys the distributive law
-([`inf_sup_le`](##IsDistribSemilatticeSup.inf_sup_le)), so the notion extends distributivity to
-semilattices that lack meets. Any two elements of a distributive semilattice have a lower bound,
-and the largest lower set inside a sup-closed set is again sup-closed.
+Distributivity is usually stated with meets and joins together. Partial information often has joins
+only, and the notion still makes sense there. A join-semilattice is **distributive** when every
+element below a join *b* ⊔ *c* is itself the join of an element below *b* and an element below *c*,
+so that whatever a combination contains can be divided between its two parts. Every distributive
+lattice is distributive in this sense, and a lattice that is distributive in this sense obeys [the
+distributive law](##IsDistribSemilatticeSup.inf_sup_le). Any two elements of a distributive
+semilattice have a lower bound, and the largest downward-closed set inside a set closed under joins
+is again closed under joins. The notion is used here to say when the pairwise joins of two
+downward-closed sets are downward closed.
 
 ## Main definitions
 
 * `IsDistribSemilatticeSup α`: `α` is a distributive join-semilattice.
+
+## Implementation notes
+
+The file is a candidate for a new `Mathlib/Order/DistribSemilattice.lean`.
 -/
 
 @[expose] public section
 
 variable {α : Type*}
 
-/-- A join-semilattice is distributive when every element below `b ⊔ c` is the join of an element
-below `b` and an element below `c`. -/
+/-- A join-semilattice is **distributive** when every element below the join of *b* and *c* is the
+join of an element below *b* and an element below *c*. -/
 class IsDistribSemilatticeSup (α : Type*) [SemilatticeSup α] : Prop where
   /-- An element below a join splits along the join. -/
   exists_sup_eq_of_le_sup {a b c : α} (h : a ≤ b ⊔ c) : ∃ b' ≤ b, ∃ c' ≤ c, b' ⊔ c' = a
@@ -42,7 +47,8 @@ instance (priority := 100) DistribLattice.toIsDistribSemilatticeSup [DistribLatt
   exists_sup_eq_of_le_sup {a b c} h :=
     ⟨a ⊓ b, inf_le_right, a ⊓ c, inf_le_right, by rw [← inf_sup_left, inf_eq_left.2 h]⟩
 
-/-- The distributive law, in a lattice distributive as a semilattice. -/
+/-- In a lattice that is distributive as a join-semilattice, the meet of an element with a join lies
+below the join of its meets with the two members, which is the distributive law. -/
 theorem IsDistribSemilatticeSup.inf_sup_le [Lattice α] [IsDistribSemilatticeSup α] (a b c : α) :
     a ⊓ (b ⊔ c) ≤ a ⊓ b ⊔ a ⊓ c := by
   obtain ⟨b', hb, c', hc, h⟩ := exists_sup_eq_of_le_sup (inf_le_right : a ⊓ (b ⊔ c) ≤ b ⊔ c)
@@ -57,7 +63,8 @@ instance (priority := 50) IsDistribSemilatticeSup.toIsCodirectedOrder : IsCodire
     let ⟨_, _, c, hc, h⟩ := exists_sup_eq_of_le_sup (le_sup_left : a ≤ a ⊔ b)
     ⟨c, h ▸ le_sup_right, hc⟩
 
-/-- The largest lower set inside a sup-closed set is sup-closed. -/
+/-- In a distributive join-semilattice, the largest downward-closed set inside a set closed under
+joins is itself closed under joins. -/
 theorem SupClosed.setOf_forall_le {s : Set α} (hs : SupClosed s) :
     SupClosed {x | ∀ y ≤ x, y ∈ s} := fun _ ha _ hb _ hc ↦
   let ⟨a', ha', b', hb', h⟩ := exists_sup_eq_of_le_sup hc

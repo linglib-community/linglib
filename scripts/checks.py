@@ -57,6 +57,7 @@ import concurrent.futures
 import copy
 import datetime
 import difflib
+import functools
 import hashlib
 import json
 import os
@@ -353,22 +354,209 @@ def evaluate(sources, renames=None):
     return status, info, data
 
 
-def status_json(sources, status, info):
-    """Every item with its status and newest sign-off, as `gen_docs_pages.py --checks` reads it."""
+def module_texts(modules):
+    """For each module, its module docstrings and its declarations as written, outermost first:
+    one per place in the source, under the shortest name declared there, with its docstring and
+    lines. What Lean generated inside another declaration, such as a projection, is left out."""
+    out = subprocess.run(["lake", "exe", "checkClosure", "--text", *modules], cwd=ROOT,
+                         check=True, capture_output=True, text=True).stdout
+    texts = {}
+    for module, raw in json.loads(out).items():
+        places = {}
+        for d in raw["decls"]:
+            if "«" in d["name"] or "._" in d["name"]:
+                continue
+            at = (d["line"], d["end"])
+            if at not in places or len(d["name"]) < len(places[at]["name"]):
+                places[at] = dict(d, doc=d["doc"] or places.get(at, {}).get("doc"))
+        decls = []
+        for at in sorted(places, key=lambda at: (at[0], -at[1])):
+            if not (decls and at[0] >= decls[-1]["line"] and at[1] <= decls[-1]["end"]):
+                decls.append(places[at])
+        texts[module] = {"docs": raw["docs"], "decls": decls}
+    return texts
+
+
+@functools.lru_cache(None)
+def blame(path):
+    """Who last wrote each line of a tracked file, and on what day, by line number. Empty where
+    git's history is cut short, as in a shallow checkout, since every line would then be credited
+    to the last commit."""
+    shallow = subprocess.run(["git", "rev-parse", "--is-shallow-repository"], cwd=ROOT,
+                             capture_output=True, text=True).stdout.strip()
+    # On a branch, a line changed and then changed back is credited to whoever changed it back.
+    # A file that is as the main branch has it is therefore read from the main branch's history.
+    base = next((ref for ref in ("origin/main", "main") if subprocess.run(
+        ["git", "diff", "--quiet", ref, "--", str(path)], cwd=ROOT,
+        capture_output=True).returncode == 0), None)
+    out = subprocess.run(["git", "blame", "-w", "-M", "--line-porcelain", *([base] if base else []),
+                          "--", str(path)], cwd=ROOT, capture_output=True, text=True)
+    if shallow != "false" or out.returncode:
+        return {}
+    lines, author, day = {}, None, None
+    for line in out.stdout.splitlines():
+        if line.startswith("author "):
+            author = line[7:]
+        elif line.startswith("author-time "):
+            day = datetime.datetime.fromtimestamp(int(line[12:]), datetime.timezone.utc).date()
+        elif line.startswith("\t"):
+            lines[len(lines) + 1] = (author, day)
+    return lines
+
+
+def credit(path, first=1, last=None):
+    """The people who answer for the lines `first` to `last` of a file: those who committed
+    them, most lines first, with the day of the latest change; `None` where git does not say.
+    Whatever drafted a line, the person who committed it answers for it, so a name that is not a
+    person's is never given, and lines not yet committed do not count. For a whole Lean file with
+    an `Authors:` header, the authors are the header's."""
+    lines = blame(path)
+    span = [lines[n] for n in range(first, (last or len(lines)) + 1)
+            if n in lines and lines[n][0] != "Not Committed Yet"
+            and not AGENT_NAME.search(lines[n][0])]
+    if not span:
+        return None
+    count = {}
+    for author, _ in span:
+        count[author] = count.get(author, 0) + 1
+    by = sorted(count, key=lambda a: (-count[a], a))
+    if first == 1 and last is None and path.suffix == ".lean":
+        header = re.search(r"(?m)^Authors: (.+)$", path.read_text(encoding="utf-8")[:1500])
+        if header:
+            by = [a.strip() for a in header.group(1).split(",")
+                  if a.strip() and not AGENT_NAME.search(a)]
+    return {"by": by, "date": max(day for _, day in span).isoformat()}
+
+
+def banner_sections(path):
+    """The section each item opens, by its id, where the record marks it with a banner comment
+    above the item, `# ── Title (§2.3) ──`: the section's number and title."""
+    sections, pending = {}, None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        banner = re.match(r"#\s*─+\s*(.*?)\s*\((§[^)]*)\)\s*─+\s*$", line)
+        if banner:
+            pending = f"{banner.group(2)} {banner.group(1)}"
+        m = re.match(r'\s*id\s*=\s*"([^"]+)"', line)
+        if m and pending:
+            sections[m.group(1)] = pending
+            pending = None
+    return sections
+
+
+def item_spans(path):
+    """The lines of each item of a check file, by its id."""
+    text = path.read_text(encoding="utf-8").splitlines()
+    starts = [n for n, line in enumerate(text, 1) if line.strip() == "[[item]]"]
+    spans = {}
+    for first, after in zip(starts, starts[1:] + [len(text) + 1]):
+        last = after - 1
+        while last > first and (not text[last - 1].strip() or text[last - 1].startswith("#")):
+            last -= 1
+        for line in text[first - 1:last]:
+            m = re.match(r'\s*id\s*=\s*"([^"]+)"', line)
+            if m:
+                spans[m.group(1)] = (first, last)
+                break
+    return spans
+
+
+def statement(text):
+    """A theorem as its file writes it, up to where its proof begins: the first `:=`, or the first
+    alternative of a proof by cases, outside every bracket, comment and string. `None` where no
+    such place is found."""
+    depth, i, n = 0, 0, len(text)
+    while i < n:
+        two = text[i:i + 2]
+        if two == "--":
+            i = text.find("\n", i) if "\n" in text[i:] else n
+        elif two == "/-":
+            i = text.find("-/", i) + 2 if "-/" in text[i:] else n
+        elif text[i] == '"':
+            i = text.find('"', i + 1) + 1 or n
+        elif text[i] in "([{⟨⦃":
+            depth += 1
+            i += 1
+        elif text[i] in ")]}⟩⦄":
+            depth -= 1
+            i += 1
+        elif depth == 0 and (two == ":=" or re.match(r"where\b", text[i:]) and not text[i - 1].isalnum()
+                             or text[i] == "|" and text[:i].rstrip(" ").endswith("\n")):
+            return text[:i].rstrip() or None
+        else:
+            i += 1
+    return None
+
+
+def source_text(node):
+    """A declaration as its file writes it, without its docstring and attributes: a definition or
+    inductive type whole, a theorem up to its proof. `None` for what Lean generated, and for a
+    theorem whose proof's beginning is not found, which a page shows as Lean prints it."""
+    if node["kind"] not in ("def", "inductive", "theorem") or not node["lines"]:
+        return None
+    path = ROOT / (node["module"].replace(".", "/") + ".lean")
+    if not path.exists():
+        return None
+    first, last = node["lines"]
+    text = "\n".join(path.read_text(encoding="utf-8").splitlines()[first - 1:last])
+    text = re.sub(r"\A\s*/--.*?-/\s*\n", "", text, flags=re.S)
+    text = re.sub(r"\A(\s*)(?:@\[[^\]]*\]\s*)+", r"\1", text)
+    text = textwrap.dedent(text).strip("\n")
+    return statement(text) if node["kind"] == "theorem" else text
+
+
+def status_json(sources, status, info, data):
+    """Every item with its status and newest sign-off, as `gen_docs_pages.py --checks` reads it,
+    and what `gen_checks_pages.py` shows of it besides: its claim, the items covering a definition
+    its statement uses (`relies`), and each declaration of a closure as a reader sees it, with the
+    declarations its statement mentions directly (`nodes`), and the modules those statements
+    reach as texts, their docstrings in the order of the source (`texts`). Each item,
+    declaration, file and record comes with who wrote its lines, as git has it (`credit`)."""
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, check=True,
                             capture_output=True, text=True).stdout.strip()
     items = []
+    spans = {key: item_spans(src["path"]) for key, src in sources.items()}
+    banners = {key: banner_sections(src["path"]) for key, src in sources.items()}
     for (key, cid), st in status.items():
         item = info[(key, cid)]["item"]
         last = (item.get("check") or [None])[-1]
         items.append({
             "source": key, "id": cid, "kind": item.get("kind"), "label": item.get("label", cid),
             "relation": item.get("relation"), "notes": item.get("notes", "").strip(),
+            "claim": item.get("claim", "").strip(),
+            "section": item.get("section") or banners[key].get(cid, ""),
+            "credit": credit(sources[key]["path"], *spans[key][cid]) if cid in spans[key] else None,
             "decls": item.get("decls", []), "status": st,
+            "relies": sorted(f"{k}/{c}" for k, c in info[(key, cid)]["deps"]),
+            "axioms": info[(key, cid)].get("axioms", []),
+            "unresolved": info[(key, cid)].get("unresolved", []),
             "check": last and {"by": last["by"], "via": last["via"],
                                "date": last["date"].date().isoformat()},
             "blocking": [f"{k}/{c}" for k, c in info[(key, cid)].get("blocking", [])]})
-    return {"commit": commit, "items": items}
+    # The modules the items' statements reach are shown as texts, so every declaration of theirs
+    # is described too, with what its own statement reaches; and a module those reach is shown
+    # in turn, until the texts lead to nothing that is not one of them.
+    every, texts, renames = dict(data["nodes"]), {}, load_renames()
+    while True:
+        modules = sorted({n["module"] for n in every.values()})
+        new = [m for m in modules if m not in texts]
+        if not new:
+            break
+        texts.update(module_texts(new))
+        written = [d["name"] for m in new for d in texts[m]["decls"]]
+        if written:
+            every.update(check_closure(modules, written, renames)["nodes"])
+    def path(module):
+        return ROOT / (module.replace(".", "/") + ".lean")
+
+    nodes = {name: {"module": n["module"], "kind": n["kind"], "display": n["display"],
+                    "source": source_text(n), "uses": n["uses"],
+                    "credit": credit(path(n["module"]), *n["lines"]) if n["lines"] else None}
+             for name, n in sorted(every.items())}
+    for module, text in texts.items():
+        text["credit"] = credit(path(module))
+    records = {key: credit(src["path"]) for key, src in sources.items()}
+    return {"commit": commit, "items": items, "nodes": nodes, "texts": texts,
+            "records": records}
 
 
 def cmd_status(args):
@@ -377,8 +565,8 @@ def cmd_status(args):
     if args.json:
         if problems:
             sys.exit("invalid check files:\n" + "\n".join(problems))
-        status, info, _ = evaluate(sources)
-        print(json.dumps(status_json(sources, status, info), indent=2))
+        status, info, data = evaluate(sources)
+        print(json.dumps(status_json(sources, status, info, data), indent=2, ensure_ascii=False))
         return 0
     for p in problems:
         print(f"invalid: {p}")

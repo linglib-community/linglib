@@ -12,29 +12,31 @@ public import Mathlib.Order.Hom.BoundedLattice
 /-!
 # Trivalent propositions
 
-A trivalent proposition is a function `W → Trivalent`, true, false or undefined at each world,
-with the connectives taken pointwise. Its worlds split into a positive extension `posExt p`, a
-negative extension `negExt p` and a gap `gapExt p`. Sending a proposition to its two extensions
-is the bounded lattice embedding `extensions` into Fitting's product `Set W ⊙ Set W`, natural in
-the worlds (`extensions_comp`), whose image is the disjoint pairs (`orderIsoDisjoint`); it carries
-Kleene's negation to the swap (`extensions_compl`) and transplication to Fitting's guard
-(`extensions_transplication`). Beaver and Krahmer's assertion operator applied pointwise
-collapses the gap into the negative extension.
+A **trivalent proposition** is true, false or undefined at each world. It divides the worlds three
+ways: its **positive extension**, where it is true, its **negative extension**, where it is false,
+and its **gap**, where it is neither. On Strawson's view *The King of France is bald* has in its gap
+the worlds with no king of France. A proposition is fixed by its two extensions, and any two
+disjoint sets of worlds are the extensions of one. Negation swaps them.
 
-A proposition `p` further presupposing `A` is its restriction `restrict A p`, the value of `p`
-where `A` holds and `undefined` elsewhere. The restriction of a two-valued proposition is a
-conditional event `condEvent A B` in de Finetti's sense. Every trivalent proposition is the
-conditional event of its truth on its definedness (`condEvent_ne_undefined_eq_true`), and two
-conditional events coincide exactly when they have the same condition and agree on it
-(`condEvent_eq_condEvent_iff`). In the knowledge order a restriction lies below the proposition it
-restricts, and the propositions below a two-valued one are the conditional events that assert it
-(`forall_kLE_ofProp_iff`).
+Presupposing more widens the gap: the **restriction** of a proposition to a condition keeps its
+value where the condition holds and is undefined elsewhere. A restricted two-valued proposition is a
+**conditional event** in de Finetti's sense, and every trivalent proposition is one, its truth on
+the condition that it is defined.
+
+## Implementation notes
+
+The two extensions are a bounded lattice embedding into Fitting's product of the sets of worlds with
+itself, natural in the worlds. It carries Kleene's negation to the swap and transplication to
+Fitting's guard. The assertion operator of Beaver and Krahmer, applied at each world, moves the gap
+into the negative extension. In the knowledge order a restriction lies below the proposition it
+restricts, and the propositions below a two-valued one are the conditional events that assert it.
 
 ## References
 
 * [beaver-krahmer-2001]
 * [de-finetti-1936]
 * [fitting-1994]
+* [beaver-geurts-denlinger-2021]
 -/
 
 @[expose] public section
@@ -45,15 +47,21 @@ open Bilattice Product
 
 variable {W : Type*}
 
-/-! ### Extensions -/
+/-!
+### Extensions
 
-/-- The positive extension collects the worlds where the proposition is true. -/
+The worlds where a proposition is true, where it is false and where it is undefined cover all the
+worlds and do not overlap. The first two sets determine the proposition, and they turn the Strong
+Kleene connectives into operations on pairs of sets.
+-/
+
+/-- The **positive extension** of a proposition is the set of worlds where it is true. -/
 def posExt (p : W → Trivalent) : Set W := {w | p w = .true}
 
-/-- The negative extension collects the worlds where the proposition is false. -/
+/-- The **negative extension** of a proposition is the set of worlds where it is false. -/
 def negExt (p : W → Trivalent) : Set W := {w | p w = .false}
 
-/-- The extension gap collects the worlds where the proposition is neither true nor false. -/
+/-- The **gap** of a proposition is the set of worlds where it is undefined. -/
 def gapExt (p : W → Trivalent) : Set W := {w | p w = .undefined}
 
 section Extensions
@@ -103,8 +111,10 @@ theorem compl_gapExt_inter_compl_posExt (p : W → Trivalent) :
 @[simp] theorem gapExt_undefined : gapExt (fun _ ↦ .undefined : W → Trivalent) = Set.univ :=
   Set.eq_univ_of_forall fun _ ↦ rfl
 
-/-- The positive and negative extensions of a trivalent proposition, in Fitting's product of
-world-sets: Strong Kleene conjunction and disjunction are its truth meet and join. -/
+/-- The **extensions** of a trivalent proposition are the pair of its positive extension, the worlds
+where it is true, and its negative extension, the worlds where it is false. Taking extensions
+preserves the truth order: the extensions of a strong Kleene conjunction are the meet of the two
+pairs, and those of a disjunction their join. -/
 def extensions : BoundedLatticeHom (W → Trivalent) (Set W ⊙ Set W) where
   toFun p := mk (posExt p) (negExt p)
   map_sup' p q := by ext w <;> simp [posExt, negExt]
@@ -117,8 +127,8 @@ theorem extensions_apply (p : W → Trivalent) : extensions p = mk (posExt p) (n
 @[simp] theorem pro_extensions (p : W → Trivalent) : (extensions p).pro = posExt p := rfl
 @[simp] theorem con_extensions (p : W → Trivalent) : (extensions p).con = negExt p := rfl
 
-/-- `extensions` is natural in the worlds: reindexing a proposition along `f` takes preimages of
-its extensions. -/
+/-- If a proposition is evaluated through a map from other worlds, its extensions are the preimages
+of the original extensions under that map. -/
 theorem extensions_comp {W' : Type*} (f : W' → W) (p : W → Trivalent) :
     extensions (p ∘ f) = mk (f ⁻¹' posExt p) (f ⁻¹' negExt p) := rfl
 
@@ -131,8 +141,9 @@ theorem extensions_le_extensions : extensions p ≤ extensions q ↔ p ≤ q := 
 theorem extensions_injective : Function.Injective (extensions (W := W)) := fun _ _ h ↦
   le_antisymm (extensions_le_extensions.1 h.le) (extensions_le_extensions.1 h.ge)
 
-/-- The extensions of a proposition are disjoint, and every disjoint pair is the extensions of a
-proposition: over a Boolean factor, Fitting's consistent pairs. -/
+/-- The positive and negative extensions of a proposition never overlap, and every pair of sets of
+worlds that do not overlap is the pair of extensions of some proposition. These are the pairs
+Fitting calls consistent. -/
 theorem range_extensions : Set.range (extensions (W := W)) = {x | Disjoint x.pro x.con} := by
   classical
   ext x
@@ -151,24 +162,26 @@ theorem range_extensions : Set.range (extensions (W := W)) = {x | Disjoint x.pro
       · simp_all
       · simp_all
 
-/-- Three-valued propositions are the disjoint pairs of world-sets. -/
+/-- Trivalent propositions correspond one to one to the pairs of sets of worlds that do not overlap,
+and the correspondence respects the truth order. -/
 noncomputable def orderIsoDisjoint :
     (W → Trivalent) ≃o {x : Set W ⊙ Set W | Disjoint x.pro x.con} :=
   (OrderEmbedding.ofMapLEIff extensions fun _ _ ↦ extensions_le_extensions).orderIso.trans
     (Set.orderIsoOfEq _ _ range_extensions)
 
-/-- Kleene's negation of a proposition swaps its extensions. -/
+/-- Negating a proposition swaps its extensions. -/
 @[simp] theorem extensions_compl (p : W → Trivalent) : extensions pᶜ = (extensions p)ᶜ := by
   ext w <;> simp [posExt, negExt]
 
-/-- Transplication of propositions is Fitting's guard on their extensions. -/
+/-- The extensions of *φ* presupposing *π*, taken world by world, are the extensions of *φ* cut down
+to the worlds where *π* is true. On pairs of sets this operation is Fitting's guard. -/
 theorem extensions_transplication (π φ : W → Trivalent) :
     extensions (fun w ↦ transplication (π w) (φ w)) = guard (extensions π) (extensions φ) := by
   ext w <;> simp [posExt, negExt, transplication_eq_true_iff, transplication_eq_false_iff]
 
 end Extensions
 
-/-- A proposition is bivalent if it takes no `undefined` value. -/
+/-- A proposition is **bivalent** when it is true or false at every world. -/
 def IsBivalent (p : W → Trivalent) : Prop :=
   ∀ w, p w = .true ∨ p w = .false
 
@@ -185,11 +198,13 @@ theorem IsBivalent.ne_undefined {p : W → Trivalent} (h : IsBivalent p) (w : W)
     p w ≠ .undefined :=
   (isBivalent_iff_forall_ne_undefined p).1 h w
 
-/-! ### Extensions under assertion
+/-!
+### Extensions under assertion
 
-Asserting a proposition pointwise, `fun w ↦ ofProp (p w = .true)`, keeps its positive extension and
-moves its gap into the negative extension. Conjoining it with a two-valued `R` keeps its gap only
-where `R` holds. -/
+Asserting a proposition, world by world, makes it two-valued: its positive extension stays and its
+gap joins its negative extension. Conjoining a proposition with a two-valued condition keeps its gap
+only where the condition holds.
+-/
 
 @[simp] theorem posExt_ofProp_eq_true (p : W → Trivalent) :
     posExt (fun w ↦ ofProp (p w = .true)) = posExt p := by
@@ -211,13 +226,15 @@ where `R` holds. -/
     gapExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w} ∩ gapExt p := by
   ext w; simp [and_comm]
 
-/-- Composing with a function undefined exactly at `undefined` preserves the gap. -/
+/-- Applying to a proposition, world by world, an operation on truth values that returns undefined
+exactly when it is given undefined leaves the gap unchanged. -/
 theorem gapExt_comp {f : Trivalent → Trivalent} (hf : ∀ a, f a = .undefined ↔ a = .undefined)
     (p : W → Trivalent) :
     gapExt (f ∘ p) = gapExt p := by
   ext w; simp [hf]
 
-/-- Composing with a function that is never `undefined` leaves no gap. -/
+/-- Applying to a proposition, world by world, an operation on truth values that never returns
+undefined gives a bivalent proposition. -/
 theorem isBivalent_comp {f : Trivalent → Trivalent} (hf : ∀ a, f a ≠ .undefined)
     (p : W → Trivalent) :
     IsBivalent (f ∘ p) :=
@@ -226,15 +243,18 @@ theorem isBivalent_comp {f : Trivalent → Trivalent} (hf : ∀ a, f a ≠ .unde
 theorem isBivalent_ofProp_eq_true (p : W → Trivalent) : IsBivalent fun w ↦ ofProp (p w = .true) :=
   fun w ↦ by by_cases h : p w = .true <;> simp [h]
 
-/-! ### Restriction
+/-!
+### Restriction
 
-A trivalent proposition `p` further presupposing `A` is its restriction to `A`, the pointwise
-transplication of `p` on `A`: the value of `p` where `A` holds and `undefined` elsewhere. -/
+A proposition that presupposes something more is undefined wherever the added presupposition fails.
+This is its **restriction**, Blamey's transplication taken world by world.
+-/
 
 section Restrict
 
-/-- The restriction of `p` to `A`, `p` further presupposing `A`: the value of `p` where `A` holds
-and `undefined` elsewhere. -/
+/-- The **restriction** of a proposition to a condition has the proposition's value at the worlds
+where the condition holds and is undefined at the others. It is the proposition with the condition
+added as a presupposition. -/
 protected def restrict (A : W → Prop) [DecidablePred A] (p : W → Trivalent) : W → Trivalent :=
   fun w ↦ transplication (ofProp (A w)) (p w)
 
@@ -273,24 +293,25 @@ theorem restrict_restrict :
   funext fun _ ↦ eq_of_eq_undefined_iff_of_eq_true_iff
     (by simp only [restrict_eq_undefined_iff]; tauto) (by simp [and_assoc])
 
-/-- A restriction has at most the information of the proposition it restricts. -/
+/-- At every world a restriction is either undefined or has the value of the proposition it
+restricts, so it never carries more information. -/
 theorem restrict_kLE : Trivalent.restrict A p w ≤ₖ p w := transplication_kLE _ _
 
 end Restrict
 
-/-! ### Conditional events
+/-!
+### Conditional events
 
-A proposition defined where `A` holds and asserting `B` there is the transplication of `B` on `A`,
-pointwise: the classical value of `B` on `A` and `undefined` elsewhere. A trivalent proposition is
-fixed by where it is defined and where it is true, and every such pair arises, so trivalent
-propositions are the conditional events `B | A` of [de-finetti-1936], conditional assertions of a
-two-valued content on a two-valued condition; two of them coincide exactly when they have the
-same condition and agree on it. -/
+A **conditional event**, written *B | A*, asserts *B* on the condition *A*: it is true where both
+hold, false where *A* holds and *B* does not, and undefined where *A* fails. The notion is de
+Finetti's. Every trivalent proposition is a conditional event, and two conditional events are the
+same when they have the same condition and agree where it holds.
+-/
 
 section ConditionalEvent
 
-/-- The conditional event `B | A` of [de-finetti-1936], `B` presupposing `A`: the classical value
-of `B` where `A` holds and `undefined` elsewhere, the pointwise transplication of `B` on `A`. -/
+/-- The **conditional event** *B | A* has the classical value of *B* at the worlds where *A* holds
+and is undefined at the others. The notion is de Finetti's. -/
 def condEvent (A B : W → Prop) [DecidablePred A] [DecidablePred B] : W → Trivalent :=
   fun w ↦ transplication (ofProp (A w)) (ofProp (B w))
 
@@ -328,11 +349,13 @@ theorem compl_condEvent : (condEvent A B)ᶜ = condEvent A (fun w ↦ ¬ B w) :=
 theorem isBivalent_condEvent_iff : IsBivalent (condEvent A B) ↔ ∀ w, A w := by
   simp [isBivalent_iff_forall_ne_undefined]
 
-/-- A conditional event has at most the information of what it asserts. -/
+/-- At every world a conditional event *B | A* is either undefined or has the classical value of
+*B*, so it never carries more information than *B*. -/
 theorem condEvent_kLE : condEvent A B w ≤ₖ ofProp (B w) := transplication_kLE _ _
 
-/-- The propositions with at most the information of a two-valued one are the conditional events
-that assert it. -/
+/-- A proposition is at every world either undefined or of the same value as a two-valued
+proposition *B* exactly when it is the conditional event of *B* on the condition that it is
+defined. -/
 theorem forall_kLE_ofProp_iff {p : W → Trivalent} :
     (∀ w, p w ≤ₖ ofProp (B w)) ↔ p = condEvent (p · ≠ .undefined) B := by
   refine ⟨fun h ↦ funext fun w ↦ ?_, fun h w ↦ ?_⟩
@@ -342,7 +365,8 @@ theorem forall_kLE_ofProp_iff {p : W → Trivalent} :
 
 end
 
-/-- Every trivalent proposition is the conditional event of its truth on its definedness. -/
+/-- Every trivalent proposition is the conditional event *B | A* in which *A* is the condition that
+it is defined and *B* the condition that it is true. -/
 theorem condEvent_ne_undefined_eq_true (p : W → Trivalent) :
     condEvent (p · ≠ .undefined) (p · = .true) = p := by
   funext w; cases h : p w <;> simp [condEvent, h]

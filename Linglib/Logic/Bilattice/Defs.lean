@@ -6,14 +6,21 @@ public import Mathlib.Order.BoundedOrder.Lattice
 /-!
 # Bilattices
 
-This file defines bilattices. A bilattice is one carrier with two lattice orders, a truth order `≤`
-and a knowledge order `≤ₖ`; it is interlaced, in Fitting's sense, when the meet and join of each
-order are monotone for the other order. The truth lattice is the carrier's own `[Lattice B]`, and
-the knowledge lattice lives on the type synonym `Know B` (cf. `OrderDual`), where the knowledge
-meet and join, Fitting's consensus `⊗` and gullibility `⊕`, are `⊓ₖ` and `⊔ₖ`. `Know B` is
-itself the bilattice with the two orders exchanged, and `Bᵒᵈ` the one with the truth order
-reversed, so a theorem about bilattices read on either is a dual theorem, as
-[the bounds](##ofKnow_top_inf_ofKnow_bot) illustrate.
+One truth value can be compared with another in two ways: it may be truer, or it may say more. A
+**bilattice** is a set of values with both orders, a **truth order** and a **knowledge order**, each
+with meets and joins. A semantics of presupposition wants both. Among three truth values, undefined
+lies between false and true in truth, and below both in knowledge, since it says nothing. A
+bilattice is **interlaced**, in Fitting's sense, when the meet and join of each order respect the
+other order. Exchanging the two orders gives a bilattice again, and so does reversing the truth
+order, so every fact about bilattices has a dual, as [the bounds](##ofKnow_top_inf_ofKnow_bot)
+illustrate.
+
+## Implementation notes
+
+The truth lattice is the carrier's own `[Lattice B]`, and the knowledge lattice lives on the type
+synonym `Know B` (cf. `OrderDual`), where the knowledge meet and join, Fitting's consensus `⊗` and
+gullibility `⊕`, are `⊓ₖ` and `⊔ₖ`. `Know B` is itself the bilattice with the two orders exchanged,
+and `Bᵒᵈ` the one with the truth order reversed.
 
 ## References
 
@@ -29,14 +36,13 @@ variable {B : Type u}
 
 namespace Bilattice
 
-/-- The knowledge-order synonym of a bilattice carrier (cf. `OrderDual`). It is
-the same underlying type as `B`, but a distinct type head, so it can carry the
-*knowledge* lattice as a separate instance from `B`'s *truth* lattice. -/
+/-- The **knowledge copy** of a set of values is the same set, kept apart so that it can carry the
+knowledge order while the original carries the truth order. -/
 def Know (B : Type u) : Type u := B
 
-/-- Cast into the knowledge synonym. -/
+/-- Every value has a counterpart in the knowledge copy, the same value read for its information. -/
 def toKnow : B ≃ Know B := Equiv.refl B
-/-- Cast out of the knowledge synonym. -/
+/-- Every member of the knowledge copy is a value of the original set. -/
 def ofKnow : Know B ≃ B := Equiv.refl B
 
 @[simp] theorem toKnow_ofKnow (x : Know B) : toKnow (ofKnow x) = x := rfl
@@ -44,10 +50,13 @@ def ofKnow : Know B ≃ B := Equiv.refl B
 
 instance [DecidableEq B] : DecidableEq (Know B) := inferInstanceAs (DecidableEq B)
 
-/-! ### The dual bilattice
+/-!
+### The dual bilattice
 
-The knowledge order of `Know B` is the truth order of `B`, so `Know B` is the bilattice with the
-two orders exchanged. -/
+Exchanging the two orders of a bilattice gives a bilattice: what was the knowledge order is now the
+truth order, and the reverse. A fact proved for every bilattice therefore holds with the roles of
+truth and knowledge exchanged.
+-/
 
 instance [LE B] : LE (Know (Know B)) := inferInstanceAs (LE B)
 instance [Preorder B] : Preorder (Know (Know B)) := inferInstanceAs (Preorder B)
@@ -55,9 +64,12 @@ instance [PartialOrder B] : PartialOrder (Know (Know B)) := inferInstanceAs (Par
 instance [Lattice B] : Lattice (Know (Know B)) := inferInstanceAs (Lattice B)
 instance [LE B] [BoundedOrder B] : BoundedOrder (Know (Know B)) := inferInstanceAs (BoundedOrder B)
 
-/-! ### The truth-dual bilattice
+/-!
+### The truth-dual bilattice
 
-Reversing the truth order and keeping the knowledge order gives the bilattice `Bᵒᵈ`. -/
+Reversing the truth order and keeping the knowledge order also gives a bilattice, in which true and
+false have changed places.
+-/
 
 instance [LE (Know B)] : LE (Know Bᵒᵈ) := inferInstanceAs (LE (Know B))
 instance [Preorder (Know B)] : Preorder (Know Bᵒᵈ) := inferInstanceAs (Preorder (Know B))
@@ -71,9 +83,11 @@ section Defs
 
 variable [Lattice (Know B)]
 
-/-- Knowledge meet `⊓ₖ` (consensus): the meet in the knowledge lattice. -/
+/-- The **knowledge meet** of two values, written `⊓ₖ`, is their meet in the knowledge order, the
+most information that both contain. Fitting calls it their consensus. -/
 def kInf (x y : B) : B := ofKnow (toKnow x ⊓ toKnow y)
-/-- Knowledge join `⊔ₖ` (gullibility): the join in the knowledge lattice. -/
+/-- The **knowledge join** of two values, written `⊔ₖ`, is their join in the knowledge order, the
+least information that contains both. Fitting calls it gullibility. -/
 def kSup (x y : B) : B := ofKnow (toKnow x ⊔ toKnow y)
 
 @[inherit_doc] scoped infixl:70 " ⊓ₖ " => kInf
@@ -86,7 +100,8 @@ end Defs
 
 section KLE
 
-/-- Knowledge order `≤_k`. -/
+/-- One value is below another in the **knowledge order**, written `≤ₖ`, when the second carries at
+least the information of the first. -/
 def kLE [LE (Know B)] (x y : B) : Prop := toKnow x ≤ toKnow y
 
 @[inherit_doc] scoped infix:50 " ≤ₖ " => kLE
@@ -114,12 +129,17 @@ theorem kLE_antisymm {x y : B} (h₁ : x ≤ₖ y) (h₂ : y ≤ₖ x) : x = y :
 
 end KLEAntisymm
 
-/-! ### The interlacing mixin -/
+/-!
+### Interlacing
+
+The meet and join of an order respect that order as a matter of course. In an interlaced bilattice
+they respect the other order too, so that learning more about the parts of a conjunction never loses
+information about the whole.
+-/
 
 open scoped Bilattice in
-/-- The four **interlacing** laws ([avron-1996] Def 2.1(3)): each operation is
-monotone w.r.t. the *other* order. The same-order monotonicities are automatic
-(an operation is monotone for its own order). -/
+/-- A bilattice is **interlaced** when the truth meet and join are monotone in the knowledge order
+and the knowledge meet and join are monotone in the truth order ([avron-1996] Def 2.1(3)). -/
 class IsInterlaced (B : Type u) [Lattice B] [Lattice (Know B)] : Prop where
   /-- truth meet `∧ = ⊓` is `≤_k`-monotone -/
   inf_kmono : ∀ {x y : B}, x ≤ₖ y → ∀ z, (x ⊓ z) ≤ₖ (y ⊓ z)
@@ -130,14 +150,14 @@ class IsInterlaced (B : Type u) [Lattice B] [Lattice (Know B)] : Prop where
   /-- knowledge join `⊔ₖ` is `≤_t`-monotone -/
   kSup_tmono : ∀ {x y : B}, x ≤ y → ∀ z, (x ⊔ₖ z) ≤ y ⊔ₖ z
 
-/-- Interlacing is symmetric in the two orders. -/
+/-- If a bilattice is interlaced, so is the bilattice with its two orders exchanged. -/
 instance [Lattice B] [Lattice (Know B)] [IsInterlaced B] : IsInterlaced (Know B) where
   inf_kmono h z := IsInterlaced.kInf_tmono (B := B) h (ofKnow z)
   sup_kmono h z := IsInterlaced.kSup_tmono (B := B) h (ofKnow z)
   kInf_tmono h z := IsInterlaced.inf_kmono (B := B) h (ofKnow z)
   kSup_tmono h z := IsInterlaced.sup_kmono (B := B) h (ofKnow z)
 
-/-- Interlacing survives reversing the truth order. -/
+/-- If a bilattice is interlaced, so is the bilattice with its truth order reversed. -/
 instance [Lattice B] [Lattice (Know B)] [IsInterlaced B] : IsInterlaced Bᵒᵈ where
   inf_kmono h z := IsInterlaced.sup_kmono (B := B) h (OrderDual.ofDual z)
   sup_kmono h z := IsInterlaced.inf_kmono (B := B) h (OrderDual.ofDual z)
@@ -148,33 +168,39 @@ section Interlaced
 
 variable [Lattice B] [Lattice (Know B)] [IsInterlaced B]
 
-/-- The truth meet is knowledge-monotone in both arguments. -/
+/-- In an interlaced bilattice, a truth meet whose two operands gain information gains
+information. -/
 theorem inf_kLE_inf {a b c d : B} (h₁ : a ≤ₖ b) (h₂ : c ≤ₖ d) : a ⊓ c ≤ₖ b ⊓ d :=
   calc a ⊓ c ≤ₖ b ⊓ c := IsInterlaced.inf_kmono h₁ c
     _ = c ⊓ b := inf_comm ..
     _ ≤ₖ d ⊓ b := IsInterlaced.inf_kmono h₂ b
     _ = b ⊓ d := inf_comm ..
 
-/-- The truth join is knowledge-monotone in both arguments. -/
+/-- In an interlaced bilattice, a truth join whose two operands gain information gains
+information. -/
 theorem sup_kLE_sup {a b c d : B} (h₁ : a ≤ₖ b) (h₂ : c ≤ₖ d) : a ⊔ c ≤ₖ b ⊔ d :=
   calc a ⊔ c ≤ₖ b ⊔ c := IsInterlaced.sup_kmono h₁ c
     _ = c ⊔ b := sup_comm ..
     _ ≤ₖ d ⊔ b := IsInterlaced.sup_kmono h₂ b
     _ = b ⊔ d := sup_comm ..
 
-/-- The knowledge meet is truth-monotone in both arguments, the dual of `inf_kLE_inf`. -/
+/-- In an interlaced bilattice, a knowledge meet whose two operands become truer becomes truer. -/
 theorem kInf_le_kInf {a b c d : B} (h₁ : a ≤ b) (h₂ : c ≤ d) : a ⊓ₖ c ≤ b ⊓ₖ d :=
   inf_kLE_inf (B := Know B) (a := toKnow a) (b := toKnow b) (c := toKnow c) (d := toKnow d) h₁ h₂
 
-/-- The knowledge join is truth-monotone in both arguments, the dual of `sup_kLE_sup`. -/
+/-- In an interlaced bilattice, a knowledge join whose two operands become truer becomes truer. -/
 theorem kSup_le_kSup {a b c d : B} (h₁ : a ≤ b) (h₂ : c ≤ d) : a ⊔ₖ c ≤ b ⊔ₖ d :=
   sup_kLE_sup (B := Know B) (a := toKnow a) (b := toKnow b) (c := toKnow c) (d := toKnow d) h₁ h₂
 
-/-! #### The four bounds
+/-!
+#### The four bounds
 
-In an interlaced bilattice each bound is a combination of two others: the consensus and the
-gullibility of `t` and `f` are the knowledge bounds, and the truth meet and join of the knowledge
-bounds are `f` and `t` ([fitting-1994] §6). -/
+A bounded bilattice has four extreme values: true and false at the ends of the truth order, and at
+the ends of the knowledge order a value with all the information and a value with none. In an
+interlaced bilattice each bound is a combination of two others: the consensus and the gullibility of
+`t` and `f` are the knowledge bounds, and the truth meet and join of the knowledge bounds are `f`
+and `t` ([fitting-1994] §6).
+-/
 
 variable [BoundedOrder B] [BoundedOrder (Know B)]
 
@@ -194,10 +220,11 @@ theorem top_kSup_bot : (⊤ : B) ⊔ₖ ⊥ = ofKnow ⊤ :=
     (calc ofKnow ⊤ = ofKnow ⊤ ⊔ₖ ⊥ := congrArg ofKnow (top_sup_eq _).symm
       _ ≤ ⊤ ⊔ₖ ⊥ := IsInterlaced.kSup_tmono le_top ⊥)
 
-/-- The dual of `top_kInf_bot`. -/
+/-- In a bounded interlaced bilattice, the truth meet of the two knowledge bounds, the value with
+all the information and the value with none, is false. -/
 theorem ofKnow_top_inf_ofKnow_bot : ofKnow ⊤ ⊓ ofKnow ⊥ = (⊥ : B) := top_kInf_bot (B := Know B)
 
-/-- The dual of `top_kSup_bot`. -/
+/-- In a bounded interlaced bilattice, the truth join of the two knowledge bounds is true. -/
 theorem ofKnow_top_sup_ofKnow_bot : ofKnow ⊤ ⊔ ofKnow ⊥ = (⊤ : B) := top_kSup_bot (B := Know B)
 
 end Interlaced

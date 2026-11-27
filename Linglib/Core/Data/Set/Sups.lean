@@ -18,20 +18,28 @@ public import Linglib.Core.Order.DistribSemilattice
 /-!
 # Suprema of pointwise sups
 
-Mirror of `Mathlib/Data/Set/Sups.lean`. Pointwise sups preserve sup-closure and the bottom element
-in any semilattice, and their sups with `univ` are the upper closure. They preserve downward
-closure and, given sup-closure, order-convexity in a distributive semilattice, and preserving
-downward closure characterizes distributivity. They respect any relation along which splits
-transport both ways. In a complete lattice, the supremum of `s ⊻ t` is the join of the suprema of
-two nonempty sets. Membership in `s ⊻ t` is decidable over a finite carrier. The indexed form of
-`s ⊻ t` is `Set.iSups s`, the set of suprema of choices of an element from each member of a
-family `s`. [UPSTREAM]
+Two information states merge by joining their points pair by pair, and this page is about that
+operation on sets in general. Where any two elements have a join, the **pointwise sups** of two sets
+*s* and *t*, written *s* ⊻ *t*, are the joins of an element of *s* with an element of *t*. Where
+only some pairs have a join, as with partial assignments that may disagree, the operation keeps the
+joins of the pairs that have one and drops the rest.
 
-Where only the pairs with an upper bound have a join, `Set.lubs s t` is the set of joins of the
-compatible pairs with one element from each set. It is `s ⊻ t` in a semilattice
-(`Set.lubs_eq_sups`), it is associative in a bounded-complete order, and its upper closure is the
-join of the upper closures (`Set.upperClosure_lubs`). This part is library substrate and not an
-upstream candidate.
+The pointwise sups of a set with everything are its upper closure. In a distributive semilattice the
+pointwise sups of downward-closed sets are downward closed, and this characterizes distributivity.
+
+## Implementation notes
+
+The first part mirrors `Mathlib/Data/Set/Sups.lean` and is a candidate for mathlib, as is
+`Set.iSups`, the indexed form of `s ⊻ t`: the set of suprema of choices of an element from each
+member of a family. Pointwise sups preserve sup-closure and the bottom element in any semilattice
+and, given sup-closure, order-convexity in a distributive semilattice; they respect any relation
+along which splits transport both ways; in a complete lattice the supremum of `s ⊻ t` is the join of
+the suprema of two nonempty sets; and membership in `s ⊻ t` is decidable over a finite carrier.
+
+`Set.lubs s t` is the set of joins of the compatible pairs with one element from each set. It is `s
+⊻ t` in a semilattice (`Set.lubs_eq_sups`), it is associative in a bounded-complete order, and its
+upper closure is the join of the upper closures (`Set.upperClosure_lubs`). This part is library
+substrate and not an upstream candidate.
 -/
 
 @[expose] public section
@@ -59,16 +67,18 @@ instance Set.decidableMemSups [Fintype α] [DecidableEq α] (s t : Set α) [Deci
 theorem Set.bot_mem_sups [OrderBot α] (hs : ⊥ ∈ s) (ht : ⊥ ∈ t) : ⊥ ∈ s ⊻ t :=
   Set.mem_sups.mpr ⟨⊥, hs, ⊥, ht, bot_sup_eq ⊥⟩
 
-/-- The pointwise sups of a set with everything are its upper closure. -/
+/-- The pointwise sups of a set with the set of all elements are its upper closure, the elements
+that lie above some member of it. -/
 theorem Set.sups_univ (s : Set α) : s ⊻ Set.univ = upperClosure s :=
   Set.ext fun x ↦ ⟨fun hx ↦ let ⟨a, ha, _, _, h⟩ := Set.mem_sups.1 hx
     mem_upperClosure.2 ⟨a, ha, h ▸ le_sup_left⟩,
     fun hx ↦ let ⟨a, ha, hax⟩ := mem_upperClosure.1 hx
       Set.mem_sups.2 ⟨a, ha, x, trivial, sup_eq_right.2 hax⟩⟩
 
-/-- Pointwise sups respect a relation between semilattices along which splits transport both ways:
-if `r` relates `a` to `c`, a split of `a` gives a split of `c` into related parts and conversely,
-then membership in `s₁ ⊻ s₂` and in `t₁ ⊻ t₂` agree on `r` when membership in each pair does. -/
+/-- Pointwise sups respect a relation between two semilattices that carries splits both ways.
+Suppose that whenever a join is related to an element, that element is a join of elements related to
+the two parts, and conversely; then if related elements agree on membership in *s*₁ and *t*₁, and in
+*s*₂ and *t*₂, they agree on membership in the pointwise sups of each pair. -/
 theorem Set.mem_sups_congr {β : Type*} [SemilatticeSup β] {r : α → β → Prop}
     (hl : ∀ {a₁ a₂ c}, r (a₁ ⊔ a₂) c → ∃ c₁ c₂, c₁ ⊔ c₂ = c ∧ r a₁ c₁ ∧ r a₂ c₂)
     (hr : ∀ {a c₁ c₂}, r a (c₁ ⊔ c₂) → ∃ a₁ a₂, a₁ ⊔ a₂ = a ∧ r a₁ c₁ ∧ r a₂ c₂)
@@ -109,7 +119,8 @@ theorem Set.OrdConnected.sups [IsDistribSemilatticeSup α] (hs : s.OrdConnected)
     b ⊔ f, ht.out hb (ht' hb hd) ⟨le_sup_left, sup_le le_sup_left hf⟩, ?_⟩
   rw [sup_sup_sup_comm, sup_eq_right.2 hx₁]
 
-/-- A semilattice is distributive exactly when pointwise sups of lower sets are lower sets. -/
+/-- A join-semilattice is distributive exactly when the pointwise sups of two downward-closed sets
+are always downward closed. -/
 theorem isDistribSemilatticeSup_iff_isLowerSet_sups : IsDistribSemilatticeSup α ↔
     ∀ s t : Set α, IsLowerSet s → IsLowerSet t → IsLowerSet (s ⊻ t) := by
   refine ⟨fun _ _ _ hs ht ↦ hs.sups ht, fun h ↦ ⟨fun {a b c} hle ↦ ?_⟩⟩
@@ -136,8 +147,8 @@ section iSups
 
 variable {ι : Type*} {s : ι → Set α} {a : α}
 
-/-- The pointwise supremum of a family of sets is the set of suprema of choices of an element from
-each member of the family. [UPSTREAM] -/
+/-- The **pointwise supremum** of a family of sets is the set of suprema obtained by choosing one
+element from each set of the family. -/
 def iSups (s : ι → Set α) : Set α :=
   (fun f : ι → α ↦ ⨆ i, f i) '' univ.pi s
 
@@ -183,7 +194,14 @@ end iSups
 
 end Set
 
-/-! ### Joins of compatible pairs -/
+/-!
+### Joins of compatible pairs
+
+Two elements are compatible when some element lies above both, and in a bounded-complete order they
+then have a join. Taking one element from each of two sets and joining the pairs that can be joined
+gives a set, and a pair with no join contributes nothing to it. Merging two information states is
+this operation on their points.
+-/
 
 namespace Set
 
@@ -191,8 +209,8 @@ section Preorder
 
 variable {α : Type*} [Preorder α] {s t : Set α} {c : α}
 
-/-- The joins of the compatible pairs with one element from each set. A pair with no least upper
-bound contributes nothing. -/
+/-- The **joins of compatible pairs** of two sets are the least upper bounds of an element of the
+first with an element of the second. A pair with no least upper bound contributes nothing. -/
 def lubs (s t : Set α) : Set α := {c | ∃ a ∈ s, ∃ b ∈ t, IsLUB {a, b} c}
 
 theorem mem_lubs : c ∈ lubs s t ↔ ∃ a ∈ s, ∃ b ∈ t, IsLUB {a, b} c := Iff.rfl
@@ -211,7 +229,8 @@ theorem lubs_assoc [IsBoundedComplete α] (s t u : Set α) :
       let ⟨v', hv', hr'⟩ := (Set.pair_comm b c ▸ hv).pair_assoc (Set.pair_comm a v ▸ hr)
       ⟨v', ⟨a, ha, b, hb, Set.pair_comm b a ▸ hv'⟩, c, hc, Set.pair_comm c v' ▸ hr'⟩⟩
 
-/-- The upper closure of the joins of compatible pairs is the join of the upper closures. -/
+/-- In a bounded-complete order, the upper closure of the joins of compatible pairs of two sets is
+the join of their upper closures. -/
 theorem upperClosure_lubs [IsBoundedComplete α] (s t : Set α) :
     upperClosure (lubs s t) = upperClosure s ⊔ upperClosure t := by
   refine SetLike.ext fun u ↦ ?_
@@ -226,7 +245,8 @@ theorem upperClosure_lubs [IsBoundedComplete α] (s t : Set α) :
 
 end Preorder
 
-/-- In a semilattice the joins of compatible pairs are the pointwise sups. -/
+/-- In a semilattice, where every pair has a join, the joins of compatible pairs are the pointwise
+sups. -/
 theorem lubs_eq_sups {α : Type*} [SemilatticeSup α] (s t : Set α) : lubs s t = s ⊻ t :=
   Set.ext fun _ ↦ ⟨fun ⟨a, ha, b, hb, h⟩ ↦ ⟨a, ha, b, hb, isLUB_pair.unique h⟩,
     fun ⟨a, ha, b, hb, h⟩ ↦ ⟨a, ha, b, hb, h ▸ isLUB_pair⟩⟩

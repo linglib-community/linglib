@@ -13,23 +13,25 @@ public import Linglib.Core.Order.DeMorganAlgebra.Basic
 /-!
 # Three-valued truth
 
-`Trivalent` is Kleene's three truth values, ordered by truth: `false < undefined < true`. The
-order's meet and join are Strong Kleene conjunction and disjunction, and Kleene negation `ᶜ`
-exchanges truth and falsity, so `Trivalent` is a Kleene algebra that is not Boolean. A value is
-fixed by whether it is undefined and whether it is true
-(`eq_of_eq_undefined_iff_of_eq_true_iff`). The two-valued fragment is the image of `ofProp`, and
-Bochvar's assertion operator `ofProp (a = .true)` is conjunction with definedness
-(`ofProp_ne_undefined_inf_self`). A `Designation` is one of the standards K3 and LP, named by its
-least designated value, and negation exchanges the two (`Designation.dual_threshold_le_compl_iff`).
+A sentence can fail to be true without being false. Strawson argued that *The King of France is
+bald* has no truth value when there is no king of France, and a semantics of presupposition gives
+such a sentence a third value. Kleene's three values are **true**, **false** and **undefined**,
+ordered by truth with undefined in the middle. Meet and join are his strong conjunction and
+disjunction: one false conjunct makes a conjunction false, and one true disjunct makes a disjunction
+true. Negation exchanges true and false and fixes undefined, so *p or not p* is undefined when *p*
+is.
+
+Bochvar's assertion operator asks whether a value is true, sending undefined to false. A logic also
+has to say which values count as holding: true alone, or undefined as well.
 
 ## Implementation notes
 
 The type follows mathlib's `SignType`: an inductive order relation closed by `decide`, and no
 numeric instances. Operations that are expressions in the order get no definition: Strong Kleene
-conjunction, disjunction and negation are `⊓`, `⊔` and `ᶜ`, Bochvar's assertion operator is
-`ofProp (a = .true)`, Beaver's presupposition operator is `a ⊔ .undefined`, designation at a
-standard `d` is `d.threshold ≤ a`, and a Boolean `b` has value `ofProp b`. The constructors
-share their names with `Bool`'s, so they are written with dot notation.
+conjunction, disjunction and negation are `⊓`, `⊔` and `ᶜ`, Bochvar's assertion operator is `ofProp
+(a = .true)`, Beaver's presupposition operator is `a ⊔ .undefined`, designation at a standard `d` is
+`d.threshold ≤ a`, and a Boolean `b` has value `ofProp b`. The constructors share their names with
+`Bool`'s, so they are written with dot notation.
 
 ## References
 
@@ -38,6 +40,7 @@ share their names with `Bool`'s, so they are written with dot notation.
 * [priest-1979]
 * [cobreros-etal-2012]
 * [kalman-1958]
+* [beaver-geurts-denlinger-2021]
 -/
 
 @[expose] public section
@@ -45,7 +48,7 @@ share their names with `Bool`'s, so they are written with dot notation.
 set_option backward.isDefEq.respectTransparency false in
 -- Don't generate unnecessary `sizeOf_spec` lemmas which the `simpNF` linter will complain about.
 set_option genSizeOfSpec false in
-/-- Kleene's three truth values. -/
+/-- A **truth value** is one of Kleene's three: true, false or undefined. -/
 inductive Trivalent
   | false
   | undefined
@@ -54,9 +57,15 @@ inductive Trivalent
 
 namespace Trivalent
 
-/-! ### The truth order -/
+/-!
+### The truth order
 
-/-- The truth order, `false < undefined < true`. -/
+The values are ordered by how true they are: false, then undefined, then true. The order is a chain
+with false at the bottom and true at the top, and its meet and join are Strong Kleene conjunction
+and disjunction.
+-/
+
+/-- The **truth order** puts false below undefined and undefined below true. -/
 protected inductive LE : Trivalent → Trivalent → Prop
   | of_false (a) : Trivalent.LE .false a
   | undefined : Trivalent.LE .undefined .undefined
@@ -144,9 +153,14 @@ theorem false_sup (a : Trivalent) : .false ⊔ a = a := by cases a <;> rfl
     a ⊔ b = .undefined ↔ a = .undefined ∧ b ≠ .true ∨ b = .undefined ∧ a ≠ .true := by
   cases a <;> cases b <;> decide
 
-/-! ### Kleene's negation -/
+/-!
+### Kleene's negation
 
-/-- Kleene negation exchanges truth and falsity and fixes `undefined`. -/
+Negation reverses the truth order and undoes itself, so the De Morgan laws hold. It is not a Boolean
+complement: undefined is its own negation, and *p and not p* is then undefined, not false.
+-/
+
+/-- **Kleene negation** exchanges true and false and leaves undefined as it is. -/
 instance : InvolutiveCompl Trivalent where
   compl
     | .false => .true
@@ -177,14 +191,22 @@ theorem compl_inf (a b : Trivalent) : (a ⊓ b)ᶜ = aᶜ ⊔ bᶜ := compl_anti
 
 theorem compl_sup (a b : Trivalent) : (a ⊔ b)ᶜ = aᶜ ⊓ bᶜ := compl_antitone.map_max
 
-/-- `Trivalent` is [kalman-1958]'s three-element Kleene algebra. -/
+/-- The conjunction of a value with its negation is never above the disjunction of another value
+with its negation. In words, a contradiction is never truer than an instance of excluded middle. -/
 instance : IsKleene Trivalent := ⟨by decide⟩
 
 theorem inf_compl_undefined_ne_bot : Trivalent.undefined ⊓ Trivalent.undefinedᶜ ≠ ⊥ := by decide
 
-/-! ### The two-valued fragment -/
+/-!
+### The two-valued fragment
 
-/-- The value of a decidable proposition is `true` or `false`. -/
+A proposition that simply holds or fails has the value true or false, and on such values
+conjunction, disjunction and negation are the classical ones. Bochvar's assertion operator maps
+every value into this fragment.
+-/
+
+/-- The **value** of a two-valued proposition is true if the proposition holds and false if it does
+not. -/
 def ofProp (P : Prop) [Decidable P] : Trivalent := if P then .true else .false
 
 section OfProp
@@ -207,7 +229,8 @@ theorem ofProp_eq_true_of_ne_undefined {a : Trivalent} [Decidable (a = .true)]
     (h : a ≠ .undefined) : ofProp (a = .true) = a := by
   revert h; cases a <;> simp
 
-/-- Bochvar's assertion operator is Strong Kleene conjunction with definedness. -/
+/-- Conjoining a value with the two-valued statement that it is defined gives true if the value is
+true and false otherwise, which is Bochvar's assertion of the value. -/
 theorem ofProp_ne_undefined_inf_self (a : Trivalent) :
     ofProp (a ≠ .undefined) ⊓ a = ofProp (a = .true) := by
   cases a <;> decide
@@ -230,27 +253,28 @@ theorem ofProp_ne_undefined_inf_self (a : Trivalent) :
 
 end OfProp
 
-/-! ### Designated values
+/-!
+### Designated values
 
-Matrix semantics fixes an upward-closed set of *designated* values; on a chain every such set is
-principal, so a designation standard is just a threshold, and a value `v` is designated at `d`
-when `d.threshold ≤ v`. K3, Strong Kleene logic, designates `{true}` and preserves truth; LP,
-[priest-1979]'s Logic of Paradox, designates `{undefined, true}` and preserves non-falsity. The
-two standards give dual logics over one algebra ([cobreros-etal-2012]), and every law of
-designation is a law of the order. -/
+A logic over the three values fixes which of them are **designated**, the values that count as
+holding. They are the values at or above a threshold. Strong Kleene logic, K3, designates true alone
+and preserves truth. Priest's Logic of Paradox, LP, designates undefined as well and preserves
+non-falsity. Cobreros and coauthors treat the two as dual logics over one algebra.
+-/
 
-/-- A designation standard, identified by its least designated value (`threshold`). -/
+/-- A **designation standard** says which truth values count as holding. There are two, K3 and
+LP. -/
 inductive Designation where
   | k3
   | lp
   deriving Repr, DecidableEq, Inhabited, Fintype
 
-/-- The least designated value of a standard. -/
+/-- The **threshold** of a standard is its least designated value: true for K3, undefined for LP. -/
 def Designation.threshold : Designation → Trivalent
   | .k3 => .true
   | .lp => .undefined
 
-/-- The K3/LP duality as an involution on standards. -/
+/-- The **dual** of a standard is the other one. -/
 def Designation.dual : Designation → Designation
   | .k3 => .lp
   | .lp => .k3
@@ -264,8 +288,8 @@ def Designation.dual : Designation → Designation
 @[simp] theorem Designation.threshold_k3 : Designation.k3.threshold = .true := rfl
 @[simp] theorem Designation.threshold_lp : Designation.lp.threshold = .undefined := rfl
 
-/-- Negation swaps the designation standards, fixing `undefined` and exchanging the complements of
-the two principal filters. -/
+/-- A negation is designated at the dual standard exactly when the value negated is not designated
+at the standard. -/
 theorem Designation.dual_threshold_le_compl_iff (d : Designation) (v : Trivalent) :
     d.dual.threshold ≤ vᶜ ↔ ¬ d.threshold ≤ v := by
   cases d <;> cases v <;> decide

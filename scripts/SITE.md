@@ -21,6 +21,53 @@ The look is that of Hugo's PaperMod theme, which the site began on:
 Mockups are read for structure and copy, not for type or color. Check a page at 1440px and 390px
 wide, in light and dark mode, before opening a PR.
 
+## The wiki pages
+
+A wiki page is at its file's path, as in the API docs: `/wiki/Semantics/Dynamic/State/` beside
+`/docs/Linglib/Semantics/Dynamic/State.html`. `gen_checks_pages.py` writes one for each source
+with a record in `checks/`, at the path of the study that formalizes it
+(`/wiki/Studies/Elliott2023/`), `/wiki/`, which lists them, and `/wiki/<path>/` for each file the items of those sources rest on
+and each file those lead to in turn, so that no page links to a file without one. No menu item and no other page links to them, and they carry `noindex`, so they are reached
+by address only.
+
+Each page is read as a text, and departs from the rules above to that end:
+
+- The page and its header are up to 1300px wide. The text is in the system serif, in the larger
+  column, 660px at the left; the Lean has up to 584px beside it, which holds most lines of source
+  and scrolls for the longest. A source's is
+  its sections, and under each its items: the kind and the source's own number in bold, then the
+  claim. A file's is its module docstring, its section headings and its documented declarations
+  in the order of the source: the kind and a number in bold, then the docstring; its
+  implementation notes and references close it. A term written `**so**` is bold. Nothing else is
+  in the column, and a declaration with no docstring is not in a text.
+- Example data and its schema (`Linglib/Data/`) have no page and no mark in a chart. A source's
+  page ends with its examples, each as the paper sets it, and one that an item is about leads to
+  the item. An example is also set where it is used: above the claim of an item about it, and
+  under a Lean statement that mentions it.
+- The paragraphs that open a page are plain prose: a link a docstring makes there is not drawn.
+- A source and the study file that formalizes it are one page, the source's: the study's header
+  opens it, the study's notes and references close it, and the two are one mark in a chart. A
+  study file has a text of its own only when its source has no record.
+- Choosing an item shows its Lean beside it: for a source's item how the Lean departs from it,
+  then the declarations, then the sign-off or the items of sources a declaration states. A definition is shown as its file writes
+  it and a theorem as its statement without the proof. What a statement uses is behind one
+  toggle, and opens in place; what Lean generated is left out. On a narrow screen the Lean opens
+  under the item.
+- Until an item is chosen the side holds a chart of what the page rests on, drawn from what its
+  statements reach and not from imports: files as squares under their titles, a source as a
+  circle, mathlib as the bar at the top, the page at the bottom, and under a file what rests on
+  it. A link is drawn where a statement of the lower file mentions a declaration of the upper and
+  no longer path says so. Top to bottom is an order to read in. Under a source's chart the same
+  pages are listed in that order, the route to the source; a page opened from that list says
+  where it stands on the route and links the next page, at its head and at its foot.
+- An item a person has checked carries a mark after its number. An unchecked item says nothing
+  in the text.
+- Credit is to people, and at the grain of the item. A file's authors stand under its title; a
+  source's page names who formalized it and who wrote its record on the line where the restated
+  items begin; and beside a chosen item stand who wrote its claim and, after each declaration's
+  name, who wrote that. The names are those of who committed the lines (`checks.py`), never a
+  tool's.
+
 ## The docs pages
 
 `gen_docs_pages.py` rebuilds doc-gen4's study and theory pages from its output (read by

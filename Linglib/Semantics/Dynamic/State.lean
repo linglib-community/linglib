@@ -13,44 +13,37 @@ public import Mathlib.Order.Hom.Basic
 /-!
 # Information states
 
-This file defines an *information state* — a set of possibilities with
-partial assignments — and its order and algebra: informativeness as
-the preorder lifted along `upperClosure`, with initial state `⊤` and
-absurd state `⊥ = ∅`; consistent merge as the monoid `*` and greatest
-lower bound, dually union as least upper bound; subsistence as the
-dual `lowerClosure` kernel; the strata `State.stratum X`, the least
-informative states at each domain, which carry the union of domains to
-the merge and through which merging with a uniform state factors as
-extension then filtering (`State.mul_eq_sep_of_uniformAt`); the uniform
-states, where both kernels collapse to inclusion; and the
-classifications of a stratum as world–assignment pairs
-(`State.uniformEquiv`) and of states up to informational equivalence as
-the complete lattice of upper sets (`State.antisymmetrizationOrderIso`).
-With no discourse referents a state is a set of worlds ordered by inclusion
-(`State.worldOrderIso`), the state of propositional update semantics.
+A hearer takes in a discourse one sentence at a time, and each sentence changes what she takes to be
+the case. An **information state** models where she stands: the possibilities she has not yet ruled
+out. In a discourse with pronouns a possibility has to say two things, how the world is and which
+individuals the discourse referents stand for, so a state is a set of pairs of a world and an
+assignment. This is Heim's **file**. The assignments are partial, since a referent that has not been
+introduced has no value.
 
-`State` is a type synonym whose `≤` is informativeness, oriented like the
-inclusion order of `Set` and of `DynamicSemantics.CCP`: a more informed state
-lies lower, and discarding points descends (`le_of_subset`). The order is the
-one mathlib's Galois connection `gc_upperClosure_coe` induces on sets, and
-since neither kernel is antisymmetric, `State` is a `Preorder` only.
-[kamp-vangenabith-reyle-2011] orient informativeness the other way, with the
-initial state at the bottom, and the content is the same.
+Take two worlds, *w*ₐ where only *a* is P and *w*₀ where nothing is, and the state {(*w*ₐ, [x ↦ a]),
+(*w*ₐ, [x ↦ b]), (*w*₀, [ ])}, an example of Elliott's. It leaves open whether anything is P. Where
+something is, x stands for *a* or for *b*; where nothing is, x has no value.
 
 ## Implementation notes
 
-A state has no domain apart from its points: `State.Familiar` and `State.Novel` quantify over
-the points, so at the absurd state `⊥ = ∅` every referent is both familiar and novel. Heim's
-files keep their domain of cards apart from their satisfaction set, so that a false file still
-has cards; a consumer that needs a familiarity failure at a state must assume it nonempty.
+A state has no domain apart from its points, so at the absurd state every referent is both familiar
+and novel. Heim's files keep their domain of cards apart from their satisfaction set, and a false
+file still has cards; a result that needs a familiarity failure must assume its state nonempty.
+
+The order has the more informed state lower, as inclusion of sets does. Kamp, van Genabith and Reyle
+draw it the other way up, with the initial state at the bottom; the content is the same. Since two
+states can each be as informed as the other without being equal, the order is a preorder.
 
 ## References
 
-- [kamp-vangenabith-reyle-2011], Defs. 23 (information states),
-  25 (informativeness), 26 (consistent merge)
-- [elliott-sudo-2025], Def. 3.3 (subsistence);
-  [groenendijk-stokhof-veltman-1996]
-- [visser-vermeulen-1996] (monoidal processing); [heim-1982]
+* [heim-1982]
+* [groenendijk-stokhof-veltman-1996], Defs. 2.8 (extension) and 2.9 (descendants, subsistence)
+* [groenendijk-stokhof-veltman-1996b]
+* [kamp-vangenabith-reyle-2011]
+* [elliott-2023]
+* [elliott-sudo-2025]
+* [visser-vermeulen-1996]
+* [nouwen-brasoveanu-vaneijck-visser-2016]
 -/
 
 @[expose] public section
@@ -61,9 +54,16 @@ open scoped SetRel
 
 variable {W V M : Type*}
 
-/-! ### Information states -/
+/-!
+### States and what they know
 
-/-- An information state is a set of world–assignment pairs. -/
+A state holds two kinds of information: its *worldly* information is the worlds of its points, and
+its *anaphoric* information is their assignments. One state is at least as **informative** as
+another when each of its points extends a point of the other, having ruled out worlds, or settled
+more referents, or both. Groenendijk, Stokhof and Veltman call it an extension of the other.
+-/
+
+/-- An **information state** is a set of possibilities, that is, of world–assignment pairs. -/
 def State (W V M : Type*) := Set (Possibility W V (Part M))
 
 namespace State
@@ -89,16 +89,19 @@ instance : HasSubset (State W V M) := ⟨fun s s' => ∀ ⦃p⦄, p ∈ s → p 
 @[ext] theorem ext (h : ∀ p, p ∈ s ↔ p ∈ s') : s = s' :=
   Set.ext h
 
-/-- `s ≤ s'` iff `s` carries at least as much information as `s'`. -/
+/-- A state lies below another in the order of informativeness, written `s ≤ s'`, when it is at
+least as informative as the other. -/
 instance : Preorder (State W V M) :=
   .lift (OrderDual.toDual ∘ upperClosure :
     State W V M → (UpperSet (Possibility W V (Part M)))ᵒᵈ)
 
-/-- Every point of the stronger state lies above a point of the weaker. -/
+/-- A state is at least as informative as another exactly when each of its points extends a point of
+the other. -/
 theorem le_def : s ≤ s' ↔ ∀ p ∈ s, ∃ q ∈ s', q ≤ p :=
   le_upperClosure
 
-/-- The initial information state `⊤ = W × {g_⊤}`. -/
+/-- The **initial state** knows nothing. It has every world, each paired with the assignment that
+gives no referent a value. -/
 instance : OrderTop (State W V M) where
   top := Set.range Possibility.bot
   le_top _ := le_def.mpr fun p _ => ⟨.bot p.world, ⟨p.world, rfl⟩, Possibility.bot_le⟩
@@ -107,7 +110,8 @@ theorem mem_top : r ∈ (⊤ : State W V M) ↔ ∀ v, r.assignment v = ⊥ :=
   ⟨fun ⟨_, hw⟩ _ => hw ▸ rfl, fun h =>
     ⟨r.world, Possibility.ext rfl (funext fun v => (h v).symm)⟩⟩
 
-/-- The absurd state `⊥ = ∅` is maximally informative. -/
+/-- The **absurd state** is empty, everything having been ruled out. It is the most informative
+state. -/
 instance : OrderBot (State W V M) where
   bot := ∅
   bot_le _ := le_def.mpr fun _ hq => hq.elim
@@ -120,22 +124,27 @@ theorem le_of_subset (h : s ⊆ s') : s ≤ s' :=
 theorem eq_empty_of_le_bot (h : s ≤ ⊥) : s = ∅ :=
   Set.eq_empty_of_forall_notMem fun p hp ↦ let ⟨_, hq, _⟩ := le_def.mp h p hp; hq.elim
 
-/-! ### Subsistence
+/-!
+### Subsistence
 
-*Subsistence* ([elliott-sudo-2025], Def. 3.3, after
-[groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9) is not a new
-relation: a point subsists in a state iff it lies in the lower closure
-of its point set (`mem_lowerClosure`: some point of the state extends
-it), and a state subsists in another iff `lowerClosure s ≤
-lowerClosure s'` — the closure kernel dual to `≤`, with `⊥ = ∅` at the
-bottom of both. -/
+Introducing a referent replaces a point by its extensions, one for each value the referent may take,
+so the point itself is gone from the new state. Groenendijk, Stokhof and Veltman call an extension
+of it in the new state a *descendant*, and say that the point **subsists** when it has one.
+Elliott's negative update of an existential is stated with subsistence.
+-/
 
-/-! ### Consistent merge as multiplication -/
+/-!
+### Merging states
 
-/-- `s * s'` is consistent merge, the unifications of pairs of points, one from each state. -/
+Two states **merge** into the state of their unifications: a point of each, in the same world, with
+assignments that agree wherever both are defined. Merging pools what the two states know.
+-/
+
+/-- The **merge** of two states, written `s * s'`, is the set of the unifications of a point of the
+one with a point of the other. -/
 instance : Mul (State W V M) := ⟨Set.lubs⟩
 
-/-- The unit of merge is the initial state. -/
+/-- Merging with the initial state changes nothing. -/
 instance : One (State W V M) := ⟨⊤⟩
 
 theorem one_eq_top : (1 : State W V M) = ⊤ := rfl
@@ -180,16 +189,17 @@ theorem isGLB_mul : IsGLB {s, s'} (s * s') :=
   ⟨by rintro x (rfl | rfl); exacts [mul_le_left, mul_le_right],
    fun _ hu => le_mul (hu (Set.mem_insert _ _)) (hu (Set.mem_insert_of_mem _ rfl))⟩
 
-/-- Merge is monotone in the informativeness order. -/
+/-- Merging more informative states gives a more informative state. -/
 instance : CovariantClass (State W V M) (State W V M) (· * ·) (· ≤ ·) :=
   ⟨fun _ _ _ h => le_mul mul_le_left (mul_le_right.trans h)⟩
 
-/-! ### Union is the join
+/-!
+### Union
 
-Merge is the meet of the informativeness order; plain union is its
-join — pooling two states keeps exactly their common information. `∪`
-is **not** merge: within a stratum merge is intersection
-(`mul_eq_inter_of_uniform`), the eliminative regime. -/
+The union of two states keeps only what they have in common. In the order of informativeness it is
+the least upper bound, as merge is the greatest lower bound. Among states that define the same
+referents merge is intersection, the eliminative update of propositional update semantics.
+-/
 
 theorem upperClosure_union :
     upperClosure (s ∪ s') = upperClosure s ⊓ upperClosure s' :=
@@ -208,14 +218,15 @@ theorem isLUB_union : IsLUB {s, s'} (s ∪ s') :=
   ⟨by rintro x (rfl | rfl); exacts [left_le_union, right_le_union],
    fun _ hu => union_le (hu (Set.mem_insert _ _)) (hu (Set.mem_insert_of_mem _ rfl))⟩
 
-/-! ### States up to informational equivalence
+/-!
+### States up to equivalence
 
-The Smyth kernel is full: `UpperSet`'s complete lattice is the algebra
-of states up to equivalence, and Def. 26's unrestricted
-(arbitrary-family) merge is `sSup` there. -/
+Two states can be as informative as each other and differ, when one has a point the other only
+extends. Identifying such states leaves the sets of possibilities closed under extension.
+-/
 
-/-- Up to informational equivalence, states are exactly the upper sets
-of possibilities, ordered by inclusion. -/
+/-- Up to informational equivalence, the states are the sets of possibilities closed under
+extension, ordered by inclusion. -/
 def antisymmetrizationOrderIso :
     Antisymmetrization (State W V M) (· ≤ ·) ≃o
       (UpperSet (Possibility W V (Part M)))ᵒᵈ where
@@ -236,16 +247,18 @@ def antisymmetrizationOrderIso :
     induction b using Quotient.ind
     exact Iff.rfl
 
-/-! ### Familiarity
+/-!
+### Familiarity
 
-The worldly content of a state — Def. 23(v)'s proposition,
-[elliott-sudo-2025] Def. 3.1's 𝒲 — is the image `Possibility.world '' s`. -/
+Heim's familiarity is read off the partial assignments. In the example above x is neither familiar
+nor novel: two points give it a value and one does not.
+-/
 
-/-- A referent is *familiar* at a state: defined at every point. -/
+/-- A referent is **familiar** at a state when every point gives it a value. -/
 def Familiar (s : State W V M) (x : V) : Prop :=
   ∀ p ∈ s, x ∈ p.domain
 
-/-- A referent is *novel* at a state: defined at no point. -/
+/-- A referent is **novel** at a state when no point gives it a value. -/
 def Novel (s : State W V M) (x : V) : Prop :=
   ∀ p ∈ s, x ∉ p.domain
 
@@ -271,23 +284,23 @@ theorem Novel.mul {x : V} (h : Novel s x) (h' : Novel s' x) : Novel (s * s') x :
   rw [Possibility.domain_eq_of_isLUB hr]
   exact fun hx ↦ hx.elim (h p hp) (h' q hq)
 
-/-! ### Strata
+/-!
+### Strata
 
-The stratum at `X` is the least informative state defining exactly the
-referents in `X`; the states uniform at `X` are its subsets, and strata
-multiply as their bases unite, so `stratum` carries the union of bases
-to the merge. Merging with a state uniform at `X` factors through the
-stratum: extension along `X`, then filtering by restriction to `X`
-(`mul_eq_sep_of_uniformAt`) — [heim-1982]'s atomic rule, whose
-satisfaction clause filters and whose domain clause extends. -/
+The states that define exactly the referents in a set *X* form a layer, with a least informative
+member, the **stratum** at *X*. Merging with a state of that layer extends each point to *X* and
+then keeps the extensions the state allows. These are the two clauses of Heim's rule for an atomic
+formula, the one that adds cards and the one that filters.
+-/
 
-/-- The stratum at `X`: every point defining exactly the referents in `X`. -/
+/-- The **stratum** at a set of referents is the state of all the possibilities that define exactly
+those referents. -/
 def stratum (X : Set V) : State W V M := {p | p.domain = X}
 
 @[simp] theorem mem_stratum : p ∈ (stratum X : State W V M) ↔ p.domain = X := Iff.rfl
 
-/-- The state is uniform at `X`: every point defines exactly the
-referents in `X`. -/
+/-- A state is **uniform** at a set of referents when each of its points defines exactly those
+referents. -/
 def UniformAt (X : Set V) (s : State W V M) : Prop :=
   ∀ p ∈ s, Possibility.domain p = X
 
@@ -316,8 +329,8 @@ theorem mem_mul_stratum :
     show (r.restrict X).domain = X
     rw [Possibility.domain_restrict, hdom, Set.inter_eq_left.mpr Set.subset_union_right]
 
-/-- Extension along `X` relates a point to the points that extend it and define exactly its
-referents and those in `X`. Merging with the stratum at `X` is its image (`image_extend`). -/
+/-- **Extension** along a set of referents relates a point to the points that extend it and define
+exactly its own referents and those of the set. -/
 def extend (X : Set V) : SetRel (Possibility W V (Part M)) (Possibility W V (Part M)) :=
   {(a, b) | (a ≤ b) ∧ b.domain = a.domain ∪ X}
 
@@ -378,7 +391,8 @@ theorem UniformAt.mul_eq_inter (hs : UniformAt X s) (hs' : UniformAt X s') :
   exact ext fun r ↦ and_congr_right fun hr ↦ by
     rw [Possibility.restrict_eq_self (hs r hr)]
 
-/-- Restriction of a state: pointwise, by direct image. -/
+/-- The **restriction** of a state to a set of referents forgets, at each point, the values of the
+referents outside the set. -/
 def restrict (X : Set V) (s : State W V M) : State W V M :=
   Possibility.restrict X '' s
 
@@ -457,9 +471,10 @@ theorem restrict_restrict :
   · rintro ⟨q, hq, rfl⟩
     exact ⟨_, ⟨q, hq, rfl⟩, Possibility.restrict_restrict⟩
 
-/-! ### The uniform classification -/
+/-! ### States without referents -/
 
-/-- Uniform states at `X` are sets of world–`X`-assignment pairs. -/
+/-- The states uniform at a set of referents correspond one to one to the sets of pairs of a world
+and a total assignment to those referents. -/
 def uniformEquiv (X : Set V) :
     {I : State W V M // UniformAt X I} ≃ Set (W × (X → M)) :=
   (Equiv.Set.powerset {p : Possibility W V (Part M) | p.domain = X}).trans
@@ -470,8 +485,8 @@ def uniformEquiv (X : Set V) :
     e ∈ uniformEquiv X I ↔ ((Possibility.domainEquiv X).symm e).1 ∈ I.1 :=
   Set.mem_image_equiv
 
-/-- A state with no discourse referents is a set of worlds, and informativeness is inclusion:
-the states of propositional update semantics. -/
+/-- With no referents a state is a set of worlds, and to be more informative is to be included in
+the other, as in propositional update semantics. -/
 def worldOrderIso : State W Empty M ≃o Set W where
   toEquiv := Equiv.setCongr (Possibility.worldEquiv W (Part M))
   map_rel_iff' {s t} := by
@@ -481,8 +496,9 @@ def worldOrderIso : State W Empty M ≃o Set W where
 
 variable [DecidableEq V]
 
-/-- Random assignment: indeterministically extend each point to a
-defined value at `x`. -/
+/-- **Random assignment** at a variable replaces each point by the points that differ from it only
+in giving that variable a value, one for each individual. It is how an indefinite introduces its
+referent. -/
 def randomAssign (s : State W V M) (x : V) : State W V M :=
   {p | ∃ q ∈ s, ∃ m : M, p = q.update x (.some m)}
 

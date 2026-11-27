@@ -12,21 +12,19 @@ public import Linglib.Data.Examples.Judgment
 /-!
 # Data from examples
 
-This file defines the data a study reads off a paper's examples; the lookups a study makes on
-them are in `Data/Examples/Readers.lean`. An example is what the paper prints under a number; a
-`Datum` is one piece of data the paper reports with it in the sense of Tonhauser and Matthewson: an
-expression (the example, or one alternant of it), the context it is judged in, and the judgment,
-less the information about the speakers that papers seldom give. A datum is a row of the
-Examples component of the Cross-Linguistic Data Formats of Forkel et al., in version 1.3, and the
-sentence-level counterpart of `Data/Wordlist/`.
-
+An **example** is what a paper prints under a number. A **datum** is one piece of data the paper
+reports with it, in the sense of Tonhauser and Matthewson: an expression, which is the example or
+one alternant of it, the context it is judged in, and the judgment, less the information about the
+speakers, which papers seldom give. A datum is a row of the Examples component of the
+Cross-Linguistic Data Formats of Forkel et al., in version 1.3, and the sentence-level counterpart
+of `Data/Wordlist/`.
 ## Main definitions
 
-* `Datum`: a piece of data about an example, with the judgment layer (`judgment`,
-  `alsoJudged`, `contrasts`, `readings`) and the paper's own columns (`paperFeatures`).
+* `Datum`: a piece of data about an example, with the judgment layer (`judgment`, `alsoJudged`,
+  `contrasts`, `readings`) and the paper's own columns (`paperFeatures`).
 * `SourceRef`: a reference to a paper, a bibkey with a locator.
-* `GlossedWord`, `GlossedMorpheme`, `LGRConformance`: a word of the gloss line with its
-  morphemes and their glosses, as `pyigt` models them, and the conformance of an example with the
+* `GlossedWord`, `GlossedMorpheme`, `LGRConformance`: a word of the gloss line with its morphemes
+  and their glosses, as `pyigt` models them, and the conformance of an example with the
   Leipzig Glossing Rules.
 
 ## Implementation notes
@@ -36,36 +34,36 @@ sentence-level counterpart of `Data/Wordlist/`.
   `namespace {AuthorYear}.Examples`. The JSON keys are the field names, and `id` uses only the
   characters of a CLDF identifier. `scripts/export_examples_cldf.py` writes the data as a CLDF
   dataset, which CI validates.
-* Four JSON keys are the source's record and not fields, since no theorem reads them and every
-  field is paid for when a kernel `decide` reduces a row: `translation` (`Translated_Text`, empty
+* Four JSON keys are the source's record and not fields, since no theorem reads them and every field
+  is paid for when a kernel `decide` reduces a row: `translation` (`Translated_Text`, empty
   for an English example), `discourseSegments` (the utterances of a discourse), `comment`, and
-  `verified` (how the row was last checked against its source). The generator validates them and
-  the CLDF export carries them.
-* `language` is a Glottocode, which the generator checks against `languages.csv`, the language
-  table of the data drawn from Glottolog; it is empty for a constructed string that belongs to no
+  `verified` (how the row was last checked against its source). The generator validates them and the
+  CLDF export carries them.
+* `language` is a Glottocode, which the generator checks against `languages.csv`, the language table
+  of the data drawn from Glottolog; it is empty for a constructed string that belongs to no
   language, such as a pattern of a formal language.
 * `glossedTokens` pairs each analysed word with its gloss, so the word-by-word alignment of Rule 1
   of the Leipzig Glossing Rules holds by construction. CLDF's `LGR_Conformance` column is not
   stored: whether a gloss also aligns morpheme by morpheme (Rule 2) is a property of the pairs.
 * Translations are into English, the default of CLDF's `Meta_Language_ID`, which is therefore not
   stored.
-* A discourse is one datum: `primaryText` joins its utterances with single spaces, and the
-  judgment is of the last utterance in the context of the others.
-* `paperFeatures` are the paper's own columns: what the paper states about the datum, such as
-  the cell of its design or the class it assigns. The results a paper prints for an experiment
+* A discourse is one datum: `primaryText` joins its utterances with single spaces, and the judgment
+  is of the last utterance in the context of the others.
+* `paperFeatures` are the paper's own columns: what the paper states about the datum, such as the
+  cell of its design or the class it assigns. The results a paper prints for an experiment
   belong in `Data/Statistics/`, and an analysis the formaliser derives belongs in the study. A key
-  repeats when the expression bears the property twice (two indefinite series in one clause), so
-  the list is not a map: `feature?` reads the first value, `features` every value.
-* The file imports no tactic library: every module with example data imports it, and names such
-  a library brings into scope (mathlib's root `Tree`) would reach every study that reads rows.
-* The lookups and fits on rows are in `Data/Examples/Readers.lean`, which only the studies that
-  read rows import, so a new reader rebuilds those studies and not every module of example
+  repeats when the expression bears the property twice (two indefinite series in one clause), so the
+  list is not a map: `feature?` reads the first value, `features` every value.
+* The file imports no tactic library: every module with example data imports it, and names such a
+  library brings into scope (mathlib's root `Tree`) would reach every study that reads rows.
+* The lookups and fits on rows are in `Data/Examples/Readers.lean`, which only the studies that read
+  rows import, so a new reader rebuilds those studies and not every module of example
   data.
 
 ## TODO
 
-* 86 rows in 21 papers with `discourseSegments` do not have their concatenation as
-  `primaryText` (the `discourse` column of `scripts/export_examples_cldf.py --report`).
+* 86 rows in 21 papers with `discourseSegments` do not have their concatenation as `primaryText`
+  (the `discourse` column of `scripts/export_examples_cldf.py --report`).
 
 ## References
 
@@ -77,10 +75,12 @@ sentence-level counterpart of `Data/Wordlist/`.
 
 @[expose] public section
 
-/-- A Glottolog language identifier, such as `"stan1293"` for Standard English. -/
+/-- A **Glottocode** is Glottolog's identifier for a language, such as `"stan1293"` for Standard
+English. -/
 abbrev Glottocode := String
 
-/-- A `SourceRef` is a CLDF source reference `bibkey[locator]` with its two parts kept apart. -/
+/-- A **source reference** names a paper and a place in it, such as an example number. It keeps
+apart the two parts of what CLDF writes as `bibkey[locator]`. -/
 structure SourceRef where
   /-- The key of the paper's entry in `references.bib`. -/
   bibkey : String
@@ -88,7 +88,8 @@ structure SourceRef where
   paperLabel : String
   deriving DecidableEq, Repr
 
-/-- How an example and its judgment were obtained. -/
+/-- The **method** of a datum says how the example and its judgment were obtained, whether by
+elicitation, from a corpus, in an experiment, or from a grammar or dictionary that does not say. -/
 inductive Datum.Method where
   /-- Elicited from, or judged by, native-speaker consultants. -/
   | elicitation
@@ -100,7 +101,8 @@ inductive Datum.Method where
   | description
   deriving DecidableEq, Repr
 
-/-- The conformance of an example with the Leipzig Glossing Rules, CLDF's `LGR_Conformance`. -/
+/-- The **conformance** of an example with the Leipzig Glossing Rules says whether its words are
+aligned with their glosses, or its morphemes are too. It is CLDF's `LGR_Conformance`. -/
 inductive LGRConformance where
   /-- `WORD_ALIGNED`: each word has its gloss (Rule 1). -/
   | wordAligned
@@ -109,7 +111,8 @@ inductive LGRConformance where
   | morphemeAligned
   deriving DecidableEq, Repr
 
-/-- A morpheme of a word with its gloss, `pyigt`'s `GlossedMorpheme`. -/
+/-- A **glossed morpheme** is a morpheme of a word together with its gloss, as in `pyigt`'s
+`GlossedMorpheme`. -/
 structure GlossedMorpheme where
   /-- The form of the morpheme, without the punctuation written around it. -/
   morpheme : List Char
@@ -122,8 +125,8 @@ structure GlossedMorpheme where
   sep : Option Char := none
   deriving DecidableEq, Repr
 
-/-- A word of the gloss line with its gloss, `pyigt`'s `GlossedWord`: the word and the gloss as
-the source prints them, and the pairs of a morpheme and its gloss, which the word has when it and
+/-- A **glossed word** is a word of the gloss line with its gloss, both as the source prints them,
+as in `pyigt`'s `GlossedWord`. It also has the pairs of a morpheme and its gloss when the word and
 its gloss are segmented alike, by the same separators in the same order (Rule 2). -/
 structure GlossedWord where
   /-- The word, as printed. -/
@@ -135,10 +138,9 @@ structure GlossedWord where
   glossedMorphemes : List GlossedMorpheme := []
   deriving DecidableEq, Repr
 
-/-- A span of an example is a run of its glossed words under a label the data file declares, with
-the lexeme it is a form of where the row names one. A span of length zero is an element the
-source's analysis posits without a word, before the word at its start. The identifiers are the
-data file's own; a study maps a lexeme to its entry in a language's fragment. -/
+/-- A **span** of an example is a run of its glossed words under a label the data file declares,
+with the lexeme it is a form of where the row names one. A span of length zero is an element the
+source's analysis posits without a word, before the word at its start. -/
 structure Datum.Span where
   /-- The position of the span's first word in the gloss line, counted from zero. -/
   start : ℕ
@@ -150,10 +152,10 @@ structure Datum.Span where
   lexeme : Option String := none
   deriving DecidableEq, Repr
 
-/-- A `Datum` is a piece of data a paper reports with one of its examples
-[tonhauser-matthewson-2016]: an expression of a language with its gloss, the context it is judged
-in, the judgment, the forms and readings the paper judges with it, and the paper's own
-classifications of it. It is the part of a row of a CLDF `ExampleTable` that theorems read. -/
+/-- A **datum** is a piece of data a paper reports with one of its examples, in the sense of
+[tonhauser-matthewson-2016]. It has an expression of a language with its gloss, the context it is
+judged in, the judgment, the forms and readings the paper judges with it, and the paper's own
+classifications of it. -/
 structure Datum where
   /-- The `ID` column holds a stable identifier keyed to the paper, `{authoryear}_{label}`. -/
   id : String

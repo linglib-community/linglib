@@ -14,6 +14,7 @@ project that the statement mentions, followed through the bodies of definitions 
 proofs. Mathlib and Lean are trusted and not followed.
 
     lake exe checkClosure [--renames FILE] Mod₁ Mod₂ … -- name₁ name₂ …
+    lake exe checkClosure --text Mod₁ Mod₂ …
 
 imports the modules, and prints as JSON, for each name, whether it resolves, its module, its
 docstring, its closure and the axioms it rests on, together with the text and the term of every
@@ -28,6 +29,14 @@ pretty-printer would hide still changes it, while the names of bound variables a
 annotations, which do not change what a statement says, do not. The closure is followed through
 the erased terms, so a declaration used only in a proof is not in it. The text of a declaration is
 its pretty-printed type and value, with full names, for people to read.
+
+Each declaration of a closure also comes with the project declarations its statement mentions
+directly (`uses`), with its signature as Lean prints it in the declaration's own namespace, with
+notation (`display`), and with the lines of its source (`lines`), absent for a declaration Lean
+generated. A page shows these to a reader; none enters a hash.
+
+With `--text` it prints instead, for each module, its module docstrings and its declarations
+with their docstrings and lines (`moduleText`), from which a page shows the module as a text.
 
 A Lean or Mathlib upgrade often renames a constant, keeping the old name for a while as a
 deprecated alias of the new one. So that such a rename does not change a term, every name of a
@@ -65,6 +74,20 @@ def ppOptions : Options :=
 
 def ppText (e : Expr) : MetaM String :=
   withOptions (fun _ ↦ ppOptions) do return toString (← ppExpr e)
+
+/-- The signature of a declaration as a page shows it, printed with notation in the
+declaration's namespace, and for an inductive type those of its constructors. It is for reading
+and is not hashed. -/
+def ppDisplay (c : ConstantInfo) : MetaM String :=
+  withTheReader Core.Context (fun ctx ↦ { ctx with currNamespace := c.name.getPrefix }) <|
+  withOptions (fun o ↦ o.set `pp.proofs false) do
+    let sig (n : Name) : MetaM String := do
+      try pure ((← PrettyPrinter.ppSignature n).fmt.pretty 64)
+      catch _ => pure s!"{n} : {(← ppExpr (← getConstInfo n).type).pretty 64}"
+    match c with
+    | .inductInfo i =>
+      return "\n".intercalate ((← sig c.name) :: (← i.ctors.mapM sig).map ("  | " ++ ·))
+    | _ => sig c.name
 
 /-- The placeholder that replaces a proof in a term. -/
 def proofPlaceholder : Expr := .const `checks.proof []
@@ -154,6 +177,8 @@ structure Node where
   kind : String
   text : String
   term : String
+  display : String
+  lines : Option (Nat × Nat)
 
 structure ClosureState where
   nodes : Std.HashMap Name Node := {}
@@ -168,8 +193,11 @@ partial def visit (renames : NameMap Name) (n : Name) : StateT ClosureState Meta
   let some c := env.find? n | return
   let (kind, text, term, used) ← describe renames c
   let deps := used.filter (isProject env) |>.toList.eraseDups.toArray
+  let display ← ppDisplay c
+  let lines := (← findDeclarationRanges? n).map fun r ↦ (r.range.pos.line, r.range.endPos.line)
   modify fun s ↦ { s with
-    nodes := s.nodes.insert n ⟨(moduleOf? env n).getD .anonymous, kind, text, term⟩
+    nodes := s.nodes.insert n
+      ⟨(moduleOf? env n).getD .anonymous, kind, text, term, display, lines⟩
     edges := s.edges.insert n deps
     mentioned := used.foldl (fun acc m ↦ if isProject env m then acc else acc.insert m)
       s.mentioned }
@@ -224,9 +252,26 @@ def run (renames : NameMap Name) (names : List Name) : MetaM Json := do
   let nodes : Array (String × Json) := st.nodes.toArray.map fun (n, node) ↦
     (n.toString, Json.mkObj [
       ("module", node.module.toString), ("kind", node.kind), ("text", node.text),
-      ("term", node.term)])
+      ("term", node.term), ("display", node.display),
+      ("lines", match node.lines with | some (a, b) => toJson #[a, b] | none => Json.null),
+      ("uses", toJson ((st.edges.getD n #[]).map Name.toString))])
   return Json.mkObj [("roots", Json.mkObj roots.toList), ("nodes", Json.mkObj nodes.toList),
     ("aliases", toJson (aliases env st.mentioned))]
+
+/-- The module docstrings of a module and its declarations that have a place in the source, each
+with its docstring and its lines: what a page that shows the module as a text is made from. -/
+def moduleText (m : Name) : MetaM Json := do
+  let env ← getEnv
+  let some idx := env.getModuleIdx? m | throwError "{m} is not imported"
+  let docs := (getModuleDoc? env m).getD #[] |>.map fun d ↦
+    Json.mkObj [("line", toJson d.declarationRange.pos.line), ("doc", d.doc)]
+  let mut decls : Array Json := #[]
+  for c in env.header.moduleData[idx]!.constNames do
+    let some r ← findDeclarationRanges? c | continue
+    decls := decls.push <| Json.mkObj [("name", c.toString),
+      ("line", toJson r.range.pos.line), ("end", toJson r.range.endPos.line),
+      ("doc", match ← findDocString? env c with | some d => Json.str d | none => Json.null)]
+  return Json.mkObj [("docs", Json.arr docs), ("decls", Json.arr decls)]
 
 /-- The map from names to names in the JSON object of the file at `path`. -/
 def readRenames (path : String) : IO (NameMap Name) := do
@@ -236,7 +281,12 @@ def readRenames (path : String) : IO (NameMap Name) := do
     let v ← IO.ofExcept v.getStr?
     return acc.insert k.toName v.toName
 
-def main (args : List String) : IO UInt32 := do
+unsafe def main (args : List String) : IO UInt32 := do
+  -- Notation is kept in environment extensions, which an import loads only on request.
+  enableInitializersExecution
+  let (text, args) := match args with
+    | "--text" :: rest => (true, rest)
+    | _ => (false, args)
   let ((renames : NameMap Name), args) ← match args with
     | "--renames" :: path :: rest => do pure (← readRenames path, rest)
     | _ => pure ({}, args)
@@ -244,8 +294,11 @@ def main (args : List String) : IO UInt32 := do
   let names := names.drop 1
   initSearchPath (← findSysroot)
   let env ← importModules (mods.map fun m ↦ { module := m.toName }).toArray {}
-    (trustLevel := 1024)
+    (trustLevel := 1024) (loadExts := true)
   let ctx : Core.Context := { fileName := "<checks>", fileMap := default, maxHeartbeats := 0 }
-  let (json, _) ← ((run renames (names.map String.toName)).run' {} {}).toIO ctx { env }
+  let act : MetaM Json :=
+    if text then return Json.mkObj (← mods.mapM fun m ↦ return (m, ← moduleText m.toName))
+    else run renames (names.map String.toName)
+  let (json, _) ← (act.run' {} {}).toIO ctx { env }
   IO.println json.compress
   return 0

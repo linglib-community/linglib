@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><!--TITLE--> | Linglib</title>
+<meta name="description" content="Definitions and results as a text to read, with the Lean that states each beside it.">
+<meta name="robots" content="noindex">
+<!--SITE_HEAD-->
+<style>
+/* A source or a file, read as a text: its items in a column, and beside it the Lean of the
+   chosen one, or else a chart of what the page rests on */
+:root {
+  --checked: #16a34a;
+  --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+/* Wider than the other pages, header included: the text has the larger column, and the Lean
+   beside it room for most lines of source without scrolling. */
+.nav, .book { max-width: calc(1300px + var(--gap) * 2); }
+.book {
+  display: grid; grid-template-columns: minmax(0, 660px) minmax(0, 584px); gap: 56px;
+  margin: 0 auto; padding: var(--gap); min-height: calc(100vh - 120px);
+}
+.text { font-family: var(--serif); font-size: 19px; line-height: 1.62; }
+/* Where the page stands on the route to a source, when it was reached along one */
+.route { margin: 6px 0 0; font: 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--secondary); }
+.route a { color: var(--primary); border-bottom: 1px solid var(--tertiary); }
+.route a:hover { border-bottom-color: currentColor; }
+.route.next { margin: 48px 0 0; font-size: 15px; }
+.crumbs { margin: 14px 0 0; font: 13px/1.5 var(--mono); color: var(--secondary); }
+.crumbs a { color: var(--secondary); }
+.crumbs a:hover { color: var(--primary); }
+h1 { font-family: var(--serif); font-size: 36px; font-weight: 600; margin: 8px 0 10px; }
+.by { margin: 0 0 8px; font-size: 16px; color: var(--secondary); }
+h2.sec { font-family: var(--serif); font-size: 23px; font-weight: 600; margin: 52px 0 18px; }
+/* Where the page's own prose ends and the source's items, restated in the record, begin */
+.prov {
+  margin: 30px 0 -22px; padding-top: 12px; border-top: 1px solid var(--border);
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--secondary);
+}
+.prov a { color: var(--secondary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 2px; }
+.prov a:hover { color: var(--primary); }
+h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
+
+.item {
+  margin: 0 0 1.1em -18px; padding-left: 16px; border-left: 2px solid transparent;
+  cursor: pointer; scroll-margin-top: 24px; outline: none;
+}
+.item:hover { border-left-color: var(--tertiary); }
+.item:focus-visible { border-left-color: var(--secondary); }
+.item.sel { border-left-color: var(--primary); }
+.item p { margin: 0 0 0.55em; }
+/* An example as a paper sets it: number, mark and sentence, then translation and readings */
+.ex { display: grid; grid-template-columns: 3.6em minmax(0, 1fr); margin: 0 0 0.7em; }
+.ex .ext, .ex .exr { margin: 0; }
+.ex .exj { margin-right: 1px; }
+.ex .exr { font-size: 0.86em; color: var(--secondary); }
+.prov.plain { margin: 6px 0 0; padding: 0; border: 0; }
+.item .head { font-weight: 700; color: var(--primary); }
+.item .head .no { font-weight: 400; }
+.item .mark { margin-left: 4px; font: 13px/1 var(--mono); color: var(--checked); }
+.item .mark.stale { color: var(--secondary); }
+.text code { font-size: 0.78em; }
+.prose p { margin: 0 0 0.9em; }
+.prose ul, .refs ul { margin: 0 0 1em; padding-left: 1.2em; }
+.prose pre { margin: 0 0 1em; padding: 10px 12px; font: 13px/1.5 var(--mono); background: var(--code-bg); border-radius: 6px; overflow-x: auto; }
+.refs { font-size: 16px; color: var(--secondary); }
+.text a.pick, .text a.ref { border-bottom: 1px solid var(--tertiary); }
+.text a.pick:hover, .text a.ref:hover { border-bottom-color: currentColor; }
+.links { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 56px 0 0; font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.links a { color: var(--secondary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
+.links a:hover { color: var(--primary); }
+
+/* The Lean of the chosen item */
+.lean { font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; }
+.lean .pane { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; padding-top: 14px; }
+.lean .back { display: block; margin: 0 0 14px; font-size: 13px; color: var(--secondary); }
+.lean .back::before { content: "\2190\00a0"; }
+.lean .back:hover { color: var(--primary); }
+.lean .how { margin-bottom: 16px; }
+.lean .how p { margin: 0 0 8px; color: var(--secondary); font-size: 14px; }
+.lean .how .rel { color: var(--content); font-size: 15px; }
+.decl { margin: 0 0 16px; }
+
+/* What the page rests on: files as squares, a source as a circle, mathlib as the bar */
+.chart { display: block; width: 100%; height: auto; margin-top: 30px; max-height: 420px; }
+.chart .ge { fill: none; stroke: var(--secondary); stroke-opacity: 0.45; stroke-width: 1.2; }
+.chart .gbase { stroke: var(--secondary); stroke-opacity: 0.5; stroke-width: 3; stroke-linecap: round; }
+.chart .gn.theory { fill: #4f6bd8; }
+.chart .gn.study { fill: var(--checked); }
+.chart .gn.here { fill: var(--primary); }
+.chart .gl { font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; fill: var(--secondary); }
+.chart .gl.here { fill: var(--primary); font-weight: 600; }
+.chart .gl.base { font-size: 11px; }
+.chart a:hover .gl { fill: var(--primary); text-decoration: underline; }
+.planh { margin: 26px 0 6px; font-size: 13px; font-weight: 600; color: var(--secondary); }
+.plan { margin: 0; padding-left: 1.6em; font-size: 14px; line-height: 1.7; columns: 2; column-gap: 28px; }
+.plan a { border-bottom: 1px solid var(--tertiary); }
+.plan a:hover { border-bottom-color: currentColor; }
+.decl .name { display: flow-root; margin: 0 0 4px; font: 13px/1.5 var(--mono); overflow-wrap: anywhere; }
+.decl .name .kw { color: var(--secondary); }
+.decl .name a { border-bottom: 1px solid var(--tertiary); }
+.decl .name a:hover { border-bottom-color: currentColor; }
+.decl .name .who { float: right; margin-left: 12px; font: 12px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--secondary); }
+.lean pre {
+  margin: 0; padding: 10px 12px; font: 12px/1.55 var(--mono); background: var(--code-bg);
+  border-radius: 6px; white-space: pre; overflow-x: auto;
+}
+/* What a theorem assumes, apart from what it states */
+.given { margin: 4px 0 0; font: 12px/1.5 var(--mono); color: var(--secondary); overflow-wrap: anywhere; }
+/* The examples a statement is about, set under it */
+.cited { margin: 8px 0 0; font-family: var(--serif); font-size: 15px; }
+.cited .ex { margin: 0 0 4px; }
+.more { margin: 5px 0 0; font-size: 13px; color: var(--secondary); }
+.more::before { content: "+"; display: inline-block; width: 1.1em; font-family: var(--mono); }
+.more[aria-expanded="true"]::before { content: "\2212"; }
+.more:hover { color: var(--primary); }
+.uses { list-style: none; margin: 4px 0 0 1.1em; padding: 0; }
+.uses .node { padding: 3px 0; }
+.opener { font: 13px/1.5 var(--mono); text-align: left; color: var(--secondary); overflow-wrap: anywhere; }
+.opener:hover { color: var(--primary); }
+.opener::before { content: "+"; display: inline-block; width: 1.1em; }
+.opener[aria-expanded="true"]::before { content: "\2212"; }
+.opener[aria-expanded="true"] { color: var(--primary); }
+.cov { margin-left: 8px; font-size: 13px; color: var(--secondary); white-space: nowrap; }
+.cov:hover { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+.node .body { margin: 4px 0 6px 1.1em; }
+.state { margin: 0; font-size: 14px; color: var(--secondary); }
+.state a { color: var(--secondary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 2px; }
+.state a:hover { color: var(--primary); }
+
+@media (max-width: 1040px) {
+  .book { display: block; max-width: calc(660px + var(--gap) * 2); }
+  .item { margin-left: -12px; padding-left: 10px; }
+  .lean .pane { position: static; max-height: none; padding: 0; }
+  .chart { margin: 8px 0 24px; }
+  .lean.inline { margin: 4px 0 28px; padding: 14px 0 16px; border-block: 1px solid var(--border); }
+}
+@media (max-width: 600px) {
+  .text { font-size: 17px; }
+  h1 { font-size: 28px; }
+  h2.sec { font-size: 20px; margin-top: 40px; }
+}
+</style>
+</head>
+<body id="top">
+<!--SITE_HEADER-->
+<main class="book">
+  <div class="text">
+    <p class="route" id="route" hidden></p>
+    <p class="crumbs"><!--CRUMBS--></p>
+    <h1><!--H1--></h1>
+    <p class="by"><!--BY--></p>
+<!--ITEMS-->
+    <p class="route next" id="route-next" hidden></p>
+    <p class="links"><!--LINKS--></p>
+  </div>
+  <aside class="lean" id="lean" aria-live="polite">
+    <div class="pane" id="pane"><!--ASIDE--></div>
+  </aside>
+</main>
+<!--SITE_FOOTER-->
+<script type="application/json" id="data">/*DATA*/{}</script>
+<script>
+(function () {
+  "use strict";
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const N = D.nodes, I = D.items;
+  const lean = document.getElementById("lean"), pane = document.getElementById("pane");
+  const narrow = matchMedia("(max-width: 1040px)");
+  const chart = pane.innerHTML;   // what the side holds while no item is chosen
+  const el = (tag, cls, text) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  };
+  const html = (tag, cls, markup) => { const e = el(tag, cls); e.innerHTML = markup; return e; };
+
+  // A declaration the chosen statement mentions, as a row that opens to its own statement.
+  function row(name) {
+    const n = N[name], li = el("li", "node");
+    if (!n) { li.append(el("code", null, name)); return li; }
+    const b = el("button", "opener", n.k + " " + name);
+    b.type = "button"; b.dataset.decl = name; b.setAttribute("aria-expanded", "false");
+    li.append(b);
+    for (const [id, label] of n.c) {
+      const a = el("a", "cov", label);
+      a.href = "#" + id; a.title = "An item of this source covers it";
+      li.append(a);
+    }
+    const body = el("div", "body");
+    body.hidden = true;
+    li.append(body);
+    return li;
+  }
+  // What a statement mentions, behind one toggle.
+  function mentions(name) {
+    const n = N[name].u.length, box = el("div", "mentions");
+    const b = el("button", "more", "uses " + n + (n === 1 ? " definition" : " definitions"));
+    b.type = "button"; b.setAttribute("aria-expanded", "false");
+    const ul = el("ul", "uses");
+    ul.hidden = true;
+    b.addEventListener("click", () => {
+      if (!ul.firstChild) N[name].u.forEach((u) => ul.append(row(u)));
+      ul.hidden = !ul.hidden;
+      b.setAttribute("aria-expanded", String(!ul.hidden));
+    });
+    box.append(b, ul);
+    return box;
+  }
+  function show(id) {
+    const it = I[id], art = document.getElementById(id);
+    if (!it || !art) return;
+    document.querySelectorAll(".item.sel").forEach((a) => a.classList.remove("sel"));
+    art.classList.add("sel");
+    const back = el("button", "back", "Back to the chart");
+    back.type = "button";
+    pane.replaceChildren(back);
+    if (it.how) pane.append(html("div", "how", it.how));
+    for (const name of it.decls) {
+      const n = N[name], d = el("div", "decl"), p = el("p", "name");
+      if (!n) { p.append(el("code", null, name)); d.append(p); pane.append(d); continue; }
+      const a = el(n.h ? "a" : "span", null, name);
+      if (n.h) a.href = n.h;
+      p.append(el("span", "kw", n.k + " "), a);
+      if (n.a) p.append(el("span", "who", n.a));
+      d.append(p, el("pre", null, n.t));
+      if (n.g) d.append(el("p", "given", "given " + n.g));
+      if (n.x) d.append(html("div", "cited", n.x));
+      if (n.u.length) d.append(mentions(name));
+      pane.append(d);
+    }
+    if (it.state) pane.append(html("p", "state", it.state));
+    if (narrow.matches) { lean.classList.add("inline"); art.after(lean); }
+    else { lean.classList.remove("inline"); document.querySelector(".book").append(lean); pane.scrollTop = 0; }
+  }
+  // Leave the chosen item: the chart comes back.
+  function leave() {
+    document.querySelectorAll(".item.sel").forEach((a) => a.classList.remove("sel"));
+    pane.innerHTML = chart;
+    lean.classList.remove("inline");
+    document.querySelector(".book").append(lean);
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+  function choose(id, scroll) {
+    show(id);
+    history.replaceState(null, "", "#" + id);
+    if (scroll) document.getElementById(id).scrollIntoView({ block: "start" });
+  }
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("button.back")) { leave(); return; }
+    const b = e.target.closest("button.opener");
+    if (b) {
+      const body = b.parentElement.querySelector(":scope > .body");
+      const open = b.getAttribute("aria-expanded") !== "true";
+      if (open && !body.firstChild) {
+        body.append(el("pre", null, N[b.dataset.decl].t));
+        if (N[b.dataset.decl].g) body.append(el("p", "given", "given " + N[b.dataset.decl].g));
+        if (N[b.dataset.decl].x) body.append(html("div", "cited", N[b.dataset.decl].x));
+        if (N[b.dataset.decl].u.length) body.append(mentions(b.dataset.decl));
+      }
+      b.setAttribute("aria-expanded", String(open));
+      body.hidden = !open;
+      return;
+    }
+    const cov = e.target.closest("a.cov, a.pick");
+    if (cov) { e.preventDefault(); choose(cov.getAttribute("href").slice(1), true); return; }
+    if (e.target.closest("a")) return;
+    const art = e.target.closest(".item");
+    if (art && !getSelection().toString()) {
+      if (art.classList.contains("sel")) leave(); else choose(art.id, false);
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { leave(); return; }
+    if ((e.key === "Enter" || e.key === " ") && e.target.classList.contains("item")) {
+      e.preventDefault(); choose(e.target.id, false);
+    }
+  });
+  // Reached along the route to a source (`?to=`): where this page stands on it, and the next.
+  const to = new URLSearchParams(location.search).get("to"), R = to && D.routes[to];
+  if (R) {
+    const stop = (k, text) => {
+      const a = el("a", null, text || R.pages[k][0]);
+      a.href = R.pages[k][1] + (k < R.pages.length - 1 ? "?to=" + encodeURIComponent(to) : "");
+      return a;
+    };
+    const last = R.pages.length - 1, top = document.getElementById("route");
+    top.append("Reading toward ", stop(last, R.to), ": " + (R.at + 1) + " of " + last);
+    if (R.at > 0) top.append(" \u00b7 ", stop(R.at - 1, "\u2190 " + R.pages[R.at - 1][0]));
+    top.append(" \u00b7 ", stop(R.at + 1, R.pages[R.at + 1][0] + " \u2192"));
+    top.hidden = false;
+    const next = document.getElementById("route-next");
+    next.append("Next toward " + R.to + ": ", stop(R.at + 1));
+    next.hidden = false;
+  }
+  addEventListener("hashchange", () => show(location.hash.slice(1)));
+  if (I[location.hash.slice(1)]) show(location.hash.slice(1));
+})();
+</script>
+<!--SITE_SCRIPT-->
+</body>
+</html>

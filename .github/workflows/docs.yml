@@ -26,6 +26,8 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: true
+          # The whole history, from which the pages credit each item to who committed it.
+          fetch-depth: 0
 
       - name: Free disk space
         run: |
@@ -206,6 +208,11 @@ jobs:
           # /docs-new/, where the study pages were previewed, forwards to them.
           python3 scripts/gen_docs_pages.py --out .lake/build/doc-site/docs --check \
             --redirect .lake/build/doc-site/docs-new --checks .lake/build/checks.json
+          # The wiki: a source's items as a text to read, at its study's path under /wiki/, and
+          # the files they rest on at /wiki/<path>/, each item with the Lean that states it. No
+          # page links there and the pages ask not to be indexed.
+          python3 scripts/gen_checks_pages.py --checks .lake/build/checks.json \
+            --out .lake/build/doc-site
           # The dependency map at /taproot/, a development page that nothing links to and that asks
           # not to be indexed. It is absent when the steps that build it did not run.
           if [ -f .lake/build/taproot-map/index.html ]; then

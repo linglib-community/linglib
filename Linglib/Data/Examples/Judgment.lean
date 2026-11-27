@@ -8,19 +8,18 @@ module
 /-!
 # Judgments
 
-A paper marks an example to report how speakers judge it, and the CLDF 1.3 column
-`grammaticalityJudgement` of [forkel-etal-2024] holds the symbols it prints. This file defines
-`Judgment`, the seven marks the library records there: no mark, `?`, `??`, `#`, `?*`, `*`, and `%`
-for an example on which speakers differ.
-
+A paper marks an example to report how speakers judge it, as `*` marks an ungrammatical sentence. A
+**judgment** is one of the seven marks the library records: none, `?`, `??`, `#`, `?*`, `*`, and `%`
+where speakers differ. The Cross-Linguistic Data Formats, version 1.3, hold it in the column
+`grammaticalityJudgement`.
 ## Implementation notes
 
 * CLDF leaves the value of the column free. The seven marks are the library's inventory.
 * The type carries no order and no grouping of its marks. Which marks a paper counts as accepted,
   and whether it reads them as a scale, is that paper's link between its account and its data, so
   a study states it; `Datum.Fits` reads a mark through `Judgment.band`.
-* A split mark a paper prints, such as `*/??`, is several marks for one sentence. A row records
-  the first as `Datum.judgment` and the rest as `Datum.alsoJudged`. Gradient ratings are results,
+* A split mark a paper prints, such as `*/??`, is several marks for one sentence. A row records the
+  first as `Datum.judgment` and the rest as `Datum.alsoJudged`. Gradient ratings are results,
   recorded in `Data/Statistics/`.
 * The file imports nothing, since every module of example data imports it.
 
@@ -31,7 +30,7 @@ for an example on which speakers differ.
 
 @[expose] public section
 
-/-- The mark a paper puts before an example. -/
+/-- A **judgment** is the mark a paper puts before an example. -/
 inductive Judgment where
   /-- The paper accepts the example and leaves it unmarked. -/
   | acceptable
