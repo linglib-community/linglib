@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Conditionals.Counterfactual
+public import Linglib.Semantics.Conditionals.SelectionFunction
+public import Linglib.Logic.Trivalent.Proposition
 
 /-!
 # McKay and van Inwagen (1977): Counterfactuals with Disjunctive Antecedents

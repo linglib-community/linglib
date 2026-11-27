@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Iatridou2000` — typed example data
@@ -659,5 +661,35 @@ def ex99 : Datum :=
     paperFeatures := [("section", "6.1"), ("mood", "past indicative"), ("paradigm", "nonpast subjunctive only")] }
 
 def all : List Datum := [ex1a, ex1b, ex2a, ex2b, en_flv, en_presCF, en_pastCF, gr_flv, gr_pastCF, fr_flv, fr_presCF, fr_pastCF, ex7, ex10a, ex10b, ex11, ex13b, ex20, ex21b, ex21c, ex47a, ex47b, ex47d, ex48a, ex48b, ex53, ex54, ex59, ex60a, ex60b, ex62b, ex63a, ex63b, ex64a, ex64b, ex65, ex66, ex67a, ex67b, ex68a, ex69b, ex74, ex75, ex79, ex97a, ex98, ex99]
+
+/-- The time at which the conditional is evaluated. -/
+inductive Evaluation where
+  /-- future: the future -/
+  | future
+  /-- now: the present -/
+  | now
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `evaluation`. -/
+def evaluation (e : Datum) : Option Evaluation :=
+  e.parse? "evaluation" [("future", .future), ("now", .now)]
+
+/-- The aspectual class of the predicate. -/
+inductive Aktionsart where
+  /-- telic: telic -/
+  | telic
+  /-- activity: an activity -/
+  | activity
+  /-- individual-level stative: an individual-level stative -/
+  | individualLevelStative
+  /-- stage-level stative: a stage-level stative -/
+  | stageLevelStative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `aktionsart`. -/
+def aktionsart (e : Datum) : Option Aktionsart :=
+  e.parse? "aktionsart" [("telic", .telic), ("activity", .activity),
+    ("individual-level stative", .individualLevelStative),
+    ("stage-level stative", .stageLevelStative)]
 
 end Iatridou2000.Examples

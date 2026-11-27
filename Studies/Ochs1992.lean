@@ -357,12 +357,13 @@ theorem rows_praising : ∀ r ∈ figure143, ∀ c ∈ r.praising,
 
 /-- The strategy a printed form of the chapter exemplifies. -/
 def strategy (d : Datum) : Option Strategy :=
-  d.parse? "strategy"
-    [("Extensive simplification", .extensiveSimplification),
-     ("Little simplification", .littleSimplification),
-     ("Express guess and negotiate meaning", .expressGuess),
-     ("Display minimal grasp", .displayMinimalGrasp),
-     ("Unidirectional", .unidirectional), ("Bidirectional", .bidirectional)]
+  (Examples.strategy d).map fun
+    | .extensiveSimplification => .extensiveSimplification
+    | .littleSimplification => .littleSimplification
+    | .expressGuess => .expressGuess
+    | .displayMinimalGrasp => .displayMinimalGrasp
+    | .unidirectional => .unidirectional
+    | .bidirectional => .bidirectional
 
 /-- The community a printed form of the chapter is reported from, when it is reported from one. -/
 def community (d : Datum) : Option Language :=

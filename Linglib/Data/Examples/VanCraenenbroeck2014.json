@@ -1,1353 +1,587 @@
-[
-  {
-    "id": "vancraenenbroeck2014_10a",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(10a)"
+{
+  "features": [
+    {
+      "key": "argument",
+      "lean": "argumentUse",
+      "type": "ArgumentUse",
+      "doc": "Whether the internal argument is stranded or included in the replaced constituent.",
+      "levels": [
+        {
+          "name": "stranded",
+          "label": "stranded",
+          "doc": "stranded outside it"
+        },
+        {
+          "name": "included",
+          "label": "included",
+          "doc": "included in it"
+        }
+      ]
     },
-    "language": "stan1293",
-    "primaryText": "Kyle criticized my paper.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "construction",
-        "selection"
-      ],
-      [
-        "category",
-        "verb"
+    {
+      "key": "form",
+      "lean": "form",
+      "type": "Form",
+      "doc": "The form of the verbal projection.",
+      "levels": [
+        {
+          "name": "active",
+          "label": "active",
+          "doc": "an active clause"
+        },
+        {
+          "name": "passive",
+          "label": "passive",
+          "doc": "a passive clause"
+        },
+        {
+          "name": "nominalizedInfinitive",
+          "label": "nominalizedInfinitive",
+          "doc": "a nominalized infinitive"
+        },
+        {
+          "name": "nominalization",
+          "label": "nominalization",
+          "doc": "a nominalization"
+        }
       ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_10b",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(10b)"
+    }
+  ],
+  "examples": [
+    {
+      "id": "vancraenenbroeck2014_10a",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(10a)"},
+      "language": "stan1293",
+      "primaryText": "Kyle criticized my paper.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.2"],
+        ["construction", "selection"],
+        ["category", "verb"]
+      ],
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Kyle's criticism of my paper.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2"
+    {
+      "id": "vancraenenbroeck2014_10b",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(10b)"},
+      "language": "stan1293",
+      "primaryText": "Kyle's criticism of my paper.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.2"],
+        ["construction", "selection"],
+        ["category", "noun"]
       ],
-      [
-        "construction",
-        "selection"
-      ],
-      [
-        "category",
-        "noun"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_11",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(11)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Kyle criticized my paper and Rajesh did {the same/likewise} to my book.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2"
+    {
+      "id": "vancraenenbroeck2014_11",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(11)"},
+      "language": "stan1293",
+      "primaryText": "Kyle criticized my paper and Rajesh did {the same/likewise} to my book.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.2"],
+        ["construction", "pronominalization"],
+        ["category", "verb"],
+        ["proform", "the same/likewise"],
+        ["argument", "stranded"]
       ],
-      [
-        "construction",
-        "pronominalization"
-      ],
-      [
-        "category",
-        "verb"
-      ],
-      [
-        "proform",
-        "the same/likewise"
-      ],
-      [
-        "argument",
-        "stranded"
-      ]
-    ],
-    "comment": "The stranded argument is introduced by to, which the paper sets aside.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_13",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(13)"
+      "comment": "The stranded argument is introduced by to, which the paper sets aside.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Kyle criticized my paper and Rajesh did {the same/likewise}.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2"
+    {
+      "id": "vancraenenbroeck2014_13",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(13)"},
+      "language": "stan1293",
+      "primaryText": "Kyle criticized my paper and Rajesh did {the same/likewise}.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.2"],
+        ["construction", "pronominalization"],
+        ["category", "verb"],
+        ["proform", "the same/likewise"],
+        ["argument", "included"]
       ],
-      [
-        "construction",
-        "pronominalization"
-      ],
-      [
-        "category",
-        "verb"
-      ],
-      [
-        "proform",
-        "the same/likewise"
-      ],
-      [
-        "argument",
-        "included"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_15a",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(15a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "west2354",
-    "primaryText": "Jitske besprekt syn roman.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Jitske",
-        "Jitske"
+    {
+      "id": "vancraenenbroeck2014_15a",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(15a)"},
+      "language": "west2354",
+      "primaryText": "Jitske besprekt syn roman.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jitske", "Jitske"], ["besprekt", "reviews"], ["syn", "his"], ["roman.", "novel"]
       ],
-      [
-        "besprekt",
-        "reviews"
+      "translation": "Jitske reviews his novel.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.2"],
+        ["construction", "selection"],
+        ["category", "verb"]
       ],
-      [
-        "syn",
-        "his"
-      ],
-      [
-        "roman.",
-        "novel"
-      ]
-    ],
-    "translation": "Jitske reviews his novel.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "construction",
-        "selection"
-      ],
-      [
-        "category",
-        "verb"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_15b",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(15b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "west2354",
-    "primaryText": "in besprek fan syn roman",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "in",
-        "a"
+    {
+      "id": "vancraenenbroeck2014_15b",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(15b)"},
+      "language": "west2354",
+      "primaryText": "in besprek fan syn roman",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["in", "a"], ["besprek", "review"], ["fan", "of"], ["syn", "his"], ["roman", "novel"]
       ],
-      [
-        "besprek",
-        "review"
+      "translation": "a review of his novel",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.2"],
+        ["construction", "selection"],
+        ["category", "noun"]
       ],
-      [
-        "fan",
-        "of"
-      ],
-      [
-        "syn",
-        "his"
-      ],
-      [
-        "roman",
-        "novel"
-      ]
-    ],
-    "translation": "a review of his novel",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "construction",
-        "selection"
-      ],
-      [
-        "category",
-        "noun"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_16",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(16)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "west2354",
-    "primaryText": "Jan hie in witte auto en Geart in swarten ien.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Jan",
-        "Jan"
+    {
+      "id": "vancraenenbroeck2014_16",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(16)"},
+      "language": "west2354",
+      "primaryText": "Jan hie in witte auto en Geart in swarten ien.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jan", "Jan"], ["hie", "has"], ["in", "a"], ["witte", "white"], ["auto", "car"],
+        ["en", "and"], ["Geart", "Geart"], ["in", "a"], ["swarten", "black"], ["ien.", "one"]
       ],
-      [
-        "hie",
-        "has"
+      "translation": "Jan has a white car and Geart a black one.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.2"],
+        ["construction", "npEllipsis"],
+        ["proform", "ien"]
       ],
-      [
-        "in",
-        "a"
-      ],
-      [
-        "witte",
-        "white"
-      ],
-      [
-        "auto",
-        "car"
-      ],
-      [
-        "en",
-        "and"
-      ],
-      [
-        "Geart",
-        "Geart"
-      ],
-      [
-        "in",
-        "a"
-      ],
-      [
-        "swarten",
-        "black"
-      ],
-      [
-        "ien.",
-        "one"
-      ]
-    ],
-    "translation": "Jan has a white car and Geart a black one.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "construction",
-        "npEllipsis"
-      ],
-      [
-        "proform",
-        "ien"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_17a",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(17a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "west2354",
-    "primaryText": "Jitse wiisde him op in posityf besprek fan syn roman en Jitske op in negativen ien fan syn samle fersen.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Jitse",
-        "Jitse"
+    {
+      "id": "vancraenenbroeck2014_17a",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(17a)"},
+      "language": "west2354",
+      "primaryText": "Jitse wiisde him op in posityf besprek fan syn roman en Jitske op in negativen ien fan syn samle fersen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jitse", "Jitse"], ["wiisde", "pointed"], ["him", "him"], ["op", "on"], ["in", "a"],
+        ["posityf", "positive"], ["besprek", "review"], ["fan", "of"], ["syn", "his"],
+        ["roman", "novel"], ["en", "and"], ["Jitske", "Jitske"], ["op", "on"], ["in", "a"],
+        ["negativen", "negative"], ["ien", "one"], ["fan", "of"], ["syn", "his"],
+        ["samle", "collected"], ["fersen.", "poems"]
       ],
-      [
-        "wiisde",
-        "pointed"
+      "translation": "Jitse pointed out to him a positive review of his novel and Jitske pointed out a negative review of his collected poems.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.2"],
+        ["construction", "pronominalization"],
+        ["category", "noun"],
+        ["proform", "ien"],
+        ["argument", "stranded"]
       ],
-      [
-        "him",
-        "him"
-      ],
-      [
-        "op",
-        "on"
-      ],
-      [
-        "in",
-        "a"
-      ],
-      [
-        "posityf",
-        "positive"
-      ],
-      [
-        "besprek",
-        "review"
-      ],
-      [
-        "fan",
-        "of"
-      ],
-      [
-        "syn",
-        "his"
-      ],
-      [
-        "roman",
-        "novel"
-      ],
-      [
-        "en",
-        "and"
-      ],
-      [
-        "Jitske",
-        "Jitske"
-      ],
-      [
-        "op",
-        "on"
-      ],
-      [
-        "in",
-        "a"
-      ],
-      [
-        "negativen",
-        "negative"
-      ],
-      [
-        "ien",
-        "one"
-      ],
-      [
-        "fan",
-        "of"
-      ],
-      [
-        "syn",
-        "his"
-      ],
-      [
-        "samle",
-        "collected"
-      ],
-      [
-        "fersen.",
-        "poems"
-      ]
-    ],
-    "translation": "Jitse pointed out to him a positive review of his novel and Jitske pointed out a negative review of his collected poems.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "construction",
-        "pronominalization"
-      ],
-      [
-        "category",
-        "noun"
-      ],
-      [
-        "proform",
-        "ien"
-      ],
-      [
-        "argument",
-        "stranded"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_17b",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(17b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "west2354",
-    "primaryText": "Jitse wiisde him op in posityf besprek fan syn roman en Jitske op in negativen ien.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Jitse",
-        "Jitse"
+    {
+      "id": "vancraenenbroeck2014_17b",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(17b)"},
+      "language": "west2354",
+      "primaryText": "Jitse wiisde him op in posityf besprek fan syn roman en Jitske op in negativen ien.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jitse", "Jitse"], ["wiisde", "pointed"], ["him", "him"], ["op", "on"], ["in", "a"],
+        ["posityf", "positive"], ["besprek", "review"], ["fan", "of"], ["syn", "his"],
+        ["roman", "novel"], ["en", "and"], ["Jitske", "Jitske"], ["op", "on"], ["in", "a"],
+        ["negativen", "negative"], ["ien.", "one"]
       ],
-      [
-        "wiisde",
-        "pointed"
+      "translation": "Jitse pointed out to him a positive review of his novel and Jitske pointed out a negative one.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.2"],
+        ["construction", "pronominalization"],
+        ["category", "noun"],
+        ["proform", "ien"],
+        ["argument", "included"]
       ],
-      [
-        "him",
-        "him"
-      ],
-      [
-        "op",
-        "on"
-      ],
-      [
-        "in",
-        "a"
-      ],
-      [
-        "posityf",
-        "positive"
-      ],
-      [
-        "besprek",
-        "review"
-      ],
-      [
-        "fan",
-        "of"
-      ],
-      [
-        "syn",
-        "his"
-      ],
-      [
-        "roman",
-        "novel"
-      ],
-      [
-        "en",
-        "and"
-      ],
-      [
-        "Jitske",
-        "Jitske"
-      ],
-      [
-        "op",
-        "on"
-      ],
-      [
-        "in",
-        "a"
-      ],
-      [
-        "negativen",
-        "negative"
-      ],
-      [
-        "ien.",
-        "one"
-      ]
-    ],
-    "translation": "Jitse pointed out to him a positive review of his novel and Jitske pointed out a negative one.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "construction",
-        "pronominalization"
-      ],
-      [
-        "category",
-        "noun"
-      ],
-      [
-        "proform",
-        "ien"
-      ],
-      [
-        "argument",
-        "included"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_18a",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(18a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "Ze geeft hem de bons.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Ze",
-        "she"
+    {
+      "id": "vancraenenbroeck2014_18a",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(18a)"},
+      "language": "dutc1256",
+      "primaryText": "Ze geeft hem de bons.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ze", "she"], ["geeft", "gives"], ["hem", "him"], ["de", "the"], ["bons.", "knock"]
       ],
-      [
-        "geeft",
-        "gives"
+      "translation": "She's dumping him.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "bons"],
+        ["form", "active"]
       ],
-      [
-        "hem",
-        "him"
-      ],
-      [
-        "de",
-        "the"
-      ],
-      [
-        "bons.",
-        "knock"
-      ]
-    ],
-    "translation": "She's dumping him.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "bons"
-      ],
-      [
-        "form",
-        "active"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_18b",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(18b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "het geven van de bons (aan hem)",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "het",
-        "the"
+    {
+      "id": "vancraenenbroeck2014_18b",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(18b)"},
+      "language": "dutc1256",
+      "primaryText": "het geven van de bons (aan hem)",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["het", "the"], ["geven", "give.INF"], ["van", "of"], ["de", "the"], ["bons", "knock"],
+        ["(aan", "to"], ["hem)", "him"]
       ],
-      [
-        "geven",
-        "give.INF"
+      "translation": "intended: 'the dupming [sic] of him'",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "bons"],
+        ["form", "nominalizedInfinitive"]
       ],
-      [
-        "van",
-        "of"
-      ],
-      [
-        "de",
-        "the"
-      ],
-      [
-        "bons",
-        "knock"
-      ],
-      [
-        "(aan",
-        "to"
-      ],
-      [
-        "hem)",
-        "him"
-      ]
-    ],
-    "translation": "intended: 'the dupming [sic] of him'",
-    "context": "",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "bons"
-      ],
-      [
-        "form",
-        "nominalizedInfinitive"
-      ]
-    ],
-    "comment": "The idiomatic reading is unavailable.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_18c",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(18c)"
+      "comment": "The idiomatic reading is unavailable.",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "De bons wordt hem door haar gegeven.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "De",
-        "the"
+    {
+      "id": "vancraenenbroeck2014_18c",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(18c)"},
+      "language": "dutc1256",
+      "primaryText": "De bons wordt hem door haar gegeven.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["De", "the"], ["bons", "knock"], ["wordt", "becomes"], ["hem", "him"], ["door", "by"],
+        ["haar", "her"], ["gegeven.", "given"]
       ],
-      [
-        "bons",
-        "knock"
+      "translation": "intended: 'He is being dumped by her.'",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "bons"],
+        ["form", "passive"]
       ],
-      [
-        "wordt",
-        "becomes"
-      ],
-      [
-        "hem",
-        "him"
-      ],
-      [
-        "door",
-        "by"
-      ],
-      [
-        "haar",
-        "her"
-      ],
-      [
-        "gegeven.",
-        "given"
-      ]
-    ],
-    "translation": "intended: 'He is being dumped by her.'",
-    "context": "",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "bons"
-      ],
-      [
-        "form",
-        "passive"
-      ]
-    ],
-    "comment": "The idiomatic reading is unavailable.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_19a",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(19a)"
+      "comment": "The idiomatic reading is unavailable.",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "Dat doet hem de das om.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Dat",
-        "that"
+    {
+      "id": "vancraenenbroeck2014_19a",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(19a)"},
+      "language": "dutc1256",
+      "primaryText": "Dat doet hem de das om.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dat", "that"], ["doet", "puts"], ["hem", "him"], ["de", "the"], ["das", "tie"],
+        ["om.", "on"]
       ],
-      [
-        "doet",
-        "puts"
+      "translation": "That is the end of him.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "das"],
+        ["form", "active"]
       ],
-      [
-        "hem",
-        "him"
-      ],
-      [
-        "de",
-        "the"
-      ],
-      [
-        "das",
-        "tie"
-      ],
-      [
-        "om.",
-        "on"
-      ]
-    ],
-    "translation": "That is the end of him.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "das"
-      ],
-      [
-        "form",
-        "active"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_19b",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(19b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "Hem wordt de das omgedaan.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Hem",
-        "him"
+    {
+      "id": "vancraenenbroeck2014_19b",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(19b)"},
+      "language": "dutc1256",
+      "primaryText": "Hem wordt de das omgedaan.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hem", "him"], ["wordt", "becomes"], ["de", "the"], ["das", "tie"], ["omgedaan.", "put.on"]
       ],
-      [
-        "wordt",
-        "becomes"
+      "translation": "It is the end of him.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "das"],
+        ["form", "passive"]
       ],
-      [
-        "de",
-        "the"
-      ],
-      [
-        "das",
-        "tie"
-      ],
-      [
-        "omgedaan.",
-        "put.on"
-      ]
-    ],
-    "translation": "It is the end of him.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "das"
-      ],
-      [
-        "form",
-        "passive"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_19c",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(19c)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "het hem omdoen van de das",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "het",
-        "the"
+    {
+      "id": "vancraenenbroeck2014_19c",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(19c)"},
+      "language": "dutc1256",
+      "primaryText": "het hem omdoen van de das",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["het", "the"], ["hem", "him"], ["omdoen", "on.put.INF"], ["van", "of"], ["de", "the"],
+        ["das", "tie"]
       ],
-      [
-        "hem",
-        "him"
+      "translation": "intended: 'the end of him'",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "das"],
+        ["form", "nominalizedInfinitive"]
       ],
-      [
-        "omdoen",
-        "on.put.INF"
-      ],
-      [
-        "van",
-        "of"
-      ],
-      [
-        "de",
-        "the"
-      ],
-      [
-        "das",
-        "tie"
-      ]
-    ],
-    "translation": "intended: 'the end of him'",
-    "context": "",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "das"
-      ],
-      [
-        "form",
-        "nominalizedInfinitive"
-      ]
-    ],
-    "comment": "The idiomatic reading is unavailable.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_20a",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(20a)"
+      "comment": "The idiomatic reading is unavailable.",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "Hij begraaft de strijdbijl.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Hij",
-        "he"
+    {
+      "id": "vancraenenbroeck2014_20a",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(20a)"},
+      "language": "dutc1256",
+      "primaryText": "Hij begraaft de strijdbijl.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hij", "he"], ["begraaft", "buries"], ["de", "the"], ["strijdbijl.", "hatchet"]
       ],
-      [
-        "begraaft",
-        "buries"
+      "translation": "He's burying the hatchet.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "strijdbijl"],
+        ["form", "active"]
       ],
-      [
-        "de",
-        "the"
-      ],
-      [
-        "strijdbijl.",
-        "hatchet"
-      ]
-    ],
-    "translation": "He's burying the hatchet.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "strijdbijl"
-      ],
-      [
-        "form",
-        "active"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_20b",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(20b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "het begraven van de strijdbijl",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "het",
-        "the"
+    {
+      "id": "vancraenenbroeck2014_20b",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(20b)"},
+      "language": "dutc1256",
+      "primaryText": "het begraven van de strijdbijl",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["het", "the"], ["begraven", "bury.INF"], ["van", "of"], ["de", "the"],
+        ["strijdbijl", "hatchet"]
       ],
-      [
-        "begraven",
-        "bury.INF"
+      "translation": "the burying of the hatchet",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "strijdbijl"],
+        ["form", "nominalizedInfinitive"]
       ],
-      [
-        "van",
-        "of"
-      ],
-      [
-        "de",
-        "the"
-      ],
-      [
-        "strijdbijl",
-        "hatchet"
-      ]
-    ],
-    "translation": "the burying of the hatchet",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "strijdbijl"
-      ],
-      [
-        "form",
-        "nominalizedInfinitive"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_20c",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(20c)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "De strijdbijl wordt begraven.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "De",
-        "the"
+    {
+      "id": "vancraenenbroeck2014_20c",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(20c)"},
+      "language": "dutc1256",
+      "primaryText": "De strijdbijl wordt begraven.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["De", "the"], ["strijdbijl", "hatchet"], ["wordt", "becomes"], ["begraven.", "buried"]
       ],
-      [
-        "strijdbijl",
-        "hatchet"
+      "translation": "The hatchet is being buried.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "strijdbijl"],
+        ["form", "passive"]
       ],
-      [
-        "wordt",
-        "becomes"
-      ],
-      [
-        "begraven.",
-        "buried"
-      ]
-    ],
-    "translation": "The hatchet is being buried.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "strijdbijl"
-      ],
-      [
-        "form",
-        "passive"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_21a",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(21a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "Hij breekt het ijs.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Hij",
-        "he"
+    {
+      "id": "vancraenenbroeck2014_21a",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(21a)"},
+      "language": "dutc1256",
+      "primaryText": "Hij breekt het ijs.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hij", "he"], ["breekt", "breaks"], ["het", "the"], ["ijs.", "ice"]
       ],
-      [
-        "breekt",
-        "breaks"
+      "translation": "He breaks the ice.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "ijs"],
+        ["form", "active"]
       ],
-      [
-        "het",
-        "the"
-      ],
-      [
-        "ijs.",
-        "ice"
-      ]
-    ],
-    "translation": "He breaks the ice.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "ijs"
-      ],
-      [
-        "form",
-        "active"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_21b",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(21b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "het breken van het ijs",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "het",
-        "the"
+    {
+      "id": "vancraenenbroeck2014_21b",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(21b)"},
+      "language": "dutc1256",
+      "primaryText": "het breken van het ijs",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["het", "the"], ["breken", "break.INF"], ["van", "of"], ["het", "the"], ["ijs", "ice"]
       ],
-      [
-        "breken",
-        "break.INF"
+      "translation": "the breaking of the ice",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "ijs"],
+        ["form", "nominalizedInfinitive"]
       ],
-      [
-        "van",
-        "of"
-      ],
-      [
-        "het",
-        "the"
-      ],
-      [
-        "ijs",
-        "ice"
-      ]
-    ],
-    "translation": "the breaking of the ice",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "ijs"
-      ],
-      [
-        "form",
-        "nominalizedInfinitive"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_21c",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(21c)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "Het ijs is gebroken.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Het",
-        "the"
+    {
+      "id": "vancraenenbroeck2014_21c",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(21c)"},
+      "language": "dutc1256",
+      "primaryText": "Het ijs is gebroken.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Het", "the"], ["ijs", "ice"], ["is", "is"], ["gebroken.", "broken"]
       ],
-      [
-        "ijs",
-        "ice"
+      "translation": "The ice is broken.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "ijs"],
+        ["form", "passive"]
       ],
-      [
-        "is",
-        "is"
-      ],
-      [
-        "gebroken.",
-        "broken"
-      ]
-    ],
-    "translation": "The ice is broken.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "ijs"
-      ],
-      [
-        "form",
-        "passive"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_22a",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(22a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "de begraving van de strijdbijl",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "de",
-        "the"
+    {
+      "id": "vancraenenbroeck2014_22a",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(22a)"},
+      "language": "dutc1256",
+      "primaryText": "de begraving van de strijdbijl",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["de", "the"], ["begraving", "bury.NOMINALIZER"], ["van", "of"], ["de", "the"],
+        ["strijdbijl", "hatchet"]
       ],
-      [
-        "begraving",
-        "bury.NOMINALIZER"
+      "translation": "intended: 'the burying of the hatchet'",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "strijdbijl"],
+        ["form", "nominalization"]
       ],
-      [
-        "van",
-        "of"
-      ],
-      [
-        "de",
-        "the"
-      ],
-      [
-        "strijdbijl",
-        "hatchet"
-      ]
-    ],
-    "translation": "intended: 'the burying of the hatchet'",
-    "context": "",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "strijdbijl"
-      ],
-      [
-        "form",
-        "nominalization"
-      ]
-    ],
-    "comment": "Only the literal reading remains.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vancraenenbroeck2014_22b",
-    "source": {
-      "bibkey": "van-craenenbroeck-2014",
-      "paperLabel": "(22b)"
+      "comment": "Only the literal reading remains.",
+      "verified": "page-image"
     },
-    "language": "dutc1256",
-    "primaryText": "de breking van het ijs",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "de",
-        "the"
+    {
+      "id": "vancraenenbroeck2014_22b",
+      "source": {"bibkey": "van-craenenbroeck-2014", "paperLabel": "(22b)"},
+      "language": "dutc1256",
+      "primaryText": "de breking van het ijs",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["de", "the"], ["breking", "break.NOMINALIZER"], ["van", "of"], ["het", "the"],
+        ["ijs", "ice"]
       ],
-      [
-        "breking",
-        "break.NOMINALIZER"
+      "translation": "intended: 'the breaking of the ice'",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["construction", "idiom"],
+        ["idiom", "ijs"],
+        ["form", "nominalization"]
       ],
-      [
-        "van",
-        "of"
-      ],
-      [
-        "het",
-        "the"
-      ],
-      [
-        "ijs",
-        "ice"
-      ]
-    ],
-    "translation": "intended: 'the breaking of the ice'",
-    "context": "",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "construction",
-        "idiom"
-      ],
-      [
-        "idiom",
-        "ijs"
-      ],
-      [
-        "form",
-        "nominalization"
-      ]
-    ],
-    "comment": "Only the literal reading remains.",
-    "verified": "page-image"
-  }
-]
+      "comment": "Only the literal reading remains.",
+      "verified": "page-image"
+    }
+  ]
+}

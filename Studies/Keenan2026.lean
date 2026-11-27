@@ -1,6 +1,13 @@
 module
 
-public import Linglib.Core.ModelTheory.Monadic
+public import Mathlib.ModelTheory.Complexity
+public import Mathlib.Basic.Finite.Sigma
+public import Mathlib.Basic.Finite.Sum
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.ModelTheory.Bundled
+public import Linglib.Core.ModelTheory.LanguageMap
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Set.Finite.Lattice
 public import Linglib.Semantics.Quantifier.Individual
 public import Linglib.Semantics.Quantifier.Polyadic
 public import Mathlib.ModelTheory.Graph

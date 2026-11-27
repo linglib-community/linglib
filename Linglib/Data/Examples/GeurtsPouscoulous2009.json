@@ -1,781 +1,493 @@
-[
-  {
-    "id": "geurtspouscoulous2009_t1_simple",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "Table 1 ∅"
-    },
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "Fred heard some of the Verdi operas.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "1"
-      ],
-      [
-        "embedding",
-        "simple"
-      ],
-      [
-        "rate1a",
-        "93"
-      ],
-      [
-        "rate1b",
-        "94"
+{
+  "features": [
+    {
+      "key": "quantifier",
+      "lean": "quantifier",
+      "type": "Quantifier",
+      "doc": "The quantifier embedding *some*.",
+      "levels": [
+        {
+          "name": "all",
+          "label": "all",
+          "doc": "*all*"
+        },
+        {
+          "name": "moreThanOne",
+          "label": "moreThanOne",
+          "doc": "*more than one*"
+        },
+        {
+          "name": "exactlyTwo",
+          "label": "exactlyTwo",
+          "doc": "*exactly two*"
+        },
+        {
+          "name": "notAll",
+          "label": "notAll",
+          "doc": "*not all*"
+        },
+        {
+          "name": "notMoreThanOne",
+          "label": "notMoreThanOne",
+          "doc": "*not more than one*"
+        }
       ]
-    ],
-    "comment": "Candidate inference: he didn't hear all of them. Experiment 1 sentence; the participants judged whether the candidate inference follows.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_t1_all",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "Table 1 all"
     },
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "All students heard some of the Verdi operas.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "1"
-      ],
-      [
-        "embedding",
-        "all"
-      ],
-      [
-        "rate1a",
-        "27"
-      ],
-      [
-        "rate1b",
-        "none"
+    {
+      "key": "trial",
+      "lean": "trialLabel",
+      "type": "TrialLabel",
+      "doc": "Which of the two pictures shown with *exactly two*, where the sentence has two.",
+      "levels": [
+        {
+          "name": "none",
+          "label": "none",
+          "doc": "the sentence has one picture"
+        },
+        {
+          "name": "a",
+          "label": "A",
+          "doc": "picture A"
+        },
+        {
+          "name": "b",
+          "label": "B",
+          "doc": "picture B"
+        }
       ]
-    ],
-    "comment": "Candidate inference: none of the students heard them all. Experiment 1 sentence; the participants judged whether the candidate inference follows.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_t1_must",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "Table 1 must"
+    }
+  ],
+  "examples": [
+    {
+      "id": "geurtspouscoulous2009_t1_simple",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "Table 1 ∅"},
+      "method": "experiment",
+      "language": "stan1293",
+      "primaryText": "Fred heard some of the Verdi operas.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "1"],
+        ["embedding", "simple"],
+        ["rate1a", "93"],
+        ["rate1b", "94"]
+      ],
+      "comment": "Candidate inference: he didn't hear all of them. Experiment 1 sentence; the participants judged whether the candidate inference follows.",
+      "verified": "page-image"
     },
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "Fred has to hear some of the Verdi operas.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "1"
+    {
+      "id": "geurtspouscoulous2009_t1_all",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "Table 1 all"},
+      "method": "experiment",
+      "language": "stan1293",
+      "primaryText": "All students heard some of the Verdi operas.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "1"],
+        ["embedding", "all"],
+        ["rate1a", "27"],
+        ["rate1b", "none"]
       ],
-      [
-        "embedding",
-        "must"
-      ],
-      [
-        "rate1a",
-        "3"
-      ],
-      [
-        "rate1b",
-        "none"
-      ]
-    ],
-    "comment": "Candidate inference: he isn't allowed to hear all of them. Experiment 1 sentence; the participants judged whether the candidate inference follows.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_t1_think",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "Table 1 think"
+      "comment": "Candidate inference: none of the students heard them all. Experiment 1 sentence; the participants judged whether the candidate inference follows.",
+      "verified": "page-image"
     },
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "Betty thinks Fred heard some of the Verdi operas.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "1"
+    {
+      "id": "geurtspouscoulous2009_t1_must",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "Table 1 must"},
+      "method": "experiment",
+      "language": "stan1293",
+      "primaryText": "Fred has to hear some of the Verdi operas.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "1"],
+        ["embedding", "must"],
+        ["rate1a", "3"],
+        ["rate1b", "none"]
       ],
-      [
-        "embedding",
-        "think"
-      ],
-      [
-        "rate1a",
-        "50"
-      ],
-      [
-        "rate1b",
-        "65"
-      ]
-    ],
-    "comment": "Candidate inference: she thinks he didn't hear all of them. Experiment 1 sentence; the participants judged whether the candidate inference follows.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_t1_want",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "Table 1 want"
+      "comment": "Candidate inference: he isn't allowed to hear all of them. Experiment 1 sentence; the participants judged whether the candidate inference follows.",
+      "verified": "page-image"
     },
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "Betty wants Fred to hear some of the Verdi operas.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "1"
+    {
+      "id": "geurtspouscoulous2009_t1_think",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "Table 1 think"},
+      "method": "experiment",
+      "language": "stan1293",
+      "primaryText": "Betty thinks Fred heard some of the Verdi operas.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "1"],
+        ["embedding", "think"],
+        ["rate1a", "50"],
+        ["rate1b", "65"]
       ],
-      [
-        "embedding",
-        "want"
-      ],
-      [
-        "rate1a",
-        "none"
-      ],
-      [
-        "rate1b",
-        "32"
-      ]
-    ],
-    "comment": "Candidate inference: she wants him not to hear all of them. Experiment 1 sentence; the participants judged whether the candidate inference follows.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex24",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(24)"
+      "comment": "Candidate inference: she thinks he didn't hear all of them. Experiment 1 sentence; the participants judged whether the candidate inference follows.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Some of the B's are in the box on the left.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "2"
+    {
+      "id": "geurtspouscoulous2009_t1_want",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "Table 1 want"},
+      "method": "experiment",
+      "language": "stan1293",
+      "primaryText": "Betty wants Fred to hear some of the Verdi operas.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "1"],
+        ["embedding", "want"],
+        ["rate1a", "none"],
+        ["rate1b", "32"]
       ],
-      [
-        "embedding",
-        "simple"
-      ],
-      [
-        "inferenceRate",
-        "62"
-      ],
-      [
-        "verificationRate",
-        "34"
-      ]
-    ],
-    "comment": "Verification situation: BBBAAA in the left box, CCC in the right; the scalar inference is a positive response in the inference task and a negative one in the verification task.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex26a",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(26a)"
+      "comment": "Candidate inference: she wants him not to hear all of them. Experiment 1 sentence; the participants judged whether the candidate inference follows.",
+      "verified": "page-image"
     },
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "All the squares are connected with some of the circles.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "3"
+    {
+      "id": "geurtspouscoulous2009_ex24",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(24)"},
+      "language": "stan1293",
+      "primaryText": "Some of the B's are in the box on the left.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "2"],
+        ["embedding", "simple"],
+        ["inferenceRate", "62"],
+        ["verificationRate", "34"]
       ],
-      [
-        "quantifier",
-        "all"
-      ],
-      [
-        "trial",
-        "none"
-      ],
-      [
-        "verificationRate",
-        "100"
-      ],
-      [
-        "predictedRate",
-        "0"
-      ],
-      [
-        "inferenceRate",
-        "46"
-      ],
-      [
-        "exp4Yes",
-        "95"
-      ],
-      [
-        "exp4No",
-        "5"
-      ],
-      [
-        "exp4Both",
-        "0"
-      ]
-    ],
-    "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex26b",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(26b)"
+      "comment": "Verification situation: BBBAAA in the left box, CCC in the right; the scalar inference is a positive response in the inference task and a negative one in the verification task.",
+      "verified": "page-image"
     },
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "There is more than one square that is connected with some of the circles.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "3"
+    {
+      "id": "geurtspouscoulous2009_ex26a",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(26a)"},
+      "method": "experiment",
+      "language": "stan1293",
+      "primaryText": "All the squares are connected with some of the circles.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "3"],
+        ["quantifier", "all"],
+        ["trial", "none"],
+        ["verificationRate", "100"],
+        ["predictedRate", "0"],
+        ["inferenceRate", "46"],
+        ["exp4Yes", "95"],
+        ["exp4No", "5"],
+        ["exp4Both", "0"]
       ],
-      [
-        "quantifier",
-        "moreThanOne"
-      ],
-      [
-        "trial",
-        "none"
-      ],
-      [
-        "verificationRate",
-        "100"
-      ],
-      [
-        "predictedRate",
-        "0"
-      ],
-      [
-        "inferenceRate",
-        "62"
-      ],
-      [
-        "exp4Yes",
-        "100"
-      ],
-      [
-        "exp4No",
-        "0"
-      ],
-      [
-        "exp4Both",
-        "0"
-      ]
-    ],
-    "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex27_a",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(27)"
+      "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict.",
+      "verified": "page-image"
     },
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "There are exactly two squares that are connected with some of the circles.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "3"
+    {
+      "id": "geurtspouscoulous2009_ex26b",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(26b)"},
+      "method": "experiment",
+      "language": "stan1293",
+      "primaryText": "There is more than one square that is connected with some of the circles.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "3"],
+        ["quantifier", "moreThanOne"],
+        ["trial", "none"],
+        ["verificationRate", "100"],
+        ["predictedRate", "0"],
+        ["inferenceRate", "62"],
+        ["exp4Yes", "100"],
+        ["exp4No", "0"],
+        ["exp4Both", "0"]
       ],
-      [
-        "quantifier",
-        "exactlyTwo"
-      ],
-      [
-        "trial",
-        "A"
-      ],
-      [
-        "verificationRate",
-        "100"
-      ],
-      [
-        "predictedRate",
-        "0"
-      ],
-      [
-        "inferenceRate",
-        "50"
-      ],
-      [
-        "exp4Yes",
-        "86"
-      ],
-      [
-        "exp4No",
-        "5"
-      ],
-      [
-        "exp4Both",
-        "9"
-      ]
-    ],
-    "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict. Trial with one square connected with some but not all of the circles and one with all.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex27_b",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(27)"
+      "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict.",
+      "verified": "page-image"
     },
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "There are exactly two squares that are connected with some of the circles.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "3"
+    {
+      "id": "geurtspouscoulous2009_ex27_a",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(27)"},
+      "method": "experiment",
+      "language": "stan1293",
+      "primaryText": "There are exactly two squares that are connected with some of the circles.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "3"],
+        ["quantifier", "exactlyTwo"],
+        ["trial", "A"],
+        ["verificationRate", "100"],
+        ["predictedRate", "0"],
+        ["inferenceRate", "50"],
+        ["exp4Yes", "86"],
+        ["exp4No", "5"],
+        ["exp4Both", "9"]
       ],
-      [
-        "quantifier",
-        "exactlyTwo"
-      ],
-      [
-        "trial",
-        "B"
-      ],
-      [
-        "verificationRate",
-        "0"
-      ],
-      [
-        "predictedRate",
-        "100"
-      ],
-      [
-        "inferenceRate",
-        "50"
-      ],
-      [
-        "exp4Yes",
-        "9"
-      ],
-      [
-        "exp4No",
-        "77"
-      ],
-      [
-        "exp4Both",
-        "14"
-      ]
-    ],
-    "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict. Trial with two squares connected with some but not all of the circles and one with all.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex25a",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(25a)"
+      "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict. Trial with one square connected with some but not all of the circles and one with all.",
+      "verified": "page-image"
     },
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "Not all the squares are connected with some of the circles.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "3"
+    {
+      "id": "geurtspouscoulous2009_ex27_b",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(27)"},
+      "method": "experiment",
+      "language": "stan1293",
+      "primaryText": "There are exactly two squares that are connected with some of the circles.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "3"],
+        ["quantifier", "exactlyTwo"],
+        ["trial", "B"],
+        ["verificationRate", "0"],
+        ["predictedRate", "100"],
+        ["inferenceRate", "50"],
+        ["exp4Yes", "9"],
+        ["exp4No", "77"],
+        ["exp4Both", "14"]
       ],
-      [
-        "quantifier",
-        "notAll"
-      ],
-      [
-        "trial",
-        "none"
-      ],
-      [
-        "verificationRate",
-        "4"
-      ],
-      [
-        "predictedRate",
-        "0"
-      ],
-      [
-        "inferenceRate",
-        "58"
-      ],
-      [
-        "exp4Yes",
-        "9"
-      ],
-      [
-        "exp4No",
-        "86"
-      ],
-      [
-        "exp4Both",
-        "5"
-      ]
-    ],
-    "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex25b",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(25b)"
+      "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict. Trial with two squares connected with some but not all of the circles and one with all.",
+      "verified": "page-image"
     },
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "There isn't more than one square that is connected with some of the circles.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "3"
+    {
+      "id": "geurtspouscoulous2009_ex25a",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(25a)"},
+      "method": "experiment",
+      "language": "stan1293",
+      "primaryText": "Not all the squares are connected with some of the circles.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "3"],
+        ["quantifier", "notAll"],
+        ["trial", "none"],
+        ["verificationRate", "4"],
+        ["predictedRate", "0"],
+        ["inferenceRate", "58"],
+        ["exp4Yes", "9"],
+        ["exp4No", "86"],
+        ["exp4Both", "5"]
       ],
-      [
-        "quantifier",
-        "notMoreThanOne"
-      ],
-      [
-        "trial",
-        "none"
-      ],
-      [
-        "verificationRate",
-        "4"
-      ],
-      [
-        "predictedRate",
-        "0"
-      ],
-      [
-        "inferenceRate",
-        "46"
-      ],
-      [
-        "exp4Yes",
-        "9"
-      ],
-      [
-        "exp4No",
-        "91"
-      ],
-      [
-        "exp4Both",
-        "0"
-      ]
-    ],
-    "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex29a",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(29a)"
+      "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "The circles and the squares are connected with each other.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "4"
+    {
+      "id": "geurtspouscoulous2009_ex25b",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(25b)"},
+      "method": "experiment",
+      "language": "stan1293",
+      "primaryText": "There isn't more than one square that is connected with some of the circles.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "3"],
+        ["quantifier", "notMoreThanOne"],
+        ["trial", "none"],
+        ["verificationRate", "4"],
+        ["predictedRate", "0"],
+        ["inferenceRate", "46"],
+        ["exp4Yes", "9"],
+        ["exp4No", "91"],
+        ["exp4Both", "0"]
       ],
-      [
-        "role",
-        "ambiguousControl"
-      ],
-      [
-        "exp4Both",
-        "82"
-      ]
-    ],
-    "comment": "Ambiguous control item of Experiment 4.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex29b",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(29b)"
+      "comment": "Experiment 3 sentence, run in Dutch; the verification situation makes the classical and the local-implicature construal conflict.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "The green and the orange figures are connected with each other.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "4"
+    {
+      "id": "geurtspouscoulous2009_ex29a",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(29a)"},
+      "language": "stan1293",
+      "primaryText": "The circles and the squares are connected with each other.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "4"],
+        ["role", "ambiguousControl"],
+        ["exp4Both", "82"]
       ],
-      [
-        "role",
-        "ambiguousControl"
-      ],
-      [
-        "exp4Both",
-        "73"
-      ]
-    ],
-    "comment": "Ambiguous control item of Experiment 4.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex29c",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(29c)"
+      "comment": "Ambiguous control item of Experiment 4.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "All the figures are orange and green.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "4"
+    {
+      "id": "geurtspouscoulous2009_ex29b",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(29b)"},
+      "language": "stan1293",
+      "primaryText": "The green and the orange figures are connected with each other.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "4"],
+        ["role", "ambiguousControl"],
+        ["exp4Both", "73"]
       ],
-      [
-        "role",
-        "ambiguousControl"
-      ],
-      [
-        "exp4Both",
-        "59"
-      ]
-    ],
-    "comment": "Ambiguous control item of Experiment 4.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex29d",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(29d)"
+      "comment": "Ambiguous control item of Experiment 4.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "There are green circles and squares.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "4"
+    {
+      "id": "geurtspouscoulous2009_ex29c",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(29c)"},
+      "language": "stan1293",
+      "primaryText": "All the figures are orange and green.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "4"],
+        ["role", "ambiguousControl"],
+        ["exp4Both", "59"]
       ],
-      [
-        "role",
-        "ambiguousControl"
-      ],
-      [
-        "exp4Both",
-        "77"
-      ]
-    ],
-    "comment": "Ambiguous control item of Experiment 4.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex29e",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(29e)"
+      "comment": "Ambiguous control item of Experiment 4.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "The circles and the squares have the same colour.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "4"
+    {
+      "id": "geurtspouscoulous2009_ex29d",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(29d)"},
+      "language": "stan1293",
+      "primaryText": "There are green circles and squares.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "4"],
+        ["role", "ambiguousControl"],
+        ["exp4Both", "77"]
       ],
-      [
-        "role",
-        "ambiguousControl"
-      ],
-      [
-        "exp4Both",
-        "59"
-      ]
-    ],
-    "comment": "Ambiguous control item of Experiment 4.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex31",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(31)"
+      "comment": "Ambiguous control item of Experiment 4.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Bob believes that Anna ate some of the cookies.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "none"
+    {
+      "id": "geurtspouscoulous2009_ex29e",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(29e)"},
+      "language": "stan1293",
+      "primaryText": "The circles and the squares have the same colour.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "4"],
+        ["role", "ambiguousControl"],
+        ["exp4Both", "59"]
       ],
-      [
-        "embedding",
-        "think"
-      ]
-    ],
-    "comment": "The global implicature is that Bob does not believe Anna ate all; with Bob opinionated on whether she did, it yields that he believes she did not.",
-    "verified": "page-image"
-  },
-  {
-    "id": "geurtspouscoulous2009_ex35",
-    "source": {
-      "bibkey": "geurts-pouscoulous-2009",
-      "paperLabel": "(35)"
+      "comment": "Ambiguous control item of Experiment 4.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "All the customers shot at some of the salesmen.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "experiment",
-        "none"
+    {
+      "id": "geurtspouscoulous2009_ex31",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(31)"},
+      "language": "stan1293",
+      "primaryText": "Bob believes that Anna ate some of the cookies.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "none"],
+        ["embedding", "think"]
       ],
-      [
-        "embedding",
-        "all"
-      ]
-    ],
-    "comment": "The global implicature is that not all customers shot at all salesmen; the local construal needs the implausible uniformity assumption that either all or none did.",
-    "verified": "page-image"
-  }
-]
+      "comment": "The global implicature is that Bob does not believe Anna ate all; with Bob opinionated on whether she did, it yields that he believes she did not.",
+      "verified": "page-image"
+    },
+    {
+      "id": "geurtspouscoulous2009_ex35",
+      "source": {"bibkey": "geurts-pouscoulous-2009", "paperLabel": "(35)"},
+      "language": "stan1293",
+      "primaryText": "All the customers shot at some of the salesmen.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["experiment", "none"],
+        ["embedding", "all"]
+      ],
+      "comment": "The global implicature is that not all customers shot at all salesmen; the local construal needs the implausible uniformity assumption that either all or none did.",
+      "verified": "page-image"
+    }
+  ]
+}

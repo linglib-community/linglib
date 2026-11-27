@@ -1,420 +1,456 @@
-[
-  {
-    "id": "reinhart1976_11a",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(11a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Rosa denied that Rosa has met the Shah.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [{"name": "coreference", "judgment": "unacceptable"}],
-    "paperFeatures": [
-      ["structure", "denied"],
-      ["np1", "0"],
-      ["np2", "110"],
-      ["pronouns", "none"]
-    ],
-    "comment": "Printed unmarked among the four sentences the rules generate (p. 14); the prose judges coreference: 'coreference is only possible in (11c) and (11d)'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_11b",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(11b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "She denied that Rosa has met the Shah.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [{"name": "coreference", "judgment": "unacceptable"}],
-    "paperFeatures": [
-      ["structure", "denied"],
-      ["np1", "0"],
-      ["np2", "110"],
-      ["pronouns", "np1"]
-    ],
-    "comment": "Printed unmarked among the four sentences the rules generate (p. 14); the prose judges coreference: 'coreference is only possible in (11c) and (11d)'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_11c",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(11c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Rosa denied that she has met the Shah.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "denied"],
-      ["np1", "0"],
-      ["np2", "110"],
-      ["pronouns", "np2"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_11d",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(11d)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "She denied that she has met the Shah.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "denied"],
-      ["np1", "0"],
-      ["np2", "110"],
-      ["pronouns", "both"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_IIa",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(IIa)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The man who traveled with Rosa denied that she met the Shah.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "relative"],
-      ["np1", "02111"],
-      ["np2", "110"],
-      ["pronouns", "np2"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_IIb",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(IIb)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The man who traveled with her denied that Rosa met the Shah.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "relative"],
-      ["np1", "02111"],
-      ["np2", "110"],
-      ["pronouns", "np1"]
-    ],
-    "comment": "repeated as (3)",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_12a",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(12a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "People who know Nixon hate him.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "relativeObject"],
-      ["np1", "0111"],
-      ["np2", "11"],
-      ["pronouns", "np2"]
-    ],
-    "comment": "from Lasnik (1976)",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_12b",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(12b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "People who know him hate Nixon.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "relativeObject"],
-      ["np1", "0111"],
-      ["np2", "11"],
-      ["pronouns", "np1"]
-    ],
-    "comment": "from Lasnik (1976)",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_12c",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(12c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "People who know Nixon hate Nixon.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "relativeObject"],
-      ["np1", "0111"],
-      ["np2", "11"],
-      ["pronouns", "none"]
-    ],
-    "comment": "from Lasnik (1976); marginal for some speakers, but not blocked, unlike (11a)",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_43a",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(43a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Near Dan, he saw a snake.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "preposedPP"],
-      ["np1", "01"],
-      ["np2", "1"],
-      ["pronouns", "np2"]
-    ],
-    "comment": "repeated from (20a)",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_43b",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(43b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Near Dan, Dan saw a snake.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "preposedPP"],
-      ["np1", "01"],
-      ["np2", "1"],
-      ["pronouns", "none"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_45",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(45)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Near him, Dan saw a snake.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "preposedPP"],
-      ["np1", "01"],
-      ["np2", "1"],
-      ["pronouns", "np1"]
-    ],
-    "comment": "repeated from (18a)",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_47",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(47)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "In Dan's apartment, Rosa showed him her new tricks.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "preposedPP"],
-      ["np1", "010"],
-      ["np2", "21"],
-      ["pronouns", "np2"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_44a",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(44a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "He was fired since McIntosh's weird habits had finally reached an intolerable stage.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "sententialPP"],
-      ["np1", "0"],
-      ["np2", "2100"],
-      ["pronouns", "np1"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_44b",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(44b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "McIntosh was fired since McIntosh's weird habits had finally reached an intolerable stage.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "sententialPP"],
-      ["np1", "0"],
-      ["np2", "2100"],
-      ["pronouns", "none"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_46",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(46)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "We had to fire him since McIntosh's weird habits had reached an intolerable stage.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "sententialPP"],
-      ["np1", "11"],
-      ["np2", "2100"],
-      ["pronouns", "np1"]
-    ],
-    "comment": "(19b) without its two occurrences of finally",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_48a",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(48a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I'm willing to give him 2 grand for Ben's car.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "verbalPP"],
-      ["np1", "111"],
-      ["np2", "11310"],
-      ["pronouns", "np1"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_51a",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(51a)"},
-    "reportedIn": null,
-    "language": "plat1254",
-    "primaryText": "namono azy ny anadahin-dRakoto",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Rakoto's sister killed him.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "vos"],
-      ["np1", "01"],
-      ["np2", "11"],
-      ["pronouns", "np1"]
-    ],
-    "comment": "from Ed Keenan, personal communication",
-    "verified": "page-image"
-  },
-  {
-    "id": "reinhart1976_51b",
-    "source": {"bibkey": "reinhart-1976", "paperLabel": "(51b)"},
-    "reportedIn": null,
-    "language": "plat1254",
-    "primaryText": "namono ny anadahin-dRakoto izy",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "he killed Rakoto's sister.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["structure", "vos"],
-      ["np1", "011"],
-      ["np2", "1"],
-      ["pronouns", "np2"]
-    ],
-    "comment": "from Ed Keenan, personal communication",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "pronouns",
+      "lean": "pronouns",
+      "type": "Pronouns",
+      "doc": "Which of the two noun phrases are pronouns.",
+      "levels": [
+        {
+          "name": "none",
+          "label": "none",
+          "doc": "neither"
+        },
+        {
+          "name": "np1",
+          "label": "np1",
+          "doc": "the first"
+        },
+        {
+          "name": "np2",
+          "label": "np2",
+          "doc": "the second"
+        },
+        {
+          "name": "both",
+          "label": "both",
+          "doc": "both"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "reinhart1976_11a",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(11a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Rosa denied that Rosa has met the Shah.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "coreference", "judgment": "unacceptable"}
+      ],
+      "paperFeatures": [
+        ["structure", "denied"],
+        ["np1", "0"],
+        ["np2", "110"],
+        ["pronouns", "none"]
+      ],
+      "comment": "Printed unmarked among the four sentences the rules generate (p. 14); the prose judges coreference: 'coreference is only possible in (11c) and (11d)'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_11b",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(11b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "She denied that Rosa has met the Shah.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "coreference", "judgment": "unacceptable"}
+      ],
+      "paperFeatures": [
+        ["structure", "denied"],
+        ["np1", "0"],
+        ["np2", "110"],
+        ["pronouns", "np1"]
+      ],
+      "comment": "Printed unmarked among the four sentences the rules generate (p. 14); the prose judges coreference: 'coreference is only possible in (11c) and (11d)'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_11c",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(11c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Rosa denied that she has met the Shah.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "denied"],
+        ["np1", "0"],
+        ["np2", "110"],
+        ["pronouns", "np2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_11d",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(11d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "She denied that she has met the Shah.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "denied"],
+        ["np1", "0"],
+        ["np2", "110"],
+        ["pronouns", "both"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_IIa",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(IIa)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The man who traveled with Rosa denied that she met the Shah.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "relative"],
+        ["np1", "02111"],
+        ["np2", "110"],
+        ["pronouns", "np2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_IIb",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(IIb)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The man who traveled with her denied that Rosa met the Shah.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "relative"],
+        ["np1", "02111"],
+        ["np2", "110"],
+        ["pronouns", "np1"]
+      ],
+      "comment": "repeated as (3)",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_12a",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(12a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "People who know Nixon hate him.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "relativeObject"],
+        ["np1", "0111"],
+        ["np2", "11"],
+        ["pronouns", "np2"]
+      ],
+      "comment": "from Lasnik (1976)",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_12b",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(12b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "People who know him hate Nixon.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "relativeObject"],
+        ["np1", "0111"],
+        ["np2", "11"],
+        ["pronouns", "np1"]
+      ],
+      "comment": "from Lasnik (1976)",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_12c",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(12c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "People who know Nixon hate Nixon.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "relativeObject"],
+        ["np1", "0111"],
+        ["np2", "11"],
+        ["pronouns", "none"]
+      ],
+      "comment": "from Lasnik (1976); marginal for some speakers, but not blocked, unlike (11a)",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_43a",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(43a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Near Dan, he saw a snake.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "preposedPP"],
+        ["np1", "01"],
+        ["np2", "1"],
+        ["pronouns", "np2"]
+      ],
+      "comment": "repeated from (20a)",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_43b",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(43b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Near Dan, Dan saw a snake.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "preposedPP"],
+        ["np1", "01"],
+        ["np2", "1"],
+        ["pronouns", "none"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_45",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(45)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Near him, Dan saw a snake.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "preposedPP"],
+        ["np1", "01"],
+        ["np2", "1"],
+        ["pronouns", "np1"]
+      ],
+      "comment": "repeated from (18a)",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_47",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(47)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "In Dan's apartment, Rosa showed him her new tricks.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "preposedPP"],
+        ["np1", "010"],
+        ["np2", "21"],
+        ["pronouns", "np2"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_44a",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(44a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "He was fired since McIntosh's weird habits had finally reached an intolerable stage.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "sententialPP"],
+        ["np1", "0"],
+        ["np2", "2100"],
+        ["pronouns", "np1"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_44b",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(44b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "McIntosh was fired since McIntosh's weird habits had finally reached an intolerable stage.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "sententialPP"],
+        ["np1", "0"],
+        ["np2", "2100"],
+        ["pronouns", "none"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_46",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(46)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "We had to fire him since McIntosh's weird habits had reached an intolerable stage.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "sententialPP"],
+        ["np1", "11"],
+        ["np2", "2100"],
+        ["pronouns", "np1"]
+      ],
+      "comment": "(19b) without its two occurrences of finally",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_48a",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(48a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I'm willing to give him 2 grand for Ben's car.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "verbalPP"],
+        ["np1", "111"],
+        ["np2", "11310"],
+        ["pronouns", "np1"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_51a",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(51a)"},
+      "reportedIn": null,
+      "language": "plat1254",
+      "primaryText": "namono azy ny anadahin-dRakoto",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Rakoto's sister killed him.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "vos"],
+        ["np1", "01"],
+        ["np2", "11"],
+        ["pronouns", "np1"]
+      ],
+      "comment": "from Ed Keenan, personal communication",
+      "verified": "page-image"
+    },
+    {
+      "id": "reinhart1976_51b",
+      "source": {"bibkey": "reinhart-1976", "paperLabel": "(51b)"},
+      "reportedIn": null,
+      "language": "plat1254",
+      "primaryText": "namono ny anadahin-dRakoto izy",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "he killed Rakoto's sister.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["structure", "vos"],
+        ["np1", "011"],
+        ["np2", "1"],
+        ["pronouns", "np2"]
+      ],
+      "comment": "from Ed Keenan, personal communication",
+      "verified": "page-image"
+    }
+  ]
+}

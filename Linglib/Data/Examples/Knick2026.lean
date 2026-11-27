@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Knick2026` — typed example data
@@ -144,5 +146,29 @@ def ex_8d : Datum :=
     paperFeatures := [("aktionsart", "stative"), ("adverbial", "tomorrow")] }
 
 def all : List Datum := [ex_7a, ex_7b, ex_7c, ex_7d, ex_8a, ex_8b, ex_8c, ex_8d]
+
+/-- The aspectual class of the predicate. -/
+inductive Aktionsart where
+  /-- eventive: an eventive predicate -/
+  | eventive
+  /-- stative: a stative predicate -/
+  | stative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `aktionsart`. -/
+def aktionsart (e : Datum) : Option Aktionsart :=
+  e.parse? "aktionsart" [("eventive", .eventive), ("stative", .stative)]
+
+/-- The temporal adverbial of the sentence. -/
+inductive Adverbial where
+  /-- now: *odoo* 'now' -/
+  | now
+  /-- tomorrow: *margaash* 'tomorrow' -/
+  | tomorrow
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `adverbial`. -/
+def adverbial (e : Datum) : Option Adverbial :=
+  e.parse? "adverbial" [("now", .now), ("tomorrow", .tomorrow)]
 
 end Knick2026.Examples

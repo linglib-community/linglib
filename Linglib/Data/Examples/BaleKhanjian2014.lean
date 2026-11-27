@@ -361,4 +361,16 @@ inductive NumberHead where
 def number (e : Datum) : Option NumberHead :=
   e.parse? "number" [("SG", .sg), ("PL", .pl)]
 
+/-- Whether the subject denotes one individual or several. -/
+inductive Subject where
+  /-- atom: a single individual -/
+  | atom
+  /-- group: a conjunction of two individuals -/
+  | group
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `subject`. -/
+def subject (e : Datum) : Option Subject :=
+  e.parse? "subject" [("atom", .atom), ("group", .group)]
+
 end BaleKhanjian2014.Examples

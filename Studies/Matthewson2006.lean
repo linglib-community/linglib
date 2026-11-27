@@ -163,7 +163,10 @@ instance (o : Ordering) : Decidable (Locatable o) := decidable_of_iff _ locatabl
 
 /-- Where a row's adverbial places the reference time. -/
 def adverbial (e : Datum) : Option Ordering :=
-  e.parse? "adverbial" [("past", .lt), ("present", .eq), ("future", .gt)]
+  (Examples.adverbial e).map fun
+    | .past => .lt
+    | .present => .eq
+    | .future => .gt
 
 /-- A superficially tenseless sentence accepts the present and past adverbials of (5) and rejects
 the future ones of (6). -/

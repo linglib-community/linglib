@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `ElliottNicolaeSauerland2022` — typed example data
@@ -446,5 +448,46 @@ def ex_82 : Datum :=
     paperFeatures := [("type", "PBI")] }
 
 def all : List Datum := [ex_2, ex_3, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24a, ex_24b, ex_24c, ex_25, ex_57, ex_59, ex_66, ex_68, n19i, ex_76, ex_79, ex_80, ex_81, ex_82]
+
+/-- The type of interrogative phrase. -/
+inductive PhraseType where
+  /-- SCI: a singular complex interrogative -/
+  | singularComplex
+  /-- PCI: a plural complex interrogative -/
+  | pluralComplex
+  /-- BI: a bare interrogative unmarked for number -/
+  | bare
+  /-- SBI: a singular bare interrogative -/
+  | singularBare
+  /-- PBI: a plural bare interrogative -/
+  | pluralBare
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `type`. -/
+def phraseType (e : Datum) : Option PhraseType :=
+  e.parse? "type" [("SCI", .singularComplex), ("PCI", .pluralComplex), ("BI", .bare), ("SBI", .singularBare),
+    ("PBI", .pluralBare)]
+
+/-- What the context settles about how many individuals satisfy the question's nucleus. -/
+inductive Context where
+  /-- exactlyOne: exactly one does -/
+  | exactlyOne
+  /-- atLeastOne: at least one does -/
+  | atLeastOne
+  /-- several: several do -/
+  | several
+  /-- noExistence: it is open whether any does -/
+  | noExistence
+  /-- twoWhispering: two people are heard whispering -/
+  | twoWhispering
+  /-- zeroOrSeveral: none or several do -/
+  | zeroOrSeveral
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `context`. -/
+def context (e : Datum) : Option Context :=
+  e.parse? "context" [("exactlyOne", .exactlyOne), ("atLeastOne", .atLeastOne), ("several", .several),
+    ("noExistence", .noExistence), ("twoWhispering", .twoWhispering),
+    ("zeroOrSeveral", .zeroOrSeveral)]
 
 end ElliottNicolaeSauerland2022.Examples

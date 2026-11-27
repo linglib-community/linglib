@@ -4,7 +4,8 @@ public import Studies.GuerriniWehbe2025
 public import Linglib.Semantics.Focus.Polarity
 public import Linglib.Semantics.Questions.Hamblin.Modal
 public import Linglib.Semantics.Questions.Hamblin.Exhaustification
-public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Hamblin.StrongestAnswer
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Data.Examples.BarLevBassi2026
 public import Linglib.Data.Examples.Readers

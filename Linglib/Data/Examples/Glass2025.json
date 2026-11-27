@@ -1,403 +1,217 @@
-[
-  {
-    "id": "glass2025_1a",
-    "source": {
-      "bibkey": "glass-2025",
-      "paperLabel": "(1a)"
-    },
-    "language": "stan1293",
-    "primaryText": "Alex knows there's a meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "There is a meeting.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "verb",
-        "know"
-      ],
-      [
-        "state",
-        "p"
+{
+  "features": [
+    {
+      "key": "state",
+      "lean": "state",
+      "type": "State",
+      "doc": "What the context settles about the complement.",
+      "levels": [
+        {
+          "name": "p",
+          "label": "p",
+          "doc": "the complement is settled true"
+        },
+        {
+          "name": "unsettled",
+          "label": "unsettled",
+          "doc": "the complement is not settled"
+        },
+        {
+          "name": "notP",
+          "label": "notP",
+          "doc": "the complement is settled false"
+        }
       ]
-    ],
-    "comment": "The inference that there is a meeting projects through questions and negation, (1b)–(1c).",
-    "verified": "page-image"
-  },
-  {
-    "id": "glass2025_2a_p",
-    "source": {
-      "bibkey": "glass-2025",
-      "paperLabel": "(2a)"
+    }
+  ],
+  "examples": [
+    {
+      "id": "glass2025_1a",
+      "source": {"bibkey": "glass-2025", "paperLabel": "(1a)"},
+      "language": "stan1293",
+      "primaryText": "Alex knows there's a meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "There is a meeting.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "know"],
+        ["state", "p"]
+      ],
+      "comment": "The inference that there is a meeting projects through questions and negation, (1b)–(1c).",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Alex thinks there's a meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "There is a meeting.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "verb",
-        "think"
+    {
+      "id": "glass2025_2a_p",
+      "source": {"bibkey": "glass-2025", "paperLabel": "(2a)"},
+      "language": "stan1293",
+      "primaryText": "Alex thinks there's a meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "There is a meeting.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "think"],
+        ["state", "p"]
       ],
-      [
-        "state",
-        "p"
-      ]
-    ],
-    "comment": "Whether there is a meeting depends on Alex's trustworthiness and the plausibility of a meeting.",
-    "verified": "page-image"
-  },
-  {
-    "id": "glass2025_2a_unsettled",
-    "source": {
-      "bibkey": "glass-2025",
-      "paperLabel": "(2a)"
+      "comment": "Whether there is a meeting depends on Alex's trustworthiness and the plausibility of a meeting.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Alex thinks there's a meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "It is open whether there is a meeting.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "verb",
-        "think"
+    {
+      "id": "glass2025_2a_unsettled",
+      "source": {"bibkey": "glass-2025", "paperLabel": "(2a)"},
+      "language": "stan1293",
+      "primaryText": "Alex thinks there's a meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "It is open whether there is a meeting.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "think"],
+        ["state", "unsettled"]
       ],
-      [
-        "state",
-        "unsettled"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "glass2025_2a_notP",
-    "source": {
-      "bibkey": "glass-2025",
-      "paperLabel": "(2a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Alex thinks there's a meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "There is no meeting.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "verb",
-        "think"
+    {
+      "id": "glass2025_2a_notP",
+      "source": {"bibkey": "glass-2025", "paperLabel": "(2a)"},
+      "language": "stan1293",
+      "primaryText": "Alex thinks there's a meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "There is no meeting.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "think"],
+        ["state", "notP"]
       ],
-      [
-        "state",
-        "notP"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "glass2025_4_notP",
-    "source": {
-      "bibkey": "glass-2023",
-      "paperLabel": "(4)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "mand1415",
-    "primaryText": "Māma yǐwéi wǒ bìng le",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Māma",
-        "mom"
+    {
+      "id": "glass2025_4_notP",
+      "source": {"bibkey": "glass-2023", "paperLabel": "(4)"},
+      "reportedIn": {"bibkey": "glass-2025", "paperLabel": "(4)"},
+      "language": "mand1415",
+      "primaryText": "Māma yǐwéi wǒ bìng le",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Māma", "mom"], ["yǐwéi", "yǐwéi"], ["wǒ", "1sg"], ["bìng", "sick"], ["le", "asp"]
       ],
-      [
-        "yǐwéi",
-        "yǐwéi"
+      "translation": "Mom is under the impression that I'm sick.",
+      "context": "The speaker faked illness to avoid school.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "yiwei"],
+        ["state", "notP"]
       ],
-      [
-        "wǒ",
-        "1sg"
-      ],
-      [
-        "bìng",
-        "sick"
-      ],
-      [
-        "le",
-        "asp"
-      ]
-    ],
-    "translation": "Mom is under the impression that I'm sick.",
-    "context": "The speaker faked illness to avoid school.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "verb",
-        "yiwei"
-      ],
-      [
-        "state",
-        "notP"
-      ]
-    ],
-    "comment": "Excerpted from Glass 2023, p. 2.",
-    "reportedIn": {
-      "bibkey": "glass-2025",
-      "paperLabel": "(4)"
+      "comment": "Excerpted from Glass 2023, p. 2.",
+      "verified": "page-image"
     },
-    "verified": "page-image"
-  },
-  {
-    "id": "glass2025_4_p",
-    "source": {
-      "bibkey": "glass-2023",
-      "paperLabel": "(4)"
+    {
+      "id": "glass2025_4_p",
+      "source": {"bibkey": "glass-2023", "paperLabel": "(4)"},
+      "reportedIn": {"bibkey": "glass-2025", "paperLabel": "(4)"},
+      "language": "mand1415",
+      "primaryText": "Māma yǐwéi wǒ bìng le",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Māma", "mom"], ["yǐwéi", "yǐwéi"], ["wǒ", "1sg"], ["bìng", "sick"], ["le", "asp"]
+      ],
+      "translation": "Mom is under the impression that I'm sick.",
+      "context": "The speaker is definitely sick.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "yiwei"],
+        ["state", "p"]
+      ],
+      "comment": "Nonsensical if the speaker is definitely sick.",
+      "verified": "page-image"
     },
-    "language": "mand1415",
-    "primaryText": "Māma yǐwéi wǒ bìng le",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Māma",
-        "mom"
+    {
+      "id": "glass2025_5_notP",
+      "source": {"bibkey": "glass-2023", "paperLabel": "(5)"},
+      "reportedIn": {"bibkey": "glass-2025", "paperLabel": "(5)"},
+      "language": "mand1415",
+      "primaryText": "Māma rènwéi wǒ bìng le",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Māma", "mom"], ["rènwéi", "think"], ["wǒ", "1sg"], ["bìng", "sick"], ["le", "asp"]
       ],
-      [
-        "yǐwéi",
-        "yǐwéi"
+      "translation": "Mom thinks I'm sick.",
+      "context": "The speaker faked illness to avoid school.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "renwei"],
+        ["state", "notP"]
       ],
-      [
-        "wǒ",
-        "1sg"
-      ],
-      [
-        "bìng",
-        "sick"
-      ],
-      [
-        "le",
-        "asp"
-      ]
-    ],
-    "translation": "Mom is under the impression that I'm sick.",
-    "context": "The speaker is definitely sick.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "verb",
-        "yiwei"
-      ],
-      [
-        "state",
-        "p"
-      ]
-    ],
-    "comment": "Nonsensical if the speaker is definitely sick.",
-    "reportedIn": {
-      "bibkey": "glass-2025",
-      "paperLabel": "(4)"
+      "comment": "Adapted from Glass 2023, p. 2.",
+      "verified": "page-image"
     },
-    "verified": "page-image"
-  },
-  {
-    "id": "glass2025_5_notP",
-    "source": {
-      "bibkey": "glass-2023",
-      "paperLabel": "(5)"
+    {
+      "id": "glass2025_5_unsettled",
+      "source": {"bibkey": "glass-2023", "paperLabel": "(5)"},
+      "reportedIn": {"bibkey": "glass-2025", "paperLabel": "(5)"},
+      "language": "mand1415",
+      "primaryText": "Māma rènwéi wǒ bìng le",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Māma", "mom"], ["rènwéi", "think"], ["wǒ", "1sg"], ["bìng", "sick"], ["le", "asp"]
+      ],
+      "translation": "Mom thinks I'm sick.",
+      "context": "The speaker feels exhausted and thinks she may indeed be sick, citing her mother's belief as evidence.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "renwei"],
+        ["state", "unsettled"]
+      ],
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "mand1415",
-    "primaryText": "Māma rènwéi wǒ bìng le",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Māma",
-        "mom"
+    {
+      "id": "glass2025_7",
+      "source": {"bibkey": "glass-2023", "paperLabel": "(7)"},
+      "reportedIn": {"bibkey": "glass-2025", "paperLabel": "(7)"},
+      "language": "mand1415",
+      "primaryText": "wǒ bù zhīdào yǒu-méi-yǒu défēn, dànshì zhège qiúyuán yǐwéi défēn le",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["wǒ", "I"], ["bù", "not"], ["zhīdào", "know"], ["yǒu-méi-yǒu", "have-not-have"],
+        ["défēn", "score"], ["dànshì", "but"], ["zhège", "this-cl"], ["qiúyuán", "ball-player"],
+        ["yǐwéi", "yǐwéi"], ["défēn", "score"], ["le", "asp"]
       ],
-      [
-        "rènwéi",
-        "think"
+      "translation": "I don't know whether the player scored or not, but he's under the impression that he did.",
+      "context": "The athlete caught the ball on the edge of the end zone and celebrates while the referees debate the catch; the speaker does not know whether he scored.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "yiwei"],
+        ["state", "unsettled"]
       ],
-      [
-        "wǒ",
-        "1sg"
-      ],
-      [
-        "bìng",
-        "sick"
-      ],
-      [
-        "le",
-        "asp"
-      ]
-    ],
-    "translation": "Mom thinks I'm sick.",
-    "context": "The speaker faked illness to avoid school.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "verb",
-        "renwei"
-      ],
-      [
-        "state",
-        "notP"
-      ]
-    ],
-    "comment": "Adapted from Glass 2023, p. 2.",
-    "reportedIn": {
-      "bibkey": "glass-2025",
-      "paperLabel": "(5)"
-    },
-    "verified": "page-image"
-  },
-  {
-    "id": "glass2025_5_unsettled",
-    "source": {
-      "bibkey": "glass-2023",
-      "paperLabel": "(5)"
-    },
-    "language": "mand1415",
-    "primaryText": "Māma rènwéi wǒ bìng le",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Māma",
-        "mom"
-      ],
-      [
-        "rènwéi",
-        "think"
-      ],
-      [
-        "wǒ",
-        "1sg"
-      ],
-      [
-        "bìng",
-        "sick"
-      ],
-      [
-        "le",
-        "asp"
-      ]
-    ],
-    "translation": "Mom thinks I'm sick.",
-    "context": "The speaker feels exhausted and thinks she may indeed be sick, citing her mother's belief as evidence.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "verb",
-        "renwei"
-      ],
-      [
-        "state",
-        "unsettled"
-      ]
-    ],
-    "comment": "",
-    "reportedIn": {
-      "bibkey": "glass-2025",
-      "paperLabel": "(5)"
-    },
-    "verified": "page-image"
-  },
-  {
-    "id": "glass2025_7",
-    "source": {
-      "bibkey": "glass-2023",
-      "paperLabel": "(7)"
-    },
-    "language": "mand1415",
-    "primaryText": "wǒ bù zhīdào yǒu-méi-yǒu défēn, dànshì zhège qiúyuán yǐwéi défēn le",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "wǒ",
-        "I"
-      ],
-      [
-        "bù",
-        "not"
-      ],
-      [
-        "zhīdào",
-        "know"
-      ],
-      [
-        "yǒu-méi-yǒu",
-        "have-not-have"
-      ],
-      [
-        "défēn",
-        "score"
-      ],
-      [
-        "dànshì",
-        "but"
-      ],
-      [
-        "zhège",
-        "this-cl"
-      ],
-      [
-        "qiúyuán",
-        "ball-player"
-      ],
-      [
-        "yǐwéi",
-        "yǐwéi"
-      ],
-      [
-        "défēn",
-        "score"
-      ],
-      [
-        "le",
-        "asp"
-      ]
-    ],
-    "translation": "I don't know whether the player scored or not, but he's under the impression that he did.",
-    "context": "The athlete caught the ball on the edge of the end zone and celebrates while the referees debate the catch; the speaker does not know whether he scored.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "verb",
-        "yiwei"
-      ],
-      [
-        "state",
-        "unsettled"
-      ]
-    ],
-    "comment": "Glass 2023, p. 6. Odd if the speaker has no reason to question the athlete's belief; a presupposition of not-p would contradict the ignorance expressed in the first clause.",
-    "reportedIn": {
-      "bibkey": "glass-2025",
-      "paperLabel": "(7)"
-    },
-    "verified": "page-image"
-  }
-]
+      "comment": "Glass 2023, p. 6. Odd if the speaker has no reason to question the athlete's belief; a presupposition of not-p would contradict the ignorance expressed in the first clause.",
+      "verified": "page-image"
+    }
+  ]
+}

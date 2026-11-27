@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Languages.Turkish.Pronouns
+public import Linglib.Syntax.Category.Pronoun.Interrogative
 public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!

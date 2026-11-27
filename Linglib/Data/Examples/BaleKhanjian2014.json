@@ -17,540 +17,558 @@
           "doc": "PL"
         }
       ]
+    },
+    {
+      "key": "subject",
+      "lean": "subject",
+      "type": "Subject",
+      "doc": "Whether the subject denotes one individual or several.",
+      "levels": [
+        {
+          "name": "atom",
+          "label": "atom",
+          "doc": "a single individual"
+        },
+        {
+          "name": "group",
+          "label": "group",
+          "doc": "a conjunction of two individuals"
+        }
+      ]
     }
   ],
   "examples": [
-  {
-    "id": "balekhanjian2014_3",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(3)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Dəgha vazets.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Dəgha", "boy(SG)"], ["vaze-ts", "run-PST"]
-    ],
-    "translation": "One or more boys ran.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "existential"],
-      ["number", "SG"],
-      ["definite", "no"],
-      ["reading", "general"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_4a",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(4a)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Johnə dəgha e.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-ə", "John-DEF"], ["dəgha", "boy(SG)"], ["e", "is"]
-    ],
-    "translation": "John is a boy.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "predicative"],
-      ["subject", "atom"],
-      ["number", "SG"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_4b",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(4b)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Johnə yev Bradə dəgha en.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-ə", "John-DEF"], ["yev", "and"], ["Brad-ə", "Brad-DEF"], ["dəgha", "boy(SG)"],
-      ["en", "are"]
-    ],
-    "translation": "John and Brad are boys.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "predicative"],
-      ["subject", "group"],
-      ["number", "SG"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_5a",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(5a)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Johnə yev Bradə yergu dəghaner en.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-ə", "John-DEF"], ["yev", "and"], ["Brad-ə", "Brad-DEF"], ["yergu", "two"],
-      ["dəgha-ner", "boy-PL"], ["en", "are"]
-    ],
-    "translation": "John and Brad are two boys.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "predicative"],
-      ["subject", "group"],
-      ["number", "PL"],
-      ["numeral", "two"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_5b",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(5b)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Johnə yev Bradə meg dəgha en/e.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-ə", "John-DEF"], ["yev", "and"], ["Brad-ə", "Brad-DEF"], ["meg", "one"],
-      ["dəgha", "boy"], ["en/e", "are/is"]
-    ],
-    "translation": "John and Brad are one boy.",
-    "context": "",
-    "judgment": "questionable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "predicative"],
-      ["subject", "group"],
-      ["number", "SG"],
-      ["numeral", "one"]
-    ],
-    "comment": "No distributive reading, as a distributive operator on the predicate would give.",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_5c",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(5c)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Johnə yev Bradə dəgha mən e.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-ə", "John-DEF"], ["yev", "and"], ["Brad-ə", "Brad-DEF"], ["dəgha", "boy"],
-      ["mən", "INDEF(SG)"], ["e", "is"]
-    ],
-    "translation": "John and Brad are a boy.",
-    "context": "",
-    "judgment": "questionable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "predicativeIndefinite"],
-      ["subject", "group"],
-      ["number", "SG"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_6a",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(6a)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Johnə yev Bradə dəghaner en.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-ə", "John-DEF"], ["yev", "and"], ["Brad-ə", "Brad-DEF"], ["dəgha-ner", "boy-PL"],
-      ["en", "are"]
-    ],
-    "translation": "John and Brad are boys.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "predicative"],
-      ["subject", "group"],
-      ["number", "PL"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_6b",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(6b)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Johnə dəghaner e.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-ə", "John-DEF"], ["dəgha-ner", "boy-PL"], ["e", "is"]
-    ],
-    "translation": "John is boys.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "predicative"],
-      ["subject", "atom"],
-      ["number", "PL"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_7",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(7)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Dəghaner vazetsin.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Dəgha-ner", "boy-PL"], ["vaze-ts-in", "run-PST-3PL"]
-    ],
-    "translation": "Two or more boys ran.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "existential"],
-      ["number", "PL"],
-      ["definite", "no"],
-      ["reading", "strictPlural"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_8a",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(8a)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Amen mart vor bəzdigner uner vodki gajnetsav.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Amen", "all"], ["mart", "person"], ["vor", "that"], ["bəzdig-ner", "child-PL"],
-      ["uner", "had"], ["vodk-i", "foot-DAT"], ["gajne-tsav", "stand.up-PST"]
-    ],
-    "translation": "Everyone that had two or more children stood up.",
-    "context": "",
-    "judgment": "marginal",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "restrictor"],
-      ["number", "PL"],
-      ["reading", "strictPlural"]
-    ],
-    "comment": "Speakers prefer the singular in restrictors; when forced, the plural keeps its strict reading.",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_8b",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(8b)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Amen mart vor bəzdig uner vodki gajnetsav.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Amen", "all"], ["mart", "person"], ["vor", "that"], ["bəzdig", "child(SG)"],
-      ["uner", "had"], ["vodk-i", "foot-DAT"], ["gajne-tsav", "stand.up-PST"]
-    ],
-    "translation": "Everyone that had one or more children stood up.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "restrictor"],
-      ["number", "SG"],
-      ["reading", "general"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_10a",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(10a)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Yergu dəgha vazets.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yergu", "two"], ["dəgha", "boy(SG)"], ["vaze-ts", "run-PST"]
-    ],
-    "translation": "Two boys ran.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "existential"],
-      ["number", "SG"],
-      ["numeral", "two"],
-      ["definite", "no"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_10b",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(10b)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Yergu dəghaner vazetsin.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yergu", "two"], ["dəgha-ner", "boy-PL"], ["vaze-ts-in", "run-PST-3PL"]
-    ],
-    "translation": "Two boys ran.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "existential"],
-      ["number", "PL"],
-      ["numeral", "two"],
-      ["definite", "no"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_11b",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(11b)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Dəghan vazets.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Dəgha-n", "boy(SG)-DEF"], ["vaze-ts", "run-PST"]
-    ],
-    "translation": "The (single) boy ran.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "definite"],
-      ["number", "SG"],
-      ["definite", "yes"],
-      ["reading", "strictSingular"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_13a",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(13a)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Amen dəgha ir kirkerə kənadz e.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Amen", "every"], ["dəgha", "boy"], ["ir", "3SG.HUMAN.GEN"], ["kirk-er-ə", "book-PL-DEF"],
-      ["kənadz", "buy.PRF"], ["e", "be.3SG"]
-    ],
-    "translation": "Every boy has bought his (two or more) books.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "boundPossessive"],
-      ["number", "PL"],
-      ["definite", "yes"],
-      ["reading", "strictPlural"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_13b",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(13b)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Amen dəgha ir kirkə kənadz e.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Amen", "every"], ["dəgha", "boy"], ["ir", "3SG.HUMAN.GEN"], ["kirk-ə", "book-DEF"],
-      ["kənadz", "buy.PRF"], ["e", "be.3SG"]
-    ],
-    "translation": "Every boy has bought his (one) book.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "boundPossessive"],
-      ["number", "SG"],
-      ["definite", "yes"],
-      ["reading", "strictSingular"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_14a",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(14a)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Yergu dəghan vazets.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yergu", "two"], ["dəgha-n", "boy(SG)-DEF"], ["vaze-ts", "run-PST"]
-    ],
-    "translation": "The two boys ran.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "definite"],
-      ["number", "SG"],
-      ["numeral", "two"],
-      ["definite", "yes"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_14b",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(14b)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Yergu dəghanerə vazetsin.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yergu", "two"], ["dəgha-ner-ə", "boy-PL-DEF"], ["vaze-ts-in", "run-PST-3PL"]
-    ],
-    "translation": "The two boys ran.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "definite"],
-      ["number", "PL"],
-      ["numeral", "two"],
-      ["definite", "yes"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_24a",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(24a)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Dəgha chi vazets.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Dəgha", "boy(SG)"], ["chi", "not"], ["vaze-ts", "run-PST"]
-    ],
-    "translation": "No boys ran.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "negated"],
-      ["number", "SG"],
-      ["definite", "no"],
-      ["scopeAmbiguous", "no"]
-    ],
-    "comment": "Only the reading with negation over the existential.",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_25a",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(25a)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Dəghaner chi vazetsin.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Dəgha-ner", "boy-PL"], ["chi", "not"], ["vaze-ts-in", "run-PST-3PL"]
-    ],
-    "translation": "No boys ran/Some boys didn't run.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "negated"],
-      ["number", "PL"],
-      ["definite", "no"],
-      ["scopeAmbiguous", "yes"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_26a",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(26a)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Yergu dəgha chi vazets.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yergu", "two"], ["dəgha", "boy(SG)"], ["chi", "not"], ["vaze-ts", "run-PST"]
-    ],
-    "translation": "Two boys didn't run.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "negated"],
-      ["number", "SG"],
-      ["numeral", "two"],
-      ["definite", "no"],
-      ["scopeAmbiguous", "yes"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "balekhanjian2014_27a",
-    "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(27a)"},
-    "reportedIn": null,
-    "language": "homs1234",
-    "primaryText": "Yergu dəghaner chi vazetsin.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yergu", "two"], ["dəgha-ner", "boy-PL"], ["chi", "not"], ["vaze-ts-in", "run-PST-3PL"]
-    ],
-    "translation": "Two boys didn't run.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "negated"],
-      ["number", "PL"],
-      ["numeral", "two"],
-      ["definite", "no"],
-      ["scopeAmbiguous", "yes"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  }
-]
+    {
+      "id": "balekhanjian2014_3",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(3)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Dəgha vazets.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dəgha", "boy(SG)"], ["vaze-ts", "run-PST"]
+      ],
+      "translation": "One or more boys ran.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "existential"],
+        ["number", "SG"],
+        ["definite", "no"],
+        ["reading", "general"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_4a",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(4a)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Johnə dəgha e.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ə", "John-DEF"], ["dəgha", "boy(SG)"], ["e", "is"]
+      ],
+      "translation": "John is a boy.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "predicative"],
+        ["subject", "atom"],
+        ["number", "SG"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_4b",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(4b)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Johnə yev Bradə dəgha en.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ə", "John-DEF"], ["yev", "and"], ["Brad-ə", "Brad-DEF"], ["dəgha", "boy(SG)"],
+        ["en", "are"]
+      ],
+      "translation": "John and Brad are boys.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "predicative"],
+        ["subject", "group"],
+        ["number", "SG"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_5a",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(5a)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Johnə yev Bradə yergu dəghaner en.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ə", "John-DEF"], ["yev", "and"], ["Brad-ə", "Brad-DEF"], ["yergu", "two"],
+        ["dəgha-ner", "boy-PL"], ["en", "are"]
+      ],
+      "translation": "John and Brad are two boys.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "predicative"],
+        ["subject", "group"],
+        ["number", "PL"],
+        ["numeral", "two"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_5b",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(5b)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Johnə yev Bradə meg dəgha en/e.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ə", "John-DEF"], ["yev", "and"], ["Brad-ə", "Brad-DEF"], ["meg", "one"],
+        ["dəgha", "boy"], ["en/e", "are/is"]
+      ],
+      "translation": "John and Brad are one boy.",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "predicative"],
+        ["subject", "group"],
+        ["number", "SG"],
+        ["numeral", "one"]
+      ],
+      "comment": "No distributive reading, as a distributive operator on the predicate would give.",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_5c",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(5c)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Johnə yev Bradə dəgha mən e.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ə", "John-DEF"], ["yev", "and"], ["Brad-ə", "Brad-DEF"], ["dəgha", "boy"],
+        ["mən", "INDEF(SG)"], ["e", "is"]
+      ],
+      "translation": "John and Brad are a boy.",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "predicativeIndefinite"],
+        ["subject", "group"],
+        ["number", "SG"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_6a",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(6a)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Johnə yev Bradə dəghaner en.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ə", "John-DEF"], ["yev", "and"], ["Brad-ə", "Brad-DEF"], ["dəgha-ner", "boy-PL"],
+        ["en", "are"]
+      ],
+      "translation": "John and Brad are boys.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "predicative"],
+        ["subject", "group"],
+        ["number", "PL"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_6b",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(6b)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Johnə dəghaner e.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ə", "John-DEF"], ["dəgha-ner", "boy-PL"], ["e", "is"]
+      ],
+      "translation": "John is boys.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "predicative"],
+        ["subject", "atom"],
+        ["number", "PL"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_7",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(7)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Dəghaner vazetsin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dəgha-ner", "boy-PL"], ["vaze-ts-in", "run-PST-3PL"]
+      ],
+      "translation": "Two or more boys ran.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "existential"],
+        ["number", "PL"],
+        ["definite", "no"],
+        ["reading", "strictPlural"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_8a",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(8a)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Amen mart vor bəzdigner uner vodki gajnetsav.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Amen", "all"], ["mart", "person"], ["vor", "that"], ["bəzdig-ner", "child-PL"],
+        ["uner", "had"], ["vodk-i", "foot-DAT"], ["gajne-tsav", "stand.up-PST"]
+      ],
+      "translation": "Everyone that had two or more children stood up.",
+      "context": "",
+      "judgment": "marginal",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "restrictor"],
+        ["number", "PL"],
+        ["reading", "strictPlural"]
+      ],
+      "comment": "Speakers prefer the singular in restrictors; when forced, the plural keeps its strict reading.",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_8b",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(8b)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Amen mart vor bəzdig uner vodki gajnetsav.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Amen", "all"], ["mart", "person"], ["vor", "that"], ["bəzdig", "child(SG)"],
+        ["uner", "had"], ["vodk-i", "foot-DAT"], ["gajne-tsav", "stand.up-PST"]
+      ],
+      "translation": "Everyone that had one or more children stood up.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "restrictor"],
+        ["number", "SG"],
+        ["reading", "general"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_10a",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(10a)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Yergu dəgha vazets.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Yergu", "two"], ["dəgha", "boy(SG)"], ["vaze-ts", "run-PST"]
+      ],
+      "translation": "Two boys ran.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "existential"],
+        ["number", "SG"],
+        ["numeral", "two"],
+        ["definite", "no"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_10b",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(10b)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Yergu dəghaner vazetsin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Yergu", "two"], ["dəgha-ner", "boy-PL"], ["vaze-ts-in", "run-PST-3PL"]
+      ],
+      "translation": "Two boys ran.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "existential"],
+        ["number", "PL"],
+        ["numeral", "two"],
+        ["definite", "no"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_11b",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(11b)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Dəghan vazets.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dəgha-n", "boy(SG)-DEF"], ["vaze-ts", "run-PST"]
+      ],
+      "translation": "The (single) boy ran.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "definite"],
+        ["number", "SG"],
+        ["definite", "yes"],
+        ["reading", "strictSingular"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_13a",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(13a)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Amen dəgha ir kirkerə kənadz e.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Amen", "every"], ["dəgha", "boy"], ["ir", "3SG.HUMAN.GEN"], ["kirk-er-ə", "book-PL-DEF"],
+        ["kənadz", "buy.PRF"], ["e", "be.3SG"]
+      ],
+      "translation": "Every boy has bought his (two or more) books.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "boundPossessive"],
+        ["number", "PL"],
+        ["definite", "yes"],
+        ["reading", "strictPlural"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_13b",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(13b)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Amen dəgha ir kirkə kənadz e.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Amen", "every"], ["dəgha", "boy"], ["ir", "3SG.HUMAN.GEN"], ["kirk-ə", "book-DEF"],
+        ["kənadz", "buy.PRF"], ["e", "be.3SG"]
+      ],
+      "translation": "Every boy has bought his (one) book.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "boundPossessive"],
+        ["number", "SG"],
+        ["definite", "yes"],
+        ["reading", "strictSingular"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_14a",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(14a)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Yergu dəghan vazets.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Yergu", "two"], ["dəgha-n", "boy(SG)-DEF"], ["vaze-ts", "run-PST"]
+      ],
+      "translation": "The two boys ran.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "definite"],
+        ["number", "SG"],
+        ["numeral", "two"],
+        ["definite", "yes"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_14b",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(14b)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Yergu dəghanerə vazetsin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Yergu", "two"], ["dəgha-ner-ə", "boy-PL-DEF"], ["vaze-ts-in", "run-PST-3PL"]
+      ],
+      "translation": "The two boys ran.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "definite"],
+        ["number", "PL"],
+        ["numeral", "two"],
+        ["definite", "yes"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_24a",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(24a)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Dəgha chi vazets.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dəgha", "boy(SG)"], ["chi", "not"], ["vaze-ts", "run-PST"]
+      ],
+      "translation": "No boys ran.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "negated"],
+        ["number", "SG"],
+        ["definite", "no"],
+        ["scopeAmbiguous", "no"]
+      ],
+      "comment": "Only the reading with negation over the existential.",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_25a",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(25a)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Dəghaner chi vazetsin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dəgha-ner", "boy-PL"], ["chi", "not"], ["vaze-ts-in", "run-PST-3PL"]
+      ],
+      "translation": "No boys ran/Some boys didn't run.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "negated"],
+        ["number", "PL"],
+        ["definite", "no"],
+        ["scopeAmbiguous", "yes"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_26a",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(26a)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Yergu dəgha chi vazets.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Yergu", "two"], ["dəgha", "boy(SG)"], ["chi", "not"], ["vaze-ts", "run-PST"]
+      ],
+      "translation": "Two boys didn't run.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "negated"],
+        ["number", "SG"],
+        ["numeral", "two"],
+        ["definite", "no"],
+        ["scopeAmbiguous", "yes"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "balekhanjian2014_27a",
+      "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(27a)"},
+      "reportedIn": null,
+      "language": "homs1234",
+      "primaryText": "Yergu dəghaner chi vazetsin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Yergu", "two"], ["dəgha-ner", "boy-PL"], ["chi", "not"], ["vaze-ts-in", "run-PST-3PL"]
+      ],
+      "translation": "Two boys didn't run.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "negated"],
+        ["number", "PL"],
+        ["numeral", "two"],
+        ["definite", "no"],
+        ["scopeAmbiguous", "yes"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
 }

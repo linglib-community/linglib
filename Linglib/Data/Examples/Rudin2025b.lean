@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Rudin2025b` — typed example data
@@ -250,5 +252,31 @@ def ex82a : Datum :=
     paperFeatures := [("verb", "ask"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")] }
 
 def all : List Datum := [ex6b_wonder, ex7b_claim, ex8_whisper, ex10_shout, ex12a, ex18a, ex37a, ex42a, ex48, ex49, ex69a, ex69b, ex70a, ex70b, ex74a, ex75, ex78a, ex82a]
+
+/-- The volume of the utterance. -/
+inductive Volume where
+  /-- neutral: neutral volume -/
+  | neutral
+  /-- loud: loud -/
+  | loud
+  /-- whispered: whispered -/
+  | whispered
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `volume`. -/
+def volume (e : Datum) : Option Volume :=
+  e.parse? "volume" [("neutral", .neutral), ("loud", .loud), ("whispered", .whispered)]
+
+/-- The sentence mood. -/
+inductive Mood where
+  /-- declarative: declarative -/
+  | declarative
+  /-- interrogative: polar interrogative -/
+  | interrogative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `mood`. -/
+def mood (e : Datum) : Option Mood :=
+  e.parse? "mood" [("declarative", .declarative), ("interrogative", .interrogative)]
 
 end Rudin2025b.Examples

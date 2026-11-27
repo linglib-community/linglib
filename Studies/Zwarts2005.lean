@@ -326,7 +326,9 @@ a measure on which *towards* has paths to concatenate. -/
 theorem bounded_iff_telic [Preorder α] {d : Loc → α} {a b c : Loc} (hab : d b < d a)
     (hbc : d c < d b) (R : Set Loc) :
     ∀ e ∈ Examples.all, ∀ ph ∈ e.parse? "preposition" prepositions,
-      ∀ t ∈ e.parse? "aspect" [("telic", true), ("atelic", false)],
+      ∀ t ∈ (Examples.aspect e).map fun
+        | .telic => true
+        | .atelic => false,
         (Bounded Concat (ph.denotation R d) ↔ t = true) := by
   have key : ∀ ph : Phrase, Bounded Concat (ph.denotation R d) ↔ ph ≠ .towards := by
     rintro (_ | _ | _ | _)

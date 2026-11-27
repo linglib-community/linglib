@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Cohen2013` — typed example data
@@ -68,5 +70,19 @@ def ex_25a : Datum :=
     paperFeatures := [("construction", "verb conjunction")] }
 
 def all : List Datum := [ex_12b, ex_17a, ex_17b, ex_25a]
+
+/-- The construction in which the indefinite takes its apparent wide or narrow scope. -/
+inductive Construction where
+  /-- generic: a generic sentence -/
+  | generic
+  /-- habitual: a habitual sentence -/
+  | habitual
+  /-- verb conjunction: an extensional verb conjoined with an intensional one -/
+  | verbConjunction
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `construction`. -/
+def construction (e : Datum) : Option Construction :=
+  e.parse? "construction" [("generic", .generic), ("habitual", .habitual), ("verb conjunction", .verbConjunction)]
 
 end Cohen2013.Examples

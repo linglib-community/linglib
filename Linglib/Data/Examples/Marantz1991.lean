@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Marantz1991` — typed example data
@@ -256,5 +258,22 @@ def m1991_5c : Datum :=
     paperFeatures := [("clause", "transitive"), ("subject", "ERG"), ("object", "ABS")] }
 
 def all : List Datum := [m1991_1a, m1991_1b, m1991_1c, m1991_1d, m1991_2a, m1991_2b, m1991_3a, m1991_3b, m1991_4a, m1991_4a_erg, m1991_4b, m1991_4c, m1991_4d, m1991_5a, m1991_5b, m1991_5c]
+
+/-- The type of clause an example illustrates. -/
+inductive ClauseType where
+  /-- transitive: a transitive clause -/
+  | transitive
+  /-- unergative: an unergative clause -/
+  | unergative
+  /-- unaccusative: an unaccusative clause -/
+  | unaccusative
+  /-- psych: a clause with a psychological predicate and a dative experiencer -/
+  | psych
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `clause`. -/
+def clauseType (e : Datum) : Option ClauseType :=
+  e.parse? "clause" [("transitive", .transitive), ("unergative", .unergative), ("unaccusative", .unaccusative),
+    ("psych", .psych)]
 
 end Marantz1991.Examples

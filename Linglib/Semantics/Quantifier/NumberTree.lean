@@ -5,7 +5,7 @@ public import Linglib.Semantics.Quantifier.Invariants
 public import Mathlib.Order.Hom.CompleteLattice
 public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Core.Data.Fintype.EquivFin
-public import Linglib.Core.Data.Set.Card
+public import Mathlib.Data.Set.Card
 public import Linglib.Core.Logic.Function.DependsOn
 public import Mathlib.Data.Finset.NatAntidiagonal
 public import Mathlib.Algebra.BigOperators.Intervals

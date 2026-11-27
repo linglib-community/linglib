@@ -387,8 +387,10 @@ instance (n : Option Number) (s : Finset Woman) : Decidable ((s : Set Woman) ∈
 
 -- (41), (42), (65), (66)
 theorem rows_agree : ∀ e ∈ Examples.all,
-    ∀ n ∈ e.parse? "whNumber"
-      [("singular", some .singular), ("plural", some .plural), ("neutral", none)],
+    ∀ n ∈ (Examples.whNumber e).map fun
+      | .singular => some .singular
+      | .plural => some .plural
+      | .neutral => none,
       ∀ s ∈ e.parse? "situation"
         ([("none", ∅), ("one", {mary}), ("two", {mary, sue})] : List (String × Finset Woman)),
         (e.judgment = .acceptable ↔ (s : Set Woman) ∈ whFelicitous n) := by

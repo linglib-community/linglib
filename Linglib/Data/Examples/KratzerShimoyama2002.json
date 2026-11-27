@@ -1,303 +1,474 @@
-[
-  {
-    "id": "kratzershimoyama2002_ex23a",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23a)"},
-    "language": "stan1295",
-    "primaryText": "Was hat sie nicht WEM gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["sie", "she"], ["nicht", "not"], ["WEM", "to.whom"], ["gezeigt", "shown"]],
-    "translation": "What didn't she show to whom?",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "nicht"], ["feature", "Neg"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex23b",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23b)"},
-    "language": "stan1295",
-    "primaryText": "Was hat sie nie WEM gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["sie", "she"], ["nie", "never"], ["WEM", "to.whom"], ["gezeigt", "shown"]],
-    "translation": "What didn't she show to whom?",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "nie"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex23c",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23c)"},
-    "language": "stan1295",
-    "primaryText": "Was hat niemand WEM gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["niemand", "nobody"], ["WEM", "to.whom"], ["gezeigt", "shown"]],
-    "translation": "What did nobody show to whom?",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "niemand"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex23d",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23d)"},
-    "language": "stan1295",
-    "primaryText": "Was hat fast jeder WEM gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["fast", "almost"], ["jeder", "everybody"], ["WEM", "to.whom"], ["gezeigt", "shown"]],
-    "translation": "What did almost everybody show to whom?",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "fast jeder"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex23e",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23e)"},
-    "language": "stan1295",
-    "primaryText": "Was hat (irgend)jemand WEM gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["(irgend)jemand", "somebody"], ["WEM", "to.whom"], ["gezeigt", "shown"]],
-    "translation": "What did somebody show to whom?",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "(irgend)jemand"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex23f",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23f)"},
-    "language": "stan1295",
-    "primaryText": "Was hat der Hans WEM gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["der", "the"], ["Hans", "Hans"], ["WEM", "to.whom"], ["gezeigt", "shown"]],
-    "translation": "What did Hans show to whom?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "der Hans"], ["feature", "none"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex23g",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23g)"},
-    "language": "stan1295",
-    "primaryText": "Was hat sie damals WEM gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["sie", "she"], ["damals", "then"], ["WEM", "whom"], ["gezeigt", "shown"]],
-    "translation": "What did she show whom at the time?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "damals"], ["feature", "none"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex24a",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(24a)"},
-    "language": "stan1295",
-    "primaryText": "Was hat sie WEM nicht gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["sie", "she"], ["WEM", "to.whom"], ["nicht", "not"], ["gezeigt", "shown"]],
-    "translation": "What didn't she show to whom?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "nicht"], ["feature", "Neg"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex24b",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(24b)"},
-    "language": "stan1295",
-    "primaryText": "Was hat sie WEM nie gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["sie", "she"], ["WEM", "to.whom"], ["nie", "never"], ["gezeigt", "shown"]],
-    "translation": "What didn't she show to whom?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "nie"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex24c",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(24c)"},
-    "language": "stan1295",
-    "primaryText": "Was hat WEM niemand gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["WEM", "to.whom"], ["niemand", "nobody"], ["gezeigt", "shown"]],
-    "translation": "What did nobody show to whom?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "niemand"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex24d",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(24d)"},
-    "language": "stan1295",
-    "primaryText": "Was hat WEM fast jeder gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["WEM", "to.whom"], ["fast", "almost"], ["jeder", "everybody"], ["gezeigt", "shown"]],
-    "translation": "What did almost everybody show to whom?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "fast jeder"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex24e",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(24e)"},
-    "language": "stan1295",
-    "primaryText": "Was hat WEM (irgend)jemand gezeigt?",
-    "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["WEM", "to.whom"], ["(irgend)jemand", "somebody"], ["gezeigt", "shown"]],
-    "translation": "What did somebody show to whom?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["intervener", "(irgend)jemand"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex12",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(12)"},
-    "language": "stan1295",
-    "primaryText": "Niemand musste irgendjemand einladen.",
-    "discourseSegments": [],
-    "glossedTokens": [["Niemand", "nobody"], ["musste", "had.to"], ["irgendjemand", "irgend-one"], ["einladen", "invite"]],
-    "translation": "Nobody had to invite anybody.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["context", "nobody"], ["intervener", "niemand"], ["feature", "exists"]],
-    "comment": "Under a negative quantifier the distribution requirement disappears.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex13",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(13)"},
-    "language": "stan1295",
-    "primaryText": "Ich bezweifle, dass sie je irgendjemand einladen durfte.",
-    "discourseSegments": [],
-    "glossedTokens": [["Ich", "I"], ["bezweifle", "doubt"], ["dass", "that"], ["sie", "she"], ["je", "ever"], ["irgendjemand", "irgend-one"], ["einladen", "invite"], ["durfte", "could"]],
-    "translation": "I doubt that she was ever allowed to invite anybody.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["context", "doubtVerb"]],
-    "comment": "Under a downward-entailing verb the distribution requirement disappears.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex16",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(16)"},
-    "language": "stan1295",
-    "primaryText": "Du kannst dir irgendeins von diesen beiden Büchern leihen.",
-    "discourseSegments": [],
-    "glossedTokens": [["Du", "you"], ["kannst", "can"], ["dir", "you.DAT"], ["irgendeins", "irgend-one"], ["von", "of"], ["diesen", "those"], ["beiden", "two"], ["Büchern", "books"], ["leihen", "borrow"]],
-    "translation": "You can borrow one of those two books, it doesn't matter which.",
-    "context": "Two books are under discussion, an algebra book and a biology book.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["context", "modalPossibility"]],
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex17",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(17)"},
-    "language": "stan1295",
-    "primaryText": "Du musst dir irgendeins von diesen beiden Büchern leihen.",
-    "discourseSegments": [],
-    "glossedTokens": [["Du", "you"], ["musst", "must"], ["dir", "you.DAT"], ["irgendeins", "irgend-one"], ["von", "of"], ["diesen", "those"], ["beiden", "two"], ["Büchern", "books"], ["leihen", "borrow"]],
-    "translation": "You must borrow one of those two books, it doesn't matter which.",
-    "context": "Two books are under discussion, an algebra book and a biology book.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["context", "modalNecessity"]],
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex18",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(18)"},
-    "language": "stan1295",
-    "primaryText": "Du kannst dir auf keinen Fall irgendeins von diesen beiden Büchern leihen.",
-    "discourseSegments": [],
-    "glossedTokens": [["Du", "you"], ["kannst", "can"], ["dir", "you.DAT"], ["auf", "in"], ["keinen", "no"], ["Fall", "case"], ["irgendeins", "irgend-one"], ["von", "of"], ["diesen", "those"], ["beiden", "two"], ["Büchern", "books"], ["leihen", "borrow"]],
-    "translation": "In no case can you borrow any one of those two books.",
-    "context": "Two books are under discussion, an algebra book and a biology book.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["context", "nobody"], ["intervener", "auf keinen Fall"], ["feature", "exists"]],
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex21",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(21)"},
-    "language": "stan1295",
-    "primaryText": "Ich hab’ nicht irgendwas gelesen.",
-    "discourseSegments": [],
-    "glossedTokens": [["Ich", "I"], ["hab’", "have"], ["nicht", "not"], ["irgendwas", "irgend-what"], ["gelesen", "read"]],
-    "translation": "I didn't read anything.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["context", "negation"], ["intervener", "nicht"], ["feature", "Neg"]],
-    "comment": "With irgend stressed the sentence has the reading 'I didn't read just ANYthing' (footnote 8).",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzershimoyama2002_ex22",
-    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(22)"},
-    "language": "stan1295",
-    "primaryText": "Der Lehrer hat gefragt, ob Hans irgendein Buch gelesen hat.",
-    "discourseSegments": [],
-    "glossedTokens": [["Der", "the"], ["Lehrer", "teacher"], ["hat", "has"], ["gefragt", "asked"], ["ob", "whether"], ["Hans", "Hans"], ["irgendein", "irgend-one"], ["Buch", "book"], ["gelesen", "read"], ["hat", "has"]],
-    "translation": "The teacher asked whether Hans read any book.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["context", "question"]],
-    "comment": "The paper marks as impossible the reading on which the teacher asked whether {Hans read book a, Hans read book b, ...}: irgendein cannot associate with [Q].",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "context",
+      "lean": "context",
+      "type": "Context",
+      "doc": "The environment in which *irgendein* occurs.",
+      "levels": [
+        {
+          "name": "question",
+          "label": "question",
+          "doc": "an embedded question"
+        },
+        {
+          "name": "doubtVerb",
+          "label": "doubtVerb",
+          "doc": "the complement of *bezweifeln* 'doubt'"
+        },
+        {
+          "name": "modalPossibility",
+          "label": "modalPossibility",
+          "doc": "under a possibility modal"
+        },
+        {
+          "name": "modalNecessity",
+          "label": "modalNecessity",
+          "doc": "under a necessity modal"
+        },
+        {
+          "name": "nobody",
+          "label": "nobody",
+          "doc": "under *niemand* 'nobody'"
+        },
+        {
+          "name": "negation",
+          "label": "negation",
+          "doc": "under inflectional negation *nicht*"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "kratzershimoyama2002_ex23a",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23a)"},
+      "language": "stan1295",
+      "primaryText": "Was hat sie nicht WEM gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["sie", "she"], ["nicht", "not"], ["WEM", "to.whom"],
+        ["gezeigt", "shown"]
+      ],
+      "translation": "What didn't she show to whom?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "nicht"],
+        ["feature", "Neg"],
+        ["order", "intervener-first"]
+      ],
+      "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex23b",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23b)"},
+      "language": "stan1295",
+      "primaryText": "Was hat sie nie WEM gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["sie", "she"], ["nie", "never"], ["WEM", "to.whom"],
+        ["gezeigt", "shown"]
+      ],
+      "translation": "What didn't she show to whom?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "nie"],
+        ["feature", "exists"],
+        ["order", "intervener-first"]
+      ],
+      "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex23c",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23c)"},
+      "language": "stan1295",
+      "primaryText": "Was hat niemand WEM gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["niemand", "nobody"], ["WEM", "to.whom"],
+        ["gezeigt", "shown"]
+      ],
+      "translation": "What did nobody show to whom?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "niemand"],
+        ["feature", "exists"],
+        ["order", "intervener-first"]
+      ],
+      "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex23d",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23d)"},
+      "language": "stan1295",
+      "primaryText": "Was hat fast jeder WEM gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["fast", "almost"], ["jeder", "everybody"],
+        ["WEM", "to.whom"], ["gezeigt", "shown"]
+      ],
+      "translation": "What did almost everybody show to whom?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "fast jeder"],
+        ["feature", "exists"],
+        ["order", "intervener-first"]
+      ],
+      "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex23e",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23e)"},
+      "language": "stan1295",
+      "primaryText": "Was hat (irgend)jemand WEM gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["(irgend)jemand", "somebody"], ["WEM", "to.whom"],
+        ["gezeigt", "shown"]
+      ],
+      "translation": "What did somebody show to whom?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "(irgend)jemand"],
+        ["feature", "exists"],
+        ["order", "intervener-first"]
+      ],
+      "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex23f",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23f)"},
+      "language": "stan1295",
+      "primaryText": "Was hat der Hans WEM gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["der", "the"], ["Hans", "Hans"], ["WEM", "to.whom"],
+        ["gezeigt", "shown"]
+      ],
+      "translation": "What did Hans show to whom?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "der Hans"],
+        ["feature", "none"],
+        ["order", "intervener-first"]
+      ],
+      "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex23g",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(23g)"},
+      "language": "stan1295",
+      "primaryText": "Was hat sie damals WEM gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["sie", "she"], ["damals", "then"], ["WEM", "whom"],
+        ["gezeigt", "shown"]
+      ],
+      "translation": "What did she show whom at the time?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "damals"],
+        ["feature", "none"],
+        ["order", "intervener-first"]
+      ],
+      "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex24a",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(24a)"},
+      "language": "stan1295",
+      "primaryText": "Was hat sie WEM nicht gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["sie", "she"], ["WEM", "to.whom"], ["nicht", "not"],
+        ["gezeigt", "shown"]
+      ],
+      "translation": "What didn't she show to whom?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "nicht"],
+        ["feature", "Neg"],
+        ["order", "wh-first"]
+      ],
+      "comment": "The in-situ wh-phrase scrambled over the intervener.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex24b",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(24b)"},
+      "language": "stan1295",
+      "primaryText": "Was hat sie WEM nie gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["sie", "she"], ["WEM", "to.whom"], ["nie", "never"],
+        ["gezeigt", "shown"]
+      ],
+      "translation": "What didn't she show to whom?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "nie"],
+        ["feature", "exists"],
+        ["order", "wh-first"]
+      ],
+      "comment": "The in-situ wh-phrase scrambled over the intervener.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex24c",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(24c)"},
+      "language": "stan1295",
+      "primaryText": "Was hat WEM niemand gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["WEM", "to.whom"], ["niemand", "nobody"],
+        ["gezeigt", "shown"]
+      ],
+      "translation": "What did nobody show to whom?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "niemand"],
+        ["feature", "exists"],
+        ["order", "wh-first"]
+      ],
+      "comment": "The in-situ wh-phrase scrambled over the intervener.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex24d",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(24d)"},
+      "language": "stan1295",
+      "primaryText": "Was hat WEM fast jeder gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["WEM", "to.whom"], ["fast", "almost"],
+        ["jeder", "everybody"], ["gezeigt", "shown"]
+      ],
+      "translation": "What did almost everybody show to whom?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "fast jeder"],
+        ["feature", "exists"],
+        ["order", "wh-first"]
+      ],
+      "comment": "The in-situ wh-phrase scrambled over the intervener.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex24e",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(24e)"},
+      "language": "stan1295",
+      "primaryText": "Was hat WEM (irgend)jemand gezeigt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Was", "what"], ["hat", "has"], ["WEM", "to.whom"], ["(irgend)jemand", "somebody"],
+        ["gezeigt", "shown"]
+      ],
+      "translation": "What did somebody show to whom?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["intervener", "(irgend)jemand"],
+        ["feature", "exists"],
+        ["order", "wh-first"]
+      ],
+      "comment": "The in-situ wh-phrase scrambled over the intervener.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex12",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(12)"},
+      "language": "stan1295",
+      "primaryText": "Niemand musste irgendjemand einladen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Niemand", "nobody"], ["musste", "had.to"], ["irgendjemand", "irgend-one"],
+        ["einladen", "invite"]
+      ],
+      "translation": "Nobody had to invite anybody.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["context", "nobody"],
+        ["intervener", "niemand"],
+        ["feature", "exists"]
+      ],
+      "comment": "Under a negative quantifier the distribution requirement disappears.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex13",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(13)"},
+      "language": "stan1295",
+      "primaryText": "Ich bezweifle, dass sie je irgendjemand einladen durfte.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ich", "I"], ["bezweifle", "doubt"], ["dass", "that"], ["sie", "she"], ["je", "ever"],
+        ["irgendjemand", "irgend-one"], ["einladen", "invite"], ["durfte", "could"]
+      ],
+      "translation": "I doubt that she was ever allowed to invite anybody.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["context", "doubtVerb"]
+      ],
+      "comment": "Under a downward-entailing verb the distribution requirement disappears.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex16",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(16)"},
+      "language": "stan1295",
+      "primaryText": "Du kannst dir irgendeins von diesen beiden Büchern leihen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Du", "you"], ["kannst", "can"], ["dir", "you.DAT"], ["irgendeins", "irgend-one"],
+        ["von", "of"], ["diesen", "those"], ["beiden", "two"], ["Büchern", "books"],
+        ["leihen", "borrow"]
+      ],
+      "translation": "You can borrow one of those two books, it doesn't matter which.",
+      "context": "Two books are under discussion, an algebra book and a biology book.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["context", "modalPossibility"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex17",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(17)"},
+      "language": "stan1295",
+      "primaryText": "Du musst dir irgendeins von diesen beiden Büchern leihen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Du", "you"], ["musst", "must"], ["dir", "you.DAT"], ["irgendeins", "irgend-one"],
+        ["von", "of"], ["diesen", "those"], ["beiden", "two"], ["Büchern", "books"],
+        ["leihen", "borrow"]
+      ],
+      "translation": "You must borrow one of those two books, it doesn't matter which.",
+      "context": "Two books are under discussion, an algebra book and a biology book.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["context", "modalNecessity"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex18",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(18)"},
+      "language": "stan1295",
+      "primaryText": "Du kannst dir auf keinen Fall irgendeins von diesen beiden Büchern leihen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Du", "you"], ["kannst", "can"], ["dir", "you.DAT"], ["auf", "in"], ["keinen", "no"],
+        ["Fall", "case"], ["irgendeins", "irgend-one"], ["von", "of"], ["diesen", "those"],
+        ["beiden", "two"], ["Büchern", "books"], ["leihen", "borrow"]
+      ],
+      "translation": "In no case can you borrow any one of those two books.",
+      "context": "Two books are under discussion, an algebra book and a biology book.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["context", "nobody"],
+        ["intervener", "auf keinen Fall"],
+        ["feature", "exists"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex21",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(21)"},
+      "language": "stan1295",
+      "primaryText": "Ich hab’ nicht irgendwas gelesen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ich", "I"], ["hab’", "have"], ["nicht", "not"], ["irgendwas", "irgend-what"],
+        ["gelesen", "read"]
+      ],
+      "translation": "I didn't read anything.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["context", "negation"],
+        ["intervener", "nicht"],
+        ["feature", "Neg"]
+      ],
+      "comment": "With irgend stressed the sentence has the reading 'I didn't read just ANYthing' (footnote 8).",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzershimoyama2002_ex22",
+      "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "(22)"},
+      "language": "stan1295",
+      "primaryText": "Der Lehrer hat gefragt, ob Hans irgendein Buch gelesen hat.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Der", "the"], ["Lehrer", "teacher"], ["hat", "has"], ["gefragt", "asked"],
+        ["ob", "whether"], ["Hans", "Hans"], ["irgendein", "irgend-one"], ["Buch", "book"],
+        ["gelesen", "read"], ["hat", "has"]
+      ],
+      "translation": "The teacher asked whether Hans read any book.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["context", "question"]
+      ],
+      "comment": "The paper marks as impossible the reading on which the teacher asked whether {Hans read book a, Hans read book b, ...}: irgendein cannot associate with [Q].",
+      "verified": "page-image"
+    }
+  ]
+}

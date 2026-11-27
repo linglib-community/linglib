@@ -272,9 +272,16 @@ structure Row where
   deriving DecidableEq, Repr
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let quant ← ex.parse? "quantifier" [("all", Quant.all), ("moreThanOne", .moreThanOne),
-    ("exactlyTwo", .exactlyTwo), ("notAll", .notAll), ("notMoreThanOne", .notMoreThanOne)]
-  let trial ← ex.parse? "trial" [("none", Trial.none), ("A", .a), ("B", .b)]
+  let quant ← (Examples.quantifier ex).map fun
+    | .all => Quant.all
+    | .moreThanOne => .moreThanOne
+    | .exactlyTwo => .exactlyTwo
+    | .notAll => .notAll
+    | .notMoreThanOne => .notMoreThanOne
+  let trial ← (Examples.trialLabel ex).map fun
+    | .none => Trial.none
+    | .a => .a
+    | .b => .b
   let observed ← ex.nat? "verificationRate"
   let predicted ← ex.nat? "predictedRate"
   pure ⟨quant, trial, decide (50 ≤ observed), decide (50 ≤ predicted)⟩

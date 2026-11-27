@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `KratzerShimoyama2002` — typed example data
@@ -301,5 +303,26 @@ def ex22 : Datum :=
     paperFeatures := [("context", "question")] }
 
 def all : List Datum := [ex23a, ex23b, ex23c, ex23d, ex23e, ex23f, ex23g, ex24a, ex24b, ex24c, ex24d, ex24e, ex12, ex13, ex16, ex17, ex18, ex21, ex22]
+
+/-- The environment in which *irgendein* occurs. -/
+inductive Context where
+  /-- question: an embedded question -/
+  | question
+  /-- doubtVerb: the complement of *bezweifeln* 'doubt' -/
+  | doubtVerb
+  /-- modalPossibility: under a possibility modal -/
+  | modalPossibility
+  /-- modalNecessity: under a necessity modal -/
+  | modalNecessity
+  /-- nobody: under *niemand* 'nobody' -/
+  | nobody
+  /-- negation: under inflectional negation *nicht* -/
+  | negation
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `context`. -/
+def context (e : Datum) : Option Context :=
+  e.parse? "context" [("question", .question), ("doubtVerb", .doubtVerb), ("modalPossibility", .modalPossibility),
+    ("modalNecessity", .modalNecessity), ("nobody", .nobody), ("negation", .negation)]
 
 end KratzerShimoyama2002.Examples

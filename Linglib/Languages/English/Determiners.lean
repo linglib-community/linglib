@@ -54,6 +54,10 @@ there. *Both* and *neither* select the dual, the core concept `[−atomic, +mini
 [harbour-2014], whose cardinality clause their readings reflect
 ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
 
+/-- *No*, read as `no`, with a singular, a plural or a mass noun. -/
+def no : QuantificationalDeterminer :=
+  { form := "no", readings := {.no}, selectsMass := true }
+
 /-- *None*, read as `no`. -/
 def none_ : QuantificationalDeterminer :=
   { form := "none", readings := {.no}, selectsMass := true }
@@ -160,7 +164,7 @@ def your : PossessiveDeterminer := { form := "your" }
 
 /-- The quantificational determiners. -/
 def allQuantifiers : List QuantificationalDeterminer :=
-  [none_, few, some_, half, most, all, every, each, many, both, neither]
+  [no, none_, few, some_, half, most, all, every, each, many, both, neither]
 
 /-- The articles. -/
 def allArticles : List Article := [the, a]

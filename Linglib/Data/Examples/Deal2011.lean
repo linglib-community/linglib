@@ -313,4 +313,16 @@ def environment (e : Datum) : Option Environment :=
     ("universal restriction", .universalRestriction),
     ("conditional antecedent", .conditionalAntecedent)]
 
+/-- The modal force of the context. -/
+inductive Force where
+  /-- possibility: a possibility claim -/
+  | possibility
+  /-- necessity: a necessity claim -/
+  | necessity
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `force`. -/
+def force (e : Datum) : Option Force :=
+  e.parse? "force" [("possibility", .possibility), ("necessity", .necessity)]
+
 end Deal2011.Examples

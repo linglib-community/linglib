@@ -1,1038 +1,541 @@
-[
-  {
-    "id": "harley2014_ex3a",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(3a)"
+{
+  "features": [
+    {
+      "key": "stranded",
+      "lean": "stranded",
+      "type": "Stranded",
+      "doc": "The dependent stranded by *one*-replacement.",
+      "levels": [
+        {
+          "name": "argument",
+          "label": "argument",
+          "doc": "an argument of the noun"
+        },
+        {
+          "name": "adjunct",
+          "label": "adjunct",
+          "doc": "an adjunct"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "harley2014_ex3a",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(3a)"},
+      "language": "yaqu1251",
+      "primaryText": "vuite~tenne",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "run.sg~run.pl",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "2.1"],
+        ["phenomenon", "rootSuppletion"],
+        ["singularForm", "vuite"],
+        ["pluralForm", "tenne"],
+        ["conditioner", "subject"]
+      ],
+      "comment": "A suppletive main verb, conditioned by subject number.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "vuite~tenne",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "run.sg~run.pl",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2.1"
+    {
+      "id": "harley2014_ex3b",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(3b)"},
+      "language": "yaqu1251",
+      "primaryText": "siika~saka",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "go.sg~go.pl",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "2.1"],
+        ["phenomenon", "rootSuppletion"],
+        ["singularForm", "siika"],
+        ["pluralForm", "saka"],
+        ["conditioner", "subject"]
       ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "singularForm",
-        "vuite"
-      ],
-      [
-        "pluralForm",
-        "tenne"
-      ],
-      [
-        "conditioner",
-        "subject"
-      ]
-    ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex3b",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(3b)"
+      "comment": "A suppletive main verb, conditioned by subject number.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "siika~saka",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "go.sg~go.pl",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2.1"
+    {
+      "id": "harley2014_ex3c",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(3c)"},
+      "language": "yaqu1251",
+      "primaryText": "weama~rehte",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "wander.sg~wander.pl",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "2.1"],
+        ["phenomenon", "rootSuppletion"],
+        ["singularForm", "weama"],
+        ["pluralForm", "rehte"],
+        ["conditioner", "subject"]
       ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "singularForm",
-        "siika"
-      ],
-      [
-        "pluralForm",
-        "saka"
-      ],
-      [
-        "conditioner",
-        "subject"
-      ]
-    ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex3c",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(3c)"
+      "comment": "A suppletive main verb, conditioned by subject number.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "weama~rehte",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "wander.sg~wander.pl",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2.1"
+    {
+      "id": "harley2014_ex3d",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(3d)"},
+      "language": "yaqu1251",
+      "primaryText": "kivake~kiime",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "enter.sg~enter.pl",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "2.1"],
+        ["phenomenon", "rootSuppletion"],
+        ["singularForm", "kivake"],
+        ["pluralForm", "kiime"],
+        ["conditioner", "subject"]
       ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "singularForm",
-        "weama"
-      ],
-      [
-        "pluralForm",
-        "rehte"
-      ],
-      [
-        "conditioner",
-        "subject"
-      ]
-    ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex3d",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(3d)"
+      "comment": "A suppletive main verb, conditioned by subject number.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "kivake~kiime",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "enter.sg~enter.pl",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2.1"
+    {
+      "id": "harley2014_ex3e",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(3e)"},
+      "language": "yaqu1251",
+      "primaryText": "vo'e~to'e",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "lie.sg~lie.pl",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "2.1"],
+        ["phenomenon", "rootSuppletion"],
+        ["singularForm", "vo'e"],
+        ["pluralForm", "to'e"],
+        ["conditioner", "subject"]
       ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "singularForm",
-        "kivake"
-      ],
-      [
-        "pluralForm",
-        "kiime"
-      ],
-      [
-        "conditioner",
-        "subject"
-      ]
-    ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex3e",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(3e)"
+      "comment": "A suppletive main verb, conditioned by subject number.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "vo'e~to'e",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "lie.sg~lie.pl",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2.1"
+    {
+      "id": "harley2014_ex3f",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(3f)"},
+      "language": "yaqu1251",
+      "primaryText": "weye~kaate",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "walk.sg~walk.pl",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "2.1"],
+        ["phenomenon", "rootSuppletion"],
+        ["singularForm", "weye"],
+        ["pluralForm", "kaate"],
+        ["conditioner", "subject"]
       ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "singularForm",
-        "vo'e"
-      ],
-      [
-        "pluralForm",
-        "to'e"
-      ],
-      [
-        "conditioner",
-        "subject"
-      ]
-    ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex3f",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(3f)"
+      "comment": "A suppletive main verb, conditioned by subject number.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "weye~kaate",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "walk.sg~walk.pl",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2.1"
+    {
+      "id": "harley2014_ex3g",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(3g)"},
+      "language": "yaqu1251",
+      "primaryText": "mea~sua",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "kill.sgObj~kill.plObj",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "2.1"],
+        ["phenomenon", "rootSuppletion"],
+        ["singularForm", "mea"],
+        ["pluralForm", "sua"],
+        ["conditioner", "object"]
       ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "singularForm",
-        "weye"
-      ],
-      [
-        "pluralForm",
-        "kaate"
-      ],
-      [
-        "conditioner",
-        "subject"
-      ]
-    ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex3g",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(3g)"
+      "comment": "A suppletive main verb, conditioned by object number.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "mea~sua",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "kill.sgObj~kill.plObj",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2.1"
+    {
+      "id": "harley2014_ex6a",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(6a)"},
+      "language": "yaqu1251",
+      "primaryText": "Aapo aman vuite-k.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Aapo", "3sg"], ["aman", "there"], ["vuite-k.", "run.sg-prf"]
       ],
-      [
-        "phenomenon",
-        "rootSuppletion"
+      "translation": "He ran over there.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Vempo aman vuite-k.", "judgment": "ungrammatical"}
       ],
-      [
-        "singularForm",
-        "mea"
+      "readings": [],
+      "paperFeatures": [
+        ["section", "2.1"],
+        ["phenomenon", "rootSuppletion"],
+        ["subjectNumber", "singular"]
       ],
-      [
-        "pluralForm",
-        "sua"
-      ],
-      [
-        "conditioner",
-        "object"
-      ]
-    ],
-    "comment": "A suppletive main verb, conditioned by object number.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex6a",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(6a)"
+      "comment": "The singular form with a singular subject; the plural subject is excluded.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Aapo aman vuite-k.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Aapo",
-        "3sg"
+    {
+      "id": "harley2014_ex6b",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(6b)"},
+      "language": "yaqu1251",
+      "primaryText": "Vempo aman tenne-k",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Vempo", "3pl"], ["aman", "there"], ["tenne-k", "run.pl-prf"]
       ],
-      [
-        "aman",
-        "there"
+      "translation": "They ran over there.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Aapo aman tenne-k.", "judgment": "ungrammatical"}
       ],
-      [
-        "vuite-k.",
-        "run.sg-prf"
-      ]
-    ],
-    "translation": "He ran over there.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "Vempo aman vuite-k.",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2.1"
+      "readings": [],
+      "paperFeatures": [
+        ["section", "2.1"],
+        ["phenomenon", "rootSuppletion"],
+        ["subjectNumber", "plural"]
       ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "subjectNumber",
-        "singular"
-      ]
-    ],
-    "comment": "The singular form with a singular subject; the plural subject is excluded.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex6b",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(6b)"
+      "comment": "The plural form with a plural subject; the singular subject is excluded.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Vempo aman tenne-k",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Vempo",
-        "3pl"
+    {
+      "id": "harley2014_ex18a",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(18a)"},
+      "language": "stan1293",
+      "primaryText": "This student of chemistry and that one of physics sit together",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.1"],
+        ["phenomenon", "oneReplacement"],
+        ["stranded", "argument"]
       ],
-      [
-        "aman",
-        "there"
-      ],
-      [
-        "tenne-k",
-        "run.pl-prf"
-      ]
-    ],
-    "translation": "They ran over there.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "Aapo aman tenne-k.",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2.1"
-      ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "subjectNumber",
-        "plural"
-      ]
-    ],
-    "comment": "The plural form with a plural subject; the singular subject is excluded.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex18a",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(18a)"
+      "comment": "one strands the argument of the noun it replaces.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "This student of chemistry and that one of physics sit together",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.1"
+    {
+      "id": "harley2014_ex18b",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(18b)"},
+      "language": "stan1293",
+      "primaryText": "That student with short hair and this one with long hair sit together",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.1"],
+        ["phenomenon", "oneReplacement"],
+        ["stranded", "adjunct"]
       ],
-      [
-        "phenomenon",
-        "oneReplacement"
-      ],
-      [
-        "stranded",
-        "argument"
-      ]
-    ],
-    "comment": "one strands the argument of the noun it replaces.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex18b",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(18b)"
+      "comment": "one strands an adjunct of the noun it replaces.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "That student with short hair and this one with long hair sit together",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.1"
+    {
+      "id": "harley2014_ex26a",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(26a)"},
+      "language": "yaqu1251",
+      "primaryText": "Aapo weye",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Aapo", "3sg"], ["weye", "walk.sg"]
       ],
-      [
-        "phenomenon",
-        "oneReplacement"
+      "translation": "He/she/it is walking.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "rootSuppletion"],
+        ["subjectNumber", "singular"]
       ],
-      [
-        "stranded",
-        "adjunct"
-      ]
-    ],
-    "comment": "one strands an adjunct of the noun it replaces.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex26a",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(26a)"
+      "comment": "An intransitive conditioned by subject number.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Aapo weye",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Aapo",
-        "3sg"
+    {
+      "id": "harley2014_ex26b",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(26b)"},
+      "language": "yaqu1251",
+      "primaryText": "Vempo kaate",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Vempo", "3pl"], ["kaate", "walk.pl"]
       ],
-      [
-        "weye",
-        "walk.sg"
-      ]
-    ],
-    "translation": "He/she/it is walking.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
+      "translation": "They are walking.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "rootSuppletion"],
+        ["subjectNumber", "plural"]
       ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "subjectNumber",
-        "singular"
-      ]
-    ],
-    "comment": "An intransitive conditioned by subject number.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex26b",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(26b)"
+      "comment": "An intransitive conditioned by subject number.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Vempo kaate",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Vempo",
-        "3pl"
+    {
+      "id": "harley2014_ex27a",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(27a)"},
+      "language": "yaqu1251",
+      "primaryText": "Aapo/Vempo uka koowi-ta mea-k",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Aapo/Vempo", "3sg/3pl"], ["uka", "the.sg"], ["koowi-ta", "pig-ACC.sg"],
+        ["mea-k", "kill.sg-PRF"]
       ],
-      [
-        "kaate",
-        "walk.pl"
-      ]
-    ],
-    "translation": "They are walking.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
+      "translation": "He/They killed the pig.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "rootSuppletion"],
+        ["objectNumber", "singular"]
       ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "subjectNumber",
-        "plural"
-      ]
-    ],
-    "comment": "An intransitive conditioned by subject number.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex27a",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(27a)"
+      "comment": "A transitive conditioned by object number, whatever the subject's.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Aapo/Vempo uka koowi-ta mea-k",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Aapo/Vempo",
-        "3sg/3pl"
+    {
+      "id": "harley2014_ex27b",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(27b)"},
+      "language": "yaqu1251",
+      "primaryText": "Aapo/Vempo ume kowi-m sua-k",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Aapo/Vempo", "3sg/3pl"], ["ume", "the.pl"], ["kowi-m", "pig-pl"], ["sua-k", "kill.pl-PRF"]
       ],
-      [
-        "uka",
-        "the.sg"
+      "translation": "He/They killed the pigs.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "rootSuppletion"],
+        ["objectNumber", "plural"]
       ],
-      [
-        "koowi-ta",
-        "pig-ACC.sg"
-      ],
-      [
-        "mea-k",
-        "kill.sg-PRF"
-      ]
-    ],
-    "translation": "He/They killed the pig.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "objectNumber",
-        "singular"
-      ]
-    ],
-    "comment": "A transitive conditioned by object number, whatever the subject's.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex27b",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(27b)"
+      "comment": "A transitive conditioned by object number, whatever the subject's.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Aapo/Vempo ume kowi-m sua-k",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Aapo/Vempo",
-        "3sg/3pl"
+    {
+      "id": "harley2014_ex29a",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(29a)"},
+      "language": "yaqu1251",
+      "primaryText": "Hoan Maria-ta vicha-k",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hoan", "Juan.nom"], ["Maria-ta", "Maria-acc"], ["vicha-k", "see-prf"]
       ],
-      [
-        "ume",
-        "the.pl"
+      "translation": "Juan saw Maria",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "case"]
       ],
-      [
-        "kowi-m",
-        "pig-pl"
-      ],
-      [
-        "sua-k",
-        "kill.pl-PRF"
-      ]
-    ],
-    "translation": "He/They killed the pigs.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "phenomenon",
-        "rootSuppletion"
-      ],
-      [
-        "objectNumber",
-        "plural"
-      ]
-    ],
-    "comment": "A transitive conditioned by object number, whatever the subject's.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex29a",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(29a)"
+      "comment": "Accusative on the object of a transitive.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Hoan Maria-ta vicha-k",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Hoan",
-        "Juan.nom"
+    {
+      "id": "harley2014_ex29b",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(29b)"},
+      "language": "yaqu1251",
+      "primaryText": "Maria aman vicha-wa-k",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Maria", "Maria.nom"], ["aman", "there"], ["vicha-wa-k", "see-pass-prf"]
       ],
-      [
-        "Maria-ta",
-        "Maria-acc"
+      "translation": "Maria was seen there",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "case"]
       ],
-      [
-        "vicha-k",
-        "see-prf"
-      ]
-    ],
-    "translation": "Juan saw Maria",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "phenomenon",
-        "case"
-      ]
-    ],
-    "comment": "Accusative on the object of a transitive.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex29b",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(29b)"
+      "comment": "The accusative is structural: nominative under passivization.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Maria aman vicha-wa-k",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Maria",
-        "Maria.nom"
+    {
+      "id": "harley2014_ex30a",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(30a)"},
+      "language": "yaqu1251",
+      "primaryText": "U'u maaso uusi-m yi'i-ria-k",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["U'u", "the"], ["maaso", "deer.dancer"], ["uusi-m", "children-pl"],
+        ["yi'i-ria-k", "dance-APPL-PRF"]
       ],
-      [
-        "aman",
-        "there"
+      "translation": "The deer dancer danced for the children.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "applicative"],
+        ["verbClass", "unergative"],
+        ["applicative", "suffixed"]
       ],
-      [
-        "vicha-wa-k",
-        "see-pass-prf"
-      ]
-    ],
-    "translation": "Maria was seen there",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "phenomenon",
-        "case"
-      ]
-    ],
-    "comment": "The accusative is structural: nominative under passivization.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex30a",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(30a)"
+      "comment": "The high applicative on an unergative intransitive.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "U'u maaso uusi-m yi'i-ria-k",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "U'u",
-        "the"
+    {
+      "id": "harley2014_ex30b",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(30b)"},
+      "language": "yaqu1251",
+      "primaryText": "Inepo Hose-ta pueta-ta eta-ria-k",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Inepo", "1sg"], ["Hose-ta", "Jose-ACC"], ["pueta-ta", "door-ACC"],
+        ["eta-ria-k", "close-APPL-PRF"]
       ],
-      [
-        "maaso",
-        "deer.dancer"
+      "translation": "I closed the door for Jose",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "applicative"],
+        ["verbClass", "transitive"],
+        ["applicative", "suffixed"]
       ],
-      [
-        "uusi-m",
-        "children-pl"
-      ],
-      [
-        "yi'i-ria-k",
-        "dance-APPL-PRF"
-      ]
-    ],
-    "translation": "The deer dancer danced for the children.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "phenomenon",
-        "applicative"
-      ],
-      [
-        "verbClass",
-        "unergative"
-      ],
-      [
-        "applicative",
-        "suffixed"
-      ]
-    ],
-    "comment": "The high applicative on an unergative intransitive.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex30b",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(30b)"
+      "comment": "The applicative on a transitive.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Inepo Hose-ta pueta-ta eta-ria-k",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Inepo",
-        "1sg"
+    {
+      "id": "harley2014_ex31",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(31)"},
+      "language": "yaqu1251",
+      "primaryText": "Uu tasa Maria-ta hamte-ria-k",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Uu", "the"], ["tasa", "cup.nom"], ["Maria-ta", "Maria-ACC"],
+        ["hamte-ria-k", "break.intr-APPL-PRF"]
       ],
-      [
-        "Hose-ta",
-        "Jose-ACC"
+      "translation": "The cup broke for/on Maria",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "applicative"],
+        ["verbClass", "unaccusative"],
+        ["applicative", "suffixed"]
       ],
-      [
-        "pueta-ta",
-        "door-ACC"
-      ],
-      [
-        "eta-ria-k",
-        "close-APPL-PRF"
-      ]
-    ],
-    "translation": "I closed the door for Jose",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "phenomenon",
-        "applicative"
-      ],
-      [
-        "verbClass",
-        "transitive"
-      ],
-      [
-        "applicative",
-        "suffixed"
-      ]
-    ],
-    "comment": "The applicative on a transitive.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex31",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(31)"
+      "comment": "No applicative on an unaccusative.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Uu tasa Maria-ta hamte-ria-k",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Uu",
-        "the"
+    {
+      "id": "harley2014_ex32a",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(32a)"},
+      "language": "yaqu1251",
+      "primaryText": "Santos Maria-ta San Xavierle-u weye-ria",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Santos", "Santos"], ["Maria-ta", "Maria-ACC"], ["San", "San"], ["Xavierle-u", "Xavier-to"],
+        ["weye-ria", "go-APPL"]
       ],
-      [
-        "tasa",
-        "cup.nom"
+      "translation": "Santos is going/walking to San Xavier for Maria",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "applicative"],
+        ["verbClass", "suppletiveIntransitive"],
+        ["applicative", "suffixed"]
       ],
-      [
-        "Maria-ta",
-        "Maria-ACC"
-      ],
-      [
-        "hamte-ria-k",
-        "break.intr-APPL-PRF"
-      ]
-    ],
-    "translation": "The cup broke for/on Maria",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "phenomenon",
-        "applicative"
-      ],
-      [
-        "verbClass",
-        "unaccusative"
-      ],
-      [
-        "applicative",
-        "suffixed"
-      ]
-    ],
-    "comment": "No applicative on an unaccusative.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex32a",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(32a)"
+      "comment": "No applicative on a suppletive intransitive: the suppletive intransitives are unaccusative, as the locality of conditioning predicts.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Santos Maria-ta San Xavierle-u weye-ria",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Santos",
-        "Santos"
+    {
+      "id": "harley2014_ex32b",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(32b)"},
+      "language": "yaqu1251",
+      "primaryText": "Santos Maria-ta vetchi'ivo San Xavierle-u weye",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Santos", "Santos"], ["Maria-ta", "Maria-ACC"], ["vetchi'ivo", "for"], ["San", "San"],
+        ["Xavierle-u", "Xavier-to"], ["weye", "go"]
       ],
-      [
-        "Maria-ta",
-        "Maria-ACC"
+      "translation": "Santos is going/walking to San Xavier for Maria",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "applicative"],
+        ["verbClass", "suppletiveIntransitive"],
+        ["applicative", "periphrastic"]
       ],
-      [
-        "San",
-        "San"
-      ],
-      [
-        "Xavierle-u",
-        "Xavier-to"
-      ],
-      [
-        "weye-ria",
-        "go-APPL"
-      ]
-    ],
-    "translation": "Santos is going/walking to San Xavier for Maria",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "phenomenon",
-        "applicative"
-      ],
-      [
-        "verbClass",
-        "suppletiveIntransitive"
-      ],
-      [
-        "applicative",
-        "suffixed"
-      ]
-    ],
-    "comment": "No applicative on a suppletive intransitive: the suppletive intransitives are unaccusative, as the locality of conditioning predicts.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_ex32b",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(32b)"
+      "comment": "The periphrastic benefactive instead.",
+      "verified": "page-image"
     },
-    "language": "yaqu1251",
-    "primaryText": "Santos Maria-ta vetchi'ivo San Xavierle-u weye",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Santos",
-        "Santos"
+    {
+      "id": "harley2014_exfn33-i",
+      "source": {"bibkey": "harley-2014", "paperLabel": "(fn33-i)"},
+      "language": "yaqu1251",
+      "primaryText": "Santos Hose-ta koowi-ta/koowi-m mea/sua-ria-k.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Santos", "Santos"], ["Hose-ta", "Jose-ACC"], ["koowi-ta/koowi-m", "pig-ACC/pig-PL"],
+        ["mea/sua-ria-k.", "kill.sg/kill.pl-APPL-PRF"]
       ],
-      [
-        "Maria-ta",
-        "Maria-ACC"
+      "translation": "Santos killed a pig/pigs for Jose.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "3.3"],
+        ["phenomenon", "applicative"],
+        ["verbClass", "suppletiveTransitive"],
+        ["applicative", "suffixed"]
       ],
-      [
-        "vetchi'ivo",
-        "for"
-      ],
-      [
-        "San",
-        "San"
-      ],
-      [
-        "Xavierle-u",
-        "Xavier-to"
-      ],
-      [
-        "weye",
-        "go"
-      ]
-    ],
-    "translation": "Santos is going/walking to San Xavier for Maria",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "phenomenon",
-        "applicative"
-      ],
-      [
-        "verbClass",
-        "suppletiveIntransitive"
-      ],
-      [
-        "applicative",
-        "periphrastic"
-      ]
-    ],
-    "comment": "The periphrastic benefactive instead.",
-    "verified": "page-image"
-  },
-  {
-    "id": "harley2014_exfn33-i",
-    "source": {
-      "bibkey": "harley-2014",
-      "paperLabel": "(fn33-i)"
-    },
-    "language": "yaqu1251",
-    "primaryText": "Santos Hose-ta koowi-ta/koowi-m mea/sua-ria-k.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Santos",
-        "Santos"
-      ],
-      [
-        "Hose-ta",
-        "Jose-ACC"
-      ],
-      [
-        "koowi-ta/koowi-m",
-        "pig-ACC/pig-PL"
-      ],
-      [
-        "mea/sua-ria-k.",
-        "kill.sg/kill.pl-APPL-PRF"
-      ]
-    ],
-    "translation": "Santos killed a pig/pigs for Jose.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.3"
-      ],
-      [
-        "phenomenon",
-        "applicative"
-      ],
-      [
-        "verbClass",
-        "suppletiveTransitive"
-      ],
-      [
-        "applicative",
-        "suffixed"
-      ]
-    ],
-    "comment": "The applicative on a suppletive transitive; suppletion still follows the thematic object, not the applied object.",
-    "verified": "page-image"
-  }
-]
+      "comment": "The applicative on a suppletive transitive; suppletion still follows the thematic object, not the applied object.",
+      "verified": "page-image"
+    }
+  ]
+}

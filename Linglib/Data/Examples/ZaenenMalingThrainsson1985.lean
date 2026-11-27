@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `ZaenenMalingThrainsson1985` — typed example data
@@ -983,5 +985,36 @@ def zmt1985_88c : Datum :=
     paperFeatures := [("verb", "abhören"), ("voice", "passive"), ("test", "passive"), ("tested", "theme")] }
 
 def all : List Datum := [zmt1985_8a, zmt1985_8b, zmt1985_9a, zmt1985_11a, zmt1985_11b, zmt1985_13, zmt1985_29a, zmt1985_37a, zmt1985_37b, zmt1985_37c, zmt1985_37d, zmt1985_37e, zmt1985_42a, zmt1985_42b, zmt1985_42c, zmt1985_44a, zmt1985_44b, zmt1985_64a, zmt1985_66b, zmt1985_66c, zmt1985_14b, zmt1985_14d, zmt1985_16, zmt1985_18a, zmt1985_21a, zmt1985_21c, zmt1985_23b, zmt1985_23d, zmt1985_25a, zmt1985_25c, zmt1985_27a, zmt1985_27b, zmt1985_29b, zmt1985_30, zmt1985_31, zmt1985_32a, zmt1985_33b, zmt1985_34, zmt1985_35, zmt1985_36a, zmt1985_45a, zmt1985_45b, zmt1985_68a, zmt1985_68a_prime, zmt1985_68c, zmt1985_78, zmt1985_79b, zmt1985_79c, zmt1985_81a, zmt1985_81b, zmt1985_82b, zmt1985_82c, zmt1985_82d, zmt1985_82e, zmt1985_83a, zmt1985_83b, zmt1985_83c, zmt1985_83d, zmt1985_83e, zmt1985_84, zmt1985_85a, zmt1985_85b, zmt1985_88a, zmt1985_88b, zmt1985_88c]
+
+/-- The voice of the clause. -/
+inductive Voice where
+  /-- active: active -/
+  | active
+  /-- passive: passive -/
+  | passive
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `voice`. -/
+def voice (e : Datum) : Option Voice :=
+  e.parse? "voice" [("active", .active), ("passive", .passive)]
+
+/-- The thematic role of the argument a subjecthood test applies to. -/
+inductive Tested where
+  /-- agent: agent -/
+  | agent
+  /-- theme: theme -/
+  | theme
+  /-- goal: goal -/
+  | goal
+  /-- source: source -/
+  | source
+  /-- experiencer: experiencer -/
+  | experiencer
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `tested`. -/
+def tested (e : Datum) : Option Tested :=
+  e.parse? "tested" [("agent", .agent), ("theme", .theme), ("goal", .goal), ("source", .source),
+    ("experiencer", .experiencer)]
 
 end ZaenenMalingThrainsson1985.Examples

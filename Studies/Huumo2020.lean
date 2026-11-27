@@ -93,7 +93,10 @@ end Clause
 
 /-- A row read through the paper's terms. -/
 def Clause.ofDatum (e : Datum) : Option Clause := do
-  let q ← e.parse? "quantifier" [("none", Quantifier.none), ("mass", .mass), ("number", .number)]
+  let q ← (Examples.objectQuantifier e).map fun
+    | .none => Quantifier.none
+    | .mass => .mass
+    | .number => .number
   let c ← e.parse? "case" [("part", Finnish.Case.part), ("acc", .acc)]
   let a ← (Examples.adverbial e)
   some ⟨q, c, a⟩

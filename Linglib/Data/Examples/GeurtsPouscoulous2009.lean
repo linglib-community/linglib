@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `GeurtsPouscoulous2009` — typed example data
@@ -274,5 +276,38 @@ def ex35 : Datum :=
     paperFeatures := [("experiment", "none"), ("embedding", "all")] }
 
 def all : List Datum := [t1_simple, t1_all, t1_must, t1_think, t1_want, ex24, ex26a, ex26b, ex27_a, ex27_b, ex25a, ex25b, ex29a, ex29b, ex29c, ex29d, ex29e, ex31, ex35]
+
+/-- The quantifier embedding *some*. -/
+inductive Quantifier where
+  /-- all: *all* -/
+  | all
+  /-- moreThanOne: *more than one* -/
+  | moreThanOne
+  /-- exactlyTwo: *exactly two* -/
+  | exactlyTwo
+  /-- notAll: *not all* -/
+  | notAll
+  /-- notMoreThanOne: *not more than one* -/
+  | notMoreThanOne
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `quantifier`. -/
+def quantifier (e : Datum) : Option Quantifier :=
+  e.parse? "quantifier" [("all", .all), ("moreThanOne", .moreThanOne), ("exactlyTwo", .exactlyTwo),
+    ("notAll", .notAll), ("notMoreThanOne", .notMoreThanOne)]
+
+/-- Which of the two pictures shown with *exactly two*, where the sentence has two. -/
+inductive TrialLabel where
+  /-- none: the sentence has one picture -/
+  | none
+  /-- A: picture A -/
+  | a
+  /-- B: picture B -/
+  | b
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `trial`. -/
+def trialLabel (e : Datum) : Option TrialLabel :=
+  e.parse? "trial" [("none", .none), ("A", .a), ("B", .b)]
 
 end GeurtsPouscoulous2009.Examples

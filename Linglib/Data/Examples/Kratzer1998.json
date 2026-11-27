@@ -1,398 +1,434 @@
-[
-  {
-    "id": "kratzer1998_ex01",
-    "source": {"bibkey": "abusch-1988", "paperLabel": "WCCFL 7 SOT example"},
-    "reportedIn": {"bibkey": "kratzer-1998", "paperLabel": "(1)"},
-    "language": "stan1293",
-    "primaryText": "John decided a week ago that in ten days he would say to his mother that they were having their last meal together.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Showcases that the underlined past tense \"were\" need not be interpreted as semantically past — the meal time is in the future of utterance, not the past.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "uninterpreted-past (SOT)", "judgment": "acceptable"}
-    ],
-    "comment": "Kratzer's plot example (1). The point: a past tense morpheme can fail to make any semantic contribution beyond agreeing with a higher past. Section 1, p. 92.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex02",
-    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (37)"},
-    "reportedIn": {"bibkey": "kratzer-1998", "paperLabel": "(2)"},
-    "language": "stan1293",
-    "primaryText": "John said he would buy a fish that was still alive.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Past tense \"was\" inside the future-complement \"would buy\" — the alive-time is the future buying time, not the saying-time and not the utterance time.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "alive-at-buying (later-than-saying)", "judgment": "acceptable"},
-      {"name": "alive-at-saying", "judgment": "acceptable"}
-    ],
-    "comment": "Kratzer's plot example (2), reported from Ogihara 1989. Ambiguity highlights non-pronominal use of past. Section 1, p. 92.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex03",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(3)"},
-    "language": "stan1293",
-    "primaryText": "Mary predicted that she would know that she was pregnant the minute she got pregnant.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Multi-embedded SOT with two underlined past forms (\"was\", \"got\") both referring to future-of-utterance times.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "pregnancy-at-knowing (future-of-utterance)", "judgment": "acceptable"}
-    ],
-    "comment": "Kratzer's plot example (3). The minute-clause shows even adjunct past morphology can be SOT'd. Section 1, p. 92.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex05",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(5)"},
-    "language": "stan1293",
-    "primaryText": "He will marry a woman who went to Harvard.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "The past tense \"went\" need not refer to a time before the utterance time: will shifts the evaluation time into the future and the embedded past takes us back from there, so the past cannot be analyzed as a pronoun.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {
-        "name": "going-to-Harvard before the marrying time, not necessarily before utterance",
-        "judgment": "acceptable"
-      }
-    ],
-    "comment": "Kratzer's \"major obstacle\" example (5), Section 1, p. 92, discussed p. 93: not all past tenses can be analyzed as pronouns. Motivates the perfect-aspect-as-operator move in Section 7.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex29",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(29)"},
-    "language": "stan1293",
-    "primaryText": "John thinks that it is 10 o'clock.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Uttered at, say, 11 o'clock. John self-locates at 10 o'clock; his belief is not that the time of utterance is 10.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "de se (John self-locates at 10)", "judgment": "acceptable"},
-      {"name": "indexical (John thinks 11 is 10)", "judgment": "marginal"}
-    ],
-    "comment": "Kratzer's temporal de se example (29), Section 5, p. 101. Attributed to v. Stechow 1982.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex30",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(30)"},
-    "language": "stan1293",
-    "primaryText": "John thinks that he has a headache.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Embedded present-under-present. John self-locates at a time when he has a headache.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "de se (headache at John's now)", "judgment": "acceptable"}
-    ],
-    "comment": "Kratzer's example (30), Section 5, p. 102: even non-dramatic embedded tense gets a de se interpretation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex32a",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(32a)"},
-    "language": "stan1293",
-    "primaryText": "John bought a fish that was still alive.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Relative clause past tense under a matrix past. The relative-clause tense can be zero-bound (simultaneous with buying) or independently past.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "simultaneous (alive-at-buying, zero tense in RC)", "judgment": "acceptable"},
-      {"name": "independent past (alive-before-buying, past in RC)", "judgment": "acceptable"}
-    ],
-    "comment": "Kratzer's example (32a), Section 5, p. 103. RC tense is structurally optional in a way SOT complement-tense is not.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex33a",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(33a)"},
-    "language": "stan1293",
-    "primaryText": "John said he would buy a fish that was still alive.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Same surface form as (2)/ex02, re-analyzed in Section 5 with zero-tense in the RC. Kratzer's own multi-LF variant (not attributed to Ogihara below this ex number in the paper).",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "RC zero-tense (alive-at-buying)", "judgment": "acceptable"},
-      {"name": "RC past-tense (alive-at-saying)", "judgment": "acceptable"}
-    ],
-    "comment": "Kratzer's example (33a), Section 5, p. 103. Two LFs for the RC tense — zero-tense bound at the buying time, or genuine past bound at the saying time.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex34a",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(34a)"},
-    "language": "stan1293",
-    "primaryText": "John thought two days ago that you would be sick yesterday.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Sickness is at yesterday (between thought-time two-days-ago and utterance). \"Would\" makes the relative future-from-thought reachable.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {
-        "name": "sickness yesterday, after the self-located thought time (de se)",
-        "judgment": "acceptable"
-      }
-    ],
-    "comment": "Kratzer's example (34a), Section 5, p. 104. Contrasts minimally with (35a) below.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex35a",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(35a)"},
-    "language": "stan1293",
-    "primaryText": "John thought two days ago that you were sick yesterday.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Without \"would\", the embedded past forces sickness at the thought-time (two days ago), which conflicts with the adverbial \"yesterday\".",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [
-      {"name": "sickness-at-thought-time", "judgment": "ungrammatical"}
-    ],
-    "comment": "Kratzer's example (35a), Section 5, p. 104. Star is Kratzer's. The de se contrast with (34a): John would have to locate himself two days ago at a time that is part of yesterday.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex36a",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(36a)"},
-    "language": "stan1293",
-    "primaryText": "The ultrasound picture indicated that Mary is pregnant.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Past matrix with present embedded. Embedded present can be de re about a present state of Mary that the past ultrasound picture is about.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "de re on present state", "judgment": "marginal"}
-    ],
-    "comment": "Kratzer's example (36a), Section 6, p. 104. Printed unmarked; Kratzer: \"Sentences like (36) are in fact ungrammatical or marginal for many speakers, including some of my linguist colleagues. But there are enough speakers who like them\".",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex36b",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(36b)"},
-    "language": "stan1293",
-    "primaryText": "The ultrasound picture indicated of a present state of Mary's that it is a pregnancy.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Ogihara-style paraphrase that makes the temporal de re explicit.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "de re on present state (explicit)", "judgment": "acceptable"}
-    ],
-    "comment": "Kratzer's example (36b), Section 6, p. 104. The paper prints \"ultra sound picture\" here.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex40a",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(40a)"},
-    "language": "stan1293",
-    "primaryText": "Who built this Church? Borromini built this church.",
-    "discourseSegments": [
-      "Who built this Church?",
-      "Borromini built this church."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Looking at churches in Italy, no previous discourse. English simple past acceptable out of the blue.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["form", "simple past"], ["context", "out of the blue"]],
-    "comment": "Kratzer's example (40a), Section 7, p. 106. Cornerstone of the deictic-vs-anaphoric contrast: English simple past does not require a contextually salient past time.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex40b",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(40b)"},
-    "language": "stan1295",
-    "primaryText": "Wer baute diese Kirche? Borromini baute diese Kirche.",
-    "discourseSegments": [
-      "Wer baute diese Kirche?",
-      "Borromini baute diese Kirche."
-    ],
-    "glossedTokens": [
-      ["Wer", "Who"], ["baute", "built"], ["diese", "this"], ["Kirche", "church"],
-      ["Borromini", "Borromini"], ["baute", "built"], ["diese", "this"], ["Kirche", "church"]
-    ],
-    "translation": "Who built this church? Borromini built this church.",
-    "context": "Looking at churches in Italy, no previous discourse. German simple past (Präteritum) infelicitous out of the blue.",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["form", "Präteritum"], ["context", "out of the blue"]],
-    "comment": "Kratzer's example (40b), Section 7, p. 106. Star is Kratzer's. Per Kratzer: \"At best, it sounds like the hypercorrect utterance of a South German speaker.\" Cornerstone of the deictic-vs-anaphoric Preterit asymmetry. The paper prints a period after the question \"Wer baute diese Kirche\".",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex40c",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(40c)"},
-    "language": "stan1295",
-    "primaryText": "Wer hat diese Kirche gebaut? Borromini hat diese Kirche gebaut.",
-    "discourseSegments": [
-      "Wer hat diese Kirche gebaut?",
-      "Borromini hat diese Kirche gebaut."
-    ],
-    "glossedTokens": [
-      ["Wer", "Who"], ["hat", "has"], ["diese", "this"], ["Kirche", "church"], ["gebaut", "built"],
-      ["Borromini", "Borromini"], ["hat", "has"], ["diese", "this"], ["Kirche", "church"],
-      ["gebaut", "built"]
-    ],
-    "translation": "Who has this church built? Borromini has this church built.",
-    "context": "Same out-of-the-blue Italy-church scenario. Standard German Perfekt is felicitous where simple past is not.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["form", "Perfekt"], ["context", "out of the blue"]],
-    "comment": "Kratzer's example (40c), Section 7, p. 106. The Perfekt fills the deictic-past slot that the Preterit cannot. Supports Kratzer's decomposition: English simple past = perfect-aspect + present-tense.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex41a",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(41a)"},
-    "language": "stan1293",
-    "primaryText": "We will answer every letter that we got.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "English simple past in a relative clause inside a future matrix. Felicitous even without a contextually salient past interval.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["form", "simple past"]],
-    "comment": "Kratzer's example (41a), Section 7, p. 106. English simple past = perfect tolerated in embedded sentences.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex41b",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(41b)"},
-    "language": "stan1295",
-    "primaryText": "Wir werden jeden Brief beantworten, den wir bekamen.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Wir", "We"], ["werden", "will"], ["jeden", "every"], ["Brief", "letter"],
-      ["beantworten", "answer"], ["den", "that"], ["wir", "we"], ["bekamen", "received"]
-    ],
-    "translation": "We will answer every letter that we received.",
-    "context": "Same content as (41a) in Standard German Präteritum. Needs a contextually salient past time to be acceptable.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["form", "Präteritum"]],
-    "comment": "Kratzer's example (41b), Section 7, p. 106. Printed unmarked. Per Kratzer: \"needs a contextually salient past time to be acceptable\" — directly diagnoses the anaphoric requirement.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex41c",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(41c)"},
-    "language": "stan1295",
-    "primaryText": "Wir werden jeden Brief beantworten, den wir bekommen haben.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Wir", "We"], ["werden", "will"], ["jeden", "every"], ["Brief", "letter"],
-      ["beantworten", "answer"], ["den", "that"], ["wir", "we"], ["bekommen", "gotten"],
-      ["haben", "have"]
-    ],
-    "translation": "We will answer every letter that we received.",
-    "context": "Same content as (41a/b) but with German Perfekt in the RC. Felicitous without a salient past time.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [["form", "Perfekt"]],
-    "comment": "Kratzer's example (41c), Section 7, p. 106. The Perfekt slot again fills in for the missing deictic Preterit.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex42a",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(42a)"},
-    "language": "stan1293",
-    "primaryText": "John dreamed about eating a fish that he caught himself.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "RC past \"caught\" can have either an anaphoric reading (relative to the dream-time) or an independent backward-shifted reading.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "anaphoric (caught-before-dreaming)", "judgment": "acceptable"},
-      {"name": "backward-shifted (caught-before-eating)", "judgment": "acceptable"}
-    ],
-    "comment": "Kratzer's example (42a), Section 7, p. 106. Per Kratzer: \"Underlined past tense does not have to be anaphoric.\"",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex42b",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(42b)"},
-    "language": "stan1295",
-    "primaryText": "Hans träumte davon, einen Fisch zu essen, den er selber fing.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hans", "Hans"], ["träumte", "dreamed"], ["davon", "of it"], ["einen", "a"],
-      ["Fisch", "fish"], ["zu", "to"], ["essen", "eat"], ["den", "that"], ["er", "he"],
-      ["selber", "himself"], ["fing", "caught"]
-    ],
-    "translation": "Hans dreamed about eating a fish that he caught himself.",
-    "context": "Same content as (42a) with German Präteritum in the RC. Per Kratzer, the past tense must be anaphoric (no backward-shifted reading).",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "anaphoric (caught-at-dreaming-time)", "judgment": "acceptable"},
-      {"name": "backward-shifted (caught-before-eating)", "judgment": "unacceptable"}
-    ],
-    "comment": "Kratzer's example (42b), Section 7, p. 106. Per Kratzer: \"Underlined past tense must be anaphoric.\" The backward-shifted reading is an interpretation gap (unavailable LF), not a string ill-formedness — hence `unacceptable` rather than `ungrammatical`.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kratzer1998_ex42c",
-    "source": {"bibkey": "kratzer-1998", "paperLabel": "(42c)"},
-    "language": "stan1295",
-    "primaryText": "Hans träumte davon, einen Fisch zu essen, den er selber gefangen hatte.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hans", "Hans"], ["träumte", "dreamed"], ["davon", "of it"], ["einen", "a"],
-      ["Fisch", "fish"], ["zu", "to"], ["essen", "eat"], ["den", "that"], ["er", "he"],
-      ["selber", "himself"], ["gefangen", "caught"], ["hatte", "had"]
-    ],
-    "translation": "Hans dreamed about eating a fish that he had caught himself.",
-    "context": "To recover the backward-shifted reading in German, the past perfect (Plusquamperfekt) is required.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "backward-shifted (caught-before-eating)", "judgment": "acceptable"}
-    ],
-    "comment": "Kratzer's example (42c), Section 7, p. 106. Past perfect fills the backward-shifted slot that the bare Preterit cannot. NB: Kratzer's free English translation in the PDF reads \"catching\" (typo for \"eating\"); the German `einen Fisch zu essen` is unambiguously \"to eat a fish\", with the catching in the RC `den er selber gefangen hatte`. Translation here reflects the German.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "form",
+      "lean": "form",
+      "type": "Form",
+      "doc": "The tense form of the sentence.",
+      "levels": [
+        {
+          "name": "simplePast",
+          "label": "simple past",
+          "doc": "the English simple past"
+        },
+        {
+          "name": "praeteritum",
+          "label": "Präteritum",
+          "doc": "the German Präteritum"
+        },
+        {
+          "name": "perfekt",
+          "label": "Perfekt",
+          "doc": "the German Perfekt"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "kratzer1998_ex01",
+      "source": {"bibkey": "abusch-1988", "paperLabel": "WCCFL 7 SOT example"},
+      "reportedIn": {"bibkey": "kratzer-1998", "paperLabel": "(1)"},
+      "language": "stan1293",
+      "primaryText": "John decided a week ago that in ten days he would say to his mother that they were having their last meal together.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Showcases that the underlined past tense \"were\" need not be interpreted as semantically past — the meal time is in the future of utterance, not the past.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "uninterpreted-past (SOT)", "judgment": "acceptable"}
+      ],
+      "comment": "Kratzer's plot example (1). The point: a past tense morpheme can fail to make any semantic contribution beyond agreeing with a higher past. Section 1, p. 92.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex02",
+      "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (37)"},
+      "reportedIn": {"bibkey": "kratzer-1998", "paperLabel": "(2)"},
+      "language": "stan1293",
+      "primaryText": "John said he would buy a fish that was still alive.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Past tense \"was\" inside the future-complement \"would buy\" — the alive-time is the future buying time, not the saying-time and not the utterance time.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "alive-at-buying (later-than-saying)", "judgment": "acceptable"},
+        {"name": "alive-at-saying", "judgment": "acceptable"}
+      ],
+      "comment": "Kratzer's plot example (2), reported from Ogihara 1989. Ambiguity highlights non-pronominal use of past. Section 1, p. 92.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex03",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(3)"},
+      "language": "stan1293",
+      "primaryText": "Mary predicted that she would know that she was pregnant the minute she got pregnant.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Multi-embedded SOT with two underlined past forms (\"was\", \"got\") both referring to future-of-utterance times.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "pregnancy-at-knowing (future-of-utterance)", "judgment": "acceptable"}
+      ],
+      "comment": "Kratzer's plot example (3). The minute-clause shows even adjunct past morphology can be SOT'd. Section 1, p. 92.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex05",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(5)"},
+      "language": "stan1293",
+      "primaryText": "He will marry a woman who went to Harvard.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "The past tense \"went\" need not refer to a time before the utterance time: will shifts the evaluation time into the future and the embedded past takes us back from there, so the past cannot be analyzed as a pronoun.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "going-to-Harvard before the marrying time, not necessarily before utterance", "judgment": "acceptable"}
+      ],
+      "comment": "Kratzer's \"major obstacle\" example (5), Section 1, p. 92, discussed p. 93: not all past tenses can be analyzed as pronouns. Motivates the perfect-aspect-as-operator move in Section 7.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex29",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(29)"},
+      "language": "stan1293",
+      "primaryText": "John thinks that it is 10 o'clock.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Uttered at, say, 11 o'clock. John self-locates at 10 o'clock; his belief is not that the time of utterance is 10.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "de se (John self-locates at 10)", "judgment": "acceptable"},
+        {"name": "indexical (John thinks 11 is 10)", "judgment": "marginal"}
+      ],
+      "comment": "Kratzer's temporal de se example (29), Section 5, p. 101. Attributed to v. Stechow 1982.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex30",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(30)"},
+      "language": "stan1293",
+      "primaryText": "John thinks that he has a headache.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Embedded present-under-present. John self-locates at a time when he has a headache.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "de se (headache at John's now)", "judgment": "acceptable"}
+      ],
+      "comment": "Kratzer's example (30), Section 5, p. 102: even non-dramatic embedded tense gets a de se interpretation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex32a",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(32a)"},
+      "language": "stan1293",
+      "primaryText": "John bought a fish that was still alive.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Relative clause past tense under a matrix past. The relative-clause tense can be zero-bound (simultaneous with buying) or independently past.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "simultaneous (alive-at-buying, zero tense in RC)", "judgment": "acceptable"},
+        {"name": "independent past (alive-before-buying, past in RC)", "judgment": "acceptable"}
+      ],
+      "comment": "Kratzer's example (32a), Section 5, p. 103. RC tense is structurally optional in a way SOT complement-tense is not.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex33a",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(33a)"},
+      "language": "stan1293",
+      "primaryText": "John said he would buy a fish that was still alive.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Same surface form as (2)/ex02, re-analyzed in Section 5 with zero-tense in the RC. Kratzer's own multi-LF variant (not attributed to Ogihara below this ex number in the paper).",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "RC zero-tense (alive-at-buying)", "judgment": "acceptable"},
+        {"name": "RC past-tense (alive-at-saying)", "judgment": "acceptable"}
+      ],
+      "comment": "Kratzer's example (33a), Section 5, p. 103. Two LFs for the RC tense — zero-tense bound at the buying time, or genuine past bound at the saying time.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex34a",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(34a)"},
+      "language": "stan1293",
+      "primaryText": "John thought two days ago that you would be sick yesterday.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Sickness is at yesterday (between thought-time two-days-ago and utterance). \"Would\" makes the relative future-from-thought reachable.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "sickness yesterday, after the self-located thought time (de se)", "judgment": "acceptable"}
+      ],
+      "comment": "Kratzer's example (34a), Section 5, p. 104. Contrasts minimally with (35a) below.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex35a",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(35a)"},
+      "language": "stan1293",
+      "primaryText": "John thought two days ago that you were sick yesterday.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Without \"would\", the embedded past forces sickness at the thought-time (two days ago), which conflicts with the adverbial \"yesterday\".",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [
+        {"name": "sickness-at-thought-time", "judgment": "ungrammatical"}
+      ],
+      "comment": "Kratzer's example (35a), Section 5, p. 104. Star is Kratzer's. The de se contrast with (34a): John would have to locate himself two days ago at a time that is part of yesterday.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex36a",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(36a)"},
+      "language": "stan1293",
+      "primaryText": "The ultrasound picture indicated that Mary is pregnant.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Past matrix with present embedded. Embedded present can be de re about a present state of Mary that the past ultrasound picture is about.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "de re on present state", "judgment": "marginal"}
+      ],
+      "comment": "Kratzer's example (36a), Section 6, p. 104. Printed unmarked; Kratzer: \"Sentences like (36) are in fact ungrammatical or marginal for many speakers, including some of my linguist colleagues. But there are enough speakers who like them\".",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex36b",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(36b)"},
+      "language": "stan1293",
+      "primaryText": "The ultrasound picture indicated of a present state of Mary's that it is a pregnancy.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Ogihara-style paraphrase that makes the temporal de re explicit.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "de re on present state (explicit)", "judgment": "acceptable"}
+      ],
+      "comment": "Kratzer's example (36b), Section 6, p. 104. The paper prints \"ultra sound picture\" here.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex40a",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(40a)"},
+      "language": "stan1293",
+      "primaryText": "Who built this Church? Borromini built this church.",
+      "discourseSegments": [
+        "Who built this Church?",
+        "Borromini built this church."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Looking at churches in Italy, no previous discourse. English simple past acceptable out of the blue.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["form", "simple past"],
+        ["context", "out of the blue"]
+      ],
+      "comment": "Kratzer's example (40a), Section 7, p. 106. Cornerstone of the deictic-vs-anaphoric contrast: English simple past does not require a contextually salient past time.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex40b",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(40b)"},
+      "language": "stan1295",
+      "primaryText": "Wer baute diese Kirche? Borromini baute diese Kirche.",
+      "discourseSegments": [
+        "Wer baute diese Kirche?",
+        "Borromini baute diese Kirche."
+      ],
+      "glossedTokens": [
+        ["Wer", "Who"], ["baute", "built"], ["diese", "this"], ["Kirche", "church"],
+        ["Borromini", "Borromini"], ["baute", "built"], ["diese", "this"], ["Kirche", "church"]
+      ],
+      "translation": "Who built this church? Borromini built this church.",
+      "context": "Looking at churches in Italy, no previous discourse. German simple past (Präteritum) infelicitous out of the blue.",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["form", "Präteritum"],
+        ["context", "out of the blue"]
+      ],
+      "comment": "Kratzer's example (40b), Section 7, p. 106. Star is Kratzer's. Per Kratzer: \"At best, it sounds like the hypercorrect utterance of a South German speaker.\" Cornerstone of the deictic-vs-anaphoric Preterit asymmetry. The paper prints a period after the question \"Wer baute diese Kirche\".",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex40c",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(40c)"},
+      "language": "stan1295",
+      "primaryText": "Wer hat diese Kirche gebaut? Borromini hat diese Kirche gebaut.",
+      "discourseSegments": [
+        "Wer hat diese Kirche gebaut?",
+        "Borromini hat diese Kirche gebaut."
+      ],
+      "glossedTokens": [
+        ["Wer", "Who"], ["hat", "has"], ["diese", "this"], ["Kirche", "church"], ["gebaut", "built"],
+        ["Borromini", "Borromini"], ["hat", "has"], ["diese", "this"], ["Kirche", "church"],
+        ["gebaut", "built"]
+      ],
+      "translation": "Who has this church built? Borromini has this church built.",
+      "context": "Same out-of-the-blue Italy-church scenario. Standard German Perfekt is felicitous where simple past is not.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["form", "Perfekt"],
+        ["context", "out of the blue"]
+      ],
+      "comment": "Kratzer's example (40c), Section 7, p. 106. The Perfekt fills the deictic-past slot that the Preterit cannot. Supports Kratzer's decomposition: English simple past = perfect-aspect + present-tense.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex41a",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(41a)"},
+      "language": "stan1293",
+      "primaryText": "We will answer every letter that we got.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "English simple past in a relative clause inside a future matrix. Felicitous even without a contextually salient past interval.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["form", "simple past"]
+      ],
+      "comment": "Kratzer's example (41a), Section 7, p. 106. English simple past = perfect tolerated in embedded sentences.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex41b",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(41b)"},
+      "language": "stan1295",
+      "primaryText": "Wir werden jeden Brief beantworten, den wir bekamen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Wir", "We"], ["werden", "will"], ["jeden", "every"], ["Brief", "letter"],
+        ["beantworten", "answer"], ["den", "that"], ["wir", "we"], ["bekamen", "received"]
+      ],
+      "translation": "We will answer every letter that we received.",
+      "context": "Same content as (41a) in Standard German Präteritum. Needs a contextually salient past time to be acceptable.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["form", "Präteritum"]
+      ],
+      "comment": "Kratzer's example (41b), Section 7, p. 106. Printed unmarked. Per Kratzer: \"needs a contextually salient past time to be acceptable\" — directly diagnoses the anaphoric requirement.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex41c",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(41c)"},
+      "language": "stan1295",
+      "primaryText": "Wir werden jeden Brief beantworten, den wir bekommen haben.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Wir", "We"], ["werden", "will"], ["jeden", "every"], ["Brief", "letter"],
+        ["beantworten", "answer"], ["den", "that"], ["wir", "we"], ["bekommen", "gotten"],
+        ["haben", "have"]
+      ],
+      "translation": "We will answer every letter that we received.",
+      "context": "Same content as (41a/b) but with German Perfekt in the RC. Felicitous without a salient past time.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["form", "Perfekt"]
+      ],
+      "comment": "Kratzer's example (41c), Section 7, p. 106. The Perfekt slot again fills in for the missing deictic Preterit.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex42a",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(42a)"},
+      "language": "stan1293",
+      "primaryText": "John dreamed about eating a fish that he caught himself.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "RC past \"caught\" can have either an anaphoric reading (relative to the dream-time) or an independent backward-shifted reading.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "anaphoric (caught-before-dreaming)", "judgment": "acceptable"},
+        {"name": "backward-shifted (caught-before-eating)", "judgment": "acceptable"}
+      ],
+      "comment": "Kratzer's example (42a), Section 7, p. 106. Per Kratzer: \"Underlined past tense does not have to be anaphoric.\"",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex42b",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(42b)"},
+      "language": "stan1295",
+      "primaryText": "Hans träumte davon, einen Fisch zu essen, den er selber fing.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hans", "Hans"], ["träumte", "dreamed"], ["davon", "of it"], ["einen", "a"],
+        ["Fisch", "fish"], ["zu", "to"], ["essen", "eat"], ["den", "that"], ["er", "he"],
+        ["selber", "himself"], ["fing", "caught"]
+      ],
+      "translation": "Hans dreamed about eating a fish that he caught himself.",
+      "context": "Same content as (42a) with German Präteritum in the RC. Per Kratzer, the past tense must be anaphoric (no backward-shifted reading).",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "anaphoric (caught-at-dreaming-time)", "judgment": "acceptable"},
+        {"name": "backward-shifted (caught-before-eating)", "judgment": "unacceptable"}
+      ],
+      "comment": "Kratzer's example (42b), Section 7, p. 106. Per Kratzer: \"Underlined past tense must be anaphoric.\" The backward-shifted reading is an interpretation gap (unavailable LF), not a string ill-formedness — hence `unacceptable` rather than `ungrammatical`.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kratzer1998_ex42c",
+      "source": {"bibkey": "kratzer-1998", "paperLabel": "(42c)"},
+      "language": "stan1295",
+      "primaryText": "Hans träumte davon, einen Fisch zu essen, den er selber gefangen hatte.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hans", "Hans"], ["träumte", "dreamed"], ["davon", "of it"], ["einen", "a"],
+        ["Fisch", "fish"], ["zu", "to"], ["essen", "eat"], ["den", "that"], ["er", "he"],
+        ["selber", "himself"], ["gefangen", "caught"], ["hatte", "had"]
+      ],
+      "translation": "Hans dreamed about eating a fish that he had caught himself.",
+      "context": "To recover the backward-shifted reading in German, the past perfect (Plusquamperfekt) is required.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "backward-shifted (caught-before-eating)", "judgment": "acceptable"}
+      ],
+      "comment": "Kratzer's example (42c), Section 7, p. 106. Past perfect fills the backward-shifted slot that the bare Preterit cannot. NB: Kratzer's free English translation in the PDF reads \"catching\" (typo for \"eating\"); the German `einen Fisch zu essen` is unambiguously \"to eat a fish\", with the catching in the RC `den er selber gefangen hatte`. Translation here reflects the German.",
+      "verified": "page-image"
+    }
+  ]
+}

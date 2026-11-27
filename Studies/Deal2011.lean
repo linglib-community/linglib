@@ -250,7 +250,9 @@ theorem rows_resolve :
 theorem rows :
     ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable,
       ∀ env ∈ Examples.environment e,
-        (∀ r ∈ e.parse? "force" forceTable, (e.judgment = .acceptable ↔
+        (∀ r ∈ (Examples.force e).map fun
+          | .possibility => .existential
+          | .necessity => .universal, (e.judgment = .acceptable ↔
           TranslatesIn lexicalForce NezPerce.modals (polarity env) m r)) ∧
         ∀ x ∈ e.readings, ∃ r ∈ forceTable.lookup x.1, (x.2 = .acceptable ↔
           TranslatesIn lexicalForce NezPerce.modals (polarity env) m r) := by

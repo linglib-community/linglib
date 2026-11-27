@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Logic.Team.QBSML.Enrichment
-public import Linglib.Logic.Team.QBSML.Properties
+public import Linglib.Logic.Team.QBSML.Defs
+public import Linglib.Logic.Team.Closure
 
 /-!
 # Free choice in QBSML

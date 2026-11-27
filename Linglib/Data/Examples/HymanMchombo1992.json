@@ -1,1770 +1,1820 @@
-[
-  {
-    "id": "hymanmchombo1992_1b_caus",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(1b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "C"],
-      ["suffixes", "C"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_1b_appl",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(1b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie for/with/at",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "A"],
-      ["suffixes", "A"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_1b_recip",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(1b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie each other",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "R"],
-      ["suffixes", "R"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_1b_pass",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(1b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-idw-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "P"],
-      ["suffixes", "P"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_1b_int",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(1b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ITS-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie well",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "I"],
-      ["suffixes", "I"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_3a_rc",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie each other",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RC"],
-      ["suffixes", "RC"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_3a_cr",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause each other tie",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "CR"],
-      ["suffixes", "CR"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_3b_ap",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-idw-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied for[ben] ~ with[instr] ~ at[loc]",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "AP"],
-      ["suffixes", "AP"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_3b_pa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-idw-ir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied at[loc] ~ for[reason]",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "PA"],
-      ["suffixes", "PA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_3c_ar",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie for each other",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "AR"],
-      ["suffixes", "AR"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_3c_ra",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-ir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie each other for/with/at",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RA"],
-      ["suffixes", "RA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_3c_ra_doubled",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie each other for/with/at",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RA"],
-      ["suffixes", "RA(R)"]
-    ],
-    "comment": "The doubled -an- is underlined in the source.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_3d_ri",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3d)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-ITS-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie each other well",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RI"],
-      ["suffixes", "RI"]
-    ],
-    "comment": "Printed with '(=INT-REC)': synonymous with the INT-REC order (fn. 3).",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_3d_ir",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3d)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ITSITS-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie well each other",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RI"],
-      ["suffixes", "IR"]
-    ],
-    "comment": "Printed with '(=REC-INT)': synonymous with the REC-INT order (fn. 3). The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes; fn. 16 derives the form by circumscription.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_4a_rp",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(4a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-idw-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be each other tied",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RP"],
-      ["suffixes", "RP"]
-    ],
-    "comment": "The source stars the gloss as well: *'be each other tied'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_4a_pr",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(4a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-idw-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied each other",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "PR"],
-      ["suffixes", "PR"]
-    ],
-    "comment": "The source stars the gloss as well: *'be tied each other'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_4b_ci",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(4b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-ITS-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie well",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "CI"],
-      ["suffixes", "CI"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_4b_ic",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(4b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ITSITS-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause well to tie",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "IC"],
-      ["suffixes", "IC"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_6a",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-ir-a",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie for [s.o] at [s.pl.]",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "AA"],
-      ["suffixes", "AA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_6b",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-an-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie for each other at [s.pl.]",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "ARA"],
-      ["suffixes", "ARA(R)"]
-    ],
-    "comment": "The doubled -an- is underlined in the source.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_6c_ap",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-idw-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied at [s.pl.]",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "AP"],
-      ["suffixes", "AP"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_6c_pa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-idw-ir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied at [s.pl.]",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "PA"],
-      ["suffixes", "PA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_6d_aap",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6d)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-ir-idw-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied with [sth.] at [s.pl.]",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "AAP"],
-      ["suffixes", "AAP"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_6d_apa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6d)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-idw-ir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied with [sth.] at [s.pl.]",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "APA"],
-      ["suffixes", "APA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_7a_ca",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-ir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie for (~ with ~ at)",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "CA"],
-      ["suffixes", "CA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_7a_ac",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause for (with/at) to tie",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "AC"],
-      ["suffixes", "AC"]
-    ],
-    "comment": "The source stars the label *APP-CAUS but prints the form without a star; the text states that -its- must precede -ir-.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_7b_cp",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-idw-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be caused to tie",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "CP"],
-      ["suffixes", "CP"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_7b_pc",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-idw-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to be tied",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "PC"],
-      ["suffixes", "PC"]
-    ],
-    "comment": "The source adds '(use CAUS-PASS)'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_7c_ia",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ITSITS-ir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie well for (~ with ~ at)",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "AI"],
-      ["suffixes", "IA"]
-    ],
-    "comment": "The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes; fn. 16 derives the form by circumscription.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_7c_ai",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-ITS-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie for (~ with ~ at) well",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "AI"],
-      ["suffixes", "AI"]
-    ],
-    "comment": "Printed with '(=INT-APP)'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_7d_ip",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7d)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ITSITS-idw-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied well",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "PI"],
-      ["suffixes", "IP"]
-    ],
-    "comment": "The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes; fn. 16 derives the form by circumscription.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_7d_pi",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7d)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-idw-ITS-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied well",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "PI"],
-      ["suffixes", "PI"]
-    ],
-    "comment": "The source prints *mang-idw-its- under the label *PASS-INT, with '(=INT-PASS)'; (12a) prints the same form as *mang-idw-ITS-.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_11a_ac",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(11a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie for [s.o.]",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "AC"],
-      ["suffixes", "AC"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_11a_arc",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(11a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-an-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie for each other",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "ARC"],
-      ["suffixes", "ARC"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_11b_ai",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(11b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-ITS-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie for well",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "AI"],
-      ["suffixes", "AI"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_11b_ari",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(11b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-an-ITS-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie for each other well",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "ARI"],
-      ["suffixes", "ARI"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_12a",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-idw-ITS-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied well",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "PI"],
-      ["suffixes", "PI"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_12b",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-idw-ir-ITS-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied well at [s.pl]",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "PAI"],
-      ["suffixes", "PAI"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_12c_rc",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie each other",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RC"],
-      ["suffixes", "RC"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_12c_rcp",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-idw-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be caused to tie each other",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RCP"],
-      ["suffixes", "RCP"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_12c_rcpa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-idw-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be caused to tie e.o. at [s.pl.]",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RCPA"],
-      ["suffixes", "RCPA(R)"]
-    ],
-    "comment": "Labeled RCPA(R); the doubled -an- is underlined in the source.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_12d",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12d)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-idw-ir-an-ITS-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be caused to tie e.o. at [s.pl.] well",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RCPAI"],
-      ["suffixes", "RCPA(R)I"]
-    ],
-    "comment": "Labeled RCPARI; its doubled -an-, underlined in (12c), is printed without the underline fn. 2 promises.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_16_ac",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(16)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-ir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie for",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "AC"],
-      ["suffixes", "CA"]
-    ],
-    "comment": "The derivation on the left, from [[mang] APP] CAUS.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_16_pc",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(16)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-idw-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to be tied",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "PC"],
-      ["suffixes", "CP"]
-    ],
-    "comment": "The derivation on the right, from [[mang] PASS] CAUS; fn. 7 notes it can also mean 'be caused to tie', from [[mang] CAUS] PASS.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_18",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(18)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-idw-ir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause be tied at [s.pl.] ~ for [s.reason]",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "PAC"],
-      ["suffixes", "CPA"]
-    ],
-    "comment": "The derivation from the morphosyntactic representation (18a), V PASS APP CAUS.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_21c",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(21c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie each for [s.o.] ~ with [sth.] ~ at [s.pl.] ~ for [s.reason]",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RA"],
-      ["suffixes", "AR"]
-    ],
-    "comment": "The order -ir-an- used as an applicativized reciprocal.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_23a_bad",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(23a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-ir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie each other for ~ with ~ at",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RCA"],
-      ["suffixes", "RCA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_23a",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(23a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie each other for ~ with ~ at",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RCA"],
-      ["suffixes", "RCA(R)"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_23b_bad",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(23b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-idw-ir-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be caused to tie each other at ~ for [reason]",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RCPA"],
-      ["suffixes", "RCPA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_23b",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(23b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-idw-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be caused to tie each other at ~ for [reason]",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RCPA"],
-      ["suffixes", "RCPA(R)"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_25a_1",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(25a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie each other for [s.o.]",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RA"],
-      ["suffixes", "RA(R)"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_25a_2",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(25a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-ir-an-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie each other for [s.o.] with [sth.]",
-    "context": "",
-    "judgment": "nearlyUngrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RAA"],
-      ["suffixes", "RA(R)A(R)"]
-    ],
-    "comment": "Marked ?* in the source.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_25a_3",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(25a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-ir-an-ir-an-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "tie each other for [s.o.] with [sth.] at [s.pl.]",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RAAA"],
-      ["suffixes", "RA(R)A(R)A(R)"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_25b",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(25b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-ir-an-its-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie e.o. for [s.o.] with [sth.]",
-    "context": "",
-    "judgment": "marginal",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RACA"],
-      ["suffixes", "RA(R)CA(R)"]
-    ],
-    "comment": "The source glosses it also 'cause to tie e.o. with [sth.] at [s.pl.]'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_27a_ap",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(27a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "Mchómbó a-na-máng-ír-idw-á nkhûni",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Mchombo was tied firewood",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "benefactive"],
-      ["subject", "applied"],
-      ["suffixes", "AP"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_27a_pa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(27a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "Mchómbó a-na-máng-ídw-ir-á nkhûni",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "benefactive"],
-      ["subject", "applied"],
-      ["suffixes", "PA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_27b_ap",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(27b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "nkhúní zi-na-máng-ír-idw-á Mchômbo",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "firewood was tied for Mch.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "benefactive"],
-      ["subject", "patient"],
-      ["suffixes", "AP"]
-    ],
-    "comment": "The source annotates [*PATIENT subject w/BEN].",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_27b_pa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(27b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "nkhúní zi-na-máng-ídw-ir-á Mchômbo",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "firewood was tied for Mch.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "benefactive"],
-      ["subject", "patient"],
-      ["suffixes", "PA"]
-    ],
-    "comment": "The source annotates [*PATIENT subject w/BEN].",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_28a_ap",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(28a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "chingwe chi-na-máng-ír-idw-á nkhûni",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "a rope was used to tie firewood",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "instrument"],
-      ["subject", "applied"],
-      ["suffixes", "AP"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_28a_pa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(28a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "chingwe chi-na-máng-ídw-ir-á nkhûni",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "instrument"],
-      ["subject", "applied"],
-      ["suffixes", "PA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_28b_ap",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(28b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "nkhúní zi-na-máng-ír-idw-á chingwe",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "firewood was tied with a rope",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "instrument"],
-      ["subject", "patient"],
-      ["suffixes", "AP"]
-    ],
-    "comment": "The source annotates [*PATIENT subject w/INSTR].",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_28b_pa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(28b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "nkhúní zi-na-máng-ídw-ir-á chingwe",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "firewood was tied with a rope",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "instrument"],
-      ["subject", "patient"],
-      ["suffixes", "PA"]
-    ],
-    "comment": "The source annotates [*PATIENT subject w/INSTR].",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_29a_ap",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(29a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "m-nkhalangó mu-na-máng-ír-idw-á nkhûni",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "in forest was tied firewood",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "locative"],
-      ["subject", "applied"],
-      ["suffixes", "AP"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_29a_pa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(29a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "m-nkhalangó mu-na-máng-ídw-ir-á nkhûni",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "in forest was tied firewood",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "locative"],
-      ["subject", "applied"],
-      ["suffixes", "PA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_29b_ap",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(29b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "nkhúní zi-na-máng-ír-idw-á m-nkhalǎngo",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "firewood was tied in forest",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "locative"],
-      ["subject", "patient"],
-      ["suffixes", "AP"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_29b_pa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(29b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "nkhúní zi-na-máng-ídw-ir-á m-nkhalǎngo",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "firewood was tied in forest",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "locative"],
-      ["subject", "patient"],
-      ["suffixes", "PA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_30a_ap",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(30a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "nkhúní zi-na-máng-ír-idw-á ndalâma",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "firewood was tied for money",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "circumstantial"],
-      ["subject", "patient"],
-      ["suffixes", "AP"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_30a_pa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(30a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "nkhúní zi-na-máng-ídw-ir-á ndalâma",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "firewood was tied for money",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "circumstantial"],
-      ["subject", "patient"],
-      ["suffixes", "PA"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_30b_ap",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(30b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "ndalámá i-na-máng-ír-idw-á nkhûni",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "[for] money was tied firewood",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "circumstantial"],
-      ["subject", "applied"],
-      ["suffixes", "AP"]
-    ],
-    "comment": "The source annotates [*CIRCUM subject of passive].",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_30b_pa",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(30b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "ndalámá i-na-máng-ídw-ir-á nkhûni",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "[for] money was tied firewood",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["role", "circumstantial"],
-      ["subject", "applied"],
-      ["suffixes", "PA"]
-    ],
-    "comment": "The source annotates [*CIRCUM subject of passive].",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_32b",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(32b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "uk-ir-a",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "rebel against",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "uk"],
-      ["scope", "A"],
-      ["suffixes", "A"]
-    ],
-    "comment": "'wake up' + APP, with an idiomatic meaning.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_32c",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(32c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "uk-ir-its-a",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to rebel against",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "uk"],
-      ["scope", "AC"],
-      ["suffixes", "AC"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_32d",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(32d)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "uk-its-ir-a",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to rebel against",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "uk"],
-      ["scope", "AC"],
-      ["suffixes", "CA"]
-    ],
-    "comment": "Also 'wake up [s.o.] for (~ with ~ at)'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_34b",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-ir-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie e.o. with",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RAC"],
-      ["suffixes", "RAC"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_34c",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34c)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ir-an-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie e.o. with",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RAC"],
-      ["suffixes", "ARC"]
-    ],
-    "comment": "Printed '(=ungrammatical with intended scope)'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_34d",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34d)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-ir-an-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie e.o. with",
-    "context": "",
-    "judgment": "marginal",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RAC"],
-      ["suffixes", "RA(R)C"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_34e_1",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34e)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie e.o. with",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RAC"],
-      ["suffixes", "RCA(R)"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_34e_2",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34e)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-an-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie e.o. with",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RAC"],
-      ["suffixes", "CRA(R)"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_34e_3",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34e)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-ir-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie e.o. with",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RAC"],
-      ["suffixes", "CAR"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_35a_cr",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(35a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause each other to tie",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "CR"],
-      ["suffixes", "CR"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_35a_rc",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(35a)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-an-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie each other",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RC"],
-      ["suffixes", "CR"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_35b_rc",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(35b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie each other",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RC"],
-      ["suffixes", "RC"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_35b_cr",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(35b)"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-an-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause each other to tie",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "CR"],
-      ["suffixes", "RC"]
-    ],
-    "comment": "The source stars the reading: *'cause each other to tie'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_fn16_a",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "fn. 16"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ITSITS-an-its-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause to tie each other well",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "RCI"],
-      ["suffixes", "IRC"]
-    ],
-    "comment": "The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_fn16_b",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "fn. 16"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-its-an-ITS-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "cause each other to tie well",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "CRI"],
-      ["suffixes", "CRI"]
-    ],
-    "verified": "page-image"
-  },
-  {
-    "id": "hymanmchombo1992_fn16_c",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "fn. 16"},
-    "reportedIn": null,
-    "language": "nyan1308",
-    "primaryText": "mang-ITSITS-ir-idw-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "be tied well with",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "mang"],
-      ["scope", "API"],
-      ["suffixes", "IAP"]
-    ],
-    "comment": "The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "role",
+      "lean": "role",
+      "type": "Role",
+      "doc": "The role of the applied argument.",
+      "levels": [
+        {
+          "name": "benefactive",
+          "label": "benefactive",
+          "doc": "benefactive"
+        },
+        {
+          "name": "instrument",
+          "label": "instrument",
+          "doc": "instrument"
+        },
+        {
+          "name": "locative",
+          "label": "locative",
+          "doc": "locative"
+        },
+        {
+          "name": "circumstantial",
+          "label": "circumstantial",
+          "doc": "circumstantial"
+        }
+      ]
+    },
+    {
+      "key": "subject",
+      "lean": "passiveSubject",
+      "type": "PassiveSubject",
+      "doc": "The argument that is the subject of the passive.",
+      "levels": [
+        {
+          "name": "applied",
+          "label": "applied",
+          "doc": "the applied argument"
+        },
+        {
+          "name": "patient",
+          "label": "patient",
+          "doc": "the patient"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "hymanmchombo1992_1b_caus",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(1b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "C"],
+        ["suffixes", "C"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_1b_appl",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(1b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie for/with/at",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "A"],
+        ["suffixes", "A"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_1b_recip",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(1b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie each other",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "R"],
+        ["suffixes", "R"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_1b_pass",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(1b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-idw-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "P"],
+        ["suffixes", "P"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_1b_int",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(1b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ITS-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie well",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "I"],
+        ["suffixes", "I"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_3a_rc",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie each other",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RC"],
+        ["suffixes", "RC"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_3a_cr",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause each other tie",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "CR"],
+        ["suffixes", "CR"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_3b_ap",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-idw-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied for[ben] ~ with[instr] ~ at[loc]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "AP"],
+        ["suffixes", "AP"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_3b_pa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-idw-ir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied at[loc] ~ for[reason]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "PA"],
+        ["suffixes", "PA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_3c_ar",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie for each other",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "AR"],
+        ["suffixes", "AR"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_3c_ra",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-ir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie each other for/with/at",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RA"],
+        ["suffixes", "RA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_3c_ra_doubled",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie each other for/with/at",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RA"],
+        ["suffixes", "RA(R)"]
+      ],
+      "comment": "The doubled -an- is underlined in the source.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_3d_ri",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3d)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-ITS-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie each other well",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RI"],
+        ["suffixes", "RI"]
+      ],
+      "comment": "Printed with '(=INT-REC)': synonymous with the INT-REC order (fn. 3).",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_3d_ir",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(3d)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ITSITS-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie well each other",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RI"],
+        ["suffixes", "IR"]
+      ],
+      "comment": "Printed with '(=REC-INT)': synonymous with the REC-INT order (fn. 3). The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes; fn. 16 derives the form by circumscription.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_4a_rp",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(4a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-idw-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be each other tied",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RP"],
+        ["suffixes", "RP"]
+      ],
+      "comment": "The source stars the gloss as well: *'be each other tied'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_4a_pr",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(4a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-idw-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied each other",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "PR"],
+        ["suffixes", "PR"]
+      ],
+      "comment": "The source stars the gloss as well: *'be tied each other'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_4b_ci",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(4b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-ITS-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie well",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "CI"],
+        ["suffixes", "CI"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_4b_ic",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(4b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ITSITS-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause well to tie",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "IC"],
+        ["suffixes", "IC"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_6a",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-ir-a",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie for [s.o] at [s.pl.]",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "AA"],
+        ["suffixes", "AA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_6b",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-an-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie for each other at [s.pl.]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "ARA"],
+        ["suffixes", "ARA(R)"]
+      ],
+      "comment": "The doubled -an- is underlined in the source.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_6c_ap",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-idw-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied at [s.pl.]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "AP"],
+        ["suffixes", "AP"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_6c_pa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-idw-ir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied at [s.pl.]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "PA"],
+        ["suffixes", "PA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_6d_aap",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6d)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-ir-idw-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied with [sth.] at [s.pl.]",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "AAP"],
+        ["suffixes", "AAP"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_6d_apa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(6d)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-idw-ir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied with [sth.] at [s.pl.]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "APA"],
+        ["suffixes", "APA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_7a_ca",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-ir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie for (~ with ~ at)",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "CA"],
+        ["suffixes", "CA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_7a_ac",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause for (with/at) to tie",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "AC"],
+        ["suffixes", "AC"]
+      ],
+      "comment": "The source stars the label *APP-CAUS but prints the form without a star; the text states that -its- must precede -ir-.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_7b_cp",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-idw-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be caused to tie",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "CP"],
+        ["suffixes", "CP"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_7b_pc",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-idw-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to be tied",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "PC"],
+        ["suffixes", "PC"]
+      ],
+      "comment": "The source adds '(use CAUS-PASS)'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_7c_ia",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ITSITS-ir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie well for (~ with ~ at)",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "AI"],
+        ["suffixes", "IA"]
+      ],
+      "comment": "The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes; fn. 16 derives the form by circumscription.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_7c_ai",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-ITS-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie for (~ with ~ at) well",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "AI"],
+        ["suffixes", "AI"]
+      ],
+      "comment": "Printed with '(=INT-APP)'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_7d_ip",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7d)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ITSITS-idw-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied well",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "PI"],
+        ["suffixes", "IP"]
+      ],
+      "comment": "The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes; fn. 16 derives the form by circumscription.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_7d_pi",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(7d)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-idw-ITS-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied well",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "PI"],
+        ["suffixes", "PI"]
+      ],
+      "comment": "The source prints *mang-idw-its- under the label *PASS-INT, with '(=INT-PASS)'; (12a) prints the same form as *mang-idw-ITS-.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_11a_ac",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(11a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie for [s.o.]",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "AC"],
+        ["suffixes", "AC"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_11a_arc",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(11a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-an-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie for each other",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "ARC"],
+        ["suffixes", "ARC"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_11b_ai",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(11b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-ITS-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie for well",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "AI"],
+        ["suffixes", "AI"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_11b_ari",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(11b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-an-ITS-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie for each other well",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "ARI"],
+        ["suffixes", "ARI"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_12a",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-idw-ITS-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied well",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "PI"],
+        ["suffixes", "PI"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_12b",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-idw-ir-ITS-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied well at [s.pl]",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "PAI"],
+        ["suffixes", "PAI"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_12c_rc",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie each other",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RC"],
+        ["suffixes", "RC"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_12c_rcp",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-idw-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be caused to tie each other",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RCP"],
+        ["suffixes", "RCP"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_12c_rcpa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-idw-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be caused to tie e.o. at [s.pl.]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RCPA"],
+        ["suffixes", "RCPA(R)"]
+      ],
+      "comment": "Labeled RCPA(R); the doubled -an- is underlined in the source.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_12d",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(12d)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-idw-ir-an-ITS-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be caused to tie e.o. at [s.pl.] well",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RCPAI"],
+        ["suffixes", "RCPA(R)I"]
+      ],
+      "comment": "Labeled RCPARI; its doubled -an-, underlined in (12c), is printed without the underline fn. 2 promises.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_16_ac",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(16)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-ir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie for",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "AC"],
+        ["suffixes", "CA"]
+      ],
+      "comment": "The derivation on the left, from [[mang] APP] CAUS.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_16_pc",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(16)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-idw-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to be tied",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "PC"],
+        ["suffixes", "CP"]
+      ],
+      "comment": "The derivation on the right, from [[mang] PASS] CAUS; fn. 7 notes it can also mean 'be caused to tie', from [[mang] CAUS] PASS.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_18",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(18)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-idw-ir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause be tied at [s.pl.] ~ for [s.reason]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "PAC"],
+        ["suffixes", "CPA"]
+      ],
+      "comment": "The derivation from the morphosyntactic representation (18a), V PASS APP CAUS.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_21c",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(21c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie each for [s.o.] ~ with [sth.] ~ at [s.pl.] ~ for [s.reason]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RA"],
+        ["suffixes", "AR"]
+      ],
+      "comment": "The order -ir-an- used as an applicativized reciprocal.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_23a_bad",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(23a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-ir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie each other for ~ with ~ at",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RCA"],
+        ["suffixes", "RCA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_23a",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(23a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie each other for ~ with ~ at",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RCA"],
+        ["suffixes", "RCA(R)"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_23b_bad",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(23b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-idw-ir-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be caused to tie each other at ~ for [reason]",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RCPA"],
+        ["suffixes", "RCPA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_23b",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(23b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-idw-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be caused to tie each other at ~ for [reason]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RCPA"],
+        ["suffixes", "RCPA(R)"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_25a_1",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(25a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie each other for [s.o.]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RA"],
+        ["suffixes", "RA(R)"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_25a_2",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(25a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-ir-an-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie each other for [s.o.] with [sth.]",
+      "context": "",
+      "judgment": "nearlyUngrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RAA"],
+        ["suffixes", "RA(R)A(R)"]
+      ],
+      "comment": "Marked ?* in the source.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_25a_3",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(25a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-ir-an-ir-an-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "tie each other for [s.o.] with [sth.] at [s.pl.]",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RAAA"],
+        ["suffixes", "RA(R)A(R)A(R)"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_25b",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(25b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-ir-an-its-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie e.o. for [s.o.] with [sth.]",
+      "context": "",
+      "judgment": "marginal",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RACA"],
+        ["suffixes", "RA(R)CA(R)"]
+      ],
+      "comment": "The source glosses it also 'cause to tie e.o. with [sth.] at [s.pl.]'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_27a_ap",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(27a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "Mchómbó a-na-máng-ír-idw-á nkhûni",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Mchombo was tied firewood",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "benefactive"],
+        ["subject", "applied"],
+        ["suffixes", "AP"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_27a_pa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(27a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "Mchómbó a-na-máng-ídw-ir-á nkhûni",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "benefactive"],
+        ["subject", "applied"],
+        ["suffixes", "PA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_27b_ap",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(27b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "nkhúní zi-na-máng-ír-idw-á Mchômbo",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "firewood was tied for Mch.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "benefactive"],
+        ["subject", "patient"],
+        ["suffixes", "AP"]
+      ],
+      "comment": "The source annotates [*PATIENT subject w/BEN].",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_27b_pa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(27b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "nkhúní zi-na-máng-ídw-ir-á Mchômbo",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "firewood was tied for Mch.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "benefactive"],
+        ["subject", "patient"],
+        ["suffixes", "PA"]
+      ],
+      "comment": "The source annotates [*PATIENT subject w/BEN].",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_28a_ap",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(28a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "chingwe chi-na-máng-ír-idw-á nkhûni",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "a rope was used to tie firewood",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "instrument"],
+        ["subject", "applied"],
+        ["suffixes", "AP"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_28a_pa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(28a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "chingwe chi-na-máng-ídw-ir-á nkhûni",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "instrument"],
+        ["subject", "applied"],
+        ["suffixes", "PA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_28b_ap",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(28b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "nkhúní zi-na-máng-ír-idw-á chingwe",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "firewood was tied with a rope",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "instrument"],
+        ["subject", "patient"],
+        ["suffixes", "AP"]
+      ],
+      "comment": "The source annotates [*PATIENT subject w/INSTR].",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_28b_pa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(28b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "nkhúní zi-na-máng-ídw-ir-á chingwe",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "firewood was tied with a rope",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "instrument"],
+        ["subject", "patient"],
+        ["suffixes", "PA"]
+      ],
+      "comment": "The source annotates [*PATIENT subject w/INSTR].",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_29a_ap",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(29a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "m-nkhalangó mu-na-máng-ír-idw-á nkhûni",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "in forest was tied firewood",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "locative"],
+        ["subject", "applied"],
+        ["suffixes", "AP"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_29a_pa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(29a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "m-nkhalangó mu-na-máng-ídw-ir-á nkhûni",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "in forest was tied firewood",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "locative"],
+        ["subject", "applied"],
+        ["suffixes", "PA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_29b_ap",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(29b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "nkhúní zi-na-máng-ír-idw-á m-nkhalǎngo",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "firewood was tied in forest",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "locative"],
+        ["subject", "patient"],
+        ["suffixes", "AP"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_29b_pa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(29b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "nkhúní zi-na-máng-ídw-ir-á m-nkhalǎngo",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "firewood was tied in forest",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "locative"],
+        ["subject", "patient"],
+        ["suffixes", "PA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_30a_ap",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(30a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "nkhúní zi-na-máng-ír-idw-á ndalâma",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "firewood was tied for money",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "circumstantial"],
+        ["subject", "patient"],
+        ["suffixes", "AP"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_30a_pa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(30a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "nkhúní zi-na-máng-ídw-ir-á ndalâma",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "firewood was tied for money",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "circumstantial"],
+        ["subject", "patient"],
+        ["suffixes", "PA"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_30b_ap",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(30b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "ndalámá i-na-máng-ír-idw-á nkhûni",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "[for] money was tied firewood",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "circumstantial"],
+        ["subject", "applied"],
+        ["suffixes", "AP"]
+      ],
+      "comment": "The source annotates [*CIRCUM subject of passive].",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_30b_pa",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(30b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "ndalámá i-na-máng-ídw-ir-á nkhûni",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "[for] money was tied firewood",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["role", "circumstantial"],
+        ["subject", "applied"],
+        ["suffixes", "PA"]
+      ],
+      "comment": "The source annotates [*CIRCUM subject of passive].",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_32b",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(32b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "uk-ir-a",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "rebel against",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "uk"],
+        ["scope", "A"],
+        ["suffixes", "A"]
+      ],
+      "comment": "'wake up' + APP, with an idiomatic meaning.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_32c",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(32c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "uk-ir-its-a",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to rebel against",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "uk"],
+        ["scope", "AC"],
+        ["suffixes", "AC"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_32d",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(32d)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "uk-its-ir-a",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to rebel against",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "uk"],
+        ["scope", "AC"],
+        ["suffixes", "CA"]
+      ],
+      "comment": "Also 'wake up [s.o.] for (~ with ~ at)'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_34b",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-ir-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie e.o. with",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RAC"],
+        ["suffixes", "RAC"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_34c",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34c)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ir-an-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie e.o. with",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RAC"],
+        ["suffixes", "ARC"]
+      ],
+      "comment": "Printed '(=ungrammatical with intended scope)'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_34d",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34d)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-ir-an-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie e.o. with",
+      "context": "",
+      "judgment": "marginal",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RAC"],
+        ["suffixes", "RA(R)C"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_34e_1",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34e)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie e.o. with",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RAC"],
+        ["suffixes", "RCA(R)"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_34e_2",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34e)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-an-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie e.o. with",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RAC"],
+        ["suffixes", "CRA(R)"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_34e_3",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(34e)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-ir-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie e.o. with",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RAC"],
+        ["suffixes", "CAR"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_35a_cr",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(35a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause each other to tie",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "CR"],
+        ["suffixes", "CR"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_35a_rc",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(35a)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-an-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie each other",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RC"],
+        ["suffixes", "CR"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_35b_rc",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(35b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie each other",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RC"],
+        ["suffixes", "RC"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_35b_cr",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(35b)"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-an-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause each other to tie",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "CR"],
+        ["suffixes", "RC"]
+      ],
+      "comment": "The source stars the reading: *'cause each other to tie'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_fn16_a",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "fn. 16"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ITSITS-an-its-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause to tie each other well",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "RCI"],
+        ["suffixes", "IRC"]
+      ],
+      "comment": "The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_fn16_b",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "fn. 16"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-its-an-ITS-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "cause each other to tie well",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "CRI"],
+        ["suffixes", "CRI"]
+      ],
+      "verified": "page-image"
+    },
+    {
+      "id": "hymanmchombo1992_fn16_c",
+      "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "fn. 16"},
+      "reportedIn": null,
+      "language": "nyan1308",
+      "primaryText": "mang-ITSITS-ir-idw-",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "be tied well with",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "mang"],
+        ["scope", "API"],
+        ["suffixes", "IAP"]
+      ],
+      "comment": "The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes.",
+      "verified": "page-image"
+    }
+  ]
+}
