@@ -49,6 +49,11 @@ expressions with the same value at every context and world have the same charact
 difference of linguistic meaning finer than that, which structured characters and structured
 propositions are meant to capture, is not represented.
 
+The type `Character C W E` is a definition and not an abbreviation of `C → W → E`, as `Matrix` is
+in mathlib. A character is written with `fun` and applied as a function, but it does not inherit
+the instances of the function type. In particular it does not inherit the pointwise order on
+`C → W → Prop`, whose greatest element is a necessary sentence and not an a priori one.
+
 The type `W` may be any type of indices. Stalnaker's propositional concepts are the characters
 whose contexts are the worlds themselves.
 
@@ -65,11 +70,14 @@ whose contexts are the worlds themselves.
 /-- A **character** is a function from contexts to contents, where a **content** is a function
 from worlds to values. It represents the linguistic meaning of an expression, which fixes what the
 expression says at each context. -/
-abbrev Character (C W E : Type*) := C → W → E
+def Character (C W E : Type*) := C → W → E
 
 namespace Character
 
 variable {C W E : Type*}
+
+@[ext] theorem ext {χ χ' : Character C W E} (h : ∀ c w, χ c w = χ' c w) : χ = χ' :=
+  funext fun c ↦ funext (h c)
 
 /-- A character is **directly referential** if its content at every context is rigid. -/
 def IsDirectlyReferential (χ : Character C W E) : Prop := ∀ c, IsRigid (χ c)
