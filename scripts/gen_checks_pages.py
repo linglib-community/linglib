@@ -418,7 +418,7 @@ class Page:
             to = "?to=" + esc(focus, quote=True)
             plan = "".join(f'<li><a href="{self.href(site.unit_path(m))}{to}">'
                            f'{esc(site.unit_title(m))}</a></li>' for m in self.route)
-            plan = f'<p class="planh">Prerequisites</p><ol class="plan">{plan}</ol>'
+            plan = f'<p class="planh">Dependencies</p><ol class="plan">{plan}</ol>'
         return (f'<svg class="chart" viewBox="0 0 {width} {height:.0f}" '
                 f'style="max-width:{width}px" role="img" aria-label="What this page rests on">'
                 + "".join(lines + marks) + "</svg>" + plan)
