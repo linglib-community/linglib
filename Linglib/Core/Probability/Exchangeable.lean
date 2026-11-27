@@ -36,6 +36,8 @@ permutations of `ι` on `ι → E` by precomposition.
   exchangeable family gives an exchangeable family.
 * `ProbabilityTheory.Exchangeable.precomp`: a subfamily of an exchangeable family is
   exchangeable.
+* `ProbabilityTheory.Exchangeable.map_precomp_eq`: an exchangeable family is contractable, its
+  joint law being unchanged by reindexing along an injective map.
 * `ProbabilityTheory.iIndepFun.exchangeable`: independent and identically distributed random
   variables are exchangeable.
 
@@ -47,8 +49,8 @@ permutations that move finitely many indices; under a finite measure the two agr
 
 ## TODO
 
-* De Finetti's theorem: an exchangeable sequence in a standard Borel space is a mixture of
-  independent and identically distributed sequences.
+* `Contractable` as a predicate of its own, and its equivalence with exchangeability for
+  sequences.
 
 ## Tags
 
@@ -139,6 +141,26 @@ theorem precomp {f : ι' → ι} (hf : f.Injective) (h : Exchangeable X μ) :
     simpa [Function.comp_def, hv] using this
 
 end Exchangeable
+
+/-- An exchangeable family is contractable: reindexing along an injective map of the index type
+into itself does not change the joint law. -/
+theorem Exchangeable.map_precomp_eq [IsFiniteMeasure μ] {X : ι → Ω → E} (h : Exchangeable X μ)
+    {f : ι → ι} (hf : f.Injective) :
+    μ.map (fun ω i ↦ X (f i) ω) = μ.map fun ω i ↦ X i ω := by
+  have hr (I : Finset ι) : Measurable (I.restrict (π := fun _ ↦ E)) :=
+    .of_eval fun _ ↦ measurable_pi_apply _
+  have hc (g : ι → ι) : AEMeasurable (fun ω i ↦ X (g i) ω) μ :=
+    (Measurable.of_eval fun k ↦ measurable_pi_apply (g k)).comp_aemeasurable h.aemeasurable
+  refine IsProjectiveLimit.unique
+    (P := fun I : Finset ι ↦ (μ.map fun ω i ↦ X i ω).map I.restrict) (fun I ↦ ?_) (fun I ↦ rfl)
+  obtain ⟨σ, hσ⟩ := Equiv.Perm.exists_extending_pair (fun i : I ↦ (i : ι)) (fun i : I ↦ f i)
+    Subtype.val_injective (hf.comp Subtype.val_injective)
+  beta_reduce
+  rw [← h.map_eq σ, AEMeasurable.map_map_of_aemeasurable (hr I).aemeasurable (hc _),
+    AEMeasurable.map_map_of_aemeasurable (hr I).aemeasurable (hc _)]
+  congr 1
+  ext ω i
+  simp [hσ i]
 
 /-- A family is exchangeable if and only if its joint law is invariant under permuting the
 coordinates. -/
