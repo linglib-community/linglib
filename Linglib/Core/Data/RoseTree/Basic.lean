@@ -180,6 +180,11 @@ def map (f : α → β) : RoseTree α → RoseTree β :=
 theorem map_map (g : β → γ) (f : α → β) (t : RoseTree α) : map g (map f t) = map (g ∘ f) t :=
   fold_hom (map g) (fun a ps ↦ map_node g (f a) ps) t
 
+/-- A fold of a relabelled tree is the fold by the algebra at the new labels. -/
+theorem fold_map (f : α → β) (g : β → List γ → γ) (t : RoseTree α) :
+    fold g (map f t) = fold (fun a ↦ g (f a)) t :=
+  fold_hom (fold g) (fun a ps ↦ fold_node g (f a) ps) t
+
 @[simp] theorem value_map (f : α → β) (t : RoseTree α) : (map f t).value = f t.value := by
   cases t; simp
 
