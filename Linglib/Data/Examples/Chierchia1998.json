@@ -476,6 +476,116 @@
       "verified": "page-image"
     },
     {
+      "id": "chierchia1998_ex72a",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(72a)"},
+      "language": "ital1282",
+      "primaryText": "Leo ha mangiato patate.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Leo", "Leo"], ["ha", "PAST"], ["mangiato", "eat"], ["patate", "potatoes"]
+      ],
+      "translation": "Leo ate potatoes.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "governed"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex72b",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(72b)"},
+      "language": "ital1282",
+      "primaryText": "Leo stermina ratti.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Leo", "Leo"], ["stermina", "exterminates"], ["ratti", "rats"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "governed"],
+        ["predicate", "kind"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex72c",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(72c)"},
+      "language": "ital1282",
+      "primaryText": "Leo è andato da amici.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Leo", "Leo"], ["è", "PAST"], ["andato", "go"], ["da", "to"], ["amici", "friend"]
+      ],
+      "translation": "Leo visited friends.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "governed"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex74a",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(74a)"},
+      "language": "ital1282",
+      "primaryText": "Studenti hanno telefonato.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Studenti", "students"], ["hanno", "have"], ["telefonato", "phoned"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "subject"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex74b",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(74b)"},
+      "language": "ital1282",
+      "primaryText": "Hanno telefonato studenti.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hanno", "have"], ["telefonato", "called"], ["studenti", "students"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "subject"],
+        ["predicate", "object"]
+      ],
+      "comment": "The bare nominal is a postverbal subject.",
+      "verified": "page-image"
+    },
+    {
       "id": "chierchia1998_p356_water",
       "source": {"bibkey": "chierchia-1998", "paperLabel": "p. 356"},
       "language": "stan1293",
