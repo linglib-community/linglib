@@ -37,7 +37,7 @@ disjunctions by the paper's own classification of each sentence.
 * [hurford-1974]
 * [singh-2008]
 * [gajewski-sharvit-2012]
-* [schlenker-2008]
+* [schlenker-2008a]
 * [chierchia-2004]
 -/
 

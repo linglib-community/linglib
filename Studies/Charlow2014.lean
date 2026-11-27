@@ -65,7 +65,7 @@ and *no* do not.
 * [brasoveanu-farkas-2011]
 * [schwarz-2001]
 * [geurts-2000]
-* [shan-2002]
+* [shan-2001]
 * [shan-2004]
 * [kratzer-shimoyama-2002]
 * [barker-shan-2014]
@@ -828,7 +828,7 @@ end DynamicGQ
 /-! ### The Focus monad (Fact 5.4, §5.4.3–§5.4.5, (5.30))
 
 Rooth's two-dimensional focus semantics is the pointed-powerset monad
-([shan-2002]): a value paired with its alternatives, sequencing the Identity
+([shan-2001]): a value paired with its alternatives, sequencing the Identity
 monad on the first coordinate and the Set monad on the second (Def. 5.6). It is the
 library's `WithAlternatives`, whose monad laws are the thesis's Appendix B.9.
 F-marking injects a value with its alternatives; `only`/`also` quantify over the

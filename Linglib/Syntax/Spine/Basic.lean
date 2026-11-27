@@ -11,8 +11,9 @@ public import Mathlib.Data.List.Basic
 # Spines
 
 A spine is the list of heads a phrase projects, from the lowest upward, each the head of the
-complement of the next: `[V, v, T, C]` for a finite clause, `[N, Num, D]` for a noun phrase.
-Specifiers and adjuncts are not on it.
+complement of the next. A phrase whose head `c` takes as its complement a phrase headed by `b`,
+which in turn takes one headed by `a`, has the spine `[a, b, c]`. Specifiers and adjuncts are not
+on it.
 
 This file holds what is said of a spine by position: the head at a position, the truncation of a
 spine to its lowest `n` heads, a shell appended over a spine, and the image of a spine under a map
@@ -30,9 +31,8 @@ means is left to the type of heads. The operations that address a head by its va
 
 ## Implementation notes
 
-The type of heads is a parameter. The categories of a framework and the conditions it puts on a
-spine, such as being an extended projection, are stated on `Spine` at that framework's type of
-heads.
+The type of heads is a parameter, which a framework supplies. A condition on spines, such as being
+an extended projection, takes what it needs to know of the heads as further parameters.
 
 A spine of categories may repeat a category without any head occupying two positions, and a spine
 of head tokens repeats one only where the same head does. `Spine.map` takes a spine of tokens to
@@ -40,7 +40,7 @@ the spine of their categories.
 
 ## References
 
-* [grimshaw-2005]
+* [grimshaw-2000]
 -/
 
 @[expose] public section

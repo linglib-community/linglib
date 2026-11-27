@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Modality.Basic
 public import Linglib.Semantics.Modality.EventRelativity
-public import Linglib.Syntax.Cartography
+public import Linglib.Syntax.Cartography.Clause
 public import Linglib.Data.Examples.Hacquard2010
 
 /-!

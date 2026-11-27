@@ -13,6 +13,7 @@ public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
+public import Linglib.Syntax.Spine.Label
 
 /-!
 # Dayal (2025): The interrogative left periphery
@@ -99,14 +100,11 @@ inductive PeripheryLayer where
   | sap
   deriving DecidableEq, Repr, Fintype
 
-/-- The height of a layer in the periphery. -/
-def PeripheryLayer.height : PeripheryLayer → ℕ
-  | .cp => 0
-  | .perspP => 1
-  | .sap => 2
+/-- (7): the spine of the interrogative left periphery, C below Persp below SA. -/
+def periphery : Spine PeripheryLayer := ⟨[.cp, .perspP, .sap]⟩
 
-/-- Layers ordered by height. -/
-instance : LinearOrder PeripheryLayer := LinearOrder.lift' PeripheryLayer.height (by decide)
+/-- Layers are ordered by their height on the periphery. -/
+instance : LinearOrder PeripheryLayer := LinearOrder.lift' periphery.height (by decide)
 
 /-- Embedding predicates are classed by the largest left-peripheral structure they select
 ([dayal-2025] §1.2). Uninterrogatives take no interrogative; rogatives take CP only

@@ -8,7 +8,8 @@ public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Minimalist.SyntacticObject.Constituency
-public import Linglib.Syntax.Minimalist.ExtendedProjection.Size
+public import Linglib.Syntax.Minimalist.Category
+public import Linglib.Syntax.Spine.Label
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
 public import Linglib.Syntax.Minimalist.Verbal.Voice.Denotation
 public import Linglib.Data.Examples.Pylkkanen2008
@@ -492,17 +493,20 @@ inductive Layer where
   | phase
   deriving DecidableEq, Repr, Fintype
 
-/-- The size of a layer, its highest head: the root is the lexical head, the verb v, and the
-phase Voice. -/
-def Layer.size : Layer → ComplementSize
-  | .root => ⟨.V⟩
-  | .verb => .vP
-  | .phase => ⟨.Voice⟩
+/-- The spine of the verbal architecture (12): the lexical head, v and Voice. -/
+def verbalSpine : Spine Cat := ⟨[.V, .v, .Voice]⟩
 
-/-- Layers are ordered by containment, as their sizes are in the extension order. -/
-instance : Preorder Layer := Preorder.lift Layer.size
+/-- The spine of a layer: the root projects the lexical head, the verb adds v, and the phase adds
+Voice. -/
+def Layer.spine : Layer → Spine Cat
+  | .root => verbalSpine.take 1
+  | .verb => verbalSpine.take 2
+  | .phase => verbalSpine
 
-instance : DecidableLE Layer := fun l m ↦ inferInstanceAs (Decidable (l.size ≤ m.size))
+/-- Layers are ordered by containment of their spines. -/
+instance : Preorder Layer := Preorder.lift Layer.spine
+
+instance : DecidableLE Layer := fun l m ↦ inferInstanceAs (Decidable (l.spine ≤ m.spine))
 
 /-- A causative head is given by the largest layer its complement may contain (11) and whether
 Cause is bundled with Voice (10). -/

@@ -7,7 +7,8 @@ module
 
 public import Linglib.Core.Order.Flat
 public import Linglib.Syntax.Anaphora.Basic
-public import Linglib.Syntax.Minimalist.Spine
+public import Linglib.Syntax.Minimalist.Category
+public import Linglib.Syntax.Spine.Label
 public import Mathlib.Data.List.Basic
 public import Mathlib.Data.Set.Function
 public import Mathlib.Order.Basic

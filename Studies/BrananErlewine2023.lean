@@ -3,7 +3,8 @@ module
 public import Linglib.Core.Data.RoseTree.Positions
 public import Linglib.Data.Examples.BrananErlewine2023
 public import Linglib.Semantics.Focus.Particles
-public import Linglib.Syntax.Minimalist.ExtendedProjection
+public import Linglib.Syntax.Minimalist.Category
+public import Linglib.Syntax.Spine.Label
 public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Data.Examples.Readers
@@ -22,8 +23,8 @@ tell pied-piping from anti-pied-piping.
 
 ## Implementation notes
 
-* A phase is a constituency tree over the categories of the functional sequence, in the order
-  it is spelled out. Its spine is the path of categories extending to the category of the phase,
+* A phase is a constituency tree over the categories, in the order it is spelled out. Its spine
+  is the path of categories of the extended projection that contains the phase head,
   and the prominent phrases, the paper's ●-marked ones, are the phrases off the spine that an
   example does not report as skipped.
 * The examples name constituents (subject, predicate, the fronted phrase), and a frame finds
@@ -132,11 +133,16 @@ bears abstract prominence, the paper's ●, unless it is indefinite, given or ot
 
 variable {W : Type*}
 
-/-- A position is on the spine of a phase when its category and that of every node above it
-extend to the category of the phase, so that it belongs to the extended projection containing
-the phase head. -/
+/-- The extended projection that contains the phase head of a clausal phase: the verb under
+little v. -/
+def clausalProjection : Spine Cat := ⟨[.V, .v]⟩
+
+/-- A position is on the spine of a phase when its category, and that of every node above it, is
+the category of the phase or is in the complement of the phase head on `clausalProjection`, so
+that it belongs to the extended projection containing the phase head (115). -/
 def OnSpine (t : Tree Cat W) (p : GornAddress) : Prop :=
-  ∀ q ∈ p.inits, ∃ s ∈ t[q]?, (Tree.cat s).ExtendsTo t.cat
+  ∀ q ∈ p.inits, ∃ s ∈ t[q]?, Tree.cat s = t.cat ∨
+    t.cat ∈ clausalProjection ∧ Tree.cat s ∈ clausalProjection.below t.cat
 
 instance (t : Tree Cat W) (p : GornAddress) : Decidable (OnSpine t p) := by
   unfold OnSpine; infer_instance

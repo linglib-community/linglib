@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Cartography
+public import Linglib.Syntax.Cartography.Clause
 public import Linglib.Data.Examples.RamchandSvenonius2014
 
 /-!

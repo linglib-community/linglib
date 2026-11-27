@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Aspect.Telicity
 public import Linglib.Semantics.Aspect.AspectualClass
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
-public import Linglib.Syntax.Cartography
+public import Linglib.Syntax.Cartography.Clause
 public import Studies.TonhauserEtAl2013
 public import Linglib.Data.Examples.HoleFraser2026
 public import Mathlib.Data.Set.Card
