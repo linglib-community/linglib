@@ -11,17 +11,33 @@ public import Mathlib.Order.SupClosed
 /-!
 # Innocent exclusion
 
-This file defines Fox's innocent exclusion. A set of alternatives is a consistent exclusion when
-denying all of them is consistent with the prejacent; an alternative is innocently excludable when
-it belongs to every maximal consistent exclusion, and `exhIE` asserts the prejacent and denies the
-innocently excludable alternatives. The maximal consistent exclusions are
-[the sets of alternatives false at a minimal world](##Exhaustification.maximal_sdiff_satisfied_iff),
-so an alternative is innocently excludable iff
-[it fails at every minimal world](##Exhaustification.isInnocentlyExcludable_iff_exhMW_subset_compl),
-innocent exclusion is plain exhaustification
-[when that is consistent](##Exhaustification.exhIE_eq_exh_of_nonempty), and it keeps exactly the
-minimal worlds iff [every other world of the prejacent verifies an alternative false at all of
-them](##Exhaustification.exhIE_eq_exhMW_iff).
+A set of alternatives is a consistent exclusion when denying all of them is consistent with the
+prejacent. An alternative is innocently excludable when it belongs to every maximal consistent
+exclusion, and `exhIE ALT φ` is the prejacent with the innocently excludable alternatives denied.
+The maximal consistent exclusions are the sets of alternatives false at a minimal world of the
+prejacent, so the three exhaustifications are nested, `exh ALT φ ⊆ exhMW ALT φ ⊆ exhIE ALT φ`, and
+they coincide when the first is consistent.
+
+## Main definitions
+
+* `Exhaustification.IsConsistentExclusion`, `Exhaustification.IsInnocentlyExcludable`
+* `Exhaustification.exhIE`: the prejacent with every innocently excludable alternative denied.
+* `Exhaustification.excludesIE`: the exclusion alone, over a set of relevant alternatives.
+
+## Main results
+
+* `Exhaustification.maximal_sdiff_satisfied_iff`: the alternatives false at a prejacent world are
+  a maximal consistent exclusion iff the world is minimal.
+* `Exhaustification.isInnocentlyExcludable_iff_exhMW_subset_compl`: an alternative is innocently
+  excludable iff it fails at every minimal world.
+* `Exhaustification.exh_subset_exhMW`, `Exhaustification.exhMW_subset_exhIE`: the three
+  exhaustifications are nested.
+* `Exhaustification.exhIE_eq_exh_of_nonempty`, `Exhaustification.exhMW_eq_exh_of_nonempty`: they
+  coincide when plain exhaustification is consistent.
+* `Exhaustification.exhIE_eq_exhMW_iff`: innocent exclusion keeps exactly the minimal worlds iff
+  every other world of the prejacent verifies an alternative false at all of them.
+* `Exhaustification.mem_exhIE_iff_subset_sUnion`: innocent exclusion keeps the prejacent worlds
+  verifying only alternatives that some minimal verified set contains.
 
 ## References
 
@@ -406,32 +422,20 @@ end MinimalCover
 
 Each operator reads a world only through the alternatives it verifies, and the prejacent only
 through the sets of alternatives its worlds verify. `exh` keeps the worlds verifying the least such
-set, `exhMW` those verifying a minimal one (`mem_exhMW_iff_minimal`), and `exhIE` those verifying
-only alternatives that some minimal verified set contains. -/
+set, `exhMW` those verifying a minimal one, and `exhIE` those verifying only alternatives that some
+minimal verified set contains. -/
 
 section Verified
 
 variable {ALT φ} {w : World}
 
-/-- Plain exhaustification keeps the prejacent worlds whose true alternatives are least among the
-prejacent's, as `exhMW` keeps those whose are minimal. Innocent exclusion keeps those below the join
-of the minimal sets (`mem_exhIE_iff_subset_sUnion`), and the cell those at it (`mem_cell_iff`). -/
-theorem mem_exh_iff_isLeast :
-    w ∈ exh ALT φ ↔
-      w ∈ φ ∧ IsLeast ((fun w ↦ {a ∈ ALT | w ∈ a}) '' φ) ({a ∈ ALT | w ∈ a}) := by
-  rw [mem_exh]
-  refine and_congr_right fun hw ↦ ⟨fun h ↦ ⟨⟨w, hw, rfl⟩, ?_⟩,
-    fun ⟨_, h⟩ a ha hwa v hv ↦ (h ⟨v, hv, rfl⟩ ⟨ha, hwa⟩).2⟩
-  rintro _ ⟨v, hv, rfl⟩ a ⟨ha, hwa⟩
-  exact ⟨ha, h a ha hwa hv⟩
-
 /-- Exhaustification is consistent iff the sets of alternatives the prejacent worlds verify have a
 least element. -/
 theorem exh_nonempty_iff :
     (exh ALT φ).Nonempty ↔ ∃ P, IsLeast ((fun w ↦ {a ∈ ALT | w ∈ a}) '' φ) P := by
-  refine ⟨fun ⟨w, hw⟩ ↦ ⟨_, (mem_exh_iff_isLeast.1 hw).2⟩, ?_⟩
+  refine ⟨fun ⟨w, hw⟩ ↦ ⟨_, (mem_exh_iff_isLeast_image.1 hw).2⟩, ?_⟩
   rintro ⟨P, ⟨w, hw, rfl⟩, hP⟩
-  exact ⟨w, mem_exh_iff_isLeast.2 ⟨hw, ⟨w, hw, rfl⟩, hP⟩⟩
+  exact ⟨w, mem_exh_iff_isLeast_image.2 ⟨hw, ⟨w, hw, rfl⟩, hP⟩⟩
 
 theorem isInnocentlyExcludable_iff_forall_minimal {a : Set World} (ha : a ∈ ALT) :
     IsInnocentlyExcludable ALT φ a ↔

@@ -12,21 +12,32 @@ public import Mathlib.Order.Monotone.Basic
 /-!
 # Exhaustification
 
-This file defines Chierchia's exhaustification operator `O` and its exclusion component.
-`excludes C p` holds at the worlds where every true alternative in `C` is entailed by the
-prejacent `p`, which is the assertion of the entailment-scale *only*. `exh C p` is the prejacent
-together with `excludes C p`: it denies every alternative the prejacent does not entail, so a
-member of `C` is exhaustified [where it is the least true
-member](##mem_exh_iff_isLeast_of_mem), on a scale where its index is [the greatest true
-one](##mem_exh_range_iff_isGreatest). Denying only the strictly stronger alternatives instead
-gives [the minimal true members](##mem_exh_inter_Iio_iff_minimal), the same thing [when no
-alternative is independent of the prejacent](##exh_inter_Iio_eq_exh). Over finitely many worlds
-and an indexed family of alternatives, membership in `exh` is decidable.
+For a set `C` of alternative propositions and a prejacent `p`, the exclusion `excludes C p` holds
+at the worlds where every true alternative is entailed by `p`, and the exhaustification `exh C p`
+is `p` together with its exclusion: `p` holds and every alternative it does not entail fails.
+A member of `C` is exhaustified where it is the least true member under entailment. Restricting
+the alternatives to those strictly stronger than the prejacent, `C ∩ Set.Iio p`, gives the minimal
+true members instead, and the two agree when every alternative is comparable with the prejacent.
+Over finitely many worlds and an indexed family of alternatives, membership in `exh` is decidable.
 
-## Main statements
+## Main definitions
+
+* `Exhaustification.excludes`: the worlds where every true alternative is entailed by the
+  prejacent.
+* `Exhaustification.exh`: the prejacent with every alternative it does not entail denied.
+* `Exhaustification.Irredundant`: a family each of whose members can hold alone.
+* `Exhaustification.Dominated`: a member covered by the members strictly stronger than it.
+
+## Main results
 
 * `Exhaustification.exh_eq_sdiff`: `exh` removes from the prejacent the alternatives it does not
   entail.
+* `Exhaustification.mem_exh_iff_isLeast_of_mem`: a member of `C` is exhaustified where it is the
+  least true member.
+* `Exhaustification.mem_exh_inter_Iio_iff_minimal`: against the strictly stronger alternatives, a
+  member is exhaustified where it is a minimal true member.
+* `Exhaustification.exh_inter_Iio_eq_exh`: the two agree when every alternative is comparable
+  with the prejacent.
 * `Exhaustification.exh_subset_exh_iff`: one exhaustification entails another exactly when the
   prejacents and the entailed alternatives line up.
 * `Exhaustification.Irredundant.excludes_injOn`: over an irredundant family, exclusion separates
@@ -156,6 +167,13 @@ theorem exh_insert_of_not_subset (h : ¬ p ⊆ q) : exh (insert q C) p = exh C p
 
 theorem exh_singleton_of_not_subset (h : ¬ p ⊆ q) : exh {q} p = p \ q := by
   rw [← insert_empty_eq, exh_insert_of_not_subset h, exh_empty]
+
+/-- When one alternative the prejacent does not entail is entailed by every other such
+alternative, it alone is denied. -/
+theorem exh_eq_sdiff_of_forall (hq : q ∈ C) (h : ¬ p ⊆ q) (hC : ∀ r ∈ C, p ⊆ r ∨ r ⊆ q) :
+    exh C p = p \ q :=
+  Set.ext fun _ ↦ ⟨fun hw ↦ ⟨hw.1, fun hwq ↦ h (hw.2 q hq hwq)⟩, fun hw ↦ ⟨hw.1, fun r hr hwr ↦
+    (hC r hr).resolve_right fun hrq ↦ hw.2 (hrq hwr)⟩⟩
 
 theorem excludes_antitone (h : C ⊆ C') (p : Set W) : excludes C' p ⊆ excludes C p :=
   fun _ hw q hq ↦ hw q (h hq)
