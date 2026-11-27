@@ -80,7 +80,18 @@ theorem realize_places (M : L.Structure D) (σ : Signature S) (args : σ.Interpr
     simp only [places, realize, realize_bind]
     exact Prod.ext (ihσ args.1) (ihτ args.2)
 
+/-- Terms for the arguments of a shape, as one term of that shape. -/
+def ofArgs : (σ : Signature S) → σ.Interpret (fun s ↦ L.Term α (.of s)) → L.Term α σ
+  | .nil, _ => nil
+  | .of _, t => t
+  | .prod σ τ, x => prod (ofArgs σ x.1) (ofArgs τ x.2)
+
 end Language.Term
+
+/-- The term algebra: a symbol denotes its application to terms. -/
+@[reducible] def Language.Term.structure (L : Language.{u, v} S) (α : S → Type w) :
+    L.Structure fun s ↦ L.Term α (.of s) where
+  funMap f x := .func f (.ofArgs _ x)
 
 variable {D' : S → Type x'} {M : L.Structure D} {M' : L.Structure D'}
   {R : ∀ s, D s → D' s → Prop}

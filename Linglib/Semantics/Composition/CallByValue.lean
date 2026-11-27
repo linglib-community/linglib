@@ -187,13 +187,13 @@ a rule of the grammar on their values where both are defined, a partial result o
 flattened. A function applied to an undefined argument is undefined. -/
 def partialValued [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
     Interpreter (effectGrammar G) N where
-  unary _ _ := []
+  bind _ _ := []
   binary
-    | _, .comp .M l, .comp .M r =>
+    | .comp .M l, .comp .M r =>
       (Language.LocallyFinite.binaryRules (L := G) l r).map fun
         | ⟨.comp .M u, p⟩ => ⟨.comp .M u, .join trivial (.ap trivial (.basic p))⟩
         | ⟨u, p⟩ => ⟨.comp .M u, .ap trivial (.basic p)⟩
-    | _, _, _ => []
+    | _, _ => []
 
 section PartialValued
 

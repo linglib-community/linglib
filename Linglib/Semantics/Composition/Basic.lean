@@ -1,11 +1,10 @@
 module
 
 public import Linglib.Core.ModelTheory.ManySorted.Simulation
-public import Linglib.Syntax.Skeleton
 public import Mathlib.Data.Nat.Notation
 
 /-!
-# Type-driven interpreters
+# Rules and derivations
 
 The rules by which meanings combine are the symbols of a many-sorted language over the semantic
 types: its binary symbols are the modes of combination and its unary symbols the type shifts. A
@@ -13,24 +12,17 @@ derivation is a term of the language over typed lexical items, and a structure f
 gives each derivation a value.
 
 A derivation is all the semantics is given, and nothing is assumed of where it comes from: a
-syntactic theory says which derivations its objects have. One way is type-driven: an interpreter
-reads a bare structure, the words in their constituency and order with a label at each node, and
-says which rules a node admits by its label and the types of its daughters, so that the
-derivations over a bare structure are found from the types alone.
+syntactic theory says which derivations its objects have.
 
 ## Main definitions
 
 * `ManySorted.Language.Deriv`: the derivations of a type over typed lexical items.
 * `ManySorted.Language.LocallyFinite.unaryRules`, `binaryRules`: the rules that apply to given
   daughters, and `ManySorted.Language.motherTypes`, the types they give the mother.
-* `Interpreter`: the rules a node admits by its label and its daughters' types, and
-  `Interpreter.typeDriven`, the interpreter that admits every rule that applies.
-* `Interpreter.derivs`, `Interpreter.values`: the derivations over a bare structure, and their
-  values.
 
 ## Implementation notes
 
-`Interpreter.derivs` matches on the derivations of the daughters and does not project from them:
+The node operations match on the values of the daughters and do not project from them:
 a projection is unfolded again wherever it is inspected, which made checking a sentence's value
 some fifty times dearer. A lexicon gives each word typed items and their values separately. With
 the values inside the items, a statement over a model with variables in it is still slow to
@@ -55,11 +47,11 @@ namespace ManySorted.Language
 variable {T : Type u} {L : Language.{u, v} T} {W : T → Type w} {D : T → Type x}
 
 /-- The unary rules that apply to a daughter of type `a`. -/
-abbrev LocallyFinite.unaryRules [L.LocallyFinite] (a : T) : List (Σ b, L.Unary a b) :=
+abbrev LocallyFinite.unaryRules [L.LocallyFinite] (a : T) : List (Sigma (L.Unary a)) :=
   LocallyFinite.symbols (.of a)
 
 /-- The binary rules that apply to daughters of types `l` and `r`. -/
-abbrev LocallyFinite.binaryRules [L.LocallyFinite] (l r : T) : List (Σ u, L.Binary l r u) :=
+abbrev LocallyFinite.binaryRules [L.LocallyFinite] (l r : T) : List (Sigma (L.Binary l r)) :=
   LocallyFinite.symbols (.prod (.of l) (.of r))
 
 /-- The types of the mothers that the rules of a language give two daughters. -/
@@ -97,82 +89,3 @@ variable (M : L.Structure D) (ρ : ∀ {a : T}, W a → D a)
 end Deriv
 
 end ManySorted.Language
-
-/-- A type-driven interpreter for a language of rules: the rules a node admits, by its label and
-the types of its daughters. -/
-structure Interpreter {T : Type u} (L : ManySorted.Language.{u, v} T) (N : Type v) where
-  /-- The unary rules a node labelled `n` over a daughter of type `a` admits. -/
-  unary : N → (a : T) → List (Σ b, L.Unary a b)
-  /-- The binary rules a node labelled `n` over daughters of types `l` and `r` admits. -/
-  binary : N → (l r : T) → List (Σ u, L.Binary l r u)
-
-namespace Interpreter
-
-open ManySorted.Language
-
-variable {T : Type u} {L : Language.{u, v} T} {N : Type v} {Lx : Type w} {W : T → Type w}
-  {D : T → Type x}
-
-/-- The type-driven interpreter of a language: a node admits every rule that applies to the
-types of its daughters, whatever its label. -/
-def typeDriven (L : Language.{u, v} T) [L.LocallyFinite] : Interpreter L N where
-  unary _ := LocallyFinite.unaryRules
-  binary _ := LocallyFinite.binaryRules
-
-/-- The type-driven interpreter admits every binary rule of the language. -/
-@[simp] theorem mem_binary_typeDriven [L.LocallyFinite] {n : N} {l r : T}
-    (m : Σ u, L.Binary l r u) : m ∈ (typeDriven L : Interpreter L N).binary n l r :=
-  LocallyFinite.mem_symbols m.2
-
-/-- The derivations over a bare structure that an interpreter admits, given the typed items each
-word may be. -/
-def derivs (I : Interpreter L N) (lex : Lx → List (Σ a, W a)) :
-    Skeleton N Lx → List (Σ a, Deriv L W a)
-  | .leaf x => (lex x).map fun ⟨a, w⟩ ↦ ⟨a, .leaf w⟩
-  | .unary n s => (I.derivs lex s).flatMap fun ⟨a, d⟩ ↦
-      (I.unary n a).map fun ⟨b, r⟩ ↦ ⟨b, .unary r d⟩
-  | .binary n s₁ s₂ => (I.derivs lex s₁).flatMap fun ⟨a, d₁⟩ ↦
-      (I.derivs lex s₂).flatMap fun ⟨b, d₂⟩ ↦
-        (I.binary n a b).map fun ⟨c, m⟩ ↦ ⟨c, .binary m d₁ d₂⟩
-
-/-- Where a node admits at most one rule for given daughters and a word is at most one item, a
-bare structure has at most one derivation. -/
-theorem length_derivs_le_one {I : Interpreter L N} {lex : Lx → List (Σ a, W a)}
-    (hu : ∀ n a, (I.unary n a).length ≤ 1) (hb : ∀ n l r, (I.binary n l r).length ≤ 1)
-    (hl : ∀ x, (lex x).length ≤ 1) : ∀ s : Skeleton N Lx, (I.derivs lex s).length ≤ 1
-  | .leaf x => by simpa [derivs] using hl x
-  | .unary n s => by
-    have ih := length_derivs_le_one hu hb hl s
-    match h : I.derivs lex s, ih with
-    | [], _ => simp [derivs, h]
-    | [⟨a, d⟩], _ => simpa [derivs, h] using hu n a
-  | .binary n s₁ s₂ => by
-    have ih₁ := length_derivs_le_one hu hb hl s₁
-    have ih₂ := length_derivs_le_one hu hb hl s₂
-    match h₁ : I.derivs lex s₁, h₂ : I.derivs lex s₂, ih₁, ih₂ with
-    | [], _, _, _ => simp [derivs, h₁]
-    | [_], [], _, _ => simp [derivs, h₁, h₂]
-    | [⟨a, d₁⟩], [⟨b, d₂⟩], _, _ => simpa [derivs, h₁, h₂] using hb n a b
-
-/-- The values of the derivations over a bare structure, for a lexicon of typed items whose
-values `ρ` gives. The derivations are found from the types alone. -/
-def values (I : Interpreter L N) (M : L.Structure D) (ρ : ∀ {a : T}, W a → D a)
-    (lex : Lx → List (Σ a, W a)) (s : Skeleton N Lx) : List (Σ a, D a) :=
-  (I.derivs lex s).map fun ⟨a, d⟩ ↦ ⟨a, d.realize M ρ⟩
-
-/-- A value of a binary node is the value of a rule the node admits, at values of its
-daughters. -/
-theorem mem_values_binary {I : Interpreter L N} {M : L.Structure D}
-    {ρ : ∀ {a : T}, W a → D a} {lex : Lx → List (Σ a, W a)} {n : N} {s₁ s₂ : Skeleton N Lx}
-    {d : Σ a, D a} :
-    d ∈ I.values M ρ lex (.binary n s₁ s₂) ↔
-      ∃ d₁ ∈ I.values M ρ lex s₁, ∃ d₂ ∈ I.values M ρ lex s₂,
-      ∃ m ∈ I.binary n d₁.1 d₂.1, d = ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩ := by
-  simp only [values, derivs, List.mem_map, List.mem_flatMap]
-  constructor
-  · rintro ⟨_, ⟨⟨a, e₁⟩, h₁, ⟨b, e₂⟩, h₂, ⟨u, m⟩, hm, rfl⟩, rfl⟩
-    exact ⟨_, ⟨⟨a, e₁⟩, h₁, rfl⟩, _, ⟨⟨b, e₂⟩, h₂, rfl⟩, ⟨u, m⟩, hm, rfl⟩
-  · rintro ⟨_, ⟨⟨a, e₁⟩, h₁, rfl⟩, _, ⟨⟨b, e₂⟩, h₂, rfl⟩, ⟨u, m⟩, hm, rfl⟩
-    exact ⟨_, ⟨⟨a, e₁⟩, h₁, ⟨b, e₂⟩, h₂, ⟨u, m⟩, hm, rfl⟩, rfl⟩
-
-end Interpreter

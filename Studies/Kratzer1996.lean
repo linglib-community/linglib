@@ -135,12 +135,9 @@ def Word.val : {a : Ty Base} → Word a → a.Domain Entity Unit { eventuality :
 Event Identification. -/
 def meanings (t : PlanarSyntacticObject TokenLeaf) :
     List (Denotation Entity Unit { eventuality := V }) :=
-  match t.toTree.skeleton (fun _ ↦ false) with
-  | some s => (typeDriven Voice.grammar).values
-      (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
-      (Word.val ρ feedRel m d)
-      (entries lexicon) s
-  | none => []
+  t.toTree.values (typeDriven Voice.grammar)
+    (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
+    (Word.val ρ feedRel m d) (entries lexicon)
 
 /-- (22): the one meaning of (21), by Functional Application, Event Identification and Functional
 Application, is $\lambda e[\mathrm{Agent}(\mathrm{Mittie})(e) \wedge
@@ -235,11 +232,9 @@ def PWord.val : {a : Ty Base} → PWord a → a.Domain Entity Unit { eventuality
 Identification, over partial predicates. -/
 def partialMeanings (t : PlanarSyntacticObject TokenLeaf) :
     List (Denotation Entity Unit { eventuality := V }) :=
-  match t.toTree.skeleton (fun _ ↦ false) with
-  | some s => (typeDriven partialGrammar).values
-      (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
-      (PWord.val IsAction IsState ρ ownRel d) (entries partialLexicon) s
-  | none => []
+  t.toTree.values (typeDriven partialGrammar)
+    (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
+    (PWord.val IsAction IsState ρ ownRel d) (entries partialLexicon)
 
 /-- An agent head, defined at actions, and the stative *own the dog*, defined at states: Event
 Identification applies and, when no action is a state, has no value. "Given the two input
