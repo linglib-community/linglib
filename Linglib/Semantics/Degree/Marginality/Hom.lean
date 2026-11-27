@@ -31,7 +31,9 @@ variable {α : Type*} [LinearOrder α] {ml : MarginalScale α} {x y z : α}
 than. -/
 structure IsHom {β : Type*} [LinearOrder β] (ml : MarginalScale α) (ml' : MarginalScale β)
     (f : α → β) : Prop where
+  /-- The map preserves and reflects smaller than. -/
   strictMono : StrictMono f
+  /-- The map preserves and reflects marginally smaller than. -/
   marginallyLT_iff : ∀ x y, ml'.MarginallyLT (f x) (f y) ↔ ml.MarginallyLT x y
 
 section IsHom

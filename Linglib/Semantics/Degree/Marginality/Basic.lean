@@ -54,7 +54,7 @@ and a large one on either side, are the predicate `MarginalScale.IsML`.
 
 The scale is the equivalence and not the relation of being marginally smaller with the axioms of
 ML theory as fields. The two presentations determine each other, by `MarginalScale.ofMarginallyLT`
-and `MarginalScale.ofMarginallyLT_marginallyLT`, and the equivalence is the one
+and `MarginalScale.ofMarginallyLT_eq_self`, and the equivalence is the one
 under which the scale of an order-connected subgroup of an ordered group exists whatever the
 subgroup: when the subgroup is everything, as in an archimedean group, no difference is large and
 the scale does not satisfy ML theory.
@@ -391,7 +391,7 @@ theorem ofMarginallyLT_marginallyLT_iff :
     h.elim id fun h ↦ absurd (lt_of h) hxy.not_gt, fun h ↦ ⟨lt_of h, .inr (.inl h)⟩⟩
 
 /-- A marginal scale is the scale of its relation of being marginally smaller. -/
-theorem ofMarginallyLT_marginallyLT (ml : MarginalScale α) :
+theorem ofMarginallyLT_eq_self (ml : MarginalScale α) :
     ofMarginallyLT ml.MarginallyLT (fun _ _ h ↦ h.lt)
       (fun _ _ z h ↦ h.irrelevance z) = ml :=
   ext fun _ _ ↦ (ofMarginallyLT_atMostMarginal_iff ..).trans atMostMarginal_iff.symm

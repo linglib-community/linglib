@@ -52,6 +52,11 @@ exactly when `a < b` and `d` is negligible against `b - a`, the class of `d` lyi
 The conclusion of the argument, that `P` holds of everything reached from `a`, is not a field:
 it follows from the base case and tolerance (`Sorites.of_reflTransGen`), and with the
 counterexample it is the contradiction of the paradox.
+
+## References
+
+* [dinis-jacinto-2025]
+* [itzhaki-2021]
 -/
 
 @[expose] public section
@@ -166,7 +171,8 @@ theorem exists_isLowerSet_sorites_iff :
   ⟨fun ⟨_, hP, h⟩ ↦ largelyLT_iff_lt_and_not_atMostMarginal.2
       ⟨lt_of_not_ge fun hba ↦ h.counter (hP hba h.base),
         fun hab ↦ h.counter (h.tolerance h.base hab)⟩,
-    fun h ↦ ⟨fun x ↦ ml.toBlock x ≤ ml.toBlock a, (IsLowerSet.Iic (ml.toBlock a)).preimage ml.toBlock_mono,
+    fun h ↦ ⟨fun x ↦ ml.toBlock x ≤ ml.toBlock a,
+      (IsLowerSet.Iic (ml.toBlock a)).preimage ml.toBlock_mono,
       sorites_toBlock_le le_rfl h⟩⟩
 
 end MarginalScale

@@ -62,17 +62,33 @@ variable {α : Type*} [LinearOrder α] {ml : MarginalScale α} {x y : α}
 /-- The eleven axioms of §2 on marginally and largely smaller than, `M` and `L`, along a strict
 weak order `R`, both relations primitive. -/
 structure IsMLModel {β : Type*} (R M L : β → β → Prop) : Prop where
+  /-- The underlying order is a strict weak order. -/
   isStrictWeakOrder : IsStrictWeakOrder β R
+  /-- Axiom 2.1: some difference is large. -/
   exists_l : ∃ x y, L x y
+  /-- Axiom 2.2: marginally smaller implies smaller. -/
   r_of_m : ∀ ⦃x y⦄, M x y → R x y
+  /-- Axiom 2.3: largely smaller implies smaller. -/
   r_of_l : ∀ ⦃x y⦄, L x y → R x y
+  /-- Axiom 2.4: marginally smaller than is transitive. -/
   m_trans : ∀ ⦃x y z⦄, M x y → M y z → M x z
+  /-- Axiom 2.5: a marginal difference is not large. -/
   not_l_of_m : ∀ ⦃x y⦄, M x y → ¬ L x y
+  /-- Axiom 2.6: marginal differences are irrelevant to large ones. -/
   irrelevance : ∀ ⦃x y⦄ z, M x y → (L z y → L z x) ∧ (L x z → L y z)
+  /-- Axiom 2.7: whatever is smaller than something largely smaller than `z` is largely smaller
+  than `z`. -/
   l_of_r_of_l : ∀ ⦃x y z⦄, R x y → L y z → L x z
+  /-- Axiom 2.8: whatever is largely smaller than something smaller than `z` is largely smaller
+  than `z`. -/
   l_of_l_of_r : ∀ ⦃x y z⦄, L x y → R y z → L x z
+  /-- Axiom 2.9: a difference is marginal or large. -/
   m_or_l_of_r : ∀ ⦃x y⦄, R x y → M x y ∨ L x y
+  /-- Axiom 2.10, Decomposition: a large difference is a marginal step followed by a large
+  difference, and a large difference followed by a marginal step. -/
   decomposition : ∀ ⦃x y⦄, L x y → (∃ z, M x z ∧ L z y) ∧ ∃ w, M w y ∧ L x w
+  /-- Axiom 2.11: whatever lies between two marginally different elements is marginally
+  different from both. -/
   m_bounded : ∀ ⦃x y z⦄, M x z → R x y → R y z → M x y ∧ M y z
 
 theorem IsMLModel.l_iff {M L : α → α → Prop} (h : IsMLModel (· < ·) M L) :
