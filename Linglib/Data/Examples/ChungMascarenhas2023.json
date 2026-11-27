@@ -1,326 +1,533 @@
-[
-  {
-    "id": "cm2024_1_korean_conditional_eval",
-    "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(1) / (42)"},
-    "language": "kore1280",
-    "primaryText": "John-un cip-ey iss-∅-eya toy-n-ta.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-un", "John-TOP"], ["cip-ey", "home-DAT"], ["iss-∅-eya", "COP-PRES-only.if"],
-      ["toy-n-ta", "EVAL-PRES-DECL"]
-    ],
-    "translation": "(Lit.) Only if John is home, it suffices. ≈ 'John must be home.'",
-    "context": "Korean conditional evaluative construction: -(e)ya 'only-if' + toy- 'EVAL/suffice'.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "koreanComposition"],
-      ["construction", "conditional-evaluative"]
-    ],
-    "comment": "The paper's centerpiece morphosyntactic argument. Korean realizes English-must as the transparent composition of (i) the evaluative predicate toy 'EVAL' as the measure function μ_R, (ii) the conditional 'if φ, EVAL' as the conditional expectation of μ_R given φ, (iii) the exhaustifier -(e)ya 'only-if'.",
-    "verified": "page-image"
+{
+  "features": [
+    {"key": "prejacent", "lean": "prejacent", "type": "Prejacent",
+     "doc": "The action a sentence of the miners puzzle is about, under the paper's name for the proposition.",
+     "levels": [
+       {"name": "blockNeither", "label": "block-neither", "doc": "we block neither shaft"},
+       {"name": "blockA", "label": "block-A", "doc": "we block shaft A"},
+       {"name": "blockB", "label": "block-B", "doc": "we block shaft B"}
+     ]},
+    {"key": "antecedent", "lean": "antecedent", "type": "Antecedent",
+     "doc": "The if-clause of a sentence of the miners puzzle, under the paper's name for the proposition.",
+     "levels": [
+       {"name": "minersInA", "label": "miners-in-A", "doc": "the miners are in shaft A"},
+       {"name": "minersInB", "label": "miners-in-B", "doc": "the miners are in shaft B"}
+     ]},
+    {"key": "focus", "lean": "focus", "type": "Focus",
+     "doc": "The focused constituent of the prejacent, where the paper marks one.",
+     "levels": [
+       {"name": "pat", "label": "Pat", "doc": "focus on the object *Pat*"}
+     ]}
+  ],
+  "spans": {
+    "labels": {"type": "SpanLabel", "doc": "The labels of the spans the rows mark.",
+               "levels": [
+                 {"name": "modal", "label": "modal", "doc": "the necessity modal under test"}
+               ]},
+    "lexemes": {"type": "Lexeme", "doc": "The modal auxiliaries under test.",
+                "levels": [
+                  {"name": "must", "label": "must", "doc": "English *must*"},
+                  {"name": "ought", "label": "ought", "doc": "English *ought*"}
+                ]}
   },
-  {
-    "id": "cm2024_4_linda_original",
-    "source": {"bibkey": "tversky-kahneman-1983", "paperLabel": "Linda task"},
-    "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(4) / (28)"},
-    "method": "experiment",
-    "language": "stan1293",
-    "primaryText": "Linda is 31 years old, single, outspoken, and very bright. She majored in philosophy. As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations. Which is more probable?",
-    "discourseSegments": [
-      "Linda is 31 years old, single, outspoken, and very bright. She majored in philosophy. As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations.",
-      "Which is more probable?",
-      "(a) Linda is a bank teller.",
-      "(b) Linda is a bank teller and she is active in the feminist movement."
-    ],
-    "glossedTokens": [],
-    "translation": "Classic conjunction-fallacy task: ~85% of participants pick (b), violating the probability calculus.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Linda is a bank teller.", "judgment": "acceptable"},
-      {"form": "Linda is a bank teller and she is active in the feminist movement.", "judgment": "acceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "conjunctionFallacy"],
-      ["empiricalDomain", "epistemic"]
-    ],
-    "comment": "Original Tversky-Kahneman 1983 conjunction-fallacy stimulus. C&M propose a *modal* version (cm2024_29b_modal_linda) and argue their semantics predicts the fallacy at the modal level via explanatory-value (sum of likelihoods).",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_15a_minersBlockNeither",
-    "source": {"bibkey": "kolodny-macfarlane-2010", "paperLabel": "Miners puzzle"},
-    "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(15a)"},
-    "language": "stan1293",
-    "primaryText": "We ought to block neither shaft.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Ten miners trapped in shaft A or shaft B (unknown which). Blocking A: 10 saved if in A, 0 if in B. Blocking B: 0/10. Blocking neither: 9 saved either way.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "miners"],
-      ["modalForce", "ought"]
-    ],
-    "comment": "First clause of the Kolodny-MacFarlane miners triple. C&M's expected-utility analysis makes this true at any θ ∈ (5, 9).",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_15b_minersBlockA",
-    "source": {"bibkey": "kolodny-macfarlane-2010", "paperLabel": "Miners puzzle"},
-    "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(15b)"},
-    "language": "stan1293",
-    "primaryText": "If the miners are in shaft A, we ought to block shaft A.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Same miners scenario as (15a). Conditional on miners-in-A info.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "miners"],
-      ["modalForce", "ought"],
-      ["conditional", "info-sensitive"]
-    ],
-    "comment": "Conditional clause of the miners triple. Together with (15a), it shows the Kratzerian ordering source cannot be information-insensitive.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_25a_minersMust",
-    "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(25a)"},
-    "language": "stan1293",
-    "primaryText": "We must / have to block neither path.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Same miners scenario as (15a).",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "We mustn't block either path.", "judgment": "acceptable"},
-      {"form": "We must / have to refrain from blocking either path.", "judgment": "acceptable"},
-      {"form": "We cannot block either path.", "judgment": "acceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "miners"],
-      ["modalForce", "must"]
-    ],
-    "comment": "Must-variant of (15a). Printed unmarked; the paper reports its judgments as less sharp for (a) and suspects interference from a reading with 'neither' scoping above the modal; the rephrasings in alternatives, (26a)–(26c), unambiguously target the intended reading.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_25b_minersMustA",
-    "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(25b)"},
-    "language": "stan1293",
-    "primaryText": "If the miners are in shaft A, we must / have to block shaft A.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Same miners scenario as (15a).",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "miners"],
-      ["modalForce", "must"],
-      ["prediction", "thresholdShift"]
-    ],
-    "comment": "Must-variant of (15b). With (26a)/(25b) both felicitous, the paper's threshold-shifting prediction follows: a single θ cannot validate both unconditional (9 > θ ≥ 5) and conditional-on-A (10 > θ ≥ 9) must-claims.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_29b_modal_linda",
-    "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(29b)"},
-    "language": "stan1293",
-    "primaryText": "Linda must be a bank teller and be active in the feminist movement.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Following the Linda description (cm2024_4_linda_original).",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "Linda must be a bank teller.",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "modalConjunctionFallacy"],
-      ["empiricalDomain", "epistemic"]
-    ],
-    "comment": "Paper-introduced 'modal conjunction fallacy': introspectively, the conjunctive must-claim sounds *better* than the bare. C&M's analysis predicts this via the explanatory-value (sum of likelihoods) gap: 0.5 vs 1.5 (paper eq. 32 / 33).",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_35_jack_description",
-    "source": {"bibkey": "kahneman-tversky-1973", "paperLabel": "Jack description"},
-    "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(35)"},
-    "language": "stan1293",
-    "primaryText": "Jack is a 45-year-old man. He is married and has four children. He is generally conservative, careful, and ambitious. He shows no interest in political and social issues and spends most of his free time on his many hobbies which include home carpentry, sailing, and mathematical puzzles.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Engineer-prototypical thumbnail description.",
-    "context": "Panel of psychologists interviewed 30 engineers and 70 lawyers (or 70/30 in reversed condition); descriptions written about each. Jack's description shown to subjects.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "baseRateNeglect"],
-      ["empiricalDomain", "epistemic"]
-    ],
-    "comment": "Kahneman-Tversky 1973 base-rate-neglect stimulus. Subjects' engineer-probability judgment is unaffected by the 30/70 vs 70/30 prior split, signalling neglect of prior probabilities — the empirical phenomenon C&M's analysis predicts at the modal level.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_36_jack_must_engineer",
-    "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(36)"},
-    "language": "stan1293",
-    "primaryText": "Jack must be an engineer.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Following the Jack description (cm2024_35_jack_description).",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "Jack must be a lawyer.",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "baseRateNeglect"],
-      ["modalForce", "must"]
-    ],
-    "comment": "Paper-introduced 'modal base-rate neglect': introspectively, the engineer-claim sounds appropriate regardless of the 30/70 vs 70/30 prior. C&M's explanatory-value analysis: EV(engineer) = 1.33 (paper eq. 39) > EV(lawyer) = 0.63 (eq. 40), prior-independent.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_49a_cold",
-    "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(49a)"},
-    "language": "stan1293",
-    "primaryText": "John did not come to work today. He must have caught a cold.",
-    "discourseSegments": [
-      "John did not come to work today.",
-      "He must have caught a cold."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "John absent; speaker reasoning about why.",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "He must be dead.",
-        "judgment": "unacceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "plausibilityFloor"],
-      ["modalForce", "must"]
-    ],
-    "comment": "Dead-vs-cold contrast (paper §5, eq. 49a/b). The pure likelihood-based analysis incorrectly predicts must-dead acceptable (P(absent|dead)=1 ≫ P(absent|cold)). Motivates the §5 plausibility-floor patch.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_54a_grammatical_mistake",
-    "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(54a)"},
-    "language": "stan1293",
-    "primaryText": "One must under no circumstance ever make a grammatical mistake.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Deontic; speaker prescribing impossible standard.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "plausibilityFloor"],
-      ["modalForce", "must"],
-      ["modalType", "deontic"]
-    ],
-    "comment": "Deontic-domain instance of the §5 plausibility-floor requirement: the prejacent (never making any mistake) is implausible, infelicity follows. Extends the dead/cold contrast (cm2024_49a) from epistemic to deontic.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_55a_bushwick_helicopter",
-    "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(55a)"},
-    "language": "stan1293",
-    "primaryText": "In order to get to Bushwick, you have to take a helicopter.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Teleological; multiple alternative means available.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "plausibilityFloor"],
-      ["modalForce", "have-to"],
-      ["modalType", "teleological"]
-    ],
-    "comment": "Teleological-domain instance of the §5 plausibility-floor requirement: the prejacent (helicopter-taking) is implausible / impractical. Extends the dead/cold contrast (cm2024_49a) from epistemic to teleological.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_60a_kim_marry_pat",
-    "source": {"bibkey": "dretske-1972", "paperLabel": "(adapted; PAT focus)"},
-    "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(60a)"},
-    "language": "stan1293",
-    "primaryText": "Kim must marry Pat in order to inherit.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Kim will only inherit the considerable fortune their parents left them if they get married. They can marry anyone they like, the condition is simply that Kim be married in order to inherit. Suppose Kim is planning on marrying Pat.",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "Kim must marry PAT in order to inherit.",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "focusContrast"],
-      ["modalForce", "must"]
-    ],
-    "comment": "Focus contrast (§6 eq. 60). With neutral focus, the alternative-set is the polar negation of the prejacent (true / true-enough). With contrastive PAT-focus, the alternative-set is other people Kim might marry — making it false (any marriage works). C&M's evidence for alternative-sensitivity of must but not might.",
-    "verified": "page-image"
-  },
-  {
-    "id": "cm2024_63_billy_rain",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(6b)"},
-    "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(63)"},
-    "language": "stan1293",
-    "primaryText": "Billy is looking out the window at the pouring rain. It must be raining.",
-    "discourseSegments": [
-      "Billy is looking out the window at the pouring rain.",
-      "It must be raining."
-    ],
-    "glossedTokens": [],
-    "translation": "Billy is looking out the window at the pouring rain. #It must be raining.",
-    "context": "Billy has direct perceptual evidence (looking at rain).",
-    "judgment": "unacceptable",
-    "contrasts": [
-      {
-        "form": "It's raining.",
-        "judgment": "acceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["puzzle", "vfgFelicity"],
-      ["modalForce", "must"],
-      ["modalType", "epistemic"]
-    ],
-    "comment": "von Fintel-Gillies 2010 puzzle: epistemic must infelicitous with direct perceptual evidence. C&M §7 adopt Goodhue 2017's felicity condition: must φ requires φ not be known. Not formalized — awaits project-wide epistemic-knowledge substrate.",
-    "verified": "page-image"
-  }
-]
+  "index": {"type": "Example", "doc": "The examples of the article."},
+  "examples": [
+    {
+      "id": "chungmascarenhas2023_1",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(1), (42)"},
+      "language": "kore1280",
+      "primaryText": "John-un cip-ey iss-∅-eya toy-n-ta.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-un", "John-TOP"], ["cip-ey", "home-DAT"], ["iss-∅-eya", "COP-PRES-only.if"], ["toy-n-ta", "EVAL-PRES-DECL"]
+      ],
+      "translation": "John must be home.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "Literal translation printed: 'Only if John is home, it suffices.'",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_15a",
+      "source": {"bibkey": "kolodny-macfarlane-2010", "paperLabel": "Miners puzzle"},
+      "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(15a)"},
+      "language": "stan1293",
+      "primaryText": "We ought to block neither shaft.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["We", ""], ["ought", ""], ["to", ""], ["block", ""],
+        ["neither", ""], ["shaft", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 1, "label": "modal", "lexeme": "ought"}],
+      "paperFeatures": [["prejacent", "block-neither"]],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_15b",
+      "source": {"bibkey": "kolodny-macfarlane-2010", "paperLabel": "Miners puzzle"},
+      "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(15b)"},
+      "language": "stan1293",
+      "primaryText": "If the miners are in shaft A, we ought to block shaft A.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["If", ""], ["the", ""], ["miners", ""], ["are", ""],
+        ["in", ""], ["shaft", ""], ["A,", ""], ["we", ""],
+        ["ought", ""], ["to", ""], ["block", ""], ["shaft", ""],
+        ["A", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 8, "label": "modal", "lexeme": "ought"}],
+      "paperFeatures": [["prejacent", "block-A"], ["antecedent", "miners-in-A"]],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_15c",
+      "source": {"bibkey": "kolodny-macfarlane-2010", "paperLabel": "Miners puzzle"},
+      "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(15c)"},
+      "language": "stan1293",
+      "primaryText": "If the miners are in shaft B, we ought to block shaft B.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["If", ""], ["the", ""], ["miners", ""], ["are", ""],
+        ["in", ""], ["shaft", ""], ["B,", ""], ["we", ""],
+        ["ought", ""], ["to", ""], ["block", ""], ["shaft", ""],
+        ["B", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 8, "label": "modal", "lexeme": "ought"}],
+      "paperFeatures": [["prejacent", "block-B"], ["antecedent", "miners-in-B"]],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_25a",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(25a)"},
+      "language": "stan1293",
+      "primaryText": "We must block neither path.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["We", ""], ["must", ""], ["block", ""], ["neither", ""],
+        ["path", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 1, "label": "modal", "lexeme": "must"}],
+      "paperFeatures": [["prejacent", "block-neither"]],
+      "comment": "The paper reports its judgments as less sharp for (25a) and suspects interference from a reading with 'neither' scoping above the modal; (26a) and (26b) rephrase it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_25a_have_to",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(25a)"},
+      "language": "stan1293",
+      "primaryText": "We have to block neither path.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["We", ""], ["have", ""], ["to", ""], ["block", ""],
+        ["neither", ""], ["path", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 1, "length": 2, "label": "modal"}],
+      "paperFeatures": [["prejacent", "block-neither"]],
+      "comment": "The paper reports its judgments as less sharp for (25a) and suspects interference from a reading with 'neither' scoping above the modal; (26a) and (26b) rephrase it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_25b",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(25b)"},
+      "language": "stan1293",
+      "primaryText": "If the miners are in shaft A, we must block shaft A.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["If", ""], ["the", ""], ["miners", ""], ["are", ""],
+        ["in", ""], ["shaft", ""], ["A,", ""], ["we", ""],
+        ["must", ""], ["block", ""], ["shaft", ""], ["A", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 8, "label": "modal", "lexeme": "must"}],
+      "paperFeatures": [["prejacent", "block-A"], ["antecedent", "miners-in-A"]],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_25b_have_to",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(25b)"},
+      "language": "stan1293",
+      "primaryText": "If the miners are in shaft A, we have to block shaft A.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["If", ""], ["the", ""], ["miners", ""], ["are", ""],
+        ["in", ""], ["shaft", ""], ["A,", ""], ["we", ""],
+        ["have", ""], ["to", ""], ["block", ""], ["shaft", ""],
+        ["A", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 8, "length": 2, "label": "modal"}],
+      "paperFeatures": [["prejacent", "block-A"], ["antecedent", "miners-in-A"]],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_25c",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(25c)"},
+      "language": "stan1293",
+      "primaryText": "If the miners are in shaft B, we must block shaft B.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["If", ""], ["the", ""], ["miners", ""], ["are", ""],
+        ["in", ""], ["shaft", ""], ["B,", ""], ["we", ""],
+        ["must", ""], ["block", ""], ["shaft", ""], ["B", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 8, "label": "modal", "lexeme": "must"}],
+      "paperFeatures": [["prejacent", "block-B"], ["antecedent", "miners-in-B"]],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_25c_have_to",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(25c)"},
+      "language": "stan1293",
+      "primaryText": "If the miners are in shaft B, we have to block shaft B.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["If", ""], ["the", ""], ["miners", ""], ["are", ""],
+        ["in", ""], ["shaft", ""], ["B,", ""], ["we", ""],
+        ["have", ""], ["to", ""], ["block", ""], ["shaft", ""],
+        ["B", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 8, "length": 2, "label": "modal"}],
+      "paperFeatures": [["prejacent", "block-B"], ["antecedent", "miners-in-B"]],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_26a",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(26a)"},
+      "language": "stan1293",
+      "primaryText": "We mustn't block either path.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["We", ""], ["mustn't", ""], ["block", ""], ["either", ""],
+        ["path", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_26b",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(26b)"},
+      "language": "stan1293",
+      "primaryText": "We must refrain from blocking either path.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["We", ""], ["must", ""], ["refrain", ""], ["from", ""],
+        ["blocking", ""], ["either", ""], ["path", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 1, "label": "modal", "lexeme": "must"}],
+      "paperFeatures": [["prejacent", "block-neither"]],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_26b_have_to",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(26b)"},
+      "language": "stan1293",
+      "primaryText": "We have to refrain from blocking either path.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["We", ""], ["have", ""], ["to", ""], ["refrain", ""],
+        ["from", ""], ["blocking", ""], ["either", ""], ["path", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 1, "length": 2, "label": "modal"}],
+      "paperFeatures": [["prejacent", "block-neither"]],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_26c",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(26c)"},
+      "language": "stan1293",
+      "primaryText": "We cannot block either path.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["We", ""], ["cannot", ""], ["block", ""], ["either", ""],
+        ["path", ""]
+      ],
+      "translation": "",
+      "context": "Ten miners are trapped either in shaft A or in shaft B, but we do not know which. Flood waters threaten to flood the shafts. We have enough sandbags to block one shaft, but not both. If we block one shaft, all the water will go into the other shaft, killing any miners inside it. If we block neither shaft, both shafts will fill halfway with water, and just one miner, the lowest in the shaft, will be killed.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_29a",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(29a)"},
+      "language": "stan1293",
+      "primaryText": "Linda must be a bank teller.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Linda", ""], ["must", ""], ["be", ""], ["a", ""],
+        ["bank", ""], ["teller", ""]
+      ],
+      "translation": "",
+      "context": "Linda is 31 years old, single, outspoken, and very bright. She majored in philosophy. As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_29b",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(29b)"},
+      "language": "stan1293",
+      "primaryText": "Linda must be a bank teller and be active in the feminist movement.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Linda", ""], ["must", ""], ["be", ""], ["a", ""],
+        ["bank", ""], ["teller", ""], ["and", ""], ["be", ""],
+        ["active", ""], ["in", ""], ["the", ""], ["feminist", ""],
+        ["movement", ""]
+      ],
+      "translation": "",
+      "context": "Linda is 31 years old, single, outspoken, and very bright. She majored in philosophy. As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "The paper reports that (29b) is more attractive than (29a) to the authors and a group of informants.",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_36",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(36)"},
+      "language": "stan1293",
+      "primaryText": "Jack must be an engineer.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jack", ""], ["must", ""], ["be", ""], ["an", ""],
+        ["engineer", ""]
+      ],
+      "translation": "",
+      "context": "A panel of psychologists have interviewed and administered personality tests to 30 engineers and 70 lawyers. On the basis of this information, thumbnail descriptions of the 30 engineers and 70 lawyers have been written. Below is the thumbnail description of Jack, one of the interviewees: Jack is a 45-year-old man. He is married and has four children. He is generally conservative, careful, and ambitious. He shows no interest in political and social issues and spends most of his free time on his many hobbies which include home carpentry, sailing, and mathematical puzzles.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_49a",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(49a)"},
+      "language": "stan1293",
+      "primaryText": "John did not come to work today. He must have caught a cold.",
+      "discourseSegments": [
+        "John did not come to work today.",
+        "He must have caught a cold."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_49b",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(49b)"},
+      "language": "stan1293",
+      "primaryText": "John did not come to work today. He must be dead.",
+      "discourseSegments": [
+        "John did not come to work today.",
+        "He must be dead."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_54a",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(54a)"},
+      "language": "stan1293",
+      "primaryText": "One must under no circumstance ever make a grammatical mistake.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["One", ""], ["must", ""], ["under", ""], ["no", ""],
+        ["circumstance", ""], ["ever", ""], ["make", ""], ["a", ""],
+        ["grammatical", ""], ["mistake", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_55a",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(55a)"},
+      "language": "stan1293",
+      "primaryText": "In order to get to Bushwick, you have to take a helicopter.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["In", ""], ["order", ""], ["to", ""], ["get", ""],
+        ["to", ""], ["Bushwick,", ""], ["you", ""], ["have", ""],
+        ["to", ""], ["take", ""], ["a", ""], ["helicopter", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_60a",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(60a)"},
+      "language": "stan1293",
+      "primaryText": "Kim must marry Pat in order to inherit.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Kim", ""], ["must", ""], ["marry", ""], ["Pat", ""],
+        ["in", ""], ["order", ""], ["to", ""], ["inherit", ""]
+      ],
+      "translation": "",
+      "context": "Kim will only inherit the considerable fortune their parents left them if they get married. They can marry anyone they like, the condition is simply that Kim be married in order to inherit. Suppose Kim is planning on marrying Pat.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 1, "label": "modal", "lexeme": "must"}],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_60b",
+      "source": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(60b)"},
+      "language": "stan1293",
+      "primaryText": "Kim must marry PAT in order to inherit.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Kim", ""], ["must", ""], ["marry", ""], ["PAT", ""],
+        ["in", ""], ["order", ""], ["to", ""], ["inherit", ""]
+      ],
+      "translation": "",
+      "context": "Kim will only inherit the considerable fortune their parents left them if they get married. They can marry anyone they like, the condition is simply that Kim be married in order to inherit. Suppose Kim is planning on marrying Pat.",
+      "judgment": "acceptable",
+      "verdict": false,
+      "contrasts": [],
+      "readings": [],
+      "spans": [{"start": 1, "label": "modal", "lexeme": "must"}],
+      "paperFeatures": [["focus", "Pat"]],
+      "comment": "The paper prints Pat in small capitals for focus.",
+      "verified": "page-image"
+    },
+    {
+      "id": "chungmascarenhas2023_63",
+      "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(6b)"},
+      "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(63)"},
+      "language": "stan1293",
+      "primaryText": "It must be raining.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["It", ""], ["must", ""], ["be", ""], ["raining", ""]
+      ],
+      "translation": "",
+      "context": "Billy is looking out the window at the pouring rain.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

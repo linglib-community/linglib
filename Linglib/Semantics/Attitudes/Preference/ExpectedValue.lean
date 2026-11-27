@@ -22,6 +22,12 @@ them when they differ and both propositions have positive probability, so expect
 intermediate measure of propositions. A positive affine change of the value function changes every
 expected value by the same map, so comparisons of expected value are invariant under such changes.
 
+The expected value of `φ` depends on the value function only on `φ`, and on the prior only through
+the prior conditioned on `φ`. A value function constant on a `φ` of positive probability has that
+constant as expected value, the indicator of a proposition `ψ` has the conditional probability of
+`ψ` given `φ`, and the number of propositions of a finite family that hold has the sum of their
+conditional probabilities.
+
 [jeffrey-1965] changes the prior and the value function together. For reals `a`, `b`, `c`, `d`
 with `c * V + d` positive, the prior with density `c * V + d` and the value function
 `(a * V + b) / (c * V + d)` give every proposition of positive probability the expected value
@@ -38,6 +44,10 @@ function is `a * V + b`.
 * `Desire.expectedValue_eq_integral_cond`: expected value as an integral against the conditioned
   prior.
 * `Desire.expectedValue_cond`: conditioning the prior on a domain restricts the proposition to it.
+* `Desire.expectedValue_sum_indicator_one`: the expected number of propositions of a finite family
+  that hold is the sum of their conditional probabilities.
+* `Desire.expectedValue_congr_cond`: the expected value of a proposition depends on the prior only
+  through the prior conditioned on it.
 * `Desire.expectedValue_union`: the expected value of a disjoint union is a weighted average.
 * `Desire.isIntermediate_expectedValue`: expected value is an intermediate measure.
 * `Desire.expectedValue_union_mem_Ioo`: the expected value of a disjoint union of propositions of
@@ -83,6 +93,35 @@ on `φ`. -/
 theorem expectedValue_eq_integral_cond : expectedValue μ V φ = ∫ w, V w ∂μ[|φ] :=
   setAverage_eq' μ V φ
 
+/-! ### Dependence on the value function and the prior -/
+
+theorem expectedValue_congr_fun {V' : W → ℝ} (hφ : MeasurableSet φ) (h : EqOn V V' φ) :
+    expectedValue μ V φ = expectedValue μ V' φ :=
+  setAverage_congr_fun hφ (.of_forall h)
+
+/-- The expected value of `φ` depends on the prior only through the prior conditioned on `φ`. -/
+theorem expectedValue_congr_cond {ν : Measure W} (h : μ[|φ] = ν[|φ]) :
+    expectedValue μ V φ = expectedValue ν V φ := by
+  rw [expectedValue_eq_integral_cond, expectedValue_eq_integral_cond, h]
+
+theorem expectedValue_const_mul (c : ℝ) (V : W → ℝ) (φ : Set W) :
+    expectedValue μ (fun w ↦ c * V w) φ = c * expectedValue μ V φ :=
+  average_const_mul _ c V
+
+/-- The expected value of the indicator of `ψ` is the conditional probability of `ψ` given `φ`. -/
+theorem expectedValue_indicator_one (hψ : MeasurableSet ψ) :
+    expectedValue μ (ψ.indicator 1) φ = μ[|φ].real ψ := by
+  rw [expectedValue_eq_integral_cond, integral_indicator_one hψ]
+
+/-- The expected number of propositions of a finite family that hold is the sum of their
+conditional probabilities. -/
+theorem expectedValue_sum_indicator_one {ι : Type*} (s : Finset ι) {R : ι → Set W}
+    (hR : ∀ i ∈ s, MeasurableSet (R i)) :
+    expectedValue μ (∑ i ∈ s, (R i).indicator 1) φ = ∑ i ∈ s, μ[|φ].real (R i) := by
+  simp only [expectedValue_eq_integral_cond, Finset.sum_apply]
+  exact (integral_finsetSum s fun i hi ↦ (integrable_const (1 : ℝ)).indicator (hR i hi)).trans
+    (Finset.sum_congr rfl fun i hi ↦ integral_indicator_one (hR i hi))
+
 variable [IsFiniteMeasure μ]
 
 /-- On finitely many worlds the expected value of `φ` is the sum of the values of its worlds
@@ -108,6 +147,12 @@ theorem expectedValue_cond (hD : MeasurableSet D) (hφ : MeasurableSet φ) :
     expectedValue μ[|D] V φ = expectedValue μ V (D ∩ φ) := by
   rw [expectedValue_eq_integral_cond, expectedValue_eq_integral_cond,
     cond_cond_eq_cond_inter hD hφ]
+
+/-- A value function that is constant on a proposition of positive probability has that constant
+as the proposition's expected value. -/
+theorem expectedValue_eq_of_forall_mem_eq (hφ : MeasurableSet φ) (h₀ : μ φ ≠ 0) {c : ℝ}
+    (h : ∀ w ∈ φ, V w = c) : expectedValue μ V φ = c :=
+  (expectedValue_congr_fun hφ h).trans (setAverage_const h₀ (measure_ne_top _ _) c)
 
 /-! ### Disjoint unions -/
 

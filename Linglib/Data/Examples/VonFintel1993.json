@@ -1,779 +1,848 @@
-[
-  {
-    "id": "vonfintel1993_1a",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(1a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Every student but John attended the meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "John is the only student who did not attend", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "every"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_1b",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(1b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Except for John, every student attended the meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "except for"],
-      ["determiner", "every"]
-    ],
-    "comment": "The free exceptive.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_2b",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(2b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "No student but John attended the meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "John is the only student who attended", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "no"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_4",
-    "source": {"bibkey": "hoeksema-1990", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(4)"},
-    "language": "stan1293",
-    "primaryText": "Well, except for Dr. Samuels everybody has an alibi, inspector. Let's go see Dr. Samuels to find out if he's got one too.",
-    "discourseSegments": [
-      "Well, except for Dr. Samuels everybody has an alibi, inspector.",
-      "Let's go see Dr. Samuels to find out if he's got one too."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "except for"],
-      ["test", "cancellability"]
-    ],
-    "comment": "The free exceptive does not entail that the excepted person lacks the property.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_5",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(5)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Well, everybody but Dr. Samuels has an alibi, inspector. Let's go see Dr. Samuels to find out if he's got one too.",
-    "discourseSegments": [
-      "Well, everybody but Dr. Samuels has an alibi, inspector.",
-      "Let's go see Dr. Samuels to find out if he's got one too."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "questionable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["test", "cancellability"]
-    ],
-    "comment": "The but-phrase entails that Dr. Samuels has no alibi; the continuation In fact, he has one too is unacceptable.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_7",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(7)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I just noticed that every student but John attended the meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "the speaker noticed that every other student attended and that John did not", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["test", "embedding"]
-    ],
-    "comment": "Both propositions are entailments; that John is a student may be an implicature.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_10_everyone",
-    "source": {"bibkey": "horn-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
-    "language": "stan1293",
-    "primaryText": "everyone but Mary",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "every"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_10_nobody",
-    "source": {"bibkey": "horn-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
-    "language": "stan1293",
-    "primaryText": "nobody but John",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "no"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_10_anyone",
-    "source": {"bibkey": "horn-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
-    "language": "stan1293",
-    "primaryText": "anyone but Carter",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "any"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_10_somebody",
-    "source": {"bibkey": "horn-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
-    "language": "stan1293",
-    "primaryText": "somebody but Kim",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "some"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_10_somewhere",
-    "source": {"bibkey": "horn-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
-    "language": "stan1293",
-    "primaryText": "somewhere but here",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [
-      {"form": "anywhere but here", "judgment": "acceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "some"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_10_all_of",
-    "source": {"bibkey": "horn-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
-    "language": "stan1293",
-    "primaryText": "all of my friends but Chris",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "none of my friends but Chris", "judgment": "acceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "all"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_10_most_of",
-    "source": {"bibkey": "horn-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
-    "language": "stan1293",
-    "primaryText": "most of my friends but Chris",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [
-      {"form": "many of my friends but Chris", "judgment": "ungrammatical"},
-      {"form": "three of my friends but Chris", "judgment": "ungrammatical"},
-      {"form": "some of my friends but Chris", "judgment": "ungrammatical"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "most"]
-    ],
-    "comment": "The alternatives are ungrammatical as well. The paper prints *Mary for *Many; Horn (1989, 346), its source, prints *Many.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_10_everything",
-    "source": {"bibkey": "horn-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
-    "language": "stan1293",
-    "primaryText": "everything but the kitchen sink",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "every"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_10_none",
-    "source": {"bibkey": "horn-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
-    "language": "stan1293",
-    "primaryText": "None but the brave deserves the fair.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Dryden.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "no"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_13",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(13)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Every human being is mortal. Therefore every male human being is mortal.",
-    "discourseSegments": [
-      "Every human being is mortal.",
-      "Every male human being is mortal."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "No human being is mortal. Therefore no male human being is mortal.", "judgment": "acceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["inference", "valid"],
-      ["property", "left downward monotonicity"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_14",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(14)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Every student but John attended the meeting. Therefore every student but John and Jill attended the meeting.",
-    "discourseSegments": [
-      "Every student but John attended the meeting.",
-      "Every student but John and Jill attended the meeting."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "contrasts": [
-      {"form": "No student but John attended the meeting. Therefore no student but John and Jill attended the meeting.", "judgment": "unacceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["inference", "invalid"],
-      ["property", "left downward monotonicity"]
-    ],
-    "comment": "The paper prints ?⇒? between premise and conclusion and calls the inferences blatantly incorrect. The conclusion implies that Jill is a student who did not attend, which does not follow; domain subtraction with or without restrictiveness wrongly licenses it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_16",
-    "source": {"bibkey": "hoeksema-1987", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(16)"},
-    "language": "stan1293",
-    "primaryText": "all the students but each foreigner",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["complement", "quantifier"]
-    ],
-    "comment": "The complement of but must denote a set that can be subtracted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_19",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(19)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Some female human being is an athlete. Therefore some human being is an athlete.",
-    "discourseSegments": [
-      "Some female human being is an athlete.",
-      "Some human being is an athlete."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["inference", "valid"],
-      ["property", "left upward monotonicity"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_22",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(22)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Every student but John and Mary attended the meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "John and Mary are the students who did not attend", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "every"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_25a",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(25a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Most students attended the meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Tom, John and Harry did not attend; Bill and Mary did.",
-    "judgment": "acceptable",
-    "verdict": false,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["determiner", "most"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_25b",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(25b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Most students but Tom and John attended the meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Tom, John and Harry did not attend; Bill and Mary did.",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["determiner", "most"]
-    ],
-    "comment": "Excluding Tom and Harry or John and Harry would do as well, so there is no least exception set.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_27a",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(27a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Who but a total idiot would have said a thing like that?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "rhetorical: nobody but a total idiot would have", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["construction", "wh-question"]
-    ],
-    "comment": "The only possible answers are nobody and everybody, which promotes the rhetorical reading.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_27b",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(27b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Who but Leslie is coming to a party?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "nearlyUngrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["construction", "wh-question"]
-    ],
-    "comment": "Marked ?* in the text; where a rhetorical reading is dispreferred, ungrammaticality ensues.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_28a",
-    "source": {"bibkey": "geis-1973", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(28a)"},
-    "language": "stan1293",
-    "primaryText": "Everybody but John and but Mary attended the meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [
-      {"form": "Everybody but John and Mary attended the meeting.", "judgment": "acceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["construction", "conjunction"]
-    ],
-    "comment": "Two but-phrases on one quantifier make clashing uniqueness demands.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_31b",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(31b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Except for the famous detective, no one suspected the cook.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "No one, except for the famous detective, suspected the cook.", "judgment": "acceptable"},
-      {"form": "No one suspected the cook, except for the famous detective.", "judgment": "acceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "except for"],
-      ["position", "peripheral"]
-    ],
-    "comment": "Free exceptives appear NP-internally and at either periphery.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_32",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(32)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Everyone loved the new show and no one thought it would be canceled so soon. Except for George, of course.",
-    "discourseSegments": [
-      "Everyone loved the new show and no one thought it would be canceled so soon.",
-      "Except for George, of course."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "except for"],
-      ["use", "afterthought"]
-    ],
-    "comment": "Set aside as not amenable to compositional analysis.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_33a",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(33a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Except for Joan, most cabinet members liked the proposal.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Except for John, few employees accepted the pay cut.", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "appositive: Joan is a notable exception", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["exceptive", "except for"],
-      ["use", "appositive"],
-      ["determiner", "most"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_34a",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(34a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Except for Jim, no one really liked the soup.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "except for"],
-      ["use", "restrictive"],
-      ["determiner", "no"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_34b",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(34b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Except for Jane, my relatives are (all) total bores.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "except for"],
-      ["use", "restrictive"],
-      ["determiner", "definite"]
-    ],
-    "comment": "Free exceptives modify definite NPs that are not overtly quantified.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_34c",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(34c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Except for the assistant professors, most faculty members supported the dean.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "except for"],
-      ["use", "restrictive"],
-      ["determiner", "most"]
-    ],
-    "comment": "Free exceptives occur with nonuniversal determiners.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_35a",
-    "source": {"bibkey": "hoeksema-1987", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(35a)"},
-    "language": "stan1293",
-    "primaryText": "Except for John, who would say a thing like that?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Who but John would say a thing like that?", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "ordinary informative question", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["exceptive", "except for"],
-      ["construction", "wh-question"]
-    ],
-    "comment": "No rhetorical flavour, unlike the but-phrase.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_36a",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(36a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Except for John and except for Mary, nobody complained.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "except for"],
-      ["construction", "conjunction"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_36b",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(36b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Nobody but John and but Mary complained.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "but"],
-      ["construction", "conjunction"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_37",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(37)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Except for John, everybody likes John.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "except for"],
-      ["test", "sentence-level subtraction"]
-    ],
-    "comment": "Refutes removing the excepted set from the universe of discourse: the exceptive associates with the quantifier only.",
-    "verified": "page-image"
-  },
-  {
-    "id": "vonfintel1993_42",
-    "source": {"bibkey": "von-fintel-1993", "paperLabel": "(42)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Besides John, five other students attended the meeting.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["exceptive", "besides"],
-      ["determiner", "numeral"]
-    ],
-    "comment": "Besides co-occurs with numerals; the paper suggests it imposes minimality rather than uniqueness.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "exceptive",
+      "lean": "exceptive",
+      "type": "Exceptive",
+      "doc": "The exceptive marker of the example.",
+      "levels": [
+        {
+          "name": "but",
+          "label": "but",
+          "doc": "the *but*-phrase inside the noun phrase"
+        },
+        {
+          "name": "exceptFor",
+          "label": "except for",
+          "doc": "the free exceptive *except for*"
+        },
+        {
+          "name": "besides",
+          "label": "besides",
+          "doc": "the additive *besides* of the concluding section"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "vonfintel1993_1a",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(1a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Every student but John attended the meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "John is the only student who did not attend", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["determiner", "every"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_1b",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(1b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Except for John, every student attended the meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "except for"],
+        ["determiner", "every"]
+      ],
+      "comment": "The free exceptive.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_2b",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(2b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "No student but John attended the meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "John is the only student who attended", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["determiner", "no"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_4",
+      "source": {"bibkey": "hoeksema-1990", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(4)"},
+      "language": "stan1293",
+      "primaryText": "Well, except for Dr. Samuels everybody has an alibi, inspector. Let's go see Dr. Samuels to find out if he's got one too.",
+      "discourseSegments": [
+        "Well, except for Dr. Samuels everybody has an alibi, inspector.",
+        "Let's go see Dr. Samuels to find out if he's got one too."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "except for"],
+        ["test", "cancellability"]
+      ],
+      "comment": "The free exceptive does not entail that the excepted person lacks the property.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_5",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(5)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Well, everybody but Dr. Samuels has an alibi, inspector. Let's go see Dr. Samuels to find out if he's got one too.",
+      "discourseSegments": [
+        "Well, everybody but Dr. Samuels has an alibi, inspector.",
+        "Let's go see Dr. Samuels to find out if he's got one too."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["test", "cancellability"]
+      ],
+      "comment": "The but-phrase entails that Dr. Samuels has no alibi; the continuation In fact, he has one too is unacceptable.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_7",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(7)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I just noticed that every student but John attended the meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "the speaker noticed that every other student attended and that John did not", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["test", "embedding"]
+      ],
+      "comment": "Both propositions are entailments; that John is a student may be an implicature.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_10_everyone",
+      "source": {"bibkey": "horn-1989", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "everyone but Mary",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_10_nobody",
+      "source": {"bibkey": "horn-1989", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "nobody but John",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_10_anyone",
+      "source": {"bibkey": "horn-1989", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "anyone but Carter",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_10_somebody",
+      "source": {"bibkey": "horn-1989", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "somebody but Kim",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_10_somewhere",
+      "source": {"bibkey": "horn-1989", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "somewhere but here",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [
+        {"form": "anywhere but here", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_10_all_of",
+      "source": {"bibkey": "horn-1989", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "all of my friends but Chris",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "none of my friends but Chris", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["determiner", "all"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_10_most_of",
+      "source": {"bibkey": "horn-1989", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "most of my friends but Chris",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [
+        {"form": "many of my friends but Chris", "judgment": "ungrammatical"},
+        {"form": "three of my friends but Chris", "judgment": "ungrammatical"},
+        {"form": "some of my friends but Chris", "judgment": "ungrammatical"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["determiner", "most"]
+      ],
+      "comment": "The alternatives are ungrammatical as well. The paper prints *Mary for *Many; Horn (1989, 346), its source, prints *Many.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_10_some_of",
+      "source": {"bibkey": "horn-1989", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "some of my friends but Chris",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [
+        {"form": "many of my friends but Chris", "judgment": "ungrammatical"},
+        {"form": "three of my friends but Chris", "judgment": "ungrammatical"},
+        {"form": "some of my friends but Chris", "judgment": "ungrammatical"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["determiner", "some"]
+      ],
+      "comment": "The alternatives are ungrammatical as well. The paper prints *Mary for *Many; Horn (1989, 346), its source, prints *Many.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_10_none_of",
+      "source": {"bibkey": "horn-1989", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "none of my friends but Chris",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "many of my friends but Chris", "judgment": "ungrammatical"},
+        {"form": "three of my friends but Chris", "judgment": "ungrammatical"},
+        {"form": "some of my friends but Chris", "judgment": "ungrammatical"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["determiner", "none"]
+      ],
+      "comment": "The alternatives are ungrammatical as well. The paper prints *Mary for *Many; Horn (1989, 346), its source, prints *Many.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_10_everything",
+      "source": {"bibkey": "horn-1989", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "everything but the kitchen sink",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_10_none",
+      "source": {"bibkey": "horn-1989", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "None but the brave deserves the fair.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Dryden.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["determiner", "none"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_13",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(13)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Every human being is mortal. Therefore every male human being is mortal.",
+      "discourseSegments": [
+        "Every human being is mortal.",
+        "Every male human being is mortal."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "No human being is mortal. Therefore no male human being is mortal.", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["inference", "valid"],
+        ["property", "left downward monotonicity"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_14",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(14)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Every student but John attended the meeting. Therefore every student but John and Jill attended the meeting.",
+      "discourseSegments": [
+        "Every student but John attended the meeting.",
+        "Every student but John and Jill attended the meeting."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [
+        {"form": "No student but John attended the meeting. Therefore no student but John and Jill attended the meeting.", "judgment": "unacceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["inference", "invalid"],
+        ["property", "left downward monotonicity"]
+      ],
+      "comment": "The paper prints ?⇒? between premise and conclusion and calls the inferences blatantly incorrect. The conclusion implies that Jill is a student who did not attend, which does not follow; domain subtraction with or without restrictiveness wrongly licenses it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_16",
+      "source": {"bibkey": "hoeksema-1987", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(16)"},
+      "language": "stan1293",
+      "primaryText": "all the students but each foreigner",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["complement", "quantifier"]
+      ],
+      "comment": "The complement of but must denote a set that can be subtracted.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_19",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(19)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Some female human being is an athlete. Therefore some human being is an athlete.",
+      "discourseSegments": [
+        "Some female human being is an athlete.",
+        "Some human being is an athlete."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["inference", "valid"],
+        ["property", "left upward monotonicity"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_22",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(22)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Every student but John and Mary attended the meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "John and Mary are the students who did not attend", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["determiner", "every"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_25a",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(25a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Most students attended the meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Tom, John and Harry did not attend; Bill and Mary did.",
+      "judgment": "acceptable",
+      "verdict": false,
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "most"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_25b",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(25b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Most students but Tom and John attended the meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Tom, John and Harry did not attend; Bill and Mary did.",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["determiner", "most"]
+      ],
+      "comment": "Excluding Tom and Harry or John and Harry would do as well, so there is no least exception set.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_27a",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(27a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Who but a total idiot would have said a thing like that?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "rhetorical: nobody but a total idiot would have", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["construction", "wh-question"]
+      ],
+      "comment": "The only possible answers are nobody and everybody, which promotes the rhetorical reading.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_27b",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(27b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Who but Leslie is coming to a party?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "nearlyUngrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["construction", "wh-question"]
+      ],
+      "comment": "Marked ?* in the text; where a rhetorical reading is dispreferred, ungrammaticality ensues.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_28a",
+      "source": {"bibkey": "geis-1973", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(28a)"},
+      "language": "stan1293",
+      "primaryText": "Everybody but John and but Mary attended the meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [
+        {"form": "Everybody but John and Mary attended the meeting.", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["construction", "conjunction"]
+      ],
+      "comment": "Two but-phrases on one quantifier make clashing uniqueness demands.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_31b",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(31b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Except for the famous detective, no one suspected the cook.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "No one, except for the famous detective, suspected the cook.", "judgment": "acceptable"},
+        {"form": "No one suspected the cook, except for the famous detective.", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "except for"],
+        ["position", "peripheral"]
+      ],
+      "comment": "Free exceptives appear NP-internally and at either periphery.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_32",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(32)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Everyone loved the new show and no one thought it would be canceled so soon. Except for George, of course.",
+      "discourseSegments": [
+        "Everyone loved the new show and no one thought it would be canceled so soon.",
+        "Except for George, of course."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "except for"],
+        ["use", "afterthought"]
+      ],
+      "comment": "Set aside as not amenable to compositional analysis.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_33a",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(33a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Except for Joan, most cabinet members liked the proposal.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Except for John, few employees accepted the pay cut.", "judgment": "acceptable"}
+      ],
+      "readings": [
+        {"name": "appositive: Joan is a notable exception", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["exceptive", "except for"],
+        ["use", "appositive"],
+        ["determiner", "most"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_34a",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(34a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Except for Jim, no one really liked the soup.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "except for"],
+        ["use", "restrictive"],
+        ["determiner", "no"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_34b",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(34b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Except for Jane, my relatives are (all) total bores.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "except for"],
+        ["use", "restrictive"],
+        ["determiner", "definite"]
+      ],
+      "comment": "Free exceptives modify definite NPs that are not overtly quantified.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_34c",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(34c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Except for the assistant professors, most faculty members supported the dean.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "except for"],
+        ["use", "restrictive"],
+        ["determiner", "most"]
+      ],
+      "comment": "Free exceptives occur with nonuniversal determiners.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_35a",
+      "source": {"bibkey": "hoeksema-1987", "paperLabel": ""},
+      "reportedIn": {"bibkey": "von-fintel-1993", "paperLabel": "(35a)"},
+      "language": "stan1293",
+      "primaryText": "Except for John, who would say a thing like that?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Who but John would say a thing like that?", "judgment": "acceptable"}
+      ],
+      "readings": [
+        {"name": "ordinary informative question", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["exceptive", "except for"],
+        ["construction", "wh-question"]
+      ],
+      "comment": "No rhetorical flavour, unlike the but-phrase.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_36a",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(36a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Except for John and except for Mary, nobody complained.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "except for"],
+        ["construction", "conjunction"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_36b",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(36b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Nobody but John and but Mary complained.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "but"],
+        ["construction", "conjunction"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_37",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(37)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Except for John, everybody likes John.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "except for"],
+        ["test", "sentence-level subtraction"]
+      ],
+      "comment": "Refutes removing the excepted set from the universe of discourse: the exceptive associates with the quantifier only.",
+      "verified": "page-image"
+    },
+    {
+      "id": "vonfintel1993_42",
+      "source": {"bibkey": "von-fintel-1993", "paperLabel": "(42)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Besides John, five other students attended the meeting.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["exceptive", "besides"],
+        ["determiner", "numeral"]
+      ],
+      "comment": "Besides co-occurs with numerals; the paper suggests it imposes minimality rather than uniqueness.",
+      "verified": "page-image"
+    }
+  ]
+}

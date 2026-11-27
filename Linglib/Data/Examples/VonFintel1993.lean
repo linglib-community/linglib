@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `VonFintel1993` — typed example data
@@ -104,7 +106,7 @@ def ex_10_everyone : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("exceptive", "but"), ("determiner", "every")] }
+    paperFeatures := [("exceptive", "but")] }
 
 def ex_10_nobody : Datum :=
   { id := "vonfintel1993_10_nobody"
@@ -117,7 +119,7 @@ def ex_10_nobody : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("exceptive", "but"), ("determiner", "no")] }
+    paperFeatures := [("exceptive", "but")] }
 
 def ex_10_anyone : Datum :=
   { id := "vonfintel1993_10_anyone"
@@ -130,7 +132,7 @@ def ex_10_anyone : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("exceptive", "but"), ("determiner", "any")] }
+    paperFeatures := [("exceptive", "but")] }
 
 def ex_10_somebody : Datum :=
   { id := "vonfintel1993_10_somebody"
@@ -143,7 +145,7 @@ def ex_10_somebody : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("exceptive", "but"), ("determiner", "some")] }
+    paperFeatures := [("exceptive", "but")] }
 
 def ex_10_somewhere : Datum :=
   { id := "vonfintel1993_10_somewhere"
@@ -156,7 +158,7 @@ def ex_10_somewhere : Datum :=
     judgment := .ungrammatical
     contrasts := [("anywhere but here", .acceptable)]
     readings := []
-    paperFeatures := [("exceptive", "but"), ("determiner", "some")] }
+    paperFeatures := [("exceptive", "but")] }
 
 def ex_10_all_of : Datum :=
   { id := "vonfintel1993_10_all_of"
@@ -184,6 +186,32 @@ def ex_10_most_of : Datum :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "most")] }
 
+def ex_10_some_of : Datum :=
+  { id := "vonfintel1993_10_some_of"
+    source := ⟨"horn-1989", ""⟩
+    reportedIn := some ⟨"von-fintel-1993", "(10)"⟩
+    language := "stan1293"
+    primaryText := "some of my friends but Chris"
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    contrasts := [("many of my friends but Chris", .ungrammatical), ("three of my friends but Chris", .ungrammatical), ("some of my friends but Chris", .ungrammatical)]
+    readings := []
+    paperFeatures := [("exceptive", "but"), ("determiner", "some")] }
+
+def ex_10_none_of : Datum :=
+  { id := "vonfintel1993_10_none_of"
+    source := ⟨"horn-1989", ""⟩
+    reportedIn := some ⟨"von-fintel-1993", "(10)"⟩
+    language := "stan1293"
+    primaryText := "none of my friends but Chris"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := [("many of my friends but Chris", .ungrammatical), ("three of my friends but Chris", .ungrammatical), ("some of my friends but Chris", .ungrammatical)]
+    readings := []
+    paperFeatures := [("exceptive", "but"), ("determiner", "none")] }
+
 def ex_10_everything : Datum :=
   { id := "vonfintel1993_10_everything"
     source := ⟨"horn-1989", ""⟩
@@ -195,7 +223,7 @@ def ex_10_everything : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("exceptive", "but"), ("determiner", "every")] }
+    paperFeatures := [("exceptive", "but")] }
 
 def ex_10_none : Datum :=
   { id := "vonfintel1993_10_none"
@@ -208,7 +236,7 @@ def ex_10_none : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("exceptive", "but"), ("determiner", "no")] }
+    paperFeatures := [("exceptive", "but"), ("determiner", "none")] }
 
 def ex_13 : Datum :=
   { id := "vonfintel1993_13"
@@ -484,6 +512,20 @@ def ex_42 : Datum :=
     readings := []
     paperFeatures := [("exceptive", "besides"), ("determiner", "numeral")] }
 
-def all : List Datum := [ex_1a, ex_1b, ex_2b, ex_4, ex_5, ex_7, ex_10_everyone, ex_10_nobody, ex_10_anyone, ex_10_somebody, ex_10_somewhere, ex_10_all_of, ex_10_most_of, ex_10_everything, ex_10_none, ex_13, ex_14, ex_16, ex_19, ex_22, ex_25a, ex_25b, ex_27a, ex_27b, ex_28a, ex_31b, ex_32, ex_33a, ex_34a, ex_34b, ex_34c, ex_35a, ex_36a, ex_36b, ex_37, ex_42]
+def all : List Datum := [ex_1a, ex_1b, ex_2b, ex_4, ex_5, ex_7, ex_10_everyone, ex_10_nobody, ex_10_anyone, ex_10_somebody, ex_10_somewhere, ex_10_all_of, ex_10_most_of, ex_10_some_of, ex_10_none_of, ex_10_everything, ex_10_none, ex_13, ex_14, ex_16, ex_19, ex_22, ex_25a, ex_25b, ex_27a, ex_27b, ex_28a, ex_31b, ex_32, ex_33a, ex_34a, ex_34b, ex_34c, ex_35a, ex_36a, ex_36b, ex_37, ex_42]
+
+/-- The exceptive marker of the example. -/
+inductive Exceptive where
+  /-- but: the *but*-phrase inside the noun phrase -/
+  | but
+  /-- except for: the free exceptive *except for* -/
+  | exceptFor
+  /-- besides: the additive *besides* of the concluding section -/
+  | besides
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `exceptive`. -/
+def exceptive (e : Datum) : Option Exceptive :=
+  e.parse? "exceptive" [("but", .but), ("except for", .exceptFor), ("besides", .besides)]
 
 end VonFintel1993.Examples

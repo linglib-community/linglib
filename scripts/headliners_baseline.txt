@@ -92,7 +92,6 @@ ChemlaSpector2011
 ChenVanDeemter2023
 Chierchia2013
 Chomsky1995
-ChungMascarenhas2023
 CiardelliGuerrini2026
 CiardelliZhangChampollion2018
 Clements1985
@@ -348,7 +347,6 @@ UchiharaMendozaRuiz2021
 VanRooy2003
 VanTielEtAl2021
 Veltman1996
-VonFintel1993
 VonFintel1999
 VonFintel2001
 VonFintelGillies2010
