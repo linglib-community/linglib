@@ -7,28 +7,27 @@ public import Mathlib.Order.Setoid.Basic
 /-!
 # Elliott (2023): Donkey disjunctions and overlapping updates
 
-This file formalizes Elliott's analysis of donkey disjunctions such as *either there's no bathroom
-in this house, or it's in a funny place* in Bilateral Update Semantics. The denial of the negated
-existential in the first disjunct introduces the pronoun's referent, so [the positive
-update](##Elliott2023.positive_donkey) keeps the points with no bathroom and extends the others to
-a bathroom in a funny place, a heterogeneous existential reading, and [the disjunction and its
+In a donkey disjunction, *either there's no bathroom in this house, or it's in a funny place*, a
+negated existential appears to bind a pronoun in the next disjunct. On Elliott's analysis, denying
+the negated existential introduces the pronoun's referent, so [the positive
+update](##Elliott2023.positive_donkey) keeps the points with no bathroom and extends the others to a
+bathroom in a funny place, a heterogeneous existential reading, and [the disjunction and its
 negation hold together](##Elliott2023.nonempty_lnc_iff) where there are bathrooms of both kinds.
 Asserted exhaustively relative to its negation, the disjunction [keeps the worlds where every
 bathroom is in a funny place](##Elliott2023.world_exhAssert_bot), unless [the question under
 discussion distinguishes no worlds](##Elliott2023.exhAssert_top). Since the negative update of an
-existential is defined by subsistence, [the anaphoric presupposition of a free variable in its
-scope projects](##Elliott2023.negative_exists_pred2).
-
+existential is defined by subsistence, [the anaphoric presupposition of a free variable in its scope
+projects](##Elliott2023.negative_exists_pred2).
 ## Implementation notes
 
-* Assertion and exhaustive assertion are a definedness condition, `BilateralUpdate.Assertable`,
-  and an output, the positive update or `exhAssert`.
-* A question under discussion is a partition of all worlds, so the cell-mate of exhaustive
-  assertion is required to be a world of the context, which the paper's partition of the context
-  set guarantees.
+* Assertion and exhaustive assertion are a definedness condition, `BilateralUpdate.Assertable`, and
+  an output, the positive update or `exhAssert`.
+* A question under discussion is a partition of all worlds, so the cell-mate of exhaustive assertion
+  is required to be a world of the context, which the paper's partition of the context
+set guarantees.
 * The projection of the presupposition of `y` holds at states whose points all define the same
   referents; where two points of one world differ in whether they define `y`, the one that does
-  not subsists in the updates of the one that does.
+not subsists in the updates of the one that does.
 
 ## References
 
@@ -65,7 +64,8 @@ section Donkey
 
 variable (B U : E → W → Prop)
 
-/-- The donkey disjunction `¬∃x B(x) ∨ U(x)` of (30). -/
+/-- The **donkey disjunction** of (30) is the formula `¬∃x B(x) ∨ U(x)`, the disjunction of a
+negated existential with a predication of its variable. -/
 noncomputable abbrev donkey (x : V) : BilateralUpdate W V E :=
   (~(exists_ x (pred1 B x))) ⊕ pred1 U x
 
@@ -113,8 +113,9 @@ theorem secondPart_donkey [Nonempty E] (hx : State.Novel s x) :
   · simp [update, unknownUpdate_neg, unknownUpdate_exists_pred1 B hx] at hp
   · simp [update, positive_pred1_of_novel U hn] at hp
 
-/-- The positive update of the donkey disjunction keeps the points without a bathroom and extends
-the others to a bathroom in a funny place, (33). -/
+/-- At a state where the variable is novel, and with at least one individual in the domain, the
+positive update of the donkey disjunction keeps the points without a bathroom and extends the others
+to a bathroom in a funny place, as in (33). -/
 theorem positive_donkey [Nonempty E] (hx : State.Novel s x) :
     (donkey B U x).positive s =
       {p ∈ s | ∀ e, ¬ B e p.world} ∪ (pred1 U x).positive ((exists_ x (pred1 B x)).positive s) := by
@@ -165,8 +166,8 @@ theorem ex7 [Nonempty E] (hx : State.Novel s x) :
 
 /-! ### The law of non-contradiction (§2.4.3) -/
 
-/-- The donkey disjunction and its negation hold together exactly where there is a bathroom in a
-funny place and a bathroom elsewhere, (37). -/
+/-- Under the same assumptions, the donkey disjunction and its negation can be verified together
+exactly where some point has a bathroom in a funny place and a bathroom elsewhere, as in (37). -/
 theorem nonempty_lnc_iff [Nonempty E] (hx : State.Novel s x) :
     ((donkey B U x ⊙ ~(donkey B U x)).positive s).Nonempty ↔
       ∃ p ∈ s, (∃ e, B e p.world ∧ U e p.world) ∧ ∃ e, B e p.world ∧ ¬ U e p.world := by
@@ -183,10 +184,10 @@ theorem nonempty_lnc_iff [Nonempty E] (hx : State.Novel s x) :
 
 /-! ### Exhaustive assertion (§3) -/
 
-/-- Exhaustive assertion of `φ` at `c` relative to a question under discussion `Q`, (46): the
-points of the positive update whose world shares a cell of `Q` with a world of `c` that the
-negative update does not reach. At the fact-finding question `⊥` every world is its own cell,
-which is (45). -/
+/-- The **exhaustive assertion** of a sentence at a context, relative to a question under
+discussion, keeps the points of the positive update whose world shares a cell of the question with a
+world of the context that the negative update does not reach; this is (46). At the fact-finding
+question every world is its own cell, which gives (45). -/
 def exhAssert (Q : Setoid W) (φ : BilateralUpdate W V E) (c : Set (Possibility W V (Part E))) :
     Set (Possibility W V (Part E)) :=
   {p ∈ φ.positive c | ∃ w ∈ Possibility.world '' c, Q p.world w ∧
@@ -198,8 +199,8 @@ theorem world_mem_of_mem_positive_donkey [Nonempty E] (hx : State.Novel s x)
   rcases (mem_positive_donkey B U hx).1 hp with ⟨hp, -⟩ | ⟨q, hq, e, rfl, -⟩
   exacts [⟨p, hp, rfl⟩, ⟨q, hq, rfl⟩]
 
-/-- Asserted exhaustively at the fact-finding question, the donkey disjunction keeps exactly the
-worlds where every bathroom is in a funny place. -/
+/-- Under the same assumptions, the donkey disjunction asserted exhaustively at the fact-finding
+question keeps exactly the worlds of the context where every bathroom is in a funny place. -/
 theorem world_exhAssert_bot [Nonempty E] (hx : State.Novel s x) :
     Possibility.world '' exhAssert ⊥ (donkey B U x) s =
       Possibility.world '' s ∩ {w | ∀ e, B e w → U e w} := by
@@ -315,9 +316,10 @@ private theorem mem_lowerClosure_pred2_randomAssign {X : Set V} (hs : State.Unif
       (hy p _).symm ▸ ha, hR⟩,
       Possibility.le_update_of_notMem (fun hd ↦ hx ((hs p hp).subset hd)) _⟩
 
-/-- At a state whose points all define the same referents, the denial of `∃x R(x, y)` at a novel
-`x` keeps the points that define `y` and whose value for `y` nothing bears `R` to: the anaphoric
-presupposition of `y` projects, (23). -/
+/-- At a state whose points all define the same referents, with the quantified variable not among
+them and at least one individual in the domain, the negative update of `∃x R(x, y)`, for a variable
+`y` other than `x`, keeps the points that define `y` and at which nothing bears `R` to the value of
+`y`. The anaphoric presupposition of `y` thus projects, as in (23). -/
 theorem negative_exists_pred2 [Nonempty E] (R : E → E → W → Prop) {X : Set V} {y : V}
     (hs : State.UniformAt X s) (hx : x ∉ X) (hyx : y ≠ x) :
     (exists_ x (pred2 R x y)).negative s =

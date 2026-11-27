@@ -5,25 +5,26 @@ public import Mathlib.Algebra.GroupWithZero.Defs
 /-!
 # Antidomain monoids
 
-An antidomain monoid is a monoid with zero and a unary operation `∼`, the antidomain. The
-binary relations on a type under composition are the motivating example, with `∼R` the identity
-relation on the complement of the domain of `R`. In general `∼x` annihilates `x` on the left,
-and is [the largest antidomain element that does](##IsAntidomain.eq_mul_map_of_mul_eq_zero).
-The axioms are the
-five equations of [desharnais-jipsen-struth-2009], whose name this is; they
-[are equivalent](##IsAntidomain.of_distrib) to those of [hollenberg-1997], which prove every
-equation true of relations, and they [determine the operation](##IsAntidomain.unique) from the
-monoid, as [hollenberg-visser-1999] show.
+In relational dynamic semantics a sentence denotes a relation between states, and a sequence of
+sentences composes their relations. Negation is a test: it passes on unchanged the states where the
+negated relation has no output, and blocks the rest. This is the **antidomain** of the relation. An
+**antidomain monoid** is the algebra of composition with such an operation `∼`: a monoid with a zero
+and an antidomain. In general `∼x` gives zero when multiplied on the left of `x`, and is [the
+largest antidomain element that does](##IsAntidomain.eq_mul_map_of_mul_eq_zero). The axioms are the
+five equations of Desharnais, Jipsen and Struth, whose name this is. They [are
+equivalent](##IsAntidomain.of_distrib) to Hollenberg's, which prove every equation true of
+relations, and they [determine the operation](##IsAntidomain.unique) from the monoid, as Hollenberg
+and Visser show.
 
 ## Implementation notes
 
 The axioms are a predicate `IsAntidomain` on an operation of a monoid with zero, so that two
-operations on one monoid can be compared; `AntidomainMonoid` bundles the operation with its
-proof. [desharnais-jipsen-struth-2009] list a sixth equation, that zero is absorbing on the
-right, which holds in every monoid with zero, as do three of [hollenberg-visser-1999]'s ten.
-The rest of the latter are `IsAntidomain.map_zero`, `IsAntidomain.map_map_mul` and
-`IsAntidomain.distrib`, and `IsAntidomain.of_distrib` is the converse. [visser-1997] generates
-the same algebra from composition and dynamic implication.
+operations on one monoid can be compared; `AntidomainMonoid` bundles the operation with its proof.
+[desharnais-jipsen-struth-2009] list a sixth equation, that zero is absorbing on the right, which
+holds in every monoid with zero, as do three of [hollenberg-visser-1999]'s ten. The rest of the
+latter are `IsAntidomain.map_zero`, `IsAntidomain.map_map_mul` and `IsAntidomain.distrib`, and
+`IsAntidomain.of_distrib` is the converse. [visser-1997] generates the same algebra from composition
+and dynamic implication.
 
 ## References
 
@@ -34,16 +35,16 @@ the same algebra from composition and dynamic implication.
 
 ## TODO
 
-The Heyting algebras, with meet as the product and pseudocomplement as `∼`, are antidomain
-monoids that are not algebras of relations; the instance is not stated.
+The Heyting algebras, with meet as the product and pseudocomplement as `∼`, are antidomain monoids
+that are not algebras of relations; the instance is not stated.
 -/
 
 @[expose] public section
 
 variable {M : Type*}
 
-/-- An operation on a monoid with zero is an antidomain operation when it satisfies the
-equations of [desharnais-jipsen-struth-2009]. -/
+/-- An operation on a monoid with zero is an **antidomain operation** when it satisfies the five
+equations of Desharnais, Jipsen and Struth. -/
 @[mk_iff] structure IsAntidomain [MonoidWithZero M] (a : M → M) : Prop where
   /-- The antidomain of `x` annihilates `x` on the left. -/
   mul_self (x : M) : a x * x = 0
@@ -66,12 +67,13 @@ theorem map_one (h : IsAntidomain a) : a 1 = 0 := by simpa using h.mul_self 1
 /-- The antidomain of zero is one. -/
 theorem map_zero (h : IsAntidomain a) : a 0 = 1 := by simpa [h.map_one] using h.map_map_mul_self 1
 
-/-- The antidomain is its own third iterate. -/
+/-- Applying the antidomain three times gives the same result as applying it once. -/
 theorem map_map_map (h : IsAntidomain a) (x : M) : a (a (a x)) = a x := by
   have := h.map_eq_mul (a (a x)) x
   rwa [h.map_map_mul_self, h.mul_self, h.map_zero, mul_one] at this
 
-/-- Antidomain elements are idempotent. -/
+/-- An antidomain element, the antidomain of some element, gives itself when multiplied by
+itself. -/
 theorem mul_self_eq (h : IsAntidomain a) (x : M) : a x * a x = a x := by
   simpa [h.map_map_map] using h.map_map_mul_self (a x)
 
@@ -87,7 +89,7 @@ private theorem map_map_mul_eq_mul_left (h : IsAntidomain a) (p q : M) :
   have := h.map_mul_mul_self (a (a (a p * a q))) (a (a p))
   rwa [h.comm (a (a p * a q)) (a p), h0, h.map_zero, one_mul, h.map_map_map] at this
 
-/-- A product of antidomain elements is fixed by the double antidomain. -/
+/-- The double antidomain leaves a product of two antidomain elements unchanged. -/
 theorem map_map_mul (h : IsAntidomain a) (x y : M) : a (a (a x * a y)) = a x * a y := by
   have hy := h.map_map_mul_eq_mul_left y x
   rw [h.comm y x] at hy
@@ -95,14 +97,16 @@ theorem map_map_mul (h : IsAntidomain a) (x y : M) : a (a (a x * a y)) = a x * a
     _ = a (a (a x * a y)) * a x * a y := congrArg (· * a y) (h.map_map_mul_eq_mul_left x y)
     _ = a x * a y := by rw [mul_assoc, h.map_map_mul_self]
 
-/-- An antidomain element annihilating `x` lies below the antidomain of `x`. -/
+/-- An antidomain element that gives zero when multiplied on the left of *x* lies below the
+antidomain of *x*, in the sense that multiplying it by that antidomain leaves it unchanged. -/
 theorem eq_mul_map_of_mul_eq_zero (h : IsAntidomain a) {t x : M} (hx : a t * x = 0) :
     a t = a t * a x := by
   have := h.map_eq_mul (a t) x
   rw [hx, h.map_zero, one_mul] at this
   rw [← h.map_map_mul, ← this, h.map_map_map]
 
-/-- The antidomain of a product sees its second factor only through its double antidomain. -/
+/-- The antidomain of a product does not change when the second factor is replaced by its double
+antidomain. -/
 theorem map_mul_map_map (h : IsAntidomain a) (x y : M) : a (x * a (a y)) = a (x * y) := by
   have hv : x * a (a y) * y = x * y := by rw [mul_assoc, h.map_map_mul_self]
   have h₁ : a (x * a (a y)) * (x * y) = 0 := by rw [← hv, ← mul_assoc, h.mul_self, zero_mul]
@@ -112,8 +116,8 @@ theorem map_mul_map_map (h : IsAntidomain a) (x y : M) : a (x * a (a y)) = a (x 
     rw [this, mul_assoc, mul_assoc, h.mul_self, mul_zero, mul_zero]
   rw [h.eq_mul_map_of_mul_eq_zero h₁, h.comm, ← h.eq_mul_map_of_mul_eq_zero h₂]
 
-/-- The antidomain of `x * a (a y * a z)` is the product of the antidomains of `x * y` and
-`x * z`. -/
+/-- The antidomain of the product of *x* with the dynamic disjunction of *y* and *z* is the product
+of the antidomains of *x* · *y* and *x* · *z*. -/
 theorem map_mul_map_mul (h : IsAntidomain a) (x y z : M) :
     a (x * a (a y * a z)) = a (x * y) * a (x * z) := by
   have hA : a (x * a (a y * a z)) * x = a (x * a (a y * a z)) * x * (a y * a z) := by
@@ -151,12 +155,15 @@ theorem map_mul_map_mul (h : IsAntidomain a) (x y z : M) :
         rw [mul_assoc, ← h.map_map_mul (x * y) (x * z), h.comm]
     _ = a (x * y) * a (x * z) := hBC.symm
 
-/-- The distribution axiom of [hollenberg-1997]. -/
+/-- Every antidomain operation satisfies Hollenberg's distribution axiom. It says that the
+antidomain of the product of *x* with the dynamic disjunction of *y* and *z* is the double
+antidomain of the product of the antidomains of *x* · *y* and *x* · *z*. -/
 theorem distrib (h : IsAntidomain a) (x y z : M) :
     a (x * a (a y * a z)) = a (a (a (x * y) * a (x * z))) := by
   rw [h.map_mul_map_mul, h.map_map_mul]
 
-/-- The axioms of [hollenberg-visser-1999] define the antidomain operations. -/
+/-- An operation that satisfies the axioms of Hollenberg and Visser is an antidomain operation, so
+the two sets of axioms define the same operations. -/
 theorem of_distrib (map_zero : a 0 = 1) (mul_self : ∀ x, a x * x = 0)
     (comm : ∀ x y, a x * a y = a y * a x) (map_map_mul_self : ∀ x, a (a x) * x = x)
     (map_map_mul : ∀ x y, a (a (a x * a y)) = a x * a y)
@@ -207,7 +214,8 @@ theorem unique (ha : IsAntidomain a) (hb : IsAntidomain b) : a = b := by
 
 end IsAntidomain
 
-/-- An antidomain monoid is a monoid with zero and an antidomain operation `∼`. -/
+/-- An **antidomain monoid** is a monoid with zero together with an antidomain operation, written
+`∼`. -/
 class AntidomainMonoid (M : Type*) extends MonoidWithZero M where
   /-- The antidomain operation. -/
   antidomain : M → M
@@ -220,12 +228,13 @@ namespace AntidomainMonoid
 
 variable [AntidomainMonoid M] (x y z : M)
 
-/-- Dynamic implication is the antidomain of `x * ∼y`. On relations it is the identity on the
-points all of whose images under `x` lie in the domain of `y`. -/
+/-- The **dynamic implication** from *x* to *y* is the antidomain of the product of *x* with the
+antidomain of *y*. On relations it is the identity on the points all of whose images under *x* lie
+in the domain of *y*. -/
 def dimp : M := ∼(x * ∼y)
 
-/-- Dynamic disjunction is the antidomain of `∼x * ∼y`. On relations it is the identity on the
-union of the domains of `x` and `y`. -/
+/-- The **dynamic disjunction** of *x* and *y* is the antidomain of the product of their
+antidomains. On relations it is the identity on the union of the domains of *x* and *y*. -/
 def dor : M := ∼(∼x * ∼y)
 
 theorem dimp_def : dimp x y = ∼(x * ∼y) := rfl
@@ -257,11 +266,18 @@ theorem antidomain_mul_mul_self : ∼(x * y) * x = ∼(x * y) * x * ∼y :=
 theorem antidomain_mul_dor : ∼(x * dor y z) = ∼(dor (x * y) (x * z)) :=
   isAntidomain.distrib x y z
 
-/-- The operation of an antidomain monoid is its only antidomain operation. -/
+/-- The operation of an antidomain monoid is the only antidomain operation on it. -/
 theorem antidomain_unique {a : M → M} (h : IsAntidomain a) : a = antidomain :=
   h.unique isAntidomain
 
-/-! ### Dynamic implication and disjunction -/
+/-!
+### Dynamic implication and disjunction
+
+Implication and disjunction are defined from the antidomain and the product, and both are tests. On
+relations, *x* implies *y* at a state when every output of *x* from it is a state where *y* has an
+output, and the disjunction of *x* and *y* holds where either has one. A disjunction is the
+implication from the antidomain of its first member to its second.
+-/
 
 theorem antidomain_antidomain_dimp : ∼∼(dimp x y) = dimp x y := antidomain_antidomain_antidomain _
 
@@ -273,7 +289,8 @@ theorem antidomain_mul : ∼(x * y) = dimp x ∼y := (antidomain_mul_antidomain_
 
 theorem dimp_antidomain_antidomain : dimp x ∼∼y = dimp x y := by simp [dimp]
 
-/-- Dynamic implication curries over the product. -/
+/-- The implication from *x* to the implication from *y* to *z* is the implication from the product
+of *x* and *y* to *z*. -/
 theorem dimp_dimp : dimp x (dimp y z) = dimp (x * y) z := by simp [dimp, mul_assoc]
 
 theorem dimp_antidomain_comm : dimp ∼x y = dimp ∼y x := by

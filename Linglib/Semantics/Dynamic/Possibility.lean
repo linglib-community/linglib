@@ -10,28 +10,42 @@ public import Mathlib.Logic.Function.Basic
 /-!
 # Possibilities
 
-This file defines a *possibility*, a world paired with an assignment of discourse referents, the
-relation on possibilities that a family of relations on assignments determines world by world
-(`Possibility.liftRel`), with equality of two possibilities on a set of referents as an instance
-(`Possibility.EqOn`), and the structure of the partial points, whose assignments are families of
-partial values `V → Part M`: the descent order, compatibility and joins, restriction, and the
-classification of each stratum as world–assignment pairs. Partial values form a forest, so two
-compatible points have a join, the point that extends both and is defined only where one of them
-is (`Possibility.isLUB_pair_iff`).
+An information state is a set of possibilities, the ones still open given what has been said. A
+discourse carries two kinds of information, about the world and about the items it has introduced,
+and a **possibility** settles both: it pairs a world with an assignment of objects to discourse
+referents. This is Groenendijk, Stokhof and Veltman's picture, in which adding a referent extends
+each possibility, perhaps in several ways.
+
+A possibility need not give every referent a value. In Elliott's notation [x → a] gives *x* the
+value *a* and leaves every other referent undefined. One possibility **extends** another when they
+share their world and it gives each referent the other defines the same value. Two possibilities
+with a common extension have a least one, their join.
+
+## Implementation notes
+
+The values of an assignment may be of any type. A partial possibility is one whose values are
+partial, and the order, the domain, restriction and joins are stated for those. Joins exist because
+two partial values with a common upper bound are comparable.
+
+A family of relations on assignments, one for each world, determines a relation on possibilities
+that keeps the world. Equality on a set of referents is the case of equality of assignments on that
+set.
 
 ## References
 
 - [groenendijk-stokhof-veltman-1996], [elliott-sudo-2025]
 - [kamp-vangenabith-reyle-2011], Def. 22
 - [heim-1982]
+- [veltman-1996]
+- [elliott-2023]
+- [groenendijk-stokhof-veltman-1996b]
 -/
 
 @[expose] public section
 
 namespace DynamicSemantics
 
-/-- A possibility is a world paired with an assignment of discourse
-referents to individuals. -/
+/-- A **possibility** is a world paired with an assignment of values to discourse referents. -/
 @[ext] structure Possibility (W V M : Type*) where
   /-- The world coordinate. -/
   world : W
@@ -46,7 +60,8 @@ section Update
 
 variable [DecidableEq V] (x : V) (e : M)
 
-/-- Update the assignment at a single referent. -/
+/-- The **update** of a possibility at a referent gives that referent a new value and changes
+nothing else. -/
 def update : Possibility W V M :=
   { p with assignment := Function.update p.assignment x e }
 
@@ -57,7 +72,13 @@ def update : Possibility W V M :=
 
 end Update
 
-/-! ### Relations world by world -/
+/-!
+### Relations world by world
+
+A relation on assignments, such as resetting one referent, says nothing about the world. Given one
+such relation for each world, two possibilities are related when they share their world and their
+assignments are related at it.
+-/
 
 section LiftRel
 
@@ -65,8 +86,9 @@ open scoped SetRel
 
 variable {R S : W → SetRel (V → M) (V → M)} {a b : Possibility W V M}
 
-/-- The relation on possibilities that a family of relations on assignments determines: the
-world is kept, and the assignments are related by the relation at that world. -/
+/-- A family of relations on assignments, one for each world, **lifts** to a relation on
+possibilities. It holds of two possibilities when they share their world and their assignments stand
+in the relation at that world. -/
 def liftRel (R : W → SetRel (V → M) (V → M)) : SetRel (Possibility W V M) (Possibility W V M) :=
   {(a, b) | a.world = b.world ∧ a.assignment ~[R a.world] b.assignment}
 
@@ -92,7 +114,12 @@ theorem mem_dom_liftRel : a ∈ (liftRel R).dom ↔ a.assignment ∈ (R a.world)
 
 end LiftRel
 
-/-! ### Equality on a set of referents -/
+/-!
+### Equality on a set of referents
+
+A formula looks at some referents only, so what matters is whether two possibilities agree on those.
+Agreement on a set of referents is an equivalence relation, and it passes to smaller sets.
+-/
 
 section EqOn
 
@@ -100,8 +127,8 @@ open scoped SetRel
 
 variable {X Y : Set V} {p q r : Possibility W V M}
 
-/-- Two possibilities are equal on the referents in `X` when they share their world and their
-assignments take the same values on `X`. -/
+/-- Two possibilities are **equal on** a set of referents when they share their world and their
+assignments give each referent of the set the same value. -/
 structure EqOn (p q : Possibility W V M) (X : Set V) : Prop where
   /-- The possibilities share their world. -/
   world_eq : p.world = q.world
@@ -131,19 +158,25 @@ theorem eqOn_comm : p.EqOn q X ↔ q.EqOn p X := ⟨.symm, .symm⟩
 theorem eqOn_update [DecidableEq V] {x : V} (hx : x ∉ X) (m : M) : p.EqOn (p.update x m) X :=
   ⟨rfl, fun _ hv ↦ (Function.update_of_ne (ne_of_mem_of_not_mem hv hx) _ _).symm⟩
 
-/-- Equality on `X` is the relation that equality of assignments on `X` determines world by
-world. -/
+/-- Equality on a set of referents is the lift of the relation that holds of two assignments when
+they agree on the set. -/
 theorem eqOn_iff_liftRel : p.EqOn q X ↔ p ~[liftRel fun _ ↦ {(g, h) | Set.EqOn g h X}] q :=
   ⟨fun h ↦ ⟨h.world_eq, h.assignment_eqOn⟩, fun ⟨hw, h⟩ ↦ ⟨hw, h⟩⟩
 
 end EqOn
 
-/-! ### Partial points -/
+/-!
+### Partial points
+
+A partial possibility gives values to some referents only, and one such possibility can extend
+another. A point that extends another has the larger domain.
+-/
 
 variable {p q r u : Possibility W V (Part M)}
 
-/-- `p ≤ q` iff `p` and `q` share their world and the assignments grow
-pointwise in the order of partial values. -/
+/-- One partial possibility **extends** another when they share their world and it agrees with the
+other wherever the other is defined. This is the order on partial possibilities, written `p ≤ q`
+when `q` extends `p`. -/
 instance : PartialOrder (Possibility W V (Part M)) where
   le p q := p.world = q.world ∧ ∀ x, p.assignment x ≤ q.assignment x
   le_refl _ := ⟨rfl, fun _ ↦ le_rfl⟩
@@ -154,7 +187,7 @@ instance : PartialOrder (Possibility W V (Part M)) where
 theorem le_def : p ≤ q ↔ p.world = q.world ∧ ∀ x, p.assignment x ≤ q.assignment x :=
   Iff.rfl
 
-/-- The domain of a partial point is the set of referents it defines. -/
+/-- The **domain** of a partial point is the set of referents to which it gives a value. -/
 def domain (p : Possibility W V (Part M)) : Set V :=
   PFun.Dom p.assignment
 
@@ -197,9 +230,15 @@ theorem eq_update_of_le (hpr : p ≤ r) (hdom : r.domain = insert x p.domain)
 
 end Update
 
-/-! ### The empty point -/
+/-!
+### The empty point
 
-/-- The empty point at a world: no referent defined. -/
+At each world there is a point that defines no referent: the possibility before any referent has
+been introduced. Every point extends the empty point at its own world.
+-/
+
+/-- The **empty point** at a world is the possibility with that world that gives no referent a
+value. -/
 def bot (w : W) : Possibility W V (Part M) :=
   ⟨w, fun _ ↦ ⊥⟩
 
@@ -215,13 +254,20 @@ theorem bot_le_of_compat {w : W} (h : Compat p (bot w)) : bot w ≤ p := by
 @[simp] theorem domain_bot {w : W} : (bot w : Possibility W V (Part M)).domain = ∅ :=
   domain_eq_empty_iff.mpr fun _ ↦ rfl
 
-/-! ### Restriction -/
+/-!
+### Restriction
+
+Restricting a point to a set of referents forgets its values outside the set, so the point extends
+its restriction. A point with domain *X* is extended by another exactly when it is that point's
+restriction to *X*.
+-/
 
 section Restrict
 
 variable {X Y : Set V} {v : V}
 
-/-- Restrict a partial point to the referents in `X`. -/
+/-- The **restriction** of a partial point to a set of referents keeps its values on the set and
+forgets the rest. -/
 def restrict (X : Set V) (p : Possibility W V (Part M)) : Possibility W V (Part M) :=
   ⟨p.world, fun v ↦ Part.assert (v ∈ X) fun _ ↦ p.assignment v⟩
 
@@ -261,7 +307,8 @@ theorem restrict_restrict : (p.restrict Y).restrict X = p.restrict (X ∩ Y) :=
   Possibility.ext rfl <| funext fun v ↦ by
     by_cases hx : v ∈ X <;> by_cases hy : v ∈ Y <;> simp [hx, hy]
 
-/-- Partial points with domain `X` are exactly world–`X`-assignment pairs. -/
+/-- The partial points whose domain is a given set of referents correspond one to one to the pairs
+of a world and a total assignment on that set. -/
 def domainEquiv (X : Set V) :
     {p : Possibility W V (Part M) // p.domain = X} ≃ W × (X → M) where
   toFun p := (p.1.world, fun v ↦ (p.1.assignment v).get (p.2.symm.subset v.2))
@@ -278,7 +325,13 @@ theorem restrict_domainEquiv_symm (h : Y ⊆ X) (e : W × (X → M)) :
 
 end Restrict
 
-/-! ### Joins -/
+/-!
+### Joins
+
+Two points are compatible when some point extends both, that is, when they share their world and
+never give a referent different values. Compatible points have a join, the least point extending
+both. Merging two information states takes the joins of their points.
+-/
 
 theorem compat_iff_forall : Compat p q ↔
     p.world = q.world ∧ ∀ v, Compat (p.assignment v) (q.assignment v) :=
@@ -289,14 +342,14 @@ theorem compat_iff_forall : Compat p q ↔
     ⟨rfl, fun v ↦ (mem_upperBounds_pair.mp (hc v).choose_spec).1⟩
     ⟨hw.symm, fun v ↦ (mem_upperBounds_pair.mp (hc v).choose_spec).2⟩⟩
 
-/-- Two partial points are compatible iff they share their world and agree where both are defined
-([kamp-vangenabith-reyle-2011], Def. 26). -/
+/-- Two partial points are compatible, that is, some point extends both, exactly when they share
+their world and agree wherever both are defined ([kamp-vangenabith-reyle-2011], Def. 26). -/
 theorem compat_iff : Compat p q ↔ p.world = q.world ∧
     ∀ v, ∀ e ∈ p.assignment v, ∀ e' ∈ q.assignment v, e = e' := by
   simp only [compat_iff_forall, Compat, Part.bddAbove_pair_iff]
 
-/-- A partial point is the join of two others iff it extends both and defines only what one of
-them defines. -/
+/-- A partial point is the join of two others exactly when it extends both and defines only
+referents that one of them defines. -/
 theorem isLUB_pair_iff : IsLUB {p, q} u ↔ p ≤ u ∧ q ≤ u ∧ u.domain ⊆ p.domain ∪ q.domain := by
   refine ⟨fun h ↦ ?_, fun ⟨hp, hq, hdom⟩ ↦ ⟨mem_upperBounds_pair.mpr ⟨hp, hq⟩, fun u' hu' ↦ ?_⟩⟩
   · obtain ⟨hp, hq⟩ := mem_upperBounds_pair.mp h.1
@@ -309,8 +362,8 @@ theorem isLUB_pair_iff : IsLUB {p, q} u ↔ p ≤ u ∧ q ≤ u ∧ u.domain ⊆
     · exact hp'.2 v e ((Part.eq_of_le (hp.2 v) fun _ ↦ hv).symm ▸ he)
     · exact hq'.2 v e ((Part.eq_of_le (hq.2 v) fun _ ↦ hv).symm ▸ he)
 
-/-- Compatible points have a join: at each referent their values are comparable, since partial
-values form a forest, and the join takes the larger. -/
+/-- Two compatible points have a join. At each referent it takes whichever of their values is
+defined, and the two agree where both are. -/
 theorem exists_isLUB (h : Compat p q) : ∃ u, IsLUB {p, q} u := by
   classical
   obtain ⟨hw, hc⟩ := compat_iff_forall.mp h
@@ -343,33 +396,33 @@ theorem eq_of_compat_of_domain_eq (h : Compat p q) (hdom : p.domain = q.domain) 
   (eq_of_le_of_domain_eq hp (by rw [hu', ← hdom, Set.union_self])).trans
     (eq_of_le_of_domain_eq hq (by rw [hu', hdom, Set.union_self])).symm
 
-/-- A point extending `p` and defined on `p`'s domain and `X` is the join of `p` and its own
-restriction to `X`. -/
+/-- A point that extends another, and defines exactly that point's referents together with those of
+a given set, is the join of that point and its own restriction to the set. -/
 theorem isLUB_restrict {X : Set V} (hpr : p ≤ r) (hdom : r.domain = p.domain ∪ X) :
     IsLUB {p, r.restrict X} r :=
   isLUB_pair_iff.mpr ⟨hpr, restrict_le, fun v hv ↦ (hdom ▸ hv : v ∈ p.domain ∪ X).imp_right
     fun hx ↦ ⟨hx, hv⟩⟩
 
-/-! ### Instantiations
+/-!
+### Instantiations
 
-Update systems share one form — states are sets of points, updates act
-on states — and differ in the point. The parameters select the system:
-worlds only gives propositional update semantics ([veltman-1996]; the
-`∅`-fiber), assignments only gives lifted DPL, and the general form is
-FCS/DRT's pairs. Propositional inquisitive semantics instead *iterates*
-the construction — its points are sets of worlds — a level shift, not a
-parameter choice. -/
+Dynamic systems agree that a state is a set of points and that updates act on states, and differ in
+what a point is. With no referents a point is a world, as in Veltman's propositional update
+semantics; with a single world it is an assignment, as in dynamic predicate logic lifted to sets; in
+general it is a pair, as in file change semantics and discourse representation theory. Propositional
+inquisitive semantics instead iterates the construction: its points are sets of worlds.
+-/
 
-/-- Worlds-only points are bare worlds — the points of propositional
-update semantics. -/
+/-- Where there are no referents, a possibility is just a world, as in propositional update
+semantics. -/
 def worldEquiv (W M : Type*) : Possibility W Empty M ≃ W where
   toFun p := p.world
   invFun w := ⟨w, Empty.elim⟩
   left_inv _ := Possibility.ext rfl (funext fun v => v.elim)
   right_inv _ := rfl
 
-/-- Assignment-only points are bare assignments — the points of lifted
-DPL. -/
+/-- Where there is a single world, a possibility is just an assignment, as in dynamic predicate
+logic lifted to sets of assignments. -/
 def assignmentEquiv (V M : Type*) : Possibility Unit V M ≃ (V → M) where
   toFun p := p.assignment
   invFun g := ⟨(), g⟩

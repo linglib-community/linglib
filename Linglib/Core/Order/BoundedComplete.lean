@@ -7,14 +7,22 @@ public import Mathlib.Order.WithBot
 /-!
 # Bounded-complete orders
 
-Two elements of an order are compatible when they have a common upper bound, and their
-unification is their least upper bound, `IsLUB {a, b} u`. These are the notions of Carpenter's
-unification domains, the bounded complete partial orders, in which a compatible pair has a join
-and an incompatible pair has none. Compatibility is `Compat`, mathlib's `BddAbove` at a pair, so
-it is pointwise on functions and componentwise on products, and it is decidable wherever it is on
-the components. An order is `IsBoundedComplete` when every compatible pair has a join, and then
-joins of pairs reassociate (`IsLUB.pair_assoc`). An order whose joins are computed presents them
-as the join of `WithTop α`, with `⊤` the failure, through `WithTop.semilatticeSupOfIsLUB`.
+Two pieces of partial information can be combined when they do not conflict. Order them by how much
+they say. Two elements are then **compatible** when some element lies above both, and their
+**unification** is the least such element, their join. An order is **bounded complete** when every
+compatible pair has a join; an incompatible pair has none. These are the notions of Carpenter's
+unification domains. Partial assignments are the case at hand: two possibilities are compatible when
+they share their world and never give a referent different values, and merging two information
+states joins their compatible points.
+
+## Implementation notes
+
+Compatibility is `Compat`, mathlib's `BddAbove` at a pair, so it is pointwise on functions and
+componentwise on products, and it is decidable wherever it is on the components; `Compat` is an
+`abbrev`, so the `BddAbove` API applies. The unification of `a` and `b` is stated as `IsLUB {a, b}
+u`. In an `IsBoundedComplete` order joins of pairs reassociate (`IsLUB.pair_assoc`). An order whose
+joins are computed presents them as the join of `WithTop α`, with `⊤` the failure, through
+`WithTop.semilatticeSupOfIsLUB`.
 
 ## References
 
@@ -24,7 +32,12 @@ as the join of `WithTop α`, with `⊤` the failure, through `WithTop.semilattic
 
 @[expose] public section
 
-/-! ### Bounds of pairs -/
+/-!
+### Bounds of pairs
+
+An upper bound of a pair lies above both of its members, and their join is the least upper bound.
+For functions the join is taken at each argument, and for pairs in each coordinate.
+-/
 
 theorem mem_upperBounds_pair {α : Type*} [Preorder α] {u a b : α} :
     u ∈ upperBounds ({a, b} : Set α) ↔ a ≤ u ∧ b ≤ u := by
@@ -54,8 +67,9 @@ instance {α β : Type*} [Preorder α] [Preorder β] [∀ a b c : α, Decidable 
     [∀ a b c : β, Decidable (IsLUB {a, b} c)] (a b c : α × β) : Decidable (IsLUB {a, b} c) :=
   decidable_of_iff _ isLUB_pair_prod_iff.symm
 
-/-- The join of a function with one that is `⊥` off one coordinate is the join at that
-coordinate. -/
+/-- A function *u* is the join of a function *f* with the function that takes the value *x* at one
+argument and the least value everywhere else exactly when *u* agrees with *f* away from that
+argument, and its value there is the join of the value of *f* with *x*. -/
 theorem isLUB_pair_update_bot_iff {F : Type*} {S : F → Type*} [DecidableEq F]
     [∀ t, PartialOrder (S t)] [∀ t, OrderBot (S t)] {f u : ∀ t, S t} {t : F} {x : S t} :
     IsLUB {f, Function.update ⊥ t x} u ↔ IsLUB {f t, x} (u t) ∧ u = Function.update f t (u t) := by
@@ -72,12 +86,14 @@ theorem isLUB_pair_update_bot_iff {F : Type*} {S : F → Type*} [DecidableEq F]
       simp only [Function.update_of_ne ht, Pi.bot_apply]
       exact isLUB_pair_iff_forall_le.2 ⟨le_rfl, bot_le, fun _ h _ ↦ h⟩
 
-/-- An order is bounded complete when every pair with an upper bound has a least one. -/
+/-- An order is **bounded complete** when every pair of elements with an upper bound has a least
+upper bound. -/
 class IsBoundedComplete (α : Type*) [Preorder α] : Prop where
   /-- A pair that is bounded above has a least upper bound. -/
   exists_isLUB_of_bddAbove : ∀ a b : α, BddAbove ({a, b} : Set α) → ∃ c, IsLUB {a, b} c
 
-/-- In a bounded-complete order, joins of pairs reassociate. -/
+/-- In a bounded-complete order, joins of pairs reassociate. If *r* is the join of *w* with the join
+of *p* and *q*, then *q* and *w* have a join, and *r* is the join of *p* with it. -/
 theorem IsLUB.pair_assoc {α : Type*} [Preorder α] [IsBoundedComplete α] {p q w v r : α}
     (hv : IsLUB {p, q} v) (hr : IsLUB {v, w} r) : ∃ u, IsLUB {q, w} u ∧ IsLUB {p, u} r := by
   obtain ⟨hpv, hqv, hv'⟩ := isLUB_pair_iff_forall_le.1 hv
@@ -88,14 +104,19 @@ theorem IsLUB.pair_assoc {α : Type*} [Preorder α] [IsBoundedComplete α] {p q 
   exact ⟨u, hu, isLUB_pair_iff_forall_le.2 ⟨hpv.trans hvr, hu' r (hqv.trans hvr) hwr,
     fun x hpx hux ↦ hr' x (hv' x hpx (hqu.trans hux)) (hwu.trans hux)⟩⟩
 
-/-! ### Compatibility -/
+/-!
+### Compatibility
+
+Two elements are compatible when they have a common upper bound. Compatibility is symmetric, every
+element is compatible with itself, and elements below a compatible pair are compatible.
+-/
 
 section Compat
 
 variable {α : Type*}
 
-/-- Two elements are compatible when they are bounded above, the consistency relation of
-unification. An `abbrev`, so the `BddAbove` API applies. -/
+/-- Two elements are **compatible** when some element lies above both. This is the consistency
+relation of unification. -/
 abbrev Compat [Preorder α] (a b : α) : Prop := BddAbove ({a, b} : Set α)
 
 theorem Compat.of_le [Preorder α] {a b u : α} (ha : a ≤ u) (hb : b ≤ u) : Compat a b :=
@@ -112,7 +133,8 @@ theorem Compat.mono [Preorder α] {a b c d : α} (h₁ : a ≤ b) (h₂ : c ≤ 
 
 theorem compat_self [Preorder α] (a : α) : Compat a a := .of_le le_rfl le_rfl
 
-/-- Compatible maximal elements coincide: a fully specified element has no proper extension. -/
+/-- Two compatible maximal elements are equal, since a fully specified element has no proper
+extension. -/
 theorem Compat.eq_of_isMax [PartialOrder α] {a b : α} (h : Compat a b) (ha : IsMax a)
     (hb : IsMax b) : a = b :=
   let ⟨_, hu⟩ := h
@@ -133,7 +155,8 @@ theorem Compat.apply {F : Type*} {S : F → Type*} [∀ t, Preorder (S t)] {f g 
 
 theorem bot_compat [Preorder α] [OrderBot α] (a : α) : Compat (⊥ : α) a := .of_le bot_le le_rfl
 
-/-- In the dual of an order, two elements are compatible when they have a common lower bound. -/
+/-- In the reverse of an order, two elements are compatible exactly when they have a common lower
+bound in the original order. -/
 theorem compat_toDual_iff [Preorder α] {a b : α} :
     Compat (OrderDual.toDual a) (OrderDual.toDual b) ↔ ∃ c, c ≤ a ∧ c ≤ b :=
   ⟨fun ⟨u, hu⟩ ↦ ⟨OrderDual.ofDual u, (mem_upperBounds_pair.1 hu).1, (mem_upperBounds_pair.1 hu).2⟩,
@@ -160,7 +183,8 @@ instance {β : Type*} [Preorder α] [Preorder β] [∀ a b : α, Decidable (Comp
 
 end Compat
 
-/-- A product of bounded-complete orders is bounded complete. -/
+/-- Functions into bounded-complete orders, ordered argument by argument, form a bounded-complete
+order. -/
 instance {ι : Type*} {S : ι → Type*} [∀ i, Preorder (S i)] [∀ i, IsBoundedComplete (S i)] :
     IsBoundedComplete (∀ i, S i) where
   exists_isLUB_of_bddAbove a b h :=
@@ -169,13 +193,20 @@ instance {ι : Type*} {S : ι → Type*} [∀ i, Preorder (S i)] [∀ i, IsBound
       isLUB_pair_pi_iff.mpr fun i ↦ (IsBoundedComplete.exists_isLUB_of_bddAbove (a i) (b i)
         (compat_pi_iff.mp h i)).choose_spec⟩
 
-/-! ### Joins with failure adjoined -/
+/-!
+### Joins with failure adjoined
+
+A procedure that unifies two elements returns their join or fails. Adding one new element above all
+the others, to stand for failure, makes unification defined everywhere: the join of two incompatible
+elements is the failure element, and joining anything with failure gives failure.
+-/
 
 namespace WithTop
 
 variable {α : Type*}
 
-/-- Whether an element of `WithTop α` is `⊤` is decidable without decidable equality on `α`. -/
+/-- Whether an element of an order with failure adjoined is the failure element can be decided
+without deciding equality among the other elements. -/
 instance decidableEqTop (x : WithTop α) : Decidable (x = ⊤) :=
   recTopCoe (isTrue rfl) (fun _ ↦ isFalse coe_ne_top) x
 
@@ -214,13 +245,15 @@ end Preorder
 
 variable [PartialOrder α]
 
-/-- A partial join extended to `WithTop α`, with `⊤` absorbing. -/
+/-- A unification procedure for the elements of an order extends to the order with failure adjoined,
+where joining anything with failure gives failure. -/
 def supOfUnify (unify : α → α → WithTop α) : WithTop α → WithTop α → WithTop α
   | (a : α), (b : α) => unify a b
   | _, _ => ⊤
 
-/-- A function computing the join of two elements of `α` in `WithTop α`, `⊤` when they have no
-common upper bound, makes `WithTop α` a join-semilattice. -/
+/-- Suppose a procedure returns the join of any two elements in the order with failure adjoined, and
+so returns failure when they have no common upper bound. Then every two elements of that order have
+a join. -/
 @[instance_reducible]
 def semilatticeSupOfIsLUB (unify : α → α → WithTop α)
     (h : ∀ a b : α, IsLUB {(a : WithTop α), (b : WithTop α)} (unify a b)) :
@@ -242,14 +275,20 @@ theorem eq_top_iff_of_isLUB {a b : α} {v : WithTop α}
     (h : IsLUB ({↑a, ↑b} : Set (WithTop α)) v) : v = ⊤ ↔ ¬ Compat a b :=
   ⟨fun e ↦ isLUB_pair_coe_top_iff.1 (e ▸ h), fun hc ↦ h.unique (isLUB_pair_coe_top_iff.2 hc)⟩
 
-/-! ### Pointwise joins -/
+/-!
+### Pointwise joins
+
+Functions are unified one argument at a time. The unification of two functions succeeds when it
+succeeds at every argument, and fails when it fails at one.
+-/
 
 section Pi
 
 variable {F : Type*} {S : F → Type*} [∀ t, PartialOrder (S t)] [Fintype F]
   {u : ∀ t, S t → S t → WithTop (S t)}
 
-/-- The join of two functions computed pointwise by `u`, `⊤` when some coordinate fails. -/
+/-- The **pointwise unification** of two functions unifies their values at each argument, and fails
+when the values at some argument do not unify. -/
 def piUnify (u : ∀ t, S t → S t → WithTop (S t)) (f g : ∀ t, S t) : WithTop (∀ t, S t) :=
   if h : ∀ t, u t (f t) (g t) ≠ ⊤ then ↑(fun t ↦ (u t (f t) (g t)).untop (h t)) else ⊤
 
@@ -263,7 +302,9 @@ theorem isLUB_piUnify
   · exact isLUB_pair_coe_top_iff.2 fun hc ↦ h fun t ↦
       (eq_top_iff_of_isLUB (hu t _ _)).not.2 (not_not.2 (compat_pi_iff.1 hc t))
 
-/-- Unifying with a function that is `⊥` off one coordinate unifies at that coordinate. -/
+/-- Unifying a function with one that takes the value *x* at a single argument and the least value
+everywhere else unifies the two values at that argument, and leaves the function as it is
+elsewhere. -/
 theorem piUnify_update_bot [DecidableEq F] [∀ t, OrderBot (S t)]
     (hu : ∀ t (a b : S t), IsLUB ({↑a, ↑b} : Set (WithTop (S t))) (u t a b)) (f : ∀ t, S t)
     (t : F) (x : S t) :
@@ -284,7 +325,12 @@ end Pi
 end WithTop
 
 
-/-! ### Adjoining a bottom -/
+/-!
+### Adjoining a bottom
+
+A new least element, for a value that is undefined, is compatible with everything, and it changes
+nothing about which of the old elements are compatible with each other.
+-/
 
 namespace WithBot
 
@@ -305,21 +351,28 @@ instance [∀ a b : α, Decidable (Compat a b)] : ∀ x y : WithBot α, Decidabl
 
 end WithBot
 
-/-! ### Nonempty finite sets under reverse inclusion -/
+/-!
+### Nonempty finite sets under reverse inclusion
+
+A nonempty finite set of alternatives says more the smaller it is, so these sets are ordered by
+reverse inclusion. Two of them are compatible when they overlap, and they unify to their
+intersection.
+-/
 
 namespace Finset
 
 variable {α : Type*} [DecidableEq α] {a b c : {s : Finset α // s.Nonempty}ᵒᵈ}
 
-/-- Nonempty finite sets ordered by reverse inclusion, the smaller set the more specific, are
-compatible when they meet. -/
+/-- Two nonempty finite sets, ordered by reverse inclusion so that the smaller set says more, are
+compatible exactly when they have an element in common. -/
 theorem compat_iff_inter_nonempty :
     Compat a b ↔ ((OrderDual.ofDual a).1 ∩ (OrderDual.ofDual b).1).Nonempty :=
   ⟨fun ⟨u, hu⟩ ↦ (OrderDual.ofDual u).2.mono
     (subset_inter (mem_upperBounds_pair.1 hu).1 (mem_upperBounds_pair.1 hu).2),
    fun h ↦ .of_le (u := OrderDual.toDual ⟨_, h⟩) inter_subset_left inter_subset_right⟩
 
-/-- They unify to their intersection. -/
+/-- In that order, a nonempty finite set is the join of two others exactly when it is their
+intersection. -/
 theorem isLUB_pair_iff_eq_inter :
     IsLUB {a, b} c ↔ (OrderDual.ofDual c).1 = (OrderDual.ofDual a).1 ∩ (OrderDual.ofDual b).1 := by
   rw [isLUB_pair_iff_forall_le]
@@ -329,7 +382,8 @@ theorem isLUB_pair_iff_eq_inter :
   · exact ⟨h.subset.trans inter_subset_left, h.subset.trans inter_subset_right, fun u hau hbu ↦
       show (OrderDual.ofDual u).1 ⊆ (OrderDual.ofDual c).1 from h ▸ subset_inter hau hbu⟩
 
-/-- Unification of nonempty finite sets, their intersection when it is nonempty. -/
+/-- The **unification** of two nonempty finite sets is their intersection when it is nonempty, and
+fails otherwise. -/
 protected def unify (a b : {s : Finset α // s.Nonempty}ᵒᵈ) :
     WithTop {s : Finset α // s.Nonempty}ᵒᵈ :=
   if h : ((OrderDual.ofDual a).1 ∩ (OrderDual.ofDual b).1).Nonempty then

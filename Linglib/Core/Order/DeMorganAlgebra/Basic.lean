@@ -10,18 +10,14 @@ public import Linglib.Core.Order.InvolutiveCompl
 /-!
 # De Morgan and Kleene algebras
 
-This file defines Kleene's law for lattices with an involutive complement. A *De Morgan algebra*
-is a bounded distributive lattice with an involutive complement, written
-`[DistribLattice α] [BoundedOrder α] [InvolutiveCompl α]` and needing no class of its own. A
-*Kleene algebra* adds Kleene's law `a ⊓ aᶜ ≤ b ⊔ bᶜ`, that contradictions lie below excluded
-middles; Kalman's "normal" lattices with involution are the distributive lattices satisfying it,
-with or without bounds. Every Boolean algebra is a Kleene algebra, the law degenerating through
-`⊥`, and the three-element chain of Kleene's values (`Trivalent`) is the canonical non-Boolean
-example.
-
-"Kleene algebra" here is the lattice notion, not the regular-expression star-semiring of
-mathlib's root `KleeneAlgebra`. Kalman's construction of Kleene algebras from distributive
-lattices is in `Core/Order/DeMorganAlgebra/Kalman.lean`.
+In classical logic the conjunction of a sentence with its negation has the least value, and their
+disjunction the greatest. Kleene's three-valued negation gives up both laws and keeps two others: it
+reverses the order of truth, and it cancels when doubled. A **De Morgan algebra** is a bounded
+distributive lattice with such a negation, an involutive complement. A **Kleene algebra** adds
+Kleene's law, that a contradiction *a* ⊓ *a*ᶜ lies below every excluded middle *b* ⊔ *b*ᶜ. Kalman's
+"normal" lattices with involution are the distributive lattices satisfying it, with or without
+bounds. Every Boolean algebra is a Kleene algebra, since there a contradiction is the least element,
+and Kleene's three truth values are the standard example that is not Boolean.
 
 ## Main definitions
 
@@ -32,6 +28,13 @@ lattices is in `Core/Order/DeMorganAlgebra/Kalman.lean`.
 * `BooleanAlgebra.toIsKleene`: every Boolean algebra is a Kleene algebra.
 * `Prod` and `Pi` instances of `IsKleene`.
 
+## Implementation notes
+
+A De Morgan algebra is written `[DistribLattice α] [BoundedOrder α] [InvolutiveCompl α]` and needs
+no class of its own. "Kleene algebra" here is the lattice notion, not the regular-expression
+star-semiring of mathlib's root `KleeneAlgebra`. Kalman's construction of Kleene algebras from
+distributive lattices is in `Core/Order/DeMorganAlgebra/Kalman.lean`.
+
 ## References
 
 * [kalman-1958]
@@ -41,14 +44,16 @@ lattices is in `Core/Order/DeMorganAlgebra/Kalman.lean`.
 
 variable {α β : Type*}
 
-/-- Kleene's law says that contradictions lie below excluded middles. [kalman-1958]'s
-"normal" i-lattices are the distributive lattices with an involution satisfying it; with bounds
-they are the Kleene algebras, the lattice notion. -/
+/-- A lattice with an involutive complement satisfies **Kleene's law** when the meet of any element
+with its complement lies below the join of any element with its complement, so that contradictions
+lie below excluded middles. Kalman's "normal" i-lattices are the distributive lattices with an
+involution satisfying it, and with bounds they are the Kleene algebras. -/
 class IsKleene (α : Type*) [Lattice α] [InvolutiveCompl α] : Prop where
   /-- The Kleene law. -/
   inf_compl_le_sup_compl (a b : α) : a ⊓ aᶜ ≤ b ⊔ bᶜ
 
-/-- Every Boolean algebra satisfies the Kleene law, which degenerates through `⊥`. -/
+/-- Every Boolean algebra satisfies Kleene's law, since there the meet of an element with its
+complement is the least element. -/
 instance (priority := 100) BooleanAlgebra.toIsKleene [BooleanAlgebra α] : IsKleene α :=
   ⟨fun a _ ↦ (BooleanAlgebra.inf_compl_le_bot a).trans _root_.bot_le⟩
 
