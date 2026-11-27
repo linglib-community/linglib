@@ -1,0 +1,812 @@
+{
+  "meta": {
+    "bibkey": "corbett-2000",
+    "method": "corpus",
+    "description": "The counts and judgements of chapter 6: judgements on agreement with corporate nouns in three varieties of English, plural agreement with corporate nouns in British newspaper texts, agreement with honorific *vy* across the Slavonic languages, and number resolution with conjoined noun phrases by target and by controller.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "Variety",
+      "doc": "The varieties of English of Table 6.10.",
+      "levels": [
+        {
+          "name": "gb",
+          "label": "GB",
+          "doc": "British English"
+        },
+        {
+          "name": "us",
+          "label": "US",
+          "doc": "American English"
+        },
+        {
+          "name": "nz",
+          "label": "NZ",
+          "doc": "New Zealand English"
+        }
+      ]
+    },
+    {
+      "name": "Response",
+      "doc": "The responses to *The audience were enjoying every minute of the show*.",
+      "levels": [
+        {
+          "name": "noCorrection",
+          "label": "no correction",
+          "doc": "the sentence is left as given"
+        },
+        {
+          "name": "wasEnjoying",
+          "label": "was enjoying",
+          "doc": "the verb is corrected to the singular"
+        },
+        {
+          "name": "other",
+          "label": "other response",
+          "doc": "any other correction"
+        }
+      ]
+    },
+    {
+      "name": "CorporateTarget",
+      "doc": "The agreement targets counted with corporate nouns in a corpus of British newspaper texts.",
+      "levels": [
+        {
+          "name": "predicate",
+          "label": "predicate",
+          "doc": "the predicate"
+        },
+        {
+          "name": "pronoun",
+          "label": "pronoun",
+          "doc": "the personal and the possessive pronoun together"
+        }
+      ]
+    },
+    {
+      "name": "Mark",
+      "doc": "A cell of Table 6.11: lower case is syntactic (plural) agreement, upper case semantic (singular) agreement, and parentheses mark the less frequent or less preferred variant.",
+      "levels": [
+        {
+          "name": "pl",
+          "label": "pl",
+          "doc": "plural only"
+        },
+        {
+          "name": "plRarelySg",
+          "label": "pl/(SG)",
+          "doc": "plural, the singular less preferred"
+        },
+        {
+          "name": "either",
+          "label": "pl/SG",
+          "doc": "plural or singular"
+        },
+        {
+          "name": "sgRarelyPl",
+          "label": "(pl)/SG",
+          "doc": "singular, the plural less preferred"
+        },
+        {
+          "name": "sg",
+          "label": "SG",
+          "doc": "singular only"
+        }
+      ]
+    },
+    {
+      "name": "Slavonic",
+      "doc": "The rows of Table 6.11, Russian once for each form of its adjective.",
+      "levels": [
+        {
+          "name": "czech",
+          "label": "Czech",
+          "doc": "West Slavonic"
+        },
+        {
+          "name": "slovak",
+          "label": "Slovak",
+          "doc": "West Slavonic"
+        },
+        {
+          "name": "lowerSorbian",
+          "label": "Lower Sorbian",
+          "doc": "West Slavonic"
+        },
+        {
+          "name": "upperSorbian",
+          "label": "Upper Sorbian",
+          "doc": "West Slavonic"
+        },
+        {
+          "name": "polishDialects",
+          "label": "Polish dialects",
+          "doc": "West Slavonic"
+        },
+        {
+          "name": "bulgarian",
+          "label": "Bulgarian",
+          "doc": "South Slavonic"
+        },
+        {
+          "name": "macedonian",
+          "label": "Macedonian",
+          "doc": "South Slavonic"
+        },
+        {
+          "name": "serboCroat",
+          "label": "Serbo-Croat",
+          "doc": "South Slavonic"
+        },
+        {
+          "name": "slovene",
+          "label": "Slovene",
+          "doc": "South Slavonic"
+        },
+        {
+          "name": "ukrainian",
+          "label": "Ukrainian",
+          "doc": "East Slavonic"
+        },
+        {
+          "name": "belarusian",
+          "label": "Belarusian",
+          "doc": "East Slavonic"
+        },
+        {
+          "name": "russianShort",
+          "label": "Russian, short form",
+          "doc": "East Slavonic, the adjective in its short form"
+        },
+        {
+          "name": "russianLong",
+          "label": "Russian, long form",
+          "doc": "East Slavonic, the adjective in its long form"
+        }
+      ]
+    },
+    {
+      "name": "Target",
+      "doc": "The positions of the Agreement Hierarchy.",
+      "levels": [
+        {
+          "name": "attributive",
+          "label": "attributive",
+          "doc": "the attributive modifier"
+        },
+        {
+          "name": "predicate",
+          "label": "predicate",
+          "doc": "the predicate"
+        },
+        {
+          "name": "relativePronoun",
+          "label": "relative pronoun",
+          "doc": "the relative pronoun"
+        },
+        {
+          "name": "personalPronoun",
+          "label": "personal pronoun",
+          "doc": "the personal pronoun"
+        }
+      ]
+    },
+    {
+      "name": "ConjoinedLanguage",
+      "doc": "The languages of Table 6.13.",
+      "levels": [
+        {
+          "name": "medievalSpanish",
+          "label": "Medieval Spanish",
+          "doc": "texts of the thirteenth to fifteenth centuries"
+        },
+        {
+          "name": "german",
+          "label": "German",
+          "doc": "German"
+        },
+        {
+          "name": "russian",
+          "label": "Russian",
+          "doc": "Russian"
+        },
+        {
+          "name": "serboCroat",
+          "label": "Serbo-Croat",
+          "doc": "modern literary texts"
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "doc": "The order of the conjoined subject and its predicate.",
+      "levels": [
+        {
+          "name": "subjectPredicate",
+          "label": "subject–predicate",
+          "doc": "the subject precedes the predicate"
+        },
+        {
+          "name": "predicateSubject",
+          "label": "predicate–subject",
+          "doc": "the predicate precedes the subject"
+        }
+      ]
+    },
+    {
+      "name": "Animacy",
+      "doc": "The animacy of the conjuncts.",
+      "levels": [
+        {
+          "name": "animate",
+          "label": "animate",
+          "doc": "the conjuncts denote animates"
+        },
+        {
+          "name": "inanimate",
+          "label": "inanimate",
+          "doc": "the conjuncts denote inanimates"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "judgement",
+      "structure": "Judgement",
+      "doc": "the percentage of respondents of a variety giving a response to the test sentence.",
+      "locator": "Table 6.10",
+      "verified": "page-image",
+      "method": "survey",
+      "key": [
+        "variety",
+        "response"
+      ],
+      "columns": [
+        {
+          "name": "variety",
+          "type": "Variety",
+          "doc": "The variety."
+        },
+        {
+          "name": "response",
+          "type": "Response",
+          "doc": "The response."
+        },
+        {
+          "name": "percent",
+          "type": "decimal",
+          "doc": "The percentage of respondents."
+        }
+      ],
+      "rows": [
+        {
+          "variety": "GB",
+          "response": "no correction",
+          "percent": "77.2"
+        },
+        {
+          "variety": "GB",
+          "response": "was enjoying",
+          "percent": "15.2"
+        },
+        {
+          "variety": "GB",
+          "response": "other response",
+          "percent": "7.6"
+        },
+        {
+          "variety": "US",
+          "response": "no correction",
+          "percent": "5.4"
+        },
+        {
+          "variety": "US",
+          "response": "was enjoying",
+          "percent": "90.3"
+        },
+        {
+          "variety": "US",
+          "response": "other response",
+          "percent": "4.3"
+        },
+        {
+          "variety": "NZ",
+          "response": "no correction",
+          "percent": "72.5"
+        },
+        {
+          "variety": "NZ",
+          "response": "was enjoying",
+          "percent": "20.6"
+        },
+        {
+          "variety": "NZ",
+          "response": "other response",
+          "percent": "6.9"
+        }
+      ]
+    },
+    {
+      "name": "respondents",
+      "structure": "Respondents",
+      "doc": "the number of respondents of a variety.",
+      "locator": "Table 6.10",
+      "verified": "page-image",
+      "method": "survey",
+      "key": [
+        "variety"
+      ],
+      "columns": [
+        {
+          "name": "variety",
+          "type": "Variety",
+          "doc": "The variety."
+        },
+        {
+          "name": "n",
+          "type": "nat",
+          "doc": "The number of respondents."
+        }
+      ],
+      "rows": [
+        {
+          "variety": "GB",
+          "n": 92
+        },
+        {
+          "variety": "US",
+          "n": 93
+        },
+        {
+          "variety": "NZ",
+          "n": 102
+        }
+      ]
+    },
+    {
+      "name": "corporate",
+      "structure": "Corporate",
+      "doc": "plural agreement with corporate nouns at a target, in a corpus of British newspaper texts.",
+      "locator": "section 6.2",
+      "verified": "text-layer",
+      "key": [
+        "target"
+      ],
+      "columns": [
+        {
+          "name": "target",
+          "type": "CorporateTarget",
+          "doc": "The target."
+        },
+        {
+          "name": "n",
+          "type": "nat",
+          "doc": "The number of examples."
+        },
+        {
+          "name": "percentPlural",
+          "type": "decimal",
+          "doc": "The percentage with plural agreement."
+        }
+      ],
+      "rows": [
+        {
+          "target": "predicate",
+          "n": 181,
+          "percentPlural": "12.2"
+        },
+        {
+          "target": "pronoun",
+          "n": 106,
+          "percentPlural": "27.4"
+        }
+      ]
+    },
+    {
+      "name": "honorific",
+      "structure": "Honorific",
+      "doc": "agreement with honorific *vy* in a Slavonic language, at each sub-position of the predicate.",
+      "locator": "Table 6.11",
+      "verified": "page-image",
+      "key": [
+        "language"
+      ],
+      "columns": [
+        {
+          "name": "language",
+          "type": "Slavonic",
+          "doc": "The language."
+        },
+        {
+          "name": "finiteVerb",
+          "type": "Mark",
+          "doc": "The finite verb."
+        },
+        {
+          "name": "participle",
+          "type": "Mark",
+          "doc": "The participle."
+        },
+        {
+          "name": "adjective",
+          "type": "Mark",
+          "doc": "The adjective."
+        },
+        {
+          "name": "noun",
+          "type": "Mark",
+          "doc": "The noun."
+        },
+        {
+          "name": "participlePercent",
+          "type": "option decimal",
+          "doc": "The percentage of the participle's mark, where the table prints one."
+        },
+        {
+          "name": "participleN",
+          "type": "option nat",
+          "doc": "The number of examples behind it."
+        },
+        {
+          "name": "adjectivePercent",
+          "type": "option decimal",
+          "doc": "The percentage of the adjective's mark, where the table prints one."
+        },
+        {
+          "name": "adjectiveN",
+          "type": "option nat",
+          "doc": "The number of examples behind it."
+        }
+      ],
+      "rows": [
+        {
+          "language": "Czech",
+          "finiteVerb": "pl",
+          "participle": "(pl)/SG",
+          "adjective": "(pl)/SG",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": null,
+          "adjectiveN": null
+        },
+        {
+          "language": "Slovak",
+          "finiteVerb": "pl",
+          "participle": "pl/(SG)",
+          "adjective": "SG",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": null,
+          "adjectiveN": null
+        },
+        {
+          "language": "Lower Sorbian",
+          "finiteVerb": "pl",
+          "participle": "pl",
+          "adjective": "pl/SG",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": null,
+          "adjectiveN": null
+        },
+        {
+          "language": "Upper Sorbian",
+          "finiteVerb": "pl",
+          "participle": "(pl)/SG",
+          "adjective": "(pl)/SG",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": null,
+          "adjectiveN": null
+        },
+        {
+          "language": "Polish dialects",
+          "finiteVerb": "pl",
+          "participle": "pl/SG",
+          "adjective": "pl/SG",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": null,
+          "adjectiveN": null
+        },
+        {
+          "language": "Bulgarian",
+          "finiteVerb": "pl",
+          "participle": "pl",
+          "adjective": "SG",
+          "noun": "SG",
+          "participlePercent": "96",
+          "participleN": 167,
+          "adjectivePercent": "97",
+          "adjectiveN": 163
+        },
+        {
+          "language": "Macedonian",
+          "finiteVerb": "pl",
+          "participle": "pl",
+          "adjective": "(pl)/SG",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": null,
+          "adjectiveN": null
+        },
+        {
+          "language": "Serbo-Croat",
+          "finiteVerb": "pl",
+          "participle": "pl",
+          "adjective": "pl/(SG)",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": null,
+          "adjectiveN": null
+        },
+        {
+          "language": "Slovene",
+          "finiteVerb": "pl",
+          "participle": "pl/(SG)",
+          "adjective": "pl/(SG)",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": null,
+          "adjectiveN": null
+        },
+        {
+          "language": "Ukrainian",
+          "finiteVerb": "pl",
+          "participle": "pl/(SG)",
+          "adjective": "(pl)/SG",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": null,
+          "adjectiveN": null
+        },
+        {
+          "language": "Belarusian",
+          "finiteVerb": "pl",
+          "participle": "pl",
+          "adjective": "SG",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": null,
+          "adjectiveN": null
+        },
+        {
+          "language": "Russian, short form",
+          "finiteVerb": "pl",
+          "participle": "pl",
+          "adjective": "pl",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": "97",
+          "adjectiveN": 145
+        },
+        {
+          "language": "Russian, long form",
+          "finiteVerb": "pl",
+          "participle": "pl",
+          "adjective": "SG",
+          "noun": "SG",
+          "participlePercent": null,
+          "participleN": null,
+          "adjectivePercent": "89",
+          "adjectiveN": 37
+        }
+      ]
+    },
+    {
+      "name": "russianConjoined",
+      "structure": "RussianConjoined",
+      "doc": "number resolution with conjoined noun phrases at a target in modern literary Russian.",
+      "locator": "Table 6.12",
+      "verified": "page-image",
+      "key": [
+        "target"
+      ],
+      "columns": [
+        {
+          "name": "target",
+          "type": "Target",
+          "doc": "The target."
+        },
+        {
+          "name": "n",
+          "type": "nat",
+          "doc": "The number of examples."
+        },
+        {
+          "name": "percentPlural",
+          "type": "decimal",
+          "doc": "The percentage with number resolution."
+        }
+      ],
+      "rows": [
+        {
+          "target": "attributive",
+          "n": 34,
+          "percentPlural": "12"
+        },
+        {
+          "target": "predicate",
+          "n": 230,
+          "percentPlural": "70"
+        },
+        {
+          "target": "relative pronoun",
+          "n": 10,
+          "percentPlural": "100"
+        },
+        {
+          "target": "personal pronoun",
+          "n": 26,
+          "percentPlural": "100"
+        }
+      ]
+    },
+    {
+      "name": "resolution",
+      "structure": "Resolution",
+      "doc": "plural predicates with conjoined subjects, by the animacy of the conjuncts and their order relative to the predicate.",
+      "locator": "Table 6.13",
+      "verified": "page-image",
+      "key": [
+        "language",
+        "order",
+        "animacy"
+      ],
+      "columns": [
+        {
+          "name": "language",
+          "type": "ConjoinedLanguage",
+          "doc": "The language."
+        },
+        {
+          "name": "order",
+          "type": "Order",
+          "doc": "The order of subject and predicate."
+        },
+        {
+          "name": "animacy",
+          "type": "Animacy",
+          "doc": "The animacy of the conjuncts."
+        },
+        {
+          "name": "n",
+          "type": "nat",
+          "doc": "The number of examples."
+        },
+        {
+          "name": "percentPlural",
+          "type": "decimal",
+          "doc": "The percentage with a plural predicate."
+        }
+      ],
+      "rows": [
+        {
+          "language": "Medieval Spanish",
+          "order": "subject–predicate",
+          "animacy": "animate",
+          "n": 288,
+          "percentPlural": "96"
+        },
+        {
+          "language": "Medieval Spanish",
+          "order": "subject–predicate",
+          "animacy": "inanimate",
+          "n": 243,
+          "percentPlural": "31"
+        },
+        {
+          "language": "German",
+          "order": "subject–predicate",
+          "animacy": "animate",
+          "n": 1095,
+          "percentPlural": "96"
+        },
+        {
+          "language": "German",
+          "order": "subject–predicate",
+          "animacy": "inanimate",
+          "n": 1702,
+          "percentPlural": "67"
+        },
+        {
+          "language": "Russian",
+          "order": "subject–predicate",
+          "animacy": "animate",
+          "n": 115,
+          "percentPlural": "100"
+        },
+        {
+          "language": "Russian",
+          "order": "subject–predicate",
+          "animacy": "inanimate",
+          "n": 67,
+          "percentPlural": "85"
+        },
+        {
+          "language": "Serbo-Croat",
+          "order": "subject–predicate",
+          "animacy": "animate",
+          "n": 21,
+          "percentPlural": "100"
+        },
+        {
+          "language": "Serbo-Croat",
+          "order": "subject–predicate",
+          "animacy": "inanimate",
+          "n": 35,
+          "percentPlural": "91"
+        },
+        {
+          "language": "Medieval Spanish",
+          "order": "predicate–subject",
+          "animacy": "animate",
+          "n": 318,
+          "percentPlural": "69"
+        },
+        {
+          "language": "Medieval Spanish",
+          "order": "predicate–subject",
+          "animacy": "inanimate",
+          "n": 239,
+          "percentPlural": "6"
+        },
+        {
+          "language": "German",
+          "order": "predicate–subject",
+          "animacy": "animate",
+          "n": 379,
+          "percentPlural": "93"
+        },
+        {
+          "language": "German",
+          "order": "predicate–subject",
+          "animacy": "inanimate",
+          "n": 925,
+          "percentPlural": "40"
+        },
+        {
+          "language": "Russian",
+          "order": "predicate–subject",
+          "animacy": "animate",
+          "n": 89,
+          "percentPlural": "84"
+        },
+        {
+          "language": "Russian",
+          "order": "predicate–subject",
+          "animacy": "inanimate",
+          "n": 114,
+          "percentPlural": "28"
+        },
+        {
+          "language": "Serbo-Croat",
+          "order": "predicate–subject",
+          "animacy": "animate",
+          "n": 23,
+          "percentPlural": "70"
+        },
+        {
+          "language": "Serbo-Croat",
+          "order": "predicate–subject",
+          "animacy": "inanimate",
+          "n": 62,
+          "percentPlural": "26"
+        }
+      ]
+    }
+  ]
+}
