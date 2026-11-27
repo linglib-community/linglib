@@ -26,7 +26,7 @@ require «doc-gen4» from git
 
 -- memo's models as Lean programs, for the studies that state them in linglib's vocabulary
 require minimemo from git
-  "https://github.com/linglib-community/minimemo" @ "3c9393960551467dad7fd0b55e48709f1bed29ee"
+  "https://github.com/linglib-community/minimemo" @ "01ddb971096fca95a1490000d617ad34ae74f246"
 
 -- Mathlib last so its dependency versions take precedence
 require mathlib from git

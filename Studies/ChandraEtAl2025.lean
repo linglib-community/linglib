@@ -3,7 +3,7 @@ module
 public import Linglib.Pragmatics.Probabilistic.Recursion
 public import Linglib.Pragmatics.Agent.Basic
 public import Linglib.Core.Probability.UniformOn
-public import MinimemoTheory.Example.RSA
+public import Minimemo.Examples.RSA
 
 /-!
 # Chandra, Chen, Tenenbaum and Ragan-Kelley (2025): A language for reasoning about reasoning
@@ -22,8 +22,11 @@ referent on hearing it.
 
 Here the speaker is an agent who knows the referent and values a true utterance at that
 probability, and the listener holds a uniform prior and applies Bayes' rule to the speaker's
-policy. [The array that the memo program returns is this listener](##level_eq_listenerAt), at
-every depth and every positive `β`. At depth zero [she is the literal
+policy. [The memo program realizes this listener](##realizes_listenerAt), at every depth and
+every positive `β`: the kernel of its array is her kernel. A program realizes at most one kernel,
+so the programs that realize her are equivalent to one another, and what is proved of the
+program's array is proved of her: [her probability of the green square on hearing *green* falls
+with the depth to a limit](##tendsto_listenerAt). At depth zero [she is the literal
 listener](##listenerAt_zero_real).
 
 The speaker of the Rational Speech Acts model soft-maximizes the logarithm of the listener's
@@ -215,6 +218,9 @@ noncomputable def listenerAt (β : ℝ) : ℕ → Kernel Utterance Referent
   | 0 => hear 1 fun _ _ ↦ 0
   | t + 1 => hear β fun u r ↦ (listenerAt β t u).real {r}
 
+instance (β : ℝ) (t : ℕ) : IsFiniteKernel (listenerAt β t) := by
+  cases t <;> exact inferInstanceAs (IsFiniteKernel (listener _ _))
+
 -- the listener at every depth, by the recursion on the probability of the green square
 theorem listenerAt_real {β : ℝ} (hβ : 0 < β) (t : ℕ) (u : Utterance) (r : Referent) :
     (listenerAt β t u).real {r} = table (Memo.RSA.prob β t) u r := by
@@ -237,13 +243,38 @@ def Utterance.pos : Utterance → ℕ
 def Referent.pos : Referent → ℕ
   | .greenSquare => 0 | .greenCircle => 1 | .pinkCircle => 2
 
-/-- **The array of the memo program is the listener.** The array that the program of Figure 1
-returns at depth `t` has, at an utterance and a referent, the probability that the listener at
-depth `t` gives the referent on hearing the utterance. -/
-theorem level_eq_listenerAt {β : ℝ} (hβ : 0 < β) (t : ℕ) (u : Utterance) (r : Referent) :
-    (Memo.RSA.level β t).getD (u.pos * 3 + r.pos) 0 = (listenerAt β t u).real {r} := by
-  rw [listenerAt_real hβ, Memo.RSA.level_eq]
+/-- A memo program **realizes** a kernel when the kernel of its array, from the positions of what
+is given to the positions of what is reported, is that kernel at the values with those positions.
+Programs that realize one kernel are equivalent, and so are agents whose policies are realized by
+one program. -/
+def Realizes {O A : Type*} [MeasurableSpace O] [MeasurableSpace A] (k : Kernel ℕ ℕ)
+    (heard : O → ℕ) (chosen : A → ℕ) (κ : Kernel O A) : Prop :=
+  ∀ o a, k (heard o) {chosen a} = κ o {a}
+
+-- a memo program realizes at most one kernel
+theorem Realizes.unique {O A : Type*} [MeasurableSpace O] [MeasurableSpace A] [Countable A]
+    [MeasurableSingletonClass A] {k : Kernel ℕ ℕ} {heard : O → ℕ} {chosen : A → ℕ}
+    {κ₁ κ₂ : Kernel O A} (h₁ : Realizes k heard chosen κ₁) (h₂ : Realizes k heard chosen κ₂) :
+    κ₁ = κ₂ :=
+  Kernel.ext fun o ↦ Measure.ext_of_singleton fun a ↦ (h₁ o a).symm.trans (h₂ o a)
+
+/-- **The memo program realizes the listener.** The program of Figure 1 at depth `t` realizes the
+listener at depth `t`: its array has, at an utterance and a referent, the probability that she
+gives the referent on hearing the utterance. -/
+theorem realizes_listenerAt {β : ℝ} (hβ : 0 < β) (t : ℕ) :
+    Realizes (Memo.RSA.family.kernel (Memo.NaiveListener.domOf ℝ) (Memo.RSA.callOf β) (t + 1) t)
+      Utterance.pos Referent.pos (listenerAt β t) := fun u r ↦ by
+  rw [Memo.RSA.kernel_family, ← ofReal_measureReal (measure_ne_top _ _), listenerAt_real hβ]
   cases u <;> cases r <;> rfl
+
+/-- What memo's model does in the limit, the listener does: as the depth grows, the probability
+that she gives the green square on hearing *green* tends to the greatest `p` with
+`p = 2 / (3 + exp (β * (1 - p)))`. -/
+theorem tendsto_listenerAt {β : ℝ} (hβ : 0 < β) :
+    Filter.Tendsto (fun t ↦ (listenerAt β t .green).real {.greenSquare}) Filter.atTop
+      (nhds (Memo.RSA.limit β)) := by
+  simp_rw [listenerAt_real hβ]
+  exact Memo.RSA.tendsto_prob hβ.le
 
 /-! ### The speaker of the Rational Speech Acts model -/
 
