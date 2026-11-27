@@ -305,9 +305,13 @@ open PolarityItem
 
 /-- `contextOf? r` is the licensing environment a row of the *irgendein* paradigm names. -/
 def contextOf? (r : Datum) : Option LicensingContext :=
-  r.parse? "context"
-    [("question", .question), ("doubtVerb", .doubtVerb), ("modalPossibility", .modalPossibility),
-      ("modalNecessity", .modalNecessity), ("nobody", .nobody), ("negation", .negation)]
+  (Examples.context r).map fun
+    | .question => .question
+    | .doubtVerb => .doubtVerb
+    | .modalPossibility => .modalPossibility
+    | .modalNecessity => .modalNecessity
+    | .nobody => .nobody
+    | .negation => .negation
 
 /-- The library's licensing theory admits *irgendein* exactly where the paper finds it acceptable,
 (12), (13), (16)–(18) and (22), inflectional negation (21) aside. -/

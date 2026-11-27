@@ -637,8 +637,10 @@ def ofDatum? (e : Datum) : Option Row := do
   let secondGrp ← e.feature? "2+3"
   let thirdGrp ← e.feature? "3+3"
   let chapter ← e.nat? "chapter"
-  let ubiquity ← e.parse? "ubiquity"
-    [("common", .common), ("semi-common", .semiCommon), ("rare", .rare)]
+  let ubiquity ← (Examples.ubiquity e).map fun
+    | .common => .common
+    | .semiCommon => .semiCommon
+    | .rare => .rare
   let marking ← optional? e "marking"
     [("independent", .independent), ("inflectional", .inflectional)]
   let kind ← optional? e "kind" Kind.names

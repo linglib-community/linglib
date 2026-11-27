@@ -146,8 +146,10 @@ theorem reading_word_le_phrase {α β γ : Type*} {op : (α → Prop) → β →
 /-- The device of a construction: Predicate Transfer for a generic, a type-shift for a habitual
 and for an extensional verb conjoined with an intensional one. -/
 def device? (e : Datum) : Option Device :=
-  e.parse? "construction"
-    [("generic", .predicateTransfer), ("habitual", .typeShift), ("verb conjunction", .typeShift)]
+  (Examples.construction e).map fun
+    | .generic => .predicateTransfer
+    | .habitual => .typeShift
+    | .verbConjunction => .typeShift
 
 /-- A row's name for the reading a level yields. -/
 def Level.key : Level → String

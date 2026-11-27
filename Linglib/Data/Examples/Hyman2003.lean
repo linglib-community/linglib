@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Hyman2003` — typed example data
@@ -996,5 +998,17 @@ def ex_48_star_acr : Datum :=
     paperFeatures := [("scope", "ACR"), ("suffixes", "ACR")] }
 
 def all : List Datum := [ex_2a_cr, ex_2a_rc, ex_2b_rc, ex_2b_cr, ex_3a, ex_3b, ex_7b, ex_8, ex_8_star, ex_13a, ex_13b, ex_13c, ex_13d, ex_17b, ex_18a, ex_18b, ex_20a, ex_20b, ex_22a, ex_22b, ex_22c, ex_23a, ex_23b, ex_23c, ex_32c, ex_32d, ex_48a_car, ex_48a_acr, ex_48a_cra, ex_48a_arc, ex_48a_rca, ex_48a_rac, ex_48b_car, ex_48b_acr, ex_48b_cra, ex_48b_arc, ex_48b_rca, ex_48b_rac, ex_48c_car, ex_48c_acr, ex_48c_cra, ex_48c_arc, ex_48c_rca, ex_48c_rac, ex_48d_car, ex_48d_acr, ex_48d_cra, ex_48d_arc, ex_48d_rca, ex_48d_rac, ex_48e_car, ex_48e_acr, ex_48e_cra, ex_48e_arc, ex_48e_rca, ex_48e_rac, ex_48_star_cra_cra, ex_48_star_cra_rca, ex_48_star_cra_rac, ex_48_star_rca_rca, ex_48_star_rca_rac, ex_48_star_acr]
+
+/-- The argument a passive of a causative of an applicative takes as its subject. -/
+inductive PassiveSubject where
+  /-- instrument: the instrument, the applied argument -/
+  | instrument
+  /-- causee: the causee -/
+  | causee
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `subject`. -/
+def passiveSubject (e : Datum) : Option PassiveSubject :=
+  e.parse? "subject" [("instrument", .instrument), ("causee", .causee)]
 
 end Hyman2003.Examples

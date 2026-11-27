@@ -566,7 +566,7 @@ def grammar? (r : Datum) : Option Grammar :=
 
 /-- The passive subject a row reports. -/
 def subject? (r : Datum) : Option Baker1985.Arg :=
-  r.parse? "subject" [("instrument", .applied), ("causee", .agent)]
+  (Examples.passiveSubject r).map fun | .instrument => .applied | .causee => .agent
 
 /-- Every form the paper judges, the starred *-an-its-il-* apart, is acceptable exactly when it
 is an output of its scope. -/

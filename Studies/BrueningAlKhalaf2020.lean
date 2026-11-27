@@ -334,7 +334,7 @@ def selects? (e : Datum) : Option (Finset Cat) :=
 
 /-- `side? e` says whether a row's selector precedes or follows what it selects. -/
 def side? (e : Datum) : Option HeadDirection :=
-  e.parse? "selector" [("precedes", .headInitial), ("follows", .headFinal)]
+  (Examples.selector e).map fun | .precedes => .headInitial | .follows => .headFinal
 
 /-- `modifiers? e` lists a row's prenominal modifiers, in order. -/
 def modifiers? (e : Datum) : Option (List (Option AdvHead)) :=
