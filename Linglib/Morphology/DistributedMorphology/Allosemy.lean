@@ -2,7 +2,8 @@ module
 
 public import Mathlib.Algebra.Order.GroupWithZero.Canonical
 public import Mathlib.Logic.Equiv.Defs
-public import Linglib.Core.Data.Fintype.WithZero
+public import Mathlib.Algebra.Group.WithOne.Defs
+public import Mathlib.Data.Fintype.Option
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Basic
 

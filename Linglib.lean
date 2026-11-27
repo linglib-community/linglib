@@ -35,7 +35,6 @@ import Linglib.Core.Data.List.TakeDrop
 import Linglib.Core.Data.Multiset.Dominates
 import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Get
-import Linglib.Core.Data.RoseTree.Leaves
 import Linglib.Core.Data.RoseTree.Perm
 import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.GroupTheory.Congruence.Hom
@@ -48,11 +47,9 @@ import Linglib.Logic.CylindricAlgebra
 import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 import Linglib.Core.MeasureTheory.Measure.Prod
 import Linglib.Core.MeasureTheory.Measure.WithDensity
-import Linglib.Core.ModelTheory.EhrenfeuchtFraisse
 import Linglib.Logic.Modal.FirstOrder.Semantics
 import Linglib.Logic.Modal.FirstOrder.Syntax
 import Linglib.Core.ModelTheory.Lindstrom
-import Linglib.Core.ModelTheory.QuantifierRank
 import Linglib.Logic.PIP.Syntax
 import Linglib.Logic.PIP.Semantics
 import Linglib.Logic.PIP.Felicity
@@ -63,7 +60,6 @@ import Linglib.Logic.Team.Kripke
 import Linglib.Logic.Team.QBSML.Defs
 import Linglib.Logic.Team.QBSML.Enrichment
 import Linglib.Logic.Team.QBSML.FreeChoice
-import Linglib.Logic.Team.QBSML.Properties
 import Linglib.Logic.Team.Closure
 import Linglib.Logic.Temporal.Basic
 import Linglib.Logic.Temporal.Defs
@@ -228,7 +224,6 @@ import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Commitment.Frame
 import Linglib.Discourse.Commitment.Space
 import Linglib.Discourse.Commitment.Table
-import Linglib.Discourse.CommonGround
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.QUD.Basic
@@ -284,7 +279,6 @@ import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Conditionals.Basic
-import Linglib.Semantics.Conditionals.Counterfactual
 import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 import Linglib.Semantics.Conditionals.Restrictor
 import Linglib.Semantics.Conditionals.SelectionFunction

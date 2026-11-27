@@ -6,7 +6,13 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Logic.Relation
-public import Linglib.Core.Data.UnorderedTree.Leaves
+public import Linglib.Core.Data.RoseTree.Perm
+public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+public import Mathlib.Data.Multiset.Bind
+public import Mathlib.Algebra.Order.Monoid.Multiset
+public import Mathlib.Algebra.Order.BigOperators.Group.List
+public import Mathlib.Algebra.Order.Group.Nat
+public import Linglib.Core.Data.UnorderedTree.Basic
 public import Linglib.Core.Data.UnorderedTree.Subtree
 public import Linglib.Syntax.Minimalist.SyntacticObject.Tree
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build

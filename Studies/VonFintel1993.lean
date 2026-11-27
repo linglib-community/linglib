@@ -4,7 +4,8 @@ public import Linglib.Semantics.Quantifier.Exceptive
 public import Linglib.Semantics.Quantifier.Global
 public import Linglib.Data.Examples.VonFintel1993
 public import Linglib.Languages.English.Determiners
-public import Linglib.Core.Order.Prop
+public import Mathlib.Order.Basic
+public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Tactic.FinCases
 public import Linglib.Data.Examples.Readers
 
