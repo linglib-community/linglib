@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.MeasureTheory.Integral.Average
-public import Mathlib.Probability.ConditionalProbability
+public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Semantics.MeasurementTheory.Intermediate
 
 /-!
@@ -22,6 +22,12 @@ them when they differ and both propositions have positive probability, so expect
 intermediate measure of propositions. A positive affine change of the value function changes every
 expected value by the same map, so comparisons of expected value are invariant under such changes.
 
+The expected value of `φ` depends on the value function only on `φ`. A value function constant on
+`φ` has that constant as expected value, the indicator of a proposition `ψ` has the conditional
+probability of `ψ` given `φ`, and the number of propositions of a finite family that hold has the
+sum of their conditional probabilities. Reweighting the prior by a density that is constant on
+`φ` leaves the expected value of `φ` unchanged.
+
 [jeffrey-1965] changes the prior and the value function together. For reals `a`, `b`, `c`, `d`
 with `c * V + d` positive, the prior with density `c * V + d` and the value function
 `(a * V + b) / (c * V + d)` give every proposition of positive probability the expected value
@@ -38,6 +44,10 @@ function is `a * V + b`.
 * `Desire.expectedValue_eq_integral_cond`: expected value as an integral against the conditioned
   prior.
 * `Desire.expectedValue_cond`: conditioning the prior on a domain restricts the proposition to it.
+* `Desire.expectedValue_sum_indicator_one`: the expected number of propositions of a finite family
+  that hold is the sum of their conditional probabilities.
+* `Desire.expectedValue_withDensity_of_forall_mem_eq`: a density constant on a proposition does
+  not change its expected value.
 * `Desire.expectedValue_union`: the expected value of a disjoint union is a weighted average.
 * `Desire.isIntermediate_expectedValue`: expected value is an intermediate measure.
 * `Desire.expectedValue_union_mem_Ioo`: the expected value of a disjoint union of propositions of
@@ -68,6 +78,7 @@ the other.
 namespace Desire
 
 open MeasureTheory ProbabilityTheory MeasurementTheory Set
+open scoped ENNReal
 
 variable {W : Type*} [MeasurableSpace W] (μ : Measure W) (V : W → ℝ) (φ : Set W)
 
@@ -108,6 +119,45 @@ theorem expectedValue_cond (hD : MeasurableSet D) (hφ : MeasurableSet φ) :
     expectedValue μ[|D] V φ = expectedValue μ V (D ∩ φ) := by
   rw [expectedValue_eq_integral_cond, expectedValue_eq_integral_cond,
     cond_cond_eq_cond_inter hD hφ]
+
+/-! ### Dependence on the value function and the prior -/
+
+omit [IsFiniteMeasure μ] in
+theorem expectedValue_congr {V' : W → ℝ} (hφ : MeasurableSet φ) (h : EqOn V V' φ) :
+    expectedValue μ V φ = expectedValue μ V' φ :=
+  setAverage_congr_fun hφ (.of_forall h)
+
+theorem expectedValue_const (hφ : μ φ ≠ 0) (c : ℝ) : expectedValue μ (fun _ ↦ c) φ = c :=
+  setAverage_const hφ (measure_ne_top _ _) c
+
+omit [IsFiniteMeasure μ] in
+theorem expectedValue_const_mul (c : ℝ) (V : W → ℝ) (φ : Set W) :
+    expectedValue μ (fun w ↦ c * V w) φ = c * expectedValue μ V φ :=
+  average_const_mul _ c V
+
+omit [IsFiniteMeasure μ] in
+/-- The expected value of the indicator of `ψ` is the conditional probability of `ψ` given `φ`. -/
+theorem expectedValue_indicator_one (hψ : MeasurableSet ψ) :
+    expectedValue μ (ψ.indicator 1) φ = μ[|φ].real ψ := by
+  rw [expectedValue_eq_integral_cond, integral_indicator_one hψ]
+
+/-- The expected number of propositions of a finite family that hold is the sum of their
+conditional probabilities. -/
+theorem expectedValue_sum_indicator_one {ι : Type*} (s : Finset ι) {R : ι → Set W}
+    (hR : ∀ i ∈ s, MeasurableSet (R i)) :
+    expectedValue μ (∑ i ∈ s, (R i).indicator 1) φ = ∑ i ∈ s, μ[|φ].real (R i) :=
+  (setAverage_finsetSum fun i hi ↦
+    ((integrable_const (1 : ℝ)).indicator (hR i hi)).integrableOn).trans
+    (Finset.sum_congr rfl fun i hi ↦ expectedValue_indicator_one (hR i hi))
+
+omit [IsFiniteMeasure μ] in
+/-- Reweighting the prior by a density that is a positive finite constant on `φ` does not change
+the expected value of `φ`. -/
+theorem expectedValue_withDensity_of_forall_mem_eq (hφ : MeasurableSet φ) {f : W → ℝ≥0∞}
+    {c : ℝ≥0∞} (hc₀ : c ≠ 0) (hc : c ≠ ∞) (h : ∀ w ∈ φ, f w = c) :
+    expectedValue (μ.withDensity f) V φ = expectedValue μ V φ := by
+  rw [expectedValue_eq_integral_cond, expectedValue_eq_integral_cond,
+    cond_withDensity_of_forall_mem_eq μ hφ hc₀ hc h]
 
 /-! ### Disjoint unions -/
 
