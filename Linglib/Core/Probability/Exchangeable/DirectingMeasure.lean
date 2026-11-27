@@ -8,7 +8,7 @@ module
 public import Linglib.Core.Probability.Exchangeable.DeFinetti
 public import Mathlib.Probability.Kernel.Condexp
 public import Mathlib.Probability.HasCondDistrib
-public import Mathlib.Probability.StrongLaw
+public import Linglib.Core.Probability.StrongLaw
 
 /-!
 # De Finetti's theorem
@@ -199,27 +199,9 @@ private theorem ae_tendsto_average_indicator_infinitePi (m : ProbabilityMeasure 
       Tendsto (fun n : ℕ ↦ (n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, B.indicator (1 : E → ℝ) (x i))
         atTop (𝓝 ((m : Measure E).real B)) := by
   have hf : Measurable (B.indicator (1 : E → ℝ)) := measurable_one.indicator hB
-  have hind := iIndepFun_infinitePi (P := fun _ : ℕ ↦ (m : Measure E)) fun _ ↦ hf
-  have hid (i : ℕ) : IdentDistrib (fun x : ℕ → E ↦ B.indicator (1 : E → ℝ) (x i))
-      (fun x ↦ B.indicator 1 (x 0)) (Measure.infinitePi fun _ : ℕ ↦ (m : Measure E))
-      (Measure.infinitePi fun _ : ℕ ↦ (m : Measure E)) :=
-    have h : IdentDistrib (fun x : ℕ → E ↦ x i) (fun x ↦ x 0)
-        (Measure.infinitePi fun _ : ℕ ↦ (m : Measure E))
-        (Measure.infinitePi fun _ : ℕ ↦ (m : Measure E)) :=
-      ⟨(measurable_pi_apply i).aemeasurable, (measurable_pi_apply 0).aemeasurable,
-        by rw [Measure.infinitePi_map_eval, Measure.infinitePi_map_eval]⟩
-    h.comp hf
-  have hint : Integrable (fun x : ℕ → E ↦ B.indicator (1 : E → ℝ) (x 0))
-      (Measure.infinitePi fun _ : ℕ ↦ (m : Measure E)) :=
-    .of_bound (hf.comp (measurable_pi_apply 0)).aestronglyMeasurable 1
-      (ae_of_all _ fun x ↦ by by_cases hx : x 0 ∈ B <;> simp [hx])
-  have hlim : ∫ x, B.indicator (1 : E → ℝ) (x 0) ∂(Measure.infinitePi fun _ : ℕ ↦ (m : Measure E))
-      = (m : Measure E).real B := by
-    rw [← integral_map (measurable_pi_apply 0).aemeasurable hf.aestronglyMeasurable,
-      Measure.infinitePi_map_eval, integral_indicator_one hB]
-  have := strong_law_ae (fun i (x : ℕ → E) ↦ B.indicator (1 : E → ℝ) (x i)) hint
-    (fun i j hij ↦ hind.indepFun hij) hid
-  rwa [hlim] at this
+  have := ae_tendsto_average_infinitePi (m : Measure E) hf (.of_bound hf.aestronglyMeasurable 1
+    (ae_of_all _ fun x ↦ by by_cases hx : x ∈ B <;> simp [hx]))
+  rwa [integral_indicator_one hB] at this
 
 /-- Given a random distribution `η` under which a sequence is conditionally i.i.d., the frequency
 of visits of the sequence to a measurable set converges almost surely to its `η`-mass. -/
