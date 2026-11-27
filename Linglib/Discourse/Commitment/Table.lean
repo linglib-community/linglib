@@ -108,6 +108,8 @@ structure Table (A W : Type*) where
   /-- The common ground: the propositions that are joint commitments. -/
   commonGround : Filter W
 
+initialize_simps_projections Table (as_prefix stack, as_prefix commitments, as_prefix commonGround)
+
 namespace Table
 
 variable {A W : Type*}
@@ -174,7 +176,7 @@ end Project
 variable (K : Table A W) (a : A) (p : Set W) (P : Proposition (Set W))
 
 /-- The initial context has nothing on the Table, no commitments, and the trivial common ground. -/
-def empty : Table A W := ⟨[], ∅, ⊤⟩
+@[simps] def empty : Table A W := ⟨[], ∅, ⊤⟩
 
 instance : Inhabited (Table A W) := ⟨empty⟩
 
@@ -200,71 +202,35 @@ def InCrisis : Prop := K.commonGround = ⊥ ∨ ∀ f ∈ K.projectedSet, f = �
 /-! ### Moves -/
 
 /-- Place an issue on the Table. -/
-def push : Table A W := { K with stack := P :: K.stack }
+@[simps] def push : Table A W := { K with stack := P :: K.stack }
 
 /-- Remove the top issue. -/
-def pop : Table A W := { K with stack := K.stack.tail }
+@[simps] def pop : Table A W := { K with stack := K.stack.tail }
 
 /-- Commit `a` to `p`. -/
-def commit : Table A W := { K with commitments := insert (a, p) K.commitments }
+@[simps] def commit : Table A W := { K with commitments := insert (a, p) K.commitments }
 
 /-- In the default assertion (9), `a` commits to `p` and places the declarative's issue on the
 Table. -/
-def assert : Table A W := (K.commit a p).push (ofSet p)
+@[simps!] def assert : Table A W := (K.commit a p).push (ofSet p)
 
 /-- The default polar question (12) places the interrogative's issue on the Table. -/
-def polarQuestion : Table A W := K.push (polar p)
+@[simps!] def polarQuestion : Table A W := K.push (polar p)
 
 open scoped Classical in
 /-- In the common-ground increasing operation M' (17), applied once `p` is on every commitment
 list, `p` enters the common ground and leaves the individual commitment lists, and the issues the
 new common ground decides are popped from the top of the Table. -/
-noncomputable def settle : Table A W where
+@[simps] noncomputable def settle : Table A W where
   stack := K.stack.dropWhile fun P ↦ decide (P.DecidedBy (K.commonGround ⊓ 𝓟 p))
   commitments := {(a, q) | a ~[K.commitments] q ∧ q ≠ p}
   commonGround := K.commonGround ⊓ 𝓟 p
 
 /-- Agreeing to disagree (23), from a Table with the denial on top of the assertion it denies,
 removes the contradictory pair from the Table and keeps the commitments. -/
-def agreeToDisagree : Table A W := K.pop.pop
+@[simps!] def agreeToDisagree : Table A W := K.pop.pop
 
-/-! ### Coordinates of the moves -/
-
-@[simp] theorem stack_empty : (empty : Table A W).stack = [] := rfl
-@[simp] theorem commitments_empty : (empty : Table A W).commitments = ∅ := rfl
-@[simp] theorem commonGround_empty : (empty : Table A W).commonGround = ⊤ := rfl
-@[simp] theorem stack_push : (K.push P).stack = P :: K.stack := rfl
-@[simp] theorem commitments_push : (K.push P).commitments = K.commitments := rfl
-@[simp] theorem commonGround_push : (K.push P).commonGround = K.commonGround := rfl
-@[simp] theorem stack_pop : K.pop.stack = K.stack.tail := rfl
-@[simp] theorem commitments_pop : K.pop.commitments = K.commitments := rfl
-@[simp] theorem commonGround_pop : K.pop.commonGround = K.commonGround := rfl
-@[simp] theorem stack_commit : (K.commit a p).stack = K.stack := rfl
-@[simp] theorem commitments_commit : (K.commit a p).commitments = insert (a, p) K.commitments :=
-  rfl
-@[simp] theorem commonGround_commit : (K.commit a p).commonGround = K.commonGround := rfl
-@[simp] theorem stack_assert : (K.assert a p).stack = ofSet p :: K.stack := rfl
-@[simp] theorem commitments_assert : (K.assert a p).commitments = insert (a, p) K.commitments :=
-  rfl
-@[simp] theorem commonGround_assert : (K.assert a p).commonGround = K.commonGround := rfl
-@[simp] theorem stack_polarQuestion : (K.polarQuestion p).stack = polar p :: K.stack := rfl
-@[simp] theorem commitments_polarQuestion : (K.polarQuestion p).commitments = K.commitments :=
-  rfl
-@[simp] theorem commonGround_polarQuestion :
-    (K.polarQuestion p).commonGround = K.commonGround := rfl
-
-open scoped Classical in
-@[simp] theorem stack_settle :
-    (K.settle p).stack = K.stack.dropWhile fun P ↦ decide (P.DecidedBy (K.commonGround ⊓ 𝓟 p)) :=
-  rfl
-@[simp] theorem commitments_settle :
-    (K.settle p).commitments = {(a, q) | a ~[K.commitments] q ∧ q ≠ p} := rfl
-@[simp] theorem commonGround_settle : (K.settle p).commonGround = K.commonGround ⊓ 𝓟 p := rfl
-@[simp] theorem stack_agreeToDisagree : K.agreeToDisagree.stack = K.stack.tail.tail := rfl
-@[simp] theorem commitments_agreeToDisagree : K.agreeToDisagree.commitments = K.commitments :=
-  rfl
-@[simp] theorem commonGround_agreeToDisagree :
-    K.agreeToDisagree.commonGround = K.commonGround := rfl
+/-! ### The current issue -/
 
 @[simp] theorem issue_empty : (empty : Table A W).issue = ⊤ := rfl
 @[simp] theorem issue_push : (K.push P).issue = P := rfl
@@ -342,7 +308,9 @@ variable {K p P} in
 /-- M' pops a decided issue from the top of the Table and goes on popping. -/
 theorem settle_push_of_decidedBy (h : P.DecidedBy (K.commonGround ⊓ 𝓟 p)) :
     (K.push P).settle p = K.settle p :=
-  Table.ext (by simp [h]) rfl rfl
+  Table.ext (by
+    rw [stack_settle, stack_push, List.dropWhile_cons_of_pos (by simpa using h)]
+    rfl) rfl rfl
 
 variable {K p P} in
 theorem stack_settle_push_of_not_decidedBy (h : ¬ P.DecidedBy (K.commonGround ⊓ 𝓟 p)) :
