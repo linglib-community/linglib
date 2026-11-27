@@ -10,39 +10,37 @@ public import Linglib.Data.Examples.Readers
 /-!
 # von Fintel (1993): Exceptive Constructions
 
-von Fintel gives the English *but*-phrase of *every student but John* a least-exception
-semantics. Plain domain subtraction, reading *students but John* as the students minus John,
-neither explains why *but* occurs only with *every* and *no* nor blocks the inference to
-*every student but John and Jill*, and adding the requirement that the quantification fail
-without the subtraction still admits *most*. On the least-exception semantics the *but*-phrase
-instead names the exception set, the least set whose subtraction makes the quantification true
-(`Exceptive.IsExceptionSet`), which with *every* is the restrictor minus the scope and with
-*no* their intersection. Free exceptives like *except for John* carry subtraction with
-restrictiveness only (`Exceptive.Restrictive`), which is why they also occur with *most*.
+An exceptive subtracts a set `C` from the restrictor `A` of a quantification `Q A B`. A free
+exceptive, as in *except for John, every student attended*, asserts that the quantification holds
+of `A \ C` and fails of `A`. A *but*-phrase, as in *every student but John attended*, asserts
+further that `C` is the exception set of the quantification, the least set whose subtraction makes
+it true. With *every* the exception set is `A \ B` and with *no* it is `A ∩ B`.
+
+A determiner guarantees an exception set when every false quantification with it has one. Among
+the eight determiner symbols of the library only *every* and *no* do, and a *but*-phrase is
+acceptable with exactly the determiners that do. A free exceptive carries no uniqueness condition
+and is contradictory only with *some*, which is upward monotone in its restrictor.
 
 ## Implementation notes
 
-* Restrictor, scope and exception set are sets, so the truth conditions are lattice equations
-  and the five-student and two-student models use `Set.univ` and `Fin` restrictors.
-* The guarantee of an exception set is conditional on a false quantification, the paper's "if
-  there is any at all"; the unconditional version also holds for *every* and *no*, whose
-  exception set is then empty (`Exceptive.isExceptionSet_every`).
+* Restrictor, scope and exception set are sets, and the five-student and two-student models are
+  `Fin 5` and `Fin 2` with the restrictor `Set.univ`.
+* The guarantee is conditional on a false quantification, "if there is any at all". A true
+  quantification with *every* or *no* also has an exception set, the empty one.
+* An exception set that is empty is not restrictive, so the uniqueness condition yields
+  restrictiveness only for a nonempty exception set.
+* *Both* and *neither* assert that the restrictor has two members, so a false quantification
+  with a restrictor of another size has no exception set and they do not guarantee one.
+* The determiner of an example is matched by its form against the English determiners. The
+  indefinite pronouns of the paradigm from Horn (*everyone*, *nobody*, *somebody*), *any*, the
+  definite of *except for Jane, my relatives* and the numeral of the *besides* example match no
+  determiner with a reading and are not predicted.
+* The examples include no unacceptable free exceptive, so the second prediction is tested only
+  on acceptable examples.
 * The strengthening of a free exceptive to the *but* reading takes as hypothesis that the
-  exception set contains only exceptions, the paper's gloss of the uniqueness condition, which
-  pragmatics supplies.
-* The determiner *any* of Horn's paradigm has no reading in the paper or the language file, so its
-  rows are not predicted; likewise the definite of *except for Jane, my relatives* and the
-  minimality-based *besides*, which the paper leaves to further research.
-* Not formalized: the two curryings of the *but*-phrase and the impossibility of an
-  NP-modifier semantics, which is not derivable from *every* and *no* alone; the Cooper
-  variable; the rhetorical reading of *who but*.
-
-## TODO
-
-* The paper's footnote on *both* and *neither* presumes they "give rise to unique exception
-  sets"; under the library's cardinality-asserting `both` a false *both*-quantification has no
-  exception set at all, so which semantics the footnote intends is undetermined and neither
-  claim is stated.
+  exception set contains only exceptions, which pragmatics supplies.
+* Not formalized: the two curryings of the *but*-phrase, the exclusion of a noun-phrase modifier
+  semantics, the Cooper variable, and the rhetorical reading of *who but*.
 
 ## References
 
@@ -59,37 +57,29 @@ namespace VonFintel1993
 open Quantifier Quantifier.Det Quantifier.Exceptive
 open scoped Denotes
 
-variable {α : Type*} {Q : Det α} {A C B : Set α}
-
-/-! ### Truth conditions (§1.1, §1.5) -/
-
--- (9)
-theorem isExceptionSet_every_singleton_iff {j : α} :
-    IsExceptionSet every A {j} B ↔ A \ B = {j} :=
-  isExceptionSet_every_iff
-
--- (9)
-theorem isExceptionSet_no_singleton_iff {j : α} :
-    IsExceptionSet no A {j} B ↔ A ∩ B = {j} :=
-  isExceptionSet_no_iff
+variable {α : Type*} {Q : Det α} {A C B S T : Set α}
 
 /-! ### Consequences of uniqueness (§1.5, §1.7) -/
 
-/-- The inference to a *but*-phrase with a larger exception set (24), `Examples.ex_14`, is
-blocked. -/
+-- (24)
 theorem not_isExceptionSet_of_ssubset (h : IsExceptionSet Q A C B) {C' : Set α} (hlt : C ⊂ C') :
     ¬ IsExceptionSet Q A C' B :=
   fun h' ↦ hlt.ne (h.unique h')
 
-/-- Two *but*-phrases on one quantifier (28), `Examples.ex_28a`, name the same exception. -/
+-- (28)
 theorem eq_of_isExceptionSet_singleton {j m : α} (hj : IsExceptionSet Q A {j} B)
     (hm : IsExceptionSet Q A {m} B) : j = m :=
   Set.singleton_injective (hj.unique hm)
 
+/-- A false quantification that two disjoint subtractions each make true has no exception set:
+there is a choice of what to exclude (§1.6). -/
+theorem not_isExceptionSet_of_disjoint (h : ¬ Q A B) (hS : Q (A \ S) B) (hT : Q (A \ T) B)
+    (hd : Disjoint S T) : ¬ IsExceptionSet Q A C B := fun hC ↦
+  h <| by simpa [(hd.mono (hC.2 hS) (hC.2 hT)).eq_bot_of_self] using hC.1
+
 /-! ### The co-occurrence restrictions (§1.6) -/
 
-/-- A determiner guarantees an exception set when every false quantification has one, the
-property von Fintel finds the universal determiners alone to have. -/
+/-- A determiner guarantees an exception set when every false quantification has one. -/
 def GuaranteesException (Q : Det α) : Prop :=
   ∀ A B : Set α, ¬ Q A B → ∃ C, IsExceptionSet Q A C B
 
@@ -99,9 +89,10 @@ theorem guaranteesException_every : GuaranteesException (every : Det α) :=
 theorem guaranteesException_no : GuaranteesException (no : Det α) :=
   fun A B _ ↦ ⟨A ∩ B, isExceptionSet_no A B⟩
 
-theorem not_guaranteesException_some : ¬ GuaranteesException (Det.some : Det α) := fun h ↦
-  let ⟨_, ⟨_, _, hx⟩, _⟩ := h Set.univ ∅ fun ⟨_, _, hx⟩ ↦ hx
-  hx
+theorem not_guaranteesException_some [Nonempty α] : ¬ GuaranteesException (Det.some : Det α) :=
+  fun h ↦
+    let ⟨_, ⟨_, _, hx⟩, _⟩ := h Set.univ ∅ fun ⟨_, _, hx⟩ ↦ hx
+    hx
 
 /-- The five students of (25) are Tom, John, Harry, Bill and Mary in order; only the last two
 attended (`Examples.ex_25a`). -/
@@ -128,6 +119,7 @@ theorem not_guaranteesException_most : ¬ GuaranteesException (most : Det (Fin 5
   let ⟨C, hC⟩ := h Set.univ attended fun hm ↦ absurd hm (by decide)
   not_isExceptionSet_most C hC
 
+-- §1.6
 theorem isExceptionSet_most_two :
     IsExceptionSet most Set.univ {(0 : Fin 2)} {(1 : Fin 2)} := by
   refine ⟨by decide, fun S hS x hx ↦ ?_⟩
@@ -143,9 +135,47 @@ theorem isExceptionSet_most_two :
     rw [e] at hS'
     exact absurd hS' (by decide)
 
+theorem not_guaranteesException_few : ¬ GuaranteesException (few : Det (Fin 1)) := fun h ↦
+  let ⟨C, hC⟩ := h Set.univ Set.univ (by decide)
+  absurd hC.1 (by simp [few_apply])
+
+theorem not_guaranteesException_half : ¬ GuaranteesException (half : Det (Fin 3)) := fun h ↦
+  let ⟨_, hC⟩ := h Set.univ {0, 1} (by decide)
+  not_isExceptionSet_of_disjoint (S := {0}) (T := {1}) (by decide) (by decide) (by decide)
+    (by simp) hC
+
+private theorem ncard_ne_two (S : Set (Fin 1)) : S.ncard ≠ 2 := fun h ↦ by
+  have := Set.ncard_le_ncard (Set.subset_univ S)
+  rw [h, Set.ncard_univ, Nat.card_fin] at this
+  omega
+
+theorem not_guaranteesException_both : ¬ GuaranteesException (both : Det (Fin 1)) := fun h ↦
+  let ⟨_, hC⟩ := h Set.univ Set.univ fun hb ↦ ncard_ne_two _ hb.2
+  ncard_ne_two _ hC.1.2
+
+theorem not_guaranteesException_neither : ¬ GuaranteesException (neither : Det (Fin 1)) :=
+  fun h ↦
+    let ⟨_, hC⟩ := h Set.univ ∅ fun hb ↦ ncard_ne_two _ hb.1
+    ncard_ne_two _ hC.1.1
+
+/-- Among the determiner symbols, those that guarantee an exception set on every finite universe
+are *every* and *no*. -/
+theorem guaranteesException_denote_iff (s : Det.Symbol) :
+    (∀ (β : Type) [Finite β], GuaranteesException ((s.denote : Det.Family.{0}) β)) ↔
+      s = .every ∨ s = .no := by
+  cases s
+  · exact iff_of_true (fun _ _ ↦ guaranteesException_every) (.inl rfl)
+  · exact iff_of_false (fun h ↦ not_guaranteesException_some (h (Fin 1))) (by decide)
+  · exact iff_of_true (fun _ _ ↦ guaranteesException_no) (.inr rfl)
+  · exact iff_of_false (fun h ↦ not_guaranteesException_most (h (Fin 5))) (by decide)
+  · exact iff_of_false (fun h ↦ not_guaranteesException_few (h (Fin 1))) (by decide)
+  · exact iff_of_false (fun h ↦ not_guaranteesException_half (h (Fin 3))) (by decide)
+  · exact iff_of_false (fun h ↦ not_guaranteesException_both (h (Fin 1))) (by decide)
+  · exact iff_of_false (fun h ↦ not_guaranteesException_neither (h (Fin 1))) (by decide)
+
 /-! ### What *but* operates on (§1.8) -/
 
-/-- No noun modifier yields the exception-set truth conditions with *every* (§1.8). -/
+-- §1.8
 theorem not_exists_nounModifier (hC : C ≠ ∅) :
     ¬ ∃ f : Set α → Set α, ∀ A B, every (f A) B ↔ IsExceptionSet every A C B :=
   fun ⟨_, hf⟩ ↦ hC ((isExceptionSet_every_iff.1 ((hf ∅ Set.univ).1 (Set.subset_univ _))).symm.trans
@@ -158,8 +188,34 @@ theorem restrictive_most :
     Restrictive most Set.univ {0, 1} attended :=
   ⟨by decide, fun h ↦ absurd h (by decide)⟩
 
-/-- With *every* the *but* reading is the pragmatic strengthening of the free exceptive to an
-exception set that contains only exceptions (§2.3). -/
+/-- Among the determiner symbols, those that admit a restrictive subtraction on some finite
+universe are all but *some*, which is upward monotone in its restrictor (§1.4). -/
+theorem exists_restrictive_denote_iff (s : Det.Symbol) :
+    (∃ (β : Type) (_ : Finite β) (A C B : Set β),
+        Restrictive ((s.denote : Det.Family.{0}) β) A C B) ↔ s ≠ .some := by
+  cases s
+  · exact iff_of_true ⟨Fin 1, inferInstance, Set.univ, Set.univ, ∅,
+      fun _ hx ↦ hx.2 trivial, fun h ↦ h (Set.mem_univ (0 : Fin 1))⟩ (by decide)
+  · exact iff_of_false (fun ⟨_, _, _, _, _, h⟩ ↦ h.not_of_restrictorMonotone
+      restrictorMonotone_some) (by decide)
+  · exact iff_of_true ⟨Fin 1, inferInstance, Set.univ, Set.univ, Set.univ,
+      fun _ hx _ ↦ hx.2 trivial, fun h ↦ h (Set.mem_univ (0 : Fin 1)) trivial⟩ (by decide)
+  · exact iff_of_true ⟨Fin 5, inferInstance, Set.univ, {0, 1}, attended, restrictive_most⟩
+      (by decide)
+  · exact iff_of_true ⟨Fin 2, inferInstance, Set.univ, {0}, {0},
+      show Restrictive (few : Det (Fin 2)) _ _ _ from ⟨by decide, by decide⟩⟩
+      (by decide)
+  · exact iff_of_true ⟨Fin 3, inferInstance, Set.univ, {0}, {0, 1},
+      show Restrictive (half : Det (Fin 3)) _ _ _ from ⟨by decide, by decide⟩⟩
+      (by decide)
+  · exact iff_of_true ⟨Fin 3, inferInstance, Set.univ, {0}, Set.univ,
+      show Restrictive (both : Det (Fin 3)) _ _ _ from ⟨by decide, by decide⟩⟩
+      (by decide)
+  · exact iff_of_true ⟨Fin 3, inferInstance, Set.univ, {0}, ∅,
+      show Restrictive (neither : Det (Fin 3)) _ _ _ from ⟨by decide, by decide⟩⟩
+      (by decide)
+
+-- §2.3
 theorem isExceptionSet_every_of_restrictive (h : Restrictive every A C B) (hC : C ⊆ A \ B) :
     IsExceptionSet every A C B :=
   isExceptionSet_every_iff.2 (le_antisymm (restrictive_every_iff.1 h).1 hC)
@@ -171,154 +227,40 @@ theorem isExceptionSet_no_of_restrictive (h : Restrictive no A C B) (hC : C ⊆ 
 
 /-! ### The paper's examples -/
 
-/-- The paper opposes two exceptive markers, the *but*-phrase and free *except for*. -/
-inductive Marker
-  | but
-  | exceptFor
-  deriving DecidableEq, Repr
-
-/-- These determiners of the paper's exceptive examples have a reading in the English language file
-or the quantification substrate; *any*, the definite and *besides*'s numeral have none. -/
-inductive Determiner
-  | every
-  | no
-  | some
-  | most
-  deriving DecidableEq, Repr
-
-/-- A determiner reads as the English language file's denotations for the words the language file
-has
-and as the quantification substrate's `no` for *no*. -/
-noncomputable def Determiner.readings : Determiner → Set Det.Family.{0}
-  | .every => ⟦English.Determiners.every⟧
-  | .no => {Det.Family.no}
-  | .some => ⟦English.Determiners.some_⟧
-  | .most => ⟦English.Determiners.most⟧
-
-@[simp] theorem Determiner.readings_every :
-    Determiner.every.readings = {Det.Family.every} :=
-  QuantificationalDeterminer.denote_eq_singleton (d := English.Determiners.every) (s := .every) rfl
-
-@[simp] theorem Determiner.readings_some :
-    Determiner.some.readings = {Det.Family.some} :=
-  QuantificationalDeterminer.denote_eq_singleton (d := English.Determiners.some_) (s := .some) rfl
-
-@[simp] theorem Determiner.readings_most :
-    Determiner.most.readings = {Det.Family.most} :=
-  QuantificationalDeterminer.denote_eq_singleton (d := English.Determiners.most) (s := .most) rfl
-
-/-- A row records an exceptive example of the paper by its marker, its determiner and its
-printed judgment. -/
-structure Row where
-  marker : Marker
-  det : Determiner
-  judgment : Judgment
-  deriving DecidableEq, Repr
-
-/-- `ofDatum` reads the marker, the determiner and the judgment off an exceptive example with
-a tabled determiner. -/
-def Row.ofDatum (ex : Datum) : Option Row := do
-  let m ← ex.parse? "exceptive" [("but", Marker.but), ("except for", .exceptFor)]
-  let d ← ex.parse? "determiner"
-    [("every", Determiner.every), ("all", .every), ("no", .no), ("some", .some), ("most", .most)]
-  pure ⟨m, d, ex.judgment⟩
-
-/-- `rows` collects the exceptive rows of the paper's examples. -/
-def rows : List Row := Examples.all.filterMap Row.ofDatum
-
-private theorem rows_eq : rows =
-    [⟨.but, .every, .acceptable⟩, ⟨.exceptFor, .every, .acceptable⟩, ⟨.but, .no, .acceptable⟩,
-     ⟨.but, .every, .acceptable⟩, ⟨.but, .no, .acceptable⟩, ⟨.but, .some, .ungrammatical⟩,
-     ⟨.but, .some, .ungrammatical⟩, ⟨.but, .every, .acceptable⟩, ⟨.but, .most, .ungrammatical⟩,
-     ⟨.but, .every, .acceptable⟩, ⟨.but, .no, .acceptable⟩, ⟨.but, .every, .acceptable⟩,
-     ⟨.but, .most, .ungrammatical⟩, ⟨.exceptFor, .most, .acceptable⟩,
-     ⟨.exceptFor, .no, .acceptable⟩, ⟨.exceptFor, .most, .acceptable⟩] := by
+/-- A *but*-phrase is acceptable with an English determiner if and only if every reading of the
+determiner guarantees an exception set on every finite universe ((1a), (2b), (10), (22),
+(25b)). -/
+theorem but_predicted :
+    ∀ e ∈ Examples.all, Examples.exceptive e = some .but →
+      ∀ d ∈ English.Determiners.allQuantifiers, d.readings.Nonempty →
+        e.feature? "determiner" = some d.form →
+          (e.judgment = .acceptable ↔
+            ∀ q ∈ (⟦d⟧ : Set Det.Family.{0}), ∀ (β : Type) [Finite β],
+              GuaranteesException (q β)) := by
+  have key (d : QuantificationalDeterminer) :
+      (∀ q ∈ (⟦d⟧ : Set Det.Family.{0}), ∀ (β : Type) [Finite β], GuaranteesException (q β)) ↔
+        ∀ s ∈ d.readings, s = .every ∨ s = .no := by
+    simp only [QuantificationalDeterminer.mem_denote_iff, forall_exists_index, and_imp,
+      forall_apply_eq_imp_iff₂, guaranteesException_denote_iff]
+  simp only [key]
   decide
 
-/-- A *but*-phrase is acceptable with a determiner iff its readings guarantee an exception set on
-every finite domain ((10), (1a), (2b), (22), (25b)). -/
-theorem but_predicted :
-    ∀ r ∈ rows, r.marker = .but →
-      (r.judgment = .acceptable ↔
-        ∀ q ∈ r.det.readings, ∀ (β : Type) [Fintype β], GuaranteesException (q β)) := by
-  have hevery : ∀ q ∈ Determiner.every.readings, ∀ (β : Type) [Fintype β],
-      GuaranteesException (q β) := fun q hq β _ ↦ by
-    rw [Determiner.readings_every] at hq
-    obtain rfl : q = Det.Family.every := hq
-    exact guaranteesException_every
-  have hno : ∀ q ∈ Determiner.no.readings, ∀ (β : Type) [Fintype β],
-      GuaranteesException (q β) := fun q hq β _ ↦ by
-    obtain rfl : q = Det.Family.no := hq
-    exact guaranteesException_no
-  have hsome : ¬ ∀ q ∈ Determiner.some.readings, ∀ (β : Type) [Fintype β],
-      GuaranteesException (q β) :=
-    fun h ↦ not_guaranteesException_some (h Det.Family.some (by simp) (Fin 1))
-  have hmost : ¬ ∀ q ∈ Determiner.most.readings, ∀ (β : Type) [Fintype β],
-      GuaranteesException (q β) :=
-    fun h ↦ not_guaranteesException_most (h Det.Family.most (by simp) (Fin 5))
-  rw [rows_eq]
-  simp only [List.mem_cons, List.not_mem_nil, or_false]
-  rintro r (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
-    rfl | rfl)
-  · exact fun _ ↦ iff_of_true rfl hevery
-  · exact fun h ↦ nomatch h
-  · exact fun _ ↦ iff_of_true rfl hno
-  · exact fun _ ↦ iff_of_true rfl hevery
-  · exact fun _ ↦ iff_of_true rfl hno
-  · exact fun _ ↦ iff_of_false (by decide) hsome
-  · exact fun _ ↦ iff_of_false (by decide) hsome
-  · exact fun _ ↦ iff_of_true rfl hevery
-  · exact fun _ ↦ iff_of_false (by decide) hmost
-  · exact fun _ ↦ iff_of_true rfl hevery
-  · exact fun _ ↦ iff_of_true rfl hno
-  · exact fun _ ↦ iff_of_true rfl hevery
-  · exact fun _ ↦ iff_of_false (by decide) hmost
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-
-/-- The free exceptives of (1b), (33a), (34a) and (34c) are acceptable with every tabled determiner,
-each admitting a restrictive exceptive on some finite domain. -/
+/-- A free exceptive is acceptable with an English determiner if and only if every reading of the
+determiner admits a restrictive subtraction on some finite universe ((1b), (33a), (34a),
+(34c)). -/
 theorem exceptFor_predicted :
-    ∀ r ∈ rows, r.marker = .exceptFor →
-      (r.judgment = .acceptable ↔
-        ∀ q ∈ r.det.readings, ∃ (β : Type) (_ : Fintype β) (A C B : Set β),
-          Restrictive (q β) A C B) := by
-  have hevery : ∀ q ∈ Determiner.every.readings, ∃ (β : Type) (_ : Fintype β)
-      (A C B : Set β), Restrictive (q β) A C B := fun q hq ↦ by
-    rw [Determiner.readings_every] at hq
-    obtain rfl : q = Det.Family.every := hq
-    exact ⟨Fin 1, inferInstance, Set.univ, Set.univ, ∅,
-      fun _ hx ↦ hx.2 trivial, fun h ↦ h (Set.mem_univ (0 : Fin 1))⟩
-  have hno : ∀ q ∈ Determiner.no.readings, ∃ (β : Type) (_ : Fintype β)
-      (A C B : Set β), Restrictive (q β) A C B := fun q hq ↦ by
-    obtain rfl : q = Det.Family.no := hq
-    exact ⟨Fin 1, inferInstance, Set.univ, Set.univ, Set.univ,
-      fun _ hx _ ↦ hx.2 trivial, fun h ↦ h (Set.mem_univ (0 : Fin 1)) trivial⟩
-  have hmost : ∀ q ∈ Determiner.most.readings, ∃ (β : Type) (_ : Fintype β)
-      (A C B : Set β), Restrictive (q β) A C B := fun q hq ↦ by
-    rw [Determiner.readings_most] at hq
-    obtain rfl : q = Det.Family.most := hq
-    exact ⟨Fin 5, inferInstance, Set.univ, {0, 1}, attended, restrictive_most⟩
-  rw [rows_eq]
-  simp only [List.mem_cons, List.not_mem_nil, or_false]
-  rintro r (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
-    rfl | rfl)
-  · exact fun h ↦ nomatch h
-  · exact fun _ ↦ iff_of_true rfl hevery
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-  · exact fun h ↦ nomatch h
-  · exact fun _ ↦ iff_of_true rfl hmost
-  · exact fun _ ↦ iff_of_true rfl hno
-  · exact fun _ ↦ iff_of_true rfl hmost
+    ∀ e ∈ Examples.all, Examples.exceptive e = some .exceptFor →
+      ∀ d ∈ English.Determiners.allQuantifiers, d.readings.Nonempty →
+        e.feature? "determiner" = some d.form →
+          (e.judgment = .acceptable ↔
+            ∀ q ∈ (⟦d⟧ : Set Det.Family.{0}), ∃ (β : Type) (_ : Finite β) (A C B : Set β),
+              Restrictive (q β) A C B) := by
+  have key (d : QuantificationalDeterminer) :
+      (∀ q ∈ (⟦d⟧ : Set Det.Family.{0}), ∃ (β : Type) (_ : Finite β) (A C B : Set β),
+        Restrictive (q β) A C B) ↔ ∀ s ∈ d.readings, s ≠ .some := by
+    simp only [QuantificationalDeterminer.mem_denote_iff, forall_exists_index, and_imp,
+      forall_apply_eq_imp_iff₂, exists_restrictive_denote_iff]
+  simp only [key]
+  decide
 
 end VonFintel1993
