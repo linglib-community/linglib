@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Discourse.Commitment.Basic
-public import Linglib.Semantics.Attitudes.Preference.Structure
+public import Linglib.Semantics.Embedding.Preference.Structure
 
 /-!
 # Sincerity

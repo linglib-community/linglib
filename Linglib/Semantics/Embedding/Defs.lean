@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Logic.Natural.ImplicationSignature
-public import Linglib.Semantics.Attitudes.Basic
+public import Linglib.Semantics.Embedding.Attitude
 public import Linglib.Semantics.Presupposition.Trigger
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 

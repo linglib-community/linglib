@@ -7,8 +7,8 @@ module
 
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.PolarityItem.Licenser
-public import Linglib.Semantics.Attitudes.NegRaising
-public import Linglib.Semantics.Attitudes.Preference.BestWorlds
+public import Linglib.Semantics.Embedding.NegRaising
+public import Linglib.Semantics.Embedding.Preference.BestWorlds
 public import Linglib.Semantics.Conditionals.Horizon
 public import Linglib.Semantics.Degree.Superlative
 public import Linglib.Semantics.Focus.Particles

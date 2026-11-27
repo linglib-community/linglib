@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Sbardolini2026
-public import Linglib.Semantics.Attitudes.Preference.BestWorlds
+public import Linglib.Semantics.Embedding.Preference.BestWorlds
 public import Linglib.Semantics.Conditionals.Horizon
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.PolarityItem.LicensingContext

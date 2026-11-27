@@ -5,8 +5,7 @@ public import Linglib.Discourse.Commitment.Table
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Data.Examples.Rudin2025b
 public import Linglib.Data.Examples.Readers
-public import Linglib.Semantics.Questions.Inquisitive.Declarative
-
+public import Linglib.Logic.Inquisitive.Declarative
 /-!
 # Rudin (2025): Embedded Intonation and Quotative Complements to Verbs of Speech
 

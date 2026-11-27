@@ -7,7 +7,7 @@ module
 
 public import Linglib.Semantics.Mood.Verbal
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.Attitudes.Preference.BestWorlds
+public import Linglib.Semantics.Embedding.Preference.BestWorlds
 public import Linglib.Languages.Romance.French.Verbs
 public import Linglib.Languages.Romance.Spanish.Verbs
 

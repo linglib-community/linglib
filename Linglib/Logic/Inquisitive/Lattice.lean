@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Inquisitive.Defs
-
+public import Linglib.Logic.Inquisitive.Defs
 /-!
 # The lattice of inquisitive propositions
 
