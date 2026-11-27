@@ -137,11 +137,19 @@ Benthem's criterion for the logical items. -/
 def IsPermutationInvariant (ty : Ty Base) (x : Ty.Domain E Unit ty) : Prop :=
   ∀ π : Equiv.Perm E, permLift ty π x = x
 
+-- a function is a logical item exactly when it commutes with the lifted permutations
+theorem isPermutationInvariant_fn_iff {a b : Ty Base} {f : Ty.Domain E Unit (a ⇒ b)} :
+    IsPermutationInvariant (a ⇒ b) f ↔
+      ∀ π : Equiv.Perm E, Function.Semiconj f (permLift a π) (permLift b π) :=
+  forall_congr' fun π ↦
+    ⟨fun h x ↦ by rw [← permLift_apply_apply, h], fun h ↦ funext fun x ↦ by
+      rw [permLift_fn_apply, ← h.eq, Equiv.apply_symm_apply]⟩
+
 -- a logical item applied to a logical item is a logical item
 theorem IsPermutationInvariant.app {a b : Ty Base} {f : Ty.Domain E Unit (a ⇒ b)}
     {x : Ty.Domain E Unit a} (hf : IsPermutationInvariant (a ⇒ b) f)
     (hx : IsPermutationInvariant a x) : IsPermutationInvariant b (f x) := fun π ↦ by
-  rw [← permLift_apply_apply, hf π, hx π]
+  rw [← (isPermutationInvariant_fn_iff.1 hf π).eq, hx π]
 
 /-- Truth-functional conjunction is a logical item (20), preserved because the lift is the
 identity at type `t`. -/
