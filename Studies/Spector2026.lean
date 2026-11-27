@@ -34,7 +34,7 @@ of donkey sentences, and a strong-truth operator internalizes universal readings
 
 * [spector-2026]
 * [schlenker-2007]
-* [schlenker-2008]
+* [schlenker-2008a]
 * [mandelkern-2022]
 * [peters-1979]
 * [beaver-krahmer-2001]
