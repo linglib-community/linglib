@@ -25,7 +25,7 @@ non-contradiction the ortholattices. A Boolean algebra is both.
 
 * `InvolutiveCompl`: the data class of an involutive, order-reversing complement, extending the
   notation class `Compl` and parameterized by the order, as mathlib's `InvolutiveNeg` extends
-`Neg` and `OrderTop` takes `[LE α]`.
+  `Neg` and `OrderTop` takes `[LE α]`.
 * `InvolutiveCompl.complOrderIso`: the involution as an order isomorphism `α ≃o αᵒᵈ`.
 
 ## Main results

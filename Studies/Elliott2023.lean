@@ -24,11 +24,11 @@ anaphoric presupposition of a free variable in its scope projects.
 * Assertion and exhaustive assertion are a definedness condition, `BilateralUpdate.Assertable`, and
   an output, the positive update or `exhAssert`.
 * A question under discussion is a partition of all worlds, so the cell-mate of exhaustive assertion
-  is required to be a world of the context, which the paper's partition of the context
-set guarantees.
+  is required to be a world of the context, which the paper's partition of the context set
+  guarantees.
 * The projection of the presupposition of `y` holds at states whose points all define the same
   referents; where two points of one world differ in whether they define `y`, the one that does
-not subsists in the updates of the one that does.
+  not subsists in the updates of the one that does.
 
 ## References
 

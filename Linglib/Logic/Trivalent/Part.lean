@@ -33,7 +33,7 @@ need not make the whole undefined.
 
 * `Trivalent.ofPart_eq_undefined_iff`, `Trivalent.ofPart_eq_true_iff`,
   `Trivalent.ofPart_eq_false_iff`:
-the three values of `ofPart`.
+  the three values of `ofPart`.
 * `Trivalent.ofPart_map_not`, `Trivalent.ofPart_ite_some_false`: negation and enrichment by a
   two-valued condition transport along `ofPart`.
 * `Trivalent.toPart_transplication`, `Trivalent.toPart_meetMiddle`, `Trivalent.toPart_meetWeak`:

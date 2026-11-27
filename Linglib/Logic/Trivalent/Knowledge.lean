@@ -37,7 +37,7 @@ four values add one, and Kleene's three are their consistent part.
   not truth-monotone.
 * `Trivalent.toKnow_supervaluation`: over a nonempty family, the supervaluation is the knowledge
   meet of the classical values, so shrinking the family can only add information
-(`Trivalent.supervaluation_kLE_supervaluation`).
+  (`Trivalent.supervaluation_kLE_supervaluation`).
 
 ## Implementation notes
 

@@ -29,8 +29,8 @@ an output in the second and each of its members is the output of some input stat
 
 * `Set.liftRel_iff_subset_preimage_image`, `Set.liftRel_iff_exists_dom_cod`,
   `Set.liftRel_iff_biTotal`, `Set.liftRel_iff_liftr`: the lifting as two `SetRel` image
-inclusions, as a subrelation with the given domain and codomain, as bitotality of the restriction,
-and as `Functor.Liftr`.
+  inclusions, as a subrelation with the given domain and codomain, as bitotality of the restriction,
+  and as `Functor.Liftr`.
 * `Set.liftRel_eq`, `Set.liftRel_comp`: the lifting sends equality to equality and relational
   composition to composition.
 * `Set.liftRel_iff_image_eq`: the lifting of equality along two maps is equality of their images.

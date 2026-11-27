@@ -24,7 +24,7 @@ inspects the state as a whole, as *might* does, need not be among them.
 * `Update S`, `Condition S`: relations on states, sets of states.
 * `Update.test`: the test of a condition. With the antidomain `∼D = test D.domᶜ` the updates are an
   `AntidomainMonoid`, whose dynamic implication and disjunction are the tests of
-`D₁.core D₂.dom` and `D₁.dom ∪ D₂.dom`.
+  `D₁.core D₂.dom` and `D₁.dom ∪ D₂.dom`.
 * `Update.IsTest`: updates that never change the state.
 * `Update.maxBy`: the outputs of an update at which a valuation is locally maximal.
 * `Update.cumul`, `Update.strictLift`: the cumulative and the strict lift of an update to plural
@@ -49,7 +49,7 @@ inspects the state as a whole, as *might* does, need not be among them.
   cumulative one, and takes a one-row state to a one-row state.
 * `CCP.isClassical_iff_up_down_eq`, `CCP.exists_eq_image_test_iff`: the classical transformers are
   exactly the static ones — `up` of their own content, the
-images of tests; `CCP.might_not_isDistributive` separates.
+  images of tests; `CCP.might_not_isDistributive` separates.
 
 ## Implementation notes
 

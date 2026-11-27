@@ -25,40 +25,40 @@ of `Data/Wordlist/`.
 * `SourceRef`: a reference to a paper, a bibkey with a locator.
 * `GlossedWord`, `GlossedMorpheme`, `LGRConformance`: a word of the gloss line with its morphemes
   and their glosses, as `pyigt` models them, and the conformance of an example with the
-Leipzig Glossing Rules.
+  Leipzig Glossing Rules.
 
 ## Implementation notes
 
 * Per-paper data lives in `Linglib/Data/Examples/{AuthorYear}.json` and is compiled by
   `scripts/gen_examples.py` into `Linglib/Data/Examples/{AuthorYear}.lean`, declaring
-`namespace {AuthorYear}.Examples`. The JSON keys are the field names, and `id` uses only the
-characters of a CLDF identifier. `scripts/export_examples_cldf.py` writes the data as a CLDF
-dataset, which CI validates.
+  `namespace {AuthorYear}.Examples`. The JSON keys are the field names, and `id` uses only the
+  characters of a CLDF identifier. `scripts/export_examples_cldf.py` writes the data as a CLDF
+  dataset, which CI validates.
 * Four JSON keys are the source's record and not fields, since no theorem reads them and every field
   is paid for when a kernel `decide` reduces a row: `translation` (`Translated_Text`, empty
-for an English example), `discourseSegments` (the utterances of a discourse), `comment`, and
-`verified` (how the row was last checked against its source). The generator validates them and the
-CLDF export carries them.
+  for an English example), `discourseSegments` (the utterances of a discourse), `comment`, and
+  `verified` (how the row was last checked against its source). The generator validates them and the
+  CLDF export carries them.
 * `language` is a Glottocode, which the generator checks against `languages.csv`, the language table
   of the data drawn from Glottolog; it is empty for a constructed string that belongs to no
-language, such as a pattern of a formal language.
+  language, such as a pattern of a formal language.
 * `glossedTokens` pairs each analysed word with its gloss, so the word-by-word alignment of Rule 1
   of the Leipzig Glossing Rules holds by construction. CLDF's `LGR_Conformance` column is not
-stored: whether a gloss also aligns morpheme by morpheme (Rule 2) is a property of the pairs.
+  stored: whether a gloss also aligns morpheme by morpheme (Rule 2) is a property of the pairs.
 * Translations are into English, the default of CLDF's `Meta_Language_ID`, which is therefore not
   stored.
 * A discourse is one datum: `primaryText` joins its utterances with single spaces, and the judgment
   is of the last utterance in the context of the others.
 * `paperFeatures` are the paper's own columns: what the paper states about the datum, such as the
   cell of its design or the class it assigns. The results a paper prints for an experiment
-belong in `Data/Statistics/`, and an analysis the formaliser derives belongs in the study. A key
-repeats when the expression bears the property twice (two indefinite series in one clause), so the
-list is not a map: `feature?` reads the first value, `features` every value.
+  belong in `Data/Statistics/`, and an analysis the formaliser derives belongs in the study. A key
+  repeats when the expression bears the property twice (two indefinite series in one clause), so the
+  list is not a map: `feature?` reads the first value, `features` every value.
 * The file imports no tactic library: every module with example data imports it, and names such a
   library brings into scope (mathlib's root `Tree`) would reach every study that reads rows.
 * The lookups and fits on rows are in `Data/Examples/Readers.lean`, which only the studies that read
   rows import, so a new reader rebuilds those studies and not every module of example
-data.
+  data.
 
 ## TODO
 

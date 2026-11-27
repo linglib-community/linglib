@@ -17,10 +17,10 @@ where speakers differ. The Cross-Linguistic Data Formats, version 1.3, hold it i
 * CLDF leaves the value of the column free. The seven marks are the library's inventory.
 * The type carries no order and no grouping of its marks. Which marks a paper counts as accepted,
   and whether it reads them as a scale, is that paper's link between its account and its data, so
-a study states it; `Datum.Fits` reads a mark through `Judgment.band`.
+  a study states it; `Datum.Fits` reads a mark through `Judgment.band`.
 * A split mark a paper prints, such as `*/??`, is several marks for one sentence. A row records the
   first as `Datum.judgment` and the rest as `Datum.alsoJudged`. Gradient ratings are results,
-recorded in `Data/Statistics/`.
+  recorded in `Data/Statistics/`.
 * The file imports nothing, since every module of example data imports it.
 
 ## References
