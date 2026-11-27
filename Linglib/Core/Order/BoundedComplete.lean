@@ -322,6 +322,38 @@ theorem piUnify_update_bot [DecidableEq F] [∀ t, OrderBot (S t)]
 
 end Pi
 
+/-! ### Componentwise joins -/
+
+section Prod
+
+variable {β : Type*} [PartialOrder β] {u : α → α → WithTop α} {v : β → β → WithTop β}
+
+/-- The join of two pairs computed componentwise by `u` and `v`, `⊤` when a component fails. -/
+def prodUnify (u : α → α → WithTop α) (v : β → β → WithTop β) (a b : α × β) : WithTop (α × β) :=
+  map₂ Prod.mk (u a.1 b.1) (v a.2 b.2)
+
+theorem isLUB_prodUnify (hu : ∀ a b : α, IsLUB ({↑a, ↑b} : Set (WithTop α)) (u a b))
+    (hv : ∀ a b : β, IsLUB ({↑a, ↑b} : Set (WithTop β)) (v a b)) (a b : α × β) :
+    IsLUB ({↑a, ↑b} : Set (WithTop (α × β))) (prodUnify u v a b) := by
+  unfold prodUnify
+  cases h₁ : u a.1 b.1 with
+  | top =>
+    rw [map₂_top_left]
+    exact isLUB_pair_coe_top_iff.2 fun hc ↦
+      (eq_top_iff_of_isLUB (hu _ _)).1 h₁ (compat_prod_iff.1 hc).1
+  | coe x =>
+    cases h₂ : v a.2 b.2 with
+    | top =>
+      rw [map₂_top_right]
+      exact isLUB_pair_coe_top_iff.2 fun hc ↦
+        (eq_top_iff_of_isLUB (hv _ _)).1 h₂ (compat_prod_iff.1 hc).2
+    | coe y =>
+      rw [map₂_coe_coe]
+      exact isLUB_pair_coe_iff.2 (isLUB_pair_prod_iff.2
+        ⟨(eq_coe_iff_of_isLUB (hu _ _)).1 h₁, (eq_coe_iff_of_isLUB (hv _ _)).1 h₂⟩)
+
+end Prod
+
 end WithTop
 
 

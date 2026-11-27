@@ -35,8 +35,8 @@ halts the search without valuing: Chomsky's defective intervention is satisfacti
 interaction in the sense of [deal-2025a]. Valuation only adds features, so [a run of Agree
 extends the state](##Minimalist.FeatureState.le_agree_state), and [a slot holding a maximal
 element of its order, as a value of a flat slot is, keeps it
-](##Minimalist.FeatureState.apply_eq_coe_of_le). A person slot can grow, as a slot specified for
-a speech-act participant becomes one specified for the first person.
+](##Minimalist.FeatureState.apply_eq_coe_of_le). A person slot can grow, as one holding the first
+person comes to hold the first person inclusive.
 
 ## Main definitions
 

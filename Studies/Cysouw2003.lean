@@ -4,12 +4,13 @@ public import Linglib.Data.Examples.Cysouw2003
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Core.Data.Setoid.Basic
-public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Person.Decomposition
 public import Linglib.Languages.English.Pronouns
 public import Linglib.Languages.Tagalog.Pronouns
 public import Linglib.Morphology.Inflection.Paradigm.Morphome
 public import Linglib.Core.Order.Concept
 public import Linglib.Data.Examples.Readers
+public import Linglib.Syntax.Category.Pronoun.Reference
 
 /-!
 # Cysouw (2003): The paradigmatic structure of person marking
@@ -251,7 +252,7 @@ abbrev Structure := Setoid Category
 homophony reaches them, the third person first and the first person last. -/
 abbrev Singular := {c : Category // c.IsSingular}
 
-instance : LinearOrder Singular := LinearOrder.lift' (fun a ↦ a.1.person.prominence) (by decide)
+instance : LinearOrder Singular := LinearOrder.lift' (fun a ↦ a.1.person) (by decide)
 
 /-- The marking of 'we', the columns of the book's Table 4.2, opposes minimal to augmented
 inclusive, or inclusive to exclusive, or has one form. -/

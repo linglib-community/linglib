@@ -4,6 +4,7 @@ public import Mathlib.Order.Cover
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Statistics.CharnavelMateu2015
 public import Linglib.Languages.Romance.Spanish.Clitics
+public import Linglib.Syntax.Category.Pronoun.Reference
 
 /-!
 # Charnavel and Mateu (2015): the clitic logophoric restriction
@@ -128,7 +129,7 @@ which bears no person feature (41), realizes none unless it is read de se. The p
 one the clitic denotes, so a polite clitic with third person agreement is a discourse
 participant. -/
 def center (c : PersonalPronoun) : Option LogophoricCenter :=
-  if ∃ p ∈ c.referentialPerson, p.IsSAP then some .discourseParticipant
+  if ∃ p ∈ c.referentialPerson, p ≠ .third then some .discourseParticipant
   else if .dat ∈ c.cases then some .empathyLocus else none
 
 /-- A Spanish dative and accusative clitic are licit together exactly when the accusative is third
@@ -150,7 +151,7 @@ theorem licit_dative_attitudeHolder_iff :
 /-- The dative clitics a condition's coding admits, first- or second-person ones for `1/2` and
 third-person ones for `3` and `bound 3`. -/
 def DativePerson.Admits : DativePerson → PersonalPronoun → Prop
-  | .participant, d => ∃ p ∈ d.person, p.IsSAP
+  | .participant, d => ∃ p ∈ d.person, p ≠ .third
   | .third, d | .boundThird, d => d.person = some .third
 
 instance : (v : DativePerson) → DecidablePred v.Admits

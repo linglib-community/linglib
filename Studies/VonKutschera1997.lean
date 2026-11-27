@@ -1,6 +1,5 @@
 module
 
-public import Mathlib.Basic.Countable.Defs
 public import Studies.Thomason1984
 public import Linglib.Logic.Modal.Definability
 
@@ -12,14 +11,16 @@ he credits to Di Maio and Zanardo. The
 Hilbert calculus `TW` adds to linear tense logic S5 modalities for historical necessity and for
 truth in all worlds, their interaction with the tenses, and Gabbay's irreflexivity rule, whose
 soundness rests on [a formula's depending only on the atoms it mentions](##sat_iff_of_agree). The
-calculus is [sound](##soundness) and [complete](##completeness) for models with an arbitrary
-valuation. His frames are Thomason's, but his models drop Thomason's condition on assignments, so
+calculus is [sound](##soundness) for models with an arbitrary valuation. His frames are Thomason's,
+but his models drop Thomason's condition on assignments, so
 [an atom's historical necessity is valid for Thomason and unprovable in `TW`](##not_provable_imp_N).
 
 ## TODO
 
-* `completeness`: von Kutschera's proof builds, from the maximal consistent sets of `TW`, a
-  separated model refuting an unprovable sentence, using Gabbay's irreflexivity lemma.
+* Completeness, the paper's main theorem: every formula true at every point of every model is
+  provable in `TW`. Von Kutschera's proof builds, from the maximal consistent sets of `TW`, a
+  separated model refuting an unprovable sentence, using Gabbay's irreflexivity lemma. The
+  language needs infinitely many atoms for the irreflexivity rule to have a fresh one.
 * The equivalence of T × W and separated models (Theorem 1.1, p. 243), and the alternative
   axiomatization with an *actually* operator sketched at the end of the paper.
 
@@ -212,13 +213,6 @@ theorem soundness {a : Formula Atom} (h : Provable a) : Valid.{u, v} a := by
         simp only [V', ite_eq_right hpq]
       exact (sat_iff_of_agree F V V' a hagree t w).mpr
         ((TWFrame.sat_imp F V' _ _ t w).1 (ih V' t w) hbox)
-
-/-- `TW` is complete for its models, the main theorem. The language needs infinitely many atoms for
-the irreflexivity rule to have a fresh one. -/
-theorem completeness [Countable Atom] [Infinite Atom] {a : Formula Atom} (h : Valid.{0, 0} a) :
-    Provable a := by
-  -- TODO: the canonical separated model of the maximal consistent sets of `TW` (see `## TODO`).
-  sorry
 
 /-- An atom's implying its own historical necessity is valid over Thomason's assignments, by his
 (6), and is not provable in `TW`, whose models allow any valuation. -/

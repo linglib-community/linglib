@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Reference
 
 /-!
 # Yorùbá pronouns

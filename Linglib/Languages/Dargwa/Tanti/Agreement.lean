@@ -4,7 +4,7 @@ public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Feature.Gender.Basic
-public import Linglib.Syntax.Feature.Person.Class
+public import Linglib.Syntax.Feature.Person.Scale
 
 /-!
 # Tanti Dargwa agreement
@@ -49,7 +49,7 @@ and *-u* otherwise, so it marks exactly the clauses in which the verb agrees wit
 ## Implementation notes
 
 * A transitive clause is a `Clause.Scenario` of the persons of A and P. The thematic suffix is
-  read off its kind on the binary scale `Person.Class`, as Sumbatova states it; the
+  read off its kind on the binary scale `Person.Scale`, as Sumbatova states it; the
   controller is the two-hierarchy rule as she states it.
 * The masculine marker ‹w› is dropped or realized *-j* in some positions. Some nouns for liquids
   and granular substances take plural agreement, and a few nouns contain a gender marker of
@@ -106,10 +106,10 @@ def Value.sgMarker : Value → Marker
 
 /-- A plural controller takes ‹d› when it is non-human or includes the speaker or the addressee,
 and ‹b› when it is human and does not. -/
-def Value.plMarker : Value → Person.Class → Marker
+def Value.plMarker : Value → Person.Scale → Marker
   | .neut, _ => .d
-  | _, .participant => .d
-  | _, .nonParticipant => .b
+  | _, .locuphoric => .d
+  | _, .aliophoric => .b
 
 /-- The singular markers distinguish the three genders. -/
 theorem Value.sgMarker_injective : Function.Injective Value.sgMarker := by decide
@@ -118,8 +118,8 @@ theorem Value.sgMarker_injective : Function.Injective Value.sgMarker := by decid
 theorem Value.plMarker_masc_eq_fem : Value.masc.plMarker = Value.fem.plMarker := by
   funext c; cases c <;> rfl
 
-theorem Value.plMarker_eq_d_iff {g : Value} {c : Person.Class} :
-    g.plMarker c = .d ↔ g = .neut ∨ c = .participant := by
+theorem Value.plMarker_eq_d_iff {g : Value} {c : Person.Scale} :
+    g.plMarker c = .d ↔ g = .neut ∨ c = .locuphoric := by
   cases g <;> cases c <;> decide
 
 end Gender
@@ -156,7 +156,7 @@ def PersonSet.paradigm : PersonSet → Paradigm (List Morph)
 /-- In every set, a cell is unmarked exactly when it is not a speech-act participant's. -/
 theorem PersonSet.realize_eq_nil_iff :
     ∀ s : PersonSet, ∀ c ∈ Bundle.personNumberCells,
-      s.paradigm.realize c = some [] ↔ ¬ c.IsSAP := by
+      s.paradigm.realize c = some [] ↔ c.person = ↑Person.third := by
   decide
 
 /-- The past tense clitic bears no person. -/
@@ -168,7 +168,8 @@ theorem clitic_second_singular :
 /-- A paradigm has the Dargic configuration when two speech-act participant cells share a
 marker exactly when both or neither is the second person singular. -/
 def IsDargic (p : Paradigm (List Morph)) : Prop :=
-  ∀ c ∈ Bundle.personNumberCells, ∀ c' ∈ Bundle.personNumberCells, c.IsSAP → c'.IsSAP →
+  ∀ c ∈ Bundle.personNumberCells, ∀ c' ∈ Bundle.personNumberCells,
+    c.person ≠ ↑Person.third → c'.person ≠ ↑Person.third →
     (p.realize c = p.realize c' ↔
       (c = .personNumber .second .singular ↔ c' = .personNumber .second .singular))
 
@@ -188,22 +189,22 @@ theorem not_isDargic_irrealis : ¬ IsDargic PersonSet.irrealis.paradigm := by de
 absolutive > ergative. It is A when A alone is a speech-act participant and the absolutive P
 otherwise. -/
 def personController (s : Scenario Person) : ArgumentRole :=
-  if s.high.IsSAP ∧ ¬ s.low.IsSAP then .A else .P
+  if s.high ≠ .third ∧ s.low = .third then .A else .P
 
 /-- The thematic suffix of a transitive verb is *-i* when A is higher than P on the person
 hierarchy 1, 2 > 3, and *-u* when the two are equal or P is higher. -/
 def thematic (s : Scenario Person) : Morph :=
-  if (s.map Person.toClass).kind = .downstream then .suff "i" else .suff "u"
+  if (s.map Person.toScale).kind = .downstream then .suff "i" else .suff "u"
 
 /-- An intransitive verb takes the thematic suffix *-u* with a speech-act participant, and *-ar*
 or *-an* otherwise. -/
 def intransitiveThematic (p : Person) : List Morph :=
-  if p.IsSAP then [.suff "u"] else [.suff "ar", .suff "an"]
+  if p ≠ .third then [.suff "u"] else [.suff "ar", .suff "an"]
 
 /-- The thematic suffix is *-i* exactly when A controls person agreement. -/
 theorem thematic_eq_i_iff (s : Scenario Person) :
     thematic s = .suff "i" ↔ personController s = .A := by
-  simp only [thematic, personController, Person.kind_map_toClass_eq_downstream_iff]
+  simp only [thematic, personController, Person.kind_map_toScale_eq_downstream_iff]
   split_ifs <;> decide
 
 /-- A transitive verb whose A and P are the given person–number cells takes the clitic of the

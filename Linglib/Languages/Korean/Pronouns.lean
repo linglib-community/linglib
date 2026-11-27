@@ -170,17 +170,19 @@ def personal : Finset PersonalPronoun :=
   {na, jeo, uri, jeohui, neo, jane, dangsin, jagi, taek, neohui, janedeul, dangsindeul, taekdeul,
     geu, geunyeo, gyae, geudeul}
 
-/-- Every category has a pronoun. -/
-theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+/-- Every person and number has a pronoun. -/
+theorem forms_nonempty :
+    ∀ c ∈ Agreement.Bundle.personNumberCells, (PersonalPronoun.forms personal c).Nonempty := by
   decide +kernel
 
 /-- Every grade distinguishes one addressee from several. -/
 theorem addresseeSg_ne_addresseePl (g : Grade) : addresseeSg g ≠ addresseePl g := by
   cases g <;> decide
 
-/-- The pronouns of address are ordinary: each denotes what its person and number realize. -/
-theorem isOrdinary_addressee (g : Grade) :
-    (addresseeSg g).IsOrdinary ∧ (addresseePl g).IsOrdinary := by
+/-- The pronouns of address are ordinary: each is used for its own person and number. -/
+theorem cells_addressee (g : Grade) :
+    (addresseeSg g).cells = {(addresseeSg g).cell} ∧
+      (addresseePl g).cells = {(addresseePl g).cell} := by
   cases g <;> decide
 
 /-- The polite speech-style particle *-yo*, of informal discourse. -/

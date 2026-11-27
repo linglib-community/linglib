@@ -39,7 +39,7 @@ as a plural, and the newer plural *zuek* adds a further plural marker to the for
 
 ## Main results
 
-* `Basque.hasPersonPrefix_iff_isSAP`: the absolutive prefixes are those of the first and second
+* `Basque.hasPersonPrefix_iff_person_ne_third`: the absolutive prefixes are those of the first and second
   persons.
 * `Basque.dative_eq_ergative`: the dative and ergative markers of the first and second persons
   coincide.
@@ -120,8 +120,8 @@ def HasPersonPrefix (c : Bundle) : Prop := (absolutive.realize c).isSome
 instance : DecidablePred HasPersonPrefix := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
 /-- The absolutive prefixes are those of the first and second persons. -/
-theorem hasPersonPrefix_iff_isSAP :
-    ∀ c ∈ Bundle.personNumberCells, HasPersonPrefix c ↔ c.IsSAP := by
+theorem hasPersonPrefix_iff_person_ne_third :
+    ∀ c ∈ Bundle.personNumberCells, HasPersonPrefix c ↔ c.person ≠ ↑Person.third := by
   decide
 
 /-- Every personal pronoun controls an absolutive prefix. -/
@@ -130,7 +130,7 @@ theorem hasPersonPrefix_agreement : ∀ p ∈ Pronouns.personal, HasPersonPrefix
 
 /-- The demonstratives, which serve as the third person pronouns, control none. -/
 theorem not_hasPersonPrefix_agreement :
-    ∀ d ∈ Pronouns.demonstratives, ¬ HasPersonPrefix d.agreement := by
+    ∀ d ∈ Pronouns.demonstratives, ¬ HasPersonPrefix d.toWord.agreement := by
   decide
 
 /-- The absolutive prefix of *hi* is that of the second person singular, whatever the gender of
@@ -144,11 +144,10 @@ theorem ergative_second_singular : ergative.realize (.personNumber .second .sing
   decide
 
 /-- The dative and ergative markers of the first and second persons coincide. -/
-theorem dative_eq_ergative {c : Bundle} (h : c.IsSAP) : dative.realize c = ergative.realize c := by
+theorem dative_eq_ergative {c : Bundle} (h : c.person ≠ ↑Person.third) :
+    dative.realize c = ergative.realize c := by
   have h3 (n : Number) : ¬ Bundle.personNumber .third n ≤ c := fun hle ↦ by
-    obtain ⟨s, hs⟩ := (OrderDual.ofDual (c .person)).2
-    have hs' : s ∈ Person.third.participantSets := (Bundle.personNumber_le_iff.1 hle).1 hs
-    exact (h s hs).ne_empty (by simpa [Person.participantSets] using hs')
+    exact h (Bundle.personNumber_le_iff.1 hle).1
   rw [dative, ergative, Paradigm.realize_append_of_forall_not_le (by simp [h3]),
     Paradigm.realize_append_of_forall_not_le (by simp [h3])]
 

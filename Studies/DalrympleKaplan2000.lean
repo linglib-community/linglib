@@ -3,7 +3,8 @@ module
 public import Linglib.Core.Order.Flat.Finset
 public import Linglib.Data.Examples.DalrympleKaplan2000
 public import Linglib.Syntax.Agreement.ResolutionRule
-public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Person.Decomposition
+public import Linglib.Syntax.Feature.Person.Specification
 public import Linglib.Languages.Chichewa.Gender
 public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Languages.German.Pronouns
@@ -282,7 +283,7 @@ theorem jose_y_tu :
 -- fn. 12
 theorem markers_subset_iff_prominence : ∀ s t : PersonSet,
     markers ↑(Person.ofParticipants t) ⊆ markers ↑(Person.ofParticipants s) ↔
-      (Person.ofParticipants t).prominence ≤ (Person.ofParticipants s).prominence := by
+      Person.ofParticipants t ≤ Person.ofParticipants s := by
   decide
 
 /-- The dual assignment, each marker set's complement, its markers read as absences ((102)). -/

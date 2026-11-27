@@ -20,8 +20,8 @@ assigned bears an unvalued case slot.
 
 Over a flat slot (`Core/Order/Flat.lean`), a slot is `absent`, `unvalued`, or `valued v`, with
 `absent < unvalued < valued v` and distinct values incomparable. Over an order with more
-structure, such as that of person specifications, a slot that holds some information can come
-to hold more.
+structure, such as that of the person slot, a person with a clusivity, a slot that holds some
+information can come to hold more.
 
 Forgetting whether the dimension is borne is `WithBot.unbotD ⊥`, which sends the absent and the
 unvalued slot to `⊥`. Its left adjoint `FeatureSlot.ofSlot` sends `⊥` to the absent slot

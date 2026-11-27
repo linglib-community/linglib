@@ -6,6 +6,7 @@ public import Linglib.Syntax.Category.Pronoun.Reciprocal
 public import Linglib.Syntax.Category.Pronoun.Reflexive
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 public import Linglib.Syntax.Category.Pronoun.Demonstrative
+public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Japanese pronouns
@@ -128,8 +129,9 @@ def addresseePl : Grade → PersonalPronoun
 def personal : Finset PersonalPronoun :=
   {watashi, boku, ore, watashitachi, kimi, anata, kimitachi, anatatachi, kare, kanojo, karera}
 
-/-- Every category has a pronoun. -/
-theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+/-- Every person and number has a pronoun. -/
+theorem forms_nonempty :
+    ∀ c ∈ Agreement.Bundle.personNumberCells, (PersonalPronoun.forms personal c).Nonempty := by
   decide +kernel
 
 /-- Every grade distinguishes one addressee from several. -/

@@ -243,10 +243,10 @@ theorem principleA_and_principleB_iff (hirr : ∀ x, ¬ LocallyOCommands I x x) 
 /-! ### Agreement -/
 
 /-- The person a sort specifies: that of a person species, and nothing above the species. -/
-def Srt.toPerson : Srt → Person.Specification
-  | .first => .first
-  | .second => .second
-  | .third => .third
+def Srt.toPerson : Srt → Flat Person
+  | .first => ↑Person.first
+  | .second => ↑Person.second
+  | .third => ↑Person.third
   | _ => ⊥
 
 /-- The number a sort specifies. -/
@@ -273,7 +273,7 @@ variable (I) in
 /-- The agreement bundle of a nominal object: the person, number and gender that the sorts of its
 index's `PER`, `NUM` and `GEND` values specify. -/
 def agreement (x : U) : Agreement.Bundle
-  | .person => ((I.A .IDX x).bind (I.A .PER)).elim ⊥ fun v ↦ (I.S v).toPerson
+  | .person => (((I.A .IDX x).bind (I.A .PER)).elim ⊥ fun v ↦ (I.S v).toPerson, ⊥)
   | .number => ((I.A .IDX x).bind (I.A .NUM)).elim ⊥ fun v ↦ (I.S v).toNumber
   | .gender => ((I.A .IDX x).bind (I.A .GEND)).elim ⊥ fun v ↦ (I.S v).toGender
   | .case | .definiteness => ⊥
@@ -316,7 +316,7 @@ theorem agreement_le_of_simulatedBy {V : Type*} {J : Interpretation sig V} {x : 
     OrderDual.toDual_le_toDual.1 (hO q hq)
   intro d
   cases d
-  · exact elim_le_elim_of_simulatedBy Srt.antitone_toPerson hS hA .PER
+  · exact ⟨elim_le_elim_of_simulatedBy Srt.antitone_toPerson hS hA .PER, le_rfl⟩
   · exact elim_le_elim_of_simulatedBy Srt.antitone_toNumber hS hA .NUM
   · exact elim_le_elim_of_simulatedBy Srt.antitone_toGender hS hA .GEND
   · exact le_rfl

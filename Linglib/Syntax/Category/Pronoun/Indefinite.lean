@@ -7,7 +7,6 @@ module
 
 public import Linglib.Morphology.Inflection.Paradigm.Basic
 public import Linglib.Syntax.Category.Pronoun.Interrogative
-public import Linglib.Syntax.Binding.Word
 
 /-!
 # Indefinite pronouns
@@ -25,15 +24,13 @@ analysis of its distribution, which studies pair with the series.
   builds on a proform.
 * `ProForm.IsQuexistential`: the proform is an interrogative and an indefinite of the language
   under one form.
-* `IndefinitePronoun.toWord`: its token, of UD pronoun type `Ind`, an R-expression where nominal
-  (`IndefinitePronoun.bindingClassOf_toWord`).
+* `IndefinitePronoun.toWord`: its token, of UD pronoun type `Ind`.
 * `IndefinitePronoun.Series`: the members of a series, with the name it is cited by.
 * `IndefinitePronoun.Series.forms`: the series as a paradigm over the ontological categories.
 
 ## References
 
 * [haspelmath-1997]
-* [chomsky-1981]
 * [hengeveld-iatridou-roelofsen-2023]
 -/
 
@@ -63,13 +60,6 @@ abbrev ofInterrogative (mark : String → String) (q : InterrogativePronoun) : I
 /-- An indefinite's token is of UD pronoun type `Ind`. -/
 def toWord (p : IndefinitePronoun) : Morphology.Word := p.toProForm.toWord .Ind
 
-/-- An indefinite is a quantifier expression, so an R-expression where its word class is nominal,
-as *someone* is and *somewhere* is not, and is not a pronominal ([chomsky-1981]). -/
-@[simp]
-theorem bindingClassOf_toWord (p : IndefinitePronoun) :
-    Binding.bindingClassOf p.toWord =
-      if Binding.IsNominal p.cat then some .rExpression else none :=
-  p.toProForm.bindingClassOf_toWord (.inr (.inr (.inl rfl)))
 
 /-- A proform is a quexistential of a language when it is among its interrogatives and among its
 indefinites with no difference in spell-out, as Dutch *wat* is 'what' and 'something'

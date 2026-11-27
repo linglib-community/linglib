@@ -47,7 +47,7 @@ def pastSuffix : Paradigm Morph :=
 
 theorem pastSuffix_gender_eq_bot_iff :
     ∀ c ∈ pastSuffix.cells,
-      c .gender = ⊥ ↔ c .person = ↑Person.first ∨ c = .personNumber .second .dual := by
+      c .gender = ⊥ ↔ c.person = ↑Person.first ∨ c = .personNumber .second .dual := by
   decide
 
 end Arabic.ModernStandard

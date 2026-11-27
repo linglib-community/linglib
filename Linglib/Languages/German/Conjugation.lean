@@ -3,7 +3,7 @@ module
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Syntax.Feature.Number.Basic
-public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 
 /-!
 # German conjugation

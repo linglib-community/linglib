@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 public import Linglib.Languages.Mayan.Extraction
 
 /-!
@@ -88,19 +88,19 @@ def suffixes (f : Mayan.VerbForm) : List Morphology.Morph :=
 whose third-person subject is extracted, and the regular transitive form otherwise. -/
 def verbForm (finite : Bool) (extracted : Option ArgumentRole) (agent : Person) :
     Mayan.VerbForm :=
-  if finite = false ∨ (extracted = some .A ∧ ¬ agent.IsSAP) then .agentFocus else .transitive
+  if finite = false ∨ (extracted = some .A ∧ agent = .third) then .agentFocus else .transitive
 
 theorem verbForm_eq_agentFocus_iff (finite : Bool) (extracted : Option ArgumentRole)
     (agent : Person) :
     verbForm finite extracted agent = .agentFocus ↔
-      finite = false ∨ (extracted = some .A ∧ ¬ agent.IsSAP) := by
+      finite = false ∨ (extracted = some .A ∧ agent = .third) := by
   unfold verbForm
   split_ifs with h <;> simp [h]
 
 theorem verbForm_false (extracted : Option ArgumentRole) (agent : Person) :
     verbForm false extracted agent = .agentFocus := rfl
 
-theorem verbForm_true_of_isSAP {agent : Person} (h : agent.IsSAP)
+theorem verbForm_true_of_ne_third {agent : Person} (h : agent ≠ .third)
     (extracted : Option ArgumentRole) : verbForm true extracted agent = .transitive := by
   simp [verbForm, h]
 
@@ -125,14 +125,14 @@ def realize (agent : Person) : Mayan.ExtractionSite → Option (Finset (Reflex M
 subject. -/
 theorem agentFocus_mem_realize_iff (agent : Person) (s : Mayan.ExtractionSite) :
     (∃ m ∈ realize agent s, Reflex.morpheme .verb (suffixes .agentFocus) ∈ m) ↔
-      s = .argument .A ∧ ¬ agent.IsSAP := by
+      s = .argument .A ∧ agent = .third := by
   decide +revert
 
-theorem eq_empty_of_mem_realize_of_isSAP {agent : Person} (h : agent.IsSAP)
+theorem eq_empty_of_mem_realize_of_ne_third {agent : Person} (h : agent ≠ .third)
     {s : Mayan.ExtractionSite} {m : Finset (Reflex Mayan.Host)} (hm : m ∈ realize agent s) :
     m = ∅ := by
   rcases s with (_ | _ | _ | _ | _) | (_ | _ | _ | _ | _ | _ | _) <;>
-    simp_all [realize, verbForm_true_of_isSAP h]
+    simp_all [realize, verbForm_true_of_ne_third h]
 
 end Extraction
 

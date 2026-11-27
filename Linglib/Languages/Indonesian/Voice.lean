@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Voice.System
-public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 
 /-!
 # Indonesian voice

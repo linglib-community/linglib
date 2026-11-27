@@ -2,6 +2,7 @@ module
 
 public import Linglib.Languages.Tagalog.Case
 public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Reference
 public import Linglib.Syntax.Feature.Person.Configuration
 
 /-!
