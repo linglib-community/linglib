@@ -124,7 +124,6 @@ control only. -/
 def convincere : Verb where
   morphs := [.root "convincere"]
   valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
-  opaqueContext := true
   clauseTypers := [di, a]
 
 /-- *pensare* 'think' takes an infinitive with *di* or with *a*, with the same difference in
@@ -132,7 +131,6 @@ meaning as *convincere*. -/
 def pensare : Verb where
   morphs := [.root "pensare"]
   valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
-  opaqueContext := true
   clauseTypers := [di, a]
 
 /-- *volere* 'want' takes a *che* clause in the subjunctive, the indicative being marginal for
@@ -143,7 +141,6 @@ def volere : Verb where
   valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
   voices := [(passive ArgumentFrame.infinitival, .excluded)]
-  opaqueContext := true
   attitude := some (.preferential .positive)
   clauseTypers := [che]
 
@@ -152,7 +149,6 @@ some speakers. -/
 def sperare : Verb where
   morphs := [.root "sperare"]
   valency := .ofFrame ArgumentFrame.subjunctiveClause
-  opaqueContext := true
   attitude := some (.preferential .positive)
   clauseTypers := [che]
 
@@ -161,7 +157,6 @@ in either mood; the periphrasis *avere intenzione di* takes the infinitive with 
 def intendere : Verb where
   morphs := [.root "intendere"]
   valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- The causative *fare* 'make' takes a bare infinitive under object control, and a finite clause

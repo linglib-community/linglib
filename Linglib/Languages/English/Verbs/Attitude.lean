@@ -87,7 +87,7 @@ def notice : Verb where
 
 /-! ### Doxastic Attitude -/
 
-/-- "believe" — doxastic attitude verb, creates opaque context. It is gradable, measuring the
+/-- "believe" — doxastic attitude verb. It is gradable, measuring the
 holder's degree of certainty in the complement ([hawthorne-rothschild-spectre-2016];
 [koev-2026] (3), (7)–(10)), and takes the maximizers *fully*, *completely* and *entirely* ((12)).
 The language file enters it on the confidence scale of *certain*, *sure* and *confident*. Besides a
@@ -101,7 +101,6 @@ def believe : Verb where
     [(.finiteClause, [some 0, some 1]), (toInfinitive.withObject, [some 0, none, some 1])]
     (controls := [none, some (.complement 0)])
   gradability := some { dimension := .confidence }
-  opaqueContext := true
   attitude := some (.doxastic .doxastic)
 
 /-- "think" — doxastic attitude verb -/
@@ -110,7 +109,6 @@ def think : Verb where
   levin := some Levin1993.Index.think
   past := "thought"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.doxastic .doxastic)
 
 /-- "doubt" — doxastic attitude verb, the apparent antonym of *believe*, measuring certainty
@@ -121,7 +119,6 @@ def doubt : Verb where
   levin := none
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
   gradability := some { dimension := .confidence, polarity := .negative }
-  opaqueContext := true
   attitude := some (.doxastic .doxastic)
 
 /-! ### Preferential Attitude -/
@@ -131,7 +128,6 @@ def want : Verb where
   morphs := [.root "want"]
   levin := some Levin1993.Index.want
   valency := .ofFrame toInfinitive (controller := some 0)
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- *intend* reports an intention ([grano-2024]). Its subject controls its infinitive (*intend
@@ -143,7 +139,6 @@ def intend : Verb where
   morphs := [.root "intend"]
   levin := some Levin1993.Index.intend
   valency := .ofFrame toInfinitive (controller := some 0)
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- *decide* is a hybrid of belief and intention ([grano-2024], §6.1). With a nonfinite
@@ -156,7 +151,6 @@ def decide_ : Verb where
   levin := none
   valency := .ofFrames [toInfinitive, ArgumentFrame.finiteClause]
     (controllers := [some 0])
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- *hope* is a preferential attitude verb that takes a finite clause (*hope that John leaves*)
@@ -166,7 +160,6 @@ def hope : Verb where
   levin := some Levin1993.Index.hope
   valency := .ofFrames [ArgumentFrame.finiteClause, toInfinitive]
     (controllers := [none, some 0])
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- *pray* is a preferential attitude verb that permits future temporal orientation. Like
@@ -178,7 +171,6 @@ def pray : Verb where
   levin := some Levin1993.Index.pray
   valency := .ofFrames [ArgumentFrame.finiteClause, toInfinitive]
     (controllers := [none, some 0])
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- "expect" — preferential attitude verb, taking a finite clause, an infinitive its subject
@@ -191,7 +183,6 @@ def expect : Verb where
     [(.finiteClause, [some 0, some 1]), (toInfinitive, [some 0, some 1]),
       (toInfinitive.withObject, [some 0, none, some 1])]
     (controls := [none, some .external, some (.complement 0)])
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- "wish" — preferential attitude verb -/
@@ -199,7 +190,6 @@ def wish : Verb where
   morphs := [.root "wish"]
   levin := some Levin1993.Index.wish
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- "fear" — a preferential attitude verb that takes questions. -/
@@ -207,7 +197,6 @@ def fear : Verb where
   morphs := [.root "fear"]
   levin := some Levin1993.Index.fear
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .negative)
 
 /-- "dread" — a preferential attitude verb that takes questions. -/
@@ -215,7 +204,6 @@ def dread : Verb where
   morphs := [.root "dread"]
   levin := some Levin1993.Index.dread
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .negative)
 
 /-- "worry" — preferential attitude verb -/
@@ -225,7 +213,6 @@ def worry : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   -- no passive with a content clause, extraposed or not ([huddleston-pullum-2002] ch. 11 §4.2)
   voices := [(passive ArgumentFrame.finiteClause, .excluded)]
-  opaqueContext := true
   attitude := some (.preferential .negative)
 
 /-! ### Clause-Embedding Predicates -/
@@ -294,7 +281,6 @@ def pretend : Verb where
   morphs := [.root "pretend"]
   levin := none
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
 
 /-- "confirm" — evidential verb -/
 def confirm : Verb where
@@ -327,7 +313,6 @@ def wonder : Verb where
   morphs := [.root "wonder"]
   levin := some Levin1993.Index.wonder
   valency := .ofFrame ArgumentFrame.question
-  opaqueContext := true
 
 /-- "ask" — embeds questions -/
 def ask : Verb where
