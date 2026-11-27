@@ -321,7 +321,7 @@ def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
 /-- A directional phrase gives an intransitive verb that selects it *zijn*, as in *De jongen is
 naar Groningen gewandeld* (§2.2, (274b)). -/
 theorem perfect_withPath_intransitive {v : Verb} {p : Locative}
-    (hv : v.TakesSpatial) (hp : p.mode.direction ≠ .place) :
+    (hv : v.valency.TakesSpatial) (hp : p.mode.direction ≠ .place) :
     perfectAuxiliary (v.withPath p) .intransitive = .be := by
   simp [perfectAuxiliary, Verb.withPath, _root_.Verb.withPath, hv, hp,
     ArgumentFrame.intransitive, ArgumentFrame.IsIntransitive]
@@ -396,7 +396,7 @@ theorem perfectAuxiliary_mem : ∀ v ∈ inventory, v.perfectAuxiliaries.Nonempt
 theorem form_eq_infinitive : ∀ v ∈ inventory, v.form = v.infinitive := by decide
 
 theorem takesSpatial_of_direction_eq_place :
-    ∀ v ∈ inventory, v.direction = some .place → v.TakesSpatial := by
+    ∀ v ∈ inventory, v.direction = some .place → v.valency.TakesSpatial := by
   decide
 
 /-- *opgebeld* and *uitgevoerd*, with the particle before *ge-*. -/

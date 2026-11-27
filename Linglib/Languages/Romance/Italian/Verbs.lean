@@ -439,7 +439,7 @@ def perfectAuxiliary (v : Verb) (fr : ArgumentFrame)
   else if (∃ d ∈ v.direction, d ≠ .place) ∨ v.phasal = some .continuation ∨
       v.gradability.isSome ∨
       (∃ θ ∈ v.slotProfile? .external, .volition ∉ θ ∧ .causation ∉ θ) ∨
-      v.TakesSpatial ∧ ∃ r ∈ p, r.mode.IsBounded then .be
+      v.valency.TakesSpatial ∧ ∃ r ∈ p, r.mode.IsBounded then .be
   else .have
 
 theorem perfectAuxiliary_mem : ∀ v ∈ allVerbs, v.perfectAuxiliaries.Nonempty →

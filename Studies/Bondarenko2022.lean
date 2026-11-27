@@ -533,7 +533,7 @@ theorem hanaxa_typers :
         ¬ ArgumentFrame.finiteClause.Takes (buryat.comp .nominal)) ∧
       (nominalizedFrame.Takes (buryat.comp .nominal) ∧
         ¬ nominalizedFrame.Takes (buryat.comp .verbal)) ∧
-      hanaxa.typers complementizers = [aasha, zha] := by
+      hanaxa.valency.typers complementizers = [aasha, zha] := by
   decide
 
 /-- *hanaxa* is veridical and transparent with a nominalized complement, and neither with a bare

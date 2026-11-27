@@ -216,7 +216,7 @@ def kick : Verb where
 
 /-- The conative *at* of *eat at* marks no value, so *eat* selects no spatial phrase, while the
 *on* of *kick him on the shin* locates the contact on a surface. -/
-example : ¬ eat.TakesSpatial ∧ kick.TakesSpatial := by decide
+example : ¬ eat.valency.TakesSpatial ∧ kick.valency.TakesSpatial := by decide
 
 /-- "aim" — with an *at*-phrase, and transitive with one -/
 def aim : Verb where
