@@ -5,7 +5,7 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Data.Set.Finite.Powerset
 public import Linglib.Core.Order.Minimals
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Defs
 public import Mathlib.Order.SymmDiff
 
 /-!
@@ -23,13 +23,6 @@ alternatives every world of the prejacent lies below a maximal one, so a satisfi
 minimal worlds. A minimal cover is a set of worlds of the prejacent that represents the minimal
 worlds up to having the same true alternatives; the exhaustifiers by innocent exclusion and
 innocent inclusion are computed from one.
-
-An operation on propositions can be applied to the prejacent and to each alternative before
-exhaustifying, or to the exhaustification. The two agree for the pullback along a surjective map
-of worlds and for a product of prejacents whose alternatives cover them. For a map that is not
-surjective the worlds outside its range no longer compete, and a conjunction is the product pulled
-back along the diagonal. Under negation the first entails the second, and they are equal only
-when neither exhaustification removes a world.
 
 ## Main definitions
 
@@ -50,12 +43,6 @@ when neither exhaustification removes a world.
 * `Exhaustification.ofLowerSets_image_union_le_iff`: under the premises that some individuals lack a
   property and others have it, a world is at least as good as another when fewer of the first and
   more of the second have the property in it.
-* `Exhaustification.exhMW_image_preimage`: exhaustifying the pullbacks along a map of worlds is
-  pulling back the exhaustification of the prejacent restricted to the range of the map.
-* `Exhaustification.exhMW_image2_prod`: exhaustification of a product is the product of the
-  exhaustifications.
-* `Exhaustification.exhMW_image_compl_eq_iff`: exhaustification commutes with negation only when
-  it is vacuous on both sides.
 * `Exhaustification.image_notMem_union_image_mem_symmDiff`: those premises are unchanged when the
   property is flipped within a set `N` and the two sets of individuals are exchanged on `N`.
 
@@ -261,104 +248,5 @@ theorem image_notMem_union_image_mem_symmDiff (N : Set E) :
       · exact .inr ⟨x, .inl ⟨hn, hx⟩, by simp only [hout hx]⟩
 
 end Property
-
-/-! ### Operations on the prejacent and the alternatives
-
-An operation on propositions acts on the prejacent and on every alternative. Exhaustifying after
-the operation and operating on the exhaustification agree for the pullback along a surjective map
-of worlds and for products, and differ for negation. -/
-
-section Operations
-
-open Set
-
-variable {W' W₁ W₂ : Type*}
-
-private theorem sep_image_preimage_subset_iff (g : W' → W) (ALT : Set (Set W)) {x y : W'} :
-    {a ∈ (g ⁻¹' ·) '' ALT | x ∈ a} ⊆ {a ∈ (g ⁻¹' ·) '' ALT | y ∈ a} ↔
-      {a ∈ ALT | g x ∈ a} ⊆ {a ∈ ALT | g y ∈ a} :=
-  ((Preorder.ofLowerSets_le_iff_subset _ y x).symm.trans
-    (Preorder.ofLowerSets_image_preimage_le_iff g ALT y x)).trans
-      (Preorder.ofLowerSets_le_iff_subset ALT (g y) (g x))
-
-/-- Exhaustifying after pulling the prejacent and the alternatives back along a map of worlds is
-pulling back the exhaustification of the prejacent restricted to the range of the map. -/
-theorem exhMW_image_preimage (g : W' → W) (ALT : Set (Set W)) (φ : Set W) :
-    exhMW ((g ⁻¹' ·) '' ALT) (g ⁻¹' φ) = g ⁻¹' exhMW ALT (φ ∩ range g) := by
-  ext w
-  refine ⟨fun ⟨hφ, hmin⟩ ↦ ⟨⟨hφ, mem_range_self w⟩, ?_⟩, fun ⟨⟨hφ, _⟩, hmin⟩ ↦
-    ⟨hφ, fun v hv hvu ↦ (sep_image_preimage_subset_iff g ALT).2
-      (hmin ⟨hv, mem_range_self v⟩ ((sep_image_preimage_subset_iff g ALT).1 hvu))⟩⟩
-  rintro _ ⟨hv, v, rfl⟩ hvu
-  exact (sep_image_preimage_subset_iff g ALT).1
-    (hmin (show v ∈ g ⁻¹' φ from hv) ((sep_image_preimage_subset_iff g ALT).2 hvu))
-
-/-- Exhaustification commutes with pulling back along a surjective map of worlds. -/
-theorem exhMW_image_preimage_of_surjective {g : W' → W} (hg : Function.Surjective g)
-    (ALT : Set (Set W)) (φ : Set W) :
-    exhMW ((g ⁻¹' ·) '' ALT) (g ⁻¹' φ) = g ⁻¹' exhMW ALT φ := by
-  rw [exhMW_image_preimage, hg.range_eq, inter_univ]
-
-/-- The pullback of an exhaustification is included in the exhaustification of the pullbacks. -/
-theorem preimage_exhMW_subset (g : W' → W) (ALT : Set (Set W)) (φ : Set W) :
-    g ⁻¹' exhMW ALT φ ⊆ exhMW ((g ⁻¹' ·) '' ALT) (g ⁻¹' φ) :=
-  fun _ ⟨hφ, hmin⟩ ↦ ⟨hφ, fun _ hv hvu ↦ (sep_image_preimage_subset_iff g ALT).2
-    (hmin hv ((sep_image_preimage_subset_iff g ALT).1 hvu))⟩
-
-/-- Exhaustifying a negation against the negated alternatives entails the negation of the
-exhaustification. -/
-theorem exhMW_image_compl_subset (ALT : Set (Set W)) (φ : Set W) :
-    exhMW (compl '' ALT) φᶜ ⊆ (exhMW ALT φ)ᶜ :=
-  fun _ h hw ↦ exhMW_subset h (exhMW_subset hw)
-
-/-- Exhaustification commutes with negation only when it is vacuous on both sides. -/
-theorem exhMW_image_compl_eq_iff (ALT : Set (Set W)) (φ : Set W) :
-    exhMW (compl '' ALT) φᶜ = (exhMW ALT φ)ᶜ ↔
-      exhMW ALT φ = φ ∧ exhMW (compl '' ALT) φᶜ = φᶜ := by
-  refine ⟨fun h ↦ ?_, fun ⟨h₁, h₂⟩ ↦ by rw [h₂, h₁]⟩
-  have e : exhMW (compl '' ALT) φᶜ = φᶜ :=
-    exhMW_subset.antisymm ((compl_subset_compl.2 exhMW_subset).trans h.ge)
-  exact ⟨compl_injective (h.symm.trans e), e⟩
-
-private theorem sep_image2_prod_subset_iff {ALT₁ : Set (Set W₁)} {ALT₂ : Set (Set W₂)}
-    {x y : W₁ × W₂} (h₁ : ∃ a ∈ ALT₁, x.1 ∈ a) (h₂ : ∃ a ∈ ALT₂, x.2 ∈ a) :
-    {a ∈ image2 (· ×ˢ ·) ALT₁ ALT₂ | x ∈ a} ⊆ {a ∈ image2 (· ×ˢ ·) ALT₁ ALT₂ | y ∈ a} ↔
-      {a ∈ ALT₁ | x.1 ∈ a} ⊆ {a ∈ ALT₁ | y.1 ∈ a} ∧
-        {a ∈ ALT₂ | x.2 ∈ a} ⊆ {a ∈ ALT₂ | y.2 ∈ a} :=
-  ((Preorder.ofLowerSets_le_iff_subset _ y x).symm.trans
-    (Preorder.ofLowerSets_image2_prod_le_iff h₁ h₂)).trans
-      ((Preorder.ofLowerSets_le_iff_subset ALT₁ y.1 x.1).and
-        (Preorder.ofLowerSets_le_iff_subset ALT₂ y.2 x.2))
-
-/-- Exhaustification of a product of prejacents against the products of their alternatives is the
-product of the exhaustifications, when the alternatives cover each prejacent. -/
-theorem exhMW_image2_prod {ALT₁ : Set (Set W₁)} {ALT₂ : Set (Set W₂)} {φ₁ : Set W₁} {φ₂ : Set W₂}
-    (h₁ : ∀ w ∈ φ₁, ∃ a ∈ ALT₁, w ∈ a) (h₂ : ∀ w ∈ φ₂, ∃ a ∈ ALT₂, w ∈ a) :
-    exhMW (image2 (· ×ˢ ·) ALT₁ ALT₂) (φ₁ ×ˢ φ₂) = exhMW ALT₁ φ₁ ×ˢ exhMW ALT₂ φ₂ := by
-  ext ⟨w₁, w₂⟩
-  refine ⟨fun ⟨hφ, hmin⟩ ↦ ⟨⟨hφ.1, fun v hv hvu ↦ ?_⟩, hφ.2, fun v hv hvu ↦ ?_⟩,
-    fun ⟨⟨hφ₁, hmin₁⟩, hφ₂, hmin₂⟩ ↦ ⟨⟨hφ₁, hφ₂⟩, fun v hv hvu ↦ ?_⟩⟩
-  · exact ((sep_image2_prod_subset_iff (x := (w₁, w₂)) (y := (v, w₂)) (h₁ _ hφ.1) (h₂ _ hφ.2)).1
-      (hmin (show (v, w₂) ∈ φ₁ ×ˢ φ₂ from ⟨hv, hφ.2⟩)
-        ((sep_image2_prod_subset_iff (x := (v, w₂)) (y := (w₁, w₂)) (h₁ _ hv) (h₂ _ hφ.2)).2
-          ⟨hvu, subset_rfl⟩))).1
-  · exact ((sep_image2_prod_subset_iff (x := (w₁, w₂)) (y := (w₁, v)) (h₁ _ hφ.1) (h₂ _ hφ.2)).1
-      (hmin (show (w₁, v) ∈ φ₁ ×ˢ φ₂ from ⟨hφ.1, hv⟩)
-        ((sep_image2_prod_subset_iff (x := (w₁, v)) (y := (w₁, w₂)) (h₁ _ hφ.1) (h₂ _ hv)).2
-          ⟨subset_rfl, hvu⟩))).2
-  · obtain ⟨hv₁, hv₂⟩ := (sep_image2_prod_subset_iff (h₁ _ hv.1) (h₂ _ hv.2)).1 hvu
-    exact (sep_image2_prod_subset_iff (h₁ _ hφ₁) (h₂ _ hφ₂)).2
-      ⟨hmin₁ hv.1 hv₁, hmin₂ hv.2 hv₂⟩
-
-/-- Exhaustification of a conjunction against the pairwise conjunctions of the alternatives is the
-exhaustification of the product, restricted to the diagonal. -/
-theorem exhMW_image2_inter (ALT₁ ALT₂ : Set (Set W)) (φ₁ φ₂ : Set W) :
-    exhMW (image2 (· ∩ ·) ALT₁ ALT₂) (φ₁ ∩ φ₂) =
-      (fun w ↦ (w, w)) ⁻¹' exhMW (image2 (· ×ˢ ·) ALT₁ ALT₂)
-        (φ₁ ×ˢ φ₂ ∩ range fun w ↦ (w, w)) := by
-  rw [← exhMW_image_preimage, image_image2]
-  rfl
-
-end Operations
 
 end Exhaustification

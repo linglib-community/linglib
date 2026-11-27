@@ -3,13 +3,14 @@ module
 public import Linglib.Core.Order.Filter.AtBotOn
 public import Linglib.Core.Order.Minimals
 public import Linglib.Core.Order.PreorderLattice
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Defs
 public import Mathlib.Order.Concept
 
 /-!
 # The ordering a family of propositions induces
 
 A family `A` of sets orders the points: `a` lies below `b` when every member of `A` containing `b`
-contains `a`. We write this preorder `≤[A]`. With the propositions of an ordering source it is the
+contains `a`. This preorder `≤[A]` is defined in `PremiseOrdering/Defs.lean`. With the propositions of an ordering source it is the
 ordering of premise semantics; with a Hamblin set it ranks worlds by the answers true at them;
 with the negations of alternatives it is the order whose minimal worlds a minimal-world
 exhaustifier keeps.
@@ -30,8 +31,6 @@ bottom filter can be stated through the subfamilies of `A` with a common point.
 
 ## Main definitions
 
-* `Preorder.ofLowerSets`, with notation `≤[A]`, `w ≤[A] z`, `w <[A] z` in the scope
-  `PremiseOrdering`: the ordering a family of sets induces.
 * `Preorder.ofCriterion`: the ordering of a single predicate.
 * `Preorder.lowerSets`: the lower sets of a preorder given as a term.
 * `PremiseOrdering.gi`: the Galois insertion between families of sets and preorders.
@@ -44,21 +43,9 @@ bottom filter can be stated through the subfamilies of `A` with a common point.
 * `Preorder.ofLowerSets_eq_of_subset_lowerSets`: a family of lower sets of a preorder containing
   the principal ones induces that preorder.
 * `Preorder.ofLowerSets_insert`: adding a set meets the ordering with that of the set.
-* `Preorder.ofLowerSets_image_compl_le_iff`, `Preorder.ofLowerSets_image_preimage_le_iff`,
-  `Preorder.ofLowerSets_image2_prod_le_iff`: the orderings of the complements, of the preimages
-  under a map, and of the products of two families.
-* `Preorder.ofLowerSets_eq_lift`: the ordering is the pullback of `⊇` along the map sending a
-  point to the members of `A` containing it.
 * `Preorder.minimals_ofLowerSets_eq`: the minimal points are those in every member of `A`, when
   some point is.
 * `Filter.mem_atBotOn_satisfied_iff`: the bottom filter in terms of jointly satisfied criteria.
-
-## Implementation notes
-
-`Preorder.ofLowerSets` is defined by its unfolded condition `∀ s ∈ A, b ∈ s → a ∈ s` and not as
-`Preorder.lift` along the map `fun a ↦ {s ∈ A | a ∈ s}`, so that the order of an inserted set
-unfolds to a conjunction and membership in `A` is not repeated on both sides. The two agree by
-`Preorder.ofLowerSets_eq_lift`.
 
 ## TODO
 
@@ -66,6 +53,8 @@ unfolds to a conjunction and membership in `A` is not repeated on both sides. Th
   under arbitrary intersections and arbitrary unions, so that the closure operator of
   `PremiseOrdering.gi` adds exactly these. The expressible propositions
   of `Studies/Chemla2011.lean` are a case of it.
+* The family of preimages of the members of `A` under a map generates the pullback of `≤[A]`
+  along it.
 * Adding a set to a family is an operation on orderings, by `Preorder.ofLowerSets_insert`.
   Removing one is not: for independent `p` and `q`, the families `{p, q, p ∩ q}` and `{p, q}`
   generate the same ordering, and `{q, p ∩ q}` and `{q}` do not. Characterize the operations on
@@ -82,88 +71,11 @@ unfolds to a conjunction and membership in `A` is not repeated on both sides. Th
 
 @[expose] public section
 
-namespace Preorder
-
-variable {α : Type*}
-
-/-- The ordering a family `A` of sets induces ranks `a` below `b` when every member of `A`
-containing `b` contains `a`. -/
-@[reducible] def ofLowerSets (A : Set (Set α)) : Preorder α where
-  le a b := ∀ s ∈ A, b ∈ s → a ∈ s
-  le_refl _ _ _ h := h
-  le_trans _ _ _ hab hbc s hs h := hab s hs (hbc s hs h)
-
-end Preorder
-
-/-- `≤[A]` is the ordering a family `A` of propositions induces on the worlds, ranking `w` below
-`z` when every proposition of `A` true at `z` is true at `w`. -/
-scoped[PremiseOrdering] notation "≤[" A "]" => Preorder.ofLowerSets A
-
-/-- `w ≤[A] z` says that `w` is at least as good as `z` under the premise set `A`, verifying every
-premise of `A` that `z` verifies. -/
-scoped[PremiseOrdering] notation:50 w " ≤[" A "] " z =>
-  @LE.le _ (@Preorder.toLE _ (Preorder.ofLowerSets A)) w z
-
-/-- `w <[A] z` says that `w` is strictly better than `z` under the premise set `A`. -/
-scoped[PremiseOrdering] notation:50 w " <[" A "] " z =>
-  @LT.lt _ (@Preorder.toLT _ (Preorder.ofLowerSets A)) w z
-
 open scoped PremiseOrdering
 
 namespace Preorder
 
 variable {α : Type*} {A B : Set (Set α)} {a b : α}
-
-theorem ofLowerSets_le_iff (A : Set (Set α)) (a b : α) :
-    (a ≤[A] b) ↔ ∀ s ∈ A, b ∈ s → a ∈ s :=
-  Iff.rfl
-
-theorem ofLowerSets_lt_iff (A : Set (Set α)) (a b : α) :
-    (a <[A] b) ↔ (a ≤[A] b) ∧ ¬ (b ≤[A] a) :=
-  Iff.rfl
-
-theorem ofLowerSets_le_iff_subset (A : Set (Set α)) (a b : α) :
-    (a ≤[A] b) ↔ {s ∈ A | b ∈ s} ⊆ {s ∈ A | a ∈ s} :=
-  ⟨fun h _ hs ↦ ⟨hs.1, h _ hs.1 hs.2⟩, fun h _ hs hb ↦ (h ⟨hs, hb⟩).2⟩
-
-/-- A family indexed by another type induces the ordering of its image. -/
-theorem ofLowerSets_image_le_iff {ι : Type*} (f : ι → Set α) (I : Set ι) (a b : α) :
-    (a ≤[f '' I] b) ↔ ∀ i ∈ I, b ∈ f i → a ∈ f i :=
-  Set.forall_mem_image
-
-/-- The complements of a family induce the reverse ordering. -/
-theorem ofLowerSets_image_compl_le_iff (A : Set (Set α)) (a b : α) :
-    (a ≤[compl '' A] b) ↔ (b ≤[A] a) := by
-  simp only [ofLowerSets_le_iff, Set.forall_mem_image, Set.mem_compl_iff, not_imp_not]
-
-/-- The preimages of a family under a map induce the pullback of its ordering. -/
-theorem ofLowerSets_image_preimage_le_iff {β : Type*} (g : β → α) (A : Set (Set α)) (x y : β) :
-    (x ≤[(g ⁻¹' ·) '' A] y) ↔ ((g x) ≤[A] (g y)) :=
-  Set.forall_mem_image
-
-/-- The products of the members of two families induce the product ordering above a point each of
-whose components lies in some member. -/
-theorem ofLowerSets_image2_prod_le_iff {β : Type*} {A : Set (Set α)} {B : Set (Set β)}
-    {x y : α × β} (h₁ : ∃ s ∈ A, y.1 ∈ s) (h₂ : ∃ t ∈ B, y.2 ∈ t) :
-    (x ≤[Set.image2 (· ×ˢ ·) A B] y) ↔ (x.1 ≤[A] y.1) ∧ (x.2 ≤[B] y.2) := by
-  obtain ⟨s₀, hs₀, hy₁⟩ := h₁
-  obtain ⟨t₀, ht₀, hy₂⟩ := h₂
-  refine ⟨fun h ↦ ⟨fun s hs hy ↦ (h _ (Set.mem_image2_of_mem hs ht₀) ⟨hy, hy₂⟩).1,
-    fun t ht hy ↦ (h _ (Set.mem_image2_of_mem hs₀ ht) ⟨hy₁, hy⟩).2⟩, ?_⟩
-  rintro ⟨h₁, h₂⟩ _ ⟨s, hs, t, ht, rfl⟩ hy
-  exact ⟨h₁ s hs hy.1, h₂ t ht hy.2⟩
-
-/-- The ordering is the pullback of `⊇` along the map sending a point to the members of `A`
-containing it. -/
-theorem ofLowerSets_eq_lift (A : Set (Set α)) :
-    ≤[A] = Preorder.lift fun a ↦ OrderDual.toDual {s ∈ A | a ∈ s} :=
-  Preorder.ext fun a b ↦ ofLowerSets_le_iff_subset A a b
-
-/-- Two points are equivalent exactly when they lie in the same members of `A`. -/
-theorem antisymmRel_ofLowerSets_iff :
-    AntisymmRel (≤[A]).le a b ↔ {s ∈ A | a ∈ s} = {s ∈ A | b ∈ s} :=
-  ((ofLowerSets_le_iff_subset A a b).and (ofLowerSets_le_iff_subset A b a))
-    |>.trans (and_comm.trans Set.Subset.antisymm_iff.symm)
 
 private theorem sep_subset_sep_iff {C : Type*} {sat : α → C → Prop} {crit : Set C} :
     {c ∈ crit | sat b c} ⊆ {c ∈ crit | sat a c} ↔ ∀ c ∈ crit, sat b c → sat a c :=
