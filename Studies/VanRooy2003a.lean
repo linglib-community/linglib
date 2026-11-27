@@ -35,16 +35,6 @@ negatively](##VanRooy2003a.measure_alternative_eq_zero), which is the rhetorical
 
 * `VanRooy2003a.entropy`: the informativity value of a partition question under a prior.
 
-## Main statements
-
-* `VanRooy2003a.entropy_polar`: the entropy of a polar question is the binary entropy of the
-  probability of its positive answer.
-* `VanRooy2003a.entropy_anti`: a finer question has at least the entropy of a coarser one.
-* `VanRooy2003a.entropy_polar_lt_iff`: when weakening the positive answer of a polar question
-  raises its entropy.
-* `VanRooy2003a.measure_alternative_eq_zero`: the alternatives of a minimizer in an open
-  question are settled negatively.
-
 ## Implementation notes
 
 * A question is a partition of the worlds, a `Setoid`, and worlds are finite and discrete, as in
@@ -79,8 +69,8 @@ open MeasureTheory ProbabilityTheory InformationTheory Real
 
 /-! ### Binary entropy on the two sides of one half -/
 
-/-- Raising a probability raises its binary entropy exactly when the new probability is still
-below the complement of the old one. -/
+-- Raising a probability raises its binary entropy exactly when the new probability is still
+-- below the complement of the old one.
 private theorem binEntropy_lt_binEntropy_iff {p p' : ℝ} (hp : 0 ≤ p) (hpp : p ≤ p')
     (hp' : p' ≤ 1) : binEntropy p < binEntropy p' ↔ p < p' ∧ p + p' < 1 := by
   have hm := binEntropy_strictMonoOn
@@ -95,8 +85,8 @@ private theorem binEntropy_lt_binEntropy_iff {p p' : ℝ} (hp : 0 ≤ p) (hpp : 
         hm.lt_iff_lt ⟨by linarith, by linarith⟩ ⟨by linarith, by linarith⟩]
       exact ⟨fun hlt ↦ absurd hlt (by linarith), fun h ↦ by linarith [h.2]⟩
 
-/-- Lowering a probability raises its binary entropy exactly when the new probability is still
-above the complement of the old one. -/
+-- Lowering a probability raises its binary entropy exactly when the new probability is still
+-- above the complement of the old one.
 private theorem binEntropy_lt_binEntropy_iff_of_ge {p p' : ℝ} (hp' : 0 ≤ p') (hpp : p' ≤ p)
     (hp : p ≤ 1) : binEntropy p < binEntropy p' ↔ p' < p ∧ 1 < p + p' := by
   rw [← binEntropy_one_sub p, ← binEntropy_one_sub p',
@@ -119,7 +109,7 @@ theorem entropy_nonneg (Q : Setoid W) : 0 ≤ entropy μ Q := InformationTheory.
 
 variable [IsProbabilityMeasure μ]
 
-/-- A finer question has at least the entropy of a coarser one, under the same prior. -/
+-- A finer question has at least the entropy of a coarser one, under the same prior.
 theorem entropy_anti [Finite W] : Antitone (entropy μ) := fun Q Q' h ↦ by
   cases nonempty_fintype (Quotient Q')
   cases nonempty_fintype (Quotient Q)
@@ -151,9 +141,9 @@ theorem entropy_polar_lt_iff (h : q ⊆ q') :
   rw [entropy_polar, entropy_polar, binEntropy_lt_binEntropy_iff measureReal_nonneg
     (measureReal_mono h) measureReal_le_one]
 
-/-- Strengthening the positive answer of a polar question raises the entropy of the question
-exactly when it makes that answer less likely and no less likely than the old negative answer
-was. -/
+-- Strengthening the positive answer of a polar question raises the entropy of the question
+-- exactly when it makes that answer less likely and no less likely than the old negative answer
+-- was.
 theorem entropy_polar_lt_iff_of_superset (h : q' ⊆ q) :
     entropy μ (Setoid.polar q) < entropy μ (Setoid.polar q') ↔
       μ.real q' < μ.real q ∧ 1 < μ.real q + μ.real q' := by
@@ -167,12 +157,12 @@ theorem not_entropy_polar_lt_of_half_le (h : q ⊆ q') (hq : 2⁻¹ ≤ μ.real 
   have := (entropy_polar_lt_iff μ h).1 hlt
   linarith [this.1, this.2]
 
-/-- A settled question has no entropy. -/
+-- A settled question has no entropy.
 theorem entropy_polar_of_measure_eq_zero (hq : μ q = 0) : entropy μ (Setoid.polar q) = 0 := by
   simp [entropy_polar, measureReal_def, hq]
 
-/-- A question settled in the negative becomes stronger under any weakening that leaves it
-open. -/
+-- A question settled in the negative becomes stronger under any weakening that leaves it
+-- open.
 theorem entropy_polar_lt_of_measure_eq_zero (hq : μ q = 0) (h0 : μ q' ≠ 0) (h1 : μ q' ≠ 1) :
     entropy μ (Setoid.polar q) < entropy μ (Setoid.polar q') := by
   rw [entropy_polar_of_measure_eq_zero μ hq, entropy_polar]
