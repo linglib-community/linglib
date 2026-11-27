@@ -1,7 +1,9 @@
 module
 
 public import Linglib.Core.Order.IntervalOrder
+public import Linglib.Semantics.Degree.Sorites
 public import Linglib.Semantics.Delineation
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Comparable
 public import Mathlib.Tactic.Linarith
@@ -33,9 +35,13 @@ margin of error](##marginOrder_of_conjoinedComparison), van Rooij's semi-order.
   which describe the model and not the entries, as the paper's degree-free relative/absolute
   distinction requires.
 * The Similarity Constraint is a condition on a delineation for a relation of similarity, imposed
-  in every comparison class containing the similar pair; so imposed it is a tolerance condition,
-  which a class of many small steps meets only trivially. For the margin of error, similarity is
-  incomparability under the margin order, and the margin is real-valued as in measurement theory.
+  in every comparison class containing the similar pair. On a gapless delineation it is the
+  tolerance premise of a soritical argument along similarity within the class, so a conjoined
+  comparison holds of no two members joined by a chain of similar members; a class that contains
+  the whole interval between two measures admits none. In the paper's exposition of van Rooij the
+  constraint is evaluated in the class of the two compared individuals, and further members of a
+  class obviate it. For the margin of error, similarity is incomparability under the margin order,
+  and the margin is real-valued as in measurement theory.
 * The library has interval orders, `IsIntervalOrder`, but no class of semi-orders, so
   semi-transitivity (58c) is a theorem of its own.
 
@@ -192,6 +198,15 @@ variable {μ ε}
 @[simp] theorem marginOrder_zero_iff : MarginOrder μ 0 x y ↔ μ y < μ x := by
   simp [MarginOrder]
 
+-- on a gapless delineation the Similarity Constraint says that the positive extension of every
+-- class is tolerant along similarity within the class
+theorem similarityConstraint_iff_tolerance {del : Delineation E} {sim : E → E → Prop}
+    (hd : del.IsGapless) : SimilarityConstraint del sim ↔
+      ∀ C, ∀ ⦃x y⦄, x ∈ del C → (x ∈ C ∧ y ∈ C ∧ sim x y) → y ∈ del C := by
+  simp only [SimilarityConstraint, hd.mem_neg_iff, not_not]
+  exact forall_congr' fun C ↦ ⟨fun h x y hx ⟨hxC, hyC, hs⟩ ↦ h x hxC y hyC hs hx,
+    fun h x hxC y hyC hs hx ↦ h hx ⟨hxC, hyC, hs⟩⟩
+
 -- (21)
 theorem not_conjoinedComparison_of_similar {sim : E → E → Prop} (h : SimilarityConstraint del sim)
     (hx : x ∈ C) (hy : y ∈ C) (hs : sim x y) : ¬ ConjoinedComparison del C x y :=
@@ -217,6 +232,49 @@ theorem marginOrder_of_conjoinedComparison (hε : 0 ≤ ε) (hs : del.IsSoundFor
   have := conjoinedComparison_entails hs h
   unfold MarginOrder at h'
   linarith
+
+-- under the Similarity Constraint a conjoined comparison in a gapless delineation is a Sorites
+theorem ConjoinedComparison.sorites {sim : E → E → Prop} (hd : del.IsGapless)
+    (hsim : SimilarityConstraint del sim) (h : ConjoinedComparison del C x y) :
+    Sorites (· ∈ del C) (fun a b ↦ a ∈ C ∧ b ∈ C ∧ sim a b) x y :=
+  ⟨h.1, (similarityConstraint_iff_tolerance hd).1 hsim C, hd.mem_neg_iff.1 h.2⟩
+
+-- under the Similarity Constraint a gapless delineation admits no conjoined comparison of two
+-- members of a class joined by a chain of similar members of the class
+theorem not_conjoinedComparison_of_reflTransGen {sim : E → E → Prop} (hd : del.IsGapless)
+    (hsim : SimilarityConstraint del sim)
+    (hxy : Relation.ReflTransGen (fun a b ↦ a ∈ C ∧ b ∈ C ∧ sim a b) x y) :
+    ¬ ConjoinedComparison del C x y :=
+  fun h ↦ (h.sorites hd hsim).not_reflTransGen hxy
+
+private theorem reflTransGen_incompRel_marginOrder {C : Set ℝ} (hε : 0 < ε) (n : ℕ) :
+    ∀ {x y : ℝ}, y ≤ x → x - y ≤ n * ε → Set.Icc y x ⊆ C → Relation.ReflTransGen
+      (fun a b ↦ a ∈ C ∧ b ∈ C ∧ IncompRel (MarginOrder id ε) a b) x y := by
+  have key (a b : ℝ) (h₁ : a ≤ b + ε) (h₂ : b ≤ a + ε) : IncompRel (MarginOrder id ε) a b :=
+    ⟨fun h ↦ by simp only [MarginOrder, id] at h; linarith,
+      fun h ↦ by simp only [MarginOrder, id] at h; linarith⟩
+  induction n with
+  | zero =>
+    intro x y hyx h _
+    obtain rfl : x = y := le_antisymm (by simpa using h) hyx
+    exact .refl
+  | succ n ih =>
+    intro x y hyx h hC
+    rcases le_total (x - y) ε with hle | hle
+    · exact .single ⟨hC ⟨hyx, le_rfl⟩, hC ⟨le_rfl, hyx⟩, key x y (by linarith) (by linarith)⟩
+    · have hx : x - ε ∈ Set.Icc y x := ⟨by linarith, by linarith⟩
+      refine .head ⟨hC ⟨hyx, le_rfl⟩, hC hx, key x (x - ε) (by linarith) (by linarith)⟩
+        (ih hx.1 (by push_cast at h; linarith) fun z hz ↦ hC ⟨hz.1, hz.2.trans hx.2⟩)
+
+-- under the Similarity Constraint for a positive margin of error a gapless delineation of the
+-- reals admits no conjoined comparison in a class containing every measure between the two
+theorem not_conjoinedComparison_of_Icc_subset {del : Delineation ℝ} {C : Set ℝ} {x y : ℝ}
+    (hd : del.IsGapless) (hε : 0 < ε)
+    (hsim : SimilarityConstraint del (IncompRel (MarginOrder id ε))) (hyx : y ≤ x)
+    (hC : Set.Icc y x ⊆ C) : ¬ ConjoinedComparison del C x y := by
+  obtain ⟨n, hn⟩ := exists_nat_ge ((x - y) / ε)
+  exact not_conjoinedComparison_of_reflTransGen hd hsim
+    (reflTransGen_incompRel_marginOrder hε n hyx ((div_le_iff₀ hε).1 hn) hC)
 
 variable (μ) in
 -- (58a), (58b)
