@@ -31,9 +31,10 @@ it never drops going up a cited spine. So assign each category a height, in any 
 drops going up a cited spine. One category is at most another exactly when every such assignment
 places it no higher.
 
-A spine of categories is then an extended projection when it ascends in this order. All its heads
-are of one family, since no cited spine leaves the family of its lexical head, and the lexical
-head of a family is below every category of the family and below nothing else.
+A spine of categories is then an extended projection when its heads are of one family and it
+ascends in this order. Here the second condition brings the first with it, since no cited spine
+leaves the family of its lexical head, and the lexical head of a family is below every category of
+the family and below nothing else.
 
 Since the order pools the structures of many sources, it shows where they disagree. Two heads that
 one source orders one way and another source the other way come out **level**, each at most the
@@ -397,32 +398,41 @@ variable {s : Spine Cat} {c d : Cat} {l : List Cat}
 /-!
 ### Extended projections
 
-A spine of categories is an **extended projection** when it ascends: each of its heads is at most
-the next one up.
+Two conditions make a spine of categories an **extended projection**. Its heads are of one family,
+and it ascends: each head is at most the next one up. The first condition needs only the families
+of the categories. A determiner over a clause fails it, whatever order the categories are given.
+The second needs the order. In the order of the cited structures a spine that ascends is already of
+one family, since no cited sequence leaves the family of its lexical head.
 -/
 
-/-- A spine of categories is an **extended projection** when each of its heads is at most the next
-head up. -/
-def IsExtendedProjection (s : Spine Cat) : Prop := s.heads.IsChain (· ≤ ·)
+/-- A spine of categories is an **extended projection** when its heads are of one family and each
+is at most the next head up. -/
+structure IsExtendedProjection (s : Spine Cat) : Prop where
+  /-- The heads are of one family. -/
+  family_eq ⦃c : Cat⦄ (hc : c ∈ s) ⦃d : Cat⦄ (hd : d ∈ s) : c.family = d.family
+  /-- Each head is at most the next head up. -/
+  isChain : s.heads.IsChain (· ≤ ·)
+
+/-- In the order of the cited structures, a spine that ascends is an extended projection: its
+heads are then of one family. -/
+theorem isExtendedProjection_iff_isChain : s.IsExtendedProjection ↔ s.heads.IsChain (· ≤ ·) :=
+  ⟨IsExtendedProjection.isChain, fun h ↦
+    have hp := List.isChain_iff_pairwise.1 h
+    ⟨fun _ hc _ hd ↦ List.Pairwise.forall_of_forall_of_flip
+      (R := fun x y : Cat ↦ x.family = y.family) (fun _ _ ↦ rfl) (hp.imp Cat.family_eq_of_le)
+      (hp.imp fun h ↦ (Cat.family_eq_of_le h).symm) hc hd, h⟩⟩
 
 instance (s : Spine Cat) : Decidable s.IsExtendedProjection :=
-  inferInstanceAs (Decidable (List.IsChain _ _))
+  decidable_of_iff _ isExtendedProjection_iff_isChain.symm
 
 /-- The spine of a cited structure is an extended projection. -/
 theorem isExtendedProjection_of_mem_citedSequences (hl : l ∈ citedSequences) :
     IsExtendedProjection ⟨l⟩ :=
-  Cat.isChain_le hl
+  isExtendedProjection_iff_isChain.2 (Cat.isChain_le hl)
 
 /-- In an extended projection every head is at most each head above it. -/
 theorem IsExtendedProjection.pairwise (h : s.IsExtendedProjection) : s.heads.Pairwise (· ≤ ·) :=
-  List.isChain_iff_pairwise.1 h
-
-/-- The heads of an extended projection are of one family. -/
-theorem IsExtendedProjection.family_eq (hs : s.IsExtendedProjection) (hc : c ∈ s) (hd : d ∈ s) :
-    c.family = d.family :=
-  List.Pairwise.forall_of_forall_of_flip (R := fun x y : Cat ↦ x.family = y.family)
-    (fun _ _ ↦ rfl) (hs.pairwise.imp Cat.family_eq_of_le)
-    (hs.pairwise.imp fun h ↦ (Cat.family_eq_of_le h).symm) hc hd
+  List.isChain_iff_pairwise.1 h.isChain
 
 /-- In an extended projection a head lies in the complement of another or is at least it. -/
 theorem IsExtendedProjection.mem_below_or_le (hs : s.IsExtendedProjection) (hc : c ∈ s)
