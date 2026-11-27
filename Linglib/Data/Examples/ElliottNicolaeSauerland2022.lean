@@ -249,7 +249,7 @@ def ex_24a : Datum :=
     judgment := .acceptable
     contrasts := [("pero no me acuerdo quiénes", .unacceptable)]
     readings := []
-    paperFeatures := [("context", "exactlyOne"), ("form", "quien"), ("rival", "quienes")] }
+    paperFeatures := [("context", "exactlyOne"), ("type", "SBI"), ("rival", "PBI")] }
 
 def ex_24b : Datum :=
   { id := "elliottnicolaesauerland2022_24b"
@@ -264,7 +264,7 @@ def ex_24b : Datum :=
     judgment := .acceptable
     contrasts := [("pero no me acuerdo quiénes", .unacceptable)]
     readings := []
-    paperFeatures := [("context", "atLeastOne"), ("form", "quien"), ("rival", "quienes")] }
+    paperFeatures := [("context", "atLeastOne"), ("type", "SBI"), ("rival", "PBI")] }
 
 def ex_24c : Datum :=
   { id := "elliottnicolaesauerland2022_24c"
@@ -279,7 +279,7 @@ def ex_24c : Datum :=
     judgment := .acceptable
     contrasts := [("pero no me acuerdo quién", .questionable)]
     readings := []
-    paperFeatures := [("context", "several"), ("antecedent", "plural"), ("form", "quienes"), ("rival", "quien")] }
+    paperFeatures := [("context", "several"), ("antecedent", "plural"), ("type", "PBI"), ("rival", "SBI")] }
 
 def ex_25 : Datum :=
   { id := "elliottnicolaesauerland2022_25"
@@ -294,7 +294,7 @@ def ex_25 : Datum :=
     judgment := .acceptable
     contrasts := [("Juan no sabe quiénes van a venir a la fiesta", .unacceptable)]
     readings := []
-    paperFeatures := [("context", "atLeastOne"), ("form", "quePl"), ("rival", "quienes")] }
+    paperFeatures := [("context", "atLeastOne"), ("type", "PCI"), ("rival", "PBI")] }
 
 def ex_57 : Datum :=
   { id := "elliottnicolaesauerland2022_57"
@@ -309,7 +309,7 @@ def ex_57 : Datum :=
     judgment := .acceptable
     contrasts := [("¿Quiénes hay en la fiesta?", .unacceptable)]
     readings := []
-    paperFeatures := [("context", "noExistence"), ("form", "quien"), ("rival", "quienes")] }
+    paperFeatures := [("context", "noExistence"), ("type", "SBI"), ("rival", "PBI")] }
 
 def ex_59 : Datum :=
   { id := "elliottnicolaesauerland2022_59"
@@ -324,7 +324,7 @@ def ex_59 : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("context", "atLeastOne"), ("form", "quienes")] }
+    paperFeatures := [("context", "atLeastOne"), ("type", "PBI")] }
 
 def ex_66 : Datum :=
   { id := "elliottnicolaesauerland2022_66"
@@ -339,7 +339,7 @@ def ex_66 : Datum :=
     judgment := .acceptable
     contrasts := [("Juan no sabe qué amigo van a venir", .unacceptable)]
     readings := []
-    paperFeatures := [("context", "atLeastOne"), ("form", "quePl"), ("rival", "queSg")] }
+    paperFeatures := [("context", "atLeastOne"), ("type", "PCI"), ("rival", "SCI")] }
 
 def ex_68 : Datum :=
   { id := "elliottnicolaesauerland2022_68"
@@ -354,7 +354,7 @@ def ex_68 : Datum :=
     judgment := .acceptable
     contrasts := [("¿Quiénes está ahí?", .unacceptable)]
     readings := []
-    paperFeatures := [("context", "twoWhispering"), ("form", "quien"), ("rival", "quienes")] }
+    paperFeatures := [("context", "twoWhispering"), ("type", "SBI"), ("rival", "PBI")] }
 
 def n19i : Datum :=
   { id := "elliottnicolaesauerland2022_n19i"
@@ -370,7 +370,7 @@ def n19i : Datum :=
     judgment := .acceptable
     contrasts := [("¿Quénes entraron en la habitación?", .unacceptable)]
     readings := []
-    paperFeatures := [("context", "zeroOrSeveral"), ("form", "quien"), ("rival", "quienes")] }
+    paperFeatures := [("context", "zeroOrSeveral"), ("type", "SBI"), ("rival", "PBI")] }
 
 def ex_76 : Datum :=
   { id := "elliottnicolaesauerland2022_76"
@@ -489,5 +489,55 @@ def context (e : Datum) : Option Context :=
   e.parse? "context" [("exactlyOne", .exactlyOne), ("atLeastOne", .atLeastOne), ("several", .several),
     ("noExistence", .noExistence), ("twoWhispering", .twoWhispering),
     ("zeroOrSeveral", .zeroOrSeveral)]
+
+/-- The type of the phrase in the form the row is contrasted with. -/
+inductive Rival where
+  /-- SCI: a singular complex interrogative -/
+  | singularComplex
+  /-- SBI: a singular bare interrogative -/
+  | singularBare
+  /-- PBI: a plural bare interrogative -/
+  | pluralBare
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `rival`. -/
+def rival (e : Datum) : Option Rival :=
+  e.parse? "rival" [("SCI", .singularComplex), ("SBI", .singularBare), ("PBI", .pluralBare)]
+
+/-- The number of a noun phrase in the context that the interrogative phrase picks up. -/
+inductive Antecedent where
+  /-- plural: a plural noun phrase -/
+  | plural
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `antecedent`. -/
+def antecedent (e : Datum) : Option Antecedent :=
+  e.parse? "antecedent" [("plural", .plural)]
+
+/-- The answers a question is judged with. -/
+inductive Reading where
+  /-- singular answer: an answer naming one individual -/
+  | singularAnswer
+  /-- plural answer: an answer naming several individuals -/
+  | pluralAnswer
+  /-- two-group answer: an answer naming two groups of which a collective predicate holds -/
+  | twoGroupAnswer
+  /-- distributive answer: a plural answer understood of each individual -/
+  | distributiveAnswer
+  /-- collective answer: a plural answer understood of the group -/
+  | collectiveAnswer
+  deriving DecidableEq, Repr, Fintype
+
+/-- The name the rows give the reading. -/
+def Reading.label : Reading → String
+  | .singularAnswer => "singular answer"
+  | .pluralAnswer => "plural answer"
+  | .twoGroupAnswer => "two-group answer"
+  | .distributiveAnswer => "distributive answer"
+  | .collectiveAnswer => "collective answer"
+
+/-- The judgment a row records for the reading, if it records one. -/
+def reading (e : Datum) (r : Reading) : Option Judgment :=
+  e.readings.lookup r.label
 
 end ElliottNicolaeSauerland2022.Examples

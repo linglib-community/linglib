@@ -308,11 +308,11 @@ theorem avoidsIneffability_hamblinPlus [Finite E] (ha : IsAtom a) (hb : IsAtom b
   refine .inr ⟨fun _ _ ↦ by rw [contentMust_hamblinPlus_quienesGQ]; trivial, ?_⟩
   rintro _ (rfl | rfl | rfl) - hs
   · exact not_hasStrongestAnswerOn_image_Ici (D := whDomain (E := E) (some .singular))
-      (fun h ↦ h.2 rfl) hab (Or.inl rfl) (Or.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
+      (fun h ↦ h.2 rfl) hab (Or.inl rfl) (Or.inr rfl) (exhPrs_subset (hs (.inl rfl)))
   · exact not_hasStrongestAnswerOn_image_Ici (D := whDomain (E := E) (some .plural))
-      (fun h ↦ h.2 rfl) hab (Or.inl rfl) (Or.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
+      (fun h ↦ h.2 rfl) hab (Or.inl rfl) (Or.inr rfl) (exhPrs_subset (hs (.inl rfl)))
   · exact notMem_contentMust_hamblinPlus ha hb hc hbc hdis
-      (strengthen_subset _ _ _ (hs (.inr rfl)))
+      (exhPrs_subset (hs (.inr rfl)))
 
 end WeakPlural
 
