@@ -222,8 +222,6 @@ import Linglib.Data.WALS.Features.F121A
 import Linglib.Discourse.Coherence
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Commitment.Frame
-import Linglib.Discourse.Commitment.Space
-import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.QUD.Basic
