@@ -44,6 +44,8 @@ common ground is one of the projected ones, the Table is left empty.
 * `Commitment.Table.le_commonGround_of_mem_projectedSet`,
   `Commitment.Table.decidedBy_of_mem_projectedSet_of_mem_stack`: a projected common ground refines
   the current one and decides every issue on the Table.
+* `Commitment.Table.exists_le_mem_projectedSet_iff`: the consistent common grounds that refine the
+  current one and decide every issue on the Table are those that refine a projected one.
 * `Commitment.Table.isStable_settle_of_mem_projectedSet`: reaching a projected common ground
   empties the Table.
 * `Commitment.Table.commonGround_settle_mem_projectedSet_assert`: in a stable context, settling an
@@ -422,6 +424,22 @@ theorem ker_mem_issue_of_mem_projectedSet (hf : f ∈ K.projectedSet) : f.ker �
   | nil => exact mem_top
   | cons P T =>
     exact (decidedBy_of_mem_projectedSet_of_mem_stack (P := P) hf (h ▸ List.mem_cons_self)).ker_mem
+
+/-- The consistent common grounds that refine the current one and decide every issue on the Table
+are those that refine a projected common ground. -/
+theorem exists_le_mem_projectedSet_iff {g : Filter W} (hg : g ≠ ⊥) :
+    (∃ f ∈ K.projectedSet, g ≤ f) ↔ g ≤ K.commonGround ∧ ∀ P ∈ K.stack, P.DecidedBy g := by
+  refine ⟨fun ⟨f, hf, hgf⟩ ↦ ⟨hgf.trans (le_commonGround_of_mem_projectedSet hf),
+    fun P hP ↦ (decidedBy_of_mem_projectedSet_of_mem_stack hf hP).mono hgf⟩, ?_⟩
+  obtain ⟨T, C, cg⟩ := K
+  induction T with
+  | nil => exact fun h ↦ ⟨cg, rfl, h.1⟩
+  | cons P T ih =>
+    rintro ⟨hcg, hdec⟩
+    obtain ⟨f, hf, hgf⟩ := ih ⟨hcg, fun Q hQ ↦ hdec Q (List.mem_cons_of_mem _ hQ)⟩
+    obtain ⟨q, hq, hqg⟩ := hdec P List.mem_cons_self
+    have hle : g ≤ f ⊓ 𝓟 q := le_inf hgf (le_principal_iff.2 hqg)
+    exact ⟨f ⊓ 𝓟 q, mem_project.2 ⟨⟨f, hf, q, hq, rfl⟩, fun h ↦ hg (le_bot_iff.1 (h ▸ hle))⟩, hle⟩
 
 /-- Reaching a projected common ground empties the Table. -/
 theorem isStable_settle_of_mem_projectedSet (h : K.commonGround ⊓ 𝓟 p ∈ K.projectedSet) :
