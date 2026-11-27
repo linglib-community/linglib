@@ -64,10 +64,10 @@ theorem measurable_infinitePi_const {E : Type*} [MeasurableSpace E] (ι : Type*)
   exact Finset.measurable_prod _ fun i _ ↦
     (Measure.measurable_coe (ht i)).comp measurable_subtype_coe
 
-/-- Two finite measures on sequences are equal as soon as, for every `n`, they give the first `n`
-terms the same law. -/
+/-- A measure on sequences equals a finite measure as soon as, for every `n`, the two give the
+first `n` terms the same law. -/
 theorem ext_of_map_fin {E : Type*} [MeasurableSpace E] {μ ν : Measure (ℕ → E)}
-    [IsFiniteMeasure μ] [IsFiniteMeasure ν]
+    [IsFiniteMeasure ν]
     (h : ∀ n, μ.map (fun x (i : Fin n) ↦ x i) = ν.map (fun x (i : Fin n) ↦ x i)) : μ = ν := by
   refine IsProjectiveLimit.unique (P := fun I : Finset ℕ ↦ ν.map I.restrict) (fun I ↦ ?_)
     (fun I ↦ rfl)

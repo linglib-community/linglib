@@ -60,7 +60,8 @@ theorem exists_weights_eq_iff {R X : Type*} [PartialOrder R] [Semiring R] [Finty
 
 /-! ### The Borel σ-algebra on the standard simplex -/
 
-noncomputable instance {M : Type*} : MeasurableSpace (StdSimplex ℝ M) := borel _
+noncomputable instance instMeasurableSpace {M : Type*} : MeasurableSpace (StdSimplex ℝ M) :=
+  borel _
 
 instance {M : Type*} : BorelSpace (StdSimplex ℝ M) := ⟨rfl⟩
 
