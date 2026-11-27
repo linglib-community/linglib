@@ -62,6 +62,10 @@ common ground is one of the projected ones, the Table is left empty.
   issue on the Table exactly when nothing is projected.
 * `Commitment.Table.inCrisis_assert_assert_compl`: a denied assertion leaves the conversation in
   crisis.
+* `Commitment.Table.projectedSet_assert_compl_polarQuestion`,
+  `Commitment.Table.inCrisis_assert_compl_polarQuestion_iff`: a negative answer to a polar
+  question projects what the assertion alone would, so it leaves the conversation in crisis only
+  if that assertion would.
 * `Commitment.Table.agreeToDisagree_assert_assert`,
   `Commitment.Table.generate_discourseCommitments_inf_eq_bot_agreeToDisagree`: agreeing to
   disagree keeps both commitments and restores the Table, and the commitments of the two parties
@@ -181,6 +185,30 @@ instance : LeftCommutative fun (P : Proposition (Set W)) (ps : Set (Filter W)) �
 theorem decidedBy_polar_iff_bias_ne_zero : (polar p).DecidedBy f ↔ f.bias p ≠ 0 := by
   rw [decidedBy_polar, Ne, Filter.bias_eq_zero_iff]
   tauto
+
+/-- Projecting the polar issue on `p` from common grounds that all entail `p` only discards the
+inconsistent ones. -/
+theorem project_polar_of_forall_mem (h : ∀ f ∈ ps, p ∈ f) : project ps (polar p) = ps \ {⊥} := by
+  ext f
+  simp only [mem_project, Set.mem_sdiff, Set.mem_singleton_iff]
+  refine and_congr_left fun hf ↦ ⟨?_, fun hfp ↦ ⟨f, hfp, ?_⟩⟩
+  · rintro ⟨g, hg, q, hq, rfl⟩
+    have hgq : g ⊓ 𝓟 q = g := by
+      by_cases hp : p = ∅ ∨ p = Set.univ
+      · rcases hp with rfl | rfl
+        · exact absurd (by rw [empty_mem_iff_bot.1 (h g hg), bot_inf_eq]) hf
+        · rw [polar_univ, alt_top] at hq
+          rw [hq, principal_univ, inf_top_eq]
+      · rcases (mem_alt_polar_of_nontrivial (not_or.1 hp).1 (not_or.1 hp).2 q).1 hq with rfl | rfl
+        · exact inf_eq_left.2 (le_principal_iff.2 (h g hg))
+        · exact absurd (inf_principal_eq_bot.2 (by rw [compl_compl]; exact h g hg)) hf
+    rwa [hgq]
+  · by_cases hp : p = ∅ ∨ p = Set.univ
+    · rcases hp with rfl | rfl
+      · exact absurd (empty_mem_iff_bot.1 (h f hfp)) hf
+      · exact ⟨Set.univ, by rw [polar_univ, alt_top]; rfl, by rw [principal_univ, inf_top_eq]⟩
+    · exact ⟨p, (mem_alt_polar_of_nontrivial (not_or.1 hp).1 (not_or.1 hp).2 p).2 (.inl rfl),
+        inf_eq_left.2 (le_principal_iff.2 (h f hfp))⟩
 
 theorem project_singleton_ofSet (h : f ⊓ 𝓟 p ≠ ⊥) : project {f} (ofSet p) = {f ⊓ 𝓟 p} := by
   rw [project, alt_ofSet, Set.image_singleton, Set.singleton_infs_singleton,
@@ -468,6 +496,19 @@ theorem projectedSet_polarQuestion_of_isStable (hK : K.IsStable)
     (K.polarQuestion p).projectedSet = {K.commonGround ⊓ 𝓟 p, K.commonGround ⊓ 𝓟 pᶜ} := by
   rw [projectedSet_polarQuestion, projectedSet_of_isStable hK, project_singleton_polar hp hnp]
 
+/-- An assertion that answers a polar question projects what the assertion alone would. -/
+theorem projectedSet_assert_polarQuestion (b : A) :
+    ((K.polarQuestion p).assert b p).projectedSet = (K.assert b p).projectedSet := by
+  rw [projectedSet_assert, projectedSet_polarQuestion, project_right_comm,
+    project_polar_of_forall_mem fun f hf ↦ decidedBy_ofSet.1 (decidedBy_of_mem_project hf),
+    Set.sdiff_singleton_eq_self bot_notMem_project, projectedSet_assert]
+
+/-- An assertion that answers a polar question in the negative projects what the assertion alone
+would. -/
+theorem projectedSet_assert_compl_polarQuestion (b : A) :
+    ((K.polarQuestion p).assert b pᶜ).projectedSet = (K.assert b pᶜ).projectedSet := by
+  rw [← polarQuestion_compl, projectedSet_assert_polarQuestion]
+
 @[simp] theorem totalCommitment_assert_self :
     (K.assert a p).totalCommitment a = K.totalCommitment a ⊓ 𝓟 p :=
   totalCommitment_commit_self K a p
@@ -588,6 +629,12 @@ theorem inCrisis_iff_projectedSet_eq_empty (h : ¬ K.IsStable) :
   · rw [inCrisis_iff, Set.eq_empty_iff_forall_notMem]
     exact forall_congr' fun f ↦ ⟨fun hf hmem ↦ bot_notMem_project (hf hmem ▸ hmem),
       fun hf hmem ↦ absurd hmem hf⟩
+
+/-- A negative answer to a polar question leaves the conversation in crisis only if the assertion
+alone would. -/
+theorem inCrisis_assert_compl_polarQuestion_iff (b : A) :
+    ((K.polarQuestion p).assert b pᶜ).InCrisis ↔ (K.assert b pᶜ).InCrisis := by
+  rw [inCrisis_iff, inCrisis_iff, projectedSet_assert_compl_polarQuestion]
 
 /-- After an assertion has been denied, nothing consistent is projected (21). -/
 theorem projectedSet_assert_assert_compl (b : A) : ((K.assert a p).assert b pᶜ).projectedSet = ∅ :=
