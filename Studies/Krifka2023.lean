@@ -6,9 +6,9 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Spine.Label
 
 /-!
-# Krifka (2020): Layers of Assertive Clauses: Propositions, Judgements, Commitments, Acts
+# Krifka (2023): Layers of Assertive Clauses: Propositions, Judgements, Commitments, Acts
 
-This file formalizes [krifka-2020]'s decomposition of an assertive clause into a proposition
+This file formalizes [krifka-2023]'s decomposition of an assertive clause into a proposition
 (TP), a private judgement of it (JP), a public commitment to that judgement (ComP), and the act
 that updates the common ground (ActP). A judgement phrase abstracts over the judge of a
 judge-relative proposition (`Judgement`); the commitment phrase turns it into the proposition
@@ -39,7 +39,7 @@ follows from the layer selected (`Licensed`).
 
 ## References
 
-* [krifka-2020]
+* [krifka-2023]
 * [krifka-2015] — commitment spaces, the framework the layers refine
 * [stalnaker-1978] — informative update
 * [farkas-bruce-2010] — assertions that stick to the common ground even when rejected
@@ -47,7 +47,7 @@ follows from the layer selected (`Licensed`).
 
 @[expose] public section
 
-namespace Krifka2020
+namespace Krifka2023
 
 variable {Judge Index : Type*}
 
@@ -226,4 +226,4 @@ theorem licensed_iff :
       (∀ m, Licensed m .sagen ↔ m.layer ≠ .actP) := by
   decide
 
-end Krifka2020
+end Krifka2023
