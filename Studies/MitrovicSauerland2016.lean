@@ -39,9 +39,6 @@ have the additive and quantificational uses of Japanese *mo*.
   and Latin *-que*. A coordinator has an additive or a quantificational
   use when an additive particle or the particle of an indeterminate quantifier of its language
   has its morph.
-* The J and the μ coordinators of the language files are conjunctive coordinators with one
-  denotation, the infimum of the coordinands, so the difference between J and μ of (12) is stated
-  for the quantifiers only.
 
 ## TODO
 
