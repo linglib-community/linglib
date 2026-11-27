@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Stalnaker1978
 public import Linglib.Semantics.Dynamic.Update
-public import Linglib.Semantics.Reference.Monster
+public import Linglib.Semantics.Reference.Character.Operator
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.Readers
 
@@ -91,7 +91,7 @@ variable {W C V α β : Type*}
 /-- The dagger takes the diagonal proposition and projects it onto the horizontal: `†P` expresses
 the diagonal of `P` relative to every context. It evaluates `P` at the context given by the world
 of evaluation. -/
-def dagger : Character W W α → Character W W α := shiftBy fun _ w ↦ w
+def dagger : Character W W α → Character W W α := shiftBy fun w _ ↦ w
 
 @[simp] theorem dagger_apply (χ : Character W W α) (v w : W) : dagger χ v w = χ w w := rfl
 
@@ -106,24 +106,15 @@ theorem dagger_eq_self {χ : Character W W α} (h : ∀ v v', χ v = χ v') : da
 theorem dagger_dagger (χ : Character W W α) : dagger (dagger χ) = dagger χ :=
   dagger_eq_self fun _ _ ↦ rfl
 
-/-- An operator is extensional when its value at a point depends only on the value of its
-argument there. -/
+/-- An operator is **extensional** if there is a function `o` from values to values such that the
+value of `O χ` at every context and index is `o` applied to the value of `χ` there. -/
 def IsExtensional (O : Character C V α → Character C V β) : Prop :=
   ∃ o : α → β, ∀ χ c v, O χ c v = o (χ c v)
-
-/-- An operator is one-dimensional when the proposition it yields at a context depends only on
-the proposition its argument expresses there. -/
-def IsOneDimensional (O : Character C V α → Character C V β) : Prop :=
-  ∃ o : (V → α) → (V → β), ∀ χ c, O χ c = o (χ c)
 
 -- p. 320: each kind of operator generalizes the kind before it
 theorem IsExtensional.isOneDimensional {O : Character C V α → Character C V β}
     (h : IsExtensional O) : IsOneDimensional O :=
-  h.elim fun o ho ↦ ⟨fun p v ↦ o (p v), fun χ c ↦ funext (ho χ c)⟩
-
-theorem IsOneDimensional.not_isMonster {O : Character C V α → Character C V β}
-    (h : IsOneDimensional O) : ¬ IsMonster O :=
-  fun hO ↦ h.elim fun o ho ↦ hO ⟨fun _ ↦ o, ho⟩
+  h.elim fun o ho ↦ .of_apply (o := fun p v ↦ o (p v)) fun χ c ↦ funext (ho χ c)
 
 /-- Propositional necessity: `□P` expresses at a context the proposition true at a world iff what
 `P` expresses there is the necessary proposition. -/
@@ -131,13 +122,13 @@ def box (χ : Character C V Prop) : Character C V Prop := fun c _ ↦ ∀ v, χ 
 
 -- p. 320
 theorem isOneDimensional_box : IsOneDimensional (box : Character C V Prop → _) :=
-  ⟨fun p _ ↦ ∀ v, p v, fun _ _ ↦ rfl⟩
+  .of_apply (o := fun p _ ↦ ∀ v, p v) fun _ _ ↦ rfl
 
 -- p. 319: the dagger is two-dimensional, not a function of what its argument expresses
 theorem isMonster_dagger [Nontrivial W] [Nontrivial α] :
     IsMonster (dagger : Character W W α → Character W W α) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne W
-  exact (isMonster_shiftBy_iff _).2 ⟨a, b, hab.symm⟩
+  exact isMonster_shiftBy_of_ne (v := b) (c := a) hab.symm
 
 -- p. 320: the square-dagger is the a priori truth operator
 theorem box_dagger_iff (χ : Character W W Prop) (v w : W) :

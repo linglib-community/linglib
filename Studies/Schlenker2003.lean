@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Basic
+public import Linglib.Semantics.Reference.Indexical
 public import Studies.Kaplan1989
 
 /-!
@@ -98,8 +99,8 @@ variable {c c'}
 
 -- (3)
 theorem amharicI_ne_I (h : c'.agent ≠ c.agent) :
-    amharicI i c (Function.update s i c') ≠ Kaplan1989.I c (Function.update s i c') := by
-  simpa [Kaplan1989.I] using h
+    amharicI i c (Function.update s i c') ≠ Indexical.I c (Function.update s i c') := by
+  simpa using h
 
 /-! ### Person features as presuppositions -/
 
@@ -158,11 +159,11 @@ def isHappy : Person → World → Prop
 
 -- (3)
 theorem english_amharic_differ (i : ι) (s : ι → Ctx) :
-    ¬ Say tellsAlice .bob () .w0 i (fun c s ↦ isHappy (Kaplan1989.I c s) (s i).world)
+    ¬ Say tellsAlice .bob () .w0 i (fun c s ↦ isHappy (Indexical.I c s) (s i).world)
         speechCtx s ∧
       Say tellsAlice .bob () .w0 i (fun c s ↦ isHappy (amharicI i c s) (s i).world)
         speechCtx s := by
-  simp [Say, tellsAlice, isHappy, speechCtx, Kaplan1989.I]
+  simp [Say, tellsAlice, isHappy, speechCtx]
 
 /-- In (54), the shifted Amharic second person of Bob's report is Alice, where English *you* is
 Carl. -/

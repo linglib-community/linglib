@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.CoppockWechsler2018
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Reference.Context.Basic
-public import Linglib.Semantics.Reference.Monster
+public import Linglib.Semantics.Reference.Character.Operator
 public import Studies.Pearson2015
 public import Linglib.Data.Examples.Readers
 
@@ -305,8 +305,8 @@ def authorityShift (x : E) : Function.End (Context W E P T) := fun c ↦ { c wit
 theorem isMonster_authorityShift [Nonempty W] (h : c.authority ≠ x) :
     Character.IsMonster (Character.shift (authorityShift (W := W) (P := P) (T := T) x) :
       Character (Context W E P T) W Prop → _) :=
-  (Character.isMonster_shift_iff _).2 <|
-    (Function.End.ne_one_iff_exists_smul_ne _).2 ⟨c, fun e ↦ h (congrArg Context.authority e).symm⟩
+  Character.isMonster_shift_iff.2 fun e ↦
+    h (congrArg Context.authority (congrFun e c)).symm
 
 theorem says_egoAuth_name_iff (hR : ∃ p, R (w, x) p) :
     Says R x (egoAuth V (name z) (authorityShift x c)) w ↔

@@ -10,34 +10,52 @@ public import Linglib.Semantics.Reference.Rigidity
 /-!
 # Characters
 
-A *character* is a function from contexts to contents, a content being an intension from
-worlds to extensions: the two-stage semantics of [kaplan-1989], on which the linguistic
-meaning of an expression fixes, at each context of utterance, what the expression says there.
-A character is *directly referential* when its content at every context is rigid
-(`Character.IsDirectlyReferential`). Kaplan's rigidifier `dthat` makes a directly referential
-character out of any context-dependent choice of individual (`Character.dthat`): the pure
-indexicals are its instances at a coordinate of the context, and `dthat` of a description
-evaluated at the context world is Kaplan's `dthat[the φ]`. A proper name has the constant
-character (`Character.const`), rigid also as a function of the context in the sense of
-`IsRigid`.
+This file defines characters. Let `C` be a type of contexts, `W` a type of worlds and `E` a type
+of values. A content is a function `W → E`, and a character is a function `C → W → E`, which
+gives the content of an expression at each context. For a sentence `E` is `Prop`, and its content
+at a context is a proposition.
 
-Given the world, or more generally the index, of each context, a character has a *diagonal*: the
-value at each context of what is said there, evaluated at the context's own index
-(`Character.diag`). For a sentence it is truth at a context, and when the contexts are the
-worlds themselves it is the diagonal proposition of [stalnaker-1978]'s propositional concepts. A
-sentence is *a priori*, valid in Kaplan's logic of demonstratives, when its diagonal holds at
-every context, and *necessary at a context* when what it says there is true at every world. The
-two notions come apart in both directions: an a priori sentence can say something contingent,
-and a sentence necessary at a context need not be a priori; a sentence necessary at every context
-is a priori (`Character.IsNecessary.isAPriori`).
+For example, the sentence *I am hungry* has a character that sends a context `c` and a world `w`
+to the proposition that the agent of `c` is hungry in `w`. When Ann says it, its content is that
+Ann is hungry, and when Bo says it, its content is that Bo is hungry.
+
+A character is directly referential if its content at every context is rigid, that is, has the
+same value at every world. Let `ι : C → W` give the world of each context. The diagonal of a
+character `χ` along `ι` sends a context `c` to the value of `χ` at `c` and `ι c`. A sentence is a
+priori if its diagonal holds at every context, and it is necessary at a context if its content
+there holds at every world.
 
 ## Main definitions
 
-* `Character C W E`
-* `Character.IsDirectlyReferential`
-* `Character.dthat`, `Character.const`
-* `Character.diag`: the diagonal along the index of the context.
-* `Character.IsAPriori`, `Character.IsNecessaryAt`, `Character.IsNecessary`
+* `Character C W E`: the type `C → W → E` of characters.
+* `Character.IsDirectlyReferential χ`: the content `χ c` is rigid for every context `c`.
+* `Character.dthat f`: the character whose content at a context `c` has the value `f c` at every
+  world.
+* `Character.const e`: the character with the value `e` at every context and world.
+* `Character.diag ι χ`: the function `fun c ↦ χ c (ι c)`.
+* `Character.IsAPriori ι χ`: the diagonal of `χ` along `ι` holds at every context.
+* `Character.IsNecessaryAt χ c`: the content `χ c` holds at every world.
+* `Character.IsNecessary χ`: `χ` is necessary at every context.
+
+## Main results
+
+* `Character.dthat_isDirectlyReferential`: the character `dthat f` is directly referential.
+* `Character.IsNecessary.isAPriori`: a necessary sentence is a priori.
+
+## Implementation notes
+
+A character and a content are the functions that represent them in Kaplan's formal system. Two
+expressions with the same value at every context and world have the same character here. A
+difference of linguistic meaning finer than that, which structured characters and structured
+propositions are meant to capture, is not represented.
+
+The type `Character C W E` is a definition and not an abbreviation of `C → W → E`, as `Matrix` is
+in mathlib. A character is written with `fun` and applied as a function, but it does not inherit
+the instances of the function type. In particular it does not inherit the pointwise order on
+`C → W → Prop`, whose greatest element is a necessary sentence and not an a priori one.
+
+The type `W` may be any type of indices. Stalnaker's propositional concepts are the characters
+whose contexts are the worlds themselves.
 
 ## References
 
@@ -49,21 +67,27 @@ is a priori (`Character.IsNecessary.isAPriori`).
 @[expose] public section
 
 
-/-- A Kaplanian character is the linguistic meaning of an expression, assigning to each context a
-content, an intension from worlds to extensions. -/
-abbrev Character (C W E : Type*) := C → W → E
+/-- A **character** is a function from contexts to contents, where a **content** is a function
+from worlds to values. It represents the linguistic meaning of an expression, which fixes what the
+expression says at each context. -/
+def Character (C W E : Type*) := C → W → E
 
 namespace Character
 
 variable {C W E : Type*}
 
-/-- A character is directly referential when its content at every context is rigid. -/
+@[ext] theorem ext {χ χ' : Character C W E} (h : ∀ c w, χ c w = χ' c w) : χ = χ' :=
+  funext fun c ↦ funext (h c)
+
+/-- A character is **directly referential** if its content at every context is rigid. -/
 def IsDirectlyReferential (χ : Character C W E) : Prop := ∀ c, IsRigid (χ c)
 
-/-- Kaplan's rigidifier is the character that at context `c` rigidly designates `f c`. -/
+/-- The **rigidifier** `dthat f` is the character whose content at a context `c` has the value
+`f c` at every world. -/
 def dthat (f : C → E) : Character C W E := fun c _ ↦ f c
 
-/-- The constant character at `e` is the character of a proper name for `e`. -/
+/-- The **constant character** at `e` has the value `e` at every context and world. It is the
+character of a proper name for `e`. -/
 def const (e : E) : Character C W E := fun _ _ ↦ e
 
 @[simp] theorem dthat_apply (f : C → E) (c : C) (w : W) :
@@ -82,9 +106,9 @@ theorem const_isDirectlyReferential (e : E) :
 
 /-! ### The diagonal -/
 
-/-- The diagonal of a character along `ι`, the index of each context, is the value at each
-context of what is said there, at the context's own index: the truth of a sentence at a context,
-and the diagonal proposition when contexts are worlds. -/
+/-- The **diagonal** of a character `χ` along `ι`, where `ι c` is the world of the context `c`,
+sends `c` to the value of `χ` at `c` and `ι c`. For a sentence it holds at the contexts where the
+sentence, said there, is true. -/
 def diag (ι : C → W) (χ : Character C W E) : C → E := fun c ↦ χ c (ι c)
 
 @[simp] theorem diag_apply (ι : C → W) (χ : Character C W E) (c : C) : χ.diag ι c = χ c (ι c) :=
@@ -98,14 +122,14 @@ def diag (ι : C → W) (χ : Character C W E) : C → E := fun c ↦ χ c (ι c
 
 /-! ### A priori and necessary truth -/
 
-/-- A sentence is a priori, valid in the logic of demonstratives, when its diagonal holds at every
-context. -/
+/-- A sentence is **a priori** if its diagonal holds at every context. A sentence is valid in
+Kaplan's logic of demonstratives if it is a priori in every structure. -/
 def IsAPriori (ι : C → W) (χ : Character C W Prop) : Prop := ∀ c, χ.diag ι c
 
-/-- A sentence is necessary at a context when what it says there is true at every world. -/
+/-- A sentence is **necessary at a context** `c` if its content at `c` holds at every world. -/
 def IsNecessaryAt (χ : Character C W Prop) (c : C) : Prop := ∀ w, χ c w
 
-/-- A sentence is necessary when what it says at every context is true at every world. -/
+/-- A sentence is **necessary** if it is necessary at every context. -/
 def IsNecessary (χ : Character C W Prop) : Prop := ∀ c w, χ c w
 
 theorem isNecessary_iff_forall_isNecessaryAt {χ : Character C W Prop} :

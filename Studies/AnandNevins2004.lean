@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Context.Overwrite
+public import Linglib.Semantics.Reference.Indexical
 public import Studies.Schlenker2003
 public import Studies.Stalnaker1978
 public import Linglib.Data.Examples.AnandNevins2004
@@ -40,7 +41,7 @@ Constraint on Shifting (22), which the paper offers the binding accounts, is not
 
 namespace AnandNevins2004
 
-open SpeechAct Context Character
+open SpeechAct Context Character Indexical
 
 universe u
 
@@ -81,14 +82,17 @@ theorem shiftyOp_opAll_eq (χ : Character (Context W E P T) (Context W E P T) α
     (c c' : Context W E P T) : shiftyOp opAll χ c = shiftyOp opAll χ c' := by
   ext; simp
 
-/-- An attitude verb leaves the context untouched, so it is no monster (§3.1): indexical shift
-comes from the operators, not the verbs. -/
+/-- An attitude verb is one-dimensional: it leaves the context untouched (§3.1), so indexical
+shift comes from the operators and not from the verbs. -/
+theorem isOneDimensional_say : IsOneDimensional (say acc x) :=
+  .of_apply (o := fun f i ↦ ∀ j ∈ acc x i, f j) fun _ _ ↦ rfl
+
 theorem not_isMonster_say : ¬ IsMonster (say acc x) :=
-  fun h ↦ h ⟨fun _ f i ↦ ∀ j ∈ acc x i, f j, fun _ _ ↦ rfl⟩
+  (isOneDimensional_say acc x).not_isMonster
 
 theorem not_isMonster_shiftyOp_empty :
     ¬ IsMonster (shiftyOp ∅ : Character (Context W E P T) (Context W E P T) α → _) :=
-  fun h ↦ h ⟨fun _ f ↦ f, fun _ _ ↦ by ext; simp⟩
+  not_isMonster.2 (.of_apply (o := fun _ f ↦ f) fun _ _ ↦ by ext; simp)
 
 /-- An operator overwriting the author, as `OP∀` and `OP_AUTH` do, is a monster once there are
 two individuals. -/
@@ -97,16 +101,10 @@ theorem isMonster_shiftyOp_of_agent_mem [Nontrivial α] [Nontrivial E] [Nonempty
     IsMonster (shiftyOp S : Character (Context W E P T) (Context W E P T) α → _) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   obtain ⟨w⟩ := ‹Nonempty W›; obtain ⟨p⟩ := ‹Nonempty P›; obtain ⟨t⟩ := ‹Nonempty T›
-  refine (isMonster_shiftBy_iff _).2 ⟨⟨a, a, w, t, p⟩, ⟨b, a, w, t, p⟩, fun h ↦ hab ?_⟩
+  refine isMonster_shiftBy_of_ne (c := ⟨a, a, w, t, p⟩) (v := ⟨b, a, w, t, p⟩) fun h ↦ hab ?_
   simpa [hS] using (congrArg Context.agent h).symm
 
 /-! ### Indexicals, PRO and logophors -/
-
-/-- The first person reads the author of the context (24a). -/
-def I : Character (Context W E P T) (Context W E P T) E := Character.dthat Context.agent
-
-/-- The second person reads the addressee of the context. -/
-def you : Character (Context W E P T) (Context W E P T) E := Character.dthat Context.addressee
 
 /-- Subject-controlled PRO (41) and the author logophor (43a) read the author of the index, the
 attitude holder's counterpart, so they are read de se. -/
