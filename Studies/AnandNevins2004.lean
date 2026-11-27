@@ -85,7 +85,7 @@ theorem shiftyOp_opAll_eq (χ : Character (Context W E P T) (Context W E P T) α
 /-- An attitude verb is one-dimensional: it leaves the context untouched (§3.1), so indexical
 shift comes from the operators and not from the verbs. -/
 theorem isOneDimensional_say : IsOneDimensional (say acc x) :=
-  ⟨fun f i ↦ ∀ j ∈ acc x i, f j, fun _ _ ↦ rfl⟩
+  .of_apply (o := fun f i ↦ ∀ j ∈ acc x i, f j) fun _ _ ↦ rfl
 
 theorem not_isMonster_say : ¬ IsMonster (say acc x) :=
   (isOneDimensional_say acc x).not_isMonster

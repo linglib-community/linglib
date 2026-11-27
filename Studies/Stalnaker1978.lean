@@ -114,7 +114,7 @@ def IsExtensional (O : Character C V α → Character C V β) : Prop :=
 -- p. 320: each kind of operator generalizes the kind before it
 theorem IsExtensional.isOneDimensional {O : Character C V α → Character C V β}
     (h : IsExtensional O) : IsOneDimensional O :=
-  h.elim fun o ho ↦ ⟨fun p v ↦ o (p v), fun χ c ↦ funext (ho χ c)⟩
+  h.elim fun o ho ↦ .of_apply (o := fun p v ↦ o (p v)) fun χ c ↦ funext (ho χ c)
 
 /-- Propositional necessity: `□P` expresses at a context the proposition true at a world iff what
 `P` expresses there is the necessary proposition. -/
@@ -122,7 +122,7 @@ def box (χ : Character C V Prop) : Character C V Prop := fun c _ ↦ ∀ v, χ 
 
 -- p. 320
 theorem isOneDimensional_box : IsOneDimensional (box : Character C V Prop → _) :=
-  ⟨fun p _ ↦ ∀ v, p v, fun _ _ ↦ rfl⟩
+  .of_apply (o := fun p _ ↦ ∀ v, p v) fun _ _ ↦ rfl
 
 -- p. 319: the dagger is two-dimensional, not a function of what its argument expresses
 theorem isMonster_dagger [Nontrivial W] [Nontrivial α] :

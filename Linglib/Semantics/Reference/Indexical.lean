@@ -16,8 +16,7 @@ is a coordinate of the context of utterance: *I* denotes the agent of the contex
 addressee and *here* its position. The value does not depend on the index, so the content of an
 indexical at a context is rigid.
 
-For example, when Ann says *I am hungry* to Bo, the content of *I* is Ann at every world. It is
-not the content of *the speaker*, which at a world where Bo is speaking is Bo.
+For example, when Ann says *I am hungry* to Bo, the content of *I* is Ann at every world.
 
 ## Main definitions
 
@@ -33,8 +32,11 @@ not the content of *the speaker*, which at a world where Bo is speaking is Bo.
 
 These are the indexical constants of Kaplan's logic of demonstratives. The file
 `Semantics/Reference/Pronoun.lean` gives a personal pronoun a different denotation: a first
-person pronoun is a variable whose value is presupposed to include the agent of the context. This
-file does not relate the two.
+person pronoun is a variable whose value is presupposed to include the agent of the context.
+
+## TODO
+
+The relation between these characters and the denotation of a first person pronoun is not stated.
 
 ## References
 
@@ -63,11 +65,11 @@ def here : Character (Context W E P T) V P := dthat Context.position
 
 variable (c : Context W E P T) (v : V)
 
-@[simp] theorem I_apply : (I : Character (Context W E P T) V E) c v = c.agent := rfl
+@[simp] theorem I_apply : I c v = c.agent := rfl
 
-@[simp] theorem you_apply : (you : Character (Context W E P T) V E) c v = c.addressee := rfl
+@[simp] theorem you_apply : you c v = c.addressee := rfl
 
-@[simp] theorem here_apply : (here : Character (Context W E P T) V P) c v = c.position := rfl
+@[simp] theorem here_apply : here c v = c.position := rfl
 
 /-- The indexical *I* is directly referential. -/
 theorem isDirectlyReferential_I : (I : Character (Context W E P T) V E).IsDirectlyReferential :=
