@@ -21,6 +21,11 @@
   min-height: calc(100vh - 120px);
 }
 .text { font-family: var(--serif); font-size: 19px; line-height: 1.62; }
+/* Where the page stands on the route to a source, when it was reached along one */
+.route { margin: 6px 0 0; font: 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--secondary); }
+.route a { color: var(--primary); border-bottom: 1px solid var(--tertiary); }
+.route a:hover { border-bottom-color: currentColor; }
+.route.next { margin: 48px 0 0; font-size: 15px; }
 .crumbs { margin: 14px 0 0; font: 13px/1.5 var(--mono); color: var(--secondary); }
 .crumbs a { color: var(--secondary); }
 .crumbs a:hover { color: var(--primary); }
@@ -138,10 +143,12 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
 <!--SITE_HEADER-->
 <main class="book">
   <div class="text">
+    <p class="route" id="route" hidden></p>
     <p class="crumbs"><!--CRUMBS--></p>
     <h1><!--H1--></h1>
     <p class="by"><!--BY--></p>
 <!--ITEMS-->
+    <p class="route next" id="route-next" hidden></p>
     <p class="links"><!--LINKS--></p>
   </div>
   <aside class="lean" id="lean" aria-live="polite">
@@ -263,6 +270,23 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
       e.preventDefault(); choose(e.target.id, false);
     }
   });
+  // Reached along the route to a source (`?to=`): where this page stands on it, and the next.
+  const to = new URLSearchParams(location.search).get("to"), R = to && D.routes[to];
+  if (R) {
+    const stop = (k, text) => {
+      const a = el("a", null, text || R.pages[k][0]);
+      a.href = R.pages[k][1] + (k < R.pages.length - 1 ? "?to=" + encodeURIComponent(to) : "");
+      return a;
+    };
+    const last = R.pages.length - 1, top = document.getElementById("route");
+    top.append("Reading toward ", stop(last, R.to), ": " + (R.at + 1) + " of " + last);
+    if (R.at > 0) top.append(" \u00b7 ", stop(R.at - 1, "\u2190 " + R.pages[R.at - 1][0]));
+    top.append(" \u00b7 ", stop(R.at + 1, R.pages[R.at + 1][0] + " \u2192"));
+    top.hidden = false;
+    const next = document.getElementById("route-next");
+    next.append("Next toward " + R.to + ": ", stop(R.at + 1));
+    next.hidden = false;
+  }
   addEventListener("hashchange", () => show(location.hash.slice(1)));
   if (I[location.hash.slice(1)]) show(location.hash.slice(1));
 })();

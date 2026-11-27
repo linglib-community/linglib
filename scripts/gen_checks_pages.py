@@ -100,6 +100,7 @@ class Site:
     def __init__(self, data, studies):
         self.items, self.nodes, self.texts = data["items"], data["nodes"], data.get("texts", {})
         self.records = data.get("records", {})
+        self.routes = {}   # for each source, the pages to read before it, in order
         self.bib = {key: (kind, f)
                     for kind, key, f in gb.parse_bib(gb.BIB.read_text(encoding="utf-8"))}
         self.sources = {}
@@ -311,8 +312,8 @@ class Page:
         sorted into their files, with a link where a statement in the lower file mentions a
         declaration of the upper and no longer path says so; mathlib is at the top and the page
         at the bottom. A source and its study file are one mark. `below` the page is what
-        rests on it, as `(source or module, why)`. Under the chart the same pages are listed in
-        an order to read them in."""
+        rests on it, as `(source or module, why)`. Under a source's chart the same pages are
+        listed in an order to read them in, the route to the source."""
         nodes = self.site.nodes
         reached, todo = set(), [r for r in roots if r in nodes]
         while todo:
@@ -409,22 +410,25 @@ class Page:
             marks.append(f'<a href="{self.href(site.unit_path(m))}"><title>{esc(why)}</title>'
                          f'{shape(m, bx, by)}{text}</a>')
             height = max(height, by + 26 + 14 * n)
-        # The same as a list to read down: each page after the ones it rests on.
-        before = sorted((m for m in level if m != focus), key=lambda m: (level[m], x[m]))
-        plan = "".join(f'<li><a href="{self.href(site.unit_path(m))}">{esc(site.unit_title(m))}</a>'
-                       '</li>' for m in before)
-        if plan:
-            plan = f'<p class="planh">To read first, in order</p><ol class="plan">{plan}</ol>'
+        # The pages above in an order to read them, each after the ones it rests on. A source's
+        # page lists them as the route to it, and a page reached along a route offers the next.
+        self.route = sorted((m for m in level if m != focus), key=lambda m: (level[m], x[m]))
+        plan = ""
+        if focus in site.sources and self.route:
+            to = "?to=" + esc(focus, quote=True)
+            plan = "".join(f'<li><a href="{self.href(site.unit_path(m))}{to}">'
+                           f'{esc(site.unit_title(m))}</a></li>' for m in self.route)
+            plan = f'<p class="planh">Prerequisites</p><ol class="plan">{plan}</ol>'
         return (f'<svg class="chart" viewBox="0 0 {width} {height:.0f}" '
                 f'style="max-width:{width}px" role="img" aria-label="What this page rests on">'
                 + "".join(lines + marks) + "</svg>" + plan)
 
-    def render(self, title, crumbs, h1, by, body, links, aside, panel, sha):
+    def render(self, title, crumbs, h1, by, body, links, aside, panel, sha, routes=None):
         template = (PAGE / "template.html").read_text(encoding="utf-8")
         page = site_shell.render(template, self.root, None, sha)
         nodes = self.closure([d for item in panel.values() for d in item["decls"]])
-        data = json.dumps({"items": panel, "nodes": nodes}, ensure_ascii=False,
-                          separators=(",", ":"))
+        data = json.dumps({"items": panel, "nodes": nodes, "routes": routes or {}},
+                          ensure_ascii=False, separators=(",", ":"))
         fill = {"<!--TITLE-->": esc(title), "<!--CRUMBS-->": crumbs, "<!--H1-->": h1,
                 "<!--BY-->": by, "<!--ITEMS-->": "\n".join(body), "<!--LINKS-->": " ".join(links),
                 "<!--ASIDE-->": aside, "/*DATA*/{}": data.replace("</", "<\\/")}
@@ -609,10 +613,11 @@ def source_page(site, key, sha, lines):
                     + "".join(example(row) for row in rest)
                     + '<p class="prov plain">No item of the record covers these yet.</p>')
     label = site.label(key)
+    chart = page.chart(key, label, [d for i in its for d in i["decls"]])
+    site.routes[key] = page.route
     return page.path, page.render(
         gb.tex_text(f.get("title", key)), f'<a href="../../">Wiki</a> / {esc(label)}',
-        gb.tex_html(f.get("title", key)), cite, body + tail, links,
-        page.chart(key, label, [d for i in its for d in i["decls"]]), panel, sha)
+        gb.tex_html(f.get("title", key)), cite, body + tail, links, chart, panel, sha)
 
 
 def module_page(site, module, sha):
@@ -662,12 +667,19 @@ def module_page(site, module, sha):
         " / ".join(parts[1:-1] if parts[0] == "Linglib" else parts[:-1]))
     links = [f'<a href="{page.href(site.docs_path(module))}">API docs</a>',
              f'<a href="{site_shell.REPO}/blob/main/{module.replace(".", "/")}.lean">Source</a>']
+    # The routes through this page: for each source it leads to, the pages in order, then the
+    # source, and where this page stands among them.
+    routes = {}
+    for key, route in site.routes.items():
+        if module in route:
+            stops = [[site.unit_title(m), page.root + site.unit_path(m)] for m in route + [key]]
+            routes[key] = {"to": site.label(key), "pages": stops, "at": route.index(module)}
     return page.path, page.render(
         title, crumbs, page.inline(title),
         (f"{people(text.get('credit'))} · " if people(text.get("credit")) else "")
         + f"<code>{esc(module)}</code>", body + tail, links,
         page.chart(module, title, [d["name"] for d in text["decls"]], list(below.items())),
-        panel, sha)
+        panel, sha, routes)
 
 
 def index_page(site, sha):
@@ -722,7 +734,7 @@ def main():
         (args.out / path / "index.html").write_text(page, encoding="utf-8")
     # A link from one of these pages to another must land on a page written here.
     dead = [(p, t) for p, page in pages.items()
-            for t in re.findall(r'href="((?:\.\./)+wiki/[^"#]*)', page)
+            for t in re.findall(r'href="((?:\.\./)+wiki/[^"#?]*)', page)
             if posixpath.normpath(posixpath.join(p, t)) + "/" not in pages]
     for p, t in dead:
         print(f"{p}: no page at {t}", file=sys.stderr)

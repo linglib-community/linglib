@@ -49,8 +49,9 @@ Each page is read as a text, and departs from the rules above to that end:
   statements reach and not from imports: files as squares under their titles, a source as a
   circle, mathlib as the bar at the top, the page at the bottom, and under a file what rests on
   it. A link is drawn where a statement of the lower file mentions a declaration of the upper and
-  no longer path says so. Top to bottom is an order to read in, and under the chart the same
-  pages are listed in that order.
+  no longer path says so. Top to bottom is an order to read in. Under a source's chart the same
+  pages are listed in that order, the route to the source; a page opened from that list says
+  where it stands on the route and links the next page, at its head and at its foot.
 - An item a person has checked carries a mark after its number. An unchecked item says nothing
   in the text.
 - Credit is to people, and at the grain of the item. A file's authors stand under its title; a
