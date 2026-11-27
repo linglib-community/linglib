@@ -5,10 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Algebra.Order.Archimedean.Class
 public import Mathlib.Logic.Relation
 public import Mathlib.Order.UpperLower.Basic
-public import Linglib.Semantics.Degree.Marginality.Basic
+public import Linglib.Semantics.Degree.Marginality.Constructions
 
 /-!
 # Soritical arguments
@@ -19,13 +18,13 @@ counterexample `b` without `P`. We define `Sorites P R a b` as their conjunction
 `P` along every finite chain of `R`-steps from `a`, so the premises are jointly satisfiable by
 some predicate exactly when no such chain reaches `b`.
 
-When the steps add a fixed positive amount `d` in a linearly ordered group and `P` is closed
-downwards, as a predicate true of the degrees below a standard is, the premises are satisfiable
-exactly when `a < b` and `d` is negligible against `b - a`: the archimedean class of `d` lies
-above that of `b - a`. In an archimedean group this never happens. On a marginal scale, the
-predicate of lying no further than the block of a standard is tolerant along at most marginal
-differences, and it separates `a` from `b` for some standard exactly when `a` is largely smaller
-than `b`.
+On a marginal scale, a predicate closed downwards, as one true of the degrees below a standard
+is, satisfies the premises along at most marginal differences exactly when `a` is largely smaller
+than `b`. When the steps add a fixed positive amount `d` in a linearly ordered group, a downward
+closed predicate is tolerant along them exactly when it is tolerant along the at most marginal
+differences of the scale of the archimedean class of `d`. The premises are then satisfiable
+exactly when `a < b` and `d` is negligible against `b - a`, the class of `d` lying above that of
+`b - a`, which never happens in an archimedean group.
 
 ## Main definitions
 
@@ -38,12 +37,15 @@ than `b`.
 * `Sorites.swap`: the contrapositive argument, for the negated predicate along the converse
   relation from `b` to `a`.
 * `Sorites.comap`: the premises pull back along a map that sends steps to steps.
+* `MarginalScale.exists_isLowerSet_sorites_iff`: on a marginal scale, a downward closed
+  predicate satisfies the premises along at most marginal differences exactly when `a` is largely
+  smaller than `b`.
+* `sorites_add_iff_sorites_atMostMarginal`: tolerance along steps of `d` is tolerance in the
+  scale of the archimedean class of `d`.
 * `exists_isLowerSet_sorites_add_iff`, `exists_isUpperSet_sorites_sub_iff`: along steps of `d` in
   an ordered group, a monotone predicate satisfies the premises exactly when `d` is negligible
   against the distance from `a` to `b`.
 * `not_sorites_add_of_archimedean`: no downward closed predicate does in an archimedean group.
-* `MarginalScale.exists_sorites_toBlock_le_iff`: on a marginal scale, some standard's blocks
-  satisfy the premises exactly when `a` is largely smaller than `b`.
 
 ## Implementation notes
 
@@ -144,31 +146,58 @@ theorem reflTransGen_of_forall_exists_eq_add {s : α → M} {d : M} {a b : α}
 
 end Add
 
+/-! ### Marginal scales -/
+
+namespace MarginalScale
+
+variable {α : Type*} [LinearOrder α] {ml : MarginalScale α} {a b S : α}
+
+/-- Lying no further than the block of a standard is tolerant along at most marginal
+differences. -/
+theorem sorites_toBlock_le (ha : ml.toBlock a ≤ ml.toBlock S) (hb : ml.LargelyLT S b) :
+    Sorites (fun x ↦ ml.toBlock x ≤ ml.toBlock S) ml.AtMostMarginal a b :=
+  ⟨ha, fun _ _ hx hxy ↦ toBlock_eq_toBlock.2 hxy ▸ hx, (toBlock_lt_toBlock.2 hb).not_ge⟩
+
+/-- A downward closed predicate satisfies the premises of a soritical argument from `a` to `b`
+along at most marginal differences exactly when `a` is largely smaller than `b`. -/
+theorem exists_isLowerSet_sorites_iff :
+    (∃ P : α → Prop, IsLowerSet {x | P x} ∧ Sorites P ml.AtMostMarginal a b) ↔
+      ml.LargelyLT a b :=
+  ⟨fun ⟨_, hP, h⟩ ↦ largelyLT_iff_lt_and_not_atMostMarginal.2
+      ⟨lt_of_not_ge fun hba ↦ h.counter (hP hba h.base),
+        fun hab ↦ h.counter (h.tolerance h.base hab)⟩,
+    fun h ↦ ⟨fun x ↦ ml.toBlock x ≤ ml.toBlock a, (IsLowerSet.Iic (ml.toBlock a)).preimage ml.toBlock_mono,
+      sorites_toBlock_le le_rfl h⟩⟩
+
+end MarginalScale
+
+/-! ### Steps of a fixed amount in an ordered group -/
+
 section OrderedGroup
 
-open ArchimedeanClass
+open ArchimedeanClass MarginalScale
 
 variable {M : Type*} [AddCommGroup M] [LinearOrder M] [IsOrderedAddMonoid M] {a b d : M}
+
+/-- A downward closed predicate is tolerant along steps of `d > 0` exactly when it is tolerant
+along the at most marginal differences of the scale of the archimedean class of `d`. -/
+theorem sorites_add_iff_sorites_atMostMarginal {P : M → Prop} (hd : 0 < d)
+    (hP : IsLowerSet {x | P x}) : Sorites P (fun x y ↦ y = x + d) a b ↔
+      Sorites P (ofArchimedeanClass (mk d)).AtMostMarginal a b := by
+  refine ⟨fun h ↦ ⟨h.base, fun x y hx hxy ↦ ?_, h.counter⟩, fun h ↦ h.mono fun x y hxy ↦ ?_⟩
+  · obtain ⟨n, hn⟩ := mk_le_mk.1 (ofArchimedeanClass_atMostMarginal_iff.1 hxy)
+    rw [abs_of_pos hd] at hn
+    exact hP (sub_le_iff_le_add'.1 ((le_abs_self _).trans hn))
+      ((Sorites.mk hx h.tolerance h.counter).of_reflTransGen (reflTransGen_add_iff.2 ⟨n, rfl⟩))
+  · rw [ofArchimedeanClass_atMostMarginal_iff, hxy, add_sub_cancel_left]
 
 /-- Along steps of `d > 0`, a downward closed predicate satisfies the premises of a soritical
 argument from `a` to `b` exactly when `a < b` and `d` is negligible against `b - a`. -/
 theorem exists_isLowerSet_sorites_add_iff (hd : 0 < d) :
     (∃ P : M → Prop, IsLowerSet {x | P x} ∧ Sorites P (fun x y ↦ y = x + d) a b) ↔
       a < b ∧ mk (b - a) < mk d := by
-  refine ⟨fun ⟨P, hP, h⟩ ↦ ?_, fun ⟨hab, h⟩ ↦ ⟨fun x ↦ ∃ n : ℕ, x ≤ a + n • d,
-    fun x y hyx ⟨n, hn⟩ ↦ ⟨n, hyx.trans hn⟩, ⟨0, by simp⟩, ?_, ?_⟩⟩
-  · have hlt (n : ℕ) : a + n • d < b := lt_of_not_ge fun hle ↦
-      h.counter (hP hle (h.of_reflTransGen (reflTransGen_add_iff.2 ⟨n, rfl⟩)))
-    have hab : a < b := by simpa using hlt 0
-    refine ⟨hab, mk_lt_mk.2 fun n ↦ ?_⟩
-    rw [abs_of_pos hd, abs_of_pos (sub_pos.2 hab)]
-    exact lt_sub_iff_add_lt'.2 (hlt n)
-  · rintro x y ⟨n, hn⟩ rfl
-    exact ⟨n + 1, by rw [succ_nsmul, ← add_assoc]; exact add_le_add_left hn d⟩
-  · rintro ⟨n, hn⟩
-    have := mk_lt_mk.1 h n
-    rw [abs_of_pos hd, abs_of_pos (sub_pos.2 hab)] at this
-    exact (lt_sub_iff_add_lt'.1 this).not_ge hn
+  rw [← ofArchimedeanClass_largelyLT_iff, ← exists_isLowerSet_sorites_iff]
+  exact exists_congr fun P ↦ and_congr_right (sorites_add_iff_sorites_atMostMarginal hd)
 
 /-- Along steps of `-d < 0`, an upward closed predicate satisfies the premises of a soritical
 argument from `a` to `b` exactly when `b < a` and `d` is negligible against `a - b`. -/
@@ -187,30 +216,8 @@ theorem exists_isUpperSet_sorites_sub_iff (hd : 0 < d) :
 /-- In an archimedean group no downward closed predicate satisfies the premises of a soritical
 argument along steps of a positive amount. -/
 theorem not_sorites_add_of_archimedean [Archimedean M] {P : M → Prop} (hd : 0 < d)
-    (hP : IsLowerSet {x | P x}) : ¬ Sorites P (fun x y ↦ y = x + d) a b := fun h ↦ by
-  obtain ⟨hab, hlt⟩ := (exists_isLowerSet_sorites_add_iff hd).1 ⟨P, hP, h⟩
-  exact hlt.ne (mk_eq_mk_of_archimedean (sub_pos.2 hab).ne' hd.ne')
+    (hP : IsLowerSet {x | P x}) : ¬ Sorites P (fun x y ↦ y = x + d) a b := fun h ↦
+  not_ofArchimedeanClass_largelyLT hd.ne' <| exists_isLowerSet_sorites_iff.1
+    ⟨P, hP, (sorites_add_iff_sorites_atMostMarginal hd hP).1 h⟩
 
 end OrderedGroup
-
-/-! ### Marginal scales -/
-
-namespace MarginalScale
-
-variable {α : Type*} [LinearOrder α] {ml : MarginalScale α} {a b S : α}
-
-/-- Lying no further than the block of a standard is tolerant along at most marginal
-differences. -/
-theorem sorites_toBlock_le (ha : ml.toBlock a ≤ ml.toBlock S) (hb : ml.LargelyLT S b) :
-    Sorites (fun x ↦ ml.toBlock x ≤ ml.toBlock S) ml.AtMostMarginal a b :=
-  ⟨ha, fun _ _ hx hxy ↦ toBlock_eq_toBlock.2 hxy ▸ hx, (toBlock_lt_toBlock.2 hb).not_ge⟩
-
-/-- The blocks up to that of some standard satisfy the premises of a soritical argument from `a`
-to `b` along at most marginal differences exactly when `a` is largely smaller than `b`. -/
-theorem exists_sorites_toBlock_le_iff :
-    (∃ S, Sorites (fun x ↦ ml.toBlock x ≤ ml.toBlock S) ml.AtMostMarginal a b) ↔
-      ml.LargelyLT a b :=
-  ⟨fun ⟨_, h⟩ ↦ toBlock_lt_toBlock.1 (h.base.trans_lt (not_le.1 h.counter)),
-    fun h ↦ ⟨a, sorites_toBlock_le le_rfl h⟩⟩
-
-end MarginalScale

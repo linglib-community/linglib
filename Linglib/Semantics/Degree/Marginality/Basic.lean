@@ -6,207 +6,179 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Basic.Countable.Defs
-public import Mathlib.Order.Hom.Set
-public import Mathlib.Order.Interval.Set.OrdConnected
+public import Mathlib.Order.Comparable
+public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Preorder.Finite
-public import Linglib.Semantics.Degree.CresswellDegree
+public import Mathlib.Order.Quotient
 
 /-!
 # Marginal and large differences
 
-Dinis and Jacinto's ML theory orders degrees by smaller than together with a relation of being
-marginally smaller, and a degree is largely smaller than another when it is smaller but not
-marginally so. A `MarginalScale` is a linear order with such a relation obeying the five axioms of
-their 2026 paper, which simplify the original theory of 2025. Largely smaller than is a strict weak
-order [whose incomparability is at most marginal
-difference](##MarginalScale.atMostMarginal_iff_incompRel), so the degrees fall into
-[blocks](##MarginalScale.Block), the degrees that Cresswell builds from the comparison largely
-smaller than, and [taking a degree to its block](##MarginalScale.toBlock_lt_toBlock) is monotone.
+A marginal scale on a linear order is an equivalence relation with order-connected classes: two
+degrees are equivalent when they differ at most marginally. A degree `x` is marginally smaller
+than `y` when `x < y` and the two differ at most marginally, and largely smaller when `x < y` and
+they do not. The classes are the blocks of the scale. They are linearly ordered, as the quotient of
+a linear order by an equivalence with order-connected classes is, and one block precedes another
+exactly when its degrees are largely smaller.
+
+The ML theory of Dinis and Jacinto takes marginally smaller than as primitive. Its axioms that
+marginally smaller implies smaller, that marginal differences are irrelevant to large ones, and
+that large differences extend along the order hold on every marginal scale. Its two remaining
+axioms, that some difference is large and that a large difference decomposes into a marginal step
+and a large one on either side, are the predicate `MarginalScale.IsML`.
+
+## Main definitions
+
+* `MarginalScale`: an equivalence relation with order-connected classes on a linear order.
+* `MarginalScale.AtMostMarginal`, `MarginalScale.MarginallyLT`, `MarginalScale.LargelyLT`: the
+  three comparisons of a marginal scale.
+* `MarginalScale.Block`, `MarginalScale.toBlock`, `MarginalScale.toBlockHom`: the blocks, and the
+  monotone map taking a degree to its block.
+* `MarginalScale.IsML`: the scales that satisfy ML theory.
+
+## Main results
+
+* `MarginalScale.toBlock_lt_toBlock`: one block precedes another exactly when its degrees are
+  largely smaller.
+* `MarginalScale.instIsStrictWeakOrderLargelyLT`,
+  `MarginalScale.atMostMarginal_iff_incompRel`: largely smaller than is a strict weak order whose
+  incomparability is at most marginal difference.
+* `MarginalScale.isML_iff`: a scale satisfies ML theory exactly when it has at least two blocks
+  and none has an endpoint facing another.
+* `MarginalScale.IsML.infinite_Ioo`: in a scale satisfying ML theory, infinitely many degrees lie
+  between two that differ largely.
+
+## Implementation notes
+
+The scale is the equivalence and not the relation of being marginally smaller with the axioms of
+ML theory as fields. The two presentations determine each other, and the equivalence is the one
+under which the scale of an order-connected subgroup of an ordered group exists whatever the
+subgroup: when the subgroup is everything, as in an archimedean group, no difference is large and
+the scale does not satisfy ML theory.
 
 ## References
 
 * [dinis-jacinto-2025]
 * [dinis-jacinto-2026]
-* [cresswell-1976]
 -/
 
 @[expose] public section
 
-/-- A marginal scale is a linear order with a relation of being marginally smaller, subject to the
-five axioms of ML theory. A degree is largely smaller than another when it is smaller but not
-marginally smaller. -/
-structure MarginalScale (α : Type*) [LinearOrder α] where
-  /-- `x` is marginally smaller than `y`. -/
-  MarginallyLT : α → α → Prop
-  /-- Axiom 1 says that some element is largely smaller than another. -/
-  exists_large : ∃ x y, x < y ∧ ¬ MarginallyLT x y
-  /-- Axiom 2 says that marginally smaller than implies smaller than. -/
-  lt_of_marginallyLT : ∀ ⦃x y⦄, MarginallyLT x y → x < y
-  /-- Axiom 3, M-irrelevance, says that when `x` is marginally smaller than `y`, whatever is
-  largely smaller than `y` is largely smaller than `x`, and `y` is largely smaller than whatever
-  `x` is largely smaller than. -/
-  irrelevance : ∀ ⦃x y⦄ z, MarginallyLT x y →
-    (z < y ∧ ¬ MarginallyLT z y → z < x ∧ ¬ MarginallyLT z x) ∧
-      (x < z ∧ ¬ MarginallyLT x z → y < z ∧ ¬ MarginallyLT y z)
-  /-- Axiom 4 says that whatever is smaller than something largely smaller than `z` is largely
-  smaller than `z`, and whatever is largely smaller than something smaller than `z` is largely
-  smaller than `z`. -/
-  extends_lt : ∀ ⦃x y⦄ z, x < y →
-    (y < z ∧ ¬ MarginallyLT y z → x < z ∧ ¬ MarginallyLT x z) ∧
-      (z < x ∧ ¬ MarginallyLT z x → z < y ∧ ¬ MarginallyLT z y)
-  /-- Axiom 5, Decomposition, says that a large difference is a marginal step followed by a
-  large one, and a large one followed by a marginal step. -/
-  decomposition : ∀ ⦃x y⦄, x < y ∧ ¬ MarginallyLT x y →
-    (∃ z, MarginallyLT x z ∧ z < y ∧ ¬ MarginallyLT z y) ∧
-      ∃ w, MarginallyLT w y ∧ x < w ∧ ¬ MarginallyLT x w
+/-- A marginal scale on a linear order is an equivalence relation, at most marginal difference,
+whose classes are order-connected. -/
+structure MarginalScale (α : Type*) [LinearOrder α] extends Setoid α where
+  /-- The degrees that differ at most marginally from a given one are order-connected. -/
+  ordConnected' : ∀ x, {y | r x y}.OrdConnected
 
 namespace MarginalScale
 
 variable {α : Type*} [LinearOrder α] (ml : MarginalScale α)
 
-@[ext]
-theorem ext {ml ml' : MarginalScale α} (h : ∀ x y, ml.MarginallyLT x y ↔ ml'.MarginallyLT x y) :
-    ml = ml' := by
-  cases ml; cases ml'
-  congr
-  exact funext₂ fun x y ↦ propext (h x y)
+/-- Two degrees differ at most marginally when they are equivalent in the scale. -/
+def AtMostMarginal (x y : α) : Prop := ml.toSetoid x y
+
+/-- `x` is marginally smaller than `y` when it is smaller and differs at most marginally. -/
+def MarginallyLT (x y : α) : Prop := x < y ∧ ml.AtMostMarginal x y
 
 /-- `x` is largely smaller than `y` when it is smaller but not marginally smaller. -/
 def LargelyLT (x y : α) : Prop := x < y ∧ ¬ ml.MarginallyLT x y
 
-/-- Two degrees differ at most marginally when they are equal or one is marginally smaller than
-the other. -/
-def AtMostMarginal : α → α → Prop := Relation.ReflGen (Relation.SymmGen ml.MarginallyLT)
-
 variable {ml} {x y z : α}
+
+@[ext]
+theorem ext {ml ml' : MarginalScale α} (h : ∀ x y, ml.AtMostMarginal x y ↔ ml'.AtMostMarginal x y) :
+    ml = ml' := by
+  obtain ⟨s, _⟩ := ml
+  obtain ⟨s', _⟩ := ml'
+  obtain rfl : s = s' := Setoid.ext h
+  rfl
+
+@[simp]
+theorem atMostMarginal_mk {s : Setoid α} {hs} : (mk s hs).AtMostMarginal x y ↔ s x y := Iff.rfl
+
+theorem AtMostMarginal.refl (x : α) : ml.AtMostMarginal x x := ml.toSetoid.refl x
+
+theorem AtMostMarginal.symm (h : ml.AtMostMarginal x y) : ml.AtMostMarginal y x :=
+  ml.toSetoid.symm h
+
+theorem AtMostMarginal.trans (hxy : ml.AtMostMarginal x y) (hyz : ml.AtMostMarginal y z) :
+    ml.AtMostMarginal x z :=
+  ml.toSetoid.trans hxy hyz
+
+theorem atMostMarginal_comm : ml.AtMostMarginal x y ↔ ml.AtMostMarginal y x :=
+  ⟨.symm, .symm⟩
+
+variable (ml) in
+theorem ordConnected_setOf_atMostMarginal (x : α) : {y | ml.AtMostMarginal x y}.OrdConnected :=
+  ml.ordConnected' x
+
+theorem marginallyLT_iff_lt_and_atMostMarginal :
+    ml.MarginallyLT x y ↔ x < y ∧ ml.AtMostMarginal x y :=
+  Iff.rfl
+
+theorem largelyLT_iff_lt_and_not_atMostMarginal :
+    ml.LargelyLT x y ↔ x < y ∧ ¬ ml.AtMostMarginal x y :=
+  and_congr_right fun h ↦ not_congr (and_iff_right h)
 
 @[grind =]
 theorem atMostMarginal_iff :
-    ml.AtMostMarginal x y ↔ x = y ∨ ml.MarginallyLT x y ∨ ml.MarginallyLT y x :=
-  (Relation.reflGen_iff _ _ _).trans (or_congr_left eq_comm)
+    ml.AtMostMarginal x y ↔ x = y ∨ ml.MarginallyLT x y ∨ ml.MarginallyLT y x := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · rcases lt_trichotomy x y with hxy | rfl | hxy
+    exacts [.inr (.inl ⟨hxy, h⟩), .inl rfl, .inr (.inr ⟨hxy, h.symm⟩)]
+  · rintro (rfl | h | h)
+    exacts [.refl _, h.2, h.2.symm]
 
-variable (ml) in
-theorem exists_largelyLT : ∃ x y, ml.LargelyLT x y := ml.exists_large
-
+/-- In ML theory, marginally smaller than implies smaller than. -/
 @[grind →]
-theorem MarginallyLT.lt (h : ml.MarginallyLT x y) : x < y := ml.lt_of_marginallyLT h
+theorem MarginallyLT.lt (h : ml.MarginallyLT x y) : x < y := h.1
 
 @[grind →]
 theorem LargelyLT.lt (h : ml.LargelyLT x y) : x < y := h.1
 
 theorem MarginallyLT.not_largelyLT (h : ml.MarginallyLT x y) : ¬ ml.LargelyLT x y := fun h' ↦ h'.2 h
 
-theorem MarginallyLT.atMostMarginal (h : ml.MarginallyLT x y) : ml.AtMostMarginal x y :=
-  .single (.inl h)
+theorem MarginallyLT.atMostMarginal (h : ml.MarginallyLT x y) : ml.AtMostMarginal x y := h.2
 
-theorem LargelyLT.exists_marginallyLT_largelyLT (h : ml.LargelyLT x y) :
-    ∃ z, ml.MarginallyLT x z ∧ ml.LargelyLT z y :=
-  (ml.decomposition h).1
-
-theorem LargelyLT.exists_largelyLT_marginallyLT (h : ml.LargelyLT x y) :
-    ∃ w, ml.LargelyLT x w ∧ ml.MarginallyLT w y :=
-  let ⟨w, hw⟩ := (ml.decomposition h).2
-  ⟨w, hw.symm⟩
+theorem LargelyLT.not_atMostMarginal (h : ml.LargelyLT x y) : ¬ ml.AtMostMarginal x y :=
+  (largelyLT_iff_lt_and_not_atMostMarginal.1 h).2
 
 theorem marginallyLT_or_largelyLT_of_lt (h : x < y) : ml.MarginallyLT x y ∨ ml.LargelyLT x y :=
   (em _).imp_right (⟨h, ·⟩)
 
-theorem LargelyLT.of_lt_of_largelyLT (hxy : x < y) (h : ml.LargelyLT y z) : ml.LargelyLT x z :=
-  (ml.extends_lt z hxy).1 h
-
-theorem LargelyLT.trans_lt (h : ml.LargelyLT x y) (hyz : y < z) : ml.LargelyLT x z :=
-  (ml.extends_lt x hyz).2 h
-
-theorem LargelyLT.trans (hxy : ml.LargelyLT x y) (hyz : ml.LargelyLT y z) : ml.LargelyLT x z :=
-  hxy.trans_lt hyz.lt
-
 /-- Marginal steps do not accrue to a large difference. -/
 theorem MarginallyLT.trans (hxy : ml.MarginallyLT x y) (hyz : ml.MarginallyLT y z) :
-    ml.MarginallyLT x z := by
-  grind [ml.irrelevance, MarginallyLT.lt]
+    ml.MarginallyLT x z :=
+  ⟨hxy.1.trans hyz.1, hxy.2.trans hyz.2⟩
 
 theorem MarginallyLT.bounded (hxz : ml.MarginallyLT x z) (hxy : x < y) (hyz : y < z) :
-    ml.MarginallyLT x y ∧ ml.MarginallyLT y z := by
-  grind [ml.extends_lt]
+    ml.MarginallyLT x y ∧ ml.MarginallyLT y z :=
+  have h : ml.AtMostMarginal x y :=
+    (ml.ordConnected_setOf_atMostMarginal x).out (.refl x) hxz.2 ⟨hxy.le, hyz.le⟩
+  ⟨⟨hxy, h⟩, hyz, h.symm.trans hxz.2⟩
 
 instance : IsStrictOrder α ml.MarginallyLT where
   irrefl _ h := h.lt.false
   trans _ _ _ := MarginallyLT.trans
 
-instance : Std.Asymm ml.LargelyLT := ⟨fun _ _ h h' ↦ h.lt.asymm h'.lt⟩
-
-/-- Largely smaller than is negatively transitive. When one degree is largely smaller than
-another, any third degree is largely greater than the first or largely smaller than the
-second. -/
-instance : IsOrderConnected α ml.LargelyLT where
-  conn a b c h := by
-    rcases le_or_gt b a with hba | hab
-    · exact .inr (hba.eq_or_lt.elim (· ▸ h) (LargelyLT.of_lt_of_largelyLT · h))
-    rcases le_or_gt c b with hcb | hbc
-    · exact .inl (hcb.eq_or_lt.elim (· ▸ h) h.trans_lt)
-    exact (marginallyLT_or_largelyLT_of_lt hab).elim
-      (fun hm ↦ (marginallyLT_or_largelyLT_of_lt hbc).imp
-        (fun hm' ↦ absurd (hm.trans hm') h.2) id) .inl
-
-instance : IsOrderConnected α (Function.swap ml.LargelyLT) :=
-  ⟨fun a b c h ↦ (IsOrderConnected.conn c b a h).symm⟩
-
-instance instIsStrictWeakOrderLargelyLT : IsStrictWeakOrder α ml.LargelyLT :=
-  isStrictWeakOrder_of_isOrderConnected
-
-/-- At most marginal difference is incomparability under largely smaller than. -/
-theorem atMostMarginal_iff_incompRel : ml.AtMostMarginal x y ↔ IncompRel ml.LargelyLT x y := by
-  simp only [AtMostMarginal, Relation.reflGen_iff, Relation.SymmGen, IncompRel]
-  grind [marginallyLT_or_largelyLT_of_lt, MarginallyLT.not_largelyLT]
-
-theorem AtMostMarginal.refl (x : α) : ml.AtMostMarginal x x := Relation.ReflGen.refl
-
-theorem AtMostMarginal.symm (h : ml.AtMostMarginal x y) : ml.AtMostMarginal y x :=
-  atMostMarginal_iff_incompRel.2 (atMostMarginal_iff_incompRel.1 h).symm
-
-theorem AtMostMarginal.trans (hxy : ml.AtMostMarginal x y) (hyz : ml.AtMostMarginal y z) :
-    ml.AtMostMarginal x z :=
-  atMostMarginal_iff_incompRel.2 <| IsStrictWeakOrder.incomp_trans _ _ _
-    (atMostMarginal_iff_incompRel.1 hxy) (atMostMarginal_iff_incompRel.1 hyz)
-
-variable (ml) in
-/-- At most marginal difference is an equivalence relation, sameness for present purposes. -/
-def atMostMarginalSetoid : Setoid α :=
-  ⟨ml.AtMostMarginal, ⟨AtMostMarginal.refl, AtMostMarginal.symm, AtMostMarginal.trans⟩⟩
-
-theorem AtMostMarginal.largelyLT_congr_left (h : ml.AtMostMarginal x y) :
-    ml.LargelyLT x z ↔ ml.LargelyLT y z :=
-  have h := atMostMarginal_iff_incompRel.1 h
-  ⟨fun h' ↦ (IsOrderConnected.conn _ y _ h').resolve_left h.1,
-    fun h' ↦ (IsOrderConnected.conn _ x _ h').resolve_left h.2⟩
-
-theorem AtMostMarginal.largelyLT_congr_right (h : ml.AtMostMarginal y z) :
-    ml.LargelyLT x y ↔ ml.LargelyLT x z :=
-  have h := atMostMarginal_iff_incompRel.1 h
-  ⟨fun h' ↦ (IsOrderConnected.conn _ _ _ h').resolve_right h.2,
-    fun h' ↦ (IsOrderConnected.conn _ _ _ h').resolve_right h.1⟩
-
-theorem marginallyLT_iff_lt_and_atMostMarginal :
-    ml.MarginallyLT x y ↔ x < y ∧ ml.AtMostMarginal x y := by
-  grind [atMostMarginal_iff_incompRel, IncompRel, LargelyLT]
-
-theorem LargelyLT.not_atMostMarginal (h : ml.LargelyLT x y) : ¬ ml.AtMostMarginal x y :=
-  fun h' ↦ (atMostMarginal_iff_incompRel.1 h').1 h
-
 /-! ### Blocks -/
 
 variable (ml) in
-/-- The blocks of a marginal scale are its classes of at most marginally different degrees,
-ordered by largely smaller than. They are the degrees that [cresswell-1976] builds from the
-comparison largely smaller than. -/
-def Block : Type _ := CresswellDegree (Function.swap ml.LargelyLT)
+/-- The blocks of a marginal scale are its classes of at most marginally different degrees. -/
+def Block : Type _ := Quotient ml.toSetoid
 
 variable (ml) in
 /-- The block of a degree. -/
 def toBlock (x : α) : ml.Block := Quotient.mk _ x
 
+instance (q : Quotient ml.toSetoid) : (Quotient.mk ml.toSetoid ⁻¹' {q}).OrdConnected := by
+  induction q using Quotient.inductionOn with | h x
+  convert ml.ordConnected_setOf_atMostMarginal x using 1
+  ext y
+  exact Quotient.eq.trans atMostMarginal_comm
+
 noncomputable instance : LinearOrder ml.Block := by
-  classical exact inferInstanceAs (LinearOrder (CresswellDegree (Function.swap ml.LargelyLT)))
+  classical exact inferInstanceAs (LinearOrder (Quotient ml.toSetoid))
 
 @[elab_as_elim]
 protected theorem Block.ind {p : ml.Block → Prop} (h : ∀ x, p (ml.toBlock x)) (b : ml.Block) :
@@ -219,28 +191,21 @@ theorem toBlock_surjective : Function.Surjective ml.toBlock := Block.ind fun x �
 /-- One block comes before another exactly when its degrees are largely smaller. -/
 @[simp]
 theorem toBlock_lt_toBlock : ml.toBlock x < ml.toBlock y ↔ ml.LargelyLT x y :=
-  CresswellDegree.mk_lt_mk
+  Quotient.mk_lt_mk.trans largelyLT_iff_lt_and_not_atMostMarginal.symm
 
 @[simp]
-theorem toBlock_eq_toBlock : ml.toBlock x = ml.toBlock y ↔ ml.AtMostMarginal x y :=
-  CresswellDegree.mk_eq_mk_iff_incompRel.trans <|
-    (incompRel_swap_apply _).trans atMostMarginal_iff_incompRel.symm
+theorem toBlock_eq_toBlock : ml.toBlock x = ml.toBlock y ↔ ml.AtMostMarginal x y := Quotient.eq
 
 theorem toBlock_le_toBlock : ml.toBlock x ≤ ml.toBlock y ↔ ¬ ml.LargelyLT y x :=
-  CresswellDegree.mk_le_mk_iff_not
+  not_lt.symm.trans (not_congr toBlock_lt_toBlock)
 
 variable (ml) in
-theorem toBlock_mono : Monotone ml.toBlock :=
-  fun _ _ h ↦ toBlock_le_toBlock.2 fun h' ↦ h'.lt.not_ge h
+theorem toBlock_mono : Monotone ml.toBlock := Quotient.mk_monotone
 
 variable (ml) in
 /-- Taking a degree to its block, as an order homomorphism. -/
 @[simps]
 def toBlockHom : α →o ml.Block := ⟨ml.toBlock, ml.toBlock_mono⟩
-
-instance : Nontrivial ml.Block :=
-  let ⟨_, _, h⟩ := ml.exists_largelyLT
-  ⟨_, _, (toBlock_lt_toBlock.2 h).ne⟩
 
 instance [Countable α] : Countable ml.Block := ml.toBlock_surjective.countable
 
@@ -249,24 +214,121 @@ theorem largelyLT_or_atMostMarginal_or_largelyLT (x y : α) :
     ml.LargelyLT x y ∨ ml.AtMostMarginal x y ∨ ml.LargelyLT y x := by
   simpa using lt_trichotomy (ml.toBlock x) (ml.toBlock y)
 
-theorem ordConnected_setOf_atMostMarginal (x : α) :
-    {y | ml.AtMostMarginal x y}.OrdConnected := by
-  convert (Set.ordConnected_singleton (a := ml.toBlock x)).preimage_mono ml.toBlock_mono using 1
-  ext y
-  exact toBlock_eq_toBlock.symm.trans eq_comm
+/-! ### Largely smaller than -/
 
-theorem LargelyLT.infinite_setOf (h : ml.LargelyLT x y) :
-    {z | ml.MarginallyLT x z ∧ ml.LargelyLT z y}.Infinite := fun hfin ↦ by
-  obtain ⟨z₀, hz₀⟩ := (ml.decomposition h).1
-  obtain ⟨z, ⟨hxz, hzy⟩, hmax⟩ := hfin.exists_maximal ⟨z₀, hz₀⟩
-  obtain ⟨w, hzw, hwy⟩ := (ml.decomposition hzy).1
-  exact (hmax ⟨hxz.trans hzw, hwy⟩ hzw.lt.le).not_gt hzw.lt
+/-- In ML theory, whatever is smaller than something largely smaller than `z` is largely smaller
+than `z`. -/
+theorem LargelyLT.of_lt_of_largelyLT (hxy : x < y) (h : ml.LargelyLT y z) : ml.LargelyLT x z :=
+  toBlock_lt_toBlock.1 ((ml.toBlock_mono hxy.le).trans_lt (toBlock_lt_toBlock.2 h))
 
-theorem LargelyLT.infinite_Ioo (h : ml.LargelyLT x y) : (Set.Ioo x y).Infinite :=
-  h.infinite_setOf.mono (s := {z | ml.MarginallyLT x z ∧ ml.LargelyLT z y}) fun _ hz ↦
-    ⟨hz.1.lt, hz.2.lt⟩
+/-- In ML theory, whatever is largely smaller than something smaller than `z` is largely smaller
+than `z`. -/
+theorem LargelyLT.trans_lt (h : ml.LargelyLT x y) (hyz : y < z) : ml.LargelyLT x z :=
+  toBlock_lt_toBlock.1 ((toBlock_lt_toBlock.2 h).trans_le (ml.toBlock_mono hyz.le))
+
+theorem LargelyLT.trans (hxy : ml.LargelyLT x y) (hyz : ml.LargelyLT y z) : ml.LargelyLT x z :=
+  hxy.trans_lt hyz.lt
+
+/-- In ML theory, M-irrelevance: degrees that differ at most marginally are largely smaller than
+the same degrees. -/
+theorem AtMostMarginal.largelyLT_congr_left (h : ml.AtMostMarginal x y) :
+    ml.LargelyLT x z ↔ ml.LargelyLT y z := by
+  rw [← toBlock_lt_toBlock, ← toBlock_lt_toBlock, toBlock_eq_toBlock.2 h]
+
+/-- In ML theory, M-irrelevance: the same degrees are largely smaller than degrees that differ at
+most marginally. -/
+theorem AtMostMarginal.largelyLT_congr_right (h : ml.AtMostMarginal y z) :
+    ml.LargelyLT x y ↔ ml.LargelyLT x z := by
+  rw [← toBlock_lt_toBlock, ← toBlock_lt_toBlock, toBlock_eq_toBlock.2 h]
+
+instance : Std.Asymm ml.LargelyLT := ⟨fun _ _ h h' ↦ h.lt.asymm h'.lt⟩
+
+/-- Largely smaller than is negatively transitive. When one degree is largely smaller than
+another, any third degree is largely greater than the first or largely smaller than the
+second. -/
+instance : IsOrderConnected α ml.LargelyLT where
+  conn a b c h := by
+    simp only [← toBlock_lt_toBlock] at h ⊢
+    exact (lt_or_ge (ml.toBlock a) (ml.toBlock b)).imp_right fun h' ↦ h'.trans_lt h
+
+instance : IsOrderConnected α (Function.swap ml.LargelyLT) :=
+  ⟨fun a b c h ↦ (IsOrderConnected.conn c b a h).symm⟩
+
+instance instIsStrictWeakOrderLargelyLT : IsStrictWeakOrder α ml.LargelyLT :=
+  isStrictWeakOrder_of_isOrderConnected
+
+/-- At most marginal difference is incomparability under largely smaller than. -/
+theorem atMostMarginal_iff_incompRel : ml.AtMostMarginal x y ↔ IncompRel ml.LargelyLT x y := by
+  rw [← toBlock_eq_toBlock, le_antisymm_iff, toBlock_le_toBlock, toBlock_le_toBlock, and_comm]
+  rfl
 
 theorem isUpperSet_setOf_largelyLT (x : α) : IsUpperSet {y | ml.LargelyLT x y} :=
   fun _ _ hle h ↦ hle.eq_or_lt.elim (· ▸ h) h.trans_lt
+
+/-! ### Scales satisfying ML theory -/
+
+variable (ml) in
+/-- A marginal scale satisfies ML theory when some difference is large and every large difference
+decomposes into a marginal step followed by a large one, and into a large one followed by a
+marginal step. -/
+structure IsML : Prop where
+  /-- Some degree is largely smaller than another. -/
+  exists_largelyLT : ∃ x y, ml.LargelyLT x y
+  /-- A large difference is a marginal step followed by a large difference. -/
+  exists_marginallyLT_largelyLT : ∀ ⦃x y⦄, ml.LargelyLT x y →
+    ∃ z, ml.MarginallyLT x z ∧ ml.LargelyLT z y
+  /-- A large difference is a large difference followed by a marginal step. -/
+  exists_largelyLT_marginallyLT : ∀ ⦃x y⦄, ml.LargelyLT x y →
+    ∃ w, ml.LargelyLT x w ∧ ml.MarginallyLT w y
+
+/-- A marginal scale satisfies ML theory exactly when it has at least two blocks, a block below
+another has no greatest degree, and a block above another has no least degree. -/
+theorem isML_iff : ml.IsML ↔ (∃ x y, ¬ ml.AtMostMarginal x y) ∧
+    (∀ ⦃x y⦄, x < y → ¬ ml.AtMostMarginal x y → ∃ z, x < z ∧ ml.AtMostMarginal x z) ∧
+      ∀ ⦃x y⦄, x < y → ¬ ml.AtMostMarginal x y → ∃ w, w < y ∧ ml.AtMostMarginal w y := by
+  refine ⟨fun h ↦ ⟨?_, fun x y hxy hn ↦ ?_, fun x y hxy hn ↦ ?_⟩, fun ⟨⟨x, y, hn⟩, hgt, hlt⟩ ↦
+    ⟨?_, fun x y h ↦ ?_, fun x y h ↦ ?_⟩⟩
+  · obtain ⟨x, y, h⟩ := h.exists_largelyLT
+    exact ⟨x, y, h.not_atMostMarginal⟩
+  · obtain ⟨z, hz, -⟩ := h.exists_marginallyLT_largelyLT
+      (largelyLT_iff_lt_and_not_atMostMarginal.2 ⟨hxy, hn⟩)
+    exact ⟨z, hz⟩
+  · obtain ⟨w, -, hw⟩ := h.exists_largelyLT_marginallyLT
+      (largelyLT_iff_lt_and_not_atMostMarginal.2 ⟨hxy, hn⟩)
+    exact ⟨w, hw⟩
+  · rcases lt_trichotomy x y with hxy | rfl | hxy
+    · exact ⟨x, y, largelyLT_iff_lt_and_not_atMostMarginal.2 ⟨hxy, hn⟩⟩
+    · exact absurd (.refl x) hn
+    · exact ⟨y, x, largelyLT_iff_lt_and_not_atMostMarginal.2 ⟨hxy, fun h ↦ hn h.symm⟩⟩
+  · obtain ⟨hxy, hn⟩ := largelyLT_iff_lt_and_not_atMostMarginal.1 h
+    obtain ⟨z, hxz, hz⟩ := hgt hxy hn
+    exact ⟨z, ⟨hxz, hz⟩, (hz.largelyLT_congr_left).1 h⟩
+  · obtain ⟨hxy, hn⟩ := largelyLT_iff_lt_and_not_atMostMarginal.1 h
+    obtain ⟨w, hwy, hw⟩ := hlt hxy hn
+    exact ⟨w, (hw.largelyLT_congr_right).2 h, hwy, hw⟩
+
+namespace IsML
+
+variable (h : ml.IsML)
+include h
+
+theorem nontrivial_block : Nontrivial ml.Block :=
+  let ⟨_, _, hl⟩ := h.exists_largelyLT
+  ⟨_, _, (toBlock_lt_toBlock.2 hl).ne⟩
+
+theorem infinite_setOf (hxy : ml.LargelyLT x y) :
+    {z | ml.MarginallyLT x z ∧ ml.LargelyLT z y}.Infinite := fun hfin ↦ by
+  obtain ⟨z₀, hz₀⟩ := h.exists_marginallyLT_largelyLT hxy
+  obtain ⟨z, ⟨hxz, hzy⟩, hmax⟩ := hfin.exists_maximal ⟨z₀, hz₀⟩
+  obtain ⟨w, hzw, hwy⟩ := h.exists_marginallyLT_largelyLT hzy
+  exact (hmax ⟨hxz.trans hzw, hwy⟩ hzw.lt.le).not_gt hzw.lt
+
+/-- In a scale satisfying ML theory, infinitely many degrees lie between two that differ
+largely. -/
+theorem infinite_Ioo (hxy : ml.LargelyLT x y) : (Set.Ioo x y).Infinite :=
+  (h.infinite_setOf hxy).mono (s := {z | ml.MarginallyLT x z ∧ ml.LargelyLT z y}) fun _ hz ↦
+    ⟨hz.1.lt, hz.2.lt⟩
+
+end IsML
 
 end MarginalScale

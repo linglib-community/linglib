@@ -89,8 +89,7 @@ end IsHom
 
 section Lex
 
-variable {β γ : Type*} [LinearOrder β] [LinearOrder γ] [Nontrivial β] [Nonempty γ]
-  [NoMaxOrder γ] [NoMinOrder γ] {f : α → β ×ₗ γ}
+variable {β γ : Type*} [LinearOrder β] [LinearOrder γ] {f : α → β ×ₗ γ}
 
 /-- A map into a lexicographic marginal scale is a homomorphism exactly when its block coordinate
 pulls back largely smaller than and its location coordinate grows along marginal steps. -/
@@ -123,11 +122,12 @@ theorem isHom_toLex (e : ml.Block ↪o β) (g : ∀ q, {x // ml.toBlock x = q} �
   exact (g _).strictMono h.lt
 
 /-- The block coordinate of a homomorphism into lexicographic pairs embeds the blocks. -/
-noncomputable def IsHom.fstOrderEmbedding (hf : ml.IsHom (lex β γ) f) : ml.Block ↪o β :=
+noncomputable def IsHom.fstOrderEmbedding [Nonempty γ] (hf : ml.IsHom (lex β γ) f) :
+    ml.Block ↪o β :=
   hf.mapBlock.trans (lexBlockOrderIso β γ).toOrderEmbedding
 
 @[simp]
-theorem IsHom.fstOrderEmbedding_toBlock (hf : ml.IsHom (lex β γ) f) (x : α) :
+theorem IsHom.fstOrderEmbedding_toBlock [Nonempty γ] (hf : ml.IsHom (lex β γ) f) (x : α) :
     hf.fstOrderEmbedding (ml.toBlock x) = (ofLex (f x)).1 :=
   rfl
 
@@ -147,7 +147,7 @@ theorem IsHom.sndOrderEmbedding_apply (hf : ml.IsHom (lex β γ) f) (q : ml.Bloc
 variable (ml β γ) in
 /-- A homomorphism into lexicographic pairs is an embedding of the blocks together with an
 embedding of the degrees of each block. -/
-noncomputable def isHomLexEquiv : {f : α → β ×ₗ γ // ml.IsHom (lex β γ) f} ≃
+noncomputable def isHomLexEquiv [Nonempty γ] : {f : α → β ×ₗ γ // ml.IsHom (lex β γ) f} ≃
     (ml.Block ↪o β) × ∀ q, {x // ml.toBlock x = q} ↪o γ where
   toFun f := (f.2.fstOrderEmbedding, f.2.sndOrderEmbedding)
   invFun p := ⟨_, isHom_toLex p.1 p.2⟩
