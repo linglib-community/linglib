@@ -49,8 +49,7 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
 * `PolarityItem.Licenser.LicensesByStrengthening`, `PolarityItem.Licenser.LicensesFreeChoice`,
   `PolarityItem.Licenser.IsQuestion`: the three routes of licensing. A downward-entailing
   licenser licenses by strengthening, after Kadmon and Landman, a modal licenser licenses by free
-  choice, after Chierchia, and a question licenses a weak item, which van Rooy derives from the
-  relevance of the question.
+  choice, after Chierchia, and a question hosts a weak item.
 * `PolarityItem.Licenser.Licenses`, `PolarityItem.Licenser.AntiLicenses`,
   `PolarityItem.Licenser.Admits`: the licensing relations between a licenser and an item.
 
@@ -72,10 +71,11 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
   weak strength not be upward entailing as well excludes them, since a map that is monotone in
   both directions modulo presupposition takes a single value at comparable arguments where it is
   defined (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
-* The question route is the generalization that a question licenses a weak item. Van Rooy
-  derives it from the value of a question in a decision problem, which widening the domain of a
-  wh-question never lowers; that is a theorem of the theory of question value, and this file does
-  not depend on it. Van Rooy's strict condition for rhetorical questions is not formalized.
+* The question route is the descriptive generalization that a question hosts a weak item. A
+  question carries no operator, since it is downward entailing only in the domain of a
+  wh-phrase. Van Rooy ties the use of an item in a question to the expectations of the
+  questioner, through the entropy of the question under the questioner's prior. That is a
+  condition on a use of the question and not on the construction, so it is not stated here.
 
 ## References
 
@@ -169,7 +169,7 @@ inductive Licenser : Type 2 where
 
 /-- The route by which a context licenses polarity items. A context licenses by strengthening, as
 a generic context that licenses free choice items ([kadmon-landman-1993], [dayal-1996]), or by
-the relevance of a question ([van-rooy-2003-npi]). -/
+the entropy of a question ([van-rooy-2003-npi]). -/
 inductive LicensingMechanism where
   | strengthening
   | genericIndefinite
@@ -269,9 +269,9 @@ def LicensesFreeChoice : Licenser → Prop
       (antiExh (fun S ↦ F.op p (⋃ a ∈ S, P a)) D).Nonempty
   | .classical _ | .scalar _ | .strawson _ | .question => False
 
-/-- A licenser *is a question* when it is the wh-question and not an operator. A question licenses
-an item that widens its domain, which [van-rooy-2003-npi] derives from its relevance: widening the
-domain of a wh-question never lowers its value in a decision problem. -/
+/-- A licenser *is a question* when it is a question and not an operator. A question hosts a weak
+item whatever the questioner expects. In [van-rooy-2003-npi] the questioner uses the item when it
+raises the entropy of the question, which depends on the questioner's prior. -/
 def IsQuestion : Licenser → Prop
   | .question => True
   | .classical _ | .scalar _ | .strawson _ | .modal _ => False

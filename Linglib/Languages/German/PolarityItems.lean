@@ -28,9 +28,10 @@ is the positive polarity *until* of Karttunen's chart.
 
 ## TODO
 
-Following van Rooy, the licensing theory licenses every weak negative polarity item in a question.
-It therefore admits *brauchen* in the positive polar question that Büring and Gunlogson star,
-whereas the rating study reserves questions for superweak items.
+The licensing theory licenses every weak negative polarity item in a question, whatever the
+questioner expects. It therefore admits *brauchen* in the positive polar question that Büring and
+Gunlogson star, whereas the rating study reserves questions for superweak items. Van Rooy ties an
+item in a question to a questioner who expects the negative answer.
 
 ## References
 
