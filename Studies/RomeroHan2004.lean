@@ -54,9 +54,16 @@ and evidence against a proposition is evidence for its complement. Conclusive ev
 an answer and the belief the Maxim of Quality requires of an assertion are all the second grade.
 
 A question with focused *NOT* has the logical form of the negative reading of preposed negation,
-`LF.ni`. The Principle of Economy, which makes a question over VERUM require a prior bias, and the
-polarity of the implicature in suggestion contexts are stated in the paper in prose and are not
-formalized.
+`LF.ni`.
+
+## TODO
+
+* The Principle of Economy, by which a question over VERUM is used only to resolve an epistemic
+  conflict or to ensure Quality, is stated in the paper in prose and is not formalized. A question
+  without VERUM, among them the questions with non-preposed negation and neutral intonation, has
+  no logical form here, and the rows that record no implicature for such a question are paired
+  with no prediction.
+* The polarity of the implicature in suggestion contexts is not formalized.
 
 ## References
 

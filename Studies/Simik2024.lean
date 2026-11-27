@@ -365,11 +365,6 @@ def particle : SerbianPQForm → Clause.Marker
   | .jeLiPPQ | .lnpq => Serbian.QuestionParticles.jeLi
   | .hnpq => Serbian.QuestionParticles.li
 
-/-- The polarity of each strategy. -/
-def polarity : SerbianPQForm → Polarity
-  | .daLiPPQ | .jeLiPPQ => .positive
-  | .hnpq | .lnpq => .negative
-
 /-- The quiz question of (31) that exemplifies each strategy. -/
 def quizExample : SerbianPQForm → Examples.Example
   | .daLiPPQ => .ex31a
@@ -403,7 +398,7 @@ theorem distribution_daLiPPQ_ssubset_jeLiPPQ :
 
 -- positive questions are incompatible with negative biases
 theorem distribution_subset_of_polarity_eq_positive {f : SerbianPQForm}
-    (hf : f.polarity = .positive) :
+    (hf : f.quizExample.polarity = some .positive) :
     distribution serbianForms f ⊆
       (⟨.minus .negative, .minus .negative⟩ : BiasProfile).felicity := by
   revert hf; cases f <;> decide
