@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.Hungarian.Indefinites
-public import Linglib.Semantics.PolarityItem.LicensingContext
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Hungarian polarity items
@@ -56,9 +56,5 @@ def bárki : PolarityItem :=
   { form := Indefinites.bárki.form
   , licensor := some .weak
   , freeChoice := true }
-
-theorem senki_licensing_characterized (c : LicensingContext) :
-    c.licenser.Licenses senki ↔ c.licenser.Carries .antiMorphic :=
-  Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
 end Hungarian.PolarityItems

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.Mandarin.Indefinites
-public import Linglib.Semantics.PolarityItem.LicensingContext
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Mandarin polarity-sensitive items
@@ -71,9 +71,5 @@ def renhe : PolarityItem :=
   { form := Indefinites.renhe.form
   , licensor := some .weak
   , freeChoice := true }
-
-theorem sheiDou_licensing_characterized (c : LicensingContext) :
-    c.licenser.Licenses sheiDou ↔ c.licenser.Carries .antiMorphic :=
-  Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
 end Mandarin.PolarityItems
