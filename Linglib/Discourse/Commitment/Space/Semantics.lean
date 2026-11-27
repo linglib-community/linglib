@@ -50,8 +50,8 @@ namespace Space
 variable {κ W : Type*} (C : Space (Set (Set W))) (O : κ → SetRel W W) (k : κ) (φ : Set W)
   {d : Set (Set W)}
 
-/-- The assertion `C + k⊢φ` adds the proposition that `k` is committed to `φ`
-([cohen-krifka-2014] (37), [krifka-2015] (14)). -/
+/-- The **assertion** of `φ` by `k` is the update by the state `{k ⊢[O] φ}` ([cohen-krifka-2014]
+(37), [krifka-2015] (14)). -/
 def assert : Space (Set (Set W)) := C.update {k ⊢[O] φ}
 
 theorem mem_assert :
@@ -71,10 +71,12 @@ theorem root_mem_assert_iff : C.root ∈ C.assert O k φ ↔ (k ⊢[O] φ) ∈ C
 theorem committed_mem_of_mem_assert (hd : d ∈ C.assert O k φ) : (k ⊢[O] φ) ∈ d :=
   ((C.mem_assert O k φ).1 hd).elim (· ▸ C.committed_mem_root_assert O k φ) And.right
 
-/-- The monopolar question proposes `k`'s commitment to `φ` ([krifka-2015] (27)). -/
+/-- The **monopolar question** on `φ` put to `k` is the question with the single proposal `{k ⊢[O]
+φ}` ([krifka-2015] (27)). -/
 def monopolarQuestion : Space (Set (Set W)) := C.question {{k ⊢[O] φ}}
 
-/-- The bipolar question proposes `k`'s commitment to `φ` or to `¬φ` ([krifka-2015] (23)). -/
+/-- The **bipolar question** on `φ` put to `k` is the question with the proposals `{k ⊢[O] φ}` and
+`{k ⊢[O] φᶜ}` ([krifka-2015] (23)). -/
 def bipolarQuestion : Space (Set (Set W)) := C.question {{k ⊢[O] φ}, {k ⊢[O] φᶜ}}
 
 theorem mem_monopolarQuestion :
@@ -86,7 +88,7 @@ theorem mem_bipolarQuestion :
       d = C.root ∨ d ∈ C ∧ ((k ⊢[O] φ) ∈ d ∨ (k ⊢[O] φᶜ) ∈ d) := by
   simp [bipolarQuestion, mem_question]
 
-/-- The bipolar question is the disjunction of the monopolar questions of `φ` and of `¬φ`
+/-- The bipolar question on `φ` is the union of the monopolar questions on `φ` and on `φᶜ`
 ([krifka-2015] (31)). -/
 theorem coe_bipolarQuestion :
     (C.bipolarQuestion O k φ : Set (Set (Set W))) =
@@ -96,25 +98,25 @@ theorem coe_bipolarQuestion :
 
 /-! ### Projected commitments -/
 
-/-- An act taking `C` to `D` projects `k`'s commitment on `φ` when every state of `D` beyond the
-root of `C` carries `k⊢φ` or `k⊢¬φ`. The participant whose commitment to its content an act
-projects is its epistemic authority ([coppock-wechsler-2018]). -/
+/-- An act that takes `C` to `D` **projects the commitment** of `k` on `φ` when every member of `D`
+other than the root of `C` contains `k ⊢[O] φ` or `k ⊢[O] φᶜ`. The participant whose commitment to
+its content an act projects is its epistemic authority ([coppock-wechsler-2018]). -/
 def ProjectsCommitment (D : Space (Set (Set W))) : Prop :=
   ∀ d ∈ D, d ≠ C.root → (k ⊢[O] φ) ∈ d ∨ (k ⊢[O] φᶜ) ∈ d
 
-/-- An assertion projects its author's commitment. -/
+/-- An assertion by `k` projects the commitment of `k`. -/
 theorem projectsCommitment_assert : C.ProjectsCommitment O k φ (C.assert O k φ) := fun _ hd _ ↦
   .inl (C.committed_mem_of_mem_assert O k φ hd)
 
-/-- A bipolar question projects the commitment of the participant it is put to. -/
+/-- A bipolar question put to `k` projects the commitment of `k`. -/
 theorem projectsCommitment_bipolarQuestion :
     C.ProjectsCommitment O k φ (C.bipolarQuestion O k φ) := fun _ hd hne ↦
   (((C.mem_bipolarQuestion O k φ).1 hd).resolve_left hne).2
 
 variable {O k φ} {l : κ}
 
-/-- In the space of all states, an assertion by `l` projects `k`'s commitment only when `l`'s
-commitment to `φ` is `k`'s commitment to `φ` or to `¬φ`. -/
+/-- In the space of all states, an assertion of `φ` by `l` projects the commitment of `k` if and
+only if `l ⊢[O] φ` is `k ⊢[O] φ` or `k ⊢[O] φᶜ`. -/
 theorem projectsCommitment_Ici_assert_iff :
     (Space.Ici ∅).ProjectsCommitment O k φ ((Space.Ici ∅).assert O l φ) ↔
       (k ⊢[O] φ) = (l ⊢[O] φ) ∨ (k ⊢[O] φᶜ) = (l ⊢[O] φ) := by
@@ -123,8 +125,8 @@ theorem projectsCommitment_Ici_assert_iff :
   have hl := (Space.Ici ∅).committed_mem_of_mem_assert O l φ hd
   rcases h with h | h <;> simp only [h, hl, true_or, or_true]
 
-/-- In the space of all states, a bipolar question put to `l` projects `k`'s commitment only when
-`l`'s commitments to `φ` and to `¬φ` are each `k`'s commitment to `φ` or to `¬φ`. -/
+/-- In the space of all states, a bipolar question on `φ` put to `l` projects the commitment of `k`
+if and only if each of `l ⊢[O] φ` and `l ⊢[O] φᶜ` is `k ⊢[O] φ` or `k ⊢[O] φᶜ`. -/
 theorem projectsCommitment_Ici_bipolarQuestion_iff :
     (Space.Ici ∅).ProjectsCommitment O k φ ((Space.Ici ∅).bipolarQuestion O l φ) ↔
       ((k ⊢[O] φ) = (l ⊢[O] φ) ∨ (k ⊢[O] φᶜ) = (l ⊢[O] φ)) ∧

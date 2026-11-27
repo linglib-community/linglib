@@ -72,15 +72,15 @@ namespace Commitment
 
 open scoped SetFamily SetRel
 
-/-- The context structure `K` of [farkas-bruce-2010] consists of the Table as a stack of items,
-the participants' discourse commitments, and the common ground. -/
+/-- A **Table** is the state of a conversation: a stack of the items under discussion, the discourse
+commitments of the participants, and the common ground ([farkas-bruce-2010]). -/
 @[ext]
 structure Table (A W I : Type*) where
-  /-- The Table: the items under discussion, the most recent first. -/
+  /-- The items under discussion, the most recent first. -/
   stack : List I
-  /-- The discourse commitments of the participants that are not joint commitments. -/
+  /-- The propositions each participant is publicly committed to that are not joint commitments. -/
   commitments : State A W
-  /-- The common ground: the propositions that are joint commitments. -/
+  /-- The common ground, the filter of propositions that follow from the joint commitments. -/
   commonGround : Filter W
 
 initialize_simps_projections Table (as_prefix stack, as_prefix commitments, as_prefix commonGround)
@@ -91,8 +91,8 @@ variable {A W I : Type*}
 
 /-! ### Projecting a set of answers -/
 
-/-- The projection of the answers `H` from the common grounds `ps` adds each answer to each member
-of `ps` and discards the inconsistent results. -/
+/-- The **projection** of the answers `H` from the common grounds `ps` is the set of consistent
+filters `f ⊓ 𝓟 q` with `f ∈ ps` and `q ∈ H`. -/
 def project (ps : Set (Filter W)) (H : Set (Set W)) : Set (Filter W) :=
   (ps ⊼ 𝓟 '' H) \ {⊥}
 
@@ -114,7 +114,7 @@ theorem exists_mem_of_mem_project (h : f ∈ project ps H) : ∃ q ∈ H, q ∈ 
   let ⟨_, _, q, hq, e⟩ := (mem_project.1 h).1
   ⟨q, hq, e ▸ mem_inf_of_right (mem_principal_self q)⟩
 
-/-- Discarding the inconsistent common grounds before projecting changes nothing. -/
+/-- Removing `⊥` from the common grounds does not change their projection. -/
 @[simp] theorem project_sdiff_bot : project (ps \ {⊥}) H = project ps H := by
   ext f
   simp only [mem_project, Set.mem_sdiff, Set.mem_singleton_iff]
@@ -123,7 +123,7 @@ theorem exists_mem_of_mem_project (h : f ∈ project ps H) : ∃ q ∈ H, q ∈ 
   rintro rfl
   exact hf (by simpa using e.symm)
 
-/-- Two sets of answers project the same common grounds in either order. -/
+/-- Projecting two sets of answers in either order gives the same common grounds. -/
 theorem project_right_comm : project (project ps H) H' = project (project ps H') H := by
   have h (H H' : Set (Set W)) :
       project (project ps H) H' = (ps ⊼ 𝓟 '' H ⊼ 𝓟 '' H') \ {⊥} := project_sdiff_bot
@@ -138,8 +138,8 @@ theorem project_pair (hp : f ⊓ 𝓟 p ≠ ⊥) (hq : f ⊓ 𝓟 q ≠ ⊥) :
   rw [project, Set.image_pair, Set.singleton_infs, Set.image_pair,
     Set.sdiff_singleton_eq_self (by simp [hp.symm, hq.symm])]
 
-/-- Projecting `p` and `pᶜ` from common grounds that all entail `p` only discards the inconsistent
-ones. -/
+/-- If every member of `ps` contains `p`, the projection of `{p, pᶜ}` from `ps` is `ps` without `⊥`.
+-/
 theorem project_pair_compl_of_forall_mem (h : ∀ f ∈ ps, p ∈ f) :
     project ps {p, pᶜ} = ps \ {⊥} := by
   ext f
@@ -160,19 +160,19 @@ variable (K : Table A W I) (ans : I → Set (Set W)) (a : A) (p : Set W) (i : I)
 
 /-! ### Contexts -/
 
-/-- The initial context has nothing on the Table, no commitments, and the trivial common ground. -/
+/-- The **empty** Table has no items, no commitments, and the common ground `⊤`. -/
 @[simps] def empty : Table A W I := ⟨[], ∅, ⊤⟩
 
-/-- Place an item on the Table. -/
+/-- `K.push i` is `K` with the item `i` on top of the stack. -/
 @[simps] def push : Table A W I := { K with stack := i :: K.stack }
 
-/-- Commit `a` to `p`. -/
+/-- `K.commit a p` is `K` with `p` added to the commitments of `a`. -/
 @[simps] def commit : Table A W I := { K with commitments := insert (a, p) K.commitments }
 
 /-! ### The projected set -/
 
-/-- The projected set consists of the common grounds that canonically settle what is at issue,
-rebuilt from the common ground by the items on the Table, oldest first. -/
+/-- The **projected set** of `K` is obtained from the common ground of `K` by projecting the answers
+of each item on the stack, the oldest first. -/
 def projectedSet : Set (Filter W) :=
   K.stack.foldr (fun i ps ↦ project ps (ans i)) {K.commonGround}
 
@@ -191,7 +191,8 @@ theorem projectedSet_of_stack_eq_nil (h : K.stack = []) :
     K.projectedSet ans = {K.commonGround} := by
   rw [projectedSet, h, List.foldr_nil]
 
-/-- The projected set does not depend on the order of the items on the Table. -/
+/-- Two Tables with the same common ground whose stacks are permutations of each other have the same
+projected set. -/
 theorem projectedSet_congr_perm {L : Table A W I} (hs : K.stack.Perm L.stack)
     (hc : K.commonGround = L.commonGround) : K.projectedSet ans = L.projectedSet ans := by
   have : LeftCommutative fun (i : I) (ps : Set (Filter W)) ↦ project ps (ans i) :=
@@ -199,7 +200,7 @@ theorem projectedSet_congr_perm {L : Table A W I} (hs : K.stack.Perm L.stack)
   rw [projectedSet, projectedSet, hc]
   exact hs.foldr_eq _
 
-/-- A projected common ground refines the current one. -/
+/-- Every member of the projected set refines the common ground. -/
 theorem le_commonGround_of_mem_projectedSet (h : f ∈ K.projectedSet ans) :
     f ≤ K.commonGround := by
   obtain ⟨T, C, cg⟩ := K
@@ -209,7 +210,7 @@ theorem le_commonGround_of_mem_projectedSet (h : f ∈ K.projectedSet ans) :
     obtain ⟨g, hg, hfg⟩ := exists_le_of_mem_project h
     exact hfg.trans (ih hg)
 
-/-- Every projected common ground entails an answer of every item on the Table. -/
+/-- Every member of the projected set contains an answer of every item on the stack. -/
 theorem exists_mem_of_mem_projectedSet_of_mem_stack (hf : f ∈ K.projectedSet ans)
     (hi : i ∈ K.stack) : ∃ q ∈ ans i, q ∈ f := by
   obtain ⟨T, C, cg⟩ := K
@@ -221,8 +222,8 @@ theorem exists_mem_of_mem_projectedSet_of_mem_stack (hf : f ∈ K.projectedSet a
     · obtain ⟨g, hg, hfg⟩ := exists_le_of_mem_project hf
       exact (ih hg hi).imp fun _ h ↦ ⟨h.1, hfg h.2⟩
 
-/-- The consistent bodies of information that refine the common ground and entail an answer of
-every item on the Table are those that refine a projected common ground. -/
+/-- A consistent filter refines a member of the projected set if and only if it refines the common
+ground and contains an answer of every item on the stack. -/
 theorem exists_le_mem_projectedSet_iff {g : Filter W} (hg : g ≠ ⊥) :
     (∃ f ∈ K.projectedSet ans, g ≤ f) ↔
       g ≤ K.commonGround ∧ ∀ i ∈ K.stack, ∃ q ∈ ans i, q ∈ g := by
@@ -244,9 +245,9 @@ end
 /-! ### Settling a joint commitment -/
 
 open scoped Classical in
-/-- In the common-ground increasing operation M' (17), applied once `p` is on every commitment
-list, `p` enters the common ground and leaves the individual commitment lists, and the items one
-of whose answers the new common ground entails are popped from the top of the Table. -/
+/-- **Settling** `p` in `K` adds `p` to the common ground, removes `p` from every commitment list,
+and removes items from the top of the stack while the new common ground contains one of their
+answers ([farkas-bruce-2010] (17)). -/
 @[simps] noncomputable def settle : Table A W I where
   stack := K.stack.dropWhile fun i ↦ decide (∃ q ∈ ans i, q ∈ K.commonGround ⊓ 𝓟 p)
   commitments := {(a, q) | a ~[K.commitments] q ∧ q ≠ p}
@@ -256,14 +257,15 @@ variable {K} in
 theorem stack_settle_of_stack_eq_nil (h : K.stack = []) : (K.settle ans p).stack = [] :=
   congrArg (List.dropWhile _) h
 
-/-- M' strips the shared proposition from every commitment list. -/
+/-- Settling `p` removes `p` from the commitments of every participant. -/
 theorem contents_commitments_settle :
     (K.settle ans p).commitments.contents a = K.commitments.contents a \ {p} := by
   ext
   simp [State.contents]
 
 variable {K ans p i} in
-/-- M' pops an item one of whose answers is entailed and goes on popping. -/
+/-- If the common ground after settling `p` contains an answer of `i`, settling `p` in `K.push i`
+gives the same Table as settling `p` in `K`. -/
 theorem settle_push_of_exists_mem (h : ∃ q ∈ ans i, q ∈ K.commonGround ⊓ 𝓟 p) :
     (K.push i).settle ans p = K.settle ans p :=
   Table.ext (by
@@ -279,7 +281,8 @@ theorem settle_commit_self : (K.commit a p).settle ans p = K.settle ans p :=
   Table.ext rfl (Set.insert_inter_of_notMem (t := {q : A × Set W | q.2 ≠ p}) (not_not.2 rfl)) rfl
 
 variable {K ans p} in
-/-- Reaching a projected common ground empties the Table. -/
+/-- If the common ground after settling `p` is a member of the projected set, the stack after
+settling `p` is empty. -/
 theorem stack_settle_eq_nil_of_mem_projectedSet
     (h : K.commonGround ⊓ 𝓟 p ∈ K.projectedSet ans) : (K.settle ans p).stack = [] := by
   classical
@@ -294,13 +297,15 @@ section Hamblin
 
 variable (K : Table A W (Set (Set W))) (ans : Set (Set W) → Set (Set W)) (a : A) (p : Set W)
 
-/-- In the default assertion (9), `a` commits to `p` and places `{p}` on the Table. -/
+/-- The **assertion** of `p` by `a` adds `p` to the commitments of `a` and places the item `{p}` on
+the stack ([farkas-bruce-2010] (9)). -/
 @[simps!] def assert : Table A W (Set (Set W)) := (K.commit a p).push {p}
 
-/-- The default polar question (12) places `{p, pᶜ}` on the Table. -/
+/-- The **polar question** on `p` places the item `{p, pᶜ}` on the stack ([farkas-bruce-2010] (12)).
+-/
 @[simps!] def polarQuestion : Table A W (Set (Set W)) := K.push {p, pᶜ}
 
-/-- A polar question and its negative counterpart place the same item on the Table. -/
+/-- The polar questions on `p` and on `pᶜ` are equal. -/
 @[simp] theorem polarQuestion_compl : K.polarQuestion pᶜ = K.polarQuestion p := by
   rw [polarQuestion, compl_compl, Set.pair_comm, polarQuestion]
 

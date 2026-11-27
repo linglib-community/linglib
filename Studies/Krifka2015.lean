@@ -13,7 +13,7 @@ the space the act leads to. A *rejection* extends it with the space before the l
 An assertion of `φ` by `s` is two acts by `s`: the update by `s`'s commitment to `φ`, and then
 the update by `φ` itself. A bipolar question put to `a` proposes `a`'s commitment to `φ` or to
 `φᶜ`, and a monopolar question proposes `a`'s commitment to `φ` alone. The responses *yes* and
-*no* are `a`'s assertions of `φ` and of `φᶜ`.
+*no* are the updates by `a`'s commitment to `φ` and to `φᶜ`.
 
 The three responses with *no* behave differently when no rejection comes first. After a bipolar
 question, *no* leads to the space that the assertion of `φᶜ` would lead to by itself. After a
@@ -70,10 +70,10 @@ namespace Krifka2015
 open Commitment Commitment.Space ModalLogic Filter OrderDual
 open scoped SetRel
 
-/-- (8)–(9): A commitment space development records the spaces a conversation has led through,
-each with the participant whose move led to it. -/
+/-- (8)–(9): A **commitment space development** records the commitment spaces a conversation has
+passed through, each with the participant whose move led to it. -/
 structure Development (P S : Type*) [LE S] where
-  /-- The commitment space the record starts from. -/
+  /-- The space the record starts from. -/
   initial : Space S
   /-- The moves made, the most recent first, each with its actor and the space it led to. -/
   moves : List (P × Space S)
@@ -84,16 +84,17 @@ section
 
 variable {P S : Type*} [LE S] (D : Development P S) (a b : P) (f : Space S → Space S)
 
-/-- The space the last move led to. -/
+/-- The **current** space of a development is the space its last move led to. -/
 def current : Space S := (D.moves.head?.map Prod.snd).getD D.initial
 
-/-- The space before the last move. -/
+/-- The **previous** space of a development is the space before its last move. -/
 def previous : Space S := (D.moves.tail.head?.map Prod.snd).getD D.initial
 
-/-- (9): An act by `a` extends the record with the space the act leads to. -/
+/-- (9): An **act** by `a` extends a development with the space the act leads to from the current
+space. -/
 def act : Development P S := ⟨D.initial, (a, f D.current) :: D.moves⟩
 
-/-- (10): A rejection by `a` extends the record with the space before the last move. -/
+/-- (10): A **rejection** by `a` extends a development with its previous space. -/
 def reject : Development P S := ⟨D.initial, (a, D.previous) :: D.moves⟩
 
 @[simp] theorem current_act : (D.act a f).current = f D.current := rfl
@@ -107,24 +108,25 @@ end
 variable {P W : Type*} (O : P → SetRel W W) (D : Development P (Set (Set W))) (s a : P)
   (φ : Set W) {d : Set (Set W)}
 
-/-- (19): In an assertion `s` commits to `φ`, and then `φ` itself is added. -/
+/-- (19): The **assertion** of `φ` by `s` is the update by `s`'s commitment to `φ` followed by the
+update by `φ`. -/
 def assertion : Development P (Set (Set W)) :=
   (D.act s (·.assert O s φ)).act s (·.update {φ})
 
-/-- (20): *Yes* is `a`'s assertion of `φ`. -/
+/-- (20): The response **yes** by `a` is the update by `a`'s commitment to `φ`. -/
 def yes : Development P (Set (Set W)) := D.act a (·.assert O a φ)
 
-/-- (20): *No* is `a`'s assertion of `φᶜ`. -/
+/-- (20): The response **no** by `a` is the update by `a`'s commitment to `φᶜ`. -/
 def no : Development P (Set (Set W)) := D.act a (·.assert O a φᶜ)
 
-/-- (23): A bipolar question by `s` proposes `a`'s commitment to `φ` or to `φᶜ`. -/
+/-- (23): The **bipolar question** by `s` to `a` proposes `a`'s commitment to `φ` or to `φᶜ`. -/
 def bipolar : Development P (Set (Set W)) := D.act s (·.bipolarQuestion O a φ)
 
-/-- (27): A monopolar question by `s` proposes `a`'s commitment to `φ`. -/
+/-- (27): The **monopolar question** by `s` to `a` proposes `a`'s commitment to `φ`. -/
 def monopolar : Development P (Set (Set W)) := D.act s (·.monopolarQuestion O a φ)
 
-/-- (22): After a rejection, a *no* to an assertion leaves the speaker's commitment to the content
-beside the addressee's commitment to its negation, without the content. -/
+/-- (22): After an assertion of `φ` by `s`, a rejection and the response *no* by `a` lead to the
+space with `s`'s commitment to `φ` and `a`'s commitment to `φᶜ`, without `φ`. -/
 theorem current_no_reject_assertion :
     (((D.assertion O s φ).reject a).no O a φ).current =
       (D.current.assert O s φ).assert O a φᶜ := rfl
@@ -136,8 +138,9 @@ theorem mem_of_mem_current_no_assertion (hd : d ∈ ((D.assertion O s φ).no O a
       (le_root_update _ _).trans (root_le_of_mem_update _ hd),
     committed_mem_of_mem_assert _ O a φᶜ hd⟩
 
-/-- Without a rejection, a *no* to an assertion leads to states at whose worlds the addressee's
-commitments leave open no world of the state. -/
+/-- After an assertion of `φ` and the response *no* by `a` with no rejection, at a world that
+belongs to every proposition of a resulting state, no world accessible for `a` belongs to every
+proposition of that state. -/
 theorem notMem_sInter_of_mem_current_no_assertion
     (hd : d ∈ ((D.assertion O s φ).no O a φ).current) {w v : W} (hw : w ∈ ⋂₀ d)
     (hwv : w ~[O a] v) : v ∉ ⋂₀ d := fun hv ↦
@@ -158,8 +161,9 @@ theorem mem_of_mem_current_no_monopolar (h : (a ⊢[O] φᶜ) ∉ D.current.root
   · exact Set.mem_sInter.2 fun x hx ↦ key x hx.1 hx.2
   · exact key d hd.1 hd.2
 
-/-- (28): Without a rejection, a *no* to a monopolar question leads to states that no world
-satisfies, when the addressee's commitments are consistent and the answer is new. -/
+/-- (28): After a monopolar question on `φ` and the response *no* by `a` with no rejection, if `a`'s
+commitment relation is serial and `a` was not already committed to `φᶜ`, no world belongs to every
+proposition of a resulting state. -/
 theorem sInter_eq_empty_of_mem_current_no_monopolar [IsSerial (O a)]
     (h : (a ⊢[O] φᶜ) ∉ D.current.root) (hd : d ∈ ((D.monopolar O s a φ).no O a φ).current) :
     ⋂₀ d = ∅ :=
@@ -167,7 +171,8 @@ theorem sInter_eq_empty_of_mem_current_no_monopolar [IsSerial (O a)]
   Set.eq_empty_of_forall_notMem fun _ hw ↦
     Set.disjoint_left.1 disjoint_committed_compl (hw _ h₁) (hw _ h₂)
 
-/-- (24): A *no* to a bipolar question leads where the assertion alone would. -/
+/-- (24): After a bipolar question on `φ`, the response *no* by `a` leads to the space that `a`'s
+commitment to `φᶜ` alone leads to. -/
 theorem current_no_bipolar :
     ((D.bipolar O s a φ).no O a φ).current = D.current.assert O a φᶜ :=
   update_question_of_mem _ (.inr rfl)
@@ -191,10 +196,8 @@ section Table
 variable {A W I : Type*} (K : Table A W I) (ans : I → Set (Set W)) (a : A) (p : Set W) (i : I)
   {d : (Filter W)ᵒᵈ}
 
-/-- The commitment space a Table presents has the common ground as its root and, as
-continuations, the bodies of information that refine the common ground and entail an answer of
-every item on the Table. Its states are filters, ordered so that a state with more information is
-higher. -/
+/-- The **commitment space** of a Table has the common ground as its root and, as its other members,
+the filters that refine the common ground and contain an answer of every item on the stack. -/
 def toSpace : Space (Filter W)ᵒᵈ :=
   (Space.Ici (toDual K.commonGround)).restrict
     {g | ∀ i ∈ K.stack, ∃ q ∈ ans i, q ∈ ofDual g}
@@ -209,7 +212,7 @@ theorem exists_toDual_principal_le_iff (H : Set (Set W)) :
   simp only [Set.mem_image, exists_exists_and_eq_and]
   exact exists_congr fun q ↦ and_congr_right fun _ ↦ le_principal_iff
 
-/-- Placing an item on the Table is the question that proposes each of its complete answers. -/
+/-- Placing an item on the Table is the question whose proposals are the answers of the item. -/
 theorem toSpace_push :
     toSpace (K.push i) ans = (toSpace K ans).question ((fun q ↦ toDual (𝓟 q)) '' ans i) := by
   ext d

@@ -53,13 +53,13 @@ open scoped SetRel
 
 variable {κ W : Type*} (O : κ → SetRel W W) (k : κ) (φ ψ : Set W)
 
-/-- The proposition `k⊢φ` holds at the worlds all of whose `O k`-successors are `φ`-worlds, where
-`k` is committed to `φ`: the core of `φ` along `O k`. -/
+/-- `k ⊢[O] φ` is the proposition that `k` is **committed** to `φ`: the set of worlds all of whose
+`O k`-successors are in `φ`. -/
 scoped notation:50 k:51 " ⊢[" O "] " φ:51 => SetRel.core (O k) φ
 
-/-- The performative update by `k`'s commitment to `φ` keeps the `φ`-successors of `O k` and
-leaves every other accessibility unchanged ([yamada-2012]'s update by an act of asserting,
-[van-der-leer-2026] Definition 4). -/
+/-- The **performative update** of `O` by `k`'s commitment to `φ` restricts `O k` to the pairs whose
+second world is in `φ` and leaves the other relations unchanged ([yamada-2012]'s update by an act of
+asserting, [van-der-leer-2026] Definition 4). -/
 def perform : κ → SetRel W W := fun k' ↦ {p | p ∈ O k' ∧ (k' = k → p.2 ∈ φ)}
 
 variable {O k φ ψ} {k' : κ}
@@ -78,8 +78,9 @@ theorem perform_subset (k' : κ) : perform O k φ k' ⊆ O k' := fun _ h ↦ h.1
 theorem perform_of_ne (h : k' ≠ k) : perform O k φ k' = O k' :=
   Set.ext fun _ ↦ ⟨And.left, fun hp ↦ ⟨hp, (absurd · h)⟩⟩
 
-/-- After the performative update by `φ`, `k⊢ψ` holds where `k⊢(φ → ψ)` held before
-([yamada-2012]'s reduction axiom for the asserter's own commitments). -/
+/-- After the performative update by `k`'s commitment to `φ`, `k` is committed to `ψ` at the worlds
+where `k` was committed to `φᶜ ∪ ψ` ([yamada-2012]'s reduction axiom for the asserter's own
+commitments). -/
 theorem committed_perform : (k ⊢[perform O k φ] ψ) = (k ⊢[O] (φᶜ ∪ ψ)) :=
   Set.ext fun _ ↦ ⟨fun h _ hb ↦ or_iff_not_imp_left.2 fun ht ↦ h ⟨hb, fun _ ↦ not_not.1 ht⟩,
     fun h _ hb ↦ (h hb.1).resolve_left (not_not.2 (hb.2 rfl))⟩
@@ -103,7 +104,8 @@ theorem perform_comm : perform (perform O k φ) k' ψ = perform (perform O k' ψ
   funext fun _ ↦ Set.ext fun _ ↦
     ⟨fun h ↦ ⟨⟨h.1.1, h.2⟩, h.1.2⟩, fun h ↦ ⟨⟨h.1.1, h.2⟩, h.1.2⟩⟩
 
-/-- The performative update is the greatest family inside `O` in which `k⊢φ` holds everywhere. -/
+/-- A family of relations is contained in the performative update of `O` by `k`'s commitment to `φ`
+if and only if it is contained in `O` and, in it, `k` is committed to `φ` at every world. -/
 theorem le_perform_iff {O' : κ → SetRel W W} :
     O' ≤ perform O k φ ↔ O' ≤ O ∧ (k ⊢[O'] φ) = Set.univ :=
   ⟨fun h ↦ ⟨fun k' ↦ (h k').trans (perform_subset k'),
@@ -124,8 +126,8 @@ instance [IsK45Frame (O k')] : IsK45Frame (perform O k φ k') where
 
 variable (P : κ → Set W)
 
-/-- From every world, the accessibility of the public commitment sets `P` reaches exactly the
-worlds compatible with `k`'s commitments. -/
+/-- `ofSets P` is the family of relations in which every world is related by `k` to exactly the
+worlds in `P k`. -/
 def ofSets : κ → SetRel W W := fun k ↦ SetRel.cgraph fun _ ↦ P k
 
 instance : IsK45Frame (ofSets P k) where
@@ -153,12 +155,11 @@ theorem ofSets_commitmentSet_insert (K : State κ W) (k : κ) (φ : Set W) :
 
 /-! ### Indices -/
 
-/-- An index fixes a fact and, for each holder, the non-empty set of facts its commitments leave
-open. -/
+/-- An **index** is a fact together with a nonempty commitment set for each holder. -/
 structure Index (κ F : Type*) where
   /-- The fact at the index. -/
   fact : F
-  /-- The facts left open by `k`'s commitments. -/
+  /-- The facts compatible with what `k` is committed to. -/
   commitmentSet : κ → Set F
   commitmentSet_nonempty : ∀ k, (commitmentSet k).Nonempty
 
@@ -166,8 +167,8 @@ namespace Index
 
 variable {F : Type*}
 
-/-- From an index, `k` reaches the indices with the same commitment sets whose fact is left open
-by `k`'s commitments. -/
+/-- The **accessibility** of `k` relates an index to the indices with the same commitment sets whose
+fact belongs to the commitment set of `k`. -/
 def access : κ → SetRel (Index κ F) (Index κ F) :=
   fun k ↦ {p | p.2.fact ∈ p.1.commitmentSet k ∧ p.2.commitmentSet = p.1.commitmentSet}
 

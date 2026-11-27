@@ -56,11 +56,11 @@ The root is a field although the set of states determines it, which makes a spac
 
 namespace Commitment
 
-/-- A commitment space is a set of states with a least member, its root. -/
+/-- A **commitment space** is a set of states with a least element, its root. -/
 structure Space (S : Type*) [LE S] where
-  /-- The states the space projects. -/
+  /-- The states of the space. -/
   carrier : Set S
-  /-- The current state. -/
+  /-- The root, the current state. -/
   root : S
   /-- The root is the least state. -/
   isLeast' : IsLeast carrier root
@@ -78,7 +78,7 @@ instance : SetLike (Space S) S where
     obtain rfl := h.unique h'
     rfl
 
-/-- Spaces are ordered by inclusion, and the smaller space is the stronger act. -/
+/-- Commitment spaces are ordered by inclusion of their sets of states. -/
 instance : PartialOrder (Space S) := .ofSetLike (Space S)
 
 @[ext] theorem ext {C D : Space S} (h : ∀ c, c ∈ C ↔ c ∈ D) : C = D := SetLike.ext h
@@ -96,7 +96,7 @@ theorem root_mem : C.root ∈ C := C.isLeast.1
 
 theorem root_le (hc : c ∈ C) : C.root ≤ c := C.isLeast.2 hc
 
-/-- The space with only its root. -/
+/-- The commitment space `{c}` has `c` as its only state. -/
 instance : Singleton S (Space S) := ⟨fun c ↦ ⟨{c}, c, isLeast_singleton⟩⟩
 
 @[simp, norm_cast] theorem coe_singleton (c : S) : (({c} : Space S) : Set S) = {c} := rfl
@@ -105,7 +105,7 @@ instance : Singleton S (Space S) := ⟨fun c ↦ ⟨{c}, c, isLeast_singleton⟩
 
 @[simp] theorem root_singleton (c : S) : ({c} : Space S).root = c := rfl
 
-/-- The free space on `c` has every state above `c`. -/
+/-- `Space.Ici c` is the commitment space of all states above `c`. -/
 protected def Ici (c : S) : Space S := ⟨Set.Ici c, c, isLeast_Ici⟩
 
 @[simp, norm_cast] theorem coe_Ici (c : S) : (Space.Ici c : Set S) = Set.Ici c := rfl
@@ -116,8 +116,8 @@ protected def Ici (c : S) : Space S := ⟨Set.Ici c, c, isLeast_Ici⟩
 
 /-! ### Meta-speech acts -/
 
-/-- `C.restrict D` has the root and the members of `C` in `D`. A meta-speech act is such a
-restriction, which keeps the root and prunes the continuations. -/
+/-- The **restriction** of `C` to `D` has the root of `C` and the members of `C` that belong to `D`.
+-/
 def restrict (D : Set S) : Space S :=
   ⟨insert C.root (↑C ∩ D), C.root, Set.mem_insert _ _,
     Set.forall_mem_insert.2 ⟨le_rfl, fun _ hd ↦ C.root_le hd.1⟩⟩
@@ -142,7 +142,7 @@ theorem coe_restrict_inter (D E : Set S) :
   rw [coe_restrict, coe_restrict, coe_restrict, Set.inter_inter_distrib_left,
     Set.insert_inter_distrib]
 
-/-- The denegation `C − D` has the root and the members of `C` outside `D`
+/-- The **denegation** of `D` in `C` has the root of `C` and the members of `C` outside `D`
 ([cohen-krifka-2014] (26), [krifka-2015] (5), [van-der-leer-2026] Definition 22). -/
 def denegate (D : Set S) : Space S := C.restrict Dᶜ
 
@@ -153,24 +153,24 @@ def denegate (D : Set S) : Space S := C.restrict Dᶜ
 theorem coe_denegate_of_root_notMem (h : C.root ∉ D) : (C.denegate D : Set S) = ↑C \ D :=
   C.coe_restrict_of_root_mem h
 
-/-- Two denegations cancel ([cohen-krifka-2014] (28)). -/
+/-- If `D` is a set of members of `C` that does not contain the root, the members of `C` outside the
+denegation of `D` are exactly `D` ([cohen-krifka-2014] (28)). -/
 theorem sdiff_coe_denegate (hD : D ⊆ C) (h : C.root ∉ D) :
     (C : Set S) \ ↑(C.denegate D) = D := by
   rw [C.coe_denegate_of_root_notMem h, Set.sdiff_sdiff_cancel_left hD]
 
-/-- De Morgan's law `∼[A & B] = ∼A ∨ ∼B` for denegations ([cohen-krifka-2014] (34)). -/
+/-- The denegation of an intersection is the union of the denegations ([cohen-krifka-2014] (34)). -/
 theorem coe_denegate_inter (D E : Set S) :
     (C.denegate (D ∩ E) : Set S) = ↑(C.denegate D) ∪ ↑(C.denegate E) := by
   rw [denegate, Set.compl_inter, coe_restrict_union]; rfl
 
-/-- De Morgan's law `∼[A ∨ B] = ∼A & ∼B` for denegations ([cohen-krifka-2014] (35)), whose two
-sides are rooted though the disjunction is not. -/
+/-- The denegation of a union is the intersection of the denegations ([cohen-krifka-2014] (35)). -/
 theorem coe_denegate_union (D E : Set S) :
     (C.denegate (D ∪ E) : Set S) = ↑(C.denegate D) ∩ ↑(C.denegate E) := by
   rw [denegate, Set.compl_union, coe_restrict_inter]; rfl
 
-/-- The question `C.question P` keeps the root and proposes the continuations that carry one of
-the acts in `P` ([krifka-2015] (23), (27)). -/
+/-- The **question** on `C` with proposals `P` has the root of `C` and the members of `C` above some
+member of `P` ([krifka-2015] (23), (27)). -/
 def question (P : Set S) : Space S := C.restrict (upperClosure P)
 
 @[simp] theorem root_question (P : Set S) : (C.question P).root = C.root := rfl
@@ -178,12 +178,12 @@ def question (P : Set S) : Space S := C.restrict (upperClosure P)
 theorem mem_question {P : Set S} : d ∈ C.question P ↔ d = C.root ∨ d ∈ C ∧ ∃ p ∈ P, p ≤ d :=
   .rfl
 
-/-- A question one of whose proposals the root already carries changes nothing. -/
+/-- A question with a proposal below the root is the space itself. -/
 theorem question_eq_self {P : Set S} (h : ∃ p ∈ P, p ≤ C.root) : C.question P = C :=
   ext fun _ ↦ ⟨fun hd ↦ hd.elim (· ▸ C.root_mem) And.left, fun hd ↦
     let ⟨p, hp, hle⟩ := h; .inr ⟨hd, p, hp, hle.trans (C.root_le hd)⟩⟩
 
-/-- A question with alternative proposals is the disjunction of the questions
+/-- The question with proposals `P ∪ Q` is the union of the questions with proposals `P` and `Q`
 ([krifka-2015] (31), (34)). -/
 theorem coe_question_union (P Q : Set S) :
     (C.question (P ∪ Q) : Set S) = ↑(C.question P) ∪ ↑(C.question Q) := by
@@ -198,7 +198,7 @@ section CompleteLattice
 
 variable {S : Type*} [CompleteLattice S] (C : Space S) {D : Set S} {k l d : S}
 
-/-- The update `C + k` has the states of `C` above `k`, rooted at their meet
+/-- The **update** of `C` by `k` has the members of `C` above `k`, with their infimum as root
 ([cohen-krifka-2014] (23), [krifka-2015] (2), (3)). -/
 def update (k : S) : Space S :=
   ⟨insert (sInf (↑C ∩ Set.Ici k)) (↑C ∩ Set.Ici k), sInf (↑C ∩ Set.Ici k), Set.mem_insert _ _,
@@ -216,8 +216,8 @@ theorem root_le_root_update (k : S) : C.root ≤ (C.update k).root :=
 theorem root_le_of_mem_update (h : d ∈ C.update k) : C.root ≤ d :=
   h.elim (fun e ↦ e ▸ C.root_le_root_update k) fun h ↦ C.root_le h.1
 
-/-- The space admits an update, in that the new root is one of its states, iff its states above
-`k` have a least member. -/
+/-- The root of the update of `C` by `k` is a member of `C` if and only if the members of `C` above
+`k` have a least element. -/
 theorem root_update_mem_iff : (C.update k).root ∈ C ↔ ∃ r, IsLeast (↑C ∩ Set.Ici k) r := by
   refine ⟨fun h ↦ ⟨_, ⟨h, C.le_root_update k⟩, fun _ hd ↦ sInf_le hd⟩, fun ⟨r, hr⟩ ↦ ?_⟩
   rw [root_update, hr.csInf_eq]
@@ -226,7 +226,8 @@ theorem root_update_mem_iff : (C.update k).root ∈ C ↔ ∃ r, IsLeast (↑C �
 theorem root_update_of_mem (h : k ⊔ C.root ∈ C) : (C.update k).root = k ⊔ C.root :=
   IsLeast.csInf_eq ⟨⟨h, le_sup_left⟩, fun _ hd ↦ sup_le hd.2 (C.root_le hd.1)⟩
 
-/-- An update the space admits is its restriction to the states above `k`. -/
+/-- If the root of the update of `C` by `k` is a member of `C`, the update consists of the members
+of `C` above `k`. -/
 theorem coe_update_of_root_mem (h : (C.update k).root ∈ C) :
     (C.update k : Set S) = ↑C ∩ Set.Ici k :=
   Set.insert_eq_of_mem ⟨h, C.le_root_update k⟩
@@ -238,7 +239,8 @@ theorem update_le (h : (C.update k).root ∈ C) : C.update k ≤ C := by
 theorem root_mem_update_iff : C.root ∈ C.update k ↔ k ≤ C.root :=
   ⟨fun h ↦ h.elim (fun e ↦ e ▸ C.le_root_update k) And.right, fun h ↦ Or.inr ⟨C.root_mem, h⟩⟩
 
-/-- Adding more is the stronger act ([cohen-krifka-2014] (86)). -/
+/-- If `k ≤ l` and the root of the update by `l` is a member of `C`, the update by `l` is contained
+in the update by `k` ([cohen-krifka-2014] (86)). -/
 theorem update_le_update (hkl : k ≤ l) (h : (C.update l).root ∈ C) :
     C.update l ≤ C.update k := by
   rintro d (rfl | hd)
@@ -253,7 +255,8 @@ theorem update_update (h : (C.update k).root ∈ C) (l : S) :
   update_congr _ <| by
     rw [C.coe_update_of_root_mem h, Set.inter_assoc, Set.Ici_inter_Ici, sup_comm]
 
-/-- Admitted updates commute ([cohen-krifka-2014] (31), [krifka-2015] (6)). -/
+/-- Two updates commute when the root of each is a member of `C` ([cohen-krifka-2014] (31),
+[krifka-2015] (6)). -/
 theorem update_comm (hk : (C.update k).root ∈ C) (hl : (C.update l).root ∈ C) :
     (C.update k).update l = (C.update l).update k := by
   rw [C.update_update hk, C.update_update hl, sup_comm]
@@ -264,8 +267,8 @@ theorem restrict_coe_update (k : S) : C.restrict (C.update k) = C.restrict (Set.
   refine or_congr_right (and_congr_right fun hd ↦ ⟨fun h ↦ ?_, fun h ↦ Or.inr ⟨hd, h⟩⟩)
   exact h.elim (fun e ↦ e ▸ C.le_root_update k) And.right
 
-/-- A question with one proposal restricts the space to the states of its update
-([krifka-2015] (27)). -/
+/-- The question with the single proposal `k` is the restriction of `C` to the states of its update
+by `k` ([krifka-2015] (27)). -/
 theorem question_singleton (k : S) : C.question {k} = C.restrict (C.update k) := by
   rw [question, restrict_coe_update, upperClosure_singleton, UpperSet.coe_Ici]
 
@@ -275,12 +278,13 @@ theorem update_restrict_of_subset (h : ↑C ∩ Set.Ici k ⊆ D) :
     ⟨fun ⟨hd, hk⟩ ↦ ⟨hd.elim (fun e ↦ e ▸ C.root_mem) And.left, hk⟩,
       fun hd ↦ ⟨Or.inr ⟨hd.1, h hd⟩, hd.2⟩⟩
 
-/-- Taking up one of the proposals of a question is the act itself. -/
+/-- If `k` is one of the proposals of a question on `C`, updating the question by `k` gives the
+update of `C` by `k`. -/
 theorem update_question_of_mem {P : Set S} (hk : k ∈ P) : (C.question P).update k = C.update k :=
   C.update_restrict_of_subset fun _ hd ↦ ⟨k, hk, hd.2⟩
 
-/-- The update by a join is the conjunction of the updates ([cohen-krifka-2014] (31)), when the
-space admits it. -/
+/-- If the root of the update by the supremum of a nonempty set `K` is a member of `C`, that update
+is the intersection of the updates by the members of `K` ([cohen-krifka-2014] (31)). -/
 theorem coe_update_sSup {K : Set S} (hK : K.Nonempty) (h : (C.update (sSup K)).root ∈ C) :
     (C.update (sSup K) : Set S) = ⋂ k ∈ K, (C.update k : Set S) := by
   rw [C.coe_update_of_root_mem h]

@@ -44,7 +44,8 @@ and leaves the commitment sets of the other holders unchanged.
 
 namespace Commitment
 
-/-- A commitment state relates holders to the propositions they are committed to. -/
+/-- A **commitment state** is a relation between holders and the propositions they are committed to.
+-/
 abbrev State (κ W : Type*) := SetRel κ (Set W)
 
 namespace State
@@ -53,11 +54,11 @@ open scoped SetRel
 
 variable {κ W : Type*} (K : State κ W) (k : κ)
 
-/-- The contents of `k` in `K` are the propositions `k` is committed to. -/
+/-- The **contents** of `k` in `K` are the propositions `k` is committed to in `K`. -/
 def contents : Set (Set W) := {p | k ~[K] p}
 
-/-- The commitment set of `k` in `K` is the set of worlds compatible with `k`'s commitments
-([gunlogson-2001]'s `cs_k`). -/
+/-- The **commitment set** of `k` in `K` is the set of worlds that belong to every proposition `k`
+is committed to in `K` ([gunlogson-2001]). -/
 def commitmentSet : Set W := ⋂₀ K.contents k
 
 variable {K k} {L : State κ W} {k' : κ} {p φ : Set W}
@@ -98,8 +99,8 @@ theorem commitmentSet_insert_of_ne (h : k' ≠ k) :
 
 /-! ### Sincerity -/
 
-/-- A commitment state is sincere at `w` relative to the attitudes `M` when every holder holds at
-`w`, under its attitude `M k`, each proposition it is committed to. -/
+/-- A commitment state `K` is **sincere** at `w` with respect to the attitudes `M` when every holder
+`k` holds at `w`, under the attitude `M k`, each proposition `k` is committed to. -/
 def Sincere (K : State κ W) (M : κ → W → Set (Set W)) (w : W) : Prop :=
   ∀ k p, k ~[K] p → p ∈ M k w
 
