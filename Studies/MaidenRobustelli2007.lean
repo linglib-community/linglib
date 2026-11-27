@@ -13,8 +13,10 @@ colloquial usage they mean 'anybody' and 'anything' in questions. *Mai* means 'n
 negation and 'ever' in questions, superlatives, and comparatives. In formal usage *alcuno* replaces
 *nessuno* in negative sentences, and *affatto* 'at all' occurs only in negative sentences. Each
 example is linked to the lexical entry of the word it prints and to the named context in which the
-word stands. The licensing theory [admits every
-example](##MaidenRobustelli2007.acceptable_admitted).
+word stands. [The entry lists that context as one in which
+the word is possible](##MaidenRobustelli2007.verdict_eq_optional), and, the questions aside, [the
+verdicts on the six words are those of the weak
+class](##MaidenRobustelli2007.classVerdict_weak).
 
 ## Implementation notes
 
@@ -71,13 +73,24 @@ theorem links_attested :
       p.2.word.toList <:+: p.2.item.form.toList := by
   decide +kernel
 
-/-- The licensing theory admits the item of every example in the context in which it stands, the
-questions aside. A question places no operator over the item, and the entry of the item records
-that it stands in one. -/
-theorem acceptable_admitted :
+/-- Every example is acceptable, and the entry of its item lists its context as one in which the
+item is possible. -/
+theorem verdict_eq_optional :
     ∀ p ∈ links, p.1.judgment = .acceptable ∧
-      (p.2.context.licenser.Admits p.2.item ∨
-        p.2.context = .polarQuestion ∧ p.2.item.verdict p.2.context = some .optional) := by
+      p.2.item.verdict p.2.context = some .optional := by
+  decide +kernel
+
+-- Each context that an entry lists is the context of an example of the item.
+theorem contexts_linked :
+    ∀ e ∈ [nessuno, niente, neanche, mai, alcuno, affatto], ∀ q ∈ e.contexts,
+      ∃ p ∈ links, p.2.item.form = e.form ∧ p.2.context = q.1 := by
+  decide +kernel
+
+/-- The questions aside, the verdicts on the six words are those of the weak class. A question
+places no operator over the item. -/
+theorem classVerdict_weak :
+    ∀ e ∈ [nessuno, niente, neanche, mai, alcuno, affatto], ∀ q ∈ e.contexts,
+      q.1 ≠ .polarQuestion → q.2 = q.1.classVerdict .weak := by
   decide +kernel
 
 end MaidenRobustelli2007
