@@ -10,6 +10,7 @@ public import Linglib.Syntax.Spine.Label
 public import Mathlib.Data.List.Chain
 public import Mathlib.Data.List.Infix
 public import Mathlib.Logic.Relation
+public import Mathlib.Order.GaloisConnection.Basic
 
 /-!
 # The hierarchy of a set of spines
@@ -33,6 +34,8 @@ such map `f` has `f c ≤ f d`. Grimshaw's functional value of a head is such a 
 
 ## Main results
 
+* `Spine.gc_step`: the steps of a set of spines and the spines that are chains for a relation form
+  a Galois connection, so that the steps of a union are the join of the steps.
 * `Spine.reflTransGen_step_le_iff`: the hierarchy of `S` is the least reflexive and transitive
   relation for which every spine of `S` is a chain.
 * `Spine.forall_reflTransGen_step_iff`: a map sends the hierarchy of `S` into a reflexive and
@@ -77,7 +80,17 @@ theorem step_le_iff : Step S ≤ r ↔ ∀ s ∈ S, s.heads.IsChain r := by
   rintro h x y ⟨s, hs, l₁, l₂, e⟩
   exact List.isChain_iff_forall_rel_of_append_cons_cons.1 (h s hs) (by simpa using e.symm)
 
-theorem step_mono (h : S ⊆ T) : Step S ≤ Step T := fun _ _ ⟨s, hs, hi⟩ ↦ ⟨s, h hs, hi⟩
+/-- The steps of a set of spines and the set of spines that are chains for a relation form a
+Galois connection. -/
+theorem gc_step : GaloisConnection (Step (H := H)) fun r ↦ {s | s.heads.IsChain r} :=
+  fun _ _ ↦ step_le_iff
+
+theorem step_mono (h : S ⊆ T) : Step S ≤ Step T := gc_step.monotone_l h
+
+@[simp] theorem step_union (S T : Set (Spine H)) : Step (S ∪ T) = Step S ⊔ Step T :=
+  gc_step.l_sup
+
+@[simp] theorem step_empty : Step (∅ : Set (Spine H)) = ⊥ := gc_step.l_bot
 
 /-! ### The hierarchy -/
 

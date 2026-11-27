@@ -29,6 +29,8 @@ is not, since the functional value decreases, and `[V, I, C, D]` is not, since `
 
 * `Spine.isExtendedProjection_iff_isChain`: if `r` only relates heads of the same family, a spine
   is an extended projection if and only if it is a chain for `r`.
+* `Spine.isExtendedProjection_pair_iff`: a spine of two heads is an extended projection if and only
+  if the heads have the same family and are related by `r`.
 
 ## Implementation notes
 
@@ -41,7 +43,10 @@ between them is lexical. An extended projection is a projection whose functional
 from that of its head. Here both conditions are stated for a spine, the heads on the path from the
 lexical head up. Grimshaw leaves open whether the functional value must increase from each head to
 the next or may stay the same, and whether only complements, and not specifiers, take part. Here
-`r` is an arbitrary relation, and a spine contains complements only.
+`r` is an arbitrary relation, and a spine contains complements only. When `r` is the strict order
+of functional values, no head above the lowest is lexical, as her definition requires. When `r`
+lets the value stay the same, that is a further condition, which is not part of the definition
+here.
 
 ## TODO
 
@@ -90,6 +95,16 @@ theorem isExtendedProjection_iff_isChain [IsTrans H r] (hr : ∀ x y, r x y → 
     ⟨fun _ hc _ hd ↦ List.Pairwise.forall_of_forall_of_flip
       (R := fun x y ↦ family x = family y) (fun _ _ ↦ rfl) (hp.imp (hr _ _))
       (hp.imp fun h ↦ (hr _ _ h).symm) hc hd, h⟩⟩
+
+/-- A spine of two heads is an extended projection if and only if the heads have the same family
+and the lower is related by `r` to the higher. -/
+theorem isExtendedProjection_pair_iff {x y : H} :
+    IsExtendedProjection family r ⟨[x, y]⟩ ↔ family x = family y ∧ r x y := by
+  refine ⟨fun h ↦ ⟨h.family_eq (by simp) (by simp), List.isChain_pair.1 h.isChain⟩,
+    fun h ↦ ⟨fun c hc d hd ↦ ?_, List.isChain_pair.2 h.2⟩⟩
+  simp only [mem_def, List.mem_cons, List.not_mem_nil, or_false] at hc hd
+  rcases hc with rfl | rfl <;> rcases hd with rfl | rfl <;>
+    first | rfl | exact h.1 | exact h.1.symm
 
 variable [DecidableEq H]
 

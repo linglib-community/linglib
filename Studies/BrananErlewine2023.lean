@@ -3,7 +3,8 @@ module
 public import Linglib.Core.Data.RoseTree.Positions
 public import Linglib.Data.Examples.BrananErlewine2023
 public import Linglib.Semantics.Focus.Particles
-public import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+public import Linglib.Syntax.Minimalist.Category
+public import Linglib.Syntax.Spine.Hierarchy
 public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Data.Examples.Readers
@@ -22,8 +23,8 @@ tell pied-piping from anti-pied-piping.
 
 ## Implementation notes
 
-* A phase is a constituency tree over the categories of the functional sequence, in the order
-  it is spelled out. Its spine is the path of categories extending to the category of the phase,
+* A phase is a constituency tree over the categories, in the order it is spelled out. Its spine
+  is the path of categories of the extended projection that contains the phase head,
   and the prominent phrases, the paper's ●-marked ones, are the phrases off the spine that an
   example does not report as skipped.
 * The examples name constituents (subject, predicate, the fronted phrase), and a frame finds
@@ -56,8 +57,6 @@ tell pied-piping from anti-pied-piping.
 namespace BrananErlewine2023
 
 open Examples (Process LeftmostRequirement)
-
-open scoped Minimalist.ExtendedProjection
 
 open PhraseStructure Minimalist Focus Reflex OrderDual
 
@@ -134,13 +133,19 @@ bears abstract prominence, the paper's ●, unless it is indefinite, given or ot
 
 variable {W : Type*}
 
-/-- A position is on the spine of a phase when its category and that of every node above it
-extend to the category of the phase, so that it belongs to the extended projection containing
-the phase head. -/
+/-- The extended projection that contains the phase head of a clausal phase: the verb under
+little v. -/
+def clausalProjection : Spine Cat := ⟨[.V, .v]⟩
+
+/-- A position is on the spine of a phase when its category and that of every node above it are
+no higher than the category of the phase in the hierarchy of `clausalProjection`, so that it
+belongs to the extended projection containing the phase head (115). -/
 def OnSpine (t : Tree Cat W) (p : GornAddress) : Prop :=
-  ∀ q ∈ p.inits, ∃ s ∈ t[q]?, Tree.cat s ≤ t.cat
+  ∀ q ∈ p.inits, ∃ s ∈ t[q]?,
+    Relation.ReflTransGen (Spine.Step {x | x ∈ [clausalProjection]}) (Tree.cat s) t.cat
 
 instance (t : Tree Cat W) (p : GornAddress) : Decidable (OnSpine t p) := by
+  have := Spine.decidableReflTransGenStep [clausalProjection]
   unfold OnSpine; infer_instance
 
 /-- The prominent phrases of a phase are the phrases off its spine other than the `skipped`

@@ -3,7 +3,8 @@ module
 public import Linglib.Semantics.Events.Closure
 public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Semantics.Modality.Background
-public import Linglib.Syntax.Minimalist.ExtendedProjection.Size
+public import Linglib.Syntax.Minimalist.Category
+public import Linglib.Syntax.Spine.Label
 public import Linglib.Languages.Romance.Italian.Verbs
 public import Linglib.Data.Examples.FuscoSgrizzi2026
 public import Studies.Grano2024
@@ -30,17 +31,16 @@ relation (`aP`). Both heads are necessity anchored to the state, the event-relat
 ([dowty-1979], [kratzer-2013]). This is the causal
 self-referentiality of intention ([searle-1983]): in every inertia world the intended event is
 caused by the attitude state, hence later than it, the future orientation of *a*-infinitives
-([wurmbrand-2014]; `intention_future`). Complement size is the extended projection's
-`ComplementSize`, ordered by the extension order of its highest head; the reading is read off the
-CP threshold, and the diagnostics of sections 3 and 3.1 are predicted by the heads the complement
+([wurmbrand-2014]; `intention_future`). The size of a complement is its highest head, and sizes
+are ordered as their highest heads stand in the clause (`clause`); the reading is read off the CP
+threshold, and the diagnostics of sections 3 and 3.1 are predicted by the heads the complement
 reaches (`rows_predicted`).
 
 ## Implementation notes
 
 * The *a*-infinitive is recorded with negation as its highest head, the highest the paper places
-  inside it. The extension order makes negation level with tense and the modal heads, so
-  the absence of modal auxiliaries ((9) and (10)) and the ban on past-oriented complements ((5))
-  stay in the prose and in `intention_future`.
+  inside it. The clause has no modal head, so the absence of modal auxiliaries ((9) and (10)) and
+  the ban on past-oriented complements ((5)) stay in the prose and in `intention_future`.
 * The two heads are stated over abstract eventualities and worlds, with the content, the
   circumstantial base and the inertial ordering as functions of the state. The
   closure head (23b) is `Event.closure` and the prejacent of *a* is `Event.causedClosure`, the
@@ -153,19 +153,47 @@ inductive Reading
   | intention
   deriving DecidableEq, Repr
 
+/-- The heads of the clause that the diagnostics refer to, from the bottom up. The verb, little v,
+tense and the complementizer are those of (21); Voice and negation are placed between little v and
+tense, and finiteness between tense and the complementizer. -/
+def clause : Spine Cat := ⟨[.V, .v, .Voice, .Neg, .T, .Fin, .C]⟩
+
+/-- A complement size is a complement measured by the highest head it projects. -/
+structure Size where
+  /-- The highest head of the complement. -/
+  highestHead : Cat
+  deriving DecidableEq
+
+/-- A size is no larger than another when its highest head stands no higher in the clause. -/
+instance : Preorder Size := Preorder.lift fun s ↦ clause.height s.highestHead
+
+instance : DecidableLE Size := fun s t ↦
+  inferInstanceAs (Decidable (clause.height s.highestHead ≤ clause.height t.highestHead))
+
+instance : DecidableLT Size := decidableLTOfDecidableLE
+
+/-- The size of a vP. -/
+def Size.vP : Size := ⟨.v⟩
+
+/-- The size of a clause that projects up to finiteness. -/
+def Size.finP : Size := ⟨.Fin⟩
+
+/-- The size of a CP. -/
+def Size.cP : Size := ⟨.C⟩
+
 /-- The reading a complement size yields, belief for a phase-sized complement, which carries the
 closure head, and intention for a smaller one. -/
-def readingFromSize (cs : ComplementSize) : Reading :=
-  if ComplementSize.cP ≤ cs then .belief else .intention
+def readingFromSize (cs : Size) : Reading :=
+  if Size.cP ≤ cs then .belief else .intention
 
 /-- The *di*-infinitive is a CP (21). -/
-def diSize : ComplementSize := .cP
+def diSize : Size := .cP
 
 /-- The *a*-infinitive is a projection below tense with negation as its highest head (22). -/
-def aSize : ComplementSize := ⟨.Neg⟩
+def aSize : Size := ⟨.Neg⟩
 
 /-- The complement an infinitival complementizer of the language file selects. -/
-def sizeOf (z : Complementizer) : Option ComplementSize :=
+def sizeOf (z : Complementizer) : Option Size :=
   if z = di then some diSize else if z = a then some aSize else none
 
 /-- The readings a verb's complementizers yield, in the order the language file lists them. -/
@@ -184,7 +212,7 @@ assessment by propositionality; subject control by the finiteness head that host
 centre ([rizzi-1997]); passive, low aspectual verbs and negation by the Voice, v and negation
 heads; a temporal domain of its own by structure above vP; clitic climbing by a complement no
 larger than vP. -/
-def Examples.Diagnostic.Predicted : Diagnostic → ComplementSize → Prop
+def Examples.Diagnostic.Predicted : Diagnostic → Size → Prop
   | .belief, cs => readingFromSize cs = .belief
   | .intention, cs => readingFromSize cs = .intention
   | .truthAssessable, cs => .cP ≤ cs
@@ -195,19 +223,19 @@ def Examples.Diagnostic.Predicted : Diagnostic → ComplementSize → Prop
   | .independentTime, cs => .vP < cs
   | .cliticClimbing, cs => cs ≤ .vP
 
-instance (d : Diagnostic) (cs : ComplementSize) : Decidable (d.Predicted cs) := by
+instance (d : Diagnostic) (cs : Size) : Decidable (d.Predicted cs) := by
   cases d <;> unfold Diagnostic.Predicted <;> infer_instance
 
 /-- A sentence of the paper carries the size of its infinitival complement, the diagnostic it
 tests and whether it is grammatical. -/
 structure Row where
-  size : ComplementSize
+  size : Size
   diagnostic : Diagnostic
   grammatical : Bool
   deriving DecidableEq
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let s ← ex.parse? "size" [("cP", diSize), ("aP", aSize), ("vP", ComplementSize.vP)]
+  let s ← ex.parse? "size" [("cP", diSize), ("aP", aSize), ("vP", Size.vP)]
   let d ← (Examples.diagnostic ex)
   let g ← ex.parse? "grammatical" [("yes", true), ("no", false)]
   pure ⟨s, d, g⟩

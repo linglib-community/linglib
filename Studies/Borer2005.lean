@@ -2,7 +2,8 @@ module
 
 public import Linglib.Data.Examples.Borer2005
 public import Linglib.Languages.English.Determiners
-public import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+public import Linglib.Syntax.Minimalist.Category
+public import Linglib.Syntax.Spine.Label
 public import Mathlib.Order.Partition.Finpartition
 
 /-!
@@ -249,8 +250,11 @@ end Reticules
 
 /-! ### The nominal spine -/
 
+/-- The spine of a nominal expression such as *three cats* (27): the noun, the dividing head, the
+quantity head and the determiner. -/
+def spine : Spine Cat := ⟨[.N, .Q, .Num, .D]⟩
+
 -- (27): the quantity head is above the dividing head.
-open scoped Minimalist.ExtendedProjection in
-theorem Q_lt_Num : Cat.Q < .Num := by decide +kernel
+theorem height_Q_lt_height_Num : spine.height .Q < spine.height .Num := by decide
 
 end Borer2005
