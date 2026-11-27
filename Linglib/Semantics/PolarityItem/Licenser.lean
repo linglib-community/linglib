@@ -8,7 +8,6 @@ module
 public import Linglib.Logic.Natural.ProjectivitySignature
 public import Linglib.Semantics.Presupposition.Strawson
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
-public import Linglib.Semantics.Questions.Decision
 public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
@@ -48,9 +47,10 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
   Nouwen add that it must not be upward entailing as well. A strength above weak must in addition
   hold outright of the exhaustified meaning.
 * `PolarityItem.Licenser.LicensesByStrengthening`, `PolarityItem.Licenser.LicensesFreeChoice`,
-  `PolarityItem.Licenser.LicensesByRelevance`: the three routes of licensing. A downward-entailing
+  `PolarityItem.Licenser.IsQuestion`: the three routes of licensing. A downward-entailing
   licenser licenses by strengthening, after Kadmon and Landman, a modal licenser licenses by free
-  choice, after Chierchia, and a question licenses by relevance, after van Rooy.
+  choice, after Chierchia, and a question licenses a weak item, which van Rooy derives from the
+  relevance of the question.
 * `PolarityItem.Licenser.Licenses`, `PolarityItem.Licenser.AntiLicenses`,
   `PolarityItem.Licenser.Admits`: the licensing relations between a licenser and an item.
 
@@ -72,9 +72,10 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
   weak strength not be upward entailing as well excludes them, since a map that is monotone in
   both directions modulo presupposition takes a single value at comparable arguments where it is
   defined (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
-* The question route states the weak form that the theory of question value proves, namely that
-  widening the domain never lowers the value of the question. Van Rooy's strict condition for
-  rhetorical questions is not formalized.
+* The question route is the generalization that a question licenses a weak item. Van Rooy
+  derives it from the value of a question in a decision problem, which widening the domain of a
+  wh-question never lowers; that is a theorem of the theory of question value, and this file does
+  not depend on it. Van Rooy's strict condition for rhetorical questions is not formalized.
 
 ## References
 
@@ -95,7 +96,7 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
 
 namespace PolarityItem
 
-open NaturalLogic Presupposition Exhaustification MeasureTheory
+open NaturalLogic Presupposition Exhaustification
 
 namespace Licenser
 
@@ -268,18 +269,12 @@ def LicensesFreeChoice : Licenser → Prop
       (antiExh (fun S ↦ F.op p (⋃ a ∈ S, P a)) D).Nonempty
   | .classical _ | .scalar _ | .strawson _ | .question => False
 
-/-- A question *licenses by relevance* an item that widens its domain, since widening the domain
-of a wh-question never lowers its value in any decision problem ([van-rooy-2003-npi]). -/
-def LicensesByRelevance : Licenser → Prop
-  | .question => ∀ {W A E : Type} [Finite W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
-      [Finite A] [Nonempty W] (U : W → A → ℝ) (μ : Measure W) [IsProbabilityMeasure μ]
-      (P : E → Set W) ⦃D D' : Set E⦄, D ⊆ D' →
-      Inquisitive.Proposition.utility U μ (Setoid.ofProps (P '' D)) ≤
-        Inquisitive.Proposition.utility U μ (Setoid.ofProps (P '' D'))
+/-- A licenser *is a question* when it is the wh-question and not an operator. A question licenses
+an item that widens its domain, which [van-rooy-2003-npi] derives from its relevance: widening the
+domain of a wh-question never lowers its value in a decision problem. -/
+def IsQuestion : Licenser → Prop
+  | .question => True
   | .classical _ | .scalar _ | .strawson _ | .modal _ => False
-
-theorem licensesByRelevance_question : question.LicensesByRelevance :=
-  fun U μ _ P _ _ h ↦ Inquisitive.Proposition.utility_ofProps_image_mono U μ P h
 
 variable {L : Licenser} {σ τ : ProjectivitySignature} {s t : Negation.Strength}
 
@@ -471,11 +466,11 @@ namespace Licenser
 variable (L : Licenser) (e : PolarityItem)
 
 /-- A context **licenses** an item in one of three cases. Its licenser carries the licensor of the
-item, its licenser licenses free choice and the item is a free choice item, or its licenser
-licenses by relevance and the item is a weak negative polarity item. -/
+item, its licenser licenses free choice and the item is a free choice item, or its licenser is a
+question and the item is a weak negative polarity item. -/
 def Licenses : Prop :=
   (∃ r ∈ e.licensor, L.Carries r) ∨ (L.LicensesFreeChoice ∧ e.IsFCI) ∨
-    (L.LicensesByRelevance ∧ e.licensor = some .weak)
+    (L.IsQuestion ∧ e.licensor = some .weak)
 
 /-- A context **anti-licenses** an item when its licenser holds the strength that blocks the item
 outright, on its plain meaning ([vanderwouden-1997]'s laws (180), [szabolcsi-2004]'s (42)). -/
@@ -539,15 +534,15 @@ theorem antiLicenses_iff_licenses (hn : ¬ (classical F).IsStrawsonUE)
     (h : e.antiLicensor = e'.licensor) :
     (classical F).AntiLicenses e ↔ (classical F).Licenses e' := by
   simp only [AntiLicenses, Licenses, h, carries_classical_iff, and_iff_left hn, LicensesFreeChoice,
-    LicensesByRelevance, false_and, or_false]
+    IsQuestion, false_and, or_false]
 
-/-- A licensing context that has neither the free-choice route nor the relevance route licenses an
-item exactly when it carries the strength that the item requires. -/
+/-- A licensing context that does not license free choice and is not a question licenses an item
+exactly when it carries the strength that the item requires. -/
 theorem licenses_iff_requirement_le (hfc : ¬ L.LicensesFreeChoice)
-    (hrel : ¬ L.LicensesByRelevance) : L.Licenses e ↔ e.IsNPI ∧ e.requirement ≤ L.carried := by
+    (hq : ¬ L.IsQuestion) : L.Licenses e ↔ e.IsNPI ∧ e.requirement ≤ L.carried := by
   rcases h : e.licensor with _ | r
-  · simp [Licenses, IsNPI, hfc, hrel, h]
-  · simp [Licenses, IsNPI, requirement, hfc, hrel, h, coe_le_carried_iff]
+  · simp [Licenses, IsNPI, hfc, hq, h]
+  · simp [Licenses, IsNPI, requirement, hfc, hq, h, coe_le_carried_iff]
 
 /-- A context blocks an item exactly when it holds the strength that blocks the item. -/
 theorem antiLicenses_iff_blocker_le : L.AntiLicenses e ↔ e.blocker ≤ L.held := by

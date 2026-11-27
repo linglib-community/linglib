@@ -4,6 +4,7 @@ public import Linglib.Semantics.Questions.Bias
 public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Languages.English.PolarityItems
 public import Linglib.Languages.German.PolarityItems
+public import Mathlib.Data.Fintype.Option
 
 /-!
 # Büring and Gunlogson 2000: aren't positive and negative polar questions the same?

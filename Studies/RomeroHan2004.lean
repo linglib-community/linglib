@@ -9,6 +9,7 @@ public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Discourse.Bias
 public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Data.Examples.Readers
+public import Mathlib.Data.Fintype.Sigma
 
 /-!
 # Romero and Han (2004): On negative yes/no questions

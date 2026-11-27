@@ -4,6 +4,8 @@ public import Linglib.Semantics.PolarityItem.Environment
 public import Linglib.Languages.English.PolarityItems
 public import Linglib.Data.Examples.Homer2021
 public import Studies.Chierchia2004
+public import Mathlib.Tactic.IntervalCases
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Homer (2021): Domains of polarity items

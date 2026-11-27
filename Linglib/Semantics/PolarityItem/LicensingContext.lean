@@ -37,7 +37,7 @@ the stronger *no* and *at most n − 1*, which is the determiner exhaustificatio
 non-trivially, and not merely by being constant. Focus *only*, adversatives, superlatives,
 conditional antecedents, and temporal *since* are downward entailing only modulo their
 presuppositions. The modals, imperatives, generics, and free relatives are modal licensers, and
-questions license by relevance. A study may state the theory of a licenser of its own. The named
+a question licenses a weak item. A study may state the theory of a licenser of its own. The named
 constructions are the shared inventory that lexical entries cite.
 
 ## Main declarations
@@ -837,9 +837,9 @@ instance (c : LicensingContext) : Decidable c.licenser.LicensesFreeChoice :=
   | onlyFocus | adversative | superlative
   | conditionalAntecedent | sinceTemporal | question => isFalse id
 
-instance (c : LicensingContext) : Decidable c.licenser.LicensesByRelevance :=
+instance (c : LicensingContext) : Decidable c.licenser.IsQuestion :=
   match c with
-  | question => isTrue licensesByRelevance_question
+  | question => isTrue trivial
   | negation | nobody | few | atMost | universalRestrictor | noRestrictor | withoutClause
   | beforeClause | clausalComparative | tooTo | doubtVerb | denyVerb | superordinateNegation
   | onlyFocus | adversative | superlative
