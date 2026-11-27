@@ -22,7 +22,6 @@ type changes nothing](##ManySorted.Language.withAbstraction.realize_raise).
 * `Interpreter.Assignments`, `Interpreter.Assignments.total`: how assignments give indices
   values and are modified, and the total ones.
 * `ManySorted.Language.withAbstraction.structure`: values relative to an assignment.
-* `Interpreter.withAbstraction`: an interpreter that admits abstraction at an index.
 * `ManySorted.Language.withAbstraction.realize_bind`: substitution for a trace is evaluation at
   a modified assignment.
 
@@ -226,18 +225,3 @@ theorem realize_raise {b : Ty B} (ba : L.Binary (Γ n) (Γ n ⇒ b) b)
 end Raising
 
 end ManySorted.Language.withAbstraction
-
-namespace Interpreter
-
-variable {B : Type} {L : Language.{0, 0} (Ty B)}
-
-/-- An interpreter with predicate abstraction: an index admits abstraction over it, and any
-other node what the interpreter admits. -/
-def withAbstraction (I : Interpreter L Node) (Γ : ℕ → Ty B) :
-    Interpreter (L.withAbstraction Γ) Node where
-  unary
-    | .index n, b => [⟨Γ n ⇒ b, Language.Sum.inr (PredicateAbstraction.index n b)⟩]
-    | k, b => (I.unary k b).map fun ⟨c, s⟩ ↦ ⟨c, .inl s⟩
-  binary k l r := (I.binary k l r).map fun ⟨u, m⟩ ↦ ⟨u, .inl m⟩
-
-end Interpreter

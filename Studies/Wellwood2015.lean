@@ -10,6 +10,7 @@ public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Data.Examples.Wellwood2015
 public import Studies.Bresnan1973
+public import Linglib.Semantics.Composition.Interpret
 
 /-!
 # Wellwood (2015): On the Semantics of Comparison Across Categories
@@ -269,7 +270,7 @@ noncomputable def Item.val [LinearOrder D] [Nonempty D] [Nonempty Ent] (M : Mode
 /-- The rules: Functional Application, Predicate Modification, Event Identification, and
 abstraction over an index. -/
 abbrev rules : Interpreter (((application.sum predicateModification).sum
-    (eventIdentification .e .v)).withAbstraction indexTy) Node :=
+    (eventIdentification .e .v)).withAbstraction indexTy) ℕ :=
   (typeDriven ((application.sum predicateModification).sum
     (eventIdentification .e .v))).withAbstraction indexTy
 

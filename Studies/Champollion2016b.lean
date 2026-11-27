@@ -12,6 +12,7 @@ public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Languages.English.Coordination
 public import Mathlib.Data.Set.Card
+public import Linglib.Semantics.Composition.Interpret
 
 /-!
 # Champollion (2016): Ten Men and Women Got Married Today: Noun Coordination and the Intersective Theory of Conjunction
@@ -322,7 +323,7 @@ noncomputable def lex (N N' V : Set E) (R S : Set (Set E)) : Word →
 /-- The rules: Functional Application, Predicate Modification, which intersects two properties
 of pluralities, and abstraction over an index. -/
 abbrev rules : Interpreter ((application.sum predicateModification).withAbstraction
-    indexTy) Node :=
+    indexTy) ℕ :=
   (typeDriven (application.sum predicateModification)).withAbstraction indexTy
 
 /-- A logical form holds, under an assignment of choice functions to the indices, when it

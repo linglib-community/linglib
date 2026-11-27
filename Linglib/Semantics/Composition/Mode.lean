@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Composition.Effect
-public import Linglib.Semantics.Composition.Basic
+public import Linglib.Semantics.Composition.Interpreter
 
 /-!
 # The effect-driven grammar
@@ -18,11 +18,11 @@ and `Ty.combine` is the book's procedure for listing them.
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
 * `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
 * `Interpreter.Ty.combine`: the modes the book's `combine` finds for two types.
-* `Interpreter.Ty.Evaluated`: the types with no continuation still to be closed.
+* `Interpreter.Ty.Evaluated`: the types with no continuation still to be closed, those the book
+  keeps at an island.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes over a grammar's
   rules, with its structure.
-* `Interpreter.effectDriven`: the book's interpreter, which admits every mode `Ty.combine` finds
-  and at an island only those with an evaluated result.
+* `Interpreter.effectDriven`: the interpreter that admits every mode `Ty.combine` finds.
 
 ## Implementation notes
 
@@ -199,15 +199,11 @@ instance effectGrammar.structure {G : Language (Ty B)} {D : B → Type}
     [M : G.Structure (Ty.Dom D)] : (effectGrammar G).Structure (Ty.Dom D) :=
   .mk₂ (fun s x ↦ M.funMap s x) fun m ↦ m.eval D
 
-/-- The effect-driven interpreter over a grammar, the book's: a node admits the type shifts of
-the grammar and every mode that `Ty.combine` finds for its daughters, and an island only the
-modes whose result is evaluated. -/
-def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] :
-    Interpreter (effectGrammar G) Node where
-  unary _ := Language.LocallyFinite.unaryRules (L := G)
-  binary
-    | .island, l, r =>
-      (Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r).filter (·.1.Evaluated)
-    | _, l, r => Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r
+/-- The effect-driven interpreter over a grammar: a binary node admits every mode that
+`Ty.combine` finds for its daughters, and a binder admits no rule. -/
+def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
+    Interpreter (effectGrammar G) N where
+  bind _ _ := []
+  binary := Ty.combine (Language.LocallyFinite.binaryRules (L := G))
 
 end Interpreter

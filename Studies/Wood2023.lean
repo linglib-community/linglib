@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.Nominalization
+public import Linglib.Semantics.Composition.BareStructure
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
