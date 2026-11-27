@@ -12,7 +12,7 @@ public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 # Verb–complementizer selection
 
 Which complementizers a verb takes: those some frame of the verb takes
-(`ArgumentFrame.Takes`). The complementizers of a verb within a language's inventory are read off
+(`ArgumentFrame.AnyTakes` of its frames). The complementizers of a verb within a language's inventory are read off
 this relation, so a language file states a verb's complementizers as a theorem about its frames
 and the inventory, and does not list them.
 
@@ -33,24 +33,24 @@ namespace Verb
 variable {v : Verb} {z : Complementizer} {inv : List Complementizer}
 
 /-- The verb takes `z` when some frame does. -/
-def Takes (v : Verb) (z : Complementizer) : Prop :=
-  ∃ fr ∈ v.valency.frames, fr.Takes z
+def Takes (v : Verb) (z : Complementizer) : Prop := ArgumentFrame.AnyTakes v.valency.frames z
 
-instance : Decidable (v.Takes z) := inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
+instance : Decidable (v.Takes z) :=
+  inferInstanceAs (Decidable (ArgumentFrame.AnyTakes v.valency.frames z))
 
 /-- A verb taking a complementizer takes a clausal complement. -/
 theorem Takes.takesClausal (h : v.Takes z) : v.TakesClausal :=
-  h.imp fun _ ⟨hf, ht⟩ ↦ ⟨hf, ht.hasClausal⟩
+  ArgumentFrame.AnyTakes.exists_hasClausal h
 
 /-- No verb takes a complementizer restricting nothing, as a converb suffix restricts nothing. -/
 theorem not_takes_of_eq_top (hz : z.toSelection = ⊤) : ¬ v.Takes z :=
-  fun ⟨_, _, h⟩ ↦ ArgumentFrame.not_takes_of_eq_top hz h
+  ArgumentFrame.not_anyTakes_of_eq_top hz
 
 /-- The complementizers `v` takes within a language's inventory. -/
 def typers (v : Verb) (inv : List Complementizer) : List Complementizer :=
-  inv.filter (v.Takes ·)
+  ArgumentFrame.typers v.valency.frames inv
 
-@[simp] theorem mem_typers : z ∈ v.typers inv ↔ z ∈ inv ∧ v.Takes z := by
-  simp [typers]
+@[simp] theorem mem_typers : z ∈ v.typers inv ↔ z ∈ inv ∧ v.Takes z :=
+  ArgumentFrame.mem_typers
 
 end Verb
