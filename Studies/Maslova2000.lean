@@ -1,8 +1,9 @@
 module
 
-public import Linglib.Core.Probability.Exchangeable.Basic
+public import Linglib.Core.MeasureTheory.Group.Action
 public import Linglib.Core.Probability.Kernel.Invariance
 public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.MeasureTheory.Group.Integral
 public import Mathlib.Probability.ConditionalProbability
 
 /-!
@@ -280,16 +281,56 @@ theorem cycle_counterexample :
 
 /-! ### Birth and death -/
 
+-- Under an exchangeable law of finitely many nonnegative quantities, each one's share of their
+-- total has the same expectation, so the members of `A` take together the fraction `#A / card ι`
+-- of the probability that the total is nonzero.
+theorem integral_sum_div_sum {ι α : Type*} [Fintype ι] [MeasurableSpace α] {μ : Measure (ι → α)}
+    [IsFiniteMeasure μ] [SMulInvariantMeasure (Equiv.Perm ι)ᵈᵐᵃ (ι → α) μ] {f : α → ℝ}
+    (hf : Measurable f) (hf0 : ∀ a, 0 ≤ f a) (A : Finset ι) :
+    ∫ x, (∑ i ∈ A, f (x i)) / ∑ i, f (x i) ∂μ =
+      #A / Fintype.card ι * μ.real {x | ∑ i, f (x i) ≠ 0} := by
+  classical
+  set F : ι → (ι → α) → ℝ := fun i x ↦ f (x i) / ∑ j, f (x j)
+  have hS : Measurable fun x : ι → α ↦ ∑ i, f (x i) := by fun_prop
+  have hFi i : Integrable (F i) μ := by
+    refine .of_bound (by fun_prop) 1 (.of_forall fun x ↦ ?_)
+    rw [Real.norm_eq_abs, abs_div, abs_of_nonneg (hf0 _),
+      abs_of_nonneg (Finset.sum_nonneg fun j _ ↦ hf0 _)]
+    exact div_le_one_of_le₀ (Finset.single_le_sum (fun j _ ↦ hf0 (x j)) (Finset.mem_univ i))
+      (Finset.sum_nonneg fun j _ ↦ hf0 _)
+  have hswap i j : ∫ x, F i x ∂μ = ∫ x, F j x ∂μ := by
+    rw [← integral_smul_eq_self (F j) (g := DomMulAct.mk (Equiv.swap i j))]
+    refine integral_congr_ae (.of_forall fun x ↦ ?_)
+    change _ = f (x (Equiv.swap i j j)) / ∑ k, f (x (Equiv.swap i j k))
+    rw [Equiv.swap_apply_right, Equiv.sum_comp (Equiv.swap i j) fun k ↦ f (x k)]
+  have htot : ∑ i, ∫ x, F i x ∂μ = μ.real {x | ∑ i, f (x i) ≠ 0} := by
+    rw [← integral_finsetSum _ fun i _ ↦ hFi i]
+    calc ∫ x, ∑ i, F i x ∂μ = ∫ x, {x | ∑ i, f (x i) ≠ 0}.indicator 1 x ∂μ :=
+          integral_congr_ae (.of_forall fun x ↦ ?_)
+      _ = _ := integral_indicator_one (hS (measurableSet_singleton 0).compl)
+    simp only [F, ← Finset.sum_div]
+    by_cases h : ∑ i, f (x i) = 0 <;> simp [Set.indicator, h]
+  rw [show (fun x ↦ (∑ i ∈ A, f (x i)) / ∑ i, f (x i)) = fun x ↦ ∑ i ∈ A, F i x from
+    funext fun x ↦ Finset.sum_div .., integral_finsetSum _ fun i _ ↦ hFi i]
+  rcases isEmpty_or_nonempty ι with hι | hι
+  · simp [Finset.eq_empty_of_isEmpty A]
+  have i₀ : ι := hι.some
+  have hcard : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
+  simp only [fun i ↦ hswap i i₀, Finset.sum_const, nsmul_eq_mul, Finset.card_univ] at htot ⊢
+  rw [← htot]
+  field_simp
+
 /-- (A10): when languages split and die independently of their type, the expected frequency of a
 type among the descendants of `N₀` ancestral languages, given that some descendant survives, is its
 frequency `#A / N₀` among the ancestors. -/
 theorem integral_frequency_cond {N₀ : ℕ} {μ : Measure (Fin N₀ → ℕ)} [IsProbabilityMeasure μ]
-    (hμ : Exchangeable μ) (A : Finset (Fin N₀)) (hS : μ {x | ∑ i, (x i : ℝ) ≠ 0} ≠ 0) :
+    [SMulInvariantMeasure (Equiv.Perm (Fin N₀))ᵈᵐᵃ (Fin N₀ → ℕ) μ] (A : Finset (Fin N₀))
+    (hS : μ {x | ∑ i, (x i : ℝ) ≠ 0} ≠ 0) :
     ∫ x, (∑ i ∈ A, (x i : ℝ)) / ∑ i, (x i : ℝ) ∂μ[|{x | ∑ i, (x i : ℝ) ≠ 0}] = #A / N₀ := by
   have hS' : μ.real {x | ∑ i, (x i : ℝ) ≠ 0} ≠ 0 :=
     (ENNReal.toReal_ne_zero).2 ⟨hS, measure_ne_top μ _⟩
   rw [ProbabilityTheory.cond, integral_smul_measure, setIntegral_eq_integral_of_forall_compl_eq_zero
-    fun x hx ↦ by simp [not_not.1 hx], hμ.integral_sum_div_sum (f := Nat.cast)
+    fun x hx ↦ by simp [not_not.1 hx], integral_sum_div_sum (f := Nat.cast)
     (measurable_of_countable _) (fun _ ↦ Nat.cast_nonneg _) A, Fintype.card_fin,
     ENNReal.toReal_inv, ← measureReal_def, smul_eq_mul]
   field_simp
@@ -299,7 +340,7 @@ theorem integral_frequency_cond_pi {N₀ : ℕ} (hN : N₀ ≠ 0) (ν : Measure 
     (hν : ν {0} ≠ 1) (A : Finset (Fin N₀)) :
     ∫ x, (∑ i ∈ A, (x i : ℝ)) / ∑ i, (x i : ℝ)
       ∂(Measure.pi fun _ : Fin N₀ ↦ ν)[|{x | ∑ i, (x i : ℝ) ≠ 0}] = #A / N₀ := by
-  refine integral_frequency_cond (exchangeable_pi ν) A fun h0 ↦ hν ?_
+  refine integral_frequency_cond A fun h0 ↦ hν ?_
   have hc : {x : Fin N₀ → ℕ | ∑ i, (x i : ℝ) ≠ 0}ᶜ = Set.univ.pi fun _ ↦ {0} := by
     ext x
     simp [Finset.sum_eq_zero_iff_of_nonneg fun i _ ↦ Nat.cast_nonneg (x i)]

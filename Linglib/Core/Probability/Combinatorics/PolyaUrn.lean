@@ -6,9 +6,9 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Gamma.Basic
+public import Linglib.Core.MeasureTheory.Group.Action
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Linglib.Core.Order.Argmax
-public import Linglib.Core.Probability.Exchangeable.Basic
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.SeqLaw
 public import Linglib.Core.RingTheory.Polynomial.Pochhammer
 public import Mathlib.MeasureTheory.Measure.Real
@@ -36,7 +36,7 @@ Dirichlet-multinomial formula.
   weights `θ + x`.
 * `ProbabilityTheory.polyaUrn_real_singleton`: the probability of a sequence.
 * `ProbabilityTheory.polyaUrnProb_eq_prod_Gamma_div`: that probability in Gamma functions.
-* `ProbabilityTheory.exchangeable_polyaUrn`: the drawn sequence is exchangeable.
+* `ProbabilityTheory.smulInvariantMeasure_polyaUrn`: the drawn sequence is exchangeable.
 
 ## Implementation notes
 
@@ -287,9 +287,11 @@ theorem polyaUrn_real_singleton {n : ℕ} (s : Fin n → α) :
   rw [measureReal_def, polyaUrn_singleton hθ, ENNReal.toReal_ofReal (polyaUrnProb_pos hθ _).le]
 
 /-- The sequence drawn from a Pólya urn is exchangeable ([pitman-2006] Exercise 2.2.2). -/
-theorem exchangeable_polyaUrn (n : ℕ) : Exchangeable (polyaUrn θ n) :=
-  exchangeable_of_measure_singleton fun s σ ↦ by
-    rw [polyaUrn_singleton hθ, polyaUrn_singleton hθ, countVec_comp_perm]
+theorem smulInvariantMeasure_polyaUrn (n : ℕ) :
+    SMulInvariantMeasure (Equiv.Perm (Fin n))ᵈᵐᵃ (Fin n → α) (polyaUrn θ n) :=
+  smulInvariantMeasure_of_measure_singleton fun c s ↦ by
+    rw [polyaUrn_singleton hθ, polyaUrn_singleton hθ]
+    exact congrArg _ (congrArg _ (countVec_comp_perm s (DomMulAct.mk.symm c)))
 
 end Law
 

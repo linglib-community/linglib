@@ -5,10 +5,10 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.MeasureTheory.Group.Action
 public import Linglib.Core.Order.Partition.MinLabel
 public import Linglib.Core.Probability.Combinatorics.PitmanYor.EPPF
 public import Linglib.Core.Probability.Combinatorics.PolyaUrn
-public import Linglib.Core.Probability.Exchangeable.Partition
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.SeqLaw
 public import Mathlib.MeasureTheory.Measure.Real
 
@@ -56,6 +56,11 @@ open MeasureTheory Finset
 open scoped ENNReal Nat
 
 namespace ProbabilityTheory
+
+instance {ι : Type*} [DecidableEq ι] {s : Finset ι} : MeasurableSpace (Finpartition s) := ⊤
+
+instance {ι : Type*} [DecidableEq ι] {s : Finset ι} : DiscreteMeasurableSpace (Finpartition s) :=
+  ⟨fun _ ↦ trivial⟩
 
 variable {α θ : ℝ} {n : ℕ}
 
