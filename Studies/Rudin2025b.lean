@@ -302,7 +302,9 @@ def performance? (x : Datum) : Option (Performance Bool) := do
     | some "none" => some .none
     | some "inarticulate" => some .inarticulate
     | some "sentence" => do
-      let mood ← x.parse? "mood" moods
+      let mood ← (Examples.mood x).map fun
+        | .declarative => ofSet
+        | .interrogative => polar
       let rising ← x.parse? "tune" [("rising", true), ("falling", false)]
       pure (.utterance (mood {true}) rising)
     | _ => none

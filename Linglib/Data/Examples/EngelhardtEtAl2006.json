@@ -1,130 +1,175 @@
-[
-  {
-    "id": "engelhardtetal2006_1",
-    "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "(1)"},
-    "language": "stan1293",
-    "primaryText": "Put the apple on the towel in the box.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "An apple on a towel, a distractor of another kind, an empty towel and an empty box (Fig. 1A).",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["ambiguity", "ambiguous"]
-    ],
-    "comment": "The temporarily ambiguous instruction of Tanenhaus et al. (1995), on the towel a modifier of the apple or the destination: listeners fixate the empty towel on hearing the prepositional phrase in the one-referent display.",
-    "verified": "page-image"
-  },
-  {
-    "id": "engelhardtetal2006_2",
-    "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "(2)"},
-    "language": "stan1293",
-    "primaryText": "Put the apple that's on the towel in the box.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "An apple on a towel, a distractor of another kind, an empty towel and an empty box (Fig. 1A).",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["ambiguity", "unambiguous"]
-    ],
-    "comment": "The unambiguous counterpart of (1).",
-    "verified": "page-image"
-  },
-  {
-    "id": "engelhardtetal2006_3",
-    "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "Table 1, (3)"},
-    "language": "stan1293",
-    "primaryText": "Put the apple on the towel.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "The apple is on a towel and is to be moved to the other towel.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["target", "bare"],
-      ["destination", "towel"]
-    ],
-    "comment": "Bare target, matching location: the location is under-described, since the apple is already on a towel. Speakers never produced it and listeners rated it lowest of the four.",
-    "verified": "page-image"
-  },
-  {
-    "id": "engelhardtetal2006_4",
-    "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "Table 1, (4)"},
-    "language": "stan1293",
-    "primaryText": "Put the apple in the box.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "The apple is on a towel and is to be moved to the box.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["target", "bare"],
-      ["destination", "box"]
-    ],
-    "comment": "Bare target, different location: concise in the one-referent display, an under-description of the target in the two-referent display.",
-    "verified": "page-image"
-  },
-  {
-    "id": "engelhardtetal2006_5",
-    "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "Table 1, (5)"},
-    "language": "stan1293",
-    "primaryText": "Put the apple on the towel on the other towel.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "The apple is on a towel and is to be moved to the other towel.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["target", "modified"],
-      ["destination", "otherTowel"]
-    ],
-    "comment": "Modified target, matching location: the target is over-described in the one-referent display; the location carries the pre-nominal modifier other.",
-    "verified": "page-image"
-  },
-  {
-    "id": "engelhardtetal2006_6",
-    "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "Table 1, (6)"},
-    "language": "stan1293",
-    "primaryText": "Put the apple on the towel in the box.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "The apple is on a towel and is to be moved to the box.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["target", "modified"],
-      ["destination", "box"]
-    ],
-    "comment": "Modified target, different location: an over-description in the one-referent display, the modification required in the two-referent display. In Experiment 3 listeners fixated the empty towel on hearing on the towel and were delayed in fixating the box.",
-    "verified": "page-image"
-  },
-  {
-    "id": "engelhardtetal2006_7",
-    "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "(7)"},
-    "language": "stan1293",
-    "primaryText": "Put the apple in the box on the towel.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "Recorded so that the bare target instruction of the matching condition could be cut from it with the prosody of (6).",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "target",
+      "lean": "targetDescription",
+      "type": "TargetDescription",
+      "doc": "How the instruction describes the target object.",
+      "levels": [
+        {
+          "name": "bare",
+          "label": "bare",
+          "doc": "a bare noun phrase"
+        },
+        {
+          "name": "modified",
+          "label": "modified",
+          "doc": "a noun phrase with a prepositional modifier"
+        }
+      ]
+    },
+    {
+      "key": "destination",
+      "lean": "destination",
+      "type": "Destination",
+      "doc": "The destination the instruction names.",
+      "levels": [
+        {
+          "name": "towel",
+          "label": "towel",
+          "doc": "the towel"
+        },
+        {
+          "name": "otherTowel",
+          "label": "otherTowel",
+          "doc": "the other towel"
+        },
+        {
+          "name": "box",
+          "label": "box",
+          "doc": "the box"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "engelhardtetal2006_1",
+      "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "(1)"},
+      "language": "stan1293",
+      "primaryText": "Put the apple on the towel in the box.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "An apple on a towel, a distractor of another kind, an empty towel and an empty box (Fig. 1A).",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["ambiguity", "ambiguous"]
+      ],
+      "comment": "The temporarily ambiguous instruction of Tanenhaus et al. (1995), on the towel a modifier of the apple or the destination: listeners fixate the empty towel on hearing the prepositional phrase in the one-referent display.",
+      "verified": "page-image"
+    },
+    {
+      "id": "engelhardtetal2006_2",
+      "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "(2)"},
+      "language": "stan1293",
+      "primaryText": "Put the apple that's on the towel in the box.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "An apple on a towel, a distractor of another kind, an empty towel and an empty box (Fig. 1A).",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["ambiguity", "unambiguous"]
+      ],
+      "comment": "The unambiguous counterpart of (1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "engelhardtetal2006_3",
+      "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "Table 1, (3)"},
+      "language": "stan1293",
+      "primaryText": "Put the apple on the towel.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "The apple is on a towel and is to be moved to the other towel.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["target", "bare"],
+        ["destination", "towel"]
+      ],
+      "comment": "Bare target, matching location: the location is under-described, since the apple is already on a towel. Speakers never produced it and listeners rated it lowest of the four.",
+      "verified": "page-image"
+    },
+    {
+      "id": "engelhardtetal2006_4",
+      "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "Table 1, (4)"},
+      "language": "stan1293",
+      "primaryText": "Put the apple in the box.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "The apple is on a towel and is to be moved to the box.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["target", "bare"],
+        ["destination", "box"]
+      ],
+      "comment": "Bare target, different location: concise in the one-referent display, an under-description of the target in the two-referent display.",
+      "verified": "page-image"
+    },
+    {
+      "id": "engelhardtetal2006_5",
+      "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "Table 1, (5)"},
+      "language": "stan1293",
+      "primaryText": "Put the apple on the towel on the other towel.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "The apple is on a towel and is to be moved to the other towel.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["target", "modified"],
+        ["destination", "otherTowel"]
+      ],
+      "comment": "Modified target, matching location: the target is over-described in the one-referent display; the location carries the pre-nominal modifier other.",
+      "verified": "page-image"
+    },
+    {
+      "id": "engelhardtetal2006_6",
+      "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "Table 1, (6)"},
+      "language": "stan1293",
+      "primaryText": "Put the apple on the towel in the box.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "The apple is on a towel and is to be moved to the box.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["target", "modified"],
+        ["destination", "box"]
+      ],
+      "comment": "Modified target, different location: an over-description in the one-referent display, the modification required in the two-referent display. In Experiment 3 listeners fixated the empty towel on hearing on the towel and were delayed in fixating the box.",
+      "verified": "page-image"
+    },
+    {
+      "id": "engelhardtetal2006_7",
+      "source": {"bibkey": "engelhardt-etal-2006", "paperLabel": "(7)"},
+      "language": "stan1293",
+      "primaryText": "Put the apple in the box on the towel.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "Recorded so that the bare target instruction of the matching condition could be cut from it with the prosody of (6).",
+      "verified": "page-image"
+    }
+  ]
+}

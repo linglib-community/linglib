@@ -169,4 +169,28 @@ inductive Gender where
 def indirectIndex (e : Datum) : Option Gender :=
   e.parse? "indirectIndex" [("male voice", .male), ("female voice", .female)]
 
+/-- The communicative strategy a caregiver uses. -/
+inductive Strategy where
+  /-- Extensive simplification: extensive simplification -/
+  | extensiveSimplification
+  /-- Little simplification: little simplification -/
+  | littleSimplification
+  /-- Express guess and negotiate meaning: expressing a guess and negotiating meaning -/
+  | expressGuess
+  /-- Display minimal grasp: displaying minimal grasp -/
+  | displayMinimalGrasp
+  /-- Unidirectional: unidirectional praise -/
+  | unidirectional
+  /-- Bidirectional: bidirectional praise -/
+  | bidirectional
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `strategy`. -/
+def strategy (e : Datum) : Option Strategy :=
+  e.parse? "strategy" [("Extensive simplification", .extensiveSimplification),
+    ("Little simplification", .littleSimplification),
+    ("Express guess and negotiate meaning", .expressGuess),
+    ("Display minimal grasp", .displayMinimalGrasp), ("Unidirectional", .unidirectional),
+    ("Bidirectional", .bidirectional)]
+
 end Ochs1992.Examples

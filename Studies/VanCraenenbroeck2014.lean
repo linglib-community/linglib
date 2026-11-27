@@ -118,7 +118,9 @@ def uses : List (String × Use) := [("stranded", .stranded), ("included", .inclu
 /-- The category of the pronominalized phrase and the use of its argument in a row of (11), (13)
 and (17). -/
 def use? (e : Datum) : Option (Lexicon Unit × Use) := do
-  pure (← e.parse? "category" categories, ← e.parse? "argument" uses)
+  pure (← e.parse? "category" categories, ← (Examples.argumentUse e).map fun
+    | .stranded => .stranded
+    | .included => .included)
 
 -- (11), which strands the argument, is accepted
 theorem not_checks_complement (X : Cat) (n : ℕ) :
@@ -140,7 +142,7 @@ theorem checks_severed :
 -- (3), in Harley's rows: under either analysis *one*, a proform for the phrase of the noun,
 -- strands the adjunct and not the argument
 theorem checks_one (a : Analysis) :
-    Datum.Checks (·.parse? "stranded" Harley2014.dependentTable)
+    Datum.Checks (fun d ↦ (Harley2014.Examples.stranded d).map Harley2014.dependent)
       (fun d ↦ .ofProp (a.Licenses noun (.head .n) d .stranded)) Harley2014.Examples.all 2 := by
   cases a <;> decide +kernel
 
@@ -193,7 +195,11 @@ def forms : List (String × Form) :=
 omdoen* 'be the end of someone', *de strijdbijl begraven* 'bury the hatchet' and *het ijs
 breken* 'break the ice'. -/
 def form? (idiom : String) (e : Datum) : Option Form :=
-  if e.feature? "idiom" = some idiom then e.parse? "form" forms else none
+  if e.feature? "idiom" = some idiom then (Examples.form e).map fun
+    | .active => .active
+    | .passive => .passive
+    | .nominalizedInfinitive => .nominalizedInfinitive
+    | .nominalization => .nominalization else none
 
 -- (18)
 theorem checks_bons_iff (d : Domain) :

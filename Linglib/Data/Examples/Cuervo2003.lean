@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Cuervo2003` — typed example data
@@ -368,5 +370,26 @@ def ex_92b : Datum :=
     paperFeatures := [("predicate", "arrive"), ("animate", "yes"), ("dative", "dp")] }
 
 def all : List Datum := [ex_29a, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35, ex_36, ex_37, ex_38, ex_39a, ex_49, ex_54a, ex_55, ex_60, ex_66, ex_67a, ex_78, ex_90a, ex_90b, ex_85ap, ex_88, ex_89a, ex_92b]
+
+/-- The interpretation of the dative argument. -/
+inductive DativeMeaning where
+  /-- recipient: recipient -/
+  | recipient
+  /-- source: source -/
+  | source
+  /-- possessor: possessor -/
+  | possessor
+  /-- affected: affected argument -/
+  | affected
+  /-- experiencer: experiencer -/
+  | experiencer
+  /-- ethical: ethical dative -/
+  | ethical
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `meaning`. -/
+def dativeMeaning (e : Datum) : Option DativeMeaning :=
+  e.parse? "meaning" [("recipient", .recipient), ("source", .source), ("possessor", .possessor),
+    ("affected", .affected), ("experiencer", .experiencer), ("ethical", .ethical)]
 
 end Cuervo2003.Examples

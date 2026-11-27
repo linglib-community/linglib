@@ -148,7 +148,10 @@ hierarchical analysis predicts that gender only for the nominals where its probe
 cyclic probe does. -/
 theorem cyclicGender_rows : ∀ e ∈ Examples.all,
     ∃ vocabulary ∈ e.byLanguage vocabularies, ∃ hs ∈ e.parseAll? "head" heads,
-      ∃ g ∈ e.parse? "gender" genders,
+      ∃ g ∈ (Examples.genderValue e).map fun
+        | .masculine => .Masc
+        | .feminine => .Fem
+        | .neuter => .Neut,
         shown vocabulary (cyclicGender ⟨r, hs⟩) = some g ∧
           (shown vocabulary (hierarchicalGender ⟨r, hs⟩) = some g ↔
             hierarchicalGender ⟨r, hs⟩ = cyclicGender ⟨r, hs⟩) := by

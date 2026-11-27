@@ -1,680 +1,707 @@
-[
-  {
-    "id": "kramer2015_10_2",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (2)"},
-    "reportedIn": null,
-    "language": "soma1255",
-    "primaryText": "inammó",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "sons (f.)",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[-fem]"],
-      ["head", "u[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "The o-plural of ínan 'boy, son', a feminine plural n over the male n; tree (2).",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_3a",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (3a)"},
-    "reportedIn": null,
-    "language": "sout1528",
-    "primaryText": "ova pametna devojka",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ova", "this.F.SG"], ["pametna", "smart.F.SG"], ["devojka", "girl"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "Wechsler and Zlatić 2003: 64; repeated as (30a). The base of (4).",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_3b",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (3b)"},
-    "reportedIn": null,
-    "language": "sout1528",
-    "primaryText": "ovaj pametni devojčurak",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ovaj", "this.M.SG"], ["pametni", "smart.M.SG"], ["devojčurak", "girl.DIM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[+fem]"],
-      ["head", "u[-fem]"],
-      ["gender", "masculine"]
-    ],
-    "comment": "Wechsler and Zlatić 2003: 64; tree (4), a diminutive n with uninterpretable masculine gender.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_5c",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (5c)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "die Lehrer-schaft",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["die", "the.F.SG"], ["Lehrer-schaft", "faculty"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "u[-fem]"],
-      ["head", "u[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "Durrell 2014: 479; tree (6), -schaft over the masculine -er.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_8a",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (8a)"},
-    "reportedIn": null,
-    "method": "elicitation",
-    "language": "amha1245",
-    "primaryText": "bet-u",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["bet-u", "house-DEF.M"]
-    ],
-    "translation": "the house",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "plain"],
-      ["gender", "masculine"]
-    ],
-    "comment": "A masculine inanimate under plain n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_8b",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (8b)"},
-    "reportedIn": null,
-    "method": "elicitation",
-    "language": "amha1245",
-    "primaryText": "bet-wa t-amɨr-all-ätʃtʃ",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["bet-wa", "house-DEF.F"], ["t-amɨr-all-ätʃtʃ", "3F.SG-be.cute-AUX-3F.SG"]
-    ],
-    "translation": "The (adorable little) house is cute",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "plain"],
-      ["head", "u[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "Tree (9), the diminutive n with uninterpretable feminine gender.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_10a",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (10a)"},
-    "reportedIn": null,
-    "language": "amha1245",
-    "primaryText": "yɨh bäre",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["yɨh", "this.M"], ["bäre", "ox"]
-    ],
-    "translation": "this ox",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[-fem]"],
-      ["gender", "masculine"]
-    ],
-    "comment": "Cohen 1970: 77.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_10b",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (10b)"},
-    "reportedIn": null,
-    "language": "amha1245",
-    "primaryText": "yɨtʃtʃ bäre",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["yɨtʃtʃ", "this.F"], ["bäre", "ox"]
-    ],
-    "translation": "this (cute) ox",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[-fem]"],
-      ["head", "u[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "Cohen 1970: 77; tree (11).",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_14a",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (14a)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "die Lehr-er-in",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["die", "the.F.SG"], ["Lehr-er-in", "teach-er-FEM"]
-    ],
-    "translation": "the female teacher",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "u[-fem]"],
-      ["head", "i[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "Wiltschko 2012, Durrell 2011; the masculine -er of (6) under -in, which adds female natural gender.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_21",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (21)"},
-    "reportedIn": null,
-    "language": "amha1245",
-    "primaryText": "dägg-ɨnnät hulgize t'ɨru näw",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["dägg-ɨnnät", "kind-NMLZ"], ["hulgize", "always"], ["t'ɨru", "good"], ["näw", "be.3M.SG"]
-    ],
-    "translation": "Kindness is always good.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "a"],
-      ["head", "plain"],
-      ["gender", "masculine"]
-    ],
-    "comment": "Fulass 1966: 80; -ɨnnät on an aP.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_24",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (24)"},
-    "reportedIn": null,
-    "method": "elicitation",
-    "language": "amha1245",
-    "primaryText": "ɨnnat-ɨnnät käbbad näw",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ɨnnat-ɨnnät", "mother-NMLZ"], ["käbbad", "difficult"], ["näw", "be.3M.SG"]
-    ],
-    "translation": "Motherhood is difficult.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[+fem]"],
-      ["head", "plain"],
-      ["gender", "masculine"]
-    ],
-    "comment": "Tree (23): plain -ɨnnät over the female n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_25",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (25)"},
-    "reportedIn": null,
-    "method": "elicitation",
-    "language": "amha1245",
-    "primaryText": "mist-ɨnnät käbbad näw",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["mist-ɨnnät", "wife-NMLZ"], ["käbbad", "difficult"], ["näw", "be.3M.SG"]
-    ],
-    "translation": "Being a wife is difficult.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[+fem]"],
-      ["head", "plain"],
-      ["gender", "masculine"]
-    ],
-    "comment": "Tree (23): plain -ɨnnät over the female n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_26",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (26)"},
-    "reportedIn": null,
-    "method": "elicitation",
-    "language": "amha1245",
-    "primaryText": "lam-ɨnnät käbbad näw",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["lam-ɨnnät", "cow-NMLZ"], ["käbbad", "difficult"], ["näw", "be.3M.SG"]
-    ],
-    "translation": "Being a cow is difficult.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[+fem]"],
-      ["head", "plain"],
-      ["gender", "masculine"]
-    ],
-    "comment": "Tree (23): plain -ɨnnät over the female n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_27a",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (27a)"},
-    "reportedIn": null,
-    "language": "soma1255",
-    "primaryText": "náág-ta",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "the woman (f.)",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "Green et al. 2014a.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_27c",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (27c)"},
-    "reportedIn": null,
-    "language": "soma1255",
-    "primaryText": "naag-á-ha",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "the women (m.)",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[+fem]"],
-      ["head", "plain"],
-      ["gender", "masculine"]
-    ],
-    "comment": "Green et al. 2014a; tree (28), a plain plural n over the female n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_29a",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29a)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "die Karte",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["die", "the.F.SG"], ["Karte", "card"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "u[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; a feminine inanimate under the uninterpretable feminine n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_29b",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29b)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "die Stadt",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["die", "the.F.SG"], ["Stadt", "town"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "u[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; a feminine inanimate under the uninterpretable feminine n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_29c",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29c)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "die Flasche",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["die", "the.F.SG"], ["Flasche", "bottle"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "u[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; a feminine inanimate under the uninterpretable feminine n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_29d",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29d)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "das Kärt-chen",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["das", "the.N.SG"], ["Kärt-chen", "card-DIM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "u[+fem]"],
-      ["head", "plain"],
-      ["gender", "neuter"]
-    ],
-    "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; tree (31), the plain diminutive n -chen.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_29e",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29e)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "das Städt-chen",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["das", "the.N.SG"], ["Städt-chen", "town-DIM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "u[+fem]"],
-      ["head", "plain"],
-      ["gender", "neuter"]
-    ],
-    "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; tree (31), the plain diminutive n -chen.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_29f",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29f)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "das Fläsch-chen",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["das", "the.N.SG"], ["Fläsch-chen", "bottle-DIM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "u[+fem]"],
-      ["head", "plain"],
-      ["gender", "neuter"]
-    ],
-    "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; tree (31), the plain diminutive n -chen.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_30b",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (30b)"},
-    "reportedIn": null,
-    "language": "sout1528",
-    "primaryText": "ovo pametno devojče",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ovo", "this.N.SG"], ["pametno", "smart.N.SG"], ["devojče", "girl.DIM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[+fem]"],
-      ["head", "plain"],
-      ["gender", "neuter"]
-    ],
-    "comment": "Wechsler and Zlatić 2003: 64; a neuter diminutive n over the female n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_35a",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35a)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "la madre",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["la", "the.F.SG"], ["madre", "mother"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_35b",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35b)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "la piedra",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["la", "the.F.SG"], ["piedra", "stone"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "u[+fem]"],
-      ["gender", "feminine"]
-    ],
-    "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_35c",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35c)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "el padre",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["el", "the.M.SG"], ["padre", "father"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[-fem]"],
-      ["gender", "masculine"]
-    ],
-    "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_35d",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35d)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "el armario",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["el", "the.M.SG"], ["armario", "wardrobe"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "plain"],
-      ["gender", "masculine"]
-    ],
-    "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_35e",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35e)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "la madre-cita",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["la", "the.F.SG"], ["madre-cita", "mother-DIM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[+fem]"],
-      ["head", "dim"],
-      ["gender", "feminine"]
-    ],
-    "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_35f",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35f)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "la piedre-cita",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["la", "the.F.SG"], ["piedre-cita", "stone-DIM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "u[+fem]"],
-      ["head", "dim"],
-      ["gender", "feminine"]
-    ],
-    "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_35g",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35g)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "el padre-cito",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["el", "the.M.SG"], ["padre-cito", "father-DIM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "i[-fem]"],
-      ["head", "dim"],
-      ["gender", "masculine"]
-    ],
-    "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
-    "verified": "page-image"
-  },
-  {
-    "id": "kramer2015_10_35h",
-    "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35h)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "el armar-ito",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["el", "the.M.SG"], ["armar-ito", "wardrobe-DIM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "plain"],
-      ["head", "dim"],
-      ["gender", "masculine"]
-    ],
-    "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "gender",
+      "lean": "genderValue",
+      "type": "GenderValue",
+      "doc": "The gender of the noun.",
+      "levels": [
+        {
+          "name": "masculine",
+          "label": "masculine",
+          "doc": "masculine"
+        },
+        {
+          "name": "feminine",
+          "label": "feminine",
+          "doc": "feminine"
+        },
+        {
+          "name": "neuter",
+          "label": "neuter",
+          "doc": "neuter"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "kramer2015_10_2",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (2)"},
+      "reportedIn": null,
+      "language": "soma1255",
+      "primaryText": "inammó",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "sons (f.)",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[-fem]"],
+        ["head", "u[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "The o-plural of ínan 'boy, son', a feminine plural n over the male n; tree (2).",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_3a",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (3a)"},
+      "reportedIn": null,
+      "language": "sout1528",
+      "primaryText": "ova pametna devojka",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ova", "this.F.SG"], ["pametna", "smart.F.SG"], ["devojka", "girl"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "Wechsler and Zlatić 2003: 64; repeated as (30a). The base of (4).",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_3b",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (3b)"},
+      "reportedIn": null,
+      "language": "sout1528",
+      "primaryText": "ovaj pametni devojčurak",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ovaj", "this.M.SG"], ["pametni", "smart.M.SG"], ["devojčurak", "girl.DIM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[+fem]"],
+        ["head", "u[-fem]"],
+        ["gender", "masculine"]
+      ],
+      "comment": "Wechsler and Zlatić 2003: 64; tree (4), a diminutive n with uninterpretable masculine gender.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_5c",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (5c)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "die Lehrer-schaft",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["die", "the.F.SG"], ["Lehrer-schaft", "faculty"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "u[-fem]"],
+        ["head", "u[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "Durrell 2014: 479; tree (6), -schaft over the masculine -er.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_8a",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (8a)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "amha1245",
+      "primaryText": "bet-u",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["bet-u", "house-DEF.M"]
+      ],
+      "translation": "the house",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "plain"],
+        ["gender", "masculine"]
+      ],
+      "comment": "A masculine inanimate under plain n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_8b",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (8b)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "amha1245",
+      "primaryText": "bet-wa t-amɨr-all-ätʃtʃ",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["bet-wa", "house-DEF.F"], ["t-amɨr-all-ätʃtʃ", "3F.SG-be.cute-AUX-3F.SG"]
+      ],
+      "translation": "The (adorable little) house is cute",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "plain"],
+        ["head", "u[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "Tree (9), the diminutive n with uninterpretable feminine gender.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_10a",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (10a)"},
+      "reportedIn": null,
+      "language": "amha1245",
+      "primaryText": "yɨh bäre",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["yɨh", "this.M"], ["bäre", "ox"]
+      ],
+      "translation": "this ox",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[-fem]"],
+        ["gender", "masculine"]
+      ],
+      "comment": "Cohen 1970: 77.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_10b",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (10b)"},
+      "reportedIn": null,
+      "language": "amha1245",
+      "primaryText": "yɨtʃtʃ bäre",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["yɨtʃtʃ", "this.F"], ["bäre", "ox"]
+      ],
+      "translation": "this (cute) ox",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[-fem]"],
+        ["head", "u[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "Cohen 1970: 77; tree (11).",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_14a",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (14a)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "die Lehr-er-in",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["die", "the.F.SG"], ["Lehr-er-in", "teach-er-FEM"]
+      ],
+      "translation": "the female teacher",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "u[-fem]"],
+        ["head", "i[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "Wiltschko 2012, Durrell 2011; the masculine -er of (6) under -in, which adds female natural gender.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_21",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (21)"},
+      "reportedIn": null,
+      "language": "amha1245",
+      "primaryText": "dägg-ɨnnät hulgize t'ɨru näw",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["dägg-ɨnnät", "kind-NMLZ"], ["hulgize", "always"], ["t'ɨru", "good"], ["näw", "be.3M.SG"]
+      ],
+      "translation": "Kindness is always good.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "a"],
+        ["head", "plain"],
+        ["gender", "masculine"]
+      ],
+      "comment": "Fulass 1966: 80; -ɨnnät on an aP.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_24",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (24)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "amha1245",
+      "primaryText": "ɨnnat-ɨnnät käbbad näw",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ɨnnat-ɨnnät", "mother-NMLZ"], ["käbbad", "difficult"], ["näw", "be.3M.SG"]
+      ],
+      "translation": "Motherhood is difficult.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[+fem]"],
+        ["head", "plain"],
+        ["gender", "masculine"]
+      ],
+      "comment": "Tree (23): plain -ɨnnät over the female n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_25",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (25)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "amha1245",
+      "primaryText": "mist-ɨnnät käbbad näw",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["mist-ɨnnät", "wife-NMLZ"], ["käbbad", "difficult"], ["näw", "be.3M.SG"]
+      ],
+      "translation": "Being a wife is difficult.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[+fem]"],
+        ["head", "plain"],
+        ["gender", "masculine"]
+      ],
+      "comment": "Tree (23): plain -ɨnnät over the female n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_26",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (26)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "amha1245",
+      "primaryText": "lam-ɨnnät käbbad näw",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["lam-ɨnnät", "cow-NMLZ"], ["käbbad", "difficult"], ["näw", "be.3M.SG"]
+      ],
+      "translation": "Being a cow is difficult.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[+fem]"],
+        ["head", "plain"],
+        ["gender", "masculine"]
+      ],
+      "comment": "Tree (23): plain -ɨnnät over the female n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_27a",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (27a)"},
+      "reportedIn": null,
+      "language": "soma1255",
+      "primaryText": "náág-ta",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "the woman (f.)",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "Green et al. 2014a.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_27c",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (27c)"},
+      "reportedIn": null,
+      "language": "soma1255",
+      "primaryText": "naag-á-ha",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "the women (m.)",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[+fem]"],
+        ["head", "plain"],
+        ["gender", "masculine"]
+      ],
+      "comment": "Green et al. 2014a; tree (28), a plain plural n over the female n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_29a",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29a)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "die Karte",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["die", "the.F.SG"], ["Karte", "card"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "u[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; a feminine inanimate under the uninterpretable feminine n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_29b",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29b)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "die Stadt",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["die", "the.F.SG"], ["Stadt", "town"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "u[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; a feminine inanimate under the uninterpretable feminine n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_29c",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29c)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "die Flasche",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["die", "the.F.SG"], ["Flasche", "bottle"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "u[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; a feminine inanimate under the uninterpretable feminine n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_29d",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29d)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "das Kärt-chen",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["das", "the.N.SG"], ["Kärt-chen", "card-DIM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "u[+fem]"],
+        ["head", "plain"],
+        ["gender", "neuter"]
+      ],
+      "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; tree (31), the plain diminutive n -chen.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_29e",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29e)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "das Städt-chen",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["das", "the.N.SG"], ["Städt-chen", "town-DIM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "u[+fem]"],
+        ["head", "plain"],
+        ["gender", "neuter"]
+      ],
+      "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; tree (31), the plain diminutive n -chen.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_29f",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (29f)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "das Fläsch-chen",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["das", "the.N.SG"], ["Fläsch-chen", "bottle-DIM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "u[+fem]"],
+        ["head", "plain"],
+        ["gender", "neuter"]
+      ],
+      "comment": "Wiltschko and Steriopolo 2007, Durrell 2011; tree (31), the plain diminutive n -chen.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_30b",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (30b)"},
+      "reportedIn": null,
+      "language": "sout1528",
+      "primaryText": "ovo pametno devojče",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ovo", "this.N.SG"], ["pametno", "smart.N.SG"], ["devojče", "girl.DIM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[+fem]"],
+        ["head", "plain"],
+        ["gender", "neuter"]
+      ],
+      "comment": "Wechsler and Zlatić 2003: 64; a neuter diminutive n over the female n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_35a",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35a)"},
+      "reportedIn": null,
+      "language": "stan1288",
+      "primaryText": "la madre",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["la", "the.F.SG"], ["madre", "mother"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_35b",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35b)"},
+      "reportedIn": null,
+      "language": "stan1288",
+      "primaryText": "la piedra",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["la", "the.F.SG"], ["piedra", "stone"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "u[+fem]"],
+        ["gender", "feminine"]
+      ],
+      "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_35c",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35c)"},
+      "reportedIn": null,
+      "language": "stan1288",
+      "primaryText": "el padre",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["el", "the.M.SG"], ["padre", "father"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[-fem]"],
+        ["gender", "masculine"]
+      ],
+      "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_35d",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35d)"},
+      "reportedIn": null,
+      "language": "stan1288",
+      "primaryText": "el armario",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["el", "the.M.SG"], ["armario", "wardrobe"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "plain"],
+        ["gender", "masculine"]
+      ],
+      "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_35e",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35e)"},
+      "reportedIn": null,
+      "language": "stan1288",
+      "primaryText": "la madre-cita",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["la", "the.F.SG"], ["madre-cita", "mother-DIM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[+fem]"],
+        ["head", "dim"],
+        ["gender", "feminine"]
+      ],
+      "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_35f",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35f)"},
+      "reportedIn": null,
+      "language": "stan1288",
+      "primaryText": "la piedre-cita",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["la", "the.F.SG"], ["piedre-cita", "stone-DIM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "u[+fem]"],
+        ["head", "dim"],
+        ["gender", "feminine"]
+      ],
+      "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_35g",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35g)"},
+      "reportedIn": null,
+      "language": "stan1288",
+      "primaryText": "el padre-cito",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["el", "the.M.SG"], ["padre-cito", "father-DIM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "i[-fem]"],
+        ["head", "dim"],
+        ["gender", "masculine"]
+      ],
+      "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
+      "verified": "page-image"
+    },
+    {
+      "id": "kramer2015_10_35h",
+      "source": {"bibkey": "kramer-2015", "paperLabel": "ch. 10 (35h)"},
+      "reportedIn": null,
+      "language": "stan1288",
+      "primaryText": "el armar-ito",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["el", "the.M.SG"], ["armar-ito", "wardrobe-DIM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["head", "plain"],
+        ["head", "dim"],
+        ["gender", "masculine"]
+      ],
+      "comment": "The n is that of the book's analysis of Spanish, the female and male n's for natural gender, the uninterpretable feminine n for other feminines and plain n otherwise; the diminutive is an adjoined head, not an n.",
+      "verified": "page-image"
+    }
+  ]
+}

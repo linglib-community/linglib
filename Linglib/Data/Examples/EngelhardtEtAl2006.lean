@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `EngelhardtEtAl2006` — typed example data
@@ -114,5 +116,31 @@ def ex_7 : Datum :=
     paperFeatures := [] }
 
 def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7]
+
+/-- How the instruction describes the target object. -/
+inductive TargetDescription where
+  /-- bare: a bare noun phrase -/
+  | bare
+  /-- modified: a noun phrase with a prepositional modifier -/
+  | modified
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `target`. -/
+def targetDescription (e : Datum) : Option TargetDescription :=
+  e.parse? "target" [("bare", .bare), ("modified", .modified)]
+
+/-- The destination the instruction names. -/
+inductive Destination where
+  /-- towel: the towel -/
+  | towel
+  /-- otherTowel: the other towel -/
+  | otherTowel
+  /-- box: the box -/
+  | box
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `destination`. -/
+def destination (e : Datum) : Option Destination :=
+  e.parse? "destination" [("towel", .towel), ("otherTowel", .otherTowel), ("box", .box)]
 
 end EngelhardtEtAl2006.Examples

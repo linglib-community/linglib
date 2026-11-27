@@ -267,4 +267,16 @@ inductive Volume where
 def volume (e : Datum) : Option Volume :=
   e.parse? "volume" [("neutral", .neutral), ("loud", .loud), ("whispered", .whispered)]
 
+/-- The sentence mood. -/
+inductive Mood where
+  /-- declarative: declarative -/
+  | declarative
+  /-- interrogative: polar interrogative -/
+  | interrogative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `mood`. -/
+def mood (e : Datum) : Option Mood :=
+  e.parse? "mood" [("declarative", .declarative), ("interrogative", .interrogative)]
+
 end Rudin2025b.Examples

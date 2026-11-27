@@ -1,1589 +1,1644 @@
-[
-  {
-    "id": "zmt1985_8a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(8a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég hjálpaði honum.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["hjálpaði", "helped"], ["honum", "him.DAT"]
-    ],
-    "translation": "I helped him.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hjálpa"],
-      ["voice", "active"],
-      ["cases", "nom dat"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_8b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(8b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég mun sakna hans.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["mun", "will"], ["sakna", "miss"], ["hans", "him.GEN"]
-    ],
-    "translation": "I will miss him.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "sakna"],
-      ["voice", "active"],
-      ["cases", "nom gen"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_9a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(9a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Það var dansað í gær.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Það", "there"], ["var", "was"], ["dansað", "danced"], ["í gær", "yesterday"]
-    ],
-    "translation": "People danced yesterday.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "dansa"],
-      ["voice", "passive"],
-      ["cases", ""]
-    ],
-    "comment": "The impersonal passive.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_11a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(11a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Þeim var hjálpað.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Þeim", "them.DAT"], ["var", "was"], ["hjálpað", "helped"]
-    ],
-    "translation": "They were helped.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hjálpa"],
-      ["voice", "passive"],
-      ["cases", "dat"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_11b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(11b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Hennar var saknað.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hennar", "her.GEN"], ["var", "was"], ["saknað", "missed"]
-    ],
-    "translation": "She was missed.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "sakna"],
-      ["voice", "passive"],
-      ["cases", "gen"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_13",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(13)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Henni hefur alltaf þótt Ólafur leiðinlegur.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Henni", "her.DAT"], ["hefur", "has"], ["alltaf", "always"], ["þótt", "thought"],
-      ["Ólafur", "Olaf.NOM"], ["leiðinlegur", "boring.NOM"]
-    ],
-    "translation": "She has always found Olaf boring.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "þykja"],
-      ["voice", "active"],
-      ["cases", "dat nom"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_29a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(29a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Mig vantar peninga.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Mig", "me.ACC"], ["vantar", "lacks"], ["peninga", "money.ACC"]
-    ],
-    "translation": "I lack money.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "vanta"],
-      ["voice", "active"],
-      ["cases", "acc acc"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_37a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(37a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Þeir leyndu Ólaf sannleikanum.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Þeir", "they"], ["leyndu", "concealed"], ["Ólaf", "[from]-Olaf.ACC"],
-      ["sannleikanum", "the-truth.DAT"]
-    ],
-    "translation": "They hid the truth from Olaf.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "leyna"],
-      ["voice", "active"],
-      ["cases", "nom acc dat"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_37b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(37b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Jón bað mig bónar.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Jón", "Jon"], ["bað", "asked"], ["mig", "me.ACC"], ["bónar", "a-favor.GEN"]
-    ],
-    "translation": "John asked a favor of me.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "biðja"],
-      ["voice", "active"],
-      ["cases", "nom acc gen"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_37c",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(37c)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég sagði þér söguna.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["sagði", "told"], ["þér", "you.DAT"], ["söguna", "a-story.ACC"]
-    ],
-    "translation": "I told you a story.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "segja"],
-      ["voice", "active"],
-      ["cases", "nom dat acc"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_37d",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(37d)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ólafur lofaði Maríu þessum hring.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ólafur", "Olaf.NOM"], ["lofaði", "promised"], ["Maríu", "Mary.DAT"],
-      ["þessum", "this.DAT"], ["hring", "ring.DAT"]
-    ],
-    "translation": "Olaf promised Mary this ring.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "lofa"],
-      ["voice", "active"],
-      ["cases", "nom dat dat"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_37e",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(37e)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "María óskaði Ólafi alls góðs.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["María", "Mary"], ["óskaði", "wished"], ["Ólafi", "Olaf.DAT"], ["alls", "everything.GEN"],
-      ["góðs", "good.GEN"]
-    ],
-    "translation": "Mary wished Olaf all the best.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "óska"],
-      ["voice", "active"],
-      ["cases", "nom dat gen"]
-    ],
-    "comment": "The paper prints goðs.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_42a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(42a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég skilaði henni peningunum.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["skilaði", "returned"], ["henni", "her.DAT"], ["peningunum", "the-money.DAT"]
-    ],
-    "translation": "I gave her back the money.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "skila"],
-      ["voice", "active"],
-      ["cases", "nom dat dat"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_42b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(42b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Henni var skilað peningunum.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Henni", "she.DAT"], ["var", "was"], ["skilað", "returned"],
-      ["peningunum", "the-money.DAT"]
-    ],
-    "translation": "She was given back the money.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "skila"],
-      ["voice", "passive"],
-      ["cases", "dat dat"],
-      ["test", "passive"],
-      ["tested", "goal"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_42c",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(42c)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Peningunum var skilað henni.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "skila"],
-      ["voice", "passive"],
-      ["test", "passive"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_44a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(44a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Konunginum voru gefnar ambáttir.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Konunginum", "the-king.DAT"], ["voru", "were"], ["gefnar", "given.F.PL"],
-      ["ambáttir", "maidservants.NOM.F.PL"]
-    ],
-    "translation": "The king was given female slaves.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "gefa"],
-      ["voice", "passive"],
-      ["cases", "dat nom"],
-      ["test", "passive"],
-      ["tested", "goal"]
-    ],
-    "comment": "The retained object is nominative and the verb agrees with it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_44b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(44b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ambáttin var gefin konunginum.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ambáttin", "the-maidservant.NOM.SG"], ["var", "was"], ["gefin", "given.F.SG"],
-      ["konunginum", "the-king.DAT"]
-    ],
-    "translation": "The maidservant was given to the king.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "gefa"],
-      ["voice", "passive"],
-      ["cases", "nom dat"],
-      ["test", "passive"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_64a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(64a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Sjórinn svipti hana manni sínum.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Sjórinn", "the-sea"], ["svipti", "deprived"], ["hana", "her.ACC"],
-      ["manni", "husband.DAT"], ["sínum", "her.REFL"]
-    ],
-    "translation": "The sea deprived her of her husband.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "svipta"],
-      ["voice", "active"],
-      ["cases", "nom acc dat"]
-    ],
-    "comment": "From Rögnvaldsson (1982). The paper prints hanni.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_66b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(66b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Þú hefur óskað þess.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "óska (transitive)"],
-      ["voice", "active"],
-      ["cases", "nom gen"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_66c",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(66c)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Þú hefur óskað henni.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "óska"],
-      ["voice", "active"]
-    ],
-    "comment": "The recipient is optional, the theme is not.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_14b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(14b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég taldi Guðrúnu í barnaskap mínum sakna Haraldar.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["taldi", "believed"], ["Guðrúnu", "Gudrun.ACC"], ["í", "in"],
-      ["barnaskap", "foolishness"], ["mínum", "my"], ["sakna", "to-miss"],
-      ["Haraldar", "Harold.GEN"]
-    ],
-    "translation": "I believed Gudrun in my foolishness to miss Harold.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "sakna"],
-      ["voice", "active"],
-      ["test", "raising"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_14d",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(14d)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég taldi Haraldar sakna Guðrún.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["taldi", "believed"], ["Haraldar", "Harold.GEN"], ["sakna", "to-miss"],
-      ["Guðrún", "Gudrun.NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "sakna"],
-      ["voice", "active"],
-      ["test", "raising"],
-      ["tested", "theme"]
-    ],
-    "comment": "One of the four starred variants of (14d).",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_16",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(16)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég tel henni hafa alltaf þótt Ólafur leiðinlegur.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["tel", "believe"], ["henni", "her.DAT"], ["hafa", "to-have"],
-      ["alltaf", "always"], ["þótt", "thought"], ["Ólafur", "Olaf.NOM"],
-      ["leiðinlegur", "boring.NOM"]
-    ],
-    "translation": "I believe her always to have found Olaf boring.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "þykja"],
-      ["voice", "active"],
-      ["test", "raising"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_18a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(18a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Henni þykir bróðir sinn leiðinlegur.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Henni", "her.DAT"], ["þykir", "thinks"], ["bróðir", "brother.NOM"], ["sinn", "her.REFL"],
-      ["leiðinlegur", "boring"]
-    ],
-    "translation": "She finds her brother boring.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "þykja"],
-      ["voice", "active"],
-      ["test", "reflexivization"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_21a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(21a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Hefur henni alltaf þótt Ólafur leiðinlegur?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hefur", "has"], ["henni", "she.DAT"], ["alltaf", "always"], ["þótt", "thought"],
-      ["Ólafur", "Olaf.NOM"], ["leiðinlegur", "boring.NOM"]
-    ],
-    "translation": "Has she always found Olaf boring?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "þykja"],
-      ["voice", "active"],
-      ["test", "inversion"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_21c",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(21c)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Hefur Ólafur henni alltaf þótt leiðinlegur?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hefur", "has"], ["Ólafur", "Olaf.NOM"], ["henni", "she.DAT"], ["alltaf", "always"],
-      ["þótt", "thought"], ["leiðinlegur", "boring"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "þykja"],
-      ["voice", "active"],
-      ["test", "inversion"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_23b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(23b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Hvenær telur Jón að henni hafi þótt Ólafur leiðinlegur?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hvenær", "when"], ["telur", "believes"], ["Jón", "Jon.NOM"], ["að", "that"],
-      ["henni", "she.DAT"], ["hafi", "has"], ["þótt", "thought"], ["Ólafur", "Olaf"],
-      ["leiðinlegur", "boring"]
-    ],
-    "translation": "When does Jon believe that she considered Olaf boring?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "þykja"],
-      ["voice", "active"],
-      ["test", "extraction"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_23d",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(23d)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Hvenær telur Jón að Ólafur hafi henni þótt leiðinlegur?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hvenær", "when"], ["telur", "believes"], ["Jón", "Jon.NOM"], ["að", "that"],
-      ["Ólafur", "Olaf.NOM"], ["hafi", "has"], ["henni", "she.DAT"], ["þótt", "thought"],
-      ["leiðinlegur", "boring"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "þykja"],
-      ["voice", "active"],
-      ["test", "extraction"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_25a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(25a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Það hefur einhverjum þótt Ólafur leiðinlegur.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Það", "there"], ["hefur", "has"], ["einhverjum", "someone.DAT"], ["þótt", "thought"],
-      ["Ólafur", "Olaf.NOM"], ["leiðinlegur", "boring.NOM"]
-    ],
-    "translation": "Someone found Olaf boring.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "þykja"],
-      ["voice", "active"],
-      ["test", "postposing"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_25c",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(25c)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Það hefur Ólafur einhverjum þótt leiðinlegur.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Það", "there"], ["hefur", "has"], ["Ólafur", "Olaf.NOM"], ["einhverjum", "someone.DAT"],
-      ["þótt", "thought"], ["leiðinlegur", "boring"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "þykja"],
-      ["voice", "active"],
-      ["test", "postposing"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_27a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(27a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Hann segist vera duglegur, en finnst verkefnið of þungt.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hann", "he.NOM"], ["segist", "says-self"], ["vera", "to-be"], ["duglegur,", "diligent"],
-      ["en", "but"], ["finnst", "finds"], ["verkefnið", "the-homework"], ["of", "too"],
-      ["þungt", "hard"]
-    ],
-    "translation": "He says he is diligent, but finds the homework too hard.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "finnast"],
-      ["voice", "active"],
-      ["test", "ellipsis"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "The elided dative subject of finnast is identified with the nominative subject of the first conjunct.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_27b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(27b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Hann segist vera duglegur, en mér finnst latur.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hann", "he.NOM"], ["segist", "says-self"], ["vera", "to-be"], ["duglegur,", "diligent"],
-      ["en", "but"], ["mér", "I.DAT"], ["finnst", "find"], ["latur", "lazy"]
-    ],
-    "translation": "He says he is diligent, but I find [him] lazy.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "finnast"],
-      ["voice", "active"],
-      ["test", "ellipsis"],
-      ["tested", "theme"]
-    ],
-    "comment": "The elided nominative object cannot be identified with the nominative subject of the first conjunct.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_29b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(29b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég vonast til að vanta ekki peninga.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["vonast", "hope"], ["til", "for"], ["að", "to"], ["vanta", "lack"],
-      ["ekki", "not"], ["peninga", "money.ACC"]
-    ],
-    "translation": "I hope not to lack money.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "vanta"],
-      ["voice", "active"],
-      ["test", "control"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_30",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(30)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég tel þeim hafa verið hjálpað í prófinu.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["tel", "believe"], ["þeim", "them.DAT"], ["hafa", "to-have"],
-      ["verið", "been"], ["hjálpað", "helped"], ["í", "in"], ["prófinu", "the-exam"]
-    ],
-    "translation": "I believe them to have been helped on the exam.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hjálpa"],
-      ["voice", "passive"],
-      ["test", "raising"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_31",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(31)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Honum var oft hjálpað af foreldrum sínum.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Honum", "he.DAT"], ["var", "was"], ["oft", "often"], ["hjálpað", "helped"], ["af", "by"],
-      ["foreldrum", "parents"], ["sínum", "his.REFL"]
-    ],
-    "translation": "He was often helped by his parents.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hjálpa"],
-      ["voice", "passive"],
-      ["test", "reflexivization"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_32a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(32a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Var honum aldrei hjálpað af foreldrum sínum?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Var", "was"], ["honum", "he.DAT"], ["aldrei", "never"], ["hjálpað", "helped"],
-      ["af", "by"], ["foreldrum", "parents"], ["sínum", "his"]
-    ],
-    "translation": "Was he never helped by his parents?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hjálpa"],
-      ["voice", "passive"],
-      ["test", "inversion"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_33b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(33b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Hvenær telur hann að henni hafi verið hjálpað?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hvenær", "when"], ["telur", "believes"], ["hann", "he"], ["að", "that"],
-      ["henni", "she.DAT"], ["hafi", "has"], ["verið", "been"], ["hjálpað", "helped"]
-    ],
-    "translation": "When does he believe that she was helped?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hjálpa"],
-      ["voice", "passive"],
-      ["test", "extraction"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_34",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(34)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Það hefur mörgum stúdentum verið hjálpað í prófinu.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Það", "there"], ["hefur", "has"], ["mörgum", "many.DAT"], ["stúdentum", "students.DAT"],
-      ["verið", "been"], ["hjálpað", "helped"], ["í", "on"], ["prófinu", "the-exam"]
-    ],
-    "translation": "Many students have been helped on the exam.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hjálpa"],
-      ["voice", "passive"],
-      ["test", "postposing"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_35",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(35)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Hann segist vera saklaus en hefur víst verið hjálpað í prófinu.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hann", "he.NOM"], ["segist", "says-self"], ["vera", "to-be"], ["saklaus", "innocent"],
-      ["en", "but"], ["hefur", "has"], ["víst", "apparently"], ["verið", "been"],
-      ["hjálpað", "helped"], ["í", "on"], ["prófinu", "the-exam"]
-    ],
-    "translation": "He says that he is innocent but has apparently been helped on the exam.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hjálpa"],
-      ["voice", "passive"],
-      ["test", "ellipsis"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_36a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(36a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég vonast til að verða hjálpað.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["vonast", "hope"], ["til", "for"], ["að", "to"], ["verða", "be"],
-      ["hjálpað", "helped"]
-    ],
-    "translation": "I hope to be helped.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hjálpa"],
-      ["voice", "passive"],
-      ["test", "control"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_45a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(45a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég tel konunginum hafa verið gefnar ambáttir.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["tel", "believe"], ["konunginum", "the-king.DAT"], ["hafa", "have"],
-      ["verið", "been"], ["gefnar", "given.F.PL"], ["ambáttir", "slaves.NOM"]
-    ],
-    "translation": "I believe the king to have been given slaves.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "gefa"],
-      ["voice", "passive"],
-      ["test", "raising"],
-      ["tested", "goal"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_45b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(45b)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Ég tel ambáttina hafa verið gefna konunginum.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ég", "I"], ["tel", "believe"], ["ambáttina", "the-slave.ACC"], ["hafa", "have"],
-      ["verið", "been"], ["gefna", "given.ACC"], ["konunginum", "the-king.DAT"]
-    ],
-    "translation": "I believe the slave to have been given to the king.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "gefa"],
-      ["voice", "passive"],
-      ["test", "raising"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_68a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(68a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Þess var óskað.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Þess", "this.GEN"], ["var", "was"], ["óskað", "wished"]
-    ],
-    "translation": "This was wished.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "óska (transitive)"],
-      ["voice", "passive"],
-      ["cases", "gen"],
-      ["test", "passive"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_68a_prime",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(68a)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Þess var óskað henni.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Þess", "this.GEN"], ["var", "was"], ["óskað", "wished"], ["henni", "her.DAT"]
-    ],
-    "translation": "This was wished to her.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "óska"],
-      ["voice", "passive"],
-      ["test", "passive"],
-      ["tested", "theme"]
-    ],
-    "comment": "The starred parenthesized variant of (68a): with the recipient present, the genitive theme does not passivize.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_68c",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(68c)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Henni var óskað þess.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "óska"],
-      ["voice", "passive"],
-      ["cases", "dat gen"],
-      ["test", "passive"],
-      ["tested", "goal"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_78",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(78)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Ihm wurde geholfen.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ihm", "him.DAT"], ["wurde", "was"], ["geholfen", "helped"]
-    ],
-    "translation": "He was helped.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "helfen"],
-      ["voice", "passive"],
-      ["cases", "dat"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_79b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(79b)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Geholfen zu werden ist angenehm.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Geholfen", "helped"], ["zu", "to"], ["werden", "be"], ["ist", "is"],
-      ["angenehm", "agreeable"]
-    ],
-    "translation": "To be helped is nice.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "helfen"],
-      ["voice", "passive"],
-      ["test", "control"],
-      ["tested", "theme"]
-    ],
-    "comment": "The arbitrary PRO subject of the infinitive cannot be the dative of the passive.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_79c",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(79c)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Aufgenommen zu werden ist angenehm.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Aufgenommen", "admitted"], ["zu", "to"], ["werden", "be"], ["ist", "is"],
-      ["angenehm", "agreeable"]
-    ],
-    "translation": "To be admitted is nice.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "aufnehmen"],
-      ["voice", "passive"],
-      ["test", "control"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_81a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(81a)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Er hofft aufgenommen zu werden.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Er", "he.NOM"], ["hofft", "hopes"], ["aufgenommen", "admitted"], ["zu", "to"],
-      ["werden", "be"]
-    ],
-    "translation": "He hopes to be admitted.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "aufnehmen"],
-      ["voice", "passive"],
-      ["test", "control"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_81b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(81b)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Er hofft geholfen zu werden.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Er", "he.NOM"], ["hofft", "hopes"], ["geholfen", "helped"], ["zu", "to"], ["werden", "be"]
-    ],
-    "translation": "He hopes to be helped.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "helfen"],
-      ["voice", "passive"],
-      ["test", "control"],
-      ["tested", "theme"]
-    ],
-    "comment": "The paper stars the variant with Ihm in place of Er as well.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_82b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82b)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Er kam und wurde verhaftet.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Er", "he.NOM"], ["kam", "came"], ["und", "and"], ["wurde", "was"],
-      ["verhaftet", "arrested"]
-    ],
-    "translation": "He came and was arrested.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "verhaften"],
-      ["voice", "passive"],
-      ["test", "ellipsis"],
-      ["tested", "theme"]
-    ],
-    "comment": "Printed with the elided er in parentheses.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_82c",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82c)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Er kam und wurde geholfen.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Er", "he.NOM"], ["kam", "came"], ["und", "and"], ["wurde", "was"], ["geholfen", "helped"]
-    ],
-    "translation": "He came and was helped.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "helfen"],
-      ["voice", "passive"],
-      ["test", "ellipsis"],
-      ["tested", "theme"]
-    ],
-    "comment": "The elided dative cannot be identified with the nominative subject of the first conjunct.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_82d",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82d)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Er sah die Damen und gefielen sie.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Er", "he.NOM"], ["sah", "saw"], ["die Damen", "the ladies"], ["und", "and"],
-      ["gefielen", "pleased"], ["sie", "they.NOM"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "gefallen"],
-      ["voice", "active"],
-      ["test", "ellipsis"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "The elided dative cannot be identified with the nominative subject of the first conjunct.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_82e",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82e)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Er sah die Damen und sie gefielen.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Er", "he.NOM"], ["sah", "saw"], ["die Damen", "the ladies"], ["und", "and"],
-      ["sie", "they.NOM"], ["gefielen", "pleased"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "gefallen"],
-      ["voice", "active"],
-      ["test", "ellipsis"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "The elided dative cannot be identified with the nominative subject of the first conjunct.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_83a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83a)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Der das Buch lesende Junge heisst Wilhelm.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Der", "the"], ["das Buch", "the book"], ["lesende", "reading"], ["Junge", "boy"],
-      ["heisst", "is-named"], ["Wilhelm", "Wilhelm"]
-    ],
-    "translation": "The boy reading the book is named Wilhelm.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "lesen"],
-      ["voice", "active"],
-      ["test", "relative reduction"],
-      ["tested", "agent"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_83b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83b)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Das der Junge lesende Buch heisst Sieben Legenden.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Das", "the"], ["der Junge", "the boy"], ["lesende", "reading"], ["Buch", "book"],
-      ["heisst", "is-named"], ["Sieben Legenden", "Seven Legends"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "lesen"],
-      ["voice", "active"],
-      ["test", "relative reduction"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_83c",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83c)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Das vom Jungen gelesene Buch heisst Sieben Legenden.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Das", "the"], ["vom Jungen", "by-the boy"], ["gelesene", "read"], ["Buch", "book"],
-      ["heisst", "is-named"], ["Sieben Legenden", "Seven Legends"]
-    ],
-    "translation": "The book read by the boy is named Seven Legends.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "lesen"],
-      ["voice", "passive"],
-      ["test", "relative reduction"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_83d",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83d)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Der vom Lehrer geholfene Junge bekam eine gute Note.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Der", "the"], ["vom Lehrer", "by-the teacher"], ["geholfene", "helped"], ["Junge", "boy"],
-      ["bekam", "got"], ["eine gute Note", "a good grade"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "helfen"],
-      ["voice", "passive"],
-      ["test", "relative reduction"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_83e",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83c)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Der das Buch gefallende Junge sitzt da in der Ecke.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Der", "the"], ["das Buch", "the book"], ["gefallende", "pleasing"], ["Junge", "boy"],
-      ["sitzt", "sits"], ["da", "there"], ["in der Ecke", "in the corner"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "gefallen"],
-      ["voice", "active"],
-      ["test", "relative reduction"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "The fifth item of (83), printed as a second c.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_84",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(84)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Mir ist übel.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Mir", "me.DAT"], ["ist", "is"], ["übel", "nasty"]
-    ],
-    "translation": "I am nauseated.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "übel sein"],
-      ["voice", "active"],
-      ["cases", "dat"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_85a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(85a)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Ich hoffe übel zu sein.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ich", "I.NOM"], ["hoffe", "hope"], ["übel", "nauseated"], ["zu", "to"], ["sein", "be"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "übel sein"],
-      ["voice", "active"],
-      ["test", "control"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "The paper stars Mir hofft übel zu sein as well.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_85b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(85b)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Übel zu sein ist unangenehm.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Übel", "nauseated"], ["zu", "to"], ["sein", "be"], ["ist", "is"],
-      ["unangenehm", "disagreeable"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "übel sein"],
-      ["voice", "active"],
-      ["test", "control"],
-      ["tested", "experiencer"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_88a",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(88a)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Ich habe ihn das Gedicht abgehört.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ich", "I"], ["habe", "have"], ["ihn", "him.ACC"], ["das Gedicht", "the poem.ACC"],
-      ["abgehört", "heard"]
-    ],
-    "translation": "I had him recite the poem.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "abhören"],
-      ["voice", "active"],
-      ["cases", "nom acc acc"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_88b",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(88b)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Er ist das Gedicht abgehört.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Er", "he.NOM"], ["ist", "is"], ["das Gedicht", "the poem.ACC"], ["abgehört", "heard"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "abhören"],
-      ["voice", "passive"],
-      ["cases", "nom acc"],
-      ["test", "passive"],
-      ["tested", "goal"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zmt1985_88c",
-    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(88c)"},
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Das Gedicht ist ihn abgehört.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Das Gedicht", "the poem.NOM"], ["ist", "is"], ["ihn", "him.ACC"], ["abgehört", "heard"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "abhören"],
-      ["voice", "passive"],
-      ["test", "passive"],
-      ["tested", "theme"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "voice",
+      "lean": "voice",
+      "type": "Voice",
+      "doc": "The voice of the clause.",
+      "levels": [
+        {
+          "name": "active",
+          "label": "active",
+          "doc": "active"
+        },
+        {
+          "name": "passive",
+          "label": "passive",
+          "doc": "passive"
+        }
+      ]
+    },
+    {
+      "key": "tested",
+      "lean": "tested",
+      "type": "Tested",
+      "doc": "The thematic role of the argument a subjecthood test applies to.",
+      "levels": [
+        {
+          "name": "agent",
+          "label": "agent",
+          "doc": "agent"
+        },
+        {
+          "name": "theme",
+          "label": "theme",
+          "doc": "theme"
+        },
+        {
+          "name": "goal",
+          "label": "goal",
+          "doc": "goal"
+        },
+        {
+          "name": "source",
+          "label": "source",
+          "doc": "source"
+        },
+        {
+          "name": "experiencer",
+          "label": "experiencer",
+          "doc": "experiencer"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "zmt1985_8a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(8a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég hjálpaði honum.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["hjálpaði", "helped"], ["honum", "him.DAT"]
+      ],
+      "translation": "I helped him.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "hjálpa"],
+        ["voice", "active"],
+        ["cases", "nom dat"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_8b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(8b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég mun sakna hans.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["mun", "will"], ["sakna", "miss"], ["hans", "him.GEN"]
+      ],
+      "translation": "I will miss him.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "sakna"],
+        ["voice", "active"],
+        ["cases", "nom gen"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_9a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(9a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Það var dansað í gær.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "there"], ["var", "was"], ["dansað", "danced"], ["í gær", "yesterday"]
+      ],
+      "translation": "People danced yesterday.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "dansa"],
+        ["voice", "passive"],
+        ["cases", ""]
+      ],
+      "comment": "The impersonal passive.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_11a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(11a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Þeim var hjálpað.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Þeim", "them.DAT"], ["var", "was"], ["hjálpað", "helped"]
+      ],
+      "translation": "They were helped.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "hjálpa"],
+        ["voice", "passive"],
+        ["cases", "dat"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_11b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(11b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Hennar var saknað.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hennar", "her.GEN"], ["var", "was"], ["saknað", "missed"]
+      ],
+      "translation": "She was missed.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "sakna"],
+        ["voice", "passive"],
+        ["cases", "gen"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_13",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(13)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Henni hefur alltaf þótt Ólafur leiðinlegur.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Henni", "her.DAT"], ["hefur", "has"], ["alltaf", "always"], ["þótt", "thought"],
+        ["Ólafur", "Olaf.NOM"], ["leiðinlegur", "boring.NOM"]
+      ],
+      "translation": "She has always found Olaf boring.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "þykja"],
+        ["voice", "active"],
+        ["cases", "dat nom"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_29a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(29a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Mig vantar peninga.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Mig", "me.ACC"], ["vantar", "lacks"], ["peninga", "money.ACC"]
+      ],
+      "translation": "I lack money.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "vanta"],
+        ["voice", "active"],
+        ["cases", "acc acc"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_37a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(37a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Þeir leyndu Ólaf sannleikanum.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Þeir", "they"], ["leyndu", "concealed"], ["Ólaf", "[from]-Olaf.ACC"],
+        ["sannleikanum", "the-truth.DAT"]
+      ],
+      "translation": "They hid the truth from Olaf.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "leyna"],
+        ["voice", "active"],
+        ["cases", "nom acc dat"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_37b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(37b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Jón bað mig bónar.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jón", "Jon"], ["bað", "asked"], ["mig", "me.ACC"], ["bónar", "a-favor.GEN"]
+      ],
+      "translation": "John asked a favor of me.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "biðja"],
+        ["voice", "active"],
+        ["cases", "nom acc gen"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_37c",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(37c)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég sagði þér söguna.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["sagði", "told"], ["þér", "you.DAT"], ["söguna", "a-story.ACC"]
+      ],
+      "translation": "I told you a story.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "segja"],
+        ["voice", "active"],
+        ["cases", "nom dat acc"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_37d",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(37d)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ólafur lofaði Maríu þessum hring.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ólafur", "Olaf.NOM"], ["lofaði", "promised"], ["Maríu", "Mary.DAT"],
+        ["þessum", "this.DAT"], ["hring", "ring.DAT"]
+      ],
+      "translation": "Olaf promised Mary this ring.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "lofa"],
+        ["voice", "active"],
+        ["cases", "nom dat dat"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_37e",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(37e)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "María óskaði Ólafi alls góðs.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["María", "Mary"], ["óskaði", "wished"], ["Ólafi", "Olaf.DAT"], ["alls", "everything.GEN"],
+        ["góðs", "good.GEN"]
+      ],
+      "translation": "Mary wished Olaf all the best.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "óska"],
+        ["voice", "active"],
+        ["cases", "nom dat gen"]
+      ],
+      "comment": "The paper prints goðs.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_42a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(42a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég skilaði henni peningunum.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["skilaði", "returned"], ["henni", "her.DAT"], ["peningunum", "the-money.DAT"]
+      ],
+      "translation": "I gave her back the money.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "skila"],
+        ["voice", "active"],
+        ["cases", "nom dat dat"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_42b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(42b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Henni var skilað peningunum.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Henni", "she.DAT"], ["var", "was"], ["skilað", "returned"],
+        ["peningunum", "the-money.DAT"]
+      ],
+      "translation": "She was given back the money.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "skila"],
+        ["voice", "passive"],
+        ["cases", "dat dat"],
+        ["test", "passive"],
+        ["tested", "goal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_42c",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(42c)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Peningunum var skilað henni.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "skila"],
+        ["voice", "passive"],
+        ["test", "passive"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_44a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(44a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Konunginum voru gefnar ambáttir.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Konunginum", "the-king.DAT"], ["voru", "were"], ["gefnar", "given.F.PL"],
+        ["ambáttir", "maidservants.NOM.F.PL"]
+      ],
+      "translation": "The king was given female slaves.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "gefa"],
+        ["voice", "passive"],
+        ["cases", "dat nom"],
+        ["test", "passive"],
+        ["tested", "goal"]
+      ],
+      "comment": "The retained object is nominative and the verb agrees with it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_44b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(44b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ambáttin var gefin konunginum.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ambáttin", "the-maidservant.NOM.SG"], ["var", "was"], ["gefin", "given.F.SG"],
+        ["konunginum", "the-king.DAT"]
+      ],
+      "translation": "The maidservant was given to the king.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "gefa"],
+        ["voice", "passive"],
+        ["cases", "nom dat"],
+        ["test", "passive"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_64a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(64a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Sjórinn svipti hana manni sínum.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Sjórinn", "the-sea"], ["svipti", "deprived"], ["hana", "her.ACC"],
+        ["manni", "husband.DAT"], ["sínum", "her.REFL"]
+      ],
+      "translation": "The sea deprived her of her husband.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "svipta"],
+        ["voice", "active"],
+        ["cases", "nom acc dat"]
+      ],
+      "comment": "From Rögnvaldsson (1982). The paper prints hanni.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_66b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(66b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Þú hefur óskað þess.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "óska (transitive)"],
+        ["voice", "active"],
+        ["cases", "nom gen"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_66c",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(66c)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Þú hefur óskað henni.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "óska"],
+        ["voice", "active"]
+      ],
+      "comment": "The recipient is optional, the theme is not.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_14b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(14b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég taldi Guðrúnu í barnaskap mínum sakna Haraldar.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["taldi", "believed"], ["Guðrúnu", "Gudrun.ACC"], ["í", "in"],
+        ["barnaskap", "foolishness"], ["mínum", "my"], ["sakna", "to-miss"],
+        ["Haraldar", "Harold.GEN"]
+      ],
+      "translation": "I believed Gudrun in my foolishness to miss Harold.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "sakna"],
+        ["voice", "active"],
+        ["test", "raising"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_14d",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(14d)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég taldi Haraldar sakna Guðrún.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["taldi", "believed"], ["Haraldar", "Harold.GEN"], ["sakna", "to-miss"],
+        ["Guðrún", "Gudrun.NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "sakna"],
+        ["voice", "active"],
+        ["test", "raising"],
+        ["tested", "theme"]
+      ],
+      "comment": "One of the four starred variants of (14d).",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_16",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(16)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég tel henni hafa alltaf þótt Ólafur leiðinlegur.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["tel", "believe"], ["henni", "her.DAT"], ["hafa", "to-have"],
+        ["alltaf", "always"], ["þótt", "thought"], ["Ólafur", "Olaf.NOM"],
+        ["leiðinlegur", "boring.NOM"]
+      ],
+      "translation": "I believe her always to have found Olaf boring.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "þykja"],
+        ["voice", "active"],
+        ["test", "raising"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_18a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(18a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Henni þykir bróðir sinn leiðinlegur.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Henni", "her.DAT"], ["þykir", "thinks"], ["bróðir", "brother.NOM"], ["sinn", "her.REFL"],
+        ["leiðinlegur", "boring"]
+      ],
+      "translation": "She finds her brother boring.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "þykja"],
+        ["voice", "active"],
+        ["test", "reflexivization"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_21a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(21a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Hefur henni alltaf þótt Ólafur leiðinlegur?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hefur", "has"], ["henni", "she.DAT"], ["alltaf", "always"], ["þótt", "thought"],
+        ["Ólafur", "Olaf.NOM"], ["leiðinlegur", "boring.NOM"]
+      ],
+      "translation": "Has she always found Olaf boring?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "þykja"],
+        ["voice", "active"],
+        ["test", "inversion"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_21c",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(21c)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Hefur Ólafur henni alltaf þótt leiðinlegur?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hefur", "has"], ["Ólafur", "Olaf.NOM"], ["henni", "she.DAT"], ["alltaf", "always"],
+        ["þótt", "thought"], ["leiðinlegur", "boring"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "þykja"],
+        ["voice", "active"],
+        ["test", "inversion"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_23b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(23b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Hvenær telur Jón að henni hafi þótt Ólafur leiðinlegur?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hvenær", "when"], ["telur", "believes"], ["Jón", "Jon.NOM"], ["að", "that"],
+        ["henni", "she.DAT"], ["hafi", "has"], ["þótt", "thought"], ["Ólafur", "Olaf"],
+        ["leiðinlegur", "boring"]
+      ],
+      "translation": "When does Jon believe that she considered Olaf boring?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "þykja"],
+        ["voice", "active"],
+        ["test", "extraction"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_23d",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(23d)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Hvenær telur Jón að Ólafur hafi henni þótt leiðinlegur?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hvenær", "when"], ["telur", "believes"], ["Jón", "Jon.NOM"], ["að", "that"],
+        ["Ólafur", "Olaf.NOM"], ["hafi", "has"], ["henni", "she.DAT"], ["þótt", "thought"],
+        ["leiðinlegur", "boring"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "þykja"],
+        ["voice", "active"],
+        ["test", "extraction"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_25a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(25a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Það hefur einhverjum þótt Ólafur leiðinlegur.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "there"], ["hefur", "has"], ["einhverjum", "someone.DAT"], ["þótt", "thought"],
+        ["Ólafur", "Olaf.NOM"], ["leiðinlegur", "boring.NOM"]
+      ],
+      "translation": "Someone found Olaf boring.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "þykja"],
+        ["voice", "active"],
+        ["test", "postposing"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_25c",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(25c)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Það hefur Ólafur einhverjum þótt leiðinlegur.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "there"], ["hefur", "has"], ["Ólafur", "Olaf.NOM"], ["einhverjum", "someone.DAT"],
+        ["þótt", "thought"], ["leiðinlegur", "boring"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "þykja"],
+        ["voice", "active"],
+        ["test", "postposing"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_27a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(27a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Hann segist vera duglegur, en finnst verkefnið of þungt.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hann", "he.NOM"], ["segist", "says-self"], ["vera", "to-be"], ["duglegur,", "diligent"],
+        ["en", "but"], ["finnst", "finds"], ["verkefnið", "the-homework"], ["of", "too"],
+        ["þungt", "hard"]
+      ],
+      "translation": "He says he is diligent, but finds the homework too hard.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "finnast"],
+        ["voice", "active"],
+        ["test", "ellipsis"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "The elided dative subject of finnast is identified with the nominative subject of the first conjunct.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_27b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(27b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Hann segist vera duglegur, en mér finnst latur.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hann", "he.NOM"], ["segist", "says-self"], ["vera", "to-be"], ["duglegur,", "diligent"],
+        ["en", "but"], ["mér", "I.DAT"], ["finnst", "find"], ["latur", "lazy"]
+      ],
+      "translation": "He says he is diligent, but I find [him] lazy.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "finnast"],
+        ["voice", "active"],
+        ["test", "ellipsis"],
+        ["tested", "theme"]
+      ],
+      "comment": "The elided nominative object cannot be identified with the nominative subject of the first conjunct.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_29b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(29b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég vonast til að vanta ekki peninga.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["vonast", "hope"], ["til", "for"], ["að", "to"], ["vanta", "lack"],
+        ["ekki", "not"], ["peninga", "money.ACC"]
+      ],
+      "translation": "I hope not to lack money.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "vanta"],
+        ["voice", "active"],
+        ["test", "control"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_30",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(30)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég tel þeim hafa verið hjálpað í prófinu.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["tel", "believe"], ["þeim", "them.DAT"], ["hafa", "to-have"],
+        ["verið", "been"], ["hjálpað", "helped"], ["í", "in"], ["prófinu", "the-exam"]
+      ],
+      "translation": "I believe them to have been helped on the exam.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "hjálpa"],
+        ["voice", "passive"],
+        ["test", "raising"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_31",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(31)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Honum var oft hjálpað af foreldrum sínum.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Honum", "he.DAT"], ["var", "was"], ["oft", "often"], ["hjálpað", "helped"], ["af", "by"],
+        ["foreldrum", "parents"], ["sínum", "his.REFL"]
+      ],
+      "translation": "He was often helped by his parents.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "hjálpa"],
+        ["voice", "passive"],
+        ["test", "reflexivization"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_32a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(32a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Var honum aldrei hjálpað af foreldrum sínum?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Var", "was"], ["honum", "he.DAT"], ["aldrei", "never"], ["hjálpað", "helped"],
+        ["af", "by"], ["foreldrum", "parents"], ["sínum", "his"]
+      ],
+      "translation": "Was he never helped by his parents?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "hjálpa"],
+        ["voice", "passive"],
+        ["test", "inversion"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_33b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(33b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Hvenær telur hann að henni hafi verið hjálpað?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hvenær", "when"], ["telur", "believes"], ["hann", "he"], ["að", "that"],
+        ["henni", "she.DAT"], ["hafi", "has"], ["verið", "been"], ["hjálpað", "helped"]
+      ],
+      "translation": "When does he believe that she was helped?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "hjálpa"],
+        ["voice", "passive"],
+        ["test", "extraction"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_34",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(34)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Það hefur mörgum stúdentum verið hjálpað í prófinu.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "there"], ["hefur", "has"], ["mörgum", "many.DAT"], ["stúdentum", "students.DAT"],
+        ["verið", "been"], ["hjálpað", "helped"], ["í", "on"], ["prófinu", "the-exam"]
+      ],
+      "translation": "Many students have been helped on the exam.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "hjálpa"],
+        ["voice", "passive"],
+        ["test", "postposing"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_35",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(35)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Hann segist vera saklaus en hefur víst verið hjálpað í prófinu.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hann", "he.NOM"], ["segist", "says-self"], ["vera", "to-be"], ["saklaus", "innocent"],
+        ["en", "but"], ["hefur", "has"], ["víst", "apparently"], ["verið", "been"],
+        ["hjálpað", "helped"], ["í", "on"], ["prófinu", "the-exam"]
+      ],
+      "translation": "He says that he is innocent but has apparently been helped on the exam.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "hjálpa"],
+        ["voice", "passive"],
+        ["test", "ellipsis"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_36a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(36a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég vonast til að verða hjálpað.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["vonast", "hope"], ["til", "for"], ["að", "to"], ["verða", "be"],
+        ["hjálpað", "helped"]
+      ],
+      "translation": "I hope to be helped.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "hjálpa"],
+        ["voice", "passive"],
+        ["test", "control"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_45a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(45a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég tel konunginum hafa verið gefnar ambáttir.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["tel", "believe"], ["konunginum", "the-king.DAT"], ["hafa", "have"],
+        ["verið", "been"], ["gefnar", "given.F.PL"], ["ambáttir", "slaves.NOM"]
+      ],
+      "translation": "I believe the king to have been given slaves.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "gefa"],
+        ["voice", "passive"],
+        ["test", "raising"],
+        ["tested", "goal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_45b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(45b)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Ég tel ambáttina hafa verið gefna konunginum.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ég", "I"], ["tel", "believe"], ["ambáttina", "the-slave.ACC"], ["hafa", "have"],
+        ["verið", "been"], ["gefna", "given.ACC"], ["konunginum", "the-king.DAT"]
+      ],
+      "translation": "I believe the slave to have been given to the king.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "gefa"],
+        ["voice", "passive"],
+        ["test", "raising"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_68a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(68a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Þess var óskað.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Þess", "this.GEN"], ["var", "was"], ["óskað", "wished"]
+      ],
+      "translation": "This was wished.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "óska (transitive)"],
+        ["voice", "passive"],
+        ["cases", "gen"],
+        ["test", "passive"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_68a_prime",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(68a)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Þess var óskað henni.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Þess", "this.GEN"], ["var", "was"], ["óskað", "wished"], ["henni", "her.DAT"]
+      ],
+      "translation": "This was wished to her.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "óska"],
+        ["voice", "passive"],
+        ["test", "passive"],
+        ["tested", "theme"]
+      ],
+      "comment": "The starred parenthesized variant of (68a): with the recipient present, the genitive theme does not passivize.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_68c",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(68c)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Henni var óskað þess.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "óska"],
+        ["voice", "passive"],
+        ["cases", "dat gen"],
+        ["test", "passive"],
+        ["tested", "goal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_78",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(78)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Ihm wurde geholfen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ihm", "him.DAT"], ["wurde", "was"], ["geholfen", "helped"]
+      ],
+      "translation": "He was helped.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "helfen"],
+        ["voice", "passive"],
+        ["cases", "dat"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_79b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(79b)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Geholfen zu werden ist angenehm.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Geholfen", "helped"], ["zu", "to"], ["werden", "be"], ["ist", "is"],
+        ["angenehm", "agreeable"]
+      ],
+      "translation": "To be helped is nice.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "helfen"],
+        ["voice", "passive"],
+        ["test", "control"],
+        ["tested", "theme"]
+      ],
+      "comment": "The arbitrary PRO subject of the infinitive cannot be the dative of the passive.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_79c",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(79c)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Aufgenommen zu werden ist angenehm.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Aufgenommen", "admitted"], ["zu", "to"], ["werden", "be"], ["ist", "is"],
+        ["angenehm", "agreeable"]
+      ],
+      "translation": "To be admitted is nice.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "aufnehmen"],
+        ["voice", "passive"],
+        ["test", "control"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_81a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(81a)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Er hofft aufgenommen zu werden.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Er", "he.NOM"], ["hofft", "hopes"], ["aufgenommen", "admitted"], ["zu", "to"],
+        ["werden", "be"]
+      ],
+      "translation": "He hopes to be admitted.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "aufnehmen"],
+        ["voice", "passive"],
+        ["test", "control"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_81b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(81b)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Er hofft geholfen zu werden.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Er", "he.NOM"], ["hofft", "hopes"], ["geholfen", "helped"], ["zu", "to"], ["werden", "be"]
+      ],
+      "translation": "He hopes to be helped.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "helfen"],
+        ["voice", "passive"],
+        ["test", "control"],
+        ["tested", "theme"]
+      ],
+      "comment": "The paper stars the variant with Ihm in place of Er as well.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_82b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82b)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Er kam und wurde verhaftet.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Er", "he.NOM"], ["kam", "came"], ["und", "and"], ["wurde", "was"],
+        ["verhaftet", "arrested"]
+      ],
+      "translation": "He came and was arrested.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "verhaften"],
+        ["voice", "passive"],
+        ["test", "ellipsis"],
+        ["tested", "theme"]
+      ],
+      "comment": "Printed with the elided er in parentheses.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_82c",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82c)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Er kam und wurde geholfen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Er", "he.NOM"], ["kam", "came"], ["und", "and"], ["wurde", "was"], ["geholfen", "helped"]
+      ],
+      "translation": "He came and was helped.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "helfen"],
+        ["voice", "passive"],
+        ["test", "ellipsis"],
+        ["tested", "theme"]
+      ],
+      "comment": "The elided dative cannot be identified with the nominative subject of the first conjunct.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_82d",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82d)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Er sah die Damen und gefielen sie.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Er", "he.NOM"], ["sah", "saw"], ["die Damen", "the ladies"], ["und", "and"],
+        ["gefielen", "pleased"], ["sie", "they.NOM"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "gefallen"],
+        ["voice", "active"],
+        ["test", "ellipsis"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "The elided dative cannot be identified with the nominative subject of the first conjunct.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_82e",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82e)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Er sah die Damen und sie gefielen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Er", "he.NOM"], ["sah", "saw"], ["die Damen", "the ladies"], ["und", "and"],
+        ["sie", "they.NOM"], ["gefielen", "pleased"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "gefallen"],
+        ["voice", "active"],
+        ["test", "ellipsis"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "The elided dative cannot be identified with the nominative subject of the first conjunct.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_83a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83a)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Der das Buch lesende Junge heisst Wilhelm.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Der", "the"], ["das Buch", "the book"], ["lesende", "reading"], ["Junge", "boy"],
+        ["heisst", "is-named"], ["Wilhelm", "Wilhelm"]
+      ],
+      "translation": "The boy reading the book is named Wilhelm.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "lesen"],
+        ["voice", "active"],
+        ["test", "relative reduction"],
+        ["tested", "agent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_83b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83b)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Das der Junge lesende Buch heisst Sieben Legenden.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Das", "the"], ["der Junge", "the boy"], ["lesende", "reading"], ["Buch", "book"],
+        ["heisst", "is-named"], ["Sieben Legenden", "Seven Legends"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "lesen"],
+        ["voice", "active"],
+        ["test", "relative reduction"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_83c",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83c)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Das vom Jungen gelesene Buch heisst Sieben Legenden.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Das", "the"], ["vom Jungen", "by-the boy"], ["gelesene", "read"], ["Buch", "book"],
+        ["heisst", "is-named"], ["Sieben Legenden", "Seven Legends"]
+      ],
+      "translation": "The book read by the boy is named Seven Legends.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "lesen"],
+        ["voice", "passive"],
+        ["test", "relative reduction"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_83d",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83d)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Der vom Lehrer geholfene Junge bekam eine gute Note.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Der", "the"], ["vom Lehrer", "by-the teacher"], ["geholfene", "helped"], ["Junge", "boy"],
+        ["bekam", "got"], ["eine gute Note", "a good grade"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "helfen"],
+        ["voice", "passive"],
+        ["test", "relative reduction"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_83e",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83c)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Der das Buch gefallende Junge sitzt da in der Ecke.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Der", "the"], ["das Buch", "the book"], ["gefallende", "pleasing"], ["Junge", "boy"],
+        ["sitzt", "sits"], ["da", "there"], ["in der Ecke", "in the corner"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "gefallen"],
+        ["voice", "active"],
+        ["test", "relative reduction"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "The fifth item of (83), printed as a second c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_84",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(84)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Mir ist übel.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Mir", "me.DAT"], ["ist", "is"], ["übel", "nasty"]
+      ],
+      "translation": "I am nauseated.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "übel sein"],
+        ["voice", "active"],
+        ["cases", "dat"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_85a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(85a)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Ich hoffe übel zu sein.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ich", "I.NOM"], ["hoffe", "hope"], ["übel", "nauseated"], ["zu", "to"], ["sein", "be"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "übel sein"],
+        ["voice", "active"],
+        ["test", "control"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "The paper stars Mir hofft übel zu sein as well.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_85b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(85b)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Übel zu sein ist unangenehm.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Übel", "nauseated"], ["zu", "to"], ["sein", "be"], ["ist", "is"],
+        ["unangenehm", "disagreeable"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "übel sein"],
+        ["voice", "active"],
+        ["test", "control"],
+        ["tested", "experiencer"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_88a",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(88a)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Ich habe ihn das Gedicht abgehört.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ich", "I"], ["habe", "have"], ["ihn", "him.ACC"], ["das Gedicht", "the poem.ACC"],
+        ["abgehört", "heard"]
+      ],
+      "translation": "I had him recite the poem.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "abhören"],
+        ["voice", "active"],
+        ["cases", "nom acc acc"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_88b",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(88b)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Er ist das Gedicht abgehört.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Er", "he.NOM"], ["ist", "is"], ["das Gedicht", "the poem.ACC"], ["abgehört", "heard"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "abhören"],
+        ["voice", "passive"],
+        ["cases", "nom acc"],
+        ["test", "passive"],
+        ["tested", "goal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zmt1985_88c",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(88c)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Das Gedicht ist ihn abgehört.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Das Gedicht", "the poem.NOM"], ["ist", "is"], ["ihn", "him.ACC"], ["abgehört", "heard"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "abhören"],
+        ["voice", "passive"],
+        ["test", "passive"],
+        ["tested", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

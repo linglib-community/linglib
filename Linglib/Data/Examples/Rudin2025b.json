@@ -22,6 +22,24 @@
           "doc": "whispered"
         }
       ]
+    },
+    {
+      "key": "mood",
+      "lean": "mood",
+      "type": "Mood",
+      "doc": "The sentence mood.",
+      "levels": [
+        {
+          "name": "declarative",
+          "label": "declarative",
+          "doc": "declarative"
+        },
+        {
+          "name": "interrogative",
+          "label": "interrogative",
+          "doc": "polar interrogative"
+        }
+      ]
     }
   ],
   "examples": [
