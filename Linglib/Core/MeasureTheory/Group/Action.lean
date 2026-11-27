@@ -12,14 +12,14 @@ public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.GiryMonad
 
 /-!
-# Measures invariant under permuting coordinates
+# Measures invariant under group actions: countable spaces, mixtures and products
 
-A monoid `M` acting on `ι` acts on the functions `ι → α` by precomposition, as the domain action
-`Mᵈᵐᵃ` with `(DomMulAct.mk c • x) i = x (c • i)`. This action is measurable for the product
-σ-algebra. The law `μ` of an `ι`-indexed family of random variables is *exchangeable* when
-`SMulInvariantMeasure (Equiv.Perm ι)ᵈᵐᵃ (ι → α) μ` holds, and mathlib's results on invariant
-measures then apply to it as they stand: `μ.map (· ∘ σ) = μ` is `MeasureTheory.map_smul` at
-`DomMulAct.mk σ`, and `∫ x, f (x ∘ σ) ∂μ = ∫ x, f x ∂μ` is `MeasureTheory.integral_smul_eq_self`.
+This file supplements mathlib's theory of measures invariant under a group action with three
+facts. On a countable space, invariance can be checked on points. A mixture of invariant measures
+is invariant. A monoid `M` acting on `ι` acts on the functions `ι → α` by precomposition, as the
+domain action `Mᵈᵐᵃ` with `(DomMulAct.mk c • x) i = x (c • i)`; this action is measurable for the
+product σ-algebra, and a finite product of copies of one measure is invariant under it when `M`
+is a group.
 
 ## Main results
 
@@ -31,10 +31,6 @@ measures then apply to it as they stand: `μ.map (· ∘ σ) = μ` is `MeasureTh
   measure is invariant under a group acting on the indices, so under permuting the coordinates.
 
 ## Implementation notes
-
-For infinite `ι`, exchangeability is usually stated for the permutations that move finitely many
-indices. For a finite measure this is invariance under all permutations, since a measurable
-cylinder constrains finitely many indices; that equivalence is not proved here.
 
 `[UPSTREAM]` candidates for `Mathlib/MeasureTheory/Group/Action.lean` and
 `Mathlib/MeasureTheory/Constructions/Pi.lean`.
