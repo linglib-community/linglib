@@ -15,8 +15,8 @@ In Dutch and German a clause can end in a cluster of verbs that follows all thei
 Dutch orders the cluster from the matrix verb down and German from the most deeply embedded verb
 up, so the dependencies between noun phrases and verbs cross in Dutch and nest in German, and
 [the German order is the only one whose dependency tree is planar](##isPlanar_graph_iff), the only
-one a push-down store can match ([evers-1975]; for Dutch, [no context-free grammar assigns the
-clusters their trees](##BresnanEtAl1982.not_strongly_contextFree)). Yet
+one a push-down store can match ([evers-1975]; for Dutch, no context-free grammar assigns the
+clusters their trees). Yet
 [bach-brown-marslen-wilson-1986] found the Dutch sentences the easier to understand from two
 embedded clauses on.
 

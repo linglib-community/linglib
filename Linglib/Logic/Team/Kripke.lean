@@ -17,7 +17,7 @@ world of the team sees exactly the team ([aloni-2022] Definition 5).
 ## Implementation notes
 
 Aloni's conditions are not closed under bisimulation ([aloni-2022] fn. 21): they are
-[not invariant at any depth](##ModalLogic.not_boundedBisimInvariant_setOf_isIndisputable), so no
+not invariant at any depth, so no
 team logic defines them. [anttila-2021] Definition 3.3.1 (p. 46) restates them up to
 bisimilarity of the successor sets.
 
