@@ -23,7 +23,6 @@ or raise what contains one, as in May's and Heim and Kratzer's theories.
 
 ## Main definitions
 
-* `PhraseStructure.Tree.bindersAbove`: the indices of the binders dominating a position.
 * `PhraseStructure.Tree.raise`, `PhraseStructure.Tree.raiseOf`: the constituent at an address,
   or a given constituent, raised to the edge of the tree.
 * `PhraseStructure.Tree.PassesNoIsland`: a constituent crosses no island on its way to the edge.
@@ -50,28 +49,6 @@ a step crosses are the subtrees properly between the landing site and the consti
 namespace PhraseStructure.Tree
 
 variable {C W : Type*}
-
-/-- The indices of the binders that dominate the position `p`, those a trace at `p` could be bound
-by. -/
-def bindersAbove : Tree C W → List ℕ → Finset ℕ
-  | _, [] => ∅
-  | RoseTree.node l cs, i :: p =>
-    (match l with | Label.bind m _ => {m} | _ => ∅) ∪
-      match cs[i]? with
-      | some c => bindersAbove c p
-      | none => ∅
-
-@[simp] theorem bindersAbove_nil (t : Tree C W) : t.bindersAbove [] = ∅ := by
-  cases t; rfl
-
-theorem bindersAbove_bind (m : ℕ) (c : C) (t : Tree C W) (p : List ℕ) :
-    (bind m c t).bindersAbove (0 :: p) = insert m (t.bindersAbove p) := by
-  simp [bindersAbove]
-
-theorem bindersAbove_phrase {c : C} {k : PhraseKind} {cs : List (Tree C W)} {i : ℕ}
-    {t : Tree C W} (h : cs[i]? = some t) (p : List ℕ) :
-    (phrase c k cs).bindersAbove (i :: p) = t.bindersAbove p := by
-  simp [bindersAbove, h]
 
 /-- Quantifier Raising of the constituent at `p`: it adjoins to the tree, leaving a trace of index
 `n` that a binder of the same index abstracts over. -/
