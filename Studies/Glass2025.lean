@@ -16,8 +16,9 @@ scope, requiring only that the Common Ground be compatible with not-p (`Compatib
 stronger requirement is unattested; the weaker is the postsupposition Glass gives Mandarin yǐwéi
 in earlier work (`yiweiDefined`). Table 1, the states of the Common Ground each profile admits,
 is derived from the requirements (`Profile.condition_iff`). The profile of *know* comes from
-the factivity class of its language file entry, and the presupposition of a factive sentence is
-the requirement of the factive profile (`subset_compl_gapExt_factive_iff`, `rows_admits`).
+the factivity class of its language file entry, and a context admits the presupposition of any
+denotation of an entry exactly when it meets the requirement of the entry's profile
+(`Denotes.subset_compl_gapExt_iff`, `rows_admits`).
 
 ## Implementation notes
 
@@ -167,16 +168,36 @@ entry with no recorded class gives none: the record does not say that a verb is 
 postsuppositions are invisible to it. -/
 def Profile.ofFactivity : Option Factivity → Option Profile := Option.map fun _ ↦ .factive
 
-/-- A factive predicate's presupposition is admitted iff its complement is Common Ground (10),
-the requirement of the factive profile, whatever attitude it asserts. -/
-theorem subset_compl_gapExt_factive_iff (att : (W → Prop) → W → Prop) :
-    c ⊆ (Trivalent.gapExt (factive att p))ᶜ ↔ Profile.factive.condition c p := by
-  simp [Set.subset_def, Profile.condition, EntailsP]
+/-- A sentence meaning `O` is a denotation of the entry `e` when, if `e` records a factivity class,
+a report `O p` is defined exactly where `p` is true. -/
+def Denotes (e : Clause.Embedding) (O : (W → Prop) → W → Trivalent) : Prop :=
+  e.IsFactive → ∀ p, (Trivalent.gapExt (O p))ᶜ = {w | p w}
+
+/-- The factive sentence of any attitude is a denotation of any entry. -/
+theorem denotes_factive (e : Clause.Embedding) (att : (W → Prop) → W → Prop) :
+    Denotes e (factive att) := fun _ p ↦ by
+  ext w
+  simp [factive]
+
+/-- A context admits the presupposition of a denotation of an entry exactly when it meets the
+requirement of the profile the entry's factivity class gives, (10) for a factive. -/
+theorem Denotes.subset_compl_gapExt_iff {e : Clause.Embedding} {O : (W → Prop) → W → Trivalent}
+    (h : Denotes e O) {pr : Profile} (hpr : pr ∈ Profile.ofFactivity e.factivity) :
+    c ⊆ (Trivalent.gapExt (O p))ᶜ ↔ pr.condition c p := by
+  obtain ⟨f, hf, rfl⟩ := Option.map_eq_some_iff.1 hpr
+  rw [h (by simp [Clause.Embedding.IsFactive, hf]) p]
+  rfl
 
 /-- yǐwéi's profile on the paper's analysis. -/
 def yiweiProfile : Profile := .weakContrafactive
 
 theorem know_profile : Profile.ofFactivity know.factivity = some .factive := rfl
+
+-- (10): whatever attitude *know* asserts, its report is admitted where the complement is Common
+-- Ground
+theorem subset_compl_gapExt_know_iff (att : (W → Prop) → W → Prop) :
+    c ⊆ (Trivalent.gapExt (factive att p))ᶜ ↔ EntailsP c p :=
+  (denotes_factive know.toEmbedding att).subset_compl_gapExt_iff know_profile
 
 -- The entries of *think*, rènwéi and yǐwéi record no factivity class.
 theorem ofFactivity_eq_none :
