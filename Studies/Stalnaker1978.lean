@@ -54,6 +54,9 @@ known](##eq_up_diag), so that Stalnaker's reinterpretation is the update by the 
   proposition at a world has a row of gaps there.
 * The third principle is stated with the clarification of note 13: what is said at two worlds of
   the context set need coincide only within the context set.
+* The paper defines a one-dimensional operator as one whose value at a context depends only on
+  the proposition its argument expresses there. That these are the operators that commute with
+  every shift of the context is this file's reconstruction.
 * The paper proposes the essential effect, not an update rule. That the diagonal is the only
   eliminative and distributive update agreeing with it where the actual world is known is this
   file's reconstruction, through `DynamicSemantics.CCP.isClassical_iff_up_down_eq`.
@@ -124,6 +127,14 @@ theorem IsExtensional.isOneDimensional {O : Character C V α → Character C V �
 theorem IsOneDimensional.not_isMonster {O : Character C V α → Character C V β}
     (h : IsOneDimensional O) : ¬ IsMonster O :=
   h.elim fun _ ho ↦ Character.not_isMonster.2 (.of_apply ho)
+
+-- an operator is one-dimensional iff it commutes with every shift of the context
+theorem isOneDimensional_iff_comm_shift [Nonempty C] {O : Character C V α → Character C V β} :
+    IsOneDimensional O ↔
+      ∀ (σ : Function.End C) (χ : Character C V α), O (shift σ χ) = shift σ (O χ) := by
+  refine ⟨fun ⟨o, ho⟩ σ χ ↦ funext fun c ↦ by simp [ho], fun h ↦ ?_⟩
+  obtain ⟨c₀⟩ := ‹Nonempty C›
+  exact ⟨fun p ↦ O (fun _ ↦ p) c₀, fun χ c ↦ (congrFun (h (fun _ ↦ c) χ) c₀).symm⟩
 
 /-- Propositional necessity: `□P` expresses at a context the proposition true at a world iff what
 `P` expresses there is the necessary proposition. -/
