@@ -1,0 +1,82 @@
+[
+ {
+  "id": "palucci2026_2",
+  "source": {
+   "bibkey": "palucci-2026",
+   "paperLabel": "(2)"
+  },
+  "language": "stan1293",
+  "primaryText": "John included the supervisor that each volunteer reported to.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [
+   {
+    "name": "single supervisor",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "varying definite",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [],
+  "comment": "The varying definite reading: for each volunteer, John included the supervisor that volunteer reported to.",
+  "verified": "page-image"
+ },
+ {
+  "id": "palucci2026_5a",
+  "source": {
+   "bibkey": "palucci-2026",
+   "paperLabel": "(5a)"
+  },
+  "language": "stan1293",
+  "primaryText": "A student claimed each invited speaker was wrong.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [
+   {
+    "name": "∃ > ∀",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "∀ > ∃",
+    "judgment": "unacceptable"
+   }
+  ],
+  "paperFeatures": [],
+  "comment": "The baseline: the universal does not scope out of the finite complement of claim.",
+  "verified": "page-image"
+ },
+ {
+  "id": "palucci2026_6a",
+  "source": {
+   "bibkey": "palucci-2026",
+   "paperLabel": "(6a)"
+  },
+  "language": "stan1293",
+  "primaryText": "What? I included the supervisor that you claimed each volunteer reported to.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "At the community center, each volunteer reports to a different supervisor. John is supposed to keep track of all this in a file, but he's clueless regarding who reports to whom. However, he remembers that Mary claimed that Alice reports to Bill, Chris reports to Diane, and Eric reports to Francine. After writing these supervisor/volunteer pairs in the file, Mary looks it over. She looks puzzled, so John replies:",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [
+   {
+    "name": "varying definite",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [],
+  "comment": "The varying definite reading with the universal inside the finite complement of claim inside the relative clause.",
+  "verified": "page-image"
+ }
+]
