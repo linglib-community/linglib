@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Morphology.Morph
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -24,13 +23,5 @@ inductive Value where
   | masculine
   | feminine
   deriving DecidableEq, Repr, Fintype
-
-/-- The indefinite article, *un* with a masculine noun and *une* with a feminine one. -/
-def indefiniteArticle : Value → String
-  | .masculine => "un"
-  | .feminine => "une"
-
-/-- *-e*, the feminine suffix of an adjective in writing, as in *grand-e*. -/
-def feminineSuffix : Morphology.Morph := .suff "e"
 
 end French.Gender
