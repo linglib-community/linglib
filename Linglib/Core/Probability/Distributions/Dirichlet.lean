@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.MeasureTheory.Constructions.Pi
 public import Linglib.Core.Probability.Distributions.Beta
 public import Linglib.Core.Probability.Combinatorics.PolyaUrn
 public import Mathlib.Geometry.Convex.ConvexSpace.Topology
