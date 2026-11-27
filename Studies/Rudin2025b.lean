@@ -141,13 +141,13 @@ def Performance.update : Performance W → Table SpeechAct.Role W → Table Spee
 speaker to anything that resolves it. -/
 def Performance.Asking (u : Performance W) : Prop :=
   ∀ K : Table SpeechAct.Role W, ∃ i, (u.update K).stack = i :: K.stack ∧
-    ∀ q ∈ (u.update K).discourseCommitments .speaker, q ∈ i → q ∈ K.discourseCommitments .speaker
+    ∀ q ∈ (u.update K).commitments.contents .speaker, q ∈ i → q ∈ K.commitments.contents .speaker
 
 /-- A performance is an assertion when in every context it raises an issue with a single
 alternative and commits its speaker to that alternative. -/
 def Performance.Assertion (u : Performance W) : Prop :=
   ∀ K : Table SpeechAct.Role W, ∃ q, (u.update K).stack = ofSet q :: K.stack ∧
-    q ∈ (u.update K).discourseCommitments .speaker
+    q ∈ (u.update K).commitments.contents .speaker
 
 namespace Performance
 
@@ -171,8 +171,8 @@ theorem asking_utterance_iff :
         List.cons.injEq, and_true] at hi
       subst hi
       simpa using hq _ (by simp [update, utter]) hD
-    · simp only [update, utter, Table.discourseCommitments_push,
-        Table.discourseCommitments_commit_self, Set.mem_insert_iff] at hq
+    · simp only [update, utter, Table.commitments_push,
+        Table.commitments_commit, State.contents_insert_self, Set.mem_insert_iff] at hq
       refine hq.resolve_left ?_
       rintro rfl
       exact (h.resolve_left Bool.false_ne_true) hqD
@@ -198,8 +198,8 @@ theorem assertion_utterance_iff :
     refine ⟨fun h ↦ ⟨rfl, ?_⟩, fun ⟨_, h⟩ K ↦ ⟨D.info, by rw [← h]; rfl, by simp [update, utter]⟩⟩
     obtain ⟨q, hs, hq⟩ := h Table.empty
     simp only [update, utter, Table.stack_push, Table.stack_commit, Table.stack_empty,
-      List.cons.injEq, and_true, Table.discourseCommitments_push,
-      Table.discourseCommitments_commit_self, Table.discourseCommitments_empty,
+      List.cons.injEq, and_true, Table.commitments_push, Table.commitments_commit,
+      State.contents_insert_self, Table.commitments_empty, State.contents_empty,
       Set.mem_insert_iff, Set.mem_empty_iff_false, or_false] at hs hq
     exact hq ▸ hs
 

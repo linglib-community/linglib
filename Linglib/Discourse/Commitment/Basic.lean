@@ -108,13 +108,6 @@ theorem commitmentSet_insert_of_ne (h : k' ≠ k) :
 def Sincere (K : State κ W) (M : κ → W → Set (Set W)) (w : W) : Prop :=
   ∀ k p, k ~[K] p → p ∈ M k w
 
-variable {M : κ → W → Set (Set W)} {w : W}
-
-theorem Sincere.mono (hL : L.Sincere M w) (h : K ⊆ L) : K.Sincere M w :=
-  fun k p hp ↦ hL k p (h hp)
-
-theorem Sincere.mem (hs : K.Sincere M w) (h : k ~[K] p) : p ∈ M k w :=
-  hs k p h
 
 end State
 

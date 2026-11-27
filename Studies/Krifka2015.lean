@@ -48,8 +48,9 @@ content.
 
 * The high-negation question proposes that `a` not be committed to `φ`. That it is weaker than the
   low-negation question, which proposes `a`'s commitment to `φᶜ`, is proved for states closed
-  under consequence; the acts of a development are stated on sets of propositions, where a state
-  that contains `a ⊢[O] φᶜ` need not contain the weaker proposition `(a ⊢[O] φ)ᶜ`.
+  under consequence. On sets of propositions, where the acts of a development are stated, a state
+  that contains `a ⊢[O] φᶜ` need not contain the weaker proposition `(a ⊢[O] φ)ᶜ`, and the
+  high-negation question is not defined as an act of a development.
 * The acceptability of questions with no, low and high negation by contextual evidence, the
   response *I don't know*, alternative and constituent questions, and question tags are not
   formalized, and the paper's examples are not in `Data/Examples`.
@@ -107,8 +108,6 @@ def reject : Development P S := ⟨D.initial, (a, D.previous) :: D.moves⟩
 
 @[simp] theorem current_reject : (D.reject a).current = D.previous := rfl
 
-theorem current_reject_act : ((D.act a f).reject b).current = D.current := rfl
-
 end
 
 variable {P W : Type*} (O : P → SetRel W W) (D : Development P (Set (Set W))) (s a : P)
@@ -129,9 +128,6 @@ def bipolar : Development P (Set (Set W)) := D.act s (·.bipolarQuestion O a φ)
 
 /-- (27): A monopolar question by `s` proposes `a`'s commitment to `φ`. -/
 def monopolar : Development P (Set (Set W)) := D.act s (·.monopolarQuestion O a φ)
-
-/-- (39): A high-negation question by `s` proposes that `a` not be committed to `φ`. -/
-def highNegation : Development P (Set (Set W)) := D.act s (·.question {{(a ⊢[O] φ)ᶜ}})
 
 /-- (22): After a rejection, a *no* to an assertion leaves the speaker's commitment to the content
 beside the addressee's commitment to its negation, without the content. -/
@@ -241,14 +237,13 @@ theorem toSpace_assert_compl_polarQuestion (b : A) :
 
 variable {K} in
 -- making a joint commitment common ground is the update by its content
-theorem toSpace_settle_of_isStable (hK : K.IsStable) :
+theorem toSpace_settle_of_stack_eq_nil (hK : K.stack = []) :
     toSpace (K.settle p) = (toSpace K).update (toDual (𝓟 p)) := by
-  have hs : (K.settle p).stack = [] := Table.isStable_settle_of_isStable p hK
-  have hk : K.stack = [] := hK
+  have hs : (K.settle p).stack = [] := Table.stack_settle_of_stack_eq_nil p hK
   have hmem : toDual (𝓟 p) ⊔ (toSpace K).root ∈ toSpace K :=
-    (mem_toSpace K).2 (.inr ⟨inf_le_right, by simp [hk]⟩)
+    (mem_toSpace K).2 (.inr ⟨inf_le_right, by simp [hK]⟩)
   ext d
-  rw [Space.mem_update, Space.root_update_of_mem _ hmem, mem_toSpace, mem_toSpace, hs, hk]
+  rw [Space.mem_update, Space.root_update_of_mem _ hmem, mem_toSpace, mem_toSpace, hs, hK]
   simp only [List.not_mem_nil, false_imp_iff, implies_true, and_true, Table.commonGround_settle,
     root_toSpace]
   constructor

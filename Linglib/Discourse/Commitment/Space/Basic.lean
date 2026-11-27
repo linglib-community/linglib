@@ -220,9 +220,6 @@ theorem le_root_update (k : S) : k ≤ (C.update k).root := le_sInf fun _ hd ↦
 theorem root_le_root_update (k : S) : C.root ≤ (C.update k).root :=
   le_sInf fun _ hd ↦ C.root_le hd.1
 
-theorem le_of_mem_update (h : d ∈ C.update k) : k ≤ d :=
-  h.elim (fun e ↦ e ▸ C.le_root_update k) And.right
-
 theorem root_le_of_mem_update (h : d ∈ C.update k) : C.root ≤ d :=
   h.elim (fun e ↦ e ▸ C.root_le_root_update k) fun h ↦ C.root_le h.1
 
