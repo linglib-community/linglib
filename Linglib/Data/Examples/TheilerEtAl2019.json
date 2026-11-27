@@ -1,0 +1,1422 @@
+{
+ "readings": {
+  "lean": "reading",
+  "type": "Reading",
+  "doc": "The readings of a negated neg-raising predicate.",
+  "levels": [
+   {
+    "name": "lowered",
+    "label": "lowered",
+    "doc": "the negation is understood in the complement"
+   }
+  ]
+ },
+ "spans": {
+  "labels": {
+   "type": "SpanLabel",
+   "doc": "The labels of the spans the rows mark.",
+   "levels": [
+    {
+     "name": "predicate",
+     "label": "predicate",
+     "doc": "the clause-embedding predicate under test"
+    },
+    {
+     "name": "complementizer",
+     "label": "complementizer",
+     "doc": "the complementizer of a complement clause"
+    },
+    {
+     "name": "wh",
+     "label": "wh",
+     "doc": "the interrogative phrase of a complement clause"
+    },
+    {
+     "name": "subjectComplementizer",
+     "label": "subjectComplementizer",
+     "doc": "the complementizer of a clausal subject"
+    }
+   ]
+  },
+  "lexemes": {
+   "type": "Lexeme",
+   "doc": "The predicates under test and the complementizers of their clauses.",
+   "levels": [
+    {
+     "name": "know",
+     "label": "know",
+     "doc": "English *know*"
+    },
+    {
+     "name": "believe",
+     "label": "believe",
+     "doc": "English *believe*"
+    },
+    {
+     "name": "think",
+     "label": "think",
+     "doc": "English *think*"
+    },
+    {
+     "name": "wonder",
+     "label": "wonder",
+     "doc": "English *wonder*"
+    },
+    {
+     "name": "dependOn",
+     "label": "dependOn",
+     "doc": "English *depend on*"
+    },
+    {
+     "name": "beCertain",
+     "label": "beCertain",
+     "doc": "English *be certain*"
+    },
+    {
+     "name": "beTrue",
+     "label": "beTrue",
+     "doc": "English *be true*"
+    },
+    {
+     "name": "that",
+     "label": "that",
+     "doc": "English *that*"
+    },
+    {
+     "name": "whether",
+     "label": "whether",
+     "doc": "English *whether*"
+    }
+   ]
+  }
+ },
+ "index": {
+  "type": "Example",
+  "doc": "The judged sentences of the article with a clause-embedding predicate under test."
+ },
+ "examples": [
+  {
+   "id": "theileretal2019_1_that",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(1)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill knows that Mary has eaten.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Bill",
+     ""
+    ],
+    [
+     "knows",
+     ""
+    ],
+    [
+     "that",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "has",
+     ""
+    ],
+    [
+     "eaten",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "know"
+    },
+    {
+     "start": 2,
+     "label": "complementizer",
+     "lexeme": "that"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_1_whether",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(1)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill knows whether Mary has eaten.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Bill",
+     ""
+    ],
+    [
+     "knows",
+     ""
+    ],
+    [
+     "whether",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "has",
+     ""
+    ],
+    [
+     "eaten",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "know"
+    },
+    {
+     "start": 2,
+     "label": "complementizer",
+     "lexeme": "whether"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_1_what",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(1)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill knows what Mary has eaten.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Bill",
+     ""
+    ],
+    [
+     "knows",
+     ""
+    ],
+    [
+     "what",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "has",
+     ""
+    ],
+    [
+     "eaten",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "know"
+    },
+    {
+     "start": 2,
+     "label": "wh"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_2_that",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(2)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill believes that Mary has eaten.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Bill",
+     ""
+    ],
+    [
+     "believes",
+     ""
+    ],
+    [
+     "that",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "has",
+     ""
+    ],
+    [
+     "eaten",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "believe"
+    },
+    {
+     "start": 2,
+     "label": "complementizer",
+     "lexeme": "that"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_2_whether",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(2)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill believes whether Mary has eaten.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Bill",
+     ""
+    ],
+    [
+     "believes",
+     ""
+    ],
+    [
+     "whether",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "has",
+     ""
+    ],
+    [
+     "eaten",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "believe"
+    },
+    {
+     "start": 2,
+     "label": "complementizer",
+     "lexeme": "whether"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_2_what",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(2)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill believes what Mary has eaten.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Bill",
+     ""
+    ],
+    [
+     "believes",
+     ""
+    ],
+    [
+     "what",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "has",
+     ""
+    ],
+    [
+     "eaten",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "believe"
+    },
+    {
+     "start": 2,
+     "label": "wh"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_3_whether",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(3)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill wonders whether Mary has eaten.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Bill",
+     ""
+    ],
+    [
+     "wonders",
+     ""
+    ],
+    [
+     "whether",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "has",
+     ""
+    ],
+    [
+     "eaten",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "wonder"
+    },
+    {
+     "start": 2,
+     "label": "complementizer",
+     "lexeme": "whether"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_3_what",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(3)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill wonders what Mary has eaten.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Bill",
+     ""
+    ],
+    [
+     "wonders",
+     ""
+    ],
+    [
+     "what",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "has",
+     ""
+    ],
+    [
+     "eaten",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "wonder"
+    },
+    {
+     "start": 2,
+     "label": "wh"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_3_that",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(3)"
+   },
+   "language": "stan1293",
+   "primaryText": "Bill wonders that Mary has eaten.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Bill",
+     ""
+    ],
+    [
+     "wonders",
+     ""
+    ],
+    [
+     "that",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "has",
+     ""
+    ],
+    [
+     "eaten",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "wonder"
+    },
+    {
+     "start": 2,
+     "label": "complementizer",
+     "lexeme": "that"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_8",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(8)"
+   },
+   "language": "stan1293",
+   "primaryText": "Mary is certain that John left.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "is",
+     ""
+    ],
+    [
+     "certain",
+     ""
+    ],
+    [
+     "that",
+     ""
+    ],
+    [
+     "John",
+     ""
+    ],
+    [
+     "left",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 2,
+     "label": "predicate",
+     "lexeme": "beCertain"
+    },
+    {
+     "start": 3,
+     "label": "complementizer",
+     "lexeme": "that"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_9",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(9)"
+   },
+   "language": "stan1293",
+   "primaryText": "Mary is certain who left.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "is",
+     ""
+    ],
+    [
+     "certain",
+     ""
+    ],
+    [
+     "who",
+     ""
+    ],
+    [
+     "left",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 2,
+     "label": "predicate",
+     "lexeme": "beCertain"
+    },
+    {
+     "start": 3,
+     "label": "wh"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_15",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(15)"
+   },
+   "language": "stan1293",
+   "primaryText": "Mary doesn't believe that Ann left.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "doesn't",
+     ""
+    ],
+    [
+     "believe",
+     ""
+    ],
+    [
+     "that",
+     ""
+    ],
+    [
+     "Ann",
+     ""
+    ],
+    [
+     "left",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [
+    {
+     "name": "lowered",
+     "judgment": "acceptable"
+    }
+   ],
+   "spans": [
+    {
+     "start": 2,
+     "label": "predicate",
+     "lexeme": "believe"
+    },
+    {
+     "start": 3,
+     "label": "complementizer",
+     "lexeme": "that"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_31",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(31)"
+   },
+   "language": "stan1293",
+   "primaryText": "John believes whether Mary left.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "John",
+     ""
+    ],
+    [
+     "believes",
+     ""
+    ],
+    [
+     "whether",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "left",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "believe"
+    },
+    {
+     "start": 2,
+     "label": "complementizer",
+     "lexeme": "whether"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_38",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(38)"
+   },
+   "language": "stan1293",
+   "primaryText": "John wonders that Mary called.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "John",
+     ""
+    ],
+    [
+     "wonders",
+     ""
+    ],
+    [
+     "that",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "called",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "wonder"
+    },
+    {
+     "start": 2,
+     "label": "complementizer",
+     "lexeme": "that"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_40",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(40)"
+   },
+   "language": "stan1293",
+   "primaryText": "Whether the light is on depends on whether the switch is up.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Whether",
+     ""
+    ],
+    [
+     "the",
+     ""
+    ],
+    [
+     "light",
+     ""
+    ],
+    [
+     "is",
+     ""
+    ],
+    [
+     "on",
+     ""
+    ],
+    [
+     "depends",
+     ""
+    ],
+    [
+     "on",
+     ""
+    ],
+    [
+     "whether",
+     ""
+    ],
+    [
+     "the",
+     ""
+    ],
+    [
+     "switch",
+     ""
+    ],
+    [
+     "is",
+     ""
+    ],
+    [
+     "up",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 5,
+     "label": "predicate",
+     "length": 2,
+     "lexeme": "dependOn"
+    },
+    {
+     "start": 0,
+     "label": "subjectComplementizer",
+     "lexeme": "whether"
+    },
+    {
+     "start": 7,
+     "label": "complementizer",
+     "lexeme": "whether"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_42",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(42)"
+   },
+   "language": "stan1293",
+   "primaryText": "That the light is on depends on whether the switch is up.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "That",
+     ""
+    ],
+    [
+     "the",
+     ""
+    ],
+    [
+     "light",
+     ""
+    ],
+    [
+     "is",
+     ""
+    ],
+    [
+     "on",
+     ""
+    ],
+    [
+     "depends",
+     ""
+    ],
+    [
+     "on",
+     ""
+    ],
+    [
+     "whether",
+     ""
+    ],
+    [
+     "the",
+     ""
+    ],
+    [
+     "switch",
+     ""
+    ],
+    [
+     "is",
+     ""
+    ],
+    [
+     "up",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 5,
+     "label": "predicate",
+     "length": 2,
+     "lexeme": "dependOn"
+    },
+    {
+     "start": 0,
+     "label": "subjectComplementizer",
+     "lexeme": "that"
+    },
+    {
+     "start": 7,
+     "label": "complementizer",
+     "lexeme": "whether"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_43",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(43)"
+   },
+   "language": "stan1293",
+   "primaryText": "Whether the light is on depends on that the switch is up.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "Whether",
+     ""
+    ],
+    [
+     "the",
+     ""
+    ],
+    [
+     "light",
+     ""
+    ],
+    [
+     "is",
+     ""
+    ],
+    [
+     "on",
+     ""
+    ],
+    [
+     "depends",
+     ""
+    ],
+    [
+     "on",
+     ""
+    ],
+    [
+     "that",
+     ""
+    ],
+    [
+     "the",
+     ""
+    ],
+    [
+     "switch",
+     ""
+    ],
+    [
+     "is",
+     ""
+    ],
+    [
+     "up",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 5,
+     "label": "predicate",
+     "length": 2,
+     "lexeme": "dependOn"
+    },
+    {
+     "start": 0,
+     "label": "subjectComplementizer",
+     "lexeme": "whether"
+    },
+    {
+     "start": 7,
+     "label": "complementizer",
+     "lexeme": "that"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_44a_believe",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(44a)"
+   },
+   "language": "stan1293",
+   "primaryText": "John believes that Mary left and when she did.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "John",
+     ""
+    ],
+    [
+     "believes",
+     ""
+    ],
+    [
+     "that",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "left",
+     ""
+    ],
+    [
+     "and",
+     ""
+    ],
+    [
+     "when",
+     ""
+    ],
+    [
+     "she",
+     ""
+    ],
+    [
+     "did",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "believe"
+    },
+    {
+     "start": 2,
+     "label": "complementizer",
+     "lexeme": "that"
+    },
+    {
+     "start": 6,
+     "label": "wh"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_44a_think",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(44a)"
+   },
+   "language": "stan1293",
+   "primaryText": "John thinks that Mary left and when she did.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "John",
+     ""
+    ],
+    [
+     "thinks",
+     ""
+    ],
+    [
+     "that",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "left",
+     ""
+    ],
+    [
+     "and",
+     ""
+    ],
+    [
+     "when",
+     ""
+    ],
+    [
+     "she",
+     ""
+    ],
+    [
+     "did",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "think"
+    },
+    {
+     "start": 2,
+     "label": "complementizer",
+     "lexeme": "that"
+    },
+    {
+     "start": 6,
+     "label": "wh"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_44b",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(44b)"
+   },
+   "language": "stan1293",
+   "primaryText": "It is true that Mary left and when she did.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "It",
+     ""
+    ],
+    [
+     "is",
+     ""
+    ],
+    [
+     "true",
+     ""
+    ],
+    [
+     "that",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "left",
+     ""
+    ],
+    [
+     "and",
+     ""
+    ],
+    [
+     "when",
+     ""
+    ],
+    [
+     "she",
+     ""
+    ],
+    [
+     "did",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 2,
+     "label": "predicate",
+     "lexeme": "beTrue"
+    },
+    {
+     "start": 3,
+     "label": "complementizer",
+     "lexeme": "that"
+    },
+    {
+     "start": 7,
+     "label": "wh"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "theileretal2019_44c",
+   "source": {
+    "bibkey": "theiler-etal-2019",
+    "paperLabel": "(44c)"
+   },
+   "language": "stan1293",
+   "primaryText": "John wonders that Mary left and when she did.",
+   "discourseSegments": [],
+   "glossedTokens": [
+    [
+     "John",
+     ""
+    ],
+    [
+     "wonders",
+     ""
+    ],
+    [
+     "that",
+     ""
+    ],
+    [
+     "Mary",
+     ""
+    ],
+    [
+     "left",
+     ""
+    ],
+    [
+     "and",
+     ""
+    ],
+    [
+     "when",
+     ""
+    ],
+    [
+     "she",
+     ""
+    ],
+    [
+     "did",
+     ""
+    ]
+   ],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "contrasts": [],
+   "readings": [],
+   "spans": [
+    {
+     "start": 1,
+     "label": "predicate",
+     "lexeme": "wonder"
+    },
+    {
+     "start": 2,
+     "label": "complementizer",
+     "lexeme": "that"
+    },
+    {
+     "start": 6,
+     "label": "wh"
+    }
+   ],
+   "paperFeatures": [],
+   "comment": "",
+   "verified": "page-image"
+  }
+ ]
+}
