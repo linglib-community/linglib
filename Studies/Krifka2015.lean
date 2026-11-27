@@ -371,6 +371,11 @@ theorem toSpace_push :
 
 @[simp] theorem toSpace_commit : toSpace (K.commit a p) ans = toSpace K ans := rfl
 
+theorem toSpace_map {J : Type*} (g : I → J) (ans : J → Set (Set W)) :
+    toSpace (K.map g) ans = toSpace K (ans ∘ g) := by
+  ext d
+  simp [mem_toSpace]
+
 variable {K ans} in
 -- making a joint commitment common ground is the update by its content
 theorem toSpace_settle_of_stack_eq_nil (hK : K.stack = []) :

@@ -27,6 +27,7 @@ with `f`, the projected set is `{f ⊓ 𝓟 p, f ⊓ 𝓟 pᶜ}`.
 ## Main definitions
 
 * `Table A W I`: a Table with participants `A`, worlds `W` and items `I`.
+* `Table.map K g`: `K` with `g : I → J` applied to every item, a Table with items `J`.
 * `Table.project ps H`: the consistent filters `f ⊓ 𝓟 q` with `f ∈ ps` and `q ∈ H`.
 * `Table.projectedSet K ans`: the projected set of `K`.
 * `Table.settle K ans p`: `p` enters the common ground and leaves the commitment lists, and the
@@ -39,6 +40,8 @@ with `f`, the projected set is `{f ⊓ 𝓟 p, f ⊓ 𝓟 pᶜ}`.
 * `Table.exists_le_mem_projectedSet_iff`: a consistent filter refines a member of the projected
   set if and only if it refines the common ground and contains an answer of every item.
 * `Table.projectedSet_congr_perm`: the projected set does not depend on the order of the stack.
+* `Table.projectedSet_map`: the projected set of `K.map g` read by `ans` is the projected set of
+  `K` read by `ans ∘ g`.
 * `Table.stack_settle_eq_nil_of_mem_projectedSet`: if settling `p` gives a common ground that is
   a member of the projected set, the stack becomes empty.
 
@@ -87,7 +90,7 @@ initialize_simps_projections Table (as_prefix stack, as_prefix commitments, as_p
 
 namespace Table
 
-variable {A W I : Type*}
+variable {A W I J L : Type*}
 
 /-! ### Projecting a set of answers -/
 
@@ -169,6 +172,18 @@ variable (K : Table A W I) (ans : I → Set (Set W)) (a : A) (p : Set W) (i : I)
 /-- `K.commit a p` is `K` with `p` added to the commitments of `a`. -/
 @[simps] def commit : Table A W I := { K with commitments := insert (a, p) K.commitments }
 
+/-- `K.map g` is `K` with `g` applied to every item on the stack. -/
+@[simps] def map (g : I → J) : Table A W J := ⟨K.stack.map g, K.commitments, K.commonGround⟩
+
+@[simp] theorem map_id : K.map id = K := Table.ext (List.map_id _) rfl rfl
+
+theorem map_map (g : I → J) (h : J → L) : (K.map g).map h = K.map (h ∘ g) :=
+  Table.ext (List.map_map ..) rfl rfl
+
+@[simp] theorem map_push (g : I → J) : (K.push i).map g = (K.map g).push (g i) := rfl
+
+@[simp] theorem map_commit (g : I → J) : (K.commit a p).map g = (K.map g).commit a p := rfl
+
 /-! ### The projected set -/
 
 /-- The **projected set** of `K` is obtained from the common ground of `K` by projecting the answers
@@ -182,6 +197,11 @@ def projectedSet : Set (Filter W) :=
     (K.push i).projectedSet ans = project (K.projectedSet ans) (ans i) := rfl
 
 @[simp] theorem projectedSet_commit : (K.commit a p).projectedSet ans = K.projectedSet ans := rfl
+
+/-- Reading the items of `K.map g` by `ans` is reading the items of `K` by `ans ∘ g`. -/
+theorem projectedSet_map (g : I → J) (ans : J → Set (Set W)) :
+    (K.map g).projectedSet ans = K.projectedSet (ans ∘ g) := by
+  simp [projectedSet, List.foldr_map]
 
 section
 

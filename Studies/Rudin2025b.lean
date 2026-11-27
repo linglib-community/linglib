@@ -127,12 +127,16 @@ def utter (D : Proposition (Set W)) :
 
 -- (83)
 theorem utter_ofSet_false (p : Set W) (K : Table SpeechAct.Role W (Proposition (Set W))) :
-    utter (ofSet p) false K = (K.commit .speaker p).push (ofSet p) := by
-  rw [utter, info_ofSet]
+    (utter (ofSet p) false K).map alt = (K.map alt).assert .speaker p := by
+  rw [utter, info_ofSet, Table.map_push, Table.map_commit, alt_ofSet]
+  rfl
 
 -- (85)
-theorem utter_polar_true (p : Set W) (K : Table SpeechAct.Role W (Proposition (Set W))) :
-    utter (polar p) true K = K.push (polar p) := rfl
+theorem utter_polar_true {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
+    (K : Table SpeechAct.Role W (Proposition (Set W))) :
+    (utter (polar p) true K).map alt = (K.map alt).polarQuestion p := by
+  rw [utter, Table.map_push, alt_polar_of_nontrivial hne hnu]
+  rfl
 
 /-- The context update of a performance is that of the sentence it utters, if any. -/
 def Performance.update : Performance W →
