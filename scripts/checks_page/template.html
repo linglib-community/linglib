@@ -106,6 +106,8 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
   margin: 0; padding: 10px 12px; font: 12px/1.55 var(--mono); background: var(--code-bg);
   border-radius: 6px; white-space: pre; overflow-x: auto;
 }
+/* What a theorem assumes, apart from what it states */
+.given { margin: 4px 0 0; font: 12px/1.5 var(--mono); color: var(--secondary); overflow-wrap: anywhere; }
 /* The examples a statement is about, set under it */
 .cited { margin: 8px 0 0; font-family: var(--serif); font-size: 15px; }
 .cited .ex { margin: 0 0 4px; }
@@ -225,6 +227,7 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
       p.append(el("span", "kw", n.k + " "), a);
       if (n.a) p.append(el("span", "who", n.a));
       d.append(p, el("pre", null, n.t));
+      if (n.g) d.append(el("p", "given", "given " + n.g));
       if (n.x) d.append(html("div", "cited", n.x));
       if (n.u.length) d.append(mentions(name));
       pane.append(d);
@@ -254,6 +257,7 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
       const open = b.getAttribute("aria-expanded") !== "true";
       if (open && !body.firstChild) {
         body.append(el("pre", null, N[b.dataset.decl].t));
+        if (N[b.dataset.decl].g) body.append(el("p", "given", "given " + N[b.dataset.decl].g));
         if (N[b.dataset.decl].x) body.append(html("div", "cited", N[b.dataset.decl].x));
         if (N[b.dataset.decl].u.length) body.append(mentions(b.dataset.decl));
       }

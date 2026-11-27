@@ -89,6 +89,28 @@ def display(node, name):
     return name.split(".")[-1] + text[len(name):] if text.startswith(name) else text
 
 
+def given(text):
+    """A theorem as `(statement, assumptions)`: what it states, after the colon that ends its
+    binders, and the binders, which a page sets apart under the statement."""
+    depth, colon = 0, None
+    for i, ch in enumerate(text):
+        if ch in "([{⟨⦃":
+            depth += 1
+        elif ch in ")]}⟩⦄":
+            depth -= 1
+        elif ch == ":" and depth == 0 and text[i + 1:i + 2] != "=":
+            colon = i
+            break
+    if colon is None:
+        return text, ""
+    head = re.sub(r"\A\s*(?:(?:private|protected|nonrec)\s+)*(?:theorem|lemma|instance)\s+\S+\s*",
+                  "", text[:colon])
+    lines = text[colon + 1:].strip("\n").split("\n")
+    pad = min((len(line) - len(line.lstrip()) for line in lines[1:] if line.strip()), default=0)
+    body = "\n".join([lines[0].strip()] + [line[pad:] for line in lines[1:]])
+    return body, " ".join(head.split())
+
+
 def keyword(node):
     """The keyword a declaration is written with, which for a structure or a class is not the
     kind Lean files it under."""
@@ -316,7 +338,10 @@ class Page:
             n = todo.pop()
             if n in used or n not in nodes:
                 continue
-            used[n] = {"k": keyword(nodes[n]), "t": display(nodes[n], n),
+            text, assumes = display(nodes[n], n), ""
+            if nodes[n]["kind"] == "theorem" and nodes[n]["source"]:
+                text, assumes = given(text)
+            used[n] = {"k": keyword(nodes[n]), "t": text, "g": assumes,
                        "u": [u for u in nodes[n]["uses"]
                              if u in nodes and u != n and not generated(u)],
                        "h": self.root + path if (path := self.site.decl_path(n)) else "",
@@ -528,10 +553,11 @@ def head(i):
     return f'<span class="head">{name}</span>{mark}'
 
 
-def module_doc(page, doc, opening=False):
+def module_doc(page, doc, opening=False, examples=None):
     """A module docstring as the parts of a text: what belongs to its body, and the sections that
     close it. The title is left out, and so are the lists of main declarations, which the text
-    itself replaces. The paragraphs that open a page are plain prose, with no links."""
+    itself replaces. The paragraphs that open a page are plain prose, with no links. A paragraph
+    that is only the number of one of `examples`, a source's own, is set as that example."""
     body, tail, section = [], [], None
     for kind, content in page.blocks(doc, links=not opening):
         if kind == "h1":
@@ -546,7 +572,9 @@ def module_doc(page, doc, opening=False):
             cls = "refs" if section == "References" else "prose"
             tail.append(f'<div class="{cls}">{content}</div>')
         elif not (section and LISTS.match(section)):
-            body.append(f'<div class="prose">{content}</div>')
+            label = re.fullmatch(r"<p>(\([0-9a-z]+\))</p>", content)
+            row = (examples or {}).get(label.group(1)) if label else None
+            body.append(example(row) if row else f'<div class="prose">{content}</div>')
     return body, tail
 
 
@@ -590,7 +618,8 @@ def source_page(site, key, sha, lines):
     # says that what follows is the source's own items, restated in the record, and who has
     # checked them.
     header = site.texts.get(study, {}).get("docs", [])[:1]
-    body, tail = module_doc(page, header[0]["doc"], opening=True) if header else ([], [])
+    body, tail = (module_doc(page, header[0]["doc"], opening=True,
+                             examples=site.examples.get(key)) if header else ([], []))
     checked = [i for i in its if i["status"] in ("checked", "relies")]
     signers = list(dict.fromkeys(who(i["check"]) for i in checked))
     count = f'{len(its)} item{"" if len(its) == 1 else "s"}'

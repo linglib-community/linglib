@@ -460,10 +460,38 @@ def item_spans(path):
     return spans
 
 
+def statement(text):
+    """A theorem as its file writes it, up to where its proof begins: the first `:=`, or the first
+    alternative of a proof by cases, outside every bracket, comment and string. `None` where no
+    such place is found."""
+    depth, i, n = 0, 0, len(text)
+    while i < n:
+        two = text[i:i + 2]
+        if two == "--":
+            i = text.find("\n", i) if "\n" in text[i:] else n
+        elif two == "/-":
+            i = text.find("-/", i) + 2 if "-/" in text[i:] else n
+        elif text[i] == '"':
+            i = text.find('"', i + 1) + 1 or n
+        elif text[i] in "([{⟨⦃":
+            depth += 1
+            i += 1
+        elif text[i] in ")]}⟩⦄":
+            depth -= 1
+            i += 1
+        elif depth == 0 and (two == ":=" or re.match(r"where\b", text[i:]) and not text[i - 1].isalnum()
+                             or text[i] == "|" and text[:i].rstrip(" ").endswith("\n")):
+            return text[:i].rstrip() or None
+        else:
+            i += 1
+    return None
+
+
 def source_text(node):
-    """A definition or inductive type as its file writes it, without its docstring; `None` for a
-    theorem, whose statement a page shows without its proof, and for what Lean generated."""
-    if node["kind"] not in ("def", "inductive") or not node["lines"]:
+    """A declaration as its file writes it, without its docstring and attributes: a definition or
+    inductive type whole, a theorem up to its proof. `None` for what Lean generated, and for a
+    theorem whose proof's beginning is not found, which a page shows as Lean prints it."""
+    if node["kind"] not in ("def", "inductive", "theorem") or not node["lines"]:
         return None
     path = ROOT / (node["module"].replace(".", "/") + ".lean")
     if not path.exists():
@@ -471,7 +499,9 @@ def source_text(node):
     first, last = node["lines"]
     text = "\n".join(path.read_text(encoding="utf-8").splitlines()[first - 1:last])
     text = re.sub(r"\A\s*/--.*?-/\s*\n", "", text, flags=re.S)
-    return textwrap.dedent(text).strip("\n")
+    text = re.sub(r"\A(\s*)(?:@\[[^\]]*\]\s*)+", r"\1", text)
+    text = textwrap.dedent(text).strip("\n")
+    return statement(text) if node["kind"] == "theorem" else text
 
 
 def status_json(sources, status, info, data):
