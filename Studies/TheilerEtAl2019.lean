@@ -5,8 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Inquisitive.Modal
-public import Linglib.Logic.Trivalent.Proposition
+public import Linglib.Semantics.Embedding.NegRaising.Inquisitive
 
 /-!
 # Theiler, Roelofsen and Aloni (2019): Picky predicates
@@ -29,16 +28,11 @@ argument.
 
 ## Main definitions
 
-* `TheilerEtAl2019.negRaising`: the neg-raising predicate over a modal base.
 * `TheilerEtAl2019.wonder`: the worlds where an agent wonders about a proposition.
 * `TheilerEtAl2019.dependsOn`: the worlds where one proposition depends on another relative to a
   modal base.
 
 ## Implementation notes
-
-A neg-raising predicate is defined with its presupposition in the form that the modal base
-resolves the polar question of the complement, which is the disjunction that it resolves the
-complement or its negation.
 
 An interrogative complement enters the results as a proposition whose informative content is
 every world, and a declarative as the declarative of a set of worlds or as a proposition with one
@@ -89,51 +83,30 @@ theorem mem_compl_iff (P : Proposition (Set W)) (p : Set W) :
     fun h u hu ⟨q, hq, huq⟩ ↦ ?_⟩
   exact Set.notMem_empty u (h q hq ▸ ⟨huq, hu⟩)
 
-open Classical in
-/-- The neg-raising predicate over the modal base `M` presupposes that `M` resolves the polar
-question of its complement and asserts that `M` resolves the complement. -/
-noncomputable def negRaising (M : W → Set W) (P : Proposition (Set W)) : W → Trivalent :=
-  Trivalent.condEvent (fun w ↦ w ∈ P.query.resolvedBy M) fun w ↦ w ∈ P.resolvedBy M
+-- (19), (30): *believe* over the doxastic state, defined where the state resolves the complement
+-- or its negation
+theorem ofModalBase_ne_undefined_iff :
+    NegRaising.ofModalBase dox P w ≠ .undefined ↔ dox w ∈ P ∨ dox w ∈ Pᶜ :=
+  NegRaising.ofModalBase_ne_undefined_iff
 
--- (19): the presupposition, as the generalized excluded middle
-theorem negRaising_ne_undefined_iff :
-    negRaising M P w ≠ .undefined ↔ M w ∈ P ∨ M w ∈ Pᶜ := by
-  simp [negRaising, resolvedBy_query, or_iff_not_imp_left]
+/-- (15): where *x doesn't believe that p* is true, the doxastic state lies within the negation
+of `p`. -/
+theorem subset_compl_of_ofModalBase_ofSet_eq_false
+    (h : NegRaising.ofModalBase dox (ofSet p) w = .false) : dox w ⊆ pᶜ :=
+  (NegRaising.ofModalBase_ofSet_eq_false_iff.1 h).1
 
--- with a declarative complement the presupposition is the excluded middle
-theorem negRaising_ofSet_ne_undefined_iff :
-    negRaising M (ofSet p) w ≠ .undefined ↔ M w ⊆ p ∨ M w ⊆ pᶜ := by
-  rw [negRaising_ne_undefined_iff, compl_eq, info_ofSet]
-  rfl
-
-/-- A neg-raising predicate is false of a declarative exactly where its modal base lies within
-the declarative's negation and not within the declarative: its denial is the predicate of the
-negation. -/
-theorem negRaising_ofSet_eq_false_iff :
-    negRaising M (ofSet p) w = .false ↔ M w ⊆ pᶜ ∧ ¬ M w ⊆ p := by
-  simp only [negRaising, Trivalent.condEvent_eq_false_iff, resolvedBy_query, compl_eq, info_ofSet,
-    Set.mem_union, mem_resolvedBy, mem_ofSet]
-  tauto
-
-open Classical in
-/-- With a complement that is not informative, what a neg-raising predicate presupposes is what
-it asserts, so it is true wherever it is defined. -/
-theorem negRaising_eq_true_of_info_eq_univ (h : P.info = Set.univ)
-    (hd : negRaising M P w ≠ .undefined) : negRaising M P w = .true := by
-  have hq : w ∈ P.query.resolvedBy M :=
-    by_contra fun hn ↦ hd (Trivalent.condEvent_eq_undefined_iff.2 hn)
-  exact Trivalent.condEvent_eq_true_iff.2 ⟨hq, resolvedBy_query_of_info_eq_univ h M ▸ hq⟩
-
--- (31)–(33): with a complement headed by the question operator, whatever the modal base and the
--- prejacent
-theorem negRaising_query_eq_true (hd : negRaising M P.query w ≠ .undefined) :
-    negRaising M P.query w = .true :=
-  negRaising_eq_true_of_info_eq_univ (info_query P) hd
+/-- (20), (31)–(33): of a complement headed by the question operator, whatever the modal base and
+the prejacent, a neg-raising predicate is true wherever it is defined. -/
+theorem ofModalBase_query_eq_true (M : W → Set W) (P : Proposition (Set W)) (w : W)
+    (hd : NegRaising.ofModalBase M P.query w ≠ .undefined) :
+    NegRaising.ofModalBase M P.query w = .true :=
+  NegRaising.ofModalBase_query_eq_true hd
 
 -- with a declarative complement the predicate is not trivial
-theorem exists_negRaising_ofSet_eq_false :
-    ∃ (M : Bool → Set Bool) (p : Set Bool) (w : Bool), negRaising M (ofSet p) w = .false :=
-  ⟨fun _ ↦ {false}, {true}, true, negRaising_ofSet_eq_false_iff.2 (by simp)⟩
+theorem exists_ofModalBase_ofSet_eq_false :
+    ∃ (M : Bool → Set Bool) (p : Set Bool) (w : Bool),
+      NegRaising.ofModalBase M (ofSet p) w = .false :=
+  ⟨fun _ ↦ {false}, {true}, true, NegRaising.ofModalBase_ofSet_eq_false_iff.2 (by simp)⟩
 
 /-! ### Truth-evaluating predicates -/
 
