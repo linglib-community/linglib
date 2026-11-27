@@ -6,30 +6,32 @@ public import Linglib.Discourse.Commitment.Space.Basic
 /-!
 # Commitment Space Semantics
 
-Commitment Space Semantics is the theory of commitment spaces whose states are sets of
-propositions ordered by inclusion. A basic act adds propositions. An assertion by `k` of `φ` adds
-the proposition `k ⊢[O] φ` that `k` is committed to `φ`, and a polar question proposes that the
-addressee commit to `φ` or to `φᶜ`. The participant whose commitment an act projects is thus the
-speaker of an assertion and the addressee of a question.
+In Commitment Space Semantics a state is a set of propositions, the states are ordered by
+inclusion, and a commitment is itself a proposition: `k ⊢[O] φ` is the proposition that `k` is
+committed to `φ`.
+
+An *assertion* of `φ` by `k` is the update by the state `{k ⊢[O] φ}`. A *monopolar question* on
+`φ` put to `k` is the question whose one proposal is `{k ⊢[O] φ}`, and a *bipolar question* has
+the second proposal `{k ⊢[O] φᶜ}`. An act *projects the commitment* of `k` on `φ` when every
+state it leads to, other than the root it started from, contains `k ⊢[O] φ` or `k ⊢[O] φᶜ`.
 
 ## Main definitions
 
-* `Commitment.Space.assert`: the assertion.
-* `Commitment.Space.monopolarQuestion`, `Commitment.Space.bipolarQuestion`: the polar questions.
-* `Commitment.Space.ProjectsCommitment`: the act projects a participant's commitment on its
-  content.
+* `Space.assert C O k φ`: the update of `C` by `{k ⊢[O] φ}`.
+* `Space.monopolarQuestion C O k φ`: the question on `C` with the proposal `{k ⊢[O] φ}`.
+* `Space.bipolarQuestion C O k φ`: the question on `C` with the proposals `{k ⊢[O] φ}` and
+  `{k ⊢[O] φᶜ}`.
+* `Space.ProjectsCommitment C O k φ D`: every member of `D` other than the root of `C` contains
+  `k ⊢[O] φ` or `k ⊢[O] φᶜ`.
 
 ## Main results
 
-* `Commitment.Space.projectsCommitment_Ici_assert_iff`,
-  `Commitment.Space.projectsCommitment_Ici_bipolarQuestion_iff`: in the space of all states, an
-  assertion projects only its author's commitment and a bipolar question only that of the
-  participant it is put to, unless their commitments coincide.
-
-## Implementation notes
-
-After a question the root of an assertion carries the proposal as well, so an assertion on a
-space need not add exactly its content to the common ground.
+* `Space.projectsCommitment_assert`: an assertion by `k` projects the commitment of `k`.
+* `Space.projectsCommitment_bipolarQuestion`: a bipolar question put to `k` projects the
+  commitment of `k`.
+* `Space.projectsCommitment_Ici_assert_iff`: in the space of all states, an assertion by `l`
+  projects the commitment of `k` if and only if `l`'s commitment to `φ` is `k`'s commitment to
+  `φ` or to `φᶜ`.
 
 ## References
 

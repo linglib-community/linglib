@@ -9,57 +9,54 @@ public import Mathlib.Order.Filter.Basic
 /-!
 # The Table
 
-The context structure of Farkas and Bruce records the participants' discourse commitments, the
-common ground, and the Table, a stack of the items under discussion with the most recent on top.
-What an item is depends on the account: a set of propositions, an inquisitive proposition, or a
-sentence with its denotation. The structure takes the type of items as a parameter, and what it
-needs of an item is the set of its complete answers, given as a function `ans : I → Set (Set W)`.
+A *Table* is the state of a conversation in the model of Farkas and Bruce. It has a stack of the
+items under discussion, the most recent first, the propositions each participant is publicly
+committed to, and the common ground. The common ground is a filter on the set of worlds: the
+propositions that follow from what the participants jointly accept.
 
-A set `H` of answers projects, from a set `ps` of common grounds, the consistent common grounds
-`f ⊓ 𝓟 q` with `f ∈ ps` and `q ∈ H`. The projected set of a context is obtained from its common
-ground by projecting the answers of each item on the Table in turn. Its members are the weakest
-consistent bodies of information that refine the common ground and entail an answer of every
-item, and it does not depend on the order of the stack. Once a proposition is a joint commitment
-it enters the common ground by Stalnaker's update `f ⊓ 𝓟 p`, and the items one of whose answers
-the new common ground entails leave the Table.
+What an item is depends on the account. It may be a set of propositions, an inquisitive
+proposition, or a sentence with its denotation. The type `I` of items is a parameter, and the
+operations that read an item take a function `ans : I → Set (Set W)` giving its complete answers.
+
+Each item narrows the futures of the conversation to those in which one of its answers is
+accepted. The *projected set* collects these futures. From a common ground `f`, an item with
+answers `H` contributes the consistent filters `f ⊓ 𝓟 q` for `q ∈ H`, and the items on the stack
+are taken in turn. For example, if the only item has answers `{p, pᶜ}` and both are consistent
+with `f`, the projected set is `{f ⊓ 𝓟 p, f ⊓ 𝓟 pᶜ}`.
 
 ## Main definitions
 
-* `Commitment.Table A W I`: the context structure, with participants `A`, worlds `W` and items `I`.
-* `Commitment.Table.project`: the projection of a set of answers from a set of common grounds.
-* `Commitment.Table.projectedSet`: the projected set of a context.
-* `Commitment.Table.settle`: the operation that turns a joint commitment into common ground.
-* `Commitment.Table.assert`, `Commitment.Table.polarQuestion`: the default assertion, which commits
-  its author as in Gunlogson, and the default polar question, on items that are sets of
-  propositions.
+* `Table A W I`: a Table with participants `A`, worlds `W` and items `I`.
+* `Table.project ps H`: the consistent filters `f ⊓ 𝓟 q` with `f ∈ ps` and `q ∈ H`.
+* `Table.projectedSet K ans`: the projected set of `K`.
+* `Table.settle K ans p`: `p` enters the common ground and leaves the commitment lists, and the
+  items one of whose answers now follows are removed from the top of the stack.
+* `Table.assert K a p`: `a` commits to `p`, and the item `{p}` is placed on the stack.
+* `Table.polarQuestion K p`: the item `{p, pᶜ}` is placed on the stack.
 
 ## Main results
 
-* `Commitment.Table.exists_le_mem_projectedSet_iff`: the consistent bodies of information that
-  refine the common ground and entail an answer of every item on the Table are those that refine
-  a projected common ground.
-* `Commitment.Table.project_right_comm`, `Commitment.Table.projectedSet_congr_perm`: projection
-  does not depend on the order of the items.
-* `Commitment.Table.stack_settle_eq_nil_of_mem_projectedSet`: reaching a projected common ground
-  empties the Table.
+* `Table.exists_le_mem_projectedSet_iff`: a consistent filter refines a member of the projected
+  set if and only if it refines the common ground and contains an answer of every item.
+* `Table.projectedSet_congr_perm`: the projected set does not depend on the order of the stack.
+* `Table.stack_settle_eq_nil_of_mem_projectedSet`: if settling `p` gives a common ground that is
+  a member of the projected set, the stack becomes empty.
 
 ## Implementation notes
 
-* The projected set can always be rebuilt from the common ground and the Table, so it is derived
-  rather than stored. The projection is the pointwise infimum `ps ⊼ 𝓟 '' H` of two families of
-  filters with `⊥` removed, so that its commutativity is that of `⊼`.
-* The answers of an item are an argument of the operations that read them and not a field of the
-  structure or an instance on the type of items, so that one type of items can be read in more
-  than one way.
-* A common ground is a filter of propositions, so a proposition follows from it when it belongs
-  to the filter. Every necessary proposition then follows from every common ground; a finer
-  consequence relation is not represented. A discourse commitment list is a set of propositions,
-  from which a proposition can be removed.
-* The common-ground increasing operation applies once the proposition is on every commitment
-  list; `Commitment.Table.settle` is the operation itself, and that the proposition is a joint
-  commitment is a hypothesis on the caller. It pops from the top of the Table while the new
-  common ground entails an answer of the top item. Whether it does is not decidable, so the
-  operation is classical and noncomputable.
+The projected set is determined by the common ground and the stack, so it is computed from them
+and is not a field. The projection is the pointwise infimum of two families of filters with `⊥`
+removed, which makes it commutative.
+
+The answers of an item are an argument of the operations, not a field of the structure or an
+instance on the type of items, so that one type of items can be read in more than one way.
+
+A proposition follows from the common ground when it belongs to the filter, so every necessary
+proposition follows from every common ground. A commitment list is a set of propositions and not
+a filter, because settling removes a proposition from it.
+
+Settling does not check that every participant is committed to the proposition. Whether the
+common ground contains an answer of an item is not decidable, so settling is noncomputable.
 
 ## References
 

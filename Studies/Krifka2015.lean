@@ -6,57 +6,55 @@ public import Linglib.Discourse.Table.Basic
 /-!
 # Krifka (2015): Bias in Commitment Space Semantics
 
-A conversation is recorded as a commitment space development, the sequence of commitment spaces
-its moves have led through, each with its actor. An act extends the record with the space it
-leads to, and a rejection extends it with the space before the last move. An assertion of `φ` by
-`s` is two acts: `s`'s commitment `s ⊢[O] φ`, and then `φ` itself, which the addressee may
-reject. A polar question put to `a` is a meta-speech act that keeps the root and proposes `a`'s
-commitment to `φ`, alone in a monopolar question and beside `a`'s commitment to `φᶜ` in a bipolar
-one. The responses *yes* and *no* are `a`'s assertions of `φ` and of `φᶜ`.
+A *commitment space development* is the record of a conversation: the commitment spaces it has
+passed through, each with the participant whose move led to it. An act extends the record with
+the space the act leads to. A *rejection* extends it with the space before the last move.
 
-The responses differ in whether they need a rejection first. A *no* to a bipolar question leads
-where the bare assertion of `φᶜ` would. A *no* to a monopolar question leads to states that hold
-`a`'s commitments to `φ` and to `φᶜ`, which no world satisfies when `a`'s commitments are
-consistent. A *no* to an assertion leads to states that hold `φ` and `a`'s commitment to `φᶜ`, at
-whose worlds `a`'s commitments exclude every world of the state. After a rejection, the *no* to
-an assertion leaves `s`'s commitment to `φ` beside `a`'s commitment to `φᶜ`, without `φ`.
+An assertion of `φ` by `s` is two acts by `s`: the update by `s`'s commitment to `φ`, and then
+the update by `φ` itself. A bipolar question put to `a` proposes `a`'s commitment to `φ` or to
+`φᶜ`, and a monopolar question proposes `a`'s commitment to `φ` alone. The responses *yes* and
+*no* are `a`'s assertions of `φ` and of `φᶜ`.
 
-The last stage of a development corresponds to the Table of Farkas and Bruce. A Table presents a
-commitment space whose root is its common ground and whose continuations are the bodies of
-information that refine the common ground and entail an answer of every item on the Table; besides
-the root, these are the bodies of information below a projected common ground. Placing an item on
-the Table is then the question that proposes each complete answer of the item, so the assertion of
-the Table is a monopolar question on its content with the speaker's commitment recorded apart, and
-in a stable context the operation that makes a joint commitment common ground is the update by its
-content.
+The three responses with *no* behave differently when no rejection comes first. After a bipolar
+question, *no* leads to the space that the assertion of `φᶜ` would lead to by itself. After a
+monopolar question, *no* leads to states that contain `a`'s commitments to `φ` and to `φᶜ`; if
+`a`'s commitment relation is serial, no world belongs to all the propositions of such a state.
+After an assertion, *no* leads to states that contain `φ` and `a`'s commitment to `φᶜ`; at a
+world that belongs to all the propositions of such a state, none of the worlds accessible for
+`a` does. If a rejection comes first, *no* after an assertion leads to the space with `s`'s
+commitment to `φ` and `a`'s commitment to `φᶜ`, without `φ`.
+
+A Table determines a commitment space whose states are filters. Its root is the common ground of
+the Table, and its other members are the filters that refine the common ground and contain an
+answer of every item. Placing an item on the Table is then the question whose proposals are the
+answers of the item, and for an empty Table, moving a proposition to the common ground is the
+update by that proposition.
 
 ## Implementation notes
 
-* The commitment space of a Table has filters as states, where the acts of the paper are stated on
-  sets of propositions. A filter is a set of propositions closed under consequence, and with more
-  information it is smaller, so the states are ordered by the dual order.
+A development stores its first space and its moves, the most recent first. Rejecting a
+development with fewer than two moves returns to the first space.
 
-* A development records its initial space and its moves, the most recent first. The rejection of a
-  development with fewer than two moves returns to the initial space.
-* The paper calls a state that holds `φ` and `a`'s commitment to `φᶜ` incoherent without defining
-  the term. What is proved of such a state is that at each of its worlds no world `a`'s
-  commitments leave open is a world of the state.
-* The content `φ` of an assertion is added by the general update of a commitment space, which
-  is defined on every space; the theorems hold whether or not the space admits the update.
+The acts of a development are stated on states that are sets of propositions. The commitment
+space of a Table has filters as states, and a filter with more information is smaller, so its
+states carry the dual order.
+
+The update by `φ` in an assertion is defined on every space. The results do not assume that the
+space admits it.
 
 ## TODO
 
-* The high-negation question proposes that `a` not be committed to `φ`. That it is weaker than the
-  low-negation question, which proposes `a`'s commitment to `φᶜ`, is proved for states closed
-  under consequence. On sets of propositions, where the acts of a development are stated, a state
-  that contains `a ⊢[O] φᶜ` need not contain the weaker proposition `(a ⊢[O] φ)ᶜ`, and the
-  high-negation question is not defined as an act of a development.
-* The acceptability of questions with no, low and high negation by contextual evidence, the
-  response *I don't know*, alternative and constituent questions, and question tags are not
-  formalized, and the paper's examples are not in `Data/Examples`.
+* A question with high negation proposes that `a` not be committed to `φ`. It is weaker than the
+  question that proposes `a`'s commitment to `φᶜ`. This is proved for states that are filters. It
+  fails for states that are sets of propositions, where a state can contain `a ⊢[O] φᶜ` without
+  containing `(a ⊢[O] φ)ᶜ`, and the high-negation question is not defined as an act of a
+  development.
+* The acceptability of questions by contextual evidence, the response *I don't know*, alternative
+  and constituent questions, and question tags are not formalized, and the examples are not in
+  `Data/Examples`.
 * The commitment space of a Table does not represent the discourse commitments of the
-  participants, which the paper places in the state as propositions, and making a joint
-  commitment common ground is related to the update only for a stable context.
+  participants. Moving a proposition to the common ground is related to the update only for an
+  empty Table.
 
 ## References
 

@@ -5,34 +5,36 @@ public import Linglib.Logic.Modal.Systems
 public import Linglib.Discourse.Commitment.Basic
 
 /-!
-# Commitment propositions
+# Commitment as a proposition
 
-In Krifka's account a commitment is itself a proposition, so `k⊢φ` holds at the worlds where `k`
-vouches for `φ`. Over an accessibility `O k` for each holder `k` it is the core of `φ`, the worlds
-all of whose `O k`-successors are `φ`-worlds. It is closed under consequence and conjunction, its
-complement is the refusal `¬k⊢φ`, and a common ground can contain it without containing `φ`.
-Asserting `φ` is the performative update that makes `k⊢φ` hold everywhere. Public commitment sets
-give the accessibilities that do not depend on the world, and a commitment state of
-`Commitment.Basic` projects onto them. Indices that pair a fact with every holder's commitment set
-are the canonical model in which commitments vary from world to world.
+Let `O k` be an accessibility relation on worlds for each holder `k`, relating a world `w` to the
+worlds compatible with what `k` is committed to at `w`. The proposition that `k` is committed to
+`φ`, written `k ⊢[O] φ`, is the set of worlds all of whose `O k`-successors are in `φ`. Since it
+is a proposition, a common ground can contain `k ⊢[O] φ` without containing `φ`.
+
+The *performative update* by `k`'s commitment to `φ` removes from `O k` the pairs whose second
+world is outside `φ`. After the update `k ⊢[O] φ` holds at every world.
+
+When commitments do not vary from world to world they are given by a commitment set `P k` for
+each holder, and `k ⊢[O] φ` then holds at every world or at none. An *index* pairs a fact with a
+commitment set for each holder, and the indices form a model in which commitments do vary.
 
 ## Main definitions
 
-* `k ⊢[O] φ`: the commitment proposition `k⊢φ`, the core of `φ` along `O k`.
-* `Commitment.perform O k φ`: the performative update by `k`'s commitment to `φ`.
-* `Commitment.ofSets P`: the accessibility of the public commitment sets `P`.
-* `Commitment.Index κ F`: a fact with a non-empty commitment set for each holder, with its
-  accessibility `Commitment.Index.access`.
+* `k ⊢[O] φ`: the worlds all of whose `O k`-successors are in `φ`.
+* `perform O k φ`: the relations `O`, with `O k` restricted to the pairs whose second world is in
+  `φ`.
+* `ofSets P`: the relations in which every world is related by `k` to exactly the worlds in
+  `P k`.
+* `Index κ F`: a fact in `F` together with a nonempty commitment set for each holder.
 
 ## Main results
 
-* `Commitment.committed_perform`: after the performative update by `φ`, `k⊢ψ` holds where
-  `k⊢(φ → ψ)` held, so `k⊢φ` holds everywhere.
-* `Commitment.disjoint_committed_compl`: a holder whose commitments are consistent is not
-  committed to both `φ` and `¬φ`, so `k⊢¬φ` entails the refusal `¬k⊢φ`.
-* `Commitment.committed_ofSets`: a public commitment holds everywhere or nowhere.
-* `Commitment.ofSets_commitmentSet_insert`: adding a commitment to a commitment state is the
-  performative update of its commitment sets.
+* `committed_perform`: `k ⊢[perform O k φ] ψ = k ⊢[O] (φᶜ ∪ ψ)`.
+* `disjoint_committed_compl`: if `O k` is serial, then `k ⊢[O] φ` and `k ⊢[O] φᶜ` are disjoint.
+* `committed_ofSets`: `k ⊢[ofSets P] φ` holds at every world if `P k ⊆ φ` and at none otherwise.
+* `ofSets_commitmentSet_insert`: adding a commitment to a commitment state is the performative
+  update of the relations given by its commitment sets.
 
 ## References
 

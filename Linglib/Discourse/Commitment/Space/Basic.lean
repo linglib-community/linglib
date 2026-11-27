@@ -9,45 +9,41 @@ public import Mathlib.Order.UpperLower.Closure
 /-!
 # Commitment spaces
 
-A commitment space is a set of discourse states with a least member, the root, which is the
-current state; the other members are the continuations the conversation projects. A basic speech
-act keeps the projected states that carry its commitments, and the least of them is the new root.
-A meta-speech act keeps the root and prunes the continuations, as a question restricts them to the
-answers it proposes and a denegation removes the states an act would reach. Conjunction and
-disjunction of acts are intersection and union of the sets of states they reach, which need not
-be rooted, so the laws relating the acts are stated on those sets.
+Let `S` be a partial order of states, in which a larger state carries more commitments. A
+*commitment space* is a set of states with a least element, called its *root*. The root is the
+current state of the conversation, and the other members are the states it may develop into.
 
-The states are the elements of any partial order, and the basic act is defined when the order is
-a complete lattice.
+A speech act changes the space. The *update* by a state `k` keeps the members above `k`, and its
+root is their infimum. The *restriction* to a set `D` of states keeps the root and the members
+that belong to `D`. Two restrictions have names. The *denegation* of `D` keeps the members
+outside `D`, and the *question* with proposals `P` keeps the members above some member of `P`.
 
 ## Main definitions
 
-* `Commitment.Space S`: rooted sets of states, ordered by inclusion, with the free space
-  `Commitment.Space.Ici`.
-* `Commitment.Space.restrict`, `Commitment.Space.denegate`, `Commitment.Space.question`: the
-  meta-speech acts.
-* `Commitment.Space.update`: the basic act adding `k`.
+* `Space S`: a commitment space with states in `S`.
+* `Space.Ici c`: the space of all states above `c`.
+* `Space.update C k`: the members of `C` above `k`, with their infimum as root.
+* `Space.restrict C D`: the root of `C` and the members of `C` in `D`.
+* `Space.denegate C D`: the root of `C` and the members of `C` outside `D`.
+* `Space.question C P`: the root of `C` and the members of `C` above some member of `P`.
 
 ## Main results
 
-* `Commitment.Space.root_update_mem_iff`, `Commitment.Space.coe_update_of_root_mem`: a space
-  admits an update iff its states above `k` have a least member, and the update is then the
-  restriction to the states above `k`.
-* `Commitment.Space.coe_update_sSup`: the update by a join is the conjunction of the updates.
-* `Commitment.Space.update_question_of_mem`: taking up one of the proposals of a question is the
-  act itself.
-* `Commitment.Space.sdiff_coe_denegate`, `Commitment.Space.coe_denegate_inter`: two denegations
-  cancel, and de Morgan's laws hold for them.
+* `Space.root_update_mem_iff`: the root of `C.update k` is a member of `C` if and only if the
+  members of `C` above `k` have a least element.
+* `Space.update_question_of_mem`: if `k ∈ P`, updating `C.question P` by `k` gives `C.update k`.
+* `Space.coe_update_sSup`: the update by the supremum of a nonempty set of states is the
+  intersection of the updates by its members, if the root of that update is a member of `C`.
+* `Space.coe_denegate_inter`, `Space.coe_denegate_union`: De Morgan's laws for denegation.
 
 ## Implementation notes
 
-* The operations are total. Restriction and denegation always keep the root, and the update roots
-  at the meet of the states above `k`, adjoining it when it is not one of them. The space admits
-  the update when that root is one of its states; this and non-redundancy, `¬ k ≤ C.root`, are
-  hypotheses of the theorems, not arguments of the operations.
-* The root of an update is `k ⊔ C.root` only when the space projects that state. After a question
-  it carries the proposal as well.
-* The root is a field; it is determined by the states, which makes `Space S` a `SetLike`.
+The operations are total. A restriction always keeps the root. An update takes as its root the
+infimum of the members above `k`, and adds that state when it is not already a member. That the
+new root is a member of the space is a hypothesis of the results that need it, not an argument of
+the update.
+
+The root is a field although the set of states determines it, which makes a space a `SetLike`.
 
 ## References
 

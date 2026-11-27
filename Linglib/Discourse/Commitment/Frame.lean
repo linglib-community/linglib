@@ -4,45 +4,52 @@ public import Linglib.Logic.Modal.Systems
 public import Linglib.Discourse.Commitment.Proposition
 
 /-!
-# Belief–commitment frames
+# Belief and commitment frames
 
-Van der Leer's frames are multi-relational Kripke frames with a belief accessibility `B_a` for
-each agent, which is KD45, and a commitment accessibility `O_{a,b}` for each ordered pair of
-agents, which is K45. Commitment is transitive and Euclidean but not serial, so that an agent may
-be committed to a contradiction. Belief `B_a π` and commitment `C_{a,b} π` are `ModalLogic.Box`
-along these relations, `C_{a,b} π` holds exactly on the commitment proposition
-`k ⊢[O] φ`, and the update of the thesis is the performative update
-`Commitment.perform`. What `a` is committed to towards `b` at a world is a commitment state of
-`Commitment.Basic`.
+A *belief–commitment frame* on a set of worlds has an accessibility relation for the beliefs of
+each agent `a` and an accessibility relation for the commitments of each agent `a` towards each
+agent `b`. Belief is serial, transitive and Euclidean. Commitment is transitive and Euclidean but
+need not be serial, so an agent can be committed to a contradiction.
+
+An agent `a` *believes* `π` at `w` when `π` holds at every world that is belief-accessible for `a`
+from `w`, and `a` is *committed* to `π` towards `b` at `w` when `π` holds at every world that is
+commitment-accessible for `a` towards `b` from `w`. The performative update of `a`'s commitment
+relation towards `b` by `π` keeps the pairs whose second world is in `π`.
+
+A frame is *sincere* when each agent's belief relation is contained in each of its commitment
+relations, so that an agent believes what it is committed to. A frame is *competent* when each
+agent's belief relation is contained in every other agent's, so that every agent believes what
+any agent believes.
 
 ## Main definitions
 
-* `Commitment.Frame W A`: the frame.
-* `Frame.Believes`, `Frame.Committed`: `B_a`, `C_{a,b}`.
-* `Frame.restrictCommitment`: the update `c⌈π⌉_{a,b}` (Definition 4), the performative update
-  of `O_{a,b}` by `π`.
-* `Frame.Sincere`, `Frame.Competent`: the frame conditions of Definition 5, after Asher and
-  Lascarides.
-* `Frame.toState`: the commitments towards `b` at `w`, as a commitment state keyed by agent.
+* `Frame W A`: a belief–commitment frame with worlds `W` and agents `A`.
+* `Frame.Believes c a π w`: `π` holds at every world belief-accessible for `a` from `w`.
+* `Frame.Committed c a b π w`: `π` holds at every world commitment-accessible for `a` towards `b`
+  from `w`.
+* `Frame.restrictCommitment c a b π`: the frame `c` after the performative update of `a`'s
+  commitment relation towards `b` by `π`.
+* `Frame.Sincere c`, `Frame.Competent c`: the two conditions relating belief and commitment.
+* `Frame.toState c b w`: the commitment state of what each agent is committed to towards `b` at
+  `w`.
 
 ## Main results
 
-* `Frame.committed_restrictCommitment`: the performative update, `c⌈π⌉_{a,b} ⊨ C_{a,b} π`.
-* `Frame.Sincere.believes_of_committed_of_competent`: Theorem 26, commitment passes to the
-  speaker's belief under Sincerity and on to the addressee's under Competence.
-* `Frame.sincere_restrictCommitment_iff`: the update keeps Sincerity iff the speaker already
-  believed `π` everywhere.
-* `Frame.competent_iff`: Competence holds iff all agents share one belief relation.
-* `Frame.commitmentSet_toState_restrictCommitment`: on commitment states the update is the
-  insertion of `a`'s commitment to `π`.
-* `Frame.sincere_iff_forall_sincere_toState`: Sincerity of a frame is `Commitment.State.Sincere` of
-  every projected commitment state, relative to belief.
+* `Frame.committed_restrictCommitment`: after the update by `π`, `a` is committed to `π` towards
+  `b` at every world.
+* `Frame.Sincere.believes_of_committed_of_competent`: in a sincere and competent frame, if `a` is
+  committed to `π` towards `b` then `b` believes `π`.
+* `Frame.sincere_restrictCommitment_iff`: the update of a sincere frame by `π` is sincere if and
+  only if `a` believes `π` at every world.
+* `Frame.competent_iff`: a frame is competent if and only if all agents have the same belief
+  relation.
+* `Frame.sincere_iff_forall_sincere_toState`: a frame is sincere if and only if each of its
+  commitment states is sincere with respect to belief.
 
 ## Implementation notes
 
-Propositions are world-sets, so the valuation of Definition 2 is absorbed into them and every
-proposition is `C_{a,b}`-free in the thesis's sense. Definition 2's non-empty set of worlds is a
-hypothesis of the theorems that need it.
+A proposition is a set of worlds, so a frame has no valuation. That the set of worlds is nonempty
+is a hypothesis of the results that need it and not a field.
 
 ## References
 

@@ -17,7 +17,7 @@ complement relates its denotation to the event by content instead. A verb of spe
 of events fixed by a meaning postulate over reenactments: an event is a saying exactly when every
 performance reenacting it produces linguistic material, so the extension of *say* is necessity
 along reenactment of that property, $\Box_{\mathrm{REENACT}}\,\mathrm{LINGMAT}$. A quotative
-report is then [consistent exactly when](##exists_report_iff) the performance has the verb's
+report is then consistent exactly when the performance has the verb's
 property: karate gestures under *say* and a whisper under *yell* are contradictions.
 
 Rising declaratives embed only as quotations, so their distribution under *ask* and *assert* shows
@@ -25,7 +25,7 @@ what their utterances do rather than what they denote. In Farkas and Bruce's Tab
 a sentence raises its denotation as an issue and, unless the tune is rising, commits the speaker to
 the denotation's informative content. An asking raises an issue without a commitment that resolves
 it, and an assertion commits the speaker to the single resolution of the issue it raises. A rising
-utterance is an asking and never an assertion [whatever it denotes](##report_rising_ask_assert),
+utterance is an asking and never an assertion whatever it denotes,
 so a quoted rising declarative is consistent under *ask* and contradictory under *assert* on the
 view that it denotes a proposition and on the view that it denotes a question alike.
 
@@ -40,7 +40,7 @@ view that it denotes a proposition and on the view that it denotes a question al
   interrogative as the polar question on it, with the radical a fixed contingent proposition.
 * The paper derives its three update tables, for falling and rising declaratives and rising polar
   interrogatives, from the update rule above, and here they are
-  [instances of the rule](##utter_ofSet_false). A state resolves an issue when it belongs to it,
+  instances of the rule. A state resolves an issue when it belongs to it,
   so the falling utterance of a denotation asks exactly when the denotation is inquisitive. That
   is not decidable, so the decision procedure for askings is classical in that case; the rows
   quote no falling utterance under *ask*.
