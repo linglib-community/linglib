@@ -34,6 +34,10 @@ series of marginal steps](##not_transGen_marginallyLT) reaches them from the not
 
 ## TODO
 
+* The paper's models are over a strict weak order, in which indiscernible elements need not be
+  equal, and its representation and uniqueness theorems are for those. They are proved here for
+  models over a linear order; the general statements follow by passing to the quotient by
+  indiscernibility, which is not carried out.
 * The arithmetical model `ℑ1` of §3.2 and the model `ℜ` with an initial block of §4.3 need a
   nonstandard model of arithmetic, which mathlib lacks.
 
@@ -75,6 +79,46 @@ theorem IsMLModel.l_iff {M L : α → α → Prop} (h : IsMLModel (· < ·) M L)
     L x y ↔ x < y ∧ ¬ M x y := by
   grind [h.r_of_l, h.not_l_of_m, h.m_or_l_of_r]
 
+-- a marginal scale satisfying ML theory is a model of the eleven axioms
+theorem _root_.MarginalScale.IsML.isMLModel (hml : ml.IsML) :
+    IsMLModel (· < ·) ml.MarginallyLT ml.LargelyLT where
+  isStrictWeakOrder :=
+    haveI : IsOrderConnected α (· < ·) :=
+      ⟨fun a b _ h ↦ (lt_or_ge a b).imp_right fun h' ↦ h'.trans_lt h⟩
+    isStrictWeakOrder_of_isOrderConnected
+  exists_l := hml.exists_largelyLT
+  r_of_m _ _ h := h.lt
+  r_of_l _ _ h := h.lt
+  m_trans _ _ _ := MarginallyLT.trans
+  not_l_of_m _ _ h := h.not_largelyLT
+  irrelevance _ _ z h := h.irrelevance z
+  l_of_r_of_l _ _ _ := LargelyLT.of_lt_of_largelyLT
+  l_of_l_of_r _ _ _ := LargelyLT.trans_lt
+  m_or_l_of_r _ _ := marginallyLT_or_largelyLT_of_lt
+  decomposition _ _ h :=
+    ⟨hml.exists_marginallyLT_largelyLT h, (hml.exists_largelyLT_marginallyLT h).imp fun _ ↦ .symm⟩
+  m_bounded _ _ _ := MarginallyLT.bounded
+
+/-- Over a linear order, the models of the eleven axioms are the marginal scales that satisfy ML
+theory, with their relations of being marginally and largely smaller. -/
+theorem isMLModel_iff {M L : α → α → Prop} : IsMLModel (· < ·) M L ↔
+    ∃ ml : MarginalScale α, ml.IsML ∧ ml.MarginallyLT = M ∧ ml.LargelyLT = L := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · have hL : ∀ x y, L x y ↔ x < y ∧ ¬ M x y := fun _ _ ↦ h.l_iff
+    have hirr : ∀ ⦃x y⦄ z, M x y →
+        (z < y ∧ ¬ M z y → z < x ∧ ¬ M z x) ∧ (x < z ∧ ¬ M x z → y < z ∧ ¬ M y z) :=
+      fun x y z hxy ↦ by simpa only [hL] using h.irrelevance z hxy
+    have hM : (ofMarginallyLT M h.r_of_m hirr).MarginallyLT = M :=
+      funext₂ fun _ _ ↦ propext (ofMarginallyLT_marginallyLT_iff ..)
+    have hLL : (ofMarginallyLT M h.r_of_m hirr).LargelyLT = L :=
+      funext₂ fun x y ↦ propext <| by rw [LargelyLT, hM, hL]
+    refine ⟨_, ⟨?_, ?_, ?_⟩, hM, hLL⟩
+    · rw [hLL]; exact h.exists_l
+    · rw [hLL, hM]; exact fun x y hxy ↦ (h.decomposition hxy).1
+    · rw [hLL, hM]; exact fun x y hxy ↦ (h.decomposition hxy).2.imp fun _ ↦ .symm
+  · rintro ⟨ml, hml, rfl, rfl⟩
+    exact hml.isMLModel
+
 /-- No conditionally complete linear order carries an ML scale (Theorem 2.12). The supremum of
 the degrees above `x` and largely below `y` would lie in the block of `y`, and a degree marginally
 below it would be a smaller upper bound. -/
@@ -109,7 +153,8 @@ example (ml : MarginalScale ℝ) : ¬ ml.IsML := not_isML ml
 open ArchimedeanClass Hyperreal
 
 -- Theorem 3.1: the model `ℑ2` is `Hyperreal.infinitesimalScale`.
-example : infinitesimalScale.IsML := isML_infinitesimalScale
+example : IsMLModel (· < ·) infinitesimalScale.MarginallyLT infinitesimalScale.LargelyLT :=
+  isML_infinitesimalScale.isMLModel
 
 example : infinitesimalScale.MarginallyLT 0 ε ∧ infinitesimalScale.LargelyLT 0 1 :=
   ⟨infinitesimalScale_marginallyLT_iff.2 ⟨epsilon_pos, by simp [archimedeanClassMk_epsilon_pos]⟩,
@@ -286,8 +331,8 @@ end Sorites
 
 /-! ### Itzhaki's nonstandard heuristics -/
 
-/-- Under Itzhaki's qualitative size, being a heap is the baldness of §5 on the finite scale (§6).
--/
+-- §6 reads Itzhaki's account with finite differences marginal and states it for *bald*; on his
+-- qualitative size of pluralities, being a heap is the baldness of §5 in that scale
 theorem heap_iff_bald {De : Type*} {heap known : De → Prop} [DecidablePred heap]
     [DecidablePred known] {size : De → ℕ} {H : ℝ*} (hH : mk H < 0) (hpos : 0 < H) {e x : De}
     (he : heap e) : heap x ↔ Bald finiteScale (Itzhaki2021.qualSize heap known size H e)
