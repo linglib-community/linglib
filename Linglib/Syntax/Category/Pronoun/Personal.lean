@@ -40,7 +40,6 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
   specific as `c`.
 * `PersonalPronoun.ofTable table f`: the pronoun of the form `f`, with the cases and the cells
   of every cell the table gives it.
-* `PersonalPronoun.toWord p`: the token of `p`, bearing the labels it agrees as.
 
 ## References
 
@@ -116,16 +115,5 @@ def ofTableAt [Fintype C] {κ : Type*} [DecidableEq κ] (key : C → κ) (k : κ
     ((Morphology.formCellsOf table f).filter (key · = k)) f
 
 end Table
-
-/-! ### The pronoun as a token -/
-
-/-- A personal pronoun's token bears the labels the pronoun agrees as, with its case, and is of
-UD pronoun type `Prs`. -/
-def toWord (p : PersonalPronoun) : Morphology.Word :=
-  { form := p.form, cat := .PRON,
-    features := .of (person := p.agreement.person) (clusivity := p.agreement.clusivity)
-      (number := p.agreement .number) (gender := p.agreement .gender) (case := p.case)
-      (pronType := some .Prs) }
-
 
 end PersonalPronoun

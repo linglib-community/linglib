@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Chomsky1981
 public import Linglib.Data.Examples.Readers
+public import Linglib.Morphology.Word.Agree
 public import Linglib.Syntax.Binding.Tree
 public import Linglib.Syntax.Projection.Tree
 public import Studies.Reinhart1976
@@ -11,10 +12,13 @@ public import Linglib.Languages.English.Determiners
 public import Linglib.Languages.English.Nouns
 public import Linglib.Languages.English.Pronouns
 public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.English.Word
 public import Linglib.Syntax.Binding.Word
 public import Linglib.Syntax.Category.Adposition.Word
+public import Linglib.Syntax.Category.Auxiliary.Word
 public import Linglib.Syntax.Category.Determiner.Word
 public import Linglib.Syntax.Category.Noun.Word
+public import Linglib.Syntax.Category.Pronoun.Word
 
 /-!
 # Chomsky (1981): the binding theory
@@ -248,8 +252,8 @@ abbrev story := Nouns.story.toWordSg
 abbrev a_ := Determiners.a.toWord
 abbrev the := Determiners.the.toWord
 abbrev of_ := Adpositions.of_.toWord
-abbrev about := Word.mk' "about" .ADP
-abbrev be := Word.mk' "be" .VERB
+abbrev about : Word := { form := "about", cat := .ADP }
+abbrev be : Word := { form := "be", cat := .VERB }
 abbrev past : Word := { form := "", cat := .AUX, features := Auxiliaries.finite .Past }
 abbrev to_ := Auxiliaries.toInf
 abbrev would := Auxiliaries.would.toWord

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Noun.Basic
-public import Linglib.Morphology.Word.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Languages.English.Inflection
 
 /-!
@@ -20,7 +20,6 @@ count noun is not, which Chierchia derives from the Nominal Mapping Parameter
 
 * `numberSystem`: the singular and the plural.
 * `Noun`: the entry, with `Noun.realize` giving its form at a number.
-* `Noun.toWordSg`, `Noun.toWord`: the entry as a `Word` token.
 * `nouns`: the common nouns entered here.
 
 ## Implementation notes
@@ -70,23 +69,6 @@ theorem Noun.realize_eq_none (n : Noun) {m : Number} (hm : m ∉ numberSystem) :
     n.realize m = none := by
   cases m <;> simp_all [numberSystem, Noun.realize]
 
-/-- The singular word token is a `NOUN`, masculine or feminine by the gender the entry restricts
-its referents to, where it does. -/
-def Noun.toWordSg (n : Noun) : Word :=
-  { form := n.form, cat := .NOUN
-    features := Features.of (number := some .singular)
-      (gender := n.referentGender.map ReferentGender.toUD) }
-
-/-- The entry as a word token at a number, where it has a form there. -/
-def Noun.toWord (n : Noun) (num : Number) : Option Word :=
-  (n.realize num).map fun form ↦
-    { n.toWordSg with
-      form
-      features := Features.of (number := some num)
-        (gender := n.referentGender.map ReferentGender.toUD) }
-
-theorem Noun.toWord_singular (n : Noun) : n.toWord .singular = some n.toWordSg := rfl
-
 /-! ### Count nouns -/
 
 def pizza : Noun := .common "pizza"
@@ -102,6 +84,7 @@ def squirrel : Noun := .common "squirrel"
 def kitchen : Noun := .common "kitchen"
 def story : Noun := .common "story"
 def picture : Noun := .common "picture"
+def letter : Noun := .common "letter"
 def lawyer : Noun := .common "lawyer"
 def student : Noun := .common "student"
 def teacher : Noun := .common "teacher"
@@ -144,10 +127,10 @@ def mold : Noun := .mass "mold"
 
 /-- The common nouns. -/
 def nouns : List Noun :=
-  [pizza, year, book, cat, dog, girl, boy, ball, table, squirrel, kitchen, story, picture, lawyer,
-    student, teacher, soldier, horse, brother, spy, idea, lot, bean, lentil, spider, pollenGrain,
-    father, mother, man, woman, fireman, person, child, water, sand, trash, furniture, rice, gold,
-    air, wine, coffee, beer, milk, tea, pollen, mold]
+  [pizza, year, book, cat, dog, girl, boy, ball, table, squirrel, kitchen, story, picture, letter,
+    lawyer, student, teacher, soldier, horse, brother, spy, idea, lot, bean, lentil, spider,
+    pollenGrain, father, mother, man, woman, fireman, person, child, water, sand, trash,
+    furniture, rice, gold, air, wine, coffee, beer, milk, tea, pollen, mold]
 
 /-! ### Proper names -/
 

@@ -5,7 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Morphology.Word.Agree
 public import Linglib.Syntax.Binding.Word
+public import Linglib.Syntax.Category.Pronoun.Word
 public import Linglib.Syntax.Category.Pronoun.Indefinite
 public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Category.Pronoun.Reciprocal

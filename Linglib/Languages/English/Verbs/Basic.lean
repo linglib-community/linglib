@@ -5,7 +5,7 @@ public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Data.VerbClasses.Levin1993.Index
 public import Linglib.Syntax.Clause.Complementation
-public import Linglib.Morphology.Word.Basic
+public import Linglib.Morphology.Word.Features
 public import Linglib.Languages.English.Inflection
 public import Linglib.Languages.English.Adpositions
 public import Linglib.Languages.English.Verbs.Infinitive
@@ -45,8 +45,7 @@ open ArgumentStructure Aspect Data.VerbClasses
 
 /-! ### Voice -/
 
-/-- The passive of a frame, marked by the auxiliary *be* with the past participle,
-`Verb.passiveParticiple`. -/
+/-- The passive of a frame, marked by the auxiliary *be* with the past participle. -/
 def passive (fr : ArgumentFrame := .np) : Voice := (Voice.passive fr).marked [.free "be"]
 
 /-! ### The entry type -/
@@ -439,7 +438,7 @@ def sweep_instr : Verb where
     [some wipeInstrument.subjectProfile, none, none]
   senseTag := .instrumental
 
-/-! ### Words -/
+/-! ### The features of a cell -/
 
 /-- The morphosyntactic features of an inflectional cell. -/
 def Verb.Cell.features : Verb.Cell → Features
@@ -450,15 +449,5 @@ def Verb.Cell.features : Verb.Cell → Features
   | .past => Features.of (verbForm := some .Fin) (voice := some .Act) (tense := some .Past)
   | .pastParticiple => Features.of (verbForm := some .Part)
   | .presentParticiple => Features.of (verbForm := some .Part)
-
-/-- The entry's form in a cell as a `Word`, with the cell's features. -/
-def Verb.toWord (v : Verb) (c : Verb.Cell) : Word :=
-  { form := v.realize c, cat := .VERB, features := c.features }
-
-/-- The past participle in passive voice, the same form as `toWord .pastParticiple` marked
-passive. -/
-def Verb.passiveParticiple (v : Verb) : Word :=
-  { form := v.realize .pastParticiple, cat := .VERB,
-    features := Features.of (verbForm := some .Part) (voice := some .Pass) }
 
 end English.Verbs

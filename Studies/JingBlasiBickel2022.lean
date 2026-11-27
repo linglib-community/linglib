@@ -4,6 +4,7 @@ public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Catena
 public import Linglib.Syntax.WordOrder.ArcLength
 public import Linglib.Syntax.DependencyGrammar.Stemma
+public import Linglib.Morphology.Word.Basic
 public import Mathlib.Data.Fin.Tuple.Sort
 public import Mathlib.MeasureTheory.Measure.WithDensity
 public import Mathlib.Probability.ConditionalProbability
@@ -280,13 +281,13 @@ instance (words : Fin n → Word) (G : Digraph (Fin n)) [DecidableRel G.Adj] :
   fun v w ↦ inferInstanceAs (Decidable (IsLexical (words v) ∧ IsLexical (words w) ∧ G.Adj v w))
 
 /-- Figure 1: *We certainly fit into certain parts of the article*. -/
-def fig1Stemma : Stemma UD.DepRel :=
-  node (.mk' "fit" .VERB)
-    [(.nsubj, leaf (.mk' "We" .PRON)), (.advmod, leaf (.mk' "certainly" .ADV))]
-    [(.obl, node (.mk' "parts" .NOUN)
-      [(.case, leaf (.mk' "into" .ADP)), (.amod, leaf (.mk' "certain" .ADJ))]
-      [(.nmod, node (.mk' "article" .NOUN)
-        [(.case, leaf (.mk' "of" .ADP)), (.det, leaf (.mk' "the" .DET))] [])])]
+def fig1Stemma : Stemma UD.DepRel Word :=
+  node ⟨"fit", .VERB, ⊥⟩
+    [(.nsubj, leaf ⟨"We", .PRON, ⊥⟩), (.advmod, leaf ⟨"certainly", .ADV, ⊥⟩)]
+    [(.obl, node ⟨"parts", .NOUN, ⊥⟩
+      [(.case, leaf ⟨"into", .ADP, ⊥⟩), (.amod, leaf ⟨"certain", .ADJ, ⊥⟩)]
+      [(.nmod, node ⟨"article", .NOUN, ⊥⟩
+        [(.case, leaf ⟨"of", .ADP, ⊥⟩), (.det, leaf ⟨"the", .DET, ⊥⟩)] [])])]
 
 /-- The dependency graph of Figure 1. -/
 abbrev fig1 : Digraph (Fin 9) := fig1Stemma.toGraph.unlabelled
@@ -320,8 +321,9 @@ theorem length_fig2a :
 /-! ### The four orders of a chain, (6) -/
 
 /-- The chain of (6): `A` heads `B`, which heads `C`. -/
-abbrev chain : Digraph (Fin 3) := DependencyGraph.unlabelled <| Stemma.toGraph (L := Unit) <|
-  node (.mk' "A" .X) [] [((), node (.mk' "B" .X) [] [((), leaf (.mk' "C" .X))])]
+abbrev chain : Digraph (Fin 3) :=
+  DependencyGraph.unlabelled <| Stemma.toGraph (L := Unit) (W := Unit) <|
+    node () [] [((), node () [] [((), leaf ())])]
 
 /-- (6c): the order `A C B`, initial over final; (6a) is the identity, (6b) its mirror image and
 (6d) the mirror image of (6c). -/
