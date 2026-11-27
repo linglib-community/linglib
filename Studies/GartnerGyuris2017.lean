@@ -419,10 +419,15 @@ structure Row where
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let construction ← (Examples.construction ex)
-  let reading ← ex.parse? "form"
-    [("PPQ", none), ("IN-NPQ", (some .negative)), ("ON-NPQ", (some .positive))]
+  let reading ← (Examples.form ex).map fun
+    | .positive => none
+    | .innerNegation => (some .negative)
+    | .outerNegation => (some .positive)
   let dimension ← (Examples.dimension ex)
-  let value ← ex.parse? "value" [("+", (1 : SignType)), ("-", -1), ("%", 0)]
+  let value ← (Examples.value ex).map fun
+    | .plus => (1 : SignType)
+    | .minus => -1
+    | .percent => 0
   pure ⟨construction, reading, dimension, value, ex.judgment⟩
 
 /-- The judged examples (1), (2a), (2b), (8), (9a), (9b). -/

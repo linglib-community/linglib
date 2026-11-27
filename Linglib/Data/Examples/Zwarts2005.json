@@ -1,159 +1,181 @@
-[
-  {
-    "id": "zwarts2005_1a",
-    "source": {"bibkey": "zwarts-2005", "paperLabel": "(1a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Alex swam for an hour",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["aspect", "atelic"]
-    ],
-    "comment": "The in-adverbial is out: a manner of motion verb alone is atelic.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zwarts2005_1b",
-    "source": {"bibkey": "zwarts-2005", "paperLabel": "(1b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Alex swam to the beach in an hour",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["aspect", "telic"],
-      ["preposition", "to"]
-    ],
-    "comment": "The for-adverbial is out: the goal phrase makes the sentence telic.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zwarts2005_1c",
-    "source": {"bibkey": "zwarts-2005", "paperLabel": "(1c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Alex swam towards the beach for an hour",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["aspect", "atelic"],
-      ["preposition", "towards"]
-    ],
-    "comment": "The in-adverbial is out: the comparative phrase leaves the sentence atelic.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zwarts2005_12a",
-    "source": {"bibkey": "zwarts-2005", "paperLabel": "(12a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Alex ran away from the accident",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["preposition", "away from"]
-    ],
-    "comment": "Can be telic although the phrase specifies no endpoint.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zwarts2005_23a",
-    "source": {"bibkey": "zwarts-2005", "paperLabel": "(23a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Alex ran to the house in a minute",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["aspect", "telic"],
-      ["preposition", "to"]
-    ],
-    "comment": "Bounded but not quantized: a path to the house has proper subpaths to the house.",
-    "verified": "page-image"
-  },
-  {
-    "id": "zwarts2005_23b",
-    "source": {"bibkey": "zwarts-2005", "paperLabel": "(23b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Alex walked over the bridge in two minutes",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["aspect", "telic"],
-      ["preposition", "over"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zwarts2005_23c",
-    "source": {"bibkey": "zwarts-2005", "paperLabel": "(23c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Alex crawled out of the room in three minutes",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["aspect", "telic"],
-      ["preposition", "out of"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "zwarts2005_30a",
-    "source": {"bibkey": "zwarts-2005", "paperLabel": "(30a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Alex walk to the capitol",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["preposition", "to"]
-    ],
-    "comment": "The verb phrase whose weak goal denotation (30c) is cumulative.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "aspect",
+      "lean": "aspect",
+      "type": "Aspect",
+      "doc": "The aspect the temporal adverbial diagnoses.",
+      "levels": [
+        {
+          "name": "telic",
+          "label": "telic",
+          "doc": "telic, with an *in*-adverbial"
+        },
+        {
+          "name": "atelic",
+          "label": "atelic",
+          "doc": "atelic, with a *for*-adverbial"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "zwarts2005_1a",
+      "source": {"bibkey": "zwarts-2005", "paperLabel": "(1a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Alex swam for an hour",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["aspect", "atelic"]
+      ],
+      "comment": "The in-adverbial is out: a manner of motion verb alone is atelic.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zwarts2005_1b",
+      "source": {"bibkey": "zwarts-2005", "paperLabel": "(1b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Alex swam to the beach in an hour",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["aspect", "telic"],
+        ["preposition", "to"]
+      ],
+      "comment": "The for-adverbial is out: the goal phrase makes the sentence telic.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zwarts2005_1c",
+      "source": {"bibkey": "zwarts-2005", "paperLabel": "(1c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Alex swam towards the beach for an hour",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["aspect", "atelic"],
+        ["preposition", "towards"]
+      ],
+      "comment": "The in-adverbial is out: the comparative phrase leaves the sentence atelic.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zwarts2005_12a",
+      "source": {"bibkey": "zwarts-2005", "paperLabel": "(12a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Alex ran away from the accident",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["preposition", "away from"]
+      ],
+      "comment": "Can be telic although the phrase specifies no endpoint.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zwarts2005_23a",
+      "source": {"bibkey": "zwarts-2005", "paperLabel": "(23a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Alex ran to the house in a minute",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["aspect", "telic"],
+        ["preposition", "to"]
+      ],
+      "comment": "Bounded but not quantized: a path to the house has proper subpaths to the house.",
+      "verified": "page-image"
+    },
+    {
+      "id": "zwarts2005_23b",
+      "source": {"bibkey": "zwarts-2005", "paperLabel": "(23b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Alex walked over the bridge in two minutes",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["aspect", "telic"],
+        ["preposition", "over"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zwarts2005_23c",
+      "source": {"bibkey": "zwarts-2005", "paperLabel": "(23c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Alex crawled out of the room in three minutes",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["aspect", "telic"],
+        ["preposition", "out of"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "zwarts2005_30a",
+      "source": {"bibkey": "zwarts-2005", "paperLabel": "(30a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Alex walk to the capitol",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["preposition", "to"]
+      ],
+      "comment": "The verb phrase whose weak goal denotation (30c) is cumulative.",
+      "verified": "page-image"
+    }
+  ]
+}

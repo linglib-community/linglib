@@ -336,8 +336,12 @@ instance (c : Dynamicity) (t : Tense) : Decidable (Available c t) :=
 
 /-- A row's Aktionsart and the temporal reference its adverbial fixes. -/
 def reading (e : Datum) : Option (Dynamicity × Tense) := do
-  let c ← e.parse? "aktionsart" [("eventive", .dynamic), ("stative", .stative)]
-  let t ← e.parse? "adverbial" [("now", .present), ("tomorrow", .future)]
+  let c ← (Examples.aktionsart e).map fun
+    | .eventive => .dynamic
+    | .stative => .stative
+  let t ← (Examples.adverbial e).map fun
+    | .now => .present
+    | .tomorrow => .future
   pure (c, t)
 
 /-- The Aktionsart of a bare verb in *-nA* predicts its readings: the eventives of (7) are out

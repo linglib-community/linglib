@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Glass2025` — typed example data
@@ -143,5 +145,19 @@ def ex_7 : Datum :=
     paperFeatures := [("verb", "yiwei"), ("state", "unsettled")] }
 
 def all : List Datum := [ex_1a, ex_2a_p, ex_2a_unsettled, ex_2a_notP, ex_4_notP, ex_4_p, ex_5_notP, ex_5_unsettled, ex_7]
+
+/-- What the context settles about the complement. -/
+inductive State where
+  /-- p: the complement is settled true -/
+  | p
+  /-- unsettled: the complement is not settled -/
+  | unsettled
+  /-- notP: the complement is settled false -/
+  | notP
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `state`. -/
+def state (e : Datum) : Option State :=
+  e.parse? "state" [("p", .p), ("unsettled", .unsettled), ("notP", .notP)]
 
 end Glass2025.Examples

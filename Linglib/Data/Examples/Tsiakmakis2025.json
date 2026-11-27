@@ -1,589 +1,694 @@
-[
-  {
-    "id": "tsiakmakis2025_6",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(6)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Dhen vrexi sti Lisavona.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "It is not raining in Lisbon.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "dhen"],
-      ["use", "negative"],
-      ["mood", "indicative"]
-    ],
-    "comment": "NEG1 rains at.the Lisbon: the indicative negator as standard negation, (7).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_8",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(8)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Min pas sti Lisavona.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Don't go to Lisbon.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "min"],
-      ["use", "negative"],
-      ["host", "imperative"]
-    ],
-    "comment": "NEG2 you.go at.the Lisbon: negative *min* under the directive operator expresses a preference for worlds where the addressee does not go, (13).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_14",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(14)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Posus anthropus dhen kseyelase sta niata tu!",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "How many people he cheated in his youth!",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "dhen"],
-      ["use", "expletive"],
-      ["host", "negative exclamative"],
-      ["class", "apparent"]
-    ],
-    "comment": "how.many men NEG1 cheated in.the youth his; from Espinal (1997). The paper treats negative exclamatives as rhetorical questions uttered with surprise, since they reject the exclamative complementizer *pu*, (23), and receive a quantity rather than a degree reading, (24).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_15",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(15)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Dhen ipie o Yanis kafe?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Didn't Yanis drink coffee?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "dhen"],
-      ["use", "expletive"],
-      ["host", "preposed negation question"],
-      ["class", "apparent"]
-    ],
-    "comment": "NEG1 drank the Yanis coffee; from [romero-han-2004]. The paper collapses preposed and non-preposed negation questions, since pro-drop makes them string-identical, (32), the form appears in alternative questions, (33), and *dhen* licenses *akoma* 'yet' and *again*-modification, (34)–(35).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_16",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(16)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Sto kato kato, dhen ine xrisimi ke i vroxi?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "After all, isn't rain useful?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "dhen"],
-      ["use", "expletive"],
-      ["host", "rhetorical question"],
-      ["class", "apparent"]
-    ],
-    "comment": "at.the down down NEG1 is useful and the rain: under the rhetorical reading the speaker asserts that rain is useful.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_28",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(28)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Q: Pxios dhen efaye to fayito tu? A: Se pxion dhen aresun ta yuvarlakia?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Q: Who didn't eat their food? A: Who doesn't like meatball soup?",
-    "context": "It is shared knowledge that dad does not like meatball soup.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "dhen"],
-      ["use", "negative"],
-      ["host", "rhetorical question"]
-    ],
-    "comment": "A rhetorical question in which *dhen* is interpreted canonically: rhetoricity does not always reverse polarity, and positive rhetorical questions reverse it without any negator, (29), so the non-negative reading is an epiphenomenon of rhetoricity, (30).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_38",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(38)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Fovame min efaye ta yuvarlakia o babas.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I fear dad maybe ate the meatball soup.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "min"],
-      ["use", "expletive"],
-      ["host", "fear-predicate complement"],
-      ["class", "proper"]
-    ],
-    "comment": "I.fear NEG2 ate the meatball.soup the dad: expletive *min* is a biased epistemic modal, (43), incompatible with *isos* 'maybe', (42), and merged in the left periphery, since an unmarked subject cannot precede it, (44).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_39",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(39)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Fovame min dhen efaye ta yuvarlakia o babas.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I fear dad maybe didn't eat the meatball soup.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "min dhen"],
-      ["use", "expletive with canonical negation"],
-      ["host", "fear-predicate complement"],
-      ["class", "proper"]
-    ],
-    "comment": "Expletive *min* co-occurs with canonical *dhen*, and the fear is about the negative alternative.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_40",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(40)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Fovame min efaye TIPOTA o babas.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I fear dad maybe ate nothing.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "min"],
-      ["use", "expletive"],
-      ["host", "fear-predicate complement"],
-      ["diagnostic", "NCI licensing"]
-    ],
-    "comment": "Expletive *min* cannot license the negative concord item *tipota*; adding *dhen* licenses it, (41).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_44a",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(44a)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Fovame o babas min efaye yuvarlakia.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I fear dad maybe ate meatball soup.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "min"],
-      ["use", "expletive"],
-      ["host", "fear-predicate complement"],
-      ["diagnostic", "left-periphery merge"]
-    ],
-    "comment": "An informationally unmarked subject cannot precede expletive *min*, which is merged outside the TP.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_45",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(45)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Min ksexaso kati, amesos na koroidepsis.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "If I forget something, you will immediately mock me.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "min"],
-      ["use", "expletive"],
-      ["host", "conditional"],
-      ["class", "proper"]
-    ],
-    "comment": "NEG2 I.forget something immediately SUBJ you.mock: conditional *min* fails to license *tipota*, (46), co-occurs with *dhen*, (47), and is felicitous only for what has happened before, (49), a bias for p-worlds, (50).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_49b",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(49b)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "An akusis kutsobolio, amesos tha erthis.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "If you hear about some gossip, you will immediately run.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["host", "conditional"],
-      ["conjunction", "an"]
-    ],
-    "comment": "The *min*-free conditional is unmarked, whereas the variant with *min*, (49a), describes something repetitive, a habit or a norm.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_51a",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(51a)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Min efaye ta yuvarlakia o babas?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Did dad maybe eat the meatball soup?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "min"],
-      ["use", "expletive"],
-      ["host", "polar question"],
-      ["class", "proper"]
-    ],
-    "comment": "Question *min* encodes positive speaker bias, (56), where the *min*-free question, (55b), is attributed to an ignorant speaker; unlike English preposed negation questions, *min*-questions embed, (51b) against (57b).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_53a",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(53a)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Min dhen efaye ta yuvarlakia o babas?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Did dad maybe not eat the meatball soup?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "min dhen"],
-      ["use", "expletive with canonical negation"],
-      ["host", "polar question"],
-      ["class", "proper"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_59",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(59)"},
-    "reportedIn": null,
-    "language": "stan1290",
-    "primaryText": "J'ai peur que vous ne vous fassiez piquer par une méduse.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I fear you might get stung by a jellyfish.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "ne"],
-      ["use", "expletive"],
-      ["host", "fear-predicate complement"],
-      ["class", "proper"]
-    ],
-    "comment": "From [tahar-2021]: fear-predicate *ne* expresses dispreference, a deontic modal ranking p-worlds, (60).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_61",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(61)"},
-    "reportedIn": null,
-    "language": "hebr1245",
-    "primaryText": "paxadeti še-lo lo yiša'er klum.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I was scared that there would be nothing left.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "lo"],
-      ["use", "expletive with canonical negation"],
-      ["host", "fear-predicate complement"],
-      ["class", "proper"]
-    ],
-    "comment": "I.feared that-NEG NEG remain nothing: the expletive marker attaches to the complementizer, above the canonical *lo*. From Francez (to appear: 23, ex. (41)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_62",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(62)"},
-    "reportedIn": null,
-    "language": "oldf1239",
-    "primaryText": "Mais tul defent ne seit gabeth Quant dit que set e fait que peot.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "But you forbid him from being humiliated, he who says what he knows and does what he can.",
-    "context": "Benedeit, Le voyage de Saint Brendan, 1121.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "ne"],
-      ["use", "expletive"],
-      ["host", "negative predicate"],
-      ["class", "proper"]
-    ],
-    "comment": "Under *defent* 'forbid' the subject stops the humiliation: negative predicates share the doxastic component of emotive doxastics, (63). Adapted from Tahar (2022: 45, ex. (34)). The paper prints the title as Le voyage de Saint Bredan.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_65",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(65)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "¿Hay quien dude que no son falsas las tales historias?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Does anybody doubt the falsehood of such stories?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "no"],
-      ["use", "expletive"],
-      ["host", "dubitative predicate"],
-      ["class", "proper"]
-    ],
-    "comment": "From Espinal (2000): *no* under *dudar* 'doubt' is non-negative; dubitatives involve a doxastic component, (66).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_67",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(67)"},
-    "reportedIn": null,
-    "language": "anci1242",
-    "primaryText": "apisteis me: ouk episte:me: e:i he: arete:",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "You doubt that virtue is knowledge.",
-    "context": "Plato, Meno, 89d.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "me: ouk"],
-      ["use", "expletive with canonical negation"],
-      ["host", "dubitative predicate"],
-      ["class", "proper"]
-    ],
-    "comment": "you.doubt NEG2 NEG1 knowledge is.SUBJ the virtue: expletive *me:*, the ancestor of *min*, above canonical *ou(k)*.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_69a",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(69a)"},
-    "reportedIn": null,
-    "language": "ital1282",
-    "primaryText": "Resto qui finché non parli.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I stay here until you talk.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "non"],
-      ["use", "negative"],
-      ["host", "temporal expression"],
-      ["class", "apparent"]
-    ],
-    "comment": "From [tovena-1996]: with the activity *parlare* the negation is visible, my staying ending when your not-speaking ends, while (69b) without *non* means 'while you talk'; with an achievement, (68), the two coincide and *non* looks expletive.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_71",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(71)"},
-    "reportedIn": null,
-    "language": "stan1290",
-    "primaryText": "Je l'ai fait sans qu'il ne me voie.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I did it without him seeing me.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "ne"],
-      ["use", "expletive"],
-      ["host", "negative adverbial"],
-      ["class", "apparent"]
-    ],
-    "comment": "Proposed to be NEG1 in a negative concord relation with *sans*, (73), since Jamaican *widoutn*, (72), carries no dispreference and *without*-words have no modal component. From Makri (2013: 17, ex. (26)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_75",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(75)"},
-    "reportedIn": null,
-    "language": "ital1282",
-    "primaryText": "Me ne andrò a meno che tu non mangi.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I will go away unless you eat.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "non"],
-      ["use", "expletive"],
-      ["host", "unless-conditional"],
-      ["class", "apparent"]
-    ],
-    "comment": "From Greco (2019: 5, ex. (6)): with *se* 'if' in place of *a meno che*, *non* is standard negation, (76), so the licensor is the negative component of UNLESS, a negative adverbial.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_77",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(77)"},
-    "reportedIn": null,
-    "language": "ital1282",
-    "primaryText": "Gianni è più alto di quanto non sia Pietro.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Gianni is taller than Peter.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "non"],
-      ["use", "expletive"],
-      ["host", "comparative"],
-      ["class", "apparent"]
-    ],
-    "comment": "Equivalent to the *non*-free (77′); *non* is the optional spell-out of the negation in the comparative operator, (78), and the epistemic effect comes from the subjunctive.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_84",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(84)"},
-    "reportedIn": null,
-    "language": "lati1261",
-    "primaryText": "non -ne animadvertis?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Don't you observe?",
-    "context": "Cicero, De Natura Deorum, 3,89.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "non -ne"],
-      ["use", "expletive with canonical negation"],
-      ["host", "polar question"],
-      ["class", "proper"]
-    ],
-    "comment": "NEG1 NEG2 you.observe: the interrogative particle *-ne* co-occurs with canonical *non*, like Greek *min dhen*.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_87",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(87)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "A: Can I trust you? B: Have I ever hurt your feelings?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["host", "rhetorical question"],
-      ["polarity", "positive"]
-    ],
-    "comment": "A positive rhetorical question conveying the negative assertion: polarity reversal without any negator, so rhetorical questions host NEG1 masked by rhetoricity, (88).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_90",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(90)"},
-    "reportedIn": null,
-    "language": "ital1282",
-    "primaryText": "Che cosa non ha fatto Gianni!",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The things Gianni did!",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "non"],
-      ["use", "expletive"],
-      ["host", "negative exclamative"],
-      ["class", "apparent"]
-    ],
-    "comment": "A quantity reading, as in Greek, (24b), and Hebrew, (89). From Delfitto and Fiorin (2014: 284, ex. (1)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tsiakmakis2025_92b",
-    "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(92b)"},
-    "reportedIn": null,
-    "language": "hebr1245",
-    "primaryText": "ma še-dani lo katav hitparsem ba-iton.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Whatever Dani wrote was published in the newspaper.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["negator", "lo"],
-      ["use", "expletive"],
-      ["host", "free relative"],
-      ["class", "proper, tentative"]
-    ],
-    "comment": "what that-Dani NEG wrote was.published in.the.newspaper: *lo* contributes ignorance or indifference like *-ever*; the alternatives differ in the value of the wh-word and are unranked, so free relatives are not a canonical host. From Eilam (2007: 1, ex. (1)).",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "host",
+      "lean": "host",
+      "type": "Host",
+      "doc": "The environment hosting the negation.",
+      "levels": [
+        {
+          "name": "imperative",
+          "label": "imperative",
+          "doc": "an imperative"
+        },
+        {
+          "name": "negativeExclamative",
+          "label": "negative exclamative",
+          "doc": "a negative exclamative"
+        },
+        {
+          "name": "preposedNegationQuestion",
+          "label": "preposed negation question",
+          "doc": "a question with preposed negation"
+        },
+        {
+          "name": "rhetoricalQuestion",
+          "label": "rhetorical question",
+          "doc": "a rhetorical question"
+        },
+        {
+          "name": "fearPredicateComplement",
+          "label": "fear-predicate complement",
+          "doc": "the complement of a predicate of fearing"
+        },
+        {
+          "name": "conditional",
+          "label": "conditional",
+          "doc": "a conditional"
+        },
+        {
+          "name": "polarQuestion",
+          "label": "polar question",
+          "doc": "a polar question"
+        },
+        {
+          "name": "negativePredicate",
+          "label": "negative predicate",
+          "doc": "the complement of a negative predicate"
+        },
+        {
+          "name": "dubitativePredicate",
+          "label": "dubitative predicate",
+          "doc": "the complement of a predicate of doubt"
+        },
+        {
+          "name": "temporalExpression",
+          "label": "temporal expression",
+          "doc": "a temporal clause"
+        },
+        {
+          "name": "negativeAdverbial",
+          "label": "negative adverbial",
+          "doc": "a negative adverbial clause"
+        },
+        {
+          "name": "unlessConditional",
+          "label": "unless-conditional",
+          "doc": "an *unless* conditional"
+        },
+        {
+          "name": "comparative",
+          "label": "comparative",
+          "doc": "a comparative clause"
+        },
+        {
+          "name": "freeRelative",
+          "label": "free relative",
+          "doc": "a free relative"
+        }
+      ]
+    },
+    {
+      "key": "use",
+      "lean": "use",
+      "type": "Use",
+      "doc": "The use of the negation.",
+      "levels": [
+        {
+          "name": "negative",
+          "label": "negative",
+          "doc": "canonical negation"
+        },
+        {
+          "name": "expletive",
+          "label": "expletive",
+          "doc": "expletive negation"
+        },
+        {
+          "name": "expletiveWithCanonical",
+          "label": "expletive with canonical negation",
+          "doc": "expletive negation beside canonical negation"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "tsiakmakis2025_6",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(6)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Dhen vrexi sti Lisavona.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "It is not raining in Lisbon.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "dhen"],
+        ["use", "negative"],
+        ["mood", "indicative"]
+      ],
+      "comment": "NEG1 rains at.the Lisbon: the indicative negator as standard negation, (7).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_8",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(8)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Min pas sti Lisavona.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Don't go to Lisbon.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "min"],
+        ["use", "negative"],
+        ["host", "imperative"]
+      ],
+      "comment": "NEG2 you.go at.the Lisbon: negative *min* under the directive operator expresses a preference for worlds where the addressee does not go, (13).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_14",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(14)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Posus anthropus dhen kseyelase sta niata tu!",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "How many people he cheated in his youth!",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "dhen"],
+        ["use", "expletive"],
+        ["host", "negative exclamative"],
+        ["class", "apparent"]
+      ],
+      "comment": "how.many men NEG1 cheated in.the youth his; from Espinal (1997). The paper treats negative exclamatives as rhetorical questions uttered with surprise, since they reject the exclamative complementizer *pu*, (23), and receive a quantity rather than a degree reading, (24).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_15",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(15)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Dhen ipie o Yanis kafe?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Didn't Yanis drink coffee?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "dhen"],
+        ["use", "expletive"],
+        ["host", "preposed negation question"],
+        ["class", "apparent"]
+      ],
+      "comment": "NEG1 drank the Yanis coffee; from [romero-han-2004]. The paper collapses preposed and non-preposed negation questions, since pro-drop makes them string-identical, (32), the form appears in alternative questions, (33), and *dhen* licenses *akoma* 'yet' and *again*-modification, (34)–(35).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_16",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(16)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Sto kato kato, dhen ine xrisimi ke i vroxi?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "After all, isn't rain useful?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "dhen"],
+        ["use", "expletive"],
+        ["host", "rhetorical question"],
+        ["class", "apparent"]
+      ],
+      "comment": "at.the down down NEG1 is useful and the rain: under the rhetorical reading the speaker asserts that rain is useful.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_28",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(28)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Q: Pxios dhen efaye to fayito tu? A: Se pxion dhen aresun ta yuvarlakia?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Q: Who didn't eat their food? A: Who doesn't like meatball soup?",
+      "context": "It is shared knowledge that dad does not like meatball soup.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "dhen"],
+        ["use", "negative"],
+        ["host", "rhetorical question"]
+      ],
+      "comment": "A rhetorical question in which *dhen* is interpreted canonically: rhetoricity does not always reverse polarity, and positive rhetorical questions reverse it without any negator, (29), so the non-negative reading is an epiphenomenon of rhetoricity, (30).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_38",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(38)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Fovame min efaye ta yuvarlakia o babas.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "I fear dad maybe ate the meatball soup.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "min"],
+        ["use", "expletive"],
+        ["host", "fear-predicate complement"],
+        ["class", "proper"]
+      ],
+      "comment": "I.fear NEG2 ate the meatball.soup the dad: expletive *min* is a biased epistemic modal, (43), incompatible with *isos* 'maybe', (42), and merged in the left periphery, since an unmarked subject cannot precede it, (44).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_39",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(39)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Fovame min dhen efaye ta yuvarlakia o babas.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "I fear dad maybe didn't eat the meatball soup.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "min dhen"],
+        ["use", "expletive with canonical negation"],
+        ["host", "fear-predicate complement"],
+        ["class", "proper"]
+      ],
+      "comment": "Expletive *min* co-occurs with canonical *dhen*, and the fear is about the negative alternative.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_40",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(40)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Fovame min efaye TIPOTA o babas.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "I fear dad maybe ate nothing.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "min"],
+        ["use", "expletive"],
+        ["host", "fear-predicate complement"],
+        ["diagnostic", "NCI licensing"]
+      ],
+      "comment": "Expletive *min* cannot license the negative concord item *tipota*; adding *dhen* licenses it, (41).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_44a",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(44a)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Fovame o babas min efaye yuvarlakia.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "I fear dad maybe ate meatball soup.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "min"],
+        ["use", "expletive"],
+        ["host", "fear-predicate complement"],
+        ["diagnostic", "left-periphery merge"]
+      ],
+      "comment": "An informationally unmarked subject cannot precede expletive *min*, which is merged outside the TP.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_45",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(45)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Min ksexaso kati, amesos na koroidepsis.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "If I forget something, you will immediately mock me.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "min"],
+        ["use", "expletive"],
+        ["host", "conditional"],
+        ["class", "proper"]
+      ],
+      "comment": "NEG2 I.forget something immediately SUBJ you.mock: conditional *min* fails to license *tipota*, (46), co-occurs with *dhen*, (47), and is felicitous only for what has happened before, (49), a bias for p-worlds, (50).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_49b",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(49b)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "An akusis kutsobolio, amesos tha erthis.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "If you hear about some gossip, you will immediately run.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["host", "conditional"],
+        ["conjunction", "an"]
+      ],
+      "comment": "The *min*-free conditional is unmarked, whereas the variant with *min*, (49a), describes something repetitive, a habit or a norm.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_51a",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(51a)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Min efaye ta yuvarlakia o babas?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Did dad maybe eat the meatball soup?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "min"],
+        ["use", "expletive"],
+        ["host", "polar question"],
+        ["class", "proper"]
+      ],
+      "comment": "Question *min* encodes positive speaker bias, (56), where the *min*-free question, (55b), is attributed to an ignorant speaker; unlike English preposed negation questions, *min*-questions embed, (51b) against (57b).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_53a",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(53a)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Min dhen efaye ta yuvarlakia o babas?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Did dad maybe not eat the meatball soup?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "min dhen"],
+        ["use", "expletive with canonical negation"],
+        ["host", "polar question"],
+        ["class", "proper"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_59",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(59)"},
+      "reportedIn": null,
+      "language": "stan1290",
+      "primaryText": "J'ai peur que vous ne vous fassiez piquer par une méduse.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "I fear you might get stung by a jellyfish.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "ne"],
+        ["use", "expletive"],
+        ["host", "fear-predicate complement"],
+        ["class", "proper"]
+      ],
+      "comment": "From [tahar-2021]: fear-predicate *ne* expresses dispreference, a deontic modal ranking p-worlds, (60).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_61",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(61)"},
+      "reportedIn": null,
+      "language": "hebr1245",
+      "primaryText": "paxadeti še-lo lo yiša'er klum.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "I was scared that there would be nothing left.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "lo"],
+        ["use", "expletive with canonical negation"],
+        ["host", "fear-predicate complement"],
+        ["class", "proper"]
+      ],
+      "comment": "I.feared that-NEG NEG remain nothing: the expletive marker attaches to the complementizer, above the canonical *lo*. From Francez (to appear: 23, ex. (41)).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_62",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(62)"},
+      "reportedIn": null,
+      "language": "oldf1239",
+      "primaryText": "Mais tul defent ne seit gabeth Quant dit que set e fait que peot.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "But you forbid him from being humiliated, he who says what he knows and does what he can.",
+      "context": "Benedeit, Le voyage de Saint Brendan, 1121.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "ne"],
+        ["use", "expletive"],
+        ["host", "negative predicate"],
+        ["class", "proper"]
+      ],
+      "comment": "Under *defent* 'forbid' the subject stops the humiliation: negative predicates share the doxastic component of emotive doxastics, (63). Adapted from Tahar (2022: 45, ex. (34)). The paper prints the title as Le voyage de Saint Bredan.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_65",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(65)"},
+      "reportedIn": null,
+      "language": "stan1288",
+      "primaryText": "¿Hay quien dude que no son falsas las tales historias?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Does anybody doubt the falsehood of such stories?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "no"],
+        ["use", "expletive"],
+        ["host", "dubitative predicate"],
+        ["class", "proper"]
+      ],
+      "comment": "From Espinal (2000): *no* under *dudar* 'doubt' is non-negative; dubitatives involve a doxastic component, (66).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_67",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(67)"},
+      "reportedIn": null,
+      "language": "anci1242",
+      "primaryText": "apisteis me: ouk episte:me: e:i he: arete:",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "You doubt that virtue is knowledge.",
+      "context": "Plato, Meno, 89d.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "me: ouk"],
+        ["use", "expletive with canonical negation"],
+        ["host", "dubitative predicate"],
+        ["class", "proper"]
+      ],
+      "comment": "you.doubt NEG2 NEG1 knowledge is.SUBJ the virtue: expletive *me:*, the ancestor of *min*, above canonical *ou(k)*.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_69a",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(69a)"},
+      "reportedIn": null,
+      "language": "ital1282",
+      "primaryText": "Resto qui finché non parli.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "I stay here until you talk.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "non"],
+        ["use", "negative"],
+        ["host", "temporal expression"],
+        ["class", "apparent"]
+      ],
+      "comment": "From [tovena-1996]: with the activity *parlare* the negation is visible, my staying ending when your not-speaking ends, while (69b) without *non* means 'while you talk'; with an achievement, (68), the two coincide and *non* looks expletive.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_71",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(71)"},
+      "reportedIn": null,
+      "language": "stan1290",
+      "primaryText": "Je l'ai fait sans qu'il ne me voie.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "I did it without him seeing me.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "ne"],
+        ["use", "expletive"],
+        ["host", "negative adverbial"],
+        ["class", "apparent"]
+      ],
+      "comment": "Proposed to be NEG1 in a negative concord relation with *sans*, (73), since Jamaican *widoutn*, (72), carries no dispreference and *without*-words have no modal component. From Makri (2013: 17, ex. (26)).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_75",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(75)"},
+      "reportedIn": null,
+      "language": "ital1282",
+      "primaryText": "Me ne andrò a meno che tu non mangi.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "I will go away unless you eat.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "non"],
+        ["use", "expletive"],
+        ["host", "unless-conditional"],
+        ["class", "apparent"]
+      ],
+      "comment": "From Greco (2019: 5, ex. (6)): with *se* 'if' in place of *a meno che*, *non* is standard negation, (76), so the licensor is the negative component of UNLESS, a negative adverbial.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_77",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(77)"},
+      "reportedIn": null,
+      "language": "ital1282",
+      "primaryText": "Gianni è più alto di quanto non sia Pietro.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Gianni is taller than Peter.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "non"],
+        ["use", "expletive"],
+        ["host", "comparative"],
+        ["class", "apparent"]
+      ],
+      "comment": "Equivalent to the *non*-free (77′); *non* is the optional spell-out of the negation in the comparative operator, (78), and the epistemic effect comes from the subjunctive.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_84",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(84)"},
+      "reportedIn": null,
+      "language": "lati1261",
+      "primaryText": "non -ne animadvertis?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Don't you observe?",
+      "context": "Cicero, De Natura Deorum, 3,89.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "non -ne"],
+        ["use", "expletive with canonical negation"],
+        ["host", "polar question"],
+        ["class", "proper"]
+      ],
+      "comment": "NEG1 NEG2 you.observe: the interrogative particle *-ne* co-occurs with canonical *non*, like Greek *min dhen*.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_87",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(87)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "A: Can I trust you? B: Have I ever hurt your feelings?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["host", "rhetorical question"],
+        ["polarity", "positive"]
+      ],
+      "comment": "A positive rhetorical question conveying the negative assertion: polarity reversal without any negator, so rhetorical questions host NEG1 masked by rhetoricity, (88).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_90",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(90)"},
+      "reportedIn": null,
+      "language": "ital1282",
+      "primaryText": "Che cosa non ha fatto Gianni!",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "The things Gianni did!",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "non"],
+        ["use", "expletive"],
+        ["host", "negative exclamative"],
+        ["class", "apparent"]
+      ],
+      "comment": "A quantity reading, as in Greek, (24b), and Hebrew, (89). From Delfitto and Fiorin (2014: 284, ex. (1)).",
+      "verified": "page-image"
+    },
+    {
+      "id": "tsiakmakis2025_92b",
+      "source": {"bibkey": "tsiakmakis-2025", "paperLabel": "(92b)"},
+      "reportedIn": null,
+      "language": "hebr1245",
+      "primaryText": "ma še-dani lo katav hitparsem ba-iton.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Whatever Dani wrote was published in the newspaper.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["negator", "lo"],
+        ["use", "expletive"],
+        ["host", "free relative"],
+        ["class", "proper, tentative"]
+      ],
+      "comment": "what that-Dani NEG wrote was.published in.the.newspaper: *lo* contributes ignorance or indifference like *-ever*; the alternatives differ in the value of the wh-word and are unranked, so free relatives are not a canonical host. From Eilam (2007: 1, ex. (1)).",
+      "verified": "page-image"
+    }
+  ]
+}

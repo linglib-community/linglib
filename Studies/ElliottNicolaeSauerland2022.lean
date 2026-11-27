@@ -903,8 +903,12 @@ end StrongSingular
 /-- A row's phrase, by its type, where the paper judges its singular and plural answers. English
 *who* patterns with *quién*. -/
 def answers? (e : Datum) : Option Item :=
-  (e.parse? "type" [("SCI", Item.queSg), ("PCI", .quePl), ("BI", .quien), ("SBI", .quien),
-    ("PBI", .quienes)]).filter fun _ ↦ (e.readings.lookup "singular answer").isSome
+  ((Examples.phraseType e).map fun
+    | .singularComplex => Item.queSg
+    | .pluralComplex => .quePl
+    | .bare => .quien
+    | .singularBare => .quien
+    | .pluralBare => .quienes).filter fun _ ↦ (e.readings.lookup "singular answer").isSome
 
 /-- The phrase a row names under a key. -/
 def item? (key : String) (e : Datum) : Option Item :=
@@ -912,8 +916,13 @@ def item? (key : String) (e : Datum) : Option Item :=
 
 /-- The context a row sets up. -/
 def ctx? (e : Datum) : Option Ctx :=
-  e.parse? "context" [("exactlyOne", Ctx.exactlyOne), ("atLeastOne", .atLeastOne),
-    ("several", .several), ("noExistence", .noExistence), ("zeroOrSeveral", .zeroOrSeveral)]
+  (Examples.context e).bind fun
+    | .exactlyOne => some (Ctx.exactlyOne)
+    | .atLeastOne => some (.atLeastOne)
+    | .several => some (.several)
+    | .noExistence => some (.noExistence)
+    | .zeroOrSeveral => some (.zeroOrSeveral)
+    | _ => none
 
 /-- A plural antecedent makes the plural available. -/
 abbrev HasPluralAntecedent (e : Datum) : Prop := e.feature? "antecedent" = some "plural"
