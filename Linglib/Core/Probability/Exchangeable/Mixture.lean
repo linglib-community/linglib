@@ -23,6 +23,7 @@ lives on `[0, 1]`.
 * `ProbabilityTheory.exchangeable_iff_exists_map_eq_iid_comp`: a sequence is exchangeable if and
   only if its law is `Kernel.iid ℕ E ∘ₘ Λ` for a probability measure `Λ` on the probability
   measures on `E`.
+* `ProbabilityTheory.Kernel.iid_comp_injective`: the mixing measure is unique.
 * `ProbabilityTheory.Contractable.iCondIndepFun`: a contractable sequence is conditionally
   independent given its tail σ-algebra.
 * `ProbabilityTheory.Exchangeable.exists_measure_real_eq_integral_pow_mul`: for sequences of
@@ -174,6 +175,46 @@ theorem Exchangeable.exists_measure_real_eq_integral_pow_mul {X : ℕ → Ω →
     rw [← Fin.prod_univ_eq_prod_range (fun i ↦ ((m : Measure Bool) (t i)).toReal)]
     simp_rw [hx, Finset.prod_ite, Finset.prod_const]
     simp
+
+/-- If a mixture `Kernel.iid ℕ E ∘ₘ Λ` of i.i.d. sequences is conditionally i.i.d. given `η`,
+then `Λ` is the law of `η`. -/
+theorem eq_map_of_hasCondDistrib {E : Type*} [MeasurableSpace E] [StandardBorelSpace E]
+    {Λ : Measure (ProbabilityMeasure E)} [IsProbabilityMeasure Λ] {ν : Measure (ℕ → E)}
+    (hν : ν = Kernel.iid ℕ E ∘ₘ Λ) {η : (ℕ → E) → ProbabilityMeasure E} (hη : Measurable η)
+    (h : HasCondDistrib (fun x i ↦ x i) η (Kernel.iid ℕ E) ν) : Λ = ν.map η := by
+  subst hν
+  have hsnd : HasLaw Prod.snd (Kernel.iid ℕ E ∘ₘ Λ) (Λ ⊗ₘ Kernel.iid ℕ E) :=
+    ⟨measurable_snd.aemeasurable, Measure.snd_compProd _ _⟩
+  have h₁ : HasCondDistrib (fun p i ↦ (p : ProbabilityMeasure E × (ℕ → E)).2 i) Prod.fst
+      (Kernel.iid ℕ E) (Λ ⊗ₘ Kernel.iid ℕ E) := by
+    refine ⟨aemeasurable_id, ?_⟩
+    rw [← Measure.fst, Measure.fst_compProd]
+    exact Measure.map_id
+  have e : (Λ ⊗ₘ Kernel.iid ℕ E).map (fun p ↦ η p.2) = (Kernel.iid ℕ E ∘ₘ Λ).map η := by
+    rw [← hsnd.map_eq, Measure.map_map hη measurable_snd]
+    rfl
+  have h₂ : HasCondDistrib (fun p i ↦ (p : ProbabilityMeasure E × (ℕ → E)).2 i)
+      (fun p ↦ η p.2) (Kernel.iid ℕ E) (Λ ⊗ₘ Kernel.iid ℕ E) := by
+    unfold HasCondDistrib
+    rw [e]
+    exact HasLaw.comp h hsnd
+  have hae := HasCondDistrib.ae_eq_of_iid
+    (X := fun i (p : ProbabilityMeasure E × (ℕ → E)) ↦ p.2 i) h₁ h₂
+  calc Λ = (Λ ⊗ₘ Kernel.iid ℕ E).map Prod.fst := (Measure.fst_compProd _ _).symm
+    _ = (Λ ⊗ₘ Kernel.iid ℕ E).map (fun p ↦ η p.2) := Measure.map_congr hae
+    _ = _ := e
+
+/-- The mixing measure of a mixture of laws of independent and identically distributed sequences
+is unique. -/
+theorem Kernel.iid_comp_injective {E : Type*} [MeasurableSpace E] [StandardBorelSpace E]
+    {Λ₁ Λ₂ : Measure (ProbabilityMeasure E)} [IsProbabilityMeasure Λ₁] [IsProbabilityMeasure Λ₂]
+    (h : Kernel.iid ℕ E ∘ₘ Λ₁ = Kernel.iid ℕ E ∘ₘ Λ₂) : Λ₁ = Λ₂ := by
+  have hmix : ∃ Λ : Measure (ProbabilityMeasure E), IsProbabilityMeasure Λ ∧
+      HasLaw (fun x i ↦ x i) (Kernel.iid ℕ E ∘ₘ Λ) (Kernel.iid ℕ E ∘ₘ Λ₁) :=
+    ⟨Λ₁, ‹_›, HasLaw.id⟩
+  obtain ⟨η, hη, hcond⟩ := ((exchangeable_tfae (μ := Kernel.iid ℕ E ∘ₘ Λ₁)
+    (X := fun i (x : ℕ → E) ↦ x i) measurable_pi_apply).out 3 4).1 hmix
+  exact (eq_map_of_hasCondDistrib rfl hη hcond).trans (eq_map_of_hasCondDistrib h hη hcond).symm
 
 end Mixture
 
