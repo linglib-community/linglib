@@ -4,7 +4,7 @@ public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Discourse.Commitment.Space
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Discourse.SpeechAct.Role
-public import Linglib.Pragmatics.DecisionTheoretic.Basic
+public import Linglib.Core.Probability.WeightOfEvidence
 public import Studies.BuringGunlogson2000
 
 /-!
@@ -38,7 +38,7 @@ a reverse tag disjoins it with the monopolar question of the negation.
 * The licensing conditions behind the table of acceptable uses are stated on the evidence and
   are not derived from the spaces. Contextual evidence is the set of worlds it leaves open, which
   is the proposition, everything, or its complement, and under any prior on which the issue is
-  live it has the relevance sign it is built from (`relevanceSign_evidence`).
+  live its weight of evidence has the sign it is built from.
 
 ## TODO
 
@@ -540,13 +540,18 @@ instance : MeasurableSpace Weather := ⊤
 
 instance : DiscreteMeasurableSpace Weather := ⟨fun _ ↦ trivial⟩
 
-theorem relevanceSign_evidence (μ : MeasureTheory.Measure Weather)
-    [MeasureTheory.IsFiniteMeasure μ] [h : DTS.Context.Nondegenerate ⟨raining, .of_discrete, μ⟩]
-    (e : SignType) : DTS.relevanceSign ⟨raining, .of_discrete, μ⟩ (evidence raining e) = e := by
+theorem sign_weightOfEvidence_evidence (μ : MeasureTheory.Measure Weather)
+    [MeasureTheory.IsFiniteMeasure μ] (h : μ raining ≠ 0) (h' : μ rainingᶜ ≠ 0) (e : SignType) :
+    SignType.sign (ProbabilityTheory.weightOfEvidence μ raining (evidence raining e)) = e := by
   cases e
-  · exact DTS.relevanceSign_univ _
-  · exact DTS.relevanceSign_eq_neg_one_of_subset_compl subset_rfl h.compl_ne_zero
-  · exact DTS.relevanceSign_eq_one_of_subset subset_rfl h.topic_ne_zero
+  · have := ProbabilityTheory.cond_isProbabilityMeasure h
+    have := ProbabilityTheory.cond_isProbabilityMeasure h'
+    rw [ProbabilityTheory.weightOfEvidence_eq_zero_iff.2 (by simp [evidence]),
+      sign_zero]
+    rfl
+  · exact sign_neg (ProbabilityTheory.weightOfEvidence_neg_of_subset_compl .of_discrete
+      subset_rfl h')
+  · exact sign_pos (ProbabilityTheory.weightOfEvidence_pos_of_subset .of_discrete subset_rfl h)
 
 /-! ### Question tags (44), (45) -/
 
