@@ -24,8 +24,8 @@ lives on `[0, 1]`.
   only if its law is `Kernel.iid ℕ E ∘ₘ Λ` for a probability measure `Λ` on the probability
   measures on `E`.
 * `ProbabilityTheory.Kernel.iid_comp_injective`: the mixing measure is unique.
-* `ProbabilityTheory.Contractable.iCondIndepFun`: a contractable sequence is conditionally
-  independent given its tail σ-algebra.
+* `ProbabilityTheory.Contractable.iCondIndepFun`: on a standard Borel sample space, a contractable
+  sequence of measurable random variables is conditionally independent given its tail σ-algebra.
 * `ProbabilityTheory.Exchangeable.exists_measure_real_eq_integral_pow_mul`: for sequences of
   zeros and ones, the probability of a pattern is `∫ θ ^ k * (1 - θ) ^ (n - k) ∂Λ` for a
   probability measure `Λ` on `[0, 1]`.
@@ -75,11 +75,10 @@ theorem exchangeable_iff_exists_map_eq_iid_comp [StandardBorelSpace E] [IsProbab
 /-- Given the tail σ-algebra, the terms of a contractable sequence of random variables are
 conditionally independent ([kallenberg-2005] Theorem 1.1). -/
 theorem Contractable.iCondIndepFun [StandardBorelSpace Ω] [IsFiniteMeasure μ]
-    (h : Contractable X μ) (hX : ∀ i, Measurable (X i))
-    (h𝓣 : limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop ≤ mΩ) :
-    iCondIndepFun (limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop) h𝓣 X μ := by
+    (h : Contractable X μ) (hX : ∀ i, Measurable (X i)) :
+    iCondIndepFun 𝓣[X] (limsup_comap_le hX) X μ := by
   classical
-  rw [iCondIndepFun_iff _ h𝓣 _ _ hX]
+  rw [iCondIndepFun_iff _ (limsup_comap_le hX) _ _ hX]
   intro s g hg
   choose! B hB hBg using fun i (hi : i ∈ s) ↦ MeasurableSpace.measurableSet_comap.1 (hg i hi)
   let t : ℕ → Set E := fun i ↦ if i ∈ s then B i else Set.univ
@@ -91,9 +90,9 @@ theorem Contractable.iCondIndepFun [StandardBorelSpace Ω] [IsFiniteMeasure μ]
   have hb (i : ℕ) (y : E) : |(t i).indicator (1 : E → ℝ) y| ≤ 1 := by
     by_cases hy : y ∈ t i <;> simp [hy]
   have hone (i : ℕ) (hi : i ∈ s) :
-      μ⟦g i | limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop⟧ =ᵐ[μ]
+      μ⟦g i | 𝓣[X]⟧ =ᵐ[μ]
         μ[(t i).indicator 1 ∘ X 0 |
-          limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop] := by
+          𝓣[X]] := by
     have := h.condExp_finsetProd_ae_eq hX {i} (fun i ↦ (t i).indicator 1)
       (fun i ↦ measurable_one.indicator (ht i)) (fun _ ↦ 1) hb
     simp only [Finset.prod_singleton] at this

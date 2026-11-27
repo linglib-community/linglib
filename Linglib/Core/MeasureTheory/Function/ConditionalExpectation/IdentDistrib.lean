@@ -72,7 +72,7 @@ theorem condExp_ae_eq_condExp_iInf [IsFiniteMeasure μ] {m : ℕ → MeasurableS
 
 /-- Against a bounded `m`-measurable weight, a function and its conditional expectation given `m`
 have the same integral. -/
-private theorem integral_condExp_mul_of_bound {m : MeasurableSpace Ω} (hm : m ≤ mΩ)
+theorem integral_condExp_mul_of_bound {m : MeasurableSpace Ω} (hm : m ≤ mΩ)
     [IsFiniteMeasure μ] {g w : Ω → ℝ} (hg : Integrable g μ) (hw : StronglyMeasurable[m] w)
     {c : ℝ} (hwc : ∀ ω, |w ω| ≤ c) :
     ∫ ω, μ[g | m] ω * w ω ∂μ = ∫ ω, g ω * w ω ∂μ := by
@@ -85,7 +85,7 @@ private theorem integral_condExp_mul_of_bound {m : MeasurableSpace Ω} (hm : m �
 
 /-- If `(ξ, η)` and `(ξ', ζ)` are identically distributed, then integrating a function of the
 pair over the event `η ∈ B` or `ζ ∈ B` gives the same result. -/
-private theorem setIntegral_preimage_snd_eq_of_identDistrib {ξ ξ' : Ω → S} {η ζ : Ω → T}
+theorem setIntegral_preimage_snd_eq_of_identDistrib {ξ ξ' : Ω → S} {η ζ : Ω → T}
     (h : IdentDistrib (fun ω ↦ (ξ ω, η ω)) (fun ω ↦ (ξ' ω, ζ ω)) μ μ)
     {F : S × T → ℝ} (hF : Measurable F) {B : Set T} (hB : MeasurableSet B) :
     ∫ ω in η ⁻¹' B, F (ξ ω, η ω) ∂μ = ∫ ω in ζ ⁻¹' B, F (ξ' ω, ζ ω) ∂μ := by

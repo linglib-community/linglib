@@ -70,7 +70,7 @@ structure Exchangeable (X : ι → Ω → E) (μ : Measure Ω := by volume_tac) 
   /-- Reindexing the family by a permutation does not change its joint law. -/
   protected map_eq (σ : Equiv.Perm ι) : μ.map (fun ω i ↦ X (σ i) ω) = μ.map fun ω i ↦ X i ω
 
-private theorem aemeasurable_comp_index (hX : AEMeasurable (fun ω i ↦ X i ω) μ) {f : ι' → ι} :
+theorem aemeasurable_comp_index (hX : AEMeasurable (fun ω i ↦ X i ω) μ) {f : ι' → ι} :
     AEMeasurable (fun ω k ↦ X (f k) ω) μ :=
   (Measurable.of_eval fun k ↦ measurable_pi_apply (f k)).comp_aemeasurable hX
 

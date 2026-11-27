@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.MeasureTheory.Group.MeasurableEquiv
+public import Mathlib.MeasureTheory.Constructions.Projective
 public import Mathlib.MeasureTheory.Group.Action
 public import Mathlib.MeasureTheory.Measure.GiryMonad
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
@@ -23,6 +24,10 @@ the coordinates, and it depends measurably on `ν`.
 * `MeasureTheory.Measure.infinitePi.smulInvariantMeasure_domMulAct`: invariance under
   permutations of the index type.
 * `MeasureTheory.measurable_infinitePi_const`: measurability in the factor.
+* `MeasureTheory.ext_of_map_fin`: finite measures on sequences with the same laws of the first
+  `n` terms, for every `n`, are equal.
+* `MeasureTheory.infinitePi_map_fin`: the first `n` terms of an independent and identically
+  distributed sequence have the finite product law.
 * `ProbabilityTheory.Kernel.iid ι E`: the kernel sending a probability measure `m` on `E` to the
   law of an independent family of random variables with law `m`.
 
@@ -58,6 +63,40 @@ theorem measurable_infinitePi_const {E : Type*} [MeasurableSpace E] (ι : Type*)
   simp_rw [Measure.infinitePi_pi _ fun i _ ↦ ht i]
   exact Finset.measurable_prod _ fun i _ ↦
     (Measure.measurable_coe (ht i)).comp measurable_subtype_coe
+
+/-- Two finite measures on sequences are equal as soon as, for every `n`, they give the first `n`
+terms the same law. -/
+theorem ext_of_map_fin {E : Type*} [MeasurableSpace E] {μ ν : Measure (ℕ → E)}
+    [IsFiniteMeasure μ] [IsFiniteMeasure ν]
+    (h : ∀ n, μ.map (fun x (i : Fin n) ↦ x i) = ν.map (fun x (i : Fin n) ↦ x i)) : μ = ν := by
+  refine IsProjectiveLimit.unique (P := fun I : Finset ℕ ↦ ν.map I.restrict) (fun I ↦ ?_)
+    (fun I ↦ rfl)
+  have hI (i : I) : (i : ℕ) < I.sup id + 1 := Nat.lt_succ_of_le (Finset.le_sup (f := id) i.2)
+  have hg : Measurable fun (y : Fin (I.sup id + 1) → E) (i : I) ↦ y ⟨i, hI i⟩ := by fun_prop
+  have hm : Measurable fun (x : ℕ → E) (i : Fin (I.sup id + 1)) ↦ x i := by fun_prop
+  have e : I.restrict = (fun (y : Fin (I.sup id + 1) → E) (i : I) ↦ y ⟨i, hI i⟩) ∘
+      fun (x : ℕ → E) (i : Fin (I.sup id + 1)) ↦ x i := rfl
+  change μ.map I.restrict = ν.map I.restrict
+  rw [e, ← Measure.map_map hg hm, ← Measure.map_map hg hm, h]
+
+/-- The first `n` terms of an independent and identically distributed sequence are independent
+and identically distributed. -/
+theorem infinitePi_map_fin {E : Type*} [MeasurableSpace E] (m : Measure E)
+    [IsProbabilityMeasure m] (n : ℕ) :
+    (Measure.infinitePi fun _ : ℕ ↦ m).map (fun x (i : Fin n) ↦ x i) =
+      Measure.pi fun _ : Fin n ↦ m := by
+  refine (Measure.pi_eq fun s hs ↦ ?_).symm
+  let t : ℕ → Set E := fun i ↦ if h : i < n then s ⟨i, h⟩ else Set.univ
+  have ht (i : ℕ) : MeasurableSet (t i) := by
+    by_cases h : i < n <;> simp [t, h, hs]
+  have hpre : (fun x (i : Fin n) ↦ x i) ⁻¹' Set.univ.pi s = (Finset.range n : Set ℕ).pi t := by
+    ext x
+    simp only [Set.mem_preimage, Set.mem_pi, Finset.coe_range, Set.mem_Iio]
+    exact ⟨fun hx i hi ↦ by simpa [t, hi] using hx ⟨i, hi⟩,
+      fun hx i ↦ by simpa [t, i.isLt] using hx i i.isLt⟩
+  rw [Measure.map_apply (by fun_prop) (.univ_pi hs), hpre, Measure.infinitePi_pi _ fun i _ ↦ ht i,
+    ← Fin.prod_univ_eq_prod_range (fun i ↦ m (t i))]
+  exact Finset.prod_congr rfl fun i _ ↦ by simp [t, i.isLt]
 
 end MeasureTheory
 

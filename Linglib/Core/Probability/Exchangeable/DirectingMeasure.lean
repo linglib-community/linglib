@@ -75,14 +75,14 @@ tail σ-algebra. -/
 noncomputable def directingMeasure [StandardBorelSpace E] [Nonempty E] (X : ℕ → Ω → E)
     (μ : Measure Ω) [IsFiniteMeasure μ] : Ω → ProbabilityMeasure E := fun ω ↦
   ⟨@condDistrib Ω Ω E _ _ _ mΩ
-    (limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop ⊓ mΩ) (X 0) id μ _ ω,
+    (𝓣[X] ⊓ mΩ) (X 0) id μ _ ω,
     inferInstance⟩
 
 /-- The directing random measure is measurable for the tail σ-algebra, intersected with the
 ambient one. -/
 theorem measurable_directingMeasure_inf [StandardBorelSpace E] [Nonempty E]
     [IsFiniteMeasure μ] :
-    Measurable[limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop ⊓ mΩ]
+    Measurable[𝓣[X] ⊓ mΩ]
       (directingMeasure X μ) :=
   (Kernel.measurable _).subtype_mk
 
@@ -96,11 +96,10 @@ conditional probability of that set for the first term, given the tail. -/
 theorem directingMeasure_ae_eq_condExp [StandardBorelSpace E] [Nonempty E]
     [IsFiniteMeasure μ] (hX : ∀ i, Measurable (X i)) {t : Set E} (ht : MeasurableSet t) :
     (fun ω ↦ (directingMeasure X μ ω : Measure E).real t) =ᵐ[μ]
-      μ⟦X 0 ⁻¹' t | limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop⟧ := by
-  have h𝓣 : limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop ≤ mΩ :=
-    limsup_le_iSup.trans (iSup_le fun n ↦ (hX n).comap_le)
+      μ⟦X 0 ⁻¹' t | 𝓣[X]⟧ := by
+  have h𝓣 : 𝓣[X] ≤ mΩ := limsup_comap_le hX
   have := condDistrib_ae_eq_condExp (μ := μ) (Y := X 0) (X := id)
-    (mβ := limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop ⊓ mΩ)
+    (mβ := 𝓣[X] ⊓ mΩ)
     (measurable_id'' inf_le_right) (hX 0) ht
   rw [MeasurableSpace.comap_id] at this
   rw [← inf_eq_left.2 h𝓣]
@@ -111,11 +110,10 @@ law `η` ([kallenberg-2021] Theorem 27.2). -/
 theorem Contractable.hasCondDistrib_directingMeasure [StandardBorelSpace E] [Nonempty E]
     [IsProbabilityMeasure μ] (h : Contractable X μ) (hX : ∀ i, Measurable (X i)) :
     HasCondDistrib (fun ω i ↦ X i ω) (directingMeasure X μ) (Kernel.iid ℕ E) μ := by
-  have h𝓣 : limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop ≤ mΩ :=
-    limsup_le_iSup.trans (iSup_le fun n ↦ (hX n).comap_le)
+  have h𝓣 : 𝓣[X] ≤ mΩ := limsup_comap_le hX
   have hJ : Measurable fun ω i ↦ X i ω := .of_eval hX
   have hη : Measurable (directingMeasure X μ) := measurable_directingMeasure
-  have hη𝓣 : Measurable[limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop]
+  have hη𝓣 : Measurable[𝓣[X]]
       (directingMeasure X μ) := measurable_directingMeasure_inf.mono inf_le_left le_rfl
   refine ⟨(hη.prodMk hJ).aemeasurable, ?_⟩
   have := (Measure.isProbabilityMeasure_map_iff (hη.prodMk hJ).aemeasurable).2 ‹_›
@@ -229,7 +227,7 @@ private theorem HasCondDistrib.ae_tendsto_average_indicator {η : Ω → Probabi
 
 /-- Two random probability measures on a countably generated space are almost everywhere equal
 as soon as, set by set, they almost everywhere give the set the same mass. -/
-private theorem ae_eq_of_forall_ae_measureReal_eq [MeasurableSpace.CountablyGenerated E]
+theorem ae_eq_of_forall_ae_measureReal_eq [MeasurableSpace.CountablyGenerated E]
     {η₁ η₂ : Ω → ProbabilityMeasure E}
     (h : ∀ B : Set E, MeasurableSet B →
       ∀ᵐ ω ∂μ, (η₁ ω : Measure E).real B = (η₂ ω : Measure E).real B) :
