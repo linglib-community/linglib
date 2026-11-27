@@ -36,6 +36,9 @@ resolve one of its answers.
   proposition exactly where the proposition's informative content is true.
 * `Inquisitive.Proposition.resolvedBy_subset_info`: a state that contains its world resolves only
   what is true.
+* `Inquisitive.Proposition.exists_eq_setOf_mem_iff`: the sets of propositions that a consistent
+  state resolves are those closed upward, closed under arbitrary meets, and containing a join
+  only with one of the joined propositions.
 * `Inquisitive.Proposition.entertainedBy_ofSet`: a declarative is entertained exactly where the
   informative content of the inquisitive state lies within it.
 
@@ -123,6 +126,28 @@ theorem resolvedBy_compl_of_info_eq_univ (h : P.info = Set.univ) (M : W → Set 
 theorem resolvedBy_query_of_info_eq_univ (h : P.info = Set.univ) (M : W → Set W) :
     P.query.resolvedBy M = P.resolvedBy M := by
   rw [query_eq_self_of_info_eq_univ h]
+
+/-- A set of propositions is the set that some consistent state resolves exactly when it is closed
+upward, closed under arbitrary meets, and contains an arbitrary join only with one of the joined
+propositions. -/
+theorem exists_eq_setOf_mem_iff {F : Set (Proposition (Set W))} :
+    (∃ s : Set W, s.Nonempty ∧ F = {P | s ∈ P}) ↔
+      IsUpperSet F ∧ (∀ S ⊆ F, sInf S ∈ F) ∧ ∀ S, sSup S ∈ F → ∃ P ∈ S, P ∈ F := by
+  constructor
+  · rintro ⟨s, hs, rfl⟩
+    refine ⟨fun P Q h hP ↦ h hP, fun S hS ↦ mem_sInf.2 fun P hP ↦ hS hP, fun S hS ↦ ?_⟩
+    exact (mem_sSup.1 hS).resolve_left hs.ne_empty
+  · rintro ⟨hup, hinf, hsup⟩
+    have h₀ : sInf F ∈ F := hinf F subset_rfl
+    have hgen : sSup (ofSet '' ((sInf F : Proposition (Set W)) : Set (Set W))) = sInf F := by
+      rw [sSup_image, ← generate_eq_biSup, generate_coe]
+    obtain ⟨_, ⟨q, hq, rfl⟩, hqF⟩ := hsup _ (hgen.symm ▸ h₀)
+    have heq : sInf F = ofSet q := le_antisymm (sInf_le hqF) (mem_iff_ofSet_le.1 hq)
+    refine ⟨q, Set.nonempty_iff_ne_empty.2 ?_, Set.ext fun P ↦
+      ⟨fun hP ↦ mem_iff_ofSet_le.2 (heq ▸ sInf_le hP), fun hP ↦ hup (mem_iff_ofSet_le.1 hP) hqF⟩⟩
+    rintro rfl
+    obtain ⟨P, hP, -⟩ := hsup ∅ (by rwa [sSup_empty, ← ofSet_empty])
+    exact hP
 
 /-! ### Entertaining by an inquisitive state -/
 

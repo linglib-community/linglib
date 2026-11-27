@@ -7,6 +7,7 @@ module
 
 public import Linglib.Logic.Inquisitive.Modal
 public import Linglib.Semantics.Embedding.NegRaising.Basic
+public import Linglib.Semantics.Presupposition.Strawson
 
 /-!
 # Neg-raising predicates with a statement or a question as complement
@@ -31,6 +32,7 @@ wherever it is defined.
 * `NegRaising.ofModalBase_ofSet_eq_box`: on a declarative it is the presuppositional box.
 * `NegRaising.ofModalBase_ofSet_eq_false_iff`: it is false of a declarative exactly where the base
   lies within the declarative's negation and not within the declarative.
+* `NegRaising.isStrawsonUE_ofModalBase`: it is Strawson upward entailing in its complement.
 * `NegRaising.ofModalBase_eq_true_of_info_eq_univ`: of a complement that is not informative it is
   true wherever it is defined.
 
@@ -97,6 +99,14 @@ is defined. -/
 theorem ofModalBase_query_eq_true (hd : ofModalBase M P.query w ≠ .undefined) :
     ofModalBase M P.query w = .true :=
   ofModalBase_eq_true_of_info_eq_univ (info_query P) hd
+
+open Classical in
+/-- The predicate is Strawson upward entailing in its complement: where it is defined of both, a
+stronger complement it is true of makes it true of a weaker one. -/
+theorem isStrawsonUE_ofModalBase (M : W → Set W) :
+    Presupposition.IsStrawsonUE (ofModalBase M) :=
+  .of_monotone (a := fun P w ↦ w ∈ P.resolvedBy M) (fun _ _ h _ hw ↦ resolvedBy_mono M h hw)
+    fun _ _ ↦ Trivalent.condEvent_kLE
 
 private theorem eq_of_iff {a b : Trivalent} (ht : a = .true ↔ b = .true)
     (hu : a = .undefined ↔ b = .undefined) : a = b := by
