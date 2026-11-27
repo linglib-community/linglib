@@ -2,74 +2,80 @@ module
 
 public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Semantics.Questions.Inquisitive.Answerhood
+public import Mathlib.Data.List.Perm.Basic
+public import Mathlib.Data.List.DropRight
+public import Mathlib.Data.Set.Sups
 
 /-!
 # The Table
 
-Farkas and Bruce's context structure records the participants' discourse commitments, the common
-ground, and the Table, a stack of the issues under discussion with the most recent on top. A
-declarative raises its proposition as an issue, `Inquisitive.Proposition.ofSet p`, and a polar
-interrogative raises `Inquisitive.Proposition.polar p`; the complete answers of an issue are its
-alternatives, `Inquisitive.Proposition.alt`, Karttunen's interrogative denotation, and a common
-ground decides an issue when it entails one of them. Each issue on the Table projects the common
-grounds that would decide it, and the projected set is derived from the common ground and the stack.
-The moves of the paper are functions on the structure, and the file proves what each does to the
-projected set, the commitment lists, and the Table. Parenthesized numbers are the paper's example
-and definition numbers.
+The context structure of Farkas and Bruce records the participants' discourse commitments, the
+common ground, and the Table, a stack of the issues under discussion with the most recent on top.
+A declarative with content `p` raises the issue whose only complete answer is `p`, and a polar
+interrogative raises the issue whose complete answers are `p` and `pᶜ`, following Karttunen in
+taking an interrogative to denote the set of its complete answers.
 
-A Table has the `commonGround` coordinate as its common ground and the top of the stack as its
-current issue (`Table.issue`). Its `assert` is a proposal, which leaves the common ground alone and
-moves only the projected set; settling a proposition meets the common ground with it, Stalnaker's
-update.
+An issue `P` projects, from a set `ps` of common grounds, the consistent common grounds `f ⊓ 𝓟 q`
+with `f ∈ ps` and `q` a complete answer of `P`. The projected set of a context is obtained from its
+common ground by projecting each issue on the Table in turn. It consists of the common grounds
+that settle everything at issue, and it does not depend on the order of the stack. An assertion
+is a proposal: it commits its author and changes the projected set, and leaves the common ground
+alone. Once a proposition is a joint commitment, it enters the common ground by Stalnaker's
+update `f ⊓ 𝓟 p`, and the issues the new common ground decides leave the Table. When the new
+common ground is one of the projected ones, the Table is left empty.
 
 ## Main definitions
 
-* `Commitment.Table A W`: the context structure, with `Table.discourseCommitments a` the
-  propositions `a` has publicly committed to and `Table.projectedSet` the projected set, the
-  fold of the paper's `ps ∪ P` over the stack.
-* `Table.IsStable`: the Table is empty.
-* `Table.InCrisis`: the common ground is inconsistent or no projected common ground is.
-* `Table.assert`, `Table.polarQuestion`, `Table.settle`, `Table.agreeToDisagree`: the
-  default assertion (9), which commits its author as in Gunlogson, the default polar
-  question (12), the common-ground increasing operation M' (17), and agreeing to disagree (23).
-  Assertion confirmation (16) is `Table.commit` of the proposition on top of the Table, and
-  total denial (22) is `assert` of its negation.
+* `Commitment.Table A W`: the context structure, with participants `A` and worlds `W`.
+* `Commitment.Table.project`: the projection of an issue from a set of common grounds.
+* `Commitment.Table.projectedSet`: the projected set of a context.
+* `Commitment.Table.IsStable`: the Table is empty.
+* `Commitment.Table.InCrisis`: the common ground is inconsistent or no projected common ground is
+  consistent.
+* `Commitment.Table.assert`, `Commitment.Table.polarQuestion`: the default assertion, which commits
+  its author as in Gunlogson, and the default polar question.
+* `Commitment.Table.settle`: the operation that turns a joint commitment into common ground.
+* `Commitment.Table.agreeToDisagree`: the removal of a denied assertion and its denial.
 
 ## Main results
 
-* `Table.le_commonGround_of_mem_projectedSet`, `Table.decidedBy_of_mem_projectedSet_of_mem_stack`: a
-  projected common ground refines the current one and decides every issue on the Table.
-* `Table.inCrisis_iff`: with the projected set derived, crisis is having no consistent
-  projected common ground; the inconsistent-common-ground clause is subsumed.
-* `Table.projectedSet_assert_assert_compl`, `Table.inCrisis_assert_assert_compl`: a denied
-  assertion projects nothing consistent (21) and leaves the conversation in crisis.
-* `Table.settle_push_of_decidedBy`, `Table.settle_assert_self`,
-  `Table.discourseCommitments_settle`: M' pops the issues the new common ground decides and
-  strips the shared proposition from every commitment list.
-* `Table.agreeToDisagree_assert_assert`, `Table.inCrisis_agreeToDisagree_assert_assert`:
-  agreeing to disagree keeps the commitments, restores the Table, and restores the crisis
-  status of the input context (23).
+* `Commitment.Table.project_right_comm`, `Commitment.Table.projectedSet_congr_perm`: projection
+  does not depend on the order of the issues.
+* `Commitment.Table.le_commonGround_of_mem_projectedSet`,
+  `Commitment.Table.decidedBy_of_mem_projectedSet_of_mem_stack`: a projected common ground refines
+  the current one and decides every issue on the Table.
+* `Commitment.Table.isStable_settle_of_mem_projectedSet`: reaching a projected common ground
+  empties the Table.
+* `Commitment.Table.commonGround_settle_mem_projectedSet_assert`: in a stable context, settling an
+  assertion reaches the common ground it projected.
+* `Commitment.Table.inCrisis_iff`, `Commitment.Table.inCrisis_iff_projectedSet_eq_empty`: a
+  conversation is in crisis exactly when no projected common ground is consistent, and with an
+  issue on the Table exactly when nothing is projected.
+* `Commitment.Table.inCrisis_assert_assert_compl`: a denied assertion leaves the conversation in
+  crisis.
+* `Commitment.Table.agreeToDisagree_assert_assert`: agreeing to disagree keeps both commitments
+  and restores the Table.
 
 ## Implementation notes
 
-* The paper notes that the projected set can always be rebuilt from the common ground and the
-  Table, so it is derived rather than stored.
+* The projected set can always be rebuilt from the common ground and the Table, so it is derived
+  rather than stored. The projection is the pointwise infimum `ps ⊼ 𝓟 '' alt P` of two families of
+  filters with `⊥` removed, so that its commutativity is that of `⊼`.
 * A common ground is a filter of propositions, so a proposition follows from it when it belongs
-  to the filter. This is the intersection-based entailment the paper's footnote 8 sets aside as
-  too coarse-grained, so every necessary proposition is decided by every common ground, and
-  `Inquisitive.Proposition.decidedBy_top` records that the trivial issue is always decided.
-* M' (17) applies in the paper only once the proposition is on every commitment list;
-  `Table.settle` is the operation itself, and the trigger is a hypothesis on the caller,
-  `p ∈ K.commitments.jointContents`. Its popping clause is read as "pop from the top while
-  decided", which follows the stack wording of (17) and agrees with the paper's examples; the
-  gloss after (17) can also be read as removing every decided item from anywhere in the stack,
-  and the clause pops on an entailed complete answer where the gloss says a decided one, which
-  differ for a declarative whose negation the new common ground entails. Whether a common ground
-  entails a complete answer is not decidable, so `Table.settle` is classical and
-  noncomputable.
-* Agreeing to disagree requires a denial on top of the assertion it denies, which is where
-  total denial (22) leaves the Table, and removes both; `Table.agreeToDisagree` pops twice and
-  does not check the precondition.
+  to the filter. Every necessary proposition then follows from every common ground, and the
+  trivial issue is always decided; a finer consequence relation is not represented.
+* An item on the Table is the denotation of a sentence, without the sentence. A polar
+  interrogative and its negative counterpart then place the same item on the Table, and the
+  effects that depend on the form of the item are not represented.
+* The common-ground increasing operation applies once the proposition is on every commitment
+  list; `Commitment.Table.settle` is the operation itself, and that the proposition is a joint
+  commitment is a hypothesis on the caller. It pops from the top of the Table while the top issue
+  has a complete answer that the new common ground entails. This is narrower than popping every
+  issue one of whose answers is decided, positively or negatively: a declarative whose negation
+  the new common ground entails stays on the Table. Whether a common ground entails a complete
+  answer is not decidable, so the operation is classical and noncomputable.
+* Agreeing to disagree requires a denial on top of the assertion it denies and removes both;
+  `Commitment.Table.agreeToDisagree` pops twice and does not check the precondition.
 
 ## References
 
@@ -87,13 +93,17 @@ open Filter
 namespace Commitment
 
 open Inquisitive Inquisitive.Proposition
+open scoped SetFamily SetRel
 
 /-- The context structure `K` of [farkas-bruce-2010] consists of the Table as a stack of issues,
 the participants' discourse commitments, and the common ground. -/
 @[ext]
 structure Table (A W : Type*) where
+  /-- The Table: the issues under discussion, the most recent first. -/
   stack : List (Proposition (Set W))
+  /-- The discourse commitments of the participants that are not joint commitments. -/
   commitments : State A W
+  /-- The common ground: the propositions that are joint commitments. -/
   commonGround : Filter W
 
 namespace Table
@@ -102,39 +112,60 @@ variable {A W : Type*}
 
 /-! ### Projecting an issue -/
 
-/-- The projection `ps ∪ P` adds each complete answer of `P` to each projected common ground and
-discards the inconsistent results. -/
+/-- The projection of the issue `P` from the common grounds `ps` adds each complete answer of `P`
+to each member of `ps` and discards the inconsistent results. -/
 def project (ps : Set (Filter W)) (P : Proposition (Set W)) : Set (Filter W) :=
-  Set.image2 (fun f q ↦ f ⊓ 𝓟 q) ps (alt P) \ {⊥}
+  (ps ⊼ 𝓟 '' alt P) \ {⊥}
 
 section Project
 
-variable {ps : Set (Filter W)} {f : Filter W} {p : Set W} {P : Proposition (Set W)}
-
+variable {ps ps' : Set (Filter W)} {f : Filter W} {p : Set W} {P Q : Proposition (Set W)}
 
 @[simp] theorem mem_project :
-    f ∈ project ps P ↔ (∃ g ∈ ps, ∃ q ∈ alt P, g ⊓ 𝓟 q = f) ∧ f ≠ ⊥ :=
-  Iff.rfl
+    f ∈ project ps P ↔ (∃ g ∈ ps, ∃ q ∈ alt P, g ⊓ 𝓟 q = f) ∧ f ≠ ⊥ := by
+  simp [project]
 
-theorem ne_bot_of_mem_project (h : f ∈ project ps P) : f ≠ ⊥ := h.2
+theorem bot_notMem_project : ⊥ ∉ project ps P := fun h ↦ h.2 rfl
+
+@[gcongr]
+theorem project_subset (h : ps ⊆ ps') : project ps P ⊆ project ps' P :=
+  Set.sdiff_subset_sdiff_left (Set.infs_subset_right h)
 
 theorem exists_le_of_mem_project (h : f ∈ project ps P) : ∃ g ∈ ps, f ≤ g :=
-  let ⟨g, hg, _, _, e⟩ := h.1
+  let ⟨g, hg, _, _, e⟩ := (mem_project.1 h).1
   ⟨g, hg, e ▸ inf_le_left⟩
 
 theorem decidedBy_of_mem_project (h : f ∈ project ps P) : P.DecidedBy f :=
-  let ⟨_, _, q, hq, e⟩ := h.1
+  let ⟨_, _, q, hq, e⟩ := (mem_project.1 h).1
   ⟨q, hq, e ▸ mem_inf_of_right (mem_principal_self q)⟩
 
+/-- Discarding the inconsistent common grounds before projecting changes nothing. -/
+@[simp] theorem project_sdiff_bot : project (ps \ {⊥}) P = project ps P := by
+  ext f
+  simp only [mem_project, Set.mem_sdiff, Set.mem_singleton_iff]
+  refine and_congr_left fun hf ↦ ⟨fun ⟨g, hg, h⟩ ↦ ⟨g, hg.1, h⟩, fun ⟨g, hg, q, hq, e⟩ ↦
+    ⟨g, ⟨hg, ?_⟩, q, hq, e⟩⟩
+  rintro rfl
+  exact hf (by simpa using e.symm)
+
+/-- Two issues project the same common grounds in either order. -/
+theorem project_right_comm : project (project ps P) Q = project (project ps Q) P := by
+  have h (P Q : Proposition (Set W)) :
+      project (project ps P) Q = (ps ⊼ 𝓟 '' alt P ⊼ 𝓟 '' alt Q) \ {⊥} := project_sdiff_bot
+  rw [h, h, Set.infs_right_comm]
+
+instance : LeftCommutative fun (P : Proposition (Set W)) (ps : Set (Filter W)) ↦ project ps P :=
+  ⟨fun _ _ _ ↦ project_right_comm⟩
+
 theorem project_singleton_ofSet (h : f ⊓ 𝓟 p ≠ ⊥) : project {f} (ofSet p) = {f ⊓ 𝓟 p} := by
-  rw [project, Set.image2_singleton_left, alt_ofSet, Set.image_singleton,
+  rw [project, alt_ofSet, Set.image_singleton, Set.singleton_infs_singleton,
     Set.sdiff_singleton_eq_self (Set.notMem_singleton_iff.2 h.symm)]
 
 theorem project_singleton_polar (hp : f ⊓ 𝓟 p ≠ ⊥) (hnp : f ⊓ 𝓟 pᶜ ≠ ⊥) :
     project {f} (polar p) = {f ⊓ 𝓟 p, f ⊓ 𝓟 pᶜ} := by
-  rw [project, Set.image2_singleton_left,
-    alt_polar_of_nontrivial (fun e ↦ hp (by simp [e])) (fun e ↦ hnp (by simp [e])),
-    Set.image_pair, Set.sdiff_singleton_eq_self (by simp [hp.symm, hnp.symm])]
+  rw [project, alt_polar_of_nontrivial (fun e ↦ hp (by simp [e])) (fun e ↦ hnp (by simp [e])),
+    Set.image_pair, Set.singleton_infs, Set.image_pair,
+    Set.sdiff_singleton_eq_self (by simp [hp.symm, hnp.symm])]
 
 end Project
 
@@ -188,7 +219,7 @@ list, `p` enters the common ground and leaves the individual commitment lists, a
 new common ground decides are popped from the top of the Table. -/
 noncomputable def settle : Table A W where
   stack := K.stack.dropWhile fun P ↦ decide (P.DecidedBy (K.commonGround ⊓ 𝓟 p))
-  commitments := {q ∈ K.commitments | q.2 ≠ p}
+  commitments := {(a, q) | a ~[K.commitments] q ∧ q ≠ p}
   commonGround := K.commonGround ⊓ 𝓟 p
 
 /-- Agreeing to disagree (23), from a Table with the denial on top of the assertion it denies,
@@ -225,7 +256,7 @@ open scoped Classical in
     (K.settle p).stack = K.stack.dropWhile fun P ↦ decide (P.DecidedBy (K.commonGround ⊓ 𝓟 p)) :=
   rfl
 @[simp] theorem commitments_settle :
-    (K.settle p).commitments = {q ∈ K.commitments | q.2 ≠ p} := rfl
+    (K.settle p).commitments = {(a, q) | a ~[K.commitments] q ∧ q ≠ p} := rfl
 @[simp] theorem commonGround_settle : (K.settle p).commonGround = K.commonGround ⊓ 𝓟 p := rfl
 @[simp] theorem stack_agreeToDisagree : K.agreeToDisagree.stack = K.stack.tail.tail := rfl
 @[simp] theorem commitments_agreeToDisagree : K.agreeToDisagree.commitments = K.commitments :=
@@ -325,6 +356,18 @@ theorem settle_assert_self : (K.assert a p).settle p = K.settle p :=
     (decidedBy_ofSet.2 (mem_inf_of_right (mem_principal_self p)))).trans
     (settle_commit_self K a p)
 
+theorem settle_settle : (K.settle p).settle p = K.settle p := by
+  classical
+  refine Table.ext ?_ ?_ ?_
+  · simp [List.dropWhile_idempotent]
+  · ext ⟨a, q⟩
+    simp
+  · simp
+
+/-- A polar question and its negative counterpart place the same issue on the Table. -/
+@[simp] theorem polarQuestion_compl : K.polarQuestion pᶜ = K.polarQuestion p := by
+  rw [polarQuestion, polar_compl, polarQuestion]
+
 theorem settle_polarQuestion_self : (K.polarQuestion p).settle p = K.settle p :=
   settle_push_of_decidedBy (decidedBy_polar.2 (.inl (mem_inf_of_right (mem_principal_self p))))
 
@@ -345,6 +388,12 @@ variable {K a p P} {f : Filter W}
 
 theorem projectedSet_of_isStable (h : K.IsStable) : K.projectedSet = {K.commonGround} := by
   rw [projectedSet, show K.stack = [] from h, List.foldr_nil]
+
+/-- The projected set does not depend on the order of the issues on the Table. -/
+theorem projectedSet_congr_perm {L : Table A W} (hs : K.stack.Perm L.stack)
+    (hc : K.commonGround = L.commonGround) : K.projectedSet = L.projectedSet := by
+  rw [projectedSet, projectedSet, hc]
+  exact hs.foldr_eq _
 
 /-- A projected common ground refines the current one. -/
 theorem le_commonGround_of_mem_projectedSet (h : f ∈ K.projectedSet) : f ≤ K.commonGround := by
@@ -374,6 +423,13 @@ theorem ker_mem_issue_of_mem_projectedSet (hf : f ∈ K.projectedSet) : f.ker �
   | cons P T =>
     exact (decidedBy_of_mem_projectedSet_of_mem_stack (P := P) hf (h ▸ List.mem_cons_self)).ker_mem
 
+/-- Reaching a projected common ground empties the Table. -/
+theorem isStable_settle_of_mem_projectedSet (h : K.commonGround ⊓ 𝓟 p ∈ K.projectedSet) :
+    (K.settle p).IsStable := by
+  classical
+  rw [IsStable, stack_settle, List.dropWhile_eq_nil_iff]
+  exact fun P hP ↦ decide_eq_true (decidedBy_of_mem_projectedSet_of_mem_stack h hP)
+
 theorem mem_of_mem_projectedSet_assert (h : f ∈ (K.assert a p).projectedSet) : p ∈ f :=
   decidedBy_ofSet.1 (decidedBy_of_mem_project h)
 
@@ -396,11 +452,41 @@ end
 @[simp] theorem projectedSet_polarQuestion :
     (K.polarQuestion p).projectedSet = project K.projectedSet (polar p) := rfl
 
+variable {K p} in
+/-- An assertion in a stable context projects the common ground with its content (8). -/
+theorem projectedSet_assert_of_isStable (hK : K.IsStable) (hp : K.commonGround ⊓ 𝓟 p ≠ ⊥) :
+    (K.assert a p).projectedSet = {K.commonGround ⊓ 𝓟 p} := by
+  rw [projectedSet_assert, projectedSet_of_isStable hK, project_singleton_ofSet hp]
+
+variable {K p} in
+/-- A polar question in a stable context projects a common ground for each answer (11). -/
+theorem projectedSet_polarQuestion_of_isStable (hK : K.IsStable)
+    (hp : K.commonGround ⊓ 𝓟 p ≠ ⊥) (hnp : K.commonGround ⊓ 𝓟 pᶜ ≠ ⊥) :
+    (K.polarQuestion p).projectedSet = {K.commonGround ⊓ 𝓟 p, K.commonGround ⊓ 𝓟 pᶜ} := by
+  rw [projectedSet_polarQuestion, projectedSet_of_isStable hK, project_singleton_polar hp hnp]
+
+variable {K p} in
+/-- In a stable context, settling an assertion reaches the common ground it projected. -/
+theorem commonGround_settle_mem_projectedSet_assert (hK : K.IsStable)
+    (hp : K.commonGround ⊓ 𝓟 p ≠ ⊥) :
+    (K.settle p).commonGround ∈ (K.assert a p).projectedSet :=
+  projectedSet_assert_of_isStable a hK hp ▸ rfl
+
 /-- With the projected set derived, a conversation is in crisis exactly when no projected common
 ground is consistent. -/
 theorem inCrisis_iff : K.InCrisis ↔ ∀ f ∈ K.projectedSet, f = ⊥ :=
   or_iff_right_of_imp fun hcg _ hf ↦
     le_bot_iff.1 ((le_commonGround_of_mem_projectedSet hf).trans_eq hcg)
+
+variable {K} in
+/-- With an issue on the Table, a conversation is in crisis exactly when nothing is projected. -/
+theorem inCrisis_iff_projectedSet_eq_empty (h : ¬ K.IsStable) :
+    K.InCrisis ↔ K.projectedSet = ∅ := by
+  obtain ⟨_ | ⟨P, T⟩, C, cg⟩ := K
+  · exact absurd rfl h
+  · rw [inCrisis_iff, Set.eq_empty_iff_forall_notMem]
+    exact forall_congr' fun f ↦ ⟨fun hf hmem ↦ bot_notMem_project (hf hmem ▸ hmem),
+      fun hf hmem ↦ absurd hmem hf⟩
 
 /-- After an assertion has been denied, nothing consistent is projected (21). -/
 theorem projectedSet_assert_assert_compl (b : A) : ((K.assert a p).assert b pᶜ).projectedSet = ∅ :=
