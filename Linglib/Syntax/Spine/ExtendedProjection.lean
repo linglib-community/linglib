@@ -10,46 +10,44 @@ public import Linglib.Syntax.Spine.Label
 /-!
 # Extended projections
 
-A clause is built on a verb, but much of its structure is not the verb's: inflection and the
-complementizer each head a phrase of their own above it. In what sense is the clause still the
-verb's phrase? Grimshaw's answer is that these phrases form one **extended projection**: a lexical
-head together with the functional heads above it, all of the category of the lexical head and
-ordered by their functional level, the lexical head lowest. A noun phrase is built the same way,
-with the determiner above the noun.
+This file defines extended projections of a spine. Let `family` be a map from heads to their
+categories and `r` a relation that ranks the heads. A spine is an extended projection with respect
+to `family` and `r` if all its heads have the same family and each head is related by `r` to the
+next head up.
 
-Two things have to be known of the heads to say this. Each head belongs to a **family**, the
-category it shares with its lexical head, so that inflection and the complementizer are of the
-family of the verb and the determiner is of the family of the noun. And the heads are ranked, by a
-relation that says when one head is no higher than another. A spine is then an extended projection
-when its heads are of one family and each is ranked no higher than the next head up.
+In the system of Grimshaw, the heads `V`, `I` and `C` are verbal, with functional values `0`, `1`
+and `2`, and the heads `N` and `D` are nominal, with functional values `0` and `1`. With `r` the
+order of functional values, the spine `[V, I, C]` is an extended projection. The spine `[V, C, I]`
+is not, since the functional value decreases, and `[V, I, C, D]` is not, since `D` is nominal.
 
-Take Grimshaw's categories: the family sends `V`, `I` and `C` to *verbal* and `N` and `D` to
-*nominal*, and the ranking is `V`, `I`, `C`. The spine `[V, I, C]` is an extended projection. The
-spine `[V, C, I]` is of one family but descends, and `[V, I, C, D]`, a clause under a determiner,
-is of two families.
+## Main definitions
+
+* `Spine.IsExtendedProjection`: a spine whose heads have the same family and are ranked by `r`
+  from the bottom up.
+
+## Main results
+
+* `Spine.isExtendedProjection_iff_isChain`: if `r` only relates heads of the same family, a spine
+  is an extended projection if and only if it is a chain for `r`.
 
 ## Implementation notes
 
-The family and the ranking are parameters, since accounts differ on both: on which heads are of
-one category, and on whether heads are ranked by a fixed sequence, by the structures an account
-draws, or not at all. `Linglib/Syntax/Spine/Hierarchy.lean` gives the ranking that a set of
-spines determines.
+The family and the ranking are parameters, since accounts differ on both. The ranking that a set of
+spines determines is defined in `Linglib/Syntax/Spine/Hierarchy.lean`.
 
-Grimshaw defines a projection on a tree, by dominance: a phrase is a projection of a head it
-dominates when the two share their categorial features, every node between them shares them too,
-and none of those nodes is lexical. An extended projection is a projection whose functional value
-differs from its head's. The two conditions are stated here of a spine, the heads on the path from
-the lexical head up. She leaves open whether the functional value must rise from each head to the
-next or may also stay the same; the ranking here is any relation, so either can be given. She adds
-that it may be necessary to let only complements, and not specifiers, take part; a spine has only
-complements.
+Grimshaw defines projections on trees. A phrase is a projection of a head that it dominates if the
+two have the same categorial features, every node between them has those features, and no node
+between them is lexical. An extended projection is a projection whose functional value differs
+from that of its head. Here both conditions are stated for a spine, the heads on the path from the
+lexical head up. Grimshaw leaves open whether the functional value must increase from each head to
+the next or may stay the same, and whether only complements, and not specifiers, take part. Here
+`r` is an arbitrary relation, and a spine contains complements only.
 
 ## TODO
 
-Grimshaw's conditions on which heads take which complements, and her generalized theta criterion,
-are not formalized. They concern how one extended projection sits inside another, and so need the
-map from a tree with its head relation to the spine of a node, which is not yet stated; under that
-map her definition on trees and the one here on spines should correspond.
+Grimshaw's conditions on which heads take which complements, and the generalized theta criterion,
+are not formalized. They concern how one extended projection is embedded in another, and require
+the map from a tree with a head relation to the spine of a node, which is not yet defined.
 
 ## References
 
@@ -62,12 +60,12 @@ namespace Spine
 
 variable {H K : Type*} {family : H → K} {r : H → H → Prop} {s : Spine H} {c d : H}
 
-/-- A spine is an **extended projection**, for a family of each head and a ranking of the heads,
-when its heads are of one family and each is ranked no higher than the next head up. -/
+/-- A spine is an **extended projection** with respect to `family` and `r` if all its heads have
+the same family and each head is related by `r` to the next head up. -/
 structure IsExtendedProjection (family : H → K) (r : H → H → Prop) (s : Spine H) : Prop where
-  /-- The heads are of one family. -/
+  /-- All heads have the same family. -/
   family_eq ⦃c : H⦄ (hc : c ∈ s) ⦃d : H⦄ (hd : d ∈ s) : family c = family d
-  /-- Each head is ranked no higher than the next head up. -/
+  /-- Each head is related by `r` to the next head up. -/
   isChain : s.heads.IsChain r
 
 theorem isExtendedProjection_iff : s.IsExtendedProjection family r ↔
@@ -79,14 +77,12 @@ instance [DecidableEq H] [DecidableEq K] [DecidableRel r] (s : Spine H) :
     Decidable (s.IsExtendedProjection family r) :=
   decidable_of_iff _ isExtendedProjection_iff.symm
 
-/-- In an extended projection, each head is ranked no higher than any head above it on the
-spine. -/
 theorem IsExtendedProjection.pairwise [IsTrans H r] (h : s.IsExtendedProjection family r) :
     s.heads.Pairwise r :=
   List.isChain_iff_pairwise.1 h.isChain
 
-/-- When the ranking only relates heads of one family, a spine that ascends is an extended
-projection: its heads are then of one family. -/
+/-- If `r` only relates heads of the same family, a spine is an extended projection if and only if
+it is a chain for `r`. -/
 theorem isExtendedProjection_iff_isChain [IsTrans H r] (hr : ∀ x y, r x y → family x = family y) :
     s.IsExtendedProjection family r ↔ s.heads.IsChain r :=
   ⟨IsExtendedProjection.isChain, fun h ↦
@@ -97,14 +93,13 @@ theorem isExtendedProjection_iff_isChain [IsTrans H r] (hr : ∀ x y, r x y → 
 
 variable [DecidableEq H]
 
-/-- In an extended projection, a head is either inside the complement of a given head or ranked
-at least as high as that head. -/
+/-- In an extended projection, a head `d` is in the complement of a head `c` or `r c d` holds. -/
 theorem IsExtendedProjection.mem_below_or_rel [Std.Refl r] [IsTrans H r]
     (hs : s.IsExtendedProjection family r) (hc : c ∈ s) (hd : d ∈ s) : d ∈ s.below c ∨ r c d :=
   Spine.mem_below_or_rel hs.pairwise hc hd
 
-/-- In an extended projection, every head inside the complement of a head is ranked no higher than
-that head. -/
+/-- In an extended projection, `r d c` holds for every head `d` in the complement of a head
+`c`. -/
 theorem IsExtendedProjection.rel_of_mem_below [IsTrans H r]
     (hs : s.IsExtendedProjection family r) (hc : c ∈ s) (hd : d ∈ s.below c) : r d c :=
   Spine.rel_of_mem_below hs.pairwise hc hd

@@ -11,10 +11,12 @@ public import Linglib.Syntax.Spine.Label
 /-!
 # The standard clauses
 
-Three clauses of the verbal spine are named for their highest head. The **vP** has the verb and
-little v, the **TP** adds tense, and the **CP** adds the complementizer. Each is the complement of
-the next head up in the larger ones: tense takes the vP as its complement, and the complementizer
-takes the TP. A smaller clause projects some of the heads of a larger one and no others.
+This file defines the spines of the vP, the TP and the CP, the clauses of the verbal spine that are
+named for their highest head.
+
+## Main definitions
+
+* `Spine.vP`, `Spine.tP`, `Spine.cP`: the spines `[V, v]`, `[V, v, T]` and `[V, v, T, C]`.
 
 ## References
 
