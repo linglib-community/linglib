@@ -47,7 +47,8 @@ lexical entries cite.
   operator that a construction places over the item, and the function of Haspelmath's map that
   the construction realizes.
 * `Quantifier.Det.exhaustified`: a determiner exhaustified against its scale-mates.
-* `PolarityItem.FitsStrength`: the verdicts on an item are those of a strength class.
+* `PolarityItem.LicensingContext.classVerdict`, `PolarityItem.FitsStrength`: the verdict of a
+  strength class on a context, and an item whose verdicts are those of a class.
 * `PolarityItem.LicensingContext.holds_negation`, `holds_nobody_iff`, `not_isStrawsonUE_nobody`,
   `not_holds_exhaustified_few`, …: the certificates of the licenser of each context, from which
   the decidability instances compute what it carries and holds.
@@ -798,12 +799,17 @@ end LicensingContext
 
 /-! ### The strength class of an item, read from its contexts -/
 
-/-- The verdicts on an item are those of the class of strength `s` when the item is possible in
-each context whose licenser carries `s` and excluded from each of the others
-([zwarts-1998]). An item on which the sources are silent fits every strength, and an item that
-stands in a question fits none, since a question carries no strength. -/
+/-- The verdict of the class of strength `s` on a context: an item of the class is possible where
+the licenser of the context carries `s` and excluded elsewhere ([zwarts-1998]). -/
+def LicensingContext.classVerdict (c : LicensingContext) (s : Negation.Strength) :
+    Obligatoriness :=
+  if c.licenser.Carries s then .optional else .excluded
+
+/-- The verdicts on an item are those of the class of strength `s`. An item on which the sources
+are silent fits every strength, and an item that stands in a question fits none, since a question
+carries no strength. -/
 def FitsStrength (e : PolarityItem) (s : Negation.Strength) : Prop :=
-  ∀ p ∈ e.contexts, p.2 = if p.1.licenser.Carries s then .optional else .excluded
+  ∀ p ∈ e.contexts, p.2 = p.1.classVerdict s
 
 instance (e : PolarityItem) (s : Negation.Strength) : Decidable (e.FitsStrength s) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))

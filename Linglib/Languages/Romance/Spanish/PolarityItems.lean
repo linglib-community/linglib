@@ -17,6 +17,12 @@ questions expecting the answer 'no', and after *antes de*, *antes que* and *sin*
 (§27.5.6). The series is Haspelmath's type of negative indefinites that co-occur with
 verbal negation in some positions and not in others.
 
+## Implementation notes
+
+An entry lists the contexts in which the grammar prints the word with its positive meaning, and
+the one context from which it excludes a word. `Studies/ButtEtAl2019.lean` checks each listed
+context against an example.
+
 ## References
 
 * [butt-benjamin-2019]
@@ -35,37 +41,46 @@ thing anyone has said', *él tenía la culpa por llegar antes que nadie* 'it was
 arriving before anyone else'. It stands in a constituent question, *¿quién ha visto a nadie que
 trabaje más que él?* 'who has ever seen anyone who works more than he does?'. -/
 def nadie : PolarityItem :=
-  { form := "nadie", licensor := some .weak
-  , contexts := [(.constituentQuestion, .optional)] }
+  { form := "nadie"
+  , contexts := [(.negation, .optional), (.superlative, .optional), (.doubtVerb, .optional),
+      (.sinceTemporal, .optional), (.withoutClause, .optional), (.denyVerb, .optional),
+      (.tooTo, .optional), (.adversative, .optional), (.constituentQuestion, .optional),
+      (.beforeClause, .optional)] }
 
 /-- *nada* 'nothing', 'anything', as in *más que nada, es taimado* 'more than anything, he's
 cunning', *pocos libros dirían nada semejante* 'few books would say anything similar', *he venido
 sin nada* 'I've come without anything'. It stands in a constituent question, *¿a usted cuándo le
 han preguntado nada?* 'when did anyone ask you anything?'. -/
 def nada : PolarityItem :=
-  { form := "nada", licensor := some .weak
-  , contexts := [(.constituentQuestion, .optional)] }
+  { form := "nada"
+  , contexts := [(.negation, .optional), (.nobody, .optional), (.clausalComparative, .optional),
+      (.withoutClause, .optional), (.few, .optional), (.constituentQuestion, .optional),
+      (.beforeClause, .optional)] }
 
 /-- *ninguno* 'none', 'any', as in *es más lista que ninguno de los otros* 'she's cleverer than any
 of the others', literary *si he sido insincero con ninguno de vosotros* 'if I have been insincere
 with any of you'. -/
 def ninguno : PolarityItem :=
-  { form := "ninguno", licensor := some .weak }
+  { form := "ninguno"
+  , contexts := [(.clausalComparative, .optional), (.conditionalAntecedent, .optional)] }
 
 /-- *nunca* 'never', 'ever', as in *salió más temprano que nunca* 'she went out earlier than ever
 before', *¿quién hubiera pensado nunca que se casaría con Julia?* 'who would ever have thought
 he'd have married Julia?'. -/
 def nunca : PolarityItem :=
-  { form := "nunca", licensor := some .weak
-  , contexts := [(.constituentQuestion, .optional)] }
+  { form := "nunca"
+  , contexts := [(.negation, .optional), (.superlative, .optional),
+      (.clausalComparative, .optional), (.constituentQuestion, .optional)] }
 
 /-- *jamás* 'never', 'ever' is stronger and less common than *nunca*, as in *el mejor que jamás
 hubiera* 'the best that ever was', and is never used after a comparative. It stands in a
 constituent question, as *nunca* does, and in a polar question, *¿se vio jamás tal cosa?* 'was
 such a thing ever seen?'. -/
 def jamás : PolarityItem :=
-  { form := "jamás", licensor := some .weak
-  , contexts := [(.constituentQuestion, .optional), (.polarQuestion, .optional)] }
+  { form := "jamás"
+  , contexts := [(.negation, .optional), (.superlative, .optional),
+      (.clausalComparative, .excluded), (.constituentQuestion, .optional),
+      (.polarQuestion, .optional)] }
 
 /-- The polarity items. -/
 def items : List PolarityItem := [nadie, nada, ninguno, nunca, jamás]

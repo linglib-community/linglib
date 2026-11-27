@@ -13,9 +13,11 @@ before the verb when they follow it. They also have the positive meanings 'anyon
 'ever' after comparisons, under expressions of doubt, denial, and impossibility, in questions that
 expect the answer 'no', and after *antes de*, *antes que*, and *sin*. However, *jamás* never
 follows a comparison. Each example is linked to the lexical entry it contains and to the named
-context in which it stands. The licensing theory [admits every acceptable
-example](##ButtEtAl2019.acceptable_admitted). It [also admits *jamás* after a
-comparison](##ButtEtAl2019.jamás_comparative), a restriction that no strength class expresses.
+context in which it stands, and [the entry says of that context what the example
+shows](##ButtEtAl2019.verdict_eq_verdictOf). The questions aside, [the verdicts on four of the
+words are those of the weak class](##ButtEtAl2019.classVerdict_weak). *Jamás* follows a superlative
+and not a comparison, and [no strength class has both
+verdicts](##ButtEtAl2019.jamás_comparative).
 
 ## Implementation notes
 
@@ -69,21 +71,37 @@ theorem links_attested :
     ∀ p ∈ links, p.2.item.form.toList ∈ Datum.wordsOf p.1.primaryText := by
   decide +kernel
 
-/-- The licensing theory admits the item of every acceptable example in the context in which it
-stands, the questions aside. A question places no operator over the item, and the entry of the
-item records that it stands in one. -/
-theorem acceptable_admitted :
-    ∀ p ∈ links, p.1.judgment = .acceptable →
-      p.2.context.licenser.Admits p.2.item ∨
-        p.2.context ∈ [.polarQuestion, .constituentQuestion] ∧
-          p.2.item.verdict p.2.context = some .optional := by
+/-- The verdict that the judgment of an example gives on its context. -/
+def verdictOf : Judgment → Option Obligatoriness
+  | .acceptable => some .optional
+  | .ungrammatical => some .excluded
+  | _ => none
+
+/-- The entry of each item says of each context what the example in that context shows. -/
+theorem verdict_eq_verdictOf :
+    ∀ p ∈ links, p.2.item.verdict p.2.context = verdictOf p.1.judgment := by
   decide +kernel
 
-/-- *Jamás* cannot follow a comparison. The licensing theory nevertheless admits it there, since it
-admits every weak negative polarity item in an anti-additive context. -/
+-- Each context that an entry lists is the context of an example of the item.
+theorem contexts_linked :
+    ∀ e ∈ items, ∀ q ∈ e.contexts, ∃ p ∈ links, p.2.item.form = e.form ∧ p.2.context = q.1 := by
+  decide +kernel
+
+/-- The questions aside, the verdicts on *nadie*, *nada*, *ninguno*, and *nunca* are those of the
+weak class. A question places no operator over the item. -/
+theorem classVerdict_weak :
+    ∀ e ∈ [nadie, nada, ninguno, nunca], ∀ q ∈ e.contexts,
+      q.1 ∉ [.polarQuestion, .constituentQuestion] → q.2 = q.1.classVerdict .weak := by
+  decide +kernel
+
+/-- *Jamás* follows a superlative and cannot follow a comparison. No strength class has both
+verdicts, since a class that takes the superlative is the weak class, which takes the
+comparison. -/
 theorem jamás_comparative :
     tempranoJamas.judgment = .ungrammatical ∧
-      LicensingContext.clausalComparative.licenser.Admits jamás := by
-  decide
+      ∀ s, ∃ q ∈ jamás.contexts, q.1 ∉ [.polarQuestion, .constituentQuestion] ∧
+        q.2 ≠ q.1.classVerdict s := by
+  refine ⟨rfl, fun s ↦ ?_⟩
+  cases s <;> decide +kernel
 
 end ButtEtAl2019
