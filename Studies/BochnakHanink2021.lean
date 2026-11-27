@@ -3,7 +3,7 @@ module
 public import Linglib.Languages.Washo.Clause
 public import Linglib.Syntax.Category.Verb.Takes
 public import Studies.Hanink2021
-public import Linglib.Syntax.Minimalist.ExtendedProjection.Size
+public import Linglib.Syntax.Minimalist.Spine
 
 /-!
 # Bochnak & Hanink (2021): Clausal embedding in Washo: complementation vs. modification

@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+public import Linglib.Syntax.Minimalist.Spine
 
 /-!
 # Complement sizes
@@ -19,8 +20,8 @@ are level, as tense and negation are, are each no larger than the other without 
 two sizes that no source relates, a nominalized clause and a CP, are incomparable.
 
 The **size of a spine** is its highest head. A spine whose heads all occur on an extended projection
-is no larger than it. The standard clauses are the vP, the TP and the CP, and their sizes ascend as
-their spines grow.
+is no larger than it. The sizes of the standard clauses, the vP, the TP and the CP, ascend as their
+spines grow.
 
 ## Implementation notes
 
@@ -73,31 +74,6 @@ open Minimalist
 
 variable {s t : Spine Cat} {c : Cat}
 
-/-!
-### The standard clauses
-
-The clauses of the verbal extended projection that the literature on complement size names.
--/
-
-/-- The **vP** is the spine `[V, v]`, the small nonfinite clause. -/
-def vP : Spine Cat := ⟨[.V, .v]⟩
-
-/-- The **TP** is the spine `[V, v, T]`, the large nonfinite clause. -/
-def tP : Spine Cat := ⟨[.V, .v, .T]⟩
-
-/-- The **CP** is the spine `[V, v, T, C]`, the finite clause. -/
-def cP : Spine Cat := ⟨[.V, .v, .T, .C]⟩
-
-@[simp] theorem tP_below_T : tP.below .T = vP := by decide
-
-@[simp] theorem cP_below_T : cP.below .T = vP := by decide
-
-@[simp] theorem cP_below_C : cP.below .C = tP := by decide
-
-theorem vP_le_tP : vP ≤ tP := by decide
-
-theorem tP_le_cP : tP ≤ cP := by decide
-
 theorem cP_isExtendedProjection : cP.IsExtendedProjection Cat.family (· ≤ ·) := by
   decide +kernel
 
@@ -121,14 +97,12 @@ private theorem le_getLastD {l : List Cat} (hp : l.Pairwise (· ≤ ·)) (hc : c
 
 /-- In an extended projection, no head is higher than the one at the top of the spine. -/
 theorem IsExtendedProjection.le_size (hs : s.IsExtendedProjection Cat.family (· ≤ ·))
-    (hc : c ∈ s) :
-    c ≤ s.size.highestHead :=
+    (hc : c ∈ s) : c ≤ s.size.highestHead :=
   le_getLastD hs.pairwise hc
 
 /-- A nonempty spine whose heads an extended projection projects is no larger than it. -/
 theorem size_le_size (h : s ≤ t) (ht : t.IsExtendedProjection Cat.family (· ≤ ·))
-    (hs : s.heads ≠ []) :
-    s.size ≤ t.size := by
+    (hs : s.heads ≠ []) : s.size ≤ t.size := by
   obtain ⟨l, c, hlc⟩ := (List.eq_nil_or_concat s.heads).resolve_left hs
   show s.heads.getLastD .V ≤ t.size.highestHead
   rw [hlc, List.concat_eq_append, List.getLastD_concat]

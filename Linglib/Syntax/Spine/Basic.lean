@@ -30,9 +30,8 @@ means is left to the type of heads. The operations that address a head by its va
 
 ## Implementation notes
 
-The type of heads is a parameter. The categories of a framework and the conditions it puts on a
-spine, such as being an extended projection, are stated on `Spine` at that framework's type of
-heads.
+The type of heads is a parameter, which a framework supplies. A condition on spines, such as being
+an extended projection, takes what it needs to know of the heads as further parameters.
 
 A spine of categories may repeat a category without any head occupying two positions, and a spine
 of head tokens repeats one only where the same head does. `Spine.map` takes a spine of tokens to
@@ -40,7 +39,7 @@ the spine of their categories.
 
 ## References
 
-* [grimshaw-2005]
+* [grimshaw-2000]
 -/
 
 @[expose] public section

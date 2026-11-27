@@ -14,57 +14,57 @@ public import Mathlib.Order.Comparable
 /-!
 # The extended projections of the categories
 
-An extended projection is a spine whose heads are of one family and ranked from the bottom up. This
-file supplies the ranking for the categories of `Linglib/Syntax/Minimalist/Category.lean`.
+Which functional head stands above which? The categories are not numbered here. This file takes the
+spines that the literature draws and orders the categories by the hierarchy of those spines: a
+category is **no higher than** another, written `c ≤ d`, when steps of the cited spines lead from
+it up to the other.
 
-Which functional head stands above which? The heads are not numbered here. Their order is read off
-the structures that the literature draws. Each cited structure gives a spine, its heads from the
-bottom up, such as the verb, little v, Voice and tense. A head is one **step** above another when
-some cited spine places it directly above the other, or when a source takes the two to be one head,
-and a category is **no higher than** another, written `c ≤ d`, when a chain of steps leads from the
-first up to the second. Every cited spine ascends in this order, and the order holds between two
-categories only where the cited structures force it to: a map on categories is monotone as soon as
-it never drops going up a cited spine. So assign each category a height, in any way that never drops
-going up a cited spine. One category is no higher than another exactly when every such assignment
-gives it a height no greater. Such a height is what Grimshaw calls the functional value of a head,
-and her theory uses only the comparison of two values, never a value itself.
+Harley's clause runs from the verb up to tense, and Rizzi's from tense up to Force. So the verb
+comes out lower than Force, though neither source draws both.
 
-A spine of categories is then an extended projection when its heads are of one family and it
-ascends in this order. Here the second condition brings the first with it, since no cited spine
-leaves the family of its lexical head. The lexical head of a family is the lowest category of the
-family, and no category of another family is above it.
+Since the order pools many sources, it shows where they agree and where they do not. Two categories
+that the sources order in both ways come out **level**, each no higher than the other. Rizzi's
+topics stand on both sides of the focus, so topic and focus are level. Cinque interleaves the
+tenses, moods, modalities and aspects, Zanuttini finds negation on both sides of tense, and Laka
+places polarity below tense in English and above it in Basque, so all these heads are level with
+tense. Where the sources agree, one category is lower than the next: the verb, little v, Voice,
+tense, finiteness, focus and Force rise in that order, and so do the noun, the dividing head, the
+counting head, the determiner and the case shell. Where no source relates two categories they are
+unrelated, as Keine's nominalized clause and the CP are: neither contains the other.
 
-Since the order pools the structures of many sources, it shows where they disagree. Two heads that
-one source orders one way and another source the other way come out **level**, each no higher than
-the other. Cinque interleaves the tenses, moods, modalities and aspects, Zanuttini finds negation on
-both sides of tense, and Laka places polarity below tense in English and above it in Basque. All of
-these heads are therefore level with tense, and no assignment of heights that respects every source
-tells them apart. Rizzi's topics stand on both sides of the focus, so topic and focus are level too.
-Where the sources agree the order is strict: the verb, little v, Voice, tense, finiteness, focus and
-Force rise in that order, and so do the noun, the dividing head, the counting head, the determiner
-and the case shell. Where no source relates two heads they are incomparable, as Keine's nominalized
-clause and the CP are: neither contains the other.
+The order never crosses from one family of categories to another, since no cited spine does, and
+the lexical head of a family is the lowest category of the family. A spine of categories that
+ascends in the order is therefore an extended projection: its heads are of one family, and each is
+no higher than the next head up.
+
+The order holds exactly what the sources require. Give each category a height so that heights
+never drop going up a cited spine. A category that is no higher than another then gets a height no
+greater, and one category is no higher than another only if every such choice of heights says so.
+No choice of heights that respects every source tells tense from negation. Such a height is what
+Grimshaw calls the functional value of a head.
 
 ## Implementation notes
 
-`Minimalist.citedSequences` and `Minimalist.citedIdentifications` hold the cited structures, and
-`Minimalist.citedSpines` puts them together as one family of spines, an identification as a
-two-head spine in each order. The order is the hierarchy of that family, in the sense of
-`Linglib/Syntax/Spine/Hierarchy.lean`, where the general statements are proved for any type of
-heads. It is an order instance, so that a strict step is `<`, two level heads are related by
-`AntisymmRel (· ≤ ·)`, two unrelated ones by `IncompRel (· ≤ ·)`, and a map that respects the order
-is `Monotone`. The instance is scoped: the categories themselves carry no order, and a file that
-orders them adopts this one with `open scoped Minimalist.ExtendedProjection`. An account in which
-heads are ordered by selection alone uses the categories without it.
+`Minimalist.citedSequences` holds the cited spines, and `Minimalist.citedIdentifications` the pairs
+of categories that a source takes to be one head. `Minimalist.citedSpines` is the set whose
+hierarchy is the order: the cited sequences, and each identified pair as a two-head spine in both
+orders, which makes the pair level. The general statements about a hierarchy are in
+`Linglib/Syntax/Spine/Hierarchy.lean`, and the definition of an extended projection is in
+`Linglib/Syntax/Spine/ExtendedProjection.lean`.
 
-That every cited spine ascends is `Minimalist.Cat.isChain_le`, that the order is the least such is
-`Minimalist.Cat.monotone_iff`, and the statement about heights is
-`Minimalist.Cat.le_iff_forall_le`. `Cartography.Head.catHom` sends Cinque's order into it.
+The order is an order instance, so that a category lower than another is related to it by `<`, two
+level categories by `AntisymmRel (· ≤ ·)`, two unrelated ones by `IncompRel (· ≤ ·)`, and a map that
+respects the order is `Monotone`. The instance is scoped. The categories themselves carry no order,
+and a file that orders them adopts this one with `open scoped Minimalist.ExtendedProjection`. An
+account in which heads are ordered by selection alone uses the categories without it.
 
-Citing a further structure can only add to the order, since a larger family has a larger hierarchy.
-A statement that one category is no higher than another therefore survives every later citation,
-while a statement that two categories are strictly ordered or incomparable holds of the structures
-cited so far.
+That the cited spines ascend is `Minimalist.Cat.isChain_le`, the statements about heights are
+`Minimalist.Cat.monotone_iff` and `Minimalist.Cat.le_iff_forall_le`, and `Cartography.Head.catHom`
+sends Cinque's order into this one.
+
+Citing a further structure can only add to the order. A statement that one category is no higher
+than another therefore survives every later citation, while a statement that one is lower than
+another, or that two are unrelated, holds of the structures cited so far.
 
 Grimshaw leaves open whether the functional value must rise from each head to the next or may also
 stay the same. Here it may stay the same, since a cited spine can repeat a head. For her the

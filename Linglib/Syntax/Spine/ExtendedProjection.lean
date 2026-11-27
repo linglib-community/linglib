@@ -10,30 +10,30 @@ public import Linglib.Syntax.Spine.Label
 /-!
 # Extended projections
 
-A clause is built on a verb, but most of its structure is not the verb's: tense, negation and the
+A clause is built on a verb, but much of its structure is not the verb's: inflection and the
 complementizer each head a phrase of their own above it. In what sense is the clause still the
 verb's phrase? Grimshaw's answer is that these phrases form one **extended projection**: a lexical
 head together with the functional heads above it, all of the category of the lexical head and
 ordered by their functional level, the lexical head lowest. A noun phrase is built the same way,
-with number and the determiner above the noun.
+with the determiner above the noun.
 
 Two things have to be known of the heads to say this. Each head belongs to a **family**, the
-category it shares with its lexical head, so that tense and the complementizer are of the family of
-the verb and the determiner is of the family of the noun. And the heads are ranked, by a relation
-that says when one head is no higher than another. A spine is then an extended projection when its
-heads are of one family and each is ranked no higher than the next head up.
+category it shares with its lexical head, so that inflection and the complementizer are of the
+family of the verb and the determiner is of the family of the noun. And the heads are ranked, by a
+relation that says when one head is no higher than another. A spine is then an extended projection
+when its heads are of one family and each is ranked no higher than the next head up.
 
-Take the family that sends `V`, `T` and `C` to *verbal* and `N` and `D` to *nominal*, and the
-ranking `V`, `T`, `C`. The spine `[V, T, C]` is an extended projection. The spine `[V, C, T]` is of
-one family but descends, and `[V, T, C, D]`, a clause under a determiner, ascends as far as it is
-ranked but is of two families.
+Take Grimshaw's categories: the family sends `V`, `I` and `C` to *verbal* and `N` and `D` to
+*nominal*, and the ranking is `V`, `I`, `C`. The spine `[V, I, C]` is an extended projection. The
+spine `[V, C, I]` is of one family but descends, and `[V, I, C, D]`, a clause under a determiner,
+is of two families.
 
 ## Implementation notes
 
 The family and the ranking are parameters, since accounts differ on both: on which heads are of
 one category, and on whether heads are ranked by a fixed sequence, by the structures an account
-draws, or not at all. `Linglib/Syntax/Spine/Hierarchy.lean` gives the ranking a family of spines
-determines.
+draws, or not at all. `Linglib/Syntax/Spine/Hierarchy.lean` gives the ranking that a set of
+spines determines.
 
 Grimshaw defines a projection on a tree, by dominance: a phrase is a projection of a head it
 dominates when the two share their categorial features, every node between them shares them too,

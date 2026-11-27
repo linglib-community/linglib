@@ -12,46 +12,49 @@ public import Mathlib.Data.List.Infix
 public import Mathlib.Logic.Relation
 
 /-!
-# The hierarchy of a family of spines
+# The hierarchy of a set of spines
 
-Syntacticians read the order of heads off the structures they draw. A clause drawn with tense above
-the verb says that tense is higher than the verb, and a second clause drawn with the complementizer
-above tense adds that the complementizer is higher still. This file makes that reading precise for
-any type of heads. Given a family of spines, a head is one **step** below another when some spine
-of the family has the second directly above the first. The **hierarchy** of the family relates two
-heads when a chain of steps leads from the first up to the second, and the first is then **no
-higher than** the second.
+A spine lists the heads of a phrase from the lowest up, so a spine with a head `b` above a head `a`
+shows that `b` is higher than `a`. A second spine with `c` above `b` shows that `c` is higher
+still, and so higher than `a`, though neither spine has all three heads. The **hierarchy** of a set
+of spines is the order on heads that its spines show in this way.
 
-Take the two spines `[V, v, T]` and `[T, C]`. Their steps are from `V` to `v`, from `v` to `T` and
-from `T` to `C`, so in their hierarchy `V` is lower than `C`, though no one spine has both.
+A **step** goes from a head to the head directly above it on a spine of the set. One head is **no
+higher than** another when steps lead from it up to the other, or when the two are the same head,
+and it is **lower than** the other when no steps lead back. For the spines `[a, b]` and `[b, c]`,
+`a` is lower than `c`. Two heads are **level** when each is no higher than the other, which happens
+when spines of the set order them in both ways.
 
-The hierarchy is the least reflexive and transitive relation in which every spine of the family
-ascends. So a way of assigning heights to heads respects the hierarchy exactly when the heights
-never drop going up a spine of the family, and one head is no higher than another in the hierarchy
-exactly when every such assignment gives it a height no greater. A larger family has a larger
-hierarchy. When the family is one spine on which no head recurs, the hierarchy is the order of the
-positions on that spine.
+The hierarchy holds exactly what the spines require. Give each head a height, a number, so that
+heights never drop going up a spine of the set. One head is no higher than another in the hierarchy
+exactly when every such choice of heights gives it a height no greater. A height of this kind is
+what Grimshaw calls the functional value of a head.
 
-Two spines that order a pair of heads in opposite ways make the two heads **level**, each no higher
-than the other. Nothing is lost by this: the hierarchy records that the family does not agree on
-them.
-
-
+Adding a spine to the set can only add to the hierarchy. When the set is one spine on which no head
+occurs twice, the hierarchy is the order in which the heads stand on that spine.
 
 ## Implementation notes
 
-`Spine.Step S` is the only definition. The hierarchy of `S` is written
-`Relation.ReflTransGen (Spine.Step S)`, so that mathlib's lemmas about the closure apply to it, and
-level heads are related by `AntisymmRel`. The statements above are, in order,
-`Spine.reflTransGen_step_le_iff`, `Spine.forall_reflTransGen_step_iff`,
-`Spine.reflTransGen_step_iff_forall_le`, `Spine.reflTransGen_step_mono` and
+The one definition is `Spine.Step S`, for a set `S` of spines. The hierarchy of `S` has no name of
+its own. It is written `Relation.ReflTransGen (Spine.Step S)`, the reflexive and transitive closure
+of the steps, so that mathlib's lemmas about closures apply to it, and level heads are those
+related by `AntisymmRel`.
+
+`Spine.reflTransGen_step_le_iff` says that the hierarchy is the least reflexive and transitive
+relation in which every spine of `S` ascends. The statements about heights are
+`Spine.forall_reflTransGen_step_iff` and `Spine.reflTransGen_step_iff_forall_le`, the statement
+about adding a spine is `Spine.reflTransGen_step_mono`, and the single spine is
 `Spine.reflTransGen_step_singleton_iff`.
 
-A family is a set of spines. For a family given as a list, `Spine.steps` lists its steps as pairs,
-and `Spine.decidableReflTransGenStep` decides the hierarchy by searching along them.
+For a set given as a list, `Spine.steps` lists the steps as pairs, and
+`Spine.decidableReflTransGenStep` decides the hierarchy by searching along them.
 
-That two heads are one, as when an analysis identifies the heads of two proposals, is said by
-putting the two-head spine in the family in both orders.
+An analysis that takes two heads to be one head is entered as two spines, the two heads in each
+order, which makes them level.
+
+## References
+
+* [grimshaw-2000]
 -/
 
 @[expose] public section
@@ -62,13 +65,15 @@ variable {H β : Type*} {S T : Set (Spine H)} {r : H → H → Prop} {c d : H} {
 
 /-!
 ### Steps
+
+A step goes from a head to the head directly above it on some spine of the set.
 -/
 
-/-- A head is one **step** below another in a family of spines when some spine of the family has
-the other directly above it. -/
+/-- `Spine.Step S c d` says that `d` stands directly above `c` on some spine of the set `S`: there
+is a **step** from `c` up to `d`. -/
 def Step (S : Set (Spine H)) (c d : H) : Prop := ∃ s ∈ S, [c, d] <:+: s.heads
 
-/-- A relation holds along every step of a family exactly when every spine of the family is a
+/-- A relation holds along every step of a set of spines exactly when every spine of the set is a
 chain for it. -/
 theorem step_le_iff : Step S ≤ r ↔ ∀ s ∈ S, s.heads.IsChain r := by
   refine ⟨fun h s hs ↦ List.isChain_iff_forall_rel_of_append_cons_cons.2 fun x y l₁ l₂ e ↦
@@ -76,38 +81,49 @@ theorem step_le_iff : Step S ≤ r ↔ ∀ s ∈ S, s.heads.IsChain r := by
   rintro h x y ⟨s, hs, l₁, l₂, e⟩
   exact List.isChain_iff_forall_rel_of_append_cons_cons.1 (h s hs) (by simpa using e.symm)
 
-/-- A larger family has more steps. -/
+/-- A larger set of spines has more steps. -/
 theorem step_mono (h : S ⊆ T) : Step S ≤ Step T := fun _ _ ⟨s, hs, hi⟩ ↦ ⟨s, h hs, hi⟩
 
 /-!
 ### The hierarchy
+
+One head is no higher than another in the hierarchy of a set of spines when steps lead from it up
+to the other, or the two are the same head.
 -/
 
-/-- The hierarchy of a family is the least reflexive and transitive relation in which every spine
-of the family ascends. -/
+/-- The hierarchy of a set of spines is the least reflexive and transitive relation in which every
+spine of the set ascends. -/
 theorem reflTransGen_step_le_iff [Std.Refl r] [IsTrans H r] :
     Relation.ReflTransGen (Step S) ≤ r ↔ ∀ s ∈ S, s.heads.IsChain r :=
   ⟨fun h ↦ step_le_iff.1 fun x y hxy ↦ h x y (.single hxy),
     fun h ↦ Relation.reflTransGen_le_of_le (step_le_iff.2 h)⟩
 
-/-- Every spine of a family ascends in the hierarchy of the family. -/
+/-- Every spine of a set ascends in the hierarchy of the set. -/
 theorem isChain_reflTransGen_step (hs : s ∈ S) :
     s.heads.IsChain (Relation.ReflTransGen (Step S)) :=
   reflTransGen_step_le_iff.1 le_rfl s hs
 
-/-- On a spine of a family, each head is no higher in the hierarchy of the family than any head
-above it on the spine. -/
+/-- On a spine of a set, each head is no higher in the hierarchy of the set than any head above it
+on the spine. -/
 theorem pairwise_reflTransGen_step (hs : s ∈ S) :
     s.heads.Pairwise (Relation.ReflTransGen (Step S)) :=
   List.isChain_iff_pairwise.1 (isChain_reflTransGen_step hs)
 
-/-- A larger family has a larger hierarchy. -/
+/-- Adding spines to a set can only add to its hierarchy. -/
 theorem reflTransGen_step_mono (h : S ⊆ T) :
     Relation.ReflTransGen (Step S) ≤ Relation.ReflTransGen (Step T) :=
   Relation.ReflTransGen.mono (step_mono h)
 
-/-- A map sends the hierarchy of a family into a reflexive and transitive relation exactly when
-the images of the spines of the family are chains for it. -/
+/-!
+### Heights
+
+An assignment of heights respects the hierarchy exactly when the heights never drop going up a
+spine of the set, and the hierarchy holds between two heads exactly when every such assignment
+agrees.
+-/
+
+/-- A map of heads sends the hierarchy of a set of spines into a reflexive and transitive relation
+exactly when the image of every spine of the set is a chain for that relation. -/
 theorem forall_reflTransGen_step_iff {r : β → β → Prop} [Std.Refl r] [IsTrans β r] {f : H → β} :
     (∀ x y, Relation.ReflTransGen (Step S) x y → r (f x) (f y)) ↔
       ∀ s ∈ S, (s.map f).heads.IsChain r := by
@@ -116,8 +132,9 @@ theorem forall_reflTransGen_step_iff {r : β → β → Prop} [Std.Refl r] [IsTr
   simp only [heads_map, List.isChain_map]
   exact reflTransGen_step_le_iff (S := S) (r := fun x y ↦ r (f x) (f y))
 
-/-- One head is no higher than another in the hierarchy of a family exactly when every assignment
-of heights that never drops going up a spine of the family gives it a height no greater. -/
+/-- A head `c` is no higher than a head `d` in the hierarchy of a set of spines exactly when every
+assignment of heights that never drops going up a spine of the set gives `c` a height no greater
+than that of `d`. -/
 theorem reflTransGen_step_iff_forall_le :
     Relation.ReflTransGen (Step S) c d ↔
       ∀ f : H → ℕ, (∀ s ∈ S, (s.map f).heads.IsChain (· ≤ ·)) → f c ≤ f d := by
@@ -135,42 +152,50 @@ theorem reflTransGen_step_iff_forall_le :
 /-!
 ### One spine
 
-On a spine where no head recurs, the hierarchy of the spine alone is the order of its positions.
+On a spine where no head occurs twice, the hierarchy of the spine alone is the order in which its
+heads stand on it.
 -/
 
-/-- In the hierarchy of a single spine on which no head recurs, one head is no higher than another
-exactly when the two are the same head, or both are on the spine and the first is at or below the
-second. -/
-theorem reflTransGen_step_singleton_iff [DecidableEq H] (hs : s.heads.Nodup) :
-    Relation.ReflTransGen (Step {s}) c d ↔ c = d ∨ c ∈ s ∧ d ∈ s ∧ s.height c ≤ s.height d := by
-  let R : H → H → Prop := fun x y ↦ x = y ∨ x ∈ s ∧ y ∈ s ∧ s.height x ≤ s.height y
-  have : Std.Refl R := ⟨fun _ ↦ .inl rfl⟩
-  have : IsTrans H R := ⟨by
-    rintro x y z (rfl | ⟨hx, hy, hxy⟩) (rfl | ⟨hy', hz, hyz⟩)
-    exacts [.inl rfl, .inr ⟨hy', hz, hyz⟩, .inr ⟨hx, hy, hxy⟩, .inr ⟨hx, hz, hxy.trans hyz⟩]⟩
-  refine ⟨fun h ↦ (reflTransGen_step_le_iff (r := R)).2 (fun t ht ↦ ?_) c d h, ?_⟩
-  · obtain rfl : t = s := ht
-    refine List.isChain_iff_getElem.2 fun i hi ↦
-      .inr ⟨List.getElem_mem _, List.getElem_mem _, ?_⟩
+section Singleton
+
+variable [DecidableEq H]
+
+/-- On a spine where no head occurs twice, a head that is no higher than another in the hierarchy
+of that spine stands no higher on the spine. -/
+theorem height_le_of_reflTransGen_step (hs : s.heads.Nodup)
+    (h : Relation.ReflTransGen (Step {s}) c d) : s.height c ≤ s.height d := by
+  refine (forall_reflTransGen_step_iff (f := s.height) (r := (· ≤ ·))).2 (fun t ht ↦ ?_) c d h
+  obtain rfl : t = s := ht
+  rw [heads_map, List.isChain_map]
+  exact List.isChain_iff_getElem.2 fun i _ ↦ by
     simp only [height, hs.idxOf_getElem]
     exact Nat.le_succ i
-  · rintro (rfl | ⟨hc, hd, hcd⟩)
-    · exact .refl
-    · have hc' : s.height c < s.heads.length := List.idxOf_lt_length_iff.2 hc
-      have hd' : s.height d < s.heads.length := List.idxOf_lt_length_iff.2 hd
-      have ec : s.heads[s.height c] = c := List.getElem_idxOf hc'
-      have ed : s.heads[s.height d] = d := List.getElem_idxOf hd'
-      obtain hlt | heq := hcd.lt_or_eq
-      · exact ec ▸ ed ▸ List.pairwise_iff_getElem.1
-          (pairwise_reflTransGen_step (S := {s}) rfl) _ _ hc' hd' hlt
-      · have : c = d := by rw [← ec, ← ed]; simp only [heq]
-        exact this ▸ .refl
+
+/-- For two heads `c` and `d` of a spine where no head occurs twice, `c` is no higher than `d` in
+the hierarchy of that spine exactly when `c` stands no higher on the spine than `d`. -/
+theorem reflTransGen_step_singleton_iff (hs : s.heads.Nodup) (hc : c ∈ s) (hd : d ∈ s) :
+    Relation.ReflTransGen (Step {s}) c d ↔ s.height c ≤ s.height d := by
+  refine ⟨height_le_of_reflTransGen_step hs, fun h ↦ ?_⟩
+  have hc' : s.height c < s.heads.length := List.idxOf_lt_length_iff.2 hc
+  have hd' : s.height d < s.heads.length := List.idxOf_lt_length_iff.2 hd
+  have ec : s.heads[s.height c] = c := List.getElem_idxOf hc'
+  have ed : s.heads[s.height d] = d := List.getElem_idxOf hd'
+  obtain hlt | heq := h.lt_or_eq
+  · exact ec ▸ ed ▸ List.pairwise_iff_getElem.1
+      (pairwise_reflTransGen_step (S := {s}) rfl) _ _ hc' hd' hlt
+  · exact (List.idxOf_inj hc).1 heq ▸ .refl
+
+end Singleton
 
 /-!
 ### Deciding the hierarchy of a list of spines
+
+When the set of spines is given as a list, whether one head is no higher than another can be
+computed.
 -/
 
-/-- The **steps** of a list of spines, as pairs of a head and the next head up. -/
+/-- The **steps** of a list of spines, each as the pair of a head and the head directly above
+it. -/
 def steps (L : List (Spine H)) : List (H × H) := L.flatMap fun s ↦ s.heads.zip s.heads.tail
 
 private theorem pair_infix_iff_mem_zip_tail {x y : H} :
