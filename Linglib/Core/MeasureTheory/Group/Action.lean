@@ -25,8 +25,8 @@ measures then apply to it as they stand: `μ.map (· ∘ σ) = μ` is `MeasureTh
 * `MeasureTheory.smulInvariantMeasure_of_measure_singleton`: on a countable space with measurable
   singletons, a measure is invariant under a group action when moving a point never changes its
   mass.
-* `MeasureTheory.Measure.pi.smulInvariantMeasure_domMulAct_perm`: a finite product of copies of
-  one measure is invariant under permuting the coordinates.
+* `MeasureTheory.Measure.pi.smulInvariantMeasure_domMulAct`: a finite product of copies of one
+  measure is invariant under a group acting on the indices, so under permuting the coordinates.
 
 ## Implementation notes
 
@@ -38,12 +38,20 @@ cylinder constrains finitely many indices; that equivalence is not proved here.
 `Mathlib/MeasureTheory/Constructions/Pi.lean`.
 -/
 
-@[expose] public section
+public section
+
+open MeasureTheory
+
+@[to_additive]
+instance {M ι α : Type*} [SMul M ι] [MeasurableSpace α] : MeasurableConstSMul Mᵈᵐᵃ (ι → α) :=
+  ⟨fun _ ↦ Measurable.of_eval fun _ ↦ measurable_pi_apply _⟩
 
 namespace MeasureTheory
 
 /-- On a countable space with measurable singletons, a measure is invariant under a group action
 as soon as moving a point never changes its mass. -/
+@[to_additive /-- On a countable space with measurable singletons, a measure is invariant under
+an additive group action as soon as moving a point never changes its mass. -/]
 theorem smulInvariantMeasure_of_measure_singleton {G X : Type*} [Group G] [MulAction G X]
     [MeasurableSpace X] [Countable X] [MeasurableSingletonClass X] {μ : Measure X}
     (h : ∀ (g : G) (x : X), μ {g • x} = μ {x}) : SMulInvariantMeasure G X μ := by
@@ -51,26 +59,22 @@ theorem smulInvariantMeasure_of_measure_singleton {G X : Type*} [Group G] [MulAc
   rw [← Measure.map_apply (measurable_of_countable _) hs]
   congr 1
   refine Measure.ext_of_singleton fun x ↦ ?_
-  rw [Measure.map_apply (measurable_of_countable _) (measurableSet_singleton x), ← h g⁻¹ x]
-  congr 1
-  ext y
-  simp [eq_inv_smul_iff]
+  rw [Measure.map_apply (measurable_of_countable _) (measurableSet_singleton x),
+    Set.preimage_smul, Set.smul_set_singleton, h]
 
-variable {M ι α : Type*} [MeasurableSpace α]
-
-instance Pi.measurableConstSMul_domMulAct [SMul M ι] : MeasurableConstSMul Mᵈᵐᵃ (ι → α) :=
-  ⟨fun _ ↦ Measurable.of_eval fun _ ↦ measurable_pi_apply _⟩
-
-/-- Independent and identically distributed values are exchangeable. -/
-instance Measure.pi.smulInvariantMeasure_domMulAct_perm [Fintype ι] (ν : Measure α)
-    [SigmaFinite ν] :
-    SMulInvariantMeasure (Equiv.Perm ι)ᵈᵐᵃ (ι → α) (Measure.pi fun _ : ι ↦ ν) := by
-  refine ⟨fun c s hs ↦ ?_⟩
+/-- Independent and identically distributed values are exchangeable: a finite product of copies
+of one measure is invariant under a group acting on the indices. -/
+@[to_additive /-- A finite product of copies of one measure is invariant under an additive group
+acting on the indices. -/]
+instance Measure.pi.smulInvariantMeasure_domMulAct {G ι α : Type*} [Group G] [MulAction G ι]
+    [Fintype ι] [MeasurableSpace α] (ν : Measure α) [SigmaFinite ν] :
+    SMulInvariantMeasure Gᵈᵐᵃ (ι → α) (Measure.pi fun _ : ι ↦ ν) := by
+  refine ⟨fun c s _ ↦ ?_⟩
   have hc : (fun x : ι → α ↦ c • x) =
-      MeasurableEquiv.piCongrLeft (fun _ ↦ α) (DomMulAct.mk.symm c).symm := by
+      MeasurableEquiv.piCongrLeft (fun _ ↦ α) (MulAction.toPerm (DomMulAct.mk.symm c)).symm := by
     ext x i
     simp [MeasurableEquiv.piCongrLeft, Equiv.piCongrLeft, Equiv.piCongrLeft', DomMulAct.smul_apply]
   rw [hc]
-  exact (measurePreserving_piCongrLeft (fun _ : ι ↦ ν) _).measure_preimage hs.nullMeasurableSet
+  exact (measurePreserving_piCongrLeft (fun _ : ι ↦ ν) _).measure_preimage_equiv s
 
 end MeasureTheory

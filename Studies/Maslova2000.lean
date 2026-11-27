@@ -18,7 +18,7 @@ probability exactly when its types are strongly
 connected](##isIrreducible_iff_exists_isDistributionalUniversal). Where the shifts of a coarser
 typology depend on its own types alone, [summing the universal of a finer typology over each coarse
 type gives the coarser typology's own universal](##IsDistributionalUniversal.apply_eq_sum); for
-interdependent typologies the paper takes that sum as the definition. Of two types [the more
+interdependent typologies that sum is the definition of the coarser universal. Of two types [the more
 probable is the one the process leaves with the lower probability](##lt_iff_of_invariant).
 Splitting and dying that ignore type [keep the expected frequency of a type among the surviving
 languages at its ancestral frequency](##integral_frequency_cond).
@@ -27,18 +27,18 @@ languages at its ancestral frequency](##integral_frequency_cond).
 
 * A typology is a finite type with measurable singletons and its type-shift process a Markov
   kernel; `typeShift P` is the process with transition probabilities `P`. Strong connection is
-  irreducibility with respect to the counting measure. The paper's small time interval, over which
-  a language most likely keeps its type, is not imposed on the definitions; the processes
-  `absorbing` and `cycle` keep each type with probability at least nine tenths.
+  irreducibility with respect to the counting measure. The time interval is small, so that a
+  language most likely keeps its type over it; this is not imposed on the definitions, and the
+  processes `absorbing` and `cycle` keep each type with probability at least nine tenths.
 * That the shifts of a coarser typology depend on the coarse type alone is the condition
   `κ (g s) = (κS s).map g` on the coarsening `g` of a finer typology.
 * The birth-and-death process enters only through the law of the numbers of descendants of the
   $N_0$ ancestral languages, which need only be exchangeable; independent lineages make it so
   (`integral_frequency_cond_pi`). Where no descendant survives, the frequency is `0 / 0 = 0`, and
   the expectation is taken given survival.
-* The paper obtains the expected frequency $f_0$ from the independence of splitting and dying from
-  type, and (A10) displays it, for many ancestral languages, as the ratio of the expected numbers;
-  here it holds exactly for any exchangeable law (`integral_frequency_cond`).
+* The expected frequency $f_0$ follows from the independence of splitting and dying from type.
+  For many ancestral languages it is the ratio of the expected numbers, which is (A10);
+  `integral_frequency_cond` holds exactly, for any exchangeable law.
 
 ## TODO
 
