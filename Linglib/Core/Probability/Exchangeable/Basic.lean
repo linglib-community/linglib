@@ -37,8 +37,8 @@ permutations of `ι` on `ι → E` by precomposition.
   identically distributed.
 * `ProbabilityTheory.iIndepFun.exchangeable`: independent and identically distributed random
   variables are exchangeable.
-* `ProbabilityTheory.exchangeable_of_map_eq_bind`: a mixture of laws of independent and
-  identically distributed sequences is exchangeable.
+* `ProbabilityTheory.exchangeable_of_map_eq_iid_comp`: a mixture of laws of independent and
+  identically distributed families is exchangeable.
 
 ## Implementation notes
 
@@ -202,15 +202,13 @@ theorem iIndepFun.exchangeable [Countable ι] (hX : iIndepFun X μ)
   hX.exchangeable_of_aemeasurable (.of_eval fun i ↦ (hid i i).aemeasurable_fst) hid
 
 /-- A family whose joint law is a mixture of laws of independent and identically distributed
-sequences is exchangeable. -/
-theorem exchangeable_of_map_eq_bind {X : ℕ → Ω → E} (hX : AEMeasurable (fun ω i ↦ X i ω) μ)
-    {Λ : Measure (ProbabilityMeasure E)}
-    (h : μ.map (fun ω i ↦ X i ω) =
-      Λ.bind fun m ↦ Measure.infinitePi fun _ : ℕ ↦ (m : Measure E)) :
+families is exchangeable. -/
+theorem exchangeable_of_map_eq_iid_comp (hX : AEMeasurable (fun ω i ↦ X i ω) μ)
+    {Λ : Measure (ProbabilityMeasure E)} (h : μ.map (fun ω i ↦ X i ω) = Kernel.iid ι E ∘ₘ Λ) :
     Exchangeable X μ := by
   rw [exchangeable_iff_smulInvariantMeasure_map hX, h]
-  exact smulInvariantMeasure_bind (measurable_infinitePi_const ℕ).aemeasurable
-    (ae_of_all _ fun _ ↦ inferInstance)
+  exact smulInvariantMeasure_bind (measurable_infinitePi_const ι).aemeasurable
+    (ae_of_all _ fun m ↦ Measure.infinitePi.smulInvariantMeasure_domMulAct (m : Measure E))
 
 end Exchangeable
 

@@ -96,8 +96,8 @@ private theorem setIntegral_preimage_snd_eq_of_identDistrib {ξ ξ' : Ω → S} 
   exact (h.comp hG).integral_eq
 
 /-- If `(ξ, η)` and `(ξ, ζ)` are identically distributed and `σ(η) ≤ σ(ζ)`, then conditioning a
-bounded function of `ξ` on `ζ` gives the same result as conditioning it on `η` (Kallenberg 2005,
-Lemma 1.3). -/
+bounded function of `ξ` on `ζ` gives the same result as conditioning it on `η`
+([kallenberg-2005] Lemma 1.3). -/
 theorem condExp_comap_ae_eq_of_identDistrib [IsFiniteMeasure μ] {ξ : Ω → S} {η ζ : Ω → T}
     (hζ : Measurable ζ) (h : IdentDistrib (fun ω ↦ (ξ ω, η ω)) (fun ω ↦ (ξ ω, ζ ω)) μ μ)
     (hle : MeasurableSpace.comap η inferInstance ≤ MeasurableSpace.comap ζ inferInstance)

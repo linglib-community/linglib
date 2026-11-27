@@ -262,8 +262,8 @@ private theorem Contractable.measureReal_map_perm_pi [IsFiniteMeasure μ] (h : C
 
 /-- Under a finite measure, a contractable sequence of measurable random variables is
 exchangeable ([kallenberg-2005] Theorem 1.1). -/
-theorem Contractable.exchangeable [IsFiniteMeasure μ] (h : Contractable X μ)
-    (hX : ∀ i, Measurable (X i)) : Exchangeable X μ := by
+private theorem Contractable.exchangeable_of_measurable [IsFiniteMeasure μ]
+    (h : Contractable X μ) (hX : ∀ i, Measurable (X i)) : Exchangeable X μ := by
   refine ⟨h.aemeasurable, fun σ ↦ ?_⟩
   have hpi := isPiSystem_squareCylinders (α := fun _ : ℕ ↦ E)
     (fun _ ↦ MeasurableSpace.isPiSystem_measurableSet) fun _ ↦ MeasurableSet.univ
@@ -276,11 +276,24 @@ theorem Contractable.exchangeable [IsFiniteMeasure μ] (h : Contractable X μ)
   · rw [Measure.map_apply (.of_eval fun i ↦ hX (σ i)) .univ, Measure.map_apply (.of_eval hX) .univ]
     rfl
 
-/-- Under a finite measure, a sequence of measurable random variables is contractable if and only
-if it is exchangeable ([kallenberg-2005] Theorem 1.1). -/
-theorem contractable_iff_exchangeable [IsFiniteMeasure μ] (hX : ∀ i, Measurable (X i)) :
+/-- Under a finite measure, a contractable sequence of random variables is exchangeable
+([kallenberg-2005] Theorem 1.1). -/
+theorem Contractable.exchangeable [IsFiniteMeasure μ] (h : Contractable X μ) :
+    Exchangeable X μ := by
+  have hc : Contractable (fun i (x : ℕ → E) ↦ x i) (μ.map fun ω i ↦ X i ω) :=
+    ⟨aemeasurable_id, fun f hf ↦ by
+      have e : (μ.map fun ω i ↦ X i ω).map (fun x i ↦ x (f i)) = μ.map fun ω i ↦ X (f i) ω :=
+        AEMeasurable.map_map_of_aemeasurable
+          (Measurable.of_eval fun i ↦ measurable_pi_apply (f i)).aemeasurable h.aemeasurable
+      exact e.trans ((h.map_eq f hf).trans Measure.map_id.symm)⟩
+  exact (exchangeable_iff_exchangeable_eval_map h.aemeasurable).2
+    (hc.exchangeable_of_measurable measurable_pi_apply)
+
+/-- Under a finite measure, a sequence of random variables is contractable if and only if it is
+exchangeable ([kallenberg-2005] Theorem 1.1). -/
+theorem contractable_iff_exchangeable [IsFiniteMeasure μ] :
     Contractable X μ ↔ Exchangeable X μ :=
-  ⟨fun h ↦ h.exchangeable hX, Exchangeable.contractable⟩
+  ⟨Contractable.exchangeable, Exchangeable.contractable⟩
 
 end DeFinetti
 

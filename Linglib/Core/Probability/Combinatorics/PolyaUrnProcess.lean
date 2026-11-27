@@ -137,7 +137,7 @@ theorem polyaUrnProcess_eq_iid_comp (hθ : ∀ i, 0 < θ i) :
 /-- The draws of the Pólya urn are exchangeable. -/
 theorem exchangeable_polyaUrnProcess (hθ : ∀ i, 0 < θ i) :
     Exchangeable (fun i (x : ℕ → α) ↦ x i) (polyaUrnProcess hθ) :=
-  exchangeable_of_map_eq_bind aemeasurable_id
+  exchangeable_of_map_eq_iid_comp aemeasurable_id
     (Measure.map_id.trans (polyaUrnProcess_eq_iid_comp hθ))
 
 /-- The directing random measure of the Pólya urn has the Dirichlet law. -/
@@ -145,7 +145,7 @@ theorem map_directingMeasure_polyaUrnProcess (hθ : ∀ i, 0 < θ i) :
     (polyaUrnProcess hθ).map (directingMeasure (fun i (x : ℕ → α) ↦ x i) (polyaUrnProcess hθ)) =
       (dirichlet θ).map StdSimplex.toProbabilityMeasure := by
   have := isProbabilityMeasure_dirichlet hθ
-  exact (eq_map_of_hasCondDistrib (polyaUrnProcess_eq_iid_comp hθ) measurable_directingMeasure
+  exact (eq_map_of_hasCondDistrib_iid (polyaUrnProcess_eq_iid_comp hθ) measurable_directingMeasure
     ((exchangeable_polyaUrnProcess hθ).contractable.hasCondDistrib_directingMeasure
       measurable_pi_apply)).symm
 

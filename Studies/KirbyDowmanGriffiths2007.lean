@@ -275,8 +275,8 @@ theorem polyaUrnProcess_map_restrict_eq_prior [NeZero k] {α : ℝ} (hα : 0 < �
       prior α :=
   polyaUrnProcess_map_restrict _ n
 
--- the hidden distribution over classes that the exchangeability of that sequence forces is
--- unique, and its law is the symmetric Dirichlet distribution
+-- the hidden distribution over classes that the exchangeability of that sequence forces has
+-- the symmetric Dirichlet law
 theorem map_directingMeasure_eq_dirichlet [NeZero k] {α : ℝ} (hα : 0 < α) :
     (polyaUrnProcess (θ := fun _ : Fin k ↦ α) fun _ ↦ hα).map
         (directingMeasure (fun i (x : ℕ → Fin k) ↦ x i) (polyaUrnProcess fun _ ↦ hα)) =

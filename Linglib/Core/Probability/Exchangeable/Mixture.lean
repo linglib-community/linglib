@@ -13,7 +13,7 @@ public import Mathlib.Probability.Kernel.Condexp
 # Mixtures of i.i.d. sequences
 
 Consequences of de Finetti's theorem for an exchangeable sequence of random variables in a
-standard Borel space, with the weakest measurability hypotheses: its joint law is a mixture of
+standard Borel space: its joint law is a mixture of
 laws of independent and identically distributed sequences, and conversely; its terms are
 conditionally independent given the tail σ-algebra; and for zeros and ones the mixing measure
 lives on `[0, 1]`.
@@ -70,7 +70,7 @@ theorem exchangeable_iff_exists_map_eq_iid_comp [StandardBorelSpace E] [IsProbab
     (hX : AEMeasurable (fun ω i ↦ X i ω) μ) :
     Exchangeable X μ ↔ ∃ Λ : Measure (ProbabilityMeasure E), IsProbabilityMeasure Λ ∧
       μ.map (fun ω i ↦ X i ω) = Kernel.iid ℕ E ∘ₘ Λ :=
-  ⟨Exchangeable.exists_map_eq_iid_comp, fun ⟨_, _, h⟩ ↦ exchangeable_of_map_eq_bind hX h⟩
+  ⟨Exchangeable.exists_map_eq_iid_comp, fun ⟨_, _, h⟩ ↦ exchangeable_of_map_eq_iid_comp hX h⟩
 
 /-- Given the tail σ-algebra, the terms of a contractable sequence of random variables are
 conditionally independent ([kallenberg-2005] Theorem 1.1). -/
@@ -178,7 +178,7 @@ theorem Exchangeable.exists_measure_real_eq_integral_pow_mul {X : ℕ → Ω →
 
 /-- If a mixture `Kernel.iid ℕ E ∘ₘ Λ` of i.i.d. sequences is conditionally i.i.d. given `η`,
 then `Λ` is the law of `η`. -/
-theorem eq_map_of_hasCondDistrib {E : Type*} [MeasurableSpace E] [StandardBorelSpace E]
+theorem eq_map_of_hasCondDistrib_iid {E : Type*} [MeasurableSpace E] [StandardBorelSpace E]
     {Λ : Measure (ProbabilityMeasure E)} [IsProbabilityMeasure Λ] {ν : Measure (ℕ → E)}
     (hν : ν = Kernel.iid ℕ E ∘ₘ Λ) {η : (ℕ → E) → ProbabilityMeasure E} (hη : Measurable η)
     (h : HasCondDistrib (fun x i ↦ x i) η (Kernel.iid ℕ E) ν) : Λ = ν.map η := by
@@ -214,7 +214,8 @@ theorem Kernel.iid_comp_injective {E : Type*} [MeasurableSpace E] [StandardBorel
     ⟨Λ₁, ‹_›, HasLaw.id⟩
   obtain ⟨η, hη, hcond⟩ := ((exchangeable_tfae (μ := Kernel.iid ℕ E ∘ₘ Λ₁)
     (X := fun i (x : ℕ → E) ↦ x i) measurable_pi_apply).out 3 4).1 hmix
-  exact (eq_map_of_hasCondDistrib rfl hη hcond).trans (eq_map_of_hasCondDistrib h hη hcond).symm
+  exact (eq_map_of_hasCondDistrib_iid rfl hη hcond).trans
+    (eq_map_of_hasCondDistrib_iid h hη hcond).symm
 
 end Mixture
 

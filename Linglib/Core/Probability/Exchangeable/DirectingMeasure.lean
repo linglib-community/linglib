@@ -80,7 +80,7 @@ noncomputable def directingMeasure [StandardBorelSpace E] [Nonempty E] (X : ℕ 
 
 /-- The directing random measure is measurable for the tail σ-algebra, intersected with the
 ambient one. -/
-private theorem measurable_directingMeasure_inf [StandardBorelSpace E] [Nonempty E]
+theorem measurable_directingMeasure_inf [StandardBorelSpace E] [Nonempty E]
     [IsFiniteMeasure μ] :
     Measurable[limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop ⊓ mΩ]
       (directingMeasure X μ) :=
@@ -93,7 +93,7 @@ theorem measurable_directingMeasure [StandardBorelSpace E] [Nonempty E] [IsFinit
 
 /-- The mass that the directing random measure gives a measurable set is a version of the
 conditional probability of that set for the first term, given the tail. -/
-private theorem directingMeasure_ae_eq_condExp [StandardBorelSpace E] [Nonempty E]
+theorem directingMeasure_ae_eq_condExp [StandardBorelSpace E] [Nonempty E]
     [IsFiniteMeasure μ] (hX : ∀ i, Measurable (X i)) {t : Set E} (ht : MeasurableSet t) :
     (fun ω ↦ (directingMeasure X μ ω : Measure E).real t) =ᵐ[μ]
       μ⟦X 0 ⁻¹' t | limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop⟧ := by
@@ -178,8 +178,8 @@ theorem exchangeable_tfae [StandardBorelSpace E] [IsProbabilityMeasure μ]
       ∃ η : Ω → ProbabilityMeasure E, Measurable η ∧
         HasCondDistrib (fun ω i ↦ X i ω) η (Kernel.iid ℕ E) μ] := by
   have hJ : Measurable fun ω i ↦ X i ω := .of_eval hX
-  tfae_have 1 ↔ 2 := (contractable_iff_exchangeable hX).symm
-  tfae_have 3 → 1 := fun ⟨_, _, h⟩ ↦ exchangeable_of_map_eq_bind hJ.aemeasurable h.map_eq
+  tfae_have 1 ↔ 2 := contractable_iff_exchangeable.symm
+  tfae_have 3 → 1 := fun ⟨_, _, h⟩ ↦ exchangeable_of_map_eq_iid_comp hJ.aemeasurable h.map_eq
   tfae_have 2 → 4 := fun h ↦ by
     obtain ⟨ω⟩ := nonempty_of_isProbabilityMeasure μ
     have : Nonempty E := ⟨X 0 ω⟩
@@ -255,7 +255,7 @@ private theorem ae_eq_of_forall_ae_measureReal_eq [MeasurableSpace.CountablyGene
 
 /-- A random distribution given which a sequence is conditionally i.i.d. is almost surely unique
 ([kallenberg-2021] Theorem 27.2). -/
-theorem HasCondDistrib.ae_eq_of_iid [StandardBorelSpace E] [IsProbabilityMeasure μ]
+theorem HasCondDistrib.ae_eq_of_iid [MeasurableSpace.CountablyGenerated E] [SFinite μ]
     {η₁ η₂ : Ω → ProbabilityMeasure E}
     (h₁ : HasCondDistrib (fun ω i ↦ X i ω) η₁ (Kernel.iid ℕ E) μ)
     (h₂ : HasCondDistrib (fun ω i ↦ X i ω) η₂ (Kernel.iid ℕ E) μ) : η₁ =ᵐ[μ] η₂ :=
